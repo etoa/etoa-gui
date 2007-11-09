@@ -34,7 +34,7 @@
 	//////////////       MYSQL - Connection Data          /////////
 	///////////////////////////////////////////////////////////////
 
-	$db_access['server'] 			= 'localhost';
+	$db_access['server'] 			= 'test.etoa.net';
 	$db_access['db'] 				= 'etoatest';
 	$db_access['user'] 				= 'etoatest';
 	$db_access['pw'] 				= 'etoatest';
