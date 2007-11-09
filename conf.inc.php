@@ -71,6 +71,8 @@
 	//////////////       MYSQL - Table Names		          /////////
 	///////////////////////////////////////////////////////////////
 
+	// Deprecated, use table names directly in code
+
 	$db_table['admin_groups']				= "admin_groups";				// Administratorgeuppen
 	$db_table['admin_users']				= "admin_users";				// Administratoren
 	$db_table['admin_user_log']				= "admin_user_log";				// Administrator-Log
