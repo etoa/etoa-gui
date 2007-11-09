@@ -31,6 +31,8 @@
 	*/
 	
 	include("classes/planets.php");
+	
+	// Some misc stuff
 	//include("classes/mysql.class.php");
 	include("classes/timer.class.php");
 	
