@@ -1,0 +1,602 @@
+*	{
+	margin:0px;
+	padding:0px;
+	border:none;
+}
+
+body	{
+	margin:20px;
+	color: white;
+	font-family:verdana, sans-serif, ARIAL;
+	font-size: 10pt;
+	background:#000 url('../../images/background.jpg');
+}
+
+/*
+Fix für PNG-Files
+img, div { behavior: url(misc/iepngfix.htc) }
+*/
+
+a	{
+	color: white;
+	text-decoration:underline;
+	background:none;
+}
+
+a:hover	{
+	color: #ffffff;
+	text-decoration:none;
+	background:none;
+}
+
+h1	{
+	font-size:11pt;
+	text-align:center;
+	margin:5px 0px 8px 0px;
+}
+
+h1:before	{
+	content:":: ";
+}
+
+h1:after	{
+	content:" ::";
+}
+
+h2	{
+	font-size:10pt;
+	text-align:center;
+	margin:10px 0px;
+}
+
+h2:before	{
+	content:": ";
+}
+
+h2:after	{
+	content:" :";
+}
+
+table	{
+	border-collapse:collapse;
+}
+
+/* wenn man den cursor in einem textfeld setzt wird diese feld so*/
+/* Funktioniert NICHT mit dem Internet Explorer! */
+input:focus,textarea:focus, select:focus {
+  border: 1px #ddd solid;
+  background:#222;
+}
+
+/*Definiert die Buttons bei "bauhof" oder "forschung", hintergrund sollte der selbe wie tbldata sein*/
+button	{
+	background:#223;
+	border:none;
+	cursor:pointer;
+}
+
+/* Definiert die verschieden button typen im normal zustand */
+input[type="submit"],input[type="reset"],input[type="button"]	{
+	background:#222255 url('images/button1.jpg');
+	color:#fff;
+	font-weight:bold;
+}
+
+/* Definiert die verschieden button typen im hover zustand */
+/* Funktioniert NICHT mit dem Internet Explorer! */
+input:hover[type="submit"],input:hover[type="reset"],input:hover[type="button"]	{
+	background:#222255 url('images/button2.jpg');
+	color:#fff;
+	font-weight:bold;
+}
+
+input,select,textarea	{
+	border:solid #fff 1px;
+	font-family:arial;
+	font-size:10pt;
+	background:#000;
+	color:#fff
+}
+
+input[type="checkbox"],input[type="radio"] {
+	border:none;
+	padding:0px;
+	margin:0px;
+	background:none;
+}
+
+/* Absolutes Grundgerüst  */
+#layoutbox	{
+	margin:0px auto;
+	background:#6e7591;
+	font-size:10pt;
+	vertical-align:top;
+	border:1px solid #fff;
+}
+
+#minibar	{
+ 	background:#424962;
+}
+
+/* Forum, Wiki, Regenl... */
+#topbar	{
+ 	text-align:right;
+ 	padding-right:10px;
+ 	background:#424962;
+ 	height:19px;
+	border:1px solid #fff;
+}
+
+/* Forum, Wiki, Regenl -> link  */
+#topbar a {
+	text-decoration:none;
+	font-weight:bold;
+}
+
+/* Forum, Wiki, Regenl -> hover effekt  */
+#topbar a:hover {
+	text-decoration:none;
+	color:#aaa;
+	font-weight:bold;
+}
+
+#logo	{
+	background:#000 url('../../images/logo.jpg') no-repeat;
+	width:175px;
+	height:72px;
+	border:1px solid #fff;
+}
+
+#banner	{
+	text-align:center;
+	background:#000 url('../../images/banner.jpg') no-repeat;
+	height:72px;
+	border:1px solid #fff;
+}
+
+/* Planetenliste hintergrund des hintergrundes ^^  */
+select#nav_mode_select	{
+	width:185px;
+	background:#222;
+	color:#fff;
+}
+
+/* Alle Content links der hinterste background   */
+#content	{
+	background:#9198ab;
+	background:#606578;
+	height:450px;
+	vertical-align:top;
+	padding:4px 10px 10px 10px;
+	border:1px solid #fff;
+	text-align:center;
+}
+
+#helpbox	{
+	border: 1px solid #fff;
+}
+
+/* by EtoA.ch (unten links)   */
+#copy	{
+	background:#646b84;
+	border:1px solid #fff;
+	padding-left:8px;
+	width:175px;
+}
+
+/* Renderzeit, User...  */
+#bottombar	{
+	padding-top:4px;
+	padding-right:4px;
+	text-align:right;
+	background:#646b84;
+	height:25px;
+	vertical-align:top;
+}
+
+/* Menu: Restlicher Rand unter dem Menu */
+#menu1	{
+	padding:0px 0px 40px 0px;
+	background:#6e7591;
+	width:175px;
+	vertical-align:top;
+	border:1px solid #fff;
+}
+
+/* Allgemeines, Planet.... */
+#menu1 div {
+	font-weight:bold;
+	background:#225;
+	color:#fff;
+	text-decoration:none;
+	width:175px;
+	padding: 2px 2px 2px 8px;
+	margin: 0px auto;
+	border-bottom:solid 1px #e6e6e6;
+	border-top:none;
+	height:16px;
+}
+
+/* übersicht, allianz, ratshaus.... */
+#menu1 a {
+	display: block;
+	background:#626b84;
+	color:#eee;
+	text-decoration:none;
+	width:175px;
+	padding: 2px 2px 2px 8px;
+	margin: 0px auto;
+	border-bottom:solid 1px #e6e6e6;
+}
+
+/* übersicht, allianz, ratshaus -> hover */
+#menu1 a:hover {
+	background-color:silver;
+	color: #445543;
+	text-decoration:none;
+	border-bottom:solid 1px #e6e6e6;
+}
+
+/* Tabellen Header wie z.B. Titan/Silizium etc. */
+.tbltitle, .tb th {
+	font-size:10pt;
+	font-weight:bold;
+	border:1px solid #fff;
+	background:#225;
+	padding:2px;
+	vertical-align:top;
+	text-align:left;
+}
+
+/* die meisten tabellen hintergründe */
+.tbldata, .tb td {
+	font-size:8pt;
+	color:#fff;
+	border:1px solid #fff;
+	background:#223;
+	padding:3px;
+	vertical-align:top;
+	text-align:left;
+}
+
+/* Ressourcen Speicher voll / Bewohner -> farbe wenn gebäude baut */
+.tbldata2 {
+	font-size:8pt;
+	color:red;
+	border:1px solid #fff;
+	background:#223;
+	padding:3px;
+	vertical-align:top;
+	text-align:left;
+}
+
+/* Energie wenn sie Positiv ist (standart ist hellgrün) */
+.tbldata3 {
+	font-size:8pt;
+	color:#0f0;
+	border:1px solid #fff;
+	background:#223;
+	padding:3px;
+	vertical-align:top;
+	text-align:left;
+}
+
+/* Tabellenfelder mit Warntext (Standart ist orange) */
+/* rest muss gleich wie .tbldata sein! */
+.tbldata4 {
+	font-size:8pt;
+	color:#f90;
+	border:1px solid #fff;
+	background:#223;
+	padding:3px;
+	vertical-align:top;
+	text-align:left;
+}
+
+/* Allianz Seite */
+.tblblack {
+	font-size:8pt;
+	color:#fff;
+	border:1px solid #fff;
+	background:#000;
+}
+
+/* Allgemeine Tabellen definition welche gestreckt ist (infobox_start("",1)) */
+.tbl, table.tb	{
+	width:100%;
+	margin:0px auto;
+	border:1px solid #ffffff;
+}
+
+/* Allgemeine Tabellen definition für "gestauchte" tabellen (infobox_start("",0)) */
+.tblc	{
+	margin:0px auto;
+	border:1px solid #ffffff;
+}
+
+/* übersicht -> wichtige infos, fremde flotten */
+div.infoboxtitle	{
+	width:99%;
+	font-size:10pt;
+	font-weight:bold;
+	border:1px solid #fff;
+	background:#225;
+	padding:4px;
+	text-align:center;
+}
+
+/* allgemeine gebäude, wohnfläche, boni, ratshaus-news, fremde flotten... */
+td.infoboxtitle	{
+	font-size:10pt;
+	font-weight:bold;
+	border:1px solid #fff;
+	background:#225;
+	padding:4px;
+	text-align:center;
+}
+
+/* übersicht -> wichtige infos, fremde flotten die dazugehörende unterspalte */
+div.infoboxcontent {
+	width:99%;
+	font-size:8pt;
+	color:#fff;
+	border: none;
+	border-left:1px solid #fff;
+	border-right:1px solid #fff;
+	border-bottom:1px solid #fff;
+	background:#223;
+	padding:4px;
+}
+
+/* Nachrichten -> Neu, Archiv, Erstellen, Gesendet -> geklickt */
+a.tabEnabled	{
+	padding-top:3px;
+	padding-bottom:3px;
+	display:block;
+	width:100%;
+	height:100%;
+	background:#225;
+	color:#fff;
+	text-align:center;
+	text-decoration:none;
+}
+
+/* Nachrichten -> Neu, Archiv, Erstellen, Gesendet -> geklickt hover effekt */
+a.tabEnabled:hover	{
+	text-decoration:none;
+	background:#226;
+}
+
+/* Nachrichten -> Neu, Archiv, Erstellen, Gesendet -> ungeklickt */
+a.tabDefault	{
+	padding-top:3px;
+	padding-bottom:3px;
+	display:block;
+	width:100%;
+	height:100%;
+	background:#223;
+	color:#ddd;
+	text-align:center;
+	text-decoration:none;
+}
+
+/* Nachrichten -> Neu, Archiv, Erstellen, Gesendet -> "ungelickt" hover effekt */
+a.tabDefault:hover	{
+	background:#889;
+	color:#000;
+	text-decoration:none;
+}
+
+/* Nachrichten -> Neu, Archiv, Erstellen, Gesendet -> border um die buttons */
+.statsTab	{
+	/*width:120px;*/
+	height:20px;
+	border:1px solid #fff;
+	margin:0px;
+	padding:0px;
+}
+
+
+table.statsNav	{
+	width:99%;
+	border:1px solid #fff;
+	margin:0px auto;
+}
+
+td.statsNav	{
+	background:#223;
+}
+
+/* Raumkarte */
+.spaceCell {
+	border: solid 1px #111;
+	padding:0px;
+	vertical-align:middle;
+	text-align:center;
+}
+
+.spaceCellUser	{
+	border: solid 2px #4f4;
+	vertical-align:middle;
+	text-align:center;
+}
+
+.spaceCellSelected	{
+	border: solid 2px #ef4;
+	vertical-align:middle;
+	text-align:center;
+}
+
+td.coordstbl	{
+	border:0px;
+	background:#000000 url('../../images/empty_space.gif');
+	vertical-align:middle;
+	text-align:center;
+	width:40px;
+	height:40px;
+}
+
+table#outerspacetbl {
+	margin:0px auto;
+	border-collapse:collapse;
+	padding:0px;
+}
+
+table#innerspacetbl {
+	border:2px solid #fff;
+	background:#000;
+}
+
+
+
+
+/* übersicht -> planetenliste */
+
+.PlaniTextLinks {
+	color: #FFFFFF;
+	font-family: "Arial", Courier, mono;
+	font-size: 11px;
+	text-align: right;
+	vertical-align: middle;
+}
+.PlaniTextRechts {
+	color: #FFFFFF;
+	font-family: "Arial", Courier, mono;
+	font-size: 11px;
+	text-align: left;
+	vertical-align: middle;
+}
+.PlaniTextOben {
+	color: #FFFFFF;
+	font-family: "Arial", Courier, mono;
+	font-size: 11px;
+	text-align: center;
+	vertical-align: bottom;
+}
+
+.PlaniTextCenter {
+	color: #FFFFFF;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	text-align: left;
+	vertical-align: baseline;
+	font-weight: lighter;
+}
+.PlaniTextCenterPlanetname {
+	color: #FFFFFF;
+	font-family: "SF Chaerilidae";
+	font-size: 20px;
+	text-align: center;
+	vertical-align: baseline;
+	font-weight: lighter;
+}
+.PlaniTextCenterBeschreibung {
+	color: #FFFFFF;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	text-align: left;
+	vertical-align: baseline;
+	font-weight: lighter;
+}
+.PlaniTextCenterRessourcen {
+	color: #FFFFFF;
+	font-family: "SF Chaerilidae";
+	font-size: 16px;
+	text-align: center;
+	vertical-align: baseline;
+	font-weight: lighter;
+}
+.PlaniTextCenterStore {
+	color: red;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	text-align: left;
+	vertical-align: baseline;
+	font-weight: lighter;
+}
+.PlaniTextCenterPower {
+	color: #0f0;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	text-align: left;
+	vertical-align: baseline;
+	font-weight: lighter;
+}
+
+hr	{
+	height:1px;
+	border:1px solid #111;
+}
+
+
+
+
+
+table.tab	{
+	margin:0px auto;
+	border:1px solid #fff;
+	border-collapse:collapse;
+	width:600px;
+}
+
+
+td.havenTab	{
+	width:25%;
+	height:30px;
+	border:1px solid #fff;
+	margin:0px;
+	padding:0px;
+	background:#335;
+	color:#fff;
+	font-weight:bold;
+	text-align:center;
+	text-decoration:none;
+}
+
+td.havenTab:hover	{
+	background:#889;
+	color:#000;
+	text-decoration:none;
+}
+
+#havenBox, #havenInfoBox 	{
+	border:1px solid #000;
+	width:600px;
+	margin:0px auto;
+}
+
+
+/* Xajax Suchliste z.b. bei Usereingabe in Nachrichten*/
+.citybox  {
+  position:absolute;
+  z-index:10;
+  border:1px #ccc solid;
+  border-top:none;
+  border-bottom:none;
+  background:#223;
+  padding:0px;
+  display:none;
+}
+
+.citybox ul  {
+  padding:0 10px 0 10px;
+  margin:0;
+}
+
+.citybox li  {
+  list-style:none;
+  padding-left:0;
+}
+
+.citybox a  {
+  text-decoration:none;
+  color:#aaa;
+  display:block;
+  padding:5px;
+  border-bottom:1px solid #fff;
+}
+.citybox a:hover {
+  color:#fff;
+  background:#575763;
+}
+

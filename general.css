@@ -1,0 +1,86 @@
+      
+.bbtable td	{
+	padding:2px;
+}
+.bbtable th	{
+	padding:2px;
+}
+                              
+                              
+img.resIcon	{
+	float:left;
+	margin-right:5px;
+}
+
+/* Definitionen für die öffentlich zugänglichen Seiten
+-------------------------------------------------------*/
+
+#outGameBody	{
+	text-align:center;
+	margin:0px;
+}
+
+#outGameTop	{
+	border-bottom:1px solid #fff;
+	text-align:right;
+	background:#225;
+	height:21px;
+}
+
+#outGameTop a	{
+	padding:5px;
+	background:#223;
+	border-left:1px solid #fff;
+	border-bottom:1px solid #fff;
+	text-decoration:none;
+}
+
+#outGameTop a:hover	{
+	padding:5px;
+	color:#000;
+	background:#ddf;
+	border-bottom:1px solid #fff;
+	text-decoration:none;
+}
+
+#outGameTop div	{
+	float:left;
+}
+
+#outGameTop div	a {
+	border-right:1px solid #fff;
+	border-left:none;
+}
+
+#outGameContent	{
+	margin:2px 20px;
+}
+
+#outgameOverviewTable	{
+	width:450px;
+		margin:0px auto;
+}
+
+#outgameOverviewTable	td	{
+	width:150px;
+	height:150px;
+}
+
+#outgameOverviewTable	td	a {
+	display:block;
+	background:#777;
+	border:1px solid #fff;
+	width:120px;
+	height:90px;
+	text-align:center;
+	padding-top:30px;
+	text-decoration:none;
+}
+
+#outgameOverviewTable	td	a:hover {
+	background:#444;
+}
+
+a img	{
+	border:none;
+}

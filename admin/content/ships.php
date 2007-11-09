@@ -1,0 +1,1154 @@
+<?PHP
+
+	//////////////////////////////////////////////////
+	//		 	 ____    __           ______       			//
+	//			/\  _`\ /\ \__       /\  _  \      			//
+	//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
+	//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
+	//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
+	//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
+	//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
+	//																					 		//
+	//////////////////////////////////////////////////
+	// The Andromeda-Project-Browsergame				 		//
+	// Ein Massive-Multiplayer-Online-Spiel			 		//
+	// Programmiert von Nicolas Perrenoud				 		//
+	// www.nicu.ch | mail@nicu.ch								 		//
+	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
+	//////////////////////////////////////////////////
+	//
+	// 	Dateiname: ships.php
+	// 	Topic: Schiffverwaltung
+	// 	Autor: Nicolas Perrenoud alias MrCage
+	// 	Erstellt: 01.12.2004
+	// 	Bearbeitet von: Nicolas Perrenoud alias MrCage
+	// 	Bearbeitet am: 31.03.2006
+	// 	Kommentar:
+	//
+
+
+
+
+	//
+	// Battlepoints
+	//
+	if ($sub=="battlepoints")
+	{
+		echo "<h1>Battlepoints</h1>";
+		echo "<h2>Battlepoints neu berechnen</h2><form action=\"?page=$page&amp;sub=$sub\" method=\"POST\">";
+		if ($_POST['recalc']!="")
+		{
+			$res = dbquery("
+			SELECT
+				ship_id,
+                ship_costs_metal,
+                ship_costs_crystal,
+                ship_costs_fuel,
+                ship_costs_plastic,
+                ship_costs_food
+			FROM
+				".$db_table['ships'].";");
+			$mnr = mysql_num_rows($res);
+			if ($mnr>0)
+			{
+				while ($arr = mysql_fetch_array($res))
+				{
+					$p = ($arr['ship_costs_metal']+$arr['ship_costs_crystal']+$arr['ship_costs_fuel']+$arr['ship_costs_plastic']+$arr['ship_costs_food'])/$conf['points_update']['p1'];
+					dbquery("
+					UPDATE
+						".$db_table['ships']."
+					SET
+						ship_battlepoints=$p
+					WHERE
+						ship_id=".$arr['ship_id'].";");
+				}
+			}
+			if ($mnr>0)
+				echo "Die Battlepoints von <b>$mnr</b> Schiffen wurden aktualisiert!<br/><br/>";
+		}
+		echo "Nach jeder &Auml;nderung an den Schiffen m&uuml;ssen die Battlepoints neu berechnet werden: ";
+		echo "<input type=\"submit\" name=\"recalc\" value=\"Neu berechnen\" /></form>";
+		echo "<h2>Battlepoints</h2>";
+		$res=dbquery("
+		SELECT
+			ship_id,
+			ship_name,
+			ship_battlepoints
+		FROM
+			".$db_table['ships']."
+		ORDER BY
+			ship_battlepoints DESC,
+			ship_name DESC;");
+		if (mysql_num_rows($res)>0)
+		{
+			echo "<table class=\"tb\">";
+			while ($arr=mysql_fetch_array($res))
+			{
+				echo "<tr><th>".$arr['ship_name']."</th><td style=\"width:70%\">".$arr['ship_battlepoints']."</td></tr>";
+			}
+			echo "</table>";
+		}
+	}
+
+
+
+	//
+	// Kategorien
+	//
+	elseif ($sub=="cat")
+	{
+		simple_form("ship_cat");
+	}
+
+	//
+	// Daten
+	//
+	elseif ($sub=="data")
+	{
+		advanced_form("ships");
+	}
+	//
+	// Schiffsanforderungen
+	//
+	elseif ($sub=="req")
+	{
+		//Definistion für die normalen Schiffe
+		define("TITLE","Schiffanforderungen");
+		define("ITEMS_TBL","ships");
+		define("TYPES_TBL","ship_types");
+		define("REQ_TBL","ship_requirements");
+		define("REQ_ITEM_FLD","req_ship_id");
+		define("ITEM_ID_FLD","ship_id");
+		define("ITEM_NAME_FLD","ship_name");
+		define("ITEM_SHOW_FLD","ship_show");
+		define("ITEM_ORDER_FLD","special_ship DESC,ship_name");
+		define("NO_ITEMS_MSG","In dieser Kategorie gibt es keine Schiffe!");
+
+
+		//
+		// Schiffs Anforderungen
+		//
+		echo "<h1>".TITLE."</h1>";
+
+		if ($_POST['submit_changes']!="")
+		{
+			// Gebäudeänderungen speichern
+			foreach ($_POST['building_id'] as $id=>$val)
+			{
+				if ($_POST['building_level'][$id]<1)
+					dbquery("DELETE FROM ".$db_table[REQ_TBL]." WHERE req_id=$id;");
+				else
+					dbquery("UPDATE ".$db_table[REQ_TBL]." SET req_req_building_id=$val,req_req_building_level=".$_POST['building_level'][$id]." WHERE req_id=$id;");
+			}
+			// Technologieänderungen speichern
+			foreach ($_POST['tech_id'] as $id=>$val)
+			{
+				if ($_POST['tech_level'][$id]<1)
+					dbquery("DELETE FROM ".$db_table[REQ_TBL]." WHERE req_id=$id;");
+				else
+					dbquery("UPDATE ".$db_table[REQ_TBL]." SET req_req_tech_id=$val,req_req_tech_level=".$_POST['tech_level'][$id]." WHERE req_id=$id;");
+			}
+		}
+
+		// Gebäudeverknüpfung speichern
+		if ($_POST['add_building']!="")
+		{
+			if ($_POST['new_item_id']!="")
+			{
+				if (mysql_num_rows(dbquery("SELECT req_id FROM ".$db_table[REQ_TBL]." WHERE ".REQ_ITEM_FLD."=".$_POST['new_id']." AND req_req_building_id=".$_POST['new_item_id'].";"))==0)
+				{
+					dbquery("INSERT INTO ".$db_table[REQ_TBL]." (".REQ_ITEM_FLD.",req_req_building_id,req_req_building_level) VALUES ('".$_POST['new_id']."','".$_POST['new_item_id']."','".$_POST['new_item_level']."');");
+				}
+				else
+					echo "Fehler! Diese Geb&auml;udeverkn&uuml;pfung existiert bereits!<br/><br/>";
+			}
+			else
+				echo "Fehler! Kein verkn&uuml;pfendes Geb&auml;ude ausgew&auml;hlt!<br/><br/>";
+		}
+
+		// Technologieverknüpfung speicher
+		if ($_POST['add_tech']!="")
+		{
+			if ($_POST['new_item_id']!="")
+			{
+				if (mysql_num_rows(dbquery("SELECT req_id FROM ".$db_table[REQ_TBL]." WHERE ".REQ_ITEM_FLD."=".$_POST['new_id']." AND req_req_tech_id=".$_POST['new_item_id'].";"))==0)
+				{
+					dbquery("INSERT INTO ".$db_table[REQ_TBL]." (".REQ_ITEM_FLD.",req_req_tech_id,req_req_tech_level) VALUES ('".$_POST['new_id']."','".$_POST['new_item_id']."','".$_POST['new_item_level']."');");
+				}
+				else
+					echo "Fehler! Diese Forschungsverkn&uuml;pfung existiert bereits!<br/><br/>";
+			}
+			else
+				echo "Fehler! Keine verkn&uuml;pfende Forschung ausgew&auml;hlt!<br/><br/>";
+		}
+
+		// Gebäudeverknüpfungen löschen
+		if ($_POST['del_building']!="")
+		{
+			if (count($_POST['del_building'])>0)
+			{
+				foreach ($_POST['del_building'] as $req_building_id=>$req_req_building_id)
+				{
+					foreach ($req_req_building_id as $key=>$val)
+					{
+						dbquery("DELETE FROM ".$db_table[REQ_TBL]." WHERE ".REQ_ITEM_FLD."=$req_building_id AND req_req_building_id=$key;");
+					}
+				}
+			}
+		}
+
+		// Technologieknüpfungen löschen
+		if ($_POST['del_tech']!="")
+		{
+			if (count($_POST['del_tech'])>0)
+			{
+				foreach ($_POST['del_tech'] as $req_building_id=>$req_req_tech_id)
+				{
+					foreach ($req_req_tech_id as $key=>$val)
+					{
+						dbquery("DELETE FROM ".$db_table[REQ_TBL]." WHERE ".REQ_ITEM_FLD."=$req_building_id AND req_req_tech_id=$key;");
+					}
+				}
+			}
+		}
+
+
+		// Lade Gebäude- & Technologienamen
+		$bures = dbquery("SELECT building_id,building_name FROM ".$db_table['buildings']." WHERE building_show=1;");
+		while ($buarr = mysql_fetch_array($bures))
+		{
+			$bu_name[$buarr['building_id']]=$buarr['building_name'];
+		}
+		$teres = dbquery("SELECT tech_id,tech_name FROM ".$db_table['technologies']." WHERE tech_show=1;");
+		while ($tearr = mysql_fetch_array($teres))
+		{
+			$te_name[$tearr['tech_id']]=$tearr['tech_name'];
+		}
+
+		// Lade Anforderungen
+		$rres = dbquery("SELECT * FROM ".$db_table[REQ_TBL].";");
+		while ($rarr = mysql_fetch_array($rres))
+		{
+			$b_req[$rarr[REQ_ITEM_FLD]]['i'][$rarr['req_req_building_id']]=$rarr['req_id'];
+			$b_req[$rarr[REQ_ITEM_FLD]]['i'][$rarr['req_req_tech_id']]=$rarr['req_id'];
+			if ($rarr['req_req_building_id']>0) $b_req[$rarr[REQ_ITEM_FLD]]['b'][$rarr['req_req_building_id']]=$rarr['req_req_building_level'];
+			if ($rarr['req_req_tech_id']>0) $b_req[$rarr[REQ_ITEM_FLD]]['t'][$rarr['req_req_tech_id']]=$rarr['req_req_tech_level'];
+		}
+
+		$res = dbquery("SELECT * FROM ".$db_table[ITEMS_TBL]." WHERE ".ITEM_SHOW_FLD."=1 ORDER BY ".ITEM_ORDER_FLD.";");
+		if (mysql_num_rows($res)>0)
+		{
+			if ($_GET['action']=="new_building" || $_GET['action']=="new_tech")
+				$form_addition=" disabled=\"disabled\"";
+
+			while ($arr=mysql_fetch_array($res))
+			{
+				echo "<form action=\"?page=$page&sub=$sub\" method=\"post\">";
+				echo "<table width=\"400\"  border=\"0\" class=\"tbl\" cellspacing=\"1\" cellpadding=\"2\">";
+				echo "<tr><td colspan=\"3\" >".$arr[ITEM_NAME_FLD]."</td></tr>";
+				$using_something=0;
+
+				// Gespeicherte Gebäudeanforderungen
+				if (count($b_req[$arr[ITEM_ID_FLD]]['b'])>0)
+				{
+					foreach ($b_req[$arr[ITEM_ID_FLD]]['b'] as $b=>$l)
+					{
+						echo "<tr>";
+						echo "<td class=\"tbldata\" width=\"200\"><select name=\"building_id[".$b_req[$arr[ITEM_ID_FLD]]['i'][$b]."]\" $form_addition>";
+						if ($b==0)
+						echo "<option value=\"\"><i>Geb&auml;ude w&auml;hlen</i></option>";
+						foreach ($bu_name as $key=>$val)
+						{
+							echo "<option value=\"$key\"";
+							if ($b==$key) echo " selected=\"selected\"";
+							echo ">$val</option>";
+						}
+						echo "</select></td><td class=\"tbldata\" width=\"50\"><input type=\"text\" name=\"building_level[".$b_req[$arr[ITEM_ID_FLD]]['i'][$b]."]\" size=\"1\" maxlength=\"3\" value=\"$l\"$form_addition /></td>";
+						if ($_GET['action']!="new_building" && $_GET['action']!="new_tech")
+							echo "<td class=\"tbldata\"><input type=\"submit\" class=\"button\" name=\"del_building[".$arr[ITEM_ID_FLD]."][$b]\" value=\"L&ouml;schen\" /></td></tr>";
+						else
+							echo "<td class=\"tbldata\">&nbsp;</td></tr>";
+					}
+					$using_something=1;
+				}
+				// Neue Gebäudeanforderung
+				if ($_GET['action']=="new_building" && $_GET['id']==$arr[ITEM_ID_FLD])
+				{
+					echo "<input type=\"hidden\" name=\"new_id\" value=\"".$arr[ITEM_ID_FLD]."\">";
+					echo "<tr><td class=\"tbldata\" width=\"200\"><select name=\"new_item_id\">";
+					echo "<option value=\"\" style=\"font-style:italic;\">Geb&auml;ude w&auml;hlen</option>";
+					foreach ($bu_name as $key=>$val)
+					{
+						if ($key!=$arr[ITEM_ID_FLD])
+							echo "<option value=\"$key\">$val</option>";
+					}
+					echo "</select></td><td class=\"tbldata\"><input type=\"text\" name=\"new_item_level\" size=\"1\" maxlength=\"3\" value=\"1\" /></td>";
+					echo "<td class=\"tbldata\"><input type=\"submit\" class=\"button\" name=\"add_building\" value=\"&Uuml;bernehmen\" /></td></tr>";
+				}
+
+				// Gespeicherte Forschungsanforderungen
+				if (count($b_req[$arr[ITEM_ID_FLD]]['t'])>0)
+				{
+					foreach ($b_req[$arr[ITEM_ID_FLD]]['t'] as $b=>$l)
+					{
+						echo "<tr><td class=\"tbldata\" width=\"200\"><select name=\"tech_id[".$b_req[$arr[ITEM_ID_FLD]]['i'][$b]."]\" $form_addition>";
+						if ($b==0)
+						echo "<option value=\"\"><i>Geb&auml;ude w&auml;hlen</i></option>";
+						foreach ($te_name as $key=>$val)
+						{
+							echo "<option value=\"$key\"";
+							if ($b==$key) echo " selected=\"selected\"";
+							echo ">$val</option>";
+						}
+						echo "</select></td><td class=\"tbldata\" width=\"50\"><input type=\"text\" name=\"tech_level[".$b_req[$arr[ITEM_ID_FLD]]['i'][$b]."]\" size=\"1\" maxlength=\"3\" value=\"$l\"$form_addition /></td>";
+						if ($_GET['action']!="new_building" && $_GET['action']!="new_tech")
+							echo "<td class=\"tbldata\"><input type=\"submit\" class=\"button\" name=\"del_tech[".$arr[ITEM_ID_FLD]."][$b]\" value=\"L&ouml;schen\"$form_addition /></td></tr>";
+						else
+							echo "<td class=\"tbldata\">&nbsp;</td></tr>";
+					}
+					$using_something=1;
+				}
+				// Neue Forschungsanforderung
+				if ($_GET['action']=="new_tech" && $_GET['id']==$arr[ITEM_ID_FLD])
+				{
+					echo "<input type=\"hidden\" name=\"new_id\" value=\"".$arr[ITEM_ID_FLD]."\">";
+					echo "<tr><td class=\"tbldata\" width=\"200\"><select name=\"new_item_id\">";
+					echo "<option value=\"\" style=\"font-style:italic;\">Technologie w&auml;hlen</option>";
+					foreach ($te_name as $key=>$val)
+					{
+						echo "<option value=\"$key\">$val</option>";
+					}
+					echo "</select></td><td class=\"tbldata\"><input type=\"text\" name=\"new_item_level\" size=\"1\" maxlength=\"3\" value=\"1\" /></td>";
+					echo "<td class=\"tbldata\"><input type=\"submit\" class=\"button\" name=\"add_tech\" value=\"&Uuml;bernehmen\" /></td></tr>";
+				}
+				if ($using_something==0)
+					echo "<tr><td width=\"200\" class=\"tbldata\">&nbsp;</td><td colspan=\"2\" class=\"techtreeBuildingNoReq\">Keine Voraussetzungen</td></tr>";
+				if ($_GET['action']!="new_building" && $_GET['action']!="new_tech")
+				{
+					echo "<tr><td class=\"tbldata\">Neue Voraussetzung?</td>";
+					echo "<td class=\"tbldata\" colspan=\"2\"><input type=\"button\" class=\"button\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;action=new_building&amp;id=".$arr[ITEM_ID_FLD]."';\" value=\"Geb&auml;ude\" />&nbsp;";
+					echo "<input type=\"button\" class=\"button\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;action=new_tech&amp;id=".$arr[ITEM_ID_FLD]."';\" value=\"Forschung\" /></tr>";
+				}
+				echo "</table><br/>";
+			}
+			if ($form_addition=="")
+				echo "<p align=\"center\"><input type=\"submit\" class=\"button\" name=\"submit_changes\" value=\"&Auml;nderungen &uuml;bernehmen\" /></p>";
+		}
+		else
+			echo "<p class=\"infomsg\">".NO_ITEMS_MSG."</p>";
+	}
+
+
+
+
+/*
+				INNER JOIN
+				(
+					".$db_table['space_cells']."
+					ON
+						planet_solsys_id=cell_id
+				)
+
+
+				*/
+
+	//
+	// Bauliste
+	//
+	elseif ($sub=="queue")
+	{
+		echo "<h2>Bauliste</h2>";
+
+		if ($_POST['shipqueue_search']!="" || $_GET['action']=="searchresults")
+		{
+			$sqlstart = "
+			SELECT
+				queue_id,
+				queue_starttime,
+				queue_endtime,
+				queue_objtime,
+				queue_cnt,
+				ship_name,
+				ship_id,
+				planet_name,
+				planet_id,
+				planet_solsys_pos,
+				planet_user_id,
+				cell_sx,
+				cell_sy,
+				cell_cx,
+				cell_cy,
+				user_nick,
+				user_id,
+				user_points
+			FROM
+					".$db_table['ship_queue']."
+			INNER JOIN
+				".$db_table['planets']."
+				ON
+					queue_planet_id=planet_id
+			INNER JOIN
+				".$db_table['space_cells']."
+				ON
+					planet_solsys_id=cell_id
+			INNER JOIN
+				".$db_table['users']."
+				ON
+					queue_user_id=user_id
+			INNER JOIN
+				".$db_table['ships']."
+				ON
+					queue_ship_id=ship_id
+			";
+			$sqlend = "
+			GROUP BY
+					queue_id
+			ORDER BY
+					queue_planet_id,
+					queue_endtime
+					;";
+
+			// Suchquery generieren
+			if ($_SESSION['shipqueue']['query']=="")
+			{
+				if ($_POST['planet_id']!="")
+				{
+					if ($sql!="") $sql.=" AND ";
+					$sql.= "queue_planet_id=".$_POST['planet_id'];
+				}
+				if ($_POST['planet_name']!="")
+				{
+					if ($sql!="") $sql.=" AND ";
+					if (stristr($_POST['qmode']['planet_name'],"%")) $addchars = "%";else $addchars = "";
+					$sql.= "planet_name ".stripslashes($_POST['qmode']['planet_name']).$_POST['planet_name']."$addchars'";
+				}
+				if ($_POST['user_id']!="")
+				{
+					if ($sql!="") $sql.=" AND ";
+					$sql.="queue_user_id=".$_POST['user_id'];
+				}
+				if ($_POST['user_nick']!="")
+				{
+					if ($sql!="") $sql.=" AND ";
+					if (stristr($_POST['qmode']['user_nick'],"%")) $addchars = "%";else $addchars = "";
+					$sql.= "user_nick ".stripslashes($_POST['qmode']['user_nick']).$_POST['user_nick']."$addchars'";
+				}
+				if ($_POST['ship_id']!="")
+				{
+					if ($sql!="") $sql.=" AND ";
+					$sql.= "queue_ship_id=".$_POST['ship_id'];
+				}
+
+				if ($sql!="")
+				{
+					$sql = $sqlstart." WHERE ".$sql.$sqlend;
+				}
+				else
+				{
+					$sql = $sqlstart.$sql.$sqlend;
+				}
+				$_SESSION['shipqueue']['query']=$sql;
+			}
+			else
+			{
+				$sql = $_SESSION['shipqueue']['query'];
+			}
+
+			$res = dbquery($sql);
+			$nr = mysql_num_rows($res);
+			if ($nr>0)
+			{
+				echo "$nr Datens&auml;tze vorhanden<br/><br/>";
+				if ($nr>20)
+				{
+					echo "<input type=\"button\" value=\"Neue Suche\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" /> ";
+					echo "<input type=\"button\" value=\"Aktualisieren\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;action=searchresults'\" /><br/><br/>";
+				}
+
+				echo "<table class=\"tbl\">";
+				echo "<tr>";
+				echo "<td class=\"tbltitle\">ID</td>";
+				echo "<td class=\"tbltitle\">Schiff</td>";
+				echo "<td class=\"tbltitle\">Anzahl</td>";
+				echo "<td class=\"tbltitle\">Planet</td>";
+				echo "<td class=\"tbltitle\">Spieler</td>";
+				echo "<td class=\"tbltitle\">Start</td>";
+				echo "<td class=\"tbltitle\">Ende</td>";
+				echo "<td></td>";
+				echo "</tr>";
+				$check = array();
+				$pid=0;
+				while ($arr = mysql_fetch_array($res))
+				{
+					if ($pid>0 && $pid!=$arr['planet_id'])
+					{
+						echo "<tr><td colspan=\"8\" style=\"height:3px;background:#000;\" class=\"tbldata\"></td></tr>";
+					}
+					$pid=$arr['planet_id'];
+
+					$error=false;
+
+					// Planet gehört nicht dem Besitzer
+					if ($arr['user_id']!=$arr['planet_user_id'])
+					{
+						$error=true;
+						$errorMsg="Planet geh&ouml;rt nicht dem Schiffbesitzer! Wird auf den Heimatplaneten verschoben";
+					}
+					/*
+					// Zu viele Schiffe im Bau
+					if ($arr['shiplist_build_count']*$arr['shiplist_build_object_time'] > $arr['shiplist_build_end_time']-$arr['shiplist_build_start_time'])
+					{
+						$error=true;
+						$errorMsg="Bauzeit fehlerhaft, zu kurze Gesamtzeit (".tf($arr['shiplist_build_count']*$arr['shiplist_build_object_time'])." n&ouml;tig, ".tf($arr['shiplist_build_end_time']-$arr['shiplist_build_start_time'])." vorhanden)!";
+					}
+					// Bauzeit pro Objekt ist fehlerhaft
+					if ($arr['shiplist_build_object_time']!=0 && ($arr['shiplist_build_end_time']-$arr['shiplist_build_start_time'])%$arr['shiplist_build_object_time']!=0)
+					{
+						$error=true;
+						$errorMsg="Bauanzahl fehlerhaft!";
+					}
+					*/
+
+					if ($error)
+						$style=" style=\"color:#f30\"";
+					elseif ($arr['queue_cnt']==0)
+						$style=" style=\"color:#999\"";
+					else
+						$style="";
+					echo "<tr>";
+					echo "<td class=\"tbldata\" $style>".$arr['queue_id']."</a></td>";
+					echo "<td class=\"tbldata\"$style ".tm($arr['ship_name'],"<b>Schiff-ID:</b> ".$arr['ship_id']).">".$arr['ship_name']."</td>";
+					echo "<td class=\"tbldata\"$style>".nf($arr['queue_cnt'])."</td>";
+					echo "<td class=\"tbldata\"$style ".tm($arr['planet_name'],"<b>Planet-ID:</b> ".$arr['planet_id']."<br/><b>Koordinaten:</b> ".$arr['cell_sx']."/".$arr['cell_sy']." : ".$arr['cell_cx']."/".$arr['cell_cy']." : ".$arr['planet_solsys_pos']).">".cut_string($arr['planet_name'],11)."</td>";
+					echo "<td class=\"tbldata\"$style ".tm($arr['user_nick'],"<b>User-ID:</b> ".$arr['user_id']."<br/><b>Punkte:</b> ".nf($arr['user_points'])).">".cut_string($arr['user_nick'],11)."</td>";
+					echo "<td class=\"tbldata\"$style>".df($arr['queue_starttime'],1)."</td>";
+					echo "<td class=\"tbldata\"$style>".df($arr['queue_endtime'],1)."</td>";
+					echo "<td class=\"tbldata\"$style>".edit_button("?page=$page&sub=$sub&action=edit&id=".$arr['queue_id']);
+					//if ($error)
+					//	echo " ".repair_button("?page=$page&sub=$sub&action=searchresults&amp;repair=".$arr['shiplist_id'],"Fehler!",$errorMsg);
+					echo "</td>";
+					echo "</tr>";
+				}
+				$check=NULL;
+				echo "</table>";
+				echo "<br/><input type=\"button\" value=\"Neue Suche\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" /> ";
+				echo "<input type=\"button\" value=\"Aktualisieren\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;action=searchresults'\" />";
+			}
+			else
+			{
+				echo "Die Suche lieferte keine Resultate!<br/><br/><input type=\"button\" value=\"Neue Suche\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" />";
+			}
+		}
+
+		//
+		// Auftrag bearbeiten
+		//
+		elseif ($_GET['action']=="edit" && $_GET['id']>0)
+		{
+			// Änderungen speichern
+			if ($_POST['save']!="")
+			{
+				dbquery("
+				UPDATE
+					".$db_table['ship_queue']."
+				SET
+        	queue_cnt='".$_POST['queue_cnt']."',
+        	queue_starttime=UNIX_TIMESTAMP('".$_POST['queue_starttime']."'),
+        	queue_endtime=UNIX_TIMESTAMP('".$_POST['queue_endtime']."')
+				WHERE
+					queue_id='".$_GET['id']."';");
+			}
+
+			// Auftrag löschen
+			elseif ($_POST['del']!="")
+			{
+				dbquery("
+				DELETE FROM
+					".$db_table['ship_queue']."
+				WHERE
+					queue_id='".$_GET['id']."';");
+				echo "Datensatz entfernt!<br/><br/>";
+			}
+
+			// Auftrag abschliessen
+			elseif ($_POST['build_finish']!="")
+			{
+				$res = dbquery("
+				SELECT
+					queue_planet_id,
+					queue_user_id,
+					queue_ship_id,
+					queue_cnt
+				FROM
+	      	".$db_table['ship_queue']."
+	      WHERE
+	      	queue_id='".$_GET['id']."'
+	      ;");
+	      if (mysql_num_rows($res)>0)
+	      {
+	      	$arr=mysql_fetch_array($res);
+					shiplistAdd($arr['queue_planet_id'],$arr['queue_user_id'],$arr['queue_ship_id'],$arr['queue_cnt']);
+					dbquery("
+					DELETE FROM
+						".$db_table['ship_queue']."
+					WHERE
+						queue_id='".$_GET['id']."'
+					;");
+				}
+				echo "Bau abgeschlossen!<br/><br/>";
+			}
+
+			$res = dbquery("
+			SELECT
+				queue_id,
+				queue_objtime,
+				queue_starttime,
+				queue_endtime,
+				queue_cnt,
+				ship_name,
+				planet_name,
+				user_nick
+			FROM
+      	".$db_table['ship_queue']."
+      INNER JOIN
+      	".$db_table['ships']."
+      	ON queue_ship_id=ship_id
+      INNER JOIN
+      	".$db_table['users']."
+      	ON queue_user_id=user_id
+      INNER JOIN
+      	".$db_table['planets']."
+      	ON queue_planet_id=planet_id
+			WHERE
+	       queue_id=".intval($_GET['id']).";");
+
+			if (mysql_num_rows($res)>0)
+			{
+				$arr = mysql_fetch_array($res);
+				if ($arr['queue_starttime']>0)
+					$bst = date(DATE_FORMAT,$arr['queue_starttime']);
+				else
+					$bst = "";
+				if ($arr['queue_endtime']>0)
+					$bet = date(DATE_FORMAT,$arr['queue_endtime']);
+				else
+					$bet = "";
+
+				echo "<form action=\"?page=$page&sub=$sub&action=edit&id=".$arr['queue_id']."\" method=\"post\">";
+				echo "<table class=\"tbl\">";
+				echo "<tr><td class=\"tbltitle\">ID</td><td class=\"tbldata\">".$arr['queue_id']."</td></tr>";
+				echo "<tr><td class=\"tbltitle\">Planet</td><td class=\"tbldata\">".$arr['planet_name']."</td></tr>";
+				echo "<tr><td class=\"tbltitle\">Spieler</td><td class=\"tbldata\">".$arr['user_nick']."</td></tr>";
+				echo "<tr><td class=\"tbltitle\">Schiff</td><td class=\"tbldata\">".$arr['ship_name']."</td></tr>";
+				echo "<tr><td class=\"tbltitle\">Anzahl</td><td class=\"tbldata\"><input type=\"text\" name=\"queue_cnt\" value=\"".$arr['queue_cnt']."\" size=\"5\" maxlength=\"20\" /></td></tr>";
+				echo "<tr><td class=\"tbltitle\">Baustart</td><td class=\"tbldata\">
+				<input type=\"text\" id=\"shiplist_build_start_time\" name=\"queue_starttime\" value=\"$bst\" size=\"20\" maxlength=\"30\" />
+				<input type=\"button\" value=\"Jetzt\" onclick=\"document.getElementById('shiplist_build_start_time').value='".date("Y-d-m h:i")."'\" /></td></tr>";
+				echo "<tr><td class=\"tbltitle\">Bauende</td><td class=\"tbldata\">
+				<input type=\"text\" id=\"shiplist_build_end_time\" name=\"queue_endtime\" value=\"$bet\" size=\"20\" maxlength=\"30\" /></td></tr>";
+				echo "<tr><td class=\"tbltitle\">Bauzeit pro Schiff</td><td class=\"tbldata\">".tf($arr['queue_objtime'])."</td></tr>";
+				echo "</table><br/>";
+				echo "<input type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" class=\"button\" />&nbsp;";
+				echo "<input type=\"submit\" name=\"build_finish\" value=\"Bau fertigstellen\" />&nbsp;";
+				echo "<input type=\"submit\" name=\"del\" value=\"L&ouml;schen\" class=\"button\" onclick=\"return confirm('Schiffe wirklich l&ouml;schen?')\" />&nbsp;";
+				echo "<hr/>";
+				echo "<input type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&sub=$sub&action=searchresults'\" />&nbsp;";
+				echo "<input type=\"button\" value=\"Neue Suche\" onclick=\"document.location='?page=$page&sub=$sub';\" />";
+				echo "</form>";
+			}
+			else
+			{
+				echo "Dieser Datensatz existiert nicht mehr!<br/><br/>";
+				echo "<input type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&sub=$sub&action=searchresults'\" />&nbsp;";
+			}
+		}
+
+
+		//
+		// Suchmaske Schiffaufträge
+		//
+		else
+		{
+			$_SESSION['shipqueue']['query']="";
+
+			// Schiffe laden
+			$bres = dbquery("SELECT ship_id,ship_name FROM ".$db_table['ships']." ORDER BY ship_name;");
+			$slist=array();
+			while ($barr=mysql_fetch_array($bres))
+			{
+				$slist[$barr['ship_id']]=$barr['ship_name'];
+			}
+
+			// Suchmaske
+			echo "Suchmaske:<br/><br/>";
+			echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
+			echo "<table class=\"tbl\">";
+			echo "<tr><td class=\"tbltitle\">Planet ID</td><td class=\"tbldata\"><input type=\"text\" name=\"planet_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td>";
+			echo "<tr><td class=\"tbltitle\">Planetname</td><td class=\"tbldata\"><input type=\"text\" name=\"planet_name\" value=\"\" size=\"20\" maxlength=\"250\" /> ";fieldqueryselbox('planet_name');echo "</td></tr>";
+			echo "<tr><td class=\"tbltitle\">Spieler ID</td><td class=\"tbldata\"><input type=\"text\" name=\"user_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
+			echo "<tr><td class=\"tbltitle\">Spieler Nick</td><td class=\"tbldata\"><input type=\"text\" name=\"user_nick\" value=\"\" size=\"20\" maxlength=\"250\" /> ";fieldqueryselbox('user_nick');echo "</td></tr>";
+			echo "<tr><td class=\"tbltitle\">Schiff</td><td class=\"tbldata\"><select name=\"ship_id\"><option value=\"\"><i>---</i></option>";
+			foreach ($slist as $k=>$v)
+			{
+				echo "<option value=\"".$k."\">".$v."</option>";
+			}
+			echo "</select></td>";
+			echo "</table>";
+			echo "<br/><input type=\"submit\" class=\"button\" name=\"shipqueue_search\" value=\"Suche starten\" /></form>";
+			$tblcnt = mysql_fetch_row(dbquery("SELECT COUNT(queue_id) FROM ".$db_table['ship_queue'].";"));
+			echo "<br/>Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.<br/>";
+		}
+	}
+
+	/**************
+	* Schiffliste *
+	**************/
+	else
+	{
+		echo "<h2>Schiffliste</h2>";
+
+		if ($_POST['shiplist_search']!="" || $_GET['action']=="searchresults" || $_POST['new']!="")
+		{
+			$sqlstart = "
+			SELECT
+				planet_name,
+				planet_id,
+				planet_user_id,
+		      planet_solsys_pos,
+		      cell_sx,cell_sy,
+		      cell_cx,cell_cy,
+		      user_nick,
+		      user_id,
+		      user_points,
+		      ship_id,
+		      ship_name,
+		      shiplist_id,
+		      shiplist_count
+			FROM
+					".$db_table['shiplist']."
+			INNER JOIN
+				".$db_table['planets']."
+				ON planet_id=shiplist_planet_id
+			INNER JOIN
+				".$db_table['space_cells']."
+				ON planet_solsys_id=cell_id
+			INNER JOIN
+				".$db_table['users']."
+				ON user_id=shiplist_user_id
+			INNER JOIN
+				".$db_table['ships']."
+		    ON shiplist_ship_id=ship_id
+			";
+			$sqlend = "
+			GROUP BY
+					shiplist_id
+			ORDER BY
+					shiplist_planet_id,special_ship DESC,
+					ship_name;";
+
+			// Fehlerkorrektur
+			if ($_GET['repair']>0)
+			{
+				$res=dbquery($sqlstart." AND shiplist_id=".$_GET['repair'].$sqlend);
+				if (mysql_num_rows($res)>0)
+				{
+					$arr=mysql_fetch_array($res);
+					if ($arr['user_id']!=$arr['planet_user_id'])
+					{
+						$pres=dbquery("SELECT planet_id FROM ".$db_table['planets']." WHERE planet_user_main=1 AND planet_user_id=".$arr['user_id']." LIMIT 1;");
+						if (mysql_num_rows($pres))
+						{
+							$parr=mysql_fetch_row($pres);
+							shiplistAdd($parr[0],$arr['user_id'],$arr['ship_id'],$arr['shiplist_count']);
+							dbquery("DELETE FROM ".$db_table['shiplist']." WHERE shiplist_id=".$arr['shiplist_id'].";");
+							cms_ok_msg("Schiffe wurden auf den Hauptplaneten verschoben!");
+						}
+						else
+							cms_err_msg("Reparatur nicht m&ouml;glich, Hauptplaneten des Besitzers nicht gefunden!");
+					}
+					elseif  ($arr['shiplist_count']<0)
+					{
+						dbquery("UPDATE ".$db_table['shiplist']." SET shiplist_count=0 WHERE shiplist_id=".$arr['shiplist_id'].";");
+						cms_ok_msg("Fehlerhafte Anzahl wurde behoben!");
+					}
+					else
+					{
+						// Doppelschiffe reparieren
+						$lres=dbquery($sqlstart." AND shiplist_planet_id=".$arr['planet_id']." AND shiplist_user_id=".$arr['user_id']." AND shiplist_ship_id=".$arr['ship_id']." AND shiplist_id!=".$arr['shiplist_id'].$sqlend);
+						if (mysql_num_rows($lres))
+						{
+							dbquery("DELETE FROM ".$db_table['shiplist']." WHERE shiplist_id=".$arr['shiplist_id'].";");
+							shiplistAdd($arr['planet_id'],$arr['user_id'],$arr['ship_id'],$arr['shiplist_count']);
+							cms_ok_msg("Doppelschiffe zusammengef&uuml;hrt!!");
+						}
+						else
+							cms_err_msg("Reparatur nicht m&ouml;glich, kein passendes Reparaturverfahren gefunden!");
+					}
+				}
+				else
+					cms_err_msg("Reparatur nicht m&ouml;glich, Datensatz nicht vorhanden!");
+			}
+
+			// Suchquery generieren
+			elseif ($_SESSION['shipedit']['query']=="")
+			{
+				if ($_POST['planet_id']!="")
+				{
+					if ($sql!="") $sql.=" AND ";
+					$sql.= "planet_id=".$_POST['planet_id'];
+				}
+				if ($_POST['planet_name']!="")
+				{
+					if ($sql!="") $sql.=" AND ";
+					if (stristr($_POST['qmode']['planet_name'],"%")) $addchars = "%";else $addchars = "";
+					$sql.= "planet_name ".stripslashes($_POST['qmode']['planet_name']).$_POST['planet_name']."$addchars'";
+				}
+				if ($_POST['user_id']!="")
+				{
+					if ($sql!="") $sql.=" AND ";
+					$sql.="user_id=".$_POST['user_id'];
+				}
+				if ($_POST['user_nick']!="")
+				{
+					if ($sql!="") $sql.=" AND ";
+					if (stristr($_POST['qmode']['user_nick'],"%")) $addchars = "%";else $addchars = "";
+					$sql.= "user_nick ".stripslashes($_POST['qmode']['user_nick']).$_POST['user_nick']."$addchars'";
+				}
+				if ($_POST['ship_id']!="")
+				{
+					if ($sql!="") $sql.=" AND ";
+					$sql.= "ship_id=".$_POST['ship_id'];
+				}
+
+				if ($sql!="")
+				{
+					$sql = $sqlstart." WHERE ".$sql.$sqlend;
+				}
+				else
+				{
+					$sql = $sqlstart.$sql.$sqlend;
+				}
+				$_SESSION['shipedit']['query']=$sql;
+			}
+			else
+				$sql = $_SESSION['shipedit']['query'];
+
+			$res = dbquery($sql);
+			if (mysql_num_rows($res)>0)
+			{
+				echo mysql_num_rows($res)." Datens&auml;tze vorhanden<br/><br/>";
+				if (mysql_num_rows($res)>20)
+				{
+					echo "<input type=\"button\" value=\"Neue Suche\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" /> ";
+					echo "<input type=\"button\" value=\"Aktualisieren\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;action=searchresults'\" /><br/><br/>";
+				}
+
+				echo "<table class=\"tbl\">";
+				echo "<tr>";
+				echo "<td class=\"tbltitle\">ID</td>";
+				echo "<td class=\"tbltitle\">Planet</td>";
+				echo "<td class=\"tbltitle\">Spieler</td>";
+				echo "<td class=\"tbltitle\">Schiff</td>";
+				echo "<td class=\"tbltitle\">Anzahl</td>";
+				echo "<td></td>";
+				echo "</tr>";
+				$check = array();
+				$pid=0;
+				while ($arr = mysql_fetch_array($res))
+				{
+					if ($pid>0 && $pid!=$arr['planet_id'])
+					{
+						echo "<tr><td colspan=\"8\" style=\"height:3px;background:#000;\" class=\"tbldata\"></td></tr>";
+					}
+					$pid=$arr['planet_id'];
+
+					$error=false;
+					// Doppeleinträge prüfen
+					if ($check[$arr['planet_id']][$arr['user_id']][$arr['ship_id']])
+					{
+						$error=true;
+						$errorMsg="Doppelter Eintrag! Wird zusammengef&uuml;hrt!";
+					}
+					else
+						$check[$arr['planet_id']][$arr['user_id']][$arr['ship_id']]=true;
+					// Planet gehört nicht dem Besitzer
+					if ($arr['user_id']!=$arr['planet_user_id'])
+					{
+						$error=true;
+						$errorMsg="Planet geh&ouml;rt nicht dem Schiffbesitzer! Wird auf den Heimatplaneten verschoben";
+					}
+
+					if ($error)
+						$style=" style=\"color:#f30\"";
+					else
+						$style="";
+					echo "<tr>";
+					echo "<td class=\"tbldata\" $style>".$arr['shiplist_id']."</a></td>";
+					echo "<td class=\"tbldata\"$style ".tm($arr['planet_name'],"<b>Planet-ID:</b> ".$arr['planet_id']."<br/><b>Koordinaten:</b> ".$arr['cell_sx']."/".$arr['cell_sy']." : ".$arr['cell_cx']."/".$arr['cell_cy']." : ".$arr['planet_solsys_pos']).">".cut_string($arr['planet_name'],11)."</td>";
+					echo "<td class=\"tbldata\"$style ".tm($arr['user_nick'],"<b>User-ID:</b> ".$arr['user_id']."<br/><b>Punkte:</b> ".nf($arr['user_points'])).">".cut_string($arr['user_nick'],11)."</td>";
+					echo "<td class=\"tbldata\"$style ".tm($arr['ship_name'],"<b>Schiff-ID:</b> ".$arr['ship_id']).">".$arr['ship_name']."</td>";
+					echo "<td class=\"tbldata\"$style>".nf($arr['shiplist_count'])."</td>";
+					echo "<td class=\"tbldata\"$style>".edit_button("?page=$page&sub=$sub&action=edit&shiplist_id=".$arr['shiplist_id']);
+					if ($error)
+						echo " ".repair_button("?page=$page&sub=$sub&action=searchresults&amp;repair=".$arr['shiplist_id'],"Fehler!",$errorMsg);
+					echo "</td>";
+					echo "</tr>";
+				}
+				$check=NULL;
+				echo "</table>";
+				echo "<br/><input type=\"button\" value=\"Neue Suche\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" /> ";
+				echo "<input type=\"button\" value=\"Aktualisieren\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;action=searchresults'\" />";
+			}
+			else
+			{
+				echo "Die Suche lieferte keine Resultate!<br/><br/><input type=\"button\" value=\"Neue Suche\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" />";
+			}
+		}
+
+		//
+		// Bearbeiten
+		//
+		elseif ($_GET['action']=="edit")
+		{
+			// Daten speichern
+			if ($_POST['save']!="")
+			{
+				if($_POST['shiplist_count']==0)
+				{
+					$sql = "
+					,shiplist_special_ship_level=0,
+					shiplist_special_ship_exp=0,
+					shiplist_special_ship_bonus_weapon=0,
+					shiplist_special_ship_bonus_structure=0,
+					shiplist_special_ship_bonus_shield=0,
+					shiplist_special_ship_bonus_heal=0,
+					shiplist_special_ship_bonus_capacity=0,
+					shiplist_special_ship_bonus_speed=0,
+					shiplist_special_ship_bonus_pilots=0,
+					shiplist_special_ship_bonus_tarn=0,
+					shiplist_special_ship_bonus_antrax=0,
+					shiplist_special_ship_bonus_forsteal=0,
+					shiplist_special_ship_bonus_build_destroy=0,
+					shiplist_special_ship_bonus_antrax_food=0,
+					shiplist_special_ship_bonus_deactivade=0
+					";
+				}
+				else
+				{
+					$sql = "
+					,shiplist_special_ship_level='".$_POST['shiplist_special_ship_level']."',
+					shiplist_special_ship_exp='".$_POST['shiplist_special_ship_exp']."',
+					shiplist_special_ship_bonus_weapon='".$_POST['shiplist_special_ship_bonus_weapon']."',
+					shiplist_special_ship_bonus_structure='".$_POST['shiplist_special_ship_bonus_structure']."',
+					shiplist_special_ship_bonus_shield='".$_POST['shiplist_special_ship_bonus_shield']."',
+					shiplist_special_ship_bonus_heal='".$_POST['shiplist_special_ship_bonus_heal']."',
+					shiplist_special_ship_bonus_capacity='".$_POST['shiplist_special_ship_bonus_capacity']."',
+					shiplist_special_ship_bonus_speed='".$_POST['shiplist_special_ship_bonus_speed']."',
+					shiplist_special_ship_bonus_pilots='".$_POST['shiplist_special_ship_bonus_pilots']."',
+					shiplist_special_ship_bonus_tarn='".$_POST['shiplist_special_ship_bonus_tarn']."',
+					shiplist_special_ship_bonus_antrax='".$_POST['shiplist_special_ship_bonus_antrax']."',
+					shiplist_special_ship_bonus_forsteal='".$_POST['shiplist_special_ship_bonus_forsteal']."',
+					shiplist_special_ship_bonus_build_destroy='".$_POST['shiplist_special_ship_bonus_build_destroy']."',
+					shiplist_special_ship_bonus_antrax_food='".$_POST['shiplist_special_ship_bonus_antrax_food']."',
+					shiplist_special_ship_bonus_deactivade='".$_POST['shiplist_special_ship_bonus_deactivade']."'
+					";
+				}
+
+				dbquery("
+				UPDATE
+					".$db_table['shiplist']."
+				SET
+       		shiplist_count='".$_POST['shiplist_count']."'
+       		".$sql."
+				WHERE
+					shiplist_id='".$_GET['shiplist_id']."';");
+			}
+			// Datensatz löschen
+			elseif ($_POST['del']!="")
+			{
+				dbquery("
+				DELETE FROM
+					".$db_table['shiplist']."
+				WHERE
+					shiplist_id='".$_GET['shiplist_id']."'
+				;");
+			}
+
+			$res = dbquery("
+			SELECT
+				shiplist_id,
+				planet_name,
+				user_nick,
+				ship_name,
+				special_ship,
+				shiplist_count,
+				shiplist_special_ship_level,
+				shiplist_special_ship_exp,
+				shiplist_special_ship_bonus_weapon,
+				shiplist_special_ship_bonus_structure,
+				shiplist_special_ship_bonus_shield,
+				shiplist_special_ship_bonus_heal,
+				shiplist_special_ship_bonus_capacity,
+				shiplist_special_ship_bonus_speed,
+				shiplist_special_ship_bonus_pilots,
+				shiplist_special_ship_bonus_tarn,
+				shiplist_special_ship_bonus_antrax,
+				shiplist_special_ship_bonus_forsteal,
+				shiplist_special_ship_bonus_build_destroy,
+				shiplist_special_ship_bonus_antrax_food,
+				shiplist_special_ship_bonus_deactivade
+			FROM
+      	".$db_table['shiplist']."
+      INNER JOIN
+      	".$db_table['planets']."
+      	ON shiplist_planet_id=planet_id
+      INNER JOIN
+      	".$db_table['users']."
+      	ON shiplist_user_id=user_id
+      INNER JOIN
+      	".$db_table['ships']."
+      	ON shiplist_ship_id=ship_id
+			WHERE
+				shiplist_id=".$_GET['shiplist_id'].";");
+			if (mysql_num_rows($res)>0)
+			{
+				$arr = mysql_fetch_array($res);
+				echo "<form action=\"?page=$page&sub=$sub&action=edit&shiplist_id=".$_GET['shiplist_id']."\" method=\"post\">";
+				echo "<table class=\"tbl\">";
+				echo "<tr><td class=\"tbltitle\">ID</td><td class=\"tbldata\">".$arr['shiplist_id']."</td></tr>";
+				echo "<tr><td class=\"tbltitle\">Planet</td><td class=\"tbldata\">".$arr['planet_name']."</td></tr>";
+				echo "<tr><td class=\"tbltitle\">Spieler</td><td class=\"tbldata\">".$arr['user_nick']."</td></tr>";
+				echo "<tr><td class=\"tbltitle\">Schiff</td><td class=\"tbldata\">".$arr['ship_name']."</td></tr>";
+				echo "<tr><td class=\"tbltitle\">Anzahl</td><td class=\"tbldata\"><input type=\"text\" name=\"shiplist_count\" value=\"".$arr['shiplist_count']."\" size=\"5\" maxlength=\"20\" /></td></tr>";
+
+				if($arr['special_ship']==1)
+				{
+					echo "<tr><td class=\"tbltitle\">Level</td><td class=\"tbldata\"><input type=\"text\" name=\"shiplist_special_ship_level\" value=\"".$arr['shiplist_special_ship_level']."\" size=\"5\" maxlength=\"20\" /></td></tr>";
+					echo "<tr><td class=\"tbltitle\">Erfahrung</td><td class=\"tbldata\"><input type=\"text\" name=\"shiplist_special_ship_exp\" value=\"".$arr['shiplist_special_ship_exp']."\" size=\"5\" maxlength=\"20\" /></td></tr>";
+					echo "<tr><td class=\"tbltitle\">Waffenlevel</td><td class=\"tbldata\"><input type=\"text\" name=\"shiplist_special_ship_bonus_weapon\" value=\"".$arr['shiplist_special_ship_bonus_weapon']."\" size=\"5\" maxlength=\"20\" /></td></tr>";
+					echo "<tr><td class=\"tbltitle\">Strukturlevel</td><td class=\"tbldata\"><input type=\"text\" name=\"shiplist_special_ship_bonus_structure\" value=\"".$arr['shiplist_special_ship_bonus_structure']."\" size=\"5\" maxlength=\"20\" /></td></tr>";
+					echo "<tr><td class=\"tbltitle\">Schildlevel</td><td class=\"tbldata\"><input type=\"text\" name=\"shiplist_special_ship_bonus_shield\" value=\"".$arr['shiplist_special_ship_bonus_shield']."\" size=\"5\" maxlength=\"20\" /></td></tr>";
+					echo "<tr><td class=\"tbltitle\">Heallevel</td><td class=\"tbldata\"><input type=\"text\" name=\"shiplist_special_ship_bonus_heal\" value=\"".$arr['shiplist_special_ship_bonus_heal']."\" size=\"5\" maxlength=\"20\" /></td></tr>";
+					echo "<tr><td class=\"tbltitle\">Kapazit&auml;tlevel</td><td class=\"tbldata\"><input type=\"text\" name=\"shiplist_special_ship_bonus_capacity\" value=\"".$arr['shiplist_special_ship_bonus_capacity']."\" size=\"5\" maxlength=\"20\" /></td></tr>";
+					echo "<tr><td class=\"tbltitle\">Speedlevel</td><td class=\"tbldata\"><input type=\"text\" name=\"shiplist_special_ship_bonus_speed\" value=\"".$arr['shiplist_special_ship_bonus_speed']."\" size=\"5\" maxlength=\"20\" /></td></tr>";
+					echo "<tr><td class=\"tbltitle\">Besatzungslevel</td><td class=\"tbldata\"><input type=\"text\" name=\"shiplist_special_ship_bonus_pilots\" value=\"".$arr['shiplist_special_ship_bonus_pilots']."\" size=\"5\" maxlength=\"20\" /></td></tr>";
+					echo "<tr><td class=\"tbltitle\">Tarnungslevel</td><td class=\"tbldata\"><input type=\"text\" name=\"shiplist_special_ship_bonus_tarn\" value=\"".$arr['shiplist_special_ship_bonus_tarn']."\" size=\"5\" maxlength=\"20\" /></td></tr>";
+					echo "<tr><td class=\"tbltitle\">Giftgaslevel</td><td class=\"tbldata\"><input type=\"text\" name=\"shiplist_special_ship_bonus_antrax\" value=\"".$arr['shiplist_special_ship_bonus_antrax']."\" size=\"5\" maxlength=\"20\" /></td></tr>";
+					echo "<tr><td class=\"tbltitle\">Techklaulevel</td><td class=\"tbldata\"><input type=\"text\" name=\"shiplist_special_ship_bonus_forsteal\" value=\"".$arr['shiplist_special_ship_bonus_forsteal']."\" size=\"5\" maxlength=\"20\" /></td></tr>";
+					echo "<tr><td class=\"tbltitle\">Bombardierlevel</td><td class=\"tbldata\"><input type=\"text\" name=\"shiplist_special_ship_bonus_build_destroy\" value=\"".$arr['shiplist_special_ship_bonus_build_destroy']."\" size=\"5\" maxlength=\"20\" /></td></tr>";
+					echo "<tr><td class=\"tbltitle\">Antraxlevel</td><td class=\"tbldata\"><input type=\"text\" name=\"shiplist_special_ship_bonus_antrax_food\" value=\"".$arr['shiplist_special_ship_bonus_antrax_food']."\" size=\"5\" maxlength=\"20\" /></td></tr>";
+					echo "<tr><td class=\"tbltitle\">Deaktivierlevel</td><td class=\"tbldata\"><input type=\"text\" name=\"shiplist_special_ship_bonus_deactivade\" value=\"".$arr['shiplist_special_ship_bonus_deactivade']."\" size=\"5\" maxlength=\"20\" /></td></tr>";
+				}
+
+				echo "</table><br/>";
+				echo "<input type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" class=\"button\" />&nbsp;";
+				echo "<input type=\"submit\" name=\"del\" value=\"L&ouml;schen\" class=\"button\" onclick=\"return confirm('Schiffe wirklich l&ouml;schen?')\" />&nbsp;";
+				echo "<hr/>";
+				echo "<input type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&sub=$sub&action=searchresults'\" />&nbsp;";
+				echo "<input type=\"button\" value=\"Neue Suche\" onclick=\"document.location='?page=$page&sub=$sub';\" />";
+				echo "</form>";
+			}
+			else
+			{
+				echo "Dieser Datensatz wurde gel&ouml;scht!<br/><br/>";
+				echo "<input type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&sub=$sub&action=searchresults'\" />&nbsp;";
+			}
+		}
+
+		//
+		// Suchformular Schiffsliste
+		//
+		else
+		{
+			$_SESSION['shipedit']['query']="";
+
+			// Schiffe laden
+			$bres = dbquery("
+			SELECT 
+				ship_id,
+				ship_name 
+			FROM 
+				".$db_table['ships']." 
+			ORDER BY 
+				ship_name;");
+			$slist=array();
+			while ($barr=mysql_fetch_array($bres))
+				$slist[$barr['ship_id']]=$barr['ship_name'];
+
+			$tblcnt = mysql_fetch_row(dbquery("SELECT count(shiplist_id) FROM ".$db_table['shiplist'].";"));
+
+			// Suchmaske
+			echo "Suchmaske (Es sind <b>".nf($tblcnt[0])."</b> Eintr&auml;ge in der Datenbank vorhanden.):<br/><br/>";
+			echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
+			echo "<table class=\"tbl\">";
+			echo "<tr><td class=\"tbltitle\">Planet ID</td><td class=\"tbldata\"><input type=\"text\" name=\"planet_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td>";
+			echo "<tr><td class=\"tbltitle\">Planetname</td><td class=\"tbldata\"><input type=\"text\" name=\"planet_name\" value=\"\" size=\"20\" maxlength=\"250\" /> ";fieldqueryselbox('planet_name');echo "</td></tr>";
+			echo "<tr><td class=\"tbltitle\">Spieler ID</td><td class=\"tbldata\"><input type=\"text\" name=\"user_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
+			echo "<tr><td class=\"tbltitle\">Spieler Nick</td><td class=\"tbldata\"><input type=\"text\" name=\"user_nick\" value=\"\" size=\"20\" maxlength=\"250\" autocomplete=\"off\" onkeyup=\"xajax_searchUser(this.value,'user_nick','citybox1');\" />&nbsp;";
+			fieldqueryselbox('user_nick');
+			echo "<br><div class=\"citybox\" id=\"citybox1\">&nbsp;</div></td></tr>";
+			echo "<tr><td class=\"tbltitle\">Schiff</td><td class=\"tbldata\"><select name=\"ship_id\"><option value=\"\"><i>---</i></option>";
+			foreach ($slist as $k=>$v)
+				echo "<option value=\"".$k."\">".$v."</option>";
+			echo "</select></td>";
+			echo "</table>";
+			echo "<br/><input type=\"submit\" class=\"button\" name=\"shiplist_search\" value=\"Suche starten\" /></form><br/>";
+
+			// Hinzufügen
+			echo "<h2>Neue Schiffe hinzuf&uuml;gen</h2>";
+			echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\" id=\"selector\">";
+			infobox_start("",1);
+			
+			//Sonnensystem
+			echo "<tr><th class=\"tbltitle\">Sonnensystem</th><td class=\"tbldata\">
+			<select name=\"cell_sx\" onChange=\"xajax_planetSelectorByCell(xajax.getFormValues('selector'),'showShipsOnPlanet',1);\">";
+			echo "<option value=\"0\">Sektor X</option>";
+			for ($x=1;$x<=$conf['num_of_sectors']['p1'];$x++)
+				echo "<option value=\"$x\">$x</option>";
+			echo "</select>/<select name=\"cell_sy\"  onChange=\"xajax_planetSelectorByCell(xajax.getFormValues('selector'),'showShipsOnPlanet',1);\">";
+			echo "<option value=\"0\">Sektor Y</option>";
+			for ($x=1;$x<=$conf['num_of_sectors']['p2'];$x++)
+				echo "<option value=\"$x\">$x</option>";
+			echo "</select> : <select name=\"cell_cx\" onChange=\"xajax_planetSelectorByCell(xajax.getFormValues('selector'),'showShipsOnPlanet',1);\">";
+			echo "<option value=\"0\">Zelle X</option>";
+			for ($x=1;$x<=$conf['num_of_cells']['p1'];$x++)
+				echo "<option value=\"$x\">$x</option>";
+			echo "</select>/<select name=\"cell_cy\" onChange=\"xajax_planetSelectorByCell(xajax.getFormValues('selector'),'showShipsOnPlanet',1);\">";
+			echo "<option value=\"0\">Zelle Y</option>";
+			for ($x=1;$x<=$conf['num_of_cells']['p2'];$x++)
+				echo "<option value=\"$x\">$x</option>";
+			echo "</select></td></tr>";
+		
+			
+			//User
+			echo "<tr><th class=\"tbltitle\"><i>oder</i> User</th><td class=\"tbldata\">";
+			echo "<input type=\"text\" name=\"userlist_nick\" id=\"userlist_nick\" value=\"\" autocomplete=\"off\" size=\"30\" maxlength=\"30\" onkeyup=\"xajax_searchUserList(this.value,'showShipsOnPlanet');\"><br>
+			<div id=\"userlist\">&nbsp;</div>";
+			echo "</td></tr>";
+			
+			//Planeten
+			echo "<tr><th class=\"tbltitle\">Planeten</th><td class=\"tbldata\" id=\"planetSelector\">Sonnensystem oder User w&auml;hlen...</td></tr>";
+			
+			//Schiffe Hinzufügen
+			echo "<tr><th class=\"tbltitle\">Hinzuf&uuml;gen:</th><td class=\"tbldata\">
+			<input type=\"text\" name=\"shiplist_count\" value=\"1\" size=\"1\" maxlength=\"3\" />
+			<select name=\"ship_id\">";
+			foreach ($slist as $k=>$v)
+			{
+				echo "<option value=\"".$k."\">".$v."</option>";
+			}
+			echo "</select> &nbsp; <input type=\"button\" onclick=\"xajax_addShipToPlanet(xajax.getFormValues('selector'));\" value=\"Hinzuf&uuml;gen\" /></td></tr>";
+			
+			//Vorhandene Schiffe
+			echo "<tr><th class=\"tbltitle\">Vorhandene Schiffe</th><td class=\"tbldata\" id=\"shipsOnPlanet\">Planet w&auml;hlen...</td></tr>";
+			infobox_end(1);
+			echo "</form>";
+
+		}
+	}
+
+
+
+
+
+?>
