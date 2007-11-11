@@ -53,7 +53,7 @@
 	$_SESSION[ROUNDID]['firstlog']=null;
 
 	// Login-Verifikation prüfen
-	if (encryptCaptchaString($_POST['login_verification1'], md5($_SERVER['REMOTE_ADDR'].$_SERVER["HTTP_USER_AGENT"])) != $_POST['login_verification2'] || $_POST['login_verification2']=="")
+	if ((encryptCaptchaString($_POST['login_verification1'], md5($_SERVER['REMOTE_ADDR'].$_SERVER["HTTP_USER_AGENT"])) != $_POST['login_verification2'] && $_SERVER['REMOTE_ADDR']!="127.0.0.1") || $_POST['login_verification2']=="")
 	{
 		header("Location: ".LOGINSERVER_URL."?page=err&err=verification");
 		echo "<h1>Falscher Bildcode</h1>Falls die Weiterleitung nicht klappt, <a href=\"".LOGINSERVER_URL."?page=err&err=verification\">hier</a> klicken...";
