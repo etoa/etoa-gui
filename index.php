@@ -37,8 +37,8 @@
 	//Fehler ausgabe definiert (Lamborghini)
   ini_set('display_errors', 1);
 	ini_set('arg_separator.output',  '&amp;');
-	error_reporting(E_ERROR | E_WARNING | E_PARSE);
-	//error_reporting(E_ALL); // <- Nur zur dringenden fehlersuche verwenden (da haufenweise "fehler")
+	//error_reporting(E_ERROR | E_WARNING | E_PARSE);
+	error_reporting(E_ALL); // <- Nur zur dringenden fehlersuche verwenden (da haufenweise "fehler")
 
 	// Session-Cookie setzen
 	session_start();
@@ -118,7 +118,7 @@
     user_irc_name,
     user_irc_pw
 	FROM 
-		".$db_table['users']." 
+		users 
 	WHERE 
 		user_id='".$s['user']['id']."' 
 	;");
@@ -341,8 +341,8 @@
 			else
 			{
 				// Zeit der letzten User-Aktion speichern
-				dbquery("UPDATE ".$db_table['users']." SET user_acttime='".time()."' WHERE user_id='".$s['user']['id']."';");
-				dbquery ("UPDATE ".$db_table['user_log']." SET log_acttime=".time()." WHERE log_user_id=".$s['user']['id']." AND log_session_key='".$s['key']."';");
+				dbquery("UPDATE users SET user_acttime='".time()."' WHERE user_id='".$s['user']['id']."';");
+				dbquery ("UPDATE user_log SET log_acttime=".time()." WHERE log_user_id=".$s['user']['id']." AND log_session_key='".$s['key']."';");
 				
 				// ???
 				$user=$s['user'];
@@ -423,15 +423,15 @@
 				define('NEW_MESSAGES',check_new_messages($s["user"]["id"]));
 				
 				// Count users
-				$ucres=dbquery('SELECT COUNT(user_id) FROM '.$db_table['users'].';');
+				$ucres=dbquery('SELECT COUNT(user_id) FROM users;');
 				$ucarr=mysql_fetch_row($ucres);
 				
 				// Count online users
-				$gres=dbquery('SELECT COUNT(user_id) FROM '.$db_table['users'].' WHERE user_acttime>'.(time()-$conf['user_timeout']['v']).';');
+				$gres=dbquery('SELECT COUNT(user_id) FROM users WHERE user_acttime>'.(time()-$conf['user_timeout']['v']).';');
 				$garr=mysql_fetch_row($gres);
 				
 				// Count notes
-				$res=dbquery("SELECT COUNT(note_id) FROM ".$db_table['notepad']." WHERE note_user_id=".$s['user']['id'].";");
+				$res=dbquery("SELECT COUNT(note_id) FROM notepad WHERE note_user_id=".$s['user']['id'].";");
 				$narr=mysql_fetch_row($res);
 
 				// Create template object
