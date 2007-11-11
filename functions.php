@@ -116,7 +116,7 @@
 		global $nohtml;
 		global $query_counter;
 		$query_counter++;
-		if ($result=mysql_query($string))
+		if ($result=dbquery($string))
 			return $result;
 		elseif ($fehler==1)
 		{
@@ -134,7 +134,7 @@
 	{
 		global $db_table;
 		$conf = array();
-		$res = mysql_query("
+		$res = dbquery("
 		SELECT
 	    config_name,
 	    config_value,
@@ -158,7 +158,7 @@
 	{
 		global $db_table;
 		$sol_types = array();
-		$res = mysql_query("
+		$res = dbquery("
 		SELECT
 	    type_id,
 	    type_name
@@ -178,7 +178,7 @@
 	{
 		global $db_table;
 		$planet_types = array();
-		$res = mysql_query("
+		$res = dbquery("
 		SELECT
 	    type_id,
 	    type_name
@@ -198,7 +198,7 @@
 	{
 		global $db_table;
 		$planet_types = array();
-		$res = mysql_query("
+		$res = dbquery("
 		SELECT
 			*
 		FROM
@@ -217,7 +217,7 @@
 	{
 		global $db_table;
 		$planet_types = array();
-		$res = mysql_query("
+		$res = dbquery("
 		SELECT
 			*
 		FROM
@@ -236,7 +236,7 @@
 	{
 		global $db_table;
 		$race_name = array();
-		$res = mysql_query("
+		$res = dbquery("
 		SELECT
 			*
 		FROM
@@ -258,7 +258,7 @@
 		global $db_table;
 		$names = array();
 
-		$res = mysql_query("
+		$res = dbquery("
 		SELECT
       alliance_tag,
       alliance_id,
@@ -284,7 +284,7 @@
 	{
 		global $db_table;
 		$names = array();
-		$res = mysql_query("
+		$res = dbquery("
 			SELECT
 				alliance_tag,
 				alliance_id,
@@ -314,7 +314,7 @@
 	{
 		global $db_table;
 		$resource_name = array();
-		$res = mysql_query("
+		$res = dbquery("
 		SELECT
             resource_type,
             resource_name
@@ -334,7 +334,7 @@
 	{
 		global $db_table;
 		$resource_name = array();
-		$res = mysql_query("
+		$res = dbquery("
 		SELECT
 			*
 		FROM
@@ -352,7 +352,7 @@
 	function get_user_nick($id)
 	{
 		global $db_table;
-		$res = mysql_query("
+		$res = dbquery("
 			SELECT
 				user_nick
 			FROM
@@ -379,7 +379,7 @@
 	function get_user_alliance($id)
 	{
 		global $db_table;
-		$res = mysql_query("
+		$res = dbquery("
 		SELECT
 			a.alliance_name,
 			a.alliance_id,
@@ -408,7 +408,7 @@
 	function get_alliance_id_by_name($name)
 	{
 		global $db_table;
-		$res = mysql_query("
+		$res = dbquery("
 			SELECT
 				alliance_id
 			FROM
@@ -436,7 +436,7 @@
 	function get_alliance_id($tag)
 	{
 		global $db_table;
-		$res = mysql_query("
+		$res = dbquery("
 			SELECT
 				alliance_id
 			FROM
@@ -463,7 +463,7 @@
 	function get_user_id($nick)
 	{
 		global $db_table;
-		$res = mysql_query("
+		$res = dbquery("
 			SELECT
 				user_id
 			FROM
@@ -490,7 +490,7 @@
 	function get_user_id_by_planet($pid)
 	{
 		global $db_table;
-		$res = mysql_query("
+		$res = dbquery("
 			SELECT
 				planet_user_id
 			FROM
@@ -513,7 +513,7 @@
 	function get_user_nick_by_planet($pid)
 	{
 		global $db_table;
-		$res = mysql_query("
+		$res = dbquery("
 			SELECT
 				u.user_nick
 			FROM
@@ -2764,7 +2764,7 @@
 	{
 		global $db_table;
 		$names = array();
-		$res = mysql_query("
+		$res = dbquery("
 			SELECT
 				user_id,
 				user_nick,
