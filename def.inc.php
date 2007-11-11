@@ -447,7 +447,8 @@
 	define("BOARD_AVATAR_WIDTH",64);															// Avatar-Breite
 	define("BOARD_AVATAR_HEIGHT",64);															// Avatar-Höhe
 
-	define("GD_VERSION",2);	
+	if (!defined('GD_VERSION'))
+		define("GD_VERSION",2);	
 	
 	// Profilbild
 	define("PROFILE_IMG_DIR","images/userprofiles");							// Verzeichnis der User-Profilbilder

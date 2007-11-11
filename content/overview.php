@@ -32,7 +32,7 @@
 
 	// DEFINITIONEN //
 	require_once("inc/fleet_action.inc.php");
-	define(ANEWS_THRESHOLD,3600*24);
+	
 
 	// BEGIN SKRIPT //
 	echo "<h1>&Uuml;bersicht</h1>";
@@ -710,7 +710,7 @@
 				<td class=\"PlaniTextCenterPlanetname\" id=\"planet_info_name\" colspan=\"3\" style=\"text-align:center;\">&nbsp;</td>
 			</tr>
 
-			<tr height=\"".($bild_height/2)."\">
+			<tr>
 				<td colspan=\"3\">&nbsp;</td>
 			</tr>
 

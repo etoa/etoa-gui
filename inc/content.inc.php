@@ -136,7 +136,7 @@
 		}
 		else
 		{
-			if ($s['allow_planet_change'])
+			if (isset($s['allow_planet_change']) && $s['allow_planet_change'])
 			{
 				infobox_start("Planetenwechsel");
 				echo "<div style=\"color:yellow;\">Während deinem ersten Login ist es möglich, deinen 

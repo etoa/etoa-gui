@@ -3322,7 +3322,7 @@
 
 	function infobox_start($title,$table=0,$stretch=1,$width=0)
 	{
-		if ($$width>0)
+		if ($width>0)
 		{
 			$w = " style=\"width:".$width."px\"";
 		}
