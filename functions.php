@@ -46,36 +46,45 @@
 	  }
 	}
 
-
 	/**
 	* Baut die Datenbankverbindung auf
 	*/
 	function dbconnect()
 	{
-		global $db_access;
 		global $db_handle;
 		global $nohtml;
 		global $query_counter;
 		$query_counter=0;
-		if (!@$db_handle = mysql_connect($db_access["server"],$db_access["user"],$db_access["pw"]))
+		if (!@$db_handle = mysql_connect(DB_SERVER,DB_USER,DB_PASSWORD))
 		{
 			if (!$nohtml)
 			{
 				echo "</head><body>";
-				print_fs_error_msg("Zum Datenbankserver auf <b>".$db_access[server]."</b> kann keine Verbindung hergestellt werden! Bitte schaue später nochmals vorbei.<br/><br/><a href=\"http://forum.etoa.ch\">Zum Forum</a> | <a href=\"mailto:mail@etoa.ch\">Mail an die Spielleitung</a>","MySQL-Verbindungsproblem");
+				print_fs_error_msg("Zum Datenbankserver auf <b>".DB_SERVER."</b> kann keine Verbindung hergestellt werden! 
+				Bitte schaue später nochmals vorbei.<br/><br/>
+				<a href=\"http://forum.etoa.ch\">Zum Forum</a> | 
+				<a href=\"mailto:mail@etoa.ch\">Mail an die Spielleitung</a>","MySQL-Verbindungsproblem");
 			}
 			else
-				echo "Zum Datenbankserver auf <b>".$db_access[server]."</b> kann keine Verbindung hergestellt werden!";
+			{
+				echo "Zum Datenbankserver auf <b>".DB_SERVER."</b> kann keine Verbindung hergestellt 
+				werden!";
+			}
 		}
-		if (!@mysql_select_db($db_access["db"]))
+		if (!@mysql_select_db(DB_DATABASE))
 		{
 			if (!$nohtml)
 			{
 				echo "</head><body>";
-				print_fs_error_msg("Auf die Datenbank <b>".$db_access[db]."</b> auf <b>".$db_access[server]."</b> kann nicht zugegriffen werden! Bitte schaue später nochmals vorbei.<br/><br/><a href=\"http://forum.etoa.ch\">Zum Forum</a> | <a href=\"mailto:mail@etoa.ch\">Mail an die Spielleitung</a>","MySQL-Verbindungsproblem");
+				print_fs_error_msg("Auf die Datenbank <b>".DB_DATABASE."</b> auf <b>".DB_SERVER."</b> kann 
+				nicht zugegriffen werden! Bitte schaue später nochmals vorbei.<br/><br/>
+				<a href=\"http://forum.etoa.ch\">Zum Forum</a> | 
+				<a href=\"mailto:mail@etoa.ch\">Mail an die Spielleitung</a>","MySQL-Verbindungsproblem");
 			}
 			else
-				echo "Auf die Datenbank <b>".$db_access[db]."</b> auf <b>".$db_access[server]."</b> kann nicht zugegriffen werden!";
+			{
+				echo "Auf die Datenbank <b>".DB_SERVER."</b> auf <b>".DB_SERVER."</b> kann nicht zugegriffen werden!";
+			}
 		}
 		dbquery("SET NAMES 'utf8';");
 	}
