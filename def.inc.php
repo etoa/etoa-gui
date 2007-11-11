@@ -215,6 +215,7 @@
 
 	// Nachrichten
 	define("USER_MSG_CAT_ID",1);															// Cat-ID Persönliche Nachrichten
+	define('MISC_MSG_CAT_ID',5);
 	define("SHIP_SPY_MSG_CAT_ID",2);													// Cat-ID Spionageberichte
 	define("SHIP_WAR_MSG_CAT_ID",3);													// Cat-ID Kriegsberichte
 	define("SHIP_MONITOR_MSG_CAT_ID",4);											// Cat-ID Überwachungsberichte

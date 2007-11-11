@@ -35,7 +35,7 @@
 	if ($c->id>0)
 	{
 		// Planetenname ändern
-		if ($_GET['action']=="change_name")
+		if (isset($_GET['action']) && $_GET['action']=="change_name")
 		{
 			echo "<h2>:: Planetenname/-beschreibung &auml;ndern ::</h2>";
 			echo '<script type="text/javascript" src="inc/planetname.js"></script>';
@@ -51,7 +51,7 @@
 		}
 
 		// Kolonie aufgeben
-		elseif ($_GET['action']=="remove")
+		elseif (isset($_GET['action']) && $_GET['action']=="remove")
 		{
 			echo "<h2>:: Kolonie auf diesem Planeten aufheben ::</h2>";
 			echo "<form action=\"?page=$page\" method=\"POST\">";
@@ -63,7 +63,7 @@
 		}
 
 		// Kolonie aufheben ausführen
-		elseif ($_POST['submit_remove']!="")
+		elseif (isset($_GET['submit_remove']) && $_POST['submit_remove']!="")
 		{
 			if (mysql_num_rows(dbquery("SELECT shiplist_id FROM ".$db_table['shiplist']." WHERE shiplist_planet_id='".$c->id."' AND shiplist_count>0;"))==0)
 			{
@@ -107,7 +107,7 @@
 		//
 		// Felderbelegung anzeigen
 		//
-		elseif ($_GET['sub']=="fields")
+		elseif (isset($_GET['sub']) && $_GET['sub']=="fields")
 		{
 		 	echo "<h1>Felderbelegung des Planeten ".$c->name."</h1>";
 			$c->resBox();
@@ -187,7 +187,7 @@
 		//
 		else
 		{
-			if ($_POST['submit_change']!="")
+			if (isset($_POST['submit_change']) && $_POST['submit_change']!="")
 			{
 				if ($_POST['planet_name']!="")
 				{

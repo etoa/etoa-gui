@@ -32,14 +32,12 @@
 
 
 	// DEFINITIONEN //
-	define(TBL_SPACING,$conf['general_table_offset']['v']);
-	define(TBL_PADDING,$conf['general_table_offset']['p1']);
-	define(MISC_MSG_CAT_ID,5);
-	define(USER_MSG_CAT_ID,1);
-	define(ONLINE_TIME,$conf['online_threshold']['v']);
-	define(IMG_MAX_WIDTH,800);
-	define(IMG_MAX_HEIGHT,600);
+	// TODO: Move to def.inc.php
+	define('ONLINE_TIME',$conf['online_threshold']['v']);
+	define('IMG_MAX_WIDTH',800);
+	define('IMG_MAX_HEIGHT',600);
 
+	// TODO: Move to functions or alliance functions
 	function check_alliance_action_rights($action)
 	{
 		global $myRight,$isFounder;
@@ -80,7 +78,7 @@
 	//
 	// Allianzgründung
 	//
-	if ($_GET['action']=="create")
+	if (isset($_GET['action']) && $_GET['action']=="create")
 	{
 		echo "<h2>Gr&uuml;ndung einer Allianz</h2>";
 		if ($s['user']['alliance_id']==0)
@@ -106,7 +104,7 @@
 	//
 	// Allianzgründung speichern
 	//
-	elseif ($_POST['createsubmit']!="" && checker_verify())
+	elseif (isset($_POST['createsubmit']) && $_POST['createsubmit']!="" && checker_verify())
 	{
 		echo "<h2>Gr&uuml;ndung einer Allianz</h2><br>";
 		if ($s['user']['alliance_id']==0)
@@ -165,7 +163,7 @@
 	//
 	// Bewerbung bei einer Allianz
 	//
-	elseif ($_GET['action']=="join")
+	elseif (isset($_GET['action']) && $_GET['action']=="join")
 	{
 		if ($application==0)
 		{
@@ -247,7 +245,7 @@
 					alliance_tag;");
 				if (mysql_num_rows($res)>0)
 				{
-					echo "<table width=\"300\" cellspacing=\"".TBL_SPACING."\" cellpadding=\"".TBL_PADDING."\" align=\"center\" class=\"tbl\">";
+					echo "<table width=\"300\" align=\"center\" class=\"tbl\">";
 					echo "<tr>
 									<td class=\"tbltitle\">Tag</td>
 									<td class=\"tbltitle\">Name</td>
@@ -280,7 +278,7 @@
 	//
 	// Externe Allianz-Info anzeigen
 	//
-	elseif (intval($_GET['info_id'])>0 || intval($_GET['id'])>0)
+	elseif ((isset($_GET['info_id']) && intval($_GET['info_id'])>0) || (isset($_GET['id']) && intval($_GET['id'])>0))
 	{
 		require("alliance/external.inc.php");
 	}
@@ -305,7 +303,7 @@
 		elseif ($application==1)
 		{
 			// Bewerbung zurückziehen
-			if ($_GET['action']=="cancelapplication")
+			if (isset($_GET['action']) && $_GET['action']=="cancelapplication")
 			{
 				$ares = dbquery("
 				SELECT
@@ -434,7 +432,7 @@
 				//
 				// Allianzdaten ändern
 				//
-				if ($_GET['action']=="editdata")
+				if (isset($_GET['action']) && $_GET['action']=="editdata")
 				{
 					if (check_alliance_action_rights('editdata'))
 					{
@@ -445,7 +443,7 @@
 				//
 				// Bewerbungsvorlage bearbeiten
 				//
-				elseif($_GET['action']=="applicationtemplate")
+				elseif (isset($_GET['action']) && $_GET['action']=="applicationtemplate")
 				{
 					if (check_alliance_action_rights('applicationtemplate'))
 					{
@@ -456,7 +454,7 @@
 				//
 				// Umfragen anzeigen
 				//
-				elseif ($_GET['action']=="viewpoll")
+				elseif (isset($_GET['action']) && $_GET['action']=="viewpoll")
 				{
 					require("alliance/viewpoll.inc.php");
 				}
@@ -464,7 +462,7 @@
 				//
 				// Umfragen erstellen / bearbeiten
 				//
-				elseif($_GET['action']=="polls")
+				elseif (isset($_GET['action']) && $_GET['action']=="polls")
 				{
 					if (check_alliance_action_rights('polls'))
 					{
@@ -475,7 +473,7 @@
 				//
 				// Mitglieder bearbeiten
 				//
-				elseif ($_GET['action']=="editmembers")
+				elseif (isset($_GET['action']) && $_GET['action']=="editmembers")
 				{
 					if (check_alliance_action_rights('editmembers'))
 					{
@@ -486,7 +484,7 @@
 				//
 				// Rundmail
 				//
-				elseif ($_GET['action']=="massmail")
+				elseif (isset($_GET['action']) && $_GET['action']=="massmail")
 				{
 					if (check_alliance_action_rights('massmail'))
 					{
@@ -497,7 +495,7 @@
 				//
 				// Ränge
 				//
-				elseif ($_GET['action']=="ranks")
+				elseif (isset($_GET['action']) && $_GET['action']=="ranks")
 				{
 					if (check_alliance_action_rights('ranks'))
 					{
@@ -508,7 +506,7 @@
 				//
 				// Bewerbungen
 				//
-				elseif ($_GET['action']=="applications")
+				elseif (isset($_GET['action']) && $_GET['action']=="applications")
 				{
 					if (check_alliance_action_rights('applications'))
 					{
@@ -519,7 +517,7 @@
 				//
 				// Allianz auflösen bestätigen
 				//
-				elseif ($_GET['action']=="liquidate")
+				elseif (isset($_GET['action']) && $_GET['action']=="liquidate")
 				{
 					if (check_alliance_action_rights('liquidate'))
 					{
@@ -530,7 +528,7 @@
 				//
 				// Allianz-News
 				//
-				elseif ($_GET['action']=="alliancenews")
+				elseif (isset($_GET['action']) && $_GET['action']=="alliancenews")
 				{
 					if (check_alliance_action_rights('alliancenews'))
 					{
@@ -541,7 +539,7 @@
 				//
 				// Bündniss-/Kriegspartner wählen
 				//
-				elseif ($_GET['action']=="relations")
+				elseif (isset($_GET['action']) && $_GET['action']=="relations")
 				{
 					if (check_alliance_action_rights('relations'))
 					{
@@ -552,7 +550,7 @@
 				//
 				// Geschichte anzeigen
 				//
-				elseif ($_GET['action']=="history")
+				elseif (isset($_GET['action']) && $_GET['action']=="history")
 				{
 					if (check_alliance_action_rights('history'))
 					{
@@ -563,7 +561,7 @@
 				//
 				// Mitglieder anzeigen
 				//
-				elseif ($_GET['action']=="viewmembers")
+				elseif (isset($_GET['action']) && $_GET['action']=="viewmembers")
 				{
 					if (check_alliance_action_rights('viewmembers'))
 					{
@@ -574,7 +572,7 @@
 				//
 				// Allianz verlassen (Durchführen)
 				//
-				elseif ($_GET['action']=="leave" && !$isFounder)
+				elseif (isset($_GET['action']) && $_GET['action']=="leave" && !$isFounder)
 				{
 					echo "<h2>Allianz-Austritt</h2>";
 					if ($s['user']['alliance_id']!=0)
@@ -598,7 +596,7 @@
 				else
 				{
 					// Änderungen übernehmen
-					if ($_POST['editsubmit']!="" && checker_verify())
+					if (isset($_POST['editsubmit']) && $_POST['editsubmit']!="" && checker_verify())
 					{
             $alliance_img_string="";
             if ($_POST['alliance_img_del']==1)
@@ -682,14 +680,14 @@
 					}
 
 					// Bewerbungsvorlage speichern
-					if ($_POST['applicationtemplatesubmit']!="" && checker_verify())
+					if (isset($_POST['applicationtemplatesubmit']) && $_POST['applicationtemplatesubmit']!="" && checker_verify())
 					{
 						dbquery("UPDATE ".$db_table['alliances']." SET alliance_application_template='".addslashes($_POST['alliance_application_template'])."' WHERE alliance_id=".$s['user']['alliance_id'].";");
 						echo "Die &Auml;nderungen wurden übernommen!<br/><br/>";
 					}
 
 	        // Allianz auflösen
-					if ($_POST['liquidatesubmit']!="" && $isFounder && $s['user']['alliance_id']==$_POST['id_control'] && checker_verify())
+					if (isset($_POST['liquidatesubmit']) && $_POST['liquidatesubmit']!="" && $isFounder && $s['user']['alliance_id']==$_POST['id_control'] && checker_verify())
 					{
 						delete_alliance($arr['alliance_id'],true);
 						$s['user']['alliance_id']=0;
@@ -866,8 +864,8 @@
 							LIMIT 5;");
 							while ($harr=mysql_fetch_array($hres))
 							{
-								echo "<b>".df($harr['history_timestamp']).":</b> 
-									".text2html($harr['history_text'])."<br/>";
+								echo "<div style=\"border-bottom:1px solid #fff;\"><b>".df($harr['history_timestamp']).":</b> 
+									".text2html($harr['history_text'])."</div>";
 							}
 							echo "</td></tr>";							
 						}						

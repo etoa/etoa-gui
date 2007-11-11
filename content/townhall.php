@@ -223,6 +223,7 @@
 	echo "<h2>Neuste Bündnisse</h2>";
 	$res = dbquery("
 	SELECT	
+		alliance_bnd_id,
 		alliance_bnd_name,
 		a1.alliance_name as an1,
 		a2.alliance_name as an2,  
