@@ -58,7 +58,7 @@
 
 	// Mit der DB verbinden und Config-Werte laden
 	dbconnect();
-/*
+
 	$conf = get_all_config();	
 	require_once("def.inc.php");
 	
@@ -496,7 +496,7 @@
 			$_SESSION['lastpage']=$page;
 			$_SESSION[ROUNDID] = $s;
 			dbclose();
-			$firstview = false; */
+			$firstview = false; 
 		?>
 	</body>
 </html>

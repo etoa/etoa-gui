@@ -87,7 +87,8 @@
 				echo "Auf die Datenbank <b>".DB_SERVER."</b> auf <b>".DB_SERVER."</b> kann nicht zugegriffen werden!";
 			}
 		}
-		//dbquery("SELECT * FROM users;");
+
+
 		dbquery("SET NAMES 'utf8';"); 
 	}
 
@@ -115,10 +116,11 @@
 	*/
 	function dbquery($string, $fehler=1)
 	{
+		global $db_handle;
 		global $nohtml;
 		global $query_counter;
 		$query_counter++;
-		if ($result=dbquery($string))
+		if ($result=mysql_query($string,$db_handle))
 			return $result;
 		elseif ($fehler==1)
 		{
@@ -143,7 +145,7 @@
 	    config_param1,
 	    config_param2
 		FROM
-			".$db_table['config'].";");
+			config;");
 		while ($arr = mysql_fetch_array($res))
 		{
 			$conf[$arr['config_name']]['v'] = $arr['config_value'];
