@@ -82,7 +82,15 @@
 		require_once("inc/logout.inc.php");
 	}
 
-	$s = $_SESSION[ROUNDID];
+
+	if (isset($_SESSION[ROUNDID]))
+	{
+		$s = $_SESSION[ROUNDID];
+	}
+	else
+	{
+		$s = array();
+	}
 
 	// Session prüfen
 	if (!isset($s['user']['id']) || $s['user']['id']==0 || $s['user']['id']=='')

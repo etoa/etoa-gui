@@ -30,6 +30,10 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/	
 
+	//error_reporting(E_ERROR | E_WARNING | E_PARSE);
+	Error_reporting(E_ALL); // <- Nur zur dringenden fehlersuche verwenden (da haufenweise "fehler")
+
+
 	///////////////////////////////////////////////////////////////
 	//////////////       MYSQL - Table Names		          /////////
 	///////////////////////////////////////////////////////////////
@@ -123,13 +127,10 @@
 
 	define('LOGINSERVER_URL',"http://www.etoa.ch/servers");					// Adresse des Loginservers
 	define('GAMEROUND_NAME',"Testrunde");									// Name der Runde, erschein als Seitentitel
+	define('ROUNDID',"Testrunde");											// ID der Spielrunde
 	define('REGEXP_NAME','^.[^0-9\'\"\?\<\>\$\!\=\;\&]*$');
 	define('REGEXP_NICK','^.[^\'\"\?\<\>\$\!\=\;\&]*$');
 
-	define('ROUNDID',GAMEROUND_NAME);											// ID der Spielrunde
-
-	//error_reporting(E_ERROR | E_WARNING | E_PARSE);
-	error_reporting(E_ALL); // <- Nur zur dringenden fehlersuche verwenden (da haufenweise "fehler")
 
 	// Homepage
 	define('DEFAULT_PAGE',"overview");
@@ -142,7 +143,7 @@
   /***********************************/
 	
 	// Smarty Path
-	define('SMARTY_DIR', "/usr/share/php/smarty/");
+	define('SMARTY_DIR', "libs/smarty");
 
 
   /***********************************/
