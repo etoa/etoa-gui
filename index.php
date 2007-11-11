@@ -55,8 +55,10 @@
 	$render_time = explode(" ",microtime());
 	$render_starttime=$render_time[1]+$render_time[0];
 
+
 	// Mit der DB verbinden und Config-Werte laden
 	dbconnect();
+/*
 	$conf = get_all_config();	
 	require_once("def.inc.php");
 	
@@ -386,33 +388,33 @@
 					//$c->update();
 				}
 
-				/*
+				
 				// Flottenupdate (Prüfen ob nicht bereits ein Flottenupdate läuft)
-				if($conf['updating_fleet']['v']==0)
-				{
-	        $res = dbquery("
-	        SELECT
-	            *
-	        FROM
-	            ".$db_table['fleet']."
-	        WHERE
-	            fleet_landtime<".time()."
-	            AND fleet_updating=0
-	        ORDER BY
-	            fleet_landtime ASC
-	         ;"); 
-	        if (mysql_num_rows($res) > 0)
-	        {
-	          require_once("inc/fleet_action.inc.php");
-	          require_once("inc/fleet_update.inc.php");
-	          while ($arr=mysql_fetch_array($res))
-	          {
-	          	update_fleet($arr,0);
-	          }
-	        }
-				}				
-				check_missiles();
-				*/
+				//if($conf['updating_fleet']['v']==0)
+				//{
+	      //  $res = dbquery("
+	      //  SELECT
+	      //      *
+	      //  FROM
+	      //      ".$db_table['fleet']."
+	      //  WHERE
+	      //      fleet_landtime<".time()."
+	      //      AND fleet_updating=0
+	      //  ORDER BY
+	      //      fleet_landtime ASC
+	      //   ;"); 
+	      //  if (mysql_num_rows($res) > 0)
+	      //  {
+	      //    require_once("inc/fleet_action.inc.php");
+	      //    require_once("inc/fleet_update.inc.php");
+	      //    while ($arr=mysql_fetch_array($res))
+	      //    {
+	      //    	update_fleet($arr,0);
+	      //    }
+	      //  }
+				//}				
+				//check_missiles();
+				
 				
 				// Navigation laden
 				require_once('inc/nav.inc.php');
@@ -432,18 +434,6 @@
 				$res=dbquery("SELECT COUNT(note_id) FROM ".$db_table['notepad']." WHERE note_user_id=".$s['user']['id'].";");
 				$narr=mysql_fetch_row($res);
 
-
-
-           /* $num_friend=check_fleet_incomming_friendly($s['user']['id']); //Nicht feindliche Flotten
-            $num=check_fleet_incomming($s['user']['id']); //Feindliche Flotten
-            $all = $num + $num_friend;
-            if($num>0 && $num_friend==0)
-                $style="color:#f00";
-            elseif($num>0 && $num_friend>0)
-                $style="color:orange";
-            elseif($num==0 && $num_friend>0)
-                $style="color:#0f0";	*/				
-            
 				// Create template object
 				$tpl = new Smarty;
 				$tpl->template_dir = ".";
@@ -506,7 +496,7 @@
 			$_SESSION['lastpage']=$page;
 			$_SESSION[ROUNDID] = $s;
 			dbclose();
-			$firstview = false;
+			$firstview = false; */
 		?>
 	</body>
 </html>

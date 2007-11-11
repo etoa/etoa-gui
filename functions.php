@@ -55,7 +55,7 @@
 		global $nohtml;
 		global $query_counter;
 		$query_counter=0;
-		if (!@$db_handle = mysql_connect(DB_SERVER,DB_USER,DB_PASSWORD))
+		if (!$db_handle = mysql_connect(DB_SERVER,DB_USER,DB_PASSWORD))
 		{
 			if (!$nohtml)
 			{
@@ -71,8 +71,9 @@
 				werden!";
 			}
 		}
-		if (!@mysql_select_db(DB_DATABASE))
+		if (!mysql_select_db(DB_DATABASE))
 		{
+			
 			if (!$nohtml)
 			{
 				echo "</head><body>";
@@ -86,7 +87,8 @@
 				echo "Auf die Datenbank <b>".DB_SERVER."</b> auf <b>".DB_SERVER."</b> kann nicht zugegriffen werden!";
 			}
 		}
-		dbquery("SET NAMES 'utf8';");
+		//dbquery("SELECT * FROM users;");
+		//dbquery("SET NAMES 'utf8';"); 
 	}
 
 	/**
