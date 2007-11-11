@@ -128,6 +128,9 @@
 
 	define('ROUNDID',GAMEROUND_NAME);											// ID der Spielrunde
 
+	//error_reporting(E_ERROR | E_WARNING | E_PARSE);
+	error_reporting(E_ALL); // <- Nur zur dringenden fehlersuche verwenden (da haufenweise "fehler")
+
 	// Homepage
 	define('DEFAULT_PAGE',"overview");
 	

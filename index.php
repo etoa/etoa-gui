@@ -37,8 +37,6 @@
 	//Fehler ausgabe definiert (Lamborghini)
   ini_set('display_errors', 1);
 	ini_set('arg_separator.output',  '&amp;');
-	//error_reporting(E_ERROR | E_WARNING | E_PARSE);
-	error_reporting(E_ALL); // <- Nur zur dringenden fehlersuche verwenden (da haufenweise "fehler")
 
 	// Session-Cookie setzen
 	session_start();
