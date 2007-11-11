@@ -88,7 +88,7 @@
 			}
 		}
 		//dbquery("SELECT * FROM users;");
-		//dbquery("SET NAMES 'utf8';"); 
+		dbquery("SET NAMES 'utf8';"); 
 	}
 
 	/**
