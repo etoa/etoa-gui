@@ -24,6 +24,7 @@
 	//
 	/**
 	* Database access and ftp data
+	* THIS FILE IS NOT UNDER VERSION CONTROL
 	*
 	* @package etoa_gameserver
 	* @author MrCage mrcage@etoa.ch

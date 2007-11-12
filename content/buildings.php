@@ -1058,8 +1058,8 @@ function calcDemolishingWaitTime($dc,$c)
 							{
 								
 								// Aktuellen Level feststellen
-								$b_level=intval($buildlist[$bid]['buildlist_current_level']);
-								$end_time=intval($buildlist[$bid]['buildlist_build_end_time']);
+								$b_level = intval($buildlist[$bid]['buildlist_current_level']);
+								$end_time = intval($buildlist[$bid]['buildlist_build_end_time']);
 
 								// Check requirements for this building
 								$requirements_passed = true;
