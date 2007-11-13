@@ -278,7 +278,7 @@
 				echo $conf['game_name']['v']." ".$conf['game_name']['p1'];
 				if (file_exists("svnversion"))
 				{
-					echo " | Build ";
+					echo " | Rev #";
 					readfile("svnversion");
 				}
 			?>
@@ -400,7 +400,7 @@
 				"recycling");
 				if (in_array($page,$updatedPages))
 				{
-					//$c->update();
+					$c->update();
 				}
 
 				
