@@ -30,8 +30,11 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/	
 
-	//error_reporting(E_ERROR | E_WARNING | E_PARSE);
-	Error_reporting(E_ALL); // <- Nur zur dringenden fehlersuche verwenden (da haufenweise "fehler")
+	// Fehlermeldungs-Level feststellen
+	if (ETOA_DEBUG==1)
+		Error_reporting(E_ALL);
+	else
+		error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
 
 	///////////////////////////////////////////////////////////////
