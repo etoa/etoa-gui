@@ -26,11 +26,6 @@
 	// 	Kommentar: 	Layout und generelle Definitionen f� Admin-Modus
 	//
 
-	// PHP-Settings
-  ini_set('display_errors', 1);
-  //error_reporting(E_ALL); //<- Nur zur dringenden fehlersuche verwenden (da haufenweise "fehler")
-  error_reporting(E_ERROR | E_WARNING | E_PARSE);
-
 	// Seitenwahl zuweisen
 	$page = isset($_GET['page']) ? $_GET['page'] : 'home';
 	$sub = isset($_GET['sub']) ? $_GET['sub'] : '';
@@ -47,7 +42,7 @@
 	session_start();
 
 	// Funktionen und Config einlesen
-	require("../conf.inc.php");
+	require("../../conf.inc.php");
 	require("../functions.php");
 	require("../inc/fleet_action.inc.php");
 	require("../classes.php");

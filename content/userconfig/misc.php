@@ -1,5 +1,6 @@
 <?PHP
 
+	$umod = false;
 
 		//
 		// Urlaubsmodus einschalten
@@ -7,15 +8,25 @@
 	
 		if (isset($_POST['hmod_on']) && checker_verify())
 		{
-			if (mysql_num_rows(dbquery("SELECT shiplist_id FROM ".$db_table['shiplist']." WHERE shiplist_user_id='".$s['user']['id']."';"))==0)
+			$cres = dbquery("SELECT COUNT(*) FROM ship_queue WHERE queue_user_id='".$s['user']['id']."';");
+			$carr = mysql_fetch_row($cres);
+			if ($carr[0]==0)
 			{
-				if (mysql_num_rows(dbquery("SELECT deflist_id FROM ".$db_table['deflist']." WHERE deflist_user_id='".$s['user']['id']."' AND deflist_build_count>0;"))==0)
+				$cres = dbquery("SELECT COUNT(*) FROM def_queue WHERE queue_user_id='".$s['user']['id']."';");
+				$carr = mysql_fetch_row($cres);
+				if ($carr[0]==0)
 				{
-					if (mysql_num_rows(dbquery("SELECT buildlist_id FROM ".$db_table['buildlist']." WHERE buildlist_user_id='".$s['user']['id']."' AND buildlist_build_start_time>0;"))==0)
+					$cres = dbquery("SELECT COUNT(*) FROM buildlist WHERE buildlist_user_id='".$s['user']['id']."' AND buildlist_build_start_time>0;");
+					$carr = mysql_fetch_row($cres);
+					if ($carr[0]==0)
 					{
-						if (mysql_num_rows(dbquery("SELECT techlist_id FROM ".$db_table['techlist']." WHERE techlist_user_id='".$s['user']['id']."' AND techlist_build_start_time>0;"))==0)
+						$cres = dbquery("SELECT COUNT(*) FROM techlist WHERE techlist_user_id='".$s['user']['id']."' AND techlist_build_start_time>0;");
+						$carr = mysql_fetch_row($cres);
+						if ($carr[0]==0)
 						{
-							if (mysql_num_rows(dbquery("SELECT fleet_id FROM ".$db_table['fleet']." WHERE fleet_user_id='".$s['user']['id']."';"))==0)
+							$cres = dbquery("SELECT fleet_id FROM ".$db_table['fleet']." WHERE fleet_user_id='".$s['user']['id']."';");
+							$carr = mysql_fetch_row($cres);
+							if ($carr[0]==0)
 							{
 								$hfrom=time();
 								$hto=$hfrom+(MIN_UMOD_TIME*24*3600);
@@ -29,26 +40,36 @@
 									WHERE 
 										planet_user_id='".$s['user']['id']."';");
 									
-									$s['user']['hmode_from']=$hfrom;
-									$s['user']['hmode_to']=$hto;
+									$s['user']['hmode_from'] = $hfrom;
+									$s['user']['hmode_to'] = $hto;
+									$arr['user_hmode_to'] = $hto;
 									success_msg("Du bist nun im Urlaubsmodus bis [b]".df($hto)."[/b].");
 		              $umod = true;
 								}
 							}
 							else
+							{
 								err_msg("Es sind noch Flotten unterwegs!");
+							}
 						}
 						else
+						{
 							err_msg("Es sind noch Technologien in Entwicklung!");
+						}
 					}
 					else
+					{
 						err_msg("Es sind noch Geb&auml;ude im Bau!");
+					}
 				}
 				else
 					err_msg("Es sind noch Verteidigungsanlagen im Bau!");
 			}
 			else
+			{
+				
 				err_msg("Es sind noch Schiffe im Bau!");
+			}
 		}
 	
 		//
@@ -205,11 +226,17 @@
 	    	um den Urlaubsmodus aktivieren zu können.<br/><b>Dauer:</b> mindestens ".MIN_UMOD_TIME." Tage</td>
 	    	<td class=\"tbldata\">";
 	    	if ($arr['user_hmode_from']>0 && $arr['user_hmode_from']<time() && $arr['user_hmode_to']<time())
+	    	{
 	    		echo "<input type=\"submit\" style=\"color:#0f0\" name=\"hmod_off\" value=\"Urlaubsmodus deaktivieren\" />";
+	    	}
 	    	elseif ($arr['user_hmode_from']>0 && $arr['user_hmode_from']<time() && $arr['user_hmode_to']>=time() || $umod)
+	    	{
 	    	  echo "<span style=\"color:#f90\">Urlaubsmodus ist aktiv bis mindestens <b>".df($arr['user_hmode_to'])."</b>!</span>";
+	    	}
 	    	else
+	    	{
 	    	  echo "<input type=\"submit\" value=\"Urlaubsmodus aktivieren\" name=\"hmod_on\" onclick=\"return confirm('Soll der Urlaubsmodus wirklich aktiviert werden?')\" />";
+	    	} 
 	    	echo "</td></tr>";
 	
 				// Account löschen
@@ -230,7 +257,7 @@
 	    	echo "<tr><th class=\"tbltitle\">Neu anfangen</th>
 	    	<td class=\"tbldata\">";
 	    	$disabled = "";
-	    	if ($s['allow_planet_change'])
+	    	if (isset($s['allow_planet_change']) && $s['allow_planet_change'])
 	    	{
 	    		if ($s['allow_planet_change_counter']<MAX_MAINPLANET_CHANGES)
 					{

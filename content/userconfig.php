@@ -37,6 +37,7 @@
 /****************/
 
 	$mode = (isset($_GET['mode']) && $_GET['mode']!="") ? $_GET['mode'] : 'general';
+	
  	show_tab_menu("mode",array("general"=>"Profil",
  														"game"=>"Spiel",
  														"messages"=>"Nachrichten",
@@ -53,7 +54,7 @@
 	// Änderung beantragen
 	//
 
-	if ($_GET['request']!="")
+	if (isset($_GET['request']) && $_GET['request']!="")
 	{
 		if ($_POST['submit']!="")
 		{
@@ -206,7 +207,7 @@
     /****************/
     /* Spiel    */
     /****************/
-		if($_GET['mode']=='game')
+		if($mode=='game')
 		{
  			require("content/userconfig/game.php");
 		}
@@ -214,7 +215,7 @@
     /****************/
     /* Nachrichten    */
     /****************/
-		elseif($_GET['mode']=='messages')
+		elseif($mode=='messages')
 		{
       if($s['user']['sitter_active']==0)
       {
@@ -229,7 +230,7 @@
     /****************/
     /* Design     	*/
     /****************/
-		elseif($_GET['mode']=='design')
+		elseif($mode=='design')
 		{
 			require("content/userconfig/design.php");
     }
@@ -237,7 +238,7 @@
 		/****************/
 		/* Sitting			*/
 		/****************/
-   	elseif($_GET['mode']=='sitting')
+   	elseif($mode=='sitting')
     {
       if($s['user']['sitter_active']==0)
       {
@@ -287,7 +288,7 @@
 		/****************/
 		/* Passwort			*/
 		/****************/
-		elseif($_GET['mode']=='password')
+		elseif($mode=='password')
   	{
         if($s['user']['sitter_active']==0)
         {
@@ -302,7 +303,7 @@
 		/****************/
 		/* Sonstiges		*/
 		/****************/
-		elseif($_GET['mode']=='misc')
+		elseif($mode=='misc')
 		{
         if($s['user']['sitter_active']==0)
         {
@@ -318,7 +319,7 @@
 		/* Logins		*/
 		/****************/
 		
-		elseif ($_GET['mode']=="logins")
+		elseif ($mode=="logins")
 		{
     	require("content/userconfig/logins.php");
 		}
