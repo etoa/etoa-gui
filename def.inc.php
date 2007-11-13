@@ -125,9 +125,6 @@
 	//////////////            Definitions			            /////////
 	///////////////////////////////////////////////////////////////
 
-	define('LOGINSERVER_URL',"http://www.etoa.ch/servers");					// Adresse des Loginservers
-	define('GAMEROUND_NAME',"Testrunde");									// Name der Runde, erschein als Seitentitel
-	define('ROUNDID',"Testrunde");											// ID der Spielrunde
 	define('REGEXP_NAME','^.[^0-9\'\"\?\<\>\$\!\=\;\&]*$');
 	define('REGEXP_NICK','^.[^\'\"\?\<\>\$\!\=\;\&]*$');
 

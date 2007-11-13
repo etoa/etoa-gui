@@ -18,10 +18,24 @@
 		*/
 		public function MySQL($server,$user,$password,$db)
 		{
-			$this->handle = @mysql_connect($server,$user,$password) or die($this->printError("Could not connect!"));
-			mysql_select_db($db,$this->handle) or die($this->printError("Could not connect!"));
-			$this->queryCounter=0;
-			$this->query("SET NAMES 'utf8';");
+			if ($this->handle = @mysql_connect($server,$user,$password) or die($this->printError("Could not connect!")))
+			{
+				if (mysql_select_db($db,$this->handle) or die($this->printError("Could not connect!")))
+				{
+					$this->queryCounter=0;
+					$this->query("SET NAMES 'utf8';");
+				}
+				else
+				{
+					printError("Kann Datenbank nicht wählen!");
+					exit;
+				}
+			}
+			else
+			{
+				printError("Keine Serververbindung möglich!");
+				exit;
+			}
 		}
 		
 		/**

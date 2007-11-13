@@ -1,11 +1,11 @@
 <?PHP
-	include("../conf.inc.php");
+	include("../../conf.inc.php");
 	include("../functions.php");
-	include("../def.inc.php");
 	dbconnect();
+	$conf = get_all_config();
+	include("../def.inc.php");
 	dbquery("SET NAMES 'utf8';");
 
-	$conf = get_all_config();
 	
 	$rssValue = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n";
 	//$rssValue .= "<!DOCTYPE rss PUBLIC \"-//Netscape Communications//DTD RSS 0.91//EN\" \"http://my.netscape.com/publish/formats/rss-0.91.dtd\">\r\n";
@@ -30,9 +30,9 @@
 		alliance_news_title,
 		alliance_news_text
 	FROM
-		".$db_table['alliance_news']."
+		alliance_news
 	WHERE
-		alliance_news_public=1
+		alliance_news_alliance_to_id = 0
 	ORDER BY
 		alliance_news_date DESC
 	

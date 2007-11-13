@@ -30,8 +30,7 @@
 
 	showTitle('Rangliste');
 
-	if ($_GET['mode']!="") $mode=$_GET['mode'];
-	else $mode="user";
+	$mode = isset($_GET['mode']) && $_GET['mode']!="" ? $_GET['mode'] : "user";
 
 	// Menü
 	echo "<br/><table class=\"tbl\">";

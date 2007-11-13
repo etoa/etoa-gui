@@ -55,17 +55,10 @@
 
 	// BEGIN SKRIPT //
 
-	$rsc = get_resources_array();
-
-	define(HELP_URL,"?page=help&site=shipyard");
-
-	define(FLEET_FACTOR_F,$conf['flight_flight_time']['v']);
-	define(FLEET_FACTOR_S,$conf['flight_start_time']['v']);
-	define(FLEET_FACTOR_L,$conf['flight_land_time']['v']);
-
+	define('HELP_URL',"?page=help&site=shipyard"); // TODO: What does it do?
 
 	echo "<h1>Help & Info</h1>"; //Titel angepasst <h1> by Lamborghini
-	if ($_GET['site']!="")
+	if (isset($_GET['site']) && $_GET['site']!="")
 	{
 		$site = $_GET['site'];
 		if ($site!="")
@@ -112,19 +105,23 @@
 
 		infobox_start("Weitere Infos",1);
 		echo "<tr>
-		<td class=\"tbldata\" style=\"text-align:center;width:25%\">
+		<td class=\"tbldata\" style=\"text-align:center;width:20%\">
 			<a href=\"http://www.etoa.ch/forum\" target=\"_Blank\"><img src=\"images/users.png\" border=\"0\" alt=\"Forum\" title=\"Forum\" style=\"width:40px;height:40px;\"></a><br/>
 			Forum
 		</td>
-		<td class=\"tbldata\" style=\"text-align:center;width:25%\">
+		<td class=\"tbldata\" style=\"text-align:center;width:20%\">
 			<a href=\"http://www.etoa.ch/faq\" target=\"_Blank\"><img src=\"images/help.png\" border=\"0\" alt=\"FAQ\" style=\"width:40px;height:40px;\" title=\"FAQ\"></a><br/>
 			Häufig gestellte Fragen (FAQ)
 		</td>
-		<td class=\"tbldata\" style=\"text-align:center;width:25%\">
+		<td class=\"tbldata\" style=\"text-align:center;width:20%\">
+			<a href=\"http://bugs.etoa.net\" target=\"_Blank\"><img src=\"images/bug.png\" border=\"0\" alt=\"FAQ\" style=\"width:40px;height:40px;\" title=\"FAQ\"></a><br/>
+			Fehler melden
+		</td>
+		<td class=\"tbldata\" style=\"text-align:center;width:20%\">
 			<a href=\"?page=contact\"><img src=\"images/mail.png\" border=\"0\" alt=\"Kontakt\" style=\"width:40px;height:40px;\" title=\"Kontakt\"></a><br/>
 			Admin kontaktieren
 		</td>
-		<td class=\"tbldata\" style=\"text-align:center;width:25%\">
+		<td class=\"tbldata\" style=\"text-align:center;width:20%\">
 			<a href=\"?page=abuse\"><img src=\"images/abuse.png\" border=\"0\" alt=\"Missbrauch\" style=\"width:40px;height:40px;\" title=\"Missbrauch melden\"></a><br/>
 			Missbrauch melden
 		</td>

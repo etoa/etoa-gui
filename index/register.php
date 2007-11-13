@@ -82,20 +82,28 @@
 		}
 		else
 		{
+			
+			$userName = isset($_SESSION['REGISTER']['register_user_name']) ? $_SESSION['REGISTER']['register_user_name'] : '';
+			$userNick = isset($_SESSION['REGISTER']['register_user_nick']) ? $_SESSION['REGISTER']['register_user_nick'] : '';
+			$userEmail = isset($_SESSION['REGISTER']['register_user_email']) ? $_SESSION['REGISTER']['register_user_email'] : '';
+			$raceId = isset($_SESSION['REGISTER']['register_user_race_id']) ? $_SESSION['REGISTER']['register_user_race_id'] : 0;
 			echo 'Melde dich hier für die '.GAMEROUND_NAME.' von '.$conf['game_name']['v'].' an. Es sind noch <b>'.max($conf['enable_register']['p2']-$ucnt[0],0).'</b> von <b>'.$conf['enable_register']['p2'].'</b> Plätzen frei!<br/><br/>';
 			echo "<form action=\"?index=register\" method=\"post\"><div>";
 			echo "<table style=\"margin:5px auto;width:700px;\">";
 			
 			echo "<tr><th class=\"tbltitle\" style=\"width:150px;\">Vollst&auml;ndiger Name:</th>";
-			echo "<td class=\"tbldata\" style=\"width:170px;\"><input type=\"text\" name=\"register_user_name\" maxlength=\"".NAME_MAXLENGTH."\" size=\"".NAME_MAXLENGTH."\" value=\"".$_SESSION['REGISTER']['register_user_name']."\" onkeyup=\"xajax_registerCheckName(this.value)\" onblur=\"xajax_registerCheckName(this.value)\" /></td>";
+			echo "<td class=\"tbldata\" style=\"width:170px;\">
+				<input type=\"text\" name=\"register_user_name\" maxlength=\"".NAME_MAXLENGTH."\" size=\"".NAME_MAXLENGTH."\" value=\"".$userName."\" onkeyup=\"xajax_registerCheckName(this.value)\" onblur=\"xajax_registerCheckName(this.value)\" /></td>";
 			echo "<td class=\"tbldata\" id=\"nameStatus\">Hier musst du deinen realen Namen angeben; dies dient zur Kontrolle gegen Multis. Dieser Name ist nur f&uuml;r Administratoren sichtbar!</td></tr>";
 			
 			echo "<tr><th class=\"tbltitle\">Benutzername:</th>";
-			echo "<td class=\"tbldata\"><input type=\"text\" name=\"register_user_nick\" maxlength=\"".NICK_MAXLENGHT."\" size=\"".NICK_MAXLENGHT."\" value=\"".$_SESSION['REGISTER']['register_user_nick']."\" onkeyup=\"xajax_registerCheckNick(this.value)\" onblur=\"xajax_registerCheckNick(this.value)\" /></td>";
+			echo "<td class=\"tbldata\">
+				<input type=\"text\" name=\"register_user_nick\" maxlength=\"".NICK_MAXLENGHT."\" size=\"".NICK_MAXLENGHT."\" value=\"".$userNick."\" onkeyup=\"xajax_registerCheckNick(this.value)\" onblur=\"xajax_registerCheckNick(this.value)\" /></td>";
 			echo "<td class=\"tbldata\" id=\"nickStatus\">Mit diesem Name tritts du im Spiel als der Herrscher deines Volkes auf. <b>Der Nickname ist endgültig und kann nicht geändert werden!</b></td></tr>";
 			
 			echo "<tr><th class=\"tbltitle\">E-Mail:</th>";
-			echo "<td class=\"tbldata\"><input type=\"text\" name=\"register_user_email\" maxlength=\"50\" size=\"30\" value=\"".$_SESSION['REGISTER']['register_user_email']."\" onkeyup=\"xajax_registerCheckEmail(this.value)\" onblur=\"xajax_registerCheckEmail(this.value)\" /></td>";
+			echo "<td class=\"tbldata\">
+				<input type=\"text\" name=\"register_user_email\" maxlength=\"50\" size=\"30\" value=\"".$userEmail."\" onkeyup=\"xajax_registerCheckEmail(this.value)\" onblur=\"xajax_registerCheckEmail(this.value)\" /></td>";
 			echo "<td class=\"tbldata\" id=\"emailStatus\">Du musst eine g&uuml;ltige E-Mail-Adresse eingeben. Auf diese wird dir ein Passwort zugeschickt mit dem du dich einloggen kannst.</td></tr>";
 			
 			echo "<tr><th class=\"tbltitle\">Rasse:</th>";
@@ -103,7 +111,7 @@
 			foreach ($rsc as $race)
 			{
 				echo "<option value=\"".$race['race_id']."\"";
-				if ($race['race_id']==$_SESSION['REGISTER']['register_user_race_id']) 
+				if ($race['race_id']==$raceId) 
 				{
 					echo " selected=\"selected\"";
 				}

@@ -87,8 +87,6 @@
 				echo "Auf die Datenbank <b>".DB_SERVER."</b> auf <b>".DB_SERVER."</b> kann nicht zugegriffen werden!";
 			}
 		}
-
-
 		dbquery("SET NAMES 'utf8';"); 
 	}
 
@@ -120,7 +118,7 @@
 		global $nohtml;
 		global $query_counter;
 		$query_counter++;
-		if ($result=mysql_query($string,$db_handle))
+		if ($result=mysql_query($string))
 			return $result;
 		elseif ($fehler==1)
 		{

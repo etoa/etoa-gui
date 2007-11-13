@@ -43,8 +43,8 @@
 	session_start();
 	mt_srand();
 	
-	include("conf.inc.php");
-	include("functions.php");
+	require_once("../conf.inc.php");
+	require_once("functions.php");
 
 	//dbconnect();
 	$db = new MySQL(DB_SERVER,DB_USER,DB_PASSWORD,DB_DATABASE);
@@ -63,10 +63,16 @@
 	$indexpage['contact']='Kontakt';
 	$contentpage['help']='Hilfe';
 	
+	if (isset($_SESSION[ROUNDID]))
+	{
+		$s = $_SESSION[ROUNDID];
+	}
+	else
+	{
+		$s = array();
+	}
 
-	$s = $_SESSION[ROUNDID];
-
-	if ($s['user']['css_style']!="")
+	if (isset($s['user']['css_style']) && $s['user']['css_style']!="")
 	{
 		define("CSS_STYLE",$s['user']['css_style']);
 	}
@@ -75,7 +81,7 @@
 		define("CSS_STYLE",$conf['default_css_style']['v']);
 	}
 
-	if ($s['user']['image_url']!='' && $s['user']['image_ext']!='')
+	if (isset($s['user']['image_url']) && $s['user']['image_url']!='' && $s['user']['image_ext']!='')
 	{
 		define('IMAGE_PATH',$s['user']['image_url']);
 		define('IMAGE_EXT',$s['user']['image_ext']);
@@ -86,7 +92,9 @@
 		define("IMAGE_EXT","gif");
 	}	
 	
-	$index=$_GET['index'];
+	$index = isset($_GET['index']) ? $_GET['index'] : null;
+	$page = isset($_GET['page']) ? $_GET['page'] : null;
+	$info = isset($_GET['info']) ? $_GET['info'] : null;
 
 	//XAJAX
 	include("xajax_etoa.inc.php");
@@ -99,9 +107,9 @@
 		<title>
 			<?PHP 
 				echo $conf['game_name']['v']." ".$conf['game_name']['p1'].' | '.GAMEROUND_NAME;
-				if ($_GET['index']!="")
+				if ($index!="")
 				{			
-					echo " | ".$indexpage[$_GET['index']];
+					echo " | ".$indexpage[$index];
 				}
 			?>
 		</title>
@@ -142,9 +150,8 @@
 		?>
 	</head>
 	<body id="outGameBody">
-
 		<?PHP
-			if ($_GET['index']!="" || ($_GET['page']=="help" && $s['user']['id']==''))
+			if ($index!="" || ($page=="help" && isset($s['user']['id'])))
 			{
 	    	echo '<div id="outGameTop">';
 	    	echo '<div><a href="'.LOGINSERVER_URL.'">Startseite</a><a href="?">Übersicht</a></div><b>'.GAMEROUND_NAME.'</b> &nbsp; ';
@@ -174,20 +181,20 @@
 		<div id="outGameContent">
 			
 		<?PHP
-			if ($_GET['index']!="")
+			if ($index!="")
 			{
-				$page=$_GET['index'];
+				$page=$index;
 				$sub="index/";
 			}
-			elseif ($_GET['info']!="")
+			elseif ($info!="")
 			{
-				$page=$_GET['info'];
+				$page=$info;
 				$sub="info/";
 			}		
-			elseif (($_GET['page']!="" && $s['user']['id']>0) || $_GET['page']=="help")
+			elseif (($page!="" && isset($s['user']['id'])) || $page=="help")
 			{	
 				$showed=true;
-				$page=$_GET['page'];
+				$page=$page;
 				$sub="content/";
 				$external=true;
 			}
