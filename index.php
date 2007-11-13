@@ -273,7 +273,16 @@
 		<meta http-equiv="content-style-type" content="text/css" />
 		<meta http-equiv="content-language" content="de" />
 
-		<title><?PHP echo $conf['game_name']['v']." ".$conf['game_name']['p1'];?></title>
+		<title>
+			<?PHP 
+				echo $conf['game_name']['v']." ".$conf['game_name']['p1'];
+				if (file_exists("svnversion"))
+				{
+					echo " | Build ";
+					readfile("svnversion");
+				}
+			?>
+		</title>
 		<link rel="stylesheet" href="general.css" type="text/css" />
 		<script src="scripts.js" type="text/javascript"></script>
 		<?PHP 
