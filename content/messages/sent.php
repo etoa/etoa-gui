@@ -13,13 +13,13 @@
 			WHERE
         m.message_id='".intval($_GET['msg_id'])."'
         AND m.message_user_from='".$s['user']['id']."'
-        AND m.message_deleted=0");
+        ");
 			if (mysql_num_rows($mres)>0)
 			{
 				$marr = mysql_fetch_array($mres);
 				$sender = get_user_nick($marr['message_user_to']);
-				echo "<table width=\"300\" align=\"center\" class=\"tbl\">";
-				echo "<tr><td width=\"50\" valign=\"top\">&nbsp;</td><td class=\"tbltitle\">";
+				echo "<table width=\"300\" align=\"center\" class=\"tbl\" style=\"border:none;\">";
+				echo "<tr><td width=\"50\" valign=\"top\" style=\"border:none;\">&nbsp;</td><td class=\"tbltitle\">";
 				if ($marr['message_subject']!="")
 					echo stripslashes($marr['message_subject']);
 				else
@@ -42,28 +42,7 @@
 		{
 			echo "<table width=\"400\" align=\"center\" class=\"tbl\">";
 			echo "<tr><td class=\"tbltitle\" colspan=\"4\">Gesendete Nachrichten</td></tr>";
-			/*
-			$mres = dbquery("
-			SELECT
-        message_subject,
-        message_id,
-        message_timestamp,
-        message_user_to,
-        message_read,
-        user_nick
-			FROM
-				".$db_table['messages']."
-			LEFT JOIN
-				".$db_table['users']."
-				ON user_id=message_user_to					
-			WHERE
-        message_user_from='".$s['user']['id']."'
-        AND message_cat_id='".USER_MSG_CAT_ID."'
-        AND message_deleted=0
-			ORDER BY
-				message_timestamp DESC
-			LIMIT 30;");
-		*/
+
 			$mres = dbquery("
 			SELECT
         message_subject,
