@@ -5708,22 +5708,36 @@ Forum: http://www.etoa.ch/forum";
 		");
 
 
-        // Bestehende Schiffs-Einträge löschen
-        dbquery("
+    // Bestehende Schiffs-Einträge löschen
+    dbquery("
 			DELETE FROM
 				".$db_table['shiplist']."
 			WHERE
 				shiplist_planet_id='".$planet_id."';
 		");
+    dbquery("
+			DELETE FROM
+				ship_queue
+			WHERE
+				queue_planet_id='".$planet_id."';
+		");		
+		
 
 
-        // Bestehende Verteidigungs-Einträge löschen
-        dbquery("
+    // Bestehende Verteidigungs-Einträge löschen
+    dbquery("
 			DELETE FROM
 				".$db_table['deflist']."
 			WHERE
 				deflist_planet_id='".$planet_id."';
 		");
+    dbquery("
+			DELETE FROM
+				def_queue
+			WHERE
+				queue_planet_id='".$planet_id."';
+		");
+
 	}
 
 

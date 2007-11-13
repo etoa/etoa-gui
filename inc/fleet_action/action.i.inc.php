@@ -92,16 +92,19 @@
 			//Ist invasion erfolgreich? (Chance ok)
 			if ($iposs<=$iperc)
 			{
+				// Lade Planeten des Users
 				$max_planet_res = dbquery("
 				SELECT 
-					planet_user_id 
+					COUNT(planet_user_id)
 				FROM 
-					".$db_table['planets']." 
+					planets
 				WHERE 
-					planet_user_id='".$arr['fleet_user_id']."';");
+					planet_user_id='".$arr['fleet_user_id']."'
+				;");
+				$max_planet_arr = mysql_fetch_row($max_planet_res);
 					
 				//Hat der User schon die maximale Anzahl Planeten?
-				if(mysql_num_rows($max_planet_res) < $conf['user_max_planets']['v'])
+				if($max_planet_arr[0] < $conf['user_max_planets']['v'])
 				{
                     //Liest Planet ID und Cell ID vom HP des 'Opfers' aus
                     $mplanet_res = dbquery("
@@ -130,30 +133,31 @@
                         fleet_user_id='".$user_to_id."'
                         AND fleet_planet_to='".$arr['fleet_planet_to']."' 
                         ;");
-                     $time = time();
-                        
-                    while ($iflarr = mysql_fetch_array($iflres))
+                    $time = time();                        
+                    if (mysql_num_rows($iflres)>0)
                     {
-                        $duration = min($time,$iflarr['fleet_landtime'])-$iflarr['fleet_launchtime'];
-                        $launchtime = $time;
-                        $landtime = $launchtime + $duration;
-												$action = substr($iflarr['fleet_action'],0,1)."c";
-
-                        dbquery("
-                        UPDATE
-                            ".$db_table['fleet']."
-                        SET
-                            fleet_cell_from='".$iflarr['fleet_cell_to']."',
-                            fleet_cell_to='".$mplanet_arr['planet_solsys_id']."',
-                            fleet_planet_from='".$iflarr['fleet_planet_to']."',
-                            fleet_planet_to='".$mplanet_arr['planet_id']."',
-                            fleet_action='".$action."',
-                            fleet_launchtime='".$launchtime."',
-                            fleet_landtime='".$landtime."'
-                        WHERE
-                            fleet_id='".$iflarr['fleet_id']."';");
-                    }
-
+	                    while ($iflarr = mysql_fetch_array($iflres))
+	                    {
+	                        $duration = min($time,$iflarr['fleet_landtime'])-$iflarr['fleet_launchtime'];
+	                        $launchtime = $time;
+	                        $landtime = $launchtime + $duration;
+													$action = substr($iflarr['fleet_action'],0,1)."c";
+	                        dbquery("
+	                        UPDATE
+	                            ".$db_table['fleet']."
+	                        SET
+	                            fleet_cell_from='".$iflarr['fleet_cell_to']."',
+	                            fleet_cell_to='".$mplanet_arr['planet_solsys_id']."',
+	                            fleet_planet_from='".$iflarr['fleet_planet_to']."',
+	                            fleet_planet_to='".$mplanet_arr['planet_id']."',
+	                            fleet_action='".$action."',
+	                            fleet_launchtime='".$launchtime."',
+	                            fleet_landtime='".$landtime."'
+	                        WHERE
+	                            fleet_id='".$iflarr['fleet_id']."';");
+	                    }
+	                    // TODO: Nachricht an Spieler über umgeleitete Flotten
+	                  }
 
                     // Planet übernehmen
                     invasion_planet($arr['fleet_planet_to'],$arr['fleet_user_id']);
@@ -172,17 +176,18 @@
                     send_msg($user_to_id,SHIP_WAR_MSG_CAT_ID,"Kolonie wurde invasiert",$text);
 
                     $return_fleet=false;
-                }
-                //Der User hat bereits die maximale Anzahl Planeten
-                else
-                {
+        }
+        //Der User hat bereits die maximale Anzahl Planeten
+        else
+        {
 					$text="[b]Planet:[/b] $coords_target\n[b]Besitzer:[/b] ".get_user_nick($user_to_id)."\n\nEine Flotte vom Planeten $coords_from versuchte, das Ziel zu übernehmen. Dieser Versuch schlug aber fehl und die Flotte machte sich auf den Rückweg!";
 					$text1="[b]Planet:[/b] $coords_target\n[b]Besitzer:[/b] ".get_user_nick($user_to_id)."\n\nEine Flotte vom Planeten $coords_from versuchte, das Ziel zu übernehmen. Dieser Versuch schlug aber fehl und die Flotte machte sich auf den Rückweg! Hinweis: Du hast bereits die maximale Anzahl Planeten erreicht!";
 
 					send_msg($arr['fleet_user_id'],SHIP_WAR_MSG_CAT_ID,"Invasionsversuch gescheitert",$text1);
 					send_msg($user_to_id,SHIP_WAR_MSG_CAT_ID,"Invasionsversuch gescheitert",$text);
-                }
+      	}
 			}
+			// Invasion klappte nicht
 			else
 			{
 				$text="[b]Planet:[/b] $coords_target\n[b]Besitzer:[/b] ".get_user_nick($user_to_id)."\n\nEine Flotte vom Planeten $coords_from versuchte, das Ziel zu übernehmen. Dieser Versuch schlug aber fehl und die Flotte machte sich auf den Rückweg!";
