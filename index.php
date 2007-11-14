@@ -451,7 +451,7 @@
 
 				// Create template object
 				$tpl = new Smarty;
-//				$tpl->template_dir = SMARTY_TEMPLATE_DIR;
+				$tpl->template_dir = SMARTY_TEMPLATE_DIR;
 				$tpl->compile_dir = SMARTY_COMPILE_DIR;
 
 				// Assign template variables
