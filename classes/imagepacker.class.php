@@ -28,24 +28,16 @@ class ImagePacker
     {
       if (is_dir($f) && file_exists($f."/imagepack.xml"))
       {
-      	$f1 = $f.".tar.gz";
-      	$f2 = $f.".zip";
+      	$f1 = $rdir."/".$this->trg."/".$f.".tar.gz";
+      	$f2 = $rdir."/".$this->trg."/".$f.".zip";
 
 	passthru("tar czvf ".$f1." ".$f."/");
         passthru("zip -r ".$f2." ".$f."/");
-      	array_push($files,$f1);
-      	array_push($files,$f2);
+	echo "Packed $f1 and $f2 <br>";
       }
     }
     closedir($d);		
-    chdir($rdir);
-    foreach ($files as $f)
-    {
-    	$count++;
-    	rename($this->src."/".$f, $this->trg."/".$f);
-    }
-		return $count;
-	}
+}
 }
 
 ?>
