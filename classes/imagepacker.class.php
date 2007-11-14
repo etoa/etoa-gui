@@ -38,7 +38,7 @@ class ImagePacker
 	
 	function pack()
 	{
-		$rdir = getcwd();
+		//$rdir = getcwd();
     chdir($this->src);
     echo "Chdir from $rdir to ".$this->src;
     $d = opendir(".");
