@@ -69,7 +69,7 @@ echo "<h1>Tools</h1>";
 			echo "<div style=\"border:1px solid #fff;background:#000;padding:3px;\">";
 			$cmd = "whois ".$_POST['hostname'];
 			$out = array();
-			$out = exec($cmd,$out);
+			exec($cmd,$out);
 			foreach ($out as $o)
 			{
 				echo "$o <br/>";
