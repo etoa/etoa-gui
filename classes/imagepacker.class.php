@@ -49,7 +49,7 @@ class ImagePacker
         passthru("zip -r ".$f2." ".$f."/");
       }
     }
-    $out = ob_get_contents()
+    $out = ob_get_contents();
   	ob_end_clean();  
     closedir($d);		
     return $out;
