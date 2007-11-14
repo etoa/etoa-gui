@@ -1,5 +1,5 @@
 <?PHP
-$dir="images/themes/Discovery/buildings";
+$dir="images/imagepacks/Discovery/buildings";
 $d=opendir("../".$dir);
 while ($f=readdir($d))
 {

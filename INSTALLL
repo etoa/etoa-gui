@@ -1,0 +1,26 @@
+== Files ==
+
+Copy all files to the gameservers root directory, e.g. /var/www/roundx.etoa.net/htdocs,
+or user svn checkout:
+
+	svn co http://dev.etoa.net/svn/game/trunk /var/www/roundx.etoa.net/htdocs
+	
+== Permissions ==
+
+Execute the following command:
+	
+	chmod 777 -R /var/www/roundx.etoa.net/htdocs/cache
+
+to allow writing to the cache directory
+
+== Config ==
+
+== Scripts ==
+
+== Cronjobs ==
+
+== Misc ==
+
+ * Go to Admin-Panel => Config => Imagepacks and generate the downloadable imagepack files
+ * Go to Admin-Panel => Config => Generate Universe to create the universe for this round
+
