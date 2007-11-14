@@ -65,24 +65,6 @@
 	}
 
 	//
-	// Entwicklung
-	//
-	elseif ($sub=="dev")
-	{
-		echo "<h2>Entwickler-Optionen</h2>";
-		echo "<i>Noch im Aufbau</i>";
-	}
-
-	//
-	// PHP
-	//
-	elseif ($sub=="php")
-	{
-		echo "<h2>PHP-Infos</h2>";
-		echo '<iframe src="phpinfo.php" style="width:850px;height:650px;" ></iframe>';
-	}
-
-	//
 	// Universum
 	//
 	elseif ($sub=="uni")

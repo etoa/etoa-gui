@@ -89,6 +89,8 @@
 	define('USER_BLOCKED_DEFAULT_TIME',3600*24*$conf['user_ban_min_length']['v']);	// Standardsperrzeit
 	define('USER_HMODE_DEFAULT_TIME',3600*24*$conf['user_umod_min_length']['v']);	// Standardurlaubszeit
 
+	define('ADMIN_FILESHARING_DIR',"cache/admin");
+
 	// XAJAX
 	include("inc/xajax_admin.inc.php");
 
@@ -205,21 +207,16 @@
 											{
 												if ($data['level']<=$_SESSION[SESSION_NAME]['group_level'])
 												{
-													/*
-													if ($data['level']==1) $style=" style=\"color:#0f0\"";
-													elseif ($data['level']==2) $style=" style=\"color:yellow\"";
-													elseif ($data['level']==3) $style=" style=\"color:orange\"";
-													else $style="";*/
 													if ($data['sub']!="")
 													{
-														echo "<a href=\"?page=".$data['page']."&amp;sub=".$data['sub']."\" class=\"menu1Item\" $style >";
+														echo "<a href=\"?page=".$data['page']."&amp;sub=".$data['sub']."\" class=\"menu1Item\" >";
 														if ($page==$data['page'] && $sub==$data['sub'])
 															echo "<b>&gt;</b> ";
 														echo "$title </a>";
 													}
 													else
 													{
-														echo "<a href=\"?page=".$data['page']."\" class=\"menu1Item\" $style>";
+														echo "<a href=\"?page=".$data['page']."\" class=\"menu1Item\" >";
 														if ($page==$data['page'] && $sub=="")
 															echo "<b>&gt;</b> ";
 														echo "$title</a>";
@@ -349,7 +346,7 @@
 								{
 									foreach ($item as $title=> $data)
 									{
-										if ($data['page']==$page && $data['sub']==$sub)
+										if ($title != "bar" && $data['page']==$page && $data['sub']==$sub)
 										{
 											$rank=$data['level'];
 											if ($data['level']<=$_SESSION[SESSION_NAME]['group_level'])

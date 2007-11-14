@@ -3,7 +3,7 @@
 	$topnav=array();
 	$navmenu=array();
 	
-	// Links des oberen Menüs
+	// Links des oberen MenÃ¼s
 	$topnav['Forum']['url']="http://www.etoa.ch/forum";
 	$topnav['Forum']['newwindow']=true;
 	$topnav['FAQ']['url']="http://www.etoa.ch/faq";
@@ -13,7 +13,7 @@
 	$topnav['Fehler melden']['url']="http://www.etoa.ch/bugs";
 	$topnav['Fehler melden']['newwindow']=true;
 
-	// Links des linken Menüs
+	// Links des linken MenÃ¼s
 	$navmenu['&Uuml;bersicht']['Startseite']['page']="home";
 	$navmenu['&Uuml;bersicht']['Startseite']['sub']="";
 	$navmenu['&Uuml;bersicht']['Startseite']['level']=0;
@@ -348,25 +348,29 @@
 	$navmenu['Konfiguration']['Runde & Universum']['sub']="uni";
 	$navmenu['Konfiguration']['Runde & Universum']['level']=3;
 
-	$navmenu['Konfiguration']['PHP-Infos']['page']="config";
-	$navmenu['Konfiguration']['PHP-Infos']['sub']="php";
-	$navmenu['Konfiguration']['PHP-Infos']['level']=3;
-
 	$navmenu['Konfiguration']['Bildpaket-Downloads']['page']="config";
 	$navmenu['Konfiguration']['Bildpaket-Downloads']['sub']="imagepacks";
 	$navmenu['Konfiguration']['Bildpaket-Downloads']['level']=3;
 
+
+	$navmenu['Tools']['PHP-Infos']['page']="tools";
+	$navmenu['Tools']['PHP-Infos']['sub']="php";
+	$navmenu['Tools']['PHP-Infos']['level']=3;
+
+	$navmenu['Tools']['IP-Resolver']['page']="tools";
+	$navmenu['Tools']['IP-Resolver']['sub']="ipresolver";
+	$navmenu['Tools']['IP-Resolver']['level']=1;
 	
-	$navmenu['Konfiguration']['Zeittest']['page']="time_tester";
-	$navmenu['Konfiguration']['Zeittest']['sub']="";
-	$navmenu['Konfiguration']['Zeittest']['level']=3;	
+	$navmenu['Tools']['Zeittest']['page']="tools";
+	$navmenu['Tools']['Zeittest']['sub']="timetester";
+	$navmenu['Tools']['Zeittest']['level']=3;	
 
-	$navmenu['Kampfsimulator']['Kampfsimulator']['page']="battle_simulation";
-	$navmenu['Kampfsimulator']['Kampfsimulator']['sub']="";
-	$navmenu['Kampfsimulator']['Kampfsimulator']['level']=3;
+	$navmenu['Tools']['Kampfsimulator']['page']="tools";
+	$navmenu['Tools']['Kampfsimulator']['sub']="battle_simulation";
+	$navmenu['Tools']['Kampfsimulator']['level']=2;
 
-	$navmenu['Filesharing']['Filesharing']['page']="filesharing";
-	$navmenu['Filesharing']['Filesharing']['sub']="";
-	$navmenu['Filesharing']['Filesharing']['level']=1;
+	$navmenu['Tools']['Filesharing']['page']="tools";
+	$navmenu['Tools']['Filesharing']['sub']="filesharing";
+	$navmenu['Tools']['Filesharing']['level']=1;
 
 ?>
