@@ -11,9 +11,9 @@ class ImagePacker
 	function check()
 	{
 		$check=true;
+		$rdir = getcwd();
     chdir($this->src);
     $d = opendir(".");
-    echo getcwd();
     while ($f = readdir($d))
     {
       if (is_dir($f) && file_exists($f."/imagepack.xml"))
@@ -32,32 +32,41 @@ class ImagePacker
 				}
       }
     }
-    closedir($d);			
+    closedir($d);
+    chdir($rdir);
     return $check;
 	}
 	
 	function pack()
 	{
-		//$rdir = getcwd();
-    chdir($this->src);
-    echo "Chdir from $rdir to ".$this->src;
-    $d = opendir(".");
-    //exec('find -name ".svn" -type d -print | xargs rm -rf {}');
-    ob_start();
+		$rdir = getcwd();
+		$src = $rdir."/".$this->src;
+		$trg = $rdir."/".$this->trg;
+		
+    chdir($trg);
+    $d = opendir($src);
     while ($f = readdir($d))
     {
-      if (is_dir($f) && file_exists($f."/imagepack.xml"))
+      if (is_dir($src."/".$f) && file_exists($src."/".$f."/imagepack.xml"))
       {
-      	$f1 = $rdir."/".$this->trg."/".$f.".tar.gz";
-      	$f2 = $rdir."/".$this->trg."/".$f.".zip";
-				passthru("tar czvf ".$f1." ".$f."/");
-        passthru("zip -r ".$f2." ".$f."/");
+				passthru("cp -r ".$src."/".$f." .");
+    		passthru('find '.$f.' -name ".svn" -type d -print | xargs rm -rf {}');
+
+      	$f1 = $f.".tar.gz";
+      	echo "Creating <b>$f1</b>...<br/>";
+      	$c1 = "tar czvf ".$f1." ".$f."/";
+				passthru($c1);
+
+      	$f2 = $f.".zip";
+      	echo "Creating <b>$f2</b>...<br/>";
+      	$c2 = "zip -r ".$f2." ".$f."/";
+        passthru($c2);
+        
+        passthru("rm -rf $f");
       }
     }
-    $out = ob_get_contents();
-  	ob_end_clean();  
     closedir($d);		
-    return $out;
+    chdir($rdir);
 	}
 }
 

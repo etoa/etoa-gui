@@ -49,17 +49,17 @@
 		if (isset($_GET['gen']))
 		{
 			echo "Erstelle Pakate...<br/><div style=\"border:1px solid #fff;\">";
-			$out = $pkg->pack();
+			$pkg->pack();
 			echo "</div><br/>";
 		}
 
 		if ($pkg->check())
 		{
-		 echo "Bildpakete sind vorhanden!";
+		 echo "<div style=\"color:#0f0\">Bildpakete sind vorhanden!</div>";
 		}
 		else
 		{
-		 echo "Bildpakete sind NICHT vollständig vorhanden!";
+		 echo "<br/><div style=\"color:#f00\">Bildpakete sind NICHT vollständig vorhanden!</div>";
 		}
 		echo "<br/><br/><a href=\"?page=$page&amp;sub=$sub&amp;gen=1\">Neu erstellen</a>";
 	}
