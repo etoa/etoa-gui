@@ -160,7 +160,7 @@
 	// Pfade
 	define("SMILIE_DIR","images/smilies");								// Smilies
 	define("IMAGEPACK_DIRECTORY","images/imagepacks");				// Bilder
-	define("IMAGEPACK_DOWNLOAD_DIRECTORY","images/imagepacks_download");				// Bilder
+	define("IMAGEPACK_DOWNLOAD_DIRECTORY","cache/imagepacks");				// Bilder
 	define("HELPCENTER_PATH","http://www.etoa.net/faq");	// Helpcenter Link
 
 	// Ordner
@@ -440,8 +440,8 @@
   /* Allianzboard */
   /****************/
   
-	define("BOARD_BULLET_DIR","images/allianceboard/bullets");		// Verzeichnis der Forenicons
-	define("BOARD_AVATAR_DIR","images/allianceboard/avatars");		// Verzeichnis der Avatare
+	define("BOARD_BULLET_DIR","images/boardbullets");		// Verzeichnis der Forenicons
+	define("BOARD_AVATAR_DIR","cache/avatars");		// Verzeichnis der Avatare
 	define("BOARD_DEFAULT_IMAGE","default.png");									// Standard Foren-Icon
 	define("BOARD_ADMIN_RANK",4);																	// ???
 	define("BOARD_TOPIC_TABLE","allianceboard_topics");						// Tabelle der Forentopics
@@ -454,7 +454,7 @@
 		define("GD_VERSION",2);	
 	
 	// Profilbild
-	define("PROFILE_IMG_DIR","images/userprofiles");							// Verzeichnis der User-Profilbilder
+	define("PROFILE_IMG_DIR","cache/userprofiles");							// Verzeichnis der User-Profilbilder
 	define("PROFILE_IMG_WIDTH",640);															// Profilbild-Breite
 	define("PROFILE_IMG_HEIGHT",480);															// Profilbild-Höhe
 	define("PROFILE_MAX_IMG_WIDTH",1280);													// Max. Profilbild-Breite
@@ -462,7 +462,7 @@
 	define("PROFILE_IMG_MAX_SIZE",2000000);												// Profilbild-Grösse in Byte
 	
 	// Allianzbild
-	define("ALLIANCE_IMG_DIR","images/allianceprofiles");					// Verzeichnis der Allianz-Bilder
+	define("ALLIANCE_IMG_DIR","cache/allianceprofiles");					// Verzeichnis der Allianz-Bilder
 	define("ALLIANCE_IMG_WIDTH",800);															// Allianzbild-Breite
 	define("ALLIANCE_IMG_HEIGHT",600);														// Allianzbild-Höhe
 	define("ALLIANCE_IMG_MAX_WIDTH",1280);												// Max. Allianzbild-Breite
