@@ -451,8 +451,9 @@
 
 				// Create template object
 				$tpl = new Smarty;
-				$tpl->template_dir = SMARTY_TEMPLATE_DIR;
-				
+//				$tpl->template_dir = SMARTY_TEMPLATE_DIR;
+				$tpl->compile_dir = SMARTY_COMPILE_DIR;
+
 				// Assign template variables
 				$tpl->assign("messages",NEW_MESSAGES);
 				$tpl->assign("blinkMessages",$s['user']['msg_blink']);
@@ -494,9 +495,8 @@
 				else
 					$tpl->assign("noteBox",false);
 					
-
 				// Display header		
-				$tpl->display(CSS_STYLE."/header.tpl");
+				$tpl->display(getcwd()."/".CSS_STYLE."/header.tpl");
 				
 				// Include content
 				require("inc/content.inc.php");
@@ -506,7 +506,7 @@
 				$tpl->assign("renderTime",round($rtime,3));
 				
 				// Display footer
-				$tpl->display(CSS_STYLE."/footer.tpl");						
+				$tpl->display(getcwd()."/".CSS_STYLE."/footer.tpl");						
 			}
 			$_SESSION['lastpage']=$page;
 			$_SESSION[ROUNDID] = $s;
