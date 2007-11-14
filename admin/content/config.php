@@ -44,6 +44,7 @@
 		echo "<h2>Downloadbare Bildpakete erzeugen</h2>";
 
 		require("../classes/imagepacker.class.php");
+		$pkg = new ImagePacker("../images/imagepacks","../cache/imagepacks");
 
 		if (isset($_GET['gen']))
 		{
@@ -52,7 +53,6 @@
 			echo "</div><br/>";
 		}
 
-		$pkg = new ImagePacker("../images/imagepacks","../cache/imagepacks");
 		if ($pkg->check())
 		{
 		 echo "Bildpakete sind vorhanden!";
