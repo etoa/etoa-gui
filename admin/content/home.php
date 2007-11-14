@@ -398,7 +398,7 @@
 		require("../classes/imagepacker.class.php");
 		echo "Bildpakete";
 		$pkg = new ImagePacker("../images/imagepacks","../cache/imagepacks");
-		//echo $pkg->pack();
+		echo $pkg->pack();
 		echo "Pakcen beendet";
 			
 }

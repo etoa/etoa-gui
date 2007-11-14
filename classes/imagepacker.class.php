@@ -30,8 +30,9 @@ class ImagePacker
       {
       	$f1 = $f.".tar.gz";
       	$f2 = $f.".zip";
-        exec("tar czvf ".$f1." ".$f."/");
-        exec("zip -r ".$f2." ".$f."/");
+
+	passthru("tar czvf ".$f1." ".$f."/");
+        passthru("zip -r ".$f2." ".$f."/");
       	array_push($files,$f1);
       	array_push($files,$f2);
       }
