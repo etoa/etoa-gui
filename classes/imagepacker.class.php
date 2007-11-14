@@ -22,9 +22,15 @@ class ImagePacker
       	$f1 = $rdir."/".$this->trg."/".$f.".tar.gz";
       	$f2 = $rdir."/".$this->trg."/".$f.".zip";
 				if (!file_exists($f1))
+				{
+					echo "$f1 fehlt!<br/>";
 					$check=false;
+				}
 				if (!file_exists($f2))
+				{
+					echo "$f2 fehlt!<br/>";
 					$check=false;
+				}
       }
     }
     closedir($d);			
