@@ -42,6 +42,7 @@ class ImagePacker
 		$rdir = getcwd();
 		
     chdir($this->src);
+    echo "Chdir from $rdir to ".$this->src;
     $d = opendir(".");
     //exec('find -name ".svn" -type d -print | xargs rm -rf {}');
     ob_start();
