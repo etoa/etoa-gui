@@ -395,7 +395,8 @@
 		echo "><a href=\"?page=user&amp;sub=observed\">".$arr[0]." User stehen unter Beobachtung</a></td></tr>";
 		infobox_end(1);		
 		
-		
+		$pkg = new ImagePacker("../images/imagepacks","../cache/imagepacks");
+		echo $pkg->pack();
 		
 }
 ?>
