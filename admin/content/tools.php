@@ -68,10 +68,8 @@ echo "<h1>Tools</h1>";
 		{
 			echo "<div style=\"border:1px solid #fff;backgroud:#000;\">";
 			$cmd = "whois ".$_POST['hostname'];
-			ob_start();
-			passthru($cmd);
-			echo nl2br(ob_get_contents());
-			ob_end_clean();
+			$out = system($cmd);
+			echo nl2br($out);
 			echo "</div>";
 		}		
 		echo "<h2>IP-Resolver</h2>";
