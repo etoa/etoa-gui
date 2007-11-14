@@ -144,6 +144,7 @@
 	
 	// Smarty Path
 	define('SMARTY_DIR', "libs/smarty/");
+	define('SMARTY_TEMPLATE_DIR', "cache/smarty/");
 
 
   /***********************************/

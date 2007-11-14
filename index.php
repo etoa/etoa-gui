@@ -451,7 +451,7 @@
 
 				// Create template object
 				$tpl = new Smarty;
-				$tpl->template_dir = ".";
+				$tpl->template_dir = SMARTY_TEMPLATE_DIR;
 				
 				// Assign template variables
 				$tpl->assign("messages",NEW_MESSAGES);
