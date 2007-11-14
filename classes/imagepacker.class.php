@@ -11,8 +11,9 @@ class ImagePacker
 	function check()
 	{
 		$check=true;
-    chdir($rdir."/".$this->src);
+    chdir($this->src);
     $d = opendir(".");
+    echo getcwd();
     while ($f = readdir($d))
     {
       if (is_dir($f) && file_exists($f."/imagepack.xml"))
@@ -38,7 +39,7 @@ class ImagePacker
 	function pack()
 	{
 		$rdir = getcwd();
-    chdir($rdir."/".$this->src);
+    chdir($this->src);
     echo "Chdir from $rdir to ".$this->src;
     $d = opendir(".");
     //exec('find -name ".svn" -type d -print | xargs rm -rf {}');
