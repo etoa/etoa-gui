@@ -69,7 +69,7 @@ echo "<h1>Tools</h1>";
 			echo "<div style=\"border:1px solid #fff;background:#000;padding:3px;\">";
 			$cmd = "whois ".$_POST['hostname'];
 			$out = system($cmd);
-			echo text2html($out);
+			echo nl2br($out);
 			echo "</div>";
 		}		
 		echo "<h2>IP-Resolver</h2>";
