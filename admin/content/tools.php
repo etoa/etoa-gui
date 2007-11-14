@@ -66,10 +66,10 @@ echo "<h1>Tools</h1>";
 		}
 		if (isset($_POST['whois']))
 		{
-			echo "<div style=\"border:1px solid #fff;backgroud:#000;\">";
+			echo "<div style=\"border:1px solid #fff;background:#000;padding:3px;\">";
 			$cmd = "whois ".$_POST['hostname'];
 			$out = system($cmd);
-			echo nl2br($out);
+			echo text2html($out);
 			echo "</div>";
 		}		
 		echo "<h2>IP-Resolver</h2>";
