@@ -42,21 +42,26 @@
 	elseif ($sub=="imagepacks")
 	{
 		echo "<h2>Downloadbare Bildpakete erzeugen</h2>";
-		chdir("../".IMAGEPACK_DIRECTORY);
-		$dir = getcwd();
-		$d = opendir($dir);
-		while ($f = readdir($d))
-		{
-			if (is_dir($dir."/".$f) && file_exists($dir."/".$f."/imagepack.xml"))
-			{
-				echo "Zipping $f...<br/>";
-				passthru("tar cvf $f.tar $f",$out);
-				passthru("gzip $f.tar",$out);
-			}
-		}
-		closedir($d);
-		
 
+		require("../classes/imagepacker.class.php");
+
+		if (isset($_GET['gen']))
+		{
+			echo "Erstelle Pakate...<br/><div style=\"border:1px solid #fff;\">";
+			$out = $pkg->pack();
+			echo "</div><br/>";
+		}
+
+		$pkg = new ImagePacker("../images/imagepacks","../cache/imagepacks");
+		if ($pkg->check())
+		{
+		 echo "Bildpakete sind vorhanden!";
+		}
+		else
+		{
+		 echo "Bildpakete sind NICHT vollständig vorhanden!";
+		}
+		echo "<br/><br/><a href=\"?page=$page&amp;sub=$sub&amp;gen=1\">Neu erstellen</a>";
 	}
 
 	//
