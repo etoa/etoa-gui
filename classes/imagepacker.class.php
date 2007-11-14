@@ -11,9 +11,7 @@ class ImagePacker
 	function check()
 	{
 		$check=true;
-		$rdir = getcwd();
-		
-    chdir($this->src);
+    chdir($rdir."/".$this->src);
     $d = opendir(".");
     while ($f = readdir($d))
     {
@@ -40,8 +38,7 @@ class ImagePacker
 	function pack()
 	{
 		$rdir = getcwd();
-		
-    chdir($this->src);
+    chdir($rdir."/".$this->src);
     echo "Chdir from $rdir to ".$this->src;
     $d = opendir(".");
     //exec('find -name ".svn" -type d -print | xargs rm -rf {}');
