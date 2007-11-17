@@ -3,7 +3,7 @@
 	* Fleet-Action: Attack
 	*/
 
-	// Calc battle
+	// Calc battle -> Geändert von Lambo :)
 	require_once("inc/battle.inc.php");
 	$binfo = battle($arr['fleet_id'],$arr['fleet_planet_to']);
 
