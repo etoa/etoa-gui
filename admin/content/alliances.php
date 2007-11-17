@@ -27,7 +27,7 @@
 	//
 
 	//
-	// Bilder prüfen test by lambo
+	// Bilder prüfen test by lambo test by nicu
 	//
 	if ($sub=="imagecheck")
 	{
