@@ -27,7 +27,7 @@
 	//
 
 	//
-	// Bilder prüfen
+	// Bilder prüfen test by lambo
 	//
 	if ($sub=="imagecheck")
 	{
