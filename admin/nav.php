@@ -92,10 +92,6 @@
 	$navmenu['Spieler']['Tickets']['sub']="tickets";
 	$navmenu['Spieler']['Tickets']['level']=1;
 
-/*	$navmenu['Spieler']['User-History']['page']="user";
-	$navmenu['Spieler']['User-History']['sub']="history";
-	$navmenu['Spieler']['User-History']['level']=1;*/
-
 	$navmenu['Spieler']['bar'][0] = true;
 
 	$navmenu['Spieler']['Rassen']['page']="user";
@@ -323,10 +319,6 @@
 	$navmenu['Datenbank']['Backups']['page']="db";
 	$navmenu['Datenbank']['Backups']['sub']="backup";
 	$navmenu['Datenbank']['Backups']['level']=2;
-
-	$navmenu['Datenbank']['Backup-Schutz']['page']="db";
-	$navmenu['Datenbank']['Backup-Schutz']['sub']="htaccess";
-	$navmenu['Datenbank']['Backup-Schutz']['level']=2;
 
 	$navmenu['Datenbank']['Clean-Up']['page']="db";
 	$navmenu['Datenbank']['Clean-Up']['sub']="cleanup";

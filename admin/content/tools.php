@@ -146,7 +146,7 @@ echo "<h1>Tools</h1>";
 			$f = base64_decode($_GET['file']);
 			if (md5($f) == $_GET['h'])
 			{
-		  	unlink($root."/".$f);
+		  	@unlink($root."/".$f);
 		  	echo "Datei wurde gelöscht!<br/><br/>";
 			}
 			else
@@ -168,9 +168,9 @@ echo "<h1>Tools</h1>";
 			while ($f = readdir($d))
 			{
 				$file = $root."/".$f;
-				if (is_file($file))
+				if (is_file($file) && $file==".htaccess")
 				{
-					$dlink = "dl=".base64_encode($file)."&h=".md5($file);
+					$dlink = "path=".base64_encode($file)."&hash=".md5($file);
 					$link = "file=".base64_encode($f)."&h=".md5($f);
 					echo "<tr>
 						<td><a href=\"dl.php?".$dlink."\">$f</a></td>

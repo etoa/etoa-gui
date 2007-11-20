@@ -149,14 +149,6 @@
 	}
 
 	//
-	// Passwort-Schutz
-	//
-	elseif ($sub=="htaccess")
-	{
-		htaccess_tool(BACKUP_HTACCESS_NAME,BACKUP_HTACCESS_USER,getcwd()."/../backup");
-	}
-
-	//
 	// Datenbanktabellen optimieren
 	//
 	elseif ($sub=="optimize")
@@ -210,75 +202,7 @@
 	//
 	elseif ($sub=="backup")
 	{
-		echo "<h2>Backups</h2>";
-		
-		// Alte Backups löschen
-		if ($_GET['action']=="backupremove")
-		{
-			$days = $conf['backup']['p1']*3600*24;
-			$num = remove_old_backups(true);
-			echo "$num Backups die &auml;lter als ".$conf['backup']['p1']." Tage waren wurden gelöscht!<br/><br/>";
-		}
-		
-		// Backup erstellen
-		elseif ($_GET['action']=="backupcreate")
-		{
-			$result = shell_exec("../scripts/backup.php");
-			if ($result=="")
-				echo "Das Backup wurde erstellt!<br/><br/>";
-			else
-				cms_err_msg("Beim Ausf&uuml;hren des Backup-Befehls trat ein Fehler auf! $result");
-		}
-
-		// Backup wiederherstellen
-		elseif ($_GET['action']=="backuprestore" && $_GET['date']!="")
-		{
-			$result = shell_exec("../scripts/backup.php"); // Sicherungskopie anlegen
-			if ($result=="")
-			{
-				$result = shell_exec("../scripts/restore.php ".$_GET['date']);
-				if ($result=="")
-					echo "Das Backup ".$_GET['date']." wurde wiederhergestellt und es wurde eine Sicherungskopie der vorherigen Daten angelegt!<br/><br/>";
-				else
-					cms_err_msg("Beim Ausf&uuml;hren des Restore-Befehls trat ein Fehler auf! $result");
-			}
-			else
-				cms_err_msg("Beim Ausf&uuml;hren des Backup-Befehls trat ein Fehler auf! $result");
-		}
-
-		echo "<input type=\"button\" value=\"Backup erstellen\" onclick=\"document.location='?page=$page&sub=backup&amp;action=backupcreate'\" /> 
-		<input type=\"button\" value=\"Alte Backups (".$conf['backup']['p1']." Tage) löschen\" onclick=\"document.location='?page=$page&amp;sub=backup&amp;action=backupremove'\" /><br/><br/>";
-		echo "Hier ist eine Liste der downloadbaren Backups. Diese sollten durch einen Cron-Jon alle paar Stunden automatisch erstellt werden. Du benötigst eine spezielles Backup-Passwort um auf diese Dateien zuzugreifen:<br/><br/>";
-		if ($d = @opendir(BACKUP_DIR))
-		{
-			$cnt=0;
-			echo "<table class=\"tb\"><tr><th>Name</th><th>Grösse</th><th>Optionen</th></tr>";
-			$bfiles=array();
-			while ($f = readdir($d))
-			{
-				if (is_file(BACKUP_DIR."/".$f) && stristr($f,".sql.gz"))
-				{
-					array_push($bfiles,$f);
-				}
-			}
-			rsort($bfiles);
-
-			foreach ($bfiles as $f)
-			{
-				$sr = round(filesize(BACKUP_DIR."/".$f)/1024/1024,2);
-				$date=substr($f,strpos($f,"-")+1,16);
-				echo "<tr><td><a href=\"".BACKUP_DIR."/$f\">$f</a></td>";
-				echo "<td>".$sr." MB</td>";
-				echo "<td><a href=\"?page=$page&amp;sub=backup&amp;action=backuprestore&amp;date=$date\" onclick=\"return confirm('Soll die Datenbank mit den im Backup $date gespeicherten Daten &uuml;berschrieben werden?');\">Wiederherstellen</a></td></tr>";
-				$cnt++;
-			}
-			echo "</table>";
-			closedir($d);
-			if ($cnt==0)
-				cms_err_msg("Es sind noch keine Dateien vorhanden!");
-		}
-		else
-			cms_err_msg("Das Verzeichnis ".BACKUP_DIR." wurde nicht gefunden!");
+		require("db/backup.inc.php");
 	}
 
 	//

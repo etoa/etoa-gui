@@ -41,24 +41,22 @@
 	}
 
 	// Initialisieren
-	if (include(GAME_ROOT_DIR."/functions.php"))
+	if (require(GAME_ROOT_DIR."/functions.php"))
 	{	
-		include(GAME_ROOT_DIR."/conf.inc.php");               
+		require(GAME_ROOT_DIR."/../conf.inc.php");               
 		dbconnect(); 	
 		$conf = get_all_config();
-		include(GAME_ROOT_DIR."/def.inc.php");
+		require(GAME_ROOT_DIR."/def.inc.php");
 	
-		define(BACKUP_PATH,GAME_ROOT_DIR."/backup");
-
 		if ($_SERVER['argv'][1]!="")
 		{
-			$file = BACKUP_PATH."/".$db_access['db']."-".$_SERVER['argv'][1];
+			$file = BACKUP_DIR."/".DB_DATABASE."-".$_SERVER['argv'][1];
 			if (file_exists($file.".sql.gz"))
 			{
 				$result = shell_exec("gunzip ".$file.".sql.gz");
 				if ($result=="")
 				{
-					$result = shell_exec("mysql -u".$db_access['adminuser']." -p".$db_access['adminpw']." -h".$db_access['server']." ".$db_access['db']." < ".$file.".sql");
+					$result = shell_exec("mysql -u".DB_USER." -p".DB_PASSWORD." -h".DB_SERVER." ".DB_DATABASE." < ".$file.".sql");
 					if ($result!="")
 						echo "Error while restoring backup: $result\n";
 					shell_exec("gzip ".$file.".sql");
