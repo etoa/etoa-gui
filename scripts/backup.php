@@ -56,7 +56,7 @@
 		chdir(GAME_ROOT_DIR);
 
 	 	// Alte Backups löschen
-		passthru("find ".BACKUP_DIR." -name *.sql.gz -mtime +30 -exec rm {} \;");
+		passthru("find ".BACKUP_DIR." -name *.sql.gz -mtime +".$conf['backup']['p1']." -exec rm {} \;");
 
 		$file = BACKUP_DIR."/".DB_DATABASE."-".date("Y-m-d-H-i");
 		$file_wo_path = DB_DATABASE."-".date("Y-m-d-H-i");
