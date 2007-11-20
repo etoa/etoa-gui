@@ -20,7 +20,7 @@
 		else
 			$grd = substr($_SERVER["SCRIPT_FILENAME"],0,$c-1);
 	}
-	define("GAME_ROOT_DIR",$grd."/htdocs");
+	define("GAME_ROOT_DIR",$grd);
 
 	// Initialisieren
 	if (include(GAME_ROOT_DIR."/functions.php"))
