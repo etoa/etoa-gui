@@ -67,11 +67,8 @@
 	define('TIMEOUT',$conf['admin_timeout']['v']);
 
 	define('HTPASSWD_COMMAND',$conf['htaccess']['v']);
-	define('HTACCESS_FILE',$conf['htaccess']['p1']);
 	define('HTPASSWD_FILE',$conf['htaccess']['p2']);
-
-	define('ADMIN_HTACCESS_NAME',$conf['admin_htaccess']['v']);
-	define('ADMIN_HTACCESS_USER',$conf['admin_htaccess']['p1']);
+	define('HTPASSWD_USER',$conf['admin_htaccess']['p1']);
 
 	// User-Farben
 	define('USER_COLOR_DEFAULT',$conf['color_default']['v']);

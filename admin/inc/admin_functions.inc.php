@@ -261,6 +261,75 @@
 	}
 
 
+	/**
+	* Displays a tool for securing a directory with a
+	* .tpasswd and .htaccess file
+	*
+	* @param string Default AuthName
+	* @param string Default user nick
+	* @param string Default directory to store .htpasswd file
+	*/
+	function htpasswd_tool($user,$file)
+	{
+		$file = getcwd()."/../".$file;
+
+		echo "<h2>Passwort-Schutz für Admin-Modus</h2>";
+		if ($_POST['htaccess_submit']!="")
+		{
+			if ($_POST['htaccess_user']!="" && $_POST['htaccess_password']!="")
+			{
+				$cmd = HTPASSWD_COMMAND." -bc ".$file." ".$_POST['htaccess_user']." ".$_POST['htaccess_password'];
+				passthru($cmd);
+				echo "Passwortdatei erstellt!<br/><br/>";
+			}
+			else
+			{
+				echo "<b>Fehler!</b> Eines oder mehrere Felder sind nicht ausgefüllt!<br/><br/>";
+			}
+		}
+
+		$active=false;
+		
+		if (file_exists($file))
+		{
+			$f = fopen($file,"r");
+			while ($t=fgets($f,500))
+			{
+				$a = explode(":",$t);
+				$user=$a[0];
+				$pw=$a[1];
+			}
+			fclose($f);
+		}
+		else
+			echo "<b>Fehler:</b>Keine Passwortdatei gefunden ($file)!<br/><br/>";
+
+		echo "<form action=\"\" method=\"post\">";
+		echo "<table class=\"tb\">";
+		echo "<tr><th>User:</th><td><input type=\"text\" value=\"".$user."\" name=\"htaccess_user\" size=\"40\" /></td></tr>";
+		echo "<tr><th>Neues Passwort:</th><td><input type=\"text\" value=\"\" name=\"htaccess_password\" size=\"40\" /></td></tr>";
+		echo "</table><br/><br/><input type=\"submit\" value=\"Speichern\" name=\"htaccess_submit\" />";
+		if ($active)
+		{
+			echo " <input type=\"submit\" value=\"Deaktivieren\" name=\"htaccess_remove\" />";
+		}
+		echo "</form>";
+	}
+	
+	function htpasswd_check($user,$file)
+	{
+		$file = getcwd()."/../".$file;
+		if (!file_exists($file))
+		{
+			passthru(HTPASSWD_COMMAND." -bc ".$file." $user \"\"");
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+	}	
+
 	function display_field($type,$confname,$field)
 	{
 		global $conf;

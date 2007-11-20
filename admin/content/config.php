@@ -33,7 +33,7 @@
 	//
 	if ($sub=="htaccess")
 	{
-		htaccess_tool(ADMIN_HTACCESS_NAME,ADMIN_HTACCESS_USER,getcwd());
+		htpasswd_tool(HTPASSWD_USER,HTPASSWD_FILE);
 	}
 
 	//
