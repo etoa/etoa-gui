@@ -276,11 +276,6 @@
 		<title>
 			<?PHP 
 				echo $conf['game_name']['v']." ".$conf['game_name']['p1'];
-				if (file_exists("svnversion"))
-				{
-					echo " | Rev #";
-					readfile("svnversion");
-				}
 			?>
 		</title>
 		<link rel="stylesheet" href="general.css" type="text/css" />
