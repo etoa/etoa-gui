@@ -597,7 +597,7 @@
 		$tr = array();
 		$ts = array();
 		$tn = array();
-		$res=dbquery("SHOW TABLE STATUS FROM ".$db_access['db'] .";");
+		$res=dbquery("SHOW TABLE STATUS FROM ". DB_DATABASE.";");
 		while ($arr=mysql_fetch_array($res))
 		{
 			$rows+=$arr['Rows'];
@@ -607,7 +607,7 @@
 			$tn[$arr['Name']]=$arr['Name'];
 		}          
 		echo '<div style="float:right;"><h2>Datenbankstatistiken</h2>';		
-		echo "Die Datenbank <b>".$db_access['db']."</b> hat <b>".nf($rows)."</b> Zeilen<br/>und eine 
+		echo "Die Datenbank <b>".DB_DATABASE."</b> hat <b>".nf($rows)."</b> Zeilen<br/>und eine 
 		Gesamtgrösse von <b>".byte_format($datal)."</b><br/><br/>";
 		echo '<table style="width:300px;" class="tb">';
 		echo '<tr><th colspan="3">Datenbanktabellen</th></tr>';

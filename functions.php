@@ -2718,36 +2718,6 @@
 		return $string;
 	}
 
-	function remove_old_backups($manual=false)
-	{
-		global $conf;
-		$backup_dir = "backup";
-		$days = $conf['backup']['p1']*3600*24;
-
-		if ($days<1) $days = 3600*24;
-		$d = opendir($backup_dir);
-		$cnt=0;
-		$time=time();
-
-		while ($f = readdir($d))
-		{
-			if (is_file($backup_dir."/".$f) && stristr($f,".sql.gz"))
-			{
-			 	if (filectime($backup_dir."/".$f) < $time-$days )
-			 	{
-			 		unlink($backup_dir."/".$f);
-			 		$cnt++;
-			 	}
-			}
-		}
-		closedir($d);
-		if ($manual)
-			add_log("4","Alte Backups manuell überprüft. Es wurden $cnt Backups gelöscht!",time());
-		else
-			add_log("4","Alte Backups überprüft. Es wurden $cnt Backups gelöscht!",time());
-		return $cnt;
-	}
-
 	function print_fs_error_msg($string,$title="Fehler!")
 	{
 		echo "<table style=\"width:80%;margin:10px auto;border:1px solid #fff;border-collapse:collapse\">";

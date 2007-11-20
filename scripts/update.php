@@ -39,17 +39,6 @@
 		remove_deleted_users();
 		$log = "Inaktive gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
 
-	 	// Alte Backups löschen
-		$tmr = timerStart();
-		remove_old_backups();
-		$log.= "Alte Backups gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
-
-		// Felder-Update & Update der Lagerkapazität
-		//$tmr = timerStart();
-		//fieldupdate();
-		//storeupdate();
-		//$log.= "Felder und Speicher korrigiert.\nDauer: ".timerStop($tmr)." sec\n\n";
-
 		// Alte Logs löschen
 		$tmr = timerStart();
 		remove_logs();
