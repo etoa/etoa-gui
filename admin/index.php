@@ -73,10 +73,6 @@
 	define('ADMIN_HTACCESS_NAME',$conf['admin_htaccess']['v']);
 	define('ADMIN_HTACCESS_USER',$conf['admin_htaccess']['p1']);
 
-	define('BACKUP_HTACCESS_NAME',$conf['backup_htaccess']['v']);
-	define('BACKUP_HTACCESS_USER',$conf['backup_htaccess']['p1']);
-	define('BACKUP_DIR',$conf['backup']['v']);	
-
 	// User-Farben
 	define('USER_COLOR_DEFAULT',$conf['color_default']['v']);
 	define('USER_COLOR_BANNED',$conf['color_banned']['v']);

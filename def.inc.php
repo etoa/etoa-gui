@@ -138,6 +138,9 @@
 	// Char Url
 	define('CHAT_URL',"http://www.etoa.ch/chat");
 
+	// Backup-Dir
+	define('BACKUP_DIR',$conf['backup']['v']);	
+
   /***********************************/
   /* Libraries                       */
   /***********************************/
