@@ -315,7 +315,7 @@
 			if ($conf['offline']['v']==1 && !in_array($_SERVER['REMOTE_ADDR'],$allowed_ips))
 			{
 				echo "<h1>Spiel offline</h1>
-				Das Spiel ist momentan offline! Schaue sp&auml;ter nochmals vorbei!<br/><br/>
+				Das Spiel ist aufgrund von Wartungsarbeiten momentan offline! Schaue sp&auml;ter nochmals vorbei!<br/><br/>
 				<a href=\"".LOGINSERVER_URL."\">Hauptseite</a>";
 				session_destroy();
 				$s=Null;
