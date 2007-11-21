@@ -7,7 +7,7 @@
 
 	session_start();
 	include("../functions.php");
-	include("../conf.inc.php");
+	include("../../conf.inc.php");
 	dbconnect();
 
 	define(DETAIL_LIMIT,48);	// Maximale Anzahl Datensätze
