@@ -28,7 +28,7 @@
 
 
 	echo "<h1>Statistiken</h1>";
-	include("../out/gamestats.html");
+	include("../cache/out/gamestats.html");
 	
 	
 

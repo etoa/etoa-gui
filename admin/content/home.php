@@ -33,7 +33,7 @@
 	{
 		echo "<h1>Statistikgrafiken</h1>";
 		echo "<h2>Online / Registrierte User</h2>";
-		echo "<img src=\"../out/userstats.png\" alt=\"Userstats\" />";
+		echo "<img src=\"../cache/out/userstats.png\" alt=\"Userstats\" />";
 	}
 	
 	//
