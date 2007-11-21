@@ -1,6 +1,6 @@
 <?PHP
 
-	define ('GAMESTATS_FILE',"out/gamestats.html");
+	define ('GAMESTATS_FILE',"cache/out/gamestats.html");
 	define ('GAMESTATS_ROW_LIMIT',15);
 	
 	/*********************
