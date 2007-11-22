@@ -2908,9 +2908,9 @@ die Spielleitung";
 	function delete_user($user_id,$self=false,$from="")
 	{
 		global $db_table;
-     	$conf = get_all_config();
-      	define(FLEET_ACTION_RESS,$conf['market_ship_action_ress']['v']); // Ressourcen
-      	define(FLEET_ACTION_SHIP,$conf['market_ship_action_ship']['v']); // Schiffe
+  	$conf = get_all_config();
+   	define(FLEET_ACTION_RESS,$conf['market_ship_action_ress']['v']); // Ressourcen
+   	define(FLEET_ACTION_SHIP,$conf['market_ship_action_ship']['v']); // Schiffe
 
 		$res=dbquery("
 			SELECT
@@ -2927,104 +2927,7 @@ die Spielleitung";
 		if (mysql_num_rows($res)>0)
 		{
 			$arr=mysql_fetch_array($res);
-
-			$lstr="User-ID: ".$user_id."\nUser-Nick: ".$arr['user_nick']."\nUser-Name: ".$arr['user_name']."\nUser-Email. ".$arr['user_email']."\nAllianz-ID: ".$arr['user_alliance_id']."\nUser-Punkte: ".nf($arr['user_points'])."\n";
-
-
-			//
-			//Tex für Log schreiben..
-			//
-
-			//Gebäude
-			$bres = dbquery("
-				SELECT
-					building_name,
-					buildlist_current_level,
-					buildlist_planet_id
-				FROM
-					buildings
-					INNER JOIN
-					buildlist
-					ON building_id = buildlist_building_id
-					AND buildlist_user_id='".$user_id."'
-				ORDER BY
-					buildlist_planet_id;
-			");
-			if (mysql_num_rows($bres)>0)
-			{
-				$lstr.="\n[B]Gebäude:[/B]\n";
-				while ($barr=mysql_fetch_array($bres))
-				{
-					$lstr.="Planet: ".$barr['buildlist_planet_id'].", ".$barr['building_name']." (".$barr['buildlist_current_level'].")\n";
-				}
-			}
-			//Technologien
-			$tres = dbquery("
-				SELECT
-					tech_name,
-					techlist_current_level
-				FROM
-					techlist
-				INNER JOIN
-					technologies
-					ON techlist_tech_id = tech_id
-					AND techlist_user_id='".$user_id."';
-			");
-			if (mysql_num_rows($tres)>0)
-			{
-				$lstr.="\n[B]Technologien:[/B]\n";
-				while ($tarr=mysql_fetch_array($tres))
-				{
-					$lstr.=$tarr['tech_name']." (".$tarr['techlist_current_level'].")\n";
-				}
-			}
-			//Schiffe
-			$sres = dbquery("
-				SELECT
-					ship_name,
-					shiplist_count,
-					shiplist_planet_id
-				FROM
-					shiplist
-					INNER JOIN
-					ships
-					ON shiplist_ship_id = ship_id
-					AND shiplist_user_id='".$user_id."'
-				ORDER BY
-					shiplist_planet_id;
-			");
-			if (mysql_num_rows($sres)>0)
-			{
-				$lstr.="\n[B]Schiffe:[/B]\n";
-				while ($sarr=mysql_fetch_array($sres))
-				{
-					$lstr.="Planet: ".$sarr['shiplist_planet_id'].", ".$sarr['ship_name']." (".nf($sarr['shiplist_count']).")\n";
-				}
-			}
-			//Verteidigung
-			$dres = dbquery("
-				SELECT
-					d.def_name,
-					dl.deflist_count,
-					dl.deflist_planet_id
-				FROM
-					".$db_table['defense']." AS d
-					INNER JOIN
-					".$db_table['deflist']." AS dl
-					ON d.def_id = dl.deflist_def_id
-					AND dl.deflist_user_id='".$user_id."'
-				ORDER BY
-					dl.deflist_planet_id;
-			");
-			if (mysql_num_rows($dres)>0)
-			{
-				$lstr.="\n[B]Verteidigung:[/B]\n";
-				while ($darr=mysql_fetch_array($dres))
-				{
-					$lstr.="Planet: ".$darr['deflist_planet_id'].", ".$darr['def_name']." (".nf($darr['deflist_count']).")\n";
-				}
-			}
-
+			$xmlfile = writeUserToXml($arr['user_id']);
 
 			//
 			//Flotten und deren Schiffe löschen
@@ -3041,28 +2944,6 @@ die Spielleitung";
 			{
 				while ($farr=mysql_fetch_array($fres))
 				{
-					// Log-Speicherung
-					$sres = dbquery("
-						SELECT
-							s.ship_name,
-							fs.fs_ship_cnt
-						FROM
-							".$db_table['fleet_ships']." AS fs
-							INNER JOIN
-							".$db_table['ships']." AS s
-							ON fs.fs_ship_id = s.ship_id
-							AND fs.fs_ship_faked=0
-							AND fs.fs_fleet_id='".$farr['fleet_id']."';
-					");
-					if (mysql_num_rows($sres)>0)
-					{
-						$lstr.="\n[B]Flottenschiffe:[/B]\n";
-						while ($sarr=mysql_fetch_array($sres))
-						{
-							$lstr.=$sarr['ship_name']." (".$sarr['fs_ship_cnt'].")\n";
-						}
-					}
-
 					// Flotten-Schiffe löschen
 					dbquery("
 						DELETE FROM
@@ -3072,7 +2953,6 @@ die Spielleitung";
 					");
 				}
 			}
-
 			// Flotten löschen
 			dbquery("
 				DELETE FROM
@@ -3101,12 +2981,8 @@ die Spielleitung";
 			");
 			if (mysql_num_rows($pres)>0)
 			{
-				$lstr.="\n[B]Rohstoffe:[/B]\n";
 				while ($parr=mysql_fetch_array($pres))
 				{
-					//Text für log schreiben
-					$lstr.="Planet: ".$parr['planet_id']."\nName: ".$parr['planet_name']."\n".RES_METAL.": ".nf(round($parr['planet_res_metal']))."\n ".RES_CRYSTAL.": ".nf(round($parr['planet_res_crystal']))."\n".RES_PLASTIC.": ".nf(round($parr['planet_res_plastic']))."\n".RES_FUEL.": ".nf(round($parr['planet_res_fuel']))."\n".RES_FOOD.": ".nf(round($parr['planet_res_food']))."\n\n";
-
 					//löscht alle markt-handelschiffe die auf dem weg zu dem user sind
                     $fres2=dbquery("
 						SELECT
@@ -3130,7 +3006,6 @@ die Spielleitung";
 							");
                         }
                     }
-
 					//Setzt Planet zurück
 					reset_planet($parr['planet_id']);
 				}
@@ -3229,11 +3104,11 @@ die Spielleitung";
 
 			//Log schreiben
 			if($self)
-				add_log("3","Der Benutzer ".$arr['user_nick']." hat sich selbst gelöscht!\n".$lstr."",time());
+				add_log("3","Der Benutzer ".$arr['user_nick']." hat sich selbst gelöscht!\nDie Daten des Benutzers wurden nach ".$xmlfile." exportiert.",time());
 			elseif(!$self && $from!="")
-				add_log("3","Der Benutzer ".$arr['user_nick']." wurde von ".$from." gelöscht!\n".$lstr."",time());
+				add_log("3","Der Benutzer ".$arr['user_nick']." wurde von ".$from." gelöscht!\nDie Daten des Benutzers wurden nach ".$xmlfile." exportiert.",time());
 			else
-				add_log("3","Der Benutzer ".$arr['user_nick']." wurde gelöscht!\n".$lstr."",time());
+				add_log("3","Der Benutzer ".$arr['user_nick']." wurde gelöscht!\nDie Daten des Benutzers wurden nach ".$xmlfile." exportiert.",time());
 
 			$text ="Hallo ".$arr['user_nick']."
 			
@@ -6152,7 +6027,6 @@ Forum: http://www.etoa.ch/forum";
 		$nr = mysql_num_rows($res);
 		if ($nr>0)
 		{
-			echo "Checkink peaces";
 			while ($arr=mysql_fetch_array($res))
 			{
 				// Add log							
@@ -6176,6 +6050,253 @@ Forum: http://www.etoa.ch/forum";
 		
 		return $nr;
 	}
+	
+	
+	function writeUserToXml($userId,$path="")
+	{
+		$filename = $userId."_".date("Y-m-d_h-i").".xml";
+		$file = $path."cache/user_xml/".$filename;
+		if ($xml =  userToXml($userId))
+		{
+			if ($d=fopen($file,"w+"))
+			{
+				fwrite($d,$xml);
+				fclose($d);
+				return $filename;
+			}
+			echo "Konnte Datei $file nicht zum XML Export öffnen!";			
+			return false;
+		}
+		echo "XML Export fehlgeschlagen. User $userId nicht gefunden!";			
+		return false;
+	}
+	
+	function userToXml($userId)
+	{
+		$res = dbquery("
+		SELECT
+			users.*,
+			alliance_tag,
+			alliance_name,
+			race_name
+		FROM
+			users
+		LEFT JOIN
+			alliances ON user_alliance_id=alliance_id
+		INNER JOIN
+			races ON user_race_id=race_id
+		WHERE user_id=".$userId."
+		;");
+		if (mysql_num_rows($res)>0)
+		{		
+			$arr=mysql_fetch_array($res);
+			
+$xml = "<userbackup id=\"".$arr['user_id']."\" date=\"".date("d.m.Y, H:i")."\" timestamp=\"".time()."\">
+	<account>
+		<nick>".$arr['user_nick']."</nick>
+		<name>".$arr['user_name']."</name>
+		<email>".$arr['user_email']."</email>
+		<points>".$arr['user_points']."</points>
+		<rank>".$arr['user_rank_current']."</rank>
+		<online>".date("d.m.Y, H:i",$arr['user_last_online'])."</online>		
+		<ip>".$arr['user_ip']."</ip>		
+		<host>".$arr['user_hostname']."</host>		
+		<alliance id=\"".$arr['user_alliance_id']."\" tag=\"".$arr['alliance_tag']."\">".$arr['alliance_name']."</alliance>
+		<race id=\"".$arr['user_race_id']."\">".$arr['race_name']."</race>
+	</account>
+	<planets>";
+			$pres=dbquery("
+				SELECT
+					planet_id,
+					planet_name,
+					planet_res_metal,
+					planet_res_crystal,
+					planet_res_plastic,
+					planet_res_fuel,
+					planet_res_food,
+					planet_people,
+					planet_type_id,
+					type_name,
+					planet_user_main
+				FROM
+					planets
+				INNER JOIN
+					planet_types ON type_id=planet_type_id
+					AND	planet_user_id='".$userId."';
+			");
+			if (mysql_num_rows($pres)>0)
+			{
+				while ($parr=mysql_fetch_array($pres))
+				{
+					if ($parr['planet_user_main']==1)
+					{
+						$mainPlanet = $parr['planet_id'];
+					}
+					$xml.= "
+		<planet id=\"".$parr['planet_id']."\" name=\"".$parr['planet_name']."\" main=\"".$parr['planet_user_main']."\">
+			<type id=\"".$parr['planet_type_id']."\">".$parr['type_name']."</type>					
+			<metal>".intval($parr['planet_res_metal'])."</metal>
+			<crystal>".intval($parr['planet_res_crystal'])."</crystal>
+			<plastic>".intval($parr['planet_res_plastic'])."</plastic>
+			<fuel>".intval($parr['planet_res_fuel'])."</fuel>
+			<food>".intval($parr['planet_res_food'])."</food>
+			<people>".intval($parr['planet_people'])."</people>
+		</planet>";
+				}
+			}
+			$xml.="
+	</planets>
+	<buildings>";	
+			//Gebäude
+			$bres = dbquery("
+				SELECT
+					building_name,
+					buildlist_current_level,
+					buildlist_planet_id,
+					building_id
+				FROM
+					buildings
+				INNER JOIN
+					buildlist
+					ON building_id = buildlist_building_id
+					AND buildlist_user_id='".$userId."'
+				ORDER BY
+					buildlist_planet_id;
+			");
+			if (mysql_num_rows($bres)>0)
+			{
+				while ($barr=mysql_fetch_array($bres))
+				{
+					$xml.="
+		<building planet=\"".$barr['buildlist_planet_id']."\" id=\"".$barr['building_id']."\" level=\"".$barr['buildlist_current_level']."\">".$barr['building_name']."</building>";
+				}
+			}
+			$xml.="
+	</buildings>
+	<technologies>";	
+			//Technologien
+			$tres = dbquery("
+				SELECT
+					tech_name,
+					techlist_current_level,
+					tech_id
+				FROM
+					techlist
+				INNER JOIN
+					technologies
+					ON techlist_tech_id = tech_id
+					AND techlist_user_id='".$userId."';
+			");
+			if (mysql_num_rows($tres)>0)
+			{
+				while ($tarr=mysql_fetch_array($tres))
+				{
+					$xml.="
+		<technology id=\"".$tarr['tech_id']."\" level=\"".$tarr['techlist_current_level']."\">".$tarr['tech_name']."</technology>";
+				}
+			}
+
+			$xml.="
+	</technologies>
+	<ships>";	
+			//Schiffe
+			$sres = dbquery("
+				SELECT
+					ship_name,
+					ship_id,
+					shiplist_count,
+					shiplist_planet_id
+				FROM
+					shiplist
+				INNER JOIN
+					ships
+					ON shiplist_ship_id = ship_id
+					AND shiplist_user_id='".$userId."'
+					AND shiplist_count>0
+				ORDER BY
+					shiplist_planet_id;
+			");
+			if (mysql_num_rows($sres)>0)
+			{
+				while ($sarr=mysql_fetch_array($sres))
+				{
+					$xml.="
+		<ship planet=\"".$sarr['shiplist_planet_id']."\" id=\"".$sarr['ship_id']."\" count=\"".$sarr['shiplist_count']."\">".$sarr['ship_name']."</ship>";
+				}
+			}
+			//Flotten und deren Schiffe
+			$fres=dbquery("
+				SELECT
+					fleet_id
+				FROM
+					fleet
+				WHERE
+					fleet_user_id='".$userId."';
+			");
+			if (mysql_num_rows($fres)>0)
+			{
+				while ($farr=mysql_fetch_array($fres))
+				{
+					$sres = dbquery("
+						SELECT
+							s.ship_name,
+							s.ship_id,
+							fs.fs_ship_cnt
+						FROM
+							fleet_ships AS fs
+							INNER JOIN
+							ships AS s
+							ON fs.fs_ship_id = s.ship_id
+							AND fs.fs_ship_faked=0
+							AND fs.fs_fleet_id='".$farr['fleet_id']."';
+					");
+					if (mysql_num_rows($sres)>0)
+					{
+						while ($sarr=mysql_fetch_array($sres))
+						{
+					$xml.="
+		<ship planet=\"".$mainPlanet."\" id=\"".$sarr['ship_id']."\" count=\"".$sarr['fs_ship_cnt']."\">".$sarr['ship_name']."</ship>";
+						}
+					}
+				}
+			}			
+			$xml.="
+	</ships>
+	<defensse>";	
+			//Verteidigung
+			$dres = dbquery("
+				SELECT
+					d.def_name,
+					d.def_id,
+					dl.deflist_count,
+					dl.deflist_planet_id
+				FROM
+					defense AS d
+				INNER JOIN
+					deflist AS dl
+				ON d.def_id = dl.deflist_def_id
+					AND dl.deflist_user_id='".$userId."'
+					AND deflist_count>0
+				ORDER BY
+					dl.deflist_planet_id;
+			");
+			if (mysql_num_rows($dres)>0)
+			{
+				while ($darr=mysql_fetch_array($dres))
+				{
+					$xml.="
+		<defense planet=\"".$darr['deflist_planet_id']."\" id=\"".$darr['def_id']."\" count=\"".$darr['deflist_count']."\">".$darr['def_name']."</defense>";
+				}
+			}
+			$xml.="
+	</defenses>
+";	
+			$xml.="</userbackup>";
+			return $xml;
+		}
+		return false;		
+	}
+
 	
 	
 	/**

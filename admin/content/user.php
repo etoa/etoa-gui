@@ -1286,9 +1286,6 @@ echo $sql;
 					echo "<script>banEnable(false);</script>";
 				if ($arr['user_hmode_from']==0)
 					echo "<script>umodEnable(false);</script>";
-					
-
-					
 			}
 			else
 				echo "<i>Datensatz nicht vorhanden!</i>";
