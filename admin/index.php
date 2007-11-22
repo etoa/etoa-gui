@@ -116,6 +116,7 @@
 	<head>
 		<title><? echo $conf['game_name']['v']." ".$conf['game_name']['p1']." Administration - ".GAMEROUND_NAME;?></title>
 		<link rel="stylesheet" type="text/css" href="style.css" />
+		<link rel="stylesheet" href="../general.css" type="text/css" />
 
 		<meta name="author" content="Nicolas Perrenoud" />
 		<meta name="keywords" content="Escape to Andromeda, Browsergame, Strategie, Simulation, Andromeda, MMPOG, RPG" />

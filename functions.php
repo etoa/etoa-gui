@@ -3337,7 +3337,8 @@ die Spielleitung";
 
 	function err_msg($msg)
 	{
-		echo "<div class=\"errMsg\"><b>Fehler:</b> ".text2html($msg)."</div><br/>";
+		success_msg($msg);
+		//echo "<div class=\"errMsg\"><b>Fehler:</b> ".text2html($msg)."</div><br/>";
 	}
 
 	//
@@ -3348,23 +3349,53 @@ die Spielleitung";
 
 	function ok_msg($msg)
 	{
-		echo "<div class=\"okMsg\">".text2html($msg)."</div><br/>";
+		error_msg($msg);
+		//echo "<div class=\"okMsg\">".text2html($msg)."</div><br/>";
 	}
 
-	function success_msg($text)
+	function success_msg($text,$type=0)
 	{
-		infobox_start("Erfolgsmeldung");
-		echo '<div style="height:50px;padding:20px 0px 0px 60px;margin-bottom:-20px;;text-align:left;background: url(\'images/ok_middle.png\') no-repeat;">';
-    echo text2html($text).'</div>';
-		infobox_end();
+		//infobox_start("Erfolgsmeldung");
+		//echo '<div style="height:50px;padding:20px 0px 0px 60px;margin-bottom:-20px;;text-align:left;background: url(\'images/ok_middle.png\') no-repeat;">';
+    //echo text2html($text).'</div>';
+		//infobox_end();
+		echo "<div class=\"successBox\">";
+		switch($title)
+		{
+			case 1:
+				echo "";
+				break;
+			case 2:
+				echo "<b>Hurra:</b> ";
+				break;
+			default:
+				echo "<b>Erfolg:</b> ";
+		}		
+		echo text2html($text)."</div>";		
 	}
 
-	function error_msg($text)
+	function error_msg($text,$type=0)
 	{
-		infobox_start("Fehlermeldung");
-		echo '<div style="height:50px;padding:20px 0px 0px 60px;margin-bottom:-20px;;text-align:left;background: url(\'images/err_middle.png\') no-repeat;">';
-    echo text2html($text).'</div>';
-		infobox_end();
+		//infobox_start("Fehlermeldung");
+		//echo '<div style="height:50px;padding:20px 0px 0px 60px;margin-bottom:-20px;;text-align:left;background: url(\'images/err_middle.png\') no-repeat;">';
+    //echo text2html($text).'</div>';
+		//infobox_end();
+		echo "<div class=\"errorBox\">";
+		switch($title)
+		{
+			case 3:
+				echo "";
+				break;
+			case 2:
+				echo "<b>Warnung:</b> ";
+				break;
+			case 3:
+				echo "<b>Problem:</b> ";
+				break;
+			default:
+				echo "<b>Fehler:</b> ";
+		}		
+		echo text2html($text)."</div>";
 	}
 
 
@@ -6054,7 +6085,7 @@ Forum: http://www.etoa.ch/forum";
 	
 	function writeUserToXml($userId,$path="")
 	{
-		$filename = $userId."_".date("Y-m-d_h-i").".xml";
+		$filename = $userId."_".date("Y-m-d_H-i").".xml";
 		$file = $path."cache/user_xml/".$filename;
 		if ($xml =  userToXml($userId))
 		{
@@ -6091,8 +6122,10 @@ Forum: http://www.etoa.ch/forum";
 		{		
 			$arr=mysql_fetch_array($res);
 			
-$xml = "<userbackup id=\"".$arr['user_id']."\" date=\"".date("d.m.Y, H:i")."\" timestamp=\"".time()."\">
+$xml = "<userbackup>
+	<export date=\"".date("d.m.Y, H:i")."\" timestamp=\"".time()."\" />
 	<account>
+		<id>".$arr['user_id']."</id>	
 		<nick>".$arr['user_nick']."</nick>
 		<name>".$arr['user_name']."</name>
 		<email>".$arr['user_email']."</email>
@@ -6262,7 +6295,7 @@ $xml = "<userbackup id=\"".$arr['user_id']."\" date=\"".date("d.m.Y, H:i")."\" t
 			}			
 			$xml.="
 	</ships>
-	<defensse>";	
+	<defenses>";	
 			//Verteidigung
 			$dres = dbquery("
 				SELECT

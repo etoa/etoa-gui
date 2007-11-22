@@ -29,7 +29,15 @@
 	//
 	// Fehlerhafte Logins
 	//
-	if ($sub=="loginfailures")
+	if ($sub=="xml")
+	{
+		require("user/xml.inc.php");
+	}
+
+	//
+	// Fehlerhafte Logins
+	//
+	elseif ($sub=="loginfailures")
 	{
 		require("user/loginfailures.inc.php");
 	}

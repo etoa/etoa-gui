@@ -92,6 +92,11 @@
 	$navmenu['Spieler']['Tickets']['sub']="tickets";
 	$navmenu['Spieler']['Tickets']['level']=1;
 
+	$navmenu['Spieler']['XML-Export/Import']['page']="user";
+	$navmenu['Spieler']['XML-Export/Import']['sub']="xml";
+	$navmenu['Spieler']['XML-Export/Import']['level']=1;
+
+
 	$navmenu['Spieler']['bar'][0] = true;
 
 	$navmenu['Spieler']['Rassen']['page']="user";
