@@ -1,5 +1,5 @@
 <?PHP
 	showTitle('Spielstatistiken');
-	include("out/gamestats.html");
+	include("cache/out/gamestats.html");
 	echo "<br/><br/>";
 ?>
