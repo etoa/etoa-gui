@@ -2799,6 +2799,41 @@
 			add_log("4",mysql_num_rows($res)." inaktive User die seit ".date("d.m.Y H:i",$online_time)." nicht mehr online waren oder seit ".date("d.m.Y H:i",$register_time)." keine Punkte haben wurden manuell gelöscht!",time());
 		else
 			add_log("4",mysql_num_rows($res)." inaktive User die seit ".date("d.m.Y H:i",$online_time)." nicht mehr online waren oder seit ".date("d.m.Y H:i",$register_time)." keine Punkte haben wurden gelöscht!",time());
+			
+		// Nachricht an lange inaktive
+		$res =	dbquery("
+			SELECT
+				user_id,
+				user_nick,
+				user_email,
+				user_last_online
+			FROM
+				".$db_table['users']."
+			WHERE
+				user_show_stats='1'
+				AND user_last_online<'".USER_INACTIVE_TIME_LONG."' 
+				AND user_hmode_from='0';
+		");
+		if (mysql_num_rows($res)>0)
+		{
+			while ($arr=mysql_fetch_array($res))
+			{
+			$text ="Hallo ".$arr['user_nick']."
+			
+Du hast dich seit mehr als ".USER_INACTIVE_LONG." Tage nicht mehr bei EtoA: Escape to Andromeda ( http://www.etoa.ch ) eingeloggt und
+dein Account wurde deshalb als inaktiv markiert. Solltest du dich innerhalb von ".USER_INACTIVE_SHOW." Tage
+nicht mehr einloggen wird der Account gelöscht.
+
+Mit freundlichen Grüßen,
+die Spielleitung";
+			send_mail('',$arr['user_email'],'Inaktivität bei Escape to Andromeda',$text,'','');			
+				
+			}
+		}			
+			
+			
+			
+			
 		return mysql_num_rows($res);
 	}
 
@@ -3200,7 +3235,15 @@
 				add_log("3","Der Benutzer ".$arr['user_nick']." wurde gelöscht!\n".$lstr."",time());
 			return true;
 
+			$text ="Hallo ".$arr['user_nick']."
+			
+dein Accouont bei EtoA: Escape to Andromeda ( http://www.etoa.ch ) wurde auf Grund von Inaktivität 
+oder auf eigenem Wunsch nun gelöscht.
 
+Mit freundlichen Grüßen,
+die Spielleitung";
+			send_mail('',$arr['user_email'],'Accountlöschung bei Escape to Andromeda',$text,'','');
+			
 			//Arrays löschen (Speicher freigeben)
 			mysql_free_result($bres);
 			unset($barr);
