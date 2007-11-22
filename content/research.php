@@ -35,7 +35,7 @@
   define('NUM_BUILDINGS_PER_ROW',4);
   define('TECH_BUILDING_ID',8);
   define('CELL_WIDTH',175);
-	define("GEN_TECH_ID",23);				// ID der Gentechnologie
+
 
 	// SKRIPT //
 	if ($planets->current)
@@ -238,6 +238,8 @@
 
 				$start_time = $techlist[$arr['tech_id']]['techlist_build_start_time'];
 				$end_time = $techlist[$arr['tech_id']]['techlist_build_end_time'];
+				$planet_id = $techlist[$arr['tech_id']]['techlist_planet_id'];
+				
 
 				//
 				// Befehle ausführen
@@ -289,6 +291,7 @@
 									);");
 
 								}
+								$planet_id=$c->id;
 								
 								//Rohstoffe vom Planeten abziehen und aktualisieren
 								$c->changeRes(-$bc['metal'],-$bc['crystal'],-$bc['plastic'],-$bc['fuel'],-$bc['food']);
@@ -403,7 +406,7 @@
 				//
 				// Forschungsdaten anzeigen
 				//
-				infobox_start(text2html($arr['tech_name']),1);
+				infobox_start(text2html($arr['tech_name']." ".$b_level),1);
 				echo "<tr><td width=\"220\" rowspan=\"3\" class=\"tbldata\"><a href=\"?page=help&amp;site=research&amp;id=".$arr['tech_id']."\"><img src=\"".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$arr['tech_id'].".".IMAGE_EXT."\" width=\"220\" height=\"220\" border=\"0\" /></a></td>";
 				echo "<td valign=\"top\" class=\"tbldata\" colspan=\"2\">".text2html($arr['tech_shortcomment'])."</td></tr>";
 				echo "<tr><td class=\"tbltitle\" height=\"20\" width=\"50%\">Status:</td>";
@@ -451,6 +454,8 @@
 				echo "<form action=\"?page=$page\" method=\"post\">";
                 echo "<input type=\"hidden\" name=\"id\" value=\"".$arr['tech_id']."\">";
                 checker_init();
+                
+                
 				if ($requirements_passed)
 				{
 				infobox_start("Forschoptionen",1);
@@ -534,10 +539,17 @@
 				// Bau abbrechen
 				if ($b_status==1)
 				{
+					if ($planet_id==$c->id)
+					{
               echo "<tr><td class=\"tbldata\"><input type=\"submit\" class=\"button\" id=\"buildcancel\" name=\"command_cbuild\" value=\"Abbrechen\"  onclick=\"if (this.value=='Abbrechen'){return confirm('Wirklich abbrechen?');}\" />";
               echo "</td><td class=\"tbldata\" id=\"buildtime\">-</td><td colspan=\"5\" class=\"tbldata\">&nbsp;</td></tr>";
               if ($b_level<$arr['tech_last_level']-1)
 	         		echo "<tr><td class=\"tbldata\" width=\"90\">N&auml;chste Stufe:</td><td class=\"tbldata\">".tf($btimen)."</td><td class=\"tbldata\">".nf($bcn['metal'])."</td><td class=\"tbldata\">".nf($bcn['crystal'])."</td><td class=\"tbldata\">".nf($bcn['plastic'])."</td><td class=\"tbldata\">".nf($bcn['fuel'])."</td><td class=\"tbldata\">".nf($bcn['food'])."</td></tr>";
+	         }
+					else
+					{
+						echo "<tr><td class=\"tbldata\" colspan=\"7\">Technologie wird auf einem anderen Planeten bereits erforscht!</td></tr>";					
+					}
 				}
 
 
