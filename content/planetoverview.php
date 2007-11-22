@@ -63,7 +63,7 @@
 		}
 
 		// Kolonie aufheben ausführen
-		elseif (isset($_GET['submit_remove']) && $_POST['submit_remove']!="")
+		elseif (isset($_POST['submit_remove']) && $_POST['submit_remove']!="")
 		{
 			if (mysql_num_rows(dbquery("SELECT shiplist_id FROM ".$db_table['shiplist']." WHERE shiplist_planet_id='".$c->id."' AND shiplist_count>0;"))==0)
 			{
