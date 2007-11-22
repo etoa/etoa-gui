@@ -2782,11 +2782,11 @@
 			SELECT
 				user_id
 			FROM
-				".$db_table['users']."
+				users
 			WHERE
 				user_show_stats='1'
 				AND (user_registered<'".$register_time."' AND user_points='0')
-				OR (user_last_online<'".$online_time."' AND user_hmode_from='0');
+				OR (user_last_online<'".$online_time."' AND user_last_online>0 AND user_hmode_from='0');
 		");
 		if (mysql_num_rows($res)>0)
 		{
@@ -2808,10 +2808,11 @@
 				user_email,
 				user_last_online
 			FROM
-				".$db_table['users']."
+				users
 			WHERE
 				user_show_stats='1'
 				AND user_last_online<'".USER_INACTIVE_TIME_LONG."' 
+				AND user_last_online>'".(USER_INACTIVE_TIME_LONG-3600*24)."' 
 				AND user_hmode_from='0';
 		");
 		if (mysql_num_rows($res)>0)
@@ -3233,7 +3234,6 @@ die Spielleitung";
 				add_log("3","Der Benutzer ".$arr['user_nick']." wurde von ".$from." gelöscht!\n".$lstr."",time());
 			else
 				add_log("3","Der Benutzer ".$arr['user_nick']." wurde gelöscht!\n".$lstr."",time());
-			return true;
 
 			$text ="Hallo ".$arr['user_nick']."
 			
@@ -3256,6 +3256,9 @@ die Spielleitung";
 			mysql_free_result($pres);
 			unset($parr);
 			unset($lstr);
+
+			return true;
+
 
 		}
 	}
