@@ -42,14 +42,19 @@
 	
 	echo "<h2>Import</h2>";
 	$d = opendir($path);
-	echo "<table class=\"tb\">";
+	echo "<table class=\"tb\">
+	<tr><th>Datei (Userid_Datum_Zeit)</th><th>Optionen</th></tr>";
 	while ($f = readdir($d))
 	{
-		if (is_file($path."/".$f) && stristr($f,".xml"))
-		{
+		$file = $path."/".$f;
+		if (is_file($file) && stristr($f,".xml"))
+		{			
+			$dlink = "path=".base64_encode($file)."&hash=".md5($file);
 			echo "<tr>
 			<td>$f</td>
-			<td>Details & Import | Download</td>
+			<td>
+				<a href=\"?page=$page&amp;sub=$sub&amp;info=".base64_encode($f)."\">Details & Import</a> &nbsp;
+				<a href=\"dl.php?".$dlink."\">Download</a></td>
 			</tr>";
 		}
 	}

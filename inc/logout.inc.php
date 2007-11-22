@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
  */	
 
- 	dbquery ("UPDATE ".$db_table['user_log']." SET log_logouttime=".time()." WHERE log_user_id=".$_SESSION[ROUNDID]['user']['id']." AND log_session_key='".$_SESSION[ROUNDID]['key']."';");
+ 	dbquery ("UPDATE ".$db_table['user_log']." SET log_logouttime=".time()." WHERE log_user_id='".$_SESSION[ROUNDID]['user']['id']."' AND log_session_key='".$_SESSION[ROUNDID]['key']."';");
 	$_SESSION[ROUNDID]="";
 	session_destroy();
 	unset($sc);
