@@ -32,15 +32,9 @@
 
 	// DATEN LADEN
 
-	define('INACTIVE_TIME',time()-(24*3600*$conf['user_inactive_days']['v']));
-	//define('COLOR_BANNED',$conf['color_banned']['v']);
-	//define('COLOR_UMOD',$conf['color_umod']['v']);
-	//define('COLOR_INACTIVE',$conf['color_inactive']['v']);
-	//define('COLOR_ALLIANCE',$conf['color_alliance']['v']);
 	define('COLOR_ENEMY',$conf['color_enemy']['v']);
 	define('COLOR_FRIEND',$conf['color_friend']['v']);
 	define('COLOR_NOOB_SAFE',$conf['color_noob_safe']['v']);
-	//define('COLOR_DEFAULT',$conf['color_default']['v']);
 	define('COLOR_OWN',"#0f0");
 
 	// BEGIN SKRIPT //
@@ -290,8 +284,14 @@
 							$addstyle="color:".COLOR_UMOD.";";
 							$tm_info="(<span style=\'color:".COLOR_UMOD."\'>Urlaubsmodus</span>)";
 						}
+						// Lange Inaktiv
+						elseif ($arr['user_acttime']<USER_INACTIVE_TIME_LONG)
+						{
+							$addstyle="color:".COLOR_INACTIVE_LONG.";";
+							$tm_info="(<span style=\'color:".COLOR_INACTIVE_LONG."\'>Inaktiv</span>)";
+						}						
 						// Inaktiv
-						elseif ($arr['user_acttime']<INACTIVE_TIME)
+						elseif ($arr['user_acttime']<USER_INACTIVE_TIME)
 						{
 							$addstyle="color:".COLOR_INACTIVE.";";
 							$tm_info="(<span style=\'color:".COLOR_INACTIVE."\'>Inaktiv</span>)";
@@ -456,7 +456,13 @@
 			echo '</div>';
 			
 			infobox_start("Legende");
-			echo "<span style=\"color:".COLOR_OWN.";\">Eigener Planet</span>, <span style=\"color:".COLOR_BANNED.";\">Gesperrt</span>, <span style=\"color:".COLOR_UMOD.";\">Urlaubsmodus</span>, <span style=\"color:".COLOR_INACTIVE.";\">Inaktiv (7 Tage)</span>, <span style=\"color:".COLOR_NOOB_SAFE.";\">Anf&auml;ngerschutz</span>, <span style=\"color:".COLOR_FRIEND.";\">B&uuml;ndnis</span>, <span style=\"color:".COLOR_ENEMY.";\">Krieg</span>, <span style=\"color:".COLOR_ALLIANCE.";\">Allianzmitglied</span>";
+			echo "<span style=\"color:".COLOR_OWN.";\">Eigener Planet</span>, <span style=\"color:".COLOR_BANNED.";\">Gesperrt</span>, <span style=\"color:".COLOR_UMOD.";\">Urlaubsmodus</span>, 
+			<span style=\"color:".COLOR_INACTIVE.";\">Inaktiv (".USER_INACTIVE_SHOW." Tage)</span>, 
+			<span style=\"color:".COLOR_INACTIVE_LONG.";\">Inaktiv (".USER_INACTIVE_LONG." Tage)</span><br/>
+			<span style=\"color:".COLOR_NOOB_SAFE.";\">Anf&auml;ngerschutz</span>,
+			<span style=\"color:".COLOR_FRIEND.";\">B&uuml;ndnis</span>, 
+			<span style=\"color:".COLOR_ENEMY.";\">Krieg</span>, 
+			<span style=\"color:".COLOR_ALLIANCE.";\">Allianzmitglied</span>";
 			infobox_end();
 			echo "<input type=\"button\" value=\"Zur&uuml;ck zur Raumkarte\" onclick=\"document.location='?page=space&amp;sx=$sx&amp;sy=$sy'\" /> &nbsp; ";
 /*			if ($mode=="image")

@@ -178,6 +178,7 @@
 	define ("COLOR_BANNED",$conf['color_banned']['v']);			// Gesperrte
 	define ("COLOR_UMOD",$conf['color_umod']['v']);					// Urlaubsmodus
 	define ("COLOR_INACTIVE",$conf['color_inactive']['v']);	// Inaktive
+	define ("COLOR_INACTIVE_LONG",$conf['color_inactive']['p1']);	// Inaktive
 	define ("COLOR_ALLIANCE",$conf['color_alliance']['v']);	// Allianzmitglied
 	define ("COLOR_DEFAULT",$conf['color_default']['v']);		// alle anderen
 
@@ -201,8 +202,11 @@
 	// Inaktive & Urlaubsmodus
   define("MIN_UMOD_TIME",$conf['hmode_days']['v']);									// Minimale Umode-Dauer
   define("USER_INACTIVE_DELETE",$conf['user_inactive_days']['p1']);	// Vergangene Zeit bis Löschung eines Users
+  define("USER_NOTLOGIN_DELETE",$conf['user_inactive_days']['p2']);	// Vergangene Zeit bis Löschung falls nie eingeloggt
   define("USER_INACTIVE_SHOW",$conf['user_inactive_days']['v']);		// Zeit bis "Inaktiv" Status
-  define("USER_NOTLOGIN_DELETE",$conf['user_inactive_days']['v']);	// ??? doppelt?
+	define("USER_INACTIVE_TIME",time()-(24*3600*$conf['user_inactive_days']['v']));
+  define("USER_INACTIVE_LONG",14);		// Zeit bis "Inaktiv" Status
+	define("USER_INACTIVE_TIME_LONG",time()-(24*3600*14));
 	
 	// Rohstoffbenennung
 	define("RES_METAL","Titan");
