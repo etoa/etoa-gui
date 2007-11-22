@@ -1,4 +1,6 @@
 <?PHP
+	$path = "../cache/user_xml";
+
 	echo "<h1>XML-Import/Export</h1>";
 	
 	echo "<h2>Export</h2>";
@@ -36,8 +38,23 @@
 	}
 	echo "</select> 
 	<input type=\"submit\" name=\"exportcache\" value=\"Exportieren\" /> 
-	<input type=\"submit\" name=\"exportdl\" value=\"Herunterladen\" /></form>";
+	<input type=\"submit\" name=\"exportdl\" value=\"Herunterladen\" />";
 	
 	echo "<h2>Import</h2>";
+	$d = opendir($path);
+	echo "<table class=\"tb\">";
+	while ($f = readdir($d))
+	{
+		if (is_file($path."/".$f) && stristr($f,".xml"))
+		{
+			echo "<tr>
+			<td>$f</td>
+			<td>Details & Import | Download</td>
+			</tr>";
+		}
+	}
+	echo "</table>";
+	closedir($d);
+	echo "</form>";
 
 ?>
