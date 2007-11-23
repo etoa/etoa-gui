@@ -2918,7 +2918,8 @@ die Spielleitung";
 				user_alliance_id,
 				user_name,
 				user_email,
-				user_points
+				user_points,
+				user_id
 			FROM
 				".$db_table['users']."
 			WHERE
@@ -2927,7 +2928,8 @@ die Spielleitung";
 		if (mysql_num_rows($res)>0)
 		{
 			$arr=mysql_fetch_array($res);
-			$xmlfile = writeUserToXml($arr['user_id']);
+			if ($xmlfile = writeUserToXml($arr['user_id']))
+			{
 
 			//
 			//Flotten und deren Schiffe löschen
@@ -3134,7 +3136,11 @@ die Spielleitung";
 
 			return true;
 
-
+			}
+			else
+			{
+				echo "Konnte UserXML für ".$user_id." nicht exportieren, User nicht gelöscht!";
+			}
 		}
 	}
 
