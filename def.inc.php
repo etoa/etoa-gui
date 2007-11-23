@@ -507,7 +507,8 @@
 	
 	// Werbebanner
 	define('ADD_BANNER','
-	<div style="color:#0f0;font-size:8pt;font-weight:bold;">Unterstütze EtoA:</div><br/>
+	<div style="color:#0f0;font-size:8pt;font-weight:bold;">Unterstütze EtoA:<br/>
+	(SHIFT+Click = neues Fenster)</div><br/>
 	<script type="text/javascript"><!--
 google_ad_client = "pub-4873671285923921";
 google_ad_width = 120;
