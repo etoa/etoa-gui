@@ -2,7 +2,7 @@
 		<tr>
 			<td id="minibar">				
 			</td>
-			<td id="topbar">
+			<td id="topbar" colspan="2">
 				{section name=id loop=$topNav}
 				{strip}
 					{if $topNav[id].nw_js neq ""}

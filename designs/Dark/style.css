@@ -181,6 +181,13 @@ select#nav_mode_select	{
 	text-align:center;
 }
 
+#vertbanner	{
+	vertical-align:top;
+	border:1px solid #fff;
+	background:#000;
+	width:120px;
+}
+
 /* by EtoA.ch (unten links)   */
 #copy	{
 	background:#000000 url('../../images/background.jpg');

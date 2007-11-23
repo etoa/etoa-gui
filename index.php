@@ -122,7 +122,8 @@
     user_alliance_application,
     user_registered,
     user_irc_name,
-    user_irc_pw
+    user_irc_pw,
+    user_show_adds
 	FROM 
 		users 
 	WHERE 
@@ -187,6 +188,7 @@
 	$s['user']['hmode_to'] = $uarr['user_hmode_to'];
 	$s['user']['points'] = $uarr['user_points'];
 	$s['user']['deleted'] = $uarr['user_deleted'];
+	$s['user']['show_adds'] = $uarr['user_show_adds'];
 
 		//
 	// Misc settings
@@ -481,6 +483,7 @@
 					$tpl->assign("adds",true);
 				else
 					$tpl->assign("adds",false);
+				$tpl->assign("addBanner",ADD_BANNER);
 				if ($s['user']['helpbox']==1)
 					$tpl->assign("helpBox",true);
 				else
