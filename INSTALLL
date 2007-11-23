@@ -1,11 +1,15 @@
+===========
 == Files ==
+===========
 
 Copy all files to the gameservers root directory, e.g. /var/www/roundx.etoa.net/htdocs,
 or user svn checkout:
 
 	svn co http://dev.etoa.net/svn/game/trunk /var/www/roundx.etoa.net/htdocs
 	
+=================
 == Permissions ==
+=================
 
 Execute the following command:
 	
@@ -13,14 +17,62 @@ Execute the following command:
 
 to allow writing to the cache directory
 
+============
 == Config ==
+============
 
+Create a conf.inc.php file in the folder above the game root folder, containing the following code:
+
+<?PHP
+	define('DB_SERVER','localhost');
+	define('DB_USER','database_user');
+	define('DB_PASSWORD','database_password');
+	define('DB_DATABASE','database_name');	
+	
+	define("PASSWORD_SALT","wokife63wigire64reyodi69");
+	define('LOGINSERVER_URL',"http://www.etoa.ch");
+	define('GAMEROUND_NAME',"Testrunde");
+	define('ROUNDID',GAMEROUND_NAME);
+	define('ETOA_DEBUG',0);
+
+	define('BACKUP_REMOTE_IP',"ftp_backup_server");
+	define('BACKUP_REMOTE_USER',"ftp_user");
+	define('BACKUP_REMOTE_PASSWORD',"ftp_password");
+	define('BACKUP_REMOTE_PATH',"/directory_on_ftp_server");	
+?>
+
+PASSWORD_SALT is a random choosen value, which has to be set at the begining of a round and should not be changed during a round
+
+=============
 == Scripts ==
+=============
 
+Execute scripts/reset_admin_pw.sh for setting the admin mode htaccess password to it's default value
+(default user and passwort will be shown at the end of the above script)
+
+==============
 == Cronjobs ==
+==============
 
+On the unix shell, execute 
+
+	crontab -e
+
+this will open the cron editor. Insert the following text (when using vi as editor, press INSERT first)
+
+	TODO
+	
+Save and exit (in vi, press CTRL+C, then write wq and press ENTER), type
+
+	crontab -l
+
+to verify your settings.
+
+==========
 == Misc ==
+==========
+
+The admin panel can be accessed at roundx/admin.
 
  * Go to Admin-Panel => Config => Imagepacks and generate the downloadable imagepack files
  * Go to Admin-Panel => Config => Generate Universe to create the universe for this round
-

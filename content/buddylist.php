@@ -139,8 +139,15 @@
 	//
 	if ($_GET['remove']>0)
 	{
+		$c = 0;
 		dbquery("DELETE FROM ".$db_table['buddylist']." WHERE bl_user_id='".$s['user']['id']."' AND bl_buddy_id='".$_GET['remove']."';");
+		$c+=mysql_affected_rows();
 		dbquery("DELETE FROM ".$db_table['buddylist']." WHERE bl_user_id='".$_GET['remove']."' AND bl_buddy_id='".$s['user']['id']."';");
+		$c+=mysql_affected_rows();
+		if ($c>0)
+		{
+			ok_msg("Der Spieler wurde von der Freundesliste entfern!");
+		}
 	}
 
 	//

@@ -52,40 +52,24 @@
 	function dbconnect()
 	{
 		global $db_handle;
-		global $nohtml;
 		global $query_counter;
 		$query_counter=0;
-		if (!$db_handle = mysql_connect(DB_SERVER,DB_USER,DB_PASSWORD))
+		if (!$db_handle = @mysql_connect(DB_SERVER,DB_USER,DB_PASSWORD))
 		{
-			if (!$nohtml)
-			{
-				echo "</head><body>";
-				print_fs_error_msg("Zum Datenbankserver auf <b>".DB_SERVER."</b> kann keine Verbindung hergestellt werden! 
-				Bitte schaue später nochmals vorbei.<br/><br/>
-				<a href=\"http://forum.etoa.ch\">Zum Forum</a> | 
-				<a href=\"mailto:mail@etoa.ch\">Mail an die Spielleitung</a>","MySQL-Verbindungsproblem");
-			}
-			else
-			{
-				echo "Zum Datenbankserver auf <b>".DB_SERVER."</b> kann keine Verbindung hergestellt 
-				werden!";
-			}
+			error_msg("Zum Datenbankserver auf [b]".DB_SERVER."[/b] kann keine Verbindung hergestellt werden! 
+			[i]".mysql_error()."[/i]
+			
+			Bitte schaue später nochmals vorbei.",4,1,1);
+			return;
 		}
 		if (!mysql_select_db(DB_DATABASE))
 		{
+			error_msg("Auf die Datenbank [b]".DB_DATABASE."[/b] auf [b]".DB_SERVER."</b> kann 
+			nicht zugegriffen werden! 
+			[i]".mysql_error()."[/i]
 			
-			if (!$nohtml)
-			{
-				echo "</head><body>";
-				print_fs_error_msg("Auf die Datenbank <b>".DB_DATABASE."</b> auf <b>".DB_SERVER."</b> kann 
-				nicht zugegriffen werden! Bitte schaue später nochmals vorbei.<br/><br/>
-				<a href=\"http://forum.etoa.ch\">Zum Forum</a> | 
-				<a href=\"mailto:mail@etoa.ch\">Mail an die Spielleitung</a>","MySQL-Verbindungsproblem");
-			}
-			else
-			{
-				echo "Auf die Datenbank <b>".DB_SERVER."</b> auf <b>".DB_SERVER."</b> kann nicht zugegriffen werden!";
-			}
+			Bitte schaue später nochmals vorbei.",4,1);
+			return;
 		}
 		dbquery("SET NAMES 'utf8';"); 
 	}
@@ -2718,16 +2702,6 @@
 		return $string;
 	}
 
-	function print_fs_error_msg($string,$title="Fehler!")
-	{
-		echo "<table style=\"width:80%;margin:10px auto;border:1px solid #fff;border-collapse:collapse\">";
-		echo "<tr><th class=\"tbltitle\">$title</th></tr>";
-		echo "<tr><td class=\"tbldata\">$string</td></tr>";
-		echo "</table>";
-		echo "</body></html>";
-		exit;
-	}
-
 	//
 	// User Name in Array speichern
 	//
@@ -3343,8 +3317,7 @@ die Spielleitung";
 
 	function err_msg($msg)
 	{
-		success_msg($msg);
-		//echo "<div class=\"errMsg\"><b>Fehler:</b> ".text2html($msg)."</div><br/>";
+		error_msg($msg);
 	}
 
 	//
@@ -3355,18 +3328,13 @@ die Spielleitung";
 
 	function ok_msg($msg)
 	{
-		error_msg($msg);
-		//echo "<div class=\"okMsg\">".text2html($msg)."</div><br/>";
+		success_msg($msg);
 	}
 
 	function success_msg($text,$type=0)
 	{
-		//infobox_start("Erfolgsmeldung");
-		//echo '<div style="height:50px;padding:20px 0px 0px 60px;margin-bottom:-20px;;text-align:left;background: url(\'images/ok_middle.png\') no-repeat;">';
-    //echo text2html($text).'</div>';
-		//infobox_end();
 		echo "<div class=\"successBox\">";
-		switch($title)
+		switch($type)
 		{
 			case 1:
 				echo "";
@@ -3380,16 +3348,28 @@ die Spielleitung";
 		echo text2html($text)."</div>";		
 	}
 
-	function error_msg($text,$type=0)
+	function error_msg($text,$type=0,$exit=0,$addition=0)
 	{
-		//infobox_start("Fehlermeldung");
-		//echo '<div style="height:50px;padding:20px 0px 0px 60px;margin-bottom:-20px;;text-align:left;background: url(\'images/err_middle.png\') no-repeat;">';
-    //echo text2html($text).'</div>';
-		//infobox_end();
-		echo "<div class=\"errorBox\">";
-		switch($title)
+		// TODO: Do check on headers
+		if (false)
 		{
-			case 3:
+			echo '<html><header>
+			<title>Fehler</title>
+			<link rel="stylesheet" type="text/css" href="general.css">
+			<meta http-equiv="expires" content="0" />
+			<meta http-equiv="pragma" content="no-cache" />
+		 	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+			<meta http-equiv="content-script-type" content="text/javascript" />
+			<meta http-equiv="content-style-type" content="text/css" />
+			<meta http-equiv="content-language" content="de" />			
+			</header><body>
+			<div id="altLogo"></div>';
+		}
+		
+		echo "<div class=\"errorBox\">";
+		switch($type)
+		{
+			case 1:
 				echo "";
 				break;
 			case 2:
@@ -3398,10 +3378,30 @@ die Spielleitung";
 			case 3:
 				echo "<b>Problem:</b> ";
 				break;
+			case 4:
+				echo "<b>Datenbankproblem:</b> ";
+				break;
 			default:
 				echo "<b>Fehler:</b> ";
 		}		
-		echo text2html($text)."</div>";
+		echo text2html($text);
+		switch($addition)
+		{		
+			case 1:
+				echo text2html("\n\n[url http://forum.etoa.ch]Zum Forum[/url] | [email mail@etoa.ch]Mail an die Spielleitung[/email]");		
+				break;
+			case 2:
+				echo text2html("\n\n[url http://bugs.etoa.net]Fehler melden[/url]");		
+				break;				
+			default:
+				echo '';
+		}
+		echo "</div>";
+		if ($exit>0) 
+		{
+			echo "</body></html>";
+			exit;
+		}
 	}
 
 
