@@ -155,7 +155,7 @@
 		echo "<tr><td class=\"tbltitle\">".RES_PLASTIC."</td><td class=\"tbldata\">".nf($arr['fleet_res_plastic'])." t</td></tr>";
 		echo "<tr><td class=\"tbltitle\">".RES_FUEL."</td><td class=\"tbldata\">".nf($arr['fleet_res_fuel'])." t</td></tr>";
 		echo "<tr><td class=\"tbltitle\">".RES_FOOD."</td><td class=\"tbldata\">".nf($arr['fleet_res_food'])." t</td></tr>";
-		echo "<tr><td class=\"tbltitle\" style=\"width:150px;\">Freier Frachraum:</td><td class=\"tbldata\">".nf($arr['fleet_capacity'])." t</td></tr>";
+		echo "<tr><td class=\"tbltitle\" style=\"width:150px;\">Freier Frachtraum:</td><td class=\"tbldata\">".nf($arr['fleet_capacity'])." t</td></tr>";
 		echo "<tr><td class=\"tbltitle\">Passagiere</td><td class=\"tbldata\">".nf($arr['fleet_res_people'])."</td></tr>";
 		infobox_end(1);
 
