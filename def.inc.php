@@ -140,6 +140,7 @@
 
 	// Backup-Dir
 	define('BACKUP_DIR',$conf['backup']['v']);	
+	define('CACHE_ROOT','cache');
 
   /***********************************/
   /* Libraries                       */

@@ -508,7 +508,8 @@ echo $sql;
 					user_deleted=".$t."
 				WHERE
 					user_id=".$_GET['user_id']."
-				;");			
+				;");	
+				success_msg("Löschantrag gespeichert!");		
 			}
 			
 			// Löschantrag aufheben
@@ -522,7 +523,7 @@ echo $sql;
 				WHERE
 					user_id=".$_GET['user_id']."
 				;");
-				echo "Löschantrag aufgehoben!<br/><br/>";
+				success_msg("Löschantrag aufgehoben!");
 			}
 
 			// Fetch all data
@@ -550,6 +551,7 @@ echo $sql;
 					document.getElementById('tabPoints').style.display='none';
 					//document.getElementById('tabWarnings').style.display='none';
 					document.getElementById('tabTickets').style.display='none';
+					document.getElementById('tabComments').style.display='none';
 					
 					document.getElementById(idx).style.display='';
 				
@@ -589,6 +591,7 @@ echo $sql;
 					<a href=\"javascript:;\" onclick=\"showTab('tabFailures')\">Loginfehler</a>
 					<a href=\"javascript:;\" onclick=\"showTab('tabPoints')\">Punkte</a>
 					<a href=\"javascript:;\" onclick=\"showTab('tabTickets')\">Tickets</a>
+					<a href=\"javascript:;\" onclick=\"showTab('tabComments')\">Kommentare</a>
 					
 					<!--<a href=\"javascript:;\" onclick=\"showTab('tabWarnings')\">Verwarnungen</a>-->
 				<br style=\"clear:both;\" />
@@ -618,21 +621,54 @@ echo $sql;
 				echo "<tr><td colspan=\"2\" class=\"tabSeparator\"></td></tr>";
 				
 				echo "<tr>
-								<th>Rohstoffe:</th>
-								<td>
-								Raids: ".nf($arr['user_res_from_raid'])." t<br/> 
-								Asteroiden: ".nf($arr['user_res_from_asteroid'])." t<br/>
-								Nebelfelder: ".nf($arr['user_res_from_nebula'])." t
-							</td>
-						</tr>";						
+					<th>Rohstoffe:</th>
+					<td>
+						Raids: ".nf($arr['user_res_from_raid'])." t<br/> 
+						Asteroiden: ".nf($arr['user_res_from_asteroid'])." t<br/>
+						Nebelfelder: ".nf($arr['user_res_from_nebula'])." t
+					</td>
+				</tr>";						
+				echo "<tr>
+					<th>Infos:</th>
+					<td>";
+					if ($arr['user_deleted']!=0)
+					{
+						echo "<div style=\"color:".USER_COLOR_DELETED."\">Dieser Account ist zur Löschung am ".df($arr['user_deleted'])." vorgemerkt</div>";
+					}						
+					if ($arr['user_hmode_from']>0)
+					{
+						echo "<div style=\"color:".COLOR_UMOD."\">Dieser Account ist im Urlaubsmodus seit ".df($arr['user_hmode_from'])." bis mindestens ".df($arr['user_hmode_to'])."</div>";
+					}						
+					if ($arr['user_blocked_from']>0 && $arr['user_blocked_to']>time())
+					{
+						echo "<div style=\"color:".COLOR_BANNED."\">Dieser Account ist im gesperrt von ".df($arr['user_blocked_from'])." bis ".df($arr['user_blocked_to']);
+						if ($arr['user_ban_reason']!="")
+						{
+							echo ". Grund: ".stripslashes($arr['user_ban_reason']);
+						}
+						echo "</div>";
+					}
+					$cres=dbquery("
+					SELECT 
+						COUNT(comment_id),
+						MAX(comment_timestamp) 
+					FROM 
+						user_comments
+					WHERE
+						comment_user_id=".$arr['user_id']."
+					;");	
+					$carr = mysql_fetch_row($cres);
+					if ($carr[0] > 0)
+					{
+						echo "<div>Kommentare: ".$carr[0]." vorhanden, neuster Kommentar von ".df($carr[1])."</div>";
+					}	
+					if ($arr['user_comment']!="")
+					{
+						echo "<div>Bemerkungen: ".$arr['user_comment']."</div>";
+					}							
+					echo "</td>
+				</tr>";					
 				
-				/*
-				if ($arr['user_deleted']!=0)
-				{
-					infobox_start("Löschantrag");
-					echo "<span style=\"color:".USER_COLOR_DELETED."\">Dieser Account ist zur Löschung am ".df($arr['user_deleted'])." vorgemerkt!</span>";
-					infobox_end();					
-				}*/
 				echo "</table>";
 				
 				/**
@@ -1158,6 +1194,13 @@ echo $sql;
 					xajax_userTickets(".$arr['user_id'].",'tabTickets');
 				</script>";
 
+				/**
+				* Kommentare
+				*/				
+				echo "<div class=\"tb\" id=\"tabComments\" style=\"display:none;\">Laden...</div>";	
+				echo "<script type=\"text/javascript\">
+					xajax_userComments(".$arr['user_id'].",'tabComments');
+				</script>";
 				
 				/**
 				* Account
@@ -1279,7 +1322,7 @@ echo $sql;
 				echo "<input type=\"button\" value=\"Nachricht senden\" onclick=\"document.location='?page=messages&sub=sendmsg&user_id=".$arr['user_id']."'\" /> ";
 				echo "<input type=\"button\" onclick=\"document.location='?page=$page&sub=userlog&id=".$arr['user_id']."'\" value=\"Sessions\" /> ";
 				echo "<input type=\"button\" onclick=\"document.location='?page=$page&sub=history&id=".$arr['user_id']."'\" value=\"History\" /> ";
-				echo "<input type=\"submit\" name=\"delete_user\" value=\"User l&ouml;schen\" style=\"color:#f00\" onclick=\"return confirm('Soll dieser User entg&uuml;ltig gel&ouml;scht werden?');\"> ";
+				//echo "<input type=\"submit\" name=\"delete_user\" value=\"User l&ouml;schen\" style=\"color:#f00\" onclick=\"return confirm('Soll dieser User entg&uuml;ltig gel&ouml;scht werden?');\"> ";
 				if ($arr['user_deleted']!=0)
 				{
 					echo "<input type=\"submit\" name=\"canceldelete\" value=\"Löschantrag aufheben\" style=\"color:".USER_COLOR_DELETED."\" /> ";					

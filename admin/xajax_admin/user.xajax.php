@@ -299,12 +299,79 @@ function showLast5Messages($uid,$target,$limit=5)
 	return $or;
 }
 
+function userComments($uid,$target)
+{
+	$or = new xajaxResponse();
+	ob_start();
+	echo "<b>Neuer Kommentar:</b><br/><textarea rows=\"4\" cols=\"70\" id=\"new_comment_text\"></textarea><br/>";
+	echo "<input type=\"button\" onclick=\"xajax_addUserComment('$uid','$target',document.getElementById('new_comment_text').value);\" value=\"Speichern\" />";
+	echo "<table class=\"tb\">";	
+	$lres=dbquery("
+	SELECT 
+		* 
+	FROM 
+		user_comments
+	LEFT JOIN
+		admin_users
+	ON
+		comment_admin_id=user_id
+	WHERE
+		comment_user_id=".$uid."
+	ORDER BY 
+		comment_timestamp DESC
+	;");
+	if (mysql_num_rows($lres)>0)
+	{
+		echo "<tr>
+			<th>Datum</th>
+			<th>Admin</th>
+			<th>Text</th>
+		</tr>";
+		while ($larr=mysql_fetch_array($lres))
+		{
+			echo "<tr>
+				<td class=\"tbldata\">".df($larr['comment_timestamp'])."</td>
+				<td class=\"tbldata\">".$larr['user_nick']."</td>
+				<td class=\"tbldata\">".text2html($larr['comment_text'])."</td>
+			</tr>";   
+		}           
+	}             
+	else          
+	{             
+		echo "<tr><td class=\"tbldata\">Keine Kommentare</td></tr>";
+	}             
+	echo "</table>";
+
+	$out = ob_get_contents();
+	ob_end_clean();	
+	$or->addAssign($target,"innerHTML",$out);
+	return $or;	
+}
+
+function addUserComment($uid,$target,$text)
+{
+	$or = new xajaxResponse();
+	if ($text!="")
+	{
+		dbquery("INSERT INTO user_comments (comment_timestamp,comment_user_id,comment_admin_id,comment_text) VALUES ('".time()."','$uid','".$_SESSION[SESSION_NAME]['user_id']."','".addslashes($text)."');");
+		$or->addScript("xajax_userComments('$uid','$target')");
+	}
+	else
+	{
+		$or->addAlert("Fehler! Kein Text!");
+		
+	}
+	return $or;	
+}
 
 $xajax->registerFunction("showTimeBox");
 $xajax->registerFunction("allianceRankSelector");
 $xajax->registerFunction("userPointsTable");
+$xajax->registerFunction("addUserComment");
+
 
 $xajax->registerFunction("userTickets");
+$xajax->registerFunction("userComments");
 $xajax->registerFunction("sendUrgendMsg");
 $xajax->registerFunction("showLast5Messages");
 

@@ -170,7 +170,34 @@
 	}
 	else
 	{
-		login_prompt();	
+		$res = dbquery("SELECT COUNT(user_id) FROM admin_users;");
+		$arr = mysql_fetch_row($res);
+		if ($arr[0]==0)
+		{
+			if (isset($_POST['newuser_submit']) && $_POST['user_nick']!="" && $_POST['user_password']!='')
+			{
+				dbquery("INSERT INTO admin_users (user_nick,user_password,user_admin_rank) VALUES ('".$_POST['user_nick']."','".md5($_POST['user_password'])."',8);");
+				echo "Benutzer wurde erstellt!<br/><br/><input type=\"button\" onclick=\"document.location='?'\" value=\"Weiterfahren\"/>";				
+			}
+			else
+			{
+				echo "<div style=\"width:500px;margin:10px auto;text-align:center;\">" .
+				"<br/><a href=\"..\"><img src=\"../images/game_logo.jpg\" alt=\"Logo\" width=\"450\" height=\"150\" border=\"0\" /></a>";
+				echo "<h1 style=\"text-align:center;\">Administration - ".GAMEROUND_NAME."</h1>";
+				echo "<form action=\"?\" method=\"post\">";			
+				echo "<h2 style=\"text-align:center;\">Admin-User erstellen</h2>";
+				echo '<table class="tb" style="width:400px;margin:10px auto;">';
+				echo '<tr><th>Loginname:</th><td><input type="text" name="user_nick" /></td></tr>';
+				echo '<tr><th>Passwort:</th><td><input type="password" name="user_password" /></td></tr>';
+				echo '</table><br/><input type="submit" name="newuser_submit" value="Admin-User erstellen" />';
+				echo "</form></div>";
+			}
+			$login_successfull=false;
+		}
+		else
+		{
+			login_prompt();	
+		}
 	}
 
 

@@ -143,6 +143,7 @@
 			{
 				// Define s as the current session variable
 				$s = $_SESSION[SESSION_NAME];
+				
 
 				// Admin-Gruppen laden				
 				$admingroup=array();

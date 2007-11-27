@@ -1,6 +1,8 @@
 <?PHP
-	$path = "../cache/user_xml";
 	echo "<h1>XML-Import/Export</h1>";
+	
+	cache::checkPerm("user_xml","../");
+	$path = "../".CACHE_ROOT."/user_xml";
 	
 	//
 	// Import
@@ -217,8 +219,12 @@
 		echo "<h2>Export</h2>";
 		if (isset($_POST['exportcache']))
 		{
-			$xmlfile = writeUserToXml($_POST['export_user_id'],"../");
-			success_msg("Die Userdaten wurden nach [b]".$xmlfile."[/b] exportiert.");
+			$uti = new UserToXml($_POST['export_user_id']);
+			$xmlfile = $uti->toCacheFile("../");
+			if ($xmlfile)
+			{
+				success_msg("Die Userdaten wurden nach [b]".$xmlfile."[/b] exportiert.");
+			}
 		}
 		if (isset($_POST['exportdl']))
 		{
