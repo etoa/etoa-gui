@@ -1,0 +1,29 @@
+<event id="intergalacticstorm">
+	<info>
+		<handle>planet</handle>
+		<possibility>100</possibility>
+		<points min="0" max="0" />
+		<title>Intergalaktischer Sturm</title>
+		<message>Ein intergalaktischer Sturm ist über deinen Planeten {planet} 
+		gefegt. Dabei schlugen diverse Meteoriten auf dem Planeten ein. Dabei wurden auch einige deiner
+		Schiffe getroffen. Deinen Geologen ist es gelungen {general:rewards:resources:metal} Titan und 
+		{general:rewards:resources:crystal} Silizium aus den Meteoritentrümmern zu bergen.</message>	
+		<decision>0</decision>
+	</info>
+	<action>
+		<general>
+			<rewards>
+				<resources logbase="15">
+					<min>
+						<metal>250</metal>
+						<crystal>400</crystal>
+					</min>
+					<max>
+						<metal>1200</metal>
+						<crystal>1050</crystal>
+					</max>
+				</resources>
+			</rewards>
+		</general>
+	</action>
+</event>

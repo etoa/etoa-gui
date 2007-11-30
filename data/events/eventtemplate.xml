@@ -1,19 +1,47 @@
-<event id="">
-	<general>
-		<title></>
-		<text>
-
-		</text>	
-		<possibility></possibility>
-		<question></question>
-	</general>
-	<event>
-
-	</event>
-	<eventpos>
-
-	</eventpos>
-	<eventneg>
-
-	</eventneg>
+<event id="template">
+	<info>
+		<handle>planet</handle>
+		<possibility>100</possibility>
+		<points min="0" max="0" />
+		<title>Eventtitle</title>
+		<message>Text</message>	
+		<decision>0</decision>
+	</info>
+	<action>
+		<general>
+			<message></message>
+			<rewards>
+				<resources logbase="15">
+					<min>
+						<metal>0</metal>
+						<crystal>0</crystal>
+						<plastic>0</plastic>
+						<fuel>0</fuel>
+						<food>0</food>
+						<people>0</people>
+					</min>
+					<max>
+						<metal>0</metal>
+						<crystal>0</crystal>
+						<plastic>0</plastic>
+						<fuel>0</fuel>
+						<food>0</food>
+						<people>0</people>
+					</max>
+				</resources>
+				<ships logbase="15">
+					<ship id="0" min="0" max="0" />
+				</ships>
+				<defenses logbase="15">
+					<defense id="0"  min="0" max="0" />
+				</defenses>
+			</rewards>
+			<costs>	
+			</costs>			
+		</general>
+		<positive>		
+		</positive>
+		<negative>		
+		</negative>
+	</action>
 </event>
