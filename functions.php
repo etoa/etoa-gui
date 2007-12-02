@@ -3096,19 +3096,6 @@ Mit freundlichen Grüßen,
 die Spielleitung";
 			send_mail('',$arr['user_email'],'Accountlöschung bei Escape to Andromeda',$text,'','');
 			
-			//Arrays löschen (Speicher freigeben)
-			mysql_free_result($bres);
-			unset($barr);
-			mysql_free_result($tres);
-			unset($tarr);
-			mysql_free_result($sres);
-			unset($sarr);
-			mysql_free_result($dres);
-			unset($darr);
-			mysql_free_result($pres);
-			unset($parr);
-			unset($lstr);
-
 			return true;
 
 			}
@@ -3349,7 +3336,7 @@ die Spielleitung";
 		echo text2html($text)."</div>";		
 	}
 
-	function error_msg($text,$type=0,$exit=0,$addition=0)
+	function error_msg($text,$type=0,$exit=0,$addition=0,$stacktrace=null)
 	{
 		// TODO: Do check on headers
 		if (false)
@@ -3396,6 +3383,11 @@ die Spielleitung";
 				break;				
 			default:
 				echo '';
+		}
+		if (isset($stacktrace))
+		{
+			echo "<div style=\"text-align:left;border-top:1px solid #000;\">
+			<b>Stack-Trace:</b><br/>".nl2br($stacktrace)."<br/><a href=\"http://bugs.etoa.net\" target=\"_blank\">Fehler melden</a></div>";
 		}
 		echo "</div>";
 		if ($exit>0) 

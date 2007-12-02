@@ -7,17 +7,31 @@
  * @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
  */		
 
-	require_once("xajax/xajax.inc.php");
-	$objAjax = new xajax();
+	require_once(XAJAX_DIR."/xajax_core/xajax.inc.php");
+	$xajax = new xajax();
+	$xajax->setFlag('debug',false);
+	//require_once("xajax/xajax.inc.php");
 	//$objAjax-> debugOn();
 
-	
-	require_once("xajax_etoa/global.xajax.php");
 
+
+	if (isset($page))
+	{
+		if ($page=="haven")
+		{
+			require_once("inc/xajax/haven.xajax.php");
+		}
+	}	
+	
+	//require_once("xajax_etoa/global.xajax.php");
+
+	/*
 	if (stristr($_SERVER["PHP_SELF"],"chatbox.php") || (isset($page) && $page=="chat"))
 	{
 		require_once("xajax_etoa/chat.xajax.php");
 	}
+	
+
 	
 	if (isset($page) && $page=="haven")
 	{
@@ -43,11 +57,6 @@
 	{
 		require_once("xajax_etoa/registration.xajax.php");
 	}
-	/*
-	if (isset($page) && $page=="havenb")
-	{
-		require_once("xajax_etoa/haven.xajax.php");
-	}*/
 	if (isset($page) && $page=="market")
 	{
 		require_once("xajax_etoa/market.xajax.php");
@@ -55,8 +64,8 @@
 	if (isset($page) && $page=="alliance")
 	{
 		require_once("xajax_etoa/alliance.xajax.php");
-	}
+	}*/
 	
 		
-	$objAjax->processRequests();
+	$xajax->processRequest();
 ?>

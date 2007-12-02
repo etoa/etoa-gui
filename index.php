@@ -250,7 +250,7 @@
 	$page = (isset($_GET['page']) && $_GET['page']!="") ? $_GET['page'] : DEFAULT_PAGE;
 
 	// Initialize XAJAX and load functions
-	include("xajax_etoa.inc.php");
+	require_once("inc/xajax.inc.php");
 
 ?>
 <?PHP echo '<?xml version="1.0" encoding="UTF-8"?>
@@ -284,7 +284,7 @@
 		<script src="scripts.js" type="text/javascript"></script>
 		<?PHP 
 			echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"".CSS_STYLE."/style.css\" />";
-			echo $objAjax->printJavascript('xajax');
+			echo $xajax->printJavascript(XAJAX_DIR);
 			echo file_exists(CSS_STYLE."/scripts.js") ? "<script src=\"".CSS_STYLE."/scripts.js\" type=\"text/javascript\"></script>" : ''; 
 		?>
 	</head>
@@ -497,7 +497,15 @@
 				$tpl->display(getcwd()."/".CSS_STYLE."/header.tpl");
 				
 				// Include content
-				require("inc/content.inc.php");
+				try
+				{
+					require("inc/content.inc.php");
+				}
+				catch (Exception $e)
+				{
+					error_msg($e->getMessage(),0,1,0,$e->getTraceAsString());
+				}
+
 				
 				$render_time = explode(' ',microtime());
 				$rtime = $render_time[1]+$render_time[0]-$render_starttime;
@@ -506,6 +514,8 @@
 				// Display footer
 				$tpl->display(getcwd()."/".CSS_STYLE."/footer.tpl");						
 			}
+			
+			
 			$_SESSION['lastpage']=$page;
 			$_SESSION[ROUNDID] = $s;
 			dbclose();

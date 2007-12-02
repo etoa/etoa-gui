@@ -701,9 +701,12 @@
 						if ($arr['alliance_img']!="")
 						{
 							$im = ALLIANCE_IMG_DIR."/".$arr['alliance_img'];
-							$ims = getimagesize($im);
-							echo "<tr><td class=\"tblblack\" colspan=\"3\" style=\"text-align:center;background:#000\">
-							<img src=\"".$im."\" alt=\"Allianz-Logo\" style=\"width:".$ims[0]."px;height:".$ims[1]."\" /></td></tr>";
+							if (file_exists($im))
+							{
+								$ims = getimagesize($im);
+								echo "<tr><td class=\"tblblack\" colspan=\"3\" style=\"text-align:center;background:#000\">
+								<img src=\"".$im."\" alt=\"Allianz-Logo\" style=\"width:".$ims[0]."px;height:".$ims[1]."\" /></td></tr>";
+							}
 						}
 
 						// Internes Forum verlinken
@@ -785,7 +788,9 @@
 										$bewerbung = 1;
 								}
 								if($bewerbung==1)
+								{
 									echo "<tr><td class=\"tbltitle\" colspan=\"3\" align=\"center\"><div align=\"center\"><b><a href=\"?page=$page&action=applications\">Es sind Bewerbungen vorhanden!</a></b></div></td></tr>";
+								}
 							}
 						}
 
@@ -793,7 +798,10 @@
 						if ($isFounder || $myRight['relations'])
 						{
 							if (mysql_num_rows(dbquery("SELECT alliance_bnd_id FROM ".$db_table['alliance_bnd']." WHERE alliance_bnd_alliance_id2='".$s['user']['alliance_id']."' AND alliance_bnd_level='0';"))>0)
-								echo "<tr><td class=\"tbltitle\" colspan=\"3\" align=\"center\"><div align=\"center\"><b><a href=\"?page=$page&action=relations\">Es sind B&uuml;ndnisanfragen vorhanden!</a></b></div></td></tr>";
+								echo "<tr>
+									<td class=\"tbltitle\" colspan=\"3\" style=\"text-align:center;color:#0f0\">
+										<a  style=\"color:#0f0\" href=\"?page=$page&action=relations\">Es sind B&uuml;ndnisanfragen vorhanden!</a>
+								</td></tr>";
 						}
 
 						// Kriegserklärung anzeigen

@@ -27,10 +27,10 @@
 	//
 
 
-	if ($_POST['back']=="")
-		$_SESSION['haven']=Null;
+	//if ($_POST['back']=="")
+	//$_SESSION['haven']=Null;
 
-	$_SESSION['haven']=Null; //<- von lambo definiert, es gab ein bug: alleschiffe auswählen -> weiter zum start -> zurück zur zielwahl -> zurück zur flotten wahl -> nur noch ein typ schiff auswählen -> weiter -> es sind wieder alle schiffe ausgewählt, jedoch nur mit der zeit von dem einen typ!
+	//$_SESSION['haven']=Null; //<- von lambo definiert, es gab ein bug: alleschiffe auswählen -> weiter zum start -> zurück zur zielwahl -> zurück zur flotten wahl -> nur noch ein typ schiff auswählen -> weiter -> es sind wieder alle schiffe ausgewählt, jedoch nur mit der zeit von dem einen typ!
 
 	echo "<h2>Neue Schiffsauswahl</h2>";
 
@@ -124,8 +124,8 @@
 	  ".$db_table['ships']." AS s
 	ON
     s.ship_id=sl.shiplist_ship_id
-    AND sl.shiplist_user_id='".$s['user']['id']."'
-    AND sl.shiplist_planet_id='".$c->id."'
+    AND sl.shiplist_user_id='".$_SESSION['haven']['user_id']."'
+    AND sl.shiplist_planet_id='".$_SESSION['haven']['planet_id']."'
     AND sl.shiplist_count>0
 	ORDER BY
 		s.special_ship DESC,

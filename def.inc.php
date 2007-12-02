@@ -151,6 +151,8 @@
 	define('SMARTY_TEMPLATE_DIR', "cache/smarty_templates");
 	define('SMARTY_COMPILE_DIR', "cache/smarty_compile");
 
+	// xAjax
+	define('XAJAX_DIR',"libs/xajax");
 
   /***********************************/
   /* Design, Layout, Allgmeine Pfade */
@@ -215,6 +217,12 @@
 	define("RES_PLASTIC","PVC");
 	define("RES_FUEL","Tritium");
 	define("RES_FOOD","Nahrung");
+
+	// Universum
+	define("CELL_NUM_X",$conf['num_of_cells']['p1']);		// Anzahl Zellen x
+	define("CELL_NUM_Y",$conf['num_of_cells']['p2']);		// Anzahl Zellen y
+	define("CELL_LENGTH",$ae=$conf['cell_length']['v']);			// Länge vom Solsys in AE
+	define("PLANETS_MAX",$np=$conf['num_planets']['p2']);			// Max. Planeten im Solsys		
 
 	// Wurmlöcher
 	define("WH_UPDATE_AFFECT_TIME",$conf["wh_update"]["v"]);	// ???
