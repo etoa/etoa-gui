@@ -92,6 +92,8 @@
 		$_SESSION[SESSION_NAME]['user_nick']=$arr['user_nick'];
 		$_SESSION[SESSION_NAME]['user_name']=$arr['user_name'];
 		$_SESSION[SESSION_NAME]['user_email']=$arr['user_email'];
+		$_SESSION[SESSION_NAME]['user_last_host']=$arr['user_hostname'];
+		$_SESSION[SESSION_NAME]['user_last_ip']=$arr['user_ip'];
 		$_SESSION[SESSION_NAME]['user_group_id']=$arr['user_admin_rank'];
 		$_SESSION[SESSION_NAME]['user_last_login']=$arr['user_last_login'];
 		$_SESSION[SESSION_NAME]['group_name']=$arr['group_name'];

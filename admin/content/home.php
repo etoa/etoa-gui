@@ -121,6 +121,7 @@
 				<th class=\"tbltitle\">Status</th>
 				<th class=\"tbltitle\">IP</th>
 				<th class=\"tbltitle\">Hostname</th>
+				<th class=tbltitle>Ort</th>
 				</tr>";
 				while ($arr=mysql_fetch_array($res))
 				{
@@ -135,7 +136,9 @@
 					else
 						echo "<td class=\"tbldata\" style=\"color:#f72\">offline</td>";
 					echo "<td class=\"tbldata\">".$arr['user_ip']."</td>";
-					echo "<td class=\"tbldata\">".$arr['user_hostname']."</td>";
+					echo "<td class=\"tbldata\">".gethostbyaddr($arr['user_ip'])."</td>";
+					$loc = geoip_record_by_name($arr['user_ip']);
+					echo "<td class=tbldata>".$loc['city']."</td>";
 					echo "</tr>";
 					
 				}			
@@ -261,9 +264,11 @@
 	//
 	else
 	{
+		$loc = geoip_record_by_name($s['user_last_ip']);
 		echo "<h1>&Uuml;bersicht</h1>";
 		echo "Hallo <b>".$s['user_nick']."</b>, willkommen im Administrationsmodus! Dein Rang ist <b>".$s['group_name']."</b><br/><br/>";
-		
+		success_msg("Dein letzter Login war am ".df($s['user_last_login']).", Host ".gethostbyaddr($s['user_last_host']).", IP ".$s['user_last_ip'].", Ort ".$loc['city'],1);
+
 		//
 		// Admin-News
 		//
