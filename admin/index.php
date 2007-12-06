@@ -298,7 +298,7 @@
 								echo "<tr><th><a href=\"?page=home&amp;sub=adminlog\">Admins:</a></th><td>".$a1arr[0]." / ".$a2arr[0]."</td><td>".round($ap,1)."%</td></tr>";
 								echo "</table><br/>";
 								echo "<div style=\"padding-left:10px;\">
-								<b>PHP:</b> ".substr(phpversion(),0,strrpos(phpversion(),"_"))."<br/>
+								<b>PHP:</b> ".substr(phpversion(),0,10)."<br/>
 								<b>MySQL:</b> ".mysql_get_client_info()."<br/>
 								<b>Webserver:</b> ".apache_get_version()."
 								</div>";

@@ -58,7 +58,6 @@
 					<th class=\"tbltitle\">Logout</th>
 					<th class=\"tbltitle\">IP</th>
 					<th class=\"tbltitle\">Hostname</th>
-					<th class=\"tbltitle\">Ort</th>
 					<th class=\"tbltitle\">Session-Dauer</th>";
 					while ($arr=mysql_fetch_array($res))
 					{
@@ -77,9 +76,6 @@
 						echo "</td>";
 						echo "<td class=\"tbldata\">".$arr['log_ip']."</td>";
 						echo "<td class=\"tbldata\">".gethostbyaddr($arr['log_hostname'])."</td>";
-						$country = geoip_country_name_by_name($arr['log_ip']);
-						$loc = geoip_record_by_name($arr['log_ip']);
-						echo "<td class=\"tbldata\">".$loc['city']." (".$country.")</td>";
 						echo "<td class=\"tbldata\">";
 						if (max($arr['log_logouttime'],$arr['log_acttime'])-$arr['log_logintime']>0)
 							echo tf(max($arr['log_logouttime'],$arr['log_acttime'])-$arr['log_logintime']);
@@ -145,9 +141,6 @@
 						echo "<td class=\"tbldata\" style=\"color:#f72\">offline</td>";
 					echo "<td class=\"tbldata\">".$arr['user_ip']."</td>";
 					echo "<td class=\"tbldata\">".gethostbyaddr($arr['user_ip'])."</td>";
-					$country = geoip_country_name_by_name($arr['user_ip']);
-					$loc = geoip_record_by_name($arr['user_ip']);
-					echo "<td class=\"tbldata\">".$loc['city']." (".$country.")</td>";
 					echo "</tr>";
 					
 				}			
@@ -273,10 +266,9 @@
 	//
 	else
 	{
-		$loc = geoip_record_by_name($s['user_last_ip']);
 		echo "<h1>&Uuml;bersicht</h1>";
 		echo "Hallo <b>".$s['user_nick']."</b>, willkommen im Administrationsmodus! Dein Rang ist <b>".$s['group_name']."</b><br/><br/>";
-		success_msg("Dein letzter Login war am ".df($s['user_last_login']).", Host ".gethostbyaddr($s['user_last_host']).", IP ".$s['user_last_ip'].", Ort ".$loc['city'],1);
+		success_msg("Dein letzter Login war [b]".df($s['user_last_login'])."[/b], Host: [b]".gethostbyaddr($s['user_last_host'])."[/b] (aktuell: ".gethostbyaddr($_SERVER['REMOTE_ADDR'])."), IP: [b]".$s['user_last_ip']."[/b] (aktuell: ".$_SERVER['REMOTE_ADDR'].")",1);
 
 		//
 		// Admin-News
