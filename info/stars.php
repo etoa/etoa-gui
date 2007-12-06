@@ -45,8 +45,7 @@
 		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_population\">Wachstum</td>";
 		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_researchtime\">Forschungszeit</td>";
 		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_buildtime\">Bauzeit</td>";
-		echo "<td class=\"tbltitle\">Bewertung</td>
-		</tr>";
+		echo "</tr>";
 
 		while ($arr = mysql_fetch_array($res))
 		{
@@ -64,10 +63,11 @@
 			echo "<td class=\"tbldata\">".get_percent_string($arr['type_f_population'],1)."</td>";
 			echo "<td class=\"tbldata\">".get_percent_string($arr['type_f_researchtime'],1,1)."</td>";
 			echo "<td class=\"tbldata\">".get_percent_string($arr['type_f_buildtime'],1,1)."</td>";
-			$rating = ($arr['type_f_metal']+$arr['type_f_crystal']+$arr['type_f_plastic']+$arr['type_f_fuel']+
+			//$rating = ($arr['type_f_metal']+$arr['type_f_crystal']+$arr['type_f_plastic']+$arr['type_f_fuel']+
 			$arr['type_f_food']+$arr['type_f_power']+$arr['type_f_population']-
 			$arr['type_f_researchtime']-$arr['type_f_buildtime']-5);
-			echo "<td class=\"tbldata\">".$rating."</td></tr>";
+			//echo "<td class=\"tbldata\">".$rating."</td>";
+			echo "</tr>";
 			
 			$cnt_m += $arr['type_f_metal']-1;
 			$cnt_c += $arr['type_f_crystal']-1;
@@ -81,6 +81,7 @@
 			$cnt_rat += $rating;
 		}
 	}
+	/*
 	echo "<tr><th colspan=\"2\" class=\"tbltitle\">Summe</th>";
 	echo "<td class=\"tbldata\">".get_percent_string($cnt_m+1,1)."</td>";
 	echo "<td class=\"tbldata\">".get_percent_string($cnt_c+1,1)."</td>";
@@ -104,7 +105,7 @@
 	echo "<td class=\"tbldata\">".get_percent_string(($cnt_res/$nr)+1,1)."</td>";
 	echo "<td class=\"tbldata\">".get_percent_string(($cnt_bui/$nr)+1,1)."</td>";
 	echo "<td class=\"tbldata\">".round($cnt_rat/$nr,2)."</td>";
-	echo "</tr>";
+	echo "</tr>"; */
 
 	infobox_end(1);
 
