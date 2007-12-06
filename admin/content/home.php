@@ -54,7 +54,12 @@
 				$res=dbquery("SELECT * FROM ".$db_table['admin_user_log']." WHERE log_user_id=".$_POST['user_id']." ORDER BY log_id DESC;");
 				if (mysql_num_rows($res)>0)
 				{
-					echo "<table><tr><th class=\"tbltitle\">Login</th><th class=\"tbltitle\">Letzte Aktivit&auml;t</th><th class=\"tbltitle\">Logout</th><th class=\"tbltitle\">IP</th><th class=\"tbltitle\">Hostname</th><th class=\"tbltitle\">Session-Dauer</th>";
+					echo "<table><tr><th class=\"tbltitle\">Login</th><th class=\"tbltitle\">Letzte Aktivit&auml;t</th>
+					<th class=\"tbltitle\">Logout</th>
+					<th class=\"tbltitle\">IP</th>
+					<th class=\"tbltitle\">Hostname</th>
+					<th class=\"tbltitle\">Ort</th>
+					<th class=\"tbltitle\">Session-Dauer</th>";
 					while ($arr=mysql_fetch_array($res))
 					{
 						echo "<tr><td class=\"tbldata\">".date("d.m.Y H:i",$arr['log_logintime'])."</td>";
@@ -72,6 +77,9 @@
 						echo "</td>";
 						echo "<td class=\"tbldata\">".$arr['log_ip']."</td>";
 						echo "<td class=\"tbldata\">".$arr['log_hostname']."</td>";
+						$country = geoip_country_name_by_name($arr['user_ip']);
+						$loc = geoip_record_by_name($arr['user_ip']);
+						echo "<td class=\"tbldata\">".$loc['city']." (".$country.")</td>";
 						echo "<td class=\"tbldata\">";
 						if (max($arr['log_logouttime'],$arr['log_acttime'])-$arr['log_logintime']>0)
 							echo tf(max($arr['log_logouttime'],$arr['log_acttime'])-$arr['log_logintime']);
@@ -137,8 +145,9 @@
 						echo "<td class=\"tbldata\" style=\"color:#f72\">offline</td>";
 					echo "<td class=\"tbldata\">".$arr['user_ip']."</td>";
 					echo "<td class=\"tbldata\">".gethostbyaddr($arr['user_ip'])."</td>";
+					$country = geoip_country_name_by_name($arr['user_ip']);
 					$loc = geoip_record_by_name($arr['user_ip']);
-					echo "<td class=tbldata>".$loc['city']."</td>";
+					echo "<td class=\"tbldata\">".$loc['city']." (".$country.")</td>";
 					echo "</tr>";
 					
 				}			
