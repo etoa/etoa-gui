@@ -47,7 +47,7 @@
 	// Funktionen und Config einlesen
 	require_once("../conf.inc.php");
 	require_once("functions.php");
-	require_once("classes.php");
+	//require_once("classes.php");
 
 	// Renderzeit-Start festlegen
 	$render_time = explode(" ",microtime());

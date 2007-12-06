@@ -30,10 +30,10 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/
 	
-	include("classes/planets.php");
+	//include("classes/planets.php");
 	
 	// Some misc stuff
 	//include("classes/mysql.class.php");
-	include("classes/timer.class.php");
+	//include("classes/timer.class.php");
 	
 ?>

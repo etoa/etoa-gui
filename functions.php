@@ -39,9 +39,10 @@
 	{
 		if ($class_name != "xajax")
 		{
-	    if (!@include_once('classes/'.strtolower($class_name).'.class.php'))
+			$file = 'classes/'.strtolower($class_name).'.class.php';
+	    if (!@include_once($file))
 	    {
-	    	die('Class '.$class_name.' not found!');
+	    	die('Class '.$class_name.' not found ('.$file.')!');
 	    }
 	  }
 	}
