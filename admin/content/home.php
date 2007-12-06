@@ -76,9 +76,9 @@
 							echo "-";						
 						echo "</td>";
 						echo "<td class=\"tbldata\">".$arr['log_ip']."</td>";
-						echo "<td class=\"tbldata\">".$arr['log_hostname']."</td>";
-						$country = geoip_country_name_by_name($arr['user_ip']);
-						$loc = geoip_record_by_name($arr['user_ip']);
+						echo "<td class=\"tbldata\">".gethostbyaddr($arr['log_hostname'])."</td>";
+						$country = geoip_country_name_by_name($arr['log_ip']);
+						$loc = geoip_record_by_name($arr['log_ip']);
 						echo "<td class=\"tbldata\">".$loc['city']." (".$country.")</td>";
 						echo "<td class=\"tbldata\">";
 						if (max($arr['log_logouttime'],$arr['log_acttime'])-$arr['log_logintime']>0)
