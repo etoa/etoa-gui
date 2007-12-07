@@ -46,6 +46,7 @@
 	// Prüfen ob der Login-Button gedrückt wurde
 	if ($_POST['login_submit']!="")
 	{
+		echo "Versuche, einzuloggen...";
 		$_SESSION[ROUNDID]=null;
 		
 		// Login-Eingaben prüfen
