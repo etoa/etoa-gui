@@ -1,4 +1,4 @@
-<?PHP
+<?P
 
 	echo "<h2>Sterne</h2>";
 	helpNavi(array("Sterne","stars"));
@@ -64,8 +64,8 @@
 			echo "<td class=\"tbldata\">".get_percent_string($arr['type_f_researchtime'],1,1)."</td>";
 			echo "<td class=\"tbldata\">".get_percent_string($arr['type_f_buildtime'],1,1)."</td>";
 			//$rating = ($arr['type_f_metal']+$arr['type_f_crystal']+$arr['type_f_plastic']+$arr['type_f_fuel']+
-			$arr['type_f_food']+$arr['type_f_power']+$arr['type_f_population']-
-			$arr['type_f_researchtime']-$arr['type_f_buildtime']-5);
+			//$arr['type_f_food']+$arr['type_f_power']+$arr['type_f_population']-
+			//$arr['type_f_researchtime']-$arr['type_f_buildtime']-5);
 			//echo "<td class=\"tbldata\">".$rating."</td>";
 			echo "</tr>";
 			
