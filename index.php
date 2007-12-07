@@ -68,13 +68,10 @@
 	//
 	// Session- & Login - Checks
 	//
-	
-	print_r($_POST);
 
 	// User einloggen falls nötig
 	if (isset($_POST['login_submit']))
 	{
-		echo " Lade Login script ";
 		require_once("inc/login.inc.php");
 	}
 
@@ -95,8 +92,6 @@
 	}
 
 	// Session prüfen
-	print_r($s);
-	print_r($_SESSION[ROUNDID]);
 	if (!isset($s['user']['id']) || $s['user']['id']==0 || $s['user']['id']=='')
 	{
 		session_destroy();
@@ -254,7 +249,7 @@
 	$page = (isset($_GET['page']) && $_GET['page']!="") ? $_GET['page'] : DEFAULT_PAGE;
 
 	// Initialize XAJAX and load functions
-	//require_once("inc/xajax.inc.php");
+	require_once("inc/xajax.inc.php");
 
 ?>
 <?PHP echo '<?xml version="1.0" encoding="UTF-8"?>
@@ -288,7 +283,7 @@
 		<script src="scripts.js" type="text/javascript"></script>
 		<?PHP 
 			echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"".CSS_STYLE."/style.css\" />";
-			//echo $xajax->printJavascript(XAJAX_DIR);
+			echo $xajax->printJavascript(XAJAX_DIR);
 			echo file_exists(CSS_STYLE."/scripts.js") ? "<script src=\"".CSS_STYLE."/scripts.js\" type=\"text/javascript\"></script>" : ''; 
 		?>
 	</head>
