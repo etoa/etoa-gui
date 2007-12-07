@@ -33,5 +33,5 @@ class Bookmarks
 		return $this->items;
 	}
 
-}
+};
 ?>
