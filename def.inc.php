@@ -36,6 +36,17 @@
 	else
 		error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
+	// OS-Version feststellen
+	if (stristr($_SERVER['SERVER_SIGNATURE'],"win32") || stristr($_SERVER['SERVER_SIGNATURE'],"win64"))
+	{
+		define('UNIX',false);
+		define('WINDOWS',true);
+	}
+	else
+	{
+		define('UNIX',true);
+		define('WINDOWS',false);
+	}
 
 	///////////////////////////////////////////////////////////////
 	//////////////       MYSQL - Table Names		          /////////
