@@ -30,6 +30,8 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/	
 
+	define('GAMEROUND_NAME',ROUNDID);
+
 	// Fehlermeldungs-Level feststellen
 	if (ETOA_DEBUG==1)
 		Error_reporting(E_ALL);

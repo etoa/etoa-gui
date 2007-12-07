@@ -43,7 +43,7 @@
 	// Initialisieren
 	if (require(GAME_ROOT_DIR."/functions.php"))
 	{	
-		require(GAME_ROOT_DIR."/../conf.inc.php");               
+		require(GAME_ROOT_DIR."/conf.inc.php");               
 		dbconnect(); 	
 		$conf = get_all_config();
 		require(GAME_ROOT_DIR."/def.inc.php");

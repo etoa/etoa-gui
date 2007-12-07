@@ -1,6 +1,6 @@
 <?PHP
 	session_start();
-	include("../../conf.inc.php");
+	include("../conf.inc.php");
 	include("../functions.php");
 	dbconnect();
 	$conf=get_all_config();

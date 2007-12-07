@@ -48,14 +48,14 @@
 	// Initialisieren
 	if (require(GAME_ROOT_DIR."/functions.php"))
 	{	
-		require(GAME_ROOT_DIR."/../conf.inc.php");               
+		require(GAME_ROOT_DIR."/conf.inc.php");               
 		dbconnect(); 	
 		$conf = get_all_config();
 		require(GAME_ROOT_DIR."/def.inc.php");
 	
 		chdir(GAME_ROOT_DIR);
 
-	 	// Alte Backups löschen
+	 	// Alte Backups lï¿½schen
 	 	$cmd = "find ".BACKUP_DIR." -name *.sql.gz -mtime +".$conf['backup']['p1']." -exec rm {} \;";
 		passthru($cmd);
 

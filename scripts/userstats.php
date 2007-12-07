@@ -25,8 +25,7 @@
 	// Initialisieren
 	if (include(GAME_ROOT_DIR."/functions.php"))
 	{
-		include(GAME_ROOT_DIR."/../conf.inc.php");
-		include(GAME_ROOT_DIR."/classes.php");
+		include(GAME_ROOT_DIR."/conf.inc.php");
 		dbconnect();
 		$conf = get_all_config();
 		include(GAME_ROOT_DIR."/def.inc.php");
@@ -100,7 +99,7 @@
 		$graphHeight=$h-$borderTop-$borderBottom;
 		$starti = $time-($totalSteps*5*60);
 	
-		// Horizontale Linien und Grössen
+		// Horizontale Linien und Grï¿½ssen
 		for ($i=0;$i<($max/100);$i++)
 		{
 			$y = $h-$borderBottom-($graphHeight/($max/100)*$i);

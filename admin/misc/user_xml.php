@@ -5,7 +5,7 @@
 		if ($_GET['id']>0)
 		{
 			// Funktionen und Config einlesen
-			require("../../../conf.inc.php");
+			require("../../conf.inc.php");
 			require("../../functions.php");
 		
 			// Mit der DB verbinden

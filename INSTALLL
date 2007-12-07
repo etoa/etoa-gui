@@ -21,27 +21,7 @@ to allow writing to the cache directory
 == Config ==
 ============
 
-Create a conf.inc.php file in the folder above the game root folder, containing the following code:
-
-<?PHP
-	define('DB_SERVER','localhost');
-	define('DB_USER','database_user');
-	define('DB_PASSWORD','database_password');
-	define('DB_DATABASE','database_name');	
-	
-	define("PASSWORD_SALT","wokife63wigire64reyodi69");
-	define('LOGINSERVER_URL',"http://www.etoa.ch");
-	define('GAMEROUND_NAME',"Testrunde");
-	define('ROUNDID',GAMEROUND_NAME);
-	define('ETOA_DEBUG',0);
-
-	define('BACKUP_REMOTE_IP',"ftp_backup_server");
-	define('BACKUP_REMOTE_USER',"ftp_user");
-	define('BACKUP_REMOTE_PASSWORD',"ftp_password");
-	define('BACKUP_REMOTE_PATH',"/directory_on_ftp_server");	
-?>
-
-(You can also copy and rename the file conf.inc.php.test for the test server configuration)
+Edit the example.conf.inc.php file to your needs and rename it to conf.inc.php
 
 PASSWORD_SALT is a random choosen value, which has to be set at the begining of a round and should not be changed during a round
 

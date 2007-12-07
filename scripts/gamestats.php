@@ -656,7 +656,7 @@
 
 
         /****************************************/
-        /* Gebäude						       	*/
+        /* Gebï¿½ude						       	*/
         /* Gesamt Anzahl Level im Universum     */
         /****************************************/
         
@@ -747,7 +747,7 @@
 	
 	
 	/************************/
-	/* Gebäude			    */
+	/* Gebï¿½ude			    */
 	/*					    */
 	/************************/
 	
@@ -1097,8 +1097,7 @@
 	// Initialisieren
 	if (include(GAME_ROOT_DIR."/functions.php"))
 	{
-		include(GAME_ROOT_DIR."/../conf.inc.php");
-		include(GAME_ROOT_DIR."/classes.php");
+		include(GAME_ROOT_DIR."/conf.inc.php");
 		dbconnect();
 		$conf = get_all_config();
 		include(GAME_ROOT_DIR."/def.inc.php");

@@ -32,23 +32,6 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/		
 
-	/*
-
-	// Session-Cookie setzen
-	ini_set('arg_separator.output',  '&amp;');
-	session_start();
-
-	// Funktionen und Config einlesen
-	include("conf.inc.php");
-	include("functions.php");
-	
-	// Datenbankverbindung aufbauen
-	dbconnect();
-	
-	// Config einlesen
-	$conf=get_all_config();
-	include("def.inc.php"); */
-
 	// Zu-viele-Fenster-Checker resetten
 	$_SESSION[ROUNDID]['firstlog']=null;
 

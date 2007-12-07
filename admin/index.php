@@ -42,10 +42,9 @@
 	session_start();
 
 	// Funktionen und Config einlesen
-	require("../../conf.inc.php");
+	require("../conf.inc.php");
 	require("../functions.php");
 	require("../inc/fleet_action.inc.php");
-	require("../classes.php");
 	require("inc/admin_functions.inc.php");
 
 	// Mit der DB verbinden
