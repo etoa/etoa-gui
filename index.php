@@ -68,10 +68,13 @@
 	//
 	// Session- & Login - Checks
 	//
+	
+	print_r($_POST);
 
 	// User einloggen falls nötig
 	if (isset($_POST['login_submit']))
 	{
+		echo " Lade Login script ";
 		require_once("inc/login.inc.php");
 	}
 
