@@ -53,12 +53,14 @@
             buildings.building_people_place,
             buildlist.buildlist_current_level
 		FROM
-            ".$db_table['buildlist'].",
-            ".$db_table['buildings']."
-		WHERE
+            buildlist
+    INNER JOIN
+            buildings
+		ON
             buildlist.buildlist_building_id=buildings.building_id
             AND buildlist.buildlist_planet_id=".$c->id."
-            AND buildings.building_people_place>0;");
+            AND buildings.building_people_place>0
+            AND buildlist.buildlist_current_level>0;");
 		if (mysql_num_rows($res)>0)
 		{
 			//

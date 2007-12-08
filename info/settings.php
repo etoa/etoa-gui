@@ -44,7 +44,7 @@
 		{
 			echo "<tr><td class=\"tbldata\">Revision</td>";
 			echo "<td class=\"tbldata\">";
-			readfile("VERSION");
+			passthru("svnversion");
 			echo "</td></tr>";
 			
 		}
