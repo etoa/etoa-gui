@@ -208,7 +208,9 @@
 			infobox_end(1);
 			
 			echo "<div id=\"havenContent\">
-			<div id=\"havenContentShips\" style=\"\"><i>Daten werden geladen...</i></div>
+			<div id=\"havenContentShips\" style=\"\">
+			<div style=\"padding:20px\"><img src=\"images/loading.gif\" alt=\"Loading\" /> Lade Daten...</div>
+			</div>
 			<div id=\"havenContentTarget\" style=\"display:none;\"></div>
 			<div id=\"havenContentAction\" style=\"display:none;\"></div>
 			

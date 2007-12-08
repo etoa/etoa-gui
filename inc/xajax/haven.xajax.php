@@ -1,8 +1,8 @@
 <?PHP
 
-	$xajax->registerFunction("havenShowShips");
-	$xajax->registerFunction("havenShowTarget");
-	$xajax->registerFunction("havenReset");
+	$xajax->register(XAJAX_FUNCTION,"havenShowShips");
+	$xajax->register(XAJAX_FUNCTION,"havenShowTarget");
+	$xajax->register(XAJAX_FUNCTION,"havenReset");
 	
 	
 	function havenShowShips()

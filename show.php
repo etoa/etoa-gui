@@ -97,7 +97,7 @@
 	$info = isset($_GET['info']) ? $_GET['info'] : null;
 
 	//XAJAX
-	include("xajax_etoa.inc.php");
+	include("inc/xajax.inc.php");
 ?>
 <?PHP echo '<?xml version="1.0" encoding="UTF-8"?>'; ?>
 
@@ -140,7 +140,7 @@
 
 		<?PHP
 			// XAJAX
-		 	echo $objAjax->printJavascript('xajax');
+		 	echo $xajax->printJavascript(XAJAX_DIR);
 		
 			$style = DESIGN_DIRECTORY."/".CSS_STYLE."/style.css";
 			echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"$style\" />";  
@@ -168,7 +168,7 @@
 		?>
 		
 		<!-- Stuff for DHTML Tipps -->
-		<div id="Migoicons" style="visibility:hidden;position:absolute;z-index:1000;top:-100;border:none"></div>
+		<div id="Migoicons" style="visibility:hidden;position:absolute;z-index:1000;top:-100px;border:none"></div>
 		<script type="text/javascript">
 			//stl=["white","##222255","","","",,"white","#606578","","","",,,,2,"#222255",2,,,,,"",,,,]
 			var TipId="Migoicons"

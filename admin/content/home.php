@@ -27,15 +27,58 @@
 	//
 	
 	//
-	// Statistics-Graph
+	// RSS
 	//
-	if ($sub=="statsgraphs")
+	if ($sub=="rss")
 	{
-		echo "<h1>Statistikgrafiken</h1>";
-		echo "<h2>Online / Registrierte User</h2>";
-		echo "<img src=\"../cache/out/userstats.png\" alt=\"Userstats\" />";
+		echo "<h1>RSS-Feeds</h1>";
+	
+		if (isset($_GET['action']) && $_GET['action']=="gen_townhall")
+		{
+			Townhall::genRss();
+			success_msg("RSS erstellt!");
+		}
+
+		echo "<h2>Feeds (neu) generieren</h2>";
+		echo "<a href=\"?page=$page&amp;sub=$sub&amp;action=gen_townhall\">Rathaus-Feed generieren</a>";
+
+	
+		echo "<br/><br/><h2>Feedliste</h2>";
+		infobox_start("Vorhandene Feeds",1);
+		Rss::showOverview();
+		infobox_end(1);
+		
 	}
 	
+	//
+	// Statistics-Graph
+	//
+	elseif ($sub=="userstats")
+	{
+		echo "<h1>Userstatistiken</h1>";
+		echo "<h2>Online / Registrierte User</h2>";
+		if (file_exists(CACHE_ROOT."/out/userstats.png"))
+		{
+			echo "<img src=\"../cache/out/userstats.png\" alt=\"Userstats\" />";
+		}
+		else
+		{
+			error_msg("Run scripts/userstats.php periodically to update the image!",1);			
+		}	
+	}
+	
+	//
+	// Statistiken
+	//
+	elseif ($sub=="gamestats")
+	{	
+		echo "<h1>Spielstatistiken</h1>";
+		if (!@include(CACHE_ROOT."/out/gamestats.html"))
+		{
+			error_msg("Run scripts/gamestats.php periodically to update gamestats!",1);			
+		}		
+	}
+		
 	//
 	// Admin Session-Log
 	//
@@ -175,14 +218,6 @@
 			echo "</select> sind: <input type=\"submit\" name=\"delentrys\" value=\"Ausf&uuml;hren\" /></form>";				
 		}
 	}	
-	
-	//
-	// Statistiken
-	//
-	elseif ($sub=="stats")
-	{	
-		include("content/stats.php");
-	}
 	
 	//
 	// Ingame-News

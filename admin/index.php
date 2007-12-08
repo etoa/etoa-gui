@@ -50,6 +50,12 @@
 	// Mit der DB verbinden
 	dbconnect();
 	
+	// Admin defs
+	
+	define('CACHE_ROOT','../cache');
+	define('CLASS_ROOT','../classes');
+	
+	
 	// Config-Werte laden
 	$conf = get_all_config();
 	include("../def.inc.php");

@@ -4,10 +4,10 @@
 	{
 		
 		
-		Bookmark(&arr)
+		function Bookmark(&$arr)
 		{
 		
-									array_push(
+							array_push(
 							$bookmarks,
 							array(
 							"cell_sx"=> $parr['cell_sx'],
@@ -19,7 +19,7 @@
 							"bookmark_comment"=> $parr['bookmark_comment'],
 							"nebula"=> $parr['cell_nebula'],
 							"asteroid"=> $parr['cell_asteroid'],
-							"wormhole"=> $parr['cell_wormhole_id'])
+							"wormhole"=> $parr['cell_wormhole_id']));
 			
 		}
 	}

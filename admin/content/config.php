@@ -43,7 +43,6 @@
 	{
 		echo "<h2>Downloadbare Bildpakete erzeugen</h2>";
 
-		require("../classes/imagepacker.class.php");
 		$pkg = new ImagePacker("../images/imagepacks","../cache/imagepacks");
 
 		if (isset($_GET['gen']))
@@ -61,7 +60,16 @@
 		{
 		 echo "<br/><div style=\"color:#f00\">Bildpakete sind NICHT vollständig vorhanden!</div>";
 		}
-		echo "<br/><br/><a href=\"?page=$page&amp;sub=$sub&amp;gen=1\">Neu erstellen</a>";
+		echo "<br/><br/>";
+
+		if (UNIX)
+		{
+			echo "<a href=\"?page=$page&amp;sub=$sub&amp;gen=1\">Neu erstellen</a>";
+		}
+		else
+		{
+			error_msg("Bildpakete können nur auf einem Unix System erstellt werden!");
+		}			
 	}
 
 	//

@@ -39,7 +39,11 @@
 	{
 		if ($class_name != "xajax")
 		{
-			$file = 'classes/'.strtolower($class_name).'.class.php';
+			if (defined("CLASS_ROOT"))
+				$dir = CLASS_ROOT;
+			else
+				$dir = "classes";
+			$file = $dir.'/'.strtolower($class_name).'.class.php';
 	    if (!@include_once($file))
 	    {
 	    	die('Class '.$class_name.' not found ('.$file.')!');
@@ -5745,7 +5749,7 @@ Forum: http://www.etoa.ch/forum";
 			$width = ImageSX($img);
 			$height = ImageSY($img);
 			$resize = FALSE;
-			$handle;
+			
 			if ($width > $newMaxWidth) {
 				$newWidth = $newMaxWidth;
 				$newHeight = intval($height * ($newWidth / $width));
@@ -5776,7 +5780,9 @@ Forum: http://www.etoa.ch/forum";
 				$handle = $imageId;
 				// free original image
 				ImageDestroy($img);
-			} else {
+			} 
+			else 
+			{
 				$handle = $img;
 			}	
    		$imgsave($handle, $fileTo, $quality);

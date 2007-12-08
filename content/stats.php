@@ -105,12 +105,11 @@
 		show_js_tab_menu(array("xajax_statsShowBox('user');"=>"Spieler","xajax_statsShowBox('ships')"=>"Flotten","xajax_statsShowBox('tech')"=>"Technologien","xajax_statsShowBox('buildings')"=>"Geb&auml;ude","xajax_statsShowBox('alliances')"=>"Allianzen","xajax_statsShowBox('pillory')"=>"Pranger"));
 		echo "<br/>";
 
-    echo "<div id=\"statsBox\">Statistik wird geladen...";
+    echo "<div id=\"statsBox\">
+    <div style=\"padding:20px\"><img src=\"images/loading.gif\" alt=\"Loading\" /> Lade Daten...</div>";
 		// >> AJAX generated content inserted here
 		echo "</div>";
 		
-		//echo "<script type=\"text/javascript\"> xajax.loadingFunction=function(){if (document.getElementById('statsTable'))xajax.$('statsTable').innerHTML='Einen Moment bitte...';};</script>";
-
 		if ($_GET['mode']!="")
 		{
 			$mode = $_GET['mode'];

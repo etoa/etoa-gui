@@ -39,6 +39,12 @@ class ImagePacker
 	
 	function pack()
 	{
+		if (!UNIX)
+		{
+			error_msg("Bildpakete können nur auf einem Unix System erstellt werden!");
+			return false;
+		}
+				
 		$rdir = getcwd();
 		$src = $rdir."/".$this->src;
 		$trg = $rdir."/".$this->trg;

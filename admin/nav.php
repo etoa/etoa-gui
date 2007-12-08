@@ -26,13 +26,18 @@
 	$navmenu['&Uuml;bersicht']['Ingame-News']['sub']="ingamenews";
 	$navmenu['&Uuml;bersicht']['Ingame-News']['level']=0;
 
-	$navmenu['&Uuml;bersicht']['Statistiken']['page']="home";
-	$navmenu['&Uuml;bersicht']['Statistiken']['sub']="stats";
-	$navmenu['&Uuml;bersicht']['Statistiken']['level']=0;
+	$navmenu['&Uuml;bersicht']['Spielstatistiken']['page']="home";
+	$navmenu['&Uuml;bersicht']['Spielstatistiken']['sub']="gamestats";
+	$navmenu['&Uuml;bersicht']['Spielstatistiken']['level']=0;
 
-	$navmenu['&Uuml;bersicht']['Statistik-Grafiken']['page']="home";
-	$navmenu['&Uuml;bersicht']['Statistik-Grafiken']['sub']="statsgraphs";
-	$navmenu['&Uuml;bersicht']['Statistik-Grafiken']['level']=0;
+	$navmenu['&Uuml;bersicht']['Userstatistiken']['page']="home";
+	$navmenu['&Uuml;bersicht']['Userstatistiken']['sub']="userstats";
+	$navmenu['&Uuml;bersicht']['Userstatistiken']['level']=0;
+
+	$navmenu['&Uuml;bersicht']['RSS']['page']="home";
+	$navmenu['&Uuml;bersicht']['RSS']['sub']="rss";
+	$navmenu['&Uuml;bersicht']['RSS']['level']=0;
+
 
 	$navmenu['&Uuml;bersicht']['bar'][0] = true;
 

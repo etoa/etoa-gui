@@ -21,7 +21,21 @@
 		{
 			require_once("inc/xajax/haven.xajax.php");
 		}
+		elseif ($page=="stats")
+		{
+			require_once("inc/xajax/stats.xajax.php");
+		}
+
 	}	
+		
+	if (isset($index))
+	{
+		if ($index=="register")
+		{
+			require_once("inc/xajax/register.xajax.php");
+		}
+	}	
+	
 	
 	//require_once("xajax_etoa/global.xajax.php");
 

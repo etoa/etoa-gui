@@ -1,5 +1,10 @@
 <?PHP
 
+	/**
+	* This file generates some stats of the current game
+	*
+	*/
+
 	define ('GAMESTATS_FILE',"cache/out/gamestats.html");
 	define ('GAMESTATS_ROW_LIMIT',15);
 	

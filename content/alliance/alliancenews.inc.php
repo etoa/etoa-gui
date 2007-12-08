@@ -28,6 +28,9 @@
 			".$_POST['alliance_id'].")");
 			echo "<div style=\"color:#0f0;\">News wurde gesendet!</div><br/>";
 			$_SESSION['alliance']['news']=null;
+			
+			// Update rss file
+			Townhall::genRss();			
 		}
 		elseif ($_POST['news_title']!="" && $_POST['news_text']!="")
 		{

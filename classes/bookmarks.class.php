@@ -3,7 +3,7 @@ class Bookmarks
 {
 	private $items;
 	
-	Bookmarks($userId)
+	function Bookmarks($userId)
 	{
 		$this->items = array();
 		$pres = dbquery("
@@ -32,6 +32,5 @@ class Bookmarks
 	{
 		return $this->items;
 	}
-
-};
+}
 ?>

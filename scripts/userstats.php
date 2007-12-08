@@ -1,8 +1,13 @@
 <?PHP
+	
+	/**
+	* This file generates an user statistics image, 
+	* a xml infofile for the login server
+	*
+	*/
 
 	define('USERSTATS_OUTFILE',"cache/out/userstats.png");
 	define('XML_INFO_FILE',"cache/xml/info.xml");
-	define('RSS_TOWNHALL_FILE',"cache/rss/townhall.rss");
 
 
 	// Gamepfad feststellen
@@ -175,83 +180,30 @@
 
 
 
-	/**
-	* Gameinfo XML
-	*/ 
-	$pres = dbquery("SELECT COUNT(planet_id) FROM planets;");
-	$presh = dbquery("SELECT COUNT(planet_id) FROM planets WHERE planet_user_id>0;");
-	$parr = mysql_fetch_row($pres);
-	$parrh = mysql_fetch_row($presh);
-
-	$d = fopen(GAME_ROOT_DIR."/".XML_INFO_FILE,"w");
-	$text = "<gameserver>
-	<users>
-		<online>".$acto."</online>
-		<registered>".$actr."</registered>
-	</users>
-	<galaxy>
-		<planets>
-			<inhabited>".$parrh[0]."</inhabited>
-			<total>".$parr[0]."</total>
-		</planets>
-	</galaxy>
-</gameserver>";
-	fwrite($d,$text);
-	fclose($d);
+			/**
+			* Gameinfo XML
+			*/ 
+			$pres = dbquery("SELECT COUNT(planet_id) FROM planets;");
+			$presh = dbquery("SELECT COUNT(planet_id) FROM planets WHERE planet_user_id>0;");
+			$parr = mysql_fetch_row($pres);
+			$parrh = mysql_fetch_row($presh);
+		
+			$d = fopen(GAME_ROOT_DIR."/".XML_INFO_FILE,"w");
+			$text = "<gameserver>
+			<users>
+				<online>".$acto."</online>
+				<registered>".$actr."</registered>
+			</users>
+			<galaxy>
+				<planets>
+					<inhabited>".$parrh[0]."</inhabited>
+					<total>".$parr[0]."</total>
+				</planets>
+			</galaxy>
+		</gameserver>";
+			fwrite($d,$text);
+			fclose($d);
 	
-
-	/**
-	* Townhall RSS
-	*/
-
-	$rssValue = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n";
-	$rssValue .= "<rss version=\"2.0\">\r\n";
-	
-	// Build the channel tag
-	$rssValue .= "<channel>\r\n";
-	$rssValue .= "<title>EtoA Rathaus ".GAMEROUND_NAME."</title>\r\n";
-	$rssValue .= "<link>http://www.etoa.ch</link>\r\n";
-	$rssValue .= "<description>Rathaus der EtoA ".GAMEROUND_NAME."</description>\r\n";
-	$rssValue .= "<language>de</language>\r\n";
-	
-	// Build the image tag
-	$rssValue .= "<image>\r\n";
-	$rssValue .= "<title>EtoA Rathaus</title>\r\n";
-	$rssValue .= "<url>http://www.etoa.ch/images/game_logo.gif</url>\r\n";
-	$rssValue .= "<link>http://www.etoa.ch</link>\r\n";
-	$rssValue .= "</image>\r\n";
-	
-	$res=dbquery("
-	SELECT 
-		alliance_news_title,
-		alliance_news_text
-	FROM
-		alliance_news
-	WHERE
-		alliance_news_alliance_to_id = 0
-	ORDER BY
-		alliance_news_date DESC
-	
-	;");	
-	
-	// The records were retrieved OK, let's start building the item tags
-	while($arr = mysql_fetch_array($res))
-	{
-		$rssValue .= "<item>\r\n";
-		$rssValue .= "<title>".text2html($arr['alliance_news_title'])."</title>\r\n";
-		$rssValue .= "<description>".text2html($arr['alliance_news_text'])."</description>\r\n";
-		$rssValue .= "<link>http://www.etoa.ch</link>\r\n";
-		$rssValue .= "</item>\r\n";
-	}
-
-	$rssValue .= "</channel>\r\n";
-	$rssValue .= "</rss>";
-
-	$d = fopen(GAME_ROOT_DIR."/".RSS_TOWNHALL_FILE,"w");
-	fwrite($d,$rssValue);
-	fclose($d);
-
-
 
 		// DB schliessen
 		dbclose();
