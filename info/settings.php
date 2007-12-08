@@ -40,7 +40,7 @@
 		infobox_start("Grundeinstellungen",1);
 		echo "<tr><td class=\"tbltitle\">Name</td>";
 		echo "<td class=\"tbltitle\">Wert</td></tr>";
-		if (file_exists("VERSION"))
+		if (UNIX)
 		{
 			echo "<tr><td class=\"tbldata\">Revision</td>";
 			echo "<td class=\"tbldata\">";
