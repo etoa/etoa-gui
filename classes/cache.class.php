@@ -2,7 +2,7 @@
 
 class cache 
 {
-    function cache($path="") 
+    function cache($path=".") 
     {
     	if (file_exists( $path."/".$this->cacheDir))
     	{
@@ -15,7 +15,7 @@ class cache
     }
     
   
-    static function checkPerm($type="",$prePath="")
+    static function checkPerm($type="",$prePath=".")
     {
     	if (UNIX)
     	{    	
