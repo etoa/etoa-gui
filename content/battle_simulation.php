@@ -386,7 +386,7 @@
 
 		if($simulade_att==1 && $simulade_def==1)
 		{
-            include ("../inc/battle.php");
+            include ("../inc/battle.inc.php");
             battle_simulation($ships_a,$special_ships_a,$ships_d,$special_ships_d,$tech_a,$tech_d,$def_d);
         }
         else

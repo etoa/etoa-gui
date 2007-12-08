@@ -477,7 +477,5 @@ function update_fleet($arr,$output=0)
 
   //Arrays löschen (Speicher freigeben)
   unset($arr);
-  unset($msg);
-  unset($msgres);
 }
 ?>

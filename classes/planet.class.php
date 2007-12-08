@@ -509,8 +509,6 @@
       WHERE
           planet_id='".$this->id."';");
 
-      //echo "Resources updated in ".timerStop($tmr)."\n";
-      unset($cnt);
 		}
 
 		/**

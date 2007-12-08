@@ -82,7 +82,9 @@
 	function admin_create_new_dataset_query($db_fields,$_POST)
 	{
 		global $_FILES;
-		//print_r($_FILES);
+		$type="";
+		$form_data="";
+
 		$cnt = 1;
 		$fsql = "";
 		$vsql = "";

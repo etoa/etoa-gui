@@ -67,6 +67,7 @@ function battle($fleet_id,$planet_id)
 			$bstat = "Unentschieden";
 			$bstat2 = "Unentschieden";
 			$return_fleet=true;
+			// TODO: Check return_v
     	return array($return_v,$msg,$bstat,$bstat2,$return_fleet);
   	}
 /*
