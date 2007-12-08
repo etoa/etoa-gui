@@ -10,10 +10,6 @@
 	require_once(XAJAX_DIR."/xajax_core/xajax.inc.php");
 	$xajax = new xajax();
 	$xajax->setFlag('debug',false);
-	//require_once("xajax/xajax.inc.php");
-	//$objAjax-> debugOn();
-
-
 
 	if (isset($page))
 	{

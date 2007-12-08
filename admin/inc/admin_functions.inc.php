@@ -202,7 +202,7 @@
 				fwrite($f,"AuthUserFile ".$_POST['htaccess_file']."\n");
 				fwrite($f,"require valid-user");
 				fclose($f);
-				passthru(HTPASSWD_COMMAND." -bc ".$_POST['htaccess_file']." ".$_POST['htaccess_user']." ".$_POST['htaccess_password'],$return_var);
+				passthru(HTPASSWD_COMMAND." -bc ".$_POST['htaccess_file']." ".$_POST['htaccess_user']." ".$_POST['htaccess_password']);
 				echo "Passwortdatei erstellt!<br/><br/>";
 			}
 			else

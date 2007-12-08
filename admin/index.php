@@ -136,7 +136,7 @@
 		<script src="../scripts.js" type="text/javascript"></script>
 		<script src="scripts.js" type="text/javascript"></script>
 		<?PHP
-			$xajax->printJavascript("../xajax"); 
+			$xajax->printJavascript("../".XAJAX_DIR); 
 		?>
 	</head>
 	<body class="index">

@@ -7,26 +7,28 @@
  * @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
  */		
 
-	require_once("../xajax/xajax.inc.php");
+	require_once("../".XAJAX_DIR."/xajax_core/xajax.inc.php");
 	$xajax = new xajax();
+	$xajax->setFlag('debug',false);
+
 	
-	require_once("xajax_admin/global.xajax.php");
+	require_once("inc/xajax/global.xajax.php");
 
 	if (isset($page) && $page=="alliances")
 	{
-		require_once("xajax_admin/alliances.xajax.php");
+		require_once("inc/xajax/alliances.xajax.php");
 	}
 
 	if (isset($page) && $page=="user")
 	{
-		require_once("xajax_admin/user.xajax.php");
+		require_once("inc/xajax/user.xajax.php");
 	}
 
 	
 	if (isset($page) && $page=="logs")
 	{
-		require_once("xajax_admin/logs.xajax.php");
+		require_once("inc/xajax/logs.xajax.php");
 	}	
 	
-	$xajax->processRequests();
+	$xajax->processRequest();
 ?>
