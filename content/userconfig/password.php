@@ -22,6 +22,7 @@
                                   {
                                   	success_msg("Das Passwort wurde ge&auml;ndert!");
                                   	add_log(3,"Der Spieler [b]".$s['user']['nick']."[/b] &auml;ndert sein Passwort!",time());
+                                  	send_mail("",$arr['user_email'],"Passwortänderung","Hallo ".$arr['user_nick']."\n\nDies ist eine Bestätigung, dass du dein Passwort für deinen Account erfolgreich geändert hast!\n\nSolltest du dein Passwort nicht selbst geändet haben, so nimm bitte sobald wie möglich Kontakt mit einem Game-Administrator auf: http://www.etoa.ch/?page=kontakt");
                                   }
                               }
                               else
