@@ -288,58 +288,68 @@
 	    			$perms = substr(sprintf("%o",fileperms($file)),2,3);
 						if (substr($perms,1,1)>=6)
 						{
-							return true;
-						}
-						error_msg("Die Passwortdatei [b]".$file."[/b] hat falsche Gruppenrechte ($perms)!\nDies kann mit [i]chmod g+w ".$file." -R[/i] geändert werden!");
-	    		}
-				error_msg("Die Passwortdatei [b]".$file."[/b] hat eine falsche Gruppe! Eingestellt ist [b]".$user."[/b], erwartet wurde [b]".UNIX_GROUP."[/b]!\nDies kann mit [i]chgrp ".UNIX_GROUP." ".$file." -R[/i] geändert werden!");
-			}
-			error_msg("Die Passwortdatei [b]".$file."[/b] hat einen falschen Besitzer! Eingestellt ist [b]".$user."[/b], erwartet wurde [b]".UNIX_USER."[/b]!\nDies kann mit [i]chown ".UNIX_USER." ".$file." -R[/i] geändert werden!");
-		}
-		error_msg("Die Passwortdatei [b]".$file."[/b] wurde nicht gefunden!");
+							if ($_POST['htaccess_submit']!="")
+							{
+								if ($_POST['htaccess_user']!="" && $_POST['htaccess_password']!="")
+								{
+									$cmd = HTPASSWD_COMMAND." -bc ".$file." ".$_POST['htaccess_user']." ".$_POST['htaccess_password'];
+									passthru($cmd);
+									echo "Passwortdatei erstellt!<br/><br/>";
+								}
+								else
+								{
+									echo "<b>Fehler!</b> Eines oder mehrere Felder sind nicht ausgefüllt!<br/><br/>";
+								}
+							}
+					
+							$active=false;
+							
+							if (file_exists($file))
+							{
+								$f = fopen($file,"r");
+								while ($t=fgets($f,500))
+								{
+									$a = explode(":",$t);
+									$user=$a[0];
+									$pw=$a[1];
+								}
+								fclose($f);
+							}
+							else
+								echo "<b>Fehler:</b>Keine Passwortdatei gefunden ($file)!<br/><br/>";
+					
+							echo "<form action=\"\" method=\"post\">";
+							echo "<table class=\"tb\">";
+							echo "<tr><th>User:</th><td><input type=\"text\" value=\"".$user."\" name=\"htaccess_user\" size=\"40\" /></td></tr>";
+							echo "<tr><th>Neues Passwort:</th><td><input type=\"text\" value=\"\" name=\"htaccess_password\" size=\"40\" /></td></tr>";
+							echo "</table><br/><br/><input type=\"submit\" value=\"Speichern\" name=\"htaccess_submit\" />";
+							if ($active)
+							{
+								echo " <input type=\"submit\" value=\"Deaktivieren\" name=\"htaccess_remove\" />";
+							}
+							echo "</form>";
 
-		
-		
-		if ($_POST['htaccess_submit']!="")
-		{
-			if ($_POST['htaccess_user']!="" && $_POST['htaccess_password']!="")
-			{
-				$cmd = HTPASSWD_COMMAND." -bc ".$file." ".$_POST['htaccess_user']." ".$_POST['htaccess_password'];
-				passthru($cmd);
-				echo "Passwortdatei erstellt!<br/><br/>";
+
+						}
+						else
+						{
+							error_msg("Die Passwortdatei [b]".$file."[/b] hat falsche Gruppenrechte ($perms)!\nDies kann mit [i]chmod g+w ".$file." -R[/i] geändert werden!");
+						}
+	    		}
+	    		else
+	    		{
+						error_msg("Die Passwortdatei [b]".$file."[/b] hat eine falsche Gruppe! Eingestellt ist [b]".$user."[/b], erwartet wurde [b]".UNIX_GROUP."[/b]!\nDies kann mit [i]chgrp ".UNIX_GROUP." ".$file." -R[/i] geändert werden!");
+	    		}
 			}
 			else
 			{
-				echo "<b>Fehler!</b> Eines oder mehrere Felder sind nicht ausgefüllt!<br/><br/>";
+				error_msg("Die Passwortdatei [b]".$file."[/b] hat einen falschen Besitzer! Eingestellt ist [b]".$user."[/b], erwartet wurde [b]".UNIX_USER."[/b]!\nDies kann mit [i]chown ".UNIX_USER." ".$file." -R[/i] geändert werden!");
 			}
-		}
-
-		$active=false;
-		
-		if (file_exists($file))
-		{
-			$f = fopen($file,"r");
-			while ($t=fgets($f,500))
-			{
-				$a = explode(":",$t);
-				$user=$a[0];
-				$pw=$a[1];
-			}
-			fclose($f);
 		}
 		else
-			echo "<b>Fehler:</b>Keine Passwortdatei gefunden ($file)!<br/><br/>";
-
-		echo "<form action=\"\" method=\"post\">";
-		echo "<table class=\"tb\">";
-		echo "<tr><th>User:</th><td><input type=\"text\" value=\"".$user."\" name=\"htaccess_user\" size=\"40\" /></td></tr>";
-		echo "<tr><th>Neues Passwort:</th><td><input type=\"text\" value=\"\" name=\"htaccess_password\" size=\"40\" /></td></tr>";
-		echo "</table><br/><br/><input type=\"submit\" value=\"Speichern\" name=\"htaccess_submit\" />";
-		if ($active)
 		{
-			echo " <input type=\"submit\" value=\"Deaktivieren\" name=\"htaccess_remove\" />";
+			error_msg("Die Passwortdatei [b]".$file."[/b] wurde nicht gefunden!");
 		}
-		echo "</form>";
 	}
 	
 	function htpasswd_check($user,$file)
