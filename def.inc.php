@@ -48,6 +48,8 @@
 	{
 		define('UNIX',true);
 		define('WINDOWS',false);
+		define('UNIX_USER',"etoa");
+		define('UNIX_GROUP',"apache");
 	}
 
 	///////////////////////////////////////////////////////////////

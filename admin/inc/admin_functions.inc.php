@@ -274,6 +274,32 @@
 		$file = getcwd()."/../".$file;
 
 		echo "<h2>Passwort-Schutz für Admin-Modus</h2>";
+		
+		if (file_exists($file))
+		{
+			$userarr = posix_getpwuid(fileowner($file));
+			$user = $userarr['name'];
+			if ($user==UNIX_USER)
+			{
+	    		$userarr = posix_getpwuid(filegroup($file));
+	    		$user = $userarr['name'];
+	    		if ($user==UNIX_GROUP)
+	    		{		    			
+	    			$perms = substr(sprintf("%o",fileperms($file)),2,3);
+						if (substr($perms,1,1)>=6)
+						{
+							return true;
+						}
+						error_msg("Die Passwortdatei [b]".$file."[/b] hat falsche Gruppenrechte ($perms)!\nDies kann mit [i]chmod g+w ".$file." -R[/i] geändert werden!");
+	    		}
+				error_msg("Die Passwortdatei [b]".$file."[/b] hat eine falsche Gruppe! Eingestellt ist [b]".$user."[/b], erwartet wurde [b]".UNIX_GROUP."[/b]!\nDies kann mit [i]chgrp ".UNIX_GROUP." ".$file." -R[/i] geändert werden!");
+			}
+			error_msg("Die Passwortdatei [b]".$file."[/b] hat einen falschen Besitzer! Eingestellt ist [b]".$user."[/b], erwartet wurde [b]".UNIX_USER."[/b]!\nDies kann mit [i]chown ".UNIX_USER." ".$file." -R[/i] geändert werden!");
+		}
+		error_msg("Die Passwortdatei [b]".$file."[/b] wurde nicht gefunden!");
+
+		
+		
 		if ($_POST['htaccess_submit']!="")
 		{
 			if ($_POST['htaccess_user']!="" && $_POST['htaccess_password']!="")

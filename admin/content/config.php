@@ -33,7 +33,14 @@
 	//
 	if ($sub=="htaccess")
 	{
-		htpasswd_tool(HTPASSWD_USER,HTPASSWD_FILE);
+		if (UNIX)
+		{
+			htpasswd_tool(HTPASSWD_USER,HTPASSWD_FILE);
+		}
+		else
+		{
+			error_msg("Der Passwort-Schutz geht nur auf Unix-Systemen");
+		}
 	}
 
 	//
