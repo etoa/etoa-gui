@@ -1,7 +1,7 @@
 <?P
 
 	echo "<h2>Sterne</h2>";
-	helpNavi(array("Sterne","stars"));
+	Help::navi(array("Sterne","stars"));
 
 	if ($_GET['order']!="")
 	{

@@ -44,7 +44,7 @@
 	
 	echo "<h2>Rohstoffkurse</h2>";
 
-	helpNavi(array("Rohstoffkurse","rates"));
+	Help::navi(array("Rohstoffkurse","rates"));
 	
 	echo "Die Rohstoffkurse sind dynamisch und ändern sich automatisch je nach dem<br/>
 	 wie gross das Angebot und die Nachfrage

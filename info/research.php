@@ -29,7 +29,7 @@
 		
 		if ($arr = @mysql_fetch_array($res))
 		{
-			helpNavi(array("Technologien","research"),array(text2html($arr['tech_name']),$arr['tech_id']),1);
+			Help::navi(array("Technologien","research"),array(text2html($arr['tech_name']),$arr['tech_id']),1);
 			echo "<select onchange=\"document.location='?page=help&site=research&id='+this.options[this.selectedIndex].value\">";
 			$bres=dbquery("SELECT 
 				tech_id,
@@ -118,11 +118,11 @@
 		echo "<input type=\"button\" value=\"Technikbaum\" onclick=\"document.location='?page=techtree&mode=tech'\" /> &nbsp; ";
 	}
 	
-	//Übersicht
+	//ï¿½bersicht
 	
 	else
 	{
-		helpNavi(array("Technologien","research"));
+		Help::navi(array("Technologien","research"));
 		$tres=dbquery("SELECT * FROM ".$db_table['tech_types']." ORDER BY type_order,type_name;");
 		if (mysql_num_rows($tres)>0)
 		{

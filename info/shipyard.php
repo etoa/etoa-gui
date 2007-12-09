@@ -68,7 +68,7 @@
 		;");
 		if ($arr = @mysql_fetch_array($res))
 		{
-			helpNavi(array("Schiffe","shipyard"),array(text2html($arr['ship_name']),$arr['ship_id']),1);
+			Help::navi(array("Schiffe","shipyard"),array(text2html($arr['ship_name']),$arr['ship_id']),1);
 			echo "<select onchange=\"document.location='?page=help&site=shipyard&id='+this.options[this.selectedIndex].value\">";
 			$bres=dbquery("SELECT 
 				ship_id,
@@ -292,7 +292,7 @@
 	//
 	else
 	{
-		helpNavi(array("Schiffe","shipyard"));
+		Help::navi(array("Schiffe","shipyard"));
 	
 		if ($_GET['order']!="")
 		{

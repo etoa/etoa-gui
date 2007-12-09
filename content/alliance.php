@@ -30,26 +30,6 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/	
 
-
-	// DEFINITIONEN //
-	// TODO: Move to def.inc.php
-	define('ONLINE_TIME',$conf['online_threshold']['v']);
-	define('IMG_MAX_WIDTH',800);
-	define('IMG_MAX_HEIGHT',600);
-
-	// TODO: Move to functions or alliance functions
-	function check_alliance_action_rights($action)
-	{
-		global $myRight,$isFounder;
-		if ($isFounder || $myRight[$action])
-		{
-			return true;
-		}
-		echo "<h2>Fehler</h2> Keine Berechtigung!<br/><br/><input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"Zur&uuml;ck\" />";
-		return false;
-	}
-
-
 	//Bewerbung aktualisieren
 	$res=dbquery("
 	SELECT
@@ -434,7 +414,7 @@
 				//
 				if (isset($_GET['action']) && $_GET['action']=="editdata")
 				{
-					if (check_alliance_action_rights('editdata'))
+					if (Alliance::checkActionRights('editdata'))
 					{
 						require("alliance/editdata.inc.php");
 					}
@@ -445,7 +425,7 @@
 				//
 				elseif (isset($_GET['action']) && $_GET['action']=="applicationtemplate")
 				{
-					if (check_alliance_action_rights('applicationtemplate'))
+					if (Alliance::checkActionRights('applicationtemplate'))
 					{
 						require("alliance/applicationtemplate.inc.php");
 					}
@@ -464,7 +444,7 @@
 				//
 				elseif (isset($_GET['action']) && $_GET['action']=="polls")
 				{
-					if (check_alliance_action_rights('polls'))
+					if (Alliance::checkActionRights('polls'))
 					{
 						require("alliance/polls.inc.php");
 					}
@@ -475,7 +455,7 @@
 				//
 				elseif (isset($_GET['action']) && $_GET['action']=="editmembers")
 				{
-					if (check_alliance_action_rights('editmembers'))
+					if (Alliance::checkActionRights('editmembers'))
 					{
 						require("alliance/editmembers.inc.php");
 					}
@@ -486,7 +466,7 @@
 				//
 				elseif (isset($_GET['action']) && $_GET['action']=="massmail")
 				{
-					if (check_alliance_action_rights('massmail'))
+					if (Alliance::checkActionRights('massmail'))
 					{
 						require("alliance/massmail.inc.php");
 					}
@@ -497,7 +477,7 @@
 				//
 				elseif (isset($_GET['action']) && $_GET['action']=="ranks")
 				{
-					if (check_alliance_action_rights('ranks'))
+					if (Alliance::checkActionRights('ranks'))
 					{
 						require("alliance/ranks.inc.php");
 					}
@@ -508,7 +488,7 @@
 				//
 				elseif (isset($_GET['action']) && $_GET['action']=="applications")
 				{
-					if (check_alliance_action_rights('applications'))
+					if (Alliance::checkActionRights('applications'))
 					{
 						require("alliance/applications.inc.php");
 					}
@@ -519,7 +499,7 @@
 				//
 				elseif (isset($_GET['action']) && $_GET['action']=="liquidate")
 				{
-					if (check_alliance_action_rights('liquidate'))
+					if (Alliance::checkActionRights('liquidate'))
 					{
 						require("alliance/liquidate.inc.php");
 					}
@@ -530,7 +510,7 @@
 				//
 				elseif (isset($_GET['action']) && $_GET['action']=="alliancenews")
 				{
-					if (check_alliance_action_rights('alliancenews'))
+					if (Alliance::checkActionRights('alliancenews'))
 					{
 						require("alliance/alliancenews.inc.php");
 					}
@@ -541,7 +521,7 @@
 				//
 				elseif (isset($_GET['action']) && $_GET['action']=="relations")
 				{
-					if (check_alliance_action_rights('relations'))
+					if (Alliance::checkActionRights('relations'))
 					{
 						require("alliance/diplomacy.inc.php");
 					}					
@@ -552,7 +532,7 @@
 				//
 				elseif (isset($_GET['action']) && $_GET['action']=="history")
 				{
-					if (check_alliance_action_rights('history'))
+					if (Alliance::checkActionRights('history'))
 					{
 						require("alliance/history.inc.php");
 					}
@@ -563,7 +543,7 @@
 				//
 				elseif (isset($_GET['action']) && $_GET['action']=="viewmembers")
 				{
-					if (check_alliance_action_rights('viewmembers'))
+					if (Alliance::checkActionRights('viewmembers'))
 					{
 						require("alliance/viewmembers.inc.php");
 					}

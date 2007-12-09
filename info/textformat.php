@@ -27,7 +27,7 @@
 	//
 
 	echo "<h2>Texformatierung</h2>";		
-	helpNavi(array("Texformatierung","textformat"));
+	Help::navi(array("Texformatierung","textformat"));
 	
 	// Array BBCode
 	

@@ -1,6 +1,6 @@
 <?php
     echo "<h2>Raketensystem</h2>";
-		helpNavi(array("Raketensystem","misslie_system"));
+		Help::navi(array("Raketensystem","misslie_system"));
     infobox_start("Raketensystem");
     echo "<div align=\"justify\">";
     echo "Vom Raketensilo aus können Raketen für einen Raketenangriff gestartet werden. Es ist zu beachten, dass nur startbare Raketen abgeschossen werden können.<br>

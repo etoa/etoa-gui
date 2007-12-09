@@ -30,32 +30,9 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/	
 
-	function helpNavi($item1=null,$item2=null,$disable2=0)
-	{
-		echo "Du befindest dich hier: ";
-		if ($item1!=null)
-		{
-			echo "<a href=\"?page=help\">Hilfe</a> &gt; ";
-			if ($item2!=null)
-			{
-				echo "<a href=\"?page=help&amp;site=".$item1[1]."\">".$item1[0]."</a> &gt; ";		
-				if ($disable2==0)
-					echo $item2[0]."<br/><br/>";		
-			}
-			else
-			{
-				echo $item1[0]."<br/><br/>";		
-			}
-		}
-		else
-		{
-			echo "Hilfe<br/><br/>";
-		}
-	}
+
 
 	// BEGIN SKRIPT //
-
-	define('HELP_URL',"?page=help&site=shipyard"); // TODO: What does it do?
 
 	echo "<h1>Help & Info</h1>"; //Titel angepasst <h1> by Lamborghini
 	if (isset($_GET['site']) && $_GET['site']!="")
@@ -74,7 +51,7 @@
 	else
 	{
 		echo "<h2>&Uuml;bersicht</h2>";
-		helpNavi();
+		Help::navi();
 		echo "Hier findest du Informationen zu verschiedenen Objekten des Spiels:<br/><br/>";
 
 		infobox_start("Daten",1);
@@ -93,7 +70,10 @@
 
 
 		infobox_start("Mechanismen",1);
+		echo "<tr><td class=\"tbltitle\" width=\"25%\">Raumkarte</td><td class=\"tbldata\">Wie ist das Universum aufgebaut</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=space\">Anzeigen</a></td></tr>";
 		echo "<tr><td class=\"tbltitle\" width=\"25%\">Bewohner</td><td class=\"tbldata\">Wie arbeite ich mit Bewohnern und was muss ich beachten</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=population\">Anzeigen</a></td></tr>";
+		echo "<tr><td class=\"tbltitle\" width=\"25%\">Statistik</td><td class=\"tbldata\">Was sind Statistiken und wie werden sie berechnet</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=stats\">Anzeigen</a></td></tr>";
+		echo "<tr><td class=\"tbltitle\" width=\"25%\">Technikbaum</td><td class=\"tbldata\">Wie lese ich daraus die Voraussetzungen ab</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=techtree\">Anzeigen</a></td></tr>";
 		echo "<tr><td class=\"tbltitle\" width=\"25%\">Markt</td><td class=\"tbldata\">Wie der Marktplatz funktioniert</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=market\">Anzeigen</a></td></tr>";
 		echo "<tr><td class=\"tbltitle\" width=\"25%\">Multis und Sitting</td><td class=\"tbldata\">Wie wir Mehrfachaccounts handhaben und wie Sitting funktioniert</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=multi_sitting\">Anzeigen</a></td></tr>";
 		//echo "<tr><td class=\"tbltitle\" width=\"25%\">Kryptocenter</td><td class=\"tbldata\">Wie man fremde Flottenbewegungen scannt</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=crypto\">Anzeigen</a></td></tr>";

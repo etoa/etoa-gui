@@ -1,7 +1,7 @@
 <?php
 
 	echo "<h2>Markt</h2>";
-	helpNavi(array("Markt","market"));
+	Help::navi(array("Markt","market"));
 
 	infobox_start("Markt");
 	echo "<div align=\"justify\">";

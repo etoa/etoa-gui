@@ -1,6 +1,6 @@
 <?PHP
 	echo "<h2>Rassen</h2>";
-	helpNavi(array("Rassen","races"));
+	Help::navi(array("Rassen","races"));
 
 	if (count($rsc)==0)
 	{

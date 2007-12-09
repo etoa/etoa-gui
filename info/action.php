@@ -24,7 +24,7 @@
 				$actio['tarned']="Tarnangriff";
 				$actio['fake']="Fakeangriff";
 				
-				helpNavi(array("Schiffsaktionen","action"),array("$action","$action"),1);
+				Help::navi(array("Schiffsaktionen","action"),array("$action","$action"),1);
 				echo "<select onchange=\"document.location='?page=$page&site=action&action='+this.options[this.selectedIndex].value\">";
 				foreach ($actio as $ak=>$av)
 				{
@@ -68,7 +68,7 @@
 	}
 	else
 	{
-		helpNavi(array("Schiffsaktionen","action"));
+		Help::navi(array("Schiffsaktionen","action"));
 		echo "Alle Schiffsaktionen in der &Uuml;bersicht:<br/><br/>";
 
 		infobox_start("Planeten&uuml;bernahme",1);

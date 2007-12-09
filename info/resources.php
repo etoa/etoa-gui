@@ -1,6 +1,6 @@
 <?php
 	echo "<h2>Ressourcen</h2>";
-	helpNavi(array("Ressourcen","resources"));
+	Help::navi(array("Ressourcen","resources"));
 
 	infobox_start("Grundeinstellungen",1);
 	echo "<tr>

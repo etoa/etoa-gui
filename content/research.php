@@ -516,8 +516,6 @@
 					elseif ($c->res->metal<$bc['metal'] || $c->res->crystal<$bc['crystal']  || $c->res->plastic<$bc['plastic']  || $c->res->fuel<$bc['fuel']  || $c->res->food<$bc['food'])
 					{
 						echo "<tr><td class=\"tbldata\" style=\"color:red;\">Erforschen</td><td class=\"tbldata\">".tf($btime)."</td>";
-						// TODO: Colorize this..
-						//echo "<td class=\"tbldata\">".nf($bc['metal'])."</td><td class=\"tbldata\">".nf($bc['crystal'])."</td><td class=\"tbldata\">".nf($bc['plastic'])."</td><td class=\"tbldata\">".nf($bc['fuel'])."</td><td class=\"tbldata\">".nf($bc['food'])."</td></tr>";
 						echo $bcstring;
 						echo "<tr><td class=\"tbldata\" colspan=\"7\"><i>Keine Weiterentwicklung m&ouml;glich, zuwenig Rohstoffe!</i></td></tr>";
 					}

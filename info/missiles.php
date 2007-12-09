@@ -100,7 +100,7 @@
 	
 	else
 	{
-		helpNavi(array("Raketen","missiles"));		
+		Help::navi(array("Raketen","missiles"));		
 		
 		if ($_GET['order']!="")
 		{

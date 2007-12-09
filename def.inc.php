@@ -117,6 +117,7 @@
 	define ("COLOR_DEFAULT",$conf['color_default']['v']);		// alle anderen
 
 
+	define('ONLINE_TIME',$conf['online_threshold']['v']);
 
 
 

@@ -156,7 +156,9 @@
 	                        WHERE
 	                            fleet_id='".$iflarr['fleet_id']."';");
 	                    }
-	                    // TODO: Nachricht an Spieler über umgeleitete Flotten
+	                    // 
+	                    $text="Eure Schife, welche zum Planeten [b]$coords_target[/b] unterwegs waren, wurden auf euren Hauptplaneten umgeleitet!\n";
+	                    send_msg($user_to_id,SHIP_WAR_MSG_CAT_ID,"Schiffe umgeleitet",$text);
 	                  }
 
                     // Planet übernehmen

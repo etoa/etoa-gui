@@ -19,7 +19,7 @@ if ($_GET['id']!="")
 	$res = dbquery("SELECT * FROM ".$db_table['buildings']." WHERE building_id='".$_GET['id']."';");
 	if ($arr = @mysql_fetch_array($res))
 	{
-		helpNavi(array("Geb&auml;ude","buildings"),array(text2html($arr['building_name']),$arr['building_id']),1);
+		Help::navi(array("Geb&auml;ude","buildings"),array(text2html($arr['building_name']),$arr['building_id']),1);
 		echo "<select onchange=\"document.location='?page=help&site=buildings&id='+this.options[this.selectedIndex].value\">";
 		$bres=dbquery("SELECT 
 			building_id,
@@ -411,7 +411,7 @@ elseif($_GET['type_id']>0)
 {
 	if ($_GET['type_id']==BUILDING_STORE_CAT)
 	{
-		helpNavi(array("Geb&auml;ude","buildings"),array("Kategorie: Speicher",$_GET['type_id']));
+		Help::navi(array("Geb&auml;ude","buildings"),array("Kategorie: Speicher",$_GET['type_id']));
 		infobox_start("Lagerkapazit&auml;t");
 		echo "<div align=\"justify\">";
 		echo "Du kannst auf einem Planeten nicht unentlich viele Rohstoffe lagern. Jeder Planet hat eine Lagerkapazit&auml;t von ".intval($conf['def_store_capacity']['v']).". Um die Lagerkapazit&auml;t zu erh&ouml;hen, kannst du eine Planetenbasis und danach verschiedene Speicher, Lagerhallen und Silos bauen, welche die Kapazit&auml;t erh&ouml;hen. Wenn eine Zahl in der Rohstoffanzeige rot gef&auml;rbt ist, bedeutet das, dass dieser Rohstoff die Lagerkapazit&auml;t &uuml;berschreitet. Baue in diesem Fall den Speicher aus. Eine &uuml;berschrittene Lagerkapazit&auml;t bedeutet, dass nichts mehr produziert wird, jedoch werden Rohstoffe, die z.B. mit einer Flotte ankommen, trotzdem auf dem Planeten gespeichert.<br>";
@@ -421,7 +421,7 @@ elseif($_GET['type_id']>0)
 	}
 	elseif($_GET['type_id']==BUILDING_POWER_CAT)
 	{
-		helpNavi(array("Geb&auml;ude","buildings"),array("Kategorie: Kraftwerke",$_GET['type_id']));
+		Help::navi(array("Geb&auml;ude","buildings"),array("Kategorie: Kraftwerke",$_GET['type_id']));
 		infobox_start("Energie");
 		echo "<div align=\"justify\">";
 		echo "Wo es eine Produkion hat, braucht es auch Energie. Diese Energie, welche von verschiedenen Anlagen gebraucht wird, spenden uns verschiedene Kraftwerkstypen. Je h&ouml;her diese Ausgebaut sind, desto mehr Leistung erbringen sie und versorgen so die wachsende Wirtschaft.<br>
@@ -432,7 +432,7 @@ elseif($_GET['type_id']>0)
 	}
 	elseif($_GET['type_id']==BUILDING_GENERAL_CAT)
 	{
-		helpNavi(array("Geb&auml;ude","buildings"),array("Kategorie: Allgemeine Geb&auml;ude",$_GET['type_id']));
+		Help::navi(array("Geb&auml;ude","buildings"),array("Kategorie: Allgemeine Geb&auml;ude",$_GET['type_id']));
 		infobox_start("Allgemeine Geb&auml;ude");
 		echo "<div align=\"justify\">";
 		echo "Diese Geb&auml;ude werden ben&ouml;tigt um deinen Planeten auszubauen und die Produktion und Forschung zu erm&ouml;glichen.";
@@ -441,7 +441,7 @@ elseif($_GET['type_id']>0)
 	}
 	elseif($_GET['type_id']==BUILDING_RES_CAT)
 	{
-		helpNavi(array("Geb&auml;ude","buildings"),array("Kategorie: Rohstoffgeb&auml;ude",$_GET['type_id']));
+		Help::navi(array("Geb&auml;ude","buildings"),array("Kategorie: Rohstoffgeb&auml;ude",$_GET['type_id']));
 		infobox_start("Rohstoffgeb&auml;ude");
 		echo "<div align=\"justify\">";
 		echo "Diese Geb&auml;ude liefern Rohstoffe, welche du f&uuml;r den Aufbau deiner Zivilisation brauchst.";
@@ -463,7 +463,7 @@ elseif($_GET['type_id']>0)
 //
 else
 {
-	helpNavi(array("Geb&auml;ude","buildings"));
+	Help::navi(array("Geb&auml;ude","buildings"));
 	
 	$tres=dbquery("
 	SELECT 
