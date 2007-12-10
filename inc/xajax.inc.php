@@ -9,7 +9,7 @@
 
 	require_once(XAJAX_DIR."/xajax_core/xajax.inc.php");
 	$xajax = new xajax();
-	$xajax->setFlag('debug',false);
+	$xajax->setFlag('debug',true);
 
 	if (isset($page))
 	{

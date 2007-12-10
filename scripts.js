@@ -1,4 +1,9 @@
 
+function loadMsg(elemId)
+{
+	document.getElementById(elemId).innerHTML = '<img src=\"images/loading.gif\" alt=\"Loading\" /> Lade Daten...';
+}
+
 function changeNav(selIndex,page)
 {
 	obj = document.getElementById('nav_mode_select');
@@ -78,7 +83,7 @@ function nurZahlen(ereignis)
 		Buchstabe=ereignis.which
 	}
 
-	if((Buchstabe<48 || Buchstabe>57)&&Buchstabe!=8)
+	if((Buchstabe<48 || Buchstabe>57)&&Buchstabe!=8 &&Buchstabe!=0)
 	{
 		return false;
 	}

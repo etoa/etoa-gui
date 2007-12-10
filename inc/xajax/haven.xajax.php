@@ -3,6 +3,7 @@
 	$xajax->register(XAJAX_FUNCTION,"havenShowShips");
 	$xajax->register(XAJAX_FUNCTION,"havenShowTarget");
 	$xajax->register(XAJAX_FUNCTION,"havenReset");
+	$xajax->register(XAJAX_FUNCTION,"havenTargetInfo");
 	
 	
 	function havenShowShips()
@@ -34,7 +35,7 @@
 			echo "<form id=\"shipForm\">";
 			echo "<table class=\"tb\">";
 			echo "<tr>
-				<th colspan=\"6\">Schiffe w㧬en</th>
+				<th colspan=\"6\">Schiffe wählen</th>
 			</tr>";
 			echo "<tr>
 				<th colspan=\"2\">Typ</th>
@@ -43,7 +44,9 @@
 				<th width=\"110\">Anzahl</th>
 				<th width=\"110\">Auswahl</th>
 			</tr>\n";
-	
+			
+			$jsAllShips = array();	// Array for selectable ships
+			$launchable = 0;	// Counter for launchable ships
 	    while ($arr = mysql_fetch_array($res))
 	    {
 	/*
@@ -147,8 +150,11 @@
 	      		title=\"Anzahl Schiffe eingeben, die mitfliegen sollen\" 
 	      		onclick=\"this.select();\" tabindex=\"".$tabulator."\" 
 	      		onkeyup=\"FormatNumber(this.id,this.value,".$arr['shiplist_count'].",'','');\"/>
-	      	<br/><a href=\"javascript:;\" 
-	      		onclick=\"document.getElementById('ship_count_".$arr['ship_id']."').value=".$arr['shiplist_count']."\">max</a>";
+	      	<br/>
+	      	<a href=\"javascript:;\" onclick=\"document.getElementById('ship_count_".$arr['ship_id']."').value=".$arr['shiplist_count']."\">Alle</a> &nbsp; 
+	      	<a href=\"javascript:;\" onclick=\"document.getElementById('ship_count_".$arr['ship_id']."').value=0\">Keine</a>";
+		      $jsAllShips["ship_count_".$arr['ship_id']]=$arr['shiplist_count'];
+		      $launchable++;
 	      }
 	      else
 	      {
@@ -158,13 +164,25 @@
 	      $tabulator++;
 			}
 			infobox_end(1);
+
+			// Select all ships button			
+			echo "<input type=\"button\" value=\"Alle wählen\" onclick=\"";
+			foreach ($jsAllShips as $k => $v)
+			{
+				echo "document.getElementById('".$k."').value=".$v.";";
+			}
+			echo "\" /> &nbsp; ";
 		
+			// Show buttons if possible
 			if ($_SESSION['haven']['fleets_start_possible']>0)
 			{
-				echo "<input type=\"button\" onclick=\"xajax_havenShowTarget(xajax.getFormValues('shipForm'))\" value=\"Weiter zur Zielauswahl &gt;&gt;&gt;\" title=\"Wenn du die Schiffe ausgew&auml;hlt hast, klicke hier um das Ziel auszuw&auml;hlen\" tabindex=\"".($tabulator+1)."\" />";
-				if (isset($_SESSION['haven']['fleet']) && $_SESSION['haven']['fleet']!=null)
+				if ($launchable>0)
 				{
-					echo " &nbsp; <input type=\"button\" onclick=\"xajax_havenReset()\" value=\"Reset\" />";
+					echo "<input type=\"button\" onclick=\"xajax_havenShowTarget(xajax.getFormValues('shipForm'))\" value=\"Weiter zur Zielauswahl &gt;&gt;&gt;\" title=\"Wenn du die Schiffe ausgew&auml;hlt hast, klicke hier um das Ziel auszuw&auml;hlen\" tabindex=\"".($tabulator+1)."\" />";
+					if (isset($_SESSION['haven']['fleet']) && $_SESSION['haven']['fleet']!=null)
+					{
+						echo " &nbsp; <input type=\"button\" onclick=\"xajax_havenReset()\" value=\"Reset\" />";
+					}
 				}
 			}
 			else
@@ -187,6 +205,9 @@
 	}
 
 
+	/**
+	* Show target selector and calc ships
+	*/
 	function havenShowTarget($form)
 	{
 		$response = new xajaxResponse();
@@ -194,6 +215,7 @@
 		// Do some checks
 		if (count($form)>0)
 		{
+			// Create needed fleet variables
 			$_SESSION['haven']['fleet']=null;
 			$_SESSION['haven']['fleet']['costs_per_ae']=0;
 			$_SESSION['haven']['fleet']['time_launch_land']=0;
@@ -206,6 +228,7 @@
 			
 			$ships = array();
 			$shipCount=0;
+			// Check each ship
 			foreach ($form['ship_count'] as $sid => $cnt)
 			{
 				if (intval($cnt)>0)
@@ -242,7 +265,7 @@
 						}
 						else
 						{
-							min($_SESSION['haven']['fleet']['speed'], $arr['ship_speed']);
+							$_SESSION['haven']['fleet']['speed'] = min($_SESSION['haven']['fleet']['speed'], $arr['ship_speed']);
 						}					
 						$_SESSION['haven']['fleet']['time_launch_land'] = max($_SESSION['haven']['fleet']['time_launch_land'], $arr['ship_time2land'] + $arr['ship_time2start']);
 						$_SESSION['haven']['fleet']['costs_launch_land'] += 2 * ($arr['ship_fuel_use_launch'] + $arr['ship_fuel_use_landing']) * $cnt;						
@@ -254,8 +277,10 @@
 				}
 			}
 			
+			// Check if ships are selected
 			if ($shipCount>0)
 			{
+				// Calc Costs for all ships
 				foreach ($ships as $sid => $sd)
 				{
 					$ships[$sid]['costs_per_ae'] = $sd['fuel_use'] * $_SESSION['haven']['fleet']['speed'] / $sd['speed'];
@@ -264,6 +289,7 @@
 					$_SESSION['haven']['fleet']['ships'][$sid] = $sd['count'];
 				}
 				
+				// Check if there are enough people
 				if ($_SESSION['haven']['people_available'] >= $_SESSION['haven']['fleet']['pilots'])
 				{
 					// Show checked ships
@@ -312,22 +338,99 @@
 					// Manuelle Auswahl
 					echo "<tr><td class=\"tbltitle\" width=\"25%\">Zielwahl:</td><td class=\"tbldata\" width=\"75%\">
 					Manuelle Eingabe: ";
-					echo "<input type=\"text\" id=\"fleet_sx\" name=\"fleet_sx\" size=\"2\" maxlength=\"2\" value=\"$csx\" title=\"Sektor X-Koordinate\" onKeyUp=\"upd_values();\" onKeyPress=\"return nurZahlen(event)\"/>&nbsp;/&nbsp;";
-					echo "<input type=\"text\" id=\"fleet_sy\" name=\"fleet_sy\" size=\"2\" maxlength=\"2\" value=\"$csy\" title=\"Sektor Y-Koordinate\" onKeyUp=\"upd_values();\" onKeyPress=\"return nurZahlen(event)\"/>&nbsp;&nbsp;:&nbsp;&nbsp;";
-					echo "<input type=\"text\" id=\"fleet_cx\" name=\"fleet_cx\" size=\"2\" maxlength=\"2\" value=\"$ccx\" title=\"Zelle X-Koordinate\" onKeyUp=\"upd_values();\" onKeyPress=\"return nurZahlen(event)\"/>&nbsp;/&nbsp;";
-					echo "<input type=\"text\" id=\"fleet_cy\" name=\"fleet_cy\" size=\"2\" maxlength=\"2\" value=\"$ccy\" title=\"Zelle Y-Koordinate\" onKeyUp=\"upd_values();\" onKeyPress=\"return nurZahlen(event)\"/>&nbsp;&nbsp;:&nbsp;&nbsp;";
-					echo "<input type=\"text\" id=\"fleet_p\" name=\"fleet_p\" size=\"2\" maxlength=\"2\" value=\"$psp\" title=\"Position des Planeten im Sonnensystem\" onKeyUp=\"upd_values();\" onKeyPress=\"return nurZahlen(event)\"/></td></tr>";
+					echo "<input type=\"text\" 
+												id=\"man_sx\"
+												name=\"man_sx\" 
+												size=\"2\" 
+												maxlength=\"2\" 
+												value=\"$csx\" 
+												title=\"Sektor X-Koordinate\" 
+												tabindex=\"20\"
+												autocomplete=\"off\" 
+												onfocus=\"this.select()\" 
+												onclick=\"this.select()\" 
+												onkeyup=\"xajax_havenTargetInfo(xajax.getFormValues('targetForm'))\"
+												onkeypress=\"return nurZahlen(event)\"
+					/>&nbsp;/&nbsp;";
+					echo "<input type=\"text\" 
+												id=\"man_sy\" 
+												name=\"man_sy\" 
+												size=\"2\" 
+												maxlength=\"2\" 
+												value=\"$csy\" 
+												title=\"Sektor Y-Koordinate\" 
+												tabindex=\"21\"
+												autocomplete=\"off\" 
+												onfocus=\"this.select()\" 
+												onclick=\"this.select()\" 
+												onkeyup=\"xajax_havenTargetInfo(xajax.getFormValues('targetForm'))\"
+												onkeypress=\"return nurZahlen(event)\"
+					/>&nbsp;&nbsp;:&nbsp;&nbsp;";
+					echo "<input type=\"text\" 
+												id=\"man_cx\" 
+												name=\"man_cx\" 
+												size=\"2\" 
+												maxlength=\"2\" 
+												value=\"$ccx\" 
+												title=\"Zelle X-Koordinate\" 
+												tabindex=\"22\"
+												autocomplete=\"off\" 
+												onfocus=\"this.select()\" 
+												onclick=\"this.select()\" 
+												onkeyup=\"xajax_havenTargetInfo(xajax.getFormValues('targetForm'))\"
+												onkeypress=\"return nurZahlen(event)\"
+					/>&nbsp;/&nbsp;";
+					echo "<input type=\"text\" 
+												id=\"man_cy\" 
+												name=\"man_cy\" 
+												size=\"2\" 
+												maxlength=\"2\" 
+												value=\"$ccy\" 
+												tabindex=\"23\"
+												autocomplete=\"off\" 
+												onfocus=\"this.select()\" 
+												onclick=\"this.select()\" 
+												onkeyup=\"xajax_havenTargetInfo(xajax.getFormValues('targetForm'))\"
+												onkeypress=\"return nurZahlen(event)\"
+					/>&nbsp;&nbsp;:&nbsp;&nbsp;";
+					echo "<input type=\"text\" 
+												id=\"man_p\" 
+												name=\"man_p\" 
+												size=\"2\" 
+												maxlength=\"2\" 
+												value=\"$psp\" 
+												title=\"Position des Planeten im Sonnensystem\" 
+												tabindex=\"24\"
+												autocomplete=\"off\" 
+												onfocus=\"this.select()\" 
+												onclick=\"this.select()\" 
+												onkeyup=\"xajax_havenTargetInfo(xajax.getFormValues('targetForm'))\"
+												onkeypress=\"return nurZahlen(event)\"
+					/></td></tr>";
+					
 					// Speedfaktor
-					echo "<tr><td class=\"tbltitle\" width=\"25%\">Speedfaktor:</td><td class=\"tbldata\" width=\"75%\" align=\"left\"><select name=\"speed_percent\" id=\"duration_percent\" onchange=\"upd_values();\">\n";
-					for ($x=1;$x>0.1;$x-=0.1)
-					{
-						$perc = $x*100;
-						echo "<option value=\"$x\"";
-						if ($_SESSION['haven']['fleet']['speed_percent'] * 100==$perc) echo " selected=\"selected\"";
-						echo ">$perc</option>\n";
-					}
+					echo "<tr>
+						<td class=\"tbltitle\" width=\"25%\">Speedfaktor:</td>
+						<td class=\"tbldata\" width=\"75%\" align=\"left\">
+							<select name=\"speed_percent\" 
+											id=\"duration_percent\" 
+											onchange=\"upd_values();\"
+											tabindex=\"25\"
+							>\n";
+							for ($x=1;$x>0.1;$x-=0.1)
+							{
+								$perc = $x*100;
+								echo "<option value=\"$x\"";
+								if ($_SESSION['haven']['fleet']['speed_percent'] * 100==$perc) echo " selected=\"selected\"";
+								echo ">$perc</option>\n";
+							}
 					echo "</select> %</td></tr>";
+					
 					// Daten anzeigen
+					echo "<tr><td width=\"25%\"><b>Zielinfos:</b></td>
+						<td class=\"tbldata\" id=\"targetinfo\">
+							<img src=\"images/loading.gif\" alt=\"Loading\" /> Lade Daten...
+						</td></tr>";
 					echo "<tr><td  width=\"25%\">Kosten/100 AE:</td>
 						<td class=\"tbldata\">".nf($_SESSION['haven']['fleet']['costs_per_ae'])." t</td></tr>";
 					echo "<tr><td>Geschwindigkeit:</td>
@@ -348,7 +451,8 @@
 					echo "</form>";
 					
 					$response->assign("havenContentTarget","innerHTML",ob_get_contents());				
-					$response->assign("havenContentTarget","style.display",'');				
+					$response->assign("havenContentTarget","style.display",'');			
+					$response->script("document.getElementById('fleet_sx').focus();");
 					ob_end_clean();				
 					
 					
@@ -403,6 +507,28 @@
 
 		$response->script("xajax_havenShowShips()");
 	  return $response;			
+	}
+	
+	function havenTargetInfo($form)
+	{
+		$response = new xajaxResponse();
+		ob_start();
+		$ct = new Cell(array($form['man_sx'],$form['man_sy'],$form['man_cx'],$form['man_cy']));
+		if ($ct->isValid())
+		{
+			$cs = new Cell(array($_SESSION['haven']['planet_sx'],$_SESSION['haven']['planet_sy'],$_SESSION['haven']['planet_cx'],$_SESSION['haven']['planet_cy']));
+			echo "<b>Zelle:</b> ".$ct.", <b>Typ:</b> ".$ct->getType(1);
+			
+			$dist = round($cs->distance($ct),1);
+			$response->assign('distance','innerHTML',$dist." AE");
+		}
+		else
+		{
+			echo "<div style=\"color:#f00\">".$cs->getError()."</div>";
+		}	
+		$response->assign('targetinfo','innerHTML',ob_get_contents());
+		ob_end_clean();
+	  return $response;					
 	}
 
 ?>
