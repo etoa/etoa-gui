@@ -1,5 +1,7 @@
 <?PHP
 
+$xajax->register(XAJAX_FUNCTION,'showAllianceMembers');
+
 //Listet User einer Allianz auf
 function showAllianceMembers($alliance_id=0,$field_id)
 {
@@ -91,14 +93,14 @@ function showAllianceMembers($alliance_id=0,$field_id)
 	}
 	
 	
-	$objResponse->addAssign($field_id, "innerHTML", $out);
+	$objResponse->assign($field_id, "innerHTML", $out);
 	
 	
-	$objResponse->addAssign("allianceinfo","innerHTML",ob_get_contents());
+	$objResponse->assign("allianceinfo","innerHTML",ob_get_contents());
 	ob_end_clean();
 	
-	return $objResponse->getXML();
+	return $objResponse;
 }
 
-$objAjax->registerFunction('showAllianceMembers');
+
 ?>

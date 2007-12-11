@@ -1,5 +1,7 @@
 <?PHP
 
+$xajax->register(XAJAX_FUNCTION,'launchSypProbe');
+
 	function launchSypProbe($tid,$cid,$cif)
 	{
 		global $s;
@@ -61,10 +63,10 @@
 			echo "Du hast noch keine Standard-Spionagesonde gewählt, überprüfe bitte deine <a href=\"?page=userconfig&mode=game\">Spieleinstellungen</a>!<br/>";
 		}				
 				
-		$objResponse->addAssign("spy_info_box","style.display",'block');				
-		$objResponse->addAppend("spy_info","innerHTML",ob_get_contents());				
+		$objResponse->assign("spy_info_box","style.display",'block');				
+		$objResponse->append("spy_info","innerHTML",ob_get_contents());				
 		ob_end_clean();
-	  return $objResponse->getXML();	
+	  return $objResponse;	
 	}
-	$objAjax->registerFunction('launchSypProbe');
+
 ?>

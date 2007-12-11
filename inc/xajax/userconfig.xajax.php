@@ -1,5 +1,8 @@
 <?PHP
 
+$xajax->register(XAJAX_FUNCTION,'imagePackInfo');
+$xajax->register(XAJAX_FUNCTION,'designInfo');
+
 function designInfo($did)
 {
 	$ajax = new xajaxResponse();
@@ -12,8 +15,8 @@ function designInfo($did)
 	<b>Autor:</b> <a href=\"mailto:".$cd['email']."\">".$cd['author']."</a><br/>
 	<b>Beschreibung:</b> ".$cd['description']."";
 	
-	$ajax->addAssign("designInfo","innerHTML",$out);
-  return $ajax->getXML();	
+	$ajax->assign("designInfo","innerHTML",$out);
+  return $ajax;	
 }
 
 function imagePackInfo($pid,$ext="",$path="")
@@ -26,7 +29,7 @@ function imagePackInfo($pid,$ext="",$path="")
 		
 		$out = "<b>Geändert:</b> ".$cd['changed']."<br/>
 		<b>Autor:</b> <a href=\"mailto:".$cd['email']."\">".$cd['author']."</a><br/>";
-		$ajax->addAssign("imagePackInfo","innerHTML",$out);
+		$ajax->assign("imagePackInfo","innerHTML",$out);
 		$out = " Dateiendung: <select name=\"user_image_ext\">";
 		foreach ($cd['extensions'] as $e)
 		{
@@ -35,7 +38,7 @@ function imagePackInfo($pid,$ext="",$path="")
 			$out.= ">".$e."</option>";
 		}
 		$out.="</select>";	
-		$ajax->addAssign("imagePackExtension","innerHTML",$out);
+		$ajax->assign("imagePackExtension","innerHTML",$out);
 	}
 	else
 	{
@@ -49,15 +52,12 @@ function imagePackInfo($pid,$ext="",$path="")
 			$out.= ">".$e."</option>";
 		}
 		$out.="</select>";	
-		$ajax->addAssign("imagePackExtension","innerHTML",$out);
+		$ajax->assign("imagePackExtension","innerHTML",$out);
 		$out = "Pfad: <input type=\"text\" name=\"user_image_url\" id=\"user_image_url\" maxlength=\"255\" size=\"45\" value=\"".$path."\">";
-		$ajax->addAssign("imagePackInfo","innerHTML",$out);
+		$ajax->assign("imagePackInfo","innerHTML",$out);
 	}
-  return $ajax->getXML();	
+  return $ajax;	
 }
-
-$objAjax->registerFunction('imagePackInfo');
-$objAjax->registerFunction('designInfo');
 
 
 ?>

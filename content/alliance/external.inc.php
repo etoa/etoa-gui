@@ -22,9 +22,12 @@
 			if ($arr['alliance_img']!="")
 			{
 				$im = ALLIANCE_IMG_DIR."/".$arr['alliance_img'];
-				$ims = getimagesize($im);
-				echo "<tr><td class=\"tblblack\" colspan=\"3\" style=\"text-align:center;background:#000\">
-				<img src=\"".$im."\" alt=\"Allianz-Logo\" style=\"width:".$ims[0]."px;height:".$ims[1]."\" /></td></tr>";
+				if (is_file($im))
+				{
+					$ims = getimagesize($im);
+					echo "<tr><td class=\"tblblack\" colspan=\"3\" style=\"text-align:center;background:#000\">
+					<img src=\"".$im."\" alt=\"Allianz-Logo\" style=\"width:".$ims[0]."px;height:".$ims[1]."\" /></td></tr>";
+				}
 			}
 			if ($arr['alliance_text']!="")
 			{

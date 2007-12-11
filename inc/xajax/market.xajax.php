@@ -4,13 +4,25 @@
 /* Markt: Rohstoff/Preis Kalkulator        */
 /* Berechnet div. Preise und Prüft Angebot */
 /*******************************************/
+
+$xajax->register(XAJAX_FUNCTION,'calcMarketRessPrice');
+$xajax->register(XAJAX_FUNCTION,'calcMarketRessBuy');
+$xajax->register(XAJAX_FUNCTION,'calcMarketShipPrice');
+$xajax->register(XAJAX_FUNCTION,'calcMarketShipBuy');
+$xajax->register(XAJAX_FUNCTION,'checkMarketAuctionFormular');
+$xajax->register(XAJAX_FUNCTION,'calcMarketAuctionTime');
+$xajax->register(XAJAX_FUNCTION,'calcMarketAuctionPrice');
+$xajax->register(XAJAX_FUNCTION,'MarketSearchFormularShow');
+$xajax->register(XAJAX_FUNCTION,'checkMarketSearchFormular');
+
+
 function calcMarketRessPrice($val, $last_update=0)
 {
 		ob_start();
   	$objResponse = new xajaxResponse();
   	
   	// Eingaben wurden noch nicht geprüft
-  	$objResponse->addAssign("ress_check_submit","value",0); 
+  	$objResponse->assign("ress_check_submit","value",0); 
   	
   	// Stellt "Value-Variable" auf 0 wenn diese noch nicht vorhanden ist
 		if($val['ress_buy_metal']=="")
@@ -104,15 +116,15 @@ function calcMarketRessPrice($val, $last_update=0)
 		  $out_ress_min_max_metal="<a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_metal').value=".($val['ress_buy_metal']+$ress_buy_metal_min).";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_metal','".($val['ress_buy_metal']+$ress_buy_metal_min)."',1,'');\">+".nf($ress_buy_metal_min)."</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_metal').value=".($val['ress_buy_metal']+$ress_buy_metal_max).";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_metal','".($val['ress_buy_metal']+$ress_buy_metal_max)."',1,'');\">+".nf($ress_buy_metal_max)."</a>";  
 		  
 		  // Gibt das Preisfeld frei	  
-		  $objResponse->addAssign("ress_buy_metal","disabled",false);	
+		  $objResponse->assign("ress_buy_metal","disabled",false);	
   		
   									
   	}
   	else
   	{
   		// Sperrt das Preisfeld
-  		$objResponse->addAssign("ress_buy_metal","disabled",true);
-  		$objResponse->addAssign("ress_buy_metal","value",0);
+  		$objResponse->assign("ress_buy_metal","disabled",true);
+  		$objResponse->assign("ress_buy_metal","value",0);
   	}
   	
 
@@ -169,13 +181,13 @@ function calcMarketRessPrice($val, $last_update=0)
 		  $out_ress_min_max_crystal="<a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_crystal').value=".($val['ress_buy_crystal']+$ress_buy_crystal_min).";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_crystal','".($val['ress_buy_crystal']+$ress_buy_crystal_min)."',1,'');\">+".nf($ress_buy_crystal_min)."</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_crystal').value=".($val['ress_buy_crystal']+$ress_buy_crystal_max).";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_crystal','".($val['ress_buy_crystal']+$ress_buy_crystal_max)."',1,'');\">+".nf($ress_buy_crystal_max)."</a>";  		
   		
   		// Gibt das Preisfeld frei
-  		$objResponse->addAssign("ress_buy_crystal","disabled",false);
+  		$objResponse->assign("ress_buy_crystal","disabled",false);
   	}
   	else
   	{
   		// Sperrt das Preisfeld
-  		$objResponse->addAssign("ress_buy_crystal","disabled",true);
-  		$objResponse->addAssign("ress_buy_crystal","value",0); 										  	
+  		$objResponse->assign("ress_buy_crystal","disabled",true);
+  		$objResponse->assign("ress_buy_crystal","value",0); 										  	
   	}
   	
 
@@ -233,13 +245,13 @@ function calcMarketRessPrice($val, $last_update=0)
 		  $out_ress_min_max_plastic="<a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_plastic').value=".($val['ress_buy_plastic']+$ress_buy_plastic_min).";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_plastic','".($val['ress_buy_plastic']+$ress_buy_plastic_min)."',1,'');\">+".nf($ress_buy_plastic_min)."</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_plastic').value=".($val['ress_buy_plastic']+$ress_buy_plastic_max).";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_plastic','".($val['ress_buy_plastic']+$ress_buy_plastic_max)."',1,'');\">+".nf($ress_buy_plastic_max)."</a>";  		
   		
   		// Gibt das Preisfeld frei
-  		$objResponse->addAssign("ress_buy_plastic","disabled",false);
+  		$objResponse->assign("ress_buy_plastic","disabled",false);
   	}
   	else
   	{
   		// Sperrt das Preisfeld
-  		$objResponse->addAssign("ress_buy_plastic","disabled",true);
-  		$objResponse->addAssign("ress_buy_plastic","value",0); 										  	
+  		$objResponse->assign("ress_buy_plastic","disabled",true);
+  		$objResponse->assign("ress_buy_plastic","value",0); 										  	
   	}
 
   	
@@ -297,13 +309,13 @@ function calcMarketRessPrice($val, $last_update=0)
 		  $out_ress_min_max_fuel="<a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_fuel').value=".($val['ress_buy_fuel']+$ress_buy_fuel_min).";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_fuel','".($val['ress_buy_fuel']+$ress_buy_fuel_min)."',1,'');\">+".nf($ress_buy_fuel_min)."</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_fuel').value=".($val['ress_buy_fuel']+$ress_buy_fuel_max).";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_fuel','".($val['ress_buy_fuel']+$ress_buy_fuel_max)."',1,'');\">+".nf($ress_buy_fuel_max)."</a>";  		
   		
   		// Gibt das Preisfeld frei
-  		$objResponse->addAssign("ress_buy_fuel","disabled",false);
+  		$objResponse->assign("ress_buy_fuel","disabled",false);
   	}
   	else
   	{
   		// Sperrt das Preisfeld
-  		$objResponse->addAssign("ress_buy_fuel","disabled",true);
-  		$objResponse->addAssign("ress_buy_fuel","value",0); 										  	
+  		$objResponse->assign("ress_buy_fuel","disabled",true);
+  		$objResponse->assign("ress_buy_fuel","value",0); 										  	
   	}
   	
   	
@@ -362,13 +374,13 @@ function calcMarketRessPrice($val, $last_update=0)
 		  $out_ress_min_max_food="<a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_food').value=".($val['ress_buy_food']+$ress_buy_food_min).";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_food','".($val['ress_buy_food']+$ress_buy_food_min)."',1,'');\">+".nf($ress_buy_food_min)."</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_food').value=".($val['ress_buy_food']+$ress_buy_food_max).";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_food','".($val['ress_buy_food']+$ress_buy_food_max)."',1,'');\">+".nf($ress_buy_food_max)."</a>";
 		  
 		  // Gibt das Preisfeld frei
-  		$objResponse->addAssign("ress_buy_food","disabled",false);
+  		$objResponse->assign("ress_buy_food","disabled",false);
   	}
   	else
   	{
   		// Sperrt das Preisfeld
-  		$objResponse->addAssign("ress_buy_food","disabled",true);
-  		$objResponse->addAssign("ress_buy_food","value",0); 										  	
+  		$objResponse->assign("ress_buy_food","disabled",true);
+  		$objResponse->assign("ress_buy_food","value",0); 										  	
   	} 	 	  	  	
   	 	
   	
@@ -385,8 +397,8 @@ function calcMarketRessPrice($val, $last_update=0)
   	{
   		$out_check_message = "<div style=\"color:red;font-weight:bold;\">Gib ein Angebot ein!</div>";
   		
-  		$objResponse->addAssign("ressource_sell_submit","disabled",true);
-  		$objResponse->addAssign("ressource_sell_submit","style.color",'#f00');
+  		$objResponse->assign("ressource_sell_submit","disabled",true);
+  		$objResponse->assign("ressource_sell_submit","style.color",'#f00');
   	}  	
   	// Alle Rohstoffe angegeben (und somit kein Preis festgelegt)
   	elseif($val['ress_sell_metal']>0 
@@ -397,8 +409,8 @@ function calcMarketRessPrice($val, $last_update=0)
   	{
   		$out_check_message = "<div style=\"color:red;font-weight:bold;\">Das Angebot muss einen Preis haben!</div>";
   		
-  		$objResponse->addAssign("ressource_sell_submit","disabled",true);
-  		$objResponse->addAssign("ressource_sell_submit","style.color",'#f00');  	
+  		$objResponse->assign("ressource_sell_submit","disabled",true);
+  		$objResponse->assign("ressource_sell_submit","style.color",'#f00');  	
   	}
   	// Zu hohe Preise
   	elseif($log_ress_buy_metal_max<0 
@@ -409,8 +421,8 @@ function calcMarketRessPrice($val, $last_update=0)
   	{
   		$out_check_message = "<div style=\"color:red;font-weight:bold;\">Die Preise sind zu hoch!</div>";
   		
-  		$objResponse->addAssign("ressource_sell_submit","disabled",true);
-  		$objResponse->addAssign("ressource_sell_submit","style.color",'#f00');
+  		$objResponse->assign("ressource_sell_submit","disabled",true);
+  		$objResponse->assign("ressource_sell_submit","style.color",'#f00');
   	}
   	// Zu niedrige Preise
   	elseif($log_ress_buy_metal_min>0 
@@ -421,8 +433,8 @@ function calcMarketRessPrice($val, $last_update=0)
   	{
   		$out_check_message = "<div style=\"color:red;font-weight:bold;\">Die Preise sind zu niedrig!</div>";
   		
-  		$objResponse->addAssign("ressource_sell_submit","disabled",true);
-  		$objResponse->addAssign("ressource_sell_submit","style.color",'#f00');
+  		$objResponse->assign("ressource_sell_submit","disabled",true);
+  		$objResponse->assign("ressource_sell_submit","style.color",'#f00');
   	}
   	// Zu wenig Rohstoffe auf dem Planeten
   	elseif($val['ress_sell_metal'] * MARKET_SELL_TAX > $val['res_metal']
@@ -433,16 +445,16 @@ function calcMarketRessPrice($val, $last_update=0)
   	{
   		$out_check_message = "<div style=\"color:red;font-weight:bold;\">Es sind zu wenig Rohstoffe vorhanden! (Beachte Verkaufsgebühr)</div>";
   		
-  		$objResponse->addAssign("ressource_sell_submit","disabled",true);
-  		$objResponse->addAssign("ressource_sell_submit","style.color",'#f00');
+  		$objResponse->assign("ressource_sell_submit","disabled",true);
+  		$objResponse->assign("ressource_sell_submit","style.color",'#f00');
   	}  
   	// Unerlaubte Zeichen im Werbetext
   	elseif(check_illegal_signs($val['ressource_text'])!="")
   	{
   		$out_check_message = "<div style=\"color:red;font-weight:bold;\">Unerlaubte Zeichen im Werbetext (".check_illegal_signs("><$").")!</div>";
   		
-  		$objResponse->addAssign("ressource_sell_submit","disabled",true);
-  		$objResponse->addAssign("ressource_sell_submit","style.color",'#f00'); 		
+  		$objResponse->assign("ressource_sell_submit","disabled",true);
+  		$objResponse->assign("ressource_sell_submit","style.color",'#f00'); 		
   	}	
   	// Angebot ist OK
   	else
@@ -455,44 +467,44 @@ function calcMarketRessPrice($val, $last_update=0)
   							+ $val['ress_sell_food'] * (MARKET_SELL_TAX - 1);  		
   		
   		$out_check_message = "<div style=\"color:#0f0;font-weight:bold;\">OK!<br>Verkaufsgebühren: ".nf($sell_tax)." t</div>";
-  		$objResponse->addAssign("ressource_sell_submit","disabled",false);
-  		$objResponse->addAssign("ressource_sell_submit","style.color",'#0f0');
+  		$objResponse->assign("ressource_sell_submit","disabled",false);
+  		$objResponse->assign("ressource_sell_submit","style.color",'#0f0');
   		
   		// XAJAX bestätigt die Korrektheit/Legalität der Eingaben
-  		$objResponse->addAssign("ress_check_submit","value",1);
+  		$objResponse->assign("ress_check_submit","value",1);
   	}
   	
   	// Bestätigt, dass XAJAX das Formular vor dem Absenden nochmal kontrolliert hat
-  	$objResponse->addAssign("ress_last_update","value", $last_update);
+  	$objResponse->assign("ress_last_update","value", $last_update);
  	
   	
   	// XAJAX ändert Daten
-		$objResponse->addAssign("ress_min_max_metal","innerHTML", $out_ress_min_max_metal);
-		$objResponse->addAssign("ress_min_max_crystal","innerHTML", $out_ress_min_max_crystal);
-		$objResponse->addAssign("ress_min_max_plastic","innerHTML", $out_ress_min_max_plastic);
-		$objResponse->addAssign("ress_min_max_fuel","innerHTML", $out_ress_min_max_fuel);
-		$objResponse->addAssign("ress_min_max_food","innerHTML", $out_ress_min_max_food);
+		$objResponse->assign("ress_min_max_metal","innerHTML", $out_ress_min_max_metal);
+		$objResponse->assign("ress_min_max_crystal","innerHTML", $out_ress_min_max_crystal);
+		$objResponse->assign("ress_min_max_plastic","innerHTML", $out_ress_min_max_plastic);
+		$objResponse->assign("ress_min_max_fuel","innerHTML", $out_ress_min_max_fuel);
+		$objResponse->assign("ress_min_max_food","innerHTML", $out_ress_min_max_food);
 		
-		$objResponse->addAssign("ress_sell_metal","value", nf($val['ress_sell_metal']));
-		$objResponse->addAssign("ress_sell_crystal","value", nf($val['ress_sell_crystal']));
-		$objResponse->addAssign("ress_sell_plastic","value", nf($val['ress_sell_plastic']));
-		$objResponse->addAssign("ress_sell_fuel","value", nf($val['ress_sell_fuel']));
-		$objResponse->addAssign("ress_sell_food","value", nf($val['ress_sell_food']));
+		$objResponse->assign("ress_sell_metal","value", nf($val['ress_sell_metal']));
+		$objResponse->assign("ress_sell_crystal","value", nf($val['ress_sell_crystal']));
+		$objResponse->assign("ress_sell_plastic","value", nf($val['ress_sell_plastic']));
+		$objResponse->assign("ress_sell_fuel","value", nf($val['ress_sell_fuel']));
+		$objResponse->assign("ress_sell_food","value", nf($val['ress_sell_food']));
 		
-		$objResponse->addAssign("ress_buy_metal","value", nf($val['ress_buy_metal']));
-		$objResponse->addAssign("ress_buy_crystal","value", nf($val['ress_buy_crystal']));
-		$objResponse->addAssign("ress_buy_plastic","value", nf($val['ress_buy_plastic']));
-		$objResponse->addAssign("ress_buy_fuel","value", nf($val['ress_buy_fuel']));
-		$objResponse->addAssign("ress_buy_food","value", nf($val['ress_buy_food']));
+		$objResponse->assign("ress_buy_metal","value", nf($val['ress_buy_metal']));
+		$objResponse->assign("ress_buy_crystal","value", nf($val['ress_buy_crystal']));
+		$objResponse->assign("ress_buy_plastic","value", nf($val['ress_buy_plastic']));
+		$objResponse->assign("ress_buy_fuel","value", nf($val['ress_buy_fuel']));
+		$objResponse->assign("ress_buy_food","value", nf($val['ress_buy_food']));
 		
 		
-		$objResponse->addAssign("check_message","innerHTML", $out_check_message);
+		$objResponse->assign("check_message","innerHTML", $out_check_message);
 
 
-		$objResponse->addAssign("marketinfo","innerHTML",ob_get_contents());
+		$objResponse->assign("marketinfo","innerHTML",ob_get_contents());
 		ob_end_clean();
 
-  	return $objResponse->getXML();
+  	return $objResponse;
 }
 
 
@@ -541,8 +553,8 @@ function calcMarketRessBuy($val)
 		{
   		$out_ress_buy_check_message = "<div style=\"color:red;font-weight:bold;\">Es ist kein Angebot ausgewählt!</div>";
   		
-  		$objResponse->addAssign("ressource_submit","disabled",true);
-  		$objResponse->addAssign("ressource_submit","style.color",'#f00');			
+  		$objResponse->assign("ressource_submit","disabled",true);
+  		$objResponse->assign("ressource_submit","style.color",'#f00');			
 		}
 		// Prüft, ob genug Rohstoffe vorhanden sind
 		elseif($val['res_metal'] < $ress_metal_total_costs
@@ -553,8 +565,8 @@ function calcMarketRessBuy($val)
 		{
   		$out_ress_buy_check_message = "<div style=\"color:red;font-weight:bold;\">Es sind zu wenig Rohstoffe vorhanden!</div>";
   		
-  		$objResponse->addAssign("ressource_submit","disabled",true);
-  		$objResponse->addAssign("ressource_submit","style.color",'#f00');		
+  		$objResponse->assign("ressource_submit","disabled",true);
+  		$objResponse->assign("ressource_submit","style.color",'#f00');		
 		}
   	// Angebot ist OK
   	else
@@ -563,26 +575,26 @@ function calcMarketRessBuy($val)
   		if($cnt==1)
   		{
   			$out_ress_buy_check_message .= "1 Angebot ausgewählt</div>";
-  			$objResponse->addAssign("ressource_submit","value","Angebot annehmen");
+  			$objResponse->assign("ressource_submit","value","Angebot annehmen");
   		}
   		else
   		{
   			$out_ress_buy_check_message .= "".$cnt." Angebote ausgewählt</div>";
-  			$objResponse->addAssign("ressource_submit","value","Angebote annehmen");
+  			$objResponse->assign("ressource_submit","value","Angebote annehmen");
   		}
-  		$objResponse->addAssign("ressource_submit","disabled",false);
-  		$objResponse->addAssign("ressource_submit","style.color",'#0f0');
+  		$objResponse->assign("ressource_submit","disabled",false);
+  		$objResponse->assign("ressource_submit","style.color",'#0f0');
   	}
 
 
 
-		$objResponse->addAssign("ressource_check_message","innerHTML",$out_ress_buy_check_message);
+		$objResponse->assign("ressource_check_message","innerHTML",$out_ress_buy_check_message);
 
 
-  	$objResponse->addAssign("marketinfo","innerHTML",ob_get_contents());
+  	$objResponse->assign("marketinfo","innerHTML",ob_get_contents());
 		ob_end_clean();
   	
-  	return $objResponse->getXML();
+  	return $objResponse;
 }
 
 
@@ -598,7 +610,7 @@ function calcMarketShipPrice($val,$new_ship=0,$last_update=0)
   	$objResponse = new xajaxResponse();
   	
   	// Eingaben wurden noch nicht geprüft
-  	$objResponse->addAssign("ship_check_submit","value",0);
+  	$objResponse->assign("ship_check_submit","value",0);
   	
   	$ship = $val['ship_list']; 
     $ship_count = min(nf_back($val['ship_count']),$_SESSION['market']['ship_data'][$ship]['shiplist_count']);
@@ -633,11 +645,11 @@ function calcMarketShipPrice($val,$new_ship=0,$last_update=0)
   		$val['ship_buy_food']=$ship_costs_food_total;
 	  	
 	  	//Ändert Daten beim "Angebot Feld" welches gesperrt ist für Änderungen
-	  	$objResponse->addAssign("ship_sell_metal","value", nf($ship_costs_metal_total));
-	  	$objResponse->addAssign("ship_sell_crystal","value", nf($ship_costs_crystal_total));
-	  	$objResponse->addAssign("ship_sell_plastic","value", nf($ship_costs_plastic_total));
-	  	$objResponse->addAssign("ship_sell_fuel","value", nf($ship_costs_fuel_total));
-	  	$objResponse->addAssign("ship_sell_food","value", nf($ship_costs_food_total)); 	  		
+	  	$objResponse->assign("ship_sell_metal","value", nf($ship_costs_metal_total));
+	  	$objResponse->assign("ship_sell_crystal","value", nf($ship_costs_crystal_total));
+	  	$objResponse->assign("ship_sell_plastic","value", nf($ship_costs_plastic_total));
+	  	$objResponse->assign("ship_sell_fuel","value", nf($ship_costs_fuel_total));
+	  	$objResponse->assign("ship_sell_food","value", nf($ship_costs_food_total)); 	  		
   	}
 
 
@@ -928,8 +940,8 @@ function calcMarketShipPrice($val,$new_ship=0,$last_update=0)
   	{
   		$out_ship_check_message = "<div style=\"color:red;font-weight:bold;\">Gib ein Angebot ein!</div>";
   		
-  		$objResponse->addAssign("ship_sell_submit","disabled",true);
-  		$objResponse->addAssign("ship_sell_submit","style.color",'#f00');
+  		$objResponse->assign("ship_sell_submit","disabled",true);
+  		$objResponse->assign("ship_sell_submit","style.color",'#f00');
   	}  	
   	// Zu hohe Preise
   	elseif($log_ship_buy_metal_max<0 
@@ -940,8 +952,8 @@ function calcMarketShipPrice($val,$new_ship=0,$last_update=0)
   	{
   		$out_ship_check_message = "<div style=\"color:red;font-weight:bold;\">Die Preise sind zu hoch!</div>";
   		
-  		$objResponse->addAssign("ship_sell_submit","disabled",true);
-  		$objResponse->addAssign("ship_sell_submit","style.color",'#f00');
+  		$objResponse->assign("ship_sell_submit","disabled",true);
+  		$objResponse->assign("ship_sell_submit","style.color",'#f00');
   	}
   	// Zu niedrige Preise
   	elseif($log_ship_buy_metal_ship_min>0 
@@ -952,55 +964,55 @@ function calcMarketShipPrice($val,$new_ship=0,$last_update=0)
   	{
   		$out_ship_check_message = "<div style=\"color:red;font-weight:bold;\">Die Preise sind zu niedrig!</div>";
   		
-  		$objResponse->addAssign("ship_sell_submit","disabled",true);
-  		$objResponse->addAssign("ship_sell_submit","style.color",'#f00');
+  		$objResponse->assign("ship_sell_submit","disabled",true);
+  		$objResponse->assign("ship_sell_submit","style.color",'#f00');
   	}  
   	// Unerlaubte Zeichen im Werbetext
   	elseif(check_illegal_signs($val['ship_text'])!="")
   	{
   		$out_ship_check_message = "<div style=\"color:red;font-weight:bold;\">Unerlaubte Zeichen im Werbetext (".check_illegal_signs("><$").")!</div>";
   		
-  		$objResponse->addAssign("ship_sell_submit","disabled",true);
-  		$objResponse->addAssign("ship_sell_submit","style.color",'#f00');  		
+  		$objResponse->assign("ship_sell_submit","disabled",true);
+  		$objResponse->assign("ship_sell_submit","style.color",'#f00');  		
   	}	  		
   	// Angebot ist OK
   	else
   	{		
   		$out_ship_check_message = "<div style=\"color:#0f0;font-weight:bold;\">OK!</div>";
-  		$objResponse->addAssign("ship_sell_submit","disabled",false);
-  		$objResponse->addAssign("ship_sell_submit","style.color",'#0f0');
+  		$objResponse->assign("ship_sell_submit","disabled",false);
+  		$objResponse->assign("ship_sell_submit","style.color",'#0f0');
   		
   		// XAJAX bestätigt die Korrektheit/Legalität der Eingaben
-  		$objResponse->addAssign("ship_check_submit","value",1);
+  		$objResponse->assign("ship_check_submit","value",1);
   	}  	
   	
   	// Bestätigt, dass XAJAX das Formular vor dem Absenden nochmal kontrolliert hat
-  	$objResponse->addAssign("ship_last_update","value", $last_update);
+  	$objResponse->assign("ship_last_update","value", $last_update);
   	
   	
   	
   	// XAJAX ändert Daten
-		$objResponse->addAssign("ship_min_max_metal","innerHTML", $out_ship_min_max_metal);
-		$objResponse->addAssign("ship_min_max_crystal","innerHTML", $out_ship_min_max_crystal);
-		$objResponse->addAssign("ship_min_max_plastic","innerHTML", $out_ship_min_max_plastic);
-		$objResponse->addAssign("ship_min_max_fuel","innerHTML", $out_ship_min_max_fuel);
-		$objResponse->addAssign("ship_min_max_food","innerHTML", $out_ship_min_max_food);  	
+		$objResponse->assign("ship_min_max_metal","innerHTML", $out_ship_min_max_metal);
+		$objResponse->assign("ship_min_max_crystal","innerHTML", $out_ship_min_max_crystal);
+		$objResponse->assign("ship_min_max_plastic","innerHTML", $out_ship_min_max_plastic);
+		$objResponse->assign("ship_min_max_fuel","innerHTML", $out_ship_min_max_fuel);
+		$objResponse->assign("ship_min_max_food","innerHTML", $out_ship_min_max_food);  	
   	
-		$objResponse->addAssign("ship_buy_metal","value", nf($val['ship_buy_metal']));
-		$objResponse->addAssign("ship_buy_crystal","value", nf($val['ship_buy_crystal']));
-		$objResponse->addAssign("ship_buy_plastic","value", nf($val['ship_buy_plastic']));
-		$objResponse->addAssign("ship_buy_fuel","value", nf($val['ship_buy_fuel']));
-		$objResponse->addAssign("ship_buy_food","value", nf($val['ship_buy_food']));	
+		$objResponse->assign("ship_buy_metal","value", nf($val['ship_buy_metal']));
+		$objResponse->assign("ship_buy_crystal","value", nf($val['ship_buy_crystal']));
+		$objResponse->assign("ship_buy_plastic","value", nf($val['ship_buy_plastic']));
+		$objResponse->assign("ship_buy_fuel","value", nf($val['ship_buy_fuel']));
+		$objResponse->assign("ship_buy_food","value", nf($val['ship_buy_food']));	
   	
-  	$objResponse->addAssign("ship_count","value", nf($ship_count));	
+  	$objResponse->assign("ship_count","value", nf($ship_count));	
   	
-  	$objResponse->addAssign("ship_check_message","innerHTML", $out_ship_check_message);
+  	$objResponse->assign("ship_check_message","innerHTML", $out_ship_check_message);
   	
   	
-  	$objResponse->addAssign("marketinfo","innerHTML",ob_get_contents());
+  	$objResponse->assign("marketinfo","innerHTML",ob_get_contents());
 		ob_end_clean();
   	
-  	return $objResponse->getXML();
+  	return $objResponse;
 }
 
 
@@ -1048,8 +1060,8 @@ function calcMarketShipBuy($val)
 		{
   		$out_ship_buy_check_message = "<div style=\"color:red;font-weight:bold;\">Es ist kein Angebot ausgewählt!</div>";
   		
-  		$objResponse->addAssign("ship_submit","disabled",true);
-  		$objResponse->addAssign("ship_submit","style.color",'#f00');			
+  		$objResponse->assign("ship_submit","disabled",true);
+  		$objResponse->assign("ship_submit","style.color",'#f00');			
 		}
 		// Prüft, ob genug Rohstoffe vorhanden sind
 		elseif($val['res_metal'] < $ship_metal_total_costs
@@ -1060,8 +1072,8 @@ function calcMarketShipBuy($val)
 		{
   		$out_ship_buy_check_message = "<div style=\"color:red;font-weight:bold;\">Es sind zu wenig Rohstoffe vorhanden!</div>";
   		
-  		$objResponse->addAssign("ship_submit","disabled",true);
-  		$objResponse->addAssign("ship_submit","style.color",'#f00');		
+  		$objResponse->assign("ship_submit","disabled",true);
+  		$objResponse->assign("ship_submit","style.color",'#f00');		
 		}
   	// Angebot ist OK
   	else
@@ -1070,25 +1082,25 @@ function calcMarketShipBuy($val)
   		if($cnt==1)
   		{
   			$out_ship_buy_check_message .= "1 Angebot ausgewählt</div>";
-  			$objResponse->addAssign("ship_submit","value","Angebot annehmen");
+  			$objResponse->assign("ship_submit","value","Angebot annehmen");
   		}
   		else
   		{
   			$out_ship_buy_check_message .= "".$cnt." Angebote ausgewählt</div>";
-  			$objResponse->addAssign("ship_submit","value","Angebote annehmen");
+  			$objResponse->assign("ship_submit","value","Angebote annehmen");
   		}
-  		$objResponse->addAssign("ship_submit","disabled",false);
-  		$objResponse->addAssign("ship_submit","style.color",'#0f0');
+  		$objResponse->assign("ship_submit","disabled",false);
+  		$objResponse->assign("ship_submit","style.color",'#0f0');
   	}
 
 
-		$objResponse->addAssign("ship_buy_check_message","innerHTML",$out_ship_buy_check_message);
+		$objResponse->assign("ship_buy_check_message","innerHTML",$out_ship_buy_check_message);
 
 
-  	$objResponse->addAssign("marketinfo","innerHTML",ob_get_contents());
+  	$objResponse->assign("marketinfo","innerHTML",ob_get_contents());
 		ob_end_clean();
   	
-  	return $objResponse->getXML();
+  	return $objResponse;
 }
 
 
@@ -1108,12 +1120,12 @@ function calcMarketAuctionTime($val)
 		$auction_end_time = $val['auction_time_min'] + $val['auction_time_days'] * 24 * 3600 + $val['auction_time_hours'] * 3600;
 
 
-		$objResponse->addAssign("auction_end_time","innerHTML",date("d.m.Y H:i",$auction_end_time));
+		$objResponse->assign("auction_end_time","innerHTML",date("d.m.Y H:i",$auction_end_time));
 
-  	$objResponse->addAssign("marketinfo","innerHTML",ob_get_contents());
+  	$objResponse->assign("marketinfo","innerHTML",ob_get_contents());
 		ob_end_clean();
   	
-  	return $objResponse->getXML();
+  	return $objResponse;
 }
 
 
@@ -1131,14 +1143,14 @@ function checkMarketAuctionFormular($val, $last_update=0)
   	$objResponse = new xajaxResponse();
 
 		// Eingaben wurden noch nicht geprüft
-  	$objResponse->addAssign("auction_check_submit","value",0);
+  	$objResponse->assign("auction_check_submit","value",0);
 
 		// Setzt Kästchen value wieder auf 1
-		$objResponse->addAssign("auction_buy_metal","value",1);
-		$objResponse->addAssign("auction_buy_crystal","value",1);
-		$objResponse->addAssign("auction_buy_plastic","value",1);
-		$objResponse->addAssign("auction_buy_fuel","value",1);
-		$objResponse->addAssign("auction_buy_food","value",1);
+		$objResponse->assign("auction_buy_metal","value",1);
+		$objResponse->assign("auction_buy_crystal","value",1);
+		$objResponse->assign("auction_buy_plastic","value",1);
+		$objResponse->assign("auction_buy_fuel","value",1);
+		$objResponse->assign("auction_buy_food","value",1);
 
 	  
   	$val['auction_sell_metal'] = min(nf_back($val['auction_sell_metal']),floor($val['res_metal']/MARKET_SELL_TAX));
@@ -1152,36 +1164,36 @@ function checkMarketAuctionFormular($val, $last_update=0)
 		// Titan
 		if($val['auction_sell_metal']!=0)
 		{
-			$objResponse->addAssign("auction_buy_metal","checked",false);
-			$objResponse->addAssign("auction_buy_metal","value",0);
+			$objResponse->assign("auction_buy_metal","checked",false);
+			$objResponse->assign("auction_buy_metal","value",0);
 			$val['auction_buy_metal'] = 0;
 		}
 		// Silizium
 		if($val['auction_sell_crystal']!=0)
 		{
-			$objResponse->addAssign("auction_buy_crystal","checked",false);
-			$objResponse->addAssign("auction_buy_crystal","value",0);
+			$objResponse->assign("auction_buy_crystal","checked",false);
+			$objResponse->assign("auction_buy_crystal","value",0);
 			$val['auction_buy_crytsal'] = 0;
 		}
 		// PVC
 		if($val['auction_sell_plastic']!=0)
 		{
-			$objResponse->addAssign("auction_buy_plastic","checked",false);
-			$objResponse->addAssign("auction_buy_plastic","value",0);
+			$objResponse->assign("auction_buy_plastic","checked",false);
+			$objResponse->assign("auction_buy_plastic","value",0);
 			$val['auction_buy_plastic'] = 0;
 		}
 		// Tritium
 		if($val['auction_sell_fuel']!=0)
 		{
-			$objResponse->addAssign("auction_buy_fuel","checked",false);
-			$objResponse->addAssign("auction_buy_fuel","value",0);
+			$objResponse->assign("auction_buy_fuel","checked",false);
+			$objResponse->assign("auction_buy_fuel","value",0);
 			$val['auction_buy_fuel'] = 0;
 		}
 		// Nahrung
 		if($val['auction_sell_food']!=0)
 		{
-			$objResponse->addAssign("auction_buy_food","checked",false);
-			$objResponse->addAssign("auction_buy_food","value",0);
+			$objResponse->assign("auction_buy_food","checked",false);
+			$objResponse->assign("auction_buy_food","value",0);
 			$val['auction_buy_food'] = 0;
 		}
 
@@ -1199,8 +1211,8 @@ function checkMarketAuctionFormular($val, $last_update=0)
   	{
   		$out_auction_check_message = "<div style=\"color:red;font-weight:bold;\">Gib ein Angebot ein!</div>";
   		
-  		$objResponse->addAssign("auction_sell_submit","disabled",true);
-  		$objResponse->addAssign("auction_sell_submit","style.color",'#f00');
+  		$objResponse->assign("auction_sell_submit","disabled",true);
+  		$objResponse->assign("auction_sell_submit","style.color",'#f00');
   	}  	
   	// Keinen Preis angegeben
   	elseif($val['auction_buy_metal']==0 
@@ -1211,8 +1223,8 @@ function checkMarketAuctionFormular($val, $last_update=0)
   	{
   		$out_auction_check_message = "<div style=\"color:red;font-weight:bold;\">Das Angebot muss eine Zahlungsmöglichkeit aufweisen!</div>";
   		
-  		$objResponse->addAssign("auction_sell_submit","disabled",true);
-  		$objResponse->addAssign("auction_sell_submit","style.color",'#f00');
+  		$objResponse->assign("auction_sell_submit","disabled",true);
+  		$objResponse->assign("auction_sell_submit","style.color",'#f00');
   	}
   	// Zu wenig Rohstoffe auf dem Planeten
   	elseif(floor($val['auction_sell_metal'] * MARKET_SELL_TAX) > $val['res_metal']
@@ -1223,16 +1235,16 @@ function checkMarketAuctionFormular($val, $last_update=0)
   	{
   		$out_auction_check_message = "<div style=\"color:red;font-weight:bold;\">Es sind zu wenig Rohstoffe vorhanden! (Beachte Verkaufsgebühr)</div>";
   		
-  		$objResponse->addAssign("auction_sell_submit","disabled",true);
-  		$objResponse->addAssign("auction_sell_submit","style.color",'#f00');
+  		$objResponse->assign("auction_sell_submit","disabled",true);
+  		$objResponse->assign("auction_sell_submit","style.color",'#f00');
   	} 
   	// Unerlaubte Zeichen im Werbetext
   	elseif(check_illegal_signs($val['auction_text'])!="")
   	{
   		$out_auction_check_message = "<div style=\"color:red;font-weight:bold;\">Unerlaubte Zeichen im Werbetext (".check_illegal_signs("><$").")!</div>";
   		
-  		$objResponse->addAssign("auction_sell_submit","disabled",true);
-  		$objResponse->addAssign("auction_sell_submit","style.color",'#f00');  		
+  		$objResponse->assign("auction_sell_submit","disabled",true);
+  		$objResponse->assign("auction_sell_submit","style.color",'#f00');  		
   	}	  	 	
   	// Angebot ist OK
   	else
@@ -1245,30 +1257,30 @@ function checkMarketAuctionFormular($val, $last_update=0)
   							+ $val['auction_sell_food'] * (MARKET_SELL_TAX - 1);
   		
   		$out_auction_check_message = "<div style=\"color:#0f0;font-weight:bold;\">OK!<br>Verkaufsgebühren: ".nf($sell_tax)." t</div>";
-  		$objResponse->addAssign("auction_sell_submit","disabled",false);
-  		$objResponse->addAssign("auction_sell_submit","style.color",'#0f0');
+  		$objResponse->assign("auction_sell_submit","disabled",false);
+  		$objResponse->assign("auction_sell_submit","style.color",'#0f0');
   		
-  		$objResponse->addAssign("auction_check_submit","value",1);
+  		$objResponse->assign("auction_check_submit","value",1);
   	} 	
 	
 	  // Bestätigt, dass XAJAX das Formular vor dem Absenden nochmal kontrolliert hat
-  	$objResponse->addAssign("auction_last_update","value", $last_update);
+  	$objResponse->assign("auction_last_update","value", $last_update);
 	
 	
 		// XAJAX ändert Daten
-		$objResponse->addAssign("auction_check_message","innerHTML", $out_auction_check_message);
+		$objResponse->assign("auction_check_message","innerHTML", $out_auction_check_message);
 		
-		$objResponse->addAssign("auction_sell_metal","value", nf($val['auction_sell_metal']));
-		$objResponse->addAssign("auction_sell_crystal","value", nf($val['auction_sell_crystal']));
-		$objResponse->addAssign("auction_sell_plastic","value", nf($val['auction_sell_plastic']));
-		$objResponse->addAssign("auction_sell_fuel","value", nf($val['auction_sell_fuel']));
-		$objResponse->addAssign("auction_sell_food","value", nf($val['auction_sell_food']));
+		$objResponse->assign("auction_sell_metal","value", nf($val['auction_sell_metal']));
+		$objResponse->assign("auction_sell_crystal","value", nf($val['auction_sell_crystal']));
+		$objResponse->assign("auction_sell_plastic","value", nf($val['auction_sell_plastic']));
+		$objResponse->assign("auction_sell_fuel","value", nf($val['auction_sell_fuel']));
+		$objResponse->assign("auction_sell_food","value", nf($val['auction_sell_food']));
 
 
-  	$objResponse->addAssign("marketinfo","innerHTML",ob_get_contents());
+  	$objResponse->assign("marketinfo","innerHTML",ob_get_contents());
 		ob_end_clean();
   	
-  	return $objResponse->getXML();
+  	return $objResponse;
 }
 
 
@@ -1285,7 +1297,7 @@ function calcMarketAuctionPrice($val, $last_update=0)
   	$objResponse = new xajaxResponse();
 		
 		// Eingaben wurden noch nicht geprüft
-  	$objResponse->addAssign("auction_show_check_submit","value",0);
+  	$objResponse->assign("auction_show_check_submit","value",0);
 		
 		$val['auction_new_buy_metal'] = min(nf_back($val['auction_new_buy_metal']),floor($val['res_metal']));
   	$val['auction_new_buy_crystal'] = min(nf_back($val['auction_new_buy_crystal']),floor($val['res_crystal']));
@@ -1639,8 +1651,8 @@ function calcMarketAuctionPrice($val, $last_update=0)
   	{
   		$out_auction_check_message = "<div style=\"color:red;font-weight:bold;\">Gib ein Gebot ein!</div>";
   		
-  		$objResponse->addAssign("auction_submit","disabled",true);
-  		$objResponse->addAssign("auction_submit","style.color",'#f00');
+  		$objResponse->assign("auction_submit","disabled",true);
+  		$objResponse->assign("auction_submit","style.color",'#f00');
   	} 
   	// Zu hohe Preise
   	elseif($log_auction_buy_metal_max<0 
@@ -1651,8 +1663,8 @@ function calcMarketAuctionPrice($val, $last_update=0)
   	{
   		$out_auction_check_message = "<div style=\"color:red;font-weight:bold;\">Das Gebot ist zu hoch!</div>";
   		
-  		$objResponse->addAssign("auction_submit","disabled",true);
-  		$objResponse->addAssign("auction_submit","style.color",'#f00');
+  		$objResponse->assign("auction_submit","disabled",true);
+  		$objResponse->assign("auction_submit","style.color",'#f00');
   	}
   	// Zu niedrige Preise
   	elseif($log_auction_buy_metal_min>0 
@@ -1663,8 +1675,8 @@ function calcMarketAuctionPrice($val, $last_update=0)
   	{
   		$out_auction_check_message = "<div style=\"color:red;font-weight:bold;\">Das Gebot ist zu niedrig!</div>";
   		
-  		$objResponse->addAssign("ship_sell_submit","disabled",true);
-  		$objResponse->addAssign("ship_sell_submit","style.color",'#f00');
+  		$objResponse->assign("ship_sell_submit","disabled",true);
+  		$objResponse->assign("ship_sell_submit","style.color",'#f00');
   	} 
   	// Zu wenig Rohstoffe auf dem Planeten
   	elseif($val['auction_new_buy_metal'] > $val['res_metal']
@@ -1675,60 +1687,60 @@ function calcMarketAuctionPrice($val, $last_update=0)
   	{
   		$out_auction_check_message = "<div style=\"color:red;font-weight:bold;\">Es sind zu wenig Rohstoffe vorhanden!</div>";
   		
-  		$objResponse->addAssign("auction_submit","disabled",true);
-  		$objResponse->addAssign("auction_submit","style.color",'#f00');
+  		$objResponse->assign("auction_submit","disabled",true);
+  		$objResponse->assign("auction_submit","style.color",'#f00');
   	}
   	// Gebot ist tiefer als das vom Höchstbietenden
   	elseif($buy_price >= $new_buy_price)
   	{
   		$out_auction_check_message = "<div style=\"color:red;font-weight:bold;\">Das Gebot muss höher sein als das vom Höchstbietenden!</div>";
   		
-  		$objResponse->addAssign("auction_submit","disabled",true);
-  		$objResponse->addAssign("auction_submit","style.color",'#f00');  		
+  		$objResponse->assign("auction_submit","disabled",true);
+  		$objResponse->assign("auction_submit","style.color",'#f00');  		
   	}	
   	// Zeit ist abgelaufen 
   	elseif($val['auction_rest_time'] <= 0)
   	{
   		$out_auction_check_message = "<div style=\"color:red;font-weight:bold;\">Auktion ist beendet!</div>";
   		
-  		$objResponse->addAssign("auction_submit","disabled",true);
-  		$objResponse->addAssign("auction_submit","style.color",'#f00');  		
+  		$objResponse->assign("auction_submit","disabled",true);
+  		$objResponse->assign("auction_submit","style.color",'#f00');  		
   	}   	
   	// Angebot ist OK
   	else
   	{		
   		$out_auction_check_message = "<div style=\"color:#0f0;font-weight:bold;\">OK!</div>";
-  		$objResponse->addAssign("auction_submit","disabled",false);
-  		$objResponse->addAssign("auction_submit","style.color",'#0f0');
+  		$objResponse->assign("auction_submit","disabled",false);
+  		$objResponse->assign("auction_submit","style.color",'#0f0');
   		
-  		$objResponse->addAssign("auction_show_check_submit","value",1);
+  		$objResponse->assign("auction_show_check_submit","value",1);
   	}  	 
   	  	
   	
   	// Bestätigt, dass XAJAX das Formular vor dem Absenden nochmal kontrolliert hat
-  	$objResponse->addAssign("auction_show_last_update","value", $last_update);  	
+  	$objResponse->assign("auction_show_last_update","value", $last_update);  	
   	  	
 
 		// XAJAX ändert Daten
-		$objResponse->addAssign("auction_min_max_metal","innerHTML", $out_auction_min_max_metal);
-		$objResponse->addAssign("auction_min_max_crystal","innerHTML", $out_auction_min_max_crystal);
-		$objResponse->addAssign("auction_min_max_plastic","innerHTML", $out_auction_min_max_plastic);
-		$objResponse->addAssign("auction_min_max_fuel","innerHTML", $out_auction_min_max_fuel);
-		$objResponse->addAssign("auction_min_max_food","innerHTML", $out_auction_min_max_food);
+		$objResponse->assign("auction_min_max_metal","innerHTML", $out_auction_min_max_metal);
+		$objResponse->assign("auction_min_max_crystal","innerHTML", $out_auction_min_max_crystal);
+		$objResponse->assign("auction_min_max_plastic","innerHTML", $out_auction_min_max_plastic);
+		$objResponse->assign("auction_min_max_fuel","innerHTML", $out_auction_min_max_fuel);
+		$objResponse->assign("auction_min_max_food","innerHTML", $out_auction_min_max_food);
 		
-		$objResponse->addAssign("auction_new_buy_metal","value", nf($val['auction_new_buy_metal']));
-		$objResponse->addAssign("auction_new_buy_crystal","value", nf($val['auction_new_buy_crystal']));
-		$objResponse->addAssign("auction_new_buy_plastic","value", nf($val['auction_new_buy_plastic']));
-		$objResponse->addAssign("auction_new_buy_fuel","value", nf($val['auction_new_buy_fuel']));
-		$objResponse->addAssign("auction_new_buy_food","value", nf($val['auction_new_buy_food']));		
+		$objResponse->assign("auction_new_buy_metal","value", nf($val['auction_new_buy_metal']));
+		$objResponse->assign("auction_new_buy_crystal","value", nf($val['auction_new_buy_crystal']));
+		$objResponse->assign("auction_new_buy_plastic","value", nf($val['auction_new_buy_plastic']));
+		$objResponse->assign("auction_new_buy_fuel","value", nf($val['auction_new_buy_fuel']));
+		$objResponse->assign("auction_new_buy_food","value", nf($val['auction_new_buy_food']));		
 		
 		
-		$objResponse->addAssign("auction_check_message","innerHTML", $out_auction_check_message);
+		$objResponse->assign("auction_check_message","innerHTML", $out_auction_check_message);
 
-  	$objResponse->addAssign("marketinfo","innerHTML",ob_get_contents());
+  	$objResponse->assign("marketinfo","innerHTML",ob_get_contents());
 		ob_end_clean();
   	
-  	return $objResponse->getXML();
+  	return $objResponse;
 }
 
 
@@ -2015,16 +2027,16 @@ function MarketSearchFormularShow($val)
 			
 			
 		// XAJAX ändert Daten
-		$objResponse->addAssign("search_check_message","innerHTML", $out_search_check_message);
-		$objResponse->addAssign("search_submit","disabled",true);
-  	$objResponse->addAssign("search_submit","style.color",'#f00');				
-		$objResponse->addAssign("search_content","innerHTML",$out_search_content);
+		$objResponse->assign("search_check_message","innerHTML", $out_search_check_message);
+		$objResponse->assign("search_submit","disabled",true);
+  	$objResponse->assign("search_submit","style.color",'#f00');				
+		$objResponse->assign("search_content","innerHTML",$out_search_content);
 
 
-  	$objResponse->addAssign("marketinfo","innerHTML",ob_get_contents());
+  	$objResponse->assign("marketinfo","innerHTML",ob_get_contents());
 		ob_end_clean();
   	
-  	return $objResponse->getXML();
+  	return $objResponse;
 }
 
 
@@ -2037,11 +2049,13 @@ function MarketSearchFormularShow($val)
 
 function checkMarketSearchFormular($val)
 {
-		global $conf,$db_table,$s;
+		global $conf,$s;
+		
+		
 		
 		ob_start();
   	$objResponse = new xajaxResponse();
-
+print_r($s);
 		//
 		// Rohstoffe
 		//
@@ -2062,17 +2076,17 @@ function checkMarketSearchFormular($val)
 					// Eigener Nick ist unzulässig
 					if(get_user_id($val['user_nick']) != $s['user']['id'])
 					{
-						$objResponse->addAssign("check_user_nick","innerHTML", "<div style=\"color:#0f0;font-weight:bold;\">OK!</div>");
+						$objResponse->assign("check_user_nick","innerHTML", "<div style=\"color:#0f0;font-weight:bold;\">OK!</div>");
 						$user_id = get_user_id($val['user_nick']);
 					}
 					else
 					{
-						$objResponse->addAssign("check_user_nick","innerHTML", "<div style=\"color:red;font-weight:bold;\">Eigene Angebote können nicht angezeigt werden!</div>");
+						$objResponse->assign("check_user_nick","innerHTML", "<div style=\"color:red;font-weight:bold;\">Eigene Angebote können nicht angezeigt werden!</div>");
 					}
 				}
 				else
 				{
-					$objResponse->addAssign("check_user_nick","innerHTML", "<div style=\"color:red;font-weight:bold;\">User nicht gefunden!</div>");
+					$objResponse->assign("check_user_nick","innerHTML", "<div style=\"color:red;font-weight:bold;\">User nicht gefunden!</div>");
 				}
 			}
 			
@@ -2188,7 +2202,7 @@ function checkMarketSearchFormular($val)
 			SELECT
 				ressource_market_id
 			FROM
-				".$db_table['market_ressource']."
+				market_ressource
 			WHERE
 				ressource_buyable='1'
         AND user_id!='".$s['user']['id']."'
@@ -2205,21 +2219,21 @@ function checkMarketSearchFormular($val)
 			{
 				$out_search_check_message = "<div style=\"color:red;font-weight:bold;\">Keine Angebote gefunden</div>";
 				
-	  		$objResponse->addAssign("search_submit","disabled",true);
-	  		$objResponse->addAssign("search_submit","style.color",'#f00'); 			
+	  		$objResponse->assign("search_submit","disabled",true);
+	  		$objResponse->assign("search_submit","style.color",'#f00'); 			
 			}  	
 	  	// Angebot ist OK
 	  	else
 	  	{		
 	  		$out_search_check_message = "<div style=\"color:#0f0;font-weight:bold;\">OK!<br>".$cnt."".$out_add_alliance." Angebot(e)".$out_add_nick." gefunden!</div>";
 	  		
-	  		$objResponse->addAssign("search_submit","disabled",false);
-	  		$objResponse->addAssign("search_submit","style.color",'#0f0');			
+	  		$objResponse->assign("search_submit","disabled",false);
+	  		$objResponse->assign("search_submit","style.color",'#0f0');			
 			}
 	
 			// XAJAX ändert Daten
-			$objResponse->addAssign("search_check_message","innerHTML", $out_search_check_message);
-			$objResponse->addAssign("ressource_sql_add","value", $sql_add);      
+			$objResponse->assign("search_check_message","innerHTML", $out_search_check_message);
+			$objResponse->assign("ressource_sql_add","value", $sql_add);      
       
 		}
 		
@@ -2246,17 +2260,17 @@ function checkMarketSearchFormular($val)
 					// Eigener Nick ist unzulässig
 					if(get_user_id($val['user_nick']) != $s['user']['id'])
 					{
-						$objResponse->addAssign("check_user_nick","innerHTML", "<div style=\"color:#0f0;font-weight:bold;\">OK!</div>");
+						$objResponse->assign("check_user_nick","innerHTML", "<div style=\"color:#0f0;font-weight:bold;\">OK!</div>");
 						$user_id = get_user_id($val['user_nick']);
 					}
 					else
 					{
-						$objResponse->addAssign("check_user_nick","innerHTML", "<div style=\"color:red;font-weight:bold;\">Eigene Angebote können nicht angezeigt werden!</div>");
+						$objResponse->assign("check_user_nick","innerHTML", "<div style=\"color:red;font-weight:bold;\">Eigene Angebote können nicht angezeigt werden!</div>");
 					}
 				}
 				else
 				{
-					$objResponse->addAssign("check_user_nick","innerHTML", "<div style=\"color:red;font-weight:bold;\">User nicht gefunden!</div>");
+					$objResponse->assign("check_user_nick","innerHTML", "<div style=\"color:red;font-weight:bold;\">User nicht gefunden!</div>");
 				}
 			}
 			
@@ -2332,7 +2346,7 @@ function checkMarketSearchFormular($val)
 			SELECT
 				ship_market_id
 			FROM
-				".$db_table['market_ship']."
+				market_ship
 			WHERE
 				ship_buyable='1'
         AND user_id!='".$s['user']['id']."'
@@ -2349,21 +2363,21 @@ function checkMarketSearchFormular($val)
 			{
 				$out_search_check_message = "<div style=\"color:red;font-weight:bold;\">Keine Angebote gefunden</div>";
 				
-	  		$objResponse->addAssign("search_submit","disabled",true);
-	  		$objResponse->addAssign("search_submit","style.color",'#f00'); 			
+	  		$objResponse->assign("search_submit","disabled",true);
+	  		$objResponse->assign("search_submit","style.color",'#f00'); 			
 			}  	
 	  	// Angebot ist OK
 	  	else
 	  	{		
 	  		$out_search_check_message = "<div style=\"color:#0f0;font-weight:bold;\">OK!<br>".$cnt."".$out_add_alliance." Angebot(e)".$out_add_nick." gefunden!</div>";
 	  		
-	  		$objResponse->addAssign("search_submit","disabled",false);
-	  		$objResponse->addAssign("search_submit","style.color",'#0f0');			
+	  		$objResponse->assign("search_submit","disabled",false);
+	  		$objResponse->assign("search_submit","style.color",'#0f0');			
 			}
 	
 			// XAJAX ändert Daten
-			$objResponse->addAssign("search_check_message","innerHTML", $out_search_check_message);
-			$objResponse->addAssign("ship_sql_add","value", $sql_add);      
+			$objResponse->assign("search_check_message","innerHTML", $out_search_check_message);
+			$objResponse->assign("ship_sql_add","value", $sql_add);      
       
 		}	
 
@@ -2388,17 +2402,17 @@ function checkMarketSearchFormular($val)
 					// Eigener Nick ist unzulässig
 					if(get_user_id($val['user_nick']) != $s['user']['id'])
 					{
-						$objResponse->addAssign("check_user_nick","innerHTML", "<div style=\"color:#0f0;font-weight:bold;\">OK!</div>");
+						$objResponse->assign("check_user_nick","innerHTML", "<div style=\"color:#0f0;font-weight:bold;\">OK!</div>");
 						$user_id = get_user_id($val['user_nick']);
 					}
 					else
 					{
-						$objResponse->addAssign("check_user_nick","innerHTML", "<div style=\"color:red;font-weight:bold;\">Eigene Angebote können nicht angezeigt werden!</div>");
+						$objResponse->assign("check_user_nick","innerHTML", "<div style=\"color:red;font-weight:bold;\">Eigene Angebote können nicht angezeigt werden!</div>");
 					}
 				}
 				else
 				{
-					$objResponse->addAssign("check_user_nick","innerHTML", "<div style=\"color:red;font-weight:bold;\">User nicht gefunden!</div>");
+					$objResponse->assign("check_user_nick","innerHTML", "<div style=\"color:red;font-weight:bold;\">User nicht gefunden!</div>");
 				}
 			}
 			
@@ -2503,7 +2517,7 @@ function checkMarketSearchFormular($val)
 			SELECT
 				auction_market_id
 			FROM
-				".$db_table['market_auction']."
+				market_auction
 			WHERE
 				auction_user_id!='".$s['user']['id']."'
         ".$sql_add.";");
@@ -2519,41 +2533,32 @@ function checkMarketSearchFormular($val)
 			{
 				$out_search_check_message = "<div style=\"color:red;font-weight:bold;\">Keine Angebote gefunden</div>";
 				
-	  		$objResponse->addAssign("search_submit","disabled",true);
-	  		$objResponse->addAssign("search_submit","style.color",'#f00'); 			
+	  		$objResponse->assign("search_submit","disabled",true);
+	  		$objResponse->assign("search_submit","style.color",'#f00'); 			
 			}  	
 	  	// Angebot ist OK
 	  	else
 	  	{		
 	  		$out_search_check_message = "<div style=\"color:#0f0;font-weight:bold;\">OK!<br>".$cnt."".$out_add_alliance." Angebot(e)".$out_add_nick." gefunden!</div>";
 	  		
-	  		$objResponse->addAssign("search_submit","disabled",false);
-	  		$objResponse->addAssign("search_submit","style.color",'#0f0');			
+	  		$objResponse->assign("search_submit","disabled",false);
+	  		$objResponse->assign("search_submit","style.color",'#0f0');			
 			}
 	
 			// XAJAX ändert Daten
-			$objResponse->addAssign("search_check_message","innerHTML", $out_search_check_message);
-			$objResponse->addAssign("auction_sql_add","value", $sql_add);      
+			$objResponse->assign("search_check_message","innerHTML", $out_search_check_message);
+			$objResponse->assign("auction_sql_add","value", $sql_add);      
       
 		}
 
 
 
-  	$objResponse->addAssign("marketinfo","innerHTML",ob_get_contents());
+  	$objResponse->assign("marketinfo","innerHTML",ob_get_contents());
 		ob_end_clean();
   	
-  	return $objResponse->getXML();
+  	return $objResponse;
 }
 
 
 
-$objAjax->registerFunction('calcMarketRessPrice');
-$objAjax->registerFunction('calcMarketRessBuy');
-$objAjax->registerFunction('calcMarketShipPrice');
-$objAjax->registerFunction('calcMarketShipBuy');
-$objAjax->registerFunction('checkMarketAuctionFormular');
-$objAjax->registerFunction('calcMarketAuctionTime');
-$objAjax->registerFunction('calcMarketAuctionPrice');
-$objAjax->registerFunction('MarketSearchFormularShow');
-$objAjax->registerFunction('checkMarketSearchFormular');
 ?>

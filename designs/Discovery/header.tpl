@@ -33,7 +33,7 @@
 	<div class="Menueleiste-12_">
 		<img src="{$templateDir}/images/Menueleiste_12.gif" /></div>
 	<div class="pb-info_">
-		<img name="pb_info" src="{$templateDir}/images/pb_info.gif" width="56" height="60" alt="Info" border="0" usemap="#pb_info_Map"></div>
+		<img name="pb_info" src="{$templateDir}/images/pb_info.gif" width="56px" height="60px" alt="Info" border="0" usemap="#pb_info_Map"></div>
 	<div class="Menueleiste-15_">
 		<img src="{$templateDir}/images/Menueleiste_15.gif" /></div>
 	<div class="Menueleiste-16_">
@@ -215,31 +215,31 @@
 
 <div class="Toppanel">
 	<div class="EtoA-Logo_">
-		<img name="EtoA_Logo" id="EtoA_Logo" src="{$templateDir}/images/EtoA_Logo.gif" width="289" height="62" alt="" />
+		<img name="EtoA_Logo" id="EtoA_Logo" src="{$templateDir}/images/EtoA_Logo.gif" width="289px" height="62px" alt="" />
 	</div>
 	<div class="TopPanel-02_">
-		<img name="TopPanel_02" id="TopPanel_02" src="{$templateDir}/images/TopPanel_02.gif" width="156" height="42" border="0" alt="" usemap="#TopPanel_02_Map" />
+		<img name="TopPanel_02" id="TopPanel_02" src="{$templateDir}/images/TopPanel_02.gif" width="156px" height="42px" border="0" alt="" usemap="#TopPanel_02_Map" />
 	</div>
 	<div class="TopPanel-03_">
-		<img name="TopPanel_03" id="TopPanel_03" src="{$templateDir}/images/TopPanel_03.gif" width="178" height="42" border="0" alt="" usemap="#TopPanel_03_Map" />
+		<img name="TopPanel_03" id="TopPanel_03" src="{$templateDir}/images/TopPanel_03.gif" width="178px" height="42px" border="0" alt="" usemap="#TopPanel_03_Map" />
 	</div>
 	<div class="TopPanel-04_">
-		<img name="TopPanel_04" id="TopPanel_04" src="{$templateDir}/images/TopPanel_04.gif" width="179" height="42" border="0" alt="" usemap="#TopPanel_04_Map" />
+		<img name="TopPanel_04" id="TopPanel_04" src="{$templateDir}/images/TopPanel_04.gif" width="179px" height="42px" border="0" alt="" usemap="#TopPanel_04_Map" />
 	</div>
 	<div class="TopPanel-05_">
-		<img name="TopPanel_05" id="TopPanel_05" src="{$templateDir}/images/TopPanel_05.gif" width="182" height="42" border="0" alt="" usemap="#TopPanel_05_Map" />
+		<img name="TopPanel_05" id="TopPanel_05" src="{$templateDir}/images/TopPanel_05.gif" width="182px" height="42px" border="0" alt="" usemap="#TopPanel_05_Map" />
 	</div>
 	<div class="TopPanel-06_">
-		<img name="TopPanel_06" id="TopPanel_06" src="{$templateDir}/images/TopPanel_06.gif" width="156" height="22" border="0" alt="" usemap="#TopPanel_06_Map" />
+		<img name="TopPanel_06" id="TopPanel_06" src="{$templateDir}/images/TopPanel_06.gif" width="156px" height="22px" border="0" alt="" usemap="#TopPanel_06_Map" />
 	</div>
 	<div class="TopPanel-07_">
-		<img name="TopPanel_07" id="TopPanel_07" src="{$templateDir}/images/TopPanel_07.gif" width="178" height="22" border="0" alt="" usemap="#TopPanel_07_Map" />
+		<img name="TopPanel_07" id="TopPanel_07" src="{$templateDir}/images/TopPanel_07.gif" width="178px" height="22px" border="0" alt="" usemap="#TopPanel_07_Map" />
 	</div>
 	<div class="TopPanel-08_">
-		<img name="TopPanel_08" id="TopPanel_08" src="{$templateDir}/images/TopPanel_08.gif" width="179" height="22" border="0" alt="" usemap="#TopPanel_08_Map" />
+		<img name="TopPanel_08" id="TopPanel_08" src="{$templateDir}/images/TopPanel_08.gif" width="179px" height="22px" border="0" alt="" usemap="#TopPanel_08_Map" />
 	</div>
 	<div class="TopPanel-09_">
-		<img name="TopPanel_09" id="TopPanel_09" src="{$templateDir}/images/TopPanel_09.gif" width="182" height="22" border="0" alt="" usemap="#TopPanel_09_Map" />
+		<img name="TopPanel_09" id="TopPanel_09" src="{$templateDir}/images/TopPanel_09.gif" width="182px" height="22px" border="0" alt="" usemap="#TopPanel_09_Map" />
 	</div>
 </div>
 
