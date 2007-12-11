@@ -1,4 +1,8 @@
 <?PHP
+
+if (Alliance::checkActionRights('applicationtemplate'))
+{
+
 	echo "<h2>Bewerbungsvorlage bearbeiten</h2>";
 	echo "<form action=\"?page=$page\" method=\"post\">";
 	checker_init();
@@ -17,4 +21,5 @@ Der Grund deiner Bewerbung:');
 	echo "</td></tr>";
 	infobox_end(1);
 	echo "<input type=\"submit\" name=\"applicationtemplatesubmit\" value=\"Speichern\" /> &nbsp; <input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"Zur&uuml;ck\" /></form>";
+}
 ?>

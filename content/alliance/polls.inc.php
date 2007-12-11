@@ -1,4 +1,8 @@
 <?PHP
+if (Alliance::checkActionRights('polls'))
+{
+
+
 		echo "<h2>Umfragen verwalten</h2>";
 		if ($_GET['pollaction']=="create")
 		{
@@ -216,4 +220,6 @@
 			echo "<input type=\"button\" onclick=\"document.location='?page=$page&action=".$_GET['action']."&pollaction=create'\" value=\"Neue Umfrage erstellen\" /> &nbsp;
 			<input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"Zur&uuml;ck\" />";
 						}
+						
+}						
 ?>

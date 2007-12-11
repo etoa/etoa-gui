@@ -1,4 +1,9 @@
 <?PHP
+
+if (Alliance::checkActionRights('viewmembers'))
+{
+
+
 						echo "<h2>Allianzmitglieder</h2>";
 						$rres = dbquery("
 						SELECT
@@ -58,4 +63,6 @@
 						}
 						echo "</table><br>";
 						echo "<input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"Zur&uuml;ck\" />";
+						
+	}
 ?>

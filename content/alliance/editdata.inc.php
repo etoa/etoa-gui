@@ -1,4 +1,8 @@
 <?PHP
+if (Alliance::checkActionRights('editdata'))
+{
+
+
 	echo "<h2>Allianzdaten &auml;ndern</h2>";
 	
 	echo "<form action=\"?page=$page\" method=\"post\" enctype=\"multipart/form-data\">";
@@ -77,4 +81,6 @@
 	infobox_end(1);
 	
 	echo "<input type=\"submit\" name=\"editsubmit\" value=\"Speichern\" /> &nbsp; <input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"Zur&uuml;ck\" /></form>";
+	
+}
 ?>

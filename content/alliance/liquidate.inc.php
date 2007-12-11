@@ -1,4 +1,6 @@
 <?PHP
+if (Alliance::checkActionRights('liquidate'))
+{
 		echo "<h2>Allianz aufl&ouml;sen</h2>";
 		
 		// Prüft, ob noch Mitglieder vorhanden sind (keine Bewerbungen!)
@@ -24,4 +26,5 @@
 			echo "Willst du die Allianz wirklich aufl&ouml;sen?<br/><br/><input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"Nein\" />&nbsp;&nbsp;&nbsp;<input type=\"submit\" name=\"liquidatesubmit\" value=\"Ja\" />";
 			echo "</form>";
 		}
+}
 ?>

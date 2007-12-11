@@ -1,4 +1,8 @@
 <?PHP
+if (Alliance::checkActionRights('editmembers'))
+{
+
+
 		echo "<h2>Allianzmitglieder</h2>";
 		// Ränge laden
 		$rres = dbquery("
@@ -133,4 +137,6 @@
 		echo "<br/><br/><input type=\"submit\" name=\"editmemberssubmit\" value=\"&Uuml;bernehmen\" />&nbsp;&nbsp;&nbsp;
 		<input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"Zur&uuml;ck\" /></form>";
 
+
+}
 ?>

@@ -1,4 +1,5 @@
 <?PHP
+
 		if (intval($_GET['id'])>0)
 			$id = intval($_GET['id']);
 		else

@@ -1,4 +1,8 @@
 <?PHP
+
+if (Alliance::checkActionRights('alliancenews'))
+{
+
 	echo "<h2>Allianznews</h2>";
 	if (($_POST['newssubmit']!="" || $_POST['newssubmitsend']!="") && checker_verify())
 	{
@@ -92,4 +96,6 @@
 	echo "<input type=\"submit\" name=\"newssubmit\" value=\"Vorschau\">";
 	echo " &nbsp; <input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"Zur&uuml;ck\" />";
 	echo "</form>";
+	
+}
 ?>

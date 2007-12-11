@@ -1,4 +1,6 @@
 <?PHP
+
+
 	echo "<h2>Umfragen</h2>";
 
 	if ($_POST['vote_submit']!="" && checker_verify() && $_GET['vote']>0 && $_POST['poll_answer']>0)
@@ -90,4 +92,6 @@
 	else
 		echo "<i>Keine Umfragen vorhanden</i><br/><br/>";
 	echo "<input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"Zur&uuml;ck\" />";
+	
+
 ?>

@@ -1,4 +1,8 @@
 <?PHP
+if (Alliance::checkActionRights('history'))
+{
+
+
 						echo "<h2>Allianzgeschichte</h2>";
 						infobox_start("Geschichtsdaten",1);
 						echo "<tr><th class=\"tbltitle\" style=\"width:120px;\">Datum / Zeit</th><th class=\"tbltitle\">Ereignis</th></tr>";
@@ -9,4 +13,5 @@
 						}
 						infobox_end(1);
 						echo "<input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=$page'\" />";
+}
 ?>

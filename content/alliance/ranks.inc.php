@@ -1,4 +1,8 @@
 <?PHP
+if (Alliance::checkActionRights('ranks'))
+{
+
+
 						echo "<h2>R&auml;nge</h2>";
 	
 						// Ränge speichern
@@ -70,4 +74,6 @@
 						}
 						echo "<input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"Zur&uuml;ck\" />&nbsp;&nbsp;&nbsp;
 						<input type=\"submit\" name=\"ranknew\" value=\"Neuer Rang\" /></form>";
+						
+	}
 ?>

@@ -1,8 +1,62 @@
+
+<script type="text/javascript">
+	function checkWarDeclaration()
+	{
+		f = document.forms['wardeclaration'];
+		if (f.alliance_bnd_text.value=="")
+		{
+			alert("Du musst eine Nachricht schreiben!");
+			f.alliance_bnd_text.focus();
+			return false;
+		}
+		if (f.alliance_bnd_text_pub.value=="")
+		{
+			alert("Du musst eine öffentliche Kriegserklärung hinzufügen!");
+			f.alliance_bnd_text_pub.focus();
+			return false;
+		}		
+		return true;
+	}
+	
+	function checkPactOffer()
+	{
+		f = document.forms['pactoffer'];
+		if (f.alliance_bnd_name.value=="")
+		{
+			alert("Du musst dem Bündnis einen Namen geben!");
+			f.alliance_bnd_name.focus();
+			return false;
+		}
+		if (f.alliance_bnd_text.value=="")
+		{
+			alert("Du musst eine Nachricht schreiben!");
+			f.alliance_bnd_text.focus();
+			return false;
+		}
+		
+		return true;		
+	}	
+	
+	function checkEndPact()
+	{
+		f = document.forms['endpact'];
+		if (f.pact_end_text.value=="")
+		{
+			alert("Du musst eine Nachricht schreiben!");
+			f.pact_end_text.focus();
+			return false;
+		}
+		return true;		
+	}
+</script>
+
 <?PHP
 
-	if (check_alliance_action_rights('relations'))
+	if (Alliance::checkActionRights('relations'))
 	{
 		echo "<h2>Diplomatie</h2>";
+
+		
 
 			$alliances = get_alliance_names();
 
@@ -15,15 +69,17 @@
 				if (mysql_num_rows($ares)>0 && $_GET['begin_bnd']!=$s['user']['alliance_id'])
 				{
 					$aarr=mysql_fetch_array($ares);
-					echo "<form action=\"?page=$page&amp;action=relations\" method=\"post\">";
+					echo "<form action=\"?page=$page&amp;action=relations\" method=\"post\" name=\"wardeclaration\">";
 					checker_init();
 					
-					infobox_start("Kriegserkl&auml;rung an die Allianz [".$aarr['alliance_tag']."] ".$aarr['alliance_name']);
-					echo "<textarea rows=\"10\" cols=\"50\" name=\"alliance_bnd_text\"></textarea>";
-					infobox_end();
+					infobox_start("Kriegserkl&auml;rung an die Allianz [".$aarr['alliance_tag']."] ".$aarr['alliance_name'],1);
+					echo "<tr><th class=\"tbltitle\">Nachricht:</th><td class=\"tbldata\"><textarea rows=\"10\" cols=\"50\" name=\"alliance_bnd_text\"></textarea></td></tr>";
+					echo "<tr><th class=\"tbltitle\">Öffentlicher Text:</th><td class=\"tbldata\"><textarea rows=\"10\" cols=\"50\" name=\"alliance_bnd_text_pub\"></textarea></td></tr>";
+					infobox_end(1);
 					
 					echo "<input type=\"hidden\" name=\"alliance_bnd_alliance_id\" value=\"".$aarr['alliance_id']."\" />";
-					echo "<input type=\"submit\" name=\"sbmit_new_war\" value=\"Senden\" />&nbsp;<input type=\"button\" onclick=\"document.location='?page=alliance&action=relations'\" value=\"Zur&uuml;ck\" />";
+					echo "<input type=\"submit\" name=\"sbmit_new_war\" value=\"Senden\" onclick=\"return checkWarDeclaration()\" onsubmit=\"return checkWarDeclaration()\" />&nbsp;
+					<input type=\"button\" onclick=\"document.location='?page=alliance&action=relations'\" value=\"Zur&uuml;ck\" />";
 					echo "</form>";
 				}
 				else
@@ -53,7 +109,7 @@
 					
 					if($aarr['alliance_accept_bnd']==1)
 					{
-						echo "<form action=\"?page=$page&amp;action=relations\" method=\"post\">";
+						echo "<form action=\"?page=$page&amp;action=relations\" method=\"post\" name=\"pactoffer\">";
 						checker_init();
 						
 						infobox_start("B&uuml;ndnisanfrage an die Allianz [".$aarr['alliance_tag']."] ".$aarr['alliance_name'],1);
@@ -72,7 +128,8 @@
 						infobox_end(1);
 						
 						echo "<input type=\"hidden\" name=\"alliance_bnd_alliance_id\" value=\"".$aarr['alliance_id']."\" />";
-						echo "<input type=\"submit\" name=\"sbmit_new_bnd\" value=\"Senden\" />&nbsp;<input type=\"button\" onclick=\"document.location='?page=alliance&action=relations'\" value=\"Zur&uuml;ck\" />";
+						echo "<input type=\"submit\" name=\"sbmit_new_bnd\" value=\"Senden\" onclick=\"return checkPactOffer()\" onsubmit=\"return checkPactOffer()\" />&nbsp;
+						<input type=\"button\" onclick=\"document.location='?page=alliance&action=relations'\" value=\"Zur&uuml;ck\" />";
 						echo "</form>";
 					}
 					else
@@ -278,7 +335,7 @@
 						$opName = $arr['a1name'];
 					}
 					
-					echo "<form action=\"?page=$page&amp;action=relations\" method=\"post\">";
+					echo "<form action=\"?page=$page&amp;action=relations\" method=\"post\" name=\"endpact\">";
 
 					infobox_start("Bündnis \"".stripslashes($arr['alliance_bnd_name'])."\" beenden",1);
 					echo "<tr>
@@ -291,7 +348,7 @@
 					</tr>";
 					infobox_end(1);				
 					echo "<input type=\"hidden\" name=\"id\" value=\"".$id."\" />";					
-					echo "<input type=\"submit\" name=\"submit_pact_end\" value=\"Auflösen\" /> &nbsp; ";
+					echo "<input type=\"submit\" name=\"submit_pact_end\" value=\"Auflösen\"  onclick=\"return checkEndPact()\" onsubmit=\"return checkEndPact()\" /> &nbsp; ";
 					echo "<input type=\"button\" onclick=\"document.location='?page=alliance&amp;action=relations';\" value=\"Zur&uuml;ck\" />";
 					echo "</form>";
 				}
@@ -393,6 +450,7 @@
 							alliance_bnd_alliance_id2,
 							alliance_bnd_level,
 							alliance_bnd_text,
+							alliance_bnd_text_pub,
 							alliance_bnd_date
 						) 
 						VALUES 
@@ -400,11 +458,12 @@
 							'".$s['user']['alliance_id']."',
 							'".$_POST['alliance_bnd_alliance_id']."',
 							'3',
-							'".$_POST['alliance_bnd_text']."',
+							'".addslashes($_POST['alliance_bnd_text'])."',
+							'".addslashes($_POST['alliance_bnd_text_pub'])."',
 							'".time()."'
 						)");
 						
-						echo "Du hast einer Allianz den Krieg erkl&auml;rt! Bitte denke daran, einen öffentlichen Text zur Kriegserklärung hinzuzufügen!<br/><br/>";
+						echo "Du hast einer Allianz den Krieg erkl&auml;rt!<br/><br/>";
 						
 						add_alliance_history($s['user']['alliance_id'],"Der Allianz [b][".$alliances[$_POST['alliance_bnd_alliance_id']]['tag']."] ".$alliances[$_POST['alliance_bnd_alliance_id']]['name']."[/b] wird der Krieg erkl&auml;rt!");
 						add_alliance_history($_POST['alliance_bnd_alliance_id'],"Die Allianz [b][".$alliances[$s['user']['alliance_id']]['tag']."] ".$alliances[$s['user']['alliance_id']]['name']."[/b] erkl&auml;rt den Krieg!");

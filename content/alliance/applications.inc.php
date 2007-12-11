@@ -1,4 +1,8 @@
 <?PHP
+
+if (Alliance::checkActionRights('application'))
+{
+
 						echo "<h2>Bewerbungen</h2><br>";
 						if($_POST['applicationsubmit']!="" && checker_verify())
 						{
@@ -131,5 +135,8 @@
 							echo "<i>Keine Bewerbungen vorhanden!</i><br/><br/>";
 						}
 						echo "<input type=\"button\" onclick=\"document.location='?page=alliance';\" value=\"Zur&uuml;ck\" /></form>";
+
+
+}
 
 ?>

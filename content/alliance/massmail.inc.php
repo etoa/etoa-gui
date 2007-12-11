@@ -1,4 +1,6 @@
 <?PHP
+if (Alliance::checkActionRights('massmail'))
+{
 	echo "<h2>Rundmail</h2>";
 	// Nachricht senden
 	if ($_POST['submit']!="" && checker_verify())
@@ -48,4 +50,5 @@
 		echo "<input type=\"submit\" name=\"submit\" value=\"Senden\" /> &nbsp;<input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=$page'\" />";
 		echo "</form>";
 	}
+}
 ?>
