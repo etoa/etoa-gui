@@ -26,7 +26,6 @@
 	//
 
 
-
 	if ($_SESSION['haven']['wormhole']>0 && count($_SESSION['haven']['target'])>0)
 		$wormhole=true;
 	else
@@ -355,7 +354,7 @@
 			{
 
 				echo "<form action=\"?page=$page\" method=\"post\">\n";
-/*
+
 				//
 				// Bookmarks laden
 				//
@@ -397,7 +396,94 @@
 						);
 					}
 				}
-*/
+				// Gespeicherte Bookmarks
+				$pres = dbquery("
+				SELECT
+                    space_cells.cell_sx,
+                    space_cells.cell_sy,
+                    space_cells.cell_cx,
+                    space_cells.cell_cy,
+                    planets.planet_solsys_pos,
+                    planets.planet_name,
+                    target_bookmarks.bookmark_comment
+				FROM
+                    ".$db_table['space_cells'].",
+                    ".$db_table['planets'].",
+                    ".$db_table['target_bookmarks']."
+				WHERE
+                    target_bookmarks.bookmark_user_id=".$s['user']['id']."
+                    AND target_bookmarks.bookmark_planet_id=planets.planet_id
+                    AND target_bookmarks.bookmark_cell_id=space_cells.cell_id
+                    AND planets.planet_solsys_id=space_cells.cell_id
+				GROUP BY
+                    target_bookmarks.bookmark_id
+				ORDER BY
+                    target_bookmarks.bookmark_comment,
+                    target_bookmarks.bookmark_cell_id,
+                    target_bookmarks.bookmark_planet_id;");
+				if (mysql_num_rows($pres)>0)
+				{
+					while($parr=mysql_fetch_array($pres))
+					{
+						array_push(
+						$bookmarks,
+						array(
+						"cell_sx"=> $parr['cell_sx'],
+						"cell_sy"=> $parr['cell_sy'],
+						"cell_cx"=> $parr['cell_cx'],
+						"cell_cy"=> $parr['cell_cy'],
+						"planet_solsys_pos"=> $parr['planet_solsys_pos'],
+						"planet_name"=> $parr['planet_name'],
+						"automatic"=>0,
+						"bookmark_comment"=> $parr['bookmark_comment'])
+						);
+					}
+				}
+
+				$pres = dbquery("
+                SELECT
+                	space_cells.cell_sx,
+                    space_cells.cell_sy,
+                    space_cells.cell_cx,
+                    space_cells.cell_cy,
+                    space_cells.cell_nebula,
+                    space_cells.cell_asteroid,
+                    space_cells.cell_wormhole_id,
+                    target_bookmarks.bookmark_comment
+				FROM
+                    ".$db_table['space_cells'].",
+                    ".$db_table['target_bookmarks']."
+				WHERE
+                    target_bookmarks.bookmark_user_id=".$s['user']['id']."
+                    AND target_bookmarks.bookmark_planet_id=0
+                    AND target_bookmarks.bookmark_cell_id=space_cells.cell_id
+				GROUP BY
+					target_bookmarks.bookmark_id
+				ORDER BY
+					target_bookmarks.bookmark_comment ASC;");
+				if (mysql_num_rows($pres)>0)
+				{
+					while($parr=mysql_fetch_array($pres))
+					{
+						if (!$wormhole || ($wormhole && $parr['cell_wormhole_id']==0))
+						{
+							array_push(
+							$bookmarks,
+							array(
+							"cell_sx"=> $parr['cell_sx'],
+							"cell_sy"=> $parr['cell_sy'],
+							"cell_cx"=> $parr['cell_cx'],
+							"cell_cy"=> $parr['cell_cy'],
+							"planet_solsys_pos"=> 0,
+							"automatic"=>0,
+							"bookmark_comment"=> $parr['bookmark_comment'],
+							"nebula"=> $parr['cell_nebula'],
+							"asteroid"=> $parr['cell_asteroid'],
+							"wormhole"=> $parr['cell_wormhole_id'])
+							);
+						}
+					}
+				}
 
 
 				if ($wormhole)
@@ -427,7 +513,6 @@
         	$p1=$c->solsys_pos;
         }
 
-/*
 				// Entfernung berechnen (JavaScript)
 				echo "<script type=\"text/javascript\">
 				function upd_values()
@@ -551,7 +636,7 @@
 						f.fleet_cx.style.color='';
 						f.fleet_cy.style.color='';
 						f.fleet_p.style.color='';
-				}    /
+				}    */
 				}
 
 				function applyBookmark()
@@ -581,7 +666,7 @@
 					}
 					upd_values();
 				}
-				</script>"; */
+				</script>";
 
 				if (intval($_POST['planet_to'])>0 || intval($_GET['planet_to'])>0)
 				{

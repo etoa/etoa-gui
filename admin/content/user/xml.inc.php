@@ -2,7 +2,7 @@
 	echo "<h1>XML-Import/Export</h1>";
 	
 	cache::checkPerm("user_xml","../");
-	$path = "../".CACHE_ROOT."/user_xml";
+	$path = CACHE_ROOT."/user_xml";
 	
 	//
 	// Import

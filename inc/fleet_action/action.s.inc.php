@@ -290,7 +290,7 @@
 			send_msg($arr['fleet_user_id'],SHIP_SPY_MSG_CAT_ID,"Spionage fehlgeschlagen auf ".$coords_blank,$text);
 		
 			// Ausgespionierten Spieler informieren
-			$text2="Auf deinem Planeten ".$coords_target." wurde eine Spionageversuch vom Planeten ".$coords_from." erfolgreich verhindert!\n\n[b]Spionageabwehr:[/b] ".round($spy_defense)."%";
+			$text2="Auf deinem Planeten ".$coords_target." wurde ein Spionageversuch vom Planeten ".$coords_from." erfolgreich verhindert!\n\n[b]Spionageabwehr:[/b] ".round($spy_defense)."%";
 			send_msg($user_to_id,SHIP_MONITOR_MSG_CAT_ID,"Raumüberwachung",$text2);
 		}
 	}
