@@ -1,5 +1,11 @@
 <?PHP
 
+$xajax->register(XAJAX_FUNCTION,"logSelectorCat");
+$xajax->register(XAJAX_FUNCTION,"checkLogFormular");
+$xajax->register(XAJAX_FUNCTION,"logChangeButton");
+$xajax->register(XAJAX_FUNCTION,"showBattle");
+$xajax->register(XAJAX_FUNCTION,"showGameLogs");
+
 
 function logSelectorCat($cat)
 {
@@ -573,10 +579,10 @@ function logSelectorCat($cat)
 	{
 		$out .= "Kat w&auml;hlen...";
 	}
-  $objResponse->addAssign("catSelector","innerHTML", $out);	
+  $objResponse->assign("catSelector","innerHTML", $out);	
 	
 
-	$objResponse->addAssign("logsinfo","innerHTML",ob_get_contents());
+	$objResponse->assign("logsinfo","innerHTML",ob_get_contents());
 	ob_end_clean();
 	
 	return $objResponse;	
@@ -837,27 +843,27 @@ function checkLogFormular($val)
 	{
 		$out_check_message = "<div style=\"color:red;font-weight:bold;\">Keine Einträge gefunden</div>";
 		
-		$objResponse->addAssign("logs_submit","disabled",true);
-		$objResponse->addAssign("logs_submit","style.color",'#f00'); 			
+		$objResponse->assign("logs_submit","disabled",true);
+		$objResponse->assign("logs_submit","style.color",'#f00'); 			
 	}  	
 	// Angebot ist OK
 	else
 	{		
 		$out_check_message = "<div style=\"color:#0f0;font-weight:bold;\">OK!<br>".$cnt." Einträge gefunden!</div>";
 		
-		$objResponse->addAssign("logs_submit","disabled",false);
-		$objResponse->addAssign("logs_submit","style.color",'#0f0');			
+		$objResponse->assign("logs_submit","disabled",false);
+		$objResponse->assign("logs_submit","style.color",'#0f0');			
 	}
 	
 	
 	// XAJAX ändert Daten
-	$objResponse->addAssign("check_message","innerHTML", $out_check_message);
-	$objResponse->addAssign("sql_query","value", $sql_query); 	
+	$objResponse->assign("check_message","innerHTML", $out_check_message);
+	$objResponse->assign("sql_query","value", $sql_query); 	
 
 	
 	
 	
-	$objResponse->addAssign("logsinfo","innerHTML",ob_get_contents());
+	$objResponse->assign("logsinfo","innerHTML",ob_get_contents());
 	ob_end_clean();
 	
 	return $objResponse;	
@@ -877,12 +883,12 @@ function logChangeButton()
 	$out_check_message = "<div style=\"color:red;font-weight:bold;\">Neue Eingaben zuerst Prüfen lassen!</div>";
 		
 	// XAJAX ändert Daten
-	$objResponse->addAssign("logs_submit","disabled",true);
-	$objResponse->addAssign("logs_submit","style.color",'#f00'); 
-	$objResponse->addAssign("check_message","innerHTML", $out_check_message);
+	$objResponse->assign("logs_submit","disabled",true);
+	$objResponse->assign("logs_submit","style.color",'#f00'); 
+	$objResponse->assign("check_message","innerHTML", $out_check_message);
 
 
-	$objResponse->addAssign("logsinfo","innerHTML",ob_get_contents());
+	$objResponse->assign("logsinfo","innerHTML",ob_get_contents());
 	ob_end_clean();
 	
 	return $objResponse;	
@@ -898,14 +904,14 @@ function showBattle($battle,$id)
 		
 	if($battle!="")
 	{
-		$objResponse->addAssign("show_battle_".$id."","innerHTML", $battle);
+		$objResponse->assign("show_battle_".$id."","innerHTML", $battle);
 	}	
 	else
 	{
-		$objResponse->addAssign("show_battle_".$id."","innerHTML", "");
+		$objResponse->assign("show_battle_".$id."","innerHTML", "");
 	}
 
-	$objResponse->addAssign("logsinfo","innerHTML",ob_get_contents());
+	$objResponse->assign("logsinfo","innerHTML",ob_get_contents());
 	ob_end_clean();
 	
 	return $objResponse;	
@@ -922,15 +928,15 @@ function showGameLogs($log_text,$id)
 		
 	if($log_text!="")
 	{
-		$objResponse->addAssign("show_game_logs_".$id."","innerHTML", $log_text);	
+		$objResponse->assign("show_game_logs_".$id."","innerHTML", $log_text);	
 	}	
 	else
 	{
-		$objResponse->addAssign("show_game_logs_".$id."","innerHTML", "");
+		$objResponse->assign("show_game_logs_".$id."","innerHTML", "");
 	}
 
 
-	$objResponse->addAssign("logsinfo","innerHTML",ob_get_contents());
+	$objResponse->assign("logsinfo","innerHTML",ob_get_contents());
 	ob_end_clean();
 	
 	return $objResponse;	
@@ -938,11 +944,6 @@ function showGameLogs($log_text,$id)
 }
 
 
-$xajax->registerFunction("logSelectorCat");
-$xajax->registerFunction("checkLogFormular");
-$xajax->registerFunction("logChangeButton");
-$xajax->registerFunction("showBattle");
-$xajax->registerFunction("showGameLogs");
 
 
 ?>

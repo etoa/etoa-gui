@@ -1,5 +1,14 @@
 <?PHP
 
+$xajax->register(XAJAX_FUNCTION,"showTimeBox");
+$xajax->register(XAJAX_FUNCTION,"allianceRankSelector");
+$xajax->register(XAJAX_FUNCTION,"userPointsTable");
+$xajax->register(XAJAX_FUNCTION,"addUserComment");
+$xajax->register(XAJAX_FUNCTION,"userTickets");
+$xajax->register(XAJAX_FUNCTION,"userComments");
+$xajax->register(XAJAX_FUNCTION,"sendUrgendMsg");
+$xajax->register(XAJAX_FUNCTION,"showLast5Messages");
+
 function showTimeBox($parent,$name,$value,$show=1)
 {
 	$or = new xajaxResponse();
@@ -14,7 +23,7 @@ function showTimeBox($parent,$name,$value,$show=1)
 	}
 	$out = ob_get_contents();
 	ob_end_clean();	
-	$or->addAssign($parent,"innerHTML",$out);
+	$or->assign($parent,"innerHTML",$out);
 	return $or;	
 }
 
@@ -57,7 +66,7 @@ function allianceRankSelector($parent,$name,$value=0,$aid=0)
 	}	
 	$out = ob_get_contents();
 	ob_end_clean();	
-	$or->addAssign($parent,"innerHTML",$out);
+	$or->assign($parent,"innerHTML",$out);
 	return $or;							
 }
 
@@ -160,7 +169,7 @@ function userPointsTable($uid,$target,$length=100,$start=-1,$end=-1)
 
 	$out = ob_get_contents();
 	ob_end_clean();	
-	$or->addAssign($target,"innerHTML",$out);
+	$or->assign($target,"innerHTML",$out);
 	return $or;
 }	
 
@@ -218,7 +227,7 @@ function userTickets($uid,$target)
 
 	$out = ob_get_contents();
 	ob_end_clean();	
-	$or->addAssign($target,"innerHTML",$out);
+	$or->assign($target,"innerHTML",$out);
 	return $or;
 }	
 
@@ -230,13 +239,13 @@ function sendUrgendMsg($uid,$subject,$text)
 	{
 		send_msg($uid,USER_MSG_CAT_ID,$subject,$text);
 	
-		$or->addAlert("Nachricht gesendet!");
-		$or->addAssign('urgendmsgsubject',"value","");
-		$or->addAssign('urgentmsg',"value","");
+		$or->alert("Nachricht gesendet!");
+		$or->assign('urgendmsgsubject',"value","");
+		$or->assign('urgentmsg',"value","");
 	}
 	else
 	{
-		$or->addAlert("Titel oder Text fehlt!");
+		$or->alert("Titel oder Text fehlt!");
 	}
 	return $or;
 }	
@@ -295,7 +304,7 @@ function showLast5Messages($uid,$target,$limit=5)
 
 	$out = ob_get_contents();
 	ob_end_clean();	
-	$or->addAssign($target,"innerHTML",$out);
+	$or->assign($target,"innerHTML",$out);
 	return $or;
 }
 
@@ -344,7 +353,7 @@ function userComments($uid,$target)
 
 	$out = ob_get_contents();
 	ob_end_clean();	
-	$or->addAssign($target,"innerHTML",$out);
+	$or->assign($target,"innerHTML",$out);
 	return $or;	
 }
 
@@ -354,25 +363,15 @@ function addUserComment($uid,$target,$text)
 	if ($text!="")
 	{
 		dbquery("INSERT INTO user_comments (comment_timestamp,comment_user_id,comment_admin_id,comment_text) VALUES ('".time()."','$uid','".$_SESSION[SESSION_NAME]['user_id']."','".addslashes($text)."');");
-		$or->addScript("xajax_userComments('$uid','$target')");
+		$or->script("xajax_userComments('$uid','$target')");
 	}
 	else
 	{
-		$or->addAlert("Fehler! Kein Text!");
+		$or->alert("Fehler! Kein Text!");
 		
 	}
 	return $or;	
 }
 
-$xajax->registerFunction("showTimeBox");
-$xajax->registerFunction("allianceRankSelector");
-$xajax->registerFunction("userPointsTable");
-$xajax->registerFunction("addUserComment");
-
-
-$xajax->registerFunction("userTickets");
-$xajax->registerFunction("userComments");
-$xajax->registerFunction("sendUrgendMsg");
-$xajax->registerFunction("showLast5Messages");
 
 ?>

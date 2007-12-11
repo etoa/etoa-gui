@@ -13,6 +13,7 @@
 
 	
 	require_once("inc/xajax/global.xajax.php");
+	//require_once("inc/xajax/misc.xajax.php");
 
 	if (isset($page) && $page=="alliances")
 	{

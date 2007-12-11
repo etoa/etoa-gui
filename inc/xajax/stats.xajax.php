@@ -401,7 +401,7 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0)
 	
 					if ($mode=="user")
 					{
-						$out.=  "<td $addstyle class=\"tbldata\" align=\"right\" ".tm("Punkteverlauf","<img src=\"misc/stats.image.php?user=".$arr['user_id']."\" alt=\"Diagramm\" style=\"width:600px;height:400px;\" />").">";
+						$out.=  "<td $addstyle class=\"tbldata\" align=\"right\" ".tm("Punkteverlauf","<div><img src=\"misc/stats.image.php?user=".$arr['user_id']."\" alt=\"Diagramm\" style=\"width:600px;height:400px;background:#335 url(images/loading335.gif) no-repeat 300px 200px;\" /></div>").">";
 						if ($arr['user_rank_current']==$arr['user_rank_last'])
 							$out.=  "<img src=\"images/stats/stat_same.gif\" alt=\"same\" width=\"21\" height=\"9\" />";
 						elseif ($arr['user_rank_current']<$arr['user_rank_last'])

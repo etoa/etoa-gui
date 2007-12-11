@@ -1,5 +1,13 @@
 <?PHP
 
+$xajax->register(XAJAX_FUNCTION,"allianceNewsSave");
+$xajax->register(XAJAX_FUNCTION,"allianceNewsLoad");
+$xajax->register(XAJAX_FUNCTION,"allianceNewsEdit");
+$xajax->register(XAJAX_FUNCTION,"allianceNewsLoadUserList");
+$xajax->register(XAJAX_FUNCTION,"allianceNewsDel");
+$xajax->register(XAJAX_FUNCTION,"allianceNewsRemoveOld");
+$xajax->register(XAJAX_FUNCTION,"allianceNewsSetBanTime");
+
 function allianceNewsLoad()
 {
 	global $db_table;
@@ -101,7 +109,7 @@ function allianceNewsLoad()
 		}
 	
 	$objResponse = new xajaxResponse();
-  $objResponse->addAssign("newsBox","innerHTML", ob_get_contents());
+  $objResponse->assign("newsBox","innerHTML", ob_get_contents());
 	ob_end_clean();
 	return $objResponse;		
 }
@@ -116,7 +124,7 @@ function allianceNewsDel($id)
 		alliance_news_id='".$id."'
 	;");	
 	$objResponse = new xajaxResponse();
-  $objResponse->addScript("xajax_allianceNewsLoad()");
+  $objResponse->script("xajax_allianceNewsLoad()");
   return $objResponse;		
 }
 
@@ -131,8 +139,8 @@ function allianceNewsRemoveOld($ts)
 		alliance_news_date<'".$t."'
 	;");	
 	$objResponse = new xajaxResponse();
-  $objResponse->addAlert(mysql_affected_rows()." Beiträge wurden gelöscht!");
-  $objResponse->addScript("xajax_allianceNewsLoad()");
+  $objResponse->alert(mysql_affected_rows()." Beiträge wurden gelöscht!");
+  $objResponse->script("xajax_allianceNewsLoad()");
   return $objResponse;			
 }
 
@@ -153,7 +161,7 @@ function allianceNewsEdit($id)
 	{
 		while ($arr=mysql_fetch_array($res))
 		{
-  		$objResponse->addAssign("news_".$arr['alliance_news_id']."_actions","innerHTML",$out);
+  		$objResponse->assign("news_".$arr['alliance_news_id']."_actions","innerHTML",$out);
   	}
 	}
 	mysql_free_result($res);
@@ -201,7 +209,7 @@ function allianceNewsEdit($id)
 			$out.= '>'.$v.'</option>';
 		}
 		$out.= '</select>';
-  	$objResponse->addAssign("news_".$id."_alliance","innerHTML",$out);
+  	$objResponse->assign("news_".$id."_alliance","innerHTML",$out);
 		
 		$out = '<select name="alliance_to_id"><option value="0">(keine)</option>';
 		foreach ($alliances as $k => $v)
@@ -214,7 +222,7 @@ function allianceNewsEdit($id)
 			$out.= '>'.$v.'</option>';
 		}
 		$out.= '</select>';	
-  	$objResponse->addAssign("news_".$id."_alliance_to","innerHTML",$out);
+  	$objResponse->assign("news_".$id."_alliance_to","innerHTML",$out);
 
 		$out = '<input type="radio" name="public" value="1" ';
 		if ($arr['alliance_news_public']==1)
@@ -228,20 +236,20 @@ function allianceNewsEdit($id)
 			$out.= ' checked="checked"';
 		}
 		$out.= '/> Privat';	
-  	$objResponse->addAssign("news_".$id."_public","innerHTML",$out);
+  	$objResponse->assign("news_".$id."_public","innerHTML",$out);
 
-  	$objResponse->addAssign("news_".$id."_user","innerHTML",'Lade Spieler...');
-  	$objResponse->addScript("xajax_allianceNewsLoadUserList(".$id.",".$ca.",".$arr['alliance_news_user_id'].");");
+  	$objResponse->assign("news_".$id."_user","innerHTML",'Lade Spieler...');
+  	$objResponse->script("xajax_allianceNewsLoadUserList(".$id.",".$ca.",".$arr['alliance_news_user_id'].");");
 
 		$out = '<textarea name="text" rows="6" cols="45" >'.stripslashes($arr['alliance_news_text']).'</textarea>';
-  	$objResponse->addAssign("news_".$id."_text","innerHTML",$out);
+  	$objResponse->assign("news_".$id."_text","innerHTML",$out);
 		
 		$out = '<input type="text" name="title" size="45" value="'.stripslashes($arr['alliance_news_title']).'" />';
-  	$objResponse->addAssign("news_".$id."_title","innerHTML",$out);
+  	$objResponse->assign("news_".$id."_title","innerHTML",$out);
 		
 		$out = '<input type="button" onclick="xajax_allianceNewsSave('.$id.',xajax.getFormValues(\'newsForm\'))" value="Speichern" /><br/>
 		<input type="button" onclick="xajax_allianceNewsLoad()" value="Abbrechen" />';
-  	$objResponse->addAssign("news_".$id."_actions","innerHTML",$out);
+  	$objResponse->assign("news_".$id."_actions","innerHTML",$out);
  	}
   return $objResponse;		
 }
@@ -286,7 +294,7 @@ function allianceNewsLoadUserList($nid,$aid,$uid)
   }
 	$out.='</select>';
 
- 	$objResponse->addAssign("news_".$nid."_user","innerHTML",$out);	
+ 	$objResponse->assign("news_".$nid."_user","innerHTML",$out);	
 
   return $objResponse;		
 }
@@ -308,7 +316,7 @@ function allianceNewsSave($id,$form)
 		alliance_news_id='".$id."'
 	");                	
 	$objResponse = new xajaxResponse();
- 	$objResponse->addScript("xajax_allianceNewsLoad()");
+ 	$objResponse->script("xajax_allianceNewsLoad()");
   return $objResponse;		
 }
 
@@ -325,17 +333,11 @@ function allianceNewsSetBanTime($time,$text)
 		config_name='townhall_ban'
 	");                	
 	$objResponse = new xajaxResponse();
- 	$objResponse->addAlert("Einstellungen gespeichert!");
+ 	$objResponse->alert("Einstellungen gespeichert!");
   return $objResponse;		
 }
 
-$xajax->registerFunction("allianceNewsSave");
-$xajax->registerFunction("allianceNewsLoad");
-$xajax->registerFunction("allianceNewsEdit");
-$xajax->registerFunction("allianceNewsLoadUserList");
-$xajax->registerFunction("allianceNewsDel");
-$xajax->registerFunction("allianceNewsRemoveOld");
-$xajax->registerFunction("allianceNewsSetBanTime");
+
 
 
 
