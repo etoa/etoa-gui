@@ -2055,7 +2055,7 @@ function checkMarketSearchFormular($val)
 		
 		ob_start();
   	$objResponse = new xajaxResponse();
-print_r($s);
+
 		//
 		// Rohstoffe
 		//
