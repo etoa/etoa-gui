@@ -30,7 +30,6 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/	
 
-
 	// BEGIN SKRIPT //
 
 	if ($planets->current)
@@ -215,9 +214,6 @@
 			<div id=\"havenContentTarget\" style=\"display:none;\"></div>
 			<div id=\"havenContentAction\" style=\"display:none;\"></div>
 			
-			<div id=\"havenLog\" style=\"border:1px solid #fff;background:#000\">
-			Log
-			</div>
 			
 			</div>";
 			echo "<script type=\"text/javascript\">xajax_havenShowShips();</script>";
