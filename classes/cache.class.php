@@ -15,13 +15,13 @@ class cache
     }
     
   
-    static function checkPerm($type="",$prePath=".")
+    static function checkPerm($type="")
     {
     	if (UNIX)
     	{    	
 	    	if ($type!="")
 	    	{	
-		    	$path = $prePath."/".CACHE_ROOT."/".$type;
+		    	$path = CACHE_ROOT."/".$type;
 		    	if (file_exists($path))
 		    	{
 		    		$userarr = posix_getpwuid(fileowner($path));
@@ -51,7 +51,7 @@ class cache
 	    	}
 	    	else
 	    	{	
-		    	$path = $prePath."/".CACHE_ROOT;
+		    	$path = CACHE_ROOT;
 		    	if (file_exists($path))
 		    	{
 		    		$userarr = posix_getpwuid(fileowner($path));
