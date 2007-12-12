@@ -49,7 +49,6 @@
 
 
 	// Schiff-Infos
-	ob_start();
 
   infobox_start("Schiff-Infos",1);
   $res = dbquery("
@@ -176,12 +175,6 @@
   	echo "<tr><td class=\"tbldata\"><i>Keine Schiffe vorhanden!</i></td></tr>";
   }
   infobox_end(1);
-  echo ob_get_contents();
-  ob_end_clean();
-
-
-
-
 
 
 
