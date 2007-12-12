@@ -89,7 +89,11 @@
   infobox_start("Verteidigungs-Infos",1);
   $res = dbquery("
   SELECT
-  	*
+  	def_structure,
+		def_shield,
+		def_weapon,
+		def_heal,
+		deflist_count  	
   FROM
   	deflist
   INNER JOIN
@@ -105,10 +109,10 @@
   		$struct += $arr['def_structure']*$arr['deflist_count'];
   		$shield += $arr['def_shield']*$arr['deflist_count'];
   		$weapon += $arr['def_weapon']*$arr['deflist_count'];
+  		$heal += $arr['def_heal']*$arr['deflist_count'];
   		$count += $arr['deflist_count'];
   	}
-		$heal = 0;
-
+		
 		// Forschung laden und bonus dazu rechnen 
     // Liest Level der Waffen-,Schild-,Panzerungs-,Regena Tech aus Datenbank (att)
 		$weapon_tech_a=1;

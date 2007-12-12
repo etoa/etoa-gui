@@ -293,6 +293,7 @@
 							if (mysql_num_rows($res)>0)
 							{
 								$arr=mysql_fetch_array($res);
+								$msg_a.= "Das Gebäude ".$arr['building_name']." wurde für ".tf($mo['emp'])." deaktiviert!\n";
 								$msg_d.= "Euer Gebäude ".$arr['building_name']." wurde für ".tf($mo['emp'])." deaktiviert!\n";
 								dbquery("
 								UPDATE
