@@ -1,4 +1,4 @@
-<?P
+<?PHP
 
 	echo "<h2>Sterne</h2>";
 	Help::navi(array("Sterne","stars"));
