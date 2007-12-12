@@ -804,18 +804,24 @@
 					else
 						$endcell=$arr['esx']."/".$arr['esx']." : ".$arr['ecx']."/".$arr['ecy']." (<span style=\"color:red;\">Unbekannt</span>)";
 
+					$stl="";
+					if ($arr['fleet_updating']==1)
+					{
+						$stl="style=\"color:red;\"";
+					}
+
 					echo "<tr>";
-					echo "<td class=\"tbldata\">".$arr['user_nick']."</td>";
-					echo "<td class=\"tbldata\">";
+					echo "<td class=\"tbldata\" $stl>".$arr['user_nick']."</td>";
+					echo "<td class=\"tbldata\" $stl>";
 					if ($fleet_actions[$arr['fleet_action']]!="")
 						echo $fleet_actions[$arr['fleet_action']];
 					else
 						echo "<i>".$arr['fleet_action']."</i>";
 					echo "</td>";
-					echo "<td class=\"tbldata\">".$startcell."</td>";
-					echo "<td class=\"tbldata\">".$endcell."</td>";
-					echo "<td class=\"tbldata\">".date("d.m.y H:i",$arr['fleet_launchtime'])."</td>";
-					echo "<td class=\"tbldata\">".date("d.m.y H:i",$arr['fleet_landtime'])."</td>";
+					echo "<td class=\"tbldata\" $stl>".$startcell."</td>";
+					echo "<td class=\"tbldata\" $stl>".$endcell."</td>";
+					echo "<td class=\"tbldata\" $stl>".date("d.m.y H:i",$arr['fleet_launchtime'])."</td>";
+					echo "<td class=\"tbldata\" $stl>".date("d.m.y H:i",$arr['fleet_landtime'])."</td>";
 					echo "<td class=\"tbldata\"><a href=\"?page=$page&amp;sub=$sub&fleetships=".$arr['fleet_id']."\">Schiffe</a> ";
 					if (!stristr($arr['fleet_action'],"r") && !stristr($arr['fleet_action'],"c"))
 						echo "<a href=\"?page=$page&amp;sub=$sub&fleetreturn=".$arr['fleet_id']."&amp;action=searchresults\" onclick=\"return confirm('Soll diese Flotte wirklich zur&uuml;ckgeschickt werden?');\">Return</a> ";
