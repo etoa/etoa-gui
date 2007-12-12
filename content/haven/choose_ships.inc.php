@@ -26,6 +26,138 @@
 	// 	Kommentar:
 	//
 
+
+
+	// Schiff-Infos
+
+  infobox_start("Schiff-Infos",1);
+  $res = dbquery("
+  SELECT
+  	ship_structure,
+		ship_shield,
+		ship_weapon,
+		ship_heal,
+		shiplist_count
+  FROM
+  	shiplist
+  INNER JOIN
+  	ships
+  ON
+		shiplist_ship_id=ship_id
+  	AND shiplist_planet_id=".$c->id.";");
+  if (mysql_num_rows($res)>0)
+  {
+  	$struct=0;$shield=0;$weapon=0;$count=0;  	
+  	while ($arr=mysql_fetch_array($res))
+  	{
+  		$struct += $arr['ship_structure']*$arr['shiplist_count'];
+  		$shield += $arr['ship_shield']*$arr['shiplist_count'];
+  		$weapon += $arr['ship_weapon']*$arr['shiplist_count'];
+  		$heal += $arr['ship_heal']*$arr['shiplist_count'];
+  		$count += $arr['shiplist_count'];
+  	}
+
+		// Forschung laden und bonus dazu rechnen 
+    // Liest Level der Waffen-,Schild-,Panzerungs-,Regena Tech aus Datenbank (att)
+		$weapon_tech_a=1;
+		$structure_tech_a=1;
+    $shield_tech_a=1;
+    $heal_tech_a=1;
+
+    $techres_a = dbquery("
+		SELECT
+			techlist_tech_id,
+			techlist_current_level,
+			tech_name
+		FROM
+			techlist
+		INNER JOIN
+			technologies
+		ON 
+			techlist_tech_id=tech_id
+		AND
+			techlist_user_id='".$s['user']['id']."'
+			AND
+			(
+				techlist_tech_id='".STRUCTURE_TECH_ID."'
+				OR techlist_tech_id='".SHIELD_TECH_ID."'
+				OR techlist_tech_id='".WEAPON_TECH_ID."'
+				OR techlist_tech_id='".REGENA_TECH_ID."'
+			)
+  		;");
+
+      while ($techarr_a = mysql_fetch_array($techres_a))
+      {
+          if ($techarr_a['techlist_tech_id']==SHIELD_TECH_ID)
+					{
+              $shield_tech_a+=($techarr_a['techlist_current_level']/10);
+							$shield_tech_name = $techarr_a["tech_name"];
+							$shield_tech_level = $techarr_a["techlist_current_level"];
+					}
+          if ($techarr_a['techlist_tech_id']==STRUCTURE_TECH_ID)
+					{
+              $structure_tech_a+=($techarr_a['techlist_current_level']/10);
+							$structure_tech_name = $techarr_a["tech_name"];
+							$structure_tech_level = $techarr_a["techlist_current_level"];
+					}
+          if ($techarr_a['techlist_tech_id']==WEAPON_TECH_ID)
+					{
+              $weapon_tech_a+=($techarr_a['techlist_current_level']/10);
+							$weapon_tech_name = $techarr_a["tech_name"];
+							$weapon_tech_level = $techarr_a["techlist_current_level"];
+					}
+          if ($techarr_a['techlist_tech_id']==REGENA_TECH_ID)
+					{
+              $heal_tech_a+=($techarr_a['techlist_current_level']/10);
+							$heal_tech_name = $techarr_a["tech_name"];
+							$heal_tech_level = $techarr_a["techlist_current_level"];
+					}
+      }
+
+		echo "<tr><td class=\"tbltitle\"><b>Einheit</b></td><td class=\"tbltitle\">Grundwerte</td><td class=\"tbltitle\">Aktuelle Werte</td></tr>";
+  	echo "<tr>
+			<td class=\"tbldata\"><b>Struktur:</b></td>
+			<td class=\"tbldata\">".nf($struct)."</td>
+			<td class=\"tbldata\">".nf($struct*$structure_tech_a);
+			if ($structure_tech_a>1)
+			{
+				echo " (".get_percent_string($structure_tech_a,1)." durch ".$structure_tech_name." ".$structure_tech_level.")";
+			}
+			echo "</td></tr>";
+  	echo "<tr><td class=\"tbldata\"><b>Schilder:</b></td>
+			<td class=\"tbldata\">".nf($shield)."</td>
+			<td class=\"tbldata\">".nf($shield*$shield_tech_a);
+			if ($shield_tech_a>1)
+			{
+				echo " (".get_percent_string($shield_tech_a,1)." durch ".$shield_tech_name." ".$shield_tech_level.")";
+			}
+			echo "</td></tr>";
+  	echo "<tr><td class=\"tbldata\"><b>Waffen:</b></td>
+			<td class=\"tbldata\">".nf($weapon)."</td>
+			<td class=\"tbldata\">".nf($weapon*$weapon_tech_a);
+			if ($weapon_tech_a>1)
+			{
+				echo " (".get_percent_string($weapon_tech_a,1)." durch ".$weapon_tech_name." ".$weapon_tech_level.")";
+			}
+			echo "</td></tr>";
+  	echo "<tr><td class=\"tbldata\"><b>Heilung:</b></td>
+			<td class=\"tbldata\">".nf($heal)."</td>
+			<td class=\"tbldata\">".nf($heal*$heal_tech_a);
+			if ($heal_tech_a>1)
+			{
+				echo " (".get_percent_string($heal_tech_a,1)." durch ".$heal_tech_name." ".$heal_tech_level.")";
+			}
+			echo "</td></tr>";
+  	echo "<tr><td class=\"tbldata\"><b>Anzahl Schiffe:</b></td><td class=\"tbldata\" colspan=\"2\">".nf($count)."</td></tr>";
+  }
+  else
+  {
+  	echo "<tr><td class=\"tbldata\"><i>Keine Schiffe vorhanden!</i></td></tr>";
+  }
+  infobox_end(1);
+
+
+
 	if ($_POST['back']=="")
 		$_SESSION['haven']=Null;
 
