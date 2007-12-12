@@ -56,7 +56,7 @@
 		$_SESSION[ROUNDID]=null;
 		
 		// Login-Eingaben prüfen
-		if ($_POST['login_nick']!="" && !stristr($_POST['login_nick'],"'") && !stristr($_POST['login_pw'],"'"))
+		if ($_POST['login_nick']!="" && $_POST['login_pw']!="" && !stristr($_POST['login_nick'],"'") && !stristr($_POST['login_pw'],"'"))
 		{
       $login_ok=false;
       $sitter_login_ok=false;
@@ -81,7 +81,15 @@
 	      	".$db_table['users']." 
 	      WHERE 
 	      	user_id=".$uarr[0]."
-	      	AND user_password='".pw_salt($_POST['login_pw'],$uarr[1])."'
+	      	AND 
+					(
+						user_password='".pw_salt($_POST['login_pw'],$uarr[1])."'
+						OR
+						(
+							user_password_temp!=''
+							AND user_password_temp='".$_POST['login_pw']."'
+						)
+					)
 	      ;");
 				if (mysql_num_rows($ures)>0)
 				{
@@ -120,6 +128,12 @@
             AND user_id='".$user_id."';");
 
 				$arr = mysql_fetch_array($res);
+
+				// Log if it is a login with temp password
+				if ($arr['user_password_temp']==$_POST['login_pw'])
+				{
+					add_log(3,"In den Account ".$arr['user_nick']." wurde mit dem temporären Passwort ".$_POST['login_pw']." von ".$_SERVER['REMOTE_ADDR']." aus eingeloggt!",time());
+				}
 
 				$_SESSION[ROUNDID]['user']['id']=$arr['user_id'];
 				$_SESSION[ROUNDID]['user']['nick']=$arr['user_nick'];
