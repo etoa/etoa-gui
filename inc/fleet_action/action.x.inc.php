@@ -80,7 +80,7 @@
 			}
 	}
 
-	if ($return_fleet || $binfo[0]==3)
+	if ($return_fleet || $binfo[0]==4)
 	{
 		fleet_return($arr,"xr");
 	}
