@@ -54,14 +54,21 @@
 			}				
 		}		
 		
+		$load_people = min($arr['fleet_res_people'],$arr['fleet_capacity_people'],$parr['planet_people']);
+		
 		$msg = "[B]WAREN ABGEHOLT[/B]\n\nEine Flotte vom Planeten \n[b]".coords_format2($arr['fleet_planet_from'])."[/b]\nhat ihr Ziel erreicht!\n\n[b]Planet:[/b] ".coords_format2($arr['fleet_planet_to'])."\n[b]Zeit:[/b] ".date("d.m.y, H:i:s",$arr['fleet_landtime'])."\n";
-		$msg.= "\n[table]";
+		$msg.= "\nFolgende Waren wurden abgeholt: \n\n[table]";
 		$msg.= "[tr][th]".RES_METAL."[/th][td]".nf($load[0])."[/td][/tr]";
 		$msg.= "[tr][th]".RES_CRYSTAL."[/th][td]".nf($load[1])."[/td][/tr]";
 		$msg.= "[tr][th]".RES_PLASTIC."[/th][td]".nf($load[2])."[/td][/tr]";
 		$msg.= "[tr][th]".RES_FUEL."[/th][td]".nf($load[3])."[/td][/tr]";
 		$msg.= "[tr][th]".RES_FOOD."[/th][td]".nf($load[4])."[/td][/tr]";
+		if ($load_people>0)
+		{
+			$msg.= "[tr][th]Bewohner[/th][td]".nf($load_people)."[/td][/tr]";
+		}
 		$msg.= "[/table]";		
+		
 		
      dbquery("
 			UPDATE
@@ -71,14 +78,15 @@
 				planet_res_crystal=planet_res_crystal-'".$load[1]."',
 				planet_res_plastic=planet_res_plastic-'".$load[2]."',
 				planet_res_fuel=planet_res_fuel-'".$load[3]."',
-				planet_res_food=planet_res_food-'".$load[4]."'
+				planet_res_food=planet_res_food-'".$load[4]."',
+				planet_people=planet_people-'".$load_people."',
 			WHERE
 				planet_id='".$arr['fleet_planet_to']."';
 		");		
 		
 		// Nachrichten senden
 		send_msg($arr['fleet_user_id'],SHIP_MISC_MSG_CAT_ID,"Warenabholung",$msg);
-  	fleet_return($arr,"fr",$load[0],$load[1],$load[2],$load[3],$load[4],"0");
+  	fleet_return($arr,"fr",$load[0],$load[1],$load[2],$load[3],$load[4],$load_people);
 	}
 	else
 	{

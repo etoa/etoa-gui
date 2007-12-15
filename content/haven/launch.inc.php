@@ -174,6 +174,7 @@
 								$res_r[2]=$_POST['fleet_res_plastic'];
 								$res_r[3]=$_POST['fleet_res_fuel'];
 								$res_r[4]=$_POST['fleet_res_food'];
+								$fleet_people = $_POST['fleet_res_people'];
 							}
 							else
 							{
@@ -182,9 +183,10 @@
 								$res_r[2]=min($_POST['fleet_res_plastic'],$c->res->plastic);
 								$res_r[3]=min($_POST['fleet_res_fuel'],$c->res->fuel);
 								$res_r[4]=min($_POST['fleet_res_food'],$c->res->food);
+								$fleet_people = min($_POST['fleet_res_people'],$_SESSION['haven']['fleet']['people_capacity'],$people_free);
 							}
 	
-							$fleet_people=min($_POST['fleet_res_people'],$_SESSION['haven']['fleet']['people_capacity'],$people_free);
+							$fleet_people_capacity = max(0,$_SESSION['haven']['fleet']['people_capacity']);
 	
 							for ($rcnt=0;$rcnt<5;$rcnt++)
 							{
@@ -289,6 +291,7 @@
 	                            fleet_res_fuel,
 	                            fleet_res_food,
 	                            fleet_res_people,
+	                            fleet_capacity_people,
 	                            fleet_fake,
 	                            fleet_capacity,
 	                            fleet_capacity_nebula,
@@ -313,6 +316,7 @@
 	                            '".$r[3]."',
 	                            '".$r[4]."',
 	                            '".$fleet_people."',
+	                            '".$fleet_people_capacity."',
 	                            '".$is_fake."',
 	                            '".$rest_capa."',
 	                            '".$capacity_nebula."',
