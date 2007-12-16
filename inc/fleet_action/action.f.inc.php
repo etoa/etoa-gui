@@ -79,7 +79,7 @@
 				planet_res_plastic=planet_res_plastic-'".$load[2]."',
 				planet_res_fuel=planet_res_fuel-'".$load[3]."',
 				planet_res_food=planet_res_food-'".$load[4]."',
-				planet_people=planet_people-'".$load_people."',
+				planet_people=planet_people-'".$load_people."'
 			WHERE
 				planet_id='".$arr['fleet_planet_to']."';
 		");		
