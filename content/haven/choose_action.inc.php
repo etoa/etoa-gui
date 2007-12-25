@@ -345,10 +345,10 @@
                         {
                             echo "<input type=\"radio\" name=\"fleet_action\" value=\"so\" checked=\"checked\"> Ausspionieren<br/>";
 
-// && $conf['battleban_time']['p1']<time() && $conf['battleban_time']['p2']>time()
+														// && $conf['battleban_time']['p1']<time() && $conf['battleban_time']['p2']>time()
                             if ($conf['battleban']['v']!=0)
                             {
-                            	echo "Angriffssperre aktiv!<br>";
+                            	echo "<div style=\"color:red;\">Angriffssperre aktiv!</div>";
                             }
                             else
                             {

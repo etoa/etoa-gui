@@ -1,6 +1,6 @@
 <?PHP
 
-if (Alliance::checkActionRights('application'))
+if (Alliance::checkActionRights('applications'))
 {
 
 						echo "<h2>Bewerbungen</h2><br>";
