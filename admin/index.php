@@ -232,7 +232,11 @@
 										<input type=\"hidden\" name=\"qmode[user_nick]\" value=\"LIKE '%\" />
 										<input type=\"submit\" name=\"user_search\" value=\"Usersuche\" />
 									</form>";
-								
+								//
+								//Notepad
+								//
+								echo "<br><input type=\"submit\" value=\"NotePad\" name=\"NotePad\" onclick=window.open(\"misc/notepad.php\",\"notepad\")><br>";
+
 								//
 								// Auslastung
 								//
