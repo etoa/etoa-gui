@@ -509,7 +509,7 @@
 				echo "</table><br/>";
 
 				echo "<form action=\"?page=$page&amp;mode=".$mode."\" method=\"post\"><div>";
-				checker_init();
+				$cstr = checker_init();
 				echo "<input type=\"hidden\" name=\"archived_msg_cnt\" value=\"".$archived_msg_cnt."\" />";
 				
 				// Nachrichten
@@ -616,11 +616,12 @@
 							{
 								$im_path = "images/pm_new.gif";
 								$subj = '<strong>'.$subj.'</strong>';
-								$sender = '<strong>'.$sender.'</strong>';
+								$sender_f = '<strong>'.$sender.'</strong>';
 							}
 							else
 							{
 								$im_path = "images/pm_normal.gif";
+								$sender_f = $sender;
 							}
 
 							if ($marr['message_read']==1)
@@ -633,7 +634,7 @@
 	            
 	            
 	            echo "				<td class=\"tbldata\" style=\"width:16px;\">
-	            					<img src=\"".$im_path."\" alt=\"Mail\" />
+	            					<img src=\"".$im_path."\" alt=\"Mail\" id=\"msgimg".$marr['message_id']."\" />
 	            				</td>
 	            			<td class=\"tbldata\">";
 							if ($marr['message_massmail']==1)
@@ -652,19 +653,52 @@
 							}
 							else
 							{
-								echo "<a href=\"?page=$page&amp;msg_id=".$marr['message_id']."&amp;mode=".$mode."\" ";
                 if ($msgpreview)
                 {
-                    echo tm($subj,text2html(substr($marr['message_text'], 0, 500)));
+									echo "<a href=\"javascript:;\" onclick=\"toggleBox('msgtext".$marr['message_id']."');xajax_messagesSetRead(".$marr['message_id'].")\" >".$subj."</a>";
                 }
-                echo ">".$subj."</a>";
+                else
+                {
+									echo "<a href=\"?page=$page&amp;msg_id=".$marr['message_id']."&amp;mode=".$mode."\">".$subj."</a>";
+                }
               }
 							echo "</td>";
-							echo "<td class=\"tbldata\" style=\"width:120px;\">".$sender."</td>";
+							echo "<td class=\"tbldata\" style=\"width:120px;\">".$sender_f."</td>";
 							echo "<td class=\"tbldata\" style=\"width:120px;\">".date("d.m.Y H:i",$marr['message_timestamp'])."</td>";
 							echo "<td class=\"tbldata\" style=\"width:20px;text-align:center;padding:0px;vertical-align:middle;\">
 							<input id=\"delcb_".$arr['cat_id']."_".$dcnt."\" type=\"checkbox\" name=\"delmsg[".$marr['message_id']."]\" value=\"1\" title=\"Nachricht zum L&ouml;schen markieren\" /></td>";
 							echo "</tr>\n";
+              if ($msgpreview)
+              {
+								echo "<tr style=\"display:none;\" id=\"msgtext".$marr['message_id']."\"><td colspan=\"5\" class=\"tbldata\">";
+								echo text2html($marr['message_text']);
+								echo "<br/><br/>";
+								$msgadd = "&amp;message_text=".base64_encode($marr['message_text'])."&amp;message_sender=".base64_encode($sender);
+								echo "<input type=\"button\" value=\"Weiterleiten\" onclick=\"document.location='?page=$page&mode=new&amp;message_subject=".base64_encode("Fw: ".$marr['message_subject'])."".$msgadd."'\" name=\"remit\" />&nbsp;";
+								if ($marr['message_user_from']>0)
+								{				
+									if ($s['user']['msg_copy'])
+									{
+										echo "<input type=\"button\" value=\"Antworten\" name=\"answer\" onclick=\"document.location='?page=$page&mode=new&message_user_to=".$marr['message_user_from']."&amp;message_subject=".base64_encode("Re: ".$marr['message_subject'])."".$msgadd."'\" />&nbsp;";
+									}
+									else
+									{								
+										echo "<input type=\"button\" value=\"Antworten\" name=\"answer\" onclick=\"document.location='?page=$page&mode=new&message_user_to=".$marr['message_user_from']."&amp;message_subject=".base64_encode("Re: ".$marr['message_subject'])."'\" />&nbsp;";
+									}
+									echo "<input type=\"button\" value=\"Absender ignorieren\" onclick=\"document.location='?page=".$page."&amp;mode=ignore&amp;add=".$marr['message_user_from']."'\" />&nbsp;";
+								}						
+								echo "<input type=\"button\" value=\"L&ouml;schen\" onclick=\"document.location='?page=$page&mode=mode&del=".$marr['message_id']."';\" />&nbsp;";
+								if ($marr['message_user_from']>0)
+								{
+									abuse_button("messages","Beleidigung melden",$marr['message_user_from']);
+								}
+								else
+								{
+									abuse_button("rules","Regelverstoss melden");
+								}
+								echo "<br/>";
+								echo "</td></tr>";
+							}
 							$dcnt++;
 							$msgcnt++;
 						}

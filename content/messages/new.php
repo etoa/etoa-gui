@@ -145,6 +145,17 @@
 					$text = "\n\n".stripslashes($_POST['message_text'])."";
 				}
 			}
+			elseif (isset($_GET['message_text']))
+			{
+				if (isset($_GET['message_sender']))
+				{
+					$text = "\n\n[b]Nachricht von ".base64_decode($_GET['message_sender']).":[/b]\n\n".base64_decode(stripslashes($_GET['message_text']))."";
+				}
+				else
+				{
+					$text = "\n\n".base64_decode(stripslashes($_GET['message_text']))."";
+				}
+			}			
 	    else
 	    {
 	    	$text = '';

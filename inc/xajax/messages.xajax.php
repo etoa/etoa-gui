@@ -2,6 +2,7 @@
 
 $xajax->register(XAJAX_FUNCTION,'messagesNewMessagePreview');
 $xajax->register(XAJAX_FUNCTION,'messagesSelectAllInCategory');
+$xajax->register(XAJAX_FUNCTION,'messagesSetRead');
 
 //Nachriten Vorschau
 function messagesNewMessagePreview($val)
@@ -35,8 +36,18 @@ function messagesSelectAllInCategory($cid,$cnt,$bv)
     return $objResponse;
 }
 
-
-
+function messagesSetRead($mid)
+{
+  $or = new xajaxResponse();	
+  dbquery("UPDATE
+  	messages
+  SET
+  	message_read=1
+  WHERE
+  	message_id=".$mid.";");
+  $or->assign("msgimg".$mid,"src","images/pm_normal.gif");
+	return $or;
+}
 
 
 ?>

@@ -1,4 +1,16 @@
 
+	function toggleBox(elemId)
+	{
+		if (document.getElementById(elemId).style.display=='none')
+		{
+			document.getElementById(elemId).style.display='';	
+		}
+		else
+		{
+			document.getElementById(elemId).style.display='none';					
+		}		
+	}
+
 function loadMsg(elemId)
 {
 	document.getElementById(elemId).innerHTML = '<img src=\"images/loading.gif\" alt=\"Loading\" /> Lade Daten...';
