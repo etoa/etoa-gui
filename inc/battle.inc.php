@@ -1965,7 +1965,7 @@ function battle($fleet_id,$planet_id)
         	$fleet_rest_a=1;
             foreach ($special_ships_a as $id=>$data)
             {
-                $msg.= "[b]".$data['name']."[/b] ".$data['new_cnt']."\n";
+                $msg.= "[b]".$data['name']."[/b] ".nf($data['new_cnt'])."\n";
             }
         }
 		//Schiffe (att)
@@ -1975,7 +1975,7 @@ function battle($fleet_id,$planet_id)
 
             foreach ($ships_a as $id=>$data)
             {
-                $msg.= "".$data['name']." ".$data['new_cnt']."\n";
+                $msg.= "".$data['name']." ".nf($data['new_cnt'])."\n";
             }
         }
         //Zeigt die Gewonnenen EXP der Spezialschiffe (att)
@@ -1996,7 +1996,7 @@ function battle($fleet_id,$planet_id)
         	$fleet_rest_d=1;
             foreach ($special_ships_d as $id=>$data)
             {
-                $msg.= "[b]".$data['name']."[/b] ".$data['new_cnt']."\n";
+                $msg.= "[b]".$data['name']."[/b] ".nf($data['new_cnt'])."\n";
             }
         }
         //Schiffe (def)
@@ -2005,7 +2005,7 @@ function battle($fleet_id,$planet_id)
         	$fleet_rest_d=1;
             foreach ($ships_d as $id=>$data)
             {
-                $msg.= "".$data['name']." ".$data['new_cnt']."\n";
+                $msg.= "".$data['name']." ".nf($data['new_cnt'])."\n";
             }
         }
         //Zeigt die Gewonnenen EXP der Spezialschiffe (def)
