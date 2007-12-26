@@ -37,7 +37,15 @@
 		ship_shield,
 		ship_weapon,
 		ship_heal,
-		shiplist_count
+		shiplist_count,
+  	shiplist_special_ship_bonus_weapon, 	
+  	shiplist_special_ship_bonus_structure,
+  	shiplist_special_ship_bonus_shield,
+  	shiplist_special_ship_bonus_heal,
+ 		special_ship_bonus_weapon,
+ 		special_ship_bonus_structure,
+ 		special_ship_bonus_shield,
+ 		special_ship_bonus_heal
   FROM
   	shiplist
   INNER JOIN
@@ -50,11 +58,13 @@
   	$struct=0;$shield=0;$weapon=0;$count=0;  	
   	while ($arr=mysql_fetch_array($res))
   	{
-  		$struct += $arr['ship_structure']*$arr['shiplist_count'];
-  		$shield += $arr['ship_shield']*$arr['shiplist_count'];
-  		$weapon += $arr['ship_weapon']*$arr['shiplist_count'];
-  		$heal += $arr['ship_heal']*$arr['shiplist_count'];
+  		$struct += $arr['ship_structure']*$arr['shiplist_count'] + ($arr['ship_structure'] * $arr['shiplist_count'] * $arr['shiplist_special_ship_bonus_structure'] * $arr['special_ship_bonus_structure']);
+  		$shield += $arr['ship_shield']*$arr['shiplist_count'] + ($arr['ship_shield'] * $arr['shiplist_count'] * $arr['shiplist_special_ship_bonus_shield'] * $arr['special_ship_bonus_shield']);
+  		$weapon += $arr['ship_weapon']*$arr['shiplist_count'] + ($arr['ship_weapon'] * $arr['shiplist_count'] * $arr['shiplist_special_ship_bonus_weapon'] * $arr['special_ship_bonus_weapon']);
+  		$heal += $arr['ship_heal']*$arr['shiplist_count'] + ($arr['ship_heal'] * $arr['shiplist_count'] * $arr['shiplist_special_ship_bonus_heal'] * $arr['special_ship_bonus_heal']);
   		$count += $arr['shiplist_count'];
+
+  		
   	}
 
 		// Forschung laden und bonus dazu rechnen 
