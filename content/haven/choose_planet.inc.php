@@ -186,6 +186,8 @@
                 $special_ship_bonus_pilots-=$ssarr['special_ship_bonus_pilots'] * $ssarr['shiplist_special_ship_bonus_pilots'];
 			}
 
+			// Bugfix: No negative pilots
+			$special_ship_bonus_pilots = $special_ship_bonus_pilots<1 ? 1 : $special_ship_bonus_pilots;
 
 			while ($sarr = mysql_fetch_array($sres))
 			{
