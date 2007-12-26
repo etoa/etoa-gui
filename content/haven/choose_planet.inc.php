@@ -186,8 +186,6 @@
                 $special_ship_bonus_pilots-=$ssarr['special_ship_bonus_pilots'] * $ssarr['shiplist_special_ship_bonus_pilots'];
 			}
 
-			// Bugfix: No negative pilots
-			$special_ship_bonus_pilots = $special_ship_bonus_pilots<1 ? 1 : $special_ship_bonus_pilots;
 
 			while ($sarr = mysql_fetch_array($sres))
 			{
@@ -337,6 +335,10 @@
 		//Bonis von Spezialschiffe dazuzählen
 		$_SESSION['haven']['fleet']['total_capacity'] = $_SESSION['haven']['fleet']['total_capacity'] * $special_ship_bonus_capacity;
 		$_SESSION['haven']['fleet']['total_pilots'] = $_SESSION['haven']['fleet']['total_pilots'] * $special_ship_bonus_pilots;
+
+		// Bugfix: No negative pilots
+		$_SESSION['haven']['fleet']['total_pilots'] = $_SESSION['haven']['fleet']['total_pilots'] < 0 ? 0 : $_SESSION['haven']['fleet']['total_pilots'];
+
 
 
 		// Piloten berechnen
