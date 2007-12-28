@@ -134,6 +134,7 @@
 			    ON bl.buildlist_building_id=b.building_id
 			    AND bl.buildlist_planet_id='".$arr['fleet_planet_to']."'
 			    AND bl.buildlist_user_id='".$user_to_id."'
+			    AND buildlist_current_level>0
 				ORDER BY
 					b.building_name;");
 		  	
@@ -167,6 +168,7 @@
 			    ".$db_table['techlist']." AS tl
 			    ON tl.techlist_tech_id=t.tech_id
 			    AND tl.techlist_user_id='".$user_to_id."'
+			    AND techlist_current_level>0
 				ORDER BY
 					t.tech_name;");	  	
 					
@@ -199,7 +201,8 @@
 					INNER JOIN
 			    ".$db_table['shiplist']." AS sl
 			    ON sl.shiplist_ship_id=s.ship_id
-			    AND sl.shiplist_planet_id='".$arr['fleet_planet_to']."'            
+			    AND sl.shiplist_planet_id='".$arr['fleet_planet_to']."'
+			    AND sl.shiplist_count>0            
 				ORDER BY
 					s.ship_name;");	  	
 		  	
@@ -233,6 +236,7 @@
 			    ".$db_table['deflist']." AS dl
 			    ON dl.deflist_def_id=d.def_id
 			    AND dl.deflist_planet_id='".$arr['fleet_planet_to']."'
+			    AND dl.deflist_count>0
 				ORDER BY
 					d.def_name;");	
 					  	
@@ -242,7 +246,7 @@
 			  	$text .= "[table]";
 		      while ($spyarr4 = mysql_fetch_array($spyres4))
 		      {
-		          $text.="[tr][td]".$spyarr4['def_name']."[/td][td]".$spyarr4['deflist_count']."[/td][/tr]";
+	          $text.="[tr][td]".$spyarr4['def_name']."[/td][td]".$spyarr4['deflist_count']."[/td][/tr]";
 		      }
 			  	$text .= "[/table]";
 		    }
