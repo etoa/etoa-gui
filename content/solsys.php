@@ -39,6 +39,24 @@
 
 	// BEGIN SKRIPT //
 
+	if (!isset($_GET['id']) && isset($_GET['planet_id']) && $_GET['planet_id']>0)
+	{
+		$res = dbquery("
+		SELECT
+			planet_solsys_id
+		FROM
+			planets 
+		WHERE 
+			planet_id=".$_GET['planet_id']."
+		");	
+		if (mysql_num_rows($res)>0)	
+		{
+			$arr=mysql_fetch_row($res);
+			$_GET['id']=$arr[0];
+		}
+	}
+
+
 	if ($_GET['id']>0)
 	{
 		if (isset($_GET['mode']))
@@ -387,7 +405,16 @@
 					if ($arr['planet_name']!="")
 					{
 						if ($arr['planet_desc']!="")$pdesc=text2html($arr['planet_desc']);else $pdesc="<i>Keine Beschreibung vorhanden</i>";
-						echo "<td class=\"$class\"  style=\"".$addstyle."\" ".tm($arr['planet_name'],$pdesc).">".$arr['planet_name']."</td>";
+						echo "<td class=\"$class\"  style=\"".$addstyle."\" ".tm($arr['planet_name'],$pdesc).">";
+						if ($c->id==$arr['planet_id'])
+						{
+							echo "<b>".$arr['planet_name']."</b>";
+						}
+						else
+						{
+							echo $arr['planet_name'];
+						}						
+						echo "</td>";
 					}
 					else
 					{
@@ -415,8 +442,9 @@
 					echo "<td class=\"$class\" style=\"width:100px;\"><a href=\"?page=planet&amp;planet_info_id=".$arr['planet_id']."&amp;solsys_id=".intval($_GET['id'])."\" title=\"Planeteninfo\">Info</a>";
 					if ($s['user']['id']!=$arr['planet_user_id'] && $arr['planet_user_id']>0)
 						echo "&nbsp;<a href=\"?page=messages&amp;mode=new&amp;message_user_to=".$arr['planet_user_id']."\" title=\"Nachricht senden\">Mail</a>";
-					if ($c->id!=$arr['planet_id'])
-						echo "&nbsp;<a href=\"?page=haven&amp;planet_to=".$arr['planet_id']."\" title=\"Flotte hinschicken\">Flotte</a>";
+					
+					//if ($c->id!=$arr['planet_id'])
+					echo "&nbsp;<a href=\"?page=haven&amp;planet_to=".$arr['planet_id']."\" title=\"Flotte hinschicken\">Flotte</a>";
 						
 					// Bei eigenem Planet diverse Links nicht anzeigen
 					if ($s['user']['id']!=$arr['planet_user_id'])
