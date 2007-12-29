@@ -135,6 +135,14 @@
 			onmousedown="changeImages('nb_wirtschaft', '{$templateDir}/images/nb_wirtschaft-down.gif'); return true;"
 			onmouseup="changeImages('nb_wirtschaft', '{$templateDir}/images/nb_wirtschaft-over.gif'); return true;">
 			<img name="nb_wirtschaft" src="{$templateDir}/images/nb_wirtschaft.gif" alt="Wirtschaft" border="0" /></a></div>
+	<div class="nb-kryptocenter_">
+		<a href="?page=crypto"
+			onmouseover="changeImages('nb_kryptocenter', '{$templateDir}/images/nb_kryptocenter-over.gif'); return true;"
+			onmouseout="changeImages('nb_kryptocenter', '{$templateDir}/images/nb_kryptocenter.gif'); return true;"
+			onmousedown="changeImages('nb_kryptocenter', '{$templateDir}/images/nb_kryptocenter-down.gif'); return true;"
+			onmouseup="changeImages('nb_kryptocenter', '{$templateDir}/images/nb_kryptocenter-over.gif'); return true;">
+			<img name="nb_kryptocenter" src="{$templateDir}/images/nb_kryptocenter.gif" alt="Kryptocenter" border="0" /></a></div>
+
 	<div class="Menueleiste-47_">
 		<img img name="Menueleiste-47_" src="{$templateDir}/images/Menueleiste_47.gif" /></div>
 	<div class="nb-bauhof_">
@@ -165,6 +173,13 @@
 			onmousedown="changeImages('nb_forschung', '{$templateDir}/images/nb_forschung-down.gif'); return true;"
 			onmouseup="changeImages('nb_forschung', '{$templateDir}/images/nb_forschung-over.gif'); return true;">
 			<img id="nb_forschung" src="{$templateDir}/images/nb_forschung.gif" alt="Forschung" border="0" /></a></div>
+	<div class="nb-raketen_">
+		<a href="?page=missiles"
+			onmouseover="changeImages('nb_raketen', '{$templateDir}/images/nb_raketen-over.gif'); return true;"
+			onmouseout="changeImages('nb_raketen', '{$templateDir}/images/nb_raketen.gif'); return true;"
+			onmousedown="changeImages('nb_raketen', '{$templateDir}/images/nb_raketen-down.gif'); return true;"
+			onmouseup="changeImages('nb_raketen', '{$templateDir}/images/nb_raketen-over.gif'); return true;">
+			<img id="nb_raketen" src="{$templateDir}/images/nb_raketen.gif" alt="raketen" border="0" /></a></div>			
 	<div class="nb-marktplatz_">
 		<a href="?page=market"
 			onmouseover="changeImages('nb_marktplatz', '{$templateDir}/images/nb_marktplatz-over.gif'); return true;"

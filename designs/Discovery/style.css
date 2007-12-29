@@ -829,69 +829,10 @@ div.TopPanel-09_ {
 	height:22px;
 }
 
-div.alert_ {
-	position:absolute;
-	left:91px;
-	top:669px;
-	width:97px;
-	height:41px;
-}
 
-div.pb-notes_ {
-	position:absolute;
-	left:188px;
-	top:669px;
-	width:52px;
-	height:64px;
-}
 
-div.Menueleiste-66_ {
-	position:absolute;
-	left:91px;
-	top:710px;
-	width:97px;
-	height:56px;
-}
 
-div.Menueleiste-68_ {
-	position:absolute;
-	left:16px;
-	top:724px;
-	width:75px;
-	height:23px;
-}
 
-div.Menueleiste-63_ {
-	position:absolute;
-	left:240px;
-	top:653px;
-	width:23px;
-	height:94px;
-}
-
-div.pb-post_ {
-	position:absolute;
-	left:0px;
-	top:653px;
-	width:91px;
-	height:71px;
-}
-
-div.Menueleiste-62_ {
-	position:absolute;
-	left:91px;
-	top:653px;
-	width:117px;
-	height:16px;
-}
-
-div.Menueleiste-59_ {
-	position:absolute;
-	left:44px;
-	top:639px;
-	width:164px;
-	height:14px;
-}
 
 div.Menueleiste-51_ {
 	position:absolute;
@@ -909,83 +850,45 @@ div.Menueleiste-33_ {
 	height:443px;
 }
 
-div.nb-buddylist_ {
-	background:#225;
-	position:absolute;
-	left:44px;
-	top:618px;
-	width:164px;
-	height:21px;
-}
 
-div.Menueleiste-57_ {
-	position:absolute;
-	left:44px;
-	top:597px;
-	width:164px;
-	height:21px;
-}
-
-div.nb-recycling_ {
-	background:#225;
-	position:absolute;
-	left:44px;
-	top:576px;
-	width:164px;
-	height:21px;
-}
-
-div.nb-marktplatz_ {
-	background:#225;
-	position:absolute;
-	left:44px;
-	top:449px;
-	width:164px;
-	height:21px;
-}
-
-div.nb-forschung_ {
-	background:#225;
-	position:absolute;
-	left:44px;
-	top:513px;
-	width:164px;
-	height:22px;
-}
-
-div.nb-verteidigung_ {
-	background:#225;
-	position:absolute;
-	left:44px;
-	top:555px;
-	width:164px;
-	height:21px;
-}
-
-div.nb-schiffswerft_ {
-	background:#225;
-	position:absolute;
-	left:44px;
-	top:535px;
-	width:164px;
-	height:21px;
-}
-
-div.nb-bauhof_ {
-	background:#225;
-	position:absolute;
-	left:44px;
-	top:492px;
-	width:164px;
-	height:21px;
-}
 
 div.Menueleiste-47_ {
 	position:absolute;
 	left:44px;
-	top:470px;
+	top:490px;
 	width:164px;
 	height:22px;
+}
+
+/* Allgemeines */
+
+div.nb-rathaus_ {
+	background:#225;
+	position:absolute;
+	left:44px;
+	top:237px;
+	width:164px;
+	height:21px;
+}
+
+div.nb-raumkarte_ {
+	background:#225;
+	position:absolute;
+	left:44px;
+	top:258px;
+	width:164px;
+	height:21px;
+}
+
+/* Planet */
+
+div.nb-informationen_ {
+	background:#225;
+	position:absolute;
+	left:44px;
+	top:344px;
+	width:164px;
+	height:21px;
 }
 
 div.nb-wirtschaft_ {
@@ -993,6 +896,16 @@ div.nb-wirtschaft_ {
 	position:absolute;
 	left:44px;
 	top:365px;
+	width:164px;
+	height:21px;
+}
+
+
+div.nb-bev-lkerung_ {
+	background:#225;
+	position:absolute;
+	left:44px;
+	top:386px;
 	width:164px;
 	height:21px;
 }
@@ -1015,41 +928,172 @@ div.nb-schiffshafen_ {
 	height:21px;
 }
 
-div.nb-informationen_ {
+
+div.nb-marktplatz_ {
 	background:#225;
 	position:absolute;
 	left:44px;
-	top:344px;
+	top:449px;
 	width:164px;
 	height:21px;
 }
 
-div.nb-bev-lkerung_ {
+
+div.nb-kryptocenter_ {
 	background:#225;
 	position:absolute;
 	left:44px;
-	top:386px;
+	top:470px;
 	width:164px;
 	height:21px;
 }
 
-div.nb-rathaus_ {
+/* Produktion */
+
+div.nb-bauhof_ {
 	background:#225;
 	position:absolute;
 	left:44px;
-	top:237px;
+	top:512px;
 	width:164px;
 	height:21px;
 }
 
-div.nb-raumkarte_ {
+div.nb-forschung_ {
 	background:#225;
 	position:absolute;
 	left:44px;
-	top:258px;
+	top:533px;
+	width:164px;
+	height:22px;
+}
+
+div.nb-schiffswerft_ {
+	background:#225;
+	position:absolute;
+	left:44px;
+	top:555px;
 	width:164px;
 	height:21px;
 }
+
+div.nb-verteidigung_ {
+	background:#225;
+	position:absolute;
+	left:44px;
+	top:575px;
+	width:164px;
+	height:21px;
+}
+
+div.nb-recycling_ {
+	background:#225;
+	position:absolute;
+	left:44px;
+	top:596px;
+	width:164px;
+	height:21px;
+}
+
+div.nb-raketen_ {
+	background:#225;
+	position:absolute;
+	left:44px;
+	top:617px;
+	width:164px;
+	height:21px;
+}
+
+
+
+/* Sonstiges */
+
+div.Menueleiste-57_ {
+	position:absolute;
+	left:44px;
+	top:637px;
+	width:164px;
+	height:21px;
+}
+
+div.nb-buddylist_ {
+	background:#225;
+	position:absolute;
+	left:44px;
+	top:658px;
+	width:164px;
+	height:21px;
+}
+
+/* Menu abschluss */
+
+div.Menueleiste-59_ {
+	position:absolute;
+	left:44px;
+	top:679px;
+	width:164px;
+	height:14px;
+}
+
+
+div.Menueleiste-62_ {
+	position:absolute;
+	left:91px;
+	top:693px;
+	width:117px;
+	height:16px;
+}
+
+div.alert_ {
+	position:absolute;
+	left:91px;
+	top:699px;
+	width:97px;
+	height:41px;
+}
+
+div.pb-post_ {
+	position:absolute;
+	left:0px;
+	top:683px;
+	width:91px;
+	height:71px;
+}
+
+div.pb-notes_ {
+	position:absolute;
+	left:188px;
+	top:699px;
+	width:52px;
+	height:64px;
+}
+
+div.Menueleiste-66_ {
+	position:absolute;
+	left:91px;
+	top:740px;
+	width:97px;
+	height:56px;
+}
+
+div.Menueleiste-68_ {
+	position:absolute;
+	left:16px;
+	top:754px;
+	width:75px;
+	height:23px;
+}
+
+
+div.Menueleiste-63_ {
+	position:absolute;
+	left:240px;
+	top:685px;
+	width:23px;
+	height:94px;
+}
+
+
 
 div.Menueleiste-41_ {
 	position:absolute;
