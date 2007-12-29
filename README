@@ -1,0 +1,34 @@
+Änderungen an der DB
+
+::in db fleet
+
+:: ::fleet_action -> Varchar 30
+
+
+Änderungen im PHP Code
+
+::Umbennen der Flottenaktionen //nix definitiv
+	
+:: ::catergory "attack"
+		attack_normal //Angriff
+		attack_invasion //Invasion
+		attack_poison //Giftgas
+		attack_bomb //Bombadieren
+		attack_emp //Deaktivieren
+		attack_antrax //Antrax
+		attack_tarn //Tarn
+		attack_fake //Fake
+		attack_spy //Spioangriff
+		
+:: ::category "back"
+		back...	//Rückflug, für jede Aktion möglich
+		onewayticket	//Kolonisieren, stationieren, Market
+				//Transport
+		
+:: ::category "special"
+		special_spy //Spionieren
+		special_wreckage //Trümmer
+		special_gas //Gas
+		special_asteroid //Asteroiden
+		
+		
