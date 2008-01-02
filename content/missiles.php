@@ -30,6 +30,9 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/	
 
+	// Info-Link
+	define("HELP_URL","?page=help&site=missiles");
+
 	// BEGIN SKRIPT //
 
 	echo "<form action=\"?page=$page\" method=\"post\">";
@@ -490,10 +493,7 @@
 		
 				// Raketen anzeigen
 				if ($mc > 0)
-				{					
-					echo '<h2>Raketen verwalten</h2>';
-					
-				
+				{							
 					if ($max_space > 0)
 					{
 						$bar1_red = min(ceil($cnt / $max_space * 200),200);
@@ -505,24 +505,23 @@
 					
 					echo '<form action="?page='.$page.'" method="post">';
 					echo $cstr;
-					echo '<table class="tb">
-					<tr><th colspan="2">Silobelegung:</th>
-					<td style="padding:0px;vertical-align:middle;background:#000 url(\'images/poll2.jpg\') repeat-x 0px 4px;text-align:left;">
-					<img src="images/poll4.jpg" alt="bar" style="width:'.$bar1_red.'px;height:10px;margin:0px;" />
-					</td>
-					<th colspan="7">
-					'.nf($cnt).' von '.nf($max_space).', '.round($cnt/$max_space*100,0).'% ('.MISSILE_SILO_MISSILES_PER_LEVEL.' pro Gebäudestufe)
-					</th>
-					<tr><th colspan="2">Typ</th>
-					<th style="width:200px;">Beschreibung</th>
-					<th>'.RES_ICON_METAL.'</th>
-					<th>'.RES_ICON_CRYSTAL.'</th>
-					<th>'.RES_ICON_PLASTIC.'</th>
-					<th>'.RES_ICON_FUEL.'</th>
-					<th>'.RES_ICON_FOOD.'</th>
-					<th>Vorhanden</th>
-					<th>Auswahl</th>
-					</tr>';
+					
+					// Rechnet %-Werte für Tabelle
+					$store_width = ceil($cnt/$max_space*100);
+					
+					infobox_start("Silobelegung",1);
+					echo '<tr>
+									<td class="tbldata" style="padding:0px;height:10px;"><img src="images/poll3.jpg" style="height:10px;width:'.$store_width.'%;" alt="poll" />
+								</tr>
+								<tr>
+									<td class="tbldata" style="text-align:center;">
+										'.nf($cnt).' von '.nf($max_space).', '.round($cnt/$max_space*100,0).'% ('.MISSILE_SILO_MISSILES_PER_LEVEL.' pro Gebäudestufe)
+								</tr>';
+					infobox_end(1);
+					
+					infobox_start("Raketen verwalten",1);
+					
+					$cnt2 = 0;
 					foreach ($missiles as $mid => $arr)
 					{
 						
@@ -550,222 +549,531 @@
 						}
 						
 						if ($requirements_passed)
-						{					
-							echo '<tr><td>
-							<a href="?page=help&amp;site=missiles&amp;id='.$arr['missile_id'].'">
-							<img alt="'.$arr['missile_name'].'" style="width:40px;height:40px;" src="'.IMAGE_PATH.'/missiles/missile'.$mid.'_small.'.IMAGE_EXT.'" />
-							</a></td>
-							<td>'.$arr['missile_name'];
-							if ($arr['missile_def']>0)
+						{			
+							//Errechnet wie viele Raketen von diesem Typ maximal gekauft werden können mit den aktuellen Rohstoffen
+							
+							// Silokapazität
+							$store = $max_space - $cnt;
+														
+							//Titan
+							if($arr['missile_costs_metal']>0)
 							{
-								echo '<br/><b>Sprengköpfe:</b> '.$arr['missile_def'];
-							}					
-							if ($arr['missile_damage']>0)
-							{
-								echo '<br/><b>Schaden:</b> '.$arr['missile_damage'];
-							}					
-							if ($arr['missile_deactivate']>0)
-							{
-								echo '<br/><b>EMP:</b> '.tf($arr['missile_deactivate']);
-							}	
-							if ($arr['missile_range']>0)
-							{
-								echo '<br/><b>Reichweite:</b> '.$arr['missile_range'].' AE';
-							}
-							echo '</td>
-							<td>'.$arr['missile_sdesc'].'<br/>';
-							if ($arr['missile_speed']>0 && $arr['missile_range']>0)
-							{
-								echo '<b>Geschwindigkeit:</b> '.$arr['missile_speed'].' AE/h';
-							}
-							echo '</td><td>'.nf($arr['missile_costs_metal']).'</td>
-							<td>'.nf($arr['missile_costs_crystal']).'</td>
-							<td>'.nf($arr['missile_costs_plastic']).'</td>
-							<td>'.nf($arr['missile_costs_fuel']).'</td>
-							<td>'.nf($arr['missile_costs_food']).'</td>
-							<td>';
-							if (isset($missilelist[$mid]))
-							{
-								echo nf($missilelist[$mid]);
+								$build_cnt_metal=floor($c->res->metal/$arr['missile_costs_metal']);
 							}
 							else
 							{
-								echo 0;
+								$build_cnt_metal=99999999999;
 							}
-							echo '</td>
-							<td><input type="text" name="missile_count['.$mid.']" value="0" size="3" maxlength="3" /></td></tr>';
-						}
+
+							//Silizium
+							if($arr['missile_costs_crystal']>0)
+							{
+								$build_cnt_crystal=floor($c->res->crystal/$arr['missile_costs_crystal']);
+							}
+							else
+							{
+								$build_cnt_crystal=99999999999;
+							}
+					
+							//PVC
+							if($arr['missile_costs_plastic']>0)
+							{
+								$build_cnt_plastic=floor($c->res->plastic/$arr['missile_costs_plastic']);
+							}
+							else
+							{
+								$build_cnt_plastic=99999999999;
+							}
+							
+							//Tritium
+							if($arr['missile_costs_fuel']>0)
+							{
+								$build_cnt_fuel=floor($c->res->fuel/$arr['missile_costs_fuel']);
+							}
+							else
+							{
+								$build_cnt_fuel=99999999999;
+							}
+
+							//Nahrung
+							if($arr['missile_costs_food']>0)
+							{
+								$build_cnt_food=floor($c->res->food/$arr['missile_costs_food']);
+							}
+							else
+							{
+								$build_cnt_food=99999999999;
+							}
+
+							//Effetiv max. kaufbare Raketen in Betrachtung der Rohstoffe und der Silokapazität
+							$missile_max_build=min($build_cnt_metal,$build_cnt_crystal,$build_cnt_plastic,$build_cnt_fuel,$build_cnt_food,$store);
+							
+							// Grösste Zahl die eingegeben werden kann (Da man auch verschrotten kann)
+							$missile_max_number = max($missile_max_build,$missilelist[$mid]);
+
+							//Tippbox Nachricht generieren
+							//X Anlagen baubar
+							if($missile_max_build>0)
+							{
+								$tm_cnt="Es k&ouml;nnen maximal ".nf($missile_max_build)." Raketen gekauft werden.";
+							}
+							//Zu wenig Felder.
+							elseif($store==0)
+							{
+								$tm_cnt="Das Silo ist zu klein für weitere Raketen!";
+							}
+							//Zuwenig Rohstoffe. Wartezeit errechnen
+							elseif($missile_max_build==0 && $store!=0)
+							{
+								//Wartezeit Titan
+  			    		if ($c->prod->metal>0)
+  			    		{
+  			    			$bwait['metal']=ceil(($arr['missile_costs_metal']-$c->res->metal)/$c->prod->metal*3600);
+  			    		}
+  			    		else
+  			    		{
+  			    			$bwait['metal']=0;
+  			    		}
+  			    		
+  			    		//Wartezeit Silizium
+  			    		if ($c->prod->crystal>0)
+  			    		{
+  			    			$bwait['crystal']=ceil(($arr['missile_costs_crystal']-$c->res->crystal)/$c->prod->crystal*3600);
+  			    		}
+  			    		else
+  			    		{ 
+  			    			$bwait['crystal']=0;
+  			    		}
+  			    		
+  			    		//Wartezeit PVC
+  			    		if ($c->prod->plastic>0)
+  			    		{
+  			    			$bwait['plastic']=ceil(($arr['missile_costs_plastic']-$c->res->plastic)/$c->prod->plastic*3600);
+  			    		}
+  			    		else
+  			    		{ 
+  			    			$bwait['plastic']=0;
+  			    		}
+  			    		
+  			    		//Wartezeit Tritium
+  			    		if ($c->prod->fuel>0)
+  			    		{
+  			    			$bwait['fuel']=ceil(($arr['missile_costs_fuel']-$c->res->fuel)/$c->prod->fuel*3600);
+  			    		}
+  			    		else
+  			    		{ 
+  			    			$bwait['fuel']=0;
+  			    		}
+  			    		
+  			    		//Wartezeit Nahrung
+  			    		if ($c->prod->food>0)
+  			    		{
+  			    			$bwait['food']=ceil(($arr['missile_costs_food']-$c->res->food)/$c->prod->food*3600);
+  			    		}
+  			    		else
+  			    		{ 
+  			    			$bwait['food']=0;
+  			    		}
+  			    		
+  			    		//Maximale Wartezeit ermitteln
+  			    		$bwmax=max($bwait['metal'],$bwait['crystal'],$bwait['plastic'],$bwait['fuel'],$bwait['food']);
+  			    		
+  			    		$tm_cnt="Rohstoffe verf&uuml;gbar in ".tf($bwmax)."";
+							}
+							else
+							{
+								$tm_cnt="";
+							}
+
+							//Stellt Rohstoff Rot dar, wenn es von diesem zu wenig auf dem Planeten hat
+							//Titan
+							if($arr['missile_costs_metal']>$c->res->metal)
+							{
+								$ress_style_metal="style=\"color:red;\"";
+							}
+							else
+							{
+								$ress_style_metal="";
+							}
+							
+							//Silizium
+							if($arr['missile_costs_crystal']>$c->res->crystal)
+							{
+								$ress_style_crystal="style=\"color:red;\"";
+							}
+							else
+							{
+								$ress_style_crystal="";
+							}
+							
+							//PVC
+							if($arr['missile_costs_plastic']>$c->res->plastic)
+							{
+								$ress_style_plastic="style=\"color:red;\"";
+							}
+							else
+							{
+								$ress_style_plastic="";
+							}
+							
+							//Tritium
+							if($arr['missile_costs_fuel']>$c->res->fuel)
+							{
+								$ress_style_fuel="style=\"color:red;\"";
+							}
+							else
+							{
+								$ress_style_fuel="";
+							}
+							
+							//Nahrung
+							if($arr['missile_costs_food']>$c->res->food)
+							{
+								$ress_style_food="style=\"color:red;\"";
+							}
+							else
+							{
+								$ress_style_food="";
+							}
+
+							
+							// Volle Ansicht
+			      	if($s['user']['item_show']=='full')
+			      	{	
+			      		if ($cnt2>0)
+  			      	{
+  			      			echo "<tr>
+  			      							<td colspan=\"5\" style=\"height:5px;\"></td>
+  			      					</tr>";
+  			      	}
+  			      					      		
+			      	  $d_img = IMAGE_PATH.'/missiles/missile'.$mid.'_middle.'.IMAGE_EXT;
+			      	  echo "<tr>
+			      	  				<td class=\"tbltitle\" colspan=\"5\">".$arr['missile_name']."</td>
+			      	  			</tr>
+			      	  			<tr>
+			      	  				<td class=\"tbldata\" width=\"120\" height=\"120\" rowspan=\"5\">";
+			    			      	  //Bild mit Link zur Hilfe darstellen
+													echo "<a href=\"".HELP_URL."&amp;id=".$mid."\" title=\"Info zu dieser Rakete anzeigen\">
+		    			      	  	<img src=\"".$d_img."\" width=\"120\" height=\"120\" border=\"0\" /></a>";
+			      	  	echo "</td>
+			      	  				<td class=\"tbldata\" colspan=\"4\" valign=\"top\">".$arr['missile_sdesc']."</td>
+			      	  			</tr>
+			      	  			<tr>
+		    			      		<th class=\"tbltitle\">Geschwindigkeit:</th>
+		    			      	  <td class=\"tbldata\">";
+		    			      	  if($arr['missile_speed']>0)
+		    			      	  {
+		    			      	  	echo "".nf($arr['missile_speed'])."";
+		    			      	  }
+		    			      	  else
+		    			      	  {
+		    			      	  	echo "-";
+		    			      	  }
+		    			    echo "</td>
+		    			      	  <th class=\"tbltitle\" rowspan=\"2\">Vorhanden:</th>
+		    			      	  <td class=\"tbldata\" rowspan=\"2\">".nf($missilelist[$mid])."</td>
+		    			      	</tr>
+		    			      	<tr>
+		    			      		<th class=\"tbltitle\">Reichweite:</th>
+		    			      	  <td class=\"tbldata\">";
+		    			      	  if($arr['missile_range']>0)
+		    			      	  {
+		    			      	  	echo "".nf($arr['missile_range'])." AE";
+		    			      	  }
+		    			      	  else
+		    			      	  {
+		    			      	  	echo "-";
+		    			      	  }
+		    			    echo "</td>
+		    			      	</tr>
+		    			      	<tr>
+		    			      		<th class=\"tbltitle\">";
+		    			      	
+			    			      	if ($arr['missile_def']>0)
+												{
+													echo "Sprengköpfe";
+												}
+												elseif ($arr['missile_damage']>0)
+												{
+													echo "Schaden";
+												}
+												elseif($arr['missile_deactivate']>0)	
+												{
+													echo "Schaden";
+												}
+												
+		    			    echo "</th>
+			      	  				<td class=\"tbldata\">"; 
+			      	  				
+			      	  				if ($arr['missile_def']>0)
+												{
+													echo nf($arr['missile_def']);
+												}
+												elseif ($arr['missile_damage']>0)
+												{
+													echo nf($arr['missile_damage']);
+												}
+												else
+												{
+													echo "0";
+												}
+												
+			      	  	echo "</td>
+			      	  				<th class=\"tbltitle\" rowspan=\"2\">Kaufen:</th>
+    			      	      <td class=\"tbldata\" rowspan=\"2\">
+			      							<input type=\"text\" value=\"0\" id=\"missile_count_".$mid."\" name=\"missile_count[".$mid."]\" size=\"5\" maxlength=\"9\" ".tm("",$tm_cnt)." tabindex=\"".$tabulator."\" onkeyup=\"FormatNumber(this.id,this.value, ".$missile_max_number.", '', '');\"/><br><a href=\"javascript:;\" onclick=\"document.getElementById('missile_count_".$mid."').value=".$missile_max_build.";\">max</a>
+    			      	      </td>";
+	      	      echo "<tr>
+	      	      				<th class=\"tbltitle\">EMP:</th>
+	      	      				<td class=\"tbldata\">";
+	      	      				if($arr['missile_deactivate']>0)	
+												{
+													echo tf($arr['missile_deactivate']);
+												}
+												else
+												{
+													echo "Nein";
+												}
+									echo "</td>
+											</tr>";
+		    			      	
+			      	  echo "</tr>";
+			      	  echo "<tr>
+		    			      	  <td class=\"tbltitle\" height=\"20\" width=\"110\">".RES_METAL.":</td>
+		    			      	  <td class=\"tbltitle\" height=\"20\" width=\"97\">".RES_CRYSTAL.":</td>
+		    			      	  <td class=\"tbltitle\" height=\"20\" width=\"98\">".RES_PLASTIC.":</td>
+		    			      	  <td class=\"tbltitle\" height=\"20\" width=\"97\">".RES_FUEL.":</td>
+		    			      	  <td class=\"tbltitle\" height=\"20\" width=\"98\">".RES_FOOD."</td></tr>";
+			      	  echo "<tr>
+			      	  				<td class=\"tbldata\" height=\"20\" width=\"110\" ".$ress_style_metal.">
+			      	  					".nf($arr['missile_costs_metal'])."
+			      	  				</td>
+			      	  				<td class=\"tbldata\" height=\"20\" width=\"25%\" ".$ress_style_crystal.">
+			      	  					".nf($arr['missile_costs_crystal'])."
+			      	  				</td>
+			      	  				<td class=\"tbldata\" height=\"20\" width=\"25%\" ".$ress_style_plastic.">
+			      	  					".nf($arr['missile_costs_plastic'])."
+			      	  				</td>
+			      	  				<td class=\"tbldata\" height=\"20\" width=\"25%\" ".$ress_style_fuel.">
+			      	  					".nf($arr['missile_costs_fuel'])."
+			      	  				</td>
+			      	  				<td class=\"tbldata\" height=\"20\" width=\"25%\" ".$ress_style_food.">
+			      	  					".nf($arr['missile_costs_food'])."
+			      	  				</td>
+			      	  			</tr>";
+			      	}
+			      	
+			      	//Einfache Ansicht der Schiffsliste
+			      	else
+			      	{
+		      			$d_img = IMAGE_PATH.'/missiles/missile'.$mid.'_middle.'.IMAGE_EXT;
+		      			echo "<tr>
+		      							<td class=\"tbldata\">";
+			      							//Bild mit Link zur Hilfe darstellen
+		  			      				echo "<a href=\"".HELP_URL."&amp;id=".$mid."\"><img src=\"".$d_img."\" width=\"40\" height=\"40\" border=\"0\" /></a></td>";
+			      			echo "<td class=\"tbltitle\" width=\"40%\">
+			      							".$arr['missile_name']."<br/>
+			      							<span style=\"font-weight:500;font-size:8pt;\">
+			      							<b>Vorhanden:</b> ".nf($missilelist[$mid])."</span></td>
+			      						<td class=\"tbldata\" width=\"10%\" ".$ress_style_metal.">".nf($arr['missile_costs_metal'])."</td>
+			      						<td class=\"tbldata\" width=\"10%\" ".$ress_style_crystal.">".nf($arr['missile_costs_crystal'])."</td>
+			      						<td class=\"tbldata\" width=\"10%\" ".$ress_style_plastic.">".nf($arr['missile_costs_plastic'])."</td>
+			      						<td class=\"tbldata\" width=\"10%\" ".$ress_style_fuel.">".nf($arr['missile_costs_fuel'])."</td>
+			      						<td class=\"tbldata\" width=\"10%\" ".$ress_style_food.">".nf($arr['missile_costs_food'])."</td>
+			      						<td class=\"tbldata\">
+			      							<input type=\"text\" value=\"0\" id=\"missile_count_".$mid."\" name=\"missile_count[".$mid."]\" size=\"5\" maxlength=\"9\" ".tm("",$tm_cnt)." tabindex=\"".$tabulator."\" onkeyup=\"FormatNumber(this.id,this.value, ".$missile_max_number.", '', '');\"/><br><a href=\"javascript:;\" onclick=\"document.getElementById('missile_count_".$mid."').value=".$missile_max_build.";\">max</a>
+			      						</td>
+			      					</tr>";
+			      	}
+			      
+			      	$tabulator++;
+			      	$cnt2++;
+							
+						}							
 					}
-					echo '</table><br/><input type="submit" name="buy" value="Ausgewählte Anzahl kaufen" /> &nbsp; ';
-					echo '<input type="submit" name="scrap" value="Ausgewählte Anzahl verschrotten" onclick="return confirm(\'Sollen die gewählten Raketen wirklich verschrottet werden? Es werden keine Ressourcen zurückerstattet!\')" /></form><br/>';
+					infobox_end(1);
+					echo '<br/><input type="submit" name="buy" value="Ausgewählte Anzahl kaufen" /> &nbsp; ';
+					echo '<input type="submit" name="scrap" value="Ausgewählte Anzahl verschrotten" onclick="return confirm(\'Sollen die gewählten Raketen wirklich verschrottet werden? Es werden keine Ressourcen zurückerstattet!\')" /></form><br/><br><br>';
 					
 					if ($cnt > 0)
 					{
 						echo '<h2>Raketen starten</h2>';
-						if ($fcnt < $max_flights)
+						
+						// Kampfsperre prüfen
+						if ($conf['battleban']['v']!=0 && $conf['battleban_time']['p1']<=time() && $conf['battleban_time']['p2']>time())
 						{
-							
-							// Bookmarks laden
-							$bookmarks=array();
-							// Gespeicherte Bookmarks
-							$pres = dbquery("
-							SELECT
-			                    space_cells.cell_sx,
-			                    space_cells.cell_sy,
-			                    space_cells.cell_cx,
-			                    space_cells.cell_cy,
-			                    planets.planet_solsys_pos,
-			                    planets.planet_name,
-			                    target_bookmarks.bookmark_comment
-							FROM
-								".$db_table['target_bookmarks']."
-							INNER JOIN
-			       		".$db_table['planets']."
-			        ON 
-			        	target_bookmarks.bookmark_user_id=".$s['user']['id']."
-			         	AND target_bookmarks.bookmark_planet_id=planets.planet_id
-							INNER JOIN       		
-								".$db_table['space_cells']."
-							ON 
-								target_bookmarks.bookmark_cell_id=space_cells.cell_id
-							ORDER BY
-			                    target_bookmarks.bookmark_comment,
-			                    target_bookmarks.bookmark_cell_id,
-			                    target_bookmarks.bookmark_planet_id;");
-							if (mysql_num_rows($pres)>0)
-							{
-								while($parr=mysql_fetch_array($pres))
-								{
-									array_push(
-									$bookmarks,
-									array(
-									"cell_sx"=> $parr['cell_sx'],
-									"cell_sy"=> $parr['cell_sy'],
-									"cell_cx"=> $parr['cell_cx'],
-									"cell_cy"=> $parr['cell_cy'],
-									"planet_solsys_pos"=> $parr['planet_solsys_pos'],
-									"planet_name"=> $parr['planet_name'],
-									"automatic"=>0,
-									"bookmark_comment"=> $parr['bookmark_comment'])
-									);
-								}
-							}							
-							
-							if ($_GET['c']!='' && $_GET['h']!='' && md5(base64_decode($_GET['c'])) == $_GET['h'])
-							{
-								$coords = explode(":",base64_decode($_GET['c']));
-							}
-							else
-							{
-								$coords[0] = $c->sx;
-								$coords[1] = $c->sy;
-								$coords[2] = $c->cx;
-								$coords[3] = $c->cy;
-								$coords[4] = $c->solsys_pos;
-							}              
-			                       
-							$keyup_command = 'xajax_getFlightTargetInfo(xajax.getFormValues(\'targetForm\'),'.$c->sx.','.$c->sy.','.$c->cx.','.$c->cy.','.$c->solsys_pos.')';
-							echo '<form action="?page='.$page.'" method="post" id="targetForm">';
-							echo $cstr;
-							echo '<table class="tb" style="width:700px;">
-							<tr><th style="width:260px;">Raketen wählen</th><th colspan="2" style="width:440px;">Ziel wählen</th></tr>
-							<tr><td rowspan="6">';
-							$lblcnt=0;
-							foreach ($missilelist as $k => $v)
-							{
-								if ($v > 0 && $missiles[$k]['missile_launchable']==1)
-								{
-									echo '<input type="hidden" value="'.$missiles[$k]['missile_speed'].'" name="speed['.$k.']" />';
-									echo '<input type="hidden" value="'.$missiles[$k]['missile_range'].'" name="range['.$k.']" />';
-									echo '<input type="text" value="0" name="count['.$k.']" size="3" maxlength="'.strlen($v).'"  onkeyup="'.$keyup_command.'" autocomplete="off" />
-									'.$missiles[$k]['missile_name'].' ('.$v.' vorhanden)<br/>';
-									$lblcnt++;
-								}
-							}
-							if ($lblcnt==0)
-							{
-								echo 'Momentan befinden sich keine startbaren Raketen in deinem Silo!';
-							}
-							echo '</td><th>Koordinaten:</th>
-							<td>
-								<input type="text"  onkeyup="'.$keyup_command.'" name="sx" id="sx" value="'.$coords[0].'" size="2" autocomplete="off" maxlength="2" /> / 
-								<input type="text"  onkeyup="'.$keyup_command.'" name="sy" id="sy" value="'.$coords[1].'" size="2" autocomplete="off" maxlength="2" /> :
-								<input type="text"  onkeyup="'.$keyup_command.'" name="cx" id="cx" value="'.$coords[2].'" size="2" autocomplete="off" maxlength="2" /> /
-								<input type="text"  onkeyup="'.$keyup_command.'" name="cy" id="cy" value="'.$coords[3].'" size="2" autocomplete="off" maxlength="2" /> :
-								<input type="text"  onkeyup="'.$keyup_command.'" name="p" id="p" value="'.$coords[4].'" size="2" autocomplete="off" maxlength="2" />
-							</td></tr>';
-							
-							// Bookmarkliste anzeigen
-							echo "<tr><th>Favorit wählen:</th><td><select id=\"bookmarkselect\" onchange=\"applyBookmark();\">";
-							if (count($bookmarks)>0)
-							{
-								$a=1;
-								echo "<option value=\"\">W&auml;hlen...</option>";
-								foreach ($bookmarks as $i=> $b)
-								{
-									echo "<option value=\"$i\"";
-									if ($csx==$b['cell_sx'] && $csy==$b['cell_sy'] && $ccx==$b['cell_cx'] && $ccy==$b['cell_cy'] && $psp==$b['planet_solsys_pos']) echo " selected=\"selected\"";
-									echo ">";
-									if ($b['automatic']==1) echo "Eigener Planet: ";
-									echo $b['cell_sx']."/".$b['cell_sy']." : ".$b['cell_cx']."/".$b['cell_cy']." : ".$b['planet_solsys_pos']." ".$b['planet_name'];
-									if ($b['bookmark_comment']!="") echo " (".stripslashes($b['bookmark_comment']).")";
-									echo "</option>";
-								}
-							}
-							else
-								echo "<option value=\"\">(Nichts vorhaden)</option>";
-							echo "</select></td></tr>";								
-							
-							echo '<tr><th>Zielinfo:</th><td id="targetinfo">
-							Wähle bitte ein Ziel...
-							</td></tr>				
-							<tr><th>Entfernung:</th><td id="distance">
-							-
-							</td></tr>				
-							<tr><th>Geschwindigkeit:</th><td id="speed">
-							-
-							</td></tr>				
-							<tr><th>Zeit:</th><td id="time">
-							-
-							</td></tr>				
-							</table><br/><input style="color:#f00" type="submit" name="launch" id="launchbutton" value="Starten" disabled="disabled" />';
-							echo '<input type="hidden" name="timeforflight" value="0" id="timeforflight" />
-							<input type="hidden" name="targetcell" value="0" id="targetcell" />
-							<input type="hidden" name="targetplanet" value="0" id="targetplanet" /></form>';
-							echo '<script type="text/javascript">'.$keyup_command.'</script>';
-							echo "<script type=\"text/javascript\">
-							function applyBookmark()
-							{
-								select_id=document.getElementById('bookmarkselect').selectedIndex;
-								select_val=document.getElementById('bookmarkselect').options[select_id].value;
-								a=1;
-								if (select_val!='')
-								{
-									switch(select_val)
-									{
-										";
-										foreach ($bookmarks as $i=> $b)
-										{
-											echo "case \"$i\":\n";
-											echo "document.getElementById('sx').value='".$b['cell_sx']."';\n";
-											echo "document.getElementById('sy').value='".$b['cell_sy']."';\n";
-											echo "document.getElementById('cx').value='".$b['cell_cx']."';\n";
-											echo "document.getElementById('cy').value='".$b['cell_cy']."';\n";
-											echo "document.getElementById('p').value='".$b['planet_solsys_pos']."';\n";
-											echo "break;\n";
-										}
-										echo "
-									}
-			
-								}
-								".$keyup_command."
-							}
-							</script>";								
-							
+							infobox_start("Kampfsperre");
+							echo "Es ist momentan nicht m&ouml;glich andere Spieler anzugreifen. Grund: ".text2html($conf['battleban']['p1'])."<br>Die Sperre dauert vom ".date("d.m.Y",$conf['battleban_time']['p1'])." um ".date("H:i",$conf['battleban_time']['p1'])." Uhr bis am ".date("d.m.Y",$conf['battleban_time']['p2'])." um ".date("H:i",$conf['battleban_time']['p2'])." Uhr!";
+							infobox_end();
 						}
 						else
 						{
-							echo "Baue zuerst dein Raketensilo aus um mehr Raketen zu starten (".MISSILE_SILO_FLIGHTS_PER_LEVEL." Angriff pro Stufe)!";
+							if ($fcnt < $max_flights)
+							{
+								
+								// Bookmarks laden
+								$bookmarks=array();
+								// Gespeicherte Bookmarks
+								$pres = dbquery("
+								SELECT
+				                    space_cells.cell_sx,
+				                    space_cells.cell_sy,
+				                    space_cells.cell_cx,
+				                    space_cells.cell_cy,
+				                    planets.planet_solsys_pos,
+				                    planets.planet_name,
+				                    target_bookmarks.bookmark_comment
+								FROM
+									".$db_table['target_bookmarks']."
+								INNER JOIN
+				       		".$db_table['planets']."
+				        ON 
+				        	target_bookmarks.bookmark_user_id=".$s['user']['id']."
+				         	AND target_bookmarks.bookmark_planet_id=planets.planet_id
+								INNER JOIN       		
+									".$db_table['space_cells']."
+								ON 
+									target_bookmarks.bookmark_cell_id=space_cells.cell_id
+								ORDER BY
+				                    target_bookmarks.bookmark_comment,
+				                    target_bookmarks.bookmark_cell_id,
+				                    target_bookmarks.bookmark_planet_id;");
+								if (mysql_num_rows($pres)>0)
+								{
+									while($parr=mysql_fetch_array($pres))
+									{
+										array_push(
+										$bookmarks,
+										array(
+										"cell_sx"=> $parr['cell_sx'],
+										"cell_sy"=> $parr['cell_sy'],
+										"cell_cx"=> $parr['cell_cx'],
+										"cell_cy"=> $parr['cell_cy'],
+										"planet_solsys_pos"=> $parr['planet_solsys_pos'],
+										"planet_name"=> $parr['planet_name'],
+										"automatic"=>0,
+										"bookmark_comment"=> $parr['bookmark_comment'])
+										);
+									}
+								}							
+								
+								if ($_GET['c']!='' && $_GET['h']!='' && md5(base64_decode($_GET['c'])) == $_GET['h'])
+								{
+									$coords = explode(":",base64_decode($_GET['c']));
+								}
+								else
+								{
+									$coords[0] = $c->sx;
+									$coords[1] = $c->sy;
+									$coords[2] = $c->cx;
+									$coords[3] = $c->cy;
+									$coords[4] = $c->solsys_pos;
+								}              
+				                       
+								$keyup_command = 'xajax_getFlightTargetInfo(xajax.getFormValues(\'targetForm\'),'.$c->sx.','.$c->sy.','.$c->cx.','.$c->cy.','.$c->solsys_pos.')';
+								echo '<form action="?page='.$page.'" method="post" id="targetForm">';
+								echo $cstr;
+								echo '<table class="tb" style="width:700px;">
+								<tr><th style="width:260px;">Raketen wählen</th><th colspan="2" style="width:440px;">Ziel wählen</th></tr>
+								<tr><td rowspan="6">';
+								$lblcnt=0;
+								foreach ($missilelist as $k => $v)
+								{
+									if ($v > 0 && $missiles[$k]['missile_launchable']==1)
+									{
+										echo '<input type="hidden" value="'.$missiles[$k]['missile_speed'].'" name="speed['.$k.']" />';
+										echo '<input type="hidden" value="'.$missiles[$k]['missile_range'].'" name="range['.$k.']" />';
+										echo '<input type="text" value="0" name="count['.$k.']" size="3" maxlength="'.strlen($v).'"  onkeyup="'.$keyup_command.'" autocomplete="off" />
+										'.$missiles[$k]['missile_name'].' ('.$v.' vorhanden)<br/>';
+										$lblcnt++;
+									}
+								}
+								if ($lblcnt==0)
+								{
+									echo 'Momentan befinden sich keine startbaren Raketen in deinem Silo!';
+								}
+								echo '</td><th>Koordinaten:</th>
+								<td>
+									<input type="text"  onkeyup="'.$keyup_command.'" name="sx" id="sx" value="'.$coords[0].'" size="2" autocomplete="off" maxlength="2" /> / 
+									<input type="text"  onkeyup="'.$keyup_command.'" name="sy" id="sy" value="'.$coords[1].'" size="2" autocomplete="off" maxlength="2" /> :
+									<input type="text"  onkeyup="'.$keyup_command.'" name="cx" id="cx" value="'.$coords[2].'" size="2" autocomplete="off" maxlength="2" /> /
+									<input type="text"  onkeyup="'.$keyup_command.'" name="cy" id="cy" value="'.$coords[3].'" size="2" autocomplete="off" maxlength="2" /> :
+									<input type="text"  onkeyup="'.$keyup_command.'" name="p" id="p" value="'.$coords[4].'" size="2" autocomplete="off" maxlength="2" />
+								</td></tr>';
+								
+								// Bookmarkliste anzeigen
+								echo "<tr><th>Favorit wählen:</th><td><select id=\"bookmarkselect\" onchange=\"applyBookmark();\">";
+								if (count($bookmarks)>0)
+								{
+									$a=1;
+									echo "<option value=\"\">W&auml;hlen...</option>";
+									foreach ($bookmarks as $i=> $b)
+									{
+										echo "<option value=\"$i\"";
+										if ($csx==$b['cell_sx'] && $csy==$b['cell_sy'] && $ccx==$b['cell_cx'] && $ccy==$b['cell_cy'] && $psp==$b['planet_solsys_pos']) echo " selected=\"selected\"";
+										echo ">";
+										if ($b['automatic']==1) echo "Eigener Planet: ";
+										echo $b['cell_sx']."/".$b['cell_sy']." : ".$b['cell_cx']."/".$b['cell_cy']." : ".$b['planet_solsys_pos']." ".$b['planet_name'];
+										if ($b['bookmark_comment']!="") echo " (".stripslashes($b['bookmark_comment']).")";
+										echo "</option>";
+									}
+								}
+								else
+									echo "<option value=\"\">(Nichts vorhaden)</option>";
+								echo "</select></td></tr>";								
+								
+								echo '<tr><th>Zielinfo:</th><td id="targetinfo">
+								Wähle bitte ein Ziel...
+								</td></tr>				
+								<tr><th>Entfernung:</th><td id="distance">
+								-
+								</td></tr>				
+								<tr><th>Geschwindigkeit:</th><td id="speed">
+								-
+								</td></tr>				
+								<tr><th>Zeit:</th><td id="time">
+								-
+								</td></tr>				
+								</table><br/><input style="color:#f00" type="submit" name="launch" id="launchbutton" value="Starten" disabled="disabled" />';
+								echo '<input type="hidden" name="timeforflight" value="0" id="timeforflight" />
+								<input type="hidden" name="targetcell" value="0" id="targetcell" />
+								<input type="hidden" name="targetplanet" value="0" id="targetplanet" /></form>';
+								echo '<script type="text/javascript">'.$keyup_command.'</script>';
+								echo "<script type=\"text/javascript\">
+								function applyBookmark()
+								{
+									select_id=document.getElementById('bookmarkselect').selectedIndex;
+									select_val=document.getElementById('bookmarkselect').options[select_id].value;
+									a=1;
+									if (select_val!='')
+									{
+										switch(select_val)
+										{
+											";
+											foreach ($bookmarks as $i=> $b)
+											{
+												echo "case \"$i\":\n";
+												echo "document.getElementById('sx').value='".$b['cell_sx']."';\n";
+												echo "document.getElementById('sy').value='".$b['cell_sy']."';\n";
+												echo "document.getElementById('cx').value='".$b['cell_cx']."';\n";
+												echo "document.getElementById('cy').value='".$b['cell_cy']."';\n";
+												echo "document.getElementById('p').value='".$b['planet_solsys_pos']."';\n";
+												echo "break;\n";
+											}
+											echo "
+										}
+				
+									}
+									".$keyup_command."
+								}
+								</script>";								
+								
+							}
+							else
+							{
+								echo "Baue zuerst dein Raketensilo aus um mehr Raketen zu starten (".MISSILE_SILO_FLIGHTS_PER_LEVEL." Angriff pro Stufe)!";
+							}
 						}
 					}
 				}

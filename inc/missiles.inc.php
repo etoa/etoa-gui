@@ -7,6 +7,71 @@
 	*/
 	function missile_battle($fid)
 	{
+		global $db_table, $conf;
+		
+  	// Kampf abbrechen und Raketen zum Startplanet schicken wenn Kampfsperre aktiv ist
+  	if ($conf['battleban']['v']!=0 && $conf['battleban_time']['p1']<=time() && $conf['battleban_time']['p2']>time())
+		{
+			// Lädt Flugdaten
+			$res = dbquery("
+			SELECT
+				flight_planet_from
+			FROM
+				missile_flights
+			WHERE
+				flight_id=".$fid."
+			;");		
+			if (mysql_num_rows($res)>0)
+			{
+				$arr=mysql_fetch_array($res);
+				
+				// Transferiert Raketen zum Startplanet
+				$mres = dbquery("
+				SELECT
+					obj_missile_id, 
+					obj_cnt
+				FROM
+					missile_flights_obj
+				WHERE
+					obj_flight_id='".$fid."'");
+				while($marr=mysql_fetch_array($mres))
+				{
+					dbquery("
+					UPDATE
+						missilelist
+					SET
+						missilelist_count=missilelist_count+".$marr['obj_cnt']."
+					WHERE
+						missilelist_planet_id=".$arr['flight_planet_from']."							
+						AND missilelist_missile_id=".$marr['obj_missile_id']."								
+					;");
+				}
+				
+				// Löscht Flug
+				dbquery("
+				DELETE FROM 
+					missile_flights
+				WHERE
+					flight_id=".$fid."
+				;");
+			
+				// Löscht Raketen
+				dbquery("
+				DELETE FROM 
+					missile_flights_obj
+				WHERE
+					obj_flight_id=".$fid."
+				;");
+				
+				// Schickt Nachricht an den Angreifer
+				$msg = $conf['battleban_arrival_text']['p2'];
+				$uid = get_user_id_by_planet($arr['flight_planet_from']);
+				send_msg($uid,SHIP_WAR_MSG_CAT_ID,'Ergebnis des Raketenangriffs',$msg);
+			}
+			
+			return;
+		}		
+		
 		$res = dbquery("
 		SELECT
 			flight_planet_to,
@@ -329,7 +394,7 @@
 					");
 				}
 				 
-				send_msg($fuid,SHIP_WAR_MSG_CAT_ID,'Ergebniss des Raketenangriffs',$msg_a);
+				send_msg($fuid,SHIP_WAR_MSG_CAT_ID,'Ergebnis des Raketenangriffs',$msg_a);
 				send_msg($tuid,SHIP_WAR_MSG_CAT_ID,'Raketenangriff',$msg_d);				
 			}			
 		}		

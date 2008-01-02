@@ -79,17 +79,17 @@
 			SELECT
 				*
 			FROM
-                ".$db_table['planets']." AS p,
-                ".$db_table['space_cells']." AS c,
-                ".$db_table['planet_types']." AS t
+        ".$db_table['planets']." AS p,
+        ".$db_table['space_cells']." AS c,
+        ".$db_table['planet_types']." AS t
 			WHERE
-                t.type_id=p.planet_type_id
-                AND p.planet_solsys_id=c.cell_id
-                AND c.cell_sx='".$_SESSION['haven'][$tvar]['sx']."'
-                AND c.cell_sy='".$_SESSION['haven'][$tvar]['sy']."'
-                AND c.cell_cx='".$_SESSION['haven'][$tvar]['cx']."'
-                AND c.cell_cy='".$_SESSION['haven'][$tvar]['cy']."'
-                AND p.planet_solsys_pos='".$_SESSION['haven'][$tvar]['p']."';");
+        t.type_id=p.planet_type_id
+        AND p.planet_solsys_id=c.cell_id
+        AND c.cell_sx='".$_SESSION['haven'][$tvar]['sx']."'
+        AND c.cell_sy='".$_SESSION['haven'][$tvar]['sy']."'
+        AND c.cell_cx='".$_SESSION['haven'][$tvar]['cx']."'
+        AND c.cell_cy='".$_SESSION['haven'][$tvar]['cy']."'
+        AND p.planet_solsys_pos='".$_SESSION['haven'][$tvar]['p']."';");
 		}
 
 		// Check if planet exists
@@ -215,273 +215,271 @@
 				}
 				else
 				{
+          if ($_SESSION['haven']['fleet']['can_recycle'] && ($parr['planet_wf_metal']>0 || $parr['planet_wf_crystal']>0 || $parr['planet_wf_plastic']>0))
+              $addrow=1;
+          elseif ($_SESSION['haven']['fleet']['can_collect_gas']==1 && $parr['type_collect_gas']==1)
+              $addrow=1;
+          else
+              $addrow=0;
 
+          infobox_start("Aktion und Waren w&auml;hlen",1);
 
-                    if ($_SESSION['haven']['fleet']['can_recycle'] && ($parr['planet_wf_metal']>0 || $parr['planet_wf_crystal']>0 || $parr['planet_wf_plastic']>0))
-                        $addrow=1;
-                    elseif ($_SESSION['haven']['fleet']['can_collect_gas']==1 && $parr['type_collect_gas']==1)
-                        $addrow=1;
-                    else
-                        $addrow=0;
+          echo "<tr><td class=\"tbltitle\" width=\"25%\">Startplanet:</td><td class=\"tbldata\" width=\"75%\">".$c->getString()."</td></tr>";
+          if ($wormhole)
+          {
+              echo "<tr><td class=\"tbltitle\" width=\"25%\">Wurmloch-Eintrittspunkt:</td><td class=\"tbldata\" width=\"75%\">".$_SESSION['haven']['target']['sx']."/".$_SESSION['haven']['target']['sy']." : ".$_SESSION['haven']['target']['cx']."/".$_SESSION['haven']['target']['cy']."</td></tr>";
+              echo "<tr><td class=\"tbltitle\" width=\"25%\">Wurmloch-Austrittspunkt:</td><td class=\"tbldata\" width=\"75%\">$sx1/$sy1 : $cx1/$cy1</td></tr>";
+          }
 
-                    infobox_start("Aktion und Waren w&auml;hlen",1);
+          echo "<tr><td class=\"tbltitle\" width=\"40%\">Ziel:</td>";
+          if ($parr['planet_name']!="")
+              echo "<td class=\"tbldata\" width=\"60%\">".$parr['planet_name']." (".$parr['cell_sx']."/".$parr['cell_sy']." : ".$parr['cell_cx']."/".$parr['cell_cy']." : ".$parr['planet_solsys_pos'].")</td></tr>";
+          elseif ($parr['cell_nebula']==1)
+              echo "<td class=\"tbldata\" width=\"60%\">Intergalaktischer Nebel (".$parr['cell_sx']."/".$parr['cell_sy']." : ".$parr['cell_cx']."/".$parr['cell_cy'].")</td></tr>";
+          elseif ($parr['cell_asteroid']==1)
+              echo "<td class=\"tbldata\" width=\"60%\">Asteroidenfeld (".$parr['cell_sx']."/".$parr['cell_sy']." : ".$parr['cell_cx']."/".$parr['cell_cy'].")</td></tr>";
+          else
+              echo "<td class=\"tbldata\" width=\"60%\">".$parr['cell_sx']."/".$parr['cell_sy']." : ".$parr['cell_cx']."/".$parr['cell_cy']." : ".$parr['planet_solsys_pos']."</td></tr>";
+          if ($parr['planet_id']>0)
+          {
+              echo "<tr><td class=\"tbltitle\" width=\"40%\">Besitzer:</td>";
+              if ($parr['planet_user_id']!=0)
+              {
+                  if ($parr['planet_user_id']==$s['user']['id'])
+                      echo "<td class=\"tbldata\" width=\"60%\"><i>Dieser Planet geh&ouml;rt dir</i></td></tr>";
+                  else
+                      echo "<td class=\"tbldata\" width=\"60%\">".get_user_nick($parr['planet_user_id'])."</td></tr>";
+              }
+              else
+                  echo "<td class=\"tbldata\" width=\"60%\"><i>Unbewohnter Planet</i></td></tr>";
+          }
+          echo "<tr><td class=\"tbltitle\" width=\"40%\">Geschwindigkeit:</td><td class=\"tbldata\" width=\"60%\">".nf($speed)." AE/h</td></tr>";
+          echo "<tr><td class=\"tbltitle\" width=\"40%\">Entfernung:</td><td class=\"tbldata\" width=\"60%\">".nf($_SESSION['haven']['fleettotal']['flight_distance'])." AE</td></tr>";
+          echo "<tr><td class=\"tbltitle\" width=\"40%\">Flugdauer:</td><td class=\"tbldata\" width=\"60%\">".tf($_SESSION['haven']['fleettotal']['flight_duration'])."</td></tr>";
+          echo "<tr><td class=\"tbltitle\" width=\"40%\">Treibstoff:</td><td class=\"tbldata\" width=\"60%\">".nf($_SESSION['haven']['fleettotal']['flight_costs'])." ".$rsc['fuel']."</td></tr>";
+          echo "<tr><td class=\"tbltitle\" width=\"40%\">Nahrung:</td><td class=\"tbldata\" width=\"60%\">".nf($_SESSION['haven']['fleettotal']['flight_food'])." ".$rsc['food']."</td></tr>";
 
-                    echo "<tr><td class=\"tbltitle\" width=\"25%\">Startplanet:</td><td class=\"tbldata\" width=\"75%\">".$c->getString()."</td></tr>";
-                    if ($wormhole)
-                    {
-                        echo "<tr><td class=\"tbltitle\" width=\"25%\">Wurmloch-Eintrittspunkt:</td><td class=\"tbldata\" width=\"75%\">".$_SESSION['haven']['target']['sx']."/".$_SESSION['haven']['target']['sy']." : ".$_SESSION['haven']['target']['cx']."/".$_SESSION['haven']['target']['cy']."</td></tr>";
-                        echo "<tr><td class=\"tbltitle\" width=\"25%\">Wurmloch-Austrittspunkt:</td><td class=\"tbldata\" width=\"75%\">$sx1/$sy1 : $cx1/$cy1</td></tr>";
-                    }
+          //
+          // Aktionen
+          //
+          $launchable=true;
+          if ($_SESSION['haven']['fleet']['can_recycle']==1  && ($parr['planet_wf_metal']>0 || $parr['planet_wf_crystal']>0 || $parr['planet_wf_plastic']>0))
+          	$wreckage=true;
+          else
+          	$wreckage=false;
 
-                    echo "<tr><td class=\"tbltitle\" width=\"40%\">Ziel:</td>";
-                    if ($parr['planet_name']!="")
-                        echo "<td class=\"tbldata\" width=\"60%\">".$parr['planet_name']." (".$parr['cell_sx']."/".$parr['cell_sy']." : ".$parr['cell_cx']."/".$parr['cell_cy']." : ".$parr['planet_solsys_pos'].")</td></tr>";
-                    elseif ($parr['cell_nebula']==1)
-                        echo "<td class=\"tbldata\" width=\"60%\">Intergalaktischer Nebel (".$parr['cell_sx']."/".$parr['cell_sy']." : ".$parr['cell_cx']."/".$parr['cell_cy'].")</td></tr>";
-                    elseif ($parr['cell_asteroid']==1)
-                        echo "<td class=\"tbldata\" width=\"60%\">Asteroidenfeld (".$parr['cell_sx']."/".$parr['cell_sy']." : ".$parr['cell_cx']."/".$parr['cell_cy'].")</td></tr>";
-                    else
-                        echo "<td class=\"tbldata\" width=\"60%\">".$parr['cell_sx']."/".$parr['cell_sy']." : ".$parr['cell_cx']."/".$parr['cell_cy']." : ".$parr['planet_solsys_pos']."</td></tr>";
-                    if ($parr['planet_id']>0)
-                    {
-                        echo "<tr><td class=\"tbltitle\" width=\"40%\">Besitzer:</td>";
-                        if ($parr['planet_user_id']!=0)
-                        {
-                            if ($parr['planet_user_id']==$s['user']['id'])
-                                echo "<td class=\"tbldata\" width=\"60%\"><i>Dieser Planet geh&ouml;rt dir</i></td></tr>";
-                            else
-                                echo "<td class=\"tbldata\" width=\"60%\">".get_user_nick($parr['planet_user_id'])."</td></tr>";
-                        }
-                        else
-                            echo "<td class=\"tbldata\" width=\"60%\"><i>Unbewohnter Planet</i></td></tr>";
-                    }
-                    echo "<tr><td class=\"tbltitle\" width=\"40%\">Geschwindigkeit:</td><td class=\"tbldata\" width=\"60%\">".nf($speed)." AE/h</td></tr>";
-                    echo "<tr><td class=\"tbltitle\" width=\"40%\">Entfernung:</td><td class=\"tbldata\" width=\"60%\">".nf($_SESSION['haven']['fleettotal']['flight_distance'])." AE</td></tr>";
-                    echo "<tr><td class=\"tbltitle\" width=\"40%\">Flugdauer:</td><td class=\"tbldata\" width=\"60%\">".tf($_SESSION['haven']['fleettotal']['flight_duration'])."</td></tr>";
-                    echo "<tr><td class=\"tbltitle\" width=\"40%\">Treibstoff:</td><td class=\"tbldata\" width=\"60%\">".nf($_SESSION['haven']['fleettotal']['flight_costs'])." ".$rsc['fuel']."</td></tr>";
-                    echo "<tr><td class=\"tbltitle\" width=\"40%\">Nahrung:</td><td class=\"tbldata\" width=\"60%\">".nf($_SESSION['haven']['fleettotal']['flight_food'])." ".$rsc['food']."</td></tr>";
+          echo "<tr><td class=\"tbltitle\" width=\"40%\" valign=\"top\">Aktion:</td>";
+          echo "<td class=\"tbldata\">";
+          
+          // Start & Ziel sind identisch
+          if ($c->id==$parr['planet_id'])
+          {
+              if ($wreckage)
+                  echo "<input type=\"radio\" name=\"fleet_action\" value=\"wo\" checked=\"checked\"> Tr&uuml;mmer einsammeln<br/>";
+              elseif ($_SESSION['haven']['fleet']['can_recycle']==1  && ($parr['planet_wf_metal']==0 && $parr['planet_wf_crystal']==0 && $parr['planet_wf_plastic']==0))
+              {
+                  echo "<i>Keine Aktion m&ouml;glich! Es existiert kein Tr&uuml;mmerfeld!</i><br/>";
+                  $launchable=false;
+              }
+              else
+              {
+                  echo  "<i>Keine Aktion m&ouml;glich! Dies ist der selbe Planet wie der Startplanet und deine Flotte kann auch nicht ein Tr&uuml;mmerfeld abbauen</i><br/>";
+                  $launchable=false;
+              }
+          }
+          // Eigener Planet
+          elseif ($parr['planet_user_id']==$s['user']['id'])
+          {
+             echo "<input type=\"radio\" name=\"fleet_action\" value=\"to\" checked=\"checked\"> Waren transportieren<br/>";
+             echo "<input type=\"radio\" name=\"fleet_action\" value=\"fo\"> Waren abholen<br/>";
+             echo "<input type=\"radio\" name=\"fleet_action\" value=\"po\"> Flotte stationieren<br/>";
+             if ($wreckage)
+             {
+               echo "<input type=\"radio\" name=\"fleet_action\" value=\"wo\" checked=\"checked\"> Tr&uuml;mmer einsammeln<br/>";
+             }
+          }
+          // Planet eines anderen Spielers
+          elseif ($parr['planet_user_id']>0)
+          {
+              $ures = dbquery("
+              SELECT
+                  u.user_nick,
+                  u.user_hmode_from,
+                  u.user_hmode_to,
+                  u.user_points,
+                  u.user_alliance_id,
+                  u.user_blocked_from,
+                  u.user_blocked_to,
+                  u.user_last_online
+              FROM
+              	".$db_table['users']." AS u
+              WHERE
+              	u.user_id='".$parr['planet_user_id']."';");
+              $uarr = mysql_fetch_array($ures);
 
-                    //
-                    // Aktionen
-                    //
-                    $launchable=true;
-                    if ($_SESSION['haven']['fleet']['can_recycle']==1  && ($parr['planet_wf_metal']>0 || $parr['planet_wf_crystal']>0 || $parr['planet_wf_plastic']>0))
-                    	$wreckage=true;
-                    else
-                    	$wreckage=false;
+              //Fragt ob Krieg zwischen den Allianzen herrscht
+              $war=dbquery("
+              SELECT
+              	*
+              FROM
+              	".$db_table['alliance_bnd']."
+              WHERE
+                  ((alliance_bnd_alliance_id1='".$s['user']['alliance_id']."'
+                      AND alliance_bnd_alliance_id2='".$uarr['user_alliance_id']."')
+                  OR (alliance_bnd_alliance_id2='".$s['user']['alliance_id']."'
+                      AND alliance_bnd_alliance_id1='".$uarr['user_alliance_id']."'))
+                  AND alliance_bnd_level='3';");
 
-                    echo "<tr><td class=\"tbltitle\" width=\"40%\" valign=\"top\">Aktion:</td>";
-                    echo "<td class=\"tbldata\">";
-                    // Start & Ziel sind identisch
-                    if ($c->id==$parr['planet_id'])
-                    {
-                        if ($wreckage)
-                            echo "<input type=\"radio\" name=\"fleet_action\" value=\"wo\" checked=\"checked\"> Tr&uuml;mmer einsammeln<br/>";
-                        elseif ($_SESSION['haven']['fleet']['can_recycle']==1  && ($parr['planet_wf_metal']==0 && $parr['planet_wf_crystal']==0 && $parr['planet_wf_plastic']==0))
-                        {
-                            echo "<i>Keine Aktion m&ouml;glich! Es existiert kein Tr&uuml;mmerfeld!</i><br/>";
-                            $launchable=false;
-                        }
-                        else
-                        {
-                            echo  "<i>Keine Aktion m&ouml;glich! Dies ist der selbe Planet wie der Startplanet und deine Flotte kann auch nicht ein Tr&uuml;mmerfeld abbauen</i><br/>";
-                            $launchable=false;
-                        }
-                    }
-                    // Eigener Planet
-                    elseif ($parr['planet_user_id']==$s['user']['id'])
-                    {
-                       echo "<input type=\"radio\" name=\"fleet_action\" value=\"to\" checked=\"checked\"> Waren transportieren<br/>";
-                       echo "<input type=\"radio\" name=\"fleet_action\" value=\"fo\"> Waren abholen<br/>";
-                       echo "<input type=\"radio\" name=\"fleet_action\" value=\"po\"> Flotte stationieren<br/>";
-                       if ($wreckage)
-                       {
-	                       echo "<input type=\"radio\" name=\"fleet_action\" value=\"wo\" checked=\"checked\"> Tr&uuml;mmer einsammeln<br/>";
-	                     }
-                    }
-                    // Planet eines anderen Spielers
-                    elseif ($parr['planet_user_id']>0)
-                    {
-                        $ures = dbquery("
-                        SELECT
-                            u.user_nick,
-                            u.user_hmode_from,
-                            u.user_hmode_to,
-                            u.user_points,
-                            u.user_alliance_id,
-                            u.user_blocked_from,
-                            u.user_blocked_to,
-                            u.user_last_online
-                        FROM
-                        	".$db_table['users']." AS u
-                        WHERE
-                        	u.user_id='".$parr['planet_user_id']."';");
-                        $uarr = mysql_fetch_array($ures);
+              // Urlaub prüfen
+              if ($uarr['user_hmode_from']!=0 && $uarr['user_hmode_to']!=0)
+              {
+              	if (!$wreckage)
+              	{
+                  echo "<i>Der Spieler <b>".$uarr['user_nick']."</b> ist im Urlaub und darum k&ouml;nnnen ihm keine Flotten geschickt werden!</i>";
+                  $launchable=false;
+              	}
+              }
+              // Anfängerschutz überprüfen (ausgeschlossen sind inaktive,gesperrte, oder kriegsgegner)
+              elseif ( ($s['user']['points']*USER_ATTACK_PERCENTAGE<=$uarr['user_points'] && $s['user']['points']/USER_ATTACK_PERCENTAGE>=$uarr['user_points']) || $uarr['user_last_online']<INACTIVE_TIME || ($uarr['user_blocked_from']>0 && $uarr['user_blocked_from']<time() && $uarr['user_blocked_to']>time()) || mysql_num_rows($war)>0)
+              {
+                  echo "<input type=\"radio\" name=\"fleet_action\" value=\"so\" checked=\"checked\"> Ausspionieren<br/>";
 
-                        //Fragt ob Krieg zwischen den Allianzen herrscht
-                        $war=dbquery("
-                        SELECT
-                        	*
-                        FROM
-                        	".$db_table['alliance_bnd']."
-                        WHERE
-                            ((alliance_bnd_alliance_id1='".$s['user']['alliance_id']."'
-                                AND alliance_bnd_alliance_id2='".$uarr['user_alliance_id']."')
-                            OR (alliance_bnd_alliance_id2='".$s['user']['alliance_id']."'
-                                AND alliance_bnd_alliance_id1='".$uarr['user_alliance_id']."'))
-                            AND alliance_bnd_level='3';");
+                  if ($conf['battleban']['v']!=0 && $conf['battleban_time']['p1']<=time() && $conf['battleban_time']['p2']>time())
+                  {
+                  	echo "<div style=\"color:red;\" ".tm("Kampfsperre","<b>Von:</b> ".date("d.m.Y H:i",$conf['battleban_time']['p1'])."<br><b>Bis:</b> ".date("d.m.Y H:i",$conf['battleban_time']['p2'])."<br><b>Grund:</b> ".text2html($conf['battleban']['p1'])."").">Angriffssperre aktiv!</div>";
+                  }
+                  else
+                  {
+                      echo "<input type=\"radio\" name=\"fleet_action\" value=\"ao\"> Angreifen<br/>";
+                      if ($_SESSION['haven']['fleet']['can_invade']==1 && $parr['planet_user_main']==0)
+                          echo "<input type=\"radio\" name=\"fleet_action\" value=\"io\"> &Uuml;bernehmen<br/>";
+                      if ($_SESSION['haven']['fleet']['can_bomb']==1)
+                          echo "<input type=\"radio\" name=\"fleet_action\" value=\"bo\"> Bombardieren<br/>";
+                      if ($_SESSION['haven']['fleet']['can_antrax']==1)
+                          echo "<input type=\"radio\" name=\"fleet_action\" value=\"xo\"> Giftgas<br/>";
+                      if ($_SESSION['haven']['fleet']['can_tarn']==1)
+                          echo "<input type=\"radio\" name=\"fleet_action\" value=\"vo\"> Tarnangriff<br/>";
+                      if ($_SESSION['haven']['fleet']['can_fake']==1)
+                          echo "<input type=\"radio\" name=\"fleet_action\" value=\"eo\"> Fakeangriff<br/>";
+                      if ($_SESSION['haven']['fleet']['can_steal']==1)
+                          echo "<input type=\"radio\" name=\"fleet_action\" value=\"lo\"> Spionageangriff<br/>";
+                      if ($_SESSION['haven']['fleet']['can_tf']==1)
+                          echo "<input type=\"radio\" name=\"fleet_action\" value=\"zo\"> Tr&uuml;mmerfeld erstellen<br/>";
+                      if ($_SESSION['haven']['fleet']['can_deactivade']==1)
+                          echo "<input type=\"radio\" name=\"fleet_action\" value=\"do\"> Deaktivierungsbombe<br/>";
+                      if ($_SESSION['haven']['fleet']['can_antrax_food']==1)
+                          echo "<input type=\"radio\" name=\"fleet_action\" value=\"ho\"> Antrax<br/>";
+                  }
+              }
+              else
+              {
+              	echo "Anf&auml;ngerschutz aktiv! Die Punkte des Users m&uuml;ssen zwischen ".(USER_ATTACK_PERCENTAGE*100)."% und ".(100/USER_ATTACK_PERCENTAGE)."% von deinen Punkten liegen!<br/>Es k&ouml;nnen keine Flotten zu diesem Spieler gesendet werden";
+              
+              }
+              
+              if ($wreckage)
+              {
+                  echo "<input type=\"radio\" name=\"fleet_action\" value=\"wo\"> Tr&uuml;mmer einsammeln<br/>";
+              }
+          }
+          // Unbewohnter Planet
+          elseif ($parr['planet_user_id']==0)
+          {
+              // Asteroidenfeld
+              if ($_SESSION['haven']['fleet']['can_asteroid']==1 && mysql_num_rows(dbquery("SELECT cell_id FROM ".$db_table['space_cells']." WHERE cell_id=".$parr['cell_id']." AND cell_asteroid=1 AND cell_solsys_num_planets=0 AND  cell_nebula=0"))>0)
+              {
+                  echo "<input type=\"radio\" name=\"fleet_action\" value=\"yo\" checked=\"checked\"> Asteroiden sammeln<br/>";
+              }
+              elseif ($_SESSION['haven']['fleet']['can_collect_gas']==1 && mysql_num_rows(dbquery("SELECT cell_id FROM ".$db_table['space_cells']." WHERE cell_id=".$parr['cell_id']." AND cell_nebula=1 AND cell_solsys_num_planets=0 AND cell_asteroid=0"))>0)
+              {
+                  echo "<input type=\"radio\" name=\"fleet_action\" value=\"no\" checked=\"checked\"> Nebel erkunden<br/>";
+              }
+              elseif ($_SESSION['haven']['fleet']['can_collect_gas']==1 && $parr['type_collect_gas']==1)
+              {
+                  echo "<input type=\"radio\" name=\"fleet_action\" value=\"go\" checked=\"checked\"> Gas saugen<br/>";
+              }
+              elseif ($wreckage)
+              {
+                  echo "<input type=\"radio\" name=\"fleet_action\" value=\"wo\" checked=\"checked\"> Tr&uuml;mmer einsammeln<br/>";
+              }
+              elseif ($parr['type_habitable']==0)
+              {
+                  echo "<i>Kann keine Kolonie errichten, da der Zielplanet unbewohnbar ist!</i><br/>";
+                  $launchable=false;
+              }
+              elseif ($_SESSION['haven']['fleet']['can_colonialize']==1)
+              {
+                  if (mysql_num_rows(dbquery("SELECT planet_id FROM ".$db_table['planets']." WHERE planet_user_id='".$s['user']['id']."';"))<=USER_MAX_PLANETS)
+                      echo "<input type=\"radio\" name=\"fleet_action\" value=\"ko\" checked=\"checked\"> Kolonie errichten<br/>";
+                  else
+                  {
+                      echo "<i>Kann keine weitere Kolonie errichten, du hast bereits die Maximalanzahl von ".USER_MAX_PLANETS." Planeten!</i><br/>";
+                      $launchable=false;
+                  }
+              }
+              else
+              {
+                  echo "<i>Keine Aktion m&ouml;glich!</i><br/>";
+                  $launchable=false;
+              }
+          }
+          echo "</td></tr>";
 
-                        // Urlaub prüfen
-                        if ($uarr['user_hmode_from']!=0 && $uarr['user_hmode_to']!=0)
-                        {
-                        	if (!$wreckage)
-                        	{
-                            echo "<i>Der Spieler <b>".$uarr['user_nick']."</b> ist im Urlaub und darum k&ouml;nnnen ihm keine Flotten geschickt werden!</i>";
-                            $launchable=false;
-                        	}
-                        }
-                        // Anfängerschutz überprüfen (ausgeschlossen sind inaktive,gesperrte, oder kriegsgegner)
-                        elseif ( ($s['user']['points']*USER_ATTACK_PERCENTAGE<=$uarr['user_points'] && $s['user']['points']/USER_ATTACK_PERCENTAGE>=$uarr['user_points']) || $uarr['user_last_online']<INACTIVE_TIME || ($uarr['user_blocked_from']>0 && $uarr['user_blocked_from']<time() && $uarr['user_blocked_to']>time()) || mysql_num_rows($war)>0)
-                        {
-                            echo "<input type=\"radio\" name=\"fleet_action\" value=\"so\" checked=\"checked\"> Ausspionieren<br/>";
+          // Waren einladen
+          if ($launchable)
+          {
 
-														// && $conf['battleban_time']['p1']<time() && $conf['battleban_time']['p2']>time()
-                            if ($conf['battleban']['v']!=0)
-                            {
-                            	echo "<div style=\"color:red;\">Angriffssperre aktiv!</div>";
-                            }
-                            else
-                            {
-                                echo "<input type=\"radio\" name=\"fleet_action\" value=\"ao\"> Angreifen<br/>";
-                                if ($_SESSION['haven']['fleet']['can_invade']==1 && $parr['planet_user_main']==0)
-                                    echo "<input type=\"radio\" name=\"fleet_action\" value=\"io\"> &Uuml;bernehmen<br/>";
-                                if ($_SESSION['haven']['fleet']['can_bomb']==1)
-                                    echo "<input type=\"radio\" name=\"fleet_action\" value=\"bo\"> Bombardieren<br/>";
-                                if ($_SESSION['haven']['fleet']['can_antrax']==1)
-                                    echo "<input type=\"radio\" name=\"fleet_action\" value=\"xo\"> Giftgas<br/>";
-                                if ($_SESSION['haven']['fleet']['can_tarn']==1)
-                                    echo "<input type=\"radio\" name=\"fleet_action\" value=\"vo\"> Tarnangriff<br/>";
-                                if ($_SESSION['haven']['fleet']['can_fake']==1)
-                                    echo "<input type=\"radio\" name=\"fleet_action\" value=\"eo\"> Fakeangriff<br/>";
-                                if ($_SESSION['haven']['fleet']['can_steal']==1)
-                                    echo "<input type=\"radio\" name=\"fleet_action\" value=\"lo\"> Spionageangriff<br/>";
-                                if ($_SESSION['haven']['fleet']['can_tf']==1)
-                                    echo "<input type=\"radio\" name=\"fleet_action\" value=\"zo\"> Tr&uuml;mmerfeld erstellen<br/>";
-                                if ($_SESSION['haven']['fleet']['can_deactivade']==1)
-                                    echo "<input type=\"radio\" name=\"fleet_action\" value=\"do\"> Deaktivierungsbombe<br/>";
-                                if ($_SESSION['haven']['fleet']['can_antrax_food']==1)
-                                    echo "<input type=\"radio\" name=\"fleet_action\" value=\"ho\"> Antrax<br/>";
-                            }
-                        }
-                        else
-                        {
-                        	echo "Anf&auml;ngerschutz aktiv! Die Punkte des Users m&uuml;ssen zwischen ".(USER_ATTACK_PERCENTAGE*100)."% und ".(100/USER_ATTACK_PERCENTAGE)."% von deinen Punkten liegen!<br/>Es k&ouml;nnen keine Flotten zu diesem Spieler gesendet werden";
-                        
-                        }
-                        
-                        if ($wreckage)
-                        {
-                            echo "<input type=\"radio\" name=\"fleet_action\" value=\"wo\"> Tr&uuml;mmer einsammeln<br/>";
-                        }
-                    }
-                    // Unbewohnter Planet
-                    elseif ($parr['planet_user_id']==0)
-                    {
-                        // Asteroidenfeld
-                        if ($_SESSION['haven']['fleet']['can_asteroid']==1 && mysql_num_rows(dbquery("SELECT cell_id FROM ".$db_table['space_cells']." WHERE cell_id=".$parr['cell_id']." AND cell_asteroid=1 AND cell_solsys_num_planets=0 AND  cell_nebula=0"))>0)
-                        {
-                            echo "<input type=\"radio\" name=\"fleet_action\" value=\"yo\" checked=\"checked\"> Asteroiden sammeln<br/>";
-                        }
-                        elseif ($_SESSION['haven']['fleet']['can_collect_gas']==1 && mysql_num_rows(dbquery("SELECT cell_id FROM ".$db_table['space_cells']." WHERE cell_id=".$parr['cell_id']." AND cell_nebula=1 AND cell_solsys_num_planets=0 AND cell_asteroid=0"))>0)
-                        {
-                            echo "<input type=\"radio\" name=\"fleet_action\" value=\"no\" checked=\"checked\"> Nebel erkunden<br/>";
-                        }
-                        elseif ($_SESSION['haven']['fleet']['can_collect_gas']==1 && $parr['type_collect_gas']==1)
-                        {
-                            echo "<input type=\"radio\" name=\"fleet_action\" value=\"go\" checked=\"checked\"> Gas saugen<br/>";
-                        }
-                        elseif ($wreckage)
-                        {
-                            echo "<input type=\"radio\" name=\"fleet_action\" value=\"wo\" checked=\"checked\"> Tr&uuml;mmer einsammeln<br/>";
-                        }
-                        elseif ($parr['type_habitable']==0)
-                        {
-                            echo "<i>Kann keine Kolonie errichten, da der Zielplanet unbewohnbar ist!</i><br/>";
-                            $launchable=false;
-                        }
-                        elseif ($_SESSION['haven']['fleet']['can_colonialize']==1)
-                        {
-                            if (mysql_num_rows(dbquery("SELECT planet_id FROM ".$db_table['planets']." WHERE planet_user_id='".$s['user']['id']."';"))<=USER_MAX_PLANETS)
-                                echo "<input type=\"radio\" name=\"fleet_action\" value=\"ko\" checked=\"checked\"> Kolonie errichten<br/>";
-                            else
-                            {
-                                echo "<i>Kann keine weitere Kolonie errichten, du hast bereits die Maximalanzahl von ".USER_MAX_PLANETS." Planeten!</i><br/>";
-                                $launchable=false;
-                            }
-                        }
-                        else
-                        {
-                            echo "<i>Keine Aktion m&ouml;glich!</i><br/>";
-                            $launchable=false;
-                        }
-                    }
-                    echo "</td></tr>";
+          	$_SESSION['haven']['fleet']['res_capacity'] = $_SESSION['haven']['fleet']['total_capacity'] - $_SESSION['haven']['fleettotal']['flight_costs'] - $_SESSION['haven']['fleettotal']['flight_food'];
+            echo "<tr>
+            				<td class=\"tbltitle\" width=\"40%\" rowspan=\"5\" valign=\"top\">
+            					Waren mitnehmen:<br> (max. ".nf($_SESSION['haven']['fleet']['res_capacity'])." t)<br/><a href=\"javascript:;\" onclick=\"fulload(".strlen($_SESSION['haven']['fleet']['res_capacity']).");\">Alles einladen</a>
+            				</td>
+            				<td class=\"tbldata\" width=\"60%\">
+            					<input type=\"text\" name=\"fleet_res_metal\" id=\"fleet_res_metal\" value=\"0\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value, ".$_SESSION['haven']['fleet']['res_capacity'].", '', '');\">&nbsp;t ".$rsc['metal']."
+            				</td>
+            			</tr>
+            				<td class=\"tbldata\" width=\"60%\">
+            					<input type=\"text\" name=\"fleet_res_crystal\" id=\"fleet_res_crystal\" value=\"0\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value, ".$_SESSION['haven']['fleet']['res_capacity'].", '', '');\">&nbsp;t ".$rsc['crystal']."
+            				</td>
+            			</tr>
+            				<td class=\"tbldata\" width=\"60%\">
+            					<input type=\"text\" name=\"fleet_res_plastic\" id=\"fleet_res_plastic\" value=\"0\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value, ".$_SESSION['haven']['fleet']['res_capacity'].", '', '');\">&nbsp;t ".$rsc['plastic']."
+            				</td>
+            			</tr>
+            				<td class=\"tbldata\" width=\"60%\">
+            					<input type=\"text\" name=\"fleet_res_fuel\" id=\"fleet_res_fuel\" value=\"0\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value, ".$_SESSION['haven']['fleet']['res_capacity'].", '', '');\">&nbsp;t ".$rsc['fuel']."
+            				</td>
+            			</tr>
+            				<td class=\"tbldata\" width=\"60%\">
+            					<input type=\"text\" name=\"fleet_res_food\" id=\"fleet_res_food\" value=\"0\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value, ".$_SESSION['haven']['fleet']['res_capacity'].", '', '');\">&nbsp;t ".$rsc['food']."
+            				</td>
+            			</tr>";
+            if ($_SESSION['haven']['fleet']['people_capacity']>0)
+            {
+              echo "<tr>
+                			<td class=\"tbltitle\" width=\"40%\" rowspan=\"1\" valign=\"top\">
+                				Bewohner mitnehmen: (max. ".nf($_SESSION['haven']['fleet']['people_capacity']).")<br/>
+                			</td>
+                			<td class=\"tbldata\" width=\"60%\">
+                				<input type=\"text\" name=\"fleet_res_people\" id=\"fleet_res_people\" value=\"0\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value, ".$_SESSION['haven']['fleet']['people_capacity'].", '', '');\">&nbsp; Bewohner
+                			</td>
+                		</tr>";
+            }
+          }
+          infobox_end(1);
+          echo "<input type=\"hidden\" name=\"flight_cell_to\" value=\"".$parr['cell_id']."\">";
+          echo "<input type=\"submit\" name=\"reset\" value=\"Vorgang abbrechen\" title=\"Vorgang abbrechen\"/> &nbsp; ";
+          echo "<input type=\"submit\" name=\"back\" value=\"&lt;&lt;&lt; Zur&uuml;ck zur Zielauswahl\" title=\"Zur&uuml;ck zur Zielauswahl\" /> &nbsp; ";
+          if ($launchable)
+              echo "<input type=\"submit\" name=\"submit_actionselection\" value=\"Start &gt;&gt;&gt;\" title=\"Klicke hier um zu starten\">&nbsp;";
+          echo "</form><br/><br/>";
 
-                    // Waren einladen
-                    if ($launchable)
-                    {
-
-                    	$_SESSION['haven']['fleet']['res_capacity'] = $_SESSION['haven']['fleet']['total_capacity'] - $_SESSION['haven']['fleettotal']['flight_costs'] - $_SESSION['haven']['fleettotal']['flight_food'];
-                      echo "<tr>
-                      				<td class=\"tbltitle\" width=\"40%\" rowspan=\"5\" valign=\"top\">
-                      					Waren mitnehmen:<br> (max. ".nf($_SESSION['haven']['fleet']['res_capacity'])." t)<br/><a href=\"javascript:;\" onclick=\"fulload(".strlen($_SESSION['haven']['fleet']['res_capacity']).");\">Alles einladen</a>
-                      				</td>
-                      				<td class=\"tbldata\" width=\"60%\">
-                      					<input type=\"text\" name=\"fleet_res_metal\" id=\"fleet_res_metal\" value=\"0\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value, ".$_SESSION['haven']['fleet']['res_capacity'].", '', '');\">&nbsp;t ".$rsc['metal']."
-                      				</td>
-                      			</tr>
-                      				<td class=\"tbldata\" width=\"60%\">
-                      					<input type=\"text\" name=\"fleet_res_crystal\" id=\"fleet_res_crystal\" value=\"0\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value, ".$_SESSION['haven']['fleet']['res_capacity'].", '', '');\">&nbsp;t ".$rsc['crystal']."
-                      				</td>
-                      			</tr>
-                      				<td class=\"tbldata\" width=\"60%\">
-                      					<input type=\"text\" name=\"fleet_res_plastic\" id=\"fleet_res_plastic\" value=\"0\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value, ".$_SESSION['haven']['fleet']['res_capacity'].", '', '');\">&nbsp;t ".$rsc['plastic']."
-                      				</td>
-                      			</tr>
-                      				<td class=\"tbldata\" width=\"60%\">
-                      					<input type=\"text\" name=\"fleet_res_fuel\" id=\"fleet_res_fuel\" value=\"0\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value, ".$_SESSION['haven']['fleet']['res_capacity'].", '', '');\">&nbsp;t ".$rsc['fuel']."
-                      				</td>
-                      			</tr>
-                      				<td class=\"tbldata\" width=\"60%\">
-                      					<input type=\"text\" name=\"fleet_res_food\" id=\"fleet_res_food\" value=\"0\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value, ".$_SESSION['haven']['fleet']['res_capacity'].", '', '');\">&nbsp;t ".$rsc['food']."
-                      				</td>
-                      			</tr>";
-                      if ($_SESSION['haven']['fleet']['people_capacity']>0)
-                      {
-                        echo "<tr>
-                          			<td class=\"tbltitle\" width=\"40%\" rowspan=\"1\" valign=\"top\">
-                          				Bewohner mitnehmen: (max. ".nf($_SESSION['haven']['fleet']['people_capacity']).")<br/>
-                          			</td>
-                          			<td class=\"tbldata\" width=\"60%\">
-                          				<input type=\"text\" name=\"fleet_res_people\" id=\"fleet_res_people\" value=\"0\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value, ".$_SESSION['haven']['fleet']['people_capacity'].", '', '');\">&nbsp; Bewohner
-                          			</td>
-                          		</tr>";
-                      }
-                    }
-                    infobox_end(1);
-                    echo "<input type=\"hidden\" name=\"flight_cell_to\" value=\"".$parr['cell_id']."\">";
-                    echo "<input type=\"submit\" name=\"reset\" value=\"Vorgang abbrechen\" title=\"Vorgang abbrechen\"/> &nbsp; ";
-                    echo "<input type=\"submit\" name=\"back\" value=\"&lt;&lt;&lt; Zur&uuml;ck zur Zielauswahl\" title=\"Zur&uuml;ck zur Zielauswahl\" /> &nbsp; ";
-                    if ($launchable)
-                        echo "<input type=\"submit\" name=\"submit_actionselection\" value=\"Start &gt;&gt;&gt;\" title=\"Klicke hier um zu starten\">&nbsp;";
-                    echo "</form><br/><br/>";
-
-                    infobox_start("Ausgew&auml;hlte Schiffe",1);
-                    foreach ($_SESSION['haven']['ship_names'] as $id=> $name)
-                    {
-                        echo "<tr><td class=\"tbldata\">$name</td><td class=\"tbldata\">".$_SESSION['haven']['ships'][$id]."</td></tr>";
-                    }
-                    infobox_end(1);
+          infobox_start("Ausgew&auml;hlte Schiffe",1);
+          foreach ($_SESSION['haven']['ship_names'] as $id=> $name)
+          {
+              echo "<tr><td class=\"tbldata\">$name</td><td class=\"tbldata\">".$_SESSION['haven']['ships'][$id]."</td></tr>";
+          }
+          infobox_end(1);
 
 
 				}

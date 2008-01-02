@@ -73,7 +73,7 @@
 		//
 		// Kampfsperre prüfen
 		//
-		if ($conf['battleban']['v']!=0 && $conf['battleban_time']['p1']<time() && $conf['battleban_time']['p2']>time())
+		if ($conf['battleban']['v']!=0 && $conf['battleban_time']['p1']<=time() && $conf['battleban_time']['p2']>time())
 		{
 			infobox_start("Kampfsperre");
 			echo "Es ist momentan nicht m&ouml;glich andere Spieler anzugreifen. Grund: ".text2html($conf['battleban']['p1'])."<br>Die Sperre dauert vom ".date("d.m.Y",$conf['battleban_time']['p1'])." um ".date("H:i",$conf['battleban_time']['p1'])." Uhr bis am ".date("d.m.Y",$conf['battleban_time']['p2'])." um ".date("H:i",$conf['battleban_time']['p2'])." Uhr!";
@@ -83,21 +83,13 @@
 		//
 		// Flottensperre prüfen
 		//
-		if ($conf['flightban']['v']!=0 && $conf['flightban_time']['p1']<time() && $conf['flightban_time']['p2']>time())
+		if ($conf['flightban']['v']!=0 && $conf['flightban_time']['p1']<=time() && $conf['flightban_time']['p2']>time())
 		{
 			infobox_start("Flottensperre");
 			echo "Es ist momentan nicht m&ouml;glich Fl&uuml;ge zu starten. Grund: ".text2html($conf['flightban']['p1'])."<br>Die Sperre dauert vom ".date("d.m.Y",$conf['flightban_time']['p1'])." um ".date("H:i",$conf['flightban_time']['p1'])." Uhr bis am ".date("d.m.Y",$conf['flightban_time']['p2'])." um ".date("H:i",$conf['flightban_time']['p2'])." Uhr!";
 			infobox_end();
 		}
-		//
-		// Flottensperre (alt) prüfen
-		//
-		elseif ($conf['deactivate_fleet']['v']==1 && $conf['deactivate_fleet']['p1']>time())
-		{
-			infobox_start("Flottensperre");
-			echo "Der Raumschiffhafen wurde bis ".date("d.m.Y H:i",$conf['deactivate_fleet']['p1'])." deaktiviert!";
-			infobox_end();
-		}
+		
 		//
 		// Prüfen ob dieses Gebäude deaktiviert wurde
 		//

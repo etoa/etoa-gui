@@ -1328,7 +1328,7 @@
   			      	  			<tr>
   			      	  				<td class=\"tbldata\" width=\"120\" height=\"120\" rowspan=\"3\">";
 				    			      	  //Bild mit Link zur Hilfe darstellen
-														echo "<a href=\"".HELP_URL."&amp;id=".$darr[ITEM_ID_FLD]."\" title=\"Info zu diesem Schiff anzeigen\">
+														echo "<a href=\"".HELP_URL."&amp;id=".$darr[ITEM_ID_FLD]."\" title=\"Info zu dieser Anlage anzeigen\">
 			    			      	  	<img src=\"".$d_img."\" width=\"120\" height=\"120\" border=\"0\" /></a>";
   			      	  	echo "</td>
   			      	  				<td class=\"tbldata\" colspan=\"4\" valign=\"top\">".$darr['def_shortcomment']."</td>

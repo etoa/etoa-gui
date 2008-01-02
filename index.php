@@ -399,33 +399,33 @@
 					$c->update();
 				}
 
-				
+				/*
 				// Flottenupdate (Prüfen ob nicht bereits ein Flottenupdate läuft)
-				//if($conf['updating_fleet']['v']==0)
-				//{
-	      //  $res = dbquery("
-	      //  SELECT
-	      //      *
-	      //  FROM
-	      //      ".$db_table['fleet']."
-	      //  WHERE
-	      //      fleet_landtime<".time()."
-	      //      AND fleet_updating=0
-	      //  ORDER BY
-	      //      fleet_landtime ASC
-	      //   ;"); 
-	      //  if (mysql_num_rows($res) > 0)
-	      //  {
-	      //    require_once("inc/fleet_action.inc.php");
-	      //    require_once("inc/fleet_update.inc.php");
-	      //    while ($arr=mysql_fetch_array($res))
-	      //    {
-	      //    	update_fleet($arr,0);
-	      //    }
-	      //  }
-				//}				
-				//check_missiles();
-				
+				if($conf['updating_fleet']['v']==0)
+				{
+	        $res = dbquery("
+	        SELECT
+	            *
+	        FROM
+	            ".$db_table['fleet']."
+	        WHERE
+	            fleet_landtime<".time()."
+	            AND fleet_updating=0
+	        ORDER BY
+	            fleet_landtime ASC
+	         ;"); 
+	        if (mysql_num_rows($res) > 0)
+	        {
+	          require_once("inc/fleet_action.inc.php");
+	          require_once("inc/fleet_update.inc.php");
+	          while ($arr=mysql_fetch_array($res))
+	          {
+	         	update_fleet($arr,0);
+	          }
+	        }
+				}				
+				check_missiles();
+				*/
 				
 				// Navigation laden
 				require_once('inc/nav.inc.php');

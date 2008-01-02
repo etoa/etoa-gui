@@ -148,7 +148,26 @@
 			$battleban_to = mktime($_POST['battleban_time_to_h'],$_POST['battleban_time_to_i'],0,$_POST['battleban_time_to_m'],$_POST['battleban_time_to_d'],$_POST['battleban_time_to_y']);
 			
 			if($battleban_from < $battleban_to)
-			{
+			{			
+				
+				dbquery("
+				UPDATE 
+					".$db_table['config']." 
+				SET 
+					config_value=1,
+					config_param1='".addslashes($_POST['battleban_reason'])."'
+				WHERE 
+					config_name='battleban';");
+					
+				dbquery("
+				UPDATE 
+					".$db_table['config']." 
+				SET 
+					config_param1='".addslashes($_POST['battleban_arrival_text_fleet'])."',
+					config_param2='".addslashes($_POST['battleban_arrival_text_missiles'])."'
+				WHERE 
+					config_name='battleban_arrival_text';");
+					
 				dbquery("
 				UPDATE 
 					".$db_table['config']." 
@@ -157,20 +176,14 @@
 					config_param2='".$battleban_to."' 
 				WHERE 
 					config_name='battleban_time';");
-				
-				dbquery("
-				UPDATE 
-					".$db_table['config']." 
-				SET 
-					config_value=1,
-					config_param1='".addslashes($_POST['battleban_reason'])."' 
-				WHERE 
-					config_name='battleban';");
 					
 				$conf['battleban']['v']=1;
 				$conf['battleban']['p1']=addslashes($_POST['battleban_reason']);
+				$conf['battleban_arrival_text']['p1']=addslashes($_POST['battleban_arrival_text_fleet']);
+				$conf['battleban_arrival_text']['p2']=addslashes($_POST['battleban_arrival_text_missiles']);
 				$conf['battleban_time']['p1']=$battleban_from;
 				$conf['battleban_time']['p2']=$battleban_to;
+
 			}
 			else
 			{
@@ -375,6 +388,21 @@
 						<td class=\"tbltitle\">Grund</td>
 						<td class=\"tbldata\">
 							<textarea name=\"battleban_reason\" cols=\"50\" rows=\"3\">".$battleban_reason."</textarea>
+						</td>
+					</tr>
+					<tr>
+						<td class=\"tbltitle\" colspan=\"2\"><div style=\"text-align:center;\">Ankunftstext während Sperre</div></td>
+					</tr>
+					<tr>
+						<td class=\"tbltitle\">Flotten</td>
+						<td class=\"tbldata\">
+							<textarea name=\"battleban_arrival_text_fleet\" cols=\"50\" rows=\"3\">".$conf['battleban_arrival_text']['p1']."</textarea>
+						</td>
+					</tr>
+					<tr>
+						<td class=\"tbltitle\">Raketen</td>
+						<td class=\"tbldata\">
+							<textarea name=\"battleban_arrival_text_missiles\" cols=\"50\" rows=\"3\">".$conf['battleban_arrival_text']['p2']."</textarea>
 						</td>
 					</tr>
 					<tr>

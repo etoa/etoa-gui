@@ -16,7 +16,7 @@
 
 function battle($fleet_id,$planet_id)
 {
-		global $db_table;
+		global $db_table, $conf;
 
     // BEGIN SKRIPT //
 
@@ -64,26 +64,28 @@ function battle($fleet_id,$planet_id)
 	    $msg.= "[b]Verteidiger:[/b] ".get_user_nick($user_d_id)."\n\n";
     	$msg.= "Der Kampf wurde abgebrochen da Angreifer und Verteidiger demselben Imperium angehören!";
     	
+    	$return_v = 4;
 			$bstat = "Unentschieden";
 			$bstat2 = "Unentschieden";
 			$return_fleet=true;
-			// TODO: Check return_v
     	return array($return_v,$msg,$bstat,$bstat2,$return_fleet);
   	}
-/*
-		//Lädt Allianz ID von beiden Kontrahenten
-		$alliance_res = mysql_query("
-		SELECT
-			a.user_alliance_id AS alliance_id_a,
-			d.user_alliance_id AS alliance_id_d
-		FROM
-			".$db_table['users']." AS a,
-			".$db_table['users']." AS d
-		WHERE
-			a.user_id='".$user_a_id."'
-			AND d.user_id='".$user_d_id."';");
-		$alliance_arr = mysql_fetch_array($alliance_res);
-*/
+  	
+  	// Kampf abbrechen und Flotte zum Startplanet schicken wenn Kampfsperre aktiv ist
+  	if ($conf['battleban']['v']!=0 && $conf['battleban_time']['p1']<=time() && $conf['battleban_time']['p2']>time())
+		{
+  		$msg = "[b]KAMPFBERICHT[/b]\nvom Planeten ".coords_format2($planet_id)."\n[b]Zeit:[/b] ".date("d.m.Y H:i",$fleetarr['fleet_landtime'])."\n\n";
+	    $msg.= "[b]Angreifer:[/b] ".get_user_nick($user_a_id)."\n";
+	    $msg.= "[b]Verteidiger:[/b] ".get_user_nick($user_d_id)."\n\n";
+    	$msg.= $conf['battleban_arrival_text']['p1'];
+    	
+			$return_v = 4;
+			$bstat = "Unentschieden";
+			$bstat2 = "Unentschieden";
+			$return_fleet=true;
+    	return array($return_v,$msg,$bstat,$bstat2,$return_fleet);
+		}
+
 		$alliance_info_a = get_user_alliance($user_a_id);
 		$alliance_info_d = get_user_alliance($user_d_id);
 
@@ -107,17 +109,7 @@ function battle($fleet_id,$planet_id)
 				$alliances_have_war = 1;
 			}
 		}
-/*
-		// Lädt Allianz Name + Kürzel
-		if($alliance_arr['alliance_id_a']>0)
-		{
-			$alliance_info_a = get_user_alliance($user_a_id);
-		}
-		if($alliance_arr['alliance_id_d']>0)
-		{
-			$alliance_info_d = get_user_alliance($user_d_id);
-		}
-*/
+
     $msg = "[b]KAMPFBERICHT[/b]\nvom Planeten ".coords_format2($planet_id)."\n[b]Zeit:[/b] ".date("d.m.Y H:i",$fleetarr['fleet_landtime'])."\n\n";
     $msg.= "[b]Angreifer:[/b] ".get_user_nick($user_a_id)."\n";
     $msg.= "[b]Verteidiger:[/b] ".get_user_nick($user_d_id)."\n\n";
