@@ -35,7 +35,7 @@
 	
 
 	// BEGIN SKRIPT //
-	echo "<h1>&Uuml;bersicht</h1>";
+	echo "<h1>&Uuml;bersicht!!!</h1>";
 
 	if ($firstview)
 	{
