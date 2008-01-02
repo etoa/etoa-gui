@@ -346,53 +346,6 @@
 									infobox_end();
 								}
 								
-								// Flottensperre aktiv
-								if ($conf['flightban']['v']==1)
-								{
-									// Prüft, ob die Sperre schon abgelaufen ist
-									if($conf['flightban_time']['p1']<=time() && $conf['flightban_time']['p2']>=time())
-									{
-										$flightban_time_status = "<span style=\"color:#0f0\">Aktiv</span>";
-									}
-									elseif($conf['flightban_time']['p1']>time() && $conf['flightban_time']['p2']>time())
-									{
-										$flightban_time_status = "Ausstehend";
-									}
-									else
-									{
-										$flightban_time_status = "<span style=\"color:#f90\">Abgelaufen</span>";
-									}
-									
-									echo "<br/>";
-									infobox_start("Flottensperre aktiviert");
-									echo "Die Flottensperre ist aktiviert. Es können keine Flüge gestartet werden!<br><br><b>Status:</b> ".$flightban_time_status."<br><b>Zeit:</b> ".date("d.m.Y H:i",$conf['flightban_time']['p1'])." - ".date("d.m.Y H:i",$conf['flightban_time']['p2'])."<br><b>Grund:</b> ".$conf['flightban']['p1']."<br><br>";
-									echo "Zum deaktivieren: <a href=\"?page=fleets&amp;sub=fleetoptions\">Flottenoptionen</a>";
-									infobox_end();
-								}
-								
-								// Kampfsperre aktiv
-								if ($conf['battleban']['v']==1)
-								{
-									// Prüft, ob die Sperre schon abgelaufen ist
-									if($conf['battleban_time']['p1']<=time() && $conf['battleban_time']['p2']>=time())
-									{
-										$battleban_time_status = "<span style=\"color:#0f0\">Aktiv</span>";
-									}
-									elseif($conf['battleban_time']['p1']>time() && $conf['battleban_time']['p2']>time())
-									{
-										$battleban_time_status = "Ausstehend";
-									}
-									else
-									{
-										$battleban_time_status = "<span style=\"color:#f90\">Abgelaufen</span>";
-									}
-									
-									echo "<br/>";
-									infobox_start("Kampfsperre aktiviert");
-									echo "Die Kampfsperre ist aktiviert. Es können keine Angriffe geflogen werden!<br><br><b>Status:</b> ".$battleban_time_status."<br><b>Zeit:</b> ".date("d.m.Y H:i",$conf['battleban_time']['p1'])." - ".date("d.m.Y H:i",$conf['battleban_time']['p2'])."<br><b>Grund:</b> ".$conf['battleban']['p1']."<br><br>";
-									echo "Zum deaktivieren: <a href=\"?page=fleets&amp;sub=fleetoptions\">Flottenoptionen</a>";
-									infobox_end();
-								}
 								$allow_inc=false;
 								foreach ($navmenu as $cat=> $item)
 								{
