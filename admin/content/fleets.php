@@ -69,27 +69,321 @@
 	{
 		echo "<h1>Flottenoptionen</h1>";
 
+
+		//
+		// Updates
+		//
+		
+		// Flottensperre deaktivieren
+		if ($_POST['flightban_deactivate']!="")
+		{
+			dbquery("
+			UPDATE 
+				".$db_table['config']." 
+			SET 
+				config_value=0,
+				config_param1='' 
+			WHERE 
+				config_name='flightban';");
+				
+			$conf['flightban']['v']=0;
+		}
+		
+		// Flottensperre aktivieren
+		if ($_POST['flightban_activate']!="")
+		{
+			$flightban_from = mktime($_POST['flightban_time_from_h'],$_POST['flightban_time_from_i'],0,$_POST['flightban_time_from_m'],$_POST['flightban_time_from_d'],$_POST['flightban_time_from_y']);
+			$flightban_to = mktime($_POST['flightban_time_to_h'],$_POST['flightban_time_to_i'],0,$_POST['flightban_time_to_m'],$_POST['flightban_time_to_d'],$_POST['flightban_time_to_y']);
+			
+			if($flightban_from < $flightban_to)
+			{
+				dbquery("
+				UPDATE 
+					".$db_table['config']." 
+				SET 
+					config_param1='".$flightban_from."',
+					config_param2='".$flightban_to."' 
+				WHERE 
+					config_name='flightban_time';");
+					
+				dbquery("
+				UPDATE 
+					".$db_table['config']." 
+				SET 
+					config_value=1,
+					config_param1='".addslashes($_POST['flightban_reason'])."' 
+				WHERE 
+					config_name='flightban';");
+					
+				$conf['flightban']['v']=1;
+				$conf['flightban']['p1']=addslashes($_POST['flightban_reason']);
+				$conf['flightban_time']['p1']=$flightban_from;
+				$conf['flightban_time']['p2']=$flightban_to;
+			}
+			else
+			{
+				echo "<b>Fehler:</b> Das Ende muss nach dem Start erfolgen!<br><br>";
+			}
+		}		
+
+		// Kampfsperre deaktivieren
+		if ($_POST['battleban_deactivate']!="")
+		{
+			dbquery("
+			UPDATE 
+				".$db_table['config']." 
+			SET 
+				config_value=0,
+				config_param1='' 
+			WHERE 
+				config_name='battleban';");
+				
+			$conf['battleban']['v']=0;
+		}
+		
+		// Kampfsperre aktivieren
+		if ($_POST['battleban_activate']!="")
+		{
+			$battleban_from = mktime($_POST['battleban_time_from_h'],$_POST['battleban_time_from_i'],0,$_POST['battleban_time_from_m'],$_POST['battleban_time_from_d'],$_POST['battleban_time_from_y']);
+			$battleban_to = mktime($_POST['battleban_time_to_h'],$_POST['battleban_time_to_i'],0,$_POST['battleban_time_to_m'],$_POST['battleban_time_to_d'],$_POST['battleban_time_to_y']);
+			
+			if($battleban_from < $battleban_to)
+			{
+				dbquery("
+				UPDATE 
+					".$db_table['config']." 
+				SET 
+					config_param1='".$battleban_from."',
+					config_param2='".$battleban_to."' 
+				WHERE 
+					config_name='battleban_time';");
+				
+				dbquery("
+				UPDATE 
+					".$db_table['config']." 
+				SET 
+					config_value=1,
+					config_param1='".addslashes($_POST['battleban_reason'])."' 
+				WHERE 
+					config_name='battleban';");
+					
+				$conf['battleban']['v']=1;
+				$conf['battleban']['p1']=addslashes($_POST['battleban_reason']);
+				$conf['battleban_time']['p1']=$battleban_from;
+				$conf['battleban_time']['p2']=$battleban_to;
+			}
+			else
+			{
+				echo "<b>Fehler:</b> Das Ende muss nach dem Start erfolgen!<br><br>";
+			}
+		}
+
+
+
+
 		//
 		// Flottensperre
 		//
-		echo "<h2>Flottensperre</h2><form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
+		/*
+		echo "<h2>Flottensperre</h2>";
+		echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
+		
 		if ($_POST['flightban_deactivate']!="")
 		{
-			dbquery("UPDATE ".$db_table['config']." SET config_value=0,config_param1='' WHERE config_name='flightban';");
+			dbquery("
+			UPDATE 
+				".$db_table['config']." 
+			SET 
+				config_value=0,
+				config_param1='' 
+			WHERE 
+				config_name='flightban';");
+				
 			$conf['flightban']['v']=0;
 		}
+		
 		if ($_POST['flightban_activate']!="")
 		{
-			dbquery("UPDATE ".$db_table['config']." SET config_value=1,config_param1='".addslashes($_POST['ban_reason'])."' WHERE config_name='flightban';");
+			dbquery("
+			UPDATE 
+				".$db_table['config']." 
+			SET 
+				config_value=1,
+				config_param1='".addslashes($_POST['ban_reason'])."' 
+			WHERE 
+				config_name='flightban';");
+				
 			$conf['flightban']['v']=1;
 			$conf['flightban']['p1']=addslashes($_POST['ban_reason']);
 		}
-		if ($conf['flightban']['v']==1                                             )
+		
+		if ($conf['flightban']['v']==1)
+		{
 			echo "<div style=\"color:#f90\">Die Flottensperre ist aktiviert! Es k&ouml;nnen keine Fl&uuml;ge gestartet werden!</div><br/>Grund: ".text2html($conf['flightban']['p1'])."<br/><br/><input type=\"submit\" name=\"flightban_deactivate\" value=\"Deaktivieren\" />";
+		}
 		else
-			echo "<div style=\"color:#0f0\">Die Flottensperre ist deaktiviert!</div><br/>Aktivierungsgrund:<br/><textarea name=\"ban_reason\" cols=\"50\" rows=\"3\"></textarea><br/><br/><input type=\"submit\" name=\"flightban_activate\" value=\"Aktivieren\" />";
-		echo "</form><br/>";
+		{
+			echo "<div style=\"color:#0f0\">Die Flottensperre ist deaktiviert!</div><br/>";
+			echo "Aktivierungsgrund:<br/><textarea name=\"ban_reason\" cols=\"50\" rows=\"3\"></textarea><br/><br/>";
+			echo "Von: ";
+			echo show_timebox("battleban_time_from",time());
+			echo "<br>Bis: ";
+			echo show_timebox("battleban_time_to",time());
+			echo "<br><br><input type=\"submit\" name=\"flightban_activate\" value=\"Aktivieren\" />";
+		}
+		
+		echo "</form><br/><br/>";
+		*/
+		echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
+		
+		//
+		// Flottensperre
+		//
+		
+		// Setzt Variabeln wenn Flottensperre aktiv...
+		if ($conf['flightban']['v']==1)
+		{
+			// Prüft, ob die Sperre zum jetzigen Zeitpunkt gilt
+			if($conf['flightban_time']['p1']<=time() && $conf['flightban_time']['p2']>=time())
+			{
+				$flightban_time_status = "Sie wirkt zum jetzigen Zeitpunkt!";
+			}
+			elseif($conf['flightban_time']['p1']>time() && $conf['flightban_time']['p2']>time())
+			{
+				$flightban_time_status = "Sie wirkt erst ab: ".date("d.m.Y H:i",$conf['flightban_time']['p1'])."!";
+			}
+			else
+			{
+				$flightban_time_status = "Sie ist nun aber abgelaufen!";
+			}
+			
+			$flightban_status = "<div style=\"color:#f90\">Die Flottensperre ist aktiviert! ".$flightban_time_status."</div>";
+			$flightban_time_from = $conf['flightban_time']['p1'];
+			$flightban_time_to = $conf['flightban_time']['p2'];
+			$flightban_reason = $conf['flightban']['p1'];
+			$flightban_button = "<input type=\"submit\" name=\"flightban_deactivate\" value=\"Deaktivieren\" />";
+		}
+		// ...wenn nicht aktiv
+		else
+		{
+			$flightban_status = "<div style=\"color:#0f0\">Die Flottensperre ist deaktiviert!</div>";
+			$flightban_time_from = time();
+			$flightban_time_to = time();
+			$flightban_reason = "";
+			$flightban_button = "<input type=\"submit\" name=\"flightban_activate\" value=\"Aktivieren\" />";
+		}
+		
+		echo "<table class=\"tbl\">";
+		echo "<tr>
+						<td class=\"tbltitle\" colspan=\"2\"><div style=\"text-align:center;\">Flottensperre</div></td>
+					</tr>
+					<tr>
+						<td class=\"tbltitle\" width=\"15%\">Info</td>
+						<td class=\"tbldata\" width=\"85%\">Es k&ouml;nnen keine Fl&uuml;ge gestartet werden</td>
+					</tr>
+					<tr>
+						<td class=\"tbltitle\" width=\"15%\">Status</td>
+						<td class=\"tbldata\" width=\"85%\">".$flightban_status."</td>
+					</tr>
+					<tr>
+						<td class=\"tbltitle\">Von</td>
+						<td class=\"tbldata\">";
+						echo show_timebox("flightban_time_from",$flightban_time_from);
+			echo "</td>
+					</tr>
+					<tr>
+						<td class=\"tbltitle\">Bis</td>
+						<td class=\"tbldata\">";
+						echo show_timebox("flightban_time_to",$flightban_time_to);
+			echo "</td>
+					</tr>
+					<tr>
+						<td class=\"tbltitle\">Grund</td>
+						<td class=\"tbldata\">
+							<textarea name=\"flightban_reason\" cols=\"50\" rows=\"3\">".$flightban_reason."</textarea>
+						</td>
+					</tr>
+					<tr>
+						<td class=\"tbldata\" colspan=\"2\"><div style=\"text-align:center;\">".$flightban_button."</div></td>
+					</tr>";
+		echo "</table><br><br>";
 
+
+
+		//
+		// Kampfsperre
+		//
+		
+		// Setzt Variabeln wenn Kampfsperre aktiv...
+		if ($conf['battleban']['v']==1)
+		{
+			// Prüft, ob die Sperre zum jetzigen Zeitpunkt gilt
+			if($conf['battleban_time']['p1']<=time() && $conf['battleban_time']['p2']>=time())
+			{
+				$battleban_time_status = "Sie wirkt zum jetzigen Zeitpunkt!";
+			}
+			elseif($conf['battleban_time']['p1']>time() && $conf['battleban_time']['p2']>time())
+			{
+				$battleban_time_status = "Sie wirkt erst ab: ".date("d.m.Y H:i",$conf['battleban_time']['p1'])."!";
+			}
+			else
+			{
+				$battleban_time_status = "Sie ist nun aber abgelaufen!";
+			}
+			
+			$battleban_status = "<div style=\"color:#f90\">Die Flottensperre ist aktiviert! ".$battleban_time_status."</div>";
+			$battleban_time_from = $conf['battleban_time']['p1'];
+			$battleban_time_to = $conf['battleban_time']['p2'];
+			$battleban_reason = $conf['battleban']['p1'];
+			$battleban_button = "<input type=\"submit\" name=\"battleban_deactivate\" value=\"Deaktivieren\" />";
+		}
+		// ...wenn nicht aktiv
+		else
+		{
+			$battleban_status = "<div style=\"color:#0f0\">Die Flottensperre ist deaktiviert!</div>";
+			$battleban_time_from = time();
+			$battleban_time_to = time();
+			$battleban_reason = "";
+			$battleban_button = "<input type=\"submit\" name=\"battleban_activate\" value=\"Aktivieren\" />";
+		}
+		
+		echo "<table class=\"tbl\">";
+		echo "<tr>
+						<td class=\"tbltitle\" colspan=\"2\"><div style=\"text-align:center;\">Kampfsperre</div></td>
+					</tr>
+					<tr>
+						<td class=\"tbltitle\" width=\"15%\">Info</td>
+						<td class=\"tbldata\" width=\"85%\">Es k&ouml;nnen keine Angriffe geflogen werden</td>
+					</tr>
+					<tr>
+						<td class=\"tbltitle\" width=\"15%\">Status</td>
+						<td class=\"tbldata\" width=\"85%\">".$battleban_status."</td>
+					</tr>
+					<tr>
+						<td class=\"tbltitle\">Von</td>
+						<td class=\"tbldata\">";
+						echo show_timebox("battleban_time_from",$battleban_time_from);
+			echo "</td>
+					</tr>
+					<tr>
+						<td class=\"tbltitle\">Bis</td>
+						<td class=\"tbldata\">";
+						echo show_timebox("battleban_time_to",$battleban_time_to);
+			echo "</td>
+					</tr>
+					<tr>
+						<td class=\"tbltitle\">Grund</td>
+						<td class=\"tbldata\">
+							<textarea name=\"battleban_reason\" cols=\"50\" rows=\"3\">".$battleban_reason."</textarea>
+						</td>
+					</tr>
+					<tr>
+						<td class=\"tbldata\" colspan=\"2\"><div style=\"text-align:center;\">".$battleban_button."</div></td>
+					</tr>";
+		echo "</table>";
+
+
+		/*
 		//
 		// Kampfsperre
 		//
@@ -110,6 +404,7 @@
 		else
 			echo "<div style=\"color:#0f0\">Die Kampfsperre ist deaktiviert!</div><br/>Aktivierungsgrund:<br/><textarea name=\"ban_reason\" cols=\"50\" rows=\"3\"></textarea><br/><br/><input type=\"submit\" name=\"battleban_activate\" value=\"Aktivieren\" />";
 		echo "</form><br/>";
+		*/
 
 		//
 		// Schiffrückruf
@@ -233,6 +528,8 @@
 		echo "<input type=\"radio\" name=\"recall\" value=\"cancel\"> Alle Flotten zur&uuml;ckrufen (per Flugabbruch)<br/>";
 		echo "<br/><input type=\"submit\" name=\"flightrecall\" value=\"Durchf&uuml;hren\" /></form>";
 
+
+		echo "</form>";
 	}
 	
 	//

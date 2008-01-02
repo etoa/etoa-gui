@@ -169,6 +169,12 @@
 				{
 					$sql.= " AND user_id='".$_POST['user_id']."'";
 				}
+				if ($_POST['user_nick_search']!="")
+				{
+					if (stristr($_POST['qmode']['user_nick_search'],"%"))
+						$addchars = "%";else $addchars = "";
+					$sql.= " AND user_nick ".stripslashes($_POST['qmode']['user_nick_search']).$_POST['user_nick_search']."$addchars'";
+				}
 				if ($_POST['user_nick']!="")
 				{
 					if (stristr($_POST['qmode']['user_nick'],"%"))
