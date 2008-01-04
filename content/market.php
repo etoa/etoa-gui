@@ -2294,7 +2294,15 @@
 			// Schiffangebot löschen
 			if ($_POST['ship_cancel']!="")
 			{
-				$scres=dbquery("SELECT * FROM ".$db_table['market_ship']." WHERE planet_id=".$c->id." AND ship_market_id='".$_POST['ship_market_id']."' AND user_id='".$s['user']['id']."'");
+				$scres=dbquery("
+				SELECT
+				 	* 
+				FROM 
+					".$db_table['market_ship']." 
+				WHERE 
+					ship_market_id='".$_POST['ship_market_id']."' 
+					AND user_id='".$s['user']['id']."'");
+					
 				if (mysql_num_rows($scres)>0)
 				{
 					$scrow=mysql_fetch_array($scres);
@@ -2325,7 +2333,15 @@
 			// Rohstoffangebot löschen
 			elseif ($_POST['ressource_cancel']!="")
 			{
-				$rcres=dbquery("SELECT * FROM ".$db_table['market_ressource']." WHERE planet_id=".$c->id." AND ressource_market_id='".$_POST['ressource_market_id']."' AND user_id='".$s['user']['id']."'");
+				$rcres=dbquery("
+				SELECT 
+					* 
+				FROM 
+					".$db_table['market_ressource']." 
+				WHERE 
+					ressource_market_id='".$_POST['ressource_market_id']."' 
+					AND user_id='".$s['user']['id']."'");
+					
 				if (mysql_num_rows($rcres)>0)
 				{
 					$rcrow=mysql_fetch_array($rcres);
@@ -2367,8 +2383,7 @@
 				FROM 
 					".$db_table['market_auction']." 
 				WHERE 
-					auction_planet_id=".$c->id." 
-					AND auction_market_id='".$_POST['auction_market_id']."' 
+					auction_market_id='".$_POST['auction_market_id']."' 
 					AND auction_user_id='".$s['user']['id']."'");
 				if (mysql_num_rows($acres)>0)
 				{
