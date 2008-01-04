@@ -36,7 +36,12 @@
 									UPDATE 
 										".$db_table['planets']." 
 									SET 
-										planet_last_updated='0' 
+										planet_last_updated='0',
+										planet_prod_metal=0,
+										planet_prod_crystal=0,
+										planet_prod_plastic=0,
+										planet_prod_fuel=0,
+										planet_prod_food=0
 									WHERE 
 										planet_user_id='".$s['user']['id']."';");
 									
@@ -84,7 +89,21 @@
 				dbquery ("UPDATE ".$db_table['planets']." SET planet_last_updated=".time()." WHERE planet_user_id='".$s['user']['id']."';");
 				$s['user']['hmode_from']=0;
 				$s['user']['hmode_to']=0;
-				success_msg("Urlaubsmodus aufgehoben!");
+				success_msg("Urlaubsmodus aufgehoben! Denke daran, auf allen deinen Planeten die Produktion zu überprüfen!");
+				
+				$rres = dbquery ("
+				SELECT
+					planet_id
+				FROM
+					".$db_table['planets']." 
+				WHERE 
+					planet_user_id='".$s['user']['id']."';");				
+				while ($rarr=mysql_fetch_row($rres))
+				{
+					$tp = new Planet($rarr[0]);
+					$tp->updateEconomy();
+					$tp->update(1);
+				}
 				echo '<input type="button" value="Zur Übersicht" onclick="document.location=\'?page=overview\'" />';
 			}
 			else
