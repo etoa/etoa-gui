@@ -235,7 +235,7 @@
 								//
 								//Notepad
 								//
-								echo "<br><input type=\"submit\" value=\"NotePad\" name=\"NotePad\" onclick=window.open(\"misc/notepad.php\",\"notepad\")><br>";
+								echo "<br><input type=\"submit\" value=\"NotePad\" name=\"NotePad\" onclick=window.open(\"misc/notepad.php?id=".$s['user_id']."\",\"notepad\")><br>";
 
 								//
 								// Auslastung
