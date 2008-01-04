@@ -8,7 +8,7 @@ namespace res
 	class addRes
 	{
 	public:
-		static void add_fleet_res_to_planet_res(mysqlpp::Connection* con,  mysqlpp::Row);
+		static std::string add_fleet_res_to_planet_res(mysqlpp::Connection* con,  mysqlpp::Row);
 		
 	};
 	

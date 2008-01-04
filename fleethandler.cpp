@@ -33,14 +33,15 @@
 #include <mysql++/mysql++.h>
 
 #include "FleetHandler.h"
-#include "attack/attackhandler.h"
-#include "back/backhandler.h"
-#include "special/specialhandler.h"
+#include "functions/MessageHandler.h"
+//#include "special/SpecialHandler.h"
+#include "back/BackHandler.h"
+//#include "attack/AttackHandler.h"
 
 
 using namespace std;
 
-// DB-Constants (ugly!!!)
+// DB-Constants
 const char* DB_SERVER = "localhost";
 const char* DB_NAME = "etoa";
 const char* DB_USER = "root";
@@ -57,16 +58,17 @@ main(int argc, char *argv[])
 	while (true)
 	{	
 		
-		// Graphical bling-bling
-		system("clear");
-		cout << "----------------------------------------------------------------\n";
-		cout << "- EtoA Fleethandler, (C) 2007 by EtoA Gaming, Time: "<< std::time(0) <<" -\n";
-		cout << "----------------------------------------------------------------\n\n";
-		
 		//Timestamp
 		std::time_t time = std::time(0);
 		
-		//Query abfragen nach Flotten
+		// Graphical bling-bling
+		system("clear");
+		cout << "----------------------------------------------------------------\n";
+		cout << "- EtoA Fleethandler, (C) 2007 by EtoA Gaming, Time: "<< time <<" -\n";
+		cout << "----------------------------------------------------------------\n\n";
+		
+
+		//Fleetquery
 		mysqlpp::Query query = con.query();
 		    query << "SELECT ";
 		    query << "* ";
@@ -74,36 +76,43 @@ main(int argc, char *argv[])
 			query << "	fleet ";
 			query << "WHERE ";
 			query << " fleet_landtime<" << time << " ;";
-		    mysqlpp::Result res = query.store();		
-				query.reset();
+		mysqlpp::Result res = query.store();	
+		query.reset();
 				
-		//†berprŸfung ob res		
-		int i;
+				
+		cout << "Updating ";
+		//Checking queryresult
 		if (res) 
 	    {
 	    	int resSize = res.size();
+			//Checking if there are some results
 	    	if (resSize>0)
 		   	{
-	    		//Res wird Zeilenweise in Array row Ÿbertragen
+				cout << resSize << " Fleet(s)\n\n";
+				
+	    		//Put res into row
 	    		mysqlpp::Row row;
 	    		int lastId = 0;
 	    		for (mysqlpp::Row::size_type i = 0; i<resSize; i++) 
 				{
 	    			row = res.at(i);
 	    			
-	    			string row_fleet_cat, row_fleet_action;
+	    			string fleet_cat, fleet_action;
 
 				    char str[30] = "";
 				    strcpy( str, row["fleet_action"]);
 				    char * pch;	
-				    //Aktionskategorie wird gelesen und an Variable Ÿbertragen
+				    //Reading category -> put into fleet_cat
 				    pch = strtok (str,"_");
-				    row_fleet_cat = pch;
-				    //Aktion wird gelesen und an Variable Ÿbertragen
+				    fleet_cat = pch;
+				    //Reading action -> put into fleet_action
 				    pch = strtok (NULL, " ,.-");
-				    row_fleet_action = pch;
+				    fleet_action = pch;
 					
 					
+					//cout << to_go;
+					
+					cout << fleet_action << "(" << fleet_cat << ")\n";
 				    back::BackHandler* ba = new back::BackHandler(&con);
 					ba->update(row);
 		    		
@@ -111,8 +120,12 @@ main(int argc, char *argv[])
 			      
 			}
 
-	    }		
-		sleep(1);
+	    }
+		else
+		{
+			cout << "0 Fleets";
+		}
+		sleep(10);
 		
 	}		
 

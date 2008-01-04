@@ -1,11 +1,16 @@
 
 #include "ShipHandler.h"
-
+#include "MessageHandler.h"
+#include <string>
+#include <sstream>
 
 namespace ships
 {
-	void addShips::add_fleet_ships_to_planet(mysqlpp::Connection* con, mysqlpp::Row fleet_row)
+	std::string addShips::add_fleet_ships_to_planet(mysqlpp::Connection* con, mysqlpp::Row fleet_row)
 	{
+		std::string msg = "";
+		
+		std::cout << "->adding Ships to PlanetShips...\n";
 		mysqlpp::Query query = con->query();
 		
 		query << "SELECT ";
@@ -29,18 +34,22 @@ namespace ships
 			
 			if (resSize>0)
 			{
+			
+				std::string msg;
+				
 				mysqlpp::Row fleet_ships_row;
 				int lastId = 0;
+				
 				for (mysqlpp::Row::size_type i = 0; i<resSize; i++) 
 				{
 					fleet_ships_row = fleet_ships_res.at(i);
 
-					//Option für Kolonisieren
+					//Option für Kolonisieren und Invasieren
                 	int fleet_ships_cnt = fleet_ships_row["fs_ship_cnt"];
 					
 
                     // Koloschiff wegpurzelnlassen
-                   /* if (fleet_ships_row["ship_colonialize"]==1 && already_colonialized==0 && fleet_row["fleet_action"]=="onewayticket_colonize") //Oder so ähnlich
+                   /*if (fleet_ships_row["ship_colonialize"]==1 && already_colonialized==0 && fleet_row["fleet_action"]=="onewayticket_colonize") //Oder so ähnlich
                     {
                         fleet_ships_cnt--;
                         already_colonialized=1;
@@ -61,7 +70,7 @@ namespace ships
 					
 					if (shiplist_res.size()) //shiplist_res genügt nicht, weil, dies immer gleich 1 wenn query korreckt
 					{
-						std::cout << "four";
+					
 						mysqlpp::Row shiplist_row;
 						shiplist_row = shiplist_res.at(0);
 					
@@ -94,7 +103,6 @@ namespace ships
                     //Kein Datensatz vorhanden
                     else
                     {
-						std::cout << "one";
 						query << "INSERT INTO ";
 							query << "shiplist ("; 
 								query << "shiplist_user_id, ";
@@ -143,16 +151,43 @@ namespace ships
 						query.store();
 						query.reset();
                     }
-					}
-					}
-					}
-					}
+
+					if (fleet_ships_cnt>0)
+                    {
+						std::stringstream tmp;
+						std::string number;
+						tmp << fleet_ships_cnt;
+						tmp >> number;
+                    	msg += "\n[b]";
+						msg += (std::string)fleet_ships_row["ship_name"];
+						msg += ":[/b] ";
+						msg += message::formatMessage::format_number(number);
+                    }
+					
+				}
+
+				if (msg.length() == 0)
+				{
+					msg = "\n\n[b]SCHIFFE[/b]\n[i]Keine weiteren Schiffe in der Flotte![/i]";
+				}
+				else
+				{
+					std::string tmp = "\n\n[b]SCHIFFE[/b]\n";
+					tmp += msg;
+					msg = tmp;
+				}
+				return msg;
+				std::cout << msg << "\n";
+			}
+		}
+	}
 	
 	// Flotte löschen
 	
 	void deleteFleet::delete_fleet(mysqlpp::Connection* con,  mysqlpp::Row fleet_row)
 	{
 	
+		std::cout << "deleting Fleet...\n";
 		mysqlpp::Query query = con->query();
 		
 		query << "DELETE FROM ";

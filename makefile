@@ -1,10 +1,10 @@
-OBJECTS = fleethandler.o ResHandler.o ShipHandler.o backhandler.o #attackhandler.o specialhandler.o
+OBJECTS = FleetHandler.o ResHandler.o ShipHandler.o MessageHandler.o BackHandler.o PlanetHandler.o #AttackHandler.o SpecialHandler.o
 OPTS = -lmysqlpp
 
-fleethandler: ${OBJECTS}
-	g++ ${OBJECTS} ${OPTS} -o fleethandler
+FleetHandler: ${OBJECTS}
+	g++ ${OBJECTS} ${OPTS} -o FleetHandler
 	
-fleethandler.o: fleethandler.cpp
+FleetHandler.o: FleetHandler.cpp
 
 #	comp
 ResHandler.o: functions/ResHandler.cpp functions/ResHandler.h
@@ -13,16 +13,22 @@ ResHandler.o: functions/ResHandler.cpp functions/ResHandler.h
 ShipHandler.o: functions/ShipHandler.cpp functions/ShipHandler.h
 	g++ -c functions/ShipHandler.cpp functions/ShipHandler.cpp
 
-#attackhandler.o: attack/attackhandler.cpp attack/attackhandler.h
-#	g++ -c attack/attackhandler.cpp
+PlanetHandler.o: functions/PlanetHandler.cpp functions/PlanetHandler.h
+	g++ -c functions/PlanetHandler.cpp functions/PlanetHandler.cpp
+
+MessageHandler.o: functions/MessageHandler.cpp functions/MessageHandler.h
+	g++ -c functions/MessageHandler.cpp functions/MessageHandler.cpp
+
+#AttackHandler.o: attack/AttackHandler.cpp attack/AttackHandler.h
+#	g++ -c attack/AttackHandler.cpp
 #	
-backhandler.o: back/backhandler.cpp back/backhandler.h
-	g++ -c back/backhandler.cpp
+BackHandler.o: back/BackHandler.cpp back/BackHandler.h
+	g++ -c back/BackHandler.cpp
 	
-#specialhandler.o: special/specialhandler.cpp special/specialhandler.h
-#	g++ -c special/specialhandler.cpp	
+#SpecialHandler.o: special/SpecialHandler.cpp special/SpecialHandler.h
+#	g++ -c special/SpecialHandler.cpp	
 
 	
 
 clean:
-	rm fleethandler fleethandler.o ResHandler.o ShipHandler.o backhandler.o
+	rm FleetHandler FleetHandler.o ResHandler.o ShipHandler.o BackHandler.o

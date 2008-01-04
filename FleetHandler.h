@@ -1,6 +1,6 @@
 
-#ifndef __EVENTHANDLER__
-#define __EVENTHANDLER__
+#ifndef __FLEETHANDLER__
+#define __FLEETHANDLER__
 
 #include <mysql++/mysql++.h>
 
@@ -16,7 +16,7 @@ public:
 	* Eventhandler constructor for all handler classes.
 	* Sets the internal MySQL connection pointer
 	*/
-	EventHandler(mysqlpp::Connection* con) {this->con_ = con;}
+	FleetHandler(mysqlpp::Connection* con) {this->con_ = con;}
 		
 	/**
 	* Abstract class for handling the events

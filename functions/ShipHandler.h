@@ -8,7 +8,7 @@ namespace ships
 	class addShips
 	{
 	public:
-		static void add_fleet_ships_to_planet(mysqlpp::Connection*,  mysqlpp::Row);
+		static std::string add_fleet_ships_to_planet(mysqlpp::Connection*,  mysqlpp::Row);
 	};
 
 	class deleteFleet
