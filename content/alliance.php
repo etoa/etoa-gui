@@ -812,10 +812,15 @@
 							foreach ($adminBox as $ab)
 							{
 								if ($bcnt%2==0)
+								{
 									echo "<tr>";
-								echo "<td class=\"tbldata\"><b>".$ab."</b></td>\n";
+								}
+								
+								echo "<td class=\"tbldata\" width=\"50%\"><b>".$ab."</b></td>\n";
 								if ($bcnt%2==1)
+								{
 									echo "</tr>";
+								}
 								$bcnt++;
 							}
 							if ($bcnt%2==1)
@@ -860,10 +865,10 @@
 
 						// Text anzeigen
 						if ($arr['alliance_text']!="")
+						{
 							echo "<tr><td class=\"tbldata\" colspan=\"3\" style=\"text-align:center\">".text2html($arr['alliance_text'])."</td></tr>\n";
-
-						
-
+						}
+			
 						// Kriege
 						$wars=dbquery("
 						SELECT 
@@ -890,36 +895,44 @@
 						if (mysql_num_rows($wars)>0)
 						{
 							
-							echo "<tr><td class=\"tbltitle\">Kriege:</td>
-							<td class=\"tbldata\" colspan=\"2\" style=\"padding:0px;\">
-							<table style=\"width:100%\" class=\"tb\">";
-							while ($war=mysql_fetch_array($wars))
-							{
-								if ($war['a1id']==$s['user']['alliance_id']) 
-								{
-									$opId = $war['a2id'];
-									$opTag = $war['a2tag'];
-									$opName = $war['a2name'];
-								}
-								else
-								{
-									$opId = $war['a1id'];
-									$opTag = $war['a1tag'];
-									$opName = $war['a1name'];
-								}
-								echo "<tr>
-									<td style=\"width:200px;border-color:#f00;\">
-										[".$opTag."] ".$opName." 
-										[<a href=\"?page=$page&amp;id=".$opId."\">Info</a>]
-									</td>
-									<td style=\"width:150px;border-color:#f00;\">".df($war['date'])."</td>
-									<td style=\"border-color:#f00;\">".df($war['date']+WAR_DURATION)."</td>
-									</tr>";								
-							}
-							echo "</table>
-							</td></tr>";
+							echo "<tr>
+											<td class=\"tbltitle\">Kriege:</td>
+											<td class=\"tbldata\" colspan=\"2\">
+												<table class=\"tbl\">
+													<tr>
+														<td class=\"tbltitle\" style=\"width:50%;\">Allianz</td>
+														<td class=\"tbltitle\" style=\"width:25%;\">Von</td>
+														<td class=\"tbltitle\" style=\"width:25%;\">Bis</td>
+													</tr>";
+									while ($war=mysql_fetch_array($wars))
+									{
+										if ($war['a1id']==$id) 
+										{
+											$opId = $war['a2id'];
+											$opTag = $war['a2tag'];
+											$opName = $war['a2name'];
+										}
+										else
+										{
+											$opId = $war['a1id'];
+											$opTag = $war['a1tag'];
+											$opName = $war['a1name'];
+										}
+										echo "<tr>
+														<td class=\"tbldata\">
+															[".$opTag."] ".$opName." 
+															[<a href=\"?page=$page&amp;id=".$opId."\">Info</a>]
+														</td>
+														<td class=\"tbldata\">".df($war['date'])."</td>
+														<td class=\"tbldata\">".df($war['date']+WAR_DURATION)."</td>
+													</tr>";
+									}
+									echo "</table>
+											</td>
+										</tr>";
 						}
-
+			
+			
 						// Friedensabkommen
 						$wars=dbquery("
 						SELECT 
@@ -944,38 +957,44 @@
 					 		AND alliance_bnd_level=4
 					 	;");
 						if (mysql_num_rows($wars)>0)
-						{
-							
-							echo "<tr><td class=\"tbltitle\">Friedensabkommen:</td>
-							<td class=\"tbldata\" colspan=\"2\" style=\"padding:0px;\">
-							<table style=\"width:100%\" class=\"tb\">";
-							while ($war=mysql_fetch_array($wars))
-							{
-								if ($war['a1id']==$s['user']['alliance_id']) 
-								{
-									$opId = $war['a2id'];
-									$opTag = $war['a2tag'];
-									$opName = $war['a2name'];
-								}
-								else
-								{
-									$opId = $war['a1id'];
-									$opTag = $war['a1tag'];
-									$opName = $war['a1name'];
-								}
-								echo "<tr>
-									<td style=\"width:200px;border-color:#18f;\">
-										[".$opTag."] ".$opName." 
-										[<a href=\"?page=$page&amp;id=".$opId."\">Info</a>]
-									</td>
-									<td style=\"width:150px;border-color:#18f;\">".df($war['date'])."</td>
-									<td style=\"border-color:#18f;\">".df($war['date']+PEACE_DURATION)."</td>
-									</tr>";								
-							}
-							echo "</table>
-							</td></tr>";
+						{			
+							echo "<tr>
+											<td class=\"tbltitle\">Friedensabkommen:</td>
+											<td class=\"tbldata\" colspan=\"2\">
+												<table class=\"tbl\">
+													<tr>
+														<td class=\"tbltitle\" style=\"width:50%;\">Allianz</td>
+														<td class=\"tbltitle\" style=\"width:25%;\">Von</td>
+														<td class=\"tbltitle\" style=\"width:25%;\">Bis</td>
+													</tr>";					
+									while ($war=mysql_fetch_array($wars))
+									{
+										if ($war['a1id']==$id) 
+										{
+											$opId = $war['a2id'];
+											$opTag = $war['a2tag'];
+											$opName = $war['a2name'];
+										}
+										else
+										{
+											$opId = $war['a1id'];
+											$opTag = $war['a1tag'];
+											$opName = $war['a1name'];
+										}
+										echo "<tr>
+														<td class=\"tbldata\">
+															[".$opTag."] ".$opName." 
+															[<a href=\"?page=$page&amp;id=".$opId."\">Info</a>]
+														</td>
+														<td class=\"tbldata\">".df($war['date'])."</td>
+														<td class=\"tbldata\">".df($war['date']+PEACE_DURATION)."</td>
+													</tr>";				
+									}
+									echo "</table>
+											</td>
+										</tr>";
 						}						
-
+			
 						// Bündnisse
 						$wars=dbquery("
 						SELECT 
@@ -1001,37 +1020,45 @@
 					 		AND alliance_bnd_level=2
 					 	;");
 						if (mysql_num_rows($wars)>0)
-						{							
-							echo "<tr><td class=\"tbltitle\">Bündnisse:</td>
-							<td class=\"tbldata\" colspan=\"2\" style=\"padding:0px;\">
-							<table style=\"width:100%\" class=\"tb\">";
-							while ($war=mysql_fetch_array($wars))
-							{
-								if ($war['a1id']==$s['user']['alliance_id']) 
-								{
-									$opId = $war['a2id'];
-									$opTag = $war['a2tag'];
-									$opName = $war['a2name'];
-								}
-								else
-								{
-									$opId = $war['a1id'];
-									$opTag = $war['a1tag'];
-									$opName = $war['a1name'];
-								}
-								echo "<tr>
-									<td style=\"width:200px;border-color:#0f0;\">
-										[".$opTag."] ".$opName." 
-										[<a href=\"?page=$page&amp;id=".$opId."\">Info</a>]
-									</td>
-									<td style=\"width:150px;border-color:#0f0;\">".df($war['date'])."</td>
-									<td style=\"border-color:#0f0;\">".stripslashes($war['name'])."</td>
-									</tr>";								
-							}
-							echo "</table>
-							</td></tr>";
-						}						
-
+						{				
+							echo "<tr>
+											<td class=\"tbltitle\">Bündnisse:</td>
+											<td class=\"tbldata\" colspan=\"2\">
+												<table class=\"tbl\">
+													<tr>
+														<td class=\"tbltitle\" style=\"width:50%;\">Allianz</td>
+														<td class=\"tbltitle\" style=\"width:25%;\">Von</td>
+														<td class=\"tbltitle\" style=\"width:25%;\">Bündnisname</td>
+													</tr>";		
+			
+									while ($war=mysql_fetch_array($wars))
+									{
+										if ($war['a1id']==$id) 
+										{
+											$opId = $war['a2id'];
+											$opTag = $war['a2tag'];
+											$opName = $war['a2name'];
+										}
+										else
+										{
+											$opId = $war['a1id'];
+											$opTag = $war['a1tag'];
+											$opName = $war['a1name'];
+										}
+										echo "<tr>
+														<td class=\"tbldata\">
+															[".$opTag."] ".$opName." 
+															[<a href=\"?page=$page&amp;id=".$opId."\">Info</a>]
+														</td>
+														<td class=\"tbldata\">".df($war['date'])."</td>
+														<td class=\"tbldata\">".stripslashes($war['name'])."</td>
+													</tr>";							
+																
+									}
+									echo "</table>
+											</td>
+										</tr>";
+						}				
 
 						// Besucher
 						if ($arr['alliance_visits_ext']>0)

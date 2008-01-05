@@ -30,6 +30,9 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/	
 
+	//
+	// Script zum Anzeigen/Verbergen von Texten
+	//
 	?>
 	<script type="text/javascript">
 	function toggleText(elemId,switchId)
@@ -53,10 +56,12 @@
 	echo "Im Rathaus k&ouml;nnen Allianzen Nachrichten an ihre Mitglieder oder an 
 	andere Allianzen ver&ouml;ffentlichen; diese Nachrichten k&ouml;nnen &ouml;ffentlich 
 	gemacht oder nur f&uuml;r die Empf&auml;nger lesbar publiziert werden. 
-	Zum Verfassen einer Nachricht benutze die entsprechende Option auf der Allianzseite.";
+	Zum Verfassen einer Nachricht benutze die entsprechende Option auf der Allianzseite.<br><br><br>";
 	
 	
-	echo "<h2>Die neusten 10 Nachrichten</h2>";
+	//
+	// Neuste Nachrichten
+	//	
 	$anres=dbquery("
 	SELECT 
 		alliance_news_title,
@@ -87,12 +92,12 @@
 	LIMIT 10;");
 	if (mysql_num_rows($anres))
 	{
-		infobox_start("",1);
+		infobox_start("Die neusten 10 Nachrichten",1);
 		echo "<tr>
-						<th class=\"tbltitle\" style=\"width:400px;\">Titel</th>
-						<th class=\"tbltitle\" style=\"width:150px;\">Datum</th>
-						<th class=\"tbltitle\" style=\"width:250px;\">Absender</th>
-						<th class=\"tbltitle\" style=\"width:80px;\">Text</th>
+						<th class=\"tbltitle\" style=\"width:50%;\">Titel</th>
+						<th class=\"tbltitle\" style=\"width:20%;\">Datum</th>
+						<th class=\"tbltitle\" style=\"width:20%;\">Absender</th>
+						<th class=\"tbltitle\" style=\"width:10%;\">Text</th>
 				</tr>";
 		while ($anarr=mysql_fetch_array($anres))
 		{
@@ -104,9 +109,8 @@
 			if($anarr['afname']!="" && $anarr['aftag']!="")
 			{
 				echo "<td class=\"tbldata\" ".tm($anarr['aftag'],text2html($anarr['afname'])).">
-					<a href=\"?page=alliance&amp;info_id=".$anarr['alliance_news_alliance_id']."\">".$anarr['aftag']."</a>
-					
-				</td>";
+								<a href=\"?page=alliance&amp;info_id=".$anarr['alliance_news_alliance_id']."\">".$anarr['aftag']."</a>
+							</td>";
 			}
 			else
 			{
@@ -133,10 +137,11 @@
 	}
 	else
 	{
-		infobox_start(": Information :");
+		infobox_start("Die neusten 10 Nachrichten");
 		echo "Es sind momentan keine Nachrichten vorhanden!";
 		infobox_end();
 	}
+
 
 	//
 	// Internal messages
@@ -171,13 +176,12 @@
 	;");
 	if (mysql_num_rows($anres))
 	{
-		echo "<h2>Allianzinterne Nachrichten</h2>";
-		infobox_start("",1);
+		infobox_start("Allianzinterne Nachrichten",1);
 		echo "<tr>
-						<th class=\"tbltitle\" style=\"width:400px;\">Titel</th>
-						<th class=\"tbltitle\" style=\"width:150px;\">Datum</th>
-						<th class=\"tbltitle\" style=\"width:250px;\">Absender</th>
-						<th class=\"tbltitle\" style=\"width:80px;\">Text</th>
+						<th class=\"tbltitle\" style=\"width:50%;\">Titel</th>
+						<th class=\"tbltitle\" style=\"width:20%;\">Datum</th>
+						<th class=\"tbltitle\" style=\"width:20%;\">Absender</th>
+						<th class=\"tbltitle\" style=\"width:10%;\">Text</th>
 				</tr>";
 		while ($anarr=mysql_fetch_array($anres))
 		{
@@ -216,11 +220,17 @@
 		}
 		infobox_end(1);		
 	}
+	else
+	{
+		infobox_start("Allianzinterne Nachrichten");
+		echo "Es sind momentan keine Nachrichten vorhanden!";
+		infobox_end();
+	}
+
 
 	//
 	// Bündnisse
 	//
-	echo "<h2>Neuste Bündnisse</h2>";
 	$res = dbquery("
 	SELECT	
 		alliance_bnd_id,
@@ -249,24 +259,25 @@
 	");
 	if (mysql_num_rows($res)>0)
 	{
-		echo "<table class=\"tb\">";
-		echo "<tr>
-			<th>Allianz 1</th>
-			<th>Allianz 2</th>
-			<th>Bündnisname</th>
-			<th>Datum</th>
-			<th>Erklärung</th>
+		infobox_start("Neuste Bündnisse",1);
+		echo "
+		<tr>
+			<td class=\"tbltitle\" style=\"width:25%;\">Allianz 1</th>
+			<td class=\"tbltitle\" style=\"width:25%;\">Allianz 2</th>
+			<td class=\"tbltitle\" style=\"width:20%;\">Bündnisname</th>
+			<td class=\"tbltitle\" style=\"width:20%;\">Datum</th>
+			<td class=\"tbltitle\" style=\"width:10%;\">Erklärung</th>
 		</tr>";
 		while ($arr=mysql_fetch_array($res))
 		{
 			$id = "bnd".$arr['alliance_bnd_id'];
 			$sid = "sbnd".$arr['alliance_bnd_id'];			
 			echo "<tr>
-				<td><a href=\"?page=alliance&amp;info_id=".$arr['aid1']."\" ".tm($arr['at1'],text2html($arr['an1'])).">".text2html($arr['an1'])."</td>
-				<td><a href=\"?page=alliance&amp;info_id=".$arr['aid2']."\" ".tm($arr['at2'],text2html($arr['an2'])).">".text2html($arr['an2'])."</td>
-				<td>".stripslashes($arr['alliance_bnd_name'])."</td>				
-				<td>".df($arr['alliance_bnd_date'])."</td>
-				<td>";
+				<td class=\"tbldata\"><a href=\"?page=alliance&amp;info_id=".$arr['aid1']."\" ".tm($arr['at1'],text2html($arr['an1'])).">".text2html($arr['an1'])."</td>
+				<td class=\"tbldata\"><a href=\"?page=alliance&amp;info_id=".$arr['aid2']."\" ".tm($arr['at2'],text2html($arr['an2'])).">".text2html($arr['an2'])."</td>
+				<td class=\"tbldata\">".stripslashes($arr['alliance_bnd_name'])."</td>				
+				<td class=\"tbldata\">".df($arr['alliance_bnd_date'])."</td>
+				<td class=\"tbldata\">";
 				if ($arr['alliance_bnd_text_pub']!="")
 				{
 					echo "[<a href=\"javascript:;\" onclick=\"toggleText('".$id."','".$sid."');\" id=\"".$sid."\">Anzeigen</a>]";
@@ -281,14 +292,19 @@
 				<td class=\"tbldata\" colspan=\"5\">".text2html(stripslashes($arr['alliance_bnd_text_pub']))."</td>
 			</tr>";
 		}		
-		echo "</table>";
+		infobox_end(1);
 	}
-
+	else
+	{
+		infobox_start("Neuste Bündnisse");
+		echo "Es sind momentan keine Nachrichten vorhanden!";
+		infobox_end();
+	}
+	
 
 	//
 	// Kriege
 	//
-	echo "<h2>Aktuelle Kriege (Dauer ".round(WAR_DURATION/3600)."h)</h2>";
 	$res = dbquery("
 	SELECT	
 		alliance_bnd_id,
@@ -315,24 +331,24 @@
 	");
 	if (mysql_num_rows($res)>0)
 	{
-		echo "<table class=\"tb\">";
+		infobox_start("Aktuelle Kriege (Dauer ".round(WAR_DURATION/3600)."h)",1);
 		echo "<tr>
-						<th width=\"25%\">Allianz 1</th>
-						<th width=\"25%\">Allianz 2</th>
-						<th width=\"15%\">Start</th>
-						<th width=\"15%\">Ende</th>
-						<th width=\"20%\">Erklärung</th>
+						<td class=\"tbltitle\" width=\"25%\">Allianz 1</th>
+						<td class=\"tbltitle\" width=\"25%\">Allianz 2</th>
+						<td class=\"tbltitle\" width=\"20%\">Start</th>
+						<td class=\"tbltitle\" width=\"20%\">Ende</th>
+						<td class=\"tbltitle\" width=\"10%\">Erklärung</th>
 					</tr>";
 		while ($arr=mysql_fetch_array($res))
 		{
 			$id = "war".$arr['alliance_bnd_id'];
 			$sid = "swar".$arr['alliance_bnd_id'];
 			echo "<tr>
-				<td><a href=\"?page=alliance&amp;info_id=".$arr['aid1']."\" ".tm($arr['at1'],text2html($arr['an1'])).">".text2html($arr['an1'])."</td>
-				<td><a href=\"?page=alliance&amp;info_id=".$arr['aid2']."\" ".tm($arr['at2'],text2html($arr['an2'])).">".text2html($arr['an2'])."</td>
-				<td>".df($arr['alliance_bnd_date'])."</td>
-				<td>".df($arr['alliance_bnd_date']+WAR_DURATION)."</td>
-				<td>";
+				<td class=\"tbldata\"><a href=\"?page=alliance&amp;info_id=".$arr['aid1']."\" ".tm($arr['at1'],text2html($arr['an1'])).">".text2html($arr['an1'])."</td>
+				<td class=\"tbldata\"><a href=\"?page=alliance&amp;info_id=".$arr['aid2']."\" ".tm($arr['at2'],text2html($arr['an2'])).">".text2html($arr['an2'])."</td>
+				<td class=\"tbldata\">".df($arr['alliance_bnd_date'])."</td>
+				<td class=\"tbldata\">".df($arr['alliance_bnd_date']+WAR_DURATION)."</td>
+				<td class=\"tbldata\">";
 				if ($arr['alliance_bnd_text_pub']!="")
 				{
 					echo "[<a href=\"javascript:;\" onclick=\"toggleText('".$id."','".$sid."');\" id=\"".$sid."\">Anzeigen</a>]";
@@ -347,18 +363,19 @@
 				<td class=\"tbldata\" colspan=\"5\">".text2html(stripslashes($arr['alliance_bnd_text_pub']))."</td>
 			</tr>";
 		}		
-		echo "</table>";
+		infobox_end(1);
 	}
 	else
 	{
-		echo "<i>Keine Kriege vorhanden!</i><br/>";
+		infobox_start("Aktuelle Kriege (Dauer ".round(WAR_DURATION/3600)."h)");
+		echo "Es sind momentan keine Nachrichten vorhanden!";
+		infobox_end();
 	}
-	echo "<br/>";
+	
 
 	//
 	// Friedensabkommen
 	//
-	echo "<h2>Aktuelle Friedensabkommen (Dauer ".round(PEACE_DURATION/3600)."h)</h2>";
 	$res = dbquery("
 	SELECT	
 		a1.alliance_name as an1,
@@ -383,29 +400,30 @@
 	");
 	if (mysql_num_rows($res)>0)
 	{
-		echo "<table class=\"tb\">";
+		infobox_start("Aktuelle Friedensabkommen (Dauer ".round(PEACE_DURATION/3600)."h)",1);
 		echo "<tr>
-			<th width=\"30%\">Allianz 1</th>
-			<th width=\"30%\">Allianz 2</th>
-			<th width=\"20%\">Start</th>
-			<th width=\"20%\">Ende</th>
+			<td class=\"tbltitle\" width=\"30%\">Allianz 1</th>
+			<td class=\"tbltitle\" width=\"30%\">Allianz 2</th>
+			<td class=\"tbltitle\" width=\"20%\">Start</th>
+			<td class=\"tbltitle\" width=\"20%\">Ende</th>
 		</tr>";
 		while ($arr=mysql_fetch_array($res))
 		{
 			echo "<tr>
-				<td><a href=\"?page=alliance&amp;info_id=".$arr['aid1']."\" ".tm($arr['at1'],text2html($arr['an1'])).">".text2html($arr['an1'])."</td>
-				<td><a href=\"?page=alliance&amp;info_id=".$arr['aid2']."\" ".tm($arr['at2'],text2html($arr['an2'])).">".text2html($arr['an2'])."</td>
-				<td>".df($arr['alliance_bnd_date'])."</td>
-				<td>".df($arr['alliance_bnd_date']+PEACE_DURATION)."</td>
+				<td class=\"tbldata\"><a href=\"?page=alliance&amp;info_id=".$arr['aid1']."\" ".tm($arr['at1'],text2html($arr['an1'])).">".text2html($arr['an1'])."</td>
+				<td class=\"tbldata\"><a href=\"?page=alliance&amp;info_id=".$arr['aid2']."\" ".tm($arr['at2'],text2html($arr['an2'])).">".text2html($arr['an2'])."</td>
+				<td class=\"tbldata\">".df($arr['alliance_bnd_date'])."</td>
+				<td class=\"tbldata\">".df($arr['alliance_bnd_date']+PEACE_DURATION)."</td>
 			</tr>";			
 		}		
-		echo "</table>";
+		infobox_end(1);
 	}
 	else
 	{
-		echo "<i>Keine Friedensabkommen vorhanden!</i><br/>";
+		infobox_start("Aktuelle Friedensabkommen (Dauer ".round(PEACE_DURATION/3600)."h)");
+		echo "Es sind momentan keine Nachrichten vorhanden!";
+		infobox_end();
 	}
-	echo "<br/>";
 
 
 
