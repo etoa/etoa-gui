@@ -54,12 +54,23 @@
 		elseif (isset($_GET['action']) && $_GET['action']=="remove")
 		{
 			echo "<h2>:: Kolonie auf diesem Planeten aufheben ::</h2>";
-			echo "<form action=\"?page=$page\" method=\"POST\">";
-			infobox_start("Sicherheitsabfrage");
-			echo "Willst du die Kolonie auf dem Planeten <b>".$c->getString()."</b> wirklich l&ouml;schen?";
-			infobox_end();
-			echo "<input type=\"submit\" name=\"submit_noremove\" value=\"Nein, Vorgang abbrechen\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type=\"submit\" name=\"submit_remove\" value=\"Ja, die Kolonie soll aufgehoben werden\">";
-			echo "</form>";
+			
+			$t = time() + $c->userChanged()+COLONY_DELETE_THRESHOLD;
+			if ($t < time())
+			{			
+				echo "<form action=\"?page=$page\" method=\"POST\">";
+				infobox_start("Sicherheitsabfrage");
+				echo "Willst du die Kolonie auf dem Planeten <b>".$c->getString()."</b> wirklich l&ouml;schen?";
+				infobox_end();
+				echo "<input type=\"submit\" name=\"submit_noremove\" value=\"Nein, Vorgang abbrechen\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type=\"submit\" name=\"submit_remove\" value=\"Ja, die Kolonie soll aufgehoben werden\">";
+				echo "</form>";
+			}
+			else
+			{
+				echo "Die Kolonie kann wegen eines kürzlich stattgefundenen Besitzerwechsels<br/>
+				erst ab <b>".df($t)."</b> gelöscht werden!<br/><br/>
+				<input type=\"button\" value=\"Zurück\" onclick=\"document.location='?page=$page'\" />";
+			}
 		}
 
 		// Kolonie aufheben ausführen

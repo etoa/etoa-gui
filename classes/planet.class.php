@@ -105,7 +105,8 @@
 				$this->desc=$arr['planet_desc'];
 				$this->image=$arr['planet_image'];
 				$this->updated=$arr['planet_last_updated'];
-
+				$this->userChanged=$arr['planet_user_changed'];
+				
 				$this->type_id=$arr['planet_type_id'];
 				$this->type_name=$arr['planet_type_name'];
 				$this->type->name=$arr['planet_type_name'];
@@ -215,6 +216,11 @@
 		function getSectorSolsys()
 		{
 			return $this->sx."/".$this->sy." : ".$this->cx."/".$this->cy;
+		}
+		
+		function userChanged()
+		{
+			return $this->userChanged;
 		}
 		
 		/**

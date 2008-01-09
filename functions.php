@@ -5619,7 +5619,8 @@ Forum: http://www.etoa.ch/forum";
 				".$db_table['planets']."
 			SET
 				planet_user_id='".$new_user_id."',
-				planet_name='Unbenannt'
+				planet_name='Unbenannt',
+				planet_user_changed=".time()."
 			WHERE
 				planet_id='".$planet_id."';
 		");

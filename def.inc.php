@@ -165,6 +165,9 @@
 	// Planetenkennungs-Länge
 	define("PLANET_ID_LENGTH",5);	// Länge der Planetenkennung
 
+	// Minimale Sperrzeit für Kolonielöschung
+	define("COLONY_DELETE_THRESHOLD",24*3600*5);
+
 	// Nachrichten
 	define("USER_MSG_CAT_ID",1);															// Cat-ID Persönliche Nachrichten
 	define('MISC_MSG_CAT_ID',5);

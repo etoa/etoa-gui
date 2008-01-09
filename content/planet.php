@@ -63,6 +63,7 @@
 			p.planet_image,
 			p.planet_solsys_pos,
 			p.planet_fields,
+			planet_user_changed,
             p.planet_fields_used,
             p.planet_temp_from,
             p.planet_temp_to,
@@ -112,6 +113,10 @@
 			{
 				$user = get_user_nick($arr['planet_user_id']);
 				if ($user!="") echo $user." [<a href=\"?page=userinfo&id=".$arr['planet_user_id']."\" title=\"Info\">Info</a>]";
+				if ($arr['planet_user_changed']>0)
+				{
+					echo "<br/><span style=\"font-size:7pt;font-weight:bold;\">Letzter Besitzerwechsel: ".df($arr['planet_user_changed'])."</span>";
+				}
 			}
 			else
 				echo "<i>Unbewohnter Planet</i>";
