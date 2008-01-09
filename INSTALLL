@@ -1,58 +1,58 @@
-===========
-== Files ==
-===========
+Escape to Andromeda Installation Guide
+======================================
 
+
+Files
+-----
 Copy all files to the gameservers root directory, e.g. /var/www/roundx.etoa.net/htdocs,
 or user svn checkout:
 
-	svn co http://dev.etoa.net/svn/game/trunk /var/www/roundx.etoa.net/htdocs
+  $ svn co http://dev.etoa.net/svn/game/trunk /var/www/roundx.etoa.net/htdocs
 	
-=================
-== Permissions ==
-=================
-
+	
+Permissions
+-----------
 Execute the following command:
 	
-	chmod 777 -R /var/www/roundx.etoa.net/htdocs/cache
+	$ chmod 777 -R /var/www/roundx.etoa.net/htdocs/cache
 
 to allow writing to the cache directory
 
-============
-== Config ==
-============
 
+Config
+------
 Edit the example.conf.inc.php file to your needs and rename it to conf.inc.php
 
 PASSWORD_SALT is a random choosen value, which has to be set at the begining of a round and should not be changed during a round
 
-=============
-== Scripts ==
-=============
 
+Scripts
+-------
 Execute scripts/reset_admin_pw.sh for setting the admin mode htaccess password to it's default value
 (default user and passwort will be shown at the end of the above script)
 
-==============
-== Cronjobs ==
-==============
 
+Cronjobs
+--------
 On the unix shell, execute 
 
-	crontab -e
+  $ crontab -e
 
 this will open the cron editor. Insert the following text (when using vi as editor, press INSERT first)
-
-	TODO
+ 
+  * * * * * php /path/to/etoa/scripts/update.php
+  1,6,11,16,21,26,31,36,41,46,51,56 * * * * php /path/to/etoa/scripts/userstats.php
+	3 * * * * php /path/to/etoa/scripts/gamestats.php > /dev/null
 	
 Save and exit (in vi, press CTRL+C, then write wq and press ENTER), type
 
-	crontab -l
+  $ crontab -l
 
 to verify your settings.
 
-==========
-== Misc ==
-==========
+
+Misc
+----
 
 The admin panel can be accessed at roundx/admin.
 
