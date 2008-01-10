@@ -3,6 +3,11 @@
 
 #include <mysql++/mysql++.h>
 
+/**
+* Provides shiplist functions
+* 
+* \author Nicolas Perrenoud <mrcage@etoa.ch>
+*/
 namespace ship
 {
 	class ShipList

@@ -6,6 +6,11 @@
 
 #include "../EventHandler.h"
 
+/**
+* Handles building updates
+* 
+* \author Nicolas Perrenoud <mrcage@etoa.ch>
+*/
 namespace building
 {
 	class BuildingHandler	: EventHandler

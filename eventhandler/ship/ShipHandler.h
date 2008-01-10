@@ -6,6 +6,11 @@
 
 #include "../EventHandler.h"
 
+/**
+* Handles ship building updates
+* 
+* \author Nicolas Perrenoud <mrcage@etoa.ch>
+*/
 namespace ship
 {
 	class ShipHandler	: EventHandler

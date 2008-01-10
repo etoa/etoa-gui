@@ -6,6 +6,11 @@
 
 #include "../EventHandler.h"
 
+/**
+* Handles defense updates
+* 
+* \author Nicolas Perrenoud <mrcage@etoa.ch>
+*/
 namespace def
 {
 	class DefHandler	: EventHandler

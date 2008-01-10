@@ -7,7 +7,7 @@
 /**
 * EventHandler base class / interface
 * 
-* @author Nicolas Perrenoud<mrcage@etoa.ch>
+* \author Nicolas Perrenoud <mrcage@etoa.ch>
 */
 class EventHandler	
 {

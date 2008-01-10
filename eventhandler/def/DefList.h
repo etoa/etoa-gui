@@ -3,6 +3,11 @@
 
 #include <mysql++/mysql++.h>
 
+/**
+* Provides functions for defense lists
+* 
+* \author Nicolas Perrenoud <mrcage@etoa.ch>
+*/
 namespace def
 {
 	class DefList
