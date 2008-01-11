@@ -63,8 +63,6 @@
   		$weapon += $arr['ship_weapon']*$arr['shiplist_count'] + ($arr['ship_weapon'] * $arr['shiplist_count'] * $arr['shiplist_special_ship_bonus_weapon'] * $arr['special_ship_bonus_weapon']);
   		$heal += $arr['ship_heal']*$arr['shiplist_count'] + ($arr['ship_heal'] * $arr['shiplist_count'] * $arr['shiplist_special_ship_bonus_heal'] * $arr['special_ship_bonus_heal']);
   		$count += $arr['shiplist_count'];
-
-  		
   	}
 
 		// Forschung laden und bonus dazu rechnen 
