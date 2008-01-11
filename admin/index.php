@@ -228,7 +228,7 @@
 								}
 
 								echo "<br/><form action=\"?page=user&amp;action=search\" method=\"post\">
-										<input type=\"text\" name=\"user_nick_search\" size=\"10\" autocomplete=\"off\" onkeyup=\"xajax_searchUser(this.value,'user_nick_search','citybox1');\"/><br><div class=\"citybox\" id=\"citybox1\">&nbsp;</div>
+										<input type=\"text\" name=\"user_nick_search\" size=\"10\" autocomplete=\"off\" onkeyup=\"xajax_searchUser(this.value,'user_nick_search','user_search_box1');\"/><br><div class=\"citybox\" id=\"user_search_box1\">&nbsp;</div>
 										<input type=\"hidden\" name=\"qmode[user_nick_search]\" value=\"LIKE '%\" />
 										<input type=\"submit\" name=\"user_search\" value=\"Usersuche\" />
 									</form>";
