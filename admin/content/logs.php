@@ -407,7 +407,7 @@
 						$object = "";
 					}
 					
-					$log_text = text2html($arr['logs_game_text']);
+					$log_text = text2html(encode_logtext($arr['logs_game_text']));
 					
 					echo "<tr>
 									<td class=\"tbldata\">

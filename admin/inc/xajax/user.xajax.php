@@ -258,21 +258,34 @@ function showLast5Messages($uid,$target,$limit=5)
 	$lres=dbquery("
 	SELECT 
 		user_nick,
+		user_points,
+		message_user_from,
 		message_subject,
 		message_text,
 		message_id,
 		message_timestamp,
-		message_read 
+		message_read,
+		alliance_id,
+		alliance_name,
+		alliance_tag
 	FROM 
 		messages
 	LEFT JOIN
-		users
+		(
+			users
+		INNER JOIN
+			alliances
+		ON
+			user_alliance_id=alliance_id
+		)
 	ON
 		message_user_from=user_id
+	WHERE
+		message_user_to='".$uid."'
 	ORDER BY
 		message_timestamp DESC
 	LIMIT
-		$limit
+		".$limit."
 	;");
 	if (mysql_num_rows($lres)>0)
 	{
@@ -286,9 +299,26 @@ function showLast5Messages($uid,$target,$limit=5)
 		</tr>";
 		while ($larr=mysql_fetch_array($lres))
 		{
+			// Generiert MouseOver Text
+			$tm = "";
+			if($larr['user_nick']!="")
+			{
+				$tm .= "Punkte: ".nf($larr['user_points'])."";
+			}
+			if($larr['alliance_id'] != 0)
+			{
+				$tm .= "<br>Allianz: [".$larr['alliance_tag']."] ".$larr['alliance_name']."";
+			}
+			
+			
 			echo "<tr>
 				<td class=\"tbldata\">".df($larr['message_timestamp'])."</td>
-				<td class=\"tbldata\">".$larr['user_nick']."</td>
+				<td class=\"tbldata\" ";
+				if($larr['user_nick']!="")
+				{
+					echo tm("",$tm);
+				}
+				echo "><a href=\"?page=user&sub=edit&user_id=".$larr['message_user_from']."\">".$larr['user_nick']."</a></td>
 				<td class=\"tbldata\">".$larr['message_subject']."</td>
 				<td class=\"tbldata\">".text2html($larr['message_text'])."</td>
 				<td class=\"tbldata\">".($larr['message_read']==1 ? "Ja" : "Nein")."</td>

@@ -649,7 +649,9 @@
 				<b>User:</b> [USER_ID=".$s['user']['id'].";USER_NICK=".$s['user']['nick']."]<br>
 				<b>Planeten:</b> [PLANET_ID=".$c->id.";PLANET_NAME=".$c->name."]<br>
 				<b>Dauer des gesamten Auftrages:</b> ".tf($total_duration)."<br>
-				<b>Ende des gesamten Auftrages:</b> ".date("Y-m-d H:i:s",$end_time)."<br><br>
+				<b>Ende des gesamten Auftrages:</b> ".date("Y-m-d H:i:s",$end_time)."<br>
+				<b>Eingesetzte Bewohner:</b> ".nf($people_working)."<br>
+				<b>Gen-Tech Level:</b> ".GEN_TECH_LEVEL."<br><br>
 				<b>Kosten</b><br>
 				<b>".RES_METAL.":</b> ".nf($total_metal)."<br>
 				<b>".RES_CRYSTAL.":</b> ".nf($total_crystal)."<br>
@@ -771,8 +773,8 @@
 					<b>Verteidigungsauftrag Abbruch</b><br><br>
 					<b>User:</b> [USER_ID=".$s['user']['id'].";USER_NICK=".$s['user']['nick']."]<br>
 					<b>Planeten:</b> [PLANET_ID=".$c->id.";PLANET_NAME=".$c->name."]<br>
-					<b>Anlage:</b> ".$qarr['def_name']."
-					<b>Anzahl:</b> ".nf($qarr['queue_cnt'])."
+					<b>Anlage:</b> ".$qarr['def_name']."<br>
+					<b>Anzahl:</b> ".nf($qarr['queue_cnt'])."<br>
 					<b>Auftragsdauer:</b> ".tf($qarr['queue_objtime']*$qarr['queue_cnt'])."<br><br>
 					<b>Erhaltene Rohstoffe</b><br>
 					<b>Faktor:</b> ".$cancel_res_factor."<br>
