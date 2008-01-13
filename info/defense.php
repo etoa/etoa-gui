@@ -36,11 +36,11 @@
 					echo $race[$arr['def_race_id']]['race_name']."</td></tr>";
 				else
 					echo "-</td></tr>";
-	    echo "<tr><td class=\"tbltitle\">Kosten ".$rsc['metal']."</td><td class=\"tbldata\">".nf($arr['def_costs_metal'])."</td></tr>";
-	    echo "<tr><td class=\"tbltitle\">Kosten ".$rsc['crystal']."</td><td class=\"tbldata\">".nf($arr['def_costs_crystal'])."</td></tr>";
-	    echo "<tr><td class=\"tbltitle\">Kosten ".$rsc['plastic']."</td><td class=\"tbldata\">".nf($arr['def_costs_plastic'])."</td></tr>";
-	    echo "<tr><td class=\"tbltitle\">Kosten ".$rsc['fuel']."</td><td class=\"tbldata\">".nf($arr['def_costs_fuel'])."</td></tr>";
-	    echo "<tr><td class=\"tbltitle\">Kosten ".$rsc['food']."</td><td class=\"tbldata\">".nf($arr['def_costs_food'])."</td></tr>";
+	    echo "<tr><td class=\"tbltitle\">".RES_ICON_METAL."".RES_METAL."</td><td class=\"tbldata\">".nf($arr['def_costs_metal'])."</td></tr>";
+	    echo "<tr><td class=\"tbltitle\">".RES_ICON_CRYSTAL."".RES_CRYSTAL."</td><td class=\"tbldata\">".nf($arr['def_costs_crystal'])."</td></tr>";
+	    echo "<tr><td class=\"tbltitle\">".RES_ICON_PLASTIC."".RES_PLASTIC."</td><td class=\"tbldata\">".nf($arr['def_costs_plastic'])."</td></tr>";
+	    echo "<tr><td class=\"tbltitle\">".RES_ICON_FUEL."".RES_FUEL."</td><td class=\"tbldata\">".nf($arr['def_costs_fuel'])."</td></tr>";
+	    echo "<tr><td class=\"tbltitle\">".RES_ICON_FOOD."".RES_FOOD."</td><td class=\"tbldata\">".nf($arr['def_costs_food'])."</td></tr>";
 	    echo "<tr><td class=\"tbltitle\">Struktur</td><td class=\"tbldata\">".nf($arr['def_structure'])."</td></tr>";
 	    echo "<tr><td class=\"tbltitle\">Abwehrschild</td><td class=\"tbldata\">".nf($arr['def_shield'])."</td></tr>";
 	    echo "<tr><td class=\"tbltitle\">Schusskraft</td><td class=\"tbldata\">".nf($arr['def_weapon'])."</td></tr>";
