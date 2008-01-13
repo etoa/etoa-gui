@@ -1502,18 +1502,6 @@ echo $sql;
 				*/
 				echo "<div id=\"tabEconomy\" style=\"display:none;\">";
 				
-				infobox_start("Rohstoff- und Produktionsübersicht",0);
-				echo "<div align=\"center\">";
-				echo "<table class=\"tbc\">";
-				echo "<tr>
-								<td class=\"tbldata2\">Minimum</td>
-								<td class=\"tbldata3\">Maximum</td>
-								<td class=\"tbldata\" style=\"font-style:italic\">Speicher bald voll</td>
-								<td class=\"tbldata\" style=\"font-weight:bold\">Speicher voll</td>
-							</tr>";
-				echo "</table>";
-				echo "</div><br><br>";
-
 				//
 				// Rohstoff- und Produktionsübersicht
 				//
@@ -1528,6 +1516,19 @@ echo $sql;
 						planet_user_id='".$arr['user_id']."'");
 				if(mysql_num_rows($pres)>0)
 				{ 
+					infobox_start("Rohstoff- und Produktionsübersicht",0);
+					echo "<div align=\"center\">";
+					echo "<table class=\"tbc\">";
+					echo "<tr>
+									<td class=\"tbldata2\">Minimum</td>
+									<td class=\"tbldata3\">Maximum</td>
+									<td class=\"tbldata\" style=\"font-style:italic\">Speicher bald voll</td>
+									<td class=\"tbldata\" style=\"font-weight:bold\">Speicher voll</td>
+								</tr>";
+					echo "</table>";
+					echo "</div><br><br>";
+					
+					
 					// Läd alle "Planetclass" Daten in ein Array
 					$planets = array();
 					while($parr=mysql_fetch_array($pres))
@@ -1835,6 +1836,12 @@ echo $sql;
 					
 					infobox_end(0);
 				}
+				else
+				{
+					infobox_start("Rohstoff- und Produktionsübersicht");
+					echo "Der User hat noch keinen Planeten!";
+					infobox_end();
+				}
 
 				//
 				// 5 letzte Bauaufträge
@@ -2130,7 +2137,6 @@ echo $sql;
 				echo "</div>";
 				
 				
-				
 				// Buttons
 				echo "<br/><input type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" />&nbsp;";
 				echo "<input type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&action=search'\" /> ";
@@ -2153,6 +2159,7 @@ echo $sql;
 					echo "<script>banEnable(false);</script>";
 				if ($arr['user_hmode_from']==0)
 					echo "<script>umodEnable(false);</script>";
+					
 			}
 			else
 			{
