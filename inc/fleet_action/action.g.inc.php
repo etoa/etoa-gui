@@ -3,8 +3,8 @@
 	* Fleet-Action: Gas collect on gas planet
 	*/
 			$destroy=0;
-			if (mt_rand(0,100)>70)	// 40 % Chance dass Schiffe überhaupt zerstört werden
-      			$destroy=mt_rand(0,20);		// 0 <= X <= 20 Prozent an Schiffen werden Zerstört
+			if (mt_rand(0,100)>80)	// 20 % Chance dass Schiffe überhaupt zerstört werden
+      			$destroy=mt_rand(0,10);		// 0 <= X <= 10 Prozent an Schiffen werden Zerstört
 			if($destroy>0)
 			{
           $cnt_res=dbquery("
