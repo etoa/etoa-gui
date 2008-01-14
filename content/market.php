@@ -31,7 +31,6 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/
 
-
 	/********
 	*	Datei-Struktur
 	*	Die Datei market.php ist wie folgt aufgebaut
@@ -1351,6 +1350,7 @@
 								</td>
 							</tr>";
 				infobox_end(1);
+				echo "</form>";
 			}
 			else
 			{
@@ -1507,6 +1507,7 @@
 			{
 				echo "Keine Angebote vorhanden!";
 			}			
+			echo "</form>";
 		}
 
 
