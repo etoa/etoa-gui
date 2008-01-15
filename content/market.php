@@ -69,6 +69,8 @@
 	//echo "<br/><div style=\"color:red;font-size:20pt;\">In bearbeitung!</div><br/><br/>";
 	echo "<div id=\"marketinfo\"></div>"; //nur zu entwicklungszwecken!
 
+	$mode = isset($_GET['mode']) ? $_GET['mode'] : "";
+
 	// Zeigt Rohstoffbox an
 	$c->resBox();
 
@@ -148,7 +150,7 @@
 		//
 		// Rohstoffkauf speichern
 		//
-		if ($_POST['ressource_submit']!="" && checker_verify())
+		if (isset($_POST['ressource_submit']) && checker_verify())
 		{
 			$cnt = 0;
 			$cnt_error = 0;
@@ -353,7 +355,7 @@
 		//
 		// Schiffskauf speichern
 		//
-		elseif ($_POST['ship_submit']!="" && checker_verify())
+		elseif (isset($_POST['ship_submit']) && checker_verify())
 		{
 			$cnt = 0;
 			$cnt_error = 0;
@@ -498,7 +500,7 @@
 		// Auktionsgebot speichern
 		//
 		//elseif ($_POST['auction_submit']!="" && checker_verify())
-		elseif($_POST['auction_show_last_update']==1  && checker_verify())
+		elseif(isset($_POST['auction_show_last_update']) && $_POST['auction_show_last_update']==1  && checker_verify())
 		{	
 			//Prüft, ob die Eingaben durch die XAJAX Funktionen aktualisiert und ausgewertet wurden
 			if($_POST['auction_show_check_submit']==1)
@@ -826,7 +828,7 @@
 		//
 		// Rohstoffverkauf speichern
 		//
-		elseif ($_POST['ress_last_update']==1 && checker_verify())
+		elseif (isset($_POST['ress_last_update']) && $_POST['ress_last_update']==1 && checker_verify())
 		{		
 			//Prüft, ob die Eingaben durch die XAJAX Funktionen aktualisiert und ausgewertet wurden
 			if($_POST['ress_check_submit']==1)
@@ -958,7 +960,7 @@
 		//
 		// Schiffverkauf speichern
 		//
-		elseif ($_POST['ship_last_update']==1 && checker_verify())
+		elseif (isset($_POST['ship_last_update']) && $_POST['ship_last_update']==1 && checker_verify())
 		{
 			//Prüft, ob die Eingaben durch die XAJAX Funktionen aktualisiert und ausgewertet wurden
 			if($_POST['ship_check_submit']==1)
@@ -1089,7 +1091,7 @@
 		//
 		// Auktion Speichern
 		//
-		elseif ($_POST['auction_last_update']==1 && checker_verify())
+		elseif (isset($_POST['auction_last_update']) && $_POST['auction_last_update']==1 && checker_verify())
 		{	
 			//Prüft, ob die Eingaben durch die XAJAX Funktionen aktualisiert und ausgewertet wurden
 			if($_POST['auction_check_submit']==1)
@@ -1209,7 +1211,7 @@
 		//
 		// Rohstoff Angebote anzeigen
 		//
-		elseif ($_POST['search_submit']!="" && $_POST['search_cat']=="ressource" && checker_verify())
+		elseif (isset($_POST['search_submit']) && $_POST['search_cat']=="ressource" && checker_verify())
 		{
 			echo "<h2>Rohstoffe</h2>";
 
@@ -1309,7 +1311,7 @@
 									<td class=\"tbldata\"><b>".RES_METAL."</b>:</td>
 									<td class=\"".$metal_class."\">".nf($arr['buy_metal'])."</td>
 									<td class=\"tbldata\" rowspan=\"5\">
-										<input type=\"checkbox\" name=\"ressource_market_id[]\" id=\"ressource_market_id\" value=\"".$arr['ressource_market_id']."\" onclick=\"xajax_calcMarketRessBuy(xajax.getFormValues('ress_buy_selector'));\"><br/><br/>".$for_alliance."
+										<input type=\"checkbox\" name=\"ressource_market_id[]\" id=\"ressource_market_id\" value=\"".$arr['ressource_market_id']."\" onclick=\"xajax_calcMarketRessBuy(xajax.getFormValues('ress_buy_selector'));\" /><br/><br/>".$for_alliance."
 									</td>
 								</tr>
 								<tr>
@@ -1352,7 +1354,7 @@
 								<td class=\"tbldata\" colspan=\"7\" id=\"ressource_check_message\" style=\"text-align:center;vertical-align:middle;height:30px;\">&nbsp;</td>
 							</tr>
 							<tr>
-								<td class=\"tbldata\" colspan=\"7\" id=\"ressource_check_message\" style=\"text-align:center;vertical-align:middle;\">
+								<td class=\"tbldata\" colspan=\"7\" id=\"ressource_check_button\" style=\"text-align:center;vertical-align:middle;\">
 									<input type=\"submit\" class=\"button\" name=\"ressource_submit\" id=\"ressource_submit\" value=\"Angebot annehmen\" disabled=\"disabled\"/>
 								</td>
 							</tr>";
@@ -1363,8 +1365,6 @@
 			{
 				echo "Keine Angebote vorhanden!";
 			}
-			
-			echo "</form>\n";
 		}
 
 
@@ -1372,7 +1372,7 @@
 		//
 		// Schiffs Angebote anzeigen
 		//
-		elseif($_POST['search_submit']!="" && $_POST['search_cat']=="ship" && checker_verify())
+		elseif(isset($_POST['search_submit']) && $_POST['search_cat']=="ship" && checker_verify())
 		{		
 			echo "<form action=\"?page=".$page."&amp;mode=ships\" method=\"post\" id=\"ship_buy_selector\">\n";
 			checker_init();
@@ -1522,7 +1522,7 @@
 		//
 		// Auktionen Anzeigen (von der Suche oder dem Zurück-Button)
 		//
-		elseif(($_POST['search_submit']!="" && $_POST['search_cat']=="auction" || $_POST['auction_back']==1) && checker_verify())
+		elseif((isset($_POST['search_submit']) && $_POST['search_cat']=="auction" || (isset($_POST['auction_back']) && $_POST['auction_back']==1)) && checker_verify())
 		{
 			echo "<h2>Auktionen</h2><br/>";
 
@@ -1795,7 +1795,7 @@
 		//
 		// Einzelne Auktion anzeigen (Bei einer Auktion bieten)
 		//
-		elseif($_POST['auction_market_id']!=0 && checker_verify())
+		elseif(isset($_POST['auction_market_id']) && $_POST['auction_market_id']!=0 && checker_verify())
 		{
 			
 			?>
@@ -2164,7 +2164,7 @@
 		//
 		// Suchmaske
 		//
-		elseif ($_GET['mode']=="search")
+		elseif ($mode=="search")
 		{
 			echo "<form action=\"?page=".$page."\" method=\"post\" id=\"search_selector\">\n";
 			checker_init();
@@ -2295,7 +2295,7 @@
 		//
 		// Eigene Angebote anzeigen
 		//
-		elseif ($_GET['mode']=="user_sell")
+		elseif ($mode=="user_sell")
 		{
 			$return_factor = 1 - (1/(MARKET_LEVEL+1));
 
@@ -2763,7 +2763,7 @@
 				if(MIN_MARKET_LEVEL_RESS<=MARKET_LEVEL)
 				{		
           //Hier wird das ganze für die Rohstoffe noch angezeigt
-          echo "<form action=\"?page=".$page."\" method=\"post\" name=\"ressFormular\" id=\"ress_selector\">\n";
+          echo "<form action=\"?page=".$page."\" method=\"post\" name=\"ress_selector\" id=\"ress_selector\">\n";
           $cstr=checker_init();         
           
           infobox_start("Rohstoffe verkaufen",1);
@@ -2885,7 +2885,7 @@
           infobox_end(1);
           
           // Absend-Button (Per Ajax freigegeben)
-          echo "<input type=\"button\" class=\"button\" name=\"ressource_sell_submit\" id=\"ressource_sell_submit\" value=\"Angebot aufgeben\" style=\"color:#f00;\" disabled=\"disabled\" onclick=\"checkUpdate('ressFormular', 'ress_last_update','ress_check_submit');xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'),1);\"/></form><br/><br/>";
+          echo "<input type=\"button\" class=\"button\" name=\"ressource_sell_submit\" id=\"ressource_sell_submit\" value=\"Angebot aufgeben\" style=\"color:#f00;\" disabled=\"disabled\" onclick=\"checkUpdate('ress_selector', 'ress_last_update','ress_check_submit');xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'),1);\"/></form><br/><br/>";
         }
 
 
@@ -2925,7 +2925,7 @@
               }
 
 
-		          echo "<form action=\"?page=".$page."\" method=\"post\" name=\"shipFormular\" id=\"ship_selector\">\n";
+		          echo "<form action=\"?page=".$page."\" method=\"post\" name=\"ship_selector\" id=\"ship_selector\">\n";
 		          echo $cstr;
 
 							//Check Feld (wird beim Klicken auf den Submit-Button noch einmal aktualisiert)
@@ -3051,7 +3051,7 @@
 		          infobox_end(1);
 		          
 		          // Absend-Button (Per Ajax freigegeben)
-		          echo "<input type=\"button\" class=\"button\" name=\"ship_sell_submit\" id=\"ship_sell_submit\" value=\"Angebot aufgeben\" style=\"color:#f00;\" disabled=\"disabled\" onclick=\"checkUpdate('shipFormular', 'ship_last_update','ship_check_submit');xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'),0,1);\"/></form><br/><br/>";
+		          echo "<input type=\"button\" class=\"button\" name=\"ship_sell_submit\" id=\"ship_sell_submit\" value=\"Angebot aufgeben\" style=\"color:#f00;\" disabled=\"disabled\" onclick=\"checkUpdate('ship_selector', 'ship_last_update','ship_check_submit');xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'),0,1);\"/></form><br/><br/>";
  
           }
         }
@@ -3063,7 +3063,7 @@
 				if(MIN_MARKET_LEVEL_AUCTION<=MARKET_LEVEL)
 				{
 					
-          echo "<form action=\"?page=".$page."\" method=\"post\" name=\"auctionFormular\" id=\"auction_selector\">\n";
+          echo "<form action=\"?page=".$page."\" method=\"post\" name=\"auction_selector\" id=\"auction_selector\">\n";
           echo $cstr;
           infobox_start("Rohstoffe versteigern",1);
           
@@ -3087,8 +3087,8 @@
           echo "<input type=\"hidden\" value=\"".$c->res->food."\" name=\"res_food\" />";
           
           //Check Feld (wird beim Klicken auf den Submit-Button noch einmal aktualisiert)
-          echo "<input type=\"hidden\" value=\"0\" name=\"auction_check_submit\" id=\"ress_check_submit\"/>";
-          echo "<input type=\"hidden\" value=\"0\" name=\"auction_last_update\" id=\"ress_last_update\"/>";
+          echo "<input type=\"hidden\" value=\"0\" name=\"auction_check_submit\" id=\"auction_check_submit\"/>";
+          echo "<input type=\"hidden\" value=\"0\" name=\"auction_last_update\" id=\"auction_last_update\"/>";
 									
 									
 									echo "</td>
@@ -3195,7 +3195,7 @@
           infobox_end(1);
           
           // Absend-Button (Per Ajax freigegeben)
-          echo "<input type=\"button\" class=\"button\" name=\"auction_sell_submit\" id=\"auction_sell_submit\" value=\"Angebot aufgeben\" style=\"color:#f00;\" disabled=\"disabled\" onclick=\"checkUpdate('auctionFormular', 'auction_last_update','auction_check_submit');xajax_checkMarketAuctionFormular(xajax.getFormValues('auction_selector'),1);\"/></form><br/><br/>";								
+          echo "<input type=\"button\" class=\"button\" name=\"auction_sell_submit\" id=\"auction_sell_submit\" value=\"Angebot aufgeben\" style=\"color:#f00;\" disabled=\"disabled\" onclick=\"checkUpdate('auction_selector', 'auction_last_update','auction_check_submit');xajax_checkMarketAuctionFormular(xajax.getFormValues('auction_selector'),1);\"/></form><br/><br/>";								
 												
 				}
 			}
