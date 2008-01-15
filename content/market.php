@@ -145,8 +145,6 @@
     //
 		market_auction_update();
 
-
-
 		//
 		// Rohstoffkauf speichern
 		//
@@ -1404,18 +1402,18 @@
 				{
 					// Übergibt Daten an XAJAX
 					// Aktuelle Rohstoffe vom Planeten
-          echo "<input type=\"hidden\" value=\"".$c->res->metal."\" name=\"res_metal\" />";
-          echo "<input type=\"hidden\" value=\"".$c->res->crystal."\" name=\"res_crystal\" />";
-          echo "<input type=\"hidden\" value=\"".$c->res->plastic."\" name=\"res_plastic\" />";
-          echo "<input type=\"hidden\" value=\"".$c->res->fuel."\" name=\"res_fuel\" />";
-          echo "<input type=\"hidden\" value=\"".$c->res->food."\" name=\"res_food\" />";								
+          $hiddenFields = "<input type=\"hidden\" value=\"".$c->res->metal."\" name=\"res_metal\" />";
+          $hiddenFields.= "<input type=\"hidden\" value=\"".$c->res->crystal."\" name=\"res_crystal\" />";
+          $hiddenFields.= "<input type=\"hidden\" value=\"".$c->res->plastic."\" name=\"res_plastic\" />";
+          $hiddenFields.= "<input type=\"hidden\" value=\"".$c->res->fuel."\" name=\"res_fuel\" />";
+          $hiddenFields.= "<input type=\"hidden\" value=\"".$c->res->food."\" name=\"res_food\" />";								
 					
 					// Preis
-          echo "<input type=\"hidden\" value=\"".$arr['ship_costs_metal']."\" name=\"ship_buy_metal[".$arr['ship_market_id']."]\" />";
-          echo "<input type=\"hidden\" value=\"".$arr['ship_costs_crystal']."\" name=\"ship_buy_crystal[".$arr['ship_market_id']."]\" />";
-          echo "<input type=\"hidden\" value=\"".$arr['ship_costs_plastic']."\" name=\"ship_buy_plastic[".$arr['ship_market_id']."]\" />";
-          echo "<input type=\"hidden\" value=\"".$arr['ship_costs_fuel']."\" name=\"ship_buy_fuel[".$arr['ship_market_id']."]\" />";
-          echo "<input type=\"hidden\" value=\"".$arr['ship_costs_food']."\" name=\"ship_buy_food[".$arr['ship_market_id']."]\" />";						
+          $hiddenFields.= "<input type=\"hidden\" value=\"".$arr['ship_costs_metal']."\" name=\"ship_buy_metal[".$arr['ship_market_id']."]\" />";
+          $hiddenFields.= "<input type=\"hidden\" value=\"".$arr['ship_costs_crystal']."\" name=\"ship_buy_crystal[".$arr['ship_market_id']."]\" />";
+          $hiddenFields.= "<input type=\"hidden\" value=\"".$arr['ship_costs_plastic']."\" name=\"ship_buy_plastic[".$arr['ship_market_id']."]\" />";
+          $hiddenFields.= "<input type=\"hidden\" value=\"".$arr['ship_costs_fuel']."\" name=\"ship_buy_fuel[".$arr['ship_market_id']."]\" />";
+          $hiddenFields.= "<input type=\"hidden\" value=\"".$arr['ship_costs_food']."\" name=\"ship_buy_food[".$arr['ship_market_id']."]\" />";						
 					
 					
 					
@@ -1457,8 +1455,8 @@
 					}
 					
 					echo "<tr>
-									<td class=\"tbldata\" rowspan=\"5\">
-										".nf($arr['ship_count'])." <a href=\"?page=help&site=shipyard&id=".$arr['ship_id']."\">".$arr['ship_name']."</a>
+									<td class=\"tbldata\" rowspan=\"5\">".$hiddenFields."
+										".nf($arr['ship_count'])." <a href=\"?page=help&amp;site=shipyard&amp;id=".$arr['ship_id']."\">".$arr['ship_name']."</a>
 									</td>
 									<td class=\"tbldata\" rowspan=\"5\">
 										<a href=\"?page=userinfo&amp;id=".$arr['user_id']."\">".get_user_nick($arr['user_id'])."</a>
@@ -1469,7 +1467,7 @@
 									<td class=\"tbldata\"><b>".RES_METAL."</b>:</td>
 									<td class=\"".$metal_class."\">".nf($arr['ship_costs_metal'])."</td>
 									<td class=\"tbldata\" rowspan=\"5\">
-										<input type=\"checkbox\" name=\"ship_market_id[]\" id=\"ship_market_id\" value=\"".$arr['ship_market_id']."\" onclick=\"xajax_calcMarketShipBuy(xajax.getFormValues('ship_buy_selector'));\"><br/><br/>".$for_alliance."
+										<input type=\"checkbox\" name=\"ship_market_id[]\" id=\"ship_market_id_".$arr['ship_market_id']."\" value=\"".$arr['ship_market_id']."\" onclick=\"xajax_calcMarketShipBuy(xajax.getFormValues('ship_buy_selector'));\" /><br/><br/>".$for_alliance."
 									</td>
 								</tr>
 								<tr>
@@ -1505,7 +1503,7 @@
 							</tr>
 							<tr>
 								<td class=\"tbldata\" colspan=\"7\" style=\"text-align:center;vertical-align:middle;\">
-									<input type=\"submit\" class=\"button\" name=\"ship_submit\" id=\"ship_submit\" value=\"Angebot annehmen\" disabled=\"disabled\"/>
+									<input type=\"submit\" name=\"ship_submit\" id=\"ship_submit\" value=\"Angebot annehmen\" disabled=\"disabled\"/>
 								</td>
 							</tr>";
 				infobox_end(1);
