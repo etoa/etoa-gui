@@ -66,7 +66,7 @@
 	// BEGIN SKRIPT //
 
 	echo "<h1>Marktplatz des Planeten ".$c->name."</h1>";
-	//echo "<br><div style=\"color:red;font-size:20pt;\">In bearbeitung!</div><br><br>";
+	//echo "<br/><div style=\"color:red;font-size:20pt;\">In bearbeitung!</div><br/><br/>";
 	echo "<div id=\"marketinfo\"></div>"; //nur zu entwicklungszwecken!
 
 	// Zeigt Rohstoffbox an
@@ -134,7 +134,9 @@
     $return_factor = 1 - (1/(MARKET_LEVEL+1));
 
 		// Navigation
-		echo "[ <a href=\"?page=".$page."&mode=user_home\">Angebote aufgeben</a> | <a href=\"?page=".$page."&mode=user_sell\">Eigene Angebote</a> | <a href=\"?page=".$page."&mode=search\">Angebotssuche</a> ]<br/><br/>";
+		echo "[ <a href=\"?page=".$page."&amp;mode=user_home\">Angebote aufgeben</a> | 
+		<a href=\"?page=".$page."&amp;mode=user_sell\">Eigene Angebote</a> | 
+		<a href=\"?page=".$page."&amp;mode=search\">Angebotssuche</a> ]<br/><br/>";
 
 		//
     // Alle Abgelaufenen Auktionen löschen und ev. waren versenden
@@ -291,11 +293,11 @@
 			
 			if($cnt > 0)
 			{
-				echo "".$cnt." Angebot(e) erfolgreich gekauft!<br>";
+				echo "".$cnt." Angebot(e) erfolgreich gekauft!<br/>";
 			}
 			if($cnt_error > 0)
 			{
-				echo "".$cnt_error." Angebot(e) sind nicht mehr vorhanden, oder die benötigten Rohstoffe sind nicht mehr verfügbar!<br>";
+				echo "".$cnt_error." Angebot(e) sind nicht mehr vorhanden, oder die benötigten Rohstoffe sind nicht mehr verfügbar!<br/>";
 			}
 			
 			
@@ -481,11 +483,11 @@
 			
 			if($cnt > 0)
 			{
-				echo "".$cnt." Angebot(e) erfolgreich gekauft!<br>";
+				echo "".$cnt." Angebot(e) erfolgreich gekauft!<br/>";
 			}
 			if($cnt_error > 0)
 			{
-				echo "".$cnt_error." Angebot(e) sind nicht mehr vorhanden, oder die benötigten Rohstoffe sind nicht mehr verfügbar!<br>";
+				echo "".$cnt_error." Angebot(e) sind nicht mehr vorhanden, oder die benötigten Rohstoffe sind nicht mehr verfügbar!<br/>";
 			}			
 
 		}
@@ -688,7 +690,7 @@
 	                add_log(7,"Es wurde folgende Auktion erfolgreich beendet: Der Spieler ".$s['user']['nick']." hat vom Spieler ".$partner_user_nick."  folgende Waren ersteigert:\n\nRohstoffe:\n".RES_METAL.": ".nf($arr['auction_sell_metal'])."\n".RES_CRYSTAL.": ".nf($arr['auction_sell_crystal'])."\n".RES_PLASTIC.": ".nf($arr['auction_sell_plastic'])."\n".RES_FUEL.": ".nf($arr['auction_sell_fuel'])."\n".RES_FOOD.": ".nf($arr['auction_sell_food'])."\n\nDies hat ihn folgende Rohstoffe gekostet:".RES_METAL.": ".nf($_POST['auction_new_buy_metal'])."\n".RES_CRYSTAL.": ".nf($_POST['auction_new_buy_crystal'])."\n".RES_PLASTIC.": ".nf($_POST['auction_new_buy_plastic'])."\n".RES_FUEL.": ".nf($_POST['auction_new_buy_fuel'])."\n".RES_FOOD.": ".nf($_POST['auction_new_buy_food'])."\n\nDie Auktion wird nach ".AUCTION_DELAY_TIME." Stunden gel&ouml;scht",time());
 	
 	
-	                echo "Gratulation, du hast die Auktion gewonnen, da du den maximal Betrag geboten hast!<br>";
+	                echo "Gratulation, du hast die Auktion gewonnen, da du den maximal Betrag geboten hast!<br/>";
 	                
 	                // Verkaufte Rohstoffe in Config-DB speichern für Kurs berechnung
 									// Titan
@@ -794,22 +796,22 @@
 	                WHERE
 	                	auction_market_id='".$_POST['auction_market_id']."';");
 	
-	                echo "Gebot erfolgeich abgegeben!<br>";
+	                echo "Gebot erfolgeich abgegeben!<br/>";
 	            }   
 						}
 						else
 						{
-							echo "Das Gebot muss höher sein als vom Höchstbietenden!<br>";
+							echo "Das Gebot muss höher sein als vom Höchstbietenden!<br/>";
 						}
 					}
 					else
 					{
-						echo "Die gebotenen Rohstoffe sind nicht mehr verfügbar!<br>";
+						echo "Die gebotenen Rohstoffe sind nicht mehr verfügbar!<br/>";
 					}
 				}
 				else
 				{
-					"Die Auktion ist nicht mehr vorhanden oder bereits abgelaufen!<br>";
+					"Die Auktion ist nicht mehr vorhanden oder bereits abgelaufen!<br/>";
 				}
 			}
 			else
@@ -1237,22 +1239,6 @@
 				$cnt=0;
 				while ($arr=mysql_fetch_array($res))
 				{
-					// Übergibt Daten an XAJAX
-					// Aktuelle Rohstoffe vom Planeten
-          echo "<input type=\"hidden\" value=\"".$c->res->metal."\" name=\"res_metal\" />";
-          echo "<input type=\"hidden\" value=\"".$c->res->crystal."\" name=\"res_crystal\" />";
-          echo "<input type=\"hidden\" value=\"".$c->res->plastic."\" name=\"res_plastic\" />";
-          echo "<input type=\"hidden\" value=\"".$c->res->fuel."\" name=\"res_fuel\" />";
-          echo "<input type=\"hidden\" value=\"".$c->res->food."\" name=\"res_food\" />";								
-					
-					// Preis
-          echo "<input type=\"hidden\" value=\"".$arr['buy_metal']."\" name=\"ress_buy_metal[".$arr['ressource_market_id']."]\" />";
-          echo "<input type=\"hidden\" value=\"".$arr['buy_crystal']."\" name=\"ress_buy_crystal[".$arr['ressource_market_id']."]\" />";
-          echo "<input type=\"hidden\" value=\"".$arr['buy_plastic']."\" name=\"ress_buy_plastic[".$arr['ressource_market_id']."]\" />";
-          echo "<input type=\"hidden\" value=\"".$arr['buy_fuel']."\" name=\"ress_buy_fuel[".$arr['ressource_market_id']."]\" />";
-          echo "<input type=\"hidden\" value=\"".$arr['buy_food']."\" name=\"ress_buy_food[".$arr['ressource_market_id']."]\" />";						
-					
-					
 					// Für Allianzmitglied reserveriert
           if($arr['ressource_for_alliance']!=0)
           {
@@ -1291,18 +1277,39 @@
 					}
 					
 					echo "<tr>
-									<td class=\"tbldata\"><b>".RES_METAL."</b>:</td>
+									<td class=\"tbldata\"><b>".RES_METAL."</b>:";
+
+
+					// Übergibt Daten an XAJAX
+					// Aktuelle Rohstoffe vom Planeten
+          echo "<input type=\"hidden\" value=\"".$c->res->metal."\" name=\"res_metal\" />";
+          echo "<input type=\"hidden\" value=\"".$c->res->crystal."\" name=\"res_crystal\" />";
+          echo "<input type=\"hidden\" value=\"".$c->res->plastic."\" name=\"res_plastic\" />";
+          echo "<input type=\"hidden\" value=\"".$c->res->fuel."\" name=\"res_fuel\" />";
+          echo "<input type=\"hidden\" value=\"".$c->res->food."\" name=\"res_food\" />";								
+					
+					// Preis
+          echo "<input type=\"hidden\" value=\"".$arr['buy_metal']."\" name=\"ress_buy_metal[".$arr['ressource_market_id']."]\" />";
+          echo "<input type=\"hidden\" value=\"".$arr['buy_crystal']."\" name=\"ress_buy_crystal[".$arr['ressource_market_id']."]\" />";
+          echo "<input type=\"hidden\" value=\"".$arr['buy_plastic']."\" name=\"ress_buy_plastic[".$arr['ressource_market_id']."]\" />";
+          echo "<input type=\"hidden\" value=\"".$arr['buy_fuel']."\" name=\"ress_buy_fuel[".$arr['ressource_market_id']."]\" />";
+          echo "<input type=\"hidden\" value=\"".$arr['buy_food']."\" name=\"ress_buy_food[".$arr['ressource_market_id']."]\" />";						
+
+									
+									
+									
+									echo "</td>
 									<td class=\"tbldata\">".nf($arr['sell_metal'])."</td>
 									<td class=\"tbldata\" rowspan=\"5\">
 										<a href=\"?page=userinfo&amp;id=".$arr['user_id']."\">".get_user_nick($arr['user_id'])."</a>
 									</td>
 									<td class=\"tbldata\" rowspan=\"5\">
-										".date("d.m.Y  G:i:s", $arr['datum'])."<br><br>".stripslashes($arr['ressource_text'])."
+										".date("d.m.Y  G:i:s", $arr['datum'])."<br/><br/>".stripslashes($arr['ressource_text'])."
 									</td>
 									<td class=\"tbldata\"><b>".RES_METAL."</b>:</td>
 									<td class=\"".$metal_class."\">".nf($arr['buy_metal'])."</td>
 									<td class=\"tbldata\" rowspan=\"5\">
-										<input type=\"checkbox\" name=\"ressource_market_id[]\" id=\"ressource_market_id\" value=\"".$arr['ressource_market_id']."\" onclick=\"xajax_calcMarketRessBuy(xajax.getFormValues('ress_buy_selector'));\"><br><br>".$for_alliance."
+										<input type=\"checkbox\" name=\"ressource_market_id[]\" id=\"ressource_market_id\" value=\"".$arr['ressource_market_id']."\" onclick=\"xajax_calcMarketRessBuy(xajax.getFormValues('ress_buy_selector'));\"><br/><br/>".$for_alliance."
 									</td>
 								</tr>
 								<tr>
@@ -1457,12 +1464,12 @@
 										<a href=\"?page=userinfo&amp;id=".$arr['user_id']."\">".get_user_nick($arr['user_id'])."</a>
 									</td>
 									<td class=\"tbldata\" rowspan=\"5\">
-										".date("d.m.Y  G:i:s", $arr['datum'])."<br><br>".stripslashes($arr['ship_text'])."
+										".date("d.m.Y  G:i:s", $arr['datum'])."<br/><br/>".stripslashes($arr['ship_text'])."
 									</td>
 									<td class=\"tbldata\"><b>".RES_METAL."</b>:</td>
 									<td class=\"".$metal_class."\">".nf($arr['ship_costs_metal'])."</td>
 									<td class=\"tbldata\" rowspan=\"5\">
-										<input type=\"checkbox\" name=\"ship_market_id[]\" id=\"ship_market_id\" value=\"".$arr['ship_market_id']."\" onclick=\"xajax_calcMarketShipBuy(xajax.getFormValues('ship_buy_selector'));\"><br><br>".$for_alliance."
+										<input type=\"checkbox\" name=\"ship_market_id[]\" id=\"ship_market_id\" value=\"".$arr['ship_market_id']."\" onclick=\"xajax_calcMarketShipBuy(xajax.getFormValues('ship_buy_selector'));\"><br/><br/>".$for_alliance."
 									</td>
 								</tr>
 								<tr>
@@ -1517,7 +1524,7 @@
 		//
 		elseif(($_POST['search_submit']!="" && $_POST['search_cat']=="auction" || $_POST['auction_back']==1) && checker_verify())
 		{
-			echo "<h2>Auktionen</h2><br>";
+			echo "<h2>Auktionen</h2><br/>";
 
 			$res = dbquery("	
 			SELECT
@@ -1766,7 +1773,7 @@
 							echo "</td>
 									</tr>";
             infobox_end(1,1);
-            echo "<br><br><br>";				
+            echo "<br/><br/><br/>";				
 				}
 
 				echo "<script type=\"text/javascript\">";
@@ -2142,12 +2149,12 @@
 							</tr>";		
 				infobox_end(1,1);
 				
-				echo "<br><br><input type=\"button\" class=\"button\" name=\"auction_submit\" id=\"auction_submit\" value=\"Bieten\" disabled=\"disabled\" onclick=\"checkUpdate('auctionShowFormular', 'auction_show_last_update','auction_show_check_submit');xajax_calcMarketAuctionPrice(xajax.getFormValues('auction_show_selector'),1);\"/><br><br><input type=\"button\" class=\"button\" name=\"auction_back_submit\" id=\"auction_back_submit\" value=\"Zurück\" onclick=\"auctionBack();\" />";
+				echo "<br/><br/><input type=\"button\" class=\"button\" name=\"auction_submit\" id=\"auction_submit\" value=\"Bieten\" disabled=\"disabled\" onclick=\"checkUpdate('auctionShowFormular', 'auction_show_last_update','auction_show_check_submit');xajax_calcMarketAuctionPrice(xajax.getFormValues('auction_show_selector'),1);\"/><br/><br/><input type=\"button\" class=\"button\" name=\"auction_back_submit\" id=\"auction_back_submit\" value=\"Zurück\" onclick=\"auctionBack();\" />";
 				echo "</form>";					
 			}
 			else
 			{
-				echo "Angebot nicht mehr vorhanden!<br>";
+				echo "Angebot nicht mehr vorhanden!<br/>";
 			}
 			
 		}
@@ -2423,7 +2430,7 @@
 			{
 				$cstr=checker_init();
 
-				echo "Wenn du ein Angebot zur&uuml;ckziehst erh&auml;lst du ".(round($return_factor,2)*100)."% des Angebotes zur&uuml;ck (abgerundet).<br><br>";
+				echo "Wenn du ein Angebot zur&uuml;ckziehst erh&auml;lst du ".(round($return_factor,2)*100)."% des Angebotes zur&uuml;ck (abgerundet).<br/><br/>";
 
 				//
 				// Rohstoffe
@@ -2449,9 +2456,9 @@
 
 						echo "<tr><td class=\"tbldata\"><b>".RES_METAL."</b>:</td><td class=\"tbldata\">".nf($row['sell_metal'])."</td>";
 						echo "<td class=\"tbldata\" rowspan=\"5\"><a href=\"?page=userinfo&amp;id=".$row['user_id']."\">".get_user_nick($row['user_id'])."</a></td>";
-						echo "<td class=\"tbldata\" rowspan=\"5\">".date("d.m.Y  G:i:s", $row['datum'])."<br><br>".stripslashes($row['ressource_text'])."</td>";
+						echo "<td class=\"tbldata\" rowspan=\"5\">".date("d.m.Y  G:i:s", $row['datum'])."<br/><br/>".stripslashes($row['ressource_text'])."</td>";
 						echo "<td class=\"tbldata\"><b>".RES_METAL."</b>:</td><td class=\"tbldata\">".nf($row['buy_metal'])."</td>";
-						echo "<td class=\"tbldata\" rowspan=\"5\"><input type=\"radio\" name=\"ressource_market_id\" value=\"".$row['ressource_market_id']."\"><br><br>".$for_alliance."</td></tr>";
+						echo "<td class=\"tbldata\" rowspan=\"5\"><input type=\"radio\" name=\"ressource_market_id\" value=\"".$row['ressource_market_id']."\"><br/><br/>".$for_alliance."</td></tr>";
 
 						echo "<tr><td class=\"tbldata\"><b>".RES_CRYSTAL."</b>:</td><td class=\"tbldata\">".nf($row['sell_crystal'])."</td>";
 						echo "<td class=\"tbldata\"><b>".RES_CRYSTAL."</b>:</td><td class=\"tbldata\">".nf($row['buy_crystal'])."</td></tr>";
@@ -2467,7 +2474,7 @@
 					}
 					infobox_end(1);
 					echo "<input type=\"submit\" class=\"button\" name=\"ressource_cancel\" value=\"Angebot zur&uuml;ckziehen\"/>";
-					echo "</form><br><br>";
+					echo "</form><br/><br/>";
 				}
 				else
 				{
@@ -2503,9 +2510,9 @@
 
 						echo "<tr><td class=\"tbldata\" rowspan=\"5\">".$arr['ship_count']." <a href=\"?page=help&site=shipyard&id=".$arr['ship_id']."\">".$arr['ship_name']."</a></td>";
 						echo "<td class=\"tbldata\" rowspan=\"5\"><a href=\"?page=userinfo&amp;id=".$arr['user_id']."\">".get_user_nick($arr['user_id'])."</a></td>";
-						echo "<td class=\"tbldata\" rowspan=\"5\">".date("d.m.Y  G:i:s", $arr['datum'])."<br><br>".stripslashes($arr['ship_text'])."</td>";
+						echo "<td class=\"tbldata\" rowspan=\"5\">".date("d.m.Y  G:i:s", $arr['datum'])."<br/><br/>".stripslashes($arr['ship_text'])."</td>";
 						echo "<td class=\"tbldata\"><b>".RES_METAL."</b>:</td><td class=\"tbldata\">".nf($arr['ship_costs_metal'])."</td>";
-						echo "<td class=\"tbldata\" rowspan=\"5\"><input type=\"radio\" name=\"ship_market_id\" value=\"".$arr['ship_market_id']."\"><br><br>".$for_alliance."</td></tr>";
+						echo "<td class=\"tbldata\" rowspan=\"5\"><input type=\"radio\" name=\"ship_market_id\" value=\"".$arr['ship_market_id']."\"><br/><br/>".$for_alliance."</td></tr>";
 
 						echo "<tr><td class=\"tbldata\"><b>".RES_CRYSTAL."</b>:</td><td class=\"tbldata\">".nf($arr['ship_costs_crystal'])."</td></tr>";
 						echo "<tr><td class=\"tbldata\"><b>".RES_PLASTIC."</b>:</td><td class=\"tbldata\">".nf($arr['ship_costs_plastic'])."</td></tr>";
@@ -2517,7 +2524,7 @@
 					}
 					infobox_end(1);
 					echo "<input type=\"submit\" class=\"button\" name=\"ship_cancel\" value=\"Angebot zur&uuml;ckziehen\"/>";
-					echo "</form><br><br>";
+					echo "</form><br/><br/>";
 				}
 				else
 				{
@@ -2703,7 +2710,7 @@
               			</tr>";
             }
             infobox_end(1);
-            echo "<br><br>";
+            echo "<br/><br/>";
             
 							/*
 						$cnt++;
@@ -2718,7 +2725,7 @@
                 }
                 echo "</script>";
 					echo "<input type=\"submit\" class=\"button\" name=\"auction_cancel\" value=\"Angebot zur&uuml;ckziehen\"/>";
-					echo "</form><br>";
+					echo "</form><br/>";
 				}
 				else
 				{
@@ -2761,6 +2768,12 @@
           
           infobox_start("Rohstoffe verkaufen",1);
           
+
+					//Header
+					echo "<tr>
+									<td class=\"tbltitle\" style=\"width:15%;vertical-align:middle;\">Rohstoff";
+									
+
           //Roshtoff übergabe an xajax (da die $c-variabeln nicht abgerufen werden könnne)
           echo "<input type=\"hidden\" value=\"".$c->res->metal."\" name=\"res_metal\" id=\"res_metal\"/>";
           echo "<input type=\"hidden\" value=\"".$c->res->crystal."\" name=\"res_crystal\" id=\"res_crystal\"/>";
@@ -2772,9 +2785,10 @@
           echo "<input type=\"hidden\" value=\"0\" name=\"ress_check_submit\" id=\"ress_check_submit\"/>";
           echo "<input type=\"hidden\" value=\"0\" name=\"ress_last_update\" id=\"ress_last_update\"/>";
 
-					//Header
-					echo "<tr>
-									<td class=\"tbltitle\" style=\"width:15%;vertical-align:middle;\">Rohstoff</td>
+
+									
+									
+									echo "</td>
 									<td class=\"tbltitle\" style=\"width:10%;vertical-align:middle;\">Angebot</td>
 									<td class=\"tbltitle\" style=\"width:5%;text-align:center;vertical-align:middle;\">Kurs</td>
 									<td class=\"tbltitle\" style=\"width:10%;vertical-align:middle;\">Preis</td>
@@ -2784,7 +2798,7 @@
 					echo "<tr>
 									<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_METAL.":</td>
 									<td class=\"tbldata\" style=\"vertical-align:middle;\">
-										<input type=\"text\" value=\"0\" name=\"ress_sell_metal\" id=\"ress_sell_metal\" size=\"9\" maxlength=\"15\" onkeyup=\"xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));\"\"/>
+										<input type=\"text\" value=\"0\" name=\"ress_sell_metal\" id=\"ress_sell_metal\" size=\"9\" maxlength=\"15\" onkeyup=\"xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));\"/>
 									</td>
 									<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_METAL_FACTOR."</td>
 									<td class=\"tbldata\" id=\"ress_buy_metal_field\" style=\"vertical-align:middle;\">
@@ -2854,7 +2868,7 @@
           if($s['user']['alliance_id']!=0 && $s['user']['alliance_application']==0)
           {
             echo "<td class=\"tbldata\" colspan=\"1\" style=\"vertical-align:middle;\" ".tm("Reservation","Fall dieses Angebot nur Spieler aus deiner Allianz kaufen sollen, mach hier ein H&auml;kchen").">
-            				<input type=\"checkbox\" name=\"ressource_for_alliance\" value=\"1\"> F&uuml;r Allianzmitglieder Reservieren
+            				<input type=\"checkbox\" name=\"ressource_for_alliance\" value=\"1\" /> F&uuml;r Allianzmitglieder Reservieren
             			</td>
             		</tr>";
           }
@@ -2913,14 +2927,16 @@
 
 		          echo "<form action=\"?page=".$page."\" method=\"post\" name=\"shipFormular\" id=\"ship_selector\">\n";
 		          echo $cstr;
+
+							//Check Feld (wird beim Klicken auf den Submit-Button noch einmal aktualisiert)
+          		echo "<input type=\"hidden\" value=\"0\" name=\"ship_check_submit\" id=\"ship_check_submit\"/>";
+          		echo "<input type=\"hidden\" value=\"0\" name=\"ship_last_update\" id=\"ship_last_update\"/>";			
+
 		          infobox_start("Schiffe verkaufen",1);
 		
 							// Übergibt Schiffsdaten dem xajax Tool
 							$_SESSION['market']['ship_data']=$ships;
 															
-							//Check Feld (wird beim Klicken auf den Submit-Button noch einmal aktualisiert)
-          		echo "<input type=\"hidden\" value=\"0\" name=\"ship_check_submit\" id=\"ship_check_submit\"/>";
-          		echo "<input type=\"hidden\" value=\"0\" name=\"ship_last_update\" id=\"ship_last_update\"/>";			
 										
 										
 							// Header Angebot
@@ -3018,7 +3034,7 @@
 		          if($s['user']['alliance_id']!=0 && $s['user']['alliance_application']==0)
 		          {
 		            echo "<td class=\"tbldata\" colspan=\"1\" style=\"vertical-align:middle;\" ".tm("Reservation","Fall dieses Angebot nur Spieler aus deiner Allianz kaufen sollen, mach hier ein H&auml;kchen").">
-		            				<input type=\"checkbox\" name=\"ship_for_alliance\" value=\"1\"> F&uuml;r Allianzmitglieder Reservieren
+		            				<input type=\"checkbox\" name=\"ship_for_alliance\" value=\"1\"/> F&uuml;r Allianzmitglieder Reservieren
 		            			</td>
 		            		</tr>";
 		          }
@@ -3054,6 +3070,12 @@
           // Frühstes Auktionsende
           $auction_time = time() + (AUCTION_MIN_DURATION*24*3600);
           
+        
+
+					//Header
+					echo "<tr>
+									<td class=\"tbltitle\" style=\"width:15%;vertical-align:middle;\">Rohstoff";
+									
           // Min. Auktionsende an XAJAX weitergeben
           echo "<input type=\"hidden\" value=\"".$auction_time."\" name=\"auction_time_min\" />";
           
@@ -3067,11 +3089,9 @@
           //Check Feld (wird beim Klicken auf den Submit-Button noch einmal aktualisiert)
           echo "<input type=\"hidden\" value=\"0\" name=\"auction_check_submit\" id=\"ress_check_submit\"/>";
           echo "<input type=\"hidden\" value=\"0\" name=\"auction_last_update\" id=\"ress_last_update\"/>";
-          
-
-					//Header
-					echo "<tr>
-									<td class=\"tbltitle\" style=\"width:15%;vertical-align:middle;\">Rohstoff</td>
+									
+									
+									echo "</td>
 									<td class=\"tbltitle\" style=\"width:10%;vertical-align:middle;\">Angebot</td>
 									<td class=\"tbltitle\" style=\"width:5%;text-align:center;vertical-align:middle;\">Kurs</td>
 									<td class=\"tbltitle\" style=\"width:5%;vertical-align:middle;\">Preis</td>
@@ -3085,7 +3105,7 @@
 									</td>
 									<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_METAL_FACTOR."</td>
 									<td class=\"tbldata\" id=\"auction_buy_metal_field\" style=\"text-align:center;vertical-align:middle;\">
-										<input type=\"checkbox\" name=\"auction_buy_metal\" value=\"1\" onclick=\"xajax_checkMarketAuctionFormular(xajax.getFormValues('auction_selector'));\" checked=\"checked\">
+										<input type=\"checkbox\" name=\"auction_buy_metal\" value=\"1\" onclick=\"xajax_checkMarketAuctionFormular(xajax.getFormValues('auction_selector'));\" checked=\"checked\"/>
 									</td>
 									<td class=\"tbltitle\" colspan=\"2\" style=\"vertical-align:middle;\">&nbsp;</td>
 								</tr>";												
@@ -3097,7 +3117,7 @@
 									</td>
 									<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_CRYSTAL_FACTOR."</td>
 									<td class=\"tbldata\" id=\"auction_buy_crystal_field\" style=\"text-align:center;vertical-align:middle;\">
-										<input type=\"checkbox\" name=\"auction_buy_crystal\" value=\"1\" onclick=\"xajax_checkMarketAuctionFormular(xajax.getFormValues('auction_selector'));\" checked=\"checked\">
+										<input type=\"checkbox\" name=\"auction_buy_crystal\" value=\"1\" onclick=\"xajax_checkMarketAuctionFormular(xajax.getFormValues('auction_selector'));\" checked=\"checked\"/>
 									</td>
 									<td class=\"tbltitle\" style=\"vertical-align:middle;\">Dauer:</td>
 									<td class=\"tbldata\" id=\"auction_time_field\" style=\"vertical-align:middle;\">
@@ -3129,7 +3149,7 @@
 									</td>
 									<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_PLASTIC_FACTOR."</td>
 									<td class=\"tbldata\" id=\"auction_buy_plastic_field\" style=\"text-align:center;vertical-align:middle;\">
-										<input type=\"checkbox\" name=\"auction_buy_plastic\" value=\"1\" onclick=\"xajax_checkMarketAuctionFormular(xajax.getFormValues('auction_selector'));\" checked=\"checked\">
+										<input type=\"checkbox\" name=\"auction_buy_plastic\" value=\"1\" onclick=\"xajax_checkMarketAuctionFormular(xajax.getFormValues('auction_selector'));\" checked=\"checked\"/>
 									</td>
 									<td class=\"tbltitle\" colspan=\"2\" style=\"vertical-align:middle;\">&nbsp;</td>
 								</tr>";	
@@ -3141,7 +3161,7 @@
 									</td>
 									<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_FUEL_FACTOR."</td>
 									<td class=\"tbldata\" id=\"auction_buy_fuel_field\" style=\"text-align:center;vertical-align:middle;\">
-										<input type=\"checkbox\" name=\"auction_buy_fuel\" value=\"1\" onclick=\"xajax_checkMarketAuctionFormular(xajax.getFormValues('auction_selector'));\" checked=\"checked\">
+										<input type=\"checkbox\" name=\"auction_buy_fuel\" value=\"1\" onclick=\"xajax_checkMarketAuctionFormular(xajax.getFormValues('auction_selector'));\" checked=\"checked\"/>
 									</td>
 									<td class=\"tbltitle\" style=\"vertical-align:middle;\">Ende:</td>
 									<td class=\"tbldata\" id=\"auction_end_time\" style=\"vertical-align:middle;\">".date("d.m.Y H:i",$auction_time)."</td>										
@@ -3154,7 +3174,7 @@
 									</td>
 									<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_FOOD_FACTOR."</td>
 									<td class=\"tbldata\" id=\"auction_buy_food_field\" style=\"text-align:center;vertical-align:middle;\">
-										<input type=\"checkbox\" name=\"auction_buy_food\" value=\"1\" onclick=\"xajax_checkMarketAuctionFormular(xajax.getFormValues('auction_selector'));\" checked=\"checked\">
+										<input type=\"checkbox\" name=\"auction_buy_food\" value=\"1\" onclick=\"xajax_checkMarketAuctionFormular(xajax.getFormValues('auction_selector'));\" checked=\"checked\"/>
 									</td>
 									<td class=\"tbltitle\" colspan=\"2\" style=\"vertical-align:middle;\">&nbsp;</td>
 								</tr>";	

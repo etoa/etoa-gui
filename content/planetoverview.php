@@ -55,7 +55,7 @@
 		{
 			echo "<h2>:: Kolonie auf diesem Planeten aufheben ::</h2>";
 			
-			$t = time() + $c->userChanged()+COLONY_DELETE_THRESHOLD;
+			$t = $c->userChanged()+COLONY_DELETE_THRESHOLD;
 			if ($t < time())
 			{			
 				echo "<form action=\"?page=$page\" method=\"POST\">";

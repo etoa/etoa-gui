@@ -58,8 +58,10 @@
   	$struct=0;$shield=0;$weapon=0;$count=0;  	
   	while ($arr=mysql_fetch_array($res))
   	{
-  		$struct += $arr['ship_structure']*$arr['shiplist_count'] + ($arr['ship_structure'] * $arr['shiplist_count'] * $arr['shiplist_special_ship_bonus_structure'] * $arr['special_ship_bonus_structure']);
-  		$shield += $arr['ship_shield']*$arr['shiplist_count'] + ($arr['ship_shield'] * $arr['shiplist_count'] * $arr['shiplist_special_ship_bonus_shield'] * $arr['special_ship_bonus_shield']);
+  		$struct += $arr['ship_structure']*$arr['shiplist_count'];
+  		$struct_tech_special += $arr['shiplist_special_ship_bonus_structure'] * $arr['special_ship_bonus_structure'];
+  		$shield += $arr['ship_shield']*$arr['shiplist_count'];
+  		$shueld_tech_special += $arr['shiplist_special_ship_bonus_shield'] * $arr['special_ship_bonus_shield'];
   		$weapon += $arr['ship_weapon']*$arr['shiplist_count'] + ($arr['ship_weapon'] * $arr['shiplist_count'] * $arr['shiplist_special_ship_bonus_weapon'] * $arr['special_ship_bonus_weapon']);
   		$heal += $arr['ship_heal']*$arr['shiplist_count'] + ($arr['ship_heal'] * $arr['shiplist_count'] * $arr['shiplist_special_ship_bonus_heal'] * $arr['special_ship_bonus_heal']);
   		$count += $arr['shiplist_count'];
