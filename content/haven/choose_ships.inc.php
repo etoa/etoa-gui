@@ -60,10 +60,16 @@
   	{
   		$struct += $arr['ship_structure']*$arr['shiplist_count'];
   		$struct_tech_special += $arr['shiplist_special_ship_bonus_structure'] * $arr['special_ship_bonus_structure'];
+  		
   		$shield += $arr['ship_shield']*$arr['shiplist_count'];
-  		$shueld_tech_special += $arr['shiplist_special_ship_bonus_shield'] * $arr['special_ship_bonus_shield'];
-  		$weapon += $arr['ship_weapon']*$arr['shiplist_count'] + ($arr['ship_weapon'] * $arr['shiplist_count'] * $arr['shiplist_special_ship_bonus_weapon'] * $arr['special_ship_bonus_weapon']);
-  		$heal += $arr['ship_heal']*$arr['shiplist_count'] + ($arr['ship_heal'] * $arr['shiplist_count'] * $arr['shiplist_special_ship_bonus_heal'] * $arr['special_ship_bonus_heal']);
+  		$shield_tech_special += $arr['shiplist_special_ship_bonus_shield'] * $arr['special_ship_bonus_shield'];
+  		
+  		$weapon += $arr['ship_weapon']*$arr['shiplist_count']; 
+  		$weaopn_tech_special += $arr['shiplist_special_ship_bonus_weapon'] * $arr['special_ship_bonus_weapon'];
+  		
+  		$heal += $arr['ship_heal']*$arr['shiplist_count'];
+  		$heal_tech_special += $arr['shiplist_special_ship_bonus_heal'] * $arr['special_ship_bonus_heal'];
+  		
   		$count += $arr['shiplist_count'];
   	}
 
@@ -100,25 +106,25 @@
       {
           if ($techarr_a['techlist_tech_id']==SHIELD_TECH_ID)
 					{
-              $shield_tech_a+=($techarr_a['techlist_current_level']/10);
+              $shield_tech_a+=($techarr_a['techlist_current_level']/10) + $struct_tech_special;
 							$shield_tech_name = $techarr_a["tech_name"];
 							$shield_tech_level = $techarr_a["techlist_current_level"];
 					}
           if ($techarr_a['techlist_tech_id']==STRUCTURE_TECH_ID)
 					{
-              $structure_tech_a+=($techarr_a['techlist_current_level']/10);
+              $structure_tech_a+=($techarr_a['techlist_current_level']/10) + $shield_tech_special;
 							$structure_tech_name = $techarr_a["tech_name"];
 							$structure_tech_level = $techarr_a["techlist_current_level"];
 					}
           if ($techarr_a['techlist_tech_id']==WEAPON_TECH_ID)
 					{
-              $weapon_tech_a+=($techarr_a['techlist_current_level']/10);
+              $weapon_tech_a+=($techarr_a['techlist_current_level']/10) + $weaopn_tech_special;
 							$weapon_tech_name = $techarr_a["tech_name"];
 							$weapon_tech_level = $techarr_a["techlist_current_level"];
 					}
           if ($techarr_a['techlist_tech_id']==REGENA_TECH_ID)
 					{
-              $heal_tech_a+=($techarr_a['techlist_current_level']/10);
+              $heal_tech_a+=($techarr_a['techlist_current_level']/10) + $heal_tech_special;
 							$heal_tech_name = $techarr_a["tech_name"];
 							$heal_tech_level = $techarr_a["techlist_current_level"];
 					}
