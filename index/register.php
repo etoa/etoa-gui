@@ -30,6 +30,9 @@
 	{
 		switch ($typ)
 		{
+			case "register_key_wrong":
+				$str = "Dies ist eine private Runde! Dein Schlüssel-Passwort ist falsch oder fehlt!";
+			break;
 			case "register_false_char":
 				$str = "Du hast ein unerlaubtes Zeichen im Benutzernamen oder im vollst&auml;ndigen Namen!";
 			break;
@@ -87,6 +90,8 @@
 			$userNick = isset($_SESSION['REGISTER']['register_user_nick']) ? $_SESSION['REGISTER']['register_user_nick'] : '';
 			$userEmail = isset($_SESSION['REGISTER']['register_user_email']) ? $_SESSION['REGISTER']['register_user_email'] : '';
 			$raceId = isset($_SESSION['REGISTER']['register_user_race_id']) ? $_SESSION['REGISTER']['register_user_race_id'] : 0;
+			$regKey = isset($_SESSION['REGISTER']['register_key']) ? $_SESSION['REGISTER']['register_key'] : '';
+			
 			echo 'Melde dich hier für die '.GAMEROUND_NAME.' von '.$conf['game_name']['v'].' an. Es sind noch <b>'.max($conf['enable_register']['p2']-$ucnt[0],0).'</b> von <b>'.$conf['enable_register']['p2'].'</b> Plätzen frei!<br/><br/>';
 			echo "<form action=\"?index=register\" method=\"post\"><div>";
 			echo "<table style=\"margin:5px auto;width:700px;\">";
@@ -122,6 +127,16 @@
 			echo "<td class=\"tbldata\" id=\"raceInfo\">
 				W&auml;hle eine Rasse f&uuml;r dein Volk. Jede Rasse hat St&auml;rken und Schw&auml;chen, sowie rassenspezifische Raumschiffe
 			</td></tr>";
+			
+			if ($conf['register_key']['v']!="")
+			{
+				echo "<tr><th class=\"tbltitle\">Schlüssel:</th>";
+				echo "<td class=\"tbldata\">
+					<input type=\"text\" name=\"register_key\" value=\"".$regKey."\" /></td>";
+				echo "<td class=\"tbldata\"><b>Dies ist eine private Runde, es wird ein spezielles Kennwort benötigt, um die Anmeldung abzuschliessen!</b></td></tr>";
+				
+			}
+			
 			echo "<tr><td colspan=\"3\">&nbsp;</td></tr>";
 			echo "<tr><td colspan=\"3\" class=\"tbldata\"><ul>
 			<li>Mit der Anmeldung akzeptierst du unsere <a href=\"javascript:;\" onclick=\"window.open('".LOGINSERVER_URL."?page=regeln');\" >Regeln</a>!</li>
@@ -144,120 +159,129 @@
 	if (isset($_POST['register_submit']) && $_POST['register_submit']!="")
 	{
 		$_SESSION['REGISTER']=$_POST;
-		if ($_POST['register_user_name']!="" && $_POST['register_user_nick']!="" && $_POST['register_user_email']!="")
+		
+		if ($conf['register_key']['v']=="" || $_POST['register_key']==$conf['register_key']['v'])
 		{
-			if (checkValidNick($_POST['register_user_nick']) && checkValidName($_POST['register_user_name']))
+			if ($_POST['register_user_name']!="" && $_POST['register_user_nick']!="" && $_POST['register_user_email']!="")
 			{
-				$nick=str_replace(' ','',$_POST['register_user_nick']);
-				$nick_length=strlen(utf8_decode($_POST['register_user_nick']));
-				if($nick!='')
+				if (checkValidNick($_POST['register_user_nick']) && checkValidName($_POST['register_user_name']))
 				{
-					if($nick_length>=NICK_MINLENGHT && $nick_length<=NICK_MAXLENGHT)
+					$nick=str_replace(' ','',$_POST['register_user_nick']);
+					$nick_length=strlen(utf8_decode($_POST['register_user_nick']));
+					if($nick!='')
 					{
-          	if (checkEmail($_POST['register_user_email'])==TRUE)
-          	{
-          	  $res = mysql_query("SELECT user_id FROM ".$db_table['users']." WHERE user_nick='".$_POST['register_user_nick']."' OR user_email_fix='".$_POST['register_user_email']."';");
-          	  if (mysql_num_rows($res)==0)
-          	  {
-          	      $pw = mt_rand(100000000,9999999999);
-          				$time = time();
-          	
-          	      if ($db->query("
-          	      INSERT INTO
-          	      ".$db_table['users']." (
-          	          user_name,
-          	          user_nick,
-          	          user_password,
-          	          user_email,
-          	          user_email_fix,
-          	          user_race_id,
-          	          user_registered)
-          	      VALUES
-          	          ('".$_POST['register_user_name']."',
-          	          '".$_POST['register_user_nick']."',
-          	          '".pw_salt($pw,$time)."',
-          	          '".$_POST['register_user_email']."',
-          	          '".$_POST['register_user_email']."',
-          	          '".$_POST['register_user_race_id']."',
-          	          '".$time."');"))
-          	      {
-											$rsc = get_races_array();         
-											/* 	      	
-          	          $email_text = "Hallo ".$_POST['register_user_nick']."<br><br/>Du hast dich erfolgreich beim Sci-Fi Browsergame <a href=\"http://www.etoa.ch\">Escape to Andromeda</a> registriert.<br>Hier nochmals deine Daten:<br><br>";
-          	          $email_text.= "<b>Universum:</b> ".GAMEROUND_NAME."<br>";
-          	          $email_text.= "<b>Name:</b> ".$_POST['register_user_name']."<br>";
-          	          $email_text.= "<b>E-Mail:</b> ".$_POST['register_user_email']."<br>";
-          	          $email_text.= "<b>*Nick:</b> ".$_POST['register_user_nick']."<br>";
-          	          $email_text.= "<b>*Passwort:</b> ".$pw."<br>";
-          	          $email_text.= "<b>Rasse:</b> ".$rsc[$_POST['register_user_race_id']]['race_name']."<br><br>";
-          	          $email_text.= "* Benötigst du f&uuml;r das Login!<br><br>";
-          	          $email_text.= "WICHTIG: Gib das Passwort an niemanden weiter. Gib dein Passwort auch auf keiner Seite ausser der Login- und der Einstellungs-Seite ein. Ein Game-Admin oder Entwickler wird dich auch nie nach dem Passwort fragen!<br>Desweiteren solltest du dich mit den <a href=\"".LOGINSERVER_URL."?page=regeln\">Regeln</a> bekannt machen, da ein Regelverstoss eine (temporäre) Sperrung deines Accounts zur Folge haben könnte!<br><br>";
-          	          $email_text.= "Viel Spass beim Spielen wünscht...<br>Das EtoA-Team";
-          	          */
-          	          $email_text = "Hallo ".$_POST['register_user_nick']."\n\nDu hast dich erfolgreich beim Sci-Fi Browsergame Escape to Andromeda registriert.\nHier nochmals deine Daten:\n\n";
-          	          $email_text.= "Universum: ".GAMEROUND_NAME."\n";
-          	          $email_text.= "Name: ".$_POST['register_user_name']."\n";
-          	          $email_text.= "E-Mail: ".$_POST['register_user_email']."\n";
-          	          $email_text.= "Nick: ".$_POST['register_user_nick']."\n";
-          	          $email_text.= "Passwort: ".$pw."\n";
-          	          $email_text.= "Rasse: ".$rsc[$_POST['register_user_race_id']]['race_name']."\n\n";
-          	          $email_text.= "WICHTIG: Gib das Passwort an niemanden weiter. Gib dein Passwort auch auf keiner Seite ausser der Login- und der Einstellungs-Seite ein. Ein Game-Admin oder Entwickler wird dich auch nie nach dem Passwort fragen!\n";
-          	          $email_text.= "Desweiteren solltest du dich mit den Regeln (".LOGINSERVER_URL."?page=regeln) bekannt machen, da ein Regelverstoss eine (zeitweilige) Sperrung deines Accounts zur Folge haben kann!\n\n";
-          	          $email_text.= "Viel Spass beim Spielen!\nDas EtoA-Team";
-
-          	
-          	          send_mail(0,$_POST['register_user_email'],"EtoA Registrierung",$email_text,"","left",1);
-          	
-          	          add_log(3,"Der Benutzer ".$_POST['register_user_nick']." (".$_POST['register_user_name'].", ".$_POST['register_user_email'].") hat sich registriert!",time());
-          	          infobox_start("Registration erfolgreich!");
-          	          echo "Es wurde eine E-Mail an <b>".$_POST['register_user_email']."</b> verschickt, in der ein automatisch generiertes Passwort f&uuml;r deine Erstanmeldung steht.<br/>
-          	          Bitte &auml;ndere dieses Passwort sobald als m&ouml;glich in den Einstellungen.<br/><br/>
-          	          Solltest du innerhalb der n&auml;chsten 5 Minuten keine E-Mail erhalten, pr&uuml;fe zun&auml;chst dein Spam-Verzeichnis.<br/><br/>
-          	          Melde dich bei einem <a href=\"?index=contact\">Admin</a>, falls du keine E-Mail erh&auml;ltst oder andere Anmeldeprobleme auftreten.";
-          	          infobox_end();
-          	      }
-          	      else
-          	      {
-          	          echo "<h2>Fehler</h2";
-          	          echo "Beim Speichern der Daten trat ein Fehler auf! Bitte informiere den Entwickler:<br/><br/><a href=\"mailto:mail@etoa.ch\">E-Mail senden</a></p>";
-          	      }
-          	      echo "</div><br style=\"clear:both;\" /></div>";
-          	      $_SESSION['REGISTER']=Null;
-          	  }
-          	  else
-          	  {
-          	      register_error("user_exists");
-          	      drawRegForm();
-          	  }
-          	}
-          	else
-          	{
-          	    register_error("invalid_email");
-          	    drawRegForm();
-          	}
-        	}
-        	else
-        	{
-        		register_error("nick_length");
-        		drawRegForm();
-        	}
-        }
-        else
-        {
-        	register_error("nick_space");
-					drawRegForm();  
-        }
+						if($nick_length>=NICK_MINLENGHT && $nick_length<=NICK_MAXLENGHT)
+						{
+	          	if (checkEmail($_POST['register_user_email'])==TRUE)
+	          	{
+	          	  $res = mysql_query("SELECT user_id FROM ".$db_table['users']." WHERE user_nick='".$_POST['register_user_nick']."' OR user_email_fix='".$_POST['register_user_email']."';");
+	          	  if (mysql_num_rows($res)==0)
+	          	  {
+	          	      $pw = mt_rand(100000000,9999999999);
+	          				$time = time();
+	          	
+	          	      if ($db->query("
+	          	      INSERT INTO
+	          	      ".$db_table['users']." (
+	          	          user_name,
+	          	          user_nick,
+	          	          user_password,
+	          	          user_email,
+	          	          user_email_fix,
+	          	          user_race_id,
+	          	          user_registered)
+	          	      VALUES
+	          	          ('".$_POST['register_user_name']."',
+	          	          '".$_POST['register_user_nick']."',
+	          	          '".pw_salt($pw,$time)."',
+	          	          '".$_POST['register_user_email']."',
+	          	          '".$_POST['register_user_email']."',
+	          	          '".$_POST['register_user_race_id']."',
+	          	          '".$time."');"))
+	          	      {
+												$rsc = get_races_array();         
+												/* 	      	
+	          	          $email_text = "Hallo ".$_POST['register_user_nick']."<br><br/>Du hast dich erfolgreich beim Sci-Fi Browsergame <a href=\"http://www.etoa.ch\">Escape to Andromeda</a> registriert.<br>Hier nochmals deine Daten:<br><br>";
+	          	          $email_text.= "<b>Universum:</b> ".GAMEROUND_NAME."<br>";
+	          	          $email_text.= "<b>Name:</b> ".$_POST['register_user_name']."<br>";
+	          	          $email_text.= "<b>E-Mail:</b> ".$_POST['register_user_email']."<br>";
+	          	          $email_text.= "<b>*Nick:</b> ".$_POST['register_user_nick']."<br>";
+	          	          $email_text.= "<b>*Passwort:</b> ".$pw."<br>";
+	          	          $email_text.= "<b>Rasse:</b> ".$rsc[$_POST['register_user_race_id']]['race_name']."<br><br>";
+	          	          $email_text.= "* Benötigst du f&uuml;r das Login!<br><br>";
+	          	          $email_text.= "WICHTIG: Gib das Passwort an niemanden weiter. Gib dein Passwort auch auf keiner Seite ausser der Login- und der Einstellungs-Seite ein. Ein Game-Admin oder Entwickler wird dich auch nie nach dem Passwort fragen!<br>Desweiteren solltest du dich mit den <a href=\"".LOGINSERVER_URL."?page=regeln\">Regeln</a> bekannt machen, da ein Regelverstoss eine (temporäre) Sperrung deines Accounts zur Folge haben könnte!<br><br>";
+	          	          $email_text.= "Viel Spass beim Spielen wünscht...<br>Das EtoA-Team";
+	          	          */
+	          	          $email_text = "Hallo ".$_POST['register_user_nick']."\n\nDu hast dich erfolgreich beim Sci-Fi Browsergame Escape to Andromeda registriert.\nHier nochmals deine Daten:\n\n";
+	          	          $email_text.= "Universum: ".GAMEROUND_NAME."\n";
+	          	          $email_text.= "Name: ".$_POST['register_user_name']."\n";
+	          	          $email_text.= "E-Mail: ".$_POST['register_user_email']."\n";
+	          	          $email_text.= "Nick: ".$_POST['register_user_nick']."\n";
+	          	          $email_text.= "Passwort: ".$pw."\n";
+	          	          $email_text.= "Rasse: ".$rsc[$_POST['register_user_race_id']]['race_name']."\n\n";
+	          	          $email_text.= "WICHTIG: Gib das Passwort an niemanden weiter. Gib dein Passwort auch auf keiner Seite ausser der Login- und der Einstellungs-Seite ein. Ein Game-Admin oder Entwickler wird dich auch nie nach dem Passwort fragen!\n";
+	          	          $email_text.= "Desweiteren solltest du dich mit den Regeln (".LOGINSERVER_URL."?page=regeln) bekannt machen, da ein Regelverstoss eine (zeitweilige) Sperrung deines Accounts zur Folge haben kann!\n\n";
+	          	          $email_text.= "Viel Spass beim Spielen!\nDas EtoA-Team";
+	
+	          	
+	          	          send_mail(0,$_POST['register_user_email'],"EtoA Registrierung",$email_text,"","left",1);
+	          	
+	          	          add_log(3,"Der Benutzer ".$_POST['register_user_nick']." (".$_POST['register_user_name'].", ".$_POST['register_user_email'].") hat sich registriert!",time());
+	          	          infobox_start("Registration erfolgreich!");
+	          	          echo "Es wurde eine E-Mail an <b>".$_POST['register_user_email']."</b> verschickt, in der ein automatisch generiertes Passwort f&uuml;r deine Erstanmeldung steht.<br/>
+	          	          Bitte &auml;ndere dieses Passwort sobald als m&ouml;glich in den Einstellungen.<br/><br/>
+	          	          Solltest du innerhalb der n&auml;chsten 5 Minuten keine E-Mail erhalten, pr&uuml;fe zun&auml;chst dein Spam-Verzeichnis.<br/><br/>
+	          	          Melde dich bei einem <a href=\"?index=contact\">Admin</a>, falls du keine E-Mail erh&auml;ltst oder andere Anmeldeprobleme auftreten.";
+	          	          infobox_end();
+	          	      }
+	          	      else
+	          	      {
+	          	          echo "<h2>Fehler</h2";
+	          	          echo "Beim Speichern der Daten trat ein Fehler auf! Bitte informiere den Entwickler:<br/><br/><a href=\"mailto:mail@etoa.ch\">E-Mail senden</a></p>";
+	          	      }
+	          	      echo "</div><br style=\"clear:both;\" /></div>";
+	          	      $_SESSION['REGISTER']=Null;
+	          	  }
+	          	  else
+	          	  {
+	          	      register_error("user_exists");
+	          	      drawRegForm();
+	          	  }
+	          	}
+	          	else
+	          	{
+	          	    register_error("invalid_email");
+	          	    drawRegForm();
+	          	}
+	        	}
+	        	else
+	        	{
+	        		register_error("nick_length");
+	        		drawRegForm();
+	        	}
+	        }
+	        else
+	        {
+	        	register_error("nick_space");
+						drawRegForm();  
+	        }
+				}
+				else
+				{
+					register_error("register_false_char");
+					drawRegForm();
+				}
 			}
 			else
 			{
-				register_error("register_false_char");
+				register_error("register_not_filled_out");
 				drawRegForm();
 			}
 		}
 		else
 		{
-			register_error("register_not_filled_out");
-			drawRegForm();
+			register_error("register_key_wrong");
+			drawRegForm();			
 		}
 	}
 	
