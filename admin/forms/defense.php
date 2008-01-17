@@ -206,7 +206,21 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											11	=> 	array	(	"name" => "def_fields",
+											11	=> 	array	(	"name" => "def_heal",
+																		"text" => "Reparatur",
+																		"type" => "text",
+																		"def_val" => "",
+																		"size" => "20",
+																		"maxlen" => "250",
+																		"rows" => "",
+																		"cols" => "",
+																		"rcb_elem" => "",
+																		"rcb_elem_chekced" => "",
+																		"select_elem" => "",
+																		"select_elem_checked" => "",
+																		"show_overview" => 0
+																	),																	
+											12	=> 	array	(	"name" => "def_fields",
 																		"text" => "Felder",
 																		"type" => "text",
 																		"def_val" => "",
@@ -220,7 +234,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											12	=> 	array	(	"name" => "def_max_count",
+											13	=> 	array	(	"name" => "def_max_count",
 																		"text" => "Max Anzahl",
 																		"type" => "text",
 																		"def_val" => "",
@@ -234,7 +248,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											13	=> 	array	(	"name" => "def_order",
+											14	=> 	array	(	"name" => "def_order",
 																		"text" => "Reihenfolge",
 																		"type" => "text",
 																		"def_val" => "",
@@ -248,7 +262,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
 																	),
-											14	=> 	array	(	"name" => "def_show",
+											15	=> 	array	(	"name" => "def_show",
 																		"text" => "Anzeigen",
 																		"type" => "radio",
 																		"def_val" => "",
@@ -262,7 +276,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											15	=> 	array	(	"name" => "def_buildable",
+											16	=> 	array	(	"name" => "def_buildable",
 																		"text" => "Baubar",
 																		"type" => "radio",
 																		"def_val" => "",
@@ -276,7 +290,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											16	=> 	array	(	"name" => "def_cat_id",
+											17	=> 	array	(	"name" => "def_cat_id",
 																		"text" => "Kategorie",
 																		"type" => "select",
 																		"def_val" => "",
@@ -290,7 +304,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
 																	),																	
-											17	=> 	array	(	"name" => "def_race_id",
+											18	=> 	array	(	"name" => "def_race_id",
 																		"text" => "Rasse",
 																		"type" => "select",
 																		"def_val" => "",

@@ -349,7 +349,7 @@
 		  	deflist_count,
 		  	deflist_build_count			
 			FROM 
-				".$db_table['deflist'].",
+				deflist,
 				".$db_table['planets'].",
 				".$db_table['space_cells'].",
 				".$db_table['users'].",
@@ -370,14 +370,14 @@
 			if ($_POST['new']!="")
 			{
 				$updata=explode(":",$_POST['planet_id']);
-				if (mysql_num_rows(dbquery("SELECT deflist_id FROM ".$db_table['deflist']." WHERE deflist_planet_id=".$updata[0]." AND deflist_def_id=".$_POST['def_id'].";"))==0)
+				if (mysql_num_rows(dbquery("SELECT deflist_id FROM deflist WHERE deflist_planet_id=".$updata[0]." AND deflist_def_id=".$_POST['def_id'].";"))==0)
 				{
-					dbquery("INSERT INTO ".$db_table['deflist']." (deflist_planet_id,deflist_user_id,deflist_def_id,deflist_count) VALUES (".$updata[0].",".$updata[1].",".$_POST['def_id'].",".$_POST['deflist_count'].");");					
+					dbquery("INSERT INTO deflist (deflist_planet_id,deflist_user_id,deflist_def_id,deflist_count) VALUES (".$updata[0].",".$updata[1].",".$_POST['def_id'].",".$_POST['deflist_count'].");");					
 					echo "Verteidigung wurde hinzugef&uuml;gt!<br/>";
 				}
 				else
 				{
-					dbquery("UPDATE ".$db_table['deflist']." SET deflist_count=deflist_count+".$_POST['deflist_count']." WHERE deflist_planet_id=".$updata[0]." AND deflist_def_id=".$_POST['def_id'].";");
+					dbquery("UPDATE deflist SET deflist_count=deflist_count+".$_POST['deflist_count']." WHERE deflist_planet_id=".$updata[0]." AND deflist_def_id=".$_POST['def_id'].";");
 					echo "Verteidigung wurde hinzugef&uuml;gt!<br/>";
 				}
 				$sql= " AND planet_id=".$updata[0];
@@ -453,6 +453,27 @@
 			else
 				$sql = $_SESSION['defedit']['query'];								
   	
+
+			if ($_POST['save']!="")
+			{
+				dbquery("UPDATE 
+					deflist 
+				SET 
+					deflist_count='".$_POST['deflist_count']."'
+				WHERE 
+					deflist_id='".$_POST['deflist_id']."';");
+				success_msg("Gespeichert");
+			}
+			elseif ($_POST['del']!="")
+			{
+				dbquery("DELETE FROM deflist WHERE deflist_id='".$_POST['deflist_id']."';");
+				success_msg("Gelöscht");
+			}
+			elseif ($_GET['cleanup']==1)
+			{
+				dbquery("DELETE FROM deflist WHERE deflist_count=0;");
+				success_msg("Aufgeräumt");
+			}
   	
 			$res = dbquery($sql);
 			if (mysql_num_rows($res)>0)
@@ -461,7 +482,8 @@
 				if (mysql_num_rows($res)>20)
 				{
 					echo "<input type=\"button\" value=\"Neue Suche\" onclick=\"document.location='?page=$page&sub=$sub'\" /> ";
-  				echo "<input type=\"button\" value=\"Aktualisieren\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;action=searchresults'\" /><br/><br/>";					
+  				echo "<input type=\"button\" value=\"Aktualisieren\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;action=searchresults'\" /> ";					
+  				echo "<input type=\"button\" value=\"Clean-Up\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;action=searchresults&amp;cleanup=1'\" /><br/><br/>";					
   			}
 				echo "<table class=\"tbl\">";
 				echo "<tr>";
@@ -470,12 +492,11 @@
 				echo "<td class=\"tbltitle\">Spieler</td>";
 				echo "<td class=\"tbltitle\">Verteidigung</td>";
 				echo "<td class=\"tbltitle\">Anzahl</td>";
-				echo "<td class=\"tbltitle\">Bau</td>";
 				echo "</tr>";
 				while ($arr = mysql_fetch_array($res))
 				{
-					if ($arr['deflist_build_count']>0)
-						$style=" style=\"color:#0f0\"";
+					if ($arr['deflist_count']==0)
+						$style=" style=\"color:#999\"";
 					else
 						$style="";					
 					
@@ -485,7 +506,6 @@
 					echo "<td class=\"tbldata\" $style".tm($arr['user_nick'],"<b>User-ID:</b> ".$arr['user_id']."<br/><b>Punkte:</b> ".nf($arr['user_points'])).">".cut_string($arr['user_nick'],11)."</a></td>";
 					echo "<td class=\"tbldata\" $style".tm($arr['def_name'],"<b>Verteidigungs-ID:</b> ".$arr['def_id']).">".$arr['def_name']."</a></td>";
 					echo "<td class=\"tbldata\" $style>".nf($arr['deflist_count'])."</a></td>";
-					echo "<td class=\"tbldata\" $style>".nf($arr['deflist_build_count'])."</a></td>";
 					echo "<td class=\"tbldata\">".edit_button("?page=$page&sub=$sub&action=edit&deflist_id=".$arr['deflist_id'])."</td>";
 					echo "</tr>";
 				}
@@ -504,60 +524,23 @@
 		// 
 		elseif ($_GET['action']=="edit")
 		{
-			if ($_POST['save']!="")
-			{
-				dbquery("UPDATE ".$db_table['deflist']." SET deflist_count='".$_POST['deflist_count']."',deflist_build_count='".$_POST['deflist_build_count']."',deflist_build_start_time=UNIX_TIMESTAMP('".$_POST['deflist_build_start_time']."'),deflist_build_end_time=UNIX_TIMESTAMP('".$_POST['deflist_build_end_time']."') WHERE deflist_id='".$_GET['deflist_id']."';");
-			}
-			elseif ($_POST['del']!="")
-			{
-				dbquery("DELETE FROM ".$db_table['deflist']." WHERE deflist_id='".$_GET['deflist_id']."';");
-			}
-			elseif ($_POST['build_cancel']!="")
-			{
-				dbquery("UPDATE ".$db_table['deflist']." SET
-					deflist_build_count=0,
-					deflist_build_start_time=0,
-					deflist_build_end_time=0,
-					deflist_build_object_time=0
-				WHERE 
-					deflist_id='".$_GET['deflist_id']."';");
-			}
-			elseif ($_POST['build_finish']!="")
-			{
-				dbquery("UPDATE ".$db_table['deflist']." SET
-					deflist_count=deflist_count+deflist_build_count,
-					deflist_build_count=0,
-					deflist_build_start_time=0,
-					deflist_build_end_time=0,
-					deflist_build_object_time=0
-				WHERE 
-					deflist_id='".$_GET['deflist_id']."';");
-			}				
-			
-			
-			$res = dbquery("SELECT * FROM ".$db_table['deflist'].",".$db_table['planets'].",".$db_table['users'].",".$db_table['defense']." WHERE deflist_def_id=def_id AND user_id=deflist_user_id AND planet_id=deflist_planet_id AND deflist_id=".$_GET['deflist_id'].";");
+			$res = dbquery("SELECT * FROM deflist,".$db_table['planets'].",".$db_table['users'].",".$db_table['defense']." WHERE deflist_def_id=def_id AND user_id=deflist_user_id AND planet_id=deflist_planet_id AND deflist_id=".$_GET['deflist_id'].";");
 			if (mysql_num_rows($res)>0)
 			{
 				$arr = mysql_fetch_array($res);
-				echo "<form action=\"?page=$page&sub=$sub&action=edit&deflist_id=".$_GET['deflist_id']."\" method=\"post\">";
+				echo "<form action=\"?page=$page&sub=$sub&action=searchresults\" method=\"post\">";
+				echo "<input type=\"hidden\" name=\"deflist_id\" value=\"".$arr['deflist_id']."\" />";
 				echo "<table class=\"tbl\">";
 				echo "<tr><td class=\"tbltitle\">ID</td><td class=\"tbldata\">".$arr['deflist_id']."</td></tr>";
 				echo "<tr><td class=\"tbltitle\">Planet</td><td class=\"tbldata\">".$arr['planet_name']."</td></tr>";
 				echo "<tr><td class=\"tbltitle\">Spieler</td><td class=\"tbldata\">".$arr['user_nick']."</td></tr>";
 				echo "<tr><td class=\"tbltitle\">Verteidigung</td><td class=\"tbldata\">".$arr['def_name']."</td></tr>";
-				echo "<tr><td class=\"tbltitle\">Anzahl</td><td class=\"tbldata\"><input type=\"text\" name=\"deflist_count\" value=\"".$arr['deflist_count']."\" size=\"5\" maxlength=\"20\" /></td></tr>";
-				echo "<tr><td class=\"tbltitle\">Im Bau</td><td class=\"tbldata\"><input type=\"text\" name=\"deflist_build_count\" value=\"".$arr['deflist_build_count']."\" size=\"5\" maxlength=\"20\" /></td></tr>";
-				
-				if ($arr['deflist_build_start_time']>0) $bst = date(DATE_FORMAT,$arr['deflist_build_start_time']); else $bst = "";
-				if ($arr['deflist_build_end_time']>0) $bet = date(DATE_FORMAT,$arr['deflist_build_end_time']); else $bet = "";
-				echo "<tr><td class=\"tbltitle\">Baustart</td><td class=\"tbldata\"><input type=\"text\" name=\"deflist_build_start_time\" id=\"deflist_build_start_time\" value=\"$bst\" size=\"20\" maxlength=\"30\" /> <input type=\"button\" value=\"Jetzt\" onclick=\"document.getElementById('deflist_build_start_time').value='".date("Y-d-m h:i")."'\" /></td></tr>";
-				echo "<tr><td class=\"tbltitle\">Bauende</td><td class=\"tbldata\"><input type=\"text\" name=\"deflist_build_end_time\" value=\"$bet\" size=\"20\" maxlength=\"30\" /></td></tr>";
+				echo "<tr><td class=\"tbltitle\">Anzahl</td><td class=\"tbldata\">
+					<input type=\"text\" name=\"deflist_count\" value=\"".$arr['deflist_count']."\" size=\"5\" maxlength=\"20\" /></td></tr>";
+
 				echo "</table><br/>";
-				echo "<input type=\"submit\" name=\"build_cancel\" value=\"Bau abbrechen\"  onclick=\"return confirm('Bau wirklich abbrechen?')\" />&nbsp;";
-				echo "<input type=\"submit\" name=\"build_finish\" value=\"Bau fertigstellen\" />&nbsp;";
-				echo "<input type=\"submit\" name=\"del\" value=\"L&ouml;schen\" class=\"button\" />&nbsp;";
-				echo "<hr/>";				
 				echo "<input type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" class=\"button\" />&nbsp;";
+				echo "<input type=\"submit\" name=\"del\" value=\"L&ouml;schen\" class=\"button\" onclick=\"return confirm('Wirklich löschen?');\" />&nbsp;";
 				echo "<input type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&sub=$sub&action=searchresults'\" /> ";
 				echo "<input type=\"button\" value=\"Neue Suche\" class=\"button\" onclick=\"document.location='?page=$page&sub=$sub'\" /></form>";
 			}
@@ -570,7 +553,7 @@
 		//
 		else
 		{		
-			
+	
 			
 			$_SESSION['defedit']['query']="";
 
@@ -581,7 +564,8 @@
 				$dlist[$barr['def_id']]=$barr['def_name'];	
 				
 			// Suchmaske
-			echo "Suchmaske:<br/><br/>";
+			echo "<h2>Suchmaske</h2>";
+
 			echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
 			echo "<table class=\"tbl\">";
 			echo "<tr><td class=\"tbltitle\">Planet ID</td><td class=\"tbldata\"><input type=\"text\" name=\"planet_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
@@ -592,30 +576,9 @@
 			foreach ($dlist as $k=>$v)
 				echo "<option value=\"".$k."\">".$v."</option>";
 			echo "</select></td></tr>";
-			echo "<tr><td class=\"tbltitle\">Im Bau</td><td class=\"tbldata\"><input type=\"radio\" name=\"building\" value=\"2\" checked=\"checked\" /> Egal  <input type=\"radio\" name=\"building\" value=\"1\" /> Ja  <input type=\"radio\" name=\"building\" value=\"0\" /> Nein</td></tr>";			
 			echo "</table>";
-			echo "<br/><input type=\"submit\" class=\"button\" name=\"deflist_search\" value=\"Suche starten\" /></form>";
-
-/*
-			// Hinzufügen
-			echo "<h2>Neue Verteidigung hinzuf&uuml;gen</h2>";
-			echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\">";
-			infobox_start("",1);
-			echo "<tr><th class=\"tbltitle\">Verteidigung:</th><td class=\"tbldata\"><select name=\"def_id\">";
-			foreach ($dlist as $k=>$v)
-				echo "<option value=\"".$k."\">".$v."</option>";
-			echo "</select></td></tr>";
-			echo "<tr><th class=\"tbltitle\">Anzahl</th><td class=\"tbldata\"><input type=\"text\" name=\"deflist_count\" value=\"1\" size=\"1\" maxlength=\"3\" /></td></tr>";
-			echo "<tr><th class=\"tbltitle\">auf dem Planeten</th><td class=\"tbldata\"> <select name=\"planet_id\"><";
-			$pres=dbquery("SELECT user_id,planet_id,planet_name,user_nick,planet_solsys_pos,cell_sx,cell_sy,cell_cx,cell_cy FROM ".$db_table['planets'].",".$db_table['space_cells'].",".$db_table['users']." WHERE planet_user_id=user_id AND planet_solsys_id=cell_id ORDER BY planet_id;");
-			while ($parr=mysql_fetch_array($pres))
-			{
-				echo "<option value=\"".$parr['planet_id'].":".$parr['user_id']."\">".$parr['cell_sx']."/".$parr['cell_sy']." : ".$parr['cell_cx']."/".$parr['cell_cy']." : ".$parr['planet_solsys_pos']." &nbsp; ".$parr['planet_name']." (".$parr['user_nick'].")</option>";
-			}
-			echo "</select></td></tr>";
-			infobox_end(1);
-			echo "<input type=\"submit\" name=\"new\" value=\"Hinzuf&uuml;gen\" /></form>";	
-*/		
+			echo "<br/><input type=\"submit\" class=\"button\" name=\"deflist_search\" value=\"Suche starten\" /></form><br/>";
+	
 			
 
 			// Objekte laden
@@ -625,7 +588,7 @@
 			{
 				$slist[$barr['def_id']]=$barr['def_name'];
 			}
-		
+			echo "<h2>Schnellsuche</h2>";
 			// Hinzufügen
 			echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\" id=\"selector\">";
 			infobox_start("",1);
@@ -674,10 +637,10 @@
 			infobox_end(1);
 			echo "</form>";
 			echo '<script type="text/javascript">document.forms[0].user_nick.focus();</script>';
-	
-			$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM ".$db_table['deflist'].";"));
+
+			$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM deflist;"));
 			echo "Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.<br/>";	
-		
+	
 			
 		}		
 	}

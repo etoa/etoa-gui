@@ -302,9 +302,14 @@
 	else
 	{
 		echo "<h1>&Uuml;bersicht</h1>";
-		echo "Hallo <b>".$s['user_nick']."</b>, willkommen im Administrationsmodus! Dein Rang ist <b>".$s['group_name']."</b><br/><br/>";
-		success_msg("Dein letzter Login war [b]".df($s['user_last_login'])."[/b], Host: [b]".gethostbyaddr($s['user_last_host'])."[/b] (aktuell: ".gethostbyaddr($_SERVER['REMOTE_ADDR'])."), IP: [b]".$s['user_last_ip']."[/b] (aktuell: ".$_SERVER['REMOTE_ADDR'].")",1);
-
+		
+		if (!$s['home_visited'])
+		{
+			echo "Hallo <b>".$s['user_nick']."</b>, willkommen im Administrationsmodus! Dein Rang ist <b>".$s['group_name']."</b><br/>";
+			echo "<span style=\"color:#0f0;\">Dein letzter Login war <b>".df($s['user_last_login'])."</b>, Host: <b>".gethostbyaddr($s['user_last_host'])."</b> (aktuell: ".gethostbyaddr($_SERVER['REMOTE_ADDR'])."), IP: <b>".$s['user_last_ip']."</b> (aktuell: ".$_SERVER['REMOTE_ADDR'].")</span><br/><br/>";
+			$s['home_visited']=true;
+		}
+		
 		//
 		// Admin-News
 		//

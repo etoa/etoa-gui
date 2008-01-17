@@ -44,6 +44,7 @@
 	    echo "<tr><td class=\"tbltitle\">Struktur</td><td class=\"tbldata\">".nf($arr['def_structure'])."</td></tr>";
 	    echo "<tr><td class=\"tbltitle\">Abwehrschild</td><td class=\"tbldata\">".nf($arr['def_shield'])."</td></tr>";
 	    echo "<tr><td class=\"tbltitle\">Schusskraft</td><td class=\"tbldata\">".nf($arr['def_weapon'])."</td></tr>";
+	    echo "<tr><td class=\"tbltitle\">Reparatur</td><td class=\"tbldata\">".nf($arr['def_heal'])."</td></tr>";
 	    echo "<tr><td class=\"tbltitle\">Platzverbrauch</td><td class=\"tbldata\">".nf($arr['def_fields'])." Felder</td></tr>";
 	    echo "<tr><td class=\"tbltitle\">Max. Anzahl</td><td class=\"tbldata\">".nf($arr['def_max_count'])."</td></tr>";
 	    infobox_end(1);
@@ -96,7 +97,8 @@
 			echo "<th class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=weapon\">Waffen</a></th>";
 			echo "<th class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=structure\">Struktur</a></th>";
 			echo "<th class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=shield\">Schild</a></th>";
-			//echo "<th class=\"tbltitle\">&nbsp;</th></tr>";
+			echo "<th class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=heal\">Reparatur</a></th>";
+			echo "</tr>";
 			while ($arr = mysql_fetch_array($res))
 			{
 				$s_img = IMAGE_PATH."/".IMAGE_DEF_DIR."/def".$arr['def_id']."_small.".IMAGE_EXT;
@@ -110,7 +112,8 @@
 				echo "<td class=\"tbldata\">".nf($arr['def_fields'])."</td>";
 				echo "<td class=\"tbldata\">".nf($arr['def_weapon'])."</td>";
 				echo "<td class=\"tbldata\">".nf($arr['def_structure'])."</td>";
-				echo "<td class=\"tbldata\">".nf($arr['def_shield'])."</td></tr>";
+				echo "<td class=\"tbldata\">".nf($arr['def_shield'])."</td>";
+				echo "<td class=\"tbldata\">".nf($arr['def_heal'])."</td></tr>";
 				//echo "<td class=\"tbldata\"><a href=\"?page=$page&site=$site&id=".$arr['def_id']."\">Details</a></td></tr>";
 			}
 			infobox_end(1);
