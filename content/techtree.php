@@ -79,10 +79,10 @@
 		define(REQ_ITEM_FLD,"req_def_id");
 		define(ITEM_ID_FLD,"def_id");
 		define(ITEM_NAME_FLD,"def_name");
-		define(ITEM_RACE_FLD,"");
+		define(ITEM_RACE_FLD,"def_race_id");
 		define(ITEM_SHOW_FLD,"def_show");
 		define(ITEM_TYPE_FLD,"def_cat_id");
-		define(ITEM_ORDER_FLD,"def_name");
+		define(ITEM_ORDER_FLD,"def_order,def_name");
 		define(TYPE_ORDER_FLD,"cat_order");
 		define(TYPE_ID_FLD,"cat_id");
 		define(TYPE_NAME_FLD,"cat_name");

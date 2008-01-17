@@ -227,6 +227,10 @@
 	$navmenu['Verteidigung']['Voraussetzungen']['sub']="req";
 	$navmenu['Verteidigung']['Voraussetzungen']['level']=2;
 
+	$navmenu['Verteidigung']['Kategorien']['page']="def";
+	$navmenu['Verteidigung']['Kategorien']['sub']="cat";
+	$navmenu['Verteidigung']['Kategorien']['level']=2;	
+
 	$navmenu['Verteidigung']['Battlepoints']['page']="def";
 	$navmenu['Verteidigung']['Battlepoints']['sub']="battlepoints";
 	$navmenu['Verteidigung']['Battlepoints']['level']=2;

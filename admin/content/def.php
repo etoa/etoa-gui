@@ -89,6 +89,14 @@
 		advanced_form("defense");
 	}
 
+	//
+	// Kategorien
+	//	
+	elseif ($sub=="cat")
+	{
+		advanced_form("def_cat");
+	}
+
 	
 	//
 	// Voraussetzungen

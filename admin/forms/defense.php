@@ -31,7 +31,7 @@
 	define("MODUL_NAME","Verteidigung");
 	define("DB_TABLE", $db_table['defense']);
 	define("DB_TABLE_ID", "def_id");
-	define("DB_OVERVIEW_ORDER_FIELD","def_name");
+	define("DB_OVERVIEW_ORDER_FIELD","def_cat_id,def_order");
 
 	// FIELDS
 
@@ -276,7 +276,21 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											16	=> 	array	(	"name" => "def_race_id",
+											16	=> 	array	(	"name" => "def_cat_id",
+																		"text" => "Kategorie",
+																		"type" => "select",
+																		"def_val" => "",
+																		"size" => "20",
+																		"maxlen" => "250",
+																		"rows" => "",
+																		"cols" => "",
+																		"rcb_elem" => "",
+																		"rcb_elem_chekced" => "",
+																		"select_elem" => admin_get_select_elements($db_table['def_cat'],"cat_id","cat_name","cat_name",array("0"=>"(Keine)")),
+																		"select_elem_checked" => "",
+																		"show_overview" => 1
+																	),																	
+											17	=> 	array	(	"name" => "def_race_id",
 																		"text" => "Rasse",
 																		"type" => "select",
 																		"def_val" => "",
