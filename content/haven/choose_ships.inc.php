@@ -52,7 +52,8 @@
   	ships
   ON
 		shiplist_ship_id=ship_id
-  	AND shiplist_planet_id=".$c->id.";");
+  	AND shiplist_planet_id=".$c->id."
+  	AND shiplist_count>0;");
   if (mysql_num_rows($res)>0)
   {
   	$struct=0;$shield=0;$weapon=0;$count=0;  	
@@ -106,30 +107,56 @@
       {
           if ($techarr_a['techlist_tech_id']==SHIELD_TECH_ID)
 					{
-              $shield_tech_a+=($techarr_a['techlist_current_level']/10) + $struct_tech_special;
+              $shield_tech_a+=($techarr_a['techlist_current_level']/10);
 							$shield_tech_name = $techarr_a["tech_name"];
 							$shield_tech_level = $techarr_a["techlist_current_level"];
 					}
           if ($techarr_a['techlist_tech_id']==STRUCTURE_TECH_ID)
 					{
-              $structure_tech_a+=($techarr_a['techlist_current_level']/10) + $shield_tech_special;
+              $structure_tech_a+=($techarr_a['techlist_current_level']/10);
 							$structure_tech_name = $techarr_a["tech_name"];
 							$structure_tech_level = $techarr_a["techlist_current_level"];
 					}
           if ($techarr_a['techlist_tech_id']==WEAPON_TECH_ID)
 					{
-              $weapon_tech_a+=($techarr_a['techlist_current_level']/10) + $weaopn_tech_special;
+              $weapon_tech_a+=($techarr_a['techlist_current_level']/10);
 							$weapon_tech_name = $techarr_a["tech_name"];
 							$weapon_tech_level = $techarr_a["techlist_current_level"];
 					}
           if ($techarr_a['techlist_tech_id']==REGENA_TECH_ID)
 					{
-              $heal_tech_a+=($techarr_a['techlist_current_level']/10) + $heal_tech_special;
+              $heal_tech_a+=($techarr_a['techlist_current_level']/10);
 							$heal_tech_name = $techarr_a["tech_name"];
 							$heal_tech_level = $techarr_a["techlist_current_level"];
 					}
       }
-
+      
+      $struct_str = get_percent_string($structure_tech_a,1)." durch ".$structure_tech_name." ".$structure_tech_level;
+      $shield_str = get_percent_string($shield_tech_a,1)." durch ".$shield_tech_name." ".$shield_tech_level;
+      $weapon_str = get_percent_string($weapon_tech_a,1)." durch ".$weapon_tech_name." ".$weapon_tech_level;
+      $heal_str = get_percent_string($heal_tech_a,1)." durch ".$heal_tech_name." ".$heal_tech_level;
+      
+      if ($struct_tech_special>0)
+      {
+      	$structure_tech_a += $struct_tech_special;
+      	$struct_str.= ", ".get_percent_string($struct_tech_special+1,1)." durch Spezialschiffe";
+      }
+      if ($shield_tech_special>0)
+      {
+      	$shield_tech_a += $shield_tech_special;
+      	$shield_str.= ", ".get_percent_string($shield_tech_special+1,1)." durch Spezialschiffe";
+      }
+      if ($weaopn_tech_special>0)
+      {
+      	$weapon_tech_a += $weaopn_tech_special;
+      	$weapon_str.= ", ".get_percent_string($weaopn_tech_special+1,1)." durch Spezialschiffe";
+      }
+      if ($heal_tech_special>0)
+      {
+      	$heal_tech_a += $heal_tech_special;
+      	$heal_str.= ", ".get_percent_string($heal_tech_special+1,1)." durch Spezialschiffe";
+      }
+      
 		echo "<tr><td class=\"tbltitle\"><b>Einheit</b></td><td class=\"tbltitle\">Grundwerte</td><td class=\"tbltitle\">Aktuelle Werte</td></tr>";
   	echo "<tr>
 			<td class=\"tbldata\"><b>Struktur:</b></td>
@@ -137,7 +164,7 @@
 			<td class=\"tbldata\">".nf($struct*$structure_tech_a);
 			if ($structure_tech_a>1)
 			{
-				echo " (".get_percent_string($structure_tech_a,1)." durch ".$structure_tech_name." ".$structure_tech_level.")";
+				echo " (".$struct_str.")";
 			}
 			echo "</td></tr>";
   	echo "<tr><td class=\"tbldata\"><b>Schilder:</b></td>
@@ -145,7 +172,7 @@
 			<td class=\"tbldata\">".nf($shield*$shield_tech_a);
 			if ($shield_tech_a>1)
 			{
-				echo " (".get_percent_string($shield_tech_a,1)." durch ".$shield_tech_name." ".$shield_tech_level.")";
+				echo " (".$shield_str.")";
 			}
 			echo "</td></tr>";
   	echo "<tr><td class=\"tbldata\"><b>Waffen:</b></td>
@@ -153,7 +180,7 @@
 			<td class=\"tbldata\">".nf($weapon*$weapon_tech_a);
 			if ($weapon_tech_a>1)
 			{
-				echo " (".get_percent_string($weapon_tech_a,1)." durch ".$weapon_tech_name." ".$weapon_tech_level.")";
+				echo " (".$weapon_str.")";
 			}
 			echo "</td></tr>";
   	echo "<tr><td class=\"tbldata\"><b>Heilung:</b></td>
@@ -161,7 +188,7 @@
 			<td class=\"tbldata\">".nf($heal*$heal_tech_a);
 			if ($heal_tech_a>1)
 			{
-				echo " (".get_percent_string($heal_tech_a,1)." durch ".$heal_tech_name." ".$heal_tech_level.")";
+				echo " (".$heal_str.")";
 			}
 			echo "</td></tr>";
   	echo "<tr><td class=\"tbldata\"><b>Anzahl Schiffe:</b></td><td class=\"tbldata\" colspan=\"2\">".nf($count)."</td></tr>";

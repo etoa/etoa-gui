@@ -186,6 +186,10 @@
                 $special_ship_bonus_pilots-=$ssarr['special_ship_bonus_pilots'] * $ssarr['shiplist_special_ship_bonus_pilots'];
 			}
 
+			if ($special_ship_bonus_speed > 0)
+			{
+				echo "Speedbonus durch Spezialschiffe: ".get_percent_string($special_ship_bonus_speed,1,1)."<br/>";
+			}
 
 			while ($sarr = mysql_fetch_array($sres))
 			{

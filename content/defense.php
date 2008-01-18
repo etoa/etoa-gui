@@ -100,7 +100,8 @@
   	defense
   ON
   	deflist_def_id=def_id
-  	AND deflist_planet_id=".$c->id.";");
+  	AND deflist_planet_id=".$c->id."
+  	AND deflist_count>0;");
   if (mysql_num_rows($res)>0)
   {
   	$struct=0;$shield=0;$weapon=0;$count=0;  	

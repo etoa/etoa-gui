@@ -756,11 +756,11 @@ function calcDemolishingWaitTime($dc,$c)
 										</tr>";
 						}
 						// Zuwenig Rohstoffe vorhanden
-						elseif ($c->res->metal<$bc['metal'] || 
-						$c->res->crystal<$bc['crystal']  || 
-						$c->res->plastic<$bc['plastic']  || 
-						$c->res->fuel<$bc['fuel']  || 
-						$c->res->food<$bc['food'] || 
+						elseif ($c->res->metal < $bc['metal'] || 
+						$c->res->crystal < $bc['crystal']  || 
+						$c->res->plastic < $bc['plastic']  || 
+						$c->res->fuel < $bc['fuel']  || 
+						$c->res->food < $bc['food'] || 
 						($c->prod->power - $c->use->power < $bc['power'] && $bc['power']>0)
 						)
 						{
@@ -823,11 +823,11 @@ function calcDemolishingWaitTime($dc,$c)
 										</tr>";
 						}
 						// Zuwenig Rohstoffe
-						elseif ($c->res->metal<$dc['metal'] || 
-						$c->res->crystal<$dc['crystal']  || 
-						$c->res->plastic<$dc['plastic']  || 
-						$c->res->fuel<$dc['fuel']  || 
-						$c->res->food<$dc['food'] || 
+						elseif ($c->res->metal < $dc['metal'] || 
+						$c->res->crystal < $dc['crystal']  || 
+						$c->res->plastic < $dc['plastic']  || 
+						$c->res->fuel < $dc['fuel']  || 
+						$c->res->food < $dc['food'] || 
 						($c->prod->power - $c->use->power < $dc['power'] && $dc['power']>0)
 						)
 						{
