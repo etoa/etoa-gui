@@ -117,9 +117,9 @@
 		$log.= "Gasvorkommen auf ".$gu." Gasplaneten aktualisiert.\nDauer: ".timerStop($tmr)." sec\n\n";
 		
 		//Marktupdate
-		$tmr = timerStart();
-		market_update();
-		$log.= "Markt aktualisiert.\nDauer: ".timerStop($tmr)." sec\n\n";		
+		//$tmr = timerStart();
+		//market_update();
+		//$log.= "Markt aktualisiert.\nDauer: ".timerStop($tmr)." sec\n\n";		
 		
 		// Krieg-Frieden-Update
 		$tmr = timerStart();
@@ -199,18 +199,18 @@
 		if ($conf['update_enabled']['v']==1)
 		{
 
-            // Löst die Updates, falls diese +5 Minuten gesperrt sind
-            //Allgemeinte Updates
-            if ($conf['updating']['v']!=0 && ($conf['updating']['p2']=="" || $conf['updating']['p2']<time()-300))
-            {
-                dbquery("UPDATE config SET config_value=0 WHERE config_name='updating';");
-            }
+      // Löst die Updates, falls diese +5 Minuten gesperrt sind
+      //Allgemeinte Updates
+      if ($conf['updating']['v']!=0 && ($conf['updating']['p2']=="" || $conf['updating']['p2']<time()-300))
+      {
+          dbquery("UPDATE config SET config_value=0 WHERE config_name='updating';");
+      }
 
-            // Flottenupdate
-            if ($conf['updating_fleet']['v']!=0 && ($conf['updating_fleet']['p2']=="" || $conf['updating_fleet']['p2']<time()-300))
+      // Flottenupdate
+      if ($conf['updating_fleet']['v']!=0 && ($conf['updating_fleet']['p2']=="" || $conf['updating_fleet']['p2']<time()-300))
 			{
-                dbquery("UPDATE config SET config_value=0 WHERE config_name='updating_fleet';");
-            }
+          dbquery("UPDATE config SET config_value=0 WHERE config_name='updating_fleet';");
+      }
 
 
 			// Prüfen ob nicht bereits ein Update läuft
