@@ -591,7 +591,7 @@
 					{
 						echo "<tr>
 							<td class=\"tbltitle\" colspan=\"4\">".text2html($arr['cat_name'])." (".$ccnt." Nachrichten)</td>
-							<td class=\"tbltitle\" style=\"text-align:center;\"><input type=\"button\" id=\"selectBtn[".$arr['cat_id']."]\" value=\"X\" onclick=\"xajax_messagesSelectAllInCategory(".$arr['cat_id'].",$ccnt,this.value)\"/></td>
+							<td class=\"tbltitle\" style=\"text-align:center;\"><input type=\"button\" id=\"selectBtn[".$arr['cat_id']."]\" value=\"X\" onclick=\"xajax_messagesSelectAllInCategory(".$arr['cat_id'].",".$ccnt.",this.value)\"/></td>
 						</tr>";
 					}
 					else
@@ -630,13 +630,15 @@
 	            	$rcnt++;
 	            }
 	            else
+	            {
 	            	echo "<tr style=\"display:;\">";
+	            }
 	            
 	            
-	            echo "				<td class=\"tbldata\" style=\"width:16px;\">
+	            echo "				<td class=\"tbldata\" style=\"width:2%;\">
 	            					<img src=\"".$im_path."\" alt=\"Mail\" id=\"msgimg".$marr['message_id']."\" />
 	            				</td>
-	            			<td class=\"tbldata\">";
+	            			<td class=\"tbldata\" style=\"width:66%;\">";
 							if ($marr['message_massmail']==1)
 							{
 								echo "<b>[Rundmail]</b> ";
@@ -663,9 +665,9 @@
                 }
               }
 							echo "</td>";
-							echo "<td class=\"tbldata\" style=\"width:120px;\">".$sender_f."</td>";
-							echo "<td class=\"tbldata\" style=\"width:120px;\">".date("d.m.Y H:i",$marr['message_timestamp'])."</td>";
-							echo "<td class=\"tbldata\" style=\"width:20px;text-align:center;padding:0px;vertical-align:middle;\">
+							echo "<td class=\"tbldata\" style=\"width:15%;\">".$sender_f."</td>";
+							echo "<td class=\"tbldata\" style=\"width:15%;\">".date("d.m.Y H:i",$marr['message_timestamp'])."</td>";
+							echo "<td class=\"tbldata\" style=\"width:2%;text-align:center;padding:0px;vertical-align:middle;\">
 							<input id=\"delcb_".$arr['cat_id']."_".$dcnt."\" type=\"checkbox\" name=\"delmsg[".$marr['message_id']."]\" value=\"1\" title=\"Nachricht zum L&ouml;schen markieren\" /></td>";
 							echo "</tr>\n";
               if ($msgpreview)

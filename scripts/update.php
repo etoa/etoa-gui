@@ -117,9 +117,9 @@
 		$log.= "Gasvorkommen auf ".$gu." Gasplaneten aktualisiert.\nDauer: ".timerStop($tmr)." sec\n\n";
 		
 		//Marktupdate
-		//$tmr = timerStart();
-		//market_update();
-		//$log.= "Markt aktualisiert.\nDauer: ".timerStop($tmr)." sec\n\n";		
+		$tmr = timerStart();
+		market_update();
+		$log.= "Markt aktualisiert.\nDauer: ".timerStop($tmr)." sec\n\n";		
 		
 		// Krieg-Frieden-Update
 		$tmr = timerStart();

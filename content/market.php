@@ -152,12 +152,18 @@
 		{
 			$cnt = 0;
 			$cnt_error = 0;
+			$buy_metal_total = 0;
+			$buy_crystal_total = 0;
+			$buy_plastic_total = 0;
+			$buy_fuel_total = 0;
+			$buy_food_total = 0;
 			$sell_metal_total = 0;
 			$sell_crystal_total = 0;
 			$sell_plastic_total = 0;
 			$sell_fuel_total = 0;
 			$sell_food_total = 0;
-	
+
+			
 			foreach ($_POST['ressource_market_id'] as $num => $id)
 			{
 				// Lädt Angebotsdaten
@@ -271,22 +277,39 @@
 						// Log schreiben
 						add_log(7,"Ein Handel ist zustande gekommen\nDer Spieler ".$s['user']['nick']." hat vom Spieler ".$seller_user_nick."  folgende Rohstoffe gekauft:\n\n".RES_METAL.": ".nf($arr['sell_metal'])."\n".RES_CRYSTAL.": ".nf($arr['sell_crystal'])."\n".RES_PLASTIC.": ".nf($arr['sell_plastic'])."\n".RES_FUEL.": ".nf($arr['sell_fuel'])."\n".RES_FOOD.": ".nf($arr['sell_food'])."\n\nDies hat ihn folgende Rohstoffe gekostet:\n".RES_METAL.": ".nf($arr['buy_metal'])."\n".RES_CRYSTAL.": ".nf($arr['buy_crystal'])."\n".RES_PLASTIC.": ".nf($arr['buy_plastic'])."\n".RES_FUEL.": ".nf($arr['buy_fuel'])."\n".RES_FOOD.": ".nf($arr['buy_food'])."\n\n",time());
 						
+						
+						
+						// Faktor = Kaufzeit - Verkaufzeit (in ganzen Tagen, mit einem Max. von 7)
+						// Total = Mengen / Faktor
+						$factor = min( ceil( (time() - $arr['datum']) / 3600 / 24 ) ,7);
+						
+						// Summiert gekaufte Rohstoffe für Config
+						$buy_metal_total += $arr['buy_metal'] / $factor;
+						$buy_crystal_total += $arr['buy_crystal'] / $factor;
+						$buy_plastic_total += $arr['buy_plastic'] / $factor;
+						$buy_fuel_total += $arr['buy_fuel'] / $factor;
+						$buy_food_total += $arr['buy_food'] / $factor;
+						
 						// Summiert verkaufte Rohstoffe für Config
-						$sell_metal_total += $arr['sell_metal'];
-						$sell_crystal_total += $arr['sell_crystal'];
-						$sell_plastic_total += $arr['sell_plastic'];
-						$sell_fuel_total += $arr['sell_fuel'];
-						$sell_food_total += $arr['sell_food'];
+						$sell_metal_total += $arr['sell_metal'] / $factor;
+						$sell_crystal_total += $arr['sell_crystal'] / $factor;
+						$sell_plastic_total += $arr['sell_plastic'] / $factor;
+						$sell_fuel_total += $arr['sell_fuel'] / $factor;
+						$sell_food_total += $arr['sell_food'] / $factor;
 
+
+						// Zählt die erfolgreich abgewickelten Angebote
 						$cnt++;
 					}
 					else
 					{
+						// Zählt die gescheiterten Angebote
 						$cnt_error++;
 					}							
 				}
 				else
 				{
+					// Zählt die gescheiterten Angebote
 					$cnt_error++;
 				}
 			}
@@ -301,51 +324,56 @@
 			}
 			
 			
-			// Verkaufte Rohstoffe in Config-DB speichern für Kurs berechnung
+			// Gekaufte/Verkaufte Rohstoffe in Config-DB speichern für Kursberechnung
 			// Titan
 			dbquery("
 			UPDATE
 				".$db_table['config']."
 			SET
+				config_value=config_value+".$buy_metal_total.",
 				config_param1=config_param1+".$sell_metal_total."
 			WHERE
-				config_name='market_metal_factor'");		
+				config_name='market_metal_logger'");		
 				
 			// Silizium
 			dbquery("
 			UPDATE
 				".$db_table['config']."
 			SET
+				config_value=config_value+".$buy_crystal_total.",
 				config_param1=config_param1+".$sell_crystal_total."
 			WHERE
-				config_name='market_crystal_factor'");	
+				config_name='market_crystal_logger'");	
 				
 			// PVC
 			dbquery("
 			UPDATE
 				".$db_table['config']."
 			SET
+				config_value=config_value+".$buy_plastic_total.",
 				config_param1=config_param1+".$sell_plastic_total."
 			WHERE
-				config_name='market_plastic_factor'");		
+				config_name='market_plastic_logger'");		
 				
 			// Tritium
 			dbquery("
 			UPDATE
 				".$db_table['config']."
 			SET
+				config_value=config_value+".$buy_fuel_total.",
 				config_param1=config_param1+".$sell_fuel_total."
 			WHERE
-				config_name='market_fuel_factor'");	
+				config_name='market_fuel_logger'");	
 				
 			// Food
 			dbquery("
 			UPDATE
 				".$db_table['config']."
 			SET
+				config_value=config_value+".$buy_food_total.",
 				config_param1=config_param1+".$sell_food_total."
 			WHERE
-				config_name='market_food_factor'");
+				config_name='market_food_logger'");
 		}
 
 
@@ -357,11 +385,6 @@
 		{
 			$cnt = 0;
 			$cnt_error = 0;
-			$sell_metal_total = 0;
-			$sell_crystal_total = 0;
-			$sell_plastic_total = 0;
-			$sell_fuel_total = 0;
-			$sell_food_total = 0;
 				
 			foreach ($_POST['ship_market_id'] as $num => $id)
 			{
@@ -468,15 +491,18 @@
 						//Marktlog schreiben
 						add_log(7,"Der Spieler ".$s['user']['nick']." hat folgende Schiffe von ".$seller_user_nick." gekauft:\n\n".$arr['ship_count']." ".$arr['ship_name']."\n\nund das zu folgendem Preis:\n\n".RES_METAL.": ".nf($arr['ship_costs_metal'])."\n".RES_CRYSTAL.": ".nf($arr['ship_costs_crystal'])."\n".RES_PLASTIC.": ".nf($arr['ship_costs_plastic'])."\n".RES_FUEL.": ".nf($arr['ship_costs_fuel'])."\n".RES_FOOD.": ".nf($arr['ship_costs_food']),time());		
 						
+						// Zählt die erfolgreich abgewickelten Angebote
 						$cnt++;
 					}
 					else
 					{
+						// Zählt die gescheiterten Angebote
 						$cnt_error++;
 					}							
 				}
 				else
 				{
+					// Zählt die gescheiterten Angebote
 					$cnt_error++;
 				}
 			}
@@ -692,51 +718,61 @@
 	
 	                echo "Gratulation, du hast die Auktion gewonnen, da du den maximal Betrag geboten hast!<br/>";
 	                
-	                // Verkaufte Rohstoffe in Config-DB speichern für Kurs berechnung
+	                // Berechnet Faktor für verkaufte Rohstoffe
+									// Faktor = Kaufzeit - Verkaufzeit (in ganzen Tagen, mit einem Max. von 7)
+									// Total = Mengen / Faktor
+									$factor = min( ceil( (time() - $arr['auction_start']) / 3600 / 24 ) ,7);
+						
+									// Gekaufte/Verkaufte Rohstoffe in Config-DB speichern für Kursberechnung
 									// Titan
 									dbquery("
 									UPDATE
 										".$db_table['config']."
 									SET
-										config_param1=config_param1+".$arr['auction_sell_metal']."
+										config_value=config_value+".($_POST['auction_new_buy_metal']/$sell_factor).",
+										config_param1=config_param1+".($arr['auction_sell_metal']/$sell_factor)."
 									WHERE
-										config_name='market_metal_factor'");		
+										config_name='market_metal_logger'");		
 										
 									// Silizium
 									dbquery("
 									UPDATE
 										".$db_table['config']."
 									SET
-										config_param1=config_param1+".$arr['auction_sell_crystal']."
+										config_value=config_value+".($_POST['auction_new_buy_crystal']/$sell_factor).",
+										config_param1=config_param1+".($arr['auction_sell_crystal']/$sell_factor)."
 									WHERE
-										config_name='market_crystal_factor'");	
+										config_name='market_crystal_logger'");	
 										
 									// PVC
 									dbquery("
 									UPDATE
 										".$db_table['config']."
 									SET
-										config_param1=config_param1+".$arr['auction_sell_plastic']."
+										config_value=config_value+".($_POST['auction_new_buy_plastic']/$sell_factor).",
+										config_param1=config_param1+".($arr['auction_sell_plastic']/$sell_factor)."
 									WHERE
-										config_name='market_plastic_factor'");		
+										config_name='market_plastic_logger'");		
 										
 									// Tritium
 									dbquery("
 									UPDATE
 										".$db_table['config']."
 									SET
-										config_param1=config_param1+".$arr['auction_sell_fuel']."
+										config_value=config_value+".($_POST['auction_new_buy_fuel']/$sell_factor).",
+										config_param1=config_param1+".($arr['auction_sell_fuel']/$sell_factor)."
 									WHERE
-										config_name='market_fuel_factor'");	
+										config_name='market_fuel_logger'");	
 										
 									// Food
 									dbquery("
 									UPDATE
 										".$db_table['config']."
 									SET
-										config_param1=config_param1+".$arr['auction_sell_food']."
+										config_value=config_value+".($_POST['auction_new_buy_food']/$sell_factor).",
+										config_param1=config_param1+".($arr['auction_sell_food']/$sell_factor)."
 									WHERE
-										config_name='market_food_factor'");
+										config_name='market_food_logger'");
 	            }
 	            else
 	            {

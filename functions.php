@@ -4333,6 +4333,25 @@ die Spielleitung";
 						$sell_plastic_total += $arr['auction_sell_plastic'];
 						$sell_fuel_total += $arr['auction_sell_fuel'];
 						$sell_food_total += $arr['auction_sell_food'];
+						
+						
+						// Faktor = Kaufzeit - Verkaufzeit (in ganzen Tagen, mit einem Max. von 7)
+						// Total = Mengen / Faktor
+						$factor = min( ceil( (time() - $arr['auction_start']) / 3600 / 24 ) ,7);
+						
+						// Summiert gekaufte Rohstoffe für Config
+						$buy_metal_total += $arr['auction_buy_metal'] / $factor;
+						$buy_crystal_total += $arr['auction_buy_crystal'] / $factor;
+						$buy_plastic_total += $arr['auction_buy_plastic'] / $factor;
+						$buy_fuel_total += $arr['auction_buy_fuel'] / $factor;
+						$buy_food_total += $arr['auction_buy_food'] / $factor;
+						
+						// Summiert verkaufte Rohstoffe für Config
+						$sell_metal_total += $arr['auction_sell_metal'] / $factor;
+						$sell_crystal_total += $arr['auction_sell_crystal'] / $factor;
+						$sell_plastic_total += $arr['auction_sell_plastic'] / $factor;
+						$sell_fuel_total += $arr['auction_sell_fuel'] / $factor;
+						$sell_food_total += $arr['auction_sell_food'] / $factor;
 
           }
           // Waren sind gesendet, jetzt nur noch nachricht schreiben und löschendatum festlegen
@@ -4366,57 +4385,62 @@ die Spielleitung";
 						AND auction_sent='1';");
       }
       
-      // Verkaufte Rohstoffe in Config-DB speichern für Kurs berechnung
+			// Gekaufte/Verkaufte Rohstoffe in Config-DB speichern für Kursberechnung
 			// Titan
 			dbquery("
 			UPDATE
 				".$db_table['config']."
 			SET
+				config_value=config_value+".$buy_metal_total.",
 				config_param1=config_param1+".$sell_metal_total."
 			WHERE
-				config_name='market_metal_factor'");		
+				config_name='market_metal_logger'");		
 				
 			// Silizium
 			dbquery("
 			UPDATE
 				".$db_table['config']."
 			SET
+				config_value=config_value+".$buy_crystal_total.",
 				config_param1=config_param1+".$sell_crystal_total."
 			WHERE
-				config_name='market_crystal_factor'");	
+				config_name='market_crystal_logger'");	
 				
 			// PVC
 			dbquery("
 			UPDATE
 				".$db_table['config']."
 			SET
+				config_value=config_value+".$buy_plastic_total.",
 				config_param1=config_param1+".$sell_plastic_total."
 			WHERE
-				config_name='market_plastic_factor'");		
+				config_name='market_plastic_logger'");		
 				
 			// Tritium
 			dbquery("
 			UPDATE
 				".$db_table['config']."
 			SET
+				config_value=config_value+".$buy_fuel_total.",
 				config_param1=config_param1+".$sell_fuel_total."
 			WHERE
-				config_name='market_fuel_factor'");	
+				config_name='market_fuel_logger'");	
 				
 			// Food
 			dbquery("
 			UPDATE
 				".$db_table['config']."
 			SET
+				config_value=config_value+".$buy_food_total.",
 				config_param1=config_param1+".$sell_food_total."
 			WHERE
-				config_name='market_food_factor'");
+				config_name='market_food_logger'");
     }
 	}
 
 
 	//
-	// Markt Update (Verschicken von allen gekauften/ersteigerten Waren) und berechnen der Roshtoffkurse
+	// Markt Update (Verschicken von allen gekauften/ersteigerten Waren) und berechnen der Roshtoffkurse. Löschen alter Angebote
 	//
 	function market_update()
 	{
@@ -4706,7 +4730,7 @@ die Spielleitung";
 		}
 
 		//
-    //Auktionen
+    // Auktionen
     //
     $res=dbquery("
 		SELECT
@@ -4846,20 +4870,16 @@ die Spielleitung";
 		//
 		// Rohstoffkurs Berechnung & Update (Der Schiffshandel beeinflusst die Kurse nicht!)
 		//
-
-		// Summiert alle bisher verkauften Rohstoffe
-		$sell_ress_total = $conf['market_metal_factor']['p1'] + $conf['market_metal_factor']['p2']
-											+ $conf['market_crystal_factor']['p1'] + $conf['market_crystal_factor']['p2']
-											+ $conf['market_plastic_factor']['p1'] + $conf['market_plastic_factor']['p2']
-											+ $conf['market_fuel_factor']['p1'] + $conf['market_fuel_factor']['p2']
-											+ $conf['market_food_factor']['p1'] + $conf['market_food_factor']['p2'];
 											
-		// Berechnet die neuen Kurse -> Kurs = Total Verkaufte Rohstoffe / Total verkaufter Rohstoffe je Typ
-		$metal_tax = round($sell_ress_total / ($conf['market_metal_factor']['p1'] + $conf['market_metal_factor']['p2']),2);
-		$crystal_tax = round($sell_ress_total / ($conf['market_crystal_factor']['p1'] + $conf['market_crystal_factor']['p2']),2);
-		$plastic_tax = round($sell_ress_total / ($conf['market_plastic_factor']['p1'] + $conf['market_plastic_factor']['p2']),2);
-		$fuel_tax = round($sell_ress_total / ($conf['market_fuel_factor']['p1'] + $conf['market_fuel_factor']['p2']),2);
-		$food_tax = round($sell_ress_total / ($conf['market_food_factor']['p1'] + $conf['market_food_factor']['p2']),2);
+		// Berechnet die neuen Kurse -> Kurs = Gekaufte Rohstoffe / Verkaufte Rohstoffe
+		// conf V = Gekaufte Rohstoffe
+		// conf p1 = Verkaufte Rohstoffe
+		// conf p2 = Startwert
+		$metal_tax = round(($conf['market_metal_logger']['v'] + $conf['market_metal_logger']['p2']) / ($conf['market_metal_logger']['p1'] + $conf['market_metal_logger']['p2']),2);
+		$crystal_tax = round(($conf['market_crystal_logger']['v'] + $conf['market_crystal_logger']['p2']) / ($conf['market_crystal_logger']['p1'] + $conf['market_crystal_logger']['p2']),2);
+		$plastic_tax = round(($conf['market_plastic_logger']['v'] + $conf['market_plastic_logger']['p2']) / ($conf['market_plastic_logger']['p1'] + $conf['market_plastic_logger']['p2']),2);
+		$fuel_tax = round(($conf['market_fuel_logger']['v'] + $conf['market_fuel_logger']['p2']) / ($conf['market_fuel_logger']['p1'] + $conf['market_fuel_logger']['p2']),2);
+		$food_tax = round(($conf['market_food_logger']['v'] + $conf['market_food_logger']['p2']) / ($conf['market_food_logger']['p1'] + $conf['market_food_logger']['p2']),2);
 
 		// Update der Kurse
 		// Titan
@@ -4907,9 +4927,156 @@ die Spielleitung";
 		WHERE
 			config_name='market_food_factor'");		
 
+
+		// Löscht alte Rohstoffangebote
+		$res=dbquery("
+		SELECT
+			*
+		FROM
+			".$db_table['market_ressource']."
+		WHERE
+			datum<=".(time()-$conf['market_response_time']['v']*3600*24).";");    			
+    if (mysql_num_rows($res) > 0)
+    {
+    	while($arr=mysql_fetch_array($res))
+    	{
+    			// Markt Level vom Verkäufer laden
+          $mres = dbquery("
+					SELECT
+						buildlist_current_level
+					FROM
+						".$db_table['buildlist']."
+					WHERE
+						buildlist_planet_id='".$arr['planet_id']."'
+						AND buildlist_building_id='".MARKTPLATZ_ID."'
+						AND buildlist_current_level>'0'
+						AND buildlist_user_id='".$arr['user_id']."';");
+          $marr = mysql_fetch_array($mres);
+          
+          // Definiert den Rückgabefaktor
+          $return_factor = 1 - (1/($marr['buildlist_current_level']+1));
+          
+         	// Ress dem besitzer zurückgeben (mit dem faktor)
+          dbquery("
+					UPDATE
+						".$db_table['planets']."
+					SET
+						planet_res_metal=planet_res_metal+".(floor($arr['sell_metal']*$return_factor)).",
+						planet_res_crystal=planet_res_crystal+".(floor($arr['sell_crystal']*$return_factor)).",
+						planet_res_plastic=planet_res_plastic+".(floor($arr['sell_plastic']*$return_factor)).",
+						planet_res_fuel=planet_res_fuel+".(floor($arr['sell_fuel']*$return_factor)).",
+						planet_res_food=planet_res_food+".(floor($arr['sell_food']*$return_factor))."
+					WHERE
+						planet_id='".$arr['planet_id']."'
+						AND planet_user_id='".$arr['user_id']."';");
+
+
+          // Nachricht senden
+          $msg = "Folgendes Rohstoffangebot wurde nicht innerhalb von ".$conf['market_response_time']['v']." Tagen gekauft und deshalb gelöscht.\n\n"; 
+                    
+          $msg .= "[b]Angebot:[/b]\n";
+          $msg .= "".RES_METAL.": ".nf($arr['sell_metal'])."\n";
+          $msg .= "".RES_CRYSTAL.": ".nf($arr['sell_crystal'])."\n";
+          $msg .= "".RES_PLASTIC.": ".nf($arr['sell_plastic'])."\n";
+          $msg .= "".RES_FUEL.": ".nf($arr['sell_fuel'])."\n";
+          $msg .= "".RES_FOOD.": ".nf($arr['sell_food'])."\n\n";
+          
+          $msg .= "[b]Preis:[/b]\n";
+          $msg .= "".RES_METAL.": ".nf($arr['buy_metal'])."\n";
+          $msg .= "".RES_CRYSTAL.": ".nf($arr['buy_crystal'])."\n";
+          $msg .= "".RES_PLASTIC.": ".nf($arr['buy_plastic'])."\n";
+          $msg .= "".RES_FUEL.": ".nf($arr['buy_fuel'])."\n";
+          $msg .= "".RES_FOOD.": ".nf($arr['buy_food'])."\n\n";
+          
+          $msg .= "Du erhälst ".(round($return_factor,2)*100)."% deiner Rohstoffe wieder zurück (abgerundet)!\n\n";
+          
+          $msg .= "Das Handelsministerium";
+          send_msg($arr['user_id'],SHIP_MISC_MSG_CAT_ID,"Angebot gelöscht",$msg);
+
+          // Angebot löschen
+          dbquery("
+					DELETE FROM
+						".$db_table['market_ressource']."
+					WHERE
+						ressource_market_id='".$arr['ressource_market_id']."';");
+    		
+    	}
+    }
+
+
+		// Löscht alte Schiffsangebote
+		$res=dbquery("
+		SELECT
+			*
+		FROM
+			".$db_table['market_ship']."
+		WHERE
+			datum<=".(time()-$conf['market_response_time']['v']*3600*24).";");    			
+    if (mysql_num_rows($res) > 0)
+    {
+    	while($arr=mysql_fetch_array($res))
+    	{
+    			// Markt Level vom Verkäufer laden
+          $mres = dbquery("
+					SELECT
+						buildlist_current_level
+					FROM
+						".$db_table['buildlist']."
+					WHERE
+						buildlist_planet_id='".$arr['planet_id']."'
+						AND buildlist_building_id='".MARKTPLATZ_ID."'
+						AND buildlist_current_level>'0'
+						AND buildlist_user_id='".$arr['user_id']."';");
+          $marr = mysql_fetch_array($mres);
+          
+          // Definiert den Rückgabefaktor
+          $return_factor = 1 - (1/($marr['buildlist_current_level']+1));
+          
+         	// Schiffe dem besitzer zurückgeben (mit dem faktor)
+         	dbquery("
+					UPDATE 
+						".$db_table['shiplist']." 
+					SET 
+						shiplist_count=shiplist_count+'".(floor($arr['ship_count']*$return_factor))."' 
+					WHERE 
+						shiplist_user_id='".$arr['user_id']."' 
+						AND shiplist_planet_id='".$arr['planet_id']."' 
+						AND shiplist_ship_id='".$arr['ship_id']."'");
+
+
+          // Nachricht senden
+          $msg = "Folgendes Schiffsangebot wurde nicht innerhalb von ".$conf['market_response_time']['v']." Tagen gekauft und deshalb gelöscht.\n\n"; 
+                    
+          $msg .= "".$arr['ship_name'].": ".nf($arr['ship_count'])."\n\n";  
+                  
+          $msg .= "[b]Preis:[/b]\n";
+          $msg .= "".RES_METAL.": ".nf($arr['ship_costs_metal'])."\n";
+          $msg .= "".RES_CRYSTAL.": ".nf($arr['ship_costs_crystal'])."\n";
+          $msg .= "".RES_PLASTIC.": ".nf($arr['ship_costs_plastic'])."\n";
+          $msg .= "".RES_FUEL.": ".nf($arr['ship_costs_fuel'])."\n";
+          $msg .= "".RES_FOOD.": ".nf($arr['ship_costs_food'])."\n\n";
+          
+          $msg .= "Du erhälst ".(round($return_factor,2)*100)."% deiner Schiffe wieder zurück (abgerundet)!\n\n";
+          
+          $msg .= "Das Handelsministerium";
+          send_msg($arr['user_id'],SHIP_MISC_MSG_CAT_ID,"Angebot gelöscht",$msg);
+
+          // Angebot löschen
+          dbquery("
+					DELETE FROM
+						".$db_table['market_ship']."
+					WHERE
+						ship_market_id='".$arr['ship_market_id']."';");
+    		
+    	}
+    }
+
     //Arrays löschen (Speicher freigeben)
 		mysql_free_result($res);
 		unset($arr);
+		mysql_free_result($mres);
+		unset($marr);
+		unset($msg);
 	}
 
     function send_mail($preview,$adress,$topic,$text,$style,$align,$force=0)
