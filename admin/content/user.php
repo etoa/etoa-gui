@@ -26,6 +26,7 @@
 	// 	Kommentar:
 	//
 
+
 	//
 	// Fehlerhafte Logins
 	//
@@ -538,9 +539,11 @@ echo $sql;
 				* 
 			FROM 
 				".$db_table['users']." 
+			INNER JOIN
+        ".$db_table['races']."
+        ON user_race_id=race_id
 			WHERE 
-				user_id='".$_GET['user_id']."'
-			;");
+				user_id='".$_GET['user_id']."';");
 			if (mysql_num_rows($res)>0)
 			{
 				echo "<script type=\"text/javascript\">
@@ -1502,10 +1505,13 @@ echo $sql;
 				*/
 				echo "<div id=\"tabEconomy\" style=\"display:none;\">";
 				
+				// Stopt Ladedauer
+				$tmr = timerStart();
+				
 				//
 				// Rohstoff- und Produktionsübersicht
 				//
-
+								
 				// Sucht alle Planet IDs des Users
 				$pres = dbquery("
 					SELECT 
@@ -1806,6 +1812,45 @@ echo $sql;
 						echo "<tr><td class=\"tbldata\"><a href=\"?page=economy&amp;planet_id=".$p->id."\">".$p->name."</a></td>";
 						for ($x=0;$x<6;$x++)
 						{
+							// Erstellt TM-Box für jeden Rohstoff
+							// Titan
+							if($x == 0)
+							{
+								$tm_header = "Titan-Bonis";
+								$tm = "".$arr['race_name'].": ".$arr['race_f_metal']."<br\>".$p->type->name.": ".$p->type->metal."<br\>".$p->sol_type_name.": ".$p->sol->type->metal."";
+							}
+							elseif($x == 1)
+							{
+								$tm_header = "Silizium-Bonis";
+								$tm = "".$arr['race_name'].": ".$arr['race_f_crystal']."<br\>".$p->type->name.": ".$p->type->crystal."<br\>".$p->sol_type_name.": ".$p->sol->type->crystal."";
+							}
+							elseif($x == 2)
+							{
+								$tm_header = "PVC-Bonis";
+								$tm = "".$arr['race_name'].": ".$arr['race_f_plastic']."<br\>".$p->type->name.": ".$p->type->plastic."<br\>".$p->sol_type_name.": ".$p->sol->type->plastic."";
+							}
+							elseif($x == 3)
+							{
+								$tm_header = "Tritium-Bonis";
+								$tm = "".$arr['race_name'].": ".$arr['race_f_fuel']."<br\>".$p->type->name.": ".$p->type->fuel."<br\>".$p->sol_type_name.": ".$p->sol->type->fuel."";
+							}
+							elseif($x == 4)
+							{
+								$tm_header = "Nahrungs-Bonis";
+								$tm = "".$arr['race_name'].": ".$arr['race_f_food']."<br\>".$p->type->name.": ".$p->type->food."<br\>".$p->sol_type_name.": ".$p->sol->type->food."";
+							}
+							elseif($x == 5)
+							{
+								$tm_header = "Energie-Bonis";
+								$tm = "".$arr['race_name'].": ".$arr['race_f_power']."<br\>".$p->type->name.": ".$p->type->power."<br\>".$p->sol_type_name.": ".$p->sol->type->power."";
+							}
+							else
+							{
+								$tm_header = "";
+								$tm = "";
+							}
+							
+							
 							echo "<td";
 							if ($max_prod[$x]==$val_prod[$p->id][$x])
 							{
@@ -1819,7 +1864,7 @@ echo $sql;
 							{
 								 echo " class=\"tbldata\"";
 							}
-							echo ">".nf($val_prod[$p->id][$x])."</td>";
+							echo " ".tm($tm_header,$tm).">".nf($val_prod[$p->id][$x])."</td>";
 						}
 						echo "</tr>";
 						$cnt_prod++;
@@ -2133,6 +2178,8 @@ echo $sql;
 					echo "Es sind keine Logs vorhanden!";
 					infobox_end();
 				}
+				
+				echo "Wirtschaftsseite geladen in ".timerStop($tmr)." sec<br/>";
 				
 				echo "</div>";
 				

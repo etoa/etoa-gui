@@ -30,7 +30,7 @@
         Dieser Wert wird aus der Summe der zu verkaufenden Rohstoffe, welche mit den aktuellen Rohstoffkursen verrechnet wurden, gebildet.<br>
         Der Mindestpreis betr&auml;gt beim Rohstoffhandel ".(RESS_PRICE_FACTOR_MIN*100)."% und der Maximalpreis ".(RESS_PRICE_FACTOR_MAX*100)."% des Gesamtwertes. Der Markt rechnet dir immer diese Mindest- und Höchstpreise aus.<br>
         Beim Rohstoffhandel fallen dem Verkäufer die Marktgebühren (".((MARKET_SELL_TAX-1)*100)."%) zur Last, welche sich auf die maximal zu verkaufenden Rohstoffmengen auswirken. Es ist also nicht möglich 100% der aktuellen Rohstoffe auf dem Planeten zum Verkauf anzubieten!<br>
-        Das Angebot bleibt so lange im Markt, bis es jemand annimmt, oder ihr es zur&uuml;ckzieht.
+        Wird das Angebot nicht innerhalb von ".$conf['market_response_time']['v']." Tagen verkauft, so wird es automatisch gelöscht. Du erhälst dannach aber nur noch einen gewissen Prozentsatz zurück. Dieser Wert ist der gleiche, wie wenn du das Angebot manuel zurückziehst!
 		</ul><br>";
 		echo "
 		<ul>
@@ -40,7 +40,7 @@
         Dieser Wert wird aus der Summe der Baurohstoffe errechnet, welche alle Schiffe zusammen gekostet haben (exklusiv Nahrung).
         Der Mindestpreis betr&auml;gt beim Schiffshandel ".(SHIP_PRICE_FACTOR_MIN*100)."% und der Maximalpreis ".(SHIP_PRICE_FACTOR_MAX*100)."% des Gesamtwertes.<br>
         Der Schiffshandel ist von den Marktgebühren ausgeschlossen, sowohl Käufer wie auch Verkäufer zahlen keine Zuschläge!<br>
-        Das Angebot bleibt so lange im Markt, bis es jemand annimmt, oder ihr es zur&uuml;ckzieht.
+        Wird das Angebot nicht innerhalb von ".$conf['market_response_time']['v']." Tagen verkauft, so wird es automatisch gelöscht. Du erhälst dannach aber nur noch einen gewissen Prozentsatz zurück. Dieser Wert ist der gleiche, wie wenn du das Angebot manuel zurückziehst!
 		</ul><br>";
 		echo "
 		<ul>
@@ -64,7 +64,8 @@
 		<b>Eigene Angebote</b><br>
         Hier stehen alle deine Angebote die du momentan am laufen hast und hier kannst du sie auch aufheben, falls sich kein K&auml;ufer blicken l&auml;sst, oder du dich vertippt hast!
         Aber Achtung, du erh&auml;lst nur noch einen gewissen Prozentsatz vom Angebot zur&uuml;ck. Je h&ouml;her du den Markt ausgebaut hast, desto mehr bekommst du von deinen Waren zur&uuml;ck erstattet.<br>
-        Eine Auktion kann nur zur&uuml;ck genommen werden wenn noch niemand geboten hat.<br><br><br>";
+        Eine Auktion kann nur zur&uuml;ck genommen werden wenn noch niemand geboten hat.<br>
+        Die eingestellten Angebote werden ausserdem nach ".$conf['market_response_time']['v']." Tagen automatisch gelöscht, wenn sie vorher nicht gekauft wurden (Auktionen ausgeschlossen)!<br><br><br>";
 
 		echo "
 		<b>Angebotssuche</b><br><br>
@@ -102,7 +103,8 @@
 	
 	echo "Wie einigemale erwähnt, rechnet der Markt der Wert eines Angebots mit speziellen Rohstoffkursen.<br>
 	Diese werden durch das Prinzip von \"Angebot und Nachfrage\" erstellt und sind folglich variable Werte die immer auf dem aktuellen Stand sind!<br>
-	Am Anfang haben alle Rohstoffarten den selben Kurs (5). Wird jetzt vermehrt von einer Art angeboten (grosses Angebot), so sink der Wert dieses Rohstoffes und die Folge daraus ist eine Verteuerung vom Rest. Wird ein Rohstoff viel verlangt (grosse Nachfrage) so steigt der Kurs von diesem und die anderen Rohstoffe sinken im Preis.";
+	Am Anfang haben alle Rohstoffarten den selben Kurs (1). Wird jetzt vermehrt von einer Art angeboten (grosses Angebot), so sink der Wert dieses Rohstoffes und die Folge daraus ist eine Verteuerung vom Rest. Wird ein Rohstoff viel verlangt (grosse Nachfrage) so steigt der Kurs von diesem und die anderen Rohstoffe sinken im Preis.<br>
+	Eine Tabelle zu den aktuellen Kursen findest du <a href=\"?page=help&site=rates\">hier</a>.";
 	
 	echo "</div>";
 	infobox_end();	

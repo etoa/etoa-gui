@@ -51,7 +51,7 @@
 	nach einem Rohstoff im Markt ist.<br/><br/>";
 	echo "<table class=\"tb\">";
 	echo "<tr>
-		<th style=\"border-left:#000 solid 1px;border-top:#000 solid 1px;background:none;width:15%\"></th>
+		<th style=\"width:15%\"></th>
 		<th style=\"width:17%\">".RES_METAL."</th>
 		<th style=\"width:17%\">".RES_CRYSTAL."</th>
 		<th style=\"width:17%\">".RES_PLASTIC."</th>
@@ -100,7 +100,7 @@
 	</tr>";
 	echo "</table><br/>";
 	echo "<b>Beispiel:</b> Eine Tonne ".RES_FOOD." hat den Wert von ".$fo_m." Tonnen ".RES_METAL.".<br/>
-	Für eine Tonne ".RES_METAL." muss man ".$m_fo." Tonne ".RES_FOOD." aufwenden.<br/><br/>";
+	Für eine Tonne ".RES_METAL." muss man ".$m_fo." Tonnen ".RES_FOOD." aufwenden.<br/><br/>";
 
 	echo "<table class=\"tb\">";
 	echo "<tr>
