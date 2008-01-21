@@ -5077,8 +5077,8 @@ die Spielleitung";
 		if ($mres)
 		{
 			mysql_free_result($mres);
+			unset($marr);
 		}
-		unset($marr);
 		unset($msg);
 	}
 
