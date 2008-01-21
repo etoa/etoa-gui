@@ -4169,6 +4169,11 @@ die Spielleitung";
 			OR auction_delete_date!='0';");
     if(mysql_num_rows($res) > 0)
     {
+    	$buy_metal_total = 0;
+			$buy_crystal_total = 0;
+			$buy_plastic_total = 0;
+			$buy_fuel_total = 0;
+			$buy_food_total = 0
     	$sell_metal_total = 0;
 			$sell_crystal_total = 0;
 			$sell_plastic_total = 0;
