@@ -5074,7 +5074,10 @@ die Spielleitung";
     //Arrays löschen (Speicher freigeben)
 		mysql_free_result($res);
 		unset($arr);
-		mysql_free_result($mres);
+		if ($mres)
+		{
+			mysql_free_result($mres);
+		}
 		unset($marr);
 		unset($msg);
 	}
