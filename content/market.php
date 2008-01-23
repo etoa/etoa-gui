@@ -330,8 +330,8 @@
 			UPDATE
 				".$db_table['config']."
 			SET
-				config_value=config_value+".$buy_metal_total.",
-				config_param1=config_param1+".$sell_metal_total."
+				config_value=config_value+".(round($buy_metal_total)).",
+				config_param1=config_param1+".(round($sell_metal_total))."
 			WHERE
 				config_name='market_metal_logger'");		
 				
@@ -340,8 +340,8 @@
 			UPDATE
 				".$db_table['config']."
 			SET
-				config_value=config_value+".$buy_crystal_total.",
-				config_param1=config_param1+".$sell_crystal_total."
+				config_value=config_value+".(round($buy_crystal_total)).",
+				config_param1=config_param1+".(round($sell_crystal_total))."
 			WHERE
 				config_name='market_crystal_logger'");	
 				
@@ -350,8 +350,8 @@
 			UPDATE
 				".$db_table['config']."
 			SET
-				config_value=config_value+".$buy_plastic_total.",
-				config_param1=config_param1+".$sell_plastic_total."
+				config_value=config_value+".(round($buy_plastic_total)).",
+				config_param1=config_param1+".(round($sell_plastic_total))."
 			WHERE
 				config_name='market_plastic_logger'");		
 				
@@ -360,8 +360,8 @@
 			UPDATE
 				".$db_table['config']."
 			SET
-				config_value=config_value+".$buy_fuel_total.",
-				config_param1=config_param1+".$sell_fuel_total."
+				config_value=config_value+".(round($buy_fuel_total)).",
+				config_param1=config_param1+".(round($sell_fuel_total))."
 			WHERE
 				config_name='market_fuel_logger'");	
 				
@@ -370,8 +370,8 @@
 			UPDATE
 				".$db_table['config']."
 			SET
-				config_value=config_value+".$buy_food_total.",
-				config_param1=config_param1+".$sell_food_total."
+				config_value=config_value+".(round($buy_food_total)).",
+				config_param1=config_param1+".(round($sell_food_total))."
 			WHERE
 				config_name='market_food_logger'");
 		}
@@ -729,8 +729,8 @@
 									UPDATE
 										".$db_table['config']."
 									SET
-										config_value=config_value+".($_POST['auction_new_buy_metal']/$sell_factor).",
-										config_param1=config_param1+".($arr['auction_sell_metal']/$sell_factor)."
+										config_value=config_value+".(round($_POST['auction_new_buy_metal']/$factor)).",
+										config_param1=config_param1+".(round($arr['auction_sell_metal']/$factor))."
 									WHERE
 										config_name='market_metal_logger'");		
 										
@@ -739,8 +739,8 @@
 									UPDATE
 										".$db_table['config']."
 									SET
-										config_value=config_value+".($_POST['auction_new_buy_crystal']/$sell_factor).",
-										config_param1=config_param1+".($arr['auction_sell_crystal']/$sell_factor)."
+										config_value=config_value+".(round($_POST['auction_new_buy_crystal']/$factor)).",
+										config_param1=config_param1+".(round($arr['auction_sell_crystal']/$factor))."
 									WHERE
 										config_name='market_crystal_logger'");	
 										
@@ -749,8 +749,8 @@
 									UPDATE
 										".$db_table['config']."
 									SET
-										config_value=config_value+".($_POST['auction_new_buy_plastic']/$sell_factor).",
-										config_param1=config_param1+".($arr['auction_sell_plastic']/$sell_factor)."
+										config_value=config_value+".(round($_POST['auction_new_buy_plastic']/$factor)).",
+										config_param1=config_param1+".(round($arr['auction_sell_plastic']/$factor))."
 									WHERE
 										config_name='market_plastic_logger'");		
 										
@@ -759,8 +759,8 @@
 									UPDATE
 										".$db_table['config']."
 									SET
-										config_value=config_value+".($_POST['auction_new_buy_fuel']/$sell_factor).",
-										config_param1=config_param1+".($arr['auction_sell_fuel']/$sell_factor)."
+										config_value=config_value+".(round($_POST['auction_new_buy_fuel']/$factor)).",
+										config_param1=config_param1+".(round($arr['auction_sell_fuel']/$factor))."
 									WHERE
 										config_name='market_fuel_logger'");	
 										
@@ -769,8 +769,8 @@
 									UPDATE
 										".$db_table['config']."
 									SET
-										config_value=config_value+".($_POST['auction_new_buy_food']/$sell_factor).",
-										config_param1=config_param1+".($arr['auction_sell_food']/$sell_factor)."
+										config_value=config_value+".(round($_POST['auction_new_buy_food']/$factor)).",
+										config_param1=config_param1+".(round($arr['auction_sell_food']/$factor))."
 									WHERE
 										config_name='market_food_logger'");
 	            }

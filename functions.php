@@ -4396,8 +4396,8 @@ die Spielleitung";
 			UPDATE
 				".$db_table['config']."
 			SET
-				config_value=config_value+".$buy_metal_total.",
-				config_param1=config_param1+".$sell_metal_total."
+				config_value=config_value+".(round($buy_metal_total)).",
+				config_param1=config_param1+".(round($sell_metal_total))."
 			WHERE
 				config_name='market_metal_logger'");		
 				
@@ -4406,8 +4406,8 @@ die Spielleitung";
 			UPDATE
 				".$db_table['config']."
 			SET
-				config_value=config_value+".$buy_crystal_total.",
-				config_param1=config_param1+".$sell_crystal_total."
+				config_value=config_value+".(round($buy_crystal_total)).",
+				config_param1=config_param1+".(round($sell_crystal_total))."
 			WHERE
 				config_name='market_crystal_logger'");	
 				
@@ -4416,8 +4416,8 @@ die Spielleitung";
 			UPDATE
 				".$db_table['config']."
 			SET
-				config_value=config_value+".$buy_plastic_total.",
-				config_param1=config_param1+".$sell_plastic_total."
+				config_value=config_value+".(round($buy_plastic_total)).",
+				config_param1=config_param1+".(round($sell_plastic_total))."
 			WHERE
 				config_name='market_plastic_logger'");		
 				
@@ -4426,8 +4426,8 @@ die Spielleitung";
 			UPDATE
 				".$db_table['config']."
 			SET
-				config_value=config_value+".$buy_fuel_total.",
-				config_param1=config_param1+".$sell_fuel_total."
+				config_value=config_value+".(round($buy_fuel_total)).",
+				config_param1=config_param1+".(round($sell_fuel_total))."
 			WHERE
 				config_name='market_fuel_logger'");	
 				
@@ -4436,8 +4436,8 @@ die Spielleitung";
 			UPDATE
 				".$db_table['config']."
 			SET
-				config_value=config_value+".$buy_food_total.",
-				config_param1=config_param1+".$sell_food_total."
+				config_value=config_value+".(round($buy_food_total)).",
+				config_param1=config_param1+".(round($sell_food_total))."
 			WHERE
 				config_name='market_food_logger'");
     }
