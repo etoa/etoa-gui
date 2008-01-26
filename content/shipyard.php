@@ -465,6 +465,7 @@
 				<b>Planeten:</b> [PLANET_ID=".$c->id.";PLANET_NAME=".$c->name."]<br>
 				<b>Dauer des gesamten Auftrages:</b> ".tf($total_duration)."<br>
 				<b>Ende des gesamten Auftrages:</b> ".date("Y-m-d H:i:s",$end_time)."<br>
+				<b>Schiffswerft Level:</b> ".CURRENT_SHIPYARD_LEVEL."<br>
 				<b>Eingesetzte Bewohner:</b> ".nf($people_working)."<br>
 				<b>Gen-Tech Level:</b> ".GEN_TECH_LEVEL."<br><br>
 				<b>Kosten</b><br>

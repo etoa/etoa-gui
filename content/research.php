@@ -306,7 +306,8 @@
 								<b>Technologie Level:</b> ".$b_level." (vor Ausbau)<br>
 								<b>Erforschungsdauer:</b> ".tf($btime)."<br>
 								<b>Ende:</b> ".date("Y-m-d H:i:s",$end_time)."<br>
-								<b>Eingesetzte Bewohner:</b> ".nf($buildlist[BUILD_BUILDING_ID]['buildlist_people_working'])."<br>
+								<b>Forschungslabor Level:</b> ".CURRENT_LAB_LEVEL."<br>
+								<b>Eingesetzte Bewohner:</b> ".nf(PEOPLE_WORKING)."<br>
 								<b>Gen-Tech Level:</b> ".GEN_TECH_LEVEL."<br><br>
 								<b>Kosten</b><br>
 								<b>".RES_METAL.":</b> ".nf($bc['metal'])."<br>
