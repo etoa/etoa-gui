@@ -43,10 +43,16 @@
 using namespace std;
 
 // DB-Constants (ugly!!!)
-const char* DB_SERVER = "213.133.123.35";
-const char* DB_NAME = "etoatest";
-const char* DB_USER = "etoatest";
-const char* DB_PASSWORD = "etoatest";
+//const char* DB_SERVER = "";
+//const char* DB_NAME = "";
+//const char* DB_USER = "";
+//const char* DB_PASSWORD = "";
+
+// DB-Constants (ugly!!!)
+const char* DB_SERVER = "localhost";
+const char* DB_NAME = "etoa";
+const char* DB_USER = "root";
+const char* DB_PASSWORD = "";
 
 float minLoopDuration = 1;	// Minimal loop duration
 
@@ -87,7 +93,7 @@ main(int argc, char *argv[])
 			vector<int> v1 = bh->getChangedPlanets();
 			vector<int> v2 = sh->getChangedPlanets();
 			vector<int> v3 = dh->getChangedPlanets();
-
+			
 			// Merge all changed planet id's together
 			for (int x=0; x<v2.size(); x++)
 			{
@@ -108,7 +114,7 @@ main(int argc, char *argv[])
  				}						           
 			}
 			
-			planet::PlanetManager* pm = new planet::PlanetManager(&con, &v1);
+			planet::PlanetManager* pm = new planet::PlanetManager(&con, &v1);  //Segmentation Fault
 			pm->updateValues();
 			
 			
