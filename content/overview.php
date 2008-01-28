@@ -477,7 +477,8 @@
       SELECT
         b.building_name,
         bl.buildlist_build_end_time,
-        bl.buildlist_current_level
+        bl.buildlist_current_level,
+        bl.buildlist_build_type
       FROM
         ".$db_table['buildlist']." AS bl
         INNER JOIN
@@ -499,7 +500,18 @@
 
         $building_time = $building_zeit;
         $building_name =  $arr_building['building_name'];
-        $building_level =  $arr_building['buildlist_current_level']+1;
+        
+        // Zeigt Ausbaulevel bei Abriss
+        if($arr_building['buildlist_build_type'] == 2)
+        {
+        	$building_level =  $arr_building['buildlist_current_level']-1;
+        }
+        // Bei Ausbau
+        else
+        {
+        	$building_level =  $arr_building['buildlist_current_level']+1;
+        }
+        
         if($building_rest_time<=0)
         {
         	$building_time="Fertig";
