@@ -260,7 +260,14 @@
 	$navmenu['Ereignisse']['Ereignisse testen']['page']="events";
 	$navmenu['Ereignisse']['Ereignisse testen']['sub']="test";
 	$navmenu['Ereignisse']['Ereignisse testen']['level']=0;
-
+	
+	$navmenu['Minimap']['Minimap bearbeiten']['page']="minimap";
+	$navmenu['Minimap']['Minimap bearbeiten']['sub']="";
+	$navmenu['Minimap']['Minimap bearbeiten']['level']=1;
+	
+	$navmenu['Minimap']['Events']['page']="minimap";
+	$navmenu['Minimap']['Events']['sub']="events";
+	$navmenu['Minimap']['Events']['level']=1;
 
 	$navmenu['Planeten und Galaxie']['Planeten']['page']="galaxy";
 	$navmenu['Planeten und Galaxie']['Planeten']['sub']="";

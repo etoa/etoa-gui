@@ -31,5 +31,9 @@
 		require_once("inc/xajax/logs.xajax.php");
 	}	
 	
+	if (isset($page) && $page=="minimap")
+	{
+		require_once("inc/xajax/minimap.xajax.php");
+	}
 	$xajax->processRequest();
 ?>
