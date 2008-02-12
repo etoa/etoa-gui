@@ -39,6 +39,7 @@
 #include "def/DefHandler.h"
 #include "planet/PlanetManager.h"
 #include "planet/Planet.h"
+#include "functions/Functions.h";
 
 using namespace std;
 
@@ -114,18 +115,19 @@ main(int argc, char *argv[])
  				}						           
 			}
 			
-			planet::PlanetManager* pm = new planet::PlanetManager(&con, &v1);  //Segmentation Fault
-			pm->updateValues();
+			planet::PlanetManager* pm = new planet::PlanetManager(&con, &v1);
+			pm->updateValues(&v1);//Segmentation Fault
+			
 			
 			
 			
 			
 				
 				
-			//pm.updateFields();
-			//pm.updateStorage();
-			//pm.updateProductionRates();
-			//pm.save();
+			//pm.updateFields(); done
+			//pm.updateStorage(); done
+			//pm.updateProductionRates(); done
+			//pm.save(); done
 		}
 
 
@@ -134,7 +136,7 @@ main(int argc, char *argv[])
 		fleet::FleetHandler* fh = new fleet::FleetHandler(&con);
 		fh->update();*/
 		
-		sleep(4);
+		sleep(5);
 	}		
 
 	return 0;
