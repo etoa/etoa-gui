@@ -50,22 +50,6 @@
 		
 	}
 	
-	//
-	// Statistics-Graph
-	//
-	elseif ($sub=="userstats")
-	{
-		echo "<h1>Userstatistiken</h1>";
-		echo "<h2>Online / Registrierte User</h2>";
-		if (file_exists(CACHE_ROOT."/out/userstats.png"))
-		{
-			echo "<img src=\"../cache/out/userstats.png\" alt=\"Userstats\" />";
-		}
-		else
-		{
-			error_msg("Run scripts/userstats.php periodically to update the image!",1);			
-		}	
-	}
 	
 	//
 	// Statistiken
@@ -250,6 +234,41 @@
 		echo "</form>";	
 	}	
 	
+
+	//
+	// System-Nachricht
+	//
+	elseif ($sub=="systemmessage")
+	{
+		if (isset($_POST['save']))
+		{
+				dbquery("UPDATE ".$db_table['config']." SET config_value='".$_POST['config_value']."' WHERE config_name='system_message';");
+		}
+		echo "<h1>Systemnachricht</h1>";
+		
+    echo "<form action=\"?page=$page&sub=$sub\" method=\"post\">";
+		$res = dbquery("SELECT * FROM ".$db_table['config']." WHERE config_name='system_message';");
+		if (mysql_num_rows($res)>0)
+		{
+			$arr = mysql_fetch_array($res);
+			echo "Erscheint sofort auf jeder Seite im Spiel:<br/><br/>";
+			if ($arr['config_value']!="")
+			{
+				infobox_start("Vorschau");
+				echo text2html($arr['config_value']);
+				infobox_end();
+			}
+			echo "<textarea name=\"config_value\" cols=\"100\" rows=\"15\">".$arr['config_value']."</textarea><br/><br/>";
+			echo "<input type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" class=\"button\" />";
+		}
+		else
+		{
+			echo "Es ist kein Datensatz vorhanden!";
+		}
+		echo "</form>";	
+	}
+		
+	
 	//
 	// Admin-News
 	//
@@ -368,6 +387,13 @@
 			infobox_end();
 		}
 
+		if ($conf['system_message']['v']!="")
+		{
+			echo "<br/>";
+			infobox_start("<span style=\"color:red;\">Folgende Systemnachricht ist zurzeit aktiviert (<a href=\"?page=$page&amp;sub=systemmessage\">Bearbeiten/Deaktivieren</a>):</span>");
+			echo text2html($conf['system_message']['v']);
+			infobox_end();			
+		}
 
 		//
 		// Universum generieren

@@ -26,13 +26,13 @@
 	$navmenu['&Uuml;bersicht']['Ingame-News']['sub']="ingamenews";
 	$navmenu['&Uuml;bersicht']['Ingame-News']['level']=0;
 
+	$navmenu['&Uuml;bersicht']['Systemnachricht']['page']="home";
+	$navmenu['&Uuml;bersicht']['Systemnachricht']['sub']="systemmessage";
+	$navmenu['&Uuml;bersicht']['Systemnachricht']['level']=0;
+
 	$navmenu['&Uuml;bersicht']['Spielstatistiken']['page']="home";
 	$navmenu['&Uuml;bersicht']['Spielstatistiken']['sub']="gamestats";
 	$navmenu['&Uuml;bersicht']['Spielstatistiken']['level']=0;
-
-	$navmenu['&Uuml;bersicht']['Userstatistiken']['page']="home";
-	$navmenu['&Uuml;bersicht']['Userstatistiken']['sub']="userstats";
-	$navmenu['&Uuml;bersicht']['Userstatistiken']['level']=0;
 
 	$navmenu['&Uuml;bersicht']['RSS']['page']="home";
 	$navmenu['&Uuml;bersicht']['RSS']['sub']="rss";
@@ -100,6 +100,14 @@
 	$navmenu['Spieler']['XML-Export/Import']['page']="user";
 	$navmenu['Spieler']['XML-Export/Import']['sub']="xml";
 	$navmenu['Spieler']['XML-Export/Import']['level']=1;
+
+	$navmenu['Spieler']['Userstatistiken']['page']="user";
+	$navmenu['Spieler']['Userstatistiken']['sub']="userstats";
+	$navmenu['Spieler']['Userstatistiken']['level']=0;
+
+	$navmenu['Spieler']['Rangliste']['page']="user";
+	$navmenu['Spieler']['Rangliste']['sub']="stats";
+	$navmenu['Spieler']['Rangliste']['level']=0;
 
 
 	$navmenu['Spieler']['bar'][0] = true;

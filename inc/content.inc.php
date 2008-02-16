@@ -3,6 +3,32 @@
 	ob_start();											
 	$time = time();
 
+	// Show tipps
+	if (ENABLE_TIPS==1)
+	{
+		if (!isset($s['tipp_shown']))
+		{
+			$res = dbquery("
+			SELECT
+				tip_text
+			FROM
+				tips
+			ORDER BY 
+				RAND()
+			LIMIT 1;
+			");
+			if (mysql_num_rows($res)>0)
+			{
+				$arr = mysql_fetch_array($res);
+				echo "<br/>";
+				infobox_start("<span style=\"color:#0f0;\">TIPP</span>");
+				echo text2html($arr[0]);
+				infobox_end();			
+			}
+			$s['tipp_shown'] = true;
+		}
+	}
+	
 	// SYSTEMNACHRICHT //
 	if ($conf['system_message']['v']!="")
 	{

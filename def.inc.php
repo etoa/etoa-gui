@@ -198,7 +198,8 @@
 	define("WAR_DURATION",3600*48);
 	define("PEACE_DURATION",3600*48);
 	
-	
+	// Tipps beim Start aktivieren
+	define("ENABLE_TIPS",1);
 
   /****************************************************/
   /* Startwerte (bei erstellung eines neuen Accounts) */

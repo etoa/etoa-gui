@@ -36,6 +36,31 @@
 	}
 
 	//
+	// Rangliste
+	//
+	if ($sub=="stats")
+	{
+		require("user/stats.inc.php");
+	}
+
+	//
+	// Statistics-Graph
+	//
+	elseif ($sub=="userstats")
+	{
+		echo "<h1>Userstatistiken</h1>";
+		echo "<h2>Online / Registrierte User</h2>";
+		if (file_exists(CACHE_ROOT."/out/userstats.png"))
+		{
+			echo "<img src=\"../cache/out/userstats.png\" alt=\"Userstats\" />";
+		}
+		else
+		{
+			error_msg("Run scripts/userstats.php periodically to update the image!",1);			
+		}	
+	}
+	
+	//
 	// Fehlerhafte Logins
 	//
 	elseif ($sub=="loginfailures")
