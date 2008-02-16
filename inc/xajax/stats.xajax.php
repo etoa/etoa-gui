@@ -391,7 +391,11 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0)
 						$_SESSION[ROUNDID]['user']['points']=$arr['points'];
 					}
 					$out.=  "<tr";
-					if ($arr['user_id']==$_SESSION[ROUNDID]['user']['id']) $out.=  " style=\"font-weight:bold;\"";
+					if ($arr['user_id']==$_SESSION[ROUNDID]['user']['id']) 
+					{
+						$out.=  " style=\"font-weight:bold;\"";
+						$addstyle=" style=\"color:#f90;\"";
+					}
 					$out.=  ">";
 					$out.=  "<td $addstyle class=\"tbldata\" align=\"right\">";
 					if ($mode=="user")
