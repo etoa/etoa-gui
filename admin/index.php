@@ -42,7 +42,7 @@
 	session_start();
 
 	// Funktionen und Config einlesen
-	require("../conf.inc.php");
+	if (!@include_once("../conf.inc.php")) die("conf.inc.php does not exists, please read INSTALL for how to create this file!");
 	require("../functions.php");
 	require("../inc/fleet_action.inc.php");
 	require("inc/admin_functions.inc.php");
@@ -175,10 +175,10 @@
 							<?PHP
 								foreach ($topnav as $title=> $data)
 								{
-									echo "<a href=\"".$data['url']."\">$title</a> | ";
+									echo "<a href=\"".$data['url']."\" target=\"_blank\">$title</a> | ";
 								}
 							?>
-							<a href="?logout=1">Logout</a>
+							<a href="?logout=1" style="color:#f90;">Logout</a>
 						</td>
 					</tr>
 					<tr>

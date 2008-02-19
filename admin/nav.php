@@ -6,11 +6,11 @@
 	// Links des oberen Menüs
 	$topnav['Forum']['url']="http://www.etoa.ch/forum";
 	$topnav['Forum']['newwindow']=true;
-	$topnav['FAQ']['url']="http://www.etoa.ch/faq";
-	$topnav['FAQ']['newwindow']=true;
+	$topnav['Hilfecenter']['url']="http://www.etoa.ch/help";
+	$topnav['Hilfecenter']['newwindow']=true;
 	$topnav['Regeln']['url']="http://www.etoa.ch/rules";
 	$topnav['Regeln']['newwindow']=true;
-	$topnav['Fehler melden']['url']="http://www.etoa.ch/bugs";
+	$topnav['Fehler melden']['url']="http://dev.etoa.net";
 	$topnav['Fehler melden']['newwindow']=true;
 
 	// Links des linken Menüs

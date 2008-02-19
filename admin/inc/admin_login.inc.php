@@ -28,17 +28,36 @@
 
 	$login_successfull=true;
 	
-	function login_prompt()
+	function login_prompt($str="",$clr=0)
 	{
+		$logo = 1;
 		global $page, $login_successfull;
-	
-		echo "<div  style=\"text-align:center\"><br/><a href=\"..\"><img src=\"../images/game_logo.jpg\" alt=\"Logo\" width=\"450\" height=\"150\" border=\"0\" /></a>";
-		echo "<h1 style=\"text-align:center\">Administration - ".GAMEROUND_NAME."</h1><br/>";
+		if ($logo==1)
+		{
+			echo "<div  style=\"text-align:center\"><br/><a href=\"..\"><img src=\"../images/game_logo.jpg\" alt=\"Logo\" width=\"450\" height=\"150\" border=\"0\" /></a>";
+			echo "<h1 style=\"text-align:center\">Administration - ".GAMEROUND_NAME."</h1><br/>";
+		}
+		if ($str!="")
+		{
+			if ($clr==3)
+				echo "<div style=\"color:#f90;\">";
+			if ($clr==2)
+				echo "<div style=\"color:#f00;\">";
+			if ($clr==1)
+				echo "<div style=\"color:#0f0;\">";
+			echo "$str</div><br/>";
+		}
+		echo "Gib dein Benutzername und dein Passwort ein um dich anzumelden.<br/>klicke auf das Logo um zur Startseite zurückzukehren.<br/><br/>";
 		echo "<form action=\"?page=$page\" method=\"post\">";
 		echo "<table style=\"margin:0px auto;\">";
 		echo "<tr><th class=\"tbltitle\">Benutzername:</th><td class=\"tbldata\"><input type=\"text\" name=\"login_nick\" maxlength=\"255\" size=\"25\" /></td></tr>";
 		echo "<tr><th class=\"tbltitle\">Passwort:</th><td class=\"tbldata\"><input type=\"password\" name=\"login_password\" maxlength=\"255\" size=\"25\" /></td></tr>";
-		echo "</table><br/><div style=\"margin:0px auto;\"><input type=\"submit\" class=\"button\" name=\"login_submit\" value=\"Login!\" /></div></form></div>";
+		echo "</table><br/>
+		<div style=\"margin:0px auto;\">
+			<input type=\"submit\" name=\"login_submit\" value=\"Login\" /> &nbsp;
+			<input type=\"button\" value=\"Passwort vergessen\" onclick=\"document.location='?sendpass=1'\" />
+			
+		</div></form></div>";
 		echo '<script type="text/javascript">document.forms[0].elements[0].focus()</script>';
 		$login_successfull=false;
 	}
@@ -50,38 +69,46 @@
 		{
 			case "password":
 				$str = "Sorry, dieser Benutzer existiert nicht oder das Passwort ist falsch!";
+				$clr = 2;
 				break;
 			case "nothing_entered_user":
 				$str = "Sorry, du hast keinen Benutzernamen eingegeben!";
+				$clr = 2;
 				break;
 			case "nothing_entered_password":
 				$str = "Sorry, du hast keine Passwort eingegeben!";
+				$clr = 2;
 				break;
 			case "cookie":
 				$str = "Sorry, du konntest nicht im System authentifiziert werden! (Fehler 1)";
+				$clr = 2;
 				break;
 			case "cookie2":
 				$str = "Sorry, du konntest nicht im System authentifiziert werden! (Fehler 2)";
+				$clr = 2;
 				break;
 			case "cookie3":
 				$str = "Sorry, du konntest nicht im System authentifiziert werden! (Fehler 3)";
+				$clr = 2;
 				break;
 			case "logout":
 				$str = "Du hast dich erfolgreich abgemeldet!!";
+				$clr = 1;
 				break;
 			case "timeout":
 				$str = "Das Timeout von ".TIMEOUT."s wurde erreicht und du wurdest ausgeloggt!";
+				$clr = 3;
 				break;
 			default:
 				$str = "Sorry, ein unbekannter Fehler trat auf!";
+				$clr = 2;
 		}
-		echo "<div style=\"text-align:center\"><br/><a href=\"".LOGINSERVER_URL."\"><img src=\"../images/game_logo.jpg\" alt=\"Logo\" width=\"450\" height=\"150\" border=\"0\" /></a><br/>";
-		echo "<h1 style=\"text-align:center\">Administration - ".GAMEROUND_NAME."</h1>";
-		echo "<br/><div style=\"margin:0px auto\">$str</div>";
-		echo '<br/><input type="button" onclick="document.location=\'?\'" value="Neu anmelden" /></div>';
-		echo '<script type="text/javascript">setTimeout(\'document.location="?"\',1000);</script>';
+		//echo "<br/><div style=\"margin:0px auto\">$str</div>";
+		//echo '<br/><input type="button" onclick="document.location=\'?\'" value="Neu anmelden" /></div>';
+		//echo '<script type="text/javascript">setTimeout(\'document.location="?"\',1000);</script>';
 		$_SESSION[SESSION_NAME]=Null;
 		$login_successfull=false;
+		login_prompt($str,$clr);	
 		echo "</body></html>";
 		die();
 	}
@@ -156,19 +183,69 @@
 	  			$_SESSION[SESSION_NAME]['key']=md5($login_time).md5($arr['user_id']).md5(GAMEROUND_NAME).md5($_SERVER['REMOTE_ADDR']).md5($_SERVER['HTTP_USER_AGENT']).session_id();
 	  			// Loginzeit in DB speichern
 	  			dbquery ("UPDATE ".USER_TABLE_NAME." SET user_last_login=".$login_time.",user_acttime=".time().",user_session_key='".$_SESSION[SESSION_NAME]['key']."',user_ip='".$_SERVER['REMOTE_ADDR']."',user_hostname='".$_SERVER['REMOTE_ADDR']."' WHERE user_id=".$arr['user_id'].";");
-		  			
 		  		dbquery ("INSERT INTO  ".$db_table['admin_user_log']." (log_user_id,log_logintime,log_ip,log_hostname,log_session_key) VALUES (".$arr['user_id'].",".time().",'".$_SERVER['REMOTE_ADDR']."','".$_SERVER['REMOTE_ADDR']."','".$_SESSION[SESSION_NAME]['key']."');");
-	  			
 
 	  		}
 				else
+				{
 					login_error("password");
+				}
 			}
 			else
+			{
 				login_error("nothing_entered_password");		
+			}
 		}
 		else
+		{
 			login_error("nothing_entered_user");		
+		}
+	}
+	elseif (isset($_GET['sendpass']))
+	{
+		echo "<div style=\"width:500px;margin:10px auto;text-align:center;\">" .
+		"<br/><a href=\"..\"><img src=\"../images/game_logo.jpg\" alt=\"Logo\" width=\"450\" height=\"150\" border=\"0\" /></a>";
+		echo "<h1 style=\"text-align:center;\">Administration - ".GAMEROUND_NAME."</h1>
+		<h2 style=\"text-align:center;\">Passwort senden</h2>";
+		if (isset($_POST['sendpass_submit']))
+		{
+			$res = dbquery("SELECT user_id,user_nick,user_email FROM admin_users WHERE user_nick='".addslashes($_POST['user_nick'])."';");
+			if (mysql_num_rows($res)>0)
+			{
+				$arr = mysql_fetch_row($res);			
+				$pw = mt_rand(1000000,9999999);
+				$msg = "Hallo ".$arr[1].". Du hast für die Administration der ".GAMEROUND_NAME." von EtoA ein neues Passwort angefordert.\n\n";
+				$msg.= "Das neue Passwort lautet: $pw\n\n";
+				$msg.= "Diese Anfrage wurde am ".date("d.m.Y")." um ".date("H:i")." Uhr vom Computer ".gethostbyaddr($_SERVER['REMOTE_ADDR'])." aus in Auftrag gegeben.";
+				send_mail(0,$arr[2],"Neues Administrationspasswort ".GAMEROUND_NAME."",$msg,'','');
+				echo "Das Passwort wurde geändert und dir per Mail zugestellt!<br/><br/>";
+				echo "<input type=\"button\" value=\"Zum Login\" onclick=\"document.location='?'\" />";
+				dbquery("
+				UPDATE 
+					admin_users
+				SET
+					user_password='".md5($pw)."'
+				WHERE
+					user_id=".$arr[0].";");
+			}
+			else
+			{
+				echo "Dieser Benutzer existiert nicht!<br/><br/>";
+				echo "<input type=\"button\" value=\"Nochmals versuchen\" onclick=\"document.location='?sendpass=1'\" />";
+			}
+		}
+		else
+		{
+			echo "Hier kannst du ein neues Passwort beantragen.<br/>Es wird dir dann an die eingestellte E-Mail-Adresse gesendet!<br/>";
+			echo "<form action=\"?sendpass=1\" method=\"post\">";			
+			echo '<table class="tb" style="width:400px;margin:10px auto;">';
+			echo '<tr><th>Loginname:</th><td><input type="text" name="user_nick" /></td></tr>';
+			echo '</table><br/><input type="submit" name="sendpass_submit" value="Neues Passwort senden" /> &nbsp; ';
+			echo "<input type=\"button\" value=\"Zum Login\" onclick=\"document.location='?'\" />";
+			echo "</form></div>";
+			echo '<script type="text/javascript">document.forms[0].elements[0].focus()</script>';
+		}
+		$login_successfull=false;
 	}
 	else
 	{
@@ -193,6 +270,7 @@
 				echo '<tr><th>Passwort:</th><td><input type="password" name="user_password" /></td></tr>';
 				echo '</table><br/><input type="submit" name="newuser_submit" value="Admin-User erstellen" />';
 				echo "</form></div>";
+				echo '<script type="text/javascript">document.forms[0].elements[0].focus()</script>';
 			}
 			$login_successfull=false;
 		}
