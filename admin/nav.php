@@ -14,40 +14,40 @@
 	$topnav['Fehler melden']['newwindow']=true;
 
 	// Links des linken Menüs
-	$navmenu['&Uuml;bersicht']['Startseite']['page']="home";
-	$navmenu['&Uuml;bersicht']['Startseite']['sub']="";
-	$navmenu['&Uuml;bersicht']['Startseite']['level']=0;
+	$navmenu['Allgemeines']['Startseite']['page']="home";
+	$navmenu['Allgemeines']['Startseite']['sub']="";
+	$navmenu['Allgemeines']['Startseite']['level']=0;
 
-	$navmenu['&Uuml;bersicht']['Ingame-News']['page']="home";
-	$navmenu['&Uuml;bersicht']['Ingame-News']['sub']="ingamenews";
-	$navmenu['&Uuml;bersicht']['Ingame-News']['level']=0;
+	$navmenu['Allgemeines']['Ingame-News']['page']="home";
+	$navmenu['Allgemeines']['Ingame-News']['sub']="ingamenews";
+	$navmenu['Allgemeines']['Ingame-News']['level']=0;
 
-	$navmenu['&Uuml;bersicht']['Systemnachricht']['page']="home";
-	$navmenu['&Uuml;bersicht']['Systemnachricht']['sub']="systemmessage";
-	$navmenu['&Uuml;bersicht']['Systemnachricht']['level']=0;
+	$navmenu['Allgemeines']['Systemnachricht']['page']="home";
+	$navmenu['Allgemeines']['Systemnachricht']['sub']="systemmessage";
+	$navmenu['Allgemeines']['Systemnachricht']['level']=0;
 
-	$navmenu['&Uuml;bersicht']['Spielstatistiken']['page']="home";
-	$navmenu['&Uuml;bersicht']['Spielstatistiken']['sub']="gamestats";
-	$navmenu['&Uuml;bersicht']['Spielstatistiken']['level']=0;
+	$navmenu['Allgemeines']['Spielstatistiken']['page']="home";
+	$navmenu['Allgemeines']['Spielstatistiken']['sub']="gamestats";
+	$navmenu['Allgemeines']['Spielstatistiken']['level']=0;
 
-	$navmenu['&Uuml;bersicht']['RSS']['page']="home";
-	$navmenu['&Uuml;bersicht']['RSS']['sub']="rss";
-	$navmenu['&Uuml;bersicht']['RSS']['level']=0;
+	$navmenu['Allgemeines']['RSS']['page']="home";
+	$navmenu['Allgemeines']['RSS']['sub']="rss";
+	$navmenu['Allgemeines']['RSS']['level']=0;
 
 
-	$navmenu['&Uuml;bersicht']['bar'][0] = true;
+	$navmenu['Allgemeines']['bar'][0] = true;
 
-	$navmenu['&Uuml;bersicht']['Admin-News']['page']="home";
-	$navmenu['&Uuml;bersicht']['Admin-News']['sub']="adminnews";
-	$navmenu['&Uuml;bersicht']['Admin-News']['level']=2;
+	$navmenu['Allgemeines']['Admin-News']['page']="home";
+	$navmenu['Allgemeines']['Admin-News']['sub']="adminnews";
+	$navmenu['Allgemeines']['Admin-News']['level']=2;
 
-	$navmenu['&Uuml;bersicht']['Admin-Management']['page']="home";
-	$navmenu['&Uuml;bersicht']['Admin-Management']['sub']="adminusers";
-	$navmenu['&Uuml;bersicht']['Admin-Management']['level']=2;
+	$navmenu['Allgemeines']['Admin-Management']['page']="home";
+	$navmenu['Allgemeines']['Admin-Management']['sub']="adminusers";
+	$navmenu['Allgemeines']['Admin-Management']['level']=2;
 
-	$navmenu['&Uuml;bersicht']['Admin-Sessionlog']['page']="home";
-	$navmenu['&Uuml;bersicht']['Admin-Sessionlog']['sub']="adminlog";
-	$navmenu['&Uuml;bersicht']['Admin-Sessionlog']['level']=2;
+	$navmenu['Allgemeines']['Admin-Sessionlog']['page']="home";
+	$navmenu['Allgemeines']['Admin-Sessionlog']['sub']="adminlog";
+	$navmenu['Allgemeines']['Admin-Sessionlog']['level']=2;
 
 	$navmenu['Spieler']['Spieler bearbeiten']['page']="user";
 	$navmenu['Spieler']['Spieler bearbeiten']['sub']="";

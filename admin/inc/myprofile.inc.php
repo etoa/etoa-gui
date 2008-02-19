@@ -43,7 +43,8 @@
 					UPDATE 
 						admin_users 
 					SET 
-						user_password='".pw_salt($_POST['user_password'],$s['user_id'])."' 
+						user_password='".pw_salt($_POST['user_password'],$s['user_id'])."',
+						user_force_pwchange=0
 					WHERE 
 						user_id='".$s['user_id']."';");
 					cms_ok_msg("Das Passwort wurde ge&auml;ndert!");

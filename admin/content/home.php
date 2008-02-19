@@ -308,15 +308,7 @@
 	}	
 	
 	//
-	// Passwort ÃƒÆ’Ã¢â‚¬Å¾ndern
-	//
-	elseif ($sub=="change_pass")
-	{
-		include("inc/changepass.inc.php");
-	}	
-	
-	//
-	// ÃƒÆ’Ã…â€œbersicht
+	// Übersicht
 	//
 	else
 	{
@@ -328,6 +320,22 @@
 			echo "<span style=\"color:#0f0;\">Dein letzter Login war <b>".df($s['user_last_login'])."</b>, Host: <b>".gethostbyaddr($s['user_last_host'])."</b> (aktuell: ".gethostbyaddr($_SERVER['REMOTE_ADDR'])."), IP: <b>".$s['user_last_ip']."</b> (aktuell: ".$_SERVER['REMOTE_ADDR'].")</span><br/><br/>";
 			$s['home_visited']=true;
 		}
+		
+		$res = dbquery("
+		SELECT 
+			user_force_pwchange 
+		FROM 
+			admin_users
+		WHERE
+			user_id=".$s['user_id'].";");
+		$arr = mysql_fetch_row($res);
+		if ($arr[0]==1)
+		{
+			infobox_start("Passwort");   
+			echo "<span style=\"color:#f90;\">Dein Passwort wurde seit der letzten automatischen Generierung noch nicht geändert. Bitte mache das jetzt <a href=\"?myprofile=1\">hier</a>!</span>";
+			infobox_end();			
+		}
+		
 		
 		//
 		// Admin-News
@@ -342,7 +350,7 @@
 		// Flottensperre aktiv
 		if ($conf['flightban']['v']==1)
 		{
-			// Prüft, ob die Sperre schon abgelaufen ist
+			// PrÃ¼ft, ob die Sperre schon abgelaufen ist
 			if($conf['flightban_time']['p1']<=time() && $conf['flightban_time']['p2']>=time())
 			{
 				$flightban_time_status = "<span style=\"color:#0f0\">Aktiv</span>";
@@ -358,7 +366,7 @@
 			
 			echo "<br/>";
 			infobox_start("Flottensperre aktiviert");
-			echo "Die Flottensperre ist aktiviert. Es können keine Flüge gestartet werden!<br><br><b>Status:</b> ".$flightban_time_status."<br><b>Zeit:</b> ".date("d.m.Y H:i",$conf['flightban_time']['p1'])." - ".date("d.m.Y H:i",$conf['flightban_time']['p2'])."<br><b>Grund:</b> ".$conf['flightban']['p1']."<br><br>";
+			echo "Die Flottensperre ist aktiviert. Es kÃ¶nnen keine FlÃ¼ge gestartet werden!<br><br><b>Status:</b> ".$flightban_time_status."<br><b>Zeit:</b> ".date("d.m.Y H:i",$conf['flightban_time']['p1'])." - ".date("d.m.Y H:i",$conf['flightban_time']['p2'])."<br><b>Grund:</b> ".$conf['flightban']['p1']."<br><br>";
 			echo "Zum deaktivieren: <a href=\"?page=fleets&amp;sub=fleetoptions\">Flottenoptionen</a>";
 			infobox_end();
 		}
@@ -366,7 +374,7 @@
 		// Kampfsperre aktiv
 		if ($conf['battleban']['v']==1)
 		{
-			// Prüft, ob die Sperre schon abgelaufen ist
+			// PrÃ¼ft, ob die Sperre schon abgelaufen ist
 			if($conf['battleban_time']['p1']<=time() && $conf['battleban_time']['p2']>=time())
 			{
 				$battleban_time_status = "<span style=\"color:#0f0\">Aktiv</span>";
@@ -382,7 +390,7 @@
 			
 			echo "<br/>";
 			infobox_start("Kampfsperre aktiviert");
-			echo "Die Kampfsperre ist aktiviert. Es können keine Angriffe geflogen werden!<br><br><b>Status:</b> ".$battleban_time_status."<br><b>Zeit:</b> ".date("d.m.Y H:i",$conf['battleban_time']['p1'])." - ".date("d.m.Y H:i",$conf['battleban_time']['p2'])."<br><b>Grund:</b> ".$conf['battleban']['p1']."<br><br>";
+			echo "Die Kampfsperre ist aktiviert. Es kÃ¶nnen keine Angriffe geflogen werden!<br><br><b>Status:</b> ".$battleban_time_status."<br><b>Zeit:</b> ".date("d.m.Y H:i",$conf['battleban_time']['p1'])." - ".date("d.m.Y H:i",$conf['battleban_time']['p2'])."<br><b>Grund:</b> ".$conf['battleban']['p1']."<br><br>";
 			echo "Zum deaktivieren: <a href=\"?page=fleets&amp;sub=fleetoptions\">Flottenoptionen</a>";
 			infobox_end();
 		}
@@ -457,7 +465,7 @@
 
 	
 		infobox_start("Spieler-Tools",1);
-		// Ã„nderungsanfragen
+		// Ãƒâ€žnderungsanfragen
 		$res=dbquery("
 		SELECT 
 			COUNT(request_id)
