@@ -152,7 +152,6 @@
 				<th class=\"tbltitle\">Status</th>
 				<th class=\"tbltitle\">IP</th>
 				<th class=\"tbltitle\">Hostname</th>
-				<th class=tbltitle>Ort</th>
 				</tr>";
 				while ($arr=mysql_fetch_array($res))
 				{
@@ -304,7 +303,7 @@
 	//
 	elseif ($sub=="adminusers")
 	{
-		advanced_form("admin_users");
+		require("home/adminusers.inc.php");
 	}	
 	
 	//
@@ -411,35 +410,6 @@
 			echo "<h2>Universum existiert noch nicht!</h2>";
 			echo "<div style=\"color:red;\">Das Universum wurde noch nicht <a href=\"?page=config\">generiert</a>!</div><br/><br/>";
 		}			
-
-		//
-		// Userliste
-		//
-		/*
-		infobox_start("Admin-User-Liste",1);                              
-		$res = dbquery("SELECT * FROM ".$db_table['admin_users']." ORDER BY user_nick ASC;");
-		if (mysql_num_rows($res)>0)
-		{
-			while ($arr = mysql_fetch_array($res))
-			{
-					if ($arr['user_id']==$s['user_id'])
-						$logindate = "letzer Login: ".date("d.m.Y H:i",$s['user_last_login']);
-					elseif ($arr['user_last_login']>0)
-						$logindate = "letzer Login: ".date("d.m.Y H:i",$arr['user_last_login']);
-					else
-						$logindate = "noch nie eingeloggt!";
-					echo "<tr><td class=\"tbldata\" style=\"width:200px;\">".$arr['user_nick']."";
-					if ($arr['user_locked']==1) echo " <span style=\"color:red\">gesperrt!</span>";
-					echo "</td>";
-					echo "<td class=\"tbldata\">".$admingroup[$arr['user_admin_rank']]."</td>";
-					if (time()-TIMEOUT< $arr['user_acttime'] && $arr['user_session_key']!="")
-						echo "<td class=\"tbldata\" style=\"color:#0f0\">Online</td>";						
-					else
-						echo "<td class=\"tbldata\" style=\"color:#f72\">Offline</td>";						
-					echo "<td class=\"tbldata\">$logindate</td></tr>";
-			}
-		}
-		infobox_end(1); */
 		
 		//
 		// Schnellsuche
