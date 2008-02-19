@@ -26,6 +26,9 @@
 	// 	Kommentar: 	Notepad für den Admin Modus
 	//
 	
+	session_start();
+
+	
 	//CSS Style
 	echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"../style.css\">";
 	echo "<link rel=\"stylesheet\" href=\"../../general.css\" type=\"text/css\">";
@@ -36,8 +39,13 @@
 	
 	// Mit der DB verbinden
 	dbconnect();
+
+	define('SESSION_NAME',"adminsession");
+	$s = $_SESSION[SESSION_NAME];
+	$ID = $s['user_id'];
 	
-	$ID = $_GET['id'];
+	if ($ID >0)
+	{
 	
 	if ($_GET['func'] == 'editieren')
 	{
@@ -53,7 +61,7 @@
 			$res = Mysql_Query("select * from admin_notes where admin_id ='".$ID."'");
 			$row = mysql_fetch_array($res);
 
-			echo "<br><h1>Notizen</h1><br>";
+			echo "<h1>Notizen</h1><br>";
 			echo "<form action=\"notepad.php?id=".$ID."&func=editieren\" method=\"post\">";
 			echo "<input type=\"Text\" name=\"Titel\" value=\"".$row['titel']."\"></input><br><br>";
 			echo "<textarea name=\"Text\" cols=\"50\" rows=\"10\">".$row['text']."</textarea><br><br>";
@@ -114,7 +122,7 @@
 			
 						if ($_GET['chk'] == 'new')
 						{
-							echo "<br><h1>Notizen</h1><br>";
+							echo "<h1>Notizen</h1><br>";
 							echo "<form action=\"notepad.php?id=".$ID."&func=new\" method=\"post\">";
 							echo "<input type=\"Text\" name=\"Titel\"></input><br><br>";
 							echo "<textarea name=\"Text\" cols=\"50\" rows=\"10\"></textarea><br><br>";
@@ -126,7 +134,7 @@
 	
 							$res = Mysql_Query("select * from admin_notes where admin_id ='".$ID."'");
 	
-							echo "<br><h1>Notizen</h1><br>";
+							echo "<h1>Notizen</h1><br>";
 	
 							if (mysql_num_rows($res) == 0)
 							{
@@ -162,4 +170,9 @@
 			}
 		}
 	}
+}
+else
+{
+	echo "Ungültige ID";
+}
 ?>

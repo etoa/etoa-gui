@@ -177,8 +177,20 @@
 								{
 									echo "<a href=\"".$data['url']."\" target=\"_blank\">$title</a> | ";
 								}
+								
+							$nres = dbquery("select COUNT(*) from admin_notes where admin_id='".$s['user_id']."'");
+							$narr = mysql_fetch_row($nres);
+							
+							echo '<a href="?myprofile=1" style="color:#0f0;">Mein Profil</a> | ';
+							echo "<a href=\"javascript:;\" style=\"color:#0f0;\" onclick=\"window.open('misc/notepad.php','Notepad','width=600, height=500, status=no, scrollbars=yes')\">";
+							echo "Notizblock";
+							if ($narr[0]>0)
+							{
+								echo " (".$narr[0].")";
+							}
+							echo "</a> | ";
+							echo '<a href="?logout=1" style="color:#f90;">Logout</a>';
 							?>
-							<a href="?logout=1" style="color:#f90;">Logout</a>
 						</td>
 					</tr>
 					<tr>
@@ -232,10 +244,6 @@
 										<input type=\"hidden\" name=\"qmode[user_nick_search]\" value=\"LIKE '%\" />
 										<input type=\"submit\" name=\"user_search\" value=\"Usersuche\" />
 									</form>";
-								//
-								//Notepad
-								//
-								echo "<br><input type=\"submit\" value=\"NotePad\" name=\"NotePad\" onclick=\"window.open('misc/notepad.php?id=".$s['user_id']."','Notepad','width=600, height=500, status=no, scrollbars=yes')\"><br>";
 
 								//
 								// Auslastung
@@ -317,60 +325,67 @@
 							<?php
 								// Inhalt einbinden
 
-								if ($conf['updating']['v']!=0 && ($conf['updating']['p2']=="" || $conf['updating']['p2']<time()-120))
-								{
-									echo "<br/>";
-									infobox_start("Update-Problem");
-									echo "Das Update k&ouml;nnte unter Umst&auml;nden festh&auml;ngen.";
-									if ($conf['updating']['p2']>0)
-										echo "Es wurde um ".date("d.m.Y, H:i",$conf['updating']['p2'])." zuletzt ausgeführt";
-									echo " <a href=\"?page=$page&amp;releaseupdate=1\">L&ouml;sen</a>";
-									infobox_end();
-								}
-								if ($conf['updating_fleet']['v']!=0 && ($conf['updating_fleet']['p2']=="" || $conf['updating_fleet']['p2']<time()-120))
-								{
-									echo "<br/>";
-									infobox_start("Flottenupdate-Problem");
-									echo "Das Flottenupdate k&ouml;nnte unter Umst&auml;nden festh&auml;ngen.";
-									if ($conf['updating_fleet']['p2']>0)
-										echo "Es wurde um ".date("d.m.Y, H:i",$conf['updating_fleet']['p2'])." zuletzt ausgefhrt";
-									echo " <a href=\"?page=$page&amp;releasefleetupdate=1\">L&ouml;sen</a>";
-									infobox_end();
-								}
-								if ($conf['update_enabled']['v']!=1)
-								{
-									echo "<br/>";
-									infobox_start("Updates deaktiviert");
-									echo "Die Updates sind momentan deaktiviert!";
-									echo " <a href=\"?page=$page&amp;activateupdate=1\">Aktivieren</a>";
-									infobox_end();
-								}
-								
-								$allow_inc=false;
-								foreach ($navmenu as $cat=> $item)
-								{
-									foreach ($item as $title=> $data)
-									{
-										if ($title != "bar" && $data['page']==$page && $data['sub']==$sub)
-										{
-											$rank=$data['level'];
-											if ($data['level']<=$_SESSION[SESSION_NAME]['group_level'])
-												$allow_inc=true;
-										}
-									}
-								}
-								if ($allow_inc || $rank=="")
-								{
-									if (eregi("^[a-z\_]+$",$page)  && strlen($page)<=50)
-									{
-										if (!include("content/".$page.".php"))
-											cms_err_msg("Die Seite $page wurde nicht gefunden!");
-									}
-									else
-										echo "<h1>Fehler</h1>Der Seitenname <b>".$page."</b> enth&auml;lt unerlaubte Zeichen!<br><br><a href=\"javascript:history.back();\">Zur&uuml;ck</a>";
+								if (isset($_GET['myprofile']))
+								{									
+									require("inc/myprofile.inc.php");
 								}
 								else
-									echo "<h1>Kein Zugriff</h1> Du hast keinen Zugriff auf diese Seite!<br/><br/> Erwartet: <b>".$adminlevel[$rank]." ($rank)</b>, du bist <b>".$_SESSION[SESSION_NAME]['group_name']." (".$_SESSION[SESSION_NAME]['group_level'].")</b>.";
+								{
+									if ($conf['updating']['v']!=0 && ($conf['updating']['p2']=="" || $conf['updating']['p2']<time()-120))
+									{
+										echo "<br/>";
+										infobox_start("Update-Problem");
+										echo "Das Update k&ouml;nnte unter Umst&auml;nden festh&auml;ngen.";
+										if ($conf['updating']['p2']>0)
+											echo "Es wurde um ".date("d.m.Y, H:i",$conf['updating']['p2'])." zuletzt ausgeführt";
+										echo " <a href=\"?page=$page&amp;releaseupdate=1\">L&ouml;sen</a>";
+										infobox_end();
+									}
+									if ($conf['updating_fleet']['v']!=0 && ($conf['updating_fleet']['p2']=="" || $conf['updating_fleet']['p2']<time()-120))
+									{
+										echo "<br/>";
+										infobox_start("Flottenupdate-Problem");
+										echo "Das Flottenupdate k&ouml;nnte unter Umst&auml;nden festh&auml;ngen.";
+										if ($conf['updating_fleet']['p2']>0)
+											echo "Es wurde um ".date("d.m.Y, H:i",$conf['updating_fleet']['p2'])." zuletzt ausgefhrt";
+										echo " <a href=\"?page=$page&amp;releasefleetupdate=1\">L&ouml;sen</a>";
+										infobox_end();
+									}
+									if ($conf['update_enabled']['v']!=1)
+									{
+										echo "<br/>";
+										infobox_start("Updates deaktiviert");
+										echo "Die Updates sind momentan deaktiviert!";
+										echo " <a href=\"?page=$page&amp;activateupdate=1\">Aktivieren</a>";
+										infobox_end();
+									}
+									
+									$allow_inc=false;
+									foreach ($navmenu as $cat=> $item)
+									{
+										foreach ($item as $title=> $data)
+										{
+											if ($title != "bar" && $data['page']==$page && $data['sub']==$sub)
+											{
+												$rank=$data['level'];
+												if ($data['level']<=$_SESSION[SESSION_NAME]['group_level'])
+													$allow_inc=true;
+											}
+										}
+									}
+									if ($allow_inc || $rank=="")
+									{
+										if (eregi("^[a-z\_]+$",$page)  && strlen($page)<=50)
+										{
+											if (!include("content/".$page.".php"))
+												cms_err_msg("Die Seite $page wurde nicht gefunden!");
+										}
+										else
+											echo "<h1>Fehler</h1>Der Seitenname <b>".$page."</b> enth&auml;lt unerlaubte Zeichen!<br><br><a href=\"javascript:history.back();\">Zur&uuml;ck</a>";
+									}
+									else
+										echo "<h1>Kein Zugriff</h1> Du hast keinen Zugriff auf diese Seite!<br/><br/> Erwartet: <b>".$adminlevel[$rank]." ($rank)</b>, du bist <b>".$_SESSION[SESSION_NAME]['group_name']." (".$_SESSION[SESSION_NAME]['group_level'].")</b>.";
+								}
 							?>
 						</td>
 					</tr>

@@ -18,10 +18,6 @@
 	$navmenu['&Uuml;bersicht']['Startseite']['sub']="";
 	$navmenu['&Uuml;bersicht']['Startseite']['level']=0;
 
-	$navmenu['&Uuml;bersicht']['Passwort &auml;ndern']['page']="home";
-	$navmenu['&Uuml;bersicht']['Passwort &auml;ndern']['sub']="change_pass";
-	$navmenu['&Uuml;bersicht']['Passwort &auml;ndern']['level']=0;
-
 	$navmenu['&Uuml;bersicht']['Ingame-News']['page']="home";
 	$navmenu['&Uuml;bersicht']['Ingame-News']['sub']="ingamenews";
 	$navmenu['&Uuml;bersicht']['Ingame-News']['level']=0;

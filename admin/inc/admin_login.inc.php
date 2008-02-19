@@ -228,7 +228,7 @@
 				$pw = mt_rand(1000000,9999999);
 				$msg = "Hallo ".$arr[1].".\n\nDu hast für die Administration der ".GAMEROUND_NAME." von EtoA ein neues Passwort angefordert.\n\n";
 				$msg.= "Das neue Passwort lautet: $pw\n\n";
-				$msg.= "Diese Anfrage wurde am ".date("d.m.Y")." um ".date("H:i")." Uhr vom Computer ".gethostbyaddr($_SERVER['REMOTE_ADDR'])." aus in Auftrag gegeben. Bitte denke daran, das Passwort nach dem ersten Login zu ändern!";
+				$msg.= "Diese Anfrage wurde am ".date("d.m.Y")." um ".date("H:i")." Uhr vom Computer ".gethostbyaddr($_SERVER['REMOTE_ADDR'])." aus in Auftrag gegeben.\nBitte denke daran, das Passwort nach dem ersten Login zu ändern!";
 				send_mail(0,$arr[2],"Neues Administrationspasswort ".GAMEROUND_NAME."",$msg,'','');
 				echo "Das Passwort wurde geändert und dir per Mail zugestellt!<br/><br/>";
 				echo "<input type=\"button\" value=\"Zum Login\" onclick=\"document.location='?'\" />";
@@ -236,7 +236,8 @@
 				UPDATE 
 					admin_users
 				SET
-					user_password='".pw_salt($pw,$arr[0])."'
+					user_password='".pw_salt($pw,$arr[0])."',
+					user_force_pwchange=1					
 				WHERE
 					user_id=".$arr[0].";");
 				add_log(8,"Der Administrator ".$arr[1]." (ID: ".$arr[0].") fordert per E-Mail (".$arr[2].") von ".$_SERVER['REMOTE_ADDR']." aus ein neues Passwort an.",time());					
