@@ -181,6 +181,7 @@
 							$nres = dbquery("select COUNT(*) from admin_notes where admin_id='".$s['user_id']."'");
 							$narr = mysql_fetch_row($nres);
 							
+							echo '<a href="?adminlist=1" style="color:#0f0;">Adminliste</a> | ';
 							echo '<a href="?myprofile=1" style="color:#0f0;">Mein Profil</a> | ';
 							echo "<a href=\"javascript:;\" style=\"color:#0f0;\" onclick=\"window.open('misc/notepad.php','Notepad','width=600, height=500, status=no, scrollbars=yes')\">";
 							echo "Notizblock";
@@ -325,7 +326,11 @@
 							<?php
 								// Inhalt einbinden
 
-								if (isset($_GET['myprofile']))
+								if (isset($_GET['adminlist']))
+								{									
+									require("inc/adminlist.inc.php");
+								}
+								elseif (isset($_GET['myprofile']))
 								{									
 									require("inc/myprofile.inc.php");
 								}
