@@ -47,7 +47,8 @@
 				echo "<div style=\"color:#0f0;\">";
 			echo "$str</div><br/>";
 		}
-		echo "Gib dein Benutzername und dein Passwort ein um dich anzumelden.<br/>klicke auf das Logo um zur Startseite zurückzukehren.<br/><br/>";
+		echo "Gib dein Benutzername und dein Passwort ein um dich anzumelden.<br/>
+		Klicke auf das Logo um zur Startseite zurückzukehren.<br/><br/>";
 		echo "<form action=\"?page=$page\" method=\"post\">";
 		echo "<table style=\"margin:0px auto;\">";
 		echo "<tr><th class=\"tbltitle\">Benutzername:</th><td class=\"tbldata\"><input type=\"text\" name=\"login_nick\" maxlength=\"255\" size=\"25\" /></td></tr>";
@@ -98,6 +99,10 @@
 			case "timeout":
 				$str = "Das Timeout von ".TIMEOUT."s wurde erreicht und du wurdest ausgeloggt!";
 				$clr = 3;
+				break;
+			case "invalid_user":
+				$str = "Der Benutzer ist nicht vorhanden oder gesperrt!";
+				$clr = 2;
 				break;
 			default:
 				$str = "Sorry, ein unbekannter Fehler trat auf!";
@@ -172,23 +177,30 @@
 				$_POST['login_nick']=str_replace("'","",$_POST['login_nick']);
 				$_POST['login_password']=str_replace("\'","",$_POST['login_password']);
 				$_POST['login_password']=str_replace("'","",$_POST['login_password']);
-				$res = dbquery("SELECT * FROM ".USER_TABLE_NAME.",".$db_table['admin_groups']." WHERE user_nick='".$_POST['login_nick']."' AND user_password='".md5($_POST['login_password'])."' AND user_admin_rank>0 AND user_admin_rank=group_id AND user_locked=0;");
+				$res = dbquery("SELECT * FROM ".USER_TABLE_NAME.",".$db_table['admin_groups']." WHERE user_nick='".$_POST['login_nick']."' AND user_admin_rank>0 AND user_admin_rank=group_id AND user_locked=0;");
 				if (mysql_num_rows($res)!=0)
 				{					
 					$arr = mysql_fetch_array($res);
-					$login_time=time();
-					// Session-Array mit Userdaten generieren
-					create_sess_array($arr);
-	  			// Eindeutige ID für diese Session generieren
-	  			$_SESSION[SESSION_NAME]['key']=md5($login_time).md5($arr['user_id']).md5(GAMEROUND_NAME).md5($_SERVER['REMOTE_ADDR']).md5($_SERVER['HTTP_USER_AGENT']).session_id();
-	  			// Loginzeit in DB speichern
-	  			dbquery ("UPDATE ".USER_TABLE_NAME." SET user_last_login=".$login_time.",user_acttime=".time().",user_session_key='".$_SESSION[SESSION_NAME]['key']."',user_ip='".$_SERVER['REMOTE_ADDR']."',user_hostname='".$_SERVER['REMOTE_ADDR']."' WHERE user_id=".$arr['user_id'].";");
-		  		dbquery ("INSERT INTO  ".$db_table['admin_user_log']." (log_user_id,log_logintime,log_ip,log_hostname,log_session_key) VALUES (".$arr['user_id'].",".time().",'".$_SERVER['REMOTE_ADDR']."','".$_SERVER['REMOTE_ADDR']."','".$_SESSION[SESSION_NAME]['key']."');");
-
+					if (pw_salt($_POST['login_password'],$arr['user_id']) == $arr['user_password'])
+					{
+						$login_time=time();
+						// Session-Array mit Userdaten generieren
+						create_sess_array($arr);
+		  			// Eindeutige ID für diese Session generieren
+		  			$_SESSION[SESSION_NAME]['key']=md5($login_time).md5($arr['user_id']).md5(GAMEROUND_NAME).md5($_SERVER['REMOTE_ADDR']).md5($_SERVER['HTTP_USER_AGENT']).session_id();
+		  			// Loginzeit in DB speichern
+		  			dbquery ("UPDATE ".USER_TABLE_NAME." SET user_last_login=".$login_time.",user_acttime=".time().",user_session_key='".$_SESSION[SESSION_NAME]['key']."',user_ip='".$_SERVER['REMOTE_ADDR']."',user_hostname='".$_SERVER['REMOTE_ADDR']."' WHERE user_id=".$arr['user_id'].";");
+			  		dbquery ("INSERT INTO  ".$db_table['admin_user_log']." (log_user_id,log_logintime,log_ip,log_hostname,log_session_key) VALUES (".$arr['user_id'].",".time().",'".$_SERVER['REMOTE_ADDR']."','".$_SERVER['REMOTE_ADDR']."','".$_SESSION[SESSION_NAME]['key']."');");
+						
+					}
+					else
+					{
+						login_error("password");
+					}
 	  		}
 				else
 				{
-					login_error("password");
+					login_error("invalid_user");
 				}
 			}
 			else
@@ -214,9 +226,9 @@
 			{
 				$arr = mysql_fetch_row($res);			
 				$pw = mt_rand(1000000,9999999);
-				$msg = "Hallo ".$arr[1].". Du hast für die Administration der ".GAMEROUND_NAME." von EtoA ein neues Passwort angefordert.\n\n";
+				$msg = "Hallo ".$arr[1].".\n\nDu hast für die Administration der ".GAMEROUND_NAME." von EtoA ein neues Passwort angefordert.\n\n";
 				$msg.= "Das neue Passwort lautet: $pw\n\n";
-				$msg.= "Diese Anfrage wurde am ".date("d.m.Y")." um ".date("H:i")." Uhr vom Computer ".gethostbyaddr($_SERVER['REMOTE_ADDR'])." aus in Auftrag gegeben.";
+				$msg.= "Diese Anfrage wurde am ".date("d.m.Y")." um ".date("H:i")." Uhr vom Computer ".gethostbyaddr($_SERVER['REMOTE_ADDR'])." aus in Auftrag gegeben. Bitte denke daran, das Passwort nach dem ersten Login zu ändern!";
 				send_mail(0,$arr[2],"Neues Administrationspasswort ".GAMEROUND_NAME."",$msg,'','');
 				echo "Das Passwort wurde geändert und dir per Mail zugestellt!<br/><br/>";
 				echo "<input type=\"button\" value=\"Zum Login\" onclick=\"document.location='?'\" />";
@@ -224,9 +236,10 @@
 				UPDATE 
 					admin_users
 				SET
-					user_password='".md5($pw)."'
+					user_password='".pw_salt($pw,$arr[0])."'
 				WHERE
 					user_id=".$arr[0].";");
+				add_log(8,"Der Administrator ".$arr[1]." (ID: ".$arr[0].") fordert per E-Mail (".$arr[2].") von ".$_SERVER['REMOTE_ADDR']." aus ein neues Passwort an.",time());					
 			}
 			else
 			{
