@@ -70,9 +70,9 @@
 				$s['cp_users'][$_GET['rem_user']]=null;
 			}			
 			
+			echo "<h2>Benutzer [<a href=\"index.php?page=home&amp;sub=stats\" target=\"main\">alle</a>]</h2>";
 			if (count($s['cp_users'])>0)
 			{
-				echo "<h2>Benutzer [<a href=\"index.php?page=home&amp;sub=stats\" target=\"main\">alle</a>]</h2>";
 				foreach ($s['cp_users'] as $uid)
 				{
 					if ($uid>0)
