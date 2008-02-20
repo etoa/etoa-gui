@@ -1148,6 +1148,7 @@
 				*/
 				echo "<div id=\"tabEconomy\" style=\"display:none;\">";
 				
+				/*
 				// Stopt Ladedauer
 				$tmr = timerStart();
 				
@@ -1823,6 +1824,8 @@
 				}
 				
 				echo "Wirtschaftsseite geladen in ".timerStop($tmr)." sec<br/>";
+				*/
+				
 				
 				echo "</div>";
 				
