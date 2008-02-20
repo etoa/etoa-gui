@@ -1,25 +1,31 @@
 <?PHP
+
+	echo "<h1>User-Bilder pr&uuml;fen</h1>";
+
+	echo "Die Bilder wurden zuletzt an folgendem Datum geprüft: ".df($conf['profileimagecheck_done']['v'])."<br/>";
+	dbquery("UPDATE config SET config_value='".time()."' WHERE config_name='profileimagecheck_done'");		
+
+
 	$dir = '../'.PROFILE_IMG_DIR."/";
 
-		echo "<h1>User-Bilder pr&uuml;fen</h1>";
-
-		if (isset($_GET['remove_profile']) && $_GET['remove_profile']>0)
+	// Selektiertes Bild löschen
+	if (isset($_GET['remove_profile']) && $_GET['remove_profile']>0)
+	{
+		$res = dbquery("SELECT user_profile_img FROM users WHERE user_id=".$_GET['remove_profile'].";");
+		if (mysql_num_rows($res)>0)
 		{
-			$res = dbquery("SELECT user_profile_img FROM users WHERE user_id=".$_GET['remove_profile'].";");
-			if (mysql_num_rows($res)>0)
+			$arr=mysql_fetch_array($res);
+      if (file_exists('../'.PROFILE_IMG_DIR."/".$arr['user_profile_img']))
+      {
+ 	    	unlink('../'.PROFILE_IMG_DIR."/".$arr['user_profile_img']);
+  	  }
+			dbquery("UPDATE users SET user_profile_img='' WHERE user_id=".$_GET['remove_profile'].";");
+			if (mysql_affected_rows()>0)
 			{
-				$arr=mysql_fetch_array($res);
-        if (file_exists('../'.PROFILE_IMG_DIR."/".$arr['user_profile_img']))
-	      {
-   	    	unlink('../'.PROFILE_IMG_DIR."/".$arr['user_profile_img']);
-    	  }
-				dbquery("UPDATE users SET user_profile_img='' WHERE user_id=".$_GET['remove_profile'].";");
-				if (mysql_affected_rows()>0)
-				{
-					echo "Bild entfernt!<br/><br/>";
-				}
+				echo "Bild entfernt!<br/><br/>";
 			}
 		}
+	}
 
 		$res=dbquery("
 		SELECT 
@@ -69,11 +75,19 @@
 			echo "Verwaiste Bilder gelöscht!<br/><bt/>";
 		}
 
-		echo "<h2>Verwaiste Bilder</h2>";
 		$co = count($overhead);
+
+
+		if ($co>10)
+		{
+			echo "[<a href=\"#saved\">Gehe direkt zu den korrekt gespeicherten Bildern</a>]<br/>";
+		}
+
+		echo "<h2>Verwaiste Bilder</h2>";
 		if ($co>0)
 		{
-				echo "$co Bilder vorhanden. <a href=\"?page=$page&amp;sub=$sub&amp;action=clearoverhead\">L&ouml;sche alle verwaisten Bilder</a><br/><br/>";
+				echo "Diese Bilder gehören zu Spielern, die nicht mehr in unserer Datenbank vorhanden sind.<br/>
+				Es sind $co Bilder vorhanden. <a href=\"?page=$page&amp;sub=$sub&amp;action=clearoverhead\">L&ouml;sche alle verwaisten Bilder</a><br/><br/>";
 				echo "<table class=\"tb\">
 				<tr><th>Datei</th><th>Bild</th></tr>";
 				foreach($overhead as $v)
@@ -88,8 +102,9 @@
 			echo "<i>Keine vorhanden!</i>";
 		}
 
+		echo "<a name=\"saved\"></a>";
 		echo "<h2>Gespeicherte Bilder</h2>";
-
+		echo "Diese Bilder gehören zu aktiven Spielern. Bitte prüfe regelmässig, ob sie nicht gegen unsere Regeln verstossen!<br/>";
 			if ($nr>0)
 			{
 				echo "Es sind $nr Bilder gespeichert!<br/><br/>";
