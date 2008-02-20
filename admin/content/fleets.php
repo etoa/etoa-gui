@@ -16,6 +16,7 @@
     $fleet_actions['ao']="Angreifen (Hinflug)";
     $fleet_actions['ar']="Angreifen (R&uuml;ckflug)";
     $fleet_actions['aoc']="Angreifen (Abgebrochen)";
+    $fleet_actions['mo']="Marktlieferung";
     $fleet_actions['ko']="Kolonie errichten";
     $fleet_actions['koc']="Kolonie errichten (Abgebrochen)";
     $fleet_actions['io']="Invasieren";
@@ -1024,6 +1025,10 @@
                     e.cell_asteroid as easteroid,
                     e.cell_wormhole_id as ewormhole,
                     user_nick,
+                    ps.planet_id as start_planet_id,
+                    ps.planet_name as start_planet_name,
+                    es.planet_id as end_planet_id,
+                    es.planet_name as end_planet_name,
                     fleet_action,
                     fleet_launchtime,
                     fleet_landtime,
@@ -1037,40 +1042,60 @@
                     e.cell_sx as esx,
                     e.cell_sy as esy
 				FROM
-                    ".$db_table['fleet'].",
-                    ".$db_table['users'].",
-                    ".$db_table['space_cells']." AS s,
-                    ".$db_table['space_cells']." AS e";
-
-				if ($_POST['planet_name_start']!="")
-					$sqlstart.=",".$db_table['planets']." AS ps";
-				if ($_POST['planet_name_end']!="")
-					$sqlstart.=",".$db_table['planets']." AS es";
-
-				$sqlstart.= "
-				WHERE
-					fleet_user_id=user_id
-					AND fleet_cell_from=s.cell_id
-					AND fleet_cell_to=e.cell_id";
-
-				if ($_POST['planet_name_start']!="")
-					$sqlend.=" AND fleet_planet_from=ps.planet_id";
-				if ($_POST['planet_name_end']!="")
-					$sqlend.=" AND fleet_planet_to=es.planet_id";
-
-				$sqlend.= " GROUP BY fleet_id ORDER BY fleet_launchtime DESC;";
-
+        	fleet
+        LEFT JOIN
+        	users 
+        	ON fleet_user_id=user_id
+        LEFT JOIN
+        	space_cells AS s
+        	ON fleet_cell_from=s.cell_id
+        LEFT JOIN
+          space_cells AS e
+          ON fleet_cell_to=e.cell_id
+        LEFT JOIN 
+        	planets AS ps 
+					ON fleet_planet_from=ps.planet_id
+				LEFT JOIN 
+					planets AS es
+					ON fleet_planet_to=es.planet_id
+				";
+				
+				$sqlend.= " ORDER BY ";
+				
+				switch ($_POST['fleet_order'])
+				{
+					case "launchtime":
+						$sqlend.="fleet_launchtime DESC;";
+						break;
+					case "landtime":
+						$sqlend.="fleet_landtime ASC;";
+						break;
+					case "user":
+						$sqlend.="user_nick ASC;";
+						break;
+					case "action":
+						$sqlend.="fleet_action ASC;";
+						break;
+					default:
+						$sqlend.="fleet_landtime DESC;";
+						break;
+				}
+				
 				$sql = $sqlstart.$sql.$sqlend;
+				
+				//echo nl2br($sql);
+				
 				$_SESSION['fleetedit']['query']=$sql;
 			}
 			else
 				$sql = $_SESSION['fleetedit']['query'];
 
 			$res = dbquery($sql);
-			if (($sql!="" || $_SESSION['fleetedit']['query']!="" )&& mysql_num_rows($res)>0)
+			$nr = mysql_num_rows($res);
+			if (($sql!="" || $_SESSION['fleetedit']['query']!="" ) && $nr > 0)
 			{
-				echo mysql_num_rows($res)." Datens&auml;tze vorhanden<br/><br/>";
-				if (mysql_num_rows($res)>20)
+				echo $nr." Datens&auml;tze vorhanden<br/><br/>";
+				if ($nr > 20)
 					echo "<input type=\"button\" value=\"Neue Suche\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" /><br/><br/>";
 
 				if ($arr['fleet_updating']==1)
@@ -1089,54 +1114,106 @@
 				while ($arr = mysql_fetch_array($res))
 				{
 					if ($arr['snebula']>0)
-						$startcell=$arr['ssx']."/".$arr['ssx']." : ".$arr['scx']."/".$arr['scy']." (Nebel)";
+					{
+						$startcell = "<span style=\"color:#99f;\">Nebel (".$arr['ssx']."/".$arr['ssx']." : ".$arr['scx']."/".$arr['scy'].")</span>";
+					}
 					elseif ($arr['sasteroid']>0)
-						$startcell=$arr['ssx']."/".$arr['ssx']." : ".$arr['scx']."/".$arr['scy']." (Asteroid)";
+					{
+						$startcell  = "<span style=\"color:#99f;\">Asteroiden (".$arr['ssx']."/".$arr['ssx']." : ".$arr['scx']."/".$arr['scy'].")</span>";
+					}
 					elseif ($arr['swormhole']>0)
-						$startcell=$arr['ssx']."/".$arr['ssx']." : ".$arr['scx']."/".$arr['scy']." (Wurmloch)";
+					{
+						$startcell = "<span style=\"color:#99f;\">Wurmloch (".$arr['ssx']."/".$arr['ssx']." : ".$arr['scx']."/".$arr['scy'].")</span>";
+					}
 					elseif ($arr['fleet_planet_from']>0)
 					{
-						$pres=dbquery("SELECT planet_name,planet_solsys_pos FROM ".$db_table['planets']." WHERE planet_id=".$arr['fleet_planet_from'].";");
-						if (mysql_num_rows($pres)>0)
+						if ($arr['start_planet_id']>0)
 						{
-							$parr=mysql_fetch_array($pres);
-							if ($parr['planet_name']=="") $parr['planet_name']="Unbenannter Planet";
-							$startcell="<span title=\"".$arr['ssx']."/".$arr['ssx']." : ".$arr['scx']."/".$arr['scy']." : ".$parr['planet_solsys_pos']."\">".$parr['planet_name']."</span>";
+							if ($arr['start_planet_name']=="") 
+							{
+								$arr['start_planet_name']="Unbenannter Planet";
+							}
+							$startcell="<span ".tm("Koordinaten",$arr['ssx']."/".$arr['ssx']." : ".$arr['scx']."/".$arr['scy']." : ".$parr['planet_solsys_pos']).">".$arr['start_planet_name']."</span>";
 						}
 						else
+						{
 							$startcell=$arr['ssx']."/".$arr['ssx']." : ".$arr['scx']."/".$arr['scy']." (<span style=\"color:red;\">Unbekannter Planet</span>)";
+						}
 					}
 					else
-						$startcell=$arr['ssx']."/".$arr['ssx']." : ".$arr['scx']."/".$arr['scy']." (<span style=\"color:red;\">Unbekannt</span>)";
+					{
+						if ($arr['ssx'] > 0 && $arr['ssx'] > 0 && $arr['scx'] > 0 && $arr['scy'] > 0)
+						{
+							$startcell=$arr['ssx']."/".$arr['ssx']." : ".$arr['scx']."/".$arr['scy']." (<span style=\"color:red;\">Unbekannt</span>)";
+						}
+						else
+						{
+							$startcell = "<span style=\"color:#99f;\">Unendliche Weiten</span>";
+						}
+					}
+
 					if ($arr['enebula']>0)
-						$endcell=$arr['esx']."/".$arr['esx']." : ".$arr['ecx']."/".$arr['ecy']." (Nebel)";
+					{
+						$endcell = "<span style=\"color:#99f;\">Nebel (".$arr['esx']."/".$arr['esx']." : ".$arr['ecx']."/".$arr['ecy'].")</span>";
+					}
 					elseif ($arr['easteroid']>0)
-						$endcell=$arr['esx']."/".$arr['esx']." : ".$arr['ecx']."/".$arr['ecy']." (Asteroid)";
+					{
+						$endcell  = "<span style=\"color:#99f;\">Asteroiden (".$arr['esx']."/".$arr['esx']." : ".$arr['ecx']."/".$arr['ecy'].")</span>";
+					}
 					elseif ($arr['ewormhole']>0)
-						$endcell=$arr['esx']."/".$arr['esx']." : ".$arr['ecx']."/".$arr['ecy']." (Wurmloch)";
+					{
+						$endcell = "<span style=\"color:#99f;\">Wurmloch (".$arr['esx']."/".$arr['esx']." : ".$arr['ecx']."/".$arr['ecy'].")</span>";
+					}
 					elseif ($arr['fleet_planet_to']>0)
 					{
-						$pres=dbquery("SELECT planet_name,planet_solsys_pos FROM ".$db_table['planets']." WHERE planet_id=".$arr['fleet_planet_to'].";");
-						if (mysql_num_rows($pres)>0)
+						if ($arr['end_planet_id']>0)
 						{
-							$parr=mysql_fetch_array($pres);
-							if ($parr['planet_name']=="") $parr['planet_name']="Unbenannter Planet";
-							$endcell="<span title=\"".$arr['esx']."/".$arr['esx']." : ".$arr['ecx']."/".$arr['ecy']." : ".$parr['planet_solsys_pos']."\">".$parr['planet_name']."</span>";
+							if ($arr['end_planet_name']=="") 
+							{
+								$arr['end_planet_name']="Unbenannter Planet";
+							}
+							$endcell="<span ".tm("Koordinaten",$arr['esx']."/".$arr['esx']." : ".$arr['ecx']."/".$arr['ecy']." : ".$parr['planet_solsys_pos']).">".$arr['end_planet_name']."</span>";
 						}
 						else
+						{
 							$endcell=$arr['esx']."/".$arr['esx']." : ".$arr['ecx']."/".$arr['ecy']." (<span style=\"color:red;\">Unbekannter Planet</span>)";
+						}
 					}
 					else
-						$endcell=$arr['esx']."/".$arr['esx']." : ".$arr['ecx']."/".$arr['ecy']." (<span style=\"color:red;\">Unbekannt</span>)";
+					{
+						if ($arr['esx'] > 0 && $arr['esx'] > 0 && $arr['ecx'] > 0 && $arr['ecy'] > 0)
+						{
+							$endcell=$arr['esx']."/".$arr['esx']." : ".$arr['ecx']."/".$arr['ecy']." (<span style=\"color:red;\">Unbekannt</span>)";
+						}
+						else
+						{
+							$endcell = "<span style=\"color:#99f;\">Unendliche Weiten</span>";
+						}
+					}
+
 
 					$stl="";
 					if ($arr['fleet_updating']==1)
 					{
 						$stl="style=\"color:red;\"";
 					}
+					if ($arr['fleet_landtime']< time())
+					{
+						$stl="style=\"color:orange;\"";
+					}
+					
+					if ($arr['user_nick']=="")
+					{
+						$owner = "<span style=\"color:#99f\">System</span>";
+					}
+					else
+					{
+						$owner = $arr['user_nick'];
+					}
+					
 
 					echo "<tr>";
-					echo "<td class=\"tbldata\" $stl>".$arr['user_nick']."</td>";
+					echo "<td class=\"tbldata\" $stl>".$owner."</td>";
 					echo "<td class=\"tbldata\" $stl>";
 					if ($fleet_actions[$arr['fleet_action']]!="")
 						echo $fleet_actions[$arr['fleet_action']];
@@ -1145,8 +1222,8 @@
 					echo "</td>";
 					echo "<td class=\"tbldata\" $stl>".$startcell."</td>";
 					echo "<td class=\"tbldata\" $stl>".$endcell."</td>";
-					echo "<td class=\"tbldata\" $stl>".date("d.m.y H:i",$arr['fleet_launchtime'])."</td>";
-					echo "<td class=\"tbldata\" $stl>".date("d.m.y H:i",$arr['fleet_landtime'])."</td>";
+					echo "<td class=\"tbldata\" $stl>".date("d.m.y",$arr['fleet_landtime'])." &nbsp; ".date("H:i:s",$arr['fleet_launchtime'])."</td>";
+					echo "<td class=\"tbldata\" $stl>".date("d.m.y",$arr['fleet_landtime'])." &nbsp; ".date("H:i:s",$arr['fleet_landtime'])."</td>";
 					echo "<td class=\"tbldata\"><a href=\"?page=$page&amp;sub=$sub&fleetships=".$arr['fleet_id']."\">Schiffe</a> ";
 					if (!stristr($arr['fleet_action'],"r") && !stristr($arr['fleet_action'],"c"))
 						echo "<a href=\"?page=$page&amp;sub=$sub&fleetreturn=".$arr['fleet_id']."&amp;action=searchresults\" onclick=\"return confirm('Soll diese Flotte wirklich zur&uuml;ckgeschickt werden?');\">Return</a> ";
@@ -1235,6 +1312,19 @@
 			echo "<tr><td class=\"tbltitle\">Flotten ID</td><td class=\"tbldata\"><input type=\"text\" name=\"fleet_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
 			echo "<tr><td class=\"tbltitle\">Besitzer ID</td><td class=\"tbldata\"><input type=\"text\" name=\"user_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
 			echo "<tr><td class=\"tbltitle\">Besitzer Nick</td><td class=\"tbldata\"><input type=\"text\" name=\"user_nick\" value=\"\" size=\"20\" maxlength=\"250\" /> ";fieldqueryselbox('user_nick');echo "</td></tr>";
+			
+			echo "<tr>
+				<td class=\"tbltitle\">Besitzer Nick</td>
+				<td class=\"tbldata\">
+					<select name=\"fleet_order\">
+						<option value=\"landtime\">Landezeit</option>
+						<option value=\"starttime\">Startzeit</option>
+						<option value=\"user\">Besitzer</option>
+						<option value=\"action\">Aktion</option>
+					</select>
+				</td>
+			</tr>";
+			
 			echo "</table>";
 			echo "<br/><input type=\"submit\" class=\"button\" name=\"fleet_search\" value=\"Suche starten\" /></form>";
 			$tblcnt = mysql_fetch_row(dbquery("SELECT count(fleet_id) FROM ".$db_table['fleet'].";"));
