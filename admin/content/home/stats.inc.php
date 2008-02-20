@@ -69,6 +69,9 @@
 		}
 		echo "<a href=\"?page=$page&amp;sub=$sub&amp;mode=".$mode."&amp;order_field=cnt&amp;order=DESC\" title=\"Absteigend sortieren\"><img src=\"../images/s_desc.png\" alt=\"Absteigend sortieren\" border=\"0\" /></a>";
 		echo "<a href=\"?page=$page&amp;sub=$sub&amp;mode=".$mode."&amp;order_field=cnt&amp;order=ASC\" title=\"Absteigend sortieren\"><img src=\"../images/s_asc.png\" alt=\"Aufsteigend sortieren\" border=\"0\" /></a>";
+		
+		echo "<th class=\"tbltitle\" style=\"width:60px;\">Details</th>";
+		
 		echo "</tr>";
 		
 		if (isset($_GET['order_field']) && $_GET['order_field']=="uavg")
@@ -112,6 +115,7 @@
 				echo "<td class=\"tbldata\">".nf($arr['upoints'])."</td>";
 				echo "<td class=\"tbldata\">".nf($arr['uavg'])."</td>";
 				echo "<td class=\"tbldata\">".nf($arr['cnt'])."</td>";
+				echo "<td $addstyle class=\"tbldata\">".edit_button("?page=alliances&amp;sub=edit&amp;alliance_id=".$arr['alliance_id']."")."</td>";
 				echo "</tr>";
 				$cnt++;
 			}
@@ -122,65 +126,21 @@
 		}
 		echo "</table>";
 	}
+	
+	//
+	// Users
+	//
 	else
 	{
-		
-		/*
-		// Datensatznavigation
-		$usrcnt = mysql_fetch_row(dbquery("
-		SELECT 
-			COUNT(user_id) 
-		FROM 
-			user_stats 
-		"));
-		$num = $usrcnt[0];
-		if (isset($_GET['limit']) && $_GET['limit']!="")
-		{
-			$limit = intval($_GET['limit']).",".NUM_OF_ROWS;
-			$nextlimit = intval($_GET['limit'])+NUM_OF_ROWS;
-			$prevlimit = intval($_GET['limit'])-NUM_OF_ROWS;
-		}
-		else
-		{
-			$limit = "0,".NUM_OF_ROWS;
-			$nextlimit = NUM_OF_ROWS;
-			$prevlimit = -1;
-		}
-		$lastlimit = (ceil($num/NUM_OF_ROWS)*NUM_OF_ROWS)-NUM_OF_ROWS;
-		*/
-		echo "<form action=\"?page=$page&amp;sub=$sub&amp;mode=$mode\" method=\"post\"><table class=\"tbl\">";
-		/*
-		echo "<tr><td class=\"statsNav\" style=\"text-align:right;\">";
-		if ($prevlimit>-1 && NUM_OF_ROWS*2<$num)
-			echo "<input type=\"button\" value=\" &lt;&lt; \" onclick=\"document.location='?index=stats&amp;mode=$mode&amp;limit=0'\" /> &nbsp; ";
-		else
-			echo "&nbsp;";
-		if ($prevlimit>-1)
-			echo "<input type=\"button\" value=\" &lt; \" onclick=\"document.location='?index=stats&amp;mode=$mode&amp;limit=$prevlimit'\" /> &nbsp; ";
-		else
-			echo "&nbsp;";
-		if ($nextlimit<$num)
-			echo "<input type=\"button\" value=\" &gt; \" onclick=\"document.location='?index=stats&amp;mode=$mode&amp;limit=$nextlimit'\" /> &nbsp; ";
-		else
-			echo "&nbsp;";
-		if ($nextlimit<$num && NUM_OF_ROWS*2<$num)
-			echo "<input type=\"button\" value=\" &gt;&gt; \" onclick=\"document.location='?index=stats&amp;mode=$mode&amp;limit=$lastlimit'\" /> &nbsp; ";
-		else
-			echo "&nbsp;";
-		echo "<select onchange=\"document.location='?index=stats&amp;mode=$mode&amp;limit='+this.options[this.selectedIndex].value\">";
-		for ($x=1;$x<=$num;$x+=NUM_OF_ROWS)
-		{
-			$dif = $x+NUM_OF_ROWS-1;
-			if ($dif>$num) $dif=$num;
-			$oval=$x-1;
-			echo "<option value=\"$oval\"";
-			if ($limit==$oval) echo " selected=\"selected\"";
-			echo ">$x - $dif</option>";
-		}
-		echo "</select></td></tr>";
-		*/
+		echo "<form action=\"?page=$page&amp;sub=$sub&amp;mode=$mode\" method=\"post\">";
+		echo "<table class=\"tbl\">";
 		echo "<tr><td class=\"tbldata\" colspan=\"5\">";
-		echo "Suche nach Spieler: <input type=\"text\" name=\"user_nick\" value=\"\" size=\"20\" /> <input type=\"submit\" name=\"search\" value=\"Suchen\" />";
+		echo "Suche nach Spieler: <input type=\"text\" name=\"user_nick\" value=\"".(isset($_POST['user_nick']) ? $_POST['user_nick'] : '')."\" size=\"20\" /> 
+		<input type=\"submit\" name=\"search\" value=\"Suchen\" />";
+		if (isset($_POST['user_nick']))			
+		{
+			echo " &nbsp; <input type=\"button\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;mode=$mode'\" value=\"Reset\" />";
+		}
 		echo "</td></tr></table></form><br/>";
 
 		// Punktetabelle
@@ -215,6 +175,7 @@
 		else
 		{
 			$res=dbquery("SELECT 
+				user_id,
 				user_rank_current,
 				user_rank_last,
 				user_nick,
@@ -232,9 +193,7 @@
 				user_nick ASC 
 			;");			
 		}
-		
-		/*LIMIT 
-				$limit*/
+
 		echo "<table class=\"tbl\">";
 		if (mysql_num_rows($res)>0)
 		{
@@ -244,6 +203,7 @@
 				<th class=\"tbltitle\" style=\"\">Rasse</th>
 				<th class=\"tbltitle\" style=\"\">Allianz</th>
 				<th class=\"tbltitle\" style=\"\">Punkte</th>
+				<th class=\"tbltitle\" style=\"width:60px;\">Details</th>
 			</tr>";
 			$cnt=1+$limit;
 			while ($arr=mysql_fetch_array($res))
@@ -286,6 +246,7 @@
 				echo "<td $addstyle class=\"tbldata\">".$arr['race_name']."</td>";
 				echo "<td class=\"tbldata\" $addstyle >".$arr['alliance_tag']."</td>";
 				echo "<td $addstyle class=\"tbldata\">".nf($arr['points'])."</td>";
+				echo "<td $addstyle class=\"tbldata\">".edit_button("?page=user&amp;sub=edit&amp;user_id=".$arr['user_id']."")."</td>";
 				echo "</tr>";
 				$cnt++;
 			}
@@ -294,42 +255,13 @@
 			echo "<tr><td align=\"center\" class=\"tbldata\"><i>Es wurde keine User gefunden!</i></tr>";
 		echo "</table><br/>";
 
-/*
-		// Datensatznavigation
-		echo "<table class=\"tbl\">";
-		echo "<tr><td class=\"statsNav\" style=\"text-align:right;\">";
-		if ($prevlimit>-1 && NUM_OF_ROWS*2<$num)
-			echo "<input type=\"button\" value=\" &lt;&lt; \" onclick=\"document.location='?index=stats&amp;mode=$mode&amp;limit=0'\" /> &nbsp; ";
-		else
-			echo "&nbsp;";
-		if ($prevlimit>-1)
-			echo "<input type=\"button\" value=\" &lt; \" onclick=\"document.location='?index=stats&amp;mode=$mode&amp;limit=$prevlimit'\" /> &nbsp; ";
-		else
-			echo "&nbsp;";
-		if ($nextlimit<$num)
-			echo "<input type=\"button\" value=\" &gt; \" onclick=\"document.location='?index=stats&amp;mode=$mode&amp;limit=$nextlimit'\" /> &nbsp; ";
-		else
-			echo "&nbsp;";
-		if ($nextlimit<$num && NUM_OF_ROWS*2<$num)
-			echo "<input type=\"button\" value=\" &gt;&gt; \" onclick=\"document.location='?index=stats&amp;mode=$mode&amp;limit=$lastlimit'\" /> &nbsp; ";
-		else
-			echo "&nbsp;";
-		echo "<select onchange=\"document.location='?index=stats&amp;mode=$mode&amp;limit='+this.options[this.selectedIndex].value\">";
-		for ($x=1;$x<=$num;$x+=NUM_OF_ROWS)
-		{
-			$dif = $x+NUM_OF_ROWS-1;
-			if ($dif>$num) $dif=$num;
-			$oval=$x-1;
-			echo "<option value=\"$oval\"";
-			if ($limit==$oval) echo " selected=\"selected\"";
-			echo ">$x - $dif</option>";
-		}
-		echo "</select></td></tr>";
-		echo "</table>";
-		*/
+		echo "<script type=\"text/javascript\">document.forms[1].elements[0].select();</script>";
 
 	}
+	
+	//
 	// Legende
+	//
 	echo "<div style=\"text-align:center;padding:10px;\">Die Aktualisierung der Punkte erfolgt ";
 	$h = $conf['points_update']['v']/3600;
 	if ($h>1)

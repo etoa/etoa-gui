@@ -25,6 +25,12 @@
 	$navmenu['Allgemeines']['Systemnachricht']['page']="home";
 	$navmenu['Allgemeines']['Systemnachricht']['sub']="systemmessage";
 	$navmenu['Allgemeines']['Systemnachricht']['level']=0;
+	$navmenu['Allgemeines']['Systemnachricht']['new']=1;
+
+	$navmenu['Allgemeines']['Rangliste']['page']="home";
+	$navmenu['Allgemeines']['Rangliste']['sub']="stats";
+	$navmenu['Allgemeines']['Rangliste']['level']=0;
+	$navmenu['Allgemeines']['Rangliste']['new']=1;
 
 	$navmenu['Allgemeines']['Spielstatistiken']['page']="home";
 	$navmenu['Allgemeines']['Spielstatistiken']['sub']="gamestats";
@@ -33,6 +39,11 @@
 	$navmenu['Allgemeines']['RSS']['page']="home";
 	$navmenu['Allgemeines']['RSS']['sub']="rss";
 	$navmenu['Allgemeines']['RSS']['level']=0;
+
+	$navmenu['Allgemeines']['Filesharing']['page']="home";
+	$navmenu['Allgemeines']['Filesharing']['sub']="filesharing";
+	$navmenu['Allgemeines']['Filesharing']['level']=1;
+	$navmenu['Allgemeines']['Filesharing']['new']=1;
 
 
 	$navmenu['Allgemeines']['bar'][0] = true;
@@ -100,11 +111,6 @@
 	$navmenu['Spieler']['Userstatistiken']['page']="user";
 	$navmenu['Spieler']['Userstatistiken']['sub']="userstats";
 	$navmenu['Spieler']['Userstatistiken']['level']=0;
-
-	$navmenu['Spieler']['Rangliste']['page']="user";
-	$navmenu['Spieler']['Rangliste']['sub']="stats";
-	$navmenu['Spieler']['Rangliste']['level']=0;
-
 
 	$navmenu['Spieler']['bar'][0] = true;
 
@@ -382,16 +388,8 @@
 	$navmenu['Tools']['IP-Resolver']['sub']="ipresolver";
 	$navmenu['Tools']['IP-Resolver']['level']=1;
 	
-	$navmenu['Tools']['Zeittest']['page']="tools";
-	$navmenu['Tools']['Zeittest']['sub']="timetester";
-	$navmenu['Tools']['Zeittest']['level']=3;	
-
 	$navmenu['Tools']['Kampfsimulator']['page']="tools";
 	$navmenu['Tools']['Kampfsimulator']['sub']="battle_simulation";
 	$navmenu['Tools']['Kampfsimulator']['level']=2;
-
-	$navmenu['Tools']['Filesharing']['page']="tools";
-	$navmenu['Tools']['Filesharing']['sub']="filesharing";
-	$navmenu['Tools']['Filesharing']['level']=1;
 
 ?>

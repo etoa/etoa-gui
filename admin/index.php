@@ -222,7 +222,10 @@
 												{
 													if ($data['sub']!="")
 													{
-														echo "<a href=\"?page=".$data['page']."&amp;sub=".$data['sub']."\" class=\"menu1Item\" >";
+														echo "<a href=\"?page=".$data['page']."&amp;sub=".$data['sub']."\" class=\"menu1Item\" ";
+														if ($data['new']==1)
+															echo " style=\"color:#ff0;\"";
+														echo ">";
 														if ($page==$data['page'] && $sub==$data['sub'])
 															echo "<b>&gt;</b> ";
 														echo "$title </a>";
@@ -241,7 +244,7 @@
 								}
 
 								echo "<br/><form action=\"?page=user&amp;action=search\" method=\"post\">
-										<input type=\"text\" name=\"user_nick_search\" size=\"10\" autocomplete=\"off\" onkeyup=\"xajax_searchUser(this.value,'user_nick_search','user_search_box1');\"/><br><div class=\"citybox\" id=\"user_search_box1\">&nbsp;</div>
+										 &nbsp;<input type=\"text\" name=\"user_nick_search\" size=\"9\" autocomplete=\"off\" onkeyup=\"\" id=\"user_search_box1\">
 										<input type=\"hidden\" name=\"qmode[user_nick_search]\" value=\"LIKE '%\" />
 										<input type=\"submit\" name=\"user_search\" value=\"Usersuche\" />
 									</form>";

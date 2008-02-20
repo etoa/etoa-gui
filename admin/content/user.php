@@ -36,14 +36,6 @@
 	}
 
 	//
-	// Rangliste
-	//
-	if ($sub=="stats")
-	{
-		require("user/stats.inc.php");
-	}
-
-	//
 	// Statistics-Graph
 	//
 	elseif ($sub=="userstats")
