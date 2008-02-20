@@ -55,10 +55,12 @@
 	$navmenu['Allgemeines']['Admin-Management']['page']="home";
 	$navmenu['Allgemeines']['Admin-Management']['sub']="adminusers";
 	$navmenu['Allgemeines']['Admin-Management']['level']=2;
+	$navmenu['Allgemeines']['Admin-Management']['new']=1;
 
 	$navmenu['Allgemeines']['Admin-Sessionlog']['page']="home";
 	$navmenu['Allgemeines']['Admin-Sessionlog']['sub']="adminlog";
 	$navmenu['Allgemeines']['Admin-Sessionlog']['level']=2;
+
 
 	$navmenu['Spieler']['Spieler bearbeiten']['page']="user";
 	$navmenu['Spieler']['Spieler bearbeiten']['sub']="";
@@ -84,9 +86,10 @@
 	$navmenu['Spieler']['&Auml;nderungsantr&auml;ge']['sub']="requests";
 	$navmenu['Spieler']['&Auml;nderungsantr&auml;ge']['level']=0;
 
-	$navmenu['Spieler']['Bilder pr&uuml;fen']['page']="user";
-	$navmenu['Spieler']['Bilder pr&uuml;fen']['sub']="imagecheck";
-	$navmenu['Spieler']['Bilder pr&uuml;fen']['level']=0;
+	$navmenu['Spieler']['Profilbilder pr&uuml;fen']['page']="user";
+	$navmenu['Spieler']['Profilbilder pr&uuml;fen']['sub']="imagecheck";
+	$navmenu['Spieler']['Profilbilder pr&uuml;fen']['level']=0;
+	$navmenu['Spieler']['Profilbilder pr&uuml;fen']['new']=1;
 
 	$navmenu['Spieler']['Fehlerhafte Logins']['page']="user";
 	$navmenu['Spieler']['Fehlerhafte Logins']['sub']="loginfailures";
