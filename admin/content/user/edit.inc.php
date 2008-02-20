@@ -284,14 +284,14 @@
 					<a href=\"javascript:;\" onclick=\"showTab('tabMessages');xajax_showLast5Messages(".$arr['user_id'].",'lastmsgbox');\">Nachrichten</a>
 					<a href=\"javascript:;\" onclick=\"showTab('tabDesign')\">Design</a>
 					<a href=\"javascript:;\" onclick=\"showTab('tabFailures')\">Loginfehler</a>
-					<a href=\"javascript:;\" onclick=\"showTab('tabPoints');xajax_userPointssTable(".$arr['user_id'].",'tabPoints');\">Punkte</a>
-					<a href=\"javascript:;\" onclick=\"showTab('tabTickets')\">Tickets</a>
-					<a href=\"javascript:;\" onclick=\"showTab('tabComments')\">Kommentare</a>
+					<a href=\"javascript:;\" onclick=\"showTab('tabPoints');xajax_userPointsTable(".$arr['user_id'].",'tabPoints');\">Punkte</a>
+					<a href=\"javascript:;\" onclick=\"showTab('tabTickets');xajax_userTickets(".$arr['user_id'].",'tabTickets');\">Tickets</a>
+					<a href=\"javascript:;\" onclick=\"showTab('tabComments');xajax_userComments(".$arr['user_id'].",'tabComments');\">Kommentare</a>
 					<a href=\"javascript:;\" onclick=\"showTab('tabEconomy')\">Wirtschaft</a>
 					
 					<!--<a href=\"javascript:;\" onclick=\"showTab('tabWarnings')\">Verwarnungen</a>-->
 				<br style=\"clear:both;\" />
-				</div><br><br>";
+				</div><br>";
 				//echo "<div id=\"tabContent\">";
 				
 				
@@ -934,24 +934,17 @@
 				/**
 				* Tickets
 				*/				
-				echo "<div id=\"tabTickets\" style=\"display:none;\">Laden...</div>";	
+				echo "<div id=\"tabTickets\" style=\"display:none;\">
+					<div style=\"text-align:center;\"><img src=\"../images/loadingmiddle.gif\" /><br/>Wird geladen...</div>
+				</div>";	
 				
-				echo "<script type=\"text/javascript\">
-								xajax_userTickets(".$arr['user_id'].",'tabTickets');
-							</script>";
-
-
 
 				/**
 				* Kommentare
 				*/				
-				echo "<div id=\"tabComments\" style=\"display:none;\">Laden...</div>";	
-				
-				echo "<script type=\"text/javascript\">
-								xajax_userComments(".$arr['user_id'].",'tabComments');
-							</script>";
-				
-				
+				echo "<div id=\"tabComments\" style=\"display:none;\">
+					<div style=\"text-align:center;\"><img src=\"../images/loadingmiddle.gif\" /><br/>Wird geladen...</div>
+				</div>";	
 				
 				/**
 				* Account
