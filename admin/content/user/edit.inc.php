@@ -262,23 +262,29 @@
 				
 				</script>";
 				
-				
+				// Load data				
 				$arr = mysql_fetch_array($res);
+
+				// Some preparations
+				$st = $arr['user_specialist_time']>0 ? $arr['user_specialist_time'] : time();
+
 				
 				echo "<h2>Details ".$arr['user_nick']."</h2>";
 
 				echo "<form action=\"?page=$page&amp;sub=edit&amp;user_id=".$_GET['user_id']."\" method=\"post\">";
+
 				
+				// Show the navigation
 				echo "<div id=\"tabNav\">
 					<a href=\"javascript:;\" onclick=\"showTab('tabGeneral')\">Allgemeines</a>
-					<a href=\"javascript:;\" onclick=\"showTab('tabData')\">Daten</a>
+					<a href=\"javascript:;\" onclick=\"showTab('tabData');\">Daten</a>
 					<a href=\"javascript:;\" onclick=\"showTab('tabAccount')\">Account</a>
 					<a href=\"javascript:;\" onclick=\"showTab('tabProfile')\">Profil</a>
-					<a href=\"javascript:;\" onclick=\"showTab('tabGame')\">Spiel</a>
-					<a href=\"javascript:;\" onclick=\"showTab('tabMessages')\">Nachrichten</a>
+					<a href=\"javascript:;\" onclick=\"showTab('tabGame');loadSpecialist(".$st.");loadAllianceRanks(".$arr['user_alliance_rank_id'].");\">Spiel</a>
+					<a href=\"javascript:;\" onclick=\"showTab('tabMessages');xajax_showLast5Messages(".$arr['user_id'].",'lastmsgbox');\">Nachrichten</a>
 					<a href=\"javascript:;\" onclick=\"showTab('tabDesign')\">Design</a>
 					<a href=\"javascript:;\" onclick=\"showTab('tabFailures')\">Loginfehler</a>
-					<a href=\"javascript:;\" onclick=\"showTab('tabPoints')\">Punkte</a>
+					<a href=\"javascript:;\" onclick=\"showTab('tabPoints');xajax_userPointssTable(".$arr['user_id'].",'tabPoints');\">Punkte</a>
 					<a href=\"javascript:;\" onclick=\"showTab('tabTickets')\">Tickets</a>
 					<a href=\"javascript:;\" onclick=\"showTab('tabComments')\">Kommentare</a>
 					<a href=\"javascript:;\" onclick=\"showTab('tabEconomy')\">Wirtschaft</a>
@@ -475,20 +481,6 @@
 				*/
 				echo "<div id=\"tabGame\" style=\"display:none;\">";
 				
-				if ($arr['user_specialist_time']>0)
-				{
-					$st = $arr['user_specialist_time'];
-				}
-				else
-				{
-					$st = time();
-				}
-				
-				echo "<script type=\"text/javascript\">
-								loadSpecialist(".$st.");
-								loadAllianceRanks(".$arr['user_alliance_rank_id'].");
-							</script>";
-				
 				echo "<table class=\"tbl\">";
 				echo "<tr>
 								<td class=\"tbltitle\">Rasse:</td>
@@ -663,10 +655,6 @@
 				* Messages
 				*/		
 				echo "<div id=\"tabMessages\" style=\"display:none;\">";
-				
-				echo "<script type=\"text/javascript\">
-								xajax_showLast5Messages(".$arr['user_id'].",'lastmsgbox');
-							</script>";
 				
 				echo "<table class=\"tbl\">";		
 				echo "<tr>
@@ -939,14 +927,10 @@
 				/**
 				* Points
 				*/
-				echo "<div id=\"tabPoints\" style=\"display:none;\">Laden...</div>";	
+				echo "<div id=\"tabPoints\" style=\"display:none;\">
+					<div style=\"text-align:center;\"><img src=\"../images/loadingmiddle.gif\" /><br/>Wird geladen...</div>
+				</div>";	
 				
-				echo "<script type=\"text/javascript\">
-								xajax_userPointsTable(".$arr['user_id'].",'tabPoints');
-							</script>";
-							
-							
-
 				/**
 				* Tickets
 				*/				
