@@ -59,7 +59,7 @@
 	// Config-Werte laden
 	$conf = get_all_config();
 	include("../def.inc.php");
-	
+
 	// Feste Konstanten
 	define('SESSION_NAME',"adminsession");
 	define('USER_TABLE_NAME',$db_table['admin_users']);
@@ -113,6 +113,14 @@
 
 	// Zufallsgenerator initialisieren
 	mt_srand(time());
+
+	// Zwischenablage
+	if (isset($_GET['cbclose']))
+	{
+		$_SESSION['clipboard'] = null;
+	}
+	$cb = $_SESSION['clipboard']==1 ? true : false;
+
 ?>
 
 <?PHP	echo '<?xml version="1.0" encoding="UTF-8"?>';?>
@@ -190,6 +198,10 @@
 								echo " (".$narr[0].")";
 							}
 							echo "</a> | ";
+							if (!$cb)
+							{
+								echo "<a href=\"frameset.php?page=$page&amp;sub=$sub\" target=\"_top\" style=\"color:#ff0;\">Zwischenablage</a> | ";
+							}
 							echo '<a href="?logout=1" style="color:#f90;">Logout</a>';
 							?>
 						</td>

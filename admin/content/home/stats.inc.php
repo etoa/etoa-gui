@@ -246,7 +246,10 @@
 				echo "<td $addstyle class=\"tbldata\">".$arr['race_name']."</td>";
 				echo "<td class=\"tbldata\" $addstyle >".$arr['alliance_tag']."</td>";
 				echo "<td $addstyle class=\"tbldata\">".nf($arr['points'])."</td>";
-				echo "<td $addstyle class=\"tbldata\">".edit_button("?page=user&amp;sub=edit&amp;user_id=".$arr['user_id']."")."</td>";
+				echo "<td $addstyle class=\"tbldata\">
+				".edit_button("?page=user&amp;sub=edit&amp;user_id=".$arr['user_id']."")."
+				".cb_button("add_user=".$arr['user_id']."")."				
+				</td>";
 				echo "</tr>";
 				$cnt++;
 			}

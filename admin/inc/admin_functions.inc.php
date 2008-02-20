@@ -151,6 +151,23 @@
 		else
 			return "<a href=\"$url\"><img src=\"../images/edit.gif\" alt=\"Bearbeiten\" style=\"width:16px;height:18px;border:none;\" title=\"Bearbeiten\" /></a>";
 	}
+	
+	/**
+	* Displays a clickable edit button
+	*
+	* @param string Url of the link
+	* @param string Optional onclick value
+	*/
+	function cb_button($url)
+	{
+		global $cb;
+		if ($cb)
+		{
+			return "<a href=\"clipboard.php?".$url."\" target=\"clipboard\"><img src=\"../images/clipboard.png\" alt=\"Zwischenablage\" style=\"width:16px;height:18px;border:none;\" title=\"Zwischenablage\" /></a>";
+		}
+		return "";
+	}	
+	
 
 	/**
 	* Displays a clickable repair button
