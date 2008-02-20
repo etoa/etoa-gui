@@ -54,7 +54,7 @@
 				$arr=mysql_fetch_array($res);
 				echo "<h2>Punktedetails f&uuml;r ".$arr['user_nick']."</h2>";
 				echo "<b>Punkte aktuell:</b> ".nf($arr['user_points']).", <b>Rang aktuell:</b> ".$arr['user_rank_current']."<br/><br/>";
-				echo "<img src=\"../inc/statsdiag.php?user=".$arr['user_id']."\" alt=\"Diagramm\" /><br/><br/>";
+				echo "<img src=\"../misc/stats.image.php?user=".$arr['user_id']."\" alt=\"Diagramm\" /><br/><br/>";
 				$pres=dbquery("SELECT * FROM ".$db_table['user_points']." WHERE point_user_id='".$_GET['user_id']."' ORDER BY point_timestamp DESC;");
 				if (mysql_num_rows($pres)>0)
 				{
