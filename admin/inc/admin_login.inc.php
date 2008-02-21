@@ -69,7 +69,7 @@
 		switch ($typ) 
 		{
 			case "password":
-				$str = "Sorry, dieser Benutzer existiert nicht oder das Passwort ist falsch!";
+				$str = "Sorry, das Passwort ist falsch!<br/>Wenn du es vergessen hast, fordere bitte über untenstehenden Button ein neues an!";
 				$clr = 2;
 				break;
 			case "nothing_entered_user":
@@ -101,7 +101,11 @@
 				$clr = 3;
 				break;
 			case "invalid_user":
-				$str = "Der Benutzer ist nicht vorhanden oder gesperrt!";
+				$str = "Der Benutzer ist nicht vorhanden!";
+				$clr = 2;
+				break;
+			case "locked":
+				$str = "Der Benutzer gesperrt!";
 				$clr = 2;
 				break;
 			default:
@@ -177,25 +181,32 @@
 				$_POST['login_nick']=str_replace("'","",$_POST['login_nick']);
 				$_POST['login_password']=str_replace("\'","",$_POST['login_password']);
 				$_POST['login_password']=str_replace("'","",$_POST['login_password']);
-				$res = dbquery("SELECT * FROM ".USER_TABLE_NAME.",".$db_table['admin_groups']." WHERE user_nick='".$_POST['login_nick']."' AND user_admin_rank>0 AND user_admin_rank=group_id AND user_locked=0;");
+				$res = dbquery("SELECT * FROM ".USER_TABLE_NAME.",".$db_table['admin_groups']." WHERE user_nick='".$_POST['login_nick']."' AND user_admin_rank>0 AND user_admin_rank=group_id;");
 				if (mysql_num_rows($res)!=0)
 				{					
 					$arr = mysql_fetch_array($res);
-					if (pw_salt($_POST['login_password'],$arr['user_id']) == $arr['user_password'])
+					if ($arr['user_locked']==0)
 					{
-						$login_time=time();
-						// Session-Array mit Userdaten generieren
-						create_sess_array($arr);
-		  			// Eindeutige ID für diese Session generieren
-		  			$_SESSION[SESSION_NAME]['key']=md5($login_time).md5($arr['user_id']).md5(GAMEROUND_NAME).md5($_SERVER['REMOTE_ADDR']).md5($_SERVER['HTTP_USER_AGENT']).session_id();
-		  			// Loginzeit in DB speichern
-		  			dbquery ("UPDATE ".USER_TABLE_NAME." SET user_last_login=".$login_time.",user_acttime=".time().",user_session_key='".$_SESSION[SESSION_NAME]['key']."',user_ip='".$_SERVER['REMOTE_ADDR']."',user_hostname='".$_SERVER['REMOTE_ADDR']."' WHERE user_id=".$arr['user_id'].";");
-			  		dbquery ("INSERT INTO  ".$db_table['admin_user_log']." (log_user_id,log_logintime,log_ip,log_hostname,log_session_key) VALUES (".$arr['user_id'].",".time().",'".$_SERVER['REMOTE_ADDR']."','".$_SERVER['REMOTE_ADDR']."','".$_SESSION[SESSION_NAME]['key']."');");
-						
+						if (pw_salt($_POST['login_password'],$arr['user_id']) == $arr['user_password'])
+						{
+							$login_time=time();
+							// Session-Array mit Userdaten generieren
+							create_sess_array($arr);
+			  			// Eindeutige ID für diese Session generieren
+			  			$_SESSION[SESSION_NAME]['key']=md5($login_time).md5($arr['user_id']).md5(GAMEROUND_NAME).md5($_SERVER['REMOTE_ADDR']).md5($_SERVER['HTTP_USER_AGENT']).session_id();
+			  			// Loginzeit in DB speichern
+			  			dbquery ("UPDATE ".USER_TABLE_NAME." SET user_last_login=".$login_time.",user_acttime=".time().",user_session_key='".$_SESSION[SESSION_NAME]['key']."',user_ip='".$_SERVER['REMOTE_ADDR']."',user_hostname='".$_SERVER['REMOTE_ADDR']."' WHERE user_id=".$arr['user_id'].";");
+				  		dbquery ("INSERT INTO  ".$db_table['admin_user_log']." (log_user_id,log_logintime,log_ip,log_hostname,log_session_key) VALUES (".$arr['user_id'].",".time().",'".$_SERVER['REMOTE_ADDR']."','".$_SERVER['REMOTE_ADDR']."','".$_SESSION[SESSION_NAME]['key']."');");
+							
+						}
+						else
+						{
+							login_error("password");
+						}
 					}
 					else
 					{
-						login_error("password");
+						login_error("locked");
 					}
 	  		}
 				else
