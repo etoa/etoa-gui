@@ -63,9 +63,6 @@
 	// Homepage
 	define('DEFAULT_PAGE',"overview");
 	
-	// Char Url
-	define('CHAT_URL',"http://www.etoa.ch/chat");
-
 	// Backup-Dir
 	define('BACKUP_DIR',$conf['backup']['v']);	
 	define('CACHE_ROOT','cache');
@@ -100,7 +97,13 @@
 	define("SMILIE_DIR","images/smilies");								// Smilies
 	define("IMAGEPACK_DIRECTORY","images/imagepacks");				// Bilder
 	define("IMAGEPACK_DOWNLOAD_DIRECTORY","cache/imagepacks");				// Bilder
-	define("HELPCENTER_PATH","http://www.etoa.net/faq");	// Helpcenter Link
+
+	// Externe Pfade
+	define("HELPCENTER_PATH","http://help.etoa.ch");	// Helpcenter Link
+	define("FORUM_PATH","http://forum.etoa.ch");	// Forum Link
+	define("DEVCENTER_PATH","https://dev.etoa.ch");	// Entwickler Link
+	define('CHAT_URL',"http://chat.etoa.ch");	// Chat
+
 
 	// Ordner
 	define("DESIGN_DIRECTORY","designs");					// CSS Style

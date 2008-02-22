@@ -474,7 +474,7 @@
 				$tpl->assign("selectField",$planets->getSelectField());		
 				$tpl->assign("urlTeamspeak",$conf['url_teamspeak']['v']);
 				$tpl->assign("urlRules",$conf['url_rules']['v']);
-				$tpl->assign("urlForum","http://www.etoa.ch/forum");
+				$tpl->assign("urlForum",FORUM_PATH);
 				$tpl->assign("urlHelpcenter",HELPCENTER_PATH);
 				$tpl->assign("chatString",CHAT_STRING);
 								

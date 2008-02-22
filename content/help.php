@@ -88,15 +88,15 @@
 		infobox_start("Weitere Infos",1);
 		echo "<tr>
 		<td class=\"tbldata\" style=\"text-align:center;width:20%\">
-			<a href=\"http://www.etoa.ch/forum\" target=\"_Blank\"><img src=\"images/users.png\" border=\"0\" alt=\"Forum\" title=\"Forum\" style=\"width:40px;height:40px;\"></a><br/>
+			<a href=\"".FORUM_PATH."\" target=\"_Blank\"><img src=\"images/users.png\" border=\"0\" alt=\"Forum\" title=\"Forum\" style=\"width:40px;height:40px;\"></a><br/>
 			Forum
 		</td>
 		<td class=\"tbldata\" style=\"text-align:center;width:20%\">
-			<a href=\"http://www.etoa.ch/faq\" target=\"_Blank\"><img src=\"images/help.png\" border=\"0\" alt=\"FAQ\" style=\"width:40px;height:40px;\" title=\"FAQ\"></a><br/>
+			<a href=\"".HELPCENTER_PATH."\" target=\"_Blank\"><img src=\"images/help.png\" border=\"0\" alt=\"FAQ\" style=\"width:40px;height:40px;\" title=\"Hilfecenter und FAQ\"></a><br/>
 			Häufig gestellte Fragen (FAQ)
 		</td>
 		<td class=\"tbldata\" style=\"text-align:center;width:20%\">
-			<a href=\"http://bugs.etoa.net\" target=\"_Blank\"><img src=\"images/bug.png\" border=\"0\" alt=\"FAQ\" style=\"width:40px;height:40px;\" title=\"FAQ\"></a><br/>
+			<a href=\"".DEVCENTER_PATH."\" target=\"_Blank\"><img src=\"images/bug.png\" border=\"0\" alt=\"FAQ\" style=\"width:40px;height:40px;\" title=\"FAQ\"></a><br/>
 			Fehler melden
 		</td>
 		<td class=\"tbldata\" style=\"text-align:center;width:20%\">
