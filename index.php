@@ -214,34 +214,6 @@
 		define("IMAGE_EXT","gif");
 	}
 	
-
-	
-	// Chat
-  if ($uarr['user_irc_name']!="")
-  {  	
-	  $crypt = new crypt;  
-		$irc_name = $crypt->decrypt(md5(PASSWORD_SALT.$uarr['user_registered']), $uarr['user_irc_name']);								            	            	
-	  if ($uarr['user_irc_pw']!="")
-	  {            	
-			$irc_pw = $crypt->decrypt(md5(PASSWORD_SALT.$uarr['user_registered']), $uarr['user_irc_pw']);								            	            	
-	  } 	
-	}
-
-	$args = 'nick='.$s['user']['nick'].';points='.$s['user']['points'].';title='.GAMEROUND_NAME;
-	if (isset($irc_name))
-	{
-		$args.=";acc=".$irc_name;
-	}
-	if (isset($irc_pw))
-	{
-		$args.=";pw=".$irc_pw;
-	}
-
-	$a = base64_encode($args);
-	$h = md5($args).md5($a);
-	define('CHAT_PATH',CHAT_URL.'/?a='.$a.'&amp;h='.$h);
-	define('CHAT_STRING',"window.open('".CHAT_PATH."','chat','width=900,height=700');");
-
 	// Check sitting
 	require_once('inc/sitting.inc.php');
 
@@ -472,11 +444,15 @@
 				$tpl->assign("topNav",$topnav);
 				$tpl->assign("gameNav",$navmenu);
 				$tpl->assign("selectField",$planets->getSelectField());		
-				$tpl->assign("urlTeamspeak",$conf['url_teamspeak']['v']);
-				$tpl->assign("urlRules",$conf['url_rules']['v']);
+				$tpl->assign("teamspeakUrl",TEAMSPEAK_URL);
+				$tpl->assign("teamspeakOnclick",TEAMSPEAK_ONCLICK);
+				$tpl->assign("rulesUrl",RULES_URL);
+				$tpl->assign("rulesOnclick",RULES_ONCLICK);
 				$tpl->assign("urlForum",FORUM_PATH);
-				$tpl->assign("urlHelpcenter",HELPCENTER_PATH);
-				$tpl->assign("chatString",CHAT_STRING);
+				$tpl->assign("helpcenterUrl",HELPCENTER_URL);
+				$tpl->assign("helpcenterOnclick",HELPCENTER_ONCLICK);
+				$tpl->assign("chatUrl",CHAT_URL);
+				$tpl->assign("chatOnclick",CHAT_ONCLICK);
 								
 				if ($s['user']['show_adds']==1 || FORCE_ADDS==1)
 					$tpl->assign("adds",true);

@@ -56,7 +56,6 @@
 							$arr['user_irc_pw']=$pw;
 							success_msg("IRC-Daten gespeichert!");
 						}
-
           	// Formular anzeigen
           	$cstr = checker_init();
             echo "<form action=\"?page=$page&mode=password\" method=\"post\">";
@@ -68,6 +67,8 @@
             infobox_end(1);
             echo "Beachte dass Passw&ouml;rter eine L&auml;nge von mindestens ".PASSWORD_MINLENGHT." Zeichen haben m&uuml;ssen!<br/><br/>";
             echo "<input type=\"submit\" name=\"password_submit\" value=\"Passwort &auml;ndern\"></form><br/><br/>";
+            
+            /*
             echo "<form action=\"?page=$page&mode=password\" method=\"post\">";
             echo $cstr;
             infobox_start("Gamesurge IRC Daten für den Chat",1);
@@ -95,7 +96,7 @@
             infobox_end(1);
             echo "<input type=\"submit\" name=\"irc_submit\" value=\"Passwort &auml;ndern\"></form><br/><br/>";
 
-
+*/
 
 
 ?>

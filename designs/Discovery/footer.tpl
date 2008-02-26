@@ -89,12 +89,12 @@
 	onmouseup="changeImages('TopPanel_02', '{$templateDir}/images/TopPanel_02-imap_statistiken_over.gif', 'TopPanel_06', '{$templateDir}/images/TopPanel_06-imap_statistiken_over.gif'); return true;" />
 </map>
 <map name="TopPanel_03_Map" id="TopPanel_03_Map">
-<area shape="poly" alt="" coords="139,14, 230,14, 218,53, 126,53" href="{$urlTeamspeak}" target="_Blank"
+<area shape="poly" alt="" coords="139,14, 230,14, 218,53, 126,53" href="javascript:;" onclick="{$teamspeakOnclick}"
 	onmouseover="changeImages('TopPanel_03', '{$templateDir}/images/TopPanel_03-imap_teamspeak_over.gif', 'TopPanel_04', '{$templateDir}/images/TopPanel_04-imap_teamspeak_over.gif', 'TopPanel_07', '{$templateDir}/images/TopPanel_07-imap_teamspeak_over.gif', 'TopPanel_08', '{$templateDir}/images/TopPanel_08-imap_teamspeak_over.gif'); return true;"
 	onmouseout="changeImages('TopPanel_03', '{$templateDir}/images/TopPanel_03.gif', 'TopPanel_04', '{$templateDir}/images/TopPanel_04.gif', 'TopPanel_07', '{$templateDir}/images/TopPanel_07.gif', 'TopPanel_08', '{$templateDir}/images/TopPanel_08.gif'); return true;"
 	onmousedown="changeImages('TopPanel_03', '{$templateDir}/images/TopPanel_03-imap_teamspeak_down.gif', 'TopPanel_04', '{$templateDir}/images/TopPanel_04-imap_teamspeak_down.gif', 'TopPanel_07', '{$templateDir}/images/TopPanel_07-imap_teamspeak_down.gif', 'TopPanel_08', '{$templateDir}/images/TopPanel_08-imap_teamspeak_down.gif'); return true;"
 	onmouseup="changeImages('TopPanel_03', '{$templateDir}/images/TopPanel_03-imap_teamspeak_over.gif', 'TopPanel_04', '{$templateDir}/images/TopPanel_04-imap_teamspeak_over.gif', 'TopPanel_07', '{$templateDir}/images/TopPanel_07-imap_teamspeak_over.gif', 'TopPanel_08', '{$templateDir}/images/TopPanel_08-imap_teamspeak_over.gif'); return true;" />
-<area shape="poly" alt="" coords="49,14, 140,14, 128,53, 36,53" href="javascript:;" onclick="{$chatString}"
+<area shape="poly" alt="" coords="49,14, 140,14, 128,53, 36,53" href="javascript:;" onclick="{$chatOnclick}"
 	onmouseover="changeImages('TopPanel_03', '{$templateDir}/images/TopPanel_03-imap_chat_over.gif', 'TopPanel_07', '{$templateDir}/images/TopPanel_07-imap_chat_over.gif'); return true;"
 	onmouseout="changeImages('TopPanel_03', '{$templateDir}/images/TopPanel_03.gif', 'TopPanel_07', '{$templateDir}/images/TopPanel_07.gif'); return true;"
 	onmousedown="changeImages('TopPanel_03', '{$templateDir}/images/TopPanel_03-imap_chat_down.gif', 'TopPanel_07', '{$templateDir}/images/TopPanel_07-imap_chat_down.gif'); return true;"
@@ -106,7 +106,7 @@
 	onmouseup="changeImages('TopPanel_02', '{$templateDir}/images/TopPanel_02-imap_forum_over.gif', 'TopPanel_03', '{$templateDir}/images/TopPanel_03-imap_forum_over.gif', 'TopPanel_06', '{$templateDir}/images/TopPanel_06-imap_forum_over.gif', 'TopPanel_07', '{$templateDir}/images/TopPanel_07-imap_forum_over.gif'); return true;" />
 </map>
 <map name="TopPanel_04_Map" id="TopPanel_04_Map">
-<area shape="poly" alt="" coords="140,14, 231,14, 219,53, 127,53" href="{$urlRules}" target="_Blank"
+<area shape="poly" alt="" coords="140,14, 231,14, 219,53, 127,53"  href="javascript:;" onclick="{$rulesOnclick}"
 	onmouseover="changeImages('TopPanel_04', '{$templateDir}/images/TopPanel_04-imap_regeln_over.gif', 'TopPanel_05', '{$templateDir}/images/TopPanel_05-imap_regeln_over.gif', 'TopPanel_08', '{$templateDir}/images/TopPanel_08-imap_regeln_over.gif', 'TopPanel_09', '{$templateDir}/images/TopPanel_09-imap_regeln_over.gif'); return true;"
 	onmouseout="changeImages('TopPanel_04', '{$templateDir}/images/TopPanel_04.gif', 'TopPanel_05', '{$templateDir}/images/TopPanel_05.gif', 'TopPanel_08', '{$templateDir}/images/TopPanel_08.gif', 'TopPanel_09', '{$templateDir}/images/TopPanel_09.gif'); return true;"
 	onmousedown="changeImages('TopPanel_04', '{$templateDir}/images/TopPanel_04-imap_regeln_down.gif', 'TopPanel_05', '{$templateDir}/images/TopPanel_05-imap_regeln_down.gif', 'TopPanel_08', '{$templateDir}/images/TopPanel_08-imap_regeln_down.gif', 'TopPanel_09', '{$templateDir}/images/TopPanel_09-imap_regeln_down.gif'); return true;"
@@ -116,7 +116,7 @@
 	onmouseout="changeImages('TopPanel_04', '{$templateDir}/images/TopPanel_04.gif', 'TopPanel_08', '{$templateDir}/images/TopPanel_08.gif'); return true;"
 	onmousedown="changeImages('TopPanel_04', '{$templateDir}/images/TopPanel_04-imap_einstellungen_down.gif', 'TopPanel_08', '{$templateDir}/images/TopPanel_08-imap_einstellungen_down.gif'); return true;"
 	onmouseup="changeImages('TopPanel_04', '{$templateDir}/images/TopPanel_04-imap_einstellungen_over.gif', 'TopPanel_08', '{$templateDir}/images/TopPanel_08-imap_einstellungen_over.gif'); return true;" />
-<area shape="poly" alt="" coords="-39,14, 52,14, 40,53, -52,53" href="{$urlTeamspeak}" target="_Blank"
+<area shape="poly" alt="" coords="-39,14, 52,14, 40,53, -52,53" href="javascript:;" onclick="{$teamspeakOnclick}"
 	onmouseover="changeImages('TopPanel_03', '{$templateDir}/images/TopPanel_03-imap_teamspeak_over.gif', 'TopPanel_04', '{$templateDir}/images/TopPanel_04-imap_teamspeak_over.gif', 'TopPanel_07', '{$templateDir}/images/TopPanel_07-imap_teamspeak_over.gif', 'TopPanel_08', '{$templateDir}/images/TopPanel_08-imap_teamspeak_over.gif'); return true;"
 	onmouseout="changeImages('TopPanel_03', '{$templateDir}/images/TopPanel_03.gif', 'TopPanel_04', '{$templateDir}/images/TopPanel_04.gif', 'TopPanel_07', '{$templateDir}/images/TopPanel_07.gif', 'TopPanel_08', '{$templateDir}/images/TopPanel_08.gif'); return true;"
 	onmousedown="changeImages('TopPanel_03', '{$templateDir}/images/TopPanel_03-imap_teamspeak_down.gif', 'TopPanel_04', '{$templateDir}/images/TopPanel_04-imap_teamspeak_down.gif', 'TopPanel_07', '{$templateDir}/images/TopPanel_07-imap_teamspeak_down.gif', 'TopPanel_08', '{$templateDir}/images/TopPanel_08-imap_teamspeak_down.gif'); return true;"
@@ -128,12 +128,12 @@
 	onmouseout="changeImages('TopPanel_05', '{$templateDir}/images/TopPanel_05.gif', 'TopPanel_09', '{$templateDir}/images/TopPanel_09.gif'); return true;"
 	onmousedown="changeImages('TopPanel_05', '{$templateDir}/images/TopPanel_05-imap_logout_down.gif', 'TopPanel_09', '{$templateDir}/images/TopPanel_09-imap_logout_down.gif'); return true;"
 	onmouseup="changeImages('TopPanel_05', '{$templateDir}/images/TopPanel_05-imap_logout_up.gif', 'TopPanel_09', '{$templateDir}/images/TopPanel_09-imap_logout_over.gif'); return true;" />
-<area shape="poly" alt="" coords="50,14, 141,14, 129,53, 37,53" href="{$urlHelpcenter}" target="_Blank"
+<area shape="poly" alt="" coords="50,14, 141,14, 129,53, 37,53" href="javascript:;" onclick="{$helpcenterOnclick}"
 	onmouseover="changeImages('TopPanel_05', '{$templateDir}/images/TopPanel_05-imap_helpcenter_over.gif', 'TopPanel_09', '{$templateDir}/images/TopPanel_09-imap_helpcenter_over.gif'); return true;"
 	onmouseout="changeImages('TopPanel_05', '{$templateDir}/images/TopPanel_05.gif', 'TopPanel_09', '{$templateDir}/images/TopPanel_09.gif'); return true;"
 	onmousedown="changeImages('TopPanel_05', '{$templateDir}/images/TopPanel_05-imap_helpcenter_down.gif', 'TopPanel_09', '{$templateDir}/images/TopPanel_09-imap_helpcenter_down.gif'); return true;"
 	onmouseup="changeImages('TopPanel_05', '{$templateDir}/images/TopPanel_05-imap_helpcenter_over.gif', 'TopPanel_09', '{$templateDir}/images/TopPanel_09-imap_helpcenter_over.gif'); return true;" />
-<area shape="poly" alt="" coords="-39,14, 52,14, 40,53, -52,53" href="{$urlRules}"
+<area shape="poly" alt="" coords="-39,14, 52,14, 40,53, -52,53"  href="javascript:;" onclick="{$rulesOnclick}"
 	onmouseover="changeImages('TopPanel_04', '{$templateDir}/images/TopPanel_04-imap_regeln_over.gif', 'TopPanel_05', '{$templateDir}/images/TopPanel_05-imap_regeln_over.gif', 'TopPanel_08', '{$templateDir}/images/TopPanel_08-imap_regeln_over.gif', 'TopPanel_09', '{$templateDir}/images/TopPanel_09-imap_regeln_over.gif'); return true;"
 	onmouseout="changeImages('TopPanel_04', '{$templateDir}/images/TopPanel_04.gif', 'TopPanel_05', '{$templateDir}/images/TopPanel_05.gif', 'TopPanel_08', '{$templateDir}/images/TopPanel_08.gif', 'TopPanel_09', '{$templateDir}/images/TopPanel_09.gif'); return true;"
 	onmousedown="changeImages('TopPanel_04', '{$templateDir}/images/TopPanel_04-imap_regeln_down.gif', 'TopPanel_05', '{$templateDir}/images/TopPanel_05-imap_regeln_down.gif', 'TopPanel_08', '{$templateDir}/images/TopPanel_08-imap_regeln_down.gif', 'TopPanel_09', '{$templateDir}/images/TopPanel_09-imap_regeln_down.gif'); return true;"
@@ -152,12 +152,12 @@
 	onmouseup="changeImages('TopPanel_02', '{$templateDir}/images/TopPanel_02-imap_statistiken_over.gif', 'TopPanel_06', '{$templateDir}/images/TopPanel_06-imap_statistiken_over.gif'); return true;" />
 </map>
 <map name="TopPanel_07_Map" id="TopPanel_07_Map">
-<area shape="poly" alt="" coords="139,-28, 230,-28, 218,11, 126,11" href="{$urlTeamspeak}" target="_blank"
+<area shape="poly" alt="" coords="139,-28, 230,-28, 218,11, 126,11"  href="javascript:;" onclick="{$teamspeakOnclick}"
 	onmouseover="changeImages('TopPanel_03', '{$templateDir}/images/TopPanel_03-imap_teamspeak_over.gif', 'TopPanel_04', '{$templateDir}/images/TopPanel_04-imap_teamspeak_over.gif', 'TopPanel_07', '{$templateDir}/images/TopPanel_07-imap_teamspeak_over.gif', 'TopPanel_08', '{$templateDir}/images/TopPanel_08-imap_teamspeak_over.gif'); return true;"
 	onmouseout="changeImages('TopPanel_03', '{$templateDir}/images/TopPanel_03.gif', 'TopPanel_04', '{$templateDir}/images/TopPanel_04.gif', 'TopPanel_07', '{$templateDir}/images/TopPanel_07.gif', 'TopPanel_08', '{$templateDir}/images/TopPanel_08.gif'); return true;"
 	onmousedown="changeImages('TopPanel_03', '{$templateDir}/images/TopPanel_03-imap_teamspeak_down.gif', 'TopPanel_04', '{$templateDir}/images/TopPanel_04-imap_teamspeak_down.gif', 'TopPanel_07', '{$templateDir}/images/TopPanel_07-imap_teamspeak_down.gif', 'TopPanel_08', '{$templateDir}/images/TopPanel_08-imap_teamspeak_down.gif'); return true;"
 	onmouseup="changeImages('TopPanel_03', '{$templateDir}/images/TopPanel_03-imap_teamspeak_over.gif', 'TopPanel_04', '{$templateDir}/images/TopPanel_04-imap_teamspeak_over.gif', 'TopPanel_07', '{$templateDir}/images/TopPanel_07-imap_teamspeak_over.gif', 'TopPanel_08', '{$templateDir}/images/TopPanel_08-imap_teamspeak_over.gif'); return true;" />
-<area shape="poly" alt="" coords="49,-28, 140,-28, 128,11, 36,11" href="javascript:;" onclick="{$chatString}"
+<area shape="poly" alt="" coords="49,-28, 140,-28, 128,11, 36,11" href="javascript:;" onclick="{$chatOnclick}"
 	onmouseover="changeImages('TopPanel_03', '{$templateDir}/images/TopPanel_03-imap_chat_over.gif', 'TopPanel_07', '{$templateDir}/images/TopPanel_07-imap_chat_over.gif'); return true;"
 	onmouseout="changeImages('TopPanel_03', '{$templateDir}/images/TopPanel_03.gif', 'TopPanel_07', '{$templateDir}/images/TopPanel_07.gif'); return true;"
 	onmousedown="changeImages('TopPanel_03', '{$templateDir}/images/TopPanel_03-imap_chat_down.gif', 'TopPanel_07', '{$templateDir}/images/TopPanel_07-imap_chat_down.gif'); return true;"
@@ -169,7 +169,7 @@
 	onmouseup="changeImages('TopPanel_02', '{$templateDir}/images/TopPanel_02-imap_forum_over.gif', 'TopPanel_03', '{$templateDir}/images/TopPanel_03-imap_forum_over.gif', 'TopPanel_06', '{$templateDir}/images/TopPanel_06-imap_forum_over.gif', 'TopPanel_07', '{$templateDir}/images/TopPanel_07-imap_forum_over.gif'); return true;" />
 </map>
 <map name="TopPanel_08_Map" id="TopPanel_08_Map">
-<area shape="poly" alt="" coords="140,-28, 231,-28, 219,11, 127,11" href="{$urlRules}" target="_blank"
+<area shape="poly" alt="" coords="140,-28, 231,-28, 219,11, 127,11"  href="javascript:;" onclick="{$rulesOnclick}"
 	onmouseover="changeImages('TopPanel_04', '{$templateDir}/images/TopPanel_04-imap_regeln_over.gif', 'TopPanel_05', '{$templateDir}/images/TopPanel_05-imap_regeln_over.gif', 'TopPanel_08', '{$templateDir}/images/TopPanel_08-imap_regeln_over.gif', 'TopPanel_09', '{$templateDir}/images/TopPanel_09-imap_regeln_over.gif'); return true;"
 	onmouseout="changeImages('TopPanel_04', '{$templateDir}/images/TopPanel_04.gif', 'TopPanel_05', '{$templateDir}/images/TopPanel_05.gif', 'TopPanel_08', '{$templateDir}/images/TopPanel_08.gif', 'TopPanel_09', '{$templateDir}/images/TopPanel_09.gif'); return true;"
 	onmousedown="changeImages('TopPanel_04', '{$templateDir}/images/TopPanel_04-imap_regeln_down.gif', 'TopPanel_05', '{$templateDir}/images/TopPanel_05-imap_regeln_down.gif', 'TopPanel_08', '{$templateDir}/images/TopPanel_08-imap_regeln_down.gif', 'TopPanel_09', '{$templateDir}/images/TopPanel_09-imap_regeln_down.gif'); return true;"
@@ -179,7 +179,7 @@
 	onmouseout="changeImages('TopPanel_04', '{$templateDir}/images/TopPanel_04.gif', 'TopPanel_08', '{$templateDir}/images/TopPanel_08.gif'); return true;"
 	onmousedown="changeImages('TopPanel_04', '{$templateDir}/images/TopPanel_04-imap_einstellungen_down.gif', 'TopPanel_08', '{$templateDir}/images/TopPanel_08-imap_einstellungen_down.gif'); return true;"
 	onmouseup="changeImages('TopPanel_04', '{$templateDir}/images/TopPanel_04-imap_einstellungen_over.gif', 'TopPanel_08', '{$templateDir}/images/TopPanel_08-imap_einstellungen_over.gif'); return true;" />
-<area shape="poly" alt="" coords="-39,-28, 52,-28, 40,11, -52,11" href="{$urlTeamspeak}" target="_Blank"
+<area shape="poly" alt="" coords="-39,-28, 52,-28, 40,11, -52,11"  href="javascript:;" onclick="{$teamspeakOnclick}"
 	onmouseover="changeImages('TopPanel_03', '{$templateDir}/images/TopPanel_03-imap_teamspeak_over.gif', 'TopPanel_04', '{$templateDir}/images/TopPanel_04-imap_teamspeak_over.gif', 'TopPanel_07', '{$templateDir}/images/TopPanel_07-imap_teamspeak_over.gif', 'TopPanel_08', '{$templateDir}/images/TopPanel_08-imap_teamspeak_over.gif'); return true;"
 	onmouseout="changeImages('TopPanel_03', '{$templateDir}/images/TopPanel_03.gif', 'TopPanel_04', '{$templateDir}/images/TopPanel_04.gif', 'TopPanel_07', '{$templateDir}/images/TopPanel_07.gif', 'TopPanel_08', '{$templateDir}/images/TopPanel_08.gif'); return true;"
 	onmousedown="changeImages('TopPanel_03', '{$templateDir}/images/TopPanel_03-imap_teamspeak_down.gif', 'TopPanel_04', '{$templateDir}/images/TopPanel_04-imap_teamspeak_down.gif', 'TopPanel_07', '{$templateDir}/images/TopPanel_07-imap_teamspeak_down.gif', 'TopPanel_08', '{$templateDir}/images/TopPanel_08-imap_teamspeak_down.gif'); return true;"
@@ -191,12 +191,12 @@
 	onmouseout="changeImages('TopPanel_05', '{$templateDir}/images/TopPanel_05.gif', 'TopPanel_09', '{$templateDir}/images/TopPanel_09.gif'); return true;"
 	onmousedown="changeImages('TopPanel_05', '{$templateDir}/images/TopPanel_05-imap_logout_down.gif', 'TopPanel_09', '{$templateDir}/images/TopPanel_09-imap_logout_down.gif'); return true;"
 	onmouseup="changeImages('TopPanel_05', '{$templateDir}/images/TopPanel_05-imap_logout_up.gif', 'TopPanel_09', '{$templateDir}/images/TopPanel_09-imap_logout_over.gif'); return true;" />
-<area shape="poly" alt="" coords="50,-28, 141,-28, 129,11, 37,11" href="{$urlHelpcenter}" target="_Blank"
+<area shape="poly" alt="" coords="50,-28, 141,-28, 129,11, 37,11" href="javascript:;" onclick="{$helpcenterOnclick}" 
 	onmouseover="changeImages('TopPanel_05', '{$templateDir}/images/TopPanel_05-imap_helpcenter_over.gif', 'TopPanel_09', '{$templateDir}/images/TopPanel_09-imap_helpcenter_over.gif'); return true;"
 	onmouseout="changeImages('TopPanel_05', '{$templateDir}/images/TopPanel_05.gif', 'TopPanel_09', '{$templateDir}/images/TopPanel_09.gif'); return true;"
 	onmousedown="changeImages('TopPanel_05', '{$templateDir}/images/TopPanel_05-imap_helpcenter_down.gif', 'TopPanel_09', '{$templateDir}/images/TopPanel_09-imap_helpcenter_down.gif'); return true;"
 	onmouseup="changeImages('TopPanel_05', '{$templateDir}/images/TopPanel_05-imap_helpcenter_over.gif', 'TopPanel_09', '{$templateDir}/images/TopPanel_09-imap_helpcenter_over.gif'); return true;" />
-<area shape="poly" alt="" coords="-39,-28, 52,-28, 40,11, -52,11" href="{$urlRules}"
+<area shape="poly" alt="" coords="-39,-28, 52,-28, 40,11, -52,11" href="javascript:;" onclick="{$rulesOnclick}"
 	onmouseover="changeImages('TopPanel_04', '{$templateDir}/images/TopPanel_04-imap_regeln_over.gif', 'TopPanel_05', '{$templateDir}/images/TopPanel_05-imap_regeln_over.gif', 'TopPanel_08', '{$templateDir}/images/TopPanel_08-imap_regeln_over.gif', 'TopPanel_09', '{$templateDir}/images/TopPanel_09-imap_regeln_over.gif'); return true;"
 	onmouseout="changeImages('TopPanel_04', '{$templateDir}/images/TopPanel_04.gif', 'TopPanel_05', '{$templateDir}/images/TopPanel_05.gif', 'TopPanel_08', '{$templateDir}/images/TopPanel_08.gif', 'TopPanel_09', '{$templateDir}/images/TopPanel_09.gif'); return true;"
 	onmousedown="changeImages('TopPanel_04', '{$templateDir}/images/TopPanel_04-imap_regeln_down.gif', 'TopPanel_05', '{$templateDir}/images/TopPanel_05-imap_regeln_down.gif', 'TopPanel_08', '{$templateDir}/images/TopPanel_08-imap_regeln_down.gif', 'TopPanel_09', '{$templateDir}/images/TopPanel_09-imap_regeln_down.gif'); return true;"

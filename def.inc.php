@@ -99,10 +99,20 @@
 	define("IMAGEPACK_DOWNLOAD_DIRECTORY","cache/imagepacks");				// Bilder
 
 	// Externe Pfade
-	define("HELPCENTER_PATH","http://help.etoa.ch");	// Helpcenter Link
+	define("HELPCENTER_URL","http://help.etoa.ch");	// Helpcenter Link
+	define('HELPCENTER_ONCLICK',"window.open('".HELPCENTER_URL."','helpcenter','width=1024,height=700,scrollbars=yes');");
+
 	define("FORUM_PATH","http://forum.etoa.ch");	// Forum Link
 	define("DEVCENTER_PATH","https://dev.etoa.ch");	// Entwickler Link
+
 	define('CHAT_URL',"http://chat.etoa.ch");	// Chat
+	define('CHAT_ONCLICK',"window.open('".CHAT_URL."','chat','width=900,height=700,scrollbars=yes');");
+
+	define('TEAMSPEAK_URL',"http://ts.etoa.ch");	// Teamspeak
+	define('TEAMSPEAK_ONCLICK',"window.open('".TEAMSPEAK_URL."','ts','width=800,height=600,scrollbars=yes');");
+
+	define('RULES_URL','http://www.etoa.ch/rules'); // Game-Rules
+	define('RULES_ONCLICK',"window.open('".RULES_URL."','rules','width=600,height=500,scrollbars=yes');");
 
 
 	// Ordner
