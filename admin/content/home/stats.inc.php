@@ -25,13 +25,73 @@
 		echo "<td class=\"statsTab\" style=\"width:18%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=alliances\" class=\"tabEnabled\">Allianzen</a></td></tr>";
 	else
 		echo "<td class=\"statsTab\" style=\"width:18%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=alliances\" class=\"tabDefault\">Allianzen</a></td></tr>";
+	if ($mode=="titles")
+		echo "<td class=\"statsTab\" style=\"width:18%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=titles\" class=\"tabEnabled\">Titel</a></td></tr>";
+	else
+		echo "<td class=\"statsTab\" style=\"width:18%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=titles\" class=\"tabDefault\">Titel</a></td></tr>";
+
 	echo "</table><br/>";
-	
+
+	if ($mode=="titles")
+	{
+		infobox_start("Allgemeine Titel",1);
+		echo "<tr><th class=\"tbltitle\" style=\"width:80px;height:80px;\">
+		<img src='http://www.dmg-berlin.info/page/images/Beuth-Medaille.gif' style=\"height:80px;\" /></th>
+		<td class=\"tbldata\" style=\"font-size:16pt;vertical-align:middle;padding:2px 10px 2px 10px;width:300px;\">".$conf['userrank_total']['v']."</td>
+		<td class=\"tbldata\" style=\"vertical-align:middle;padding-top:0px;padding-left:15px;\">";
+		$res = dbquery("
+		SELECT 
+			user_nick,user_points 
+		FROM 
+			user_stats
+		WHERE user_points>".USERTITLES_MIN_POINTS." 
+		ORDER BY user_points DESC 
+		LIMIT 1;");
+		if (mysql_num_rows($res)>0)
+		{
+			$arr=mysql_fetch_row($res);
+			echo "<span style=\"font-size:13pt;color:#ff0;\">".$arr[0]."</span><br/><br/>
+			".nf($arr[1])." Punkte<br/><br/>
+			[<a href=\"\">Profil</a>] [<a href=\"\">Nachricht</a>]";
+		}
+		else
+		{
+			echo "Noch niemand";
+		}
+		echo "</td>";
+/*
+		$res = dbquery("SELECT user_nick FROM user_stats ORDER BY user_points_ships DESC LIMIT 1;");
+		if (mysql_num_rows($res)>0)
+		{
+			$arr=mysql_fetch_row($res);
+			echo "<b>".$arr[0].":</b> ".$conf['userrank_fleet']['v']."<br/>";
+		}
+		$res = dbquery("SELECT user_nick FROM user_stats ORDER BY user_points_tech DESC LIMIT 1;");
+		if (mysql_num_rows($res)>0)
+		{
+			$arr=mysql_fetch_row($res);
+			echo "<b>".$arr[0].":</b> ".$conf['userrank_tech']['v']."<br/>";
+		}
+		$res = dbquery("SELECT user_nick FROM user_stats ORDER BY user_points_buildings DESC LIMIT 1;");
+		if (mysql_num_rows($res)>0)
+		{
+			$arr=mysql_fetch_row($res);
+			echo "<b>".$arr[0].":</b> ".$conf['userrank_buildings']['v']."<br/>";
+		}*/
+		infobox_end(1);
+
+		echo "<h2>Rassenleader</h2>";
+
+		echo "<h2>Allianzgr&uuml;nder</h2>";
+
+
+	}
+
 	//
 	// Allianzen
 	//
 
-	if ($mode=="alliances")
+	elseif ($mode=="alliances")
 	{
 		echo "<table class=\"tbl\">";
 		echo "<tr>";
@@ -127,6 +187,8 @@
 		echo "</table>";
 	}
 	
+
+
 	//
 	// Users
 	//

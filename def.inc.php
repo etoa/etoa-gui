@@ -202,7 +202,8 @@
 	define("COLLECT_FUEL_MAX_AMOUNT",10000);													// ???
 	define("USER_MAX_PLANETS",$conf["user_max_planets"]["v"]);				// Maximale Anzahl Planeten
 	define("SPECIALIST_MIN_POINTS_REQ",100000);												// Minimal Punkte für Spezialist
-	
+	define("USERTITLES_MIN_POINTS",10000)	;
+
 	// User Planetwechsel
 	define("MAX_MAINPLANET_CHANGES",20);
 	
