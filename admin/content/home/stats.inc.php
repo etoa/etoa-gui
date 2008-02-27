@@ -53,6 +53,7 @@
 				user_stats
 			WHERE 
 				user_points>".USERTITLES_MIN_POINTS." 
+				AND user_show_stats
 			ORDER BY 
 				".$v." DESC 
 			LIMIT 1;");
@@ -103,6 +104,7 @@
 				users
 			WHERE
 				user_race_id=".$rarr['race_id']."
+				AND user_show_stats
 			ORDER BY
 				user_points DESC
 			LIMIT 1;
