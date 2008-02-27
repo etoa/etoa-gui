@@ -53,7 +53,6 @@
 				user_stats
 			WHERE 
 				user_points>".USERTITLES_MIN_POINTS." 
-				AND user_show_stats=1
 			ORDER BY 
 				".$v." DESC 
 			LIMIT 1;");
