@@ -6,83 +6,163 @@
 	// Menü
 	echo "<br/><table class=\"tbl\">";
 	if ($mode=="user")
-		echo "<tr><td class=\"statsTab\" style=\"width:18%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=user\" class=\"tabEnabled\">Spieler</a></td>";
+		echo "<tr><td class=\"statsTab\" style=\"width:16%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=user\" class=\"tabEnabled\">Spieler</a></td>";
 	else
-		echo "<tr><td class=\"statsTab\" style=\"width:18%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=user\" class=\"tabDefault\">Spieler</a></td>";
+		echo "<tr><td class=\"statsTab\" style=\"width:16%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=user\" class=\"tabDefault\">Spieler</a></td>";
 	if ($mode=="ships")
-		echo "<td class=\"statsTab\" style=\"width:18%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=ships\" class=\"tabEnabled\">Flotten</a></td>";
+		echo "<td class=\"statsTab\" style=\"width:16%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=ships\" class=\"tabEnabled\">Flotten</a></td>";
 	else
-		echo "<td class=\"statsTab\" style=\"width:18%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=ships\" class=\"tabDefault\">Flotten</a></td>";
+		echo "<td class=\"statsTab\" style=\"width:16%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=ships\" class=\"tabDefault\">Flotten</a></td>";
 	if ($mode=="tech")
-		echo "<td class=\"statsTab\" style=\"width:18%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=tech\" class=\"tabEnabled\">Technologien</a></td>";
+		echo "<td class=\"statsTab\" style=\"width:16%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=tech\" class=\"tabEnabled\">Technologien</a></td>";
 	else
-		echo "<td class=\"statsTab\" style=\"width:18%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=tech\" class=\"tabDefault\">Technologien</a></td>";
+		echo "<td class=\"statsTab\" style=\"width:16%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=tech\" class=\"tabDefault\">Technologien</a></td>";
 	if ($mode=="buildings")
-		echo "<td class=\"statsTab\" style=\"width:18%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=buildings\" class=\"tabEnabled\">Geb&auml;ude</a></td>";
+		echo "<td class=\"statsTab\" style=\"width:16%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=buildings\" class=\"tabEnabled\">Geb&auml;ude</a></td>";
 	else
-		echo "<td class=\"statsTab\" style=\"width:18%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=buildings\" class=\"tabDefault\">Geb&auml;ude</a></td>";
+		echo "<td class=\"statsTab\" style=\"width:16%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=buildings\" class=\"tabDefault\">Geb&auml;ude</a></td>";
 	if ($mode=="alliances")
-		echo "<td class=\"statsTab\" style=\"width:18%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=alliances\" class=\"tabEnabled\">Allianzen</a></td></tr>";
+		echo "<td class=\"statsTab\" style=\"width:16%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=alliances\" class=\"tabEnabled\">Allianzen</a></td>";
 	else
-		echo "<td class=\"statsTab\" style=\"width:18%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=alliances\" class=\"tabDefault\">Allianzen</a></td></tr>";
+		echo "<td class=\"statsTab\" style=\"width:16%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=alliances\" class=\"tabDefault\">Allianzen</a></td>";
 	if ($mode=="titles")
-		echo "<td class=\"statsTab\" style=\"width:18%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=titles\" class=\"tabEnabled\">Titel</a></td></tr>";
+		echo "<td class=\"statsTab\" style=\"width:16%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=titles\" class=\"tabEnabled\">Titel</a></td></tr>";
 	else
-		echo "<td class=\"statsTab\" style=\"width:18%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=titles\" class=\"tabDefault\">Titel</a></td></tr>";
+		echo "<td class=\"statsTab\" style=\"width:16%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=titles\" class=\"tabDefault\">Titel</a></td></tr>";
 
 	echo "</table><br/>";
 
 	if ($mode=="titles")
 	{
+		$titles=array();
+		$titles['total']="user_points";
+		$titles['fleet']="user_points_ships";
+		$titles['tech']="user_points_tech";
+		$titles['buildings']="user_points_buildings";
+		
 		infobox_start("Allgemeine Titel",1);
-		echo "<tr><th class=\"tbltitle\" style=\"width:80px;height:80px;\">
-		<img src='http://www.dmg-berlin.info/page/images/Beuth-Medaille.gif' style=\"height:80px;\" /></th>
-		<td class=\"tbldata\" style=\"font-size:16pt;vertical-align:middle;padding:2px 10px 2px 10px;width:300px;\">".$conf['userrank_total']['v']."</td>
-		<td class=\"tbldata\" style=\"vertical-align:middle;padding-top:0px;padding-left:15px;\">";
-		$res = dbquery("
-		SELECT 
-			user_nick,user_points 
-		FROM 
-			user_stats
-		WHERE user_points>".USERTITLES_MIN_POINTS." 
-		ORDER BY user_points DESC 
-		LIMIT 1;");
-		if (mysql_num_rows($res)>0)
+		$cnt = 0;
+		foreach ($titles as $k => $v)
 		{
-			$arr=mysql_fetch_row($res);
-			echo "<span style=\"font-size:13pt;color:#ff0;\">".$arr[0]."</span><br/><br/>
-			".nf($arr[1])." Punkte<br/><br/>
-			[<a href=\"\">Profil</a>] [<a href=\"\">Nachricht</a>]";
+			$res = dbquery("
+			SELECT 
+				user_nick,
+				".$v.",
+				user_id
+			FROM 
+				user_stats
+			WHERE 
+				user_points>".USERTITLES_MIN_POINTS." 
+			ORDER BY 
+				".$v." DESC 
+			LIMIT 1;");
+			if (mysql_num_rows($res)>0)
+			{
+				$arr=mysql_fetch_row($res);
+				echo "<tr>
+					<th class=\"tbltitle\" style=\"width:100px;height:100px;\">
+						<img src='../images/medals/medal_".$k.".png' style=\"height:100px;\" />
+					</th>
+					<td class=\"tbldata\" style=\"font-size:16pt;vertical-align:middle;padding:2px 10px 2px 10px;width:360px;\">
+						".$conf['userrank_'.$k]['v']."
+					</td>
+					<td class=\"tbldata\" style=\"vertical-align:middle;padding-top:0px;padding-left:15px;\">
+						<span style=\"font-size:13pt;color:#ff0;\">".$arr[0]."</span><br/><br/>
+						".nf($arr[1])." Punkte<br/><br/>
+						[<a href=\"?page=user&amp;sub=edit&amp;user_id=".$arr[2]."\">Profil</a>]
+					</td>
+				</tr>";
+			}
+			$cnt++;
 		}
-		else
+		if ($cnt==0)
 		{
-			echo "Noch niemand";
+			echo "<tr><td class=\"tbldata\">Keine Titel vorhanden (kein Spieler hat die minimale Punktzahl zum Erwerb eines Titels erreicht)!</td></tr>";
 		}
-		echo "</td>";
-/*
-		$res = dbquery("SELECT user_nick FROM user_stats ORDER BY user_points_ships DESC LIMIT 1;");
-		if (mysql_num_rows($res)>0)
-		{
-			$arr=mysql_fetch_row($res);
-			echo "<b>".$arr[0].":</b> ".$conf['userrank_fleet']['v']."<br/>";
-		}
-		$res = dbquery("SELECT user_nick FROM user_stats ORDER BY user_points_tech DESC LIMIT 1;");
-		if (mysql_num_rows($res)>0)
-		{
-			$arr=mysql_fetch_row($res);
-			echo "<b>".$arr[0].":</b> ".$conf['userrank_tech']['v']."<br/>";
-		}
-		$res = dbquery("SELECT user_nick FROM user_stats ORDER BY user_points_buildings DESC LIMIT 1;");
-		if (mysql_num_rows($res)>0)
-		{
-			$arr=mysql_fetch_row($res);
-			echo "<b>".$arr[0].":</b> ".$conf['userrank_buildings']['v']."<br/>";
-		}*/
 		infobox_end(1);
 
-		echo "<h2>Rassenleader</h2>";
-
-		echo "<h2>Allianzgr&uuml;nder</h2>";
+		infobox_start("Rassenleader",1);
+		$rres = dbquery("
+		SELECT
+			race_id,
+			race_leadertitle,
+			race_name
+		FROM
+			races
+		ORDER BY
+			race_name;
+		");
+		while ($rarr = mysql_fetch_array($rres))
+		{
+			$res = dbquery("
+			SELECT
+				user_nick,
+				user_points,
+				user_id				
+			FROM
+				users
+			WHERE
+				user_race_id=".$rarr['race_id']."
+			ORDER BY
+				user_points DESC
+			LIMIT 1;
+			");
+			if (mysql_num_rows($res)>0)
+			{
+				$arr = mysql_fetch_row($res);
+				$cres = dbquery("SELECT COUNT(user_race_id) FROM users WHERE user_race_id=".$rarr['race_id']."");
+				$carr = mysql_fetch_row($cres);
+				
+				echo "<tr>
+					<th class=\"tbltitle\" style=\"width:70px;height:70px;\">
+						<img src='../images/medals/medal_race.png' style=\"height:70px;\" />
+					</th>
+					<td class=\"tbldata\" style=\"vertical-align:middle;padding:2px 10px 2px 10px;width:360px;\">
+						<div style=\"font-size:16pt;\">".$rarr['race_leadertitle']."</div>
+						".$carr[0]." V&ouml;lker
+					</td>	
+					<td class=\"tbldata\" style=\"vertical-align:middle;padding-top:0px;padding-left:15px;\">
+						<span style=\"font-size:13pt;color:#ff0;\">".$arr[0]."</span><br/><br/>
+						".nf($arr[1])." Punkte &nbsp;&nbsp;&nbsp;
+						[<a href=\"?page=user&amp;sub=edit&amp;user_id=".$arr[2]."\">Profil</a>]
+					</td>							
+				</tr>";
+			}
+		}
+		infobox_end(1);
+		
+		infobox_start("Allianzgr&uuml;nder",1);
+		$res = dbquery("
+		SELECT
+			alliance_id,
+			alliance_tag,
+			alliance_name,
+			user_nick,
+			user_id
+		FROM
+			alliances
+		INNER JOIN
+			users 
+			ON user_id=alliance_founder_id
+		ORDER BY
+			alliance_tag;
+		");
+		while ($arr = mysql_fetch_array($res))
+		{				
+			$cres = dbquery("SELECT COUNT(user_alliance_id) FROM users WHERE user_alliance_id=".$arr['alliance_id']."");
+			$carr = mysql_fetch_row($cres);					
+			echo "<tr>
+				<td class=\"tbldata\" style=\"vertical-align:middle;padding:2px 10px 2px 10px;width:360px;\">
+					<div style=\"font-size:13pt;padding-bottom:4px;\">[".$arr['alliance_tag']."] ".$arr['alliance_name']."</div><nr/>
+					".$carr[0]." Mitglieder [<a href=\"?page=alliances&amp;sub=edit&amp;alliance_id=".$arr['alliance_id']."\">Info</a>]
+				</td>	
+				<td class=\"tbldata\" style=\"vertical-align:middle;padding-top:0px;padding-left:15px;\">
+					<span style=\"font-size:13pt;color:#ff0;\">".$arr['user_nick']."</span>
+					[<a href=\"?page=user&amp;sub=edit&amp;user_id=".$arr['user_id']."\">Profil</a>]
+				</td>							
+			</tr>";
+		}
+		infobox_end(1);
 
 
 	}
