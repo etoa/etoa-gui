@@ -187,7 +187,7 @@
 			GROUP BY
 				alliance_id
 			ORDER BY
-				points
+				points DESC
 			;");			
 	
 			echo "<table class=\"tbl\">";
