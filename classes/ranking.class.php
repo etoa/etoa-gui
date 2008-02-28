@@ -42,6 +42,7 @@
 					user_stats
 				WHERE 
 					user_points>".USERTITLES_MIN_POINTS." 
+					AND ".$v.">0
 				ORDER BY 
 					".$v." DESC 
 				LIMIT 1;");
@@ -76,6 +77,7 @@
 					users
 				WHERE 
 					user_points>".USERTITLES_MIN_POINTS." 
+					AND ".$v.">0
 				ORDER BY 
 					".$v." DESC 
 				LIMIT 1;");
