@@ -650,14 +650,17 @@
 		*/
 		static function addBattlePoints($userId,$points,$reason="")
 		{
-			dbquery("
-			UPDATE
-				users
-			SET
-				user_points_battle=user_points_battle+".$points."
-			WHERE
-				user_id=".$userId.";");
-			add_log(17,"Der Spieler ".$userId." erhält ".$points." Kampfpunkte. Grund: ".$reason);
+			if ($points!=0)
+			{
+				dbquery("
+				UPDATE
+					users
+				SET
+					user_points_battle=user_points_battle+".$points."
+				WHERE
+					user_id=".$userId.";");
+				add_log(17,"Der Spieler ".$userId." erhält ".$points." Kampfpunkte. Grund: ".$reason);
+			}
 		}
 		
 		static function addTradePoints($userId,$points,$reason="")

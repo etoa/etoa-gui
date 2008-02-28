@@ -184,7 +184,7 @@
 		;");			
 
 		echo "<table class=\"tbl\">";
-		$cnt=0;
+		$cnt=1;
 		if (mysql_num_rows($res)>0)
 		{
 			echo "<tr>
@@ -215,7 +215,7 @@
 				}
 			}
 		}
-		if ($cnt==0)
+		if ($cnt==1)
 			echo "<tr><td align=\"center\" class=\"tbldata\" colspan=\"6\"><i>Es wurde keine User gefunden!</i></tr>";
 		echo "</table><br/>";
 

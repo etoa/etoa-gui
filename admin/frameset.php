@@ -5,7 +5,7 @@
 	<head>
 		<title>Frameset</title>
 	</head>
-	<frameset cols="*,250" frameborder="0">
+	<frameset cols="*,220" frameborder="0">
 		<?PHP
 			$idx = "index.php?page=".$_GET['page']."&amp;sub=".$_GET['sub'];
 			
