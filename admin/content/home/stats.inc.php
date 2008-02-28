@@ -25,10 +25,13 @@
 		echo "<td class=\"statsTab\" style=\"width:16%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=alliances\" class=\"tabEnabled\">Allianzen</a></td>";
 	else
 		echo "<td class=\"statsTab\" style=\"width:16%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=alliances\" class=\"tabDefault\">Allianzen</a></td>";
-	if ($mode=="titles")
-		echo "<td class=\"statsTab\" style=\"width:16%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=titles\" class=\"tabEnabled\">Titel</a></td></tr>";
-	else
-		echo "<td class=\"statsTab\" style=\"width:16%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=titles\" class=\"tabDefault\">Titel</a></td></tr>";
+	if (ENABLE_USERTITLES==1)
+	{
+		if ($mode=="titles")
+			echo "<td class=\"statsTab\" style=\"width:16%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=titles\" class=\"tabEnabled\">Titel</a></td></tr>";
+		else
+			echo "<td class=\"statsTab\" style=\"width:16%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=titles\" class=\"tabDefault\">Titel</a></td></tr>";
+	}
 
 	echo "</table><br/>";
 

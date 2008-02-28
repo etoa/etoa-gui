@@ -137,14 +137,18 @@
 			{				
 				$cres = dbquery("SELECT COUNT(user_alliance_id) FROM users WHERE user_alliance_id=".$arr['alliance_id']."");
 				$carr = mysql_fetch_row($cres);					
+				
+				$aprofile = ($admin==1) ? "?page=alliances&amp;sub=edit&amp;alliance_id=".$arr['alliance_id'] : "?page=alliance&amp;id=".$arr['alliance_id'];
+				$profile = ($admin==1) ? "?page=user&amp;sub=edit&amp;user_id=".$arr['user_id'] : "?page=userinfo&amp;id=".$arr['user_id'];
+
 				echo "<tr>
 					<td class=\"tbldata\" style=\"vertical-align:middle;padding:2px 10px 2px 10px;width:360px;\">
 						<div style=\"font-size:13pt;padding-bottom:4px;\">[".$arr['alliance_tag']."] ".$arr['alliance_name']."</div><nr/>
-						".$carr[0]." Mitglieder [<a href=\"?page=alliances&amp;sub=edit&amp;alliance_id=".$arr['alliance_id']."\">Info</a>]
+						".$carr[0]." Mitglieder [<a href=\"".$aprofile."\">Info</a>]
 					</td>	
 					<td class=\"tbldata\" style=\"vertical-align:middle;padding-top:0px;padding-left:15px;\">
 						<span style=\"font-size:13pt;color:#ff0;\">".$arr['user_nick']."</span>
-						[<a href=\"?page=user&amp;sub=edit&amp;user_id=".$arr['user_id']."\">Profil</a>]
+						[<a href=\"".$profile."\">Profil</a>]
 					</td>							
 				</tr>";
 			}
@@ -155,6 +159,9 @@
 		}
 		
 		
+		/**
+		* Writes generated titles to cache files
+		*/
 		static function calcTitles()
 		{
 			$file_u = CACHE_ROOT."/out/usertitles.gen";
