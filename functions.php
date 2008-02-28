@@ -5757,6 +5757,7 @@ Forum: http://www.etoa.ch/forum";
 			alliance_bnd
 		WHERE
 			alliance_bnd_date<".($time-DIPLOMACY_POINTS_MIN_PACT_DURATION)."
+			AND alliance_bnd_points>0
 			AND alliance_bnd_level=2
 		");
 		if (mysql_num_rows($res)>0)
