@@ -13,6 +13,8 @@
 				tip_text
 			FROM
 				tips
+			WHERE
+				tip_active=1
 			ORDER BY 
 				RAND()
 			LIMIT 1;

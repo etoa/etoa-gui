@@ -217,7 +217,7 @@
 	define("PEACE_DURATION",3600*48);
 	
 	// Tipps beim Start aktivieren
-	define("ENABLE_TIPS",0);
+	define("ENABLE_TIPS",1);
 
 
   /****************************************************/

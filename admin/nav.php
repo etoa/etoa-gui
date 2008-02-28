@@ -40,6 +40,11 @@
 	$navmenu['Allgemeines']['RSS']['sub']="rss";
 	$navmenu['Allgemeines']['RSS']['level']=0;
 
+	$navmenu['Allgemeines']['Tipps']['page']="home";
+	$navmenu['Allgemeines']['Tipps']['sub']="tipps";
+	$navmenu['Allgemeines']['Tipps']['level']=0;
+
+
 	$navmenu['Allgemeines']['Filesharing']['page']="home";
 	$navmenu['Allgemeines']['Filesharing']['sub']="filesharing";
 	$navmenu['Allgemeines']['Filesharing']['level']=1;

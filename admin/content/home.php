@@ -59,6 +59,15 @@
 	}
 	
 	//
+	// Tipps
+	//
+	elseif ($sub=="tipps")
+	{
+		advanced_form("tipps");
+	}
+	
+	
+	//
 	// Filesharing
 	//
 	elseif ($sub=="filesharing")
