@@ -73,6 +73,8 @@
 				$text="Eine Flotte vom Planet ".$coords_from." hat einen Antraxangriff auf den Planeten ".$coords_target." verübt es starben dabei ".nf($people)." Bewohner und ".nf($food)." t Nahrung wurden dabei verbrannt.";
 				send_msg($arr['fleet_user_id'],SHIP_WAR_MSG_CAT_ID,"Antraxangriff",$text);
 				send_msg($user_to_id,SHIP_WAR_MSG_CAT_ID,"Antraxangriff",$text);
+									Ranking::addBattlePoints($arr['fleet_user_id'],BATTLE_POINTS_SPECIAL,"Spezialaktion");
+				
 			} 
 			else 
 			{

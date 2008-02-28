@@ -1507,6 +1507,8 @@
 	function coords_format2($planet_id,$link=0,$action_color=0)
 	{
 		global $db_table;
+		if ($planet_id>0)
+		{
 		$res = dbquery("
 			SELECT
 				c.cell_id,
@@ -1540,6 +1542,11 @@
 				return "<a style=\"color:$col;\" href=\"?page=solsys&id=".$arr['cell_id']."\">$coords</a>";
 			else
 				return $coords;
+		}
+		}
+		else
+		{
+			return "Unendliche Weiten";
 		}
 	}
 

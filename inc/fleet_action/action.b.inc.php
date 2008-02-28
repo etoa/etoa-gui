@@ -119,6 +119,10 @@
 	                $text="Eine Flotte vom Planet ".$coords_from." hat das Gebäude ".$barr['building_name']." des Planeten ".$coords_target." um ein Level auf Stufe ".$blarr['buildlist_current_level']." zurück gesetzt";
 	                send_msg($arr['fleet_user_id'],SHIP_WAR_MSG_CAT_ID,"Gebäude bombardiert",$text);
 	                send_msg($user_to_id,SHIP_WAR_MSG_CAT_ID,"Gebäude bombardiert",$text);                    
+	                
+									Ranking::addBattlePoints($arr['fleet_user_id'],BATTLE_POINTS_SPECIAL,"Spezialaktion");
+	                
+	                
 	            }
 		}
 		else

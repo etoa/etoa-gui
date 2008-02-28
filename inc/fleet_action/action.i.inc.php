@@ -177,6 +177,9 @@
                     send_msg($arr['fleet_user_id'],SHIP_WAR_MSG_CAT_ID,"Planet erfolgreich invasiert",$text);
                     send_msg($user_to_id,SHIP_WAR_MSG_CAT_ID,"Kolonie wurde invasiert",$text);
 
+									Ranking::addBattlePoints($arr['fleet_user_id'],BATTLE_POINTS_SPECIAL,"Spezialaktion");
+
+
                     $return_fleet=false;
         }
         //Der User hat bereits die maximale Anzahl Planeten

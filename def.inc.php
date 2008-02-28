@@ -201,13 +201,21 @@
 	
 	define('DIPLOMACY_POINTS_PER_NEWS',4);
 	define('DIPLOMACY_POINTS_PER_PACT',1);
-	define('DIPLOMACY_POINTS_MIN_PACT_DURATION',3600*24*2);
+	define('DIPLOMACY_POINTS_MIN_PACT_DURATION',3600*24*1);
 	define('DIPLOMACY_POINTS_PER_WAR',1);
 
 	define('TRADE_POINTS_PER_TRADE',1);
 	define('TRADE_POINTS_PER_AUCTION',1);
 	define('TRADE_POINTS_PER_TRADETEXT',1);
 	define('TRADE_POINTS_TRADETEXT_MIN_LENGTH',15);
+	
+	define('BATTLE_POINTS_A_W',3);
+	define('BATTLE_POINTS_A_D',1);
+	define('BATTLE_POINTS_A_L',1);
+	define('BATTLE_POINTS_D_W',2);
+	define('BATTLE_POINTS_D_D',1);
+	define('BATTLE_POINTS_D_L',0);
+	define('BATTLE_POINTS_SPECIAL',1);
 
 	// Sonstiges
 	define("RECYC_MAX_PAYBACK",0.9);																	// Maxmimale Recyclingtech effizient

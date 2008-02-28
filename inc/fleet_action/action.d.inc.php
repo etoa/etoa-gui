@@ -135,6 +135,7 @@
                   $text="Eine Flotte vom Planet ".$coords_from." hat auf dem Planeten ".$coords_target." das Gebäude \"".$name_arr['building_name']."\"  für ".$h."h deaktiviert.";
                   send_msg($arr['fleet_user_id'],SHIP_WAR_MSG_CAT_ID,"Deaktivierung",$text);
                   send_msg($user_to_id,SHIP_WAR_MSG_CAT_ID,"Deaktivierung",$text);
+									Ranking::addBattlePoints($arr['fleet_user_id'],BATTLE_POINTS_SPECIAL,"Spezialaktion");
 
 			}
 			else

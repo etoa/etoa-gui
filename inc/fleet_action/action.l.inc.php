@@ -153,6 +153,8 @@
 					send_msg($user_to_id,SHIP_WAR_MSG_CAT_ID,"Spionageangriff",$text);
 					add_log(FLEET_ACTION_LOG_CAT,$text,$arr['fleet_landtime']);                    
                     
+									Ranking::addBattlePoints($arr['fleet_user_id'],BATTLE_POINTS_SPECIAL,"Spezialaktion");
+                    
 				}
 				else
 				{
