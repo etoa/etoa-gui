@@ -49,7 +49,9 @@
 
 	if ($mode=="titles")
 	{
-		include(CACHE_ROOT."/out/usertitles_a.gen");
+		// TODO: Remove this hack
+		echo Ranking::getTitles(1);
+		//include(CACHE_ROOT."/out/usertitles_a.gen");
 	}
 	
 	//
@@ -157,69 +159,135 @@
 	//
 	elseif($mode=="diplomacy" || $mode=="battle" || $mode=="trade")
 	{
-		// Punktetabelle
-		if ($mode=="diplomacy")
-			$order="user_points_diplomacy";
-		elseif ($mode=="battle")
-			$order="user_points_battle";
-		elseif ($mode=="trade")
-			$order="user_points_trade";
-			
-		$res=dbquery("SELECT 
-			user_id,
-			user_nick,
-			race_name,
-			alliance_tag,			
-			$order AS points
-		FROM 
-			users
-		INNER JOIN
-			races ON user_race_id=race_id
-		LEFT JOIN 
-			alliances ON user_alliance_id=alliance_id
-		ORDER BY 
-			$order DESC,
-			user_rank_current,
-			user_nick ASC 
-		;");			
+		echo "<div style=\"text-align:center;\">
+		<input type=\"button\" value=\"Spieler\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;mode=$mode&amp;submode=users'\" /> &nbsp; 
+		<input type=\"button\" value=\"Allianzen\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;mode=$mode&amp;submode=alliances'\" />
+		</div><br/>";
 
-		echo "<table class=\"tbl\">";
-		$cnt=1;
-		if (mysql_num_rows($res)>0)
+		if (isset($_GET['submode']) && $_GET['submode']=="alliances")
 		{
-			echo "<tr>
-				<th class=\"tbltitle\" style=\"width:50px;\">#</th>
-				<th class=\"tbltitle\" style=\"\">Nick</th>
-				<th class=\"tbltitle\" style=\"\">Rasse</th>
-				<th class=\"tbltitle\" style=\"\">Allianz</th>
-				<th class=\"tbltitle\" style=\"\">Punkte</th>
-				<th class=\"tbltitle\" style=\"width:60px;\">Details</th>
-			</tr>";
-			while ($arr=mysql_fetch_array($res))
+			// Punktetabelle
+			if ($mode=="diplomacy")
+				$order="user_points_diplomacy";
+			elseif ($mode=="battle")
+				$order="user_points_battle";
+			elseif ($mode=="trade")
+				$order="user_points_trade";
+				
+			$res=dbquery("SELECT 
+				alliance_id,
+				alliance_name,
+				alliance_tag,
+				SUM($order) AS points,
+				COUNT(user_id) AS ucnt
+			FROM 
+				alliances
+			INNER JOIN
+				users ON user_alliance_id=alliance_id
+			GROUP BY
+				alliance_id
+			ORDER BY
+				points
+			;");			
+	
+			echo "<table class=\"tbl\">";
+			$cnt=1;
+			if (mysql_num_rows($res)>0)
 			{
-				if ($arr['points']>0)
+				echo "<tr>
+					<th class=\"tbltitle\" style=\"width:50px;\">#</th>
+					<th class=\"tbltitle\" style=\"\" colspan=\"2\">Allianz</th>
+					<th class=\"tbltitle\" style=\"\">Punkte</th>
+					<th class=\"tbltitle\" style=\"\">Mitglieder</th>
+					<th class=\"tbltitle\" style=\"width:60px;\">Details</th>
+				</tr>";
+				while ($arr=mysql_fetch_array($res))
 				{
-					echo "<tr>";
-					echo "<td $addstyle class=\"tbldata\" align=\"right\">$cnt";
-					echo "</td>";
-					echo "<td $addstyle class=\"tbldata\">".$arr['user_nick']."</td>";
-					echo "<td $addstyle class=\"tbldata\">".$arr['race_name']."</td>";
-					echo "<td class=\"tbldata\" $addstyle >".$arr['alliance_tag']."</td>";
-					echo "<td $addstyle class=\"tbldata\">".nf($arr['points'])."</td>";
-					echo "<td $addstyle class=\"tbldata\">
-					".edit_button("?page=user&amp;sub=edit&amp;user_id=".$arr['user_id']."")."
-					".cb_button("add_user=".$arr['user_id']."")."				
-					</td>";
-					echo "</tr>";
-					$cnt++;
+					if ($arr['points']>0)
+					{
+						echo "<tr>";
+						echo "<td $addstyle class=\"tbldata\" align=\"right\">$cnt";
+						echo "</td>";
+						echo "<td $addstyle class=\"tbldata\">".$arr['alliance_tag']."</td>";
+						echo "<td class=\"tbldata\" $addstyle >".$arr['alliance_name']."</td>";
+						echo "<td $addstyle class=\"tbldata\">".nf($arr['points'])."</td>";
+						echo "<td $addstyle class=\"tbldata\">".nf($arr['ucnt'])."</td>";
+						echo "<td $addstyle class=\"tbldata\">
+						".edit_button("?page=alliances&amp;sub=edit&amp;alliance_id=".$arr['alliance_id']."")."
+						</td>";
+						echo "</tr>";
+						$cnt++;
+					}
 				}
 			}
+			if ($cnt==1)
+				echo "<tr><td align=\"center\" class=\"tbldata\" colspan=\"6\"><i>Es wurde keine User gefunden!</i></tr>";
+			echo "</table><br/>";					
 		}
-		if ($cnt==1)
-			echo "<tr><td align=\"center\" class=\"tbldata\" colspan=\"6\"><i>Es wurde keine User gefunden!</i></tr>";
-		echo "</table><br/>";
-
-		
+		else
+		{
+			// Punktetabelle
+			if ($mode=="diplomacy")
+				$order="user_points_diplomacy";
+			elseif ($mode=="battle")
+				$order="user_points_battle";
+			elseif ($mode=="trade")
+				$order="user_points_trade";
+				
+			$res=dbquery("SELECT 
+				user_id,
+				user_nick,
+				race_name,
+				alliance_tag,			
+				$order AS points
+			FROM 
+				users
+			INNER JOIN
+				races ON user_race_id=race_id
+			LEFT JOIN 
+				alliances ON user_alliance_id=alliance_id
+			ORDER BY 
+				$order DESC,
+				user_rank_current,
+				user_nick ASC 
+			;");			
+	
+			echo "<table class=\"tbl\">";
+			$cnt=1;
+			if (mysql_num_rows($res)>0)
+			{
+				echo "<tr>
+					<th class=\"tbltitle\" style=\"width:50px;\">#</th>
+					<th class=\"tbltitle\" style=\"\">Nick</th>
+					<th class=\"tbltitle\" style=\"\">Rasse</th>
+					<th class=\"tbltitle\" style=\"\">Allianz</th>
+					<th class=\"tbltitle\" style=\"\">Punkte</th>
+					<th class=\"tbltitle\" style=\"width:60px;\">Details</th>
+				</tr>";
+				while ($arr=mysql_fetch_array($res))
+				{
+					if ($arr['points']>0)
+					{
+						echo "<tr>";
+						echo "<td $addstyle class=\"tbldata\" align=\"right\">$cnt";
+						echo "</td>";
+						echo "<td $addstyle class=\"tbldata\">".$arr['user_nick']."</td>";
+						echo "<td $addstyle class=\"tbldata\">".$arr['race_name']."</td>";
+						echo "<td class=\"tbldata\" $addstyle >".$arr['alliance_tag']."</td>";
+						echo "<td $addstyle class=\"tbldata\">".nf($arr['points'])."</td>";
+						echo "<td $addstyle class=\"tbldata\">
+						".edit_button("?page=user&amp;sub=edit&amp;user_id=".$arr['user_id']."")."
+						".cb_button("add_user=".$arr['user_id']."")."				
+						</td>";
+						echo "</tr>";
+						$cnt++;
+					}
+				}
+			}
+			if ($cnt==1)
+				echo "<tr><td align=\"center\" class=\"tbldata\" colspan=\"6\"><i>Es wurde keine User gefunden!</i></tr>";
+			echo "</table><br/>";			
+		}	
 	}		
 
 	//

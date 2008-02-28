@@ -103,7 +103,8 @@
 	{
 		// Menu
 		$menu = array("xajax_statsShowBox('user');"=>"Spieler","xajax_statsShowBox('ships')"=>"Flotten","xajax_statsShowBox('tech')"=>"Technologien","xajax_statsShowBox('buildings')"=>"Geb&auml;ude","xajax_statsShowBox('alliances')"=>"Allianzen","xajax_statsShowBox('pillory')"=>"Pranger");
-		if (ENABLE_USERTITLES==1)
+		// TODO: Hack, set to 1 for proper functionality
+		if (ENABLE_USERTITLES==2)
 		{
 			$menu["xajax_statsShowBox('titles');"]="Titel";
 		}		

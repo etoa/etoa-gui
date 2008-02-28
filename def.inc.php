@@ -196,7 +196,7 @@
 	define("STATS_USER_POINTS",$conf["points_update"]["p1"]);					// 1 Punkt für X (STATS_USER_POINTS) verbaute Rohstoffe
 	define("STATS_ALLIANCE_POINTS",$conf["points_update"]["p2"]);			// 1 Punkt für X (STATS_ALLIANCE_POINTS) User Punkte
 
-	define("ENABLE_USERTITLES",0);
+	define("ENABLE_USERTITLES",1);
 	define("USERTITLES_MIN_POINTS",10000)	;
 	
 	define('DIPLOMACY_POINTS_PER_NEWS',4);

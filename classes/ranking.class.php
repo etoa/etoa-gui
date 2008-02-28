@@ -23,6 +23,11 @@
 			$titles['fleet']="user_points_ships";
 			$titles['tech']="user_points_tech";
 			$titles['buildings']="user_points_buildings";
+
+			$titles2['battle']="user_points_battle";      
+			$titles2['trade']="user_points_trade";        
+			$titles2['diplomacy']="user_points_diplomacy";
+
 			
 			infobox_start("Allgemeine Titel",1);
 			$cnt = 0;
@@ -48,7 +53,7 @@
 						<th class=\"tbltitle\" style=\"width:100px;height:100px;\">
 							<img src='".$img_dir."/medals/medal_".$k.".png' style=\"height:100px;\" />
 						</th>
-						<td class=\"tbldata\" style=\"font-size:16pt;vertical-align:middle;padding:2px 10px 2px 10px;width:360px;\">
+						<td class=\"tbldata\" style=\"font-size:16pt;vertical-align:middle;padding:2px 10px 2px 10px;width:400px;\">
 							".$conf['userrank_'.$k]['v']."
 						</td>
 						<td class=\"tbldata\" style=\"vertical-align:middle;padding-top:0px;padding-left:15px;\">
@@ -60,6 +65,40 @@
 				}
 				$cnt++;
 			}
+			foreach ($titles2 as $k => $v)
+			{
+				$res = dbquery("
+				SELECT 
+					user_nick,
+					".$v.",
+					user_id
+				FROM 
+					users
+				WHERE 
+					user_points>".USERTITLES_MIN_POINTS." 
+				ORDER BY 
+					".$v." DESC 
+				LIMIT 1;");
+				if (mysql_num_rows($res)>0)
+				{
+					$arr=mysql_fetch_row($res);
+					$profile = ($admin==1) ? "?page=user&amp;sub=edit&amp;user_id=".$arr[2]."" : "?page=userinfo&amp;id=".$arr[2];
+					echo "<tr>
+						<th class=\"tbltitle\" style=\"width:100px;height:100px;\">
+							<img src='".$img_dir."/medals/medal_".$k.".png' style=\"height:100px;\" />
+						</th>
+						<td class=\"tbldata\" style=\"font-size:16pt;vertical-align:middle;padding:2px 10px 2px 10px;width:400px;\">
+							".$conf['userrank_'.$k]['v']."
+						</td>
+						<td class=\"tbldata\" style=\"vertical-align:middle;padding-top:0px;padding-left:15px;\">
+							<span style=\"font-size:13pt;color:#ff0;\">".$arr[0]."</span><br/><br/>
+							".nf($arr[1])." Punkte<br/><br/>
+							[<a href=\"".$profile."\">Profil</a>]
+						</td>
+					</tr>";
+				}
+				$cnt++;
+			}			
 			if ($cnt==0)
 			{
 				echo "<tr><td class=\"tbldata\">Keine Titel vorhanden (kein Spieler hat die minimale Punktzahl zum Erwerb eines Titels erreicht)!</td></tr>";
