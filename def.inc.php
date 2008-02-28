@@ -204,6 +204,11 @@
 	define('DIPLOMACY_POINTS_MIN_PACT_DURATION',3600*24*2);
 	define('DIPLOMACY_POINTS_PER_WAR',1);
 
+	define('TRADE_POINTS_PER_TRADE',1);
+	define('TRADE_POINTS_PER_AUCTION',1);
+	define('TRADE_POINTS_PER_TRADETEXT',1);
+	define('TRADE_POINTS_TRADETEXT_MIN_LENGTH',15);
+
 	// Sonstiges
 	define("RECYC_MAX_PAYBACK",0.9);																	// Maxmimale Recyclingtech effizient
 	define("STD_FIELDS",intval($conf["def_store_capacity"]["v"]));		// ???

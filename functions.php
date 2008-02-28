@@ -3686,7 +3686,9 @@ die Spielleitung";
 	}
 
 
-	//Markt: Abgelaufene Auktionen löschen
+	/**
+	* Markt: Abgelaufene Auktionen löschen
+	*/
 	function market_auction_update()
 	{
 		global $db_table;
@@ -3978,9 +3980,13 @@ die Spielleitung";
 	}
 
 
-	//
-	// Markt Update (Verschicken von allen gekauften/ersteigerten Waren) und berechnen der Roshtoffkurse. Löschen alter Angebote
-	//
+	/**
+	* Markt Update 
+	*
+	* Verschicken von allen gekauften/ersteigerten Waren
+	* und berechnen der Roshtoffkurse. 
+	* Löschen alter Angebote
+	*/
 	function market_update()
 	{
 		global $db_table;
@@ -4025,6 +4031,16 @@ die Spielleitung";
     {
     	while($arr=mysql_fetch_array($res))
     	{
+    		// Add trade points
+    		$tradepoints_buyer = TRADE_POINTS_PER_TRADE;
+    		$tradepoints_seller = TRADE_POINTS_PER_TRADE;
+    		if (strlen($arr['ressource_text']) > TRADE_POINTS_TRADETEXT_MIN_LENGTH) 
+    		{
+    			$tradepoints_seller+=TRADE_POINTS_PER_TRADETEXT;
+    		}
+    		Ranking::addTradePoints($arr['ressource_buyer_id'],$tradepoints_buyer,"Rohstoffkauf von ".$arr['user_id']);
+    		Ranking::addTradePoints($arr['user_id'],$tradepoints_seller,"Rohstoffverkauf an ".$arr['ressource_buyer_id']);
+    		
         //Flotte zum Verkäufer schicken
         $launchtime = time(); // Startzeit
         $duration = calcDistanceByPlanetId($arr['planet_id'],$arr['ressource_buyer_planet_id']) / $ship_speed * 3600 + $ship_starttime + $ship_landtime; // Dauer
@@ -4153,6 +4169,18 @@ die Spielleitung";
 		{
     	while($arr=mysql_fetch_array($res))
     	{
+
+    		// Add trade points
+    		$tradepoints_buyer = TRADE_POINTS_PER_TRADE;
+    		$tradepoints_seller = TRADE_POINTS_PER_TRADE;
+    		if (strlen($arr['ship_text']) > TRADE_POINTS_TRADETEXT_MIN_LENGTH) 
+    		{
+    			$tradepoints_seller+=TRADE_POINTS_PER_TRADETEXT;
+    		}
+    		Ranking::addTradePoints($arr['ship_buyer_planet_id'],$tradepoints_buyer,"Schiffkaufkauf von ".$arr['user_id']);
+    		Ranking::addTradePoints($arr['user_id'],$tradepoints_seller,"Schiffverkauf an ".$arr['ship_buyer_planet_id']);
+
+
 				//Flotte zum Verkäufer schicken
         $launchtime = time(); // Startzeit
         $duration = calcDistanceByPlanetId($arr['planet_id'],$arr['ship_buyer_planet_id']) / $ship_speed * 3600 + $ship_starttime + $ship_landtime; // Dauer
@@ -4284,6 +4312,19 @@ die Spielleitung";
     {
       while($arr=mysql_fetch_array($res))
       {
+      	
+    		// Add trade points
+    		$tradepoints_buyer = TRADE_POINTS_PER_AUCTION;
+    		$tradepoints_seller = TRADE_POINTS_PER_AUCTION;
+    		if (strlen($arr['auction_text']) > TRADE_POINTS_TRADETEXT_MIN_LENGTH) 
+    		{
+    			$tradepoints_seller+=TRADE_POINTS_PER_TRADETEXT;
+    		}
+    		Ranking::addTradePoints($arr['auction_current_buyer_id'],$tradepoints_buyer,"Auktion von ".$arr['auction_user_id']);
+    		Ranking::addTradePoints($arr['auction_user_id'],$tradepoints_seller,"Auktion an ".$arr['auction_current_buyer_id']);
+
+      	
+      	
         //Flotte zum verkäufer der auktion schicken
         $launchtime = time(); // Startzeit
         $duration = calcDistanceByPlanetId($arr['auction_planet_id'],$arr['auction_current_buyer_planet_id']) / $ship_speed * 3600 + $ship_starttime + $ship_landtime; // Dauer
