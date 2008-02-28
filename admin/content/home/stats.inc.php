@@ -6,31 +6,43 @@
 	// Menü
 	echo "<br/><table class=\"tbl\">";
 	if ($mode=="user")
-		echo "<tr><td class=\"statsTab\" style=\"width:16%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=user\" class=\"tabEnabled\">Spieler</a></td>";
+		echo "<tr><td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=user\" class=\"tabEnabled\">Spieler</a></td>";
 	else
-		echo "<tr><td class=\"statsTab\" style=\"width:16%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=user\" class=\"tabDefault\">Spieler</a></td>";
+		echo "<tr><td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=user\" class=\"tabDefault\">Spieler</a></td>";
 	if ($mode=="ships")
-		echo "<td class=\"statsTab\" style=\"width:16%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=ships\" class=\"tabEnabled\">Flotten</a></td>";
+		echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=ships\" class=\"tabEnabled\">Flotten</a></td>";
 	else
-		echo "<td class=\"statsTab\" style=\"width:16%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=ships\" class=\"tabDefault\">Flotten</a></td>";
+		echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=ships\" class=\"tabDefault\">Flotten</a></td>";
 	if ($mode=="tech")
-		echo "<td class=\"statsTab\" style=\"width:16%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=tech\" class=\"tabEnabled\">Technologien</a></td>";
+		echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=tech\" class=\"tabEnabled\">Technologien</a></td>";
 	else
-		echo "<td class=\"statsTab\" style=\"width:16%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=tech\" class=\"tabDefault\">Technologien</a></td>";
+		echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=tech\" class=\"tabDefault\">Technologien</a></td>";
 	if ($mode=="buildings")
-		echo "<td class=\"statsTab\" style=\"width:16%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=buildings\" class=\"tabEnabled\">Geb&auml;ude</a></td>";
+		echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=buildings\" class=\"tabEnabled\">Geb&auml;ude</a></td>";
 	else
-		echo "<td class=\"statsTab\" style=\"width:16%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=buildings\" class=\"tabDefault\">Geb&auml;ude</a></td>";
+		echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=buildings\" class=\"tabDefault\">Geb&auml;ude</a></td>";
 	if ($mode=="alliances")
-		echo "<td class=\"statsTab\" style=\"width:16%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=alliances\" class=\"tabEnabled\">Allianzen</a></td>";
+		echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=alliances\" class=\"tabEnabled\">Allianzen</a></td>";
 	else
-		echo "<td class=\"statsTab\" style=\"width:16%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=alliances\" class=\"tabDefault\">Allianzen</a></td>";
+		echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=alliances\" class=\"tabDefault\">Allianzen</a></td>";
+	if ($mode=="battle")
+		echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=battle\" class=\"tabEnabled\">Kampf</a></td>";
+	else
+		echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=battle\" class=\"tabDefault\">Kampf</a></td>";
+	if ($mode=="trade")
+		echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=trade\" class=\"tabEnabled\">Handel</a></td>";
+	else
+		echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=trade\" class=\"tabDefault\">Handel</a></td>";
+	if ($mode=="diplomacy")
+		echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=diplomacy\" class=\"tabEnabled\">Diplomatie</a></td>";
+	else
+		echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=diplomacy\" class=\"tabDefault\">Diplomatie</a></td>";
 	if (ENABLE_USERTITLES==1)
 	{
 		if ($mode=="titles")
-			echo "<td class=\"statsTab\" style=\"width:16%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=titles\" class=\"tabEnabled\">Titel</a></td></tr>";
+			echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=titles\" class=\"tabEnabled\">Titel</a></td></tr>";
 		else
-			echo "<td class=\"statsTab\" style=\"width:16%;\"><a href=\"?page=$page&amp;sub=$sub&amp;mode=titles\" class=\"tabDefault\">Titel</a></td></tr>";
+			echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=titles\" class=\"tabDefault\">Titel</a></td></tr>";
 	}
 
 	echo "</table><br/>";
@@ -39,7 +51,7 @@
 	{
 		include(CACHE_ROOT."/out/usertitles_a.gen");
 	}
-
+	
 	//
 	// Allianzen
 	//
@@ -140,7 +152,75 @@
 		echo "</table>";
 	}
 	
+	//
+	// Special Points
+	//
+	elseif($mode=="diplomacy" || $mode=="battle" || $mode=="trade")
+	{
+		// Punktetabelle
+		if ($mode=="diplomacy")
+			$order="user_points_diplomacy";
+		elseif ($mode=="battle")
+			$order="user_points_battle";
+		elseif ($mode=="trade")
+			$order="user_points_trade";
+			
+		$res=dbquery("SELECT 
+			user_id,
+			user_nick,
+			race_name,
+			alliance_tag,			
+			$order AS points
+		FROM 
+			users
+		INNER JOIN
+			races ON user_race_id=race_id
+		LEFT JOIN 
+			alliances ON user_alliance_id=alliance_id
+		ORDER BY 
+			$order DESC,
+			user_rank_current,
+			user_nick ASC 
+		;");			
 
+		echo "<table class=\"tbl\">";
+		$cnt=0;
+		if (mysql_num_rows($res)>0)
+		{
+			echo "<tr>
+				<th class=\"tbltitle\" style=\"width:50px;\">#</th>
+				<th class=\"tbltitle\" style=\"\">Nick</th>
+				<th class=\"tbltitle\" style=\"\">Rasse</th>
+				<th class=\"tbltitle\" style=\"\">Allianz</th>
+				<th class=\"tbltitle\" style=\"\">Punkte</th>
+				<th class=\"tbltitle\" style=\"width:60px;\">Details</th>
+			</tr>";
+			while ($arr=mysql_fetch_array($res))
+			{
+				if ($arr['points']>0)
+				{
+					echo "<tr>";
+					echo "<td $addstyle class=\"tbldata\" align=\"right\">$cnt";
+					echo "</td>";
+					echo "<td $addstyle class=\"tbldata\">".$arr['user_nick']."</td>";
+					echo "<td $addstyle class=\"tbldata\">".$arr['race_name']."</td>";
+					echo "<td class=\"tbldata\" $addstyle >".$arr['alliance_tag']."</td>";
+					echo "<td $addstyle class=\"tbldata\">".nf($arr['points'])."</td>";
+					echo "<td $addstyle class=\"tbldata\">
+					".edit_button("?page=user&amp;sub=edit&amp;user_id=".$arr['user_id']."")."
+					".cb_button("add_user=".$arr['user_id']."")."				
+					</td>";
+					echo "</tr>";
+					$cnt++;
+				}
+			}
+		}
+		if ($cnt==0)
+			echo "<tr><td align=\"center\" class=\"tbldata\" colspan=\"6\"><i>Es wurde keine User gefunden!</i></tr>";
+		echo "</table><br/>";
+
+		
+	}		
 
 	//
 	// Users
