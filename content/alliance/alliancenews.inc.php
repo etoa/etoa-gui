@@ -32,6 +32,12 @@ if (Alliance::checkActionRights('alliancenews'))
 			".$_POST['alliance_id'].")");
 			echo "<div style=\"color:#0f0;\">News wurde gesendet!</div><br/>";
 			$_SESSION['alliance']['news']=null;
+						
+			// Gebe nur Punkte falls Nachricht öffentlich oder an andere Allianz
+			if ($s['user']['alliance_id']!=$_POST['alliance_id'])
+			{
+				Ranking::addDiplomacyPoints($s['user']['id'],DIPLOMACY_POINTS_PER_NEWS,"Rathausnews verfasst (ID:".mysql_insert_id().", ".addslashes($_POST['news_text']).")");
+			}
 			
 			// Update rss file
 			Townhall::genRss();			

@@ -50,8 +50,12 @@
             alliance_tag,
             alliance_name,
             user_highest_rank,
+            user_rank_current,
             user_profile_board_url,
-            user_registered
+            user_registered,
+            user_points_battle,
+            user_points_trade,
+            user_points_diplomacy
 		FROM 
 			".$db_table['users']." 
 		LEFT JOIN
@@ -85,10 +89,27 @@
 			{
 				echo "<tr><th style=\"width:120px;\">Besucherz&auml;hler:</th><td class=\"tbldata\">".nf($arr['user_visits'])." Besucher</td></tr>";
 			}
+			if ($arr['user_rank_current']>0)
+			{
+				echo "<tr><th style=\"width:120px;\">Aktueller Rang:</th><td class=\"tbldata\">".nf($arr['user_rank_current'])."</td></tr>";
+			}					
 			if ($arr['user_highest_rank']>0)
 			{
 				echo "<tr><th style=\"width:120px;\">Bester Rang:</th><td class=\"tbldata\">".nf($arr['user_highest_rank'])."</td></tr>";
 			}
+			if ($arr['user_points_battle']>0)
+			{
+				echo "<tr><th style=\"width:120px;\">Kampfpunkte:</th><td class=\"tbldata\">".nf($arr['user_points_battle'])."</td></tr>";
+			}			
+			if ($arr['user_points_trade']>0)
+			{
+				echo "<tr><th style=\"width:120px;\">Handelspunkte:</th><td class=\"tbldata\">".nf($arr['user_points_trade'])."</td></tr>";
+			}			
+			if ($arr['user_points_diplomacy']>0)
+			{
+				echo "<tr><th style=\"width:120px;\">Diplomatiepunkte:</th><td class=\"tbldata\">".nf($arr['user_points_diplomacy'])."</td></tr>";
+			}			
+
 			if ($arr['user_profile_board_url']!="")
 			{
 				echo "<tr><th style=\"width:120px;\">Foren-Profil:</th><td class=\"tbldata\"><a href=\"".$arr['user_profile_board_url']."\" onclick=\"window.open('".$arr['user_profile_board_url']."');return false;\">".$arr['user_profile_board_url']."</a></td></tr>";

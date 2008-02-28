@@ -23,6 +23,9 @@
 				user_sitting_days=".$_POST['user_sitting_days'].",
 				user_admin=".$_POST['user_admin'].",
 				user_show_stats=".$_POST['user_show_stats'].",
+				user_points_battle=".$_POST['user_points_battle'].",
+				user_points_trade=".$_POST['user_points_trade'].",
+				user_points_diplomacy=".$_POST['user_points_diplomacy'].",
 				user_alliance_rank_id=".intval($_POST['user_alliance_rank_id']).",
 				user_profile_board_url='".$_POST['user_profile_board_url']."',
 				user_spyship_count=".$_POST['user_spyship_count'].",
@@ -1063,6 +1066,33 @@
 									}
 					echo "</td>
 							</tr>";
+
+					echo "</td>
+							</tr>
+							<tr>
+								<td class=\"tbltitle\" valign=\"top\">Kampfpunkte</td>
+								<td class=\"tbldata\">
+									<input type=\"text\" name=\"user_points_battle\" value=\"".$arr['user_points_battle']."\" size=\"3\" maxlength=\"5\" />
+								</td>
+							</tr>";
+					echo "</td>
+							</tr>
+							<tr>
+								<td class=\"tbltitle\" valign=\"top\">Handelspunkte</td>
+								<td class=\"tbldata\">
+									<input type=\"text\" name=\"user_points_trade\" value=\"".$arr['user_points_trade']."\" size=\"3\" maxlength=\"5\" />
+								</td>
+							</tr>";
+					echo "</td>
+							</tr>
+							<tr>
+								<td class=\"tbltitle\" valign=\"top\">Diplomatiepunkte</td>
+								<td class=\"tbldata\">
+									<input type=\"text\" name=\"user_points_diplomacy\" value=\"".$arr['user_points_diplomacy']."\" size=\"3\" maxlength=\"5\" />
+								</td>
+							</tr>";
+
+
 				// Multis & Sitting
 				echo "<tr>
 								<td class=\"tbltitle\" valign=\"top\">Gel&ouml;schte Multis</td>

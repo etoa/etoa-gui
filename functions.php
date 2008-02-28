@@ -5697,6 +5697,36 @@ Forum: http://www.etoa.ch/forum";
 	{
 		$time = time();
 		
+		// Assign diplomacy points for pacts
+		$res=dbquery("
+		SELECT
+			alliance_bnd_id,
+			alliance_bnd_diplomat_id,
+			alliance_bnd_alliance_id1,
+			alliance_bnd_alliance_id2,
+			alliance_bnd_points
+		FROM 
+			alliance_bnd
+		WHERE
+			alliance_bnd_date<".($time-DIPLOMACY_POINTS_MIN_PACT_DURATION)."
+			AND alliance_bnd_level=2
+		");
+		if (mysql_num_rows($res)>0)
+		{
+			while ($arr=mysql_fetch_array($res))
+			{
+				Ranking::addDiplomacyPoints($arr['alliance_bnd_diplomat_id'],$arr['alliance_bnd_points'],"Bündnis ".$arr['alliance_bnd_alliance_id1']." mit ".$arr['alliance_bnd_alliance_id1']);
+				dbquery("
+				UPDATE
+					alliance_bnd
+				SET
+					alliance_bnd_points=0
+				WHERE
+					alliance_bnd_id=".$arr['alliance_bnd_id']."
+				");
+			}
+		}
+		
 		// Wars
 		$res = dbquery("
 		SELECT
@@ -5708,7 +5738,9 @@ Forum: http://www.etoa.ch/forum";
 			a1.alliance_tag as a1tag,
 			a2.alliance_tag as a2tag,
 			a1.alliance_founder_id as a1f,
-			a2.alliance_founder_id as a2f
+			a2.alliance_founder_id as a2f,
+			alliance_bnd_points,
+			alliance_bnd_diplomat_id
 		FROM 
 			alliance_bnd
 		INNER JOIN
@@ -5735,12 +5767,16 @@ Forum: http://www.etoa.ch/forum";
 				send_msg($arr['a1f'],MSG_ALLYMAIL_CAT,"Krieg beendet",$text." Während dieser Friedenszeit kann kein neuer Krieg erklärt werden!");
 				send_msg($arr['a2f'],MSG_ALLYMAIL_CAT,"Krieg beendet",$text." Während dieser Friedenszeit kann kein neuer Krieg erklärt werden!");
 		
+				// Assing diplomacy points
+				Ranking::addDiplomacyPoints($arr['alliance_bnd_diplomat_id'],$arr['alliance_bnd_points'],"Krieg ".$arr['a1id']." gegen ".$arr['a2id']);
+
 				dbquery("
 				UPDATE
 					alliance_bnd
 				SET
 					alliance_bnd_level=4,
-					alliance_bnd_date=".$time."
+					alliance_bnd_date=".$time.",
+					alliance_bnd_points=0
 				WHERE
 					alliance_bnd_id=".$arr['alliance_bnd_id']."
 				");			

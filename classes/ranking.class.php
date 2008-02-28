@@ -221,7 +221,7 @@
 				$def[$arr['def_id']]=$arr['def_battlepoints'];
 			}
 	
-			// Gebäude laden
+			// GebÃ¤ude laden
 			$res = dbquery("
 				SELECT
 					bp_level,
@@ -266,7 +266,7 @@
 				$points_building = 0;
 	
 				//
-				// Punkte für Schiffe (aus Planeten)
+				// Punkte fÃ¼r Schiffe (aus Planeten)
 				//
 				$res = dbquery("
 					SELECT
@@ -285,7 +285,7 @@
 				}
 	
 				//
-				// Punkte für Schiffe (in Flotten)
+				// Punkte fÃ¼r Schiffe (in Flotten)
 				//
 				$res = dbquery("
 					SELECT
@@ -306,7 +306,7 @@
 				}
 	
 				//
-				// Punkte für Verteidigung
+				// Punkte fÃ¼r Verteidigung
 				//
 				$res = dbquery("
 					SELECT
@@ -325,7 +325,7 @@
 				}
 	
 				//
-				// Punkte für Gebäude
+				// Punkte fÃ¼r GebÃ¤ude
 				//
 				$res = dbquery("
 					SELECT
@@ -344,7 +344,7 @@
 				}
 	
 				//
-				// Punkte für Forschung
+				// Punkte fÃ¼r Forschung
 				//
 				$res = dbquery("
 					SELECT
@@ -399,7 +399,7 @@
 				$allpoints+=$points;
 			}
 	
-			//Array Löschen (Speicher freigeben)
+			//Array LÃ¶schen (Speicher freigeben)
 			unset($ship);
 			unset($def);
 			unset($building);
@@ -410,7 +410,7 @@
 			unset($points_tech);
 			unset($points_building);
 	
-			// Ränge berechnen
+			// RÃ¤nge berechnen
 			dbquery("
 				UPDATE
 					".$db_table['users']."
@@ -418,7 +418,7 @@
 					user_rank_last=user_rank_current;
 			");
 	
-			// Statistiktabelle löschen
+			// Statistiktabelle lÃ¶schen
 			dbquery("
 				TRUNCATE TABLE
 					user_stats;
@@ -640,10 +640,44 @@
 	
 			return array($num,$allpoints);
 	
-			//Arrays löschen (Speicher freigeben)
+			//Arrays lÃ¶schen (Speicher freigeben)
 			mysql_free_result($res);
 	        unset($arr);
 		}		
+
+		static function addBattlePoints($userId,$points,$reason="")
+		{
+			dbquery("
+			UPDATE
+				users
+			SET
+				user_points_battle=user_points_battle+".$points."
+			WHERE
+				user_id=".$userId.";");
+		}
+		
+		static function addTradePoints($userId,$points,$reason="")
+		{
+			dbquery("
+			UPDATE
+				users
+			SET
+				user_points_trade=user_points_trade+".$points."
+			WHERE
+				user_id=".$userId.";");			
+		}
+		
+		static function addDiplomacyPoints($userId,$points,$reason="")
+		{
+			dbquery("
+			UPDATE
+				users
+			SET
+				user_points_diplomacy=user_points_diplomacy+".$points."
+			WHERE
+				user_id=".$userId.";");			
+			add_log(17,"Der Spieler ".$userId." erhÃ¤lt ".$points." Diplomatiepunke. Grund: ".$reason);
+		}				
 
 	}
 

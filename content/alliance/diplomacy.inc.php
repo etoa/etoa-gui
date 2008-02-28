@@ -393,7 +393,8 @@
 							alliance_bnd_level,
 							alliance_bnd_text,
 							alliance_bnd_name,
-							alliance_bnd_date
+							alliance_bnd_date,
+							alliance_bnd_diplomat_id
 						) 
 						VALUES 
 						(
@@ -402,7 +403,8 @@
 							'0',
 							'".addslashes($_POST['alliance_bnd_text'])."',
 							'".addslashes($_POST['alliance_bnd_name'])."',
-							".time()."
+							".time().",
+							'".$s['user']['id']."'
 						);");
 						echo "Du hast einer Allianz erfolgreich ein B&uuml;ndnis angeboten!<br/><br/>";
 
@@ -451,7 +453,9 @@
 							alliance_bnd_level,
 							alliance_bnd_text,
 							alliance_bnd_text_pub,
-							alliance_bnd_date
+							alliance_bnd_date,
+							alliance_bnd_points,
+							alliance_bnd_diplomat_id
 						) 
 						VALUES 
 						(
@@ -460,7 +464,9 @@
 							'3',
 							'".addslashes($_POST['alliance_bnd_text'])."',
 							'".addslashes($_POST['alliance_bnd_text_pub'])."',
-							'".time()."'
+							'".time()."',
+							".DIPLOMACY_POINTS_PER_WAR.",
+							'".$s['user']['id']."'
 						)");
 						
 						echo "Du hast einer Allianz den Krieg erkl&auml;rt!<br/><br/>";
@@ -638,7 +644,8 @@
 						UPDATE 
 							".$db_table['alliance_bnd']." 
 						SET 
-							alliance_bnd_level='2' 
+							alliance_bnd_level='2',
+							alliance_bnd_points=".DIPLOMACY_POINTS_PER_PACT." 
 						WHERE 
 							alliance_bnd_id=".$id." 
 						;");
