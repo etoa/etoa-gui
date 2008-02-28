@@ -26,7 +26,7 @@
 	$navmenu[1]['items'][4] = array ("name"=>"Raumschiffhafen","url"=>"?page=haven");
 	$navmenu[1]['items'][5] = array ("name"=>"Marktplatz","url"=>"?page=market");
 	$navmenu[1]['items'][6] = array ("name"=>"Raketensilo","url"=>"?page=missiles");
-	//$navmenu[1]['items'][7] = array ("name"=>"Kryptocenter","url"=>"?page=crypto");
+	$navmenu[1]['items'][7] = array ("name"=>"Kryptocenter","url"=>"?page=crypto");
 
 	$navmenu[2]['cat'] = "Produktion";
 	$navmenu[2]['items'][0] = array ("name"=>"Bauhof","url"=>"?page=buildings");
@@ -45,23 +45,26 @@
 	
 	// Links des oberen Menüs
 	$topnav=array();
+
 	$topnav[0]['name']='Forum';
-	$topnav[0]['url']='http://www.etoa.ch/forum';
-	$topnav[0]['newwindow']=true;
-	$topnav[1]['name']='FAQ';
-	$topnav[1]['url']='http://www.etoa.ch/faq';
-	$topnav[1]['newwindow']=true;
-	$topnav[2]['name']="Regeln";
-	$topnav[2]['url']=$conf['url_rules']['v'];
-	$topnav[2]['newwindow']=true;
+	$topnav[0]['url']=FORUM_PATH;
+
 	$topnav[3]['name']="Fehler melden";
-	$topnav[3]['url']=$conf['url_bugs']['v'];
-	$topnav[3]['newwindow']=true;
+	$topnav[3]['url']=DEVCENTER_PATH;
+	
+	$topnav[1]['name']='Helpcenter';
+	$topnav[1]['url']=HELPCENTER_URL;
+	$topnav[1]['onclick']=HELPCENTER_ONCLICK;
+	
+	$topnav[2]['name']="Regeln";
+	$topnav[2]['url']=RULES_URL;
+	$topnav[2]['onclick']=RULES_ONCLICK;
+
 	$topnav[4]['name']="Chat";
 	$topnav[4]['url']=CHAT_URL;
-	$topnav[4]['newwindow']=true;
-	$topnav[4]['nw_js']="width=800,height=650,status=no,scrollbars=yes";
+	$topnav[4]['onclick']=CHAT_ONCLICK;
+
 	$topnav[5]['name']="TeamSpeak";
-	$topnav[5]['url']=$conf['url_teamspeak']['v'];
-	$topnav[5]['newwindow']=true;
+	$topnav[5]['url']=TEAMSPEAK_URL;
+	$topnav[5]['onclick']=TEAMSPEAK_ONCLICK;
 ?>

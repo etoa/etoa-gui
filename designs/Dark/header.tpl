@@ -5,12 +5,10 @@
 			<td id="topbar" colspan="2">
 				{section name=id loop=$topNav}
 				{strip}
-					{if $topNav[id].nw_js neq ""}
-						<a href="{$topNav[id].url}" onclick="window.open('{$topNav[id].url}','Box','{$topNav[id].nw_js}');return false;">{$topNav[id].name}</a> | 
-					{elseif $topNav[id].newwindow eq true}
-						<a href="{$topNav[id].url}" onclick="window.open('{$topNav[id].url}');return false;">{$topNav[id].name}</a> | 
+					{if $topNav[id].onclick neq ""}
+						<a href="javascript:;" onclick="{$topNav[id].onclick}">{$topNav[id].name}</a> | 
 					{else}
-						<a href="{$topNav[id].url}">{$topNav[id].name}</a> | 
+						<a href="{$topNav[id].url}" target="_blank">{$topNav[id].name}</a> | 
 					{/if}
 				{/strip}
 				{/section}

@@ -92,7 +92,7 @@
 			Forum
 		</td>
 		<td class=\"tbldata\" style=\"text-align:center;width:20%\">
-			<a href=\"".HELPCENTER_PATH."\" target=\"_Blank\"><img src=\"images/help.png\" border=\"0\" alt=\"FAQ\" style=\"width:40px;height:40px;\" title=\"Hilfecenter und FAQ\"></a><br/>
+			<a href=\"javascript:;\" onclick=\"".HELPCENTER_ONCLICK."\"><img src=\"images/help.png\" border=\"0\" alt=\"FAQ\" style=\"width:40px;height:40px;\" title=\"Hilfecenter und FAQ\"></a><br/>
 			Häufig gestellte Fragen (FAQ)
 		</td>
 		<td class=\"tbldata\" style=\"text-align:center;width:20%\">

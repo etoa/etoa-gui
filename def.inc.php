@@ -103,6 +103,7 @@
 	define('HELPCENTER_ONCLICK',"window.open('".HELPCENTER_URL."','helpcenter','width=1024,height=700,scrollbars=yes');");
 
 	define("FORUM_PATH","http://forum.etoa.ch");	// Forum Link
+	
 	define("DEVCENTER_PATH","https://dev.etoa.ch");	// Entwickler Link
 
 	define('CHAT_URL',"http://chat.etoa.ch");	// Chat
