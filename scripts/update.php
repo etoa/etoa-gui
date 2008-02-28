@@ -69,7 +69,8 @@
 
 		// Punkteberechnung
 		$tmr = timerStart();
-		pointsupdate();
+		Ranking::calc();
+		Ranking::calcTitles();
 		$log = "\nPunkte aktualisiert.\nDauer: ".timerStop($tmr)." sec\n\n";
 
 		// Wurmlöcher vertauschen

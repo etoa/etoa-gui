@@ -11,8 +11,11 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 
 	$_SESSION['statsmode']=$mode;
 
-	for ($x=0;$x<6;$x++)
+	$navcnt = (ENABLE_USERTITLES==1) ? 7 : 6;
+	for ($x=0;$x<$navcnt;$x++)
+	{
 		$objResponse->assign('tabMenu'.$x, 'className', "tabDefault");
+	}
 	switch ($mode)
 	{
 		case "users":
@@ -27,10 +30,13 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 			$objResponse->assign('tabMenu4', 'className', "tabEnabled"); break;
 		case "pillory":
 			$objResponse->assign('tabMenu5', 'className', "tabEnabled"); break;
+		case "titles":
+			$objResponse->assign('tabMenu6', 'className', "tabEnabled"); break;
 		default:
 			$objResponse->assign('tabMenu0', 'className', "tabEnabled"); break;
 	}
 
+	
 	//
 	// Allianzdaten
 	//
@@ -157,6 +163,23 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 		$out.="</table>";
 	 	$objResponse->assign('statsBox', 'innerHTML', $out);
 	}
+	
+	//
+	// Titles
+	//
+	elseif ($mode=="titles")
+	{
+		ob_start();
+		include(CACHE_ROOT."/out/usertitles.gen");
+		$out.= ob_get_contents();
+		ob_end_clean();
+	 	$objResponse->assign('statsBox', 'innerHTML', $out);
+	}
+
+	
+	// 
+	// Normal Stats
+	//
 	else
 	{
 		$out.= "<table class=\"tbl\"><tr><td style=\"width:470px;text-align:left;\" class=\"statsNav\"><b>&nbsp;&nbsp;Suche:</b> <input type=\"text\" name=\"user_nick\" value=\"\" size=\"\" onkeyup=\"xajax_statsShowTable('$mode',0,this.value);\" id=\"searchString\"/>

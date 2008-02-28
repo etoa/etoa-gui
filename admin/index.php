@@ -119,7 +119,7 @@
 	{
 		$_SESSION['clipboard'] = null;
 	}
-	$cb = $_SESSION['clipboard']==1 ? true : false;
+	$cb = isset ($_SESSION['clipboard']) && $_SESSION['clipboard']==1 ? true : false;
 
 ?>
 
@@ -235,7 +235,7 @@
 													if ($data['sub']!="")
 													{
 														echo "<a href=\"?page=".$data['page']."&amp;sub=".$data['sub']."\" class=\"menu1Item\" ";
-														if ($data['new']==1)
+														if (isset($data['new']) && $data['new']==1)
 															echo " style=\"color:#ff0;\"";
 														echo ">";
 														if ($page==$data['page'] && $sub==$data['sub'])

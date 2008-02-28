@@ -65,8 +65,8 @@
 	
 	// Backup-Dir
 	define('BACKUP_DIR',$conf['backup']['v']);	
-	define('CACHE_ROOT','cache');
-	define('CLASS_ROOT','classes');
+	if (!defined('CACHE_ROOT')) define('CACHE_ROOT','cache');
+	if (!defined('CLASS_ROOT'))	define('CLASS_ROOT','classes');
 	define('RSS_DIR',CACHE_ROOT."/rss");
 
 	// Townhall-RSS-File
@@ -196,6 +196,10 @@
 	define("STATS_USER_POINTS",$conf["points_update"]["p1"]);					// 1 Punkt für X (STATS_USER_POINTS) verbaute Rohstoffe
 	define("STATS_ALLIANCE_POINTS",$conf["points_update"]["p2"]);			// 1 Punkt für X (STATS_ALLIANCE_POINTS) User Punkte
 
+	define("ENABLE_USERTITLES",0);
+	define("USERTITLES_MIN_POINTS",10000)	;
+	
+
 	// Sonstiges
 	define("RECYC_MAX_PAYBACK",0.9);																	// Maxmimale Recyclingtech effizient
 	define("STD_FIELDS",intval($conf["def_store_capacity"]["v"]));		// ???
@@ -203,7 +207,6 @@
 	define("COLLECT_FUEL_MAX_AMOUNT",10000);													// ???
 	define("USER_MAX_PLANETS",$conf["user_max_planets"]["v"]);				// Maximale Anzahl Planeten
 	define("SPECIALIST_MIN_POINTS_REQ",100000);												// Minimal Punkte für Spezialist
-	define("USERTITLES_MIN_POINTS",10000)	;
 
 	// User Planetwechsel
 	define("MAX_MAINPLANET_CHANGES",20);
@@ -214,7 +217,8 @@
 	define("PEACE_DURATION",3600*48);
 	
 	// Tipps beim Start aktivieren
-	define("ENABLE_TIPS",1);
+	define("ENABLE_TIPS",0);
+
 
   /****************************************************/
   /* Startwerte (bei erstellung eines neuen Accounts) */
