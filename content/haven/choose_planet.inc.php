@@ -335,7 +335,6 @@
 		$_SESSION['haven']['fleet']['time_to_start']/=FLEET_FACTOR_S;
 		$_SESSION['haven']['fleet']['time_to_land']/=FLEET_FACTOR_L;
 
-
 		//Bonis von Spezialschiffe dazuzählen
 		$_SESSION['haven']['fleet']['total_capacity'] = $_SESSION['haven']['fleet']['total_capacity'] * $special_ship_bonus_capacity;
 		$_SESSION['haven']['fleet']['total_pilots'] = $_SESSION['haven']['fleet']['total_pilots'] * $special_ship_bonus_pilots;
@@ -343,6 +342,13 @@
 		// Bugfix: No negative pilots
 		$_SESSION['haven']['fleet']['total_pilots'] = $_SESSION['haven']['fleet']['total_pilots'] < 0 ? 0 : $_SESSION['haven']['fleet']['total_pilots'];
 
+		// Bugfix: Check working people for capacity
+		if ($_SESSION['haven']['fleet']['people_capacity']>0)
+		{
+			$parr= mysql_fetch_row(dbquery("SELECT planet_people FROM ".$db_table['planets']." WHERE planet_id='".$c->id."';"));
+			$pbarr= mysql_fetch_row(dbquery("SELECT SUM(buildlist_people_working) FROM ".$db_table['buildlist']." WHERE buildlist_planet_id='".$c->id."';"));
+			$_SESSION['haven']['fleet']['people_capacity'] = min(floor($parr[0]-$pbarr[0]-$_SESSION['haven']['fleet']['total_pilots']),$_SESSION['haven']['fleet']['people_capacity']);
+		}
 
 
 		// Piloten berechnen
