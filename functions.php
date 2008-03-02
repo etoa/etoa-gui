@@ -297,7 +297,35 @@
 		}
 		return $names;
 	}
-
+	
+/**
+	* Allianz Name in Array speichern, jedoch nur eine Allianz
+	*/
+	function get_alliance_names2($id)
+	{
+		global $db_table;
+		$names = array();
+		$res = dbquery("
+			SELECT
+				alliance_tag,
+				alliance_id,
+				alliance_name,
+				alliance_founder_id
+			FROM
+				".$db_table['alliances']."
+			WHERE
+				alliance_id='".$id."'
+			ORDER BY
+				alliance_name;
+		");
+		while ($arr = mysql_fetch_array($res))
+		{
+			$names[$arr['alliance_id']]['tag'] = $arr['alliance_tag'];
+			$names[$arr['alliance_id']]['name'] = $arr['alliance_name'];
+			$names[$arr['alliance_id']]['founder_id'] = $arr['alliance_founder_id'];
+		}
+		return $names;
+	}
 	/**
 	* Ressourcen-Namen in Array speichern
 	*/
@@ -2671,6 +2699,24 @@ die Spielleitung";
 			".$db_table['alliances']."
 		WHERE
 			alliance_id='".$alliance_id."';");
+
+		//Delete Bnd Forums
+		$bndres=dbquery("SELECT 
+							* 
+						FROM 
+							".$db_table['alliance_bnd']."
+						WHERE
+							alliance_bnd_alliance_id1='".$alliance_id."'
+							OR alliance_bnd_alliance_id2='".$alliance_id."';");
+		while ($bndarr=mysql_fetch_array($bndres))
+		{
+			$bres=dbquery("SELECT * FROM allianceboard_topics WHERE topic_bnd_id=".$bndarr['alliance_bnd_id'].";");
+			while ($barr=mysql_fetch_array($bres))
+			{
+				dbquery("DELETE FROM allianceboard_posts WHERE post_topic_id=".$barr['topic_id'].";");
+			}
+			dbquery("DELETE FROM allianceboard_topics WHERE topic_bnd_id=".$bndar['alliance_bnd_id'].";");				
+		}
 
 		dbquery("
 			DELETE FROM

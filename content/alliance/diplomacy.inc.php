@@ -532,7 +532,15 @@
 							$selfId = $arr['a2id'];
 							$selfName = $arr['a2name'];							
 							$selfTag = $arr['a2tag'];							
-						}						
+						}
+						
+						//Delete Bnd Forum
+						$bres=dbquery("SELECT * FROM allianceboard_topics WHERE topic_bnd_id=".$_POST['id'].";");
+						while ($barr=mysql_fetch_array($bres))
+						{
+							dbquery("DELETE FROM allianceboard_posts WHERE post_topic_id=".$barr['topic_id'].";");
+						}
+						dbquery("DELETE FROM allianceboard_topics WHERE topic_bnd_id=".$_POST['id'].";");
 						
 						// Delete entity
 						dbquery("
