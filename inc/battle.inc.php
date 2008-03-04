@@ -570,7 +570,31 @@ function battle($fleet_id,$planet_id)
                 $count_d+=$pdarr['deflist_count'];
                 $count_dd+=$pdarr['deflist_count'];
             }
-        }
+			
+            //Daten der Heilenden Verteidigung laden (def)
+            $phres=dbquery("
+				SELECT
+					dl.deflist_count,
+					d.def_heal
+				FROM
+					".$db_table['deflist']." AS dl
+					INNER JOIN 
+					".$db_table['defense']." AS d 
+					ON dl.deflist_def_id = d.def_id
+					AND dl.deflist_planet_id='".$planet_id."'
+					AND dl.deflist_user_id='".$user_d_id."'
+					AND dl.deflist_count>'0'
+					AND d.def_heal>'0';
+			");
+
+            if (mysql_num_rows($phres)>0)
+            {
+                while ($pharr=mysql_fetch_array($phres))
+                {
+                    $count_heal_d+=$pharr['deflist_count'];
+                    $heal_d+=$pharr['def_heal']*$pharr['deflist_count'];
+                }
+            }        }
         else
         {
             $msg.= "[i]Nichts vorhanden![/i]\n";
