@@ -33,14 +33,63 @@
 	//
 	if ($sub=="htaccess")
 	{
-		if (UNIX)
+		echo "<h2>Passwort-Schutz für das Admin-Verzeichnis</h2>";
+		
+		if (isset($_POST['auth_submit']))
 		{
-			htpasswd_tool(HTPASSWD_USER,HTPASSWD_FILE);
+			if ($_POST['auth_name']!="" && $_POST['auth_user']!="" && $_POST['auth_pw']!="")
+			{
+				$cfg->set('admin_htaccess_auth_name',$_POST['auth_name']);
+				$cfg->set('admin_htaccess_auth_user',$_POST['auth_user']);
+				$cfg->set('admin_htaccess_auth_pw',$_POST['auth_pw']);
+				ok_msg("Das Passwort wurde gesetzt!");
+			}
+			else
+			{
+				err_msg("Es wurden nicht alle Felder ausgefüllt!");
+			}
+		}
+	
+		if (isset($_POST['auth_submit_clear']))
+		{
+			$cfg->set('admin_htaccess_auth_name','');
+			$cfg->set('admin_htaccess_auth_user','');
+			$cfg->set('admin_htaccess_auth_pw','');
+			ok_msg("Das Passwort wurde entfernt!");
+		}		
+		
+		
+		if ($cfg->get("admin_htaccess_auth_user") != "" && $cfg->get("admin_htaccess_auth_pw")!="")
+		{
+			echo "<div style=\"color:#0f0\">Der Passwort-Schutz ist zurzeit aktiv!</div><br/>";
 		}
 		else
 		{
-			error_msg("Der Passwort-Schutz geht nur auf Unix-Systemen");
+			echo "<div style=\"color:#f90\">Der Passwort-Schutz ist nicht aktiv!</div><br/>";
 		}
+		echo "Diese Daten schützen das Admin-Tool zusätzlich und müssen vor dem eigentlichen Login eingegeben werden. Bei 
+		einer Änderung dieser Daten müssen alle anderen Admins informiert werden, da sie sonst nicht mehr in diese Tool einloggen können!<br/><br/>";
+		echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\" autocomplete=\"off\">";
+		echo "<table class=\"tb\">";
+		echo "<tr>
+			<th style=\"width:100px;\">Titel:</th>
+			<td><input type=\"text\" name=\"auth_name\" value=\"".$cfg->get("admin_htaccess_auth_name")."\" /></td>
+		</tr>";
+		echo "<tr>
+			<th style=\"width:100px;\">User:</th>
+			<td><input type=\"text\" name=\"auth_user\" value=\"".$cfg->get("admin_htaccess_auth_user")."\" /></td>
+		</tr>";
+		echo "<tr>
+			<th style=\"width:100px;\">Passwort:</th>
+			<td><input type=\"text\" name=\"auth_pw\" value=\"".$cfg->get("admin_htaccess_auth_pw")."\" /></td>
+		</tr>";
+		echo "</table><br/><input type=\"submit\" name=\"auth_submit\" value=\"Speichern\" /> &nbsp; ";
+		if ($cfg->get("admin_htaccess_auth_user") != "" && $cfg->get("admin_htaccess_auth_pw")!="")
+		{		
+			echo "<input type=\"submit\" name=\"auth_submit_clear\" value=\"Schutz deaktivieren (nicht empfohlen)\" />";
+		}
+		echo "</form>";
+		
 	}
 
 	//

@@ -57,7 +57,8 @@
 	
 	
 	// Config-Werte laden
-	$conf = get_all_config();
+	$cfg = Config::getInstance();
+	$conf = $cfg->getArray();
 	include("../def.inc.php");
 
 	// Feste Konstanten
@@ -121,6 +122,27 @@
 	}
 	$cb = isset ($_SESSION['clipboard']) && $_SESSION['clipboard']==1 ? true : false;
 
+	if ($cfg->get("admin_htaccess_auth_user") != "" && $cfg->get("admin_htaccess_auth_pw")!="")
+	{
+		$http_auth = false;
+		if ($_SERVER['PHP_AUTH_USER']!="" && $_SERVER['PHP_AUTH_PW']!="")
+		{
+			if ($cfg->get("admin_htaccess_auth_user") == $_SERVER['PHP_AUTH_USER']  && $cfg->get("admin_htaccess_auth_pw") == $_SERVER['PHP_AUTH_PW'])
+			{
+				$http_auth = true;
+			}
+		}		
+		if (!$http_auth)
+		{
+		 // Bad or no username/password.
+		 // Send HTTP 401 error to make the
+		 // browser prompt the user.
+		 header("WWW-Authenticate: " .
+		        "Basic realm=\"EtoA.ch Administration\"");
+		 header("HTTP/1.0 401 Unauthorized"); 
+		}
+	}
+
 ?>
 
 <?PHP	echo '<?xml version="1.0" encoding="UTF-8"?>';?>
@@ -149,6 +171,17 @@
 	</head>
 	<body class="index">
 		<?PHP
+			if (!$http_auth)
+			{
+				echo "<div style=\"width:400px;margin:50px auto;text-align:center;\">";
+				echo "<h1 style=\"text-align:center;\">HTACCESS-Schutz</h1><br/>
+				<b>Fehler:</b> Falsches Passwort oder falscher Benutzername!<br/><br/>Wenn du diese Daten nicht hast, frage bitte beim Admin-Leiter danach!<br/><br/>";
+				echo "<input type=\"button\" value=\"Neu einloggen\" onclick=\"document.location='?page=$page'\" />";		
+				echo "</div>";				
+			}
+			else
+			{
+		
 			// Check Login
 			include("inc/admin_login.inc.php");
 			
@@ -430,6 +463,8 @@
 				<?
 				// Write all changes of $s to the session variable
 				$_SESSION[SESSION_NAME]=$s;
+			}
+			
 			}
 		?>
 	</body>

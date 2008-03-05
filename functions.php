@@ -120,26 +120,12 @@
 
 	/**
 	* Gesamte Config-Tabelle lesen und Werte in Array speichern
+	* DEPRECATED! This is only a wrapper!
 	*/
 	function get_all_config()
 	{
-		global $db_table;
-		$conf = array();
-		$res = dbquery("
-		SELECT
-	    config_name,
-	    config_value,
-	    config_param1,
-	    config_param2
-		FROM
-			config;");
-		while ($arr = mysql_fetch_array($res))
-		{
-			$conf[$arr['config_name']]['v'] = $arr['config_value'];
-			$conf[$arr['config_name']]['p1'] = $arr['config_param1'];
-			$conf[$arr['config_name']]['p2'] = $arr['config_param2'];
-		}
-		return $conf;
+		$cfg = Config::getInstance();
+		return $cfg->getArray();
 	}
 
 	/**
