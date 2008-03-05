@@ -147,6 +147,14 @@
 	    }
 	    
 	    /**
+	    * Getter for parameter 1
+	    */
+	    public function p1($key)
+	    {
+    		return $this->param1($key);
+	    }	    
+	    
+	    /**
 	    * Getter for parameter 2
 	    */
 	    public function param2($key)
@@ -157,11 +165,19 @@
 	    	}
 	    	return false;
 	    }	 
+
+	    /**
+	    * Getter for parameter 2
+	    */
+	    public function p2($key)
+	    {
+    		return $this->param2($key);
+	    }	    	    
 	    
 			/**
 			* Wrapper for saving all values in an array (classic-style)
 			*/
-			function getArray()
+			public function getArray()
 			{
 				$conf = array();
 				foreach ($this->keys as $key)
