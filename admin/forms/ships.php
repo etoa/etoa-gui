@@ -361,7 +361,20 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-
+												50 => array ( "name" => "ship_explore",
+	                                  "text" => "Nebel/Asteroidenfelder erkunden",
+	                                  "type" => "radio",
+	                                  "def_val" => "",
+	                                  "size" => "",
+	                                  "maxlen" => "",
+	                                  "rows" => "",
+	                                  "cols" => "",
+	                                  "rcb_elem" => array("Ja"=>1,"Nein"=>0),
+	                                  "rcb_elem_chekced" => "0",
+	                                  "select_elem" => "",
+	                                  "select_elem_checked" => "",
+	                                  "show_overview" => 0
+	                                ),
 												21	=> 	array	(	"name" => "ship_structure",
 																		"text" => "Struktur",
 																		"type" => "text",
