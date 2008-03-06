@@ -42,7 +42,7 @@
 	session_start();
 
 	// Funktionen und Config einlesen
-	if (!@include_once("../conf.inc.php")) die("conf.inc.php does not exists, please read INSTALL for how to create this file!");
+	if (!@include_once("../conf.inc.php")) die("conf.inc.php does not exist, please read INSTALL for how to create this file or <a href=\"..\">click here</a> for the setup wizard!!");
 	require("../functions.php");
 	require("../inc/fleet_action.inc.php");
 	require("inc/admin_functions.inc.php");
@@ -122,6 +122,8 @@
 	}
 	$cb = isset ($_SESSION['clipboard']) && $_SESSION['clipboard']==1 ? true : false;
 
+	// Htaccess check
+	$http_auth = true;
 	if ($cfg->get("admin_htaccess_auth_user") != "" && $cfg->get("admin_htaccess_auth_pw")!="")
 	{
 		$http_auth = false;

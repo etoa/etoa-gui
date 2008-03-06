@@ -45,8 +45,12 @@
 	mt_srand(time());
 
 	// Funktionen und Config einlesen
-	require_once("conf.inc.php");
 	require_once("functions.php");
+	if (!@include_once("conf.inc.php"))
+	{
+		require("inc/install.inc.php");
+		exit();
+	}
 
 	// Renderzeit-Start festlegen
 	$render_time = explode(" ",microtime());
@@ -56,7 +60,9 @@
 	// Mit der DB verbinden und Config-Werte laden
 	dbconnect();
 
-	$conf = get_all_config();	
+	$cfg = Config::getInstance();
+	$conf = $cfg->getArray();
+
 	require_once("def.inc.php");
 	
 	// Load smarty template engine

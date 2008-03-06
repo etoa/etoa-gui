@@ -54,29 +54,36 @@
 	/**
 	* Baut die Datenbankverbindung auf
 	*/
-	function dbconnect()
+	function dbconnect($reportError=1)
 	{
 		global $db_handle;
 		global $query_counter;
 		$query_counter=0;
 		if (!$db_handle = @mysql_connect(DB_SERVER,DB_USER,DB_PASSWORD))
 		{
-			error_msg("Zum Datenbankserver auf [b]".DB_SERVER."[/b] kann keine Verbindung hergestellt werden! 
-			[i]".mysql_error()."[/i]
-			
-			Bitte schaue später nochmals vorbei.",4,1,1);
-			return;
+			if ($reportError==1)
+			{
+				error_msg("Zum Datenbankserver auf [b]".DB_SERVER."[/b] kann keine Verbindung hergestellt werden! 
+				[i]".mysql_error()."[/i]
+				
+				Bitte schaue später nochmals vorbei.",4,1,1);
+			}
+			return false;
 		}
 		if (!mysql_select_db(DB_DATABASE))
 		{
-			error_msg("Auf die Datenbank [b]".DB_DATABASE."[/b] auf [b]".DB_SERVER."</b> kann 
-			nicht zugegriffen werden! 
-			[i]".mysql_error()."[/i]
-			
-			Bitte schaue später nochmals vorbei.",4,1);
-			return;
+			if ($reportError==1)
+			{
+				error_msg("Auf die Datenbank [b]".DB_DATABASE."[/b] auf [b]".DB_SERVER."</b> kann 
+				nicht zugegriffen werden! 
+				[i]".mysql_error()."[/i]
+				
+				Bitte schaue später nochmals vorbei.",4,1);
+			}
+			return false;
 		}
 		dbquery("SET NAMES 'utf8';"); 
+		return true;
 	}
 
 	/**
@@ -5754,6 +5761,7 @@ Forum: http://www.etoa.ch/forum";
 	function pw_salt($pw,$seed=0)
 	{
 		return md5($pw.$seed.PASSWORD_SALT).md5(PASSWORD_SALT.$seed.$pw);
+		
 	}
 	
 	/**

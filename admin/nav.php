@@ -25,12 +25,10 @@
 	$navmenu['Allgemeines']['Systemnachricht']['page']="home";
 	$navmenu['Allgemeines']['Systemnachricht']['sub']="systemmessage";
 	$navmenu['Allgemeines']['Systemnachricht']['level']=0;
-	$navmenu['Allgemeines']['Systemnachricht']['new']=1;
 
 	$navmenu['Allgemeines']['Rangliste']['page']="home";
 	$navmenu['Allgemeines']['Rangliste']['sub']="stats";
 	$navmenu['Allgemeines']['Rangliste']['level']=0;
-	$navmenu['Allgemeines']['Rangliste']['new']=1;
 
 	$navmenu['Allgemeines']['Spielstatistiken']['page']="home";
 	$navmenu['Allgemeines']['Spielstatistiken']['sub']="gamestats";
@@ -48,7 +46,6 @@
 	$navmenu['Allgemeines']['Filesharing']['page']="home";
 	$navmenu['Allgemeines']['Filesharing']['sub']="filesharing";
 	$navmenu['Allgemeines']['Filesharing']['level']=1;
-	$navmenu['Allgemeines']['Filesharing']['new']=1;
 
 
 	$navmenu['Allgemeines']['bar'][0] = true;
@@ -60,7 +57,6 @@
 	$navmenu['Allgemeines']['Admin-Management']['page']="home";
 	$navmenu['Allgemeines']['Admin-Management']['sub']="adminusers";
 	$navmenu['Allgemeines']['Admin-Management']['level']=2;
-	$navmenu['Allgemeines']['Admin-Management']['new']=1;
 
 	$navmenu['Allgemeines']['Admin-Sessionlog']['page']="home";
 	$navmenu['Allgemeines']['Admin-Sessionlog']['sub']="adminlog";
@@ -94,7 +90,6 @@
 	$navmenu['Spieler']['Profilbilder pr&uuml;fen']['page']="user";
 	$navmenu['Spieler']['Profilbilder pr&uuml;fen']['sub']="imagecheck";
 	$navmenu['Spieler']['Profilbilder pr&uuml;fen']['level']=0;
-	$navmenu['Spieler']['Profilbilder pr&uuml;fen']['new']=1;
 
 	$navmenu['Spieler']['Fehlerhafte Logins']['page']="user";
 	$navmenu['Spieler']['Fehlerhafte Logins']['sub']="loginfailures";

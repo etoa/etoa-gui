@@ -132,7 +132,9 @@
 										send_msg($arr['user_id'],SHIP_SPY_MSG_CAT_ID,"Funkstörung","Eure Flottenkontrolle hat soeben eine kurzzeitige Störung des Kommunikationsnetzes festgestellt.");
 									}
 									
-									$out.="[b]Flottenscan vom Planeten ".($arr['planet_name']!='' ? $arr['planet_name'] : 'Unbenannt')."[/b] (".$sx."/".$sy." : ".$cx."/".$cy." : ".$pp.")\n\n";
+									$target = ($arr['planet_name']!='' ? $arr['planet_name'] : 'Unbenannt')."[/b] (".$sx."/".$sy." : ".$cx."/".$cy." : ".$pp.")";
+									$out.="[b]Flottenscan vom Planeten ".$target."\n
+									[b]Zeit:[/b] ".date("d.m.Y H:i:s")."\n\n";
 									$out.="[b]Eintreffende Flotten[/b]\n\n";
 									$fres = dbquery("
 									SELECT
@@ -239,6 +241,13 @@
 									infobox_start("Ergebnis der Analyse");
 									echo text2html($out);
 									infobox_end();
+									
+									// Add note to user's notepad if selected
+									if (isset($_POST['scan_to_notes']))
+									{
+										$np = new Notepad($s['user']['id']);
+										$np->add(new Note("Flottenscan: ".$target,$out));
+									}
 								}
 								else
 								{
@@ -402,7 +411,8 @@
 				}
 				else
 					echo "<option value=\"\">(Nichts vorhaden)</option>";
-				echo "</select>";					
+				echo "</select><br/><br/>
+				<input type=\"checkbox\" name=\"scan_to_notes\" value=\"1\" /> Zu meinem Notizblock hinzufügen";					
 					
 				infobox_end();
 				if ($c->res->fuel >= CRYPTO_FUEL_COSTS_PER_SCAN)
