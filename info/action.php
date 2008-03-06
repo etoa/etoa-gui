@@ -23,6 +23,7 @@
 				$actio['giftgas']="Giftgas";
 				$actio['tarned']="Tarnangriff";
 				$actio['fake']="Fakeangriff";
+				$actio['explore']="Nebel/Asteroidenfelder erkunden";
 				
 				Help::navi(array("Schiffsaktionen","action"),array("$action","$action"),1);
 				echo "<select onchange=\"document.location='?page=$page&site=action&action='+this.options[this.selectedIndex].value\">";
@@ -53,7 +54,8 @@
 			        ship_heal, 
 			        ship_antrax_food, 
 			        ship_deactivade, 
-			        ship_tf 
+			        ship_explore,
+			        ship_tf
 				FROM 
 					".$db_table['ships']." 
 				WHERE 
@@ -87,6 +89,9 @@
 		echo "<tr><td class=\"tbltitle\" width=\"25%\">Techklau</td>
 		<td class=\"tbldata\">Techklau/Spionageangriff</td>
 		<td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=action&action=tech_steal\">Anzeigen</a></td></tr>";
+    echo "<tr><td class=\"tbltitle\" width=\"25%\">Nebel/Asteroidenfelder erkunden</td>
+    <td class=\"tbldata\">Nebel/Asteroidenfelder erkunden</td>
+	  <td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=action&action=explore\">Anzeigen</a></td></tr>";
 		infobox_end(1);
 
 		infobox_start("Transport/Recycling/Asteroid",1);

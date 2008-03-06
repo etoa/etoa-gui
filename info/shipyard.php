@@ -262,7 +262,11 @@
 					array_push($specials,"<tr><td class=\"tbldata\" colspan=\"2\" style=\"width:300px\">Trümmerfeld erstellen</td>
 								<td class=\"tbldata\" style=\"width:650px\" colspan=\"2\">Dieses Schiff lÃ¤sst sich selbst explodieren, um beim Gegner ein kleines TrÃ¼mmerfeld zu erstellen. Du kannst dadurch schon vor dem Kampf deine TrÃ¼mmersammler losschicken, um sicher zu gehen, dass sofort nach dem Kampf das Trümmerfeld eingesammlet wird.</td></tr>");	
 				}
-			
+				if ($arr['ship_explore']==1)
+				{
+					array_push($specials,"<tr><td class=\"tbldata\" colspan=\"2\" style=\"width:300px\">Nebel/Asteroidenfelder erkunden</td>
+								<td class=\"tbldata\" style=\"width:650px\" colspan=\"2\"><a href=\"?page=help&site=action&action=explore\">Zur n&#228;heren Beschreibung hier klicken</a></td></tr>");
+				}
 			if (sizeof($specials)>0)
 			{	
 				foreach ($specials as $sp)
