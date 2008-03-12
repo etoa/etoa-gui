@@ -3,15 +3,28 @@
 	$topnav=array();
 	$navmenu=array();
 	
+	
 	// Links des oberen Menüs
-	$topnav['Forum']['url']="http://www.etoa.ch/forum";
+	$topnav['Login-Admin']['url']="http://www.etoa.ch/admin";
+	$topnav['Login-Admin']['newwindow']=true;
+
+	$topnav['Forum']['url']=FORUM_PATH;
 	$topnav['Forum']['newwindow']=true;
-	$topnav['Hilfecenter']['url']="http://www.etoa.ch/help";
+	
+	$topnav['Hilfecenter']['url']=HELPCENTER_URL;
 	$topnav['Hilfecenter']['newwindow']=true;
-	$topnav['Regeln']['url']="http://www.etoa.ch/rules";
+	
+	$topnav['Regeln']['url']=RULES_URL;
 	$topnav['Regeln']['newwindow']=true;
-	$topnav['Fehler melden']['url']="http://dev.etoa.net";
+	
+	$topnav['Fehler melden']['url']=DEVCENTER_PATH;
 	$topnav['Fehler melden']['newwindow']=true;
+	
+	$topnav['Chat']['url']=CHAT_URL;
+	$topnav['Chat']['newwindow']=true;
+	
+	$topnav['TeamSpeak']['url']=TEAMSPEAK_URL;
+	$topnav['TeamSpeak']['newwindow']=true;
 
 	// Links des linken Menüs
 	$navmenu['Allgemeines']['Startseite']['page']="home";

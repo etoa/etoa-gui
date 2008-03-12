@@ -272,7 +272,8 @@
 				$st = $arr['user_specialist_time']>0 ? $arr['user_specialist_time'] : time();
 
 				
-				echo "<h2>Details ".$arr['user_nick']."</h2>";
+				echo "<h2>Details</h2>
+				<h3>".$arr['user_nick']." ".cb_button("add_user=".$arr['user_id']."")."</h3>";
 
 				echo "<form action=\"?page=$page&amp;sub=edit&amp;user_id=".$_GET['user_id']."\" method=\"post\">";
 
@@ -1861,13 +1862,13 @@
 				
 				
 				// Buttons
-				echo "<br/><input type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" />&nbsp;";
+				echo "<br/>";
+
 				echo "<input type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&action=search'\" /> ";
 				echo "<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" /><hr/>";
-				echo "<input type=\"button\" value=\"Nachricht senden\" onclick=\"document.location='?page=messages&sub=sendmsg&user_id=".$arr['user_id']."'\" /> ";
-				echo "<input type=\"button\" onclick=\"document.location='?page=$page&sub=userlog&id=".$arr['user_id']."'\" value=\"Sessions\" /> ";
-				echo "<input type=\"button\" onclick=\"document.location='?page=$page&sub=history&id=".$arr['user_id']."'\" value=\"History\" /> ";
-				//echo "<input type=\"submit\" name=\"delete_user\" value=\"User l&ouml;schen\" style=\"color:#f00\" onclick=\"return confirm('Soll dieser User entg&uuml;ltig gel&ouml;scht werden?');\"> ";
+
+				
+				echo "<input type=\"submit\" name=\"save\" value=\"&Auml;nderungen &uuml;bernehmen\" style=\"color:#0f0\" />&nbsp;";
 				if ($arr['user_deleted']!=0)
 				{
 					echo "<input type=\"submit\" name=\"canceldelete\" value=\"Löschantrag aufheben\" style=\"color:".USER_COLOR_DELETED."\" /> ";					
@@ -1876,6 +1877,16 @@
 				{
 					echo "<input type=\"submit\" name=\"requestdelete\" value=\"Löschantrag erteilen\" style=\"color:".USER_COLOR_DELETED."\" /> ";					
 				}				
+				echo "<input type=\"submit\" name=\"delete_user\" value=\"User l&ouml;schen\" style=\"color:#f00\" onclick=\"return confirm('Soll dieser User entg&uuml;ltig gel&ouml;scht werden?');\"> ";
+				echo "<hr/>";
+				echo "<input type=\"button\" value=\"Planeten\" onclick=\"document.location='?page=galaxy&action=search&query=".searchQuery(array("planet_user_id"=>$arr['user_id']))."'\" /> ";
+				echo "<input type=\"button\" value=\"Gebäude\" onclick=\"document.location='?page=messages&sub=sendmsg&user_id=".$arr['user_id']."'\" /> ";
+				echo "<input type=\"button\" value=\"Forschungen\" onclick=\"document.location='?page=messages&sub=sendmsg&user_id=".$arr['user_id']."'\" /> ";
+				echo "<input type=\"button\" value=\"Schiffe\" onclick=\"document.location='?page=messages&sub=sendmsg&user_id=".$arr['user_id']."'\" /> ";
+				echo "<input type=\"button\" value=\"Verteidigung\" onclick=\"document.location='?page=messages&sub=sendmsg&user_id=".$arr['user_id']."'\" /> ";
+				echo "<input type=\"button\" value=\"Raketen\" onclick=\"document.location='?page=messages&sub=sendmsg&user_id=".$arr['user_id']."'\" /> ";
+				//echo "<input type=\"button\" onclick=\"document.location='?page=$page&sub=userlog&id=".$arr['user_id']."'\" value=\"Sessions\" /> ";
+				//echo "<input type=\"button\" onclick=\"document.location='?page=$page&sub=history&id=".$arr['user_id']."'\" value=\"History\" /> ";
 								
 				echo "</form><hr/>";
 				if ($arr['user_blocked_from']==0)

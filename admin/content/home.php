@@ -557,10 +557,10 @@
 		echo "<td class=\"tbldata\"><input type=\"text\" name=\"user_nick\" size=\"40\" /> <input type=\"hidden\" name=\"qmode[user_nick]\" value=\"LIKE '%\" /><input type=\"submit\" name=\"user_search\" value=\"Suchen\" /></td></tr></form>";
 
 		echo "<form action=\"?page=galaxy&amp;action=searchresults\" method=\"post\"><tr><th class=\"tbltitle\">Planet:</th>";
-		echo "<td class=\"tbldata\"><input type=\"text\" name=\"planet_name\" size=\"40\" /> <input type=\"hidden\" name=\"qmode[planet_name]\" value=\"LIKE '%\" /><input type=\"hidden\" name=\"planet_user_main\" value=\"2\" /><input type=\"hidden\" name=\"planet_wf\" value=\"2\" /><input type=\"submit\" name=\"planet_search\" value=\"Suchen\" /></td></tr></form>";
+		echo "<td class=\"tbldata\"><input type=\"text\" name=\"planet_name\" size=\"40\" /> <input type=\"hidden\" name=\"qmode[planet_name]\" value=\"%\" /> <input type=\"submit\" name=\"search_submit\" value=\"Suchen\" /></td></tr></form>";
 
 		echo "<form action=\"?page=galaxy&amp;action=searchresults\" method=\"post\"><tr><th class=\"tbltitle\">Planet-Besitzer:</th>";
-		echo "<td class=\"tbldata\"><input type=\"text\" name=\"user_nick\" size=\"40\" /> <input type=\"hidden\" name=\"qmode[user_nick]\" value=\"LIKE '%\" /><input type=\"hidden\" name=\"planet_user_main\" value=\"2\" /><input type=\"hidden\" name=\"planet_wf\" value=\"2\" /><input type=\"submit\" name=\"planet_search\" value=\"Suchen\" /></td></tr></form>";
+		echo "<td class=\"tbldata\"><input type=\"text\" name=\"user_nick\" size=\"40\" /> <input type=\"hidden\" name=\"qmode[user_nick]\" value=\"%\" /> <input type=\"submit\" name=\"search_submit\" value=\"Suchen\" /></td></tr></form>";
 
 		echo "<form action=\"?page=alliances&amp;action=search\" method=\"post\"><tr><th class=\"tbltitle\">Allianz-Tag:</th>";
 		echo "<td class=\"tbldata\"><input type=\"text\" name=\"alliance_tag\" size=\"40\" /> <input type=\"hidden\" name=\"qmode[alliance_tag]\" value=\"LIKE '%\" /><input type=\"submit\" name=\"alliance_search\" value=\"Suchen\" /></td></tr></form>";

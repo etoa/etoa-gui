@@ -34,8 +34,6 @@
 	$render_time = explode(" ",microtime());
 	$render_starttime=$render_time[1]+$render_time[0];
 
-	// Navigation laden
-	require_once('nav.php');
 
 	// Session-Cookie setzen
 	ini_set('arg_separator.output',  '&amp;');
@@ -60,6 +58,10 @@
 	$cfg = Config::getInstance();
 	$conf = $cfg->getArray();
 	include("../def.inc.php");
+
+	// Navigation laden
+	require_once('nav.php');
+
 
 	// Feste Konstanten
 	define('SESSION_NAME',"adminsession");
@@ -165,8 +167,8 @@
 		<meta http-equiv="Content-Style-Type" content="text/css" />
 		<meta http-equiv="content-language" content="de" />
 
-		<script src="../scripts.js" type="text/javascript"></script>
-		<script src="scripts.js" type="text/javascript"></script>
+		<script src="../js/main.js" type="text/javascript"></script>
+		<script src="../js/admin.js" type="text/javascript"></script>
 		<?PHP
 			$xajax->printJavascript("../".XAJAX_DIR); 
 		?>
@@ -218,8 +220,9 @@
 							<?PHP
 								foreach ($topnav as $title=> $data)
 								{
-									echo "<a href=\"".$data['url']."\" target=\"_blank\">$title</a> | ";
+									echo " &nbsp; <a href=\"".$data['url']."\" target=\"_blank\">$title</a>";
 								}
+								echo "<br/>";
 								
 							$nres = dbquery("select COUNT(*) from admin_notes where admin_id='".$s['user_id']."'");
 							$narr = mysql_fetch_row($nres);
