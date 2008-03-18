@@ -11,6 +11,7 @@
 	$fa['g'] = "Gas saugen";
 	$fa['h'] = "Antrax-Angriff";
 	$fa['i'] = "Invasieren";
+	$fa['j'] = "Nebel/Asteroidenfelder erkunden";
 	$fa['k'] = "Kolonie errichten";
 	$fa['m'] = "Marktanlieferung";
 	$fa['n'] = "Nebel erkunden";
