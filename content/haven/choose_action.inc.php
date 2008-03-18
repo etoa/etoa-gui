@@ -394,6 +394,10 @@
               {
                   echo "<input type=\"radio\" name=\"fleet_action\" value=\"no\" checked=\"checked\"> Nebel erkunden<br/>";
               }
+              elseif ($_SESSION['haven']['fleet']['can_explore']==1 && $parr['type_collect_gas']==1 or $parr['cell_asteroid']==1 or $parr['cell_nebula']==1)
+	            {
+	                echo "<input type=\"radio\" name=\"fleet_action\" value=\"jo\" checked=\"checked\"> Nebel/Asteroidenfelder erkunden<br/>";
+	            }
               elseif ($_SESSION['haven']['fleet']['can_collect_gas']==1 && $parr['type_collect_gas']==1)
               {
                   echo "<input type=\"radio\" name=\"fleet_action\" value=\"go\" checked=\"checked\"> Gas saugen<br/>";
