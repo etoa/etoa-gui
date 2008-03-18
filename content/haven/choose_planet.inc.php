@@ -296,6 +296,9 @@
 
 				// Kolonialisieren möglich?
 				if ($sarr['ship_colonialize']==1) $_SESSION['haven']['fleet']['can_colonialize'] = true;
+				
+				//Explore möglich?
+				if ($sarr['ship_explore']==1) $_SESSION['haven']['fleet']['can_explore'] = true;
 
 				// Recyceln möglich
 				if ($sarr['ship_recycle']==true) $_SESSION['haven']['fleet']['can_recycle'] = true;
