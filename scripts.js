@@ -634,6 +634,9 @@ function setFocus(theForm) {
 
 function FormatNumber(id, num, max, decpoint, sep) 
 {
+	// Macht aus der Zahl einen String (sonst funktioniert replace nicht richtig)
+	var num = num.toString();
+	
 	// Löscht Trennzeichen aus der Zahl
 	var num = num.replace(/`/g, "");
 	
@@ -700,9 +703,15 @@ function FormatNumber(id, num, max, decpoint, sep)
     }
   }
   
-  document.getElementById(id).value=x;
+  if (id!='return')
+  {
+  	document.getElementById(id).value=x;
+  }
+  else
+  {
+  	return x;
+  }
 }
-
 
 
 function istZahl(field)
@@ -717,4 +726,31 @@ function istZahl(field)
 	   }
    }
    return Wert;
+}
+
+
+// Such nach unerlaubten Zeichen in einem Text und gibt TRUE bei einem Treffer zurück
+function check_illegal_signs(str)
+{
+	var result = false;
+	
+	// Stellt sicher, dass die Variable vom Typ String ist
+	var str = str.toString();
+		
+	if(str.search(/\'/) != -1
+		|| str.search(/</) != -1
+		|| str.search(/>/) != -1
+		|| str.search(/\?/) != -1
+		|| str.search(/\"/) != -1
+		|| str.search(/\$/) != -1
+		|| str.search(/\!/) != -1
+		|| str.search(/=/) != -1
+		|| str.search(/\;/) != -1
+		|| str.search(/\&/) != -1
+		)
+	{
+		var result = true;
+	}
+	
+	return result;
 }
