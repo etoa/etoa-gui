@@ -71,7 +71,6 @@ main(int argc, char *argv[])
 		/**
 		* Start with event handling
 		*/
-		std::cout << std::time(0) << " :_: " << mtime+300 << "\n";
 		if ((mtime+300)<std::time(0))
 		{
 			market::MarketHandler* mh = new market::MarketHandler(&con);
