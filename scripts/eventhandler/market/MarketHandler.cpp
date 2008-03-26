@@ -207,7 +207,7 @@ namespace market
 								msg += "\n\n";
             
 								msg += "Das Handelsministerium";
-								functions::send_msg(con_,(int)arr["auction_user_id"],(int)SHIP_MISC_MSG_CAT_ID,"Auktion beendet",msg);
+								functions::send_msg(con_,(int)arr["auction_user_id"],atoi(SHIP_MISC_MSG_CAT_ID),"Auktion beendet",msg);
 
 								// Nachricht an Käufer
 								msg = "Du warst der höchstbietende in der Auktion vom Spieler " + partner_user_nick + ", welche am ";
@@ -246,7 +246,7 @@ namespace market
 								msg += " Stunden gelöscht und die Waren in wenigen Minuten versendet.\n\n";
             
 								msg += "Das Handelsministerium";
-								functions::send_msg(con_,(int)arr["auction_current_buyer_id"],(int)SHIP_MISC_MSG_CAT_ID,"Auktion beendet",msg);
+								functions::send_msg(con_,(int)arr["auction_current_buyer_id"],atoi(SHIP_MISC_MSG_CAT_ID),"Auktion beendet",msg);
             
 
 								//Log schreiben, falls dieser Handel regelwidrig ist
@@ -293,21 +293,21 @@ namespace market
 										log += functions::nf(std::string(arr["auction_sell_metal"]));
 										log += "\nSilizium: ";
 										log += functions::nf(std::string(arr["auction_sell_crystal"]));
-										log += "\PVC: ";
+										log += "\nPVC: ";
 										log += functions::nf(std::string(arr["auction_sell_plastic"]));
-										log += "\Tritium: ";
+										log += "\nTritium: ";
 										log += functions::nf(std::string(arr["auction_sell_fuel"]));
-										log += "\Nahrung: ";
+										log += "\nNahrung: ";
 										log += functions::nf(std::string(arr["auction_sell_food"]));
 										log += "\n\nDies hat ihn folgende Rohstoffe gekostet:\nTitan: ";
 										log += functions::nf(std::string(arr["auction_buy_metal"]));
 										log += "\nSilizium: ";
 										log += functions::nf(std::string(arr["auction_buy_crystal"]));
-										log += "\PVC: ";
+										log += "\nPVC: ";
 										log += functions::nf(std::string(arr["auction_buy_plastic"]));
-										log += "\Tritium: ";
+										log += "\nTritium: ";
 										log += functions::nf(std::string(arr["auction_buy_fuel"]));
-										log += "\Nahrung: ";
+										log += "\nNahrung: ";
 										log += functions::nf(std::string(arr["auction_buy_food"]));
 										functions::add_log(con_,10,log,time);
 									}
@@ -322,21 +322,21 @@ namespace market
 								log += functions::nf(std::string(arr["auction_sell_metal"]));
 								log += "\nSilizium: ";
 								log += functions::nf(std::string(arr["auction_sell_crystal"]));
-								log += "\PVC: ";
+								log += "\nPVC: ";
 								log += functions::nf(std::string(arr["auction_sell_plastic"]));
-								log += "\Tritium: ";
+								log += "\nTritium: ";
 								log += functions::nf(std::string(arr["auction_sell_fuel"]));
-								log += "\Nahrung: ";
+								log += "\nNahrung: ";
 								log += functions::nf(std::string(arr["auction_sell_food"]));
 								log += "\n\nDies hat ihn folgende Rohstoffe gekostet:\nTitan: ";
 								log += functions::nf(std::string(arr["auction_buy_metal"]));
-								log += "\nSilizium: ";
+								log += "\nnSilizium: ";
 								log += functions::nf(std::string(arr["auction_buy_crystal"]));
-								log += "\PVC: ";
+								log += "\nPVC: ";
 								log += functions::nf(std::string(arr["auction_buy_plastic"]));
-								log += "\Tritium: ";
+								log += "\nTritium: ";
 								log += functions::nf(std::string(arr["auction_buy_fuel"]));
-								log += "\Nahrung: ";
+								log += "\nNahrung: ";
 								log += functions::nf(std::string(arr["auction_buy_food"]));
 								log += "\n\nDie Auktion und wird nach ";
 								log += "24"; //ToDo AUCTION_DELAY_TIME
@@ -395,7 +395,7 @@ namespace market
 								msg += " Stunden gelöscht.\n\n";
 				
 								msg += "Das Handelsministerium";
-								functions::send_msg(con_,(int)arr["auction_user_id"],(int)SHIP_MISC_MSG_CAT_ID,"Auktion abgelaufen",msg); //ToDo
+								functions::send_msg(con_,(int)arr["auction_user_id"],atoi(SHIP_MISC_MSG_CAT_ID),"Auktion abgelaufen",msg); //ToDo
 	
 								//Auktion noch eine zeit lang anzeigen, aber unkäuflich machen
 								query << "UPDATE ";
