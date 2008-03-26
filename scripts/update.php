@@ -90,9 +90,9 @@
 		global $db_table, $conf;
 
 		// Objekt updaten
-		$tmr = timerStart();
-		$obu = updateAllObjects();
-		$log = "Objekte auf ".$obu." Planeten aktualisiert.\nDauer: ".timerStop($tmr)." sec\n\n";
+		//$tmr = timerStart();
+		//$obu = updateAllObjects();
+		//$log = "Objekte auf ".$obu." Planeten aktualisiert.\nDauer: ".timerStop($tmr)." sec\n\n";
 
 		return $log;
 	}
@@ -111,9 +111,9 @@
 		$log = "\nUser-Statistik: ".$garr[0]." User online, ".$rarr[0]." User registriert\n\n";
 
 		// Ressourcen updaten
-		$tmr = timerStart();
-		$ecu = updateAllEconomy();
-		$log.= "Wirtschaft auf ".$ecu." Planeten aktualisiert.\nDauer: ".timerStop($tmr)." sec\n\n";
+		//$tmr = timerStart();
+		//$ecu = updateAllEconomy();
+		//$log.= "Wirtschaft auf ".$ecu." Planeten aktualisiert.\nDauer: ".timerStop($tmr)." sec\n\n";
 
 		// Gasplaneten updaten
 		$tmr = timerStart();
@@ -121,9 +121,9 @@
 		$log.= "Gasvorkommen auf ".$gu." Gasplaneten aktualisiert.\nDauer: ".timerStop($tmr)." sec\n\n";
 		
 		//Marktupdate
-		$tmr = timerStart();
-		market_update();
-		$log.= "Markt aktualisiert.\nDauer: ".timerStop($tmr)." sec\n\n";		
+		//$tmr = timerStart();
+		//market_update();
+		//$log.= "Markt aktualisiert.\nDauer: ".timerStop($tmr)." sec\n\n";		
 		
 		// Krieg-Frieden-Update
 		$tmr = timerStart();
