@@ -16,10 +16,10 @@ namespace market
 	class MarketHandler	: EventHandler
 	{
 	public:
-		MarketHandler(mysqlpp::Connection* con)  : EventHandler(con) { this->changes_ = false; }
+		MarketHandler(mysqlpp::Connection* con)  : EventHandler(con) { this->changes_ = false; };
 		void update();
-		static void MarketAuctionUpdate(mysqlpp::Connection* con)
-		inline bool changes() { return this->changes_; }
+		void MarketAuctionUpdate();
+		static void update_config(mysqlpp::Connection* con_,std::vector<int> buy_res, std::vector<int> sell_res);
 	private:
 		bool changes_;
 		std::vector<int> changedPlanets_;		

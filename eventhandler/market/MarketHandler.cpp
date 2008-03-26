@@ -4,20 +4,53 @@
 #include <time.h>
 #include <math.h>
 #include <mysql++/mysql++.h>
+#include "../functions/Functions.h"
 
 #include "MarketHandler.h"
 
+const char* SHIP_MISC_MSG_CAT_ID ="5";
+const char* MARKET_SHIP_ID = "16";
+const char* MARKET_USER_ID = "1";
+const char* FLEET_ACTION_RESS = "mo";
+const char* AUCTION_DELAY_TIME = "24";
+
+
 namespace market
 {
+	//Configwerte des Marktes werden aktualisiert
+	void MarketHandler::update_config(mysqlpp::Connection* con_,std::vector<int> buy_res, std::vector<int> sell_res) //con muss noch rein
+	{
+		std::vector<std::string> ressource (5);
+		ressource[0] = "metal";
+		ressource[1] = "crystal";
+		ressource[2] = "plastic";
+		ressource[3] = "fuel";
+		ressource[4] = "food";
+		
+		mysqlpp::Query query = con_->query();
+				
+		int i=0;
+		while (i<5)
+		{
+			query << "UPDATE ";
+				query << "config ";
+			query << "SET ";
+				query << "config_value=config_value+" << buy_res[i] << ", ";
+				query << "config_param1=config_param1+" << sell_res[i] << " ";
+			query << "WHERE ";
+				query << "config_name='market_" << ressource[i] << "_logger'";
+			query.store();
+			query.reset();
+			i++;
+		}
+	}
 	
 	//Markt: Abgelaufene Auktionen löschen
-	void MarketHandler::MarketAuctionUpdate(mysqlpp::Con* con_)
+	void MarketHandler::MarketAuctionUpdate()
 	{
 	
 		std::string msg;
 		std::time_t time = std::time(0);
-	
-		std::cout << "Updating market auctions\n";
 	
 		mysqlpp::Query query = con_->query();
 		query << "SELECT ";
@@ -29,32 +62,23 @@ namespace market
 			query << "OR auction_delete_date!='0';";
 		mysqlpp::Result res = query.store();		
 		query.reset();
-	
+
 		if (res) 
 		{
 			int resSize = res.size();
-			bool empty=false;
-    	
+			std::cout << "Updating "<< resSize << " passed market auctions\n";
 			if (resSize>0)
 			{
-		
-				int buy_metal_total = 0;
-				int buy_crystal_total = 0;
-				int buy_plastic_total = 0;
-				int buy_fuel_total = 0;
-				int buy_food_total = 0;
 			
-				int sell_metal_total = 0;
-				int sell_crystal_total = 0;
-				int sell_plastic_total = 0;
-				int sell_fuel_total = 0;
-				int sell_food_total = 0;
+				std::vector<int> buy_res (5);
+				std::vector<int> sell_res (5);
 			
 				mysqlpp::Row arr;
 				int lastId = 0;
 				for (mysqlpp::Row::size_type i = 0; i<resSize; i++) 
 				{
 					arr = res.at(i);
+					
 
 					//Markt Level vom Verkäufer laden
 					query << "SELECT ";
@@ -81,12 +105,12 @@ namespace market
 							// Definiert den Rückgabefaktor
 							float return_factor = 1 - (1/(marr["buildlist_current_level"]+1));
 
-							std::string partner_user_nick = get_user_nick($arr['auction_user_id']); //ToDo
-							std::string buyer_user_nick = get_user_nick($arr['auction_current_buyer_id']); //ToDo
-							int delete_date = time + (AUCTION_DELAY_TIME * 3600); //ToDo
+							std::string partner_user_nick = functions::get_user_nick(con_, (int)arr["auction_user_id"]);
+							std::string buyer_user_nick = functions::get_user_nick(con_, (int)arr["auction_current_buyer_id"]);
+							int delete_date = time + (24 * 3600); //ToDo config market_auction_delay_time
 
 							//überprüfen ob geboten wurde, wenn nicht, Waren dem Verkäufer zurückgeben
-							if(arr["auction_current_buyer_id"]=='0')
+							if((int)arr["auction_current_buyer_id"]==0)
 							{
 								// Ress dem besitzer zurückgeben (mit dem faktor)
 								query << "UPDATE ";
@@ -107,7 +131,7 @@ namespace market
 								msg = "Folgende Auktion ist erfolglos abgelaufen und wurde gelöscht.\n\n"; 
             
 								msg += "Start: ";
-								msg += .functions::format_time(arr["auction_start"]);
+								msg += functions::format_time(arr["auction_start"]);
 								msg += "\n";
 								msg += "Ende: ";
 								msg += functions::format_time(arr["auction_end"]);
@@ -115,107 +139,114 @@ namespace market
             
 								msg += "[b]Waren:[/b]\n";
 								msg += "Titan: ";
-								msg += functions::nf(arr["auction_sell_metal"]);
+								msg += functions::nf(std::string(arr["auction_sell_metal"]));
 								msg += "\nSilizium: ";
-								msg += functions::nf(arr["auction_sell_crystal"]);
+								msg += functions::nf(std::string(arr["auction_sell_crystal"]));
 								msg += "\nPVC: ";
-								msg += functions::nf(arr["auction_sell_plastic"]);
+								msg += functions::nf(std::string(arr["auction_sell_plastic"]));
 								msg += "\nTritium: ";
-								msg += functions::nf(arr["auction_sell_fuel"]);
+								msg += functions::nf(std::string(arr["auction_sell_fuel"]));
 								msg += "\nNahrung: ";
-								msg += functions::nf(arr["auction_sell_food"]);
+								msg += functions::nf(std::string(arr["auction_sell_food"]));
 								msg += "\n\n";
             
-								msg += "Du erhälst ",
-								msg += std::string(round($return_factor,2)*100); //ToDo
+								msg += "Du erhälst ";
+								double tmp = functions::s_round(return_factor,2)*100; //ToDo
+								msg += tmp;
 								msg += "% deiner Rohstoffe wieder zurück (abgerundet)!\n\n";
             
 								msg += "Das Handelsministerium";
-								send_msg(arr["auction_user_id"],SHIP_MISC_MSG_CAT_ID,"Auktion beendet",msg); //ToDo
+								functions::send_msg(con_,(int)arr["auction_user_id"],(int)SHIP_MISC_MSG_CAT_ID,"Auktion beendet",msg); //ToDo
 
 								//Auktion löschen
 								query << "DELETE FROM ";
 									query << "market_auction ";
 								query << "WHERE ";
-									query "auction_market_id=" << arr["auction_market_id"] << ";";
+									query << "auction_market_id=" << arr["auction_market_id"] << ";";
 								query.store();		
 								query.reset();
 							}
 					
 							//Jemand hat geboten: Waren zum Versenden freigeben und Nachricht schreiben
-							else if(arr["auction_current_buyer_id"]!='0' and arr["auction_buyable"]=='1')
+							else if((int)arr["auction_current_buyer_id"]!=0 and (int)arr["auction_buyable"]==1)
 							{
 								// Nachricht an Verkäufer
 								msg = "Die Auktion vom ";
 								msg += functions::format_time(arr["auction_start"]);
 								msg += ", welche am ";
 								msg += functions::format_time(arr["auction_end"]);
-								msg += " endete, ist erfolgteich abgelaufen und wird nach ".AUCTION_DELAY_TIME." Stunden gelöscht. Die Waren werden nach wenigen Minuten versendet.\n\nDer Spieler " + buyer_user_nick +" hat von dir folgende Rohstoffe ersteigert:\n\n"; //ToDo
+								msg += " endete, ist erfolgteich abgelaufen und wird nach ";
+								msg += "24"; //ToDo AUCTION_DELAY_TIME
+								msg += " Stunden gelöscht. Die Waren werden nach wenigen Minuten versendet.\n\nDer Spieler ";
+								msg += buyer_user_nick;
+								msg += " hat von dir folgende Rohstoffe ersteigert:\n\n";
             
 								msg += "Titan: ";
-								msg += functions::nf(arr["auction_sell_metal"]).;
+								msg += functions::nf(std::string(arr["auction_sell_metal"]));
 								msg += "\nSilizium: ";
-								msg += functions::nf(arr["auction_sell_crystal"]);
+								msg += functions::nf(std::string(arr["auction_sell_crystal"]));
 								msg += "\nPVC: ";
-								msg += functions::nf(arr["auction_sell_plastic"]);
+								msg += functions::nf(std::string(arr["auction_sell_plastic"]));
 								msg += "\nTritium: ";
-								msg += functions::nf(arr["auction_sell_fuel"]);
+								msg += functions::nf(std::string(arr["auction_sell_fuel"]));
 								msg += "\nNahrung: ";
-								msg += functions::nf(arr["auction_sell_food"]);
+								msg += functions::nf(std::string(arr["auction_sell_food"]));
 								msg += "\n\n";
             
 								msg += "Dies macht dich um folgende Rohstoffe reicher:\n"; 
 								msg += "Titan: ";
-								msg += functions::nf(arr["auction_buy_metal"]).;
+								msg += functions::nf(std::string(arr["auction_buy_metal"]));
 								msg += "\nSilizium: ";
-								msg += functions::nf(arr["auction_buy_crystal"]);
+								msg += functions::nf(std::string(arr["auction_buy_crystal"]));
 								msg += "\nPVC: ";
-								msg += functions::nf(arr["auction_buy_plastic"]);
+								msg += functions::nf(std::string(arr["auction_buy_plastic"]));
 								msg += "\nTritium: ";
-								msg += functions::nf(arr["auction_buy_fuel"]);
+								msg += functions::nf(std::string(arr["auction_buy_fuel"]));
 								msg += "\nNahrung: ";
-								msg += functions::nf(arr["auction_buy_food"]);
+								msg += functions::nf(std::string(arr["auction_buy_food"]));
 								msg += "\n\n";
             
 								msg += "Das Handelsministerium";
-								send_msg(arr["auction_user_id"],SHIP_MISC_MSG_CAT_ID,"Auktion beendet",msg);
+								functions::send_msg(con_,(int)arr["auction_user_id"],(int)SHIP_MISC_MSG_CAT_ID,"Auktion beendet",msg);
 
 								// Nachricht an Käufer
 								msg = "Du warst der höchstbietende in der Auktion vom Spieler " + partner_user_nick + ", welche am ";
 								msg += functions::format_time(arr["auction_end"]);
-								msg += " zu Ende ging.\n";
+								msg += " zu Ende ging.\n\n";
 								msg += "Du hast folgende Rohstoffe ersteigert:\n\n";
 			
 								msg += "Titan: ";
-								msg += functions::nf(arr["auction_sell_metal"]).;
+								msg += functions::nf(std::string(arr["auction_sell_metal"]));
 								msg += "\nSilizium: ";
-								msg += functions::nf(arr["auction_sell_crystal"]);
+								msg += functions::nf(std::string(arr["auction_sell_crystal"]));
 								msg += "\nPVC: ";
-								msg += functions::nf(arr["auction_sell_plastic"]);
+								msg += functions::nf(std::string(arr["auction_sell_plastic"]));
 								msg += "\nTritium: ";
-								msg += functions::nf(arr["auction_sell_fuel"]);
+								msg += functions::nf(std::string(arr["auction_sell_fuel"]));
 								msg += "\nNahrung: ";
-								msg += functions::nf(arr["auction_sell_food"]);
+								msg += functions::nf(std::string(arr["auction_sell_food"]));
 								msg += "\n\n";
             
 								msg += "Dies hat dich folgende Rohstoffe gekostet:\n\n"; 
 				
 								msg += "Titan: ";
-								msg += functions::nf(arr["auction_buy_metal"]).;
+								msg += functions::nf(std::string(arr["auction_buy_metal"]));
 								msg += "\nSilizium: ";
-								msg += functions::nf(arr["auction_buy_crystal"]);
+								msg += functions::nf(std::string(arr["auction_buy_crystal"]));
 								msg += "\nPVC: ";
-								msg += functions::nf(arr["auction_buy_plastic"]);
+								msg += functions::nf(std::string(arr["auction_buy_plastic"]));
 								msg += "\nTritium: ";
-								msg += functions::nf(arr["auction_buy_fuel"]);
+								msg += functions::nf(std::string(arr["auction_buy_fuel"]));
 								msg += "\nNahrung: ";
-								msg += functions::nf(arr["auction_buy_food"]);
+								msg += functions::nf(std::string(arr["auction_buy_food"]));
 								msg += "\n\n"; 
 				
-								msg += "Die Auktion wird nach " + AUCTION_DELAY_TIME + " Stunden gelöscht und die Waren in wenigen Minuten versendet.\n\n"; //ToDo
+								msg += "Die Auktion wird nach ";
+								msg += "24"; //ToDo AUCTION_DELAY_TIME
+								msg += " Stunden gelöscht und die Waren in wenigen Minuten versendet.\n\n";
             
 								msg += "Das Handelsministerium";
-								send_msg(arr["auction_current_buyer_id"],SHIP_MISC_MSG_CAT_ID,"Auktion beendet",msg);
+								functions::send_msg(con_,(int)arr["auction_current_buyer_id"],(int)SHIP_MISC_MSG_CAT_ID,"Auktion beendet",msg);
             
 
 								//Log schreiben, falls dieser Handel regelwidrig ist
@@ -247,38 +278,38 @@ namespace market
 									if (multi_resSize>0 or multi_res2Size>0)
 									{
 										std::string log = "[URL=?page=user&sub=edit&user_id=";
-										log += arr["auction_current_buyer_id"];
+										log += std::string(arr["auction_current_buyer_id"]);
 										log += "][B]";
 										log += buyer_user_nick;
 										log += "[/B][/URL] hat an einer Auktion von [URL=?page=user&sub=edit&user_id=";
-										log += arr["auction_user_id"];
+										log += std::string(arr["auction_user_id"]);
 										log += "][B]";
 										log += partner_user_nick;
 										log += "[/B][/URL] gewonnen:\n\nSchiffe:\n";
-										log += functions::nf(arr["auction_ship_count"]);
+										log += functions::nf(std::string(arr["auction_ship_count"]));
 										log += " ";
-										log += arr["auction_ship_name"];
+										log += std::string(arr["auction_ship_name"]);
 										log += "\n\nRohstoffe:\nTitan: ";
-										log += functions::nf(arr["auction_sell_metal"]);
+										log += functions::nf(std::string(arr["auction_sell_metal"]));
 										log += "\nSilizium: ";
-										log += functions::nf(arr["auction_sell_crystal"]);
+										log += functions::nf(std::string(arr["auction_sell_crystal"]));
 										log += "\PVC: ";
-										log += functions::nf(arr["auction_sell_plastic"]);
+										log += functions::nf(std::string(arr["auction_sell_plastic"]));
 										log += "\Tritium: ";
-										log += functions::nf(arr["auction_sell_fuel"]);
+										log += functions::nf(std::string(arr["auction_sell_fuel"]));
 										log += "\Nahrung: ";
-										log += functions::nf(arr["auction_sell_food"]);
+										log += functions::nf(std::string(arr["auction_sell_food"]));
 										log += "\n\nDies hat ihn folgende Rohstoffe gekostet:\nTitan: ";
-										log += functions::nf(arr["auction_buy_metal"]);
+										log += functions::nf(std::string(arr["auction_buy_metal"]));
 										log += "\nSilizium: ";
-										log += functions::nf(arr["auction_buy_crystal"]);
+										log += functions::nf(std::string(arr["auction_buy_crystal"]));
 										log += "\PVC: ";
-										log += functions::nf(arr["auction_buy_plastic"]);
+										log += functions::nf(std::string(arr["auction_buy_plastic"]));
 										log += "\Tritium: ";
-										log += functions::nf(arr["auction_buy_fuel"]);
+										log += functions::nf(std::string(arr["auction_buy_fuel"]));
 										log += "\Nahrung: ";
-										log += functions::nf(arr["auction_buy_food"]);
-										add_log(10,log,time);
+										log += functions::nf(std::string(arr["auction_buy_food"]));
+										functions::add_log(con_,10,log,time);
 									}
 								}
 
@@ -288,29 +319,29 @@ namespace market
 								log += " hat vom Spieler ";
 								log += partner_user_nick;
 								log += " folgende Waren ersteigert:\n\nRohstoffe:\nTitan: ";
-								log += functions::nf(arr["auction_sell_metal"]);
+								log += functions::nf(std::string(arr["auction_sell_metal"]));
 								log += "\nSilizium: ";
-								log += functions::nf(arr["auction_sell_crystal"]);
+								log += functions::nf(std::string(arr["auction_sell_crystal"]));
 								log += "\PVC: ";
-								log += functions::nf(arr["auction_sell_plastic"]);
+								log += functions::nf(std::string(arr["auction_sell_plastic"]));
 								log += "\Tritium: ";
-								log += functions::nf(arr["auction_sell_fuel"]);
+								log += functions::nf(std::string(arr["auction_sell_fuel"]));
 								log += "\Nahrung: ";
-								log += functions::nf(arr["auction_sell_food"]);
-								log += "\n\nDies hat ihn folgende Rohstoffe gekostet:\nTitan: "
-								log += functions::nf(arr["auction_buy_metal"]);
+								log += functions::nf(std::string(arr["auction_sell_food"]));
+								log += "\n\nDies hat ihn folgende Rohstoffe gekostet:\nTitan: ";
+								log += functions::nf(std::string(arr["auction_buy_metal"]));
 								log += "\nSilizium: ";
-								log += functions::nf(arr["auction_buy_crystal"]);
+								log += functions::nf(std::string(arr["auction_buy_crystal"]));
 								log += "\PVC: ";
-								log += functions::nf(arr["auction_buy_plastic"]);
+								log += functions::nf(std::string(arr["auction_buy_plastic"]));
 								log += "\Tritium: ";
-								log += functions::nf(arr["auction_buy_fuel"]);
+								log += functions::nf(std::string(arr["auction_buy_fuel"]));
 								log += "\Nahrung: ";
-								log += functions::nf(arr["auction_buy_food"]);
+								log += functions::nf(std::string(arr["auction_buy_food"]));
 								log += "\n\nDie Auktion und wird nach ";
-								log += AUCTION_DELAY_TIME;
+								log += "24"; //ToDo AUCTION_DELAY_TIME
 								log += " Stunden gelöscht.";
-								add_log(7,log,time);
+								functions::add_log(con_,7,log,time);
 
 								//Auktion noch eine zeit lang anzeigen, aber unkäuflich machen
 								query << "UPDATE ";
@@ -325,44 +356,46 @@ namespace market
 								query.reset();
 
 								// Verkauftse Roshtoffe summieren für Config
-								sell_metal_total += int(arr["auction_sell_metal"]);
-								sell_crystal_total += int(arr["auction_sell_crystal"]);
-								sell_plastic_total += int(arr["auction_sell_plastic"]);
-								sell_fuel_total += int(arr["auction_sell_fuel"]);
-								sell_food_total += int(arr["auction_sell_food"]);
+								sell_res[0] += int(arr["auction_sell_metal"]);
+								sell_res[1] += int(arr["auction_sell_crystal"]);
+								sell_res[2] += int(arr["auction_sell_plastic"]);
+								sell_res[3] += int(arr["auction_sell_fuel"]);
+								sell_res[4] += int(arr["auction_sell_food"]);
 						
 								// Faktor = Kaufzeit - Verkaufzeit (in ganzen Tagen, mit einem Max. von 7)
 								// Total = Mengen / Faktor
-								int	factor = min( ceil( (time - arr["auction_start"]) / 3600 / 24 ) ,7);
+								int	factor = std::min((int)ceil( (time - arr["auction_start"]) / 3600 / 24 ) ,7);
 						
 								// Summiert gekaufte Rohstoffe für Config
-								buy_metal_total += arr["auction_buy_metal"] / factor;
-								buy_crystal_total += arr["auction_buy_crystal"] / factor;
-								buy_plastic_total += arr["auction_buy_plastic"] / factor;
-								buy_fuel_total += arr["auction_buy_fuel"] /	factor;
-								buy_food_total += arr["auction_buy_food"] / factor;
+								buy_res[0] += arr["auction_buy_metal"] / factor;
+								buy_res[1] += arr["auction_buy_crystal"] / factor;
+								buy_res[2] += arr["auction_buy_plastic"] / factor;
+								buy_res[3] += arr["auction_buy_fuel"] /	factor;
+								buy_res[4] += arr["auction_buy_food"] / factor;
 						
 								// Summiert verkaufte Rohstoffe für Config
-								sell_metal_total += arr["auction_sell_metal"] / factor;
-								sell_crystal_total += arr["auction_sell_crystal"] / factor;
-								sell_plastic_total += arr["auction_sell_plastic"] / factor;
-								sell_fuel_total += arr["auction_sell_fuel"] / factor;
-								sell_food_total += arr["auction_sell_food"] / factor;
+								sell_res[0] += arr["auction_sell_metal"] / factor;
+								sell_res[1] += arr["auction_sell_crystal"] / factor;
+								sell_res[2] += arr["auction_sell_plastic"] / factor;
+								sell_res[3] += arr["auction_sell_fuel"] / factor;
+								sell_res[4] += arr["auction_sell_food"] / factor;
 
 							}
 						
 							// Waren sind gesendet, jetzt nur noch nachricht schreiben und löschendatum festlegen
-							else if(arr["auction_delete_date"]==0 and arr["auction_sent"]==1)
+							else if((int)arr["auction_delete_date"]==0 and (int)arr["auction_sent"]==1)
 							{
 								// Nachricht senden
 								msg = "Die Auktion vom ";
 								msg += functions::format_time(arr["auction_start"]);
 								msg += ", welche am ";
 								msg += functions::format_time(arr["auction_end"]);
-								msg += " endete, ist erfolgreich abgelaufen und wird nach " + AUCTION_DELAY_TIME + " Stunden gelöscht.\n\n";
+								msg += " endete, ist erfolgreich abgelaufen und wird nach ";
+								msg += "24"; //ToDo AUCTION_DELAY_TIME
+								msg += " Stunden gelöscht.\n\n";
 				
 								msg += "Das Handelsministerium";
-								send_msg(arr["auction_user_id"],SHIP_MISC_MSG_CAT_ID,"Auktion abgelaufen",msg); //ToDo
+								functions::send_msg(con_,(int)arr["auction_user_id"],(int)SHIP_MISC_MSG_CAT_ID,"Auktion abgelaufen",msg); //ToDo
 	
 								//Auktion noch eine zeit lang anzeigen, aber unkäuflich machen
 								query << "UPDATE ";
@@ -388,62 +421,9 @@ namespace market
 						}
 					}
 				}
-      
+				
 				// Gekaufte/Verkaufte Rohstoffe in Config-DB speichern für Kursberechnung
-				// Titan
-				query << "UPDATE ";
-					query << "config ";
-				query << "SET ";
-					query << "config_value=config_value+" << round(buy_metal_total) << ", ",
-					query << "config_param1=config_param1+" << round(sell_metal_total) << " ";
-				query << "WHERE ";
-					query << "config_name='market_metal_logger'";
-				query.store();
-				query.reset();
-				
-				// Silizium
-				query << "UPDATE ";
-					query << "config ";
-				query << "SET ";
-					query << "config_value=config_value+" << round(buy_crystal_total) << ", ",
-					query << "config_param1=config_param1+" << round(sell_crystal_total) << " ";
-				query << "WHERE ";
-					query << "config_name='market_crystal_logger'";
-				query.store();
-				query.reset();
-				
-				// PVC
-				query << "UPDATE ";
-					query << "config ";
-				query << "SET ";
-					query << "config_value=config_value+" << round(buy_plastic_total) << ", ",
-					query << "config_param1=config_param1+" << round(sell_plastic_total) << " ";
-				query << "WHERE ";
-					query << "config_name='market_plastic_logger'";
-				query.store();
-				query.reset()
-			
-				// Tritium
-				query << "UPDATE ";
-					query << "config ";
-				query << "SET ";
-					query << "config_value=config_value+" << round(buy_fuel_total) << ", ",
-					query << "config_param1=config_param1+" << round(sell_fuel_total) << " ";
-				query << "WHERE ";
-					query << "config_name='market_fuel_logger'";
-				query.store();
-				query.reset()			
-				
-				// Food
-				query << "UPDATE ";
-					query << "config ";
-				query << "SET ";
-					query << "config_value=config_value+" << round(buy_food_total) << ", ",
-					query << "config_param1=config_param1+" << round(sell_food_total) << " ";
-				query << "WHERE ";
-					query << "config_name='market_food_logger'";
-				query.store();
-				query.reset()			
+				update_config(con_,buy_res, sell_res);				
 			
 			}
 		}
@@ -457,10 +437,11 @@ namespace market
 	{
 
 		//Auktionen Updaten (beenden)
-		MarketHandler::MarketAuctionUpdate(this->con_)
+		MarketHandler::MarketAuctionUpdate();
 
 		std::string msg;
 		std::time_t time = std::time(0);
+		int ship_speed, ship_starttime, ship_landtime;
 		
 		// Ermittelt die Geschwindigkeit des Handelsschiffes
 		mysqlpp::Query query = con_->query();
@@ -471,7 +452,7 @@ namespace market
 		query << "FROM ";
 			query << "ships ";
 		query << "WHERE ";
-			query << "ship_id='16';";	//Define!!!
+			query << "ship_id='" << MARKET_SHIP_ID << "';";
 		mysqlpp::Result res = query.store();		
 		query.reset();	
 		
@@ -484,9 +465,9 @@ namespace market
 			{
 				arr = res.at(0);
 				
-				int ship_speed = int(arr["ship_speed"]);
-				int ship_starttime = int(arr["ship_time2start"]);
-				int ship_landtime = int(arr["ship_time2land"]);
+				ship_speed = int(arr["ship_speed"]);
+				ship_starttime = int(arr["ship_time2start"]);
+				ship_landtime = int(arr["ship_time2land"]);
 			}
 			else
 			{
@@ -503,15 +484,14 @@ namespace market
 			query << "market_ressource ";
 		query << "WHERE ";
 			query << "ressource_buyable='0';";  
-		mysqlpp::Result res = query.store();		
+		res = query.store();		
 		query.reset();	  			
     		
 			
 		if (res) 
 		{
 			int resSize = res.size();
-			mysqlpp::Row arr;
-			
+			std::cout << "updating " << resSize << " market_ress...\n";
 			if (resSize>0)
 			{
 				mysqlpp::Row arr;
@@ -522,11 +502,12 @@ namespace market
 					arr = res.at(i);
 
 					//Flotte zum Verkäufer schicken
-					int launchtime = time(); // Startzeit
-					double distance = calcDistanceByPlanetId(arr["planet_id"],arr["ressource_buyer_planet_id"]);
+					int launchtime = std::time(0); // Startzeit
+					double distance = functions::calcDistanceByPlanetId(con_,arr["planet_id"],arr["ressource_buyer_planet_id"]);
 					int duration = distance / ship_speed * 3600 + ship_starttime + ship_landtime;
 					int landtime = launchtime + duration; // Landezeit
 
+					
 					query << "INSERT INTO fleet ";
 						query << "(fleet_user_id, ";
 						query << "fleet_cell_from, ";
@@ -549,7 +530,7 @@ namespace market
 						query << arr["planet_id"] << ", ";
 						query << launchtime << ", ";
 						query << landtime << ", ";
-						query << FLEET_ACTION_RESS << ", "; //ToDo
+						query << "'" << FLEET_ACTION_RESS << "', ";
 						query << arr["buy_metal"] << ", ";
 						query << arr["buy_crystal"] << ", ";
 						query << arr["buy_plastic"] << ", ";
@@ -557,15 +538,15 @@ namespace market
 						query << arr["buy_food"] << ");";
 					query.store();		
 					query.reset();
-			
+
 					query << "INSERT INTO fleet_ships ";
 						query << "(fs_fleet_id, ";
 						query << "fs_ship_id, ";
 						query << "fs_ship_cnt) ";
 					query << "VALUES ";
 						query << "( ";
-						query << ".mysql_insert_id().",""; //ToDo
-						query << "'16', "; //DEFINE!!!
+						query << "'" << con_->insert_id() << "',";
+						query << "'" << MARKET_SHIP_ID << "', ";
 						query << "'1');";
 					query.store();		
 					query.reset();
@@ -593,7 +574,7 @@ namespace market
 						query << arr["ressource_buyer_planet_id"] << ", ";
 						query << launchtime << ", ";
 						query << landtime << ", ";
-						query << FLEET_ACTION_RESS << ", ";
+						query << "'" << FLEET_ACTION_RESS << "', ";
 						query << arr["sell_metal"] << ", ";
 						query << arr["sell_crystal"] << ", ";
 						query << arr["sell_plastic"] << ", ";
@@ -601,15 +582,15 @@ namespace market
 						query << arr["sell_food"] << ");";
 					query.store();
 					query.reset();
-
+					
 					query << "INSERT INTO fleet_ships ";
 						query << "(fs_fleet_id, ";
 						query << "fs_ship_id, ";
 						query << "fs_ship_cnt) ";
 					query << "VALUES ";
 						query << "( ";
-						query << '".mysql_insert_id()."', //ToDo
-						query << "'16', "; //DEFINE!!!
+						query << "'" << con_->insert_id() << "',";
+						query << "'" << MARKET_SHIP_ID << "', ";
 						query << "'1');";
 					query.store();
 					query.reset();
@@ -624,7 +605,7 @@ namespace market
 				}
 		  	}
 		}
-
+		
 		//
 		// Schiffe
 		//
@@ -634,13 +615,13 @@ namespace market
 			query << "market_ship ";
 		query << "WHERE ";
 			query << "ship_buyable='0';";
-		mysqlpp::Result res = query.store();		
+		res = query.store();		
 		query.reset();	
 		
 		if (res) 
 		{
 			int resSize = res.size();
-			
+			std::cout << "updating " << resSize << " market_ship\n";
 			if (resSize>0)
 			{
 				mysqlpp::Row arr;
@@ -648,11 +629,12 @@ namespace market
 				
 				for (mysqlpp::Row::size_type i = 0; i<resSize; i++) 
 				{
+
 					arr = res.at(i);
 
 					//Flotte zum Verkäufer schicken
 					int launchtime = time; // Startzeit
-					double distance = calcDistanceByPlanetId(arr["planet_id"],arr["ship_buyer_planet_id"]);
+					double distance = functions::calcDistanceByPlanetId(con_,arr["planet_id"],arr["ship_buyer_planet_id"]);
 					int duration = distance / ship_speed * 3600 + ship_starttime + ship_landtime;
 					int landtime = launchtime + duration; // Landezeit
 
@@ -675,14 +657,14 @@ namespace market
 						query << "'0', ";
 						query << arr["cell_id"] << ", ";
 						query << "'0', ";
-						query << arr["planet_id"] << ", ",
+						query << arr["planet_id"] << ", ";
 						query << launchtime << ", ";
 						query << landtime << ", ";
-						query << FLEET_ACTION_RESS << ", ";
-						query << arr["sell_metal"] << ", ";
+						query << "'" << FLEET_ACTION_RESS << "', ";
 						query << arr["ship_costs_metal"] << ", ";
 						query << arr["ship_costs_crystal"] << ", ";
 						query << arr["ship_costs_plastic"] << ", ";
+						query << arr["ship_costs_fuel"] << ", ";
 						query << arr["ship_costs_food"] << ");";
 					query.store();
 					query.reset();
@@ -693,8 +675,8 @@ namespace market
 						query << "fs_ship_cnt) ";
 					query << "VALUES ";
 						query << "( ";
-						query << '".mysql_insert_id()."', //ToDo
-						query << "'16', "; //DEFINE!!!
+						query << "'" << con_->insert_id() << "',";
+						query << "'" << MARKET_SHIP_ID << "', ";
 						query << "'1');";
 					query.store();
 					query.reset();
@@ -719,10 +701,10 @@ namespace market
 						query << "'0', ";
 						query << arr["ship_buyer_cell_id"] << ", ";
 						query << "'0', ";
-						query << arr["ship_buyer_planet_id"] << ", ",
+						query << arr["ship_buyer_planet_id"] << ", ";
 						query << launchtime << ", ";
 						query << landtime << ", ";
-						query << "'mo', "; //DEFINE
+						query << "'" << FLEET_ACTION_RESS << "', ";
 						query << "'0', ";
 						query << "'0', ";
 						query << "'0', ";
@@ -737,7 +719,7 @@ namespace market
 						query << "fs_ship_cnt) ";
 					query << "VALUES ";
 						query << "( ";
-						query << '".mysql_insert_id()."', //ToDo
+						query << "'" << con_->insert_id() << "',";
 						query << arr["ship_id"] << ", ";
 						query << arr["ship_count"] << ");";
 					query.store();
@@ -765,13 +747,13 @@ namespace market
 			query << "auction_buyable='0' ";
 			query << "AND auction_sent='0' ";
 			query << "AND auction_delete_date>" << time << ";";
-			mysqlpp::Result res = query.store();		
+			res = query.store();		
 			query.reset();	
 		
 			if (res) 
 			{
 				int resSize = res.size();
-			
+				std::cout << "updating " << resSize << " market_auction...\n";
 				if (resSize>0)
 				{
 					mysqlpp::Row arr;
@@ -783,7 +765,7 @@ namespace market
 
 					//Flotte zum verkäufer der auktion schicken
 					int launchtime = time; // Startzeit
-					double distance = calcDistanceByPlanetId(arr["auction_planet_id"],arr["auction_current_buyer_planet_id"]);
+					double distance = functions::calcDistanceByPlanetId(con_,arr["auction_planet_id"],arr["auction_current_buyer_planet_id"]);
 					int duration = distance / ship_speed * 3600 + ship_starttime + ship_landtime;
 					int landtime = launchtime + duration; // Landezeit
 
@@ -806,10 +788,10 @@ namespace market
 						query << "'0', ";
 						query << arr["auction_cell_id"] << ", ";
 						query << "'0', ";
-						query << arr["auction_planet_id"] << ", ",
+						query << arr["auction_planet_id"] << ", ";
 						query << launchtime << ", ";
 						query << landtime << ", ";
-						query << "'mo', "; //DEFINE
+						query << "'" << FLEET_ACTION_RESS << "', ";
 						query << arr["auction_buy_metal"] << ", ";
 						query << arr["auction_buy_crystal"] << ", ";
 						query << arr["auction_buy_plastic"] << ", ";
@@ -824,8 +806,8 @@ namespace market
 						query << "fs_ship_cnt) ";
 					query << "VALUES ";
 						query << "( ";
-						query << '".mysql_insert_id()."', //ToDo
-						query << MARKET_SHIP_ID << ", ";
+						query << "'" << con_->insert_id() << "', ";
+						query << "'" << MARKET_SHIP_ID << "', ";
 						query << "'1');";
 					query.store();
 					query.reset();
@@ -850,10 +832,10 @@ namespace market
 						query << "'0', ";
 						query << arr["auction_current_buyer_cell_id"] << ", ";
 						query << "'0', ";
-						query << arr["auction_current_buyer_planet_id"] << ", ",
+						query << arr["auction_current_buyer_planet_id"] << ", ";
 						query << launchtime << ", ";
 						query << landtime << ", ";
-						query << "'mo', "; //DEFINE
+						query << "'" << FLEET_ACTION_RESS << "', ";
 						query << arr["auction_sell_metal"] << ", ";
 						query << arr["auction_sell_crystal"] << ", ";
 						query << arr["auction_sell_plastic"] << ", ";
@@ -869,8 +851,8 @@ namespace market
 						query << "fs_ship_cnt) ";
 					query << "VALUES ";
 						query << "( ";
-						query << '".mysql_insert_id()."', //ToDo
-						query << MARKET_SHIP_ID << ", ";
+						query << "'" << con_->insert_id() << "',";
+						query << "'" << MARKET_SHIP_ID << "', ";
 						query << "'1');";
 					query.store();
 					query.reset();
@@ -898,12 +880,27 @@ namespace market
 		// conf V = Gekaufte Rohstoffe
 		// conf p1 = Verkaufte Rohstoffe
 		// conf p2 = Startwert
-		float metal_tax = round(($conf['market_metal_logger']['v'] + $conf['market_metal_logger']['p2']) / ($conf['market_metal_logger']['p1'] + $conf['market_metal_logger']['p2']),2);
-		float crystal_tax = round(($conf['market_crystal_logger']['v'] + $conf['market_crystal_logger']['p2']) / ($conf['market_crystal_logger']['p1'] + $conf['market_crystal_logger']['p2']),2);
-		float plastic_tax = round(($conf['market_plastic_logger']['v'] + $conf['market_plastic_logger']['p2']) / ($conf['market_plastic_logger']['p1'] + $conf['market_plastic_logger']['p2']),2);
-		float fuel_tax = round(($conf['market_fuel_logger']['v'] + $conf['market_fuel_logger']['p2']) / ($conf['market_fuel_logger']['p1'] + $conf['market_fuel_logger']['p2']),2);
-		float food_tax = round(($conf['market_food_logger']['v'] + $conf['market_food_logger']['p2']) / ($conf['market_food_logger']['p1'] + $conf['market_food_logger']['p2']),2);
-
+		query << "SELECT * ";
+		query << "FROM ";
+		query << "	config ";
+		query << "WHERE ";
+		query << "	 `config_name` LIKE '%logger%'";
+		query << "ORDER BY ";
+		query << "	`config`.`config_id` ASC;";
+		res = query.store();
+		query.reset();
+		
+		mysqlpp::Row row = res.at(0);
+		float metal_tax = functions::s_round((((double)row["config_value"] + (int)row["config_param2"]) / ((int)row["config_param1"] + (int)row["config_param2"])),2);
+		row = res.at(1);
+		float crystal_tax = functions::s_round((((double)row["config_value"] + (int)row["config_param2"]) / ((int)row["config_param1"] + (int)row["config_param2"])),2);
+		row = res.at(2);
+		float plastic_tax = functions::s_round((((double)row["config_value"] + (int)row["config_param2"]) / ((int)row["config_param1"] + (int)row["config_param2"])),2);
+		row = res.at(3);
+		float fuel_tax = functions::s_round((((double)row["config_value"] + (int)row["config_param2"]) / ((int)row["config_param1"] + (int)row["config_param2"])),2);
+		row = res.at(4);
+		float food_tax = functions::s_round((((double)row["config_value"] + (int)row["config_param2"]) / ((int)row["config_param1"] + (int)row["config_param2"])),2);
+		
 		// Update der Kurse
 		// Titan
 		query << "UPDATE ";
@@ -961,8 +958,8 @@ namespace market
 		query << "FROM ";
 			query << "market_ressource ";
 		query << "WHERE ";
-			query << "datum<=(" << time-$conf['market_response_time']['v']*3600*24 << ");"; //ToDo
-		mysqlpp::Result res = query.store();
+			query << "datum<=(" << time-14*3600*24 << ");"; //ToDo $conf['market_response_time']['v']
+		res = query.store();
 		query.reset();
 		
 		if (res) 
@@ -983,23 +980,23 @@ namespace market
 						query << "buildlist_current_level ";
 					query << "FROM ";
 						query << "buildlist ";
-					query << "WHERE ",
+					query << "WHERE ";
 						query << "buildlist_planet_id=" << arr["planet_id"] << " ";
 						query << "AND buildlist_building_id='21' "; //DEFINE!!!
 						query << "AND buildlist_current_level>'0' ";
 						query << "AND buildlist_user_id= " << arr["user_id"] << ";";
-					mysql::Result mres = query.store();
+					mysqlpp::Result mres = query.store();
 					query.reset();
 					
 					if (mres) 
 					{
 						int mresSize = mres.size();
 
-						if (mresSize>0)
+						if (mresSize>0);
 						{
 							mysqlpp::Row marr;
 
-							arr = res.at(0);
+							marr = mres.at(0);
           
 							// Definiert den Rückgabefaktor
 							 float return_factor = 1 - (1/(marr["buildlist_current_level"]+1));
@@ -1008,11 +1005,11 @@ namespace market
 							query << "UPDATE ";
 								query << "planets ";
 							query << "SET ";
-								query << "planet_res_metal=planet_res_metal+" << floor(int(arr["sell_metal"])*return_factor)) << ", ";
-								query << "planet_res_crystal=planet_res_crystal+" << floor(int(arr["sell_crystal"])*return_factor)) << ", ";
-								query << "planet_res_plastic=planet_res_plastic+" << floor(int(arr["sell_plastic"])*return_factor)) << ", ";
-								query << "planet_res_fuel=planet_res_fuel+" << floor(int(arr["sell_fuel"])*return_factor)) << ", ";
-								query << "planet_res_food=planet_res_food+" << floor(int(arr["sell_food"])*return_factor)) << " ";
+								query << "planet_res_metal=planet_res_metal+" << floor(int(arr["sell_metal"])*return_factor) << ", ";
+								query << "planet_res_crystal=planet_res_crystal+" << floor(int(arr["sell_crystal"])*return_factor) << ", ";
+								query << "planet_res_plastic=planet_res_plastic+" << floor(int(arr["sell_plastic"])*return_factor) << ", ";
+								query << "planet_res_fuel=planet_res_fuel+" << floor(int(arr["sell_fuel"])*return_factor) << ", ";
+								query << "planet_res_food=planet_res_food+" << floor(int(arr["sell_food"])*return_factor) << " ";
 							query << "WHERE ";
 								query << "planet_id=" << arr["planet_id"] << " ";
 								query << "AND planet_user_id=" << arr["user_id"] << ";";
@@ -1021,41 +1018,41 @@ namespace market
 
 							// Nachricht senden
 							msg = "Folgendes Rohstoffangebot wurde nicht innerhalb von ";
-							msg += conf['market_response_time']['v']; //ToDo
+							msg += "14"; //ToDo conf['market_response_time']['v']
 							msg += " Tagen gekauft und deshalb gelöscht.\n\n"; 
                     
 							msg += "[b]Angebot:[/b]\n";
 							msg += "Titan: ";
-							msg += functions::nf(arr["sell_metal"]).;
+							msg += functions::nf(std::string(arr["sell_metal"]));
 							msg += "\nSilizium: ";
-							msg += functions::nf(arr["sell_crystal"]);
+							msg += functions::nf(std::string(arr["sell_crystal"]));
 							msg += "\nPVC: ";
-							msg += functions::nf(arr["sell_plastic"]);
+							msg += functions::nf(std::string(arr["sell_plastic"]));
 							msg += "\nTritium: ";
-							msg += functions::nf(arr["sell_fuel"]);
+							msg += functions::nf(std::string(arr["sell_fuel"]));
 							msg += "\nNahrung: ";
-							msg += functions::nf(arr["sell_food"]);
+							msg += functions::nf(std::string(arr["sell_food"]));
 							msg += "\n\n";
           
 							msg += "[b]Preis:[/b]\n";
 							msg += "Titan: ";
-							msg += functions::nf(arr["buy_metal"]).;
+							msg += functions::nf(std::string(arr["buy_metal"]));
 							msg += "\nSilizium: ";
-							msg += functions::nf(arr["buy_crystal"]);
+							msg += functions::nf(std::string(arr["buy_crystal"]));
 							msg += "\nPVC: ";
-							msg += functions::nf(arr["buy_plastic"]);
+							msg += functions::nf(std::string(arr["buy_plastic"]));
 							msg += "\nTritium: ";
-							msg += functions::nf(arr["buy_fuel"]);
+							msg += functions::nf(std::string(arr["buy_fuel"]));
 							msg += "\nNahrung: ";
-							msg += functions::nf(arr["buy_food"]);
+							msg += functions::nf(std::string(arr["buy_food"]));
 							msg += "\n\n";
           
 							msg += "Du erhälst ";
-							msg += round($return_factor,2)*100; //ToDo
+							msg += functions::s_round(return_factor,2)*100; //ToDo
 							msg += "% deiner Rohstoffe wieder zurück (abgerundet)!\n\n";
           
 							msg += "Das Handelsministerium";
-							send_msg(arr["user_id"],SHIP_MISC_MSG_CAT_ID,"Angebot gelöscht",msg); //ToDo
+							functions::send_msg(con_,(int)arr["user_id"],(int)SHIP_MISC_MSG_CAT_ID,"Angebot gelöscht",msg); //ToDo
 
 							// Angebot löschen
 							query << "DELETE FROM ";
@@ -1077,8 +1074,8 @@ namespace market
 		query << "FROM ";
 			query << "market_ship ";
 		query << "WHERE ";
-			query << "datum<=(" << time-conf['market_response_time']['v']*3600*24 << ");"); //ToDo
-		mysqlpp::Result res = query.store();
+			query << "datum<=(" << time-14*3600*24 << ");"; //ToDo conf['market_response_time']['v']
+		res = query.store();
 		query.reset();
 		
 		if (res) 
@@ -1107,7 +1104,7 @@ namespace market
 					mysqlpp::Result mres = query.store();
 					query.reset();
 					
-					mysqlpp:Row marr;
+					mysqlpp::Row marr;
 					
 					marr = mres.at(0);
 
@@ -1118,43 +1115,43 @@ namespace market
 					query << "UPDATE ";
 						query << "shiplist ";
 					query << "SET ";
-						query << "shiplist_count=shiplist_count+" << floor(int(arr["ship_count"])*return_factor)) << " "; 
+						query << "shiplist_count=shiplist_count+" << floor(int(arr["ship_count"])*return_factor) << " "; 
 					query << "WHERE "; 
 						query << "shiplist_user_id=" << arr["user_id"] << " "; 
-						query << "AND shiplist_planet_id=" << arr["planet_id"] << " ", 
+						query << "AND shiplist_planet_id=" << arr["planet_id"] << " "; 
 						query << "AND shiplist_ship_id=" << arr["ship_id"] << ";";
 					query.store();
 					query.reset();
 
 					// Nachricht senden
 					msg = "Folgendes Schiffsangebot wurde nicht innerhalb von ";
-					msg += conf['market_response_time']['v']; //ToDo
+					msg += "14"; //ToDo conf['market_response_time']['v']
 					msg += " Tagen gekauft und deshalb gelöscht.\n\n"; 
                     
 					msg +=std::string(arr["ship_name"]);
 					msg += ": ";
-					msg += functions::nf(arr["ship_count"]); //ToDo
+					msg += functions::nf(std::string(arr["ship_count"]));
 					msg += "\n\n";  
                   
 					msg += "[b]Preis:[/b]\n";
 					msg += "Titan: ";
-					msg += functions::nf(arr["ship_costs_metal"]).;
+					msg += functions::nf(std::string(arr["ship_costs_metal"]));
 					msg += "\nSilizium: ";
-					msg += functions::nf(arr["ship_costs_crystal"]);
+					msg += functions::nf(std::string(arr["ship_costs_crystal"]));
 					msg += "\nPVC: ";
-					msg += functions::nf(arr["ship_costs_plastic"]);
+					msg += functions::nf(std::string(arr["ship_costs_plastic"]));
 					msg += "\nTritium: ";
-					msg += functions::nf(arr["ship_costs_fuel"]);
+					msg += functions::nf(std::string(arr["ship_costs_fuel"]));
 					msg += "\nNahrung: ";
-					msg += functions::nf(arr["ship_costs_food"]);
+					msg += functions::nf(std::string(arr["ship_costs_food"]));
 					msg += "\n\n";
           
 					msg += "Du erhälst ";
-					msg += round(return_factor,2)*100); //ToDo
+					msg += functions::s_round(return_factor,2)*100; //ToDo
 					msg += "% deiner Schiffe wieder zurück (abgerundet)!\n\n";
           
 					msg += "Das Handelsministerium";
-					send_msg(arr["user_id"],SHIP_MISC_MSG_CAT_ID,"Angebot gelöscht",msg);
+					functions::send_msg(con_,(int)arr["user_id"],(int)SHIP_MISC_MSG_CAT_ID,"Angebot gelöscht",msg);
 
 					// Angebot löschen
 					query << "DELETE FROM ";

@@ -1,4 +1,6 @@
 #include <iostream>
+#include <string>
+#include <sstream>
 
 #include <mysql++/mysql++.h>
 
@@ -6,6 +8,41 @@
 
 namespace functions
 {
+
+	std::string get_user_nick(mysqlpp::Connection* con_, int pid)
+	{
+		mysqlpp::Query query = con_->query();
+		query << "SELECT ";
+			query << "user_nick ";
+		query << "FROM ";
+			query << "users ";
+		query << "WHERE ";
+			query << "user_id='" << pid << "';";
+		mysqlpp::Result res = query.store();		
+		query.reset();
+
+		if (res)
+		{
+			int resSize = res.size();			
+    	
+			if (resSize>0)
+			{
+				mysqlpp::Row row;
+				row = res.at(0);
+				return (std::string(row["user_nick"]));
+			}
+			else
+			{
+				return "<i>Unbekannter Benutzer</i>";
+			}
+		}
+		else
+		{
+			return "<i>Unbekannter Benutzer</i>";
+		}
+	}
+    
+	 
 	int getSolarPowerBonus(int t_min, int t_max)
 	{
 		int v = floor((t_max + t_min)/4);
@@ -80,6 +117,31 @@ namespace functions
 		return(value);
 	}
 	
+	void send_msg(mysqlpp::Connection* con, int user_id, int msg_type, std::string subject, std::string text)
+	{
+		std::cout << "->adding Message to db\n";
+		
+		mysqlpp::Query query = con->query();
+		query << "INSERT INTO ";
+			query << "messages ";
+				query << "(message_user_from, ";
+				query << "message_user_to, ";
+				query << "message_timestamp, ";
+				query << "message_cat_id, ";
+				query << "message_subject, ";
+				query << "message_text) ";
+			query << "VALUES ";
+				query << "('0', '";
+				query << user_id << "', '";
+				query << time(0) << "', '";
+				query << msg_type << "', '";
+				query << subject << "', '";
+				query << text << "');";
+		query.store();
+		query.reset();
+	
+	}
+	
 	void add_log(mysqlpp::Connection* con_, int log_cat, std::string log_text, std::time_t log_timestamp)
 	{
 		if (log_timestamp==0)
@@ -96,7 +158,7 @@ namespace functions
 			query << "log_realtime, ";
 			query << "log_text) ";
 		query << "VALUES ";
-			query << "('" << log_cat << ", ";
+			query << "('" << log_cat << "', ";
 		 	query << "'" << log_timestamp << "', ";
 		 	query << "'" << time << "', ";
 		 	query << "'" << log_text << "');"; //addslashes(log_text)
@@ -104,7 +166,7 @@ namespace functions
 		query.reset();
 	}
 	
-	double round(float number, int precision)
+	double s_round(float number, int precision)
 	{
 		double temp1, temp2, temp3;
 		

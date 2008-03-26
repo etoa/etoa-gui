@@ -3,6 +3,8 @@
 
 #include <mysql++/mysql++.h>
 #include <math.h>
+#include <time.h>
+#include <algorithm>
 
 #include "PlanetManager.h"
 #include "../planet/Planet.h"
@@ -13,13 +15,13 @@ namespace planet
 	PlanetManager::PlanetManager(mysqlpp::Connection* con, std::vector<int>* planetIds)
 	{
 		this->con_ = con;
-		std::vector<int>* planetIds_ = planetIds;
+		//std::vector<int>* planetIds_ = planetIds;
 		std::cout << "PlanetManager initialized...\n";
 	}
 	
 	void PlanetManager::updateValues(std::vector<int>* planetIds)
 	{
-		
+		std::setprecision(18);
 		std::vector<int>* planetIds_ = planetIds;
 		for (int i=0; i<planetIds_->size(); i++)
 		{
@@ -28,6 +30,7 @@ namespace planet
 			int fieldsExtra = 0;
 			std::vector<int> store (6);
 			std::vector<double> cnt (8);
+			std::vector<double> ressource (7);
 			
 			mysqlpp::Query query = con_->query();
 			query << "SELECT ";
@@ -93,10 +96,11 @@ namespace planet
 			updateFields(planetId, fieldsUsed, fieldsExtra);
 			updateStorage(planetId, store);
 			updateProductionRates(planetId, cnt, row);
-			save(planetId, store, cnt, fieldsUsed, fieldsExtra);
-			std::cout << fieldsUsed << ":" << fieldsExtra << ":" << store[0] << ":" << cnt[0] << "\n";
+			updateEconomy(planetId, row, ressource);
+			save(planetId, store, cnt, ressource, fieldsUsed, fieldsExtra);
 		}
-				
+		
+		std::cout << "Updated " << planetIds_->size() << " Planets\n";
 	}
 
 	
@@ -212,12 +216,12 @@ namespace planet
 				{
 					srow = sres.at(i);
 					int level = srow["buildlist_current_level"]-1;
-					store[0] += functions::round(srow["building_store_metal"] * pow(srow["building_store_factor"],level));
-					store[1] += functions::round(srow["building_store_crystal"] * pow(srow["building_store_factor"],level));
-					store[2] += functions::round(srow["building_store_plastic"] * pow(srow["building_store_factor"],level));
-					store[3] += functions::round(srow["building_store_fuel"] * pow(srow["building_store_factor"],level));
-					store[4] += functions::round(srow["building_store_food"] * pow(srow["building_store_factor"],level));
-					store[5] += functions::round(srow["building_people_place"] * pow(srow["building_store_factor"],level));
+					store[0] += functions::s_round(srow["building_store_metal"] * pow(srow["building_store_factor"],level));
+					store[1] += functions::s_round(srow["building_store_crystal"] * pow(srow["building_store_factor"],level));
+					store[2] += functions::s_round(srow["building_store_plastic"] * pow(srow["building_store_factor"],level));
+					store[3] += functions::s_round(srow["building_store_fuel"] * pow(srow["building_store_factor"],level));
+					store[4] += functions::s_round(srow["building_store_food"] * pow(srow["building_store_factor"],level));
+					store[5] += functions::s_round(srow["building_people_place"] * pow(srow["building_store_factor"],level));
 				}
 			}
 		}
@@ -338,13 +342,6 @@ namespace planet
 			cnt[4] = floor(cnt[4] * cnt[6] / cnt[7]);
 		}
 
-		// Berechnet noch Bewohnerproduktion (Dieser Wert ist nur für die Wirtschaftsübersicht zur Speicherberechnung)
-		cnt[5] = 1.1 + row["planet_type_f_population"] +row["race_f_population"] + row["sol_type_f_population"] -3; //$conf['people_multiply']['v']
-		cnt[5]= row["planet_people"]/50 * (cnt[5]);
-		if(cnt[5]<=3)
-		{
-			cnt[5]=3;
-		}
 
 		cnt[0] = floor(cnt[0]);
 		cnt[1] = floor(cnt[1]);
@@ -357,40 +354,257 @@ namespace planet
 		/**
 		* Saves updated content
 		*/
-	void PlanetManager::save(int planetId, std::vector<int>& store, std::vector<double>& cnt, int fieldsUsed, int fieldsExtra)
+	void PlanetManager::save(int planetId, std::vector<int>& store, std::vector<double>& cnt, std::vector<double>& ressource, int fieldsUsed, int fieldsExtra)
 	{
+		std::time_t time = std::time(0);
 		mysqlpp::Query query = con_->query();
+		query << std::setprecision(18);
 		query << "UPDATE ";
 			query << "planets ";
 		query << "SET ";
-			query << "planet_store_metal=" << store[0] << ", ";
-			query << "planet_store_crystal=" << store [1] << ", ";
-			query << "planet_store_plastic=" << store[2] << ", ";
-			query << "planet_store_fuel=" << store[3] << ", ";
-			query << "planet_store_food=" << store[4] << ", ";
-			query << "planet_people_place=" << store[5] << ", ";
-			query << "planet_fields_used=" << fieldsUsed << ", ";
 			query << "planet_fields_extra=" << fieldsExtra << ", ";
+			query << "planet_fields_used=" << fieldsUsed << ", ";
+			query << "planet_res_metal='" << ressource[0] <<"', ";
+			query << "planet_res_crystal='" << ressource[1] <<"', ";
+			query << "planet_res_plastic='" << ressource[2] <<"', ";
+			query << "planet_res_fuel='" << ressource[3] <<"', ";
+			query << "planet_res_food='" << ressource[4] <<"', ";
+			query << "planet_use_power=" << cnt[7] << ", ";
+			query << "planet_last_updated='" << time << "', ";
 			query << "planet_prod_metal=" << cnt[0] << ", ";
 			query << "planet_prod_crystal=" << cnt[1] << ", ";
 			query << "planet_prod_plastic=" << cnt[2] << ", ";
 			query << "planet_prod_fuel=" << cnt[3] << ", ";
 			query << "planet_prod_food=" << cnt[4] << ", ";
 			query << "planet_prod_power=" << cnt[6] << ", ";
-			query << "planet_prod_people=" << cnt[5] << ", ";
-			query << "planet_use_power=" << cnt[7] << " ";      	
+			query << "planet_prod_people=" << (int)ressource[6] << ", ";
+			query << "planet_store_metal=" << store[0] << ", ";
+			query << "planet_store_crystal=" << store [1] << ", ";
+			query << "planet_store_plastic=" << store[2] << ", ";
+			query << "planet_store_fuel=" << store[3] << ", ";
+			query << "planet_store_food=" << store[4] << ", ";
+			query << "planet_people='" << ressource[5] <<"', ";
+			query << "planet_people_place=" << store[5] << " ";
+     	query << "WHERE ";
+			query << "planet_id='" << planetId << "';";
+		query.store();
+		query.reset();
+	}
+	
+	
+		void PlanetManager::saveRes(int planetId, std::vector<double>& ressource)
+	{
+		std::time_t time = std::time(0);
+
+		mysqlpp::Query query = con_->query();
+		query << std::setprecision(18);
+		query << "UPDATE ";
+			query << "planets ";
+		query << "SET ";
+			query << "planet_res_metal='" << ressource[0] <<"', ";
+			query << "planet_res_crystal='" << ressource[1] <<"', ";
+			query << "planet_res_plastic='" << ressource[2] <<"', ";
+			query << "planet_res_fuel='" << ressource[3] <<"', ";
+			query << "planet_res_food='" << ressource[4] <<"', ";
+			query << "planet_last_updated='" << time << "', ";
+			query << "planet_prod_people=" << (int)ressource[6] << ", ";
+			query << "planet_people='" << ressource[5] <<"' ";
      	query << "WHERE ";
 			query << "planet_id='" << planetId << "';";
 		query.store();
 		query.reset();
 	}
 
-	void PlanetManager::updateEconomy()
+	void PlanetManager::updateEconomy(int planetId, mysqlpp::Row& row, std::vector<double>& ressource)
 	{
-		
+		std::time_t time = std::time(0);
+		// Ressourcen und Bewohner updaten
+		double birth_rate, pmetal, pcrystal, pplastic, pfuel, pfood, ppeople;
+		double prodMetal, prodCrystal, prodPlastic, prodFuel, prodFood;
+
+
+		int t = time - int(row["planet_last_updated"]);
+		pmetal = (double)row["planet_res_metal"];
+		pcrystal = (double)row["planet_res_crystal"];
+		pplastic = (double)row["planet_res_plastic"];
+		pfuel = (double)row["planet_res_fuel"];
+		pfood = (double)row["planet_res_food"];
+		ppeople = (double)row["planet_people"];
+		prodMetal = (double)row["planet_prod_metal"];
+		prodCrystal = (double)row["planet_prod_crystal"];
+		prodPlastic = (double)row["planet_prod_plastic"];
+		prodFuel = (double)row["planet_prod_fuel"];
+		prodFood = (double)row["planet_prod_food"];
+
+		if (int(row["planet_store_metal"]) > (pmetal+(prodMetal/3600)*t))
+			ressource[0] = pmetal + (prodMetal/3600.000000)*t;
+		else if (int(row["planet_store_metal"]) > pmetal)
+			ressource[0] = int(row["planet_store_metal"]);
+		else
+			ressource[0] = pmetal;
+
+		if (int(row["planet_store_crystal"]) > (pcrystal+(prodCrystal/3600)*t))
+			ressource[1] = pcrystal + (prodCrystal/3600)*t;
+		else if (int(row["planet_store_crystal"]) > pcrystal)
+			ressource[1] = int(row["planet_store_crystal"]);
+		else
+			ressource[1] = pcrystal;
+
+		if (int(row["planet_store_plastic"]) > (pplastic+(prodPlastic/3600)*t))
+			ressource[2] = pplastic + (prodPlastic/3600)*t;
+		else if (int(row["planet_store_plastic"]) > pplastic)
+			ressource[2] = int(row["planet_store_plastic"]);
+		else
+			ressource[2] = pplastic;
+
+		if (int(row["planet_store_fuel"]) > (pfuel+(prodFuel/3600)*t))
+			ressource[3] = pfuel + (prodFuel/3600)*t;
+		else if (int(row["planet_store_fuel"]) > pfuel)
+			ressource[3] = int(row["planet_store_fuel"]);
+		else
+			ressource[3] = pfuel;
+
+		if (int(row["planet_store_food"]) > (pfood+(prodFood/3600)*t))
+			ressource[4] = pfood + (prodFood/3600)*t;
+		else if (int(row["planet_store_food"]) > pfood)
+			ressource[4] = int(row["planet_store_food"]);
+		else
+			ressource[4] = pfood;
+
+		birth_rate = 1.1 + float(row["planet_type_f_population"]) +float(row["race_f_population"]) + float(row["sol_type_f_population"]) -3;
+		ressource[6] = ppeople/50 * birth_rate;
+		if(ressource[6]<=3)
+		{
+			ressource[6]=3;
+		}
+		if (ppeople == 0 && int(row["planet_user_main"])==1)
+		{
+			ressource[5] = 1;
+		}
+		if (int(row["planet_people_place"]) > (ppeople+(ressource[6]/3600*t)))
+		{
+			ressource[5] = ppeople + (ressource[6]/3600)*t;
+		}
+		else if (int(row["planet_people_place"]) < ppeople)
+		{
+			ressource[5] = (double)row["planet_people_place"];
+		}
+
 	}
 	
-
+	void PlanetManager::updateGasPlanets()
+	{
+		std::time_t time = std::time(0);
+				
+		mysqlpp::Query query = con_->query();
+		query << "SELECT ";
+			query << "planet_id, ";
+			query << "planet_res_fuel, ";
+			query << "planet_fields, ";
+			query << "planet_last_updated ";
+		query << "FROM ";
+			query << "planets ";
+		query << "WHERE ";
+			query << "planet_type_id='7';"; //ToDo $conf['gasplanet']['v']
+		mysqlpp::Result res = query.store();
+		query.reset();
+		
+		if (res) 
+		{
+			int resSize = res.size();
+			if (resSize>0)
+			{
+				mysqlpp::Row row;
+				double pfuel, pSize;
+				for (mysqlpp::Row::size_type i = 0; i<resSize; i++) 
+				{
+					row = res.at(i);
+					int last = row["planet_last_updated"];
+					if (last == 0) last = time;
+					double tlast = (time-last)*10000;
+					tlast /= 3600;
+					pfuel = (double)row["planet_res_fuel"];
+					tlast += pfuel;
+					
+					double pSize = 10000*int(row["planet_fields"]);
+					double fuel = std::min(tlast,pSize); //ToDo Gas param1 + 2
+					
+					query << std::setprecision(18);
+					query << "UPDATE ";
+						query << "planets ";
+					query << "SET ";
+						query << "planet_res_fuel='" << fuel << "', ";
+						query << "planet_last_updated='" << time << "' ";
+					query << "WHERE ";
+						query << "planet_id='" << row["planet_id"] << "';";
+					query.store();
+					query.reset();
+				}
+			}
+		std::cout << "Updated " << resSize << " Nebulaplanets\n";
+		}
+	}
+	
+	
+	void PlanetManager::updateUserPlanets()
+	{
+		std::time_t ptime = std::time(0) - 10;
+		std::time_t utime = std::time(0) - 2400;
+		mysqlpp::Query query = con_->query();
+		query << "SELECT ";
+			query << "	  planets.*, ";
+			query << "    races.race_f_population, ";
+			query << "    sol_types.type_f_population as sol_type_f_population, ";
+			query << "    planet_types.type_f_population as planet_type_f_population ";
+			query << "FROM  ";
+			query << "  ( ";
+			query << "  	( ";
+			query << "			( ";
+			query << "					planets ";
+			query << "						INNER JOIN  ";
+			query << "            	planet_types ";
+			query << "            ON planets.planet_type_id = planet_types.type_id ";
+			query << "            AND planets.planet_last_updated<'"<< ptime << "' ";
+			query << "				) ";
+			query << "        INNER JOIN  ";
+			query << "        (	 ";
+			query << "        	space_cells ";
+			query << "            INNER JOIN sol_types ON space_cells.cell_solsys_solsys_sol_type = sol_types.type_id ";
+			query << "        ) ";
+			query << "        ON planets.planet_solsys_id = space_cells.cell_id ";
+			query << "			) ";
+			query << "  		INNER JOIN  ";
+			query << "  			users  ";
+			query << "  		ON planets.planet_user_id = users.user_id ";
+			query << "            AND users.user_acttime > '" << utime << "' ";
+			query << ") ";
+			query << "INNER JOIN  ";
+			query << "	races  ";
+			query << "ON users.user_race_id = races.race_id ";
+		mysqlpp::Result res = query.store();		
+			query.reset();
+			
+				
+		if (res)
+		{
+			int resSize = res.size();
+			std::vector<double> ressource (8);
+			if (resSize>0)
+			{
+				mysqlpp::Row row;
+				for (mysqlpp::Row::size_type i = 0; i<resSize; i++) 
+				{ 
+					row = res.at(i);
+					int id = int(row["planet_id"]);
+					updateEconomy(id, row, ressource);
+					saveRes(id, ressource);
+				}
+			}
+			
+			std::cout << "Updated " << resSize << " Userplanets\n";
+		}
+	}
+		
 
 
 /*

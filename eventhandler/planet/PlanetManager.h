@@ -14,11 +14,14 @@ namespace planet
 		PlanetManager(mysqlpp::Connection* con, std::vector<int>* planetIds);	
 
 		void updateValues(std::vector<int>* planetIds);
-		void updateEconomy();
+		void updateEconomy(int planetId, mysqlpp::Row& row, std::vector<double>& ressource);
 		void updateFields(int planetId, int& fieldsUsed, int& fieldsExtra);
-		void PlanetManager::updateStorage(int planetId, std::vector<int>& store);
-		void PlanetManager::updateProductionRates(int planetId, std::vector<double>& cnt, mysqlpp::Row& row);
-		void PlanetManager::save(int planetId, std::vector<int>& store, std::vector<double>& cnt, int fieldsUsed, int fieldsExtra);
+		void updateStorage(int planetId, std::vector<int>& store);
+		void updateProductionRates(int planetId, std::vector<double>& cnt, mysqlpp::Row& row);
+		void save(int planetId, std::vector<int>& store, std::vector<double>& cnt, std::vector<double>& ressource, int fieldsUsed, int fieldsExtra);
+		void updateGasPlanets();
+		void PlanetManager::updateUserPlanets();
+		void saveRes(int planetId, std::vector<double>& ressource);
 
 	private:
 		mysqlpp::Connection* con_;

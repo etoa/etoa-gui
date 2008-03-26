@@ -5,10 +5,10 @@
 #include <time.h>
 #include <math.h>
 #include <map>
-#include <sstream>
 
 namespace functions //ToDo addslahes(std::string)
 {
+	
 	/**
 	* Liefet den Bonus durch die Temparatur 
 	*
@@ -16,6 +16,14 @@ namespace functions //ToDo addslahes(std::string)
 	* @author Glaubinix
 	*/
 	int getSolarPowerBonus(int t_min, int t_max);
+	
+	/**
+	* Liefet den Usernamen  
+	*
+	* @param int uid User ID 
+	* @author Glaubinix
+	*/
+	std::string get_user_nick(mysqlpp::Connection* con_, int pid);
 	
 	/**
 	* Formatiert ein Datum 
@@ -32,6 +40,17 @@ namespace functions //ToDo addslahes(std::string)
 	* @author Glaubinix
 	*/
 	std::string nf(std::string  value);
+
+	/**
+	* Speichert Nachricht in die Tabelle
+	*
+	* @param int user_id 
+	* @param int msg_type Kategorie
+	* @param string subject
+	* @param string text
+	* @author Glaubinix
+	*/	
+	void send_msg(mysqlpp::Connection* con,  int user_id, int msg_type, std::string subject, std::string text);
 	
 	/**
 	* Speichert Daten in die Log-Tabelle
@@ -50,7 +69,7 @@ namespace functions //ToDo addslahes(std::string)
 	* @param int precision Anzahl Nachkommastellen
 	* @author Glaubinix
 	*/
-	double round(float number, int precision=0);
+	double s_round(float number, int precision=0);
 	
 	/**
 	* Liefert die Distance zwischen 2 Planeten

@@ -54,7 +54,7 @@ namespace def
 	  				if ((int)arr["queue_cnt"]>0)
 	  				{
 	  					DefList::add(this->con_,
-	  												(int)arr["planet_id"], 
+	  												(int)arr["queue_planet_id"], 
 	  												(int)arr["queue_user_id"],
 	  												(int)arr["queue_def_id"],
 	  												(int)arr["queue_cnt"]);
@@ -68,7 +68,7 @@ namespace def
 	  				changes_=true;
 	  				int obj_cnt = (int)arr["queue_cnt"] - (int)ceil((double)((int)arr["queue_endtime"] - time)/(int)arr["queue_objtime"]);
   					DefList::add(this->con_,
-  												(int)arr["planet_id"], 
+  												(int)arr["queue_planet_id"], 
   												(int)arr["queue_user_id"],
   												(int)arr["queue_def_id"],
   												(int)obj_cnt);	  				
@@ -83,7 +83,7 @@ namespace def
 	  			}	      	
 		      	
 	      	// Make sure there are no duplicate planet id's
-	      	int pid = (int)arr["buildlist_planet_id"];
+	      	int pid = (int)arr["queue_planet_id"];
 	      	if (pid!=lastId)
 	      	{
 	      		this->changedPlanets_.push_back(pid);

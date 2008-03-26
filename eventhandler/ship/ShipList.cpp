@@ -14,8 +14,8 @@ namespace ship
   	<< "	shiplist "
   	<< "WHERE "
   	<< "	shiplist_user_id=" << userId <<" "
-  	<< "	shiplist_planet_id=" << planetId <<" "
-  	<< "	shiplist_ship_id=" << shipId <<";";
+  	<< "	AND shiplist_planet_id=" << planetId <<" "
+  	<< "	AND shiplist_ship_id=" << shipId <<";";
     mysqlpp::Result res = query.store();		
 		query.reset();
 

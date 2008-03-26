@@ -14,8 +14,8 @@ namespace def
   	<< "	deflist "
   	<< "WHERE "
   	<< "	deflist_user_id=" << userId <<" "
-  	<< "	deflist_planet_id=" << planetId <<" "
-  	<< "	deflist_def_id=" << defId <<";";
+  	<< "	AND deflist_planet_id=" << planetId <<" "
+  	<< "	AND deflist_def_id=" << defId <<";";
     mysqlpp::Result res = query.store();		
 		query.reset();
 

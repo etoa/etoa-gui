@@ -28,6 +28,7 @@
 #include <iomanip>
 #include <cstdlib>	// For system commands
 #include <vector>
+#include <map>
 
 #include <mysql++/mysql++.h>
 
@@ -40,41 +41,43 @@
 #include "planet/PlanetManager.h"
 #include "planet/Planet.h"
 #include "functions/Functions.h";
+#include "config/ConfigHandler.h";
+#include "market/MarketHandler.h";
 
 using namespace std;
-
-// DB-Constants (ugly!!!)
-//const char* DB_SERVER = "";
-//const char* DB_NAME = "";
-//const char* DB_USER = "";
-//const char* DB_PASSWORD = "";
-
-// DB-Constants (ugly!!!)
-const char* DB_SERVER = "localhost";
-const char* DB_NAME = "etoa";
-const char* DB_USER = "root";
-const char* DB_PASSWORD = "";
 
 float minLoopDuration = 1;	// Minimal loop duration
 
 main(int argc, char *argv[])
 {
-	mysqlpp::Connection con(DB_NAME,DB_SERVER,DB_USER,DB_PASSWORD);
-	// TODO: Error handling
+	std::cout << argv[1] << "\n";
 
+	mysqlpp::Connection con(argv[4],argv[1],argv[2],argv[3]); //NAME,SERVER,USER;PWD
+	// TODO: Error handling
+	//Config* Config::_instance = 0; /*
+	std::time_t mtime;
 	// Main loop
 	while (true)
 	{	
+		//Config::instance ()->loadConfig ();
+		
+		double dif;
 		// Graphical bling-bling
 		system("clear");
 		cout << "----------------------------------------------------------------\n";
 		cout << "- EtoA Eventhandler, (C) 2007 by EtoA Gaming, Time: "<< std::time(0) <<" -\n";
 		cout << "----------------------------------------------------------------\n\n";
 		
-
 		/**
 		* Start with event handling
 		*/
+		if ((mtime+300)<std::time(0))
+		{
+			market::MarketHandler* mh = new market::MarketHandler(&con);
+			mh->update();
+			mtime = std::time(0);
+		}
+		
 		building::BuildingHandler* bh = new building::BuildingHandler(&con);
 		bh->update();  
 
@@ -114,20 +117,18 @@ main(int argc, char *argv[])
  					v1.push_back(v3[x]);
  				}						           
 			}
-			
 			planet::PlanetManager* pm = new planet::PlanetManager(&con, &v1);
-			pm->updateValues(&v1);//Segmentation Fault
+			pm->updateValues(&v1);//Segmentation Fault		
 			
-			
-			
-			
-			
-				
+			//pm->updateGasPlanets();
+			pm->updateUserPlanets();
+
 				
 			//pm.updateFields(); done
 			//pm.updateStorage(); done
 			//pm.updateProductionRates(); done
 			//pm.save(); done
+
 		}
 
 
@@ -135,7 +136,6 @@ main(int argc, char *argv[])
 		/*
 		fleet::FleetHandler* fh = new fleet::FleetHandler(&con);
 		fh->update();*/
-		
 		sleep(5);
 	}		
 
