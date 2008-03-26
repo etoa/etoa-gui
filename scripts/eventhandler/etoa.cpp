@@ -136,7 +136,7 @@ main(int argc, char *argv[])
 		/*
 		fleet::FleetHandler* fh = new fleet::FleetHandler(&con);
 		fh->update();*/
-		sleep(5);
+		sleep(1);
 	}		
 
 	return 0;

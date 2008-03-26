@@ -548,7 +548,7 @@ namespace planet
 	
 	void PlanetManager::updateUserPlanets()
 	{
-		std::time_t ptime = std::time(0) - 10;
+		std::time_t ptime = std::time(0) - 1;
 		std::time_t utime = std::time(0) - 2400;
 		mysqlpp::Query query = con_->query();
 		query << "SELECT ";
