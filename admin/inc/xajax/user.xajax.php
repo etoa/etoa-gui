@@ -8,6 +8,7 @@ $xajax->register(XAJAX_FUNCTION,"userTickets");
 $xajax->register(XAJAX_FUNCTION,"userComments");
 $xajax->register(XAJAX_FUNCTION,"sendUrgendMsg");
 $xajax->register(XAJAX_FUNCTION,"showLast5Messages");
+$xajax->register(XAJAX_FUNCTION,"loadEconomy");
 
 function showTimeBox($parent,$name,$value,$show=1)
 {
@@ -221,7 +222,7 @@ function userTickets($uid,$target)
 	}             
 	else          
 	{             
-		echo "<tr><td class=\"tbldata\">Keine fehlgeschlagenen Logins</td></tr>";
+		echo "<tr><td class=\"tbldata\">Keine Tickets</td></tr>";
 	}             
 	echo "</table>";
 
@@ -242,6 +243,7 @@ function sendUrgendMsg($uid,$subject,$text)
 		$or->alert("Nachricht gesendet!");
 		$or->assign('urgendmsgsubject',"value","");
 		$or->assign('urgentmsg',"value","");
+		$or->script("showLoader('lastmsgbox');xajax_showLast5Messages(".$uid.",'lastmsgbox');");
 	}
 	else
 	{
@@ -342,9 +344,9 @@ function userComments($uid,$target)
 {
 	$or = new xajaxResponse();
 	ob_start();
-	echo "<b>Neuer Kommentar:</b><br/><textarea rows=\"4\" cols=\"70\" id=\"new_comment_text\"></textarea><br/>";
+	echo "<h2>Neuer Kommentar:</h2><textarea rows=\"4\" cols=\"70\" id=\"new_comment_text\"></textarea><br/><br/>";
 	echo "<input type=\"button\" onclick=\"xajax_addUserComment('$uid','$target',document.getElementById('new_comment_text').value);\" value=\"Speichern\" />";
-	echo "<table class=\"tb\">";	
+	echo "<h2>Gespeicherte Kommentare</h2><table class=\"tb\">";	
 	$lres=dbquery("
 	SELECT 
 		* 
@@ -392,6 +394,7 @@ function addUserComment($uid,$target,$text)
 	$or = new xajaxResponse();
 	if ($text!="")
 	{
+		$or->script("showLoader('$target');");
 		dbquery("INSERT INTO user_comments (comment_timestamp,comment_user_id,comment_admin_id,comment_text) VALUES ('".time()."','$uid','".$_SESSION[SESSION_NAME]['user_id']."','".addslashes($text)."');");
 		$or->script("xajax_userComments('$uid','$target')");
 	}
@@ -402,6 +405,697 @@ function addUserComment($uid,$target,$text)
 	}
 	return $or;	
 }
+
+function loadEconomy($uid,$target)
+{
+	$or = new xajaxResponse();
+	ob_start();	
+
+	echo "<input type=\"button\" value=\"Wirtschaftsdaten neu laden\" onclick=\"showLoader('tabEconomy');xajax_loadEconomy(".$uid.",'tabEconomy');\" /><br/><br/>";
+
+				// Stopt Ladedauer
+				$tmr = timerStart();
+				
+				//
+				// Rohstoff- und Produktionsübersicht
+				//
+								
+				// Sucht alle Planet IDs des Users
+				$pres = dbquery("
+					SELECT 
+						planet_id
+					FROM 
+						planets
+					WHERE
+						planet_user_id='".$uid."'");
+				if(mysql_num_rows($pres)>0)
+				{ 
+					infobox_start("Rohstoff- und Produktionsübersicht",0);
+					echo "<div align=\"center\">";
+					echo "<table class=\"tbc\">";
+					echo "<tr>
+									<td class=\"tbldata2\">Minimum</td>
+									<td class=\"tbldata3\">Maximum</td>
+									<td class=\"tbldata\" style=\"font-style:italic\">Speicher bald voll</td>
+									<td class=\"tbldata\" style=\"font-weight:bold\">Speicher voll</td>
+								</tr>";
+					echo "</table>";
+					echo "</div><br><br>";
+					
+					
+					// Läd alle "Planetclass" Daten in ein Array
+					$planets = array();
+					while($parr=mysql_fetch_array($pres))
+					{
+						$planets[] = new Planet($parr['planet_id']);
+					}
+			
+					$cnt_res=0;
+					$max_res=array(0,0,0,0,0,0);
+					$min_res=array(9999999999,9999999999,9999999999,9999999999,9999999999,9999999999);
+					$tot_res=array(0,0,0,0,0,0);
+				
+					$cnt_prod=0;
+					$max_prod=array(0,0,0,0,0,0);
+					$min_prod=array(9999999999,9999999999,9999999999,9999999999,9999999999,9999999999);
+					$tot_prod=array(0,0,0,0,0,0);
+					foreach ($planets as $p)
+					{
+						//Speichert die aktuellen Rohstoffe in ein Array
+						$val_res[$p->id][0]=floor($p->res->metal);
+						$val_res[$p->id][1]=floor($p->res->crystal);
+						$val_res[$p->id][2]=floor($p->res->plastic);
+						$val_res[$p->id][3]=floor($p->res->fuel);
+						$val_res[$p->id][4]=floor($p->res->food);
+						$val_res[$p->id][5]=floor($p->people);
+				
+						for ($x=0;$x<6;$x++)
+						{
+							$max_res[$x]=max($max_res[$x],$val_res[$p->id][$x]);
+							$min_res[$x]=min($min_res[$x],$val_res[$p->id][$x]);
+							$tot_res[$x]+=$val_res[$p->id][$x];
+						}
+				
+						//Speichert die aktuellen Rohstoffproduktionen in ein Array
+						$val_prod[$p->id][0]=floor($p->prod->metal);
+						$val_prod[$p->id][1]=floor($p->prod->crystal);
+						$val_prod[$p->id][2]=floor($p->prod->plastic);
+						$val_prod[$p->id][3]=floor($p->prod->fuel);
+						$val_prod[$p->id][4]=floor($p->prod->food);
+						$val_prod[$p->id][5]=floor($p->prod->people);
+				
+						for ($x=0;$x<6;$x++)
+						{
+							$max_prod[$x]=max($max_prod[$x],$val_prod[$p->id][$x]);
+							$min_prod[$x]=min($min_prod[$x],$val_prod[$p->id][$x]);
+							$tot_prod[$x]+=$val_prod[$p->id][$x];
+						}
+				
+						//Speichert die aktuellen Speicher in ein Array
+						$val_store[$p->id][0]=floor($p->store->metal);
+						$val_store[$p->id][1]=floor($p->store->crystal);
+						$val_store[$p->id][2]=floor($p->store->plastic);
+						$val_store[$p->id][3]=floor($p->store->fuel);
+						$val_store[$p->id][4]=floor($p->store->food);
+						$val_store[$p->id][5]=floor($p->people_place);
+				
+						//Berechnet die dauer bis die Speicher voll sind (zuerst prüfen ob Division By Zero!)
+				
+						//Titan
+						if($p->prod->metal>0)
+						{
+				      if ($p->store->metal - $p->res->metal > 0)
+				      {
+				      	$val_time[$p->id][0]=ceil(($p->store->metal-$p->res->metal)/$p->prod->metal*3600);
+				      }
+				      else
+				      {
+				        $val_time[$p->id][0]=0;
+				      }
+				    }
+				    else
+				    {
+				    	$val_time[$p->id][0]=0;
+				    }
+				    
+						//Silizium
+						if($p->prod->crystal>0)
+						{
+				      if ($p->store->crystal - $p->res->crystal > 0)
+				      {
+				      	$val_time[$p->id][1]=ceil(($p->store->crystal-$p->res->crystal)/$p->prod->crystal*3600);
+				      }
+				      else
+				      {
+				      	$val_time[$p->id][1]=0;
+				      }
+				    }
+				    else
+				    {
+				    	$val_time[$p->id][1]=0;
+				    }
+				    
+						//PVC
+						if($p->prod->plastic>0)
+						{
+				      if ($p->store->plastic - $p->res->plastic > 0)
+				      {
+				        $val_time[$p->id][2]=ceil(($p->store->plastic-$p->res->plastic)/$p->prod->plastic*3600);
+				      }
+				      else
+				      {
+				      	$val_time[$p->id][2]=0;
+				      }
+				    }
+				    else
+				    {
+				    	$val_time[$p->id][2]=0;
+				    }
+				    
+						//Tritium
+						if($p->prod->fuel>0)
+						{
+				      if ($p->store->fuel - $p->res->fuel > 0)
+				      {
+				       	$val_time[$p->id][3]=ceil(($p->store->fuel-$p->res->fuel)/$p->prod->fuel*3600);
+				      }
+				      else
+				      {
+				      	$val_time[$p->id][3]=0;
+				      }
+				    }
+				    else
+				    {
+				    	$val_time[$p->id][3]=0;
+				    }
+				    
+						//Nahrung
+						if($p->prod->food>0)
+						{
+					    if ($p->store->food - $p->res->food > 0)
+					    {
+					      $val_time[$p->id][4]=ceil(($p->store->food-$p->res->food)/$p->prod->food*3600);
+					    }
+					    else
+					   	{
+					    	$val_time[$p->id][4]=0;
+					    }
+				    }
+				    else
+				    {
+				    	$val_time[$p->id][4]=0;
+				    }
+				
+						//Bewohner
+						if($p->prod->people>0)
+						{
+				      if ($p->people_place - $p->people > 0)
+				      {
+				        $val_time[$p->id][5]=ceil(($p->people_place-$p->people)/$p->prod->people*3600);
+				      }
+				      else
+				      {
+				      	$val_time[$p->id][5]=0;
+				      }
+				    }
+				    else
+				    {
+				    	$val_time[$p->id][5]=0;
+				    }
+					}
+				
+				
+					//
+					// Rohstoffe/Bewohner und Speicher
+					//
+				
+					echo "<h2>Rohstoffe und Bewohner</h2>";
+					echo "<table class=\"tbl\">";
+					echo "<tr>
+									<td class=\"tbltitle\">Name:</td>
+									<td class=\"tbltitle\">".RES_METAL."</td>
+									<td class=\"tbltitle\">".RES_CRYSTAL."</td>
+									<td class=\"tbltitle\">".RES_PLASTIC."</td>
+									<td class=\"tbltitle\">".RES_FUEL."</td>
+									<td class=\"tbltitle\">".RES_FOOD."</td>
+									<td class=\"tbltitle\">Bewohner</td>
+								</tr>";
+					foreach ($planets as $p)
+					{
+						echo "<tr>
+										<td class=\"tbldata\">
+											<a href=\"?page=galaxy&sub=edit&planet_id=".$p->id."\">".$p->name."</a>
+										</td>";
+						for ($x=0;$x<6;$x++)
+						{
+							echo "<td";
+							if ($max_res[$x]==$val_res[$p->id][$x])
+							{
+								echo " class=\"tbldata3\"";
+							}
+							elseif ($min_res[$x]==$val_res[$p->id][$x])
+							{
+								 echo " class=\"tbldata2\"";
+							}
+							else
+							{
+								 echo " class=\"tbldata\"";
+							}
+				
+				
+							//Der Speicher ist noch nicht gefüllt
+							if($val_res[$p->id][$x]<$val_store[$p->id][$x] && $val_time[$p->id][$x]!=0)
+							{
+								echo " ".tm("Speicher","Speicher voll in ".tf($val_time[$p->id][$x])."")." ";
+								if ($val_time[$p->id][$x]<43200)
+								{
+									echo " style=\"font-style:italic;\" ";
+								}
+								echo ">".nf($val_res[$p->id][$x])."</td>";
+							}
+							//Speicher Gefüllt
+							else
+							{
+								echo " ".tm("Speicher","Speicher voll!")."";
+								echo " style=\"\" ";
+								echo "><b>".nf($val_res[$p->id][$x])."</b></td>";
+							}
+				
+						}
+						echo "</tr>";
+						$cnt_res++;
+					}
+					echo "<tr>
+									<td colspan=\"6\"></td>
+								</tr>
+								<tr>
+									<td class=\"tbltitle\">Total</td>";
+					for ($x=0;$x<6;$x++)
+					{
+						echo "<td class=\"tbltitle\">".nf($tot_res[$x])."</td>";
+					}
+					echo "</tr><tr><th class=\"tbltitle\">Durchschnitt</th>";
+					for ($x=0;$x<6;$x++)
+					{
+						echo "<td class=\"tbltitle\">".nf($tot_res[$x]/$cnt_res)."</td>";
+					}
+					echo "</tr>";
+					echo "</table>";
+				
+				
+				
+					//
+					// Rohstoffproduktion inkl. Energie
+					//
+				
+					// Ersetzt Bewohnerwerte durch Energiewerte
+					$max_prod[5] = 0;
+					$min_prod[5] = 9999999999;
+					$tot_prod[5] = 0;
+					foreach ($planets as $p)
+					{
+						//Speichert die aktuellen Energieproduktionen in ein Array (Bewohnerproduktion [5] wird überschrieben)
+						$val_prod[$p->id][5]=floor($p->prod->power);
+						
+						// Gibt Min. / Max. aus
+						$max_prod[5]=max($max_prod[5],$val_prod[$p->id][5]);
+						$min_prod[5]=min($min_prod[5],$val_prod[$p->id][5]);
+						$tot_prod[5]+=$val_prod[$p->id][5];	
+					}
+				
+				
+				
+				
+					echo "<h2>Produktion</h2>";
+					echo "<table class=\"tbl\">";
+					echo "<tr><th class=\"tbltitle\">Name:</th>
+					<th class=\"tbltitle\">".RES_METAL."</th>
+					<th class=\"tbltitle\">".RES_CRYSTAL."</th>
+					<th class=\"tbltitle\">".RES_PLASTIC."</th>
+					<th class=\"tbltitle\">".RES_FUEL."</th>
+					<th class=\"tbltitle\">".RES_FOOD."</th>
+					<th class=\"tbltitle\">Energie</th></tr>";
+					foreach ($planets as $p)
+					{
+						echo "<tr><td class=\"tbldata\"><a href=\"?page=economy&amp;planet_id=".$p->id."\">".$p->name."</a></td>";
+						for ($x=0;$x<6;$x++)
+						{
+							// Erstellt TM-Box für jeden Rohstoff
+							// Titan
+							if($x == 0)
+							{
+								$tm_header = "Titan-Bonis";
+								$tm = "".$arr['race_name'].": ".$arr['race_f_metal']."<br\>".$p->type->name.": ".$p->type->metal."<br\>".$p->sol_type_name.": ".$p->sol->type->metal."";
+							}
+							elseif($x == 1)
+							{
+								$tm_header = "Silizium-Bonis";
+								$tm = "".$arr['race_name'].": ".$arr['race_f_crystal']."<br\>".$p->type->name.": ".$p->type->crystal."<br\>".$p->sol_type_name.": ".$p->sol->type->crystal."";
+							}
+							elseif($x == 2)
+							{
+								$tm_header = "PVC-Bonis";
+								$tm = "".$arr['race_name'].": ".$arr['race_f_plastic']."<br\>".$p->type->name.": ".$p->type->plastic."<br\>".$p->sol_type_name.": ".$p->sol->type->plastic."";
+							}
+							elseif($x == 3)
+							{
+								$tm_header = "Tritium-Bonis";
+								$tm = "".$arr['race_name'].": ".$arr['race_f_fuel']."<br\>".$p->type->name.": ".$p->type->fuel."<br\>".$p->sol_type_name.": ".$p->sol->type->fuel."";
+							}
+							elseif($x == 4)
+							{
+								$tm_header = "Nahrungs-Bonis";
+								$tm = "".$arr['race_name'].": ".$arr['race_f_food']."<br\>".$p->type->name.": ".$p->type->food."<br\>".$p->sol_type_name.": ".$p->sol->type->food."";
+							}
+							elseif($x == 5)
+							{
+								$tm_header = "Energie-Bonis";
+								$tm = "".$arr['race_name'].": ".$arr['race_f_power']."<br\>".$p->type->name.": ".$p->type->power."<br\>".$p->sol_type_name.": ".$p->sol->type->power."";
+							}
+							else
+							{
+								$tm_header = "";
+								$tm = "";
+							}
+							
+							
+							echo "<td";
+							if ($max_prod[$x]==$val_prod[$p->id][$x])
+							{
+								echo " class=\"tbldata3\"";
+							}
+							elseif ($min_prod[$x]==$val_prod[$p->id][$x])
+							{
+								 echo " class=\"tbldata2\"";
+							}
+							else
+							{
+								 echo " class=\"tbldata\"";
+							}
+							echo " ".tm($tm_header,$tm).">".nf($val_prod[$p->id][$x])."</td>";
+						}
+						echo "</tr>";
+						$cnt_prod++;
+					}
+					echo "<tr><td colspan=\"6\"></td></tr>";
+					echo "<tr><th class=\"tbltitle\">Total</th>";
+					for ($x=0;$x<6;$x++)
+						echo "<td class=\"tbltitle\">".nf($tot_prod[$x])."</td>";
+					echo "</tr><tr><th class=\"tbltitle\">Durchschnitt</th>";
+					for ($x=0;$x<6;$x++)
+						echo "<td class=\"tbltitle\">".nf($tot_prod[$x]/$cnt_prod)."</td>";
+					echo "</tr>";
+					echo "</table><br><br>";
+					
+					infobox_end(0);
+				}
+				else
+				{
+					infobox_start("Rohstoff- und Produktionsübersicht");
+					echo "Der User hat noch keinen Planeten!";
+					infobox_end();
+				}
+
+				//
+				// 5 letzte Bauaufträge
+				//
+				
+				$lbres = dbquery("
+				SELECT 
+					b.building_name,
+					log.logs_game_id,
+					log.logs_game_building_id,
+					log.logs_game_text,
+					log.logs_game_build_type,
+					log.logs_game_timestamp
+				FROM 
+						(
+							logs_game AS log
+						INNER JOIN
+							buildings AS b
+						ON
+							log.logs_game_building_id=b.building_id
+						)
+					INNER JOIN
+						logs_game_cat AS cat
+					ON
+						log.logs_game_cat=cat.logs_game_cat_id
+						AND cat.logs_game_cat_id='1'
+						AND log.logs_game_user_id='".$uid."'
+				ORDER BY 
+					log.logs_game_timestamp DESC
+				LIMIT
+					5;");
+				if(mysql_num_rows($lbres)>0)
+				{ 
+					infobox_start("5 letzte Bauaufträge",1);
+					echo "<tr>
+									<td class=\"tbltitle\" style=\"width:25%\">Zeit</td>
+									<td class=\"tbltitle\" style=\"width:30%\">Gebäude</td>
+									<td class=\"tbltitle\" style=\"width:30%\">Aktion</td>
+									<td class=\"tbltitle\" style=\"width:15%\">Anzeigen</td>
+								</tr>";
+								
+								
+					while ($lbarr = mysql_fetch_array($lbres))
+					{
+						$text = encode_logtext($lbarr['logs_game_text']);
+						echo "<tr>
+										<td class=\"tbldata\">".date("Y-m-d H:i:s",$lbarr['logs_game_timestamp'])."</td>
+										<td class=\"tbldata\">".$lbarr['building_name']."</td>
+										<td class=\"tbldata\">";
+											if($lbarr['logs_game_build_type']==1)
+											{
+												echo "Ausbau";
+											}
+											elseif($lbarr['logs_game_build_type']==2)
+											{
+												echo "Abriss";
+											}
+											else
+											{
+												echo "Abbruch";
+											}		
+							echo "</td>
+										<td class=\"tbldata\">
+											<a href=\"javascript:;\" id=\"buildings_".$lbarr['logs_game_id']."\" onclick=\"toggleText('".$lbarr['logs_game_id']."','buildings_".$lbarr['logs_game_id']."')\">Anzeigen</a>
+										</td>
+									</tr>
+									</tr>
+										<td class=\"tbldata\" id=\"".$lbarr['logs_game_id']."\" style=\"display:none;\" colspan=\"4\">".$text."</td>
+									</tr>"; 
+					}
+					
+					infobox_end(1);
+				}
+				else
+				{
+					infobox_start("5 letzte Bauaufträge");
+					echo "Es sind keine Logs vorhanden!";
+					infobox_end();
+				}
+				
+				
+				//
+				// 5 letzte Forschungsaufträge
+				//
+				
+				$lres = dbquery("
+				SELECT 
+					t.tech_name,
+					log.logs_game_id,
+					log.logs_game_tech_id,
+					log.logs_game_text,
+					log.logs_game_build_type,
+					log.logs_game_timestamp
+				FROM 
+						(
+							logs_game AS log
+						INNER JOIN
+							technologies AS t
+						ON
+							log.logs_game_tech_id=t.tech_id
+						)
+					INNER JOIN
+						logs_game_cat AS cat
+					ON
+						log.logs_game_cat=cat.logs_game_cat_id
+						AND cat.logs_game_cat_id='2'
+						AND log.logs_game_user_id='".$uid."'
+				ORDER BY 
+					log.logs_game_timestamp DESC
+				LIMIT
+					5;");
+				if(mysql_num_rows($lres)>0)
+				{ 
+					infobox_start("5 letzte Forschungsaufträge",1);
+					echo "<tr>
+									<td class=\"tbltitle\" style=\"width:25%\">Zeit</td>
+									<td class=\"tbltitle\" style=\"width:30%\">Forschung</td>
+									<td class=\"tbltitle\" style=\"width:30%\">Aktion</td>
+									<td class=\"tbltitle\" style=\"width:15%\">Anzeigen</td>
+								</tr>";
+								
+								
+					while ($larr = mysql_fetch_array($lres))
+					{
+						$text = encode_logtext($larr['logs_game_text']);
+						
+						echo "<tr>
+										<td class=\"tbldata\">".date("Y-m-d H:i:s",$larr['logs_game_timestamp'])."</td>
+										<td class=\"tbldata\">".$larr['tech_name']."</td>
+										<td class=\"tbldata\">";
+											if($larr['logs_game_build_type']==1)
+											{
+												echo "Ausbau";
+											}
+											else
+											{
+												echo "Abbruch";
+											}
+							echo "</td>
+										<td class=\"tbldata\">
+											<a href=\"javascript:;\" id=\"tech_".$larr['logs_game_id']."\" onclick=\"toggleText('".$larr['logs_game_id']."','tech_".$larr['logs_game_id']."')\">Anzeigen</a>
+										</td>
+									</tr>
+									</tr>
+										<td class=\"tbldata\" id=\"".$larr['logs_game_id']."\" style=\"display:none;\" colspan=\"4\">".$text."</td>
+									</tr>"; 
+					}
+					
+					infobox_end(1);
+				}
+				else
+				{
+					infobox_start("5 letzte Forschungsaufträge");
+					echo "Es sind keine Logs vorhanden!";
+					infobox_end();
+				}
+				
+				
+				//
+				// 5 letzte Schiffsaufträge
+				//
+				
+				$lres = dbquery("
+				SELECT 
+					log.logs_game_id,
+					log.logs_game_text,
+					log.logs_game_build_type,
+					log.logs_game_timestamp
+				FROM 
+						logs_game AS log
+					INNER JOIN
+						logs_game_cat AS cat
+					ON
+						log.logs_game_cat=cat.logs_game_cat_id
+						AND cat.logs_game_cat_id='3'
+						AND log.logs_game_user_id='".$uid."'
+				ORDER BY 
+					log.logs_game_timestamp DESC
+				LIMIT
+					5;");
+				if(mysql_num_rows($lres)>0)
+				{ 
+					infobox_start("5 letzte Schiffsaufträge",1);
+					echo "<tr>
+									<td class=\"tbltitle\" style=\"width:45%\">Zeit</td>
+									<td class=\"tbltitle\" style=\"width:40%\">Aktion</td>
+									<td class=\"tbltitle\" style=\"width:15%\">Anzeigen</td>
+								</tr>";
+								
+								
+					while ($larr = mysql_fetch_array($lres))
+					{
+						$text = encode_logtext($larr['logs_game_text']);
+						
+						echo "<tr>
+										<td class=\"tbldata\">".date("Y-m-d H:i:s",$larr['logs_game_timestamp'])."</td>
+										<td class=\"tbldata\">";
+										if($larr['logs_game_build_type']==1)
+											{
+												echo "Neuer Auftrag";
+											}
+											else
+											{
+												echo "Abbruch";
+											}
+							echo "</td>
+										<td class=\"tbldata\">
+											<a href=\"javascript:;\" id=\"ship_".$larr['logs_game_id']."\" onclick=\"toggleText('".$larr['logs_game_id']."','ship_".$larr['logs_game_id']."')\">Anzeigen</a>
+										</td>
+									</tr>
+									</tr>
+										<td class=\"tbldata\" id=\"".$larr['logs_game_id']."\" style=\"display:none;\" colspan=\"3\">".$text."</td>
+									</tr>"; 
+					}
+					
+					infobox_end(1);
+				}
+				else
+				{
+					infobox_start("5 letzte Schiffsaufträge");
+					echo "Es sind keine Logs vorhanden!";
+					infobox_end();
+				}
+				
+				
+				
+				//
+				// 5 letzte Verteidigungsaufträge
+				//
+				
+				$lres = dbquery("
+				SELECT 
+					log.logs_game_id,
+					log.logs_game_text,
+					log.logs_game_build_type,
+					log.logs_game_timestamp
+				FROM 
+						logs_game AS log
+					INNER JOIN
+						logs_game_cat AS cat
+					ON
+						log.logs_game_cat=cat.logs_game_cat_id
+						AND cat.logs_game_cat_id='4'
+						AND log.logs_game_user_id='".$uid."'
+				ORDER BY 
+					log.logs_game_timestamp DESC
+				LIMIT
+					5;");
+				if(mysql_num_rows($lres)>0)
+				{ 
+					infobox_start("5 letzte Verteidigungsaufträge",1);
+					echo "<tr>
+									<td class=\"tbltitle\" style=\"width:45%\">Zeit</td>
+									<td class=\"tbltitle\" style=\"width:40%\">Aktion</td>
+									<td class=\"tbltitle\" style=\"width:15%\">Anzeigen</td>
+								</tr>";
+								
+								
+					while ($larr = mysql_fetch_array($lres))
+					{
+						$text = encode_logtext($larr['logs_game_text']);
+						
+						echo "<tr>
+										<td class=\"tbldata\">".date("Y-m-d H:i:s",$larr['logs_game_timestamp'])."</td>
+										<td class=\"tbldata\">";
+										if($larr['logs_game_build_type']==1)
+											{
+												echo "Neuer Auftrag";
+											}
+											else
+											{
+												echo "Abbruch";
+											}
+							echo "</td>
+										<td class=\"tbldata\">
+											<a href=\"javascript:;\" id=\"def_".$larr['logs_game_id']."\" onclick=\"toggleText('".$larr['logs_game_id']."','def_".$larr['logs_game_id']."')\">Anzeigen</a>
+										</td>
+									</tr>
+									</tr>
+										<td class=\"tbldata\" id=\"".$larr['logs_game_id']."\" style=\"display:none;\" colspan=\"3\">".$text."</td>
+									</tr>"; 
+					}
+					
+					infobox_end(1);
+				}
+				else
+				{
+					infobox_start("5 letzte Schiffsaufträge");
+					echo "Es sind keine Logs vorhanden!";
+					infobox_end();
+				}
+				
+				echo "Wirtschaftsseite geladen in ".timerStop($tmr)." sec<br/>";
+
+	
+	$out = ob_get_contents();
+	ob_end_clean();
+	$or->assign($target,"innerHTML",$out);
+	return $or;	
+}
+
 
 
 ?>

@@ -5924,7 +5924,17 @@ Forum: http://www.etoa.ch/forum";
 	}
 	
 	
-
+	/**
+	* Simple recursive function to calculate the power of a number
+	* this is faster than the original implementation of pow()
+	* because it only uses integer exponents
+	*/
+	function intpow($base,$exponent)
+	{
+		if ($exponent<=0)
+			return 1;
+		return $base * intpow($base,$exponent-1);
+	}
 
 	
 	

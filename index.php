@@ -258,7 +258,7 @@
 			?>
 		</title>
 		<link rel="stylesheet" href="general.css" type="text/css" />
-		<script src="scripts.js" type="text/javascript"></script>
+		<script src="js/main.js" type="text/javascript"></script>
 		<?PHP 
 			echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"".CSS_STYLE."/style.css\" />";
 			echo $xajax->printJavascript(XAJAX_DIR);
@@ -407,6 +407,7 @@
 				
 				// Navigation laden
 				require_once('inc/nav.inc.php');
+				require_once('inc/adds.inc.php');
 
 				// Count Messages
 				define('NEW_MESSAGES',check_new_messages($s["user"]["id"]));

@@ -25,6 +25,12 @@
 		require_once("inc/xajax/user.xajax.php");
 	}
 
+	if (isset($page) && $page=="ships")
+	{
+		require_once("inc/xajax/ships.xajax.php");
+	}
+
+
 	
 	if (isset($page) && $page=="logs")
 	{

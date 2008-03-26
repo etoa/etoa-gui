@@ -119,3 +119,14 @@ function toggleBox(boxId)
 					document.getElementById('user_hmode_to_i').disabled=true;
 				}
 			}
+			
+	function showLoader(elem)
+	{
+		document.getElementById(elem).innerHTML='<div style=\"text-align:center;padding:10px;\"><img src="../images/loadingmiddle.gif" /></div>';
+	}
+
+	function showLoaderPrepend(elem)
+	{
+		document.getElementById(elem).innerHTML='<div style=\"text-align:center;padding:10px;\"><img src="../images/loadingmiddle.gif" /></div>'+document.getElementById(elem).innerHTML;
+	}
+	

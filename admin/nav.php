@@ -212,6 +212,10 @@
 	$navmenu['Schiffe']['Bauliste']['sub']="queue";
 	$navmenu['Schiffe']['Bauliste']['level']=1;
 
+	$navmenu['Schiffe']['XP-Rechner']['page']="ships";
+	$navmenu['Schiffe']['XP-Rechner']['sub']="xpcalc";
+	$navmenu['Schiffe']['XP-Rechner']['level']=1;
+
 	$navmenu['Schiffe']['bar'][0] = true;
 
 	$navmenu['Schiffe']['Schiffe bearbeiten']['page']="ships";

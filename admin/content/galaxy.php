@@ -593,6 +593,7 @@
 				{
 					$_POST[$k]=$v;
 				}
+				$_SESSION['search']['planets']['query']=null;
 			}
 			
 			if (isset($_POST['search_submit']))

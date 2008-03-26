@@ -91,6 +91,55 @@
 	}
 
 
+	//
+	// XP-Rechner
+	//
+	elseif ($sub=="xpcalc")
+	{
+		echo "<h1>XP-Rechner</h1>";
+
+		echo "Schiff wählen: <select onchange=\"document.location='?page=".$page."&sub=".$sub."&id='+this.options[this.selectedIndex].value\">";
+		$res = dbquery("
+		SELECT
+			ship_name,
+			ship_id,
+			special_ship_need_exp,
+			special_ship_exp_factor
+		FROM
+			ships
+		WHERE
+			special_ship=1
+		ORDER BY
+			ship_name		
+		");
+		while ($arr=mysql_fetch_array($res))
+		{
+			if (!isset($ship_xp))
+				$ship_xp = $arr['special_ship_need_exp'];
+			if (!isset($ship_xp_multiplier))
+				$ship_xp_multiplier = $arr['special_ship_exp_factor'];
+			echo "<option value=\"".$arr['ship_id']."\"";
+			if ($_GET['id']==$arr['ship_id'])
+			{
+				echo " selected=\"selected\"";
+				$ship_xp = $arr['special_ship_need_exp'];
+				$ship_xp_multiplier = $arr['special_ship_exp_factor'];
+			}
+			echo ">".$arr['ship_name']."</option>";
+		}
+		echo "</select><br/><br/>";
+
+		echo "<table class=\"tb\"><tr><th>Level</th><th>Experience</th></tr>";	
+		for ($level=1;$level<=30;$level++)
+		{
+			echo "<tr><td>$level</td><td>".nf(Ship::xpByLevel($ship_xp,$ship_xp_multiplier,$level))."</td></tr>";
+			
+		}
+		echo "</table>";
+
+		
+	}
+
 
 	//
 	// Kategorien
@@ -996,7 +1045,9 @@
 				shiplist_special_ship_bonus_forsteal,
 				shiplist_special_ship_bonus_build_destroy,
 				shiplist_special_ship_bonus_antrax_food,
-				shiplist_special_ship_bonus_deactivade
+				shiplist_special_ship_bonus_deactivade,
+				special_ship_need_exp,
+				special_ship_exp_factor
 			FROM
       	".$db_table['shiplist']."
       INNER JOIN
@@ -1023,8 +1074,12 @@
 
 				if($arr['special_ship']==1)
 				{
-					echo "<tr><td class=\"tbltitle\">Level</td><td class=\"tbldata\"><input type=\"text\" name=\"shiplist_special_ship_level\" value=\"".$arr['shiplist_special_ship_level']."\" size=\"5\" maxlength=\"20\" /></td></tr>";
-					echo "<tr><td class=\"tbltitle\">Erfahrung</td><td class=\"tbldata\"><input type=\"text\" name=\"shiplist_special_ship_exp\" value=\"".$arr['shiplist_special_ship_exp']."\" size=\"5\" maxlength=\"20\" /></td></tr>";
+					//echo "<tr><td class=\"tbltitle\">Level</td><td class=\"tbldata\"><input type=\"text\" name=\"shiplist_special_ship_level\" value=\"".$arr['shiplist_special_ship_level']."\" size=\"5\" maxlength=\"20\" /></td></tr>";
+					echo "<tr>
+						<td class=\"tbltitle\">Erfahrung/Level</td>
+						<td class=\"tbldata\"><input type=\"text\" name=\"shiplist_special_ship_exp\" value=\"".$arr['shiplist_special_ship_exp']."\" size=\"5\" maxlength=\"20\" />";
+						echo " &nbsp; <b>Level:</b> ".Ship::levelByXp($arr['special_ship_need_exp'], $arr['special_ship_exp_factor'],$arr['shiplist_special_ship_exp'])."</td>
+					</tr>";
 					echo "<tr><td class=\"tbltitle\">Waffenlevel</td><td class=\"tbldata\"><input type=\"text\" name=\"shiplist_special_ship_bonus_weapon\" value=\"".$arr['shiplist_special_ship_bonus_weapon']."\" size=\"5\" maxlength=\"20\" /></td></tr>";
 					echo "<tr><td class=\"tbltitle\">Strukturlevel</td><td class=\"tbldata\"><input type=\"text\" name=\"shiplist_special_ship_bonus_structure\" value=\"".$arr['shiplist_special_ship_bonus_structure']."\" size=\"5\" maxlength=\"20\" /></td></tr>";
 					echo "<tr><td class=\"tbltitle\">Schildlevel</td><td class=\"tbldata\"><input type=\"text\" name=\"shiplist_special_ship_bonus_shield\" value=\"".$arr['shiplist_special_ship_bonus_shield']."\" size=\"5\" maxlength=\"20\" /></td></tr>";
@@ -1095,8 +1150,7 @@
 			echo "<br/><input type=\"submit\" class=\"button\" name=\"shiplist_search\" value=\"Suche starten\" /></form><br/>";
 
 			// Hinzufügen
-			echo "<h2>Neue Schiffe hinzuf&uuml;gen</h2>";
-			echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\" id=\"selector\">";
+			echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\" id=\"selector\" name=\"selector\">";
 			infobox_start("",1);
 			
 			//Sonnensystem
@@ -1131,18 +1185,22 @@
 			
 			//Schiffe Hinzufügen
 			echo "<tr><th class=\"tbltitle\">Hinzuf&uuml;gen:</th><td class=\"tbldata\">
-			<input type=\"text\" name=\"shiplist_count\" value=\"1\" size=\"1\" maxlength=\"3\" />
+			<input type=\"text\" name=\"shiplist_count\" value=\"1\" size=\"7\" maxlength=\"10\" />
 			<select name=\"ship_id\">";
 			foreach ($slist as $k=>$v)
 			{
 				echo "<option value=\"".$k."\">".$v."</option>";
 			}
-			echo "</select> &nbsp; <input type=\"button\" onclick=\"xajax_addShipToPlanet(xajax.getFormValues('selector'));\" value=\"Hinzuf&uuml;gen\" /></td></tr>";
+			echo "</select> &nbsp; 
+			<input type=\"button\" onclick=\"showLoaderPrepend('shipsOnPlanet');xajax_addShipToPlanet(xajax.getFormValues('selector'));\" value=\"Hinzuf&uuml;gen\" /></td></tr>";
 			
 			//Vorhandene Schiffe
-			echo "<tr><th class=\"tbltitle\">Vorhandene Schiffe</th><td class=\"tbldata\" id=\"shipsOnPlanet\">Planet w&auml;hlen...</td></tr>";
+			echo "<tr><td class=\"tbldata\" id=\"shipsOnPlanet\" colspan=\"2\">Planet w&auml;hlen...</td></tr>";
 			infobox_end(1);
 			echo "</form>";
+
+			//Focus
+			echo "<script type=\"text/javascript\">document.getElementById('userlist_nick').focus();</script>";
 
 		}
 	}

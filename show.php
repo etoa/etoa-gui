@@ -135,7 +135,7 @@
 		<meta http-equiv="Page-Enter" content="blendTrans(Duration=0.3)" />
 		<meta http-equiv="Page-Exit" content="blendTrans(Duration=0.3)" />
 		
-		<script src="scripts.js" type="text/javascript"></script>
+		<script src="js/main.js" type="text/javascript"></script>
 		<link rel="stylesheet" href="general.css" type="text/css" />
 
 		<?PHP
