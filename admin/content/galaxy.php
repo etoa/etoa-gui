@@ -33,14 +33,16 @@
 	{
 		echo "<h1>Planeten pr&uuml;fen</h1>";
 
+		echo "Prüfen ob zu allen Planeten mit einer User-Id auch ein User existiert...<br/>";
 		$user=array();
 		$res=dbquery("SELECT user_id,user_nick FROM users;");
 		if (mysql_num_rows($res)>0)
 		{
 			while ($arr=mysql_fetch_array($res))
+			{
 				$user[$arr['user_id']]=$arr['user_nick'];
+			}
 		}
-
 		$res=dbquery("
 		SELECT 
 			planet_id,
@@ -54,21 +56,56 @@
 		$cnt=0;
 		if (mysql_num_rows($res)>0)
 		{
-			echo "<table class=\"tb\">";
+			echo "<table class=\"tb\"><tr><th>Name</th><th>Id</th><th>User-Id</th><th>Id</th><th>Aktionen</th></tr>";
 			while ($arr=mysql_fetch_array($res))
 			{
 				if (count($user[$arr['planet_user_id']])==0)
 				{
 					$cnt++;
-					echo "<tr><th>".$arr['planet_name']." (".$arr['planet_id'].")</th><td>".$arr['planet_user_id']."</td></tr>";
+					echo "<tr><td>".$arr['planet_name']."</td><td>".$arr['planet_id']."</td><td>".$arr['planet_user_id']."</td>
+					<td><a href=\"?page=$page&sub=edit&amp;planet_id=".$arr['planet_id']."\">Bearbeiten</a></td></tr>";
 				}
 			}
+			if ($cnt==0)
+			{
+				echo "<tr><td colspan=\"5\">Keine Fehler gefunden!</td></th>";
+			}			
 			echo "</table>";
 		}
-		if ($cnt==0)
+		else
+		{
+			echo "<i>Keine bewohnten Planeten gefunden!</i>";
+		}
+
+		
+		echo "<br/><br/>Prüfe auf Hauptplaneten ohne User...<br/>";
+		$res=dbquery("
+		SELECT
+			planet_name,
+			planet_id
+		FROM
+			planets
+		WHERE
+			planet_user_main=1
+			AND planet_user_id=0
+		");
+		if (mysql_num_rows($res)>0)
+		{
+			echo "<table class=\"tb\"><tr><th>Name</th><th>Id</th><th>Aktionen</th></tr>";
+			while ($arr=mysql_fetch_array($res))
+			{
+				if (count($user[$arr['planet_user_id']])==0)
+				{
+					echo "<tr><td>".$arr['planet_name']."</td><td>".$arr['planet_id']."</td><td><a href=\"?page=$page&sub=edit&amp;planet_id=".$arr['planet_id']."\">Bearbeiten</a></td></tr>";
+				}
+			}
+			echo "</table>";			
+		}
+		else
 		{
 			echo "<i>Keine Fehler gefunden!</i>";
 		}
+		
 	}
 
 	elseif ($sub=="planet_types")
@@ -669,9 +706,10 @@
 				}
 				if ($_POST['planet_user_id']!="")
 				{
-					$sql.= " AND planets.planet_user_id='".$_POST['planet_user_id']."'";
-					$search_text['Besitzer-ID'] = $_POST['planet_user_id'];
-					$query_save[] = "planet_user_id:=:".$_POST['planet_user_id'];
+					$sql.= " AND planets.planet_user_id ".searchFielsOptionsSql($_POST['planet_user_id'],$_POST['qmode']['planet_user_id']);
+					$search_text['Besitzer-ID'] = searchFieldOptionsName($_POST['qmode']['planet_user_id'])." ".$_POST['planet_user_id'];
+					$query_save[] = "planet_user_id:".$_POST['qmode']['planet_user_id'].":".$_POST['planet_user_id'];
+
 				}
 				if (isset($_POST['planet_user_main']) && $_POST['planet_user_main']<2 )
 				{
@@ -833,16 +871,6 @@
 						$alliances[$aarr['alliance_id']]=$aarr['alliance_tag'];
 					}
 				}
-				/*
- 				$tres = dbquery("SELECT type_id,type_name FROM ".$db_table['planet_types'].";");
- 				$planet_types=array();
-				if (mysql_num_rows($tres))
-				{
-					while ($tarr=mysql_fetch_array($tres))
-					{
-						$planet_types[$tarr['type_id']]=$tarr['type_name'];
-					}
-				}*/
 
 				echo "<table class=\"tbl\">";
 				echo "<tr>";
@@ -873,7 +901,16 @@
 					echo "<td class=\"tbldata\">".$arr['planet_id']."</td>";
 					echo "<td class=\"tbldata\">".$arr['cell_sx']."/".$arr['cell_sy']." : ".$arr['cell_cx']."/".$arr['cell_cy']." : ".$arr['planet_solsys_pos']."</td>";
 					echo "<td class=\"tbldata\" ".tm($arr['planet_name'],stripslashes($arr['planet_desc'])).">".$arr['planet_name']."</td>";
-					echo "<td class=\"tbldata\"><a href=\"?page=user&amp;sub=edit&amp;user_id=".$arr['planet_user_id']."\" title=\"Spieler bearbeiten\">".$users[$arr['planet_user_id']]['nick']."</a></td>";
+					echo "<td class=\"tbldata\">
+						<a href=\"?page=user&amp;sub=edit&amp;user_id=".$arr['planet_user_id']."\" title=\"Spieler bearbeiten\">
+							".$users[$arr['planet_user_id']]['nick']."
+						</a>";
+						if ($arr['planet_user_main']==1)
+						{
+							echo " &nbsp; (Hauptplanet)";
+						}
+						echo "
+					</td>";
 					echo "<td class=\"tbldata\"><a href=\"?page=alliances&amp;sub=edit&amp;alliance_id=".$users[$arr['planet_user_id']]['alliance_id']."\" title=\"Allianz bearbeiten\">".$alliances[$users[$arr['planet_user_id']]['alliance_id']]."</td>";
 					echo "<td class=\"tbldata\"><a href=\"?page=galaxy&sub=planet_types&action=edit&id=".$arr['planet_type_id']."\" title=\"Typ bearbeiten\">".$arr['type_name']."</a></td>";
   				echo "<td class=\"tbldata\">".edit_button("?page=$page&sub=edit&planet_id=".$arr['planet_id'])."</td>";
@@ -903,6 +940,7 @@
 					planets
 				SET
                     planet_name='".$_POST['planet_name']."',
+                    planet_user_main=".$_POST['planet_user_main'].",
                     planet_type_id=".$_POST['planet_type_id'].",
                     planet_fields=".$_POST['planet_fields'].",
                     planet_image='".$_POST['planet_image']."',
@@ -1043,7 +1081,11 @@
 
 			echo "<tr><td class=\"tbltitle\" valign=\"top\">Bild</td>
 			<td class=\"tbldata\"><input type=\"text\" name=\"planet_image\" value=\"".$arr['planet_image']."\" size=\"20\" maxlength=\"250\" /></td>";
-			echo "<td class=\"tbldata\" valign=\"top\" colspan=\"2\"></td></tr>";
+			echo "<td class=\"tbltitle\" valign=\"top\">Hauptplanet</td>
+			<td class=\"tbldata\">
+			<input type=\"radio\" name=\"planet_user_main\" ".($arr['planet_user_main']==1 ? " checked=\"checked\"" : "")." value=\"1\"/> Ja
+			<input type=\"radio\" name=\"planet_user_main\" ".($arr['planet_user_main']==0 ? " checked=\"checked\"" : "")." value=\"0\"/> Nein
+			 </td></tr>";
 			
 			echo "<td class=\"tbldata\" style=\"height:2px;\" colspan=\"4\"></td></tr>";
 			
@@ -1153,7 +1195,7 @@
 				<td class=\"tbldata\"><input type=\"text\" name=\"planet_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
 			echo "<tr>
 				<td class=\"tbltitle\">Besitzer-ID:</td>
-				<td class=\"tbldata\"><input type=\"text\" name=\"planet_user_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td>";
+				<td class=\"tbldata\">".searchFieldNumberOptions('planet_user_id')." <input type=\"text\" name=\"planet_user_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td>";
 
 			echo "<tr>
 				<td class=\"tbltitle\">Koordinaten:</td>

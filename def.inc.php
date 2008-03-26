@@ -249,6 +249,9 @@
 	define("USR_START_PEOPLE",$conf['user_start_people']['v']);			// Anzahl Bewohner
 	define("USR_PLANET_NAME",$conf['user_planet_name']['v']);				// "Startplanet" Name
 
+	// This is for testserver only, set to empty on live servers!
+	//$firsttime_buildings = array();																
+	//$firsttime_techs = array();
 	$firsttime_buildings = array();																
 	$firsttime_techs = array();
 

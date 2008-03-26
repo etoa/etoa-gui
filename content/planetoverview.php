@@ -53,66 +53,86 @@
 		// Kolonie aufgeben
 		elseif (isset($_GET['action']) && $_GET['action']=="remove")
 		{
-			echo "<h2>:: Kolonie auf diesem Planeten aufheben ::</h2>";
-			
-			$t = $c->userChanged()+COLONY_DELETE_THRESHOLD;
-			if ($t < time())
-			{			
-				echo "<form action=\"?page=$page\" method=\"POST\">";
-				infobox_start("Sicherheitsabfrage");
-				echo "Willst du die Kolonie auf dem Planeten <b>".$c->getString()."</b> wirklich l&ouml;schen?";
-				infobox_end();
-				echo "<input type=\"submit\" name=\"submit_noremove\" value=\"Nein, Vorgang abbrechen\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type=\"submit\" name=\"submit_remove\" value=\"Ja, die Kolonie soll aufgehoben werden\">";
-				echo "</form>";
+			if (!$c->isMain)
+			{		
+				echo "<h2>:: Kolonie auf diesem Planeten aufheben ::</h2>";
+				
+				$t = $c->userChanged()+COLONY_DELETE_THRESHOLD;
+				if ($t < time())
+				{			
+					echo "<form action=\"?page=$page\" method=\"POST\">";
+					infobox_start("Sicherheitsabfrage");
+					echo "Willst du die Kolonie auf dem Planeten <b>".$c->getString()."</b> wirklich l&ouml;schen?";
+					infobox_end();
+					echo "<input type=\"submit\" name=\"submit_noremove\" value=\"Nein, Vorgang abbrechen\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type=\"submit\" name=\"submit_remove\" value=\"Ja, die Kolonie soll aufgehoben werden\">";
+					echo "</form>";
+				}
+				else
+				{
+					echo "Die Kolonie kann wegen eines kürzlich stattgefundenen Besitzerwechsels<br/>
+					erst ab <b>".df($t)."</b> gelöscht werden!<br/><br/>
+					<input type=\"button\" value=\"Zurück\" onclick=\"document.location='?page=$page'\" />";
+				}
 			}
 			else
-			{
-				echo "Die Kolonie kann wegen eines kürzlich stattgefundenen Besitzerwechsels<br/>
-				erst ab <b>".df($t)."</b> gelöscht werden!<br/><br/>
-				<input type=\"button\" value=\"Zurück\" onclick=\"document.location='?page=$page'\" />";
-			}
+				err_msg("Dies ist ein Hauptplanet! Hauptplaneten können nicht aufgegeben werden!");
 		}
 
 		// Kolonie aufheben ausführen
 		elseif (isset($_POST['submit_remove']) && $_POST['submit_remove']!="")
 		{
-			if (mysql_num_rows(dbquery("SELECT shiplist_id FROM ".$db_table['shiplist']." WHERE shiplist_planet_id='".$c->id."' AND shiplist_count>0;"))==0)
-			{
-				if (mysql_num_rows(dbquery("SELECT fleet_id FROM ".$db_table['fleet']." WHERE fleet_planet_to='".$c->id."' OR fleet_planet_from='".$c->id."';"))==0)
-				{
-					if (mysql_num_rows(dbquery("SELECT planet_id FROM ".$db_table['planets']." WHERE planet_id='".$c->id."' AND planet_user_id='".$s['user']['id']."' AND planet_user_main=0;"))==1)
+			if (!$c->isMain)
+			{			
+				$t = $c->userChanged()+COLONY_DELETE_THRESHOLD;
+				if ($t < time())
+				{							
+					if (mysql_num_rows(dbquery("SELECT shiplist_id FROM ".$db_table['shiplist']." WHERE shiplist_planet_id='".$c->id."' AND shiplist_count>0;"))==0)
 					{
-						if (reset_planet($c->id))
+						if (mysql_num_rows(dbquery("SELECT fleet_id FROM ".$db_table['fleet']." WHERE fleet_planet_to='".$c->id."' OR fleet_planet_from='".$c->id."';"))==0)
 						{
-							//Liest ID des Hauptplaneten aus
-							$main_res=dbquery("
-							SELECT
-								planet_id
-							FROM
-                                ".$db_table['planets']."
-							WHERE
-                                planet_user_id='".$s['user']['id']."'
-                                AND planet_user_main=1;");
-							$main_arr=mysql_fetch_array($main_res);
-
-							echo "<br>Die Kolonie wurde aufgehoben!<br>";
-							echo "<a href=\"?page=overview&planet_id=".$main_arr['planet_id']."\">Zur &Uuml;bersicht</a>";
-
-							$c->id=NULL;
-							$s['currentPlanetId'] = $main_arr['planet_id'];
-							$cpid = $main_arr['planet_id'];
+							if (mysql_num_rows(dbquery("SELECT planet_id FROM ".$db_table['planets']." WHERE planet_id='".$c->id."' AND planet_user_id='".$s['user']['id']."' AND planet_user_main=0;"))==1)
+							{
+								if (reset_planet($c->id))
+								{
+									//Liest ID des Hauptplaneten aus
+									$main_res=dbquery("
+									SELECT
+										planet_id
+									FROM
+		                                ".$db_table['planets']."
+									WHERE
+		                                planet_user_id='".$s['user']['id']."'
+		                                AND planet_user_main=1;");
+									$main_arr=mysql_fetch_array($main_res);
+		
+									echo "<br>Die Kolonie wurde aufgehoben!<br>";
+									echo "<a href=\"?page=overview&planet_id=".$main_arr['planet_id']."\">Zur &Uuml;bersicht</a>";
+		
+									$c->id=NULL;
+									$s['currentPlanetId'] = $main_arr['planet_id'];
+									$cpid = $main_arr['planet_id'];
+								}
+								else
+									err_msg("Beim Aufheben der Kolonie trat ein Fehler auf! Bitte wende dich an einen Game-Admin!");
+							}
+							else
+								err_msg("Der Planet ist aktuell nicht ausgew&auml;hlt, er geh&ouml;rt nicht dir oder er ist ein Hauptplanet!");
 						}
 						else
-							err_msg("Beim Aufheben der Kolonie trat ein Fehler auf! Bitte wende dich an einen Game-Admin!");
+					 		err_msg("Kolonie kann nicht gel&ouml;scht werden da Schiffe von/zu diesem Planeten unterwegs sind!");
 					}
 					else
-						err_msg("Der Planet ist aktuell nicht ausgew&auml;hlt, er geh&ouml;rt nicht dir oder er ist ein Hauptplanet!");
+						err_msg("Kolonie kann nicht gel&ouml;scht werden da noch Schiffe auf dem Planeten stationiert sind oder Schiffe noch im Bau sind!");
 				}
 				else
-			 		err_msg("Kolonie kann nicht gel&ouml;scht werden da Schiffe von/zu diesem Planeten unterwegs sind!");
+				{
+					echo "Die Kolonie kann wegen eines kürzlich stattgefundenen Besitzerwechsels<br/>
+					erst ab <b>".df($t)."</b> gelöscht werden!<br/><br/>
+					<input type=\"button\" value=\"Zurück\" onclick=\"document.location='?page=$page'\" />";
+				}
 			}
 			else
-				err_msg("Kolonie kann nicht gel&ouml;scht werden da noch Schiffe auf dem Planeten stationiert sind oder Schiffe noch im Bau sind!");
+				err_msg("Dies ist ein Hauptplanet! Hauptplaneten können nicht aufgegeben werden!");
 		}
 
 		//
@@ -294,6 +314,10 @@
 			{
 				echo "&nbsp;<input type=\"button\" value=\"Kolonie aufheben\" onClick=\"document.location='?page=$page&action=remove'\">";
 			}
+			else
+			{
+				echo "<br/><br/><b>Dies ist dein Hauptplanet. Hauptplaneten können nicht invasiert oder aufgegeben werden!</b>";
+			}	
 		}
 	}
 	else
