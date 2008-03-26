@@ -55,7 +55,7 @@ main(int argc, char *argv[])
 	mysqlpp::Connection con(argv[4],argv[1],argv[2],argv[3]); //NAME,SERVER,USER;PWD
 	// TODO: Error handling
 	//Config* Config::_instance = 0; /*
-	std::time_t mtime;
+	std::time_t mtime=0;
 	// Main loop
 	while (true)
 	{	
@@ -136,7 +136,7 @@ main(int argc, char *argv[])
 		/*
 		fleet::FleetHandler* fh = new fleet::FleetHandler(&con);
 		fh->update();*/
-		sleep(5);
+		sleep(1);
 	}		
 
 	return 0;

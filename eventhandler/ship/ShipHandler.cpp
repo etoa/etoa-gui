@@ -66,7 +66,8 @@ namespace ship
 	  			else
 	  			{
 	  				changes_=true;
-	  				int obj_cnt = (int)arr["queue_cnt"] - (int)ceil((double)((int)arr["queue_endtime"] - time)/(int)arr["queue_objtime"]);
+					int new_queue_cnt = (int)ceil((double)((int)arr["queue_endtime"] - time)/(int)arr["queue_objtime"]);
+					int obj_cnt = (int)arr["queue_cnt"] - new_queue_cnt;
   					ShipList::add(this->con_,
   												(int)arr["queue_planet_id"], 
   												(int)arr["queue_user_id"],
@@ -75,9 +76,9 @@ namespace ship
 				  	query << "UPDATE "
 				  	<< "	ship_queue "
 				  	<< "SET "
-				  	<< "	queue_cnt=queue_cnt-" << obj_cnt << " "
+				  	<< "	queue_cnt=" << new_queue_cnt << " "
 				  	<< "WHERE " 
-				  	<< "	queue_id<" << time <<";";
+				  	<< "	queue_id=" << arr["queue_id"] <<";";
 				    query.store();		
 						query.reset();	  						 				
 	  			}	      	

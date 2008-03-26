@@ -77,7 +77,7 @@ namespace def
 				  	<< "SET "
 				  	<< "	queue_cnt=queue_cnt-" << obj_cnt << " "
 				  	<< "WHERE " 
-				  	<< "	queue_id<" << time <<";";
+				  	<< "	queue_id=" << arr["queue_id"] <<";";
 				    query.store();		
 						query.reset();	  						 				
 	  			}	      	
