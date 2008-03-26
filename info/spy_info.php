@@ -23,6 +23,7 @@
 
 	infobox_start("Infos &uuml;ber gegnerische Flotten",1);
 	echo "<tr><td class=\"tbltitle\" >Stufe</td><td class=\"tbltitle\" width=\"90%\">M&ouml;glichkeiten</td></tr>";
+	echo "<tr><td class=\"tbldata\" valign=\"top\" ><b>0</b></td><td class=\"tbldata\" width=\"90%\">Es wird gar nichts angezeigt.</td></tr>";
 	echo "<tr><td class=\"tbldata\" valign=\"top\" ><b>".SPY_TECH_SHOW_ATTITUDE."</b></td><td class=\"tbldata\" width=\"90%\">Die Gesinnung (friedlich, feindlich) der Fotte wird angezeigt.</td></tr>";
 	echo "<tr><td class=\"tbldata\" valign=\"top\" ><b>".SPY_TECH_SHOW_NUM."</b></td><td class=\"tbldata\" width=\"90%\">Du siehst wieviele Schiffe in der Flotte sind.</td></tr>";
 	echo "<tr><td class=\"tbldata\" valign=\"top\" ><b>".SPY_TECH_SHOW_SHIPS."</b></td><td class=\"tbldata\" width=\"90%\">Du siehst welche Schiffstypen in der Flotte sind.</td></tr>";

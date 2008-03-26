@@ -3320,7 +3320,8 @@ die Spielleitung";
 				OR f.fleet_action='vo');
 		");
 
-
+		
+		// Spiotech des Users laden
 		$spiores=dbquery("
 			SELECT
 				techlist_current_level
@@ -3331,34 +3332,33 @@ die Spielleitung";
 				AND techlist_tech_id='7'
 		"); //Spiotech
 		$spiorow=mysql_fetch_array($spiores);
+		$spiotech = max(0,$spiorow['techlist_current_level']);
 
 		if(mysql_num_rows($ffres)>0)
 		{
-            while ($farr=mysql_fetch_array($ffres))
-            {
-                $show_tarn=0;
-                //if($farr['fleet_action']=='vo')
-                //{
-                    //Zählt alle nicht tarnfähigen Schiffe aus
-                    $tarn_ship_res=dbquery("
-						SELECT
-							s.ship_id
-						FROM
-							".$db_table['fleet_ships']." AS fs
-							INNER JOIN ".$db_table['ships']." AS s
-							ON fs.fs_ship_id = s.ship_id
-							AND fs.fs_fleet_id='".$farr['fleet_id']."'
-							AND s.ship_tarned!='1';
-					");
+			// Gehe jede Flotte durch
+      while ($farr=mysql_fetch_array($ffres))
+      {
+	      $show_tarn=0;
 
-                    if(mysql_num_rows($tarn_ship_res)>0)
-                    {
-                        $show_tarn=1;
-                    }
-                //}
+	      // Zählt alle nicht tarnfähigen Schiffe aus
+        $tarn_ship_res=dbquery("
+				SELECT
+					s.ship_id
+				FROM
+					fleet_ships AS fs
+				INNER JOIN ships AS s
+					ON fs.fs_ship_id = s.ship_id
+					AND fs.fs_fleet_id='".$farr['fleet_id']."'
+					AND s.ship_tarned!='1';
+				");
+	      if(mysql_num_rows($tarn_ship_res)>0)
+	      {
+	          $show_tarn=1;
+	      }
 
-                //Liest Tarntechnik vom Angreiffer aus
-                $tarnres=dbquery("
+        //Liest Tarntechnik vom Angreiffer aus
+        $tarnres=dbquery("
 					SELECT
 						techlist_current_level
 					FROM
@@ -3366,14 +3366,12 @@ die Spielleitung";
 					WHERE
 						techlist_user_id='".$farr['fleet_user_id']."'
 						AND techlist_tech_id='11'
-				"); //Tarntech
-                $tarnrow=mysql_fetch_array($tarnres);
+				"); 
+        $tarnrow=mysql_fetch_array($tarnres);
 
-
-                $special_ship_bonus_tarn = 0;
-
-                //Liest Tarnbonus von den Spezialschiffen aus
-                $special_boni_res=dbquery("
+        //Liest Tarnbonus von den Spezialschiffen aus
+        $special_ship_bonus_tarn = 0;
+        $special_boni_res=dbquery("
 					SELECT
 						s.special_ship_bonus_tarn,
 						sl.shiplist_special_ship_bonus_tarn
@@ -3392,35 +3390,35 @@ die Spielleitung";
 						AND sl.shiplist_planet_id='".$farr['fleet_planet_from']."'
 						AND s.special_ship='1';
 				");
-                if(mysql_num_rows($special_boni_res)>0)
-                {
-                    while ($special_boni_arr=mysql_fetch_array($special_boni_res))
-                    {
-                        $special_ship_bonus_tarn+=$special_boni_arr['special_ship_bonus_tarn'] * $special_boni_arr['shiplist_special_ship_bonus_tarn'];
-                    }
-                }
+        if(mysql_num_rows($special_boni_res)>0)
+        {
+            while ($special_boni_arr=mysql_fetch_array($special_boni_res))
+            {
+                $special_ship_bonus_tarn+=$special_boni_arr['special_ship_bonus_tarn'] * $special_boni_arr['shiplist_special_ship_bonus_tarn'];
+            }
+        }
+        
+        if ($tarnrow['techlist_current_level']-$spiotech<0)
+        {
+            $diff_time_factor=0;
+        }
+        elseif ($tarnrow['techlist_current_level']-$spiotech>9)
+        {
+            $diff_time_factor=9;
+        }
+        else
+        {
+        	$diff_time_factor=$tarnrow['techlist_current_level']-$spiotech;
+        }
 
+        $tarned = 0.1*$diff_time_factor+$special_ship_bonus_tarn;
+        //Flotte kann maximum zu 90% des Fluges getarnt werden, auch mit Spezialschiffsboni
+        if($tarned>0.9)
+            $tarned=0.9;
 
-                if ($tarnrow['techlist_current_level']-$spiorow['techlist_current_level']<0)
+                if (time() - $farr['fleet_landtime'] - ($farr['fleet_launchtime'] - $farr['fleet_landtime']) * (1-$tarned)>0 && $spiotech>=SPY_TECH_SHOW_ATTITUDE && $show_tarn==1)
                 {
-                    $diff_time_factor=0;
-                }
-                elseif ($tarnrow['techlist_current_level']-$spiorow['techlist_current_level']>9)
-                {
-                    $diff_time_factor=9;
-                }
-                else
-                {
-                    $diff_time_factor=$tarnrow['techlist_current_level']-$spiorow['techlist_current_level'];
-                }
 
-                $tarned = 0.1*$diff_time_factor+$special_ship_bonus_tarn;
-                //Flotte kann maximum zu 90% des Fluges getarnt werden, auch mit Spezialschiffsboni
-                if($tarned>0.9)
-                    $tarned=0.9;
-
-                if (time() - $farr['fleet_landtime'] - ($farr['fleet_launchtime'] - $farr['fleet_landtime']) * (1-$tarned)>0 && $spiorow['techlist_current_level']>=SPY_TECH_SHOW_ATTITUDE && $show_tarn==1)
-                {
                     $fres = dbquery("
 						SELECT
 							f.fleet_id
@@ -3450,7 +3448,7 @@ die Spielleitung";
                     }
                 }
             }
-        }
+     }
 		return $num;
 	}
 

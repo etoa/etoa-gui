@@ -51,6 +51,9 @@
 		// Aktion durchführen
 		if ($binfo[0]==1)
 		{			
+
+			$return_fleet = true;
+
 			// Anti-Hack (exploited by Pain & co)
 			// Check if an invasion ship is part of the fleet (exploited by faking the form which calls fleet_launch,
 			// setting an fleet action which wasn't allowed)
@@ -76,7 +79,7 @@
 				if ($arr_check['planet_user_main']==0)
 				{
 				
-					$return_fleet = true;
+
 		
 					$coords_target = coords_format2($arr['fleet_planet_to']);
 					$coords_from = coords_format2($arr['fleet_planet_from']);
