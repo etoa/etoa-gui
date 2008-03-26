@@ -156,7 +156,7 @@ namespace market
 								msg += "% deiner Rohstoffe wieder zurück (abgerundet)!\n\n";
             
 								msg += "Das Handelsministerium";
-								functions::send_msg(con_,(int)arr["auction_user_id"],(int)SHIP_MISC_MSG_CAT_ID,"Auktion beendet",msg); //ToDo
+								functions::send_msg(con_,(int)arr["auction_user_id"],atoi(SHIP_MISC_MSG_CAT_ID),"Auktion beendet",msg); //ToDo
 
 								//Auktion löschen
 								query << "DELETE FROM ";
@@ -1050,9 +1050,9 @@ namespace market
 							msg += "Du erhälst ";
 							msg += functions::s_round(return_factor,2)*100; //ToDo
 							msg += "% deiner Rohstoffe wieder zurück (abgerundet)!\n\n";
-          
+							
 							msg += "Das Handelsministerium";
-							functions::send_msg(con_,(int)arr["user_id"],(int)SHIP_MISC_MSG_CAT_ID,"Angebot gelöscht",msg); //ToDo
+							functions::send_msg(con_,(int)arr["user_id"],atoi(SHIP_MISC_MSG_CAT_ID),"Angebot gelöscht",msg); //ToDo
 
 							// Angebot löschen
 							query << "DELETE FROM ";
@@ -1151,7 +1151,7 @@ namespace market
 					msg += "% deiner Schiffe wieder zurück (abgerundet)!\n\n";
           
 					msg += "Das Handelsministerium";
-					functions::send_msg(con_,(int)arr["user_id"],(int)SHIP_MISC_MSG_CAT_ID,"Angebot gelöscht",msg);
+					functions::send_msg(con_,(int)arr["user_id"],atoi(SHIP_MISC_MSG_CAT_ID),"Angebot gelöscht",msg);
 
 					// Angebot löschen
 					query << "DELETE FROM ";
