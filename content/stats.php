@@ -102,9 +102,17 @@
 	else
 	{
 		// Menu
-		$menu = array("xajax_statsShowBox('user');"=>"Spieler","xajax_statsShowBox('ships')"=>"Flotten","xajax_statsShowBox('tech')"=>"Technologien","xajax_statsShowBox('buildings')"=>"Geb&auml;ude","xajax_statsShowBox('alliances')"=>"Allianzen","xajax_statsShowBox('pillory')"=>"Pranger");
+		$menu = array("xajax_statsShowBox('user');"=>"Spieler",
+		"xajax_statsShowBox('ships')"=>"Schiffe",
+		"xajax_statsShowBox('tech')"=>"Forschung",
+		"xajax_statsShowBox('buildings')"=>"Geb&auml;ude",
+		"xajax_statsShowBox('alliances')"=>"Allianzen",
+		"xajax_statsShowBox('pillory')"=>"Pranger");
 		if (ENABLE_USERTITLES==1)
 		{
+			$menu["xajax_statsShowBox('battle');"]="Kampf";
+			$menu["xajax_statsShowBox('trade');"]="Handel";
+			$menu["xajax_statsShowBox('diplomacy');"]="Diplomatie";
 			$menu["xajax_statsShowBox('titles');"]="Titel";
 		}		
 		show_js_tab_menu($menu);

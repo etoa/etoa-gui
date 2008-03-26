@@ -49,9 +49,7 @@
 
 	if ($mode=="titles")
 	{
-		// TODO: Remove this hack
-		echo Ranking::getTitles(1);
-		//include(CACHE_ROOT."/out/usertitles_a.gen");
+		include(CACHE_ROOT."/out/usertitles_a.gen");
 	}
 	
 	//
