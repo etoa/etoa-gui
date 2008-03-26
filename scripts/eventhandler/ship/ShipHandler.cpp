@@ -67,11 +67,11 @@ namespace ship
 	  			{
 	  				changes_=true;
 	  				int obj_cnt = (int)arr["queue_cnt"] - (int)ceil((double)((int)arr["queue_endtime"] - time)/(int)arr["queue_objtime"]);
-  					/*ShipList::add(this->con_,
+  					ShipList::add(this->con_,
   												(int)arr["queue_planet_id"], 
   												(int)arr["queue_user_id"],
   												(int)arr["queue_ship_id"],
-  												(int)obj_cnt);*/	  				
+  												(int)obj_cnt);	  				
 				  	query << "UPDATE "
 				  	<< "	ship_queue "
 				  	<< "SET "
