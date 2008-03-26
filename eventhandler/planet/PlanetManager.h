@@ -20,7 +20,7 @@ namespace planet
 		void updateProductionRates(int planetId, std::vector<double>& cnt, mysqlpp::Row& row);
 		void save(int planetId, std::vector<int>& store, std::vector<double>& cnt, std::vector<double>& ressource, int fieldsUsed, int fieldsExtra);
 		void updateGasPlanets();
-		void PlanetManager::updateUserPlanets();
+		void updateUserPlanets();
 		void saveRes(int planetId, std::vector<double>& ressource);
 
 	private:
