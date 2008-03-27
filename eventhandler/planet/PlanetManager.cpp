@@ -225,6 +225,7 @@ namespace planet
 				}
 			}
 		}
+		std::cout << "Store: " << store[5] << "\n";
 	}
 	
 	void PlanetManager::updateProductionRates(int planetId, std::vector<double>& cnt, mysqlpp::Row& row)
@@ -435,6 +436,7 @@ namespace planet
 		prodPlastic = (double)row["planet_prod_plastic"];
 		prodFuel = (double)row["planet_prod_fuel"];
 		prodFood = (double)row["planet_prod_food"];
+		
 
 		if (int(row["planet_store_metal"]) > (pmetal+(prodMetal/3600)*t))
 			ressource[0] = pmetal + (prodMetal/3600.000000)*t;
@@ -473,6 +475,7 @@ namespace planet
 
 		birth_rate = 1.1 + float(row["planet_type_f_population"]) +float(row["race_f_population"]) + float(row["sol_type_f_population"]) -3;
 		ressource[6] = ppeople/50 * birth_rate;
+		
 		if(ressource[6]<=3)
 		{
 			ressource[6]=3;
@@ -481,15 +484,22 @@ namespace planet
 		{
 			ressource[5] = 1;
 		}
-		if (int(row["planet_people_place"]) > (ppeople+(ressource[6]/3600*t)))
+		else if (int(row["planet_people_place"]) > (ppeople+(ressource[6]/3600*t)))
 		{
 			ressource[5] = ppeople + (ressource[6]/3600)*t;
 		}
-		else if (int(row["planet_people_place"]) < ppeople)
+		else if (int(row["planet_people_place"]) <= (ppeople+(ressource[6]/3600*t)))
 		{
-			ressource[5] = (double)row["planet_people_place"];
-		}
+			if (ppeople > int(row["planet_people_place"]))
+			{
+				ressource[5] = ppeople;
+			}
+			else
+			{
+				ressource[5] = int(row["planet_people_place"]);
+			}
 
+		}
 	}
 	
 	void PlanetManager::updateGasPlanets()
@@ -548,7 +558,7 @@ namespace planet
 	
 	void PlanetManager::updateUserPlanets()
 	{
-		std::time_t ptime = std::time(0) - 10;
+		std::time_t ptime = std::time(0);
 		std::time_t utime = std::time(0) - 2400;
 		mysqlpp::Query query = con_->query();
 		query << "SELECT ";

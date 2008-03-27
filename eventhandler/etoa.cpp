@@ -50,11 +50,10 @@ float minLoopDuration = 1;	// Minimal loop duration
 
 main(int argc, char *argv[])
 {
-	std::cout << argv[1] << "\n";
 
-	mysqlpp::Connection con(argv[4],argv[1],argv[2],argv[3]); //NAME,SERVER,USER;PWD
+	mysqlpp::Connection con(argv[4],argv[1],argv[2],argv[3]); //NAME,SERVER,USER;PWD*/
 	// TODO: Error handling
-	//Config* Config::_instance = 0; /*
+	//Config* Config::_instance = 0;
 	std::time_t mtime=0;
 	// Main loop
 	while (true)
@@ -118,7 +117,7 @@ main(int argc, char *argv[])
  				}						           
 			}
 			planet::PlanetManager* pm = new planet::PlanetManager(&con, &v1);
-			pm->updateValues(&v1);//Segmentation Fault		
+			pm->updateValues(&v1);		
 			
 			//pm->updateGasPlanets();
 			pm->updateUserPlanets();
