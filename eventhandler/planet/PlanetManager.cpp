@@ -225,7 +225,6 @@ namespace planet
 				}
 			}
 		}
-		std::cout << "Store: " << store[5] << "\n";
 	}
 	
 	void PlanetManager::updateProductionRates(int planetId, std::vector<double>& cnt, mysqlpp::Row& row)
