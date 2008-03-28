@@ -3,127 +3,132 @@
 	* Fleet action: Explore
 	*/
 	
-			$cell_id=$arr['fleet_cell_to'];
-			$planet_id=$arr['fleet_planet_to'];
-
-			// ist das nebel/asteroid feld noch vorhanden?
-			$res_nop = dbquery("
-				SELECT 
-					cell_nebula,
-					cell_asteroid 
-				FROM 
-					".$db_table['space_cells']." 
-				WHERE 
-					cell_id='".$cell_id."';
-			");
+		$cell_id=$arr['fleet_cell_to'];
+		$planet_id=$arr['fleet_planet_to'];
+		
+		
+		//Precheck action==possible?
+		$fsres = dbquery("
+			SELECT
+				ship_id
+			FROM
+				fleet_ships
+			INNER JOIN 
+				ships ON fs_ship_id = ship_id
+				AND fs_fleet_id='".$arr['fleet_id']."'
+				AND fs_ship_faked='0'
+				AND ship_explore=1;");
+					
+		if (mysql_num_rows($fsres)>0)
+		{
 			
-			// ist es ein Gas-Planet?
-			$res_okp = dbquery("
-				SELECT 
-					planet_type_id
-				FROM 
-					".$db_table['planets']." 
-				WHERE 
-					planet_id='".$planet_id."';
-			");
-			
-			//Nebel OK
-			If ($res_nop['cell_nebula']==1)
+			if ($planet_id==0)
 			{
-				$res = dbquery("
-					SELECT
-						cell_nebula_ress
-					FROM
-						".$db_table['space_cells']."
-					WHERE
+
+				//Load celldata
+				$cellres = dbquery("
+					SELECT 
+						* 
+					FROM 
+						".$db_table['space_cells']." 
+					WHERE 
 						cell_id='".$cell_id."';
 				");
 				
-				//Nachricht senden
-        $msg = "Eine Flotte vom Planeten \n[b]".coords_format2($arr['fleet_planet_from'])."[/b]\nhat [b]ein Nebelfeld [/b]\num [b]".date("d.m.Y H:i",$arr['fleet_landtime'])."[/b]\n spioniert.\n";
-        $msgres = "\n[b]ROHSTOFFE:[/b]\n\n".RES_CRYSTAL.": ".nf($res)."\n";
-        send_msg($arr['fleet_user_id'],SHIP_MISC_MSG_CAT_ID,"Nebelfeld spionieren",$msg.$msgres);
-
-        //Log schreiben
-        add_log(13,"Eine Flotte des Spielers [B]".get_user_nick($arr['fleet_user_id'])."[/B] vom Planeten [b]".coords_format2($arr['fleet_planet_from'])."[/b] hat [b]ein Nebelfeld [/b] um [b]".date("d.m.Y H:i",$arr['fleet_landtime'])."[/b]\n spioniert.\n".);
-        
-			}
-			Else
-			{
+				$cellrow = mysql_fetch_array($cellres);
 				
-				//Asteroid OK
-				If ($res_nop['cell_asteroid']==1)
+				//nebula?
+				if ($cellrow['cell_nebula']==1)
 				{
-					$res = dbquery("
-						SELECT
-							cell_asteroid_ress
-						FROM
-							".$db_table['space_cells']."
-						WHERE
-							cell_id='".$cell_id."';
-					");
 				
 					//Nachricht senden
-        	$msg = "Eine Flotte vom Planeten \n[b]".coords_format2($arr['fleet_planet_from'])."[/b]\nhat [b]ein Asteroidenfeld [/b]\num [b]".date("d.m.Y H:i",$arr['fleet_landtime'])."[/b]\n spioniert.\n";
-        	$msgres = "\n[b]ROHSTOFFE:[/b]\n\n".RES_METAL.": ".nf($res)."\n";
-        	send_msg($arr['fleet_user_id'],SHIP_MISC_MSG_CAT_ID,"Asteroidenfeld spionieren",$msg.$msgres);
-
-        	//Log schreiben
-        	add_log(13,"Eine Flotte des Spielers [B]".get_user_nick($arr['fleet_user_id'])."[/B] vom Planeten [b]".coords_format2($arr['fleet_planet_from'])."[/b] hat [b]ein Gas-Planet [/b] um [b]".date("d.m.Y H:i",$arr['fleet_landtime'])."[/b]\n spioniert.\n".);
-        
-					
-					}
-					Else
-					{
+					$msg = "Eine Flotte vom Planeten \n[b]".coords_format2($arr['fleet_planet_from'])."[/b]\nhat [b]ein Nebelfeld [/b]\num [b]".date("d.m.Y H:i",$arr['fleet_landtime'])."[/b]\n spioniert.\n";
+					$msgres = "\n[b]ROHSTOFFE:[/b]\n\n".RES_CRYSTAL.": ".nf($cellrow['cell_nebula_ress'])."\n";
+					send_msg($arr['fleet_user_id'],SHIP_MISC_MSG_CAT_ID,"Nebelfeld spionieren",$msg.$msgres);
+	
+					//Log schreiben
+					//add_log(13,"Eine Flotte des Spielers [B]".get_user_nick($arr['fleet_user_id'])."[/B] vom Planeten [b]".coords_format2($arr['fleet_planet_from'])."[/b] hat [b]ein Nebelfeld [/b] um [b]".date("d.m.Y H:i",$arr['fleet_landtime'])."[/b]\n spioniert.\n");
+				}
+				//asteroid
+				elseif ($cellrow['cell_asteroid']==1)		
+				{
+				
+					//Nachricht senden
+					$msg = "Eine Flotte vom Planeten \n[b]".coords_format2($arr['fleet_planet_from'])."[/b]\nhat [b]ein Asteroidenfeld [/b]\num [b]".date("d.m.Y H:i",$arr['fleet_landtime'])."[/b]\n spioniert.\n";
+					$msgres = "\nROHSTOFFE: ".nf($cellrow['cell_asteroid_ress'])."\n";
+					send_msg($arr['fleet_user_id'],SHIP_MISC_MSG_CAT_ID,"Asteroidenfeld spionieren",$msg.$msgres);
+	
+					//Log schreiben
+					//add_log(13,"Eine Flotte des Spielers [B]".get_user_nick($arr['fleet_user_id'])."[/B] vom Planeten [b]".coords_format2($arr['fleet_planet_from'])."[/b] hat [b]ein Gas-Planet [/b] um [b]".date("d.m.Y H:i",$arr['fleet_landtime'])."[/b]\n spioniert.\n".);			
+				}
+				//Field doesnt' exitst anymore
+				else
+				{
+				
+					//Nachricht senden
+					$msg = "Eine Flotte vom Planeten \n[b]".coords_format2($arr['fleet_planet_from'])."[/b]\nkonnte [b]kein Asteroidfeld [/b]spionieren.\n";
+					send_msg($arr['fleet_user_id'],SHIP_MISC_MSG_CAT_ID,"Gas-Planet spionieren",$msg);
+	
+					//Log schreiben
+					//add_log(13,"Eine Flotte des Spielers [B]".get_user_nick($arr['fleet_user_id'])."[/B] vom Planeten [b]".coords_format2($arr['fleet_planet_from'])."[/b] konnte [b]kein Asteroidfeld [/b]spionieren.\n".);
+						
+						
+					//Nachricht senden
+					 $msg = "Eine Flotte vom Planeten \n[b]".coords_format2($arr['fleet_planet_from'])."[/b]\nkonnte [b]kein Nebelfeld [/b]spionieren.\n";
+					send_msg($arr['fleet_user_id'],SHIP_MISC_MSG_CAT_ID,"Gas-Planet spionieren",$msg);
+	
+					//Log schreiben
+					//add_log(13,"Eine Flotte des Spielers [B]".get_user_nick($arr['fleet_user_id'])."[/B] vom Planeten [b]".coords_format2($arr['fleet_planet_from'])."[/b] konnte [b]kein Nebelfeld [/b]spionieren.\n".);	
+				}
+			}
+			else
+			{
+			
+				//Load Data
+				$planetres = dbquery("
+					SELECT 
+						*
+					FROM 
+						".$db_table['planets']." 
+					WHERE 
+						planet_id='".$planet_id."';");
+						
+				$cellrow = mysql_fetch_array($planetres);
 								
-						//Gas-Planet OK
-						If ($res_okp['planet_type_id']==7)
-						{
-							$res = dbquery("
-								SELECT 
-									planet_res_fuel
-								FROM 
-									".$db_table['planets']." 
-								WHERE 
-									planet_id='".$planet_id."';
-							");
-
-							//Nachricht senden
+				//Gas-Planet?
+				If ($cellrow['planet_type_id']==7)
+				{
+	
+					//Nachricht senden
         			$msg = "Eine Flotte vom Planeten \n[b]".coords_format2($arr['fleet_planet_from'])."[/b]\nhat [b]ein Gas-Planet [/b]\num [b]".date("d.m.Y H:i",$arr['fleet_landtime'])."[/b]\n spioniert.\n";
-        			$msgres = "\n[b]ROHSTOFFE:[/b]\n\n".RES_FUEL.": ".nf($res)."\n";
+        			$msgres = "\n[b]ROHSTOFFE:[/b]\n\n".RES_FUEL.": ".nf($cellrow['planet_res_fuel'])."\n";
         			send_msg($arr['fleet_user_id'],SHIP_MISC_MSG_CAT_ID,"Gas-Planet spionieren",$msg.$msgres);
 
         			//Log schreiben
-        			add_log(13,"Eine Flotte des Spielers [B]".get_user_nick($arr['fleet_user_id'])."[/B] vom Planeten [b]".coords_format2($arr['fleet_planet_from'])."[/b] hat [b]ein Gas-Planet [/b] um [b]".date("d.m.Y H:i",$arr['fleet_landtime'])."[/b]\n spioniert.\n".);
+        			//add_log(13,"Eine Flotte des Spielers [B]".get_user_nick($arr['fleet_user_id'])."[/B] vom Planeten [b]".coords_format2($arr['fleet_planet_from'])."[/b] hat [b]ein Gas-Planet [/b] um [b]".date("d.m.Y H:i",$arr['fleet_landtime'])."[/b]\n spioniert.\n".);
         
-						}
-						Else
-						{
-							//Nachricht senden
+				}
+				else
+				{
+					//Nachricht senden
         			$msg = "Eine Flotte vom Planeten \n[b]".coords_format2($arr['fleet_planet_from'])."[/b]\nkonnte [b]kein Gas-Planet [/b]spionieren.\n";
         			send_msg($arr['fleet_user_id'],SHIP_MISC_MSG_CAT_ID,"Gas-Planet spionieren",$msg);
 
         			//Log schreiben
-        			add_log(13,"Eine Flotte des Spielers [B]".get_user_nick($arr['fleet_user_id'])."[/B] vom Planeten [b]".coords_format2($arr['fleet_planet_from'])."[/b] konnte [b]kein Gas-Planet [/b]spionieren.\n".);
-						}
-						
-					//Nachricht senden
-        	$msg = "Eine Flotte vom Planeten \n[b]".coords_format2($arr['fleet_planet_from'])."[/b]\nkonnte [b]kein Asteroidfeld [/b]spionieren.\n";
-        	send_msg($arr['fleet_user_id'],SHIP_MISC_MSG_CAT_ID,"Gas-Planet spionieren",$msg);
-
-        	//Log schreiben
-        	add_log(13,"Eine Flotte des Spielers [B]".get_user_nick($arr['fleet_user_id'])."[/B] vom Planeten [b]".coords_format2($arr['fleet_planet_from'])."[/b] konnte [b]kein Asteroidfeld [/b]spionieren.\n".);
-					}
-					
-			//Nachricht senden
-      $msg = "Eine Flotte vom Planeten \n[b]".coords_format2($arr['fleet_planet_from'])."[/b]\nkonnte [b]kein Nebelfeld [/b]spionieren.\n";
-      send_msg($arr['fleet_user_id'],SHIP_MISC_MSG_CAT_ID,"Gas-Planet spionieren",$msg);
-
-     	//Log schreiben
-     	add_log(13,"Eine Flotte des Spielers [B]".get_user_nick($arr['fleet_user_id'])."[/B] vom Planeten [b]".coords_format2($arr['fleet_planet_from'])."[/b] konnte [b]kein Nebelfeld [/b]spionieren.\n".);
+        			//add_log(13,"Eine Flotte des Spielers [B]".get_user_nick($arr['fleet_user_id'])."[/B] vom Planeten [b]".coords_format2($arr['fleet_planet_from'])."[/b] konnte [b]kein Gas-Planet [/b]spionieren.\n".);
+				}
 			}
-							
-			$action="jo";
+						
+	
+		}
+		else
+		{
+			$text="[b]Planet:[/b] $coords_target\n[b]Besitzer:[/b] ".get_user_nick($user_to_id)."\n\nEine Flotte vom Planeten $coords_from versuchte, das Ziel zu erkunden. Leider war kein Schiff mehr in der Flotte, welches erkunden kann, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!";
+				send_msg($arr['fleet_user_id'],SHIP_MISC_MSG_CAT_ID,"Erkundungsversuch gescheitert",$text);
+				send_msg($user_to_id,SHIP_MISC_MSG_CAT_ID,"Erkundungsversuch gescheitert",$text);							
+		}
+	
+		$action="jr";
 	
 			// Flotte zurückschicken
   		fleet_return($arr,$action);
