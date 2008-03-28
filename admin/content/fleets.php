@@ -22,6 +22,9 @@
     $fleet_actions['io']="Invasieren";
     $fleet_actions['ir']="Invasieren (R&uuml;ckflug)";
     $fleet_actions['ioc']="Invasieren (Abgebrochen)";
+    $fleet_actions['jo'] ="Nebel/Asteroidenfelder erkunden";
+    $fleet_actions['joc'] ="Nebel/Asteroidenfelder erkunden (Abgebrochen)";
+    $fleet_actions['jor'] ="Nebel/Asteroidenfelder erkunden (R&uuml;ckflug)";
     $fleet_actions['bo']="Bombadieren";
     $fleet_actions['br']="Bombadieren (R&uuml;ckflug)";
     $fleet_actions['boc']="Bombadieren (Abgebrochen)";
