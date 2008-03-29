@@ -55,10 +55,30 @@
 			{
 				$destroyed_ships_msg="";
 			}
+			//Laden der Tritiummenge auf dem Planeten
+			$fuelRes = dbquery("SELECT
+									planet_res_fuel
+								FROM
+									".$db_table['planets']."
+								WHERE
+									planet_id='".$arr['fleet_planet_to']."';");
+			$fuelArr = mysql_fetch_array($fuelRes);
+			
 
 			// Anzahl gesammelter Rohstoffe berechen
-      $capa=$arr['fleet_capacity_nebula'];
-    	$fuel = mt_rand(1000,$capa);
+    	  	$capa=$arr['fleet_capacity_nebula'];
+    		$fuel = mt_rand(1000,$capa);
+		
+			$fuel = min($fuel, $fuelArr['planet_res_fuel']);
+			
+			//Tritium nach dem Saugen berechnen und speichern
+			$newFuel = $fuelArr['planet_res_fuel'] - $fuel;
+			dbquery("UPDATE 
+						".$db_table['planets']." 
+					SET 
+						planet_res_fuel='".$newFuel."' 
+					WHERE 
+						planet_id='".$arr['fleet_planet_to']."';");
 
 			//Smmiert erhaltenes Tritium zu der Ladung der Flotte
 			$fuel_total=$fuel+$arr['fleet_res_fuel'];
