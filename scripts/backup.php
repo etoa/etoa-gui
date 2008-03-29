@@ -67,6 +67,7 @@
 			$result = shell_exec("gzip -9 --best ".$file.".sql");
 			if ($result=="")
 			{
+				/*
 				$ftp_con = ftp_connect(BACKUP_REMOTE_IP,21);
 				if ($ftp_con)
 				{
@@ -87,7 +88,7 @@
 				else
 				{					
 					echo "FTP connection to ".BACKUP_REMOTE_IP." failed!\n";
-				}
+				}*/
 			}
 			else
 				echo "Error while zipping Backup-Dump $file: $result\n";
