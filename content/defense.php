@@ -48,6 +48,9 @@
 	
 	//Tabulator var setzten (für das fortbewegen des cursors im forumular)
 	$tabulator = 1;
+	
+	//Zähle initialisieren für alle Analgen
+	$allCnt = 0;
 
 	//Gentech level laden
 	$tlres = dbquery("
@@ -1417,6 +1420,7 @@
   			      	}
   			      	$tabulator++;
 								$cnt++;
+								$allCnt++;
 								
 							}
 						}
@@ -1444,7 +1448,7 @@
    				echo "<br><br><br>";
 				}
    			// Baubutton anzeigen
-				if ($cnt>0)
+				if ($allCnt>0)
 				{
 					echo "<input type=\"submit\" class=\"button\" name=\"submit\" value=\"Bauauftr&auml;ge &uuml;bernehmen\"/>";
 				}
@@ -1467,5 +1471,6 @@
 		echo $def_info_string;
 	}
 	echo "</form>";
+	
 
 ?>
