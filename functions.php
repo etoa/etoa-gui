@@ -5391,8 +5391,8 @@ Forum: http://www.etoa.ch/forum";
 		$ids=array();
 		if ($nr>0)
 		{
-			require_once("/Applications/xampp/htdocs/etoa/trunk/inc/fleet_action.inc.php");
-			require_once("/Applications/xampp/htdocs/etoa/trunk/inc/fleet_update.inc.php");
+			require_once(GAME_ROOT_DIR."/inc/fleet_action.inc.php");
+			require_once(GAME_ROOT_DIR."/inc/fleet_update.inc.php");
 			while ($arr=mysql_fetch_array($res))
 			{
 				update_fleet($arr,0);
