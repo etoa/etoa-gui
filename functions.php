@@ -1606,7 +1606,7 @@
 	// Koordinaten formatieren
 	//
 
-	function coords_format4($cell_id)
+	function coords_format4($cell_id,$link=1)
 	{
 		global $db_table;
 		$res = dbquery("
@@ -1624,12 +1624,24 @@
 		");
 		$arr = mysql_fetch_array($res);
 		$coords = $arr['cell_sx']."/".$arr['cell_sy']." : ".$arr['cell_cx']."/".$arr['cell_cy'];
-		if ($arr['cell_asteroid']==1)
-			return "<a href=\"?page=space&cell_id=$cell_id\">Asteoridenfeld ($coords)</a>";
-		elseif ($arr['cell_nebula']==1)
-			return "<a href=\"?page=space&cell_id=$cell_id\">Nebelfeld ($coords)</a>";
+		if ($link==1)
+		{
+			if ($arr['cell_asteroid']==1)
+				return "<a href=\"?page=space&cell_id=$cell_id\">Asteoridenfeld ($coords)</a>";
+			elseif ($arr['cell_nebula']==1)
+				return "<a href=\"?page=space&cell_id=$cell_id\">Nebelfeld ($coords)</a>";
+			else
+				return $coords;
+		}
 		else
-			return $coords;
+		{
+			if ($arr['cell_asteroid']==1)
+				return "Asteoridenfeld ($coords)";
+			elseif ($arr['cell_nebula']==1)
+				return "Nebelfeld ($coords)";
+			else
+				return $coords;
+		}
 	}
 
 
@@ -5379,8 +5391,8 @@ Forum: http://www.etoa.ch/forum";
 		$ids=array();
 		if ($nr>0)
 		{
-			require_once(GAME_ROOT_DIR."/inc/fleet_action.inc.php");
-			require_once(GAME_ROOT_DIR."/inc/fleet_update.inc.php");
+			require_once("/Applications/xampp/htdocs/etoa/trunk/inc/fleet_action.inc.php");
+			require_once("/Applications/xampp/htdocs/etoa/trunk/inc/fleet_update.inc.php");
 			while ($arr=mysql_fetch_array($res))
 			{
 				update_fleet($arr,0);
