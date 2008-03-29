@@ -118,7 +118,7 @@
 			SELECT 
 				* 
 			FROM 
-				".$db_table['alliance_points']." 
+				alliance_points 
 			WHERE 
 				point_alliance_id='".$_GET['alliancedetail']."' 
 			ORDER BY 
