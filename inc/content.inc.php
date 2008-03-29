@@ -136,7 +136,7 @@
 				FROM 
 					default_items
 				WHERE
-					AND item_set_id=".$setid." 
+					item_set_id=".$setid." 
 					AND item_cat='b';");
 				if (mysql_num_rows($ires)>0)
 				{
@@ -168,7 +168,7 @@
 				FROM 
 					default_items
 				WHERE
-					AND item_set_id=".$setid." 
+					item_set_id=".$setid." 
 					AND item_cat='t';");
 				if (mysql_num_rows($ires)>0)
 				{
@@ -200,7 +200,7 @@
 				FROM 
 					default_items
 				WHERE
-					AND item_set_id=".$setid." 
+					item_set_id=".$setid." 
 					AND item_cat='s';");
 				if (mysql_num_rows($ires)>0)
 				{
@@ -232,7 +232,7 @@
 				FROM 
 					default_items
 				WHERE
-					AND item_set_id=".$setid." 
+					item_set_id=".$setid." 
 					AND item_cat='d';");
 				if (mysql_num_rows($ires)>0)
 				{
