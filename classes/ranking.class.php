@@ -617,6 +617,7 @@
 				a.alliance_tag,
 				a.alliance_name,
 				a.alliance_id,
+				a.alliance_rank_current,
 				COUNT(*) AS cnt, 
 				SUM(u.user_points) AS upoints, 
 				AVG(u.user_points) AS uavg 
@@ -627,10 +628,13 @@
 			ON
 				u.alliance_id=a.alliance_id
 			GROUP BY 
-				a.alliance_id 
+				a.alliance_id
+			ORDER BY
+				SUM(u.user_points) DESC
 			;");
 			if (mysql_num_rows($res)>0)
 			{
+				$rank=1;
 				while ($arr=mysql_fetch_array($res))
 				{
 					$apoints=0;
@@ -647,7 +651,9 @@
 						alliance_name,
 						upoints,
 						uavg,
-						cnt
+						cnt,
+						alliance_rank_current,
+						alliance_rank_last
 					) 
 					VALUES 
 					(
@@ -656,8 +662,41 @@
 						'".$arr['alliance_name']."',
 						'".$apoints."',
 						'".$arr['uavg']."',
+						'".$arr['cnt']."',
+						'".$rank."',
+						'".$arr['alliance_rank_current']."'
+					);");
+					
+					dbquery("
+					UPDATE 
+						alliances
+					SET
+						alliance_points='".$apoints."',
+						alliance_rank_current='".$rank."',
+						alliance_rank_last='".$arr['alliance_rank_current']."'
+					WHERE
+						alliance_id='".$arr['alliance_id']."'
+					;");
+					
+					dbquery("
+					INSERT INTO
+						alliance_points
+					(
+						point_alliance_id,
+						point_timestamp,
+						point_points,
+						point_avg,
+						point_cnt
+					)
+					VALUES
+					(
+						'".$arr['alliance_id']."',
+						'".time()."',
+						'".$apoints."',
+						'".$arr['uavg']."',
 						'".$arr['cnt']."'
 					);");
+
 				}
 			}		
 	

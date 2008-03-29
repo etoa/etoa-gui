@@ -94,6 +94,63 @@
 		if ($_GET['limit']>0) $limit=$_GET['limit']; else $limit=0;
 		echo "<input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=$page&mode=$mode&limit=".$limit."'\" /> &nbsp; ";
 	}
+	
+	elseif ($_GET['alliancedetail']>0)
+	{
+		$res=dbquery("
+		SELECT 
+            alliance_tag,
+			alliance_name,
+            alliance_points,
+            alliance_rank_current,
+            alliance_id 
+		FROM 
+			".$db_table['alliances']." 
+		WHERE 
+			alliance_id='".$_GET['alliancedetail']."';");
+		if (mysql_num_rows($res)>0)
+		{
+			$arr=mysql_fetch_array($res);
+			echo "<h2>Punktedetails f&uuml;r [".text2html($arr['alliance_tag'])."] ".text2html($arr['alliance_name'])."</h2>";
+			echo "<b>Punkte aktuell:</b> ".nf($arr['alliance_points']).", <b>Rang aktuell:</b> ".$arr['alliance_rank_current']."<br/><br/>";
+			echo "<img src=\"misc/alliance_stats.image.php?alliance=".$arr['alliance_id']."\" alt=\"Diagramm\" /><br/><br/>";
+			$pres=dbquery("
+			SELECT 
+				* 
+			FROM 
+				".$db_table['alliance_points']." 
+			WHERE 
+				point_alliance_id='".$_GET['alliancedetail']."' 
+			ORDER BY 
+				point_timestamp DESC 
+			LIMIT 48; ");
+			if (mysql_num_rows($pres)>0)
+			{
+				$points=array();
+				while ($parr=mysql_fetch_array($pres))
+				{
+					$points[$parr['point_timestamp']]=$parr['point_points'];
+					$avg[$parr['point_timestamp']]=$parr['point_avg'];
+					$user[$parr['point_timestamp']]=$parr['point_cnt'];
+				}
+				echo "<table width=\"400\" class=\"tbl\">";
+				echo "<tr><th class=\"tbltitle\">Datum</th><th class=\"tbltitle\">Zeit</th><th class=\"tbltitle\">Punkte</th><th class=\"tbltitle\">User-Schnitt</th><th class=\"tbltitle\">User</th></tr>";
+				foreach ($points as $time=>$val)
+				{
+					echo "<tr><td class=\"tbldata\">".date("d.m.Y",$time)."</td><td class=\"tbldata\">".date("H:i",$time)."</td>";
+					echo "<td class=\"tbldata\">".nf($points[$time])."</td><td class=\"tbldata\">".nf($avg[$time])."</td><td class=\"tbldata\">".nf($user[$time])."</td></tr>";
+				}
+				echo "</table><br/>";
+				echo "<input type=\"button\" value=\"Allianzdetails anzeigen\" onclick=\"document.location='?page=alliance&info_id=".$arr['alliance_id']."'\" /> &nbsp; ";
+			}
+			else
+				echo "<i>Keine Punktedaten vorhanden!</i>";
+		}
+		else
+			echo "<i>Datensatz wurde nicht gefunden!</i>";
+		if ($_GET['limit']>0) $limit=$_GET['limit']; else $limit=0;
+		echo "<input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=$page&mode=$mode&limit=".$limit."'\" /> &nbsp; ";
+	}
 
 	//
 	// Tabellen anzeigen

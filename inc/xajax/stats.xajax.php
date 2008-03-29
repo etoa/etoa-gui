@@ -49,7 +49,7 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 	if ($mode=="alliances")
 	{
 		$out.= "<table class=\"tbl\"><tr>";
-		$out.= "<th class=\"tbltitle\">#</th>";
+		$out.= "<th class=\"tbltitle\" colspan=\"2\">Rang</th>";
 		$out.= "<th class=\"tbltitle\">Tag</th>";
 		$out.= "<th class=\"tbltitle\">Name</th>";
 		if ($sort=="upoints")
@@ -79,7 +79,7 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 			SELECT
 				*
 			FROM
-        alliance_stats
+       			alliance_stats
 			ORDER BY
 				".$sort." ".$sortOrder.",
 				alliance_name ASC;";
@@ -109,12 +109,19 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 					$style="";
 				$out.= "<tr>";
 				$out.= "<td class=\"tbldata\" align=\"right\" $style>".nf2($cnt)."</td>";
+				$out.=  "<td $addstyle class=\"tbldata\" align=\"right\" ".tm("Punkteverlauf","<div><img src=\"misc/alliance_stats.image.php?alliance=".$arr['alliance_id']."\" alt=\"Diagramm\" style=\"width:600px;height:400px;background:#335 url(images/loading335.gif) no-repeat 300px 200px;\" /></div>").">";
+				if ($arr['alliance_rank_current']==$arr['alliance_rank_last'])
+					$out.=  "<img src=\"images/stats/stat_same.gif\" alt=\"same\" width=\"21\" height=\"9\" />";
+				elseif ($arr['alliance_rank_current']<$arr['alliance_rank_last'])
+					$out.=  "<img src=\"images/stats/stat_up.gif\" alt=\"up\" width=\"9\" height=\"12\" />";
+				elseif ($arr['alliance_rank_current']>$arr['alliance_rank_last'])
+					$out.=  "<img src=\"images/stats/stat_down.gif\" alt=\"down\" width=\"9\" height=\"11\" />";
 				$out.= "<td class=\"tbldata\" $style>".(text2html($arr['alliance_tag']))."</td>";
 				$out.= "<td class=\"tbldata\" $style>".text2html($arr['alliance_name'])."</td>";
 				$out.= "<td class=\"tbldata\" $style>".nf2($arr['upoints'])."</td>";
 				$out.= "<td class=\"tbldata\" $style>".nf2($arr['uavg'])."</td>";
 				$out.= "<td class=\"tbldata\" $style>".nf2($arr['cnt'])."</td>";
-				$out.= "<td class=\"tbldata\"><a href=\"?page=alliance&amp;info_id=".$arr['alliance_id']."\">Info</a></td>";
+				$out.= "<td class=\"tbldata\"><a href=\"?page=alliance&amp;info_id=".$arr['alliance_id']."\">Info</a> <a href=\"?page=$page&amp;mode=$mode&amp;limit=".$_GET['limit']."&amp;alliancedetail=".$arr['alliance_id']."\">Punktedetails</a></td>";
 				$out.= "</tr>";
 				$cnt++;
 			}

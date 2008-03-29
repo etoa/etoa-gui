@@ -2,6 +2,8 @@
 	/**
 	* Fleet-Action: Spy
 	*/
+	
+	echo "djghlsdkghdijfbgjdsbfbdfbbds";
 
 	$user_to_id = get_user_id_by_planet($arr['fleet_planet_to']);
 
