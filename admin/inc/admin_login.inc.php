@@ -56,7 +56,8 @@
 		echo "</table><br/>
 		<div style=\"margin:0px auto;\">
 			<input type=\"submit\" name=\"login_submit\" value=\"Login\" /> &nbsp;
-			<input type=\"button\" value=\"Passwort vergessen\" onclick=\"document.location='?sendpass=1'\" />
+			<input type=\"button\" value=\"Passwort vergessen\" onclick=\"document.location='?sendpass=1'\" /> &nbsp; 
+			<input type=\"button\" value=\"Zum Spiel-Login\" onclick=\"document.location='".LOGINSERVER_URL."'\" />
 			
 		</div></form></div>";
 		echo '<script type="text/javascript">document.forms[0].elements[0].focus()</script>';

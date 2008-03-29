@@ -129,4 +129,9 @@ function toggleBox(boxId)
 	{
 		document.getElementById(elem).innerHTML='<div style=\"text-align:center;padding:10px;\"><img src="../images/loadingmiddle.gif" /></div>'+document.getElementById(elem).innerHTML;
 	}
+
+	function showLoaderInline(elem)
+	{
+		document.getElementById(elem).innerHTML='<span style=\"text-align:center;padding:10px;\"><img src="../images/loadingmiddle.gif" /></span>';
+	}
 	

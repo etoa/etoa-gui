@@ -30,6 +30,10 @@
 		require_once("inc/xajax/ships.xajax.php");
 	}
 
+	if (isset($sub) && $sub=="defaultitems")
+	{
+		require_once("inc/xajax/defaultitems.xajax.php");
+	}
 
 	
 	if (isset($page) && $page=="logs")

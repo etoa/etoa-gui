@@ -29,9 +29,17 @@
 	echo "<h1>Konfiguration</h1>";
 
 	//
+	// Start-Items
+	//
+	if ($sub=="defaultitems")
+	{
+		include("config/defaultitems.inc.php");
+	}
+
+	//
 	// Htaccess-Schutz
 	//
-	if ($sub=="htaccess")
+	elseif ($sub=="htaccess")
 	{
 		echo "<h2>Passwort-Schutz für das Admin-Verzeichnis</h2>";
 		

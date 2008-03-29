@@ -109,43 +109,156 @@
 		// Display first time message
 		if ($planets->first_time)
 		{
-			// Add objects
-			foreach ($firsttime_buildings as $k => $v)
+			
+			$res = dbquery("
+			SELECT
+				set_id
+			FROM
+				default_item_sets
+			WHERE
+				set_active=1
+			");
+			if (mysql_num_rows($res)>1)
 			{
-				dbquery("INSERT INTO
-					buildlist
-					(
-						buildlist_building_id,
-						buildlist_user_id,
-						buildlist_planet_id,
-						buildlist_current_level						
-					)
-					VALUES
-					(
-						".$k.",
-						".$s['user']['id'].",
-						".$c->id.",
-						".$v."
-					);");
+				
+				
 			}
-			foreach ($firsttime_techs as $k => $v)
+			elseif(mysql_num_rows($res)==1)
 			{
-				dbquery("INSERT INTO
-					techlist
-					(
-						techlist_tech_id,
-						techlist_user_id,
-						techlist_planet_id,
-						techlist_current_level						
-					)
-					VALUES
-					(
-						".$k.",
-						".$s['user']['id'].",
-						".$c->id.",
-						".$v."
-					);");
-			}			
+				$arr = mysql_fetch_array($res);
+				$setid = $arr['set_id'];
+				
+				// Add buildings
+				$ires = dbquery("
+				SELECT 
+					item_object_id as id,
+					item_count as count
+				FROM 
+					default_items
+				WHERE
+					AND item_set_id=".$setid." 
+					AND item_cat='b';");
+				if (mysql_num_rows($ires)>0)
+				{
+					while($iarr = mysql_fetch_array($ires))
+					{
+						dbquery("INSERT INTO
+							buildlist
+							(
+								buildlist_building_id,
+								buildlist_user_id,
+								buildlist_planet_id,
+								buildlist_current_level						
+							)
+							VALUES
+							(
+								".$iarr['id'].",
+								".$s['user']['id'].",
+								".$c->id.",
+								".$iarr['count']."
+							);");						
+					}		
+				}		
+				
+				// Add technologies
+				$ires = dbquery("
+				SELECT 
+					item_object_id as id,
+					item_count as count
+				FROM 
+					default_items
+				WHERE
+					AND item_set_id=".$setid." 
+					AND item_cat='t';");
+				if (mysql_num_rows($ires)>0)
+				{
+					while($iarr = mysql_fetch_array($ires))
+					{
+						dbquery("INSERT INTO
+							techlist
+							(
+								techlist_tech_id,
+								techlist_user_id,
+								techlist_planet_id,
+								techlist_current_level						
+							)
+							VALUES
+							(
+								".$iarr['id'].",
+								".$s['user']['id'].",
+								".$c->id.",
+								".$iarr['count']."
+							);");						
+					}		
+				}
+		
+				// Add ships
+				$ires = dbquery("
+				SELECT 
+					item_object_id as id,
+					item_count as count
+				FROM 
+					default_items
+				WHERE
+					AND item_set_id=".$setid." 
+					AND item_cat='s';");
+				if (mysql_num_rows($ires)>0)
+				{
+					while($iarr = mysql_fetch_array($ires))
+					{
+						dbquery("INSERT INTO
+							shiplist
+							(
+								shiplist_tech_id,
+								shiplist_user_id,
+								shiplist_planet_id,
+								shiplist_count						
+							)
+							VALUES
+							(
+								".$iarr['id'].",
+								".$s['user']['id'].",
+								".$c->id.",
+								".$iarr['count']."
+							);");						
+					}		
+				}
+					
+				// Add defense
+				$ires = dbquery("
+				SELECT 
+					item_object_id as id,
+					item_count as count
+				FROM 
+					default_items
+				WHERE
+					AND item_set_id=".$setid." 
+					AND item_cat='d';");
+				if (mysql_num_rows($ires)>0)
+				{
+					while($iarr = mysql_fetch_array($ires))
+					{
+						dbquery("INSERT INTO
+							deflist
+							(
+								deflist_tech_id,
+								deflist_user_id,
+								deflist_planet_id,
+								deflist_count						
+							)
+							VALUES
+							(
+								".$iarr['id'].",
+								".$s['user']['id'].",
+								".$c->id.",
+								".$iarr['count']."
+							);");						
+					}		
+				}											
+			}
+		
+		
+	
 			$c->update(1);
 			
 			echo '<br/>';
@@ -160,6 +273,9 @@
 			
 			// Set marker so that a planet change is allowed
 			$s['allow_planet_change']=true;
+			
+			
+			
 			
 		}
 		else

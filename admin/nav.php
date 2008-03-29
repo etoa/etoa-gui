@@ -399,6 +399,11 @@
 	$navmenu['Konfiguration']['Bildpaket-Downloads']['sub']="imagepacks";
 	$navmenu['Konfiguration']['Bildpaket-Downloads']['level']=3;
 
+	$navmenu['Konfiguration']['Start-Items']['page']="config";
+	$navmenu['Konfiguration']['Start-Items']['sub']="defaultitems";
+	$navmenu['Konfiguration']['Start-Items']['level']=3;
+
+
 
 	$navmenu['Tools']['PHP-Infos']['page']="tools";
 	$navmenu['Tools']['PHP-Infos']['sub']="php";
