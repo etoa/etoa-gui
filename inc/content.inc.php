@@ -106,13 +106,22 @@
 	// Seite anzeigen
 	else
 	{
+		
+		// Apply choosen itemset
+		if (isset($s['itemset_key']) && isset($_POST[md5($s['itemset_key'])]) && isset($_POST['itemset_id']))
+		{
+			addItemSetListToPlanet($c->id,$s['user']['id'],$_POST['itemset_id']);
+			$s['itemset_key']=null;
+		}
+		
 		// Display first time message
 		if ($planets->first_time)
 		{
 			
 			$res = dbquery("
 			SELECT
-				set_id
+				set_id,
+				set_name
 			FROM
 				default_item_sets
 			WHERE
@@ -120,141 +129,24 @@
 			");
 			if (mysql_num_rows($res)>1)
 			{
-				
-				
+				$k = mt_rand(10000,99999);
+				$s['itemset_key']=$k;
+				infobox_start("Start-Objekte");
+				echo "<form action=\"?\" method=\"post\">";
+				checker_init();
+				echo "Euch stehen mehrere Vorlagen von Start-Objekte zur Auswahl. Bitte wählt eine Vorlage aus, die darin definierten Objekte
+				werden dann eurem Hauptplanet hinzugefügt: <br/><br/><select name=\"itemset_id\">";
+				while ($arr=mysql_fetch_array($res))
+				{
+					echo "<option value=\"".$arr['set_id']."\">".$arr['set_name']."</option>";
+				}
+				echo "</select> <input type=\"submit\" value=\"Weiter\" name=\"".md5($k)."\" /></form>";
+				infobox_end();
 			}
 			elseif(mysql_num_rows($res)==1)
 			{
 				$arr = mysql_fetch_array($res);
-				$setid = $arr['set_id'];
-				
-				// Add buildings
-				$ires = dbquery("
-				SELECT 
-					item_object_id as id,
-					item_count as count
-				FROM 
-					default_items
-				WHERE
-					item_set_id=".$setid." 
-					AND item_cat='b';");
-				if (mysql_num_rows($ires)>0)
-				{
-					while($iarr = mysql_fetch_array($ires))
-					{
-						dbquery("INSERT INTO
-							buildlist
-							(
-								buildlist_building_id,
-								buildlist_user_id,
-								buildlist_planet_id,
-								buildlist_current_level						
-							)
-							VALUES
-							(
-								".$iarr['id'].",
-								".$s['user']['id'].",
-								".$c->id.",
-								".$iarr['count']."
-							);");						
-					}		
-				}		
-				
-				// Add technologies
-				$ires = dbquery("
-				SELECT 
-					item_object_id as id,
-					item_count as count
-				FROM 
-					default_items
-				WHERE
-					item_set_id=".$setid." 
-					AND item_cat='t';");
-				if (mysql_num_rows($ires)>0)
-				{
-					while($iarr = mysql_fetch_array($ires))
-					{
-						dbquery("INSERT INTO
-							techlist
-							(
-								techlist_tech_id,
-								techlist_user_id,
-								techlist_planet_id,
-								techlist_current_level						
-							)
-							VALUES
-							(
-								".$iarr['id'].",
-								".$s['user']['id'].",
-								".$c->id.",
-								".$iarr['count']."
-							);");						
-					}		
-				}
-		
-				// Add ships
-				$ires = dbquery("
-				SELECT 
-					item_object_id as id,
-					item_count as count
-				FROM 
-					default_items
-				WHERE
-					item_set_id=".$setid." 
-					AND item_cat='s';");
-				if (mysql_num_rows($ires)>0)
-				{
-					while($iarr = mysql_fetch_array($ires))
-					{
-						dbquery("INSERT INTO
-							shiplist
-							(
-								shiplist_ship_id,
-								shiplist_user_id,
-								shiplist_planet_id,
-								shiplist_count						
-							)
-							VALUES
-							(
-								".$iarr['id'].",
-								".$s['user']['id'].",
-								".$c->id.",
-								".$iarr['count']."
-							);");						
-					}		
-				}
-					
-				// Add defense
-				$ires = dbquery("
-				SELECT 
-					item_object_id as id,
-					item_count as count
-				FROM 
-					default_items
-				WHERE
-					item_set_id=".$setid." 
-					AND item_cat='d';");
-				if (mysql_num_rows($ires)>0)
-				{
-					while($iarr = mysql_fetch_array($ires))
-					{
-						dbquery("INSERT INTO
-							deflist
-							(
-								deflist_def_id,
-								deflist_user_id,
-								deflist_planet_id,
-								deflist_count						
-							)
-							VALUES
-							(
-								".$iarr['id'].",
-								".$s['user']['id'].",
-								".$c->id.",
-								".$iarr['count']."
-							);");						
-					}		
-				}											
+				addItemSetListToPlanet($c->id,$s['user']['id'],$arr['set_id']);							
 			}
 		
 		
