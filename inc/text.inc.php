@@ -177,6 +177,27 @@
 
 		//$string=htmlentities($string);
 
+		$res = dbquery("
+		SELECT 
+			ship_id as id,
+			ship_name as name,
+			ship_shortcomment as cmt,
+			type_name as type,
+			ship_stucture,
+			ship_shield,
+			ship_weapons
+		FROM
+			ships
+		INNER JOIN
+			ship_types
+			ON ship_type_id=type_id
+		;");
+		while ($arr=mysql_fetch_array($res))
+		{
+			$tm = $arr['type']."\n".$arr['ship_stucture']."Struktur\n".$arr['cmt'];
+			$string = eregi_replace('\[ship '.$arr['id'].'\]', '<span class="itemTooltip" '.tm($arr['name'],$tm).'>[<a href="?page=help&site=shipyard&id='.$arr['id'].'">'.$arr['name'].'</a>]</span>', $string);
+		}
+			
 
 		return $string;
 	}
