@@ -209,7 +209,7 @@
 						dbquery("INSERT INTO
 							shiplist
 							(
-								shiplist_tech_id,
+								shiplist_ship_id,
 								shiplist_user_id,
 								shiplist_planet_id,
 								shiplist_count						
@@ -241,7 +241,7 @@
 						dbquery("INSERT INTO
 							deflist
 							(
-								deflist_tech_id,
+								deflist_def_id,
 								deflist_user_id,
 								deflist_planet_id,
 								deflist_count						
