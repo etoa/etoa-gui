@@ -3720,6 +3720,14 @@ die Spielleitung";
 			return "onclick=\"stm(['".$title."','".$text."'],stl)\" onmouseout=\"htm()\"";
 		}
 	}
+	
+	// Tooltip
+	function tt($text)
+	{
+		$text = cut_word($text,150,1);
+		$text = str_replace('"',"\'",$text);
+		return "onmouseover=\"stm(['','".$text."'],tooltipstyle)\" onmouseout=\"htm()\"";
+	}	
 
 	// Date format
 	function df($date,$seconds=0)

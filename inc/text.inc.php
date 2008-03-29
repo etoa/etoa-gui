@@ -183,6 +183,7 @@
 			ship_name as name,
 			ship_shortcomment as cmt,
 			cat_name as cat,
+			cat_color as color,
 			ship_structure,
 			ship_shield,
 			ship_weapon
@@ -194,8 +195,10 @@
 		;");
 		while ($arr=mysql_fetch_array($res))
 		{
-			$tm = $arr['type']."\n".$arr['ship_stucture']."Struktur\n".$arr['cmt'];
-			$string = eregi_replace('\[ship '.$arr['id'].'\]', '<span class="itemTooltip" '.tm($arr['name'],$tm).'>[<a href="?page=help&site=shipyard&id='.$arr['id'].'">'.$arr['name'].'</a>]</span>', $string);
+			$tm = '<div style="background:url(images/imagepacks/Discovery/ships/ship'.$arr['id'].'_small.gif) right top no-repeat;">';
+			$tm .='<span style="color:'.$arr['color'].'">'.$arr['name']."</span><br/>".$arr['cat']."<br/>Struktur: ".nf($arr['ship_structure'])." <br/>Schilder: ".nf($arr['ship_shield'])." <br/>Waffen: ".nf($arr['ship_weapon'])." <br/>";
+			$tm .='<span style="color:#FFD517">'.$arr['cmt']."</span></div>";
+			$string = eregi_replace('\[ship '.$arr['id'].'\]', '<span style="color:'.$arr['color'].'" class="itemTooltip" '.tt($tm).'>[<a href="?page=help&site=shipyard&id='.$arr['id'].'" style="color:'.$arr['color'].'">'.$arr['name'].'</a>]</span>', $string);
 		}
 		
 

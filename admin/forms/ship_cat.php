@@ -61,7 +61,21 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
-																	)																	
+																	)	,
+												2	=> 	array	(	"name" => "cat_color",
+																		"text" => "Farbe",
+																		"type" => "text",
+																		"def_val" => "#ffffff",
+																		"size" => "7",
+																		"maxlen" => "7",
+																		"rows" => "",
+																		"cols" => "",
+																		"rcb_elem" => "",
+																		"rcb_elem_chekced" => "",
+																		"select_elem" => "",
+																		"select_elem_checked" => "",
+																		"show_overview" => 1
+																	)																																			
 											);
         
 ?>

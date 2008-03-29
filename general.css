@@ -113,16 +113,13 @@ a img	{
 }
 
 .itemTooltip	{
-	color:#F07902;
 }
 
 .itemTooltip a	{
-	color:#F07902;
 	text-decoration:none;
 }
 
 .itemTooltip :hover	{
-	color:#F07902;
 	text-decoration:underline;
 		
 }
