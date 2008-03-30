@@ -210,7 +210,7 @@
 			  	$text .= "[table]";
 		      while ($spyarr3 = mysql_fetch_row($spyres3))
 		      {
-		          $text.="[tr][td][ship ".$spyarr3[0]."][/td][td]".$spyarr3[1]."[/td][/tr]";
+		          $text.="[tr][td]".$spyarr3[1]."[/td][td][ship ".$spyarr3[0]."][/td][/tr]";
 		      }
 			  	$text .= "[/table]";
 		    }
@@ -240,7 +240,7 @@
 			  	$text .= "[table]";
 		      while ($spyarr4 = mysql_fetch_row($spyres4))
 		      {
-	          $text.="[tr][td][def ".$spyarr4[0]."][/td][td]".$spyarr4[1]."[/td][/tr]";
+	          $text.="[tr][td]".$spyarr4[1]."[/td][td][def ".$spyarr4[0]."][/td][/tr]";
 		      }
 			  	$text .= "[/table]";
 		    }
