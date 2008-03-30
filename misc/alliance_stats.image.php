@@ -67,7 +67,7 @@
 					alliance_points
 				WHERE 
 					point_alliance_id='".$_GET['alliance']."' 
-					AND point_points>=0
+					AND point_points>0
 					$sql1
 					$sql2
 				ORDER BY 
@@ -167,7 +167,7 @@
 				}
 			}
 			else
-				imagestring($im,3,10,10,"Keine Punktdaten vorhanden!",$black);			
+				imagestring($im,3,10,10,"Keine Punktdaten (Punkte > 0) vorhanden!",$black);			
 		}		
 		else
 			imagestring($im,3,10,10,"Fehler! Allianz nicht vorhanden!",$black);			
