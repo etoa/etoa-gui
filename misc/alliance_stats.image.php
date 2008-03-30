@@ -66,7 +66,7 @@
 				FROM 
 					alliance_points
 				WHERE 
-					point_alliance_id='85' 
+					point_alliance_id='".$_GET['alliance']."' 
 					AND point_points>0
 					$sql1
 					$sql2
