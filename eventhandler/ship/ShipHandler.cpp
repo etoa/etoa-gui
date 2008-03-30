@@ -19,18 +19,18 @@ namespace ship
 		// Load queues who needs updating
     mysqlpp::Query query = con_->query();
   	query << "SELECT "
-  	<< "	queue_ship_id, "
-  	<< "	queue_user_id, "
-  	<< "	queue_endtime, "
-  	<< "	queue_objtime, "
-  	<< "	queue_cnt, "
-  	<< "	queue_id, "
-  	<< "	queue_planet_id "
-  	<< "FROM "
-  	<< "	ship_queue "
-  	<< "WHERE "
-  	<< "	queue_starttime<" << time <<" "
-  	<< "ORDER BY queue_planet_id;";
+		<< "	queue_ship_id, "
+		<< "	queue_user_id, "
+		<< "	queue_endtime, "
+		<< "	queue_objtime, "
+		<< "	queue_cnt, "
+		<< "	queue_id, "
+		<< "	queue_planet_id "
+		<< "FROM "
+		<< "	ship_queue "
+		<< "WHERE "
+		<< "	queue_starttime<" << time <<" "
+		<< "ORDER BY queue_planet_id;";
     mysqlpp::Result res = query.store();		
 		query.reset();
 
@@ -74,11 +74,11 @@ namespace ship
   												(int)arr["queue_ship_id"],
   												(int)obj_cnt);	  				
 				  	query << "UPDATE "
-				  	<< "	ship_queue "
-				  	<< "SET "
-				  	<< "	queue_cnt=" << new_queue_cnt << " "
-				  	<< "WHERE " 
-				  	<< "	queue_id=" << arr["queue_id"] <<";";
+						<< "	ship_queue "
+						<< "SET "
+						<< "	queue_cnt=" << new_queue_cnt << " "
+						<< "WHERE " 
+						<< "	queue_id=" << arr["queue_id"] <<";";
 				    query.store();		
 						query.reset();	  						 				
 	  			}	      	
@@ -96,10 +96,10 @@ namespace ship
 	  		if (empty)
 	  		{
 			  	query << "DELETE FROM "
-			  	<< "	ship_queue "
-			  	<< "WHERE "
-			  	<< "	queue_endtime<" << time <<" "
-			  	<< "ORDER BY queue_planet_id;";
+					<< "	ship_queue "
+					<< "WHERE "
+					<< "	queue_endtime<=" << time <<" "
+					<< "ORDER BY queue_planet_id;";
 			    query.store();		
 					query.reset();	  			
 	      }	  	    	

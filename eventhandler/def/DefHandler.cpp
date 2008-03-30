@@ -19,18 +19,18 @@ namespace def
 		// Load queues who needs updating
     mysqlpp::Query query = con_->query();
   	query << "SELECT "
-  	<< "	queue_def_id, "
-  	<< "	queue_user_id, "
-  	<< "	queue_endtime, "
-  	<< "	queue_objtime, "
-  	<< "	queue_cnt, "
-  	<< "	queue_id, "
-  	<< "	queue_planet_id "
-  	<< "FROM "
-  	<< "	def_queue "
-  	<< "WHERE "
-  	<< "	queue_starttime<" << time <<" "
-  	<< "ORDER BY queue_planet_id;";
+		<< "	queue_def_id, "
+		<< "	queue_user_id, "
+		<< "	queue_endtime, "
+		<< "	queue_objtime, "
+		<< "	queue_cnt, "
+		<< "	queue_id, "
+		<< "	queue_planet_id "
+		<< "FROM "
+		<< "	def_queue "
+		<< "WHERE "
+		<< "	queue_starttime<" << time <<" "
+		<< "ORDER BY queue_planet_id;";
     mysqlpp::Result res = query.store();		
 		query.reset();
 
@@ -67,17 +67,17 @@ namespace def
 	  			{
 	  				changes_=true;
 	  				int obj_cnt = (int)arr["queue_cnt"] - (int)ceil((double)((int)arr["queue_endtime"] - time)/(int)arr["queue_objtime"]);
-  					DefList::add(this->con_,
+					DefList::add(this->con_,
   												(int)arr["queue_planet_id"], 
   												(int)arr["queue_user_id"],
   												(int)arr["queue_def_id"],
   												(int)obj_cnt);	  				
 				  	query << "UPDATE "
-				  	<< "	def_queue "
-				  	<< "SET "
-				  	<< "	queue_cnt=queue_cnt-" << obj_cnt << " "
-				  	<< "WHERE " 
-				  	<< "	queue_id=" << arr["queue_id"] <<";";
+						<< "	def_queue "
+						<< "SET "
+						<< "	queue_cnt=queue_cnt-" << obj_cnt << " "
+						<< "WHERE " 
+						<< "	queue_id=" << arr["queue_id"] <<";";
 				    query.store();		
 						query.reset();	  						 				
 	  			}	      	
@@ -95,10 +95,10 @@ namespace def
 	  		if (empty)
 	  		{
 			  	query << "DELETE FROM "
-			  	<< "	def_queue "
-			  	<< "WHERE "
-			  	<< "	queue_endtime<" << time <<" "
-			  	<< "ORDER BY queue_planet_id;";
+					<< "	def_queue "
+					<< "WHERE "
+					<< "	queue_endtime<=" << time <<" "
+					<< "ORDER BY queue_planet_id;";
 			    query.store();		
 					query.reset();	  			
 	      }	  	    	
