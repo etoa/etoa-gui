@@ -196,25 +196,21 @@
 				//Lädt Schiffsdaten
 				$spyres3 = dbquery("
 				SELECT
-			    s.ship_name,
-			    sl.shiplist_count
+					shiplist_ship_id,
+			    shiplist_count as
 				FROM
-					".$db_table['ships']." AS s
-					INNER JOIN
-			    ".$db_table['shiplist']." AS sl
-			    ON sl.shiplist_ship_id=s.ship_id
-			    AND sl.shiplist_planet_id='".$arr['fleet_planet_to']."'
-			    AND sl.shiplist_count>0            
-				ORDER BY
-					s.ship_name;");	  	
+			    shiplist
+				WHERE
+			    shiplist_planet_id='".$arr['fleet_planet_to']."'
+			    AND shiplist_count>0");	  	
 		  	
 			  $text.="\n[b]SCHIFFE[/b]:\n";
 			  if (mysql_num_rows($spyres3)>0)
 			  {
 			  	$text .= "[table]";
-		      while ($spyarr3 = mysql_fetch_array($spyres3))
+		      while ($spyarr3 = mysql_fetch_row($spyres3))
 		      {
-		          $text.="[tr][td]".$spyarr3['ship_name']."[/td][td]".$spyarr3['shiplist_count']."[/td][/tr]";
+		          $text.="[tr][td][ship ".$spyarr3[0]."][/td][td]".$spyarr3[1]."[/td][/tr]";
 		      }
 			  	$text .= "[/table]";
 		    }
@@ -230,25 +226,21 @@
 				//Lädt Verteidigungsdaten
 				$spyres4 = dbquery("
 				SELECT
-			    d.def_name,
-			    dl.deflist_count
+					deflist_def_id,
+			    deflist_count
 				FROM
-			    ".$db_table['defense']." AS d
-			    INNER JOIN
-			    ".$db_table['deflist']." AS dl
-			    ON dl.deflist_def_id=d.def_id
-			    AND dl.deflist_planet_id='".$arr['fleet_planet_to']."'
-			    AND dl.deflist_count>0
-				ORDER BY
-					d.def_name;");	
+			    deflist
+			   WHERE
+			    deflist_planet_id='".$arr['fleet_planet_to']."'
+			    AND deflist_count>0;");	
 					  	
 			  $text.="\n[b]VERTEIDIGUNG[/b]:\n";
 		  	if (mysql_num_rows($spyres4)>0)
 		  	{
 			  	$text .= "[table]";
-		      while ($spyarr4 = mysql_fetch_array($spyres4))
+		      while ($spyarr4 = mysql_fetch_row($spyres4))
 		      {
-	          $text.="[tr][td]".$spyarr4['def_name']."[/td][td]".$spyarr4['deflist_count']."[/td][/tr]";
+	          $text.="[tr][td][def ".$spyarr4[0]."][/td][td]".$spyarr4[1]."[/td][/tr]";
 		      }
 			  	$text .= "[/table]";
 		    }

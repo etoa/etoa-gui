@@ -177,6 +177,9 @@
 
 		//$string=htmlentities($string);
 
+		$imgpacket_path = "images/imagepacks/Discovery";
+		$imgpacket_ext = "png";
+	
 		$res = dbquery("
 		SELECT 
 			ship_id as id,
@@ -186,22 +189,71 @@
 			cat_color as color,
 			ship_structure,
 			ship_shield,
-			ship_weapon
+			ship_weapon,
+			race_name
 		FROM
 			ships
 		INNER JOIN
 			ship_cat
 			ON ship_cat_id=cat_id
+		LEFT JOIN
+			races ON ship_race_id=race_id			
 		;");
 		while ($arr=mysql_fetch_array($res))
 		{
-			$tm = '<div style="background:url(images/imagepacks/Discovery/ships/ship'.$arr['id'].'_small.gif) right top no-repeat;">';
-			$tm .='<span style="color:'.$arr['color'].'">'.$arr['name']."</span><br/>".$arr['cat']."<br/>Struktur: ".nf($arr['ship_structure'])." <br/>Schilder: ".nf($arr['ship_shield'])." <br/>Waffen: ".nf($arr['ship_weapon'])." <br/>";
+			$tm = '<div style="background:url('.$imgpacket_path.'/ships/ship'.$arr['id'].'_small.'.$imgpacket_ext.') right top no-repeat;">';
+			$tm .='<span style="color:'.$arr['color'].'">'.$arr['name']."</span><br/>".$arr['cat'];
+			if ($arr['race_name']!="")
+				$tm.= '<br/><span style="color:#EF0E1C">Rasse: '.$arr['race_name']."</span>";
+			$tm.="<br/>Struktur: ".nf($arr['ship_structure'])." <br/>Schilder: ".nf($arr['ship_shield'])." <br/>Waffen: ".nf($arr['ship_weapon'])." <br/>";
 			$tm .='<span style="color:#FFD517">'.$arr['cmt']."</span></div>";
 			$string = eregi_replace('\[ship '.$arr['id'].'\]', '<span style="color:'.$arr['color'].'" class="itemTooltip" '.tt($tm).'>[<a href="?page=help&site=shipyard&id='.$arr['id'].'" style="color:'.$arr['color'].'">'.$arr['name'].'</a>]</span>', $string);
 		}
+		$string = eregi_replace('\[ship ([^\[]*)\]', '<span style="color:'.$arr['color'].'" class="itemTooltip" '.tt('<span style="color:#999">Ungültige Schiff-ID!</span>').'>[Ungültiges Schiff]</span>', $string);
 		
-
+		$res = dbquery("
+		SELECT 
+			def_id as id,
+			def_name as name,
+			def_shortcomment as cmt,
+			cat_name as cat,
+			cat_color as color,
+			def_structure,
+			def_shield,
+			def_weapon,
+			def_heal,
+			def_fields,
+			race_name
+		FROM
+			defense
+		INNER JOIN
+			def_cat
+			ON def_cat_id=cat_id
+		LEFT JOIN
+			races ON def_race_id=race_id
+		;");
+		while ($arr=mysql_fetch_array($res))
+		{
+			$tm = '<div style="background:url(images/imagepacks/Discovery/defense/def'.$arr['id'].'_small.gif) right top no-repeat;">';
+			$tm .='<span style="color:'.$arr['color'].'">'.$arr['name']."</span><br/>".$arr['cat'];
+			if ($arr['race_name']!="")
+				$tm.= '<br/><span style="color:#EF0E1C">Rasse: '.$arr['race_name']."</span>";
+			
+			if ($arr['def_structure']>0)
+				$tm.= "<br/>Struktur: ".nf($arr['def_structure']);
+			if ($arr['def_shield']>0)
+				$tm.=	"<br/>Schilder: ".nf($arr['def_shield']);
+			if ($arr['def_weapon']>0)
+				$tm.= "<br/>Waffen: ".nf($arr['def_weapon']);
+			if ($arr['def_heal']>0)
+				$tm.= "<br/>Reparatur: ".nf($arr['def_heal']);
+			if ($arr['def_fields']>0)
+				$tm.= "<br/>Felderverbrauch: ".nf($arr['def_fields']);
+			$tm .='<br/><span style="color:#FFD517">'.$arr['cmt']."</span></div>";
+			$string = eregi_replace('\[def '.$arr['id'].'\]', '<span style="color:'.$arr['color'].'" class="itemTooltip" '.tt($tm).'>[<a href="?page=help&site=shipyard&id='.$arr['id'].'" style="color:'.$arr['color'].'">'.$arr['name'].'</a>]</span>', $string);
+		}
+		$string = eregi_replace('\[def ([^\[]*)\]', '<span style="color:'.$arr['color'].'" class="itemTooltip" '.tt('<span style="color:#999">Ungültige Verteidigungs-ID!</span>').'>[Ungültiges Verteidigung]</span>', $string);
+	
 	
 
 		return $string;
