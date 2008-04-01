@@ -2940,7 +2940,7 @@ die Spielleitung";
 		{
 			echo '<html><header>
 			<title>Fehler</title>
-			<link rel="stylesheet" type="text/css" href="general.css">
+			<link rel="stylesheet" type="text/css" href="css/general.css">
 			<meta http-equiv="expires" content="0" />
 			<meta http-equiv="pragma" content="no-cache" />
 		 	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />

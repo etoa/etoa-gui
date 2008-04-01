@@ -35,7 +35,7 @@
 	<head>
 		<title>Clipboard</title>
 		<link rel="stylesheet" type="text/css" href="style.css" />
-		<link rel="stylesheet" href="../general.css" type="text/css" />
+		<link rel="stylesheet" href="../css/general.css" type="text/css" />
 
 		<meta name="author" content="Nicolas Perrenoud" />
 		<meta name="keywords" content="Escape to Andromeda, Browsergame, Strategie, Simulation, Andromeda, MMPOG, RPG" />

@@ -31,7 +31,7 @@
 	
 	//CSS Style
 	echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"../style.css\">";
-	echo "<link rel=\"stylesheet\" href=\"../../general.css\" type=\"text/css\">";
+	echo "<link rel=\"stylesheet\" href=\"../../css/general.css\" type=\"text/css\">";
 	
 	// Funktionen und Config einlesen
 	require("../../conf.inc.php");

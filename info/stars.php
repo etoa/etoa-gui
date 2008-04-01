@@ -35,12 +35,12 @@
 	{
 
 		infobox_start("Sternenboni",1);
-		echo "<tr><td class=\"tbltitle\" colspan=\"2\"><a href=\"?page=$page&amp;site=$site&amp;order=name\">Name</a></td>";
-		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_metal\">".$rsc['metal']."</td>";
-		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_crystal\">".$rsc['crystal']."</td>";
-		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_plastic\">".$rsc['plastic']."</td>";
-		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_fuel\">".$rsc['fuel']."</td>";
-		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_food\">".$rsc['food']."</td>";
+		echo "<tr><td class=\"tbltitle\" colspan=\"2\" ><a href=\"?page=$page&amp;site=$site&amp;order=name\">Name</a></td>";
+		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_metal\">".RES_METAL."</td>";
+		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_crystal\">".RES_CRYSTAL."</td>";
+		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_plastic\">".RES_PLASTIC."</td>";
+		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_fuel\">".RES_FUEL."</td>";
+		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_food\">".RES_FOOD."</td>";
 		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_power\">Energie</td>";
 		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_population\">Wachstum</td>";
 		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_researchtime\">Forschungszeit</td>";
@@ -51,9 +51,12 @@
 		{
 			echo "<tr><td class=\"tbldata\" style=\"width:40px;background:#000;vertical-align:middle;\">
 				<img src=\"".IMAGE_PATH."/galaxy/sol".$arr['type_id'].".gif\" width=\"40\" height=\"40\" alt=\"Stern\"/></a></td>";
-			echo "<td class=\"tbltitle\" style=\"width:300px;\">
-				".$arr['type_name']."<br/>
-			<span style=\"font-weight:500;font-size:8pt;\">".$arr['type_comment']."</span></td>";
+				
+			$tt = new ToolTip();
+			$tt->addIcon(IMAGE_PATH."/galaxy/sol".$arr['type_id'].".gif");
+			$tt->addTitle($arr['type_name']);
+			$tt->addComment($arr['type_comment']);
+			echo "<td class=\"tbltitle\" ".$tt.">".$arr['type_name']."</td>";
 			echo "<td class=\"tbldata\">".get_percent_string($arr['type_f_metal'],1)."</td>";
 			echo "<td class=\"tbldata\">".get_percent_string($arr['type_f_crystal'],1)."</td>";
 			echo "<td class=\"tbldata\">".get_percent_string($arr['type_f_plastic'],1)."</td>";

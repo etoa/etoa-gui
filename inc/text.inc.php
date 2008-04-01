@@ -190,7 +190,12 @@
 			ship_structure,
 			ship_shield,
 			ship_weapon,
-			race_name
+			race_name,
+			ship_heal,
+			ship_max_count,
+			ship_speed,
+			ship_costs_fuel,
+			ship_capacity
 		FROM
 			ships
 		INNER JOIN
@@ -205,11 +210,30 @@
 			$tm .='<span style="color:'.$arr['color'].'">'.$arr['name']."</span><br/>".$arr['cat'];
 			if ($arr['race_name']!="")
 				$tm.= '<br/><span style="color:#EF0E1C">Rasse: '.$arr['race_name']."</span>";
-			$tm.="<br/>Struktur: ".nf($arr['ship_structure'])." <br/>Schilder: ".nf($arr['ship_shield'])." <br/>Waffen: ".nf($arr['ship_weapon'])." <br/>";
-			$tm .='<span style="color:#FFD517">'.$arr['cmt']."</span></div>";
+			if ($arr['ship_max_count']>1)
+				$tm.= "<br/>Limitiert (".nf($arr['ship_max_count']).")";
+			if ($arr['ship_max_count']==1)
+				$tm.= "<br/>Einzigartig";				
+			if ($arr['ship_structure']>0)
+				$tm.="<br/>Struktur: ".nf($arr['ship_structure']);
+			if ($arr['ship_shield']>0)
+				$tm.=" <br/>Schilder: ".nf($arr['ship_shield']);
+			if ($arr['ship_weapon']>0)
+				$tm.=" <br/>Waffen: ".nf($arr['ship_weapon']);
+			if ($arr['ship_heal']>0)
+				$tm.= "<br/>Heilung: ".nf($arr['ship_heal']);
+			if ($arr['ship_speed']>0)
+				$tm.= "<br/>Geschwindigkeit: ".nf($arr['ship_speed'])." AE/h";
+			if ($arr['ship_costs_fuel']>0)
+				$tm.= "<br/>Treibstoffverbrauch: ".nf($arr['ship_costs_fuel'])."";
+			if ($arr['ship_capacity']>0)
+				$tm.= "<br/>Laderaum: ".nf($arr['ship_capacity']);
+
+			
+			$tm .='<br/><span style="color:#FFD517">'.$arr['cmt']."</span></div>";
 			$string = eregi_replace('\[ship '.$arr['id'].'\]', '<span style="color:'.$arr['color'].'" class="itemTooltip" '.tt($tm).'>[<a href="?page=help&site=shipyard&id='.$arr['id'].'" style="color:'.$arr['color'].'">'.$arr['name'].'</a>]</span>', $string);
 		}
-		$string = eregi_replace('\[ship ([^\[]*)\]', '<span style="color:'.$arr['color'].'" class="itemTooltip" '.tt('<span style="color:#999">Ungültige Schiff-ID!</span>').'>[Ungültiges Schiff]</span>', $string);
+		$string = eregi_replace('\[ship ([^\[]*)\]', '<span style="color:'.$arr['color'].'" class="itemTooltip" '.tt('<span style="color:#999">Ungültige Schiff-ID!</span>').'>[Ungültiges Schiff: \1]</span>', $string);
 		
 		$res = dbquery("
 		SELECT 
@@ -223,7 +247,8 @@
 			def_weapon,
 			def_heal,
 			def_fields,
-			race_name
+			race_name,
+			def_max_count
 		FROM
 			defense
 		INNER JOIN
@@ -238,7 +263,10 @@
 			$tm .='<span style="color:'.$arr['color'].'">'.$arr['name']."</span><br/>".$arr['cat'];
 			if ($arr['race_name']!="")
 				$tm.= '<br/><span style="color:#EF0E1C">Rasse: '.$arr['race_name']."</span>";
-			
+			if ($arr['def_max_count']>1)
+				$tm.= "<br/>Limitiert (".nf($arr['def_max_count']).")";
+			if ($arr['def_max_count']==1)
+				$tm.= "<br/>Einzigartig";
 			if ($arr['def_structure']>0)
 				$tm.= "<br/>Struktur: ".nf($arr['def_structure']);
 			if ($arr['def_shield']>0)
@@ -250,10 +278,62 @@
 			if ($arr['def_fields']>0)
 				$tm.= "<br/>Felderverbrauch: ".nf($arr['def_fields']);
 			$tm .='<br/><span style="color:#FFD517">'.$arr['cmt']."</span></div>";
-			$string = eregi_replace('\[def '.$arr['id'].'\]', '<span style="color:'.$arr['color'].'" class="itemTooltip" '.tt($tm).'>[<a href="?page=help&site=shipyard&id='.$arr['id'].'" style="color:'.$arr['color'].'">'.$arr['name'].'</a>]</span>', $string);
+			$string = eregi_replace('\[def '.$arr['id'].'\]', '<span style="color:'.$arr['color'].'" class="itemTooltip" '.tt($tm).'>[<a href="?page=help&site=defense&id='.$arr['id'].'" style="color:'.$arr['color'].'">'.$arr['name'].'</a>]</span>', $string);
 		}
-		$string = eregi_replace('\[def ([^\[]*)\]', '<span style="color:'.$arr['color'].'" class="itemTooltip" '.tt('<span style="color:#999">Ungültige Verteidigungs-ID!</span>').'>[Ungültiges Verteidigung]</span>', $string);
+		$string = eregi_replace('\[def ([^\[]*)\]', '<span style="color:'.$arr['color'].'" class="itemTooltip" '.tt('<span style="color:#999">Ungültige Verteidigungs-ID!</span>').'>[Ungültiges Verteidigung: \1]</span>', $string);
 	
+		$res = dbquery("
+		SELECT 
+			building_id as id,
+			building_name as name,
+			building_shortcomment as cmt,
+			type_name as cat,
+			type_color as color,
+			building_fields,
+			building_last_level
+		FROM
+			buildings
+		INNER JOIN
+			building_types
+			ON building_type_id=type_id
+		;");
+		while ($arr=mysql_fetch_array($res))
+		{
+			$tm = '<div style="background:url(images/imagepacks/Discovery/buildings/building'.$arr['id'].'_small.gif) right top no-repeat;">';
+			$tm .='<span style="color:'.$arr['color'].'">'.$arr['name']."</span><br/>".$arr['cat'];
+			if ($arr['building_last_level']>0)
+				$tm.= "<br/>Maximalstufe: ".nf($arr['building_last_level'])."";
+			if ($arr['building_fields']>0)
+				$tm.= "<br/>Felder/Stufe: ".nf($arr['building_fields']);
+			$tm .='<br/><span style="color:#FFD517">'.$arr['cmt']."</span></div>";
+			$string = eregi_replace('\[building '.$arr['id'].'\]', '<span style="color:'.$arr['color'].'" class="itemTooltip" '.tt($tm).'>[<a href="?page=help&site=buildings&id='.$arr['id'].'" style="color:'.$arr['color'].'">'.$arr['name'].'</a>]</span>', $string);
+		}
+		$string = eregi_replace('\[building ([^\[]*)\]', '<span style="color:'.$arr['color'].'" class="itemTooltip" '.tt('<span style="color:#999">Ungültige Gebäude-ID!</span>').'>[Ungültiges Gebäude: \1]</span>', $string);
+
+		$res = dbquery("
+		SELECT 
+			tech_id as id,
+			tech_name as name,
+			tech_shortcomment as cmt,
+			type_name as cat,
+			type_color as color,
+			tech_last_level
+		FROM
+			technologies
+		INNER JOIN
+			tech_types
+			ON tech_type_id=type_id
+		;");
+		while ($arr=mysql_fetch_array($res))
+		{
+			$tm = '<div style="background:url(images/imagepacks/Discovery/technologies/technology'.$arr['id'].'_small.gif) right top no-repeat;">';
+			$tm .='<span style="color:'.$arr['color'].'">'.$arr['name']."</span><br/>".$arr['cat'];
+			if ($arr['tech_last_level']>0)
+				$tm.= "<br/>Maximalstufe: ".nf($arr['tech_last_level'])."";
+			$tm .='<br/><span style="color:#FFD517">'.$arr['cmt']."</span></div>";
+			$string = eregi_replace('\[tech '.$arr['id'].'\]', '<span style="color:'.$arr['color'].'" class="itemTooltip" '.tt($tm).'>[<a href="?page=help&site=research&id='.$arr['id'].'" style="color:'.$arr['color'].'">'.$arr['name'].'</a>]</span>', $string);
+		}
+		$string = eregi_replace('\[tech ([^\[]*)\]', '<span style="color:'.$arr['color'].'" class="itemTooltip" '.tt('<span style="color:#999">Ungültige Technologie-ID!</span>').'>[Ungültige Technologie: \1]</span>', $string);
 	
 
 		return $string;
