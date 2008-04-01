@@ -6,8 +6,8 @@
 		
 		function Note($subject,$text,$timestamp=0)
 		{
-			$this->subject = $subject;
-			$this->text = $text;
+			$this->subject = addslashes($subject);
+			$this->text = addslashes($text);
 			$this->timestamp = $timestamp==0 ? time() : $timestamp;
 		}
 		

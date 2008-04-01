@@ -57,9 +57,8 @@
 			}
 		}
 		
-		function add($text,$subject)
+		function add(Note $note)
 		{
-			$time = time();
 			dbquery("
 			INSERT INTO 
 				notepad 
@@ -70,9 +69,9 @@
 				note_timestamp
 			) VALUES (
 				'".$this->userId."',
-				'".addslashes($text)."',
-				'".addslashes($subject)."',
-				'".$time."'
+				'".$note->subject()."',
+				'".$note->text()."',
+				'".$note->timestamp()."'
 			);");
 			$this->note[mysql_insert_id()] = new Note($text,$subject,$time);
 		}

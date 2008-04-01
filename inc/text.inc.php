@@ -177,6 +177,7 @@
 
 		//$string=htmlentities($string);
 
+/*
 		$imgpacket_path = "images/imagepacks/Discovery";
 		$imgpacket_ext = "png";
 	
@@ -334,7 +335,7 @@
 			$string = eregi_replace('\[tech '.$arr['id'].'\]', '<span style="color:'.$arr['color'].'" class="itemTooltip" '.tt($tm).'>[<a href="?page=help&site=research&id='.$arr['id'].'" style="color:'.$arr['color'].'">'.$arr['name'].'</a>]</span>', $string);
 		}
 		$string = eregi_replace('\[tech ([^\[]*)\]', '<span style="color:'.$arr['color'].'" class="itemTooltip" '.tt('<span style="color:#999">Ungültige Technologie-ID!</span>').'>[Ungültige Technologie: \1]</span>', $string);
-	
+	*/
 
 		return $string;
 	}
