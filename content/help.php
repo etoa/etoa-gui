@@ -64,6 +64,7 @@
 		echo "<tr><td class=\"tbltitle\" width=\"25%\">Sterne</td><td class=\"tbldata\">Liste aller Sterne</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=stars\">Anzeigen</a></td></tr>";
 		echo "<tr><td class=\"tbltitle\" width=\"25%\">Rassen</td><td class=\"tbldata\">Liste aller Rassen</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=races\">Anzeigen</a></td></tr>";
 		echo "<tr><td class=\"tbltitle\" width=\"25%\">Ressourcen</td><td class=\"tbldata\">Liste aller Ressourcen</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=resources\">Anzeigen</a></td></tr>";
+		echo "<tr><td class=\"tbltitle\" width=\"25%\">Rohstoffkurse</td><td class=\"tbldata\">Welche Werte die Rohstoffe akuell haben</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=rates\">Anzeigen</a></td></tr>";
 		echo "<tr><td class=\"tbltitle\" width=\"25%\">Einstellungen</td><td class=\"tbldata\">Grundlegende Einstellungen dieser Runde</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=settings\">Anzeigen</a></td></tr>";
 		//echo "<tr><td class=\"tbltitle\" width=\"25%\">Spezialisten</td><td class=\"tbldata\">Was man mit Spezialisten machen kann</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=specialists\">Anzeigen</a></td></tr>";
 		infobox_end(1);
@@ -75,7 +76,6 @@
 		echo "<tr><td class=\"tbltitle\" width=\"25%\">Statistik</td><td class=\"tbldata\">Was sind Statistiken und wie werden sie berechnet</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=stats\">Anzeigen</a></td></tr>";
 		echo "<tr><td class=\"tbltitle\" width=\"25%\">Technikbaum</td><td class=\"tbldata\">Wie lese ich daraus die Voraussetzungen ab</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=techtree\">Anzeigen</a></td></tr>";
 		echo "<tr><td class=\"tbltitle\" width=\"25%\">Markt</td><td class=\"tbldata\">Wie der Marktplatz funktioniert</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=market\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Rohstoffkurse</td><td class=\"tbldata\">Welche Werte die Rohstoffe akuell haben</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=rates\">Anzeigen</a></td></tr>";
 		echo "<tr><td class=\"tbltitle\" width=\"25%\">Multis und Sitting</td><td class=\"tbldata\">Wie wir Mehrfachaccounts handhaben und wie Sitting funktioniert</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=multi_sitting\">Anzeigen</a></td></tr>";
 		echo "<tr><td class=\"tbltitle\" width=\"25%\">Kryptocenter</td><td class=\"tbldata\">Wie man fremde Flottenbewegungen scannt</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=crypto\">Anzeigen</a></td></tr>";
 		echo "<tr><td class=\"tbltitle\" width=\"25%\">Spezialpunkte</td><td class=\"tbldata\">Wie man Spezialpunkte und Titel erwerben kann</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=specialpoints\">Anzeigen</a></td></tr>";
