@@ -112,6 +112,7 @@
 		{
 			addItemSetListToPlanet($c->id,$s['user']['id'],$_POST['itemset_id']);
 			$s['itemset_key']=null;
+			$c->update(1);
 		}
 		
 		// Display first time message
@@ -148,9 +149,7 @@
 				$arr = mysql_fetch_array($res);
 				addItemSetListToPlanet($c->id,$s['user']['id'],$arr['set_id']);							
 			}
-		
-		
-	
+			
 			$c->update(1);
 			
 			echo '<br/>';
