@@ -1,3 +1,6 @@
+
+
+
 <?PHP
 
 	//////////////////////////////////////////////////
@@ -172,9 +175,25 @@
 			$menu["xajax_statsShowBox('diplomacy');"]="Diplomatie";
 			$menu["xajax_statsShowBox('titles');"]="Titel";
 		}		
-		show_js_tab_menu($menu);
 		
-		
+		$ddm = new DropdownMenu(1);
+		$ddm->add('total','Gesamtstatistik','xajax_statsShowBox(\'user\');');
+		$ddm->add('detail','Detailstatistiken','');
+		$ddm->add('special','Spezialstatistiken','');
+		$ddm->add('alliance','Allianzen','xajax_statsShowBox(\'alliances\')');
+		$ddm->add('pillory','Pranger','xajax_statsShowBox(\'pillory\')');
+		$ddm->add('titles','Titel','xajax_statsShowBox(\'titles\');');
+
+		$ddm->addChild('buildings','Gebäude','xajax_statsShowBox(\'buildings\');','detail');
+		$ddm->addChild('tech','Forschung','xajax_statsShowBox(\'tech\');','detail');
+		$ddm->addChild('ships','Schiffe','xajax_statsShowBox(\'ships\');','detail');
+
+		$ddm->addChild('battle','Kampfpunkte','xajax_statsShowBox(\'battle\');','special');
+		$ddm->addChild('trade','Handelspunkte','xajax_statsShowBox(\'trade\');','special');
+		$ddm->addChild('diplomacy','Diplomatiepunkte','xajax_statsShowBox(\'diplomacy\');','special');
+
+		echo $ddm;
+
 		echo "<br/>";
 
     echo "<div id=\"statsBox\">

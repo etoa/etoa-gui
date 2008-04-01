@@ -252,15 +252,18 @@
 		<meta http-equiv="content-style-type" content="text/css" />
 		<meta http-equiv="content-language" content="de" />
 
-		<title>
-			<?PHP 
-				echo $conf['game_name']['v']." ".$conf['game_name']['p1'];
-			?>
-		</title>
-		<link rel="stylesheet" href="css/general.css" type="text/css" />
-		<script src="js/main.js" type="text/javascript"></script>
+		<link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+		<title><?PHP echo $conf['game_name']['v']." ".$conf['game_name']['p1'];	?></title>
+
 		<?PHP 
-			echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"".CSS_STYLE."/style.css\" />";
+			echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"".CSS_STYLE."/style.css\" />\n";
+		?>
+		<link rel="stylesheet" href="css/general.css" type="text/css" />
+		<link rel="stylesheet" href="css/dropdown.css" type="text/css" />
+		<?PHP include("inc/csshacks.inc.php"); ?>
+
+		<script src="js/main.js" type="text/javascript"></script>
+		<?PHP
 			echo $xajax->printJavascript(XAJAX_DIR);
 			echo file_exists(CSS_STYLE."/scripts.js") ? "<script src=\"".CSS_STYLE."/scripts.js\" type=\"text/javascript\"></script>" : ''; 
 		?>
