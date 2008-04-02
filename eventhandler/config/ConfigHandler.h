@@ -23,7 +23,7 @@
 		}
 		~Config () {};
 		std::string get(std::string name, int value);
-		double Config::nget(std::string name, int value);
+		double nget(std::string name, int value);
 	private:
 		std::map<std::string, int> sConfig;
 		std::vector<std::vector<std::string> > cConfig;
