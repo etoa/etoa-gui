@@ -474,7 +474,7 @@ namespace market
 			}
 			else
 			{
-				int speed = 1;
+				ship_speed = 1;
 			}
 		}
 
@@ -507,6 +507,7 @@ namespace market
 					//Flotte zum Verkäufer schicken
 					int launchtime = std::time(0); // Startzeit
 					double distance = functions::calcDistanceByPlanetId(arr["planet_id"],arr["ressource_buyer_planet_id"]);
+					std::cout << distance << "\n";
 					int duration = distance / ship_speed * 3600 + ship_starttime + ship_landtime;
 					int landtime = launchtime + duration; // Landezeit
 
