@@ -3,6 +3,7 @@
 
 #include <time.h>
 #include <math.h>
+#include <string.h>
 #include <mysql++/mysql++.h>
 #include "../functions/Functions.h"
 #include "../MysqlHandler.h"
@@ -14,10 +15,36 @@ const char* SHIP_MISC_MSG_CAT_ID ="5";
 const char* MARKET_SHIP_ID = "16";
 const char* MARKET_USER_ID = "1";
 const char* FLEET_ACTION_RESS = "mo";
-
+const char* TRADE_POINTS_PER_TRADE = "1";
+const char* TRADE_POINTS_PER_AUCTION = "1";
+const char* TRADE_POINTS_PER_TRADETEXT = "1";
+const char* TRADE_POINTS_TRADETEXT_MIN_LENGTH = "15";
 
 namespace market
 {
+	void MarketHandler::addTradePoints(std::string userId,int points,std::string reason)
+	{
+		My &my = My::instance();
+		mysqlpp::Connection *con_ = my.get();
+		mysqlpp::Query query = con_->query();
+		query << "UPDATE ";
+		query << "	users ";
+		query << "SET ";
+		query << "	user_points_trade=user_points_trade+" << points << " ";
+		query << "WHERE ";
+		query << "	user_id=" << userId << ";";
+		query.store();
+		query.reset();
+			
+		std::string text = "Der Spieler ";
+		text += userId;
+		text += " erhält ";
+		text += points;
+		text += " Handelspunkte. Grund. ";
+		text += reason;
+		functions::add_log(17,text);
+	}	
+		
 	//Configwerte des Marktes werden aktualisiert
 	void MarketHandler::update_config(std::vector<int> buy_res, std::vector<int> sell_res)
 	{
@@ -81,8 +108,7 @@ namespace market
 				for (mysqlpp::Row::size_type i = 0; i<resSize; i++) 
 				{
 					arr = res.at(i);
-					
-
+					    	
 					//Markt Level vom Verkäufer laden
 					query << "SELECT ";
 						query << "buildlist_current_level ";
@@ -503,11 +529,28 @@ namespace market
 				for (mysqlpp::Row::size_type i = 0; i<resSize; i++) 
 				{
 					arr = res.at(i);
+					
+					// Add trade points
+					int tradepointsBuyer = 1;
+					int tradepointsSeller = 1;
+					if ((int)strlen(arr["ressource_text"]) > 15) 
+					{
+						tradepointsSeller += 1;
+					}
+					
+					
+					std::string textBuyer = "Rohstoffkauf von ";
+					textBuyer += std::string(arr["user_id"]);
+					
+					std::string textSeller = "Rohstoffverkauf an ";
+					textSeller += std::string(arr["ressource_buyer_id"]);
+					
+					addTradePoints(std::string(arr["ressource_buyer_id"]),tradepointsBuyer,textBuyer);
+					addTradePoints(std::string(arr["user_id"]),tradepointsSeller,textSeller);
 
 					//Flotte zum Verkäufer schicken
 					int launchtime = std::time(0); // Startzeit
 					double distance = functions::calcDistanceByPlanetId(arr["planet_id"],arr["ressource_buyer_planet_id"]);
-					std::cout << distance << "\n";
 					int duration = distance / ship_speed * 3600 + ship_starttime + ship_landtime;
 					int landtime = launchtime + duration; // Landezeit
 
@@ -635,6 +678,23 @@ namespace market
 				{
 
 					arr = res.at(i);
+					
+					// Add trade points
+					int tradepointsBuyer = 1;
+					int tradepointsSeller = 1;
+					if ((int)strlen(arr["ship_text"]) > 15) 
+					{
+						tradepointsSeller += 1;
+					}
+					
+					std::string textBuyer = "Schiffkauf von ";
+					textBuyer += std::string(arr["user_id"]);
+					
+					std::string textSeller = "Schiffverkauf an ";
+					textSeller += std::string(arr["ship_buyer_id"]);
+					
+					addTradePoints(std::string(arr["ship_buyer_id"]),tradepointsBuyer,textBuyer);
+					addTradePoints(std::string(arr["user_id"]),tradepointsSeller,textSeller);
 
 					//Flotte zum Verkäufer schicken
 					int launchtime = time; // Startzeit
@@ -766,6 +826,23 @@ namespace market
 					for (mysqlpp::Row::size_type i = 0; i<resSize; i++) 
 					{
 						arr = res.at(i);
+						
+					// Add trade points
+					int tradepointsBuyer = 1;
+					int tradepointsSeller = 1;
+					if ((int)strlen(arr["auction_text"]) > 15) 
+					{
+						tradepointsSeller += 1;
+					}
+					
+					std::string textBuyer = "Auktion von ";
+					textBuyer += std::string(arr["auction_user_id"]);
+					
+					std::string textSeller = "Rohstoffverkauf an ";
+					textSeller += std::string(arr["auction_current_buyer_id"]);
+					
+					addTradePoints(std::string(arr["auction_current_buyer_id"]),tradepointsBuyer,textBuyer);
+					addTradePoints(std::string(arr["auction_user_id"]),tradepointsSeller,textSeller);
 
 					//Flotte zum verkäufer der auktion schicken
 					int launchtime = time; // Startzeit

@@ -206,7 +206,6 @@ namespace functions
 		double sae = sd * ae;	
 		double ps;										// Distance in AE units
 		
-		std::cout << "1->" << temp <<"\n2->" << dx << "\n300->" << dy << "\n15->" << sd << "\n";
 		if (int(rowPlanet1["cell_sx"])==int(rowPlanet2["cell_sx"]) && int(rowPlanet1["cell_sy"])==int(rowPlanet2["cell_sy"]) && int(rowPlanet1["cell_cx"])==int(rowPlanet2["cell_cx"]) && int(rowPlanet1["cell_cy"])==int(rowPlanet2["cell_cy"]))
 		{
 			ps = fabs(int(rowPlanet2["planet_solsys_pos"])-int(rowPlanet1["planet_solsys_pos"]))*ae/4/np;				// Planetendistanz wenn sie im selben Solsys sind

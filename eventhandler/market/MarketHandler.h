@@ -21,6 +21,7 @@ namespace market
 		void update();
 		void MarketAuctionUpdate();
 		static void update_config(std::vector<int> buy_res, std::vector<int> sell_res);
+		static void addTradePoints(std::string userId,int points,std::string reason);
 	private:
 		bool changes_;
 		std::vector<int> changedPlanets_;		
