@@ -67,7 +67,7 @@
 			if ($werft_arr['buildlist_deactivated'] < time())
 			{
 				// Calculate cooldown
-				$cooldown = 10; //max($cfg->param2("cryptocenter"),$cfg->value("cryptocenter") - ($cfg->param1("cryptocenter")*($center_level-1)));
+				$cooldown = max($cfg->param2("cryptocenter"),$cfg->value("cryptocenter") - ($cfg->param1("cryptocenter")*($center_level-1)));
 				if ($werft_arr['buildlist_cooldown']>time())
 				{
 					$status_text = "Bereit in ".tf($werft_arr['buildlist_cooldown']-time());
@@ -210,7 +210,7 @@
 									{
 										$out.="Keine eintreffenden Flotten gefunden!\n\n";
 									}
-									/*
+									
 									$out.="[b]Wegfliegende Flotten[/b]\n\n";
 									$fres = dbquery("
 									SELECT
@@ -249,9 +249,9 @@
 									}								
 									else
 									{
-										$out.='Keine eintreffenden Flotten gefunden!';
+										$out.='Keine wegfliegenden Flotten gefunden!';
 									}
-									*/
+									
 									infobox_start("Ergebnis der Analyse");
 									echo text2html($out);
 									infobox_end();
