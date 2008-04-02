@@ -267,6 +267,14 @@
 			echo $xajax->printJavascript(XAJAX_DIR);
 			echo file_exists(CSS_STYLE."/scripts.js") ? "<script src=\"".CSS_STYLE."/scripts.js\" type=\"text/javascript\"></script>" : ''; 
 		?>
+		
+		
+		<script type="text/javascript" src="js/range.js"></script>
+		<script type="text/javascript" src="js/timer.js"></script>
+		<script type="text/javascript" src="js/slider.js"></script>
+		
+		<link type="text/css" rel="StyleSheet" href="css/slider.css" />
+		
 	</head>
 		<?PHP
 			echo file_exists(CSS_STYLE."/template.php") ? '<body onload="preloadImages();">' : '<body>';

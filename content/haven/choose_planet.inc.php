@@ -575,9 +575,9 @@
 						";
 
 					echo "capacity=parseInt(".$_SESSION['haven']['fleet']['total_capacity'].");// Kapazität
-
-				fspeed = Math.ceil(fspeed * (document.getElementById('duration_percent').options[ document.getElementById('duration_percent').selectedIndex].value));
-					cae = Math.ceil(cae * (document.getElementById('duration_percent').options[ document.getElementById('duration_percent').selectedIndex].value));
+					percent_value = document.getElementById('duration_percent').value;
+					fspeed = Math.ceil(fspeed * percent_value);
+					cae = Math.ceil(cae * percent_value);
 
 					dx = Math.abs((((sx2-1) * nx) + cx2) - (((sx1-1) * nx) + cx1));
 					dy = Math.abs((((sy2-1) * nx) + cy2) - (((sy1-1) * nx) + cy1));
@@ -798,7 +798,8 @@
 				echo "<input type=\"text\" id=\"fleet_cy\" name=\"fleet_cy\" size=\"2\" maxlength=\"2\" value=\"$ccy\" title=\"Zelle Y-Koordinate\" onKeyUp=\"upd_values();\" onKeyPress=\"return nurZahlen(event)\"/>&nbsp;&nbsp;:&nbsp;&nbsp;";
 				echo "<input type=\"text\" id=\"fleet_p\" name=\"fleet_p\" size=\"2\" maxlength=\"2\" value=\"$psp\" title=\"Position des Planeten im Sonnensystem\" onKeyUp=\"upd_values();\" onKeyPress=\"return nurZahlen(event)\"/></td></tr>";
 				// Speedfaktor
-				echo "<tr><td class=\"tbltitle\" width=\"25%\">Speedfaktor:</td><td class=\"tbldata\" width=\"75%\" align=\"left\"><select name=\"speed_percent\" id=\"duration_percent\" onchange=\"upd_values();\">\n";
+				echo "<tr><td class=\"tbltitle\" width=\"25%\">Speedfaktor:</td><td class=\"tbldata\" width=\"75%\" style=\"vertical-align:middle;\">";
+				/*echo "<select name=\"speed_percent\" id=\"duration_percent\" onchange=\"upd_values();\">\n";
 				for ($x=1;$x>0.1;$x-=0.1)
 				{
 					$perc = $x*100;
@@ -806,7 +807,39 @@
 					if ($speed_percent*100==$perc) echo " selected=\"selected\"";
 					echo ">$perc</option>\n";
 				}
-				echo "</select> %</td></tr>";
+				echo "</select>";*/
+				
+				?>
+				<div class="slider" id="slider-1" tabIndex="1" style="float:left;">
+					<input class="slider-input" id="slider-input-1" name="slider-input-1" />
+				</div> &nbsp; <input id="duration_percent" name="speed_percent" value="100" readonly="readonly"  style="border:none;background:none;" size="3" /><br style="clear:both;" />
+				
+				<script type="text/javascript">
+				var slide = new Slider(document.getElementById("slider-1"),document.getElementById("slider-input-1"));
+				slide.setMinimum(1);
+
+				slide.onchange = function () 
+				{
+					document.getElementById("duration_percent").value = slide.getValue();
+					upd_values();
+				};
+				<?PHP
+				if ($speed_percent<100 && $speed_percent>0)
+				{
+					echo 'slide.setValue('.$speed_percent.');';
+				}
+				else
+				{
+					echo 'slide.setValue(100);';
+				}
+				?>				
+				window.onresize = function () {
+					slide.recalculate();
+				};
+				</script>
+					<?
+				
+				echo "</td></tr>";
 				// Daten anzeigen
 				echo "<tr><td class=\"tbltitle\" width=\"25%\">Kosten/100 AE:</td><td class=\"tbldata\">".nf($_SESSION['haven']['fleet']['costs_per_ae'])." t</td></tr>";
 				echo "<tr><td class=\"tbltitle\" width=\"25%\">Geschwindigkeit:</td><td class=\"tbldata\" width=\"75%\" align=\"left\" id=\"speed\">-</td></tr>";

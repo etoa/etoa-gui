@@ -222,11 +222,10 @@
 			
 		}
 		
-		/*
+		
 		/**
 		* Punkteberechnung
 		*/
-	
 		static function calc($manual=false)
 		{
 			global $db_table, $conf;
@@ -292,11 +291,20 @@
 				$tech[$arr['bp_tech_id']][$arr['bp_level']]=$arr['bp_points'];
 			}
 	
+
+			// Statistiktabelle löschen
+			dbquery("
+				TRUNCATE TABLE
+					user_stats;
+			");	
+	
+			// User-ID's laden
 			$ures =	dbquery("
 				SELECT
-					user_id
+					user_id,
+					user_nick
 				FROM
-					".$db_table['users'].";
+					users;
 			");
 			while ($uarr=mysql_fetch_array($ures))
 			{
@@ -402,11 +410,27 @@
 					$points+=$p;
 					$points_tech+=$p;
 				}
-	
+				
+				//
+				// Punkte für XP
+				//
+				$res = dbquery("
+					SELECT
+						SUM(shiplist_special_ship_exp)
+					FROM
+						shiplist
+					WHERE
+						shiplist_user_id='".$user_id."'
+						AND shiplist_count=1;
+				");
+				$arr = mysql_fetch_row($res);
+				$points_exp = max(0,$arr[0]);
+
+				/*
 				// Punkte speichern
 				dbquery("
 					UPDATE
-						".$db_table['users']."
+						users
 					SET
 						user_points='".$points."',
 						user_points_ships='".$points_ships."',
@@ -415,10 +439,36 @@
 					WHERE
 						user_id='".$user_id."';
 				");
+				*/
+	
+				// Save points in memory cached table
+				dbquery("
+					INSERT INTO
+						user_stats
+					(
+						user_id,
+						user_points,
+						user_points_ships,
+						user_points_tech,
+						user_points_buildings,
+						user_points_exp,
+						user_nick
+					)
+					VALUES
+					(
+						".$user_id.",
+						".$points.",
+						".$points_ships.",
+						".$points_tech.",
+						".$points_building.",
+						".$points_exp.",
+						'".$uarr['user_nick']."'
+					);
+				");	
 	
 				dbquery("
 					INSERT INTO
-					".$db_table['user_points']."
+					user_points
 					(
 						point_user_id,
 						point_timestamp,
@@ -437,6 +487,8 @@
 						'".$points_building."'
 					);
 				");
+				
+				
 				$allpoints+=$points;
 			}
 	
@@ -451,20 +503,43 @@
 			unset($points_tech);
 			unset($points_building);
 	
+			/*
 			// Ränge berechnen
 			dbquery("
 				UPDATE
-					".$db_table['users']."
+					users
 				SET
 					user_rank_last=user_rank_current;
 			");
+			*/
 	
-			// Statistiktabelle löschen
-			dbquery("
-				TRUNCATE TABLE
-					user_stats;
+			
+			$res = dbquery("
+			SELECT
+				user_id
+			FROM
+				user_stats
+			ORDER BY
+				user_points DESC;			
 			");
-	
+			$cnt=1;
+			if (mysql_num_rows($res)>0)
+			{
+				while($arr=mysql_fetch_row($res))
+				{
+					dbquery("
+					UPDATE
+						user_stats
+					SET
+						user_rank_current=".$cnt."
+					WHERE
+						user_id=".$arr[0].";");
+					$cnt++;
+				}				
+			}
+				
+				
+			/*
 			// Heimatplaneten laden
 			$mp=array();
 			$res=dbquery("
@@ -489,8 +564,9 @@
 				}
 			}
 			mysql_free_result($res);
-	
-	
+			*/
+
+			/*
 			$res=dbquery("
 				SELECT
 					user_id,
@@ -512,7 +588,7 @@
 					user_hmode_from,
 					user_hmode_to				
 				FROM
-					".$db_table['users']."
+					users
 				LEFT JOIN
 					alliances
 					ON user_alliance_id=alliance_id
@@ -538,7 +614,7 @@
 						$hr = $arr['user_rank_current'];
 					dbquery("
 						UPDATE
-							".$db_table['users']."
+							users
 						SET
 							user_rank_current='".$rank."',
 							user_highest_rank='".$hr."'
@@ -606,7 +682,9 @@
 					$rank++;
 				}
 			}
-	
+			*/
+			
+			
 			// Allianz Statistik generieren
 			dbquery("
 			TRUNCATE TABLE
