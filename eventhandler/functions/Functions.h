@@ -5,6 +5,7 @@
 #include <time.h>
 #include <math.h>
 #include <map>
+#include "../MysqlHandler.h"
 
 namespace functions //ToDo addslahes(std::string)
 {
@@ -23,7 +24,7 @@ namespace functions //ToDo addslahes(std::string)
 	* @param int uid User ID 
 	* @author Glaubinix
 	*/
-	std::string get_user_nick(mysqlpp::Connection* con_, int pid);
+	std::string get_user_nick(int pid);
 	
 	/**
 	* Formatiert ein Datum 
@@ -50,7 +51,7 @@ namespace functions //ToDo addslahes(std::string)
 	* @param string text
 	* @author Glaubinix
 	*/	
-	void send_msg(mysqlpp::Connection* con,  int user_id, int msg_type, std::string subject, std::string text);
+	void send_msg(int user_id, int msg_type, std::string subject, std::string text);
 	
 	/**
 	* Speichert Daten in die Log-Tabelle
@@ -60,7 +61,7 @@ namespace functions //ToDo addslahes(std::string)
 	* @param time_t log_timestamp Zeit
 	* @author Glaubinix
 	*/
-	void add_log(mysqlpp::Connection* con_, int log_cat, std::string log_text, std::time_t log_timestamp=0);
+	void add_log(int log_cat, std::string log_text, std::time_t log_timestamp=0);
 	
 	/**
 	* Liefert eine Zahl mit Anzahl Komastellen
@@ -74,12 +75,11 @@ namespace functions //ToDo addslahes(std::string)
 	/**
 	* Liefert die Distance zwischen 2 Planeten
 	*
-	* @param mysqlpp::Connection* con_ Pointer zur MySQL Verbindung
 	* @param int pid1 PlanetenID Planet 1
 	* @param int pid1 PlanetenID Planet 2
 	* @author Glaubinix
 	*/
-	double calcDistanceByPlanetId(mysqlpp::Connection* con_, int pid1, int pid2);
+	double calcDistanceByPlanetId(int pid1, int pid2);
 	
 	/**
 	* Liefert die Distance zwischen 2 Planeten

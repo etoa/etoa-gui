@@ -53,8 +53,7 @@ namespace def
 	  			{
 	  				if ((int)arr["queue_cnt"]>0)
 	  				{
-	  					DefList::add(this->con_,
-	  												(int)arr["queue_planet_id"], 
+	  					DefList::add(				(int)arr["queue_planet_id"], 
 	  												(int)arr["queue_user_id"],
 	  												(int)arr["queue_def_id"],
 	  												(int)arr["queue_cnt"]);
@@ -67,8 +66,7 @@ namespace def
 	  			{
 	  				changes_=true;
 	  				int obj_cnt = (int)arr["queue_cnt"] - (int)ceil((double)((int)arr["queue_endtime"] - time)/(int)arr["queue_objtime"]);
-					DefList::add(this->con_,
-  												(int)arr["queue_planet_id"], 
+					DefList::add(				(int)arr["queue_planet_id"], 
   												(int)arr["queue_user_id"],
   												(int)arr["queue_def_id"],
   												(int)obj_cnt);	  				

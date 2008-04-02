@@ -4,13 +4,16 @@
 
 #include <mysql++/mysql++.h>
 
+#include "../config/ConfigHandler.h"
 #include "Functions.h"
 
 namespace functions
 {
 
-	std::string get_user_nick(mysqlpp::Connection* con_, int pid)
+	std::string get_user_nick(int pid)
 	{
+		My &my = My::instance();
+		mysqlpp::Connection *con_ = my.get();
 		mysqlpp::Query query = con_->query();
 		query << "SELECT ";
 			query << "user_nick ";
@@ -117,11 +120,13 @@ namespace functions
 		return(value);
 	}
 	
-	void send_msg(mysqlpp::Connection* con, int user_id, int msg_type, std::string subject, std::string text)
+	void send_msg(int user_id, int msg_type, std::string subject, std::string text)
 	{
+		My &my = My::instance();
+		mysqlpp::Connection *con_ = my.get();
 		std::cout << "->adding Message to db\n";
 		
-		mysqlpp::Query query = con->query();
+		mysqlpp::Query query = con_->query();
 		query << "INSERT INTO ";
 			query << "messages ";
 				query << "(message_user_from, ";
@@ -142,8 +147,10 @@ namespace functions
 	
 	}
 	
-	void add_log(mysqlpp::Connection* con_, int log_cat, std::string log_text, std::time_t log_timestamp)
+	void add_log(int log_cat, std::string log_text, std::time_t log_timestamp)
 	{
+		My &my = My::instance();
+		mysqlpp::Connection *con_ = my.get();
 		if (log_timestamp==0)
 		{
 		 	log_timestamp = std::time(0);
@@ -186,11 +193,12 @@ namespace functions
 	
 	double calcDistance(mysqlpp::Row rowPlanet1, mysqlpp::Row rowPlanet2)
 	{
+		Config &config = Config::instance();
 		// Calc time and distance
-		int nx = 10; //$conf['num_of_cells']['p1'];		// Anzahl Zellen Y
-		int ny = 10; //$conf['num_of_cells']['p2'];		// Anzahl Zellen X
-		int ae = 300; //$conf['cell_length']['v'];			// Länge vom Solsys in AE
-		int np = 15; //$conf['num_planets']['p2'];			// Max. Planeten im Solsys
+		int nx = (int)config.nget("num_of_cells", 1); //$conf['num_of_cells']['p1'];		// Anzahl Zellen Y
+		int ny = (int)config.nget("num_of_cells", 2); //$conf['num_of_cells']['p2'];		// Anzahl Zellen X
+		int ae =(int)config.nget("cell_lenghth", 0); //$conf['cell_length']['v'];			// Länge vom Solsys in AE
+		int np = (int)config.nget("num_planets", 2);; //$conf['num_planets']['p2'];			// Max. Planeten im Solsys
 		double temp = (((int(rowPlanet2["cell_sx"])-1) * nx) + int(rowPlanet2["cell_cx"])) - (((int(rowPlanet1["cell_sx"])-1) * nx) + int(rowPlanet1["cell_cx"]));
 		double dx = fabs(temp);
 		double dy = fabs((((int(rowPlanet2["cell_sy"])-1) * nx) + int(rowPlanet1["cell_cy"])) - (((int(rowPlanet1["cell_sy"])-1) * nx) + int(rowPlanet1["cell_cy"])));
@@ -210,8 +218,10 @@ namespace functions
 		return 1;
 	}		
 
-	double calcDistanceByPlanetId(mysqlpp::Connection* con_, int pid1, int pid2)
+	double calcDistanceByPlanetId(int pid1, int pid2)
 	{
+		My &my = My::instance();
+		mysqlpp::Connection *con_ = my.get();
 		mysqlpp::Row rowPlanet1, rowPlanet2;
 		mysqlpp::Query query = con_->query();
 		query << "SELECT ";

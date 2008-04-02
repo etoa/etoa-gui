@@ -11,7 +11,7 @@ namespace fleet
 	class FleetHandler : EventHandler
 	{
 	public:
-		FleetHandler(mysqlpp::Connection* con) : EventHandler(con) { }		
+		FleetHandler() : EventHandler() { }		
 		void update();
 		
 		

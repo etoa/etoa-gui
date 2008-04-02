@@ -53,8 +53,7 @@ namespace ship
 	  			{
 	  				if ((int)arr["queue_cnt"]>0)
 	  				{
-	  					ShipList::add(this->con_,
-	  												(int)arr["queue_planet_id"], 
+	  					ShipList::add(				(int)arr["queue_planet_id"], 
 	  												(int)arr["queue_user_id"],
 	  												(int)arr["queue_ship_id"],
 	  												(int)arr["queue_cnt"]);
@@ -68,8 +67,7 @@ namespace ship
 	  				changes_=true;
 					int new_queue_cnt = (int)ceil((double)((int)arr["queue_endtime"] - time)/(int)arr["queue_objtime"]);
 					int obj_cnt = (int)arr["queue_cnt"] - new_queue_cnt;
-  					ShipList::add(this->con_,
-  												(int)arr["queue_planet_id"], 
+  					ShipList::add(				(int)arr["queue_planet_id"], 
   												(int)arr["queue_user_id"],
   												(int)arr["queue_ship_id"],
   												(int)obj_cnt);	  				

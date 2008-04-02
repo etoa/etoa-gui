@@ -4,14 +4,15 @@
 
 #include <vector>
 #include <iostream>
+#include "../MysqlHandler.h"
 
 namespace planet
 {
 	class PlanetManager
 	{
 	public:
-		PlanetManager(mysqlpp::Connection* con) { this->con_ = con; };
-		PlanetManager(mysqlpp::Connection* con, std::vector<int>* planetIds);	
+		PlanetManager();
+		PlanetManager(std::vector<int>* planetIds);	
 
 		void updateValues(std::vector<int>* planetIds);
 		void updateEconomy(int planetId, mysqlpp::Row& row, std::vector<double>& ressource);

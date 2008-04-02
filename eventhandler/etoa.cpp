@@ -51,9 +51,7 @@ float minLoopDuration = 1;	// Minimal loop duration
 main(int argc, char *argv[])
 {
 
-	mysqlpp::Connection con(argv[4],argv[1],argv[2],argv[3]); //NAME,SERVER,USER;PWD*/
 	// TODO: Error handling
-	//Config* Config::_instance = 0;
 	std::time_t mtime=0;
 	// Main loop
 	while (true)
@@ -72,21 +70,21 @@ main(int argc, char *argv[])
 		*/
 		if ((mtime+300)<std::time(0))
 		{
-			market::MarketHandler* mh = new market::MarketHandler(&con);
+			market::MarketHandler* mh = new market::MarketHandler();
 			mh->update();
 			mtime = std::time(0);
 		}
 		
-		building::BuildingHandler* bh = new building::BuildingHandler(&con);
+		building::BuildingHandler* bh = new building::BuildingHandler();
 		bh->update();  
 
-		tech::TechHandler* th = new tech::TechHandler(&con);
+		tech::TechHandler* th = new tech::TechHandler();
 		th->update();  
 
-		ship::ShipHandler* sh = new ship::ShipHandler(&con);
+		ship::ShipHandler* sh = new ship::ShipHandler();
 		sh->update();  
 
-		def::DefHandler* dh = new def::DefHandler(&con);
+		def::DefHandler* dh = new def::DefHandler();
 		dh->update();  
 
 		if (bh->changes() || dh->changes() || sh->changes() || true)
@@ -116,10 +114,10 @@ main(int argc, char *argv[])
  					v1.push_back(v3[x]);
  				}						           
 			}
-			planet::PlanetManager* pm = new planet::PlanetManager(&con, &v1);
+			planet::PlanetManager* pm = new planet::PlanetManager(&v1);
 			pm->updateValues(&v1);		
 			
-			//pm->updateGasPlanets();
+			pm->updateGasPlanets();
 			pm->updateUserPlanets();
 
 				

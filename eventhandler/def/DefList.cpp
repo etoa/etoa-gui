@@ -3,11 +3,13 @@
 
 namespace def
 {
-	void DefList::add(mysqlpp::Connection* con, int planetId, int userId, int defId, int count)
+	void DefList::add(int planetId, int userId, int defId, int count)
 	{
+		My &my = My::instance();
+		mysqlpp::Connection *con_ = my.get();
 		count = count < 0 ? 0 : count;
 		
-		mysqlpp::Query query = con->query();
+		mysqlpp::Query query = con_->query();
 		query << "SELECT "
 			<< "	deflist_id "
 			<< "FROM "

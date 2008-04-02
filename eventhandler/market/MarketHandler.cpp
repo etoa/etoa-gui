@@ -5,6 +5,8 @@
 #include <math.h>
 #include <mysql++/mysql++.h>
 #include "../functions/Functions.h"
+#include "../MysqlHandler.h"
+#include "../config/ConfigHandler.h"
 
 #include "MarketHandler.h"
 
@@ -12,14 +14,15 @@ const char* SHIP_MISC_MSG_CAT_ID ="5";
 const char* MARKET_SHIP_ID = "16";
 const char* MARKET_USER_ID = "1";
 const char* FLEET_ACTION_RESS = "mo";
-const char* AUCTION_DELAY_TIME = "24";
 
 
 namespace market
 {
 	//Configwerte des Marktes werden aktualisiert
-	void MarketHandler::update_config(mysqlpp::Connection* con_,std::vector<int> buy_res, std::vector<int> sell_res) //con muss noch rein
+	void MarketHandler::update_config(std::vector<int> buy_res, std::vector<int> sell_res)
 	{
+		My &my = My::instance();
+		mysqlpp::Connection *con_ = my.get();
 		std::vector<std::string> ressource (5);
 		ressource[0] = "metal";
 		ressource[1] = "crystal";
@@ -48,7 +51,7 @@ namespace market
 	//Markt: Abgelaufene Auktionen löschen
 	void MarketHandler::MarketAuctionUpdate()
 	{
-	
+		Config &config = Config::instance();
 		std::string msg;
 		std::time_t time = std::time(0);
 	
@@ -105,9 +108,9 @@ namespace market
 							// Definiert den Rückgabefaktor
 							float return_factor = 1 - (1/(marr["buildlist_current_level"]+1));
 
-							std::string partner_user_nick = functions::get_user_nick(con_, (int)arr["auction_user_id"]);
-							std::string buyer_user_nick = functions::get_user_nick(con_, (int)arr["auction_current_buyer_id"]);
-							int delete_date = time + (24 * 3600); //ToDo config market_auction_delay_time
+							std::string partner_user_nick = functions::get_user_nick((int)arr["auction_user_id"]);
+							std::string buyer_user_nick = functions::get_user_nick((int)arr["auction_current_buyer_id"]);
+							int delete_date = time + ((int)config.nget("market_auction_delay_time", 0) * 3600);
 
 							//überprüfen ob geboten wurde, wenn nicht, Waren dem Verkäufer zurückgeben
 							if((int)arr["auction_current_buyer_id"]==0)
@@ -151,12 +154,12 @@ namespace market
 								msg += "\n\n";
             
 								msg += "Du erhälst ";
-								double tmp = functions::s_round(return_factor,2)*100; //ToDo
+								double tmp = functions::s_round(return_factor,2)*100;
 								msg += tmp;
 								msg += "% deiner Rohstoffe wieder zurück (abgerundet)!\n\n";
             
 								msg += "Das Handelsministerium";
-								functions::send_msg(con_,(int)arr["auction_user_id"],atoi(SHIP_MISC_MSG_CAT_ID),"Auktion beendet",msg); //ToDo
+								functions::send_msg((int)arr["auction_user_id"],atoi(SHIP_MISC_MSG_CAT_ID),"Auktion beendet",msg);
 
 								//Auktion löschen
 								query << "DELETE FROM ";
@@ -176,7 +179,7 @@ namespace market
 								msg += ", welche am ";
 								msg += functions::format_time(arr["auction_end"]);
 								msg += " endete, ist erfolgteich abgelaufen und wird nach ";
-								msg += "24"; //ToDo AUCTION_DELAY_TIME
+								msg += config.get("market_auction_delay_time", 0);
 								msg += " Stunden gelöscht. Die Waren werden nach wenigen Minuten versendet.\n\nDer Spieler ";
 								msg += buyer_user_nick;
 								msg += " hat von dir folgende Rohstoffe ersteigert:\n\n";
@@ -207,7 +210,7 @@ namespace market
 								msg += "\n\n";
             
 								msg += "Das Handelsministerium";
-								functions::send_msg(con_,(int)arr["auction_user_id"],atoi(SHIP_MISC_MSG_CAT_ID),"Auktion beendet",msg);
+								functions::send_msg((int)arr["auction_user_id"],atoi(SHIP_MISC_MSG_CAT_ID),"Auktion beendet",msg);
 
 								// Nachricht an Käufer
 								msg = "Du warst der höchstbietende in der Auktion vom Spieler " + partner_user_nick + ", welche am ";
@@ -242,11 +245,11 @@ namespace market
 								msg += "\n\n"; 
 				
 								msg += "Die Auktion wird nach ";
-								msg += "24"; //ToDo AUCTION_DELAY_TIME
+								msg += config.get("market_auction_delay_time", 0);
 								msg += " Stunden gelöscht und die Waren in wenigen Minuten versendet.\n\n";
             
 								msg += "Das Handelsministerium";
-								functions::send_msg(con_,(int)arr["auction_current_buyer_id"],atoi(SHIP_MISC_MSG_CAT_ID),"Auktion beendet",msg);
+								functions::send_msg((int)arr["auction_current_buyer_id"],atoi(SHIP_MISC_MSG_CAT_ID),"Auktion beendet",msg);
             
 
 								//Log schreiben, falls dieser Handel regelwidrig ist
@@ -309,7 +312,7 @@ namespace market
 										log += functions::nf(std::string(arr["auction_buy_fuel"]));
 										log += "\nNahrung: ";
 										log += functions::nf(std::string(arr["auction_buy_food"]));
-										functions::add_log(con_,10,log,time);
+										functions::add_log(10,log,time);
 									}
 								}
 
@@ -339,9 +342,9 @@ namespace market
 								log += "\nNahrung: ";
 								log += functions::nf(std::string(arr["auction_buy_food"]));
 								log += "\n\nDie Auktion und wird nach ";
-								log += "24"; //ToDo AUCTION_DELAY_TIME
+								log += config.get("market_auction_delay_time", 0);
 								log += " Stunden gelöscht.";
-								functions::add_log(con_,7,log,time);
+								functions::add_log(7,log,time);
 
 								//Auktion noch eine zeit lang anzeigen, aber unkäuflich machen
 								query << "UPDATE ";
@@ -391,11 +394,11 @@ namespace market
 								msg += ", welche am ";
 								msg += functions::format_time(arr["auction_end"]);
 								msg += " endete, ist erfolgreich abgelaufen und wird nach ";
-								msg += "24"; //ToDo AUCTION_DELAY_TIME
+								msg += config.get("market_auction_delay_time", 0);
 								msg += " Stunden gelöscht.\n\n";
 				
 								msg += "Das Handelsministerium";
-								functions::send_msg(con_,(int)arr["auction_user_id"],atoi(SHIP_MISC_MSG_CAT_ID),"Auktion abgelaufen",msg); //ToDo
+								functions::send_msg((int)arr["auction_user_id"],atoi(SHIP_MISC_MSG_CAT_ID),"Auktion abgelaufen",msg);
 	
 								//Auktion noch eine zeit lang anzeigen, aber unkäuflich machen
 								query << "UPDATE ";
@@ -423,7 +426,7 @@ namespace market
 				}
 				
 				// Gekaufte/Verkaufte Rohstoffe in Config-DB speichern für Kursberechnung
-				update_config(con_,buy_res, sell_res);				
+				update_config(buy_res, sell_res);				
 			
 			}
 		}
@@ -435,7 +438,7 @@ namespace market
 	//
 	void MarketHandler::update()
 	{
-
+		Config &config = Config::instance();
 		//Auktionen Updaten (beenden)
 		MarketHandler::MarketAuctionUpdate();
 
@@ -503,7 +506,7 @@ namespace market
 
 					//Flotte zum Verkäufer schicken
 					int launchtime = std::time(0); // Startzeit
-					double distance = functions::calcDistanceByPlanetId(con_,arr["planet_id"],arr["ressource_buyer_planet_id"]);
+					double distance = functions::calcDistanceByPlanetId(arr["planet_id"],arr["ressource_buyer_planet_id"]);
 					int duration = distance / ship_speed * 3600 + ship_starttime + ship_landtime;
 					int landtime = launchtime + duration; // Landezeit
 
@@ -634,7 +637,7 @@ namespace market
 
 					//Flotte zum Verkäufer schicken
 					int launchtime = time; // Startzeit
-					double distance = functions::calcDistanceByPlanetId(con_,arr["planet_id"],arr["ship_buyer_planet_id"]);
+					double distance = functions::calcDistanceByPlanetId(arr["planet_id"],arr["ship_buyer_planet_id"]);
 					int duration = distance / ship_speed * 3600 + ship_starttime + ship_landtime;
 					int landtime = launchtime + duration; // Landezeit
 
@@ -765,7 +768,7 @@ namespace market
 
 					//Flotte zum verkäufer der auktion schicken
 					int launchtime = time; // Startzeit
-					double distance = functions::calcDistanceByPlanetId(con_,arr["auction_planet_id"],arr["auction_current_buyer_planet_id"]);
+					double distance = functions::calcDistanceByPlanetId(arr["auction_planet_id"],arr["auction_current_buyer_planet_id"]);
 					int duration = distance / ship_speed * 3600 + ship_starttime + ship_landtime;
 					int landtime = launchtime + duration; // Landezeit
 
@@ -951,14 +954,15 @@ namespace market
 			query << "config_name='market_food_factor';";
 		query.store();
 		query.reset();
-
+		
+		int responseTime = (int)config.nget("market_response_time", 0);
 		// Löscht alte Rohstoffangebote
 		query << "SELECT ";
 			query << "* ";
 		query << "FROM ";
 			query << "market_ressource ";
 		query << "WHERE ";
-			query << "datum<=(" << time-14*3600*24 << ");"; //ToDo $conf['market_response_time']['v']
+			query << "datum<=(" << time-responseTime*3600*24 << ");";
 		res = query.store();
 		query.reset();
 		
@@ -1018,7 +1022,7 @@ namespace market
 
 							// Nachricht senden
 							msg = "Folgendes Rohstoffangebot wurde nicht innerhalb von ";
-							msg += "14"; //ToDo conf['market_response_time']['v']
+							msg += config.get("market_response_time", 0);
 							msg += " Tagen gekauft und deshalb gelöscht.\n\n"; 
                     
 							msg += "[b]Angebot:[/b]\n";
@@ -1048,11 +1052,11 @@ namespace market
 							msg += "\n\n";
           
 							msg += "Du erhälst ";
-							msg += functions::s_round(return_factor,2)*100; //ToDo
+							msg += functions::s_round(return_factor,2)*100;
 							msg += "% deiner Rohstoffe wieder zurück (abgerundet)!\n\n";
 							
 							msg += "Das Handelsministerium";
-							functions::send_msg(con_,(int)arr["user_id"],atoi(SHIP_MISC_MSG_CAT_ID),"Angebot gelöscht",msg); //ToDo
+							functions::send_msg((int)arr["user_id"],atoi(SHIP_MISC_MSG_CAT_ID),"Angebot gelöscht",msg);
 
 							// Angebot löschen
 							query << "DELETE FROM ";
@@ -1067,14 +1071,14 @@ namespace market
 			}
     	}
 
-
+		responseTime = (int)config.nget("market_response_time", 0);
 		// Löscht alte Schiffsangebote
 		query << "SELECT ";
 			query << "* ";
 		query << "FROM ";
 			query << "market_ship ";
 		query << "WHERE ";
-			query << "datum<=(" << time-14*3600*24 << ");"; //ToDo conf['market_response_time']['v']
+			query << "datum<=(" << time-responseTime*3600*24 << ");";
 		res = query.store();
 		query.reset();
 		
@@ -1125,7 +1129,7 @@ namespace market
 
 					// Nachricht senden
 					msg = "Folgendes Schiffsangebot wurde nicht innerhalb von ";
-					msg += "14"; //ToDo conf['market_response_time']['v']
+					msg += config.get("market_response_time", 1);
 					msg += " Tagen gekauft und deshalb gelöscht.\n\n"; 
                     
 					msg +=std::string(arr["ship_name"]);
@@ -1147,11 +1151,11 @@ namespace market
 					msg += "\n\n";
           
 					msg += "Du erhälst ";
-					msg += functions::s_round(return_factor,2)*100; //ToDo
+					msg += functions::s_round(return_factor,2)*100;
 					msg += "% deiner Schiffe wieder zurück (abgerundet)!\n\n";
           
 					msg += "Das Handelsministerium";
-					functions::send_msg(con_,(int)arr["user_id"],atoi(SHIP_MISC_MSG_CAT_ID),"Angebot gelöscht",msg);
+					functions::send_msg((int)arr["user_id"],atoi(SHIP_MISC_MSG_CAT_ID),"Angebot gelöscht",msg);
 
 					// Angebot löschen
 					query << "DELETE FROM ";

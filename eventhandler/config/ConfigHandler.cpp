@@ -1,40 +1,22 @@
 #include <iostream>
-#include <map>
+#include <set>
+#include <vector>
+#include "../MysqlHandler.h"
 
 #include <mysql++/mysql++.h>
 
 #include "ConfigHandler.h"
 
-
-	/*void Config::loadConfig(mysqlpp::Connection* con)
+	std::string Config::get(std::string name, int value)
 	{
-		this->con_ = con;
-		mysqlpp::Query query = con_->query();
-		query << "SELECT ";
-			query << "* ";
-		query << "FROM ";
-			query << "	config;";
-		mysqlpp::Result res = query.store();	
-		query.reset();
-		
-		std::cout << "home\n";
-	
-		if (res) 
-		{
-			int resSize = res.size();
-			if (resSize>0)
-			{
-				mysqlpp::Row row;
-				for (mysqlpp::Row::size_type i = 0; i<resSize; i++) 
-				{
-					row = res.at(i);
-					std::map<std::string, std::string> temp;
-					temp.insert(std::pair<std::string, std::string>("p1", std::string(row["config_param1"])));
-					temp.insert(std::pair<std::string, std::string>("p2", std::string(row["config_param2"])));
-					temp.insert(std::pair<std::string, std::string>("v", std::string(row["config_value"])));
-					//mpconfig.insert(std::pair<std::string, std::map<std::string, std::string> >(std::string(row["config_name"]), temp));
-				}
-			}
-		}
+		std::vector<std::string> temp (3);
+		temp = cConfig.at(sConfig[name]);
+		return(temp[value]);
 	}
-*/
+	
+	double Config::nget(std::string name, int value)
+	{
+		std::string temp = get(name, value);
+		double var = atof(temp.data());
+		return(var);
+	}

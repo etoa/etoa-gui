@@ -5,6 +5,7 @@
 #include <mysql++/mysql++.h>
 
 #include "../EventHandler.h"
+#include "../MysqlHandler.h"
 
 /**
 * Handles building updates
@@ -16,7 +17,7 @@ namespace building
 	class BuildingHandler	: EventHandler
 	{
 	public:
-		BuildingHandler(mysqlpp::Connection* con)  : EventHandler(con) { this->changes_ = false; }
+		BuildingHandler()  : EventHandler() { this->changes_ = false; }
 		void update();
 		inline bool changes() { return this->changes_; }
 		inline std::vector<int> getChangedPlanets() { return this->changedPlanets_; }

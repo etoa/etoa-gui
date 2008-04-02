@@ -5,6 +5,7 @@
 #include <mysql++/mysql++.h>
 
 #include "../EventHandler.h"
+#include "../MysqlHandler.h"
 
 /**
 * Handles technology research updates
@@ -16,7 +17,7 @@ namespace tech
 	class TechHandler	: EventHandler
 	{
 	public:
-		TechHandler(mysqlpp::Connection* con)  : EventHandler(con) { this->changes_ = false; }
+		TechHandler()  : EventHandler() { this->changes_ = false; }
 		void update();
 		inline bool changes() { return this->changes_; }
 	private:

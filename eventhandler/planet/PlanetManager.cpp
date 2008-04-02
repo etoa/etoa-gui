@@ -9,12 +9,14 @@
 #include "PlanetManager.h"
 #include "../planet/Planet.h"
 #include "../functions/Functions.h"
+#include "../config/ConfigHandler.h"
 
 namespace planet
 {
-	PlanetManager::PlanetManager(mysqlpp::Connection* con, std::vector<int>* planetIds)
+	PlanetManager::PlanetManager(std::vector<int>* planetIds)
 	{
-		this->con_ = con;
+		My &my = My::instance();
+		con_ = my.get();
 		//std::vector<int>* planetIds_ = planetIds;
 		std::cout << "PlanetManager initialized...\n";
 	}
@@ -172,12 +174,13 @@ namespace planet
 	void PlanetManager::updateStorage(int planetId, std::vector<int>& store)
 	{
 		// Basic store capacity
-		store[0] = 200000; //=intval($conf['def_store_capacity']['v']);
-		store[1] = 200000; //=intval($conf['def_store_capacity']['v']);
-		store[2] = 200000; //=intval($conf['def_store_capacity']['v']);
-		store[3] = 200000; //=intval($conf['def_store_capacity']['v']);
-		store[4] = 200000; //=intval($conf['def_store_capacity']['v']);
-		store[5] = 250; //=intval($conf['user_start_people']['p1']);
+		Config &config = Config::instance();
+		store[0] = (int)config.nget("def_store_capacity", 0);
+		store[1] = (int)config.nget("def_store_capacity", 0);
+		store[2] = (int)config.nget("def_store_capacity", 0);
+		store[3] = (int)config.nget("def_store_capacity", 0);
+		store[4] = (int)config.nget("def_store_capacity", 0);
+		store[5] = (int)config.nget("user_start_people", 1);
 
 		// Storage capacity provided by buildings
 		mysqlpp::Query query = con_->query();
@@ -503,6 +506,7 @@ namespace planet
 	
 	void PlanetManager::updateGasPlanets()
 	{
+		Config &config = Config::instance();
 		std::time_t time = std::time(0);
 				
 		mysqlpp::Query query = con_->query();
@@ -514,7 +518,7 @@ namespace planet
 		query << "FROM ";
 			query << "planets ";
 		query << "WHERE ";
-			query << "planet_type_id='7';"; //ToDo $conf['gasplanet']['v']
+			query << "planet_type_id='" << config.get("gasplanet", 0) << "';";
 		mysqlpp::Result res = query.store();
 		query.reset();
 		
@@ -523,6 +527,7 @@ namespace planet
 			int resSize = res.size();
 			if (resSize>0)
 			{
+				Config &config = Config::instance();
 				mysqlpp::Row row;
 				double pfuel, pSize;
 				for (mysqlpp::Row::size_type i = 0; i<resSize; i++) 
@@ -530,12 +535,12 @@ namespace planet
 					row = res.at(i);
 					int last = row["planet_last_updated"];
 					if (last == 0) last = time;
-					double tlast = (time-last)*10000;
+					double tlast = (time-last)*(int)config.nget("gasplanet", 1);
 					tlast /= 3600;
 					pfuel = (double)row["planet_res_fuel"];
 					tlast += pfuel;
 					
-					double pSize = 10000*int(row["planet_fields"]);
+					double pSize = (int)config.nget("gasplanet", 2)*int(row["planet_fields"]);
 					double fuel = std::min(tlast,pSize); //ToDo Gas param1 + 2
 					
 					query << std::setprecision(18);
@@ -585,7 +590,7 @@ namespace planet
 			query << "  		INNER JOIN  ";
 			query << "  			users  ";
 			query << "  		ON planets.planet_user_id = users.user_id ";
-			query << "            AND users.user_acttime > '" << utime << "' ";
+			//query << "            AND users.user_acttime > '" << utime << "' ";
 			query << ") ";
 			query << "INNER JOIN  ";
 			query << "	races  ";

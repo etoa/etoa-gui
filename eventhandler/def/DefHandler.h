@@ -5,6 +5,7 @@
 #include <mysql++/mysql++.h>
 
 #include "../EventHandler.h"
+#include "../MysqlHandler.h"
 
 /**
 * Handles defense updates
@@ -16,7 +17,7 @@ namespace def
 	class DefHandler	: EventHandler
 	{
 	public:
-		DefHandler(mysqlpp::Connection* con)  : EventHandler(con) { this->changes_ = false; }
+		DefHandler()  : EventHandler() { this->changes_ = false; }
 		void update();
 		inline bool changes() { return this->changes_; }
 		inline std::vector<int> getChangedPlanets() { return this->changedPlanets_; }

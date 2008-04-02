@@ -4,11 +4,11 @@
 
 #include <mysql++/mysql++.h>
 #include <map>
-
-#include "../EventHandler.h"
+#include <vector>
+#include "../MysqlHandler.h"
 
 /**
-* Loads config Data from DB
+* Config Singleton, very usefull!!!!! So use it .D
 * 
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
@@ -16,42 +16,55 @@
 	class Config
 	{
 	public:
-		static Config* instance ()
+		static Config& instance ()
 		{
-			static CGuard g;   // Speicherbereinigung
-			if (!_instance)
-				_instance = new Config ();
+			static Config _instance;
 			return _instance;
 		}
-		void loadConfig () {
-			std::cout << "home";
-			};
+		~Config () {};
+		std::string get(std::string name, int value);
+		double Config::nget(std::string name, int value);
 	private:
-		static std::map<std::string, std::map<std::string, std::string> > &mpConfig;
-		static Config* _instance;
-		Config () { }; /* verhindert, das ein Objekt von außerhalb von Config erzeugt wird. */
-				// protected, wenn man von der Klasse noch erben möchte
-		Config ( const Config& ); /* verhindert, dass eine weitere Instanz via
- Kopie-Konstruktor erstellt werden kann */
-		~Config () { };
-		class CGuard
+		std::map<std::string, int> sConfig;
+		std::vector<std::vector<std::string> > cConfig;
+		void loadConfig ()
 		{
-		public:
-			~CGuard()
+			My &my = My::instance();
+			mysqlpp::Connection *con = my.get();
+				
+			mysqlpp::Query query = con->query();
+			query << "SELECT ";
+				query << "* ";
+			query << "FROM ";
+				query << "	config;";
+			mysqlpp::Result res = query.store();	
+			query.reset();
+			if (res) 
 			{
-				if( NULL != Config::_instance )
+				int resSize = res.size();
+				if (resSize>0)
 				{
-					delete Config::_instance;
-					Config::_instance = NULL;
+					mysqlpp::Row row;
+					cConfig.reserve(resSize);
+					for (mysqlpp::Row::size_type i = 0; i<resSize; i++) 
+					{
+						row = res.at(i);
+						sConfig[std::string(row["config_name"]) ] =  (int)i;
+						std::vector<std::string> temp (3);
+						temp[1]=std::string(row["config_param1"]);
+						temp[2]=std::string(row["config_param2"]);
+						temp[0]=std::string(row["config_value"]);
+						cConfig.push_back(temp);
+					}
 				}
 			}
 		};
-		friend class CGuard;
-	protected:
-		/**
-		* The connection object
-		*/
-		mysqlpp::Connection* con_;
+		static Config* _instance;
+		Config () {
+			loadConfig();
+		 };
+		Config ( const Config& );
+		Config & operator = (const Config &);
 	};
 
 

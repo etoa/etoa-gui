@@ -3,11 +3,13 @@
 
 namespace ship
 {
-	void ShipList::add(mysqlpp::Connection* con, int planetId, int userId, int shipId, int count)
+	void ShipList::add(int planetId, int userId, int shipId, int count)
 	{
+		My &my = My::instance();
+		mysqlpp::Connection *con_ = my.get();
 		count = count < 0 ? 0 : count;
 		
-    mysqlpp::Query query = con->query();
+    mysqlpp::Query query = con_->query();
   	query << "SELECT "
 		<< "	shiplist_id "
 		<< "FROM "

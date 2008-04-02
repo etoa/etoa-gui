@@ -3,6 +3,7 @@
 #define __EVENTHANDLER__
 
 #include <mysql++/mysql++.h>
+#include "MysqlHandler.h"
 
 /**
 * EventHandler base class / interface
@@ -16,7 +17,11 @@ public:
 	* Eventhandler constructor for all handler classes.
 	* Sets the internal MySQL connection pointer
 	*/
-	EventHandler(mysqlpp::Connection* con) {this->con_ = con;}
+	EventHandler() {
+		My &my = My::instance();
+		con_ = my.get();
+		
+	}
 		
 	/**
 	* Abstract class for handling the events

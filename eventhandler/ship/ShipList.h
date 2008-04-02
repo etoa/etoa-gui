@@ -2,6 +2,7 @@
 #define __SHIPLIST__
 
 #include <mysql++/mysql++.h>
+#include "../MysqlHandler.h"
 
 /**
 * Provides shiplist functions
@@ -13,8 +14,7 @@ namespace ship
 	class ShipList
 	{
 	public:
-		static void add(mysqlpp::Connection* con, int planetId, int userId, int shipId, int count);
-		
+		static void add(int planetId, int userId, int shipId, int count);
 	};
 }
 #endif
