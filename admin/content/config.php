@@ -217,53 +217,57 @@
 			if($_POST['submit_create_universe2'])
 			{
 				Universe::create();
-				echo "Universum erstellt!";
+				echo "Universum erstellt!
+				<input type=\"button\" value=\"Weiter zum Urknall\" onclick=\"document.location='?page=config&sub=uni'\" />";
 			}
-
-			// Check if universe exists
-			$res = dbquery("SELECT COUNT(id) FROM cells;");
-			$arr = mysql_fetch_row($res);
-			if ($arr[0]==0)
-			{
-        echo "<h2>Urknall</h2>";
-        echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
-        echo "Neues Universum erstellen<br/><br/>";
-        echo "<input type=\"submit\" name=\"submit_create_universe\" value=\"Start\" >";
-        echo "</form><br/>";
-	  	}
 			else
 			{
-				/*
-        echo "<h2>Universum erweitern</h2>";
-        if($_POST['submit_expansion_universe2'])
-        {
-            $sector_x = $_POST['expansion_sector_x'];
-            $sector_y = $_POST['expansion_sector_y'];
-            expansion_universe($sector_x,$sector_y);
-        }
-        else
-        {
-             echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
-             echo "<b>Universum (".$conf['num_of_sectors']['p1']."x".$conf['num_of_sectors']['p2'].") erweitern</b>?<br/><br/>";
-             echo "<input type=\"submit\" name=\"submit_expansion_universe\" value=\"Universum erweitern\" >";
-             echo "</form>";
-        }*/
-
-        // Reset
-        echo "<h2>Runde zur&uuml;cksetzen</h2>";
-        if($_POST['submit_reset2'])
-        {
-            Universe::reset();
-            echo "Universum!";
-        }
-        else
-        {
-            echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
-            echo "Willst du wirklich  die Runde zur&uuml;cksetzen? (alle User, Allianzen und Objekte l&ouml;schen)<br/><br/>";
-            echo "<input type=\"submit\" name=\"submit_reset\" value=\"Ja, die gesamte Runde zur&uuml;cksetzen\" ><br><br>";
-            echo "</form>";
-        }
-    	}
+	
+				// Check if universe exists
+				$res = dbquery("SELECT COUNT(id) FROM cells;");
+				$arr = mysql_fetch_row($res);
+				if ($arr[0]==0)
+				{
+	        echo "<h2>Urknall</h2>";
+	        echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
+	        echo "Neues Universum erstellen<br/><br/>";
+	        echo "<input type=\"submit\" name=\"submit_create_universe\" value=\"Start\" >";
+	        echo "</form><br/>";
+		  	}
+				else
+				{
+					/*
+	        echo "<h2>Universum erweitern</h2>";
+	        if($_POST['submit_expansion_universe2'])
+	        {
+	            $sector_x = $_POST['expansion_sector_x'];
+	            $sector_y = $_POST['expansion_sector_y'];
+	            expansion_universe($sector_x,$sector_y);
+	        }
+	        else
+	        {
+	             echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
+	             echo "<b>Universum (".$conf['num_of_sectors']['p1']."x".$conf['num_of_sectors']['p2'].") erweitern</b>?<br/><br/>";
+	             echo "<input type=\"submit\" name=\"submit_expansion_universe\" value=\"Universum erweitern\" >";
+	             echo "</form>";
+	        }*/
+	
+	        // Reset
+	        echo "<h2>Runde zur&uuml;cksetzen</h2>";
+	        if($_POST['submit_reset2'])
+	        {
+	            Universe::reset();
+							echo "<input type=\"button\" value=\"Weiter\" onclick=\"document.location='?page=config&sub=uni'\" />";
+	        }
+	        else
+	        {
+	            echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
+	            echo "Willst du wirklich  die Runde zur&uuml;cksetzen? (alle User, Allianzen und Objekte l&ouml;schen)<br/><br/>";
+	            echo "<input type=\"submit\" name=\"submit_reset\" value=\"Ja, die gesamte Runde zur&uuml;cksetzen\" ><br><br>";
+	            echo "</form>";
+	        }
+	    	}
+	    }
 		}
 	}
 	

@@ -121,6 +121,7 @@
 				// Assign entities
 				$ct = mt_rand(1,100);
 			
+				echo "Bearbeite Zelle $cell_id<br/>";
 				
 				// Star system
 				if ($ct<=$perc_solsys)
@@ -159,6 +160,9 @@
 						);
 					";
 					dbquery($sql);
+
+					echo "Ist das Sonnensystem $eid<br/>";
+
 
 					// The planets
 					$np = mt_rand($num_planets_min,$num_planets_max);
@@ -235,6 +239,7 @@
 					";
 					dbquery($sql);
 					$eid = mysql_insert_id();
+					echo "Ist das Asteroidenfeld $eid<br/>";
 
 					$asteroid_ress = mt_rand($cfg->param1('asteroid_ress'),$conf['asteroid_ress']['p2']);
 					$sql = "
@@ -275,6 +280,7 @@
 					";
 					dbquery($sql);
 					$eid = mysql_insert_id();
+					echo "Ist der Nebel $eid<br/>";
 
 					$nebula_ress = mt_rand($cfg->param1('nebula_ress'),$cfg->param2('nebula_ress'));
 					$sql = "
@@ -315,7 +321,8 @@
 					";
 					dbquery($sql);
 					$eid = mysql_insert_id();								
-					
+										echo "Ist das Wurmloch $eid<br/>";
+
 					$sql = "
 						INSERT INTO
 							wormholes
@@ -353,6 +360,9 @@
 					";
 					dbquery($sql);
 					$eid = mysql_insert_id();
+
+					echo "Ist Leer $eid<br/>";
+
 
 					$sql = "
 						INSERT INTO
