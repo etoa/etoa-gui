@@ -488,28 +488,21 @@
 			$tbl[]="ship_queue";
 			$tbl[]="techlist";
 
-			/*
 			$tbl[]="alliances";
 			$tbl[]="alliance_bnd";
 			$tbl[]="alliance_history";
 			$tbl[]="alliance_news";
 			$tbl[]="alliance_ranks";
-			$tbl[]="buddylist";
-			$tbl[]="buildlist";
-			$tbl[]="deflist";
-			$tbl[]="fleet";
-			$tbl[]="fleet_ships";
-			$tbl[]="logs";
-			$tbl[]="market_auction";
-			$tbl[]="market_ressource";
-			$tbl[]="market_ship";
-			$tbl[]="messages";
-			$tbl[]="notepad";
-			$tbl[]="planets";
-			$tbl[]="shiplist";
-			$tbl[]="space_cells";
-			$tbl[]="target_bookmarks";
-			$tbl[]="techlist";
+			$tbl[]="alliance_poll_votes";
+			$tbl[]="alliance_rankrights";
+			$tbl[]="allianceboard_cat";
+			$tbl[]="allianceboard_posts";
+			$tbl[]="allianceboard_catranks";
+			$tbl[]="allianceboard_topics";
+			$tbl[]="alliance_stats";
+			$tbl[]="alliance_shoutbox";
+			$tbl[]="alliance_polls";
+
 			$tbl[]="users";
 			$tbl[]="user_history";
 			$tbl[]="user_multi";
@@ -518,30 +511,21 @@
 			$tbl[]="user_requests";
 			$tbl[]="user_sitting";
 			$tbl[]="user_sitting_date";
-			$tbl[]="target_bookmarks";
-			$tbl[]="buddylist";
-			
-			$tbl[]="message_ignore";
-			$tbl[]="allianceboard_catranks";
-			$tbl[]="allianceboard_topics";
-			$tbl[]="def_queue";
-			$tbl[]="ship_queue";
-			$tbl[]="alliance_poll_votes";
-			$tbl[]="allianceboard_cat";
-			$tbl[]="login_failures";
-			$tbl[]="allianceboard_posts";
-			$tbl[]="missilelist";
-			$tbl[]="alliance_rankrights";
-			$tbl[]="admin_user_log";
-			$tbl[]="alliance_stats";
 			$tbl[]="user_stats";
 			$tbl[]="user_onlinestats";
-			$tbl[]="logs_game";
+
 			
-			$tbl[]="alliance_shoutbox";
-			$tbl[]="alliance_polls";
+			$tbl[]="buddylist";
+			$tbl[]="messages";
+			$tbl[]="message_ignore";
+			$tbl[]="notepad";
+			$tbl[]="target_bookmarks";
+
+			$tbl[]="logs";
+			$tbl[]="login_failures";
+			$tbl[]="admin_user_log";
+			$tbl[]="logs_game";
 			$tbl[]="logs_battle";
-			*/
 	
 			foreach ($tbl as $t)
 			{
