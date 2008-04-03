@@ -116,8 +116,8 @@
 		//$log.= "Wirtschaft auf ".$ecu." Planeten aktualisiert.\nDauer: ".timerStop($tmr)." sec\n\n";
 
 		// Gasplaneten updaten
-		$tmr = timerStart();
-		$gu = updateGasPlanets();
+		//$tmr = timerStart();
+		//$gu = updateGasPlanets();
 		$log.= "Gasvorkommen auf ".$gu." Gasplaneten aktualisiert.\nDauer: ".timerStop($tmr)." sec\n\n";
 		
 		//Marktupdate

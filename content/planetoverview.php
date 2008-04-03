@@ -32,7 +32,7 @@
 
 	// BEGIN SKRIPT //
 
-	if ($c->id>0)
+	if ($cp)
 	{
 		// Planetenname ändern
 		if (isset($_GET['action']) && $_GET['action']=="change_name")
@@ -41,8 +41,8 @@
 			echo '<script type="text/javascript" src="inc/planetname.js"></script>';
 			echo "<form action=\"?page=$page\" method=\"POST\" style=\"text-align:center;\">";
 			infobox_start("Hier den neuen Namen eingeben:",1);
-			echo "<tr><th class=\"tbltitle\">Name:</th><td class=\"tbldata\"><input type=\"text\" name=\"planet_name\" id=\"planet_name\" value=\"".$c->name."\" length=\"16\" maxlength=\"15\"></td></tr>";
-			echo "<tr><th class=\"tbltitle\">Beschreibung:</th><td class=\"tbldata\"><textarea name=\"planet_desc\" rows=\"2\" cols=\"30\">".stripslashes($c->desc)."</textarea></td></tr>";
+			echo "<tr><th class=\"tbltitle\">Name:</th><td class=\"tbldata\"><input type=\"text\" name=\"planet_name\" id=\"planet_name\" value=\"".$cp->name."\" length=\"16\" maxlength=\"15\"></td></tr>";
+			echo "<tr><th class=\"tbltitle\">Beschreibung:</th><td class=\"tbldata\"><textarea name=\"planet_desc\" rows=\"2\" cols=\"30\">".stripslashes($cp->desc)."</textarea></td></tr>";
 			infobox_end(1);
 			echo "<input type=\"submit\" name=\"submit_change\" value=\"Speichern\"> &nbsp; ";
 			echo '<input onclick="GenPlot();" type="button" value="Name generieren" /> &nbsp; ';
@@ -53,16 +53,16 @@
 		// Kolonie aufgeben
 		elseif (isset($_GET['action']) && $_GET['action']=="remove")
 		{
-			if (!$c->isMain)
+			if (!$cp->isMain)
 			{		
 				echo "<h2>:: Kolonie auf diesem Planeten aufheben ::</h2>";
 				
-				$t = $c->userChanged()+COLONY_DELETE_THRESHOLD;
+				$t = $cp->userChanged()+COLONY_DELETE_THRESHOLD;
 				if ($t < time())
 				{			
 					echo "<form action=\"?page=$page\" method=\"POST\">";
 					infobox_start("Sicherheitsabfrage");
-					echo "Willst du die Kolonie auf dem Planeten <b>".$c->getString()."</b> wirklich l&ouml;schen?";
+					echo "Willst du die Kolonie auf dem Planeten <b>".$cp->getString()."</b> wirklich l&ouml;schen?";
 					infobox_end();
 					echo "<input type=\"submit\" name=\"submit_noremove\" value=\"Nein, Vorgang abbrechen\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type=\"submit\" name=\"submit_remove\" value=\"Ja, die Kolonie soll aufgehoben werden\">";
 					echo "</form>";
@@ -81,18 +81,18 @@
 		// Kolonie aufheben ausführen
 		elseif (isset($_POST['submit_remove']) && $_POST['submit_remove']!="")
 		{
-			if (!$c->isMain)
+			if (!$cp->isMain)
 			{			
-				$t = $c->userChanged()+COLONY_DELETE_THRESHOLD;
+				$t = $cp->userChanged()+COLONY_DELETE_THRESHOLD;
 				if ($t < time())
 				{							
-					if (mysql_num_rows(dbquery("SELECT shiplist_id FROM ".$db_table['shiplist']." WHERE shiplist_planet_id='".$c->id."' AND shiplist_count>0;"))==0)
+					if (mysql_num_rows(dbquery("SELECT shiplist_id FROM ".$db_table['shiplist']." WHERE shiplist_planet_id='".$cp->id."' AND shiplist_count>0;"))==0)
 					{
-						if (mysql_num_rows(dbquery("SELECT fleet_id FROM ".$db_table['fleet']." WHERE fleet_planet_to='".$c->id."' OR fleet_planet_from='".$c->id."';"))==0)
+						if (mysql_num_rows(dbquery("SELECT fleet_id FROM ".$db_table['fleet']." WHERE fleet_planet_to='".$cp->id."' OR fleet_planet_from='".$cp->id."';"))==0)
 						{
-							if (mysql_num_rows(dbquery("SELECT planet_id FROM ".$db_table['planets']." WHERE planet_id='".$c->id."' AND planet_user_id='".$s['user']['id']."' AND planet_user_main=0;"))==1)
+							if (mysql_num_rows(dbquery("SELECT planet_id FROM ".$db_table['planets']." WHERE planet_id='".$cp->id."' AND planet_user_id='".$s['user']['id']."' AND planet_user_main=0;"))==1)
 							{
-								if (reset_planet($c->id))
+								if (reset_planet($cp->id))
 								{
 									//Liest ID des Hauptplaneten aus
 									$main_res=dbquery("
@@ -108,7 +108,7 @@
 									echo "<br>Die Kolonie wurde aufgehoben!<br>";
 									echo "<a href=\"?page=overview&planet_id=".$main_arr['planet_id']."\">Zur &Uuml;bersicht</a>";
 		
-									$c->id=NULL;
+									$cp->id=NULL;
 									$s['currentPlanetId'] = $main_arr['planet_id'];
 									$cpid = $main_arr['planet_id'];
 								}
@@ -140,8 +140,8 @@
 		//
 		elseif (isset($_GET['sub']) && $_GET['sub']=="fields")
 		{
-		 	echo "<h1>Felderbelegung des Planeten ".$c->name."</h1>";
-			$c->resBox();
+		 	echo "<h1>Felderbelegung des Planeten ".$cp->name."</h1>";
+			$cp->resBox();
 
 			echo "<table style=\"width:100%;\"><tr><td style=\"width:50%;vertical-align:top;padding:5px;\">";
 			
@@ -155,7 +155,7 @@
 				".$db_table['buildlist']."
 			WHERE
 				buildlist.buildlist_building_id=buildings.building_id
-				AND buildlist.buildlist_planet_id=".$c->id."
+				AND buildlist.buildlist_planet_id=".$cp->id."
 			ORDER BY 
 				fields DESC;");
 			if (mysql_num_rows($res)>0)
@@ -187,7 +187,7 @@
 				".$db_table['deflist']."
 			WHERE
 				deflist.deflist_def_id=defense.def_id
-				AND deflist.deflist_planet_id=".$c->id."
+				AND deflist.deflist_planet_id=".$cp->id."
 			ORDER BY 
 				fields DESC;");
 			if (mysql_num_rows($res)>0)
@@ -227,52 +227,52 @@
 					$check_desc = check_illegal_signs($_POST['planet_desc']);
 					if ($check_name=="" && $check_desc=="")
 					{
-						dbquery("UPDATE ".$db_table['planets']." SET planet_name='".$_POST['planet_name']."',planet_desc='".addslashes($_POST['planet_desc'])."' WHERE planet_id='".$c->id."';");
-						$c->name=$_POST['planet_name'];
-						$c->desc=$_POST['planet_desc'];
+						dbquery("UPDATE ".$db_table['planets']." SET planet_name='".$_POST['planet_name']."',planet_desc='".addslashes($_POST['planet_desc'])."' WHERE planet_id='".$cp->id."';");
+						$cp->name=$_POST['planet_name'];
+						$cp->desc=$_POST['planet_desc'];
 					}
 					else
 						echo "Unerlaubtes Zeichen (".$signs.") im Planetennamen oder in der Beschreibung!<br>";
 				}
 			}
 	
-			$debris = $c->debris->metal > 0 || $c->debris->crystal > 0 || $c->debris->plastic > 0 ? true : false;
+			$debris = $cp->debris->metal > 0 || $cp->debris->crystal > 0 || $cp->debris->plastic > 0 ? true : false;
 
-		 	echo "<h1>&Uuml;bersicht &uuml;ber den Planeten ".$c->name."</h1>";
-			$c->resBox();
+		 	echo "<h1>&Uuml;bersicht &uuml;ber den Planeten ".$cp->name."</h1>";
+			$cp->resBox();
 
 			echo "<table class=\"tbl\">";
 			echo "<tr>
 				<td style=\"width:330px;background:#000;\" rowspan=\"".($debris ? 11 : 10)."\">
-				<img src=\"".IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$c->image.".gif\" alt=\"Planet\" style=\"width:310px;height:310px\"/>
+				<img src=\"".IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$cp->image.".gif\" alt=\"Planet\" style=\"width:310px;height:310px\"/>
 			</td>";
 			echo "<td class=\"tbltitle\">Kennung:</td><td class=\"tbldata\">
-				".$c->identifier()." [<a href=\"?page=planet&id=".$c->id."\">Suchen</a>]</td>
+				".$cp->identifier()." [<a href=\"?page=planet&id=".$cp->id."\">Suchen</a>]</td>
 			</tr>";
 			echo "<td class=\"tbltitle\">Koordinaten:</td><td class=\"tbldata\">
-				".$c->getCoordinates()." [<a href=\"?page=solsys&id=".$c->solsys_id."\">Zeigen</a>]</td>
+				".$cp->getCoordinates()." [<a href=\"?page=solsys&id=".$cp->solsys_id."\">Zeigen</a>]</td>
 			</tr>";
 			echo "<tr>
 				<td class=\"tbltitle\">Sonnentyp:</td><td class=\"tbldata\">
-					".$c->sol_type_name." [<a href=\"?page=help&site=stars\">Infos</a>]</td></tr>";
+					".$cp->sol_type_name." [<a href=\"?page=help&site=stars\">Infos</a>]</td></tr>";
 			echo "<tr>
 				<td class=\"tbltitle\">Planettyp:</td><td class=\"tbldata\">
-					".$c->type_name." [<a href=\"?page=help&site=planets\">Infos</a>]</td></tr>";
+					".$cp->type_name." [<a href=\"?page=help&site=planets\">Infos</a>]</td></tr>";
 			echo "<tr>
 				<td class=\"tbltitle\">Felder:</td><td class=\"tbldata\">
-					".nf($c->fields_used)." benutzt, ".(nf($c->fields))." total (".round($c->fields_used/$c->fields*100)."%)</td></tr>";
+					".nf($cp->fields_used)." benutzt, ".(nf($cp->fields))." total (".round($cp->fields_used/$cp->fields*100)."%)</td></tr>";
 			echo "<tr>
 				<td class=\"tbltitle\">Extra-Felder:</td><td class=\"tbldata\">
-					".$c->fields_extra."</td></tr>";
+					".$cp->fields_extra."</td></tr>";
 			echo "<tr>
 				<td class=\"tbltitle\">Gr&ouml;sse:</td><td class=\"tbldata\">
-					".nf($conf['field_squarekm']['v']*$c->fields)." km&sup2;</td></tr>";
+					".nf($conf['field_squarekm']['v']*$cp->fields)." km&sup2;</td></tr>";
 			echo "<tr>
 				<td class=\"tbltitle\">Temperatur:</td><td class=\"tbldata\">
-					".$c->temp_from."&deg;C bis ".$c->temp_to."&deg;C &nbsp; <br/>
+					".$cp->temp_from."&deg;C bis ".$cp->temp_to."&deg;C &nbsp; <br/>
 					Bonus auf Solarenergie 
 					<img src=\"images/infohelp.png\" style=\"width:10px;\" ".tm("Temperaturbonus","Die Planetentemperatur verstärkt oder schwächt die Produktion von Energie durch Solarsatelliten. Je näher ein Planet bei der Sonne ist, desto besser ist die Produktion.")."/>: ";
-					$spw = $c->solarPowerBonus();
+					$spw = $cp->solarPowerBonus();
 					if ($spw>=0)
 					{
 						echo "<span style=\"color:#0f0\">".$spw."</span>";
@@ -283,34 +283,34 @@
 					}
 			echo " &nbsp;  </td></tr>";
 			echo "<tr><td class=\"tbltitle\">Produktion:</td><td class=\"tbldata\">
-			".RES_ICON_METAL."".nf($c->prod->metal)." / h<br style=\"clear:both;\" /> 
-			".RES_ICON_CRYSTAL."".nf($c->prod->crystal)." / h<br style=\"clear:both;\" /> 
-			".RES_ICON_PLASTIC."".nf($c->prod->plastic)." / h<br style=\"clear:both;\" /> 
-			".RES_ICON_FUEL."".nf($c->prod->fuel)." / h<br style=\"clear:both;\" /> 
-			".RES_ICON_FOOD."".nf($c->prod->food)." / h<br style=\"clear:both;\" /> 
-			".RES_ICON_PEOPLE."".nf($c->prod->people)." / h<br style=\"clear:both;\" /> 
-			".RES_ICON_POWER."".nf($c->prod->power)."<br style=\"clear:both;\" /> 
-			".RES_ICON_POWER_USE."".nf($c->use->power)."</td></tr>";
+			".RES_ICON_METAL."".nf($cp->prod->metal)." / h<br style=\"clear:both;\" /> 
+			".RES_ICON_CRYSTAL."".nf($cp->prod->crystal)." / h<br style=\"clear:both;\" /> 
+			".RES_ICON_PLASTIC."".nf($cp->prod->plastic)." / h<br style=\"clear:both;\" /> 
+			".RES_ICON_FUEL."".nf($cp->prod->fuel)." / h<br style=\"clear:both;\" /> 
+			".RES_ICON_FOOD."".nf($cp->prod->food)." / h<br style=\"clear:both;\" /> 
+			".RES_ICON_PEOPLE."".nf($cp->prod->people)." / h<br style=\"clear:both;\" /> 
+			".RES_ICON_POWER."".nf($cp->prod->power)."<br style=\"clear:both;\" /> 
+			".RES_ICON_POWER_USE."".nf($cp->use->power)."</td></tr>";
 			echo "<tr>
 				<td class=\"tbltitle\">Beschreibung:</td>
 				<td class=\"tbldata\">
-					".($c->desc!='' ? stripslashes($c->desc) : '-')."
+					".($cp->desc!='' ? stripslashes($cp->desc) : '-')."
 				</td>
 			</tr>";
 			if ($debris)
 			{
 				echo '<tr>
 				<th class="tbltitle">Trümmerfeld:</th><td class="tbldata">
-				'.RES_ICON_METAL."".nf($c->debris->metal).'<br style="clear:both;" /> 
-				'.RES_ICON_CRYSTAL."".nf($c->debris->crystal).'<br style="clear:both;" /> 
-				'.RES_ICON_PLASTIC."".nf($c->debris->plastic).'<br style="clear:both;" /> 
+				'.RES_ICON_METAL."".nf($cp->debris->metal).'<br style="clear:both;" /> 
+				'.RES_ICON_CRYSTAL."".nf($cp->debris->crystal).'<br style="clear:both;" /> 
+				'.RES_ICON_PLASTIC."".nf($cp->debris->plastic).'<br style="clear:both;" /> 
 				</td></tr>';
 			}
 			
 			echo "</table><br/>";
 			echo "<input type=\"button\" value=\"Name / Beschreibung des Planeten &auml;ndern\" onClick=\"document.location='?page=$page&action=change_name'\"> ";
 			echo "<input type=\"button\" value=\"Felderbelegung anzeigen\" onClick=\"document.location='?page=$page&amp;sub=fields'\"> ";
-			if (!$c->isMain)
+			if (!$cp->isMain)
 			{
 				echo "&nbsp;<input type=\"button\" value=\"Kolonie aufheben\" onClick=\"document.location='?page=$page&action=remove'\">";
 			}

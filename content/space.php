@@ -31,8 +31,6 @@
 	*/	
 
 
-	$c = $planets->getCurrentData();
-
 	echo "<h1>Raumkarte</h1>";
 
 	// Wenn Planet aktiv, Koordinaten aus der DB lesen

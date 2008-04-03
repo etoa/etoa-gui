@@ -212,11 +212,18 @@
 				(
 					entities
 					INNER JOIN
+					(
 						planets 
-						ON planets.id=entities.id
-						AND planets.planet_fields>'".$cfg->value('user_min_fields')."'
-						AND planets.planet_user_id='0' 					)
-					ON entities.cell_id=cells.id ";					
+						INNER JOIN
+							planet_types 
+							ON planet_type_id=type_id
+							AND type_habitable=1
+					)
+					ON planets.id=entities.id
+					AND planets.planet_fields>'".$cfg->value('user_min_fields')."'
+					AND planets.planet_user_id='0'
+ 				)
+				ON entities.cell_id=cells.id ";					
 			if ($sx>0)
 				$sql.=" AND cells.sx=".$sx." ";
 			if ($sy>0)

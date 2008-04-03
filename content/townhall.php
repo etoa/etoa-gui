@@ -170,7 +170,7 @@
 	ON
 		user_id = alliance_news_user_id
 	WHERE 
-		alliance_news_alliance_to_id=".$s['user']['alliance_id']." 
+		alliance_news_alliance_to_id=".$cu->id()." 
 	ORDER BY 
 		alliance_news_date DESC 
 	;");

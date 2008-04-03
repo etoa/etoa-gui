@@ -45,8 +45,8 @@
 		FROM
 			login_failures
 		WHERE
-			failure_user_id=".$s['user']['id']."
-			AND failure_time > ".$s['user']['last_online']."
+			failure_user_id=".$cu->id()."
+			AND failure_time > ".$cu->last_online."
 		");
 		$arr = mysql_fetch_row($res);
 		if ($arr[0]>0)
@@ -83,10 +83,10 @@
 			".$db_table['alliance_news']."
 		WHERE
 			(
-	      alliance_news_alliance_to_id='".$s['user']['alliance_id']."'
+	      alliance_news_alliance_to_id='".$cu->alliance_id."'
 		    OR alliance_news_alliance_to_id = 0 
 			)
-	    AND alliance_news_date>'".$s['user']['last_online']."'
+	    AND alliance_news_date>'".$cu->last_online."'
 		ORDER BY
 	        alliance_news_date DESC
 		LIMIT 5;");
@@ -114,7 +114,7 @@
 		FROM 
 			fleet 
 		WHERE 
-			fleet_user_id='".$s['user']['id']." '
+			fleet_user_id='".$cu->id()." '
 		ORDER BY 
 			fleet_landtime ASC;");
 		//Mehrere Flotten
@@ -137,8 +137,8 @@
 		//
 		// Fremde Flotten
 		//
-		$num_friend=check_fleet_incomming_friendly($s['user']['id']); //Nicht feindliche Flotten
-		$num=check_fleet_incomming($s['user']['id']); //Feindliche Flotten
+		$num_friend=check_fleet_incomming_friendly($cu->id()); //Nicht feindliche Flotten
+		$num=check_fleet_incomming($cu->id()); //Feindliche Flotten
 		$all = $num + $num_friend;
 		//Nur feindliche Flotten -> rot
 		if($num>0 && $num_friend==0)
@@ -189,7 +189,7 @@
 	      INNER JOIN
 	      ".$db_table['technologies']."
 	      ON technologies.tech_id=techlist.techlist_tech_id
-	      AND techlist.techlist_user_id='".$s['user']['id']."'
+	      AND techlist.techlist_user_id='".$cu->id()."'
 	      AND techlist.techlist_build_type>'0';");
 		if (mysql_num_rows($bres)>0)
 		{
@@ -417,8 +417,8 @@
 
 	//Kreis Definitionen
 	$division=15;			//Kreis Teilung: So hoch wie die maximale Anzahl Planeten
-	$d_planets=$s['user']['planet_circle_width'];	//Durchmesser der Bilder (in Pixel)
-	$d_infos=$s['user']['planet_circle_width'];		//Durchmesser der Infos (in Pixel)
+	$d_planets = $cu->planet_circle_width;	//Durchmesser der Bilder (in Pixel)
+	$d_infos = $cu->planet_circle_width;		//Durchmesser der Infos (in Pixel)
 	$pic_height=75;			//Planet Bildhöhe
 	$pic_width=75;			//Planet Bildbreite
 	$info_box_height=50;	//Info Höhe
@@ -441,7 +441,7 @@
     $psql = "
     SELECT
     	p.planet_name,
-      p.planet_id,
+      p.id,
       p.planet_image,
       p.planet_people,
       p.planet_res_metal,
@@ -468,7 +468,7 @@
       p.planet_solsys_pos ASC;";
 		$res_planet = dbquery($psql);
 	
-		/*
+		
 		while ($arr_planet = mysql_fetch_array($res_planet))
 		{
       // Bauhof infos
@@ -483,7 +483,7 @@
         INNER JOIN
         ".$db_table['buildings']." AS b
         ON b.building_id=bl.buildlist_building_id
-        AND bl.buildlist_planet_id='".$arr_planet['planet_id']."'
+        AND bl.buildlist_planet_id='".$arr_planet['id']."'
         AND bl.buildlist_build_type>'0'");
 
       if (mysql_num_rows($res_building)>0)
@@ -537,7 +537,7 @@
     	INNER JOIN
     		".$db_table['ships']."
     		ON queue_ship_id=ship_id
-  			AND queue_planet_id='".$arr_planet['planet_id']."'
+  			AND queue_planet_id='".$arr_planet['id']."'
   			AND queue_endtime>'".time()."'
     	ORDER BY
 				queue_starttime ASC
@@ -547,26 +547,26 @@
       	$arr_shipyard = mysql_fetch_array($res_shipyard);
       	
       	//Verbleibende Zeit bis zur fertigstellung des aktuellen Auftrages
-      	$shipyard_rest_time[$arr_planet['planet_id']] = $arr_shipyard['queue_endtime']-time();
+      	$shipyard_rest_time[$arr_planet['id']] = $arr_shipyard['queue_endtime']-time();
       	//Schiffsname
-      	$shipyard_name[$arr_planet['planet_id']] =  $arr_shipyard['ship_name'];
+      	$shipyard_name[$arr_planet['id']] =  $arr_shipyard['ship_name'];
       	
         //infos über den raumschiffswerft
-        $shipyard_h=floor($shipyard_rest_time[$arr_planet['planet_id']]/3600);
-        $shipyard_m=floor(($shipyard_rest_time[$arr_planet['planet_id']]-$shipyard_h*3600)/60);
-        $shipyard_s=$shipyard_rest_time[$arr_planet['planet_id']]-$shipyard_h*3600-$shipyard_m*60;
-        $shipyard_zeit[$arr_planet['planet_id']]="(".$shipyard_h."h ".$shipyard_m."m ".$shipyard_s."s)";
+        $shipyard_h=floor($shipyard_rest_time[$arr_planet['id']]/3600);
+        $shipyard_m=floor(($shipyard_rest_time[$arr_planet['id']]-$shipyard_h*3600)/60);
+        $shipyard_s=$shipyard_rest_time[$arr_planet['id']]-$shipyard_h*3600-$shipyard_m*60;
+        $shipyard_zeit[$arr_planet['id']]="(".$shipyard_h."h ".$shipyard_m."m ".$shipyard_s."s)";
 
-        $shipyard_time[$arr_planet['planet_id']] = $shipyard_zeit[$arr_planet['planet_id']];
-        if($shipyard_rest_time[$arr_planet['planet_id']]<=0)
+        $shipyard_time[$arr_planet['id']] = $shipyard_zeit[$arr_planet['id']];
+        if($shipyard_rest_time[$arr_planet['id']]<=0)
         {
-            $shipyard_time[$arr_planet['planet_id']]="Fertig";
+            $shipyard_time[$arr_planet['id']]="Fertig";
         }
       }
       else
       {
-        $shipyard_time[$arr_planet['planet_id']] = "";
-        $shipyard_name[$arr_planet['planet_id']] = "";
+        $shipyard_time[$arr_planet['id']] = "";
+        $shipyard_name[$arr_planet['id']] = "";
       }
 
       // waffenfabrik infos
@@ -582,7 +582,7 @@
     	INNER JOIN
     		".$db_table['defense']."
     		ON queue_def_id=def_id
-  			AND queue_planet_id='".$arr_planet['planet_id']."'
+  			AND queue_planet_id='".$arr_planet['id']."'
   			AND queue_endtime>'".time()."'
     	ORDER BY
 				queue_starttime ASC
@@ -592,27 +592,27 @@
       	$arr_defense = mysql_fetch_array($res_defense);
 
       	//Verbleibende Zeit bis zur fertigstellung des aktuellen Auftrages
-      	$defense_rest_time[$arr_planet['planet_id']] = $arr_defense['queue_endtime']-time();
+      	$defense_rest_time[$arr_planet['id']] = $arr_defense['queue_endtime']-time();
       	//Defname
-      	$defense_name[$arr_planet['planet_id']] = $arr_defense['def_name'];
+      	$defense_name[$arr_planet['id']] = $arr_defense['def_name'];
 
         //infos über den raumschiffswerft
-        $defense_h=floor($defense_rest_time[$arr_planet['planet_id']]/3600);
-        $defense_m=floor(($defense_rest_time[$arr_planet['planet_id']]-$defense_h*3600)/60);
-        $defense_s=$defense_rest_time[$arr_planet['planet_id']]-$defense_h*3600-$defense_m*60;
-        $defense_zeit[$arr_planet['planet_id']]="(".$defense_h."h ".$defense_m."m ".$defense_s."s)";
+        $defense_h=floor($defense_rest_time[$arr_planet['id']]/3600);
+        $defense_m=floor(($defense_rest_time[$arr_planet['id']]-$defense_h*3600)/60);
+        $defense_s=$defense_rest_time[$arr_planet['id']]-$defense_h*3600-$defense_m*60;
+        $defense_zeit[$arr_planet['id']]="(".$defense_h."h ".$defense_m."m ".$defense_s."s)";
 
-        $defense_time[$arr_planet['planet_id']] = $defense_zeit[$arr_planet['planet_id']];
-      	$defense_name[$arr_planet['planet_id']] = $defense_name[$arr_planet['planet_id']];
-        if($defense_rest_time[$arr_planet['planet_id']]<=0)
+        $defense_time[$arr_planet['id']] = $defense_zeit[$arr_planet['id']];
+      	$defense_name[$arr_planet['id']] = $defense_name[$arr_planet['id']];
+        if($defense_rest_time[$arr_planet['id']]<=0)
         {
-            $defense_time[$arr_planet['planet_id']]="Fertig";
+            $defense_time[$arr_planet['id']]="Fertig";
         }
       }
       else
       {
-        $defense_time[$arr_planet['planet_id']] = "";
-        $defense_name[$arr_planet['planet_id']] = "";
+        $defense_time[$arr_planet['id']] = "";
+        $defense_name[$arr_planet['id']] = "";
       }
 	
 			$planet_info = "<b>".$arr_planet['planet_name']."</b><br>".$building_name." ".$building_level."<br>".$building_time."";
@@ -620,16 +620,16 @@
 	
 	
 			// Planet bild mit link zum bauhof und der informationen übergabe beim mouseover
-	    $planet_link = "<a href=\"?page=buildings&planet_id=".$arr_planet['planet_id']."\"><img id=\"Planet\" src=\"".$planet_image_path."\" width=\"".$pic_width."\" height=\"".$pic_height."\" border=\"0\" 
+	    $planet_link = "<a href=\"?page=buildings&planet_id=".$arr_planet['id']."\"><img id=\"Planet\" src=\"".$planet_image_path."\" width=\"".$pic_width."\" height=\"".$pic_height."\" border=\"0\" 
 	    onMouseOver=\"show_info(
-			'".$arr_planet['planet_id']."',
+			'".$arr_planet['id']."',
 			'".$arr_planet['planet_name']."',
 			'".$building_name."',
 			'".$building_time."',
-			'".$shipyard_name[$arr_planet['planet_id']]."',
-			'".$shipyard_time[$arr_planet['planet_id']]."',
-			'".$defense_name[$arr_planet['planet_id']]."',
-			'".$defense_time[$arr_planet['planet_id']]."',
+			'".$shipyard_name[$arr_planet['id']]."',
+			'".$shipyard_time[$arr_planet['id']]."',
+			'".$defense_name[$arr_planet['id']]."',
+			'".$defense_time[$arr_planet['id']]."',
 			'".floor($arr_planet['planet_people'])."',
 			'".floor($arr_planet['planet_res_metal'])."',
 			'".floor($arr_planet['planet_res_crystal'])."',
@@ -709,7 +709,7 @@
 	
 			$degree = $degree + (360/$division);
 		}
-*/
+
 
 	$top_table=$middle_top+(($d_planets/2)*sin(deg2rad(55+270)));
 	echo "<center><table border=\"0\" width=\"75%\" style=\"text-align:center; vertical-align:middle;\">";
