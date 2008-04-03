@@ -61,7 +61,7 @@
 			$nebula_count = 0;
 			$asteroids_count = 0;
 			$wormhole_count = 0;
-	$checker=0;
+
 			echo "Erstelle Universum mit ".$sx_num*$sy_num." Sektoren à ".$cx_num*$cy_num." Zellen, d.h. ".$sx_num*$sy_num*$cx_num*$cy_num." Zellen total<br>";
 	
 			$sql = "";	
@@ -353,26 +353,20 @@
 					dbquery($sql);
 					$eid = mysql_insert_id();
 
-					echo "Ist Leer $eid<br/>";
-
-
 					$sql = "
 						INSERT INTO
 							space
 						(
 							id,
-							lastvisited,
-							checker
+							lastvisited
 						)
 						VALUES
 						(
 							".$eid.",
-							0,
-							".$checker."
+							0
 						);
 					";
-					dbquery($sql);		
-					$checker++;	
+					dbquery($sql);	
 				}
 			}
 			echo "Universum erstellt, prüfe Wurmlöcher...<br/>";
@@ -477,6 +471,7 @@
 			$tbl[]="asteroids";
 			$tbl[]="nebulas";
 			$tbl[]="wormholes";
+			$tbl[]="space";
 			
 			$tbl[]="buildlist";
 			$tbl[]="deflist";
