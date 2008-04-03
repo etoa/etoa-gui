@@ -16,6 +16,7 @@
 	{
 		$tp = new Planet($_POST['choosenplanetid']);
 		$tp->assignToUser($cu->id(),1);
+		$cu->setSetupFinished();
 		$mode = "finished";
 	}
 	elseif (isset($_GET['setup_sx']) && isset($_GET['setup_sy']) && $_GET['setup_sx']>0 && $_GET['setup_sy']>0 && $_GET['setup_sx']<=$sx_num && $_GET['setup_sy']<=$sy_num)
@@ -58,13 +59,13 @@
 		echo "<input type=\"hidden\" name=\"choosenplanetid\" value=\"".$pid."\" />";
 		echo "Folgender Planet wurde für Euch ausgewählt:<br/><br/>
 		<table class=\"tb\" style=\"width:300px;\">";
-		echo "<tr><th>Koordinaten:</th><td>".$tp->getString()."</td></tr>";
+		echo "<tr><th>Koordinaten:</th><td>".$tp."</td></tr>";
 		echo "<tr>
 			<th>Sonnentyp:</th>
-			<td>".$tp->type->name."</td></tr>";
+			<td>".$tp->type_name."</td></tr>";
 		echo "<tr>
 			<th>Planettyp:</th>
-			<td>".$tp->sol->type->name."</td></tr>";
+			<td>".$tp->sol_type_name."</td></tr>";
 		echo "<tr>
 			<th>Felder:</td>
 			<td>".$tp->fields." total</td></tr>";
@@ -83,7 +84,7 @@
 		echo "<form action=\"?\" method=\"post\">";
 		checker_init();
 		echo "<h2>Heimatsektor auswählen</h2>";
-		
+		echo "Wählt einen Sektor aus, in dem sich euer Heimatplanet befinden soll:<br/><br/>";
 
 		echo "Anzeigen: <select onchange=\"document.getElementById('img').src='misc/map.image.php'+this.options[this.selectedIndex].value;\">
 		<option value=\"?t=".time()."\">Normale Galaxieansicht</option>
@@ -104,37 +105,58 @@
 			{
 				$res = dbquery("
 				SELECT
-					COUNT(cell_id),
-					SUM(cell_solsys_num_planets) 
+					COUNT(entities.id)										
 				FROM
-					space_cells
-				WHERE
-					cell_sx=".$xcnt."
-					AND cell_sy=".$ycnt."
-					AND cell_solsys_num_planets>0;
+					cells
+				INNER JOIN
+					entities
+					ON entities.cell_id=cells.id
+					AND entities.type='s'
+					AND sx=".$xcnt."
+					AND sy=".$ycnt."
 				;
 				");
-				$arr = mysql_fetch_row($res);
+				$arr = mysql_fetch_row($res);				
+				
 				$res = dbquery("
 				SELECT
-					COUNT(planet_id) 
+					COUNT(entities.id)										
 				FROM
-					space_cells
+					cells
 				INNER JOIN
-					planets
-					ON planet_solsys_id=cell_id
-					AND	cell_sx=".$xcnt."
-					AND cell_sy=".$ycnt."
-					AND planet_user_id>0;
+					entities
+					ON entities.cell_id=cells.id
+					AND entities.type='p'
+					AND sx=".$xcnt."
+					AND sy=".$ycnt."
+				;
 				");
 				$arr2 = mysql_fetch_row($res);
 
+				$res = dbquery("
+				SELECT
+					COUNT(entities.id) 
+				FROM
+					cells
+				INNER JOIN
+				(
+					entities
+					INNER JOIN
+						planets 
+						ON planets.id=entities.id
+						AND planet_user_id>0
+					)
+					ON entities.cell_id=cells.id
+					AND	cells.sx=".$xcnt."
+					AND cells.sy=".$ycnt."
+				;");
+				$arr3 = mysql_fetch_row($res);
 				
 				$tt = new Tooltip();
 				$tt->addTitle("Sektor $xcnt/$ycnt");
 				$tt->addText("Sternensysteme: ".$arr[0]);
-				$tt->addText("Planeten: ".$arr[1]);
-				$tt->addGoodCond("Bewohnte Planeten: ".$arr2[0]);
+				$tt->addText("Planeten: ".$arr2[0]);
+				$tt->addGoodCond("Bewohnte Planeten: ".$arr3[0]);
 				$tt->addComment("Klickt hier um euren Heimatplaneten in Sektor <b>".$xcnt."/".$ycnt."</b> anzusiedeln!");
 		  	echo "<area shape=\"rect\" coords=\"$x,".(GALAXY_MAP_WIDTH-$y).",".($x+$sec_x_size).",".(GALAXY_MAP_WIDTH-$y-$sec_y_size)."\" href=\"?setup_sx=".$xcnt."&amp;setup_sy=".$ycnt."\" alt=\"Sektor $xcnt / $ycnt\" ".$tt.">\n";
 		  	$ycnt++;

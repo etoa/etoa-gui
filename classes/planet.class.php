@@ -13,82 +13,63 @@
 			{
 				$res = dbquery("
 				SELECT
-                    planets.*,
-                    space_cells.*,
-                    sol_types.type_name as sol_type_name,
-                    sol_types.type_f_metal as sol_type_f_metal,
-                    sol_types.type_f_crystal as sol_type_f_crystal,
-                    sol_types.type_f_plastic as sol_type_f_plastic,
-                    sol_types.type_f_fuel as sol_type_f_fuel,
-                    sol_types.type_f_food as sol_type_f_food,
-                    sol_types.type_f_power as sol_type_f_power,
-                    sol_types.type_f_population as sol_type_f_population,
-                    sol_types.type_f_researchtime as sol_type_f_researchtime,
-                    sol_types.type_f_buildtime as sol_type_f_buildtime,
-                    planet_types.type_name as planet_type_name,
-                    planet_types.type_f_metal as planet_type_f_metal,
-                    planet_types.type_f_crystal as planet_type_f_crystal,
-                    planet_types.type_f_plastic as planet_type_f_plastic,
-                    planet_types.type_f_fuel as planet_type_f_fuel,
-                    planet_types.type_f_food as planet_type_f_food,
-                    planet_types.type_f_power as planet_type_f_power,
-                    planet_types.type_f_population as planet_type_f_population,
-                    planet_types.type_f_researchtime as planet_type_f_researchtime,
-                    planet_types.type_f_buildtime as planet_type_f_buildtime
-                FROM 
-							(
-									planets
-                                INNER JOIN 
-                                	planet_types 
-                                ON planets.planet_type_id = planet_types.type_id
-                                AND planets.planet_id='".$arr."'
-							)
-                            INNER JOIN 
-                            (	
-                            	space_cells
-                                INNER JOIN sol_types ON space_cells.cell_solsys_solsys_sol_type = sol_types.type_id
-                            )
-                            ON planets.planet_solsys_id = space_cells.cell_id
-
+        	planets.*,
+        	cells.sx,
+        	cells.sy,
+        	cells.cx,
+        	cells.cy,
+        	cells.id as cell_id,
+        	entities.pos,
+        	planet_types.type_id as type_id,
+        	planet_types.type_name as type_name        	
+				FROM 
+				(
+					planets
+        	INNER JOIN 
+          	planet_types 
+            ON planets.planet_type_id = planet_types.type_id
+            AND planets.id='".$arr."'
+				)
+        INNER JOIN 
+        (	
+        	entities
+         	INNER JOIN cells 
+          	ON cells.id = entities.cell_id
+        )
+        ON planets.id = entities.id
 				;");
-
-				/*
-				Alter Version
-				FROM
-					".$db_table['planets'].",
-					".$db_table['users'].",
-					".$db_table['races'].",
-					".$db_table['space_cells'].",
-					".$db_table['sol_types'].",
-					".$db_table['planet_types']."
-				WHERE
-					planets.planet_user_id=user_id
-					AND users.user_race_id=races.race_id
-					AND space_cells.cell_solsys_solsys_sol_type=sol_types.type_id
-					AND planets.planet_type_id=planet_types.type_id
-					AND planets.planet_solsys_id=space_cells.cell_id
-					AND planets.planet_id='".$arr."'
-				;");
-				*/
 
 				if (mysql_num_rows($res)>0)
 				{
-					$arr=mysql_fetch_array($res);
+					$arr=mysql_fetch_assoc($res);
 				}
 				else
+				{
 					echo "Planet $arr nicht gefunden!\n";
+				}
 			}
 
 			if ($arr)
-			{
+			{				
 				$this->id=$arr['planet_id'];
 				$this->user_id=$arr['planet_user_id'];
-				$this->name=$arr['planet_name'];
+				$this->name= $arr['planet_name']!="" ? $arr['planet_name'] : 'Unbenannt';
 				$this->desc=$arr['planet_desc'];
 				$this->image=$arr['planet_image'];
 				$this->updated=$arr['planet_last_updated'];
 				$this->userChanged=$arr['planet_user_changed'];
 				
+				$this->sx = $arr['sx'];
+				$this->sy = $arr['sy'];
+				$this->cx = $arr['cx'];
+				$this->cy = $arr['cy'];
+				$this->pos = $arr['pos'];
+
+				$this->type_id = $arr['type_id'];
+				$this->type_name = $arr['type_name'];
+
+				
+				/*
 				$this->type_id=$arr['planet_type_id'];
 				$this->type_name=$arr['planet_type_name'];
 				$this->type->name=$arr['planet_type_name'];
@@ -126,6 +107,7 @@
 				$this->race->population=$arr['race_f_population'];
 				$this->race->researchtime=$arr['race_f_researchtime'];
 				$this->race->buildtime=$arr['race_f_buildtime'];
+				*/
 
 				$this->debris->metal = $arr['planet_wf_metal'];
 				$this->debris->crystal = $arr['planet_wf_crystal'];
@@ -164,10 +146,6 @@
 					$this->isMain=true;
 				else
 					$this->isMain=false;
-				$this->sx=$arr['cell_sx'];
-				$this->sy=$arr['cell_sy'];
-				$this->cx=$arr['cell_cx'];
-				$this->cy=$arr['cell_cy'];
 
 			}
 		}
@@ -177,7 +155,7 @@
 		*/
 		function toString()
 		{
-			echo $this->sx."/".$this->sy." : ".$this->cx."/".$this->cy." : ".$this->solsys_pos." ".$this->name;
+			echo $this->sx."/".$this->sy." : ".$this->cx."/".$this->cy." : ".$this->pos." ".$this->name;
 		}
 		
 		/**
@@ -187,7 +165,12 @@
 		*/
 		function getString()
 		{
-			return $this->sx."/".$this->sy." : ".$this->cx."/".$this->cy." : ".$this->solsys_pos." ".$this->name;
+			return $this->sx."/".$this->sy." : ".$this->cx."/".$this->cy." : ".$this->pos." ".$this->name;
+		}
+
+		function __toString()
+		{
+			return $this->getString();
 		}
 
 		/**
@@ -212,7 +195,7 @@
 		*/
 		function getCoordinates()
 		{
-			return $this->sx."/".$this->sy." : ".$this->cx."/".$this->cy." : ".$this->solsys_pos;
+			return $this->sx."/".$this->sy." : ".$this->cx."/".$this->cy." : ".$this->pos;
 		}		
 		
 		/**

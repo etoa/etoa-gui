@@ -458,11 +458,9 @@
       p.planet_store_food,
       p.planet_people_place
     FROM
-    	".$db_table['planets']." AS p
-    INNER JOIN
-    	".$db_table['space_cells']." AS sc
-    	ON p.planet_solsys_id=sc.cell_id
-    	AND p.planet_user_id='".$s['user']['id']."'
+    	planets AS p
+   	WHERE
+   		p.planet_user_id='".$cu->id()."'
     ORDER BY
       p.planet_user_main DESC,
       p.planet_name,

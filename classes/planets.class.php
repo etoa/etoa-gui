@@ -204,26 +204,24 @@
 		{
 			$cfg = Config::getInstance();
 			$sql = "
-			SELECT
-				planets.planet_id
-			FROM
-			(
-      	planets
-	      INNER JOIN
-          planet_types
-      	ON planets.planet_type_id=planet_types.type_id
-      		AND planet_types.type_habitable=1
-			)
-			INNER JOIN
-				space_cells
-			ON  planets.planet_solsys_id=space_cells.cell_id
-				AND planets.planet_fields>'".$cfg->value('user_min_fields')."'
-				AND planets.planet_user_id='0'";
+				SELECT
+					planets.id
+				FROM
+					cells
+				INNER JOIN
+				(
+					entities
+					INNER JOIN
+						planets 
+						ON planets.id=entities.id
+						AND planets.planet_fields>'".$cfg->value('user_min_fields')."'
+						AND planets.planet_user_id='0' 					)
+					ON entities.cell_id=cells.id ";					
 			if ($sx>0)
-				$sql.=" AND cell_sx=".$sx." ";
+				$sql.=" AND cells.sx=".$sx." ";
 			if ($sy>0)
-				$sql.=" AND cell_sy=".$sy." ";
-				
+				$sql.=" AND cells.sy=".$sy." ";
+	
 			$sql.="ORDER BY
 					RAND()
 			LIMIT 1";

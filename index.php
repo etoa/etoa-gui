@@ -145,7 +145,7 @@
 		echo "<h1>Benutzer nicht mehr vorhanden!</h1>Falls die Weiterleitung nicht klappt, <a href=\"".LOGINSERVER_URL."?page=err&err=usernotfound\">hier</a> klicken...";
 		exit;
 	}
-	$uarr = mysql_fetch_array($ures);
+	$uarr = mysql_fetch_assoc($ures);
 	
 	// Check timeout	
 	if ($uarr['user_acttime']+$conf['user_timeout']['v'] < time())
@@ -348,81 +348,52 @@
 				dbquery("UPDATE users SET user_acttime='".time()."' WHERE user_id='".$s['user']['id']."';");
 				dbquery ("UPDATE user_log SET log_acttime=".time()." WHERE log_user_id=".$s['user']['id']." AND log_session_key='".$s['key']."';");
 				
-				$s['user']['setup']=1;
-				
 				if ($s['user']['setup']==1)
 				{
-				// ???
-				$user=$s['user'];
+					//
+					// Load current planet
+					//
+					$res = dbquery("
+					SELECT
+						id,
+						planet_user_main
+					FROM	
+						planets
+					WHERE
+						planet_user_id=".$cu->id()."
+					");
+					if (mysql_num_rows($res)>0)
+					{
+						$planets = array();
+						$mainplanet=0;
+						while ($arr=mysql_fetch_row($res))
+						{
+							$planets[] = $arr[0];
+							if ($arr[1]==1)
+							{
+								$mainplanet = $arr[0];
+							}							
+						}
+						// Todo: check if mainplanet is still 0
+						
+						// Wenn eine ID angegeben wurde (Wechsel des Planeten) wird diese überprüft
+						if (isset($_GET['planet_id']) && $_GET['planet_id']>0 && in_array($_GET['planet_id'],$planets))
+						{
+							$cpid = $_GET['planet_id'];
+						}	
+						else					
+						{
+							$cpid = $mainplanet;
+						}						
+						
+						$cp = new Planet($cpid);
+					}
+					else
+					{
+						$s['user']['setup']=1;
+					}
+				}
 
-				// Wenn eine ID angegeben wurde (Wechsel des Planeten) wird diese überprüft
-				if (isset($_GET['planet_id']) && $_GET['planet_id']>0)
-				{
-					$cpid = $_GET['planet_id'];
-				}
-				elseif (isset($s['currentPlanetId']) && $s['currentPlanetId']>0)
-				{
-					$cpid = $s['currentPlanetId'];
-				}
-				else
-				{
-					$cpid = 0;
-				}
-					
-				// Planetenklasse laden
-				$planets = new Planets($cpid);
-
-				// Daten in Session speichern
-				$s['currentPlanetId']=$planets->getCurrentId();
-				$c = $planets->getCurrentData();
-
-				// Planet aktualisieren
-				$updatedPages=array(
-				"overview",
-				"planetoverview",
-				"economy",
-				"specialists",
-				"planetstats",
-				"population",
-				"havens",
-				"market",
-				"buildings",
-				"research",
-				"shipyard",
-				"defense",
-				"recycling");
-				if (in_array($page,$updatedPages))
-				{
-					$c->update();
-				}
-				}
-				/*
-				// Flottenupdate (Prüfen ob nicht bereits ein Flottenupdate läuft)
-				if($conf['updating_fleet']['v']==0)
-				{
-	        $res = dbquery("
-	        SELECT
-	            *
-	        FROM
-	            ".$db_table['fleet']."
-	        WHERE
-	            fleet_landtime<".time()."
-	            AND fleet_updating=0
-	        ORDER BY
-	            fleet_landtime ASC
-	         ;"); 
-	        if (mysql_num_rows($res) > 0)
-	        {
-	          require_once("inc/fleet_action.inc.php");
-	          require_once("inc/fleet_update.inc.php");
-	          while ($arr=mysql_fetch_array($res))
-	          {
-	         	update_fleet($arr,0);
-	          }
-	        }
-				}				
-				check_missiles();
-				*/
 				
 				// Navigation laden
 				require_once('inc/nav.inc.php');
@@ -456,13 +427,15 @@
 				$tpl->assign("templateDir",CSS_STYLE);
 				$tpl->assign("serverTime",date('H:i:s'));
 				$tpl->assign("currentPlanetName","Planet");
-				if ($planets)
+				
+				if ($cp)
 				{
-					$tpl->assign("currentPlanetName",$planets->current->getString());
+					$tpl->assign("currentPlanetName",$cp);
+					/*
 					$tpl->assign("planetList",$planets->getLinkList());						
 					$tpl->assign("nextPlanetId",$planets->nextId);
 					$tpl->assign("prevPlanetId",$planets->prevId);
-					$tpl->assign("selectField",$planets->getSelectField());		
+					$tpl->assign("selectField",$planets->getSelectField());		*/
 				}
 				else
 				{
@@ -510,7 +483,7 @@
 				$tpl->display(getcwd()."/".CSS_STYLE."/header.tpl");
 				
 				// Include content
-				require("inc/content.inc.php");
+				//require("inc/content.inc.php");
 				
 				$render_time = explode(' ',microtime());
 				$rtime = $render_time[1]+$render_time[0]-$render_starttime;

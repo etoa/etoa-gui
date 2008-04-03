@@ -68,7 +68,7 @@
       	user_id,
       	user_registered 
       FROM 
-      	".$db_table['users']." 
+      	users 
       WHERE 
       	LCASE(user_nick)='".strtolower($_POST['login_nick'])."' 
 
@@ -80,7 +80,7 @@
 	      SELECT 
 	      	user_id
 	      FROM 
-	      	".$db_table['users']." 
+	      	users 
 	      WHERE 
 	      	user_id=".$uarr[0]."
 	      	AND 
@@ -121,13 +121,9 @@
 			{
         $res = dbquery("
         SELECT
-            *
+          *
         FROM
-            ".$db_table['users']."
-        INNER JOIN
-            ".$db_table['races']."
-            ON user_race_id=race_id
-            AND user_id='".$user_id."';");
+          users;");
 
 				$arr = mysql_fetch_array($res);
 
@@ -221,7 +217,7 @@
 				{
         	dbquery("
         	UPDATE
-        	    ".$db_table['users']."
+        	    users
         	SET
         	    user_last_online='".$login_time."',
         	    user_logintime=".$login_time.",
@@ -237,7 +233,7 @@
         {
         	dbquery("
         	UPDATE
-        	    ".$db_table['users']."
+        	    users
         	SET
         	    user_last_online='".$login_time."',
         	    user_logintime=".$login_time.",
@@ -295,7 +291,7 @@
             user_ip,
             user_hostname
         FROM
-        	".$db_table['users']."
+        	users
         WHERE
         	user_ip='".$_SERVER['REMOTE_ADDR']."'
         	AND user_id!='".$arr['user_id']."';");

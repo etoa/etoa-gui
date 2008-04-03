@@ -124,24 +124,31 @@
 	}
 	else
 	{
-		$res=dbquery("SELECT cell_sx, cell_cx, cell_sy, cell_cy,
-		cell_solsys_num_planets,
-		cell_wormhole_id,
-		cell_asteroid,
-		cell_nebula
-		FROM space_cells
+		$res=dbquery("
+		SELECT 
+			cells.sx, 
+			cells.cx, 
+			cells.sy,
+			cells.cy,
+			entities.type
+		FROM 
+			cells
+		INNER JOIN
+			entities 
+			ON entities.cell_id = cells.id
+			AND entities.pos=0
 		");
 		while ($arr=mysql_fetch_array($res))
 		{
-			$x = ((($arr['cell_sx']-1)*$cx_num + $arr['cell_cx']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
-			$y = $h-GALAXY_MAP_LEGEND_HEIGHT+GALAXY_IMAGE_SCALE-((($arr['cell_sy']-1)*$cy_num + $arr['cell_cy']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
-				if ($arr['cell_solsys_num_planets']>0)
+			$x = ((($arr['sx']-1)*$cx_num + $arr['cx']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
+			$y = $h-GALAXY_MAP_LEGEND_HEIGHT+GALAXY_IMAGE_SCALE-((($arr['sy']-1)*$cy_num + $arr['cy']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
+				if ($arr['type']=='s')
 					$col = $colWhite;
-				elseif ($arr['cell_wormhole_id']>0)
+				elseif ($arr['type']=='w')
 					$col = $colViolett;
-				elseif ($arr['cell_asteroid']==1)
+				elseif ($arr['type']=='a')
 					$col = $colGrey;
-				elseif ($arr['cell_nebula']==1)
+				elseif ($arr['type']=='m')
 					$col = $colOrange;
 				else
 					continue;
