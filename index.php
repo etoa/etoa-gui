@@ -483,7 +483,7 @@
 				$tpl->display(getcwd()."/".CSS_STYLE."/header.tpl");
 				
 				// Include content
-				//require("inc/content.inc.php");
+				require("inc/content.inc.php");
 				
 				$render_time = explode(' ',microtime());
 				$rtime = $render_time[1]+$render_time[0]-$render_starttime;

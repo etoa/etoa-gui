@@ -112,7 +112,7 @@
 		SELECT 
 			fleet_id 
 		FROM 
-			".$db_table['fleet']." 
+			fleet 
 		WHERE 
 			fleet_user_id='".$s['user']['id']." '
 		ORDER BY 
@@ -460,14 +460,15 @@
     FROM
     	planets AS p
    	WHERE
-   		p.planet_user_id='".$cu->id()."'
+   		p.planet_user_id=".$cu->id()."
     ORDER BY
       p.planet_user_main DESC,
       p.planet_name,
       p.planet_solsys_id ASC,
       p.planet_solsys_pos ASC;";
-
 		$res_planet = dbquery($psql);
+	
+		/*
 		while ($arr_planet = mysql_fetch_array($res_planet))
 		{
       // Bauhof infos
@@ -708,7 +709,7 @@
 	
 			$degree = $degree + (360/$division);
 		}
-
+*/
 
 	$top_table=$middle_top+(($d_planets/2)*sin(deg2rad(55+270)));
 	echo "<center><table border=\"0\" width=\"75%\" style=\"text-align:center; vertical-align:middle;\">";

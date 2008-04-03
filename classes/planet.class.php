@@ -51,7 +51,7 @@
 
 			if ($arr)
 			{				
-				$this->id=$arr['planet_id'];
+				$this->id=$arr['id'];
 				$this->user_id=$arr['planet_user_id'];
 				$this->name= $arr['planet_name']!="" ? $arr['planet_name'] : 'Unbenannt';
 				$this->desc=$arr['planet_desc'];
@@ -337,7 +337,7 @@
 			global $db_table;
       $sql = "
       UPDATE
-      	".$db_table['planets']."
+      	planets
       SET
 				planet_store_metal=".$this->store->metal.",
         planet_store_crystal=".$this->store->crystal.",
@@ -356,7 +356,7 @@
         planet_prod_people=".$this->prod->people.",
         planet_use_power=".$this->use->power."      	
      	WHERE
-         planet_id='".$this->id."'
+         id='".$this->id."'
        ;";
        dbquery($sql);
 		}
@@ -467,7 +467,7 @@
       // Alles speichern
       dbquery("
       UPDATE
-      	".$db_table['planets']."
+      	planets
       SET
           planet_res_metal='".$this->res->metal."',
           planet_res_crystal=".$this->res->crystal.",
@@ -478,7 +478,7 @@
           planet_prod_people=".$this->prod->people.",
           planet_last_updated='".$time."'
       WHERE
-          planet_id='".$this->id."';");
+          id='".$this->id."';");
 
 		}
 
@@ -934,7 +934,7 @@
 		    global $db_table;
 		    $sql = "
 		    UPDATE
-		    	".$db_table['planets']."
+		    	planets
 		    SET
                 planet_res_metal=planet_res_metal+".$m.",
                 planet_res_crystal=planet_res_crystal+".$c.",
@@ -942,7 +942,7 @@
                 planet_res_fuel=planet_res_fuel+".$fu.",
                 planet_res_food=planet_res_food+".$fo."
 		    WHERE
-		    	planet_id='".$this->id."';";
+		    	id='".$this->id."';";
 		    dbquery($sql);
 		    $this->res->metal+=$m;
 		    $this->res->crystal+=$c;
@@ -986,7 +986,7 @@
 				planet_user_id=".$uid.",
 				planet_user_main=".$main."
 	    WHERE
-	    	planet_id='".$this->id."';";
+	    	id='".$this->id."';";
 	    dbquery($sql);		
 		}
 	

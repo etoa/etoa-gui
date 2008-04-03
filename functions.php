@@ -2967,6 +2967,7 @@ die Spielleitung";
 	//Fremde, nicht feindliche Flotten
 	function check_fleet_incomming_friendly($user_id)
 	{
+		/*
 		global $db_table;
 
         $fres = dbquery("
@@ -2997,7 +2998,8 @@ die Spielleitung";
 		");
 		$count=mysql_num_rows($fres);
 
-        return $count;
+        return $count; */
+        return 0;
 	}
 
 	//Fremde, feindliche Flotten
@@ -3010,6 +3012,8 @@ die Spielleitung";
     */
 	function check_fleet_incomming($user_id)
 	{
+		// TODO
+		/*
 		global $db_table;
 		$num=0;
 		$ffres=dbquery("
@@ -3169,6 +3173,8 @@ die Spielleitung";
             }
      }
 		return $num;
+		*/
+		return 0;
 	}
 
 	function add_alliance_history($alliance_id,$text)
