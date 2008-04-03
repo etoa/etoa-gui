@@ -502,6 +502,7 @@
 			$tbl[]="alliance_stats";
 			$tbl[]="alliance_shoutbox";
 			$tbl[]="alliance_polls";
+			$tbl[]="alliance_points";
 
 			$tbl[]="users";
 			$tbl[]="user_history";
@@ -513,6 +514,8 @@
 			$tbl[]="user_sitting_date";
 			$tbl[]="user_stats";
 			$tbl[]="user_onlinestats";
+			$tbl[]="user_comments";
+			$tbl[]="user_warnings";
 
 			
 			$tbl[]="buddylist";
@@ -526,6 +529,8 @@
 			$tbl[]="admin_user_log";
 			$tbl[]="logs_game";
 			$tbl[]="logs_battle";
+			$tbl[]="abuses";
+			
 	
 			foreach ($tbl as $t)
 			{
