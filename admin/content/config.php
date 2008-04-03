@@ -218,7 +218,7 @@
 			{
 				Universe::create();
 				echo "Universum erstellt!
-				<input type=\"button\" value=\"Weiter zum Urknall\" onclick=\"document.location='?page=config&sub=uni'\" />";
+				<input type=\"button\" value=\"Weiter\" onclick=\"document.location='?page=config&sub=uni'\" />";
 			}
 			else
 			{

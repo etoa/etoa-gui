@@ -61,7 +61,7 @@
 			$nebula_count = 0;
 			$asteroids_count = 0;
 			$wormhole_count = 0;
-	
+	$checker=0;
 			echo "Erstelle Universum mit ".$sx_num*$sy_num." Sektoren à ".$cx_num*$cy_num." Zellen, d.h. ".$sx_num*$sy_num*$cx_num*$cy_num." Zellen total<br>";
 	
 			$sql = "";	
@@ -121,8 +121,6 @@
 				// Assign entities
 				$ct = mt_rand(1,100);
 			
-				echo "Bearbeite Zelle $cell_id<br/>";
-				
 				// Star system
 				if ($ct<=$perc_solsys)
 				{
@@ -160,9 +158,6 @@
 						);
 					";
 					dbquery($sql);
-
-					echo "Ist das Sonnensystem $eid<br/>";
-
 
 					// The planets
 					$np = mt_rand($num_planets_min,$num_planets_max);
@@ -239,7 +234,6 @@
 					";
 					dbquery($sql);
 					$eid = mysql_insert_id();
-					echo "Ist das Asteroidenfeld $eid<br/>";
 
 					$asteroid_ress = mt_rand($cfg->param1('asteroid_ress'),$conf['asteroid_ress']['p2']);
 					$sql = "
@@ -280,7 +274,6 @@
 					";
 					dbquery($sql);
 					$eid = mysql_insert_id();
-					echo "Ist der Nebel $eid<br/>";
 
 					$nebula_ress = mt_rand($cfg->param1('nebula_ress'),$cfg->param2('nebula_ress'));
 					$sql = "
@@ -321,7 +314,6 @@
 					";
 					dbquery($sql);
 					$eid = mysql_insert_id();								
-										echo "Ist das Wurmloch $eid<br/>";
 
 					$sql = "
 						INSERT INTO
@@ -369,15 +361,18 @@
 							space
 						(
 							id,
-							lastvisited
+							lastvisited,
+							checker
 						)
 						VALUES
 						(
 							".$eid.",
-							0
+							0,
+							".$checker."
 						);
 					";
-					dbquery($sql);			
+					dbquery($sql);		
+					$checker++;	
 				}
 			}
 			echo "Universum erstellt, prüfe Wurmlöcher...<br/>";
