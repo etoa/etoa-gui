@@ -353,7 +353,7 @@
 					";
 					dbquery($sql);
 					$eid = mysql_insert_id();
-/*
+
 					$sql = "
 						INSERT INTO
 							space
@@ -367,7 +367,7 @@
 							0
 						);
 					";
-					dbquery($sql);			*/
+					dbquery($sql);			
 				}
 			}
 			echo "Universum erstellt, prüfe Wurmlöcher...<br/>";
