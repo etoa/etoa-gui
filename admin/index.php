@@ -318,9 +318,9 @@
 									$pp=$p1arr[0]/$p2arr[0];
 								else
 									$pp=0;
-								$s1res=dbquery("SELECT count(*) FROM ".$db_table['space_cells'].",".$db_table['planets']." WHERE planet_solsys_id=cell_id AND planet_user_id>0 GROUP BY cell_id;");
+								$s1res=dbquery("SELECT count(entities.cell_id) FROM entities,planets WHERE planets.id=entities.id AND planet_user_id>0 GROUP BY entities.cell_id;");
 								$s1arr=mysql_num_rows($s1res);
-								$s2res=dbquery("SELECT count(*) FROM ".$db_table['space_cells']." WHERE cell_solsys_solsys_sol_type>0;");
+								$s2res=dbquery("SELECT count(*) FROM entities WHERE type='s';");
 								$s2arr=mysql_fetch_row($s2res);
 								if ($s2arr[0]>0)
 									$sp=$s1arr/$s2arr[0];

@@ -208,7 +208,7 @@
 				* 
 			FROM 
 				".$db_table['users']." 
-			INNER JOIN
+			LEFT JOIN
         ".$db_table['races']."
         ON user_race_id=race_id
 			WHERE 

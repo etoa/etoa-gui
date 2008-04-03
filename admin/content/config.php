@@ -137,7 +137,7 @@
 	}
 
 	//
-	// Universum
+	// Universe Maintenance
 	//
 	elseif ($sub=="uni")
 	{
@@ -147,9 +147,29 @@
 		//
 		if ($_POST['submit_create_universe'])
 		{
-  		echo "<h2>Runde Starten</h2>";
+  		echo "<h2>Urknall</h2>";
 			echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
-			echo "Neues Universum Wirklich erstellen (Alle Einstellungen werden von der Config-Tabelle &uuml;bernommen!)<br/><br/>";
+			echo "Neues Universum erstellen? (Alle Einstellungen werden von der <a href=\"?page=config&cid=3\">Konfiguration</a> &uuml;bernommen!)<br/><br/>";
+			
+			echo "<table class=\"tb\" style=\"width:400px;\">";
+			echo "<tr><th>Anzahl Sektoren X:</th><td>".$cfg->param1('num_of_sectors')."</td></tr>";
+			echo "<tr><th>Anzahl Sektoren Y:</th><td>".$cfg->param2('num_of_sectors')."</td></tr>";
+			echo "<tr><th>Anzahl Zellen X:</th><td>".$cfg->param1('num_of_cells')."</td></tr>";
+			echo "<tr><th>Anzahl Zellen Y:</th><td>".$cfg->param2('num_of_cells')."</td></tr>";
+			echo "<tr><th>Minimale Felder pro Planet:</th><td>".$cfg->param1('planet_fields')."</td></tr>";
+			echo "<tr><th>Maximale Felder pro Planet:</th><td>".$cfg->param2('planet_fields')."</td></tr>";
+			echo "<tr><th>Minimale Planetentemparatur:</th><td>".$cfg->param1('planet_temp')."</td></tr>";
+			echo "<tr><th>Maximale Planetentemparatur:</th><td>".$cfg->param2('planet_temp')."</td></tr>";
+			echo "<tr><th>Planetentemperaturdifferent:</th><td>".$cfg->value('planet_temp')."</td></tr>";
+			echo "<tr><th>Anzahl Sternensysteme %:</th><td>".$cfg->value('space_percent_solsys')."</td></tr>";
+			echo "<tr><th>Anzahl Asteroidenfelder %:</th><td>".$cfg->value('space_percent_asteroids')."</td></tr>";
+			echo "<tr><th>Anzahl Nebelwolken %:</th><td>".$cfg->value('space_percent_nebulas')."</td></tr>";
+			echo "<tr><th>Anzahl Wurmlöcher %:</th><td>".$cfg->value('space_percent_wormholes')."</td></tr>";
+			echo "<tr><th>Maximale Anzahl Planeten/Sternensystem:</th><td>".$cfg->param1('num_planets')."</td></tr>";
+			echo "<tr><th>Minimale Anzahl Planeten/Sternensystem:</th><td>".$cfg->param2('num_planets')."</td></tr>";
+			echo "<tr><th>Anzahl verschiedener Planetenbilder / Typ:</th><td>".$cfg->value('num_planet_images')."</td></tr>";
+			echo "</table><br/>";
+			
 			echo "<input onclick=\"return confirm('Universum wirklich erstellen?')\" type=\"submit\" name=\"submit_create_universe2\" value=\"Ja, ein neues Universum erstellen\" >";
 			echo "</form>";
 		}
@@ -196,55 +216,60 @@
 		{
 			if($_POST['submit_create_universe2'])
 			{
-				create_universe();
+				Universe::create();
 				echo "Universum erstellt!";
 			}
 
-			// Erstellen
-			$res = dbquery("SELECT cell_id FROM ".$db_table['space_cells'].";");
-			if (mysql_num_rows($res)==0)
+			// Check if universe exists
+			$res = dbquery("SELECT COUNT(id) FROM cells;");
+			$arr = mysql_fetch_row($res);
+			if ($arr[0]==0)
 			{
-                echo "<h2>Runde Starten</h2>";
-                echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
-                echo "Neues Universum errichten<br/><br/>";
-                echo "<input type=\"submit\" name=\"submit_create_universe\" value=\"Neues Universum Errichten\" >";
-                echo "</form><br/>";
-	  		}
+        echo "<h2>Urknall</h2>";
+        echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
+        echo "Neues Universum erstellen<br/><br/>";
+        echo "<input type=\"submit\" name=\"submit_create_universe\" value=\"Start\" >";
+        echo "</form><br/>";
+	  	}
 			else
 			{
+				/*
+        echo "<h2>Universum erweitern</h2>";
+        if($_POST['submit_expansion_universe2'])
+        {
+            $sector_x = $_POST['expansion_sector_x'];
+            $sector_y = $_POST['expansion_sector_y'];
+            expansion_universe($sector_x,$sector_y);
+        }
+        else
+        {
+             echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
+             echo "<b>Universum (".$conf['num_of_sectors']['p1']."x".$conf['num_of_sectors']['p2'].") erweitern</b>?<br/><br/>";
+             echo "<input type=\"submit\" name=\"submit_expansion_universe\" value=\"Universum erweitern\" >";
+             echo "</form>";
+        }*/
 
-                echo "<h2>Universum erweitern</h2>";
-                if($_POST['submit_expansion_universe2'])
-                {
-                    $sector_x = $_POST['expansion_sector_x'];
-                    $sector_y = $_POST['expansion_sector_y'];
-                    expansion_universe($sector_x,$sector_y);
-                }
-                else
-                {
-                     echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
-                     echo "<b>Universum (".$conf['num_of_sectors']['p1']."x".$conf['num_of_sectors']['p2'].") erweitern</b>?<br/><br/>";
-                     echo "<input type=\"submit\" name=\"submit_expansion_universe\" value=\"Universum erweitern\" >";
-                     echo "</form>";
-                }
-
-                // Reset
-                echo "<h2>Runde zur&uuml;cksetzen</h2>";
-                if($_POST['submit_reset2'])
-                {
-                    reset_universe();
-                    echo "Runde zur&uuml;ckgesetzt!";
-                }
-                else
-                {
-                    echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
-                    echo "Willst du wirklich  die Runde zur&uuml;cksetzen? (alle User, Allianzen und Objekte l&ouml;schen)<br/><br/>";
-                    echo "<input type=\"submit\" name=\"submit_reset\" value=\"Ja, die gesamte Runde zur&uuml;cksetzen\" ><br><br>";
-                    echo "</form>";
-                }
-            }
+        // Reset
+        echo "<h2>Runde zur&uuml;cksetzen</h2>";
+        if($_POST['submit_reset2'])
+        {
+            Universe::reset();
+            echo "Universum!";
+        }
+        else
+        {
+            echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
+            echo "Willst du wirklich  die Runde zur&uuml;cksetzen? (alle User, Allianzen und Objekte l&ouml;schen)<br/><br/>";
+            echo "<input type=\"submit\" name=\"submit_reset\" value=\"Ja, die gesamte Runde zur&uuml;cksetzen\" ><br><br>";
+            echo "</form>";
+        }
+    	}
 		}
 	}
+	
+	//
+	// Config-Editor
+	//
 	else
 	{
 			$conf_type['text']="Textfeld";

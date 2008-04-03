@@ -3,7 +3,6 @@
 	$xajax->register(XAJAX_FUNCTION,'registerCheckName');
 	$xajax->register(XAJAX_FUNCTION,'registerCheckNick');
 	$xajax->register(XAJAX_FUNCTION,'registerCheckEmail');
-	$xajax->register(XAJAX_FUNCTION,'registerShowRace');
 
 //Überprüft die Korrektheit der Eingabe von Vor- und Nachname
 function registerCheckName($val)
@@ -103,91 +102,6 @@ function registerCheckEmail($val)
 	return $objResponse;
 }
 
-//Zeigt Rasseninfos an
-function registerShowRace($val)
-{
-	global $db_table, $db;
-	$res=$db->query("
-		SELECT 
-			* 
-		FROM 
-			races 
-		WHERE 
-			race_id='$val'
-	;");
-	$arr=mysql_fetch_array($res);
-	$objResponse = new xajaxResponse();
-	
-	ob_start();
-	
-	echo text2html($arr['race_comment'])."<br/><br/><table class=\"tb\">";
-	echo "<tr><th colspan=\"2\">St&auml;rken / Schw&auml;chen</th></tr>";
-	if ($arr['race_f_metal']!=1)
-	{
-		echo "<tr><th>".RES_METAL."</a></td><td>".get_percent_string($arr['race_f_metal'],1)."</td></tr>";
-	}
-	if ($arr['race_f_crystal']!=1)
-	{
-		echo "<tr><th>".RES_CRYSTAL."</a></td><td>".get_percent_string($arr['race_f_crystal'],1)."</td></tr>";
-	}
-	if ($arr['race_f_plastic']!=1)
-	{
-		echo "<tr><th>".RES_PLASTIC."</a></td><td>".get_percent_string($arr['race_f_plastic'],1)."</td></tr>";
-	}
-	if ($arr['race_f_fuel']!=1)
-	{
-		echo "<tr><th>".RES_FUEL."</a></td><td>".get_percent_string($arr['race_f_fuel'],1)."</td></tr>";
-	}
-	if ($arr['race_f_food']!=1)
-	{
-		echo "<tr><th>".RES_FOOD."</a></td><td>".get_percent_string($arr['race_f_food'],1)."</td></tr>";
-	}
-	if ($arr['race_f_power']!=1)
-	{
-		echo "<tr><th>Energie</a></td><td>".get_percent_string($arr['race_f_power'],1)."</td></tr>";
-	}
-	if ($arr['race_f_population']!=1)
-	{
-		echo "<tr><th>Wachstum</a></td><td>".get_percent_string($arr['race_f_population'],1)."</td></tr>";
-	}
-	if ($arr['race_f_researchtime']!=1)
-	{
-		echo "<tr><th>Forschungszeit</a></td><td>".get_percent_string($arr['race_f_researchtime'],1,1)."</td></tr>";
-	}
-	if ($arr['race_f_buildtime']!=1)
-	{
-		echo "<tr><th>Bauzeit</a></td><td>".get_percent_string($arr['race_f_buildtime'],1,1)."</td></tr>";
-	}
-	if ($arr['race_f_fleettime']!=1)
-	{
-		echo "<tr><th>Fluggeschwindigkeit</a></td><td>".get_percent_string($arr['race_f_fleettime'],1,1)."</td></tr>";
-	}
-	echo  "<tr><th colspan=\"2\">Spezielle Schiffe</th></tr>";
-	$res=$db->query("
-	SELECT 
-		ship_name,
-		ship_shortcomment 
-	FROM 
-		ships 
-	WHERE 
-  	ship_race_id='".$val."' 
-  	AND ship_buildable=1 
-  	AND special_ship=0;");
-	if (mysql_num_rows($res)>0)
-	{
-		while ($arr=mysql_fetch_array($res))
-		{
-			echo "<tr><th>".text2html($arr['ship_name'])."</th><td>".text2html($arr['ship_shortcomment'])."</td></tr>";
-		}
-	}
-	else
-		echo "<tr><td colspan=\"2\">Keine Rassenschiffe vorhanden</td></tr>";
-		
-	echo "</table>";
- 	$objResponse->assign('raceInfo', 'innerHTML', ob_get_contents());
- 	ob_end_clean();
-  return $objResponse;
-}
 
 
 

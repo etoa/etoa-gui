@@ -39,12 +39,12 @@ class Tooltip
 	  
 	function addText($text)
 	{
-		$this->add(text2html($text));
+		$this->add(text2html($text)."<br/>");
 	}	
 
 	function addHtml($text)
 	{
-		$this->add($text);
+		$this->add($text."<br/>");
 	}	
 
 	function addTitle($text)

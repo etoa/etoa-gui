@@ -3,6 +3,15 @@
 	ob_start();											
 	$time = time();
 
+	// Go to user setup page if user wasn't set up correctly
+	if ($s['user']['setup']==0 && $page!="help" && $page!="contact")
+	{
+		require("inc/usersetup.inc.php");		
+	}
+	else
+	{
+
+
 	// Show tipps
 	if (ENABLE_TIPS==1)
 	{
@@ -196,6 +205,8 @@
 				<input type="button" onclick="history.back();" value="Zurück" />';
 			}
 		}
+	}
+	
 	}
 	
 	// End PHP output stack and send content to browser

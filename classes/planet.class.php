@@ -15,15 +15,6 @@
 				SELECT
                     planets.*,
                     space_cells.*,
-                    races.race_f_metal,
-                    races.race_f_crystal,
-                    races.race_f_plastic,
-                    races.race_f_fuel,
-                    races.race_f_food,
-                    races.race_f_power,
-                    races.race_f_population,
-                    races.race_f_researchtime,
-                    races.race_f_buildtime,
                     sol_types.type_name as sol_type_name,
                     sol_types.type_f_metal as sol_type_f_metal,
                     sol_types.type_f_crystal as sol_type_f_crystal,
@@ -45,8 +36,6 @@
                     planet_types.type_f_researchtime as planet_type_f_researchtime,
                     planet_types.type_f_buildtime as planet_type_f_buildtime
                 FROM 
-                	(
-                		(
 							(
 									planets
                                 INNER JOIN 
@@ -60,14 +49,7 @@
                                 INNER JOIN sol_types ON space_cells.cell_solsys_solsys_sol_type = sol_types.type_id
                             )
                             ON planets.planet_solsys_id = space_cells.cell_id
-						)
-                		INNER JOIN 
-                			users 
-                		ON planets.planet_user_id = users.user_id
-                	)
-                	INNER JOIN 
-                		races 
-                	ON users.user_race_id = races.race_id	
+
 				;");
 
 				/*
@@ -197,7 +179,7 @@
 		{
 			echo $this->sx."/".$this->sy." : ".$this->cx."/".$this->cy." : ".$this->solsys_pos." ".$this->name;
 		}
-
+		
 		/**
 		* Returns a formatet string of planet coordinates
 		*
@@ -1011,6 +993,19 @@
 			}
 			return $v;
 		}	
+		
+		function assignToUser($uid,$main=0)
+		{
+	    $sql = "
+	    UPDATE
+	    	planets
+	    SET
+				planet_user_id=".$uid.",
+				planet_user_main=".$main."
+	    WHERE
+	    	planet_id='".$this->id."';";
+	    dbquery($sql);		
+		}
 	
 	}
 ?>

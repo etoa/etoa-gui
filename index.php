@@ -128,7 +128,8 @@
     user_registered,
     user_irc_name,
     user_irc_pw,
-    user_show_adds
+    user_show_adds,
+    user_setup
 	FROM 
 		users 
 	WHERE 
@@ -194,6 +195,9 @@
 	$s['user']['points'] = $uarr['user_points'];
 	$s['user']['deleted'] = $uarr['user_deleted'];
 	$s['user']['show_adds'] = $uarr['user_show_adds'];
+	$s['user']['setup'] = $uarr['user_setup'];
+
+	$cu = new User($s['user']['id']);
 
 		//
 	// Misc settings
@@ -344,6 +348,10 @@
 				dbquery("UPDATE users SET user_acttime='".time()."' WHERE user_id='".$s['user']['id']."';");
 				dbquery ("UPDATE user_log SET log_acttime=".time()." WHERE log_user_id=".$s['user']['id']." AND log_session_key='".$s['key']."';");
 				
+				$s['user']['setup']=1;
+				
+				if ($s['user']['setup']==1)
+				{
 				// ???
 				$user=$s['user'];
 
@@ -387,7 +395,7 @@
 				{
 					$c->update();
 				}
-
+				}
 				/*
 				// Flottenupdate (Prüfen ob nicht bereits ein Flottenupdate läuft)
 				if($conf['updating_fleet']['v']==0)
@@ -448,20 +456,32 @@
 				$tpl->assign("templateDir",CSS_STYLE);
 				$tpl->assign("serverTime",date('H:i:s'));
 				$tpl->assign("currentPlanetName","Planet");
-				$tpl->assign("currentPlanetName",$planets->current->getString());
-				$tpl->assign("planetList",$planets->getLinkList());						
+				if ($planets)
+				{
+					$tpl->assign("currentPlanetName",$planets->current->getString());
+					$tpl->assign("planetList",$planets->getLinkList());						
+					$tpl->assign("nextPlanetId",$planets->nextId);
+					$tpl->assign("prevPlanetId",$planets->prevId);
+					$tpl->assign("selectField",$planets->getSelectField());		
+				}
+				else
+				{
+					$tpl->assign("currentPlanetName","Unbekannt");
+					$tpl->assign("planetList","");						
+					$tpl->assign("nextPlanetId","");
+					$tpl->assign("prevPlanetId","");
+					$tpl->assign("selectField","");		
+					
+				}
 				$tpl->assign("usersOnline",$garr[0]);
 				$tpl->assign("usersTotal",$ucarr[0]);
 				$tpl->assign("notes",$narr[0]);
 				$tpl->assign("userPoints",nf($s["user"]["points"]));
 				$tpl->assign("userNick",$s["user"]["nick"]);
 				$tpl->assign("gameWidth",GAME_WIDTH);
-				$tpl->assign("nextPlanetId",$planets->nextId);
-				$tpl->assign("prevPlanetId",$planets->prevId);
 				$tpl->assign("page",$page);
 				$tpl->assign("topNav",$topnav);
 				$tpl->assign("gameNav",$navmenu);
-				$tpl->assign("selectField",$planets->getSelectField());		
 				$tpl->assign("teamspeakUrl",TEAMSPEAK_URL);
 				$tpl->assign("teamspeakOnclick",TEAMSPEAK_ONCLICK);
 				$tpl->assign("rulesUrl",RULES_URL);
@@ -490,15 +510,7 @@
 				$tpl->display(getcwd()."/".CSS_STYLE."/header.tpl");
 				
 				// Include content
-				try
-				{
-					require("inc/content.inc.php");
-				}
-				catch (Exception $e)
-				{
-					error_msg($e->getMessage(),0,1,0,$e->getTraceAsString());
-				}
-
+				require("inc/content.inc.php");
 				
 				$render_time = explode(' ',microtime());
 				$rtime = $render_time[1]+$render_time[0]-$render_starttime;

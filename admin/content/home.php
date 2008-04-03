@@ -449,6 +449,21 @@
 			$s['home_visited']=true;
 		}
 		
+		//
+		// Universum generieren
+		//
+		$res = dbquery("SELECT COUNT(id) FROM cells;");
+		$arr = mysql_fetch_row($res);
+		if ($arr[0]==0)
+		{
+			echo "<h2>Universum existiert noch nicht!</h2>";
+			echo "<div style=\"color:orange;font-weight:bold;\">Das Universum wurde noch nicht erschaffen!<br/><br/>
+			<input type=\"button\" value=\"Weiter zum Urknall\" onclick=\"document.location='?page=config&sub=uni'\" /></div><br/><br/>";
+		}
+		else
+		{				
+		
+		
 		$res = dbquery("
 		SELECT 
 			user_force_pwchange 
@@ -536,15 +551,6 @@
 			echo "<div style=\"color:#f90\">Der Passwort-Schutz ist noch nicht aktiv! <a href=\"?page=config&amp;sub=htaccess\">Hier einrichten</a></div><br/>";
 		}
 
-		//
-		// Universum generieren
-		//
-		if (mysql_num_rows(dbquery("SELECT cell_id FROM ".$db_table['space_cells']." LIMIT 1;"))==0)
-		{
-			echo "<h2>Universum existiert noch nicht!</h2>";
-			echo "<div style=\"color:red;\">Das Universum wurde noch nicht <a href=\"?page=config\">generiert</a>!</div><br/><br/>";
-		}			
-		
 		//
 		// Schnellsuche
 		//
@@ -640,6 +646,6 @@
 		
 		cache::checkPerm();
 		
-			
+		}
 }
 ?>

@@ -61,7 +61,6 @@
 	function drawRegForm()
 	{
 		global $page,$db_table,$conf,$db;
-		$rsc = get_races_array();
 		
 		// Load user count
 		$ucnt=mysql_fetch_row($db->query("SELECT COUNT(user_id) FROM ".$db_table['users'].";"));
@@ -89,7 +88,6 @@
 			$userName = isset($_SESSION['REGISTER']['register_user_name']) ? $_SESSION['REGISTER']['register_user_name'] : '';
 			$userNick = isset($_SESSION['REGISTER']['register_user_nick']) ? $_SESSION['REGISTER']['register_user_nick'] : '';
 			$userEmail = isset($_SESSION['REGISTER']['register_user_email']) ? $_SESSION['REGISTER']['register_user_email'] : '';
-			$raceId = isset($_SESSION['REGISTER']['register_user_race_id']) ? $_SESSION['REGISTER']['register_user_race_id'] : 0;
 			$regKey = isset($_SESSION['REGISTER']['register_key']) ? $_SESSION['REGISTER']['register_key'] : '';
 			
 			echo 'Melde dich hier für die '.GAMEROUND_NAME.' von '.$conf['game_name']['v'].' an. Es sind noch <b>'.max($conf['enable_register']['p2']-$ucnt[0],0).'</b> von <b>'.$conf['enable_register']['p2'].'</b> Plätzen frei!<br/><br/>';
@@ -110,23 +108,6 @@
 			echo "<td class=\"tbldata\">
 				<input type=\"text\" name=\"register_user_email\" maxlength=\"50\" size=\"30\" value=\"".$userEmail."\" onkeyup=\"xajax_registerCheckEmail(this.value)\" onblur=\"xajax_registerCheckEmail(this.value)\" /></td>";
 			echo "<td class=\"tbldata\" id=\"emailStatus\">Du musst eine g&uuml;ltige E-Mail-Adresse eingeben. Auf diese wird dir ein Passwort zugeschickt mit dem du dich einloggen kannst.</td></tr>";
-			
-			echo "<tr><th class=\"tbltitle\">Rasse:</th>";
-			echo "<td class=\"tbldata\"><select name=\"register_user_race_id\" onchange=\"xajax_registerShowRace(this.options[this.selectedIndex].value)\" onkeyup=\"xajax_registerShowRace(this.options[this.selectedIndex].value)\" onclick=\"xajax_registerShowRace(this.options[this.selectedIndex].value)\">";
-			foreach ($rsc as $race)
-			{
-				echo "<option value=\"".$race['race_id']."\"";
-				if ($race['race_id']==$raceId) 
-				{
-					echo " selected=\"selected\"";
-				}
-				echo ">".$race['race_name']."</option>";
-			}
-			echo "</select></td>";
-			// xajax content will be placed in the following cell
-			echo "<td class=\"tbldata\" id=\"raceInfo\">
-				W&auml;hle eine Rasse f&uuml;r dein Volk. Jede Rasse hat St&auml;rken und Schw&auml;chen, sowie rassenspezifische Raumschiffe
-			</td></tr>";
 			
 			if ($conf['register_key']['v']!="")
 			{
@@ -188,7 +169,6 @@
 	          	          user_password,
 	          	          user_email,
 	          	          user_email_fix,
-	          	          user_race_id,
 	          	          user_registered)
 	          	      VALUES
 	          	          ('".$_POST['register_user_name']."',
@@ -196,10 +176,8 @@
 	          	          '".pw_salt($pw,$time)."',
 	          	          '".$_POST['register_user_email']."',
 	          	          '".$_POST['register_user_email']."',
-	          	          '".$_POST['register_user_race_id']."',
 	          	          '".$time."');"))
 	          	      {
-												$rsc = get_races_array();         
 												/* 	      	
 	          	          $email_text = "Hallo ".$_POST['register_user_nick']."<br><br/>Du hast dich erfolgreich beim Sci-Fi Browsergame <a href=\"http://www.etoa.ch\">Escape to Andromeda</a> registriert.<br>Hier nochmals deine Daten:<br><br>";
 	          	          $email_text.= "<b>Universum:</b> ".GAMEROUND_NAME."<br>";
@@ -215,10 +193,9 @@
 	          	          $email_text = "Hallo ".$_POST['register_user_nick']."\n\nDu hast dich erfolgreich beim Sci-Fi Browsergame Escape to Andromeda registriert.\nHier nochmals deine Daten:\n\n";
 	          	          $email_text.= "Universum: ".GAMEROUND_NAME."\n";
 	          	          $email_text.= "Name: ".$_POST['register_user_name']."\n";
-	          	          $email_text.= "E-Mail: ".$_POST['register_user_email']."\n";
+	          	          $email_text.= "E-Mail: ".$_POST['register_user_email']."\n\n";
 	          	          $email_text.= "Nick: ".$_POST['register_user_nick']."\n";
-	          	          $email_text.= "Passwort: ".$pw."\n";
-	          	          $email_text.= "Rasse: ".$rsc[$_POST['register_user_race_id']]['race_name']."\n\n";
+	          	          $email_text.= "Passwort: ".$pw."\n\n";
 	          	          $email_text.= "WICHTIG: Gib das Passwort an niemanden weiter. Gib dein Passwort auch auf keiner Seite ausser der Login- und der Einstellungs-Seite ein. Ein Game-Admin oder Entwickler wird dich auch nie nach dem Passwort fragen!\n";
 	          	          $email_text.= "Desweiteren solltest du dich mit den Regeln (".LOGINSERVER_URL."?page=regeln) bekannt machen, da ein Regelverstoss eine (zeitweilige) Sperrung deines Accounts zur Folge haben kann!\n\n";
 	          	          $email_text.= "Viel Spass beim Spielen!\nDas EtoA-Team";

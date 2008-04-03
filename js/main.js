@@ -1,4 +1,18 @@
 
+	function showLoader(elem)
+	{
+		document.getElementById(elem).innerHTML='<div style=\"text-align:center;padding:10px;\"><img src="images/loading.gif" /></div>';
+	}
+
+	function showLoaderPrepend(elem)
+	{
+		document.getElementById(elem).innerHTML='<div style=\"text-align:center;padding:10px;\"><img src="images/loading.gif" /></div>'+document.getElementById(elem).innerHTML;
+	}
+
+	function showLoaderInline(elem)
+	{
+		document.getElementById(elem).innerHTML='<span style=\"text-align:center;padding:10px;\"><img src="images/loading.gif" /></span>';
+	}
 	function toggleBox(elemId)
 	{
 		if (document.getElementById(elemId).style.display=='none')

@@ -200,6 +200,43 @@
 			}
 		}
 
+		static function getFreePlanet($sx=0,$sy=0)
+		{
+			$cfg = Config::getInstance();
+			$sql = "
+			SELECT
+				planets.planet_id
+			FROM
+			(
+      	planets
+	      INNER JOIN
+          planet_types
+      	ON planets.planet_type_id=planet_types.type_id
+      		AND planet_types.type_habitable=1
+			)
+			INNER JOIN
+				space_cells
+			ON  planets.planet_solsys_id=space_cells.cell_id
+				AND planets.planet_fields>'".$cfg->value('user_min_fields')."'
+				AND planets.planet_user_id='0'";
+			if ($sx>0)
+				$sql.=" AND cell_sx=".$sx." ";
+			if ($sy>0)
+				$sql.=" AND cell_sy=".$sy." ";
+				
+			$sql.="ORDER BY
+					RAND()
+			LIMIT 1";
+			$tres = dbquery($sql);				
+			if (mysql_num_rows($tres)==0)
+			{
+				return false;
+			}
+			$tarr = mysql_fetch_row($tres);			
+			return $tarr[0];
+		}
+
+
 		function getCurrentId()
 		{
 			return $this->currentId;
