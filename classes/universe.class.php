@@ -89,6 +89,24 @@
 						
 						if ($o>0)
 						{
+							$type[$x][$y]='s';
+						}
+						else
+						{
+							$ct = mt_rand(1,100);
+							elseif ($ct<= $perc_asteroids)
+								$type[$x][$y]='a';
+							elseif ($ct<= $perc_asteroids + $perc_nebulas)
+								$type[$x][$y]='n';
+							elseif ($ct<= $perc_asteroids + $perc_nebulas + $perc_wormholes)
+								$type[$x][$y]='w';
+							else
+								$type[$x][$y]='e';
+						}						
+						
+						/*
+						if ($o>0)
+						{
 							$ct = mt_rand(1,100);
 							if ($ct<=$perc_solsys)
 								$type[$x][$y]='s';
@@ -104,7 +122,7 @@
 						else
 						{
 							$type[$x][$y]='e';
-						}
+						}*/
 					}
 				}
 			}

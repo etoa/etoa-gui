@@ -29,7 +29,22 @@
 	//
 	// Beistzerprüfung
 	//
-	if ($sub=="planetcheck")
+	if ($sub=="map")
+	{
+		echo "<h1>Galaxiekarte</h1>";
+		echo "Anzeigen: <select onchange=\"document.getElementById('img').src='../misc/map.image.php'+this.options[this.selectedIndex].value;\">
+		<option value=\"?t=".time()."\">Normale Galaxieansicht</option>
+		<option value=\"?type=populated&t=".time()."\">Bev&ouml;lkerte Systeme</option>
+		
+		</select><br/><br/>";
+		echo "<img src=\"../misc/map.image.php\" alt=\"Galaxiekarte\" id=\"img\" usemap=\"#Galaxy\" style=\"border:none;\"/>";		
+		
+	}
+	
+	//
+	// Beistzerprüfung
+	//
+	elseif ($sub=="planetcheck")
 	{
 		echo "<h1>Planeten pr&uuml;fen</h1>";
 

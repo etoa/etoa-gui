@@ -311,6 +311,11 @@
 	$navmenu['Planeten und Galaxie']['Zellen']['sub']="cells";
 	$navmenu['Planeten und Galaxie']['Zellen']['level']=1;
 
+	$navmenu['Planeten und Galaxie']['Karte']['page']="galaxy";
+	$navmenu['Planeten und Galaxie']['Karte']['sub']="map";
+	$navmenu['Planeten und Galaxie']['Karte']['level']=1;
+
+
 	$navmenu['Planeten und Galaxie']['Planetenbesitzer pr&uuml;fen']['page']="galaxy";
 	$navmenu['Planeten und Galaxie']['Planetenbesitzer pr&uuml;fen']['sub']="planetcheck";
 	$navmenu['Planeten und Galaxie']['Planetenbesitzer pr&uuml;fen']['level']=1;
