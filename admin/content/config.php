@@ -223,7 +223,8 @@
 			if($_POST['submit_create_universe2'])
 			{
 				Universe::create();
-				echo "Universum erstellt!
+				echo "<br/><br/>
+				<img src=\"../misc/map.image.php\" alt=\"Galaxiekarte\" id=\"img\" usemap=\"#Galaxy\" style=\"border:none;\"/><br/><br/>
 				<input type=\"button\" value=\"Weiter\" onclick=\"document.location='?page=config&sub=uni'\" />";
 			}
 			else
@@ -263,7 +264,7 @@
 	        if($_POST['submit_reset2'])
 	        {
 	            Universe::reset();
-							echo "<input type=\"button\" value=\"Weiter\" onclick=\"document.location='?page=config&sub=uni'\" />";
+							echo "<br/><input type=\"button\" value=\"Weiter\" onclick=\"document.location='?page=config&sub=uni'\" />";
 	        }
 	        else
 	        {
