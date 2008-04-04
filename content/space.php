@@ -42,18 +42,18 @@
 	// Sonst Standardkoordinaten (Zentrum der Galaxie)
 	else
 	{
-		$sx_def = $conf['map_init_sector']['p1'];
-		$sy_def = $conf['map_init_sector']['p2'];
+		$sx_def = $cfg->param1('map_init_sector');
+		$sy_def = $cfg->param2('map_init_sector');
 	}
 
 	$sector_pic = "".IMAGE_PATH."/galaxy";
 
-	$sx_num=$conf['num_of_sectors']['p1'];
-	$sy_num=$conf['num_of_sectors']['p2'];
-	$cx_num=$conf['num_of_cells']['p1'];
-	$cy_num=$conf['num_of_cells']['p2'];
-	$cell_width=$conf['space_cell_size']['p1'];
-	$cell_height=$conf['space_cell_size']['p2'];
+	$sx_num=$cfg->param1('num_of_sectors');
+	$sy_num=$cfg->param2('num_of_sectors');
+	$cx_num=$cfg->param1('num_of_cells');
+	$cy_num=$cfg->param2('num_of_cells');
+	$cell_width=$cfg->param1('space_cell_size');
+	$cell_height=$cfg->param2('space_cell_size');
 
 	$table_width = $cx_num * $cell_width;
 	$table_height = $cx_num * $cell_height;
@@ -101,15 +101,22 @@
 	// Lade Sonnensysteme des Users
   $res = dbquery("
   SELECT 
-  	planet_solsys_id
+  	cells.id as id
   FROM 
-  	".$db_table['planets']."
-  WHERE
-  	planet_user_id='".$s['user']['id']."';");
+  	planets
+  INNER JOIN
+  (
+  	entities
+  	INNER JOIN
+  		cells 
+  		ON cells.id=entities.cell_id
+  )
+ 	ON entities.id=planets.id
+  	AND planet_user_id='".$cu->id()."';");
 
-  while ($arr = mysql_fetch_array($res))
+  while ($arr = mysql_fetch_row($res))
   {
-      $user_solsys_id[]=$arr['planet_solsys_id'];
+  	$user_solsys_id[]=$arr[0];
   }
 
 	echo "<form action=\"?page=$page\" method=\"post\">";
@@ -184,22 +191,25 @@
 		echo "<colgroup width=\"$cell_width\" span=\"$cx_num\" align=\"center\" valign=\"middle\"></colgroup>\n";
 		$res = dbquery("
 		SELECT 
-			* 
+			cx,
+			cy,
+			cells.id as cid,
+			entities.id as eid,
+			type
 		FROM 
-			space_cells 
-		WHERE 
-			cell_sx='$sx' 
-			AND cell_sy='$sy';");
+			cells 
+		INNER JOIN
+			entities
+			ON entities.cell_id=cells.id
+			AND entities.pos=0
+			AND sx='$sx' 
+			AND sy='$sy';");
 		$cells = array();
-		while ($arr = mysql_fetch_array($res))
+		while ($arr = mysql_fetch_assoc($res))
 		{
-			$cells[$arr['cell_cx']][$arr['cell_cy']]['id']=$arr['cell_id'];
-			$cells[$arr['cell_cx']][$arr['cell_cy']]['solsys_num_planets']=$arr['cell_solsys_num_planets'];
-			$cells[$arr['cell_cx']][$arr['cell_cy']]['solsys_sol_type']=$arr['cell_solsys_solsys_sol_type'];
-			$cells[$arr['cell_cx']][$arr['cell_cy']]['solsys_name']=$arr['cell_solsys_name'];
-			$cells[$arr['cell_cx']][$arr['cell_cy']]['asteroid']=$arr['cell_asteroid'];
-			$cells[$arr['cell_cx']][$arr['cell_cy']]['nebula']=$arr['cell_nebula'];
-			$cells[$arr['cell_cx']][$arr['cell_cy']]['wormhole_id']=$arr['cell_wormhole_id'];
+			$cells[$arr['cx']][$arr['cy']]['cid']=$arr['cid'];
+			$cells[$arr['cx']][$arr['cy']]['eid']=$arr['eid'];
+			$cells[$arr['cx']][$arr['cy']]['type']=$arr['type'];
 		}
 		for ($y=0;$y<$cx_num;$y++)
 		{
@@ -212,14 +222,10 @@
 			$counter_bottom="".IMAGE_PATH."/galaxy/GalaxyFrameCounterBottom";
 			$counter_bottom_high="".IMAGE_PATH."/galaxy/GalaxyFrameCounterBottomHighlight";
 
-			//MvI: Grafik-Counter eingepflegt.
 			echo "<td class=\"coordstbl\"> <img name=\"counter_left_$ycoords\" src=\"$counter_left$ycoords.gif\" style=\"height:40px;\"/> </td>";
-			//echo "<tr><td class=\"coordstbl\" id=\"ycoords_$ycoords\">$ycoords</td>";
-
 
 			for ($x=0;$x<$cy_num;$x++)
 			{
-
 				$xcoords = $x+1;
 				if ($c->solsys_id!="" && $cells[$xcoords][$ycoords]['id']==$c->solsys_id)
 				{
@@ -239,27 +245,52 @@
 				//
 
 				// Sonnensystem
-				if ($cells[$xcoords][$ycoords]['solsys_num_planets']!=0)
+				if ($cells[$xcoords][$ycoords]['type']=='s')
 				{
-					echo "<a href=\"?page=solsys&amp;id=".$cells[$xcoords][$ycoords]['id']."\" ".tm("Sonnensystem ".$cells[$xcoords][$ycoords]['solsys_name']."","<b>Position:</b> $sx/$sy : $xcoords/$ycoords<br/><b>Planeten:</b> ".$cells[$xcoords][$ycoords]['solsys_num_planets']."")."><img src=\"".IMAGE_PATH."/galaxy/sol".$cells[$xcoords][$ycoords]['solsys_sol_type'].".gif\"  border=\"0\" width=\"$img_width\" height=\"$img_height\" /></a>";
+					$wres=dbquery("
+					SELECT 
+						type_id,
+						name
+					FROM 
+						stars
+					WHERE 
+						id='".$cells[$xcoords][$ycoords]['eid']."';");
+					$warr=mysql_fetch_row($wres);
+					$pres=dbquery("
+					SELECT 
+						COUNT(planets.id)
+					FROM 
+						planets
+					INNER JOIN
+					 entities
+					ON planets.id=entities.id
+					AND 
+						cell_id='".$cells[$xcoords][$ycoords]['cid']."';");
+					$parr=mysql_fetch_row($pres);
+					$tt = new Tooltip();
+					$tt->addTitle("Sonnensystem");
+					$tt->addText("Position: $sx/$sy : $xcoords/$ycoords");
+					$tt->addText("Planeten: ".$parr[0]);
+					echo "<a href=\"?page=solsys&amp;id=".$cells[$xcoords][$ycoords]['cid']."\" ".$tt.">
+					<img src=\"".IMAGE_PATH."/galaxy/sol".$warr[0].".gif\" style=\"border:none;width:".$img_width."px;height:".$img_height."px\" /></a>";
 				}
 				// Nebel
-				elseif ($cells[$xcoords][$ycoords]['nebula']!=0)
+				elseif ($cells[$xcoords][$ycoords]['type']=='n')
 				{
 					$test = pseudo_randomize(8,$sx_tl,$sy_tl,$xcoords,$ycoords);
 					//MvI: Randomize Nebulas eingepflegt.
-					//$es_c = mt_rand(1,8);
 					echo "<a href=\"?page=haven&amp;planet_to=0&amp;cell_to_id=".$cells[$xcoords][$ycoords]['id']."\"><img src=\"".IMAGE_PATH."/galaxy/nebula".$test.".gif\" ".tm("Intergalaktischer Nebel","<b>Position:</b> $sx/$sy : $xcoords/$ycoords")." border=\"0\" width=\"$img_width\" height=\"$img_height\" /></a>";
 				}
 				// Asteroiden
-				elseif ($cells[$xcoords][$ycoords]['asteroid']!=0)
+				elseif ($cells[$xcoords][$ycoords]['type']=='a')
 				{
 					//MvI: Randomizer eingebaut
 					$test = pseudo_randomize(4,$sx_tl,$sy_tl,$xcoords,$ycoords);
 					echo "<a href=\"?page=haven&amp;planet_to=0&amp;cell_to_id=".$cells[$xcoords][$ycoords]['id']."\"><img src=\"".IMAGE_PATH."/galaxy/asteroid_field".$test.".gif\" ".tm("Asteroidenfeld","<b>Position:</b> $sx/$sy : $xcoords/$ycoords")." border=\"0\" width=\"$img_width\" height=\"$img_height\" /></a>";
 				}
-				elseif ($cells[$xcoords][$ycoords]['wormhole_id']!=0)
+				elseif ($cells[$xcoords][$ycoords]['type']=='w')
 				{
+					/*
 					$wres=dbquery("
 					SELECT 
                         cell_sx,
@@ -272,9 +303,9 @@
 						cell_id='".$cells[$xcoords][$ycoords]['wormhole_id']."';");
 					if (mysql_num_rows($wres)>0)
 					{
-						$warr=mysql_fetch_array($wres);
+						$warr=mysql_fetch_assoc($wres);
 						echo "<a href=\"?page=haven&amp;planet_to=0&amp;cell_to_id=".$cells[$xcoords][$ycoords]['id']."\" ".tm("Wurmloch","<b>Position:</b> $sx/$sy : $xcoords/$ycoords<br/><b>Ziel:</b> ".$warr['cell_sx']."/".$warr['cell_sy']." : ".$warr['cell_cx']."/".$warr['cell_cy']).">";
-					}
+					}*/
 					echo "<img src=\"".IMAGE_PATH."/galaxy/wormhole.gif\" border=\"0\" width=\"$img_width\" height=\"$img_height\" /></a>";
 				}
 				else

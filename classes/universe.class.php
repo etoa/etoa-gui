@@ -63,7 +63,73 @@
 			$wormhole_count = 0;
 
 			echo "Erstelle Universum mit ".$sx_num*$sy_num." Sektoren à ".$cx_num*$cy_num." Zellen, d.h. ".$sx_num*$sy_num*$cx_num*$cy_num." Zellen total<br>";
-	
+
+			$type=array();
+
+			//
+			// Set cell types
+			//
+			
+			// by image
+			$imgpath = "images/galaxylayout_".($sx_num*$sy_num)."_".($cx_num*$cy_num).".png";
+			if (is_file($imgpath))	
+			{
+				$im = imagecreatefrompng($imgpath);
+				$w = imagesx($im);
+				$h = imagesy($im);
+
+				echo "Bildvorlage gefunden, verwende diese: <img src=\"".$imgpath."\" /><br/>";
+
+				for($x=1;$x<=$w;$x++)
+				{
+					for($y=1;$y<=$h;$y++)
+					{
+						$o = imagecolorat($im,$x,$y);
+						
+						if ($o>0)
+						{
+							$ct = mt_rand(1,100);
+							if ($ct<=$perc_solsys)
+								$type[$x][$y]='s';
+							elseif ($ct<=$perc_solsys + $perc_asteroids)
+								$type[$x][$y]='a';
+							elseif ($ct<=$perc_solsys + $perc_asteroids + $perc_nebulas)
+								$type[$x][$y]='n';
+							elseif ($ct<=$perc_solsys + $perc_asteroids + $perc_nebulas + $perc_wormholes)
+								$type[$x][$y]='w';
+							else
+								$type[$x][$y]='s';
+						}
+						else
+						{
+							$type[$x][$y]='e';
+						}
+					}
+				}
+			}
+			// by randomizer with config values
+			else
+			{
+				for($x=1;$x<=$w;$x++)
+				{
+					for($y=1;$y<=$h;$y++)
+					{
+						$ct = mt_rand(1,100);
+						if ($ct<=$perc_solsys)
+							$type[$x][$y]='s';
+						elseif ($ct<=$perc_solsys + $perc_asteroids)
+							$type[$x][$y]='a';
+						elseif ($ct<=$perc_solsys + $perc_asteroids + $perc_nebulas)
+							$type[$x][$y]='n';
+						elseif ($ct<=$perc_solsys + $perc_asteroids + $perc_nebulas + $perc_wormholes)
+							$type[$x][$y]='w';
+						else
+							$type[$x][$y]='e';
+					}
+				}				
+			}
+		
+			// Save cell info
 			$sql = "";	
 			for ($sx=1;$sx<=$sx_num;$sx++)
 			{
@@ -111,18 +177,21 @@
 			echo "Zellen gespeichert, fülle Objekte rein...<br/>";
 			$res = dbquery("
 			SELECT
-				id
+				id,
+				sx,
+				sy,
+				cx,
+				cy
 			FROM
 				cells;");
-			while ($arr=mysql_Fetch_row($res))
+			while ($arr=mysql_fetch_row($res))
 			{
 				$cell_id = $arr[0];					
+				$x = (($arr[1]-1)*10)+$arr[3];
+				$y = (($arr[2]-1)*10)+$arr[4];
 							
-				// Assign entities
-				$ct = mt_rand(1,100);
-			
 				// Star system
-				if ($ct<=$perc_solsys)
+				if ($type[$x][$y]=='s')
 				{
 					// The Star
 					$st = $sol_types[array_rand($sol_types)];
@@ -215,7 +284,7 @@
 				}
 				
 				// Asteroid Fields
-				elseif ($ct<=$perc_solsys + $perc_asteroids)
+				elseif ($type[$x][$y]=='a')
 				{
 					$sql = "
 						INSERT INTO
@@ -255,7 +324,7 @@
 				}
 				
 				// Nebulas
-				elseif ($ct<=$perc_solsys + $perc_asteroids + $perc_nebulas)
+				elseif ($type[$x][$y]=='n')
 				{
 					$sql = "
 						INSERT INTO
@@ -295,7 +364,7 @@
 				}
 				
 				// Wormholes
-				elseif ($ct<=$perc_solsys + $perc_asteroids + $perc_nebulas + $perc_wormholes)
+				elseif ($type[$x][$y]=='w')
 				{
 					$sql = "
 						INSERT INTO
@@ -522,7 +591,7 @@
 			$tbl[]="messages";
 			$tbl[]="message_ignore";
 			$tbl[]="notepad";
-			$tbl[]="target_bookmarks";
+			$tbl[]="bookmarks";
 
 			$tbl[]="logs";
 			$tbl[]="login_failures";

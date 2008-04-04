@@ -463,9 +463,7 @@
    		p.planet_user_id=".$cu->id()."
     ORDER BY
       p.planet_user_main DESC,
-      p.planet_name,
-      p.planet_solsys_id ASC,
-      p.planet_solsys_pos ASC;";
+      p.planet_name;";
 		$res_planet = dbquery($psql);
 	
 		
