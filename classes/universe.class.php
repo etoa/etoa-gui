@@ -94,7 +94,7 @@
 						else
 						{
 							$ct = mt_rand(1,100);
-							elseif ($ct<= $perc_asteroids)
+							if ($ct<= $perc_asteroids)
 								$type[$x][$y]='a';
 							elseif ($ct<= $perc_asteroids + $perc_nebulas)
 								$type[$x][$y]='n';
