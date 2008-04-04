@@ -44,17 +44,15 @@
 	$fres = dbquery("
 	SELECT
 		fleet_id,
-		fleet_planet_from,
-		fleet_planet_to,
-		fleet_cell_from,
-		fleet_cell_to,
+		fleet_entity_from,
+		fleet_entity_to,
 		fleet_launchtime,
 		fleet_landtime,
 		fleet_action
 	FROM
-		".$db_table['fleet']."
+		fleet
 	WHERE
-		fleet_user_id='".$s['user']['id']."'
+		fleet_user_id='".$cu->id()."'
 	ORDER BY
 		fleet_landtime DESC;");
 	if (mysql_num_rows($fres)>0)
@@ -134,23 +132,23 @@
 
 	//Liest alle Flotten aus die auf dem weg zu einem eigenen Planeten gehen, ausser:
 	//Trümmer sammeln (wo), Trümmerfeld erstellen (zo)
-	$spy_tech_level = get_spy_tech($s['user']['id']);
+	$spy_tech_level = get_spy_tech($cu->id());
 	$fres = dbquery("
 	SELECT
       f.fleet_id,
       f.fleet_user_id,
-      f.fleet_planet_from,
-      f.fleet_planet_to,
+			f.fleet_entity_from,
+			f.fleet_entity_to,
       f.fleet_launchtime,
       f.fleet_landtime,
       f.fleet_action
 	FROM
-      ".$db_table['fleet']." AS f
-      INNER JOIN
-      ".$db_table['planets']." AS p
-			ON f.fleet_planet_to=p.planet_id
-      AND f.fleet_user_id!='".$s['user']['id']."'
-      AND p.planet_user_id='".$s['user']['id']."'
+      fleet AS f
+  INNER JOIN
+      planets AS p
+			ON f.fleet_entity_to=p.id
+      AND f.fleet_user_id!='".$cu->id()."'
+      AND p.planet_user_id='".$cu->id()."'
       AND f.fleet_action!='wo'
       AND f.fleet_action!='zo'
 	ORDER BY

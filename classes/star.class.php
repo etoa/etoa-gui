@@ -1,14 +1,14 @@
 <?PHP
 	
 	/**
-	* Class for unknown space entities
+	* Class for stars
 	*/
-	class UnknownEntity
+	class Star
 	{
 		/**
 		* The constructor
 		*/
-		function UnknownEntity($id=0)
+		function Star($id=0)
 		{
 			
 		}
@@ -21,12 +21,12 @@
 		/**
 		* Returns type name
 		*/
-		function type() { return "Unbekannter Raum"; }	      
+		function type() { return "Stern"; }	      
 		
 		/**
 		* To-String function
 		*/
-		function __toString() { return  ""; }
+		function __toString() { return ""; }
 		
 	}
 ?>

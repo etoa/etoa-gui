@@ -2,6 +2,75 @@
 
 	class Cell
 	{
+		private $id;
+		private $isValid;
+		private $entities;
+		
+		public function Cell($id=0)
+		{
+			$this->isValid=false;
+			$this->entities=null;
+			
+			$res=dbquery("
+			SELECT 
+	    	cells.sx,
+	    	cells.sy,
+	    	cells.cx,
+	    	cells.cy
+			FROM 
+	    	cells
+			WHERE 
+			 	id='".intval($id)."';");
+			if (mysql_num_rows($res))	
+			{
+				$arr = mysql_fetch_row($res);
+				$this->id=$id;
+				$this->sx=$arr[0];
+				$this->sy=$arr[1];
+				$this->cx=$arr[2];
+				$this->cy=$arr[3];
+				$this->isValid=true;
+			}
+		}
+		
+		public function id()
+		{
+			return $this->id;
+		}	
+		
+		public function isValid()
+		{
+			return $this->isValid;
+		}
+		
+		function getEntities()
+		{
+			if ($this->entities==null)
+			{
+				$this->entities=array();
+				$res = dbquery("
+				SELECT
+					id,
+					type
+				FROM
+					entities
+				WHERE
+					cell_id=".$this->id."
+				ORDER BY
+					pos
+				");
+				while ($arr=mysql_fetch_row($res))
+				{
+					$this->entities[] = Entity::createFactory($arr[1],$arr[0]);
+				}
+			}
+			return $this->entities;
+		}
+		
+		
+		
+		
+		/*
 		private $x;
 		private $y;
 		private $sectorX;
@@ -20,7 +89,7 @@
 		* 
 		*
 		* @param mixed Cell-Coordinades
-		*/
+		*
 		function Cell($data)
 		{			
 			$this->valid = false;
@@ -174,7 +243,7 @@
 		
 		/**
 		* Sets the absolute coordinates
-		*/
+		*
 		private function setAbs()
 		{
 			$this->absX = (($this->sectorX-1) * CELL_NUM_X) + $this->x;
@@ -183,7 +252,7 @@
 		
 		/**
 		* toString method which returns the formated cell coordinates
-		*/
+		*
 		public function __toString()
 		{
 			return $this->sectorX."/".$this->sectorY." : ".$this->x."/".$this->y;
@@ -201,7 +270,7 @@
 		
 		/**
 		* Returns a formated string of absolute cell coordinates
-		*/
+		*
 		function absString()
 		{
 			return $this->absX."/".$this->absY;
@@ -292,7 +361,7 @@
 				return "<span style=\"color:".$clr.";\">".$msg."</span>";
 			}
 			return $msg;
-		}
+		}*/
 	}
 
 ?>

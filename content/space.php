@@ -60,15 +60,15 @@
 	$img_width = $cell_width;
 	$img_height = $cell_height;
 
-	if (intval($_POST['sx'])>0)
+	if (isset($_POST['sx']) && intval($_POST['sx'])>0)
 		$sx	= $_POST['sx'];
-	elseif (intval($_GET['sx'])>0)
+	elseif (isset($_GET['sx']) && intval($_GET['sx'])>0)
 		$sx	= $_GET['sx'];
 	else
 		$sx = $sx_def;
-	if (intval($_POST['sy'])>0)
+	if (isset($_POST['sy']) && intval($_POST['sy'])>0)
 		$sy	= $_POST['sy'];
-	elseif (intval($_GET['sy'])>0)
+	elseif (isset($_GET['sy']) && intval($_GET['sy'])>0)
 		$sy	= $_GET['sy'];
 	else
 		$sy = $sy_def;
@@ -116,7 +116,7 @@
 
   while ($arr = mysql_fetch_row($res))
   {
-  	$user_solsys_id[]=$arr[0];
+  	$user_solsys_ids[]=$arr[0];
   }
 
 	echo "<form action=\"?page=$page\" method=\"post\">";
@@ -227,11 +227,12 @@
 			for ($x=0;$x<$cy_num;$x++)
 			{
 				$xcoords = $x+1;
-				if ($c->solsys_id!="" && $cells[$xcoords][$ycoords]['id']==$c->solsys_id)
+				
+				if ($cp->id()==$cells[$xcoords][$ycoords]['eid'])
 				{
 					echo "<td class=\"spaceCellSelected\" onmouseover=\"counter_left_$ycoords.src='$counter_left_high$ycoords.gif';counter_bottom_$xcoords.src='$counter_bottom_high$xcoords.gif';\" onmouseout=\"counter_left_$ycoords.src='$counter_left$ycoords.gif';counter_bottom_$xcoords.src='$counter_bottom$xcoords.gif';\">";
 				}
-				elseif (in_array($cells[$xcoords][$ycoords]['id'],$user_solsys_id) && $cells[$xcoords][$ycoords]['id']!=$c->solsys_id)
+				elseif (in_array($cells[$xcoords][$ycoords]['cid'],$user_solsys_ids) && $cells[$xcoords][$ycoords]['eid']!=$cp->id())
 				{
 					echo "<td class=\"spaceCellUser\" onmouseover=\"counter_left_$ycoords.src='$counter_left_high$ycoords.gif';counter_bottom_$xcoords.src='$counter_bottom_high$xcoords.gif';\" onmouseout=\"counter_left_$ycoords.src='$counter_left$ycoords.gif';counter_bottom_$xcoords.src='$counter_bottom$xcoords.gif';\">";
 				}
@@ -279,14 +280,14 @@
 				{
 					$test = pseudo_randomize(8,$sx_tl,$sy_tl,$xcoords,$ycoords);
 					//MvI: Randomize Nebulas eingepflegt.
-					echo "<a href=\"?page=haven&amp;planet_to=0&amp;cell_to_id=".$cells[$xcoords][$ycoords]['id']."\"><img src=\"".IMAGE_PATH."/galaxy/nebula".$test.".gif\" ".tm("Intergalaktischer Nebel","<b>Position:</b> $sx/$sy : $xcoords/$ycoords")." border=\"0\" width=\"$img_width\" height=\"$img_height\" /></a>";
+					echo "<a href=\"?page=haven&amp;planet_to=0&amp;cell_to_id=".$cells[$xcoords][$ycoords]['cid']."\"><img src=\"".IMAGE_PATH."/galaxy/nebula".$test.".gif\" ".tm("Intergalaktischer Nebel","<b>Position:</b> $sx/$sy : $xcoords/$ycoords")." border=\"0\" width=\"$img_width\" height=\"$img_height\" /></a>";
 				}
 				// Asteroiden
 				elseif ($cells[$xcoords][$ycoords]['type']=='a')
 				{
 					//MvI: Randomizer eingebaut
 					$test = pseudo_randomize(4,$sx_tl,$sy_tl,$xcoords,$ycoords);
-					echo "<a href=\"?page=haven&amp;planet_to=0&amp;cell_to_id=".$cells[$xcoords][$ycoords]['id']."\"><img src=\"".IMAGE_PATH."/galaxy/asteroid_field".$test.".gif\" ".tm("Asteroidenfeld","<b>Position:</b> $sx/$sy : $xcoords/$ycoords")." border=\"0\" width=\"$img_width\" height=\"$img_height\" /></a>";
+					echo "<a href=\"?page=haven&amp;planet_to=0&amp;cell_to_id=".$cells[$xcoords][$ycoords]['cid']."\"><img src=\"".IMAGE_PATH."/galaxy/asteroid_field".$test.".gif\" ".tm("Asteroidenfeld","<b>Position:</b> $sx/$sy : $xcoords/$ycoords")." border=\"0\" width=\"$img_width\" height=\"$img_height\" /></a>";
 				}
 				elseif ($cells[$xcoords][$ycoords]['type']=='w')
 				{

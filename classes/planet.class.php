@@ -57,6 +57,7 @@
 			if ($arr)
 			{				
 				$this->id=$arr['id'];
+				$this->cell_id=$arr['cell_id'];
 				$this->user_id=$arr['planet_user_id'];
 				$this->name= $arr['planet_name']!="" ? $arr['planet_name'] : 'Unbenannt';
 				$this->desc=$arr['planet_desc'];
@@ -153,6 +154,11 @@
 					$this->isMain=false;
 
 			}
+		}
+
+		function id()
+		{
+			return $this->id;
 		}
 
 		function type()
@@ -542,7 +548,7 @@
           OR buildings.building_people_place>0);");
       if (mysql_num_rows($bres)>0)
       {
-          while ($barr=mysql_fetch_array($bres))
+          while ($barr=mysql_fetch_assoc($bres))
           {
               $level = $barr['buildlist_current_level']-1;
               $this->store->metal+=round($barr['building_store_metal'] * pow($barr['building_store_factor'],$level));
@@ -583,7 +589,7 @@
                 AND buildlist.buildlist_planet_id=".$this->id.";");
 			if (mysql_num_rows($bres)>0)
 			{
-				$barr=mysql_fetch_array($bres);
+				$barr=mysql_fetch_assoc($bres);
 				$this->fields_used+=$barr['f'];
 				$this->fields_extra+=$barr['e'];
 			}
@@ -598,7 +604,7 @@
 				AND deflist.deflist_planet_id=".$this->id.";");
 			if (mysql_num_rows($bres)>0)
 			{
-				$barr=mysql_fetch_array($bres);
+				$barr=mysql_fetch_assoc($bres);
 				$this->fields_used+=$barr['f'];
 			}
       //echo "Fields calculated in ".timerStop($tmr)."\n";
@@ -663,7 +669,7 @@
           $cnt = array();
           $pwrcnt = 0;
           // Errechnen der Produktion pro GebÃ¤ude
-          while ($barr = mysql_fetch_array($bres))
+          while ($barr = mysql_fetch_assoc($bres))
           {
               $cnt['metal'] += ceil($barr['building_prod_metal'] * $barr['buildlist_prod_percent'] * pow($barr['building_production_factor'],$barr['buildlist_current_level']-1));
               $cnt['crystal'] += ceil($barr['building_prod_crystal'] * $barr['buildlist_prod_percent'] * pow($barr['building_production_factor'],$barr['buildlist_current_level']-1));
@@ -691,7 +697,7 @@
 			if (mysql_num_rows($sres)>0)
 			{
 				$dtemp = $this->solarPowerBonus();
-				while ($sarr=mysql_fetch_array($sres))
+				while ($sarr=mysql_fetch_assoc($sres))
 				{					
 					$cnt['power'] += ($sarr['ship_prod_power']+$dtemp) *$sarr['shiplist_count'];
 				}
@@ -828,7 +834,7 @@
       	if (mysql_num_rows($res)>0)
       	{
       		$empty=false;
-      		while ($arr=mysql_fetch_array($res))
+      		while ($arr=mysql_fetch_assoc($res))
       		{
       			// Alle Schiffe als gebaut speichern da Endzeit bereits in der Vergangenheit
       			if ($arr['queue_endtime']<$time)
@@ -899,7 +905,7 @@
     	if (mysql_num_rows($res)>0)
     	{
     		$empty=false;
-    		while ($arr=mysql_fetch_array($res))
+    		while ($arr=mysql_fetch_assoc($res))
     		{
     			// Alle Verteidigungsanlagen als gebaut speichern da Endzeit bereits in der Vergangenheit
     			if ($arr['queue_endtime']<$time)

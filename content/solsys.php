@@ -39,6 +39,7 @@
 
 	// BEGIN SKRIPT //
 
+	/** todo: remove or fix
 	if (!isset($_GET['id']) && isset($_GET['planet_id']) && $_GET['planet_id']>0)
 	{
 		$res = dbquery("
@@ -55,10 +56,18 @@
 			$_GET['id']=$arr[0];
 		}
 	}
+	*/
 
 
-	if ($_GET['id']>0)
+	if (isset($_GET['id']) && $_GET['id']>0)
 	{
+		$cellId = $_GET['id'];
+	}
+	else
+	{
+		$cellId = $cp->cell_id;
+	}
+	
 		if (isset($_GET['mode']))
 		{
 			$mode=$_GET['mode'];
@@ -80,7 +89,7 @@
       	SET 
       		cell_solsys_name='".$_POST['cell_solsys_name']."'
        	WHERE 
-       		cell_id='".intval($_GET['id'])."'
+       		cell_id='".intval($cellId)."'
        	;");
       }
       else
@@ -88,29 +97,17 @@
       	echo "Unerlaubtes Zeichen (".$check_name.") im Namen!<br/>";
       }
 		}
-
-		// Systemnamen anzeigen
-		$reso=dbquery("
-		SELECT 
-            space_cells.cell_sx,
-            space_cells.cell_sy,
-            space_cells.cell_cx,
-            space_cells.cell_cy,
-            space_cells.cell_solsys_solsys_sol_type,
-            space_cells.cell_solsys_name,
-            sol_types.type_name 
-		FROM 
-            ".$db_table['space_cells']."
-    INNER JOIN
-            ".$db_table['sol_types']." 
-            ON 	space_cells.cell_solsys_solsys_sol_type=sol_types.type_id
-		WHERE 
-		 				space_cells.cell_id='".intval($_GET['id'])."';");
-		if (mysql_num_rows($reso))
+		
+		$cell = new Cell($cellId);
+		if ($cell->isValid())
 		{
-			$arro=mysql_fetch_array($reso);
+			$entities = $cell->getEntities();
+			
+			
+			
 			echo "<h1>Sonnensystem ".$arro['cell_sx']."/".$arro['cell_sy']." : ".$arro['cell_cx']."/".$arro['cell_cy']."</h1>";
 			
+			/*
 			if ($mode=="image")
 			{
 				$_SESSION['sol']=array();
@@ -121,7 +118,9 @@
 					echo "<h2>".$arro['type_name']."</h2";			
 			}
 			else
-			{
+			{*/
+			
+			/*
 				echo "<table style=\"width:450px;margin:0px auto;border-collapse:collapse;\">";
 				echo "<tr><td class=\"tbldata\" style=\"width:39px;height:39px;color:#000;background:#000\">";
 				echo "<img src=\"".IMAGE_PATH."/galaxy/sol".$arro['cell_solsys_solsys_sol_type'].".gif\" style=\"border:none;width:40px;height:40px;\" alt=\"Stern\" /></td>";
@@ -132,7 +131,7 @@
 					echo $arro['type_name'];
 				echo "</td></tr>";
 				echo "</table><br/>";
-			}
+			
 
 			$sx=$arro['cell_sx'];
 			$sy=$arro['cell_sy'];
@@ -149,7 +148,7 @@
       		".$db_table['users']." 
       		ON planets.planet_user_id=users.user_id 
       	WHERE            
-        	planets.planet_solsys_id='".intval($_GET['id'])."' 
+        	planets.planet_solsys_id='".intval($cellId)."' 
       	ORDER BY 
       		planets.planet_user_main DESC,
       		users.user_points DESC 
@@ -159,70 +158,31 @@
       		$snarr = mysql_fetch_array($snres);
       		if ($s['user']['id']==$snarr['user_id'])
       		{
-      		    echo "<form action=\"?page=$page&amp;id=".intval($_GET['id'])."\" method=\"post\">";
+      		    echo "<form action=\"?page=$page&amp;id=".intval($cellId)."\" method=\"post\">";
       		    echo "Du darfst diesen Stern benennen: <input type=\"text\" name=\"cell_solsys_name\" value=\"\" maxlength=\"30\"/> <input type=\"submit\" name=\"submit\" value=\"Speichern\" /><br/><br/></form>";
       		}
       	}
       }
-
+			*/
 
 			//
 			// Planeten
 			//
 			
-			if ($mode!="image")
+			infobox_start("Planeten",1);
+			echo "<tr>
+				<th colspan=\"2\" class=\"tbltitle\">Pos</th>
+				<th class=\"tbltitle\">Typ</th>
+				<th class=\"tbltitle\">Name</th>
+				<th class=\"tbltitle\">Besitzer</th>
+				<th class=\"tbltitle\">Allianz</th>
+				<th class=\"tbltitle\">&nbsp;</th>
+			</tr>";
+
+
+			foreach ($entities as $ent)
 			{
-				infobox_start("Planeten",1);
-				echo "<tr><th colspan=\"2\" class=\"tbltitle\">Pos</th><th class=\"tbltitle\">Typ</th><th class=\"tbltitle\">Name</th><th class=\"tbltitle\">Besitzer</th><th class=\"tbltitle\">Allianz</th><th class=\"tbltitle\">&nbsp;</th></tr>";
-			}
-			$res=dbquery("
-			SELECT 
-				planets.planet_id,
-				planets.planet_name,
-				planets.planet_desc,
-				planets.planet_image,
-				planets.planet_fields,
-				planets.planet_user_id,
-				planets.planet_wf_metal,
-				planets.planet_wf_crystal,
-				planets.planet_wf_plastic,
-				planets.planet_solsys_pos,
-				planets.planet_semi_major_axis,
-				planets.planet_ecccentricity,
-				planets.planet_mass,
-				planet_types.*,
-				users.user_id,
-				users.user_points,
-        users.user_acttime,
-        users.user_hmode_from,
-        users.user_nick,
-        users.user_alliance_id,
-        users.user_alliance_application,
-        users.user_blocked_to,
-        users.user_blocked_from,
-        alliances.alliance_tag				
-			FROM 
-				".$db_table['planets']."
-			INNER JOIN
-				".$db_table['planet_types']." 
-				ON planets.planet_type_id=planet_types.type_id     
-			LEFT JOIN
-			(
-				".$db_table['users']."
-				LEFT JOIN
-					 ".$db_table['alliances']." 
-					ON user_alliance_id=alliance_id
-					AND user_alliance_application=''
-			)
-			ON  user_id=planet_user_id
-			WHERE 			 
-				planets.planet_solsys_id='".intval($_GET['id'])."' 
-			ORDER BY 
-				planets.planet_solsys_pos ASC");  
-				
-			$_SESSION['planets']=array();
-			while ($arr=mysql_fetch_array($res))
-			{
+				/*
 				if ($mode=="image")
 				{
 					$_SESSION['planets'][$arr['planet_solsys_pos']]['name']=$arr['planet_name'];
@@ -232,8 +192,10 @@
 					$_SESSION['planets'][$arr['planet_solsys_pos']]['image']=IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$arr['planet_image']."_small.gif";
 					
 				}
-				else
-				{
+				else 
+				{*/
+				
+				/*
 					if ($arr['user_id']>0)
 					{
 						// Bündnisse laden
@@ -343,7 +305,8 @@
 					else
 					{
 						$addstyle="";
-					}
+					}*/
+					$addstyle="";
 					$class="tbldata";
       	
 					echo "<tr>";
@@ -439,7 +402,7 @@
 					}
 					else
 						echo "<td class=\"$class\" colspan=\"2\" align=\"center\"><i>Unbewohnter Planet</i></td>";
-					echo "<td class=\"$class\" style=\"width:100px;\"><a href=\"?page=planet&amp;planet_info_id=".$arr['planet_id']."&amp;solsys_id=".intval($_GET['id'])."\" title=\"Planeteninfo\">Info</a>";
+					echo "<td class=\"$class\" style=\"width:100px;\"><a href=\"?page=planet&amp;planet_info_id=".$arr['planet_id']."&amp;solsys_id=".intval($cellId)."\" title=\"Planeteninfo\">Info</a>";
 					if ($s['user']['id']!=$arr['planet_user_id'] && $arr['planet_user_id']>0)
 						echo "&nbsp;<a href=\"?page=messages&amp;mode=new&amp;message_user_to=".$arr['planet_user_id']."\" title=\"Nachricht senden\">Mail</a>";
 					
@@ -465,17 +428,18 @@
 						}
 					}
 					echo "</td></tr>"; 
-				}
+				
 			}
 			
+			/*
 			if ($mode=="image")
 			{				
-				echo "<img src=\"misc/solsys.image.php?sol=".$_GET['id']."\" alt=\"Solarsystem\" usemap=\"solsys\" style=\"border:1px solid #fff;\" /><br/><br/>";
+				echo "<img src=\"misc/solsys.image.php?sol=".$cellId."\" alt=\"Solarsystem\" usemap=\"solsys\" style=\"border:1px solid #fff;\" /><br/><br/>";
 			}
 			else
-			{			
+			{		*/	
 				echo "</table><br/><br/>";
-			}
+			
 			
 			echo '<div id="spy_info_box" style="display:none;">';
 			infobox_start("Spionage");
@@ -495,11 +459,11 @@
 			echo "<input type=\"button\" value=\"Zur&uuml;ck zur Raumkarte\" onclick=\"document.location='?page=space&amp;sx=$sx&amp;sy=$sy'\" /> &nbsp; ";
 /*			if ($mode=="image")
 			{				
-				echo "<input type=\"button\" value=\"Tabellarische Ansicht\" onclick=\"document.location='?page=solsys&amp;id=".$_GET['id']."'\" />";
+				echo "<input type=\"button\" value=\"Tabellarische Ansicht\" onclick=\"document.location='?page=solsys&amp;id=".$cellId."'\" />";
 			}
 			else
 			{
-				echo "<input type=\"button\" value=\"Grafische Ansicht (Beta)\" onclick=\"document.location='?page=solsys&amp;id=".$_GET['id']."&amp;mode=image'\" />";
+				echo "<input type=\"button\" value=\"Grafische Ansicht (Beta)\" onclick=\"document.location='?page=solsys&amp;id=".$cellId."&amp;mode=image'\" />";
 			}*/
 		}
 		else
@@ -507,11 +471,6 @@
 			echo "<h1>Fehler!</h1>System nicht gefunden!<br/><br/>";
 			echo "<input type=\"button\" value=\"Zur&uuml;ck zur Raumkarte\" onclick=\"document.location='?page=space'\" />";
 		}
-	}
-	else
-	{
-		echo "<h1>Fehler!</h1>System-ID nicht angegeben!<br/><br/>";
-		echo "<input type=\"button\" value=\"Zur&uuml;ck zur Raumkarte\" onclick=\"document.location='?page=space'\" />";
-	}
+
 ?>
 

@@ -30,14 +30,14 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/	
 
-	define(GALAXY_MAP_DOT_RADIUS,3);
-	define(GALAXY_MAP_WIDTH,500);
-	define(GALAXY_MAP_LEGEND_HEIGHT,40);
+	define('GALAXY_MAP_DOT_RADIUS',3);
+	define('GALAXY_MAP_WIDTH',500);
+	define('GALAXY_MAP_LEGEND_HEIGHT',40);
 
-	$sx_num=$conf['num_of_sectors']['p1'];
-	$sy_num=$conf['num_of_sectors']['p2'];
-	$cx_num=$conf['num_of_cells']['p1'];
-	$cy_num=$conf['num_of_cells']['p2'];
+	$sx_num = $cfg->param1('num_of_sectors');
+	$sy_num = $cfg->param2('num_of_sectors');
+	$cx_num = $cfg->param1('num_of_cells');
+	$cy_num = $cfg->param2('num_of_cells');
 
 	echo "<h2>Galaxie-Grafik</h2>";
 	echo "<input type=\"button\" onclick=\"document.location='?page=space'\" value=\"Raumkarte des aktuellen Sektors\" /><br/><br/>";
@@ -48,7 +48,7 @@
 	<option value=\"?type=alliance&t=".time()."\">Systeme mit Allianzplaneten</option>
 	
 	</select><br/><br/>";
-	echo "<img src=\"misc/map.image.php\" alt=\"Galaxiekarte\" id=\"img\" usemap=\"#Galaxy\" style=\"border:none;\"/>";
+	echo "<img src=\"misc/map.image.php\" alt=\"Galaxiekarte\" id=\"img\" alt=\"galaxymap\" usemap=\"#Galaxy\" style=\"border:none;\"/>";
 	
 	echo "<map name=\"Galaxy\">\n";
 	$sec_x_size=GALAXY_MAP_WIDTH/$sx_num;

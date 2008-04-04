@@ -6,9 +6,9 @@
 	$conf=get_all_config();
 	include("../def.inc.php");
 
-	define(GALAXY_MAP_DOT_RADIUS,3);
-	define(GALAXY_MAP_WIDTH,500);
-	define(GALAXY_MAP_LEGEND_HEIGHT,40);
+	define('GALAXY_MAP_DOT_RADIUS',3);
+	define('GALAXY_MAP_WIDTH',500);
+	define('GALAXY_MAP_LEGEND_HEIGHT',40);
 
 	$sx_num=$conf['num_of_sectors']['p1'];
 	$sy_num=$conf['num_of_sectors']['p2'];
@@ -17,7 +17,7 @@
 	$p_num_min=$conf['num_planets']['p1'];
 	$p_num_max=$conf['num_planets']['p2'];
 
-	define(GALAXY_IMAGE_SCALE,GALAXY_MAP_WIDTH/((($sx_num-1)*10)+$cx_num));
+	define('GALAXY_IMAGE_SCALE',GALAXY_MAP_WIDTH/((($sx_num-1)*10)+$cx_num));
 	
 	$w = GALAXY_MAP_WIDTH;
 	$h = $sy_num*$cy_num*GALAXY_IMAGE_SCALE+GALAXY_MAP_LEGEND_HEIGHT;
@@ -36,8 +36,8 @@
 	$colRe = imagecolorallocate($im,200,0,200);
 
 
-	if ($_GET['type']=="alliance")
-	{
+	if (isset($_GET['type']) && $_GET['type']=="alliance")
+	{                        
 		$aid=$_SESSION[ROUNDID]['user']['alliance_id'];
 		$res=dbquery("SELECT cell_sx, cell_cx, cell_sy, cell_cy,
 		COUNT(planet_id) AS cnt
@@ -67,7 +67,7 @@
 		imagefilledellipse ($im,135,$h-GALAXY_MAP_LEGEND_HEIGHT+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[floor($p_num_max/2)]);
 		imagefilledellipse ($im,205,$h-GALAXY_MAP_LEGEND_HEIGHT+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[3]);
 	}
-	elseif ($_GET['type']=="own")
+	elseif (isset($_GET['type']) && $_GET['type']=="own")
 	{
 		$uid=$_SESSION[ROUNDID]['user']['id'];
 		$res=dbquery("SELECT cell_sx, cell_cx, cell_sy, cell_cy,
@@ -95,7 +95,7 @@
 		imagefilledellipse ($im,135,$h-GALAXY_MAP_LEGEND_HEIGHT+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[floor($p_num_max/2)]);
 		imagefilledellipse ($im,205,$h-GALAXY_MAP_LEGEND_HEIGHT+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[3]);
 	}
-	elseif ($_GET['type']=="populated")
+	elseif (isset($_GET['type']) && $_GET['type']=="populated")
 	{
 		$res=dbquery("SELECT cell_sx, cell_cx, cell_sy, cell_cy,
 		COUNT(planet_id) AS cnt
