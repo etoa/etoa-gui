@@ -13,7 +13,7 @@
 			FROM 
 				".$db_table['user_log']." 
 			WHERE
-				log_user_id=".$s['user']['id']."
+				log_user_id=".$cu->id()."
 			ORDER BY 
 				log_logintime DESC
 			LIMIT 
@@ -35,7 +35,7 @@
 			FROM 
 				".$db_table['login_failures']." 
 			WHERE
-				failure_user_id=".$s['user']['id']."
+				failure_user_id=".$cu->id()."
 			ORDER BY 
 				failure_time DESC
 			LIMIT 

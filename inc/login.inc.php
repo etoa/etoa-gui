@@ -118,6 +118,7 @@
 			{
 				$s['login_time'] = $login_time;			
 				$s['user_id']	= $userId;
+				$s['user_nick']	= $userNick;
 				// Create session key: 
 				// Byte 0-31: Logintime
 				// Byte 32-63: User-Id

@@ -34,7 +34,7 @@
 
 	// Bearbeiten
 
-	if ($_GET['edit']>0)
+	if (isset($_GET['edit']) && $_GET['edit']>0)
 	{
 		echo "<form action=\"?page=$page\" method=\"post\">";
 		checker_init();
@@ -55,7 +55,7 @@
       AND target_bookmarks.bookmark_id='".$_GET['edit']."';");
 		if (mysql_num_rows($res)>0)
 		{
-			$arr=mysql_fetch_array($res);
+			$arr=mysql_fetch_assoc($res);
 			if ($arr['bookmark_planet_id']>0)
 			{
 				$pres=dbquery("
@@ -66,7 +66,7 @@
 					".$db_table['planets']."
 				WHERE
 					planet_id=".$arr['bookmark_planet_id'].";");
-				$parr=mysql_fetch_array($pres);
+				$parr=mysql_fetch_assoc($pres);
 			}
 			
 			infobox_start("Favorit bearbeiten",1);
@@ -101,7 +101,7 @@
 	else
 	{
 		// Bearbeiteter Favorit speichern
-		if ($_POST['submit_edit_target'] && checker_verify())
+		if (isset($_POST['submit_edit_target']) && $_POST['submit_edit_target'] && checker_verify())
 		{
 			dbquery("
 			UPDATE 
@@ -114,7 +114,7 @@
 		}
 
 		// Favorit löschen
-		if ($_GET['del']>0)
+		if (isset($_GET['del']) && $_GET['del']>0)
 		{
 			dbquery("
 			DELETE FROM 
@@ -125,7 +125,7 @@
 		}
 
 		// Neuer Favorit aus Planeten-ID speichern
-		if ($_GET['add_planet_id']>0)
+		if (isset($_GET['add_planet_id']) && $_GET['add_planet_id']>0)
 		{
 			$pres=dbquery("
 			SELECT
@@ -138,7 +138,7 @@
 				AND planet_user_id!='".$s['user']['id']."';");
 			if (mysql_num_rows($pres)>0)
 			{
-				$parr=mysql_fetch_array($pres);
+				$parr=mysql_fetch_assoc($pres);
 				
 				$check_res = dbquery("
 				SELECT 
@@ -176,21 +176,24 @@
 		}
 
 		// Neuer Favorit speichern
-		if ($_POST['submit_target']!="" && checker_verify())
+		if (isset($_POST['submit_target']) && $_POST['submit_target']!="" && checker_verify())
 		{
 			$res=dbquery("
 			SELECT
-				*
+				entities.id
 			FROM
-				".$db_table['space_cells']."
-			WHERE
-        cell_sx='".$_POST['sx']."'
-        AND cell_sy='".$_POST['sy']."'
-        AND cell_cx='".$_POST['cx']."'
-        AND cell_cy='".$_POST['cy']."';");
+				entities
+			INNER JOIN
+				cells
+			ON entities.cell_id=cells.id
+				AND sx='".$_POST['sx']."'
+        AND sy='".$_POST['sy']."'
+        AND cx='".$_POST['cx']."'
+        AND cy='".$_POST['cy']."'
+        AND pos='".$_POST['pos']."';");
 			if (mysql_num_rows($res)>0)
 			{
-				$arr=mysql_fetch_array($res);
+				$arr=mysql_fetch_assoc($res);
 				if ($arr['cell_solsys_num_planets']>0 || $arr['cell_asteroid']>0 || $arr['cell_nebula']>0 || $arr['cell_wormhole_id']>0)
 				{
 					if ($arr['cell_solsys_num_planets']>0)
@@ -207,7 +210,7 @@
 								AND planet_solsys_pos='".$_POST['p']."';");
 							if (mysql_num_rows($pres)>0)
 							{
-								$parr=mysql_fetch_array($pres);
+								$parr=mysql_fetch_assoc($pres);
 								
 								$check_res = dbquery("
 								SELECT 
@@ -291,7 +294,7 @@
 			}
 			else
 			{
-				echo "<b>Fehler:</b> Die entsprechende Zelle wurde nicht gefunden!<br/><br/>";
+				echo "<b>Fehler:</b> Es existiert kein Objekt an den angegebenen Koordinaten!!<br/><br/>";
 			}
 		}
 
@@ -319,8 +322,7 @@
 			echo "<option value=\"$y\">$y</option>";
 		}
 		echo "</select> : <select name=\"p\">";
-		echo "<option value=\"0\">Zelle</option>";
-		for ($y=1;$y<=$conf['num_planets']['p2'];$y++)
+		for ($y=0;$y<=$conf['num_planets']['p2'];$y++)
 		{
 			echo "<option value=\"$y\">$y</option>";
 		}
@@ -332,39 +334,33 @@
 
 		$res = dbquery("
 		SELECT
-      target_bookmarks.*,
-      space_cells.cell_sx,
-      space_cells.cell_sy,
-      space_cells.cell_cx,
-      space_cells.cell_cy,
-      cell_nebula,
-      cell_asteroid,
-      cell_wormhole_id
+      bookmarks.id,
+      bookmarks.comment,
+      bookmarks.entity_id,
+      entities.type
 		FROM
-			".$db_table['target_bookmarks']."
-			INNER JOIN
-			".$db_table['space_cells']."
-			ON target_bookmarks.bookmark_cell_id=space_cells.cell_id
-		 	AND target_bookmarks.bookmark_user_id='".$s['user']['id']."'
-		GROUP BY
-		 	target_bookmarks.bookmark_id
+			bookmarks
+		INNER JOIN
+			entities	
+			ON bookmarks.user_id=".$cu->id()."
+			AND bookmarks.entity_id=entities.id
 		ORDER BY
-		 	target_bookmarks.bookmark_comment,
-      target_bookmarks.bookmark_cell_id,
-      target_bookmarks.bookmark_planet_id;");
+		 	bookmarks.comment;");
 		if (mysql_num_rows($res)>0)
 		{
 			infobox_start("Gespeicherte Favoriten",1);
 			echo "<tr>
 							<th class=\"tbltitle\">Typ</th>
 							<th class=\"tbltitle\">Koordinaten</th>
-							<th class=\"tbltitle\">User</th>
+							<th class=\"tbltitle\">Besitzer</th>
 							<th class=\"tbltitle\">Kommentar</th>
 							<th class=\"tbltitle\">Aktionen</th>
 						</tr>";
-			while ($arr=mysql_fetch_array($res))
+			while ($arr=mysql_fetch_assoc($res))
 			{
-				$user_nick = "";
+				$ent = Entity::createFactory($arr['type'],$arr['entity_id']);
+				
+				/*
 				if ($arr['bookmark_planet_id']>0)
 				{
 					$pres=dbquery("
@@ -376,7 +372,7 @@
 						".$db_table['planets']."
 					WHERE
 						planet_id=".$arr['bookmark_planet_id'].";");
-					$parr=mysql_fetch_array($pres);
+					$parr=mysql_fetch_assoc($pres);
 					
 					$typ = "Planet <b>".$parr['planet_name']."</b>";
 					
@@ -410,14 +406,14 @@
 				{
 					$koords = "<a href=\"?page=space&amp;sx=".$arr['cell_sx']."&amp;sy=".$arr['cell_sy']."\">".$arr['cell_sx']."/".$arr['cell_sy']." : ".$arr['cell_cx']."/".$arr['cell_cy']."</a>";
 				}				
-				
+				*/
 				
 				
 				echo "<tr>
-									<td class=\"tbldata\">".$typ."</td>
-									<td class=\"tbldata\">".$koords."</td>
-									<td class=\"tbldata\">".$user_nick."</td>
-									<td class=\"tbldata\">".text2html($arr['bookmark_comment'])."</td>
+									<td class=\"tbldata\">".$ent->type."</td>
+									<td class=\"tbldata\">".$ent."</td>
+									<td class=\"tbldata\">".$ent->owner."</td>
+									<td class=\"tbldata\">".text2html($arr['comment'])."</td>
 									<td class=\"tbldata\">
 										<a href=\"?page=haven&amp;planet_to=".$arr['bookmark_planet_id']."&amp;cell_to_id=".$arr['bookmark_cell_id']."\">Flotte hinschicken</a> <a href=\"?page=$page&amp;edit=".$arr['bookmark_id']."\">Bearbeiten</a> <a href=\"?page=$page&amp;del=".$arr['bookmark_id']."\" onclick=\"return confirm('Soll dieser Favorit wirklich gel&ouml;scht werden?');\">Entfernen</a>
 								</td>

@@ -13,7 +13,7 @@
                   user_msg_copy=".$_POST['user_msg_copy'].",
                   user_msg_blink=".$_POST['user_msg_blink']."
              	WHERE
-                  user_id='".$s['user']['id']."';");
+                  user_id='".$cu->id()."';");
                       
               $s['user']['msgsignature']=$_POST['user_msgsignature'];
               $s['user']['msg_preview']=$_POST['user_msg_preview'];
@@ -23,7 +23,7 @@
               
               success_msg("Nachrichten-Einstellungen wurden ge&auml;ndert!");
                   
-              $res = dbquery("SELECT * FROM ".$db_table['users']." WHERE user_id='".$s['user']['id']."';");
+              $res = dbquery("SELECT * FROM ".$db_table['users']." WHERE user_id='".$cu->id()."';");
               $arr = mysql_fetch_array($res);
             }
 

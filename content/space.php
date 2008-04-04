@@ -34,10 +34,10 @@
 	echo "<h1>Raumkarte</h1>";
 
 	// Wenn Planet aktiv, Koordinaten aus der DB lesen
-	if ($planets->current->solsys_id>0)
+	if ($cp)
 	{
-		$sx_def = $planets->current->sx;
-		$sy_def = $planets->current->sy;
+		$sx_def = $cp->sx;
+		$sy_def = $cp->sy;
 	}
 	// Sonst Standardkoordinaten (Zentrum der Galaxie)
 	else

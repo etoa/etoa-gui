@@ -4,16 +4,16 @@
     SELECT
         user_sitting_date.user_sitting_date_from
     FROM
-        ".$db_table['user_sitting_date'].",
-        ".$db_table['user_sitting']."
+        user_sitting_date,
+        user_sitting
     WHERE
-        user_sitting.user_sitting_user_id='".$_SESSION[ROUNDID]['user']['id']."'
+        user_sitting.user_sitting_user_id='".$cu->id()."'
         AND user_sitting.user_sitting_active='1'
-        AND user_sitting_date.user_sitting_date_user_id='".$_SESSION[ROUNDID]['user']['id']."'
+        AND user_sitting_date.user_sitting_date_user_id='".$cu->id()."'
         AND user_sitting_date.user_sitting_date_from<".time()."
         AND user_sitting_date.user_sitting_date_to>".time().";");
 
-	if($_SESSION[ROUNDID]['user']['sitter_active']==1 && mysql_num_rows($date_res)==0)
+	if($s['sitter_active']==1 && mysql_num_rows($date_res)==0)
 	{
 		//if($_SESSION[ROUNDID]['user']['sitter_active']==NULL && $_SESSION[ROUNDID]['user']['sitter_active']!='0')
         session_destroy();
@@ -29,32 +29,32 @@
     SELECT
         user_sitting_date.user_sitting_date_to
     FROM
-        ".$db_table['user_sitting_date'].",
-        ".$db_table['user_sitting']."
+        user_sitting_date,
+        user_sitting
     WHERE
-        user_sitting_date.user_sitting_date_user_id='".$_SESSION[ROUNDID]['user']['id']."'
+        user_sitting_date.user_sitting_date_user_id='".$cu->id()."'
         AND user_sitting_date.user_sitting_date_from!='0'
         AND user_sitting_date.user_sitting_date_to!='0'
         AND user_sitting.user_sitting_active='1'
     ORDER BY
         user_sitting_date.user_sitting_date_to DESC
     LIMIT 1;");
-    $check_arr=mysql_fetch_array($check_res);
+    $check_arr=mysql_fetch_assoc($check_res);
 
     if(mysql_num_rows($check_res)>0 && $check_arr['user_sitting_date_to']<time())
     {
         dbquery("
         UPDATE
-            ".$db_table['user_sitting']."
+            user_sitting
         SET
             user_sitting_active='0',
             user_sitting_sitter_user_id='0',
             user_sitting_sitter_password='0',
             user_sitting_date='0'
         WHERE
-            user_sitting_user_id='".$_SESSION[ROUNDID]['user']['id']."';");
+            user_sitting_user_id='".$cu->id()."';");
 
         //löscht alle gespeichertet Sittingdaten des users
-        dbquery("DELETE FROM ".$db_table['user_sitting_date']." WHERE user_sitting_date_user_id='".$_SESSION[ROUNDID]['user']['id']."';");
+        dbquery("DELETE FROM user_sitting_date WHERE user_sitting_date_user_id='".$cu->id()."';");
     }
 ?>

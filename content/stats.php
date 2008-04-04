@@ -41,7 +41,7 @@
 	// Details anzeigen
 	//
 
-	if ($_GET['userdetail']>0)
+	if (isset($_GET['userdetail']) && $_GET['userdetail']>0)
 	{
 		$res=dbquery("
 		SELECT 
@@ -98,7 +98,7 @@
 		echo "<input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=$page&mode=$mode&limit=".$limit."'\" /> &nbsp; ";
 	}
 	
-	elseif ($_GET['alliancedetail']>0)
+	elseif (isset($_GET['alliancedetail']) && $_GET['alliancedetail']>0)
 	{
 		$res=dbquery("
 		SELECT 
@@ -201,7 +201,7 @@
 		// >> AJAX generated content inserted here
 		echo "</div>";
 		
-		if ($_GET['mode']!="")
+		if (isset($_GET['mode']))
 		{
 			$mode = $_GET['mode'];
 		}

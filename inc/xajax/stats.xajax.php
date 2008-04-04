@@ -41,7 +41,7 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 		default:
 			$objResponse->assign('tabMenu0', 'className', "tabEnabled"); break;
 	}
-
+	$out="";
 	
 	//
 	// Allianzdaten
@@ -128,7 +128,7 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 		}
 		else
 		{
-			$out.= "<tr><td colspan=\"5\" align=\"center\"><i>Keine Allianzen in der Statistik</i></tr>";
+			$out.= "<tr><td colspan=\"8\" align=\"center\" class=\"tbldata\"><i>Keine Allianzen in der Statistik</i></tr>";
 		}
 	 	$objResponse->assign('statsBox', 'innerHTML', $out);
 		$out.="</table>";
@@ -342,7 +342,7 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 	{
 		$out.= "<table class=\"tbl\"><tr><td style=\"width:470px;text-align:left;\" class=\"statsNav\"><b>&nbsp;&nbsp;Suche:</b> <input type=\"text\" name=\"user_nick\" value=\"\" size=\"\" onkeyup=\"xajax_statsShowTable('$mode',0,this.value);\" id=\"searchString\"/>
 		<input type=\"button\" onclick=\"getElementById('searchString').value='';xajax_statsShowTable('$mode');\" value=\"Reset\" />
-		<input type=\"button\" onclick=\"xajax_statsShowTable('$mode',0,'".$_SESSION[ROUNDID]['user']['nick']."',1);\" value=\"".$_SESSION[ROUNDID]['user']['nick']."\" />
+		<input type=\"button\" onclick=\"xajax_statsShowTable('$mode',0,'".$_SESSION[ROUNDID]['user_nick']."',1);\" value=\"".$_SESSION[ROUNDID]['user_nick']."\" />
 		</td>";
 		$out.= "<td class=\"statsNav\" id=\"statsNav1\" style=\"text-align:right;\">";
 		// >> AJAX generated content here
@@ -557,22 +557,23 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0)
 					{
 						$addstyle=" style=\"color:".COLOR_INACTIVE.";\"";
 					}
+					/*
 					elseif ($arr['alliance_id']==$_SESSION[ROUNDID]['user']['alliance_id'] 
 									AND $_SESSION[ROUNDID]['user']['alliance_id']!='0'
 									AND $_SESSION[ROUNDID]['user']['alliance_application']==0)
 					{
 						$addstyle=" style=\"color:".COLOR_ALLIANCE.";\"";
-					}
+					}*/
 					else
 					{
 						$addstyle="";
 					}
-					if ($arr['user_id']==$_SESSION[ROUNDID]['user']['id'])
+					if ($arr['user_id']==$_SESSION[ROUNDID]['user_id'])
 					{
 						$_SESSION[ROUNDID]['user']['points']=$arr['points'];
 					}
 					$out.=  "<tr";
-					if ($arr['user_id']==$_SESSION[ROUNDID]['user']['id']) 
+					if ($arr['user_id']==$_SESSION[ROUNDID]['user_id']) 
 					{
 						$out.=  " style=\"font-weight:bold;\"";
 						$addstyle=" style=\"color:#f90;\"";
@@ -602,8 +603,8 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0)
 					$out.=  "<td $addstyle class=\"tbldata\"><a href=\"?page=space&amp;sx=".$arr['cell_sx']."&amp;sy=".$arr['cell_sy']."\">".$arr['cell_sx']."/".$arr['cell_sy']."</a></td>";
 					$out.=  "<td $addstyle class=\"tbldata\">";
 					$out.=  "<a href=\"?page=userinfo&id=".$arr['user_id']."\" title=\"Userinfo\">Info</a> ";
-					$out.=  "<a href=\"?page=$page&amp;mode=$mode&amp;limit=".$_GET['limit']."&amp;userdetail=".$arr['user_id']."\">Punktedetails</a> ";
-					if ($arr['user_id']!=$_SESSION[ROUNDID]['user']['id'])
+					$out.=  "<a href=\"?page=$page&amp;mode=$mode&amp;userdetail=".$arr['user_id']."\">Punktedetails</a> ";
+					if ($arr['user_id']!=$_SESSION[ROUNDID]['user_id'])
 					{
 						$out.=  "<a href=\"?page=messages&mode=new&message_user_to=".$arr['user_id']."\" title=\"Nachricht senden\">Mail</a> ";
 						$out.=  "<a href=\"?page=buddylist&add_id=".$arr['user_id']."\" title=\"Info\">Buddy</a></td>";

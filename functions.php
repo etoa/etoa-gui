@@ -44,7 +44,7 @@
 			else
 				$dir = "classes";
 			$file = $dir.'/'.strtolower($class_name).'.class.php';
-	    if (!@include_once($file))
+	    if (!include_once($file))
 	    {
 	    	die('Class '.$class_name.' not found ('.$file.')!');
 	    }

@@ -10,14 +10,14 @@
                   user_spyship_id='".$_POST['user_spyship_id']."',
                   user_fleet_rtn_msg='".$_POST['user_fleet_rtn_msg']."'
              	WHERE
-                  user_id='".$s['user']['id']."';");
+                  user_id='".$cu->id()."';");
                       
               $s['user']['spyship_count']=$_POST['user_spyship_count'];
               $s['user']['spyship_id']=$_POST['user_spyship_id'];
               
               success_msg("Benutzer-Daten wurden ge&auml;ndert!");
                   
-              $res = dbquery("SELECT * FROM ".$db_table['users']." WHERE user_id='".$s['user']['id']."';");
+              $res = dbquery("SELECT * FROM ".$db_table['users']." WHERE user_id='".$cu->id()."';");
               $arr = mysql_fetch_array($res);
             }
 

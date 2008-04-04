@@ -3,9 +3,9 @@
               if ($_POST['password_submit']!="" && checker_verify())
               {
 
-                  if (mysql_num_rows(dbquery("SELECT user_id FROM ".$db_table['users']." WHERE user_password='".pw_salt($_POST['user_password'],$arr['user_registered'])."' AND user_id=".$s['user']['id'].";"))>0)
+                  if (mysql_num_rows(dbquery("SELECT user_id FROM ".$db_table['users']." WHERE user_password='".pw_salt($_POST['user_password'],$arr['user_registered'])."' AND user_id=".$cu->id().";"))>0)
                   {
-                      if (mysql_num_rows(dbquery("SELECT user_sitting_sitter_password FROM ".$db_table['user_sitting']." WHERE user_sitting_sitter_password='".md5($_POST['user_password1'])."' AND user_sitting_user_id=".$s['user']['id'].";"))==0)
+                      if (mysql_num_rows(dbquery("SELECT user_sitting_sitter_password FROM ".$db_table['user_sitting']." WHERE user_sitting_sitter_password='".md5($_POST['user_password1'])."' AND user_sitting_user_id=".$cu->id().";"))==0)
                       {
                           if ($_POST['user_password1']==$_POST['user_password2'])
                           {
@@ -17,7 +17,7 @@
                                   	SET 
                                   		user_password='".pw_salt($_POST['user_password1'],$arr['user_registered'])."' 
                                   	WHERE 
-                                  		user_id='".$s['user']['id']."'
+                                  		user_id='".$cu->id()."'
                                   	;"))
                                   {
                                   	success_msg("Das Passwort wurde ge&auml;ndert!");
@@ -50,7 +50,7 @@
 								user_irc_name='".$name."',
 								user_irc_pw='".$pw."'
 							WHERE 
-								user_id=".$s['user']['id']."
+								user_id=".$cu->id()."
 							;");											         
 							$arr['user_irc_name']=$name;
 							$arr['user_irc_pw']=$pw;

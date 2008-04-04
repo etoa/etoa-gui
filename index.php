@@ -334,7 +334,7 @@
 				$tpl->assign("messages",NEW_MESSAGES);
 				$tpl->assign("blinkMessages",$cu->msg_blink);
 				$tpl->assign("buddys",check_buddys_online($s['user_id']));
-				$tpl->assign("fleetAttack",check_fleet_incomming($_SESSION[ROUNDID]['user']['id']));
+				$tpl->assign("fleetAttack",check_fleet_incomming($cu->id()));
 				$tpl->assign("templateDir",CSS_STYLE);
 				$tpl->assign("serverTime",date('H:i:s'));
 				$tpl->assign("currentPlanetName","Planet");

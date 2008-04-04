@@ -1,6 +1,11 @@
 <?PHP
-
-	class Planet
+      
+  /**
+  * Planet class
+  *
+  * @author Nicolas Perrenoud <mrcage@etoa.ch>
+  */
+	class Planet extends Entity
 	{
 		/**
 		* Constructor
@@ -149,6 +154,17 @@
 
 			}
 		}
+
+		function type()
+		{
+			return "Planet";
+		}
+
+		function owner()
+		{
+			return "TODO";
+		}
+
 
 		/**
 		* Prints a formatet string of planet coordinates

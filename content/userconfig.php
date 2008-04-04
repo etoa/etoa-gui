@@ -64,7 +64,7 @@
             {
                 //Normaler Name
                 case "change_name":
-                    if(mysql_num_rows(dbquery("SELECT request_id FROM ".$db_table['user_requests']." WHERE request_user_id='".$s['user']['id']."' AND request_field='user_name';"))>0)
+                    if(mysql_num_rows(dbquery("SELECT request_id FROM ".$db_table['user_requests']." WHERE request_user_id='".$cu->id()."' AND request_field='user_name';"))>0)
                     {
                         echo "Du hast schon einen Anfrage geschrieben!<br>";
                     }
@@ -79,7 +79,7 @@
                           request_comment,
                           request_timestamp) 
                         VALUES
-                          ('".$s['user']['id']."',
+                          ('".$cu->id()."',
                           'user_name',
                           '".addslashes($_POST['value'])."',
                           '".addslashes($_POST['comment'])."',
@@ -90,7 +90,7 @@
                 
                 //Nickname
                 case "change_nick":
-                    if(mysql_num_rows(dbquery("SELECT request_id FROM ".$db_table['user_requests']." WHERE request_user_id='".$s['user']['id']."' AND request_field='user_nick';"))>0)
+                    if(mysql_num_rows(dbquery("SELECT request_id FROM ".$db_table['user_requests']." WHERE request_user_id='".$cu->id()."' AND request_field='user_nick';"))>0)
                     {
                         echo "Du hast schon einen Anfrage geschrieben!<br>";
                     }
@@ -105,7 +105,7 @@
                           request_comment,
                           request_timestamp) 
                         VALUES
-                          ('".$s['user']['id']."',
+                          ('".$cu->id()."',
                           'user_nick',
                           '".addslashes($_POST['value'])."',
                           '".addslashes($_POST['comment'])."',
@@ -116,7 +116,7 @@
                 
                 //Email
                 case "change_email":
-                    if(mysql_num_rows(dbquery("SELECT request_id FROM ".$db_table['user_requests']." WHERE request_user_id='".$s['user']['id']."' AND request_field='user_email_fix';"))>0)
+                    if(mysql_num_rows(dbquery("SELECT request_id FROM ".$db_table['user_requests']." WHERE request_user_id='".$cu->id()."' AND request_field='user_email_fix';"))>0)
                     {
                         echo "Du hast schon einen Anfrage geschrieben!<br>";
                     }
@@ -131,7 +131,7 @@
                           request_comment,
                           request_timestamp) 
                         VALUES
-                          ('".$s['user']['id']."',
+                          ('".$cu->id()."',
                           'user_email_fix',
                           '".addslashes($_POST['value'])."',
                           '".addslashes($_POST['comment'])."',
@@ -161,19 +161,19 @@
 			{
 				case "change_name":
 					infobox_start("&Auml;nderungsantrag: Vollst&auml;ndiger Name",1);
-					$res=dbquery("SELECT user_name FROM ".$db_table['users']." WHERE user_id='".$s['user']['id']."';");
+					$res=dbquery("SELECT user_name FROM users WHERE user_id='".$cu->id()."';");
 					$arr=mysql_fetch_row($res);
 					$oldval=$arr[0];
 					break;
 				case "change_nick":
 					infobox_start("&Auml;nderungsantrag: Benutzername",1);
-					$res=dbquery("SELECT user_nick FROM ".$db_table['users']." WHERE user_id='".$s['user']['id']."';");
+					$res=dbquery("SELECT user_nick FROM users WHERE user_id='".$cu->id()."';");
 					$arr=mysql_fetch_row($res);
 					$oldval=$arr[0];
 					break;
 				case "change_email":
 					infobox_start("&Auml;nderungsantrag: Fixe E-Mail",1);
-					$res=dbquery("SELECT user_email_fix FROM ".$db_table['users']." WHERE user_id='".$s['user']['id']."';");
+					$res=dbquery("SELECT user_email_fix FROM users WHERE user_id='".$cu->id()."';");
 					$arr=mysql_fetch_row($res);
 					$oldval=$arr[0];
 					break;
@@ -201,7 +201,7 @@
 
 	else
 	{
-		$res = dbquery("SELECT * FROM ".$db_table['users']." WHERE user_id='".$s['user']['id']."';");
+		$res = dbquery("SELECT * FROM users WHERE user_id='".$cu->id()."';");
 		$arr = mysql_fetch_array($res);
 
     /****************/
@@ -258,7 +258,7 @@
         FROM
             ".$db_table['user_sitting_date']."
         WHERE
-            user_sitting_date_user_id='".$s['user']['id']."'
+            user_sitting_date_user_id='".$cu->id()."'
             AND user_sitting_date_from!=0
             AND user_sitting_date_to!=0
         ORDER BY
@@ -329,7 +329,7 @@
     /****************/
 		else
 		{
-        if($s['user']['sitter_active']==0)
+        if($s['sitter_active']==0)
         {
 					require("content/userconfig/general.php");
         }

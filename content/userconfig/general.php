@@ -1,6 +1,6 @@
 <?PHP
     	// Datenänderung übernehmen
-      if ($_POST['data_submit']!="" && checker_verify())
+      if (isset($_POST['data_submit']) && $_POST['data_submit']!="" && checker_verify())
       {
         if (checkEmail($_POST['user_email']))
         {
@@ -23,7 +23,7 @@
               //überprüft Bildgrösse
               if ($ims[0]==BOARD_AVATAR_WIDTH && $ims[1]==BOARD_AVATAR_HEIGHT)
               {
-                  $fname = "user_".$s['user']['id']."_".time().".gif";
+                  $fname = "user_".$cu->id()."_".time().".gif";
                   if (file_exists(BOARD_AVATAR_DIR."/".$arr['user_avatar']))
                       @unlink(BOARD_AVATAR_DIR."/".$arr['user_avatar']);
                   move_uploaded_file($source,BOARD_AVATAR_DIR."/".$fname);
@@ -60,7 +60,7 @@
                 //überprüft Bildgrösse
                 if ($ims[0]<=PROFILE_MAX_IMG_WIDTH && $ims[1]<=PROFILE_MAX_IMG_HEIGHT)
                 {
-                    $fname = "user_".$s['user']['id']."_".time().".".$ext;
+                    $fname = "user_".$cu->id()."_".time().".".$ext;
                     if (file_exists(PROFILE_IMG_DIR."/".$arr['user_profile_img']))
                         @unlink(PROFILE_IMG_DIR."/".$arr['user_profile_img']);
                     move_uploaded_file($source,PROFILE_IMG_DIR."/".$fname);
@@ -111,11 +111,11 @@
                 $profil_img_string
                 user_profile_board_url='".$_POST['user_profile_board_url']."'
             WHERE
-                user_id='".$s['user']['id']."';");
+                user_id='".$cu->id()."';");
                 
             success_msg("Benutzer-Daten wurden ge&auml;ndert!");
             
-            $res = dbquery("SELECT * FROM ".$db_table['users']." WHERE user_id='".$s['user']['id']."';");
+            $res = dbquery("SELECT * FROM ".$db_table['users']." WHERE user_id='".$cu->id()."';");
             $arr = mysql_fetch_array($res);
         }
         else

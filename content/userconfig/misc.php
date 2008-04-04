@@ -8,29 +8,29 @@
 	
 		if (isset($_POST['hmod_on']) && checker_verify())
 		{
-			$cres = dbquery("SELECT COUNT(*) FROM ship_queue WHERE queue_user_id='".$s['user']['id']."';");
+			$cres = dbquery("SELECT COUNT(*) FROM ship_queue WHERE queue_user_id='".$cu->id()."';");
 			$carr = mysql_fetch_row($cres);
 			if ($carr[0]==0)
 			{
-				$cres = dbquery("SELECT COUNT(*) FROM def_queue WHERE queue_user_id='".$s['user']['id']."';");
+				$cres = dbquery("SELECT COUNT(*) FROM def_queue WHERE queue_user_id='".$cu->id()."';");
 				$carr = mysql_fetch_row($cres);
 				if ($carr[0]==0)
 				{
-					$cres = dbquery("SELECT COUNT(*) FROM buildlist WHERE buildlist_user_id='".$s['user']['id']."' AND buildlist_build_start_time>0;");
+					$cres = dbquery("SELECT COUNT(*) FROM buildlist WHERE buildlist_user_id='".$cu->id()."' AND buildlist_build_start_time>0;");
 					$carr = mysql_fetch_row($cres);
 					if ($carr[0]==0)
 					{
-						$cres = dbquery("SELECT COUNT(*) FROM techlist WHERE techlist_user_id='".$s['user']['id']."' AND techlist_build_start_time>0;");
+						$cres = dbquery("SELECT COUNT(*) FROM techlist WHERE techlist_user_id='".$cu->id()."' AND techlist_build_start_time>0;");
 						$carr = mysql_fetch_row($cres);
 						if ($carr[0]==0)
 						{
-							$cres = dbquery("SELECT fleet_id FROM ".$db_table['fleet']." WHERE fleet_user_id='".$s['user']['id']."';");
+							$cres = dbquery("SELECT fleet_id FROM ".$db_table['fleet']." WHERE fleet_user_id='".$cu->id()."';");
 							$carr = mysql_fetch_row($cres);
 							if ($carr[0]==0)
 							{
 								$hfrom=time();
 								$hto=$hfrom+(MIN_UMOD_TIME*24*3600);
-								if (dbquery("UPDATE ".$db_table['users']." SET user_hmode_from='$hfrom',user_hmode_to='$hto' WHERE user_id='".$s['user']['id']."';"))
+								if (dbquery("UPDATE ".$db_table['users']." SET user_hmode_from='$hfrom',user_hmode_to='$hto' WHERE user_id='".$cu->id()."';"))
 								{
 									dbquery ("
 									UPDATE 
@@ -43,7 +43,7 @@
 										planet_prod_fuel=0,
 										planet_prod_food=0
 									WHERE 
-										planet_user_id='".$s['user']['id']."';");
+										planet_user_id='".$cu->id()."';");
 									
 									$s['user']['hmode_from'] = $hfrom;
 									$s['user']['hmode_to'] = $hto;
@@ -85,8 +85,8 @@
 		{
 			if ($s['user']['hmode_from']>0 && $s['user']['hmode_from']<time() && $s['user']['hmode_to']<time())
 			{
-				dbquery("UPDATE ".$db_table['users']." SET user_hmode_from=0,user_hmode_to=0 WHERE user_id='".$s['user']['id']."';");
-				dbquery ("UPDATE ".$db_table['planets']." SET planet_last_updated=".time()." WHERE planet_user_id='".$s['user']['id']."';");
+				dbquery("UPDATE ".$db_table['users']." SET user_hmode_from=0,user_hmode_to=0 WHERE user_id='".$cu->id()."';");
+				dbquery ("UPDATE ".$db_table['planets']." SET planet_last_updated=".time()." WHERE planet_user_id='".$cu->id()."';");
 				$s['user']['hmode_from']=0;
 				$s['user']['hmode_to']=0;
 				success_msg("Urlaubsmodus aufgehoben! Denke daran, auf allen deinen Planeten die Produktion zu überprüfen!");
@@ -97,7 +97,7 @@
 				FROM
 					".$db_table['planets']." 
 				WHERE 
-					planet_user_id='".$s['user']['id']."';");				
+					planet_user_id='".$cu->id()."';");				
 				while ($rarr=mysql_fetch_row($rres))
 				{
 					$tp = new Planet($rarr[0]);
@@ -139,7 +139,7 @@
 			FROM 
 				".$db_table['users']." 
 			WHERE 
-				user_id=".$s['user']['id']."
+				user_id=".$cu->id()."
 			;");
 			$parr=mysql_fetch_row($pres);
 			if ($parr[0]==pw_salt($_POST['remove_password'],$parr[1]))
@@ -151,7 +151,7 @@
 				SET
 					user_deleted=".$t."
 				WHERE
-					user_id=".$s['user']['id']."
+					user_id=".$cu->id()."
 				;");
 				
 					$s=Null;
@@ -177,7 +177,7 @@
 			SET
 				user_deleted=0
 			WHERE
-				user_id=".$s['user']['id']."
+				user_id=".$cu->id()."
 			;");
 			success_msg("Löschantrag aufgehoben!");
 			echo '<input type="button" value="Weiter" onclick="document.location=\'?page=userconfig&mode=misc\'" />';
@@ -192,11 +192,11 @@
 			{
 				if ($s['allow_planet_change_counter']<MAX_MAINPLANET_CHANGES)
 				{
-					$arr1 = mysql_fetch_row(dbquery("SELECT COUNT(shiplist_id) FROM ".$db_table['shiplist']." WHERE shiplist_user_id='".$s['user']['id']."';"));
-					$arr2 = mysql_fetch_row(dbquery("SELECT COUNT(deflist_id) FROM ".$db_table['deflist']." WHERE deflist_user_id='".$s['user']['id']."';"));
-					$arr3 = mysql_fetch_row(dbquery("SELECT COUNT(buildlist_id) FROM ".$db_table['buildlist']." WHERE buildlist_user_id='".$s['user']['id']."';"));
-					$arr4 = mysql_fetch_row(dbquery("SELECT COUNT(techlist_id) FROM ".$db_table['techlist']." WHERE techlist_user_id='".$s['user']['id']."';"));
-					$arr5 = mysql_fetch_row(dbquery("SELECT COUNT(fleet_id) FROM ".$db_table['fleet']." WHERE fleet_user_id='".$s['user']['id']."';"));
+					$arr1 = mysql_fetch_row(dbquery("SELECT COUNT(shiplist_id) FROM ".$db_table['shiplist']." WHERE shiplist_user_id='".$cu->id()."';"));
+					$arr2 = mysql_fetch_row(dbquery("SELECT COUNT(deflist_id) FROM ".$db_table['deflist']." WHERE deflist_user_id='".$cu->id()."';"));
+					$arr3 = mysql_fetch_row(dbquery("SELECT COUNT(buildlist_id) FROM ".$db_table['buildlist']." WHERE buildlist_user_id='".$cu->id()."';"));
+					$arr4 = mysql_fetch_row(dbquery("SELECT COUNT(techlist_id) FROM ".$db_table['techlist']." WHERE techlist_user_id='".$cu->id()."';"));
+					$arr5 = mysql_fetch_row(dbquery("SELECT COUNT(fleet_id) FROM ".$db_table['fleet']." WHERE fleet_user_id='".$cu->id()."';"));
 					if ($c->isMain && $arr1[0]==0 && $arr2[0]==0 && $arr3[0]==0 && $arr4[0]==0 && $arr5[0]==0)
 					{
 						reset_planet($c->id);

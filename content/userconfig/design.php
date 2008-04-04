@@ -21,7 +21,7 @@
         // Daten werden gespeichert
         //
         
-        if ($_POST['data_submit_design']!="")
+        if (isset($_POST['data_submit_design']) && $_POST['data_submit_design']!="")
         {
           //Prüft eingaben auf unerlaube Zeichen
           $check_image = check_illegal_signs($_POST['user_image_url']);
@@ -49,7 +49,6 @@
           if ($_POST['user_image_select']!='')
           {
           	$sqla = " user_image_url='".$_POST['user_image_select']."',";
-          	$s['user']['image_url']=$_POST['user_image_select'];
           }
           
           // Ändert die Bildendung, aber nur, wenn ein neues Packet gewählt wurde
@@ -60,7 +59,7 @@
           
           if (dbquery("
           UPDATE
-              ".$db_table['users']."
+              users
           SET
           		".$sqla."
               user_css_style='".$_POST['user_css_style']."',
@@ -73,25 +72,9 @@
               user_havenships_buttons='".$_POST['user_havenships_buttons']."',
               user_show_adds=".$_POST['user_show_adds']."                          
           WHERE
-              user_id='".$s['user']['id']."';")
+              user_id='".$cu->id()."';")
           )
           {
-          	
-          	if(isset($_POST['user_image_ext']))
-          	{
-              $s['user']['image_ext']=$_POST['user_image_ext'];
-						}
-
-            $s['user']['css_style']=$_POST['user_css_style'];
-            $s['user']['game_width']=$_POST['user_game_width'];
-            $s['user']['planet_circle_width']=$_POST['user_planet_circle_width'];
-            $s['user']['item_show']=$_POST['user_item_show'];
-            $s['user']['image_filter']=$_POST['user_image_filter'];
-            $s['user']['helpbox']=$_POST['user_helpbox'];
-            $s['user']['notebox']=$_POST['user_notebox'];
-            $s['user']['havenships_buttons']=$_POST['user_havenships_buttons'];
-            $s['user']['show_adds']=$_POST['user_show_adds'];
-            
             success_msg("Design-Daten wurden geändert!");
             if (mysql_affected_rows()>0)
             {
@@ -99,7 +82,7 @@
             }
           }
         }
-				if ($_GET['changes']==1)
+				if (isset($_GET['changes']) && $_GET['changes']==1)
 				{
          	success_msg("Design-Daten wurden geändert!");
         }
@@ -110,7 +93,7 @@
 				//
 				
         echo "<form action=\"?page=$page&mode=design\" method=\"post\">";
-        echo $cstr;
+        $cstr = checker_init();
         infobox_start("Designoptionen",1);
         
         //Design wählen
@@ -155,7 +138,7 @@
                     for ($x=70;$x<=100;$x+=10)
                     {
                         echo "<option value=\"$x\"";
-                        if ($s['user']['game_width']==$x) echo " selected=\"selected\"";
+                        if ($cu->game_width==$x) echo " selected=\"selected\"";
                         echo ">".$x."%</option>";
                     }
                     echo "</select> <span ".tm("Info","Das Spiel wurde optimiert f&uuml;r eine Aufl&ouml;sung von 1280*1024 Pixeln! Wenn du diese besitzt empfiehlt es sich bei den Classic Designs (Blue und Dark) eine Spielgr&ouml;sse von 80% zu w&auml;hlen. Bei einer kleineren Aufl&ouml;sung empfiehlt es sich eine Spielgr&ouml;sse von 100% einzustellen!",1)."><u>Info</u></span>
@@ -170,7 +153,7 @@
                   for ($x=450;$x<=700;$x+=50)
                   {
                       echo "<option value=\"$x\"";
-                      if ($s['user']['planet_circle_width']==$x) echo " selected=\"selected\"";
+                      if ($cu->planet_circle_width==$x) echo " selected=\"selected\"";
                       echo ">".$x."</option>";
                   }
                 echo "</select> <span ".tm("Info","Mit dieser Option l&auml;sst sich die gr&ouml;sse des Planetkreises in der &Uuml;bersicht einstellen.<br>Je nach Aufl&ouml;sung die du verwendest ist es beispielsweise nicht m&ouml;glich eine Gr&ouml;sse von 700 Pixeln zu haben. Finde selber heraus welche Gr&ouml;sse am besten Aussieht.",1)."><u>Info</u></span>

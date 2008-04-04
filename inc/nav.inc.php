@@ -10,38 +10,41 @@
 	$navmenu=array();
 	$navmenu[0]['cat'] = "Allgemeines";
 	$navmenu[0]['items'][0] = array ("name"=>"Übersicht","url"=>"?page=overview");
-	$navmenu[0]['items'][1] = array ("name"=>"Allianz","url"=>"?page=alliance");
-	$navmenu[0]['items'][2] = array ("name"=>"Allianzforum","url"=>"?page=allianceboard");
-	$navmenu[0]['items'][3] = array ("name"=>"Ratshaus","url"=>"?page=townhall");
-	$navmenu[0]['items'][4] = array ("name"=>"Nachrichten","url"=>"?page=messages");
-	$navmenu[0]['items'][5] = array ("name"=>"Statistiken","url"=>"?page=stats");
-	$navmenu[0]['items'][6] = array ("name"=>"Raumkarte","url"=>"?page=space");
-	$navmenu[0]['items'][7] = array ("name"=>"Flotten","url"=>"?page=fleets");
+	$navmenu[0]['items'][1] = array ("name"=>"Statistiken","url"=>"?page=stats");
+	$navmenu[0]['items'][2] = array ("name"=>"Raumkarte","url"=>"?page=space");
+	$navmenu[0]['items'][3] = array ("name"=>"Sonnensystem","url"=>"?page=solsys");
+	$navmenu[0]['items'][4] = array ("name"=>"Flotten","url"=>"?page=fleets");
 
-	$navmenu[1]['cat'] = "Planet";
-	$navmenu[1]['items'][0] = array ("name"=>"Informationen","url"=>"?page=planetoverview");
-	$navmenu[1]['items'][1] = array ("name"=>"Wirtschaft","url"=>"?page=economy");
-	$navmenu[1]['items'][2] = array ("name"=>"Bevölkerung","url"=>"?page=population");
-	$navmenu[1]['items'][3] = array ("name"=>"Technikbaum","url"=>"?page=techtree");
-	$navmenu[1]['items'][4] = array ("name"=>"Raumschiffhafen","url"=>"?page=haven");
-	$navmenu[1]['items'][5] = array ("name"=>"Marktplatz","url"=>"?page=market");
-	$navmenu[1]['items'][6] = array ("name"=>"Raketensilo","url"=>"?page=missiles");
-	$navmenu[1]['items'][7] = array ("name"=>"Kryptocenter","url"=>"?page=crypto");
+	$navmenu[1]['cat'] = "Kommunikation";
+	$navmenu[1]['items'][0] = array ("name"=>"Allianz","url"=>"?page=alliance");
+	$navmenu[1]['items'][1] = array ("name"=>"Allianzforum","url"=>"?page=allianceboard");
+	$navmenu[1]['items'][2] = array ("name"=>"Ratshaus","url"=>"?page=townhall");
+	$navmenu[1]['items'][3] = array ("name"=>"Nachrichten","url"=>"?page=messages");
 
-	$navmenu[2]['cat'] = "Produktion";
-	$navmenu[2]['items'][0] = array ("name"=>"Bauhof","url"=>"?page=buildings");
-	$navmenu[2]['items'][1] = array ("name"=>"Forschungslabor","url"=>"?page=research");
-	$navmenu[2]['items'][2] = array ("name"=>"Schiffswerft","url"=>"?page=shipyard");
-	$navmenu[2]['items'][3] = array ("name"=>"Waffenfabrik","url"=>"?page=defense");
-	$navmenu[2]['items'][4] = array ("name"=>"Schrottplatz","url"=>"?page=recycle");
+	$navmenu[2]['cat'] = "Planet";
+	$navmenu[2]['items'][0] = array ("name"=>"Informationen","url"=>"?page=planetoverview");
+	$navmenu[2]['items'][1] = array ("name"=>"Wirtschaft","url"=>"?page=economy");
+	$navmenu[2]['items'][2] = array ("name"=>"Bevölkerung","url"=>"?page=population");
+	$navmenu[2]['items'][3] = array ("name"=>"Technikbaum","url"=>"?page=techtree");
+	$navmenu[2]['items'][4] = array ("name"=>"Raumschiffhafen","url"=>"?page=haven");
+	$navmenu[2]['items'][5] = array ("name"=>"Marktplatz","url"=>"?page=market");
+	$navmenu[2]['items'][6] = array ("name"=>"Raketensilo","url"=>"?page=missiles");
+	$navmenu[2]['items'][7] = array ("name"=>"Kryptocenter","url"=>"?page=crypto");
 
-	$navmenu[3]['cat'] = "Tools";
-	$navmenu[3]['items'][0] = array ("name"=>"Buddylist","url"=>"?page=buddylist");
-	$navmenu[3]['items'][1] = array ("name"=>"Notizen","url"=>"?page=notepad");
-	$navmenu[3]['items'][2] = array ("name"=>"Favoriten","url"=>"?page=bookmarks");
-	$navmenu[3]['items'][3] = array ("name"=>"Einstellungen","url"=>"?page=userconfig");
-	$navmenu[3]['items'][4] = array ("name"=>"Hilfe","url"=>"?page=help");
-	$navmenu[3]['items'][5] = array ("name"=>"Kontakt","url"=>"?page=contact");
+	$navmenu[3]['cat'] = "Produktion";
+	$navmenu[3]['items'][0] = array ("name"=>"Bauhof","url"=>"?page=buildings");
+	$navmenu[3]['items'][1] = array ("name"=>"Forschungslabor","url"=>"?page=research");
+	$navmenu[3]['items'][2] = array ("name"=>"Schiffswerft","url"=>"?page=shipyard");
+	$navmenu[3]['items'][3] = array ("name"=>"Waffenfabrik","url"=>"?page=defense");
+	$navmenu[3]['items'][4] = array ("name"=>"Schrottplatz","url"=>"?page=recycle");
+
+	$navmenu[4]['cat'] = "Tools";
+	$navmenu[4]['items'][0] = array ("name"=>"Buddylist","url"=>"?page=buddylist");
+	$navmenu[4]['items'][1] = array ("name"=>"Notizen","url"=>"?page=notepad");
+	$navmenu[4]['items'][2] = array ("name"=>"Favoriten","url"=>"?page=bookmarks");
+	$navmenu[4]['items'][3] = array ("name"=>"Einstellungen","url"=>"?page=userconfig");
+	$navmenu[4]['items'][4] = array ("name"=>"Hilfe","url"=>"?page=help");
+	$navmenu[4]['items'][5] = array ("name"=>"Kontakt","url"=>"?page=contact");
 	
 	// Links des oberen Menüs
 	$topnav=array();
