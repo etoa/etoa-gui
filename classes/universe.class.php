@@ -71,7 +71,7 @@
 			//
 			
 			// by image
-			$imgpath = "images/galaxylayout_".($sx_num*$sy_num)."_".($cx_num*$cy_num).".png";
+			$imgpath = "images/galaxylayout_".($sx_num*$cx_num)."_".($sy_num*$cy_num).".png";
 			if (is_file($imgpath))	
 			{
 				$im = imagecreatefrompng($imgpath);
@@ -110,9 +110,9 @@
 			// by randomizer with config values
 			else
 			{
-				for($x=1;$x<=$w;$x++)
+				for($x=1;$x<=($sx_num*$cx_num);$x++)
 				{
-					for($y=1;$y<=$h;$y++)
+					for($y=1;$y<=($sy_num*$cy_num);$y++)
 					{
 						$ct = mt_rand(1,100);
 						if ($ct<=$perc_solsys)
