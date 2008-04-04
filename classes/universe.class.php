@@ -72,7 +72,6 @@
 			
 			// by image
 			$imgpath = "../images/galaxylayout_".($sx_num*$cx_num)."_".($sy_num*$cy_num).".png";
-			echo $imgpath;
 			if (is_file($imgpath))	
 			{
 				$im = imagecreatefrompng($imgpath);
