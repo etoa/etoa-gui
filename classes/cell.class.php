@@ -1,5 +1,10 @@
 <?PHP
-
+	
+	/**
+	* Space cells class
+	*
+	* @author Nicolas Perrenoud <mrcage@etoa.ch>
+	*/
 	class Cell
 	{
 		private $id;
@@ -51,7 +56,7 @@
 				$res = dbquery("
 				SELECT
 					id,
-					type
+					code
 				FROM
 					entities
 				WHERE
@@ -65,6 +70,11 @@
 				}
 			}
 			return $this->entities;
+		}
+		
+		function __toString()
+		{
+			return $this->sx." / ". $this->sy." : ". $this->cx." / ". $this->cy;
 		}
 		
 		

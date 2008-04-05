@@ -11,8 +11,8 @@
 	$navmenu[0]['cat'] = "Allgemeines";
 	$navmenu[0]['items'][0] = array ("name"=>"Übersicht","url"=>"?page=overview");
 	$navmenu[0]['items'][1] = array ("name"=>"Statistiken","url"=>"?page=stats");
-	$navmenu[0]['items'][2] = array ("name"=>"Raumkarte","url"=>"?page=space");
-	$navmenu[0]['items'][3] = array ("name"=>"Sonnensystem","url"=>"?page=solsys");
+	$navmenu[0]['items'][2] = array ("name"=>"Raumkarte","url"=>"?page=map");
+	$navmenu[0]['items'][3] = array ("name"=>"Sonnensystem","url"=>"?page=cell");
 	$navmenu[0]['items'][4] = array ("name"=>"Flotten","url"=>"?page=fleets");
 
 	$navmenu[1]['cat'] = "Kommunikation";

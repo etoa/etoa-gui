@@ -25,7 +25,6 @@
 	/**
 	* Stellar system map
 	*
-	* @package etoa_gameserver
 	* @author MrCage <mrcage@etoa.ch>
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/	
@@ -105,21 +104,9 @@
 			
 			
 			
-			echo "<h1>Sonnensystem ".$arro['cell_sx']."/".$arro['cell_sy']." : ".$arro['cell_cx']."/".$arro['cell_cy']."</h1>";
+			echo "<h1>System ".$cell."</h1>";
 			
-			/*
-			if ($mode=="image")
-			{
-				$_SESSION['sol']=array();
-				$_SESSION['sol']['image']=IMAGE_PATH."/galaxy/sol".$arro['cell_solsys_solsys_sol_type'].".gif";
-				if ($arro['cell_solsys_name']!="")
-					echo "<h2>".$arro['cell_solsys_name']."</b> (".$arro['type_name'].")</h2>";
-				else
-					echo "<h2>".$arro['type_name']."</h2";			
-			}
-			else
-			{*/
-			
+		
 			/*
 				echo "<table style=\"width:450px;margin:0px auto;border-collapse:collapse;\">";
 				echo "<tr><td class=\"tbldata\" style=\"width:39px;height:39px;color:#000;background:#000\">";
@@ -169,31 +156,63 @@
 			// Planeten
 			//
 			
-			infobox_start("Planeten",1);
+			infobox_start("Karte",1);
 			echo "<tr>
-				<th colspan=\"2\" class=\"tbltitle\">Pos</th>
+				<th colspan=\"2\" class=\"tbltitle\" style=\"width:60px;\">Position</th>
 				<th class=\"tbltitle\">Typ</th>
 				<th class=\"tbltitle\">Name</th>
 				<th class=\"tbltitle\">Besitzer</th>
-				<th class=\"tbltitle\">Allianz</th>
+				
 				<th class=\"tbltitle\">&nbsp;</th>
-			</tr>";
+			</tr>"; //<th class=\"tbltitle\">Allianz</th>
 
 
 			foreach ($entities as $ent)
 			{
-				/*
-				if ($mode=="image")
-				{
-					$_SESSION['planets'][$arr['planet_solsys_pos']]['name']=$arr['planet_name'];
-					$_SESSION['planets'][$arr['planet_solsys_pos']]['semi_major_axis']=$arr['planet_semi_major_axis'];
-					$_SESSION['planets'][$arr['planet_solsys_pos']]['ecccentricity']=$arr['planet_ecccentricity'];
-					$_SESSION['planets'][$arr['planet_solsys_pos']]['mass']=$arr['planet_mass'];
-					$_SESSION['planets'][$arr['planet_solsys_pos']]['image']=IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$arr['planet_image']."_small.gif";
+				echo "<tr>
+					<td class=\"tbldata\" style=\"width:40px;background:#000;\"><img src=\"".$ent->imagePath()."\" alt=\"icon\" /></td>
+					<td class=\"tbldata\">".$ent->pos()."</td>
+					<td class=\"tbldata\">".$ent->type()."</td>
+					<td class=\"tbldata\">".$ent->name()."</td>
+					<td class=\"tbldata\">".$ent->owner()."</td>
+					<td class=\"tbldata\">";
 					
-				}
-				else 
-				{*/
+					if ($ent->entityCode()=='p')					
+					{
+						echo "<a href=\"?page=planet&amp;id=".$ent->id()."\" title=\"Planeteninfo\">Info</a> ";
+						
+						// Nachrichten-Link
+						if ($ent->ownerId()>0 && $cu->id()!=$ent->ownerId())
+						{
+							echo "<a href=\"?page=messages&amp;mode=new&amp;message_user_to=".$ent->ownerId()."\" title=\"Nachricht senden\">Mail</a> ";
+						}
+							
+						// Diverse Links
+						if ($cu->id()!=$ent->ownerId())
+						{
+							// Besiedelte Planete
+							if($ent->ownerId() > 0)
+							{
+								//echo "&nbsp;<a href=\"javascript:;\" onclick=\"xajax_launchSypProbe(".$arr['planet_id'].",".$c->id.",".$c->res->fuel.");\" title=\"Ausspionieren\">Spionage</a>";
+								echo "<a href=\"?page=missiles&amp;target=".$ent->id()."\" title=\"Raketenangriff starten\">Rakete</a> ";
+								echo "<a href=\"?page=crypto&amp;target=".$ent->id()."\" title=\"Flottenbewegungen analysieren\">Analyse</a> ";					
+							}
+						}
+					}
+					
+					if ($ent->entityCode()=='p' || $ent->entityCode()=='a' || $ent->entityCode()=='n' || $ent->entityCode()=='e')
+					{
+						// Flotte
+						echo "<a href=\"?page=haven&amp;target=".$ent->id()."\" title=\"Flotte hinschicken\">Flotte</a> ";
+	
+						// Favorit
+						if ($cu->id()!=$ent->ownerId())
+						{
+							echo "<a href=\"?page=bookmarks&amp;add=".$ent->id()."\" title=\"Zu den Favoriten hinzuf&uuml;gen\">Favorit</a> ";
+						}					
+					}
+					echo "</td></tr>";
+
 				
 				/*
 					if ($arr['user_id']>0)
@@ -305,7 +324,7 @@
 					else
 					{
 						$addstyle="";
-					}*/
+					}
 					$addstyle="";
 					$class="tbldata";
       	
@@ -402,43 +421,15 @@
 					}
 					else
 						echo "<td class=\"$class\" colspan=\"2\" align=\"center\"><i>Unbewohnter Planet</i></td>";
-					echo "<td class=\"$class\" style=\"width:100px;\"><a href=\"?page=planet&amp;planet_info_id=".$arr['planet_id']."&amp;solsys_id=".intval($cellId)."\" title=\"Planeteninfo\">Info</a>";
-					if ($s['user']['id']!=$arr['planet_user_id'] && $arr['planet_user_id']>0)
-						echo "&nbsp;<a href=\"?page=messages&amp;mode=new&amp;message_user_to=".$arr['planet_user_id']."\" title=\"Nachricht senden\">Mail</a>";
-					
-					//if ($c->id!=$arr['planet_id'])
-					echo "&nbsp;<a href=\"?page=haven&amp;planet_to=".$arr['planet_id']."\" title=\"Flotte hinschicken\">Flotte</a>";
-						
-					// Bei eigenem Planet diverse Links nicht anzeigen
-					if ($s['user']['id']!=$arr['planet_user_id'])
-					{
-						// Favoriten
-						echo "&nbsp;<a href=\"?page=bookmarks&amp;add_planet_id=".$arr['planet_id']."\" title=\"Zu den Favoriten hinzuf&uuml;gen\">Favorit</a>";
-						
-						// Besiedelte Planete
-						if($arr['planet_user_id']>0)
-						{
-							//echo "&nbsp;<a href=\"javascript:;\" onclick=\"xajax_launchSypProbe(".$arr['planet_id'].",".$c->id.",".$c->res->fuel.");\" title=\"Ausspionieren\">Spionage</a>";
-							$coords = $arro['cell_sx'].":".$arro['cell_sy'].":".$arro['cell_cx'].":".$arro['cell_cy'].":".$arr['planet_solsys_pos'];
-							$h = md5($coords);
-							$coords = base64_encode($coords);			
-											
-							echo "&nbsp;<a href=\"?page=missiles&amp;c=".$coords."&amp;h=".$h."\" title=\"Raketenangriff starten\">Rakete</a>";
-							//echo "&nbsp;<a href=\"?page=crypto&amp;c=".$coords."&amp;h=".$h."\" title=\"Flottenbewegungen analysieren\">Analyse</a>";
+					echo "<td class=\"$class\" style=\"width:100px;\">
 						}
-					}
+					}*/
+					
 					echo "</td></tr>"; 
 				
 			}
 			
-			/*
-			if ($mode=="image")
-			{				
-				echo "<img src=\"misc/solsys.image.php?sol=".$cellId."\" alt=\"Solarsystem\" usemap=\"solsys\" style=\"border:1px solid #fff;\" /><br/><br/>";
-			}
-			else
-			{		*/	
-				echo "</table><br/><br/>";
+			echo "</table><br/><br/>";
 			
 			
 			echo '<div id="spy_info_box" style="display:none;">';
@@ -456,15 +447,8 @@
 			<span style=\"color:".COLOR_ENEMY.";\">Krieg</span>, 
 			<span style=\"color:".COLOR_ALLIANCE.";\">Allianzmitglied</span>";
 			infobox_end();
-			echo "<input type=\"button\" value=\"Zur&uuml;ck zur Raumkarte\" onclick=\"document.location='?page=space&amp;sx=$sx&amp;sy=$sy'\" /> &nbsp; ";
-/*			if ($mode=="image")
-			{				
-				echo "<input type=\"button\" value=\"Tabellarische Ansicht\" onclick=\"document.location='?page=solsys&amp;id=".$cellId."'\" />";
-			}
-			else
-			{
-				echo "<input type=\"button\" value=\"Grafische Ansicht (Beta)\" onclick=\"document.location='?page=solsys&amp;id=".$cellId."&amp;mode=image'\" />";
-			}*/
+			echo "<input type=\"button\" value=\"Zur Raumkarte\" onclick=\"document.location='?page=map&amp;sx=".$cell->sx."&amp;sy=".$cell->sy."'\" /> &nbsp; ";
+
 		}
 		else
 		{

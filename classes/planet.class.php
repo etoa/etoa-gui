@@ -71,8 +71,8 @@
 				$this->cy = $arr['cy'];
 				$this->pos = $arr['pos'];
 
-				$this->type_id = $arr['type_id'];
-				$this->type_name = $arr['type_name'];
+				$this->typeId = $arr['type_id'];
+				$this->typeName = $arr['type_name'];
 
 				
 				/*
@@ -161,7 +161,17 @@
 			return $this->id;
 		}
 
-		function type()
+		function pos()
+		{
+			return $this->pos;
+		}		
+
+		function entityCode()
+		{
+			return "p";
+		}
+
+		function entityCodeString()
 		{
 			return "Planet";
 		}
@@ -170,29 +180,29 @@
 		{
 			return "TODO";
 		}
-
-
-		/**
-		* Prints a formatet string of planet coordinates
-		*/
-		function toString()
-		{
-			echo $this->sx."/".$this->sy." : ".$this->cx."/".$this->cy." : ".$this->pos." ".$this->name;
-		}
 		
-		/**
-		* Returns a formatet string of planet coordinates
-		*
-		* @return string
-		*/
-		function getString()
+		function type()
 		{
-			return $this->sx."/".$this->sy." : ".$this->cx."/".$this->cy." : ".$this->pos." ".$this->name;
+			return $this->typeName;
+		}		
+		function imagePath($opt="")
+		{
+			return IMAGE_PATH."/planets/planet".$this->image."_small.".IMAGE_EXT;
+		}		
+		
+		function ownerId()
+		{
+			return 0;
+		}		
+
+		function name()
+		{
+			return $this->name;
 		}
 
 		function __toString()
 		{
-			return $this->getString();
+			return $this->sx."/".$this->sy." : ".$this->cx."/".$this->cy." : ".$this->pos." ".$this->name;
 		}
 
 		/**

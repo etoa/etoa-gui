@@ -46,7 +46,7 @@
 		$sy_def = $cfg->param2('map_init_sector');
 	}
 
-	$sector_pic = "".IMAGE_PATH."/galaxy";
+	$sector_pic = "".IMAGE_PATH."/map";
 
 	$sx_num=$cfg->param1('num_of_sectors');
 	$sy_num=$cfg->param2('num_of_sectors');
@@ -195,7 +195,7 @@
 			cy,
 			cells.id as cid,
 			entities.id as eid,
-			type
+			code
 		FROM 
 			cells 
 		INNER JOIN
@@ -209,18 +209,18 @@
 		{
 			$cells[$arr['cx']][$arr['cy']]['cid']=$arr['cid'];
 			$cells[$arr['cx']][$arr['cy']]['eid']=$arr['eid'];
-			$cells[$arr['cx']][$arr['cy']]['type']=$arr['type'];
+			$cells[$arr['cx']][$arr['cy']]['code']=$arr['code'];
 		}
 		for ($y=0;$y<$cx_num;$y++)
 		{
 			$ycoords = $cy_num-$y;
 
 
-			$counter_left="".IMAGE_PATH."/galaxy/GalaxyFrameCounterLeft";
-			$counter_left_high="".IMAGE_PATH."/galaxy/GalaxyFrameCounterLeftHighlight";
+			$counter_left="".IMAGE_PATH."/map/GalaxyFrameCounterLeft";
+			$counter_left_high="".IMAGE_PATH."/map/GalaxyFrameCounterLeftHighlight";
 
-			$counter_bottom="".IMAGE_PATH."/galaxy/GalaxyFrameCounterBottom";
-			$counter_bottom_high="".IMAGE_PATH."/galaxy/GalaxyFrameCounterBottomHighlight";
+			$counter_bottom="".IMAGE_PATH."/map/GalaxyFrameCounterBottom";
+			$counter_bottom_high="".IMAGE_PATH."/map/GalaxyFrameCounterBottomHighlight";
 
 			echo "<td class=\"coordstbl\"> <img name=\"counter_left_$ycoords\" src=\"$counter_left$ycoords.gif\" style=\"height:40px;\"/> </td>";
 
@@ -244,7 +244,16 @@
 				//
 				// Symbole anzeigen
 				//
-
+				$ent = Entity::createFactory($cells[$xcoords][$ycoords]['code'],$cells[$xcoords][$ycoords]['eid']);
+				$tt = new Tooltip();
+				$tt->addTitle($ent->entityCodeString());
+				$tt->addText("Position: $sx/$sy : $xcoords/$ycoords");
+				$tt->addComment($ent->name());
+				echo "<a href=\"?page=cell&amp;id=".$cells[$xcoords][$ycoords]['cid']."\" ".$tt.">
+					<img src=\"".$ent->imagePath()."\" style=\"border:none;background:#000;width:".$img_width."px;height:".$img_height."px\" />
+				</a>";
+				
+				/*
 				// Sonnensystem
 				if ($cells[$xcoords][$ycoords]['type']=='s')
 				{
@@ -272,22 +281,22 @@
 					$tt->addTitle("Sonnensystem");
 					$tt->addText("Position: $sx/$sy : $xcoords/$ycoords");
 					$tt->addText("Planeten: ".$parr[0]);
-					echo "<a href=\"?page=solsys&amp;id=".$cells[$xcoords][$ycoords]['cid']."\" ".$tt.">
-					<img src=\"".IMAGE_PATH."/galaxy/sol".$warr[0].".gif\" style=\"border:none;width:".$img_width."px;height:".$img_height."px\" /></a>";
+					echo "<a href=\"?page=cell&amp;id=".$cells[$xcoords][$ycoords]['cid']."\" ".$tt.">
+					<img src=\"".IMAGE_PATH."/map/sol".$warr[0].".gif\" style=\"border:none;width:".$img_width."px;height:".$img_height."px\" /></a>";
 				}
 				// Nebel
 				elseif ($cells[$xcoords][$ycoords]['type']=='n')
 				{
 					$test = pseudo_randomize(8,$sx_tl,$sy_tl,$xcoords,$ycoords);
 					//MvI: Randomize Nebulas eingepflegt.
-					echo "<a href=\"?page=haven&amp;planet_to=0&amp;cell_to_id=".$cells[$xcoords][$ycoords]['cid']."\"><img src=\"".IMAGE_PATH."/galaxy/nebula".$test.".gif\" ".tm("Intergalaktischer Nebel","<b>Position:</b> $sx/$sy : $xcoords/$ycoords")." border=\"0\" width=\"$img_width\" height=\"$img_height\" /></a>";
+					echo "<a href=\"?page=haven&amp;planet_to=0&amp;cell_to_id=".$cells[$xcoords][$ycoords]['cid']."\"><img src=\"".IMAGE_PATH."/map/nebula".$test.".gif\" ".tm("Intergalaktischer Nebel","<b>Position:</b> $sx/$sy : $xcoords/$ycoords")." border=\"0\" width=\"$img_width\" height=\"$img_height\" /></a>";
 				}
 				// Asteroiden
 				elseif ($cells[$xcoords][$ycoords]['type']=='a')
 				{
 					//MvI: Randomizer eingebaut
 					$test = pseudo_randomize(4,$sx_tl,$sy_tl,$xcoords,$ycoords);
-					echo "<a href=\"?page=haven&amp;planet_to=0&amp;cell_to_id=".$cells[$xcoords][$ycoords]['cid']."\"><img src=\"".IMAGE_PATH."/galaxy/asteroid_field".$test.".gif\" ".tm("Asteroidenfeld","<b>Position:</b> $sx/$sy : $xcoords/$ycoords")." border=\"0\" width=\"$img_width\" height=\"$img_height\" /></a>";
+					echo "<a href=\"?page=haven&amp;planet_to=0&amp;cell_to_id=".$cells[$xcoords][$ycoords]['cid']."\"><img src=\"".IMAGE_PATH."/map/asteroid_field".$test.".gif\" ".tm("Asteroidenfeld","<b>Position:</b> $sx/$sy : $xcoords/$ycoords")." border=\"0\" width=\"$img_width\" height=\"$img_height\" /></a>";
 				}
 				elseif ($cells[$xcoords][$ycoords]['type']=='w')
 				{
@@ -306,14 +315,14 @@
 					{
 						$warr=mysql_fetch_assoc($wres);
 						echo "<a href=\"?page=haven&amp;planet_to=0&amp;cell_to_id=".$cells[$xcoords][$ycoords]['id']."\" ".tm("Wurmloch","<b>Position:</b> $sx/$sy : $xcoords/$ycoords<br/><b>Ziel:</b> ".$warr['cell_sx']."/".$warr['cell_sy']." : ".$warr['cell_cx']."/".$warr['cell_cy']).">";
-					}*/
-					echo "<img src=\"".IMAGE_PATH."/galaxy/wormhole.gif\" border=\"0\" width=\"$img_width\" height=\"$img_height\" /></a>";
+					}
+					echo "<img src=\"".IMAGE_PATH."/map/wormhole.gif\" border=\"0\" width=\"$img_width\" height=\"$img_height\" /></a>";
 				}
 				else
 				{
 					$es_c = mt_rand(1,4);
-					echo "<img src=\"".IMAGE_PATH."/galaxy/empty_space".$es_c.".gif\" alt=\"Leerer Raum\" title=\"Leerer Raum ($xcoords/$ycoords)\" border=\"0\" width=\"$img_width\" height=\"$img_height\" />";
-				}
+					echo "<img src=\"".IMAGE_PATH."/map/empty_space".$es_c.".gif\" alt=\"Leerer Raum\" title=\"Leerer Raum ($xcoords/$ycoords)\" border=\"0\" width=\"$img_width\" height=\"$img_height\" />";
+				}*/
 				echo "</td>\n";
 			}
 			echo "</tr>\n";
@@ -322,12 +331,7 @@
 		for ($x=0;$x<$cy_num;$x++)
 		{
 			$xcoords = $x+1;
-
-			//Editiert durch MvI: Imagecounter-Grafik statt Text
-			  echo "<td class=\"coordstbl\"><img name=\"counter_bottom_$xcoords\" src=\"$counter_bottom$xcoords.gif\"/></td>";
-			//echo "<td> <img src=\"".IMAGE_PATH."/galaxy/GalaxyFrameCounterLeft".$ycoords.".gif\" style=\"height:40px;\"/> </td>";
-			//echo "<td class=\"coordstbl\" id=\"xcoords_$xcoords\">$xcoords</td>";
-
+		  echo "<td class=\"coordstbl\"><img name=\"counter_bottom_$xcoords\" src=\"$counter_bottom$xcoords.gif\"/></td>";
 		}
 		echo "</tr>";
 		echo "</table></td>";
