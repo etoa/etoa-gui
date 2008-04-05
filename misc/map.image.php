@@ -130,7 +130,7 @@
 			cells.cx, 
 			cells.sy,
 			cells.cy,
-			entities.type
+			entities.code
 		FROM 
 			cells
 		INNER JOIN
@@ -142,13 +142,13 @@
 		{
 			$x = ((($arr['sx']-1)*$cx_num + $arr['cx']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
 			$y = $h-GALAXY_MAP_LEGEND_HEIGHT+GALAXY_IMAGE_SCALE-((($arr['sy']-1)*$cy_num + $arr['cy']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
-				if ($arr['type']=='s')
+				if ($arr['code']=='s')
 					$col = $colWhite;
-				elseif ($arr['type']=='w')
+				elseif ($arr['code']=='w')
 					$col = $colViolett;
-				elseif ($arr['type']=='a')
+				elseif ($arr['code']=='a')
 					$col = $colGrey;
-				elseif ($arr['type']=='m')
+				elseif ($arr['code']=='m')
 					$col = $colOrange;
 				else
 					continue;

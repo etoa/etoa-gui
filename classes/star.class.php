@@ -7,12 +7,19 @@
 	*/
 	class Star extends Entity
 	{
-		private $id;
-		private $pos;
+		protected $id;
+		protected $pos;
 		private $name;
 		private $typeId;
-		private $isValid;		
+		protected $isValid;		
 		private $typeName;
+		public $named;
+		protected $coordsLoaded;
+		protected $sx;
+		protected $sy;
+		protected $cx;
+		protected $cy;				
+		protected $cellId;
 		
 		/**
 		* The constructor
@@ -20,7 +27,8 @@
 		function Star($id=0)
 		{
 			$this->isValid=false;
-			
+			$this->coordsLoaded=false;
+						
 			$res=dbquery("
 			SELECT 
 	    	stars.name,
@@ -39,8 +47,17 @@
 			{
 				$arr = mysql_fetch_row($res);
 				$this->id=$id;
-
-				$this->name = $arr[0]!="" ? $arr[0] : "Unbenannt";
+				
+				if ($arr[0]!="")
+				{
+					$this->name = stripslashes($arr[0]);
+				 	$this->named = true;
+				}
+				else
+				{	
+				 	$this->name = "Unbenannt";
+				 	$this->named = false;
+				}
 				$this->typeId = $arr[1];
 				$this->pos = $arr[2];
 				$this->typeName = $arr[3];
@@ -109,7 +126,44 @@
 		/**
 		* To-String function
 		*/
-		function __toString() { return ""; }
+		function __toString() 
+		{ 
+			if (!$this->coordsLoaded)
+			{
+				$this->loadCoords();
+			}
+			return $this->formatedCoords()." ".$this->name;			
+		}
 		
+		function cellId()
+		{
+			if (!$this->coordsLoaded)
+			{
+				$this->loadCoords();
+			}
+			return $this->cellId;
+		}		
+		
+		/**
+		* Name star
+		*/
+		public function setNewName($name,$strict=1)
+		{
+			if ($strict == 0 || !$this->named)
+			{
+				dbquery("
+				UPDATE
+					stars
+				SET
+					name='".addslashes($name)."'
+				WHERE
+					id=".$this->id."
+				");
+				$this->name=$name;
+				$this->named=true;
+				return true;
+			}
+			return false;
+		}
 	}
 ?>

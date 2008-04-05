@@ -84,6 +84,9 @@
 		echo "<tr><td class=\"tbltitle\" width=\"25%\">Spionage</td><td class=\"tbldata\">Wie das Spionagesystem funktioniert</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=spy_info\">Anzeigen</a></td></tr>";
 		echo "<tr><td class=\"tbltitle\" width=\"25%\">Textformatierung</td><td class=\"tbldata\">Wie man Text formatieren kann (BBcode)</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=textformat\">Anzeigen</a></td></tr>";
 		echo "<tr><td class=\"tbltitle\" width=\"25%\">Urlaubsmodus</td><td class=\"tbldata\">Was das ist und wie es funktioniert</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=u_mod\">Anzeigen</a></td></tr>";
+		echo "<tr><td class=\"tbltitle\" width=\"25%\">Wärme- und Kältebonus</td><td class=\"tbldata\">Welche Auswirkungen hat die Planetentemperatur</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=tempbonus\">Anzeigen</a></td></tr>";
+	
+		
 		infobox_end(1);
 
 		infobox_start("Weitere Infos",1);

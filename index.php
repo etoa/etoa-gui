@@ -400,6 +400,7 @@
 				$rtime = $render_time[1]+$render_time[0]-$render_starttime;
 				$tpl->assign("renderTime",round($rtime,3));
 				
+				//echo $query_counter;
 				// Display footer
 				$tpl->display(getcwd()."/".CSS_STYLE."/footer.tpl");						
 			}

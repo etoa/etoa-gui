@@ -253,15 +253,16 @@
 			//Rohstoffe anzeigen, wenn Spiotechlevel genug hoch ist
 		  if ($a_spy_level >= SPY_ATTACK_SHOW_RESSOURCEN && mt_rand(0,100)>$tarn_defense)
 		  {
+		  	$planet = new Planet($arr['fleet_planet_to']);
+		  	
 		    $text.="\n[b]RESSOURCEN:[/b]\n";
 		  	$text .= "[table]";
-		    $r = get_ress_on_planet($arr['fleet_planet_to']);
 		
-		    $text.= "[tr][td]".RES_METAL."[/td][td]".nf($r['metal'])."[/td][/tr]";
-		    $text.= "[tr][td]".RES_CRYSTAL."[/td][td]".nf($r['crystal'])."[/td][/tr]";
-		    $text.= "[tr][td]".RES_PLASTIC."[/td][td]".nf($r['plastic'])."[/td][/tr]";
-		    $text.= "[tr][td]".RES_FUEL."[/td][td]".nf($r['fuel'])."[/td][/tr]";
-		    $text.= "[tr][td]".RES_FOOD."[/td][td]".nf($r['food'])."[/td][/tr]";
+		    $text.= "[tr][td]".RES_METAL."[/td][td]".nf($planet->resMetal)."[/td][/tr]";
+		    $text.= "[tr][td]".RES_CRYSTAL."[/td][td]".nf($planet->resCrystal)."[/td][/tr]";
+		    $text.= "[tr][td]".RES_PLASTIC."[/td][td]".nf($planet->resPlastic)."[/td][/tr]";
+		    $text.= "[tr][td]".RES_FUEL."[/td][td]".nf($planet->resFuel)."[/td][/tr]";
+		    $text.= "[tr][td]".RES_FOOD."[/td][td]".nf($planet->resFood)."[/td][/tr]";
 		  	$text .= "[/table]";
 		  }
 		

@@ -40,7 +40,7 @@
 	$cy_num = $cfg->param2('num_of_cells');
 
 	echo "<h2>Galaxie-Grafik</h2>";
-	echo "<input type=\"button\" onclick=\"document.location='?page=space'\" value=\"Raumkarte des aktuellen Sektors\" /><br/><br/>";
+	echo "<input type=\"button\" onclick=\"document.location='?page=map'\" value=\"Raumkarte des aktuellen Sektors\" /><br/><br/>";
 	echo "Anzeigen: <select onchange=\"document.getElementById('img').src='misc/map.image.php'+this.options[this.selectedIndex].value;\">
 	<option value=\"?t=".time()."\">Normale Galaxieansicht</option>
 	<option value=\"?type=populated&t=".time()."\">Bev&ouml;lkerte Systeme</option>
@@ -60,7 +60,7 @@
 	 	$ycnt=1;
 		for ($y=0;$y<GALAXY_MAP_WIDTH;$y+=$sec_y_size)
 		{
-	  	echo "<area shape=\"rect\" coords=\"$x,".(GALAXY_MAP_WIDTH-$y).",".($x+$sec_x_size).",".(GALAXY_MAP_WIDTH-$y-$sec_y_size)."\" href=\"?page=space&sx=$xcnt&sy=$ycnt\" alt=\"Sektor $xcnt / $ycnt\" ".tm("Sektor $xcnt / $ycnt","Klicken um Karte anzuzeigen").">\n";
+	  	echo "<area shape=\"rect\" coords=\"$x,".(GALAXY_MAP_WIDTH-$y).",".($x+$sec_x_size).",".(GALAXY_MAP_WIDTH-$y-$sec_y_size)."\" href=\"?page=map&sx=$xcnt&sy=$ycnt\" alt=\"Sektor $xcnt / $ycnt\" ".tm("Sektor $xcnt / $ycnt","Klicken um Karte anzuzeigen").">\n";
 	  	$ycnt++;
 	  }
 	  $xcnt++;

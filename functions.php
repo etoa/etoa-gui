@@ -136,84 +136,6 @@
 	}
 
 	/**
-	* Sonnentyp-Name in Array speichern
-	*/
-	function get_sol_types_array()
-	{
-		global $db_table;
-		$sol_types = array();
-		$res = dbquery("
-		SELECT
-	    type_id,
-	    type_name
-		FROM
-			".$db_table['sol_types'].";");
-		while ($arr = mysql_fetch_array($res))
-		{
-			$sol_types[$arr['type_id']] = $arr['type_name'];
-		}
-		return $sol_types;
-	}
-
-	/**
-	* Planetentyp-Name in Array speichern
-	*/
-	function get_planet_types_array()
-	{
-		global $db_table;
-		$planet_types = array();
-		$res = dbquery("
-		SELECT
-	    type_id,
-	    type_name
-		FROM
-			".$db_table['planet_types'].";");
-		while ($arr = mysql_fetch_array($res))
-		{
-			$planet_types[$arr['type_id']] = $arr['type_name'];
-		}
-		return $planet_types;
-	}
-
-	/**
-	* Planetentyp-Daten in Array speichern
-	*/
-	function get_planet_types_data()
-	{
-		global $db_table;
-		$planet_types = array();
-		$res = dbquery("
-		SELECT
-			*
-		FROM
-			".$db_table['planet_types'].";");
-		while ($arr = mysql_fetch_array($res))
-		{
-			$planet_types[$arr['type_id']] = $arr;
-		}
-		return $planet_types;
-	}
-
-	/**
-	* Sonnentyp-Daten in Array speichern
-	*/
-	function get_sol_types_data()
-	{
-		global $db_table;
-		$planet_types = array();
-		$res = dbquery("
-		SELECT
-			*
-		FROM
-			".$db_table['sol_types'].";");
-		while ($arr = mysql_fetch_array($res))
-		{
-			$sol_types[$arr['type_id']] = $arr;
-		}
-		return $sol_types;
-	}
-
-	/**
 	* Rassen-Daten in Array speichern
 	*/
 	function get_races_array()
@@ -227,7 +149,7 @@
 			".$db_table['races']."
 		ORDER BY
 			race_name;");
-		while ($arr = mysql_fetch_array($res))
+		while ($arr = mysql_fetch_assoc($res))
 		{
 			$race_name[$arr['race_id']] = $arr;
 		}
@@ -252,7 +174,7 @@
 			".$db_table['alliances']."
 		ORDER BY
 			alliance_name;");
-		while ($arr = mysql_fetch_array($res))
+		while ($arr = mysql_fetch_assoc($res))
 		{
 			$names[$arr['alliance_id']]['tag'] = $arr['alliance_tag'];
 			$names[$arr['alliance_id']]['name'] = $arr['alliance_name'];
@@ -282,7 +204,7 @@
 				alliance_name;
 		");
 		echo $_SESSION[ROUNDID]['user']['alliance_id'];
-		while ($arr = mysql_fetch_array($res))
+		while ($arr = mysql_fetch_assoc($res))
 		{
 			$names[$arr['alliance_id']]['tag'] = $arr['alliance_tag'];
 			$names[$arr['alliance_id']]['name'] = $arr['alliance_name'];
@@ -311,7 +233,7 @@
 			ORDER BY
 				alliance_name;
 		");
-		while ($arr = mysql_fetch_array($res))
+		while ($arr = mysql_fetch_assoc($res))
 		{
 			$names[$arr['alliance_id']]['tag'] = $arr['alliance_tag'];
 			$names[$arr['alliance_id']]['name'] = $arr['alliance_name'];
@@ -332,30 +254,11 @@
             resource_name
 		FROM
 			".$db_table['resources'].";");
-		while ($arr = mysql_fetch_array($res))
+		while ($arr = mysql_fetch_assoc($res))
 		{
 			$resource_name[$arr['resource_type']] = $arr['resource_name'];
 		}
 		return $resource_name;
-	}
-
-	/**
-	* Ressourcen-Daten in Array speichern
-	*/
-	function get_resources_data()
-	{
-		global $db_table;
-		$resource_name = array();
-		$res = dbquery("
-		SELECT
-			*
-		FROM
-			".$db_table['resources'].";");
-		while ($arr = mysql_fetch_array($res))
-		{
-			$resources[$arr['resource_type']] = $arr;
-		}
-		return $resources;
 	}
 
 	/**
@@ -374,7 +277,7 @@
 		");
 		if (mysql_num_rows($res)>0)
 		{
-			$arr = mysql_fetch_array($res);
+			$arr = mysql_fetch_assoc($res);
 			return $arr['user_nick'];
 		}
 		else
@@ -404,7 +307,7 @@
 		");
 		if (mysql_num_rows($res)>0)
 		{
-			return mysql_fetch_array($res);
+			return mysql_fetch_assoc($res);
 		}
 		else
 		{
@@ -430,7 +333,7 @@
 		");
 		if (mysql_num_rows($res)>0)
 		{
-			$arr = mysql_fetch_array($res);
+			$arr = mysql_fetch_assoc($res);
 			return $arr['alliance_id'];
 		}
 		else
@@ -458,7 +361,7 @@
 		");
 		if (mysql_num_rows($res)>0)
 		{
-			$arr = mysql_fetch_array($res);
+			$arr = mysql_fetch_assoc($res);
 			return $arr['alliance_id'];
 		}
 		else
@@ -485,7 +388,7 @@
 		");
 		if (mysql_num_rows($res)>0)
 		{
-			$arr = mysql_fetch_array($res);
+			$arr = mysql_fetch_assoc($res);
 			return $arr['user_id'];
 		}
 		else
@@ -512,7 +415,7 @@
 		");
 		if (mysql_num_rows($res)>0)
 		{
-			$arr = mysql_fetch_array($res);
+			$arr = mysql_fetch_assoc($res);
 			return $arr['planet_user_id'];
 		}
 		else
@@ -536,7 +439,7 @@
 		");
 		if (mysql_num_rows($res)>0)
 		{
-			$arr = mysql_fetch_array($res);
+			$arr = mysql_fetch_assoc($res);
 			return $arr['user_nick'];
 		}
 		else
@@ -823,7 +726,7 @@
             	cell_wormhole_id!='0';
 			");
 		}
-		while ($arr=mysql_fetch_array($res))
+		while ($arr=mysql_fetch_assoc($res))
 		{
 			array_push($wh,$arr['cell_id']);
 		}
@@ -952,222 +855,7 @@
 		return $h."h ".$m."m ".$s."s";
 	}
 
-	//
-	// Ressourcen eines Planeten berechnen
-	//
-
-	function calculate_ress_on_planet($planet_id)
-	{
-		global $db_table,$conf;
-
-		$rp = get_planet_types_data();
-		$rs = get_sol_types_data();
-		$race = get_races_array();
-
-		$arr = mysql_fetch_array(dbquery("
-			SELECT
-				p.planet_type_id,
-				p.planet_people,
-				p.planet_res_metal,
-				p.planet_res_crystal,
-				p.planet_res_plastic,
-				p.planet_res_fuel,
-				p.planet_res_food,
-				p.planet_last_updated,
-				p.planet_prod_metal,
-				p.planet_prod_plastic,
-				p.planet_prod_crystal,
-				p.planet_prod_fuel,
-				p.planet_prod_food,
-				p.planet_store_metal,
-				p.planet_store_crystal,
-				p.planet_store_plastic,
-				p.planet_store_fuel,
-				p.planet_store_food,
-				p.planet_people_place,
-				u.user_race_id
-			FROM
-				".$db_table['planets']." AS p
-				INNER JOIN ".$db_table['users']." AS u
-				ON p.planet_user_id = u.user_id
-				AND p.planet_id='".$planet_id."';")
-		);
-
-		if ($arr['planet_last_updated']==0)
-		{
-			$arr['planet_last_updated']=time();
-		}
-		$p_metal=$arr['planet_res_metal'];
-		$p_crystal=$arr['planet_res_crystal'];
-		$p_plastic=$arr['planet_res_plastic'];
-		$p_fuel=$arr['planet_res_fuel'];
-		$p_food=$arr['planet_res_food'];
-		$people=$arr['planet_people'];
-
-		if ($people<1)$people=1;
-
-		if ($p_metal<0) $p_metal=0;
-		if ($p_crystal<0) $p_crystal=0;
-		if ($p_plastic<0) $p_plastic=0;
-		if ($p_fuel<0) $p_fuel=0;
-		if ($p_food<0) $p_food=0;
-
-		$t = time()-$arr['planet_last_updated'];
-
-		if ($arr['planet_store_metal']>$p_metal+($arr['planet_prod_metal']/3600*$t))
-			$p_metal+=$arr['planet_prod_metal']/3600*$t;
-		elseif ($arr['planet_store_metal']>$p_metal)
-			$p_metal=$arr['planet_store_metal'];
-
-		if ($arr['planet_store_crystal']>$p_crystal+($arr['planet_prod_crystal']/3600*$t))
-			$p_crystal+=$arr['planet_prod_crystal']/3600*$t;
-		elseif ($arr['planet_store_crystal']>$p_crystal)
-			$p_crystal=$arr['planet_store_crystal'];
-
-		if ($arr['planet_store_plastic']>$p_plastic+($arr['planet_prod_plastic']/3600*$t))
-			$p_plastic+=$arr['planet_prod_plastic']/3600*$t;
-		elseif ($arr['planet_store_plastic']>$p_plastic)
-			$p_plastic=$arr['planet_store_plastic'];
-
-		if ($arr['planet_store_fuel']>$p_fuel+($arr['planet_prod_fuel']/3600*$t))
-			$p_fuel+=$arr['planet_prod_fuel']/3600*$t;
-		elseif ($arr['planet_store_fuel']>$p_fuel)
-			$p_fuel=$arr['planet_store_fuel'];
-
-		if ($arr['planet_store_food']>$p_food+($arr['planet_prod_food']/3600*$t))
-			$p_food+=$arr['planet_prod_food']/3600*$t;
-		elseif ($arr['planet_store_food']>$p_food)
-			$p_food=$arr['planet_store_food'];
-
-		if ($arr['planet_store_food']>$p_food+($arr['planet_prod_food']/3600*$t))
-			$p_food+=$arr['planet_prod_food']/3600*$t;
-		elseif ($arr['planet_store_food']>$p_food)
-			$p_food=$arr['planet_store_food'];
-
-		$people_births = $people * ($conf['people_multiply']['v']-1);
-
-		$people_births = $people * $conf['people_multiply']['v'] - $people;
-		$people_births= $people_births * ($rp[$arr['planet_type_id']]['type_f_population']) * ($race[$arr['user_race_id']]['race_f_population']) * ($rs[$arr['planet_type_id']]['type_f_population']);
-		if($people_births<=1)
-			$people_births=1;
-
-		if ($arr['planet_people_place']>$people+($people_births/3600*$t))
-			$people+=$people_births/3600*$t;
-		elseif ($arr['planet_people_place']>$people)
-			$people=$arr['planet_people_place'];
-
-		dbquery("
-		UPDATE
-			".$db_table['planets']."
-        SET
-            planet_res_metal='".$p_metal."',
-            planet_res_crystal='".$p_crystal."',
-            planet_res_plastic='".$p_plastic."',
-            planet_res_fuel='".$p_fuel."',
-            planet_res_food='".$p_food."',
-            planet_people='".$people."',
-            planet_last_updated=''".time()."''
-        WHERE
-            planet_id='".$planet_id."';
-		");
-	}
-
-	function reset_universe()
-	{
-		global $db_table;
-
-		$tbl[1]="alliances";
-		$tbl[2]="alliance_bnd";
-		$tbl[3]="alliance_history";
-		$tbl[4]="alliance_news";
-		$tbl[5]="alliance_ranks";
-		$tbl[6]="buddylist";
-		$tbl[7]="buildlist";
-		$tbl[8]="deflist";
-		$tbl[9]="fleet";
-		$tbl[10]="fleet_ships";
-		$tbl[11]="logs";
-		$tbl[12]="market_auction";
-		$tbl[13]="market_ressource";
-		$tbl[14]="market_ship";
-		$tbl[15]="messages";
-		$tbl[16]="notepad";
-		$tbl[17]="planets";
-		$tbl[18]="shiplist";
-		$tbl[19]="space_cells";
-		$tbl[20]="target_bookmarks";
-		$tbl[21]="techlist";
-		$tbl[22]="users";
-		$tbl[23]="user_history";
-		$tbl[24]="user_multi";
-		$tbl[25]="user_log";
-		$tbl[26]="user_points";
-		$tbl[27]="user_requests";
-		$tbl[28]="user_sitting";
-		$tbl[29]="user_sitting_date";
-		$tbl[30]="target_bookmarks";
-		$tbl[31]="buddylist";
-		
-		$tbl[32]="message_ignore";
-		$tbl[33]="allianceboard_catranks";
-		$tbl[34]="allianceboard_topics";
-		$tbl[35]="def_queue";
-		$tbl[36]="ship_queue";
-		$tbl[37]="alliance_poll_votes";
-		$tbl[38]="allianceboard_cat";
-		$tbl[39]="login_failures";
-		$tbl[40]="allianceboard_posts";
-		$tbl[41]="missilelist";
-		$tbl[42]="alliance_rankrights";
-		$tbl[43]="admin_user_log";
-		$tbl[44]="alliance_stats";
-		$tbl[45]="user_stats";
-		$tbl[46]="user_onlinestats";
-		$tbl[47]="logs_game";
-		
-		$tbl[47]="alliance_shoutbox";
-		$tbl[47]="alliance_polls";
-		$tbl[47]="logs_battle";
-
-		foreach ($tbl as $t)
-		{
-			dbquery("TRUNCATE $t;");
-			echo "Leere Tabelle <b>$t</b><br/>";
-		}
-		return true;
-	}
-
-
-	//
-	// Ressourcen eines Planeten auslesen
-	//
-
-	function get_ress_on_planet($planet_id)
-	{
-		global $db_table;
-		$res =dbquery("
-        SELECT
-            planet_res_metal,
-            planet_res_crystal,
-            planet_res_plastic,
-            planet_res_fuel,
-            planet_res_food
-        FROM
-            ".$db_table['planets']."
-        WHERE
-            planet_id='".$planet_id."';");
-		$arr = mysql_fetch_array($res);
-
-		$p['metal']=$arr['planet_res_metal'];
-		$p['crystal']=$arr['planet_res_crystal'];
-		$p['plastic']=$arr['planet_res_plastic'];
-		$p['fuel']=$arr['planet_res_fuel'];
-		$p['food']=$arr['planet_res_food'];
-
-		return $p;
-	}
-
-	//
+//
 	// Treibstoff vom Ressourcen-Konto abbuchen
 	//
 
@@ -1219,7 +907,7 @@
 				ON p.planet_solsys_id = c.cell_id
 				AND p.planet_id='".$planet_id."';
 		");
-		$arr = mysql_fetch_array($res);
+		$arr = mysql_fetch_assoc($res);
 
 		$coords = $arr['cell_sx']."/".$arr['cell_sy']." : ".$arr['cell_cx']."/".$arr['cell_cy']." : ".$arr['planet_solsys_pos'];
 		if ($arr['planet_name']!="")
@@ -1252,7 +940,7 @@
 				ON p.planet_solsys_id = c.cell_id
 				AND p.planet_id='".$planet_id."';
 		");
-		$arr = mysql_fetch_array($res);
+		$arr = mysql_fetch_assoc($res);
 		$coords = $arr['cell_sx']."/".$arr['cell_sy']." : ".$arr['cell_cx']."/".$arr['cell_cy']." : ".$arr['planet_solsys_pos'];
 		if ($action_color==1) $col="#0f0";
 		if ($action_color==2) $col="#f00";
@@ -1301,7 +989,7 @@
 				ON p.planet_solsys_id = c.cell_id
 				AND p.planet_id='".$planet_id."';
 		");
-		$arr = mysql_fetch_array($res);
+		$arr = mysql_fetch_assoc($res);
 		$coords = $arr['cell_sx']."/".$arr['cell_sy']." : ".$arr['cell_cx']."/".$arr['cell_cy']." : ".$arr['planet_solsys_pos'];
 		if ($action_color==1) $col="#0f0";
 		if ($action_color==2) $col="#f00";
@@ -1329,7 +1017,7 @@
 			WHERE
 				cell_id='".$cell_id."';
 		");
-		$arr = mysql_fetch_array($res);
+		$arr = mysql_fetch_assoc($res);
 		$coords = $arr['cell_sx']."/".$arr['cell_sy']." : ".$arr['cell_cx']."/".$arr['cell_cy'];
 		if ($link==1)
 		{
@@ -1486,7 +1174,7 @@
             ON p.planet_solsys_id=c.cell_id
  			AND p.planet_user_id='".$user_id ."'
 			AND p.planet_user_main='1';");
-		$arr = mysql_fetch_array($res);
+		$arr = mysql_fetch_assoc($res);
 		$coords = $arr['cell_sx']."/".$arr['cell_sy'];
 		if ($coords=="/")
 			return "";
@@ -1811,7 +1499,7 @@
 			AND techlist_tech_id='".SPY_TECH_ID."';");
 		if (mysql_num_rows($res)>0)
 		{
-			$arr = mysql_fetch_array($res);
+			$arr = mysql_fetch_assoc($res);
 			return 	$arr['techlist_current_level'];
 		}
 		else
@@ -2008,7 +1696,7 @@
 			ORDER BY
 				user_nick;
 		");
-		while ($arr = mysql_fetch_array($res))
+		while ($arr = mysql_fetch_assoc($res))
 		{
 			$names[$arr['user_id']]['nick'] = $arr['user_nick'];
 			$names[$arr['user_id']]['name'] = $arr['user_name'];
@@ -2050,7 +1738,7 @@
 		");
 		if (mysql_num_rows($res)>0)
 		{
-			while ($arr=mysql_fetch_array($res))
+			while ($arr=mysql_fetch_assoc($res))
 			{
 				delete_user($arr['user_id']);
 			}
@@ -2077,7 +1765,7 @@
 		");
 		if (mysql_num_rows($res)>0)
 		{
-			while ($arr=mysql_fetch_array($res))
+			while ($arr=mysql_fetch_assoc($res))
 			{
 			$text ="Hallo ".$arr['user_nick']."
 			
@@ -2115,7 +1803,7 @@ die Spielleitung";
 		");
 		if (mysql_num_rows($res)>0)
 		{
-			while ($arr=mysql_fetch_array($res))
+			while ($arr=mysql_fetch_assoc($res))
 			{
 				delete_user($arr['user_id']);
 			}
@@ -2187,7 +1875,7 @@ die Spielleitung";
 		");
 		if (mysql_num_rows($res)>0)
 		{
-			$arr=mysql_fetch_array($res);
+			$arr=mysql_fetch_assoc($res);
 			$utx = new userToXml($arr['user_id']);
 			if ($xmlfile = $utx->toCacheFile())
 			{
@@ -2205,7 +1893,7 @@ die Spielleitung";
 			");
 			if (mysql_num_rows($fres)>0)
 			{
-				while ($farr=mysql_fetch_array($fres))
+				while ($farr=mysql_fetch_assoc($fres))
 				{
 					// Flotten-Schiffe löschen
 					dbquery("
@@ -2244,7 +1932,7 @@ die Spielleitung";
 			");
 			if (mysql_num_rows($pres)>0)
 			{
-				while ($parr=mysql_fetch_array($pres))
+				while ($parr=mysql_fetch_assoc($pres))
 				{
 					//löscht alle markt-handelschiffe die auf dem weg zu dem user sind
                     $fres2=dbquery("
@@ -2258,7 +1946,7 @@ die Spielleitung";
 					");
                     if (mysql_num_rows($fres2)>0)
                     {
-                        while ($farr2=mysql_fetch_array($fres2))
+                        while ($farr2=mysql_fetch_assoc($fres2))
                         {
                         	// Flotten-Schiffe löschen
                             dbquery("
@@ -2298,7 +1986,7 @@ die Spielleitung";
 				");
 				if (mysql_num_rows($ares)>0)
 				{
-					$aarr=mysql_fetch_array($ares);
+					$aarr=mysql_fetch_assoc($ares);
 
 					 // Wenn der User der Gründer der Allianz ist wird der User mit den höchsten Punkten zum neuen Allianzgründer
 					if ($user_id==$aarr['alliance_founder_id'])
@@ -2403,7 +2091,7 @@ die Spielleitung";
 			WHERE
 				alliance_id='".$alliance_id."';
 		");
-		$arr=mysql_fetch_array($res);
+		$arr=mysql_fetch_assoc($res);
 
 		//Daten löschen
 		dbquery("
@@ -2420,10 +2108,10 @@ die Spielleitung";
 						WHERE
 							alliance_bnd_alliance_id1='".$alliance_id."'
 							OR alliance_bnd_alliance_id2='".$alliance_id."';");
-		while ($bndarr=mysql_fetch_array($bndres))
+		while ($bndarr=mysql_fetch_assoc($bndres))
 		{
 			$bres=dbquery("SELECT * FROM allianceboard_topics WHERE topic_bnd_id=".$bndarr['alliance_bnd_id'].";");
-			while ($barr=mysql_fetch_array($bres))
+			while ($barr=mysql_fetch_assoc($bres))
 			{
 				dbquery("DELETE FROM allianceboard_posts WHERE post_topic_id=".$barr['topic_id'].";");
 			}
@@ -3054,13 +2742,13 @@ die Spielleitung";
 				techlist_user_id='".$user_id."'
 				AND techlist_tech_id='7'
 		"); //Spiotech
-		$spiorow=mysql_fetch_array($spiores);
+		$spiorow=mysql_fetch_assoc($spiores);
 		$spiotech = max(0,$spiorow['techlist_current_level']);
 
 		if(mysql_num_rows($ffres)>0)
 		{
 			// Gehe jede Flotte durch
-      while ($farr=mysql_fetch_array($ffres))
+      while ($farr=mysql_fetch_assoc($ffres))
       {
 	      $show_tarn=0;
 
@@ -3090,7 +2778,7 @@ die Spielleitung";
 						techlist_user_id='".$farr['fleet_user_id']."'
 						AND techlist_tech_id='11'
 				"); 
-        $tarnrow=mysql_fetch_array($tarnres);
+        $tarnrow=mysql_fetch_assoc($tarnres);
 
         //Liest Tarnbonus von den Spezialschiffen aus
         $special_ship_bonus_tarn = 0;
@@ -3115,7 +2803,7 @@ die Spielleitung";
 				");
         if(mysql_num_rows($special_boni_res)>0)
         {
-            while ($special_boni_arr=mysql_fetch_array($special_boni_res))
+            while ($special_boni_arr=mysql_fetch_assoc($special_boni_res))
             {
                 $special_ship_bonus_tarn+=$special_boni_arr['special_ship_bonus_tarn'] * $special_boni_arr['shiplist_special_ship_bonus_tarn'];
             }
@@ -3234,9 +2922,12 @@ die Spielleitung";
 	function checker_init($debug=0)
 	{
 		$_SESSION['checker']=md5(mt_rand(0,99999999).time());
-		while ($_SESSION['checker_last']==$_SESSION['checker'])
+		if (isset($_SESSION['checker_last']))
 		{
-			$_SESSION['checker']=md5(mt_rand(0,99999999).time());
+			while ($_SESSION['checker_last']==$_SESSION['checker'])
+			{
+				$_SESSION['checker']=md5(mt_rand(0,99999999).time());
+			}
 		}
 		$_SESSION['checker_last']=$_SESSION['checker'];
 		echo "<input type=\"hidden\" name=\"checker\" value=\"".$_SESSION['checker']."\" />";
@@ -3493,7 +3184,7 @@ die Spielleitung";
 			$sell_fuel_total = 0;
 			$sell_food_total = 0;
 			
-      while($arr=mysql_fetch_array($res))
+      while($arr=mysql_fetch_assoc($res))
       {
           //Markt Level vom Verkäufer laden
           $mres = dbquery("
@@ -3506,7 +3197,7 @@ die Spielleitung";
 						AND buildlist_building_id='".MARKTPLATZ_ID."'
 						AND buildlist_current_level>'0'
 						AND buildlist_user_id='".$arr['auction_user_id']."';");
-          $marr = mysql_fetch_array($mres);
+          $marr = mysql_fetch_assoc($mres);
           
           // Definiert den Rückgabefaktor
           $return_factor = 1 - (1/($marr['buildlist_current_level']+1));
@@ -3784,7 +3475,7 @@ die Spielleitung";
 			ship_id='".MARKET_SHIP_ID."';");		
     if (mysql_num_rows($res) > 0)
     {
-    	$arr=mysql_fetch_array($res);
+    	$arr=mysql_fetch_assoc($res);
     	$ship_speed = $arr['ship_speed'];
     	$ship_starttime = $arr['ship_time2start'];
     	$ship_landtime = $arr['ship_time2land'];
@@ -3806,7 +3497,7 @@ die Spielleitung";
 			ressource_buyable='0';");    			
     if (mysql_num_rows($res) > 0)
     {
-    	while($arr=mysql_fetch_array($res))
+    	while($arr=mysql_fetch_assoc($res))
     	{
     		// Add trade points
     		$tradepoints_buyer = TRADE_POINTS_PER_TRADE;
@@ -3944,7 +3635,7 @@ die Spielleitung";
 			ship_buyable='0';");
 		if (mysql_num_rows($res)!=0)
 		{
-    	while($arr=mysql_fetch_array($res))
+    	while($arr=mysql_fetch_assoc($res))
     	{
 
     		// Add trade points
@@ -4087,7 +3778,7 @@ die Spielleitung";
 			AND auction_delete_date>'".time()."';");
     if (mysql_num_rows($res)!=0)
     {
-      while($arr=mysql_fetch_array($res))
+      while($arr=mysql_fetch_assoc($res))
       {
       	
     		// Add trade points
@@ -4295,7 +3986,7 @@ die Spielleitung";
 			datum<=".(time()-$conf['market_response_time']['v']*3600*24).";");    			
     if (mysql_num_rows($res) > 0)
     {
-    	while($arr=mysql_fetch_array($res))
+    	while($arr=mysql_fetch_assoc($res))
     	{
     			// Markt Level vom Verkäufer laden
           $mres = dbquery("
@@ -4308,7 +3999,7 @@ die Spielleitung";
 						AND buildlist_building_id='".MARKTPLATZ_ID."'
 						AND buildlist_current_level>'0'
 						AND buildlist_user_id='".$arr['user_id']."';");
-          $marr = mysql_fetch_array($mres);
+          $marr = mysql_fetch_assoc($mres);
           
           // Definiert den Rückgabefaktor
           $return_factor = 1 - (1/($marr['buildlist_current_level']+1));
@@ -4371,7 +4062,7 @@ die Spielleitung";
 			datum<=".(time()-$conf['market_response_time']['v']*3600*24).";");    			
     if (mysql_num_rows($res) > 0)
     {
-    	while($arr=mysql_fetch_array($res))
+    	while($arr=mysql_fetch_assoc($res))
     	{
     			// Markt Level vom Verkäufer laden
           $mres = dbquery("
@@ -4384,7 +4075,7 @@ die Spielleitung";
 						AND buildlist_building_id='".MARKTPLATZ_ID."'
 						AND buildlist_current_level>'0'
 						AND buildlist_user_id='".$arr['user_id']."';");
-          $marr = mysql_fetch_array($mres);
+          $marr = mysql_fetch_assoc($mres);
           
           // Definiert den Rückgabefaktor
           $return_factor = 1 - (1/($marr['buildlist_current_level']+1));
@@ -4556,7 +4247,7 @@ Forum: http://www.etoa.ch/forum";
 			WHERE
 				cell_id='".$w1."';
 		");
-		$arr=mysql_fetch_array($res);
+		$arr=mysql_fetch_assoc($res);
 		// Prüfen ob Wurmloch sich geändert hat und ob nicht die aktuelle Zelle gewählt wurde
 		if ($arr['cell_wormhole_id']!=$w2 && $w1!=$w2)
 		{
@@ -4569,7 +4260,7 @@ Forum: http://www.etoa.ch/forum";
 				WHERE
 					cell_id='".$w2."';
 			");
-			$warr=mysql_fetch_array($wres);
+			$warr=mysql_fetch_assoc($wres);
 			dbquery("
 				UPDATE
 					".$db_table['space_cells']."
@@ -4636,7 +4327,7 @@ Forum: http://www.etoa.ch/forum";
 		");
 		if (mysql_num_rows($res)>0)
 		{
-			while ($arr=mysql_fetch_array($res))
+			while ($arr=mysql_fetch_assoc($res))
 			{
 				if (!in_array($arr['cell_id'],$deleted) && !in_array($arr['cell_wormhole_id'],$deleted))
 				{
@@ -4954,7 +4645,7 @@ Forum: http://www.etoa.ch/forum";
 		$nr = mysql_num_rows($res);
 		if ($nr>0)
 		{
-			while ($arr=mysql_fetch_array($res))
+			while ($arr=mysql_fetch_assoc($res))
 			{
 				mail($arr['msg_to'],stripslashes($arr['msg_subject']),stripslashes($arr['msg_text']),stripslashes($arr['msg_header'])) or die("Mail problem!\n");
 				
@@ -5070,7 +4761,7 @@ Forum: http://www.etoa.ch/forum";
 		if ($cnt>0)
 		{
 			$time = time();
-			while ($arr=mysql_fetch_array($res))
+			while ($arr=mysql_fetch_assoc($res))
 			{
 				if ($arr['planet_last_updated']==0) $arr['planet_last_updated']=$time;
 				$fuel = min((max($time-$arr['planet_last_updated'],0)*$conf['gasplanet']['p1']/3600)+$arr['planet_res_fuel'],$conf['gasplanet']['p2']*$arr['planet_fields']);
@@ -5117,7 +4808,7 @@ Forum: http://www.etoa.ch/forum";
 		{
 			require_once(GAME_ROOT_DIR."/inc/fleet_action.inc.php");
 			require_once(GAME_ROOT_DIR."/inc/fleet_update.inc.php");
-			while ($arr=mysql_fetch_array($res))
+			while ($arr=mysql_fetch_assoc($res))
 			{
 				update_fleet($arr,0);
 				array_push($ids,$arr['fleet_id']);
@@ -5341,7 +5032,7 @@ Forum: http://www.etoa.ch/forum";
 		if (mysql_num_rows($res)>0)
 		{
 			include("inc/missiles.inc.php");
-			while($arr=mysql_fetch_array($res))
+			while($arr=mysql_fetch_assoc($res))
 			{
 				missile_battle($arr['flight_id']);				
 			}
@@ -5471,7 +5162,7 @@ Forum: http://www.etoa.ch/forum";
 		");
 		if (mysql_num_rows($res)>0)
 		{
-			$arr=mysql_fetch_array($res);
+			$arr=mysql_fetch_assoc($res);
 			$coords['id'] = $arr['cell_id'];
 			$coords['sx'] = $arr['cell_sx'];
 			$coords['sy'] = $arr['cell_sy'];
@@ -5536,7 +5227,7 @@ Forum: http://www.etoa.ch/forum";
 		");
 		if (mysql_num_rows($res)>0)
 		{
-			while ($arr=mysql_fetch_array($res))
+			while ($arr=mysql_fetch_assoc($res))
 			{
 				Ranking::addDiplomacyPoints($arr['alliance_bnd_diplomat_id'],$arr['alliance_bnd_points'],"Bündnis ".$arr['alliance_bnd_alliance_id1']." mit ".$arr['alliance_bnd_alliance_id1']);
 				dbquery("
@@ -5579,7 +5270,7 @@ Forum: http://www.etoa.ch/forum";
 		$nr = mysql_num_rows($res);
 		if ($nr>0)
 		{
-			while ($arr=mysql_fetch_array($res))
+			while ($arr=mysql_fetch_assoc($res))
 			{
 				// Add log							
 				$text = "Der Krieg zwischen [b][".$arr['a1tag']."] ".$arr['a1name']."[/b] und [b][".$arr['a2tag']."] ".$arr['a2name']."[/b] ist zu Ende! Es folgt eine Friedenszeit von ".round(PEACE_DURATION/3600)." Stunden.";
@@ -5633,7 +5324,7 @@ Forum: http://www.etoa.ch/forum";
 		$nr = mysql_num_rows($res);
 		if ($nr>0)
 		{
-			while ($arr=mysql_fetch_array($res))
+			while ($arr=mysql_fetch_assoc($res))
 			{
 				// Add log							
 				$text = "Der Friedensvertrag zwischen [b][".$arr['a1tag']."] ".$arr['a1name']."[/b] und [b][".$arr['a2tag']."] ".$arr['a2name']."[/b] ist abgelaufen. Ihr könnt einander nun wieder Krieg erklären.";
@@ -5687,7 +5378,7 @@ Forum: http://www.etoa.ch/forum";
 			AND item_cat='b';");
 		if (mysql_num_rows($ires)>0)
 		{
-			while($iarr = mysql_fetch_array($ires))
+			while($iarr = mysql_fetch_assoc($ires))
 			{
 				dbquery("INSERT INTO
 					buildlist
@@ -5719,7 +5410,7 @@ Forum: http://www.etoa.ch/forum";
 			AND item_cat='t';");
 		if (mysql_num_rows($ires)>0)
 		{
-			while($iarr = mysql_fetch_array($ires))
+			while($iarr = mysql_fetch_assoc($ires))
 			{
 				dbquery("INSERT INTO
 					techlist
@@ -5751,7 +5442,7 @@ Forum: http://www.etoa.ch/forum";
 			AND item_cat='s';");
 		if (mysql_num_rows($ires)>0)
 		{
-			while($iarr = mysql_fetch_array($ires))
+			while($iarr = mysql_fetch_assoc($ires))
 			{
 				dbquery("INSERT INTO
 					shiplist
@@ -5783,7 +5474,7 @@ Forum: http://www.etoa.ch/forum";
 			AND item_cat='d';");
 		if (mysql_num_rows($ires)>0)
 		{
-			while($iarr = mysql_fetch_array($ires))
+			while($iarr = mysql_fetch_assoc($ires))
 			{
 				dbquery("INSERT INTO
 					deflist

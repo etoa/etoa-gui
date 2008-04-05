@@ -38,26 +38,6 @@
 
 	// BEGIN SKRIPT //
 
-	/** todo: remove or fix
-	if (!isset($_GET['id']) && isset($_GET['planet_id']) && $_GET['planet_id']>0)
-	{
-		$res = dbquery("
-		SELECT
-			planet_solsys_id
-		FROM
-			planets 
-		WHERE 
-			planet_id=".$_GET['planet_id']."
-		");	
-		if (mysql_num_rows($res)>0)	
-		{
-			$arr=mysql_fetch_row($res);
-			$_GET['id']=$arr[0];
-		}
-	}
-	*/
-
-
 	if (isset($_GET['id']) && $_GET['id']>0)
 	{
 		$cellId = $_GET['id'];
@@ -67,106 +47,46 @@
 		$cellId = $cp->cell_id;
 	}
 	
-		if (isset($_GET['mode']))
+	
+	// Systemnamen updaten
+	if (isset($_POST['starname_submit']) && $_POST['starname']!="" && $_POST['starname_id']>0 && checker_verify())
+	{
+		$star = new Star($_POST['starname_id']);
+		if ($star->isValid())
 		{
-			$mode=$_GET['mode'];
-		}
-		else
-		{
-			$mode="default";
-		}
-		
-		// Systemnamen updaten
-		if (isset($_POST['submit']) && $_POST['submit']!="" && $_POST['cell_solsys_name']!="")
-		{
-			$check_name=check_illegal_signs($_POST['cell_solsys_name']);
-			if(!$check_name)
+			if ($star->setNewName($_POST['starname']))
 			{
-      	dbquery("
-      	UPDATE 
-      		".$db_table['space_cells']." 
-      	SET 
-      		cell_solsys_name='".$_POST['cell_solsys_name']."'
-       	WHERE 
-       		cell_id='".intval($cellId)."'
-       	;");
-      }
-      else
-      {
-      	echo "Unerlaubtes Zeichen (".$check_name.") im Namen!<br/>";
-      }
+				echo "Der Stern wurde benannt!<br/><br/>";
+			}
+			else
+			{
+				echo "Es gab ein Problem beim Setzen des Namens!<br/><br/>";
+			}
 		}
+		unset($star);
+	}
 		
 		$cell = new Cell($cellId);
 		if ($cell->isValid())
 		{
 			$entities = $cell->getEntities();
 			
-			
-			
 			echo "<h1>System ".$cell."</h1>";
-			
-		
-			/*
-				echo "<table style=\"width:450px;margin:0px auto;border-collapse:collapse;\">";
-				echo "<tr><td class=\"tbldata\" style=\"width:39px;height:39px;color:#000;background:#000\">";
-				echo "<img src=\"".IMAGE_PATH."/galaxy/sol".$arro['cell_solsys_solsys_sol_type'].".gif\" style=\"border:none;width:40px;height:40px;\" alt=\"Stern\" /></td>";
-				echo "<td class=\"tbldata\" style=\"text-align:center;font-size:12pt;vertical-align:middle;\">";
-				if ($arro['cell_solsys_name']!="")
-					echo "<b>".$arro['cell_solsys_name']."</b> (".$arro['type_name'].")";
-				else
-					echo $arro['type_name'];
-				echo "</td></tr>";
-				echo "</table><br/>";
-			
-
-			$sx=$arro['cell_sx'];
-			$sy=$arro['cell_sy'];
-
-			// System benennen
-			if ($arro['cell_solsys_name']=="")
-			{
-      	$snres = dbquery("
-      	SELECT 
-      		users.user_id 
-      	FROM 
-      		".$db_table['planets']."
-      	INNER JOIN
-      		".$db_table['users']." 
-      		ON planets.planet_user_id=users.user_id 
-      	WHERE            
-        	planets.planet_solsys_id='".intval($cellId)."' 
-      	ORDER BY 
-      		planets.planet_user_main DESC,
-      		users.user_points DESC 
-      	LIMIT 1;");
-      	if (mysql_num_rows($snres)>0)
-      	{
-      		$snarr = mysql_fetch_array($snres);
-      		if ($s['user']['id']==$snarr['user_id'])
-      		{
-      		    echo "<form action=\"?page=$page&amp;id=".intval($cellId)."\" method=\"post\">";
-      		    echo "Du darfst diesen Stern benennen: <input type=\"text\" name=\"cell_solsys_name\" value=\"\" maxlength=\"30\"/> <input type=\"submit\" name=\"submit\" value=\"Speichern\" /><br/><br/></form>";
-      		}
-      	}
-      }
-			*/
-
+					
 			//
-			// Planeten
+			// Systamkarte
 			//
-			
 			infobox_start("Karte",1);
 			echo "<tr>
 				<th colspan=\"2\" class=\"tbltitle\" style=\"width:60px;\">Position</th>
 				<th class=\"tbltitle\">Typ</th>
 				<th class=\"tbltitle\">Name</th>
 				<th class=\"tbltitle\">Besitzer</th>
-				
-				<th class=\"tbltitle\">&nbsp;</th>
+				<th class=\"tbltitle\">Aktionen</th>
 			</tr>"; //<th class=\"tbltitle\">Allianz</th>
 
-
+			$hasPlanetInSystem = false;
+			$starNameEmpty = false;
 			foreach ($entities as $ent)
 			{
 				echo "<tr>
@@ -174,11 +94,29 @@
 					<td class=\"tbldata\">".$ent->pos()."</td>
 					<td class=\"tbldata\">".$ent->type()."</td>
 					<td class=\"tbldata\">".$ent->name()."</td>
-					<td class=\"tbldata\">".$ent->owner()."</td>
 					<td class=\"tbldata\">";
-					
-					if ($ent->entityCode()=='p')					
+					if ($ent->ownerId()>0)
+						echo "<a href=\"?page=userinfo&amp;id=".$ent->ownerId()."\">".$ent->owner()."</a>";
+					else
+						echo $ent->owner();					
+					echo "</td>
+					<td class=\"tbldata\">";
+
+					if ($ent->entityCode()=='s')					
 					{
+						if (!$ent->named)
+						{
+							$starNameEmpty=true;
+							$starToBeNamed = $ent->id();
+						}
+					}
+					elseif ($ent->entityCode()=='p')					
+					{
+						if ($ent->ownerId()>0 && $cu->id()==$ent->ownerId())
+						{
+							$hasPlanetInSystem = true;
+						}
+						
 						echo "<a href=\"?page=planet&amp;id=".$ent->id()."\" title=\"Planeteninfo\">Info</a> ";
 						
 						// Nachrichten-Link
@@ -200,17 +138,17 @@
 						}
 					}
 					
-					if ($ent->entityCode()=='p' || $ent->entityCode()=='a' || $ent->entityCode()=='n' || $ent->entityCode()=='e')
+					// Flotte
+					if ($ent->entityCode()=='p' || $ent->entityCode()=='a' || $ent->entityCode()=='w' || $ent->entityCode()=='n' || $ent->entityCode()=='e')
 					{
-						// Flotte
 						echo "<a href=\"?page=haven&amp;target=".$ent->id()."\" title=\"Flotte hinschicken\">Flotte</a> ";
-	
-						// Favorit
-						if ($cu->id()!=$ent->ownerId())
-						{
-							echo "<a href=\"?page=bookmarks&amp;add=".$ent->id()."\" title=\"Zu den Favoriten hinzuf&uuml;gen\">Favorit</a> ";
-						}					
 					}
+
+					// Favorit
+					if ($cu->id()!=$ent->ownerId())
+					{
+						echo "<a href=\"?page=bookmarks&amp;add=".$ent->id()."\" title=\"Zu den Favoriten hinzuf&uuml;gen\">Favorit</a> ";
+					}					
 					echo "</td></tr>";
 
 				
@@ -430,6 +368,19 @@
 			}
 			
 			echo "</table><br/><br/>";
+			
+			
+			// System benennen
+			if ($hasPlanetInSystem && $starNameEmpty)
+			{
+ 		    echo "<form action=\"?page=$page&amp;id=".intval($cellId)."\" method=\"post\">";
+ 		    checker_init();
+ 		    echo "Du darfst diesen Stern benennen: 
+ 		    <input type=\"text\" name=\"starname\" value=\"\" maxlength=\"30\"/> 
+ 		    <input type=\"hidden\" name=\"starname_id\" value=\"". $starToBeNamed."\" /> 
+ 		    <input type=\"submit\" name=\"starname_submit\" value=\"Speichern\" /><br/><br/></form>";
+      }
+						
 			
 			
 			echo '<div id="spy_info_box" style="display:none;">';

@@ -5,8 +5,15 @@
 	*/
 	class Wormhole extends Entity
 	{
-		private $id;
-		private $pos;
+		protected $id;
+		protected $coordsLoaded;
+		protected $pos;
+		protected $isValid;		
+		protected $sx;
+		protected $sy;
+		protected $cx;
+		protected $cy;
+		protected $cellId;
 		private $name;		
 		
 		/**
@@ -14,9 +21,11 @@
 		*/
 		function Wormhole($id=0)
 		{
+			$this->isValid = false;
 			$this->id = $id;
 			$this->pos = 0;
 			$this->name = "Unbenannt";
+			$this->coordsLoaded=false;
 		}
 
 		/**
@@ -55,7 +64,7 @@
 		*/
 		function type()
 		{
-			return "";
+			return "Wurmloch";
 		}							
 
 		function imagePath($opt="")
@@ -72,7 +81,26 @@
 		/**
 		* To-String function
 		*/
-		function __toString() { return "-"; }
+		function __toString() 
+		{
+			if (!$this->coordsLoaded)
+			{
+				$this->loadCoords();
+			}
+			return $this->formatedCoords();
+		}
+		
+		/**
+		* Returns the cell id
+		*/
+		function cellId()
+		{
+			if (!$this->coordsLoaded)
+			{
+				$this->loadCoords();
+			}
+			return $this->cellId;
+		}
 		
 	}
 ?>

@@ -5,18 +5,27 @@
 	*/
 	class UnknownEntity extends Entity
 	{
-		private $id;
-		private $pos;
 		private $name;		
+		protected $id;
+		protected $coordsLoaded;
+		protected $isValid;		
+		protected $pos;
+		protected $sx;
+		protected $sy;
+		protected $cx;
+		protected $cy;
+		protected $cellId;
 		
 		/**
 		* The constructor
 		*/
 		function UnknownEntity($id=0)
 		{
+			$this->isValid = false;
 			$this->id = $id;
 			$this->pos = 0;
 			$this->name = "Unbenannt";
+			$this->coordsLoaded=false;
 		}
 
 		/**
@@ -55,7 +64,7 @@
 		*/
 		function type()
 		{
-			return "";
+			return "Unbekannter Raum";
 		}							
 
 		function imagePath($opt="")
@@ -67,12 +76,34 @@
 		/**
 		* Returns type
 		*/
-		function entityCode() { return "e"; }	      
+		function entityCode() 
+		{ 
+			return "e"; 
+		}	      
 		
 		/**
 		* To-String function
 		*/
-		function __toString() { return "-"; }
+		function __toString() 
+		{
+			if (!$this->coordsLoaded)
+			{
+				$this->loadCoords();
+			}
+			return $this->formatedCoords();
+		}
+		
+		/**
+		* Returns the cell id
+		*/
+		function cellId()
+		{
+			if (!$this->coordsLoaded)
+			{
+				$this->loadCoords();
+			}
+			return $this->cellId;
+		}
 		
 	}
 ?>

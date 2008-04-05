@@ -7,13 +7,16 @@
   */
 	class Planet extends Entity
 	{
+		protected $isValid;
+		
 		/**
 		* Constructor
 		* Erwartet ein Array mit dem Inhalt des MySQL-Datensatzes, oder die ID eines Planeten
 		*/
 		function Planet($arr=null)
 		{
-			global $db_table;
+			$this->isValid = false;
+			
 			if (!is_array($arr) && $arr>0)
 			{
 				$res = dbquery("
@@ -57,13 +60,34 @@
 			if ($arr)
 			{				
 				$this->id=$arr['id'];
-				$this->cell_id=$arr['cell_id'];
-				$this->user_id=$arr['planet_user_id'];
+				$this->cellId=$arr['cell_id'];
+				$this->userId=$arr['planet_user_id'];
 				$this->name= $arr['planet_name']!="" ? $arr['planet_name'] : 'Unbenannt';
 				$this->desc=$arr['planet_desc'];
 				$this->image=$arr['planet_image'];
 				$this->updated=$arr['planet_last_updated'];
 				$this->userChanged=$arr['planet_user_changed'];
+				
+				if ($arr['planet_user_id']>0)
+				{
+					$ures = dbquery("
+					SELECT
+						user_nick,
+						user_race_id
+					FROM
+						users
+					");
+					$uarr = mysql_Fetch_row($ures);
+					$this->owner = $uarr[0];
+					$this->ownerRaceId = $uarr[1];
+				}
+				else
+				{
+					$this->owner = "Niemand";	
+					$this->ownerRaceId = 0;
+				}
+				
+				
 				
 				$this->sx = $arr['sx'];
 				$this->sy = $arr['sy'];
@@ -132,6 +156,15 @@
 				$this->res->fuel=zeroPlus($arr['planet_res_fuel']);
 				$this->res->food=zeroPlus($arr['planet_res_food']);
 				$this->use->power=zeroPlus($arr['planet_use_power']);
+
+				$this->resMetal=zeroPlus($arr['planet_res_metal']);
+				$this->resCrystal=zeroPlus($arr['planet_res_crystal']);
+				$this->resPlastic=zeroPlus($arr['planet_res_plastic']);
+				$this->resFuel=zeroPlus($arr['planet_res_fuel']);
+				$this->resFood=zeroPlus($arr['planet_res_food']);
+				$this->usePower=zeroPlus($arr['planet_use_power']);
+
+
 				$this->store->metal=$arr['planet_store_metal'];
 				$this->store->crystal=$arr['planet_store_crystal'];
 				$this->store->plastic=$arr['planet_store_plastic'];
@@ -152,6 +185,8 @@
 					$this->isMain=true;
 				else
 					$this->isMain=false;
+
+				$this->isValid = true;
 
 			}
 		}
@@ -176,9 +211,14 @@
 			return "Planet";
 		}
 
+		function ownerId()
+		{
+			return $this->userId;
+		}		
+
 		function owner()
 		{
-			return "TODO";
+			return $this->owner;
 		}
 		
 		function type()
@@ -187,14 +227,17 @@
 		}		
 		function imagePath($opt="")
 		{
+			if ($opt=="b")
+			{
+				return IMAGE_PATH."/planets/planet".$this->image.".".IMAGE_EXT;
+			}
+			if ($opt=="m")
+			{
+				return IMAGE_PATH."/planets/planet".$this->image."_medium.".IMAGE_EXT;
+			}			
 			return IMAGE_PATH."/planets/planet".$this->image."_small.".IMAGE_EXT;
 		}		
 		
-		function ownerId()
-		{
-			return 0;
-		}		
-
 		function name()
 		{
 			return $this->name;
@@ -202,7 +245,12 @@
 
 		function __toString()
 		{
-			return $this->sx."/".$this->sy." : ".$this->cx."/".$this->cy." : ".$this->pos." ".$this->name;
+			return $this->formatedCoords()." ".$this->name;
+		}
+		
+		function cellId()
+		{
+			return $this->cellId;
 		}
 
 		/**
@@ -230,34 +278,6 @@
 			return $this->sx."/".$this->sy." : ".$this->cx."/".$this->cy." : ".$this->pos;
 		}		
 		
-		/**
-		* Returns current coordinates
-		*
-		* @return string
-		*/
-		function identifier()
-		{
-			return Planet::getIdentifier($this->id);
-		}				
-
-		/**
-		* Returns identifier
-		*
-		* @return string
-		*/
-		static function getIdentifier($pid,$p=1)
-		{
-			$l = strlen($pid);
-			if ($p==1)
-				$s = "P";
-			else
-				$s = "";
-			for ($x=$l;$x<PLANET_ID_LENGTH;$x++)
-			{
-				$s.="0";
-			}
-			return $s.$pid;
-		}	
 
 		/** 
 		* Displays a box with resources, power and population
@@ -776,7 +796,7 @@
 				buildlist_planet_id=".$this->id."
                 AND buildlist_build_type=1
                 AND buildlist_build_end_time<".time()."
-                AND buildlist_user_id='".$this->user_id."';");
+                AND buildlist_user_id='".$this->userId."';");
 			$b = mysql_affected_rows();
 
 			dbquery("
@@ -791,7 +811,7 @@
 				buildlist_planet_id=".$this->id."
                 AND buildlist_build_type=2
                 AND buildlist_build_end_time<".time()."
-                AND buildlist_user_id='".$this->user_id."';");
+                AND buildlist_user_id='".$this->userId."';");
 
 			$d = mysql_affected_rows();
 			return ($d+$b>0) ? true : false;				
@@ -812,7 +832,7 @@
                 techlist_build_start_time=0,
                 techlist_build_end_time=0
 			WHERE
-                techlist_user_id='".$this->user_id."'
+                techlist_user_id='".$this->userId."'
                 AND techlist_build_type=1
                 AND techlist_build_end_time<".time().";");
 			//echo mysql_affected_rows()." Technologien wurden aktualisiert!<br/>";
@@ -994,6 +1014,15 @@
 				$v = -99;
 			}
 			return $v;
+		}
+
+		/**
+		* Calculate bonus power production based on temperature
+		*/
+		function fuelProductionBonus()
+		{
+			$v = floor(($this->temp_from + $this->temp_to)/20);
+			return -$v;
 		}
 
 		/**

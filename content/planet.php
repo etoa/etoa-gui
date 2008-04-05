@@ -32,18 +32,11 @@
 
 	// DATEN LADEN
 
-	$sol_type = get_sol_types_array();
-	$planet_type = get_planet_types_array();
-
-	if (intval($_GET['planet_info_id'])>0)
-	{
-		$id = intval($_GET['planet_info_id']);
-	}	
-	elseif(intval($_GET['id'])>0)
+	if(isset($_GET['id']) && intval($_GET['id'])>0)
 	{
 		$id = intval($_GET['id']);
 	}	
-	elseif(intval($_POST['id'])>0)
+	elseif(isset($_POST['id']) && intval($_POST['id'])>0)
 	{
 		$id = intval($_POST['id']);
 	}	
@@ -55,115 +48,25 @@
 
 	if ($id>0)
 	{
-		$res = dbquery("
-		SELECT     
-			p.planet_id,
-			p.planet_user_id,
-			p.planet_name,
-			p.planet_image,
-			p.planet_solsys_pos,
-			p.planet_fields,
-			planet_user_changed,
-            p.planet_fields_used,
-            p.planet_temp_from,
-            p.planet_temp_to,
-            p.planet_desc,
-            sp.cell_id,
-            sp.cell_sx,
-            sp.cell_sy,
-            sp.cell_cx,
-            sp.cell_cy,
-            pt.type_name as ptype,
-            s.type_name as stype
-		FROM 
-            ".$db_table['planets']." AS p
-    INNER JOIN
-    (
-    	".$db_table['space_cells']." AS sp
-    	
-    		INNER JOIN
-      		".$db_table['sol_types']." AS s
-    		ON sp.cell_solsys_solsys_sol_type=s.type_id   			
-    )
-    ON p.planet_solsys_id=sp.cell_id
-    
-    INNER JOIN 
-   		".$db_table['planet_types']." AS pt
-   	ON p.planet_type_id=pt.type_id
-		WHERE
-			p.planet_id='".intval($id)."'
-		;");
-		if (mysql_num_rows($res)>0)
+		$ent = Entity::createFactoryById($id);
+		if ($ent->isValid())
 		{
-			$arr = mysql_fetch_array($res);
-			echo "<h1>&Uuml;bersicht &uuml;ber den Planeten ".$arr['cell_sx']."/".$arr['cell_sy']." : ".$arr['cell_cx']."/".$arr['cell_cy']." : ".$arr['planet_solsys_pos'];
-			if ($arr['planet_name']!="") echo " (".$arr['planet_name'].")";
-			echo "</h1>";
-	
-			$p_img = IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$arr['planet_image'].".gif";
-	
+		
+		echo "<h1>&Uuml;bersicht &uuml;ber ".$ent." (".$ent->entityCodeString().")</h1>";
+		if ($ent->entityCode()=='p')
+		{
 			infobox_start("Planetendaten",1);
 			echo "<tr>
 				<td width=\"320\" class=\"tbldata\" style=\"background:#000;vertical-align:middle\" rowspan=\"7\">
-					<img src=\"$p_img\" width=\"310\" height=\"310\"/>
+					<img src=\"".$ent->imagePath("b")."\" alt=\"planet\" width=\"310\" height=\"310\"/>
 				</td>";
 			echo "<td width=\"100\" class=\"tbltitle\">Besitzer:</td>
 			<td class=\"tbldata\">";
-			if ($arr['planet_user_id']>0)
-			{
-				$user = get_user_nick($arr['planet_user_id']);
-				if ($user!="") echo $user." [<a href=\"?page=userinfo&id=".$arr['planet_user_id']."\" title=\"Info\">Info</a>]";
-				if ($arr['planet_user_changed']>0)
-				{
-					echo "<br/><span style=\"font-size:7pt;font-weight:bold;\">Letzter Besitzerwechsel: ".df($arr['planet_user_changed'])."</span>";
-				}
-			}
+			if ($ent->ownerId()>0)
+				echo "<a href=\"?page=userinfo&amp;id=".$ent->ownerId()."\">".$ent->owner()."</a>";
 			else
-				echo "<i>Unbewohnter Planet</i>";
+				echo $ent->owner();
 			echo "</td>
-			<td rowspan=\"7\" class=\"tbldata\">
-				<table style=\"width:100%;height:100%;\">
-				<tr>
-					<th class=\"tbltitle\" colspan=\"2\">Pos</th>
-					<th class=\"tbltitle\">Kennung</th>
-				</tr>";
-				// Neighbour-List
-				$sres = dbquery("
-				SELECT
-					planet_id,
-					planet_solsys_pos,
-					planet_name,
-					planet_image					
-				FROM
-					planets
-				WHERE
-					planet_solsys_id=".$arr['cell_id']."
-				;");
-				while ($sarr=mysql_fetch_row($sres))
-				{
-					if ($sarr[0]==$arr['planet_id'])
-					{
-						$style=" style=\"color:yellow;font-weight:bold;\"";
-					}
-					else
-					{
-						$style="";
-					}
-					$p_img = IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$sarr[3]."_small.gif";
-					echo "<tr>
-						<th class=\"tbltitle\">
-							<img src=\"$p_img\" style=\"width:20px;height:20px;border:none;\" alt=\"".$arr['type_name']."\" />
-						</th>
-						<th class=\"tbltitle\" $style>
-							".$sarr[1]."</th>
-						<td class=\"tbldata\" $style>
-							<a href=\"?page=planet&amp;id=".$sarr[0]."\" $style>
-								".Planet::getIdentifier($sarr[0])."
-							</a></td>
-					</tr>";					
-				}
-				echo "</table>
-			</td>
 			</tr>";
 			echo "<tr>
 				<td width=\"100\" class=\"tbltitle\">Sonnentyp:</td>
@@ -173,15 +76,15 @@
 				<td class=\"tbldata\">".$arr['ptype']."</td></tr>";
 			echo "<tr>
 				<td width=\"100\" class=\"tbltitle\">Felder:</td>
-				<td class=\"tbldata\">".$arr['planet_fields']." total</td></tr>";
+				<td class=\"tbldata\">".$ent->fields." total</td></tr>";
 			echo "<tr>
 				<td width=\"100\" class=\"tbltitle\">Gr&ouml;sse:</td>
-				<td class=\"tbldata\">".nf($conf['field_squarekm']['v']*$arr['planet_fields'])." km&sup2;</td></tr>";
+				<td class=\"tbldata\">".nf($conf['field_squarekm']['v']*$ent->fields)." km&sup2;</td></tr>";
 			echo "<tr>
 				<td width=\"100\" class=\"tbltitle\">Temperatur:</td>
-				<td class=\"tbldata\">".$arr['planet_temp_from']."&deg;C bis ".$arr['planet_temp_to']."&deg;C <br/>";
-				$spw = Planet::getsolarPowerBonus($arr['planet_temp_from'],$arr['planet_temp_to']);
-				echo "Solarbonus <img src=\"images/infohelp.png\" style=\"width:10px;\" ".tm("Temperaturbonus","Die Planetentemperatur verstärkt oder schwächt die Produktion von Energie durch Solarsatelliten. Je näher ein Planet bei der Sonne ist, desto besser ist die Produktion.")."/>:";
+				<td class=\"tbldata\">".$ent->temp_from."&deg;C bis ".$ent->temp_to."&deg;C <br/>";
+				echo "Wärmebonus: ";
+				$spw = $ent->solarPowerBonus();
 				if ($spw>=0)
 				{
 					echo "<span style=\"color:#0f0\">+".$spw."</span>";
@@ -190,20 +93,38 @@
 				{
 					echo "<span style=\"color:#f00\">".$spw."</span>";
 				}
-			echo "</td></tr>";
+				echo " Energie pro Solarsatellit<br/>
+				Kältebonus: ";
+				$spw = $ent->fuelProductionBonus();
+				if ($spw>=0)
+				{
+					echo "<span style=\"color:#0f0\">+".$spw."%</span>";
+				}
+				else
+				{
+					echo "<span style=\"color:#f00\">".$spw."%</span>";
+				}				
+			echo " ".RES_FUEL."-Produktion</td></tr>";
 			echo "<tr>
 				<td width=\"100\" class=\"tbltitle\">Beschreibung:</td>
-				<td class=\"tbldata\">".($arr['planet_desc']!="" ? $arr['planet_desc'] : '-')."</td></tr>";
+				<td class=\"tbldata\">".($ent->desc!="" ? $ent->desc : '-')."</td></tr>";
 			infobox_end(1);
-			
+		}
+		else
+		{
+			infobox_start("Objektdaten");			
+			echo "Über dieses Objekt sind keine weiteren Daten verfügbar!";
+			infobox_end();
+		}
+		
 			// Previous and next planet
-			$idprev = $arr['planet_id']-1;
-			$idnext = $arr['planet_id']+1;
+			$idprev = $id-1;
+			$idnext = $id+1;
 			$pmres = dbquery("
 			SELECT 
-				MAX(planet_id) 
+				MAX(id) 
 			FROM 
-				planets");	
+				entities");	
 			$pmarr=mysql_fetch_row($pmres);		
 			if ($idprev>0)
 			{	
@@ -212,38 +133,36 @@
 			if ($idnext <= $pmarr[0])
 			{
 				$str_next = "<td class=\"tbldata\"><input type=\"button\" value=\"&gt;\" onclick=\"document.location='?page=planet&amp;id=".$idnext."'\" /></td>";
-			}
+			} 
 		}
 		else
 		{
-			echo "<h1>Planeten-Datenbank</h1>
-			Der Planet mit der Kennung <b>".Planet::getIdentifier($id)."</b> existiert nicht!<br/><br/>";
+			echo "<h1>Raumobjekt-Datenbank</h1>
+			Das Objekt mit der Kennung <b>".$id."</b> existiert nicht!<br/><br/>";
 		}
 	}
 	else
 	{
-		echo "<h1>Planeten-Datenbank</h1>";
+		echo "<h1>Raumobjekt-Datenbank</h1>
+		Das Objekt mit der Kennung <b>".$id."</b> existiert nicht!<br/><br/>";
 	}
-
+	
+	
 	echo "<form action=\"?page=$page\" method=\"post\" name=\"planetsearch\">";
-	infobox_start("Planetensuche",1,0);
-	if ($arr['planet_id']>0)
-		$idn = Planet::getIdentifier($arr['planet_id'],0);
-	echo "<tr>
-		$str_prev
-		<th class=\"tbltitle\">Kennung:</th>
+	infobox_start("Objektsuche",1,0);
+	echo "<tr>";
+		if (isset($str_prev)) echo $str_prev;
+		echo "<th class=\"tbltitle\">Kennung:</th>
 		<td class=\"tbldata\">
-			P<input type=\"text\" name=\"id\" size=\"5\" maxlength=\"7\" value=\"".$idn."\" /> &nbsp; 
+			<input type=\"text\" name=\"id\" size=\"5\" maxlength=\"7\" value=\"".$id."\" /> &nbsp; 
 			<input type=\"submit\" name=\"search_submit\" value=\"Planet anzeigen\" />
-		</td>
-		$str_next
-	</tr>";
+		</td>";
+		if (isset($str_next)) echo $str_next;
+	echo "</tr>";
 	infobox_end(1);
-	echo "<input type=\"button\" value=\"Raumkarte\" onclick=\"document.location='?page=space'\" /> &nbsp; ";
-	if ($arr['cell_id']>0)
-	{
-		echo "<input type=\"button\" value=\"Sonnensystem\" onclick=\"document.location='?page=solsys&id=".$arr['cell_id']."'\" />";
-	}
+	echo "<input type=\"button\" value=\"Zur Raumkarte\" onclick=\"document.location='?page=space'\" /> &nbsp; ";
+	if ($ent)
+		echo "<input type=\"button\" value=\"Zur Systemkarte\" onclick=\"document.location='?page=cell&amp;id=".$ent->cellId()."'\" />";			
 	echo "</form>
 	<script type=\"\">document.forms['planetsearch'].elements[0].focus();</script>";
 	

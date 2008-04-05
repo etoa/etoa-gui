@@ -137,15 +137,12 @@
 		echo ">$y</option>";
 	}
 	echo "</select>";
-	//echo "<input type=\"text\" name=\"sx\" value=\"$sx\" maxlength=\"3\" size=\"2\">&nbsp;/&nbsp;<input type=\"text\" name=\"sy\" value=\"$sy\" maxlength=\"3\" size=\"2\">";
 	echo "&nbsp;&nbsp;&nbsp;<input type=\"submit\" name=\"submit_sector\" value=\"Anzeigen\" /> &nbsp; <input type=\"button\" onclick=\"document.location='?page=galaxygraph'\" value=\"Galaxiegrafik\" /></div><br/>";
 
 	echo "<table id=\"outerspacetbl\" cellspacing=\"0\" cellpadding=\"0\">";
 
 	echo "<tr>";
-	//echo "<td width=\"42\" align=\"center\" height=\"42\"><a href=\"?page=$page&amp;sx=$sx_tl&amp;sy=$sy_tl\" class=\"galaxyTopLeft\" title=\"Sektor $sx_tl/$sy_tl\">
 
-	//echo "<td width=\"$table_width\" align=\"center\" height=\"42\"><a href=\"?page=$page&amp;sx=$sx_tc&amp;sy=$sy_tc\" class=\"galaxyTopCenter\" alt=\"Sektor $sx_tc/$sy_tc\" title=\"Sektor $sx_tc/$sy_tc\" /></a></td>";
 	if ($sx_tl && $sy_tl!=0 && $sx_tl!=$sx_num+1 && $sy_tl!=$sy_num+1)
 	{
 		echo "<td width=\"42\" align=\"center\" height=\"42\"><a href=\"?page=$page&amp;sx=$sx_tl&amp;sy=$sy_tl\" title=\"Sektor $sx_tl/$sy_tl\" onmouseover=\"sector_topleft.src='$sector_pic/sector_topleft_On.gif';\" onmouseout=\"sector_topleft.src='$sector_pic/sector_topleft.gif';\">
@@ -211,10 +208,10 @@
 			$cells[$arr['cx']][$arr['cy']]['eid']=$arr['eid'];
 			$cells[$arr['cx']][$arr['cy']]['code']=$arr['code'];
 		}
+		
 		for ($y=0;$y<$cx_num;$y++)
 		{
 			$ycoords = $cy_num-$y;
-
 
 			$counter_left="".IMAGE_PATH."/map/GalaxyFrameCounterLeft";
 			$counter_left_high="".IMAGE_PATH."/map/GalaxyFrameCounterLeftHighlight";
@@ -226,8 +223,7 @@
 
 			for ($x=0;$x<$cy_num;$x++)
 			{
-				$xcoords = $x+1;
-				
+				$xcoords = $x+1;				
 				if ($cp->id()==$cells[$xcoords][$ycoords]['eid'])
 				{
 					echo "<td class=\"spaceCellSelected\" onmouseover=\"counter_left_$ycoords.src='$counter_left_high$ycoords.gif';counter_bottom_$xcoords.src='$counter_bottom_high$xcoords.gif';\" onmouseout=\"counter_left_$ycoords.src='$counter_left$ycoords.gif';counter_bottom_$xcoords.src='$counter_bottom$xcoords.gif';\">";
@@ -241,9 +237,7 @@
 					echo "<td class=\"spaceCell\" onmouseover=\"counter_left_$ycoords.src='$counter_left_high$ycoords.gif';counter_bottom_$xcoords.src='$counter_bottom_high$xcoords.gif';\" onmouseout=\"counter_left_$ycoords.src='$counter_left$ycoords.gif';counter_bottom_$xcoords.src='$counter_bottom$xcoords.gif';\">";
 				}
 
-				//
 				// Symbole anzeigen
-				//
 				$ent = Entity::createFactory($cells[$xcoords][$ycoords]['code'],$cells[$xcoords][$ycoords]['eid']);
 				$tt = new Tooltip();
 				$tt->addTitle($ent->entityCodeString());
@@ -252,78 +246,8 @@
 				echo "<a href=\"?page=cell&amp;id=".$cells[$xcoords][$ycoords]['cid']."\" ".$tt.">
 					<img src=\"".$ent->imagePath()."\" style=\"border:none;background:#000;width:".$img_width."px;height:".$img_height."px\" />
 				</a>";
-				
-				/*
-				// Sonnensystem
-				if ($cells[$xcoords][$ycoords]['type']=='s')
-				{
-					$wres=dbquery("
-					SELECT 
-						type_id,
-						name
-					FROM 
-						stars
-					WHERE 
-						id='".$cells[$xcoords][$ycoords]['eid']."';");
-					$warr=mysql_fetch_row($wres);
-					$pres=dbquery("
-					SELECT 
-						COUNT(planets.id)
-					FROM 
-						planets
-					INNER JOIN
-					 entities
-					ON planets.id=entities.id
-					AND 
-						cell_id='".$cells[$xcoords][$ycoords]['cid']."';");
-					$parr=mysql_fetch_row($pres);
-					$tt = new Tooltip();
-					$tt->addTitle("Sonnensystem");
-					$tt->addText("Position: $sx/$sy : $xcoords/$ycoords");
-					$tt->addText("Planeten: ".$parr[0]);
-					echo "<a href=\"?page=cell&amp;id=".$cells[$xcoords][$ycoords]['cid']."\" ".$tt.">
-					<img src=\"".IMAGE_PATH."/map/sol".$warr[0].".gif\" style=\"border:none;width:".$img_width."px;height:".$img_height."px\" /></a>";
-				}
-				// Nebel
-				elseif ($cells[$xcoords][$ycoords]['type']=='n')
-				{
-					$test = pseudo_randomize(8,$sx_tl,$sy_tl,$xcoords,$ycoords);
-					//MvI: Randomize Nebulas eingepflegt.
-					echo "<a href=\"?page=haven&amp;planet_to=0&amp;cell_to_id=".$cells[$xcoords][$ycoords]['cid']."\"><img src=\"".IMAGE_PATH."/map/nebula".$test.".gif\" ".tm("Intergalaktischer Nebel","<b>Position:</b> $sx/$sy : $xcoords/$ycoords")." border=\"0\" width=\"$img_width\" height=\"$img_height\" /></a>";
-				}
-				// Asteroiden
-				elseif ($cells[$xcoords][$ycoords]['type']=='a')
-				{
-					//MvI: Randomizer eingebaut
-					$test = pseudo_randomize(4,$sx_tl,$sy_tl,$xcoords,$ycoords);
-					echo "<a href=\"?page=haven&amp;planet_to=0&amp;cell_to_id=".$cells[$xcoords][$ycoords]['cid']."\"><img src=\"".IMAGE_PATH."/map/asteroid_field".$test.".gif\" ".tm("Asteroidenfeld","<b>Position:</b> $sx/$sy : $xcoords/$ycoords")." border=\"0\" width=\"$img_width\" height=\"$img_height\" /></a>";
-				}
-				elseif ($cells[$xcoords][$ycoords]['type']=='w')
-				{
-					/*
-					$wres=dbquery("
-					SELECT 
-                        cell_sx,
-                        cell_sy,
-                        cell_cx,
-                        cell_cy 
-					FROM 
-						space_cells 
-					WHERE 
-						cell_id='".$cells[$xcoords][$ycoords]['wormhole_id']."';");
-					if (mysql_num_rows($wres)>0)
-					{
-						$warr=mysql_fetch_assoc($wres);
-						echo "<a href=\"?page=haven&amp;planet_to=0&amp;cell_to_id=".$cells[$xcoords][$ycoords]['id']."\" ".tm("Wurmloch","<b>Position:</b> $sx/$sy : $xcoords/$ycoords<br/><b>Ziel:</b> ".$warr['cell_sx']."/".$warr['cell_sy']." : ".$warr['cell_cx']."/".$warr['cell_cy']).">";
-					}
-					echo "<img src=\"".IMAGE_PATH."/map/wormhole.gif\" border=\"0\" width=\"$img_width\" height=\"$img_height\" /></a>";
-				}
-				else
-				{
-					$es_c = mt_rand(1,4);
-					echo "<img src=\"".IMAGE_PATH."/map/empty_space".$es_c.".gif\" alt=\"Leerer Raum\" title=\"Leerer Raum ($xcoords/$ycoords)\" border=\"0\" width=\"$img_width\" height=\"$img_height\" />";
-				}*/
 				echo "</td>\n";
+				unset($ent);
 			}
 			echo "</tr>\n";
 		}
@@ -339,7 +263,6 @@
 			echo "<td width=\"20\" align=\"center\" height=\"$table_height\"><a href=\"?page=$page&amp;sx=$sx_mr&amp;sy=$sy_mr\"  width=\"20\" height=\"20\" border=\"0\" alt=\"Sektor $sx_mr/$sy_mr\" title=\"Sektor $sx_mr/$sy_mr\" onmouseover=\"sector_middleright.src='$sector_pic/sector_middleright_On.gif';\" onmouseout=\"sector_middleright.src='$sector_pic/sector_middleright.gif';\"><img name=\"sector_middleright\" src=\"$sector_pic/sector_middleright.gif\" height=\"42\" width=\"42\" border=\"0\"></a></td>";
 		else
 			echo "<td width=\"20\" align=\"center\" height=\"$table_height\">&nbsp;</td>";
-
 		echo "</tr><tr>";
 
 		if ($sx_bl && $sy_bl!=0 && $sx_bl!=$sx_num+1 && $sy_bl!=$sy_num+1)
