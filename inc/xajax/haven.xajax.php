@@ -21,8 +21,8 @@
 		  ships AS s
 		ON
 	    s.ship_id=sl.shiplist_ship_id
-			AND sl.shiplist_user_id='".$_SESSION['haven_uid']."'
-			AND sl.shiplist_planet_id='".$_SESSION['haven_pid']."'
+			AND sl.shiplist_user_id='".$_SESSION['haven']['user_id']."'
+			AND sl.shiplist_planet_id='".$_SESSION['haven']['planet_id']."'
 	    AND sl.shiplist_count>0
 		ORDER BY
 			s.special_ship DESC,
