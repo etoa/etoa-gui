@@ -62,8 +62,8 @@
 				$this->id=$arr['id'];
 				$this->cellId=$arr['cell_id'];
 				$this->userId=$arr['planet_user_id'];
-				$this->name= $arr['planet_name']!="" ? $arr['planet_name'] : 'Unbenannt';
-				$this->desc=$arr['planet_desc'];
+				$this->name= $arr['planet_name']!="" ? stripslashes($arr['planet_name']) : 'Unbenannt';
+				$this->desc= stripslashes($arr['planet_desc']);
 				$this->image=$arr['planet_image'];
 				$this->updated=$arr['planet_last_updated'];
 				$this->userChanged=$arr['planet_user_changed'];
@@ -275,7 +275,7 @@
 		*/
 		function getCoordinates()
 		{
-			return $this->sx."/".$this->sy." : ".$this->cx."/".$this->cy." : ".$this->pos;
+			return $this->formatedCoords();
 		}		
 		
 
@@ -1021,7 +1021,7 @@
 		*/
 		function fuelProductionBonus()
 		{
-			$v = floor(($this->temp_from + $this->temp_to)/20);
+			$v = floor(($this->temp_from + $this->temp_to)/25);
 			return -$v;
 		}
 
@@ -1049,6 +1049,20 @@
 	    WHERE
 	    	id='".$this->id."';";
 	    dbquery($sql);		
+		}
+		
+		function setNameAndComment($name,$comment)
+		{
+			dbquery("
+			UPDATE 
+				planets 
+			SET 
+				planet_name='".$name."',
+				planet_desc='".addslashes($comment)."' 
+			WHERE 
+				id='".$this->id."';");
+			$this->name=$name;
+			$this->desc=$comment;			
 		}
 	
 	}

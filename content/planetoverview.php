@@ -38,7 +38,7 @@
 		if (isset($_GET['action']) && $_GET['action']=="change_name")
 		{
 			echo "<h2>:: Planetenname/-beschreibung &auml;ndern ::</h2>";
-			echo '<script type="text/javascript" src="inc/planetname.js"></script>';
+			echo '<script type="text/javascript" src="js/planetname.js"></script>';
 			echo "<form action=\"?page=$page\" method=\"POST\" style=\"text-align:center;\">";
 			infobox_start("Hier den neuen Namen eingeben:",1);
 			echo "<tr><th class=\"tbltitle\">Name:</th><td class=\"tbldata\"><input type=\"text\" name=\"planet_name\" id=\"planet_name\" value=\"".$cp->name."\" length=\"16\" maxlength=\"15\"></td></tr>";
@@ -222,17 +222,7 @@
 			{
 				if ($_POST['planet_name']!="")
 				{
-					$signs=check_illegal_signs("<a¨!&ad >;");
-					$check_name = check_illegal_signs($_POST['planet_name']);
-					$check_desc = check_illegal_signs($_POST['planet_desc']);
-					if ($check_name=="" && $check_desc=="")
-					{
-						dbquery("UPDATE ".$db_table['planets']." SET planet_name='".$_POST['planet_name']."',planet_desc='".addslashes($_POST['planet_desc'])."' WHERE planet_id='".$cp->id."';");
-						$cp->name=$_POST['planet_name'];
-						$cp->desc=$_POST['planet_desc'];
-					}
-					else
-						echo "Unerlaubtes Zeichen (".$signs.") im Planetennamen oder in der Beschreibung!<br>";
+					$cp->setNameAndComment($_POST['planet_name'],$_POST['planet_desc']);
 				}
 			}
 	
@@ -247,17 +237,18 @@
 				<img src=\"".IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$cp->image.".gif\" alt=\"Planet\" style=\"width:310px;height:310px\"/>
 			</td>";
 			echo "<td class=\"tbltitle\">Kennung:</td><td class=\"tbldata\">
-				".$cp->identifier()." [<a href=\"?page=planet&id=".$cp->id."\">Suchen</a>]</td>
+				".$cp->id()." [<a href=\"?page=planet&id=".$cp->id()."\">Suchen</a>]</td>
 			</tr>";
 			echo "<td class=\"tbltitle\">Koordinaten:</td><td class=\"tbldata\">
-				".$cp->getCoordinates()." [<a href=\"?page=solsys&id=".$cp->solsys_id."\">Zeigen</a>]</td>
+				".$cp->getCoordinates()." [<a href=\"?page=cell&id=".$cp->cellId()."\">Zeigen</a>]</td>
 			</tr>";
 			echo "<tr>
-				<td class=\"tbltitle\">Sonnentyp:</td><td class=\"tbldata\">
-					".$cp->sol_type_name." [<a href=\"?page=help&site=stars\">Infos</a>]</td></tr>";
+				<td class=\"tbltitle\">Sonnentyp:</td><td class=\"tbldata\">";
+					//".$cp->sol_type_name." [<a href=\"?page=help&site=stars\">Infos</a>]
+					echo "</td></tr>";
 			echo "<tr>
 				<td class=\"tbltitle\">Planettyp:</td><td class=\"tbldata\">
-					".$cp->type_name." [<a href=\"?page=help&site=planets\">Infos</a>]</td></tr>";
+					".$cp->type()." [<a href=\"?page=help&site=planets\">Infos</a>]</td></tr>";
 			echo "<tr>
 				<td class=\"tbltitle\">Felder:</td><td class=\"tbldata\">
 					".nf($cp->fields_used)." benutzt, ".(nf($cp->fields))." total (".round($cp->fields_used/$cp->fields*100)."%)</td></tr>";
@@ -270,18 +261,28 @@
 			echo "<tr>
 				<td class=\"tbltitle\">Temperatur:</td><td class=\"tbldata\">
 					".$cp->temp_from."&deg;C bis ".$cp->temp_to."&deg;C &nbsp; <br/>
-					Bonus auf Solarenergie 
-					<img src=\"images/infohelp.png\" style=\"width:10px;\" ".tm("Temperaturbonus","Die Planetentemperatur verstärkt oder schwächt die Produktion von Energie durch Solarsatelliten. Je näher ein Planet bei der Sonne ist, desto besser ist die Produktion.")."/>: ";
-					$spw = $cp->solarPowerBonus();
-					if ($spw>=0)
-					{
-						echo "<span style=\"color:#0f0\">".$spw."</span>";
-					}
-					else
-					{
-						echo "<span style=\"color:#f00\">".$spw."</span>";
-					}
-			echo " &nbsp;  </td></tr>";
+					Wärmebonus: ";
+				$spw = $cp->solarPowerBonus();
+				if ($spw>=0)
+				{
+					echo "<span style=\"color:#0f0\">+".$spw."</span>";
+				}
+				else
+				{
+					echo "<span style=\"color:#f00\">".$spw."</span>";
+				}
+				echo " Energie pro Solarsatellit<br/>
+				Kältebonus: ";
+				$spw = $cp->fuelProductionBonus();
+				if ($spw>=0)
+				{
+					echo "<span style=\"color:#0f0\">+".$spw."%</span>";
+				}
+				else
+				{
+					echo "<span style=\"color:#f00\">".$spw."%</span>";
+				}				
+			echo " ".RES_FUEL."-Produktion</td></tr>";
 			echo "<tr><td class=\"tbltitle\">Produktion:</td><td class=\"tbldata\">
 			".RES_ICON_METAL."".nf($cp->prod->metal)." / h<br style=\"clear:both;\" /> 
 			".RES_ICON_CRYSTAL."".nf($cp->prod->crystal)." / h<br style=\"clear:both;\" /> 
