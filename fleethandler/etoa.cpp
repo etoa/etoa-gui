@@ -33,11 +33,11 @@
 #include <mysql++/mysql++.h>
 
 #include "FleetHandler.h"
-#include "functions/MessageHandler.h"
-//#include "special/SpecialHandler.h"
-#include "back/BackHandler.h"
-//#include "attack/AttackHandler.h"
-
+#include "functions/Functions.h"
+#include "config/ConfigHandler.h";
+#include "MysqlHandler.h"
+#include "fleetActions/cancel/CancelHandler.h"
+#include "fleetActions/return/ReturnHandler.h"
 
 using namespace std;
 
@@ -52,12 +52,16 @@ const char* DB_PASSWORD = "";
 main(int argc, char *argv[])
 {
 	
-	mysqlpp::Connection con(DB_NAME,DB_SERVER,DB_USER,DB_PASSWORD);
+	//mysqlpp::Connection con(DB_NAME,DB_SERVER,DB_USER,DB_PASSWORD);
+
+	
 
 	// Main loop
 	while (true)
 	{	
-		
+		Config &config = Config::instance();
+		std::string df = config.get("num_planets", 1);
+		cout << df;
 		//Timestamp
 		std::time_t time = std::time(0);
 		
@@ -66,10 +70,12 @@ main(int argc, char *argv[])
 		cout << "----------------------------------------------------------------\n";
 		cout << "- EtoA Fleethandler, (C) 2007 by EtoA Gaming, Time: "<< time <<" -\n";
 		cout << "----------------------------------------------------------------\n\n";
+		My &my = My::instance();
+		mysqlpp::Connection *con;
+		con = my.get();
 		
-
 		//Fleetquery
-		mysqlpp::Query query = con.query();
+		mysqlpp::Query query = con->query();
 		    query << "SELECT ";
 		    query << "* ";
 		    query << "FROM ";
@@ -81,6 +87,7 @@ main(int argc, char *argv[])
 				
 				
 		cout << "Updating ";
+		cout << res << "\n";
 		//Checking queryresult
 		if (res) 
 	    {
@@ -97,35 +104,49 @@ main(int argc, char *argv[])
 				{
 	    			row = res.at(i);
 	    			
-	    			string fleet_cat, fleet_action;
-
-				    char str[30] = "";
+				    char str[4] = "";
 				    strcpy( str, row["fleet_action"]);
-				    char * pch;	
-				    //Reading category -> put into fleet_cat
-				    pch = strtok (str,"_");
-				    fleet_cat = pch;
-				    //Reading action -> put into fleet_action
-				    pch = strtok (NULL, " ,.-");
-				    fleet_action = pch;
 					
-					
-					//cout << to_go;
-					
-					cout << fleet_action << "(" << fleet_cat << ")\n";
-				    back::BackHandler* ba = new back::BackHandler(&con);
-					ba->update(row);
+					// Nachprüfen ob Landezeit wirklich kleider ist als aktuelle Zeit
+					if ((int)row["fleet_landtime"] < time && (int)row["fleet_updating"]==0)
+					{
+
+						// Load action
+						if (str[2]=='c')
+						{
+							cancel::CancelHandler* ch = new cancel::CancelHandler(row);
+							ch->update();
+						}
+						else if (str[1]=='r')
+						{
+							retour::ReturnHandler* rh = new retour::ReturnHandler(row);
+							rh->update();
+						}
+						else
+						{
+							switch (str[0] )
+							{     
+								case 'f':
+									fetch::FetchHandler* fh = new fetch::FetchHandler(row);
+									fh->update();
+									break;
+								default :
+									defaul::DefaultHandler* dh = new defaul::DefaultHandler(row);
+									dh->update();
+							} 
+						}
+					}
+
 		    		
 		    	}
 			      
 			}
-
-	    }
-		else
-		{
-			cout << "0 Fleets";
+			else
+			{
+				cout << "0 Fleets\n";
+			}
 		}
-		sleep(10);
+		sleep(4);
 		
 	}		
 
