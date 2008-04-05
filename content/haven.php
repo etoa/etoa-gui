@@ -170,7 +170,7 @@
 				$racefactor =  1;
 			}		
 			
-				$xajax->register(XAJAX_CALLABLE_OBJECT,$cp);				
+			$xajax->register(XAJAX_CALLABLE_OBJECT,$cp);				
 			
 			// Set vars for xajax
 			$_SESSION['haven'] = Null;
@@ -183,16 +183,12 @@
 			$_SESSION['haven']['planet_p'] = $cp->pos; 
 			$_SESSION['haven']['people_available'] = $people_available;
 			$_SESSION['haven']['fleets_start_possible'] = $fleets_start_possible;
-			/*
-			if (isset ($_GET['planet_to']) && intval($_GET['planet_to'])>0)
+
+			if (isset ($_GET['target']) && intval($_GET['target'])>0)
 			{
-				$_SESSION['haven']['target_planet'] = intval($_GET['planet_to']);
+				$_SESSION['haven']['target']=$_GET['target'];
 			}
-			if (isset ($_GET['cell_to_id']) && intval($_GET['cell_to_id'])>0)
-			{
-				$_SESSION['haven']['target_cell'] = intval($_GET['cell_to_id']);
-			}
-			*/
+
 			
     	infobox_start("Hafen-Infos",1);
     		

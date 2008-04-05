@@ -9,11 +9,11 @@
 		protected $id;
 		protected $coordsLoaded;
 		protected $isValid;		
-		protected $pos;
-		protected $sx;
-		protected $sy;
-		protected $cx;
-		protected $cy;
+		public $pos;
+		public $sx;
+		public $sy;
+		public $cx;
+		public $cy;
 		protected $cellId;
 		
 		/**

@@ -8,6 +8,7 @@
 	class Planet extends Entity
 	{
 		protected $isValid;
+		protected $coordsLoaded;
 		
 		/**
 		* Constructor

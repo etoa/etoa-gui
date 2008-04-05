@@ -329,12 +329,25 @@
 						<th colspan=\"2\">Zielwahl</th>
 					</tr>";
 
-					$csx = $_SESSION['haven']['planet_sx'];
-					$csy = $_SESSION['haven']['planet_sy'];
-					$ccx = $_SESSION['haven']['planet_cx'];
-					$ccy = $_SESSION['haven']['planet_cy'];
-					$psp = $_SESSION['haven']['planet_p'];
-
+					if (isset($_SESSION['haven']['target']) && $_SESSION['haven']['target']>0)
+					{
+						$ent = Entity::createFactoryById($_SESSION['haven']['target']);
+						$ent->loadCoords();
+						$csx = $ent->sx; 
+						$csy = $ent->sy; 
+						$ccx = $ent->cx; 
+						$ccy = $ent->cy; 
+						$psp = $ent->pos; 
+					}
+					else
+					{
+						$csx = $_SESSION['haven']['planet_sx'];
+						$csy = $_SESSION['haven']['planet_sy'];
+						$ccx = $_SESSION['haven']['planet_cx'];
+						$ccy = $_SESSION['haven']['planet_cy'];
+						$psp = $_SESSION['haven']['planet_p'];
+					}
+					
 					// Manuelle Auswahl
 					echo "<tr><td class=\"tbltitle\" width=\"25%\">Zielwahl:</td><td class=\"tbldata\" width=\"75%\">
 					Manuelle Eingabe: ";
@@ -543,11 +556,10 @@
 			{
 				$arr=mysql_fetch_row($res);
 				$ent = Entity::createFactory($arr[1],$arr[0]);
-				echo "".$ent." (".$ent->entityCodeString().", Besitzer: ".$ent->owner().")";
+				echo $ent." (".$ent->entityCodeString().", Besitzer: ".$ent->owner().")";
 				$response->assign('targetinfo','style.background',"#000 url('".$ent->imagePath()."') no-repeat 3px 3px;");
 				
-				//$dist = round($cs->distance($ct),1);
-				$dist = "todo";
+				$dist = $ent->distanceByCoords($_SESSION['haven']['planet_sx'],$_SESSION['haven']['planet_sy'],$_SESSION['haven']['planet_cx'],$_SESSION['haven']['planet_cy'],$_SESSION['haven']['planet_p']);
 				$response->assign('distance','innerHTML',$dist." AE");
 			}
 			else

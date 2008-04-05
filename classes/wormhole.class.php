@@ -7,12 +7,12 @@
 	{
 		protected $id;
 		protected $coordsLoaded;
-		protected $pos;
+		public $pos;
 		protected $isValid;		
-		protected $sx;
-		protected $sy;
-		protected $cx;
-		protected $cy;
+		public $sx;
+		public $sy;
+		public $cx;
+		public $cy;
 		protected $cellId;
 		private $name;		
 		
