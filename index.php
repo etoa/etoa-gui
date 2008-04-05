@@ -339,7 +339,7 @@
 				$tpl->assign("serverTime",date('H:i:s'));
 				$tpl->assign("currentPlanetName","Planet");
 				
-				if ($cp)
+				if (isset($cp))
 				{
 					$tpl->assign("currentPlanetName",$cp);
 					/*

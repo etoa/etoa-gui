@@ -320,7 +320,7 @@
 									$pp=0;
 								$s1res=dbquery("SELECT count(entities.cell_id) FROM entities,planets WHERE planets.id=entities.id AND planet_user_id>0 GROUP BY entities.cell_id;");
 								$s1arr=mysql_num_rows($s1res);
-								$s2res=dbquery("SELECT count(*) FROM entities WHERE type='s';");
+								$s2res=dbquery("SELECT count(*) FROM entities WHERE code='s';");
 								$s2arr=mysql_fetch_row($s2res);
 								if ($s2arr[0]>0)
 									$sp=$s1arr/$s2arr[0];

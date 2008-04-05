@@ -5,7 +5,7 @@
 		// Apply choosen itemset
 		if (isset($s['itemset_key']) && isset($_POST[md5($s['itemset_key'])]) && isset($_POST['itemset_id']))
 		{
-			addItemSetListToPlanet($c->id,$s['user']['id'],$_POST['itemset_id']);
+			addItemSetListToPlanet($c->id,$cu->id(),$_POST['itemset_id']);
 			$s['itemset_key']=null;
 			$c->update(1);
 		}
@@ -42,7 +42,7 @@
 			elseif(mysql_num_rows($res)==1)
 			{
 				$arr = mysql_fetch_array($res);
-				addItemSetListToPlanet($c->id,$s['user']['id'],$arr['set_id']);							
+				addItemSetListToPlanet($c->id,$cu->id(),$arr['set_id']);							
 			}
 			
 			$c->update(1);
@@ -54,7 +54,7 @@
 			echo '<input type="button" value="Zum Heimatplaneten" onclick="document.location=\'?page=planetoverview\'" />';
 			if (!isset($s['allow_planet_change_counter']) || $s['allow_planet_change_counter']==0)
 			{
-				send_msg($s['user']['id'],USER_MSG_CAT_ID,'Willkommen',$conf['welcome_message']['v']);
+				send_msg($cu->id(),USER_MSG_CAT_ID,'Willkommen',$conf['welcome_message']['v']);
 			}
 			
 			// Set marker so that a planet change is allowed
@@ -69,9 +69,9 @@
 
 */
 
-	define(GALAXY_MAP_DOT_RADIUS,3);
-	define(GALAXY_MAP_WIDTH,500);
-	define(GALAXY_MAP_LEGEND_HEIGHT,40);
+	define('GALAXY_MAP_DOT_RADIUS',3);
+	define('GALAXY_MAP_WIDTH',500);
+	define('GALAXY_MAP_LEGEND_HEIGHT',40);
 	
 	$sx_num=$conf['num_of_sectors']['p1'];
 	$sy_num=$conf['num_of_sectors']['p2'];
@@ -85,6 +85,9 @@
 	{
 		$tp = new Planet($_POST['choosenplanetid']);
 		$tp->assignToUser($cu->id(),1);
+		$tp->reset();
+		$tp->setDefaultResources();	
+		
 		$cu->setSetupFinished();
 		$mode = "finished";
 	}
@@ -102,7 +105,7 @@
 		}		
 	}
 	
-	elseif ($s['user']['race_id']>0 && !$c)
+	elseif ($cu->race_id >0 && !isset($cp))
 	{
 		$mode = "choosesector";	
 	}
@@ -111,7 +114,7 @@
 		$cu->setRace($_POST['register_user_race_id']);
 		$mode = "choosesector";	
 	}
-	elseif ($s['user']['race_id']==0)
+	elseif ($cu->race_id==0)
 	{
 		$mode = "race";
 	}
@@ -123,7 +126,6 @@
 
 		echo "<h2>Planetenwahl bestätigen</h2>";
 		$tp = new Planet($pid);
-		$p_img = IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$tp->image."_middle.gif";
 
 		echo "<input type=\"hidden\" name=\"choosenplanetid\" value=\"".$pid."\" />";
 		echo "Folgender Planet wurde für Euch ausgewählt:<br/><br/>
@@ -131,10 +133,10 @@
 		echo "<tr><th>Koordinaten:</th><td>".$tp."</td></tr>";
 		echo "<tr>
 			<th>Sonnentyp:</th>
-			<td>".$tp->sol_type_name."</td></tr>";
+			<td>".$tp->starType."</td></tr>";
 		echo "<tr>
 			<th>Planettyp:</th>
-			<td>".$tp->type_name."</td></tr>";
+			<td>".$tp->type()."</td></tr>";
 		echo "<tr>
 			<th>Felder:</td>
 			<td>".$tp->fields." total</td></tr>";
@@ -142,7 +144,7 @@
 			<th>Temperatur:</td>
 			<td>".$tp->temp_from."&deg;C bis ".$tp->temp_to."&deg;C";
 		echo "</td></tr>";		
-		echo "<tr><th>Ansicht:</th><td style=\"background:#000;text-align:center;\"><img src=\"$p_img\" style=\"border:none;\" alt=\"planet\" /></td></tr>
+		echo "<tr><th>Ansicht:</th><td style=\"background:#000;text-align:center;\"><img src=\"".$tp->imagePath("m")."\" style=\"border:none;\" alt=\"planet\" /></td></tr>
 		</table><br/>
 		<input type=\"submit\" name=\"submit_chooseplanet\" value=\"Auswählen\" />
 		<input type=\"submit\" name=\"redo\" value=\"Einen neuen Planeten auswählen\" />";
@@ -180,7 +182,7 @@
 				INNER JOIN
 					entities
 					ON entities.cell_id=cells.id
-					AND entities.type='s'
+					AND entities.code='s'
 					AND sx=".$xcnt."
 					AND sy=".$ycnt."
 				;
@@ -195,7 +197,7 @@
 				INNER JOIN
 					entities
 					ON entities.cell_id=cells.id
-					AND entities.type='p'
+					AND entities.code='p'
 					AND sx=".$xcnt."
 					AND sy=".$ycnt."
 				;
@@ -285,7 +287,7 @@
 		echo '<input type="button" value="Zum Heimatplaneten" onclick="document.location=\'?page=planetoverview\'" />';
 		if (!isset($s['allow_planet_change_counter']) || $s['allow_planet_change_counter']==0)
 		{
-			send_msg($s['user']['id'],USER_MSG_CAT_ID,'Willkommen',$conf['welcome_message']['v']);
+			send_msg($cu->id(),USER_MSG_CAT_ID,'Willkommen',$conf['welcome_message']['v']);
 		}
 	}
 	else

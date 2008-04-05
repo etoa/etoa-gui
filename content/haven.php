@@ -1,4 +1,4 @@
-<?PHP
+        <?PHP
 
 	//////////////////////////////////////////////////
 	//		 	 ____    __           ______       			//
@@ -30,43 +30,45 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/	
 
-	// DATEN LADEN
-
-	$rsc = get_resources_array();
-
-
 	// BEGIN SKRIPT //
 
-	if ($planets->current)
+	if ($cp)
 	{
-		$c = $planets->getCurrentData();
 
-		echo "<h1>Raumschiffhafen des Planeten ".$c->name."</h1>";
-		$c->resBox();
-
-
-
-
-
-
+		echo "<h1>Raumschiffhafen des Planeten ".$cp->name."</h1>";
+		$cp->resBox();
 
 		$fleets_away = mysql_num_rows(dbquery("
 		SELECT 
-		fleet_id 
+			fleet_id 
 		FROM 
-		".$db_table['fleet']." 
+			fleet 
 		WHERE 
-		fleet_user_id='".$s['user']['id']."' 
-		AND ((fleet_planet_from='".$c->id."' AND fleet_action LIKE '%o%' AND fleet_action NOT LIKE '%c%') 
-			OR (fleet_planet_to='".$c->id."' AND (fleet_action LIKE '%r%'  OR fleet_action LIKE '%c%')));"));
-		$bres = dbquery("SELECT buildlist_current_level FROM ".$db_table['buildlist']." WHERE buildlist_building_id=".FLEET_CONTROL_ID." AND buildlist_user_id='".$s['user']['id']."' AND buildlist_planet_id='".$c->id."';");
+			fleet_user_id='".$cu->id()."' 
+		AND ((fleet_entity_from='".$cp->id."' 
+			AND fleet_action LIKE '%o%' 
+			AND fleet_action NOT LIKE '%c%') 
+			OR (fleet_entity_to='".$cp->id."' 
+			AND (fleet_action LIKE '%r%'  
+			OR fleet_action LIKE '%c%')));"));
+		$bres = dbquery("
+		SELECT 
+			buildlist_current_level 
+		FROM 
+			buildlist 
+		WHERE 
+			buildlist_building_id=".FLEET_CONTROL_ID." 
+			AND buildlist_user_id='".$cu->id()."' 
+			AND buildlist_planet_id='".$cp->id."';");
 		if (mysql_num_rows($bres)>0)
 		{
 			$barr = mysql_fetch_array($bres);
 			$fleets_start_possible = FLEET_NOCONTROL_NUM + $barr['buildlist_current_level'];
 		}
 		else
+		{
 			$fleets_start_possible=FLEET_NOCONTROL_NUM;
+		}
 		$fleets_start_possible-=$fleets_away;
 
 
@@ -93,7 +95,7 @@
 		//
 		// Prüfen ob dieses Gebäude deaktiviert wurde
 		//
-		elseif ($dt = check_building_deactivated($s['user']['id'],$c->id,FLEET_CONTROL_ID))
+		elseif ($dt = check_building_deactivated($cu->id(),$cp->id,FLEET_CONTROL_ID))
  		{
 			infobox_start("Geb&auml;ude nicht bereit");
 			echo "Dieser Raumschiffhafen ist bis ".date("d.m.Y H:i",$dt)." deaktiviert.";
@@ -104,11 +106,160 @@
 		//
 		else
 		{
-			if ($_SESSION['lastpage']!=$page) $_SESSION['haven']=Null;
-			if ($_POST['reset']!="")  $_SESSION['haven']=Null;
-			if ($_SESSION['haven']['pid']!=$c->id) $_SESSION['haven']=Null;
-			$_SESSION['haven']['pid']=$c->id;
+			
+			// Set possible launch count to default 
+			$fleets_start_possible = FLEET_NOCONTROL_NUM;
+			
+			// Add level of fleet control station to launch count
+			$bres = dbquery("
+			SELECT 
+				buildlist_current_level 
+			FROM
+				buildlist
+			WHERE 
+				buildlist_building_id=".FLEET_CONTROL_ID." 
+				AND buildlist_user_id='".$cu->id()."' 
+				AND buildlist_planet_id='".$cp->id()."'
+			;");
+			$fleetControlLevel=0;
+			if (mysql_num_rows($bres)>0)
+			{
+				$barr = mysql_fetch_row($bres);
+				$fleetControlLevel = $barr[0];
+				$fleets_start_possible += FLEET_NOCONTROL_NUM + $fleetControlLevel;
+			}
+	
+			// Subtract current fleet count from launch count
+			$fleets_away = mysql_num_rows(dbquery("
+			SELECT 
+				fleet_id 
+			FROM 
+				fleet
+			WHERE 
+				fleet_user_id='".$cu->id()."' 
+				AND 
+				(
+					(
+						fleet_entity_from='".$cp->id()."' 
+						AND fleet_action LIKE '%o%' AND fleet_action NOT LIKE '%c%'
+					) 
+					OR 
+					(
+						fleet_entity_to='".$cp->id()."' 
+						AND 
+						(
+							fleet_action LIKE '%r%' OR fleet_action LIKE '%c%'
+						)
+					)
+				);"));
+			$fleets_start_possible -= $fleets_away;
+	
+			// Piloten
+			$pbarr= mysql_fetch_row(dbquery("SELECT SUM(buildlist_people_working) FROM ".$db_table['buildlist']." WHERE buildlist_planet_id='".$cp->id()."';"));
+			$people_available = floor($cp->people - $pbarr[0]);			
 
+			// Rassenspeed laden
+			$rres=dbquery("SELECT race_f_fleettime FROM races WHERE race_id=".$cu->race_id.";");
+			$rarr=mysql_fetch_array($rres);
+			if ($rarr['race_f_fleettime']!=1)
+			{
+				$racefactor =  2-$rarr['race_f_fleettime'];
+			}
+			else
+			{
+				$racefactor =  1;
+			}		
+			
+				$xajax->register(XAJAX_CALLABLE_OBJECT,$cp);				
+			
+			// Set vars for xajax
+			$_SESSION['haven'] = Null;
+			$_SESSION['haven']['user_id'] = $cu->id();
+			$_SESSION['haven']['planet_id'] = $cp->id(); 
+			$_SESSION['haven']['planet_cx'] = $cp->cx; 
+			$_SESSION['haven']['planet_cy'] = $cp->cy; 
+			$_SESSION['haven']['planet_sx'] = $cp->sx; 
+			$_SESSION['haven']['planet_sy'] = $cp->sy; 
+			$_SESSION['haven']['planet_p'] = $cp->pos; 
+			$_SESSION['haven']['people_available'] = $people_available;
+			$_SESSION['haven']['fleets_start_possible'] = $fleets_start_possible;
+			/*
+			if (isset ($_GET['planet_to']) && intval($_GET['planet_to'])>0)
+			{
+				$_SESSION['haven']['target_planet'] = intval($_GET['planet_to']);
+			}
+			if (isset ($_GET['cell_to_id']) && intval($_GET['cell_to_id'])>0)
+			{
+				$_SESSION['haven']['target_cell'] = intval($_GET['cell_to_id']);
+			}
+			*/
+			
+    	infobox_start("Hafen-Infos",1);
+    		
+			// Flotten unterwegs
+    	echo "<tr><th class=\"tbltitle\">Aktive Flotten:</th><td class=\"tbldata\">";
+			if ($fleets_away>1)
+				echo "<b>$fleets_away</b> Flotten dieses Planeten sind <a href=\"?page=fleets\">unterwegs</a>.";
+			elseif ($fleets_away==1)
+				echo "<b>Eine</b> Flotte dieses Planeten ist <a href=\"?page=fleets\">unterwegs</a>.";
+			else
+				echo "Es sind <b>keine</b> Flotten dieses Planeten unterwegs.";
+			echo "</td></tr>";
+		
+			// Flotten startbar?
+    	echo "<tr><th class=\"tbltitle\">Flottenstart:</th><td class=\"tbldata\">";
+ 			if ($fleets_start_possible>1 )
+				echo "<b>$fleets_start_possible</b> Flotten k&ouml;nnen von diesem Planeten starten!";
+			elseif ($fleets_start_possible==1 )
+				echo "<b>Eine</b> Flotte kann von diesem Planeten starten!";
+			else
+				echo "Es k&ouml;nnen <b>keine</b> Flotten von diesem Planeten starten!";
+			echo " (Flottenkontrolle: Stufe ".$fleetControlLevel.")</td></tr>";
+		
+			// Piloten		
+    	echo "<tr><th class=\"tbltitle\">Piloten:</th><td class=\"tbldata\">";
+			if ($people_available>1)
+				echo "<b>".$people_available."</b> Piloten k&ouml;nnen eingesetzt werden.";
+			elseif ($people_available==1)
+				echo "<b>Ein</b> Pilot kann eingesetzt werden.";
+			else
+				echo "Es sind <b>keine</b> Piloten verf&uuml;gbar.";
+			echo "</td></tr>";
+					
+			// Rasse		
+  		if ($racefactor!=1)
+  		{
+  			echo "<tr><th class=\"tbltitle\">Piloten:</th><td class=\"tbldata\">";
+				echo "Die Schiffe fliegen aufgrund deiner Rasseneigenschaft mit ".get_percent_string($racefactor,1)." Geschwindigkeit!";
+				echo "</td></tr>";
+			}
+			infobox_end(1);
+			
+			echo "<div id=\"havenContent\">
+			<div id=\"havenContentShips\" style=\"\">
+			<div style=\"padding:20px\"><img src=\"images/loading.gif\" alt=\"Loading\" /> Lade Daten...</div>
+			</div>
+			<div id=\"havenContentTarget\" style=\"display:none;\"></div>
+			<div id=\"havenContentAction\" style=\"display:none;\"></div>
+			
+			
+			</div>";
+			echo "<script type=\"text/javascript\">xajax_havenShowShips();</script>";	
+	
+			
+			/*
+			//if ($_SESSION['lastpage']!=$page) $_SESSION['haven']=Null;
+			//if ($_POST['reset']!="")  $_SESSION['haven']=Null;
+			//if ($_SESSION['haven']['pid']!=$cp->id) $_SESSION['haven']=Null;
+			$_SESSION['haven_pid']=$cp->id();
+			$_SESSION['haven_uid']=$cu->id();
+			
+
+			echo "<div id=\"havenContentShips\"></div>";
+			echo "<div id=\"havenContentTarget\"></div>";
+			echo "<script type=\"text/javascript\">xajax_havenShowShips();</script>";
+
+/*
 			//
 			// Start durchführen
 			//
@@ -137,9 +288,10 @@
 			// Schiffsauswahl
 			//
 			else
-			{
-				require ("haven/choose_ships.inc.php");
-			}
+			{    */
+			//	require ("haven/choose_ships.inc.php");
+				
+			//}
 		}
 	}
 ?>

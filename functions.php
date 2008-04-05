@@ -2232,9 +2232,9 @@ die Spielleitung";
 		{
 			dbquery("
 				UPDATE
-					".$db_table['planets']."
+					planets
 				SET
-					planet_user_id=0,
+					user_id=0,
 					planet_name='',
 					planet_user_main=0,
 					planet_fields_used=0,
@@ -2261,7 +2261,7 @@ die Spielleitung";
 					planet_people_place=0,
 					planet_desc=''
 				WHERE
-					planet_id='".$planet_id."';
+					id='".$planet_id."';
 			");
 
 			dbquery("

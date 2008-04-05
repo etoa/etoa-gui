@@ -52,11 +52,19 @@
   	ships
   ON
 		shiplist_ship_id=ship_id
-  	AND shiplist_planet_id=".$c->id."
+  	AND shiplist_planet_id=".$cp->id."
   	AND shiplist_count>0;");
+  $struct_tech_special=0;
+  $shield_tech_special=0;
+  $weaopn_tech_special=0;
+  $heal_tech_special=0;
   if (mysql_num_rows($res)>0)
   {
-  	$struct=0;$shield=0;$weapon=0;$count=0;  	
+  	$struct=0;
+  	$shield=0;
+  	$weapon=0;
+  	$count=0;  	
+  	$heal=0;
   	while ($arr=mysql_fetch_array($res))
   	{
   		$struct += $arr['ship_structure']*$arr['shiplist_count'];
@@ -93,7 +101,7 @@
 		ON 
 			techlist_tech_id=tech_id
 		AND
-			techlist_user_id='".$s['user']['id']."'
+			techlist_user_id='".$cu->id()."'
 			AND
 			(
 				techlist_tech_id='".STRUCTURE_TECH_ID."'
@@ -103,6 +111,14 @@
 			)
   		;");
 
+			$structure_tech_name="";
+			$shield_tech_name="";
+			$weapon_tech_name="";
+			$heal_tech_name="";
+			$structure_tech_level=0;
+			$shield_tech_level=0;
+			$weapon_tech_level=0;
+			$heal_tech_level=0;
       while ($techarr_a = mysql_fetch_array($techres_a))
       {
           if ($techarr_a['techlist_tech_id']==SHIELD_TECH_ID)
@@ -201,10 +217,10 @@
 
 
 
-	if ($_POST['back']=="")
-		$_SESSION['haven']=Null;
-
-	$_SESSION['haven']=Null; //<- von lambo definiert, es gab ein bug: alleschiffe auswählen -> weiter zum start -> zurück zur zielwahl -> zurück zur flotten wahl -> nur noch ein typ schiff auswählen -> weiter -> es sind wieder alle schiffe ausgewählt, jedoch nur mit der zeit von dem einen typ!
+//	if ($_POST['back']=="")
+//		$_SESSION['haven']=Null;
+//
+//	$_SESSION['haven']=Null; //<- von lambo definiert, es gab ein bug: alleschiffe auswählen -> weiter zum start -> zurück zur zielwahl -> zurück zur flotten wahl -> nur noch ein typ schiff auswählen -> weiter -> es sind wieder alle schiffe ausgewählt, jedoch nur mit der zeit von dem einen typ!
 
 	echo "<h2>Neue Schiffsauswahl</h2>";
 
@@ -213,15 +229,15 @@
 	SELECT
 		fleet_id
 	FROM
-		".$db_table['fleet']."
+		fleet
 	WHERE
-		fleet_user_id='".$s['user']['id']."'
+		fleet_user_id='".$cu->id()."'
         AND (
-            (fleet_planet_from='".$c->id."'
+            (fleet_entity_from='".$cp->id."'
             AND fleet_action LIKE '%o%'
             AND fleet_action NOT LIKE '%c%')
             OR
-            (fleet_planet_to='".$c->id."'
+            (fleet_entity_to='".$cp->id."'
             AND (fleet_action LIKE '%r%'
             OR fleet_action LIKE '%c%'))
         );"));
@@ -239,11 +255,11 @@
 	SELECT
 		buildlist_current_level
 	FROM
-		".$db_table['buildlist']."
+		buildlist
 	WHERE
         buildlist_building_id=".FLEET_CONTROL_ID."
-        AND buildlist_user_id='".$s['user']['id']."'
-        AND buildlist_planet_id='".$c->id."';");
+        AND buildlist_user_id='".$cu->id()."'
+        AND buildlist_planet_id='".$cp->id."';");
 	if (mysql_num_rows($bres)>0)
 	{
 		$barr = mysql_fetch_array($bres);
@@ -263,9 +279,14 @@
 		echo "Es k&ouml;nnen <b>keine</b> Flotten von diesem Planeten starten!<br/>";
 
 	// Piloten
-	$parr= mysql_fetch_row(dbquery("SELECT planet_people FROM ".$db_table['planets']." WHERE planet_id='".$c->id."';"));
-	$pbarr= mysql_fetch_row(dbquery("SELECT SUM(buildlist_people_working) FROM ".$db_table['buildlist']." WHERE buildlist_planet_id='".$c->id."';"));
-	$people_available = floor($parr[0]-$pbarr[0]);
+	$pbarr= mysql_fetch_row(dbquery("
+	SELECT 
+		SUM(buildlist_people_working) 
+	FROM 
+		buildlist
+	WHERE 
+		buildlist_planet_id='".$cp->id."';"));
+	$people_available = floor($cp->people - $pbarr[0]);
 
 	if ($people_available>1)
 		echo "<b>".$people_available."</b> Piloten k&ouml;nnen eingesetzt werden.<br/><br/>";
@@ -275,7 +296,13 @@
 		echo "Es sind <b>keine</b> Piloten verf&uuml;gbar.<br/><br/>";
 
 	// Rassenspeed laden
-	$rres=dbquery("SELECT race_f_fleettime FROM ".$db_table['races']." WHERE race_id=".$s['user']['race_id'].";");
+	$rres=dbquery("
+	SELECT 
+		race_f_fleettime 
+	FROM 
+		races 
+	WHERE 
+		race_id=".$cu->race_id.";");
 	$rarr=mysql_fetch_array($rres);
 	if ($rarr['race_f_fleettime']!=1)
 	{
@@ -293,13 +320,13 @@
 	SELECT
 		*
 	FROM
-    ".$db_table['shiplist']." AS sl
+    shiplist AS sl
 	INNER JOIN
-	  ".$db_table['ships']." AS s
+	  ships AS s
 	ON
     s.ship_id=sl.shiplist_ship_id
-    AND sl.shiplist_user_id='".$s['user']['id']."'
-    AND sl.shiplist_planet_id='".$c->id."'
+    AND sl.shiplist_user_id='".$cu->id()."'
+    AND sl.shiplist_planet_id='".$cp->id."'
     AND sl.shiplist_count>0
 	ORDER BY
 		s.special_ship DESC,
@@ -327,16 +354,16 @@
                 technologies.tech_name,
                 ship_requirements.req_req_tech_level
             FROM
-                ".$db_table['techlist'].",
-                ".$db_table['ship_requirements'].",
-                ".$db_table['technologies']."
+                techlist,
+                ship_requirements,
+                technologies
             WHERE
                 ship_requirements.req_ship_id=".$arr['ship_id']."
                 AND technologies.tech_type_id='".TECH_SPEED_CAT."'
                 AND ship_requirements.req_req_tech_id=technologies.tech_id
                 AND technologies.tech_id=techlist.techlist_tech_id
                 AND techlist.techlist_tech_id=ship_requirements.req_req_tech_id
-                AND techlist.techlist_user_id=".$s['user']['id']."
+                AND techlist.techlist_user_id=".$cu->id()."
             GROUP BY
                 ship_requirements.req_id;");
             if ($rarr['race_f_fleettime']!=1)
@@ -362,21 +389,23 @@
                 }
             }
 
-
+/*
             if ($_SESSION['haven']['ships'][$arr['ship_id']]>0)
                 $val = $_SESSION['haven']['ships'][$arr['ship_id']];
             else
-                $val=0;
-
+*/
+            $val=0;
             $arr['ship_speed']/=FLEET_FACTOR_F;
 
             if($arr['special_ship']==1)
             {
-                echo "<tr><td class=\"tbldata\" width=\"40\"><a href=\"?page=ship_upgrade&amp;id=".$arr['ship_id']."\"><img src=\"".IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$arr['ship_id']."_small.".IMAGE_EXT."\" width=\"40\" height=\"40\" alt=\"Ship\" border=\"0\"/></a></td>";
+                echo "<tr><td class=\"tbldata\" style=\"width:40px;background:#000;\"><a href=\"?page=ship_upgrade&amp;id=".$arr['ship_id']."\">
+                <img src=\"".IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$arr['ship_id']."_small.".IMAGE_EXT."\" width=\"40\" height=\"40\" alt=\"Ship\" border=\"0\"/></a></td>";
             }
             else
             {
-                echo "<tr><td class=\"tbldata\" width=\"40\"><a href=\"?page=help&amp;site=shipyard&amp;id=".$arr['ship_id']."\"><img src=\"".IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$arr['ship_id']."_small.".IMAGE_EXT."\" width=\"40\" height=\"40\" alt=\"Ship\" border=\"0\"/></a></td>";
+                echo "<tr><td class=\"tbldata\" style=\"width:40px;background:#000;\"><a href=\"?page=help&amp;site=shipyard&amp;id=".$arr['ship_id']."\">
+                <img src=\"".IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$arr['ship_id']."_small.".IMAGE_EXT."\" width=\"40\" height=\"40\" alt=\"Ship\" border=\"0\"/></a></td>";
             }
 
             echo "<td class=\"tbldata\" ".tm($arr['ship_name'],text2html($arr['ship_shortcomment'])).">".$arr['ship_name']."</td>";
@@ -389,7 +418,8 @@
             echo "<td class=\"tbldata\" width=\"110\">";
             if ($arr['ship_launchable']==1)
             {
-            	echo "<input type=\"text\" id=\"ship_count_".$arr['ship_id']."\" name=\"ship_count[".$arr['ship_id']."]\" size=\"10\" value=\"$val\"  title=\"Anzahl Schiffe eingeben, die mitfliegen sollen\" onclick=\"this.select();\" tabindex=\"".$tabulator."\" onkeyup=\"FormatNumber(this.id,this.value,".$arr['shiplist_count'].",'','');\"/><br/><a href=\"javascript:;\" onclick=\"document.getElementById('ship_count_".$arr['ship_id']."').value=".$arr['shiplist_count']."\">max</a>";
+            	echo "<input type=\"text\" id=\"ship_count_".$arr['ship_id']."\" name=\"ship_count[".$arr['ship_id']."]\" size=\"10\" value=\"$val\"  title=\"Anzahl Schiffe eingeben, die mitfliegen sollen\" onclick=\"this.select();\" tabindex=\"".$tabulator."\" onkeyup=\"FormatNumber(this.id,this.value,".$arr['shiplist_count'].",'','');\"/>
+            	<br/><a href=\"javascript:;\" onclick=\"document.getElementById('ship_count_".$arr['ship_id']."').value=".$arr['shiplist_count']."\">max</a>";
             }
             else
             {
@@ -400,6 +430,7 @@
         }
         infobox_end(1);
 
+/*
 		if (intval($_GET['planet_to'])>0)
 		{
 			echo "<input type=\"hidden\" name=\"planet_to\" value=\"".intval($_GET['planet_to'])."\" />";
@@ -408,12 +439,12 @@
 		{
 			echo "<input type=\"hidden\" name=\"cell_to\" value=\"".intval($_GET['cell_to_id'])."\" />";
 		}
-
+*/
 		if ($fleets_start_possible>0)
 		{
 			$btn1 = "<input type=\"submit\" name=\"submit_shipselection_all\" value=\"Alle Schiffe ausw&auml;hlen &gt;&gt;&gt;\" title=\"Klicke hier um alle Schiffe auszuw&auml;hlen\" tabindex=\"".($tabulator+2)."\">&nbsp;";
 			$btn2 = "<input type=\"submit\" name=\"submit_shipselection\" value=\"Weiter zur Zielauswahl &gt;&gt;&gt;\" title=\"Wenn du die Schiffe ausgew&auml;hlt hast, klicke hier um das Ziel auszuw&auml;hlen\" tabindex=\"".($tabulator+1)."\" /> &nbsp;";
-			if ($s['user']['havenships_buttons']==1)
+			if ($cu->havenships_buttons==1)
 			{
 				echo $btn2.$btn1;
 			}

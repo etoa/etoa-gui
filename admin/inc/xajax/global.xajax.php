@@ -120,41 +120,33 @@ function planetSelectorByUser($userNick,$function,$show_user_id=1)
 	{
 		$pres=dbquery("
 		SELECT
-			planet_id,
-			planet_name,
-			planet_user_id,
-			cell_sx,
-			cell_sy,
-			cell_cx,
-			cell_cy,
-			planet_solsys_pos
+			id,
+			planet_user_id
 		FROM
 			planets
 		INNER JOIN
 			users
-			ON planet_user_id=user_id
-		INNER JOIN
-			space_cells
-			ON planet_solsys_id=cell_id
-		WHERE
-			user_nick='$userNick'				
+		ON planet_user_id=user_id
+			AND user_nick='$userNick'				
 			;
 		");
 		$nr=mysql_num_rows($pres);
 		if ($nr>0)
 		{
 			$out="<select name=\"planet_id\" size=\"$nr\" onchange=\"showLoader('shipsOnPlanet');xajax_".$function."(this.options[this.selectedIndex].value);\">\n";
-			while ($parr=mysql_fetch_array($pres))
+			while ($parr=mysql_fetch_row($pres))
 			{
+				$p = new Planet($parr[0]);
+				
 				if ($show_user_id==1)
 				{
-					$val=$parr['planet_id'].":".$parr['planet_user_id'];;
+					$val=$parr[0].":".$parr[1];;
 				}
 				else
 				{
-					$val=$parr['planet_id'];
+					$val=$parr[0];
 				}
-				$out.="<option value=\"$val\">".$parr['cell_sx']."/".$parr['cell_sy']." : ".$parr['cell_cx']."/".$parr['cell_cy']." : ".$parr['planet_solsys_pos']." - ".$parr['planet_name']."</option>\n";
+				$out.="<option value=\"$val\">".$p."</option>\n";
 			}
 			$out.="</select>\n";
 

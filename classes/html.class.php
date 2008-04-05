@@ -50,6 +50,7 @@
 					<script type="text/javascript" src="js/slider.js"></script>
 					
 					<link type="text/css" rel="StyleSheet" href="css/slider.css" />					
+
 				</head> 		
 			<?PHP	
  		}

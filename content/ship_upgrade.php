@@ -30,20 +30,17 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/	
 
-	$race=get_races_array();
-
-
 	//
 	// Upgrade menu eines spezial Schiffes
 	//
-	if ($_GET['id']!="")
+	if (isset($_GET['id']) && $_GET['id']!="")
 	{
 		echo "<h1>Schiffs Upgrade Menu</h1>";
 
     //
     // Upgrade speichern
     //
-    if($_POST['submit_upgrade']!="" && $_POST['id']!="" && $_POST['upgrade']!="" && checker_verify())
+    if(isset($_POST['submit_upgrade']) && $_POST['submit_upgrade']!="" && $_POST['id']!="" && $_POST['upgrade']!="" && checker_verify())
     {
         dbquery("
         UPDATE
@@ -53,7 +50,7 @@
         	shiplist_special_ship_bonus_".$_POST['upgrade']."=shiplist_special_ship_bonus_".$_POST['upgrade']."+1
         WHERE
         	shiplist_ship_id='".$_POST['id']."'
-        	AND shiplist_user_id='".$s['user']['id']."';");
+        	AND shiplist_user_id='".$cu->id()."';");
 
         echo "Upgrade erfolgreich duchgeführt!<br>";
     }
@@ -101,7 +98,7 @@
         	".$db_table['shiplist']." AS shiplist
         ON ships.ship_id=shiplist.shiplist_ship_id
         AND ships.special_ship='1'
-        AND shiplist.shiplist_user_id='".$s['user']['id']."'
+        AND shiplist.shiplist_user_id='".$cu->id()."'
         AND shiplist.shiplist_ship_id='".intval($_GET['id'])."'  
         AND shiplist.shiplist_count>'0'
     ;");
@@ -375,7 +372,7 @@
         INNER JOIN
         ".$db_table['shiplist']." AS shiplist
         ON ships.ship_id=shiplist.shiplist_ship_id
-        AND shiplist.shiplist_user_id='".$s['user']['id']."'
+        AND shiplist.shiplist_user_id='".$cu->id()."'
         AND ships.special_ship='1'
         AND shiplist.shiplist_count>'0'
       ORDER BY

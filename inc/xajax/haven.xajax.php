@@ -21,8 +21,8 @@
 		  ships AS s
 		ON
 	    s.ship_id=sl.shiplist_ship_id
-			AND sl.shiplist_user_id='".$_SESSION['haven']['user_id']."'
-			AND sl.shiplist_planet_id='".$_SESSION['haven']['planet_id']."'
+			AND sl.shiplist_user_id='".$_SESSION['haven_uid']."'
+			AND sl.shiplist_planet_id='".$_SESSION['haven_pid']."'
 	    AND sl.shiplist_count>0
 		ORDER BY
 			s.special_ship DESC,
@@ -341,8 +341,8 @@
 					echo "<input type=\"text\" 
 												id=\"man_sx\"
 												name=\"man_sx\" 
-												size=\"2\" 
-												maxlength=\"2\" 
+												size=\"1\" 
+												maxlength=\"1\" 
 												value=\"$csx\" 
 												title=\"Sektor X-Koordinate\" 
 												tabindex=\"20\"
@@ -355,8 +355,8 @@
 					echo "<input type=\"text\" 
 												id=\"man_sy\" 
 												name=\"man_sy\" 
-												size=\"2\" 
-												maxlength=\"2\" 
+												size=\"1\" 
+												maxlength=\"1\" 
 												value=\"$csy\" 
 												title=\"Sektor Y-Koordinate\" 
 												tabindex=\"21\"
@@ -411,8 +411,12 @@
 					// Speedfaktor
 					echo "<tr>
 						<td class=\"tbltitle\" width=\"25%\">Speedfaktor:</td>
-						<td class=\"tbldata\" width=\"75%\" align=\"left\">
-							<select name=\"speed_percent\" 
+						<td class=\"tbldata\" width=\"75%\" align=\"left\">";
+						
+						
+						//<input id="duration_percent" name="speed_percent" value="100" readonly="readonly"  style="border:none;background:none;" size="3" /><br style="clear:both;" />
+						
+							echo "<select name=\"speed_percent\" 
 											id=\"duration_percent\" 
 											onchange=\"upd_values();\"
 											tabindex=\"25\"
@@ -424,11 +428,13 @@
 								if ($_SESSION['haven']['fleet']['speed_percent'] * 100==$perc) echo " selected=\"selected\"";
 								echo ">$perc</option>\n";
 							}
-					echo "</select> %</td></tr>";
+					echo "</select> %";
+					
+					echo "</td></tr>";
 					
 					// Daten anzeigen
-					echo "<tr><td width=\"25%\"><b>Zielinfos:</b></td>
-						<td class=\"tbldata\" id=\"targetinfo\">
+					echo "<tr><td width=\"25%\"><b>Ziel-Informationen:</b></td>
+						<td class=\"tbldata\" id=\"targetinfo\" style=\"padding:16px 2px 2px 60px;background:#000;color:#fff;height:47px;\">
 							<img src=\"images/loading.gif\" alt=\"Loading\" /> Lade Daten...
 						</td></tr>";
 					echo "<tr><td  width=\"25%\">Kosten/100 AE:</td>
@@ -452,7 +458,8 @@
 					
 					$response->assign("havenContentTarget","innerHTML",ob_get_contents());				
 					$response->assign("havenContentTarget","style.display",'');			
-					$response->script("document.getElementById('fleet_sx').focus();");
+					$response->script("document.getElementById('man_sx').focus();");
+					$response->script("xajax_havenTargetInfo(xajax.getFormValues('targetForm'))");
 					ob_end_clean();				
 					
 					
@@ -512,22 +519,46 @@
 	function havenTargetInfo($form)
 	{
 		$response = new xajaxResponse();
-		ob_start();
-		$ct = new Cell(array($form['man_sx'],$form['man_sy'],$form['man_cx'],$form['man_cy']));
-		if ($ct->isValid())
-		{
-			$cs = new Cell(array($_SESSION['haven']['planet_sx'],$_SESSION['haven']['planet_sy'],$_SESSION['haven']['planet_cx'],$_SESSION['haven']['planet_cy']));
-			echo "<b>Zelle:</b> ".$ct.", <b>Typ:</b> ".$ct->getType(1);
-			
-			$dist = round($cs->distance($ct),1);
-			$response->assign('distance','innerHTML',$dist." AE");
+		if ($form['man_sx']!="" && $form['man_sy']!="" && $form['man_cx']!="" && $form['man_cy']!="" && $form['man_p']!=""
+		&& $form['man_sx']>0 && $form['man_sy']>0 && $form['man_cx']>0 && $form['man_cy']>0 && $form['man_p']>=0)
+		{		
+			ob_start();
+			$res = dbquery("
+			SELECT
+				entities.id,
+				entities.code
+			FROM
+				entities
+			INNER JOIN	
+				cells
+			ON
+				entities.cell_id=cells.id
+				AND cells.sx=".$form['man_sx']."
+				AND cells.sy=".$form['man_sy']."
+				AND cells.cx=".$form['man_cx']."
+				AND cells.cy=".$form['man_cy']."
+				AND entities.pos=".$form['man_p']."
+			");
+			if (mysql_num_rows($res)>0)
+			{
+				$arr=mysql_fetch_row($res);
+				$ent = Entity::createFactory($arr[1],$arr[0]);
+				echo "".$ent." (".$ent->entityCodeString().", Besitzer: ".$ent->owner().")";
+				$response->assign('targetinfo','style.background',"#000 url('".$ent->imagePath()."') no-repeat 3px 3px;");
+				
+				//$dist = round($cs->distance($ct),1);
+				$dist = "todo";
+				$response->assign('distance','innerHTML',$dist." AE");
+			}
+			else
+			{
+				echo "<div style=\"color:#f00\">Ziel nicht vorhanden!</div>";
+				$response->assign('distance','innerHTML',"Unbekannt");
+				$response->assign('targetinfo','style.background',"#000");
+			}	
+			$response->assign('targetinfo','innerHTML',ob_get_contents());
+			ob_end_clean();
 		}
-		else
-		{
-			echo "<div style=\"color:#f00\">".$cs->getError()."</div>";
-		}	
-		$response->assign('targetinfo','innerHTML',ob_get_contents());
-		ob_end_clean();
 	  return $response;					
 	}
 

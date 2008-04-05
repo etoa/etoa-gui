@@ -387,20 +387,6 @@
 			echo "<p class=\"infomsg\">".NO_ITEMS_MSG."</p>";
 	}
 
-
-
-
-/*
-				INNER JOIN
-				(
-					".$db_table['space_cells']."
-					ON
-						planet_solsys_id=cell_id
-				)
-
-
-				*/
-
 	//
 	// Bauliste
 	//
@@ -756,6 +742,7 @@
 	{
 		echo "<h2>Schiffliste</h2>";
 
+/*
 		if ($_POST['shiplist_search']!="" || $_GET['action']=="searchresults" || $_POST['new']!="")
 		{
 			$sqlstart = "
@@ -1117,20 +1104,7 @@
 		{
 			$_SESSION['shipedit']['query']="";
 
-			// Schiffe laden
-			$bres = dbquery("
-			SELECT 
-				ship_id,
-				ship_name 
-			FROM 
-				".$db_table['ships']." 
-			ORDER BY 
-				ship_name;");
-			$slist=array();
-			while ($barr=mysql_fetch_array($bres))
-				$slist[$barr['ship_id']]=$barr['ship_name'];
 
-			$tblcnt = mysql_fetch_row(dbquery("SELECT count(shiplist_id) FROM ".$db_table['shiplist'].";"));
 
 			// Suchmaske
 			echo "Suchmaske (Es sind <b>".nf($tblcnt[0])."</b> Eintr&auml;ge in der Datenbank vorhanden.):<br/><br/>";
@@ -1148,7 +1122,23 @@
 			echo "</select></td>";
 			echo "</table>";
 			echo "<br/><input type=\"submit\" class=\"button\" name=\"shiplist_search\" value=\"Suche starten\" /></form><br/>";
+			*/
 
+			// Schiffe laden
+			$bres = dbquery("
+			SELECT 
+				ship_id,
+				ship_name 
+			FROM 
+				".$db_table['ships']." 
+			ORDER BY 
+				ship_name;");
+			$slist=array();
+			while ($barr=mysql_fetch_array($bres))
+				$slist[$barr['ship_id']]=$barr['ship_name'];
+
+			$tblcnt = mysql_fetch_row(dbquery("SELECT count(shiplist_id) FROM ".$db_table['shiplist'].";"));
+			
 			// Hinzufügen
 			echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\" id=\"selector\" name=\"selector\">";
 			infobox_start("",1);
@@ -1202,7 +1192,9 @@
 			//Focus
 			echo "<script type=\"text/javascript\">document.getElementById('userlist_nick').focus();</script>";
 
-		}
+			echo "<br/>Es sind <b>".nf($tblcnt[0])."</b> Eintr&auml;ge in der Datenbank vorhanden.";
+
+	//	}
 	}
 
 
