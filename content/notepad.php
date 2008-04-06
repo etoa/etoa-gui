@@ -125,7 +125,7 @@
 
 	$n=new notepad();
 	$n->db_table=$db_table['notepad'];
-	$n->user_id=$s['user']['id'];
+	$n->user_id=$cu->id();
 
 	//
 	// Neue Notiz

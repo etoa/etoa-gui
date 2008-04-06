@@ -59,7 +59,7 @@
 	FROM
 		".$db_table['techlist']."
 	WHERE
-    techlist_user_id='".$s['user']['id']."'
+    techlist_user_id='".$cu->id()."'
     AND techlist_tech_id='".GEN_TECH_ID."';");
 	if(mysql_num_rows($tlres)>0)
 	{
@@ -80,10 +80,10 @@
   FROM
   	".$db_table['buildlist']."
   WHERE
-  	buildlist_planet_id='".$c->id."'
+  	buildlist_planet_id='".$cp->id()."'
   	AND buildlist_building_id='".FACTORY_ID."'
   	AND buildlist_current_level>='1'
-  	AND buildlist_user_id='".$s['user']['id']."'");
+  	AND buildlist_user_id='".$cu->id()."'");
 	
 	
 	// Verteidigungs-Infos
@@ -103,7 +103,7 @@
   	defense
   ON
   	deflist_def_id=def_id
-  	AND deflist_planet_id=".$c->id."
+  	AND deflist_planet_id=".$cp->id()."
   	AND deflist_count>0;");
   if (mysql_num_rows($res)>0)
   {
@@ -136,7 +136,7 @@
 		ON 
 			techlist_tech_id=tech_id
 		AND
-			techlist_user_id='".$s['user']['id']."'
+			techlist_user_id='".$cu->id()."'
 			AND
 			(
 				techlist_tech_id='".STRUCTURE_TECH_ID."'
@@ -225,10 +225,10 @@
   	define('CURRENT_FACTORY_LEVEL',$werft_arr['buildlist_current_level']);
 
 		// Titel
-		echo "<h1>Waffenfabrik (Stufe ".CURRENT_FACTORY_LEVEL.") des Planeten ".$c->name."</h1>";
+		echo "<h1>Waffenfabrik (Stufe ".CURRENT_FACTORY_LEVEL.") des Planeten ".$cp->name."</h1>";
 
 		// Ressourcen anzeigen
-		$c->resBox();
+		$cp->resBox();
 		
 		echo $def_info_string;
 
@@ -276,9 +276,9 @@
 			INNER JOIN
   			".$db_table['defense']."
   		  ON queue_def_id=def_id
-  		  AND queue_planet_id='".$c->id."'
+  		  AND queue_planet_id='".$cp->id()."'
   		  AND queue_endtime>'".time()."'
-				AND queue_user_id='".$s['user']['id']."'
+				AND queue_user_id='".$cu->id()."'
 			;");
 			if (mysql_num_rows($field_res)>0)
 			{
@@ -289,7 +289,7 @@
 			}       
 			
 			//Berechnet freie Felder   
-			$fields_available = $c->fields+$c->fields_extra-$c->fields_used-$def_fields-$build0.ing_fields;		
+			$fields_available = $cp->fields+$cp->fields_extra-$cp->fields_used-$def_fields-$build0.ing_fields;		
 
     	// level zählen welches die waffenfabrik über dem angegeben level ist und faktor berechnen
     	$need_bonus_level = CURRENT_FACTORY_LEVEL - $conf['build_time_boni_waffenfabrik']['p1'];
@@ -356,11 +356,11 @@
 					user_item_order_def='".$_POST['sort_value']."',
 					user_item_order_way='".$_POST['sort_way']."'
 				WHERE
-					user_id='".$s['user']['id']."'
+					user_id='".$cu->id()."'
 				");		
 				
-				$s['user']['item_order_def']=$_POST['sort_value'];
-        $s['user']['item_order_way']=$_POST['sort_way'];	
+				$cu->item_order_def=$_POST['sort_value'];
+        $cu->item_order_way=$_POST['sort_way'];	
 			}
 
 			
@@ -391,7 +391,7 @@
 								foreach ($values as $value => $name)
 								{		
 									echo "<option value=\"".$value."\"";
-									if($s['user']['item_order_def']==$value)
+									if($cu->item_order_def==$value)
 									{
 										echo " selected=\"selected\"";
 									}
@@ -403,12 +403,12 @@
 								
 									//Aufsteigend
 									echo "<option value=\"ASC\"";
-									if($s['user']['item_order_way']=='ASC') echo " selected=\"selected\"";
+									if($cu->item_order_way=='ASC') echo " selected=\"selected\"";
 									echo ">Aufsteigend</option>";
 									
 									//Absteigend
 									echo "<option value=\"DESC\"";
-									if($s['user']['item_order_way']=='DESC') echo " selected=\"selected\"";
+									if($cu->item_order_way=='DESC') echo " selected=\"selected\"";
 									echo ">Absteigend</option>";	
 																	
 					echo "</select>						
@@ -453,8 +453,8 @@
 				FROM
 					".$db_table['def_queue']."
 				WHERE
-  				queue_planet_id='".$c->id."'
-  				AND queue_user_id='".$s['user']['id']."'
+  				queue_planet_id='".$cp->id()."'
+  				AND queue_user_id='".$cu->id()."'
   			ORDER BY
   				queue_endtime DESC
   			LIMIT 1;
@@ -508,7 +508,7 @@
 						//Titan
 						if ($darr['def_costs_metal']>0)
 						{
-							$bf['metal']=$c->res->metal/$darr['def_costs_metal'];
+							$bf['metal']=$cp->resMetal/$darr['def_costs_metal'];
 						}
 						else
 						{
@@ -517,7 +517,7 @@
 						//Silizium
 						if ($darr['def_costs_crystal']>0)
 						{
-							$bf['crystal']=$c->res->crystal/$darr['def_costs_crystal'];
+							$bf['crystal']=$cp->resCrystal/$darr['def_costs_crystal'];
 						}
 						else
 						{
@@ -526,7 +526,7 @@
 						//PVC
 						if ($darr['def_costs_plastic']>0) 
 						{
-							$bf['plastic']=$c->res->plastic/$darr['def_costs_plastic']; 
+							$bf['plastic']=$cp->resPlastic/$darr['def_costs_plastic']; 
 						}
 						else 
 						{
@@ -535,7 +535,7 @@
 						//Tritium
 						if ($darr['def_costs_fuel']>0) 
 						{
-							$bf['fuel']=$c->res->fuel/$darr['def_costs_fuel']; 
+							$bf['fuel']=$cp->resFuel/$darr['def_costs_fuel']; 
 						}
 						else 
 						{
@@ -544,7 +544,7 @@
 						//Nahrung
 						if ($_POST['additional_food_costs']>0 || $darr['def_costs_food']>0)
 						{
-							 $bf['food']=$c->res->food/($_POST['additional_food_costs']+$darr['def_costs_food']); 
+							 $bf['food']=$cp->resFood/($_POST['additional_food_costs']+$darr['def_costs_food']); 
 						}
 						else 
 						{
@@ -568,11 +568,11 @@
 							$bc['food']=($_POST['additional_food_costs']+$darr['def_costs_food'])*$build_cnt;
 
     	        //Berechnete Ress provisorisch abziehen
-    	        $c->res->metal-=$bc['metal'];
-    	        $c->res->crystal-=$bc['crystal'];
-    	        $c->res->plastic-=$bc['plastic'];
-    	        $c->res->fuel-=$bc['fuel'];
-    	        $c->res->food-=$bc['food'];
+    	        $cp->resMetal-=$bc['metal'];
+    	        $cp->resCrystal-=$bc['crystal'];
+    	        $cp->resPlastic-=$bc['plastic'];
+    	        $cp->resFuel-=$bc['fuel'];
+    	        $cp->resFood-=$bc['food'];
 
 							// Bauzeit pro Schiff berechnen
 							$btime = ($darr['def_costs_metal'] + $darr['def_costs_crystal'] + $darr['def_costs_plastic'] + $darr['def_costs_fuel'] + $darr['def_costs_food']) / 12 * GLOBAL_TIME * DEF_BUILD_TIME * $time_boni_factor;
@@ -606,9 +606,9 @@
     	            queue_endtime,
     	            queue_objtime)
     	        VALUES
-    	            ('".$s['user']['id']."',
+    	            ('".$cu->id()."',
     	            '".$def_id."',
-    	            '".$c->id."',
+    	            '".$cp->id()."',
     	            '".$build_cnt."',
     	            '".$start_time."',
     	            '".$end_time."',
@@ -638,20 +638,20 @@
 				}
 				
 				// Die Roshtoffe der $c-variablen wieder beigeben, da sie sonst doppelt abgezogen werden
-        $c->res->metal+=$total_metal;
-        $c->res->crystal+=$total_crystal;
-        $c->res->plastic+=$total_plastic;
-        $c->res->fuel+=$total_fuel;
-        $c->res->food+=$total_food;					
+        $cp->resMetal+=$total_metal;
+        $cp->resCrystal+=$total_crystal;
+        $cp->resPlastic+=$total_plastic;
+        $cp->resFuel+=$total_fuel;
+        $cp->resFood+=$total_food;					
 				
 				//Rohstoffe vom Planeten abziehen und aktualisieren
-				$c->changeRes(-$total_metal,-$total_crystal,-$total_plastic,-$total_fuel,-$total_food);
+				$cp->changeRes(-$total_metal,-$total_crystal,-$total_plastic,-$total_fuel,-$total_food);
 												
 				//Log schreiben
 				$log_text = "
 				<b>Verteidigungsauftrag Bauen</b><br><br>
-				<b>User:</b> [USER_ID=".$s['user']['id'].";USER_NICK=".$s['user']['nick']."]<br>
-				<b>Planeten:</b> [PLANET_ID=".$c->id.";PLANET_NAME=".$c->name."]<br>
+				<b>User:</b> [USER_ID=".$cu->id().";USER_NICK=".$cu->nick."]<br>
+				<b>Planeten:</b> [PLANET_ID=".$cp->id().";PLANET_NAME=".$cp->name."]<br>
 				<b>Dauer des gesamten Auftrages:</b> ".tf($total_duration)."<br>
 				<b>Ende des gesamten Auftrages:</b> ".date("Y-m-d H:i:s",$end_time)."<br>
 				<b>Waffenfabrik Level:</b> ".CURRENT_FACTORY_LEVEL."<br>
@@ -664,17 +664,17 @@
 				<b>".RES_FUEL.":</b> ".nf($total_fuel)."<br>
 				<b>".RES_FOOD.":</b> ".nf($total_food)."<br><br>
 				<b>Rohstoffe auf dem Planeten</b><br><br>
-				<b>".RES_METAL.":</b> ".nf($c->res->metal)."<br>
-				<b>".RES_CRYSTAL.":</b> ".nf($c->res->crystal)."<br>
-				<b>".RES_PLASTIC.":</b> ".nf($c->res->plastic)."<br>
-				<b>".RES_FUEL.":</b> ".nf($c->res->fuel)."<br>
-				<b>".RES_FOOD.":</b> ".nf($c->res->food)."<br><br>
+				<b>".RES_METAL.":</b> ".nf($cp->resMetal)."<br>
+				<b>".RES_CRYSTAL.":</b> ".nf($cp->resCrystal)."<br>
+				<b>".RES_PLASTIC.":</b> ".nf($cp->resPlastic)."<br>
+				<b>".RES_FUEL.":</b> ".nf($cp->resFuel)."<br>
+				<b>".RES_FOOD.":</b> ".nf($cp->resFood)."<br><br>
 				<b>Anlagen</b><br>
 				".$log_defs."
 				";
 				
 				//Log Speichern
-				add_log_game_def($log_text,$s['user']['id'],$s['user']['alliance_id'],$c->id,1,time());					
+				add_log_game_def($log_text,$cu->id(),$cu->alliance_id,$cp->id(),1,time());					
 				
 				if ($counter==0)
 				{
@@ -711,8 +711,8 @@
  	  			".$db_table['defense']."
 	  		  ON queue_def_id=def_id
 					AND queue_id='".intval($_GET['cancel'])."'
-					AND queue_user_id='".$s['user']['id']."'
-					AND queue_planet_id='".$c->id."'
+					AND queue_user_id='".$cu->id()."'
+					AND queue_planet_id='".$cp->id()."'
 					AND queue_endtime>'".$time."'
 				;");
 				if (mysql_num_rows($qres)>0)
@@ -744,8 +744,8 @@
 						".$db_table['def_queue']."
 					WHERE
 						queue_starttime>='".$qarr['queue_endtime']."'
-						AND queue_user_id='".$s['user']['id']."'
-						AND queue_planet_id='".$c->id."'
+						AND queue_user_id='".$cu->id()."'
+						AND queue_planet_id='".$cp->id()."'
 					ORDER BY
 						queue_starttime
 					;");
@@ -769,15 +769,15 @@
 					}
 					
 					//Rohstoffe dem Planeten gutschreiben und aktualisieren
-					$c->changeRes($ret['metal'],$ret['crystal'],$ret['plastic'],$ret['fuel'],$ret['food']);						
+					$cp->changeRes($ret['metal'],$ret['crystal'],$ret['plastic'],$ret['fuel'],$ret['food']);						
 						
 					echo "Der Auftrag wurde abgebrochen!<br/><br/>";
 						
 					//Log schreiben
 					$log_text = "
 					<b>Verteidigungsauftrag Abbruch</b><br><br>
-					<b>User:</b> [USER_ID=".$s['user']['id'].";USER_NICK=".$s['user']['nick']."]<br>
-					<b>Planeten:</b> [PLANET_ID=".$c->id.";PLANET_NAME=".$c->name."]<br>
+					<b>User:</b> [USER_ID=".$cu->id().";USER_NICK=".$cu->nick."]<br>
+					<b>Planeten:</b> [PLANET_ID=".$cp->id().";PLANET_NAME=".$cp->name."]<br>
 					<b>Anlage:</b> ".$qarr['def_name']."<br>
 					<b>Anzahl:</b> ".nf($qarr['queue_cnt'])."<br>
 					<b>Auftragsdauer:</b> ".tf($qarr['queue_objtime']*$qarr['queue_cnt'])."<br><br>
@@ -789,15 +789,15 @@
 					<b>".RES_FUEL.":</b> ".nf($ret['fuel'])."<br>
 					<b>".RES_FOOD.":</b> ".nf($ret['food'])."<br><br>
 					<b>Rohstoffe auf dem Planeten</b><br><br>
-					<b>".RES_METAL.":</b> ".nf($c->res->metal)."<br>
-					<b>".RES_CRYSTAL.":</b> ".nf($c->res->crystal)."<br>
-					<b>".RES_PLASTIC.":</b> ".nf($c->res->plastic)."<br>
-					<b>".RES_FUEL.":</b> ".nf($c->res->fuel)."<br>
-					<b>".RES_FOOD.":</b> ".nf($c->res->food)."<br>
+					<b>".RES_METAL.":</b> ".nf($cp->resMetal)."<br>
+					<b>".RES_CRYSTAL.":</b> ".nf($cp->resCrystal)."<br>
+					<b>".RES_PLASTIC.":</b> ".nf($cp->resPlastic)."<br>
+					<b>".RES_FUEL.":</b> ".nf($cp->resFuel)."<br>
+					<b>".RES_FOOD.":</b> ".nf($cp->resFood)."<br>
 					";
 					
 					//Log Speichern
-					add_log_game_def($log_text,$s['user']['id'],$s['user']['alliance_id'],$c->id,0,time());					
+					add_log_game_def($log_text,$cu->id(),$cu->alliance_id,$cp->id(),0,time());					
 				}
 			}
 
@@ -821,8 +821,8 @@
     		".$db_table['defense']."
     		ON
     		queue_def_id=def_id
-  			AND queue_planet_id='".$c->id."'
-  			AND queue_user_id='".$s['user']['id']."'
+  			AND queue_planet_id='".$cp->id()."'
+  			AND queue_user_id='".$cu->id()."'
   			AND queue_endtime>'".$time."'
     	ORDER BY
 				queue_starttime ASC;");
@@ -944,7 +944,7 @@
 			FROM 
 				".$db_table['techlist']." 
 			WHERE 
-				techlist_user_id='".$s['user']['id']."';");
+				techlist_user_id='".$cu->id()."';");
 			while ($arr = mysql_fetch_array($res))
 			{
 				$techlist[$arr['techlist_tech_id']]=$arr['techlist_current_level'];
@@ -957,8 +957,8 @@
 			FROM 
 				".$db_table['buildlist']." 
 			WHERE 
-				buildlist_planet_id='".$c->id."' 
-				AND buildlist_user_id='".$s['user']['id']."';");
+				buildlist_planet_id='".$cp->id()."' 
+				AND buildlist_user_id='".$cu->id()."';");
 			while ($arr = mysql_fetch_array($res))
 			{
 				$buildlist[$arr['buildlist_building_id']]=$arr['buildlist_current_level'];
@@ -982,7 +982,7 @@
 					$cnt = 0;
 
 					//Ordnung des Users beachten
-					$order="def_".$s['user']['item_order_def']." ".$s['user']['item_order_way']."";
+					$order="def_".$cu->item_order_def." ".$cu->item_order_way."";
 
 					// Auflistung der Schiffe (auch diese, die noch nicht gebaut wurden)
 					$dres = dbquery("
@@ -1009,19 +1009,19 @@
     			LEFT JOIN
     				".$db_table['deflist']."
   					ON deflist_def_id=def_id
-  					AND deflist_planet_id='".$c->id."'
-  	        AND deflist_user_id='".$s['user']['id']."'
+  					AND deflist_planet_id='".$cp->id()."'
+  	        AND deflist_user_id='".$cu->id()."'
    				WHERE
     				def_buildable='1'
     				AND def_cat_id='".$carr['cat_id']."'
     				AND def_show='1'
-    				AND (def_race_id='0' OR def_race_id='".$s['user']['race_id']."')
+    				AND (def_race_id='0' OR def_race_id='".$cu->race_id."')
     			ORDER BY
     				".$order.";");
 					if (mysql_num_rows($dres)>0)
 					{
 						//Einfache Ansicht
-						if ($s['user']['item_show']!='full')
+						if ($cu->item_show!='full')
 						{
 							echo '<tr>
 											<th colspan="2" class="tbltitle">Anlage</th>
@@ -1077,9 +1077,9 @@
     			      FROM
     			          ".$db_table['deflist']."
     			      WHERE
-    			      		deflist_planet_id='".$c->id."'
+    			      		deflist_planet_id='".$cp->id()."'
     			          AND deflist_def_id='".$darr['def_id']."'
-    			          AND deflist_user_id='".$s['user']['id']."';");
+    			          AND deflist_user_id='".$cu->id()."';");
     			      if (mysql_num_rows($check_res1)>0)
     			      {
     			        while ($check_arr1=mysql_fetch_array($check_res1))
@@ -1133,7 +1133,7 @@
 								//Titan
 								if($darr['def_costs_metal']>0)
 								{
-									$build_cnt_metal=floor($c->res->metal/$darr['def_costs_metal']);
+									$build_cnt_metal=floor($cp->resMetal/$darr['def_costs_metal']);
 								}
 								else
 								{
@@ -1143,7 +1143,7 @@
 								//Silizium
 								if($darr['def_costs_crystal']>0)
 								{
-									$build_cnt_crystal=floor($c->res->crystal/$darr['def_costs_crystal']);
+									$build_cnt_crystal=floor($cp->resCrystal/$darr['def_costs_crystal']);
 								}
 								else
 								{
@@ -1153,7 +1153,7 @@
 								//PVC
 								if($darr['def_costs_plastic']>0)
 								{
-									$build_cnt_plastic=floor($c->res->plastic/$darr['def_costs_plastic']);
+									$build_cnt_plastic=floor($cp->resPlastic/$darr['def_costs_plastic']);
 								}
 								else
 								{
@@ -1163,7 +1163,7 @@
 								//Tritium
 								if($darr['def_costs_fuel']>0)
 								{
-									$build_cnt_fuel=floor($c->res->fuel/$darr['def_costs_fuel']);
+									$build_cnt_fuel=floor($cp->resFuel/$darr['def_costs_fuel']);
 								}
 								else
 								{
@@ -1173,7 +1173,7 @@
 								//Nahrung
 								if($food_costs>0)
 								{
-									$build_cnt_food=floor($c->res->food/$food_costs);
+									$build_cnt_food=floor($cp->resFood/$food_costs);
 								}
 								else
 								{
@@ -1208,9 +1208,9 @@
 								elseif($def_max_build==0 && $build_cnt_fields!=0)
 								{
 									//Wartezeit Titan
-    			    		if ($c->prod->metal>0)
+    			    		if ($cp->prodMetal>0)
     			    		{
-    			    			$bwait['metal']=ceil(($darr['def_costs_metal']-$c->res->metal)/$c->prod->metal*3600);
+    			    			$bwait['metal']=ceil(($darr['def_costs_metal']-$cp->resMetal)/$cp->prodMetal*3600);
     			    		}
     			    		else
     			    		{
@@ -1218,9 +1218,9 @@
     			    		}
     			    		
     			    		//Wartezeit Silizium
-    			    		if ($c->prod->crystal>0)
+    			    		if ($cp->prodCrystal>0)
     			    		{
-    			    			$bwait['crystal']=ceil(($darr['def_costs_crystal']-$c->res->crystal)/$c->prod->crystal*3600);
+    			    			$bwait['crystal']=ceil(($darr['def_costs_crystal']-$cp->resCrystal)/$cp->prodCrystal*3600);
     			    		}
     			    		else
     			    		{ 
@@ -1228,9 +1228,9 @@
     			    		}
     			    		
     			    		//Wartezeit PVC
-    			    		if ($c->prod->plastic>0)
+    			    		if ($cp->prodPlastic>0)
     			    		{
-    			    			$bwait['plastic']=ceil(($darr['def_costs_plastic']-$c->res->plastic)/$c->prod->plastic*3600);
+    			    			$bwait['plastic']=ceil(($darr['def_costs_plastic']-$cp->resPlastic)/$cp->prodPlastic*3600);
     			    		}
     			    		else
     			    		{ 
@@ -1238,9 +1238,9 @@
     			    		}
     			    		
     			    		//Wartezeit Tritium
-    			    		if ($c->prod->fuel>0)
+    			    		if ($cp->prodFuel>0)
     			    		{
-    			    			$bwait['fuel']=ceil(($darr['def_costs_fuel']-$c->res->fuel)/$c->prod->fuel*3600);
+    			    			$bwait['fuel']=ceil(($darr['def_costs_fuel']-$cp->resFuel)/$cp->prodFuel*3600);
     			    		}
     			    		else
     			    		{ 
@@ -1248,9 +1248,9 @@
     			    		}
     			    		
     			    		//Wartezeit Nahrung
-    			    		if ($c->prod->food>0)
+    			    		if ($cp->prodFood>0)
     			    		{
-    			    			$bwait['food']=ceil(($food_costs-$c->res->food)/$c->prod->food*3600);
+    			    			$bwait['food']=ceil(($food_costs-$cp->resFood)/$cp->prodFood*3600);
     			    		}
     			    		else
     			    		{ 
@@ -1269,7 +1269,7 @@
 
 								//Stellt Rohstoff Rot dar, wenn es von diesem zu wenig auf dem Planeten hat
 								//Titan
-								if($darr['def_costs_metal']>$c->res->metal)
+								if($darr['def_costs_metal']>$cp->resMetal)
 								{
 									$ress_style_metal="style=\"color:red;\"";
 								}
@@ -1279,7 +1279,7 @@
 								}
 								
 								//Silizium
-								if($darr['def_costs_crystal']>$c->res->crystal)
+								if($darr['def_costs_crystal']>$cp->resCrystal)
 								{
 									$ress_style_crystal="style=\"color:red;\"";
 								}
@@ -1289,7 +1289,7 @@
 								}
 								
 								//PVC
-								if($darr['def_costs_plastic']>$c->res->plastic)
+								if($darr['def_costs_plastic']>$cp->resPlastic)
 								{
 									$ress_style_plastic="style=\"color:red;\"";
 								}
@@ -1299,7 +1299,7 @@
 								}
 								
 								//Tritium
-								if($darr['def_costs_fuel']>$c->res->fuel)
+								if($darr['def_costs_fuel']>$cp->resFuel)
 								{
 									$ress_style_fuel="style=\"color:red;\"";
 								}
@@ -1309,7 +1309,7 @@
 								}
 								
 								//Nahrung
-								if($food_costs>$c->res->food)
+								if($food_costs>$cp->resFood)
 								{
 									$ress_style_food="style=\"color:red;\"";
 								}
@@ -1319,7 +1319,7 @@
 								}
 
 								// Volle Ansicht
-  			      	if($s['user']['item_show']=='full')
+  			      	if($cu->item_show=='full')
   			      	{	
   			      		if ($cnt>0)
   			      		{
@@ -1462,10 +1462,10 @@
 	else
 	{
 		// Titel
-		echo "<h1>Waffenfabrik des Planeten ".$c->name."</h1>";		
+		echo "<h1>Waffenfabrik des Planeten ".$cp->name."</h1>";		
 		
 		// Ressourcen anzeigen
-		$c->resBox();
+		$cp->resBox();
 		echo "<br>Die Waffenfabrik wurde noch nicht gebaut!<br/><br/>";
 		
 		echo $def_info_string;
