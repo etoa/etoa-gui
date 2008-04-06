@@ -110,8 +110,6 @@
 				$this->typeResearchtime=$arr['type_f_researchtime'];
 				$this->typeBuildtime=$arr['type_f_buildtime'];
 
-				echo $this->typeBuildtime."#";
-
 				$this->starTypeId=0;
 				$this->starTypeName="Teststern";
 

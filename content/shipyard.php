@@ -54,7 +54,7 @@
 	SELECT
 		techlist_current_level
 	FROM
-		".$db_table['techlist']."
+		techlist
 	WHERE
     techlist_user_id='".$cu->id()."'
     AND techlist_tech_id='".GEN_TECH_ID."';");
@@ -75,7 +75,7 @@
   	buildlist_people_working,
   	buildlist_deactivated
   FROM
-  	".$db_table['buildlist']."
+  	buildlist
   WHERE
   	buildlist_planet_id='".$cp->id."'
   	AND buildlist_building_id='".SHIPYARD_ID."'
@@ -119,7 +119,7 @@
     		$time_boni_factor=1-($need_bonus_level*($conf['build_time_boni_schiffswerft']['v']/100));
     	}
     	$people_working = $werft_arr['buildlist_people_working'];
-    	
+
     	// Faktor der zurückerstatteten Ressourcen bei einem Abbruch des Auftrags berechnen
     	if (CURRENT_SHIPYARD_LEVEL>=SHIPQUEUE_CANCEL_MIN_LEVEL)
     	{
@@ -176,8 +176,8 @@
 					user_id='".$cu->id()."'
 				");		
 				
-				$s['user']['item_order_ship']=$_POST['sort_value'];
-        $s['user']['item_order_way']=$_POST['sort_way'];	
+				$cu->item_order_ship=$_POST['sort_value'];
+        $cu->item_order_way=$_POST['sort_way'];	
 			}
 
 			
@@ -211,7 +211,7 @@
 								foreach ($values as $value => $name)
 								{		
 									echo "<option value=\"".$value."\"";
-									if($s['user']['item_order_ship']==$value)
+									if($cu->item_order_ship==$value)
 									{
 										echo " selected=\"selected\"";
 									}
@@ -223,12 +223,12 @@
 								
 									//Aufsteigend
 									echo "<option value=\"ASC\"";
-									if($s['user']['item_order_way']=='ASC') echo " selected=\"selected\"";
+									if($cu->item_order_way=='ASC') echo " selected=\"selected\"";
 									echo ">Aufsteigend</option>";
 									
 									//Absteigend
 									echo "<option value=\"DESC\"";
-									if($s['user']['item_order_way']=='DESC') echo " selected=\"selected\"";
+									if($cu->item_order_way=='DESC') echo " selected=\"selected\"";
 									echo ">Absteigend</option>";	
 																	
 					echo "</select>						
@@ -449,11 +449,11 @@
 				}
 				
 				// Die Roshtoffe der $c-variablen wieder beigeben, da sie sonst doppelt abgezogen werden
-        $cp->res->metal+=$total_metal;
-        $cp->res->crystal+=$total_crystal;
-        $cp->res->plastic+=$total_plastic;
-        $cp->res->fuel+=$total_fuel;
-        $cp->res->food+=$total_food;				
+        $cp->resMetal+=$total_metal;
+        $cp->resCrystal+=$total_crystal;
+        $cp->resPlastic+=$total_plastic;
+        $cp->resFuel+=$total_fuel;
+        $cp->resFood+=$total_food;				
 				
 				//Rohstoffe vom Planeten abziehen und aktualisieren
 				$cp->changeRes(-$total_metal,-$total_crystal,-$total_plastic,-$total_fuel,-$total_food);
@@ -461,7 +461,7 @@
 				//Log schreiben
 				$log_text = "
 				<b>Schiffsauftrag Bauen</b><br><br>
-				<b>User:</b> [USER_ID=".$cu->id().";USER_NICK=".$s['user']['nick']."]<br>
+				<b>User:</b> [USER_ID=".$cu->id().";USER_NICK=".$cu->nick."]<br>
 				<b>Planeten:</b> [PLANET_ID=".$cp->id.";PLANET_NAME=".$cp->name."]<br>
 				<b>Dauer des gesamten Auftrages:</b> ".tf($total_duration)."<br>
 				<b>Ende des gesamten Auftrages:</b> ".date("Y-m-d H:i:s",$end_time)."<br>
@@ -485,7 +485,7 @@
 				";
 				
 				//Log Speichern
-				add_log_game_ship($log_text,$cu->id(),$s['user']['alliance_id'],$cp->id,1,time());					
+				add_log_game_ship($log_text,$cu->id(),$cu->alliance_id,$cp->id,1,time());					
 				
 				if ($counter==0)
 				{
@@ -587,7 +587,7 @@
 					//Log schreiben
 					$log_text = "
 					<b>Schiffsauftrag Abbruch</b><br><br>
-					<b>User:</b> [USER_ID=".$cu->id().";USER_NICK=".$s['user']['nick']."]<br>
+					<b>User:</b> [USER_ID=".$cu->id().";USER_NICK=".$cu->nick."]<br>
 					<b>Planeten:</b> [PLANET_ID=".$cp->id.";PLANET_NAME=".$cp->name."]<br>
 					<b>Schiff:</b> ".$qarr['ship_name']."<br>
 					<b>Anzahl:</b> ".nf($qarr['queue_cnt'])."<br>
@@ -608,7 +608,7 @@
 					";
 					
 					//Log Speichern
-					add_log_game_ship($log_text,$cu->id(),$s['user']['alliance_id'],$cp->id,0,time());					
+					add_log_game_ship($log_text,$cu->id(),$cu->alliance_id,$cp->id,0,time());					
 				}
 			}
 
@@ -796,7 +796,7 @@
 					$ccnt = 0;
 
 					//Schiffsordnung des Users beachten
-					$order="ship_".$s['user']['item_order_ship']." ".$s['user']['item_order_way']."";
+					$order="ship_".$cu->item_order_ship." ".$cu->item_order_way."";
 
 					// Auflistung der Schiffe (auch diese, die noch nicht gebaut wurden)
 					$sres = dbquery("
@@ -836,7 +836,7 @@
 					if (mysql_num_rows($sres)>0)
 					{
 						//Einfache Ansicht
-						if ($s['user']['item_show']!='full')
+						if ($cu->item_show!='full')
 						{
 							echo '<tr>
 											<th colspan="2" class="tbltitle">Schiff</th>
@@ -1136,7 +1136,7 @@
  			      		if ($sarr['special_ship']==0 || $cp->isMain)
  			      		{
 									// Volle Ansicht
-    			      	if($s['user']['item_show']=='full')
+    			      	if($cu->item_show=='full')
     			      	{
     			      		if ($ccnt>0)
     			      		{

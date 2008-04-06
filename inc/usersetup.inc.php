@@ -51,7 +51,7 @@
 	}
 	elseif (isset($_GET['setup_sx']) && isset($_GET['setup_sy']) && $_GET['setup_sx']>0 && $_GET['setup_sy']>0 && $_GET['setup_sx']<=$sx_num && $_GET['setup_sy']<=$sy_num)
 	{
-		if ($pid = Planets::getFreePlanet($_GET['setup_sx'],$_GET['setup_sy']))
+		if ($pid = PlanetManager::getFreePlanet($_GET['setup_sx'],$_GET['setup_sy']))
 		{
 			$mode = "checkplanet";
 		}		

@@ -292,17 +292,25 @@
 						if (isset($_GET['planet_id']) && $_GET['planet_id']>0 && in_array($_GET['planet_id'],$planets))
 						{
 							$cpid = $_GET['planet_id'];
+							$s['cpid'] = $cpid;
 						}	
+						elseif (isset($s['cpid']) && in_array($s['cpid'],$planets))
+						{
+							$cpid = $s['cpid'];
+						}
 						else					
 						{
 							$cpid = $mainplanet;
 						}						
 						
 						$cp = new Planet($cpid);
+						
+						$pm = new PlanetManager($planets);
 					}
 					else
 					{
-						$cu->setNotSetup();
+						$cu->setNotSetup($planets);
+						unset($planets);
 					}
 				}
 
@@ -342,18 +350,17 @@
 				if (isset($cp))
 				{
 					$tpl->assign("currentPlanetName",$cp);
-					/*
-					$tpl->assign("planetList",$planets->getLinkList());						
-					$tpl->assign("nextPlanetId",$planets->nextId);
-					$tpl->assign("prevPlanetId",$planets->prevId);
-					$tpl->assign("selectField",$planets->getSelectField());		*/
+					$tpl->assign("planetList",$pm->getLinkList());		
+					$tpl->assign("nextPlanetId",$pm->nextId());
+					$tpl->assign("prevPlanetId",$pm->prevId());
+					$tpl->assign("selectField",$pm->getSelectField());
 				}
 				else
 				{
 					$tpl->assign("currentPlanetName","Unbekannt");
 					$tpl->assign("planetList","");						
-					$tpl->assign("nextPlanetId","");
-					$tpl->assign("prevPlanetId","");
+					$tpl->assign("nextPlanetId",0);
+					$tpl->assign("prevPlanetId",0);
 					$tpl->assign("selectField","");		
 					
 				}
@@ -395,7 +402,7 @@
 				
 				// Include content
 				require("inc/content.inc.php");
-				
+
 				$render_time = explode(' ',microtime());
 				$rtime = $render_time[1]+$render_time[0]-$render_starttime;
 				$tpl->assign("renderTime",round($rtime,3));

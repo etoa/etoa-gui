@@ -226,7 +226,7 @@
 				}
 			}
 	
-			$debris = $cp->debris->metal > 0 || $cp->debris->crystal > 0 || $cp->debris->plastic > 0 ? true : false;
+			$debris = $cp->debrisMetal > 0 || $cp->debrisCrystal > 0 || $cp->debrisPlastic > 0 ? true : false;
 
 		 	echo "<h1>&Uuml;bersicht &uuml;ber den Planeten ".$cp->name."</h1>";
 			$cp->resBox();
@@ -284,14 +284,14 @@
 				}				
 			echo " ".RES_FUEL."-Produktion</td></tr>";
 			echo "<tr><td class=\"tbltitle\">Produktion:</td><td class=\"tbldata\">
-			".RES_ICON_METAL."".nf($cp->prod->metal)." / h<br style=\"clear:both;\" /> 
-			".RES_ICON_CRYSTAL."".nf($cp->prod->crystal)." / h<br style=\"clear:both;\" /> 
-			".RES_ICON_PLASTIC."".nf($cp->prod->plastic)." / h<br style=\"clear:both;\" /> 
-			".RES_ICON_FUEL."".nf($cp->prod->fuel)." / h<br style=\"clear:both;\" /> 
-			".RES_ICON_FOOD."".nf($cp->prod->food)." / h<br style=\"clear:both;\" /> 
-			".RES_ICON_PEOPLE."".nf($cp->prod->people)." / h<br style=\"clear:both;\" /> 
-			".RES_ICON_POWER."".nf($cp->prod->power)."<br style=\"clear:both;\" /> 
-			".RES_ICON_POWER_USE."".nf($cp->use->power)."</td></tr>";
+			".RES_ICON_METAL."".nf($cp->prodMetal)." / h<br style=\"clear:both;\" /> 
+			".RES_ICON_CRYSTAL."".nf($cp->prodCrystal)." / h<br style=\"clear:both;\" /> 
+			".RES_ICON_PLASTIC."".nf($cp->prodPlastic)." / h<br style=\"clear:both;\" /> 
+			".RES_ICON_FUEL."".nf($cp->prodFuel)." / h<br style=\"clear:both;\" /> 
+			".RES_ICON_FOOD."".nf($cp->prodFood)." / h<br style=\"clear:both;\" /> 
+			".RES_ICON_PEOPLE."".nf($cp->prodPeople)." / h<br style=\"clear:both;\" /> 
+			".RES_ICON_POWER."".nf($cp->prodPower)."<br style=\"clear:both;\" /> 
+			".RES_ICON_POWER_USE."".nf($cp->usePower)."</td></tr>";
 			echo "<tr>
 				<td class=\"tbltitle\">Beschreibung:</td>
 				<td class=\"tbldata\">
@@ -302,9 +302,9 @@
 			{
 				echo '<tr>
 				<th class="tbltitle">Trümmerfeld:</th><td class="tbldata">
-				'.RES_ICON_METAL."".nf($cp->debris->metal).'<br style="clear:both;" /> 
-				'.RES_ICON_CRYSTAL."".nf($cp->debris->crystal).'<br style="clear:both;" /> 
-				'.RES_ICON_PLASTIC."".nf($cp->debris->plastic).'<br style="clear:both;" /> 
+				'.RES_ICON_METAL."".nf($cp->debrisMetal).'<br style="clear:both;" /> 
+				'.RES_ICON_CRYSTAL."".nf($cp->debrisCrystal).'<br style="clear:both;" /> 
+				'.RES_ICON_PLASTIC."".nf($cp->debrisPlastic).'<br style="clear:both;" /> 
 				</td></tr>';
 			}
 			
