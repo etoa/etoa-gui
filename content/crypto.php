@@ -45,10 +45,10 @@
   FROM
   	buildlist
   WHERE
-  	buildlist_planet_id='".$c->id."'
+  	buildlist_planet_id='".$cp->id()."'
   	AND buildlist_building_id='".BUILD_CRYPTO_ID."'
   	AND buildlist_current_level>='1'
-  	AND buildlist_user_id='".$s['user']['id']."'");
+  	AND buildlist_user_id='".$cu->id()."'");
 
   // Prüfen ob Gebäude gebaut ist
   if (mysql_num_rows($werft_res)>0)
@@ -57,12 +57,12 @@
   	$center_level = $werft_arr['buildlist_current_level'];
   	
 		// Titel
-		echo "<h1>Kryptocenter (Stufe ".$center_level.") des Planeten ".$c->name."</h1>";		
+		echo "<h1>Kryptocenter (Stufe ".$center_level.") des Planeten ".$cp->name."</h1>";		
 		
 		// Ressourcen anzeigen
-		$c->resBox();
+		$cp->resBox();
 
-		if ($c->prod->power - $c->use->power >= 0  && $c->prod->power>0 && $werft_arr['buildlist_prod_percent']==1)
+		if ($cp->prodPower - $cp->usePower >= 0  && $cp->prodPower>0 && $werft_arr['buildlist_prod_percent']==1)
 		{
 			if ($werft_arr['buildlist_deactivated'] < time())
 			{
@@ -88,7 +88,7 @@
 					$pp = intval($_POST['p']);
 					if ($sx>0 && $sy>0 && $cx>0 && $cy>0 && $pp>0)
 					{
-						if ($c->res->fuel >= CRYPTO_FUEL_COSTS_PER_SCAN)
+						if ($cp->resFuel >= CRYPTO_FUEL_COSTS_PER_SCAN)
 						{
 							$res = dbquery("
 							SELECT
@@ -115,11 +115,11 @@
 							;");
 							if (mysql_num_rows($res)>0)
 							{
-								$sx1 = $c->sx;
-								$sy1 = $c->sy;
-								$cx1 = $c->cx;
-								$cy1 = $c->cy;
-								$p1 = $c->solsys_pos;
+								$sx1 = $cp->sx;
+								$sy1 = $cp->sy;
+								$cx1 = $cp->cx;
+								$cy1 = $cp->cy;
+								$p1 = $cp->pos();
 								
 								$nx=$conf['num_of_cells']['p1'];		// Anzahl Zellen Y
 								$ny=$conf['num_of_cells']['p2'];		// Anzahl Zellen X
@@ -137,7 +137,7 @@
 												
 								if ($ssae <= CRYPTO_RANGE_PER_LEVEL*$center_level)
 								{									
-									$c->changeRes(0,0,0,-CRYPTO_FUEL_COSTS_PER_SCAN,0);
+									$cp->changeRes(0,0,0,-CRYPTO_FUEL_COSTS_PER_SCAN,0);
 									include("inc/fleet_action.inc.php");
 									$arr=mysql_fetch_array($res);          
 
@@ -259,7 +259,7 @@
 									// Add note to user's notepad if selected
 									if (isset($_POST['scan_to_notes']))
 									{
-										$np = new Notepad($s['user']['id']);
+										$np = new Notepad($cu->id());
 										$np->add(new Note("Flottenscan: ".$target,$out));
 									}
 									
@@ -271,9 +271,9 @@
 									SET
 										buildlist_cooldown=".$cd."
 									WHERE
-								  	buildlist_planet_id='".$c->id."'
+								  	buildlist_planet_id='".$cp->id()."'
 								  	AND buildlist_building_id='".BUILD_CRYPTO_ID."'
-								  	AND buildlist_user_id='".$s['user']['id']."'");
+								  	AND buildlist_user_id='".$cu->id()."'");
 								  $werft_arr['buildlist_cooldown'] = $cd;
 									if ($werft_arr['buildlist_cooldown']>time())
 									{
@@ -330,11 +330,11 @@
 					}				
 					else
 					{
-						$coords[0] = $c->sx;
-						$coords[1] = $c->sy;
-						$coords[2] = $c->cx;
-						$coords[3] = $c->cy;
-						$coords[4] = $c->solsys_pos;
+						$coords[0] = $cp->sx;
+						$coords[1] = $cp->sy;
+						$coords[2] = $cp->cx;
+						$coords[3] = $cp->cy;
+						$coords[4] = $cp->pos;
 					}  		
 					echo '<form action="?page='.$page.'" method="post">';		
 					checker_init();
@@ -360,7 +360,7 @@
 						".$db_table['space_cells']."
 					ON
 	          space_cells.cell_id=planets.planet_solsys_id
-	          AND planets.planet_user_id=".$s['user']['id']."
+	          AND planets.planet_user_id=".$cu->id()."
 					ORDER BY
 						planets.planet_user_main DESC,
 						planets.planet_name ASC,
@@ -397,7 +397,7 @@
 					INNER JOIN
 	       		".$db_table['planets']."
 	        ON 
-	        	target_bookmarks.bookmark_user_id=".$s['user']['id']."
+	        	target_bookmarks.bookmark_user_id=".$cu->id()."
 	         	AND target_bookmarks.bookmark_planet_id=planets.planet_id
 					INNER JOIN       		
 						".$db_table['space_cells']."
@@ -461,7 +461,7 @@
 					<input type=\"checkbox\" name=\"scan_to_notes\" value=\"1\" checked=\"checked\" /> Zu meinem Notizblock hinzufügen";					
 						
 					infobox_end();
-					if ($c->res->fuel >= CRYPTO_FUEL_COSTS_PER_SCAN)
+					if ($cp->resFuel >= CRYPTO_FUEL_COSTS_PER_SCAN)
 					{
 						echo '<input type="submit" name="scan" value="Analyse für '.nf(CRYPTO_FUEL_COSTS_PER_SCAN).' '.RES_FUEL.' starten" />';
 					}
@@ -517,10 +517,10 @@
 	else
 	{
 		// Titel
-		echo "<h1>Kryptocenter des Planeten ".$c->name."</h1>";		
+		echo "<h1>Kryptocenter des Planeten ".$cp->name."</h1>";		
 		
 		// Ressourcen anzeigen
-		$c->resBox();
+		$cp->resBox();
 		echo "<h2>Fehler!</h2>Das Cryptocenter wurde noch nicht gebaut!<br>";
 	}
 ?>

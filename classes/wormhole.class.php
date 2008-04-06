@@ -15,6 +15,9 @@
 		public $cy;
 		protected $cellId;
 		private $name;		
+		private $targetId;
+		private $changed;
+		private $dataLoaded;
 		
 		/**
 		* The constructor
@@ -26,6 +29,9 @@
 			$this->pos = 0;
 			$this->name = "Unbenannt";
 			$this->coordsLoaded=false;
+			$this->dataLoaded=false;
+			$this->targetId=-1;
+			$this->changed=-1;
 		}
 
 		/**
@@ -101,6 +107,47 @@
 			}
 			return $this->cellId;
 		}
+		
+		function loadData()
+		{
+			if ($this->dataLoaded==false)
+			{
+				$res=dbquery("
+				SELECT
+					target_id,
+					changed
+				FROM
+					wormholes
+				WHERE
+					id=".$this->id.";
+				");
+				if (mysql_num_rows($res)>0)
+				{
+					$arr=mysql_Fetch_array($res);
+					$this->targetId=$arr[0];
+					$this->changed=$arr[1];
+					$this->dataLoaded=true;
+				}
+			}
+		}
+		
+		function targetId()
+		{
+			if (!$this->dataLoaded)
+			{
+				$this->loadData();
+			}
+			return $this->targetId;
+		}
+
+		function changed()
+		{
+			if (!$this->dataLoaded)
+			{
+				$this->loadData();
+			}
+			return $this->changed;
+		}		
 		
 		/**
 		* Vertauscht zufällig mehrere Wurmlöcher miteinander

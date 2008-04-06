@@ -89,10 +89,22 @@
 			$starNameEmpty = false;
 			foreach ($entities as $ent)
 			{
+				if ($ent->pos()==1)
+				{
+					echo "<tr>
+						<td class=\"tbldata\" style=\"height:3px;background:#000;\" colspan=\"6\"></td>
+					</tr>";			
+				}
 				echo "<tr>
 					<td class=\"tbldata\" style=\"width:40px;background:#000;\"><img src=\"".$ent->imagePath()."\" alt=\"icon\" /></td>
 					<td class=\"tbldata\">".$ent->pos()."</td>
-					<td class=\"tbldata\">".$ent->type()."</td>
+					<td class=\"tbldata\">".$ent->type();
+					if ($ent->entityCode()=='w')
+					{
+						$tent = new Wormhole($ent->targetId());
+						echo "<br/>Ziel: <a href=\"?page=cell&amp;id=".$tent->cellId()."\">".$tent."</a>";
+					}					
+					echo "</td>
 					<td class=\"tbldata\">".$ent->name()."</td>
 					<td class=\"tbldata\">";
 					if ($ent->ownerId()>0)
@@ -150,6 +162,7 @@
 						echo "<a href=\"?page=bookmarks&amp;add=".$ent->id()."\" title=\"Zu den Favoriten hinzuf&uuml;gen\">Favorit</a> ";
 					}					
 					echo "</td></tr>";
+					
 
 				
 				/*

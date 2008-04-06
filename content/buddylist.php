@@ -37,7 +37,7 @@
 	//
 	// Erlaubnis erteilen
 	//
-	if ($_GET['allow']>0)
+	if (isset($_GET['allow']) && $_GET['allow']>0)
 	{
 		$res=dbquery("
 		SELECT
@@ -49,29 +49,29 @@
 		ON
 			buddylist.bl_user_id=users.user_id
 			AND buddylist.bl_user_id=".$_GET['allow']."
-			AND buddylist.bl_buddy_id=".$s['user']['id'].";");
+			AND buddylist.bl_buddy_id=".$cu->id().";");
 		if (mysql_num_rows($res)>0)
 		{
 			$arr=mysql_fetch_array($res);
-			dbquery("UPDATE buddylist SET bl_allow=1 WHERE bl_user_id=".$_GET['allow']." AND bl_buddy_id=".$s['user']['id'].";");
+			dbquery("UPDATE buddylist SET bl_allow=1 WHERE bl_user_id=".$_GET['allow']." AND bl_buddy_id=".$cu->id().";");
 			$res = dbquery("
 			SELECT
 				bl_id
 			FROM
 				buddylist
 			WHERE
-				bl_user_id=".$s['user']['id']."
+				bl_user_id=".$cu->id()."
 				AND bl_buddy_id=".$_GET['allow']."
 			");
 			if (mysql_num_rows($res)>0)
 			{
-				dbquery("UPDATE buddylist SET bl_allow=1 WHERE bl_user_id=".$s['user']['id']." AND bl_buddy_id=".$_GET['allow'].";");
+				dbquery("UPDATE buddylist SET bl_allow=1 WHERE bl_user_id=".$cu->id()." AND bl_buddy_id=".$_GET['allow'].";");
 			}
 			else
 			{
-				dbquery("INSERT INTO buddylist (bl_allow,bl_user_id,bl_buddy_id) VALUES (1,".$s['user']['id'].",".$_GET['allow'].");");
+				dbquery("INSERT INTO buddylist (bl_allow,bl_user_id,bl_buddy_id) VALUES (1,".$cu->id().",".$_GET['allow'].");");
 			}
-			dbquery("DELETE FROM ".$db_table['messages']." WHERE message_user_to=".$s['user']['id']." AND message_user_from=0 AND message_subject='Buddylist-Anfrage von ".$arr['user_nick']."';");
+			dbquery("DELETE FROM ".$db_table['messages']." WHERE message_user_to=".$cu->id()." AND message_user_from=0 AND message_subject='Buddylist-Anfrage von ".$arr['user_nick']."';");
 			ok_msg("Erlaubnis erteilt!");
 		}
 		else
@@ -81,7 +81,7 @@
 	//
 	// Erlaubnis verweigern
 	//
-	if ($_GET['deny']>0)
+	if (isset($_GET['deny']) && $_GET['deny']>0)
 	{
 		$res=dbquery("
 		SELECT
@@ -92,12 +92,12 @@
 		WHERE
 			buddylist.bl_user_id=".$_GET['deny']."
 			AND buddylist.bl_user_id=users.user_id
-			AND buddylist.bl_buddy_id=".$s['user']['id'].";");
+			AND buddylist.bl_buddy_id=".$cu->id().";");
 		if (mysql_num_rows($res)>0)
 		{
 			$arr=mysql_fetch_array($res);
-			dbquery("DELETE FROM buddylist WHERE bl_user_id=".$_GET['deny']." AND bl_buddy_id=".$s['user']['id'].";");
-			dbquery("DELETE FROM ".$db_table['messages']." WHERE message_user_to=".$s['user']['id']." AND message_user_from=0 AND message_subject='Buddylist-Anfrage von ".$arr['user_nick']."';");
+			dbquery("DELETE FROM buddylist WHERE bl_user_id=".$_GET['deny']." AND bl_buddy_id=".$cu->id().";");
+			dbquery("DELETE FROM ".$db_table['messages']." WHERE message_user_to=".$cu->id()." AND message_user_from=0 AND message_subject='Buddylist-Anfrage von ".$arr['user_nick']."';");
 			ok_msg("Die Anfrage wurde gel&ouml;scht!");
 		}
 		else
@@ -107,22 +107,22 @@
 	//
 	// Freund hinzufügen
 	//
-	if (($_POST['buddy_nick']!="" && $_POST['submit_buddy']!="") || $_GET['add_id']>0)
+	if ((isset($_POST['buddy_nick']) && $_POST['buddy_nick']!="" && $_POST['submit_buddy']!="") || (isset($_GET['add_id']) && $_GET['add_id']>0))
 	{
-		if ($_GET['add_id']>0)
+		if (isset($_GET['add_id']) && $_GET['add_id']>0)
 			$res=dbquery("SELECT user_id,user_nick FROM users WHERE user_id='".$_GET['add_id']."';");
 		else
 			$res=dbquery("SELECT user_id,user_nick FROM users WHERE user_nick='".$_POST['buddy_nick']."';");
 		if (mysql_num_rows($res)>0)
 		{
 			$arr=mysql_fetch_array($res);
-			if ($s['user']['id']!=$arr['user_id'])
+			if ($cu->id()!=$arr['user_id'])
 			{
-				if (mysql_num_rows(dbquery("SELECT bl_user_id FROM buddylist WHERE bl_user_id='".$s['user']['id']."' AND bl_buddy_id='".$arr['user_id']."';"))==0)
+				if (mysql_num_rows(dbquery("SELECT bl_user_id FROM buddylist WHERE bl_user_id='".$cu->id()."' AND bl_buddy_id='".$arr['user_id']."';"))==0)
 				{
-					dbquery("INSERT INTO buddylist (bl_user_id,bl_buddy_id,bl_allow) VALUES('".$s['user']['id']."','".$arr['user_id']."',0);");
+					dbquery("INSERT INTO buddylist (bl_user_id,bl_buddy_id,bl_allow) VALUES('".$cu->id()."','".$arr['user_id']."',0);");
 					ok_msg("[b]".$arr['user_nick']."[/b] wurde zu deiner Liste hinzugef&uuml;gt und ihm wurde eine Best&auml;tigungsnachricht gesendet!");
-					send_msg($arr['user_id'],5,"Buddylist-Anfrage von ".$s['user']['nick'],"Der Spieler will dich zu seiner Freundesliste hinzuf&uuml;gen. Willst du dies erlauben?\n\n[url ?page=buddylist&allow=".$s['user']['id']."]Erlauben[/url] [url ?page=buddylist&deny=".$s['user']['id']."]Verbieten[/url]");
+					send_msg($arr['user_id'],5,"Buddylist-Anfrage von ".$cu->nick,"Der Spieler will dich zu seiner Freundesliste hinzuf&uuml;gen. Willst du dies erlauben?\n\n[url ?page=buddylist&allow=".$cu->id()."]Erlauben[/url] [url ?page=buddylist&deny=".$cu->id()."]Verbieten[/url]");
 				}
 				else
 					err_msg("Dieser Eintrag ist schon vorhanden!");
@@ -137,12 +137,12 @@
 	//
 	// Entfernen
 	//
-	if ($_GET['remove']>0)
+	if (isset($_GET['remove']) && $_GET['remove']>0)
 	{
 		$c = 0;
-		dbquery("DELETE FROM buddylist WHERE bl_user_id='".$s['user']['id']."' AND bl_buddy_id='".$_GET['remove']."';");
+		dbquery("DELETE FROM buddylist WHERE bl_user_id='".$cu->id()."' AND bl_buddy_id='".$_GET['remove']."';");
 		$c+=mysql_affected_rows();
-		dbquery("DELETE FROM buddylist WHERE bl_user_id='".$_GET['remove']."' AND bl_buddy_id='".$s['user']['id']."';");
+		dbquery("DELETE FROM buddylist WHERE bl_user_id='".$_GET['remove']."' AND bl_buddy_id='".$cu->id()."';");
 		$c+=mysql_affected_rows();
 		if ($c>0)
 		{
@@ -153,12 +153,12 @@
 	//
 	// In einer anderen Liste entfernen
 	//
-	if ($_GET['removeremote']>0)
+	if (isset($_GET['removeremote']) && $_GET['removeremote']>0)
 	{
-		dbquery("DELETE FROM buddylist WHERE bl_user_id='".$_GET['removeremote']."' AND bl_buddy_id='".$s['user']['id']."';");
+		dbquery("DELETE FROM buddylist WHERE bl_user_id='".$_GET['removeremote']."' AND bl_buddy_id='".$cu->id()."';");
 	}
 
-	if ($_GET['comment']>0)
+	if (isset($_GET['comment']) && $_GET['comment']>0)
 	{
 		$res = dbquery("
 		SELECT 
@@ -173,15 +173,15 @@
 			bl_id='".$_GET['comment']."'
 			AND
 			(
-				bl_user_id=".$s['user']['id']."
-				OR bl_buddy_id=".$s['user']['id']."
+				bl_user_id=".$cu->id()."
+				OR bl_buddy_id=".$cu->id()."
 			)
 		;");
 		if (mysql_num_rows($res)>0)
 		{
 			$arr=mysql_fetch_array($res);
 			echo "<form action=\"?page=$page\" method=\"post\">";
-			if ($arr['bl_user_id']==$s['user']['id'])
+			if ($arr['bl_user_id']==$cu->id())
 			{
 				$nick = get_user_nick($arr['bl_buddy_id']);
 				infobox_start("Kommentar für ".$nick."");
@@ -232,7 +232,7 @@
         buddylist.bl_id,
         bl_user_id,
         bl_buddy_id,
-        planets.planet_id
+        planets.id as pid
 	FROM
         buddylist
   INNER JOIN
@@ -245,7 +245,7 @@
         AND planets.planet_user_main=1
   )
 	ON 
-  	buddylist.bl_user_id='".$s['user']['id']."'
+  	buddylist.bl_user_id='".$cu->id()."'
     AND buddylist.bl_buddy_id=users.user_id
 	ORDER BY
 		users.user_nick ASC;");
@@ -256,11 +256,11 @@
 		while($arr=mysql_fetch_array($res))
 		{
 			echo "<tr><td class=\"tbldata\">".$arr['user_nick']." ";
-			if ($arr['bl_comment']!="" && $arr['bl_user_id']==$s['user']['id'])
+			if ($arr['bl_comment']!="" && $arr['bl_user_id']==$cu->id())
 			{
 				echo " <img src=\"images/infohelp.png\" alt=\"Info\" style=\"height:10px;\" ".tm("Kommentar",text2html($arr['bl_comment']))."></a>";
 			}
-			if ($arr['bl_comment_buddy']!="" && $arr['bl_buddy_id']==$s['user']['id'])
+			if ($arr['bl_comment_buddy']!="" && $arr['bl_buddy_id']==$cu->id())
 			{
 				echo " <img src=\"images/infohelp.png\" alt=\"Info\" style=\"height:10px;\" ".tm("Kommentar",text2html($arr['bl_comment_buddy']))."></a>";
 			}
@@ -268,8 +268,9 @@
 			echo "</td>";
 			if ($arr['bl_allow']==1)
 			{
+				$tp = new Planet($arr['planet_id']);
 				echo "<td class=\"tbldata\">".nf($arr['user_points'])."</td>";
-				echo "<td class=\"tbldata\">".coords_format2($arr['planet_id'],1)."</td>";
+				echo "<td class=\"tbldata\">".$tp."</td>";
 				if ((time()-$conf['online_threshold']['v']*60) < $arr['user_acttime'])
 					echo "<td class=\"tbldata\" style=\"color:#0f0;\">online</td>";
 				else

@@ -77,6 +77,8 @@
 						user_race_id
 					FROM
 						users
+					WHERE
+						user_id=".$arr['planet_user_id']."
 					");
 					$uarr = mysql_Fetch_row($ures);
 					$this->owner = $uarr[0];
@@ -173,6 +175,7 @@
 				$this->store->plastic=$arr['planet_store_plastic'];
 				$this->store->fuel=$arr['planet_store_fuel'];
 				$this->store->food=$arr['planet_store_food'];
+
 				$this->prod->metal=$arr['planet_prod_metal'];
 				$this->prod->crystal=$arr['planet_prod_crystal'];
 				$this->prod->plastic=$arr['planet_prod_plastic'];
@@ -181,6 +184,13 @@
 				$this->prod->power=zeroPlus($arr['planet_prod_power']);
 				$this->prod->people=$arr['planet_prod_people'];
 
+				$this->prodMetal=$arr['planet_prod_metal'];
+				$this->prodCrystal=$arr['planet_prod_crystal'];
+				$this->prodPlastic=$arr['planet_prod_plastic'];
+				$this->prodFuel=$arr['planet_prod_fuel'];
+				$this->prodFood=$arr['planet_prod_food'];
+				$this->prodPower=zeroPlus($arr['planet_prod_power']);
+				$this->prodPeople=$arr['planet_prod_people'];
 
 
 

@@ -32,101 +32,105 @@
 
 	// Definitionen
 
-	if($_GET['mode']!="") $mode=$_GET['mode']; else $mode="buildings";
+	if(isset($_GET['mode']) && $_GET['mode']!="") 
+		$mode=$_GET['mode']; 
+	else 
+		$mode="buildings";
+	
 	$race=get_races_array();
 
 	if ($mode=="tech")
 	{
-		define(ITEMS_TBL,"technologies");
-		define(TYPES_TBL,"tech_types");
-		define(REQ_TBL,"tech_requirements");
-		define(REQ_ITEM_FLD,"req_tech_id");
-		define(ITEM_ID_FLD,"tech_id");
-		define(ITEM_NAME_FLD,"tech_name");
-		define(ITEM_RACE_FLD,"");
-		define(ITEM_SHOW_FLD,"tech_show");
-		define(ITEM_TYPE_FLD,"tech_type_id");
-		define(ITEM_ORDER_FLD,"tech_order");
-		define(TYPE_ORDER_FLD,"type_order");
-		define(TYPE_ID_FLD,"type_id");
-		define(TYPE_NAME_FLD,"type_name");
-		define(NO_ITEMS_MSG,"In dieser Kategorie gibt es keine Technologien!");
-		define(HELP_URL,"?page=help&site=research");
+		define('ITEMS_TBL',"technologies");
+		define('TYPES_TBL',"tech_types");
+		define('REQ_TBL',"tech_requirements");
+		define('REQ_ITEM_FLD',"req_tech_id");
+		define('ITEM_ID_FLD',"tech_id");
+		define('ITEM_NAME_FLD',"tech_name");
+		define('ITEM_RACE_FLD',"");
+		define('ITEM_SHOW_FLD',"tech_show");
+		define('ITEM_TYPE_FLD',"tech_type_id");
+		define('ITEM_ORDER_FLD',"tech_order");
+		define('TYPE_ORDER_FLD',"type_order");
+		define('TYPE_ID_FLD',"type_id");
+		define('TYPE_NAME_FLD',"type_name");
+		define('NO_ITEMS_MSG',"In dieser Kategorie gibt es keine Technologien!");
+		define('HELP_URL',"?page=help&site=research");
 	}
 	elseif ($mode=="ships")
 	{
-		define(ITEMS_TBL,"ships");
-		define(TYPES_TBL,"ship_cat");
-		define(REQ_TBL,"ship_requirements");
-		define(REQ_ITEM_FLD,"req_ship_id");
-		define(ITEM_ID_FLD,"ship_id");
-		define(ITEM_NAME_FLD,"ship_name");
-		define(ITEM_RACE_FLD,"ship_race_id");
-		define(ITEM_SHOW_FLD,"ship_show");
-		define(ITEM_TYPE_FLD,"ship_cat_id");
-		define(ITEM_ORDER_FLD,"ship_name");
-		define(TYPE_ORDER_FLD,"cat_order");
-		define(TYPE_ID_FLD,"cat_id");
-		define(TYPE_NAME_FLD,"cat_name");
-		define(NO_ITEMS_MSG,"In dieser Kategorie gibt es keine Schiffe!");
-		define(HELP_URL,"?page=help&site=shipyard");
+		define('ITEMS_TBL',"ships");
+		define('TYPES_TBL',"ship_cat");
+		define('REQ_TBL',"ship_requirements");
+		define('REQ_ITEM_FLD',"req_ship_id");
+		define('ITEM_ID_FLD',"ship_id");
+		define('ITEM_NAME_FLD',"ship_name");
+		define('ITEM_RACE_FLD',"ship_race_id");
+		define('ITEM_SHOW_FLD',"ship_show");
+		define('ITEM_TYPE_FLD',"ship_cat_id");
+		define('ITEM_ORDER_FLD',"ship_name");
+		define('TYPE_ORDER_FLD',"cat_order");
+		define('TYPE_ID_FLD',"cat_id");
+		define('TYPE_NAME_FLD',"cat_name");
+		define('NO_ITEMS_MSG',"In dieser Kategorie gibt es keine Schiffe!");
+		define('HELP_URL',"?page=help&site=shipyard");
 	}
 	elseif ($mode=="defense")
 	{
-		define(ITEMS_TBL,"defense");
-		define(TYPES_TBL,"def_cat");
-		define(REQ_TBL,"def_requirements");
-		define(REQ_ITEM_FLD,"req_def_id");
-		define(ITEM_ID_FLD,"def_id");
-		define(ITEM_NAME_FLD,"def_name");
-		define(ITEM_RACE_FLD,"def_race_id");
-		define(ITEM_SHOW_FLD,"def_show");
-		define(ITEM_TYPE_FLD,"def_cat_id");
-		define(ITEM_ORDER_FLD,"def_order,def_name");
-		define(TYPE_ORDER_FLD,"cat_order");
-		define(TYPE_ID_FLD,"cat_id");
-		define(TYPE_NAME_FLD,"cat_name");
-		define(NO_ITEMS_MSG,"In dieser Kategorie gibt es keine Verteidigungsanlagen!");
-		define(HELP_URL,"?page=help&site=defense");
+		define('ITEMS_TBL',"defense");
+		define('TYPES_TBL',"def_cat");
+		define('REQ_TBL',"def_requirements");
+		define('REQ_ITEM_FLD',"req_def_id");
+		define('ITEM_ID_FLD',"def_id");
+		define('ITEM_NAME_FLD',"def_name");
+		define('ITEM_RACE_FLD',"def_race_id");
+		define('ITEM_SHOW_FLD',"def_show");
+		define('ITEM_TYPE_FLD',"def_cat_id");
+		define('ITEM_ORDER_FLD',"def_order,def_name");
+		define('TYPE_ORDER_FLD',"cat_order");
+		define('TYPE_ID_FLD',"cat_id");
+		define('TYPE_NAME_FLD',"cat_name");
+		define('NO_ITEMS_MSG',"In dieser Kategorie gibt es keine Verteidigungsanlagen!");
+		define('HELP_URL',"?page=help&site=defense");
 	}
 	elseif ($mode=="missiles")
 	{
-		define(ITEMS_TBL,"missiles");
-		define(REQ_TBL,"missile_requirements");
-		define(REQ_ITEM_FLD,"req_missile_id");
-		define(ITEM_ID_FLD,"missile_id");
-		define(ITEM_NAME_FLD,"missile_name");
-		define(ITEM_RACE_FLD,"");
-		define(ITEM_SHOW_FLD,"missile_show");
-		define(ITEM_ORDER_FLD,"missile_name");
-		define(NO_ITEMS_MSG,"In dieser Kategorie gibt es keine Raketen!");
-		define(HELP_URL,"?page=help&site=missiles");
+		define('ITEMS_TBL',"missiles");
+		define('REQ_TBL',"missile_requirements");
+		define('REQ_ITEM_FLD',"req_missile_id");
+		define('ITEM_ID_FLD',"missile_id");
+		define('ITEM_NAME_FLD',"missile_name");
+		define('ITEM_RACE_FLD',"");
+		define('ITEM_SHOW_FLD',"missile_show");
+		define('ITEM_ORDER_FLD',"missile_name");
+		define('NO_ITEMS_MSG',"In dieser Kategorie gibt es keine Raketen!");
+		define('HELP_URL',"?page=help&site=missiles");
 	}	
 	else
 	{
-		define(ITEMS_TBL,"buildings");
-		define(TYPES_TBL,"building_types");
-		define(REQ_TBL,"building_requirements");
-		define(REQ_ITEM_FLD,"req_building_id");
-		define(ITEM_ID_FLD,"building_id");
-		define(ITEM_NAME_FLD,"building_name");
-		define(ITEM_RACE_FLD,"");
-		define(ITEM_SHOW_FLD,"building_show");
-		define(ITEM_TYPE_FLD,"building_type_id");
-		define(ITEM_ORDER_FLD,"building_order");
-		define(TYPE_ORDER_FLD,"type_order");
-		define(TYPE_ID_FLD,"type_id");
-		define(TYPE_NAME_FLD,"type_name");
-		define(NO_ITEMS_MSG,"In dieser Kategorie gibt es keine Geb&auml;ude!");
-		define(HELP_URL,"?page=help&site=buildings");
+		define('ITEMS_TBL',"buildings");
+		define('TYPES_TBL',"building_types");
+		define('REQ_TBL',"building_requirements");
+		define('REQ_ITEM_FLD',"req_building_id");
+		define('ITEM_ID_FLD',"building_id");
+		define('ITEM_NAME_FLD',"building_name");
+		define('ITEM_RACE_FLD',"");
+		define('ITEM_SHOW_FLD',"building_show");
+		define('ITEM_TYPE_FLD',"building_type_id");
+		define('ITEM_ORDER_FLD',"building_order");
+		define('TYPE_ORDER_FLD',"type_order");
+		define('TYPE_ID_FLD',"type_id");
+		define('TYPE_NAME_FLD',"type_name");
+		define('NO_ITEMS_MSG',"In dieser Kategorie gibt es keine Geb&auml;ude!");
+		define('HELP_URL',"?page=help&site=buildings");
 	}
 
 
-	if ($planets->current)
+	if (isset($cp))
 	{
-		$c = $planets->getCurrentData();
 
 		// Lade Gebäudelistenlevel
+		$buildlist=array();
 		$bres = dbquery("
 		SELECT 
 			buildlist_current_level,
@@ -134,14 +138,15 @@
 		FROM 
 			".$db_table['buildlist']." 
 		WHERE 
-			buildlist_user_id='".$s['user']['id']."' 
-			AND buildlist_planet_id='".$c->id."'
+			buildlist_user_id='".$cu->id()."' 
+			AND buildlist_planet_id='".$cp->id()."'
 		;");
 		while ($barr = mysql_fetch_array($bres))
 		{
 			$buildlist[$barr['buildlist_building_id']] = $barr['buildlist_current_level'];
 		}
 		// Lade Techlistenlevel
+		$techlist=array();
 		$tres = dbquery("
 		SELECT 
 			techlist_current_level,
@@ -149,7 +154,7 @@
 		FROM 
 			".$db_table['techlist']." 
 		WHERE 
-			techlist_user_id='".$s['user']['id']."'
+			techlist_user_id='".$cu->id()."'
 		;");
 		while ($tarr = mysql_fetch_array($tres))
 		{
@@ -157,6 +162,7 @@
 		}
 
 		// Lade Gebäudenamen
+		$bu_name=array();
 		$bures = dbquery("
 		SELECT 	
 			building_id,
@@ -171,6 +177,7 @@
 			$bu_name[$buarr['building_id']]=$buarr['building_name'];
 		}
 		// Lade Technologienamen
+		$te_name=array();
 		$teres = dbquery("
 		SELECT 
 			tech_id,
@@ -185,6 +192,7 @@
 		}
 
 		// Lade Anforderungen
+		$b_req=array();
 		$rres = dbquery("
 		SELECT 
 			* 
@@ -198,7 +206,7 @@
 		}
 
 		// Daten anzeigen
-		echo "<h1>Technikbaum des Planeten ".$c->name."</h1>";
+		echo "<h1>Technikbaum des Planeten ".$cp->name()."</h1>";
 
 		// Tab-Navigation anzeigen
 		show_tab_menu("mode",array("buildings"=>"Geb&auml;ude",
@@ -235,7 +243,7 @@
 						AND 
 						(
 							".ITEM_RACE_FLD."=0 
-							OR ".ITEM_RACE_FLD."=".$s['user']['race_id']."
+							OR ".ITEM_RACE_FLD."=".$cu->race_id."
 						) 
 						AND ".ITEM_TYPE_FLD."=".$tarr[TYPE_ID_FLD]." 
 					ORDER BY 
@@ -346,7 +354,7 @@
 					AND 
 					(
 						".ITEM_RACE_FLD."=0 
-						OR ".ITEM_RACE_FLD."=".$s['user']['race_id']."
+						OR ".ITEM_RACE_FLD."=".$cu->race_id."
 					) 
 					ORDER BY 
 						".ITEM_ORDER_FLD.";

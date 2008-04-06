@@ -65,14 +65,14 @@
 
 	// BEGIN SKRIPT //
 
-	echo "<h1>Marktplatz des Planeten ".$c->name."</h1>";
+	echo "<h1>Marktplatz des Planeten ".$cp->name()."</h1>";
 	//echo "<br/><div style=\"color:red;font-size:20pt;\">In bearbeitung!</div><br/><br/>";
 	echo "<div id=\"marketinfo\"></div>"; //nur zu entwicklungszwecken!
 
 	$mode = isset($_GET['mode']) ? $_GET['mode'] : "";
 
 	// Zeigt Rohstoffbox an
-	$c->resBox();
+	$cp->resBox();
 
 	//Überprüfung ob der Marktplatz schon gebaut wurde
 	$mres=dbquery("
@@ -81,10 +81,10 @@
 	FROM 
 		".$db_table['buildlist']." 
 	WHERE 
-	buildlist_planet_id='".$c->id."'
+	buildlist_planet_id='".$cp->id()."'
 		AND buildlist_building_id='".MARKTPLATZ_ID."' 
 		AND buildlist_current_level>0 
-		AND buildlist_user_id='".$s['user']['id']."';");
+		AND buildlist_user_id='".$cu->id()."';");
 	
 	if (mysql_num_rows($mres)>0)
 	{
@@ -1585,11 +1585,11 @@
 					$arr = mysql_fetch_array($res);
 							
 					// Prüft, ob genug Rohstoffe vorhanden sind
-					if ($c->res->metal >= $arr['buy_metal'] 
-					&& $c->res->crystal >= $arr['buy_crystal']  
-					&& $c->res->plastic >= $arr['buy_plastic']  
-					&& $c->res->fuel >= $arr['buy_fuel']  
-					&& $c->res->food >= $arr['buy_food'])
+					if ($cp->resMetal >= $arr['buy_metal'] 
+					&& $cp->resCrystal >= $arr['buy_crystal']  
+					&& $cp->resPlastic >= $arr['buy_plastic']  
+					&& $cp->resFuel >= $arr['buy_fuel']  
+					&& $cp->resFood >= $arr['buy_food'])
 					{
 						$seller_user_nick = get_user_nick($arr['user_id']);	
 	
@@ -1599,18 +1599,18 @@
 							".$db_table['market_ressource']."
 						SET
 							ressource_buyable='0',
-							ressource_buyer_id='".$s['user']['id']."',
-							ressource_buyer_planet_id='".$c->id."',
-							ressource_buyer_cell_id='".$c->solsys_id."'
+							ressource_buyer_id='".$cu->id()."',
+							ressource_buyer_planet_id='".$cp->id()."',
+							ressource_buyer_cell_id='".$cp->cellId()."'
 						WHERE
 							ressource_market_id='".$arr['ressource_market_id']."'");
 	
 						// Rohstoffe vom Käuferplanet abziehen und $c-variabeln anpassen
-						$c->changeRes(-$arr['buy_metal'],-$arr['buy_crystal'],-$arr['buy_plastic'],-$arr['buy_fuel'],-$arr['buy_food']);
+						$cp->changeRes(-$arr['buy_metal'],-$arr['buy_crystal'],-$arr['buy_plastic'],-$arr['buy_fuel'],-$arr['buy_food']);
 						
 						// Nachricht an Verkäufer
 						$msg = "Ein Handel ist zustande gekommen\n";
-						$msg .= "Der Spieler ".$s['user']['nick']." hat von dir folgende Rohstoffe gekauft:\n\n";
+						$msg .= "Der Spieler ".$cu->nick." hat von dir folgende Rohstoffe gekauft:\n\n";
 						
 						$msg .= "".RES_METAL.": ".nf($arr['sell_metal'])."\n";
 						$msg .= "".RES_CRYSTAL.": ".nf($arr['sell_crystal'])."\n";
@@ -1652,7 +1652,7 @@
 						$msg .= "Die Rohstoffe werden in wenigen Minuten versendet.\n\n";
 						
 						$msg .= "Das Handelsministerium";
-						send_msg($s['user']['id'],SHIP_MISC_MSG_CAT_ID,"Handel vollzogen",$msg);
+						send_msg($cu->id(),SHIP_MISC_MSG_CAT_ID,"Handel vollzogen",$msg);
 	
 						//Log schreiben, falls dieser Handel regelwidrig ist
 						$multi_res1=dbquery("
@@ -1661,7 +1661,7 @@
 						FROM
 							".$db_table['user_multi']."
 						WHERE
-							user_multi_user_id='".$s['user']['id']."'
+							user_multi_user_id='".$cu->id()."'
 							AND user_multi_multi_user_id='".$arr['user_id']."';");
 	
 						$multi_res2=dbquery("
@@ -1671,15 +1671,15 @@
 							".$db_table['user_multi']."
 						WHERE
 							user_multi_user_id='".$arr['user_id']."'
-							AND user_multi_multi_user_id='".$s['user']['id']."';");
+							AND user_multi_multi_user_id='".$cu->id()."';");
 	
 						if(mysql_num_rows($multi_res1)!=0 && mysql_num_rows($multi_res2)!=0)
 						{
-					    add_log(10,"[URL=?page=user&sub=edit&user_id=".$s['user']['id']."][B]".$s['user']['nick']."[/B][/URL] hat von [URL=?page=user&sub=edit&user_id=".$arr['user_id']."][B]".$seller_user_nick."[/B][/URL] Rohstoffe gekauft:\n\n".RES_METAL.": ".nf($arr['sell_metal'])."\n".RES_CRYSTAL.": ".nf($arr['sell_crystal'])."\n".RES_PLASTIC.": ".nf($arr['sell_plastic'])."\n".RES_FUEL.": ".nf($arr['sell_fuel'])."\n".RES_FOOD.": ".nf($arr['sell_food'])."\n\nDies hat ihn folgende Rohstoffe gekostet:\n".RES_METAL.": ".nf($arr['buy_metal'])."\n".RES_CRYSTAL.": ".nf($arr['buy_crystal'])."\n".RES_PLASTIC.": ".nf($arr['buy_plastic'])."\n".RES_FUEL.": ".nf($arr['buy_fuel'])."\n".RES_FOOD.": ".nf($arr['buy_food']),time());
+					    add_log(10,"[URL=?page=user&sub=edit&user_id=".$cu->id()."][B]".$cu->nick."[/B][/URL] hat von [URL=?page=user&sub=edit&user_id=".$arr['user_id']."][B]".$seller_user_nick."[/B][/URL] Rohstoffe gekauft:\n\n".RES_METAL.": ".nf($arr['sell_metal'])."\n".RES_CRYSTAL.": ".nf($arr['sell_crystal'])."\n".RES_PLASTIC.": ".nf($arr['sell_plastic'])."\n".RES_FUEL.": ".nf($arr['sell_fuel'])."\n".RES_FOOD.": ".nf($arr['sell_food'])."\n\nDies hat ihn folgende Rohstoffe gekostet:\n".RES_METAL.": ".nf($arr['buy_metal'])."\n".RES_CRYSTAL.": ".nf($arr['buy_crystal'])."\n".RES_PLASTIC.": ".nf($arr['buy_plastic'])."\n".RES_FUEL.": ".nf($arr['buy_fuel'])."\n".RES_FOOD.": ".nf($arr['buy_food']),time());
 						}
 	
 						// Log schreiben
-						add_log(7,"Ein Handel ist zustande gekommen\nDer Spieler ".$s['user']['nick']." hat vom Spieler ".$seller_user_nick."  folgende Rohstoffe gekauft:\n\n".RES_METAL.": ".nf($arr['sell_metal'])."\n".RES_CRYSTAL.": ".nf($arr['sell_crystal'])."\n".RES_PLASTIC.": ".nf($arr['sell_plastic'])."\n".RES_FUEL.": ".nf($arr['sell_fuel'])."\n".RES_FOOD.": ".nf($arr['sell_food'])."\n\nDies hat ihn folgende Rohstoffe gekostet:\n".RES_METAL.": ".nf($arr['buy_metal'])."\n".RES_CRYSTAL.": ".nf($arr['buy_crystal'])."\n".RES_PLASTIC.": ".nf($arr['buy_plastic'])."\n".RES_FUEL.": ".nf($arr['buy_fuel'])."\n".RES_FOOD.": ".nf($arr['buy_food'])."\n\n",time());
+						add_log(7,"Ein Handel ist zustande gekommen\nDer Spieler ".$cu->nick." hat vom Spieler ".$seller_user_nick."  folgende Rohstoffe gekauft:\n\n".RES_METAL.": ".nf($arr['sell_metal'])."\n".RES_CRYSTAL.": ".nf($arr['sell_crystal'])."\n".RES_PLASTIC.": ".nf($arr['sell_plastic'])."\n".RES_FUEL.": ".nf($arr['sell_fuel'])."\n".RES_FOOD.": ".nf($arr['sell_food'])."\n\nDies hat ihn folgende Rohstoffe gekostet:\n".RES_METAL.": ".nf($arr['buy_metal'])."\n".RES_CRYSTAL.": ".nf($arr['buy_crystal'])."\n".RES_PLASTIC.": ".nf($arr['buy_plastic'])."\n".RES_FUEL.": ".nf($arr['buy_fuel'])."\n".RES_FOOD.": ".nf($arr['buy_food'])."\n\n",time());
 						
 						
 						
@@ -1807,11 +1807,11 @@
 					$arr = mysql_fetch_array($res);
 							
 					// Prüft, ob genug Rohstoffe vorhanden sind
-					if ($c->res->metal >= $arr['ship_costs_metal'] 
-					&& $c->res->crystal >= $arr['ship_costs_crystal']  
-					&& $c->res->plastic >= $arr['ship_costs_plastic']  
-					&& $c->res->fuel >= $arr['ship_costs_fuel']  
-					&& $c->res->food >= $arr['ship_costs_food'])
+					if ($cp->resMetal >= $arr['ship_costs_metal'] 
+					&& $cp->resCrystal >= $arr['ship_costs_crystal']  
+					&& $cp->resPlastic >= $arr['ship_costs_plastic']  
+					&& $cp->resFuel >= $arr['ship_costs_fuel']  
+					&& $cp->resFood >= $arr['ship_costs_food'])
 					{
 						$seller_user_nick = get_user_nick($arr['user_id']);			
 			
@@ -1821,17 +1821,17 @@
 							".$db_table['market_ship']."
 						SET
 							ship_buyable='0',
-							ship_buyer_id='".$s['user']['id']."',
-							ship_buyer_planet_id='".$c->id."',
-							ship_buyer_cell_id='".$c->solsys_id."'
+							ship_buyer_id='".$cu->id()."',
+							ship_buyer_planet_id='".$cp->id()."',
+							ship_buyer_cell_id='".$cp->cellId()."'
 						WHERE
 							ship_market_id='".$id."'");			
 			
 						// Rohstoffe vom Käuferplanet abziehen und $c-variabeln anpassen
-						$c->changeRes(-$arr['ship_costs_metal'],-$arr['ship_costs_crystal'],-$arr['ship_costs_plastic'],-$arr['ship_costs_fuel'],-$arr['ship_costs_food']);	
+						$cp->changeRes(-$arr['ship_costs_metal'],-$arr['ship_costs_crystal'],-$arr['ship_costs_plastic'],-$arr['ship_costs_fuel'],-$arr['ship_costs_food']);	
 							
 						// Nachricht an Verkäufer
-						$msg = "Der Handel war erfolgreich: Der User ".$s['user']['nick']." hat folgende Schiffe von dir gekauft:\n\n";
+						$msg = "Der Handel war erfolgreich: Der User ".$cu->nick." hat folgende Schiffe von dir gekauft:\n\n";
 						
 						$msg .= "".$arr['ship_name'].": ".$arr['ship_count']."\n\n";
 						
@@ -1865,7 +1865,7 @@
 						$msg .= "Die Waren werden in wenigen Minuten versendet.\n\n";
 						
 						$msg .= "Das Handelsministerium";
-						send_msg($s['user']['id'],SHIP_MISC_MSG_CAT_ID,"Handel vollzogen",$msg);
+						send_msg($cu->id(),SHIP_MISC_MSG_CAT_ID,"Handel vollzogen",$msg);
 	
 	
 						//Log schreiben, falls dieser Handel regelwidrig ist
@@ -1875,7 +1875,7 @@
 						FROM
 							".$db_table['user_multi']."
 						WHERE
-							user_multi_user_id='".$s['user']['id']."'
+							user_multi_user_id='".$cu->id()."'
 							AND user_multi_multi_user_id='".$arr['user_id']."';");
 	
 						$multi_res2=dbquery("
@@ -1885,15 +1885,15 @@
 							".$db_table['user_multi']."
 						WHERE
 							user_multi_user_id='".$arr['user_id']."'
-							AND user_multi_multi_user_id='".$s['user']['id']."';");
+							AND user_multi_multi_user_id='".$cu->id()."';");
 	
 						if(mysql_num_rows($multi_res1)!=0 && mysql_num_rows($multi_res2)!=0)
 						{
-					    add_log(10,"[URL=?page=user&sub=edit&user_id=".$s['user']['id']."][B]".$s['user']['nick']."[/B][/URL] hat von [URL=?page=user&sub=edit&user_id=".$arr['user_id']."][B]".$seller_user_nick."[/B][/URL] Schiffe gekauft:\n\n".$arr['ship_count']." ".$arr['ship_name']."\n\nund das zu folgendem Preis:\n\n".RES_METAL.": ".nf($arr['ship_costs_metal'])."\n".RES_CRYSTAL.": ".nf($arr['ship_costs_crystal'])."\n".RES_PLASTIC.": ".nf($arr['ship_costs_plastic'])."\n".RES_FUEL.": ".nf($arr['ship_costs_fuel'])."\n".RES_FOOD.": ".nf($arr['ship_costs_food']),time());
+					    add_log(10,"[URL=?page=user&sub=edit&user_id=".$cu->id()."][B]".$cu->nick."[/B][/URL] hat von [URL=?page=user&sub=edit&user_id=".$arr['user_id']."][B]".$seller_user_nick."[/B][/URL] Schiffe gekauft:\n\n".$arr['ship_count']." ".$arr['ship_name']."\n\nund das zu folgendem Preis:\n\n".RES_METAL.": ".nf($arr['ship_costs_metal'])."\n".RES_CRYSTAL.": ".nf($arr['ship_costs_crystal'])."\n".RES_PLASTIC.": ".nf($arr['ship_costs_plastic'])."\n".RES_FUEL.": ".nf($arr['ship_costs_fuel'])."\n".RES_FOOD.": ".nf($arr['ship_costs_food']),time());
 						}
 	
 						//Marktlog schreiben
-						add_log(7,"Der Spieler ".$s['user']['nick']." hat folgende Schiffe von ".$seller_user_nick." gekauft:\n\n".$arr['ship_count']." ".$arr['ship_name']."\n\nund das zu folgendem Preis:\n\n".RES_METAL.": ".nf($arr['ship_costs_metal'])."\n".RES_CRYSTAL.": ".nf($arr['ship_costs_crystal'])."\n".RES_PLASTIC.": ".nf($arr['ship_costs_plastic'])."\n".RES_FUEL.": ".nf($arr['ship_costs_fuel'])."\n".RES_FOOD.": ".nf($arr['ship_costs_food']),time());		
+						add_log(7,"Der Spieler ".$cu->nick." hat folgende Schiffe von ".$seller_user_nick." gekauft:\n\n".$arr['ship_count']." ".$arr['ship_name']."\n\nund das zu folgendem Preis:\n\n".RES_METAL.": ".nf($arr['ship_costs_metal'])."\n".RES_CRYSTAL.": ".nf($arr['ship_costs_crystal'])."\n".RES_PLASTIC.": ".nf($arr['ship_costs_plastic'])."\n".RES_FUEL.": ".nf($arr['ship_costs_fuel'])."\n".RES_FOOD.": ".nf($arr['ship_costs_food']),time());		
 						
 						// Zählt die erfolgreich abgewickelten Angebote
 						$cnt++;
@@ -1950,11 +1950,11 @@
 				$arr=mysql_fetch_array($res);
 				
 				// Prüft, ob noch genug Rohstoffe vorhanden sind (eventueller Verlust durch Kampf?)
-				if ($c->res->metal >= $_POST['auction_new_buy_metal'] 
-					&& $c->res->crystal >= $_POST['auction_new_buy_crystal']
-					&& $c->res->plastic >= $_POST['auction_new_buy_plastic']
-					&& $c->res->fuel >= $_POST['auction_new_buy_fuel']
-					&& $c->res->food >= $_POST['auction_new_buy_food'])
+				if ($cp->resMetal >= $_POST['auction_new_buy_metal'] 
+					&& $cp->resCrystal >= $_POST['auction_new_buy_crystal']
+					&& $cp->resPlastic >= $_POST['auction_new_buy_plastic']
+					&& $cp->resFuel >= $_POST['auction_new_buy_fuel']
+					&& $cp->resFood >= $_POST['auction_new_buy_food'])
 				{
 					// Errechnet Rohstoffwert vom Angebot
 					$sell_price = $arr['auction_sell_metal'] * MARKET_METAL_FACTOR
@@ -2000,7 +2000,7 @@
                         AND planet_user_id=".$arr['auction_current_buyer_id']."");
 
                     // Nachricht dem überbotenen User schicken
-                    $msg = "Du wurdest vom Spieler ".$s['user']['nick']." in einer Auktion &uuml;berboten\n";
+                    $msg = "Du wurdest vom Spieler ".$cu->nick." in einer Auktion &uuml;berboten\n";
                     $msg .= "Die Auktion ist nun zu Ende und wird nach ".AUCTION_DELAY_TIME." Stunden gel&ouml;scht.\n";
                     $msg .= "[URL=?page=market&mode=auction&id=".$arr['auction_market_id']."Hier[/URL] gehts zu der Auktion.\n\n";
                     
@@ -2019,13 +2019,13 @@
                     planet_res_fuel=planet_res_fuel-'".$_POST['auction_new_buy_fuel']."',
                     planet_res_food=planet_res_food-'".$_POST['auction_new_buy_food']."'
                 WHERE
-                    planet_id='".$c->id."'
-                    AND planet_user_id='".$s['user']['id']."'");
+                    planet_id='".$cp->id()."'
+                    AND planet_user_id='".$cu->id()."'");
 
 
                 // Nachricht an Verkäufer
                 $msg = "Ein Handel ist erfolgreich zustande gekommen.\n";
-                $msg .= "Der Spieler ".$s['user']['nick']." hat von dir folgende Rohstoffe ersteigert: \n\n";
+                $msg .= "Der Spieler ".$cu->nick." hat von dir folgende Rohstoffe ersteigert: \n\n";
 
                 $msg .= "".RES_METAL.": ".nf($arr['auction_sell_metal'])."\n";
                 $msg .= "".RES_CRYSTAL.": ".nf($arr['auction_sell_crystal'])."\n";
@@ -2065,7 +2065,7 @@
                 $msg .= "Die Auktion wird nach ".AUCTION_DELAY_TIME." Stunden gel&ouml;scht und die Waren werden in wenigen Minuten versendet.\n\n";
                 
                 $msg .= "Das Handelsministerium";
-                send_msg($s['user']['id'],SHIP_MISC_MSG_CAT_ID,"Auktion vorzeitig beendet",$msg);
+                send_msg($cu->id(),SHIP_MISC_MSG_CAT_ID,"Auktion vorzeitig beendet",$msg);
 
 
                 // Auktion Speichern und "Stoppen" so dass nicht mehr geboten werden kann
@@ -2074,9 +2074,9 @@
                 UPDATE
                     ".$db_table['market_auction']."
                 SET
-                    auction_current_buyer_id='".$s['user']['id']."',
-                    auction_current_buyer_planet_id='".$c->id."',
-                    auction_current_buyer_cell_id='".$c->solsys_id."',
+                    auction_current_buyer_id='".$cu->id()."',
+                    auction_current_buyer_planet_id='".$cp->id()."',
+                    auction_current_buyer_cell_id='".$cp->cellId()."',
                     auction_current_buyer_date='".time()."',
                     auction_buy_metal='".$_POST['auction_new_buy_metal']."',
                     auction_buy_crystal='".$_POST['auction_new_buy_crystal']."',
@@ -2096,7 +2096,7 @@
                     ".$db_table['user_multi']."
                 WHERE
                     user_multi_user_id='".$arr['auction_user_id']."'
-                    AND user_multi_multi_user_id='".$s['user']['id']."';");
+                    AND user_multi_multi_user_id='".$cu->id()."';");
 
                 $multi_res2=dbquery("
                 SELECT
@@ -2104,16 +2104,16 @@
                 FROM
                     ".$db_table['user_multi']."
                 WHERE
-                    user_multi_user_id='".$s['user']['id']."'
+                    user_multi_user_id='".$cu->id()."'
                     AND user_multi_multi_user_id='".$arr['auction_user_id']."';");
 
                 if(mysql_num_rows($multi_res1)!=0 && mysql_num_rows($multi_res2)!=0)
                 {
-			            add_log(10,"[URL=?page=user&sub=edit&user_id=".$s['user']['id']."][B]".$s['user']['nick']."[/B][/URL] hat an einer Auktion von [URL=?page=user&sub=edit&user_id=".$arr['auction_user_id']."][B]".$partner_user_nick."[/B][/URL] gewonnen:\n\nRohstoffe:\n".RES_METAL.": ".nf($arr['auction_sell_metal'])."\n".RES_CRYSTAL.": ".nf($arr['auction_sell_crystal'])."\n".RES_PLASTIC.": ".nf($arr['auction_sell_plastic'])."\n".RES_FUEL.": ".nf($arr['auction_sell_fuel'])."\n".RES_FOOD.": ".nf($arr['auction_sell_food'])."\n\nDies hat ihn folgende Rohstoffe gekostet:\n".RES_METAL.": ".nf($_POST['auction_new_buy_metal'])."\n".RES_CRYSTAL.": ".nf($_POST['auction_new_buy_crystal'])."\n".RES_PLASTIC.": ".nf($_POST['auction_new_buy_plastic'])."\n".RES_FUEL.": ".nf($_POST['auction_new_buy_fuel'])."\n".RES_FOOD.": ".nf($_POST['auction_new_buy_food'])."",time());
+			            add_log(10,"[URL=?page=user&sub=edit&user_id=".$cu->id()."][B]".$cu->nick."[/B][/URL] hat an einer Auktion von [URL=?page=user&sub=edit&user_id=".$arr['auction_user_id']."][B]".$partner_user_nick."[/B][/URL] gewonnen:\n\nRohstoffe:\n".RES_METAL.": ".nf($arr['auction_sell_metal'])."\n".RES_CRYSTAL.": ".nf($arr['auction_sell_crystal'])."\n".RES_PLASTIC.": ".nf($arr['auction_sell_plastic'])."\n".RES_FUEL.": ".nf($arr['auction_sell_fuel'])."\n".RES_FOOD.": ".nf($arr['auction_sell_food'])."\n\nDies hat ihn folgende Rohstoffe gekostet:\n".RES_METAL.": ".nf($_POST['auction_new_buy_metal'])."\n".RES_CRYSTAL.": ".nf($_POST['auction_new_buy_crystal'])."\n".RES_PLASTIC.": ".nf($_POST['auction_new_buy_plastic'])."\n".RES_FUEL.": ".nf($_POST['auction_new_buy_fuel'])."\n".RES_FOOD.": ".nf($_POST['auction_new_buy_food'])."",time());
                 }
 
                 // Log schreiben
-                add_log(7,"Es wurde folgende Auktion erfolgreich beendet: Der Spieler ".$s['user']['nick']." hat vom Spieler ".$partner_user_nick."  folgende Waren ersteigert:\n\nRohstoffe:\n".RES_METAL.": ".nf($arr['auction_sell_metal'])."\n".RES_CRYSTAL.": ".nf($arr['auction_sell_crystal'])."\n".RES_PLASTIC.": ".nf($arr['auction_sell_plastic'])."\n".RES_FUEL.": ".nf($arr['auction_sell_fuel'])."\n".RES_FOOD.": ".nf($arr['auction_sell_food'])."\n\nDies hat ihn folgende Rohstoffe gekostet:".RES_METAL.": ".nf($_POST['auction_new_buy_metal'])."\n".RES_CRYSTAL.": ".nf($_POST['auction_new_buy_crystal'])."\n".RES_PLASTIC.": ".nf($_POST['auction_new_buy_plastic'])."\n".RES_FUEL.": ".nf($_POST['auction_new_buy_fuel'])."\n".RES_FOOD.": ".nf($_POST['auction_new_buy_food'])."\n\nDie Auktion wird nach ".AUCTION_DELAY_TIME." Stunden gel&ouml;scht",time());
+                add_log(7,"Es wurde folgende Auktion erfolgreich beendet: Der Spieler ".$cu->nick." hat vom Spieler ".$partner_user_nick."  folgende Waren ersteigert:\n\nRohstoffe:\n".RES_METAL.": ".nf($arr['auction_sell_metal'])."\n".RES_CRYSTAL.": ".nf($arr['auction_sell_crystal'])."\n".RES_PLASTIC.": ".nf($arr['auction_sell_plastic'])."\n".RES_FUEL.": ".nf($arr['auction_sell_fuel'])."\n".RES_FOOD.": ".nf($arr['auction_sell_food'])."\n\nDies hat ihn folgende Rohstoffe gekostet:".RES_METAL.": ".nf($_POST['auction_new_buy_metal'])."\n".RES_CRYSTAL.": ".nf($_POST['auction_new_buy_crystal'])."\n".RES_PLASTIC.": ".nf($_POST['auction_new_buy_plastic'])."\n".RES_FUEL.": ".nf($_POST['auction_new_buy_fuel'])."\n".RES_FOOD.": ".nf($_POST['auction_new_buy_food'])."\n\nDie Auktion wird nach ".AUCTION_DELAY_TIME." Stunden gel&ouml;scht",time());
 
 
                 echo "Gratulation, du hast die Auktion gewonnen, da du den maximal Betrag geboten hast!<br/>";
@@ -2194,7 +2194,7 @@
                         AND planet_user_id=".$arr['auction_current_buyer_id']."");
 
                     // Nachricht dem überbotenen user schicken
-                    $msg = "Du wurdest vom Spieler ".$s['user']['nick']." in einer Auktion &uuml;berboten\n";
+                    $msg = "Du wurdest vom Spieler ".$cu->nick." in einer Auktion &uuml;berboten\n";
                     $msg .= "Die Auktion dauert noch bis am ".date("d.m.Y H:i",$arr['auction_end']).".\n";
                     $msg .= "[URL=?page=market&mode=auction&id=".$_POST['auction_market_id']."]Hier[/URL] gehts zu der Auktion.\n\n";
                     
@@ -2213,16 +2213,16 @@
                     planet_res_fuel=planet_res_fuel-'".$_POST['auction_new_buy_fuel']."',
                     planet_res_food=planet_res_food-'".$_POST['auction_new_buy_food']."'
                 WHERE
-                    planet_id='".$c->id."'
-                    AND planet_user_id='".$s['user']['id']."'");
+                    planet_id='".$cp->id()."'
+                    AND planet_user_id='".$cu->id()."'");
 
                 //Das neue Angebot Speichern
                 dbquery("
                 UPDATE
                   ".$db_table['market_auction']."
                 SET
-                  auction_current_buyer_id='".$s['user']['id']."',
-                  auction_current_buyer_planet_id='".$c->id."',
+                  auction_current_buyer_id='".$cu->id()."',
+                  auction_current_buyer_planet_id='".$cp->id()."',
                   auction_current_buyer_date='".time()."',
                   auction_buy_metal='".$_POST['auction_new_buy_metal']."',
                   auction_buy_crystal='".$_POST['auction_new_buy_crystal']."',
@@ -2280,16 +2280,16 @@
 			}
 			else
 			{
-				$_POST['ressource_for_alliance']=$s['user']['alliance_id'];
+				$_POST['ressource_for_alliance']=$cu->alliance_id;
 				$for_alliance="f&uuml;r ein Allianzmitglied ";
 			}
 
 			// Prüft ob noch immer genug Rohstoffe auf dem Planeten sind (eventueller verlust durch Kampf?)
-  		if($_POST['ress_sell_metal'] * MARKET_SELL_TAX <= $c->res->metal
-  		&& $_POST['ress_sell_crystal'] * MARKET_SELL_TAX <= $c->res->crystal 
-  		&& $_POST['ress_sell_plastic'] * MARKET_SELL_TAX <= $c->res->plastic  
-  		&& $_POST['ress_sell_fuel'] * MARKET_SELL_TAX <= $c->res->fuel
-  		&& $_POST['ress_sell_food'] * MARKET_SELL_TAX <= $c->res->food)
+  		if($_POST['ress_sell_metal'] * MARKET_SELL_TAX <= $cp->resMetal
+  		&& $_POST['ress_sell_crystal'] * MARKET_SELL_TAX <= $cp->resCrystal 
+  		&& $_POST['ress_sell_plastic'] * MARKET_SELL_TAX <= $cp->resPlastic  
+  		&& $_POST['ress_sell_fuel'] * MARKET_SELL_TAX <= $cp->resFuel
+  		&& $_POST['ress_sell_food'] * MARKET_SELL_TAX <= $cp->resFood)
   		{
 	      //Nachricht versenden
 	      $msg = "Du hast folgende Rohstoffe ".$for_alliance."angeboten:\n\n";
@@ -2309,10 +2309,10 @@
 	      $msg .= "".RES_FOOD.": ".nf($_POST['ress_buy_food'])."\n\n";
 
 	      $msg .= "Das Handelsministerium";
-	      send_msg($s['user']['id'],SHIP_MISC_MSG_CAT_ID,"Angebot eingetragen",$msg);
+	      send_msg($cu->id(),SHIP_MISC_MSG_CAT_ID,"Angebot eingetragen",$msg);
 	
 	      // Log schreiben
-	      add_log(7,"Der Spieler ".$s['user']['nick']." hat folgende Rohstoffe ".$for_alliance."angeboten:\n\n".RES_METAL.": ".nf($_POST['ress_sell_metal'])."\n".RES_CRYSTAL.": ".nf($_POST['ress_sell_crystal'])."\n".RES_PLASTIC.": ".nf($_POST['ress_sell_plastic'])."\n".RES_FUEL.": ".nf($_POST['ress_sell_fuel'])."\n".RES_FOOD.": ".nf($_POST['ress_sell_food'])."\n\nFolgender Preis muss daf&uuml;r gezahlt werden:\n\n".RES_METAL.": ".nf($_POST['ress_buy_metal'])."\n".RES_CRYSTAL.": ".nf($_POST['ress_buy_crystal'])."\n".RES_PLASTIC.": ".nf($_POST['ress_buy_plastic'])."\n".RES_FUEL.": ".nf($_POST['ress_buy_fuel'])."\n".RES_FOOD.": ".nf($_POST['ress_buy_food'])."\n\n",time());
+	      add_log(7,"Der Spieler ".$cu->nick." hat folgende Rohstoffe ".$for_alliance."angeboten:\n\n".RES_METAL.": ".nf($_POST['ress_sell_metal'])."\n".RES_CRYSTAL.": ".nf($_POST['ress_sell_crystal'])."\n".RES_PLASTIC.": ".nf($_POST['ress_sell_plastic'])."\n".RES_FUEL.": ".nf($_POST['ress_sell_fuel'])."\n".RES_FOOD.": ".nf($_POST['ress_sell_food'])."\n\nFolgender Preis muss daf&uuml;r gezahlt werden:\n\n".RES_METAL.": ".nf($_POST['ress_buy_metal'])."\n".RES_CRYSTAL.": ".nf($_POST['ress_buy_crystal'])."\n".RES_PLASTIC.": ".nf($_POST['ress_buy_plastic'])."\n".RES_FUEL.": ".nf($_POST['ress_buy_fuel'])."\n".RES_FOOD.": ".nf($_POST['ress_buy_food'])."\n\n",time());
 	
 	      // Rohstoffe vom Planet abziehen
 	      dbquery("
@@ -2325,8 +2325,8 @@
 	        planet_res_fuel=planet_res_fuel-".($_POST['ress_sell_fuel']*MARKET_SELL_TAX).",
 	        planet_res_food=planet_res_food-".($_POST['ress_sell_food']*MARKET_SELL_TAX)."
 	      WHERE
-	      	planet_id='".$c->id."'
-	      	AND planet_user_id='".$s['user']['id']."';");
+	      	planet_id='".$cp->id()."'
+	      	AND planet_user_id='".$cu->id()."';");
 	
 				// Angebot speichern
 	      dbquery("
@@ -2349,9 +2349,9 @@
 	          ressource_text,
 	          datum)
 	      VALUES
-	          ('".$s['user']['id']."',
-	          '".$c->id."',
-	          '".$c->solsys_id."',
+	          ('".$cu->id()."',
+	          '".$cp->id()."',
+	          '".$cp->cellId()."',
 	          '".$_POST['ress_sell_metal']."',
 	          '".$_POST['ress_sell_crystal']."',
 	          '".$_POST['ress_sell_plastic']."',
@@ -2390,7 +2390,7 @@
 			}
 			else
 			{
-				$_POST['ship_for_alliance']=$s['user']['alliance_id'];
+				$_POST['ship_for_alliance']=$cu->alliance_id;
 				$for_alliance="für ein Allianzmitglied ";
 			}
 
@@ -2410,7 +2410,7 @@
       FROM
       	".$db_table['shiplist']."
       WHERE
-      	shiplist_planet_id='".$c->id."'
+      	shiplist_planet_id='".$cp->id()."'
       	AND shiplist_ship_id='".$ship_id."'");
       if(mysql_num_rows($check_res)>0)
       {
@@ -2425,7 +2425,7 @@
           SET
           	shiplist_count=shiplist_count-".$ship_count."
           WHERE
-              shiplist_planet_id='".$c->id."'
+              shiplist_planet_id='".$cp->id()."'
               AND shiplist_ship_id='".$_POST['ship_list']."';");
 
 					// Angebot speicherns
@@ -2447,9 +2447,9 @@
               ship_text,
               datum)
           VALUES
-              ('".$s['user']['id']."',
-              '".$c->id."',
-              '".$c->solsys_id."',
+              ('".$cu->id()."',
+              '".$cp->id()."',
+              '".$cp->cellId()."',
               '".$ship_id."',
               '".$ship_name."',
               '".$ship_count."',
@@ -2477,10 +2477,10 @@
           $msg .= "".RES_FOOD.": ".nf($_POST['ship_buy_food'])."\n\n";
 
           $msg .= "Das Handelsministerium";
-          send_msg($s['user']['id'],SHIP_MISC_MSG_CAT_ID,"Angebot eingetragen",$msg);
+          send_msg($cu->id(),SHIP_MISC_MSG_CAT_ID,"Angebot eingetragen",$msg);
 
           //Log schreiben
-          add_log(LOG_CAT,"Der Spieler ".$s['user']['nick']." hat folgende Schiffe zum Verkauf ".$for_alliance."angeboten:\n\n".nf($ship_count)." ".$ship_name."\n\nPreis:\n ".RES_METAL.": ".nf($_POST['ship_buy_metal'])."\n".RES_CRYSTAL.": ".nf($_POST['ship_buy_crystal'])."\n".RES_PLASTIC.": ".nf($_POST['ship_buy_plastic'])."\n".RES_FUEL.": ".nf($_POST['ship_buy_fuel'])."\n".RES_FOOD.": ".nf($_POST['ship_buy_food'])."\n\n",time());
+          add_log(LOG_CAT,"Der Spieler ".$cu->nick." hat folgende Schiffe zum Verkauf ".$for_alliance."angeboten:\n\n".nf($ship_count)." ".$ship_name."\n\nPreis:\n ".RES_METAL.": ".nf($_POST['ship_buy_metal'])."\n".RES_CRYSTAL.": ".nf($_POST['ship_buy_crystal'])."\n".RES_PLASTIC.": ".nf($_POST['ship_buy_plastic'])."\n".RES_FUEL.": ".nf($_POST['ship_buy_fuel'])."\n".RES_FOOD.": ".nf($_POST['ship_buy_food'])."\n\n",time());
 
         	echo "Angebot erfolgreich abgesendet<br/><br/>";
           return_btn();
@@ -2522,11 +2522,11 @@
 			$_POST['auction_sell_food'] = nf_back($_POST['auction_sell_food']);
 
 			// Prüft ob Rohstoffe noch vorhanden sind (eventueller verlust durch Kampf?)
-      if (($_POST['auction_sell_metal']*MARKET_SELL_TAX)<=$c->res->metal
-          && ($_POST['auction_sell_crystal']*MARKET_SELL_TAX)<=$c->res->crystal
-          && ($_POST['auction_sell_plastic']*MARKET_SELL_TAX)<=$c->res->plastic
-          && ($_POST['auction_sell_fuel']*MARKET_SELL_TAX)<=$c->res->fuel
-          && ($_POST['auction_sell_food']*MARKET_SELL_TAX)<=$c->res->food)
+      if (($_POST['auction_sell_metal']*MARKET_SELL_TAX)<=$cp->resMetal
+          && ($_POST['auction_sell_crystal']*MARKET_SELL_TAX)<=$cp->resCrystal
+          && ($_POST['auction_sell_plastic']*MARKET_SELL_TAX)<=$cp->resPlastic
+          && ($_POST['auction_sell_fuel']*MARKET_SELL_TAX)<=$cp->resFuel
+          && ($_POST['auction_sell_food']*MARKET_SELL_TAX)<=$cp->resFood)
       {
 
         // Rohstoffe + Taxe vom Planetenkonto abziehen
@@ -2540,8 +2540,8 @@
             planet_res_fuel=planet_res_fuel-".($_POST['auction_sell_fuel']*MARKET_SELL_TAX).",
             planet_res_food=planet_res_food-".($_POST['auction_sell_food']*MARKET_SELL_TAX)."
         WHERE
-            planet_id=".$c->id."
-            AND planet_user_id=".$s['user']['id']."");
+            planet_id=".$cp->id()."
+            AND planet_user_id=".$cu->id()."");
 
         // Angebot speichern
         dbquery("
@@ -2564,9 +2564,9 @@
             auction_currency_food,
             auction_buyable)
         VALUES
-            ('".$s['user']['id']."',
-            '".$c->id."',
-            '".$c->solsys_id."',
+            ('".$cu->id()."',
+            '".$cp->id()."',
+            '".$cp->cellId()."',
             '".time()."',
             '".$auction_end_time."',
             '".$_POST['auction_sell_metal']."',
@@ -2595,9 +2595,9 @@
         $msg .= "Die Auktion endet am ".date("d.m.Y",$auction_end_time)." um ".date("H:i",$auction_end_time)." Uhr.\n\n";
         
         $msg .= "Das Handelsministerium";
-        send_msg($s['user']['id'],SHIP_MISC_MSG_CAT_ID,"Auktion eingetragen",$msg);
+        send_msg($cu->id(),SHIP_MISC_MSG_CAT_ID,"Auktion eingetragen",$msg);
 
-        add_log(LOG_CAT,"Der Spieler ".$s['user']['nick']." hat folgende Rohstoffe zur versteigerung angeboten:\n\n".RES_METAL.": ".nf($_POST['auction_sell_metal'])."\n".RES_CRYSTAL.": ".nf($_POST['auction_sell_crystal'])."\n".RES_PLASTIC.": ".nf($_POST['auction_sell_plastic'])."\n".RES_FUEL.": ".nf($_POST['auction_sell_fuel'])."\n".RES_FOOD.": ".nf($_POST['auction_sell_food'])."\n\nAuktionsende: ".date("d.m.Y H:i",$auction_end_time)."",time());
+        add_log(LOG_CAT,"Der Spieler ".$cu->nick." hat folgende Rohstoffe zur versteigerung angeboten:\n\n".RES_METAL.": ".nf($_POST['auction_sell_metal'])."\n".RES_CRYSTAL.": ".nf($_POST['auction_sell_crystal'])."\n".RES_PLASTIC.": ".nf($_POST['auction_sell_plastic'])."\n".RES_FUEL.": ".nf($_POST['auction_sell_fuel'])."\n".RES_FOOD.": ".nf($_POST['auction_sell_food'])."\n\nAuktionsende: ".date("d.m.Y H:i",$auction_end_time)."",time());
 
         echo "Auktion erfolgreich lanciert<br/><br/>";
         return_btn();
@@ -2627,7 +2627,7 @@
 				".$db_table['market_ressource']."
 			WHERE
 				ressource_buyable='1'
-        AND user_id!='".$s['user']['id']."'
+        AND user_id!='".$cu->id()."'
         ".stripslashes($_POST['ressource_sql_add'])."
       ORDER BY
 				datum ASC;");				
@@ -2662,23 +2662,23 @@
           $plastic_class = "tbldata";
           $fuel_class = "tbldata";
           $food_class = "tbldata";
-					if ($c->res->metal < $arr['buy_metal'])
+					if ($cp->resMetal < $arr['buy_metal'])
 					{ 
 						$metal_class = "tbldata2";
 					}
-					if ($c->res->crystal < $arr['buy_crystal'])
+					if ($cp->resCrystal < $arr['buy_crystal'])
 					{ 
 						$crystal_class = "tbldata2";
 					}					
-					if ($c->res->plastic < $arr['buy_plastic'])
+					if ($cp->resPlastic < $arr['buy_plastic'])
 					{ 
 						$plastic_class = "tbldata2";
 					}
-					if ($c->res->fuel < $arr['buy_fuel'])
+					if ($cp->resFuel < $arr['buy_fuel'])
 					{ 
 						$fuel_class = "tbldata2";
 					}
-					if ($c->res->food < $arr['buy_food'])
+					if ($cp->resFood < $arr['buy_food'])
 					{ 
 						$food_class = "tbldata2";
 					}
@@ -2689,11 +2689,11 @@
 
 					// Übergibt Daten an XAJAX
 					// Aktuelle Rohstoffe vom Planeten
-          echo "<input type=\"hidden\" value=\"".$c->res->metal."\" name=\"res_metal\" />";
-          echo "<input type=\"hidden\" value=\"".$c->res->crystal."\" name=\"res_crystal\" />";
-          echo "<input type=\"hidden\" value=\"".$c->res->plastic."\" name=\"res_plastic\" />";
-          echo "<input type=\"hidden\" value=\"".$c->res->fuel."\" name=\"res_fuel\" />";
-          echo "<input type=\"hidden\" value=\"".$c->res->food."\" name=\"res_food\" />";								
+          echo "<input type=\"hidden\" value=\"".$cp->resMetal."\" name=\"res_metal\" />";
+          echo "<input type=\"hidden\" value=\"".$cp->resCrystal."\" name=\"res_crystal\" />";
+          echo "<input type=\"hidden\" value=\"".$cp->resPlastic."\" name=\"res_plastic\" />";
+          echo "<input type=\"hidden\" value=\"".$cp->resFuel."\" name=\"res_fuel\" />";
+          echo "<input type=\"hidden\" value=\"".$cp->resFood."\" name=\"res_food\" />";								
 					
 					// Preis
           echo "<input type=\"hidden\" value=\"".$arr['buy_metal']."\" name=\"ress_buy_metal[".$arr['ressource_market_id']."]\" />";
@@ -2798,7 +2798,7 @@
 				".$db_table['market_ship']."
 			WHERE
 				ship_buyable='1'
-        AND user_id!='".$s['user']['id']."'
+        AND user_id!='".$cu->id()."'
         ".stripslashes($_POST['ship_sql_add'])."
       ORDER BY
 				datum ASC;");															
@@ -2809,11 +2809,11 @@
 				{
 					// Übergibt Daten an XAJAX
 					// Aktuelle Rohstoffe vom Planeten
-          $hiddenFields = "<input type=\"hidden\" value=\"".$c->res->metal."\" name=\"res_metal\" />";
-          $hiddenFields.= "<input type=\"hidden\" value=\"".$c->res->crystal."\" name=\"res_crystal\" />";
-          $hiddenFields.= "<input type=\"hidden\" value=\"".$c->res->plastic."\" name=\"res_plastic\" />";
-          $hiddenFields.= "<input type=\"hidden\" value=\"".$c->res->fuel."\" name=\"res_fuel\" />";
-          $hiddenFields.= "<input type=\"hidden\" value=\"".$c->res->food."\" name=\"res_food\" />";								
+          $hiddenFields = "<input type=\"hidden\" value=\"".$cp->resMetal."\" name=\"res_metal\" />";
+          $hiddenFields.= "<input type=\"hidden\" value=\"".$cp->resCrystal."\" name=\"res_crystal\" />";
+          $hiddenFields.= "<input type=\"hidden\" value=\"".$cp->resPlastic."\" name=\"res_plastic\" />";
+          $hiddenFields.= "<input type=\"hidden\" value=\"".$cp->resFuel."\" name=\"res_fuel\" />";
+          $hiddenFields.= "<input type=\"hidden\" value=\"".$cp->resFood."\" name=\"res_food\" />";								
 					
 					// Preis
           $hiddenFields.= "<input type=\"hidden\" value=\"".$arr['ship_costs_metal']."\" name=\"ship_buy_metal[".$arr['ship_market_id']."]\" />";
@@ -2840,23 +2840,23 @@
           $plastic_class = "tbldata";
           $fuel_class = "tbldata";
           $food_class = "tbldata";
-					if ($c->res->metal < $arr['ship_costs_metal'])
+					if ($cp->resMetal < $arr['ship_costs_metal'])
 					{ 
 						$metal_class = "tbldata2";
 					}
-					if ($c->res->crystal < $arr['ship_costs_crystal'])
+					if ($cp->resCrystal < $arr['ship_costs_crystal'])
 					{ 
 						$crystal_class = "tbldata2";
 					}					
-					if ($c->res->plastic < $arr['ship_costs_plastic'])
+					if ($cp->resPlastic < $arr['ship_costs_plastic'])
 					{ 
 						$plastic_class = "tbldata2";
 					}
-					if ($c->res->fuel < $arr['ship_costs_fuel'])
+					if ($cp->resFuel < $arr['ship_costs_fuel'])
 					{ 
 						$fuel_class = "tbldata2";
 					}
-					if ($c->res->food < $arr['ship_costs_food'])
+					if ($cp->resFood < $arr['ship_costs_food'])
 					{ 
 						$food_class = "tbldata2";
 					}
@@ -2937,7 +2937,7 @@
 			FROM
 				".$db_table['market_auction']."
 			WHERE
-				auction_user_id!='".$s['user']['id']."'
+				auction_user_id!='".$cu->id()."'
         ".stripslashes($_POST['auction_sql_add'])."
       ORDER BY
 				auction_end ASC;");							
@@ -3156,7 +3156,7 @@
 										if($arr['auction_buyable']==1)
 										{
 											// Der Höchstbietende kann nicht sein eigenes Gebot überbieten
-											if($arr['auction_current_buyer_id']==$s['user']['id'])
+											if($arr['auction_current_buyer_id']==$cu->id())
 											{
 												$disabled = "disabled=\"disabled\"";
 											}
@@ -3262,7 +3262,7 @@
 				".$db_table['market_auction']." 
 			WHERE 
 				auction_market_id='".intval($_POST['auction_market_id'])."'
-				AND auction_user_id!='".$s['user']['id']."' ");
+				AND auction_user_id!='".$cu->id()."' ");
 			if (mysql_num_rows($res)>0)
 			{
 				$arr=mysql_fetch_array($res);
@@ -3272,11 +3272,11 @@
 				
 				// Übergibt Daten an XAJAX
 				// Rohstoffe
-        echo "<input type=\"hidden\" value=\"".$c->res->metal."\" name=\"res_metal\" />";
-        echo "<input type=\"hidden\" value=\"".$c->res->crystal."\" name=\"res_crystal\" />";
-        echo "<input type=\"hidden\" value=\"".$c->res->plastic."\" name=\"res_plastic\" />";
-        echo "<input type=\"hidden\" value=\"".$c->res->fuel."\" name=\"res_fuel\" />";
-        echo "<input type=\"hidden\" value=\"".$c->res->food."\" name=\"res_food\" />";					
+        echo "<input type=\"hidden\" value=\"".$cp->resMetal."\" name=\"res_metal\" />";
+        echo "<input type=\"hidden\" value=\"".$cp->resCrystal."\" name=\"res_crystal\" />";
+        echo "<input type=\"hidden\" value=\"".$cp->resPlastic."\" name=\"res_plastic\" />";
+        echo "<input type=\"hidden\" value=\"".$cp->resFuel."\" name=\"res_fuel\" />";
+        echo "<input type=\"hidden\" value=\"".$cp->resFood."\" name=\"res_food\" />";					
 				
 				// Angebot
         echo "<input type=\"hidden\" value=\"".$arr['auction_sell_metal']."\" name=\"auction_sell_metal\" />";
@@ -3621,7 +3621,7 @@
 				".$db_table['market_auction']." 
 			WHERE 
 				auction_market_id='".intval($_POST['auction_market_id'])."'
-				AND auction_user_id!='".$s['user']['id']."' ");
+				AND auction_user_id!='".$cu->id()."' ");
 			if (mysql_num_rows($res)>0)
 			{
 				// 123
@@ -3633,11 +3633,11 @@
 				
 				// Übergibt Daten an XAJAX
 				// Rohstoffe
-        echo "<input type=\"hidden\" value=\"".$c->res->metal."\" name=\"res_metal\" id=\"res_metal\"/>";
-        echo "<input type=\"hidden\" value=\"".$c->res->crystal."\" name=\"res_crystal\" id=\"res_crystal\"/>";
-        echo "<input type=\"hidden\" value=\"".$c->res->plastic."\" name=\"res_plastic\" id=\"res_plastic\"/>";
-        echo "<input type=\"hidden\" value=\"".$c->res->fuel."\" name=\"res_fuel\" id=\"res_fuel\"/>";
-        echo "<input type=\"hidden\" value=\"".$c->res->food."\" name=\"res_food\" id=\"res_food\"/>";					
+        echo "<input type=\"hidden\" value=\"".$cp->resMetal."\" name=\"res_metal\" id=\"res_metal\"/>";
+        echo "<input type=\"hidden\" value=\"".$cp->resCrystal."\" name=\"res_crystal\" id=\"res_crystal\"/>";
+        echo "<input type=\"hidden\" value=\"".$cp->resPlastic."\" name=\"res_plastic\" id=\"res_plastic\"/>";
+        echo "<input type=\"hidden\" value=\"".$cp->resFuel."\" name=\"res_fuel\" id=\"res_fuel\"/>";
+        echo "<input type=\"hidden\" value=\"".$cp->resFood."\" name=\"res_food\" id=\"res_food\"/>";					
 				
 				// Angebot
         echo "<input type=\"hidden\" value=\"".$arr['auction_sell_metal']."\" name=\"auction_sell_metal\" id=\"auction_sell_metal\"/>";
@@ -3804,7 +3804,7 @@
 								<td class=\"tbldata\" style=\"vertical-align:middle;\">";
 								if($arr['auction_currency_metal']==1 && $arr['auction_buyable']==1)
 								{
-									echo "<input type=\"text\" value=\"".nf($arr['auction_buy_metal'])."\" name=\"auction_new_buy_metal\" id=\"auction_new_buy_metal\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$c->res->metal.",'','');calcMarketAuctionPrice(0);\"/>";
+									echo "<input type=\"text\" value=\"".nf($arr['auction_buy_metal'])."\" name=\"auction_new_buy_metal\" id=\"auction_new_buy_metal\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resMetal.",'','');calcMarketAuctionPrice(0);\"/>";
 								}
 								else
 								{
@@ -3826,7 +3826,7 @@
 								<td class=\"tbldata\" style=\"vertical-align:middle;\">";
 								if($arr['auction_currency_crystal']==1 && $arr['auction_buyable']==1)
 								{
-									echo "<input type=\"text\" value=\"".nf($arr['auction_buy_crystal'])."\" name=\"auction_new_buy_crystal\" id=\"auction_new_buy_crystal\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$c->res->crystal.",'','');calcMarketAuctionPrice(0);\"/>";
+									echo "<input type=\"text\" value=\"".nf($arr['auction_buy_crystal'])."\" name=\"auction_new_buy_crystal\" id=\"auction_new_buy_crystal\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resCrystal.",'','');calcMarketAuctionPrice(0);\"/>";
 								}
 								else
 								{
@@ -3848,7 +3848,7 @@
 								<td class=\"tbldata\" style=\"vertical-align:middle;\">";
 								if($arr['auction_currency_plastic']==1 && $arr['auction_buyable']==1)
 								{
-									echo "<input type=\"text\" value=\"".nf($arr['auction_buy_plastic'])."\" name=\"auction_new_buy_plastic\" id=\"auction_new_buy_plastic\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$c->res->plastic.",'','');calcMarketAuctionPrice(0);\"/>";
+									echo "<input type=\"text\" value=\"".nf($arr['auction_buy_plastic'])."\" name=\"auction_new_buy_plastic\" id=\"auction_new_buy_plastic\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resPlastic.",'','');calcMarketAuctionPrice(0);\"/>";
 								}
 								else
 								{
@@ -3870,7 +3870,7 @@
 								<td class=\"tbldata\" style=\"vertical-align:middle;\">";
 								if($arr['auction_currency_fuel']==1 && $arr['auction_buyable']==1)
 								{
-									echo "<input type=\"text\" value=\"".nf($arr['auction_buy_fuel'])."\" name=\"auction_new_buy_fuel\" id=\"auction_new_buy_fuel\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$c->res->fuel.",'','');calcMarketAuctionPrice(0);\"/>";
+									echo "<input type=\"text\" value=\"".nf($arr['auction_buy_fuel'])."\" name=\"auction_new_buy_fuel\" id=\"auction_new_buy_fuel\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resFuel.",'','');calcMarketAuctionPrice(0);\"/>";
 								}
 								else
 								{
@@ -3892,7 +3892,7 @@
 								<td class=\"tbldata\" style=\"vertical-align:middle;\">";
 								if($arr['auction_currency_food']==1 && $arr['auction_buyable']==1)
 								{
-									echo "<input type=\"text\" value=\"".nf($arr['auction_buy_food'])."\" name=\"auction_new_buy_food\" id=\"auction_new_buy_food\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$c->res->food.",'','');calcMarketAuctionPrice(0);\"/>";
+									echo "<input type=\"text\" value=\"".nf($arr['auction_buy_food'])."\" name=\"auction_new_buy_food\" id=\"auction_new_buy_food\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resFood.",'','');calcMarketAuctionPrice(0);\"/>";
 								}
 								else
 								{
@@ -3939,8 +3939,8 @@
 				".$db_table['market_ressource']."
 			WHERE
 				ressource_buyable='1'
-        AND user_id!='".$s['user']['id']."'
-        AND (ressource_for_alliance='0' OR ressource_for_alliance='".$s['user']['alliance_id']."');");
+        AND user_id!='".$cu->id()."'
+        AND (ressource_for_alliance='0' OR ressource_for_alliance='".$cu->alliance_id."');");
         		
 			// Schiffe
 			$ship_res = dbquery("
@@ -3950,8 +3950,8 @@
 				".$db_table['market_ship']."
 			WHERE
 				ship_buyable='1'
-				AND user_id!='".$s['user']['id']."'
-				AND (ship_for_alliance='0' OR ship_for_alliance='".$s['user']['alliance_id']."');");									
+				AND user_id!='".$cu->id()."'
+				AND (ship_for_alliance='0' OR ship_for_alliance='".$cu->alliance_id."');");									
 			
 			// Auktionen
 			$auction_res = dbquery("
@@ -3960,7 +3960,7 @@
 			FROM
 				".$db_table['market_auction']."
 			WHERE
-				auction_user_id!='".$s['user']['id']."';");				
+				auction_user_id!='".$cu->id()."';");				
 			
 			
 			// Lädt Schiffliste
@@ -3988,11 +3988,11 @@
 			
 			// Übergibt Daten an XAJAX
 			// Aktuelle Rohstoffe vom Planeten
-      echo "<input type=\"hidden\" value=\"".$c->res->metal."\" name=\"res_metal\" />";
-      echo "<input type=\"hidden\" value=\"".$c->res->crystal."\" name=\"res_crystal\" />";
-      echo "<input type=\"hidden\" value=\"".$c->res->plastic."\" name=\"res_plastic\" />";
-      echo "<input type=\"hidden\" value=\"".$c->res->fuel."\" name=\"res_fuel\" />";
-      echo "<input type=\"hidden\" value=\"".$c->res->food."\" name=\"res_food\" />";		
+      echo "<input type=\"hidden\" value=\"".$cp->resMetal."\" name=\"res_metal\" />";
+      echo "<input type=\"hidden\" value=\"".$cp->resCrystal."\" name=\"res_crystal\" />";
+      echo "<input type=\"hidden\" value=\"".$cp->resPlastic."\" name=\"res_plastic\" />";
+      echo "<input type=\"hidden\" value=\"".$cp->resFuel."\" name=\"res_fuel\" />";
+      echo "<input type=\"hidden\" value=\"".$cp->resFood."\" name=\"res_food\" />";		
       
       // Anzahl Gebote pro Kategorie		
 			echo "<input type=\"hidden\" value=\"".mysql_num_rows($ressource_res)."\" name=\"ressource_cnt\" />";	
@@ -4069,7 +4069,7 @@
 					".$db_table['market_ship']." 
 				WHERE 
 					ship_market_id='".$_POST['ship_market_id']."' 
-					AND user_id='".$s['user']['id']."'");
+					AND user_id='".$cu->id()."'");
 					
 				if (mysql_num_rows($scres)>0)
 				{
@@ -4108,7 +4108,7 @@
 					".$db_table['market_ressource']." 
 				WHERE 
 					ressource_market_id='".$_POST['ressource_market_id']."' 
-					AND user_id='".$s['user']['id']."'");
+					AND user_id='".$cu->id()."'");
 					
 				if (mysql_num_rows($rcres)>0)
 				{
@@ -4132,7 +4132,7 @@
 					WHERE 
 						ressource_market_id='".$_POST['ressource_market_id']."'");
 						
-					add_log(7,"Der Spieler ".$s['user']['nick']." zieht folgendes Rohstoffangebot zur&uuml;ck: \n\n".RES_METAL.": ".$rcrow['sell_metal']."\n".RES_CRYSTAL.": ".$rcrow['sell_crystal']."\n".RES_PLASTIC.": ".$rcrow['sell_plastic']."\n".RES_FUEL.": ".$rcrow['sell_fuel']."\n".RES_FOOD.": ".$rcrow['sell_food']."\n\nEr erh&auml;lt ".(round($return_factor,2)*100)."% der Waren erstattet!",time());
+					add_log(7,"Der Spieler ".$cu->nick." zieht folgendes Rohstoffangebot zur&uuml;ck: \n\n".RES_METAL.": ".$rcrow['sell_metal']."\n".RES_CRYSTAL.": ".$rcrow['sell_crystal']."\n".RES_PLASTIC.": ".$rcrow['sell_plastic']."\n".RES_FUEL.": ".$rcrow['sell_fuel']."\n".RES_FOOD.": ".$rcrow['sell_food']."\n\nEr erh&auml;lt ".(round($return_factor,2)*100)."% der Waren erstattet!",time());
 					echo "Angebot wurde gel&ouml;scht und du hast ".(round($return_factor,2)*100)."% der angebotenen Rohstoffe zur&uuml;ck erhalten!";
 				}
 				else
@@ -4152,7 +4152,7 @@
 					".$db_table['market_auction']." 
 				WHERE 
 					auction_market_id='".$_POST['auction_market_id']."' 
-					AND auction_user_id='".$s['user']['id']."'");
+					AND auction_user_id='".$cu->id()."'");
 				if (mysql_num_rows($acres)>0)
 				{
 					// Rohstoffe zurückgeben
@@ -4173,7 +4173,7 @@
 					//Auktion löschen
 					dbquery("DELETE FROM ".$db_table['market_auction']." WHERE auction_market_id='".$_POST['auction_market_id']."'");
 
-					add_log(7,"Der Spieler ".$s['user']['nick']." zieht folgende Auktion zur&uuml;ck:\nRohstoffe:\n".RES_METAL.": ".$acrow['sell_metal']."\n".RES_CRYSTAL.": ".$acrow['sell_crystal']."\n".RES_PLASTIC.": ".$acrow['sell_plastic']."\n".RES_FUEL.": ".$acrow['sell_fuel']."\n".RES_FOOD.": ".$acrow['sell_food']."\n\nEr erh&auml;lt ".(round($return_factor,2)*100)."% der Waren erstattet!",time());
+					add_log(7,"Der Spieler ".$cu->nick." zieht folgende Auktion zur&uuml;ck:\nRohstoffe:\n".RES_METAL.": ".$acrow['sell_metal']."\n".RES_CRYSTAL.": ".$acrow['sell_crystal']."\n".RES_PLASTIC.": ".$acrow['sell_plastic']."\n".RES_FUEL.": ".$acrow['sell_fuel']."\n".RES_FOOD.": ".$acrow['sell_food']."\n\nEr erh&auml;lt ".(round($return_factor,2)*100)."% der Waren erstattet!",time());
 
 					echo "Auktion wurde gel&ouml;scht und du hast ".(round($return_factor,2)*100)."% der angebotenen Waren zur&uuml;ck erhalten (es wird abgerundet)!";
 				}
@@ -4195,7 +4195,7 @@
 				//
 				// Rohstoffe
 				//
-				$res=dbquery("SELECT * FROM ".$db_table['market_ressource']." WHERE user_id='".$s['user']['id']."' AND ressource_buyable='1' ORDER BY datum ASC");
+				$res=dbquery("SELECT * FROM ".$db_table['market_ressource']." WHERE user_id='".$cu->id()."' AND ressource_buyable='1' ORDER BY datum ASC");
 				if (mysql_num_rows($res)>0)
 				{
 					echo "<form action=\"?page=$page&amp;mode=user_sell\" method=\"post\">\n";
@@ -4247,7 +4247,7 @@
 				//
 				// Schiffe
 				//
-				$res=dbquery("SELECT * FROM ".$db_table['market_ship']." WHERE user_id='".$s['user']['id']."' AND ship_buyable='1' ORDER BY datum ASC");
+				$res=dbquery("SELECT * FROM ".$db_table['market_ship']." WHERE user_id='".$cu->id()."' AND ship_buyable='1' ORDER BY datum ASC");
 				if (mysql_num_rows($res)>0)
 				{
 					echo "<form action=\"?page=$page&amp;mode=user_sell\" method=\"post\">\n";
@@ -4332,7 +4332,7 @@
 
                 <?PHP
 
-				$res=dbquery("SELECT * FROM ".$db_table['market_auction']." WHERE auction_user_id='".$s['user']['id']."' ORDER BY auction_buyable DESC, auction_end ASC");
+				$res=dbquery("SELECT * FROM ".$db_table['market_auction']." WHERE auction_user_id='".$cu->id()."' ORDER BY auction_buyable DESC, auction_end ASC");
 				if (mysql_num_rows($res)>0)
 				{
 					echo "<form action=\"?page=".$page."&amp;mode=user_sell\" method=\"post\">\n";
@@ -4510,8 +4510,8 @@
 			FROM 
 				".$db_table['market_ressource']." 
 			WHERE 
-				user_id='".$s['user']['id']."' 
-				AND planet_id='".$c->id."'");
+				user_id='".$cu->id()."' 
+				AND planet_id='".$cp->id()."'");
 				
 			// Lädt alle eingestellten Schiffsangebote des Users auf dem aktuellen Planeten
 			$sares=dbquery("
@@ -4520,8 +4520,8 @@
 			FROM 
 				".$db_table['market_ship']." 
 			WHERE 
-				user_id='".$s['user']['id']."' 
-				AND planet_id='".$c->id."'");	
+				user_id='".$cu->id()."' 
+				AND planet_id='".$cp->id()."'");	
 				
 			// Lädt alle eingestellten Auktionen des Users auf dem aktuellen Planeten
 			$aares=dbquery("
@@ -4530,8 +4530,8 @@
 			FROM 
 				".$db_table['market_auction']." 
 			WHERE 
-				auction_user_id='".$s['user']['id']."' 
-				AND auction_planet_id='".$c->id."'");
+				auction_user_id='".$cu->id()."' 
+				AND auction_planet_id='".$cp->id()."'");
 				
 			// Summiert die eingestellten Angebote und berechnet die Anzahl der noch einstellbaren Angebote
 			$anzahl=mysql_num_rows($sares)+mysql_num_rows($rares)+mysql_num_rows($aares);
@@ -4564,11 +4564,11 @@
 									
 				
 				          //Roshtoff übergabe an xajax (da die $c-variabeln nicht abgerufen werden könnne)
-				          echo "<input type=\"hidden\" value=\"".$c->res->metal."\" name=\"res_metal\" id=\"res_metal\"/>";
-				          echo "<input type=\"hidden\" value=\"".$c->res->crystal."\" name=\"res_crystal\" id=\"res_crystal\"/>";
-				          echo "<input type=\"hidden\" value=\"".$c->res->plastic."\" name=\"res_plastic\" id=\"res_plastic\"/>";
-				          echo "<input type=\"hidden\" value=\"".$c->res->fuel."\" name=\"res_fuel\" id=\"res_fuel\"/>";
-				          echo "<input type=\"hidden\" value=\"".$c->res->food."\" name=\"res_food\" id=\"res_food\" />";
+				          echo "<input type=\"hidden\" value=\"".$cp->resMetal."\" name=\"res_metal\" id=\"res_metal\"/>";
+				          echo "<input type=\"hidden\" value=\"".$cp->resCrystal."\" name=\"res_crystal\" id=\"res_crystal\"/>";
+				          echo "<input type=\"hidden\" value=\"".$cp->resPlastic."\" name=\"res_plastic\" id=\"res_plastic\"/>";
+				          echo "<input type=\"hidden\" value=\"".$cp->resFuel."\" name=\"res_fuel\" id=\"res_fuel\"/>";
+				          echo "<input type=\"hidden\" value=\"".$cp->resFood."\" name=\"res_food\" id=\"res_food\" />";
 				          
 				          // Vor dem Absenden des Formulars, wird die Überprüfung noch einmal gestartet. Bevor diese nicht das "OK" gibt, kann nicht gesendet werden
 				          echo "<input type=\"hidden\" value=\"0\" name=\"ress_last_update\" id=\"ress_last_update\"/>";
@@ -4583,7 +4583,7 @@
 					echo "<tr>
 									<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_METAL.":</td>
 									<td class=\"tbldata\" style=\"vertical-align:middle;\">
-										<input type=\"text\" value=\"0\" name=\"ress_sell_metal\" id=\"ress_sell_metal\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$c->res->metal.",'','');calcMarketRessPrice('0');\"/>
+										<input type=\"text\" value=\"0\" name=\"ress_sell_metal\" id=\"ress_sell_metal\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resMetal.",'','');calcMarketRessPrice('0');\"/>
 									</td>
 									<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_METAL_FACTOR."</td>
 									<td class=\"tbldata\" id=\"ress_buy_metal_field\" style=\"vertical-align:middle;\">
@@ -4596,7 +4596,7 @@
 					echo "<tr>
 									<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_CRYSTAL.":</td>
 									<td class=\"tbldata\" style=\"vertical-align:middle;\">
-										<input type=\"text\" value=\"0\" name=\"ress_sell_crystal\" id=\"ress_sell_crystal\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$c->res->crystal.",'','');calcMarketRessPrice('0');\"/>
+										<input type=\"text\" value=\"0\" name=\"ress_sell_crystal\" id=\"ress_sell_crystal\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resCrystal.",'','');calcMarketRessPrice('0');\"/>
 									</td>
 									<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_CRYSTAL_FACTOR."</td>
 									<td class=\"tbldata\" id=\"ress_buy_crystal_field\" style=\"vertical-align:middle;\">
@@ -4608,7 +4608,7 @@
 					echo "<tr>
 									<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_PLASTIC.":</td>
 									<td class=\"tbldata\" style=\"vertical-align:middle;\">
-										<input type=\"text\" value=\"0\" name=\"ress_sell_plastic\" id=\"ress_sell_plastic\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$c->res->plastic.",'','');calcMarketRessPrice('0');\"/>
+										<input type=\"text\" value=\"0\" name=\"ress_sell_plastic\" id=\"ress_sell_plastic\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resPlastic.",'','');calcMarketRessPrice('0');\"/>
 									</td>
 									<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_PLASTIC_FACTOR."</td>
 									<td class=\"tbldata\" id=\"ress_buy_plastic_field\" style=\"vertical-align:middle;\">
@@ -4620,7 +4620,7 @@
 					echo "<tr>
 									<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_FUEL.":</td>
 									<td class=\"tbldata\" style=\"vertical-align:middle;\">
-										<input type=\"text\" value=\"0\" name=\"ress_sell_fuel\" id=\"ress_sell_fuel\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$c->res->fuel.",'','');calcMarketRessPrice('0');\"/>
+										<input type=\"text\" value=\"0\" name=\"ress_sell_fuel\" id=\"ress_sell_fuel\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resFuel.",'','');calcMarketRessPrice('0');\"/>
 									</td>
 									<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_FUEL_FACTOR."</td>
 									<td class=\"tbldata\" id=\"ress_buy_fuel_field\" style=\"vertical-align:middle;\">
@@ -4632,7 +4632,7 @@
 					echo "<tr>
 									<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_FOOD.":</td>
 									<td class=\"tbldata\" style=\"vertical-align:middle;\">
-										<input type=\"text\" value=\"0\" name=\"ress_sell_food\" id=\"ress_sell_food\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$c->res->food.",'','');calcMarketRessPrice('0');\"/>
+										<input type=\"text\" value=\"0\" name=\"ress_sell_food\" id=\"ress_sell_food\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resFood.",'','');calcMarketRessPrice('0');\"/>
 									</td>
 									<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_FOOD_FACTOR."</td>
 									<td class=\"tbldata\" id=\"ress_buy_food_field\" style=\"vertical-align:middle;\">
@@ -4650,7 +4650,7 @@
           					<input type=\"text\" value=\"\" name=\"ressource_text\" id=\"ressource_text\" size=\"55\" maxlength=\"60\" ".tm("Text","Schreib einen kleinen Werbetext f&uuml;r deine Waren.")." onkeyup=\"calcMarketRessPrice('0');\"/>	
           				</td>";
           //Für allianzmitglied reservieren
-          if($s['user']['alliance_id']!=0 && $s['user']['alliance_application']==0)
+          if($cu->alliance_id!=0 && $cu->alliance_application==0)
           {
             echo "<td class=\"tbldata\" colspan=\"1\" style=\"vertical-align:middle;\" ".tm("Reservation","Fall dieses Angebot nur Spieler aus deiner Allianz kaufen sollen, mach hier ein H&auml;kchen").">
             				<input type=\"checkbox\" name=\"ressource_for_alliance\" value=\"1\" /> F&uuml;r Allianzmitglieder Reservieren
@@ -4693,11 +4693,11 @@
 									
 
           //Roshtoff übergabe an xajax (da die $c-variabeln nicht abgerufen werden könnne)
-          echo "<input type=\"hidden\" value=\"".$c->res->metal."\" name=\"res_metal\" id=\"res_metal\"/>";
-          echo "<input type=\"hidden\" value=\"".$c->res->crystal."\" name=\"res_crystal\" id=\"res_crystal\"/>";
-          echo "<input type=\"hidden\" value=\"".$c->res->plastic."\" name=\"res_plastic\" id=\"res_plastic\"/>";
-          echo "<input type=\"hidden\" value=\"".$c->res->fuel."\" name=\"res_fuel\" id=\"res_fuel\"/>";
-          echo "<input type=\"hidden\" value=\"".$c->res->food."\" name=\"res_food\" id=\"res_food\" />";
+          echo "<input type=\"hidden\" value=\"".$cp->resMetal."\" name=\"res_metal\" id=\"res_metal\"/>";
+          echo "<input type=\"hidden\" value=\"".$cp->resCrystal."\" name=\"res_crystal\" id=\"res_crystal\"/>";
+          echo "<input type=\"hidden\" value=\"".$cp->resPlastic."\" name=\"res_plastic\" id=\"res_plastic\"/>";
+          echo "<input type=\"hidden\" value=\"".$cp->resFuel."\" name=\"res_fuel\" id=\"res_fuel\"/>";
+          echo "<input type=\"hidden\" value=\"".$cp->resFood."\" name=\"res_food\" id=\"res_food\" />";
           
           //Check Feld (wird beim Klicken auf den Submit-Button noch einmal aktualisiert)
           echo "<input type=\"hidden\" value=\"0\" name=\"ress_check_submit\" id=\"ress_check_submit\"/>";
@@ -4783,7 +4783,7 @@
           					<input type=\"text\" value=\"\" name=\"ressource_text\" size=\"55\" maxlength=\"60\" ".tm("Text","Schreib einen kleinen Werbetext f&uuml;r deine Waren.")." onkeyup=\"xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));\"/>	
           				</td>";
           //Für allianzmitglied reservieren
-          if($s['user']['alliance_id']!=0 && $s['user']['alliance_application']==0)
+          if($cu->alliance_id!=0 && $s['user']['alliance_application']==0)
           {
             echo "<td class=\"tbldata\" colspan=\"1\" style=\"vertical-align:middle;\" ".tm("Reservation","Fall dieses Angebot nur Spieler aus deiner Allianz kaufen sollen, mach hier ein H&auml;kchen").">
             				<input type=\"checkbox\" name=\"ressource_for_alliance\" value=\"1\" /> F&uuml;r Allianzmitglieder Reservieren
@@ -4820,7 +4820,7 @@
 					FROM 
 						".$db_table['shiplist']." 
 					WHERE 
-						shiplist_planet_id='".$c->id."'");
+						shiplist_planet_id='".$cp->id()."'");
 					
           //Zuerst wird überprüft ob auf dem Planeten Schiffe sind
           if (mysql_num_rows($check_res)>0)
@@ -4843,7 +4843,7 @@
                 INNER JOIN
                 ".$db_table['ships']."
                 ON shiplist.shiplist_ship_id=ships.ship_id
-                AND shiplist.shiplist_planet_id='".$c->id."'
+                AND shiplist.shiplist_planet_id='".$cp->id()."'
                 AND shiplist.shiplist_count>'0'
                 AND ships.special_ship='0'
             ORDER BY
@@ -4972,7 +4972,7 @@
 	          					<input type=\"text\" value=\"\" name=\"ship_text\" id=\"ship_text\" size=\"55\" maxlength=\"60\" ".tm("Text","Schreib einen kleinen Werbetext f&uuml;r deine Waren.")." onkeyup=\"calcMarketShipPrice(0, 0);\"/>	
 	          				</td>";
 	          //Für allianzmitglied reservieren
-	          if($s['user']['alliance_id']!=0 && $s['user']['alliance_application']==0)
+	          if($cu->alliance_id!=0 && $cu->alliance_application==0)
 	          {
 	            echo "<td class=\"tbldata\" colspan=\"1\" style=\"vertical-align:middle;\" ".tm("Reservation","Fall dieses Angebot nur Spieler aus deiner Allianz kaufen sollen, mach hier ein H&auml;kchen").">
 	            				<input type=\"checkbox\" name=\"ship_for_alliance\" value=\"1\"/> F&uuml;r Allianzmitglieder Reservieren
@@ -5004,7 +5004,7 @@
 				if(MIN_MARKET_LEVEL_SHIP<=MARKET_LEVEL)
 				{
           //Zuerst wird überprüft ob auf dem Planeten Schiffe sind, auch ob diese dem User gehören
-          if (mysql_num_rows(dbquery("SELECT shiplist_id FROM ".$db_table['shiplist']." WHERE shiplist_planet_id='".$c->id."'"))>0)
+          if (mysql_num_rows(dbquery("SELECT shiplist_id FROM ".$db_table['shiplist']." WHERE shiplist_planet_id='".$cp->id()."'"))>0)
           {
           	// Folgender Javascript Abschnitt, welcher von PHP-Teilen erzeugt wird, lädt die Daten von den Schiffen, welche sich auf dem aktuellen Planeten befinden, in ein JS-Array. Dies wird für die Preisberechnung benötigt        	
           	
@@ -5024,7 +5024,7 @@
                   INNER JOIN
                   ".$db_table['ships']."
                   ON shiplist.shiplist_ship_id=ships.ship_id
-                  AND shiplist.shiplist_planet_id='".$c->id."'
+                  AND shiplist.shiplist_planet_id='".$cp->id()."'
                   AND shiplist.shiplist_count>'0'
                   AND ships.special_ship='0'
               ORDER BY
@@ -5141,7 +5141,7 @@
 		          					<input type=\"text\" value=\"\" name=\"ship_text\" size=\"55\" maxlength=\"60\" ".tm("Text","Schreib einen kleinen Werbetext f&uuml;r deine Waren.")." onkeyup=\"xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));\"/>	
 		          				</td>";
 		          //Für allianzmitglied reservieren
-		          if($s['user']['alliance_id']!=0 && $s['user']['alliance_application']==0)
+		          if($cu->alliance_id!=0 && $s['user']['alliance_application']==0)
 		          {
 		            echo "<td class=\"tbldata\" colspan=\"1\" style=\"vertical-align:middle;\" ".tm("Reservation","Fall dieses Angebot nur Spieler aus deiner Allianz kaufen sollen, mach hier ein H&auml;kchen").">
 		            				<input type=\"checkbox\" name=\"ship_for_alliance\" value=\"1\"/> F&uuml;r Allianzmitglieder Reservieren
@@ -5190,11 +5190,11 @@
           echo "<input type=\"hidden\" value=\"".$auction_time."\" name=\"auction_time_min\" />";
           
           //Roshtoff übergabe an XAJAX (da die $c-variabeln nicht abgerufen werden könnnen)
-          echo "<input type=\"hidden\" value=\"".$c->res->metal."\" name=\"res_metal\" />";
-          echo "<input type=\"hidden\" value=\"".$c->res->crystal."\" name=\"res_crystal\" />";
-          echo "<input type=\"hidden\" value=\"".$c->res->plastic."\" name=\"res_plastic\" />";
-          echo "<input type=\"hidden\" value=\"".$c->res->fuel."\" name=\"res_fuel\" />";
-          echo "<input type=\"hidden\" value=\"".$c->res->food."\" name=\"res_food\" />";
+          echo "<input type=\"hidden\" value=\"".$cp->resMetal."\" name=\"res_metal\" />";
+          echo "<input type=\"hidden\" value=\"".$cp->resCrystal."\" name=\"res_crystal\" />";
+          echo "<input type=\"hidden\" value=\"".$cp->resPlastic."\" name=\"res_plastic\" />";
+          echo "<input type=\"hidden\" value=\"".$cp->resFuel."\" name=\"res_fuel\" />";
+          echo "<input type=\"hidden\" value=\"".$cp->resFood."\" name=\"res_food\" />";
           
           //Check Feld (wird beim Klicken auf den Submit-Button noch einmal aktualisiert)
           echo "<input type=\"hidden\" value=\"0\" name=\"auction_check_submit\" id=\"auction_check_submit\"/>";
@@ -5326,11 +5326,11 @@
 					          echo "<input type=\"hidden\" value=\"".$auction_time."\" name=\"auction_time_min\" id=\"auction_time_min\"/>";
 					          
 					          //Roshtoff übergabe an XAJAX (da die $c-variabeln nicht abgerufen werden könnnen)
-					          echo "<input type=\"hidden\" value=\"".$c->res->metal."\" name=\"res_metal\" />";
-					          echo "<input type=\"hidden\" value=\"".$c->res->crystal."\" name=\"res_crystal\" />";
-					          echo "<input type=\"hidden\" value=\"".$c->res->plastic."\" name=\"res_plastic\" />";
-					          echo "<input type=\"hidden\" value=\"".$c->res->fuel."\" name=\"res_fuel\" />";
-					          echo "<input type=\"hidden\" value=\"".$c->res->food."\" name=\"res_food\" />";
+					          echo "<input type=\"hidden\" value=\"".$cp->resMetal."\" name=\"res_metal\" />";
+					          echo "<input type=\"hidden\" value=\"".$cp->resCrystal."\" name=\"res_crystal\" />";
+					          echo "<input type=\"hidden\" value=\"".$cp->resPlastic."\" name=\"res_plastic\" />";
+					          echo "<input type=\"hidden\" value=\"".$cp->resFuel."\" name=\"res_fuel\" />";
+					          echo "<input type=\"hidden\" value=\"".$cp->resFood."\" name=\"res_food\" />";
 					          
 					          //Check Feld (wird beim Klicken auf den Submit-Button noch einmal aktualisiert)
 					          echo "<input type=\"hidden\" value=\"0\" name=\"auction_last_update\" id=\"auction_last_update\"/>";
@@ -5346,7 +5346,7 @@
 					echo "<tr>
 									<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_METAL.":</td>
 									<td class=\"tbldata\" style=\"vertical-align:middle;\">
-										<input type=\"text\" value=\"0\" name=\"auction_sell_metal\" id=\"auction_sell_metal\" size=\"7\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$c->res->metal.",'','');checkMarketAuctionFormular(0);\"/>
+										<input type=\"text\" value=\"0\" name=\"auction_sell_metal\" id=\"auction_sell_metal\" size=\"7\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resMetal.",'','');checkMarketAuctionFormular(0);\"/>
 									</td>
 									<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_METAL_FACTOR."</td>
 									<td class=\"tbldata\" id=\"auction_buy_metal_field\" style=\"text-align:center;vertical-align:middle;\">
@@ -5358,7 +5358,7 @@
 					echo "<tr>
 									<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_CRYSTAL.":</td>
 									<td class=\"tbldata\" style=\"vertical-align:middle;\">
-										<input type=\"text\" value=\"0\" name=\"auction_sell_crystal\" id=\"auction_sell_crystal\" size=\"7\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$c->res->crystal.",'','');checkMarketAuctionFormular(0);\"/>
+										<input type=\"text\" value=\"0\" name=\"auction_sell_crystal\" id=\"auction_sell_crystal\" size=\"7\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resCrystal.",'','');checkMarketAuctionFormular(0);\"/>
 									</td>
 									<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_CRYSTAL_FACTOR."</td>
 									<td class=\"tbldata\" id=\"auction_buy_crystal_field\" style=\"text-align:center;vertical-align:middle;\">
@@ -5390,7 +5390,7 @@
 					echo "<tr>
 									<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_PLASTIC.":</td>
 									<td class=\"tbldata\" style=\"vertical-align:middle;\">
-										<input type=\"text\" value=\"0\" name=\"auction_sell_plastic\" id=\"auction_sell_plastic\" size=\"7\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$c->res->plastic.",'','');checkMarketAuctionFormular(0);\"/>
+										<input type=\"text\" value=\"0\" name=\"auction_sell_plastic\" id=\"auction_sell_plastic\" size=\"7\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resPlastic.",'','');checkMarketAuctionFormular(0);\"/>
 									</td>
 									<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_PLASTIC_FACTOR."</td>
 									<td class=\"tbldata\" id=\"auction_buy_plastic_field\" style=\"text-align:center;vertical-align:middle;\">
@@ -5402,7 +5402,7 @@
 					echo "<tr>
 									<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_FUEL.":</td>
 									<td class=\"tbldata\" style=\"vertical-align:middle;\">
-										<input type=\"text\" value=\"0\" name=\"auction_sell_fuel\" id=\"auction_sell_fuel\" size=\"7\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$c->res->fuel.",'','');checkMarketAuctionFormular(0);\"/>
+										<input type=\"text\" value=\"0\" name=\"auction_sell_fuel\" id=\"auction_sell_fuel\" size=\"7\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resFuel.",'','');checkMarketAuctionFormular(0);\"/>
 									</td>
 									<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_FUEL_FACTOR."</td>
 									<td class=\"tbldata\" id=\"auction_buy_fuel_field\" style=\"text-align:center;vertical-align:middle;\">
@@ -5415,7 +5415,7 @@
 					echo "<tr>
 									<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_FOOD.":</td>
 									<td class=\"tbldata\" style=\"vertical-align:middle;\">
-										<input type=\"text\" value=\"0\" name=\"auction_sell_food\" id=\"auction_sell_food\" size=\"7\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$c->res->food.",'','');checkMarketAuctionFormular(0);\"/>
+										<input type=\"text\" value=\"0\" name=\"auction_sell_food\" id=\"auction_sell_food\" size=\"7\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resFood.",'','');checkMarketAuctionFormular(0);\"/>
 									</td>
 									<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_FOOD_FACTOR."</td>
 									<td class=\"tbldata\" id=\"auction_buy_food_field\" style=\"text-align:center;vertical-align:middle;\">
