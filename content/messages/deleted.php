@@ -18,7 +18,7 @@
 				ON user_id=message_user_from
 			WHERE
           m.message_id='".intval($_GET['msg_id'])."'
-          AND m.message_user_to='".$s['user']['id']."'
+          AND m.message_user_to='".$cu->id()."'
           AND m.message_deleted=1");
 			if (mysql_num_rows($mres)>0)
 			{
@@ -52,7 +52,7 @@
 					message_deleted=0
 				WHERE
           message_id='".intval($_GET['restore'])."'
-          AND message_user_to='".$s['user']['id']."'
+          AND message_user_to='".$cu->id()."'
           AND message_deleted=1");
       	if (mysql_affected_rows()>0)
       	{
@@ -80,7 +80,7 @@
 				".$db_table['users']."
 				ON user_id=message_user_from
 			WHERE
-				message_user_to='".$s['user']['id']."'
+				message_user_to='".$cu->id()."'
 				AND message_deleted=1
 			ORDER BY
 				message_timestamp DESC

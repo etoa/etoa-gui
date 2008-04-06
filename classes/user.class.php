@@ -25,6 +25,38 @@
 			{
 				$arr = mysql_fetch_assoc($res);
 
+				$rres = dbquery("
+				SELECT
+			  	race_f_researchtime,
+					race_f_buildtime,
+					race_f_fleettime,
+					race_f_metal,
+					race_f_crystal,
+					race_f_plastic,
+					race_f_fuel,
+					race_f_food,
+					race_f_power,
+					race_f_population		
+				FROM
+					races
+				WHERE
+					race_id=".$arr['user_race_id']."			
+				");
+				if (mysql_num_rows($rres)>0)
+				{
+					$rarr = mysql_fetch_assoc($rres);
+					$this->raceResearchtime = $rarr['race_f_researchtime'];
+					$this->raceBuildtime = $rarr['race_f_buildtime'];
+					$this->raceFleettime = $rarr['race_f_fleettime'];
+					$this->raceMetal = $rarr['race_f_metal'];
+					$this->raceCrystal = $rarr['race_f_crystal'];
+					$this->racePlastic = $rarr['race_f_plastic'];
+					$this->raceFuel = $rarr['race_f_fuel'];
+					$this->raceFood = $rarr['race_f_food'];
+					$this->racePower = $rarr['race_f_power'];
+					$this->racePopulation = $rarr['race_f_population'];
+				}
+
 				// Those are for session controll				
 				$this->uid = $arr['uid'];
 				$this->lt = $arr['lt'];

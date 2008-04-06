@@ -17,7 +17,7 @@
 						".$db_table['message_ignore']."
 					WHERE
 						ignore_owner_id=".$uid."
-						AND ignore_target_id=".$s['user']['id']."
+						AND ignore_target_id=".$cu->id()."
 					;");
 					$arr=mysql_fetch_row($res);
 					if ($arr[0]==0)
@@ -40,7 +40,7 @@
          		    ) 
          		   	VALUES 
          		   	(
-         		   		'".$s['user']['id']."',
+         		   		'".$cu->id()."',
          		   		'".$uid."',
          		   		".$time.",
          		   		".USER_MSG_CAT_ID.",

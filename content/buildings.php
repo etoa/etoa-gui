@@ -33,11 +33,9 @@
   // DEFINITIONEN //
 
   define('NUM_BUILDINGS_PER_ROW',4);// Gebäude pro Reihe
-  define('BUILD_BUILDING_ID',6);		// Bauhof
   define('CELL_WIDTH',175);					// Breite der Gebäudezelle in der Übersicht
-	define('GEN_TECH_ID',23);				// ID der Gentechnologie
-
-	if ($s['user']['image_filter']==1)
+	
+	if ($cu->image_filter==1)
 		$use_img_filter = true;
 	else
 		$use_img_filter = false;
@@ -49,43 +47,43 @@
 function calcBuildingWaitTime($bc,$c)
 {
 	// Wartezeiten auf Ressourcen berechnen
-	if ($c->prod->metal>0) $bwait['metal']=ceil(($bc['metal']-$c->res->metal)/$c->prod->metal*3600);else $bwait['metal']=0;
-	if ($c->prod->crystal>0) $bwait['crystal']=ceil(($bc['crystal']-$c->res->crystal)/$c->prod->crystal*3600);else $bwait['crystal']=0;
-	if ($c->prod->plastic>0) $bwait['plastic']=ceil(($bc['plastic']-$c->res->plastic)/$c->prod->plastic*3600);else $bwait['plastic']=0;
-	if ($c->prod->fuel>0) $bwait['fuel']=ceil(($bc['fuel']-$c->res->fuel)/$c->prod->fuel*3600);else $bwait['fuel']=0;
-	if ($c->prod->food>0) $bwait['food']=ceil(($bc['food']-$c->res->food)/$c->prod->food*3600);else $bwait['food']=0;
+	if ($cp->prodMetal>0) $bwait['metal']=ceil(($bc['metal']-$cp->resMetal)/$cp->prodMetal*3600);else $bwait['metal']=0;
+	if ($cp->prodCrystal>0) $bwait['crystal']=ceil(($bc['crystal']-$cp->resCrystal)/$cp->prodCrystal*3600);else $bwait['crystal']=0;
+	if ($cp->prodPlastic>0) $bwait['plastic']=ceil(($bc['plastic']-$cp->resPlastic)/$cp->prodPlastic*3600);else $bwait['plastic']=0;
+	if ($cp->prodFuel>0) $bwait['fuel']=ceil(($bc['fuel']-$cp->resFuel)/$cp->prodFuel*3600);else $bwait['fuel']=0;
+	if ($cp->prodFood>0) $bwait['food']=ceil(($bc['food']-$cp->resFood)/$cp->prodFood*3600);else $bwait['food']=0;
 	$bwmax=max($bwait['metal'],$bwait['crystal'],$bwait['plastic'],$bwait['fuel'],$bwait['food']);
 
 	// Baukosten-String
 	$bcstring.="<td";
-	if ($bc['metal']>$c->res->metal)
-		$bcstring.= " class=\"tbldata2\" ".tm("Fehlender Rohstoff","<b>".nf($bc['metal']-$c->res->metal)."</b> ".RES_METAL."<br/>Bereit in <b>".tf($bwait['metal'])."</b>");
+	if ($bc['metal']>$cp->resMetal)
+		$bcstring.= " class=\"tbldata2\" ".tm("Fehlender Rohstoff","<b>".nf($bc['metal']-$cp->resMetal)."</b> ".RES_METAL."<br/>Bereit in <b>".tf($bwait['metal'])."</b>");
 	else
 		$bcstring.=" class=\"tbldata\"";
 	$bcstring.= ">".nf($bc['metal'])."</td><td";
-	if ($bc['crystal']>$c->res->crystal)
-		$bcstring.= " class=\"tbldata2\" ".tm("Fehlender Rohstoff",nf($bc['crystal']-$c->res->crystal)." ".RES_CRYSTAL."<br/>Bereit in <b>".tf($bwait['crystal'])."</b>");
+	if ($bc['crystal']>$cp->resCrystal)
+		$bcstring.= " class=\"tbldata2\" ".tm("Fehlender Rohstoff",nf($bc['crystal']-$cp->resCrystal)." ".RES_CRYSTAL."<br/>Bereit in <b>".tf($bwait['crystal'])."</b>");
 	else
 		$bcstring.=" class=\"tbldata\"";
 	$bcstring.= ">".nf($bc['crystal'])."</td><td";
-	if ($bc['plastic']>$c->res->plastic)
-		$bcstring.= " class=\"tbldata2\" ".tm("Fehlender Rohstoff",nf($bc['plastic']-$c->res->plastic)." ".RES_PLASTIC."<br/>Bereit in <b>".tf($bwait['plastic'])."</b>");
+	if ($bc['plastic']>$cp->resPlastic)
+		$bcstring.= " class=\"tbldata2\" ".tm("Fehlender Rohstoff",nf($bc['plastic']-$cp->resPlastic)." ".RES_PLASTIC."<br/>Bereit in <b>".tf($bwait['plastic'])."</b>");
 	else
 		$bcstring.=" class=\"tbldata\"";
 	$bcstring.= ">".nf($bc['plastic'])."</td><td";
-	if ($bc['fuel']>$c->res->fuel)
-		$bcstring.= " class=\"tbldata2\" ".tm("Fehlender Rohstoff",nf($bc['fuel']-$c->res->fuel)." ".RES_FUEL."<br/>Bereit in <b>".tf($bwait['fuel'])."</b>");
+	if ($bc['fuel']>$cp->resFuel)
+		$bcstring.= " class=\"tbldata2\" ".tm("Fehlender Rohstoff",nf($bc['fuel']-$cp->resFuel)." ".RES_FUEL."<br/>Bereit in <b>".tf($bwait['fuel'])."</b>");
 	else
 		$bcstring.=" class=\"tbldata\"";
 	$bcstring.= ">".nf($bc['fuel'])."</td><td";
-	if ($bc['food']>$c->res->food)
-		$bcstring.= " class=\"tbldata2\" ".tm("Fehlender Rohstoff",nf($bc['food']-$c->res->food)." ".RES_FOOD."<br/>Bereit in <b>".tf($bwait['food'])."</b>");
+	if ($bc['food']>$cp->resFood)
+		$bcstring.= " class=\"tbldata2\" ".tm("Fehlender Rohstoff",nf($bc['food']-$cp->resFood)." ".RES_FOOD."<br/>Bereit in <b>".tf($bwait['food'])."</b>");
 	else
 		$bcstring.=" class=\"tbldata\"";
 	$bcstring.= ">".nf($bc['food'])."</td><td";
 	
-	if ($bc['power']> $c->prod->power- $c->use->power && $bc['power']>0)
-		$bcstring.= " class=\"tbldata2\" ".tm("Fehlender Rohstoff",nf($bc['power']-($c->prod->power-$c->use->power))." Energie");
+	if ($bc['power']> $cp->prodPower- $cp->usePower && $bc['power']>0)
+		$bcstring.= " class=\"tbldata2\" ".tm("Fehlender Rohstoff",nf($bc['power']-($cp->prodPower-$cp->usePower))." Energie");
 	else
 		$bcstring.=" class=\"tbldata\"";
 	$bcstring.= ">".nf($bc['power'])."</td></tr>";
@@ -107,56 +105,56 @@ function calcDemolishingCosts($buildingArray, $buildingCosts)
 
 function calcDemolishingWaitTime($dc,$c)
 {
-	if ($c->prod->metal>0)
-		$dwait['metal']=ceil(($dc['metal']-$c->res->metal)/$c->prod->metal*3600);
+	if ($cp->prodMetal>0)
+		$dwait['metal']=ceil(($dc['metal']-$cp->resMetal)/$cp->prodMetal*3600);
 	else
 		$dwait['metal']=0;
-	if ($c->prod->crystal>0)
-		$dwait['crystal']=ceil(($dc['crystal']-$c->res->crystal)/$c->prod->crystal*3600);
+	if ($cp->prodCrystal>0)
+		$dwait['crystal']=ceil(($dc['crystal']-$cp->resCrystal)/$cp->prodCrystal*3600);
 	else
 		$dwait['crystal']=0;
-	if ($c->prod->plastic>0)
-		$dwait['plastic']=ceil(($dc['plastic']-$c->res->plastic)/$c->prod->plastic*3600);
+	if ($cp->prodPlastic>0)
+		$dwait['plastic']=ceil(($dc['plastic']-$cp->resPlastic)/$cp->prodPlastic*3600);
 	else
 		$dwait['plastic']=0;
-	if ($c->prod->fuel>0)
-		$dwait['fuel']=ceil(($dc['fuel']-$c->res->fuel)/$c->prod->fuel*3600);
+	if ($cp->prodFuel>0)
+		$dwait['fuel']=ceil(($dc['fuel']-$cp->resFuel)/$cp->prodFuel*3600);
 	else
 		$dwait['plastic']=0;
-	if ($c->prod->food>0)
-		$dwait['food']=ceil(($dc['food']-$c->res->food)/$c->prod->food*3600);
+	if ($cp->prodFood>0)
+		$dwait['food']=ceil(($dc['food']-$cp->resFood)/$cp->prodFood*3600);
 	else
 		$dwait['food']=0;
 	$dwmax=max($dwait['metal'],$dwait['crystal'],$dwait['plastic'],$dwait['fuel'],$dwait['food']);
 
 	$dwstring= "<td";
-	if ($dc['metal']>$c->res->metal)
-		$dwstring.=" class=\"tbldata2\" ".tm("Fehlender Rohstoff","<b>".nf($dc['metal']-$c->res->metal)."</b> ".RES_METAL."<br/>Bereit in <b>".tf($dwait['metal'])."</b>");
+	if ($dc['metal']>$cp->resMetal)
+		$dwstring.=" class=\"tbldata2\" ".tm("Fehlender Rohstoff","<b>".nf($dc['metal']-$cp->resMetal)."</b> ".RES_METAL."<br/>Bereit in <b>".tf($dwait['metal'])."</b>");
 	else
 		$dwstring.=" class=\"tbldata\"";
 	$dwstring.= ">".nf($dc['metal'])."</td><td";
-	if ($dc['crystal']>$c->res->crystal)
-		$dwstring.= " class=\"tbldata2\" ".tm("Fehlender Rohstoff",nf($dc['crystal']-$c->res->crystal)." ".RES_CRYSTAL."<br/>Bereit in <b>".tf($dwait['crystal'])."</b>");
+	if ($dc['crystal']>$cp->resCrystal)
+		$dwstring.= " class=\"tbldata2\" ".tm("Fehlender Rohstoff",nf($dc['crystal']-$cp->resCrystal)." ".RES_CRYSTAL."<br/>Bereit in <b>".tf($dwait['crystal'])."</b>");
 	else
 		$dwstring.=" class=\"tbldata\"";
 	$dwstring.= ">".nf($dc['crystal'])."</td><td";
-	if ($dc['plastic']>$c->res->plastic)
-		$dwstring.= " class=\"tbldata2\" ".tm("Fehlender Rohstoff",nf($dc['plastic']-$c->res->plastic)." ".RES_PLASTIC."<br/>Bereit in <b>".tf($dwait['plastic'])."</b>");
+	if ($dc['plastic']>$cp->resPlastic)
+		$dwstring.= " class=\"tbldata2\" ".tm("Fehlender Rohstoff",nf($dc['plastic']-$cp->resPlastic)." ".RES_PLASTIC."<br/>Bereit in <b>".tf($dwait['plastic'])."</b>");
 	else
 		$dwstring.=" class=\"tbldata\"";
 	$dwstring.= ">".nf($dc['plastic'])."</td><td";
-	if ($dc['fuel']>$c->res->fuel)
-		$dwstring.= " class=\"tbldata2\" ".tm("Fehlender Rohstoff",nf($dc['fuel']-$c->res->fuel)." ".RES_FUEL."<br/>Bereit in <b>".tf($dwait['fuel'])."</b>");
+	if ($dc['fuel']>$cp->resFuel)
+		$dwstring.= " class=\"tbldata2\" ".tm("Fehlender Rohstoff",nf($dc['fuel']-$cp->resFuel)." ".RES_FUEL."<br/>Bereit in <b>".tf($dwait['fuel'])."</b>");
 	else
 		$dwstring.=" class=\"tbldata\"";
 	$dwstring.= ">".nf($dc['fuel'])."</td><td";
-	if ($dc['food']>$c->res->food)
-		$dwstring.= " class=\"tbldata2\" ".tm("Fehlender Rohstoff",nf($dc['food']-$c->res->food)." ".RES_FOOD."<br/>Bereit in <b>".tf($dwait['food'])."</b>");
+	if ($dc['food']>$cp->resFood)
+		$dwstring.= " class=\"tbldata2\" ".tm("Fehlender Rohstoff",nf($dc['food']-$cp->resFood)." ".RES_FOOD."<br/>Bereit in <b>".tf($dwait['food'])."</b>");
 	else
 		$dwstring.=" class=\"tbldata\"";
 	$dwstring.= ">".nf($dc['food'])."</td><td";
-	if ($dc['power']>$c->prod->power-$c->use->power && $dc['power']>0)
-		$dwstring.= " class=\"tbldata2\" ".tm("Fehlender Rohstoff",nf($dc['power']-($c->prod->power-$c->use->power))." Energie");
+	if ($dc['power']>$cp->prodPower-$cp->usePower && $dc['power']>0)
+		$dwstring.= " class=\"tbldata2\" ".tm("Fehlender Rohstoff",nf($dc['power']-($cp->prodPower-$cp->usePower))." Energie");
 	else
 		$dwstring.=" class=\"tbldata\"";
 	$dwstring.= ">".nf($dc['power'])."</td></tr>";
@@ -165,10 +163,10 @@ function calcDemolishingWaitTime($dc,$c)
 
 	// SKRIPT //
 
-	if ($planets->current)
+	if (isset($cp))
 	{
-		echo "<h1>Bauhof des Planeten ".$c->name."</h1>";
-		$c->resBox();
+		echo "<h1>Bauhof des Planeten ".$cp->name()."</h1>";
+		$cp->resBox();
 
 		// Gebäudeliste laden
 		$sql ="
@@ -177,8 +175,8 @@ function calcDemolishingWaitTime($dc,$c)
 		FROM 
 		"	.$db_table['buildlist']." 
 		WHERE 
-			buildlist_user_id='".$s['user']['id']."' 
-			AND buildlist_planet_id='".$c->id."';";
+			buildlist_user_id='".$cu->id()."' 
+			AND buildlist_planet_id='".$cp->id()."';";
 		
 		$blres = dbquery($sql);
 		$builing_something=false;
@@ -198,7 +196,7 @@ function calcDemolishingWaitTime($dc,$c)
 		FROM 
 			".$db_table['techlist']." 
 		WHERE 
-			techlist_user_id='".$s['user']['id']."'
+			techlist_user_id='".$cu->id()."'
 		;");
 		while ($tarr = mysql_fetch_array($tres))
 		{
@@ -232,7 +230,7 @@ function calcDemolishingWaitTime($dc,$c)
 		FROM
 			".$db_table['techlist']."
 		WHERE
-            techlist_user_id='".$s['user']['id']."'
+            techlist_user_id='".$cu->id()."'
             AND techlist_tech_id='".GEN_TECH_ID."';");
 		if(mysql_num_rows($tlres)>0)
 		{
@@ -254,7 +252,7 @@ function calcDemolishingWaitTime($dc,$c)
 			".$db_table['deflist']." AS dl
 			ON
 			d.def_id = dl.deflist_def_id 
-			AND dl.deflist_planet_id='".$c->id."';");
+			AND dl.deflist_planet_id='".$cp->id()."';");
 		$arr=mysql_fetch_array($res_def);
 		if ($arr['planet_def_fields_needed']>0)
 		{
@@ -323,7 +321,7 @@ function calcDemolishingWaitTime($dc,$c)
 				// Bauzeit
 				$btime_global_factor = $conf['global_time']['v'];
 				$btime_build_factor = $conf['build_build_time']['v'];
-				$bonus = $c->race->buildtime + $c->type->buildtime + $c->sol->type->buildtime-2;
+				$bonus = $cu->raceBuildtime + $cp->typeBuildtime + $cp->starBuildtime-2;
 
 				$btime = ($bc['metal']+$bc['crystal']+$bc['plastic']+$bc['fuel']+$bc['food']) / 12 * $btime_global_factor * $btime_build_factor;
 				$btime *= $bonus;
@@ -355,9 +353,9 @@ function calcDemolishingWaitTime($dc,$c)
 					if (!$builing_something)
 					{
 
-						if ($c->fields_used+$arr['building_fields']+$def_field_needed <= $c->fields+$c->fields_extra || $arr['building_fields']==0)
+						if ($cp->fields_used+$arr['building_fields']+$def_field_needed <= $cp->fields+$cp->fields_extra || $arr['building_fields']==0)
 						{
-							if ($c->res->metal >= $bc['metal'] && $c->res->crystal >= $bc['crystal'] && $c->res->plastic >= $bc['plastic']  && $c->res->fuel >= $bc['fuel']  && $c->res->food >= $bc['food'])
+							if ($cp->resMetal >= $bc['metal'] && $cp->resCrystal >= $bc['crystal'] && $cp->resPlastic >= $bc['plastic']  && $cp->resFuel >= $bc['fuel']  && $cp->resFood >= $bc['food'])
 							{
 								$end_time = time()+$btime;
 								
@@ -373,8 +371,8 @@ function calcDemolishingWaitTime($dc,$c)
 										buildlist_build_end_time='".$end_time."'
 									WHERE 
 										buildlist_building_id='".$arr['building_id']."'
-										AND buildlist_user_id='".$s['user']['id']."'
-										AND buildlist_planet_id='".$c->id."';");
+										AND buildlist_user_id='".$cu->id()."'
+										AND buildlist_planet_id='".$cp->id()."';");
 								}
 								//Gebäude noch nicht vorhanden
 								else
@@ -396,22 +394,22 @@ function calcDemolishingWaitTime($dc,$c)
 										'".time()."',
 										'".$end_time."',
 										'".$arr['building_id']."',
-										'".$s['user']['id']."',
-										'".$c->id."'
+										'".$cu->id()."',
+										'".$cp->id()."'
 									);");
 
 								}
 								
 								//Rohstoffe vom Planeten abziehen und aktualisieren
-								$c->changeRes(-$bc['metal'],-$bc['crystal'],-$bc['plastic'],-$bc['fuel'],-$bc['food']);
+								$cp->changeRes(-$bc['metal'],-$bc['crystal'],-$bc['plastic'],-$bc['fuel'],-$bc['food']);
 								$b_status=1;
 								
 								
 								//Log schreiben
 								$log_text = "
 								<b>Gebäude Ausbau</b><br><br>
-								<b>User:</b> [USER_ID=".$s['user']['id'].";USER_NICK=".$s['user']['nick']."]<br>
-								<b>Planeten:</b> [PLANET_ID=".$c->id.";PLANET_NAME=".$c->name."]<br>
+								<b>User:</b> [USER_ID=".$cu->id().";USER_NICK=".$cu->nick."]<br>
+								<b>Planeten:</b> [PLANET_ID=".$cp->id().";PLANET_NAME=".$cp->name."]<br>
 								<b>Gebäude:</b> ".$arr['building_name']."<br>
 								<b>Gebäude Level:</b> ".$b_level." (vor Ausbau)<br>
 								<b>Bau dauer:</b> ".tf($btime)."<br>
@@ -425,15 +423,15 @@ function calcDemolishingWaitTime($dc,$c)
 								<b>".RES_FUEL.":</b> ".nf($bc['fuel'])."<br>
 								<b>".RES_FOOD.":</b> ".nf($bc['food'])."<br><br>
 								<b>Restliche Rohstoffe auf dem Planeten</b><br><br>
-								<b>".RES_METAL.":</b> ".nf($c->res->metal)."<br>
-								<b>".RES_CRYSTAL.":</b> ".nf($c->res->crystal)."<br>
-								<b>".RES_PLASTIC.":</b> ".nf($c->res->plastic)."<br>
-								<b>".RES_FUEL.":</b> ".nf($c->res->fuel)."<br>
-								<b>".RES_FOOD.":</b> ".nf($c->res->food)."<br><br>
+								<b>".RES_METAL.":</b> ".nf($cp->resMetal)."<br>
+								<b>".RES_CRYSTAL.":</b> ".nf($cp->resCrystal)."<br>
+								<b>".RES_PLASTIC.":</b> ".nf($cp->resPlastic)."<br>
+								<b>".RES_FUEL.":</b> ".nf($cp->resFuel)."<br>
+								<b>".RES_FOOD.":</b> ".nf($cp->resFood)."<br><br>
 								";
 								
 								//Log Speichern
-								add_log_game_building($log_text,$s['user']['id'],$s['user']['alliance_id'],$c->id,$arr['building_id'],$b_status,time());
+								add_log_game_building($log_text,$cu->id(),$cu->alliance_id,$cp->id(),$arr['building_id'],$b_status,time());
 								
 							}
 							else
@@ -451,7 +449,7 @@ function calcDemolishingWaitTime($dc,$c)
 				{
 					if (!$builing_something)
 					{
-						if ($c->res->metal >= $dc['metal'] && $c->res->crystal >= $dc['crystal'] && $c->res->plastic >= $dc['plastic']  && $c->res->fuel >= $dc['fuel']  && $c->res->food >= $dc['food'])
+						if ($cp->resMetal >= $dc['metal'] && $cp->resCrystal >= $dc['crystal'] && $cp->resPlastic >= $dc['plastic']  && $cp->resFuel >= $dc['fuel']  && $cp->resFood >= $dc['food'])
 						{
 							$end_time = time()+$dtime;
 							dbquery("
@@ -463,19 +461,19 @@ function calcDemolishingWaitTime($dc,$c)
 								buildlist_build_end_time='".$end_time."'
 							WHERE 
 								buildlist_building_id='".$arr['building_id']."'
-								AND buildlist_user_id='".$s['user']['id']."'
-								AND buildlist_planet_id='".$c->id."';");
+								AND buildlist_user_id='".$cu->id()."'
+								AND buildlist_planet_id='".$cp->id()."';");
 								
 							//Rohstoffe vom Planeten abziehen und aktualisieren
-							$c->changeRes(-$dc['metal'],-$dc['crystal'],-$dc['plastic'],-$dc['fuel'],-$dc['food']);
+							$cp->changeRes(-$dc['metal'],-$dc['crystal'],-$dc['plastic'],-$dc['fuel'],-$dc['food']);
 							$b_status=2;
 							
 							
 							//Log schreiben
 							$log_text = "
 							<b>Gebäude Abriss</b><br><br>
-							<b>User:</b> [USER_ID=".$s['user']['id'].";USER_NICK=".$s['user']['nick']."]<br>
-							<b>Planeten:</b> [PLANET_ID=".$c->id.";PLANET_NAME=".$c->name."]<br>
+							<b>User:</b> [USER_ID=".$cu->id().";USER_NICK=".$cu->nick."]<br>
+							<b>Planeten:</b> [PLANET_ID=".$cp->id().";PLANET_NAME=".$cp->name."]<br>
 							<b>Gebäude:</b> ".$arr['building_name']."<br>
 							<b>Gebäude Level:</b> ".$b_level." (vor Abriss)<br>
 							<b>Abriss dauer:</b> ".tf($dtime)."<br>
@@ -487,15 +485,15 @@ function calcDemolishingWaitTime($dc,$c)
 							<b>".RES_FUEL.":</b> ".nf($dc['fuel'])."<br>
 							<b>".RES_FOOD.":</b> ".nf($dc['food'])."<br><br>
 							<b>Restliche Rohstoffe auf dem Planeten</b><br><br>
-							<b>".RES_METAL.":</b> ".nf($c->res->metal)."<br>
-							<b>".RES_CRYSTAL.":</b> ".nf($c->res->crystal)."<br>
-							<b>".RES_PLASTIC.":</b> ".nf($c->res->plastic)."<br>
-							<b>".RES_FUEL.":</b> ".nf($c->res->fuel)."<br>
-							<b>".RES_FOOD.":</b> ".nf($c->res->food)."<br><br>
+							<b>".RES_METAL.":</b> ".nf($cp->resMetal)."<br>
+							<b>".RES_CRYSTAL.":</b> ".nf($cp->resCrystal)."<br>
+							<b>".RES_PLASTIC.":</b> ".nf($cp->resPlastic)."<br>
+							<b>".RES_FUEL.":</b> ".nf($cp->resFuel)."<br>
+							<b>".RES_FOOD.":</b> ".nf($cp->resFood)."<br><br>
 							";
 							
 							//Log Speichern
-							add_log_game_building($log_text,$s['user']['id'],$s['user']['alliance_id'],$c->id,$arr['building_id'],$b_status,time());	
+							add_log_game_building($log_text,$cu->id(),$cu->alliance_id,$cp->id(),$arr['building_id'],$b_status,time());	
 							
 						}
 						else
@@ -520,19 +518,19 @@ function calcDemolishingWaitTime($dc,$c)
 							buildlist_build_end_time=0
 						WHERE 
 							buildlist_building_id='".$arr['building_id']."'
-							AND buildlist_user_id='".$s['user']['id']."'
-							AND buildlist_planet_id='".$c->id."';");
+							AND buildlist_user_id='".$cu->id()."'
+							AND buildlist_planet_id='".$cp->id()."';");
 							
 						//Rohstoffe vom Planeten abziehen und aktualisieren
-						$c->changeRes($bc['metal']*$fac,$bc['crystal']*$fac,$bc['plastic']*$fac,$bc['fuel']*$fac,$bc['food']*$fac);
+						$cp->changeRes($bc['metal']*$fac,$bc['crystal']*$fac,$bc['plastic']*$fac,$bc['fuel']*$fac,$bc['food']*$fac);
 						$b_status=0;
 						$builing_something=false;
 						
 						//Log schreiben
 						$log_text = "
 						<b>Gebäudebau Abbruch</b><br><br>
-						<b>User:</b> [USER_ID=".$s['user']['id'].";USER_NICK=".$s['user']['nick']."]<br>
-						<b>Planeten:</b> [PLANET_ID=".$c->id.";PLANET_NAME=".$c->name."]<br>
+						<b>User:</b> [USER_ID=".$cu->id().";USER_NICK=".$cu->nick."]<br>
+						<b>Planeten:</b> [PLANET_ID=".$cp->id().";PLANET_NAME=".$cp->name."]<br>
 						<b>Gebäude:</b> ".$arr['building_name']."<br>
 						<b>Gebäude Level:</b> ".$b_level." (nach Abbruch)<br>
 						<b>Start des Gebädes:</b> ".date("Y-m-d H:i:s",$start_time)."<br>
@@ -545,15 +543,15 @@ function calcDemolishingWaitTime($dc,$c)
 						<b>".RES_FUEL.":</b> ".nf($bc['fuel']*$fac)."<br>
 						<b>".RES_FOOD.":</b> ".nf($bc['food']*$fac)."<br><br>
 						<b>Rohstoffe auf dem Planeten</b><br><br>
-						<b>".RES_METAL.":</b> ".nf($c->res->metal)."<br>
-						<b>".RES_CRYSTAL.":</b> ".nf($c->res->crystal)."<br>
-						<b>".RES_PLASTIC.":</b> ".nf($c->res->plastic)."<br>
-						<b>".RES_FUEL.":</b> ".nf($c->res->fuel)."<br>
-						<b>".RES_FOOD.":</b> ".nf($c->res->food)."<br><br>
+						<b>".RES_METAL.":</b> ".nf($cp->resMetal)."<br>
+						<b>".RES_CRYSTAL.":</b> ".nf($cp->resCrystal)."<br>
+						<b>".RES_PLASTIC.":</b> ".nf($cp->resPlastic)."<br>
+						<b>".RES_FUEL.":</b> ".nf($cp->resFuel)."<br>
+						<b>".RES_FOOD.":</b> ".nf($cp->resFood)."<br><br>
 						";
 						
 						//Log Speichern
-						add_log_game_building($log_text,$s['user']['id'],$s['user']['alliance_id'],$c->id,$arr['building_id'],$b_status,time());								
+						add_log_game_building($log_text,$cu->id(),$cu->alliance_id,$cp->id(),$arr['building_id'],$b_status,time());								
 					}
 					else
 						echo "<i>Bauauftrag kann nicht mehr abgebrochen werden, die Arbeit ist bereits fertiggestellt!</i><br/><br/>";
@@ -574,19 +572,19 @@ function calcDemolishingWaitTime($dc,$c)
 							buildlist_build_end_time=0
 						WHERE 
 							buildlist_building_id='".$arr['building_id']."'
-							AND buildlist_user_id='".$s['user']['id']."'
-							AND buildlist_planet_id='".$c->id."';");
+							AND buildlist_user_id='".$cu->id()."'
+							AND buildlist_planet_id='".$cp->id()."';");
 						
 						//Rohstoffe vom Planeten abziehen und aktualisieren
-						$c->changeRes($dc['metal']*$fac,$dc['crystal']*$fac,$dc['plastic']*$fac,$dc['fuel']*$fac,$dc['food']*$fac);
+						$cp->changeRes($dc['metal']*$fac,$dc['crystal']*$fac,$dc['plastic']*$fac,$dc['fuel']*$fac,$dc['food']*$fac);
 						$b_status=0;
 						$builing_something=false;
 						
 						//Log schreiben
 						$log_text = "
 						<b>Gebäudeabbruch Abbruch</b><br><br>
-						<b>User:</b> [USER_ID=".$s['user']['id'].";USER_NICK=".$s['user']['nick']."]<br>
-						<b>Planeten:</b> [PLANET_ID=".$c->id.";PLANET_NAME=".$c->name."]<br>
+						<b>User:</b> [USER_ID=".$cu->id().";USER_NICK=".$cu->nick."]<br>
+						<b>Planeten:</b> [PLANET_ID=".$cp->id().";PLANET_NAME=".$cp->name."]<br>
 						<b>Gebäude:</b> ".$arr['building_name']."<br>
 						<b>Gebäude Level:</b> ".$b_level." (nach Abbruch)<br>
 						<b>Start des Gebädes:</b> ".date("Y-m-d H:i:s",$start_time)."<br>
@@ -599,15 +597,15 @@ function calcDemolishingWaitTime($dc,$c)
 						<b>".RES_FUEL.":</b> ".nf($dc['fuel']*$fac)."<br>
 						<b>".RES_FOOD.":</b> ".nf($dc['food']*$fac)."<br><br>
 						<b>Rohstoffe auf dem Planeten</b><br><br>
-						<b>".RES_METAL.":</b> ".nf($c->res->metal)."<br>
-						<b>".RES_CRYSTAL.":</b> ".nf($c->res->crystal)."<br>
-						<b>".RES_PLASTIC.":</b> ".nf($c->res->plastic)."<br>
-						<b>".RES_FUEL.":</b> ".nf($c->res->fuel)."<br>
-						<b>".RES_FOOD.":</b> ".nf($c->res->food)."<br><br>
+						<b>".RES_METAL.":</b> ".nf($cp->resMetal)."<br>
+						<b>".RES_CRYSTAL.":</b> ".nf($cp->resCrystal)."<br>
+						<b>".RES_PLASTIC.":</b> ".nf($cp->resPlastic)."<br>
+						<b>".RES_FUEL.":</b> ".nf($cp->resFuel)."<br>
+						<b>".RES_FOOD.":</b> ".nf($cp->resFood)."<br><br>
 						";
 						
 						//Log Speichern
-						add_log_game_building($log_text,$s['user']['id'],$s['user']['alliance_id'],$c->id,$arr['building_id'],$b_status,time());							
+						add_log_game_building($log_text,$cu->id(),$cu->alliance_id,$cp->id(),$arr['building_id'],$b_status,time());							
 					}
 					else
 						echo "<i>Abbruchauftrag kann nicht mehr abgebrochen werden, die Arbeit ist bereits fertiggestellt!</i><br/><br/>";
@@ -743,7 +741,7 @@ function calcDemolishingWaitTime($dc,$c)
 										</tr>";
 						}
 						// Zuwenig Felder vorhanden
-						elseif ($arr['building_fields']>0 && ($c->fields_used+$arr['building_fields']+$def_field_needed > $c->fields+$c->fields_extra))
+						elseif ($arr['building_fields']>0 && ($cp->fields_used+$arr['building_fields']+$def_field_needed > $cp->fields+$cp->fields_extra))
 						{
 							echo "<tr>
 											<td class=\"tbldata\" style=\"color:red;\">Bauen</td>
@@ -751,17 +749,17 @@ function calcDemolishingWaitTime($dc,$c)
 							echo $bWaitArray[0];
 							echo "<tr>
 											<td class=\"tbldata\" colspan=\"8\">
-												<i>Kein Ausbau m&ouml;glich, da es zuwenig Platz (Total: ".($c->fields+$c->fields_extra).", reserviert: ".($c->fields_used+$def_field_needed).", benötigt: ".$arr['building_fields'].") f&uuml;r dieses Geb&auml;ude hat!</i>
+												<i>Kein Ausbau m&ouml;glich, da es zuwenig Platz (Total: ".($cp->fields+$cp->fields_extra).", reserviert: ".($cp->fields_used+$def_field_needed).", benötigt: ".$arr['building_fields'].") f&uuml;r dieses Geb&auml;ude hat!</i>
 											</td>
 										</tr>";
 						}
 						// Zuwenig Rohstoffe vorhanden
-						elseif ($c->res->metal < $bc['metal'] || 
-						$c->res->crystal < $bc['crystal']  || 
-						$c->res->plastic < $bc['plastic']  || 
-						$c->res->fuel < $bc['fuel']  || 
-						$c->res->food < $bc['food'] || 
-						($c->prod->power - $c->use->power < $bc['power'] && $bc['power']>0)
+						elseif ($cp->resMetal < $bc['metal'] || 
+						$cp->resCrystal < $bc['crystal']  || 
+						$cp->resPlastic < $bc['plastic']  || 
+						$cp->resFuel < $bc['fuel']  || 
+						$cp->resFood < $bc['food'] || 
+						($cp->prodPower - $cp->usePower < $bc['power'] && $bc['power']>0)
 						)
 						{
 							echo "<tr>
@@ -823,12 +821,12 @@ function calcDemolishingWaitTime($dc,$c)
 										</tr>";
 						}
 						// Zuwenig Rohstoffe
-						elseif ($c->res->metal < $dc['metal'] || 
-						$c->res->crystal < $dc['crystal']  || 
-						$c->res->plastic < $dc['plastic']  || 
-						$c->res->fuel < $dc['fuel']  || 
-						$c->res->food < $dc['food'] || 
-						($c->prod->power - $c->use->power < $dc['power'] && $dc['power']>0)
+						elseif ($cp->resMetal < $dc['metal'] || 
+						$cp->resCrystal < $dc['crystal']  || 
+						$cp->resPlastic < $dc['plastic']  || 
+						$cp->resFuel < $dc['fuel']  || 
+						$cp->resFood < $dc['food'] || 
+						($cp->prodPower - $cp->usePower < $dc['power'] && $dc['power']>0)
 						)
 						{
 							echo "<tr>
@@ -1136,7 +1134,7 @@ function calcDemolishingWaitTime($dc,$c)
 									// Zuwenig Ressourcen
 									
                 	$bc = calcBuildingCosts($bv,$b_level);
-									if($b_level<$bv['last_level'] && $c->res->metal < $bc['metal'] || $c->res->crystal < $bc['crystal']  || $c->res->plastic < $bc['plastic']  || $c->res->fuel < $bc['fuel']  || $c->res->food < $bc['food'])
+									if($b_level<$bv['last_level'] && $cp->resMetal < $bc['metal'] || $cp->resCrystal < $bc['crystal']  || $cp->resPlastic < $bc['plastic']  || $cp->resFuel < $bc['fuel']  || $cp->resFood < $bc['food'])
 									{
 										$tmtext = "<span style=\"color:#f00\">Zuwenig Ressourcen f&uuml;r<br/>weiteren Ausbau!</span><br/>";
 										$color = '#f00';

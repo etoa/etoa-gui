@@ -47,10 +47,10 @@
   FROM
   	".$db_table['buildlist']."
   WHERE
-  	buildlist_planet_id='".$c->id."'
+  	buildlist_planet_id='".$cp->id()."'
   	AND buildlist_building_id='".BUILD_MISSILE_ID."'
   	AND buildlist_current_level>='1'
-  	AND buildlist_user_id='".$s['user']['id']."'");
+  	AND buildlist_user_id='".$cu->id()."'");
 
   // Prüfen ob Gebäude gebaut ist
   if (mysql_num_rows($werft_res)>0)
@@ -61,12 +61,12 @@
 		$max_flights = $silo_level*MISSILE_SILO_FLIGHTS_PER_LEVEL;
   	
 		// Titel
-		echo "<h1>Raketensilo (Stufe ".$silo_level.") des Planeten ".$c->name."</h1>";		
+		echo "<h1>Raketensilo (Stufe ".$silo_level.") des Planeten ".$cp->name."</h1>";		
 		
 		// Ressourcen anzeigen
-		$c->resBox();
+		$cp->resBox();
 
-		if ($c->prod->power - $c->use->power >= 0 && $c->prod->power>0 && $werft_arr['buildlist_prod_percent']==1)
+		if ($cp->prodPower - $cp->usePower >= 0 && $cp->prodPower>0 && $werft_arr['buildlist_prod_percent']==1)
 		{
 			if ($werft_arr['buildlist_deactivated'] < time())
 			{
@@ -98,8 +98,8 @@
 				FROM 
 				"	.$db_table['buildlist']." 
 				WHERE 
-					buildlist_user_id='".$s['user']['id']."' 
-					AND buildlist_planet_id='".$c->id."';";
+					buildlist_user_id='".$cu->id()."' 
+					AND buildlist_planet_id='".$cp->id()."';";
 				
 				$blres = dbquery($sql);
 				$builing_something=false;
@@ -115,7 +115,7 @@
 				FROM 
 					".$db_table['techlist']." 
 				WHERE 
-					techlist_user_id='".$s['user']['id']."'
+					techlist_user_id='".$cu->id()."'
 				;");
 				while ($tarr = mysql_fetch_array($tres))
 				{
@@ -130,7 +130,7 @@
 					DELETE FROM
 						missile_flights
 					WHERE
-						flight_planet_from=".$c->id."
+						flight_planet_from=".$cp->id()."
 						AND flight_id=".intval($_GET['selfdestruct'])."
 					;");
 					if (mysql_affected_rows()>0)
@@ -176,8 +176,8 @@
 				FROM
 					missilelist
 				WHERE 
-					missilelist_user_id=".$s['user']['id']."
-					AND missilelist_planet_id=".$c->id."
+					missilelist_user_id=".$cu->id()."
+					AND missilelist_planet_id=".$cp->id()."
 				;");
 				$cnt = 0;
 				if (mysql_num_rows($res)>0)
@@ -222,7 +222,7 @@
 							flight_starttime,
 							flight_landtime
 						) VALUES (
-							'".$c->id."',
+							'".$cp->id()."',
 							'".$_POST['targetplanet']."',
 							UNIX_TIMESTAMP(),
 							UNIX_TIMESTAMP()+".$_POST['timeforflight']."
@@ -250,8 +250,8 @@
 							SET
 								missilelist_count=missilelist_count-".$v."
 							WHERE
-								missilelist_user_id=".$s['user']['id']."
-								AND missilelist_planet_id=".$c->id."							
+								missilelist_user_id=".$cu->id()."
+								AND missilelist_planet_id=".$cp->id()."							
 								AND missilelist_missile_id=".$k."								
 							;");				
 							$missilelist[$k]-=$v;		
@@ -283,7 +283,7 @@
 					planets
 				)
 					ON flight_planet_to=planet_id
-					AND flight_planet_from=".$c->id."
+					AND flight_planet_from=".$cp->id()."
 				;"); 
 				if (mysql_num_rows($res)>0)
 				{
@@ -363,11 +363,11 @@
 								$mcosts[3]=$missiles[$k]['missile_costs_fuel']*$v;
 								$mcosts[4]=$missiles[$k]['missile_costs_food']*$v;
 								
-								if ($c->res->metal >= $mcosts[0] &&
-								$c->res->crystal >= $mcosts[1] &&
-								$c->res->plastic >= $mcosts[2] &&
-								$c->res->fuel >= $mcosts[3] &&
-								$c->res->food >= $mcosts[4])
+								if ($cp->resMetal >= $mcosts[0] &&
+								$cp->resCrystal >= $mcosts[1] &&
+								$cp->resPlastic >= $mcosts[2] &&
+								$cp->resFuel >= $mcosts[3] &&
+								$cp->resFood >= $mcosts[4])
 								{
 									if (isset($missilelist[$k]))
 									{
@@ -377,8 +377,8 @@
 										SET
 											missilelist_count=missilelist_count+".$v."
 										WHERE
-											missilelist_user_id=".$s['user']['id']."
-											AND missilelist_planet_id=".$c->id."							
+											missilelist_user_id=".$cu->id()."
+											AND missilelist_planet_id=".$cp->id()."							
 											AND missilelist_missile_id=".$k."
 										");
 										$missilelist[$k]+=$v;
@@ -394,14 +394,14 @@
 											missilelist_missile_id,
 											missilelist_count
 										) VALUES (
-											".$s['user']['id'].",
-											".$c->id.",
+											".$cu->id().",
+											".$cp->id().",
 											".$k.",
 											".$v."
 										);");
 										$missilelist[$k]=$v;
 									}		
-									$c->changeRes(-$mcosts[0],-$mcosts[1],-$mcosts[2],-$mcosts[3],-$mcosts[4]);	
+									$cp->changeRes(-$mcosts[0],-$mcosts[1],-$mcosts[2],-$mcosts[3],-$mcosts[4]);	
 									echo $v." ".$missiles[$k]['missile_name']." wurden gekauft!<br/><br/>";				
 								}
 								else
@@ -445,8 +445,8 @@
 								SET
 									missilelist_count=missilelist_count-".$bc."
 								WHERE
-									missilelist_user_id=".$s['user']['id']."
-									AND missilelist_planet_id=".$c->id."							
+									missilelist_user_id=".$cu->id()."
+									AND missilelist_planet_id=".$cp->id()."							
 									AND missilelist_missile_id=".$k."
 								");
 								$missilelist[$k]-=$bc;				
@@ -558,7 +558,7 @@
 							//Titan
 							if($arr['missile_costs_metal']>0)
 							{
-								$build_cnt_metal=floor($c->res->metal/$arr['missile_costs_metal']);
+								$build_cnt_metal=floor($cp->resMetal/$arr['missile_costs_metal']);
 							}
 							else
 							{
@@ -568,7 +568,7 @@
 							//Silizium
 							if($arr['missile_costs_crystal']>0)
 							{
-								$build_cnt_crystal=floor($c->res->crystal/$arr['missile_costs_crystal']);
+								$build_cnt_crystal=floor($cp->resCrystal/$arr['missile_costs_crystal']);
 							}
 							else
 							{
@@ -578,7 +578,7 @@
 							//PVC
 							if($arr['missile_costs_plastic']>0)
 							{
-								$build_cnt_plastic=floor($c->res->plastic/$arr['missile_costs_plastic']);
+								$build_cnt_plastic=floor($cp->resPlastic/$arr['missile_costs_plastic']);
 							}
 							else
 							{
@@ -588,7 +588,7 @@
 							//Tritium
 							if($arr['missile_costs_fuel']>0)
 							{
-								$build_cnt_fuel=floor($c->res->fuel/$arr['missile_costs_fuel']);
+								$build_cnt_fuel=floor($cp->resFuel/$arr['missile_costs_fuel']);
 							}
 							else
 							{
@@ -598,7 +598,7 @@
 							//Nahrung
 							if($arr['missile_costs_food']>0)
 							{
-								$build_cnt_food=floor($c->res->food/$arr['missile_costs_food']);
+								$build_cnt_food=floor($cp->resFood/$arr['missile_costs_food']);
 							}
 							else
 							{
@@ -626,9 +626,9 @@
 							elseif($missile_max_build==0 && $store!=0)
 							{
 								//Wartezeit Titan
-  			    		if ($c->prod->metal>0)
+  			    		if ($cp->prodMetal>0)
   			    		{
-  			    			$bwait['metal']=ceil(($arr['missile_costs_metal']-$c->res->metal)/$c->prod->metal*3600);
+  			    			$bwait['metal']=ceil(($arr['missile_costs_metal']-$cp->resMetal)/$cp->prodMetal*3600);
   			    		}
   			    		else
   			    		{
@@ -636,9 +636,9 @@
   			    		}
   			    		
   			    		//Wartezeit Silizium
-  			    		if ($c->prod->crystal>0)
+  			    		if ($c->prodCrystal>0)
   			    		{
-  			    			$bwait['crystal']=ceil(($arr['missile_costs_crystal']-$c->res->crystal)/$c->prod->crystal*3600);
+  			    			$bwait['crystal']=ceil(($arr['missile_costs_crystal']-$cp->resCrystal)/$c->prodCrystal*3600);
   			    		}
   			    		else
   			    		{ 
@@ -646,9 +646,9 @@
   			    		}
   			    		
   			    		//Wartezeit PVC
-  			    		if ($c->prod->plastic>0)
+  			    		if ($cp->prodPlastic>0)
   			    		{
-  			    			$bwait['plastic']=ceil(($arr['missile_costs_plastic']-$c->res->plastic)/$c->prod->plastic*3600);
+  			    			$bwait['plastic']=ceil(($arr['missile_costs_plastic']-$cp->resPlastic)/$cp->prodPlastic*3600);
   			    		}
   			    		else
   			    		{ 
@@ -656,9 +656,9 @@
   			    		}
   			    		
   			    		//Wartezeit Tritium
-  			    		if ($c->prod->fuel>0)
+  			    		if ($cp->prodFuel>0)
   			    		{
-  			    			$bwait['fuel']=ceil(($arr['missile_costs_fuel']-$c->res->fuel)/$c->prod->fuel*3600);
+  			    			$bwait['fuel']=ceil(($arr['missile_costs_fuel']-$cp->resFuel)/$cp->prodFuel*3600);
   			    		}
   			    		else
   			    		{ 
@@ -666,9 +666,9 @@
   			    		}
   			    		
   			    		//Wartezeit Nahrung
-  			    		if ($c->prod->food>0)
+  			    		if ($cp->prodFood>0)
   			    		{
-  			    			$bwait['food']=ceil(($arr['missile_costs_food']-$c->res->food)/$c->prod->food*3600);
+  			    			$bwait['food']=ceil(($arr['missile_costs_food']-$cp->resFood)/$cp->prodFood*3600);
   			    		}
   			    		else
   			    		{ 
@@ -687,7 +687,7 @@
 
 							//Stellt Rohstoff Rot dar, wenn es von diesem zu wenig auf dem Planeten hat
 							//Titan
-							if($arr['missile_costs_metal']>$c->res->metal)
+							if($arr['missile_costs_metal']>$cp->resMetal)
 							{
 								$ress_style_metal="style=\"color:red;\"";
 							}
@@ -697,7 +697,7 @@
 							}
 							
 							//Silizium
-							if($arr['missile_costs_crystal']>$c->res->crystal)
+							if($arr['missile_costs_crystal']>$cp->resCrystal)
 							{
 								$ress_style_crystal="style=\"color:red;\"";
 							}
@@ -707,7 +707,7 @@
 							}
 							
 							//PVC
-							if($arr['missile_costs_plastic']>$c->res->plastic)
+							if($arr['missile_costs_plastic']>$cp->resPlastic)
 							{
 								$ress_style_plastic="style=\"color:red;\"";
 							}
@@ -717,7 +717,7 @@
 							}
 							
 							//Tritium
-							if($arr['missile_costs_fuel']>$c->res->fuel)
+							if($arr['missile_costs_fuel']>$cp->resFuel)
 							{
 								$ress_style_fuel="style=\"color:red;\"";
 							}
@@ -727,7 +727,7 @@
 							}
 							
 							//Nahrung
-							if($arr['missile_costs_food']>$c->res->food)
+							if($arr['missile_costs_food']>$cp->resFood)
 							{
 								$ress_style_food="style=\"color:red;\"";
 							}
@@ -929,7 +929,7 @@
 								INNER JOIN
 				       		".$db_table['planets']."
 				        ON 
-				        	target_bookmarks.bookmark_user_id=".$s['user']['id']."
+				        	target_bookmarks.bookmark_user_id=".$cu->id()."
 				         	AND target_bookmarks.bookmark_planet_id=planets.planet_id
 								INNER JOIN       		
 									".$db_table['space_cells']."
@@ -964,14 +964,14 @@
 								}
 								else
 								{
-									$coords[0] = $c->sx;
-									$coords[1] = $c->sy;
-									$coords[2] = $c->cx;
-									$coords[3] = $c->cy;
-									$coords[4] = $c->solsys_pos;
+									$coords[0] = $cp->sx;
+									$coords[1] = $cp->sy;
+									$coords[2] = $cp->cx;
+									$coords[3] = $cp->cy;
+									$coords[4] = $cp->pos;
 								}              
 				                       
-								$keyup_command = 'xajax_getFlightTargetInfo(xajax.getFormValues(\'targetForm\'),'.$c->sx.','.$c->sy.','.$c->cx.','.$c->cy.','.$c->solsys_pos.')';
+								$keyup_command = 'xajax_getFlightTargetInfo(xajax.getFormValues(\'targetForm\'),'.$cp->sx.','.$cp->sy.','.$cp->cx.','.$cp->cy.','.$cp->pos.')';
 								echo '<form action="?page='.$page.'" method="post" id="targetForm">';
 								echo $cstr;
 								echo '<table class="tb" style="width:700px;">
@@ -1095,10 +1095,10 @@
 	else
 	{
 		// Titel
-		echo "<h1>Raketensilo des Planeten ".$c->name."</h1>";		
+		echo "<h1>Raketensilo des Planeten ".$cp->name."</h1>";		
 		
 		// Ressourcen anzeigen
-		$c->resBox();
+		$cp->resBox();
 		echo "<h2>Fehler!</h2>Das Raketensilo wurde noch nicht gebaut!<br>";
 	}
 

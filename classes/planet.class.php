@@ -29,8 +29,7 @@
         	cells.cy,
         	cells.id as cell_id,
         	entities.pos,
-        	planet_types.type_id as type_id,
-        	planet_types.type_name as type_name        	
+        	planet_types.*
 				FROM 
 				(
 					planets
@@ -101,52 +100,43 @@
 				$this->typeId = $arr['type_id'];
 				$this->typeName = $arr['type_name'];
 
-				$this->starType="TODO";
+				$this->typeMetal=$arr['planet_type_f_metal'];
+				$this->typeCrystal=$arr['planet_type_f_crystal'];
+				$this->typePlastic=$arr['planet_type_f_plastic'];
+				$this->typeFuel=$arr['planet_type_f_fuel'];
+				$this->typeFood=$arr['planet_type_f_food'];
+				$this->typePower=$arr['planet_type_f_power'];
+				$this->typePopulation=$arr['planet_type_f_population'];
+				$this->typeResearchtime=$arr['planet_type_f_researchtime'];
+				$this->typeBuildtime=$arr['planet_type_f_buildtime'];
 
-				
-				/*
-				$this->type_id=$arr['planet_type_id'];
-				$this->type_name=$arr['planet_type_name'];
-				$this->type->name=$arr['planet_type_name'];
-				$this->type->metal=$arr['planet_type_f_metal'];
-				$this->type->crystal=$arr['planet_type_f_crystal'];
-				$this->type->plastic=$arr['planet_type_f_plastic'];
-				$this->type->fuel=$arr['planet_type_f_fuel'];
-				$this->type->food=$arr['planet_type_f_food'];
-				$this->type->power=$arr['planet_type_f_power'];
-				$this->type->population=$arr['planet_type_f_population'];
-				$this->type->researchtime=$arr['planet_type_f_researchtime'];
-				$this->type->buildtime=$arr['planet_type_f_buildtime'];
+				$this->starTypeId=0;
+				$this->starTypeName="Teststern";
 
-				$this->solsys_id=$arr['planet_solsys_id'];
-				$this->solsys_pos=$arr['planet_solsys_pos'];
-				$this->sol_type=$arr['cell_solsys_solsys_sol_type'];
-				$this->sol_type_name=$arr['sol_type_name'];
-				$this->sol->type->name=$arr['sol_type_name'];
-				$this->sol->type->metal=$arr['sol_type_f_metal'];
-				$this->sol->type->crystal=$arr['sol_type_f_crystal'];
-				$this->sol->type->plastic=$arr['sol_type_f_plastic'];
-				$this->sol->type->fuel=$arr['sol_type_f_fuel'];
-				$this->sol->type->food=$arr['sol_type_f_food'];
-				$this->sol->type->power=$arr['sol_type_f_power'];
-				$this->sol->type->population=$arr['sol_type_f_population'];
-				$this->sol->type->researchtime=$arr['sol_type_f_researchtime'];
-				$this->sol->type->buildtime=$arr['sol_type_f_buildtime'];
+				$this->starMetal=1;
+				$this->starCrystal=1;
+				$this->starPlastic=1;
+				$this->starFuel=1;
+				$this->starFood=1;
+				$this->starPower=1;
+				$this->starPopulation=1;
+				$this->starResearchtime=1;
+				$this->starBuildtime=1;
 
-				$this->race->metal=$arr['race_f_metal'];
-				$this->race->crystal=$arr['race_f_crystal'];
-				$this->race->plastic=$arr['race_f_plastic'];
-				$this->race->fuel=$arr['race_f_fuel'];
-				$this->race->food=$arr['race_f_food'];
-				$this->race->power=$arr['race_f_power'];
-				$this->race->population=$arr['race_f_population'];
-				$this->race->researchtime=$arr['race_f_researchtime'];
-				$this->race->buildtime=$arr['race_f_buildtime'];
-				*/
-
-				$this->debris->metal = $arr['planet_wf_metal'];
-				$this->debris->crystal = $arr['planet_wf_crystal'];
-				$this->debris->plastic = $arr['planet_wf_plastic'];
+/*
+				$this->starMetal=$arr['sol_type_f_metal'];
+				$this->starCrystal=$arr['sol_type_f_crystal'];
+				$this->starPlastic=$arr['sol_type_f_plastic'];
+				$this->starFuel=$arr['sol_type_f_fuel'];
+				$this->starFood=$arr['sol_type_f_food'];
+				$this->starPower=$arr['sol_type_f_power'];
+				$this->starPopulation=$arr['sol_type_f_population'];
+				$this->starResearchtime=$arr['sol_type_f_researchtime'];
+				$this->starBuildtime=$arr['sol_type_f_buildtime'];
+*/
+				$this->debrisMetal = $arr['planet_wf_metal'];
+				$this->debrisCrystal = $arr['planet_wf_crystal'];
+				$this->debrisPlastic = $arr['planet_wf_plastic'];
 
 				$this->fields=$arr['planet_fields'];
 				$this->fields_extra=$arr['planet_fields_extra'];
