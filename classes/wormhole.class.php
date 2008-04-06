@@ -102,5 +102,129 @@
 			return $this->cellId;
 		}
 		
+		/**
+		* Vertauscht zufällig mehrere Wurmlöcher miteinander
+		*
+		* @athor MrCage
+		*/
+		static function randomize()
+		{
+			$time = time();
+			
+			// Löschen
+			$deleted = array();
+			$delcnt=0;
+			$res=dbquery("
+				SELECT
+					id
+				FROM
+					wormholes
+				WHERE
+					target_id>'0'
+					AND changed<".($time-WH_UPDATE_AFFECT_TIME)."
+				ORDER BY
+					RAND()
+				LIMIT ".WH_UPDATE_AFFECT_CNT.";
+			");
+			if (mysql_num_rows($res)>0)
+			{
+				while ($arr=mysql_fetch_assoc($res))
+				{
+					if (!in_array($arr['id'],$deleted) && !in_array($arr['target_id'],$deleted))
+					{
+						dbquery("
+							UPDATE
+								entities
+							SET
+								code='e',
+							WHERE
+								id='".$arr['id']."'
+							OR
+								id='".$arr['target_id']."';
+						");
+						dbquery("
+							DELETE FROM	
+								wormholes
+							WHERE
+								id='".$arr['id']."'
+							OR
+								id='".$arr['target_id']."';
+						");
+						dbquery("
+							INSERT INTO
+								space
+							(
+								id
+							)
+							VALUES
+							('".$arr['id']."'),
+							('".$arr['target_id']."');
+						");					
+						array_push($deleted,$arr['id']);
+						array_push($deleted,$arr['target_id']);
+						$delcnt++;
+					}
+				}
+			}
+	
+			// Neue erstellen
+			$res=dbquery("
+				SELECT
+					id
+				FROM
+					entities
+				WHERE
+					code='e'
+				ORDER BY
+					RAND()
+				LIMIT ".($delcnt*2).";
+			");
+			while ($arr1=mysql_fetch_row($res))
+			{
+				$arr2=mysql_fetch_row($res);
+				dbquery("
+				UPDATE
+					entities
+				SET
+					code='w'
+				WHERE
+					id='".$arr1[0]."';");
+				dbquery("
+				INSERT INTO
+					wormholes
+				(
+					id,
+					target_id,
+					changed
+				)
+				VALUES (
+					'".$arr1[0]."',
+					'".$arr2[0]."',
+					'".$time."'
+				);");
+	
+				dbquery("
+				UPDATE
+					entities
+				SET
+					code='w'
+				WHERE
+					id='".$arr2[0]."';");
+				dbquery("
+				INSERT INTO
+					wormholes
+				(
+					id,
+					target_id,
+					changed
+				)
+				VALUES (
+					'".$arr2[0]."',
+					'".$arr1[0]."',
+					'".$time."'
+				);");
+			}
+		}		
+			
 	}
 ?>

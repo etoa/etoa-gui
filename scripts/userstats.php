@@ -183,8 +183,8 @@
 			/**
 			* Gameinfo XML
 			*/ 
-			$pres = dbquery("SELECT COUNT(planet_id) FROM planets;");
-			$presh = dbquery("SELECT COUNT(planet_id) FROM planets WHERE planet_user_id>0;");
+			$pres = dbquery("SELECT COUNT(id) FROM planets;");
+			$presh = dbquery("SELECT COUNT(id) FROM planets WHERE planet_user_id>0;");
 			$parr = mysql_fetch_row($pres);
 			$parrh = mysql_fetch_row($presh);
 		
