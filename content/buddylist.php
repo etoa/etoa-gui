@@ -268,7 +268,7 @@
 			echo "</td>";
 			if ($arr['bl_allow']==1)
 			{
-				$tp = new Planet($arr['planet_id']);
+				$tp = new Planet($arr['pid']);
 				echo "<td class=\"tbldata\">".nf($arr['user_points'])."</td>";
 				echo "<td class=\"tbldata\">".$tp."</td>";
 				if ((time()-$conf['online_threshold']['v']*60) < $arr['user_acttime'])

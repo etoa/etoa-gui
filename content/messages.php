@@ -33,14 +33,14 @@
 	// DEFINITIONEN //
 
 
-	$msgpreview = $s['user']['msg_preview']==1 ? true : false;
-	$msgcreatpreview = $s['user']['msgcreation_preview']==1 ? true : false;
+	$msgpreview = $cu->msg_preview==1 ? true : false;
+	$msgcreatpreview = $cu->msgcreation_preview==1 ? true : false;
 
 
 	// BEGIN SKRIPT //
 	
 	// Modus setzen
-	$mode = ($_GET['mode']!="") ? $_GET['mode'] : 'inbox';
+	$mode = isset($_GET['mode']) && ($_GET['mode']!="") ? $_GET['mode'] : 'inbox';
 
 
 	?>
@@ -81,30 +81,30 @@
 	{
 		if ($_GET['msgprev']=='on')
 		{
-			dbquery("UPDATE ".$db_table['users']." SET user_msg_preview=1 WHERE user_id=".$s['user']['id'].";");
+			dbquery("UPDATE ".$db_table['users']." SET user_msg_preview=1 WHERE user_id=".$cu->id().";");
 			$msgpreview=true;
-			$s['user']['msg_preview']=1;
+			$cu->msg_preview=1;
 		}
 		else
 		{
-			dbquery("UPDATE ".$db_table['users']." SET user_msg_preview=0 WHERE user_id=".$s['user']['id'].";");
+			dbquery("UPDATE ".$db_table['users']." SET user_msg_preview=0 WHERE user_id=".$cu->id().";");
 			$msgpreview=false;
-			$s['user']['msg_preview']=0;
+			$cu->msg_preview=0;
 		}
 	}
 	if (isset($_GET['msgcreatprev']))
 	{
 		if ($_GET['msgcreatprev']=='on')
 		{
-			dbquery("UPDATE ".$db_table['users']." SET user_msgcreation_preview=1 WHERE user_id=".$s['user']['id'].";");
+			dbquery("UPDATE ".$db_table['users']." SET user_msgcreation_preview=1 WHERE user_id=".$cu->id().";");
 			$msgcreatpreview=true;
-			$s['user']['msgcreation_preview']=1;
+			$cu->msgcreation_preview=1;
 		}
 		else
 		{
-			dbquery("UPDATE ".$db_table['users']." SET user_msgcreation_preview=0 WHERE user_id=".$s['user']['id'].";");
+			dbquery("UPDATE ".$db_table['users']." SET user_msgcreation_preview=0 WHERE user_id=".$cu->id().";");
 			$msgcreatpreview=false;
-			$s['user']['msgcreation_preview']=0;
+			$cu->msgcreation_preview=0;
 		}
 	}	
 	echo '<div style="float:right;font-size:8pt;text-align:right;">';
@@ -190,7 +190,7 @@
 			//
 			// Einzelne Nachricht
 			//
-			if (intval($_GET['msg_id'])>0)
+			if (isset($_GET['msg_id']) && intval($_GET['msg_id'])>0)
 			{
 				$mres = dbquery("
 				SELECT
@@ -211,7 +211,7 @@
         	ON message_user_from=user_id
 				WHERE                    
        		message_id='".intval($_GET['msg_id'])."'
-       		AND m.message_user_to='".$s['user']['id']."'
+       		AND m.message_user_to='".$cu->id()."'
        		AND m.message_deleted=0");
 				if (mysql_num_rows($mres)>0)
 				{
@@ -268,7 +268,7 @@
 					echo "<input type=\"hidden\" name=\"message_id\" value=\"".intval($_GET['msg_id'])."\" />";
 					echo "<input type=\"hidden\" name=\"message_subject\" value=\"".$marr['message_subject']."\" />";
 					echo "<input type=\"hidden\" name=\"message_sender\" value=\"".$sender."\" />";
-					if ($s['user']['msg_copy'])
+					if ($cu->msg_copy)
 					{
 						// Muss mit echo 'text'; erfolgen, da sonst der Text beim ersten " - Zeichen abgeschnitten wird!
 						// Allerdings ist so das selbe Problem mit den ' - Zeichen!
@@ -306,7 +306,7 @@
 			{
 
 				// Einzelne Nachricht löschen
-				if ($_POST['submitdelete']!="" && checker_verify())
+				if (isset($_POST['submitdelete']) && checker_verify())
 				{
 					dbquery("
 					UPDATE 
@@ -315,7 +315,7 @@
 						message_deleted=1 
 					WHERE 
 						message_id='".$_POST['message_id']."' 
-						AND message_user_to='".$s['user']['id']."';");
+						AND message_user_to='".$cu->id()."';");
 					success_msg("Nachricht wurde gel&ouml;scht!");
 				}
 				if (isset($_GET['del']) && $_GET['del']>0)
@@ -327,7 +327,7 @@
 						message_deleted=1 
 					WHERE 
 						message_id='".$_GET['del']."' 
-						AND message_user_to='".$s['user']['id']."';");
+						AND message_user_to='".$cu->id()."';");
 					if (mysql_affected_rows()>0)
 					{
 						success_msg("Nachricht wurde gel&ouml;scht!");
@@ -340,7 +340,7 @@
 				
 				
 				// Selektiere löschen
-				if ($_POST['submitdeleteselection']!=""  && checker_verify())
+				if (isset($_POST['submitdeleteselection'])  && checker_verify())
 				{
 					if($mode=="archiv")
 					{
@@ -362,7 +362,7 @@
 								message_deleted=1
 							WHERE
 								message_id='$id'
-								AND message_user_to='".$s['user']['id']."'
+								AND message_user_to='".$cu->id()."'
 								$sqladd;");
 						}
 						if (count($_POST['delmsg'])==1)
@@ -377,7 +377,7 @@
 				}
 				
 				// Alle Nachrichten löschen
-				elseif ($_POST['submitdeleteall']!="" && checker_verify())
+				elseif (isset($_POST['submitdeleteall']) && checker_verify())
 				{
 					if($mode=="archiv")
 						$sqladd = " AND message_archived=1";
@@ -389,13 +389,13 @@
 					SET
 						message_deleted=1
 					WHERE
-						message_user_to='".$s['user']['id']."'
+						message_user_to='".$cu->id()."'
 						$sqladd;");
 					success_msg("Alle Nachrichten wurden gel&ouml;scht!");
 				}
 				
 				// Systemnachrichten löschen
-				elseif ($_POST['submitdeletesys']!="" && checker_verify())
+				elseif (isset($_POST['submitdeletesys']) && checker_verify())
 				{
 					if($mode=="archiv")
 						$sqladd = " AND message_archived=1";
@@ -408,12 +408,12 @@
 					SET
 						message_deleted=1
 					WHERE
-         		message_user_to='".$s['user']['id']."'
+         		message_user_to='".$cu->id()."'
          		AND message_user_from=0
 						$sqladd;");
 					success_msg("Alle Systemnachrichten wurden gel&ouml;scht!");
 				}
-				elseif ($_POST['submitarchiving']!=""  && checker_verify())
+				elseif (isset($_POST['submitarchiving'])  && checker_verify())
 				{
 					if (count($_POST['delmsg'])>0)
 					{
@@ -428,7 +428,7 @@
 	                    message_archived=1
 	                WHERE
 	                    message_id='".$id."'
-	                    AND message_user_to='".$s['user']['id']."'
+	                    AND message_user_to='".$cu->id()."'
 	                    ;");
 	            }
 	            if (count($_POST['delmsg'])==1)
@@ -451,7 +451,7 @@
 				FROM
 					".$db_table['messages']."
 				WHERE
-          message_user_to='".$s['user']['id']."'
+          message_user_to='".$cu->id()."'
           AND message_read='1'
           AND message_deleted='0'
           AND message_archived='0'
@@ -466,7 +466,7 @@
 				FROM
 					".$db_table['messages']."
 				WHERE
-          message_user_to='".$s['user']['id']."'
+          message_user_to='".$cu->id()."'
           AND message_archived='1'
           AND message_deleted='0';");
 				$archived_msg_cnt_arr=mysql_fetch_row($cnt_res);
@@ -548,7 +548,7 @@
 							".$db_table['users']."
 							ON message_user_from=user_id									
 						WHERE
-							message_user_to='".$s['user']['id']."'
+							message_user_to='".$cu->id()."'
 							AND message_cat_id='".$arr['cat_id']."'
 							AND message_deleted=0
 							AND message_archived=1
@@ -576,7 +576,7 @@
 							".$db_table['users']."
 							ON message_user_from=user_id														
 						WHERE
-							message_user_to='".$s['user']['id']."'
+							message_user_to='".$cu->id()."'
 							AND message_cat_id='".$arr['cat_id']."'
 							AND message_deleted=0
 							AND message_archived=0
@@ -679,7 +679,7 @@
 								echo "<input type=\"button\" value=\"Weiterleiten\" onclick=\"document.location='?page=$page&mode=new&amp;message_subject=".base64_encode("Fw: ".$marr['message_subject'])."".$msgadd."'\" name=\"remit\" />&nbsp;";
 								if ($marr['message_user_from']>0)
 								{				
-									if ($s['user']['msg_copy'])
+									if ($cu->msg_copy)
 									{
 										echo "<input type=\"button\" value=\"Antworten\" name=\"answer\" onclick=\"document.location='?page=$page&mode=new&message_user_to=".$marr['message_user_from']."&amp;message_subject=".base64_encode("Re: ".$marr['message_subject'])."".$msgadd."'\" />&nbsp;";
 									}
