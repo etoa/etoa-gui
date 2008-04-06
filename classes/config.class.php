@@ -56,6 +56,25 @@
 	    	}
 	    }
 	    
+	    public function reload()
+	    {
+	    	$res = dbquery("
+	    	SELECT 
+	    		config_name,
+	    		config_value,
+	    		config_param1,
+	    		config_param2 	 
+	    	FROM 
+	    		config;");
+	    	while ($arr = mysql_fetch_array($res))
+	    	{
+	    		$this->keys[] = $arr['config_name'];
+	    		$this->values[$arr['config_name']] = $arr['config_value'];
+	    		$this->params1[$arr['config_name']] = $arr['config_param1'];
+	    		$this->params2[$arr['config_name']] = $arr['config_param2'];
+	    	}	    	
+	    }
+	    
 	    /**
 	    * Adds a given value to a keyword
 	    */

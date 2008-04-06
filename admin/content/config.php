@@ -352,6 +352,7 @@
 							dbquery("UPDATE ".$db_table['config']." SET config_param2='".create_sql_value($arr['config_type_p2'],$arr['config_name'],"p2",$_POST)."' WHERE config_id='".$arr['config_id']."'");
 						}
 						echo "&Auml;nderungen wurden &uuml;bernommen!<br/><br/>";
+						$cfg->reload();
 						$conf = get_all_config();
 					}
 
@@ -378,6 +379,7 @@
 							display_field($arr['config_type_p2'],$arr['config_name'],"p2");
 							echo " (".$arr['config_name'].", Parameter 2)</td></tr>";
 						}
+						echo "<tr><td colspan=\"2\" style=\"height:1px;\"></td></tr>";
 					}
 					echo "</table><br/></br/>";
 				}
