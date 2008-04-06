@@ -100,15 +100,17 @@
 				$this->typeId = $arr['type_id'];
 				$this->typeName = $arr['type_name'];
 
-				$this->typeMetal=$arr['planet_type_f_metal'];
-				$this->typeCrystal=$arr['planet_type_f_crystal'];
-				$this->typePlastic=$arr['planet_type_f_plastic'];
-				$this->typeFuel=$arr['planet_type_f_fuel'];
-				$this->typeFood=$arr['planet_type_f_food'];
-				$this->typePower=$arr['planet_type_f_power'];
-				$this->typePopulation=$arr['planet_type_f_population'];
-				$this->typeResearchtime=$arr['planet_type_f_researchtime'];
-				$this->typeBuildtime=$arr['planet_type_f_buildtime'];
+				$this->typeMetal=$arr['type_f_metal'];
+				$this->typeCrystal=$arr['type_f_crystal'];
+				$this->typePlastic=$arr['type_f_plastic'];
+				$this->typeFuel=$arr['type_f_fuel'];
+				$this->typeFood=$arr['type_f_food'];
+				$this->typePower=$arr['type_f_power'];
+				$this->typePopulation=$arr['type_f_population'];
+				$this->typeResearchtime=$arr['type_f_researchtime'];
+				$this->typeBuildtime=$arr['type_f_buildtime'];
+
+				echo $this->typeBuildtime."#";
 
 				$this->starTypeId=0;
 				$this->starTypeName="Teststern";

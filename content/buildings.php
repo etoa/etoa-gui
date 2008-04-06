@@ -321,15 +321,15 @@ function calcDemolishingWaitTime($dc,$c)
 				// Bauzeit
 				$btime_global_factor = $conf['global_time']['v'];
 				$btime_build_factor = $conf['build_build_time']['v'];
-				$bonus = $cu->raceBuildtime + $cp->typeBuildtime + $cp->starBuildtime-2;
+				$bonus = $cu->raceBuildtime + $cp->typeBuildtime + $cp->starBuildtime -2;
 
-				$btime = ($bc['metal']+$bc['crystal']+$bc['plastic']+$bc['fuel']+$bc['food']) / 12 * $btime_global_factor * $btime_build_factor;
+				$btime = ($bc['metal']+$bc['crystal']+$bc['plastic']+$bc['fuel']+$bc['food']) * $btime_global_factor * $btime_build_factor;
 				$btime *= $bonus;
 
-				$btimen = ($bcn['metal']+$bcn['crystal']+$bcn['plastic']+$bcn['fuel']+$bcn['food']) / 12 * $btime_global_factor * $btime_build_factor;
+				$btimen = ($bcn['metal']+$bcn['crystal']+$bcn['plastic']+$bcn['fuel']+$bcn['food']) * $btime_global_factor * $btime_build_factor;
 				$btimen  *= $bonus;
 
-				$dtime = ($dc['metal']+$dc['crystal']+$dc['plastic']+$dc['fuel']+$dc['food']) / 12 * $btime_global_factor * $btime_build_factor;
+				$dtime = ($dc['metal']+$dc['crystal']+$dc['plastic']+$dc['fuel']+$dc['food']) * $btime_global_factor * $btime_build_factor;
 				$dtime  *= $bonus;
 
 				if ($buildlist[BUILD_BUILDING_ID]['buildlist_people_working']>0)

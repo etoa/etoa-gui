@@ -1,74 +1,5 @@
 <?PHP
 
-/* todo
-
-		// Apply choosen itemset
-		if (isset($s['itemset_key']) && isset($_POST[md5($s['itemset_key'])]) && isset($_POST['itemset_id']))
-		{
-			addItemSetListToPlanet($c->id,$cu->id(),$_POST['itemset_id']);
-			$s['itemset_key']=null;
-			$c->update(1);
-		}
-		
-		// Display first time message
-		if ($planets->first_time)
-		{
-			
-			$res = dbquery("
-			SELECT
-				set_id,
-				set_name
-			FROM
-				default_item_sets
-			WHERE
-				set_active=1
-			");
-			if (mysql_num_rows($res)>1)
-			{
-				$k = mt_rand(10000,99999);
-				$s['itemset_key']=$k;
-				infobox_start("Start-Objekte");
-				echo "<form action=\"?\" method=\"post\">";
-				checker_init();
-				echo "Euch stehen mehrere Vorlagen von Start-Objekte zur Auswahl. Bitte wählt eine Vorlage aus, die darin definierten Objekte
-				werden dann eurem Hauptplanet hinzugefügt: <br/><br/><select name=\"itemset_id\">";
-				while ($arr=mysql_fetch_array($res))
-				{
-					echo "<option value=\"".$arr['set_id']."\">".$arr['set_name']."</option>";
-				}
-				echo "</select> <input type=\"submit\" value=\"Weiter\" name=\"".md5($k)."\" /></form>";
-				infobox_end();
-			}
-			elseif(mysql_num_rows($res)==1)
-			{
-				$arr = mysql_fetch_array($res);
-				addItemSetListToPlanet($c->id,$cu->id(),$arr['set_id']);							
-			}
-			
-			$c->update(1);
-			
-			echo '<br/>';
-			infobox_start("Willkommen");
-			echo text2html($conf['welcome_message']['v']);
-			infobox_end();
-			echo '<input type="button" value="Zum Heimatplaneten" onclick="document.location=\'?page=planetoverview\'" />';
-			if (!isset($s['allow_planet_change_counter']) || $s['allow_planet_change_counter']==0)
-			{
-				send_msg($cu->id(),USER_MSG_CAT_ID,'Willkommen',$conf['welcome_message']['v']);
-			}
-			
-			// Set marker so that a planet change is allowed
-			$s['allow_planet_change']=true;
-			
-			
-			
-			
-		}
-		else
-		{
-
-*/
-
 	define('GALAXY_MAP_DOT_RADIUS',3);
 	define('GALAXY_MAP_WIDTH',500);
 	define('GALAXY_MAP_LEGEND_HEIGHT',40);
@@ -81,15 +12,42 @@
 	echo "<h1>Willkommen in Andromeda</h1>";
 
 
-	if (isset($_POST['submit_chooseplanet']) && $_POST['choosenplanetid']>0 && checker_verify())
+		// Apply choosen itemset
+	if (isset($s['itemset_key']) && isset($_POST[md5($s['itemset_key'])]) && isset($_POST['itemset_id']))
+	{
+		Usersetup::addItemSetListToPlanet($s['itemset_planet'],$cu->id(),$_POST['itemset_id']);
+		$s['itemset_key']=null;
+		$s['itemset_planet']=null;
+		$cu->setSetupFinished();
+		$mode = "finished";		
+	}
+	elseif (isset($_POST['submit_chooseplanet']) && $_POST['choosenplanetid']>0 && checker_verify())
 	{
 		$tp = new Planet($_POST['choosenplanetid']);
-		$tp->assignToUser($cu->id(),1);
 		$tp->reset();
+		$tp->assignToUser($cu->id(),1);
 		$tp->setDefaultResources();	
 		
-		$cu->setSetupFinished();
-		$mode = "finished";
+		$res = dbquery("
+		SELECT
+			set_id,
+			set_name
+		FROM
+			default_item_sets
+		WHERE
+			set_active=1
+		");
+		if (mysql_num_rows($res)>1)
+		{
+			$mode="itemsets";
+		}
+		elseif(mysql_num_rows($res)==1)
+		{
+			$arr = mysql_fetch_array($res);
+			Usersetup::addItemSetListToPlanet($tp->id,$cu->id(),$arr['set_id']);							
+			$cu->setSetupFinished();
+			$mode = "finished";
+		}		
 	}
 	elseif (isset($_GET['setup_sx']) && isset($_GET['setup_sy']) && $_GET['setup_sx']>0 && $_GET['setup_sy']>0 && $_GET['setup_sx']<=$sx_num && $_GET['setup_sy']<=$sy_num)
 	{
@@ -118,8 +76,25 @@
 	{
 		$mode = "race";
 	}
-	
-	if ($mode=="checkplanet")
+
+	if ($mode=="itemsets")	
+	{
+		$k = mt_rand(10000,99999);
+		$s['itemset_key']=$k;
+		$s['itemset_planet']=$tp->id();
+		infobox_start("Start-Objekte");
+		echo "<form action=\"?\" method=\"post\">";
+		checker_init();
+		echo "Euch stehen mehrere Vorlagen von Start-Objekte zur Auswahl. Bitte wählt eine Vorlage aus, die darin definierten Objekte
+		werden dann eurem Hauptplanet hinzugefügt: <br/><br/><select name=\"itemset_id\">";
+		while ($arr=mysql_fetch_array($res))
+		{
+			echo "<option value=\"".$arr['set_id']."\">".$arr['set_name']."</option>";
+		}
+		echo "</select> <input type=\"submit\" value=\"Weiter\" name=\"".md5($k)."\" /></form>";
+		infobox_end();		
+	}	
+	elseif ($mode=="checkplanet")
 	{
 		echo "<form action=\"?\" method=\"post\">";
 		checker_init();

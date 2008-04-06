@@ -38,7 +38,7 @@
 
 
 	// SKRIPT //
-	if ($planets->current)
+	if (isset($cp))
 	{
 		$res = dbquery("
         SELECT 
@@ -47,7 +47,7 @@
         FROM 
           ".$db_table['buildlist']."
      		WHERE
-        	buildlist_planet_id='".$c->id."' 
+        	buildlist_planet_id='".$cp->id()."' 
       		AND buildlist_building_id='".TECH_BUILDING_ID."'
 	  	;");
 		if (mysql_num_rows($res)>0)
@@ -57,8 +57,8 @@
 			define('PEOPLE_WORKING',$arr[0]);
 			
 			// Überschrift
-			echo "<h1>Forschungslabor (Stufe ".CURRENT_LAB_LEVEL.") des Planeten ".$c->name."</h1>";
-			$c->resBox();
+			echo "<h1>Forschungslabor (Stufe ".CURRENT_LAB_LEVEL.") des Planeten ".$cp->name."</h1>";
+			$cp->resBox();
 
       //level zählen welches das forschungslabor über dem angegeben level ist und faktor berechnen
       $need_bonus_level = CURRENT_LAB_LEVEL - $conf['build_time_boni_forschungslabor']['p1'];
@@ -79,7 +79,7 @@
 		FROM 
 			".$db_table['techlist']." 
 		WHERE 
-			techlist_user_id='".$s['user']['id']."';");
+			techlist_user_id='".$cu->id()."';");
 		$builing_something=false;
 		while ($blarr = mysql_fetch_array($blres))
 		{
@@ -97,7 +97,7 @@
 		FROM
 			".$db_table['techlist']."
 		WHERE
-            techlist_user_id='".$s['user']['id']."'
+            techlist_user_id='".$cu->id()."'
             AND techlist_tech_id='".GEN_TECH_ID."';");
 		if(mysql_num_rows($tlres)>0)
 		{
@@ -117,8 +117,8 @@
 			FROM 
 				".$db_table['buildlist']." 
 			WHERE 
-				buildlist_user_id='".$s['user']['id']."' 
-				AND buildlist_planet_id='".$c->id."'
+				buildlist_user_id='".$cu->id()."' 
+				AND buildlist_planet_id='".$cp->id()."'
 			;");
 		while ($tarr = mysql_fetch_array($tres))
 		{
@@ -205,7 +205,7 @@
 				// Bauzeit
 				$btime_global_factor = $conf['global_time']['v'];
 				$btime_build_factor = $conf['res_build_time']['v'];
-				$bonus = $c->race->researchtime + $c->type->researchtime + $c->sol->type->researchtime-2;
+				$bonus = $cu->raceResearchtime + $cp->typeResearchtime + $cp->starResearchtime-2;
 
 				$btime = ($bc['metal']+$bc['crystal']+$bc['plastic']+$bc['fuel']+$bc['food']) / 12 * $btime_global_factor * $btime_build_factor * $time_boni_factor;
 				$btime *= $bonus;
@@ -225,7 +225,7 @@
           ".$db_table['buildings']." 
           ON
           buildlist.buildlist_building_id=buildings.building_id 
-          AND buildlist.buildlist_planet_id='".$c->id."' 
+          AND buildlist.buildlist_planet_id='".$cp->id()."' 
           AND buildings.building_id='".TECH_BUILDING_ID."';");
     		if (mysql_num_rows($fres)>0)
         {
@@ -250,7 +250,7 @@
 					if (!$builing_something)
 					{
 
-							if ($c->res->metal >= $bc['metal'] && $c->res->crystal >= $bc['crystal'] && $c->res->plastic >= $bc['plastic']  && $c->res->fuel >= $bc['fuel']  && $c->res->food >= $bc['food'])
+							if ($cp->resMetal >= $bc['metal'] && $cp->resCrystal >= $bc['crystal'] && $cp->resPlastic >= $bc['plastic']  && $cp->resFuel >= $bc['fuel']  && $cp->resFood >= $bc['food'])
 							{
 								$end_time = time()+$btime;
 								if (sizeof($techlist[$arr['tech_id']])>0)
@@ -262,10 +262,10 @@
 	                  techlist_build_type='1',
 	                  techlist_build_start_time='".time()."',
 	                  techlist_build_end_time='".$end_time."',
-	                  techlist_planet_id='".$c->id."'
+	                  techlist_planet_id='".$cp->id()."'
 									WHERE
 										techlist_tech_id='".$arr['tech_id']."'
-										AND techlist_user_id='".$s['user']['id']."';");
+										AND techlist_user_id='".$cu->id()."';");
 								}
 								else
 								{
@@ -282,26 +282,26 @@
 									)
 									VALUES
 									(
-										'".$c->id."',
+										'".$cp->id()."',
 										'1',
 										'".time()."',
 										'".$end_time."',
 										'".$arr['tech_id']."',
-										'".$s['user']['id']."'
+										'".$cu->id()."'
 									);");
 
 								}
-								$planet_id=$c->id;
+								$planet_id=$cp->id();
 								
 								//Rohstoffe vom Planeten abziehen und aktualisieren
-								$c->changeRes(-$bc['metal'],-$bc['crystal'],-$bc['plastic'],-$bc['fuel'],-$bc['food']);
+								$cp->changeRes(-$bc['metal'],-$bc['crystal'],-$bc['plastic'],-$bc['fuel'],-$bc['food']);
 								$b_status=1;
 								
 								//Log schreiben
 								$log_text = "
 								<b>Forschung Ausbau</b><br><br>
-								<b>User:</b> [USER_ID=".$s['user']['id'].";USER_NICK=".$s['user']['nick']."]<br>
-								<b>Planeten:</b> [PLANET_ID=".$c->id.";PLANET_NAME=".$c->name."]<br>
+								<b>User:</b> [USER_ID=".$cu->id().";USER_NICK=".$cu->nick."]<br>
+								<b>Planeten:</b> [PLANET_ID=".$cp->id().";PLANET_NAME=".$cp->name."]<br>
 								<b>Technologie:</b> ".$arr['tech_name']."<br>
 								<b>Technologie Level:</b> ".$b_level." (vor Ausbau)<br>
 								<b>Erforschungsdauer:</b> ".tf($btime)."<br>
@@ -316,15 +316,15 @@
 								<b>".RES_FUEL.":</b> ".nf($bc['fuel'])."<br>
 								<b>".RES_FOOD.":</b> ".nf($bc['food'])."<br><br>
 								<b>Restliche Rohstoffe auf dem Planeten</b><br><br>
-								<b>".RES_METAL.":</b> ".nf($c->res->metal)."<br>
-								<b>".RES_CRYSTAL.":</b> ".nf($c->res->crystal)."<br>
-								<b>".RES_PLASTIC.":</b> ".nf($c->res->plastic)."<br>
-								<b>".RES_FUEL.":</b> ".nf($c->res->fuel)."<br>
-								<b>".RES_FOOD.":</b> ".nf($c->res->food)."<br><br>
+								<b>".RES_METAL.":</b> ".nf($cp->resMetal)."<br>
+								<b>".RES_CRYSTAL.":</b> ".nf($cp->resCrystal)."<br>
+								<b>".RES_PLASTIC.":</b> ".nf($cp->resPlastic)."<br>
+								<b>".RES_FUEL.":</b> ".nf($cp->resFuel)."<br>
+								<b>".RES_FOOD.":</b> ".nf($cp->resFood)."<br><br>
 								";
 								
 								//Log Speichern
-								add_log_game_research($log_text,$s['user']['id'],$s['user']['alliance_id'],$c->id,$arr['tech_id'],$b_status,time());								
+								add_log_game_research($log_text,$cu->id(),$cu->alliance_id,$cp->id(),$arr['tech_id'],$b_status,time());								
 								
 							}
 							else
@@ -353,18 +353,18 @@
 							techlist_build_end_time='0'
 						WHERE 
 							techlist_tech_id='".$arr['tech_id']."'
-							AND techlist_user_id='".$s['user']['id']."';");
+							AND techlist_user_id='".$cu->id()."';");
 
 						//Rohstoffe vom Planeten abziehen und aktualisieren
-						$c->changeRes($bc['metal']*$fac,$bc['crystal']*$fac,$bc['plastic']*$fac,$bc['fuel']*$fac,$bc['food']*$fac);
+						$cp->changeRes($bc['metal']*$fac,$bc['crystal']*$fac,$bc['plastic']*$fac,$bc['fuel']*$fac,$bc['food']*$fac);
 						$b_status=0;
 						$builing_something=false;
 						
 						//Log schreiben
 						$log_text = "
 						<b>Forschungs Abbruch</b><br><br>
-						<b>User:</b> [USER_ID=".$s['user']['id'].";USER_NICK=".$s['user']['nick']."]<br>
-						<b>Planeten:</b> [PLANET_ID=".$c->id.";PLANET_NAME=".$c->name."]<br>
+						<b>User:</b> [USER_ID=".$cu->id().";USER_NICK=".$cu->nick."]<br>
+						<b>Planeten:</b> [PLANET_ID=".$cp->id().";PLANET_NAME=".$cp->name."]<br>
 						<b>Forschung:</b> ".$arr['tech_name']."<br>
 						<b>Forschungs Level:</b> ".$b_level." (nach Abbruch)<br>
 						<b>Start der Forschung:</b> ".date("Y-m-d H:i:s",$start_time)."<br>
@@ -377,15 +377,15 @@
 						<b>".RES_FUEL.":</b> ".nf($bc['fuel']*$fac)."<br>
 						<b>".RES_FOOD.":</b> ".nf($bc['food']*$fac)."<br><br>
 						<b>Rohstoffe auf dem Planeten</b><br><br>
-						<b>".RES_METAL.":</b> ".nf($c->res->metal)."<br>
-						<b>".RES_CRYSTAL.":</b> ".nf($c->res->crystal)."<br>
-						<b>".RES_PLASTIC.":</b> ".nf($c->res->plastic)."<br>
-						<b>".RES_FUEL.":</b> ".nf($c->res->fuel)."<br>
-						<b>".RES_FOOD.":</b> ".nf($c->res->food)."<br><br>
+						<b>".RES_METAL.":</b> ".nf($cp->resMetal)."<br>
+						<b>".RES_CRYSTAL.":</b> ".nf($cp->resCrystal)."<br>
+						<b>".RES_PLASTIC.":</b> ".nf($cp->resPlastic)."<br>
+						<b>".RES_FUEL.":</b> ".nf($cp->resFuel)."<br>
+						<b>".RES_FOOD.":</b> ".nf($cp->resFood)."<br><br>
 						";
 						
 						//Log Speichern
-						add_log_game_research($log_text,$s['user']['id'],$s['user']['alliance_id'],$c->id,$arr['tech_id'],$b_status,time());								
+						add_log_game_research($log_text,$cu->id(),$cu->alliance_id,$cp->id(),$arr['tech_id'],$b_status,time());								
 					}
 					else
 					{
@@ -475,29 +475,29 @@
 				if ($b_status==0)
 				{
 					// Wartezeiten auf Ressourcen berechnen
-					if ($c->prod->metal>0) $bwait['metal']=ceil(($bc['metal']-$c->res->metal)/$c->prod->metal*3600);else $bwait['metal']=0;
-					if ($c->prod->crystal>0) $bwait['crystal']=ceil(($bc['crystal']-$c->res->crystal)/$c->prod->crystal*3600);else $bwait['crystal']=0;
-					if ($c->prod->plastic>0) $bwait['plastic']=ceil(($bc['plastic']-$c->res->plastic)/$c->prod->plastic*3600);else $bwait['plastic']=0;
-					if ($c->prod->fuel>0) $bwait['fuel']=ceil(($bc['fuel']-$c->res->fuel)/$c->prod->fuel*3600);else $bwait['fuel']=0;
-					if ($c->prod->food>0) $bwait['food']=ceil(($bc['food']-$c->res->food)/$c->prod->food*3600);else $bwait['food']=0;
+					if ($cp->prodMetal>0) $bwait['metal']=ceil(($bc['metal']-$cp->resMetal)/$cp->prodMetal*3600);else $bwait['metal']=0;
+					if ($cp->prodCrystal>0) $bwait['crystal']=ceil(($bc['crystal']-$cp->resCrystal)/$cp->prodCrystal*3600);else $bwait['crystal']=0;
+					if ($cp->prodPlastic>0) $bwait['plastic']=ceil(($bc['plastic']-$cp->resPlastic)/$cp->prodPlastic*3600);else $bwait['plastic']=0;
+					if ($cp->prodFuel>0) $bwait['fuel']=ceil(($bc['fuel']-$cp->resFuel)/$cp->prodFuel*3600);else $bwait['fuel']=0;
+					if ($cp->prodFood>0) $bwait['food']=ceil(($bc['food']-$cp->resFood)/$cp->prodFood*3600);else $bwait['food']=0;
 					$bwmax=max($bwait['metal'],$bwait['crystal'],$bwait['plastic'],$bwait['fuel'],$bwait['food']);
 
 					// Baukosten-String
 					$bcstring.="<td class=\"tbldata\"";
-					if ($bc['metal']>$c->res->metal)
-						$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff","<b>".nf($bc['metal']-$c->res->metal)."</b> ".RES_METAL."<br/>Bereit in <b>".tf($bwait['metal'])."</b>");
+					if ($bc['metal']>$cp->resMetal)
+						$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff","<b>".nf($bc['metal']-$cp->resMetal)."</b> ".RES_METAL."<br/>Bereit in <b>".tf($bwait['metal'])."</b>");
 					$bcstring.= ">".nf($bc['metal'])."</td><td class=\"tbldata\"";
-					if ($bc['crystal']>$c->res->crystal)
-						$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['crystal']-$c->res->crystal)." ".RES_CRYSTAL."<br/>Bereit in <b>".tf($bwait['crystal'])."</b>");
+					if ($bc['crystal']>$cp->resCrystal)
+						$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['crystal']-$cp->resCrystal)." ".RES_CRYSTAL."<br/>Bereit in <b>".tf($bwait['crystal'])."</b>");
 					$bcstring.= ">".nf($bc['crystal'])."</td><td class=\"tbldata\"";
-					if ($bc['plastic']>$c->res->plastic)
-						$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['plastic']-$c->res->plastic)." ".RES_PLASTIC."<br/>Bereit in <b>".tf($bwait['plastic'])."</b>");
+					if ($bc['plastic']>$cp->resPlastic)
+						$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['plastic']-$cp->resPlastic)." ".RES_PLASTIC."<br/>Bereit in <b>".tf($bwait['plastic'])."</b>");
 					$bcstring.= ">".nf($bc['plastic'])."</td><td class=\"tbldata\"";
-					if ($bc['fuel']>$c->res->fuel)
-						$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['fuel']-$c->res->fuel)." ".RES_FUEL."<br/>Bereit in <b>".tf($bwait['fuel'])."</b>");
+					if ($bc['fuel']>$cp->resFuel)
+						$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['fuel']-$cp->resFuel)." ".RES_FUEL."<br/>Bereit in <b>".tf($bwait['fuel'])."</b>");
 					$bcstring.= ">".nf($bc['fuel'])."</td><td class=\"tbldata\"";
-					if ($bc['food']>$c->res->food)
-						$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['food']-$c->res->food)." ".RES_FOOD."<br/>Bereit in <b>".tf($bwait['food'])."</b>");
+					if ($bc['food']>$cp->resFood)
+						$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['food']-$cp->resFood)." ".RES_FOOD."<br/>Bereit in <b>".tf($bwait['food'])."</b>");
 					$bcstring.= ">".nf($bc['food'])."</td></tr>";
 
 					// Maximale Stufe erreicht
@@ -514,7 +514,7 @@
 						echo "<tr><td class=\"tbldata\" colspan=\"7\"><i>Es kann nichts erforscht werden da gerade an einer anderen Technik geforscht wird!</i></td></tr>";
 					}
 					// Zuwenig Rohstoffe vorhanden
-					elseif ($c->res->metal<$bc['metal'] || $c->res->crystal<$bc['crystal']  || $c->res->plastic<$bc['plastic']  || $c->res->fuel<$bc['fuel']  || $c->res->food<$bc['food'])
+					elseif ($cp->resMetal<$bc['metal'] || $cp->resCrystal<$bc['crystal']  || $cp->resPlastic<$bc['plastic']  || $cp->resFuel<$bc['fuel']  || $cp->resFood<$bc['food'])
 					{
 						echo "<tr><td class=\"tbldata\" style=\"color:red;\">Erforschen</td><td class=\"tbldata\">".tf($btime)."</td>";
 						echo $bcstring;
@@ -538,7 +538,7 @@
 				// Bau abbrechen
 				if ($b_status==1)
 				{
-					if ($planet_id==$c->id)
+					if ($planet_id==$cp->id())
 					{
               echo "<tr><td class=\"tbldata\"><input type=\"submit\" class=\"button\" id=\"buildcancel\" name=\"command_cbuild\" value=\"Abbrechen\"  onclick=\"if (this.value=='Abbrechen'){return confirm('Wirklich abbrechen?');}\" />";
               echo "</td><td class=\"tbldata\" id=\"buildtime\">-</td><td colspan=\"5\" class=\"tbldata\">&nbsp;</td></tr>";
@@ -797,7 +797,7 @@
               	  $bc['food'] = $bv['tech_costs_food'] * pow($bv['tech_build_costs_factor'],$b_level);
 									
 									// Zuwenig Ressourcen
-									if($b_level<$bv['last_level'] && ($c->res->metal < $bc['metal'] || $c->res->crystal < $bc['crystal']  || $c->res->plastic < $bc['plastic']  || $c->res->fuel < $bc['fuel']  || $c->res->food < $bc['food']))
+									if($b_level<$bv['last_level'] && ($cp->resMetal < $bc['metal'] || $cp->resCrystal < $bc['crystal']  || $cp->resPlastic < $bc['plastic']  || $cp->resFuel < $bc['fuel']  || $cp->resFood < $bc['food']))
 									{
 										$tmtext = "<span style=\"color:#f00\">Zuwenig Ressourcen f&uuml;r<br/>weitere Forschungen!</span><br/>";
 										$color = '#f00';
@@ -898,8 +898,8 @@
 		}
 		else
 		{
-			echo "<h1>Forschungslabor des Planeten ".$c->name."</h1>";
-			$c->resBox();
+			echo "<h1>Forschungslabor des Planeten ".$cp->name."</h1>";
+			$cp->resBox();
 			echo "Das Forschungslabor wurde noch nicht gebaut!";
 		}
 	}
