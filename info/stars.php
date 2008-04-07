@@ -49,11 +49,13 @@
 
 		while ($arr = mysql_fetch_array($res))
 		{
+			//$star = new Star();
+			
 			echo "<tr><td class=\"tbldata\" style=\"width:40px;background:#000;vertical-align:middle;\">
-				<img src=\"".IMAGE_PATH."/galaxy/sol".$arr['type_id'].".gif\" width=\"40\" height=\"40\" alt=\"Stern\"/></a></td>";
+				<img src=\"".IMAGE_PATH."/stars/star".$arr['type_id']."_small.".IMAGE_EXT."\" width=\"40\" height=\"40\" alt=\"Stern\"/></a></td>";
 				
 			$tt = new ToolTip();
-			$tt->addIcon(IMAGE_PATH."/galaxy/sol".$arr['type_id'].".gif");
+			$tt->addIcon(IMAGE_PATH."/stars/star".$arr['type_id']."_small.".IMAGE_EXT."");
 			$tt->addTitle($arr['type_name']);
 			$tt->addComment($arr['type_comment']);
 			echo "<td class=\"tbltitle\" ".$tt.">".$arr['type_name']."</td>";

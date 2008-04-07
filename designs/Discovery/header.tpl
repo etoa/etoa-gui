@@ -262,7 +262,7 @@
 
 
 {if $adds == true }
-	<div style="position:absolute;left:1000px;top:100px;">
+	<div style="position:absolute;left:1050px;top:100px;">
 		{$addBanner}
 	</div>
 {/if}

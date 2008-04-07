@@ -354,7 +354,9 @@
 			while ($arr = mysql_fetch_array($res))
 			{
 				$s_img = IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$arr['ship_id']."_small.".IMAGE_EXT;
-				echo "<tr><td class=\"tbldata\"><a href=\"?page=$page&site=$site&id=".$arr['ship_id']."\"><img src=\"$s_img\" alt=\"Schiffbild\" width=\"40\" height=\"40\" border=\"0\"/></a></td>";
+				echo "<tr><td class=\"tbldata\" style=\"background:#000;width:40px;\">
+				<a href=\"?page=$page&site=$site&id=".$arr['ship_id']."\">
+				<img src=\"$s_img\" alt=\"Schiffbild\" width=\"40\" height=\"40\" border=\"0\"/></a></td>";
 				echo "<td class=\"tbltitle\" ".tm($arr['ship_name'],text2html($arr['ship_shortcomment'])."<br/><br/>".shipRanking($arr)).">
 					".$arr['ship_name']."<br/><span style=\"font-weight:500\">".$arr['cat_name']."</span>
 				</td>";

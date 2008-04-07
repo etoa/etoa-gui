@@ -1985,10 +1985,11 @@
             {
                 if($arr['auction_current_buyer_id']!=0)
                 {
+                	// TODO: use planet class
                     // Rohstoffe dem überbotenen User wieder zurückgeben
                     dbquery("
                     UPDATE
-                        ".$db_table['planets']."
+                        planets
                     SET
                         planet_res_metal=planet_res_metal+".$arr['auction_buy_metal'].",
                         planet_res_crystal=planet_res_crystal+".$arr['auction_buy_crystal'].",
@@ -1996,7 +1997,7 @@
                         planet_res_fuel=planet_res_fuel+".$arr['auction_buy_fuel'].",
                         planet_res_food=planet_res_food+".$arr['auction_buy_food']."
                     WHERE
-                        planet_id=".$arr['auction_current_buyer_planet_id']."
+                        id=".$arr['auction_current_buyer_planet_id']."
                         AND planet_user_id=".$arr['auction_current_buyer_id']."");
 
                     // Nachricht dem überbotenen User schicken
@@ -2008,10 +2009,11 @@
                     send_msg($arr['auction_current_buyer_id'],SHIP_MISC_MSG_CAT_ID,"Überboten",$msg);
                 }
 
+                	// TODO: use planet class
                 // Rohstoffe dem Gewinner abziehen
                 dbquery("
                 UPDATE
-                    ".$db_table['planets']."
+                    planets
                 SET
                     planet_res_metal=planet_res_metal-'".$_POST['auction_new_buy_metal']."',
                     planet_res_crystal=planet_res_crystal-'".$_POST['auction_new_buy_crystal']."',
@@ -2019,7 +2021,7 @@
                     planet_res_fuel=planet_res_fuel-'".$_POST['auction_new_buy_fuel']."',
                     planet_res_food=planet_res_food-'".$_POST['auction_new_buy_food']."'
                 WHERE
-                    planet_id='".$cp->id()."'
+                    id='".$cp->id()."'
                     AND planet_user_id='".$cu->id()."'");
 
 
@@ -2179,10 +2181,11 @@
 
                 if($arr['auction_current_buyer_id']!=0)
                 {
-                    // Rohstoffe dem überbotenen User wieder zurückgeben
+                    // TODO: use planet class
+										// Rohstoffe dem überbotenen User wieder zurückgeben
                     dbquery("
                     UPDATE
-                        ".$db_table['planets']."
+                        planets
                     SET
                         planet_res_metal=planet_res_metal+".$arr['auction_buy_metal'].",
                         planet_res_crystal=planet_res_crystal+".$arr['auction_buy_crystal'].",
@@ -2190,7 +2193,7 @@
                         planet_res_fuel=planet_res_fuel+".$arr['auction_buy_fuel'].",
                         planet_res_food=planet_res_food+".$arr['auction_buy_food']."
                     WHERE
-                        planet_id=".$arr['auction_current_buyer_planet_id']."
+                        id=".$arr['auction_current_buyer_planet_id']."
                         AND planet_user_id=".$arr['auction_current_buyer_id']."");
 
                     // Nachricht dem überbotenen user schicken
@@ -2202,10 +2205,12 @@
                     send_msg($arr['auction_current_buyer_id'],SHIP_MISC_MSG_CAT_ID,"Überboten",$msg);
                 }
 
+
+               	// TODO: use planet class
                 // Rohstoffe vom neuen Bieter abziehen
                 dbquery("
                 UPDATE
-                    ".$db_table['planets']."
+                   planets
                 SET
                     planet_res_metal=planet_res_metal-'".$_POST['auction_new_buy_metal']."',
                     planet_res_crystal=planet_res_crystal-'".$_POST['auction_new_buy_crystal']."',
@@ -2213,7 +2218,7 @@
                     planet_res_fuel=planet_res_fuel-'".$_POST['auction_new_buy_fuel']."',
                     planet_res_food=planet_res_food-'".$_POST['auction_new_buy_food']."'
                 WHERE
-                    planet_id='".$cp->id()."'
+                    id='".$cp->id()."'
                     AND planet_user_id='".$cu->id()."'");
 
                 //Das neue Angebot Speichern
@@ -2315,9 +2320,10 @@
 	      add_log(7,"Der Spieler ".$cu->nick." hat folgende Rohstoffe ".$for_alliance."angeboten:\n\n".RES_METAL.": ".nf($_POST['ress_sell_metal'])."\n".RES_CRYSTAL.": ".nf($_POST['ress_sell_crystal'])."\n".RES_PLASTIC.": ".nf($_POST['ress_sell_plastic'])."\n".RES_FUEL.": ".nf($_POST['ress_sell_fuel'])."\n".RES_FOOD.": ".nf($_POST['ress_sell_food'])."\n\nFolgender Preis muss daf&uuml;r gezahlt werden:\n\n".RES_METAL.": ".nf($_POST['ress_buy_metal'])."\n".RES_CRYSTAL.": ".nf($_POST['ress_buy_crystal'])."\n".RES_PLASTIC.": ".nf($_POST['ress_buy_plastic'])."\n".RES_FUEL.": ".nf($_POST['ress_buy_fuel'])."\n".RES_FOOD.": ".nf($_POST['ress_buy_food'])."\n\n",time());
 	
 	      // Rohstoffe vom Planet abziehen
+        	// TODO: use planet class
 	      dbquery("
 	      UPDATE
-	      ".$db_table['planets']."
+	      	planets
 	      SET
 	        planet_res_metal=planet_res_metal-".($_POST['ress_sell_metal']*MARKET_SELL_TAX).",
 	        planet_res_crystal=planet_res_crystal-".($_POST['ress_sell_crystal']*MARKET_SELL_TAX).",
@@ -2325,7 +2331,7 @@
 	        planet_res_fuel=planet_res_fuel-".($_POST['ress_sell_fuel']*MARKET_SELL_TAX).",
 	        planet_res_food=planet_res_food-".($_POST['ress_sell_food']*MARKET_SELL_TAX)."
 	      WHERE
-	      	planet_id='".$cp->id()."'
+	      	id='".$cp->id()."'
 	      	AND planet_user_id='".$cu->id()."';");
 	
 				// Angebot speichern
@@ -2530,9 +2536,10 @@
       {
 
         // Rohstoffe + Taxe vom Planetenkonto abziehen
+                	// TODO: use planet class
         dbquery("
         UPDATE
-            ".$db_table['planets']."
+            planets
         SET
             planet_res_metal=planet_res_metal-".($_POST['auction_sell_metal']*MARKET_SELL_TAX).",
             planet_res_crystal=planet_res_crystal-".($_POST['auction_sell_crystal']*MARKET_SELL_TAX).",
@@ -2540,7 +2547,7 @@
             planet_res_fuel=planet_res_fuel-".($_POST['auction_sell_fuel']*MARKET_SELL_TAX).",
             planet_res_food=planet_res_food-".($_POST['auction_sell_food']*MARKET_SELL_TAX)."
         WHERE
-            planet_id=".$cp->id()."
+            id=".$cp->id()."
             AND planet_user_id=".$cu->id()."");
 
         // Angebot speichern
@@ -4112,10 +4119,11 @@
 					
 				if (mysql_num_rows($rcres)>0)
 				{
+                	// TODO: use planet class
 					$rcrow=mysql_fetch_array($rcres);
 					dbquery("
 					UPDATE 
-						".$db_table['planets']." 
+						planets
 					SET 
 						planet_res_metal=planet_res_metal+'".($rcrow['sell_metal']*$return_factor)."',
 						planet_res_crystal=planet_res_crystal+'".($rcrow['sell_crystal']*$return_factor)."',
@@ -4124,7 +4132,7 @@
 						planet_res_food=planet_res_food+'".($rcrow['sell_food']*$return_factor)."'
 					WHERE 
 						planet_user_id='".$rcrow['user_id']."' 
-						AND planet_id='".$rcrow['planet_id']."'");
+						AND id='".$rcrow['planet_id']."'");
 						
 					dbquery("
 					DELETE FROM 
@@ -4157,9 +4165,10 @@
 				{
 					// Rohstoffe zurückgeben
 					$acrow=mysql_fetch_array($acres);
+                	// TODO: use planet class
 					dbquery("
 					UPDATE 
-						".$db_table['planets']." 
+						planets
 					SET
             planet_res_metal=planet_res_metal+'".($acrow['auction_sell_metal']*$return_factor)."',
             planet_res_crystal=planet_res_crystal+'".($acrow['auction_sell_crystal']*$return_factor)."',
@@ -4168,7 +4177,7 @@
             planet_res_food=planet_res_food+'".($acrow['auction_sell_food']*$return_factor)."'
 					WHERE
 						planet_user_id='".$acrow['auction_user_id']."'
-						AND planet_id='".$acrow['auction_planet_id']."'");
+						AND id='".$acrow['auction_planet_id']."'");
 
 					//Auktion löschen
 					dbquery("DELETE FROM ".$db_table['market_auction']." WHERE auction_market_id='".$_POST['auction_market_id']."'");

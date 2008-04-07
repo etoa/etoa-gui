@@ -2,12 +2,6 @@
 	echo "<h2>Rassen</h2>";
 	Help::navi(array("Rassen","races"));
 
-	if (count($rsc)==0)
-	{
-		$rsc=get_resources_array();
-	}
-
-
 	if ($_GET['order']!="")
 	{
 		$order="race_".$_GET['order'];
@@ -34,17 +28,17 @@
 		$sort="ASC";
 	}
 
-	$res = dbquery("SELECT * FROM ".$db_table['races']." ORDER BY $order $sort;");
+	$res = dbquery("SELECT * FROM races WHERE race_active=1 ORDER BY $order $sort;");
 	if (mysql_num_rows($res)>0)
 	{
 
 		infobox_start("Rassenboni",1);
 		echo "<tr><td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=name\">Name</a></td>";
-		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_metal\">".$rsc['metal']."</a></td>";
-		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_crystal\">".$rsc['crystal']."</a></td>";
-		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_plastic\">".$rsc['plastic']."</a></td>";
-		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_fuel\">".$rsc['fuel']."</a></td>";
-		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_food\">".$rsc['food']."</a></td>";
+		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_metal\">".RES_METAL."</a></td>";
+		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_crystal\">".RES_CRYSTAL."</a></td>";
+		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_plastic\">".RES_PLASTIC."</a></td>";
+		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_fuel\">".RES_FUEL."</a></td>";
+		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_food\">".RES_FOOD."</a></td>";
 		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_power\">Energie</a></td>";
 		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_population\">Wachstum</a></td>";
 		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_researchtime\">Forschungszeit</a></td>";

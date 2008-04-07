@@ -101,7 +101,16 @@
 	echo "</table><br/>";
 	echo "<b>Beispiel:</b> Eine Tonne ".RES_FOOD." hat den Wert von ".$fo_m." Tonnen ".RES_METAL.".<br/>
 	Für eine Tonne ".RES_METAL." muss man ".$m_fo." Tonnen ".RES_FOOD." aufwenden.<br/><br/>";
-
+	echo "<b>Legende:</b><br/><br/> kleiner Bedarf/grosses Angebot
+		<span style=\"background:#0f0;width;50px;\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+		<span style=\"background:#ff0;width;50px;\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+		<span style=\"background:#fa0;width;50px;\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+		<span style=\"background:#f70;width;50px;\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+		<span style=\"background:#f40;width;50px;\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+		grosser Bedarf/kleines Angebot
+		<br/><br/>";
+	
+	
 	echo "<table class=\"tb\">";
 	echo "<tr>
 		<th>Rohstoff</th>
@@ -128,6 +137,7 @@
 		<td>".$conf['market_food_factor']['v']."</td>
 	</tr>";
 	echo "</table><br/><br/>";
+
 
 
 

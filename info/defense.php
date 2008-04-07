@@ -102,7 +102,8 @@
 			while ($arr = mysql_fetch_array($res))
 			{
 				$s_img = IMAGE_PATH."/".IMAGE_DEF_DIR."/def".$arr['def_id']."_small.".IMAGE_EXT;
-				echo "<tr><td class=\"tbldata\" style=\"width:40px;\"><a href=\"?page=$page&site=$site&id=".$arr['def_id']."\"><img src=\"$s_img\" alt=\"Verteidigung\" width=\"40\" height=\"40\" border=\"0\"/></a></td>";
+				echo "<tr><td class=\"tbldata\" style=\"width:40px;background:#000;\">
+				<a href=\"?page=$page&site=$site&id=".$arr['def_id']."\"><img src=\"$s_img\" alt=\"Verteidigung\" width=\"40\" height=\"40\" border=\"0\"/></a></td>";
 				echo "<td class=\"tbltitle\">".$arr['def_name']."</td>";
 				echo "<td class=\"tbldata\">";
 				if ($arr['def_race_id']>0)

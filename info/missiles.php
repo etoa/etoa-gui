@@ -142,7 +142,7 @@
 			//echo "<th class=\"tbltitle\">&nbsp;</th></tr>";
 			while ($arr = mysql_fetch_array($res))
 			{
-				echo "<tr><td class=\"tbldata\" style=\"width:40px;\">
+				echo "<tr><td class=\"tbldata\" style=\"width:40px;background:#000\">
 							<a href=\"?page=$page&site=$site&id=".$arr['missile_id']."\">
 							<img src=\"".IMAGE_PATH."/missiles/missile".$arr['missile_id']."_small.".IMAGE_EXT."\" alt=\"Raketen\" width=\"40\" height=\"40\" border=\"0\"/></a></td>";
 				echo "<td class=\"tbltitle\">".$arr['missile_name']."</td>";
