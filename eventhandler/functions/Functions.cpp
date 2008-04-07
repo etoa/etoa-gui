@@ -199,20 +199,20 @@ namespace functions
 		int ny = (int)config.nget("num_of_cells", 2); //$conf['num_of_cells']['p2'];		// Anzahl Zellen X
 		int ae =(int)config.nget("cell_length", 0); //$conf['cell_length']['v'];			// Länge vom Solsys in AE
 		int np = (int)config.nget("num_planets", 2);; //$conf['num_planets']['p2'];			// Max. Planeten im Solsys
-		double temp = ((((int)rowPlanet2["cell_sx"]-1) * nx) + (int)rowPlanet2["cell_cx"]) - ((((int)rowPlanet1["cell_sx"]-1) * nx) + (int)rowPlanet1["cell_cx"]);
+		double temp = ((((int)rowPlanet2["sx"]-1) * nx) + (int)rowPlanet2["cx"]) - ((((int)rowPlanet1["sx"]-1) * nx) + (int)rowPlanet1["cx"]);
 		double dx = fabs(temp);
-		double dy = fabs(((((int)rowPlanet2["cell_sy"]-1) * nx) + (int)rowPlanet1["cell_cy"]) - ((((int)rowPlanet1["cell_sy"]-1) * nx) + (int)rowPlanet1["cell_cy"]));
+		double dy = fabs(((((int)rowPlanet2["sy"]-1) * nx) + (int)rowPlanet1["cy"]) - ((((int)rowPlanet1["sy"]-1) * nx) + (int)rowPlanet1["cy"]));
 		double sd = sqrt(pow(dx,2)+pow(dy,2));			// Distanze zwischen den beiden Zellen
 		double sae = sd * ae;	
 		double ps;										// Distance in AE units
 		
-		if (int(rowPlanet1["cell_sx"])==int(rowPlanet2["cell_sx"]) && int(rowPlanet1["cell_sy"])==int(rowPlanet2["cell_sy"]) && int(rowPlanet1["cell_cx"])==int(rowPlanet2["cell_cx"]) && int(rowPlanet1["cell_cy"])==int(rowPlanet2["cell_cy"]))
+		if (int(rowPlanet1["sx"])==int(rowPlanet2["sx"]) && int(rowPlanet1["sy"])==int(rowPlanet2["sy"]) && int(rowPlanet1["cx"])==int(rowPlanet2["cx"]) && int(rowPlanet1["cy"])==int(rowPlanet2["cy"]))
 		{
-			ps = fabs(int(rowPlanet2["planet_solsys_pos"])-int(rowPlanet1["planet_solsys_pos"]))*ae/4/np;				// Planetendistanz wenn sie im selben Solsys sind
+			ps = fabs(int(rowPlanet2["pos"])-int(rowPlanet1["pos"]))*ae/4/np;				// Planetendistanz wenn sie im selben Solsys sind
 		}
 		else
 		{
-			ps = (ae/2) - ((int(rowPlanet2["planet_solsys_pos"]))*ae/4/np);	// Planetendistanz wenn sie nicht im selben Solsys sind
+			ps = (ae/2) - ((int(rowPlanet2["pos"]))*ae/4/np);	// Planetendistanz wenn sie nicht im selben Solsys sind
 		}
 		double ssae = sae + ps;
 		return ssae;	
@@ -226,32 +226,32 @@ namespace functions
 		mysqlpp::Row rowPlanet1, rowPlanet2;
 		mysqlpp::Query query = con_->query();
 		query << "SELECT ";
-			query << "cell_sx, ";
-			query << "cell_sy, ";
-			query << "cell_cx, ";
-			query << "cell_cy, ";
-			query << "planet_solsys_pos ";
+			query << "cells.sx, ";
+			query << "cells.sy, ";
+			query << "cells.cx, ";
+			query << "cells.cy, ";
+			query << "entities.pos ";
 		query << "FROM ";
-			query << "planets ";
+			query << "entities ";
 		query << "INNER JOIN ";
-			query << "space_cells ";
-			query << "ON planet_solsys_id=cell_id ";
-			query << "AND planet_id='" << pid1 <<"';";
+			query << "cells ";
+			query << "ON cells.id=entities.cell_id ";
+			query << "AND entities.id='" << pid1 <<"';";
 		mysqlpp::Result res1 = query.store();		
 		query.reset();
 		
 		query << "SELECT ";
-			query << "cell_sx, ";
-			query << "cell_sy, ";
-			query << "cell_cx, ";
-			query << "cell_cy, ";
-			query << "planet_solsys_pos ";
+			query << "cells.sx, ";
+			query << "cells.sy, ";
+			query << "cells.cx, ";
+			query << "cells.cy, ";
+			query << "entities.pos ";
 		query << "FROM ";
-			query << "planets ";
+			query << "entities ";
 		query << "INNER JOIN ";
-			query << "space_cells ";
-			query << "ON planet_solsys_id=cell_id ";
-			query << "AND planet_id='" << pid2 <<"';";
+			query << "cells ";
+			query << "ON cells.id=entities.cell_id ";
+			query << "AND entities.id='" << pid2 <<"';";
 		mysqlpp::Result res2 = query.store();		
 		query.reset();
 		

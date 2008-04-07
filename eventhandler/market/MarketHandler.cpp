@@ -151,7 +151,7 @@ namespace market
 									query << "planet_res_fuel=planet_res_fuel+(" << arr["auction_sell_fuel"]*return_factor << "), ";
 									query << "planet_res_food=planet_res_food+(" << arr["auction_sell_food"]*return_factor << ") ";
 								query << "WHERE ";
-									query << "planet_id=" << arr["auction_planet_id"] << " ";
+									query << "id=" << arr["auction_planet_id"] << " ";
 									query << "AND planet_user_id=" << arr["auction_user_id"] << ";";
 								query.store();		
 								query.reset();
@@ -557,10 +557,8 @@ namespace market
 					
 					query << "INSERT INTO fleet ";
 						query << "(fleet_user_id, ";
-						query << "fleet_cell_from, ";
-						query << "fleet_cell_to, ";
-						query << "fleet_planet_from, ";
-						query << "fleet_planet_to, ";
+						query << "fleet_entity_from, ";
+						query << "fleet_entity_to, ";
 						query << "fleet_launchtime, ";
 						query << "fleet_landtime, ";
 						query << "fleet_action, ";
@@ -571,8 +569,6 @@ namespace market
 						query << "fleet_res_food) ";
 					query << "VALUES ";
 						query << "('0', ";
-						query << "'0', ";
-						query << arr["cell_id"] << ", ";
 						query << "'0', ";
 						query << arr["planet_id"] << ", ";
 						query << launchtime << ", ";
@@ -601,10 +597,8 @@ namespace market
 					//Flotte zum Käufer schicken
 					query << "INSERT INTO fleet ";
 						query << "(fleet_user_id, ";
-						query << "fleet_cell_from, ";
-						query << "fleet_cell_to, ";
-						query << "fleet_planet_from, ";
-						query << "fleet_planet_to, ";
+						query << "fleet_entity_from, ";
+						query << "fleet_entity_to, ";
 						query << "fleet_launchtime, ";
 						query << "fleet_landtime, ";
 						query << "fleet_action, ";
@@ -615,8 +609,6 @@ namespace market
 						query << "fleet_res_food) ";
 					query << "VALUES ";
 						query << "('0', ";
-						query << "'0', ";
-						query << arr["ressource_buyer_cell_id"] << ", ";
 						query << "'0', ";
 						query << arr["ressource_buyer_planet_id"] << ", ";
 						query << launchtime << ", ";
@@ -704,10 +696,8 @@ namespace market
 
 					query << "INSERT INTO fleet ";
 						query << "(fleet_user_id, ";
-						query << "fleet_cell_from, ";
-						query << "fleet_cell_to, ";
-						query << "fleet_planet_from, ";
-						query << "fleet_planet_to, ";
+						query << "fleet_entity_from, ";
+						query << "fleet_entity_to, ";
 						query << "fleet_launchtime, ";
 						query << "fleet_landtime, ";
 						query << "fleet_action, ";
@@ -718,8 +708,6 @@ namespace market
 						query << "fleet_res_food) ";
 					query << "VALUES ";
 						query << "('0', ";
-						query << "'0', ";
-						query << arr["cell_id"] << ", ";
 						query << "'0', ";
 						query << arr["planet_id"] << ", ";
 						query << launchtime << ", ";
@@ -748,10 +736,8 @@ namespace market
 					//Flotte zum Käufer schicken
 					query << "INSERT INTO fleet ";
 						query << "(fleet_user_id, ";
-						query << "fleet_cell_from, ";
-						query << "fleet_cell_to, ";
-						query << "fleet_planet_from, ";
-						query << "fleet_planet_to, ";
+						query << "fleet_entity_from, ";
+						query << "fleet_entity_to, ";
 						query << "fleet_launchtime, ";
 						query << "fleet_landtime, ";
 						query << "fleet_action, ";
@@ -762,8 +748,6 @@ namespace market
 						query << "fleet_res_food) ";
 					query << "VALUES ";
 						query << "('0', ";
-						query << "'0', ";
-						query << arr["ship_buyer_cell_id"] << ", ";
 						query << "'0', ";
 						query << arr["ship_buyer_planet_id"] << ", ";
 						query << launchtime << ", ";
@@ -852,10 +836,8 @@ namespace market
 
 					query << "INSERT INTO fleet ";
 						query << "(fleet_user_id, ";
-						query << "fleet_cell_from, ";
-						query << "fleet_cell_to, ";
-						query << "fleet_planet_from, ";
-						query << "fleet_planet_to, ";
+						query << "fleet_entity_from, ";
+						query << "fleet_entity_to, ";
 						query << "fleet_launchtime, ";
 						query << "fleet_landtime, ";
 						query << "fleet_action, ";
@@ -866,8 +848,6 @@ namespace market
 						query << "fleet_res_food) ";
 					query << "VALUES ";
 						query << "('0', ";
-						query << "'0', ";
-						query << arr["auction_cell_id"] << ", ";
 						query << "'0', ";
 						query << arr["auction_planet_id"] << ", ";
 						query << launchtime << ", ";
@@ -892,14 +872,13 @@ namespace market
 						query << "'1');";
 					query.store();
 					query.reset();
+					
 
 					//Flotte zum hochstbietenden schicken (Käufer)
 					query << "INSERT INTO fleet ";
 						query << "(fleet_user_id, ";
-						query << "fleet_cell_from, ";
-						query << "fleet_cell_to, ";
-						query << "fleet_planet_from, ";
-						query << "fleet_planet_to, ";
+						query << "fleet_entity_from, ";
+						query << "fleet_entity_to, ";
 						query << "fleet_launchtime, ";
 						query << "fleet_landtime, ";
 						query << "fleet_action, ";
@@ -910,8 +889,6 @@ namespace market
 						query << "fleet_res_food) ";
 					query << "VALUES ";
 						query << "('0', ";
-						query << "'0', ";
-						query << arr["auction_current_buyer_cell_id"] << ", ";
 						query << "'0', ";
 						query << arr["auction_current_buyer_planet_id"] << ", ";
 						query << launchtime << ", ";
@@ -924,6 +901,7 @@ namespace market
 						query << arr["auction_sell_food"] << ");";
 					query.store();
 					query.reset();
+					
 
 					// Schickt gekaufte Rohstoffe mit Handelsschiff
 					query << "INSERT INTO fleet_ships ";
@@ -937,7 +915,6 @@ namespace market
 						query << "'1');";
 					query.store();
 					query.reset();
-        
 
 					//Waren als "gesendet" markieren
 					query << "UPDATE ";
@@ -1093,7 +1070,7 @@ namespace market
 								query << "planet_res_fuel=planet_res_fuel+" << floor(int(arr["sell_fuel"])*return_factor) << ", ";
 								query << "planet_res_food=planet_res_food+" << floor(int(arr["sell_food"])*return_factor) << " ";
 							query << "WHERE ";
-								query << "planet_id=" << arr["planet_id"] << " ";
+								query << "id=" << arr["planet_id"] << " ";
 								query << "AND planet_user_id=" << arr["user_id"] << ";";
 							query.store();
 							query.reset();

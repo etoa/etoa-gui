@@ -37,7 +37,7 @@ namespace planet
 			mysqlpp::Query query = con_->query();
 			query << "SELECT ";
 			query << "    planets.*, ";
-			query << "    space_cells.*, ";
+			query << "    stars.*, ";
 			query << "    races.race_f_metal, ";
 			query << "    races.race_f_crystal, ";
 			query << "    races.race_f_plastic, ";
@@ -71,23 +71,35 @@ namespace planet
 			query << "  ( ";
 			query << "  	( ";
 			query << "			( ";
-			query << "					planets ";
-			query << "						INNER JOIN  ";
-			query << "            	planet_types ";
-			query << "            ON planets.planet_type_id = planet_types.type_id ";
-			query << "            AND planets.planet_id='"<< planetId << "' ";
-			query << "				) ";
-			query << "        INNER JOIN  ";
-			query << "        (	 ";
-			query << "        	space_cells ";
-			query << "            INNER JOIN sol_types ON space_cells.cell_solsys_solsys_sol_type = sol_types.type_id ";
-			query << "        ) ";
-			query << "        ON planets.planet_solsys_id = space_cells.cell_id ";
+			query << "				(";
+			query << "					(";
+			query << "						(";
+			query << "						entities ";
+			query << "						INNER JOIN ";
+			query << "							planets ";
+			query << "						ON planets.id = entities.id ";
+			query << "						AND entities.id='" << planetId << "' ";
+			query << "						) ";
+			query << "					INNER JOIN  ";
+			query << "						entities AS e ";
+			query << "					ON e.cell_id=entities.cell_id AND e.pos=0 ";
+			query << "					) ";
+			query << "				INNER JOIN  	 ";
+			query << "					stars ";
+			query << "				ON stars.id=e.id ";
+			query << "				)";
+			query << "			INNER JOIN ";
+			query << "				planet_types ";
+			query << "				ON planet_types.type_id = planets.planet_type_id ";
 			query << "			) ";
-			query << "  		INNER JOIN  ";
-			query << "  			users  ";
-			query << "  		ON planets.planet_user_id = users.user_id ";
-			query << ") ";
+			query << "		INNER JOIN ";
+			query << "			sol_types ";
+			query << "		ON sol_types.type_id=stars.type_id ";
+			query << "		) ";
+			query << "  	INNER JOIN  ";
+			query << "			users  ";
+			query << "		ON planets.planet_user_id = users.user_id ";
+			query << "	) ";
 			query << "INNER JOIN  ";
 			query << "	races  ";
 			query << "ON users.user_race_id = races.race_id;";
@@ -389,7 +401,7 @@ namespace planet
 			query << "planet_people='" << ressource[5] <<"', ";
 			query << "planet_people_place=" << store[5] << " ";
      	query << "WHERE ";
-			query << "planet_id='" << planetId << "';";
+			query << "id='" << planetId << "';";
 		query.store();
 		query.reset();
 	}
@@ -413,7 +425,7 @@ namespace planet
 			query << "planet_prod_people=" << (int)ressource[6] << ", ";
 			query << "planet_people='" << ressource[5] <<"' ";
      	query << "WHERE ";
-			query << "planet_id='" << planetId << "';";
+			query << "id='" << planetId << "';";
 		query.store();
 		query.reset();
 	}
@@ -511,7 +523,7 @@ namespace planet
 				
 		mysqlpp::Query query = con_->query();
 		query << "SELECT ";
-			query << "planet_id, ";
+			query << "id, ";
 			query << "planet_res_fuel, ";
 			query << "planet_fields, ";
 			query << "planet_last_updated ";
@@ -550,7 +562,7 @@ namespace planet
 						query << "planet_res_fuel='" << fuel << "', ";
 						query << "planet_last_updated='" << time << "' ";
 					query << "WHERE ";
-						query << "planet_id='" << row["planet_id"] << "';";
+						query << "id='" << row["id"] << "';";
 					query.store();
 					query.reset();
 				}
@@ -565,7 +577,7 @@ namespace planet
 		std::time_t ptime = std::time(0);
 		std::time_t utime = std::time(0) - 2400;
 		mysqlpp::Query query = con_->query();
-		query << "SELECT ";
+			query << "SELECT ";
 			query << "	  planets.*, ";
 			query << "    races.race_f_population, ";
 			query << "    sol_types.type_f_population as sol_type_f_population, ";
@@ -574,28 +586,40 @@ namespace planet
 			query << "  ( ";
 			query << "  	( ";
 			query << "			( ";
-			query << "					planets ";
-			query << "						INNER JOIN  ";
-			query << "            	planet_types ";
-			query << "            ON planets.planet_type_id = planet_types.type_id ";
-			query << "            AND planets.planet_last_updated<'"<< ptime << "' ";
-			query << "				) ";
-			query << "        INNER JOIN  ";
-			query << "        (	 ";
-			query << "        	space_cells ";
-			query << "            INNER JOIN sol_types ON space_cells.cell_solsys_solsys_sol_type = sol_types.type_id ";
-			query << "        ) ";
-			query << "        ON planets.planet_solsys_id = space_cells.cell_id ";
+			query << "				(";
+			query << "					(";
+			query << "						(";
+			query << "						entities ";
+			query << "						INNER JOIN ";
+			query << "							planets ";
+			query << "						ON planets.id = entities.id ";
+			query << "						AND planets.planet_last_updated<'"<< ptime << "' ";
+			query << "						) ";
+			query << "					INNER JOIN  ";
+			query << "						entities AS e ";
+			query << "					ON e.cell_id=entities.cell_id AND e.pos=0 ";
+			query << "					) ";
+			query << "				INNER JOIN  	 ";
+			query << "					stars ";
+			query << "				ON stars.id=e.id ";
+			query << "				)";
+			query << "			INNER JOIN ";
+			query << "				planet_types ";
+			query << "				ON planet_types.type_id = planets.planet_type_id ";
 			query << "			) ";
-			query << "  		INNER JOIN  ";
-			query << "  			users  ";
-			query << "  		ON planets.planet_user_id = users.user_id ";
-			//query << "            AND users.user_acttime > '" << utime << "' ";
-			query << ") ";
+			query << "		INNER JOIN ";
+			query << "			sol_types ";
+			query << "		ON sol_types.type_id=stars.type_id ";
+			query << "		) ";
+			query << "  	INNER JOIN  ";
+			query << "			users  ";
+			query << "		ON planets.planet_user_id = users.user_id ";
+			//query << "	AND users.user_acttime > '" << utime << "' ";
+			query << "	) ";
 			query << "INNER JOIN  ";
 			query << "	races  ";
-			query << "ON users.user_race_id = races.race_id ";
-		mysqlpp::Result res = query.store();		
+			query << "ON users.user_race_id = races.race_id;";
+			mysqlpp::Result res = query.store();			
 			query.reset();
 			
 				
@@ -609,7 +633,7 @@ namespace planet
 				for (mysqlpp::Row::size_type i = 0; i<resSize; i++) 
 				{ 
 					row = res.at(i);
-					int id = int(row["planet_id"]);
+					int id = int(row["id"]);
 					updateEconomy(id, row, ressource);
 					saveRes(id, ressource);
 				}
