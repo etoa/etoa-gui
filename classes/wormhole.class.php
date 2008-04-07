@@ -163,7 +163,8 @@
 			$delcnt=0;
 			$res=dbquery("
 				SELECT
-					id
+					id,
+					target_id
 				FROM
 					wormholes
 				WHERE

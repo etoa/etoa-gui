@@ -301,6 +301,7 @@
 						else					
 						{
 							$cpid = $mainplanet;
+							$s['cpid'] = $cpid;
 						}						
 						
 						$cp = new Planet($cpid);
