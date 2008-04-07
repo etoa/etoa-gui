@@ -45,15 +45,15 @@ namespace functions
 		}
 	}
     
-	int getSolarFuelBonus(int t_min, int t_max)
+	float getSolarFuelBonus(int t_min, int t_max)
 	{
-		int v = floor((t_min + t_max)/25);
-		return -v;
+		float v = (int)floor((t_min + t_max)/25);
+		return v;
 	}
 	
 	int getSolarPowerBonus(int t_min, int t_max)
 	{
-		int v = floor((t_max + t_min)/4);
+		int v = (int)floor((t_max + t_min)/4);
 		if (v <= -100)
 		{
 			v = -99;

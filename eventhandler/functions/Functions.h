@@ -17,7 +17,7 @@ namespace functions //ToDo addslahes(std::string)
 	* @author Glaubinix
 	*/
 	int getSolarPowerBonus(int t_min, int t_max);
-	int getSolarFuelBonus(int t_min, int t_max);
+	float getSolarFuelBonus(int t_min, int t_max);
 	
 	/**
 	* Liefet den Usernamen  

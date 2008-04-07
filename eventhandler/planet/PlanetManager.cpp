@@ -231,12 +231,12 @@ namespace planet
 				{
 					srow = sres.at(i);
 					int level = srow["buildlist_current_level"]-1;
-					store[0] += functions::s_round(srow["building_store_metal"] * pow(srow["building_store_factor"],level));
-					store[1] += functions::s_round(srow["building_store_crystal"] * pow(srow["building_store_factor"],level));
-					store[2] += functions::s_round(srow["building_store_plastic"] * pow(srow["building_store_factor"],level));
-					store[3] += functions::s_round(srow["building_store_fuel"] * pow(srow["building_store_factor"],level));
-					store[4] += functions::s_round(srow["building_store_food"] * pow(srow["building_store_factor"],level));
-					store[5] += functions::s_round(srow["building_people_place"] * pow(srow["building_store_factor"],level));
+					store[0] += (int)functions::s_round(srow["building_store_metal"] * pow(srow["building_store_factor"],level));
+					store[1] += (int)functions::s_round(srow["building_store_crystal"] * pow(srow["building_store_factor"],level));
+					store[2] += (int)functions::s_round(srow["building_store_plastic"] * pow(srow["building_store_factor"],level));
+					store[3] += (int)functions::s_round(srow["building_store_fuel"] * pow(srow["building_store_factor"],level));
+					store[4] += (int)functions::s_round(srow["building_store_food"] * pow(srow["building_store_factor"],level));
+					store[5] += (int)functions::s_round(srow["building_people_place"] * pow(srow["building_store_factor"],level));
 				}
 			}
 		}
@@ -338,12 +338,13 @@ namespace planet
 				}
 			}	
 		}
-			
+		
 		// Addieren der Planeten- und Rassenboni
+		double fuelSolar = 1 - (functions::getSolarFuelBonus((int)row["planet_temp_from"], (int)row["planet_temp_to"])/100);
 		cnt[0] += (cnt[0] * (float(row["planet_type_f_metal"]) + float(row["race_f_metal"]) + float(row["sol_type_f_metal"]) - 3));
 		cnt[1] += (cnt[1] * (float(row["planet_type_f_crystal"]) + float(row["race_f_crystal"]) + float(row["sol_type_f_crystal"]) - 3));
 		cnt[2] += (cnt[2] * (float(row["planet_type_f_plastic"]) + float(row["race_f_plastic"]) + float(row["sol_type_f_plastic"]) - 3));
-		cnt[3] += (cnt[3] * (float(row["planet_type_f_fuel"]) + float(row["race_f_fuel"]) + float(row["sol_type_f_fuel"]) + functions::getSolarFuelBonus((int)row["planet_temp_from"], (int)row["planet_temp_to"])/100 - 4));
+		cnt[3] += (cnt[3] * (float(row["planet_type_f_fuel"]) + float(row["race_f_fuel"]) + float(row["sol_type_f_fuel"]) + fuelSolar - 4));
 		cnt[4] += (cnt[4] * (float(row["planet_type_f_food"]) + float(row["race_f_food"]) + float(row["sol_type_f_food"]) - 3));
 		cnt[6] += (cnt[6] * (float(row["planet_type_f_power"]) + float(row["race_f_power"]) + float(row["sol_type_f_power"]) - 3));
 
