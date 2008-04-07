@@ -112,8 +112,16 @@
 	   
 	  protected function formatedCoords()
 	  {
+	  	$this->loadCoords();
 	  	return $this->sx."/".$this->sy." : ".$this->cx."/".$this->cy." : ".$this->pos;
 	  }
+	   
+	   
+	  public function coordsArray()
+	  {
+	  	$this->loadCoords();
+	  	return array($this->sx,$this->sy,$this->cx,$this->cy,$this->pos);
+	  }	   
 	   
 	  public function distance(Entity $target)
 	  {
@@ -224,7 +232,55 @@
 			}
 			else
 				die ("Ungültige ID");
+		}
+		
+	  /**
+	  * Creates an instance of a child class
+	  * using the factory design pattern
+	  */ 
+		static public function createFactoryByCoords($c1,$c2,$c3,$c4,$c5)
+		{
+			$res=dbquery("
+			SELECT
+				entities.id,
+				code
+			FROM
+				entities
+			INNER JOIN	
+				cells on entities.cell_id=cells.id
+			AND sx=".$c1."
+			AND sy=".$c2."
+			AND cx=".$c3."
+			AND cy=".$c4."
+			AND pos=".$c5."
+			");
+			if (mysql_num_rows($res)>0)
+			{
+				$arr = mysql_fetch_array($res);
+				$type = $arr[1];
+				$id = $arr[0];
+				
+				switch ($type)
+				{
+					case 's':
+						return new Star($id);
+					case 'p':
+						return new Planet($id);
+					case 'a':
+						return new AsteroidField($id);
+					case 'n':
+						return new Nebula($id);
+					case 'w':
+						return new Wormhole($id);
+					default:
+						return new UnknownEntity($id);
+				}			
+			}
+			else
+				die ("Ungültige ID");
 		}			
+		
+					
 	}
 
 ?>

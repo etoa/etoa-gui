@@ -53,7 +53,7 @@
   // Prüfen ob Gebäude gebaut ist
   if (mysql_num_rows($werft_res)>0)
   {
-  	$werft_arr=mysql_fetch_array($werft_res);
+  	$werft_arr=mysql_fetch_assoc($werft_res);
   	$center_level = $werft_arr['buildlist_current_level'];
   	
 		// Titel
@@ -90,100 +90,44 @@
 					{
 						if ($cp->resFuel >= CRYPTO_FUEL_COSTS_PER_SCAN)
 						{
-							$res = dbquery("
-							SELECT
-								planet_id,
-								cell_id,
-								planet_name,
-								user_id
-							FROM
-								space_cells
-							INNER JOIN
-							(
-								planets
-								LEFT JOIN
-									users 
-									ON user_id=planet_user_id
-							)
-								ON planet_solsys_id=cell_id
-								AND cell_sx=".$sx."
-								AND cell_sy=".$sy."
-								AND cell_cx=".$cx."
-								AND cell_cy=".$cy."
-								AND planet_solsys_pos=".$pp."
-							
-							;");
-							if (mysql_num_rows($res)>0)
+							$target = Entity::createFactoryByCoords($sx,$sy,$cx,$cy,$pp);
+							if (true)
 							{
-								$sx1 = $cp->sx;
-								$sy1 = $cp->sy;
-								$cx1 = $cp->cx;
-								$cy1 = $cp->cy;
-								$p1 = $cp->pos();
-								
-								$nx=$conf['num_of_cells']['p1'];		// Anzahl Zellen Y
-								$ny=$conf['num_of_cells']['p2'];		// Anzahl Zellen X
-								$ae=$conf['cell_length']['v'];			// Länge vom Solsys in AE
-								$np=$conf['num_planets']['p2'];			// Max. Planeten im Solsys
-								$dx = abs(((($sx-1) * $nx) + $cx) - ((($sx1-1) * $nx) + $cx1));
-								$dy = abs(((($sy-1) * $nx) + $cy) - ((($sy1-1) * $nx) + $cy1));
-								$sd = sqrt(pow($dx,2)+pow($dy,2));			// Distanze zwischen den beiden Zellen
-								$sae = $sd * $ae;											// Distance in AE units
-								if ($sx1==$sx && $sy1==$sy && $cx1==$cx && $cy1=$cy)
-									$ps = abs($pp-$p1)*$ae/4/$np;				// Planetendistanz wenn sie im selben Solsys sind
-								else
-									$ps = ($ae/2) - (($pp)*$ae/4/$np);	// Planetendistanz wenn sie nicht im selben Solsys sind
-								$ssae = $sae + $ps;
-												
-								if ($ssae <= CRYPTO_RANGE_PER_LEVEL*$center_level)
+								$dist = $cp->distance($target);
+								if ($dist <= CRYPTO_RANGE_PER_LEVEL*$center_level)
 								{									
 									$cp->changeRes(0,0,0,-CRYPTO_FUEL_COSTS_PER_SCAN,0);
-									include("inc/fleet_action.inc.php");
-									$arr=mysql_fetch_array($res);          
 
-									if ($arr['user_id']>0)
+									if ($target->ownerId() > 0)
 									{									
 										send_msg($arr['user_id'],SHIP_SPY_MSG_CAT_ID,"Funkstörung","Eure Flottenkontrolle hat soeben eine kurzzeitige Störung des Kommunikationsnetzes festgestellt.");
 									}
 									
-									$target = ($arr['planet_name']!='' ? $arr['planet_name'] : 'Unbenannt')."[/b] (".$sx."/".$sy." : ".$cx."/".$cy." : ".$pp.")";
-									$out.="[b]Flottenscan vom Planeten ".$target."\n
+									$out="[b]Flottenscan vom Planeten ".$target."\n
 									[b]Zeit:[/b] ".date("d.m.Y H:i:s")."\n\n";
 									$out.="[b]Eintreffende Flotten[/b]\n\n";
 									$fres = dbquery("
 									SELECT
 										fleet_landtime,
 										fleet_action,
-										planet_name,
-										planet_solsys_pos,
-										fleet_id,
-										cell_sx,
-										cell_sy,
-										cell_cx,
-										cell_cy,
-										cell_id,
-										user_nick									
+										fleet_entity_from,
+										user_nick
 									FROM
 										fleet
-									INNER JOIN
-									(
-										planets 
-										LEFT JOIN
-											users
-											ON planet_user_id=user_id
-									)
-										ON fleet_planet_from=planet_id
-										AND fleet_planet_to=".$arr['planet_id']."
-									INNER JOIN
-										space_cells
-										ON cell_id=fleet_cell_from
+									LEFT JOIN
+										users
+										ON fleet_user_id=user_id
+									WHERE
+										fleet_entity_to=".$target->id()."
 									");
 									if (mysql_num_rows($fres)>0)
 									{
 										require("inc/fleet_action.inc.php");
-										while ($farr=mysql_fetch_array($fres))
+										while ($farr=mysql_fetch_assoc($fres))
 										{
-											$out.='[b]Herkunft:[/b] '.$farr['planet_name'].' ('.$farr['cell_sx'].'/'.$farr['cell_sy'].' : '.$farr['cell_cx'].'/'.$farr['cell_cy'].' : '.$farr['planet_solsys_pos'].'), [b]Besitzer:[/b] '.$farr['user_nick'];
+											$source = Entity::createFactoryById($farr['fleet_entity_from']);
+											
+											$out.='[b]Herkunft:[/b] '.$source.'), [b]Besitzer:[/b] '.$farr['user_nick'];
 											$out.= "\n[b]Ankunft:[/b] ".df($farr['fleet_landtime']).", [b]Aktion:[/b] ".fa($farr['fleet_action'])."\n";
 											$sres = dbquery("
 											SELECT
@@ -198,7 +142,7 @@
 											;");
 											if (mysql_num_rows($sres)>0)
 											{
-												while ($sarr=mysql_fetch_array($sres))
+												while ($sarr=mysql_fetch_assoc($sres))
 												{
 													$out.=$sarr['fs_ship_cnt']." ".$sarr['ship_name']."\n";
 												}
@@ -211,6 +155,7 @@
 										$out.="Keine eintreffenden Flotten gefunden!\n\n";
 									}
 									
+									/*
 									$out.="[b]Wegfliegende Flotten[/b]\n\n";
 									$fres = dbquery("
 									SELECT
@@ -241,7 +186,7 @@
 									");
 									if (mysql_num_rows($fres)>0)
 									{
-										while ($farr=mysql_fetch_array($fres))
+										while ($farr=mysql_fetch_assoc($fres))
 										{
 											$out.='[b]Ziel:[/b] '.$farr['planet_name'].' ('.$farr['cell_sx'].'/'.$farr['cell_sy'].' : '.$farr['cell_cx'].'/'.$farr['cell_cy'].' : '.$farr['planet_solsys_pos'].'), [b]Besitzer:[/b] '.$farr['user_nick'];
 											$out.= "\n[b]Ankunft:[/b] ".df($farr['fleet_landtime']).", [b]Aktion:[/b] ".get_fleet_action($farr['fleet_action'])."\n\n";
@@ -250,7 +195,7 @@
 									else
 									{
 										$out.='Keine wegfliegenden Flotten gefunden!';
-									}
+									}*/
 									
 									infobox_start("Ergebnis der Analyse");
 									echo text2html($out);
@@ -288,7 +233,7 @@
 								}
 								else
 								{
-									echo "Das Ziel ist zu weit entfernt (".ceil($ssae)." AE, momentan sind ".CRYPTO_RANGE_PER_LEVEL*$center_level." möglich, ".CRYPTO_RANGE_PER_LEVEL." pro Gebäudestufe)!<br/><br/>";
+									echo "Das Ziel ist zu weit entfernt (".ceil($dist)." AE, momentan sind ".CRYPTO_RANGE_PER_LEVEL*$center_level." möglich, ".CRYPTO_RANGE_PER_LEVEL." pro Gebäudestufe)!<br/><br/>";
 								}									
 							}
 							else
@@ -316,9 +261,10 @@
 				
 				if (!$cd_enabled)
 				{				
-					if ($_GET['c']!='' && $_GET['h']!='' && md5(base64_decode($_GET['c'])) == $_GET['h'])
+					if (isset($_GET['target']) && $_GET['target']>0)
 					{
-						$coords = explode(":",base64_decode($_GET['c']));
+						$ent = Entity::createFactoryById($_GET['target']);
+						$coords = $ent->coordsArray();
 					}
 					elseif(isset($_POST['scan']))
 					{
@@ -343,89 +289,9 @@
 					//
 					// Bookmarks laden
 					//
-					$bookmarks=array();
-	
-					// Eigene Planeten
-					$pres = dbquery("
-					SELECT
-	                    space_cells.cell_sx,
-	                    space_cells.cell_sy,
-	                    space_cells.cell_cx,
-	                    space_cells.cell_cy,
-	                    planets.planet_solsys_pos,
-	                    planets.planet_name
-					FROM
-						".$db_table['planets']."
-					INNER JOIN
-						".$db_table['space_cells']."
-					ON
-	          space_cells.cell_id=planets.planet_solsys_id
-	          AND planets.planet_user_id=".$cu->id()."
-					ORDER BY
-						planets.planet_user_main DESC,
-						planets.planet_name ASC,
-	                    space_cells.cell_id ASC;");
-					if (mysql_num_rows($pres)>0)
-					{
-						while($parr=mysql_fetch_array($pres))
-						{
-							array_push(
-							$bookmarks,
-							array(
-							"cell_sx"=> $parr['cell_sx'],
-							"cell_sy"=> $parr['cell_sy'],
-							"cell_cx"=> $parr['cell_cx'],
-							"cell_cy"=> $parr['cell_cy'],
-							"planet_solsys_pos"=> $parr['planet_solsys_pos'],
-							"planet_name"=> $parr['planet_name'],
-							"automatic"=>1)
-							);
-						}
-					}
-					// Gespeicherte Bookmarks
-					$pres = dbquery("
-					SELECT
-	                    space_cells.cell_sx,
-	                    space_cells.cell_sy,
-	                    space_cells.cell_cx,
-	                    space_cells.cell_cy,
-	                    planets.planet_solsys_pos,
-	                    planets.planet_name,
-	                    target_bookmarks.bookmark_comment
-					FROM
-						".$db_table['target_bookmarks']."
-					INNER JOIN
-	       		".$db_table['planets']."
-	        ON 
-	        	target_bookmarks.bookmark_user_id=".$cu->id()."
-	         	AND target_bookmarks.bookmark_planet_id=planets.planet_id
-					INNER JOIN       		
-						".$db_table['space_cells']."
-					ON 
-						target_bookmarks.bookmark_cell_id=space_cells.cell_id
-					ORDER BY
-	                    target_bookmarks.bookmark_comment,
-	                    target_bookmarks.bookmark_cell_id,
-	                    target_bookmarks.bookmark_planet_id;");
-					if (mysql_num_rows($pres)>0)
-					{
-						while($parr=mysql_fetch_array($pres))
-						{
-							array_push(
-							$bookmarks,
-							array(
-							"cell_sx"=> $parr['cell_sx'],
-							"cell_sy"=> $parr['cell_sy'],
-							"cell_cx"=> $parr['cell_cx'],
-							"cell_cy"=> $parr['cell_cy'],
-							"planet_solsys_pos"=> $parr['planet_solsys_pos'],
-							"planet_name"=> $parr['planet_name'],
-							"automatic"=>0,
-							"bookmark_comment"=> $parr['bookmark_comment'])
-							);
-						}
-					}
-	
+
+					$bm = new BookmarkManager($cu->id());
+					
 					echo 'Koordinaten eingeben: 
 						<input type="text" name="sx" id="sx" value="'.$coords[0].'" size="2" maxlength="2" /> / 
 						<input type="text" name="sy" id="sy" value="'.$coords[1].'" size="2" maxlength="2" /> :
@@ -434,32 +300,9 @@
 						<input type="text" name="p" id="p" value="'.$coords[4].'" size="2" maxlength="2" /><br/><br/>';
 					
 					// Bookmarkliste anzeigen
-					echo "<i>oder</i> Favorit wählen: <select id=\"bookmarkselect\" onchange=\"applyBookmark();\">";
-					if (count($bookmarks)>0)
-					{
-						$a=1;
-						echo "<option value=\"\">W&auml;hlen...</option>";
-						foreach ($bookmarks as $i=> $b)
-						{
-							if ($b['automatic']==0 && $a==1)
-							{
-								$a=0;
-								echo "<option value=\"\">-----------------------------</option>";
-							}
-							echo "<option value=\"$i\"";
-							if ($csx==$b['cell_sx'] && $csy==$b['cell_sy'] && $ccx==$b['cell_cx'] && $ccy==$b['cell_cy'] && $psp==$b['planet_solsys_pos']) echo " selected=\"selected\"";
-							echo ">";
-							if ($b['automatic']==1) echo "Eigener Planet: ";
-							echo $b['cell_sx']."/".$b['cell_sy']." : ".$b['cell_cx']."/".$b['cell_cy']." : ".$b['planet_solsys_pos']." ".$b['planet_name'];
-							if ($b['bookmark_comment']!="") echo " (".stripslashes($b['bookmark_comment']).")";
-							echo "</option>";
-						}
-					}
-					else
-						echo "<option value=\"\">(Nichts vorhaden)</option>";
-					echo "</select><br/><br/>
+					echo "<i>oder</i> Favorit wählen: ".$bm->drawSelector("bookmarkselect","applyBookmark();")."<br/><br/>
 					<input type=\"checkbox\" name=\"scan_to_notes\" value=\"1\" checked=\"checked\" /> Zu meinem Notizblock hinzufügen";					
-						
+					echo $bm->drawSelectorJavaScript("bookmarkselect","applyBookmark");
 					infobox_end();
 					if ($cp->resFuel >= CRYPTO_FUEL_COSTS_PER_SCAN)
 					{
@@ -471,33 +314,7 @@
 					}
 					echo '</form>';				
 					
-					echo "<script type=\"text/javascript\">
-					function applyBookmark()
-					{
-						select_id=document.getElementById('bookmarkselect').selectedIndex;
-						select_val=document.getElementById('bookmarkselect').options[select_id].value;
-						a=1;
-						if (select_val!='')
-						{
-							switch(select_val)
-							{
-								";
-								foreach ($bookmarks as $i=> $b)
-								{
-									echo "case \"$i\":\n";
-									echo "document.getElementById('sx').value='".$b['cell_sx']."';\n";
-									echo "document.getElementById('sy').value='".$b['cell_sy']."';\n";
-									echo "document.getElementById('cx').value='".$b['cell_cx']."';\n";
-									echo "document.getElementById('cy').value='".$b['cell_cy']."';\n";
-									echo "document.getElementById('p').value='".$b['planet_solsys_pos']."';\n";
-									echo "break;\n";
-								}
-								echo "
-							}
-	
-						}
-					}
-					</script>";			
+		
 				}
 				else
 				{

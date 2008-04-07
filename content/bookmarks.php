@@ -259,7 +259,7 @@
 		{
 			infobox_start("Gespeicherte Favoriten",1);
 			echo "<tr>
-							<th class=\"tbltitle\">Typ</th>
+							<th class=\"tbltitle\" colspan=\"2\">Typ</th>
 							<th class=\"tbltitle\">Koordinaten</th>
 							<th class=\"tbltitle\">Besitzer</th>
 							<th class=\"tbltitle\">Kommentar</th>
@@ -270,6 +270,7 @@
 				$ent = Entity::createFactory($arr['code'],$arr['entity_id']);
 			
 				echo "<tr>
+									<td class=\"tbldata\" style=\"width:40px;background:#000\"><img src=\"".$ent->imagePath()."\" /></td>
 									<td class=\"tbldata\">".$ent->entityCodeString()."</td>
 									<td class=\"tbldata\">".$ent."</td>
 									<td class=\"tbldata\">".$ent->owner()."</td>

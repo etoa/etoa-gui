@@ -21,6 +21,12 @@
 			$this->num = count($i);
 		}
 
+		public function itemObjects()
+		{
+			$this->load();			
+			return $this->itemObjects;
+		}
+
 		static function getFreePlanet($sx=0,$sy=0)
 		{
 			$cfg = Config::getInstance();
