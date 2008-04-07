@@ -329,7 +329,7 @@ namespace planet
 			int sresSize = sres.size();
 			if (sresSize>0)
 			{
-				int dtemp = functions::getSolarPowerBonus(int(row["planet_temp_from"]), int(row["planet_temp_to"]));
+				int dtemp = functions::getSolarPowerBonus((int)row["planet_temp_from"], (int)row["planet_temp_to"]);
 				mysqlpp::Row srow;
 				for (mysqlpp::Row::size_type i = 0; i<sresSize; i++) 
 				{
@@ -343,7 +343,7 @@ namespace planet
 		cnt[0] += (cnt[0] * (float(row["planet_type_f_metal"]) + float(row["race_f_metal"]) + float(row["sol_type_f_metal"]) - 3));
 		cnt[1] += (cnt[1] * (float(row["planet_type_f_crystal"]) + float(row["race_f_crystal"]) + float(row["sol_type_f_crystal"]) - 3));
 		cnt[2] += (cnt[2] * (float(row["planet_type_f_plastic"]) + float(row["race_f_plastic"]) + float(row["sol_type_f_plastic"]) - 3));
-		cnt[3] += (cnt[3] * (float(row["planet_type_f_fuel"]) + float(row["race_f_fuel"]) + float(row["sol_type_f_fuel"]) - 3));
+		cnt[3] += (cnt[3] * (float(row["planet_type_f_fuel"]) + float(row["race_f_fuel"]) + float(row["sol_type_f_fuel"]) + functions::getSolarFuelBonus((int)row["planet_temp_from"], (int)row["planet_temp_to"])/100 - 4));
 		cnt[4] += (cnt[4] * (float(row["planet_type_f_food"]) + float(row["race_f_food"]) + float(row["sol_type_f_food"]) - 3));
 		cnt[6] += (cnt[6] * (float(row["planet_type_f_power"]) + float(row["race_f_power"]) + float(row["sol_type_f_power"]) - 3));
 
