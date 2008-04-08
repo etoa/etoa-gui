@@ -45,8 +45,6 @@
 									WHERE 
 										planet_user_id='".$cu->id()."';");
 									
-									$s['user']['hmode_from'] = $hfrom;
-									$s['user']['hmode_to'] = $hto;
 									$arr['user_hmode_to'] = $hto;
 									success_msg("Du bist nun im Urlaubsmodus bis [b]".df($hto)."[/b].");
 		              $umod = true;
@@ -83,12 +81,10 @@
 	
 		if (isset($_POST['hmod_off']) && checker_verify())
 		{
-			if ($s['user']['hmode_from']>0 && $s['user']['hmode_from']<time() && $s['user']['hmode_to']<time())
+			if ($cu->hmode_from > 0 && $cu->hmode_from < time() && $cu->hmode_to < time())
 			{
-				dbquery("UPDATE ".$db_table['users']." SET user_hmode_from=0,user_hmode_to=0 WHERE user_id='".$cu->id()."';");
-				dbquery ("UPDATE ".$db_table['planets']." SET planet_last_updated=".time()." WHERE planet_user_id='".$cu->id()."';");
-				$s['user']['hmode_from']=0;
-				$s['user']['hmode_to']=0;
+				dbquery("UPDATE users SET user_hmode_from=0,user_hmode_to=0 WHERE user_id='".$cu->id()."';");
+				dbquery ("UPDATE planets SET planet_last_updated=".time()." WHERE planet_user_id='".$cu->id()."';");
 				success_msg("Urlaubsmodus aufgehoben! Denke daran, auf allen deinen Planeten die Produktion zu überprüfen!");
 				
 				$rres = dbquery ("
@@ -184,53 +180,6 @@
 		}
 
 		//
-		// Neu anfangen
-		//
-		elseif (isset($_POST['reroll']) && checker_verify())
-		{
-			if ($s['allow_planet_change'])
-			{
-				if ($s['allow_planet_change_counter']<MAX_MAINPLANET_CHANGES)
-				{
-					$arr1 = mysql_fetch_row(dbquery("SELECT COUNT(shiplist_id) FROM ".$db_table['shiplist']." WHERE shiplist_user_id='".$cu->id()."';"));
-					$arr2 = mysql_fetch_row(dbquery("SELECT COUNT(deflist_id) FROM ".$db_table['deflist']." WHERE deflist_user_id='".$cu->id()."';"));
-					$arr3 = mysql_fetch_row(dbquery("SELECT COUNT(buildlist_id) FROM ".$db_table['buildlist']." WHERE buildlist_user_id='".$cu->id()."';"));
-					$arr4 = mysql_fetch_row(dbquery("SELECT COUNT(techlist_id) FROM ".$db_table['techlist']." WHERE techlist_user_id='".$cu->id()."';"));
-					$arr5 = mysql_fetch_row(dbquery("SELECT COUNT(fleet_id) FROM ".$db_table['fleet']." WHERE fleet_user_id='".$cu->id()."';"));
-					if ($c->isMain && $arr1[0]==0 && $arr2[0]==0 && $arr3[0]==0 && $arr4[0]==0 && $arr5[0]==0)
-					{
-						reset_planet($c->id);
-						success_msg("Alter Planet wurde zurückgesetzt und ein neuer Planet wird gesucht...");
-						echo '<input type="button" value="Weiter" onclick="document.location=\'?page=overview\'" />';
-						if (!isset($s['allow_planet_change_counter']))
-						{
-							$s['allow_planet_change_counter']=1;
-						}
-						else
-						{
-							$s['allow_planet_change_counter']++;
-						}
-					}
-					else
-					{
-						error_msg("Du hast bereits auf deinem Planeten etwas gebaut!");			
-						echo '<input type="button" value="Weiter" onclick="document.location=\'?page=userconfig&mode=misc\'" />';
-					}
-				}
-				else
-				{
-					error_msg("Du kannst nicht mehr als ".MAX_MAINPLANET_CHANGES." mal neu anfangen!");			
-					echo '<input type="button" value="Weiter" onclick="document.location=\'?page=userconfig&mode=misc\'" />';
-				}				
-			}
-			else
-			{
-				error_msg("Ein Neuanfang ist nur während des ersten Logins möglich!");			
-				echo '<input type="button" value="Weiter" onclick="document.location=\'?page=userconfig&mode=misc\'" />';
-			}
-		}
-		
-		//
 		// Auswahl
 		//
 		else
@@ -272,35 +221,6 @@
 	    	}
 	    	echo "</td></tr>";
 	    	
-				// Neu anfangen löschen
-	    	echo "<tr><th class=\"tbltitle\">Neu anfangen</th>
-	    	<td class=\"tbldata\">";
-	    	$disabled = "";
-	    	if (isset($s['allow_planet_change']) && $s['allow_planet_change'])
-	    	{
-	    		if ($s['allow_planet_change_counter']<MAX_MAINPLANET_CHANGES)
-					{
-			    	echo "Sollte dein Startplanet nicht deinen Vorstellungen entsprechen kannst du hier das Spiel mit einem
-			    	neuen Planeten anfangen. Voraussetzung ist jedoch dass auf dem Startplanet noch nichts gebaut wurde!
-			    	<b>Du kannst noch ".(MAX_MAINPLANET_CHANGES-$s['allow_planet_change_counter'])." mal neu anfangen.</b> Beachte dass ein Neuanfang nur währden des
-			    	erstmaligen Anmeldens möglich ist!";
-			    }
-			    else
-			    {
-			    	echo "Ein Neuanfang ist leider nicht mehr möglich, es sind maximal ".MAX_MAINPLANET_CHANGES." Neuanfänge erlaubt!";
-			    	$disabled = "disabled=\"disabled\"";
-			    }
-	    	}
-	    	else
-	    	{
-	    		echo "Ein Neuanfang ist leider nicht mehr möglich!";
-	    		$disabled = "disabled=\"disabled\"";
-	    	}
-	    	echo "</td>
-	    	<td class=\"tbldata\">";
-    		echo "<input type=\"submit\" name=\"reroll\" value=\"Neu anfangen\" ".$disabled." onclick=\"return confirm('Wirklich neu anfangen?')\" />";
-	    	echo "</td></tr>";
-
 
 	    	infobox_end(1);
 				echo "</form>";

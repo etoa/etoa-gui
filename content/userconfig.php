@@ -217,7 +217,7 @@
     /****************/
 		elseif($mode=='messages')
 		{
-      if($s['user']['sitter_active']==0)
+      if($s['sitter_active']==0)
       {
       	require("content/userconfig/messages.php");
       }
@@ -240,7 +240,7 @@
 		/****************/
    	elseif($mode=='sitting')
     {
-      if($s['user']['sitter_active']==0)
+      if($s['sitter_active']==0)
       {
       	require("content/userconfig/sitting.php");
       }
@@ -290,7 +290,7 @@
 		/****************/
 		elseif($mode=='password')
   	{
-        if($s['user']['sitter_active']==0)
+        if($s['sitter_active']==0)
         {
         	require("content/userconfig/password.php");
       	}
@@ -305,7 +305,7 @@
 		/****************/
 		elseif($mode=='misc')
 		{
-        if($s['user']['sitter_active']==0)
+        if($s['sitter_active']==0)
         {
         	require("content/userconfig/misc.php");
       	}

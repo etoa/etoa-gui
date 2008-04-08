@@ -3,11 +3,11 @@
             // Neuer user anlegen, der am gleichen PC sitzt (multi)
             //
 
-            if ($_POST['new_multi']!="" && checker_verify())
+            if (isset($_POST['new_multi'])!="" && checker_verify())
             {
                 dbquery("
                 INSERT INTO
-                ".$db_table['user_multi']."
+                	user_multi
                 (user_multi_user_id)
                 VALUES
                 ('".$cu->id()."');");
@@ -20,7 +20,7 @@
             // Daten Speichern (multi)
             //
 
-            if ($_POST['data_submit_multi']!="" && checker_verify())
+            if (isset($_POST['data_submit_multi']) && checker_verify())
             {
 
                 $user=array_unique($_POST['user_multi_multi_nick']); //löscht alle users die mehrfach eingetragen wurden
@@ -90,7 +90,7 @@
             // Neues Sitting Datum erzeugen
             //
 
-            if ($_POST['new_sitting_date']!="" && checker_verify())
+            if (isset($_POST['new_sitting_date']) && checker_verify())
             {
                 dbquery("
                 INSERT INTO
@@ -107,7 +107,7 @@
             // Daten Speichern (sitting)
             //
 
-            if ($_POST['data_submit_sitting']!="" && checker_verify())
+            if (isset($_POST['data_submit_sitting']) && checker_verify())
             {
                 //überprüft ob der angegebene user wirklich vorhanden ist
                 if (get_user_id($_POST['user_sitting_sitter_nick'])!=0 || $_POST['user_sitting_sitter_nick']=="")
@@ -255,7 +255,7 @@
 
             //Sittermodus aktivieren
 
-            if ($_POST['sitting_activade']!="" && checker_verify())
+            if (isset($_POST['sitting_activade']) && checker_verify())
             {
                 //Errechnet Anzahl der Sittertage
                 $date_res = dbquery("
@@ -375,7 +375,7 @@
                         echo "</td></tr>";
 
                     }
-                    if($unused_multi<1 && $s['user']['sitter_active']==0)
+                    if($unused_multi<1 && $s['sitter_active']==0)
                     {
                         echo "<tr><td class=\"tbldata\" style=\"text-align:center;\" colspan=\"3\"><input type=\"submit\" name=\"new_multi\" value=\"User hinzuf&uuml;gen\"/></td></tr>";
                     }

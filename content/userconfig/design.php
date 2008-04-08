@@ -104,7 +104,7 @@
                     foreach ($designs as $k => $v)
                     {
                         echo "<option value=\"$k\"";
-                        if ($arr['user_css_style']==$k) echo " selected=\"selected\"";
+                        if (CSS_STYLE==$k) echo " selected=\"selected\"";
                         echo ">".$v['name']."</option>";
                     }
                     echo "</select>
@@ -121,12 +121,12 @@
                     foreach ($themes as $k => $v)
                     {
                         echo "<option value=\"$k\"";
-                        if ($arr['user_image_url']==$k) echo " selected=\"selected\"";
+                        if (IMAGE_PATH==$k) echo " selected=\"selected\"";
                         echo ">".$v['name']."</option>";
                     }
                     echo "</select> <span id=\"imagePackExtension\"></span><br/>
                     <div id=\"imagePackInfo\"></div>";
-                    echo "<script type=\"text/javascript;\">xajax_imagePackInfo(document.getElementById('user_image_select').options[document.getElementById('user_image_select').selectedIndex].value,'".$arr['user_image_ext']."','".$arr['user_image_url']."');</script>";
+                    echo "<script type=\"text/javascript;\">xajax_imagePackInfo(document.getElementById('user_image_select').options[document.getElementById('user_image_select').selectedIndex].value,'".IMAGE_EXT."','".IMAGE_PATH."');</script>";
              echo "</td>";
         echo "</tr>";
 

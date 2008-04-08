@@ -1,7 +1,7 @@
 <?PHP
 
          	// Datenänderung übernehmen
-            if ($_POST['data_submit']!="" && checker_verify())
+            if (isset($_POST['data_submit']) && checker_verify())
             {
               dbquery("
               UPDATE
@@ -15,12 +15,6 @@
              	WHERE
                   user_id='".$cu->id()."';");
                       
-              $s['user']['msgsignature']=$_POST['user_msgsignature'];
-              $s['user']['msg_preview']=$_POST['user_msg_preview'];
-              $s['user']['msgcreation_preview']=$_POST['user_msgcreation_preview'];
-              $s['user']['msg_copy']=$_POST['user_msg_copy'];
-              $s['user']['msg_blink']=$_POST['user_msg_blink'];
-              
               success_msg("Nachrichten-Einstellungen wurden ge&auml;ndert!");
                   
               $res = dbquery("SELECT * FROM ".$db_table['users']." WHERE user_id='".$cu->id()."';");

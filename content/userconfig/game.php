@@ -1,10 +1,10 @@
 <?PHP
          	// Datenänderung übernehmen
-            if ($_POST['data_submit']!="" && checker_verify())
+            if (isset($_POST['data_submit']) && checker_verify())
             {
               dbquery("
               UPDATE
-                  ".$db_table['users']."
+                  users
               SET
                   user_spyship_count='".intval($_POST['user_spyship_count'])."',
                   user_spyship_id='".$_POST['user_spyship_id']."',
@@ -12,9 +12,6 @@
              	WHERE
                   user_id='".$cu->id()."';");
                       
-              $s['user']['spyship_count']=$_POST['user_spyship_count'];
-              $s['user']['spyship_id']=$_POST['user_spyship_id'];
-              
               success_msg("Benutzer-Daten wurden ge&auml;ndert!");
                   
               $res = dbquery("SELECT * FROM ".$db_table['users']." WHERE user_id='".$cu->id()."';");

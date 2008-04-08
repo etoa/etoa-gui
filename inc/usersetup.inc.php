@@ -240,10 +240,6 @@
 		while ($race = mysql_fetch_array($res))
 		{
 			echo "<option value=\"".$race['race_id']."\"";
-			if ($race['race_id']==$raceId) 
-			{
-				echo " selected=\"selected\"";
-			}
 			echo ">".$race['race_name']."</option>";
 		}
 		echo "</select>";
