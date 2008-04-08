@@ -17,7 +17,7 @@
 <map name="pb_info_Map">
 <area shape="circle" alt="" coords="28,31,18" 
 	{if $helpBox eq "true"}
-		href="javascript:;" onclick="window.open('show.php?page=help','help','status=no,width=800,height=600,scrollbars=yes');"
+		href="javascript:;" onclick="window.open('show.php?page=help','help','status=no,width=800,height=600,scrollbars=yes,resizable=yes');"
 	{else}
 		href="?page=help"
 	{/if}
@@ -64,7 +64,7 @@
 <map name="pb_notes_Map">
 <area shape="circle" alt="" coords="23,32,18" 
 	{if $noteBox == true}
-		href="javascript:;" onclick="window.open('show.php?page=notepad','notes','status=no,width=800,height=600,scrollbars=yes');"
+		href="javascript:;" onclick="window.open('show.php?page=notepad','notes','status=no,width=800,height=600,scrollbars=yes,resizable=yes');"
 	{else}
 		href="?page=notepad"
 	{/if}

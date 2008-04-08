@@ -36,9 +36,9 @@
 						{elseif $gameNav[id].items[iid].name == "Nachrichten" && $messages > 0}
 							<a href="{$gameNav[id].items[iid].url}" style="color:#0f0">
 						{elseif $gameNav[id].items[iid].name == "Notizen" && $noteBox == true}
-							<a href="javascript:;" onclick="window.open('show.php?page=notepad','notes','status=no,width=800,height=600,scrollbars=yes');">
+							<a href="javascript:;" onclick="window.open('show.php?page=notepad','notes','status=no,width=800,height=600,scrollbars=yes,resizable=yes');">
 						{elseif $gameNav[id].items[iid].name == "Hilfe" && $helpBox == true}
-							<a href="javascript:;" onclick="window.open('show.php?page=help','help','status=no,width=800,height=600,scrollbars=yes');">
+							<a href="javascript:;" onclick="window.open('show.php?page=help','help','status=no,width=800,height=600,scrollbars=yes,resizable=yes');">
 						{else}
 							<a href="{$gameNav[id].items[iid].url}">
 						{/if}
