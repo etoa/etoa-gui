@@ -184,7 +184,7 @@
 							UPDATE
 								entities
 							SET
-								code='e',
+								code='e'
 							WHERE
 								id='".$arr['id']."'
 							OR
