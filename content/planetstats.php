@@ -43,6 +43,8 @@
 	echo "</table>";
 	echo "</div><br><br>";
 
+	$planets=$pm->itemObjects();
+
 	$cnt_res=0;
 	$max_res=array(0,0,0,0,0,0);
 	$min_res=array(9999999999,9999999999,9999999999,9999999999,9999999999,9999999999);
@@ -52,7 +54,7 @@
 	$max_prod=array(0,0,0,0,0,0);
 	$min_prod=array(9999999999,9999999999,9999999999,9999999999,9999999999,9999999999);
 	$tot_prod=array(0,0,0,0,0,0);
-	foreach ($planets->own as $p)
+	foreach ($planets as $p)
 	{
 		//Speichert die aktuellen Rohstoffe in ein Array
 		$val_res[$p->id][0]=floor($p->res->metal);
@@ -211,7 +213,7 @@
 	<th class=\"tbltitle\">".RES_FUEL."</th>
 	<th class=\"tbltitle\">".RES_FOOD."</th>
 	<th class=\"tbltitle\">Bewohner</th></tr>";
-	foreach ($planets->own as $p)
+	foreach ($planets as $p)
 	{
 		echo "<tr><td class=\"tbldata\"><a href=\"?page=economy&amp;planet_id=".$p->id."\">".$p->name."</a></td>";
 		for ($x=0;$x<6;$x++)
@@ -272,7 +274,7 @@
 	$max_prod[5] = 0;
 	$min_prod[5] = 9999999999;
 	$tot_prod[5] = 0;
-	foreach ($planets->own as $p)
+	foreach ($planets as $p)
 	{
 		//Speichert die aktuellen Energieproduktionen in ein Array (Bewohnerproduktion [5] wird überschrieben)
 		$val_prod[$p->id][5]=floor($p->prod->power);
@@ -295,7 +297,7 @@
 	<th class=\"tbltitle\">".RES_FUEL."</th>
 	<th class=\"tbltitle\">".RES_FOOD."</th>
 	<th class=\"tbltitle\">Energie</th></tr>";
-	foreach ($planets->own as $p)
+	foreach ($planets as $p)
 	{
 		echo "<tr><td class=\"tbldata\"><a href=\"?page=economy&amp;planet_id=".$p->id."\">".$p->name."</a></td>";
 		for ($x=0;$x<6;$x++)

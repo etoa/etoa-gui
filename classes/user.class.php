@@ -27,6 +27,7 @@
 
 				$rres = dbquery("
 				SELECT
+					race_name,
 			  	race_f_researchtime,
 					race_f_buildtime,
 					race_f_fleettime,
@@ -45,6 +46,7 @@
 				if (mysql_num_rows($rres)>0)
 				{
 					$rarr = mysql_fetch_assoc($rres);
+					$this->raceName = $rarr['race_name'];
 					$this->raceResearchtime = $rarr['race_f_researchtime'];
 					$this->raceBuildtime = $rarr['race_f_buildtime'];
 					$this->raceFleettime = $rarr['race_f_fleettime'];

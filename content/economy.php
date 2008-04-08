@@ -44,7 +44,7 @@
 					if ($val>1) $val=1; if ($val<0) $val=0;
 					dbquery("
 					UPDATE 
-						".$db_table['buildlist']." 
+						buildlist 
 					SET 
 						buildlist_prod_percent=$val 
 					WHERE 
@@ -53,8 +53,6 @@
 						AND buildlist_building_id='$id'
 					;");
 				}
-				$cp->updateEconomy();
-				$cp->update(1);
 			}
 		}
 
@@ -148,23 +146,23 @@
           // Addieren der Planeten- und Rassenboni
           if ($bp['metal']!="")
           { 
-          	$bp['metal']  = $bp['metal'] + ($bp['metal'] * ($cp->type->metal-1)) + ($bp['metal'] * ($user['race']['metal']-1) + ($bp['metal'] * ($cp->sol->type->metal-1)));
+          	$bp['metal']  = $bp['metal'] + ($bp['metal'] * ($cp->typeMetal-1)) + ($bp['metal'] * ($cu->raceMetal-1) + ($bp['metal'] * ($cp->starMetal-1)));
           }
           if ($bp['crystal']!="")
           { 
-          	$bp['crystal']= $bp['crystal'] + ($bp['crystal'] * ($cp->type->crystal-1)) +  ($bp['crystal'] * ($user['race']['crystal']-1) + ($bp['crystal'] * ($cp->sol->type->crystal-1)));
+          	$bp['crystal']= $bp['crystal'] + ($bp['crystal'] * ($cp->typeCrystal-1)) +  ($bp['crystal'] * ($cu->raceCrystal-1) + ($bp['crystal'] * ($cp->starCrystal-1)));
           }
           if ($bp['plastic']!="")
           { 
-          	$bp['plastic']= $bp['plastic'] + ($bp['plastic'] * ($cp->type->plastic-1)) + ($bp['plastic'] * ($user['race']['plastic']-1) + ($bp['plastic'] * ($cp->sol->type->plastic-1)));
+          	$bp['plastic']= $bp['plastic'] + ($bp['plastic'] * ($cp->typePlastic-1)) + ($bp['plastic'] * ($cu->racePlastic-1) + ($bp['plastic'] * ($cp->starPlastic-1)));
           }
           if ($bp['fuel']!="")
           {
-          	$bp['fuel'] = $bp['fuel'] + ($bp['fuel'] * ($cp->type->fuel-1)) + ($bp['fuel'] * ($user['race']['fuel']-1) + ($bp['fuel'] * ($cp->sol->type->fuel-1)));
+          	$bp['fuel'] = $bp['fuel'] + ($bp['fuel'] * ($cp->typeFuel-1)) + ($bp['fuel'] * ($cu->raceFuel-1) + ($bp['fuel'] * ($cp->starFuel-1)));
           }
           if ($bp['food']!="")
           {
-          	$bp['food'] = $bp['food'] + ($bp['food'] * ($cp->type->food-1)) + ($bp['food'] * ($user['race']['food']-1) + ($bp['food'] * ($cp->sol->type->food-1)));
+          	$bp['food'] = $bp['food'] + ($bp['food'] * ($cp->typeFood-1)) + ($bp['food'] * ($cu->raceFood-1) + ($bp['food'] * ($cp->starFood-1)));
           }
 
           // Zum Total hinzufügen
@@ -291,7 +289,7 @@
 		FROM 
       ".$db_table['buildings']." AS b
       INNER JOIN
-      ".$db_table['buildlist']." AS l
+      buildlist AS l
       ON b.building_id=l.buildlist_building_id
       AND l.buildlist_user_id='".$cu->id()."'
       AND l.buildlist_planet_id='".$cp->id."'
@@ -306,7 +304,7 @@
 			{
 				$bp['power'] 	= round($parr['building_prod_power'] * pow($parr['building_production_factor'],$parr['buildlist_current_level']-1));
 				// Addieren der Planeten- und Rassenboni
-				if ($bp['power']!="") $bp['power'] = $bp['power'] + ($bp['power'] * ($cp->type->power-1)) + ($bp['power'] * ($user['race']['power']-1) + ($bp['power'] * ($cp->sol->type->power-1)));
+				if ($bp['power']!="") $bp['power'] = $bp['power'] + ($bp['power'] * ($cp->typePower-1)) + ($bp['power'] * ($cu->racePower-1) + ($bp['power'] * ($cp->starPower-1)));
 
 				echo "<tr><td class=\"tbltitle\">".$parr['building_name']." (".$parr['buildlist_current_level'].")</td>";
 				echo "<td class=\"tbldata\" colspan=\"2\">".nf(floor($bp['power']))."</td></tr>";
@@ -316,7 +314,7 @@
 			}
 		}
 	
-		$power_bonus = ($cp->type->power + $user['race']['power'] + $cp->sol->type->power-2);
+		$power_bonus = ($cp->typePower + $cu->racePower + $cp->starPower-2);
 	
 		$sres = dbquery("
 		SELECT
@@ -383,7 +381,7 @@
             l.buildlist_current_level
 		FROM
             ".$db_table['buildings']." AS b,
-            ".$db_table['buildlist']." AS l
+            buildlist AS l
 		WHERE
             b.building_id = l.buildlist_building_id
             AND l.buildlist_planet_id=".$cp->id."
@@ -446,71 +444,71 @@
 		infobox_start("Boni",1);
 
 
-		echo "<tr><td class=\"tbltitle\">&nbsp;</td><td class=\"tbltitle\">".$cp->type->name."</td>";
-		echo "<td class=\"tbltitle\">".$user['race']['name']."</td>";
-		echo "<td class=\"tbltitle\">".$cp->sol_type_name."</td>";
-		//echo "<td class=\"tbltitle\" rowspan=\"11\" width=\"1\"></td>";
+		echo "<tr><td class=\"tbltitle\">Rohstoff</td>
+		<td class=\"tbltitle\">".$cp->typeName."</td>";
+		echo "<td class=\"tbltitle\">".$cu->raceName."</td>";
+		echo "<td class=\"tbltitle\">".$cp->starTypeName."</td>";
 		echo "<td class=\"tbltitle\">TOTAL</td></tr>";
 
 		echo "<tr><td class=\"tbldata\">".RES_ICON_METAL."Produktion ".RES_METAL."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cp->type->metal,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($user['race']['metal'],1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cp->sol->type->metal,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string(array($cp->type->metal,$user['race']['metal'],$cp->sol->type->metal),1)."</td></tr>";
+		echo "<td class=\"tbldata\">".get_percent_string($cp->typeMetal,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($cu->raceMetal,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($cp->starMetal,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string(array($cp->typeMetal,$cu->raceMetal,$cp->starMetal),1)."</td></tr>";
 
 		echo "<tr><td class=\"tbldata\">".RES_ICON_CRYSTAL."Produktion ".RES_CRYSTAL."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cp->type->crystal,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($user['race']['crystal'],1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cp->sol->type->crystal,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string(array($cp->type->crystal,$user['race']['crystal'],$cp->sol->type->crystal),1)."</td></tr>";
+		echo "<td class=\"tbldata\">".get_percent_string($cp->typeCrystal,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($cu->raceCrystal,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($cp->starCrystal,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string(array($cp->typeCrystal,$cu->raceCrystal,$cp->starCrystal),1)."</td></tr>";
 
 		echo "<tr><td class=\"tbldata\">".RES_ICON_PLASTIC."Produktion ".RES_PLASTIC."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cp->type->plastic,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($user['race']['plastic'],1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cp->sol->type->plastic,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string(array($cp->type->plastic,$user['race']['plastic'],$cp->sol->type->plastic),1)."</td></tr>";
+		echo "<td class=\"tbldata\">".get_percent_string($cp->typePlastic,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($cu->racePlastic,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($cp->starPlastic,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string(array($cp->typePlastic,$cu->racePlastic,$cp->starPlastic),1)."</td></tr>";
 
 		echo "<tr><td class=\"tbldata\">".RES_ICON_FUEL."Produktion ".RES_FUEL."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cp->type->fuel,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($user['race']['fuel'],1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cp->sol->type->fuel,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string(array($cp->type->fuel,$user['race']['fuel'],$cp->sol->type->fuel),1)."</td></tr>";
+		echo "<td class=\"tbldata\">".get_percent_string($cp->typeFuel,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($cu->raceFuel,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($cp->starFuel,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string(array($cp->typeFuel,$cu->raceFuel,$cp->starFuel),1)."</td></tr>";
 
 		echo "<tr><td class=\"tbldata\">".RES_ICON_FOOD."Produktion ".RES_FOOD."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cp->type->food,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($user['race']['food'],1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cp->sol->type->food,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string(array($cp->type->food,$user['race']['food'],$cp->sol->type->food),1)."</td></tr>";
+		echo "<td class=\"tbldata\">".get_percent_string($cp->typeFood,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($cu->raceFood,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($cp->starFood,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string(array($cp->typeFood,$cu->raceFood,$cp->starFood),1)."</td></tr>";
 
 		echo "<tr><td class=\"tbldata\">".RES_ICON_POWER."Produktion Energie</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cp->type->power,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($user['race']['power'],1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cp->sol->type->power,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string(array($cp->type->power,$user['race']['power'],$cp->sol->type->power),1)."</td></tr>";
+		echo "<td class=\"tbldata\">".get_percent_string($cp->typePower,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($cu->racePower,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($cp->starPower,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string(array($cp->typePower,$cu->racePower,$cp->starPower),1)."</td></tr>";
 
 		echo "<tr><td class=\"tbldata\">".RES_ICON_PEOPLE."Bev&ouml;lkerungswachstum</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cp->type->population,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($user['race']['population'],1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cp->sol->type->population,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string(array($cp->type->population,$user['race']['population'],$cp->sol->type->population),1)."</td></tr>";
+		echo "<td class=\"tbldata\">".get_percent_string($cp->typePopulation,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($cu->racePopulation,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($cp->starPopulation,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string(array($cp->typePopulation,$cu->racePopulation,$cp->starPopulation),1)."</td></tr>";
 
 		echo "<tr><td class=\"tbldata\">".RES_ICON_TIME."Forschungszeit</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cp->type->researchtime,1,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($user['race']['researchtime'],1,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cp->sol->type->researchtime,1,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string(array($cp->type->researchtime,$user['race']['researchtime'],$cp->sol->type->researchtime),1,1)."</td></tr>";
+		echo "<td class=\"tbldata\">".get_percent_string($cp->typeResearchtime,1,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($cu->raceResearchtime,1,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($cp->starResearchtime,1,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string(array($cp->typeResearchtime,$cu->raceResearchtime,$cp->starResearchtime),1,1)."</td></tr>";
 
 		echo "<tr><td class=\"tbldata\">".RES_ICON_TIME."Bauzeit (Geb&auml;ude)</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cp->type->buildtime,1,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($user['race']['buildtime'],1,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cp->sol->type->buildtime,1,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string(array($cp->type->buildtime,$user['race']['buildtime'],$cp->sol->type->buildtime),1,1)."</td></tr>";
+		echo "<td class=\"tbldata\">".get_percent_string($cp->typeBuildtime,1,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($cu->raceBuildtime,1,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($cp->starBuildtime,1,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string(array($cp->typeBuildtime,$cu->raceBuildtime,$cp->starBuildtime),1,1)."</td></tr>";
 
 		echo "<tr><td class=\"tbldata\">".RES_ICON_TIME."Flugzeit</td>";
 		echo "<td class=\"tbldata\">-</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($user['race']['fleettime'],1,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($cu->raceFleettime,1,1)."</td>";
 		echo "<td class=\"tbldata\">-</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($user['race']['fleettime'],1,1)."</td></tr>";
+		echo "<td class=\"tbldata\">".get_percent_string($cu->raceFleettime,1,1)."</td></tr>";
 
 		infobox_end(1);
 
