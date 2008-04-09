@@ -28,7 +28,6 @@
 	/**
 	* Alternative main file for out of game viewing of specific pages
 	*
-	* @package etoa_game
 	* @author MrCage mrcage@etoa.ch
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/		

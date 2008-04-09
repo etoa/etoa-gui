@@ -25,7 +25,6 @@
 	/**
 	* Main function file
 	*
-	* @package etoa_gameserver
 	* @author MrCage mrcage@etoa.ch
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/
