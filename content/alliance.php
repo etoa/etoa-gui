@@ -1068,7 +1068,8 @@
 						// Website
 						if ($arr['alliance_url']!="")
 						{
-							echo "<tr><td class=\"tbltitle\" width=\"120\">Website/Forum:</td><td class=\"tbldata\" colspan=\"2\"><b>".format_link($arr['alliance_url'])."</a></b></td></tr>\n";
+							echo "<tr><td class=\"tbltitle\" width=\"120\">Website/Forum:</td><td class=\"tbldata\" colspan=\"2\"><b>".
+							format_link($arr['alliance_url'])."</a></b></td></tr>\n";
 						}
 						
 						// Diverses

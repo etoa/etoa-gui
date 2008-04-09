@@ -240,25 +240,6 @@
 		}
 		return $names;
 	}
-	/**
-	* Ressourcen-Namen in Array speichern
-	*/
-	function get_resources_array()
-	{
-		global $db_table;
-		$resource_name = array();
-		$res = dbquery("
-		SELECT
-            resource_type,
-            resource_name
-		FROM
-			".$db_table['resources'].";");
-		while ($arr = mysql_fetch_assoc($res))
-		{
-			$resource_name[$arr['resource_type']] = $arr['resource_name'];
-		}
-		return $resource_name;
-	}
 
 	/**
 	* User-Nick via User-Id auslesen
@@ -270,7 +251,7 @@
 			SELECT
 				user_nick
 			FROM
-				".$db_table['users']."
+				users
 			WHERE
 				user_id='".$id."';
 		");
@@ -299,7 +280,7 @@
 			a.alliance_id,
 			a.alliance_tag
 		FROM
-			".$db_table['users']." AS u
+			users AS u
 			INNER JOIN ".$db_table['alliances']." AS a
 			ON u.user_alliance_id = a.alliance_id
 			AND u.user_id='".$id."';
@@ -381,7 +362,7 @@
 			SELECT
 				user_id
 			FROM
-				".$db_table['users']."
+				users
 			WHERE
 				user_nick='".$nick."';
 		");
@@ -424,380 +405,9 @@
 
 	}
 
-	function get_user_nick_by_planet($pid)
-	{
-		global $db_table;
-		$res = dbquery("
-			SELECT
-				u.user_nick
-			FROM
-				".$db_table['users']." AS u
-				INNER JOIN ".$db_table['planets']." AS p
-				ON u.user_id = p.planet_user_id
-				AND p.planet_id='".$pid."';
-		");
-		if (mysql_num_rows($res)>0)
-		{
-			$arr = mysql_fetch_assoc($res);
-			return $arr['user_nick'];
-		}
-		else
-		{
-			return 0;
-		}
-
-	}
-
 	/**
-	* Erweitert Universum
-	*
-	* @param string $sx_num_new,$sy_num_new
+	* Format number
 	*/
-	function expansion_universe($sx_num_new,$sy_num_new)
-	{
-		global $conf,$db_table;
-
-		$sx_num=$conf['num_of_sectors']['p1'];
-		$sy_num=$conf['num_of_sectors']['p2'];
-		$cx_num=$conf['num_of_cells']['p1'];
-		$cy_num=$conf['num_of_cells']['p2'];
-		$planet_fields_min=$conf['planet_fields']['p1'];
-		$planet_fields_max=$conf['planet_fields']['p2'];
-		$planet_temp_min=$conf['planet_temp']['p1'];
-		$planet_temp_max=$conf['planet_temp']['p2'];
-		$planet_temp_diff=$conf['planet_temp']['v'];
-		$planet_temp_totaldiff=abs($planet_temp_min)+abs($planet_temp_max);
-		$perc_solsys=$conf['space_percent_solsys']['v'];
-		$perc_asteroids=$conf['space_percent_asteroids']['v'];
-		$perc_nebulas=$conf['space_percent_nebulas']['v'];
-		$perc_wormholes=$conf['space_percent_wormholes']['v'];
-		$num_planets_min=$conf['num_planets']['p1'];
-		$num_planets_max=$conf['num_planets']['p2'];
-		$num_sol_types=mysql_num_rows(dbquery("SELECT * FROM ".$db_table['sol_types'].";"));
-		$sol_types = get_sol_types_array();
-		$num_planet_types=mysql_num_rows(dbquery("SELECT * FROM ".$db_table['planet_types'].";"));
-		$planet_types = get_planet_types_array();
-		$num_planet_images = $conf['num_planet_images']['v'];
-		$planet_count = 0;
-		$sol_count = 0;
-		$nebula_count = 0;
-		$asteroids_count = 0;
-		$wormhole_count = 0;
-
-		echo "Erweitere Universum von $sx_num x $sy_num Sektoren auf $sx_num_new x $sy_num_new Sektoren. Es werden ".$cx_num*$cy_num." Zellen pro Sektor und ".($sx_num_new*$sy_num_new-$sx_num*$sy_num)*$cx_num*$cy_num." Zellen total hinzugefügt<br>";
-
-		for ($sx=1;$sx<=$sx_num_new;$sx++)
-		{
-			for ($sy=1;$sy<=$sy_num_new;$sy++)
-			{
-				//überprüft ob dieser sektor schon vorhanden ist
-                $res = dbquery("
-					SELECT
-						cell_id
-					FROM
-						".$db_table['space_cells']."
-					WHERE
-						cell_sx='".$sx."'
-						AND cell_sy='".$sy."';
-				");
-                if (mysql_num_rows($res)==0)
-                {
-                    for ($cx=1;$cx<=$cx_num;$cx++)
-                    {
-                        for ($cy=1;$cy<=$cy_num;$cy++)
-                        {
-                            $ct = mt_rand(1,100);
-                            //Sonnensystem
-                            if ($ct<=$perc_solsys)
-                            {
-                                $st = mt_rand(1,$num_sol_types);
-                                $np = mt_rand($num_planets_min,$num_planets_max);
-                                $sql = "
-									INSERT INTO
-									".$db_table['space_cells']."
-									(
-										cell_sx,
-										cell_sy,
-										cell_cx,
-										cell_cy,
-										cell_type,
-										cell_solsys_num_planets,
-										cell_solsys_solsys_sol_type
-									)
-									VALUES
-									(
-										'".$sx."',
-										'".$sy."',
-										'".$cx."',
-										'".$cy."',
-										'1',
-										'".$np."',
-										'".$st."'
-									);
-								";
-                                dbquery($sql);  // Zelle speichern
-                                $solsys_id = mysql_insert_id();
-                                for ($cnp=1;$cnp<=$np;$cnp++)
-                                {
-                                    $pt = mt_rand(1,$num_planet_types);
-                                    $img_nr = $pt."_".mt_rand(1,$num_planet_images);
-                                    $fields = mt_rand($planet_fields_min,$planet_fields_max);
-                                    $tblock =  round($planet_temp_totaldiff / $np);
-                                    $temp = mt_rand($planet_temp_max-($tblock*$cnp),($planet_temp_max-($tblock*$cnp)+$tblock));
-                                    $tmin = $temp - $planet_temp_diff;
-                                    $tmax = $temp + $planet_temp_diff;
-                                    $sql = "
-										INSERT INTO
-										".$db_table['planets']."
-										(
-											planet_solsys_id,
-											planet_solsys_pos,
-											planet_type_id,
-											planet_fields,
-											planet_image,
-											planet_temp_from,
-											planet_temp_to
-										)
-										VALUES
-										(
-											'".$solsys_id."',
-											'".$cnp."',
-											'".$pt."',
-											'".$fields."',
-											'".$img_nr."',
-											'".$tmin."',
-											'".$tmax."'
-										)
-									";
-                                    dbquery($sql);  // Planet speichern
-                                    $planet_count++;
-                                }
-                                $sol_count++;
-                            }
-                            //Asteroidenfeld
-                            elseif ($ct<=$perc_solsys + $perc_asteroids)
-                            {
-                                $asteroid_ress = mt_rand($conf['asteroid_ress']['p1'],$conf['asteroid_ress']['p2']);
-                                $sql = "
-									INSERT INTO
-									".$db_table['space_cells']."
-									(
-										cell_sx,
-										cell_sy,
-										cell_cx,
-										cell_cy,
-										cell_type,
-										cell_asteroid,
-										cell_asteroid_ress
-									)
-									VALUES
-									(
-										'".$sx."',
-										'".$sy."',
-										'".$cx."',
-										'".$cy."',
-										'1',
-										'1',
-										'".$asteroid_ress."'
-									);
-								";
-                                dbquery($sql);  // Zelle speichern
-                                $asteroids_count++;
-                            }
-                            //Intergalaktischer Nebel
-                            elseif ($ct<=$perc_solsys + $perc_asteroids + $perc_nebulas)
-                            {
-                                $nebula_ress = mt_rand($conf['nebula_ress']['p1'],$conf['nebula_ress']['p2']);
-
-                                $sql = "
-									INSERT INTO
-									".$db_table['space_cells']."
-									(
-										cell_sx,
-										cell_sy,
-										cell_cx,
-										cell_cy,
-										cell_type,
-										cell_nebula,
-										cell_nebula_ress
-									)
-									VALUES
-									(
-										'".$sx."',
-										'".$sy."',
-										'".$cx."',
-										'".$cy."',
-										'1',
-										'1',
-										'".$nebula_ress."'
-									);
-								";
-                                dbquery($sql);  // Zelle speichern
-                                $nebula_count++;
-                            }
-                            //Wurmlöcher
-                            elseif ($ct<=$perc_solsys + $perc_asteroids + $perc_nebulas + $perc_wormholes)
-                            {
-                                // echo "$sx/$sy : $cx/$cy &nbsp;-&nbsp; Wurmloch<br>";
-                                $sql = "
-									INSERT INTO
-									".$db_table['space_cells']."
-									(
-										cell_sx,
-										cell_sy,
-										cell_cx,
-										cell_cy,
-										cell_type,
-										cell_wormhole_id
-									)
-									VALUES
-									(
-										'".$sx."',
-										'".$sy."',
-										'".$cx."',
-										'".$cy."',
-										'1',
-										'1'
-									);
-								";
-                                dbquery($sql);  // Zelle speichern
-                                $wormhole_count++;
-                            }
-                            //Leere Zellen
-                            else
-                            {
-                                $sql = "
-									INSERT INTO
-									".$db_table['space_cells']."
-									(
-										cell_sx,
-										cell_sy,
-										cell_cx,
-										cell_cy,
-										cell_type
-									)
-									VALUES
-									(
-										'".$sx."',
-										'".$sy."',
-										'".$cx."',
-										'".$cy."',
-										'0'
-									);
-								";
-                                dbquery($sql);  // Zelle speichern
-                            }
-                        }
-                    }
-				}
-			}
-		}
-
-		$wh = array();
-		$wh_new = array();
-		$res = dbquery("
-        SELECT
-            *
-        FROM
-            ".$db_table['space_cells']."
-        WHERE
-            cell_wormhole_id!='0';
-		");
-		if (fmod(mysql_num_rows($res),2)!=0) //wenn Zahl ungerade ist
-		{
-			echo "<br>Eins ist zuviel!<br>";
-			dbquery("
-            UPDATE
-            	".$db_table['space_cells']."
-            SET
-            	cell_wormhole_id='0'
-            WHERE
-            	cell_wormhole_id!='0'
-            LIMIT 1;
-			");
-			echo mysql_error();
-			$res = dbquery("
-            SELECT
-            	*
-            FROM
-            	".$db_table['space_cells']."
-            WHERE
-            	cell_wormhole_id!='0';
-			");
-		}
-		while ($arr=mysql_fetch_assoc($res))
-		{
-			array_push($wh,$arr['cell_id']);
-		}
-		shuffle($wh);
-		while (sizeof($wh)>0)
-		{
-			$wh_new[array_shift($wh)]=array_pop($wh);
-		}
-		$wormhole_count = mysql_num_rows($res);
-		foreach ($wh_new as $k=>$v)
-		{
-			dbquery("
-            UPDATE
-            	".$db_table['space_cells']."
-            SET
-            	cell_wormhole_id='".$k."'
-            WHERE
-            	cell_id='".$v."';
-			");
-			echo mysql_error();
-			dbquery("
-            UPDATE
-            	".$db_table['space_cells']."
-            SET
-            	cell_wormhole_id='".$v."'
-            WHERE
-            	cell_id='".$k."';
-			");
-						echo mysql_error();
-		}
-
-		//Neue Sektorenanzahl in der Config speichern
-		dbquery("
-		UPDATE
-			".$db_table['config']."
-		SET
-            config_param1='".$sx_num_new."',
-            config_param2='".$sy_num_new."'
-		WHERE
-			config_name='num_of_sectors';");
-
-		echo "Universum erweitert:<br>$sol_count Sonnensysteme mit $planet_count Planeten, $asteroids_count Asteroidenfelder, $nebula_count Nebel und $wormhole_count Wurmlöcher!";
-
-	}
-
-	//
-	// Seitenanzeige überprüfen
-	//
-
-	function checkPage($id,$comp,$page,$op)
-	{
-		// Diese Funktion überprüft, ob eine gegebene Variable (id) gleich einem Vergleichswert (comp) ist, wenn ja wird die gegebene Seite (page) aufgerufen
-		if ($op==1)
-		{
-			if ($id==$comp)
-			{
-				die ("<script>document.location='?page=$page'</script>");
-			}
-		}
-		elseif ($op==0)
-		{
-			if ($id!=$comp)
-			{
-				die ("<script>document.location='?page=$page'</script>");
-			}
-		}
-	}
-
-	//
-	// Zahlen formatieren
-	//
-
 	function nf($number,$colorize=0)	// Number format
 	{
 		if ($colorize==1)
@@ -810,11 +420,9 @@
 		return number_format($number,0,",","`");
 	}
 
-
-	//
-	// Zahlen deformatieren
-	//
-
+	/**
+	* Convert formated number back to integer
+	*/
 	function nf_back($number)	// Number format
 	{
 		$number = str_replace('`', '', $number);
@@ -823,7 +431,11 @@
 		
 	}
 
-
+	/**
+	* An alternative number formatter
+	*
+	* @todo Merge this with nf()
+	*/	
 	function nf2($number,$colorize=0)	// Number format
 	{
 		if ($colorize==1)
@@ -835,13 +447,10 @@
 		}
 		return number_format($number,0,",",".");
 	}
-	
-	
 
-	//
-	// Zeit formatieren
-	//
-
+	/**
+	* Format time in seconds to hour,minute,seconds
+	*/
 	function tf($ts)	// Time format
 	{
 		$t = floor($ts / 3600 / 24);
@@ -854,71 +463,12 @@
 		return $h."h ".$m."m ".$s."s";
 	}
 
-//
-	// Treibstoff vom Ressourcen-Konto abbuchen
-	//
 
-	function subst_fuel($planet_id,$fuel_amount)
-	{
-		global $db_table;
-		dbquery("
-			UPDATE
-				".$db_table['planets']."
-			SET
-				planet_res_fuel=planet_res_fuel-".$fuel_amount."
-			WHERE
-				planet_id='".$planet_id."';
-		");
-	}
-
-	function subst_food($planet_id,$food_amount)
-	{
-		global $db_table;
-		dbquery("
-			UPDATE
-				".$db_table['planets']."
-			SET
-				planet_res_food=planet_res_food-".$food_amount."
-			WHERE
-				planet_id='".$planet_id."';
-		");
-	}
-
-
-	//
-	// Koordinaten formatieren
-	//
-
-	function coords_format1($cell_id,$planet_id)
-	{
-		global $db_table;
-		$res = dbquery("
-			SELECT
-				c.cell_sx,
-				c.cell_sy,
-				c.cell_cx,
-				c.cell_cy,
-				p.planet_solsys_pos,
-				p.planet_name
-			FROM
-				".$db_table['planets']." AS p
-				INNER JOIN ".$db_table['space_cells']." AS c
-				ON p.planet_solsys_id = c.cell_id
-				AND p.planet_id='".$planet_id."';
-		");
-		$arr = mysql_fetch_assoc($res);
-
-		$coords = $arr['cell_sx']."/".$arr['cell_sy']." : ".$arr['cell_cx']."/".$arr['cell_cy']." : ".$arr['planet_solsys_pos'];
-		if ($arr['planet_name']!="")
-			return $arr['planet_name']." ($coords)";
-		else
-			return $coords;
-	}
-
-	//
-	// Koordinaten formatieren
-	//
-
+	/**
+	* Koordinaten formatieren
+	*
+	* @todo Remove this method and let the classes do their job
+	*/
 	function coords_format2($planet_id,$link=0,$action_color=0)
 	{
 		global $db_table;
@@ -965,11 +515,11 @@
 		}
 	}
 
-
-	//
-	// Koordinaten formatieren
-	//
-
+	/**
+	* Koordinaten formatieren
+	*
+	* @todo Remove this method and let the classes do their job
+	*/
 	function coords_format3($planet_id,$link=0,$action_color=0)
 	{
 		global $db_table;
@@ -996,10 +546,11 @@
 			return $coords;
 	}
 
-	//
-	// Koordinaten formatieren
-	//
-
+	/**
+	* Koordinaten formatieren
+	*
+	* @todo Remove this method and let the classes do their job
+	*/
 	function coords_format4($cell_id,$link=1)
 	{
 		global $db_table;
@@ -1038,7 +589,9 @@
 		}
 	}
 
-
+	/**
+	* Corrects a web url
+	*/
 	function format_link($string)
 	{
 		$string = eregi_replace("([ \n])http://([^ ,\n]*)", "\\1[url]http://\\2[/url]", $string);
@@ -1053,9 +606,11 @@
 		return $string;
 	}
 
-	//
-	// Überprüft ob unerlaubte Zeichen im Text sind und gibt Antwort zurück
-	//
+	/**
+	* Überprüft ob unerlaubte Zeichen im Text sind und gibt Antwort zurück
+	*
+	* @todo Should be removed (better use some class methods and strip-/addslashes
+	*/
 	function check_illegal_signs($string)
 	{
 			if (
@@ -1079,9 +634,11 @@
            	}
 	}
 
-	//
-	// Überprüft ob unerlaubte Zeichen im Text sind und gibt Antwort zurück
-	//
+	/**
+	* Überprüft ob unerlaubte Zeichen im Text sind und gibt Antwort zurück
+	*
+	* @todo Check if this method is still usable
+	*/
 	function remove_illegal_signs($string)
 	{
 		$string = str_replace("'","",$string);
@@ -1097,8 +654,9 @@
 		return $string;
 	}
 
-
-
+	/**
+	* Sends a system message to an user
+	*/
 	function send_msg($user_id,$msg_type,$subject,$text)
 	{
 		global $db_table;
@@ -1123,64 +681,6 @@
 				'".addslashes($text)."'
 			);
 		");
-	}
-
-	function send_msg_hd($user_id,$msg_type,$subject,$text,$user_from)
-	{
-		global $db_table;
-		dbquery("
-			INSERT INTO
-			".$db_table['messages']."
-			(
-				message_user_from,
-				message_user_to,
-				message_timestamp,
-				message_cat_id,
-				message_subject,
-				message_text
-			)
-			VALUES
-			(
-				'".$user_from."',
-				'".$user_id."',
-				'".time()."',
-				'".$msg_type."',
-				'".addslashes($subject)."',
-				'".addslashes($text)."'
-			);
-		");
-	}
-
-    function endpage()
-    {
-        echo "</body></html>";
-        exit();
-    }
-
-
-
-	function get_sector_of_main_planet ($user_id,$link=0)
-	{
-		global $db_table;
-		$res = dbquery("
-		SELECT
-            c.cell_sx,
-            c.cell_sy
-		FROM
-            ".$db_table['space_cells']." AS c
-            INNER JOIN
-            ".$db_table['planets']." AS p
-            ON p.planet_solsys_id=c.cell_id
- 			AND p.planet_user_id='".$user_id ."'
-			AND p.planet_user_main='1';");
-		$arr = mysql_fetch_assoc($res);
-		$coords = $arr['cell_sx']."/".$arr['cell_sy'];
-		if ($coords=="/")
-			return "";
-		elseif ($link==1)
-			return "<a href=\"?page=space&sx=".$arr['cell_sx']."&sy=".$arr['cell_sy']."\">$coords</a>";
-		else
-			return $coords;
 	}
 
 	/**
@@ -1220,6 +720,9 @@
 		 );");
 	}
 
+	/**
+	* Adds an user log item
+	*/
 	function add_log_user($log_cat,$log_text,$uid1,$uid2=0,$pid=0,$sid=0,$log_timestamp=0)
 	{
 		global $db_table;
@@ -1611,6 +1114,9 @@
 		return $ores;
 	}
 		
+	/**
+	* Cuts a string by a given length
+	*/
 	function cut_string($string,$num)
 	{
 		if (strlen($string)>$num+3)
@@ -1619,66 +1125,33 @@
 			return $string;
 	}
 
-
-	function archk($rank,$urank)
-	{
-		if ($rank>$urank)
-		{
-			echo "<b>Sperre:</b> Du hast keinen Zugriff auf diese Seite!<br/>";
-			return false;
-		}
-		else
-			return true;
-	}
-
+	/**
+	* Checks for a valid mail address
+	*/
 	function checkEmail($email)
 	{
 	  return preg_match("/^[a-zA-Z0-9-_.]+@[a-zA-Z0-9-_.]+\.[a-zA-Z]{2,4}$/",$email);
 	}
 	
+	/**
+	* Checks vor a vaid name
+	*/
 	function checkValidName($name)
 	{
 		return eregi(REGEXP_NAME, $name);
 	}
 
+	/**
+	* Checks for a valid nick
+	*/
 	function checkValidNick($name)
 	{
 		return eregi(REGEXP_NICK, $name);
 	}
 
-
-	function encode_textfield ($string)
-	{
-		str_replace("\"","&quot;",$string);
-		//str_replace("&","&amp;",$string);
-		str_replace("<","&lt;",$string);
-		str_replace(">","&gt;",$string);
-		str_replace("´","&acute;",$string);
-		str_replace("‘","&lsquo;",$string);
-		str_replace("’","&rsquo;",$string);
-		str_replace("'","&#39;",$string);
-
-		return $string;
-	}
-
-	function decode_textfield ($string)
-	{
-		str_replace("&quot;","\"",$string);
-		//str_replace("&amp;","&",$string);
-		str_replace("&lt;","<",$string);
-		str_replace("&gt;",">",$string);
-		str_replace("&acute;","´",$string);
-		str_replace("&lsquo;","‘",$string);
-		str_replace("&rsquo;","’",$string);
-		str_replace("&#39;","'",$string);
-
-		return $string;
-	}
-
-	//
-	// User Name in Array speichern
-	//
-
+	/**
+	* User Name in Array speichern
+	*/
 	function get_user_names()
 	{
 		global $db_table;
@@ -1691,9 +1164,7 @@
 				user_email,
 				user_alliance_id
 			FROM
-				".$db_table['users']."
-			ORDER BY
-				user_nick;
+				users;
 		");
 		while ($arr = mysql_fetch_assoc($res))
 		{
@@ -1705,19 +1176,9 @@
 		return $names;
 	}
 
-	//
-	// Die ultimative Antwort
-	//
-
-	function answer_to_life_the_universe_and_everything()
-	{
-		return 42;
-	}
-
-	//
-	// Inaktive User löschen
-	//
-
+	/**
+	* Remove inactive users
+	*/
 	function remove_inactive($manual=false)
 	{
 		global $conf,$db_table;
@@ -1796,7 +1257,7 @@ die Spielleitung";
 			SELECT
 				user_id
 			FROM
-				".$db_table['users']."
+				users
 			WHERE
 				user_deleted>0 && user_deleted<".time()."
 		");
@@ -1815,10 +1276,9 @@ die Spielleitung";
 	}
 
 
-	//
-	// Alte Logs löschen
-	//
-
+	/**
+	* Alte Logs löschen
+	*/
 	function remove_logs()
 	{
 		global $conf,$db_table;
@@ -1832,10 +1292,9 @@ die Spielleitung";
 		add_log("4","Logs die älter als ".date("d.m.Y H:i",$tstamp)." sind wurden gelöscht!",time());
 	}
 
-	//
-	// Alte Nachrichten löschen
-	//
-
+	/**
+	* Alte Nachrichten löschen
+	*/
 	function remove_messages()
 	{
 		global $conf,$db_table;
@@ -1850,8 +1309,9 @@ die Spielleitung";
 		add_log("4","Unarchivierte Nachrichten die älter als ".date("d.m.Y H:i",$tstamp)." sind wurden gelöscht!",time());
 	}
 
-	// Benutzer löschen
-
+	/**
+	* Benutzer löschen
+	*/
 	function delete_user($user_id,$self=false,$from="")
 	{
 		global $db_table;
@@ -1868,7 +1328,7 @@ die Spielleitung";
 				user_points,
 				user_id
 			FROM
-				".$db_table['users']."
+				users
 			WHERE
 				user_id='".$user_id."';
 		");
@@ -1972,7 +1432,7 @@ die Spielleitung";
 						u.user_id,
 						a.alliance_founder_id
 					FROM
-						".$db_table['users']." AS u
+						users AS u
 						INNER JOIN
 						".$db_table['alliances']." AS a
 						ON u.user_alliance_id = a.alliance_id
@@ -2047,7 +1507,7 @@ die Spielleitung";
 			//
 			//Benutzer löschen
 			//
-			dbquery("DELETE FROM ".$db_table['users']." WHERE user_id='".$user_id."';");
+			dbquery("DELETE FROM users WHERE user_id='".$user_id."';");
 
 
 
@@ -2079,6 +1539,9 @@ die Spielleitung";
 		}
 	}
 
+	/**
+	* Delete alliance
+	*/
 	function delete_alliance($alliance_id,$self=false)
 	{
 		global $db_table;
@@ -2131,7 +1594,7 @@ die Spielleitung";
 		dbquery("DELETE FROM ".$db_table['alliance_poll_votes']." WHERE vote_alliance_id='".$alliance_id."';");
 		dbquery("
 			UPDATE
-				".$db_table['users']."
+				users
 			SET
 				user_alliance_id='0',
 				user_alliance_application=''
@@ -2147,16 +1610,15 @@ die Spielleitung";
 		return true;
 	}
 
-	//
-	// Abgelaufene Sperren löschen
-	//
-
+	/**
+	* Abgelaufene Sperren löschen
+	*/
 	function remove_old_banns()
 	{
 		global $db_table;
 		dbquery("
 			UPDATE
-				".$db_table['users']."
+				users
 			SET
 				user_blocked_from='0',
 				user_blocked_to='0',
@@ -2167,7 +1629,9 @@ die Spielleitung";
 		");
 	}
 
-
+	/**
+	* Infobox-Header
+	*/
 	function infobox_start($title,$table=0,$stretch=1,$width=0)
 	{
 		if ($width>0)
@@ -2196,6 +1660,9 @@ die Spielleitung";
 		}
 	}
 
+	/**
+	* Infobox-Footer
+	*/
 	function infobox_end($table=0,$dontbreak=0)
 	{
 		if ($table==1)
@@ -2218,12 +1685,12 @@ die Spielleitung";
 		}
 	}
 
-	//
-	// Planetendaten zurücksetzen
-	//
-	// $planet_id: MySQL-ID des Planeten
-	//
-
+	/**
+	* Planetendaten zurücksetzen
+	*
+	* $planet_id: MySQL-ID des Planeten
+	* @todo Use class method!
+	*/
 	function reset_planet($planet_id)
 	{
 		global $db_table;
@@ -2288,28 +1755,29 @@ die Spielleitung";
 			return false;
 	}
 
-	//
-	// Formatierte Fehlermeldung anzeigen
-	//
-	// $msg: Fehlermeldung
-	//
-
+	/*
+	* Formatierte Fehlermeldung anzeigen
+	*
+	* $msg: Fehlermeldung
+	*/
 	function err_msg($msg)
 	{
 		error_msg($msg);
 	}
 
-	//
-	// Formatierte OK-Meldung anzeigen
-	//
-	// $msg: OK-Meldung
-	//
-
+	/**
+	* Formatierte OK-Meldung anzeigen
+	*
+	* $msg: OK-Meldung
+	*/
 	function ok_msg($msg)
 	{
 		success_msg($msg);
 	}
 
+	/**
+	* Sucess msg
+	*/
 	function success_msg($text,$type=0)
 	{
 		echo "<div class=\"successBox\">";
@@ -2326,7 +1794,10 @@ die Spielleitung";
 		}		
 		echo text2html($text)."</div>";		
 	}
-
+       
+  /**
+  * Error msg
+  */
 	function error_msg($text,$type=0,$exit=0,$addition=0,$stacktrace=null)
 	{
 		// TODO: Do check on headers
@@ -2389,13 +1860,12 @@ die Spielleitung";
 	}
 
 
-	//
-	// Prozentwert generieren und zurückgeben
-	//
-	// $val: Einzelner Wert oder Array von Werten als Dezimalzahl; 1.0 = 0%
-	// $colors: Farben anzeigen (1) oder nicht anzeigen (0)
-	//
-
+	/**
+	* Prozentwert generieren und zurückgeben
+	*
+	* $val: Einzelner Wert oder Array von Werten als Dezimalzahl; 1.0 = 0%
+	* $colors: Farben anzeigen (1) oder nicht anzeigen (0)
+	*/
 	function get_percent_string($val,$colors=0,$inverse=0)
 	{
 		$string=0;
@@ -2442,13 +1912,12 @@ die Spielleitung";
 		return $string;
 	}
 
-	//
-	// Tabulator-Menü anzeigen
-	//
-	// $varname: Name des Modusfeldes
-	// $data: Array mit Menüdaten
-	//
-
+	/**
+	* Tabulator-Menü anzeigen
+	*
+	* $varname: Name des Modusfeldes
+	* $data: Array mit Menüdaten
+	*/
 	function show_tab_menu($varname,$data)
 	{
 		global $page,$$varname;
@@ -2463,7 +1932,10 @@ die Spielleitung";
 		}
 		echo "</tr></table>";
 	}
-
+	
+	/**
+	* Tab Menu with on-click
+	*/
 	function show_js_tab_menu($data)
 	{
 		$width = 100/count($data);
@@ -2479,7 +1951,10 @@ die Spielleitung";
 		}
 		echo "</tr></table>";
 	}
-
+    
+  /**
+  * Get imagepacks
+  */
 	function get_imagepacks($path="")
 	{
 		$pack=array();
@@ -2541,7 +2016,9 @@ die Spielleitung";
 		return $pack;
 	}
 
-	//Wählt die verschiedenen Designs aus und schreibt sie in ein array. by Lamborghini
+	/**
+	* Wählt die verschiedenen Designs aus und schreibt sie in ein array. by Lamborghini
+	*/
 	function get_designs($path="")
 	{
 		$designs=array();
@@ -2601,14 +2078,15 @@ die Spielleitung";
 		return $designs;
 	}	
 
-	//
-	// Überprüft ob ein Gebäude deaktiviert ist
-	//
-	// $user_id: Benutzer-ID
-	// $planet_id: Planet-ID
-	// $building_id: Gebäude-ID
-	//
-
+	/**
+	* Überprüft ob ein Gebäude deaktiviert ist
+	*
+	* $user_id: Benutzer-ID
+	* $planet_id: Planet-ID
+	* $building_id: Gebäude-ID
+	*
+	* @todo Typo in method name... bether think of creating a building class
+	*/
 	function check_building_deactivated($user_id,$planet_id,$building_id)
 	{
 		global $db_table;
@@ -2632,6 +2110,9 @@ die Spielleitung";
 			return false;
 	}
 
+	/**
+	* Check for new messages
+	*/
 	function check_new_messages($user_id)
 	{
 		global $db_table;
@@ -2650,8 +2131,11 @@ die Spielleitung";
 	}
 
 
-
-	//Fremde, nicht feindliche Flotten
+	/**
+	* Fremde, nicht feindliche Flotten
+	*
+	* @todo Fix this
+	*/
 	function check_fleet_incomming_friendly($user_id)
 	{
 		/*
@@ -2689,14 +2173,16 @@ die Spielleitung";
         return 0;
 	}
 
-	//Fremde, feindliche Flotten
-    /**
-    * Gibt Anzahl feindliche Flotten zurück unter beachtung von Tarn- und Spionagetechnik
-    * Sind keine Flotten unterwegs -> return 0
-    *
-    * @author MrCage
-    * @param int $user_id User ID
-    */
+  /**
+	* Fremde, feindliche Flotten
+  * Gibt Anzahl feindliche Flotten zurück unter beachtung von Tarn- und Spionagetechnik
+  * Sind keine Flotten unterwegs -> return 0
+  *
+  * @author MrCage
+  * @param int $user_id User ID
+  *
+  * @todo fix this
+  */
 	function check_fleet_incomming($user_id)
 	{
 		// TODO
@@ -2864,6 +2350,9 @@ die Spielleitung";
 		return 0;
 	}
 
+	/**
+	* Add text to alliance history
+	*/
 	function add_alliance_history($alliance_id,$text)
 	{
 		global $db_table;
@@ -2883,6 +2372,10 @@ die Spielleitung";
 			);");
 	}
 
+	/**
+	* User-history adder
+	* @todo User history no longer uses
+	*/
 	function add_user_history($user_id,$text)
 	{
 		global $db_table;
@@ -2902,6 +2395,9 @@ die Spielleitung";
 			);");
 	}
 
+	/**
+	* Check for buddys who are online
+	*/
 	function check_buddys_online($id)
 	{
 		global $db_table,$conf;
@@ -2910,7 +2406,7 @@ die Spielleitung";
 				user_id
 			FROM
 				".$db_table['buddylist']." AS bl
-				INNER JOIN ".$db_table['users']." AS u
+				INNER JOIN users AS u
 				ON bl.bl_buddy_id = u.user_id
 				AND bl_user_id='".$id."'
 				AND bl_allow=1
@@ -2918,6 +2414,9 @@ die Spielleitung";
 		"));
 	}
 
+	/**
+	* The form checker - init
+	*/
 	function checker_init($debug=0)
 	{
 		$_SESSION['checker']=md5(mt_rand(0,99999999).time());
@@ -2935,6 +2434,9 @@ die Spielleitung";
 		return "<input type=\"hidden\" name=\"checker\" value=\"".$_SESSION['checker']."\" />";
 	}
 
+	/**
+	* The form checker - verify
+	*/
 	function checker_verify($debug=0,$msg=1)
 	{
 		global $_POST,$_GET;
@@ -2959,63 +2461,43 @@ die Spielleitung";
 		}
 	}
 
+	/**
+	* The form checker - get key
+	*/
 	function checker_get_key()
 	{
 		return $_SESSION['checker'];
 	}
 
+	/**
+	* The form checker - debug
+	*/
 	function checker_get_link_key()
 	{
 		return "&amp;checker=".$_SESSION['checker'];
 	}
 
-
-
-	//
-	// Entfernt Tick's die per JavaScript hinzugefügt wurden
-	//
-	function deltick($text)
-	{
-		if (is_array($text))
-		{
-			$tmp=array();
-			foreach ($text as $t)
-			{
-				array_push($tmp,str_replace(".","",$t));
-			}
-			$text= $tmp;
-		}
-		else
-			$text= str_replace(".","",$text);
-		return $text;
-	}
-
-	//
-	// Schaltet die Tick-Funktion für ein Feld ein
-	//
-	function numberfield($defval=0)
-	{
-		if ($_SESSION[ROUNDID]['user']['tick'])
-		{
-			return  " onfocus=\"removeDefVal(this,0".$defval.")\" onblur=\"setDefVal(this,0".$defval.")\" onkeypress=\"return nurZahlen(event)\" onkeyup=\"setTick(this);\"";
-		}
-	}
-
-
+	/**
+	* Displays a simple back button
+	*/
 	function return_btn()
 	{
 		global $page;
 		echo "<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Zur&uuml;ck\" />";
 	}
 
-
+	/**
+	* A pseudi randomizer
+	*/
 	function pseudo_randomize($faktor,$qx,$qy,$px,$py)
 	{
 		$str=floor((abs(sin($qx)) + abs(sin($qy)) + abs(sin($px)) + abs(sin($py)))*10000);
 		return round ($faktor*((substr($str,strlen($str)-1,1)+1)/10),0);
 	}
 
-
+	/**
+	* Prevents negative numbers
+	*/
 	function zeroPlus($val)
 	{
 		if ($val<0)
@@ -3024,7 +2506,9 @@ die Spielleitung";
 			return $val;
 	}
 
-	// Diese Funktion liefert 5 Optionsfelder in denen man den Tag,Monat,Jahr,Stunde,Minute auswählen kann
+	/**
+	* Diese Funktion liefert 5 Optionsfelder in denen man den Tag,Monat,Jahr,Stunde,Minute auswählen kann
+	*/
 	function show_timebox($element_name,$def_val,$seconds=0)
 	{
 			// Liefert Tag 1-31
@@ -3104,12 +2588,17 @@ die Spielleitung";
 			
 	}
 
+	/**
+	* Servertime
+	*/
 	function serverTime()
 	{
 		echo date("H:i:s");
 	}
 
-	// Tipmessage
+	/**
+	* Tipmessage
+	*/
 	function tm($title,$text,$mouse=0)
 	{
 		$text = cut_word($text,150,1);
@@ -3124,7 +2613,9 @@ die Spielleitung";
 		}
 	}
 	
-	// Tooltip
+	/**
+	* Tooltip
+	*/
 	function tt($text)
 	{
 		$text = cut_word($text,150,1);
@@ -3132,7 +2623,9 @@ die Spielleitung";
 		return "onmouseover=\"stm(['','".$text."'],tooltipstyle)\" onmouseout=\"htm()\"";
 	}	
 
-	// Date format
+	/**
+	* Date format
+	*/
 	function df($date,$seconds=0)
 	{
 		if ($seconds==1)
@@ -3155,6 +2648,8 @@ die Spielleitung";
 
 	/**
 	* Markt: Abgelaufene Auktionen löschen
+	*
+	* @todo source this out
 	*/
 	function market_auction_update()
 	{
@@ -3453,6 +2948,8 @@ die Spielleitung";
 	* Verschicken von allen gekauften/ersteigerten Waren
 	* und berechnen der Roshtoffkurse. 
 	* Löschen alter Angebote
+	*
+	* @todo source this out
 	*/
 	function market_update()
 	{
@@ -4129,6 +3626,11 @@ die Spielleitung";
 		unset($msg);
 	}
 
+	/**
+	* Sends an email
+	*
+	* @todo Needs refractoring!!
+	*/
     function send_mail($preview,$adress,$topic,$text,$style,$align,$force=0)
     {
         global $db_table;
@@ -4224,79 +3726,6 @@ Forum: http://www.etoa.ch/forum";
         }
 
     }
-
-
-	/**
-	* Verknüpft das Wurmloch einer Zelle mit einem neuen Wurmloch
-	*
-	* @param int $w1 Ursprüngliche Startzelle
-	* @param int $w2 Neue Zielzelle
-	* @tables space_cells
-	* @author MrCage
-	*/
-	function change_wormhole($w1,$w2)
-	{
-		global $db_table;
-
-		$res=dbquery("
-			SELECT
-				cell_wormhole_id
-			FROM
-				".$db_table['space_cells']."
-			WHERE
-				cell_id='".$w1."';
-		");
-		$arr=mysql_fetch_assoc($res);
-		// Prüfen ob Wurmloch sich geändert hat und ob nicht die aktuelle Zelle gewählt wurde
-		if ($arr['cell_wormhole_id']!=$w2 && $w1!=$w2)
-		{
-			// Abfragen mit wem das neue Ziel verknüpft ist
-			$wres=dbquery("
-				SELECT
-					cell_wormhole_id
-				FROM
-					".$db_table['space_cells']."
-				WHERE
-					cell_id='".$w2."';
-			");
-			$warr=mysql_fetch_assoc($wres);
-			dbquery("
-				UPDATE
-					".$db_table['space_cells']."
-				SET
-					cell_wormhole_id='".$arr['cell_wormhole_id']."',
-					cell_wormhole_changed='".time()."'
-				WHERE
-					cell_id='".$warr['cell_wormhole_id']."';
-			");
-			dbquery("
-				UPDATE
-					".$db_table['space_cells']."
-				SET
-					cell_wormhole_id='".$warr['cell_wormhole_id']."',
-					cell_wormhole_changed='".time()."'
-				WHERE
-					cell_id='".$arr['cell_wormhole_id']."';
-			");
-			dbquery("
-				UPDATE
-					".$db_table['space_cells']."
-				SET
-					cell_wormhole_id='".$w2."',
-					cell_wormhole_changed='".time()."'
-				WHERE cell_id='".$w1."';
-			");
-			dbquery("
-				UPDATE
-					".$db_table['space_cells']."
-				SET
-					cell_wormhole_id='".$w1."',
-					cell_wormhole_changed='".time()."'
-				WHERE
-					cell_id='".$w2."';
-			");
-		}
-	}
 
 	/**
 	* Fehlermeldungs-Box anzeigen
@@ -4576,6 +4005,8 @@ Forum: http://www.etoa.ch/forum";
 
 	/**
 	* Ressourcen-Update
+	*
+	* @todo Deprecated! Source this out, it is no longer used
 	*/
 	function updateAllEconomy()
 	{
@@ -4609,6 +4040,7 @@ Forum: http://www.etoa.ch/forum";
 
 	/**
 	* Objekt-Update
+	* @todo Deprecated! Source this out, it is no longer used
 	*/
 	function updateAllObjects()
 	{
@@ -4643,6 +4075,7 @@ Forum: http://www.etoa.ch/forum";
 	/**
 	* Gasplaneten-Update
 	* @author MrCage
+	* @todo Deprecated! Source this out, it is no longer used
 	*/
 	function updateGasPlanets()
 	{
@@ -4732,6 +4165,7 @@ Forum: http://www.etoa.ch/forum";
 	* @param int $planet_id Planet ID
 	* @param int $new_user_id User ID des 'Übernehmers'
 	* @athor Lamborghini
+	* @todo Source this out, it's only used in update script
 	*/
 	function invasion_planet($planet_id,$new_user_id)
 	{
@@ -4793,7 +4227,9 @@ Forum: http://www.etoa.ch/forum";
 
 	}
 
-
+	/**
+	* Cuts words
+	*/
    function cut_word($txt, $where, $br=0) {
        if (empty($txt)) return false;
        for ($c = 0, $a = 0, $g = 0; $c<strlen($txt); $c++) {
@@ -4813,7 +4249,9 @@ Forum: http://www.etoa.ch/forum";
        return implode("", $d);
    }
 
-
+	/**
+	* Stopwatch start
+	*/
 	function timerStart()
 	{
 		// Renderzeit-Start festlegen
@@ -4821,6 +4259,9 @@ Forum: http://www.etoa.ch/forum";
 		return $render_time[1]+$render_time[0];
 	}
 
+	/**
+	* Stopwatch stop
+	*/
 	function timerStop($starttime)
 	{
 		// Renderzeit
@@ -4829,26 +4270,11 @@ Forum: http://www.etoa.ch/forum";
 		return round($rtime,3);
 	}
 
-  function encryptCaptchaString($string, $key)
-  {
-	   $result = '';
-	   for($i=0; $i<strlen($string); $i++)
-	   {
-	      $char = substr($string, $i, 1);
-	      $keychar = substr($key, ($i % strlen($key))-1, 1);
-	      $char = chr(ord($char)+ord($keychar));
-	      $result.=$char;
-	   }
-   	$result = base64_encode($result);
-   	$result  = str_replace("=", "", $result);
-   	return $result;
-  }
-
-
 	/**
 	* Resizes a jpeg image and save it to a given filename
 	*
 	* No return value
+	* @todo Source this out
 	*/
 	function resizeImage($fileFrom, $fileTo, $newMaxWidth = 0, $newMaxHeight = 0, $type="jpeg" ) 
 	{
@@ -4919,6 +4345,7 @@ Forum: http://www.etoa.ch/forum";
 
 	/**
 	* Checks and handles missile actions
+	* @todo source this out
 	*/
 	function check_missiles()
 	{
@@ -5015,6 +4442,11 @@ Forum: http://www.etoa.ch/forum";
 		}
 	}	
 	
+
+	/**
+	* Deprecated
+	* @todo fix and outsource
+	*/
 	function calcDistance($sx1,$sy1,$cx1,$cy1,$pp1,$sx2,$sy2,$cx2,$cy2,$pp2)
 	{
 		global $conf;
@@ -5035,6 +4467,10 @@ Forum: http://www.etoa.ch/forum";
 		return $ssae;	
 	}		
 
+	/**
+	* Deprecated
+	* @todo fix and outsource
+	*/
 	function calcDistanceByPlanetId($pid1,$pid2)
 	{
 		$c1 = getCoordsByPlanetId($pid1);
@@ -5043,6 +4479,10 @@ Forum: http://www.etoa.ch/forum";
 	}
 
 	
+	/**
+	* Deprecated
+	* @todo fix and outsource
+	*/
 	function getCoordsByPlanetId($id)
 	{		
 		$coords = array();
@@ -5108,6 +4548,7 @@ Forum: http://www.etoa.ch/forum";
 	/**
 	* Checks current wars / peace between alliances
 	* if they're still valid
+	* @todo outsource
 	*/
 	function warpeace_update()
 	{
@@ -5262,6 +4703,14 @@ Forum: http://www.etoa.ch/forum";
 		if ($exponent<=0)
 			return 1;
 		return $base * intpow($base,$exponent-1);
+	}
+
+	/**
+	* The ultimate answer
+	*/
+	function answer_to_life_the_universe_and_everything()
+	{
+		return 42;
 	}
 
 	/**

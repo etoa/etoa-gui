@@ -8,7 +8,7 @@
 	{
 
 		/**
-		* Create the universe
+		* Create the universe.
 		* And there was light!
 		*/	
 		static function create()
@@ -548,7 +548,10 @@
 	
 		}	
 		
-		
+		/**
+		* Resets the universe and all user data
+		* The Anti-Big-Bang
+		*/
 		static function reset()
 		{
 			$tbl[]="cells";
@@ -627,6 +630,332 @@
 			return true;
 		}
 		
+		/**
+		* Erweitert Universum
+		*
+		* @param string $sx_num_new,$sy_num_new
+		* @author Lamborghini
+		* @todo This method has to be rewritten due to the database changes with the new entity table
+		*/
+		function expansion_universe($sx_num_new,$sy_num_new)
+		{
+			global $conf,$db_table;
+	
+			$sx_num=$conf['num_of_sectors']['p1'];
+			$sy_num=$conf['num_of_sectors']['p2'];
+			$cx_num=$conf['num_of_cells']['p1'];
+			$cy_num=$conf['num_of_cells']['p2'];
+			$planet_fields_min=$conf['planet_fields']['p1'];
+			$planet_fields_max=$conf['planet_fields']['p2'];
+			$planet_temp_min=$conf['planet_temp']['p1'];
+			$planet_temp_max=$conf['planet_temp']['p2'];
+			$planet_temp_diff=$conf['planet_temp']['v'];
+			$planet_temp_totaldiff=abs($planet_temp_min)+abs($planet_temp_max);
+			$perc_solsys=$conf['space_percent_solsys']['v'];
+			$perc_asteroids=$conf['space_percent_asteroids']['v'];
+			$perc_nebulas=$conf['space_percent_nebulas']['v'];
+			$perc_wormholes=$conf['space_percent_wormholes']['v'];
+			$num_planets_min=$conf['num_planets']['p1'];
+			$num_planets_max=$conf['num_planets']['p2'];
+			$num_sol_types=mysql_num_rows(dbquery("SELECT * FROM ".$db_table['sol_types'].";"));
+			$sol_types = get_sol_types_array();
+			$num_planet_types=mysql_num_rows(dbquery("SELECT * FROM ".$db_table['planet_types'].";"));
+			$planet_types = get_planet_types_array();
+			$num_planet_images = $conf['num_planet_images']['v'];
+			$planet_count = 0;
+			$sol_count = 0;
+			$nebula_count = 0;
+			$asteroids_count = 0;
+			$wormhole_count = 0;
+	
+			echo "Erweitere Universum von $sx_num x $sy_num Sektoren auf $sx_num_new x $sy_num_new Sektoren. Es werden ".$cx_num*$cy_num." Zellen pro Sektor und ".($sx_num_new*$sy_num_new-$sx_num*$sy_num)*$cx_num*$cy_num." Zellen total hinzugefügt<br>";
+	
+			for ($sx=1;$sx<=$sx_num_new;$sx++)
+			{
+				for ($sy=1;$sy<=$sy_num_new;$sy++)
+				{
+					//überprüft ob dieser sektor schon vorhanden ist
+	                $res = dbquery("
+						SELECT
+							cell_id
+						FROM
+							".$db_table['space_cells']."
+						WHERE
+							cell_sx='".$sx."'
+							AND cell_sy='".$sy."';
+					");
+	                if (mysql_num_rows($res)==0)
+	                {
+	                    for ($cx=1;$cx<=$cx_num;$cx++)
+	                    {
+	                        for ($cy=1;$cy<=$cy_num;$cy++)
+	                        {
+	                            $ct = mt_rand(1,100);
+	                            //Sonnensystem
+	                            if ($ct<=$perc_solsys)
+	                            {
+	                                $st = mt_rand(1,$num_sol_types);
+	                                $np = mt_rand($num_planets_min,$num_planets_max);
+	                                $sql = "
+										INSERT INTO
+										".$db_table['space_cells']."
+										(
+											cell_sx,
+											cell_sy,
+											cell_cx,
+											cell_cy,
+											cell_type,
+											cell_solsys_num_planets,
+											cell_solsys_solsys_sol_type
+										)
+										VALUES
+										(
+											'".$sx."',
+											'".$sy."',
+											'".$cx."',
+											'".$cy."',
+											'1',
+											'".$np."',
+											'".$st."'
+										);
+									";
+	                                dbquery($sql);  // Zelle speichern
+	                                $solsys_id = mysql_insert_id();
+	                                for ($cnp=1;$cnp<=$np;$cnp++)
+	                                {
+	                                    $pt = mt_rand(1,$num_planet_types);
+	                                    $img_nr = $pt."_".mt_rand(1,$num_planet_images);
+	                                    $fields = mt_rand($planet_fields_min,$planet_fields_max);
+	                                    $tblock =  round($planet_temp_totaldiff / $np);
+	                                    $temp = mt_rand($planet_temp_max-($tblock*$cnp),($planet_temp_max-($tblock*$cnp)+$tblock));
+	                                    $tmin = $temp - $planet_temp_diff;
+	                                    $tmax = $temp + $planet_temp_diff;
+	                                    $sql = "
+											INSERT INTO
+											".$db_table['planets']."
+											(
+												planet_solsys_id,
+												planet_solsys_pos,
+												planet_type_id,
+												planet_fields,
+												planet_image,
+												planet_temp_from,
+												planet_temp_to
+											)
+											VALUES
+											(
+												'".$solsys_id."',
+												'".$cnp."',
+												'".$pt."',
+												'".$fields."',
+												'".$img_nr."',
+												'".$tmin."',
+												'".$tmax."'
+											)
+										";
+	                                    dbquery($sql);  // Planet speichern
+	                                    $planet_count++;
+	                                }
+	                                $sol_count++;
+	                            }
+	                            //Asteroidenfeld
+	                            elseif ($ct<=$perc_solsys + $perc_asteroids)
+	                            {
+	                                $asteroid_ress = mt_rand($conf['asteroid_ress']['p1'],$conf['asteroid_ress']['p2']);
+	                                $sql = "
+										INSERT INTO
+										".$db_table['space_cells']."
+										(
+											cell_sx,
+											cell_sy,
+											cell_cx,
+											cell_cy,
+											cell_type,
+											cell_asteroid,
+											cell_asteroid_ress
+										)
+										VALUES
+										(
+											'".$sx."',
+											'".$sy."',
+											'".$cx."',
+											'".$cy."',
+											'1',
+											'1',
+											'".$asteroid_ress."'
+										);
+									";
+	                                dbquery($sql);  // Zelle speichern
+	                                $asteroids_count++;
+	                            }
+	                            //Intergalaktischer Nebel
+	                            elseif ($ct<=$perc_solsys + $perc_asteroids + $perc_nebulas)
+	                            {
+	                                $nebula_ress = mt_rand($conf['nebula_ress']['p1'],$conf['nebula_ress']['p2']);
+	
+	                                $sql = "
+										INSERT INTO
+										".$db_table['space_cells']."
+										(
+											cell_sx,
+											cell_sy,
+											cell_cx,
+											cell_cy,
+											cell_type,
+											cell_nebula,
+											cell_nebula_ress
+										)
+										VALUES
+										(
+											'".$sx."',
+											'".$sy."',
+											'".$cx."',
+											'".$cy."',
+											'1',
+											'1',
+											'".$nebula_ress."'
+										);
+									";
+	                                dbquery($sql);  // Zelle speichern
+	                                $nebula_count++;
+	                            }
+	                            //Wurmlöcher
+	                            elseif ($ct<=$perc_solsys + $perc_asteroids + $perc_nebulas + $perc_wormholes)
+	                            {
+	                                // echo "$sx/$sy : $cx/$cy &nbsp;-&nbsp; Wurmloch<br>";
+	                                $sql = "
+										INSERT INTO
+										".$db_table['space_cells']."
+										(
+											cell_sx,
+											cell_sy,
+											cell_cx,
+											cell_cy,
+											cell_type,
+											cell_wormhole_id
+										)
+										VALUES
+										(
+											'".$sx."',
+											'".$sy."',
+											'".$cx."',
+											'".$cy."',
+											'1',
+											'1'
+										);
+									";
+	                                dbquery($sql);  // Zelle speichern
+	                                $wormhole_count++;
+	                            }
+	                            //Leere Zellen
+	                            else
+	                            {
+	                                $sql = "
+										INSERT INTO
+										".$db_table['space_cells']."
+										(
+											cell_sx,
+											cell_sy,
+											cell_cx,
+											cell_cy,
+											cell_type
+										)
+										VALUES
+										(
+											'".$sx."',
+											'".$sy."',
+											'".$cx."',
+											'".$cy."',
+											'0'
+										);
+									";
+	                                dbquery($sql);  // Zelle speichern
+	                            }
+	                        }
+	                    }
+					}
+				}
+			}
+	
+			$wh = array();
+			$wh_new = array();
+			$res = dbquery("
+	        SELECT
+	            *
+	        FROM
+	            ".$db_table['space_cells']."
+	        WHERE
+	            cell_wormhole_id!='0';
+			");
+			if (fmod(mysql_num_rows($res),2)!=0) //wenn Zahl ungerade ist
+			{
+				echo "<br>Eins ist zuviel!<br>";
+				dbquery("
+	            UPDATE
+	            	".$db_table['space_cells']."
+	            SET
+	            	cell_wormhole_id='0'
+	            WHERE
+	            	cell_wormhole_id!='0'
+	            LIMIT 1;
+				");
+				echo mysql_error();
+				$res = dbquery("
+	            SELECT
+	            	*
+	            FROM
+	            	".$db_table['space_cells']."
+	            WHERE
+	            	cell_wormhole_id!='0';
+				");
+			}
+			while ($arr=mysql_fetch_assoc($res))
+			{
+				array_push($wh,$arr['cell_id']);
+			}
+			shuffle($wh);
+			while (sizeof($wh)>0)
+			{
+				$wh_new[array_shift($wh)]=array_pop($wh);
+			}
+			$wormhole_count = mysql_num_rows($res);
+			foreach ($wh_new as $k=>$v)
+			{
+				dbquery("
+	            UPDATE
+	            	".$db_table['space_cells']."
+	            SET
+	            	cell_wormhole_id='".$k."'
+	            WHERE
+	            	cell_id='".$v."';
+				");
+				echo mysql_error();
+				dbquery("
+	            UPDATE
+	            	".$db_table['space_cells']."
+	            SET
+	            	cell_wormhole_id='".$v."'
+	            WHERE
+	            	cell_id='".$k."';
+				");
+							echo mysql_error();
+			}
+	
+			//Neue Sektorenanzahl in der Config speichern
+			dbquery("
+			UPDATE
+				".$db_table['config']."
+			SET
+	            config_param1='".$sx_num_new."',
+	            config_param2='".$sy_num_new."'
+			WHERE
+				config_name='num_of_sectors';");
+	
+			echo "Universum erweitert:<br>$sol_count Sonnensysteme mit $planet_count Planeten, $asteroids_count Asteroidenfelder, $nebula_count Nebel und $wormhole_count Wurmlöcher!";
+	
+		}
+
+
 	
 	}
 
