@@ -28,7 +28,7 @@
 	showTitle('Pranger');
 	echo "Hier ist eine Liste aller gesperrten Spieler:<br/><br/>";
 
-	$res = $db->query("SELECT 
+	$res = dbquery("SELECT 
 		u.user_nick,
 		u.user_blocked_from,
 		u.user_blocked_to,

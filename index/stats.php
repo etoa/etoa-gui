@@ -122,7 +122,7 @@
 			$sort="DESC";   
 		}
 		
-		$res=$db->query("
+		$res=dbquery("
 		SELECT 
 				*
 		FROM 
@@ -154,7 +154,7 @@
 	else
 	{
 		// Datensatznavigation
-		$usrcnt = mysql_fetch_row($db->query("
+		$usrcnt = mysql_fetch_row(dbquery("
 		SELECT 
 			COUNT(user_id) 
 		FROM 
@@ -219,7 +219,7 @@
 			
 		if (isset($_POST['search']) && $_POST['search']!="" && $_POST['user_nick']!="")
 		{
-			$res=$db->query("SELECT 
+			$res=dbquery("SELECT 
 				user_rank_current,
 				user_rank_last,
 				user_nick,
@@ -238,7 +238,7 @@
 		}
 		else
 		{
-			$res=$db->query("SELECT 
+			$res=dbquery("SELECT 
 				user_rank_current,
 				user_rank_last,
 				user_nick,

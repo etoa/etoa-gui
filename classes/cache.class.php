@@ -1,8 +1,15 @@
 <?php
 
-class cache 
+/**
+* Provides functions for the cache directory
+* such as permission checking
+*/
+class Cache 
 {
-    function cache($path=".") 
+		/**
+		* The constructor
+		*/
+    function Cache($path=".") 
     {
     	if (file_exists( $path."/".$this->cacheDir))
     	{
@@ -14,7 +21,9 @@ class cache
     	}
     }
     
-  
+  	/**
+  	* Checks for correct (Unix) permissions of the cache directory
+  	*/
     static function checkPerm($type="")
     {
     	if (UNIX)

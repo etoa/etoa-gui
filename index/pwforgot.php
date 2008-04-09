@@ -32,7 +32,7 @@
 	{
 		if ($_POST['user_nick']!="" && !stristr($_POST['user_nick'],"'") && $_POST['user_email_fix']!="" && !stristr($_POST['user_email_fix'],"'"))
 		{
-			$res = $db->query("
+			$res = dbquery("
 			SELECT 
 				user_id,
 				user_css_style,
@@ -56,7 +56,7 @@
 				send_mail(0,$_POST['user_email_fix'],"Passwort-Anforderung",$email_text,$arr['user_css_style'],"left");
 	
 				// Passwort updaten
-				$db->query("UPDATE ".$db_table['users']." SET user_password='".pw_salt($pw,$arr['user_registered'])."' WHERE user_nick='".$_POST['user_nick']."' AND user_email_fix='".$_POST['user_email_fix']."';");
+				dbquery("UPDATE ".$db_table['users']." SET user_password='".pw_salt($pw,$arr['user_registered'])."' WHERE user_nick='".$_POST['user_nick']."' AND user_email_fix='".$_POST['user_email_fix']."';");
 			
 				// Log hinzufügen
 				add_log(3,"Der Benutzer ".$_POST['user_nick']." hat ein neues Passwort per E-Mail angefordert!",time());

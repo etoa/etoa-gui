@@ -7,8 +7,7 @@
 	* $cfg = Config::getInstance();
 	* The first really useful [TM] class in EtoA ;)
 	*
-	* @autor MrCage <mrcage@etoa.ch>
-	*
+	* @author Nicolas Perrenoud <mrcage@etoa.ch>
 	*/
 	class Config
 	{
@@ -19,7 +18,7 @@
 	    private $keys;
 	
 			/**
-			* Get instance with this Singleton pattern
+			* Get instance with this very nice singleton design pattern
 			*/
 	    static public function getInstance()
 	    {
@@ -31,7 +30,7 @@
 	    }
 	
 			/**
-			* The constructor
+			* The constructor (is private so getInstance() must be used)
 			*/
 	    private function Config()
 	    {
@@ -56,6 +55,9 @@
 	    	}
 	    }
 	    
+	    /**
+	    * Reloads the whole config from the database
+	    */
 	    public function reload()
 	    {
 	    	$res = dbquery("
@@ -166,7 +168,7 @@
 	    }
 	    
 	    /**
-	    * Getter for parameter 1
+	    * Getter for parameter 1 (alias)
 	    */
 	    public function p1($key)
 	    {
@@ -186,7 +188,7 @@
 	    }	 
 
 	    /**
-	    * Getter for parameter 2
+	    * Getter for parameter 2 (alias)
 	    */
 	    public function p2($key)
 	    {

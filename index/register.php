@@ -60,10 +60,10 @@
 
 	function drawRegForm()
 	{
-		global $page,$db_table,$conf,$db;
+		global $page,$conf;
 		
 		// Load user count
-		$ucnt=mysql_fetch_row($db->query("SELECT COUNT(user_id) FROM ".$db_table['users'].";"));
+		$ucnt=mysql_fetch_row(dbquery("SELECT COUNT(user_id) FROM users;"));
 		
 		// Check if registration is switched off
 		if ($conf['enable_register']['v']==0)
@@ -155,15 +155,15 @@
 						{
 	          	if (checkEmail($_POST['register_user_email'])==TRUE)
 	          	{
-	          	  $res = mysql_query("SELECT user_id FROM ".$db_table['users']." WHERE user_nick='".$_POST['register_user_nick']."' OR user_email_fix='".$_POST['register_user_email']."';");
+	          	  $res = mysql_query("SELECT user_id FROM users WHERE user_nick='".$_POST['register_user_nick']."' OR user_email_fix='".$_POST['register_user_email']."';");
 	          	  if (mysql_num_rows($res)==0)
 	          	  {
 	          	      $pw = mt_rand(100000000,9999999999);
 	          				$time = time();
 	          	
-	          	      if ($db->query("
+	          	      if (dbquery("
 	          	      INSERT INTO
-	          	      ".$db_table['users']." (
+	          	      users (
 	          	          user_name,
 	          	          user_nick,
 	          	          user_password,

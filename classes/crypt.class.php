@@ -1,5 +1,8 @@
 <?PHP
-class crypt 
+/**
+* Class for encrypting a string using a key
+*/
+class Crypto 
 { 
    var $scramble1;      // 1st string of ASCII characters 
    var $scramble2;      // 2nd string of ASCII characters 
@@ -7,7 +10,10 @@ class crypt
    var $adj;            // 1st adjustment value (optional) 
    var $mod;            // 2nd adjustment value (optional) 
    
-   function crypt () 
+   /**
+   * The constructor. Initializes the crypt class
+   */
+   function Crypto () 
    { 
       // Each of these two strings must contain the same characters, but in a different order. 
       // Use only printable characters from the ASCII table. 
@@ -19,13 +25,16 @@ class crypt
       if (strlen($this->scramble1) <> strlen($this->scramble2)) 
       { 
          trigger_error('** SCRAMBLE1 is not same length as SCRAMBLE2 **', E_USER_ERROR); 
-      } // if 
+      }
        
       $this->adj = 1.75;    // this value is added to the rolling fudgefactors 
       $this->mod = 3;       // if divisible by this the adjustment is made negative 
        
-   } // constructor    
+   }
    
+   /**
+   * Encrypts a given string and returns the result
+   */
    function encrypt ($key, $source, $sourcelen=0) 
    {
       $this->errors = array();
@@ -65,7 +74,9 @@ class crypt
        
    } // encrypt 
    
-   
+   /**
+   * Convers a key for decryption (Internal use)
+   */
    function _convertKey ($key) 
    { 
       if (empty($key)) 
@@ -94,6 +105,9 @@ class crypt
     
    } // _convertKey 
    
+   /**
+   * Applies a fudge factir (Internal use)
+   */
    function _applyFudgeFactor (&$fudgefactor) 
    {
       $fudge = array_shift($fudgefactor);
@@ -110,6 +124,9 @@ class crypt
        
    } // _applyFudgeFactor 
    
+   /**
+   * Checks scramle range (Internal use)
+   */
    function _checkRange ($num) 
    {
       $num = round($num);
@@ -124,8 +141,11 @@ class crypt
       } // while 
       return $num; 
        
-   } // _checkRange 
+   }
    
+  /**
+  * Decrypts a given string using a given key
+  */
 	function decrypt ($key, $source) 
 	{	            
 		$source = base64_decode($source);

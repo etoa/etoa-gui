@@ -31,7 +31,7 @@
 	echo "<div style=\"margin:0px auto;width:600px;\">";
 
 		echo text2html($conf['contact_message']['v'])."<br/><br/>";
-		$res = $db->query("
+		$res = dbquery("
 			SELECT 
 				user_id,
 				user_nick,

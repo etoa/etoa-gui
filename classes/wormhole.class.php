@@ -152,7 +152,7 @@
 		/**
 		* Vertauscht zufällig mehrere Wurmlöcher miteinander
 		*
-		* @athor MrCage
+		* @author MrCage
 		*/
 		static function randomize()
 		{

@@ -644,7 +644,7 @@
 
 		infobox_end(1);		
 		
-		cache::checkPerm();
+		Cache::checkPerm();
 		
 		}
 }

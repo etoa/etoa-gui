@@ -45,8 +45,7 @@
 	require_once("conf.inc.php");
 	require_once("functions.php");
 
-	//dbconnect();
-	$db = new MySQL(DB_SERVER,DB_USER,DB_PASSWORD,DB_DATABASE);
+	dbconnect();
 
 	$conf = get_all_config();
 	include("def.inc.php");
@@ -237,7 +236,7 @@
 			}
 			echo "<input type=\"button\" value=\"Fenster schliessen\" onclick=\"window.close();\" /><br/><br/>";
 			
-			//dbclose();
+			dbclose();
 			$_SESSION[ROUNDID] = $s;
 		?>
 		
