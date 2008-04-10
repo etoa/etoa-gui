@@ -187,35 +187,25 @@
 				{
 					$sql.= " AND user_id='".$_POST['user_id']."'";
 				}
-				if ($_POST['user_nick_search']!="")
+				if (isset($_POST['user_nick_search'])!="")
 				{
-					if (stristr($_POST['qmode']['user_nick_search'],"%"))
-						$addchars = "%";else $addchars = "";
-					$sql.= " AND user_nick ".stripslashes($_POST['qmode']['user_nick_search']).$_POST['user_nick_search']."$addchars'";
+					$sql.= " AND user_nick LIKE '%".$_POST['user_nick_search']."%'";
 				}
 				if ($_POST['user_nick']!="")
 				{
-					if (stristr($_POST['qmode']['user_nick'],"%"))
-						$addchars = "%";else $addchars = "";
-					$sql.= " AND user_nick ".stripslashes($_POST['qmode']['user_nick']).$_POST['user_nick']."$addchars'";
+					$sql.= " AND user_nick  LIKE '%".$_POST['user_nick']."%'";
 				}
 				if ($_POST['user_name']!="")
 				{
-					if (stristr($_POST['qmode']['user_name'],"%"))
-						$addchars = "%";else $addchars = "";
-					$sql.= " AND user_name ".stripslashes($_POST['qmode']['user_name']).$_POST['user_name']."$addchars'";
+					$sql.= " AND user_name  LIKE '%".$_POST['user_name']."%'";
 				}
 				if ($_POST['user_email']!="")
 				{
-					if (stristr($_POST['qmode']['user_email'],"%"))
-						$addchars = "%";else $addchars = "";
-					$sql.= " AND user_email ".stripslashes($_POST['qmode']['user_email']).$_POST['user_email']."$addchars'";
+					$sql.= " AND user_email  LIKE '%".$_POST['user_email']."%'";
 				}
 				if ($_POST['user_email_fix']!="")
 				{
-					if (stristr($_POST['qmode']['user_email_fix'],"%"))
-						$addchars = "%";else $addchars = "";
-					$sql.= " AND user_email_fix ".stripslashes($_POST['qmode']['user_email_fix']).$_POST['user_email_fix']."$addchars'";
+					$sql.= " AND user_email_fix LIKE '%".$_POST['user_email_fix']."%'";
 				}
 				if ($_POST['user_password']!="")
 				{
@@ -223,15 +213,11 @@
 				}
 				if ($_POST['user_ip']!="")
 				{
-					if (stristr($_POST['qmode']['user_ip'],"%"))
-						$addchars = "%";else $addchars = "";
-					$sql.= " AND user_ip ".stripslashes($_POST['qmode']['user_ip']).$_POST['user_ip']."$addchars'";
+					$sql.= " AND user_ip LIKE '%".$_POST['user_ip']."%'";
 				}
 				if ($_POST['user_alliance']!="")
 				{
-					if (stristr($_POST['qmode']['user_alliance'],"%"))
-						$addchars = "%";else $addchars = "";
-					$sql.= " AND user_alliance_id=alliance_id AND alliance_name ".stripslashes($_POST['qmode']['user_alliance']).$_POST['user_alliance']."$addchars'";
+					$sql.= " AND user_alliance_id=alliance_id AND alliance_name LIKE '%".$_POST['user_alliance']."%'";
 					$tables.=",".$db_table['alliances'];
 				}
 				if ($_POST['user_race_id']!="")
@@ -240,9 +226,7 @@
 				}
 				if ($_POST['user_profile_text']!="")
 				{
-					if (stristr($_POST['qmode']['user_profile_text'],"%"))
-						$addchars = "%";else $addchars = "";
-					$sql.= " AND user_profile_text ".stripslashes($_POST['qmode']['user_profile_text']).$_POST['user_profile_text']."$addchars'";
+					$sql.= " AND user_profile_text LIKE '%".$_POST['user_profile_text']."%'";
 				}
 				if (isset($_POST['user_hmode']) && $_POST['user_hmode']<2)
 				{
@@ -281,8 +265,6 @@
 			else
   			$sql=$_SESSION['admin']['user_query'];
 
-
-echo $sql;
 			$res = dbquery($sql);
 			$nr = mysql_num_rows($res);
 			if ($nr==1)
@@ -295,10 +277,14 @@ echo $sql;
 			{
 				echo $nr." Datens&auml;tze vorhanden<br/><br/>";
 				if ($nr>20)
+				{
 					echo "<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" /><br/><br/>";
-
+				}
+				
 				$race = get_races_array();
 				$allys=get_alliance_names();
+				$time = time();
+				
  				echo "<table class=\"tbl\">";
 				echo "<tr>";
 				echo "<td class=\"tbltitle\" valign=\"top\">ID</td>";
@@ -312,9 +298,9 @@ echo $sql;
 				echo "</tr>";
 				while ($arr = mysql_fetch_array($res))
 				{
-					if ($arr['user_blocked_from']<time() && $arr['user_blocked_to']>time())
+					if ($arr['user_blocked_from']<$time && $arr['user_blocked_to']>$time)
 						$uCol=USER_COLOR_BANNED;
-					elseif($arr['user_hmode_from']<time() && $arr['user_hmode_to']>time())
+					elseif($arr['user_hmode_from']<$time && $arr['user_hmode_to']>$time)
 						$uCol=USER_COLOR_HOLIDAY;
 					elseif ($arr['user_deleted']!=0)
 						$uCol=USER_COLOR_DELETED;
@@ -326,7 +312,7 @@ echo $sql;
 					echo "<td class=\"tbldata\" style=\"color:".$uCol.";\" title=\"".$arr['user_name']."\">".cut_string($arr['user_name'],15)."</td>";
 					echo "<td class=\"tbldata\" style=\"color:".$uCol.";\" title=\"".$arr['user_email']."\">".cut_string($arr['user_email'],15)."</td>";
 					echo "<td class=\"tbldata\" style=\"color:".$uCol.";\">".nf($arr['user_points'])."</td>";
-					echo "<td class=\"tbldata\" style=\"color:".$uCol.";\">".$allys[$arr['user_alliance_id']]['tag']."</td>";
+					echo "<td class=\"tbldata\" style=\"color:".$uCol.";\">".($arr['user_alliance_id']>0 ? $allys[$arr['user_alliance_id']]['tag']:'-')."</td>";
 					echo "<td class=\"tbldata\" style=\"color:".$uCol.";\">".$race[$arr['user_race_id']]['race_name']."</td>";
 					if ($arr['user_comment']!="")
 						echo "<td class=\"tbldata\" style=\"color:".$uCol.";\" ".tm("Interne Bemerkungen",$arr['user_comment']).">".cut_string($arr['user_comment'],11)."</td>";
@@ -340,7 +326,13 @@ echo $sql;
 				}
 				echo "</table>";
 				echo "<br/><input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" /> ";
-				echo "<input type=\"button\" onclick=\"document.location='?page=$page&amp;action=search'\" value=\"Aktualisieren\" />";
+				echo "<input type=\"button\" onclick=\"document.location='?page=$page&amp;action=search'\" value=\"Aktualisieren\" /><br/><br/>
+				<b>Legende:</b> 
+				<span style=\"color:".USER_COLOR_DEFAULT."\">Normal</span>, 
+				<span style=\"color:".USER_COLOR_BANNED."\">Gesperrt</span>, 
+				<span style=\"color:".USER_COLOR_HOLIDAY."\">Urlaub</span>, 
+				<span style=\"color:".USER_COLOR_DELETED."\">Löschauftrag</span>
+				";
 			}
 			else
 			{
@@ -368,20 +360,22 @@ echo $sql;
 			echo "<form action=\"?page=$page&amp;action=search\" method=\"post\">";
 			echo "<table class=\"tbl\">";
 			echo "<tr><td class=\"tbltitle\">ID</td><td class=\"tbldata\"><input type=\"text\" name=\"user_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
-			echo "<tr><td class=\"tbltitle\">Nickname</td><td class=\"tbldata\"><input type=\"text\" name=\"user_nick\" value=\"\" size=\"20\" maxlength=\"250\" autocomplete=\"off\" onkeyup=\"xajax_searchUser(this.value,'user_nick','citybox1');\"/> ";fieldqueryselbox('user_nick');echo "<br><div class=\"citybox\" id=\"citybox1\">&nbsp;</div></td></tr>";
-			echo "<tr><td class=\"tbltitle\">Name</td><td class=\"tbldata\"><input type=\"text\" name=\"user_name\" value=\"\" size=\"20\" maxlength=\"250\" /> ";fieldqueryselbox('user_name');echo "</td></tr>";
-			echo "<tr><td class=\"tbltitle\">E-Mail</td><td class=\"tbldata\"><input type=\"text\" name=\"user_email\" value=\"\" size=\"20\" maxlength=\"250\" /> ";fieldqueryselbox('user_email');echo "</td></tr>";
-			echo "<tr><td class=\"tbltitle\">Fixe E-Mail</td><td class=\"tbldata\"><input type=\"text\" name=\"user_email_fix\" value=\"\" size=\"20\" maxlength=\"250\" /> ";fieldqueryselbox('user_email_fix');echo "</td></tr>";
+			echo "<tr><td class=\"tbltitle\">Nickname</td><td class=\"tbldata\"><input type=\"text\" name=\"user_nick\" value=\"\" size=\"20\" maxlength=\"250\" autocomplete=\"off\" onkeyup=\"xajax_searchUser(this.value,'user_nick','citybox1');\"/> <br><div class=\"citybox\" id=\"citybox1\">&nbsp;</div></td></tr>";
+			echo "<tr><td class=\"tbltitle\">Name</td><td class=\"tbldata\"><input type=\"text\" name=\"user_name\" value=\"\" size=\"20\" maxlength=\"250\" /> </td></tr>";
+			echo "<tr><td class=\"tbltitle\">E-Mail</td><td class=\"tbldata\"><input type=\"text\" name=\"user_email\" value=\"\" size=\"20\" maxlength=\"250\" /> </td></tr>";
+			echo "<tr><td class=\"tbltitle\">Fixe E-Mail</td><td class=\"tbldata\"><input type=\"text\" name=\"user_email_fix\" value=\"\" size=\"20\" maxlength=\"250\" /> </td></tr>";
 			echo "<tr><td class=\"tbltitle\">Passwort</td><td class=\"tbldata\"><input type=\"text\" name=\"user_password\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
-			echo "<tr><td class=\"tbltitle\">IP-Adresse</td><td class=\"tbldata\"><input type=\"text\" name=\"user_ip\" value=\"\" size=\"20\" maxlength=\"250\" /> ";fieldqueryselbox('user_ip');echo "</td></tr>";
-			echo "<tr><td class=\"tbltitle\">Allianz</td><td class=\"tbldata\"><input type=\"text\" name=\"user_alliance\" value=\"\" size=\"20\" maxlength=\"250\" autocomplete=\"off\" onkeyup=\"xajax_searchAlliance(this.value,'user_alliance','citybox2');\"/> ";fieldqueryselbox('user_alliance');echo "<br><div class=\"citybox\" id=\"citybox2\">&nbsp;</div></td></tr>";
+			echo "<tr><td class=\"tbltitle\">IP-Adresse</td><td class=\"tbldata\"><input type=\"text\" name=\"user_ip\" value=\"\" size=\"20\" maxlength=\"250\" /> </td></tr>";
+			echo "<tr><td class=\"tbltitle\">Allianz</td><td class=\"tbldata\"><input type=\"text\" name=\"user_alliance\" value=\"\" size=\"20\" maxlength=\"250\" autocomplete=\"off\" onkeyup=\"xajax_searchAlliance(this.value,'user_alliance','citybox2');\"/> <br><div class=\"citybox\" id=\"citybox2\">&nbsp;</div></td></tr>";
 			$race = get_races_array();
 			echo "<tr><td class=\"tbltitle\">Rasse</td><td class=\"tbldata\"><select name=\"user_race_id\">";
 			echo "<option value=\"\">(egal)</option>";
 			foreach ($race as $id=>$racedata)
+			{
 				echo "<option value=\"$id\">".$racedata['race_name']."</option>";
+			}
 			echo "</select></td></tr>";
-			echo "<tr><td class=\"tbltitle\">Profil-Text</td><td class=\"tbldata\"><input type=\"text\" name=\"user_profile_text\" value=\"\" size=\"20\" maxlength=\"250\" /> ";fieldqueryselbox('user_profile_text');echo "</td></tr>";
+			echo "<tr><td class=\"tbltitle\">Profil-Text</td><td class=\"tbldata\"><input type=\"text\" name=\"user_profile_text\" value=\"\" size=\"20\" maxlength=\"250\" /> </td></tr>";
 			echo "<tr><td class=\"tbltitle\">Urlaubsmodus</td><td class=\"tbldata\"><input type=\"radio\" name=\"user_hmode\" value=\"2\" checked=\"checked\" /> Egal &nbsp; <input type=\"radio\" name=\"user_hmode\" value=\"0\" /> Nein &nbsp; <input type=\"radio\" name=\"user_hmode\" value=\"1\" /> Ja</td></tr>";
 			echo "<tr><td class=\"tbltitle\">Gesperrt</td><td class=\"tbldata\"><input type=\"radio\" name=\"user_blocked\" value=\"2\" checked=\"checked\" /> Egal &nbsp; <input type=\"radio\" name=\"user_blocked\" value=\"0\" /> Nein &nbsp; <input type=\"radio\" name=\"user_blocked\" value=\"1\"  /> Ja</td></tr>";
 			echo "<tr><td class=\"tbltitle\">Admin</td><td class=\"tbldata\"><input type=\"radio\" name=\"user_admin\" value=\"2\" checked=\"checked\" /> Egal &nbsp; <input type=\"radio\" name=\"user_admin\" value=\"0\" /> Nein &nbsp; <input type=\"radio\" name=\"user_admin\" value=\"1\"  /> Ja</td></tr>";

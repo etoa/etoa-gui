@@ -4,6 +4,7 @@ $xajax->register(XAJAX_FUNCTION,"showTimeBox");
 $xajax->register(XAJAX_FUNCTION,"allianceRankSelector");
 $xajax->register(XAJAX_FUNCTION,"userPointsTable");
 $xajax->register(XAJAX_FUNCTION,"addUserComment");
+$xajax->register(XAJAX_FUNCTION,"delUserComment");
 $xajax->register(XAJAX_FUNCTION,"userTickets");
 $xajax->register(XAJAX_FUNCTION,"userComments");
 $xajax->register(XAJAX_FUNCTION,"sendUrgendMsg");
@@ -344,7 +345,7 @@ function userComments($uid,$target)
 {
 	$or = new xajaxResponse();
 	ob_start();
-	echo "<h2>Neuer Kommentar:</h2><textarea rows=\"4\" cols=\"70\" id=\"new_comment_text\"></textarea><br/><br/>";
+	echo "<div style=\"background:#335;border:1px solid #aaa;padding:10px;\"><b>Neuer Kommentar:</b><br/><br/><textarea rows=\"4\" cols=\"70\" id=\"new_comment_text\"></textarea><br/><br/>";
 	echo "<input type=\"button\" onclick=\"xajax_addUserComment('$uid','$target',document.getElementById('new_comment_text').value);\" value=\"Speichern\" />";
 	echo "<h2>Gespeicherte Kommentare</h2><table class=\"tb\">";	
 	$lres=dbquery("
@@ -367,6 +368,7 @@ function userComments($uid,$target)
 			<th>Datum</th>
 			<th>Admin</th>
 			<th>Text</th>
+			<th>Aktionen</th>
 		</tr>";
 		while ($larr=mysql_fetch_array($lres))
 		{
@@ -374,6 +376,7 @@ function userComments($uid,$target)
 				<td class=\"tbldata\">".df($larr['comment_timestamp'])."</td>
 				<td class=\"tbldata\">".$larr['user_nick']."</td>
 				<td class=\"tbldata\">".text2html($larr['comment_text'])."</td>
+				<td class=\"tbldata\"><a href=\"javascript:;\" onclick=\"if (confirm('Wirklich löschen?')) {xajax_delUserComment('".$uid."','".$target."',".$larr['comment_id'].")}\">Löschen</a></td>
 			</tr>";   
 		}           
 	}             
@@ -381,7 +384,7 @@ function userComments($uid,$target)
 	{             
 		echo "<tr><td class=\"tbldata\">Keine Kommentare</td></tr>";
 	}             
-	echo "</table>";
+	echo "</table></div>";
 
 	$out = ob_get_contents();
 	ob_end_clean();	
@@ -406,6 +409,23 @@ function addUserComment($uid,$target,$text)
 	return $or;	
 }
 
+function delUserComment($uid,$target,$id)
+{
+	$or = new xajaxResponse();
+	if ($id>0)
+	{
+		$or->script("showLoader('$target');");
+		dbquery("DELETE FROM user_comments WHERE comment_id=".$id.";");
+		$or->script("xajax_userComments('$uid','$target')");
+	}
+	else
+	{
+		$or->alert("Fehler! Falsche ID!");
+		
+	}
+	return $or;	
+}
+
 function loadEconomy($uid,$target)
 {
 	$or = new xajaxResponse();
@@ -423,7 +443,7 @@ function loadEconomy($uid,$target)
 				// Sucht alle Planet IDs des Users
 				$pres = dbquery("
 					SELECT 
-						planet_id
+						id
 					FROM 
 						planets
 					WHERE
@@ -445,9 +465,9 @@ function loadEconomy($uid,$target)
 					
 					// Läd alle "Planetclass" Daten in ein Array
 					$planets = array();
-					while($parr=mysql_fetch_array($pres))
+					while($parr=mysql_fetch_row($pres))
 					{
-						$planets[] = new Planet($parr['planet_id']);
+						$planets[] = new Planet($parr[0]);
 					}
 			
 					$cnt_res=0;
@@ -624,7 +644,7 @@ function loadEconomy($uid,$target)
 					{
 						echo "<tr>
 										<td class=\"tbldata\">
-											<a href=\"?page=galaxy&sub=edit&planet_id=".$p->id."\">".$p->name."</a>
+											<a href=\"?page=galaxy&sub=edit&planet_id=".$p->id()."\">".$p."</a>
 										</td>";
 						for ($x=0;$x<6;$x++)
 						{
@@ -717,9 +737,10 @@ function loadEconomy($uid,$target)
 					<th class=\"tbltitle\">Energie</th></tr>";
 					foreach ($planets as $p)
 					{
-						echo "<tr><td class=\"tbldata\"><a href=\"?page=economy&amp;planet_id=".$p->id."\">".$p->name."</a></td>";
+						echo "<tr><td class=\"tbldata\"><a href=\"?page=galaxy&amp;sub=edit&amp;id=".$p->id()."\">".$p."</a></td>";
 						for ($x=0;$x<6;$x++)
 						{
+/*
 							// Erstellt TM-Box für jeden Rohstoff
 							// Titan
 							if($x == 0)
@@ -757,7 +778,9 @@ function loadEconomy($uid,$target)
 								$tm_header = "";
 								$tm = "";
 							}
-							
+							*/
+								$tm_header = "";
+								$tm = "";
 							
 							echo "<td";
 							if ($max_prod[$x]==$val_prod[$p->id][$x])

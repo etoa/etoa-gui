@@ -60,7 +60,7 @@
 		}
 		$res=dbquery("
 		SELECT 
-			planet_id,
+			id,
 			planet_user_id,
 			planet_user_main 
 		FROM 
@@ -77,8 +77,8 @@
 				if (count($user[$arr['planet_user_id']])==0)
 				{
 					$cnt++;
-					echo "<tr><td>".$arr['planet_name']."</td><td>".$arr['planet_id']."</td><td>".$arr['planet_user_id']."</td>
-					<td><a href=\"?page=$page&sub=edit&amp;planet_id=".$arr['planet_id']."\">Bearbeiten</a></td></tr>";
+					echo "<tr><td>".$arr['planet_name']."</td><td>".$arr['id']."</td><td>".$arr['planet_user_id']."</td>
+					<td><a href=\"?page=$page&sub=edit&amp;id=".$arr['id']."\">Bearbeiten</a></td></tr>";
 				}
 			}
 			if ($cnt==0)
@@ -97,7 +97,7 @@
 		$res=dbquery("
 		SELECT
 			planet_name,
-			planet_id
+			id
 		FROM
 			planets
 		WHERE
@@ -111,7 +111,7 @@
 			{
 				if (count($user[$arr['planet_user_id']])==0)
 				{
-					echo "<tr><td>".$arr['planet_name']."</td><td>".$arr['planet_id']."</td><td><a href=\"?page=$page&sub=edit&amp;planet_id=".$arr['planet_id']."\">Bearbeiten</a></td></tr>";
+					echo "<tr><td>".$arr['planet_name']."</td><td>".$arr['id']."</td><td><a href=\"?page=$page&sub=edit&amp;id=".$arr['id']."\">Bearbeiten</a></td></tr>";
 				}
 			}
 			echo "</table>";			
@@ -628,7 +628,7 @@
 		echo "<h1>Planeten</h1>";
 		
 		$order_array=array();		
-		$order_array['planet_id']="Planeten-ID";
+		$order_array['id']="Planeten-ID";
 		$order_array['planet_name']="Planetenname";
 		$order_array['type_name']="Planetentyp";
 		$order_array['user_nick']="Besitzer-Name";
@@ -683,11 +683,11 @@
 					$search_text['Planetenname'] = searchFieldOptionsName($_POST['qmode']['planet_name'])." ".$_POST['planet_name'];
 					$query_save[] = "planet_name:".$_POST['qmode']['planet_name'].":".$_POST['planet_name'];
 				}
-				if ($_POST['planet_id']!="")
+				if ($_POST['id']!="")
 				{
-					$sql.= " AND planets.planet_id=".$_POST['planet_id'];
-					$search_text['Planeten-ID'] = $_POST['planet_id'];
-					$query_save[] = "planet_id:=:".$_POST['planet_id'];
+					$sql.= " AND planets.id=".$_POST['id'];
+					$search_text['Planeten-ID'] = $_POST['id'];
+					$query_save[] = "id:=:".$_POST['id'];
 				}
 				if ($_POST['cell_cx']!="")
 				{
@@ -913,7 +913,7 @@
 						$uarr = Null;
 
 					echo "<tr>";
-					echo "<td class=\"tbldata\">".$arr['planet_id']."</td>";
+					echo "<td class=\"tbldata\">".$arr['id']."</td>";
 					echo "<td class=\"tbldata\">".$arr['cell_sx']."/".$arr['cell_sy']." : ".$arr['cell_cx']."/".$arr['cell_cy']." : ".$arr['planet_solsys_pos']."</td>";
 					echo "<td class=\"tbldata\" ".tm($arr['planet_name'],stripslashes($arr['planet_desc'])).">".$arr['planet_name']."</td>";
 					echo "<td class=\"tbldata\">
@@ -928,7 +928,7 @@
 					</td>";
 					echo "<td class=\"tbldata\"><a href=\"?page=alliances&amp;sub=edit&amp;alliance_id=".$users[$arr['planet_user_id']]['alliance_id']."\" title=\"Allianz bearbeiten\">".$alliances[$users[$arr['planet_user_id']]['alliance_id']]."</td>";
 					echo "<td class=\"tbldata\"><a href=\"?page=galaxy&sub=planet_types&action=edit&id=".$arr['planet_type_id']."\" title=\"Typ bearbeiten\">".$arr['type_name']."</a></td>";
-  				echo "<td class=\"tbldata\">".edit_button("?page=$page&sub=edit&planet_id=".$arr['planet_id'])."</td>";
+  				echo "<td class=\"tbldata\">".edit_button("?page=$page&sub=edit&id=".$arr['id'])."</td>";
 					echo "</tr>";
 				}
 				echo "</table>";
@@ -978,7 +978,7 @@
                     planet_people=planet_people+'".$_POST['planet_people_add']."',
                     planet_desc='".addslashes($_POST['planet_desc'])."'
 				WHERE
-					planet_id='".$_GET['planet_id']."';");
+					id='".$_GET['id']."';");
 				if (mysql_affected_rows()>0)
 				{
 					success_msg("Änderungen übernommen");
@@ -990,9 +990,9 @@
 				if($_POST['planet_user_id']!=$_POST['planet_user_id_old'])
 				{
 					//Planet dem neuen User übergeben (Schiffe und Verteidigung werden vom Planeten gelöscht!)
-					invasion_planet($_GET['planet_id'],$_POST['planet_user_id']);
+					invasion_planet($_GET['id'],$_POST['planet_user_id']);
 					//Log Schreiben
-					add_log(8,$_SESSION[SESSION_NAME]['user_nick']." wechselt den Besitzer vom Planeten: [URL=?page=galaxy&sub=edit&planet_id=".$_GET['planet_id']."][B]".$_GET['planet_id']."[/B][/URL]\nAlter Besitzer: [URL=?page=user&sub=edit&user_id=".$_POST['planet_user_id_old']."][B]".$_POST['planet_user_id_old']."[/B][/URL]\nNeuer Besitzer: [URL=?page=user&sub=edit&user_id=".$_POST['planet_user_id']."][B]".$_POST['planet_user_id']."[/B][/URL]",time());
+					add_log(8,$_SESSION[SESSION_NAME]['user_nick']." wechselt den Besitzer vom Planeten: [URL=?page=galaxy&sub=edit&id=".$_GET['id']."][B]".$_GET['id']."[/B][/URL]\nAlter Besitzer: [URL=?page=user&sub=edit&user_id=".$_POST['planet_user_id_old']."][B]".$_POST['planet_user_id_old']."[/B][/URL]\nNeuer Besitzer: [URL=?page=user&sub=edit&user_id=".$_POST['planet_user_id']."][B]".$_POST['planet_user_id']."[/B][/URL]",time());
 
 					success_msg("Der Planet wurde dem User mit der ID: [b]".$_POST['planet_user_id']."[/b] &uuml;bergeben!");
 				}
@@ -1005,11 +1005,11 @@
 			{
 				$res=dbquery("
 					SELECT
-						planet_id
+						id
 					FROM
 						planets
 					WHERE
-						planet_id='".$_GET['planet_id']."'
+						id='".$_GET['id']."'
 				");
 				$cnt=mysql_num_rows($res);
 				if ($cnt>0)
@@ -1024,11 +1024,11 @@
 			{
 				$res=dbquery("
 					SELECT
-						planet_id
+						id
 					FROM
 						planets
 					WHERE
-						planet_id='".$_GET['planet_id']."'
+						id='".$_GET['id']."'
 				");
 				$cnt=mysql_num_rows($res);
 				if ($cnt>0)
@@ -1040,13 +1040,13 @@
 				}
 			}			
 			
-			$res = dbquery("SELECT * FROM planets,space_cells,".$db_table['planet_types']." WHERE planet_type_id=type_id AND planet_solsys_id=cell_id AND planet_id=".$_GET['planet_id'].";");
+			$res = dbquery("SELECT * FROM planets,space_cells,".$db_table['planet_types']." WHERE planet_type_id=type_id AND planet_solsys_id=cell_id AND id=".$_GET['id'].";");
 			$arr = mysql_fetch_array($res);
-			echo "<form action=\"?page=$page&sub=edit&planet_id=".$_GET['planet_id']."\" method=\"post\">";
+			echo "<form action=\"?page=$page&sub=edit&id=".$_GET['id']."\" method=\"post\">";
 			echo "<table class=\"tbl\">";
 			
 			echo "<tr><td class=\"tbltitle\" valign=\"top\">ID</td>
-			<td class=\"tbldata\">".$arr['planet_id']."</td>";
+			<td class=\"tbldata\">".$arr['id']."</td>";
 			echo "<td class=\"tbltitle\" valign=\"top\">Koordinaten</td>
 			<td class=\"tbldata\">".$arr['cell_sx']."/".$arr['cell_sy']." : ".$arr['cell_cx']."/".$arr['cell_cy']." : ".$arr['planet_solsys_pos']."</td></tr>";
 			
@@ -1207,7 +1207,7 @@
 				echo "</td></tr>";
 			echo "<tr>
 				<td class=\"tbltitle\">Planeten-ID:</td>
-				<td class=\"tbldata\"><input type=\"text\" name=\"planet_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
+				<td class=\"tbldata\"><input type=\"text\" name=\"id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
 			echo "<tr>
 				<td class=\"tbltitle\">Besitzer-ID:</td>
 				<td class=\"tbldata\">".searchFieldNumberOptions('planet_user_id')." <input type=\"text\" name=\"planet_user_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td>";
@@ -1283,7 +1283,7 @@
 				}
 				echo "
 			</select> <input type=\"submit\" class=\"button\" name=\"search_submit\" value=\"Suchen\" /></form>";
-			$tblcnt = mysql_fetch_row(dbquery("SELECT count(planet_id) FROM planets;"));
+			$tblcnt = mysql_fetch_row(dbquery("SELECT count(id) FROM planets;"));
 			echo "<br/>Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.";
 			
 			echo "<script type=\"text/javascript\">document.forms['advancedsearch'].elements[1].focus();</script>";

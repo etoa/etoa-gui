@@ -26,7 +26,6 @@
 				user_points_battle=".$_POST['user_points_battle'].",
 				user_points_trade=".$_POST['user_points_trade'].",
 				user_points_diplomacy=".$_POST['user_points_diplomacy'].",
-				user_alliance_rank_id=".intval($_POST['user_alliance_rank_id']).",
 				user_profile_board_url='".$_POST['user_profile_board_url']."',
 				user_spyship_count=".$_POST['user_spyship_count'].",
 				user_spyship_id=".$_POST['user_spyship_id'].",
@@ -44,6 +43,10 @@
 				user_havenships_buttons=".$_POST['user_havenships_buttons'].",
 				user_show_adds=".$_POST['user_show_adds']."
 				";				
+				if (isset($_POST['user_alliance_rank_id']))
+				{
+					$sql.= ",user_alliance_rank_id=".intval($_POST['user_alliance_rank_id'])."";
+				}
 
 				// Handle specialist decision
 				if ($_POST['user_specialist_id']>0 && $_POST['user_specialist_time_h']>0)
@@ -58,7 +61,7 @@
 				}
 
 				// Handle  image
-        if ($_POST['profile_img_del']==1)
+        if (isset($_POST['profile_img_del']) && $_POST['profile_img_del']==1)
         {
 					$res = dbquery("SELECT user_profile_img FROM users WHERE user_id=".$_GET['user_id'].";");
 					if (mysql_num_rows($res)>0)
@@ -73,7 +76,7 @@
         }
         
         // Handle avatar
-        if ($_POST['avatar_img_del']==1)
+        if (isset($_POST['avatar_img_del']) && $_POST['avatar_img_del']==1)
         {
 					$res = dbquery("SELECT user_avatar FROM users WHERE user_id=".$_GET['user_id'].";");
 					if (mysql_num_rows($res)>0)
@@ -88,7 +91,7 @@
         }        
 
 				// Handle password
-				if ($_POST['user_password']!="")
+				if (isset($_POST['user_password']) && $_POST['user_password']!="")
 				{
 					$pres = dbquery("SELECT user_registered FROM users WHERE user_id='".$_GET['user_id']."';");
 					$parr = mysql_fetch_row($pres);
@@ -131,10 +134,10 @@
 				// Perform query
 				$sql .= " WHERE user_id='".$_GET['user_id']."';";
 				dbquery($sql);
-				echo "<div style=\"color:#0f0;\">Änderungen gespeichert!</div>";
+				cms_ok_msg("&Auml;nderungen wurden &uuml;bernommen!","submitresult");
 
 				//Aktuelles Sitten Stoppen
-				if($_POST['user_sitting_active']==1)
+				if(isset($_POST['user_sitting_active']) && $_POST['user_sitting_active']==1)
 				{
                     dbquery("
                     UPDATE
@@ -152,7 +155,7 @@
 
 				}
 				//Sitter Passwort ändern
-				if ($_POST['user_sitting_sitter_password']!="")
+				if (isset($_POST['user_sitting_sitter_password']) && $_POST['user_sitting_sitter_password']!="")
 				{
                     dbquery("
                     UPDATE
@@ -207,14 +210,21 @@
 			SELECT 
 				* 
 			FROM 
-				".$db_table['users']." 
+				users
 			LEFT JOIN
-        ".$db_table['races']."
+        races
         ON user_race_id=race_id
 			WHERE 
 				user_id='".$_GET['user_id']."';");
 			if (mysql_num_rows($res)>0)
 			{
+				// Load data				
+				$arr = mysql_fetch_array($res);
+
+				// Some preparations
+				$st = $arr['user_specialist_time']>0 ? $arr['user_specialist_time'] : time();
+				
+				// Javascript				
 				echo "<script type=\"text/javascript\">
 				function showTab(idx)
 				{
@@ -233,7 +243,32 @@
 					document.getElementById('tabEconomy').style.display='none';
 					
 					document.getElementById(idx).style.display='';
-				
+					document.getElementById('tabactive').value=idx;
+					if (document.getElementById('submitresult'))
+					{
+						document.getElementById('submitresult').style.display='none';
+					}
+					
+					if (idx=='tabGame')
+					{
+						loadSpecialist(".$st.");loadAllianceRanks(".$arr['user_alliance_rank_id'].");
+					}
+					else if (idx=='tabMessages')
+					{
+						xajax_showLast5Messages(".$arr['user_id'].",'lastmsgbox');
+					}
+					else if (idx=='tabPoints')
+					{
+						xajax_userPointsTable(".$arr['user_id'].",'tabPoints');
+					}
+					else if (idx=='tabTickets')
+					{
+						xajax_userTickets(".$arr['user_id'].",'tabTickets');
+					}
+					else if (idx=='tabComments')
+					{
+						xajax_userComments(".$arr['user_id'].",'tabComments');
+					}
 				}				
 				
 				function loadSpecialist(st)
@@ -264,18 +299,11 @@
 				}
 				
 				</script>";
-				
-				// Load data				
-				$arr = mysql_fetch_array($res);
+			
+				echo "<h2>Details <span style=\"color:#0f0;\">".$arr['user_nick']."</span> ".cb_button("add_user=".$arr['user_id']."")."</h2>";
 
-				// Some preparations
-				$st = $arr['user_specialist_time']>0 ? $arr['user_specialist_time'] : time();
-
-				
-				echo "<h2>Details</h2>
-				<h3>".$arr['user_nick']." ".cb_button("add_user=".$arr['user_id']."")."</h3>";
-
-				echo "<form action=\"?page=$page&amp;sub=edit&amp;user_id=".$_GET['user_id']."\" method=\"post\">";
+				echo "<form action=\"?page=$page&amp;sub=edit&amp;user_id=".$_GET['user_id']."\" method=\"post\">
+				<input type=\"hidden\" id=\"tabactive\" name=\"tabactive\" value=\"\" />";
 
 				
 				// Show the navigation
@@ -284,13 +312,13 @@
 					<a href=\"javascript:;\" onclick=\"showTab('tabData');\">Daten</a>
 					<a href=\"javascript:;\" onclick=\"showTab('tabAccount')\">Account</a>
 					<a href=\"javascript:;\" onclick=\"showTab('tabProfile')\">Profil</a>
-					<a href=\"javascript:;\" onclick=\"showTab('tabGame');loadSpecialist(".$st.");loadAllianceRanks(".$arr['user_alliance_rank_id'].");\">Spiel</a>
-					<a href=\"javascript:;\" onclick=\"showTab('tabMessages');xajax_showLast5Messages(".$arr['user_id'].",'lastmsgbox');\">Nachrichten</a>
+					<a href=\"javascript:;\" onclick=\"showTab('tabGame');\">Spiel</a>
+					<a href=\"javascript:;\" onclick=\"showTab('tabMessages');\">Nachrichten</a>
 					<a href=\"javascript:;\" onclick=\"showTab('tabDesign')\">Design</a>
 					<a href=\"javascript:;\" onclick=\"showTab('tabFailures')\">Loginfehler</a>
-					<a href=\"javascript:;\" onclick=\"showTab('tabPoints');xajax_userPointsTable(".$arr['user_id'].",'tabPoints');\">Punkte</a>
-					<a href=\"javascript:;\" onclick=\"showTab('tabTickets');xajax_userTickets(".$arr['user_id'].",'tabTickets');\">Tickets</a>
-					<a href=\"javascript:;\" onclick=\"showTab('tabComments');xajax_userComments(".$arr['user_id'].",'tabComments');\">Kommentare</a>
+					<a href=\"javascript:;\" onclick=\"showTab('tabPoints');\">Punkte</a>
+					<a href=\"javascript:;\" onclick=\"showTab('tabTickets');\">Tickets</a>
+					<a href=\"javascript:;\" onclick=\"showTab('tabComments');\">Kommentare</a>
 					<a href=\"javascript:;\" onclick=\"showTab('tabEconomy')\">Wirtschaft</a>
 					
 					<!--<a href=\"javascript:;\" onclick=\"showTab('tabWarnings')\">Verwarnungen</a>-->
@@ -308,7 +336,7 @@
 				
 				echo "<table class=\"tbl\">";
 				echo "<tr>
-								<td class=\"tbltitle\">ID:</td>
+								<td class=\"tbltitle\" style=\"width:180px;\">ID:</td>
 								<td class=\"tbldata\">".$arr['user_id']."</td>
 							</tr>
 							<tr>
@@ -375,6 +403,8 @@
 										}
 										echo "</div>";
 									}
+									
+									// Kommentare
 									$cres=dbquery("
 									SELECT 
 										COUNT(comment_id),
@@ -387,11 +417,15 @@
 									$carr = mysql_fetch_row($cres);
 									if ($carr[0] > 0)
 									{
-										echo "<div>Kommentare: ".$carr[0]." vorhanden, neuster Kommentar von ".df($carr[1])."</div>";
+										echo "<div><b>".$carr[0]." Kommentare</b> vorhanden, neuster Kommentar von ".df($carr[1])."
+										[<a href=\"javascript:;\" onclick=\"showTab('tabComments');\">Zeigen</a>]
+										</div>";
 									}	
+									
+									// Bemerkung
 									if ($arr['user_comment']!="")
 									{
-										echo "<div>Bemerkungen: ".$arr['user_comment']."</div>";
+										echo "<div><b>Bemerkungen:</b> ".$arr['user_comment']." [<a href=\"javascript:;\" onclick=\"showTab('tabData');\">Ändern</a>]</div>";
 									}							
 					echo "</td>
 							</tr>";					
@@ -1186,38 +1220,45 @@
 				
 				
 				// Buttons
-				echo "<br/><br/>";
-
-				echo "<input type=\"button\" value=\"Spielerdaten neu laden\" onclick=\"document.location='?page=$page&sub=edit&amp;user_id=".$arr['user_id']."'\" /> ";
-				echo "<input type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&action=search'\" /> ";
-				echo "<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" /><hr/>";
-
-				
-				echo "<input type=\"submit\" name=\"save\" value=\"&Auml;nderungen &uuml;bernehmen\" style=\"color:#0f0\" />&nbsp;";
+				echo "<br/>";
+	
+				echo "<input type=\"submit\" name=\"save\" value=\"&Auml;nderungen &uuml;bernehmen\" style=\"color:#0f0\" /> &nbsp;";
 				if ($arr['user_deleted']!=0)
 				{
-					echo "<input type=\"submit\" name=\"canceldelete\" value=\"Löschantrag aufheben\" style=\"color:".USER_COLOR_DELETED."\" /> ";					
+					echo "<input type=\"submit\" name=\"canceldelete\" value=\"Löschantrag aufheben\" style=\"color:".USER_COLOR_DELETED."\" /> &nbsp;";					
 				}
 				else
 				{
-					echo "<input type=\"submit\" name=\"requestdelete\" value=\"Löschantrag erteilen\" style=\"color:".USER_COLOR_DELETED."\" /> ";					
+					echo "<input type=\"submit\" name=\"requestdelete\" value=\"Löschantrag erteilen\" style=\"color:".USER_COLOR_DELETED."\" /> &nbsp;";					
 				}				
 				echo "<input type=\"submit\" name=\"delete_user\" value=\"User l&ouml;schen\" style=\"color:#f00\" onclick=\"return confirm('Soll dieser User entg&uuml;ltig gel&ouml;scht werden?');\"> ";
+				
 				echo "<hr/>";
-				echo "<input type=\"button\" value=\"Planeten\" onclick=\"document.location='?page=galaxy&action=search&query=".searchQuery(array("planet_user_id"=>$arr['user_id']))."'\" /> ";
-				echo "<input type=\"button\" value=\"Gebäude\" onclick=\"document.location='?page=messages&sub=sendmsg&user_id=".$arr['user_id']."'\" /> ";
-				echo "<input type=\"button\" value=\"Forschungen\" onclick=\"document.location='?page=messages&sub=sendmsg&user_id=".$arr['user_id']."'\" /> ";
-				echo "<input type=\"button\" value=\"Schiffe\" onclick=\"document.location='?page=messages&sub=sendmsg&user_id=".$arr['user_id']."'\" /> ";
-				echo "<input type=\"button\" value=\"Verteidigung\" onclick=\"document.location='?page=messages&sub=sendmsg&user_id=".$arr['user_id']."'\" /> ";
+				echo "<input type=\"button\" value=\"Planeten\" onclick=\"document.location='?page=galaxy&action=search&query=".searchQuery(array("planet_user_id"=>$arr['user_id']))."'\" /> &nbsp;";
+				echo "<input type=\"button\" value=\"Gebäude\" onclick=\"document.location='?page=messages&sub=sendmsg&user_id=".$arr['user_id']."'\" /> &nbsp;";
+				echo "<input type=\"button\" value=\"Forschungen\" onclick=\"document.location='?page=messages&sub=sendmsg&user_id=".$arr['user_id']."'\" /> &nbsp;";
+				echo "<input type=\"button\" value=\"Schiffe\" onclick=\"document.location='?page=messages&sub=sendmsg&user_id=".$arr['user_id']."'\" /> &nbsp;";
+				echo "<input type=\"button\" value=\"Verteidigung\" onclick=\"document.location='?page=messages&sub=sendmsg&user_id=".$arr['user_id']."'\" /> &nbsp;";
 				echo "<input type=\"button\" value=\"Raketen\" onclick=\"document.location='?page=messages&sub=sendmsg&user_id=".$arr['user_id']."'\" /> ";
-				//echo "<input type=\"button\" onclick=\"document.location='?page=$page&sub=userlog&id=".$arr['user_id']."'\" value=\"Sessions\" /> ";
-				//echo "<input type=\"button\" onclick=\"document.location='?page=$page&sub=history&id=".$arr['user_id']."'\" value=\"History\" /> ";
+				
+				echo "<hr/>";
+				echo "<input type=\"button\" value=\"Spielerdaten neu laden\" onclick=\"document.location='?page=$page&sub=edit&amp;user_id=".$arr['user_id']."'\" /> &nbsp;";
+				echo "<input type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&action=search'\" /> &nbsp;";
+				echo "<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" /><br/><br/>";
+
 								
-				echo "</form><hr/>";
+				echo "</form>";
+				
 				if ($arr['user_blocked_from']==0)
 					echo "<script>banEnable(false);</script>";
 				if ($arr['user_hmode_from']==0)
 					echo "<script>umodEnable(false);</script>";
+				
+				if(isset($_POST['tabactive']) && $_POST['tabactive']!="")
+				{
+					echo "<script>showTab('".$_POST['tabactive']."');</script>";
+					
+				}
 					
 			}
 			else

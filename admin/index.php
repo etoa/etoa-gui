@@ -419,6 +419,7 @@
 									}
 									
 									$allow_inc=false;
+									$rank="";
 									foreach ($navmenu as $cat=> $item)
 									{
 										foreach ($item as $title=> $data)

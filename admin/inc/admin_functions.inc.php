@@ -58,9 +58,9 @@
 	*
 	* @param string Message
 	*/
-	function cms_err_msg($msg)
+	function cms_err_msg($msg,$id="errmsg")
 	{
-		echo "<div class=\"cmsErrMsg\"><b>Fehler:</b> ".text2html($msg)."</div><br/>";
+		echo "<div class=\"errorBox\" id=\"$id\"><b>Fehler:</b> ".text2html($msg)."</div>";
 	}
 
 	/**
@@ -68,9 +68,9 @@
 	*
 	* @param string Message
 	*/
-	function cms_ok_msg($msg)
+	function cms_ok_msg($msg,$id="okmsg")
 	{
-		echo "<div class=\"cmsOkMsg\">".text2html($msg)."</div><br/>";
+		echo "<div class=\"successBox\" id=\"$id\">".text2html($msg)."</div>";
 	}
 
 	/**

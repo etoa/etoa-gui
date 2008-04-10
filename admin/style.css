@@ -597,3 +597,23 @@ h1,h2,h3,h4	{
 .tabSeparator	{
 	height:1px;
 }
+
+.errorBox	{
+	border:1px #f00 solid;
+	padding:5px;
+	background:#baa;
+	color:#400;
+	width:90%;
+	margin:0px auto;
+	margin-bottom:15px;
+}
+
+.successBox	{
+	border:1px #0f0 solid;
+	padding:5px;
+	background:#aba;
+	color:#040;
+	width:90%;
+	margin:5px auto;
+	margin-bottom:15px;
+}
