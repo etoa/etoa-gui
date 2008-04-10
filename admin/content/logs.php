@@ -476,6 +476,9 @@
 			
 			$can_attack_total_time = 24*3600;				// alle Regeln gelten innerhalb von 24h
 			
+			$first_ban_time = 12*3600;							// Sperrzeit beim ersten Vergehen: 12h
+			$add_ban_time = 12*3600;								// Sperrzeit bei jedem weiteren Vergehen: 12h (wird immer dazu addiert)
+			
 			
 			
 			echo "Angriffsverletzung (Test tool)<br><br><br>";
@@ -497,14 +500,13 @@
 			FROM 
 				".$db_table['logs_battle']."
 			WHERE
-				logs_battle_user1_weapon>0
-				AND logs_battle_fleet_landtime>".(time()-$can_attack_total_time)."
+				logs_battle_fleet_landtime>".(time()-$can_attack_total_time)."
+				AND logs_battle_bann_mark='0'
+				AND logs_battle_user1_weapon>0
 			ORDER BY
 				logs_battle_user1_id ASC,
 				logs_battle_planet_id ASC,
-				logs_battle_fleet_landtime ASC
-			LIMIT
-				100;");
+				logs_battle_fleet_landtime ASC;");
 				
 			$user_id = 0;							// Das Opfer
 			$planet_id = 0;						// Der angegriffene Planet
@@ -521,6 +523,9 @@
 			{			
 				// Alle gefundenen und sortierten Datensätze werden in einer Schleife ausgegeben und verarbeitet
 				echo "".mysql_num_rows($res)." Datensätze!<br><br><br>";
+				
+				$user_ban = array();
+				
 				while ($arr=mysql_fetch_array($res))
 				{
 					
@@ -546,7 +551,7 @@
 					// Neuer Planet
 					// Einige Variabeln ändern (Setzt auch neue Variablen wenn letzter Angriff länger als 6h her ist)
 					if($planet_id!=$arr['logs_battle_planet_id'] 
-					|| ($last_planet_time < $arr['logs_battle_fleet_landtime'] - $can_attack_planets_time))
+					|| ($last_planet_time <= $arr['logs_battle_fleet_landtime'] - $can_attack_planets_time))
 					{
 						$planet_id = $arr['logs_battle_planet_id'];
 						
@@ -585,10 +590,10 @@
 						// Sperre wenn mehr als 3 Angriffe auf einen Planeten und die Angriffe keine 6h auseinander liegen
 						if($attack_cnt_planet > $can_attack_on_one_planet 
 							&& $arr['logs_battle_alliances_have_war']==0
-							&& $last_planet_time > $arr['logs_battle_fleet_landtime'] - $can_attack_planets_time)
+							&& $last_planet_time >= $arr['logs_battle_fleet_landtime'] - $can_attack_planets_time)
 						{
 							$bann = 1;
-							$bann_reason .= "<b>Sperre:</b> ".get_user_nick($arr['logs_battle_user1_id']).". Grund: Mehr als ".$can_attack_on_one_planet." Angriffe auf den selben Planeten innerhalb von ".($can_attack_planets_time/3600)." Stunden!<br>";
+							$bann_reason .= "Sperre: Mehr als ".$can_attack_on_one_planet." Angriffe auf den selben Planeten innerhalb von ".($can_attack_planets_time/3600)." Stunden!\n";
 						}
 						
 						// Sperre wenn zwischen erstem und letztem Angriff mehr als 15min liegen aber weniger als 6h
@@ -596,7 +601,7 @@
 							&& $arr['logs_battle_fleet_landtime'] - $first_planet_time < $can_attack_planets_time)
 						{
 							$bann = 1;
-							$bann_reason .= "<b>Sperre:</b> ".get_user_nick($arr['logs_battle_user1_id']).". Grund: ".(round((($last_planet_time- $first_planet_time)/60),2)." Minuten liegen zwischen dem ersten und dem letzten Angriff auf den gleichen Planeten! (Erlaubt wären ".($can_attack_on_one_planet_time/60)." Minuten)<br>";
+							$bann_reason .= "Sperre: ".(($arr['logs_battle_fleet_landtime']-$first_planet_time)/60)." Minuten liegen zwischen dem ersten und dem letzten Angriff auf den gleichen Planeten! (Erlaubt wären ".round(($can_attack_on_one_planet_time/60),2)." Minuten oder ".($can_attack_planets_time/3600)." Stunden abstand)\n";
 						}
 						
 						// Sperre wenn gleicher Planet mehr als 2 mal angegriffen wurde
@@ -605,7 +610,7 @@
 							if($cnt > $can_attack_on_one_planet_again)
 							{
 								$bann = 1;
-								$bann_reason .= "<b>Sperre:</b> ".get_user_nick($arr['logs_battle_user1_id']).". Grund: einen Planeten mehr als ".$can_attack_on_one_planet_again." mal angegriffen. Anzahl Angriffe: ".$cnt."<br>";
+								$bann_reason .= "Sperre: einen Planeten mehr als ".$can_attack_on_one_planet_again." mal angegriffen. Anzahl Angriffe: ".$cnt."\n";
 							}
 						}
 						
@@ -613,7 +618,7 @@
 						if(count($attack_cnt_planet_total) > $can_attack_planets)
 						{
 							$bann = 1;
-							$bann_reason .= "<b>Sperre:</b> ".get_user_nick($arr['logs_battle_user1_id']).". Grund: mehr als ".$can_attack_planets." Planeten angegriffen<br>";
+							$bann_reason .= "Sperre: mehr als ".$can_attack_planets." Planeten angegriffen innerhalb von ".($can_attack_total_time/3600)." stunden\n";
 						}
 					}
 					
@@ -623,18 +628,18 @@
 						// Sperre wenn mehr als 4 Angriffe und die Angriffe keine 6h auseinander liegen
 						if($attack_cnt_planet > $can_attack_on_one_planet_war
 							&& $arr['logs_battle_alliances_have_war']==1
-							&& $last_planet_time > $arr['logs_battle_fleet_landtime'] - $can_attack_planets_time)
+							&& $last_planet_time >= $arr['logs_battle_fleet_landtime'] - $can_attack_planets_time)
 						{
 							$bann = 1;
-							$bann_reason .= "<b>Sperre:</b> ".get_user_nick($arr['logs_battle_user1_id']).". Grund: Mehr als ".$can_attack_on_one_planet_war." Angriffe auf den selben Planeten innerhalb von ".($can_attack_planets_time/3600)." Stunden!<br>";
+							$bann_reason .= "Sperre: Mehr als ".$can_attack_on_one_planet_war." Angriffe auf den selben Planeten innerhalb von ".($can_attack_planets_time/3600)." Stunden!\n";
 						}
 						
-						// Sperre wenn zwischen erstem und letztem angriff mehr als 15min liegen aber weniger als 6h
-						if($last_planet_time - $first_planet_time > $can_attack_on_one_planet_time 
+						// Sperre wenn zwischen erstem und letztem Angriff mehr als 15min liegen aber weniger als 6h
+						if($arr['logs_battle_fleet_landtime'] - $first_planet_time > $can_attack_on_one_planet_time 
 							&& $arr['logs_battle_fleet_landtime'] - $first_planet_time < $can_attack_planets_time)
 						{
 							$bann = 1;
-							$bann_reason .= "<b>Sperre:</b> ".get_user_nick($arr['logs_battle_user1_id']).". Grund: ".(($last_planet_time- $first_planet_time)/60)." Minuten liegen zwischen dem ersten und dem letzten Angriff auf den gleichen Planeten! (Erlaubt wären ".($can_attack_on_one_planet_time/60)." Minuten)<br>";
+							$bann_reason .= "Sperre: ".(($arr['logs_battle_fleet_landtime']-$first_planet_time)/60)." Minuten liegen zwischen dem ersten und dem letzten Angriff auf den gleichen Planeten! (Erlaubt wären ".round(($can_attack_on_one_planet_time/60),2)." Minuten oder ".($can_attack_planets_time/3600)." Stunden abstand)\n";
 						}
 						
 						// Sperre wenn gleicher Planet mehr als 4 mal angegriffen wurde
@@ -643,7 +648,7 @@
 							if($cnt > $can_attack_on_one_planet_again_war)
 							{
 								$bann = 1;
-								$bann_reason .= "<b>Sperre:</b> ".get_user_nick($arr['logs_battle_user1_id']).". Grund: einen Planeten mehr als ".$can_attack_on_one_planet_again." mal angegriffen. Anzahl Angriffe: ".$cnt."<br>";
+								$bann_reason .= "Sperre: einen Planeten mehr als ".$can_attack_on_one_planet_again." mal angegriffen. Anzahl Angriffe: ".$cnt."\n";
 							}
 						}
 						
@@ -651,7 +656,7 @@
 						if(count($attack_cnt_planet_total) > $can_attack_planets_war)
 						{
 							$bann = 1;
-							$bann_reason .= "<b>Sperre:</b> ".get_user_nick($arr['logs_battle_user1_id']).". Grund: mehr als ".$can_attack_planets." Planeten angegriffen. Anzahl angegriffener Planeten: ".count($attack_cnt_planet_total)."<br>";
+							$bann_reason .= "Sperre: mehr als ".$can_attack_planets." Planeten angegriffen. Anzahl angegriffener Planeten: ".count($attack_cnt_planet_total)."\n";
 						}					
 					}
 					
@@ -660,17 +665,82 @@
 					
 					
 					echo "<b>".get_user_nick($arr['logs_battle_user1_id'])." VS. ".get_user_nick($arr['logs_battle_user2_id']).": Planet: ".$arr['logs_battle_planet_id']." / Zeit: ".date("Y-m-d H:i:s",$arr['logs_battle_fleet_landtime'])."<br></b>";
-					echo "attack: ".$attack_cnt_planet.", last time: ".$last_planet_time."<br><br>";
+					echo "attack: ".$attack_cnt_planet.", krieg: ".$arr['logs_battle_alliances_have_war'].", last time: ".$last_planet_time."<br><br>";
 					
+					// Es liegt eine Angriffsverletzung vor
 					if($bann==1)
 					{
+						// Verstoss wird in Array geschrieben und nach der Schleife wird der entsprechende User gesperrt
+						$user_ban[$arr['logs_battle_user1_id']] = $bann_reason;
+						
 						echo "".$bann_reason."<br><br>";
 						$bann = 0;
 						$bann_reason = "";
 					}
+				
+				}
+				
+				echo "<br><br>sperren:<br><br>";
+				// User werden gesperrt
+				foreach($user_ban as $id => $reason)
+				{				
+					echo "user: ".$id."<br>grund:<br> ".$reason."<br><br>";
 					
-					
-					
+					// Läd die Anzahl bisheriger Sperren wegen Angriffsverletzung und die Sperrzeit wenn vorhanden
+					$res = dbquery("
+					SELECT 
+						user_blocked_from,
+						user_blocked_to,
+						user_attack_bans,
+						user_ban_reason
+					FROM 
+						users
+					WHERE
+						user_id='".$id."';");
+					if(mysql_num_rows($res)>0)
+					{
+						$arr = mysql_fetch_array($res);
+						
+						$reason .= "\nDies ist der ".($arr['user_attack_bans']+1).". Verstoss";
+						
+						// Rechnet die Sperrzeit
+						$ban_time = $first_ban_time + $arr['user_attack_bans'] * $add_ban_time;
+						$ban_from = time();
+						//$ban_to = time() + $ban_time;
+						$ban_to = time() + 120;
+						
+						
+						// Speichert die Sperre
+						dbquery("
+						UPDATE
+							users
+						SET
+							user_blocked_from='".$ban_from."',
+							user_blocked_to='".$ban_to."',
+							user_attack_bans=user_attack_bans+1,
+							user_ban_reason='".addslashes($reason)."'							
+						WHERE
+							user_id=".$id.";");
+							
+						
+						// Logt die Sperre
+						add_user_history($id,"[b]Accountsperrung[/b] von [b]".date("d.m.Y H:i",$ban_from)."[/b] bis [b]".date("d.m.Y H:i",$ban_to)."[/b]\n[b]Grund:[/b] ".addslashes($reason)."\n[b]Verantwortlich: [/b]System");
+						
+						
+						// Markiert die Kampfberichte, dass keine Doppelsperren für das gleiche Vergehen vehängt werden
+						dbquery("
+						UPDATE
+							logs_battle
+						SET
+							logs_battle_bann_mark='1'							
+						WHERE
+							logs_battle_user1_id=".$id.";");
+							
+						// Schickt eine IGM an den "gesperrten". nur zum test
+						$msg = "Na du :)\n\nLaut System warst du ein ganz ungezogenes Kind in naher Vergangenheit!\nFolgende Sache wird dir zu Lasten gelegt:\n\n[i]".addslashes($reason)."[/i]\n\nRein theoretisch würdest du jetzt für [b]".($ban_time/3600)." Stunden[/b] gesperrt werden, aber da deine liebe Fee ein gutes Wort für dich eingelegt hat, kommst du noch ohne grosse Folgen davon!\n\nDas System wünscht noch eine angenehme Zeit. Bis zur nächsten Unartigkeit ;)";
+						
+						send_msg($id,5,"Angriffsverletzung",$msg);
+					}
 				}	
 			}
 		}	
