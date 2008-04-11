@@ -40,9 +40,9 @@
 #include "def/DefHandler.h"
 #include "planet/PlanetManager.h"
 #include "planet/Planet.h"
-#include "functions/Functions.h";
-#include "config/ConfigHandler.h";
-#include "market/MarketHandler.h";
+#include "functions/Functions.h"
+#include "config/ConfigHandler.h"
+#include "market/MarketHandler.h"
 
 using namespace std;
 
@@ -117,7 +117,6 @@ main(int argc, char *argv[])
 			planet::PlanetManager* pm = new planet::PlanetManager(&v1);
 			pm->updateValues(&v1);		
 			
-			pm->updateGasPlanets();
 			pm->updateUserPlanets();
 
 				

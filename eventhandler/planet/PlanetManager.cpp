@@ -517,62 +517,6 @@ namespace planet
 		}
 	}
 	
-	void PlanetManager::updateGasPlanets()
-	{
-		Config &config = Config::instance();
-		std::time_t time = std::time(0);
-				
-		mysqlpp::Query query = con_->query();
-		query << "SELECT ";
-			query << "id, ";
-			query << "planet_res_fuel, ";
-			query << "planet_fields, ";
-			query << "planet_last_updated ";
-		query << "FROM ";
-			query << "planets ";
-		query << "WHERE ";
-			query << "planet_type_id='" << config.get("gasplanet", 0) << "';";
-		mysqlpp::Result res = query.store();
-		query.reset();
-		
-		if (res) 
-		{
-			int resSize = res.size();
-			if (resSize>0)
-			{
-				Config &config = Config::instance();
-				mysqlpp::Row row;
-				double pfuel, pSize;
-				for (mysqlpp::Row::size_type i = 0; i<resSize; i++) 
-				{
-					row = res.at(i);
-					int last = row["planet_last_updated"];
-					if (last == 0) last = time;
-					double tlast = (time-last)*(int)config.nget("gasplanet", 1);
-					tlast /= 3600;
-					pfuel = (double)row["planet_res_fuel"];
-					tlast += pfuel;
-					
-					double pSize = (int)config.nget("gasplanet", 2)*int(row["planet_fields"]);
-					double fuel = std::min(tlast,pSize); //ToDo Gas param1 + 2
-					
-					query << std::setprecision(18);
-					query << "UPDATE ";
-						query << "planets ";
-					query << "SET ";
-						query << "planet_res_fuel='" << fuel << "', ";
-						query << "planet_last_updated='" << time << "' ";
-					query << "WHERE ";
-						query << "id='" << row["id"] << "';";
-					query.store();
-					query.reset();
-				}
-			}
-		std::cout << "Updated " << resSize << " Nebulaplanets\n";
-		}
-	}
-	
-	
 	void PlanetManager::updateUserPlanets()
 	{
 		std::time_t ptime = std::time(0);

@@ -45,7 +45,9 @@ namespace gas
 			
 			if (fsSize > 0)
 			{
-				mysqlpp::Query query = con_->query();  //destroy fault!!
+				//Updating GasPlanet
+				functions::updateGasPlanet((int)fleet_["fleet_entity_to"]);
+				
 				query << std::setprecision(18);
 				destroyedShips = "";
 				destroy = 0;

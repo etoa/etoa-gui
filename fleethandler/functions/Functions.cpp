@@ -1,8 +1,64 @@
 #include "Functions.h"
 #include "../MysqlHandler.h"
+#include "../config/ConfigHandler.h"
 
 namespace functions
 {
+	void updateGasPlanet(int pid)
+	{
+		My &my = My::instance();
+		mysqlpp::Connection *con_ = my.get();
+		Config &config = Config::instance();
+		std::time_t time = std::time(0);
+				
+		mysqlpp::Query query = con_->query();
+		query << "SELECT ";
+		query << "	id, ";
+		query << "	planet_res_fuel, ";
+		query << "	planet_fields, ";
+		query << "	planet_last_updated ";
+		query << "FROM ";
+		query << "	planets ";
+		query << "WHERE ";
+		query << "	planet_type_id='" << config.get("gasplanet", 0) << "' ";
+		query << "	AND id='" << pid << "';";
+		mysqlpp::Result res = query.store();
+		query.reset();
+		
+		if (res) 
+		{
+			int resSize = res.size();
+			if (resSize>0)
+			{
+				Config &config = Config::instance();
+				
+				mysqlpp::Row row = res.at(0);
+				
+				int last = (int)row["planet_last_updated"];
+				if (last == 0) last = time;
+				double tlast = (time-last)*(int)config.nget("gasplanet", 1);
+				tlast /= 3600;
+				double pfuel = (double)row["planet_res_fuel"];
+				tlast += pfuel;
+					
+				double pSize = (int)config.nget("gasplanet", 2)*int(row["planet_fields"]);
+				double fuel = std::min(tlast,pSize); //ToDo Gas param1 + 2
+					
+				query << std::setprecision(18);
+				query << "UPDATE ";
+				query << "	planets ";
+				query << "SET ";
+				query << "	planet_res_fuel='" << fuel << "', ";
+				query << "	planet_last_updated='" << time << "' ";
+				query << "WHERE ";
+				query << "	id='" << row["id"] << "';";
+				query.store();
+				query.reset();
+			}
+		std::cout << "Updated Nebulaplanet " << pid << "\n";
+		}
+	}
+
 	bool resetPlanet(int id)
 	{
 		My &my = My::instance();

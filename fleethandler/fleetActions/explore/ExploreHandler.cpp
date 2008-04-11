@@ -134,7 +134,9 @@ namespace explore
 						//gasplanet?
 						else if (std::string(codeRow["code"])=="p")
 						{
-			
+							//Updating GasPlanet
+							functions::updateGasPlanet((int)fleet_["fleet_entity_to"]);
+							
 							//Load Data
 							query << "SELECT ";
 							query << "	planet_res_fuel ";
