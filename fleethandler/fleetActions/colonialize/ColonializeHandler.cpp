@@ -76,7 +76,7 @@ namespace colonialize
 							msg += msgAllShips;
 							msg += msgRes;
 							
-							functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_MISC_MSG_CAT_ID"),"Flotte angekommen",msg);
+							functions::sendMsg((int)fleet_["fleet_user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Flotte angekommen",msg);
 						}
 	  
 						//Planet gehört bereits an einem anderen User
@@ -85,7 +85,7 @@ namespace colonialize
 							//Nachricht senden
 							std::string msg = "Die Flotte kann den Planeten nicht kolonialisieren, da er bereits von einem anderen Volk kolonialisiert wurde!\n";
 					
-							functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_MISC_MSG_CAT_ID"),"Landung nicht möglich",msg);
+							functions::sendMsg((int)fleet_["fleet_user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Landung nicht möglich",msg);
 
 							// Flotte zurückschicken
 							fleetReturn("koc");
@@ -119,7 +119,7 @@ namespace colonialize
 									//Nachricht senden
 									std::string msg = "Die Flotte kann den Planeten nicht kolonialisieren, da die maximale Zahl an Planeten auf denen du regieren darfst, bereits erreicht worden ist!\n";
 							
-									functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_MISC_MSG_CAT_ID"),"Landung nicht möglich",msg);
+									functions::sendMsg((int)fleet_["fleet_user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Landung nicht möglich",msg);
 	
 									// Flotte zurückschicken
 									fleetReturn("koc");
@@ -158,7 +158,7 @@ namespace colonialize
 									msg += msgAllShips;
 									msg += msgRes;
 						
-									functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_MISC_MSG_CAT_ID"),"Planet kolonialisiert",msg);
+									functions::sendMsg((int)fleet_["fleet_user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Planet kolonialisiert",msg);
 								}
 							}
 						}
@@ -171,7 +171,7 @@ namespace colonialize
 				text += functions::formatCoords((int)fleet_["fleet_entity_from"],0);
 				text += " versuchte, eine Kolonie zu errichten. Leider war kein Schiff mehr in der Flotte, welches die Aktion ausführen konnte, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!";
 							
-				functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_MISC_MSG_CAT_ID"),"Kolonisieren gescheitert",text);
+				functions::sendMsg((int)fleet_["fleet_user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Kolonisieren gescheitert",text);
 				
 				fleetReturn("kr");
 			}

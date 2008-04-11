@@ -36,6 +36,6 @@ namespace position
 		msg += msgAllShips;
 		msg += msgRes;
 		
-		functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_MISC_MSG_CAT_ID"),"Flotte angekommen",msg);
+		functions::sendMsg((int)fleet_["fleet_user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Flotte angekommen",msg);
 	}
 }

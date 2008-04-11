@@ -50,7 +50,7 @@ namespace gas
 				destroyedShips = "";
 				destroy = 0;
 				int one = rand() % 101;
-				int two = config.nget("gascollect_action",0) * 100;
+				int two = (int)config.nget("gascollect_action",0) * 100;
 				if (one  < two)	// 20 % Chance dass Schiffe überhaupt zerstört werden
 				{
 					destroy = rand() % (int)(config.nget("gascollect_action",1) * 100);		// 0 <= X <= 10 Prozent an Schiffen werden Zerstört
@@ -106,7 +106,7 @@ namespace gas
 									query << "	AND fs_ship_id='" << cntRow["fs_ship_id"] << "';";
 									query.store();
 									query.reset();
-									destroyedShips += shipDestroy;
+									destroyedShips += functions::d2s(shipDestroy);
 									destroyedShips += " ";
 									destroyedShips += std::string(cntRow["ship_name"]);
 									destroyedShips += "\n";
@@ -151,7 +151,7 @@ namespace gas
 						mysqlpp::Row fuelRow = fuelRes.at(0);
 
 						// Anzahl gesammelter Rohstoffe berechen
-						int capa = std::min((double)fleet_["fleet_capacity_nebula"],(double)fleet_["fleet_capacity"]);
+						double capa = std::min((double)fleet_["fleet_capacity_nebula"],(double)fleet_["fleet_capacity"]);
 						fuel = 1000 + (rand() % (int)(capa - 999));
 		
 						fuel = std::min(fuel, (double)fuelRow["planet_res_fuel"]);
@@ -191,7 +191,7 @@ namespace gas
 		
 				msg += msgRes;
 		
-				functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_MISC_MSG_CAT_ID"),"Gas gesaugt",msg);
+				functions::sendMsg((int)fleet_["fleet_user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Gas gesaugt",msg);
 
 				//Erbeutete Rohstoffsumme speichern
 				query << "UPDATE ";
@@ -222,7 +222,7 @@ namespace gas
 				text += functions::formatCoords((int)fleet_["fleet_entity_from"],0);
 				text += " versuchte, das Ziel zu übernehmen. Leider war kein Schiff mehr in der Flotte, welches die Aktion ausführen konnte, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!";
 							
-				functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_MISC_MSG_CAT_ID"),"Gassaugen gescheitert",text);
+				functions::sendMsg((int)fleet_["fleet_user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Gassaugen gescheitert",text);
 				
 				fleetReturn("gr");
 			}

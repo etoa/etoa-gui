@@ -70,7 +70,7 @@ namespace market
 
 			msg += "\n\nUnser Unternehmen dankt ihnen f&uuml;r die Unterst&uuml;tzung und wir hoffen sie sind mit uns zufrieden und w&uuml;nschen ihnen auch in Zukunft viel Erfolg.\nDas Handelsministerium";
 
-			functions::sendMsg(userToId,config.idget("SHIP_MISC_MSG_CAT_ID"),"Flotte vom Handelsministerium",msg);
+			functions::sendMsg(userToId,(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Flotte vom Handelsministerium",msg);
 		}
 	
 		// Only resources
@@ -88,7 +88,7 @@ namespace market
 			msg += msgRes;
 			msg += "\n\nUnser Unternehmen dankt ihnen f&uuml;r die Unterst&uuml;tzung und wir hoffen sie sind mit uns zufrieden und w&uuml;nschen ihnen auch in Zukunft viel Erfolg.\nDas Handelsministerium";
 			
-			functions::sendMsg(userToId,config.idget("SHIP_MISC_MSG_CAT_ID"),"Transport vom Handelsministerium",msg);
+			functions::sendMsg(userToId,(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Transport vom Handelsministerium",msg);
 		}
 
 		// Flotte-Schiffe-Verknüpfungen löschen

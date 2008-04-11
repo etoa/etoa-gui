@@ -18,9 +18,11 @@ namespace transport
 		* Fleet-Action: Transport
 		*/
 		
-		Config &config = Config::instance();	
+		Config &config = Config::instance();
+		std::time_t time = std::time(0);	
+
 		//Waren ausladen
-		fleetLand(2); //ToDo init time
+		fleetLand(2);
 
 		//Sucht User-ID
 		int userToId = functions::getUserIdByPlanet((int)fleet_["fleet_entity_to"]);
@@ -35,12 +37,12 @@ namespace transport
 		msg += msgRes;
 	
 		// Nachrichten senden
-		functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_MISC_MSG_CAT_ID"),"Transport angekommen",msg);
+		functions::sendMsg((int)fleet_["fleet_user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Transport angekommen",msg);
 	
 		//Nachricht an Empfänger senden, falls Empfänger != Sender
 		if ((int)fleet_["fleet_user_id"]!=userToId)
 		{
-			functions::sendMsg(userToId,config.idget("SHIP_MISC_MSG_CAT_ID"),"Transport angekommen",msg);
+			functions::sendMsg(userToId,(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Transport angekommen",msg);
 		}
 		
 		double capacity = (double)fleet_["fleet_res_metal"] + (double)fleet_["fleet_res_crystal"] + (double)fleet_["fleet_res_plastic"] + (double)fleet_["fleet_res_fuel"] + (double)fleet_["fleet_res_food"];

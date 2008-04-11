@@ -449,14 +449,14 @@ namespace spy
 					topText += "\nDu konntest leider nichts über den Planeten herausfinden da deine Spionagetechnologie zu wenig weit entwickelt oder der Gegner zu gut getarnt ist!\n\n[b]Spionageabwehr:[/b] ";
 					topText += functions::d2s(round(spyDefense));
 					topText += "%\n[b]Tarnung:[/b] ";
-					topText += tarnDefense;
+					topText += functions::d2s(tarnDefense);
 					topText += "%";
 				}
 		
 				//Spionagebericht senden
 				std::string subject = "Spionagebericht ";
 				subject += coordsBlank;
-				functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_SPY_MSG_CAT_ID"),subject,topText);
+				functions::sendMsg((int)fleet_["fleet_user_id"],(int)config.idget("SHIP_SPY_MSG_CAT_ID"),subject,topText);
 		
 				// Ausgespionierten Spieler informieren
 				std::string text2 = "Eine fremde Flotte vom Planeten ";
@@ -480,7 +480,7 @@ namespace spy
 				
 				std::string subject = "Spionage fehlgeschlagen auf ";
 				subject += coordsBlank;
-				functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_SPY_MSG_CAT_ID"),subject,text);
+				functions::sendMsg((int)fleet_["fleet_user_id"],(int)config.idget("SHIP_SPY_MSG_CAT_ID"),subject,text);
 		
 				// Ausgespionierten Spieler informieren
 				std::string text2 = "Auf deinem Planeten ";
@@ -491,7 +491,7 @@ namespace spy
 				text2 += functions::d2s(round(spyDefense));
 				text2 += "%";
 				
-				functions::sendMsg(userToId,config.idget("SHIP_MONITOR_MSG_CAT_ID"),"Raumüberwachung",text2);
+				functions::sendMsg(userToId,(int)config.idget("SHIP_MONITOR_MSG_CAT_ID"),"Raumüberwachung",text2);
 			}
 		}
 		else
@@ -503,7 +503,7 @@ namespace spy
 			
 			std::string subject = "Spionage fehlgeschlagen auf ";
 			subject += coordsBlank;
-			functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_SPY_MSG_CAT_ID"),subject,text);
+			functions::sendMsg((int)fleet_["fleet_user_id"],(int)config.idget("SHIP_SPY_MSG_CAT_ID"),subject,text);
 		}
 	
 		std::string action = "sr";

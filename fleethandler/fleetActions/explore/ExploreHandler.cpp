@@ -89,7 +89,7 @@ namespace explore
 									msg += functions::nf(std::string(nebulaRow["resources"]));
 									msg += "\n";
 									
-									functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_MISC_MSG_CAT_ID"),"Nebelfeld spionieren",msg);
+									functions::sendMsg((int)fleet_["fleet_user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Nebelfeld spionieren",msg);
 	
 								}
 							}
@@ -126,7 +126,7 @@ namespace explore
 									msg += functions::nf(std::string(asteroidRow["resources"]));
 									msg += "\n";
 									
-									functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_MISC_MSG_CAT_ID"),"Asteroidenfeld spionieren",msg);
+									functions::sendMsg((int)fleet_["fleet_user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Asteroidenfeld spionieren",msg);
 	
 								}
 							}
@@ -167,7 +167,7 @@ namespace explore
 									msg += functions::nf(functions::d2s(gasRow["planet_res_fuel"]));
 									msg += "\n";
 									
-									functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_MISC_MSG_CAT_ID"),"Gas-Planet spionieren",msg);
+									functions::sendMsg((int)fleet_["fleet_user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Gas-Planet spionieren",msg);
 								}
 								else
 								{
@@ -176,7 +176,7 @@ namespace explore
 									msg += functions::formatCoords((int)fleet_["fleet_entity_from"],0);
 									msg += "[/b]\nkonnte [b]kein Gas-Planet [/b]spionieren.\n";
 									
-									functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_MISC_MSG_CAT_ID"),"Gas-Planet spionieren",msg);
+									functions::sendMsg((int)fleet_["fleet_user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Gas-Planet spionieren",msg);
 								}
 							}						
 						}
@@ -186,7 +186,7 @@ namespace explore
 							msg += functions::formatCoords((int)fleet_["fleet_entity_from"],0);
 							msg += " versuchte, das Ziel zu erkunden. Konnte jedoch nur die unendlichen Weiten des leeren Raumes bestaunen.";
 							
-							functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_MISC_MSG_CAT_ID"),"Erkundungsversuch gescheitert",msg);
+							functions::sendMsg((int)fleet_["fleet_user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Erkundungsversuch gescheitert",msg);
 						}
 					}
 				}
@@ -201,7 +201,7 @@ namespace explore
 				msg += functions::formatCoords((int)fleet_["fleet_entity_from"],0);
 				msg += " versuchte, das Ziel zu erkunden. Leider war kein Schiff mehr in der Flotte, welches erkunden kann, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!";
 							
-				functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_MISC_MSG_CAT_ID"),"Erkundungsversuch gescheitert",msg);
+				functions::sendMsg((int)fleet_["fleet_user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Erkundungsversuch gescheitert",msg);
 			}
 		}
 		

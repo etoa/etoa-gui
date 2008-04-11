@@ -217,7 +217,7 @@ namespace nebula
 									msgRes += "\n";
 									msg += msgRes;
 							
-									functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_MISC_MSG_CAT_ID"),"Nebelfeld erkunden",msg);
+									functions::sendMsg((int)fleet_["fleet_user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Nebelfeld erkunden",msg);
 
 									//Erbeutete Rohstoffsumme speichern
 									query << "UPDATE ";
@@ -251,7 +251,7 @@ namespace nebula
 							msg += functions::formatCoords((int)fleet_["fleet_entity_from"],0);
 							msg += "[/b]\n hatte bei ihrer Erkundung eines Intergalaktischen Nebelfeldes eine starke magnetische Störung, welche zu einem Systemausfall führte.\nZu der Flotte ist jeglicher Kontakt abgebrochen.";
                     
-							functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_MISC_MSG_CAT_ID"),"Flotte verschollen",msg);
+							functions::sendMsg((int)fleet_["fleet_user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Flotte verschollen",msg);
 
 							//Log schreiben
 							std::string log = "Eine Flotte des Spielers [B]";
@@ -277,7 +277,7 @@ namespace nebula
 						msg += functions::formatCoords((int)fleet_["fleet_entity_from"],0);
 						msg += "[/b]\n konnte kein Intergalaktisches Nebelfeld orten.\n";
 				
-						functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_MISC_MSG_CAT_ID"),"Nebelfeld verschwunden",msg);
+						functions::sendMsg((int)fleet_["fleet_user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Nebelfeld verschwunden",msg);
 
 						//Log schreiben
 						std::string log = "Eine Flotte des Spielers [B]";
@@ -295,7 +295,7 @@ namespace nebula
 				text += functions::formatCoords((int)fleet_["fleet_entity_from"],0);
 				text += " versuchte, in einem Nebelfeld zu saugen. Leider war kein Schiff mehr in der Flotte, welches die Aktion ausführen konnte, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!";
 							
-				functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_MISC_MSG_CAT_ID"),"Nebelsaugen gescheitert",text);
+				functions::sendMsg((int)fleet_["fleet_user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Nebelsaugen gescheitert",text);
 				
 				fleetReturn("nr");
 			}
