@@ -318,7 +318,7 @@
 						//Titan
 						if ($sarr['ship_costs_metal']>0)
 						{
-							$bf['metal']=$cp->res->metal/$sarr['ship_costs_metal'];
+							$bf['metal']=$cp->resMetal/$sarr['ship_costs_metal'];
 						}
 						else
 						{
@@ -327,7 +327,7 @@
 						//Silizium
 						if ($sarr['ship_costs_crystal']>0)
 						{
-							$bf['crystal']=$cp->res->crystal/$sarr['ship_costs_crystal'];
+							$bf['crystal']=$cp->resCrystal/$sarr['ship_costs_crystal'];
 						}
 						else
 						{
@@ -336,7 +336,7 @@
 						//PVC
 						if ($sarr['ship_costs_plastic']>0) 
 						{
-							$bf['plastic']=$cp->res->plastic/$sarr['ship_costs_plastic']; 
+							$bf['plastic']=$cp->resPlastic/$sarr['ship_costs_plastic']; 
 						}
 						else 
 						{
@@ -345,7 +345,7 @@
 						//Tritium
 						if ($sarr['ship_costs_fuel']>0) 
 						{
-							$bf['fuel']=$cp->res->fuel/$sarr['ship_costs_fuel']; 
+							$bf['fuel']=$cp->resFuel/$sarr['ship_costs_fuel']; 
 						}
 						else 
 						{
@@ -354,7 +354,7 @@
 						//Nahrung
 						if ($_POST['additional_food_costs']>0 || $sarr['ship_costs_food']>0)
 						{
-							 $bf['food']=$cp->res->food/($_POST['additional_food_costs']+$sarr['ship_costs_food']); 
+							 $bf['food']=$cp->resFood/($_POST['additional_food_costs']+$sarr['ship_costs_food']); 
 						}
 						else 
 						{
@@ -378,11 +378,11 @@
 							$bc['food']=($_POST['additional_food_costs']+$sarr['ship_costs_food'])*$build_cnt;
 
     	        //Berechnete Ress provisorisch abziehen
-    	        $cp->res->metal-=$bc['metal'];
-    	        $cp->res->crystal-=$bc['crystal'];
-    	        $cp->res->plastic-=$bc['plastic'];
-    	        $cp->res->fuel-=$bc['fuel'];
-    	        $cp->res->food-=$bc['food'];
+    	        $cp->resMetal-=$bc['metal'];
+    	        $cp->resCrystal-=$bc['crystal'];
+    	        $cp->resPlastic-=$bc['plastic'];
+    	        $cp->resFuel-=$bc['fuel'];
+    	        $cp->resFood-=$bc['food'];
 
 							// Bauzeit pro Schiff berechnen
 							$btime = ($sarr['ship_costs_metal'] + $sarr['ship_costs_crystal'] + $sarr['ship_costs_plastic'] + $sarr['ship_costs_fuel'] + $sarr['ship_costs_food']) / 12 * GLOBAL_TIME * SHIP_BUILD_TIME * $time_boni_factor;
@@ -474,11 +474,11 @@
 				<b>".RES_FUEL.":</b> ".nf($total_fuel)."<br>
 				<b>".RES_FOOD.":</b> ".nf($total_food)."<br><br>
 				<b>Rohstoffe auf dem Planeten</b><br><br>
-				<b>".RES_METAL.":</b> ".nf($cp->res->metal)."<br>
-				<b>".RES_CRYSTAL.":</b> ".nf($cp->res->crystal)."<br>
-				<b>".RES_PLASTIC.":</b> ".nf($cp->res->plastic)."<br>
-				<b>".RES_FUEL.":</b> ".nf($cp->res->fuel)."<br>
-				<b>".RES_FOOD.":</b> ".nf($cp->res->food)."<br><br>
+				<b>".RES_METAL.":</b> ".nf($cp->resMetal)."<br>
+				<b>".RES_CRYSTAL.":</b> ".nf($cp->resCrystal)."<br>
+				<b>".RES_PLASTIC.":</b> ".nf($cp->resPlastic)."<br>
+				<b>".RES_FUEL.":</b> ".nf($cp->resFuel)."<br>
+				<b>".RES_FOOD.":</b> ".nf($cp->resFood)."<br><br>
 				<b>Schiffe</b><br>
 				".$log_ships."
 				";
@@ -599,11 +599,11 @@
 					<b>".RES_FUEL.":</b> ".nf($ret['fuel'])."<br>
 					<b>".RES_FOOD.":</b> ".nf($ret['food'])."<br><br>
 					<b>Rohstoffe auf dem Planeten</b><br><br>
-					<b>".RES_METAL.":</b> ".nf($cp->res->metal)."<br>
-					<b>".RES_CRYSTAL.":</b> ".nf($cp->res->crystal)."<br>
-					<b>".RES_PLASTIC.":</b> ".nf($cp->res->plastic)."<br>
-					<b>".RES_FUEL.":</b> ".nf($cp->res->fuel)."<br>
-					<b>".RES_FOOD.":</b> ".nf($cp->res->food)."<br>
+					<b>".RES_METAL.":</b> ".nf($cp->resMetal)."<br>
+					<b>".RES_CRYSTAL.":</b> ".nf($cp->resCrystal)."<br>
+					<b>".RES_PLASTIC.":</b> ".nf($cp->resPlastic)."<br>
+					<b>".RES_FUEL.":</b> ".nf($cp->resFuel)."<br>
+					<b>".RES_FOOD.":</b> ".nf($cp->resFood)."<br>
 					";
 					
 					//Log Speichern
@@ -950,7 +950,7 @@
 								//Titan
 								if($sarr['ship_costs_metal']>0)
 								{
-									$build_cnt_metal=floor($cp->res->metal/$sarr['ship_costs_metal']);
+									$build_cnt_metal=floor($cp->resMetal/$sarr['ship_costs_metal']);
 								}
 								else
 								{
@@ -960,7 +960,7 @@
 								//Silizium
 								if($sarr['ship_costs_crystal']>0)
 								{
-									$build_cnt_crystal=floor($cp->res->crystal/$sarr['ship_costs_crystal']);
+									$build_cnt_crystal=floor($cp->resCrystal/$sarr['ship_costs_crystal']);
 								}
 								else
 								{
@@ -970,7 +970,7 @@
 								//PVC
 								if($sarr['ship_costs_plastic']>0)
 								{
-									$build_cnt_plastic=floor($cp->res->plastic/$sarr['ship_costs_plastic']);
+									$build_cnt_plastic=floor($cp->resPlastic/$sarr['ship_costs_plastic']);
 								}
 								else
 								{
@@ -980,7 +980,7 @@
 								//Tritium
 								if($sarr['ship_costs_fuel']>0)
 								{
-									$build_cnt_fuel=floor($cp->res->fuel/$sarr['ship_costs_fuel']);
+									$build_cnt_fuel=floor($cp->resFuel/$sarr['ship_costs_fuel']);
 								}
 								else
 								{
@@ -990,7 +990,7 @@
 								//Nahrung
 								if($food_costs>0)
 								{
-									$build_cnt_food=floor($cp->res->food/$food_costs);
+									$build_cnt_food=floor($cp->resFood/$food_costs);
 								}
 								else
 								{
@@ -1022,7 +1022,7 @@
 									//Wartezeit Titan
     			    		if ($cp->prod->metal>0)
     			    		{
-    			    			$bwait['metal']=ceil(($sarr['ship_costs_metal']-$cp->res->metal)/$cp->prod->metal*3600);
+    			    			$bwait['metal']=ceil(($sarr['ship_costs_metal']-$cp->resMetal)/$cp->prod->metal*3600);
     			    		}
     			    		else
     			    		{
@@ -1032,7 +1032,7 @@
     			    		//Wartezeit Silizium
     			    		if ($cp->prod->crystal>0)
     			    		{
-    			    			$bwait['crystal']=ceil(($sarr['ship_costs_crystal']-$cp->res->crystal)/$cp->prod->crystal*3600);
+    			    			$bwait['crystal']=ceil(($sarr['ship_costs_crystal']-$cp->resCrystal)/$cp->prod->crystal*3600);
     			    		}
     			    		else
     			    		{ 
@@ -1042,7 +1042,7 @@
     			    		//Wartezeit PVC
     			    		if ($cp->prod->plastic>0)
     			    		{
-    			    			$bwait['plastic']=ceil(($sarr['ship_costs_plastic']-$cp->res->plastic)/$cp->prod->plastic*3600);
+    			    			$bwait['plastic']=ceil(($sarr['ship_costs_plastic']-$cp->resPlastic)/$cp->prod->plastic*3600);
     			    		}
     			    		else
     			    		{ 
@@ -1052,7 +1052,7 @@
     			    		//Wartezeit Tritium
     			    		if ($cp->prod->fuel>0)
     			    		{
-    			    			$bwait['fuel']=ceil(($sarr['ship_costs_fuel']-$cp->res->fuel)/$cp->prod->fuel*3600);
+    			    			$bwait['fuel']=ceil(($sarr['ship_costs_fuel']-$cp->resFuel)/$cp->prod->fuel*3600);
     			    		}
     			    		else
     			    		{ 
@@ -1062,7 +1062,7 @@
     			    		//Wartezeit Nahrung
     			    		if ($cp->prod->food>0)
     			    		{
-    			    			$bwait['food']=ceil(($food_costs-$cp->res->food)/$cp->prod->food*3600);
+    			    			$bwait['food']=ceil(($food_costs-$cp->resFood)/$cp->prod->food*3600);
     			    		}
     			    		else
     			    		{ 
@@ -1081,7 +1081,7 @@
 
 								//Stellt Rohstoff Rot dar, wenn es von diesem zu wenig auf dem Planeten hat
 								//Titan
-								if($sarr['ship_costs_metal']>$cp->res->metal)
+								if($sarr['ship_costs_metal']>$cp->resMetal)
 								{
 									$ress_style_metal="style=\"color:red;\"";
 								}
@@ -1091,7 +1091,7 @@
 								}
 								
 								//Silizium
-								if($sarr['ship_costs_crystal']>$cp->res->crystal)
+								if($sarr['ship_costs_crystal']>$cp->resCrystal)
 								{
 									$ress_style_crystal="style=\"color:red;\"";
 								}
@@ -1101,7 +1101,7 @@
 								}
 								
 								//PVC
-								if($sarr['ship_costs_plastic']>$cp->res->plastic)
+								if($sarr['ship_costs_plastic']>$cp->resPlastic)
 								{
 									$ress_style_plastic="style=\"color:red;\"";
 								}
@@ -1111,7 +1111,7 @@
 								}
 								
 								//Tritium
-								if($sarr['ship_costs_fuel']>$cp->res->fuel)
+								if($sarr['ship_costs_fuel']>$cp->resFuel)
 								{
 									$ress_style_fuel="style=\"color:red;\"";
 								}
@@ -1121,7 +1121,7 @@
 								}
 								
 								//Nahrung
-								if($food_costs>$cp->res->food)
+								if($food_costs>$cp->resFood)
 								{
 									$ress_style_food="style=\"color:red;\"";
 								}
