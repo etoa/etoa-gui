@@ -1,6 +1,6 @@
 
-#ifndef __RETURNHANDLER__
-#define __RETURNHANDLER__
+#ifndef __TRANSPORTHANDLER__
+#define __TRANSPORTHANDLER__
 
 #include <mysql++/mysql++.h>
 
@@ -8,16 +8,16 @@
 #include "../../MysqlHandler.h"
 
 /**
-* Handles Return....
+* Handles Transport....
 * 
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
-namespace retour
+namespace transport
 {
-	class ReturnHandler	: FleetHandler
+	class TransportHandler	: FleetHandler
 	{
 	public:
-		ReturnHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }
+		TransportHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }
 		void update();
 
 	private:

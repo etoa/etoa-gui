@@ -1,6 +1,6 @@
 
-#ifndef __RETURNHANDLER__
-#define __RETURNHANDLER__
+#ifndef __SPYHANDLER__
+#define __SPYHANDLER__
 
 #include <mysql++/mysql++.h>
 
@@ -8,16 +8,16 @@
 #include "../../MysqlHandler.h"
 
 /**
-* Handles Return....
+* Handles Spy....
 * 
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
-namespace retour
+namespace spy
 {
-	class ReturnHandler	: FleetHandler
+	class SpyHandler	: FleetHandler
 	{
 	public:
-		ReturnHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }
+		SpyHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }
 		void update();
 
 	private:

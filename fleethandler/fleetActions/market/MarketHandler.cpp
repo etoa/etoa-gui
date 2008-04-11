@@ -5,6 +5,7 @@
 #include "MarketHandler.h"
 #include "../../MysqlHandler.H"
 #include "../../functions/Functions.h"
+#include "../../config/ConfigHandler.h"
 
 namespace market
 {
@@ -14,6 +15,7 @@ namespace market
 		/**
 		* Fleet-Action: Market-delivery
 		*/
+		Config &config = Config::instance();
 
 		int landAction = 1;
 		mysqlpp::Query query = con_->query();
@@ -32,9 +34,9 @@ namespace market
 			
 			if (sSize > 0)
 			{
-				mysqlpp::sRow = sRes.at(0);
+				mysqlpp::Row sRow = sRes.at(0);
 
-				if ((int)sRow["fs_ship_id"]==MARKET_SHIP_ID && sSize==1)
+				if ((int)sRow["fs_ship_id"]==config.idget("MARKET_SHIP_ID") && sSize==1)
 				{
 					landAction = 2;
 				}
@@ -42,7 +44,7 @@ namespace market
 		}
 
 		//Sucht User-ID
-		int userToId = functions::getUserIdByPlanet((int)fleet_["fleet_target_to"]);
+		int userToId = functions::getUserIdByPlanet((int)fleet_["fleet_entity_to"]);
 
 		// Resources and ships
 		if (landAction==1)
@@ -52,7 +54,7 @@ namespace market
 
 			//Nachricht senden
 			std::string msg = "Eine Flotte vom Handelsministerium hat folgendes Ziel erreicht:\n[b]Planet:[/b] ";
-			msg += functions::formatCoords((int)fleet_["fleet_target_to"]);
+			msg += functions::formatCoords((int)fleet_["fleet_entity_to"],0);
 			msg += "\n[b]Zeit:[/b] ";
 			msg += functions::formatTime((int)fleet_["fleet_landtime"]);
 			msg += "\n[b]Bericht:[/b] Die gekauften Schiffe sind gelandet.\n";
@@ -68,7 +70,7 @@ namespace market
 
 			msg += "\n\nUnser Unternehmen dankt ihnen f&uuml;r die Unterst&uuml;tzung und wir hoffen sie sind mit uns zufrieden und w&uuml;nschen ihnen auch in Zukunft viel Erfolg.\nDas Handelsministerium";
 
-			functions::sendMsg(userToId,SHIP_MISC_MSG_CAT_ID,"Flotte vom Handelsministerium",msg);
+			functions::sendMsg(userToId,config.idget("SHIP_MISC_MSG_CAT_ID"),"Flotte vom Handelsministerium",msg);
 		}
 	
 		// Only resources
@@ -79,14 +81,14 @@ namespace market
 
 			//Nachricht senden
 			std::string msg = "Eine Flotte vom Handelsministerium hat folgendes Ziel erreicht:\n[b]Planet:[/b] ";
-			msg += functions::formatCoords((int)fleet_["fleet_target_to"]);
+			msg += functions::formatCoords((int)fleet_["fleet_entity_to"],0);
 			msg += "\n[b]Zeit:[/b] ";
 			msg += functions::formatTime((int)fleet_["fleet_landtime"]);
 			msg += "\n[b]Bericht:[/b] Folgende Waren wurden ausgeladen:\n";
 			msg += msgRes;
 			msg += "\n\nUnser Unternehmen dankt ihnen f&uuml;r die Unterst&uuml;tzung und wir hoffen sie sind mit uns zufrieden und w&uuml;nschen ihnen auch in Zukunft viel Erfolg.\nDas Handelsministerium";
 			
-			functions::sendMsg(userToId,SHIP_MISC_MSG_CAT_ID,"Transport vom Handelsministerium",msg);
+			functions::sendMsg(userToId,config.idget("SHIP_MISC_MSG_CAT_ID"),"Transport vom Handelsministerium",msg);
 		}
 
 		// Flotte-Schiffe-Verknüpfungen löschen

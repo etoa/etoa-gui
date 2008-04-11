@@ -36,32 +36,33 @@
 #include "functions/Functions.h"
 #include "config/ConfigHandler.h";
 #include "MysqlHandler.h"
-#include "fleetActions/cancel/CancelHandler.h"
-#include "fleetActions/return/ReturnHandler.h"
+
+#include "fleetActions/cancel/CancelHandler.h" //working
+#include "fleetActions/default/DefaultHandler.h" //working
+#include "fleetActions/return/ReturnHandler.h" //working
+#include "fleetActions/asteroid/AsteroidHandler.h" //working
+#include "fleetActions/colonialize/ColonializeHandler.h"
+#include "fleetActions/debris/DebrisHandler.h" //working
+#include "fleetActions/explore/ExploreHandler.h" //working
+#include "fleetActions/fetch/FetchHandler.h" //working
+#include "fleetActions/gas/GasHandler.h" //working
+#include "fleetActions/market/MarketHandler.h" //working
+#include "fleetActions/nebula/NebulaHandler.h" //working
+#include "fleetActions/position/PositionHandler.h" //working
+#include "fleetActions/spy/SpyHandler.h" //working
+#include "fleetActions/transport/TransportHandler.h" //working
+#include "fleetActions/wreckage/WreckageHandler.h" //working
 
 using namespace std;
 
-// DB-Constants
-const char* DB_SERVER = "localhost";
-const char* DB_NAME = "etoa";
-const char* DB_USER = "root";
-const char* DB_PASSWORD = "";
-
-
 
 main(int argc, char *argv[])
-{
-	
-	//mysqlpp::Connection con(DB_NAME,DB_SERVER,DB_USER,DB_PASSWORD);
-
-	
+{	
 
 	// Main loop
 	while (true)
 	{	
 		Config &config = Config::instance();
-		std::string df = config.get("num_planets", 1);
-		cout << df;
 		//Timestamp
 		std::time_t time = std::time(0);
 		
@@ -71,11 +72,11 @@ main(int argc, char *argv[])
 		cout << "- EtoA Fleethandler, (C) 2007 by EtoA Gaming, Time: "<< time <<" -\n";
 		cout << "----------------------------------------------------------------\n\n";
 		My &my = My::instance();
-		mysqlpp::Connection *con;
-		con = my.get();
+		mysqlpp::Connection *con_;
+		con_ = my.get();
 		
 		//Fleetquery
-		mysqlpp::Query query = con->query();
+		mysqlpp::Query query = con_->query();
 		    query << "SELECT ";
 		    query << "* ";
 		    query << "FROM ";
@@ -87,7 +88,6 @@ main(int argc, char *argv[])
 				
 				
 		cout << "Updating ";
-		cout << res << "\n";
 		//Checking queryresult
 		if (res) 
 	    {
@@ -129,6 +129,50 @@ main(int argc, char *argv[])
 								case 'f':
 									fetch::FetchHandler* fh = new fetch::FetchHandler(row);
 									fh->update();
+									break;
+								case 'g':
+									gas::GasHandler* gh = new gas::GasHandler(row);
+									gh->update();
+									break;
+								case 'j':
+									explore::ExploreHandler* jh = new explore::ExploreHandler(row);
+									jh->update();
+									break;
+								case 'k':
+									colonialize::ColonializeHandler* kh = new colonialize::ColonializeHandler(row);
+									kh->update();
+									break;
+								case 'm':
+									market::MarketHandler* mh = new market::MarketHandler(row);
+									mh->update();
+									break;
+								case 'n':
+									nebula::NebulaHandler* nh = new nebula::NebulaHandler(row);
+									nh->update();
+									break;
+								case 'p':
+									position::PositionHandler* ph = new position::PositionHandler(row);
+									ph->update();
+									break;
+								case 's':
+									spy::SpyHandler* sh = new spy::SpyHandler(row);
+									sh->update();
+									break;
+								case 't':
+									transport::TransportHandler* th = new transport::TransportHandler(row);
+									th->update();
+									break;
+								case 'w':
+									wreckage::WreckageHandler* wh = new wreckage::WreckageHandler(row);
+									wh->update();
+									break;
+								case 'y':
+									asteroid::AsteroidHandler* yh = new asteroid::AsteroidHandler(row);
+									yh->update();
+									break;
+								case 'z':
+									debris::DebrisHandler* zh = new debris::DebrisHandler(row);
+									zh->update();
 									break;
 								default :
 									defaul::DefaultHandler* dh = new defaul::DefaultHandler(row);

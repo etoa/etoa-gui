@@ -1,6 +1,6 @@
 
-#ifndef __RETURNHANDLER__
-#define __RETURNHANDLER__
+#ifndef __WRECKAGEHANDLER__
+#define __WRECKAGEHANDLER__
 
 #include <mysql++/mysql++.h>
 
@@ -8,16 +8,16 @@
 #include "../../MysqlHandler.h"
 
 /**
-* Handles Return....
+* Handles Wreackage....
 * 
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
-namespace retour
+namespace wreckage
 {
-	class ReturnHandler	: FleetHandler
+	class WreckageHandler	: FleetHandler
 	{
 	public:
-		ReturnHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }
+		WreckageHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }
 		void update();
 
 	private:

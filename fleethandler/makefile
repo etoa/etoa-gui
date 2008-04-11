@@ -1,34 +1,62 @@
-OBJECTS = FleetHandler.o ResHandler.o ShipHandler.o MessageHandler.o BackHandler.o PlanetHandler.o #AttackHandler.o SpecialHandler.o
+OBJECTS = etoa.o FleetHandler.o ConfigHandler.o Functions.o CancelHandler.o FetchHandler.o ReturnHandler.o DefaultHandler.o AsteroidHandler.o ColonializeHandler.o ExploreHandler.o GasHandler.o MarketHandler.o NebulaHandler.o PositionHandler.o SpyHandler.o TransportHandler.o WreckageHandler.o DebrisHandler.o
 OPTS = -lmysqlpp
 
-FleetHandler: ${OBJECTS}
-	g++ ${OBJECTS} ${OPTS} -o FleetHandler
+etoa: ${OBJECTS}
+	g++ ${OBJECTS} ${OPTS} -o etoa
 	
-FleetHandler.o: FleetHandler.cpp
+etoa.o: etoa.cpp
 
-#	comp
-ResHandler.o: functions/ResHandler.cpp functions/ResHandler.h
-	g++ -c functions/ResHandler.cpp functions/ResHandler.cpp
+	g++ -c etoa.cpp
+FleetHandler.o: FleetHandler.cpp FleetHandler.h
+	g++ -c FleetHandler.cpp
 
-ShipHandler.o: functions/ShipHandler.cpp functions/ShipHandler.h
-	g++ -c functions/ShipHandler.cpp functions/ShipHandler.cpp
+ConfigHandler.o: config/ConfigHandler.cpp config/ConfigHandler.h
+	g++ -c config/ConfigHandler.cpp
 
-PlanetHandler.o: functions/PlanetHandler.cpp functions/PlanetHandler.h
-	g++ -c functions/PlanetHandler.cpp functions/PlanetHandler.cpp
+Functions.o: functions/Functions.cpp functions/Functions.h
+	g++ -c functions/Functions.cpp
 
-MessageHandler.o: functions/MessageHandler.cpp functions/MessageHandler.h
-	g++ -c functions/MessageHandler.cpp functions/MessageHandler.cpp
+CancelHandler.o: fleetActions/cancel/CancelHandler.cpp fleetActions/cancel/CancelHandler.h
+	g++ -c fleetActions/cancel/CancelHandler.cpp
 
-#AttackHandler.o: attack/AttackHandler.cpp attack/AttackHandler.h
-#	g++ -c attack/AttackHandler.cpp
-#	
-BackHandler.o: back/BackHandler.cpp back/BackHandler.h
-	g++ -c back/BackHandler.cpp
+ReturnHandler.o: fleetActions/return/ReturnHandler.cpp fleetActions/return/ReturnHandler.h
+	g++ -c fleetActions/return/ReturnHandler.cpp
 	
-#SpecialHandler.o: special/SpecialHandler.cpp special/SpecialHandler.h
-#	g++ -c special/SpecialHandler.cpp	
-
+FetchHandler.o: fleetActions/fetch/FetchHandler.cpp fleetActions/fetch/FetchHandler.h
+	g++ -c fleetActions/fetch/FetchHandler.cpp
 	
+DefaultHandler.o: fleetActions/default/DefaultHandler.cpp fleetActions/default/DefaultHandler.h
+	g++ -c fleetActions/default/DefaultHandler.cpp	
+	
+AsteroidHandler.o: fleetActions/asteroid/AsteroidHandler.cpp fleetActions/asteroid/AsteroidHandler.h
+	g++ -c fleetActions/asteroid/AsteroidHandler.cpp
 
-clean:
-	rm FleetHandler FleetHandler.o ResHandler.o ShipHandler.o BackHandler.o
+ColonializeHandler.o: fleetActions/colonialize/ColonializeHandler.cpp fleetActions/colonialize/ColonializeHandler.h
+	g++ -c fleetActions/colonialize/ColonializeHandler.cpp
+
+ExploreHandler.o: fleetActions/explore/ExploreHandler.cpp fleetActions/explore/ExploreHandler.h
+	g++ -c fleetActions/explore/ExploreHandler.cpp
+
+GasHandler.o: fleetActions/gas/GasHandler.cpp fleetActions/gas/GasHandler.h
+	g++ -c fleetActions/gas/GasHandler.cpp
+
+MarketHandler.o: fleetActions/market/MarketHandler.cpp fleetActions/market/MarketHandler.h
+	g++ -c fleetActions/market/MarketHandler.cpp
+
+NebulaHandler.o: fleetActions/nebula/NebulaHandler.cpp fleetActions/nebula/NebulaHandler.h
+	g++ -c fleetActions/nebula/NebulaHandler.cpp
+
+PositionHandler.o: fleetActions/position/PositionHandler.cpp fleetActions/position/PositionHandler.h
+	g++ -c fleetActions/position/PositionHandler.cpp
+
+SpyHandler.o: fleetActions/spy/SpyHandler.cpp fleetActions/spy/SpyHandler.h
+	g++ -c fleetActions/spy/SpyHandler.cpp
+
+TransportHandler.o: fleetActions/transport/TransportHandler.cpp fleetActions/transport/TransportHandler.h
+	g++ -c fleetActions/transport/TransportHandler.cpp
+
+WreckageHandler.o: fleetActions/wreckage/WreckageHandler.cpp fleetActions/wreckage/WreckageHandler.h
+	g++ -c fleetActions/wreckage/WreckageHandler.cpp
+
+DebrisHandler.o: fleetActions/debris/DebrisHandler.cpp fleetActions/debris/DebrisHandler.h
+	g++ -c fleetActions/debris/DebrisHandler.cpp

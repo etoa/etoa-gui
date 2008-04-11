@@ -46,7 +46,7 @@ namespace retour
 				{
 					mysqlpp::Row mRow = mRes.at(0);
 					
-					if (mRow["usere_fleet_rtn_msg"]!="0")
+					if (mRow["user_fleet_rtn_msg"]!="0")
 					{
 						sendMsg = false;
 					}
@@ -58,9 +58,9 @@ namespace retour
 		{
 			//Nachricht senden
 			std::string msg = "[b]FLOTTE GELANDET[/b]\n\nEine eurer Flotten hat ihr Ziel erreicht!\n[b]Zielplanet:[/b] ";
-			msg += functions::formatCoords((int)fleet_["fleet_target_to"]);
+			msg += functions::formatCoords((int)fleet_["fleet_entity_to"],0);
 			msg += "[b]Startplanet:[/b] ";
-			msg += functions::formatCoords(fleet_["fleet_target_from"]);
+			msg += functions::formatCoords(fleet_["fleet_entity_from"],0);
 			msg += "[b]Zeit:[/b] ";
 			msg += functions::formatTime((int)fleet_["fleet_landtime"]);
 			msg += "[b]Auftrag:[/b] ";

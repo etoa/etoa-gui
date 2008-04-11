@@ -1,6 +1,6 @@
 
-#ifndef __NEBULAHANDLER__
-#define __NEBULAHANDLER__
+#ifndef __DEBRISHANDLER__
+#define __DEBRISHANDLER__
 
 #include <mysql++/mysql++.h>
 
@@ -8,16 +8,16 @@
 #include "../../MysqlHandler.h"
 
 /**
-* Handles Nebula....
+* Handles Debris....
 * 
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
-namespace nebula
+namespace debris
 {
-	class NebulaHandler	: FleetHandler
+	class DebrisHandler	: FleetHandler
 	{
 	public:
-		NebulaHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }
+		DebrisHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }
 		void update();
 		
 	};

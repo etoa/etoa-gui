@@ -23,8 +23,11 @@
 		}
 		~Config () {};
 		std::string get(std::string name, int value);
+		double nget(std::string name, int value);
+		double idget(std::string name);
 	private:
 		std::map<std::string, int> sConfig;
+		std::map<std::string, double> idConfig;
 		std::vector<std::vector<std::string> > cConfig;
 		void loadConfig ()
 		{
@@ -50,13 +53,31 @@
 						row = res.at(i);
 						sConfig[std::string(row["config_name"]) ] =  (int)i;
 						std::vector<std::string> temp (3);
-						temp[0]=std::string(row["config_param1"]);
-						temp[1]=std::string(row["config_param2"]);
-						temp[2]=std::string(row["config_value"]);
+						temp[1]=std::string(row["config_param1"]);
+						temp[2]=std::string(row["config_param2"]);
+						temp[0]=std::string(row["config_value"]);
 						cConfig.push_back(temp);
 					}
 				}
 			}
+			
+			idConfig["SHIP_MISC_MSG_CAT_ID"] = 5;
+			idConfig["SHIP_MONITOR_MSG_CAT_ID"]= 4;
+			
+			idConfig["MARKET_SHIP_ID"] = 16;
+			idConfig["SPY_TECH_ID"] = 7;
+			idConfig["TARN_TECH_ID"] = 11;
+			
+			idConfig["SPY_DEFENSE_FACTOR_TECH"] = 20;
+			idConfig["SPY_DEFENSE_FACTOR_SHIPS"] = 0.5;
+			idConfig["SPY_DEFENSE_MAX"] = 90;
+			idConfig["SPY_DEFENSE_FACTOR_TARN"] = 10;
+			
+			idConfig["SPY_ATTACK_SHOW_BUILDINGS"] = 1;
+			idConfig["SPY_ATTACK_SHOW_RESEARCH"] = 3;
+			idConfig["SPY_ATTACK_SHOW_DEFENSE"] = 5;
+			idConfig["SPY_ATTACK_SHOW_SHIPS"] = 7;
+			idConfig["SPY_ATTACK_SHOW_RESSOURCEN"] = 9;
 		};
 		static Config* _instance;
 		Config () {

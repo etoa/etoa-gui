@@ -21,8 +21,7 @@ namespace gas
 		void update();
 
 	private:
-		bool sendMsg;
-		double destroy,fuel,fuelTotal;
+		double shipDestroy,destroy,fuel,fuelTotal;
 		std::string destroyedShips,destroyedShipsMsg;
 		
 	};

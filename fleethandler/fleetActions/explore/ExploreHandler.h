@@ -17,9 +17,8 @@ namespace explore
 	class ExploreHandler	: FleetHandler
 	{
 	public:
-		ExplreHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }
+		ExploreHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }
 		void update();
-
 	private:
 		double destroy;
 		

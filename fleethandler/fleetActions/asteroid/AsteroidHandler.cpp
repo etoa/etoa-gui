@@ -5,22 +5,24 @@
 
 #include <mysql++/mysql++.h>
 
-#include "NebulaHandler.h"
+#include "AsteroidHandler.h"
 #include "../../MysqlHandler.H"
-#include "../../functions/Functions.h"
 #include "../../config/ConfigHandler.h"
+#include "../../functions/Functions.h"
 
-namespace nebula
+namespace asteroid
 {
-	void NebulaHandler::update()
+	void AsteroidHandler::update()
 	{
 	
 		/**
-		* Fleet action: Collect nebula gas
-		*/
+		* Fleet-Action: Collect asteroids
+		*/ 
 
+		//Init
 		Config &config = Config::instance();
 		std::time_t time = std::time(0);
+		srand (time);
 
 		// Precheck action==possible?
 		mysqlpp::Query query = con_->query();
@@ -32,7 +34,7 @@ namespace nebula
 		query << "	ships ON fs_ship_id = ship_id ";
 		query << "	AND fs_fleet_id='" << fleet_["fleet_id"] << "' ";
 		query << "	AND fs_ship_faked='0' ";
-		query << "	AND ship_nebula='1';";
+		query << "	AND ship_asteroid='1';";
 		mysqlpp::Result fsRes = query.store();
 		query.reset();
 		
@@ -43,60 +45,63 @@ namespace nebula
 			
 			if (fsSize > 0)
 			{
-			
-				// ist das nebel feld noch vorhanden?
+				// ist das asteroiden feld noch vorhanden?
 				query << "SELECT ";
-				query << "	resources ";
+				query << " resources ";
 				query << "FROM ";
-				query << "nebulas "; 
+				query << "	asteroids ";
 				query << "WHERE ";
 				query << "	id='" << fleet_["fleet_entity_to"] << "';";
-				mysqlpp::Result nebulaRes = query.store();
+				mysqlpp::Result asteroidRes = query.store();
 				query.reset();
 		
-				if (nebulaRes)
+				if (asteroidRes)
 				{
-					int nebulaSize = nebulaRes.size();
+					int asteroidSize = asteroidRes.size();
 			
-					if (nebulaSize > 0)
+					if (asteroidSize > 0)
 					{
-						mysqlpp::Row nebulaRow = nebulaRes.at(0);
-				
-						double capa = std::min((int)fleet_["fleet_capacity_nebula"],(int)fleet_["fleet_capacity"]);
+						mysqlpp::Row asteroidRow = asteroidRes.at(0);
+
+						double capa = std::min((int)fleet_["fleet_capacity_asteroid"],(int)fleet_["fleet_capacity"]);
+						capa /= 3;
 
 						//80% Chance das das sammeln klappt
-						double goOrNot = rand() % 101;
-						std::cout << "go " << goOrNot << " -> " << config.nget("nebula_action",0) * 100 << "\n";
-						if (goOrNot > config.nget("nebula_action",0) * 100)
+						double goOrNot=rand()%101;
+				
+						if (goOrNot > config.nget("asteroid_action",0) * 100)
 						{
+	
+							double  maxRes = (double)asteroidRow["resources"]/3;
+	
+							double asteroid = config.nget("asteroid_action",1) + (rand() % (int)(capa - config.nget("asteroid_action",1) + 1));
+							double metal = round(std::min(asteroid,maxRes));
+					
+							asteroid = config.nget("asteroid_action",1) + (rand() % (int)(capa - config.nget("asteroid_action",1) + 1));
+							double crystal = round(std::min(asteroid,maxRes));
+					
+							asteroid = config.nget("asteroid_action",1) + (rand() % (int)(capa - config.nget("asteroid_action",1) + 1));
+							double plastic = round(std::min(asteroid,maxRes));
 
-							double maxRess = (int)nebulaRow["resources"];
-
-							double nebula = config.nget("nebula_action",1) + (rand() % (int)(capa - config.nget("nebula_action",1) + 1));
-							double crystal = round(std::min(nebula,maxRess));
-							double capacity = (double)fleet_["fleet_capacity"]-crystal;
-
-							double resTotal = (int)nebulaRow["resources"] -crystal;
-
+							double resTotal = metal + crystal + plastic;
 							query << "UPDATE ";
-							query << "	nebulas ";
+							query << "	asteroids ";
 							query << "SET ";
-							query << "	resources=resources-'" << resTotal << "' ";
+							query << " resources=resources-'" << resTotal << "' ";
 							query << "WHERE ";
 							query << "	id='" << fleet_["fleet_entity_to"] << "';";
 							query.store();
 							query.reset();
 
-
 							//
-							//Wenn nebula feld keine ress mehr hat -> löschen und neues erstellen
+							//Wenn Asteroidenfeld keine ress mehr hat -> löschen und neues erstellen
 							//
 							query << "SELECT ";
-							query << "	resources ";
+							query << " resources ";
 							query << "FROM ";
-							query << "	nebulas ";
+							query << "	asteroids ";
 							query << "WHERE ";
-							query << "id='" << fleet_["fleet_entity_to"] << "';";
+							query << "	id='" << fleet_["fleet_entity_to"] << "';";
 							mysqlpp::Result checkRes = query.store();
 							query.reset();
 					
@@ -107,14 +112,14 @@ namespace nebula
 								if (checkSize > 0)
 								{
 									mysqlpp::Row checkRow = checkRes.at(0);
-							
-									if ((int)checkRow["resources"] < config.nget("nebula_action",1))
+									
+									if ((int)checkRow["resources"] < config.nget("asteroid_action",1))
 									{
-										// altes "löschen" //
+										// altes "löschen"
 										query << "UPDATE ";
 										query << "	entities ";
 										query << "SET ";
-										query << "	code=e ";
+										query << "	code='e' ";
 										query << "WHERE ";
 										query << "	id='" << fleet_["fleet_entity_to"] << "';";
 										query.store();
@@ -122,7 +127,7 @@ namespace nebula
 								
 										//nebula löschen
 										query << "DELETE FROM";
-										query << "	nebulas ";
+										query << "	asteroids ";
 										query << "WHERE ";
 										query << " id='" << fleet_["fleet_entity_to"] << "';";
 										query.store();
@@ -137,21 +142,22 @@ namespace nebula
 										query << ") ";
 										query << "VALUES ";
 										query << "(";
-										query << "'" << fleet_["fleet_entity_to"] << "' ";
-										query << "'0';";
+										query << "'" << fleet_["fleet_entity_to"] << "', ";
+										query << "'0');";
 										query.store();
 										query.reset();
 
-										// neues erstellen //
-										double newRes = config.nget("nebula_ress",1) + (rand() % (int)(config.nget("nebula_ress",2) - config.nget("nebula_ress",1) + 1));
 
+										// neues erstellen //
+										double newRes = config.nget("asteroid_ress",1) + (rand() % (int)(config.nget("asteroid_ress",2) - config.nget("asteroid_ress",1) + 1));
+			
 										// hat es noch leere felder?
 										query << "SELECT ";
 										query << "	id ";
 										query << "FROM ";
 										query << "	entities ";
 										query << "WHERE ";
-										query << "	code=e ";
+										query << "	code='e' ";
 										query << "ORDER BY ";
 										query << " RAND() ";
 										query << "LIMIT 1;";
@@ -171,14 +177,14 @@ namespace nebula
 												query << "UPDATE ";
 												query << "	entities ";
 												query << "SET ";
-												query << "	code=n ";
+												query << "	code='a' ";
 												query << "WHERE ";
 												query << "	id='" << searchRow["id"] << "';";
 												query.store();
 												query.reset();
 										
 												query << "INSERT INTO ";
-												query << "	nebulas ";
+												query << "	asteroids ";
 												query << "(";
 												query << "	id, ";
 												query << "	resources ";
@@ -186,7 +192,7 @@ namespace nebula
 												query << "VALUES ";
 												query << "(";
 												query << "'" << searchRow["id"] << "',";
-												query << "'" << newRes << "';";
+												query << "'" << newRes << "');";
 												query.store();
 												query.reset();
 										
@@ -200,44 +206,55 @@ namespace nebula
 										}
 									}
 
+									double sum = metal - crystal -plastic;
+									double capacity = (double)fleet_["fleet_capacity"] - sum;
+							
 									//Summiert Rohstoffe zu der Ladung der Flotte
+									metal += (double)fleet_["fleet_res_metal"];
 									crystal += (double)fleet_["fleet_res_crystal"];
-		
+									plastic += (double)fleet_["fleet_res_plastic"];
+								
 									// Flotte zurückschicken
-									fleetReturn("nr",-1,crystal,-1,-1,-1,-1,capacity);
+									fleetReturn("yr",metal,crystal,plastic,-1,-1,-1,capacity);
 
 									//Nachricht senden
 									std::string msg = "Eine Flotte vom Planeten \n[b]";
 									msg += functions::formatCoords((int)fleet_["fleet_entity_from"],0);
-									msg +="[/b]\nhat [b]ein Intergalaktisches Nebelfeld [/b]\num [b]";
+									msg += "[/b]\nhat [b]ein Asteroidenfeld[/b]\num [b]";
 									msg += functions::formatTime((int)fleet_["fleet_landtime"]);
-									msg += "[/b]\n erkundet und dabei Rohstoffe gesammelt.\n";
-									msgRes = "\n[b]ROHSTOFFE:[/b]\n\nSilizium: ";
+									msg += "[/b]\n erreicht und Rohstoffe gesammelt.\n";
+							
+									msgRes = "\n[b]ROHSTOFFE:[/b]\n\nTitan: ";
+									msgRes += functions::nf(functions::d2s(metal));
+									msgRes += "\nSilizium: ";
 									msgRes += functions::nf(functions::d2s(crystal));
+									msgRes += "\nPVC: ";
+									msgRes += functions::nf(functions::d2s(plastic));
 									msgRes += "\n";
 									msg += msgRes;
 							
-									functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_MISC_MSG_CAT_ID"),"Nebelfeld erkunden",msg);
+									functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_MISC_MSG_CAT_ID"),"Asteroiden gesammelt",msg);
 
 									//Erbeutete Rohstoffsumme speichern
 									query << "UPDATE ";
 									query << "	users ";
 									query << "SET ";
-									query << "	user_res_from_nebula=user_res_from_nebula+'" << crystal << "' ";
+									query << "	user_res_from_asteroid=user_res_from_asteroid+'" << sum << "' ";
 									query << "WHERE ";
 									query << "	user_id='" << fleet_["fleet_user_id"] << "';";
 									query.store();
-									query.reset(); 
+									query.reset();  
 
 									//Log schreiben
 									std::string log = "Eine Flotte des Spielers [B]";
 									log += functions::getUserNick((int)fleet_["fleet_user_id"]);
 									log += "[/B] vom Planeten [b]";
 									log += functions::formatCoords((int)fleet_["fleet_entity_from"],0);
-									log += "[/b] at [b]ein Intergalaktisches Nebelfeld [/b] um [b]";
+									log += "[/b] hat [b]ein Asteroidenfeld[/b] um [b]",
 									log += functions::formatTime((int)fleet_["fleet_landtime"]);
-									log += "[/b]\n erkundet und dabei Rohstoffe gesammelt.\n";
+									log += "[/b]\n erreicht und Rohstoffe gesammelt.";
 									log += msgRes;
+							
 									functions::addLog(13,log,time);
 								}
 							}
@@ -249,42 +266,43 @@ namespace nebula
 							//Nachricht senden
 							std::string msg = "Eine Flotte vom Planeten \n[b]";
 							msg += functions::formatCoords((int)fleet_["fleet_entity_from"],0);
-							msg += "[/b]\n hatte bei ihrer Erkundung eines Intergalaktischen Nebelfeldes eine starke magnetische Störung, welche zu einem Systemausfall führte.\nZu der Flotte ist jeglicher Kontakt abgebrochen.";
-                    
-							functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_MISC_MSG_CAT_ID"),"Flotte verschollen",msg);
+							msg += "[/b]\n wurde bei einem Asteroidenfeld abgeschossen.";
+
+							functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_MISC_MSG_CAT_ID"),"Flotte abgeschossen",msg);
 
 							//Log schreiben
 							std::string log = "Eine Flotte des Spielers [B]";
-							log += functions::getUserNick((int)fleet_["fleet_user_id"]);
+							log += functions::getUserNick((int)fleet_["fleet_user_id"]),
 							log += "[/B] vom Planeten [b]";
 							log += functions::formatCoords((int)fleet_["fleet_entity_from"],0);
-							log += "[/b] wurde bei einem Intergalaktisches Nebelfeld zerst&ouml;rt.";
+							log += "[/b] wurde bei einem Asteroidenfeld abgeschossen.";
+					
 							functions::addLog(13,log,time);
 
 							// Flotte-Schiffe-Verknüpfungen löschen
 							fleetDelete();
 						}
 					}
-
-					// nebula feld nicht mehr vorhanden
+					// Asteroiden feld nicht mehr vorhanden
 					else
 					{
 						// Flotte zurückschicken
-						fleetReturn("nr");
+						fleetReturn("yr");
 
-						//Nachricht senden
+						// Nachricht senden
 						std::string msg = "Die Flotte vom Planeten \n[b]";
 						msg += functions::formatCoords((int)fleet_["fleet_entity_from"],0);
-						msg += "[/b]\n konnte kein Intergalaktisches Nebelfeld orten.\n";
+						msg += "[/b]\n fand kein Asteroidenfeld mehr vor.\n";
 				
-						functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_MISC_MSG_CAT_ID"),"Nebelfeld verschwunden",msg);
+						functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_MISC_MSG_CAT_ID"),"Asteroidenfeld aufgelöst",msg);
 
 						//Log schreiben
 						std::string log = "Eine Flotte des Spielers [B]";
 						log += functions::getUserNick((int)fleet_["fleet_user_id"]);
 						log += "[/B] vom Planeten [b]";
 						log += functions::formatCoords((int)fleet_["fleet_entity_from"],0);
-						log += "[/b] konnte kein Intergalaktisches Nebelfeld orten.";
+						log += "[/b] fand kein Asteroidenfeld mehr vor.";
+				
 						functions::addLog(13,log,time);
 					}
 				}
@@ -293,13 +311,12 @@ namespace nebula
 			{
 				std::string text = "Eine Flotte vom Planeten ";
 				text += functions::formatCoords((int)fleet_["fleet_entity_from"],0);
-				text += " versuchte, in einem Nebelfeld zu saugen. Leider war kein Schiff mehr in der Flotte, welches die Aktion ausführen konnte, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!";
+				text += " versuchte, Asteroiden zu sammeln. Leider war kein Schiff mehr in der Flotte, welches die Aktion ausführen konnte, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!";
 							
-				functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_MISC_MSG_CAT_ID"),"Nebelsaugen gescheitert",text);
+				functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_MISC_MSG_CAT_ID"),"Asteroidensammeln gescheitert",text);
 				
-				fleetReturn("nr");
+				fleetReturn("yr");
 			}
 		}
 	}
 }
-
