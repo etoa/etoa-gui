@@ -34,7 +34,7 @@
 
 #include "FleetHandler.h"
 #include "functions/Functions.h"
-#include "config/ConfigHandler.h";
+#include "config/ConfigHandler.h"
 #include "MysqlHandler.h"
 
 #include "fleetActions/cancel/CancelHandler.h" //working
@@ -127,56 +127,82 @@ main(int argc, char *argv[])
 							switch (str[0] )
 							{     
 								case 'f':
+								{
 									fetch::FetchHandler* fh = new fetch::FetchHandler(row);
 									fh->update();
 									break;
+								}
 								case 'g':
+								{
 									gas::GasHandler* gh = new gas::GasHandler(row);
 									gh->update();
 									break;
+								}
 								case 'j':
+								{
 									explore::ExploreHandler* jh = new explore::ExploreHandler(row);
 									jh->update();
 									break;
+								}
 								case 'k':
+								{
 									colonialize::ColonializeHandler* kh = new colonialize::ColonializeHandler(row);
 									kh->update();
 									break;
+								}
 								case 'm':
+								{
 									market::MarketHandler* mh = new market::MarketHandler(row);
 									mh->update();
 									break;
+								}
 								case 'n':
+								{
 									nebula::NebulaHandler* nh = new nebula::NebulaHandler(row);
 									nh->update();
 									break;
+								}
 								case 'p':
+								{
 									position::PositionHandler* ph = new position::PositionHandler(row);
 									ph->update();
 									break;
+								}
 								case 's':
+								{
 									spy::SpyHandler* sh = new spy::SpyHandler(row);
 									sh->update();
 									break;
+								}
 								case 't':
+								{
 									transport::TransportHandler* th = new transport::TransportHandler(row);
 									th->update();
 									break;
+								}
 								case 'w':
+								{
 									wreckage::WreckageHandler* wh = new wreckage::WreckageHandler(row);
 									wh->update();
 									break;
+								}
 								case 'y':
+								{
 									asteroid::AsteroidHandler* yh = new asteroid::AsteroidHandler(row);
 									yh->update();
 									break;
+								}
 								case 'z':
+								{
 									debris::DebrisHandler* zh = new debris::DebrisHandler(row);
 									zh->update();
 									break;
+								}
 								default :
+								{
 									defaul::DefaultHandler* dh = new defaul::DefaultHandler(row);
 									dh->update();
+								}
 							} 
 						}
 					}
