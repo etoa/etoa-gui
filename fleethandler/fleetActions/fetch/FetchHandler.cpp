@@ -124,7 +124,7 @@ namespace fetch
 			query.reset();		
 		
 			// Nachrichten senden
-			functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_MISC_MSG_CAT_ID"),"Warenabholung",msg);
+			functions::sendMsg((int)fleet_["fleet_user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Warenabholung",msg);
 			fleetReturn("fr",load[0],load[1],load[2],load[3],load[4],loadPeople);
 		}
 		else

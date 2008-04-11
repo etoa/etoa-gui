@@ -6,7 +6,7 @@
 #include <mysql++/mysql++.h>
 
 #include "AsteroidHandler.h"
-#include "../../MysqlHandler.H"
+#include "../../MysqlHandler.h"
 #include "../../config/ConfigHandler.h"
 #include "../../functions/Functions.h"
 
@@ -233,7 +233,7 @@ namespace asteroid
 									msgRes += "\n";
 									msg += msgRes;
 							
-									functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_MISC_MSG_CAT_ID"),"Asteroiden gesammelt",msg);
+									functions::sendMsg((int)fleet_["fleet_user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Asteroiden gesammelt",msg);
 
 									//Erbeutete Rohstoffsumme speichern
 									query << "UPDATE ";
@@ -268,7 +268,7 @@ namespace asteroid
 							msg += functions::formatCoords((int)fleet_["fleet_entity_from"],0);
 							msg += "[/b]\n wurde bei einem Asteroidenfeld abgeschossen.";
 
-							functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_MISC_MSG_CAT_ID"),"Flotte abgeschossen",msg);
+							functions::sendMsg((int)fleet_["fleet_user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Flotte abgeschossen",msg);
 
 							//Log schreiben
 							std::string log = "Eine Flotte des Spielers [B]";
@@ -294,7 +294,7 @@ namespace asteroid
 						msg += functions::formatCoords((int)fleet_["fleet_entity_from"],0);
 						msg += "[/b]\n fand kein Asteroidenfeld mehr vor.\n";
 				
-						functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_MISC_MSG_CAT_ID"),"Asteroidenfeld aufgelöst",msg);
+						functions::sendMsg((int)fleet_["fleet_user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Asteroidenfeld aufgelöst",msg);
 
 						//Log schreiben
 						std::string log = "Eine Flotte des Spielers [B]";
@@ -313,7 +313,7 @@ namespace asteroid
 				text += functions::formatCoords((int)fleet_["fleet_entity_from"],0);
 				text += " versuchte, Asteroiden zu sammeln. Leider war kein Schiff mehr in der Flotte, welches die Aktion ausführen konnte, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!";
 							
-				functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_MISC_MSG_CAT_ID"),"Asteroidensammeln gescheitert",text);
+				functions::sendMsg((int)fleet_["fleet_user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Asteroidensammeln gescheitert",text);
 				
 				fleetReturn("yr");
 			}
