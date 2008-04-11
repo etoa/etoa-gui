@@ -3,7 +3,7 @@
 #include <mysql++/mysql++.h>
 
 #include "InvadeHandler.h"
-#include "../../MysqlHandler.H"
+#include "../../MysqlHandler.h"
 #include "../../functions/Functions.h"
 
 namespace invade
@@ -385,4 +385,3 @@ namespace invade
 		}
 	}
 }
-

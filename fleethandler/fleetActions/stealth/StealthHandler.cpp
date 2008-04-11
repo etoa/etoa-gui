@@ -5,7 +5,7 @@
 #include <mysql++/mysql++.h>
 
 #include "StealthHandler.h"
-#include "../../MysqlHandler.H"
+#include "../../MysqlHandler.h"
 #include "../../functions/Functions.h"
 
 namespace stealth
@@ -43,4 +43,3 @@ namespace stealth
 		}
 	}
 }
-

@@ -3,7 +3,7 @@
 #include <mysql++/mysql++.h>
 
 #include "EmpHandler.h"
-#include "../../MysqlHandler.H"
+#include "../../MysqlHandler.h"
 #include "../../functions/Functions.h"
 
 namespace emp
@@ -252,4 +252,3 @@ namespace emp
 		}
 	}
 }
-

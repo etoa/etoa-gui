@@ -5,7 +5,7 @@
 #include <mysql++/mysql++.h>
 
 #include "CancelHandler.h"
-#include "../../MysqlHandler.H"
+#include "../../MysqlHandler.h"
 #include "../../functions/Functions.h"
 
 namespace cancel

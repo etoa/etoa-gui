@@ -5,7 +5,7 @@
 #include <mysql++/mysql++.h>
 
 #include "WreckageHandler.h"
-#include "../../MysqlHandler.H"
+#include "../../MysqlHandler.h"
 #include "../../functions/Functions.h"
 #include "../../config/ConfigHandler.h"
 
@@ -189,4 +189,3 @@ namespace wreckage
 		}
 	}
 }
-

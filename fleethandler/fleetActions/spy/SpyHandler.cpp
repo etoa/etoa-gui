@@ -6,7 +6,7 @@
 #include <mysql++/mysql++.h>
 
 #include "SpyHandler.h"
-#include "../../MysqlHandler.H"
+#include "../../MysqlHandler.h"
 #include "../../functions/Functions.h"
 #include "../../config/ConfigHandler.h"
 
@@ -512,4 +512,3 @@ namespace spy
 		fleetReturn(action);
 	}
 }
-

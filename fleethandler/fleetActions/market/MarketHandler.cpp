@@ -3,7 +3,7 @@
 #include <mysql++/mysql++.h>
 
 #include "MarketHandler.h"
-#include "../../MysqlHandler.H"
+#include "../../MysqlHandler.h"
 #include "../../functions/Functions.h"
 #include "../../config/ConfigHandler.h"
 
@@ -95,4 +95,3 @@ namespace market
 		fleetDelete();
 	}
 }
-

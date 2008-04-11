@@ -5,7 +5,7 @@
 #include <mysql++/mysql++.h>
 
 #include "ReturnHandler.h"
-#include "../../MysqlHandler.H"
+#include "../../MysqlHandler.h"
 #include "../../functions/Functions.h"
 
 namespace retour
@@ -73,4 +73,3 @@ namespace retour
 		}
 	}
 }
-

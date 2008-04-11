@@ -6,7 +6,7 @@
 #include <mysql++/mysql++.h>
 
 #include "GasHandler.h"
-#include "../../MysqlHandler.H"
+#include "../../MysqlHandler.h"
 #include "../../config/ConfigHandler.h"
 #include "../../functions/Functions.h"
 
@@ -229,4 +229,3 @@ namespace gas
 		}
 	}
 }
-

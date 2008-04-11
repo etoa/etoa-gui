@@ -3,7 +3,7 @@
 #include <mysql++/mysql++.h>
 
 #include "ColonializeHandler.h"
-#include "../../MysqlHandler.H"
+#include "../../MysqlHandler.h"
 #include "../../config/ConfigHandler.h"
 #include "../../functions/Functions.h"
 
@@ -178,4 +178,3 @@ namespace colonialize
 		}
 	}
 }
-

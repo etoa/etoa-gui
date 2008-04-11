@@ -3,7 +3,7 @@
 #include <mysql++/mysql++.h>
 
 #include "PositionHandler.h"
-#include "../../MysqlHandler.H"
+#include "../../MysqlHandler.h"
 #include "../../functions/Functions.h"
 #include "../../config/ConfigHandler.h"
 
@@ -39,4 +39,3 @@ namespace position
 		functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_MISC_MSG_CAT_ID"),"Flotte angekommen",msg);
 	}
 }
-
