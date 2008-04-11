@@ -145,12 +145,15 @@
 				$this->temp_to=$arr['planet_temp_to'];
 				$this->people=zeroPlus($arr['planet_people']);
 				$this->people_place=zeroPlus($arr['planet_people_place']);
+
+				/*
 				$this->res->metal=zeroPlus($arr['planet_res_metal']);
 				$this->res->crystal=zeroPlus($arr['planet_res_crystal']);
 				$this->res->plastic=zeroPlus($arr['planet_res_plastic']);
 				$this->res->fuel=zeroPlus($arr['planet_res_fuel']);
 				$this->res->food=zeroPlus($arr['planet_res_food']);
 				$this->use->power=zeroPlus($arr['planet_use_power']);
+				*/
 
 				$this->resMetal=zeroPlus($arr['planet_res_metal']);
 				$this->resCrystal=zeroPlus($arr['planet_res_crystal']);
@@ -159,13 +162,21 @@
 				$this->resFood=zeroPlus($arr['planet_res_food']);
 				$this->usePower=zeroPlus($arr['planet_use_power']);
 
-
+				/*
 				$this->store->metal=$arr['planet_store_metal'];
 				$this->store->crystal=$arr['planet_store_crystal'];
 				$this->store->plastic=$arr['planet_store_plastic'];
 				$this->store->fuel=$arr['planet_store_fuel'];
 				$this->store->food=$arr['planet_store_food'];
+				*/
 
+				$this->storeMetal=$arr['planet_store_metal'];
+				$this->storeCrystal=$arr['planet_store_crystal'];
+				$this->storePlastic=$arr['planet_store_plastic'];
+				$this->storeFuel=$arr['planet_store_fuel'];
+				$this->storeFood=$arr['planet_store_food'];
+				
+				/*
 				$this->prod->metal=$arr['planet_prod_metal'];
 				$this->prod->crystal=$arr['planet_prod_crystal'];
 				$this->prod->plastic=$arr['planet_prod_plastic'];
@@ -173,7 +184,8 @@
 				$this->prod->food=$arr['planet_prod_food'];
 				$this->prod->power=zeroPlus($arr['planet_prod_power']);
 				$this->prod->people=$arr['planet_prod_people'];
-
+				*/
+				
 				$this->prodMetal=$arr['planet_prod_metal'];
 				$this->prodCrystal=$arr['planet_prod_crystal'];
 				$this->prodPlastic=$arr['planet_prod_plastic'];
@@ -298,27 +310,27 @@
 			$power_msg=false;
 			$place_msg=false;
 
-			if ($this->store->metal<=floor($this->res->metal) && floor($this->res->metal)>0)
+			if ($this->storeMetal<=floor($this->resMetal) && floor($this->resMetal)>0)
 			{
 				$style0="class=\"tbldata2\"";
 				$store_msg=true;
 			}
-			if ($this->store->crystal<=floor($this->res->crystal) && floor($this->res->crystal)>0)
+			if ($this->storeCrystal<=floor($this->resCrystal) && floor($this->resCrystal)>0)
 			{
 				$style1="class=\"tbldata2\"";
 				$store_msg=true;
 			}
-			if ($this->store->plastic<=floor($this->res->plastic) && floor($this->res->plastic)>0)
+			if ($this->storePlastic<=floor($this->resPlastic) && floor($this->resPlastic)>0)
 			{
 				$style2="class=\"tbldata2\"";
 				$store_msg=true;
 			}
-			if ($this->store->fuel<=floor($this->res->fuel) && floor($this->res->fuel)>0)
+			if ($this->storeFuel<=floor($this->resFuel) && floor($this->resFuel)>0)
 			{
 				$style3="class=\"tbldata2\"";
 				$store_msg=true;
 			}
-			if ($this->store->food<=floor($this->res->food) && floor($this->res->food)>0)
+			if ($this->storeFood<=floor($this->resFood) && floor($this->resFood)>0)
 			{
 				$style4="class=\"tbldata2\"";
 				$store_msg=true;
@@ -328,16 +340,16 @@
 				$style5="class=\"tbldata2\"";
 				$place_msg=true;
 			}
-			if(floor($this->prod->power)-floor($this->use->power)<0)
+			if(floor($this->prodPower)-floor($this->usePower)<0)
 			{
 				$style6="class=\"tbldata2\"";
 				$power_msg=true;
-				$power_rest = floor($this->prod->power)-floor($this->use->power);
+				$power_rest = floor($this->prodPower)-floor($this->usePower);
 			}
 			else
 			{
 				$style6="class=\"tbldata3\"";
-				$power_rest = floor($this->prod->power)-floor($this->use->power);
+				$power_rest = floor($this->prodPower)-floor($this->usePower);
 			}
 			infobox_start("Ressourcen",1);
 			echo "<tr>
@@ -349,11 +361,11 @@
 			<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_ICON_PEOPLE." Bewohner</td>
 			<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_ICON_POWER." Energie</td>
 			</tr><tr>
-			<td $style0>".nf(floor($this->res->metal))." t</td>
-			<td $style1>".nf(floor($this->res->crystal))." t</td>
-			<td $style2>".nf(floor($this->res->plastic))." t</td>
-			<td $style3>".nf(floor($this->res->fuel))." t</td>
-			<td $style4>".nf(floor($this->res->food))." t</td>
+			<td $style0>".nf(floor($this->resMetal))." t</td>
+			<td $style1>".nf(floor($this->resCrystal))." t</td>
+			<td $style2>".nf(floor($this->resPlastic))." t</td>
+			<td $style3>".nf(floor($this->resFuel))." t</td>
+			<td $style4>".nf(floor($this->resFood))." t</td>
 			<td $style5>".nf(floor($this->people))."</td>
 			<td $style6>".nf($power_rest)."</td>
 			</tr>";
@@ -402,11 +414,11 @@
 		    WHERE
 		    	id='".$this->id."';";
 		    dbquery($sql);
-		    $this->res->metal+=$m;
-		    $this->res->crystal+=$c;
-		    $this->res->plastic+=$p;
-		    $this->res->fuel+=$fu;
-		    $this->res->food+=$fo;
+		    $this->resMetal+=$m;
+		    $this->resCrystal+=$c;
+		    $this->resPlastic+=$p;
+		    $this->resFuel+=$fu;
+		    $this->resFood+=$fo;
 		}
 
 		/**
