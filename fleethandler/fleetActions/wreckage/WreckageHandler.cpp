@@ -131,7 +131,7 @@ namespace wreckage
 					msgRes += functions::nf(functions::d2s(plastic));
 					msg += msgRes;
 		
-					functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_MISC_MSG_CAT_ID"),"Tr&uuml;mmer gesammelt",msg);	
+					functions::sendMsg((int)fleet_["fleet_user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Tr&uuml;mmer gesammelt",msg);	
 	
 					//Erbeutete Rohstoffsumme speichern
 					query << "UPDATE ";
@@ -173,7 +173,7 @@ namespace wreckage
 					msgRes = "Es wurden aber leider keine brauchbaren Trümmerteile mehr gefunden so dass die Flotte unverrichteter Dinge zurückkehren musste.";
 					msg += msgRes;
 				
-					functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_MISC_MSG_CAT_ID"),"Tr&uuml;mmer gesammelt",msg);
+					functions::sendMsg((int)fleet_["fleet_user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Tr&uuml;mmer gesammelt",msg);
 				}
 			}
 			else
@@ -182,7 +182,7 @@ namespace wreckage
 				text += functions::formatCoords((int)fleet_["fleet_entity_from"],0);
 				text += " versuchte, Trümmer zu sammeln. Leider war kein Schiff mehr in der Flotte, welches die Aktion ausführen konnte, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!";
 							
-				functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_MISC_MSG_CAT_ID"),"Trümmer gescheitert",text);
+				functions::sendMsg((int)fleet_["fleet_user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Trümmer gescheitert",text);
 				
 				fleetReturn("wr");
 			}

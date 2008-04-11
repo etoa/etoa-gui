@@ -110,7 +110,7 @@ namespace debris
 						msg += coordsTarget;
 						msg += " ein Trümmerfeld erstellt.";
 						
-						functions::sendMsg(fleet_["fleet_user_id"],config.idget("SHIP_MISC_MSG_CAT_ID"),"Trümmerfeld erstellt",msg);
+						functions::sendMsg(fleet_["fleet_user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Trümmerfeld erstellt",msg);
 
 						//Log schreiben
 						std::string log = "Eine Flotte des Spielers [B]";
@@ -131,7 +131,7 @@ namespace debris
 				text += functions::formatCoords((int)fleet_["fleet_entity_from"],0);
 				text += " versuchte, ein Trümmerfel zu erstellen. Leider war kein Schiff mehr in der Flotte, welches die Aktion ausführen konnte, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!";
 							
-				functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_MISC_MSG_CAT_ID"),"Trümmer erstellen gescheitert",text);
+				functions::sendMsg((int)fleet_["fleet_user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Trümmer erstellen gescheitert",text);
 				
 				fleetReturn("zr");
 			}

@@ -467,7 +467,7 @@ namespace spy
 				text2 += functions::d2s(round(spyDefense));
 				text2 += "%";
 				
-				functions::sendMsg(userToId,config.idget("SHIP_MONITOR_MSG_CAT_ID"),"Raumüberwachung",text2);
+				functions::sendMsg(userToId,(int)config.idget("SHIP_MONITOR_MSG_CAT_ID"),"Raumüberwachung",text2);
 			}
 			else
 			{
