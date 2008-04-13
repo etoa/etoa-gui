@@ -17,10 +17,10 @@ namespace building
     query << "SELECT ";
     query << "	buildlist_planet_id ";
     query << "FROM ";
-		query << "	buildlist ";
-		query << "WHERE ";
-		query << "	buildlist_build_type!=0 ";
-		query << "	AND buildlist_build_end_time<" << time << " ORDER BY buildlist_planet_id;";
+	query << "	buildlist ";
+	query << "WHERE ";
+	query << "	buildlist_build_type!=0 ";
+	query << "	AND buildlist_build_end_time<" << time << " ORDER BY buildlist_planet_id;";
     mysqlpp::Result res = query.store();		
 		query.reset();
 		

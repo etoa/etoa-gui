@@ -36,9 +36,12 @@
 				
 			mysqlpp::Query query = con->query();
 			query << "SELECT ";
-				query << "* ";
+			query << "	config_name, ";
+			query << "	config_value, ";
+			query << "	config_param1, ";
+			query << "	config_param2 ";
 			query << "FROM ";
-				query << "	config;";
+			query << "	config;";
 			mysqlpp::Result res = query.store();	
 			query.reset();
 			if (res) 
@@ -67,6 +70,10 @@
 			idConfig["MARKET_SHIP_ID"] = 16;
 			idConfig["SPY_TECH_ID"] = 7;
 			idConfig["TARN_TECH_ID"] = 11;
+			idConfig["STRUCTURE_TECH_ID"] = 9;
+			idConfig["SHIELD_TECH_ID"] = 10;
+			idConfig["WEAPON_TECH_ID"] = 8;
+			idConfig["REGENA_TECH_ID"] = 19;
 			
 			idConfig["SPY_DEFENSE_FACTOR_TECH"] = 20;
 			idConfig["SPY_DEFENSE_FACTOR_SHIPS"] = 0.5;

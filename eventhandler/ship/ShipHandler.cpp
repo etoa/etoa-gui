@@ -47,6 +47,8 @@ namespace ship
 	      for (mysqlpp::Row::size_type i = 0; i<resSize; i++) 
 	      {
 	      	arr = res.at(i);
+			
+				updatePlanet = false;
 
 	  			// Alle Schiffe als gebaut speichern da Endzeit bereits in der Vergangenheit
 	  			if ((int)arr["queue_endtime"] <= time)
@@ -58,13 +60,13 @@ namespace ship
 	  												(int)arr["queue_ship_id"],
 	  												(int)arr["queue_cnt"]);
 	  					changes_=true;
+						updatePlanet = true;
 	  				}
 	  				empty=true;
 	  			}
 	  			// Bau ist noch im Gang
 	  			else
 	  			{
-	  				changes_=true;
 					int new_queue_cnt = (int)ceil((double)((int)arr["queue_endtime"] - time)/(int)arr["queue_objtime"]);
 					int obj_cnt = (int)arr["queue_cnt"] - new_queue_cnt;
   					ShipList::add(				(int)arr["queue_planet_id"], 
@@ -78,12 +80,18 @@ namespace ship
 						<< "WHERE " 
 						<< "	queue_id=" << arr["queue_id"] <<";";
 				    query.store();		
-						query.reset();	  						 				
+						query.reset();	
+						
+					if ((int)obj_cnt > 0)
+					{
+						changes_ = true;
+						updatePlanet = true;
+					}
 	  			}	      	
 		      	
 	      	// Make sure there are no duplicate planet id's
 	      	int pid = (int)arr["queue_planet_id"];
-	      	if (pid!=lastId)
+	      	if (pid!=lastId && updatePlanet)
 	      	{
 	      		this->changedPlanets_.push_back(pid);
 	      	}

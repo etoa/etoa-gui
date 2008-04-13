@@ -34,7 +34,10 @@
 				
 			mysqlpp::Query query = con->query();
 			query << "SELECT ";
-				query << "* ";
+			query << "	config_name, ";
+			query << "	config_value, ";
+			query << "	config_param1, ";
+			query << "	config_param2 ";
 			query << "FROM ";
 				query << "	config;";
 			mysqlpp::Result res = query.store();	

@@ -23,6 +23,7 @@ namespace def
 		inline std::vector<int> getChangedPlanets() { return this->changedPlanets_; }
 	private:
 		bool changes_;
+		bool updatePlanet;
 		std::vector<int> changedPlanets_;		
 	};
 }

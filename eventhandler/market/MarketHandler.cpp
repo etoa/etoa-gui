@@ -938,7 +938,10 @@ namespace market
 		// conf V = Gekaufte Rohstoffe
 		// conf p1 = Verkaufte Rohstoffe
 		// conf p2 = Startwert
-		query << "SELECT * ";
+		query << "SELECT ";
+		query << "	config_value, ";
+		query << "	config_param1, ";
+		query << "	config_param2 ";
 		query << "FROM ";
 		query << "	config ";
 		query << "WHERE ";

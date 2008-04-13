@@ -53,12 +53,11 @@ main(int argc, char *argv[])
 
 	// TODO: Error handling
 	std::time_t mtime=0;
+	Config &config = Config::instance();
 	// Main loop
 	while (true)
 	{	
-		//Config::instance ()->loadConfig ();
 		
-		double dif;
 		// Graphical bling-bling
 		system("clear");
 		cout << "----------------------------------------------------------------\n";
@@ -68,18 +67,20 @@ main(int argc, char *argv[])
 		/**
 		* Start with event handling
 		*/
-		if ((mtime+300)<std::time(0))
+		if ((mtime+300) < std::time(0))
 		{
 			market::MarketHandler* mh = new market::MarketHandler();
 			mh->update();
 			mtime = std::time(0);
+			delete mh;
 		}
 		
 		building::BuildingHandler* bh = new building::BuildingHandler();
 		bh->update();  
 
 		tech::TechHandler* th = new tech::TechHandler();
-		th->update();  
+		th->update(); 
+		delete th;
 
 		ship::ShipHandler* sh = new ship::ShipHandler();
 		sh->update();  
@@ -94,6 +95,7 @@ main(int argc, char *argv[])
 			vector<int> v1 = bh->getChangedPlanets();
 			vector<int> v2 = sh->getChangedPlanets();
 			vector<int> v3 = dh->getChangedPlanets();
+			delete bh, sh, dh;
 			
 			// Merge all changed planet id's together
 			for (int x=0; x<v2.size(); x++)
@@ -118,22 +120,12 @@ main(int argc, char *argv[])
 			pm->updateValues(&v1);		
 			
 			pm->updateUserPlanets();
-
-				
-			//pm.updateFields(); done
-			//pm.updateStorage(); done
-			//pm.updateProductionRates(); done
-			//pm.save(); done
+			
+			delete pm;
 
 		}
-
-
-		// Check fleets
-		/*
-		fleet::FleetHandler* fh = new fleet::FleetHandler(&con);
-		fh->update();*/
 		sleep(1);
 	}		
 
-	return 0;
+	return 1;
 }
