@@ -63,25 +63,11 @@
 		$cnt = 1;
 		while ($farr = mysql_fetch_array($fres))
 		{
+			$ef = Entity::createFactoryById($farr['fleet_entity_from']);
+			$et = Entity::createFactoryById($farr['fleet_entity_to']);
 			echo "<tr>";
-			if ($farr['fleet_planet_from']!=0)
-			{
-				echo"<td class=\"tbldata\">".coords_format2($farr['fleet_planet_from'],1)."<br/>";
-			}
-			else
-			{
-				echo"<td class=\"tbldata\">".coords_format4($farr['fleet_cell_from'])."<br/>";
-			}
-				
-			if ($farr['fleet_planet_to']!=0)
-			{
-				echo coords_format2($farr['fleet_planet_to'],1)."</td>";
-			}
-			else
-			{
-				echo coords_format4($farr['fleet_cell_to'])."</td>";
-			}
-				
+			echo "<td class=\"tbldata\"><b>".$ef->entityCodeString()."</b> ".$ef."<br/>";
+			echo "<b>".$et->entityCodeString()."</b> ".$et."</td>";			
 			echo "<td class=\"tbldata\">".date("d.m.y, H:i:s",$farr['fleet_launchtime'])."<br/>";
 			echo date("d.m.y, H:i:s",$farr['fleet_landtime'])."</td>";
 			echo "<td class=\"tbldata\"><a href=\"?page=fleetinfo&id=".$farr['fleet_id']."\">".fa($farr['fleet_action'])."</a><br/>";
@@ -425,9 +411,14 @@
 					$header=1;
 				}
 				$deal=1;
+				
+			$ef = Entity::createFactoryById($farr['fleet_entity_from']);
+			$et = Entity::createFactoryById($farr['fleet_entity_to']);
+				
 				echo "<tr>
 								<td class=\"tbldata\" style=\"".$style."\">
-									".coords_format2($farr['fleet_planet_from'],1,$act_color)."<br/>".coords_format2($farr['fleet_planet_to'],1,$act_color)."
+									<b>".$ef->entityCodeString()."</b> ".$ef."<br/>
+									<b>".$et->entityCodeString()."</b> ".$et."
 								</td>
 								<td class=\"tbldata\" style=\"".$style."\">
 									".date("d.m.y, H:i:s",$farr['fleet_launchtime'])."<br/>

@@ -44,7 +44,7 @@
 	}
 	else
 	{
-		$cellId = $cp->cell_id;
+		$cellId = $cp->cellId();
 	}
 	
 	
