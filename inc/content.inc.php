@@ -113,20 +113,39 @@
 		// Seite anzeigen
 		else
 		{
-			if (eregi('^[a-z\_]+$',$page)  && strlen($page)<=50)
+			// Cheating-Schutz für externe Formulare
+			if ($page!=DEFAULT_PAGE && !isset($_SERVER["HTTP_REFERER"]) && count($_POST)>0)
 			{
-				if (!include("content/".$page.".php"))
+				echo "<h1>Cheat-Schutz</h1> Du hast anscheinend versucht, über ein externes Formular eine Aktion durchzuführen. 
+				Dies ist nicht erlaubt (Cheating-Möglichkeit)! Diese Aktion wird geloggt und einem Admin zur Prüfung vorgelegt.
+				Deine IP-Adresse: ".$_SERVER['REMOTE_ADDR']."<br/><br/>";
+				
+				$str = "Der Spieler ".$cu->nick." (".$s['user_id'].") hat versucht, über ein externes Formular auf das Spiel zuzugreifen! IP-Adresse: ".$_SERVER['REMOTE_ADDR'].".\n";
+				$str.="\nInhalt des POST-Arrays:\n";
+				foreach ($_POST as $k => $v)
 				{
-					echo '<h1>Fehler</h1>
-					Die Seite <b>'.$page.'</b> existiert nicht!<br/><br/>
-					<input type="button" onclick="history.back();" value="Zurück" />';
+					$str.="$k: $v\n";
 				}
+				add_log(3,$str);
+				$s=Null;
 			}
 			else
-			{
-				echo '<h1>Fehler</h1>
-				Der Seitenname <b>'.$page.'</b> enth&auml;lt unerlaubte Zeichen!<br/><br/>
-				<input type="button" onclick="history.back();" value="Zurück" />';
+			{			
+				if (eregi('^[a-z\_]+$',$page)  && strlen($page)<=50)
+				{
+					if (!include("content/".$page.".php"))
+					{
+						echo '<h1>Fehler</h1>
+						Die Seite <b>'.$page.'</b> existiert nicht!<br/><br/>
+						<input type="button" onclick="history.back();" value="Zurück" />';
+					}
+				}
+				else
+				{
+					echo '<h1>Fehler</h1>
+					Der Seitenname <b>'.$page.'</b> enth&auml;lt unerlaubte Zeichen!<br/><br/>
+					<input type="button" onclick="history.back();" value="Zurück" />';
+				}
 			}
 		}
 	}	

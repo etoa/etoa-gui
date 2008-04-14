@@ -207,13 +207,16 @@
 		<?PHP
 			// Referers prüfen
 			$referer_allow=false;
-			foreach ($referers as $rfr)
+			if (isset($_SERVER["HTTP_REFERER"]))
 			{
-				if (substr($_SERVER["HTTP_REFERER"],0,strlen($rfr))==$rfr)
+				foreach ($referers as $rfr)
 				{
-					$referer_allow=true;
+					if (substr($_SERVER["HTTP_REFERER"],0,strlen($rfr))==$rfr)
+					{
+						$referer_allow=true;
+					}
 				}
-			}
+			} 				
 
 			// Spiel ist generell gesperrt (ausser für erlaubte IP's)
 			$allowed_ips = explode("\n",$cfg->value('offline'));
@@ -244,7 +247,7 @@
 				$s=Null;
 			}
 			// Zugriff von anderen als eigenem Server bzw Login-Server sperren
-			elseif (!$referer_allow && $_SERVER["HTTP_REFERER"]!="")
+			elseif (!$referer_allow && isset($_SERVER["HTTP_REFERER"]))
 			{
 				echo "<h1>Falscher Referer</h1>
 				Der Zugriff auf das Spiel ist nur anderen internen Seiten aus m&ouml;glich! Ein externes Verlinken direkt in das Game hinein ist nicht gestattet! Dein Referer: ".$_SERVER["HTTP_REFERER"]."<br/><br/>
