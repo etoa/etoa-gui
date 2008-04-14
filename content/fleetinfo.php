@@ -33,11 +33,6 @@
 
 	// DEFINITIONEN //
 
-	define("SHIP_SPY_MSG_CAT_ID",2);
-	define("SHIP_WAR_MSG_CAT_ID",3);
-	define("SHIP_MONITOR_MSG_CAT_ID",4);
-	define("SHIP_MISC_MSG_CAT_ID",5);
-
 	echo "<h1>Flotten</h1>";
 	echo "<h2>Details</h2>";
 
@@ -49,16 +44,16 @@
 	//
 	// Flugabbruch auslösen
 	//
-	if ($_POST['cancel']!="" && checker_verify())
+	if (isset($_POST['cancel'])!="" && checker_verify())
 	{
 		$res=dbquery("
 		SELECT
 			*
 		FROM
-			".$db_table['fleet']."
+			fleet
 		WHERE
 			fleet_id='".$fleet_id."'
-			AND fleet_user_id='".$s['user']['id']."'
+			AND fleet_user_id='".$cu->id()."'
 			AND fleet_landtime>".time()."
 			AND fleet_action NOT LIKE '%c%'
 			AND fleet_action NOT LIKE '%r%'
@@ -80,7 +75,7 @@
 				";
 			}
 			$sql = "UPDATE
-				".$db_table['fleet']."
+				fleet
 			SET
 				fleet_cell_from='".$arr['fleet_cell_to']."',
 				fleet_cell_to='".$arr['fleet_cell_from']."',
@@ -107,10 +102,10 @@
 	SELECT
 		*
 	FROM
-		".$db_table['fleet']."
+		fleet
 	WHERE
 		fleet_id='".$fleet_id."'
-		AND fleet_user_id='".$s['user']['id']."';
+		AND fleet_user_id='".$cu->id()."';
 	");
 	if (mysql_num_rows($res)>0)
 	{
@@ -121,18 +116,17 @@
 
 		// Flugdaten
 		infobox_start("Flugdaten",1);
+		$ef = Entity::createFactoryById($arr['fleet_entity_from']);
+		$et = Entity::createFactoryById($arr['fleet_entity_to']);
+		
 		echo "<tr><td class=\"tbltitle\" style=\"width:200px;\">Auftrag:</td><td class=\"tbldata\">".fa($arr['fleet_action'])."</td></tr>";
-		if ($arr['fleet_planet_from']!=0)
-			echo "<tr><td class=\"tbltitle\">Startkoordinaten:</td><td class=\"tbldata\">".coords_format2($arr['fleet_planet_from'],1)."</td></tr>";
-		else
-			echo "<tr><td class=\"tbltitle\">Startkoordinaten:</td><td class=\"tbldata\">".coords_format4($arr['fleet_cell_from'])."</td></tr>";
-		if ($arr['fleet_planet_to']!=0)
-			echo "<tr><td class=\"tbltitle\">Zielkoordinaten:</td><td class=\"tbldata\">".coords_format2($arr['fleet_planet_to'],1)."</td></tr>";
-		else
-			echo "<tr><td class=\"tbltitle\">Zielkoordinaten:</td><td class=\"tbldata\">".coords_format4($arr['fleet_cell_to'])."</td></tr>";
+		echo "<tr><td class=\"tbltitle\">Startkoordinaten:</td><td class=\"tbldata\">".$ef."</td></tr>";
+		echo "<tr><td class=\"tbltitle\">Zielkoordinaten:</td><td class=\"tbldata\">".$ef."</td></tr>";
 		echo "<tr><td class=\"tbltitle\">Startzeit:</td><td class=\"tbldata\">".date("d.m.Y H:i:s",$arr['fleet_launchtime'])."</td></tr>";
 		if ($arr['fleet_whtime']>0)
+		{
 			echo "<tr><td class=\"tbltitle\">Wurmloch-Passage:</td><td class=\"tbldata\">".date("d.m.Y H:i:s",$arr['fleet_whtime'])."</td></tr>";
+		}
 		echo "<tr><td class=\"tbltitle\">Ende des Fluges:</td><td class=\"tbldata\">".date("d.m.Y H:i:s",$arr['fleet_landtime'])."</td></tr>";
 		echo "<tr><td class=\"tbltitle\">Verbleibend:</td><td class=\"tbldata\" id=\"flighttime\">-</td></tr>";
 		echo "<tr><td class=\"tbltitle\">Piloten:</td><td class=\"tbldata\">".nf($arr['fleet_pilots'])."</td></tr>";

@@ -31,7 +31,7 @@
 
 	echo '<h1>Schiffsübersicht</h1>';
 	
-	define(HELP_URL,"?page=help&site=shipyard");
+	define('HELP_URL',"?page=help&site=shipyard");
 
 	//Button "Zurück zum Raumschiffshafen"
 	echo "<input type=\"button\" onclick=\"document.location='?page=fleets'\" value=\"Flotten anzeigen\" /> &nbsp; ";
@@ -41,9 +41,9 @@
 	$planet_data = array();		//Speichert alle Planetnamen des Users
 
 	//Speichert Planetnamen in ein Array
-	foreach ($planets->own as $p)
+	foreach ($pm->itemObjects() as $p)
 	{
-		$planet_data[$p->id]['name']=$p->name;
+		$planet_data[$p->id()]['name']=$p->name();
 	}
 	
 
@@ -54,7 +54,7 @@
   FROM
   	".$db_table['shiplist']."
   WHERE
-  	shiplist_user_id='".$s['user']['id']."'
+  	shiplist_user_id='".$cu->id()."'
   LIMIT 1;");
   if(mysql_num_rows($res)>0)
   {
@@ -96,7 +96,7 @@
 			  FROM
 			  	".$db_table['shiplist']."
 			  WHERE
-			  	shiplist_user_id='".$s['user']['id']."'
+			  	shiplist_user_id='".$cu->id()."'
 			  	AND shiplist_ship_id='".$sarr['ship_id']."'
 			  GROUP BY
 			  	shiplist_ship_id
@@ -119,7 +119,7 @@
 			  FROM
 			  	".$db_table['ship_queue']."
 			  WHERE
-			  	queue_user_id='".$s['user']['id']."'
+			  	queue_user_id='".$cu->id()."'
 			  	AND queue_ship_id='".$sarr['ship_id']."'
 			  GROUP BY
 			  	queue_ship_id
@@ -144,7 +144,7 @@
 		      INNER JOIN
 		      ".$db_table['fleet']." AS f
 		      ON fs.fs_fleet_id=f.fleet_id
-		      AND f.fleet_user_id='".$s['user']['id']."'
+		      AND f.fleet_user_id='".$cu->id()."'
 		      AND fs.fs_ship_id='".$sarr['ship_id']."'
 				GROUP BY
 					fs.fs_ship_id
@@ -177,7 +177,7 @@
 			  FROM
 			  	".$db_table['shiplist']."
 			  WHERE
-			  	shiplist_user_id='".$s['user']['id']."'
+			  	shiplist_user_id='".$cu->id()."'
 			  	AND shiplist_ship_id='".$sarr['ship_id']."';");
 			  if(mysql_num_rows($res)>0)
 			  {
@@ -195,7 +195,7 @@
 			  FROM
 			  	".$db_table['ship_queue']."
 			  WHERE
-			  	queue_user_id='".$s['user']['id']."'
+			  	queue_user_id='".$cu->id()."'
 			  	AND queue_ship_id='".$sarr['ship_id']."'
 			  GROUP BY
 			  	queue_planet_id;");
