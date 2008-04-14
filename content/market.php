@@ -350,10 +350,9 @@
 					  										- ress_buy_plastic * MARKET_PLASTIC_FACTOR / actuel_res_factor
 					  										- ress_buy_fuel * MARKET_FUEL_FACTOR / actuel_res_factor
 					  										- ress_buy_food * MARKET_FOOD_FACTOR / actuel_res_factor;
-					  log_ress_buy_max[res] = Math.ceil(ress_buy_max[res]);	// Der Prüfwert
-					  ress_buy_max[res] = Math.floor(ress_buy_max[res]);		// Der Anzeigewert	
+					  ress_buy_max[res] = Math.floor(ress_buy_max[res]);		// Der Anzeigewert & Prüfwert
 					  	
-					  				
+
 			  		// MinBetrag
 			  		// Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
 			  		ress_buy_min[res] =	ress_sell_metal / actuel_res_factor * MARKET_METAL_FACTOR * RESS_PRICE_FACTOR_MIN
@@ -368,11 +367,10 @@
 					  										- ress_buy_plastic * MARKET_PLASTIC_FACTOR / actuel_res_factor
 					  										- ress_buy_fuel * MARKET_FUEL_FACTOR / actuel_res_factor
 					  										- ress_buy_food * MARKET_FOOD_FACTOR / actuel_res_factor;	
-					  log_ress_buy_min[res] = Math.floor(ress_buy_min[res]);		// Der Prüfwert
-					  ress_buy_min[res] = Math.ceil(ress_buy_min[res]);					// Der Anzeigewert	
+					  ress_buy_min[res] = Math.ceil(ress_buy_min[res]);					// Der Anzeigewert & Prüfwert
 					  	
 					  
-					  
+					  /*
 					  if(ress_buy_max[res]<=0)
 					  {
 					  	ress_buy_max[res]=0;
@@ -382,7 +380,7 @@
 					  {
 					  	ress_buy_min[res]=0;
 					  } 
-					  
+					  */
 					  
 					  // Gibt das Preisfeld frei, wenn vom gleichen Rohstoff nichts verlangt wird. Ansonsten wird das Feld gesperrt und 0 als Defaultwert hineingeschrieben
 						if (ress_sell>0)
@@ -440,11 +438,11 @@
 						document.getElementById('ressource_sell_submit').style.color='#f00';  	
 			  	}
 			  	// Zu hohe Preise
-			  	else if(log_ress_buy_max['0']<0 
-			  		|| log_ress_buy_max['1']<0 
-			  		|| log_ress_buy_max['2']<0 
-			  		|| log_ress_buy_max['3']<0
-			  		|| log_ress_buy_max['4']<0)
+			  	else if(ress_buy_max['0']<0 
+			  		|| ress_buy_max['1']<0 
+			  		|| ress_buy_max['2']<0 
+			  		|| ress_buy_max['3']<0
+			  		|| ress_buy_max['4']<0)
 			  	{
 			  		var check_message = "<div style=\"color:red;font-weight:bold;\">Die Preise sind zu hoch!</div>";
 			  		
@@ -459,6 +457,7 @@
 			  		|| ress_buy_min['3']>0 
 			  		|| ress_buy_min['4']>0 )
 			  	{
+			  		var test2 = Math.round(-3.5);
 			  		var check_message = "<div style=\"color:red;font-weight:bold;\">Die Preise sind zu niedrig!</div>";
 			  		
 			  		// Sperrt Sendebutton
@@ -760,8 +759,7 @@
 					  										- ship_buy_plastic * MARKET_PLASTIC_FACTOR / actuel_res_factor
 					  										- ship_buy_fuel * MARKET_FUEL_FACTOR / actuel_res_factor
 					  										- ship_buy_food * MARKET_FOOD_FACTOR / actuel_res_factor;
-					  log_ship_buy_max[res] = Math.ceil(ship_buy_max[res]);	// Der Prüfwert
-					  ship_buy_max[res] = Math.floor(ship_buy_max[res]);		// Der Anzeigewert	
+					  ship_buy_max[res] = Math.floor(ship_buy_max[res]);		// Der Anzeigewert & Prüfwert
 					  	
 					  				
 			  		// MinBetrag
@@ -778,20 +776,8 @@
 					  										- ship_buy_plastic * MARKET_PLASTIC_FACTOR / actuel_res_factor
 					  										- ship_buy_fuel * MARKET_FUEL_FACTOR / actuel_res_factor
 					  										- ship_buy_food * MARKET_FOOD_FACTOR / actuel_res_factor;	
-					  log_ship_buy_min[res] = Math.floor(ship_buy_min[res]);		// Der Prüfwert
-					  ship_buy_min[res] = Math.ceil(ship_buy_min[res]);					// Der Anzeigewert	
+					  ship_buy_min[res] = Math.floor(ship_buy_min[res]);					// Der Anzeigewert & Prüfwert
 					  	
-					  
-					  
-					  if(ship_buy_max[res]<=0)
-					  {
-					  	ship_buy_max[res]=0;
-					  }  									
-			
-					  if(ship_buy_min[res]<=0)
-					  {
-					  	ship_buy_min[res]=0;
-					  } 
 					  
 						// Definiert die Zahl, welche in das Preisfeld geschrieben wird nach dem Klick auf den Min/Max Link
 						var sum_min = ship_buy + ship_buy_min[res];
@@ -802,8 +788,6 @@
 						
 						// Definiert die "Min./Max." Ausgabe
 					  out_ship_min_max[res]="<a href=\"javascript:;\" onclick=\"document.getElementById('"+buy_field+"').value="+sum_min+";calcMarketShipPrice(0, 0);FormatNumber('"+buy_field+"','"+sum_min+"','','','');\">"+ship_min+"</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('"+buy_field+"').value="+sum_max+";calcMarketShipPrice(0, 0);FormatNumber('"+buy_field+"','"+sum_max+"','','','');\">"+ship_max+"</a>"; 
-					  
-							  
 					}
 						
 						
@@ -822,11 +806,11 @@
 						document.getElementById('ship_sell_submit').style.color='#f00';
 			  	}  
 			  	// Zu hohe Preise
-			  	else if(log_ship_buy_max['0']<0 
-			  		|| log_ship_buy_max['1']<0 
-			  		|| log_ship_buy_max['2']<0 
-			  		|| log_ship_buy_max['3']<0
-			  		|| log_ship_buy_max['4']<0)
+			  	else if(ship_buy_max['0']<0 
+			  		|| ship_buy_max['1']<0 
+			  		|| ship_buy_max['2']<0 
+			  		|| ship_buy_max['3']<0
+			  		|| ship_buy_max['4']<0)
 			  	{
 			  		var ship_check_message = "<div style=\"color:red;font-weight:bold;\">Die Preise sind zu hoch!</div>";
 			  		
@@ -1360,8 +1344,7 @@
 					  										- auction_new_buy_plastic * MARKET_PLASTIC_FACTOR / actuel_res_factor
 					  										- auction_new_buy_fuel * MARKET_FUEL_FACTOR / actuel_res_factor
 					  										- auction_new_buy_food * MARKET_FOOD_FACTOR / actuel_res_factor;
-					  log_auction_buy_max[res] = Math.ceil(auction_buy_max[res]);	// Der Prüfwert
-					  auction_buy_max[res] = Math.floor(auction_buy_max[res]);		// Der Anzeigewert	
+					  auction_buy_max[res] = Math.floor(auction_buy_max[res]);		// Der Anzeigewert & Prüfwert
 					  	
 					  				
 			  		// MinBetrag
@@ -1378,20 +1361,9 @@
 					  										- auction_new_buy_plastic * MARKET_PLASTIC_FACTOR / actuel_res_factor
 					  										- auction_new_buy_fuel * MARKET_FUEL_FACTOR / actuel_res_factor
 					  										- auction_new_buy_food * MARKET_FOOD_FACTOR / actuel_res_factor;	
-					  log_auction_buy_min[res] = Math.floor(auction_buy_min[res]);		// Der Prüfwert
-					  auction_buy_min[res] = Math.ceil(auction_buy_min[res]);					// Der Anzeigewert	
+					  auction_buy_min[res] = Math.ceil(auction_buy_min[res]);					// Der Anzeigewert & Prüfwert	
 					  	
 					  
-					  
-					  if(auction_buy_max[res]<=0)
-					  {
-					  	auction_buy_max[res]=0;
-					  }  									
-			
-					  if(auction_buy_min[res]<=0)
-					  {
-					  	auction_buy_min[res]=0;
-					  } 
 					  
 					  
 						// Definiert die Zahl, welche in das Preisfeld geschrieben wird nach dem Klick auf den Min/Max Link
@@ -1425,11 +1397,11 @@
 						document.getElementById('auction_submit').style.color='#f00';
 			  	}  	
 			  	// Zu hohe Preise
-			  	else if(log_auction_buy_max['0']<0 
-			  		|| log_auction_buy_max['1']<0 
-			  		|| log_auction_buy_max['2']<0 
-			  		|| log_auction_buy_max['3']<0
-			  		|| log_auction_buy_max['4']<0)
+			  	else if(auction_buy_max['0']<0 
+			  		|| auction_buy_max['1']<0 
+			  		|| auction_buy_max['2']<0 
+			  		|| auction_buy_max['3']<0
+			  		|| auction_buy_max['4']<0)
 			  	{
 			  		var auction_check_message = "<div style=\"color:red;font-weight:bold;\">Die Preise sind zu hoch!</div>";
 			  		

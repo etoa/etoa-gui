@@ -2074,7 +2074,7 @@ function checkMarketSearchFormular($val)
 				if(get_user_id($val['user_nick']) != 0)
 				{
 					// Eigener Nick ist unzulässig
-					if(get_user_id($val['user_nick']) != $s['user']['id'])
+					if(get_user_id($val['user_nick']) != $s['user_id'])
 					{
 						$objResponse->assign("check_user_nick","innerHTML", "<div style=\"color:#0f0;font-weight:bold;\">OK!</div>");
 						$user_id = get_user_id($val['user_nick']);
@@ -2108,16 +2108,16 @@ function checkMarketSearchFormular($val)
 			}
 	
 			// Für Allianzmitglieder
-			if($s['user']['alliance_application']==0)
+			if($s['user_alliance_application']==0)
 			{
 				if($val['search_ress_for_alliance']==1)
 				{
-					$sql_add .= " AND ressource_for_alliance='".$s['user']['alliance_id']."'";
+					$sql_add .= " AND ressource_for_alliance='".$s['user_alliance_id']."'";
 					$out_add_alliance = " reservierte(s)";
 				}
 				else
 				{
-					$sql_add .= " AND (ressource_for_alliance='0' OR ressource_for_alliance='".$s['user']['alliance_id']."')";
+					$sql_add .= " AND (ressource_for_alliance='0' OR ressource_for_alliance='".$s['user_alliance_id']."')";
 				}
 			}
 			else
@@ -2205,7 +2205,7 @@ function checkMarketSearchFormular($val)
 				market_ressource
 			WHERE
 				ressource_buyable='1'
-        AND user_id!='".$s['user']['id']."'
+        AND user_id!='".$s['user_id']."'
         ".$sql_add.";");
 			$cnt = mysql_num_rows($res);
       
@@ -2258,7 +2258,7 @@ function checkMarketSearchFormular($val)
 				if(get_user_id($val['user_nick']) != 0)
 				{
 					// Eigener Nick ist unzulässig
-					if(get_user_id($val['user_nick']) != $s['user']['id'])
+					if(get_user_id($val['user_nick']) != $s['user_id'])
 					{
 						$objResponse->assign("check_user_nick","innerHTML", "<div style=\"color:#0f0;font-weight:bold;\">OK!</div>");
 						$user_id = get_user_id($val['user_nick']);
@@ -2292,16 +2292,16 @@ function checkMarketSearchFormular($val)
 			}
 	
 			// Für Allianzmitglieder
-			if($s['user']['alliance_application']==0)
+			if($s['user_alliance_application']==0)
 			{
 				if($val['search_ship_for_alliance']==1)
 				{
-					$sql_add .= " AND ship_for_alliance='".$s['user']['alliance_id']."'";
+					$sql_add .= " AND ship_for_alliance='".$s['user_alliance_id']."'";
 					$out_add_alliance = " reservierte(s)";
 				}
 				else
 				{
-					$sql_add .= " AND (ship_for_alliance='0' OR ship_for_alliance='".$s['user']['alliance_id']."')";
+					$sql_add .= " AND (ship_for_alliance='0' OR ship_for_alliance='".$s['user_alliance_id']."')";
 				}
 			}
 			else
@@ -2349,7 +2349,7 @@ function checkMarketSearchFormular($val)
 				market_ship
 			WHERE
 				ship_buyable='1'
-        AND user_id!='".$s['user']['id']."'
+        AND user_id!='".$s['user_id']."'
         ".$sql_add.";");
 			$cnt = mysql_num_rows($res);
       
@@ -2400,7 +2400,7 @@ function checkMarketSearchFormular($val)
 				if(get_user_id($val['user_nick']) != 0)
 				{
 					// Eigener Nick ist unzulässig
-					if(get_user_id($val['user_nick']) != $s['user']['id'])
+					if(get_user_id($val['user_nick']) != $s['user_id'])
 					{
 						$objResponse->assign("check_user_nick","innerHTML", "<div style=\"color:#0f0;font-weight:bold;\">OK!</div>");
 						$user_id = get_user_id($val['user_nick']);
@@ -2519,7 +2519,7 @@ function checkMarketSearchFormular($val)
 			FROM
 				market_auction
 			WHERE
-				auction_user_id!='".$s['user']['id']."'
+				auction_user_id!='".$s['user_id']."'
         ".$sql_add.";");
 			$cnt = mysql_num_rows($res);
       
