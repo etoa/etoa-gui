@@ -57,6 +57,8 @@
 	{
 		global $db_handle;
 		global $query_counter;
+		//global $queries;
+		//$queries = array();
 		$query_counter=0;
 		if (!$db_handle = @mysql_connect(DB_SERVER,DB_USER,DB_PASSWORD))
 		{
@@ -92,8 +94,12 @@
 	{
 		global $db_handle;
 		global $res;
-		global $query_counter;
-		//echo "Queries done: ".$query_counter;
+		global $query_counter; //,$queries;
+		//echo "Queries done: ".$query_counter."<br/>";
+		//foreach ($queries as $q)
+		//{
+		//	echo "EXPLAIN $q<br/>";
+		//}
 		if (isset($res))
 		{
 			@mysql_free_result($res);
@@ -111,8 +117,9 @@
 	{
 		global $db_handle;
 		global $nohtml;
-		global $query_counter;
+		global $query_counter; //,$queries;
 		$query_counter++;
+		//$queries[] = $string;
 		if ($result=mysql_query($string))
 			return $result;
 		elseif ($fehler==1)
@@ -1303,45 +1310,6 @@ die Spielleitung";
 	}
 
 	/**
-	* Alte Nachrichten löschen
-	*/
-	function remove_messages()
-	{
-		global $conf,$db_table;
-		$tstamp=time()-(24*3600*$conf['messages_threshold_days']['v']);
-		$res = 
-		$res = dbquery("
-			SELECT
-				message_id
-			 FROM
-				messages
-			WHERE
-				message_archived='0'
-				AND message_timestamp<'".$tstamp."';		
-		");
-		if (mysql_num_rows($res)>0)
-		{
-			while ($arr=mysql_fetch_row($res))
-			{
-				dbquery("
-					DELETE FROM
-						message_data
-					WHERE
-						id=".$arr[0].";
-				");				
-			}			
-		}
-		dbquery("
-			DELETE FROM
-				messages
-			WHERE
-				message_archived='0'
-				AND message_timestamp<'".$tstamp."';
-		");
-		add_log("4","Unarchivierte Nachrichten die älter als ".date("d.m.Y H:i",$tstamp)." sind wurden gelöscht!",time());
-	}
-
-	/**
 	* Benutzer löschen
 	*/
 	function delete_user($user_id,$self=false,$from="")
@@ -1521,9 +1489,6 @@ die Spielleitung";
 			dbquery("DELETE FROM ".$db_table['market_ressource']." WHERE user_id='".$user_id."' AND ressource_buyable='1';"); 	// Rohstoff Angebot
 			dbquery("DELETE FROM ".$db_table['market_ship']." WHERE user_id='".$user_id."' AND ship_buyable='1';"); 				// Schiff Angebot
 			dbquery("DELETE FROM ".$db_table['market_auction']." WHERE auction_user_id='".$user_id."' AND auction_buyable='1';"); // Auktionen
-
-			// Nachrichten löschen
-			//dbquery("DELETE FROM ".$db_table['messages']." WHERE message_user_to='".$user_id."' OR message_user_from='".$user_id."';");
 
 			//Notitzen löschen
 			dbquery("DELETE FROM ".$db_table['notepad']." WHERE note_user_id='".$user_id."';");
@@ -2144,26 +2109,6 @@ die Spielleitung";
 		else
 			return false;
 	}
-
-	/**
-	* Check for new messages
-	*/
-	function check_new_messages($user_id)
-	{
-		$mres = dbquery("
-			SELECT
-				COUNT(message_id)
-			FROM
-				messages
-			WHERE
-				message_deleted='0'
-				AND message_user_to='".$user_id."'
-				AND message_read='0';
-		");
-		$count=mysql_fetch_row($mres);
-		return $count[0];
-	}
-
 
 	/**
 	* Fremde, nicht feindliche Flotten

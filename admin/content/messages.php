@@ -73,24 +73,8 @@
 		{
 			if ($_POST['message_subject']!="" && $_POST['message_text']!="")
 			{
-				dbquery("INSERT INTO ".$db_table['messages']." (
-					message_user_from,
-					message_user_to,
-					message_timestamp,
-					message_cat_id
-					) VALUES (
-					0,
-					'".$_POST['message_user_to']."',
-					".time().",
-					".SYS_MESSAGE_CAT_ID.");");
-				dbquery("INSERT INTO message_data (
-					id,
-					subject,
-					text
-					) VALUES (
-					".mysql_insert_id().",
-					'".addslashes($_POST['message_subject'])."',
-					'".addslashes($_POST['message_text'])."');");				
+				//SYS_MESSAGE_CAT_ID
+				Message::sendFromUserToUser(0,$_POST['message_user_to'],$_POST['message_subject'],$_POST['message_text']);
 				cms_ok_msg("Nachricht wurde gesendet!");
 				echo "<input type=\"button\" class=\"button\" value=\"Neue Nachricht schreiben\" onclick=\"document.location='?page=$page&sub=$sub'\">";
 			}
@@ -132,7 +116,7 @@
 			$res = dbquery("SELECT user_id FROM users;");
 			while ($arr=mysql_fetch_array($res))
 			{
-				dbquery("INSERT INTO ".$db_table['messages']." (
+				dbquery("INSERT INTO messages (
 				message_user_from,
 				message_user_to,
 				message_timestamp,
@@ -545,7 +529,11 @@
 
 		elseif ($_GET['sub']=="edit")
 		{
-			$res = dbquery("SELECT * FROM ".$db_table['messages']." 
+			$res = dbquery("
+			SELECT 
+				* 
+			FROM 
+				messages
 			INNER JOIN
 				message_data as md ON md.id=message_id AND  message_id=".$_GET['message_id'].";");
 			$arr = mysql_fetch_array($res);
@@ -626,7 +614,7 @@
 			echo "</table>";
 			echo "<br/><input type=\"submit\" class=\"button\" name=\"user_search\" value=\"Suche starten\" /></form>";
 
-			$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM ".$db_table['messages'].";"));
+			$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM messages;"));
 			echo "<br/>Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.";
 		}
 

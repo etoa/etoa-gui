@@ -545,7 +545,7 @@
 	$db_table['market_auction']				= "market_auction";				// Marktplatz-Auktionen
 	$db_table['market_ressource']			= "market_ressource";			// Marktplatz-Ressourcen
 	$db_table['market_ship']				= "market_ship";				// Marktplatz-Schiffe
-	$db_table['messages']					= "messages";					// Nachrichten
+
 	$db_table['message_cat']				= "message_cat";				// Nachrichten-Kategorien
 	$db_table['message_ignore']				= "message_ignore";				// Ignorierliste
 	$db_table['missiles']					= "missiles";					// Raketen

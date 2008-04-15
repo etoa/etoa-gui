@@ -70,7 +70,6 @@
 			{
 				dbquery("INSERT INTO buddylist (bl_allow,bl_user_id,bl_buddy_id) VALUES (1,".$cu->id().",".$_GET['allow'].");");
 			}
-			dbquery("DELETE FROM ".$db_table['messages']." WHERE message_user_to=".$cu->id()." AND message_user_from=0 AND message_subject='Buddylist-Anfrage von ".$arr['user_nick']."';");
 			ok_msg("Erlaubnis erteilt!");
 		}
 		else
@@ -96,7 +95,6 @@
 		{
 			$arr=mysql_fetch_array($res);
 			dbquery("DELETE FROM buddylist WHERE bl_user_id=".$_GET['deny']." AND bl_buddy_id=".$cu->id().";");
-			dbquery("DELETE FROM ".$db_table['messages']." WHERE message_user_to=".$cu->id()." AND message_user_from=0 AND message_subject='Buddylist-Anfrage von ".$arr['user_nick']."';");
 			ok_msg("Die Anfrage wurde gel&ouml;scht!");
 		}
 		else

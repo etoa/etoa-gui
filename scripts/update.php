@@ -46,7 +46,7 @@
 
 		// Alte Nachrichten löschen
 		$tmr = timerStart();
-		remove_messages();
+		Message::removeOld();
 		$log.= "Alte Nachrichten gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
 
 		// Abgelaufene Sperren löschen

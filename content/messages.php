@@ -201,7 +201,7 @@
           c.cat_sender,
           user_nick
 				FROM
-          ".$db_table['messages']." AS m
+          messages AS m
         INNER JOIN
         	".$db_table['message_cat']." AS c
         	ON c.cat_id=m.message_cat_id
@@ -261,7 +261,7 @@
 					
 					if ($marr['message_read']==0)
 					{
-						dbquery("UPDATE ".$db_table['messages']." SET message_read=1 WHERE message_id='".intval($_GET['msg_id'])."';");
+						dbquery("UPDATE messages SET message_read=1 WHERE message_id='".intval($_GET['msg_id'])."';");
 					}
 
 					
@@ -314,7 +314,7 @@
 				{
 					dbquery("
 					UPDATE 
-						".$db_table['messages']." 
+						messages 
 					SET 
 						message_deleted=1 
 					WHERE 
@@ -326,7 +326,7 @@
 				{
 					dbquery("
 					UPDATE 
-						".$db_table['messages']." 
+						messages 
 					SET 
 						message_deleted=1 
 					WHERE 
@@ -361,7 +361,7 @@
 						{
 							dbquery("
 							UPDATE
-								".$db_table['messages']."
+								messages
 							SET
 								message_deleted=1
 							WHERE
@@ -389,7 +389,7 @@
 						$sqladd = " AND message_archived=0";
 					dbquery("
 					UPDATE
-						".$db_table['messages']."
+						messages
 					SET
 						message_deleted=1
 					WHERE
@@ -408,7 +408,7 @@
 
 					dbquery("
 					UPDATE
-						".$db_table['messages']."
+						messages
 					SET
 						message_deleted=1
 					WHERE
@@ -427,7 +427,7 @@
 	            {
 	                dbquery("
 	                UPDATE
-	                    ".$db_table['messages']."
+	                    messages
 	                SET
 	                    message_archived=1
 	                WHERE
@@ -453,7 +453,7 @@
 				SELECT
 					COUNT(message_id)
 				FROM
-					".$db_table['messages']."
+					messages
 				WHERE
           message_user_to='".$cu->id()."'
           AND message_read='1'
@@ -468,7 +468,7 @@
 				SELECT
 					COUNT(message_id)
 				FROM
-					".$db_table['messages']."
+					messages
 				WHERE
           message_user_to='".$cu->id()."'
           AND message_archived='1'

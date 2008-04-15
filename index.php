@@ -322,7 +322,7 @@
 				require_once('inc/adds.inc.php');
 
 				// Count Messages
-				define('NEW_MESSAGES',check_new_messages($cu->id()));
+				define('NEW_MESSAGES',Message::checkNew($cu->id()));
 				
 				// Count users
 				$ucres=dbquery('SELECT COUNT(user_id) FROM users;');

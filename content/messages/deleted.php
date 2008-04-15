@@ -12,7 +12,7 @@
           user_nick,
           user_id
 			FROM
-				".$db_table['messages']." AS m
+				messages AS m
 			INNER JOIN
 				message_data as md
 				ON md.id=message_id						
@@ -50,7 +50,7 @@
 			{
 				dbquery("
 				UPDATE
-					".$db_table['messages']."
+					messages
 				SET
 					message_deleted=0
 				WHERE

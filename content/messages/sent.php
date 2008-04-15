@@ -54,7 +54,7 @@
         message_read,
         user_nick
 			FROM
-				".$db_table['messages']."
+				messages
 			INNER JOIN
 				message_data as md
 				ON md.id=message_id							

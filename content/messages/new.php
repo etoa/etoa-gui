@@ -27,38 +27,8 @@
 						if($check_subject=="")
 						{
 								$s['messages']['sent'][$uid]=$time;
-         		    dbquery("
-         		    INSERT INTO 
-         		    	messages
-         		    (
-         		    	message_user_from,
-         		    	message_user_to,
-         		    	message_timestamp,
-         		    	message_cat_id
-         		    ) 
-         		   	VALUES 
-         		   	(
-         		   		'".$cu->id()."',
-         		   		'".$uid."',
-         		   		".$time.",
-         		   		".USER_MSG_CAT_ID."
-         		   	);");
-								dbquery("
-									INSERT INTO
-										message_data
-									(
-										id,
-										subject,
-										text
-									)
-									VALUES
-									(
-										".mysql_insert_id().",
-	         		   		'".addslashes($_POST['message_subject'])."',
- 	        		   		'".addslashes($_POST['message_text'])."'
-									);
-								");	         		   	
-         		   	
+								Message::sendFromUserToUser($cu->id(),$uid,$_POST['message_subject'],$_POST['message_text']);
+
          		    infobox_start("Nachrichtenversand",1);
          		    echo "Nachricht wurde an <b>".$_POST['message_user_to']."</b> gesendet!";
          		    infobox_end();

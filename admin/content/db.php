@@ -227,7 +227,7 @@
 					$tstamp = time()-$_POST['message_timestamp'];
 					dbquery("
 					DELETE FROM 
-						".$db_table['messages']." 
+						messages
 					WHERE 
 						AND message_timestamp<$tstamp
 					;");
@@ -238,7 +238,7 @@
 					$tstamp = time()-$_POST['message_timestamp'];
 					dbquery("
 					DELETE FROM 
-						".$db_table['messages']." 
+						messages
 					WHERE 
 						message_deleted=1 
 						AND message_timestamp<$tstamp
@@ -335,7 +335,7 @@
 		SELECT 
 			COUNT(message_id) 
 		FROM 
-			".$db_table['messages']."
+			messages
 		;"));
 		echo '<input type="radio" name="msg_type" value="all" /><b>Nachrichten löschen:</b> ';
 		echo "Älter als <select name=\"message_timestamp\">";
@@ -348,7 +348,7 @@
 		SELECT 
 			COUNT(message_id) 
 		FROM 
-			".$db_table['messages']." 
+			messages
 		WHERE 
 			message_deleted=1
 		;"));

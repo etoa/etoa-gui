@@ -263,16 +263,6 @@ function ShowState_sel_item_buddylist() {
 	changeImages('nb_buddylist', 'nb_buddylist_sel_item_buddylist');
 }
 
-function ShowState_Postthere() {
-
-	$mcnt = check_new_messages($_SESSION[ROUNDID]['user']['id']);
-	if ($mcnt>0)
-		changeImages('pb_post', 'designs/Discovery/images/pb_post-sp_pb_post_postther.gif');
-	else
-		changeImages('pb_post', 'designs/Discovery/images/pb_post.gif');
-	return true
-}
-
 function ShowState_attacked() {
 	changeImages('alert', 'alert_attacked');
 }
