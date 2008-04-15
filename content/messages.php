@@ -193,10 +193,10 @@
 			{
 				$mres = dbquery("
 				SELECT
-          m.message_subject,
           m.message_timestamp,
           m.message_user_from,
-          m.message_text,
+          md.subject,
+          md.text,
           m.message_read,
           c.cat_sender,
           user_nick
@@ -205,6 +205,9 @@
         INNER JOIN
         	".$db_table['message_cat']." AS c
         	ON c.cat_id=m.message_cat_id
+       	INNER JOIN
+       		message_data as md
+       		ON message_id=md.id
         LEFT JOIN
         	".$db_table['users']."
         	ON message_user_from=user_id
@@ -220,12 +223,14 @@
 					// Sender
 					$sender = $marr['message_user_from']>0 ? ($marr['user_nick']!='' ? $marr['user_nick'] : '<i>Unbekannt</i>') : '<i>'.$marr['cat_sender'].'</i>';
 					// Title
-					$subj = $marr['message_subject']!="" ? stripslashes($marr['message_subject']) : "<i>Kein Titel</i>";
+					$subj = $marr['subject']!="" ? stripslashes($marr['subject']) : "<i>Kein Titel</i>";
 					
 					echo "<table class=\"tbl\">";
 					echo "<tr><td class=\"tbltitle\" colspan=\"2\">".$subj."</td></tr>";
-					echo "<tr><td class=\"tbltitle\" width=\"50\" valign=\"top\">Datum:</td><td class=\"tbldata\" width=\"250\">".date("d.m.Y H:i",$marr['message_timestamp'])."</td></tr>";
-					echo "<tr><td class=\"tbltitle\" width=\"50\" valign=\"top\">Sender:</td><td class=\"tbldata\" width=\"250\">".$sender."</td></tr>";
+					echo "<tr><td class=\"tbltitle\" width=\"50\" valign=\"top\">Datum:</td>
+					<td class=\"tbldata\" width=\"250\">".df($marr['message_timestamp'])."</td></tr>";
+					echo "<tr><td class=\"tbltitle\" width=\"50\" valign=\"top\">Sender:</td>
+					<td class=\"tbldata\" width=\"250\">".$sender."</td></tr>";
 					echo "<tr><td class=\"tbltitle\" width=\"50\" valign=\"top\">Text:<br/>";
 					if (isset($_GET['src']))
 					{
@@ -240,11 +245,11 @@
 					{
 						if (isset($_GET['src']))
 						{
-							echo '<textarea rows="30" cols="60" readonly="readonly">'.stripslashes($marr['message_text']).'</textarea>';
+							echo '<textarea rows="30" cols="60" readonly="readonly">'.stripslashes($marr['text']).'</textarea>';
 						}	
 						else
 						{
-							echo text2html(stripslashes($marr['message_text']));
+							echo text2html(stripslashes($marr['text']));
 						}
 					}
 					else
@@ -265,7 +270,7 @@
 					
 					echo "<input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=messages&mode=".$mode."'\"/>&nbsp;";					
 					echo "<input type=\"hidden\" name=\"message_id\" value=\"".intval($_GET['msg_id'])."\" />";
-					echo "<input type=\"hidden\" name=\"message_subject\" value=\"".$marr['message_subject']."\" />";
+					echo "<input type=\"hidden\" name=\"message_subject\" value=\"".$marr['subject']."\" />";
 					echo "<input type=\"hidden\" name=\"message_sender\" value=\"".$sender."\" />";
 					if ($cu->msg_copy)
 					{
@@ -531,8 +536,8 @@
 					{
 						$mres = dbquery("
 						SELECT
-							message_subject,
-							message_text,
+							md.subject,
+							md.text,
 							message_id,
 							message_timestamp,
 							message_user_from,
@@ -542,9 +547,12 @@
 							message_forwarded,							
 							user_nick							
 						FROM
-							".$db_table['messages']."
+							messages
+		       	INNER JOIN
+		       		message_data as md
+		       		ON message_id=md.id							
 						LEFT JOIN
-							".$db_table['users']."
+							users
 							ON message_user_from=user_id									
 						WHERE
 							message_user_to='".$cu->id()."'
@@ -558,8 +566,8 @@
 					{
 						$mres = dbquery("
 						SELECT
-							message_subject,
-							message_text,
+							md.subject,
+							md.text,
 							message_id,
 							message_timestamp,
 							message_user_from,
@@ -570,7 +578,10 @@
 							message_forwarded,
 							user_nick							
 						FROM
-							".$db_table['messages']."
+							messages
+		       	INNER JOIN
+		       		message_data as md
+		       		ON message_id=md.id							
 						LEFT JOIN
 							".$db_table['users']."
 							ON message_user_from=user_id														
@@ -608,7 +619,7 @@
 							$sender = $marr['message_user_from']>0 ? ($marr['user_nick']!='' ? $marr['user_nick'] : '<i>Unbekannt</i>') : '<i>'.$arr['cat_sender'].'</i>';
 							
 							// Title
-							$subj = $marr['message_subject']!="" ? stripslashes($marr['message_subject']) : "<i>Kein Titel</i>";
+							$subj = $marr['subject']!="" ? stripslashes($marr['subject']) : "<i>Kein Titel</i>";
 							
 							// Read or not read
 							if ($marr['message_read']==0)
@@ -648,7 +659,7 @@
 								echo "<span style=\"color:red;\" ";
                 if ($msgpreview)
                 {
-                    echo tm($subj,text2html(substr($marr['message_text'], 0, 500)));
+                    echo tm($subj,text2html(substr($marr['text'], 0, 500)));
                 }
                 echo ">".$subj."</span>";
 							}
@@ -672,19 +683,19 @@
               if ($msgpreview)
               {
 								echo "<tr style=\"display:none;\" id=\"msgtext".$marr['message_id']."\"><td colspan=\"5\" class=\"tbldata\">";
-								echo text2html($marr['message_text']);
+								echo text2html($marr['text']);
 								echo "<br/><br/>";
-								$msgadd = "&amp;message_text=".base64_encode($marr['message_text'])."&amp;message_sender=".base64_encode($sender);
-								echo "<input type=\"button\" value=\"Weiterleiten\" onclick=\"document.location='?page=$page&mode=new&amp;message_subject=".base64_encode("Fw: ".$marr['message_subject'])."".$msgadd."'\" name=\"remit\" />&nbsp;";
+								$msgadd = "&amp;message_text=".base64_encode($marr['text'])."&amp;message_sender=".base64_encode($sender);
+								echo "<input type=\"button\" value=\"Weiterleiten\" onclick=\"document.location='?page=$page&mode=new&amp;message_subject=".base64_encode("Fw: ".$marr['subject'])."".$msgadd."'\" name=\"remit\" />&nbsp;";
 								if ($marr['message_user_from']>0)
 								{				
 									if ($cu->msg_copy)
 									{
-										echo "<input type=\"button\" value=\"Antworten\" name=\"answer\" onclick=\"document.location='?page=$page&mode=new&message_user_to=".$marr['message_user_from']."&amp;message_subject=".base64_encode("Re: ".$marr['message_subject'])."".$msgadd."'\" />&nbsp;";
+										echo "<input type=\"button\" value=\"Antworten\" name=\"answer\" onclick=\"document.location='?page=$page&mode=new&message_user_to=".$marr['message_user_from']."&amp;message_subject=".base64_encode("Re: ".$marr['subject'])."".$msgadd."'\" />&nbsp;";
 									}
 									else
 									{								
-										echo "<input type=\"button\" value=\"Antworten\" name=\"answer\" onclick=\"document.location='?page=$page&mode=new&message_user_to=".$marr['message_user_from']."&amp;message_subject=".base64_encode("Re: ".$marr['message_subject'])."'\" />&nbsp;";
+										echo "<input type=\"button\" value=\"Antworten\" name=\"answer\" onclick=\"document.location='?page=$page&mode=new&message_user_to=".$marr['message_user_from']."&amp;message_subject=".base64_encode("Re: ".$marr['subject'])."'\" />&nbsp;";
 									}
 									echo "<input type=\"button\" value=\"Absender ignorieren\" onclick=\"document.location='?page=".$page."&amp;mode=ignore&amp;add=".$marr['message_user_from']."'\" />&nbsp;";
 								}						

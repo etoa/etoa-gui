@@ -29,24 +29,36 @@
 								$s['messages']['sent'][$uid]=$time;
          		    dbquery("
          		    INSERT INTO 
-         		    	".$db_table['messages']." 
+         		    	messages
          		    (
          		    	message_user_from,
          		    	message_user_to,
          		    	message_timestamp,
-         		    	message_cat_id,
-         		    	message_subject,
-         		    	message_text
+         		    	message_cat_id
          		    ) 
          		   	VALUES 
          		   	(
          		   		'".$cu->id()."',
          		   		'".$uid."',
          		   		".$time.",
-         		   		".USER_MSG_CAT_ID.",
-         		   		'".addslashes($_POST['message_subject'])."',
-         		   		'".addslashes($_POST['message_text'])."'
+         		   		".USER_MSG_CAT_ID."
          		   	);");
+								dbquery("
+									INSERT INTO
+										message_data
+									(
+										id,
+										subject,
+										text
+									)
+									VALUES
+									(
+										".mysql_insert_id().",
+	         		   		'".addslashes($_POST['message_subject'])."',
+ 	        		   		'".addslashes($_POST['message_text'])."'
+									);
+								");	         		   	
+         		   	
          		    infobox_start("Nachrichtenversand",1);
          		    echo "Nachricht wurde an <b>".$_POST['message_user_to']."</b> gesendet!";
          		    infobox_end();

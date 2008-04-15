@@ -659,28 +659,38 @@
 	*/
 	function send_msg($user_id,$msg_type,$subject,$text)
 	{
-		global $db_table;
 		dbquery("
 			INSERT INTO
-			".$db_table['messages']."
+				messages
 			(
 				message_user_from,
 				message_user_to,
 				message_timestamp,
-				message_cat_id,
-				message_subject,
-				message_text
+				message_cat_id
 			)
 			VALUES
 			(
 				'0',
 				'".$user_id."',
 				'".time()."',
-				'".$msg_type."',
+				'".$msg_type."'
+			);
+		");
+		dbquery("
+			INSERT INTO
+				message_data
+			(
+				id,
+				subject,
+				text
+			)
+			VALUES
+			(
+				".mysql_insert_id().",
 				'".addslashes($subject)."',
 				'".addslashes($text)."'
 			);
-		");
+		");		
 	}
 
 	/**
@@ -1299,9 +1309,31 @@ die Spielleitung";
 	{
 		global $conf,$db_table;
 		$tstamp=time()-(24*3600*$conf['messages_threshold_days']['v']);
+		$res = 
+		$res = dbquery("
+			SELECT
+				message_id
+			 FROM
+				messages
+			WHERE
+				message_archived='0'
+				AND message_timestamp<'".$tstamp."';		
+		");
+		if (mysql_num_rows($res)>0)
+		{
+			while ($arr=mysql_fetch_row($res))
+			{
+				dbquery("
+					DELETE FROM
+						message_data
+					WHERE
+						id=".$arr[0].";
+				");				
+			}			
+		}
 		dbquery("
 			DELETE FROM
-				".$db_table['messages']."
+				messages
 			WHERE
 				message_archived='0'
 				AND message_timestamp<'".$tstamp."';
@@ -2118,19 +2150,18 @@ die Spielleitung";
 	*/
 	function check_new_messages($user_id)
 	{
-		global $db_table;
 		$mres = dbquery("
 			SELECT
-				message_id
+				COUNT(message_id)
 			FROM
-				".$db_table['messages']."
+				messages
 			WHERE
 				message_deleted='0'
 				AND message_user_to='".$user_id."'
 				AND message_read='0';
 		");
-		$count=mysql_num_rows($mres);
-		return $count;
+		$count=mysql_fetch_row($mres);
+		return $count[0];
 	}
 
 
