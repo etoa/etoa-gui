@@ -4,15 +4,18 @@
 			$mres = dbquery("
 			SELECT
 					m.message_id,
-          m.message_subject,
+          md.subject,
           m.message_timestamp,
           m.message_user_to,
-          m.message_text,
+          md.text,
           m.message_read
           user_nick,
           user_id
 			FROM
 				".$db_table['messages']." AS m
+			INNER JOIN
+				message_data as md
+				ON md.id=message_id						
 			LEFT JOIN
 				".$db_table['users']."
 				ON user_id=message_user_from
@@ -24,13 +27,13 @@
 			{
 				$marr = mysql_fetch_array($mres);
 				$sender = $marr['message_user_from']>0 ? ($marr['user_nick']!='' ? $marr['user_nick'] : '<i>Unbekannt</i>') : '<i>System</i>';
-				$subj = $marr['message_subject']!="" ? stripslashes($marr['message_subject']) : "<i>Kein Titel</i>";
+				$subj = $marr['subject']!="" ? stripslashes($marr['subject']) : "<i>Kein Titel</i>";
 
 				echo "<table class=\"tb\">";
 				echo "<tr><th colspan=\"2\">".$subj."</th></tr>";
 				echo "<tr><th style=\"width:100px;\">Datum:</td><td>".date("d.m.Y H:i",$marr['message_timestamp'])."</td></tr>";
 				echo "<tr><th>Sender:</td><td>".$sender."</td></tr>";
-				echo "<tr><th>Text:</td><td>".text2html($marr['message_text'])."</td></tr>";
+				echo "<tr><th>Text:</td><td>".text2html($marr['text'])."</td></tr>";
 				echo "</table><br/>";
 				echo "<input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=messages&mode=deleted'\" /> &nbsp; ";
 				echo "<input type=\"button\" value=\"Wiederherstellen\" onclick=\"document.location='?page=messages&mode=deleted&restore=".$marr['message_id']."'\" />";
@@ -65,14 +68,17 @@
 			$mres = dbquery("
 			SELECT
 				cat_name,
-        message_subject,
+        md.subject,
         message_id,
         message_timestamp,
         message_user_from,
         user_nick,
         user_id
 			FROM
-				".$db_table['messages']."
+				messages
+			INNER JOIN
+				message_data as md
+				ON md.id=message_id						
 			LEFT JOIN	
 				message_cat
 				ON message_cat_id=cat_id
@@ -90,7 +96,7 @@
 				while ($marr = mysql_fetch_array($mres))
 				{
 					$nick = $marr['message_user_from']>0 ? ($marr['user_nick']!='' ? $marr['user_nick'] : '<i>Unbekannt</i>') : '<i>System</i>';
-					$subj = $marr['message_subject']!="" ? stripslashes($marr['message_subject']) : "<i>Kein Titel</i>";
+					$subj = $marr['subject']!="" ? stripslashes($marr['subject']) : "<i>Kein Titel</i>";
 					
 					echo "<tr><td style=\"width:16px;\">
 					<a href=\"?page=$page&msg_id=".$marr['message_id']."&mode=".$mode."\">

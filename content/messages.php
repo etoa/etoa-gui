@@ -241,7 +241,7 @@
 						echo '[<a href="?page='.$page.'&mode='.$mode.'&amp;msg_id='.$_GET['msg_id'].'&amp;src=1">Quelltext</a>]';
 					}					
 					echo "</td><td class=\"tbldata\" width=\"250\">";
-					if ($marr['message_text']!="")
+					if ($marr['text']!="")
 					{
 						if (isset($_GET['src']))
 						{
@@ -276,7 +276,7 @@
 					{
 						// Muss mit echo 'text'; erfolgen, da sonst der Text beim ersten " - Zeichen abgeschnitten wird!
 						// Allerdings ist so das selbe Problem mit den ' - Zeichen!
-						echo '<input type=\'hidden\' name=\'message_text\' value=\''.stripslashes($marr['message_text']).'\' />';
+						echo '<input type=\'hidden\' name=\'message_text\' value=\''.stripslashes($marr['text']).'\' />';
 					}
 					echo "<input type=\"submit\" value=\"Weiterleiten\" name=\"remit\" />&nbsp;";
 					if ($marr['message_user_from']>0)
@@ -530,7 +530,14 @@
 					cat_order;");
 				$msgcnt=0;
 				$rcnt=0;
+				$msgcats = array();
 				while ($arr = mysql_fetch_array($res))
+				{
+					$msgcats[] = $arr;
+				}				
+				$msgcats[] = array('cat_id'=>0,'cat_name'=>"Ohne Kategorie",'cat_desc'=>"",'cat_sender'=>"System");
+				
+				foreach ($msgcats as $arr)
 				{
 					if($mode=="archiv")
 					{
