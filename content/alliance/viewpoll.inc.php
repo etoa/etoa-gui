@@ -15,7 +15,7 @@
 				vote_number
 			) VALUES (
 			'".$_GET['vote']."',
-			'".$s['user']['id']."',
+			'".$cu->id()."',
 			'".$arr['alliance_id']."',
 			'".$_POST['poll_answer']."'
 			)");
@@ -44,7 +44,7 @@
 				".$db_table['alliance_poll_votes']."
 			WHERE
 				vote_poll_id=".$parr['poll_id']."
-				AND vote_user_id=".$s['user']['id']."
+				AND vote_user_id=".$cu->id()."
 				AND vote_alliance_id=".$arr['alliance_id'].";");
 			if (mysql_num_rows($upres)>0 || $parr['poll_active']==0)
 			{

@@ -11,7 +11,6 @@
 				user_email_fix='".$_POST['user_email_fix']."',
 				user_race_id='".$_POST['user_race_id']."',
 				user_alliance_id='".$_POST['user_alliance_id']."',
-				user_alliance_application='".addslashes($_POST['user_alliance_application'])."',
 				user_css_style='".$_POST['user_css_style']."',
 				user_image_url='".$_POST['user_image_url']."',
 				user_image_ext='".$_POST['user_image_ext']."',
@@ -573,7 +572,8 @@
 										echo ">[".$ak['tag']."]  ".$ak['name']."</option>";
 									}
 									echo "</select> Rang: <span id=\"ars\">-</span></td>
-							</tr>
+							</tr>";
+							/* Deprecated 
 							<tr>
 								<td class=\"tbltitle\">Allianz-Bewerbung:</td>
 								<td class=\"tbldata\">
@@ -583,8 +583,8 @@
 									(Ist dieses Feld nicht leer, ist der Spieler im Bewerbungsmodus und noch kein Mitgleid der Allianz)
 									<br style=\"clear:both;\" />
 								</td>
-							</tr>
-							<tr>
+							</tr>*/
+							echo "<tr>
 			        	<td class=\"tbltitle\">Spionagesonden für Direktscan:</td>
 			          <td class=\"tbldata\">
 			          	<input type=\"text\" name=\"user_spyship_count\" maxlength=\"5\" size=\"5\" value=\"".$arr['user_spyship_count']."\"> &nbsp; ";

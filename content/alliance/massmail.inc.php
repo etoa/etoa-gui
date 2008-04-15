@@ -5,13 +5,21 @@ if (Alliance::checkActionRights('massmail'))
 	// Nachricht senden
 	if ($_POST['submit']!="" && checker_verify())
 	{
-		$ures = dbquery("SELECT user_id FROM users WHERE user_alliance_id=".$s['user']['alliance_id']." AND user_id!=".$s['user']['id']." AND user_alliance_application='';");
+		$ures = dbquery("SELECT 
+			user_id 
+		FROM 
+			users 
+		WHERE 
+			user_alliance_id=".$arr['alliance_id']." 
+			AND user_id!=".$cu->id()." 
+		;");
 		if (mysql_num_rows($ures)>0)
 		{
 			while ($uarr=mysql_fetch_array($ures))
 			{
 				$subject=addslashes($_POST['message_subject'])."";
-				dbquery("INSERT INTO ".$db_table['messages']." (
+				dbquery("INSERT INTO messages 
+				(
 				message_user_from,
 				message_user_to,
 				message_timestamp,
@@ -20,7 +28,7 @@ if (Alliance::checkActionRights('massmail'))
 				message_text,
 				message_massmail
 				) VALUES (
-				'".$s['user']['id']."',
+				'".$cu->id()."',
 				'".$uarr['user_id']."',
 				".time().",
 				".MSG_ALLYMAIL_CAT.",

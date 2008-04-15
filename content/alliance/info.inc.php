@@ -1,6 +1,6 @@
 <?PHP
 
-		if (intval($_GET['id'])>0)
+		if (isset($_GET['id']) && intval($_GET['id'])>0)
 			$id = intval($_GET['id']);
 		else
 			$id = intval($_GET['info_id']);
@@ -9,22 +9,22 @@
 		SELECT
 			*
 		FROM
-			".$db_table['alliances']."
+			alliances
 		WHERE
 			alliance_id='".$id."';");
 		if (mysql_num_rows($res)>0)
 		{
 			$arr = mysql_fetch_array($res);
-			dbquery("UPDATE ".$db_table['alliances']." SET alliance_visits_ext=alliance_visits_ext+1 WHERE alliance_id='".$id."';");
+			dbquery("UPDATE alliances SET alliance_visits_ext=alliance_visits_ext+1 WHERE alliance_id='".$id."';");
 
 			$member_count = mysql_num_rows(dbquery("
 			SELECT 
 				user_id 
 			FROM 
-				".$db_table['users']." 
+				users
 			WHERE 
 				user_alliance_id='".$id."' 
-				AND user_alliance_application='';"));
+				;"));
 			
  			echo "<table width=\"500\" cellspacing=\"".TBL_SPACING."\" cellpadding=\"".TBL_PADDING."\" align=\"center\" class=\"tbl\">";
 			echo "<tr>

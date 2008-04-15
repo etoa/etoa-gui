@@ -45,7 +45,6 @@
             user_profile_text,
             user_profile_img,
             user_alliance_id,
-            user_alliance_application,
             alliance_tag,
             alliance_name,
             user_highest_rank,
@@ -80,7 +79,7 @@
 				echo "<tr><td colspan=\"2\" style=\"text-align:center\">".text2html($arr['user_profile_text'])."</td></tr>";
 			}
 			echo "<tr><th style=\"width:120px;\">Punkte:</th><td class=\"tbldata\">".nf($arr['user_points'])."</td></tr>";
-			if ($arr['user_alliance_id']>0 && $arr['user_alliance_application']=='')
+			if ($arr['user_alliance_id']>0)
 			{
 				echo "<tr><th style=\"width:120px;\">Allianz:</th><td class=\"tbldata\"><a href=\"?page=alliance&amp;info_id=".$arr['user_alliance_id']."\">[".$arr['alliance_tag']."] ".$arr['alliance_name']."</a></td></tr>";
 			}

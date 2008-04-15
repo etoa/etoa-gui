@@ -30,7 +30,6 @@ function showAllianceMembers($alliance_id=0,$field_id)
 			".$db_table['users']."
 		WHERE
 			user_alliance_id='".$alliance_id."' 
-			AND user_alliance_application=''
 		ORDER BY 
 			user_rank_current;");
 		if (mysql_num_rows($res)>0)

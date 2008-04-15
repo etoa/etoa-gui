@@ -74,8 +74,6 @@
 		    $this->hmode_to = $arr['user_hmode_to'];
 		    $this->points = $arr['user_points'];
 		    $this->deleted = $arr['user_deleted'];
-		    // Todo: change this
-		    $this->alliance_application = $arr['user_alliance_application']!="" ? 1 : 0;
 		    $this->registered = $arr['user_registered'];
 		    $this->show_adds = $arr['user_show_adds'];
 		    $this->setup = $arr['user_setup']==1 ? true : false;
@@ -88,6 +86,7 @@
 				$this->race_id=$arr['user_race_id'];
 				$this->points=$arr['user_points'];
 				$this->alliance_id=$arr['user_alliance_id'];
+				$this->alliance_rank_id=$arr['user_alliance_rank_id'];
 				$this->css_style=$arr['user_css_style'];
 				$this->game_width=$arr['user_game_width'];
 				$this->planet_circle_width=$arr['user_planet_circle_width'];

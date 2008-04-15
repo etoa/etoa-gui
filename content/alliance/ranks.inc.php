@@ -10,7 +10,7 @@ if (Alliance::checkActionRights('ranks'))
 						{
 							if($_POST['ranknew']!="")
 							{
-								dbquery("INSERT INTO ".$db_table['alliance_ranks']." (rank_alliance_id) VALUES (".$s['user']['alliance_id'].");");
+								dbquery("INSERT INTO ".$db_table['alliance_ranks']." (rank_alliance_id) VALUES (".$arr['alliance_id'].");");
 							}
 							if(($_POST['ranksubmit']!="" || $_POST['ranknew']!=""))
 							{
@@ -43,19 +43,27 @@ if (Alliance::checkActionRights('ranks'))
 						echo "<form action=\"?page=$page&action=ranks\" method=\"post\">";
 						checker_init();
 
-						$rankres=dbquery("SELECT rank_name,rank_id,rank_level FROM ".$db_table['alliance_ranks']." WHERE rank_alliance_id=".$s['user']['alliance_id'].";");
+						$rankres=dbquery("
+						SELECT 
+							rank_name,
+							rank_id,
+							rank_level 
+						FROM 
+							".$db_table['alliance_ranks']." 
+						WHERE 
+							rank_alliance_id=".$arr['alliance_id'].";");
 						if (mysql_num_rows($rankres)>0)
 						{
 							infobox_start("Verf&uuml;gbare R&auml;nge",1);
 							echo "<tr><td class=\"tbltitle\">Rangname</td><td class=\"tbltitle\">Rechte</td><td class=\"tbltitle\">L&ouml;schen</td></tr>";
-							while ($arr = mysql_fetch_array($rankres))
+							while ($rarr = mysql_fetch_array($rankres))
 							{
-								echo "<tr><td class=\"tbldata\"><input type=\"text\" name=\"rank_name[".$arr['rank_id']."]\" value=\"".$arr['rank_name']."\" />";
+								echo "<tr><td class=\"tbldata\"><input type=\"text\" name=\"rank_name[".$rarr['rank_id']."]\" value=\"".$rarr['rank_name']."\" />";
 								echo "<td class=\"tbldata\">";
 								foreach ($rights as $k=>$v)
 								{
-									echo "<input type=\"checkbox\" name=\"rankright[".$arr['rank_id']."][".$k."]\" value=\"1\" ";
-									$rrres=dbquery("SELECT rr_id FROM ".$db_table['alliance_rankrights']." WHERE rr_right_id=".$k." AND rr_rank_id=".$arr['rank_id'].";");
+									echo "<input type=\"checkbox\" name=\"rankright[".$rarr['rank_id']."][".$k."]\" value=\"1\" ";
+									$rrres=dbquery("SELECT rr_id FROM ".$db_table['alliance_rankrights']." WHERE rr_right_id=".$k." AND rr_rank_id=".$rarr['rank_id'].";");
 									if (mysql_num_rows($rrres)>0)
 										echo " checked=\"checked\" /><span style=\"color:#0f0;\">".$v['desc']."</span><br/>";
 									else
@@ -63,7 +71,7 @@ if (Alliance::checkActionRights('ranks'))
 								}
 								echo "</td>";
 
-								echo "<td class=\"tbldata\"><input type=\"checkbox\" name=\"rank_del[".$arr['rank_id']."]\" value=\"1\" /></td></tr>";
+								echo "<td class=\"tbldata\"><input type=\"checkbox\" name=\"rank_del[".$rarr['rank_id']."]\" value=\"1\" /></td></tr>";
 							}
 							infobox_end(1);
 							echo "<input type=\"submit\" name=\"ranksubmit\" value=\"&Uuml;bernehmen\" />&nbsp;&nbsp;&nbsp;";

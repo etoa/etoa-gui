@@ -118,15 +118,23 @@
 			if ($page!=DEFAULT_PAGE && !isset($_SERVER["HTTP_REFERER"]) && count($_POST)>0)
 			{
 				echo "<h1>Cheat-Schutz</h1> Du hast anscheinend versucht, über ein externes Formular eine Aktion durchzuführen. 
-				Dies ist nicht erlaubt (Cheating-Möglichkeit)! Diese Aktion wird geloggt und einem Admin zur Prüfung vorgelegt.
-				Deine IP-Adresse: ".$_SERVER['REMOTE_ADDR']."<br/><br/>";
+				Dies ist nicht erlaubt!<br/><br/>";
 				
-				$str = "Der Spieler ".$cu->nick." (".$s['user_id'].") hat versucht, über ein externes Formular auf das Spiel zuzugreifen! IP-Adresse: ".$_SERVER['REMOTE_ADDR'].".\n";
-				$str.="\nInhalt des POST-Arrays:\n";
+				$str = "Der Spieler ".$cu->nick." (".$s['user_id'].") hat versucht, über ein externes Formular auf das Spiel zuzugreifen!\n";
+				$str.= "IP-Adresse: ".$_SERVER['REMOTE_ADDR']."\n";
+				$str.= "Host: ".gethostbyaddr($_SERVER['REMOTE_ADDR'])."";
+				$str.="\nSeite: $page\n";
+				$str.="Inhalt des POST-Arrays:\n";
 				foreach ($_POST as $k => $v)
 				{
 					$str.="$k: $v\n";
 				}
+				$str.="\nInhalt des GET-Arrays:\n";
+				foreach ($_GET as $k => $v)
+				{
+					$str.="$k: $v\n";
+				}		
+				$str.="\nBrowser: ".$_SERVER["HTTP_USER_AGENT"];	
 				add_log(3,$str);
 				$s=Null;
 			}

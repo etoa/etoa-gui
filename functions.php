@@ -1473,6 +1473,9 @@ die Spielleitung";
 			//Rest löschen
 			//
 
+			dbquery("DELETE FROM alliance_applications WHERE user_id='".$user_id."';");
+
+
 			//Baulisten löschen
 			dbquery("DELETE FROM ".$db_table['shiplist']." WHERE shiplist_user_id='".$user_id."';");		// Schiffe löschen
 			dbquery("DELETE FROM ".$db_table['deflist']." WHERE deflist_user_id='".$user_id."';");			// Verteidigung löschen
@@ -1592,12 +1595,12 @@ die Spielleitung";
 		dbquery("DELETE FROM allianceboard_cat WHERE cat_alliance_id='".$alliance_id."';");
 		dbquery("DELETE FROM ".$db_table['alliance_polls']." WHERE poll_alliance_id='".$alliance_id."';");
 		dbquery("DELETE FROM ".$db_table['alliance_poll_votes']." WHERE vote_alliance_id='".$alliance_id."';");
+		dbquery("DELETE FROM alliance_applications WHERE alliance_id='".$alliance_id."';");
 		dbquery("
 			UPDATE
 				users
 			SET
-				user_alliance_id='0',
-				user_alliance_application=''
+				user_alliance_id='0'
 			WHERE
 				user_alliance_id='".$alliance_id."';
 		");

@@ -33,14 +33,14 @@
 	echo "<h1>Allianzforum</h1>";
 
 	// Prüfen ob User in Allianz ist
-	if ($s['user']['alliance_id']>0)
+	if ($cu->alliance_id>0)
 	{
 		// Prüfen ob Allianz existiert
-		$res=dbquery("SELECT alliance_id,alliance_founder_id FROM ".$db_table['alliances']." WHERE alliance_id='".$s['user']['alliance_id']."';");
+		$res=dbquery("SELECT alliance_id,alliance_founder_id FROM ".$db_table['alliances']." WHERE alliance_id='".$cu->alliance_id."';");
 		if (mysql_num_rows($res)>0)
 		{
 			$arr=mysql_fetch_array($res);
-			define(BOARD_ALLIANCE_ID,$arr['alliance_id']);
+			define('BOARD_ALLIANCE_ID',$arr['alliance_id']);
 			
 			//Get Variablen überprüfen und IDs zuordnen
 			$legal=TRUE;
@@ -79,8 +79,7 @@
 			FROM
 				".$db_table['users']."
 			WHERE
-				user_id=".$s['user']['id']."
-				AND user_alliance_application=''
+				user_id=".$cu->id()."
 				AND user_alliance_id=".BOARD_ALLIANCE_ID.";");
 			if (mysql_num_rows($ures)>0)
 			{
@@ -128,7 +127,7 @@
 			}							
 			
 			// Gründer prüfen
-			if ($arr['alliance_founder_id']==$s['user']['id'])
+			if ($arr['alliance_founder_id']==$cu->id())
 				$isFounder=true;
 			else
 				$isFounder=false;						
@@ -153,9 +152,7 @@
 			echo "function changeBullet(elem) { document.getElementById('bullet').src='".BOARD_BULLET_DIR."/'+elem.options[elem.selectedIndex].value;}";
 			echo "</script>";		
 		
-			// User-ID zuweisen
-			$s['user_id'] = $s['user']['id'];
-			
+		
 			// Board-Admin prüfen
 			if ($myRight['allianceboard'] || $isFounder)
 				$s['admin']=true;
@@ -282,7 +279,7 @@
 						// Save new post
 						if ($_POST['submit']!="" && $_POST['post_text']!="" && $s['user_id']>0 && $tarr['topic_closed']==0)
 						{
-							dbquery("INSERT INTO ".BOARD_POSTS_TABLE." (post_topic_id,post_user_id,post_user_nick,post_text,post_timestamp) VALUES (".$_GET['topic'].",".$s['user_id'].",'".$s['user']['nick']."','".addslashes($_POST['post_text'])."',".time().");");
+							dbquery("INSERT INTO ".BOARD_POSTS_TABLE." (post_topic_id,post_user_id,post_user_nick,post_text,post_timestamp) VALUES (".$_GET['topic'].",".$s['user_id'].",'".$cu->nick."','".addslashes($_POST['post_text'])."',".time().");");
 							$mid=mysql_insert_id();
 							dbquery("UPDATE ".BOARD_TOPIC_TABLE." SET topic_timestamp=".time()." WHERE topic_id=".$_GET['topic'].";");			
 							echo "Beitrag gespeichert!<br/><br/>";
@@ -497,9 +494,9 @@
 						// Save new topic
 						if ($_POST['submit']!="" && $_POST['topic_subject']!="" && $_POST['post_text']!="" && $s['user_id']>0)
 						{
-							dbquery("INSERT INTO ".BOARD_TOPIC_TABLE." (topic_subject,topic_cat_id,topic_user_id,topic_user_nick,topic_timestamp) VALUES ('".addslashes($_POST['topic_subject'])."',".$_GET['cat'].",".$s['user_id'].",'".$s['user']['nick']."',".time().");");			
+							dbquery("INSERT INTO ".BOARD_TOPIC_TABLE." (topic_subject,topic_cat_id,topic_user_id,topic_user_nick,topic_timestamp) VALUES ('".addslashes($_POST['topic_subject'])."',".$_GET['cat'].",".$s['user_id'].",'".$cu->nick."',".time().");");			
 							$mid=mysql_insert_id();
-							dbquery("INSERT INTO ".BOARD_POSTS_TABLE." (post_topic_id,post_user_id,post_user_nick,post_text,post_timestamp) VALUES (".$mid.",".$s['user_id'].",'".$s['user']['nick']."','".addslashes($_POST['post_text'])."',".time().");");
+							dbquery("INSERT INTO ".BOARD_POSTS_TABLE." (post_topic_id,post_user_id,post_user_nick,post_text,post_timestamp) VALUES (".$mid.",".$s['user_id'].",'".$cu->nick."','".addslashes($_POST['post_text'])."',".time().");");
 							$pmid=mysql_insert_id();
 							echo "<script type=\"text/javascript\">document.location='?page=$page&topic=".$mid."#".$pmid."';</script>";
 						}			
@@ -586,9 +583,9 @@
 						// Save new topic
 						if ($_POST['submit']!="" && $_POST['topic_subject']!="" && $_POST['post_text']!="" && $s['user_id']>0)
 						{
-							dbquery("INSERT INTO ".BOARD_TOPIC_TABLE." (topic_subject,topic_bnd_id,topic_user_id,topic_user_nick,topic_timestamp) VALUES ('".addslashes($_POST['topic_subject'])."',".$_GET['bnd'].",".$s['user_id'].",'".$s['user']['nick']."',".time().");");			
+							dbquery("INSERT INTO ".BOARD_TOPIC_TABLE." (topic_subject,topic_bnd_id,topic_user_id,topic_user_nick,topic_timestamp) VALUES ('".addslashes($_POST['topic_subject'])."',".$_GET['bnd'].",".$s['user_id'].",'".$cu->nick."',".time().");");			
 							$mid=mysql_insert_id();
-							dbquery("INSERT INTO ".BOARD_POSTS_TABLE." (post_topic_id,post_user_id,post_user_nick,post_text,post_timestamp) VALUES (".$mid.",".$s['user_id'].",'".$s['user']['nick']."','".addslashes($_POST['post_text'])."',".time().");");
+							dbquery("INSERT INTO ".BOARD_POSTS_TABLE." (post_topic_id,post_user_id,post_user_nick,post_text,post_timestamp) VALUES (".$mid.",".$s['user_id'].",'".$cu->nick."','".addslashes($_POST['post_text'])."',".time().");");
 							$pmid=mysql_insert_id();
 							echo "<script type=\"text/javascript\">document.location='?page=$page&bnd=".$_GET['bnd']."&topic=".$mid."#".$pmid."';</script>";
 						}			

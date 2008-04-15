@@ -24,8 +24,8 @@ if (Alliance::checkActionRights('alliancenews'))
 			alliance_news_date,
 			alliance_news_alliance_to_id)
 			VALUES
-			(".$s['user']['alliance_id'].",
-			".$s['user']['id'].",
+			(".$cu->alliance_id.",
+			".$cu->id().",
 			'".addslashes($_POST['news_title'])."',
 			'".addslashes($_POST['news_text'])."',
 			".time().",
@@ -34,9 +34,9 @@ if (Alliance::checkActionRights('alliancenews'))
 			$_SESSION['alliance']['news']=null;
 						
 			// Gebe nur Punkte falls Nachricht öffentlich oder an andere Allianz
-			if ($s['user']['alliance_id']!=$_POST['alliance_id'])
+			if ($cu->alliance_id!=$_POST['alliance_id'])
 			{
-				Ranking::addDiplomacyPoints($s['user']['id'],DIPLOMACY_POINTS_PER_NEWS,"Rathausnews verfasst (ID:".mysql_insert_id().", ".addslashes($_POST['news_text']).")");
+				Ranking::addDiplomacyPoints($cu->id(),DIPLOMACY_POINTS_PER_NEWS,"Rathausnews verfasst (ID:".mysql_insert_id().", ".addslashes($_POST['news_text']).")");
 			}
 			
 			// Update rss file
@@ -68,7 +68,7 @@ if (Alliance::checkActionRights('alliancenews'))
 	if ($_GET['message_subject']!="") $_SESSION['alliance']['news']['news_title']=$_GET['message_subject'];
 	infobox_start("Neue Allianzenews",1);
 	$aid=$_SESSION['alliance']['news']['alliance_id'];
-	if ($aid==0) $aid=$s['user']['alliance_id'];
+	if ($aid==0) $aid=$cu->alliance_id;
 	echo "<tr><th class=\"tbldata\" colspan=\"3\">Sende diese Nachricht nur ab, wenn du dir bezüglich der Ratshausreglen sicher bist! Eine Missachtung kann zur Sperrung des Accounts führen!</th></tr>";
 	echo "<tr>
 		<td class=\"tbltitle\" width=\"170\">Betreff:</td>
