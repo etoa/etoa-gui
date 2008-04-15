@@ -77,16 +77,20 @@
 					message_user_from,
 					message_user_to,
 					message_timestamp,
-					message_cat_id,
-					message_subject,
-					message_text
+					message_cat_id
 					) VALUES (
 					0,
 					'".$_POST['message_user_to']."',
 					".time().",
-					".SYS_MESSAGE_CAT_ID.",
+					".SYS_MESSAGE_CAT_ID.");");
+				dbquery("INSERT INTO message_data (
+					id,
+					subject,
+					text
+					) VALUES (
+					".mysql_insert_id().",
 					'".addslashes($_POST['message_subject'])."',
-					'".addslashes($_POST['message_text'])."');");
+					'".addslashes($_POST['message_text'])."');");				
 				cms_ok_msg("Nachricht wurde gesendet!");
 				echo "<input type=\"button\" class=\"button\" value=\"Neue Nachricht schreiben\" onclick=\"document.location='?page=$page&sub=$sub'\">";
 			}
@@ -103,11 +107,10 @@
 			echo "<table width=\"300\" class=\"tbl\">";
 			echo "<tr><td width=\"50\" valign=\"top\">&nbsp;</td><td class=\"tbltitle\">Neue Nachricht</td></tr>";
 			echo "<tr><td class=\"tbltitle\" width=\"50\" valign=\"top\">Empf&auml;nger:</td><td class=\"tbldata\" width=\"250\"><select name=\"message_user_to\">";
-			$res=dbquery("SELECT user_id,user_nick FROM ".$db_table['users']." ORDER BY user_nick;");
+			$res=dbquery("SELECT user_id,user_nick FROM users ORDER BY user_nick;");
 			while ($arr=mysql_fetch_array($res))
 			{
 				echo "<option value=\"".$arr['user_id']."\"";
-				if ($_GET['user_id']==$arr['user_id']) echo " selected=\"selected\"";
 				echo ">".$arr['user_nick']."</option>";
 			}
 			echo "</select></td></tr>";
@@ -402,7 +405,6 @@
 		{
 			if ($_SESSION['admin']['message_query']=="")
 			{
-				$tables = $db_table['messages'].",".$db_table['message_cat'];
 				if ($_POST['message_user_from_id']!="")
 					$sql.= " AND message_user_from=".$_POST['message_user_from_id'];
 				if ($_POST['message_user_from_nick']!="")
@@ -458,7 +460,26 @@
 				else
 					$limit=";";
 
-				$sqlstart = "SELECT message_id,message_user_from,message_user_to,message_subject,message_text,message_timestamp,message_deleted,message_read,message_archived,cat_name FROM $tables WHERE message_cat_id=cat_id ";
+				$sqlstart = "SELECT 
+					message_id,
+					message_user_from,
+					message_user_to,
+					md.subject,
+					md.text,
+					message_timestamp,
+					message_deleted,
+					message_read,
+					message_archived,
+					cat_name 
+					FROM 
+						messages 
+					INNER JOIN
+						 message_data as md 
+						 ON message_id=md.id
+					INNER JOIN
+						message_cat
+						ON message_cat_id=cat_id 
+					WHERE 1 ";
 				$sqlend = " ORDER BY message_timestamp DESC";
 				$sql = $sqlstart.$sql.$sqlend.$limit;
 				$_SESSION['admin']['message_query']=$sql;
@@ -506,7 +527,7 @@
 					echo "<tr>";
 					echo "<td $style>".cut_string($uidf,11)."</a></td>";
 					echo "<td $style>".cut_string($uidt,11)."</a></td>";
-					echo "<td $style ".tm($arr['message_subject'],text2html(substr($arr['message_text'], 0, 500))).">".cut_string($arr['message_subject'],20)."</a></td>";
+					echo "<td $style ".tm($arr['subject'],text2html(substr($arr['text'], 0, 500))).">".cut_string($arr['subject'],20)."</a></td>";
 					echo "<td $style>".date("Y-d-m H:i",$arr['message_timestamp'])."</a></td>";
 					echo "<td $style>".$arr['cat_name']."</td>";
 					echo "<td>".edit_button("?page=$page&sub=edit&message_id=".$arr['message_id'])."</td>";
@@ -524,7 +545,9 @@
 
 		elseif ($_GET['sub']=="edit")
 		{
-			$res = dbquery("SELECT * FROM ".$db_table['messages']." WHERE message_id=".$_GET['message_id'].";");
+			$res = dbquery("SELECT * FROM ".$db_table['messages']." 
+			INNER JOIN
+				message_data as md ON md.id=message_id AND  message_id=".$_GET['message_id'].";");
 			$arr = mysql_fetch_array($res);
 			if ($arr['message_user_from']>0)
 				$uidf = get_user_nick($arr['message_user_from']);
@@ -539,9 +562,10 @@
 			echo "<tr><td class=\"tbltitle\" valign=\"top\">Sender</td><td class=\"tbldata\">$uidf</td></tr>";
 			echo "<tr><td class=\"tbltitle\" valign=\"top\">Empf&auml;nger</td><td class=\"tbldata\">$uidt</td></tr>";
 			echo "<tr><td class=\"tbltitle\" valign=\"top\">Datum</td><td class=\"tbldata\">".date("Y-m-d H:i:s",$arr['message_timestamp'])."</td></tr>";
-			echo "<tr><td class=\"tbltitle\" valign=\"top\">Betreff</td><td class=\"tbldata\">".text2html($arr['message_subject'])."</td></tr>";
-			echo "<tr><td class=\"tbltitle\" valign=\"top\">Text</td><td class=\"tbldata\">".text2html($arr['message_text'])."</td></tr>";
-			echo "<tr><td class=\"tbltitle\" valign=\"top\">Quelltext</td><td class=\"tbldata\"><textarea rows=\"20\" cols=\"80\" readonly=\"readonly\">".stripslashes($arr['message_text'])."</textarea></td></tr>";
+			echo "<tr><td class=\"tbltitle\" valign=\"top\">Betreff</td><td class=\"tbldata\">".text2html($arr['subject'])."</td></tr>";
+			echo "<tr><td class=\"tbltitle\" valign=\"top\">Text</td><td class=\"tbldata\">".text2html($arr['text'])."</td></tr>";
+			echo "<tr><td class=\"tbltitle\" valign=\"top\">Quelltext</td>
+			<td class=\"tbldata\"><textarea rows=\"20\" cols=\"80\" readonly=\"readonly\">".stripslashes($arr['text'])."</textarea></td></tr>";
 			echo "<tr><td class=\"tbltitle\" valign=\"top\">Gelesen?</td><td class=\"tbldata\">";
 			switch ($arr['message_read'])
 			{
