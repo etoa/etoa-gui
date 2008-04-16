@@ -466,7 +466,7 @@
                         //Sitter Nick
                         echo "<tr>
                                 <td class=\"$nick_class\" width=\"35%\">Sitter Nick</td>
-                                <td class=\"tbldata\" width=\"65%\" colspan=\"2\">";
+                                <td class=\"tbldata\" width=\"65%\" colspan=\"2\" ".tm("Sitter Nick","Gib hier den Nick des Users an, welcher dein Account Sitten soll.").">";
 
                                 if($arr['user_sitting_sitter_user_id']!=0)
                                 {
@@ -484,7 +484,7 @@
                         //Sitter Passwort
                         echo "<tr>
                                 <td class=\"$pw_class\" width=\"35%\">Sitter Passwort</td>
-                                <td class=\"tbldata\" width=\"65%\" colspan=\"2\">
+                                <td class=\"tbldata\" width=\"65%\" colspan=\"2\" ".tm("Sitter Passwort","Definiere hier das Passwort, mit dem sich dein Sitter einlogen kann.").">
                                     <input type=\"password\" name=\"user_sitting_sitter_password1\" maxlength=\"20\" size=\"20\" value=\"\">
                                 </td>
                              </tr>";
@@ -492,7 +492,7 @@
                         //Sitter Passwort (wiederholen)
                         echo "<tr>
                                 <td class=\"$pw_class\" width=\"35%\">Sitter Passwort (wiederholen)</td>
-                                <td class=\"tbldata\" width=\"65%\" colspan=\"2\">
+                                <td class=\"tbldata\" width=\"65%\" colspan=\"2\" ".tm("Sitter Passwort (wiederholen)","Zur SIcherheit, musst du hier das Passwort noch einmal hinschreiben.").">
                                     <input type=\"password\" name=\"user_sitting_sitter_password2\" maxlength=\"20\" size=\"20\" value=\"\">
                                 </td>
                              </tr>";
@@ -511,7 +511,7 @@
                             }
 
                             echo "<td class=\"tbldata\" width=\"60%\">Von ".date("d.m.Y H:i",$date_arr['user_sitting_date_from'])." bis ".date("d.m.Y H:i",$date_arr['user_sitting_date_to'])."</td>";
-                            echo "<td class=\"tbldata\" width=\"5%\" style=\"text-align:center;\"><input type=\"checkbox\" name=\"del_sitting_date[".$date_arr['user_sitting_date_id']."]\" value=\"1\" title=\"Datum l&ouml;schen\"/></td></tr>";
+                            echo "<td class=\"tbldata\" width=\"5%\" style=\"text-align:center;\" ".tm("Datum löschen","Setz ein Häckchen, wenn du dieses Datum löschen willst.")."><input type=\"checkbox\" name=\"del_sitting_date[".$date_arr['user_sitting_date_id']."]\" value=\"1\"/></td></tr>";
 
                             $sitting_from+=$date_arr['user_sitting_date_from'];
                             $sitting_to+=$date_arr['user_sitting_date_to'];
@@ -557,7 +557,7 @@
                     {
                         if($user_arr['user_sitting_days']!=0 && $prof_rest_days>0)
                         {
-                            echo "<br><input type=\"submit\" name=\"new_sitting_date\" value=\"Datum hinzuf&uuml;gen\" title=\"F&uuml;ge eine neue Sitterzugriffszeit ein\"/>";
+                            echo "<br><input type=\"submit\" name=\"new_sitting_date\" value=\"Datum hinzuf&uuml;gen\" ".tm("Datum hinzufügen","F&uuml;ge eine neue Sitterzugriffszeit ein.")."/>";
                         }
                         else
                         {
@@ -567,17 +567,24 @@
                     //wenn user,passwort und datum korrekt eingegeben sind, zeige button zum aktivieren
                     if($nick_check==1 && $pw_check==1 && $date_check==1)
                     {
-                        echo "<br><br><input type=\"submit\" name=\"sitting_activade\" style=\"color:#0f0\" value=\"Sittingmodus aktivieren\" title=\"Aktiviert den Sittmodus mit den momentanen Daten\" onclick=\"return confirm('Wenn du diese Info best&auml;tigst wird der Modus mit sofortiger Wirkung aktiviert und kann nicht mehr ge&auml;ndert werden, du solltest dir also sicher sein, dass die Daten richtig eingegeben sind. Es werden die gespeicherten Daten &uuml;bernommen, was bedeutet, dass du zuerst alle Daten eingeben musst und diese mit einem Klick auf &Uuml;bernehmen best&auml;tigen solltest!');\" />
+                        echo "<br><br><input type=\"submit\" name=\"sitting_activade\" style=\"color:#0f0\" value=\"Sittingmodus aktivieren\" ".tm("Sittingmodus aktivieren","Aktiviert den Sittmodus mit den momentanen Daten.")." onclick=\"return confirm('Wenn du diese Info best&auml;tigst wird der Modus mit sofortiger Wirkung aktiviert und kann nicht mehr ge&auml;ndert werden.\nDu solltest dir also sicher sein, dass die Daten richtig eingegeben sind!');\" />
                         	</td>
                         </tr>
                         <tr>
                         	<td class=\"tbldata\" colspan=\"3\">Alle Sittingdaten sind nun korrekt eingestellt. Der Sittingmodus kann nun mit einem Klick auf \"Sittingmodus aktivieren\" gestartet werden oder es können noch Änderungen angebracht werden!";
                     }
+                    else
+                    {
+                     echo "</td>
+                        </tr>
+                        <tr>
+                        	<td class=\"tbldata2\" colspan=\"3\">Es sind nicht alle benötigten Daten angegeben!";
+                    }
 
                     echo "</div></td></tr>";
                     infobox_end(1);
 
-                    echo "<input type=\"submit\" name=\"data_submit_sitting\" value=\"&Uuml;bernehmen\"/>";
+                    echo "<input type=\"submit\" name=\"data_submit_sitting\" value=\"&Uuml;bernehmen\" ".tm("Übernehmen","Speichert die angegebenen Daten. Mit diesem Button wird der Sittingmodus aber NICHT aktiviert!")."/>";
                     echo "</form><br/><br/><br>";
                 }
                 else
