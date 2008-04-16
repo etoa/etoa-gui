@@ -47,15 +47,18 @@
             user_alliance_id,
             alliance_tag,
             alliance_name,
-            user_highest_rank,
-            user_rank_current,
+            user_rank_highest,
+            user_rank,
             user_profile_board_url,
             user_registered,
-            user_points_battle,
-            user_points_trade,
-            user_points_diplomacy
+            battle_rating,
+            trade_rating,
+            diplomacy_rating
 		FROM 
 			".$db_table['users']." 
+		INNER JOIN
+			user_ratings
+			ON user_id=id
 		LEFT JOIN
 			".$db_table['alliances']." 
 			ON user_alliance_id=alliance_id
@@ -87,25 +90,25 @@
 			{
 				echo "<tr><th style=\"width:120px;\">Besucherz&auml;hler:</th><td class=\"tbldata\">".nf($arr['user_visits'])." Besucher</td></tr>";
 			}
-			if ($arr['user_rank_current']>0)
+			if ($arr['user_rank']>0)
 			{
-				echo "<tr><th style=\"width:120px;\">Aktueller Rang:</th><td class=\"tbldata\">".nf($arr['user_rank_current'])."</td></tr>";
+				echo "<tr><th style=\"width:120px;\">Aktueller Rang:</th><td class=\"tbldata\">".nf($arr['user_rank'])."</td></tr>";
 			}					
-			if ($arr['user_highest_rank']>0)
+			if ($arr['user_rank_highest']>0)
 			{
-				echo "<tr><th style=\"width:120px;\">Bester Rang:</th><td class=\"tbldata\">".nf($arr['user_highest_rank'])."</td></tr>";
+				echo "<tr><th style=\"width:120px;\">Bester Rang:</th><td class=\"tbldata\">".nf($arr['user_rank_highest'])."</td></tr>";
 			}
-			if ($arr['user_points_battle']>0)
+			if ($arr['battle_rating']>0)
 			{
-				echo "<tr><th style=\"width:120px;\">Kampfpunkte:</th><td class=\"tbldata\">".nf($arr['user_points_battle'])."</td></tr>";
+				echo "<tr><th style=\"width:120px;\">Kampfpunkte:</th><td class=\"tbldata\">".nf($arr['battle_rating'])."</td></tr>";
 			}			
-			if ($arr['user_points_trade']>0)
+			if ($arr['trade_rating']>0)
 			{
-				echo "<tr><th style=\"width:120px;\">Handelspunkte:</th><td class=\"tbldata\">".nf($arr['user_points_trade'])."</td></tr>";
+				echo "<tr><th style=\"width:120px;\">Handelspunkte:</th><td class=\"tbldata\">".nf($arr['trade_rating'])."</td></tr>";
 			}			
-			if ($arr['user_points_diplomacy']>0)
+			if ($arr['diplomacy_rating']>0)
 			{
-				echo "<tr><th style=\"width:120px;\">Diplomatiepunkte:</th><td class=\"tbldata\">".nf($arr['user_points_diplomacy'])."</td></tr>";
+				echo "<tr><th style=\"width:120px;\">Diplomatiepunkte:</th><td class=\"tbldata\">".nf($arr['diplomacy_rating'])."</td></tr>";
 			}			
 
 			if ($arr['user_profile_board_url']!="")

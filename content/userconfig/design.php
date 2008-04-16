@@ -104,7 +104,7 @@
                     foreach ($designs as $k => $v)
                     {
                         echo "<option value=\"$k\"";
-                        if (CSS_STYLE==$k) echo " selected=\"selected\"";
+                        if (CSS_STYLE==DESIGN_DIRECTORY."/".$k) echo " selected=\"selected\"";
                         echo ">".$v['name']."</option>";
                     }
                     echo "</select>
