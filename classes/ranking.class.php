@@ -117,7 +117,7 @@
 			ORDER BY
 				race_name;
 			");
-			while ($rarr = mysql_fetch_array($rres))
+			while ($rarr = mysql_fetch_assoc($rres))
 			{
 				$res = dbquery("
 				SELECT
@@ -174,7 +174,7 @@
 			ORDER BY
 				alliance_tag;
 			");
-			while ($arr = mysql_fetch_array($res))
+			while ($arr = mysql_fetch_assoc($res))
 			{				
 				$cres = dbquery("SELECT COUNT(user_alliance_id) FROM users WHERE user_alliance_id=".$arr['alliance_id']."");
 				$carr = mysql_fetch_row($cres);					
@@ -228,87 +228,148 @@
 		*/
 		static function calc($manual=false)
 		{
-			global $db_table, $conf;
+			$cfg = Config::getInstance();
 	
 			$allpoints=0;
-			$res_amount_per_point = $conf['points_update']['p1'];
+			$res_amount_per_point = $cfg->param1('points_update');
 	
 			// Schiffe laden
 			$res = dbquery("
 				SELECT
-					ship_battlepoints,
-					ship_id
+					ship_id,
+					ship_battlepoints					
 				FROM
-					".$db_table['ships'].";
+					ships;
 			");
-	    	$ship=array();
-			while ($arr = mysql_fetch_array($res))
+	    $ship=array();
+			while ($arr = mysql_fetch_row($res))
 			{
-				$ship[$arr['ship_id']]=$arr['ship_battlepoints'];
+				$ship[$arr[0]]=$arr[1];
 			}
 	
 			// Verteidigung laden
 			$res = dbquery("
 				SELECT
-					def_battlepoints,
-					def_id
+					def_id,
+					def_battlepoints					
 				FROM
-					".$db_table['defense'].";
-			");
-	    	$def=array();
-			while ($arr = mysql_fetch_array($res))
+					defense
+			;");
+	    $def=array();
+			while ($arr = mysql_fetch_row($res))
 			{
-				$def[$arr['def_id']]=$arr['def_battlepoints'];
+				$def[$arr[0]]=$arr[1];
 			}
 	
 			// Gebäude laden
 			$res = dbquery("
 				SELECT
-					bp_level,
 					bp_building_id,
+					bp_level,					
 					bp_points
 				FROM
-					".$db_table['building_points'].";
+					building_points;
 			");
-	    	$building=array();
-			while ($arr = mysql_fetch_array($res))
+	    $building=array();
+			while ($arr = mysql_fetch_row($res))
 			{
-				$building[$arr['bp_building_id']][$arr['bp_level']]=$arr['bp_points'];
+				$building[$arr[0]][$arr[1]]=$arr[2];
 			}
 	
 			// Technologien laden
 			$res = dbquery("
 				SELECT
-					bp_level,
 					bp_tech_id,
+					bp_level,
 					bp_points
 				FROM
-					".$db_table['tech_points'].";
+					tech_points;
 			");
-	    	$tech=array();
-			while ($arr = mysql_fetch_array($res))
+	    $tech=array();
+			while ($arr = mysql_fetch_row($res))
 			{
-				$tech[$arr['bp_tech_id']][$arr['bp_level']]=$arr['bp_points'];
+				$tech[$arr[0]][$arr[1]]=$arr[2];
 			}
 	
 
-			// Statistiktabelle löschen
+
+			// Rassen laden
+			$rres = dbquery("
+			SELECT
+				race_id,
+				race_name
+			FROM
+				races
+			");
+			$race=array();
+			while($rarr=mysql_fetch_assoc($rres))
+			{
+				$race[$rarr['race_id']]=$rarr['race_name'];
+			}
+			
+			// Allianzen laden
+			$rres = dbquery("
+			SELECT
+				alliance_id,
+				alliance_tag
+			FROM
+				alliances
+			");
+			$alliance=array();
+			while($rarr=mysql_fetch_assoc($rres))
+			{
+				$alliance[$rarr['alliance_id']]=$rarr['alliance_tag'];
+			}			
+	
+			// Load 'old' ranks
+			$res = dbquery("
+				SELECT
+					id,
+					rank,
+					rank_ships,
+					rank_tech,
+					rank_buildings,
+					rank_exp
+				FROM
+					user_stats;
+			");
+			$oldranks = array();		
+			if (mysql_num_rows($res)>0)
+			{
+				while ($arr=mysql_fetch_row($res))
+				{
+					$oldranks[$arr[0]][0]=$arr[1];
+					$oldranks[$arr[0]][1]=$arr[2];
+					$oldranks[$arr[0]][2]=$arr[3];
+					$oldranks[$arr[0]][3]=$arr[4];
+					$oldranks[$arr[0]][4]=$arr[5];
+				}
+			}
+			
+			// Statistiktabelle leeren
 			dbquery("
 				TRUNCATE TABLE
 					user_stats;
-			");	
+			");		
 	
 			// User-ID's laden
 			$ures =	dbquery("
 				SELECT
 					user_id,
-					user_nick
+					user_nick,
+					user_race_id,
+					user_alliance_id,
+					user_rank_highest
 				FROM
 					users;
 			");
-			while ($uarr=mysql_fetch_array($ures))
+			$user_stats_query = "";
+			$user_points_query = "";
+			$user_rank_highest=array();
+			while ($uarr=mysql_fetch_assoc($ures))
 			{
 				$user_id = $uarr['user_id'];
+				$user_rank_highest[$user_id] = $uarr['user_rank_highest']>0 ? $uarr['user_rank_highest'] : 9999;
 				$points = 0;
 				$points_ships = 0;
 				$points_tech = 0;
@@ -322,11 +383,11 @@
 						shiplist_ship_id,
 						shiplist_count
 					FROM
-						".$db_table['shiplist']."
+						shiplist
 					WHERE
 						shiplist_user_id='".$user_id."';
 				");
-				while ($arr = mysql_fetch_array($res))
+				while ($arr = mysql_fetch_assoc($res))
 				{
 					$p = round($arr['shiplist_count']*$ship[$arr['shiplist_ship_id']]);
 					$points+=$p;
@@ -335,19 +396,21 @@
 	
 				//
 				// Punkte für Schiffe (in Flotten)
-				//
+				// TODO: Check this query (EXPLAIN)
 				$res = dbquery("
 					SELECT
 						fs.fs_ship_id,
 						fs.fs_ship_cnt
 					FROM
-						".$db_table['fleet']." AS f
-						INNER JOIN ".$db_table['fleet_ships']." AS fs
+						fleet AS f
+					INNER JOIN 
+						fleet_ships AS fs
 						ON f.fleet_id = fs.fs_fleet_id
+						AND fs.fs_ship_faked='0'
 						AND f.fleet_user_id='".$user_id."'
-						AND fs.fs_ship_faked='0';
+						;
 				");
-				while ($arr = mysql_fetch_array($res))
+				while ($arr = mysql_fetch_assoc($res))
 				{
 					$p = round($arr['fs_ship_cnt']*$ship[$arr['fs_ship_id']]);
 					$points+=$p;
@@ -362,11 +425,11 @@
 						deflist_count,
 						deflist_def_id
 					FROM
-						".$db_table['deflist']."
+						deflist
 					WHERE
 						deflist_user_id='".$user_id."';
 				");
-				while ($arr = mysql_fetch_array($res))
+				while ($arr = mysql_fetch_assoc($res))
 				{
 					$p = round($arr['deflist_count']*$def[$arr['deflist_def_id']]);
 					$points+=$p;
@@ -381,11 +444,11 @@
 						buildlist_current_level,
 						buildlist_building_id
 					FROM
-						".$db_table['buildlist']."
+						buildlist
 					WHERE
 						buildlist_user_id='".$user_id."';
 				");
-				while ($arr = mysql_fetch_array($res))
+				while ($arr = mysql_fetch_assoc($res))
 				{
 					$p = round($building[$arr['buildlist_building_id']][$arr['buildlist_current_level']]);
 					$points+=$p;
@@ -400,11 +463,11 @@
 						techlist_current_level,
 						techlist_tech_id
 					FROM
-						".$db_table['techlist']."
+						techlist
 					WHERE
 						techlist_user_id='".$user_id."';
 				");
-				while ($arr = mysql_fetch_array($res))
+				while ($arr = mysql_fetch_assoc($res))
 				{
 					$p = round($tech[$arr['techlist_tech_id']][$arr['techlist_current_level']]);
 					$points+=$p;
@@ -426,71 +489,72 @@
 				$arr = mysql_fetch_row($res);
 				$points_exp = max(0,$arr[0]);
 
-				/*
-				// Punkte speichern
-				dbquery("
-					UPDATE
-						users
-					SET
-						user_points='".$points."',
-						user_points_ships='".$points_ships."',
-						user_points_tech='".$points_tech."',
-						user_points_buildings='".$points_building."'
-					WHERE
-						user_id='".$user_id."';
-				");
-				*/
-	
-				// Save points in memory cached table
-				dbquery("
-					INSERT INTO
-						user_stats
-					(
-						user_id,
-						user_points,
-						user_points_ships,
-						user_points_tech,
-						user_points_buildings,
-						user_points_exp,
-						user_nick
-					)
-					VALUES
-					(
+				// Save part of insert query
+				$user_stats_query .= ",(
 						".$user_id.",
 						".$points.",
 						".$points_ships.",
 						".$points_tech.",
 						".$points_building.",
 						".$points_exp.",
-						'".$uarr['user_nick']."'
-					);
-				");	
-	
-				dbquery("
-					INSERT INTO
-					user_points
-					(
-						point_user_id,
-						point_timestamp,
-						point_points,
-						point_ship_points,
-						point_tech_points,
-						point_building_points
-					)
-					VALUES
-					(
+						'".$uarr['user_nick']."',
+						'".($uarr['user_alliance_id']>0 ? $alliance[$uarr['user_alliance_id']] : '')."',
+						'".$uarr['user_alliance_id']."',
+						'".($uarr['user_race_id']>0 ? $race[$uarr['user_race_id']] : '')."',
+						2,
+						2
+					)";
+				$user_points_query.=",(
 						'".$user_id."',
 						'".time()."',
 						'".$points."',
 						'".$points_ships."',
 						'".$points_tech."',
 						'".$points_building."'
-					);
-				");
-				
+					)";				
 				
 				$allpoints+=$points;
 			}
+			unset($user_id);
+	
+			// Save points in memory cached table
+			dbquery("
+				INSERT INTO
+					user_stats
+				(
+					id,
+					points,
+					points_ships,
+					points_tech,
+					points_buildings,
+					points_exp,
+					nick,
+					alliance_tag,
+					alliance_id,
+					race_name,
+					sx,
+					sy
+				)
+				VALUES
+					".substr($user_stats_query,1)."
+				;
+			");		
+			
+			// Save points to user points table
+			dbquery("
+				INSERT INTO
+				user_points
+				(
+					point_user_id,
+					point_timestamp,
+					point_points,
+					point_ship_points,
+					point_tech_points,
+					point_building_points
+				)
+				VALUES
+					".substr($user_points_query,1)."
+			");
 	
 			//Array Löschen (Speicher freigeben)
 			unset($ship);
@@ -502,187 +566,193 @@
 			unset($points_ships);
 			unset($points_tech);
 			unset($points_building);
-	
-			/*
-			// Ränge berechnen
-			dbquery("
-				UPDATE
-					users
-				SET
-					user_rank_last=user_rank_current;
-			");
-			*/
-	
-			
+			unset($user_stats_query);
+			unset($user_points_query);
+		
+			// Ranking (Total Points)
 			$res = dbquery("
 			SELECT
-				user_id
+				id,
+				points
 			FROM
 				user_stats
 			ORDER BY
-				user_points DESC;			
+				points DESC;			
 			");
 			$cnt=1;
 			if (mysql_num_rows($res)>0)
 			{
 				while($arr=mysql_fetch_row($res))
 				{
+					$rs = 0;
+					if (isset($oldranks[$arr[0]]))
+					{
+						if ($cnt < $oldranks[$arr[0]][0])
+							$rs = 1;
+						elseif ($cnt > $oldranks[$arr[0]][0])
+							$rs = 2;
+					}
 					dbquery("
 					UPDATE
 						user_stats
 					SET
-						user_rank_current=".$cnt."
+						rank=".$cnt.",
+						rankshift=".$rs."
 					WHERE
-						user_id=".$arr[0].";");
+						id=".$arr[0].";");
+					dbquery("
+					UPDATE
+						users
+					SET	
+						user_rank=".$cnt.",
+						user_points=".$arr[1].",
+						user_rank_highest=".min($cnt,$user_rank_highest[$arr[0]])."
+					WHERE
+						user_id=".$arr[0]."
+					");
+						
 					$cnt++;
 				}				
 			}
-				
-				
-			/*
-			// Heimatplaneten laden
-			$mp=array();
-			$res=dbquery("
+			unset($user_rank_highest);
+			
+			// Ranking (Ships)
+			$res = dbquery("
 			SELECT
-				cell_sx,
-				cell_sy,
-				planet_user_id
+				id
 			FROM
-				space_cells
-			INNER JOIN
-				planets
-				ON planet_solsys_id=cell_id
-				AND planet_user_main=1	
-			");		
-			if (mysql_num_rows($res)>0)
-			{
-				while($arr=mysql_fetch_array($res))
-				{
-					$mp[$arr['planet_user_id']]=array();
-					$mp[$arr['planet_user_id']]['sx']=$arr['cell_sx'];
-					$mp[$arr['planet_user_id']]['sy']=$arr['cell_sy'];
-				}
-			}
-			mysql_free_result($res);
-			*/
-
-			/*
-			$res=dbquery("
-				SELECT
-					user_id,
-					user_rank_current,
-					user_highest_rank,
-					
-					user_nick,
-					user_points,
-					user_points_ships,
-					user_points_tech,
-					user_points_buildings,
-					user_rank_last,
-					alliance_tag,
-					alliance_id,
-					race_name,
-					user_last_online,
-					user_blocked_from,
-					user_blocked_to,
-					user_hmode_from,
-					user_hmode_to				
-				FROM
-					users
-				LEFT JOIN
-					alliances
-					ON user_alliance_id=alliance_id
-					AND user_alliance_application=''
-				INNER JOIN
-					races
-					ON user_race_id=race_id			
-				WHERE
-					user_show_stats='1'
-				ORDER BY
-					user_points DESC,
-					user_registered DESC,
-					user_nick ASC;
+				user_stats
+			ORDER BY
+				points_ships DESC;			
 			");
+			$cnt=1;
 			if (mysql_num_rows($res)>0)
 			{
-				$rank=1;
-				while ($arr=mysql_fetch_array($res))
+				while($arr=mysql_fetch_row($res))
 				{
-					if ($arr['user_highest_rank']>0)
-						$hr = min($arr['user_highest_rank'],$rank);
-					else
-						$hr = $arr['user_rank_current'];
+					$rs = 0;
+					if (isset($oldranks[$arr[0]]))
+					{
+						if ($cnt < $oldranks[$arr[0]][1])
+							$rs = 1;
+						elseif ($cnt > $oldranks[$arr[0]][1])
+							$rs = 2;
+					}
 					dbquery("
-						UPDATE
-							users
-						SET
-							user_rank_current='".$rank."',
-							user_highest_rank='".$hr."'
-						WHERE
-							user_id='".$arr['user_id']."';
-					");
-					
-					$blocked=0;
-					if ($arr['user_blocked_from']>0 && $arr['user_blocked_from']<time() && $arr['user_blocked_to']>time())
-					{
-						$blocked=1;
-					}
-					$hmod=0;
-					if ($arr['user_hmode_from']>0 && $arr['user_hmode_from']< time())				
-					{
-						$hmod=1;
-					}
-					$inactive=0;
-					if ($arr['user_last_online']>0 && $arr['user_last_online']< time()-($conf['user_inactive_days']['v']*3600*24))
-					{
-						$inactive=1;
-					}
-					
-					dbquery("
-					INSERT INTO
+					UPDATE
 						user_stats
-					(
-						user_id,
-						user_points,
-						user_points_ships,
-						user_points_tech,
-						user_points_buildings,
-						user_rank_current,
-						user_rank_last,
-						user_nick,
-						alliance_tag,
-						alliance_id,
-						race_name,
-						cell_sx,
-						cell_sy,
-						user_inactive,
-						user_hmod,
-						user_blocked
-					)
-					VALUES
-					(
-						".$arr['user_id'].",
-						".$arr['user_points'].",
-						".$arr['user_points_ships'].",
-						".$arr['user_points_tech'].",
-						".$arr['user_points_buildings'].",
-						".$rank.",
-						".$arr['user_rank_last'].",
-						'".$arr['user_nick']."',
-						'".$arr['alliance_tag']."',
-						'".$arr['alliance_id']."',
-						'".$arr['race_name']."',
-						'".$mp[$arr['user_id']]['sx']."',
-						'".$mp[$arr['user_id']]['sy']."',
-						'".$inactive."',
-						'".$hmod."',
-						'".$blocked."'						
-					);");
-					
-					$rank++;
-				}
-			}
-			*/
+					SET
+						rank_ships=".$cnt.",
+						rankshift_ships=".$rs."
+					WHERE
+						id=".$arr[0].";");
+					$cnt++;
+				}				
+			}							
+
+			// Ranking (Tech)
+			$res = dbquery("
+			SELECT
+				id
+			FROM
+				user_stats
+			ORDER BY
+				points_tech DESC;			
+			");
+			$cnt=1;
+			if (mysql_num_rows($res)>0)
+			{
+				while($arr=mysql_fetch_row($res))
+				{
+					$rs = 0;
+					if (isset($oldranks[$arr[0]]))
+					{
+						if ($cnt < $oldranks[$arr[0]][2])
+							$rs = 1;
+						elseif ($cnt > $oldranks[$arr[0]][2])
+							$rs = 2;
+					}
+					dbquery("
+					UPDATE
+						user_stats
+					SET
+						rank_tech=".$cnt.",
+						rankshift_tech=".$rs."
+					WHERE
+						id=".$arr[0].";");
+					$cnt++;
+				}				
+			}				
+
+			// Ranking (Buildings)
+			$res = dbquery("
+			SELECT
+				id
+			FROM
+				user_stats
+			ORDER BY
+				points_buildings DESC;			
+			");
+			$cnt=1;
+			if (mysql_num_rows($res)>0)
+			{
+				while($arr=mysql_fetch_row($res))
+				{
+					$rs = 0;
+					if (isset($oldranks[$arr[0]]))
+					{
+						if ($cnt < $oldranks[$arr[0]][3])
+							$rs = 1;
+						elseif ($cnt > $oldranks[$arr[0]][3])
+							$rs = 2;
+					}
+					dbquery("
+					UPDATE
+						user_stats
+					SET
+						rank_buildings=".$cnt.",
+						rankshift_buildings=".$rs."
+					WHERE
+						id=".$arr[0].";");
+					$cnt++;
+				}				
+			}										
+	
+			// Ranking (Exp)
+			$res = dbquery("
+			SELECT
+				id
+			FROM
+				user_stats
+			ORDER BY
+				points_exp DESC;			
+			");
+			$cnt=1;
+			if (mysql_num_rows($res)>0)
+			{
+				while($arr=mysql_fetch_row($res))
+				{
+					$rs = 0;
+					if (isset($oldranks[$arr[0]]))
+					{
+						if ($cnt < $oldranks[$arr[0]][4])
+							$rs = 1;
+						elseif ($cnt > $oldranks[$arr[0]][4])
+							$rs = 2;
+					}
+					dbquery("
+					UPDATE
+						user_stats
+					SET
+						rank_exp=".$cnt.",
+						rankshift_exp=".$rs."
+					WHERE
+						id=".$arr[0].";");
+					$cnt++;
+				}				
+			}				
+			unset($oldranks);
+			
 			
 			
 			// Allianz Statistik generieren
@@ -697,10 +767,10 @@
 				a.alliance_id,
 				a.alliance_rank_current,
 				COUNT(*) AS cnt, 
-				SUM(u.user_points) AS upoints, 
-				AVG(u.user_points) AS uavg 
+				SUM(u.points) AS upoints, 
+				AVG(u.points) AS uavg 
 			FROM 
-				".$db_table['alliances']." as a
+				alliances as a
 			INNER JOIN
 				user_stats as u
 			ON
@@ -708,17 +778,18 @@
 			GROUP BY 
 				a.alliance_id
 			ORDER BY
-				SUM(u.user_points) DESC
+				SUM(u.points) DESC
 			;");
 			if (mysql_num_rows($res)>0)
 			{
 				$rank=1;
-				while ($arr=mysql_fetch_array($res))
+				while ($arr=mysql_fetch_assoc($res))
 				{
 					$apoints=0;
-					if ($arr['upoints']>0 && $conf['points_update']['p2']>0)
+					if ($arr['upoints']>0 && $cfg->param2('points_update')>0)
 					{
-						$apoints = floor($arr['upoints'] / $conf['points_update']['p2']);
+						$apoints = floor($arr['upoints'] / $cfg->param2('points_update')
+);
 					}
 					dbquery("
 					INSERT INTO
@@ -777,17 +848,11 @@
 
 				}
 			}		
+			
 	
 	
 			// Zeit in Config speichern
-			dbquery ("
-				UPDATE
-					".$db_table['config']."
-				SET
-					config_value='".time()."'
-				WHERE
-					config_name='statsupdate';
-			");
+			$cfg->set('statsupdate',time());
 			$num = mysql_num_rows($ures);
 	
 	 		// Log-Eintrag
@@ -800,7 +865,7 @@
 	
 			//Arrays löschen (Speicher freigeben)
 			mysql_free_result($res);
-	        unset($arr);
+	    unset($arr);
 		}		
 
 		/**

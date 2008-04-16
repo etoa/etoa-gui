@@ -21,10 +21,12 @@
 		echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=buildings\" class=\"tabEnabled\">Geb&auml;ude</a></td>";
 	else
 		echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=buildings\" class=\"tabDefault\">Geb&auml;ude</a></td>";
-	if ($mode=="alliances")
-		echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=alliances\" class=\"tabEnabled\">Allianzen</a></td>";
+	if ($mode=="exp")
+		echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=exp\" class=\"tabEnabled\">Exp</a></td>";
 	else
-		echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=alliances\" class=\"tabDefault\">Allianzen</a></td>";
+		echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=exp\" class=\"tabDefault\">Exp</a></td>";
+
+
 	if ($mode=="battle")
 		echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=battle\" class=\"tabEnabled\">Kampf</a></td>";
 	else
@@ -37,6 +39,11 @@
 		echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=diplomacy\" class=\"tabEnabled\">Diplomatie</a></td>";
 	else
 		echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=diplomacy\" class=\"tabDefault\">Diplomatie</a></td>";
+	if ($mode=="alliances")
+		echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=alliances\" class=\"tabEnabled\">Allianzen</a></td>";
+	else
+		echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=alliances\" class=\"tabDefault\">Allianzen</a></td>";
+
 	if (ENABLE_USERTITLES==1)
 	{
 		if ($mode=="titles")
@@ -289,7 +296,7 @@
 	}		
 
 	//
-	// Users
+	// Calculated points
 	//
 	else
 	{
@@ -304,64 +311,99 @@
 		}
 		echo "</td></tr></table></form><br/>";
 
+		$limit=0;
+
 		// Punktetabelle
 		if ($mode=="ships")
-			$order="user_points_ships";
+		{
+			$field="points_ships";
+			$order="rank_ships";
+			$title="Schiffspunkte";
+			$shift="rankshift_ships";
+		}
 		elseif ($mode=="tech")
-			$order="user_points_tech";
+		{
+			$field="points_tech";
+			$order="rank_tech";
+			$title="Technologiepunkte";
+			$shift="rankshift_tech";
+		}
 		elseif ($mode=="buildings")
-			$order="user_points_buildings";
+		{
+			$field="points_buildings";
+			$order="rank_buildings";
+			$title="Gebäudepunkte";
+			$shift="rankshift_buildings";
+		}
+		elseif ($mode=="exp")
+		{
+			$field="points_exp";
+			$order="rank_exp";
+			$title="Erfahrungspunkte";
+			$shift="rankshift_exp";
+		}
 		else
-			$order="user_points";
-			
+		{
+			$field="points";
+			$order="rank";
+			$title="Gesamtpunkte";
+			$shift="rankshift";
+		}
 		if (isset($_POST['search']) && $_POST['search']!="" && $_POST['user_nick']!="")
 		{
 			$res=dbquery("SELECT 
-				user_rank_current,
-				user_rank_last,
-				user_nick,
-				user_blocked,
-				user_hmod,
-				user_inactive,	
-				$order AS points,
+				id,
+				nick,
+				blocked,
+				hmod,
+				active,	
+				".$order." AS rank,
+				".$field." AS points,
+				".$shift." AS shift,
 				race_name,
-				alliance_tag					
+				alliance_tag,
+				sx,
+				sy
 			FROM 
 				user_stats
 			WHERE 
-				user_nick LIKE '%".$_POST['user_nick']."%' 
-			ORDER BY $order DESC,
-			user_nick ASC;");
+				nick LIKE '".$_POST['user_nick']."%' 
+			ORDER BY 
+				$order ASC,
+				nick ASC;");
 		}
 		else
 		{
 			$res=dbquery("SELECT 
-				user_id,
-				user_rank_current,
-				user_rank_last,
-				user_nick,
-				$order AS points,
+				id,
+				nick,
+				blocked,
+				hmod,
+				active,
+				".$order." AS rank,
+				".$field." AS points,
+				".$shift." AS shift,
 				race_name,
 				alliance_tag,
-				user_blocked,
-				user_hmod,
-				user_inactive				
+				sx,
+				sy
 			FROM 
 				user_stats
 			ORDER BY 
-				$order DESC,
-				user_rank_current,
-				user_nick ASC 
+				$order ASC,
+				nick ASC 
 			;");			
 		}
 
 		echo "<table class=\"tbl\">";
 		if (mysql_num_rows($res)>0)
 		{
+			echo "<tr><th class=\"tbltitle\" colspan=\"7\" style=\"text-align:center;\">".$title."</th></tr>";
 			echo "<tr>
 				<th class=\"tbltitle\" style=\"width:50px;\">#</th>
 				<th class=\"tbltitle\" style=\"\">Nick</th>
 				<th class=\"tbltitle\" style=\"\">Rasse</th>
+				<th class=\"tbltitle\" style=\"\">Sektor</th>
 				<th class=\"tbltitle\" style=\"\">Allianz</th>
 				<th class=\"tbltitle\" style=\"\">Punkte</th>
 				<th class=\"tbltitle\" style=\"width:60px;\">Details</th>
@@ -369,15 +411,15 @@
 			$cnt=1+$limit;
 			while ($arr=mysql_fetch_array($res))
 			{
-				if ($arr['user_blocked']==1)
+				if ($arr['blocked']==1)
 				{
 					$addstyle=" style=\"color:#ffaaaa;\"";
 				}
-				elseif ($arr['user_hmod']==1)
+				elseif ($arr['hmod']==1)
 				{
 					$addstyle=" style=\"color:#aaffaa;\"";
 				}
-				elseif ($arr['user_inactive']==1)
+				elseif ($arr['active']==1)
 				{
 					$addstyle=" style=\"color:#aaaaaa;\"";
 				}
@@ -387,29 +429,22 @@
 				}
 				echo "<tr>";
 
-				if ($mode=="user")
-				{
-					echo "<td $addstyle class=\"tbldata\" align=\"right\">".nf($arr['user_rank_current'])."";
-
-					if ($arr['user_rank_current']==$arr['user_rank_last'])
-						echo "<img src=\"../images/stats/stat_same.gif\" alt=\"same\" width=\"21\" height=\"9\" />";
-					elseif ($arr['user_rank_current']<$arr['user_rank_last'])
-						echo "<img src=\"../images/stats/stat_up.gif\" alt=\"down\" width=\"9\" height=\"12\" />";
-					elseif ($arr['user_rank_current']>$arr['user_rank_last'])
-						echo "<img src=\"../images/stats/stat_down.gif\" alt=\"up\" width=\"9\" height=\"11\" />";
-				}
+				echo "<td $addstyle class=\"tbldata\" align=\"right\">".nf($arr['rank'])."";
+				if ($arr['shift']==2)
+					echo "<img src=\"../images/stats/stat_up.gif\" alt=\"down\" width=\"9\" height=\"12\" />";
+				elseif ($arr['shift']==1)
+					echo "<img src=\"../images/stats/stat_down.gif\" alt=\"up\" width=\"9\" height=\"11\" />";
 				else
-				{
-					echo "<td $addstyle class=\"tbldata\" align=\"right\">$cnt (".nf($arr['user_rank_last']).")";
-				}
+					echo "<img src=\"../images/stats/stat_same.gif\" alt=\"same\" width=\"21\" height=\"9\" />";
 				echo "</td>";
-				echo "<td $addstyle class=\"tbldata\">".$arr['user_nick']."</td>";
+				echo "<td $addstyle class=\"tbldata\">".$arr['nick']."</td>";
 				echo "<td $addstyle class=\"tbldata\">".$arr['race_name']."</td>";
+				echo "<td class=\"tbldata\" $addstyle >".$arr['sx']."/".$arr['sy']."</td>";
 				echo "<td class=\"tbldata\" $addstyle >".$arr['alliance_tag']."</td>";
 				echo "<td $addstyle class=\"tbldata\">".nf($arr['points'])."</td>";
 				echo "<td $addstyle class=\"tbldata\">
-				".edit_button("?page=user&amp;sub=edit&amp;user_id=".$arr['user_id']."")."
-				".cb_button("add_user=".$arr['user_id']."")."				
+				".edit_button("?page=user&amp;sub=edit&amp;user_id=".$arr['id']."")."
+				".cb_button("add_user=".$arr['id']."")."				
 				</td>";
 				echo "</tr>";
 				$cnt++;

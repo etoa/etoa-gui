@@ -144,7 +144,7 @@
 		login_error("logout");		
 	}
 	
-	if ($_SESSION[SESSION_NAME]['key']!="")
+	if (isset($_SESSION[SESSION_NAME]['key']) && $_SESSION[SESSION_NAME]['key']!="")
 	{
 		if (substr($_SESSION[SESSION_NAME]['key'],64,32)==md5(GAMEROUND_NAME) && substr($_SESSION[SESSION_NAME]['key'],96,32)==md5($_SERVER['REMOTE_ADDR']) && substr($_SESSION[SESSION_NAME]['key'],128,32)==md5($_SERVER['HTTP_USER_AGENT']) && substr($_SESSION[SESSION_NAME]['key'],160)==session_id())
 		{

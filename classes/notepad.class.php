@@ -106,6 +106,7 @@
 				'".addslashes($subject)."',
 				'".addslashes($text)."'
 			);");			
+			$this->num++;
 			$this->note[$mid] = new Note($mid,$subject,$text,$time);
 		}
 		
@@ -156,6 +157,7 @@
 			{
 				dbquery("DELETE FROM notepad_data WHERE id=".$nid.";");
 				unset($this->note[$nid]);
+				$this->num--;
 				return true;
 			}
 			return false;

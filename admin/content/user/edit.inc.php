@@ -364,15 +364,11 @@
 							</tr>
 							<tr>
 								<td class=\"tbltitle\">Aktueller Rang:</td>
-								<td class=\"tbldata\">".nf($arr['user_rank_current'])."</td>
-							</tr>
-							<tr>
-								<td class=\"tbltitle\">Letzter Rang:</td>
-								<td class=\"tbldata\">".nf($arr['user_rank_last'])."</td>
+								<td class=\"tbldata\">".nf($arr['user_rank'])."</td>
 							</tr>
 							<tr>
 								<td class=\"tbltitle\">Höchster Rang:</td>
-								<td class=\"tbldata\">".nf($arr['user_highest_rank'])."</td>
+								<td class=\"tbldata\">".nf($arr['user_rank_highest'])."</td>
 							</tr>
 							<tr>
 								<td class=\"tbltitle\">Rohstoffe von...</td>

@@ -472,6 +472,7 @@
 			}
 			
 			}
+			dbclose();
 		?>
 	</body>
 </html>
