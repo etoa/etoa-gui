@@ -385,8 +385,10 @@
 				$tpl->assign("helpcenterOnclick",HELPCENTER_ONCLICK);
 				$tpl->assign("chatUrl",CHAT_URL);
 				$tpl->assign("chatOnclick",CHAT_ONCLICK);
-								
-				if ($cu->show_adds==1 || FORCE_ADDS==1)
+						
+				if (ADD_BANNER=="")		
+					$tpl->assign("adds",false);
+				elseif ($cu->show_adds==1 || FORCE_ADDS==1)
 					$tpl->assign("adds",true);
 				else
 					$tpl->assign("adds",false);

@@ -57,8 +57,8 @@
 	{
 		global $db_handle;
 		global $query_counter;
-		//global $queries;
-		//$queries = array();
+		global $queries;
+		$queries = array();
 		$query_counter=0;
 		if (!$db_handle = @mysql_connect(DB_SERVER,DB_USER,DB_PASSWORD))
 		{
@@ -94,12 +94,16 @@
 	{
 		global $db_handle;
 		global $res;
-		global $query_counter; //,$queries;
-		//echo "Queries done: ".$query_counter."<br/>";
-		//foreach ($queries as $q)
-		//{
-		//	echo "EXPLAIN $q<br/>";
-		//}
+		global $query_counter; 
+		global $queries;
+		echo "Queries done: ".$query_counter."<br/>";
+		foreach ($queries as $q)
+		{
+			echo "$q<br/>";
+			$res = mysql_query("EXPLAIN $q");
+			drawDbQueryResult($res);
+			
+		}
 		if (isset($res))
 		{
 			@mysql_free_result($res);
@@ -117,9 +121,11 @@
 	{
 		global $db_handle;
 		global $nohtml;
-		global $query_counter; //,$queries;
+		global $query_counter; 
+		global $queries;
 		$query_counter++;
-		//$queries[] = $string;
+		if (stristr($string,"SELECT"))
+			$queries[] = $string;
 		if ($result=mysql_query($string))
 			return $result;
 		elseif ($fehler==1)
@@ -128,6 +134,33 @@
 				echo "Bei Ihrer Datenbankabfrage trat ein Fehler auf!\n\n[b]MySQL-Meldung:[/b] [i]".mysql_error()."[/i]\n\n[b]Originalabfrage:[/b] ".$string;
 			else
 				errBox("Datenbankfehler","Bei Ihrer Datenbankabfrage trat ein Fehler auf!\n\n[b]MySQL-Meldung:[/b] [i]".mysql_error()."[/i]\n\n[b]Originalabfrage:[/b] ".$string);
+		}
+	}
+
+	function drawDbQueryResult($res)
+	{
+		if (mysql_num_rows($res)>0)
+		{
+			echo "<table class=\"tb\"><tr>";
+			for ($x=0;$x<mysql_num_fields($res);$x++)
+			{
+				echo "<th>".mysql_field_name($res,$x)."</th>";
+			}
+			echo "</tr>";
+			while ($arr=mysql_fetch_row($res))
+			{
+				echo "<tr>";
+				foreach ($arr as $a)
+				{
+					echo "<td>".$a."</td>";
+				}
+				echo "</tr>";
+			}
+			echo "</table>";
+		}
+		else
+		{
+			echo "No result!<br/>";
 		}
 	}
 
