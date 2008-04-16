@@ -13,16 +13,17 @@
 		*/
 		static function getTitles($admin=0)
 		{
-			global $conf;
+			$cfg = Config::getInstance();
 			ob_start();
 			
 			$img_dir = ($admin==1) ? "../images" : "images";
 			
-			$titles=array();
-			$titles['total']="user_points";
-			$titles['fleet']="user_points_ships";
-			$titles['tech']="user_points_tech";
-			$titles['buildings']="user_points_buildings";
+			$titles=array(
+				"total"=>"",
+				"battle"=>"_ships",
+				"tech"=>"_tech",
+				"buildings"=>"_buildings",
+				"exp"=>"_exp");
 
 			$titles2['battle']="user_points_battle";      
 			$titles2['trade']="user_points_trade";        
@@ -31,20 +32,19 @@
 			
 			infobox_start("Allgemeine Titel",1);
 			$cnt = 0;
-			foreach ($titles as $k => $v)
+			foreach ($titles as $k=> $v)
 			{
 				$res = dbquery("
 				SELECT 
-					user_nick,
-					".$v.",
-					user_id
+					nick,
+					points".$v.",
+					id
 				FROM 
 					user_stats
-				WHERE 
-					user_points>".USERTITLES_MIN_POINTS." 
-					AND ".$v.">0
+				WHERE
+					rank".$v.">0
 				ORDER BY 
-					".$v." DESC 
+					rank".$v." ASC 
 				LIMIT 1;");
 				if (mysql_num_rows($res)>0)
 				{
@@ -55,7 +55,7 @@
 							<img src='".$img_dir."/medals/medal_".$k.".png' style=\"height:100px;\" />
 						</th>
 						<td class=\"tbldata\" style=\"font-size:16pt;vertical-align:middle;padding:2px 10px 2px 10px;width:400px;\">
-							".$conf['userrank_'.$k]['v']."
+							".$cfg->value('userrank_'.$k)."
 						</td>
 						<td class=\"tbldata\" style=\"vertical-align:middle;padding-top:0px;padding-left:15px;\">
 							<span style=\"font-size:13pt;color:#ff0;\">".$arr[0]."</span><br/><br/>

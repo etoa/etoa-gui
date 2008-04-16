@@ -100,6 +100,7 @@
 	    	// Update-Flag setzen
 	    	dbquery("UPDATE ".$db_table['config']." SET config_value=1,config_param2=".time()." WHERE config_name='updating';");
 	    	$num = Ranking::calc(true);
+	    	Ranking::calcTitles();
 	    	echo "Die Punkte von ".$num[0]." Spielern wurden aktualisiert!<br/>";
 	    	$d = $num[1]/$num[0];
 	    	echo "Ein Spieler hat durchschnittlich ".nf($d)." Punkte!<br/><br/>";
