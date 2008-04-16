@@ -2,12 +2,13 @@
 
 	class Note
 	{
-		private $subject,$text,$timestamp;
+		private $subject,$text,$timestamp,$id;
 		
-		function Note($subject,$text,$timestamp=0)
+		function Note($id,$subject,$text,$timestamp=0)
 		{
-			$this->subject = addslashes($subject);
-			$this->text = addslashes($text);
+			$this->subject = $subject;
+			$this->text = $text;
+			$this->id = $id;
 			$this->timestamp = $timestamp==0 ? time() : $timestamp;
 		}
 		
@@ -17,6 +18,7 @@
 
 		function timestamp() { return $this->timestamp; } 
 
+		function id() { return $this->id; } 
 		
 	}
 

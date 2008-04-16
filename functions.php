@@ -1524,7 +1524,9 @@ die Spielleitung";
 			dbquery("DELETE FROM ".$db_table['market_auction']." WHERE auction_user_id='".$user_id."' AND auction_buyable='1';"); // Auktionen
 
 			//Notitzen löschen
-			dbquery("DELETE FROM ".$db_table['notepad']." WHERE note_user_id='".$user_id."';");
+			$np = new Notepad($user_id);
+			$numNotes = $np->deleteAll();
+			unset($np);
 
 			//Gespeicherte Koordinaten löschen
 			dbquery("DELETE FROM ".$db_table['target_bookmarks']." WHERE bookmark_user_id='".$user_id."';");

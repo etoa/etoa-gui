@@ -204,7 +204,7 @@
 									if (isset($_POST['scan_to_notes']))
 									{
 										$np = new Notepad($cu->id());
-										$np->add(new Note("Flottenscan: ".$target,$out));
+										$np->add("Flottenscan: ".$target,$out);
 									}
 									
 									// Set cooldown

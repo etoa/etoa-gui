@@ -550,7 +550,6 @@
 	$db_table['message_ignore']				= "message_ignore";				// Ignorierliste
 	$db_table['missiles']					= "missiles";					// Raketen
 	$db_table['missile_requirements']	= "missile_requirements";					// Raketen-Voraussetzungen
-	$db_table['notepad']					= "notepad";					// Notizen
 	$db_table['planets']					= "planets";					// Planeten	
 	$db_table['planet_types']				= "planet_types";				// Planetentypen
 	$db_table['races']						= "races";						// Rassen

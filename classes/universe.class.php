@@ -610,8 +610,10 @@
 			
 			$tbl[]="buddylist";
 			$tbl[]="messages";
+			$tbl[]="message_data";
 			$tbl[]="message_ignore";
 			$tbl[]="notepad";
+			$tbl[]="notepad_data";
 			$tbl[]="bookmarks";
 
 			$tbl[]="logs";

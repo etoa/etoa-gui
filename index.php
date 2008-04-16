@@ -333,8 +333,9 @@
 				$garr=mysql_fetch_row($gres);
 				
 				// Count notes
-				$res=dbquery("SELECT COUNT(id) FROM notepad WHERE user_id=".$s['user_id'].";");
-				$narr=mysql_fetch_row($res);
+				$np = new Notepad($cu->id());
+				$numNotes = $np->numNotes();
+				unset($np);
 
 				// Create template object
 				$tpl = new Smarty;
@@ -369,7 +370,7 @@
 				}
 				$tpl->assign("usersOnline",$garr[0]);
 				$tpl->assign("usersTotal",$ucarr[0]);
-				$tpl->assign("notes",$narr[0]);
+				$tpl->assign("notes",$numNotes);
 				$tpl->assign("userPoints",nf($cu->points));
 				$tpl->assign("userNick",$cu->nick);
 				$tpl->assign("gameWidth",GAME_WIDTH);
