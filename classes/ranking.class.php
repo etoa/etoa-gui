@@ -25,9 +25,7 @@
 				"buildings"=>"_buildings",
 				"exp"=>"_exp");
 
-			$titles2['battle']="user_points_battle";      
-			$titles2['trade']="user_points_trade";        
-			$titles2['diplomacy']="user_points_diplomacy";
+			$titles2 = array('battle','trade','diplomacy');
 
 			
 			infobox_start("Allgemeine Titel",1);
@@ -43,6 +41,7 @@
 					user_stats
 				WHERE
 					rank".$v.">0
+					AND points".$v.">0
 				ORDER BY 
 					rank".$v." ASC 
 				LIMIT 1;");
@@ -52,7 +51,7 @@
 					$profile = ($admin==1) ? "?page=user&amp;sub=edit&amp;user_id=".$arr[2]."" : "?page=userinfo&amp;id=".$arr[2];
 					echo "<tr>
 						<th class=\"tbltitle\" style=\"width:100px;height:100px;\">
-							<img src='".$img_dir."/medals/medal_".$k.".png' style=\"height:100px;\" />
+							<img src='".$img_dir."/medals/medal_".$k.".png' alt=\"medal\" style=\"height:100px;\" />
 						</th>
 						<td class=\"tbldata\" style=\"font-size:16pt;vertical-align:middle;padding:2px 10px 2px 10px;width:400px;\">
 							".$cfg->value('userrank_'.$k)."
@@ -66,20 +65,22 @@
 				}
 				$cnt++;
 			}
-			foreach ($titles2 as $k => $v)
+			foreach ($titles2 as $v)
 			{
 				$res = dbquery("
 				SELECT 
 					user_nick,
-					".$v.",
+					".$v."_rating,
 					user_id
 				FROM 
 					users
-				WHERE 
-					user_points>".USERTITLES_MIN_POINTS." 
-					AND ".$v.">0
+				INNER JOIN	
+					user_ratings
+				ON user_id=id
+				AND
+					".$v."_rating>0
 				ORDER BY 
-					".$v." DESC 
+					".$v."_rating DESC 
 				LIMIT 1;");
 				if (mysql_num_rows($res)>0)
 				{
@@ -87,10 +88,10 @@
 					$profile = ($admin==1) ? "?page=user&amp;sub=edit&amp;user_id=".$arr[2]."" : "?page=userinfo&amp;id=".$arr[2];
 					echo "<tr>
 						<th class=\"tbltitle\" style=\"width:100px;height:100px;\">
-							<img src='".$img_dir."/medals/medal_".$k.".png' style=\"height:100px;\" />
+							<img src='".$img_dir."/medals/medal_".$v.".png' style=\"height:100px;\" />
 						</th>
 						<td class=\"tbldata\" style=\"font-size:16pt;vertical-align:middle;padding:2px 10px 2px 10px;width:400px;\">
-							".$conf['userrank_'.$k]['v']."
+							".$cfg->value('userrank_'.$v)."
 						</td>
 						<td class=\"tbldata\" style=\"vertical-align:middle;padding-top:0px;padding-left:15px;\">
 							<span style=\"font-size:13pt;color:#ff0;\">".$arr[0]."</span><br/><br/>
@@ -158,42 +159,6 @@
 			}
 			infobox_end(1);
 		
-			infobox_start("Allianzgr&uuml;nder",1);
-			$res = dbquery("
-			SELECT
-				alliance_id,
-				alliance_tag,
-				alliance_name,
-				user_nick,
-				user_id
-			FROM
-				alliances
-			INNER JOIN
-				users 
-				ON user_id=alliance_founder_id
-			ORDER BY
-				alliance_tag;
-			");
-			while ($arr = mysql_fetch_assoc($res))
-			{				
-				$cres = dbquery("SELECT COUNT(user_alliance_id) FROM users WHERE user_alliance_id=".$arr['alliance_id']."");
-				$carr = mysql_fetch_row($cres);					
-				
-				$aprofile = ($admin==1) ? "?page=alliances&amp;sub=edit&amp;alliance_id=".$arr['alliance_id'] : "?page=alliance&amp;id=".$arr['alliance_id'];
-				$profile = ($admin==1) ? "?page=user&amp;sub=edit&amp;user_id=".$arr['user_id'] : "?page=userinfo&amp;id=".$arr['user_id'];
-
-				echo "<tr>
-					<td class=\"tbldata\" style=\"vertical-align:middle;padding:2px 10px 2px 10px;width:360px;\">
-						<div style=\"font-size:13pt;padding-bottom:4px;\">[".$arr['alliance_tag']."] ".$arr['alliance_name']."</div><nr/>
-						".$carr[0]." Mitglieder [<a href=\"".$aprofile."\">Info</a>]
-					</td>	
-					<td class=\"tbldata\" style=\"vertical-align:middle;padding-top:0px;padding-left:15px;\">
-						<span style=\"font-size:13pt;color:#ff0;\">".$arr['user_nick']."</span>
-						[<a href=\"".$profile."\">Profil</a>]
-					</td>							
-				</tr>";
-			}
-			infobox_end(1);			
 			$rtn = ob_get_contents();
 			ob_end_clean();
 			return $rtn;		
