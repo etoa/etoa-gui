@@ -3,7 +3,7 @@
 
 	$mode = isset($_GET['mode']) && $_GET['mode']!="" ? $_GET['mode'] : "user";
 
-	// Men�
+	// Menü
 	echo "<br/><table class=\"tbl\">";
 	if ($mode=="user")
 		echo "<tr><td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=user\" class=\"tabEnabled\">Spieler</a></td>";
@@ -65,44 +65,45 @@
 
 	elseif ($mode=="alliances")
 	{
-		echo "<table class=\"tbl\">";
-		echo "<tr>";
-		echo "<th class=\"tbltitle\">#</th>";
-		echo "<th class=\"tbltitle\">Tag</th>";
-		echo "<th class=\"tbltitle\">Name</th>";
+		echo "<table class=\"tb\">";
+		echo "<tr><th colspan=\"7\" style=\"text-align:center\">Allianzrangliste</th></tr>";
+			echo "<tr>";
+		echo "<th>#</th>";
+		echo "<th>Tag</th>";
+		echo "<th>Name</th>";
 		if (isset($_GET['order_field']) && $_GET['order_field']=="upoints")
 		{
-			echo "<th class=\"tbltitle\"><i>Punkte</i> ";
+			echo "<th><i>Punkte</i> ";
 		}
 		else
 		{
-			echo "<th class=\"tbltitle\">Punkte ";
+			echo "<th>Punkte ";
 		}
 		echo "<a href=\"?page=$page&amp;sub=$sub&amp;mode=".$mode."&amp;order_field=upoints&amp;order=DESC\" title=\"Absteigend sortieren\"><img src=\"../images/s_desc.png\" alt=\"Absteigend sortieren\" border=\"0\" /></a>";
 		echo "<a href=\"?page=$page&amp;sub=$sub&amp;mode=".$mode."&amp;order_field=upoints&amp;order=ASC\" title=\"Absteigend sortieren\"><img src=\"../images/s_asc.png\" alt=\"Aufsteigend sortieren\" border=\"0\" /></a>";
 		if (isset($_GET['order_field']) && $_GET['order_field']=="uavg")
 		{
-			echo "<th class=\"tbltitle\"><i>User-Schnitt</i> ";
+			echo "<th><i>User-Schnitt</i> ";
 		}
 		else
 		{
-			echo "<th class=\"tbltitle\">User-Schnitt ";
+			echo "<th>User-Schnitt ";
 		}
 		echo "<a href=\"?page=$page&amp;sub=$sub&amp;mode=".$mode."&amp;order_field=uavg&amp;order=DESC\" title=\"Absteigend sortieren\"><img src=\"../images/s_desc.png\" alt=\"Absteigend sortieren\" border=\"0\" /></a>";
 		echo "<a href=\"?page=$page&amp;sub=$sub&amp;mode=".$mode."&amp;order_field=uavg&amp;order=ASC\" title=\"Absteigend sortieren\"><img src=\"../images/s_asc.png\" alt=\"Aufsteigend sortieren\" border=\"0\" /></a>";
 		echo "</th>";
 		if (isset($_GET['order_field']) && $_GET['order_field']=="cnt")
 		{
-			echo "<th class=\"tbltitle\"><i>User</i> ";
+			echo "<th><i>User</i> ";
 		}
 		else
 		{
-			echo "<th class=\"tbltitle\">User ";
+			echo "<th>User ";
 		}
 		echo "<a href=\"?page=$page&amp;sub=$sub&amp;mode=".$mode."&amp;order_field=cnt&amp;order=DESC\" title=\"Absteigend sortieren\"><img src=\"../images/s_desc.png\" alt=\"Absteigend sortieren\" border=\"0\" /></a>";
 		echo "<a href=\"?page=$page&amp;sub=$sub&amp;mode=".$mode."&amp;order_field=cnt&amp;order=ASC\" title=\"Absteigend sortieren\"><img src=\"../images/s_asc.png\" alt=\"Aufsteigend sortieren\" border=\"0\" /></a>";
 		
-		echo "<th class=\"tbltitle\" style=\"width:60px;\">Details</th>";
+		echo "<th style=\"width:60px;\">Details</th>";
 		
 		echo "</tr>";
 		
@@ -141,13 +142,13 @@
 			while ($arr=mysql_fetch_array($res))
 			{
 				echo "<tr>";
-				echo "<td class=\"tbldata\" align=\"right\">".nf($cnt)."</td>";
-				echo "<td class=\"tbldata\">".$arr['alliance_tag']."</td>";
-				echo "<td class=\"tbldata\">".$arr['alliance_name']."</td>";
-				echo "<td class=\"tbldata\">".nf($arr['upoints'])."</td>";
-				echo "<td class=\"tbldata\">".nf($arr['uavg'])."</td>";
-				echo "<td class=\"tbldata\">".nf($arr['cnt'])."</td>";
-				echo "<td $addstyle class=\"tbldata\">".edit_button("?page=alliances&amp;sub=edit&amp;alliance_id=".$arr['alliance_id']."")."</td>";
+				echo "<td align=\"right\">".nf($cnt)."</td>";
+				echo "<td>".$arr['alliance_tag']."</td>";
+				echo "<td>".$arr['alliance_name']."</td>";
+				echo "<td>".nf($arr['upoints'])."</td>";
+				echo "<td>".nf($arr['uavg'])."</td>";
+				echo "<td>".nf($arr['cnt'])."</td>";
+				echo "<td>".edit_button("?page=alliances&amp;sub=edit&amp;alliance_id=".$arr['alliance_id']."")."</td>";
 				echo "</tr>";
 				$cnt++;
 			}
@@ -164,135 +165,196 @@
 	//
 	elseif($mode=="diplomacy" || $mode=="battle" || $mode=="trade")
 	{
-		echo "<div style=\"text-align:center;\">
-		<input type=\"button\" value=\"Spieler\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;mode=$mode&amp;submode=users'\" /> &nbsp; 
-		<input type=\"button\" value=\"Allianzen\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;mode=$mode&amp;submode=alliances'\" />
-		</div><br/>";
-
-		if (isset($_GET['submode']) && $_GET['submode']=="alliances")
-		{
 			// Punktetabelle
 			if ($mode=="diplomacy")
-				$order="user_points_diplomacy";
-			elseif ($mode=="battle")
-				$order="user_points_battle";
-			elseif ($mode=="trade")
-				$order="user_points_trade";
-				
-			$res=dbquery("SELECT 
-				alliance_id,
-				alliance_name,
-				alliance_tag,
-				SUM($order) AS points,
-				COUNT(user_id) AS ucnt
-			FROM 
-				alliances
-			INNER JOIN
-				users ON user_alliance_id=alliance_id
-			GROUP BY
-				alliance_id
-			ORDER BY
-				points DESC
-			;");			
-	
-			echo "<table class=\"tbl\">";
-			$cnt=1;
-			if (mysql_num_rows($res)>0)
 			{
-				echo "<tr>
-					<th class=\"tbltitle\" style=\"width:50px;\">#</th>
-					<th class=\"tbltitle\" style=\"\" colspan=\"2\">Allianz</th>
-					<th class=\"tbltitle\" style=\"\">Punkte</th>
-					<th class=\"tbltitle\" style=\"\">Mitglieder</th>
-					<th class=\"tbltitle\" style=\"width:60px;\">Details</th>
-				</tr>";
-				while ($arr=mysql_fetch_array($res))
+				$res=dbquery("
+				SELECT 
+					r.diplomacy_rating,
+					user_id,
+					user_nick,
+					race_name,
+					alliance_tag		
+				FROM 
+					users
+				INNER JOIN
+					races ON user_race_id=race_id
+				INNER JOIN
+					user_ratings as r ON user_id=r.id
+				LEFT JOIN 
+					alliances ON user_alliance_id=alliance_id
+				ORDER BY 
+					battle_rating DESC
+				;");
+				echo "<table class=\"tb\">";
+				echo "<tr><th colspan=\"9\" style=\"text-align:center\">Diplomatiewertung</th></tr>";
+				$cnt=1;
+				if (mysql_num_rows($res)>0)
 				{
-					if ($arr['points']>0)
+					echo "<tr>
+						<th style=\"width:50px;\">#</th>
+						<th style=\"\">Nick</th>
+						<th style=\"\">Rasse</th>
+						<th style=\"\">Allianz</th>
+						<th style=\"\">Bewertung</th>
+						<th style=\"width:60px;\">Details</th>
+					</tr>";
+					while ($arr=mysql_fetch_array($res))
 					{
-						echo "<tr>";
-						echo "<td $addstyle class=\"tbldata\" align=\"right\">$cnt";
-						echo "</td>";
-						echo "<td $addstyle class=\"tbldata\">".$arr['alliance_tag']."</td>";
-						echo "<td class=\"tbldata\" $addstyle >".$arr['alliance_name']."</td>";
-						echo "<td $addstyle class=\"tbldata\">".nf($arr['points'])."</td>";
-						echo "<td $addstyle class=\"tbldata\">".nf($arr['ucnt'])."</td>";
-						echo "<td $addstyle class=\"tbldata\">
-						".edit_button("?page=alliances&amp;sub=edit&amp;alliance_id=".$arr['alliance_id']."")."
-						</td>";
-						echo "</tr>";
-						$cnt++;
+						if ($arr['diplomacy_rating']>0)
+						{
+							echo "<tr>";
+							echo "<td>".$cnt."</td>";
+							echo "<td>".$arr['user_nick']."</td>";
+							echo "<td>".$arr['race_name']."</td>";
+							echo "<td >".$arr['alliance_tag']."</td>";
+							echo "<td>".nf($arr['diplomacy_rating'])."</td>";
+							echo "<td>
+							".edit_button("?page=user&amp;sub=edit&amp;user_id=".$arr['user_id']."")."
+							".cb_button("add_user=".$arr['user_id']."")."				
+							</td>";
+							echo "</tr>";
+							$cnt++;
+						}
 					}
 				}
-			}
-			if ($cnt==1)
-				echo "<tr><td align=\"center\" class=\"tbldata\" colspan=\"6\"><i>Es wurde keine User gefunden!</i></tr>";
-			echo "</table><br/>";					
-		}
-		else
-		{
-			// Punktetabelle
-			if ($mode=="diplomacy")
-				$order="user_points_diplomacy";
-			elseif ($mode=="battle")
-				$order="user_points_battle";
-			elseif ($mode=="trade")
-				$order="user_points_trade";
-				
-			$res=dbquery("SELECT 
-				user_id,
-				user_nick,
-				race_name,
-				alliance_tag,			
-				$order AS points
-			FROM 
-				users
-			INNER JOIN
-				races ON user_race_id=race_id
-			LEFT JOIN 
-				alliances ON user_alliance_id=alliance_id
-			ORDER BY 
-				$order DESC,
-				user_rank_current,
-				user_nick ASC 
-			;");			
-	
-			echo "<table class=\"tbl\">";
-			$cnt=1;
-			if (mysql_num_rows($res)>0)
-			{
-				echo "<tr>
-					<th class=\"tbltitle\" style=\"width:50px;\">#</th>
-					<th class=\"tbltitle\" style=\"\">Nick</th>
-					<th class=\"tbltitle\" style=\"\">Rasse</th>
-					<th class=\"tbltitle\" style=\"\">Allianz</th>
-					<th class=\"tbltitle\" style=\"\">Punkte</th>
-					<th class=\"tbltitle\" style=\"width:60px;\">Details</th>
-				</tr>";
-				while ($arr=mysql_fetch_array($res))
+				if ($cnt==1)
 				{
-					if ($arr['points']>0)
+					echo "<tr><td align=\"center\" colspan=\"8\"><i>Es wurde keine User gefunden!</i></tr>";
+				}
+				echo "</table><br/>";											
+			}
+			elseif ($mode=="battle")
+			{
+				$res=dbquery("
+				SELECT 
+					r.battles_fought,
+					r.battles_won,
+					r.battles_lost,
+					r.battle_rating,
+					user_id,
+					user_nick,
+					race_name,
+					alliance_tag		
+				FROM 
+					users
+				INNER JOIN
+					races ON user_race_id=race_id
+				INNER JOIN
+					user_ratings as r ON user_id=r.id
+				LEFT JOIN 
+					alliances ON user_alliance_id=alliance_id
+				ORDER BY 
+					battle_rating DESC
+				;");
+				echo "<table class=\"tb\">";
+				echo "<tr><th colspan=\"9\" style=\"text-align:center\">Kampfwertung</th></tr>";
+				$cnt=1;
+				if (mysql_num_rows($res)>0)
+				{
+					echo "<tr>
+						<th style=\"width:50px;\">#</th>
+						<th style=\"\">Nick</th>
+						<th style=\"\">Rasse</th>
+						<th style=\"\">Allianz</th>
+						<th style=\"\">Kämpfe Gewonnen</th>
+						<th style=\"\">Kämpfe Verloren</th>
+						<th style=\"\">Kämpfe Total</th>
+						<th style=\"\">Bewertung</th>
+						<th style=\"width:60px;\">Details</th>
+					</tr>";
+					while ($arr=mysql_fetch_array($res))
 					{
-						echo "<tr>";
-						echo "<td $addstyle class=\"tbldata\" align=\"right\">$cnt";
-						echo "</td>";
-						echo "<td $addstyle class=\"tbldata\">".$arr['user_nick']."</td>";
-						echo "<td $addstyle class=\"tbldata\">".$arr['race_name']."</td>";
-						echo "<td class=\"tbldata\" $addstyle >".$arr['alliance_tag']."</td>";
-						echo "<td $addstyle class=\"tbldata\">".nf($arr['points'])."</td>";
-						echo "<td $addstyle class=\"tbldata\">
-						".edit_button("?page=user&amp;sub=edit&amp;user_id=".$arr['user_id']."")."
-						".cb_button("add_user=".$arr['user_id']."")."				
-						</td>";
-						echo "</tr>";
-						$cnt++;
+						if ($arr['battle_rating']>0)
+						{
+							echo "<tr>";
+							echo "<td>".$cnt."</td>";
+							echo "<td>".$arr['user_nick']."</td>";
+							echo "<td>".$arr['race_name']."</td>";
+							echo "<td >".$arr['alliance_tag']."</td>";
+							echo "<td>".nf($arr['battles_won'])."</td>";
+							echo "<td>".nf($arr['battles_lost'])."</td>";
+							echo "<td>".nf($arr['battles_fought'])."</td>";
+							echo "<td>".nf($arr['battle_rating'])."</td>";
+							echo "<td>
+							".edit_button("?page=user&amp;sub=edit&amp;user_id=".$arr['user_id']."")."
+							".cb_button("add_user=".$arr['user_id']."")."				
+							</td>";
+							echo "</tr>";
+							$cnt++;
+						}
 					}
 				}
+				if ($cnt==1)
+				{
+					echo "<tr><td align=\"center\"  colspan=\"9\"><i>Es wurde keine User gefunden!</i></tr>";
+				}
+				echo "</table><br/>";											
 			}
-			if ($cnt==1)
-				echo "<tr><td align=\"center\" class=\"tbldata\" colspan=\"6\"><i>Es wurde keine User gefunden!</i></tr>";
-			echo "</table><br/>";			
-		}	
+			elseif ($mode=="trade")
+			{
+				$res=dbquery("
+				SELECT 
+					r.trades_sell,
+					r.trades_buy,
+					r.trade_rating,
+					user_id,
+					user_nick,
+					race_name,
+					alliance_tag		
+				FROM 
+					users
+				INNER JOIN
+					races ON user_race_id=race_id
+				INNER JOIN
+					user_ratings as r ON user_id=r.id
+				LEFT JOIN 
+					alliances ON user_alliance_id=alliance_id
+				ORDER BY 
+					battle_rating DESC
+				;");
+				echo "<table class=\"tb\">";
+				echo "<tr><th colspan=\"9\" style=\"text-align:center\">Handelswertung</th></tr>";
+				$cnt=1;
+				if (mysql_num_rows($res)>0)
+				{
+					echo "<tr>
+						<th style=\"width:50px;\">#</th>
+						<th style=\"\">Nick</th>
+						<th style=\"\">Rasse</th>
+						<th style=\"\">Allianz</th>
+						<th style=\"\">Einkäufe</th>
+						<th style=\"\">Verkäufe</th>
+						<th style=\"\">Bewertung</th>
+						<th style=\"width:60px;\">Details</th>
+					</tr>";
+					while ($arr=mysql_fetch_array($res))
+					{
+						if ($arr['trade_rating']>0)
+						{
+							echo "<tr>";
+							echo "<td>".$cnt."</td>";
+							echo "<td>".$arr['user_nick']."</td>";
+							echo "<td>".$arr['race_name']."</td>";
+							echo "<td >".$arr['alliance_tag']."</td>";
+							echo "<td>".nf($arr['trades_buy'])."</td>";
+							echo "<td>".nf($arr['trades_sell'])."</td>";
+							echo "<td>".nf($arr['trade_rating'])."</td>";
+							echo "<td>
+							".edit_button("?page=user&amp;sub=edit&amp;user_id=".$arr['user_id']."")."
+							".cb_button("add_user=".$arr['user_id']."")."				
+							</td>";
+							echo "</tr>";
+							$cnt++;
+						}
+					}
+				}
+				if ($cnt==1)
+				{
+					echo "<tr><td align=\"center\" colspan=\"8\"><i>Es wurde keine User gefunden!</i></tr>";
+				}
+				echo "</table><br/>";											
+			}
 	}		
 
 	//
@@ -332,7 +394,7 @@
 		{
 			$field="points_buildings";
 			$order="rank_buildings";
-			$title="Geb�udepunkte";
+			$title="Gebäudepunkte";
 			$shift="rankshift_buildings";
 		}
 		elseif ($mode=="exp")
@@ -395,18 +457,18 @@
 			;");			
 		}
 
-		echo "<table class=\"tbl\">";
+		echo "<table class=\"tb\">";
 		if (mysql_num_rows($res)>0)
 		{
-			echo "<tr><th class=\"tbltitle\" colspan=\"7\" style=\"text-align:center;\">".$title."</th></tr>";
+			echo "<tr><th colspan=\"7\" style=\"text-align:center;\">".$title."</th></tr>";
 			echo "<tr>
-				<th class=\"tbltitle\" style=\"width:50px;\">#</th>
-				<th class=\"tbltitle\" style=\"\">Nick</th>
-				<th class=\"tbltitle\" style=\"\">Rasse</th>
-				<th class=\"tbltitle\" style=\"\">Sektor</th>
-				<th class=\"tbltitle\" style=\"\">Allianz</th>
-				<th class=\"tbltitle\" style=\"\">Punkte</th>
-				<th class=\"tbltitle\" style=\"width:60px;\">Details</th>
+				<th style=\"width:50px;\">#</th>
+				<th style=\"\">Nick</th>
+				<th style=\"\">Rasse</th>
+				<th style=\"\">Sektor</th>
+				<th style=\"\">Allianz</th>
+				<th style=\"\">Punkte</th>
+				<th style=\"width:60px;\">Details</th>
 			</tr>";
 			$cnt=1+$limit;
 			while ($arr=mysql_fetch_array($res))
@@ -429,7 +491,7 @@
 				}
 				echo "<tr>";
 
-				echo "<td $addstyle class=\"tbldata\" align=\"right\">".nf($arr['rank'])."";
+				echo "<td $addstyle  align=\"right\">".nf($arr['rank'])."";
 				if ($arr['shift']==2)
 					echo "<img src=\"../images/stats/stat_up.gif\" alt=\"down\" width=\"9\" height=\"12\" />";
 				elseif ($arr['shift']==1)
@@ -437,12 +499,12 @@
 				else
 					echo "<img src=\"../images/stats/stat_same.gif\" alt=\"same\" width=\"21\" height=\"9\" />";
 				echo "</td>";
-				echo "<td $addstyle class=\"tbldata\">".$arr['nick']."</td>";
-				echo "<td $addstyle class=\"tbldata\">".$arr['race_name']."</td>";
-				echo "<td class=\"tbldata\" $addstyle >".$arr['sx']."/".$arr['sy']."</td>";
-				echo "<td class=\"tbldata\" $addstyle >".$arr['alliance_tag']."</td>";
-				echo "<td $addstyle class=\"tbldata\">".nf($arr['points'])."</td>";
-				echo "<td $addstyle class=\"tbldata\">
+				echo "<td $addstyle >".$arr['nick']."</td>";
+				echo "<td $addstyle >".$arr['race_name']."</td>";
+				echo "<td  $addstyle >".$arr['sx']."/".$arr['sy']."</td>";
+				echo "<td  $addstyle >".$arr['alliance_tag']."</td>";
+				echo "<td $addstyle >".nf($arr['points'])."</td>";
+				echo "<td $addstyle >
 				".edit_button("?page=user&amp;sub=edit&amp;user_id=".$arr['id']."")."
 				".cb_button("add_user=".$arr['id']."")."				
 				</td>";
@@ -451,7 +513,7 @@
 			}
 		}
 		else
-			echo "<tr><td align=\"center\" class=\"tbldata\"><i>Es wurde keine User gefunden!</i></tr>";
+			echo "<tr><td align=\"center\" ><i>Es wurde keine User gefunden!</i></tr>";
 		echo "</table><br/>";
 
 		echo "<script type=\"text/javascript\">document.forms[1].elements[0].select();</script>";
