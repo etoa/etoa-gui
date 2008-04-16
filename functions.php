@@ -96,13 +96,16 @@
 		global $res;
 		global $query_counter; 
 		global $queries;
-		echo "Queries done: ".$query_counter."<br/>";
-		foreach ($queries as $q)
+		if (ETOA_DEBUG==1)
 		{
-			echo "$q<br/>";
-			$res = mysql_query("EXPLAIN $q");
-			drawDbQueryResult($res);
-			
+			echo "Queries done: ".$query_counter."<br/>";
+			foreach ($queries as $q)
+			{
+				echo "$q<br/>";
+				$res = mysql_query("EXPLAIN $q");
+				drawDbQueryResult($res);
+				
+			}
 		}
 		if (isset($res))
 		{
@@ -124,7 +127,7 @@
 		global $query_counter; 
 		global $queries;
 		$query_counter++;
-		if (stristr($string,"SELECT"))
+		if (ETOA_DEBUG==1 && stristr($string,"SELECT"))
 			$queries[] = $string;
 		if ($result=mysql_query($string))
 			return $result;
