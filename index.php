@@ -333,7 +333,7 @@
 				$garr=mysql_fetch_row($gres);
 				
 				// Count notes
-				$res=dbquery("SELECT COUNT(note_id) FROM notepad WHERE note_user_id=".$s['user_id'].";");
+				$res=dbquery("SELECT COUNT(id) FROM notepad WHERE user_id=".$s['user_id'].";");
 				$narr=mysql_fetch_row($res);
 
 				// Create template object
