@@ -1,4 +1,40 @@
 <?PHP
+
+	//Abgelaufene Sittings löschen
+  $check_res = dbquery("
+  SELECT
+      user_sitting_date_to
+  FROM
+      user_sitting_date
+    INNER JOIN
+      user_sitting
+    ON user_sitting_date_user_id=user_sitting_user_id
+ WHERE
+ 		user_sitting_user_id='".$cu->id()."'
+    AND user_sitting_active='1'
+ ORDER BY
+    user_sitting_date_to DESC
+  LIMIT 1;");
+  $check_arr=mysql_fetch_assoc($check_res);
+
+  if(mysql_num_rows($check_res)>0 && $check_arr['user_sitting_date_to']<time())
+  {
+      dbquery("
+      UPDATE
+          user_sitting
+      SET
+          user_sitting_active='0',
+          user_sitting_sitter_user_id='0',
+          user_sitting_sitter_password='0',
+          user_sitting_date='0'
+      WHERE
+          user_sitting_user_id='".$cu->id()."';");
+
+      //löscht alle gespeichertet Sittingdaten des users
+      dbquery("DELETE FROM user_sitting_date WHERE user_sitting_date_user_id='".$cu->id()."';");
+  }
+
+
             //
             // Neuer user anlegen, der am gleichen PC sitzt (multi)
             //
@@ -308,7 +344,6 @@
             //
             // Multierkennung
             //
-
             echo "<form action=\"?page=$page&mode=sitting\" method=\"post\">";
             $cstr = checker_init();
 
