@@ -229,7 +229,9 @@
 		static function calc($manual=false)
 		{
 			$cfg = Config::getInstance();
-	
+			
+			$time = time();
+			$inactivetime = 86400 * USER_INACTIVE_SHOW;
 			$allpoints=0;
 			$res_amount_per_point = $cfg->param1('points_update');
 	
@@ -359,7 +361,10 @@
 					user_nick,
 					user_race_id,
 					user_alliance_id,
-					user_rank_highest
+					user_rank_highest,
+					user_blocked_to,
+					user_hmode_from,
+					user_acttime
 				FROM
 					users;
 			");
@@ -502,7 +507,10 @@
 						'".$uarr['user_alliance_id']."',
 						'".($uarr['user_race_id']>0 ? $race[$uarr['user_race_id']] : '')."',
 						2,
-						2
+						2,
+						".($uarr['user_blocked_to'] > $time ? 1 : 0).",
+						".($uarr['user_acttime'] < $time-$inactivetime ? 1 : 0).",
+						".($uarr['user_hmode_from'] > 0 ? 1 : 0)."
 					)";
 				$user_points_query.=",(
 						'".$user_id."',
@@ -533,7 +541,10 @@
 					alliance_id,
 					race_name,
 					sx,
-					sy
+					sy,
+					blocked,
+					inactive,
+					hmod
 				)
 				VALUES
 					".substr($user_stats_query,1)."

@@ -356,7 +356,7 @@
 				nick,
 				blocked,
 				hmod,
-				active,	
+				inactive,	
 				".$order." AS rank,
 				".$field." AS points,
 				".$shift." AS shift,
@@ -379,7 +379,7 @@
 				nick,
 				blocked,
 				hmod,
-				active,
+				inactive,
 				".$order." AS rank,
 				".$field." AS points,
 				".$shift." AS shift,
@@ -419,7 +419,7 @@
 				{
 					$addstyle=" style=\"color:#aaffaa;\"";
 				}
-				elseif ($arr['active']==1)
+				elseif ($arr['inactive']==1)
 				{
 					$addstyle=" style=\"color:#aaaaaa;\"";
 				}
