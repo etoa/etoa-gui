@@ -15,7 +15,7 @@
 		 AND user_sitting_date_to>".time().";");
 
 	// Wenn der Sittingmodus aktiv ist, aber zur Zeit kein keine Loginzeit definitert ist -> Logout
-	if($s['sitter_active']==1 && mysql_result($data_res,0)==0)
+	if($s['sitter_active']==1 && mysql_result($date_res,0)==0)
 	{
 		//if($_SESSION[ROUNDID]['user']['sitter_active']==NULL && $_SESSION[ROUNDID]['user']['sitter_active']!='0')
     session_destroy();
@@ -42,20 +42,20 @@
   LIMIT 1;");
   $check_arr=mysql_fetch_assoc($check_res);
 
-    if(mysql_num_rows($check_res)>0 && $check_arr['user_sitting_date_to']<time())
-    {
-        dbquery("
-        UPDATE
-            user_sitting
-        SET
-            user_sitting_active='0',
-            user_sitting_sitter_user_id='0',
-            user_sitting_sitter_password='0',
-            user_sitting_date='0'
-        WHERE
-            user_sitting_user_id='".$cu->id()."';");
+  if(mysql_num_rows($check_res)>0 && $check_arr['user_sitting_date_to']<time())
+  {
+      dbquery("
+      UPDATE
+          user_sitting
+      SET
+          user_sitting_active='0',
+          user_sitting_sitter_user_id='0',
+          user_sitting_sitter_password='0',
+          user_sitting_date='0'
+      WHERE
+          user_sitting_user_id='".$cu->id()."';");
 
-        //löscht alle gespeichertet Sittingdaten des users
-        dbquery("DELETE FROM user_sitting_date WHERE user_sitting_date_user_id='".$cu->id()."';");
-    }
+      //löscht alle gespeichertet Sittingdaten des users
+      dbquery("DELETE FROM user_sitting_date WHERE user_sitting_date_user_id='".$cu->id()."';");
+  }
 ?>
