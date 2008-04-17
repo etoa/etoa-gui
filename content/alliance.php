@@ -488,7 +488,15 @@
 						// Bündnissanfragen anzeigen
 						if ($isFounder || $myRight['relations'])
 						{
-							if (mysql_num_rows(dbquery("SELECT alliance_bnd_id FROM ".$db_table['alliance_bnd']." WHERE alliance_bnd_alliance_id2='".$cu->alliance_id."' AND alliance_bnd_level='0';"))>0)
+							$bres = dbquery("
+							SELECT 
+								alliance_bnd_id 
+							FROM 
+								".$db_table['alliance_bnd']." 
+							WHERE 
+								alliance_bnd_alliance_id2='".$cu->alliance_id."' 
+								AND alliance_bnd_level='0';")
+							if (mysql_num_rows($bres)>0)
 								echo "<tr>
 									<td class=\"tbltitle\" colspan=\"3\" style=\"text-align:center;color:#0f0\">
 										<a  style=\"color:#0f0\" href=\"?page=$page&action=relations\">Es sind B&uuml;ndnisanfragen vorhanden!</a>

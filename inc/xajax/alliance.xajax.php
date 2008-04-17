@@ -20,41 +20,45 @@ function showAllianceMembers($alliance_id=0,$field_id)
 		SELECT 
 			user_id,
 			user_nick,
-			user_points,
-			user_points_ships,
-			user_points_tech,
-			user_points_buildings,
-			user_rank_current,
-			user_rank_last
+			rank,
+			rankshift,
+			points,
+			points_ships,
+			points_tech,
+			points_buildings,
+			points_exp
 		FROM 
 			".$db_table['users']."
+		LEFT JOIN
+			user_stats
+			ON id=user_id
 		WHERE
 			user_alliance_id='".$alliance_id."' 
 		ORDER BY 
-			user_rank_current;");
+			user_rank;");
 		if (mysql_num_rows($res)>0)
 		{
 			while ($arr = mysql_fetch_array($res))
 			{
 				$cnt++;
 				
-				if ($arr['user_rank_current']==$arr['user_rank_last'])
-				{
-					$rank =  "<img src=\"images/stats/stat_same.gif\" alt=\"same\" width=\"21\" height=\"9\" />";
-				}
-				elseif ($arr['user_rank_current']<$arr['user_rank_last'])
+				if ($arr['rankshift']==2)
 				{
 					$rank =  "<img src=\"images/stats/stat_up.gif\" alt=\"up\" width=\"9\" height=\"12\" />";
 				}
-				elseif ($arr['user_rank_current']>$arr['user_rank_last'])
+				elseif ($arr['rankshift']==1)
 				{
 					$rank =  "<img src=\"images/stats/stat_down.gif\" alt=\"down\" width=\"9\" height=\"11\" />";
+				}
+				else
+				{
+					$rank =  "<img src=\"images/stats/stat_same.gif\" alt=\"same\" width=\"21\" height=\"9\" />";
 				}
 				
 				$members .= "
 				<tr>
 					<td class=\"tbldata\">
-						".$arr['user_rank_current']."
+						".$arr['rank']."
 					</td>
 					<td class=\"tbldata\">
 						".$rank."
@@ -63,16 +67,19 @@ function showAllianceMembers($alliance_id=0,$field_id)
 						<a href=\"?page=userinfo&id=".$arr['user_id']."\">".$arr['user_nick']."</a>
 					</td>
 					<td class=\"tbldata\">
-						".nf($arr['user_points'])."
+						".nf($arr['points'])."
 					</td>
 					<td class=\"tbldata\">
-						".nf($arr['user_points_buildings'])."
+						".nf($arr['points_buildings'])."
 					</td>
 					<td class=\"tbldata\">
-						".nf($arr['user_points_ships'])."
+						".nf($arr['points_ships'])."
 					</td>
 					<td class=\"tbldata\">
-						".nf($arr['user_points_tech'])."
+						".nf($arr['points_tech'])."
+					</td>
+					<td class=\"tbldata\">
+						".nf($arr['points_exp'])."
 					</td>
 				</tr>";
 			}
@@ -84,6 +91,7 @@ function showAllianceMembers($alliance_id=0,$field_id)
 								<td class=\"tbltitle\" width=\"20%\">Gebäude</td>
 								<td class=\"tbltitle\" width=\"20%\">Flotten</td>
 								<td class=\"tbltitle\" width=\"20%\">Technologien</td>
+								<td class=\"tbltitle\" width=\"20%\">Erfahrung</td>
 							</tr>
 							".$members."
 							</table>";

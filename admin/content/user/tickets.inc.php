@@ -296,7 +296,7 @@
 		WHERE
 			abuse_status=1	
 		ORDER BY
-			abuse_timestamp
+			abuse_timestamp DESC
 		;");
 		if (mysql_num_rows($res)>0)
 		{
