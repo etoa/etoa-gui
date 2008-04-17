@@ -29,6 +29,7 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/	
 
+	/*
 	echo '<h1>Schiffsübersicht</h1>';
 	
 	define('HELP_URL',"?page=help&site=shipyard");
@@ -296,4 +297,258 @@
 	}
 
 	
+	
+	*/
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	echo '<h1>Schiffsübersicht</h1>';
+	
+	define('HELP_URL',"?page=help&site=shipyard");
+
+	//Button "Zurück zum Raumschiffshafen"
+	echo "<input type=\"button\" onclick=\"document.location='?page=fleets'\" value=\"Flotten anzeigen\" /> &nbsp; ";
+	echo "<input type=\"button\" onclick=\"document.location='?page=haven'\" value=\"Raumschiffshafen des aktuellen Planeten anzeigen\" /><br/><br/>";	
+
+	//Prüft ob Schiffe vorhanden sind
+  $res = dbquery("
+  SELECT
+  	COUNT(*)
+  FROM
+  	shiplist
+  WHERE
+  	shiplist_user_id='".$cu->id()."';");
+  if(mysql_result($res,0)>0)
+  {
+  	//
+  	// Läd alle benötigten Daten
+  	//
+  	
+  	//Speichert Planetnamen in ein Array
+  	$planet_data = array();
+		foreach ($pm->itemObjects() as $p)
+		{
+			$planet_data[$p->id()]=$p->name();
+		}
+  	
+  	
+  	// Speichert alle Schiffe des Users, welche auf den Planeten stationiert sind
+  	$shiplist_data = array();
+  	$res = dbquery("
+		SELECT
+			shiplist_ship_id,
+			shiplist_count,
+			shiplist_planet_id
+		FROM
+			shiplist
+			INNER JOIN
+			planets
+			ON shiplist_planet_id=id
+		WHERE
+			 shiplist_user_id='".$cu->id()."'
+		ORDER BY
+			planet_user_main DESC,
+			planet_name DESC;");
+  	while ($arr=mysql_fetch_array($res))
+  	{
+  		$shiplist_data[$arr['shiplist_ship_id']][$arr['shiplist_planet_id']] = $arr['shiplist_count'];
+  	}	
+  		
+  	
+  	// Speichert alle Schiffe des Users, die sich im Bau befinden
+  	$queue_data = array();
+  	$res = dbquery("
+	  SELECT
+	  	SUM(queue_cnt) AS cnt,
+	  	queue_ship_id,
+	  	queue_planet_id
+	  FROM
+	  	ship_queue
+	  	INNER JOIN
+			planets
+			ON queue_planet_id=id
+	  WHERE
+	  	queue_user_id='".$cu->id()."'
+	  GROUP BY
+	  	queue_planet_id
+	  ORDER BY
+			planet_user_main DESC,
+			planet_name DESC;");
+		if(mysql_num_rows($res)>0)
+		{
+		 	while ($arr=mysql_fetch_array($res))
+		 	{
+  			$queue_data[$arr['queue_ship_id']][$arr['queue_planet_id']] = $arr['cnt'];
+		 	}
+  	}
+  	
+  	
+  	// Speichert alle Schiffe des Users, die sich im All befinden
+  	$fleet_data = array();
+  	$res = dbquery("
+		SELECT
+		  SUM(fs.fs_ship_cnt) AS cnt,
+		  fs.fs_ship_id
+		FROM
+      fleet_ships AS fs
+      INNER JOIN
+      fleet AS f
+      ON fs.fs_fleet_id=f.fleet_id
+      AND f.fleet_user_id='".$cu->id()."'
+		GROUP BY
+			fs.fs_ship_id;");
+		if(mysql_num_rows($res)>0)
+		{
+		 	while ($arr=mysql_fetch_array($res))
+		 	{
+  			$fleet_data[$arr['fs_ship_id']] = $arr['cnt'];
+		 	}
+  	}
+  	
+  	
+		infobox_start("Schiffe",1,0);
+		echo "<tr>
+						<td class=\"tbltitle\" colspan=\"2\">Schiff</td>
+						<td class=\"tbltitle\" width=\"100\">Im Orbit</td>
+						<td class=\"tbltitle\" width=\"100\">Im Bau</td>
+						<td class=\"tbltitle\" width=\"100\">Im All</td>
+					</tr>";
+		
+		//Listet alle Schiffe auf, die allgemein gebaut werden können (auch die, die der User nach dem Technikbaum noch nicht bauen könnte oder nicht seiner Rasse entsprechen)
+	  $sres = dbquery("
+	  SELECT
+	  	ship_id,
+	    ship_name,
+	    special_ship
+	  FROM
+	  	ships
+	  WHERE
+	  	ship_buildable='1'
+	  	AND ship_show='1'
+	  ORDER BY
+	  	special_ship DESC,
+	  	ship_name;");
+	  if(mysql_num_rows($sres)>0)
+	  {
+	  	while ($sarr=mysql_fetch_array($sres))
+	  	{	  
+			 	//Zeigt Informationen (Zeile) an wenn Schiffe vorhanden sind
+			  if(isset($shiplist_data[$sarr['ship_id']]) || isset($queue_data[$sarr['ship_id']])  || isset($fleet_data[$sarr['ship_id']]) )
+			  {
+			  	$s_img = IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$sarr['ship_id']."_small.".IMAGE_EXT;
+			  	echo "<tr>
+			  					<td class=\"tbldata\">";
+			  					
+			  					if($sarr['special_ship']==1)
+			  					{
+			  						echo "<a href=\"?page=ship_upgrade&amp;id=".$sarr['ship_id']."\" title=\"Zum Upgrademenu\"><img src=\"".$s_img."\" style=\"width:40px;height:40px;\"/></a>";
+			  					}
+			  					else
+			  					{
+			  						echo "<a href=\"".HELP_URL."\" title=\"Info zu diesem Schiff anzeigen\"><img src=\"".$s_img."\" style=\"width:40px;height:40px;\"/></a>";
+			  					}
+			  		echo "</td>
+			  					<td class=\"tbltitle\">
+			  						".$sarr['ship_name']."
+			  					</td>";
+			  					
+			  				//Spalte gebauter Schiffe
+		  					if(isset($shiplist_data[$sarr['ship_id']]))
+		  					{
+		  						// Summiert die Anzahl Schiffe von allen Planeten
+		  						$total = array_sum($shiplist_data[$sarr['ship_id']]);
+		  						
+		  						// Listet die Anzahl Schiffe von jedem einzelen Planeten auf
+		  						$tm = "";
+		  						foreach ($shiplist_data[$sarr['ship_id']] as $planet_id => $count)
+							  	{
+							  		$tm .= "<b>".$planet_data[$planet_id]."</b>: ".nf($count)."<br>";
+							  	}
+		  						
+		  						echo "
+			  					<td class=\"tbldata\" ".tm("Anzahl",$tm).">
+			  						".nf($total)."
+			  					</td>";
+			  				}
+			  				else
+			  				{
+			  					echo "
+			  					<td class=\"tbldata\">
+			  						&nbsp;
+			  					</td>";		  					
+			  				}
+			  				
+			  				//Spalte bauender Schiffe
+		  					if(isset($queue_data[$sarr['ship_id']]))
+		  					{
+		  						// Summiert die Anzahl Schiffe von allen Planeten
+		  						$total = array_sum($queue_data[$sarr['ship_id']]);
+		  						
+		  						// Listet die Anzahl Schiffe von jedem einzelen Planeten auf
+		  						$tm = "";
+		  						foreach ($queue_data[$sarr['ship_id']] as $planet_id => $count)
+							  	{
+							  		$tm .= "<b>".$planet_data[$planet_id]."</b>: ".nf($count)."<br>";
+							  	}
+							  	
+		  						echo "
+			  					<td class=\"tbldata\" ".tm("Anzahl",$tm).">
+			  						".nf($total)."
+			  					</td>";
+			  				}
+			  				else
+			  				{
+			  					echo "
+			  					<td class=\"tbldata\">
+			  						&nbsp;
+			  					</td>";		  					
+			  				}
+			  				
+			  				
+			  				//Spalte fliegender Schiffe
+		  					if(isset($fleet_data[$sarr['ship_id']]))
+		  					{
+		  						// Summiert die Anzahl Schiffe von allen Planeten
+		  						$total = array_sum($fleet_data[$sarr['ship_id']]);
+		  						echo "
+			  					<td class=\"tbldata\">
+			  						".nf($total)."
+			  					</td>";
+			  				}
+			  				else
+			  				{
+			  					echo "
+			  					<td class=\"tbldata\">
+			  						&nbsp;
+			  					</td>";		  					
+			  				}			  				
+			  	echo "</tr>";
+			  }
+	  	}    	
+	  }		
+		
+		infobox_end(1);
+		
+		//Arrays löschen (Speicher freigeben)
+		mysql_free_result($res);
+		mysql_free_result($sres);
+    unset($arr);
+    unset($sarr);
+    unset($planet_data);
+    unset($shiplist_data);
+    unset($queue_data);
+    unset($fleet_data);
+	}
+	else
+	{
+		echo "Es sind noch keine Schiffe vorhanden!<br>";
+	}
 ?>
