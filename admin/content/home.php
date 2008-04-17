@@ -546,10 +546,10 @@
 			infobox_end();			
 		}
 
-		if ($cfg->get("admin_htaccess_auth_user") == "" || $cfg->get("admin_htaccess_auth_pw")=="")
-		{
-			echo "<div style=\"color:#f90\">Der Passwort-Schutz ist noch nicht aktiv! <a href=\"?page=config&amp;sub=htaccess\">Hier einrichten</a></div><br/>";
-		}
+		//if ($cfg->get("admin_htaccess_auth_user") == "" || $cfg->get("admin_htaccess_auth_pw")=="")
+		//{
+		//	echo "<div style=\"color:#f90\">Der Passwort-Schutz ist noch nicht aktiv! <a href=\"?page=config&amp;sub=htaccess\">Hier einrichten</a></div><br/>";
+		//}
 
 		//
 		// Schnellsuche

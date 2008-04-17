@@ -768,3 +768,8 @@ function check_illegal_signs(str)
 	
 	return result;
 }
+
+function statsSearchLoader()
+{
+	document.getElementById('statsTable').innerHTML='<div style=\"padding:20px;background:#335\"><img src=\"images/loading335.gif\" alt=\"Loading\" /> Suche Spieler...</div>';
+}

@@ -47,7 +47,7 @@
 		$res=dbquery("
 			SELECT 
 				user_nick,
-				user_rank_current 
+				user_rank
 			FROM 
 				users
 			WHERE 
@@ -103,7 +103,7 @@
 				}
 				ksort ($points);
 	
-				imagestring($im,FONT_SIZE,B_B/3,B_B/3,"Statistiken von ".$arr['user_nick'].", Rang ".$arr['user_rank_current'].", letzes Update: ".date("d.m.Y H:i",$last_update)."",$black);	
+				imagestring($im,FONT_SIZE,B_B/3,B_B/3,"Statistiken von ".$arr['user_nick'].", Rang ".$arr['user_rank'].", letzes Update: ".date("d.m.Y H:i",$last_update)."",$black);	
 				imagestring($im,FONT_SIZE,B_B/3,B_B/3+9,"Schrittweite: ".STEP." Stunden, Zeitraum: ".(DETAIL_LIMIT*STEP/24)." Tage",$black);	
 				$cnt=0;
 				

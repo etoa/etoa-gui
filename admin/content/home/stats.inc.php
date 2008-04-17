@@ -138,7 +138,6 @@
 			$order $sort;");		
 		if (mysql_num_rows($res)>0)
 		{
-			$cnt=1;
 			while ($arr=mysql_fetch_array($res))
 			{
 				echo "<tr>";
@@ -150,7 +149,6 @@
 				echo "<td>".nf($arr['cnt'])."</td>";
 				echo "<td>".edit_button("?page=alliances&amp;sub=edit&amp;alliance_id=".$arr['alliance_id']."")."</td>";
 				echo "</tr>";
-				$cnt++;
 			}
 		}
 		else
@@ -470,7 +468,6 @@
 				<th style=\"\">Punkte</th>
 				<th style=\"width:60px;\">Details</th>
 			</tr>";
-			$cnt=1+$limit;
 			while ($arr=mysql_fetch_array($res))
 			{
 				if ($arr['blocked']==1)
@@ -509,7 +506,6 @@
 				".cb_button("add_user=".$arr['id']."")."				
 				</td>";
 				echo "</tr>";
-				$cnt++;
 			}
 		}
 		else

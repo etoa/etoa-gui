@@ -56,7 +56,7 @@
             diplomacy_rating
 		FROM 
 			".$db_table['users']." 
-		INNER JOIN
+		LEFT JOIN
 			user_ratings
 			ON user_id=id
 		LEFT JOIN
@@ -124,7 +124,7 @@
 			echo "<input type=\"button\" value=\"Punkteverlauf anzeigen\" onclick=\"document.location='?page=stats&amp;mode=user&amp;userdetail=".intval($_GET['id'])."'\" /> &nbsp; ";
 		}
 		else
-			echo "<b>Fehler:</b>Dieser Spieler existiert nicht!";
+			echo "<b>Fehler:</b> Dieser Spieler existiert nicht!<br/><br/>";
 	}
 	else
 		echo "<b>Fehler:</b> Keine ID angegeben!";

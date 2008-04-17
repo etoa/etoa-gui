@@ -46,7 +46,7 @@
 		SELECT 
             user_nick,
             user_points,
-            user_rank_current,
+            user_rank,
             user_id 
 		FROM 
 			".$db_table['users']." 
@@ -56,7 +56,7 @@
 		{
 			$arr=mysql_fetch_array($res);
 			echo "<h2>Punktedetails f&uuml;r ".text2html($arr['user_nick'])."</h2>";
-			echo "<b>Punkte aktuell:</b> ".nf($arr['user_points']).", <b>Rang aktuell:</b> ".$arr['user_rank_current']."<br/><br/>";
+			echo "<b>Punkte aktuell:</b> ".nf($arr['user_points']).", <b>Rang aktuell:</b> ".$arr['user_rank']."<br/><br/>";
 			echo "<img src=\"misc/stats.image.php?user=".$arr['user_id']."\" alt=\"Diagramm\" /><br/><br/>";
 			$pres=dbquery("
 			SELECT 
@@ -160,21 +160,6 @@
 
 	else
 	{
-		// Menu
-		$menu = array("xajax_statsShowBox('user');"=>"Spieler",
-		"xajax_statsShowBox('ships')"=>"Schiffe",
-		"xajax_statsShowBox('tech')"=>"Forschung",
-		"xajax_statsShowBox('buildings')"=>"Geb&auml;ude",
-		"xajax_statsShowBox('alliances')"=>"Allianzen",
-		"xajax_statsShowBox('pillory')"=>"Pranger");
-		if (ENABLE_USERTITLES==1)
-		{
-			$menu["xajax_statsShowBox('battle');"]="Kampf";
-			$menu["xajax_statsShowBox('trade');"]="Handel";
-			$menu["xajax_statsShowBox('diplomacy');"]="Diplomatie";
-			$menu["xajax_statsShowBox('titles');"]="Titel";
-		}		
-		
 		$ddm = new DropdownMenu(1);
 		$ddm->add('total','Gesamtstatistik','xajax_statsShowBox(\'user\');');
 		$ddm->add('detail','Detailstatistiken','');
@@ -186,6 +171,7 @@
 		$ddm->addChild('buildings','Gebäude','xajax_statsShowBox(\'buildings\');','detail');
 		$ddm->addChild('tech','Forschung','xajax_statsShowBox(\'tech\');','detail');
 		$ddm->addChild('ships','Schiffe','xajax_statsShowBox(\'ships\');','detail');
+		$ddm->addChild('exp','Erfahrung','xajax_statsShowBox(\'exp\');','detail');
 
 		$ddm->addChild('battle','Kampfpunkte','xajax_statsShowBox(\'battle\');','special');
 		$ddm->addChild('trade','Handelspunkte','xajax_statsShowBox(\'trade\');','special');
@@ -215,10 +201,11 @@
 
 		echo "<script type=\"text/javascript\">
 		xajax_statsShowBox('".$mode."');
-		</script>";
+		</script><br/>";
 
 
 		// Legende
+		infobox_start("Infos zur Statistik");
 		echo "<p align=\"center\">Die Aktualisierung der <span ".tm("Punkteberechnung","F&uuml;r ".STATS_USER_POINTS."t verbaute Rohstoffe bekommt der Spieler 1 Punkt in der Statistik<br>F&uuml;r ".STATS_ALLIANCE_POINTS." Spielerpunkte bekommt die Allianz 1 Punkt in der Statisik")."><u>Punkte</u></span> erfolgt ";
 		$h = $conf['points_update']['v']/3600;
 		if ($h>1)
@@ -231,7 +218,7 @@
 			echo "alle $m Minuten!<br>";
 		}
 		echo "Neu angemeldete Benutzer erscheinen erst nach der ersten Aktualisierung in der Liste.<br/>";
-		echo "Letzte Aktualisierung: <b>".date("d.m.Y",$conf['statsupdate']['v'])."</b> um <b>".date("H:i",$conf['statsupdate']['v'])." Uhr</b><br/>";
+		echo "Letzte Aktualisierung: <b>".df($conf['statsupdate']['v'])." Uhr</b><br/>";
 		echo "<b>Legende:</b> <span style=\"color:".$conf['color_banned']['v'].";\">Gesperrt</span>, ";
 		echo "<span style=\"color:".$conf['color_umod']['v'].";\">Urlaubsmodus</span>, ";
 		echo "<span style=\"color:".$conf['color_inactive']['v'].";\">Inaktiv (".USER_INACTIVE_SHOW." Tage)</span>, ";
@@ -241,5 +228,6 @@
 		else
 			echo "Allianzmitglied";
 		echo "</span></p>";
+		infobox_end();
 	}
 ?>
