@@ -1782,19 +1782,19 @@ function MarketSearchFormularShow($val)
 				<tr>
 					<td class=\"tbltitle\" width=\"25%\">Bezahlbar</td>
 					<td class=\"tbldata\" ".tm("Bezahlbar","Es werden nur Angebote angezeigt, für diese genug Rohstoffe auf dem aktuellen Planeten sind.").">
-						<input type=\"radio\" name=\"search_ress_buyable\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Ja 
+						<input type=\"radio\" name=\"search_ress_buyable\" id=\"search_ress_buyable\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Ja 
 					</td>
 					<td class=\"tbldata\" colspan=\"4\" ".tm("Bezahlbar","Es werden alle Angebote angezeigt").">
-						<input type=\"radio\" name=\"search_ress_buyable\" value=\"0\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Nein alles anzeigen
+						<input type=\"radio\" name=\"search_ress_buyable\" id=\"search_ress_buyable\" value=\"0\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Nein alles anzeigen
 					</td>
 				</tr>
 				<tr>
 					<td class=\"tbltitle\" width=\"25%\">Reservierte</td>
 					<td class=\"tbldata\" ".tm("Reservierte","Es werden nur Angebote angezeigt, welche für Allianzmitlgieder reserveriert sind.").">
-						<input type=\"radio\" name=\"search_ress_for_alliance\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Ja 
+						<input type=\"radio\" name=\"search_ress_for_alliance\" id=\"search_ress_for_alliance\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Ja 
 					</td>
 					<td class=\"tbldata\" colspan=\"4\" ".tm("Reservierte","Es werden alle Angebote angezeigt").">
-						<input type=\"radio\" name=\"search_ress_for_alliance\" value=\"0\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Nein alles anzeigen
+						<input type=\"radio\" name=\"search_ress_for_alliance\" id=\"search_ress_for_alliance\" value=\"0\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Nein alles anzeigen
 					</td>
 				</tr>
 				<tr>
@@ -1812,37 +1812,37 @@ function MarketSearchFormularShow($val)
 				<tr>
 					<td class=\"tbltitle\">Angebot</td>
 					<td class=\"tbldata\" width=\"15%\" ".tm("Angebot","".RES_METAL." soll im Angebot enthalten sein.").">
-						<input type=\"checkbox\" name=\"search_ress_sell_metal\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_METAL."
+						<input type=\"checkbox\" name=\"search_ress_sell_metal\" id=\"search_ress_sell_metal\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_METAL."
 					</td>
 					<td class=\"tbldata\" width=\"15%\" ".tm("Angebot","".RES_CRYSTAL." soll im Angebot enthalten sein.").">
-						<input type=\"checkbox\" name=\"search_ress_sell_crystal\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_CRYSTAL."
+						<input type=\"checkbox\" name=\"search_ress_sell_crystal\" id=\"search_ress_sell_crystal\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_CRYSTAL."
 					</td>
 					<td class=\"tbldata\" width=\"15%\" ".tm("Angebot","".RES_PLASTIC." soll im Angebot enthalten sein.").">
-						<input type=\"checkbox\" name=\"search_ress_sell_plastic\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_PLASTIC."
+						<input type=\"checkbox\" name=\"search_ress_sell_plastic\" id=\"search_ress_sell_plastic\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_PLASTIC."
 					</td>
 					<td class=\"tbldata\" width=\"15%\" ".tm("Angebot","".RES_FUEL." soll im Angebot enthalten sein.").">
-						<input type=\"checkbox\" name=\"search_ress_sell_fuel\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_FUEL."
+						<input type=\"checkbox\" name=\"search_ress_sell_fuel\" id=\"search_ress_sell_fuel\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_FUEL."
 					</td>
 					<td class=\"tbldata\" width=\"15%\" ".tm("Angebot","".RES_FOOD." soll im Angebot enthalten sein.").">
-						<input type=\"checkbox\" name=\"search_ress_sell_food\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_FOOD."
+						<input type=\"checkbox\" name=\"search_ress_sell_food\" id=\"search_ress_sell_food\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_FOOD."
 					</td>
 				</tr>
 				<tr>
 					<td class=\"tbltitle\" width=\"25%\">Preis</td>
 					<td class=\"tbldata\" ".tm("Preis","".RES_METAL." soll im Preis enthalten sein.").">
-						<input type=\"checkbox\" name=\"search_ress_buy_metal\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_METAL."
+						<input type=\"checkbox\" name=\"search_ress_buy_metal\" id=\"search_ress_buy_metal\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_METAL."
 					</td>
 					<td class=\"tbldata\" ".tm("Preis","".RES_CRYSTAL." soll im Preis enthalten sein.").">
-						<input type=\"checkbox\" name=\"search_ress_buy_crystal\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_CRYSTAL."
+						<input type=\"checkbox\" name=\"search_ress_buy_crystal\" id=\"search_ress_buy_crystal\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_CRYSTAL."
 					</td>
 					<td class=\"tbldata\" ".tm("Preis","".RES_PLASTIC." soll im Preis enthalten sein.").">
-						<input type=\"checkbox\" name=\"search_ress_buy_plastic\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_PLASTIC."
+						<input type=\"checkbox\" name=\"search_ress_buy_plastic\" id=\"search_ress_buy_plastic\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_PLASTIC."
 					</td>
 					<td class=\"tbldata\" ".tm("Preis","".RES_FUEL." soll im Preis enthalten sein.").">
-						<input type=\"checkbox\" name=\"search_ress_buy_fuel\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_FUEL."
+						<input type=\"checkbox\" name=\"search_ress_buy_fuel\" id=\"search_ress_buy_fuel\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_FUEL."
 					</td>
 					<td class=\"tbldata\" ".tm("Preis","".RES_FOOD." soll im Preis enthalten sein.").">
-						<input type=\"checkbox\" name=\"search_ress_buy_food\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_FOOD."
+						<input type=\"checkbox\" name=\"search_ress_buy_food\" id=\"search_ress_buy_food\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_FOOD."
 					</td>
 				</tr>					
 			</table>";
@@ -1872,19 +1872,19 @@ function MarketSearchFormularShow($val)
 				<tr>
 					<td class=\"tbltitle\" width=\"25%\">Bezahlbar</td>
 					<td class=\"tbldata\" ".tm("Bezahlbar","Es werden nur Angebote angezeigt, für diese genug Rohstoffe auf dem aktuellen Planeten sind.").">
-						<input type=\"radio\" name=\"search_ship_buyable\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Ja 
+						<input type=\"radio\" name=\"search_ship_buyable\" id=\"search_ship_buyable\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Ja 
 					</td>
 					<td class=\"tbldata\" colspan=\"4\" ".tm("Bezahlbar","Es werden alle Angebote angezeigt").">
-						<input type=\"radio\" name=\"search_ship_buyable\" value=\"0\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Nein alles anzeigen
+						<input type=\"radio\" name=\"search_ship_buyable\" id=\"search_ship_buyable\" value=\"0\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Nein alles anzeigen
 					</td>
 				</tr>
 				<tr>
 					<td class=\"tbltitle\" width=\"25%\">Reservierte</td>
 					<td class=\"tbldata\" ".tm("Reservierte","Es werden nur Angebote angezeigt, welche für Allianzmitlgieder reserveriert sind.").">
-						<input type=\"radio\" name=\"search_ship_for_alliance\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Ja 
+						<input type=\"radio\" name=\"search_ship_for_alliance\" id=\"search_ship_for_alliance\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Ja 
 					</td>
 					<td class=\"tbldata\" colspan=\"4\" ".tm("Reservierte","Es werden alle Angebote angezeigt").">
-						<input type=\"radio\" name=\"search_ship_for_alliance\" value=\"0\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Nein alles anzeigen
+						<input type=\"radio\" name=\"search_ship_for_alliance\" id=\"search_ship_for_alliance\" value=\"0\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Nein alles anzeigen
 					</td>
 				</tr>																
 				<tr>
@@ -1903,19 +1903,19 @@ function MarketSearchFormularShow($val)
 				<tr>
 					<td class=\"tbltitle\" width=\"25%\">Preis</td>
 					<td class=\"tbldata\" width=\"15%\" ".tm("Preis","".RES_METAL." soll im Preis enthalten sein.").">
-						<input type=\"checkbox\" name=\"search_ship_buy_metal\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_METAL."
+						<input type=\"checkbox\" name=\"search_ship_buy_metal\" id=\"search_ship_buy_metal\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_METAL."
 					</td>
 					<td class=\"tbldata\" width=\"15%\" ".tm("Preis","".RES_CRYSTAL." soll im Preis enthalten sein.").">
-						<input type=\"checkbox\" name=\"search_ship_buy_crystal\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_CRYSTAL."
+						<input type=\"checkbox\" name=\"search_ship_buy_crystal\" id=\"search_ship_buy_crystal\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_CRYSTAL."
 					</td>
 					<td class=\"tbldata\" width=\"15%\" ".tm("Preis","".RES_PLASTIC." soll im Preis enthalten sein.").">
-						<input type=\"checkbox\" name=\"search_ship_buy_plastic\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_PLASTIC."
+						<input type=\"checkbox\" name=\"search_ship_buy_plastic\" id=\"search_ship_buy_plastic\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_PLASTIC."
 					</td>
 					<td class=\"tbldata\" width=\"15%\" ".tm("Preis","".RES_FUEL." soll im Preis enthalten sein.")."> ".RES_FUEL."
-						<input type=\"checkbox\" name=\"search_ship_buy_fuel\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/>
+						<input type=\"checkbox\" name=\"search_ship_buy_fuel\" id=\"search_ship_buy_fuel\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/>
 					</td>
 					<td class=\"tbldata\" width=\"15%\" ".tm("Preis","".RES_FOOD." soll im Preis enthalten sein.").">
-						<input type=\"checkbox\" name=\"search_ship_buy_food\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_FOOD."
+						<input type=\"checkbox\" name=\"search_ship_buy_food\" id=\"search_ship_buy_food\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_FOOD."
 					</td>
 				</tr>					
 			</table>";
@@ -1945,19 +1945,19 @@ function MarketSearchFormularShow($val)
 				<tr>
 					<td class=\"tbltitle\" width=\"25%\">Bezahlbar</td>
 					<td class=\"tbldata\" ".tm("Bezahlbar","Es werden nur Angebote angezeigt, für diese genug Rohstoffe auf dem aktuellen Planeten sind.").">
-						<input type=\"radio\" name=\"search_auction_buyable\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Ja 
+						<input type=\"radio\" name=\"search_auction_buyable\" id=\"search_auction_buyable\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Ja 
 					</td>
 					<td class=\"tbldata\" colspan=\"4\" ".tm("Bezahlbar","Es werden alle Angebote angezeigt").">
-						<input type=\"radio\" name=\"search_auction_buyable\" value=\"0\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Nein alles anzeigen
+						<input type=\"radio\" name=\"search_auction_buyable\" id=\"search_auction_buyable\" value=\"0\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Nein alles anzeigen
 					</td>
 				</tr>
 				<tr>
 					<td class=\"tbltitle\" width=\"25%\">Abgelaufene ausblenden</td>
 					<td class=\"tbldata\" ".tm("Abgelaufene ausblenden","Es werden nur Angebote angezeigt, welche noch nicht abgelaufen sind.").">
-						<input type=\"radio\" name=\"search_auction_end\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Ja 
+						<input type=\"radio\" name=\"search_auction_end\" id=\"search_auction_end\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Ja 
 					</td>
 					<td class=\"tbldata\" colspan=\"4\" ".tm("Abgelaufene ausblenden","Es werden alle Angebote angezeigt").">
-						<input type=\"radio\" name=\"search_auction_end\" value=\"0\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Nein alles anzeigen
+						<input type=\"radio\" name=\"search_auction_end\" id=\"search_auction_end\" value=\"0\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Nein alles anzeigen
 					</td>
 				</tr>				
 				<tr>
@@ -1975,37 +1975,37 @@ function MarketSearchFormularShow($val)
 				<tr>
 					<td class=\"tbltitle\">Angebot</td>
 					<td class=\"tbldata\" width=\"15%\" ".tm("Angebot","".RES_METAL." soll im Angebot enthalten sein.").">
-						<input type=\"checkbox\" name=\"search_auction_sell_metal\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_METAL."
+						<input type=\"checkbox\" name=\"search_auction_sell_metal\" id=\"search_auction_sell_metal\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_METAL."
 					</td>
 					<td class=\"tbldata\" width=\"15%\" ".tm("Angebot","".RES_CRYSTAL." soll im Angebot enthalten sein.").">
-						<input type=\"checkbox\" name=\"search_auction_sell_crystal\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_CRYSTAL."
+						<input type=\"checkbox\" name=\"search_auction_sell_crystal\" id=\"search_auction_sell_crystal\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_CRYSTAL."
 					</td>
 					<td class=\"tbldata\" width=\"15%\" ".tm("Angebot","".RES_PLASTIC." soll im Angebot enthalten sein.").">
-						<input type=\"checkbox\" name=\"search_auction_sell_plastic\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_PLASTIC."
+						<input type=\"checkbox\" name=\"search_auction_sell_plastic\" id=\"search_auction_sell_plastic\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_PLASTIC."
 					</td>
 					<td class=\"tbldata\" width=\"15%\" ".tm("Angebot","".RES_FUEL." soll im Angebot enthalten sein.").">
-						<input type=\"checkbox\" name=\"search_auction_sell_fuel\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_FUEL."
+						<input type=\"checkbox\" name=\"search_auction_sell_fuel\" id=\"search_auction_sell_fuel\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_FUEL."
 					</td>
 					<td class=\"tbldata\" width=\"15%\" ".tm("Angebot","".RES_FOOD." soll im Angebot enthalten sein.").">
-						<input type=\"checkbox\" name=\"search_auction_sell_food\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_FOOD."
+						<input type=\"checkbox\" name=\"search_auction_sell_food\" id=\"search_auction_sell_food\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_FOOD."
 					</td>
 				</tr>
 				<tr>
 					<td class=\"tbltitle\" width=\"25%\">Preis</td>
 					<td class=\"tbldata\" ".tm("Preis","".RES_METAL." soll im Preis enthalten sein.").">
-						<input type=\"checkbox\" name=\"search_auction_buy_metal\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_METAL."
+						<input type=\"checkbox\" name=\"search_auction_buy_metal\" id=\"search_auction_buy_metal\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_METAL."
 					</td>
 					<td class=\"tbldata\" ".tm("Preis","".RES_CRYSTAL." soll im Preis enthalten sein.").">
-						<input type=\"checkbox\" name=\"search_auction_buy_crystal\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_CRYSTAL."
+						<input type=\"checkbox\" name=\"search_auction_buy_crystal\" id=\"search_auction_buy_crystal\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_CRYSTAL."
 					</td>
 					<td class=\"tbldata\" ".tm("Preis","".RES_PLASTIC." soll im Preis enthalten sein.").">
-						<input type=\"checkbox\" name=\"search_auction_buy_plastic\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_PLASTIC."
+						<input type=\"checkbox\" name=\"search_auction_buy_plastic\" id=\"search_auction_buy_plastic\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_PLASTIC."
 					</td>
 					<td class=\"tbldata\" ".tm("Preis","".RES_FUEL." soll im Preis enthalten sein.").">
-						<input type=\"checkbox\" name=\"search_auction_buy_fuel\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_FUEL."
+						<input type=\"checkbox\" name=\"search_auction_buy_fuel\" id=\"search_auction_buy_fuel\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_FUEL."
 					</td>
 					<td class=\"tbldata\" ".tm("Preis","".RES_FOOD." soll im Preis enthalten sein.").">
-						<input type=\"checkbox\" name=\"search_auction_buy_food\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_FOOD."
+						<input type=\"checkbox\" name=\"search_auction_buy_food\" id=\"search_auction_buy_food\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_FOOD."
 					</td>
 				</tr>					
 			</table>";
@@ -2049,7 +2049,7 @@ function MarketSearchFormularShow($val)
 
 function checkMarketSearchFormular($val)
 {
-		global $conf,$s;
+		global $conf, $s, $cu;
 		
 		
 		
@@ -2098,7 +2098,7 @@ function checkMarketSearchFormular($val)
 			}
 			
 			// Kaufbare Angebote suchen
-			if($val['search_ress_buyable']==1)
+			if(isset($val['search_ress_buyable']) && $val['search_ress_buyable']==1)
 			{
 				$sql_add .= " AND buy_metal<='".$val['res_metal']."'
 										AND buy_crystal<='".$val['res_crystal']."'
@@ -2108,22 +2108,16 @@ function checkMarketSearchFormular($val)
 			}
 	
 			// Für Allianzmitglieder
-			if($s['user_alliance_application']==0)
+			if(isset($val['search_ress_for_alliance']) && $val['search_ress_for_alliance']==1)
 			{
-				if($val['search_ress_for_alliance']==1)
-				{
-					$sql_add .= " AND ressource_for_alliance='".$s['user_alliance_id']."'";
-					$out_add_alliance = " reservierte(s)";
-				}
-				else
-				{
-					$sql_add .= " AND (ressource_for_alliance='0' OR ressource_for_alliance='".$s['user_alliance_id']."')";
-				}
+				$sql_add .= " AND ressource_for_alliance='".$cu->alliance_id."'";
+				$out_add_alliance = " reservierte(s)";
 			}
 			else
 			{
-				$sql_add .= " AND ressource_for_alliance='0'";
+				$sql_add .= " AND (ressource_for_alliance='0' OR ressource_for_alliance='".$cu->alliance_id."')";
 			}
+
 			
 			// Preisklasse
 			if($val['search_ress_price_class']>0)
@@ -2150,45 +2144,45 @@ function checkMarketSearchFormular($val)
 			}
 			
 			// Rohtoffe im Angebot
-			if($val['search_ress_sell_metal']==1)
+			if(isset($val['search_ress_sell_metal']) && $val['search_ress_sell_metal']==1)
 			{
 				$sql_add .= " AND sell_metal>0";
 			}
-			if($val['search_ress_sell_crystal']==1)
+			if(isset($val['search_ress_sell_crystal']) && $val['search_ress_sell_crystal']==1)
 			{
 				$sql_add .= " AND sell_crystal>0";
 			}	
-			if($val['search_ress_sell_plastic']==1)
+			if(isset($val['search_ress_sell_plastic']) && $val['search_ress_sell_plastic']==1)
 			{
 				$sql_add .= " AND sell_plastic>0";
 			}	
-			if($val['search_ress_sell_fuel']==1)
+			if(isset($val['search_ress_sell_fuel']) && $val['search_ress_sell_fuel']==1)
 			{
 				$sql_add .= " AND sell_fuel>0";
 			}	
-			if($val['search_ress_sell_food']==1)
+			if(isset($val['search_ress_sell_food']) && $val['search_ress_sell_food']==1)
 			{
 				$sql_add .= " AND sell_food>0";
 			}			
 			
 			// Rohstoffe im Preis
-			if($val['search_ress_buy_metal']==1)
+			if(isset($val['search_ress_buy_metal']) && $val['search_ress_buy_metal']==1)
 			{
 				$sql_add .= " AND buy_metal>0";
 			}
-			if($val['search_ress_buy_crystal']==1)
+			if(isset($val['search_ress_buy_crystal']) && $val['search_ress_buy_crystal']==1)
 			{
 				$sql_add .= " AND buy_crystal>0";
 			}	
-			if($val['search_ress_buy_plastic']==1)
+			if(isset($val['search_ress_buy_plastic']) && $val['search_ress_buy_plastic']==1)
 			{
 				$sql_add .= " AND buy_plastic>0";
 			}	
-			if($val['search_ress_buy_fuel']==1)
+			if(isset($val['search_ress_buy_fuel']) && $val['search_ress_buy_fuel']==1)
 			{
 				$sql_add .= " AND buy_fuel>0";
 			}	
-			if($val['search_ress_buy_food']==1)
+			if(isset($val['search_ress_buy_food']) && $val['search_ress_buy_food']==1)
 			{
 				$sql_add .= " AND buy_food>0";
 			}				
@@ -2253,7 +2247,7 @@ function checkMarketSearchFormular($val)
 			
 			
 			// Prüft Nick Eingaben
-			if($val['user_nick']!="")
+			if(isset($val['user_nick']) && $val['user_nick']!="")
 			{
 				if(get_user_id($val['user_nick']) != 0)
 				{
@@ -2282,7 +2276,7 @@ function checkMarketSearchFormular($val)
 			}
 			
 			// Kaufbare Angebote suchen
-			if($val['search_ship_buyable']==1)
+			if(isset($val['search_ship_buyable']) && $val['search_ship_buyable']==1)
 			{
 				$sql_add .= " AND ship_costs_metal<='".$val['res_metal']."'
 										AND ship_costs_crystal<='".$val['res_crystal']."'
@@ -2292,22 +2286,16 @@ function checkMarketSearchFormular($val)
 			}
 	
 			// Für Allianzmitglieder
-			if($s['user_alliance_application']==0)
+			if(isset($val['search_ship_for_alliance']) && $val['search_ship_for_alliance']==1)
 			{
-				if($val['search_ship_for_alliance']==1)
-				{
-					$sql_add .= " AND ship_for_alliance='".$s['user_alliance_id']."'";
-					$out_add_alliance = " reservierte(s)";
-				}
-				else
-				{
-					$sql_add .= " AND (ship_for_alliance='0' OR ship_for_alliance='".$s['user_alliance_id']."')";
-				}
+				$sql_add .= " AND ship_for_alliance='".$cu->alliance_id."'";
+				$out_add_alliance = " reservierte(s)";
 			}
 			else
 			{
-				$sql_add .= " AND ship_for_alliance='0'";
+				$sql_add .= " AND (ship_for_alliance='0' OR ship_for_alliance='".$cu->alliance_id."')";
 			}
+
 			
 			// Schiff
 			if($val['search_ship_ship_list']!=0)
@@ -2316,23 +2304,23 @@ function checkMarketSearchFormular($val)
 			}
 			
 			// Rohstoffe im Preis
-			if($val['search_ship_buy_metal']==1)
+			if(isset($val['search_ship_buy_metal']) && $val['search_ship_buy_metal']==1)
 			{
 				$sql_add .= " AND ship_costs_metal>0";
 			}
-			if($val['search_ship_buy_crystal']==1)
+			if(isset($val['search_ship_buy_crystal']) && $val['search_ship_buy_crystal']==1)
 			{
 				$sql_add .= " AND ship_costs_crystal>0";
 			}	
-			if($val['search_ship_buy_plastic']==1)
+			if(isset($val['search_ship_buy_plastic']) && $val['search_ship_buy_plastic']==1)
 			{
 				$sql_add .= " AND ship_costs_plastic>0";
 			}	
-			if($val['search_ship_buy_fuel']==1)
+			if(isset($val['search_ship_buy_fuel']) && $val['search_ship_buy_fuel']==1)
 			{
 				$sql_add .= " AND ship_costs_fuel>0";
 			}	
-			if($val['search_ship_buy_food']==1)
+			if(isset($val['search_ship_buy_food']) && $val['search_ship_buy_food']==1)
 			{
 				$sql_add .= " AND ship_costs_food>0";
 			}				
@@ -2392,10 +2380,11 @@ function checkMarketSearchFormular($val)
 			$sql_add = "";
 			$out_add_nick = "";
 			$user_id = 0;
+			$out_add_alliance = "";
 			
 			
 			// Prüft Nick Eingaben
-			if($val['user_nick']!="")
+			if(isset($val['user_nick']) && $val['user_nick']!="")
 			{
 				if(get_user_id($val['user_nick']) != 0)
 				{
@@ -2424,7 +2413,7 @@ function checkMarketSearchFormular($val)
 			}
 			
 			// Kaufbare Angebote suchen
-			if($val['search_auction_auction_buyable']==1)
+			if(isset($val['search_auction_auction_buyable']) && $val['search_auction_auction_buyable']==1)
 			{
 				$sql_add .= " AND auction_buy_metal<='".$val['res_metal']."'
 										AND auction_buy_crystal<='".$val['res_crystal']."'
@@ -2434,7 +2423,7 @@ function checkMarketSearchFormular($val)
 			}
 			
 			// Abgelaufene Angebote
-			if($val['search_auction_end']==1)
+			if(isset($val['search_auction_end']) && $val['search_auction_end']==1)
 			{
 				$sql_add .= " AND auction_buyable='1'";
 			}
@@ -2465,45 +2454,45 @@ function checkMarketSearchFormular($val)
 			}
 			
 			// Rohtoffe im Angebot
-			if($val['search_auction_sell_metal']==1)
+			if(isset($val['search_auction_sell_metal']) && $val['search_auction_sell_metal']==1)
 			{
 				$sql_add .= " AND auction_sell_metal>0";
 			}
-			if($val['search_auction_sell_crystal']==1)
+			if(isset($val['search_auction_sell_crystal']) && $val['search_auction_sell_crystal']==1)
 			{
 				$sql_add .= " AND auction_sell_crystal>0";
 			}	
-			if($val['search_auction_sell_plastic']==1)
+			if(isset($val['search_auction_sell_plastic']) && $val['search_auction_sell_plastic']==1)
 			{
 				$sql_add .= " AND auction_sell_plastic>0";
 			}	
-			if($val['search_auction_sell_fuel']==1)
+			if(isset($val['search_auction_sell_fuel']) && $val['search_auction_sell_fuel']==1)
 			{
 				$sql_add .= " AND auction_sell_fuel>0";
 			}	
-			if($val['search_auction_sell_food']==1)
+			if(isset($val['search_auction_sell_food']) && $val['search_auction_sell_food']==1)
 			{
 				$sql_add .= " AND auction_sell_food>0";
 			}			
 			
 			// Rohstoffe im Preis
-			if($val['search_auction_buy_metal']==1)
+			if(isset($val['search_auction_buy_metal']) && $val['search_auction_buy_metal']==1)
 			{
 				$sql_add .= " AND auction_buy_metal>0";
 			}
-			if($val['search_auction_buy_crystal']==1)
+			if(isset($val['search_auction_buy_crystal']) && $val['search_auction_buy_crystal']==1)
 			{
 				$sql_add .= " AND auction_buy_crystal>0";
 			}	
-			if($val['search_auction_buy_plastic']==1)
+			if(isset($val['search_auction_buy_plastic']) && $val['search_auction_buy_plastic']==1)
 			{
 				$sql_add .= " AND auction_buy_plastic>0";
 			}	
-			if($val['search_auction_buy_fuel']==1)
+			if(isset($val['search_auction_buy_fuel']) && $val['search_auction_buy_fuel']==1)
 			{
 				$sql_add .= " AND auction_buy_fuel>0";
 			}	
-			if($val['search_auction_buy_food']==1)
+			if(isset($val['search_auction_buy_food']) && $val['search_auction_buy_food']==1)
 			{
 				$sql_add .= " AND auction_buy_food>0";
 			}				
