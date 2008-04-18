@@ -34,19 +34,32 @@
   define('NUM_BUILDINGS_PER_ROW',4);// Gebäude pro Reihe
   define('CELL_WIDTH',175);					// Breite der Gebäudezelle in der Übersicht
 	
+	// Aktiviert / Deaktiviert Bildfilter
 	if ($cu->image_filter==1)
+	{
 		$use_img_filter = true;
+	}
 	else
+	{
 		$use_img_filter = false;
+	}
 
 /* This function has to be outsourced, of course, later */
 
 
 
-function calcBuildingWaitTime($bc,$c)
+function calcBuildingWaitTime($bc,$cp)
 {
 	// Wartezeiten auf Ressourcen berechnen
-	if ($cp->prodMetal>0) $bwait['metal']=ceil(($bc['metal']-$cp->resMetal)/$cp->prodMetal*3600);else $bwait['metal']=0;
+	if ($cp->prodMetal>0)
+	{ 
+		$bwait['metal']=ceil(($bc['metal']-$cp->resMetal)/$cp->prodMetal*3600);
+	}
+	else
+	{
+		$bwait['metal']=0;
+	}
+	
 	if ($cp->prodCrystal>0) $bwait['crystal']=ceil(($bc['crystal']-$cp->resCrystal)/$cp->prodCrystal*3600);else $bwait['crystal']=0;
 	if ($cp->prodPlastic>0) $bwait['plastic']=ceil(($bc['plastic']-$cp->resPlastic)/$cp->prodPlastic*3600);else $bwait['plastic']=0;
 	if ($cp->prodFuel>0) $bwait['fuel']=ceil(($bc['fuel']-$cp->resFuel)/$cp->prodFuel*3600);else $bwait['fuel']=0;
@@ -54,7 +67,7 @@ function calcBuildingWaitTime($bc,$c)
 	$bwmax=max($bwait['metal'],$bwait['crystal'],$bwait['plastic'],$bwait['fuel'],$bwait['food']);
 
 	// Baukosten-String
-	$bcstring.="<td";
+	$bcstring ="<td";
 	if ($bc['metal']>$cp->resMetal)
 		$bcstring.= " class=\"tbldata2\" ".tm("Fehlender Rohstoff","<b>".nf($bc['metal']-$cp->resMetal)."</b> ".RES_METAL."<br/>Bereit in <b>".tf($bwait['metal'])."</b>");
 	else
@@ -102,7 +115,7 @@ function calcDemolishingCosts($buildingArray, $buildingCosts)
 	return $dc;
 }
 
-function calcDemolishingWaitTime($dc,$c)
+function calcDemolishingWaitTime($dc,$cp)
 {
 	if ($cp->prodMetal>0)
 		$dwait['metal']=ceil(($dc['metal']-$cp->resMetal)/$cp->prodMetal*3600);
@@ -152,7 +165,7 @@ function calcDemolishingWaitTime($dc,$c)
 	else
 		$dwstring.=" class=\"tbldata\"";
 	$dwstring.= ">".nf($dc['food'])."</td><td";
-	if ($dc['power']>$cp->prodPower-$cp->usePower && $dc['power']>0)
+	if ($dc['power']> $cp->prodPower - $cp->usePower && $dc['power']>0)
 		$dwstring.= " class=\"tbldata2\" ".tm("Fehlender Rohstoff",nf($dc['power']-($cp->prodPower-$cp->usePower))." Energie");
 	else
 		$dwstring.=" class=\"tbldata\"";
@@ -167,15 +180,19 @@ function calcDemolishingWaitTime($dc,$c)
 		echo "<h1>Bauhof des Planeten ".$cp->name()."</h1>";
 		$cp->resBox();
 
+
+		//
+		// Lädt alle benötigten Daten in Arrays
+		//
+
 		// Gebäudeliste laden
 		$sql ="
 		SELECT 
 			*
 		FROM 
-		"	.$db_table['buildlist']." 
-		WHERE 
-			buildlist_user_id='".$cu->id()."' 
-			AND buildlist_planet_id='".$cp->id()."';";
+			buildlist
+		WHERE  
+			buildlist_planet_id='".$cp->id()."';";
 		
 		$blres = dbquery($sql);
 		$builing_something=false;
@@ -188,26 +205,35 @@ function calcDemolishingWaitTime($dc,$c)
 			}
 		}
 
-		// Technologieliste laden
+		// Technologieliste laden und Gentechlevel definieren
+		define("GEN_TECH_LEVEL",0);
 		$tres = dbquery("
 		SELECT 
 			* 
 		FROM 
-			".$db_table['techlist']." 
+			techlist
 		WHERE 
 			techlist_user_id='".$cu->id()."'
 		;");
 		while ($tarr = mysql_fetch_array($tres))
 		{
 			$techlist[$tarr['techlist_tech_id']]=$tarr['techlist_current_level'];
+			
+			// Speichert Gentechlevel wenn diese schon erforscht wurde
+			if($tarr['techlist_tech_id']==GEN_TECH_ID && $tarr['techlist_current_level']>0)
+			{
+				define("GEN_TECH_LEVEL",$tarr['techlist_current_level']);
+			}
 		}
+		
+		
 		
 		// Requirements
 		$rres = dbquery("
 		SELECT 
 			* 
 		FROM 
-			".$db_table['building_requirements']."
+			building_requirements
 		;");
 		while ($rarr = mysql_fetch_array($rres))
 		{
@@ -222,41 +248,37 @@ function calcDemolishingWaitTime($dc,$c)
 			}
 		}
 
-		//Gentech level laden
-		$tlres = dbquery("
-		SELECT
-			techlist_current_level
-		FROM
-			".$db_table['techlist']."
-		WHERE
-            techlist_user_id='".$cu->id()."'
-            AND techlist_tech_id='".GEN_TECH_ID."';");
-		if(mysql_num_rows($tlres)>0)
-		{
-			$tlarr = mysql_fetch_array($tlres);
-			define("GEN_TECH_LEVEL",$tlarr['techlist_current_level']);
-    }
-    else
-    {
-    	define("GEN_TECH_LEVEL",0);
-    }
 
 		// Felder von bauender Def laden
 		$res_def =	dbquery("
 		SELECT 
 			SUM(d.def_fields * dl.deflist_build_count) AS planet_def_fields_needed 
 		FROM 
-			".$db_table['defense']." AS d
+			defense AS d
 			INNER JOIN
-			".$db_table['deflist']." AS dl
+			deflist AS dl
 			ON
-			d.def_id = dl.deflist_def_id 
-			AND dl.deflist_planet_id='".$cp->id()."';");
-		$arr=mysql_fetch_array($res_def);
-		if ($arr['planet_def_fields_needed']>0)
+			d.def_id = dl.deflist_def_id
+		WHERE
+			dl.deflist_planet_id='".$cp->id()."';");
+		if(mysql_num_rows($res_def)>0)
 		{
-			$def_field_needed = $arr['planet_def_fields_needed'];
+			$arr=mysql_fetch_array($res_def);
+			if ($arr['planet_def_fields_needed']>0)
+			{
+				$def_field_needed = $arr['planet_def_fields_needed'];
+    	}
+    	else
+    	{
+    		$def_field_needed = 0;
+    	}
     }
+    else
+    {
+    	$def_field_needed = 0;
+    }
+
+
 
 /********************
 * Gebäudedetail     *
@@ -295,23 +317,28 @@ function calcDemolishingWaitTime($dc,$c)
 			if (mysql_num_rows($res)>0)
 			{
 				$arr = mysql_fetch_array($res);
-				if ($buildlist[$arr['building_id']]['buildlist_current_level']!=null)
+				
+				// Prüft, ob Gebäude schon gebaut wurde und setzt Variablen
+				if(isset($buildlist[$arr['building_id']]))
 				{
-					$b_level=$buildlist[$arr['building_id']]['buildlist_current_level'];
+					$built = true;
+					
+					$b_level = $buildlist[$arr['building_id']]['buildlist_current_level'];
+					$b_status = $buildlist[$arr['building_id']]['buildlist_build_type'];
+					$start_time = $buildlist[$arr['building_id']]['buildlist_build_start_time'];
+					$end_time = $buildlist[$arr['building_id']]['buildlist_build_end_time'];
 				}
+				// Gebäude wurde noch nicht gebaut. Es werden Default Werte vergeben
 				else
 				{
-					$b_level=0;
-				}
-
-				if ($buildlist[$arr['building_id']]['buildlist_build_type']!="")
-				{
-					$b_status=$buildlist[$arr['building_id']]['buildlist_build_type'];
-				}
-				else
-				{
+					$built = false;
+					
+					$b_level = 0;
 					$b_status=0;
+					$start_time = 0;
+					$end_time = 0;
 				}
+					
 
         $bc = calcBuildingCosts($arr,$b_level);
         $bcn = calcBuildingCosts($arr,$b_level+1);
@@ -331,7 +358,7 @@ function calcDemolishingWaitTime($dc,$c)
 				$dtime = ($dc['metal']+$dc['crystal']+$dc['plastic']+$dc['fuel']+$dc['food']) * $btime_global_factor * $btime_build_factor;
 				$dtime  *= $bonus;
 
-				if ($buildlist[BUILD_BUILDING_ID]['buildlist_people_working']>0)
+				if (isset($buildlist[BUILD_BUILDING_ID]['buildlist_people_working']) && $buildlist[BUILD_BUILDING_ID]['buildlist_people_working']>0)
 				{
 					$btime_min=$btime*(0.1-(GEN_TECH_LEVEL/100));
 					$btime=$btime-($buildlist[BUILD_BUILDING_ID]['buildlist_people_working']*3);
@@ -339,15 +366,13 @@ function calcDemolishingWaitTime($dc,$c)
 					$bc['food']+=$buildlist[BUILD_BUILDING_ID]['buildlist_people_working']*12;
 				}
 
-				$start_time = $buildlist[$arr['building_id']]['buildlist_build_start_time'];
-				$end_time = $buildlist[$arr['building_id']]['buildlist_build_end_time'];
 
 				//
 				// Befehle ausführen
 				//
 
 				//Gebäude ausbauen
-				if ($_POST['command_build']!="" && $b_status==0)
+				if (isset($_POST['command_build']) && $b_status==0)
 				{
 					if (!$builing_something)
 					{
@@ -363,22 +388,21 @@ function calcDemolishingWaitTime($dc,$c)
 								{
 									dbquery("
 									UPDATE 
-										".$db_table['buildlist']." 
+										buildlist 
 									SET
 										buildlist_build_type='1',
 										buildlist_build_start_time='".time()."',
 										buildlist_build_end_time='".$end_time."'
-									WHERE 
-										buildlist_building_id='".$arr['building_id']."'
-										AND buildlist_user_id='".$cu->id()."'
-										AND buildlist_planet_id='".$cp->id()."';");
+									WHERE
+										buildlist_planet_id='".$cp->id()."'
+										AND buildlist_building_id='".$arr['building_id']."';");
 								}
 								//Gebäude noch nicht vorhanden
 								else
 								{
 									dbquery("
 									INSERT INTO 
-									".$db_table['buildlist']." 
+									buildlist 
 									(
 										buildlist_build_type,
 										buildlist_build_start_time,
@@ -444,7 +468,7 @@ function calcDemolishingWaitTime($dc,$c)
 				}
 
 				//Gebäude abbrechen
-				if ($_POST['command_demolish']!="" && $b_status==0)
+				if (isset($_POST['command_demolish']) && $b_status==0)
 				{
 					if (!$builing_something)
 					{
@@ -453,15 +477,14 @@ function calcDemolishingWaitTime($dc,$c)
 							$end_time = time()+$dtime;
 							dbquery("
 							UPDATE 
-								".$db_table['buildlist']." 
+								buildlist 
 							SET
 								buildlist_build_type='2',
 								buildlist_build_start_time='".time()."',
 								buildlist_build_end_time='".$end_time."'
 							WHERE 
-								buildlist_building_id='".$arr['building_id']."'
-								AND buildlist_user_id='".$cu->id()."'
-								AND buildlist_planet_id='".$cp->id()."';");
+								buildlist_planet_id='".$cp->id()."'
+								AND buildlist_building_id='".$arr['building_id']."';");
 								
 							//Rohstoffe vom Planeten abziehen und aktualisieren
 							$cp->changeRes(-$dc['metal'],-$dc['crystal'],-$dc['plastic'],-$dc['fuel'],-$dc['food']);
@@ -503,22 +526,21 @@ function calcDemolishingWaitTime($dc,$c)
 				}
 
 				//Bauauftrag abbrechen
-				if ($_POST['command_cbuild']!="" && $b_status==1)
+				if (isset($_POST['command_cbuild']) && $b_status==1)
 				{
 					if ($buildlist[$arr['building_id']]['buildlist_build_end_time'] > time())
 					{
 						$fac = ($end_time-time())/($end_time-$start_time);
 						dbquery("
 						UPDATE 
-							".$db_table['buildlist']." 
+							buildlist 
 						SET
 							buildlist_build_type=0,
 							buildlist_build_start_time=0,
 							buildlist_build_end_time=0
 						WHERE 
-							buildlist_building_id='".$arr['building_id']."'
-							AND buildlist_user_id='".$cu->id()."'
-							AND buildlist_planet_id='".$cp->id()."';");
+							buildlist_planet_id='".$cp->id()."'
+							AND buildlist_building_id='".$arr['building_id']."';");
 							
 						//Rohstoffe vom Planeten abziehen und aktualisieren
 						$cp->changeRes($bc['metal']*$fac,$bc['crystal']*$fac,$bc['plastic']*$fac,$bc['fuel']*$fac,$bc['food']*$fac);
@@ -557,22 +579,21 @@ function calcDemolishingWaitTime($dc,$c)
 				}
 
 				//Abbruchauftrag abbrechen
-				if ($_POST['command_cdemolish']!="" && $b_status==2)
+				if (isset($_POST['command_cdemolish']) && $b_status==2)
 				{
 					if ($buildlist[$arr['building_id']]['buildlist_build_end_time'] > time())
 					{
 						$fac = ($end_time-time())/($end_time-$start_time);
 						dbquery("
 						UPDATE 
-							".$db_table['buildlist']." 
+							buildlist 
 						SET
 							buildlist_build_type=0,
 							buildlist_build_start_time=0,
 							buildlist_build_end_time=0
 						WHERE 
-							buildlist_building_id='".$arr['building_id']."'
-							AND buildlist_user_id='".$cu->id()."'
-							AND buildlist_planet_id='".$cp->id()."';");
+							buildlist_planet_id='".$cp->id()."'
+							AND buildlist_building_id='".$arr['building_id']."';");
 						
 						//Rohstoffe vom Planeten abziehen und aktualisieren
 						$cp->changeRes($dc['metal']*$fac,$dc['crystal']*$fac,$dc['plastic']*$fac,$dc['fuel']*$fac,$dc['food']*$fac);
@@ -670,21 +691,21 @@ function calcDemolishingWaitTime($dc,$c)
 				// Check requirements for this building
 				$requirements_passed = true;
 				$bid = $arr['building_id'];
-				if (count($b_req[$bid]['b'])>0)
+				if (isset($b_req[$bid]['b']) && count($b_req[$bid]['b'])>0)
 				{
 					foreach ($b_req[$bid]['b'] as $b => $l)
 					{
-						if ($buildlist[$b]['buildlist_current_level']<$l)
+						if (!isset($buildlist[$b]['buildlist_current_level']) || $buildlist[$b]['buildlist_current_level']<$l)
 						{
 							$requirements_passed = false;
 						}
 					}
 				}								
-				if (count($b_req[$bid]['t'])>0)
+				if (isset($b_req[$bid]['t']) && count($b_req[$bid]['t'])>0)
 				{
 					foreach ($b_req[$bid]['t'] as $id => $level)
 					{
-						if ($techlist[$id]<$level)
+						if (!isset($techlist[$id]) || $techlist[$id]<$level)
 						{
 							$requirements_passed = false;
 						}
@@ -698,6 +719,8 @@ function calcDemolishingWaitTime($dc,$c)
 				echo "<form action=\"?page=$page\" method=\"post\">";
         echo "<input type=\"hidden\" name=\"id\" value=\"".$arr['building_id']."\">";
         checker_init();
+        
+        // Voraussetzungen sind erfüllt
         if ($requirements_passed)
         {
 					infobox_start("Bauoptionen",1);
@@ -715,7 +738,7 @@ function calcDemolishingWaitTime($dc,$c)
 					// Bauen
 					if ($b_status==0)
 					{
-						$bWaitArray = calcBuildingWaitTime($bc,$c);
+						$bWaitArray = calcBuildingWaitTime($bc,$cp);
 	
 						// Maximale Stufe erreicht
 						if ($b_level>=$arr['building_last_level'])
@@ -805,7 +828,7 @@ function calcDemolishingWaitTime($dc,$c)
 					// Abreissen
 					if ($b_level>0 && $arr['building_demolish_costs_factor']!=0 && $b_status==0)
 					{
-						$dWaitArray = calcDemolishingWaitTime($dc,$c);
+						$dWaitArray = calcDemolishingWaitTime($dc,$cp);
 						// Es wird bereits an einem Gebäude gebaut
 						if ($builing_something)
 						{
@@ -865,7 +888,7 @@ function calcDemolishingWaitTime($dc,$c)
 		      					<td class=\"tbldata\" id=\"buildtime\">-</td>
 		      					<td colspan=\"6\" class=\"tbldata\">&nbsp;</td>
 		      				</tr>";
-		      	if ($b_level<$arr['building_last_level']-1)
+		      	if ($b_level < $arr['building_last_level']-1)
 		      	{
 		         	echo "<tr>
 		         					<td class=\"tbldata\" width=\"90\">N&auml;chste Stufe:</td>
@@ -895,11 +918,11 @@ function calcDemolishingWaitTime($dc,$c)
 					
 					
 	
-					if ($bWaitArray[1]>0)
+					if (isset($bWaitArray) && $bWaitArray[1]>0)
 					{
 						echo "Wartezeit bis gen&uuml;gend Rohstoffe zum Bau vorhanden sind: <b>".tf($bWaitArray[1])."</b><br/>";
 					}
-					if ($dWaitArray[1]>0)
+					if (isset($dWaitArray) && $dWaitArray[1]>0)
 					{
 						echo "Wartezeit bis gen&uuml;gend Rohstoffe zum Abriss vorhanden sind: <b>".tf($dWaitArray[1])."</b><br/>";
 					}
@@ -974,7 +997,7 @@ function calcDemolishingWaitTime($dc,$c)
 			}
 			else
 				echo "<b>Fehler:</b> Geb&auml;ude nicht vorhanden!<br/><br/><a href=\"?page=$page\">&Uuml;bersicht</a>";
-		}
+			}
 
 /********************
 * Übersicht         *
@@ -988,7 +1011,7 @@ function calcDemolishingWaitTime($dc,$c)
 			SELECT
 				*
 			FROM
-        ".$db_table['building_types']."
+        building_types
 			ORDER BY
 				type_order ASC
 			;");				
@@ -1008,10 +1031,13 @@ function calcDemolishingWaitTime($dc,$c)
 					building_costs_plastic,
 					building_costs_fuel,
 					building_costs_food,
+					building_costs_power,
 					building_build_costs_factor,
 					building_show
 				FROM
-					".$db_table['buildings']."
+					buildings
+				WHERE
+					building_show='1'
 				ORDER BY
 					building_order,
 					building_name
@@ -1031,6 +1057,7 @@ function calcDemolishingWaitTime($dc,$c)
 						$building[$tid][$bid]['building_costs_plastic'] = $barr['building_costs_plastic'];
 						$building[$tid][$bid]['building_costs_fuel'] = $barr['building_costs_fuel'];
 						$building[$tid][$bid]['building_costs_food'] = $barr['building_costs_food'];
+						$building[$tid][$bid]['building_costs_power'] = $barr['building_costs_power'];
 						$building[$tid][$bid]['building_build_costs_factor'] = $barr['building_build_costs_factor'];
 						$building[$tid][$bid]['show'] = $barr['building_show'];
 					}
@@ -1049,32 +1076,36 @@ function calcDemolishingWaitTime($dc,$c)
 						$scnt = 0; // Counter for shown buildings
 
 						$bdata = $building[$tarr['type_id']];
-						if (count($bdata)>0)
+						if (isset($bdata) && count($bdata)>0)
 						{
 							foreach ($bdata as $bid => $bv)
 							{
 								
 								// Aktuellen Level feststellen
-								$b_level = intval($buildlist[$bid]['buildlist_current_level']);
-								$end_time = intval($buildlist[$bid]['buildlist_build_end_time']);
+								if(isset($buildlist[$bid]['buildlist_current_level']))
+								{
+									$b_level = intval($buildlist[$bid]['buildlist_current_level']);
+									$end_time = intval($buildlist[$bid]['buildlist_build_end_time']);
+								}
+
 
 								// Check requirements for this building
 								$requirements_passed = true;
-								if (count($b_req[$bid]['b'])>0)
+								if (isset($b_req[$bid]['b']) && count($b_req[$bid]['b'])>0)
 								{
 									foreach ($b_req[$bid]['b'] as $b => $l)
 									{
-										if ($buildlist[$b]['buildlist_current_level']<$l)
+										if (isset($buildlist[$b]['buildlist_current_level']) && $buildlist[$b]['buildlist_current_level']<$l)
 										{
 											$requirements_passed = false;
 										}
 									}
 								}								
-								if (count($b_req[$bid]['t'])>0)
+								if (isset($b_req[$bid]['t']) && count($b_req[$bid]['t'])>0)
 								{
 									foreach ($b_req[$bid]['t'] as $id => $level)
 									{
-										if ($techlist[$id]<$level)
+										if (isset($techlist[$id]) && $techlist[$id]<$level)
 										{
 											$requirements_passed = false;
 										}
@@ -1098,7 +1129,7 @@ function calcDemolishingWaitTime($dc,$c)
 									
 								}
 								// Ist im Bau
-								elseif ($buildlist[$bid]['buildlist_build_type']==1)
+								elseif (isset($buildlist[$bid]['buildlist_build_type']) && $buildlist[$bid]['buildlist_build_type']==1)
 								{
 									$subtitle =  "Ausbau auf Stufe ".($b_level+1);
 									$tmtext = "<span style=\"color:#0f0\">Wird ausgebaut!<br/>Dauer: ".tf($end_time-time())."</span><br/>";
@@ -1113,7 +1144,7 @@ function calcDemolishingWaitTime($dc,$c)
 									}
 								}
 								// Wird abgerissen
-								elseif ($buildlist[$bid]['buildlist_build_type']==2)
+								elseif (isset($buildlist[$bid]['buildlist_build_type']) && $buildlist[$bid]['buildlist_build_type']==2)
 								{
 									$subtitle = "Abriss auf Stufe ".($b_level-1);
 									$tmtext = "<span style=\"color:#f90\">Wird abgerissen!<br/>Dauer: ".tf($end_time-time())."</span><br/>";
