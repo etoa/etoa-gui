@@ -384,7 +384,7 @@ function calcDemolishingWaitTime($dc,$cp)
 								$end_time = time()+$btime;
 								
 								//Gebäude bereits vorhanden
-								if (sizeof($buildlist[$arr['building_id']])>0)
+								if (isset($buildlist[$arr['building_id']])>0)
 								{
 									dbquery("
 									UPDATE 
