@@ -22,19 +22,69 @@ const char* TRADE_POINTS_TRADETEXT_MIN_LENGTH = "15";
 
 namespace market
 {
-	void MarketHandler::addTradePoints(std::string userId,int points,std::string reason)
+	void MarketHandler::addTradePoints(std::string userId,int points,bool sell,std::string reason)
 	{
 		My &my = My::instance();
 		mysqlpp::Connection *con_ = my.get();
 		mysqlpp::Query query = con_->query();
-		query << "UPDATE ";
-		query << "	users ";
-		query << "SET ";
-		query << "	user_points_trade=user_points_trade+" << points << " ";
+		query << "SELECT ";
+		query << "	id ";
+		query << "FROM ";
+		query << "	user_ratings ";
 		query << "WHERE ";
-		query << "	user_id=" << userId << ";";
-		query.store();
+		query << "	id='" << userId << "';";
+		mysqlpp::Result uRes = query.store();
 		query.reset();
+		
+		if (uRes)
+		{
+			int uSize = uRes.size();
+			
+			if (uSize > 0)
+			{
+				query << "UPDATE ";
+				query << "	user_ratings ";
+				query << "SET ";
+				query << "	trade_rating=trade_rating+" << points << ", ";
+				if (sell)
+				{
+					query << " trades_sell=trades_sell+'1' ";
+				}
+				else
+				{
+					query << " trades_buy=trades_buy+'1' ";
+				}
+				query << "WHERE ";
+				query << "	id=" << userId << ";";
+				query.store();
+				query.reset();
+			}
+			else
+			{
+				query << "INSERT INTO ";
+				query << "	user_ratings ";
+				query << "(";
+				query << "	id, ";
+				if (sell)
+				{
+					query << "	trades_sell, ";
+				}
+				else
+				{
+					query << " trades_buy, ";
+				}
+				query << "	trade_rating ";
+				query << ")";
+				query << "VALUES ";
+				query << "(";
+				query << "	'" << userId << "', ";
+				query << "	'1', ";
+				query << "	'" << points << "' ";
+				query << ");";
+				query.store();
+				query.reset();
+			}
+		}
 			
 		std::string text = "Der Spieler ";
 		text += userId;
@@ -121,7 +171,7 @@ namespace market
 						query << "AND buildlist_user_id=" << arr["auction_user_id"] << ";";
 					mysqlpp::Result mres = query.store();		
 					query.reset();
-				
+					
 					if (mres) 
 					{
 						int mresSize = mres.size();
@@ -130,7 +180,7 @@ namespace market
 						if (mresSize>0)
 						{
 							marr = mres.at(0);
-                    
+
 							// Definiert den Rückgabefaktor
 							float return_factor = 1 - (1/(marr["buildlist_current_level"]+1));
 
@@ -545,8 +595,8 @@ namespace market
 					std::string textSeller = "Rohstoffverkauf an ";
 					textSeller += std::string(arr["ressource_buyer_id"]);
 					
-					addTradePoints(std::string(arr["ressource_buyer_id"]),tradepointsBuyer,textBuyer);
-					addTradePoints(std::string(arr["user_id"]),tradepointsSeller,textSeller);
+					addTradePoints(std::string(arr["ressource_buyer_id"]),tradepointsBuyer,0,textBuyer);
+					addTradePoints(std::string(arr["user_id"]),tradepointsSeller,1,textSeller);
 
 					//Flotte zum Verkäufer schicken
 					int launchtime = std::time(0); // Startzeit
@@ -685,8 +735,8 @@ namespace market
 					std::string textSeller = "Schiffverkauf an ";
 					textSeller += std::string(arr["ship_buyer_id"]);
 					
-					addTradePoints(std::string(arr["ship_buyer_id"]),tradepointsBuyer,textBuyer);
-					addTradePoints(std::string(arr["user_id"]),tradepointsSeller,textSeller);
+					addTradePoints(std::string(arr["ship_buyer_id"]),tradepointsBuyer,0,textBuyer);
+					addTradePoints(std::string(arr["user_id"]),tradepointsSeller,1,textSeller);
 
 					//Flotte zum Verkäufer schicken
 					int launchtime = time; // Startzeit
@@ -825,8 +875,8 @@ namespace market
 					std::string textSeller = "Rohstoffverkauf an ";
 					textSeller += std::string(arr["auction_current_buyer_id"]);
 					
-					addTradePoints(std::string(arr["auction_current_buyer_id"]),tradepointsBuyer,textBuyer);
-					addTradePoints(std::string(arr["auction_user_id"]),tradepointsSeller,textSeller);
+					addTradePoints(std::string(arr["auction_current_buyer_id"]),tradepointsBuyer,0,textBuyer);
+					addTradePoints(std::string(arr["auction_user_id"]),tradepointsSeller,1,textSeller);
 
 					//Flotte zum verkäufer der auktion schicken
 					int launchtime = time; // Startzeit
