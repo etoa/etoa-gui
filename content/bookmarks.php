@@ -276,7 +276,7 @@
 									<td class=\"tbldata\">".text2html($arr['comment'])."</td>
 									<td class=\"tbldata\">
 										<a href=\"?page=haven&amp;target=".$ent->id()."\">Flotte</a> 
-										<a href=\"?page=cell&amp;id=".$ent->cellId()."\">System</a> 
+										<a href=\"?page=cell&amp;id=".$ent->cellId()."&amp;hl=".$ent->id()."\">System</a> 
 										<a href=\"?page=$page&amp;edit=".$arr['id']."\">Bearbeiten</a> 
 										<a href=\"?page=$page&amp;del=".$arr['id']."\" onclick=\"return confirm('Soll dieser Favorit wirklich gel&ouml;scht werden?');\">Entfernen</a>
 								</td>

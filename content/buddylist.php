@@ -267,7 +267,7 @@
 			{
 				$tp = new Planet($arr['pid']);
 				echo "<td class=\"tbldata\">".nf($arr['user_points'])."</td>";
-				echo "<td class=\"tbldata\">".$tp."</td>";
+				echo "<td class=\"tbldata\"><a href=\"?page=cell&amp;id=".$tp->cellId()."&amp;hl=".$tp->id()."\">".$tp."</a></td>";
 				if ((time()-$conf['online_threshold']['v']*60) < $arr['user_acttime'])
 					echo "<td class=\"tbldata\" style=\"color:#0f0;\">online</td>";
 				else

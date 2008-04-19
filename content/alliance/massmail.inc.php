@@ -18,24 +18,8 @@ if (Alliance::checkActionRights('massmail'))
 			while ($uarr=mysql_fetch_array($ures))
 			{
 				$subject=addslashes($_POST['message_subject'])."";
-				dbquery("INSERT INTO messages 
-				(
-				message_user_from,
-				message_user_to,
-				message_timestamp,
-				message_cat_id,
-				message_subject,
-				message_text,
-				message_massmail
-				) VALUES (
-				'".$cu->id()."',
-				'".$uarr['user_id']."',
-				".time().",
-				".MSG_ALLYMAIL_CAT.",
-				'".$subject."',
-				'".addslashes($_POST['message_text'])."',
-				1
-				);");
+				
+				Message::sendFromUserToUser($cu->id(),$uarr['user_id'],$_POST['message_subject'],$_POST['message_subject'],MSG_ALLYMAIL_CAT);
 			}
 			echo "Nachricht wurde gesendet!<br/><br/>";
 			echo "<input type=\"button\" value=\"Neue Nachricht schreiben\" onclick=\"document.location='?page=$page&action=massmail'\" /> &nbsp; ";

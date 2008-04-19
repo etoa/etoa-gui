@@ -96,7 +96,7 @@
 			
 			echo "<tr><th class=\"tbltitle\" style=\"width:150px;\">Vollst&auml;ndiger Name:</th>";
 			echo "<td class=\"tbldata\" style=\"width:170px;\">
-				<input type=\"text\" name=\"register_user_name\" maxlength=\"".NAME_MAXLENGTH."\" size=\"".NAME_MAXLENGTH."\" value=\"".$userName."\" onkeyup=\"xajax_registerCheckName(this.value)\" onblur=\"xajax_registerCheckName(this.value)\" /></td>";
+				<input type=\"text\" id=\"register_user_name\" name=\"register_user_name\" maxlength=\"".NAME_MAXLENGTH."\" size=\"".NAME_MAXLENGTH."\" value=\"".$userName."\" onkeyup=\"xajax_registerCheckName(this.value)\" onblur=\"xajax_registerCheckName(this.value)\" /></td>";
 			echo "<td class=\"tbldata\" id=\"nameStatus\">Hier musst du deinen realen Namen angeben; dies dient zur Kontrolle gegen Multis. Dieser Name ist nur f&uuml;r Administratoren sichtbar!</td></tr>";
 			
 			echo "<tr><th class=\"tbltitle\">Benutzername:</th>";
@@ -125,7 +125,8 @@
 			<li>Nach der Registration wird ein automatisch generiertes Passwort an die angegebene E-Mail-Adresse gesendet.</li>
 			<li>Der Name und die E-Mail-Adresse können nur von den Game-Administratoren eingesehen werden und werden nicht weitergegeben.</li>
 			</ul></td></tr>";
-			echo "</table><br/><input type=\"submit\" name=\"register_submit\" value=\"Anmelden!\" /></div></form><br/>";
+			echo "</table><br/><input type=\"submit\" name=\"register_submit\" value=\"Anmelden!\" /></div></form><br/>
+			<script type=\"text/javascript\">document.getElementById('register_user_name').focus()</script>";
 		}		
 		
 	}

@@ -66,8 +66,8 @@
 */
 
 		echo "<input type=\"button\" onclick=\"document.location='?page=planetstats'\" value=\"Ressourcen aller Planeten anzeigen\" />
-		<input type=\"button\" onclick=\"document.location='?page=$page&amp;action=update'\" value=\"Neu berechnen\" /><br/><br/>";
-
+		<br/><br/>";
+//<input type=\"button\" onclick=\"document.location='?page=$page&amp;action=update'\" value=\"Neu berechnen\" />
 
 		//
 		// Produktion pro Stunde und Energieverbrauch

@@ -36,15 +36,13 @@ function registerCheckName($val)
 //Überprüft die Korrektheit des Nicks und prüft ob dieser schon vorhanden ist
 function registerCheckNick($val)
 {
-	global $db_table, $db;
-	
 	$objResponse = new xajaxResponse();
 	$objResponse->assign('nickStatus', 'style.fontWeight', "bold");
 	if (checkValidNick($val))
 	{
 		if (strlen($val)>=NICK_MINLENGHT)
 		{
-			$res=$db->query("SELECT user_id FROM ".$db_table['users']." WHERE user_nick='$val';");
+			$res=dbquery("SELECT user_id FROM users WHERE user_nick='$val';");
             if (mysql_num_rows($res)>0)
             {
                 $objResponse->assign('nickStatus', 'innerHTML', "Dieser Benutzername wird bereits benutzt!");
@@ -58,7 +56,7 @@ function registerCheckNick($val)
         }
         else
         {
-            $objResponse->assign('nickStatus', 'innerHTML', "Der Benutzername ist noch zu kurz!");
+            $objResponse->assign('nickStatus', 'innerHTML', "Der Benutzername ist noch zu kurz (Mind. ".NICK_MINLENGHT." Zeichen)!");
             $objResponse->assign('nickStatus', 'style.color', "#f90");
         }
     }
@@ -74,11 +72,10 @@ function registerCheckNick($val)
 //Überprüft die Korrektheit der Eingabe von der Email Adresse und prüft ob diese schon vorhanden ist
 function registerCheckEmail($val)
 {
-	global $db_table, $db;
 	$objResponse = new xajaxResponse();
 	if (checkEmail($val))
 	{
-		$res=$db->query("SELECT user_id FROM ".$db_table['users']." WHERE user_email='$val' OR user_email_fix='$val';");
+		$res=dbquery("SELECT user_id FROM users WHERE user_email='$val' OR user_email_fix='$val';");
         if (mysql_num_rows($res)>0)
         {
             $objResponse->assign('emailStatus', 'innerHTML', "Diese E-Mail-Adresse wird bereits benutzt!");

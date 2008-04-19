@@ -95,24 +95,31 @@
 						<td class=\"tbldata\" style=\"height:3px;background:#000;\" colspan=\"6\"></td>
 					</tr>";			
 				}
+				$addstyle="";
+				if (isset($_GET['hl']) && $_GET['hl']==$ent->id())
+				{
+					$addstyle=" style=\"background:#003D6F;\"";
+				}
+				
+				
 				echo "<tr>
 					<td class=\"tbldata\" style=\"width:40px;background:#000;\"><img src=\"".$ent->imagePath()."\" alt=\"icon\" /></td>
-					<td class=\"tbldata\">".$ent->pos()."</td>
-					<td class=\"tbldata\">".$ent->type();
+					<td class=\"tbldata\" $addstyle>".$ent->pos()."</td>
+					<td class=\"tbldata\" $addstyle>".$ent->type();
 					if ($ent->entityCode()=='w')
 					{
 						$tent = new Wormhole($ent->targetId());
 						echo "<br/>Ziel: <a href=\"?page=cell&amp;id=".$tent->cellId()."\">".$tent."</a>";
 					}					
 					echo "</td>
-					<td class=\"tbldata\">".$ent->name()."</td>
-					<td class=\"tbldata\">";
+					<td class=\"tbldata\" $addstyle>".$ent->name()."</td>
+					<td class=\"tbldata\" $addstyle>";
 					if ($ent->ownerId()>0)
 						echo "<a href=\"?page=userinfo&amp;id=".$ent->ownerId()."\">".$ent->owner()."</a>";
 					else
 						echo $ent->owner();					
 					echo "</td>
-					<td class=\"tbldata\">";
+					<td class=\"tbldata\" $addstyle>";
 
 					if ($ent->entityCode()=='s')					
 					{

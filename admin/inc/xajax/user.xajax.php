@@ -263,8 +263,8 @@ function showLast5Messages($uid,$target,$limit=5)
 		user_nick,
 		user_points,
 		message_user_from,
-		message_subject,
-		message_text,
+		md.subject,
+		md.text,
 		message_id,
 		message_timestamp,
 		message_read,
@@ -273,6 +273,9 @@ function showLast5Messages($uid,$target,$limit=5)
 		alliance_tag
 	FROM 
 		messages
+	INNER JOIN
+		message_data as md
+		on md.id=message_id
 	LEFT JOIN
 		(
 			users
@@ -322,8 +325,8 @@ function showLast5Messages($uid,$target,$limit=5)
 					echo tm("",$tm);
 				}
 				echo "><a href=\"?page=user&sub=edit&user_id=".$larr['message_user_from']."\">".$larr['user_nick']."</a></td>
-				<td class=\"tbldata\">".$larr['message_subject']."</td>
-				<td class=\"tbldata\">".text2html($larr['message_text'])."</td>
+				<td class=\"tbldata\">".$larr['subject']."</td>
+				<td class=\"tbldata\">".text2html($larr['text'])."</td>
 				<td class=\"tbldata\">".($larr['message_read']==1 ? "Ja" : "Nein")."</td>
 				<td class=\"tbldata\">[<a href=\"?page=messages&sub=edit&message_id=".$larr['message_id']."\">Details</a>]</td>
 			</tr>";   

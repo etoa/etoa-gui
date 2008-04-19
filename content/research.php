@@ -622,7 +622,7 @@
 				
 	    	infobox_start("Labor-Infos");
 	    	echo "<b>Eingestellte Arbeiter:</b> ".nf(PEOPLE_WORKING)."<br/>
-	    	<b>Bauzeitverringerung:</b> ";
+	    	<b>Forschungszeitverringerung:</b> ";
 	    	if ($need_bonus_level>=0)
 	    	{
 	    		echo get_percent_string($time_boni_factor)." durch Stufe ".CURRENT_LAB_LEVEL." (-".((1-$conf['build_time_boni_forschungslabor']['p2'])*100)."% maximum)<br/>";

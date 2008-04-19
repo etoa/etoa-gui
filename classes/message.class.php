@@ -31,8 +31,10 @@ class Message
 	/**
 	* Sends a message from an user to another user
 	*/
-	static function sendFromUserToUser($fuid,$tuid,$subject,$text)
+	static function sendFromUserToUser($fuid,$tuid,$subject,$text,$cat=0)
 	{
+		if ($cat==0) 
+			$cat = USER_MSG_CAT_ID;
     dbquery("
     INSERT INTO 
     	messages
@@ -47,7 +49,7 @@ class Message
    		'".$fuid."',
    		'".$tuid."',
    		".time().",
-   		".USER_MSG_CAT_ID."
+   		".$cat."
    	);");
 		dbquery("
 			INSERT INTO

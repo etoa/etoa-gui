@@ -1608,16 +1608,18 @@ die Spielleitung";
 						WHERE
 							alliance_bnd_alliance_id1='".$alliance_id."'
 							OR alliance_bnd_alliance_id2='".$alliance_id."';");
-		while ($bndarr=mysql_fetch_assoc($bndres))
+		if (mysql_num_rows($bndres)>0)
 		{
-			$bres=dbquery("SELECT * FROM allianceboard_topics WHERE topic_bnd_id=".$bndarr['alliance_bnd_id'].";");
-			while ($barr=mysql_fetch_assoc($bres))
+			while ($bndarr=mysql_fetch_assoc($bndres))
 			{
-				dbquery("DELETE FROM allianceboard_posts WHERE post_topic_id=".$barr['topic_id'].";");
+				$bres=dbquery("SELECT * FROM allianceboard_topics WHERE topic_bnd_id=".$bndarr['alliance_bnd_id'].";");
+				while ($barr=mysql_fetch_assoc($bres))
+				{
+					dbquery("DELETE FROM allianceboard_posts WHERE post_topic_id=".$barr['topic_id'].";");
+				}
+				dbquery("DELETE FROM allianceboard_topics WHERE topic_bnd_id=".$bndar['alliance_bnd_id'].";");				
 			}
-			dbquery("DELETE FROM allianceboard_topics WHERE topic_bnd_id=".$bndar['alliance_bnd_id'].";");				
 		}
-
 		dbquery("
 			DELETE FROM
 				".$db_table['alliance_bnd']."

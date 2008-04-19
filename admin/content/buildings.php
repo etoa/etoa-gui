@@ -777,25 +777,18 @@
 			SELECT 
                 users.user_id,
                 users.user_nick,
-                planets.planet_id,
-                planets.planet_name,
-                planets.planet_solsys_pos,
-                space_cells.cell_sx,
-                space_cells.cell_sy,
-                space_cells.cell_cx,
-                space_cells.cell_cy 
+                planets.id,
+                planets.planet_name
 			FROM 
                 ".$db_table['planets'].",
-                ".$db_table['space_cells'].",
                 ".$db_table['users']." 
 			WHERE 
                 planets.planet_user_id=users.user_id 
-                AND planets.planet_solsys_id=space_cells.cell_id 
 			ORDER BY 
-				planets.planet_id;");
+				planets.id;");
 			while ($parr=mysql_fetch_array($pres))
 			{
-				echo "<option value=\"".$parr['planet_id'].":".$parr['user_id']."\">".$parr['cell_sx']."/".$parr['cell_sy']." : ".$parr['cell_cx']."/".$parr['cell_cy']." : ".$parr['planet_solsys_pos']." &nbsp; ".$parr['planet_name']." (".$parr['user_nick'].")</option>";
+				echo "<option value=\"".$parr['id'].":".$parr['user_id']."\">".($parr['planet_name']!="" ? $parr['planet_name']: "Unbenannt")." (".$parr['user_nick'].")</option>";
 			}
 			echo "</select></td></tr>";
 			infobox_end(1);

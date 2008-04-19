@@ -23,7 +23,9 @@ if (Alliance::checkActionRights('liquidate'))
 			echo "<form action=\"?page=$page\" method=\"post\">";
 			echo "<input name=\"id_control\" type=\"hidden\" value=\"".$cu->alliance_id."\" />";
 			checker_init();
-			echo "Willst du die Allianz wirklich aufl&ouml;sen?<br/><br/><input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"Nein\" />&nbsp;&nbsp;&nbsp;<input type=\"submit\" name=\"liquidatesubmit\" value=\"Ja\" />";
+			echo "Willst du die Allianz wirklich aufl&ouml;sen?<br/><br/>
+			<input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"Nein\" />&nbsp;&nbsp;&nbsp;
+			<input type=\"submit\" name=\"liquidatesubmit\" value=\"Ja\" />";
 			echo "</form>";
 		}
 }
