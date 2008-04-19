@@ -1095,7 +1095,7 @@ function calcDemolishingWaitTime($dc,$cp)
 								{
 									foreach ($b_req[$bid]['b'] as $b => $l)
 									{
-										if (isset($buildlist[$b]['buildlist_current_level']) && $buildlist[$b]['buildlist_current_level']<$l)
+										if (!isset($buildlist[$b]['buildlist_current_level']) || $buildlist[$b]['buildlist_current_level']<$l)
 										{
 											$requirements_passed = false;
 										}
@@ -1105,7 +1105,7 @@ function calcDemolishingWaitTime($dc,$cp)
 								{
 									foreach ($b_req[$bid]['t'] as $id => $level)
 									{
-										if (isset($techlist[$id]) && $techlist[$id]<$level)
+										if (!isset($techlist[$id]) || $techlist[$id]<$level)
 										{
 											$requirements_passed = false;
 										}
