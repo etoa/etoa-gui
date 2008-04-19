@@ -36,7 +36,6 @@
 	else 
 		$mode="buildings";
 	
-	$race=get_races_array();
 
 	if ($mode=="tech")
 	{
@@ -127,6 +126,22 @@
 
 	if (isset($cp))
 	{
+		//
+		// Läd alle benötigten Daten
+		//
+
+		// Lade Rassennamen
+		$race=array();
+		$rres = dbquery("
+		SELECT 
+			race_id,
+			race_name
+		FROM 
+			races ;");
+		while ($rarr = mysql_fetch_array($rres))
+		{
+			$race[$rarr['race_id']] = $rarr['race_name'];
+		}
 
 		// Lade Gebäudelistenlevel
 		$buildlist=array();
@@ -135,15 +150,15 @@
 			buildlist_current_level,
 			buildlist_building_id
 		FROM 
-			".$db_table['buildlist']." 
+			buildlist 
 		WHERE 
-			buildlist_user_id='".$cu->id()."' 
-			AND buildlist_planet_id='".$cp->id()."'
+			buildlist_planet_id='".$cp->id()."'
 		;");
 		while ($barr = mysql_fetch_array($bres))
 		{
 			$buildlist[$barr['buildlist_building_id']] = $barr['buildlist_current_level'];
 		}
+		
 		// Lade Techlistenlevel
 		$techlist=array();
 		$tres = dbquery("
@@ -151,7 +166,7 @@
 			techlist_current_level,
 			techlist_tech_id
 		FROM 
-			".$db_table['techlist']." 
+			techlist 
 		WHERE 
 			techlist_user_id='".$cu->id()."'
 		;");
@@ -167,14 +182,15 @@
 			building_id,
 			building_name 
 		FROM 
-			".$db_table['buildings']." 
+			buildings 
 		WHERE 
-			building_show=1
+			building_show='1'
 		;");
 		while ($buarr = mysql_fetch_array($bures))
 		{
 			$bu_name[$buarr['building_id']]=$buarr['building_name'];
 		}
+		
 		// Lade Technologienamen
 		$te_name=array();
 		$teres = dbquery("
@@ -182,9 +198,9 @@
 			tech_id,
 			tech_name 
 		FROM 
-			".$db_table['technologies']." 
+			technologies 
 		WHERE 
-			tech_show=1;");
+			tech_show='1';");
 		while ($tearr = mysql_fetch_array($teres))
 		{
 			$te_name[$tearr['tech_id']]=$tearr['tech_name'];
@@ -256,7 +272,8 @@
 						* 
 					FROM 
 						".$db_table[ITEMS_TBL]." 
-						WHERE ".ITEM_SHOW_FLD."=1 
+					WHERE 
+						".ITEM_SHOW_FLD."=1 
 						AND ".ITEM_TYPE_FLD."=".$tarr[TYPE_ID_FLD]." 
 					ORDER BY 
 						".ITEM_ORDER_FLD."
@@ -270,59 +287,131 @@
 					{
 						if ($mode!="ships" || $arr['special_ship']==0)
 						{
+							if(isset($b_req[$arr[ITEM_ID_FLD]]['b']))
+							{
+								$b_cnt = count($b_req[$arr[ITEM_ID_FLD]]['b']);
+							}
+							else
+							{
+								$b_cnt = 0;
+							}
 							
-							if (count($b_req[$arr[ITEM_ID_FLD]]['b'])+count($b_req[$arr[ITEM_ID_FLD]]['t'])>0)
-								echo "<tr><td width=\"200\" class=\"tbldata\" rowspan=\"".(count($b_req[$arr[ITEM_ID_FLD]]['b'])+count($b_req[$arr[ITEM_ID_FLD]]['t']))."\"><b>".$arr[ITEM_NAME_FLD]."</b> [<a href=\"".HELP_URL."&amp;id=".$arr[ITEM_ID_FLD]."\">info</a>]";
+							if(isset($b_req[$arr[ITEM_ID_FLD]]['t']))
+							{
+								$t_cnt = count($b_req[$arr[ITEM_ID_FLD]]['t']);
+							}
 							else
+							{
+								$t_cnt = 0;
+							}
+							
+							if ($b_cnt + $t_cnt>0)
+							{
+								echo "<tr><td width=\"200\" class=\"tbldata\" rowspan=\"".($b_cnt + $t_cnt)."\"><b>".$arr[ITEM_NAME_FLD]."</b> [<a href=\"".HELP_URL."&amp;id=".$arr[ITEM_ID_FLD]."\">info</a>]";
+							}
+							else
+							{
 								echo "<tr><td width=\"200\" class=\"tbldata\"><b>".$arr[ITEM_NAME_FLD]."</b> [<a href=\"".HELP_URL."&amp;id=".$arr[ITEM_ID_FLD]."\">info</a>]";
-	
+							}
+							
 							if (ITEM_RACE_FLD!="" && $arr[ITEM_RACE_FLD]>0)
-								echo "<br/>Spezialobjekt der ".$race[$arr[ITEM_RACE_FLD]]['race_name']."</td>";
+							{
+								echo "<br/>Spezialobjekt der ".$race[$arr[ITEM_RACE_FLD]]."</td>";
+							}
 							else
+							{
 								echo "</td>";
+							}
 	
 							$using_something=0;
-							if (count($b_req[$arr[ITEM_ID_FLD]]['b'])>0)
+							if (isset($b_req[$arr[ITEM_ID_FLD]]['b']) && count($b_req[$arr[ITEM_ID_FLD]]['b'])>0)
 							{
 								$cnt=0;
 								foreach ($b_req[$arr[ITEM_ID_FLD]]['b'] as $b=>$l)
 								{
-									if ($cnt==0 && count($b_req[$arr[ITEM_ID_FLD]]['b'])>1) $bstyle="border-bottom:none;";
-									elseif (($cnt>0 && $cnt<count($b_req[$arr[ITEM_ID_FLD]]['b'])-1) || count($b_req[$arr[ITEM_ID_FLD]]['t'])>0)  $bstyle="border-top:none;border-bottom:none;";
-									elseif ($cnt!=0) $bstyle="border-top:none;";
-									else $bstyle="";
-	
-									if ($buildlist[$b]<$l)
-										echo "<td class=\"tbldata\" style=\"color:#f00;border-right:none;$bstyle\" width=\"130\">".$bu_name[$b]."</td><td class=\"tbldata\" style=\"color:#f00;border-left:none;$bstyle\" width=\"70\">Stufe $l</td></tr>";
+									if ($cnt==0 && count($b_req[$arr[ITEM_ID_FLD]]['b'])>1) 
+									{
+										$bstyle="border-bottom:none;";
+									}
+									elseif (
+										($cnt>0 
+										&& $cnt < count($b_req[$arr[ITEM_ID_FLD]]['b'])-1) 
+									|| 
+										(isset($b_req[$arr[ITEM_ID_FLD]]['t']) 
+										&& count($b_req[$arr[ITEM_ID_FLD]]['t'])>0))
+									{
+										$bstyle="border-top:none;border-bottom:none;";
+									}
+									elseif ($cnt!=0)
+									{
+										$bstyle="border-top:none;";
+									}
 									else
-										echo "<td class=\"tbldata\" style=\"color:#0f0;border-right:none;$bstyle\" width=\"130\">".$bu_name[$b]."</td><td class=\"tbldata\" style=\"color:#0f0;border-left:none;$bstyle\" width=\"70\">Stufe $l</td></tr>";
+									{
+										$bstyle="";
+									}
+	
+									if (!isset($buildlist[$b]) || $buildlist[$b]<$l)
+									{
+										echo "<td class=\"tbldata\" style=\"color:#f00;border-right:none;".$bstyle."\" width=\"130\">".$bu_name[$b]."</td><td class=\"tbldata\" style=\"color:#f00;border-left:none;".$bstyle."\" width=\"70\">Stufe ".$l."</td></tr>";
+									}
+									else
+									{
+										echo "<td class=\"tbldata\" style=\"color:#0f0;border-right:none;".$bstyle."\" width=\"130\">".$bu_name[$b]."</td><td class=\"tbldata\" style=\"color:#0f0;border-left:none;".$bstyle."\" width=\"70\">Stufe $l</td></tr>";
+									}
 									$cnt++;
 								}
 								$using_something=1;
 							}
-							if (count($b_req[$arr[ITEM_ID_FLD]]['t'])>0)
+							
+							if (isset($b_req[$arr[ITEM_ID_FLD]]['t']) && count($b_req[$arr[ITEM_ID_FLD]]['t'])>0)
 							{
 								$cnt=0;
 								foreach ($b_req[$arr[ITEM_ID_FLD]]['t'] as $b=>$l)
 								{
-									if ($cnt==0 && count($b_req[$arr[ITEM_ID_FLD]]['t'])>1 && count($b_req[$arr[ITEM_ID_FLD]]['b'])>0) $bstyle="border-top:none;border-bottom:none;";
-									elseif ($cnt==0 && count($b_req[$arr[ITEM_ID_FLD]]['t'])>1) $bstyle="border-bottom:none;";
-									elseif (($cnt>0 && $cnt<count($b_req[$arr[ITEM_ID_FLD]]['t'])-1))  $bstyle="border-top:none;border-bottom:none;";
-									elseif ($cnt!=0) $bstyle="border-top:none;";
-									elseif (count($b_req[$arr[ITEM_ID_FLD]]['b'])>0) $bstyle="border-top:none;";
-									else $bstyle="";
-	
-	
-									if ($techlist[$b]<$l)
-										echo "<td class=\"tbldata\" style=\"color:#f00;border-right:none;$bstyle\" width=\"130\">".$te_name[$b]."</td><td class=\"tbldata\" style=\"color:#f00;border-left:none;$bstyle\" width=\"70\">Stufe $l</td></tr>";
+									if ($cnt==0 && count($b_req[$arr[ITEM_ID_FLD]]['t'])>1 && isset($b_req[$arr[ITEM_ID_FLD]]['b']) && count($b_req[$arr[ITEM_ID_FLD]]['b'])>0)
+									{
+										$bstyle="border-top:none;border-bottom:none;";
+									}
+									elseif ($cnt==0 && count($b_req[$arr[ITEM_ID_FLD]]['t'])>1)
+									{
+										$bstyle="border-bottom:none;";
+									}
+									elseif (($cnt>0 && $cnt<count($b_req[$arr[ITEM_ID_FLD]]['t'])-1))
+									{
+										$bstyle="border-top:none;border-bottom:none;";
+									}
+									elseif ($cnt!=0)
+									{
+										$bstyle="border-top:none;";
+									}
+									elseif (count($b_req[$arr[ITEM_ID_FLD]]['b'])>0)
+									{
+										$bstyle="border-top:none;";
+									}
 									else
-										echo "<td class=\"tbldata\" style=\"color:#0f0;border-right:none;$bstyle\" width=\"130\">".$te_name[$b]."</td><td class=\"tbldata\" style=\"color:#0f0;border-left:none;$bstyle\" width=\"70\">Stufe $l</td></tr>";
+									{
+										$bstyle="";
+									}
+	
+	
+									if (!isset($techlist[$b]) || $techlist[$b]<$l)
+									{
+										echo "<td class=\"tbldata\" style=\"color:#f00;border-right:none;".$bstyle."\" width=\"130\">".$te_name[$b]."</td><td class=\"tbldata\" style=\"color:#f00;border-left:none;".$bstyle."\" width=\"70\">Stufe ".$l."</td></tr>";
+									}
+									else
+									{
+										echo "<td class=\"tbldata\" style=\"color:#0f0;border-right:none;".$bstyle."\" width=\"130\">".$te_name[$b]."</td><td class=\"tbldata\" style=\"color:#0f0;border-left:none;".$bstyle."\" width=\"70\">Stufe ".$l."</td></tr>";
+									}
 									$cnt++;
 								}
 								$using_something=1;
 							}
+							
 							if ($using_something==0)
+							{
 								echo "<td colspan=\"2\" class=\"tbldata\"><i>Keine Voraussetzungen n&ouml;tig</i></td></tr>";
+							}
 							$cntr++;
 						}
 					}
@@ -376,45 +465,89 @@
 				while ($arr=mysql_fetch_array($res))
 				{
 					if (count($b_req[$arr[ITEM_ID_FLD]]['b'])+count($b_req[$arr[ITEM_ID_FLD]]['t'])>0)
+					{
 						echo "<tr><td width=\"200\" class=\"tbldata\" rowspan=\"".(count($b_req[$arr[ITEM_ID_FLD]]['b'])+count($b_req[$arr[ITEM_ID_FLD]]['t']))."\"><b>".$arr[ITEM_NAME_FLD]."</b> [<a href=\"".HELP_URL."&amp;id=".$arr[ITEM_ID_FLD]."\">info</a>]</td>";
+					}
 					else
+					{
 						echo "<tr><td width=\"200\" class=\"tbldata\"><b>".$arr[ITEM_NAME_FLD]."</b> [<a href=\"".HELP_URL."&amp;id=".$arr[ITEM_ID_FLD]."\">info</a>]</td>";
+					}
 					$using_something=0;
-					if (count($b_req[$arr[ITEM_ID_FLD]]['b'])>0)
+					
+					if (isset($b_req[$arr[ITEM_ID_FLD]]['b']) && count($b_req[$arr[ITEM_ID_FLD]]['b'])>0)
 					{
 						$cnt=0;
 						foreach ($b_req[$arr[ITEM_ID_FLD]]['b'] as $b=>$l)
 						{
-							if ($cnt==0 && count($b_req[$arr[ITEM_ID_FLD]]['b'])>1) $bstyle="border-bottom:none;";
-							elseif (($cnt>0 && $cnt<count($b_req[$arr[ITEM_ID_FLD]]['b'])-1) || count($b_req[$arr[ITEM_ID_FLD]]['t'])>0)  $bstyle="border-top:none;border-bottom:none;";
-							elseif ($cnt!=0) $bstyle="border-top:none;";
-							else $bstyle="";
-
-							if ($buildlist[$b]<$l)
-								echo "<td class=\"tbldata\" style=\"color:#f00;border-right:none;$bstyle\" width=\"130\">".$bu_name[$b]."</td><td class=\"tbldata\" style=\"color:#f00;border-left:none;$bstyle\" width=\"70\">Stufe $l</td></tr>";
+							if ($cnt==0 && count($b_req[$arr[ITEM_ID_FLD]]['b'])>1)
+							{
+								$bstyle="border-bottom:none;";
+							}
+							elseif (($cnt>0 && $cnt<count($b_req[$arr[ITEM_ID_FLD]]['b'])-1) || count($b_req[$arr[ITEM_ID_FLD]]['t'])>0)
+							{
+								$bstyle="border-top:none;border-bottom:none;";
+							}
+							elseif ($cnt!=0)
+							{
+								$bstyle="border-top:none;";
+							}
 							else
+							{
+								$bstyle="";
+							}
+
+							if (!isset($buildlist[$b]) || $buildlist[$b]<$l)
+							{
+								echo "<td class=\"tbldata\" style=\"color:#f00;border-right:none;$bstyle\" width=\"130\">".$bu_name[$b]."</td><td class=\"tbldata\" style=\"color:#f00;border-left:none;$bstyle\" width=\"70\">Stufe $l</td></tr>";
+							}
+							else
+							{
 								echo "<td class=\"tbldata\" style=\"color:#0f0;border-right:none;$bstyle\" width=\"130\">".$bu_name[$b]."</td><td class=\"tbldata\" style=\"color:#0f0;border-left:none;$bstyle\" width=\"70\">Stufe $l</td></tr>";
+							}
 							$cnt++;
 						}
 						$using_something=1;
 					}
-					if (count($b_req[$arr[ITEM_ID_FLD]]['t'])>0)
+					
+					if (isset($b_req[$arr[ITEM_ID_FLD]]['t']) && count($b_req[$arr[ITEM_ID_FLD]]['t'])>0)
 					{
 						$cnt=0;
 						foreach ($b_req[$arr[ITEM_ID_FLD]]['t'] as $b=>$l)
 						{
-							if ($cnt==0 && count($b_req[$arr[ITEM_ID_FLD]]['t'])>1 && count($b_req[$arr[ITEM_ID_FLD]]['b'])>0) $bstyle="border-top:none;border-bottom:none;";
-							elseif ($cnt==0 && count($b_req[$arr[ITEM_ID_FLD]]['t'])>1) $bstyle="border-bottom:none;";
-							elseif (($cnt>0 && $cnt<count($b_req[$arr[ITEM_ID_FLD]]['t'])-1))  $bstyle="border-top:none;border-bottom:none;";
-							elseif ($cnt!=0) $bstyle="border-top:none;";
-							elseif (count($b_req[$arr[ITEM_ID_FLD]]['b'])>0) $bstyle="border-top:none;";
-							else $bstyle="";
-
-
-							if ($techlist[$b]<$l)
-								echo "<td class=\"tbldata\" style=\"color:#f00;border-right:none;$bstyle\" width=\"130\">".$te_name[$b]."</td><td class=\"tbldata\" style=\"color:#f00;border-left:none;$bstyle\" width=\"70\">Stufe $l</td></tr>";
+							if ($cnt==0 && count($b_req[$arr[ITEM_ID_FLD]]['t'])>1 && count($b_req[$arr[ITEM_ID_FLD]]['b'])>0)
+							{
+								$bstyle="border-top:none;border-bottom:none;";
+							}
+							elseif ($cnt==0 && count($b_req[$arr[ITEM_ID_FLD]]['t'])>1)
+							{
+								$bstyle="border-bottom:none;";
+							}
+							elseif (($cnt>0 && $cnt<count($b_req[$arr[ITEM_ID_FLD]]['t'])-1))
+							{
+								$bstyle="border-top:none;border-bottom:none;";
+							}
+							elseif ($cnt!=0)
+							{
+								$bstyle="border-top:none;";
+							}
+							elseif (count($b_req[$arr[ITEM_ID_FLD]]['b'])>0)
+							{
+								$bstyle="border-top:none;";
+							}
 							else
+							{
+								$bstyle="";
+							}
+
+
+							if (!isset($techlist[$b]) || $techlist[$b]<$l)
+							{
+								echo "<td class=\"tbldata\" style=\"color:#f00;border-right:none;$bstyle\" width=\"130\">".$te_name[$b]."</td><td class=\"tbldata\" style=\"color:#f00;border-left:none;$bstyle\" width=\"70\">Stufe $l</td></tr>";
+							}
+							else
+							{
 								echo "<td class=\"tbldata\" style=\"color:#0f0;border-right:none;$bstyle\" width=\"130\">".$te_name[$b]."</td><td class=\"tbldata\" style=\"color:#0f0;border-left:none;$bstyle\" width=\"70\">Stufe $l</td></tr>";
+							}
 							$cnt++;
 						}
 						$using_something=1;
