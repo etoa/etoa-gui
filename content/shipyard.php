@@ -197,7 +197,7 @@
 			{
 				$queue_total[$arr['queue_ship_id']] = $arr['cnt'];
 			}	
-			print_r($queue_total);
+
 			// Flotten laden
 			$res = dbquery("
       SELECT
