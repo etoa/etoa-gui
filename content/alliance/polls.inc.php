@@ -4,9 +4,9 @@ if (Alliance::checkActionRights('polls'))
 
 
 		echo "<h2>Umfragen verwalten</h2>";
-		if ($_GET['pollaction']=="create")
+		if (isset($_GET['pollaction']) && $_GET['pollaction']=="create")
 		{
-			if ($_POST['pollsubmitnew'] && checker_verify())
+			if (isset($_POST['pollsubmitnew']) && $_POST['pollsubmitnew'] && checker_verify())
 			{
 				$_SESSION['alliance_poll']['poll_title']=$_POST['poll_title'];
 				$_SESSION['alliance_poll']['poll_question']=$_POST['poll_question'];
@@ -65,7 +65,7 @@ if (Alliance::checkActionRights('polls'))
 					echo "<b>Fehler!</b> Titel fehlt!";
 				echo "<br/><br/>";
 			}
-			if ($created)
+			if (isset($created) && $created)
 				echo "<input type=\"button\" onclick=\"document.location='?page=$page&amp;action=".$_GET['action']."';\" value=\"Ok\" />";
 			else
 			{
@@ -91,7 +91,7 @@ if (Alliance::checkActionRights('polls'))
 		//
 		// Umfrage bearbeiten
 		//
-		elseif ($_GET['edit']>0)
+		elseif (isset($_GET['edit']) && $_GET['edit']>0)
 		{
 			$pres=dbquery("SELECT * FROM ".$db_table['alliance_polls']." WHERE poll_id=".$_GET['edit']." AND poll_alliance_id=".$arr['alliance_id'].";");
 			if (mysql_num_rows($pres)>0)
@@ -108,7 +108,7 @@ if (Alliance::checkActionRights('polls'))
 				$_SESSION['alliance_poll']['poll_a7_text']=$parr['poll_a7_text'];
 				$_SESSION['alliance_poll']['poll_a8_text']=$parr['poll_a8_text'];
 
-				if ($_POST['pollsubmit'] && checker_verify())
+				if (isset($_POST['pollsubmit']) && $_POST['pollsubmit'] && checker_verify())
 				{
 					$_SESSION['alliance_poll']['poll_title']=$_POST['poll_title'];
 					$_SESSION['alliance_poll']['poll_question']=$_POST['poll_question'];
@@ -182,7 +182,7 @@ if (Alliance::checkActionRights('polls'))
 		//
 		else
 		{
-			if ($_GET['del']>0)
+			if (isset($_GET['del']) && $_GET['del']>0)
 			{
 				dbquery("DELETE FROM ".$db_table['alliance_polls']." WHERE poll_id=".$_GET['del']." AND poll_alliance_id=".$arr['alliance_id'].";");
 				if (mysql_affected_rows()>0)
@@ -191,9 +191,9 @@ if (Alliance::checkActionRights('polls'))
 					echo "Umfrage wurde gel&ouml;scht!<br/><br/>";
 				}
 			}
-			if ($_GET['deactivate'])
+			if (isset($_GET['deactivate']) && $_GET['deactivate'])
 				dbquery("UPDATE ".$db_table['alliance_polls']." SET poll_active=0 WHERE poll_id=".$_GET['deactivate']." AND poll_alliance_id=".$arr['alliance_id'].";");
-			if ($_GET['activate'])
+			if (isset($_GET['activate']) && $_GET['activate'])
 				dbquery("UPDATE ".$db_table['alliance_polls']." SET poll_active=1 WHERE poll_id=".$_GET['activate']." AND poll_alliance_id=".$arr['alliance_id'].";");
 
 			$_SESSION['alliance_poll']=null;

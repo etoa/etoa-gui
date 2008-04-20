@@ -22,7 +22,7 @@ if (Alliance::checkActionRights('editmembers'))
 		// Mitgliederänderungen speichern
 		if (isset($_POST['editmemberssubmit']) && checker_verify())
 		{
-			if (count($_POST['user_alliance_rank_id'])>0)
+			if (isset($_POST['user_alliance_rank_id']) && count($_POST['user_alliance_rank_id'])>0)
 			{
 				foreach ($_POST['user_alliance_rank_id'] as $uid=>$rid)
 				{
@@ -99,7 +99,7 @@ if (Alliance::checkActionRights('editmembers'))
 		echo "<tr><td class=\"tbltitle\">Nick</td><td class=\"tbltitle\">Heimatplanet</td><td class=\"tbltitle\">Punkte</td><td class=\"tbltitle\">Rang</td><td class=\"tbltitle\">Angriffe</td><td class=\"tbltitle\">Online</td><td class=\"tbltitle\">Aktionen</td>";
 		$ures = dbquery("
 		SELECT 
-			u.user_last_online,
+			u.user_acttime,
 			u.user_id,u.user_points,
 			u.user_nick,
 			p.id,
@@ -149,10 +149,10 @@ if (Alliance::checkActionRights('editmembers'))
       }
 
 			// Zuletzt online
-			if ((time()-$conf['online_threshold']['v']*60) < $uarr['user_last_online'])
+			if ((time()-$conf['online_threshold']['v']*60) < $uarr['user_acttime'])
 				echo "<td class=\"tbldata\" style=\"color:#0f0;\">online</td>";
 			else
-				echo "<td class=\"tbldata\">".date("d.m.Y H:i",$uarr['user_last_online'])."</td>";
+				echo "<td class=\"tbldata\">".date("d.m.Y H:i",$uarr['user_acttime'])."</td>";
 			// Aktionen
 			echo "<td class=\"tbldata\">";
 			if ($cu->id()!=$uarr['user_id'])

@@ -276,10 +276,74 @@
 				else
 				{
 					// Änderungen übernehmen
-					if (isset($_POST['editsubmit']) && $_POST['editsubmit']!="" && checker_verify())
+					if (isset($_POST['editsubmit']) && checker_verify())
 					{
+						// Prüft Korrektheit des Allianztags und Namen, wenn diese geändert haben
+						$check=false;
+						if($_POST['alliance_tag']!=$arr['alliance_tag'] || $_POST['alliance_name']!=$arr['alliance_name'])
+						{
+							// Prüfen, ob der Allianzname bzw. Tag nicht nur aus Leerschlägen besteht
+							$check_tag = str_replace(' ','',$_POST['alliance_tag']);
+							$check_name = str_replace(' ','',$_POST['alliance_name']);
+							
+							if($check_name!='' && $check_tag!='')
+							{
+								$check_tag = check_illegal_signs($_POST['alliance_tag']);
+								$check_name = check_illegal_signs($_POST['alliance_name']);
+								$signs = check_illegal_signs("gibt eine liste von unerlaubten zeichen aus! ; < > & etc.");
+								if($check_tag=="" && $check_name=="")
+								{
+									// Prüft, ob dieser Tag oder Name bereits vorhanden ist
+									$check_res = dbquery("
+									SELECT 
+										COUNT(*)
+									FROM 
+										alliances
+									WHERE 
+										alliance_tag='".$_POST['alliance_tag']."'
+										OR alliance_name='".$_POST['alliance_name']."'
+									;");
+									// Name / Tag sind bereits vergeben
+									if(mysql_result($check_res,0)>0)
+									{										
+										echo "Fehler! Der gewünschte Tag oder Name ist bereits vergeben!<br>";
+									}
+									// Name / Tag sind noch nicht vergeben
+									else
+									{
+										$check = true;
+									}
+								}
+								else
+								{
+									echo "Fehler! Unerlaubte Zeichen (".$signs.") im Allianztag oder im Allianznamen!<br>";
+								}
+							}
+							else
+							{
+								echo "Fehler! Der Allianzname und Allianztag dürfen nicht nur aus Leerzeichen besttehen!<br>";
+							}
+						}
+						
+						// Name und/oder Tag wird übernommen
+						if($check)
+						{
+							$alliance_tag = $_POST['alliance_tag'];
+							$alliance_name = $_POST['alliance_name'];
+							
+							add_alliance_history($cu->alliance_id,"[b]".$cu->nick."[/b] ändert den Allianzname und/oder Tag von [b]".$arr['alliance_name']." (".$arr['alliance_tag'].")[/b] in [b]".$_POST['alliance_name']." (".$_POST['alliance_tag'].")[/b]!");
+						}
+						// Name und/oder Tag sind fehlerhaft
+						else
+						{
+							$alliance_tag = $arr['alliance_tag'];
+							$alliance_name = $arr['alliance_name'];
+						}
+						
+						
+						// Prüft Korrektheit des Allianzbildes
             $alliance_img_string="";
-            if ($_POST['alliance_img_del']==1)
+            if (isset($_POST['alliance_img_del']) && $_POST['alliance_img_del']==1)
             {
               if (file_exists(ALLIANCE_IMG_DIR."/".$arr['alliance_img']))
               {
@@ -287,7 +351,7 @@
               }
               $alliance_img_string="alliance_img='',";
             }
-            elseif ($_FILES['alliance_img_file']['tmp_name']!="")
+            elseif (isset($_FILES['alliance_img_file']['tmp_name']) && $_FILES['alliance_img_file']['tmp_name']!="")
             {
             	if ($_FILES['alliance_img_file']['size']<=ALLIANCE_IMG_MAX_SIZE)
             	{
@@ -341,12 +405,17 @@
 							}
             }
 
+						if(!isset($message))
+						{
+							$message = "";	
+						}
+						
 						dbquery("
 						UPDATE 
 							alliances 
 						SET 
-							alliance_tag='".addslashes($_POST['alliance_tag'])."', 
-							alliance_name='".addslashes($_POST['alliance_name'])."', 
+							alliance_tag='".addslashes($alliance_tag)."', 
+							alliance_name='".addslashes($alliance_name)."', 
 							alliance_text='".addslashes($_POST['alliance_text'])."',
 						 	".$alliance_img_string."
 							alliance_url='".$_POST['alliance_url']."',
@@ -356,7 +425,7 @@
 							alliance_id=".$cu->alliance_id.";");
 						$res = dbquery("SELECT * FROM alliances WHERE alliance_id='".$cu->alliance_id."';");
 						$arr = mysql_fetch_array($res);
-						echo "Die &Auml;nderungen wurden übernommen!<br/>$message<br/>";
+						echo "Die &Auml;nderungen wurden übernommen!<br/>".$message."<br/>";
 					}
 
 					// Bewerbungsvorlage speichern
@@ -625,7 +694,7 @@
 													</tr>";
 									while ($war=mysql_fetch_array($wars))
 									{
-										if ($war['a1id']==$id) 
+										if (isset($war['a1id']) && $war['a1id']==$cu->alliance_id) 
 										{
 											$opId = $war['a2id'];
 											$opTag = $war['a2tag'];
@@ -688,7 +757,7 @@
 													</tr>";					
 									while ($war=mysql_fetch_array($wars))
 									{
-										if ($war['a1id']==$id) 
+										if (isset($war['a1id']) && $war['a1id']==$cu->alliance_id) 
 										{
 											$opId = $war['a2id'];
 											$opTag = $war['a2tag'];
@@ -752,7 +821,7 @@
 			
 									while ($war=mysql_fetch_array($wars))
 									{
-										if ($war['a1id']==$id) 
+										if (isset($war['a1id']) && $war['a1id']==$cu->alliance_id) 
 										{
 											$opId = $war['a2id'];
 											$opTag = $war['a2tag'];

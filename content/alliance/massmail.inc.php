@@ -2,8 +2,9 @@
 if (Alliance::checkActionRights('massmail'))
 {
 	echo "<h2>Rundmail</h2>";
+	
 	// Nachricht senden
-	if ($_POST['submit']!="" && checker_verify())
+	if (isset($_POST['submit']) && checker_verify())
 	{
 		$ures = dbquery("SELECT 
 			user_id 
@@ -35,8 +36,16 @@ if (Alliance::checkActionRights('massmail'))
 	{
 		echo "<form action=\"?page=$page&action=massmail\" method=\"POST\">";
 		checker_init();
+		if(isset($_GET['message_subject']))
+		{
+			$subject = $_GET['message_subject'];
+		}
+		else
+		{
+			$subject = "";
+		}
 		infobox_start("Nachricht verfassen",1);
-		echo "<tr><td class=\"tbltitle\" style=\"width:50px;\">Betreff:</td><td class=\"tbldata\"><input type=\"text\" name=\"message_subject\" value=\"".$_GET['message_subject']."\" size=\"30\" maxlength=\"255\"></td></tr>";
+		echo "<tr><td class=\"tbltitle\" style=\"width:50px;\">Betreff:</td><td class=\"tbldata\"><input type=\"text\" name=\"message_subject\" value=\"".$subject."\" size=\"30\" maxlength=\"255\"></td></tr>";
 		echo "<tr><td class=\"tbltitle\">Text:</td><td class=\"tbldata\"><textarea name=\"message_text\" rows=\"5\" cols=\"50\"></textarea></td></tr>";
 		infobox_end(1);
 		echo "<input type=\"submit\" name=\"submit\" value=\"Senden\" /> &nbsp;<input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=$page'\" />";

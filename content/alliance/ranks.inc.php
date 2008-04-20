@@ -6,20 +6,20 @@ if (Alliance::checkActionRights('ranks'))
 						echo "<h2>R&auml;nge</h2>";
 	
 						// Ränge speichern
-						if (count($_POST)>0 && checker_verify())
+						if (isset($_POST) && count($_POST)>0 && checker_verify())
 						{
-							if($_POST['ranknew']!="")
+							if(isset($_POST['ranknew']))
 							{
 								dbquery("INSERT INTO ".$db_table['alliance_ranks']." (rank_alliance_id) VALUES (".$arr['alliance_id'].");");
 							}
-							if(($_POST['ranksubmit']!="" || $_POST['ranknew']!=""))
+							if(isset($_POST['ranksubmit']) || isset($_POST['ranknew']))
 							{
-								if (count($_POST['rank_name'])>0)
+								if (isset($_POST['rank_name']) && count($_POST['rank_name'])>0)
 								{
 									foreach ($_POST['rank_name'] as $id=>$name)
 									{
 										dbquery("DELETE FROM ".$db_table['alliance_rankrights']." WHERE rr_rank_id=$id;");
-										if ($_POST['rank_del'][$id]==1)
+										if (isset($_POST['rank_del'][$id]) && $_POST['rank_del'][$id]==1)
 										{
 											dbquery("DELETE FROM ".$db_table['alliance_ranks']." WHERE rank_id=$id;");
 											dbquery("UPDATE ".$db_table['users']." SET user_alliance_rank_id=0 WHERE user_alliance_rank_id=$id;");

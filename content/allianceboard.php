@@ -154,7 +154,7 @@
 		
 		
 			// Board-Admin prüfen
-			if ($myRight['allianceboard'] || $isFounder)
+			if (isset($myRight['allianceboard']) || $isFounder)
 				$s['admin']=true;
 			else
 				$s['admin']=false;
@@ -164,7 +164,7 @@
 			//
 			// Create new post in topic
 			//
-			if ($_GET['newpost']>0 && $s['user_id']>0 && legal==TRUE)
+			if (isset($_GET['newpost']) && $_GET['newpost']>0 && $s['user_id']>0 && legal==TRUE)
 			{
 				if (isset($alliance_bnd_id))
 				{
@@ -204,7 +204,7 @@
 			//
 			// Edit Post
 			//
-			elseif($_GET['editpost']>0 && $s)
+			elseif(isset($_GET['editpost']) && $_GET['editpost']>0 && $s)
 			{
 				echo "<h2>Beitrag bearbeiten</h2>";
 				$res=dbquery("SELECT * FROM ".BOARD_POSTS_TABLE." WHERE post_id=".$_GET['editpost'].";");		
@@ -230,7 +230,7 @@
 			//
 			// Delete Post
 			//
-			elseif($_GET['delpost']>0 && $s)
+			elseif(isset($_GET['delpost']) && $_GET['delpost']>0 && $s)
 			{
 				echo "<h2>Beitrag löschen</h2>";
 				$res=dbquery("SELECT * FROM ".BOARD_POSTS_TABLE." WHERE post_id=".$_GET['delpost'].";");		
@@ -257,7 +257,7 @@
 			//
 			// Show topic with it's posts
 			//	
-			elseif ($_GET['topic']>0 && $legal=TRUE)
+			elseif (isset($_GET['topic']) && $_GET['topic']>0 && $legal=TRUE)
 			{
 				$tres=dbquery("SELECT * FROM ".BOARD_TOPIC_TABLE.",".BOARD_CAT_TABLE." WHERE topic_id=".$_GET['topic']." AND (topic_cat_id=cat_id || topic_cat_id=0);");
 				if (mysql_num_rows($tres)>0)
@@ -277,7 +277,7 @@
 						echo "<img src=\"images/closed.gif\" alt=\"closed\" style=\"width:15px;height:16px;\" /> <i>Dieses Thema ist geschlossen und es können keine weiteren Beiträge erstellt werden!</i><br/><br/>";
 			
 						// Save new post
-						if ($_POST['submit']!="" && $_POST['post_text']!="" && $s['user_id']>0 && $tarr['topic_closed']==0)
+						if (isset($_POST['submit']) && isset($_POST['post_text']) && $s['user_id']>0 && $tarr['topic_closed']==0)
 						{
 							dbquery("INSERT INTO ".BOARD_POSTS_TABLE." (post_topic_id,post_user_id,post_user_nick,post_text,post_timestamp) VALUES (".$_GET['topic'].",".$s['user_id'].",'".$cu->nick."','".addslashes($_POST['post_text'])."',".time().");");
 							$mid=mysql_insert_id();
@@ -289,7 +289,7 @@
 							dbquery("UPDATE ".BOARD_TOPIC_TABLE." SET topic_count=topic_count+1  WHERE topic_id=".$_GET['topic'].";");			
 			
 						// Edit post
-						if ($_POST['post_edit']!="" && $_POST['post_text']!="" && $_POST['post_id']!="" && ($s['user_id']>0 || $s['admin']))
+						if (isset($_POST['post_edit']) && isset($_POST['post_text']) && isset($_POST['post_id']) && ($s['user_id']>0 || $s['admin']))
 						{
 							if ($s['admin'])
 								dbquery("UPDATE ".BOARD_POSTS_TABLE." SET post_text='".addslashes($_POST['post_text'])."',post_changed=".time()." WHERE post_id=".$_POST['post_id'].";");
@@ -300,7 +300,7 @@
 						}
 						
 						// Delete post
-						if ($_POST['post_delete']!="" && $_POST['post_id']!="" && ($s['user_id']>0 || $s['admin']))
+						if (isset($_POST['post_delete']) && isset($_POST['post_id']) && ($s['user_id']>0 || $s['admin']))
 						{
 							if ($s['admin'])
 								dbquery("DELETE FROM ".BOARD_POSTS_TABLE." WHERE post_id=".$_POST['post_id'].";");
@@ -326,7 +326,7 @@
 									echo "<br/><a href=\"?page=$page&amp;bnd=".$_GET['bnd']."&editpost=".$arr['post_id']."\"><img src=\"images/edit.gif\" alt=\"edit\" style=\"border:none\" /></a> <a href=\"?page=$page&amp;bnd=".$_GET['bnd']."&delpost=".$arr['post_id']."\"><img src=\"images/delete.gif\" alt=\"del\" style=\"border:none;\" /></a>";
 								echo "</th>";
 								echo "<td";
-								if ($user[$arr['post_user_id']]['rank']==count($urank)-1) echo " style=\"color:".ADMIN_COLOR."\"";
+								if (isset($urank) && $user[$arr['post_user_id']]['rank']==count($urank)-1) echo " style=\"color:".ADMIN_COLOR."\"";
 								//echo ">".($arr['post_text']);
 								echo ">".text2html($arr['post_text']);
 								if ($arr['post_changed']>0)
@@ -360,7 +360,7 @@
 			//
 			// Create new topic in category
 			//
-			elseif ($_GET['newtopic']>0 && $s['user_id']>0 && $legal=TRUE)
+			elseif (isset($_GET['newtopic']) && $_GET['newtopic']>0 && $s['user_id']>0 && $legal=TRUE)
 			{
 				if (isset($_GET['bnd']) && $_GET['bnd']>0)
 				{
@@ -404,7 +404,7 @@
 			//
 			// Edit a topic
 			//
-			elseif($_GET['edittopic']>0 && $s  && $legal==TRUE)
+			elseif(isset($_GET['edittopic']) && $_GET['edittopic']>0 && $s  && $legal==TRUE)
 			{
 				echo "<h2>Thema bearbeiten</h2>";
 				$res=dbquery("SELECT * FROM ".BOARD_TOPIC_TABLE." WHERE topic_id=".$_GET['edittopic']." AND topic_bnd_id=".$_GET['bnd'].";");		
@@ -461,7 +461,7 @@
 			//
 			// Delete a topic and all it's posts
 			//
-			elseif($_GET['deltopic']>0 && $s['admin'])
+			elseif(isset($_GET['deltopic']) && $_GET['deltopic']>0 && $s['admin'])
 			{
 				echo "<h2>Thema löschen</h2>";
 				$res=dbquery("SELECT * FROM ".BOARD_TOPIC_TABLE." WHERE topic_id=".$_GET['deltopic'].";");		
@@ -481,9 +481,9 @@
 			//
 			// Show topics in category
 			//
-			elseif ($_GET['cat']>0)
+			elseif (isset($_GET['cat']) && $_GET['cat']>0)
 			{
-				if ($s['admin'] || $myCat[$_GET['cat']])
+				if ($s['admin'] || isset($myCat[$_GET['cat']]))
 				{
 					$cres=dbquery("SELECT * FROM ".BOARD_CAT_TABLE." WHERE cat_alliance_id=".BOARD_ALLIANCE_ID." AND cat_id=".$_GET['cat'].";");		
 					if (mysql_num_rows($cres)>0)
@@ -492,7 +492,7 @@
 						echo "<h2><a href=\"?page=$page\">&Uuml;bersicht</a> &gt; ".$carr['cat_name']."</h2>";
 						
 						// Save new topic
-						if ($_POST['submit']!="" && $_POST['topic_subject']!="" && $_POST['post_text']!="" && $s['user_id']>0)
+						if (isset($_POST['submit']) && isset($_POST['topic_subject']) && isset($_POST['post_text']) && $s['user_id']>0)
 						{
 							dbquery("INSERT INTO ".BOARD_TOPIC_TABLE." (topic_subject,topic_cat_id,topic_user_id,topic_user_nick,topic_timestamp) VALUES ('".addslashes($_POST['topic_subject'])."',".$_GET['cat'].",".$s['user_id'].",'".$cu->nick."',".time().");");			
 							$mid=mysql_insert_id();
@@ -501,7 +501,7 @@
 							echo "<script type=\"text/javascript\">document.location='?page=$page&topic=".$mid."#".$pmid."';</script>";
 						}			
 						// Save edited topic
-						elseif ($_POST['topic_edit']!="" && $_POST['topic_subject']!="" && $_POST['topic_id']>0)
+						elseif (isset($_POST['topic_edit']) && isset($_POST['topic_subject']) && isset($_POST['topic_id']) && $_POST['topic_id']>0)
 						{
 							dbquery("UPDATE ".BOARD_TOPIC_TABLE." SET topic_subject='".$_POST['topic_subject']."',topic_top='".$_POST['topic_top']."',topic_closed='".$_POST['topic_closed']."',topic_cat_id='".$_POST['topic_cat_id']."',topic_bnd_id='".$_POST['topic_bnd_id']."' WHERE topic_id=".$_POST['topic_id']."");
 							echo "&Auml;nderungen gespeichert!<br/><br/>";
@@ -509,7 +509,7 @@
 								echo "<script type=\"text/javascript\">document.location='?page=$page&amp;cat=".$_POST['topic_cat_id']."';</script>";
 						}
 						// Delete topic
-						elseif ($_POST['topic_delete']!="" && $_POST['topic_id']>0)
+						elseif (isset($_POST['topic_delete']) && isset($_POST['topic_id']) && $_POST['topic_id']>0)
 						{
 							dbquery("DELETE FROM ".BOARD_POSTS_TABLE." WHERE post_topic_id=".$_POST['topic_id'].";");
 							dbquery("DELETE FROM ".BOARD_TOPIC_TABLE." WHERE topic_id=".$_POST['topic_id'].";");
@@ -572,16 +572,16 @@
 			//
 			// Show bnd topics in category
 			//
-			elseif ($_GET['bnd']>0 )
+			elseif (isset($_GET['bnd']) && $_GET['bnd']>0 )
 			{
-				if ($s['admin'] || $myCat[$_GET['cat']])
+				if ($s['admin'] || isset($myCat[$_GET['cat']]))
 				{
 					if ($legal=TRUE)
 					{								
 						echo "<h2><a href=\"?page=$page\">&Uuml;bersicht</a> &gt; ".$alliance[$alliance_bnd_id]['name']."</h2>";
 						
 						// Save new topic
-						if ($_POST['submit']!="" && $_POST['topic_subject']!="" && $_POST['post_text']!="" && $s['user_id']>0)
+						if (isset($_POST['submit']) && isset($_POST['topic_subject']) && isset($_POST['post_text']) && $s['user_id']>0)
 						{
 							dbquery("INSERT INTO ".BOARD_TOPIC_TABLE." (topic_subject,topic_bnd_id,topic_user_id,topic_user_nick,topic_timestamp) VALUES ('".addslashes($_POST['topic_subject'])."',".$_GET['bnd'].",".$s['user_id'].",'".$cu->nick."',".time().");");			
 							$mid=mysql_insert_id();
@@ -590,7 +590,7 @@
 							echo "<script type=\"text/javascript\">document.location='?page=$page&bnd=".$_GET['bnd']."&topic=".$mid."#".$pmid."';</script>";
 						}			
 						// Save edited topic
-						elseif ($_POST['topic_edit']!="" && $_POST['topic_subject']!="" && $_POST['topic_id']>0)
+						elseif (isset($_POST['topic_edit']) && isset($_POST['topic_subject']) && isset($_POST['topic_id']) && $_POST['topic_id']>0)
 						{
 							dbquery("UPDATE ".BOARD_TOPIC_TABLE." SET topic_subject='".$_POST['topic_subject']."',topic_top='".$_POST['topic_top']."',topic_closed='".$_POST['topic_closed']."',topic_bnd_id='".$_POST['topic_bnd_id']."' WHERE topic_id=".$_POST['topic_id']."");
 							echo "&Auml;nderungen gespeichert!<br/><br/>";
@@ -598,7 +598,7 @@
 								echo "<script type=\"text/javascript\">document.location='?page=$page&amp;bnd=".$_POST['topic_bnd_id']."';</script>";
 						}
 						// Delete topic
-						elseif ($_POST['topic_delete']!="" && $_POST['topic_id']>0)
+						elseif (isset($_POST['topic_delete']) && isset($_POST['topic_id']) && $_POST['topic_id']>0)
 						{
 							dbquery("DELETE FROM ".BOARD_POSTS_TABLE." WHERE post_topic_id=".$_POST['topic_id'].";");
 							dbquery("DELETE FROM ".BOARD_TOPIC_TABLE." WHERE topic_id=".$_POST['topic_id'].";");
@@ -662,7 +662,7 @@
 			//
 			// New category
 			//
-			elseif($_GET['action']=="newcat" && $s['admin'])
+			elseif(isset($_GET['action']) && $_GET['action']=="newcat" && $s['admin'])
 			{
 				$d=opendir(BOARD_BULLET_DIR);
 				$bullets=array();
@@ -708,7 +708,7 @@
 			//
 			// Edit a category
 			//
-			elseif($_GET['editcat']>0 && $s['admin'])
+			elseif(isset($_GET['editcat']) && $_GET['editcat']>0 && $s['admin'])
 			{
 				echo "<h2>Kategorie bearbeiten</h2>";
 				$res=dbquery("SELECT * FROM ".BOARD_CAT_TABLE." WHERE cat_alliance_id=".BOARD_ALLIANCE_ID." AND cat_id=".$_GET['editcat'].";");		
@@ -765,7 +765,7 @@
 			
 		//
 		//edit a bnd category
-		elseif($_GET['editbnd']>0 && $s['admin'])
+		elseif(isset($_GET['editbnd']) && $_GET['editbnd']>0 && $s['admin'])
 			{
 				echo "<h2>Kategorie bearbeiten</h2>";
 				$res=dbquery("SELECT * FROM ".$db_table['alliance_bnd']." WHERE (alliance_bnd_alliance_id1=".BOARD_ALLIANCE_ID." || alliance_bnd_alliance_id2=".BOARD_ALLIANCE_ID.") AND alliance_bnd_id=".$_GET['editbnd'].";");		
@@ -833,7 +833,7 @@
 			//
 			// Delete a forum category and all it's content
 			//
-			elseif($_GET['delcat']>0 && $s['admin'])
+			elseif(isset($_GET['delcat']) && $_GET['delcat']>0 && $s['admin'])
 			{
 				echo "<h2>Kategorie löschen</h2>";
 				$res=dbquery("SELECT * FROM ".BOARD_CAT_TABLE." WHERE cat_alliance_id=".BOARD_ALLIANCE_ID." AND cat_id=".$_GET['delcat'].";");		
@@ -857,10 +857,10 @@
 			{
 				echo "<h2>Übersicht</h2>";
 				
-				if (count($rank)>0)
+				if (isset($rank) && count($rank)>0)
 				{
 				
-					if ($_POST['cat_new']!="" && $_POST['cat_name']!="")
+					if (isset($_POST['cat_new']) && isset($_POST['cat_name']))
 					{
 						dbquery("INSERT INTO ".BOARD_CAT_TABLE." (
 						cat_name,
@@ -884,7 +884,7 @@
 						}
 						echo "Neue Kategorie gespeichert!<br/><br/>";
 					}
-					elseif ($_POST['cat_edit']!="" && $_POST['cat_name']!="" && $_POST['cat_id']>0)
+					elseif (isset($_POST['cat_edit']) && isset($_POST['cat_name']) && isset($_POST['cat_id']) && $_POST['cat_id']>0)
 					{
 						dbquery("UPDATE ".BOARD_CAT_TABLE." SET 
 						cat_name='".addslashes($_POST['cat_name'])."',
@@ -902,7 +902,7 @@
 						}
 						echo "&Auml;nderungen gespeichert!<br/><br/>";
 					}
-					elseif ($_POST['cat_edit']!="" && $_POST['bnd_id']>0)
+					elseif (isset($_POST['cat_edit']) && isset($_POST['bnd_id']) && $_POST['bnd_id']>0)
 					{
 						dbquery("DELETE FROM ".$db_table['allianceboard_catranks']." WHERE cr_bnd_id=".$_POST['bnd_id'].";");
 						if (isset($_POST['cr']))
@@ -914,7 +914,7 @@
 						}
 						echo "&Auml;nderungen gespeichert!<br/><br/>";
 					}
-					elseif ($_POST['cat_delete']!="" && $_POST['cat_id']>0)
+					elseif (isset($_POST['cat_delete']) && isset($_POST['cat_id']) && $_POST['cat_id']>0)
 					{
 						$tres=dbquery("SELECT topic_id FROM ".BOARD_TOPIC_TABLE." WHERE topic_cat_id=".$_POST['cat_id'].";");
 						if (mysql_num_rows($tres)>0)
@@ -942,7 +942,7 @@
 						$accessCnt=0;
 						while ($arr=mysql_fetch_array($res))
 						{
-							if ($s['admin'] || $myCat[$arr['cat_id']])
+							if ($s['admin'] || isset($myCat[$arr['cat_id']]))
 							{
 								$accessCnt++;
 								$pres=dbquery("SELECT topic_subject,post_id,topic_id,topic_timestamp,post_user_id,post_user_nick FROM ".BOARD_POSTS_TABLE.",".BOARD_TOPIC_TABLE." WHERE post_topic_id=topic_id AND topic_cat_id=".$arr['cat_id']." ORDER BY post_timestamp DESC LIMIT 1;");
@@ -1026,7 +1026,7 @@
 							}
 							$alliance=get_alliance_names();
 							
-							if ($s['admin'] || $myCat[$arr['alliance_bnd_id']])
+							if ($s['admin'] || isset($myCat[$arr['alliance_bnd_id']]))
 							{
 								$accessCnt++;
 								$pres=dbquery("SELECT topic_subject,post_id,topic_id,topic_timestamp,post_user_id,post_user_nick FROM ".BOARD_POSTS_TABLE.",".BOARD_TOPIC_TABLE." WHERE post_topic_id=topic_id AND topic_bnd_id=".$arr['alliance_bnd_id']." ORDER BY post_timestamp DESC LIMIT 1;");

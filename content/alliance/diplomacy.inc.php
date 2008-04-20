@@ -63,10 +63,16 @@
 			//
 			// Kriegserklärung schreiben
 			//
-			if ($_GET['begin_war']>0)
+			if (isset($_GET['begin_war']) && $_GET['begin_war']>0)
 			{
+				$check = false;
+				if(!isset($_GET['begin_bnd']) || $_GET['begin_bnd']!=$cu->alliance_id)
+				{
+					$check = true;
+				}
+				
 				$ares=dbquery("SELECT * FROM ".$db_table['alliances']." WHERE alliance_id='".$_GET['begin_war']."';");
-				if (mysql_num_rows($ares)>0 && $_GET['begin_bnd']!=$cu->alliance_id)
+				if (mysql_num_rows($ares)>0 && $check)
 				{
 					$aarr=mysql_fetch_array($ares);
 					echo "<form action=\"?page=$page&amp;action=relations\" method=\"post\" name=\"wardeclaration\">";
@@ -91,7 +97,7 @@
 			//
 			// Bündnisanfrage schreiben
 			//
-			elseif ($_GET['begin_bnd']>0)
+			elseif (isset($_GET['begin_bnd']) && $_GET['begin_bnd']>0)
 			{
 				$ares=dbquery("
 				SELECT
@@ -103,7 +109,7 @@
 					".$db_table['alliances']."
 				WHERE
 					alliance_id='".$_GET['begin_bnd']."';");
-				if (mysql_num_rows($ares)>0 && $_GET['begin_bnd']!=$cu->alliance_id)
+				if (mysql_num_rows($ares)>0 && isset($_GET['begin_bnd']) && $_GET['begin_bnd']!=$cu->alliance_id)
 				{
 					$aarr=mysql_fetch_array($ares);
 					
@@ -360,7 +366,7 @@
 			else
 			{
 				// Save pact offer
-				if ($_POST['sbmit_new_bnd']!="" && checker_verify())
+				if (isset($_POST['sbmit_new_bnd']) && checker_verify())
 				{
 					$bnd_res = dbquery("
 					SELECT 
@@ -419,7 +425,7 @@
 				}
 				
 				// Save war
-				if ($_POST['sbmit_new_war']!="" && checker_verify())
+				if (isset($_POST['sbmit_new_war']) && checker_verify())
 				{
 					$alliances = get_alliance_names();
 					
@@ -777,7 +783,7 @@
 							$relations[$barr['alliance_bnd_alliance_id2']]['name']=$barr['alliance_bnd_name'];
 							$relations[$barr['alliance_bnd_alliance_id2']]['level']=$barr['alliance_bnd_level'];
 							$relations[$barr['alliance_bnd_alliance_id2']]['date']=$barr['alliance_bnd_date'];
-							$relations[$barr['alliance_bnd_alliance_id2']]['text']=$barr['alliance_text'];
+							$relations[$barr['alliance_bnd_alliance_id2']]['text']=$barr['alliance_bnd_text'];
 						}
 						else
 						{
@@ -786,7 +792,7 @@
 							$relations[$barr['alliance_bnd_alliance_id1']]['name']=$barr['alliance_bnd_name'];
 							$relations[$barr['alliance_bnd_alliance_id1']]['level']=$barr['alliance_bnd_level'];
 							$relations[$barr['alliance_bnd_alliance_id1']]['date']=$barr['alliance_bnd_date'];
-							$relations[$barr['alliance_bnd_alliance_id1']]['text']=$barr['alliance_text'];
+							$relations[$barr['alliance_bnd_alliance_id1']]['text']=$barr['alliance_bnd_text'];
 						}
 					}
 				}
@@ -823,36 +829,45 @@
 							 ".text2html($aarr['alliance_name'])."
 							</td>";
 							
-						if ($relations[$aarr['alliance_id']]['level']==2)
-						{
-							echo "<td class=\"tbldata\" style=\"color:#0f0;\">B&uuml;ndnis</td>";
-							echo "<td class=\"tbldata\">".df($relations[$aarr['alliance_id']]['date'])."</td>";
-							echo "<td class=\"tbldata\">".$relations[$aarr['alliance_id']]['name']."</td>";
-						}
-						elseif ($relations[$aarr['alliance_id']]['level']==3)
-						{
-							echo "<td class=\"tbldata\" style=\"color:#f00;\">Krieg</td>";
-							echo "<td class=\"tbldata\">".df($relations[$aarr['alliance_id']]['date'])."</td>";
-							echo "<td class=\"tbldata\">".df($relations[$aarr['alliance_id']]['date']+WAR_DURATION)."</td>";
-						}
-						elseif ($relations[$aarr['alliance_id']]['level']==4)
-						{
-							echo "<td class=\"tbldata\" style=\"color:#3f9;\">Frieden</td>";
-							echo "<td class=\"tbldata\">".df($relations[$aarr['alliance_id']]['date'])."</td>";
-							echo "<td class=\"tbldata\">".df($relations[$aarr['alliance_id']]['date']+PEACE_DURATION)."</td>";
-						}									
-						elseif ($relations[$aarr['alliance_id']]['level']==0 && count($relations[$aarr['alliance_id']])>0)
-						{
-							if ($relations[$aarr['alliance_id']]['master'])
+						if(isset($relations[$aarr['alliance_id']]))
+						{	
+							if ($relations[$aarr['alliance_id']]['level']==2)
 							{
-								echo "<td class=\"tbldata\" style=\"color:#ff0;\">Anfrage</td>";
+								echo "<td class=\"tbldata\" style=\"color:#0f0;\">B&uuml;ndnis</td>";
+								echo "<td class=\"tbldata\">".df($relations[$aarr['alliance_id']]['date'])."</td>";
+								echo "<td class=\"tbldata\">".$relations[$aarr['alliance_id']]['name']."</td>";
+							}
+							elseif ($relations[$aarr['alliance_id']]['level']==3)
+							{
+								echo "<td class=\"tbldata\" style=\"color:#f00;\">Krieg</td>";
+								echo "<td class=\"tbldata\">".df($relations[$aarr['alliance_id']]['date'])."</td>";
+								echo "<td class=\"tbldata\">".df($relations[$aarr['alliance_id']]['date']+WAR_DURATION)."</td>";
+							}
+							elseif ($relations[$aarr['alliance_id']]['level']==4)
+							{
+								echo "<td class=\"tbldata\" style=\"color:#3f9;\">Frieden</td>";
+								echo "<td class=\"tbldata\">".df($relations[$aarr['alliance_id']]['date'])."</td>";
+								echo "<td class=\"tbldata\">".df($relations[$aarr['alliance_id']]['date']+PEACE_DURATION)."</td>";
+							}									
+							elseif ($relations[$aarr['alliance_id']]['level']==0 && count($relations[$aarr['alliance_id']])>0)
+							{
+								if ($relations[$aarr['alliance_id']]['master'])
+								{
+									echo "<td class=\"tbldata\" style=\"color:#ff0;\">Anfrage</td>";
+								}
+								else
+								{
+									echo "<td class=\"tbldata\" style=\"color:#f90;\">Anfrage an uns</td>";
+								}
+								echo "<td class=\"tbldata\">".df($relations[$aarr['alliance_id']]['date'])."</td>";
+								echo "<td class=\"tbldata\">-</td>";
 							}
 							else
 							{
-								echo "<td class=\"tbldata\" style=\"color:#f90;\">Anfrage an uns</td>";
+								echo "<td class=\"tbldata\">-</td>";
+								echo "<td class=\"tbldata\">-</td>";
+								echo "<td class=\"tbldata\">-</td>";
 							}
-							echo "<td class=\"tbldata\">".df($relations[$aarr['alliance_id']]['date'])."</td>";
-							echo "<td class=\"tbldata\">-</td>";
 						}
 						else
 						{
@@ -862,37 +877,49 @@
 						}
 												
 						echo "<td class=\"tbldata\">";
-						if ($relations[$aarr['alliance_id']]['level']==2)
+						
+						if(isset($relations[$aarr['alliance_id']]))
 						{
-							echo "<a href=\"?page=$page&action=relations&amp;view=".$relations[$aarr['alliance_id']]['id']."\">Details</a> &nbsp; ";
-							echo "<a href=\"?page=$page&action=relations&amp;end_pact=".$relations[$aarr['alliance_id']]['id']."\">Auflösen</a> ";
-						}
-						elseif ($relations[$aarr['alliance_id']]['level']==3)
-						{
-							echo "<a href=\"?page=$page&action=relations&view=".$relations[$aarr['alliance_id']]['id']."\">Kriegserklärung</a> ";
-						}
-						elseif ($relations[$aarr['alliance_id']]['level']==4)
-						{
-							echo "-";
-						}									
-						elseif ($relations[$aarr['alliance_id']]['level']==0 && count($relations[$aarr['alliance_id']])>0)
-						{
-							if ($relations[$aarr['alliance_id']]['master'])
+							if ($relations[$aarr['alliance_id']]['level']==2)
 							{
-								echo "<a href=\"?page=$page&action=relations&view=".$relations[$aarr['alliance_id']]['id']."\">Anschauen / Löschen</a> ";
+								echo "<a href=\"?page=$page&action=relations&amp;view=".$relations[$aarr['alliance_id']]['id']."\">Details</a> &nbsp; ";
+								echo "<a href=\"?page=$page&action=relations&amp;end_pact=".$relations[$aarr['alliance_id']]['id']."\">Auflösen</a> ";
+							}
+							elseif ($relations[$aarr['alliance_id']]['level']==3)
+							{
+								echo "<a href=\"?page=$page&action=relations&view=".$relations[$aarr['alliance_id']]['id']."\">Kriegserklärung</a> ";
+							}
+							elseif ($relations[$aarr['alliance_id']]['level']==4)
+							{
+								echo "-";
+							}									
+							elseif ($relations[$aarr['alliance_id']]['level']==0 && count($relations[$aarr['alliance_id']])>0)
+							{
+								if ($relations[$aarr['alliance_id']]['master'])
+								{
+									echo "<a href=\"?page=$page&action=relations&view=".$relations[$aarr['alliance_id']]['id']."\">Anschauen / Löschen</a> ";
+								}
+								else
+								{
+									echo "<a href=\"?page=$page&action=relations&view=".$relations[$aarr['alliance_id']]['id']."\">Beantworten</a> ";
+								}
 							}
 							else
 							{
-								echo "<a href=\"?page=$page&action=relations&view=".$relations[$aarr['alliance_id']]['id']."\">Beantworten</a> ";
+								if($aarr['alliance_accept_bnd']==1)
+								{
+									echo "<a href=\"?page=$page&action=relations&amp;begin_bnd=".$aarr['alliance_id']."\">B&uuml;ndnis</a> &nbsp; ";
+								}
+								echo "<a href=\"?page=$page&action=relations&amp;begin_war=".$aarr['alliance_id']."\">Krieg</a> ";
 							}
 						}
 						else
 						{
 							if($aarr['alliance_accept_bnd']==1)
-							{
-								echo "<a href=\"?page=$page&action=relations&amp;begin_bnd=".$aarr['alliance_id']."\">B&uuml;ndnis</a> &nbsp; ";
-							}
-							echo "<a href=\"?page=$page&action=relations&amp;begin_war=".$aarr['alliance_id']."\">Krieg</a> ";
+								{
+									echo "<a href=\"?page=$page&action=relations&amp;begin_bnd=".$aarr['alliance_id']."\">B&uuml;ndnis</a> &nbsp; ";
+								}
+								echo "<a href=\"?page=$page&action=relations&amp;begin_war=".$aarr['alliance_id']."\">Krieg</a> ";
 						}
 						echo "</td></tr>";
 					}

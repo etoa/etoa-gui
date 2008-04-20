@@ -4,7 +4,7 @@ if (Alliance::checkActionRights('alliancenews'))
 {
 
 	echo "<h2>Allianznews</h2>";
-	if (($_POST['newssubmit']!="" || $_POST['newssubmitsend']!="") && checker_verify())
+	if ((isset($_POST['newssubmit']) || isset($_POST['newssubmitsend'])) && checker_verify())
 	{
 		if (check_illegal_signs($_POST['news_title'])!="")
 		{
@@ -13,10 +13,13 @@ if (Alliance::checkActionRights('alliancenews'))
 			$_SESSION['alliance']['news']['news_text']=$_POST['news_text'];
 			$_SESSION['alliance']['news']['alliance_id']=$_POST['alliance_id'];
 		}
-		elseif ($_POST['newssubmitsend']!="" && $_POST['news_text']!="" && $_SESSION['alliance']['news']['preview'])
+		elseif (isset($_POST['newssubmitsend']) && isset($_POST['news_text']) && $_POST['news_text']!="" && $_SESSION['alliance']['news']['preview'])
 		{
 			$_SESSION['alliance']['news']=Null;
-			dbquery("INSERT INTO ".$db_table['alliance_news']."
+			
+			dbquery("
+			INSERT INTO 
+			".$db_table['alliance_news']."
 			(alliance_news_alliance_id,
 			alliance_news_user_id,
 			alliance_news_title,
@@ -30,8 +33,8 @@ if (Alliance::checkActionRights('alliancenews'))
 			'".addslashes($_POST['news_text'])."',
 			".time().",
 			".$_POST['alliance_id'].")");
+			
 			echo "<div style=\"color:#0f0;\">News wurde gesendet!</div><br/>";
-			$_SESSION['alliance']['news']=null;
 						
 			// Gebe nur Punkte falls Nachricht öffentlich oder an andere Allianz
 			if ($cu->alliance_id!=$_POST['alliance_id'])
@@ -42,7 +45,7 @@ if (Alliance::checkActionRights('alliancenews'))
 			// Update rss file
 			Townhall::genRss();			
 		}
-		elseif ($_POST['news_title']!="" && $_POST['news_text']!="")
+		elseif (isset($_POST['news_title']) && isset($_POST['news_text']) && $_POST['news_title']!="" && $_POST['news_text']!="")
 		{
 			$_SESSION['alliance']['news']['news_title']=$_POST['news_title'];
 			$_SESSION['alliance']['news']['news_text']=$_POST['news_text'];
@@ -65,17 +68,46 @@ if (Alliance::checkActionRights('alliancenews'))
 
 	echo "<form action=\"?page=$page&action=".$_GET['action']."\" method=\"post\">";
 	checker_init();
-	if ($_GET['message_subject']!="") $_SESSION['alliance']['news']['news_title']=$_GET['message_subject'];
+	if (isset($_GET['message_subject']) && $_GET['message_subject']!="")
+	{
+		$_SESSION['alliance']['news']['news_title']=$_GET['message_subject'];
+	}
+	
 	infobox_start("Neue Allianzenews",1);
-	$aid=$_SESSION['alliance']['news']['alliance_id'];
-	if ($aid==0) $aid=$cu->alliance_id;
+	if(isset($_SESSION['alliance']['news']['alliance_id']) && $_SESSION['alliance']['news']['alliance_id']!=0)
+	{
+		$aid = $_SESSION['alliance']['news']['alliance_id'];
+	}
+	else
+	{
+		$aid = $cu->alliance_id;
+	} 
+	
+	if(isset($_SESSION['alliance']['news']['news_title']))
+	{
+		$news_title = $_SESSION['alliance']['news']['news_title'];
+	}
+	else
+	{
+		$news_title = "";
+	}
+	
+	if(isset($_SESSION['alliance']['news']['news_text']))
+	{
+		$news_text = $_SESSION['alliance']['news']['news_text'];
+	}
+	else
+	{
+		$news_text = "";
+	}
+	
 	echo "<tr><th class=\"tbldata\" colspan=\"3\">Sende diese Nachricht nur ab, wenn du dir bezüglich der Ratshausreglen sicher bist! Eine Missachtung kann zur Sperrung des Accounts führen!</th></tr>";
 	echo "<tr>
 		<td class=\"tbltitle\" width=\"170\">Betreff:</td>
-		<td class=\"tbldata\" colspan=\"2\"><input type=\"text\" name=\"news_title\" value=\"".$_SESSION['alliance']['news']['news_title']."\" size=\"62\" maxlength=\"255\"></td></tr>";
+		<td class=\"tbldata\" colspan=\"2\"><input type=\"text\" name=\"news_title\" value=\"".$news_title."\" size=\"62\" maxlength=\"255\"></td></tr>";
 	echo "<tr>
 		<td class=\"tbltitle\" width=\"170\">Text:</td>
-		<td class=\"tbldata\" colspan=2><textarea name=\"news_text\" rows=\"18\" cols=\"60\">".$_SESSION['alliance']['news']['news_text']."</textarea></td></tr>";
+		<td class=\"tbldata\" colspan=2><textarea name=\"news_text\" rows=\"18\" cols=\"60\">".$news_text."</textarea></td></tr>";
 	echo "<tr>
 		<td class=\"tbltitle\" width=\"170\">Ziel:</td>
 		<td class=\"tbldata\" colspan=2>
@@ -83,22 +115,24 @@ if (Alliance::checkActionRights('alliancenews'))
 				<option value=\"0\" style=\"font-weight:bold;color:#0f0;\">Öffentliches Rathaus</option>";
 		$alliance=dbquery("
 		SELECT
-                    alliance_id,
-                    alliance_tag,
-                    alliance_name
+      alliance_id,
+      alliance_tag,
+      alliance_name
 		FROM
 			".$db_table['alliances']."");
-		while ($alliances=mysql_fetch_array($alliance))
+		while ($alliances=mysql_fetch_assoc($alliance))
 		{
 			echo "<option value=\"".$alliances['alliance_id']."\"";
-			if ($alliances['alliance_id']==$_SESSION['alliance']['news']['alliance_id']) echo " selected=\"selected\"";
+			if ($alliances['alliance_id']==$aid) echo " selected=\"selected\"";
 			echo ">[".$alliances['alliance_tag']."]  ".$alliances['alliance_name']."</option>";
 		}
 		echo "</select></td>
 	</tr>";
 	infobox_end(1);
-	if ($_SESSION['alliance']['news']['preview'])
+	if (isset($_SESSION['alliance']['news']['preview']) && $_SESSION['alliance']['news']['preview'])
+	{
 		echo "<input type=\"submit\" name=\"newssubmitsend\" value=\"Senden\"> &nbsp; ";
+	}
 	echo "<input type=\"submit\" name=\"newssubmit\" value=\"Vorschau\">";
 	echo " &nbsp; <input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"Zur&uuml;ck\" />";
 	echo "</form>";
