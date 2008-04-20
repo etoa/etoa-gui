@@ -4559,9 +4559,9 @@ Forum: http://www.etoa.ch/forum";
 	* @param int Concerning user id
 	* @param int Concerning alliance id
 	*/
-	function abuse_button($cat,$title="Missbrauch",$uid=0,$aid=0)
+	function ticket_button($cat,$title="Missbrauch",$uid=0,$aid=0)
 	{		
-		echo "<input type=\"button\" value=\"".$title."\" onclick=\"window.open('show.php?page=abuse&ext=1&cat=".$cat."&uid=".$uid."&$aid=".$aid."','abuse','width=700,height=470,status=no')\" />";
+		echo "<input type=\"button\" value=\"".$title."\" onclick=\"window.open('show.php?page=ticket&ext=1&cat=".$cat."&uid=".$uid."&$aid=".$aid."','abuse','width=700,height=470,status=no,scrollbars=yes')\" />";
 	}
 	
 	/**

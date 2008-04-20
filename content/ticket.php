@@ -17,40 +17,43 @@
 
 <?PHP
 	$status = array("Neu","Zugeteilt","Abgeschlossen","Gelöscht");
+	$abuse_colors = array("#f90","#ff0","#0f0","#bbb");
 	$ext = true;
-	if ($_GET['ext']==1)
+	if (isset($_GET['ext']) && $_GET['ext']==1)
 		$ext = false;
 	
-	echo "<h1>Missbrauch melden</h1>";
+	echo "<h1>Ticketsystem</h1>";
 	
 	if (isset($_POST['abuse_submit']) && checker_verify())
 	{
 		dbquery("
 		INSERT INTO
-			abuses
+			tickets
 		(
-			abuse_cat,
-			abuse_user_id,
-			abuse_c_user_id,
-			abuse_c_alliance_id,
-			abuse_timestamp,
-			abuse_text		
+			cat_id,
+			user_id,
+			c_user_id,
+			c_alliance_id,
+			timestamp,
+			text		
 		)
 		VALUES
 		(
 			'".$_POST['abuse_cat']."',
-			'".$s['user']['id']."',
+			'".$cu->id()."',
 			'".$_POST['abuse_c_user_id']."',
 			'".$_POST['abuse_c_alliance_id']."',
 			UNIX_TIMESTAMP(),
 			'".addslashes($_POST['abuse_text'])."'	
 		);");
 		echo "Vielen Dank, dein Text wurde gespeichert.<br/>Ein Game-Administrator wird sich dem Problem annehmen.<br/><br/>";
+		if (!$ext)
+			echo "<input type=\"button\" onclick=\"document.location='?page=help'\" value=\"Weiter\" />";
 	}
 	else
 	{
 		echo "Über unser Benachrichtigungssystem kanns du einen Game-Administrator informieren, falls
-		du einen Missbrauch der Spielregeln festgestellt hast. Bitte fülle folgendes Formular aus
+		du ein Problem mit dem Spiel hast oder einen Missbrauch der Spielregeln festgestellt hast. Bitte fülle folgendes Formular aus
 		um dein Anliegen zu beschrieben; je mehr Infos du uns gibts, desto besser können wir dir helfen:<br/><br/>";
 		echo "<form action=\"?page=$page\" method=\"post\">";
 		checker_init();
@@ -58,16 +61,29 @@
 		<tr>
 			<th>Kategorie:</th>
 			<td><select name=\"abuse_cat\">";
-			foreach ($abuse_cats as $k=>$v)
+			$cres = dbquery("
+			SELECT
+				id,
+				name
+			FROM
+				ticket_cat
+			ORDER By
+				sort			
+			");			
+			while ($carr = mysql_fetch_row($cres))
 			{
-				echo "<option value=\"".$k."\"";
-				if ($_GET['cat']==$k) echo " selected=\"selected\"";
-				echo ">".$v."</option>";			
+				echo "<option value=\"".$carr[0]."\"";
+				if (isset($_GET['cat']) && $_GET['cat']==$carr[0]) echo " selected=\"selected\"";
+				echo ">".$carr[1]."</option>";			
 			}
 			echo "</select></td>
 		</tr>
 		<tr>
-			<th>Betreffenden Spieler</th>
+			<th>Beschreibung:</th>
+			<td><textarea name=\"abuse_text\" rows=\"10\" cols=\"60\"></textarea></td>
+		</tr>
+		<tr>
+			<th>Betreffenden Spieler * </th>
 			<td><select name=\"abuse_c_user_id\">
 			<option value=\"0\">-</option>";
 			$res = dbquery("
@@ -81,13 +97,13 @@
 			while($arr=mysql_fetch_row($res))
 			{
 				echo "<option value=\"".$arr[1]."\"";
-				if ($_GET['uid']==$arr[1]) echo " selected=\"selected\"";
+				if (isset($_GET['uid']) && $_GET['uid']==$arr[1]) echo " selected=\"selected\"";
 				echo ">".$arr[0]."</option>";			
 			}
 			echo "</select></td>
 		</tr>
 		<tr>
-			<th>Betreffende Allianz</th>
+			<th>Betreffende Allianz * </th>
 			<td><select name=\"abuse_c_alliance_id\">
 			<option value=\"0\">-</option>";
 			$res = dbquery("
@@ -102,17 +118,13 @@
 			while($arr=mysql_fetch_row($res))
 			{
 				echo "<option value=\"".$arr[2]."\"";
-				if ($_GET['aid']==$arr[2]) echo " selected=\"selected\"";
+				if (isset($_GET['aid']) && $_GET['aid']==$arr[2]) echo " selected=\"selected\"";
 				echo ">[".$arr[1]."] ".$arr[0]."</option>";			
 			}
 			echo "</select></td>
 		</tr>
-		<tr>
-			<th>Beschreibung:</th>
-			<td><textarea name=\"abuse_text\" rows=\"10\" cols=\"60\"></textarea></td>
-		</tr>
 		</table><br/>
-		<input type=\"submit\" name=\"abuse_submit\" value=\"Einsenden\" /><br/><br/>";
+		<input type=\"submit\" name=\"abuse_submit\" value=\"Einsenden\" /> &nbsp; (* z.B. bei Regelverstössen)<br/><br/>";
 		echo "</form>";
 		
 		if ($ext)
@@ -121,23 +133,27 @@
 		$res = dbquery("
 		SELECT		
 			a.user_nick as anick,
-			abuse_timestamp,
-			abuse_cat,
-			abuse_id,
-			abuse_admin_timestamp,
-			abuse_text,
-			abuse_notice,
-			abuse_status		
+			a.user_id as aid,
+			t.timestamp,
+			c.name as cname,
+			t.id,
+			t.admin_timestamp,
+			t.text,
+			t.notice,
+			t.status		
 		FROM
-			abuses
+			tickets as t
+		INNER JOIN
+			ticket_cat as c
+			ON t.cat_id=c.id
 		LEFT JOIN
 			admin_users as a
 		ON
-			abuse_admin_id=a.user_id
+			t.admin_id=a.user_id
 		WHERE
-			abuse_user_id=".$s['user']['id']."	
+			t.user_id=".$cu->id()."	
 		ORDER BY
-			abuse_timestamp DESC
+			t.timestamp DESC
 		;");
 		if (mysql_num_rows($res)>0)
 		{
@@ -154,28 +170,28 @@
 			while($arr=mysql_fetch_array($res))
 			{
 				echo "<tr>
-				<td>#".$arr['abuse_id']."</td>
-				<td>".$abuse_cats[$arr['abuse_cat']]."</td>
-				<td>".df($arr['abuse_timestamp'])."</td>
-				<td>".$status[$arr['abuse_status']]."</td>
-				<td><a href=\"?page=contact\">".$arr['anick']."</a></td>
-				<td>".($arr['abuse_admin_timestamp'] > 0 ? df($arr['abuse_admin_timestamp']) : "-")."</td>
+				<td>".$arr['id']."</td>
+				<td>".$arr['cname']."</td>
+				<td>".df($arr['timestamp'])."</td>
+				<td style=\"color:".$abuse_colors[$arr['status']]."\">".$status[$arr['status']]."</td>
+				<td><a href=\"?page=contact&rcpt=".$arr['aid']."\">".$arr['anick']."</a></td>
+				<td>".($arr['admin_timestamp'] > 0 ? df($arr['admin_timestamp']) : "-")."</td>
 				<td>
-					[<a href=\"javascript:;\" onclick=\"toggleText('tx_".$arr['abuse_id']."','sw_".$arr['abuse_id']."')\" id=\"sw_".$arr['abuse_id']."\">Anzeigen</a>]
+					[<a href=\"javascript:;\" onclick=\"toggleText('tx_".$arr['id']."','sw_".$arr['id']."')\" id=\"sw_".$arr['id']."\">Anzeigen</a>]
 				</td>
 				</tr>
-				<tr id=\"tx_".$arr['abuse_id']."\" ";
-				if ($_GET['id']!=$arr['abuse_id'])
+				<tr id=\"tx_".$arr['id']."\" ";
+				if (!isset($_GET['id']) || (isset($_GET['id']) && $_GET['id']!=$arr['id']))
 				{
 					echo "style=\"display:none;\"";
 				}
 				echo ">
 					<td colspan=\"7\">
 					<b>Meldung:</b><br/>
-					".text2html($arr['abuse_text'])."<br/><br/>
+					".text2html($arr['text'])."<br/><br/>
 					<b>Antwort:</b><br/>";
-					if ($arr['abuse_notice']!="")
-						echo text2html($arr['abuse_notice']);
+					if ($arr['notice']!="")
+						echo text2html($arr['notice']);
 					else
 						echo "<i>Noch keine vorhanden</i>";
 					echo "</td>

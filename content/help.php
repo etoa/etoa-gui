@@ -53,6 +53,32 @@
 		Help::navi();
 		echo "Hier findest du Informationen zu verschiedenen Objekten des Spiels:<br/><br/>";
 
+		infobox_start("Tools",1);
+		echo "<tr>
+		<td class=\"tbldata\" style=\"text-align:center;width:20%\">
+			<a href=\"?page=ticket\"><img src=\"images/abuse.png\" border=\"0\" alt=\"Missbrauch\" style=\"width:40px;height:40px;\" title=\"Ticket erstellen\"></a><br/>
+			Ticket an einen Admin schreiben
+		</td>
+		<td class=\"tbldata\" style=\"text-align:center;width:20%\">
+			<a href=\"?page=contact\"><img src=\"images/mail.png\" border=\"0\" alt=\"Kontakt\" style=\"width:40px;height:40px;\" title=\"Kontakt\"></a><br/>
+			Admin per E-Mail kontaktieren
+		</td>
+		<td class=\"tbldata\" style=\"text-align:center;width:20%\">
+			<a href=\"javascript:;\" onclick=\"".HELPCENTER_ONCLICK."\"><img src=\"images/help.png\" border=\"0\" alt=\"FAQ\" style=\"width:40px;height:40px;\" title=\"Hilfecenter und FAQ\"></a><br/>
+			Häufig gestellte Fragen (FAQ)
+		</td>
+		<td class=\"tbldata\" style=\"text-align:center;width:20%\">
+			<a href=\"".FORUM_PATH."\" target=\"_Blank\"><img src=\"images/users.png\" border=\"0\" alt=\"Forum\" title=\"Forum\" style=\"width:40px;height:40px;\"></a><br/>
+			Forum
+		</td>
+		<td class=\"tbldata\" style=\"text-align:center;width:20%\">
+			<a href=\"".DEVCENTER_PATH."\" target=\"_Blank\"><img src=\"images/bug.png\" border=\"0\" alt=\"FAQ\" style=\"width:40px;height:40px;\" title=\"FAQ\"></a><br/>
+			Fehler melden
+		</td>
+		</td></tr>";
+		infobox_end(1);
+
+
 		infobox_start("Daten",1);
 		echo "<tr><td class=\"tbltitle\" width=\"25%\">Geb&auml;ude</td><td class=\"tbldata\">Liste aller Geb&auml;ude</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=buildings\">Anzeigen</a></td></tr>";
 		echo "<tr><td class=\"tbltitle\" width=\"25%\">Technologien</td><td class=\"tbldata\">Liste aller Technologien</td><td class=\"tbldata\"><a href=\"?page=$page&site=research\" width=\"60\">Anzeigen</a></td></tr>";
@@ -86,31 +112,6 @@
 		echo "<tr><td class=\"tbltitle\" width=\"25%\">Wärme- und Kältebonus</td><td class=\"tbldata\">Welche Auswirkungen hat die Planetentemperatur</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=tempbonus\">Anzeigen</a></td></tr>";
 	
 		
-		infobox_end(1);
-
-		infobox_start("Weitere Infos",1);
-		echo "<tr>
-		<td class=\"tbldata\" style=\"text-align:center;width:20%\">
-			<a href=\"".FORUM_PATH."\" target=\"_Blank\"><img src=\"images/users.png\" border=\"0\" alt=\"Forum\" title=\"Forum\" style=\"width:40px;height:40px;\"></a><br/>
-			Forum
-		</td>
-		<td class=\"tbldata\" style=\"text-align:center;width:20%\">
-			<a href=\"javascript:;\" onclick=\"".HELPCENTER_ONCLICK."\"><img src=\"images/help.png\" border=\"0\" alt=\"FAQ\" style=\"width:40px;height:40px;\" title=\"Hilfecenter und FAQ\"></a><br/>
-			Häufig gestellte Fragen (FAQ)
-		</td>
-		<td class=\"tbldata\" style=\"text-align:center;width:20%\">
-			<a href=\"".DEVCENTER_PATH."\" target=\"_Blank\"><img src=\"images/bug.png\" border=\"0\" alt=\"FAQ\" style=\"width:40px;height:40px;\" title=\"FAQ\"></a><br/>
-			Fehler melden
-		</td>
-		<td class=\"tbldata\" style=\"text-align:center;width:20%\">
-			<a href=\"?page=contact\"><img src=\"images/mail.png\" border=\"0\" alt=\"Kontakt\" style=\"width:40px;height:40px;\" title=\"Kontakt\"></a><br/>
-			Admin kontaktieren
-		</td>
-		<td class=\"tbldata\" style=\"text-align:center;width:20%\">
-			<a href=\"?page=abuse\"><img src=\"images/abuse.png\" border=\"0\" alt=\"Missbrauch\" style=\"width:40px;height:40px;\" title=\"Missbrauch melden\"></a><br/>
-			Missbrauch melden
-		</td>
-		</td></tr>";
 		infobox_end(1);
 
 

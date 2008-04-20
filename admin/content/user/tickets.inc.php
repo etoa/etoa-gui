@@ -1,47 +1,53 @@
 <?PHP
+	$abuse_status = array("Neu","Zugeteilt","Abgeschlossen","Gelöscht");
+	$abuse_colors = array("#f90","#ff0","#0f0","#bbb");
+
 	echo "<h1>Tickets</h1>";
 	
 	
-	if ($_GET['view']>0)
+	if (isset($_GET['view'])>0)
 	{
 		$res = dbquery("
 		SELECT
 			u.user_nick as unick,
 			u.user_id as uid,
-			abuse_timestamp,
-			abuse_cat,
-			abuse_id,
-			abuse_text,
-			abuse_status,
-			abuse_admin_id,
+			t.timestamp,
+			c.name as cname,
+			t.id,
+			t.text,
+			t.status,
+			t.admin_id,
 			cu.user_nick as cunick,
 			cu.user_id as cuid,
 			alliance_tag,
 			alliance_name,
 			alliance_id,
-			abuse_solution,
-			abuse_notice								
+			t.solution,
+			t.notice								
 		FROM
-			abuses
+			tickets as t
+		INNER JOIN
+			ticket_cat as c
+			ON c.id=t.cat_id			
 		LEFT JOIN
 			users as u
 		ON
-			abuse_user_id=u.user_id
+			t.user_id=u.user_id
 		LEFT JOIN
 			users as cu
 		ON
-			abuse_c_user_id=cu.user_id
+			c_user_id=cu.user_id
 		LEFT JOIN
 			alliances
 		ON
-			abuse_c_alliance_id=alliance_id
+			c_alliance_id=alliance_id
 		WHERE
-			abuse_id=".$_GET['view']."
+			t.id=".$_GET['view']."
 		;");
 		if (mysql_num_rows($res)>0)
 		{
 			$arr=mysql_fetch_array($res);
-			echo "<h2>Details Ticket #".$arr['abuse_id']."</h2>";
+			echo "<h2>Details Ticket #".$arr['id']."</h2>";
 			echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
 			echo "<input type=\"hidden\" name=\"user_id\" value=\"".$arr['uid']."\" />";
 			echo "<table class=\"tb\">
@@ -54,15 +60,15 @@
 			</tr>
 			<tr>
 				<th>Kategorie</th>
-				<td>".$abuse_cats[$arr['abuse_cat']]."</td>
+				<td>".$arr['cname']."</td>
 			</tr>
 			<tr>
 				<th>Zeit</th>
-				<td>".df($arr['abuse_timestamp'])."</td>
+				<td>".df($arr['timestamp'])."</td>
 			</tr>
 			<tr>
 				<th>Text</th>
-				<td>".text2html($arr['abuse_text'])."</td>
+				<td>".text2html($arr['text'])."</td>
 			</tr>";
 			if ($arr['cunick']!="")
 			{
@@ -89,7 +95,7 @@
 				foreach ($abuse_status as $k => $v)
 				{
 					echo "<option value=\"".$k."\"";
-					if ($arr['abuse_status']==$k) echo " selected=\"selected\"";
+					if ($arr['status']==$k) echo " selected=\"selected\"";
 					echo ">".$v."</option>";
 				}
 				echo "</select></td>
@@ -110,28 +116,28 @@
 				while ($aarr=mysql_fetch_row($ares))
 				{
 					echo "<option value=\"".$aarr[1]."\"";
-					if ($arr['abuse_admin_id']==$aarr[1]) echo " selected=\"selected\"";
+					if ($arr['admin_id']==$aarr[1]) echo " selected=\"selected\"";
 					echo ">".$aarr[0]."</option>";
 				}
 				echo "</select></td>
 			</tr>
 			<tr>
-				<th>Lösung:</th>
-				<td><textarea name=\"abuse_solution\" rows=\"5\" cols=\"70\">".stripslashes($arr['abuse_solution'])."</textarea></td>
+				<th>Lösung:<br/><span style=\"font-size:8pt\">Admin-Interne Notiz</span></th>
+				<td><textarea name=\"abuse_solution\" rows=\"5\" cols=\"70\">".stripslashes($arr['solution'])."</textarea></td>
 			</tr>";
-			if ($arr['abuse_status']==1 || $arr['abuse_status']==2)
+			if ($arr['status']==1 || $arr['status']==2)
 			echo "<tr>
-				<th>Nachricht an Spieler:</th>
-				<td><textarea name=\"abuse_notice\" rows=\"5\" cols=\"70\">".stripslashes($arr['abuse_notice'])."</textarea></td>
+				<th>Nachricht an Spieler:<br/><span style=\"font-size:8pt\">Dies wird beim Spieler angezeigt</span></th>
+				<td><textarea name=\"abuse_notice\" rows=\"5\" cols=\"70\">".stripslashes($arr['notice'])."</textarea></td>
 			</tr>";			
 			echo "</table><br/>";
-			echo "<input type=\"hidden\" name=\"abuse_id\" value=\"".$arr['abuse_id']."\" />";
-			if ($arr['abuse_status']==0)
+			echo "<input type=\"hidden\" name=\"abuse_id\" value=\"".$arr['id']."\" />";
+			if ($arr['status']==0)
 			{
 				echo "<input type=\"submit\" name=\"submit_chown\" value=\"Ticket mir zuweisen und User informieren\" /> &nbsp; ";
 				echo "<input type=\"submit\" name=\"submit_delete\" value=\"Ticket löschen\" /> &nbsp; ";
 			}
-			if ($arr['abuse_status']==1)
+			if ($arr['status']==1)
 			{
 				echo "<input type=\"submit\" name=\"submit_finished\" value=\"Ticket als Bearbeitet kennzeichnen und User informieren\" /> &nbsp; ";
 			}
@@ -151,15 +157,15 @@
 		{
 			dbquery("
 			UPDATE
-				abuses
+				tickets
 			SET
-				abuse_admin_id=".$_POST['abuse_admin_id'].",
-				abuse_status='".$_POST['abuse_status']."',
-				abuse_admin_timestamp=UNIX_TIMESTAMP(),
-				abuse_solution='".addslashes($_POST['abuse_solution'])."',
-				abuse_notice='".addslashes($_POST['abuse_notice'])."'
+				admin_id=".$_POST['abuse_admin_id'].",
+				status='".$_POST['abuse_status']."',
+				admin_timestamp=UNIX_TIMESTAMP(),
+				solution='".addslashes($_POST['abuse_solution'])."',
+				notice='".addslashes($_POST['abuse_notice'])."'
 			WHERE
-				abuse_id=".$_POST['abuse_id']."
+				id=".$_POST['abuse_id']."
 			;");	
 			echo "Ticket geändert!<br/>";
 		}
@@ -167,33 +173,33 @@
 		{
 			dbquery("
 			UPDATE
-				abuses
+				tickets
 			SET
-				abuse_admin_id=".$s['user_id'].",
-				abuse_status=1,
-				abuse_admin_timestamp=UNIX_TIMESTAMP(),
-				abuse_solution='".addslashes($_POST['abuse_solution'])."'
+				admin_id=".$s['user_id'].",
+				status=1,
+				admin_timestamp=UNIX_TIMESTAMP(),
+				solution='".addslashes($_POST['abuse_solution'])."'
 			WHERE
-				abuse_id=".$_POST['abuse_id']."
+				id=".$_POST['abuse_id']."
 			;");	
 			echo "Ticket geändert!<br/>";
-			$text = "Hallo!\n\nEin Administrator hat dein Ticket erhalten und wird sich um das Problem kümmern ! Klicke [url ?page=abuse&id=".$_POST['abuse_id']."]hier[/url] um Informationen dazu anzuzeigen.";
-			send_msg($_POST['user_id'],USER_MSG_CAT_ID,"Dein Ticket #".$_POST['abuse_id']."",$text);
+			$text = "Hallo!\n\nEin Administrator hat dein Ticket erhalten und wird sich um das Problem kümmern ! Klicke [url ?page=ticket&id=".$_POST['abuse_id']."]hier[/url] um Informationen dazu anzuzeigen.";
+			send_msg($_POST['user_id'],USER_MSG_CAT_ID,"Dein Ticket ".$_POST['abuse_id']."",$text);
 		}	
 		if (isset($_POST['submit_finished']))
 		{
 			dbquery("
 			UPDATE
-				abuses
+				tickets
 			SET
-				abuse_status=2,
-				abuse_admin_timestamp=UNIX_TIMESTAMP(),
-				abuse_solution='".addslashes($_POST['abuse_solution'])."',
-				abuse_notice='".addslashes($_POST['abuse_notice'])."'
+				status=2,
+				admin_timestamp=UNIX_TIMESTAMP(),
+				solution='".addslashes($_POST['abuse_solution'])."',
+				notice='".addslashes($_POST['abuse_notice'])."'
 			WHERE
-				abuse_id=".$_POST['abuse_id']."
+				id=".$_POST['abuse_id']."
 			;");	
-			$text = "Hallo!\n\nDein Ticket wurde bearbeitet! Klicke [url ?page=abuse&id=".$_POST['abuse_id']."]hier[/url] um Informationen dazu anzuzeigen.";
+			$text = "Hallo!\n\nDein Ticket wurde bearbeitet! Klicke [url ?page=ticket&id=".$_POST['abuse_id']."]hier[/url] um Informationen dazu anzuzeigen.";
 			send_msg($_POST['user_id'],USER_MSG_CAT_ID,"Dein Ticket #".$_POST['abuse_id']."",$text);
 			
 			echo "Ticket geändert!<br/>";
@@ -202,25 +208,25 @@
 		{
 			dbquery("
 			UPDATE
-				abuses
+				tickets
 			SET
-				abuse_admin_id=".$s['user_id'].",
-				abuse_status=3,
-				abuse_admin_timestamp=UNIX_TIMESTAMP(),
-				abuse_solution='".addslashes($_POST['abuse_solution'])."',
-				abuse_notice='".addslashes($_POST['abuse_notice'])."'
+				admin_id=".$s['user_id'].",
+				status=3,
+				admin_timestamp=UNIX_TIMESTAMP(),
+				solution='".addslashes($_POST['abuse_solution'])."',
+				notice='".addslashes($_POST['abuse_notice'])."'
 			WHERE
-				abuse_id=".$_POST['abuse_id']."
+				id=".$_POST['abuse_id']."
 			;");	
 			echo "Ticket geändert!<br/>";
 		}	
-		if ($_GET['action']=="delall")
+		if (isset($_GET['action']) && $_GET['action']=="delall")
 		{
 			dbquery("
 			DELETE FROM
-				abuses
+				tickets
 			WHERE
-				abuse_status=3
+				status=3
 			;");	
 			echo "Tickets gelöscht!<br/>";
 		}	
@@ -228,21 +234,24 @@
 		echo "<h2>Unbearbeitete Tickets</h2>";
 		$res = dbquery("
 		SELECT		
-			user_nick,
-			user_id,
-			abuse_timestamp,
-			abuse_cat,
-			abuse_id		
+			u.user_nick,
+			u.user_id,  
+			c.name as cname,
+			t.timestamp,
+			t.id		
 		FROM
-			abuses
+			tickets as t
+		INNER JOIN
+			ticket_cat as c
+			ON c.id=t.cat_id
 		LEFT JOIN
-			users
+			users as u
 		ON
-			abuse_user_id=user_id
+			t.user_id=u.user_id
 		WHERE
-			abuse_status=0	
+			t.status=0	
 		ORDER BY
-			abuse_timestamp
+			t.timestamp
 		;");
 		if (mysql_num_rows($res)>0)
 		{
@@ -257,12 +266,12 @@
 			while($arr=mysql_fetch_array($res))
 			{
 				echo "<tr>
-				<td>#".$arr['abuse_id']."</td>
+				<td>".$arr['id']."</td>
 				<td>".$arr['user_nick']."</td>
-				<td>".$abuse_cats[$arr['abuse_cat']]."</td>
-				<td>".df($arr['abuse_timestamp'])."</td>
+				<td>".$arr['cname']."</td>
+				<td>".df($arr['timestamp'])."</td>
 				<td>
-					<a href=\"?page=$page&amp;sub=$sub&amp;view=".$arr['abuse_id']."\">Anzeigen</a>
+					<a href=\"?page=$page&amp;sub=$sub&amp;view=".$arr['id']."\">Anzeigen</a>
 				</td>
 				</tr>";			
 			}
@@ -279,24 +288,27 @@
 			u.user_nick as unick,
 			u.user_id as uid,
 			a.user_nick as anick,
-			abuse_timestamp,
-			abuse_cat,
-			abuse_id,
-			abuse_admin_timestamp		
+			t.timestamp,
+			c.name as cname,
+			t.id,
+			t.admin_timestamp		
 		FROM
-			abuses
+			tickets t
+		INNER JOIN
+			ticket_cat as c
+			ON c.id=t.cat_id			
 		LEFT JOIN
 			users as u
 		ON
-			abuse_user_id=u.user_id
+			t.user_id=u.user_id
 		LEFT JOIN
 			admin_users as a
 		ON
-			abuse_admin_id=a.user_id
+			t.admin_id=a.user_id
 		WHERE
-			abuse_status=1	
+			t.status=1	
 		ORDER BY
-			abuse_timestamp DESC
+			t.timestamp DESC
 		;");
 		if (mysql_num_rows($res)>0)
 		{
@@ -313,14 +325,14 @@
 			while($arr=mysql_fetch_array($res))
 			{
 				echo "<tr>
-				<td>#".$arr['abuse_id']."</td>
+				<td>#".$arr['id']."</td>
 				<td>".$arr['unick']."</td>
-				<td>".$abuse_cats[$arr['abuse_cat']]."</td>
-				<td>".df($arr['abuse_timestamp'])."</td>
+				<td>".$arr['cname']."</td>
+				<td>".df($arr['timestamp'])."</td>
 				<td>".$arr['anick']."</td>
-				<td>".df($arr['abuse_admin_timestamp'])."</td>
+				<td>".df($arr['admin_timestamp'])."</td>
 				<td>
-					<a href=\"?page=$page&amp;sub=$sub&amp;view=".$arr['abuse_id']."\">Anzeigen</a>
+					<a href=\"?page=$page&amp;sub=$sub&amp;view=".$arr['id']."\">Anzeigen</a>
 				</td>
 				</tr>";			
 			}
@@ -338,24 +350,27 @@
 			u.user_nick as unick,
 			u.user_id as uid,
 			a.user_nick as anick,
-			abuse_timestamp,
-			abuse_cat,
-			abuse_id,
-			abuse_admin_timestamp		
+			t.timestamp,
+			c.name as cname,
+			t.id,
+			t.admin_timestamp		
 		FROM
-			abuses
+			tickets as t
+		INNER JOIN
+			ticket_cat as c
+			ON c.id=t.cat_id						
 		LEFT JOIN
 			users as u
 		ON
-			abuse_user_id=u.user_id
+			t.user_id=u.user_id
 		LEFT JOIN
 			admin_users as a
 		ON
-			abuse_admin_id=a.user_id
+			t.admin_id=a.user_id
 		WHERE
-			abuse_status=2	
+			t.status=2	
 		ORDER BY
-			abuse_timestamp
+			t.timestamp DESC
 		;");
 		if (mysql_num_rows($res)>0)
 		{
@@ -372,14 +387,14 @@
 			while($arr=mysql_fetch_array($res))
 			{
 				echo "<tr>
-				<td>#".$arr['abuse_id']."</td>
+				<td>#".$arr['id']."</td>
 				<td>".$arr['unick']."</td>
-				<td>".$abuse_cats[$arr['abuse_cat']]."</td>
-				<td>".df($arr['abuse_timestamp'])."</td>
+				<td>".$arr['cname']."</td>
+				<td>".df($arr['timestamp'])."</td>
 				<td>".$arr['anick']."</td>
-				<td>".df($arr['abuse_admin_timestamp'])."</td>
+				<td>".df($arr['admin_timestamp'])."</td>
 				<td>
-					<a href=\"?page=$page&amp;sub=$sub&amp;view=".$arr['abuse_id']."\">Anzeigen</a>
+					<a href=\"?page=$page&amp;sub=$sub&amp;view=".$arr['id']."\">Anzeigen</a>
 				</td>
 				</tr>";			
 			}
@@ -397,24 +412,27 @@
 			u.user_nick as unick,
 			u.user_id as uid,
 			a.user_nick as anick,
-			abuse_timestamp,
-			abuse_cat,
-			abuse_id,
-			abuse_admin_timestamp		
+			t.timestamp,
+			c.name as cname,
+			t.id,
+			t.admin_timestamp		
 		FROM
-			abuses
+			tickets as t
+		INNER JOIN
+			ticket_cat as c
+			ON c.id=t.cat_id				
 		LEFT JOIN
 			users as u
 		ON
-			abuse_user_id=u.user_id
+			t.user_id=u.user_id
 		LEFT JOIN
 			admin_users as a
 		ON
-			abuse_admin_id=a.user_id
+			t.admin_id=a.user_id
 		WHERE
-			abuse_status=3	
+			t.status=3	
 		ORDER BY
-			abuse_timestamp
+			t.timestamp DESC
 		;");
 		if (mysql_num_rows($res)>0)
 		{
@@ -431,14 +449,14 @@
 			while($arr=mysql_fetch_array($res))
 			{
 				echo "<tr>
-				<td>#".$arr['abuse_id']."</td>
+				<td>#".$arr['id']."</td>
 				<td>".$arr['unick']."</td>
-				<td>".$abuse_cats[$arr['abuse_cat']]."</td>
-				<td>".df($arr['abuse_timestamp'])."</td>
+				<td>".$arr['cname']."</td>
+				<td>".df($arr['timestamp'])."</td>
 				<td>".$arr['anick']."</td>
-				<td>".df($arr['abuse_admin_timestamp'])."</td>
+				<td>".df($arr['admin_timestamp'])."</td>
 				<td>
-					<a href=\"?page=$page&amp;sub=$sub&amp;view=".$arr['abuse_id']."\">Anzeigen</a>
+					<a href=\"?page=$page&amp;sub=$sub&amp;view=".$arr['id']."\">Anzeigen</a>
 				</td>
 				</tr>";			
 			}

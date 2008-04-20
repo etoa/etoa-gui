@@ -177,25 +177,30 @@ function userPointsTable($uid,$target,$length=100,$start=-1,$end=-1)
 
 function userTickets($uid,$target)
 {
-	global $abuse_cats;
-	global $abuse_status;
-	
+	$abuse_status = array("Neu","Zugeteilt","Abgeschlossen","Gelöscht");
+	$abuse_colors = array("#f90","#ff0","#0f0","#bbb");
+		
 	$or = new xajaxResponse();
 	ob_start();
 	echo "<table class=\"tb\">";	
 	$lres=dbquery("
 	SELECT 
-		* 
+		t.* ,
+		c.name as cname,
+		u.user_nick
 	FROM 
-		abuses
+		tickets as t
+	INNER JOIN
+		ticket_cat as c
+		ON t.cat_id = c.id
 	LEFT JOIN
-		admin_users
+		admin_users as u
 	ON
-		abuse_admin_id=user_id
+		t.admin_id=u.user_id
 	WHERE
-		abuse_user_id=".$uid."
+		t.user_id=".$uid."
 	ORDER BY 
-		abuse_timestamp DESC
+		timestamp DESC
 	;");
 	if (mysql_num_rows($lres)>0)
 	{
@@ -211,13 +216,13 @@ function userTickets($uid,$target)
 		while ($larr=mysql_fetch_array($lres))
 		{
 			echo "<tr>
-				<td class=\"tbldata\">#".$larr['abuse_id']."</td>
-				<td class=\"tbldata\">".df($larr['abuse_timestamp'])."</td>
-				<td class=\"tbldata\">".$abuse_cats[$larr['abuse_cat']]."</td>
-				<td class=\"tbldata\">".$abuse_status[$larr['abuse_status']]."</td>
+				<td class=\"tbldata\">".$larr['id']."</td>
+				<td class=\"tbldata\">".df($larr['timestamp'])."</td>
+				<td class=\"tbldata\">".$larr['cname']."</td>
+				<td class=\"tbldata\" style=\"color:".$abuse_colors[$larr['status']]."\">".$abuse_status[$larr['status']]."</td>
 				<td class=\"tbldata\">".$larr['user_nick']."</td>
-				<td class=\"tbldata\">".df($larr['abuse_admin_timestamp'])."</td>
-				<td class=\"tbldata\">[<a href=\"?page=user&sub=tickets&view=".$larr['abuse_id']."\">Details</a>]</td>
+				<td class=\"tbldata\">".df($larr['admin_timestamp'])."</td>
+				<td class=\"tbldata\">[<a href=\"?page=user&sub=tickets&view=".$larr['id']."\">Details</a>]</td>
 			</tr>";   
 		}           
 	}             

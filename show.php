@@ -70,19 +70,21 @@
 		$s = array();
 	}
 
-	if (isset($s['user']['css_style']) && $s['user']['css_style']!="")
+	$cu = new User($s['user_id']);
+
+	if (isset($cu->css_style) && $cu->css_style!="")
 	{
-		define("CSS_STYLE",$s['user']['css_style']);
+		define("CSS_STYLE",$cu->css_style);
 	}
 	else
 	{
 		define("CSS_STYLE",$conf['default_css_style']['v']);
 	}
 
-	if (isset($s['user']['image_url']) && $s['user']['image_url']!='' && $s['user']['image_ext']!='')
+	if (isset($cu->image_url) && $cu->image_url!='' && $cu->image_ext!='')
 	{
-		define('IMAGE_PATH',$s['user']['image_url']);
-		define('IMAGE_EXT',$s['user']['image_ext']);
+		define('IMAGE_PATH',$cu->image_url);
+		define('IMAGE_EXT',$cu->image_ext);
 	}
 	else
 	{
@@ -149,7 +151,7 @@
 	</head>
 	<body id="outGameBody">
 		<?PHP
-			if ($index!="" || ($page=="help" && isset($s['user']['id'])))
+			if ($index!="" || ($page=="help" && isset($s['user_id'])))
 			{
 	    	echo '<div id="outGameTop">';
 	    	echo '<div><a href="'.LOGINSERVER_URL.'">Startseite</a><a href="?">Übersicht</a></div><b>'.GAMEROUND_NAME.'</b> &nbsp; ';
@@ -189,7 +191,7 @@
 				$page=$info;
 				$sub="info/";
 			}		
-			elseif (($page!="" && isset($s['user']['id'])) || $page=="help")
+			elseif (($page!="" && isset($s['user_id'])) || $page=="help")
 			{	
 				$showed=true;
 				$page=$page;
@@ -223,7 +225,8 @@
 			
 			if (!eregi("^[a-z\_]+$",$page) || strlen($page)>50)
 			{
-				die("<h1>Fehler</h1>Der Seitenname <b>".$page."</b> enth&auml;lt unerlaubte Zeichen!<br/><br/><a href=\"javascript:window.close();\">Schliessen</a><br/><br/>");
+				die("<h1>Fehler</h1>Der Seitenname <b>".$page."</b> enth&auml;lt unerlaubte Zeichen!<br/><br/>
+				<a href=\"javascript:window.close();\">Schliessen</a><br/><br/>");
 			}
 			if (file_exists($sub.$page.".php"))
 			{

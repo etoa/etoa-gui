@@ -47,7 +47,7 @@
 		$arr=mysql_fetch_row($res);
 		echo '<input type="hidden" name="mail_rcpt" value="'.$arr[0].'<'.$arr[1].'>" />';
 		echo '<table class="tb">';
-		echo '<tr><th>Sender:</th><td>'.$s['user']['nick'].'&lt;'.$s['user']['email'].'&gt;</td></tr>';
+		echo '<tr><th>Sender:</th><td>'.$cu->nick.'&lt;'.$cu->email.'&gt;</td></tr>';
 		echo '<tr><th>Empfänger:</th><td>'.$arr[0].'&lt;'.$arr[1].'&gt;</td></tr>';
 		echo '<tr><th>Titel:</th><td><input type="text" name="mail_subject" value="" size="50" /></td></tr>';
 		echo '<tr><th>Text:</th><td><textarea name="mail_text" rows="6" cols="80"></textarea></td></tr>';
@@ -60,14 +60,14 @@
 		if (isset($_POST['submit']))
 		{
 			$text = "InGame-Anfrage ".GAMEROUND_NAME."\n----------------------\n\n";
-			$text.= "Nick: ".$s['user']['nick']."\n";
-			$text.= "ID: ".$s['user']['id']."\n";
+			$text.= "Nick: ".$cu->nick."\n";
+			$text.= "ID: ".$s['user_id']."\n";
 			$text.= "IP/Host: ".$_SERVER['REMOTE_ADDR']." (".gethostbyaddr($_SERVER['REMOTE_ADDR']).")\n";
 			$text.= "Titel: ".$_POST['mail_subject']."\n\n";
 			$text.= $_POST['mail_text'];
 			
       $email_header = "From: Escape to Andromeda<etoa@orion.etoa.net>\n";
-      $email_header .= "Reply-To: ".$s['user']['nick']."<".$s['user']['email'].">\n";
+      $email_header .= "Reply-To: ".$cu->nick."<".$cu->email.">\n";
       $email_header .= "X-Mailer: PHP/" . phpversion(). "\n";
       $email_header .= "X-Sender-IP: ".$REMOTE_ADDR."\n";
       //$email_header .= "Content-type: text/html\n";

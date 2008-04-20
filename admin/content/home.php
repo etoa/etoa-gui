@@ -594,21 +594,21 @@
 		// Tickets		
 		$res = dbquery("
 		SELECT		
-			COUNT(abuse_id)
+			COUNT(id)
 		FROM
-			abuses
+			tickets
 		WHERE
-			abuse_status=0	
+			status=0	
 		;");
 		$arr=mysql_fetch_row($res);
 		$res2 = dbquery("
 		SELECT		
-			COUNT(abuse_id)
+			COUNT(id)
 		FROM
-			abuses
+			tickets
 		WHERE
-			abuse_status=1
-			AND abuse_admin_id=".$s['user_id']."	
+			status=1
+			AND admin_id=".$s['user_id']."	
 		;");
 		$arr2=mysql_fetch_row($res2);		
 		echo "<tr><th class=\"tbltitle\">Ticket-System:</th>";

@@ -98,7 +98,7 @@
 	define("IMAGEPACK_DOWNLOAD_DIRECTORY","cache/imagepacks");				// Bilder
 
 	// Externe Pfade
-	define("HELPCENTER_URL","http://help.etoa.ch");	// Helpcenter Link
+	define("HELPCENTER_URL","http://www.etoa.ch/help/?page=faq");	// Helpcenter Link
 	define('HELPCENTER_ONCLICK',"window.open('".HELPCENTER_URL."','helpcenter','width=1024,height=700,scrollbars=yes');");
 
 	define("FORUM_PATH","http://forum.etoa.ch");	// Forum Link
@@ -471,19 +471,6 @@
   /****************/
   /* Sonstiges */
   /****************/	
-	
-	// Ticket-System Kategorien
-	$abuse_cats = array("messages"=>"Beleidigung in Nachricht",
-											"townhall"=>"Rathaus-Missbrauch",
-											"attack"=>"Missachtung der Angriffsregeln",
-											"pushing"=>"Pushing-Verdach",
-											"cheating"=>"Cheat-Verdach",
-											"bugusing"=>"Bugusing-Verdach",
-											"image"=>"Anstössiges Bild",
-											"rules"=>"Sonstiger Regelverstoss");	
-											
-	$abuse_status = array("Neu","Zugeteilt","Abgeschlossen","Gelöscht");
-											
 	
 	define('FORCE_ADDS',0); // Banner immer anzeigen
 	
