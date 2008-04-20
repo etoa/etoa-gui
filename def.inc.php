@@ -314,6 +314,7 @@
 
 	define("RES_BUILDING_CAT",2);
 	define("BUILD_BUILDING_ID",6);								// Gebäude welches den Status des Bauhofes wiedergibt
+	define("TECH_BUILDING_ID",8);								// Gebäude welches den Status des Bauhofes wiedergibt
 	define("SHIP_BUILDING_ID",9);									// Gebäude welches den Status der Schiffswerft wiedergibt
 	define("DEF_BUILDING_ID",10);									// Gebäude welches den Status der Waffenfabrik wiedergibt
 	
