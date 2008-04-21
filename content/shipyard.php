@@ -159,7 +159,7 @@
 				$shiplist[$arr['shiplist_ship_id']][$arr['shiplist_planet_id']]=$arr['shiplist_count'];
 			}
 
-			// Bauliste vom aktuellen Planeten laden
+			// Bauliste vom aktuellen Planeten laden (wird nach "Abbrechen" nochmals geladen)
 			$res = dbquery("
 			SELECT
     		queue_id,
@@ -225,7 +225,7 @@
 			SELECT
 				ship_id,
 				ship_name,
-				ship_type_id,
+				ship_cat_id,
 				ship_shortcomment,
 				ship_costs_metal,
 				ship_costs_crystal,
@@ -252,18 +252,15 @@
 				ship_buildable='1'
 				AND ship_show='1'
 				AND (ship_race_id='0' OR ship_race_id='".$cu->race_id."')
-			GROUP BY
-				cat_id	
 			ORDER BY
 				cat_order,
 				special_ship DESC,
 				".$order.";");
 			while ($arr = mysql_fetch_assoc($res))
 			{
-				$ships[$arr['ship_id']] = $arr;
 				$cat[$arr['cat_id']] = $arr['cat_name'];
+				$ships[$arr['ship_id']] = $arr;
 			}
-			
 			
     	// level zählen welches die schiffswerft über dem angegeben level ist und faktor berechnen
     	$need_bonus_level = CURRENT_SHIPYARD_LEVEL - $conf['build_time_boni_schiffswerft']['p1'];
@@ -432,17 +429,28 @@
 				// Bauaufträge speichern
 				//
 				$counter=0;
-				foreach ($_POST['build_count'] as $ship_id=> $build_cnt)
+				foreach ($_POST['build_count'] as $ship_id => $build_cnt)
 				{
 					$build_cnt=nf_back($build_cnt);
 
 					if ($build_cnt>0)
 					{
-	   				// Zählt Anzahl Schiffe die im ganzen Account in der Bauliste stehen
-	   				$ship_count = 0;
-	   				if(isset($queue_total[$ship_id]))
+			      // Zählt die Anzahl Schiffe dieses Typs im ganzen Account...
+			      $ship_count = 0;
+			      // ... auf den Planeten
+			      if(isset($shiplist[$ship_id]))
+			      {
+			      	$ship_count += array_sum($shiplist[$ship_id]);
+			      }
+			      // ... in der Bauliste
+			      if(isset($queue_total[$ship_id]))
 			      {
 			      	$ship_count += $queue_total[$ship_id];
+			      }
+						// ... in der Luft
+			      if(isset($fleet[$ship_id]))
+			      {
+			      	$ship_count += $fleet[$ship_id];
 			      }
 			      
 						//Anzahl überprüfen, ob diese die maximalzahl übersteigt, gegebenenfalls ändern
@@ -631,6 +639,7 @@
 				echo "</table><br/>";
 			}
 
+			
 			$time = time();
 			checker_init();
 
@@ -638,66 +647,51 @@
 	* Auftrag abbrechen  *
 	*********************/
 			if (isset($_GET['cancel']) && $_GET['cancel']>0 && $cancelable)
-			{
-				$qres=dbquery("
-				SELECT
-					ship_name,
-					ship_costs_metal,
-					ship_costs_crystal,
-					ship_costs_fuel,
-					ship_costs_plastic,
-					ship_costs_food,
-    			queue_endtime,
-    			queue_starttime,
-    			queue_objtime,
-    			queue_cnt
-				FROM
-					".$db_table['ship_queue']."
-				INNER JOIN
- 	  			".$db_table['ships']."
-	  		  ON queue_ship_id=ship_id
-					AND queue_id='".intval($_GET['cancel'])."'
-					AND queue_user_id='".$cu->id()."'
-					AND queue_planet_id='".$cp->id."'
-					AND queue_endtime>'".$time."'
-				;");
-				if (mysql_num_rows($qres)>0)
+			{	
+				$id = intval($_GET['cancel']);
+				if (isset($queue[$id]))
 				{
-					$qarr=mysql_fetch_assoc($qres);
 					
 					//Zu erhaltende Rohstoffe errechnen
-					$obj_cnt=ceil(($qarr['queue_endtime']-$time)/$qarr['queue_objtime']);
-					$ret['metal']=$qarr['ship_costs_metal']*$obj_cnt*$cancel_res_factor;
-					$ret['crystal']=$qarr['ship_costs_crystal']*$obj_cnt*$cancel_res_factor;
-					$ret['plastic']=$qarr['ship_costs_plastic']*$obj_cnt*$cancel_res_factor;
-					$ret['fuel']=$qarr['ship_costs_fuel']*$obj_cnt*$cancel_res_factor;
-					$ret['food']=$qarr['ship_costs_food']*$obj_cnt*$cancel_res_factor;
+					$obj_cnt=ceil(($queue[$id]['queue_endtime']-$time)/$queue[$id]['queue_objtime']);
+					$ret['metal']=$ships[$queue[$id]['queue_ship_id']]['ship_costs_metal']*$obj_cnt*$cancel_res_factor;
+					$ret['crystal']=$ships[$queue[$id]['queue_ship_id']]['ship_costs_crystal']*$obj_cnt*$cancel_res_factor;
+					$ret['plastic']=$ships[$queue[$id]['queue_ship_id']]['ship_costs_plastic']*$obj_cnt*$cancel_res_factor;
+					$ret['fuel']=$ships[$queue[$id]['queue_ship_id']]['ship_costs_fuel']*$obj_cnt*$cancel_res_factor;
+					$ret['food']=$ships[$queue[$id]['queue_ship_id']]['ship_costs_food']*$obj_cnt*$cancel_res_factor;
 
+					// Daten für Log speichern
+					$ship_name = $ships[$queue[$id]['queue_ship_id']]['ship_name'];
+					$queue_count = $queue[$id]['queue_cnt'];
+					$queue_objtime = $queue[$id]['queue_objtime'];
+					
 					//Auftrag löschen
 					dbquery("
 					DELETE FROM
 					 ".$db_table['ship_queue']."
 					WHERE
-						queue_id='".intval($_GET['cancel'])."';");
+						queue_id='".$id."';");
 
 					//Nachkommende Aufträge werden Zeitlich nach vorne verschoben
 					$tres=dbquery("
 					SELECT
 						queue_id,
-						queue_starttime,
-						queue_endtime
+		    		queue_ship_id,
+		    		queue_cnt,
+		    		queue_starttime,
+		    		queue_endtime,
+		    		queue_objtime
 					FROM
 						".$db_table['ship_queue']."
 					WHERE
-						queue_starttime>='".$qarr['queue_endtime']."'
-						AND queue_user_id='".$cu->id()."'
+						queue_starttime>='".$queue[$id]['queue_endtime']."'
 						AND queue_planet_id='".$cp->id."'
 					ORDER BY
-						queue_starttime
+						queue_starttime ASC
 					;");
 					if (mysql_num_rows($tres)>0)
 					{						
-						$new_starttime=max($qarr['queue_starttime'],$time);
+						$new_starttime=max($queue[$id]['queue_starttime'],$time);
 						while ($tarr=mysql_fetch_assoc($tres))
 						{
 							$new_endtime=$new_starttime+$tarr['queue_endtime']-$tarr['queue_starttime'];
@@ -710,6 +704,9 @@
 							WHERE
 								queue_id='".$tarr['queue_id']."'
 							");
+							
+							// Aktualisiert das Queue-Array
+							 
 							$new_starttime=$new_endtime;
 						}
 					}
@@ -724,9 +721,9 @@
 					<b>Schiffsauftrag Abbruch</b><br><br>
 					<b>User:</b> [USER_ID=".$cu->id().";USER_NICK=".$cu->nick."]<br>
 					<b>Planeten:</b> [PLANET_ID=".$cp->id.";PLANET_NAME=".$cp->name."]<br>
-					<b>Schiff:</b> ".$qarr['ship_name']."<br>
-					<b>Anzahl:</b> ".nf($qarr['queue_cnt'])."<br>
-					<b>Auftragsdauer:</b> ".tf($qarr['queue_objtime']*$qarr['queue_cnt'])."<br><br>
+					<b>Schiff:</b> ".$ship_name."<br>
+					<b>Anzahl:</b> ".nf($queue_count)."<br>
+					<b>Auftragsdauer:</b> ".tf($queue_objtime*$queue_count)."<br><br>
 					<b>Erhaltene Rohstoffe</b><br>
 					<b>Faktor:</b> ".$cancel_res_factor."<br>
 					<b>".RES_METAL.":</b> ".nf($ret['metal'])."<br>
@@ -747,6 +744,28 @@
 				}
 			}
 
+
+
+			// Bauliste vom aktuellen Planeten laden
+			$res = dbquery("
+			SELECT
+    		queue_id,
+    		queue_ship_id,
+    		queue_cnt,
+    		queue_starttime,
+    		queue_endtime,
+    		queue_objtime
+			FROM
+    		ship_queue
+			WHERE
+  			queue_planet_id='".$cp->id."'
+  			AND queue_endtime>'".$time."'
+    	ORDER BY
+				queue_starttime ASC;");
+			while ($arr = mysql_fetch_assoc($res))
+			{
+				$queue[$arr['queue_id']] = $arr;
+			}
 
 
 	/*********************************
@@ -814,18 +833,6 @@
 
 					//Setzt die Startzeit des nächsten Schiffes, auf die Endzeit des jetztigen Schiffes
 					$absolute_starttime=$data['queue_endtime'];
-					
-					//Summiert die Anzahl der bauenden Schiffen pro Typ, für im unteren Teil "Maximal Anzahl erreicht" anzeigen zu lassen
-					//Würde beispielsweise die Bauliste nach den Schiffen kommen, müsste man eine neue Queue-Abfrage machen!
-					if(isset($queue_cnt[$data['queue_ship_id']]))
-					{
-						$queue_cnt[$data['queue_ship_id']]+=$data['queue_cnt'];
-					}
-					else
-					{
-						$queue_cnt[$data['queue_ship_id']]=$data['queue_cnt'];
-					}
-				
 				}
 				infobox_end(1);
 			 	echo "<br/><br/>";
@@ -892,7 +899,7 @@
     			    }
 
     			    // Schiffdatensatz zeigen wenn die Voraussetzungen erfüllt sind und das Schiff in diese Kategorie gehört
-							if ($build_ship==1 && $data['ship_type_id']==$cat_id)
+							if ($build_ship==1 && $data['ship_cat_id']==$cat_id)
 							{
     			      // Zählt die Anzahl Schiffe dieses Typs im ganzen Account...
     			      $ship_count = 0;
