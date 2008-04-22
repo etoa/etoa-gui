@@ -1228,7 +1228,7 @@
 				  			      			
 	  			      			echo "<td class=\"tbltitle\" width=\"30%\">
 	  			      							<span style=\"font-weight:500\">".$data['ship_name']."<br/>
-	  			      							Gebaut:</span> ".nf($data['shiplist_count'])."
+	  			      							Gebaut:</span> ".nf($shiplist[$data['ship_id']][$cp->id])."
 	  			      						</td>
 	  			      						<td class=\"tbldata\" width=\"13%\">".tf($btime)."</td>
 	  			      						<td class=\"tbldata\" width=\"10%\" ".$ress_style_metal.">".nf($data['ship_costs_metal'])."</td>
