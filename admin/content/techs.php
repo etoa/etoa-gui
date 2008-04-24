@@ -361,14 +361,14 @@
 		$build_type[0]="Unt&auml;tig";
 		$build_type[1]="Forschen";
 	
-		if ($_POST['techlist_search']!="" || $_GET['action']=="searchresults" || $_POST['new']!="")
+		if (isset($_POST['techlist_search']) || (isset($_GET['action']) && $_GET['action']=="searchresults") || isset($_POST['new']))
 		{
 			$sqlstart = "
 			SELECT 
 					planet_name,
-		      planet_solsys_pos,
-		      cell_sx,cell_sy,
-		      cell_cx,cell_cy,
+		      entities.pos,
+		      cells.sx,cells.sy,
+		      cells.cx,cells.cy,
 		      user_nick,
 		      user_points,
 		      tech_name,
@@ -376,16 +376,27 @@
 		      techlist_build_type,
 		      techlist_current_level
 			FROM 
-					".$db_table['techlist'].",
-					".$db_table['space_cells'].",
-					".$db_table['planets'].",
-					".$db_table['users'].",
-					".$db_table['technologies']." 
-			WHERE 
-		    	planet_solsys_id=cell_id 
-					AND techlist_tech_id=tech_id 
-					AND user_id=techlist_user_id 
-					AND planet_id=techlist_planet_id			
+				techlist
+			INNER JOIN
+				technologies
+			ON
+				techlist.techlist_tech_id=technologies.tech_id
+			INNER JOIN 
+				planets
+			ON
+				techlist_planet_id=planets.id
+			INNER JOIN
+				entities
+			ON
+				planets.id=entities.id
+			INNER Join
+				cells
+			ON
+				entities.cell_id=cells.id
+			INNER JOIN
+				users
+			ON
+				techlist.techlist_user_id=users.user_id			
 			";
 			$sqlend = "
 			GROUP BY 
@@ -397,7 +408,7 @@
 				tech_name;";
  	
 			// Forschung hinzufügen
-			if ($_POST['new']!="")
+			if (isset($_POST['new']))
 			{
 				$updata=explode(":",$_POST['planet_id']);
 				if (mysql_num_rows(dbquery("SELECT techlist_id FROM ".$db_table['techlist']." WHERE techlist_user_id=".$updata[1]." AND techlist_tech_id=".$_POST['tech_id'].";"))==0)
@@ -436,7 +447,7 @@
 					$v=1;
 				echo "<tr><th class=\"tbltitle\">Stufe</th><td class=\"tbldata\"><input type=\"text\" name=\"techlist_current_level\" value=\"$v\" size=\"1\" maxlength=\"3\" /></td></tr>";
 				echo "<tr><th class=\"tbltitle\">f&uuml;r den Spieler</th><td class=\"tbldata\"> <select name=\"planet_id\"><";
-				$pres=dbquery("SELECT user_id,user_nick,planet_id FROM ".$db_table['users'].",".$db_table['planets']." WHERE planet_user_id=user_id AND planet_user_main=1 ORDER BY user_nick;");
+				$pres=dbquery("SELECT user_id,user_nick,planets.id FROM ".$db_table['users'].",".$db_table['planets']." WHERE planet_user_id=user_id AND planet_user_main=1 ORDER BY user_nick;");
 				while ($parr=mysql_fetch_array($pres))
 				{
 					echo "<option value=\"".$parr['planet_id'].":".$parr['user_id']."\"";
@@ -454,15 +465,15 @@
 			elseif ($_SESSION['techedit']['query']=="")
 			{ 	
  			
-				if ($_POST['planet_id']!="")
-					$sql.= " AND planet_id='".$_POST['planet_id']."'";
-				if ($_POST['planet_name']!="")
+				if ($_POST['planet_id']!='')
+					$sql.= " AND planets.id='".$_POST['planet_id']."'";
+				if ($_POST['planet_name']!='')
 				{
 					if (stristr($_POST['qmode']['planet_name'],"%")) 
 						$addchars = "%";else $addchars = "";
-					$sql.= " AND planet_name ".stripslashes($_POST['qmode']['planet_name']).$_POST['planet_name']."$addchars'";
+					$sql.= " AND planet_name ".stripslashes($_POST['qmode']['planet_name'])."'".$_POST['planet_name']."$addchars'";
 				}
-				if ($_POST['user_id']!="")
+				if ($_POST['user_id']!='')
 					$sql.=" AND user_id='".$_POST['user_id']."'";
 				if ($_POST['user_nick']!="")
 				{
@@ -470,7 +481,7 @@
 						$addchars = "%";else $addchars = "";
 					$sql.= " AND user_nick ".stripslashes($_POST['qmode']['user_nick']).$_POST['user_nick']."$addchars'";
 				}		
-				if ($_POST['tech_id']!="")
+				if ($_POST['tech_id']!='')
 					$sql.= " AND tech_id='".$_POST['tech_id']."'";
 					
 				$sql = $sqlstart.$sql.$sqlend;
@@ -501,7 +512,7 @@
 					else
 						$style="";
 					echo "<tr>";
-					echo "<td class=\"tbldata\"$style ".tm($arr['planet_name'],$arr['cell_sx']."/".$arr['cell_sy']." : ".$arr['cell_cx']."/".$arr['cell_cy']." : ".$arr['planet_solsys_pos']).">".cut_string($arr['planet_name'],11)."</a></td>";
+					echo "<td class=\"tbldata\"$style ".tm($arr['planet_name'],$arr['sx']."/".$arr['sy']." : ".$arr['cx']."/".$arr['cy']." : ".$arr['pos']).">".cut_string($arr['planet_name'],11)."</a></td>";
 					echo "<td class=\"tbldata\"$style ".tm($arr['user_nick'],nf($arr['user_points'])." Punkte").">".cut_string($arr['user_nick'],11)."</a></td>";
 					echo "<td class=\"tbldata\"$style>".$arr['tech_name']."</a></td>";
 					echo "<td class=\"tbldata\"$style>".nf($arr['techlist_current_level'])."</a></td>";
@@ -523,16 +534,32 @@
 		//
 		elseif ($_GET['action']=="edit")
 		{
-			if ($_POST['save']!="")
+			if (isset($_POST['save']))
 			{
 				dbquery("UPDATE ".$db_table['techlist']." SET techlist_current_level='".$_POST['techlist_current_level']."',techlist_build_type='".$_POST['techlist_build_type']."',techlist_build_start_time=UNIX_TIMESTAMP('".$_POST['techlist_build_start_time']."'),techlist_build_end_time=UNIX_TIMESTAMP('".$_POST['techlist_build_end_time']."') WHERE techlist_id='".$_GET['techlist_id']."';");
 			}
-			elseif ($_POST['del']!="")
+			elseif (isset($_POST['del']))
 			{
 				dbquery("DELETE FROM ".$db_table['techlist']." WHERE techlist_id='".$_GET['techlist_id']."';");
 			}
 			
-			$res = dbquery("SELECT * FROM ".$db_table['techlist'].",".$db_table['planets'].",".$db_table['users'].",".$db_table['technologies']." WHERE techlist_tech_id=tech_id AND user_id=techlist_user_id AND planet_id=techlist_planet_id AND techlist_id=".$_GET['techlist_id'].";");
+			$res = dbquery("SELECT 
+								* 
+							FROM 
+								techlist
+							INNER JOIN
+								technologies
+							ON
+								techlist.techlist_tech_id=technologies.tech_id
+								AND techlist.techlist_id='".$_GET['techlist_id']."'
+							INNER JOIN
+								planets
+							ON
+								techlist.techlist_planet_id=planets.id
+							INNER JOIN
+								users
+							ON
+								techlist.techlist_user_id=users.user_id;");
 			if (mysql_num_rows($res)>0)
 			{
 				$arr = mysql_fetch_array($res);
@@ -596,7 +623,10 @@
 			echo "</select></td></tr>";
 			echo "</table>";
 			echo "<br/><input type=\"submit\" name=\"techlist_search\" value=\"Suche starten\" /></form>";
-			$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM ".$db_table['techlist'].";"));
+			$tblcnt = mysql_fetch_row(dbquery("SELECT 
+													count(*) 
+												FROM 
+													".$db_table['techlist'].";"));
 			echo "<br/>Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.<br/>";	
 			
 			// Hinzufügen
@@ -609,10 +639,22 @@
 			echo "</select></td></tr>";
 			echo "<tr><th class=\"tbltitle\">Stufe</th><td class=\"tbldata\"><input type=\"text\" name=\"techlist_current_level\" value=\"1\" size=\"1\" maxlength=\"3\" /></td></tr>";
 			echo "<tr><th class=\"tbltitle\">f&uuml;r den Spieler</th><td class=\"tbldata\"> <select name=\"planet_id\"><";
-			$pres=dbquery("SELECT user_id,user_nick,planet_id FROM ".$db_table['users'].",".$db_table['planets']." WHERE planet_user_id=user_id AND planet_user_main=1 ORDER BY user_nick;");
+			$pres=dbquery("SELECT 
+								user_id,
+								user_nick,
+								planets.id 
+							FROM 
+								planets
+							INNER JOIN
+								users
+							ON
+								users.user_id=planets.planet_user_id
+								AND planets.planet_user_main=1 
+							ORDER BY 
+								user_nick;");
 			while ($parr=mysql_fetch_array($pres))
 			{
-				echo "<option value=\"".$parr['planet_id'].":".$parr['user_id']."\">".$parr['user_nick']."</option>";
+				echo "<option value=\"".$parr['id'].":".$parr['user_id']."\">".$parr['user_nick']."</option>";
 			}
 			echo "</select></td></tr>";
 			infobox_end(1);

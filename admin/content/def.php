@@ -116,7 +116,7 @@
 	
 		echo "<h1>".TITLE."</h1>";
 
-		if ($_POST['submit_changes']!="")
+		if (isset($_POST['submit_changes']))
 		{
 			// Gebäudeänderungen speichern			
 			foreach ($_POST['building_id'] as $id=>$val)
@@ -137,9 +137,9 @@
 		}
 
 		// Gebäudeverknüpfung speichern
-		if ($_POST['add_building']!="")
+		if (isset($_POST['add_building']))
 		{
-			if ($_POST['new_item_id']!="")
+			if (isset($_POST['new_item_id']))
 			{			
 				if (mysql_num_rows(dbquery("SELECT req_id FROM ".$db_table[REQ_TBL]." WHERE ".REQ_ITEM_FLD."=".$_POST['new_id']." AND req_req_building_id=".$_POST['new_item_id'].";"))==0)
 				{
@@ -153,9 +153,9 @@
 		}
 		
 		// Technologieverknüpfung speicher
-		if ($_POST['add_tech']!="")
+		if (isset($_POST['add_tech']))
 		{
-			if ($_POST['new_item_id']!="")
+			if (isset($_POST['new_item_id']))
 			{			
 				if (mysql_num_rows(dbquery("SELECT req_id FROM ".$db_table[REQ_TBL]." WHERE ".REQ_ITEM_FLD."=".$_POST['new_id']." AND req_req_tech_id=".$_POST['new_item_id'].";"))==0)
 				{
@@ -169,7 +169,7 @@
 		}
 		
 		// Gebäudeverknüpfungen löschen
-		if ($_POST['del_building']!="")
+		if (isset($_POST['del_building']))
 		{
 			if (count($_POST['del_building'])>0)
 			{			
@@ -184,7 +184,7 @@
 		}		
 
 		// Technologieknüpfungen löschen
-		if ($_POST['del_tech']!="")
+		if (isset($_POST['del_tech']))
 		{
 			if (count($_POST['del_tech'])>0)
 			{			
@@ -224,7 +224,7 @@
 		$res = dbquery("SELECT * FROM ".$db_table[ITEMS_TBL]." WHERE ".ITEM_SHOW_FLD."=1 ORDER BY ".ITEM_ORDER_FLD.";");
 		if (mysql_num_rows($res)>0)
 		{
-			if ($_GET['action']=="new_building" || $_GET['action']=="new_tech")
+			if (isset($_GET['action']) && $_GET['action']=="new_building" || $_GET['action']=="new_tech")
 				$form_addition=" disabled=\"disabled\"";
 
 			while ($arr=mysql_fetch_array($res))
@@ -250,7 +250,7 @@
 							echo ">$val</option>";
 						}
 						echo "</select></td><td class=\"tbldata\" width=\"50\"><input type=\"text\" name=\"building_level[".$b_req[$arr[ITEM_ID_FLD]]['i'][$b]."]\" size=\"1\" maxlength=\"3\" value=\"$l\"$form_addition /></td>";
-						if ($_GET['action']!="new_building" && $_GET['action']!="new_tech")
+						if (isset($_GET['action']) && $_GET['action']!="new_building" && $_GET['action']!="new_tech")
 							echo "<td class=\"tbldata\"><input type=\"submit\" class=\"button\" name=\"del_building[".$arr[ITEM_ID_FLD]."][$b]\" value=\"L&ouml;schen\" /></td></tr>";
 						else
 							echo "<td class=\"tbldata\">&nbsp;</td></tr>";
@@ -287,7 +287,7 @@
 							echo ">$val</option>";
 						}
 						echo "</select></td><td class=\"tbldata\" width=\"50\"><input type=\"text\" name=\"tech_level[".$b_req[$arr[ITEM_ID_FLD]]['i'][$b]."]\" size=\"1\" maxlength=\"3\" value=\"$l\"$form_addition /></td>";
-						if ($_GET['action']!="new_building" && $_GET['action']!="new_tech")
+						if (isset($_GET['action']) && $_GET['action']!="new_building" && $_GET['action']!="new_tech")
 							echo "<td class=\"tbldata\"><input type=\"submit\" class=\"button\" name=\"del_tech[".$arr[ITEM_ID_FLD]."][$b]\" value=\"L&ouml;schen\"$form_addition /></td></tr>";
 						else
 							echo "<td class=\"tbldata\">&nbsp;</td></tr>";
@@ -309,7 +309,7 @@
 				}
 				if ($using_something==0)
 					echo "<tr><td width=\"200\" class=\"tbldata\">&nbsp;</td><td colspan=\"2\" class=\"techtreeBuildingNoReq\">Keine Voraussetzungen</td></tr>";
-				if ($_GET['action']!="new_building" && $_GET['action']!="new_tech")
+				if (isset($_GET['action']) && $_GET['action']!="new_building" && $_GET['action']!="new_tech")
 				{
 					echo "<tr><td class=\"tbldata\">Neue Voraussetzung?</td>";
 					echo "<td class=\"tbldata\" colspan=\"2\"><input type=\"button\" class=\"button\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;action=new_building&amp;id=".$arr[ITEM_ID_FLD]."';\" value=\"Geb&auml;ude\" />&nbsp;";
@@ -331,15 +331,15 @@
 	{
 		echo "<h1>Verteidigungsliste</h1>";
 	
-		if ($_POST['deflist_search']!="" || $_GET['action']=="searchresults" || $_POST['new']!="")
+		if (isset($_POST['deflist_search']) || $_GET['action']=="searchresults" || isset($_POST['new']))
 		{
 	
 			$sqlstart = "SELECT 
-				planet_id,
+				planets.id,
 				planet_name,
-		  	planet_solsys_pos,
-		  	cell_sx,cell_sy,
-		  	cell_cx,cell_cy,
+		  		entities.pos,
+		  	cells.sx,cells.sy,
+		  	cells.cx,cells.cy,
 		  	user_id,
 		  	user_nick,
 		  	user_points,
@@ -350,15 +350,17 @@
 		  	deflist_build_count			
 			FROM 
 				deflist,
+				entities,
 				".$db_table['planets'].",
-				".$db_table['space_cells'].",
+				cells,
 				".$db_table['users'].",
 				".$db_table['defense']." 
 			WHERE 
-		    	planet_solsys_id=cell_id 
+				planets.id=entities.id
+		    AND	entities.cell_id=cells.id 
 					AND deflist_def_id=def_id 
 					AND user_id=deflist_user_id 
-					AND planet_id=deflist_planet_id ";
+					AND planets.id=deflist_planet_id ";
 			$sqlend = " 
 			GROUP BY 
 					deflist_id 
@@ -367,7 +369,7 @@
 					def_order,def_name;";
   
 			// Verteidigung hinzufügen
-			if ($_POST['new']!="")
+			if (isset($_POST['new']))
 			{
 				$updata=explode(":",$_POST['planet_id']);
 				if (mysql_num_rows(dbquery("SELECT deflist_id FROM deflist WHERE deflist_planet_id=".$updata[0]." AND deflist_def_id=".$_POST['def_id'].";"))==0)
@@ -380,7 +382,7 @@
 					dbquery("UPDATE deflist SET deflist_count=deflist_count+".$_POST['deflist_count']." WHERE deflist_planet_id=".$updata[0]." AND deflist_def_id=".$_POST['def_id'].";");
 					echo "Verteidigung wurde hinzugef&uuml;gt!<br/>";
 				}
-				$sql= " AND planet_id=".$updata[0];
+				$sql= " AND planets.id=".$updata[0];
 				$_SESSION['defedit']['query']="";
 				
 				// Verteidigung laden
@@ -454,7 +456,7 @@
 				$sql = $_SESSION['defedit']['query'];								
   	
 
-			if ($_POST['save']!="")
+			if (isset($_POST['save']))
 			{
 				dbquery("UPDATE 
 					deflist 
@@ -464,7 +466,7 @@
 					deflist_id='".$_POST['deflist_id']."';");
 				success_msg("Gespeichert");
 			}
-			elseif ($_POST['del']!="")
+			elseif (isset($_POST['del']))
 			{
 				dbquery("DELETE FROM deflist WHERE deflist_id='".$_POST['deflist_id']."';");
 				success_msg("Gelöscht");
@@ -502,7 +504,7 @@
 					
 					echo "<tr>";
 					echo "<td class=\"tbldata\" $style>".$arr['deflist_id']."</a></td>";
-					echo "<td class=\"tbldata\" $style".tm($arr['planet_name'],"<b>Planet-ID:</b> ".$arr['planet_id']."<br/><b>Koordinaten:</b> ".$arr['cell_sx']."/".$arr['cell_sy']." : ".$arr['cell_cx']."/".$arr['cell_cy']." : ".$arr['planet_solsys_pos']).">".cut_string($arr['planet_name'],11)."</a></td>";
+					echo "<td class=\"tbldata\" $style".tm($arr['planet_name'],"<b>Planet-ID:</b> ".$arr['id']."<br/><b>Koordinaten:</b> ".$arr['sx']."/".$arr['sy']." : ".$arr['cx']."/".$arr['cy']." : ".$arr['pos']).">".cut_string($arr['planet_name'],11)."</a></td>";
 					echo "<td class=\"tbldata\" $style".tm($arr['user_nick'],"<b>User-ID:</b> ".$arr['user_id']."<br/><b>Punkte:</b> ".nf($arr['user_points'])).">".cut_string($arr['user_nick'],11)."</a></td>";
 					echo "<td class=\"tbldata\" $style".tm($arr['def_name'],"<b>Verteidigungs-ID:</b> ".$arr['def_id']).">".$arr['def_name']."</a></td>";
 					echo "<td class=\"tbldata\" $style>".nf($arr['deflist_count'])."</a></td>";
@@ -524,7 +526,26 @@
 		// 
 		elseif ($_GET['action']=="edit")
 		{
-			$res = dbquery("SELECT * FROM deflist,".$db_table['planets'].",".$db_table['users'].",".$db_table['defense']." WHERE deflist_def_id=def_id AND user_id=deflist_user_id AND planet_id=deflist_planet_id AND deflist_id=".$_GET['deflist_id'].";");
+			$res = dbquery("SELECT 
+								deflist.deflist_id,
+								deflist.deflist_count,
+								defense.def_name,
+								users.user_nick,
+								planets.planet_name
+							FROM 
+								deflist
+							INNER JOIN
+								defense
+							ON
+								deflist.deflist_def_id=defense.def_id
+							INNER JOIN
+								users
+							ON
+								deflist.deflist_user_id=users.user_id
+							INNER JOIN
+								planets
+							ON
+								deflist.deflist_planet_id=planets.id;");
 			if (mysql_num_rows($res)>0)
 			{
 				$arr = mysql_fetch_array($res);

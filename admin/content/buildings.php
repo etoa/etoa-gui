@@ -496,7 +496,7 @@
 		$build_colors[1]="#0f0";
 		$build_colors[2]="orange";
 
-		if ($_POST['save']!="")
+		if (isset($_POST['save']))
 		{
 			dbquery("
 			UPDATE 
@@ -509,7 +509,7 @@
 			WHERE 
 				buildlist_id='".$_POST['buildlist_id']."';");
 		}
-		elseif ($_POST['del']!="")
+		elseif (isset($_POST['del']))
 		{
 			dbquery("DELETE FROM ".$db_table['buildlist']." WHERE buildlist_id='".$_POST['buildlist_id']."';");
 		}
@@ -518,7 +518,7 @@
 		//
 		// Datensatz bearbeiten
 		//
-		if ($_GET['action']=="edit")
+		if (isset($_GET['action']) && $_GET['action']=="edit")
 		{
 			echo "<h2>Datensatz bearbeiten</h2>";
 			$res = dbquery("
@@ -532,15 +532,20 @@
 				users.user_nick,
 				buildings.building_name
 			FROM 
-                ".$db_table['buildlist'].",
-                ".$db_table['planets'].",
-                ".$db_table['users'].",
-                ".$db_table['buildings']." 
-			WHERE 
-                buildlist.buildlist_building_id=buildings.building_id 
-                AND users.user_id=buildlist.buildlist_user_id 
-                AND planets.planet_id=buildlist.buildlist_planet_id 
-                AND buildlist.buildlist_id=".$_GET['buildlist_id'].";");
+                buildlist
+			INNER JOIN
+                planets
+			ON 
+				buildlist.buildlist_planet_id=planets.id
+			INNER JOIN
+                users
+			ON 
+				buildlist.buildlist_user_id=users.user_id
+			INNER JOIN
+                buildings
+			ON
+				buildlist.buildlist_building_id=buildings.building_id
+				AND buildlist.buildlist_id=".$_GET['buildlist_id'].";");
 			if (mysql_num_rows($res)>0)
 			{
 				$arr = mysql_fetch_array($res);
@@ -578,10 +583,10 @@
 		//
 		// Suchergebnisse anzeigen
 		//
-		elseif (($_POST['buildlist_search']!="" || $_POST['new']!="" || $_SESSION['admin']['building_query']!="") && $_GET['action']=="search")
+		elseif ((isset($_POST['buildlist_search']) || isset($_POST['new']) || isset($_SESSION['admin']['building_query'])) && (isset($_GET['action']) &&$_GET['action']=="search"))
 		{
 			$tables = $db_table['buildlist'].",".$db_table['planets'].",".$db_table['users'].",".$db_table['buildings'];
-			if ($_POST['new']!="")
+			if (isset($_POST['new']))
 			{
 				$updata=explode(":",$_POST['planet_id']);
 				if (mysql_num_rows(dbquery("SELECT buildlist_id FROM ".$db_table['buildlist']." WHERE buildlist_planet_id=".$updata[0]." AND buildlist_building_id=".$_POST['building_id'].";"))==0)
@@ -602,7 +607,7 @@
 				}
 				else
 					echo "Geb&auml;ude kann nicht hinzugef&uuml;gt werden, es ist bereits vorhanden!<br/>";
-				$sql= "planet_id=".$updata[0]." AND ";
+				$sql= "planets.id=".$updata[0]." AND ";
 				$_SESSION['admin']['building_query']="";
 
 
@@ -618,12 +623,37 @@
 				echo "</select></td></tr>";
 				echo "<tr><th class=\"tbltitle\">mit Stufe</th><td class=\"tbldata\"><input type=\"text\" name=\"building_level\" value=\"1\" size=\"1\" maxlength=\"3\" /></td></tr>";
 				echo "<tr><th class=\"tbltitle\">auf dem Planeten</th><td class=\"tbldata\"> <select name=\"planet_id\"><";
-				$pres=dbquery("SELECT user_id,planet_id,planet_name,user_nick,planet_solsys_pos,cell_sx,cell_sy,cell_cx,cell_cy FROM ".$db_table['planets'].",".$db_table['space_cells'].",".$db_table['users']." WHERE planet_user_id=user_id AND planet_solsys_id=cell_id ORDER BY planet_id;");
+				$pres=dbquery("SELECT 
+								users.user_id,
+								planets.id,
+								planets.planet_name,
+								users.user_nick,
+								entities.pos,
+								cells.sx,
+								cells.sy,
+								cells.cx,
+								cells.cy 
+							FROM 
+								planets
+							INNER JOIN
+								entities
+							ON 
+								planets.id=entities.id
+							INNER JOIN
+								cells
+							ON 
+								entities.cell_id=cells.id
+							INNER JOIN 
+								users
+							ON
+								planets.planet_user_id=users.user_id
+							ORDER BY 
+								planets.id;");
 				while ($parr=mysql_fetch_array($pres))
 				{
-					echo "<option value=\"".$parr['planet_id'].":".$parr['user_id']."\"";
-					if ($updata[0]==$parr['planet_id']) echo " selected=\"selected\"";
-					echo ">".$parr['cell_sx']."/".$parr['cell_sy']." : ".$parr['cell_cx']."/".$parr['cell_cy']." : ".$parr['planet_solsys_pos']." &nbsp; ".$parr['planet_name']." (".$parr['user_nick'].")</option>";
+					echo "<option value=\"".$parr['id'].":".$parr['user_id']."\"";
+					if ($updata[0]==$parr['id']) echo " selected=\"selected\"";
+					echo ">".$parr['sx']."/".$parr['sy']." : ".$parr['cx']."/".$parr['cy']." : ".$parr['pos']." &nbsp; ".$parr['planet_name']." (".$parr['user_nick'].")</option>";
 				}
 				echo "</select></td></tr>";
 				infobox_end(1);
@@ -635,7 +665,7 @@
 			{
 				if ($_POST['planet_id']!="")
 				{
-					$sql.= "planet_id=".$_POST['planet_id']." AND ";
+					$sql.= "id=".$_POST['planet_id']." AND ";
 				}
 				if ($_POST['planet_name']!="")
 				{
@@ -649,7 +679,7 @@
 				if ($_POST['user_nick']!="")
 				{
 					if (stristr($_POST['qmode']['user_nick'],"%")) $addchars = "%";else $addchars = "";
-					$sql.= "user_nick ".stripslashes($_POST['qmode']['user_nick']).$_POST['user_nick']."$addchars' AND ";
+					$sql.= "user_nick ".stripslashes($_POST['qmode']['user_nick'])."'".$_POST['user_nick']."$addchars' AND ";
 				}
 				if ($_POST['building_id']!="")
 				{
@@ -659,7 +689,7 @@
 
 			echo "<h2>Suchergebnisse</h2>";
 			$sqlstart = "SELECT * FROM $tables WHERE ";
-			$sqlend = "buildlist_building_id=building_id AND user_id=buildlist_user_id AND planet_id=buildlist_planet_id
+			$sqlend = "buildlist_building_id=building_id AND user_id=buildlist_user_id AND planets.id=buildlist_planet_id
 			GROUP BY buildlist_id
 			ORDER BY buildlist_user_id,buildlist_planet_id,building_type_id,building_order,building_name;";
 
@@ -683,28 +713,28 @@
 				echo "<th></th>";
 				echo "</tr>";
 				for ($x=0;$x<mysql_num_rows($res);$x++)
-				{
-					if ($narr!=null)
+				{	
+					if (sizeof($narr)>1)
 						$arr=$narr;
 					else
 						$arr = mysql_fetch_array($res);
 					$narr=mysql_fetch_array($res);
 
 					echo "<tr>";
-					if ($larr['user_id']==$arr['user_id'] && $narr['user_id']==$arr['user_id'] && $larr['planet_id']==$arr['planet_id'] && $narr['planet_id']==$arr['planet_id'])
+					if ($larr['user_id']==$arr['user_id'] && $narr['user_id']==$arr['user_id'] && $larr['id']==$arr['id'] && $narr['id']==$arr['id'])
 						echo "<td class=\"tbldatawtb\">&nbsp;</td>";
-					elseif ($larr['user_id']==$arr['user_id'] && $larr['planet_id']==$arr['planet_id'])
+					elseif ($larr['user_id']==$arr['user_id'] && $larr['id']==$arr['id'])
 						echo "<td class=\"tbldatawt\">&nbsp;</td>";
-					elseif ($narr['user_id']==$arr['user_id'] && $narr['planet_id']==$arr['planet_id'])
+					elseif ($narr['user_id']==$arr['user_id'] && $narr['id']==$arr['id'])
 						echo "<td class=\"tbldatawb\"><a href=\"?page=galaxy&amp;sub=edit&amp;planet_id=".$arr['buildlist_planet_id']."\" title=\"".$arr['planet_name']."\">".cut_string($arr['planet_name'],11)."</a></td>";
 					else
 						echo "<td class=\"tbldata\"><a href=\"?page=galaxy&amp;sub=edit&amp;planet_id=".$arr['buildlist_planet_id']."\" title=\"".$arr['planet_name']."\">".cut_string($arr['planet_name'],11)."</a></td>";
 
-					if ($larr['user_id']==$arr['user_id'] && $narr['user_id']==$arr['user_id'] && $larr['planet_id']==$arr['planet_id'] && $narr['planet_id']==$arr['planet_id'])
+					if ($larr['user_id']==$arr['user_id'] && $narr['user_id']==$arr['user_id'] && $larr['id']==$arr['id'] && $narr['id']==$arr['id'])
 						echo "<td class=\"tbldatawtb\">&nbsp;</td>";
-					elseif ($larr['user_id']==$arr['user_id'] && $larr['planet_id']==$arr['planet_id'])
+					elseif ($larr['user_id']==$arr['user_id'] && $larr['id']==$arr['id'])
 						echo "<td class=\"tbldatawt\">&nbsp;</td>";
-					elseif ($narr['user_id']==$arr['user_id'] && $narr['planet_id']==$arr['planet_id'])
+					elseif ($narr['user_id']==$arr['user_id'] && $narr['id']==$arr['id'])
 						echo "<td class=\"tbldatawb\"><a href=\"?page=user&amp;sub=edit&amp;user_id=".$arr['buildlist_user_id']."\" title=\"".$arr['user_nick']."\">".cut_string($arr['user_nick'],11)."</a></td>";
 					else
 						echo "<td class=\"tbldata\"><a href=\"?page=user&amp;sub=edit&amp;user_id=".$arr['buildlist_user_id']."\" title=\"".$arr['user_nick']."\">".cut_string($arr['user_nick'],11)."</a></td>";
@@ -780,10 +810,11 @@
                 planets.id,
                 planets.planet_name
 			FROM 
-                ".$db_table['planets'].",
-                ".$db_table['users']." 
-			WHERE 
-                planets.planet_user_id=users.user_id 
+                planets
+			INNER JOIN
+                users 
+			ON
+            	planets.planet_user_id=users.user_id 
 			ORDER BY 
 				planets.id;");
 			while ($parr=mysql_fetch_array($pres))

@@ -179,7 +179,7 @@
 		//
 		echo "<h1>".TITLE."</h1>";
 
-		if ($_POST['submit_changes']!="")
+		if (isset($_POST['submit_changes']))
 		{
 			// Gebäudeänderungen speichern
 			foreach ($_POST['building_id'] as $id=>$val)
@@ -200,9 +200,9 @@
 		}
 
 		// Gebäudeverknüpfung speichern
-		if ($_POST['add_building']!="")
+		if (isset($_POST['add_building']))
 		{
-			if ($_POST['new_item_id']!="")
+			if (isset($_POST['new_item_id']))
 			{
 				if (mysql_num_rows(dbquery("SELECT req_id FROM ".$db_table[REQ_TBL]." WHERE ".REQ_ITEM_FLD."=".$_POST['new_id']." AND req_req_building_id=".$_POST['new_item_id'].";"))==0)
 				{
@@ -216,9 +216,9 @@
 		}
 
 		// Technologieverknüpfung speicher
-		if ($_POST['add_tech']!="")
+		if (isset($_POST['add_tech']))
 		{
-			if ($_POST['new_item_id']!="")
+			if (isset($_POST['new_item_id']))
 			{
 				if (mysql_num_rows(dbquery("SELECT req_id FROM ".$db_table[REQ_TBL]." WHERE ".REQ_ITEM_FLD."=".$_POST['new_id']." AND req_req_tech_id=".$_POST['new_item_id'].";"))==0)
 				{
@@ -232,7 +232,7 @@
 		}
 
 		// Gebäudeverknüpfungen löschen
-		if ($_POST['del_building']!="")
+		if (isset($_POST['del_building']))
 		{
 			if (count($_POST['del_building'])>0)
 			{
@@ -247,7 +247,7 @@
 		}
 
 		// Technologieknüpfungen löschen
-		if ($_POST['del_tech']!="")
+		if (isset($_POST['del_tech']))
 		{
 			if (count($_POST['del_tech'])>0)
 			{
@@ -287,7 +287,7 @@
 		$res = dbquery("SELECT * FROM ".$db_table[ITEMS_TBL]." WHERE ".ITEM_SHOW_FLD."=1 ORDER BY ".ITEM_ORDER_FLD.";");
 		if (mysql_num_rows($res)>0)
 		{
-			if ($_GET['action']=="new_building" || $_GET['action']=="new_tech")
+			if (isset($_GET['action']) && ($_GET['action']=="new_building" || $_GET['action']=="new_tech"))
 				$form_addition=" disabled=\"disabled\"";
 
 			while ($arr=mysql_fetch_array($res))
@@ -313,7 +313,7 @@
 							echo ">$val</option>";
 						}
 						echo "</select></td><td class=\"tbldata\" width=\"50\"><input type=\"text\" name=\"building_level[".$b_req[$arr[ITEM_ID_FLD]]['i'][$b]."]\" size=\"1\" maxlength=\"3\" value=\"$l\"$form_addition /></td>";
-						if ($_GET['action']!="new_building" && $_GET['action']!="new_tech")
+						if (isset($_GET['action']) && $_GET['action']!="new_building" && $_GET['action']!="new_tech")
 							echo "<td class=\"tbldata\"><input type=\"submit\" class=\"button\" name=\"del_building[".$arr[ITEM_ID_FLD]."][$b]\" value=\"L&ouml;schen\" /></td></tr>";
 						else
 							echo "<td class=\"tbldata\">&nbsp;</td></tr>";
@@ -350,7 +350,7 @@
 							echo ">$val</option>";
 						}
 						echo "</select></td><td class=\"tbldata\" width=\"50\"><input type=\"text\" name=\"tech_level[".$b_req[$arr[ITEM_ID_FLD]]['i'][$b]."]\" size=\"1\" maxlength=\"3\" value=\"$l\"$form_addition /></td>";
-						if ($_GET['action']!="new_building" && $_GET['action']!="new_tech")
+						if (isset($_GET['action']) && $_GET['action']!="new_building" && $_GET['action']!="new_tech")
 							echo "<td class=\"tbldata\"><input type=\"submit\" class=\"button\" name=\"del_tech[".$arr[ITEM_ID_FLD]."][$b]\" value=\"L&ouml;schen\"$form_addition /></td></tr>";
 						else
 							echo "<td class=\"tbldata\">&nbsp;</td></tr>";
@@ -372,7 +372,7 @@
 				}
 				if ($using_something==0)
 					echo "<tr><td width=\"200\" class=\"tbldata\">&nbsp;</td><td colspan=\"2\" class=\"techtreeBuildingNoReq\">Keine Voraussetzungen</td></tr>";
-				if ($_GET['action']!="new_building" && $_GET['action']!="new_tech")
+				if (isset($_GET['action']) && $_GET['action']!="new_building" && $_GET['action']!="new_tech")
 				{
 					echo "<tr><td class=\"tbldata\">Neue Voraussetzung?</td>";
 					echo "<td class=\"tbldata\" colspan=\"2\"><input type=\"button\" class=\"button\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;action=new_building&amp;id=".$arr[ITEM_ID_FLD]."';\" value=\"Geb&auml;ude\" />&nbsp;";
@@ -406,13 +406,13 @@
 				ship_name,
 				ship_id,
 				planet_name,
-				planet_id,
-				planet_solsys_pos,
+				planets.id,
 				planet_user_id,
-				cell_sx,
-				cell_sy,
-				cell_cx,
-				cell_cy,
+				entities.pos,
+				cells.sx,
+				cells.sy,
+				cells.cx,
+				cells.cy,
 				user_nick,
 				user_id,
 				user_points
@@ -421,11 +421,15 @@
 			INNER JOIN
 				".$db_table['planets']."
 				ON
-					queue_planet_id=planet_id
+					queue_planet_id=planets.id
 			INNER JOIN
-				".$db_table['space_cells']."
+				entities
 				ON
-					planet_solsys_id=cell_id
+					planets.id=entities.id
+			INNER JOIN
+				cells
+				ON
+					entities.cell_id=cells.id
 			INNER JOIN
 				".$db_table['users']."
 				ON
