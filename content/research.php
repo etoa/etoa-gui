@@ -32,7 +32,6 @@
    // DEFINITIONEN //
 
   define('NUM_BUILDINGS_PER_ROW',4);
-  define('TECH_BUILDING_ID',8);
   define('CELL_WIDTH',175);
 
 	// Aktiviert / Deaktiviert Bildfilter
