@@ -1019,9 +1019,9 @@
 								elseif($ship_max_build==0)
 								{
 									//Wartezeit Titan
-    			    		if ($cp->prod->metal>0)
+    			    		if ($cp->prodMetal>0)
     			    		{
-    			    			$bwait['metal']=ceil(($data['ship_costs_metal']-$cp->resMetal)/$cp->prod->metal*3600);
+    			    			$bwait['metal']=ceil(($data['ship_costs_metal']-$cp->resMetal)/$cp->prodMetal*3600);
     			    		}
     			    		else
     			    		{
@@ -1029,9 +1029,9 @@
     			    		}
     			    		
     			    		//Wartezeit Silizium
-    			    		if ($cp->prod->crystal>0)
+    			    		if ($cp->prodCrystal>0)
     			    		{
-    			    			$bwait['crystal']=ceil(($data['ship_costs_crystal']-$cp->resCrystal)/$cp->prod->crystal*3600);
+    			    			$bwait['crystal']=ceil(($data['ship_costs_crystal']-$cp->resCrystal)/$cp->prodCrystal*3600);
     			    		}
     			    		else
     			    		{ 
@@ -1039,9 +1039,9 @@
     			    		}
     			    		
     			    		//Wartezeit PVC
-    			    		if ($cp->prod->plastic>0)
+    			    		if ($cp->prodPlastic>0)
     			    		{
-    			    			$bwait['plastic']=ceil(($data['ship_costs_plastic']-$cp->resPlastic)/$cp->prod->plastic*3600);
+    			    			$bwait['plastic']=ceil(($data['ship_costs_plastic']-$cp->resPlastic)/$cp->prodPlastic*3600);
     			    		}
     			    		else
     			    		{ 
@@ -1049,9 +1049,9 @@
     			    		}
     			    		
     			    		//Wartezeit Tritium
-    			    		if ($cp->prod->fuel>0)
+    			    		if ($cp->prodFuel>0)
     			    		{
-    			    			$bwait['fuel']=ceil(($data['ship_costs_fuel']-$cp->resFuel)/$cp->prod->fuel*3600);
+    			    			$bwait['fuel']=ceil(($data['ship_costs_fuel']-$cp->resFuel)/$cp->prodFuel*3600);
     			    		}
     			    		else
     			    		{ 
@@ -1059,9 +1059,9 @@
     			    		}
     			    		
     			    		//Wartezeit Nahrung
-    			    		if ($cp->prod->food>0)
+    			    		if ($cp->prodFood>0)
     			    		{
-    			    			$bwait['food']=ceil(($food_costs-$cp->resFood)/$cp->prod->food*3600);
+    			    			$bwait['food']=ceil(($food_costs-$cp->resFood)/$cp->prodFood*3600);
     			    		}
     			    		else
     			    		{ 
