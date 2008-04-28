@@ -133,20 +133,34 @@ namespace functions
 		
 		mysqlpp::Query query = con_->query();
 		query << "INSERT INTO ";
-			query << "messages ";
-				query << "(message_user_from, ";
-				query << "message_user_to, ";
-				query << "message_timestamp, ";
-				query << "message_cat_id, ";
-				query << "message_subject, ";
-				query << "message_text) ";
-			query << "VALUES ";
-				query << "('0', '";
-				query << user_id << "', '";
-				query << time(0) << "', '";
-				query << msg_type << "', '";
-				query << subject << "', '";
-				query << text << "');";
+		query << "	messages ";
+		query << "(";
+		query << "	message_user_from, ";
+		query << "	message_user_to, ";
+		query << "	message_timestamp, ";
+		query << "	message_cat_id ";
+		query << ") ";
+		query << "VALUES ";
+		query << "('0', '";
+		query << user_id << "', '";
+		query << time(0) << "', '";
+		query << msg_type << "' ";
+		query << ");";
+		query.store();
+		query.reset();
+		
+		query << "INSERT INTO ";
+		query << "	message_data ";
+		query << "(";
+		query << "	id, ";
+		query << "	subject, ";
+		query << "	text ";
+		query << ") ";
+		query << "VALUES ";
+		query << "('" << con_->insert_id() << "', ";
+		query << "'" << subject << "', ";
+		query << "'" << text << "' ";
+		query << ");";
 		query.store();
 		query.reset();
 	
