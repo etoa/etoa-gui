@@ -18,7 +18,7 @@ if (!file_exists("conf.inc.php") && !file_exists("../conf.inc.php"))
 		$_SESSION['INSTALL']['db_password'] = $_POST['db_password'];
 
 		
-		echo "Prüfe Eingaben....<br/>";
+		echo "PrÃ¼fe Eingaben....<br/>";
 		if ($_POST['db_server'] != "" && $_POST['db_name'] != "" && $_POST['db_user'] != "" && $_POST['db_password'] != "")
 		{
 			define('DB_SERVER',$_POST['db_server']);
@@ -189,7 +189,7 @@ if (!file_exists("conf.inc.php") && !file_exists("../conf.inc.php"))
 				<tr>
 					<th>Referers:</th>
 					<td><textarea name=\"referers\" rows=\"6\" cols=\"50\">".($_SESSION['INSTALL']['referers']!="" ? $_SESSION['INSTALL']['referers'] : $cfg->get('referers'))."</textarea></td>
-					<td>(alle Seiten, welche als Absender gelten sollen. Also der Loginserver, sowie der aktuelle Server. Mache für jeden Eintrag eine neue Linie!)</td>
+					<td>(alle Seiten, welche als Absender gelten sollen. Also der Loginserver, sowie der aktuelle Server. Mache fÃ¼r jeden Eintrag eine neue Linie!)</td>
 				</tr>";
 				$res = dbquery("SELECT COUNT(*) FROM admin_users;");
 				$arr = mysql_fetch_row($res);
@@ -237,7 +237,7 @@ if (!file_exists("conf.inc.php") && !file_exists("../conf.inc.php"))
 				<tr>
 					<th>Passwort-Salt:</th>
 					<td><input type=\"text\" name=\"password_salt\" value=\"".$_SESSION['INSTALL']['password_salt']."\" /></td>
-					<td>(mit diesem Schlüssel werden alle Passwörter zusätzlich verschlüsselt; darf während einer laufenden Runde nicht ge&auml;ndert werde da sonst die Passw&ouml;rter nicht mehr gehen)</td>
+					<td>(mit diesem SchlÃ¼ssel werden alle PasswÃ¶rter zusÃ¤tzlich verschlÃ¼sselt; darf wÃ¤hrend einer laufenden Runde nicht ge&auml;ndert werde da sonst die Passw&ouml;rter nicht mehr gehen)</td>
 				</tr>
 				<tr>
 					<th>Debug-Modus:</th>
@@ -255,8 +255,8 @@ if (!file_exists("conf.inc.php") && !file_exists("../conf.inc.php"))
 	}	
 	else
 	{
-		echo "Anscheinend existiert noch keine Konfigurationsdatei für diese EtoA-Instanz. Bitte erstelle
-	eine indem du folgendes Formular ausfüllst:<br/><br/>";
+		echo "Anscheinend existiert noch keine Konfigurationsdatei fÃ¼r diese EtoA-Instanz. Bitte erstelle
+	eine indem du folgendes Formular ausfÃ¼llst:<br/><br/>";
 		
 		echo "<div style=\"font-weight:bold;color:#666;\">
 		<a href=\"?step=1\" style=\"color:000\">Schritt 1</a> |
@@ -291,7 +291,7 @@ if (!file_exists("conf.inc.php") && !file_exists("../conf.inc.php"))
 			</table>
 		</fieldset><br/>
 		
-		<br/><input type=\"submit\" name=\"install_check\" value=\"Eingaben prüfen\" />
+		<br/><input type=\"submit\" name=\"install_check\" value=\"Eingaben prÃ¼fen\" />
 		</form>";	
 	}
 }
