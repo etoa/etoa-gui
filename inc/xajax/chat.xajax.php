@@ -1,6 +1,8 @@
 <?PHP
 $xajax->register(XAJAX_FUNCTION,'loadChat');
 $xajax->register(XAJAX_FUNCTION,'sendChat');
+$xajax->register(XAJAX_FUNCTION,'setChatUserOnline');
+$xajax->register(XAJAX_FUNCTION,'showChatUsers');
 
 function loadChat($minId)
 {
@@ -87,6 +89,56 @@ function sendChat($form)
 		}	
 	}
   return $ajax;		
+}
+
+function setChatUserOnline()
+{
+	$ajax = new xajaxResponse();	
+	$s = $_SESSION[ROUNDID];
+	if (isset($s['user_id']))
+	{		
+		dbquery("INSERT INTO
+			chat_users
+		(
+			timestamp,
+			nick,
+			user_id
+		)
+		VALUES
+		(
+			".time().",
+			'".$s['user_nick']."',
+			'".$s['user_id']."'
+		)");
+		$ajax->script("setTimeout('xajax_setChatUserOnline()',60000);");
+	}
+  return $ajax;		
+}
+
+function showChatUsers()
+{
+	$ajax = new xajaxResponse();	
+	$res = dbquery("
+	SELECT DISTINCT
+		nick,
+		user_id
+	FROM
+		chat_users
+	");
+	$out="<b>Chat-User</b><br/><br/>";
+	if (mysql_num_rows($res)>0)
+	{
+		while ($arr=mysql_fetch_assoc($res))
+		{
+			$out.= "<a href=\"../index.php?page=userinfo&id=".$arr['user_id']."\" target=\"main\">".$arr['nick']."</a><br/>";					
+		}
+	}
+	else
+		$out.="Keine User online!<br/>";
+	$out.="<br/>";
+	$ajax->assign("userlist","innerHTML",$out);
+
+  return $ajax;			
 }
 
 ?>

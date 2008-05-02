@@ -171,6 +171,10 @@
         $log .= "Flotte [b]".$fa[1][$i]."[/b]\n";
     }
 
+		// Chat-Cleanup
+		dbquery("DELETE FROM chat_users WHERE timestamp < ".(time()-120));		
+
+
     //Flag deaktivieren
     dbquery("UPDATE ".$db_table['config']." SET config_value=0 WHERE config_name='updating_fleet';");
 		

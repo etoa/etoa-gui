@@ -34,6 +34,7 @@
 					<option value="#0f0" style="background:#000;color:#0f0">Grün</option>
 					<option value="#0ff" style="background:#000;color:#0ff">Cyan</option>
 					<option value="#00f" style="background:#000;color:#00f">Blau</option>
+					<option value="#FF00E5" style="background:#000;color:#FF00E5">Pink</option>
 				</select>
 				<input type="button" onclick="xajax_sendChat(xajax.getFormValues('cform'));document.getElementById('ctext').focus();" value="Senden"/> &nbsp;
 				<input type="button" onclick="parent.top.location = '..'" value="Chat schliessen"/>
