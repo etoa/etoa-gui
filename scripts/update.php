@@ -133,6 +133,8 @@
 		$nr = warpeace_update();
 		$log.= "$nr Krieg und Frieden aktualisiert.\nDauer: ".timerStop($tmr)." sec\n\n";		
 		
+		// Chat-Cleanup
+		dbquery("DELETE FROM chat WHERE id < (SELECT id FROM chat ORDER BY id DESC LIMIT 200,1)");		
 
 		return $log;
 	}
