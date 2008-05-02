@@ -480,7 +480,7 @@
         UPDATE
         	entities
         SET
-        	type='e'
+        	code='e'
         WHERE
         	id='".$arr['id']."'
 				");
