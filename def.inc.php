@@ -105,8 +105,10 @@
 	
 	define("DEVCENTER_PATH","https://dev.etoa.ch");	// Entwickler Link
 
-	define('CHAT_URL',"http://chat.etoa.ch");	// Chat
-	define('CHAT_ONCLICK',"window.open('".CHAT_URL."','chat','width=900,height=700,scrollbars=yes');");
+	//define('CHAT_URL',"http://chat.etoa.ch");	// Chat
+	//define('CHAT_ONCLICK',"window.open('".CHAT_URL."','chat','width=900,height=700,scrollbars=yes');");
+	define('CHAT_URL',"chatframe.php");	// Chat
+	define('CHAT_ONCLICK',"parent.top.location='chatframe.php';");
 
 	define('TEAMSPEAK_URL',"http://ts.etoa.ch");	// Teamspeak
 	define('TEAMSPEAK_ONCLICK',"window.open('".TEAMSPEAK_URL."','ts','width=800,height=600,scrollbars=yes');");
