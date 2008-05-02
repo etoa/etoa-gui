@@ -134,7 +134,12 @@
 		$log.= "$nr Krieg und Frieden aktualisiert.\nDauer: ".timerStop($tmr)." sec\n\n";		
 		
 		// Chat-Cleanup
-		dbquery("DELETE FROM chat WHERE id < (SELECT id FROM chat ORDER BY id DESC LIMIT 200,1)");		
+		$res = dbquery("SELECT id FROM chat ORDER BY id DESC LIMIT 200,1");
+		if (mysql_num_rows($res)>0)
+		{
+			$arr=mysql_fetch_row($res);
+			dbquery("DELETE FROM chat WHERE id < ".$arr[0]);		
+		}
 
 		return $log;
 	}
