@@ -37,7 +37,7 @@ function loadChat($minId)
 						$out.= "</span><br/>";
 					}
 					else
-						$out.= "&lt;<a style=\"color:".$arr['color']."\" href=\"../index.php?page=messages&mode=new&message_user_to=".$arr['user_id']."\" target=\"main\">".$arr['nick']."</a> | ".date("H:i",$arr['timestamp'])."&gt; ".stripslashes($arr['text'])."<br/>";					
+						$out.= "&lt;<a style=\"color:#fff\" href=\"../index.php?page=messages&mode=new&message_user_to=".$arr['user_id']."\" target=\"main\">".$arr['nick']."</a> | ".date("H:i",$arr['timestamp'])."&gt; ".stripslashes($arr['text'])."<br/>";					
 					$lastid=$arr['id'];
 				}
 				$ajax->append("chatitems","innerHTML",$out);
