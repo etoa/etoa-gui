@@ -33,11 +33,11 @@ function loadChat($minId)
 					if ($arr['color']!="")
 					{
 						$out.= "<span style=\"color:".$arr['color']."\">";
-						$out.= "&lt;<a style=\"color:".$arr['color']."\" href=\"../index.php?page=messages&mode=new&message_user_to=".$arr['user_id']."\" target=\"main\">".$arr['nick']."</a> | ".date("H:i",$arr['timestamp'])."&gt; ".stripslashes($arr['text']);					
+						$out.= "&lt;<a style=\"color:".$arr['color']."\" href=\"../index.php?page=userinfo&id=".$arr['user_id']."\" target=\"main\">".$arr['nick']."</a> | ".date("H:i",$arr['timestamp'])."&gt; ".stripslashes($arr['text']);					
 						$out.= "</span><br/>";
 					}
 					else
-						$out.= "&lt;<a style=\"color:#fff\" href=\"../index.php?page=messages&mode=new&message_user_to=".$arr['user_id']."\" target=\"main\">".$arr['nick']."</a> | ".date("H:i",$arr['timestamp'])."&gt; ".stripslashes($arr['text'])."<br/>";					
+						$out.= "&lt;<a style=\"color:#fff\" href=\"../index.php?page=userinfo&id=".$arr['user_id']."\" target=\"main\">".$arr['nick']."</a> | ".date("H:i",$arr['timestamp'])."&gt; ".stripslashes($arr['text'])."<br/>";					
 					$lastid=$arr['id'];
 				}
 				$ajax->append("chatitems","innerHTML",$out);
