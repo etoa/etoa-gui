@@ -218,7 +218,7 @@
 							entities
 						(
 							cell_id,
-							type,
+							code,
 							pos
 						)
 						VALUES
@@ -255,7 +255,7 @@
 								entities
 							(
 								cell_id,
-								type,
+								code,
 								pos
 							)
 							VALUES
@@ -309,7 +309,7 @@
 							entities
 						(
 							cell_id,
-							type,
+							code,
 							pos
 						)
 						VALUES
@@ -349,7 +349,7 @@
 							entities
 						(
 							cell_id,
-							type,
+							code,
 							pos
 						)
 						VALUES
@@ -389,7 +389,7 @@
 							entities
 						(
 							cell_id,
-							type,
+							code,
 							pos
 						)
 						VALUES
@@ -427,7 +427,7 @@
 							entities
 						(
 							cell_id,
-							type,
+							code,
 							pos
 						)
 						VALUES
@@ -621,7 +621,7 @@
 			$tbl[]="admin_user_log";
 			$tbl[]="logs_game";
 			$tbl[]="logs_battle";
-			$tbl[]="abuses";
+			$tbl[]="tickets";
 			
 	
 			foreach ($tbl as $t)
