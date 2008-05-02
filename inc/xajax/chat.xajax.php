@@ -45,7 +45,8 @@ function loadChat($minId)
 			}
 
 		$ajax->script("setTimeout(\"xajax_loadChat(document.getElementById('lastid').innerHTML)\",1000);");
-		$ajax->script("setTimeout(\"window.location.hash = '#bancor';\",50);");
+		//$ajax->script("setTimeout(\"window.location.hash = '#bancor';\",50);");
+		$ajax->script("window.scrollBy(0,10000);");
 	}
 	else
 	{
