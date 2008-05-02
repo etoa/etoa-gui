@@ -352,6 +352,11 @@
 	$navmenu['Nachrichten']['E-Mail-Warteschlange']['sub']="queue";
 	$navmenu['Nachrichten']['E-Mail-Warteschlange']['level']=2;
 
+	$navmenu['Chat']['Chat']['page']="chat";
+	$navmenu['Chat']['Chat']['sub']="";
+	$navmenu['Chat']['Chat']['level']=0;
+
+
 	$navmenu['Logs']['Logs anschauen']['page']="logs";
 	$navmenu['Logs']['Logs anschauen']['sub']="";
 	$navmenu['Logs']['Logs anschauen']['level']=0;
