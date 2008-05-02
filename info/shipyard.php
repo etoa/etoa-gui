@@ -265,7 +265,7 @@
 				if ($arr['ship_analyze']==1)
 				{
 					array_push($specials,"<tr><td class=\"tbldata\" colspan=\"2\" style=\"width:300px\">Nebel/Asteroidenfelder erkunden</td>
-								<td class=\"tbldata\" style=\"width:650px\" colspan=\"2\"><a href=\"?page=help&site=action&action=explore\">Zur n&#228;heren Beschreibung hier klicken</a></td></tr>");
+								<td class=\"tbldata\" style=\"width:650px\" colspan=\"2\"><a href=\"?page=help&site=action&action=analyze\">Zur n&#228;heren Beschreibung hier klicken</a></td></tr>");
 				}
 			if (sizeof($specials)>0)
 			{	

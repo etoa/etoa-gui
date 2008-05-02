@@ -30,7 +30,6 @@
 	*/	
 
 
-
 	// BEGIN SKRIPT //
 
 	echo "<h1>Help & Info</h1>"; //Titel angepasst <h1> by Lamborghini
