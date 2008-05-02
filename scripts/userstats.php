@@ -79,7 +79,16 @@
 		$acto=false;
 		$actr=false;
 		$index0 = 0;
-		$res=dbquery("SELECT stats_count,stats_regcount,stats_timestamp FROM user_onlinestats ORDER BY stats_timestamp DESC LIMIT $totalSteps;");
+		$res=dbquery("SELECT 
+			stats_count,
+			stats_regcount,
+			stats_timestamp 
+		FROM 
+			user_onlinestats 
+		ORDER BY 
+			stats_timestamp DESC 
+		LIMIT 
+			".$totalSteps.";");
 		$mnr = mysql_num_rows($res);
 		if ($mnr>0)
 		{
@@ -141,8 +150,16 @@
 				// User-Diagramm
 				if (count($data[$t])>0)
 				{
-					$yo=$h - $borderBottom - ($graphHeight/$max*$data[$t]['o']);
-					$yr=$h - $borderBottom - ($graphHeight/$max*$data[$t]['r']);
+					if ($max>0)
+					{
+						$yo=$h - $borderBottom - ($graphHeight/$max*$data[$t]['o']);
+						$yr=$h - $borderBottom - ($graphHeight/$max*$data[$t]['r']);
+					}
+					else
+					{
+						$yo=$h - $borderBottom;
+						$yr=$h - $borderBottom;
+					}
 					imageline($im,$lastx,$lastyo,$x,$yo,$colGreen);
 					imageline($im,$lastx,$lastyr,$x,$yr,$colBlue);
 					$lastyo=$yo;
