@@ -98,7 +98,7 @@
 			}
 			$avgo = round($sumo / $mnr,2);
 			$avgr = round($sumr / $mnr,2);
-		}
+		
 	
 		ksort($data);
 		$graphHeight=$h-$borderTop-$borderBottom;
@@ -178,7 +178,7 @@
 		unlink(GAME_ROOT_DIR."/".USERSTATS_OUTFILE);		
 		imagepng($im,GAME_ROOT_DIR."/".USERSTATS_OUTFILE);
 
-
+		}
 
 			/**
 			* Gameinfo XML
