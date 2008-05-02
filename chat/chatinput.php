@@ -36,7 +36,7 @@
 					<option value="#00f" style="background:#000;color:#00f">Blau</option>
 				</select>
 				<input type="button" onclick="xajax_sendChat(xajax.getFormValues('cform'));document.getElementById('ctext').focus();" value="Senden"/> &nbsp;
-				<input type="button" onclick="parent.top.location = '.'" value="Chat schliessen"/>
+				<input type="button" onclick="parent.top.location = '..'" value="Chat schliessen"/>
 			</form>
 			<script type="text/javascript">document.forms[0].elements[0].focus()</script>
 		</div>
