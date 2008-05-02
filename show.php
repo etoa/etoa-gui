@@ -70,7 +70,12 @@
 		$s = array();
 	}
 
-	$cu = new User($s['user_id']);
+	if (isset($s['user_id']))
+	{
+		$cu = new User($s['user_id']);
+	}
+	else
+		$cu = null;
 
 	if (isset($cu->css_style) && $cu->css_style!="")
 	{

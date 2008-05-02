@@ -44,13 +44,12 @@
             {
                 unlink(PROFILE_IMG_DIR."/".$arr['user_profile_img']);
             }
-            $profil_img_string="user_profile_img='',";
+            $profil_img_string="user_profile_img='',user_profile_img_check=0,";
           }
           elseif ($_FILES['user_profile_img_file']['tmp_name']!="")
           {
           	if ($_FILES['user_profile_img_file']['size']<=PROFILE_IMG_MAX_SIZE)
-          	{
-          		
+          	{          		
               $source=$_FILES['user_profile_img_file']['tmp_name'];
               $ims = getimagesize($source);
               
@@ -70,7 +69,7 @@
 											{
 												echo "Bildgrösse wurde angepasst! ";
                       	echo "Profilbild gespeichert!<br/>";
-                      	$profil_img_string="user_profile_img='".$fname."',";
+                      	$profil_img_string="user_profile_img='".$fname."',user_profile_img_check=1,";
 											}
 											else
 											{
@@ -81,7 +80,7 @@
 										else
 										{
                     	echo "Profilbild gespeichert!<br/>";
-                    	$profil_img_string="user_profile_img='".$fname."',";
+                    	$profil_img_string="user_profile_img='".$fname."',user_profile_img_check=1,";
                     }
                 }
                 else

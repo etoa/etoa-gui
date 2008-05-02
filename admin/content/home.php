@@ -633,12 +633,19 @@
 		if ($arr[0]>0) echo " style=\"background:#880;\"";
 		echo "><a href=\"?page=user&amp;sub=observed\">".$arr[0]." User stehen unter Beobachtung</a></td></tr>";
 
-		// Warnung falls User-Bilder schon lange nicht mehr geprueft wurden
-		if (intval($conf['profileimagecheck_done']['v']) < time()-(24*3600*7))
+			
+		$res = dbquery("SELECT
+			COUNT(user_id)
+		FROM
+			users
+		WHERE
+			user_profile_img_check=1;");
+		$arr=mysql_fetch_row($res);
+		if ($arr[0]>0)
 		{
 			echo "<tr><th class=\"tbltitle\">Profil-Bilder:</th>";
-			echo "<td class=\"tbldata\" style=\"background:#f80;\">";
-			echo "Die Spieler-Profilbilder wurden schon lange nicht mehr geprüft. Gewisse Bilder könnten gegen die Regeln verstossen! <a href=\"?page=user&amp;sub=imagecheck\">Jetzt prüfen</a>";
+			echo "<td class=\"tbldata\" style=\"background:#880;\">";
+			echo $arr[0]." Spieler-Profilbilder wurden noch nicht verifiziert. Gewisse Bilder könnten gegen die Regeln verstossen. <a href=\"?page=user&amp;sub=imagecheck\">Jetzt prüfen</a>";
 			echo "</td></tr>";
 		}
 

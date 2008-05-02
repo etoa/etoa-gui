@@ -22,9 +22,6 @@
 				user_sitting_days=".$_POST['user_sitting_days'].",
 				user_admin=".$_POST['user_admin'].",
 				user_show_stats=".$_POST['user_show_stats'].",
-				user_points_battle=".$_POST['user_points_battle'].",
-				user_points_trade=".$_POST['user_points_trade'].",
-				user_points_diplomacy=".$_POST['user_points_diplomacy'].",
 				user_profile_board_url='".$_POST['user_profile_board_url']."',
 				user_spyship_count=".$_POST['user_spyship_count'].",
 				user_spyship_id=".$_POST['user_spyship_id'].",
@@ -46,6 +43,12 @@
 				{
 					$sql.= ",user_alliance_rank_id=".intval($_POST['user_alliance_rank_id'])."";
 				}
+				if (isset($_POST['user_profile_img_check']))
+				{
+					$sql.= ",user_profile_img_check=0";
+				}
+				
+				
 
 				// Handle specialist decision
 				if ($_POST['user_specialist_id']>0 && $_POST['user_specialist_time_h']>0)
@@ -569,17 +572,6 @@
 									}
 									echo "</select> Rang: <span id=\"ars\">-</span></td>
 							</tr>";
-							/* Deprecated 
-							<tr>
-								<td class=\"tbltitle\">Allianz-Bewerbung:</td>
-								<td class=\"tbldata\">
-									<div style=\"float:left;margin-right:5px;\">
-										<textarea name=\"user_alliance_application\" cols=\"50\" rows=\"3\">".stripslashes($arr['user_alliance_application'])."</textarea>
-									</div>
-									(Ist dieses Feld nicht leer, ist der Spieler im Bewerbungsmodus und noch kein Mitgleid der Allianz)
-									<br style=\"clear:both;\" />
-								</td>
-							</tr>*/
 							echo "<tr>
 			        	<td class=\"tbltitle\">Spionagesonden für Direktscan:</td>
 			          <td class=\"tbldata\">
@@ -652,9 +644,15 @@
 								<td class=\"tbldata\">";
 					      if ($arr['user_profile_img']!="")
 					      {
+					        if ($arr['user_profile_img_check']==1)
+					       	 	echo "<input type=\"checkbox\" value=\"0\" name=\"user_profile_img_check\"> Bild-Verifikation bestätigen<br/>";
 					        echo '<img src="../'.PROFILE_IMG_DIR.'/'.$arr['user_profile_img'].'" alt="Profil" /><br/>';
 					        echo "<input type=\"checkbox\" value=\"1\" name=\"profile_img_del\"> Bild l&ouml;schen<br/>";
 					      }				
+					      else
+					      {
+					      	echo "<i>Keines</i>";
+					      }
 					echo "</td>
 							</tr>
 							<tr>
@@ -670,7 +668,11 @@
 						      {
 						        echo '<img src="../'.BOARD_AVATAR_DIR.'/'.$arr['user_avatar'].'" alt="Profil" /><br/>';
 						        echo "<input type=\"checkbox\" value=\"1\" name=\"avatar_img_del\"> Bild l&ouml;schen<br/>";
-						      }							
+						      }		
+					      else
+					      {
+					      	echo "<i>Keines</i>";
+					      }						      					
 					echo "</td>
 							</tr>
 							<tr>
