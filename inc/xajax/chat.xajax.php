@@ -17,7 +17,8 @@ function loadChat($minId)
 				nick,
 				timestamp,
 				text,
-				color
+				color,
+				user_id
 			FROM
 				chat
 			WHERE
@@ -32,7 +33,7 @@ function loadChat($minId)
 					if ($arr['color']!="")
 					{
 						$out.= "<span style=\"color:".$arr['color']."\">";
-						$out.= "&lt;".$arr['nick']." | ".date("H:i",$arr['timestamp'])."&gt; ".stripslashes($arr['text']);					
+						$out.= "&lt;<a href=\"index.php?page=messages&mode=new&message_user_to=".$arr['user_id']."\" target=\"main\">".$arr['nick']."</a> | ".date("H:i",$arr['timestamp'])."&gt; ".stripslashes($arr['text']);					
 						$out.= "</span><br/>";
 					}
 					else
@@ -71,14 +72,16 @@ function sendChat($form)
 				timestamp,
 				nick,
 				text,
-				color
+				color,
+				user_id
 			)
 			VALUES
 			(
 				".time().",
 				'".$s['user_nick']."',
 				'".addslashes($form['ctext'])."',
-				'".$form['ccolor']."'
+				'".$form['ccolor']."',
+				'".$s['user_id']."'
 			)");
 		}	
 	}
