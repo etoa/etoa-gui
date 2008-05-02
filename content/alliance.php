@@ -271,6 +271,14 @@
 				}
 
 				//
+				// Allianzbasis
+				//
+				elseif (isset($_GET['action']) && $_GET['action']=="base")
+				{
+					require("alliance/base.inc.php");
+				}
+
+				//
 				// Allianz-Hauptseite anzeigen
 				//
 				else
@@ -592,6 +600,7 @@
 						if ($isFounder || $myRight['relations']) array_push($adminBox,"<a href=\"?page=$page&action=relations\">Diplomatie</a>");
 						if ($isFounder || $myRight['polls']) array_push($adminBox,"<a href=\"?page=$page&action=polls\">Umfragen verwalten</a>");
 						if ($isFounder || $myRight['liquidate']) array_push($adminBox,"<a href=\"?page=$page&action=liquidate\">Allianz aufl&ouml;sen</a>");
+						array_push($adminBox,"<a href=\"?page=$page&action=base\">Allianzbasis</a>");
 						$cnt=count($adminBox);
 						if ($cnt>0)
 						{
@@ -615,17 +624,6 @@
 							echo "<td class=\"tbldata\"></td></tr>";
 						}
 
-						// Optionen
-						$optionBox=array();
-						if ($isFounder || $myRight['viewmembers']) array_push($optionBox,"<td class=\"tbldata\" colspan=\"2\"><b><a href=\"?page=$page&action=viewmembers\">Mitglieder</a></b></td></tr><tr>");
-						if (!$isFounder) array_push($optionBox,"<td class=\"tbldata\" colspan=\"2\"><b><a href=\"?page=$page&amp;action=leave\" onclick=\"return confirm('Willst du wirklich aus der Allianz austreten?');\">Aus der Allianz austreten</a></b></td></tr>");
-						$cnt=count($optionBox);
-						if ($cnt>0)
-						{
-							echo "<tr><td class=\"tbltitle\" width=\"120\" rowspan=\"".$cnt."\">Optionen:</td>";
-							foreach ($optionBox as $ab)
-								echo $ab."\n";
-						}
 
 						// Letzte Ereignisse anzeigen
 						if ($isFounder || $myRight['history'])
@@ -643,11 +641,15 @@
 							ORDER BY 
 								history_timestamp DESC
 							LIMIT 5;");
-							while ($harr=mysql_fetch_array($hres))
+							if(mysql_num_rows($hres)>0)
 							{
-								echo "<div style=\"border-bottom:1px solid #fff;\"><b>".df($harr['history_timestamp']).":</b> 
-									".text2html($harr['history_text'])."</div>";
+								while ($harr=mysql_fetch_array($hres))
+								{
+									echo "<div style=\"border-bottom:1px solid #fff;\"><b>".df($harr['history_timestamp']).":</b> 
+										".text2html($harr['history_text'])."</div>";
+								}
 							}
+							echo "<br><a href=\"?page=".$page."&action=history\">Alle Ereignisse</a>";
 							echo "</td></tr>";							
 						}						
 
