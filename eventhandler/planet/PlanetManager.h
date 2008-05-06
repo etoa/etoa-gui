@@ -17,9 +17,9 @@ namespace planet
 		void updateValues(std::vector<int>* planetIds);
 		void updateEconomy(int planetId, mysqlpp::Row& row, std::vector<double>& ressource);
 		void updateFields(int planetId, int& fieldsUsed, int& fieldsExtra);
-		void updateStorage(int planetId, std::vector<int>& store);
+		void updateStorage(int planetId, std::vector<double>& store);
 		void updateProductionRates(int planetId, std::vector<double>& cnt, mysqlpp::Row& row);
-		void save(int planetId, std::vector<int>& store, std::vector<double>& cnt, std::vector<double>& ressource, int fieldsUsed, int fieldsExtra);
+		void save(int planetId, std::vector<double>& store, std::vector<double>& cnt, std::vector<double>& ressource, int fieldsUsed, int fieldsExtra);
 		void updateUserPlanets();
 		void saveRes(int planetId, std::vector<double>& ressource);
 

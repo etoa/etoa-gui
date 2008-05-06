@@ -30,7 +30,7 @@ namespace planet
 			int planetId = planetIds_->at(i);
 			int fieldsUsed = 0;
 			int fieldsExtra = 0;
-			std::vector<int> store (6);
+			std::vector<double> store (6);
 			std::vector<double> cnt (8);
 			std::vector<double> ressource (7);
 			
@@ -182,16 +182,16 @@ namespace planet
 		}
 	}
 
-	void PlanetManager::updateStorage(int planetId, std::vector<int>& store)
+	void PlanetManager::updateStorage(int planetId, std::vector<double>& store)
 	{
 		// Basic store capacity
 		Config &config = Config::instance();
-		store[0] = (int)config.nget("def_store_capacity", 0);
-		store[1] = (int)config.nget("def_store_capacity", 0);
-		store[2] = (int)config.nget("def_store_capacity", 0);
-		store[3] = (int)config.nget("def_store_capacity", 0);
-		store[4] = (int)config.nget("def_store_capacity", 0);
-		store[5] = (int)config.nget("user_start_people", 1);
+		store[0] = config.nget("def_store_capacity", 0);
+		store[1] = config.nget("def_store_capacity", 0);
+		store[2] = config.nget("def_store_capacity", 0);
+		store[3] = config.nget("def_store_capacity", 0);
+		store[4] = config.nget("def_store_capacity", 0);
+		store[5] = config.nget("user_start_people", 1);
 
 		// Storage capacity provided by buildings
 		mysqlpp::Query query = con_->query();
@@ -219,7 +219,7 @@ namespace planet
 			query << "OR buildings.building_people_place>0);";
 		mysqlpp::Result sres = query.store();		
 			query.reset();
-				
+			std::cout << store[0] << " -> ";	
 		if (sres) 
 		{
 			int sresSize = sres.size();
@@ -230,13 +230,15 @@ namespace planet
 				{
 					srow = sres.at(i);
 					int level = srow["buildlist_current_level"]-1;
-					store[0] += (int)functions::s_round(srow["building_store_metal"] * pow(srow["building_store_factor"],level));
-					store[1] += (int)functions::s_round(srow["building_store_crystal"] * pow(srow["building_store_factor"],level));
-					store[2] += (int)functions::s_round(srow["building_store_plastic"] * pow(srow["building_store_factor"],level));
-					store[3] += (int)functions::s_round(srow["building_store_fuel"] * pow(srow["building_store_factor"],level));
-					store[4] += (int)functions::s_round(srow["building_store_food"] * pow(srow["building_store_factor"],level));
-					store[5] += (int)functions::s_round(srow["building_people_place"] * pow(srow["building_store_factor"],level));
+					store[0] += functions::s_round(srow["building_store_metal"] * pow(srow["building_store_factor"],level));
+					store[1] += functions::s_round(srow["building_store_crystal"] * pow(srow["building_store_factor"],level));
+					store[2] += functions::s_round(srow["building_store_plastic"] * pow(srow["building_store_factor"],level));
+					store[3] += functions::s_round(srow["building_store_fuel"] * pow(srow["building_store_factor"],level));
+					store[4] += functions::s_round(srow["building_store_food"] * pow(srow["building_store_factor"],level));
+					store[5] += functions::s_round(srow["building_people_place"] * pow(srow["building_store_factor"],level));
+								std::cout << store[0] << " -> ";
 				}
+				std::cout << "\n";
 			}
 		}
 	}
@@ -369,10 +371,11 @@ namespace planet
 		/**
 		* Saves updated content
 		*/
-	void PlanetManager::save(int planetId, std::vector<int>& store, std::vector<double>& cnt, std::vector<double>& ressource, int fieldsUsed, int fieldsExtra)
+	void PlanetManager::save(int planetId, std::vector<double>& store, std::vector<double>& cnt, std::vector<double>& ressource, int fieldsUsed, int fieldsExtra)
 	{
 		std::time_t time = std::time(0);
 		mysqlpp::Query query = con_->query();
+		std::cout << store[0] << "\n";
 		query << std::setprecision(18);
 		query << "UPDATE ";
 			query << "planets ";
