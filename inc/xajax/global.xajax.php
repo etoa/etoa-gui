@@ -160,26 +160,30 @@ function getFlightTargetInfo($f,$sx1,$sy1,$cx1,$cy1,$p1)
 				planet_name,
 				user_nick,
 				user_id,
-				cell_id,
-				planet_id
-			FROM
-				space_cells
-			INNER JOIN
-			(
-				planets
-				LEFT JOIN
-					users
-					ON planet_user_id=user_id				
-			)
+				entities.cell_id,
+				planets.id
+
+			FROM 
+				entities
+			INNER JOIN 
+				cells 
 			ON 
-				planet_solsys_id=cell_id
-				AND cell_sx=".intval($sx)."
-				AND cell_sy=".intval($sy)."
-				AND cell_cx=".intval($cx)."
-				AND cell_cy=".intval($cy)."
-				AND planet_solsys_pos=".intval($p)."
+				entities.cell_id = cells.id
+				AND entities.pos=".intval($p)."
+				AND cells.sx=".intval($sx)."
+				AND cells.sy=".intval($sy)."
+				AND cells.cx=".intval($cx)."
+				AND cells.cy=".intval($cy)."
+			INNER JOIN
+				planets
+			ON 
+				entities.id=planets.id
+			LEFT JOIN
+				users
+			ON planet_user_id=user_id				
 				
 			");
+			$out = mysql_num_rows($res);
 			if (mysql_num_rows($res)>0)
 			{
 				$arr=mysql_fetch_array($res);
@@ -212,7 +216,7 @@ function getFlightTargetInfo($f,$sx1,$sy1,$cx1,$cy1,$p1)
 				}
 				$objResponse->assign("targetinfo","innerHTML",$out);								
 				$objResponse->assign("targetcell","value",$arr['cell_id']);								
-				$objResponse->assign("targetplanet","value",$arr['planet_id']);								
+				$objResponse->assign("targetplanet","value",$arr['id']);								
 			}			
 			else
 			{

@@ -28,10 +28,12 @@
 	* @author MrCage <mrcage@etoa.ch>
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/	
-
+check_missiles();
 	// Info-Link
 	define("HELP_URL","?page=help&site=missiles");
 
+	print_r($_GET);
+	print_r($_POST);
 	// BEGIN SKRIPT //
 
 	echo "<form action=\"?page=$page\" method=\"post\">";
@@ -216,8 +218,8 @@
 						INSERT INTO
 							missile_flights
 						(
-							flight_planet_from,
-							flight_planet_to,
+							flight_entity_from,
+							flight_entity_to,
 							flight_starttime,
 							flight_landtime
 						) VALUES (
@@ -274,15 +276,15 @@
 					flight_landtime,
 					flight_id,
 					planet_name,
-					planet_id
+					id
 				FROM
 					missile_flights
 				INNER JOIN
 				(
 					planets
 				)
-					ON flight_planet_to=planet_id
-					AND flight_planet_from=".$cp->id()."
+					ON flight_entity_to=id
+					AND flight_entity_from=".$cp->id()."
 				;"); 
 				if (mysql_num_rows($res)>0)
 				{
@@ -291,7 +293,7 @@
 						$fcnt++;
 						$flights[$arr['flight_id']]['landtime']=$arr['flight_landtime'];
 						$flights[$arr['flight_id']]['planet_name']=$arr['planet_name'];
-						$flights[$arr['flight_id']]['planet_id']=$arr['planet_id'];
+						$flights[$arr['flight_id']]['planet_id']=$arr['id'];
 						$flights[$arr['flight_id']]['obj']=array();
 						$ores = dbquery("
 						SELECT
@@ -735,9 +737,8 @@
 								$ress_style_food="";
 							}
 
-							
 							// Volle Ansicht
-			      	if($s['user']['item_show']=='full')
+			      	if($cu->item_show=='full')
 			      	{	
 			      		if ($cnt2>0)
   			      	{
@@ -916,28 +917,31 @@
 								// Gespeicherte Bookmarks
 								$pres = dbquery("
 								SELECT
-				                    space_cells.cell_sx,
-				                    space_cells.cell_sy,
-				                    space_cells.cell_cx,
-				                    space_cells.cell_cy,
-				                    planets.planet_solsys_pos,
+				                    cells.sx,
+				                    cells.sy,
+				                    cells.cx,
+				                    cells.cy,
+				                    entities.pos,
 				                    planets.planet_name,
-				                    target_bookmarks.bookmark_comment
+				                    bookmarks.comment
 								FROM
-									".$db_table['target_bookmarks']."
+									bookmarks
 								INNER JOIN
-				       		".$db_table['planets']."
+				       				entities
 				        ON 
-				        	target_bookmarks.bookmark_user_id=".$cu->id()."
-				         	AND target_bookmarks.bookmark_planet_id=planets.planet_id
+				        	bookmarks.user_id=".$cu->id()."
+				         	AND bookmarks.entity_id=entities.id
+								INNER JOIN
+									planets
+								ON
+									entities.id=planets.id
 								INNER JOIN       		
-									".$db_table['space_cells']."
+									cells
 								ON 
-									target_bookmarks.bookmark_cell_id=space_cells.cell_id
+									entities.cell_id=cells.id
 								ORDER BY
-				                    target_bookmarks.bookmark_comment,
-				                    target_bookmarks.bookmark_cell_id,
-				                    target_bookmarks.bookmark_planet_id;");
+				                    bookmarks.comment,
+				                    bookmarks.entity_id;");
 								if (mysql_num_rows($pres)>0)
 								{
 									while($parr=mysql_fetch_array($pres))
@@ -945,11 +949,11 @@
 										array_push(
 										$bookmarks,
 										array(
-										"cell_sx"=> $parr['cell_sx'],
-										"cell_sy"=> $parr['cell_sy'],
-										"cell_cx"=> $parr['cell_cx'],
-										"cell_cy"=> $parr['cell_cy'],
-										"planet_solsys_pos"=> $parr['planet_solsys_pos'],
+										"cell_sx"=> $parr['sx'],
+										"cell_sy"=> $parr['sy'],
+										"cell_cx"=> $parr['cx'],
+										"cell_cy"=> $parr['cy'],
+										"planet_solsys_pos"=> $parr['pos'],
 										"planet_name"=> $parr['planet_name'],
 										"automatic"=>0,
 										"bookmark_comment"=> $parr['bookmark_comment'])
@@ -957,9 +961,29 @@
 									}
 								}							
 								
-								if ($_GET['c']!='' && $_GET['h']!='' && md5(base64_decode($_GET['c'])) == $_GET['h'])
+								if (isset($_GET['target']))
 								{
-									$coords = explode(":",base64_decode($_GET['c']));
+									$tres = dbquery("SELECT
+														cells.sx,
+														cells.sy,
+														cells.cx,
+														cells.cy,
+														entities.pos
+													FROM
+														entities
+													INNER JOIN
+														cells
+													ON
+														entities.id='".$_GET['target']."'
+														AND entities.cell_id=cells.id;");
+									$tarr=mysql_fetch_array($tres);
+									$coords[0] = $tarr['sx'];
+									$coords[1] = $tarr['sy'];
+									$coords[2] = $tarr['cx'];
+									$coords[3] = $tarr['cy'];
+									$coords[4] = $tarr['pos'];
+									
+									
 								}
 								else
 								{
@@ -968,7 +992,7 @@
 									$coords[2] = $cp->cx;
 									$coords[3] = $cp->cy;
 									$coords[4] = $cp->pos;
-								}              
+								}             
 				                       
 								$keyup_command = 'xajax_getFlightTargetInfo(xajax.getFormValues(\'targetForm\'),'.$cp->sx.','.$cp->sy.','.$cp->cx.','.$cp->cy.','.$cp->pos.')';
 								echo '<form action="?page='.$page.'" method="post" id="targetForm">';
@@ -992,7 +1016,7 @@
 								{
 									echo 'Momentan befinden sich keine startbaren Raketen in deinem Silo!';
 								}
-								echo '</td><th>Koordinaten:</th>
+								echo '</td><th>:</th>
 								<td>
 									<input type="text"  onkeyup="'.$keyup_command.'" name="sx" id="sx" value="'.$coords[0].'" size="2" autocomplete="off" maxlength="2" /> / 
 									<input type="text"  onkeyup="'.$keyup_command.'" name="sy" id="sy" value="'.$coords[1].'" size="2" autocomplete="off" maxlength="2" /> :

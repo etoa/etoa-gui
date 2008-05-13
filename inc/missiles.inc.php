@@ -8,14 +8,14 @@
 	function missile_battle($fid)
 	{
 		global $db_table, $conf;
-		
-  	// Kampf abbrechen und Raketen zum Startplanet schicken wenn Kampfsperre aktiv ist
-  	if ($conf['battleban']['v']!=0 && $conf['battleban_time']['p1']<=time() && $conf['battleban_time']['p2']>time())
+			
+ 		// Kampf abbrechen und Raketen zum Startplanet schicken wenn Kampfsperre aktiv ist
+ 	 	if ($conf['battleban']['v']!=0 && $conf['battleban_time']['p1']<=time() && $conf['battleban_time']['p2']>time())
 		{
 			// Lädt Flugdaten
 			$res = dbquery("
 			SELECT
-				flight_planet_from
+				flight_entity_from
 			FROM
 				missile_flights
 			WHERE
@@ -74,7 +74,7 @@
 		
 		$res = dbquery("
 		SELECT
-			flight_planet_to,
+			flight_entity_to,
 			pt.planet_user_id as tuid,
 			pt.planet_name,
 			pf.planet_user_id as fuid
@@ -82,16 +82,16 @@
 			missile_flights
 		INNER JOIN
 			planets as pt
-			ON flight_planet_to=pt.planet_id
+			ON flight_entity_to=pt.id
 		INNER JOIN
 			planets as pf
-			ON flight_planet_from=pf.planet_id
+			ON flight_entity_from=pf.id
 			AND flight_id=".$fid."
 		;");		
 		if (mysql_num_rows($res)>0)
 		{
 			$arr=mysql_fetch_array($res);
-			$tid = $arr['flight_planet_to'];
+			$tid = $arr['flight_entity_to'];
 			$tuid = $arr['tuid'];
 			$fuid = $arr['fuid'];
 			$tname = $arr['planet_name'];
