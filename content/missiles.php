@@ -28,12 +28,11 @@
 	* @author MrCage <mrcage@etoa.ch>
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/	
-check_missiles();
+
 	// Info-Link
 	define("HELP_URL","?page=help&site=missiles");
 
-	print_r($_GET);
-	print_r($_POST);
+	
 	// BEGIN SKRIPT //
 
 	echo "<form action=\"?page=$page\" method=\"post\">";
