@@ -29,7 +29,46 @@
 	//
 	// RSS
 	//
-	if ($sub=="rss")
+	if ($sub=="offline")
+	{
+		echo "<h1>Spiel offline nehmen</h1>";
+		
+		if ($_GET['off']==1)
+		{
+			$cfg->set('offline',1);
+		}
+		if ($_GET['on']==1)
+		{
+			$cfg->set('offline',0);
+		}
+		
+		if (isset($_POST['save']))
+		{
+			$cfg->set('offline',1,$_POST['param1'],$_POST['param2']);
+		}
+
+		echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
+		if ($cfg->get('offline')==1)
+		{
+			echo "<span style=\"color:#f90;\">Das Spiel ist offline!</span><br/><br/>
+			Erlaubte IP's (deine ist ".$_SERVER['REMOTE_ADDR']."):<br/> <textarea name=\"param1\" rows=\"6\" cols=\"60\">".$cfg->p1('offline')."</textarea><br/>
+			Nachricht: <br/><textarea name=\"param2\" rows=\"6\" cols=\"60\">".$cfg->p2('offline')."</textarea><br/><br/>
+			<input type=\"submit\" value=\"&Auml;nderungen speichern\" name=\"save\" /> &nbsp; 
+			<input type=\"button\" value=\"Spiel online stellen\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;on=1'\" />";
+			
+		}
+		else
+		{
+			echo "<span style=\"color:#0f0;\">Das Spiel ist online!</span><br/><br/>
+			<input type=\"button\" value=\"Spiel offline nehmen\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;off=1'\" />";
+		}	
+		echo "</form>";
+	}	
+	
+	//
+	// RSS
+	//
+	elseif ($sub=="rss")
 	{
 		echo "<h1>RSS-Feeds</h1>";
 	
@@ -545,7 +584,15 @@
 			echo text2html($conf['system_message']['v']);
 			infobox_end();			
 		}
-
+		
+		if ($cfg->value('offline')==1)
+		{
+			echo "<br/>";
+			infobox_start("<span style=\"color:red;\">Spiel offline</span>");
+			echo $cfg->value('p1')." &nbsp; [<a href=\"?page=$page&amp;sub=offline\">&Auml;ndern</a>]";
+			infobox_end();			
+		}
+		
 		//if ($cfg->get("admin_htaccess_auth_user") == "" || $cfg->get("admin_htaccess_auth_pw")=="")
 		//{
 		//	echo "<div style=\"color:#f90\">Der Passwort-Schutz ist noch nicht aktiv! <a href=\"?page=config&amp;sub=htaccess\">Hier einrichten</a></div><br/>";

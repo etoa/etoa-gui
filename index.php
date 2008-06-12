@@ -223,8 +223,17 @@
 			if ($cfg->value('offline')==1 && !in_array($_SERVER['REMOTE_ADDR'],$allowed_ips))
 			{
 				echo "<h1>Spiel offline</h1>
-				Das Spiel ist aufgrund von Wartungsarbeiten momentan offline! Schaue sp&auml;ter nochmals vorbei!<br/><br/>
-				<a href=\"".LOGINSERVER_URL."\">Hauptseite</a>";
+				<div style=\"width:900px;margin:10px auto;text-align:center;background:black;border:1px solid #ddd;\">
+				<img src=\"images/maintenance.jpg\" alt=\"maintenance\" /><br/><br/>";
+				if ($cfg->p2('offline')!="")
+				{
+					echo text2html($cfg->p2('offline'))."<br/><br/>";
+				}
+				else
+				{
+					echo "Das Spiel ist aufgrund von Wartungsarbeiten momentan offline! Schaue sp&auml;ter nochmals vorbei!<br/><br/>";
+				}
+				echo "<a href=\"".LOGINSERVER_URL."\">Zur Startseite</a><br/><br/></div>";
 				session_destroy();
 				$s=Null;
 			}

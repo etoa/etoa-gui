@@ -58,16 +58,14 @@
 		echo "<h1>Wirtschaft des Planeten ".$cp->name."</h1>";
 		$cp->resBox();
 
-/*
-		if (SPECIALIST_MIN_POINTS_REQ <= $s['user']['points'])
+		if (SPECIALIST_MIN_POINTS_REQ <= $cu->points)
 		{
 			echo '<input type="button" onclick="document.location=\'?page=specialists\'" value="Spezialisten einstellen" /> ';
 		}
-*/
+
 
 		echo "<input type=\"button\" onclick=\"document.location='?page=planetstats'\" value=\"Ressourcen aller Planeten anzeigen\" />
 		<br/><br/>";
-//<input type=\"button\" onclick=\"document.location='?page=$page&amp;action=update'\" value=\"Neu berechnen\" />
 
 		//
 		// Produktion pro Stunde und Energieverbrauch
@@ -236,6 +234,8 @@
 			echo "<td class=\"tbldata\" style=\"color:#f00\"><input type=\"submit\" name=\"submitpercent\" class=\"button\" style=\"font-size:8pt;\" value=\"Speichern\" /></td>";
 			echo "</tr>";
 
+			$powerUsed = $pwrcnt;
+
 			// Bei zuwenig Strom Warnmessage
 			if ($pwrcnt > $cp->prod->power)
 			{
@@ -332,6 +332,11 @@
 		if (mysql_num_rows($sres)>0)
 		{
 			$dtemp = $cp->solarPowerBonus();
+			if ($dtemp<0)
+				$dtempstr = "<span style=\"color:#f00\">".$dtemp."</span>";
+			else
+				$dtempstr = "<span style=\"color:#0f0\">+".$dtemp."</span>";
+			
 			while ($sarr=mysql_fetch_array($sres))
 			{
 				$pwr = ($sarr['ship_prod_power']+ $dtemp) ;
@@ -340,26 +345,26 @@
 				$pwrt = $pwr * $sarr['shiplist_count'];
 				echo '<tr><td class="tbltitle">'.$sarr['ship_name'].' ('.nf($sarr['shiplist_count']).')</td>';
 				echo '<td colspan="2" class="tbldata">'.nf($pwrt).' 
-				(Energie pro Satellit: '.(($pwr)).', Basis: '.$sarr['ship_prod_power'].', Temp: '.$dtemp.', Prod: '.get_percent_string($power_bonus).')</td>';
+				(Energie pro Satellit: '.(($pwr)).' = '.$sarr['ship_prod_power'].' Basis '.$dtempstr.' Solar '.get_percent_string($power_bonus,1).' Bonus)</td>';
 				echo '</tr>';
 				$cnt['power'] += $pwrt;
 			}
 		}		
 					
-		$power_rest = $cp->prod->power - $cp->use->power;
-		$tot = $cp->prod->power;
+		$powerProduced = $cnt['power']; 
 		echo "<tr><td class=\"tbltitle\" style=\"height:2px;\" colspan=\"3\"></td></tr>";			
-		echo "<tr><td class=\"tbltitle\">TOTAL</td><td class=\"tbldata\" colspan=\"2\">".nf($tot)."</td></tr>";
-		if ($tot!=0)
+		echo "<tr><td class=\"tbltitle\">TOTAL produziert</td><td class=\"tbldata\" colspan=\"2\">".nf($powerProduced)."</td></tr>";
+		if ($powerProduced!=0)
 		{
+			$powerFree = $powerProduced - $powerUsed;
 			echo "<tr><td class=\"tbltitle\">Benutzt</td><td class=\"tbldata\"";
-			echo ">".nf($cp->use->power)."</td><td class=\"tbldata\">".round($cp->use->power/$tot*100,2)."%</td></tr>";
-			if ($power_rest<0)
+			echo ">".nf($powerUsed)."</td><td class=\"tbldata\">".round($powerUsed/$powerProduced*100,2)."%</td></tr>";
+			if ($powerFree<0)
 				$style=" style=\"color:#f00\"";
 			else
 				$style=" style=\"color:#0f0\"";
 			echo "<tr><td class=\"tbltitle\">Verfügbar</td><td class=\"tbldata\" $style";
-			echo ">".nf($power_rest)."</td><td class=\"tbldata\" $style>".round($power_rest/$tot*100,2)."%</td></tr>";
+			echo ">".nf($powerFree)."</td><td class=\"tbldata\" $style>".round($powerFree/$powerProduced*100,2)."%</td></tr>";
 		}
 		echo "</table><br/><br/>";
 		

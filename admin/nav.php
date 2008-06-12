@@ -55,6 +55,9 @@
 	$navmenu['Allgemeines']['Tipps']['sub']="tipps";
 	$navmenu['Allgemeines']['Tipps']['level']=0;
 
+	$navmenu['Allgemeines']['Offline nehmen']['page']="home";
+	$navmenu['Allgemeines']['Offline nehmen']['sub']="offline";
+	$navmenu['Allgemeines']['Offline nehmen']['level']=1;
 
 	$navmenu['Allgemeines']['Filesharing']['page']="home";
 	$navmenu['Allgemeines']['Filesharing']['sub']="filesharing";

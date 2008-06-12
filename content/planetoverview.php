@@ -260,7 +260,7 @@
 			echo "<tr>
 				<td class=\"tbltitle\">Temperatur:</td><td class=\"tbldata\">
 					".$cp->temp_from."&deg;C bis ".$cp->temp_to."&deg;C &nbsp; <br/>
-					Wärmebonus: ";
+					<img src=\"images/heat_small.png\" alt=\"Heat\" style=\"width:16px;float:left;\" /> <a href=\"?page=help&amp;site=tempbonus\">Wärmebonus</a>: ";
 				$spw = $cp->solarPowerBonus();
 				if ($spw>=0)
 				{
@@ -270,8 +270,8 @@
 				{
 					echo "<span style=\"color:#f00\">".$spw."</span>";
 				}
-				echo " Energie pro Solarsatellit<br/>
-				Kältebonus: ";
+				echo " Energie pro Solarsatellit<br style=\"clear:both;\"/>
+				<img src=\"images/ice_small.png\" alt=\"Cold\" style=\"width:16px;float:left;\" /> <a href=\"?page=help&amp;site=tempbonus\"> Kältebonus</a>: ";
 				$spw = $cp->fuelProductionBonus();
 				if ($spw>=0)
 				{
@@ -316,7 +316,10 @@
 			}
 			else
 			{
-				echo "<br/><br/><b>Dies ist dein Hauptplanet. Hauptplaneten können nicht invasiert oder aufgegeben werden!</b>";
+				echo "<br/><br/>";
+				infobox_start("Hauptplanet");
+				echo "<b>Dies ist dein Hauptplanet. Hauptplaneten können nicht invasiert oder aufgegeben werden!</b>";
+				infobox_end();
 			}	
 		}
 	}

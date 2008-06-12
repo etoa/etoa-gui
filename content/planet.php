@@ -82,7 +82,7 @@
 			echo "<tr>
 				<td width=\"100\" class=\"tbltitle\">Temperatur:</td>
 				<td class=\"tbldata\">".$ent->temp_from."&deg;C bis ".$ent->temp_to."&deg;C <br/>";
-				echo "Wärmebonus: ";
+				echo "<img src=\"images/heat_small.png\" alt=\"Heat\" style=\"width:16px;float:left;\" /> <a href=\"?page=help&amp;site=tempbonus\">Wärmebonus</a>: ";
 				$spw = $ent->solarPowerBonus();
 				if ($spw>=0)
 				{
@@ -92,8 +92,8 @@
 				{
 					echo "<span style=\"color:#f00\">".$spw."</span>";
 				}
-				echo " Energie pro Solarsatellit<br/>
-				Kältebonus: ";
+				echo " Energie pro Solarsatellit<br style=\"clear:both;\"/>
+				<img src=\"images/ice_small.png\" alt=\"Cold\" style=\"width:16px;float:left;\" /> <a href=\"?page=help&amp;site=tempbonus\"> Kältebonus</a>: ";
 				$spw = $ent->fuelProductionBonus();
 				if ($spw>=0)
 				{

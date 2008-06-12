@@ -3,7 +3,7 @@
 	$t = time();	
 
 	echo '<h1>Spezialisten</h1>';    
-	$c->resBox();
+	$cp->resBox();
 	
 	if (isset($_POST['submit_engage']) && isset($_POST['engage']))
 	{
@@ -27,11 +27,11 @@
 			{
 				$arr = mysql_fetch_array($res);
 
-				if ($c->res->metal >= $arr['specialist_costs_metal'] &&
-				$c->res->crystal >= $arr['specialist_costs_crystal'] &&
-				$c->res->plastic >= $arr['specialist_costs_plastic'] &&
-				$c->res->fuel >= $arr['specialist_costs_fuel'] &&
-				$c->res->food >= $arr['specialist_costs_food']
+				if ($cp->resMetal >= $arr['specialist_costs_metal'] &&
+				$cp->resCrystal >= $arr['specialist_costs_crystal'] &&
+				$cp->resPlastic >= $arr['specialist_costs_plastic'] &&
+				$cp->resFuel >= $arr['specialist_costs_fuel'] &&
+				$cp->resFood >= $arr['specialist_costs_food']
 				)
 				{		
 
@@ -44,12 +44,12 @@
 						user_specialist_id=".$arr['specialist_id'].",
 						user_specialist_time=".$st."
 					WHERE
-						user_id=".$s['user']['id']."
+						user_id=".$cu->id()."
 					;");
 					$s['user']['specialist_time'] = $st;
 					$s['user']['specialist_id'] = $arr['specialist_id'];
 					
-					$c->changeRes(
+					$cp->changeRes(
 					-$arr['specialist_costs_metal'],
 					-$arr['specialist_costs_crystal'],
 					-$arr['specialist_costs_plastic'],
@@ -89,7 +89,7 @@
 	FROM
 		".$db_table['specialists']."
 	WHERE
-		specialist_points_req<=".intval($s['user']['points'])."
+		specialist_points_req<=".intval($cu->points)."
 	ORDER BY
 		specialist_name
 	;");
@@ -181,11 +181,11 @@
 			if (!$s_active)
 			{
 				echo '<td>';
-				if ($c->res->metal >= $arr['specialist_costs_metal'] &&
-				$c->res->crystal >= $arr['specialist_costs_crystal'] &&
-				$c->res->plastic >= $arr['specialist_costs_plastic'] &&
-				$c->res->fuel >= $arr['specialist_costs_fuel'] &&
-				$c->res->food >= $arr['specialist_costs_food']
+				if ($cp->resMetal >= $arr['specialist_costs_metal'] &&
+				$cp->resCrystal >= $arr['specialist_costs_crystal'] &&
+				$cp->resPlastic >= $arr['specialist_costs_plastic'] &&
+				$cp->resFuel >= $arr['specialist_costs_fuel'] &&
+				$cp->resFood >= $arr['specialist_costs_food']
 				)
 				{					
 					echo '<input type="radio" name="engage" value="'.$arr['specialist_id'].'" />';
