@@ -280,6 +280,7 @@
 	define("WEAPON_TECH_ID",8);								// ID der Waffentechnik
 	define("REGENA_TECH_ID",19);							// ID der Regenatechnik	
 	define("TARN_TECH_ID",11);								// ID der Tarntechnik	
+  define("COMPUTER_TECH_ID",25);                // ID der Tarntechnik  
 	define("RECYC_TECH_ID",12);								// ID der Recyclingtechnologie	
 	define("BOMB_TECH_ID",15); 								// ID der Bombentechnik
 	define('GEN_TECH_ID',23);									// ID der Gentechnologie

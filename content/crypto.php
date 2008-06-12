@@ -74,7 +74,7 @@
 				if ($werft_arr['buildlist_deactivated'] < time())
 				{
 					// Calculate cooldown
-					$cooldown = max($conf["cryptocenter"]['p2'],$conf["cryptocenter"]['v'] - ($conf["cryptocenter"]['p1']*($center_level-1)));
+					$cooldown = max($cfg->param2("cryptocenter"),$cfg->value("cryptocenter") - ($cfg->param1("cryptocenter")*($center_level-1)));
 					if ($werft_arr['buildlist_cooldown']>time())
 					{
 						$status_text = "Bereit in ".tf($werft_arr['buildlist_cooldown']-time());
@@ -84,7 +84,7 @@
 					{
 						$status_text = "Bereit";
 						$cd_enabled=false;
-					}				
+					}		
 	
 					// Scan
 					if (isset($_POST['scan']) && checker_verify() && !$cd_enabled)
@@ -99,56 +99,14 @@
 						$pp = intval($_POST['p']);
 						if ($sx>0 && $sy>0 && $cx>0 && $cy>0 && $pp>0)
 						{
-							if ($cp->res->fuel >= CRYPTO_FUEL_COSTS_PER_SCAN)
+							if ($cp->resFuel >= CRYPTO_FUEL_COSTS_PER_SCAN)
 							{
-								$res = dbquery("
-								SELECT
-									planet_id,
-									cell_id,
-									planet_name,
-									user_id
-								FROM
-									space_cells
-								INNER JOIN
-								(
-									planets
-									LEFT JOIN
-										users 
-										ON user_id=planet_user_id
-								)
-									ON planet_solsys_id=cell_id
-									AND cell_sx=".$sx."
-									AND cell_sy=".$sy."
-									AND cell_cx=".$cx."
-									AND cell_cy=".$cy."
-									AND planet_solsys_pos=".$pp."
-								
-								;");
-								if (mysql_num_rows($res)>0)
+								$target = Entity::createFactoryByCoords($sx,$sy,$cx,$cy,$pp);
+								if (true)
 								{
-									$sx1 = $cp->sx;
-									$sy1 = $cp->sy;
-									$cx1 = $cp->cx;
-									$cy1 = $cp->cy;
-									$p1 = $cp->solsys_pos;
-									
-									$nx=$conf['num_of_cells']['p1'];		// Anzahl Zellen Y
-									$ny=$conf['num_of_cells']['p2'];		// Anzahl Zellen X
-									$ae=$conf['cell_length']['v'];			// Länge vom Solsys in AE
-									$np=$conf['num_planets']['p2'];			// Max. Planeten im Solsys
-									$dx = abs(((($sx-1) * $nx) + $cx) - ((($sx1-1) * $nx) + $cx1));
-									$dy = abs(((($sy-1) * $nx) + $cy) - ((($sy1-1) * $nx) + $cy1));
-									$sd = sqrt(pow($dx,2)+pow($dy,2));			// Distanze zwischen den beiden Zellen
-									$sae = $sd * $ae;											// Distance in AE units
-									if ($sx1==$sx && $sy1==$sy && $cx1==$cx && $cy1=$cy)
-										$ps = abs($pp-$p1)*$ae/4/$np;				// Planetendistanz wenn sie im selben Solsys sind
-									else
-										$ps = ($ae/2) - (($pp)*$ae/4/$np);	// Planetendistanz wenn sie nicht im selben Solsys sind
-									$ssae = $sae + $ps;
-													
-									if ($ssae <= CRYPTO_RANGE_PER_LEVEL*$center_level)
+									$dist = $cp->distance($target);
+									if ($dist <= CRYPTO_RANGE_PER_LEVEL*$center_level)
 									{							
-	                  $arr=mysql_fetch_array($res);   
 	                  
 	                  // Load oponent's jamming device count
 	                  $jres = dbquery("
@@ -161,7 +119,7 @@
 	                    ON deflist_def_id=def_id
 	                    AND deflist_count>0
 	                    AND def_jam=1
-	                    AND deflist_planet_id=".$arr['planet_id'].";                  
+	                    AND deflist_planet_id=".$target->id().";                  
 	                  ");
 	                  $op_jam = 0;
 	                  if (mysql_num_rows($jres)>0)
@@ -178,7 +136,7 @@
 	                    techlist
 	                  WHERE
 	                    techlist_tech_id=".TARN_TECH_ID."
-	                    AND techlist_user_id=".$arr['user_id']."
+	                    AND techlist_user_id=".$target->ownerId()."
 	                  ");
 	                  $op_stealth = 0;
 	                  if (mysql_num_rows($tres)>0)
@@ -193,7 +151,7 @@
 	                    techlist
 	                  WHERE
 	                    techlist_tech_id=".COMPUTER_TECH_ID."
-	                    AND techlist_user_id=".$arr['user_id']."
+	                    AND techlist_user_id=".$target->ownerId()."
 	                  ");
 	                  $op_computer = 0;
 	                  if (mysql_num_rows($tres)>0)
@@ -252,36 +210,22 @@
 	                    // >30 Show action
 	                    
 	                    
-										  $out.="[b]Flottenscan vom Planeten ".($arr['planet_name']!='' ? $arr['planet_name'] : 'Unbenannt')."[/b] (".$sx."/".$sy." : ".$cx."/".$cy." : ".$pp.")\n\n";
+										  $out.="[b]Flottenscan vom Planeten ".$target->name()."[/b] (".$sx."/".$sy." : ".$cx."/".$cy." : ".$pp.")\n\n";
 	
 										  $out.="[b]Eintreffende Flotten[/b]\n\n";
 										  $fres = dbquery("
-										  SELECT
-											  fleet_landtime,
-											  fleet_action,
-											  planet_name,
-											  planet_solsys_pos,
-											  fleet_id,
-											  cell_sx,
-											  cell_sy,
-											  cell_cx,
-											  cell_cy,
-											  cell_id,
-											  user_nick									
-										  FROM
-											  fleet
-										  INNER JOIN
-										  (
-											  planets 
-											  LEFT JOIN
-												  users
-												  ON planet_user_id=user_id
-										  )
-											  ON fleet_planet_from=planet_id
-											  AND fleet_planet_to=".$arr['planet_id']."
-										  INNER JOIN
-											  space_cells
-											  ON cell_id=fleet_cell_from
+											SELECT
+												fleet_landtime,
+												fleet_action,
+												fleet_entity_from,
+												user_nick
+											FROM
+												fleet
+											LEFT JOIN
+												users
+												ON fleet_user_id=user_id
+											WHERE
+												fleet_entity_to=".$target->id()."
 										  ");
 										  if (mysql_num_rows($fres)>0)
 										  {
@@ -297,7 +241,10 @@
 	                      {
 											    while ($farr=mysql_fetch_array($fres))
 											    {
-												    $out.='[b]Herkunft:[/b] '.$farr['planet_name'].' ('.$farr['cell_sx'].'/'.$farr['cell_sy'].' : '.$farr['cell_cx'].'/'.$farr['cell_cy'].' : '.$farr['planet_solsys_pos'].'), [b]Besitzer:[/b] '.$farr['user_nick'];
+														$source = Entity::createFactoryById($farr['fleet_entity_from']);
+											    	
+											    	
+												    $out.='[b]Herkunft:[/b] '.$source.', [b]Besitzer:[/b] '.$farr['user_nick'];
 												    $out.= "\n[b]Ankunft:[/b] ";
 	                          
 	                          if ($decryptlevel<=15)
@@ -368,32 +315,18 @@
 										  
 										  $out.="[b]Wegfliegende Flotten[/b]\n\n";
 										  $fres = dbquery("
-										  SELECT
-											  fleet_landtime,
-											  fleet_action,
-											  planet_name,
-											  planet_solsys_pos,
-	                      fleet_id,
-											  cell_sx,
-											  cell_sy,
-											  cell_cx,
-											  cell_cy,
-											  cell_id,
-											  user_nick									
-										  FROM
-											  fleet
-										  INNER JOIN
-										  (
-											  planets 
-											  LEFT JOIN
-												  users
-												  ON planet_user_id=user_id
-										  )
-											  ON fleet_planet_to=planet_id
-											  AND fleet_planet_from=".$arr['planet_id']."
-										  INNER JOIN
-											  space_cells
-											  ON cell_id=fleet_cell_to
+											SELECT
+												fleet_landtime,
+												fleet_action,
+												fleet_entity_from,
+												user_nick
+											FROM
+												fleet
+											LEFT JOIN
+												users
+												ON fleet_user_id=user_id
+											WHERE
+												fleet_entity_from=".$target->id()."
 										  ");
 										  if (mysql_num_rows($fres)>0)
 										  {
@@ -409,7 +342,9 @@
 	                      {
 	                        while ($farr=mysql_fetch_array($fres))
 	                        {
-	                          $out.='[b]Ziel:[/b] '.$farr['planet_name'].' ('.$farr['cell_sx'].'/'.$farr['cell_sy'].' : '.$farr['cell_cx'].'/'.$farr['cell_cy'].' : '.$farr['planet_solsys_pos'].'), [b]Besitzer:[/b] '.$farr['user_nick'];
+														$source = Entity::createFactoryById($farr['fleet_entity_from']);
+	                        	
+	                          $out.='[b]Ziel:[/b] '.$source.', [b]Besitzer:[/b] '.$farr['user_nick'];
 	                          $out.= "\n[b]Ankunft:[/b] ";
 	                          
 	                          if ($decryptlevel<=15)
@@ -472,39 +407,6 @@
 	                          $out.="\n";                  
 	                        }
 	                      }                      
-	                      
-	                      
-	                      
-	                      
-	                      
-	                      
-	                      
-	                      
-	                          /*
-											  while ($farr=mysql_fetch_array($fres))
-											  {
-												  $out.='[b]Ziel:[/b] '.$farr['planet_name'].' ('.$farr['cell_sx'].'/'.$farr['cell_sy'].' : '.$farr['cell_cx'].'/'.$farr['cell_cy'].' : '.$farr['planet_solsys_pos'].'), [b]Besitzer:[/b] '.$farr['user_nick'];
-												  $out.= "\n[b]Ankunft:[/b] ".df($farr['fleet_landtime']).", [b]Aktion:[/b] ".fa($farr['fleet_action'])."\n\n";
-	                        $sres = dbquery("
-	                        SELECT
-	                          ship_name,
-	                          fs_ship_cnt
-	                        FROM
-	                          fleet_ships
-	                        INNER JOIN
-	                          ships
-	                          ON ship_id=fs_ship_id
-	                          AND fs_fleet_id=".$farr['fleet_id']."
-	                        ;");
-	                        if (mysql_num_rows($sres)>0)
-	                        {
-	                          while ($sarr=mysql_fetch_array($sres))
-	                          {
-	                            $out.=$sarr['fs_ship_cnt']." ".$sarr['ship_name']."\n";
-	                          }
-	                        }  
-	                        $out.="\n";                        
-											  }   */
 										  }								
 										  else
 										  {
@@ -517,9 +419,9 @@
 	                    $cp->changeRes(0,0,0,-CRYPTO_FUEL_COSTS_PER_SCAN,0);
 	
 	                    // Inform oponent
-	                    if ($arr['user_id']>0)
+	                    if ($target->ownerId()>0)
 	                    {                  
-	                      send_msg($arr['user_id'],SHIP_SPY_MSG_CAT_ID,"Funkstörung","Eure Flottenkontrolle hat soeben eine kurzzeitige Störung des Kommunikationsnetzes festgestellt. Es kann sein das fremde Hacker in das Netz eingedrungen sind und Flottendaten geklaut haben.");
+	                      send_msg($target->ownerId(),SHIP_SPY_MSG_CAT_ID,"Funkstörung","Eure Flottenkontrolle hat soeben eine kurzzeitige Störung des Kommunikationsnetzes festgestellt. Es kann sein das fremde Hacker in das Netz eingedrungen sind und Flottendaten geklaut haben.");
 	                    }
 	                                        
 	                    // Display result
@@ -527,8 +429,15 @@
 										  echo text2html($out);
 										  infobox_end();
 										                   
-	                    // Mail result
-										  send_msg($cu->id(),SHIP_MISC_MSG_CAT_ID,"Kryptocenter-Bericht",$out);
+											// Add note to user's notepad if selected
+											if (isset($_POST['scan_to_notes']))
+											{
+												$np = new Notepad($cu->id());
+												$np->add("Flottenscan: ".$target,$out);
+											}										                   
+										                   
+	                    // Mail result (deprecated)
+										  //send_msg($cu->id(),SHIP_MISC_MSG_CAT_ID,"Kryptocenter-Bericht",$out);
 										  
 	                    
 										  // Set cooldown
@@ -557,9 +466,9 @@
 	                  }
 	                  else
 	                  {
-	                    if ($op_jam>0 && $arr['user_id']>0)
+	                    if ($op_jam>0 && $target->ownerId()>0)
 	                    {                  
-	                      send_msg($arr['user_id'],SHIP_SPY_MSG_CAT_ID,"Störsender erfolgreich","Eure Techniker haben festgestellt, dass von einem anderen Planeten eine Entschlüsselung eures Funkverkehrs versucht wurde. Daraufhin haben eure Störsender die Funknetze mit falschen Werten überlastet, so dass die gegnerische Analyse fehlschlug!");
+	                      send_msg($target->ownerId(),SHIP_SPY_MSG_CAT_ID,"Störsender erfolgreich","Eure Techniker haben festgestellt, dass von einem anderen Planeten eine Entschlüsselung eures Funkverkehrs versucht wurde. Daraufhin haben eure Störsender die Funknetze mit falschen Werten überlastet, so dass die gegnerische Analyse fehlschlug!");
 	                    }                    
 	                    echo "Die Analyse schlug leider fehl! Eure Empfangsgeräte haben zu viel Rauschen aufgenommen; anscheinend hat der Zielplanet ein aktives Störfeld oder die dortige Flottenkontrolle ist zu gut getarnt (Chance: ".$chance.")!<br/><br/>";                    
 	                  }                  
@@ -576,7 +485,7 @@
 							}
 							else
 							{
-								echo "Zuwenig ".RES_FUEL.", ".nf(CRYPTO_FUEL_COSTS_PER_SCAN)." benötigt!<br/><br/>";
+								echo "Zuwenig ".RES_FUEL.", ".nf(CRYPTO_FUEL_COSTS_PER_SCAN)." benötigt, ".nf($cp->resFuel)." vorhanden!<br/><br/>";
 							}						
 						}
 						else
@@ -589,15 +498,16 @@
 					infobox_start("Kryptocenter-Infos",1);
 					echo "<tr><th class=\"tbltitle\">Aktuelle Reichweite:</th><td class=\"tbldata\">".(CRYPTO_RANGE_PER_LEVEL*$center_level)." AE (+".CRYPTO_RANGE_PER_LEVEL." pro Stufe)</td></tr>";
 					echo "<tr><th class=\"tbltitle\">Kosten pro Scan:</th><td class=\"tbldata\">".nf(CRYPTO_FUEL_COSTS_PER_SCAN)." ".RES_FUEL."</td></tr>";
-					echo "<tr><th class=\"tbltitle\">Abklingzeit:</th><td class=\"tbldata\">".tf($cooldown)." (-".tf($conf["cryptocenter"]['p1'])." pro Stufe, minimal ".tf($conf["cryptocenter"]['p2']).")</td></tr>";
+					echo "<tr><th class=\"tbltitle\">Abklingzeit:</th><td class=\"tbldata\">".tf($cooldown)." (-".tf($cfg->param1("cryptocenter"))." pro Stufe, minimal ".tf($cfg->param2("cryptocenter")).")</td></tr>";
 					echo "<tr><th class=\"tbltitle\">Status:</th><td class=\"tbldata\">".$status_text."</td></tr>";
 					infobox_end(1);
 					
 					if (!$cd_enabled)
-					{
-						if ($_GET['c']!='' && $_GET['h']!='' && md5(base64_decode($_GET['c'])) == $_GET['h'])
+					{				
+						if (isset($_GET['target']) && $_GET['target']>0)
 						{
-							$coords = explode(":",base64_decode($_GET['c']));
+							$ent = Entity::createFactoryById($_GET['target']);
+							$coords = $ent->coordsArray();
 						}
 						elseif(isset($_POST['scan']))
 						{
@@ -613,7 +523,7 @@
 							$coords[1] = $cp->sy;
 							$coords[2] = $cp->cx;
 							$coords[3] = $cp->cy;
-							$coords[4] = $cp->solsys_pos;
+							$coords[4] = $cp->pos;
 						}  		
 						echo '<form action="?page='.$page.'" method="post">';		
 						checker_init();
@@ -622,89 +532,9 @@
 						//
 						// Bookmarks laden
 						//
-						$bookmarks=array();
-		
-						// Eigene Planeten
-						$pres = dbquery("
-						SELECT
-		                    space_cells.cell_sx,
-		                    space_cells.cell_sy,
-		                    space_cells.cell_cx,
-		                    space_cells.cell_cy,
-		                    planets.planet_solsys_pos,
-		                    planets.planet_name
-						FROM
-							".$db_table['planets']."
-						INNER JOIN
-							".$db_table['space_cells']."
-						ON
-		          space_cells.cell_id=planets.planet_solsys_id
-		          AND planets.planet_user_id=".$cu->id()."
-						ORDER BY
-							planets.planet_user_main DESC,
-							planets.planet_name ASC,
-		                    space_cells.cell_id ASC;");
-						if (mysql_num_rows($pres)>0)
-						{
-							while($parr=mysql_fetch_array($pres))
-							{
-								array_push(
-								$bookmarks,
-								array(
-								"cell_sx"=> $parr['cell_sx'],
-								"cell_sy"=> $parr['cell_sy'],
-								"cell_cx"=> $parr['cell_cx'],
-								"cell_cy"=> $parr['cell_cy'],
-								"planet_solsys_pos"=> $parr['planet_solsys_pos'],
-								"planet_name"=> $parr['planet_name'],
-								"automatic"=>1)
-								);
-							}
-						}
-						// Gespeicherte Bookmarks
-						$pres = dbquery("
-						SELECT
-		                    space_cells.cell_sx,
-		                    space_cells.cell_sy,
-		                    space_cells.cell_cx,
-		                    space_cells.cell_cy,
-		                    planets.planet_solsys_pos,
-		                    planets.planet_name,
-		                    target_bookmarks.bookmark_comment
-						FROM
-							".$db_table['target_bookmarks']."
-						INNER JOIN
-		       		".$db_table['planets']."
-		        ON 
-		        	target_bookmarks.bookmark_user_id=".$cu->id()."
-		         	AND target_bookmarks.bookmark_planet_id=planets.planet_id
-						INNER JOIN       		
-							".$db_table['space_cells']."
-						ON 
-							target_bookmarks.bookmark_cell_id=space_cells.cell_id
-						ORDER BY
-		                    target_bookmarks.bookmark_comment,
-		                    target_bookmarks.bookmark_cell_id,
-		                    target_bookmarks.bookmark_planet_id;");
-						if (mysql_num_rows($pres)>0)
-						{
-							while($parr=mysql_fetch_array($pres))
-							{
-								array_push(
-								$bookmarks,
-								array(
-								"cell_sx"=> $parr['cell_sx'],
-								"cell_sy"=> $parr['cell_sy'],
-								"cell_cx"=> $parr['cell_cx'],
-								"cell_cy"=> $parr['cell_cy'],
-								"planet_solsys_pos"=> $parr['planet_solsys_pos'],
-								"planet_name"=> $parr['planet_name'],
-								"automatic"=>0,
-								"bookmark_comment"=> $parr['bookmark_comment'])
-								);
-							}
-						}
-		
+	
+						$bm = new BookmarkManager($cu->id());
+						
 						echo 'Koordinaten eingeben: 
 							<input type="text" name="sx" id="sx" value="'.$coords[0].'" size="2" maxlength="2" /> / 
 							<input type="text" name="sy" id="sy" value="'.$coords[1].'" size="2" maxlength="2" /> :
@@ -713,69 +543,20 @@
 							<input type="text" name="p" id="p" value="'.$coords[4].'" size="2" maxlength="2" /><br/><br/>';
 						
 						// Bookmarkliste anzeigen
-						echo "<i>oder</i> Favorit wählen: <select id=\"bookmarkselect\" onchange=\"applyBookmark();\">";
-						if (count($bookmarks)>0)
-						{
-							$a=1;
-							echo "<option value=\"\">W&auml;hlen...</option>";
-							foreach ($bookmarks as $i=> $b)
-							{
-								if ($b['automatic']==0 && $a==1)
-								{
-									$a=0;
-									echo "<option value=\"\">-----------------------------</option>";
-								}
-								echo "<option value=\"$i\"";
-								if ($csx==$b['cell_sx'] && $csy==$b['cell_sy'] && $ccx==$b['cell_cx'] && $ccy==$b['cell_cy'] && $psp==$b['planet_solsys_pos']) echo " selected=\"selected\"";
-								echo ">";
-								if ($b['automatic']==1) echo "Eigener Planet: ";
-								echo $b['cell_sx']."/".$b['cell_sy']." : ".$b['cell_cx']."/".$b['cell_cy']." : ".$b['planet_solsys_pos']." ".$b['planet_name'];
-								if ($b['bookmark_comment']!="") echo " (".stripslashes($b['bookmark_comment']).")";
-								echo "</option>";
-							}
-						}
-						else
-							echo "<option value=\"\">(Nichts vorhaden)</option>";
-						echo "</select>";					
-							
+						echo "<i>oder</i> Favorit wählen: ".$bm->drawSelector("bookmarkselect","applyBookmark();")."<br/><br/>
+						<input type=\"checkbox\" name=\"scan_to_notes\" value=\"1\" checked=\"checked\" /> Bericht zu meinem Notizblock hinzufügen";					
+						echo $bm->drawSelectorJavaScript("bookmarkselect","applyBookmark");
 						infobox_end();
-						if ($cp->res->fuel >= CRYPTO_FUEL_COSTS_PER_SCAN)
+						if ($cp->resFuel >= CRYPTO_FUEL_COSTS_PER_SCAN)
 						{
 							echo '<input type="submit" name="scan" value="Analyse für '.nf(CRYPTO_FUEL_COSTS_PER_SCAN).' '.RES_FUEL.' starten" />';
 						}
 						else
 						{
-							echo "Zuwenig Rohstoffe für eine Analyse vorhanden, ".nf(CRYPTO_FUEL_COSTS_PER_SCAN)." ".RES_FUEL." benötigt!";
+							echo "Zuwenig Rohstoffe für eine Analyse vorhanden, ".nf(CRYPTO_FUEL_COSTS_PER_SCAN)." ".RES_FUEL." benötigt, ".nf($cp->resFuel)." vorhanden!";
 						}
 						echo '</form>';				
-						
-						echo "<script type=\"text/javascript\">
-						function applyBookmark()
-						{
-							select_id=document.getElementById('bookmarkselect').selectedIndex;
-							select_val=document.getElementById('bookmarkselect').options[select_id].value;
-							a=1;
-							if (select_val!='')
-							{
-								switch(select_val)
-								{
-									";
-									foreach ($bookmarks as $i=> $b)
-									{
-										echo "case \"$i\":\n";
-										echo "document.getElementById('sx').value='".$b['cell_sx']."';\n";
-										echo "document.getElementById('sy').value='".$b['cell_sy']."';\n";
-										echo "document.getElementById('cx').value='".$b['cell_cx']."';\n";
-										echo "document.getElementById('cy').value='".$b['cell_cy']."';\n";
-										echo "document.getElementById('p').value='".$b['planet_solsys_pos']."';\n";
-										echo "break;\n";
-									}
-									echo "
-								}
-		
-							}
-						}
-						</script>";			
+
 					}
 					else
 					{

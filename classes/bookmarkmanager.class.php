@@ -50,10 +50,6 @@
 					echo "<option value=\"".$i->entityId."\">".$i->target->entityCodeString()." ".$i->target." (".$i->comment.")</option>";
 				}
 			}
-			else
-			{
-				echo "<option value=\"\">(Nichts vorhaden)</option>";
-			}
 			echo "</select>";					
 			$rtn = ob_get_contents();
 			ob_end_clean();
