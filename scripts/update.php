@@ -148,6 +148,9 @@
 	{
 		global $db_table, $conf;
 
+		// Zufalls-Event auslösen
+		PlanetEventHandler::doEvent(RANDOM_EVENTS_PER_UPDATE);
+
 		$nr = warpeace_update();
 		
 		// Mailqueue abarbeiten

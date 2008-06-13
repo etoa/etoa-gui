@@ -1,9 +1,9 @@
 <?PHP
 	
 	/**
-	* Class for nebula entity
+	* Class for asteroidfield entity
 	*/
-	class Nebula extends Entity
+	class AsteroidField extends Entity
 	{
 		protected $id;
 		protected $coordsLoaded;
@@ -19,13 +19,14 @@
 		/**
 		* The constructor
 		*/
-		function Nebula($id=0)
+		function AsteroidField($id=0)
 		{
 			$this->isValid = false;
 			$this->id = $id;
 			$this->pos = 0;
 			$this->name = "Unbenannt";
 			$this->coordsLoaded=false;			
+      $this->isVisible = true;
 		}
 
 		/**
@@ -52,7 +53,7 @@
 		/**
 		* Returns type string
 		*/                        
-		function entityCodeString() { return "Interstellarer Gasnebel"; }      
+		function entityCodeString() { return "Asteroidenfeld"; }      
 	
 		/**
 		* Returns owner
@@ -64,19 +65,19 @@
 		*/
 		function type()
 		{
-			return "Interstellarer Nebel";
+			return "Asteroidenfeld";
 		}							
 
 		function imagePath($opt="")
 		{
-			$r = mt_rand(1,9);
-			return IMAGE_PATH."/nebulas/nebula".$r."_small.".IMAGE_EXT;
+			$r = mt_rand(1,5);
+			return IMAGE_PATH."/asteroids/asteroids".$r."_small.".IMAGE_EXT;
 		}
 
 		/**
 		* Returns type
 		*/
-		function entityCode() { return "n"; }	      
+		function entityCode() { return "a"; }	      
 		
 		/**
 		* To-String function

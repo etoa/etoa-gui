@@ -282,10 +282,12 @@
 	$navmenu['Raketen']['Voraussetzungen']['sub']="req";
 	$navmenu['Raketen']['Voraussetzungen']['level']=2;
 
-/*
+
 	$navmenu['Ereignisse']['Vorlagen']['page']="events";
 	$navmenu['Ereignisse']['Vorlagen']['sub']="";
 	$navmenu['Ereignisse']['Vorlagen']['level']=1;
+
+/*
 
 	$navmenu['Ereignisse']['Aktuelle Ereignisse']['page']="events";
 	$navmenu['Ereignisse']['Aktuelle Ereignisse']['sub']="exec";

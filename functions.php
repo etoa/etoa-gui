@@ -42,9 +42,21 @@
 				$dir = CLASS_ROOT;
 			else
 				$dir = "classes";
-			$file = $dir.'/'.strtolower($class_name).'.class.php';
-	    if (!include_once($file))
-	    {
+			$file = strtolower($class_name).'.class.php';
+      if (file_exists($dir.'/'.$file))
+      {
+        include_once($dir.'/'.$file);
+      }
+      elseif (file_exists($dir.'/entity/'.$file))
+      {
+        include_once($dir.'/entity/'.$file);
+      }
+      elseif (file_exists($dir.'/fleetAction'.$file))
+      {
+        include_once($dir.'/fleetAction'.$file);
+      }      
+      else
+      {
 	    	die('Class '.$class_name.' not found ('.$file.')!');
 	    }
 	  }

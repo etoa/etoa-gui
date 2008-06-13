@@ -32,6 +32,7 @@
 			$this->dataLoaded=false;
 			$this->targetId=-1;
 			$this->changed=-1;
+      $this->isVisible = true;
 		}
 
 		/**
@@ -150,7 +151,7 @@
 		}		
 		
 		/**
-		* Vertauscht zufällig mehrere Wurmlöcher miteinander
+		* Vertauscht zuf?llig mehrere Wurml?cher miteinander
 		*
 		* @author MrCage
 		*/
@@ -158,7 +159,7 @@
 		{
 			$time = time();
 			
-			// Löschen
+			// L?schen
 			$deleted = array();
 			$delcnt=0;
 			$res=dbquery("

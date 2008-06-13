@@ -52,7 +52,7 @@
 	
 	define('CACHE_ROOT','../cache');
 	define('CLASS_ROOT','../classes');
-	
+	define('DATA_DIR',"../data");
 	
 	// Config-Werte laden
 	$cfg = Config::getInstance();

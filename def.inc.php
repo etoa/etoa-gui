@@ -67,6 +67,7 @@
 	if (!defined('CACHE_ROOT')) define('CACHE_ROOT','cache');
 	if (!defined('CLASS_ROOT'))	define('CLASS_ROOT','classes');
 	define('RSS_DIR',CACHE_ROOT."/rss");
+	define('DATA_DIR',"data");
 
 	// Townhall-RSS-File
 	define('RSS_TOWNHALL_FILE',RSS_DIR."/townhall.rss");
@@ -136,7 +137,10 @@
 
 	define('ONLINE_TIME',$conf['online_threshold']['v']);
 
-
+  /*********************/
+  /* Zufallsereignisse */
+  /*********************/
+	define("RANDOM_EVENTS_PER_UPDATE",1);
 
 
 

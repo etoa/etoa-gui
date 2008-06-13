@@ -1,0 +1,15 @@
+<event>
+	<probability>10</probability>
+	<title>Sonnenwind</title>
+	<message>Der Stern in der Nähe deines Planeten {planet} hat durch eine Gaseruption an seiner Oberfläche einen grossen Sonnenwind ausgelöst. Einige dieser elektromagnetisch geladenen Teilchen trafen dabei auch auf das Magnetfeld deines Planeten. Während der Analyse dieses Phänomens ist es deinen Wissenschaftlern gelungen, {reward:crystal} Silizium aus der Atmosphäre einzufangen.</message>	
+	<logbase>10</logbase>
+
+	<rewards>
+		<crystal min="250" max="350" />
+	</rewards>
+
+	<costs>
+	
+	</costs>
+
+</event>

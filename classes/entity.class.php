@@ -7,6 +7,9 @@
 	*/ 
 	abstract class Entity
 	{
+    protected $isVisible;
+    
+    
 		/**
 		* Private constructor
 		* Prevents usage as object
@@ -69,6 +72,14 @@
 	  */
 	  public abstract function cellId();
 	
+    /**
+    * Return if entity is visible in map
+    */
+    public function isVisible()
+    {
+      return $this->isVisible; 
+    }    
+    
 		/**
 		* check if data could be loaded
 		*/
