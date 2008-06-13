@@ -2,6 +2,10 @@
 	
 	class Ship
 	{
+		
+		
+		
+		
 		static function xpByLevel($base_xp,$factor,$level)
 		{
 			return $base_xp * intpow($factor,$level-1);

@@ -62,11 +62,6 @@
 		function entityCodeString() { return "Wurmloch"; }      
 	
 		/**
-		* Returns owner
-		*/                        
-		function pos() { return $this->pos; }      
-		
-		/**
 		* Returns type
 		*/
 		function type()

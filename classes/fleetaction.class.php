@@ -4,7 +4,7 @@
 	*
 	* @author Nicolas Perrenoud<mrcage@etoa.ch>
 	*/	
-	abstract class fleetAction
+	abstract class FleetAction
 	{
 		//
 		// Class variables
@@ -12,7 +12,7 @@
 		
 		protected $code;	// Flight code
 		protected $name;	// Name 
-		protected $desc; // Short description of the action
+		protected $desc; 	// Short description of the action
 		
 		protected $attitude;	// 0: Neutral, 1: Peacefull, -1: Hostile
 

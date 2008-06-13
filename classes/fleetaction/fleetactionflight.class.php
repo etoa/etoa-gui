@@ -1,9 +1,9 @@
 <?PHP
 
-	class fleetActionFlight extends fleetAction
+	class FleetActionFlight extends FleetAction
 	{
 
-		function fleetActionFlight()
+		function FleetActionFlight()
 		{
 			$this->code = "flight";
 			$this->name = "Flug";

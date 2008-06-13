@@ -45,11 +45,11 @@
 						echo file_exists(CSS_STYLE."/scripts.js") ? "<script src=\"".CSS_STYLE."/scripts.js\" type=\"text/javascript\"></script>" : ''; 
 					?>					
 					
-					<script type="text/javascript" src="js/range.js"></script>
-					<script type="text/javascript" src="js/timer.js"></script>
-					<script type="text/javascript" src="js/slider.js"></script>
+					<!--<script type="text/javascript" src="js/range.js"></script> -->
+					<!--<script type="text/javascript" src="js/timer.js"></script> -->
+					<!--<script type="text/javascript" src="js/slider.js"></script>-->
 					
-					<link type="text/css" rel="StyleSheet" href="css/slider.css" />					
+					<!--<link type="text/css" rel="StyleSheet" href="css/slider.css" />					-->
 
 				</head> 		
 			<?PHP	

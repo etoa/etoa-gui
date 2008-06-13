@@ -56,11 +56,6 @@
 		function entityCodeString() { return "Unbekannter Raum"; }      
 	
 		/**
-		* Returns owner
-		*/                        
-		function pos() { return $this->pos; }      
-		
-		/**
 		* Returns type
 		*/
 		function type()

@@ -173,22 +173,31 @@
 			
 			// Set vars for xajax
 			$_SESSION['haven'] = Null;
+			
 			$_SESSION['haven']['user_id'] = $cu->id();
 			$_SESSION['haven']['planet_id'] = $cp->id(); 
-			$_SESSION['haven']['planet_cx'] = $cp->cx; 
-			$_SESSION['haven']['planet_cy'] = $cp->cy; 
-			$_SESSION['haven']['planet_sx'] = $cp->sx; 
-			$_SESSION['haven']['planet_sy'] = $cp->sy; 
-			$_SESSION['haven']['planet_p'] = $cp->pos; 
+		//	$_SESSION['haven']['planet_cx'] = $cp->cx; 
+		//	$_SESSION['haven']['planet_cy'] = $cp->cy; 
+		//	$_SESSION['haven']['planet_sx'] = $cp->sx; 
+		//	$_SESSION['haven']['planet_sy'] = $cp->sy; 
+		//	$_SESSION['haven']['planet_p'] = $cp->pos; 
+			
+			
 			$_SESSION['haven']['people_available'] = $people_available;
 			$_SESSION['haven']['fleets_start_possible'] = $fleets_start_possible;
 
-			if (isset ($_GET['target']) && intval($_GET['target'])>0)
-			{
-				$_SESSION['haven']['target']=$_GET['target'];
-			}
+//			if (isset ($_GET['target']) && intval($_GET['target'])>0)
+//			{
+//				$_SESSION['haven']['target']=$_GET['target'];
+//			}
 
+			// Fleet object
+			$fleet = new Fleet();
+			$fleet->setSource($cp);
+			$fleet->setOwnerId($cu->id());
+			$_SESSION['haven']['fleetObj']=serialize($fleet);
 			
+			// Infobox
     	infobox_start("Hafen-Infos",1);
     		
 			// Flotten unterwegs
@@ -240,53 +249,6 @@
 			
 			</div>";
 			echo "<script type=\"text/javascript\">xajax_havenShowShips();</script>";	
-	
-			
-			/*
-			//if ($_SESSION['lastpage']!=$page) $_SESSION['haven']=Null;
-			//if ($_POST['reset']!="")  $_SESSION['haven']=Null;
-			//if ($_SESSION['haven']['pid']!=$cp->id) $_SESSION['haven']=Null;
-			$_SESSION['haven_pid']=$cp->id();
-			$_SESSION['haven_uid']=$cu->id();
-			
-
-			echo "<div id=\"havenContentShips\"></div>";
-			echo "<div id=\"havenContentTarget\"></div>";
-			echo "<script type=\"text/javascript\">xajax_havenShowShips();</script>";
-
-/*
-			//
-			// Start durchführen
-			//
-			if ($_POST['submit_actionselection']!="" && $_SESSION['haven']['status']=="chooseAction" &&$fleets_start_possible>0)
-			{
-				require ("haven/launch.inc.php");
-			}
-
-			//
-			// Aktion und Waren werden ausgewählt und der Start bestätigt
-			//
-			elseif ((($_POST['submit_planetselection']!="" && $_SESSION['haven']['status']=="choosePlanet") || ($_SESSION['haven']['status']=="chooseAction" && $_POST['back']=="") )&& $fleets_start_possible>0)
-			{
-				require ("haven/choose_action.inc.php");
-			}
-
-			//
-			// Ziel auswählen
-			//
-			elseif (((($_POST['submit_shipselection']!="" || $_POST['submit_shipselection_all']!="") && ($_SESSION['haven']['status']=="chooseAction" || $_SESSION['haven']['status']==Null )) || ($_SESSION['haven']['status']=="choosePlanet" && $_POST['back']=="") || ($_POST['back']!="" && $_SESSION['haven']['status']=="chooseAction")) &&$fleets_start_possible>0)
-			{
-				require ("haven/choose_planet.inc.php");
-			}
-
-			//
-			// Schiffsauswahl
-			//
-			else
-			{    */
-			//	require ("haven/choose_ships.inc.php");
-				
-			//}
 		}
 	}
 ?>

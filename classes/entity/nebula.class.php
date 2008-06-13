@@ -54,11 +54,6 @@
 		* Returns type string
 		*/                        
 		function entityCodeString() { return "Interstellarer Gasnebel"; }      
-	
-		/**
-		* Returns owner
-		*/                        
-		function pos() { return $this->pos; }      
 		
 		/**
 		* Returns type

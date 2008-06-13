@@ -102,11 +102,6 @@
 		function entityCodeString() { return "Stern"; }      
 	
 		/**
-		* Returns owner
-		*/                        
-		function pos() { return $this->pos; }      
-		
-		/**
 		* Returns star type
 		*/
 		function type()

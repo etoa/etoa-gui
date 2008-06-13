@@ -212,11 +212,6 @@
 			return $this->id;
 		}
 
-		function pos()
-		{
-			return $this->pos;
-		}		
-
 		function entityCode()
 		{
 			return "p";

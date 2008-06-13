@@ -55,11 +55,7 @@
 		*/                        
 		function entityCodeString() { return "Asteroidenfeld"; }      
 	
-		/**
-		* Returns owner
-		*/                        
-		function pos() { return $this->pos; }      
-		
+	
 		/**
 		* Returns type
 		*/
