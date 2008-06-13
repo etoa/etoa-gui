@@ -236,10 +236,10 @@
 				<img src=\"".IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$cp->image.".gif\" alt=\"Planet\" style=\"width:310px;height:310px\"/>
 			</td>";
 			echo "<td class=\"tbltitle\">Kennung:</td><td class=\"tbldata\">
-				".$cp->id()." [<a href=\"?page=planet&id=".$cp->id()."\">Suchen</a>]</td>
+				".$cp->id()." [<a href=\"?page=entity&id=".$cp->id()."\">Suchen</a>]</td>
 			</tr>";
 			echo "<td class=\"tbltitle\">Koordinaten:</td><td class=\"tbldata\">
-				".$cp->getCoordinates()." [<a href=\"?page=cell&id=".$cp->cellId()."\">Zeigen</a>]</td>
+				".$cp->getCoordinates()." [<a href=\"?page=cell&id=".$cp->cellId()."&amp;hl=".$cp->id()."\">Zeigen</a>]</td>
 			</tr>";
 			echo "<tr>
 				<td class=\"tbltitle\">Sonnentyp:</td><td class=\"tbldata\">";

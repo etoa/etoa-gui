@@ -116,7 +116,7 @@
 			infobox_end();
 		}
 		
-			// Previous and next planet
+			// Previous and next entity
 			$idprev = $id-1;
 			$idnext = $id+1;
 			$pmres = dbquery("
@@ -127,11 +127,11 @@
 			$pmarr=mysql_fetch_row($pmres);		
 			if ($idprev>0)
 			{	
-				$str_prev =	"<td class=\"tbldata\"><input type=\"button\" value=\"&lt;\" onclick=\"document.location='?page=planet&amp;id=".$idprev."'\" /></td>";
+				$str_prev =	"<td class=\"tbldata\"><input type=\"button\" value=\"&lt;\" onclick=\"document.location='?page=$page&amp;id=".$idprev."'\" /></td>";
 			}
 			if ($idnext <= $pmarr[0])
 			{
-				$str_next = "<td class=\"tbldata\"><input type=\"button\" value=\"&gt;\" onclick=\"document.location='?page=planet&amp;id=".$idnext."'\" /></td>";
+				$str_next = "<td class=\"tbldata\"><input type=\"button\" value=\"&gt;\" onclick=\"document.location='?page=$page&amp;id=".$idnext."'\" /></td>";
 			} 
 		}
 		else
@@ -154,7 +154,7 @@
 		echo "<th class=\"tbltitle\">Kennung:</th>
 		<td class=\"tbldata\">
 			<input type=\"text\" name=\"id\" size=\"5\" maxlength=\"7\" value=\"".$id."\" /> &nbsp; 
-			<input type=\"submit\" name=\"search_submit\" value=\"Planet anzeigen\" />
+			<input type=\"submit\" name=\"search_submit\" value=\"Objekt anzeigen\" />
 		</td>";
 		if (isset($str_next)) echo $str_next;
 	echo "</tr>";

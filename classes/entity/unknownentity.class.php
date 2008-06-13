@@ -21,7 +21,7 @@
 		*/
 		function UnknownEntity($id=0)
 		{
-			$this->isValid = false;
+			$this->isValid = true;
 			$this->id = $id;
 			$this->pos = 0;
 			$this->name = "Unbenannt";

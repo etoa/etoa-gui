@@ -95,16 +95,16 @@
 						<td class=\"tbldata\" style=\"height:3px;background:#000;\" colspan=\"6\"></td>
 					</tr>";			
 				}
-				$addstyle="";
+				$addstyle=" style=\"vertical-align:middle;";
 				if (isset($_GET['hl']) && $_GET['hl']==$ent->id())
 				{
-					$addstyle=" style=\"background:#003D6F;\"";
+					$addstyle.="background:#003D6F;";
 				}
-				
+				$addstyle.="\" ";
 				
 				echo "<tr>
 					<td class=\"tbldata\" style=\"width:40px;background:#000;\"><img src=\"".$ent->imagePath()."\" alt=\"icon\" /></td>
-					<td class=\"tbldata\" $addstyle>".$ent->pos()."</td>
+					<td class=\"tbldata\" style=\"text-align:center;vertical-align:middle;background:#000\"><b>".$ent->pos()."</b></td>
 					<td class=\"tbldata\" $addstyle>".$ent->type();
 					if ($ent->entityCode()=='w')
 					{
@@ -136,7 +136,7 @@
 							$hasPlanetInSystem = true;
 						}
 						
-						echo "<a href=\"?page=planet&amp;id=".$ent->id()."\" title=\"Planeteninfo\">Info</a> ";
+						echo "<a href=\"?page=entity&amp;id=".$ent->id()."\" title=\"Planeteninfo\">Info</a> ";
 						
 						// Nachrichten-Link
 						if ($ent->ownerId()>0 && $cu->id()!=$ent->ownerId())
