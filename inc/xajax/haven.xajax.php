@@ -31,8 +31,11 @@
 
 		if (mysql_num_rows($res)!=0)
 		{
+			$fleet = unserialize($_SESSION['haven']['fleetObj']);			
+			$ships = $fleet->getShips();
+						
 	    $tabulator=1;
-			echo "<form id=\"shipForm\">";
+			echo "<form id=\"shipForm\" onsubmit=\"xajax_havenShowTarget(xajax.getFormValues('shipForm')); return false;\">";
 			echo "<table class=\"tb\">";
 			echo "<tr>
 				<th colspan=\"6\">Schiffe wählen</th>
@@ -49,62 +52,9 @@
 			$launchable = 0;	// Counter for launchable ships
 	    while ($arr = mysql_fetch_array($res))
 	    {
-	/*
-	            //Geschwindigkeitsbohni der entsprechenden Antriebstechnologien laden und zusammenrechnen
-	            $vres=dbquery("
-	            SELECT
-	                techlist.techlist_current_level,
-	                technologies.tech_name,
-	                ship_requirements.req_req_tech_level
-	            FROM
-	                ".$db_table['techlist'].",
-	                ".$db_table['ship_requirements'].",
-	                ".$db_table['technologies']."
-	            WHERE
-	                ship_requirements.req_ship_id=".$arr['ship_id']."
-	                AND technologies.tech_type_id='".TECH_SPEED_CAT."'
-	                AND ship_requirements.req_req_tech_id=technologies.tech_id
-	                AND technologies.tech_id=techlist.techlist_tech_id
-	                AND techlist.techlist_tech_id=ship_requirements.req_req_tech_id
-	                AND techlist.techlist_user_id=".$s['user']['id']."
-	            GROUP BY
-	                ship_requirements.req_id;");
-	            if ($rarr['race_f_fleettime']!=1)
-	                $speedtechstring="Rasse: ".((1-$rarr['race_f_fleettime'])*100)."%<br>";
-	            else
-	                $speedtechstring="";
-	
-	            $timefactor=$racefactor;
-	            if (mysql_num_rows($vres)>0)
-	            {
-	                while ($varr=mysql_fetch_array($vres))
-	                {
-	                    if($varr['techlist_current_level']-$varr['req_req_tech_level']<=0)
-	                    {
-	                        $timefactor+=0;
-	                         $speedtechstring.=$varr['tech_name']." ".$varr['techlist_current_level'].": +0%<br>";
-	                    }
-	                    else
-	                    {
-	                        $timefactor+=($varr['techlist_current_level']-$varr['req_req_tech_level'])*0.1;
-	                        $speedtechstring.=$varr['tech_name']." ".$varr['techlist_current_level'].": +".(($varr['techlist_current_level']-$varr['req_req_tech_level'])*10)."%<br>";
-	                    }
-	                }
-	            }
-	
-	
-	            if ($_SESSION['haven']['fleet'][$arr['ship_id']]>0)
-	                $val = $_SESSION['haven']['fleet'][$arr['ship_id']];
-	            else
-	                $val=0;
-	
-	            $arr['ship_speed']/=FLEET_FACTOR_F;
-	
-	*/	
-				
-				if (isset($_SESSION['haven']['fleet']['ships'][$arr['ship_id']]) && $_SESSION['haven']['fleet']['ships'][$arr['ship_id']]>0)
+				if (isset($ships[$arr['ship_id']]))
 				{
-					$val = $_SESSION['haven']['fleet']['ships'][$arr['ship_id']];			
+					$val = max(0,$ships[$arr['ship_id']]['count']);			
 				}
 				else
 				{
@@ -151,8 +101,8 @@
 	      		onclick=\"this.select();\" tabindex=\"".$tabulator."\" 
 	      		onkeyup=\"FormatNumber(this.id,this.value,".$arr['shiplist_count'].",'','');\"/>
 	      	<br/>
-	      	<a href=\"javascript:;\" onclick=\"document.getElementById('ship_count_".$arr['ship_id']."').value=".$arr['shiplist_count']."\">Alle</a> &nbsp; 
-	      	<a href=\"javascript:;\" onclick=\"document.getElementById('ship_count_".$arr['ship_id']."').value=0\">Keine</a>";
+	      	<a href=\"javascript:;\" onclick=\"document.getElementById('ship_count_".$arr['ship_id']."').value=".$arr['shiplist_count'].";document.getElementById('ship_count_".$arr['ship_id']."').select()\">Alle</a> &nbsp; 
+	      	<a href=\"javascript:;\" onclick=\"document.getElementById('ship_count_".$arr['ship_id']."').value=0;document.getElementById('ship_count_".$arr['ship_id']."').select()\">Keine</a>";
 		      $jsAllShips["ship_count_".$arr['ship_id']]=$arr['shiplist_count'];
 		      $launchable++;
 	      }
@@ -163,23 +113,28 @@
 	      echo "</td></tr>\n";
 	      $tabulator++;
 			}
-			infobox_end(1);
-
+			echo "<tr><td colspan=\"5\"></td>
+			<td class=\"tbldata\">";
+			
 			// Select all ships button			
-			echo "<input type=\"button\" value=\"Alle wählen\" onclick=\"";
+			echo "<a href=\"javascript:;\" onclick=\"";
 			foreach ($jsAllShips as $k => $v)
 			{
 				echo "document.getElementById('".$k."').value=".$v.";";
 			}
-			echo "\" /> &nbsp; ";
+			echo "\">Alle wählen</a>";			
+			echo "</td></tr>";
+			infobox_end(1);
+
+
 		
 			// Show buttons if possible
 			if ($_SESSION['haven']['fleets_start_possible']>0)
 			{
 				if ($launchable>0)
 				{
-					echo "<input type=\"button\" onclick=\"xajax_havenShowTarget(xajax.getFormValues('shipForm'))\" value=\"Weiter zur Zielauswahl &gt;&gt;&gt;\" title=\"Wenn du die Schiffe ausgew&auml;hlt hast, klicke hier um das Ziel auszuw&auml;hlen\" tabindex=\"".($tabulator+1)."\" />";
-					if (isset($_SESSION['haven']['fleet']) && $_SESSION['haven']['fleet']!=null)
+					echo "<input type=\"submit\" value=\"Weiter zur Zielauswahl &gt;&gt;&gt;\" title=\"Wenn du die Schiffe ausgew&auml;hlt hast, klicke hier um das Ziel auszuw&auml;hlen\" tabindex=\"".($tabulator+1)."\" />";
+					if (count($ships)>0)
 					{
 						echo " &nbsp; <input type=\"button\" onclick=\"xajax_havenReset()\" value=\"Reset\" />";
 					}
@@ -206,10 +161,13 @@
 		$response->assign("havenContentAction","innerHTML","");				
 		$response->assign("havenContentAction","style.display",'none');				
 
+		$response->script("document.forms[0].elements[0].select();");				
 	
 		ob_end_clean();
 	  return $response;	
 	}
+
+
 
 
 	/**
@@ -219,18 +177,24 @@
 	{
 		$response = new xajaxResponse();
 
+		// Get fleet object
+		$fleet = unserialize($_SESSION['haven']['fleetObj']);
+
+
 		// Do some checks
-		if (count($form)>0)
+		if (count($form)>0 || $fleet->getShipCount() > 0)
 		{
-			// Get fleet object
-			$fleet = unserialize($_SESSION['haven']['fleetObj']);
 		
 			// Add ships
-			foreach ($form['ship_count'] as $sid => $cnt)
+			if (isset($form['ship_count']))
 			{
-				if (intval($cnt)>0)
+				$fleet->resetShips();
+				foreach ($form['ship_count'] as $sid => $cnt)
 				{
-					$fleet->addShip($sid,$cnt);
+					if (intval($cnt)>0)
+					{
+						$fleet->addShip($sid,$cnt);
+					}
 				}
 			}
 			
@@ -252,8 +216,8 @@
 						<th colspan=\"5\">Schiffe</th>
 					</tr>";
 					echo "<tr>
-						<th>Typ</th>
 						<th>Anzahl</th>
+						<th>Typ</th>
 						<th>Piloten</th>
 						<th>Speed</th>
 						<th>Kosten / 100 AE</th>
@@ -261,8 +225,9 @@
 					$shipCount=0;
 					foreach ($fleet->getShips() as $sid => $sd)
 					{				
-						echo "<tr><td>".$sd['name']."</td>
-						<td>".$sd['count']."</td>
+						echo "<tr>
+						<td>".nf($sd['count'])."</td>
+						<td>".$sd['name']."</td>
 						<td>".nf($sd['pilots'])."</td>
 						<td>".round($fleet->getSpeed() / $sd['speed']*100)."%</td>
 						<td>".nf($sd['costs_per_ae'])." ".RES_FUEL."</td></tr>";
@@ -280,29 +245,28 @@
 					// Show Target form
 					//
 					ob_start();
-					echo "<form id=\"targetForm\">";
+					echo "<form id=\"targetForm\" onsubmit=\"xajax_havenShowAction(xajax.getFormValues('targetForm'));return false;\" >";
+					
 					echo "<table class=\"tb\">";
 					echo "<tr>
 						<th colspan=\"2\">Zielwahl</th>
 					</tr>";
 
-					if (isset($_SESSION['haven']['target']) && $_SESSION['haven']['target']>0)
+					if (isset($fleet->targetEntity))
 					{
-						$ent = Entity::createFactoryById($_SESSION['haven']['target']);
-						$ent->loadCoords();
-						$csx = $ent->sx; 
-						$csy = $ent->sy; 
-						$ccx = $ent->cx; 
-						$ccy = $ent->cy; 
-						$psp = $ent->pos; 
+						$csx = $fleet->targetEntity->sx(); 
+						$csy = $fleet->targetEntity->sy(); 
+						$ccx = $fleet->targetEntity->cx(); 
+						$ccy = $fleet->targetEntity->cy(); 
+						$psp = $fleet->targetEntity->pos(); 
 					}
 					else
 					{
-						$csx = $fleet->sourceEntity->sx;
-						$csy = $fleet->sourceEntity->sy;
-						$ccx = $fleet->sourceEntity->cx;
-						$ccy = $fleet->sourceEntity->cy;
-						$psp = $fleet->sourceEntity->pos;
+						$csx = $fleet->sourceEntity->sx();
+						$csy = $fleet->sourceEntity->sy();
+						$ccx = $fleet->sourceEntity->cx();
+						$ccy = $fleet->sourceEntity->cy();
+						$psp = $fleet->sourceEntity->pos();
 					}
 					
 					// Manuelle Auswahl
@@ -315,11 +279,12 @@
 												maxlength=\"1\" 
 												value=\"$csx\" 
 												title=\"Sektor X-Koordinate\" 
-												tabindex=\"20\"
+												tabindex=\"1\"
 												autocomplete=\"off\" 
 												onfocus=\"this.select()\" 
 												onclick=\"this.select()\" 
-												onkeyup=\"showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm'))\"
+												onkeydown=\"detectChangeRegister(this,'t1');\"
+												onkeyup=\"if (detectChangeTest(this,'t1')) { showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
 												onkeypress=\"return nurZahlen(event)\"
 					/>&nbsp;/&nbsp;";
 					echo "<input type=\"text\" 
@@ -329,11 +294,12 @@
 												maxlength=\"1\" 
 												value=\"$csy\" 
 												title=\"Sektor Y-Koordinate\" 
-												tabindex=\"21\"
+												tabindex=\"2\"
 												autocomplete=\"off\" 
 												onfocus=\"this.select()\" 
 												onclick=\"this.select()\" 
-												onkeyup=\"showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm'))\"
+												onkeydown=\"detectChangeRegister(this,'t2');\"
+												onkeyup=\"if (detectChangeTest(this,'t2')) { showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
 												onkeypress=\"return nurZahlen(event)\"
 					/>&nbsp;&nbsp;:&nbsp;&nbsp;";
 					echo "<input type=\"text\" 
@@ -343,11 +309,12 @@
 												maxlength=\"2\" 
 												value=\"$ccx\" 
 												title=\"Zelle X-Koordinate\" 
-												tabindex=\"22\"
+												tabindex=\"3\"
 												autocomplete=\"off\" 
 												onfocus=\"this.select()\" 
 												onclick=\"this.select()\" 
-												onkeyup=\"showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm'))\"
+												onkeydown=\"detectChangeRegister(this,'t3');\"
+												onkeyup=\"if (detectChangeTest(this,'t3')) { showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
 												onkeypress=\"return nurZahlen(event)\"
 					/>&nbsp;/&nbsp;";
 					echo "<input type=\"text\" 
@@ -356,11 +323,12 @@
 												size=\"2\" 
 												maxlength=\"2\" 
 												value=\"$ccy\" 
-												tabindex=\"23\"
+												tabindex=\"4\"
 												autocomplete=\"off\" 
 												onfocus=\"this.select()\" 
 												onclick=\"this.select()\" 
-												onkeyup=\"showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm'))\"
+												onkeydown=\"detectChangeRegister(this,'t4');\"
+												onkeyup=\"if (detectChangeTest(this,'t4')) { showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
 												onkeypress=\"return nurZahlen(event)\"
 					/>&nbsp;&nbsp;:&nbsp;&nbsp;";
 					echo "<input type=\"text\" 
@@ -370,11 +338,12 @@
 												maxlength=\"2\" 
 												value=\"$psp\" 
 												title=\"Position des Planeten im Sonnensystem\" 
-												tabindex=\"24\"
+												tabindex=\"5\"
 												autocomplete=\"off\" 
 												onfocus=\"this.select()\" 
 												onclick=\"this.select()\" 
-												onkeyup=\"showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm'))\"
+												onkeydown=\"detectChangeRegister(this,'t5');\"
+												onkeyup=\"if (detectChangeTest(this,'t5')) { showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
 												onkeypress=\"return nurZahlen(event)\"
 					/></td></tr>";
 					
@@ -385,7 +354,7 @@
 							echo "<select name=\"speed_percent\" 
 											id=\"duration_percent\" 
 											onchange=\"showLoader('duration');xajax_havenTargetInfo(xajax.getFormValues('targetForm'))\"
-											tabindex=\"25\"
+											tabindex=\"6\"
 							>\n";
 							for ($x=100;$x>0;$x-=1)
 							{
@@ -417,15 +386,22 @@
 					echo "<tr><td>Bemerkungen:</td>
 						<td id=\"comment\">-</td></tr>";
 					echo "</table><br/>";
-					echo "<input type=\"button\" onclick=\"xajax_havenShowShips()\" value=\"&lt;&lt; Zurück zur Schiffauswahl\" /> &nbsp; ";
-					echo "<input type=\"button\" onclick=\"xajax_havenShowAction(xajax.getFormValues('targetForm'))\" value=\"Weiter zur Aktionsauswahl &gt;&gt;&gt;\"  /> &nbsp; ";
-					echo "<input type=\"button\" onclick=\"xajax_havenReset()\" value=\"Reset\" />";
+					echo "<input tabindex=\"8\" type=\"button\" onclick=\"xajax_havenShowShips()\" value=\"&lt;&lt; Zurück zur Schiffauswahl\" /> &nbsp; ";
+					echo "<input tabindex=\"7\" type=\"submit\" value=\"Weiter zur Aktionsauswahl &gt;&gt;&gt;\"  /> &nbsp; ";
+					echo "<input tabindex=\"9\" type=\"button\" onclick=\"xajax_havenReset()\" value=\"Reset\" />";
 					echo "</form>";
 					
 					$response->assign("havenContentTarget","innerHTML",ob_get_contents());				
 					$response->assign("havenContentTarget","style.display",'');			
+					
+					$response->assign("havenContentAction","innerHTML","");				
+					$response->assign("havenContentAction","style.display",'none');				
+					
 					$response->script("document.getElementById('man_sx').focus();");
 					$response->script("xajax_havenTargetInfo(xajax.getFormValues('targetForm'))");
+					
+					
+					
 					ob_end_clean();				
 					
 				}
@@ -461,89 +437,135 @@
 		{
 			// Get fleet object
 			$fleet = unserialize($_SESSION['haven']['fleetObj']);
-	
-			//
-			// Show ships in fleet
-			//
-			ob_start();							
-			
-			echo "<table class=\"tb\">";
-			echo "<tr>
-				<th colspan=\"5\">Schiffe</th>
-			</tr>";
-			echo "<tr>
-				<th>Typ</th>
-				<th>Anzahl</th>
-				<th>Piloten</th>
-				<th>Speed</th>
-				<th>Kosten / 100 AE</th>
-			</tr>\n";	
-			$shipCount=0;
-			foreach ($fleet->getShips() as $sid => $sd)
-			{				
-				echo "<tr><td>".$sd['name']."</td>
-				<td>".$sd['count']."</td>
-				<td>".nf($sd['pilots'])."</td>
-				<td>".round($fleet->getSpeed() / $sd['speed']*100)."%</td>
-				<td>".nf($sd['costs_per_ae'])." ".RES_FUEL."</td></tr>";
-				$shipCount++;
-			}								
-			if ($shipCount>1)
+
+			$res = dbquery("
+			SELECT
+				entities.id,
+				entities.code
+			FROM
+				entities
+			INNER JOIN	
+				cells
+			ON
+				entities.cell_id=cells.id
+				AND cells.sx=".$form['man_sx']."
+				AND cells.sy=".$form['man_sy']."
+				AND cells.cx=".$form['man_cx']."
+				AND cells.cy=".$form['man_cy']."
+				AND entities.pos=".$form['man_p']."
+			");
+			if (mysql_num_rows($res)>0)
 			{
-				echo "<tr><td colspan=\"5\">Schnellere Schiffe nehmen im Flottenverband automatisch die Geschwindigkeit des langsamsten Schiffes an, sie brauchen daf&uuml;r aber auch entsprechend weniger Treibstoff!</td></tr>";
-			}
-			echo "</table><br/>";					
-			$response->assign("havenContentShips","innerHTML",ob_get_contents());				
-			ob_end_clean();		
-		
-		
-			ob_start();
-			echo "<table class=\"tb\">";
-			echo "<tr>
-				<th colspan=\"2\">Zielinfos</th>
-			</tr>";
-			echo "<tr><td width=\"25%\"><b>Ziel-Informationen:</b></td>
-				<td class=\"tbldata\" id=\"targetinfo\" style=\"padding:16px 2px 2px 60px;color:#fff;height:47px;background:#000 url('".$fleet->targetEntity->imagePath()."') no-repeat 3px 3px;\">
-					".$fleet->targetEntity."
-				</td></tr>";
-			echo "<tr>
-				<td class=\"tbltitle\" width=\"25%\">Speedfaktor:</td>
-				<td class=\"tbldata\" width=\"75%\" align=\"left\">";
-			echo $fleet->getSpeedPercent();
-			echo "%</td></tr>";
-			echo "<tr><td class=\"tbltitle\">Entfernung:</td>
-				<td id=\"distance\">".$fleet->getDistance()." AE</td></tr>";
-			echo "<tr><td class=\"tbltitle\">Dauer:</td>
-				<td><span id=\"duration\" style=\"font-weight:bold;\">".tf($fleet->getDuration())."</span></td></tr>";
-			echo "<tr><td class=\"tbltitle\">Treibstoff:</td>
-				<td><span id=\"costs\" style=\"font-weight:bold;\">".nf($fleet->getCosts())." t ".RES_FUEL."</span></td></tr>";
-			echo "</table><br/>";			
-			
-			$response->assign("havenContentTarget","innerHTML",ob_get_contents());				
-			$response->assign("havenContentTarget","style.display",'');			
-			ob_end_clean();
-			
+				$arr=mysql_fetch_row($res);
+				$ent = Entity::createFactory($arr[1],$arr[0]);
+				
+				$fleet->setTarget($ent);
+				$fleet->setSpeedPercent($form['speed_percent']);
+							
+				if ($fleet->sourceEntity->resFuel() >= $fleet->getCosts())
+				{							
+
+					//
+					// Target infos
+					//	
+					ob_start();
+					echo "<table class=\"tb\">";
+					echo "<tr>
+						<th colspan=\"2\">Zielinfos</th>
+					</tr>";
+					echo "<tr><td width=\"25%\"><b>Ziel-Informationen:</b></td>
+						<td class=\"tbldata\" id=\"targetinfo\" style=\"padding:16px 2px 2px 60px;color:#fff;height:47px;background:#000 url('".$ent->imagePath()."') no-repeat 3px 3px;\">
+							".$ent." (".$ent->entityCodeString().", Besitzer: ".$ent->owner().")
+						</td></tr>";
+					echo "<tr>
+						<td class=\"tbltitle\" width=\"25%\">Speedfaktor:</td>
+						<td class=\"tbldata\" width=\"75%\" align=\"left\">";
+					echo $fleet->getSpeedPercent();
+					echo "%</td></tr>";
+					echo "<tr><td class=\"tbltitle\">Entfernung:</td>
+						<td id=\"distance\">".nf($fleet->getDistance())." AE</td></tr>";
+					echo "<tr><td class=\"tbltitle\">Dauer:</td>
+						<td><span id=\"duration\" style=\"font-weight:bold;\">".tf($fleet->getDuration())."</span></td></tr>";
+					echo "<tr><td class=\"tbltitle\">Treibstoff:</td>
+						<td><span id=\"costs\" style=\"font-weight:bold;\">".nf($fleet->getCosts())." t ".RES_FUEL."</span></td></tr>";
+					echo "</table><br/>";			
+					
+					$response->assign("havenContentTarget","innerHTML",ob_get_contents());				
+					$response->assign("havenContentTarget","style.display",'');			
+					ob_end_clean();
+					
+					//
+					// Action chooser
+					//						
+					ob_start();
+					echo "<form id=\"actionForm\">";
+					echo "<table class=\"tb\">";
+					echo "<tr>
+						<th>Aktionswahl</th>
+						<th colspan=\"2\">Ladung</th>
+					</tr>";
+					echo "<tr><td rowspan=\"6\">";
+					$actions = FleetAction::getAll();
+					
+					$actionsAvailable = 0;
+					foreach ($actions as $ai)
+					{
+						// Source and target the same
+						if (
+						($fleet->sourceEntity->id() == $fleet->targetEntity->id() && $ai->allowSourceEntity()) || 
+						($fleet->sourceEntity->ownerId() == $fleet->targetEntity->ownerId() && $fleet->sourceEntity->id() != $fleet->targetEntity->id() && $ai->allowOwnEntities()) ||
+						($fleet->sourceEntity->ownerId() != $fleet->targetEntity->ownerId() && $fleet->targetEntity->ownerId()>0 && $ai->allowPlayerEntities()) ||
+						($fleet->targetEntity->ownerId() == 0 && $ai->allowNpcEntities()) 
+						)
+						{
+							if (in_array($ai->code(),$fleet->targetEntity->allowedFleetActions()))
+							{
+								echo "<input type=\"radio\" name=\"fleet_action\" value=\"".$ai->code()."\"";
+								if ($actionsAvailable == 0)
+									echo " checked=\"checked\"";
+								echo " /> 
+								<span style=\"font-weight:bold;color:".FleetAction::$attitudeColor[$ai->attitude()]."\">".$ai->name()."</span> ".$ai->desc()."<br/>";
+								$actionsAvailable++;
+							}
+						}
 						
-			ob_start();
-			echo "<form id=\"actionForm\">";
-			echo "<table class=\"tb\">";
-			echo "<tr>
-				<th colspan=\"2\">Aktionswahl</th>
-			</tr>";
+						
+					}
+					if ($actionsAvailable==0)
+					{
+						echo "<i>Keine Aktion auf dieses Ziel verfügbar!</i>";
+					}
+					
+					echo "</td>
+					<td>".RES_METAL."</td><td><input type=\"text\" name=\"res1\" value=\"0\" size=\"5\"/></td></tr>
+					<tr><td>".RES_CRYSTAL."</td><td><input type=\"text\" name=\"res2\" value=\"0\" size=\"5\"/></td></tr>
+					<tr><td>".RES_PLASTIC."</td><td><input type=\"text\" name=\"res3\" value=\"0\" size=\"5\"/></td></tr>
+					<tr><td>".RES_FUEL."</td><td><input type=\"text\" name=\"res4\" value=\"0\" size=\"5\"/></td></tr>
+					<tr><td>".RES_FOOD."</td><td><input type=\"text\" name=\"res5\" value=\"0\" size=\"5\"/></td></tr>
+					<tr><td>Passagiere</td><td><input type=\"text\" name=\"res6\" value=\"0\" size=\"5\"/></td></tr>					
+					</table><br/>";                                                                                   
+					
+					
+					echo "<input type=\"button\" onclick=\"xajax_havenShowTarget(null)\" value=\"&lt;&lt; Zurück zur Zielwahl\" /> &nbsp; ";
+					//echo "<input type=\"button\" onclick=\"xajax_havenShowLaunch(xajax.getFormValues('actionForm'))\" value=\"Start! &gt;&gt;&gt;\"  /> &nbsp; ";
+					echo "<input type=\"button\" onclick=\"xajax_havenReset()\" value=\"Reset\" />";
+					echo "</form>";			
+					
+					$response->assign("havenContentAction","innerHTML",ob_get_contents());				
+					$response->assign("havenContentAction","style.display",'');			
 		
-			
-			echo "</table><br/>";
-			
-			echo "<input type=\"button\" onclick=\"xajax_havenShowTarget()\" value=\"&lt;&lt; Zurück zur Zielwahl\" /> &nbsp; ";
-			echo "<input type=\"button\" onclick=\"xajax_havenShowLaunch(xajax.getFormValues('actionForm'))\" value=\"Start! &gt;&gt;&gt;\"  /> &nbsp; ";
-			echo "<input type=\"button\" onclick=\"xajax_havenReset()\" value=\"Reset\" />";
-			echo "</form>";			
-			
-			$response->assign("havenContentAction","innerHTML",ob_get_contents());				
-			$response->assign("havenContentAction","style.display",'');			
-
-
-			ob_end_clean();
+		
+					ob_end_clean();
+				}
+				else
+				{
+					$response->alert("Zuwenig Treibstoff! ".nf($fleet->sourceEntity->resFuel())." t ".RES_FUEL." vorhanden, ".nf($fleet->getCosts())." t benötigt.");				
+				}				
+			}
+			else
+			{
+				$response->alert("Ungültiges Ziel!");				
+			}
 		}
 		else
 		{
@@ -557,9 +579,7 @@
 	function havenReset()
 	{
 		$response = new xajaxResponse();
-		$_SESSION['haven']['fleet']=null;
-
-		$response->script("xajax_havenShowShips()");
+		$response->script("document.location='?page=haven'");
 	  return $response;			
 	}
 	

@@ -1,4 +1,22 @@
 
+		
+	var cdarray = new Object();
+
+	function detectChangeRegister(elem,keyname)
+	{
+		cdarray[keyname] = elem.value;
+	}
+	
+	function detectChangeTest(elem,keyname)
+	{
+		if (cdarray[keyname] != elem.value)
+		{
+			cdarray[keyname] = elem.value;
+			return true;
+		}
+		return false;
+	}
+
 	function showLoader(elem)
 	{
 		document.getElementById(elem).innerHTML='<div style=\"text-align:center;padding:10px;\"><img src="images/loading.gif" /></div>';

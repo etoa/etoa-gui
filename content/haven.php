@@ -191,6 +191,63 @@
 //				$_SESSION['haven']['target']=$_GET['target'];
 //			}
 
+
+	/*
+	            //Geschwindigkeitsbohni der entsprechenden Antriebstechnologien laden und zusammenrechnen
+	            $vres=dbquery("
+	            SELECT
+	                techlist.techlist_current_level,
+	                technologies.tech_name,
+	                ship_requirements.req_req_tech_level
+	            FROM
+	                ".$db_table['techlist'].",
+	                ".$db_table['ship_requirements'].",
+	                ".$db_table['technologies']."
+	            WHERE
+	                ship_requirements.req_ship_id=".$arr['ship_id']."
+	                AND technologies.tech_type_id='".TECH_SPEED_CAT."'
+	                AND ship_requirements.req_req_tech_id=technologies.tech_id
+	                AND technologies.tech_id=techlist.techlist_tech_id
+	                AND techlist.techlist_tech_id=ship_requirements.req_req_tech_id
+	                AND techlist.techlist_user_id=".$s['user']['id']."
+	            GROUP BY
+	                ship_requirements.req_id;");
+	            if ($rarr['race_f_fleettime']!=1)
+	                $speedtechstring="Rasse: ".((1-$rarr['race_f_fleettime'])*100)."%<br>";
+	            else
+	                $speedtechstring="";
+	
+	            $timefactor=$racefactor;
+	            if (mysql_num_rows($vres)>0)
+	            {
+	                while ($varr=mysql_fetch_array($vres))
+	                {
+	                    if($varr['techlist_current_level']-$varr['req_req_tech_level']<=0)
+	                    {
+	                        $timefactor+=0;
+	                         $speedtechstring.=$varr['tech_name']." ".$varr['techlist_current_level'].": +0%<br>";
+	                    }
+	                    else
+	                    {
+	                        $timefactor+=($varr['techlist_current_level']-$varr['req_req_tech_level'])*0.1;
+	                        $speedtechstring.=$varr['tech_name']." ".$varr['techlist_current_level'].": +".(($varr['techlist_current_level']-$varr['req_req_tech_level'])*10)."%<br>";
+	                    }
+	                }
+	            }
+	
+	
+	            if ($_SESSION['haven']['fleet'][$arr['ship_id']]>0)
+	                $val = $_SESSION['haven']['fleet'][$arr['ship_id']];
+	            else
+	                $val=0;
+	
+	            $arr['ship_speed']/=FLEET_FACTOR_F;
+	
+	*/	
+
+
+
+
 			// Fleet object
 			$fleet = new Fleet();
 			$fleet->setSource($cp);

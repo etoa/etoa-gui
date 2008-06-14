@@ -9,7 +9,6 @@
 	{
     protected $isVisible;
     
-    
 		/**
 		* Private constructor
 		* Prevents usage as object
@@ -74,6 +73,8 @@
     {
       return $this->isVisible; 
     }    
+    
+    public abstract function allowedFleetActions();
     
 		function sx() 
 		{ 

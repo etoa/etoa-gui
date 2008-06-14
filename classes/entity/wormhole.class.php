@@ -35,6 +35,11 @@
       $this->isVisible = true;
 		}
 
+    public function allowedFleetActions()
+    {
+    	return array("flight");
+    }
+
 		/**
 		* Returns id
 		*/                        

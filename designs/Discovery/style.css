@@ -61,8 +61,9 @@ table	{
 /* Wenn sich der cursor in einem text feld befindet... */
 /* Internet Explorer unterstützt diese funktion nicht!!!*/
 input:focus,textarea:focus, select:focus {
-  border: 1px #ffffff solid;
-  background:#000000;
+ 	border:1px solid #ff0;
+  background:#002;
+  color:#fff;
 }
 
 /*Definiert die Buttons bei "bauhof" oder "forschung", hintergrund sollte der selbe wie tbldata sein*/
@@ -78,6 +79,13 @@ input[type="submit"],input[type="reset"],input[type="button"]	{
 	background:#222255 url('images/button1.jpg');
 	color:#fff;
 	font-weight:bold;
+}
+
+input[type="submit"]:focus,input[type="reset"]:focus,input[type="button"]:focus	{
+	background:#222255 url('images/button1.jpg');
+	color:#fff;
+	font-weight:bold;
+	border:1px solid #ff0;
 }
 
 /* Definiert die verschieden button typen im hover zustand */

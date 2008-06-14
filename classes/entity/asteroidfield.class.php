@@ -29,6 +29,12 @@
       $this->isVisible = true;
 		}
 
+    public function allowedFleetActions()
+    {
+    	return array("collectmetal","analyze","flight");
+    }
+
+
 		/**
 		* Returns id
 		*/                        

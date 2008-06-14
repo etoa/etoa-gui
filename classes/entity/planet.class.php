@@ -101,6 +101,9 @@
 				$this->typeId = $arr['type_id'];
 				$this->typeName = $arr['type_name'];
 
+				$this->habitable = (boolean)$arr['type_habitable'];
+				$this->collectGas = (boolean)$arr['type_collect_gas'];
+
 				$this->typeMetal=$arr['type_f_metal'];
 				$this->typeCrystal=$arr['type_f_crystal'];
 				$this->typePlastic=$arr['type_f_plastic'];
@@ -206,6 +209,22 @@
 
 			}
 		}
+
+    public function allowedFleetActions()
+    {
+    	$arr = array("transport","fetch","position","attack","spy");
+    	if ($this->ownerId()==0 && $this->habitable)
+    		$arr[] = "colonize";
+    	if ($this->debrisMetal+$this->debrisCrystal+$this->debrisPlastic > 0)	
+    		$arr[] = "collectdebris";
+    	if ($this->collectGas)	
+    	{
+    		$arr[] = "collectfuel";
+    		$arr[] = "analyze";
+    	}
+    	$arr[] = "flight";
+    	return $arr;
+    }
 
 		function id()
 		{
@@ -532,6 +551,18 @@
 					id='".$this->id."';
 			");
 		}		
+	
+		//
+		// Getters
+		//
+		function resMetal() { return $this->resMetal; }
+		function resCrystal() { return $this->resCrystal; }
+		function resPlastic() { return $this->resPlastic; }
+		function resFuel() { return $this->resFuel; }
+		function resFood() { return $this->resFood; }
+		function usePower() { return $this->usePower; }
+		
+		
 	
 	}
 ?>

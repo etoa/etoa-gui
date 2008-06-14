@@ -7,6 +7,30 @@
 	abstract class FleetAction
 	{
 		//
+		// Static variables
+		//
+
+		// Update this list when adding a new class. This makes the getList() faster
+		static private $sublist = array(
+		"transport",
+		"fetch",
+		"collectdebris",
+		"position",
+		"attack",
+		"spy",
+		"colonize",
+		"collectmetal",
+		"collectcrystal",
+		"collectfuel",
+		"analyze",
+		"explore",
+		"flight"
+		);
+
+		// Colors for different attitudes
+		static public $attitudeColor = array("#ff0","#0f0","#f90","#f00");
+
+		//
 		// Class variables
 		//
 		
@@ -14,17 +38,12 @@
 		protected $name;	// Name 
 		protected $desc; 	// Short description of the action
 		
-		protected $attitude;	// 0: Neutral, 1: Peacefull, -1: Hostile
+		protected $attitude;	// 0: Neutral, 1: Peacefull, 2: A bit hostile 3: Very hostile
 
-		protected $targetPlayerEntities;
-		protected $targetOwnEntities;
-		protected $targetNpcEntities;
-		
-		// Update this list when adding a new class. This makes the getList() faster
-		static private $sublist = array(
-		"attack",
-		"flight"
-		);
+		protected $allowPlayerEntities;
+		protected $allowOwnEntities;
+		protected $allowNpcEntities;
+		protected $allowSourceEntity;
 		
 		//
 		// Abstract methods
@@ -45,9 +64,11 @@
 		
 		function attitude() { return $this->attitude; }
 		
-		function targetPlayerEntities() { return $this->targetPlayerEntities; }
-		function targetOwnEntities() { return $this->targetOwnEntities; }
-		function targetNpcEntities() { return $this->targetNpcEntities; }
+		function allowPlayerEntities() { return $this->allowPlayerEntities; }
+		function allowOwnEntities() { return $this->allowOwnEntities; }
+		function allowNpcEntities() { return $this->allowNpcEntities; }
+		function allowSourceEntity() { return $this->allowSourceEntity; }
+
 
 		//
 		// Other general methods
@@ -57,8 +78,12 @@
 		{
 			$className = "fleetAction".ucfirst($code);
 			$classFile = CLASS_ROOT."/fleetaction/".strtolower($className).".class.php";
-			include_once($classFile);
-			return new $className();			
+			if (file_exists($classFile))
+			{
+				include_once($classFile);
+				return new $className();			
+			}
+			return false;
 		}
 		
 		static function getAll()
@@ -66,10 +91,7 @@
 			$arr = array();
 			foreach (self::$sublist as $i)
 			{
-				$className = "fleetAction".ucfirst($i);
-				$classFile = CLASS_ROOT."/fleetaction/".strtolower($className).".class.php";
-				include_once($classFile);
-				$arr[] = new $className();		
+				$arr[] = self::createFactory($i);
 			}
 			return $arr;			
 		}

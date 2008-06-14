@@ -67,6 +67,11 @@
 			}
 		}
 
+    public function allowedFleetActions()
+    {
+    	return array("flight");
+    }
+
 		/**
 		* Returns validity
 		*/
