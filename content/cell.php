@@ -103,16 +103,24 @@
 				$addstyle.="\" ";
 				
 				echo "<tr>
-					<td class=\"tbldata\" style=\"width:40px;background:#000;\"><img src=\"".$ent->imagePath()."\" alt=\"icon\" /></td>
+					<td class=\"tbldata\" style=\"width:40px;background:#000;\">
+						<a href=\"?page=entity&amp;id=".$ent->id()."\">
+							<img src=\"".$ent->imagePath()."\" alt=\"icon\" />
+						</a>
+					</td>
 					<td class=\"tbldata\" style=\"text-align:center;vertical-align:middle;background:#000\"><b>".$ent->pos()."</b></td>
 					<td class=\"tbldata\" $addstyle>".$ent->type();
 					if ($ent->entityCode()=='w')
 					{
 						$tent = new Wormhole($ent->targetId());
 						echo "<br/>Ziel: <a href=\"?page=cell&amp;id=".$tent->cellId()."\">".$tent."</a>";
-					}					
+					}				
+					elseif ($ent->entityCode()=='p' && $ent->debrisField)					
+					{				
+						echo "<br/><span style=\"color:#ccc;font-weight:bold\" ".tm("Resourcen",RES_ICON_METAL.nf($ent->debrisMetal)." ".RES_METAL."<br style=\"clear:both\" />".RES_ICON_CRYSTAL.nf($ent->debrisCrystal)." ".RES_CRYSTAL."<br style=\"clear:both\" />".RES_ICON_PLASTIC.nf($ent->debrisPlastic)." ".RES_PLASTIC."<br style=\"clear:both\" />").">Trümmerfeld</span> ";
+					}	
 					echo "</td>
-					<td class=\"tbldata\" $addstyle>".$ent->name()."</td>
+					<td class=\"tbldata\" $addstyle><a href=\"?page=entity&amp;id=".$ent->id()."\">".$ent->name()."</a></td>
 					<td class=\"tbldata\" $addstyle>";
 					if ($ent->ownerId()>0)
 						echo "<a href=\"?page=userinfo&amp;id=".$ent->ownerId()."\">".$ent->owner()."</a>";
@@ -136,8 +144,6 @@
 							$hasPlanetInSystem = true;
 						}
 						
-						echo "<a href=\"?page=entity&amp;id=".$ent->id()."\" title=\"Planeteninfo\">Info</a> ";
-						
 						// Nachrichten-Link
 						if ($ent->ownerId()>0 && $cu->id()!=$ent->ownerId())
 						{
@@ -152,7 +158,7 @@
 							{
 								//echo "&nbsp;<a href=\"javascript:;\" onclick=\"xajax_launchSypProbe(".$arr['planet_id'].",".$c->id.",".$c->res->fuel.");\" title=\"Ausspionieren\">Spionage</a>";
 								echo "<a href=\"?page=missiles&amp;target=".$ent->id()."\" title=\"Raketenangriff starten\">Rakete</a> ";
-								echo "<a href=\"?page=crypto&amp;target=".$ent->id()."\" title=\"Flottenbewegungen analysieren\">Analyse</a> ";					
+								echo "<a href=\"?page=crypto&amp;target=".$ent->id()."\" title=\"Flottenbewegungen analysieren\">Kryptoscan</a> ";					
 							}
 						}
 					}

@@ -56,7 +56,7 @@
 		{
 			infobox_start("Planetendaten",1);
 			echo "<tr>
-				<td width=\"320\" class=\"tbldata\" style=\"background:#000;vertical-align:middle\" rowspan=\"7\">
+				<td width=\"320\" class=\"tbldata\" style=\"background:#000 url('".IMAGE_PATH."/backgrounds/bg".mt_rand(1,PLANET_BACKGROUND_COUNT).".jpg');;vertical-align:middle\" rowspan=\"".($ent->debrisField ? 8 : 7)."\">
 					<img src=\"".$ent->imagePath("b")."\" alt=\"planet\" width=\"310\" height=\"310\"/>
 				</td>";
 			echo "<td width=\"100\" class=\"tbltitle\">Besitzer:</td>
@@ -107,6 +107,16 @@
 			echo "<tr>
 				<td width=\"100\" class=\"tbltitle\">Beschreibung:</td>
 				<td class=\"tbldata\">".($ent->desc!="" ? $ent->desc : '-')."</td></tr>";
+			if ($ent->debrisField)
+			{
+				echo '<tr>
+				<th class="tbltitle">Trümmerfeld:</th><td class="tbldata">
+				'.RES_ICON_METAL."".nf($ent->debrisMetal).'<br style="clear:both;" /> 
+				'.RES_ICON_CRYSTAL."".nf($ent->debrisCrystal).'<br style="clear:both;" /> 
+				'.RES_ICON_PLASTIC."".nf($ent->debrisPlastic).'<br style="clear:both;" /> 
+				</td></tr>';
+			}				
+				
 			infobox_end(1);
 		}
 		else

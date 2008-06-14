@@ -537,12 +537,12 @@
 					}
 					
 					echo "</td>
-					<td>".RES_METAL."</td><td><input type=\"text\" name=\"res1\" value=\"0\" size=\"5\"/></td></tr>
-					<tr><td>".RES_CRYSTAL."</td><td><input type=\"text\" name=\"res2\" value=\"0\" size=\"5\"/></td></tr>
-					<tr><td>".RES_PLASTIC."</td><td><input type=\"text\" name=\"res3\" value=\"0\" size=\"5\"/></td></tr>
-					<tr><td>".RES_FUEL."</td><td><input type=\"text\" name=\"res4\" value=\"0\" size=\"5\"/></td></tr>
-					<tr><td>".RES_FOOD."</td><td><input type=\"text\" name=\"res5\" value=\"0\" size=\"5\"/></td></tr>
-					<tr><td>Passagiere</td><td><input type=\"text\" name=\"res6\" value=\"0\" size=\"5\"/></td></tr>					
+					<td>".RES_ICON_METAL."".RES_METAL."</td><td><input type=\"text\" name=\"res1\" value=\"0\" size=\"5\"/></td></tr>
+					<tr><td>".RES_ICON_CRYSTAL."".RES_CRYSTAL."</td><td><input type=\"text\" name=\"res2\" value=\"0\" size=\"5\"/></td></tr>
+					<tr><td>".RES_ICON_PLASTIC."".RES_PLASTIC."</td><td><input type=\"text\" name=\"res3\" value=\"0\" size=\"5\"/></td></tr>
+					<tr><td>".RES_ICON_FUEL."".RES_FUEL."</td><td><input type=\"text\" name=\"res4\" value=\"0\" size=\"5\"/></td></tr>
+					<tr><td>".RES_ICON_FOOD."".RES_FOOD."</td><td><input type=\"text\" name=\"res5\" value=\"0\" size=\"5\"/></td></tr>
+					<tr><td>".RES_ICON_PEOPLE."Passagiere</td><td><input type=\"text\" name=\"res6\" value=\"0\" size=\"5\"/></td></tr>					
 					</table><br/>";                                                                                   
 					
 					

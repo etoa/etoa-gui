@@ -225,14 +225,12 @@
 				}
 			}
 	
-			$debris = $cp->debrisMetal > 0 || $cp->debrisCrystal > 0 || $cp->debrisPlastic > 0 ? true : false;
-
 		 	echo "<h1>&Uuml;bersicht &uuml;ber den Planeten ".$cp->name."</h1>";
 			$cp->resBox();
 
 			echo "<table class=\"tbl\">";
 			echo "<tr>
-				<td style=\"width:330px;background:#000;\" rowspan=\"".($debris ? 11 : 10)."\">
+				<td style=\"width:330px;background:#000 url('".IMAGE_PATH."/backgrounds/bg".mt_rand(1,PLANET_BACKGROUND_COUNT).".jpg');\" rowspan=\"".($cp->debrisField ? 11 : 10)."\">
 				<img src=\"".IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$cp->image.".gif\" alt=\"Planet\" style=\"width:310px;height:310px\"/>
 			</td>";
 			echo "<td class=\"tbltitle\">Kennung:</td><td class=\"tbldata\">
@@ -297,7 +295,7 @@
 					".($cp->desc!='' ? stripslashes($cp->desc) : '-')."
 				</td>
 			</tr>";
-			if ($debris)
+			if ($cp->debrisField)
 			{
 				echo '<tr>
 				<th class="tbltitle">Trümmerfeld:</th><td class="tbldata">

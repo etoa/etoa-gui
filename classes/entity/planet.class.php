@@ -142,6 +142,11 @@
 				$this->debrisCrystal = $arr['planet_wf_crystal'];
 				$this->debrisPlastic = $arr['planet_wf_plastic'];
 
+				if ($this->debrisMetal+$this->debrisCrystal+$this->debrisPlastic > 0)
+					$this->debrisField = true;
+				else
+					$this->debrisField = false;
+
 				$this->fields=$arr['planet_fields'];
 				$this->fields_extra=$arr['planet_fields_extra'];
 				$this->fields_used=$arr['planet_fields_used'];
@@ -215,7 +220,7 @@
     	$arr = array("transport","fetch","position","attack","spy");
     	if ($this->ownerId()==0 && $this->habitable)
     		$arr[] = "colonize";
-    	if ($this->debrisMetal+$this->debrisCrystal+$this->debrisPlastic > 0)	
+    	if ($this->debrisField)	
     		$arr[] = "collectdebris";
     	if ($this->collectGas)	
     	{
