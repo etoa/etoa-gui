@@ -83,9 +83,9 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 				if ($arr['alliance_rank_current']==$arr['alliance_rank_last'])
 					$out.=  "<img src=\"images/stats/stat_same.gif\" alt=\"same\" width=\"21\" height=\"9\" />";
 				elseif ($arr['alliance_rank_current']<$arr['alliance_rank_last'])
-					$out.=  "<img src=\"images/stats/stat_up.gif\" alt=\"up\" width=\"9\" height=\"12\" />";
+					$out.=  "<img src=\"images/stats/stat_down.gif\" alt=\"up\" width=\"9\" height=\"12\" />";
 				elseif ($arr['alliance_rank_current']>$arr['alliance_rank_last'])
-					$out.=  "<img src=\"images/stats/stat_down.gif\" alt=\"down\" width=\"9\" height=\"11\" />";
+					$out.=  "<img src=\"images/stats/stat_up.gif\" alt=\"down\" width=\"9\" height=\"11\" />";
 				$out.= "<td class=\"tbldata\" $style>".(text2html($arr['alliance_tag']))."</td>";
 				$out.= "<td class=\"tbldata\" $style>".text2html($arr['alliance_name'])."</td>";
 				$out.= "<td class=\"tbldata\" $style>".nf2($arr['upoints'])."</td>";
@@ -159,7 +159,7 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 			$res=dbquery("
 			SELECT 
 				r.diplomacy_rating,
-				user_id,
+				user_id AS id,
 				user_nick,
 				race_name,
 				alliance_tag		
@@ -225,7 +225,7 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 				r.battles_won,
 				r.battles_lost,
 				r.battle_rating,
-				user_id,
+				user_id AS id,
 				user_nick,
 				race_name,
 				alliance_tag		
@@ -296,7 +296,7 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 				r.trades_sell,
 				r.trades_buy,
 				r.trade_rating,
-				user_id,
+				user_id AS id,
 				user_nick,
 				race_name,
 				alliance_tag		
@@ -634,9 +634,9 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0)
 						$out.= tm("Punkteverlauf","<div><img src=\"misc/stats.image.php?user=".$arr['id']."\" alt=\"Diagramm\" style=\"width:600px;height:400px;background:#335 url(images/loading335.gif) no-repeat 300px 200px;\" /></div>");
 					$out.= ">".nf($arr['rank'])." ";
 					if ($arr['shift']==2)
-						$out.= "<img src=\"images/stats/stat_up.gif\" alt=\"down\" width=\"9\" height=\"12\" />";
+						$out.= "<img src=\"images/stats/stat_down.gif\" alt=\"down\" width=\"9\" height=\"12\" />";
 					elseif ($arr['shift']==1)
-						$out.= "<img src=\"images/stats/stat_down.gif\" alt=\"up\" width=\"9\" height=\"11\" />";
+						$out.= "<img src=\"images/stats/stat_up.gif\" alt=\"up\" width=\"9\" height=\"11\" />";
 					else
 						$out.= "<img src=\"images/stats/stat_same.gif\" alt=\"same\" width=\"21\" height=\"9\" />";
 					$out.= "</td>";
