@@ -181,7 +181,7 @@
 		if (isset($str_next)) echo $str_next;
 	echo "</tr>";
 	infobox_end(1);
-	echo "<input type=\"button\" value=\"Zur Raumkarte\" onclick=\"document.location='?page=space'\" /> &nbsp; ";
+	echo "<input type=\"button\" value=\"Zur Raumkarte\" onclick=\"document.location='?page=map'\" /> &nbsp; ";
 	if ($ent)
 		echo "<input type=\"button\" value=\"Zur Systemkarte\" onclick=\"document.location='?page=cell&amp;id=".$ent->cellId()."'\" />";			
 	echo "</form>
