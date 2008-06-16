@@ -5,6 +5,8 @@
 		private $setup;
 		private $valid;
 		
+		private $maskMatrix;
+		
 		function User($id)
 		{
 			$this->valid = false;
@@ -120,6 +122,16 @@
         $this->havenships_buttons=$arr['user_havenships_buttons'];
 				 
 				$this->valid=true;
+				
+				$this->maskMatrix = array();
+				$mask = "abcabcabc";
+				for ($x=0; $x < strlen($a);$x++)
+				{
+					$bm = new Bitmask;
+					$bm->reverse_mask(''.ord(substr($mask,$x,1)).'');
+					$this->maskMatrix[$x] = $bm;
+				}				
+				
 			}
 		}
 		
@@ -174,6 +186,46 @@
 	    $this->setup=true;					
 		}
 
+		function loadDiscoveryMask()
+		{
+			$res = dbquery("
+			SELECT
+				discoverymask
+			FROM				
+				users
+			WHERE
+				user_id=".$this->id()."
+			");
+			$mask = '';
+			$arr = mysql_fetch_row($res);
+			if ($arr[0]=='')
+			{
+				for ($x=1;$x<=30;$x++)
+				{
+					for ($y=1;$y<=30;$y++)
+					{
+						$mask.= '0';
+					}
+				}
+			}
+			else
+			{
+				$mask=$arr[0];
+			}			
+			return $mask;
+		}
+
+		function saveDiscoveryMask(&$mask)
+		{
+			dbquery("
+			UPDATE
+				users
+			SET
+				discoverymask='".$mask."'
+			WHERE
+				user_id=".$this->id()."
+			");
+		}
 		
 	}
 

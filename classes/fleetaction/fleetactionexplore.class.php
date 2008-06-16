@@ -6,7 +6,7 @@
 		function FleetActionExplore()
 		{
 			$this->code = "explore";
-			$this->name = "Erforschen";
+			$this->name = "Erkunden";
 			$this->desc = "Die unbekannten Weiten des Raumes erkunden";
 			
 			$this->attitude = 0;

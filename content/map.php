@@ -54,6 +54,10 @@
 	$cell_width=$cfg->param1('space_cell_size');
 	$cell_height=$cfg->param2('space_cell_size');
 
+
+	$mask = $cu->loadDiscoveryMask();
+
+
 	$table_width = $cx_num * $cell_width;
 	$table_height = $cx_num * $cell_height;
 	$img_width = $cell_width;
@@ -223,30 +227,53 @@
 			for ($x=0;$x<$cy_num;$x++)
 			{
 				$xcoords = $x+1;				
+
+				$ent = Entity::createFactory($cells[$xcoords][$ycoords]['code'],$cells[$xcoords][$ycoords]['eid']);
+				$cell = new Cell($cells[$xcoords][$ycoords]['cid']);
+
+
 				if ($cp->id()==$cells[$xcoords][$ycoords]['eid'])
 				{
 					echo "<td class=\"spaceCellSelected\" onmouseover=\"counter_left_$ycoords.src='$counter_left_high$ycoords.gif';counter_bottom_$xcoords.src='$counter_bottom_high$xcoords.gif';\" onmouseout=\"counter_left_$ycoords.src='$counter_left$ycoords.gif';counter_bottom_$xcoords.src='$counter_bottom$xcoords.gif';\">";
 				}
 				elseif (in_array($cells[$xcoords][$ycoords]['cid'],$user_solsys_ids) && $cells[$xcoords][$ycoords]['eid']!=$cp->id())
 				{
+					if (!$cell->discovered($mask))
+					{
+						$cell->setDiscovered($mask);
+						$maskchanged=true;
+					}
 					echo "<td class=\"spaceCellUser\" onmouseover=\"counter_left_$ycoords.src='$counter_left_high$ycoords.gif';counter_bottom_$xcoords.src='$counter_bottom_high$xcoords.gif';\" onmouseout=\"counter_left_$ycoords.src='$counter_left$ycoords.gif';counter_bottom_$xcoords.src='$counter_bottom$xcoords.gif';\">";
 				}
 				else
 				{
 					echo "<td class=\"spaceCell\" onmouseover=\"counter_left_$ycoords.src='$counter_left_high$ycoords.gif';counter_bottom_$xcoords.src='$counter_bottom_high$xcoords.gif';\" onmouseout=\"counter_left_$ycoords.src='$counter_left$ycoords.gif';counter_bottom_$xcoords.src='$counter_bottom$xcoords.gif';\">";
 				}
-
+				
 				// Symbole anzeigen
-				$ent = Entity::createFactory($cells[$xcoords][$ycoords]['code'],$cells[$xcoords][$ycoords]['eid']);
-				$tt = new Tooltip();
-				$tt->addTitle($ent->entityCodeString());
-				$tt->addText("Position: $sx/$sy : $xcoords/$ycoords");
-				$tt->addComment($ent->name());
-				echo "<a href=\"?page=cell&amp;id=".$cells[$xcoords][$ycoords]['cid']."\" ".$tt.">
-					<img src=\"".$ent->imagePath()."\" style=\"border:none;background:#000;width:".$img_width."px;height:".$img_height."px\" />
-				</a>";
+				if ($cell->discovered($mask))
+				{					
+					$tt = new Tooltip();
+					$tt->addTitle($ent->entityCodeString());
+					$tt->addText("Position: $sx/$sy : $xcoords/$ycoords  $absX $absY");
+					$tt->addComment($ent->name());
+					echo "<a href=\"?page=cell&amp;id=".$cells[$xcoords][$ycoords]['cid']."\" ".$tt.">
+						<img src=\"".$ent->imagePath()."\" style=\"border:none;background:#000;width:".$img_width."px;height:".$img_height."px\" />
+					</a>";
+					unset($ent);
+				}
+				else
+				{
+					$tt = new Tooltip();
+					$tt->addTitle("Unerforschte Raumzelle!");
+					$tt->addText("Position: $sx/$sy : $xcoords/$ycoords  $absX $absY $absP");
+					$tt->addComment("Expedition senden um Zelle sichtbar zu machen.");
+
+					echo "<a href=\"?page=haven\" ".$tt.">
+						<img src=\"".IMAGE_PATH."/unexplored/ue1.png\" style=\"border:none;background:#000;width:".$img_width."px;height:".$img_height."px\" />
+					</a>";
+				}
 				echo "</td>\n";
-				unset($ent);
 			}
 			echo "</tr>\n";
 		}
@@ -278,4 +305,8 @@
 			echo "<td width=\"20\" align=\"center\" height=\"20\">&nbsp;</td>";
 		echo "</tr></table></form>";
 
+		if ($maskchanged)
+		{
+			$cu->saveDiscoveryMask($mask);
+		}
 ?>

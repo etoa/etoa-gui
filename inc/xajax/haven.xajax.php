@@ -1,11 +1,18 @@
 <?PHP
 
+	// Main dialogs
 	$xajax->register(XAJAX_FUNCTION,"havenShowShips");
 	$xajax->register(XAJAX_FUNCTION,"havenShowTarget");
 	$xajax->register(XAJAX_FUNCTION,"havenShowAction");
+	$xajax->register(XAJAX_FUNCTION,"havenShowLaunch");
+
+	// Helpers
 	$xajax->register(XAJAX_FUNCTION,"havenReset");
 	$xajax->register(XAJAX_FUNCTION,"havenTargetInfo");
 	
+	/**
+	* Show a list of all ships on the planet
+	*/
 	function havenShowShips()
 	{
 		$response = new xajaxResponse();
@@ -171,7 +178,7 @@
 
 
 	/**
-	* Show target selector and calc ships
+	* Verify ships and show target selector
 	*/
 	function havenShowTarget($form)
 	{
@@ -426,7 +433,7 @@
 	}
 
 	/**
-	* Show action selector
+	* Verify target and show action selector
 	*/
 	function havenShowAction($form)
 	{
@@ -547,13 +554,17 @@
 					
 					
 					echo "<input type=\"button\" onclick=\"xajax_havenShowTarget(null)\" value=\"&lt;&lt; Zurück zur Zielwahl\" /> &nbsp; ";
-					//echo "<input type=\"button\" onclick=\"xajax_havenShowLaunch(xajax.getFormValues('actionForm'))\" value=\"Start! &gt;&gt;&gt;\"  /> &nbsp; ";
+					if ($actionsAvailable>0)
+					{
+						echo "<input type=\"button\" onclick=\"xajax_havenShowLaunch(xajax.getFormValues('actionForm'))\" value=\"Start! &gt;&gt;&gt;\"  /> &nbsp; ";
+					}
 					echo "<input type=\"button\" onclick=\"xajax_havenReset()\" value=\"Reset\" />";
 					echo "</form>";			
 					
 					$response->assign("havenContentAction","innerHTML",ob_get_contents());				
 					$response->assign("havenContentAction","style.display",'');			
 		
+					
 		
 					ob_end_clean();
 				}
@@ -566,6 +577,9 @@
 			{
 				$response->alert("Ungültiges Ziel!");				
 			}
+			
+			$_SESSION['haven']['fleetObj']=serialize($fleet);
+			
 		}
 		else
 		{
@@ -575,14 +589,20 @@
 	  return $response;			
 	}
 
-
+	/**
+	* Reset everything
+	*/
 	function havenReset()
 	{
 		$response = new xajaxResponse();
+		$_SESSION['haven']['fleetObj']=null;
 		$response->script("document.location='?page=haven'");
 	  return $response;			
 	}
 	
+	/**
+	*
+	*/
 	function havenTargetInfo($form)
 	{
 		$response = new xajaxResponse();

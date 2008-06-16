@@ -69,6 +69,10 @@
 		$cell = new Cell($cellId);
 		if ($cell->isValid())
 		{
+			$mask = $cu->loadDiscoveryMask();
+			if ($cell->discovered($mask))
+			{
+
 			$entities = $cell->getEntities();
 			
 			echo "<h1>System ".$cell."</h1>";
@@ -426,11 +430,17 @@
 			infobox_end();
 			echo "<input type=\"button\" value=\"Zur Raumkarte\" onclick=\"document.location='?page=map&amp;sx=".$cell->sx."&amp;sy=".$cell->sy."'\" /> &nbsp; ";
 
+			}
+			else
+			{
+			echo "<h1>Fehler!</h1>System noch nicht erkundet. Erforsche das System mit einer Erkundungsflotte um es sichtbar zu machen!<br/><br/>";
+			echo "<input type=\"button\" value=\"Zur&uuml;ck zur Raumkarte\" onclick=\"document.location='?page=map'\" />";
+			}
 		}
 		else
 		{
 			echo "<h1>Fehler!</h1>System nicht gefunden!<br/><br/>";
-			echo "<input type=\"button\" value=\"Zur&uuml;ck zur Raumkarte\" onclick=\"document.location='?page=space'\" />";
+			echo "<input type=\"button\" value=\"Zur&uuml;ck zur Raumkarte\" onclick=\"document.location='?page=map'\" />";
 		}
 
 ?>

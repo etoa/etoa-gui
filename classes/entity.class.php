@@ -74,6 +74,12 @@
       return $this->isVisible; 
     }    
     
+    
+    public function getCell()
+    {
+    	return new Cell($this->cellId());
+    }
+    
     public abstract function allowedFleetActions();
     
 		function sx() 

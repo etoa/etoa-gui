@@ -48,106 +48,118 @@
 	if ($id>0)
 	{
 		$ent = Entity::createFactoryById($id);
-		if ($ent->isValid())
-		{
 		
-		echo "<h1>&Uuml;bersicht &uuml;ber ".$ent." (".$ent->entityCodeString().")</h1>";
-		if ($ent->entityCode()=='p')
-		{
-			infobox_start("Planetendaten",1);
-			echo "<tr>
-				<td width=\"320\" class=\"tbldata\" style=\"background:#000 url('".IMAGE_PATH."/backgrounds/bg".mt_rand(1,PLANET_BACKGROUND_COUNT).".jpg');;vertical-align:middle\" rowspan=\"".($ent->debrisField ? 8 : 7)."\">
-					<img src=\"".$ent->imagePath("b")."\" alt=\"planet\" width=\"310\" height=\"310\"/>
-				</td>";
-			echo "<td width=\"100\" class=\"tbltitle\">Besitzer:</td>
-			<td class=\"tbldata\">";
-			if ($ent->ownerId()>0)
-				echo "<a href=\"?page=userinfo&amp;id=".$ent->ownerId()."\">".$ent->owner()."</a>";
-			else
-				echo $ent->owner();
-			echo "</td>
-			</tr>";
-			echo "<tr>
-				<td width=\"100\" class=\"tbltitle\">Sonnentyp:</td>
-				<td class=\"tbldata\">".$arr['stype']."</td></tr>";
-			echo "<tr>
-				<td width=\"100\" class=\"tbltitle\">Planettyp:</td>
-				<td class=\"tbldata\">".$arr['ptype']."</td></tr>";
-			echo "<tr>
-				<td width=\"100\" class=\"tbltitle\">Felder:</td>
-				<td class=\"tbldata\">".$ent->fields." total</td></tr>";
-			echo "<tr>
-				<td width=\"100\" class=\"tbltitle\">Gr&ouml;sse:</td>
-				<td class=\"tbldata\">".nf($conf['field_squarekm']['v']*$ent->fields)." km&sup2;</td></tr>";
-			echo "<tr>
-				<td width=\"100\" class=\"tbltitle\">Temperatur:</td>
-				<td class=\"tbldata\">".$ent->temp_from."&deg;C bis ".$ent->temp_to."&deg;C <br/>";
-				echo "<img src=\"images/heat_small.png\" alt=\"Heat\" style=\"width:16px;float:left;\" /> <a href=\"?page=help&amp;site=tempbonus\">Wärmebonus</a>: ";
-				$spw = $ent->solarPowerBonus();
-				if ($spw>=0)
-				{
-					echo "<span style=\"color:#0f0\">+".$spw."</span>";
-				}
+		$cell = new Cell($ent->cellId());
+		$mask = $cu->loadDiscoveryMask();
+		if ($cell->discovered($mask))
+		{						
+		
+			if ($ent->isValid())
+			{
+			
+			echo "<h1>&Uuml;bersicht &uuml;ber ".$ent." (".$ent->entityCodeString().")</h1>";
+			if ($ent->entityCode()=='p')
+			{
+				infobox_start("Planetendaten",1);
+				echo "<tr>
+					<td width=\"320\" class=\"tbldata\" style=\"background:#000 url('".IMAGE_PATH."/backgrounds/bg".mt_rand(1,PLANET_BACKGROUND_COUNT).".jpg');;vertical-align:middle\" rowspan=\"".($ent->debrisField ? 8 : 7)."\">
+						<img src=\"".$ent->imagePath("b")."\" alt=\"planet\" width=\"310\" height=\"310\"/>
+					</td>";
+				echo "<td width=\"100\" class=\"tbltitle\">Besitzer:</td>
+				<td class=\"tbldata\">";
+				if ($ent->ownerId()>0)
+					echo "<a href=\"?page=userinfo&amp;id=".$ent->ownerId()."\">".$ent->owner()."</a>";
 				else
+					echo $ent->owner();
+				echo "</td>
+				</tr>";
+				echo "<tr>
+					<td width=\"100\" class=\"tbltitle\">Sonnentyp:</td>
+					<td class=\"tbldata\">".$arr['stype']."</td></tr>";
+				echo "<tr>
+					<td width=\"100\" class=\"tbltitle\">Planettyp:</td>
+					<td class=\"tbldata\">".$arr['ptype']."</td></tr>";
+				echo "<tr>
+					<td width=\"100\" class=\"tbltitle\">Felder:</td>
+					<td class=\"tbldata\">".$ent->fields." total</td></tr>";
+				echo "<tr>
+					<td width=\"100\" class=\"tbltitle\">Gr&ouml;sse:</td>
+					<td class=\"tbldata\">".nf($conf['field_squarekm']['v']*$ent->fields)." km&sup2;</td></tr>";
+				echo "<tr>
+					<td width=\"100\" class=\"tbltitle\">Temperatur:</td>
+					<td class=\"tbldata\">".$ent->temp_from."&deg;C bis ".$ent->temp_to."&deg;C <br/>";
+					echo "<img src=\"images/heat_small.png\" alt=\"Heat\" style=\"width:16px;float:left;\" /> <a href=\"?page=help&amp;site=tempbonus\">Wärmebonus</a>: ";
+					$spw = $ent->solarPowerBonus();
+					if ($spw>=0)
+					{
+						echo "<span style=\"color:#0f0\">+".$spw."</span>";
+					}
+					else
+					{
+						echo "<span style=\"color:#f00\">".$spw."</span>";
+					}
+					echo " Energie pro Solarsatellit<br style=\"clear:both;\"/>
+					<img src=\"images/ice_small.png\" alt=\"Cold\" style=\"width:16px;float:left;\" /> <a href=\"?page=help&amp;site=tempbonus\"> Kältebonus</a>: ";
+					$spw = $ent->fuelProductionBonus();
+					if ($spw>=0)
+					{
+						echo "<span style=\"color:#0f0\">+".$spw."%</span>";
+					}
+					else
+					{
+						echo "<span style=\"color:#f00\">".$spw."%</span>";
+					}				
+				echo " ".RES_FUEL."-Produktion</td></tr>";
+				echo "<tr>
+					<td width=\"100\" class=\"tbltitle\">Beschreibung:</td>
+					<td class=\"tbldata\">".($ent->desc!="" ? $ent->desc : '-')."</td></tr>";
+				if ($ent->debrisField)
 				{
-					echo "<span style=\"color:#f00\">".$spw."</span>";
-				}
-				echo " Energie pro Solarsatellit<br style=\"clear:both;\"/>
-				<img src=\"images/ice_small.png\" alt=\"Cold\" style=\"width:16px;float:left;\" /> <a href=\"?page=help&amp;site=tempbonus\"> Kältebonus</a>: ";
-				$spw = $ent->fuelProductionBonus();
-				if ($spw>=0)
-				{
-					echo "<span style=\"color:#0f0\">+".$spw."%</span>";
-				}
-				else
-				{
-					echo "<span style=\"color:#f00\">".$spw."%</span>";
+					echo '<tr>
+					<th class="tbltitle">Trümmerfeld:</th><td class="tbldata">
+					'.RES_ICON_METAL."".nf($ent->debrisMetal).'<br style="clear:both;" /> 
+					'.RES_ICON_CRYSTAL."".nf($ent->debrisCrystal).'<br style="clear:both;" /> 
+					'.RES_ICON_PLASTIC."".nf($ent->debrisPlastic).'<br style="clear:both;" /> 
+					</td></tr>';
 				}				
-			echo " ".RES_FUEL."-Produktion</td></tr>";
-			echo "<tr>
-				<td width=\"100\" class=\"tbltitle\">Beschreibung:</td>
-				<td class=\"tbldata\">".($ent->desc!="" ? $ent->desc : '-')."</td></tr>";
-			if ($ent->debrisField)
-			{
-				echo '<tr>
-				<th class="tbltitle">Trümmerfeld:</th><td class="tbldata">
-				'.RES_ICON_METAL."".nf($ent->debrisMetal).'<br style="clear:both;" /> 
-				'.RES_ICON_CRYSTAL."".nf($ent->debrisCrystal).'<br style="clear:both;" /> 
-				'.RES_ICON_PLASTIC."".nf($ent->debrisPlastic).'<br style="clear:both;" /> 
-				</td></tr>';
-			}				
-				
-			infobox_end(1);
-		}
-		else
-		{
-			infobox_start("Objektdaten");			
-			echo "Über dieses Objekt sind keine weiteren Daten verfügbar!";
-			infobox_end();
-		}
-		
-			// Previous and next entity
-			$idprev = $id-1;
-			$idnext = $id+1;
-			$pmres = dbquery("
-			SELECT 
-				MAX(id) 
-			FROM 
-				entities");	
-			$pmarr=mysql_fetch_row($pmres);		
-			if ($idprev>0)
-			{	
-				$str_prev =	"<td class=\"tbldata\"><input type=\"button\" value=\"&lt;\" onclick=\"document.location='?page=$page&amp;id=".$idprev."'\" /></td>";
+					
+				infobox_end(1);
 			}
-			if ($idnext <= $pmarr[0])
+			else
 			{
-				$str_next = "<td class=\"tbldata\"><input type=\"button\" value=\"&gt;\" onclick=\"document.location='?page=$page&amp;id=".$idnext."'\" /></td>";
-			} 
+				infobox_start("Objektdaten");			
+				echo "Über dieses Objekt sind keine weiteren Daten verfügbar!";
+				infobox_end();
+			}
+			
+				// Previous and next entity
+				$idprev = $id-1;
+				$idnext = $id+1;
+				$pmres = dbquery("
+				SELECT 
+					MAX(id) 
+				FROM 
+					entities");	
+				$pmarr=mysql_fetch_row($pmres);		
+				if ($idprev>0)
+				{	
+					$str_prev =	"<td class=\"tbldata\"><input type=\"button\" value=\"&lt;\" onclick=\"document.location='?page=$page&amp;id=".$idprev."'\" /></td>";
+				}
+				if ($idnext <= $pmarr[0])
+				{
+					$str_next = "<td class=\"tbldata\"><input type=\"button\" value=\"&gt;\" onclick=\"document.location='?page=$page&amp;id=".$idnext."'\" /></td>";
+				} 
+			}
+			else
+			{
+				echo "<h1>Raumobjekt-Datenbank</h1>
+				Das Objekt mit der Kennung <b>".$id."</b> existiert nicht!<br/><br/>";
+			}
 		}
 		else
 		{
 			echo "<h1>Raumobjekt-Datenbank</h1>
-			Das Objekt mit der Kennung <b>".$id."</b> existiert nicht!<br/><br/>";
+			Das Objekt mit der Kennung <b>".$id."</b> wurde noch nicht entdeckt!<br/><br/>";
 		}
 	}
 	else
