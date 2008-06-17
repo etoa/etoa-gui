@@ -13,7 +13,7 @@
 		var $speed;
 		var $speedPercent;
 		var $duration;
-		var $action;
+		private $action;
 		var $costsPerHundredAE;
 		var $timeLaunchLand;
 		var $costsLaunchLand;
@@ -22,9 +22,12 @@
 		var $capacityResUses;
 		var $capacityFuelUsed;
 		var $capacityPeopleTotal;
-		var $capacityPeopleUsed;
+		var $capacityPeopleLoaded;
 		
 		var $distance;
+		private $resources;
+		private $launchError;
+				
 		
 		function Fleet($args="")
 		{
@@ -45,13 +48,14 @@
 				$this->costsLaunchLand=0;
 				$this->pilots=0;
 				$this->capacityTotal=0;
-				$this->capacityResUsed=0;
+				$this->capacityResLoaded=0;
 				$this->capacityFuelUsed=0;
 				$this->capacityPeopleTotal=0;
-				$this->capacityPeopleUsed=0;		
+				$this->capacityPeopleLoaded=0;		
 				$this->shipCount=0;
 				$this->distance=0;
 				$this->shipsFixed=false;
+				$this->resources = array();
 			}
 		}
 		
@@ -82,9 +86,9 @@
 					"speed" => $arr['ship_speed'],
 					"fuel_use" => $arr['ship_fuel_use'] * $cnt,
 					"name" => $arr['ship_name'],
-					"pilots" => $arr['ship_pilots'] * $cnt,
+					"pilots" => $arr['ship_pilots'] * $cnt					
 					);
-					
+		
 					// Set global speed
 					if ($this->speed <= 0)
 					{
@@ -131,10 +135,10 @@
 			$this->costsLaunchLand=0;
 			$this->pilots=0;
 			$this->capacityTotal=0;
-			$this->capacityResUsed=0;
+			$this->capacityResLoaded=0;
 			$this->capacityFuelUsed=0;
 			$this->capacityPeopleTotal=0;
-			$this->capacityPeopleUsed=0;		
+			$this->capacityPeopleLoaded=0;		
 			$this->shipCount=0;
 			$this->distance=0;
 			$this->shipsFixed=false;
@@ -143,6 +147,7 @@
 		function setSource($ent)
 		{
 			$this->sourceEntity=$ent;
+			$this->ownerId = $ent->ownerId();
 		}
 
 		function setTarget($ent)
@@ -221,7 +226,126 @@
 		{
 			return $this->costsLaunchLand;
 		}		
+		       
+		function getCapacity()
+		{
+			return $this->capacityTotal - $this->capacityResLoaded - $this->capacityFuelUsed;
+		}
+
+		function getTotalCapacity()
+		{
+			return $this->capacityTotal;
+		}
 		
+		function getPeopleCapacity()
+		{
+			return $this->capacityPeopleTotal - $this->capacityPeopleLoaded;		
+		}
+		
+		private function calcResLoaded()
+		{
+			$this->capacityResLoaded = 0;
+			foreach ($this->res as $i)
+			{
+				$this->capacityResLoaded += $i;
+			}
+		}
+		
+		function getLoadedRes($id)
+		{
+			return ($this->res[$id]>0) ? $this->res[$id] : 0;
+		}
+		
+		function loadResource($id,$ammount,$finalize=0)
+		{
+			$ammount = max(0,$ammount);
+			$this->res[$id] = 0;
+			$this->calcResLoaded();
+			$loaded = floor(min($ammount,$this->getCapacity(),$this->sourceEntity->getRes($id)));
+			$this->res[$id] = $loaded;
+			$this->calcResLoaded();
+			
+			if ($finalize==1)
+			{
+				$this->sourceEntity->chgRes($id,-$loaded);
+			}			
+			return $loaded;
+		}
+		
+		function setAction($actionCode)
+		{
+			$this->action = $actionCode;
+			return true;
+		}
+		
+		function launch()
+		{
+			$time = time();
+			$sql = "
+			INSERT INTO
+				fleet
+			(
+				fleet_user_id,
+				fleet_entity_from,
+				fleet_entity_to,
+				fleet_launchtime,
+				fleet_landtime,
+				fleet_action,
+				fleet_pilots,
+				fleet_res_metal,
+				fleet_res_crystal,
+				fleet_res_plastic,
+				fleet_res_fuel,
+				fleet_res_food,
+				fleet_res_people
+			)
+			VALUES
+			(
+				".$this->ownerId.",
+				".$this->sourceEntity->id().",
+				".$this->targetEntity->id().",
+				".$time.",
+				".($time+$this->duration).",
+				'".$this->action."',
+				".$this->pilots.",
+				".$this->res[1].",
+				".$this->res[2].",
+				".$this->res[3].",
+				".$this->res[4].",
+				".$this->res[5].",
+				".$this->capacityPeopleLoaded."
+			)
+			";
+			dbquery($sql);
+			$fid = mysql_insert_id();
+			
+			foreach ($this->ships as $sid => $sda)
+			{
+				dbquery("INSERT INTO
+				fleet_ships
+				(
+					fs_fleet_id,
+					fs_ship_id,
+					fs_ship_cnt
+				)
+				VALUES
+				(
+					".$fid.",
+					".$sid.",
+					".$sda['count']."
+				);");
+				
+			}
+			
+			
+			return true;
+		}
+		
+		
+		function launchError()
+		{
+			return $this->launchError;
+		}
 		
 	}
 

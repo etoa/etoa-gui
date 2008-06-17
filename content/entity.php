@@ -50,8 +50,8 @@
 		$ent = Entity::createFactoryById($id);
 		
 		$cell = new Cell($ent->cellId());
-		$mask = $cu->loadDiscoveryMask();
-		if ($cell->discovered($mask))
+		
+		if ($cu->discovered($cell->absX(),$cell->absY()))
 		{						
 		
 			if ($ent->isValid())

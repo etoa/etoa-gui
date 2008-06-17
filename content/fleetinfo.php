@@ -110,7 +110,6 @@
 	if (mysql_num_rows($res)>0)
 	{
 		$arr = mysql_fetch_array($res);
-		include_once ("inc/fleet_action.inc.php");
 
 		echo "<table style=\"width:100%\"><tr><td style=\"width:50%;vertical-align:top;\">";
 
@@ -118,8 +117,9 @@
 		infobox_start("Flugdaten",1);
 		$ef = Entity::createFactoryById($arr['fleet_entity_from']);
 		$et = Entity::createFactoryById($arr['fleet_entity_to']);
+		$fa = FleetAction::createFactory($arr['fleet_action']);
 		
-		echo "<tr><td class=\"tbltitle\" style=\"width:200px;\">Auftrag:</td><td class=\"tbldata\">".fa($arr['fleet_action'])."</td></tr>";
+		echo "<tr><td class=\"tbltitle\" style=\"width:200px;\">Auftrag:</td><td class=\"tbldata\" style=\"color:".FleetAction::$attitudeColor[$fa->attitude()]."\">".$fa->name()."</td></tr>";
 		echo "<tr><td class=\"tbltitle\">Startkoordinaten:</td><td class=\"tbldata\">".$ef."</td></tr>";
 		echo "<tr><td class=\"tbltitle\">Zielkoordinaten:</td><td class=\"tbldata\">".$ef."</td></tr>";
 		echo "<tr><td class=\"tbltitle\">Startzeit:</td><td class=\"tbldata\">".date("d.m.Y H:i:s",$arr['fleet_launchtime'])."</td></tr>";

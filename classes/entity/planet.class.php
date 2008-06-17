@@ -421,7 +421,6 @@
 		*/
 		function changeRes($m,$c,$p,$fu,$fo)
 		{
-		    global $db_table;
 		    $sql = "
 		    UPDATE
 		    	planets
@@ -567,7 +566,56 @@
 		function resFood() { return $this->resFood; }
 		function usePower() { return $this->usePower; }
 		
+		function getRes($i) 
+		{ 
+			switch ($i)
+			{
+				case 1:
+					return $this->resMetal;
+				case 2:
+					return $this->resCrystal;
+				case 3:
+					return $this->resPlastic;
+				case 4:
+					return $this->resFuel;
+				case 5:
+					return $this->resFood;
+			}
+		}
 		
-	
+		function chgRes($i,$diff)
+		{
+			switch ($i)
+			{
+				case 1:
+					$str = "planet_res_metal=planet_res_metal+".$diff."";
+		    	$this->resMetal+=$diff;
+					break;
+				case 2:
+					$str = "planet_res_crystal=planet_res_crystal+".$diff."";
+		    	$this->resCrystal+=$diff;
+					break;
+				case 3:
+					$str = "planet_res_plastic=planet_res_plastic+".$diff."";
+		   	 	$this->resPlastic+=$diff;
+					break;
+				case 4:
+					$str = "planet_res_fuel=planet_res_fuel+".$diff."";
+		    	$this->resFuel+=$diff;
+					break;
+				case 5:
+					$str = "planet_res_food=planet_res_food+".$diff."";
+		    $this->resFood+=$diff;
+					break;
+			}			
+	    $sql = "
+	    UPDATE
+	    	planets
+	    SET
+        ".$str."      
+	    WHERE
+	    	id='".$this->id."';";
+	   	dbquery($sql);			
+		}	
 	}
 ?>

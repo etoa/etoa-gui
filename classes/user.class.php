@@ -123,15 +123,7 @@
 				 
 				$this->valid=true;
 				
-				$this->maskMatrix = array();
-				$mask = "abcabcabc";
-				for ($x=0; $x < strlen($a);$x++)
-				{
-					$bm = new Bitmask;
-					$bm->reverse_mask(''.ord(substr($mask,$x,1)).'');
-					$this->maskMatrix[$x] = $bm;
-				}				
-				
+		
 			}
 		}
 		
@@ -196,7 +188,7 @@
 			WHERE
 				user_id=".$this->id()."
 			");
-			$mask = '';
+			$this->dmask = '';
 			$arr = mysql_fetch_row($res);
 			if ($arr[0]=='')
 			{
@@ -204,24 +196,67 @@
 				{
 					for ($y=1;$y<=30;$y++)
 					{
-						$mask.= '0';
+						$this->dmask.= '0';
 					}
 				}
 			}
 			else
 			{
-				$mask=$arr[0];
+				$this->dmask=$arr[0];
 			}			
-			return $mask;
 		}
 
-		function saveDiscoveryMask(&$mask)
+		function discovered($absX,$absY)
+		{
+			$cfg = Config::getInstance();
+			$sy_num=$cfg->param2('num_of_sectors');
+			$cy_num=$cfg->param2('num_of_cells');
+			
+			if (!isset($this->dmask))
+			{
+				$this->loadDiscoveryMask();
+			}	
+			
+			$pos = $absX + ($cy_num*$sy_num)*($absY-1)-1;
+
+			if ($this->dmask{$pos}=='1')
+				return true;
+			return false;		
+		}
+		
+		function setDiscovered($absX,$absY,$save=1)
+		{
+			$cfg = Config::getInstance();
+			$sx_num=$cfg->param1('num_of_sectors');
+			$cx_num=$cfg->param1('num_of_cells');
+			$sy_num=$cfg->param2('num_of_sectors');
+			$cy_num=$cfg->param2('num_of_cells');
+			
+			for ($x=$absX-1; $x<=$absX+1; $x++)
+			{
+				for ($y=$absY-1; $y<=$absY+1; $y++)
+				{
+					$pos = $x + ($cy_num*$sy_num)*($y-1)-1;
+					if ($pos>= 0 && $pos <= $sx_num*$sy_num*$cx_num*$cy_num)
+					{
+						$this->dmask{$pos} = '1';				
+					}
+				}
+			}	
+			
+			if ($save==1)
+			{
+				$this->saveDiscoveryMask();
+			}			
+		}	
+
+		function saveDiscoveryMask()
 		{
 			dbquery("
 			UPDATE
 				users
 			SET
-				discoverymask='".$mask."'
+				discoverymask='".$this->dmask."'
 			WHERE
 				user_id=".$this->id()."
 			");

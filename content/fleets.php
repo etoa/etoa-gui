@@ -29,8 +29,6 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/	
 
-	include_once ("inc/fleet_action.inc.php");
-
 	//
 	// Eigene Flotten
 	//
@@ -65,12 +63,14 @@
 		{
 			$ef = Entity::createFactoryById($farr['fleet_entity_from']);
 			$et = Entity::createFactoryById($farr['fleet_entity_to']);
+			$fa = FleetAction::createFactory($farr['fleet_action']);
+			
 			echo "<tr>";
 			echo "<td class=\"tbldata\"><b>".$ef->entityCodeString()."</b> ".$ef."<br/>";
 			echo "<b>".$et->entityCodeString()."</b> ".$et."</td>";			
 			echo "<td class=\"tbldata\">".date("d.m.y, H:i:s",$farr['fleet_launchtime'])."<br/>";
 			echo date("d.m.y, H:i:s",$farr['fleet_landtime'])."</td>";
-			echo "<td class=\"tbldata\"><a href=\"?page=fleetinfo&id=".$farr['fleet_id']."\">".fa($farr['fleet_action'])."</a><br/>";
+			echo "<td class=\"tbldata\"><a href=\"?page=fleetinfo&id=".$farr['fleet_id']."\" style=\"color:".FleetAction::$attitudeColor[$fa->attitude()]."\">".$fa->name()."</a><br/>";
 			
 			//Flotte landet
 			if ($farr['fleet_landtime']<time())

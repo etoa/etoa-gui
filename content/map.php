@@ -55,9 +55,6 @@
 	$cell_height=$cfg->param2('space_cell_size');
 
 
-	$mask = $cu->loadDiscoveryMask();
-
-
 	$table_width = $cx_num * $cell_width;
 	$table_height = $cx_num * $cell_height;
 	$img_width = $cell_width;
@@ -238,10 +235,9 @@
 				}
 				elseif (in_array($cells[$xcoords][$ycoords]['cid'],$user_solsys_ids) && $cells[$xcoords][$ycoords]['eid']!=$cp->id())
 				{
-					if (!$cell->discovered($mask))
+					if (!$cu->discovered($cell->absX(),$cell->absY()))
 					{
-						$cell->setDiscovered($mask);
-						$maskchanged=true;
+						$cu->setDiscovered($cell->absX(),$cell->absY());
 					}
 					echo "<td class=\"spaceCellUser\" onmouseover=\"counter_left_$ycoords.src='$counter_left_high$ycoords.gif';counter_bottom_$xcoords.src='$counter_bottom_high$xcoords.gif';\" onmouseout=\"counter_left_$ycoords.src='$counter_left$ycoords.gif';counter_bottom_$xcoords.src='$counter_bottom$xcoords.gif';\">";
 				}
@@ -251,7 +247,7 @@
 				}
 				
 				// Symbole anzeigen
-				if ($cell->discovered($mask))
+				if ($cu->discovered($cell->absX(),$cell->absY()))
 				{					
 					$tt = new Tooltip();
 					$tt->addTitle($ent->entityCodeString());
@@ -305,8 +301,5 @@
 			echo "<td width=\"20\" align=\"center\" height=\"20\">&nbsp;</td>";
 		echo "</tr></table></form>";
 
-		if ($maskchanged)
-		{
-			$cu->saveDiscoveryMask($mask);
-		}
+
 ?>
