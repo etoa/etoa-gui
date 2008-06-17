@@ -248,7 +248,7 @@
 				
 				// Symbole anzeigen
 				if ($cu->discovered($cell->absX(),$cell->absY()))
-				{					
+				{		
 					$tt = new Tooltip();
 					$tt->addTitle($ent->entityCodeString());
 					$tt->addText("Position: $sx/$sy : $xcoords/$ycoords  $absX $absY");

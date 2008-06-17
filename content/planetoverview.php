@@ -231,7 +231,7 @@
 			echo "<table class=\"tbl\">";
 			echo "<tr>
 				<td style=\"width:330px;background:#000 url('".IMAGE_PATH."/backgrounds/bg".mt_rand(1,PLANET_BACKGROUND_COUNT).".jpg');\" rowspan=\"".($cp->debrisField ? 11 : 10)."\">
-				<img src=\"".IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$cp->image.".gif\" alt=\"Planet\" style=\"width:310px;height:310px\"/>
+				<img src=\"".IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$cp->image.".".IMAGE_EXT."\" alt=\"Planet\" style=\"width:310px;height:310px\"/>
 			</td>";
 			echo "<td class=\"tbltitle\">Kennung:</td><td class=\"tbldata\">
 				".$cp->id()." [<a href=\"?page=entity&id=".$cp->id()."\">Suchen</a>]</td>
