@@ -1347,7 +1347,7 @@
 						)
 						VALUES
 						( 
-							".$_POST['user_id'].",
+							'".$_POST['user_id']."',
 							".$launchtime.",
 							".$landtime.",
 							".$srcEnt->id().",
