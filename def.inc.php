@@ -333,6 +333,7 @@
 	define("FLEET_CONTROL_ID",11);								// ID der Flottenkontrolle
 	define("BUILD_CRYPTO_ID",24);									// ID des Kryptocenters
 	define("BUILD_MISSILE_ID",25);								// ID des Raketensilos
+
 	define("BUILD_TECH_ID",14);										// ???
 
 	// Schiffswerft

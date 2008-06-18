@@ -103,7 +103,7 @@
 			{
 				echo "<tr><td class=\"tbldata\" width=\"120px\"><b>".$n->subject()."</b>
 				<br/>".df($n->timestamp())."</td>";
-				echo "<td class=\"tbldata\">".$n->text()."</td>";
+				echo "<td class=\"tbldata\">".text2html($n->text())."</td>";
 				echo "<td class=\"tbldata\" style=\"width:130px;\"><a href=\"?page=$page&amp;action=edit&amp;id=".$id."\">Bearbeiten</a> &nbsp; ";
 				echo "<a href=\"?page=$page&amp;action=delete&amp;id=".$id."\" onclick=\"return confirm('Soll die Notiz ".$n->subject()." wirklich gel&ouml;scht werden?');\">L&ouml;schen</a></td></tr>";
 			}

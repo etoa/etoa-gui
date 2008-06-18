@@ -1,71 +1,6 @@
 <?PHP
 
 
-	// Aktions Liste vom 07.06.2006
-
-    $fleet_actions['po']="Stationieren";
-    $fleet_actions['poc']="Stationieren (Abgebrochen)";
-    $fleet_actions['mto']="Transport";
-    $fleet_actions['mpo']="Stationieren";
-    $fleet_actions['to']="Transport (Hinflug)";
-    $fleet_actions['tr']="Transport (R&uuml;ckflug)";
-    $fleet_actions['toc']="Transport (Abgebrochen)";
-    $fleet_actions['so']="Spionieren (Hinflug)";
-    $fleet_actions['sr']="Spionieren (R&uuml;ckflug)";
-    $fleet_actions['soc']="Spionieren (Abgebrochen)";
-    $fleet_actions['ao']="Angreifen (Hinflug)";
-    $fleet_actions['ar']="Angreifen (R&uuml;ckflug)";
-    $fleet_actions['aoc']="Angreifen (Abgebrochen)";
-    $fleet_actions['mo']="Marktlieferung";
-    $fleet_actions['ko']="Kolonie errichten";
-    $fleet_actions['koc']="Kolonie errichten (Abgebrochen)";
-    $fleet_actions['io']="Invasieren";
-    $fleet_actions['ir']="Invasieren (R&uuml;ckflug)";
-    $fleet_actions['ioc']="Invasieren (Abgebrochen)";
-    $fleet_actions['jo'] ="Nebel/Asteroidenfelder erkunden";
-    $fleet_actions['joc'] ="Nebel/Asteroidenfelder erkunden (Abgebrochen)";
-    $fleet_actions['jor'] ="Nebel/Asteroidenfelder erkunden (R&uuml;ckflug)";
-    $fleet_actions['bo']="Bombadieren";
-    $fleet_actions['br']="Bombadieren (R&uuml;ckflug)";
-    $fleet_actions['boc']="Bombadieren (Abgebrochen)";
-    $fleet_actions['do']="EMP";
-    $fleet_actions['dr']="EMP (R&uuml;ckflug)";
-    $fleet_actions['doc']="EMP (Abgebrochen)";
-    $fleet_actions['xo']="Giftgas";
-    $fleet_actions['xr']= "Giftgas (R&uuml;ckflug)";
-    $fleet_actions['xoc']="Giftgas (Abgebrochen)";
-    $fleet_actions['ho']="Antrax";
-    $fleet_actions['hr']="Antrax (R&uuml;ckflug)";
-    $fleet_actions['hoc']="Antrax (Abgebrochen)";
-    $fleet_actions['vo']="Tarnangriff";
-    $fleet_actions['vr']="Tarnangriff (R&uuml;ckflug)";
-    $fleet_actions['voc']="Tarnangriff (Abgebrochen)";
-    $fleet_actions['eo']="Angriff (fake)";
-    $fleet_actions['er']="Angriff (fake)(R&uuml;ckflug)";
-    $fleet_actions['eoc']="Angriff (fake)(Abgebrochen)";
-    $fleet_actions['lo']="Spionageangriff";
-    $fleet_actions['lr']="Spionageangriff (R&uuml;ckflug)";
-    $fleet_actions['loc']="Spionageangriff (Abgebrochen)";
-    $fleet_actions['zo']="Tr&uuml;mmerfeld erstellen";
-    $fleet_actions['zr']="Tr&uuml;mmerfeld erstellen (R&uuml;ckflug)";
-    $fleet_actions['zoc']="Tr&uuml;mmerfeld erstellen (Abgebrochen)";
-    $fleet_actions['wo']="Tr&uuml;mmer sammeln";
-    $fleet_actions['wr']="Tr&uuml;mmer sammeln (R&uuml;ckflug)";
-    $fleet_actions['woc']="Tr&uuml;mmer sammeln (Abgebrochen)";
-    $fleet_actions['go']="Gas saugen";
-    $fleet_actions['gr']="Gas saugen (R&uuml;ckflug)";
-    $fleet_actions['goc']="Gas saugen (Abgebrochen)";
-    $fleet_actions['yo']="Asteroiden sammeln";
-    $fleet_actions['yr']="Asteroiden sammeln (R&uuml;ckflug)";
-    $fleet_actions['yoc']="Asteroiden sammeln (Abgebrochen)";
-    $fleet_actions['no']="Nebel erkunden";
-    $fleet_actions['nr']="Nebel erkunden (R&uuml;ckflug)";
-    $fleet_actions['noc']="Nebel erkunden (Abgebrochen)";
-    $fleet_actions['fo']="Flug";
-    $fleet_actions['fr']="R&uuml;ckflug";
-    $fleet_actions['foc']="Flug (Abgebrochen)";
-
-
 	//
 	// Flottenoptionen
 	//
@@ -626,30 +561,26 @@
 			{
 				$users[$uarr['user_id']]=$uarr['user_nick'];
 			}
-			$res=dbquery("SELECT 
-			fleet_cell_from,
-			fleet_cell_to,
-			fleet_res_metal,
-			fleet_res_crystal,
-			fleet_res_plastic,
-			fleet_res_fuel,
-			fleet_res_food,
-			fleet_res_people,
-			fleet_updating,
-			user_id,fleet_id,
-			fleet_planet_from,fleet_planet_to,s.cell_nebula as snebula,s.cell_asteroid as sasteroid,s.cell_wormhole_id as swormhole,e.cell_nebula as enebula,e.cell_asteroid as easteroid,e.cell_wormhole_id as ewormhole,user_nick,fleet_action,fleet_launchtime,fleet_landtime,s.cell_cx as scx,s.cell_cy as scy,s.cell_sx as ssx,s.cell_sy as ssy,e.cell_cx as ecx,e.cell_cy as ecy,e.cell_sx as esx,e.cell_sy as esy FROM ".$db_table['fleet'].",".$db_table['users'].",".$db_table['space_cells']." AS s,".$db_table['space_cells']." AS e WHERE fleet_id='".$_GET['fleetedit']."' AND fleet_user_id=user_id AND fleet_cell_from=s.cell_id AND fleet_cell_to=e.cell_id;");
+			$res=dbquery("
+			SELECT 
+				*
+			FROM 
+				fleet
+			WHERE
+				fleet_id='".$_GET['fleetedit']."'
+			;");
 			if (mysql_num_rows($res)>0)
 			{
 				$arr=mysql_fetch_array($res);
 				echo "<form action=\"?page=$page&amp;sub=$sub&amp;fleetedit=".$_GET['fleetedit']."\" method=\"post\" name=\"fleetform\">";
-				echo "<input type=\"hidden\" name=\"fleet_cell_from_old\" value=\"".$arr['fleet_cell_from']."\" />";
-				echo "<input type=\"hidden\" name=\"fleet_cell_to_old\" value=\"".$arr['fleet_cell_to']."\" />";
+				echo "<input type=\"hidden\" name=\"fleet_cell_from_old\" value=\"".$arr['fleet_entity_from']."\" />";
+				echo "<input type=\"hidden\" name=\"fleet_cell_to_old\" value=\"".$arr['fleet_entity_to']."\" />";
 				echo "<table class=\"tbl\">";
 				echo "<tr><th class=\"tbltitle\">Besitzer:</th><td class=\"tbldata\"><select name=\"fleet_user_id\"><option value=\"\" style=\"font-style:italic\">(niemand)</option>";
 				foreach ($users as $id=>$val)
 				{
 					echo "<option value=\"$id\"";
-					if ($id==$arr['user_id']) echo " selected=\"selected\"";
+					if ($id==$arr['fleet_user_id']) echo " selected=\"selected\"";
 					echo ">$val</option>";
 				}
 				echo "</select></td></tr>";
@@ -659,7 +590,8 @@
 				echo "<tr><th class=\"tbltitle\">Landezeit:</th><td class=\"tbldata\">";
 				show_timebox("fleet_landtime",$arr['fleet_landtime'],1);
 				echo "</td></tr>";
-				echo "<tr><td class=\"tbltitle\">Startzelle</td><td class=\"tbldata\"><select name=\"sx_start\" onchange=\"submitForm();\">";
+				echo "<tr><td class=\"tbltitle\">Startzelle</td><td class=\"tbldata\">
+				<select name=\"sx_start\" onchange=\"submitForm();\">";
 				for ($x=1;$x<=$conf['num_of_sectors']['p1'];$x++)
 				{
 					echo "<option value=\"$x\"";
@@ -688,27 +620,10 @@
 					echo ">$x</option>";
 				}
 				echo "</select> ";
-				if ($arr['sasteroid']>0)
-					echo "Asteroidenfeld";
-				elseif ($arr['snebula']>0)
-					echo "Nebel";
-				elseif ($arr['swormhole']>0)
-					echo "Wurmloch";
-				else
-				{
-					$pres=dbquery("SELECT planet_solsys_pos,planet_name,planet_id FROM ".$db_table['planets']." WHERE planet_solsys_id='".$arr['fleet_cell_from']."' ORDER BY planet_solsys_pos ASC;");
-					echo "Planet <select name=\"fleet_planet_from\" onchange=\"submitForm();\">";
-					echo "<option value=\"\">(Bitte w&auml;hlen)</option>";
-					while ($parr=mysql_fetch_array($pres))
-					{
-						echo "<option value=\"".$parr['planet_id']."\"";
-						if ($parr['planet_id']==$arr['fleet_planet_from'])echo " selected=\"selected\"";
-						echo ">".$parr['planet_solsys_pos']." - ".$parr['planet_name']."</option>";
-					}
-					echo "</select>";
-				}
+
 				echo "</td></tr>";
-				echo "<tr><td class=\"tbltitle\">Endzelle</td><td class=\"tbldata\"><select name=\"sx_end\" onchange=\"submitForm();\">";
+				echo "<tr><td class=\"tbltitle\">Endzelle</td><td class=\"tbldata\">
+				<select name=\"sx_end\" onchange=\"submitForm();\">";
 				for ($x=1;$x<=$conf['num_of_sectors']['p1'];$x++)
 				{
 					echo "<option value=\"$x\"";
@@ -737,25 +652,7 @@
 					echo ">$x</option>";
 				}
 				echo "</select> ";
-				if ($arr['easteroid']>0)
-					echo "Asteroidenfeld";
-				elseif ($arr['enebula']>0)
-					echo "Nebel";
-				elseif ($arr['ewormhole']>0)
-					echo "Wurmloch";
-				else
-				{
-					$pres=dbquery("SELECT planet_solsys_pos,planet_name,planet_id FROM ".$db_table['planets']." WHERE planet_solsys_id='".$arr['fleet_cell_to']."' ORDER BY planet_solsys_pos ASC;");
-					echo "Planet <select name=\"fleet_planet_to\" onchange=\"submitForm();\">";
-					echo "<option value=\"\">(Bitte w&auml;hlen)</option>";
-					while ($parr=mysql_fetch_array($pres))
-					{
-						echo "<option value=\"".$parr['planet_id']."\"";
-						if ($parr['planet_id']==$arr['fleet_planet_to'])echo " selected=\"selected\"";
-						echo ">".$parr['planet_solsys_pos']." - ".$parr['planet_name']."</option>";
-					}
-					echo "</select>";
-				}
+
 				echo "</td></tr>";
 				echo "<tr><td class=\"tbltitle\">Aktion:</td><td class=\"tbldata\"><select name=\"fleet_action\">";
 				echo "<option value=\"\">(egal)</option>";
@@ -1018,49 +915,19 @@
 
 				$sqlstart = "
 				SELECT
-                    fleet_id,
-                    fleet_planet_from,
-                    fleet_planet_to,
-                    s.cell_nebula as snebula,
-                    s.cell_asteroid as sasteroid,
-                    s.cell_wormhole_id as swormhole,
-                    e.cell_nebula as enebula,
-                    e.cell_asteroid as easteroid,
-                    e.cell_wormhole_id as ewormhole,
-                    user_nick,
-                    ps.planet_id as start_planet_id,
-                    ps.planet_name as start_planet_name,
-                    es.planet_id as end_planet_id,
-                    es.planet_name as end_planet_name,
-                    fleet_action,
-                    fleet_launchtime,
-                    fleet_landtime,
-                    fleet_updating,
-                    s.cell_cx as scx,
-                    s.cell_cy as scy,
-                    s.cell_sx as ssx,
-                    s.cell_sy as ssy,
-                    e.cell_cx as ecx,
-                    e.cell_cy as ecy,
-                    e.cell_sx as esx,
-                    e.cell_sy as esy
+          fleet_id,
+          fleet_entity_from,
+          fleet_entity_to,
+          user_nick,
+          fleet_action,
+          fleet_status,
+          fleet_launchtime,
+          fleet_landtime
 				FROM
         	fleet
         LEFT JOIN
         	users 
         	ON fleet_user_id=user_id
-        LEFT JOIN
-        	space_cells AS s
-        	ON fleet_cell_from=s.cell_id
-        LEFT JOIN
-          space_cells AS e
-          ON fleet_cell_to=e.cell_id
-        LEFT JOIN 
-        	planets AS ps 
-					ON fleet_planet_from=ps.planet_id
-				LEFT JOIN 
-					planets AS es
-					ON fleet_planet_to=es.planet_id
 				";
 				
 				$sqlend.= " ORDER BY ";
@@ -1109,6 +976,7 @@
 				echo "<tr>";
 				echo "<td class=\"tbltitle\" $style>Besitzer</td>";
 				echo "<td class=\"tbltitle\" $style>Aktion</td>";
+				echo "<td class=\"tbltitle\" $style>Status</td>";
 				echo "<td class=\"tbltitle\" $style>Start</td>";
 				echo "<td class=\"tbltitle\" $style>Ziel</td>";
 				echo "<td class=\"tbltitle\" $style>Startzeit</td>";
@@ -1116,85 +984,6 @@
 				echo "</tr>";
 				while ($arr = mysql_fetch_array($res))
 				{
-					if ($arr['snebula']>0)
-					{
-						$startcell = "<span style=\"color:#99f;\">Nebel (".$arr['ssx']."/".$arr['ssx']." : ".$arr['scx']."/".$arr['scy'].")</span>";
-					}
-					elseif ($arr['sasteroid']>0)
-					{
-						$startcell  = "<span style=\"color:#99f;\">Asteroiden (".$arr['ssx']."/".$arr['ssx']." : ".$arr['scx']."/".$arr['scy'].")</span>";
-					}
-					elseif ($arr['swormhole']>0)
-					{
-						$startcell = "<span style=\"color:#99f;\">Wurmloch (".$arr['ssx']."/".$arr['ssx']." : ".$arr['scx']."/".$arr['scy'].")</span>";
-					}
-					elseif ($arr['fleet_planet_from']>0)
-					{
-						if ($arr['start_planet_id']>0)
-						{
-							if ($arr['start_planet_name']=="") 
-							{
-								$arr['start_planet_name']="Unbenannter Planet";
-							}
-							$startcell="<span ".tm("Koordinaten",$arr['ssx']."/".$arr['ssx']." : ".$arr['scx']."/".$arr['scy']." : ".$parr['planet_solsys_pos']).">".$arr['start_planet_name']."</span>";
-						}
-						else
-						{
-							$startcell=$arr['ssx']."/".$arr['ssx']." : ".$arr['scx']."/".$arr['scy']." (<span style=\"color:red;\">Unbekannter Planet</span>)";
-						}
-					}
-					else
-					{
-						if ($arr['ssx'] > 0 && $arr['ssx'] > 0 && $arr['scx'] > 0 && $arr['scy'] > 0)
-						{
-							$startcell=$arr['ssx']."/".$arr['ssx']." : ".$arr['scx']."/".$arr['scy']." (<span style=\"color:red;\">Unbekannt</span>)";
-						}
-						else
-						{
-							$startcell = "<span style=\"color:#99f;\">Unendliche Weiten</span>";
-						}
-					}
-
-					if ($arr['enebula']>0)
-					{
-						$endcell = "<span style=\"color:#99f;\">Nebel (".$arr['esx']."/".$arr['esx']." : ".$arr['ecx']."/".$arr['ecy'].")</span>";
-					}
-					elseif ($arr['easteroid']>0)
-					{
-						$endcell  = "<span style=\"color:#99f;\">Asteroiden (".$arr['esx']."/".$arr['esx']." : ".$arr['ecx']."/".$arr['ecy'].")</span>";
-					}
-					elseif ($arr['ewormhole']>0)
-					{
-						$endcell = "<span style=\"color:#99f;\">Wurmloch (".$arr['esx']."/".$arr['esx']." : ".$arr['ecx']."/".$arr['ecy'].")</span>";
-					}
-					elseif ($arr['fleet_planet_to']>0)
-					{
-						if ($arr['end_planet_id']>0)
-						{
-							if ($arr['end_planet_name']=="") 
-							{
-								$arr['end_planet_name']="Unbenannter Planet";
-							}
-							$endcell="<span ".tm("Koordinaten",$arr['esx']."/".$arr['esx']." : ".$arr['ecx']."/".$arr['ecy']." : ".$parr['planet_solsys_pos']).">".$arr['end_planet_name']."</span>";
-						}
-						else
-						{
-							$endcell=$arr['esx']."/".$arr['esx']." : ".$arr['ecx']."/".$arr['ecy']." (<span style=\"color:red;\">Unbekannter Planet</span>)";
-						}
-					}
-					else
-					{
-						if ($arr['esx'] > 0 && $arr['esx'] > 0 && $arr['ecx'] > 0 && $arr['ecy'] > 0)
-						{
-							$endcell=$arr['esx']."/".$arr['esx']." : ".$arr['ecx']."/".$arr['ecy']." (<span style=\"color:red;\">Unbekannt</span>)";
-						}
-						else
-						{
-							$endcell = "<span style=\"color:#99f;\">Unendliche Weiten</span>";
-						}
-					}
-
-
 					$stl="";
 					if ($arr['fleet_updating']==1)
 					{
@@ -1213,23 +1002,25 @@
 					{
 						$owner = $arr['user_nick'];
 					}
-					
 
 					echo "<tr>";
 					echo "<td class=\"tbldata\" $stl>".$owner."</td>";
-					echo "<td class=\"tbldata\" $stl>";
-					if ($fleet_actions[$arr['fleet_action']]!="")
-						echo $fleet_actions[$arr['fleet_action']];
-					else
-						echo "<i>".$arr['fleet_action']."</i>";
+					$fa = FleetAction::createFactory($arr['fleet_action']);
+					echo "<td class=\"tbldata\" style=\"color:".FleetAction::$attitudeColor[$fa->attitude()]."\">";
+					echo $fa;
 					echo "</td>";
-					echo "<td class=\"tbldata\" $stl>".$startcell."</td>";
-					echo "<td class=\"tbldata\" $stl>".$endcell."</td>";
+					echo "<td class=\"tbldata\" $stl>";
+					echo FleetAction::$statusCode[$arr['fleet_status']];
+					echo "</td>";
+					echo "<td class=\"tbldata\" $stl>";
+					$startEntity = Entity::createFactoryById($arr['fleet_entity_from']);
+					echo $startEntity."</td>";
+					echo "<td class=\"tbldata\" $stl>";
+					$endEntity = Entity::createFactoryById($arr['fleet_entity_to']);
+					echo $endEntity."</td>";
 					echo "<td class=\"tbldata\" $stl>".date("d.m.y",$arr['fleet_landtime'])." &nbsp; ".date("H:i:s",$arr['fleet_launchtime'])."</td>";
 					echo "<td class=\"tbldata\" $stl>".date("d.m.y",$arr['fleet_landtime'])." &nbsp; ".date("H:i:s",$arr['fleet_landtime'])."</td>";
-					echo "<td class=\"tbldata\"><a href=\"?page=$page&amp;sub=$sub&fleetships=".$arr['fleet_id']."\">Schiffe</a> ";
-					if (!stristr($arr['fleet_action'],"r") && !stristr($arr['fleet_action'],"c"))
-						echo "<a href=\"?page=$page&amp;sub=$sub&fleetreturn=".$arr['fleet_id']."&amp;action=searchresults\" onclick=\"return confirm('Soll diese Flotte wirklich zur&uuml;ckgeschickt werden?');\">Return</a> ";
+					echo "<td class=\"tbldata\">";
 					echo edit_button("?page=$page&amp;sub=$sub&fleetedit=".$arr['fleet_id'])." ";
 					echo del_button("?page=$page&amp;sub=$sub&fleetdel=".$arr['fleet_id']."&amp;action=searchresults","return confirm('Soll diese Flotte wirklich gel&ouml;scht werden?');");
 					echo "</tr>";
@@ -1254,7 +1045,7 @@
 			echo "Suchmaske:<br/><br/>";
 			echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
 			echo "<table class=\"tbl\">";
-			echo "<tr><td class=\"tbltitle\">Startzelle</td><td class=\"tbldata\"><select name=\"sx_start\">";
+			echo "<tr><td class=\"tbltitle\">Startentität-Koordinaten</td><td class=\"tbldata\"><select name=\"sx_start\">";
 			echo "<option value=\"\">(egal)</option>";
 			for ($x=1;$x<=$conf['num_of_sectors']['p1'];$x++)
 				echo "<option value=\"$x\">$x</option>";
@@ -1270,8 +1061,12 @@
 			echo "<option value=\"\">(egal)</option>";
 			for ($x=1;$x<=$conf['num_of_cells']['p2'];$x++)
 				echo "<option value=\"$x\">$x</option>";
+			echo "</select> : <select name=\"p_start\">";
+			echo "<option value=\"\">(egal)</option>";
+			for ($x=0;$x<=$conf['num_planets']['p2'];$x++)
+				echo "<option value=\"$x\">$x</option>";
 			echo "</select></td></tr>";
-			echo "<tr><td class=\"tbltitle\">Endzelle</td><td class=\"tbldata\"><select name=\"sx_end\">";
+			echo "<tr><td class=\"tbltitle\">Zielentität-Koordinaten</td><td class=\"tbldata\"><select name=\"sx_end\">";
 			echo "<option value=\"\">(egal)</option>";
 			for ($x=1;$x<=$conf['num_of_sectors']['p1'];$x++)
 				echo "<option value=\"$x\">$x</option>";
@@ -1287,37 +1082,31 @@
 			echo "<option value=\"\">(egal)</option>";
 			for ($x=1;$x<=$conf['num_of_cells']['p2'];$x++)
 				echo "<option value=\"$x\">$x</option>";
-			echo "</select></td></tr>";
-			echo "<tr><td class=\"tbltitle\">Startzellentyp</td><td class=\"tbldata\"><select name=\"typ_start\">";
+			echo "</select> : <select name=\"p_end\">";
 			echo "<option value=\"\">(egal)</option>";
-			echo "<option value=\"solsys\">Sonnensystem / Planet</option>";
-			echo "<option value=\"asteroid\">Asteroidenfeld</option>";
-			echo "<option value=\"nebula\">Nebel</option>";
-			echo "<option value=\"wormhole\">Wurmloch</option>";
-			echo "</select></td></tr>";
-			echo "<tr><td class=\"tbltitle\">Zielzellentyp</td><td class=\"tbldata\"><select name=\"typ_end\">";
-			echo "<option value=\"\">(egal)</option>";
-			echo "<option value=\"solsys\">Sonnensystem / Planet</option>";
-			echo "<option value=\"asteroid\">Asteroidenfeld</option>";
-			echo "<option value=\"nebula\">Nebel</option>";
-			echo "<option value=\"wormhole\">Wurmloch</option>";
-			echo "</select></td></tr>";
+			for ($x=0;$x<=$conf['num_planets']['p2'];$x++)
+				echo "<option value=\"$x\">$x</option>";
+			echo "</select>		
+			</td></tr>";
+			echo "<tr><td class=\"tbltitle\">Startentität-Name</td><td class=\"tbldata\"><input type=\"text\" name=\"planet_name_start\" value=\"\" size=\"20\" maxlength=\"250\" /> ";fieldqueryselbox('planet_name_start');echo "</td></tr>";
+			echo "<tr><td class=\"tbltitle\">Zielentität-Name</td><td class=\"tbldata\"><input type=\"text\" name=\"planet_name_end\" value=\"\" size=\"20\" maxlength=\"250\" /> ";fieldqueryselbox('planet_name_end');echo "</td></tr>";
+
+
 			echo "<tr><td class=\"tbltitle\">Flottenaktion</td><td class=\"tbldata\"><select name=\"fleet_action\">";
 			echo "<option value=\"\">(egal)</option>";
-			echo "<option value=\"-\">(nichts)</option>";
-			foreach ($fleet_actions as $key=>$val)
+			$fas = FleetAction::getAll();
+			foreach ($fas as $fa)
 			{
-				echo "<option value=\"$key\">$val</option>";
+				echo "<option value=\"".$fa->code()."\">".$fa->name()."</option>";
 			}
+			echo "<option value=\"-\">(keine)</option>";
 			echo "</select></td></tr>";
-			echo "<tr><td class=\"tbltitle\">Startplanetname</td><td class=\"tbldata\"><input type=\"text\" name=\"planet_name_start\" value=\"\" size=\"20\" maxlength=\"250\" /> ";fieldqueryselbox('planet_name_start');echo "</td></tr>";
-			echo "<tr><td class=\"tbltitle\">Zielplanetname</td><td class=\"tbldata\"><input type=\"text\" name=\"planet_name_end\" value=\"\" size=\"20\" maxlength=\"250\" /> ";fieldqueryselbox('planet_name_end');echo "</td></tr>";
 			echo "<tr><td class=\"tbltitle\">Flotten ID</td><td class=\"tbldata\"><input type=\"text\" name=\"fleet_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
 			echo "<tr><td class=\"tbltitle\">Besitzer ID</td><td class=\"tbldata\"><input type=\"text\" name=\"user_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
 			echo "<tr><td class=\"tbltitle\">Besitzer Nick</td><td class=\"tbldata\"><input type=\"text\" name=\"user_nick\" value=\"\" size=\"20\" maxlength=\"250\" /> ";fieldqueryselbox('user_nick');echo "</td></tr>";
 			
 			echo "<tr>
-				<td class=\"tbltitle\">Besitzer Nick</td>
+				<td class=\"tbltitle\">Sortieren nach</td>
 				<td class=\"tbldata\">
 					<select name=\"fleet_order\">
 						<option value=\"landtime\">Landezeit</option>

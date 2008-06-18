@@ -89,18 +89,59 @@
 			    	</td>";
 				}
 	
+				// TODO: Rewrite this!
+        //Geschwindigkeitsbohni der entsprechenden Antriebstechnologien laden und zusammenrechnen
+        $vres=dbquery("
+        SELECT
+            techlist.techlist_current_level,
+            technologies.tech_name,
+            ship_requirements.req_req_tech_level
+        FROM
+            techlist,
+            ship_requirements,
+            technologies
+        WHERE
+            ship_requirements.req_ship_id=".$arr['ship_id']."
+            AND technologies.tech_type_id='".TECH_SPEED_CAT."'
+            AND ship_requirements.req_req_tech_id=technologies.tech_id
+            AND technologies.tech_id=techlist.techlist_tech_id
+            AND techlist.techlist_tech_id=ship_requirements.req_req_tech_id
+            AND techlist.techlist_user_id=".$_SESSION['haven']['user_id']."
+        GROUP BY
+            ship_requirements.req_id;");
+        if ($_SESSION['haven']['race_speed_factor']!=1)
+            $speedtechstring="Rasse: ".get_percent_string($_SESSION['haven']['race_speed_factor'],1)."<br>";
+        else
+            $speedtechstring="";
+
+        $timefactor=$_SESSION['haven']['race_speed_factor'];
+        if (mysql_num_rows($vres)>0)
+        {
+            while ($varr=mysql_fetch_array($vres))
+            {
+                if($varr['techlist_current_level']-$varr['req_req_tech_level']<=0)
+                {
+                    $timefactor+=0;
+                }
+                else
+                {
+                    $timefactor+=($varr['techlist_current_level']-$varr['req_req_tech_level'])*0.1;
+                    $speedtechstring.=$varr['tech_name']." ".$varr['techlist_current_level'].": ".get_percent_string((($varr['techlist_current_level']-$varr['req_req_tech_level'])/10)+1,1)."<br>";
+                }
+            }
+        }
+
+        $arr['ship_speed']/=FLEET_FACTOR_F;	
+	
+
 	      echo "<td ".tm($arr['ship_name'],text2html($arr['ship_shortcomment'])).">".$arr['ship_name']."</td>";
-	      // ".tm("Geschwindigkeit","Grundgeschwindigkeit: ".$arr['ship_speed']." AE/h<br>$speedtechstring")."
-	      // *$timefactor
-	      echo "<td width=\"190\" >".nf($arr['ship_speed'])." AE/h</td>";
+	      echo "<td width=\"190\" ".tm("Geschwindigkeit","Grundgeschwindigkeit: ".$arr['ship_speed']." AE/h<br>$speedtechstring").">".nf($arr['ship_speed']*$timefactor)." AE/h</td>";
 	      echo "<td width=\"110\">".nf($arr['ship_pilots'])."</td>";
 	      echo "<td width=\"110\">".nf($arr['shiplist_count'])."<br/>";
 	      
-	      //if ($_SESSION['haven']['people_available']<$arr['shiplist_count']*$arr['ship_pilots'])
-	      //    echo "(<span title=\"Mit der momentanen Anzahl Piloten k&ouml;nnen soviel Schiffe gestartet werden\">".floor($people_available/$arr['ship_pilots']).")</span>";
 	      echo "</td>";
 	      echo "<td width=\"110\">";
-	      if ($arr['ship_launchable']==1)
+	      if ($arr['ship_launchable']==1 && $_SESSION['haven']['people_available']>$arr['ship_pilots'])
 	      {
 	      	echo "<input type=\"text\" 
 	      		id=\"ship_count_".$arr['ship_id']."\" 
@@ -134,8 +175,6 @@
 			echo "\">Alle wählen</a>";			
 			echo "</td></tr>";
 			infobox_end(1);
-
-
 		
 			// Show buttons if possible
 			if ($_SESSION['haven']['fleets_start_possible']>0)

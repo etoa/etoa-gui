@@ -29,6 +29,9 @@
 
 		// Colors for different attitudes
 		static public $attitudeColor = array("#ff0","#0f0","#f90","#f00");
+		
+		// Status descriptions
+		static public $statusCode = array("Hinflug","Rückflug","Rückflug (Abbruch)");
 
 		//
 		// Class variables
@@ -60,6 +63,7 @@
 		
 		function code() { return $this->code; }
 		function name() { return $this->name; }
+		function __toString() { return $this->name; }
 		function desc() { return $this->desc; }
 		
 		function attitude() { return $this->attitude; }

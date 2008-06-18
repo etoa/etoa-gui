@@ -262,6 +262,22 @@
 			");
 		}
 		
+		function raceSpeedFactor()
+		{
+			if ($this->raceFleettime!=1)
+			{
+				return 2-$this->raceFleettime;
+			}
+			else
+			{
+				return 1;
+			}		
+		}
+		
+		function raceName()
+		{
+			return $this->raceName;
+		}
 	}
 
 ?>

@@ -565,6 +565,7 @@
 		function resFuel() { return $this->resFuel; }
 		function resFood() { return $this->resFood; }
 		function usePower() { return $this->usePower; }
+		function people() { return $this->people; }
 		
 		function getRes($i) 
 		{ 

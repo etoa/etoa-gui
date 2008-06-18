@@ -35,49 +35,37 @@
 	echo "<form action=\"?page=$page\" method=\"post\">";
 	
 	// Gebäude Level und Arbeiter laden
-  $werft_res = dbquery("
-  SELECT
-  	buildlist_current_level,
-  	buildlist_people_working,
-  	buildlist_deactivated,
-  	buildlist_prod_percent,
-  	buildlist_cooldown,
-  	building_power_req
-  FROM
-  	buildlist
-  INNER JOIN
-  	buildings
-  ON 
-  	buildlist_building_id=building_id
-  	AND buildlist_planet_id='".$cp->id()."'
-  	AND buildlist_building_id='".BUILD_CRYPTO_ID."'
-  	AND buildlist_current_level>='1'
-  	AND buildlist_user_id='".$cu->id()."'");
+ 	$bl = new BuildList($cp->id());
+	$cryptoCenterLevel = $bl->getLevel(BUILD_CRYPTO_ID);
 
 	// Allg. deaktivierung
-  if (true)
+  if ($cfg->get('crypto_enable') == 1)
   {
 	  // Prüfen ob Gebäude gebaut ist
-	  if (mysql_num_rows($werft_res)>0)
+	  if ($cryptoCenterLevel > 0)
 	  {
-	  	$werft_arr=mysql_fetch_array($werft_res);
-	  	$center_level = $werft_arr['buildlist_current_level'];
-	  	
 			// Titel
-			echo "<h1>Kryptocenter (Stufe ".$center_level.") des Planeten ".$cp->name."</h1>";		
-			
-			// Ressourcen anzeigen
+			echo "<h1>Kryptocenter (Stufe ".$cryptoCenterLevel.") des Planeten ".$cp->name."</h1>";		
 			$cp->resBox();
 	
+			// Todo: This is useless at the moment
 			if ($cp->prodPower >= $werft_arr['building_power_req'])
 			{
-				if ($werft_arr['buildlist_deactivated'] < time())
+
+				// Prüfen ob dieses Gebäude deaktiviert wurde
+				if ($dt = $bl->getDeactivated(BUILD_CRYPTO_ID))
+		 		{
+					infobox_start("Geb&auml;ude nicht bereit");
+					echo "Dieses Gebäude ist noch bis <span id=\"decd\">".df($dt)."</span> deaktiviert.";
+					infobox_end();
+				}
+				else
 				{
 					// Calculate cooldown
-					$cooldown = max($cfg->param2("cryptocenter"),$cfg->value("cryptocenter") - ($cfg->param1("cryptocenter")*($center_level-1)));
-					if ($werft_arr['buildlist_cooldown']>time())
+					$cooldown = max($cfg->param2("cryptocenter"),$cfg->value("cryptocenter") - ($cfg->param1("cryptocenter")*($cryptoCenterLevel-1)));
+					if ($cd = $bl->getCooldown(BUILD_CRYPTO_ID))
 					{
-						$status_text = "Bereit in ".tf($werft_arr['buildlist_cooldown']-time());
+						$status_text = "Bereit in <span id=\"cdcd\">".tf($bl->getCooldown(BUILD_CRYPTO_ID)-time()."</span>");
 						$cd_enabled=true;
 					}
 					else
@@ -105,7 +93,7 @@
 								if (true)
 								{
 									$dist = $cp->distance($target);
-									if ($dist <= CRYPTO_RANGE_PER_LEVEL*$center_level)
+									if ($dist <= CRYPTO_RANGE_PER_LEVEL*$cryptoCenterLevel)
 									{							
 	                  
 	                  // Load oponent's jamming device count
@@ -193,12 +181,12 @@
 	                  }                 
 	                         
 	                  // Calculate success chance
-	                  $chance = ($center_level-$op_jam) + (0.3*($self_spy - $op_stealth)) + mt_rand(0,2)-1;
+	                  $chance = ($cryptoCenterLevel-$op_jam) + (0.3*($self_spy - $op_stealth)) + mt_rand(0,2)-1;
 	                  
 	                  // Do the scan if chance >= 0
 	                  if ($chance >= 0)
 	                  {         
-	                    $decryptlevel = ($center_level-$op_jam) + (0.75*($self_spy + $self_computer - $op_stealth - $op_computer)) + mt_rand(0,2)-1;  
+	                    $decryptlevel = ($cryptoCenterLevel-$op_jam) + (0.75*($self_spy + $self_computer - $op_stealth - $op_computer)) + mt_rand(0,2)-1;  
 	                    
 	                    // Decrypt level
 	                    // < 0 Only show that there are some fleets
@@ -451,10 +439,12 @@
 									  	  buildlist_planet_id='".$cp->id()."'
 									  	  AND buildlist_building_id='".BUILD_CRYPTO_ID."'
 									  	  AND buildlist_user_id='".$cu->id()."'");
-									    $werft_arr['buildlist_cooldown'] = $cd;
-										  if ($werft_arr['buildlist_cooldown']>time())
+									    
+									    $bl->setCooldown(BUILD_CRYPTO_ID,$cd);
+									    
+										  if ($cd = $bl->getCooldown(BUILD_CRYPTO_ID))
 										  {
-											  $status_text = "Bereit in ".tf($werft_arr['buildlist_cooldown']-time());
+											  $status_text = "Bereit in ".tf($bl->getCooldown(BUILD_CRYPTO_ID)-time());
 											  $cd_enabled=true;
 										  }
 										  else
@@ -475,7 +465,7 @@
 									}
 									else
 									{
-										echo "Das Ziel ist zu weit entfernt (".ceil($ssae)." AE, momentan sind ".CRYPTO_RANGE_PER_LEVEL*$center_level." möglich, ".CRYPTO_RANGE_PER_LEVEL." pro Gebäudestufe)!<br/><br/>";
+										echo "Das Ziel ist zu weit entfernt (".ceil($ssae)." AE, momentan sind ".CRYPTO_RANGE_PER_LEVEL*$cryptoCenterLevel." möglich, ".CRYPTO_RANGE_PER_LEVEL." pro Gebäudestufe)!<br/><br/>";
 									}									
 								}
 								else
@@ -496,7 +486,7 @@
 						
 		
 					infobox_start("Kryptocenter-Infos",1);
-					echo "<tr><th class=\"tbltitle\">Aktuelle Reichweite:</th><td class=\"tbldata\">".(CRYPTO_RANGE_PER_LEVEL*$center_level)." AE (+".CRYPTO_RANGE_PER_LEVEL." pro Stufe)</td></tr>";
+					echo "<tr><th class=\"tbltitle\">Aktuelle Reichweite:</th><td class=\"tbldata\">".(CRYPTO_RANGE_PER_LEVEL*$cryptoCenterLevel)." AE (+".CRYPTO_RANGE_PER_LEVEL." pro Stufe)</td></tr>";
 					echo "<tr><th class=\"tbltitle\">Kosten pro Scan:</th><td class=\"tbldata\">".nf(CRYPTO_FUEL_COSTS_PER_SCAN)." ".RES_FUEL."</td></tr>";
 					echo "<tr><th class=\"tbltitle\">Abklingzeit:</th><td class=\"tbldata\">".tf($cooldown)." (-".tf($cfg->param1("cryptocenter"))." pro Stufe, minimal ".tf($cfg->param2("cryptocenter")).")</td></tr>";
 					echo "<tr><th class=\"tbltitle\">Status:</th><td class=\"tbldata\">".$status_text."</td></tr>";
@@ -560,13 +550,13 @@
 					}
 					else
 					{
-						echo "<b>Diese Funktion wurde vor kurzem benutzt! Du musst bis ".df($werft_arr['buildlist_cooldown'])." warten, um die Funktion wieder zu benutzen!</b>";
+						echo "<b>Diese Funktion wurde vor kurzem benutzt! <br/>
+						Du musst bis ".df($bl->getCooldown(BUILD_CRYPTO_ID))." warten, um die Funktion wieder zu benutzen!</b>";
+						
+						countDown("cdcd",$bl->getCooldown(BUILD_CRYPTO_ID));	
+						
 					}						
 				}
-				else
-				{
-					echo "Dieses Gebäude ist noch bis ".df($werft_arr['buildlist_deactivated'])." deaktiviert!";
-				}	
 			}
 			else
 			{
@@ -577,9 +567,8 @@
 		{
 			// Titel
 			echo "<h1>Kryptocenter des Planeten ".$cp->name."</h1>";		
-			
-			// Ressourcen anzeigen
 			$cp->resBox();
+
 			echo "<h2>Fehler!</h2>Das Cryptocenter wurde noch nicht gebaut!<br>";
 		}
   }
@@ -587,9 +576,8 @@
   {
     // Titel
     echo "<h1>Kryptocenter des Planeten ".$cp->name."</h1>";    
-    
-    // Ressourcen anzeigen
     $cp->resBox();
+
     echo "<h2>Fehler!</h2>Aufgrund eines intergalaktischen Moratoriums der Völkerföderation der Galaxie Andromeda 
     sind sämtliche elektronischen Spionagetätigkeiten zurzeit nicht erlaubt!<br>";
   }  

@@ -1,4 +1,29 @@
 
+	if (!cnt)
+	{
+		var cnt = new Array();
+	}
+	function setCountdown(elem,time,diff)
+	{
+		var ts;
+		ts = diff - time - cnt[elem];
+		if (ts>=0)
+		{
+			t = Math.floor(ts / 3600 / 24);
+			h = Math.floor(ts / 3600);
+			m = Math.floor((ts-(h*3600))/60);
+			s = Math.floor((ts-(h*3600)-(m*60)));
+			nv = h+"h "+m+"m "+s+"s";
+
+			document.getElementById(elem).firstChild.nodeValue=nv;
+			cnt[elem] = cnt[elem] + 1;
+			setTimeout("setCountdown('"+elem+"',"+time+","+diff+")",1000);
+		}
+		else
+		{
+			nv = "-";
+		}
+	}
 		
 	var cdarray = new Object();
 

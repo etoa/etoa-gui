@@ -59,6 +59,7 @@
 		<td class=\"tbltitle\">Start / Landung</td>
 		<td class=\"tbltitle\">Auftrag / Status</td></tr>";
 		$cnt = 1;
+		$cdarr = array();
 		while ($farr = mysql_fetch_array($fres))
 		{
 			$ef = Entity::createFactoryById($farr['fleet_entity_from']);
@@ -70,7 +71,11 @@
 			echo "<b>".$et->entityCodeString()."</b> ".$et."</td>";			
 			echo "<td class=\"tbldata\">".date("d.m.y, H:i:s",$farr['fleet_launchtime'])."<br/>";
 			echo date("d.m.y, H:i:s",$farr['fleet_landtime'])."</td>";
-			echo "<td class=\"tbldata\"><a href=\"?page=fleetinfo&id=".$farr['fleet_id']."\" style=\"color:".FleetAction::$attitudeColor[$fa->attitude()]."\">".$fa->name()."</a><br/>";
+			echo "<td class=\"tbldata\">
+				<a href=\"?page=fleetinfo&id=".$farr['fleet_id']."\" style=\"color:".FleetAction::$attitudeColor[$fa->attitude()]."\">
+				".$fa->name()."</a><br/>";
+			
+			$cdarr["cd".$farr['fleet_id']] = $farr['fleet_landtime'];
 			
 			//Flotte landet
 			if ($farr['fleet_landtime']<time())
@@ -94,13 +99,18 @@
 			}
 			else
 			{
-				echo "Flotte ist unterwegs";
+				echo "Flotte ist unterwegs [<span id=\"cd".$farr['fleet_id']."\">-</span>]";
 			}
 			echo "</td></tr>";
 			$fleet_landtime[$cnt]=$farr['fleet_landtime'];
 			$cnt++;
 		}
 		infobox_end(1);
+			
+		foreach ($cdarr as $elem=>$t)
+		{
+			countDown($elem,$t);
+		}		
 	}
 	else
 	{

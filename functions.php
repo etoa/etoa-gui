@@ -2657,7 +2657,7 @@ die Spielleitung";
 	/**
 	* Date format
 	*/
-	function df($date,$seconds=0)
+	function df($date,$seconds=1)
 	{
 		if ($seconds==1)
 		{
@@ -4735,6 +4735,20 @@ Forum: http://www.etoa.ch/forum";
 			return 1;
 		return $base * intpow($base,$exponent-1);
 	}
+
+	function countDown($elem,$targettime)
+	{
+		?>
+		<script type="text/javascript">
+			if (document.getElementById('<?PHP echo $elem;?>')!=null)
+			{
+				cnt["<?PHP echo $elem;?>"] = 0;
+				setCountdown('<?PHP echo $elem;?>',<?PHP echo time();?>,<?PHP echo $targettime;?>);
+			}
+		</script>
+		<?PHP	
+	}
+
 
 	/**
 	* The ultimate answer
