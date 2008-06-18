@@ -3,10 +3,14 @@
 	class FleetManager
 	{
 		private $userId;
+		private $count;
+		private $fleet;		
 		
 		function FleetManager($userId)
 		{
 			$this->userId = $userId;
+			$this->count = 0;
+			$this->fleet = array();
 		}
 	
 		function countControlledByEntity($entId)
@@ -30,6 +34,41 @@
 				);");
 			$arr = mysql_fetch_row($res);
 			return $arr[0];		
+		}
+	
+		function loadOwn()
+		{
+			$this->count = 0;
+			$this->fleet = array();
+			
+			//Lädt Flottendaten
+			$fres = dbquery("
+			SELECT
+				id
+			FROM
+				fleet
+			WHERE
+				user_id='".$this->userId."'
+			ORDER BY
+				landtime DESC;");
+			if (mysql_num_rows($fres)>0)
+			{	
+				while ($farr = mysql_fetch_row($fres))
+				{
+					$this->fleet[$farr[0]] = new Fleet($farr[0]);
+					$this->count++;
+				}		
+			}
+		}
+		
+		function count()
+		{
+			return $this->count;
+		}
+		
+		function getAll()
+		{
+			return $this->fleet;
 		}
 	
 	}

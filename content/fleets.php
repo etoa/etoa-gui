@@ -37,58 +37,38 @@
 	
 	echo "<input type=\"button\" onclick=\"document.location='?page=fleetstats'\" value=\"Schiffs&uuml;bersicht anzeigen\" /><br/><br/>";
 	
-	//Lädt Flottendaten
-	$fres = dbquery("
-	SELECT
-		id,
-		entity_from,
-		entity_to,
-		launchtime,
-		landtime,
-		action
-	FROM
-		fleet
-	WHERE
-		user_id='".$cu->id()."'
-	ORDER BY
-		landtime DESC;");
-	if (mysql_num_rows($fres)>0)
+	$fm = new FleetManager($cu->id());
+	$fm->loadOwn();		
+
+	if ($fm->count() > 0)
 	{
+		$cdarr = array();
+		
+		echo "Klicke auf den Auftrag um die Details einer Flotte anzuzeigen<br/><br/>";
 		infobox_start("Eigene Flotten",1);
 		echo "<tr><td class=\"tbltitle\">Start / Ziel</td>
 		<td class=\"tbltitle\">Start / Landung</td>
 		<td class=\"tbltitle\">Auftrag / Status</td></tr>";
-		$cnt = 1;
-		$cdarr = array();
-		while ($farr = mysql_fetch_array($fres))
+		foreach ($fm->getAll() as $fid=>$fd)
 		{
-			$ef = Entity::createFactoryById($farr['entity_from']);
-			$et = Entity::createFactoryById($farr['entity_to']);
-			$fa = FleetAction::createFactory($farr['action']);
-			
+			$cdarr["cd".$fid] = $fd->landTime();
+
 			echo "<tr>";
-			echo "<td class=\"tbldata\"><b>".$ef->entityCodeString()."</b> ".$ef."<br/>";
-			echo "<b>".$et->entityCodeString()."</b> ".$et."</td>";			
-			echo "<td class=\"tbldata\">".date("d.m.y, H:i:s",$farr['launchtime'])."<br/>";
-			echo date("d.m.y, H:i:s",$farr['landtime'])."</td>";
+			echo "<td class=\"tbldata\"><b>".$fd->getSource()->entityCodeString()."</b> 
+			<a href=\"?page=cell&amp;id=".$fd->getSource()->cellId()."\">".$fd->getSource()."</a><br/>";
+			echo "<b>".$fd->getTarget()->entityCodeString()."</b> 
+			<a href=\"?page=cell&amp;id=".$fd->getTarget()->cellId()."\">".$fd->getTarget()."</a></td>";			
 			echo "<td class=\"tbldata\">
-				<a href=\"?page=fleetinfo&id=".$farr['id']."\" style=\"color:".FleetAction::$attitudeColor[$fa->attitude()]."\">
-				".$fa->name()."</a><br/>";
-			
-			$cdarr["cd".$farr['id']] = $farr['landtime'];
-			
-			//Flotte landet
-			if ($farr['landtime']<time())
+			".date("d.m.y, H:i:s",$fd->launchTime())."<br/>";
+			echo date("d.m.y, H:i:s",$fd->landTime())."</td>";
+			echo "<td class=\"tbldata\">
+				<a href=\"?page=fleetinfo&id=".$fid."\">
+				<span style=\"color:".FleetAction::$attitudeColor[$fd->getAction()->attitude()]."\">
+				".$fd->getAction()->name()."
+				</span> [".FleetAction::$statusCode[$fd->status()]."]</a><br/>";
+			if ($fd->landTime() < time())
 			{
-				if ($farr['action']=="po")
-				{
-					echo "Flotte wird stationiert...";
-				}
-				elseif ($farr['action']=="ko")
-				{
-					echo "Kolonie wird errichtet...";
-				}
-				elseif (stristr($farr['action'],"c") || stristr($farr['action'],"r"))
+				if ($fd->status() > 0)
 				{
 					echo "Flotte landet...";
 				}
@@ -99,11 +79,9 @@
 			}
 			else
 			{
-				echo "Flotte ist unterwegs [<span id=\"cd".$farr['id']."\">-</span>]";
+				echo "Ankunft in <b><span id=\"cd".$fid."\">-</span></b>";
 			}
 			echo "</td></tr>";
-			$fleet_landtime[$cnt]=$farr['landtime'];
-			$cnt++;
 		}
 		infobox_end(1);
 			
@@ -121,7 +99,7 @@
 
 
 	//
-	//Gegnerische Flotten
+	// Gegnerische Flotten
 	//
 
 

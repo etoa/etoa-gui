@@ -1024,7 +1024,7 @@
 						echo "<option value=\"".$ssarr['ship_id']."\">".$ssarr['ship_name']."</option>";
 					}
 					echo "</select> hinzuf&uuml;gen: 
-					<input type=\"submit\" name=\"newship_submit\" value=\"Asuf&uuml;hren\" /></form><br/>";
+					<input type=\"submit\" name=\"newship_submit\" value=\"Ausf&uuml;hren\" /></form><br/>";
 				}
 				else
 				{

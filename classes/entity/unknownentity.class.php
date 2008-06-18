@@ -58,7 +58,7 @@
 		/**
 		* Returns type string
 		*/                        
-		function entityCodeString() { return "Unbekannter Raum"; }      
+		function entityCodeString() { return "Leerer Raum"; }      
 	
 		/**
 		* Returns type

@@ -10,10 +10,14 @@
 		if (ts>=0)
 		{
 			t = Math.floor(ts / 3600 / 24);
-			h = Math.floor(ts / 3600);
+			h = Math.floor(ts / 3600  - (t*24));
+			ts -= (t*24*3600);
 			m = Math.floor((ts-(h*3600))/60);
 			s = Math.floor((ts-(h*3600)-(m*60)));
-			nv = h+"h "+m+"m "+s+"s";
+			if (t>0)
+				nv = t + "d " + h+"h "+m+"m "+s+"s";
+			else
+				nv = h+"h "+m+"m "+s+"s";
 
 			document.getElementById(elem).firstChild.nodeValue=nv;
 			cnt[elem] = cnt[elem] + 1;

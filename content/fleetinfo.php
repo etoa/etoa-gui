@@ -98,58 +98,66 @@
 	//
 	// Flottendaten laden und überprüfen ob die Flotte existiert
 	//
-	$res = dbquery("
-	SELECT
-		*
-	FROM
-		fleet
-	WHERE
-		fleet_id='".$fleet_id."'
-		AND fleet_user_id='".$cu->id()."';
-	");
-	if (mysql_num_rows($res)>0)
+	$fd = new Fleet($fleet_id,$cu->id());
+	if ($fd->valid())
 	{
-		$arr = mysql_fetch_array($res);
-
 		echo "<table style=\"width:100%\"><tr><td style=\"width:50%;vertical-align:top;\">";
 
 		// Flugdaten
 		infobox_start("Flugdaten",1);
-		$ef = Entity::createFactoryById($arr['fleet_entity_from']);
-		$et = Entity::createFactoryById($arr['fleet_entity_to']);
-		$fa = FleetAction::createFactory($arr['fleet_action']);
 		
-		echo "<tr><td class=\"tbltitle\" style=\"width:200px;\">Auftrag:</td><td class=\"tbldata\" style=\"color:".FleetAction::$attitudeColor[$fa->attitude()]."\">".$fa->name()."</td></tr>";
-		echo "<tr><td class=\"tbltitle\">Startkoordinaten:</td><td class=\"tbldata\">".$ef."</td></tr>";
-		echo "<tr><td class=\"tbltitle\">Zielkoordinaten:</td><td class=\"tbldata\">".$ef."</td></tr>";
-		echo "<tr><td class=\"tbltitle\">Startzeit:</td><td class=\"tbldata\">".date("d.m.Y H:i:s",$arr['fleet_launchtime'])."</td></tr>";
-		if ($arr['fleet_whtime']>0)
-		{
-			echo "<tr><td class=\"tbltitle\">Wurmloch-Passage:</td><td class=\"tbldata\">".date("d.m.Y H:i:s",$arr['fleet_whtime'])."</td></tr>";
-		}
-		echo "<tr><td class=\"tbltitle\">Ende des Fluges:</td><td class=\"tbldata\">".date("d.m.Y H:i:s",$arr['fleet_landtime'])."</td></tr>";
-		echo "<tr><td class=\"tbltitle\">Verbleibend:</td><td class=\"tbldata\" id=\"flighttime\">-</td></tr>";
-		echo "<tr><td class=\"tbltitle\">Piloten:</td><td class=\"tbldata\">".nf($arr['fleet_pilots'])."</td></tr>";
+		echo "<tr>
+			<td class=\"tbltitle\">Auftrag:</td>
+			<td class=\"tbldata\" ".tm($fd->getAction()->name(),$fd->getAction()->desc())." style=\"color:".FleetAction::$attitudeColor[$fd->getAction()->attitude()]."\">
+			".$fd->getAction()->name()." [".FleetAction::$statusCode[$fd->status()]."]</td></tr>";
+		echo "<tr>
+			<td class=\"tbltitle\">Startkoordinaten:</td>
+			<td class=\"tbldata\">
+				<a href=\"?page=cell&amp;id=".$fd->getSource()->cellId()."\">".$fd->getSource()."</a>
+				 (".$fd->getSource()->entityCodeString().")</td></tr>";
+		echo "<tr>
+			<td class=\"tbltitle\">Zielkoordinaten:</td>
+			<td class=\"tbldata\">
+				<a href=\"?page=cell&amp;id=".$fd->getTarget()->cellId()."\">".$fd->getTarget()."</a>
+				 (".$fd->getTarget()->entityCodeString().")</td></tr>";
+		echo "<tr>
+			<td class=\"tbltitle\">Startzeit:</td>
+			<td class=\"tbldata\">".date("d.m.Y H:i:s",$fd->launchTime())."</td></tr>";
+		echo "<tr>
+			<td class=\"tbltitle\">Ende des Fluges:</td>
+			<td class=\"tbldata\">".date("d.m.Y H:i:s",$fd->landTime())."</td></tr>";
+		echo "<tr>
+			<td class=\"tbltitle\">Verbleibend:</td>
+			<td class=\"tbldata\" id=\"flighttime\" style=\"color:#ff0\">-</td></tr>";
 		infobox_end(1);
 
-		echo "</td><td style=\"width:50%;vertical-align:top;\">";
+		infobox_start("Piloten &amp; Verbrauch",1);
+		echo "<tr><td class=\"tbltitle\" style=\"width:150px;\">".RES_ICON_PEOPLE."Piloten:</td>
+			<td class=\"tbldata\">".nf($fd->pilots())."</td></tr>";
+		echo "<tr><td class=\"tbltitle\">".RES_ICON_FUEL."".RES_FUEL.":</td>
+			<td class=\"tbldata\">".nf($fd->usageFuel())."</td></tr>";
+		echo "<tr><td class=\"tbltitle\">".RES_ICON_FOOD."".RES_FOOD.":</td>
+			<td class=\"tbldata\">".nf($fd->usageFood())."</td></tr>";
+		echo "<tr><td class=\"tbltitle\">".RES_ICON_POWER." ".RES_POWER.":</td>
+			<td class=\"tbldata\">".nf($fd->usagePower())."</td></tr>";
+		infobox_end(1);
+
+		echo "</td><td style=\"width:5%;vertical-align:top;\"></td><td style=\"width:45%;vertical-align:top;\">";
 
 		// Frachtraum
-		if ($arr['fleet_action']=="fo")
-		{
-			infobox_start("Abholauftrag",1);
-		}
-		else
-		{
-			infobox_start("Frachtraum",1);
-		}
-		echo "<tr><td class=\"tbltitle\">".RES_METAL."</td><td class=\"tbldata\">".nf($arr['fleet_res_metal'])." t</td></tr>";
-		echo "<tr><td class=\"tbltitle\">".RES_CRYSTAL."</td><td class=\"tbldata\" >".nf($arr['fleet_res_crystal'])." t</td></tr>";
-		echo "<tr><td class=\"tbltitle\">".RES_PLASTIC."</td><td class=\"tbldata\">".nf($arr['fleet_res_plastic'])." t</td></tr>";
-		echo "<tr><td class=\"tbltitle\">".RES_FUEL."</td><td class=\"tbldata\">".nf($arr['fleet_res_fuel'])." t</td></tr>";
-		echo "<tr><td class=\"tbltitle\">".RES_FOOD."</td><td class=\"tbldata\">".nf($arr['fleet_res_food'])." t</td></tr>";
+		infobox_start("Frachtraum",1);
+		echo "<tr><td class=\"tbltitle\">".RES_ICON_METAL."".RES_METAL."</td><td class=\"tbldata\">".nf($arr['fleet_res_metal'])." t</td></tr>";
+		echo "<tr><td class=\"tbltitle\">".RES_ICON_CRYSTAL."".RES_CRYSTAL."</td><td class=\"tbldata\" >".nf($arr['fleet_res_crystal'])." t</td></tr>";
+		echo "<tr><td class=\"tbltitle\">".RES_ICON_PLASTIC."".RES_PLASTIC."</td><td class=\"tbldata\">".nf($arr['fleet_res_plastic'])." t</td></tr>";
+		echo "<tr><td class=\"tbltitle\">".RES_ICON_FUEL."".RES_FUEL."</td><td class=\"tbldata\">".nf($arr['fleet_res_fuel'])." t</td></tr>";
+		echo "<tr><td class=\"tbltitle\">".RES_ICON_FOOD."".RES_FOOD."</td><td class=\"tbldata\">".nf($arr['fleet_res_food'])." t</td></tr>";
+		echo "<tr><td class=\"tbltitle\">".RES_ICON_POWER."".RES_POWER."</td><td class=\"tbldata\">".nf($arr['fleet_res_food'])." t</td></tr>";
 		echo "<tr><td class=\"tbltitle\" style=\"width:150px;\">Freier Frachtraum:</td><td class=\"tbldata\">".nf($arr['fleet_capacity'])." t</td></tr>";
-		echo "<tr><td class=\"tbltitle\">Passagiere</td><td class=\"tbldata\">".nf($arr['fleet_res_people'])."</td></tr>";
+		infobox_end(1);
+
+		infobox_start("Passagierraum",1);
+		echo "<tr><td class=\"tbltitle\">".RES_ICON_PEOPLE."Passagiere</td><td class=\"tbldata\">".nf($arr['fleet_res_people'])."</td></tr>";
+		echo "<tr><td class=\"tbltitle\" style=\"width:150px;\">Freier Platz:</td><td class=\"tbldata\">".nf($arr['fleet_capacity'])." t</td></tr>";
 		infobox_end(1);
 
 		echo "</td></tr></table>";
@@ -197,45 +205,7 @@
 		}
 		echo "</form>";
 
-		if ($arr['fleet_landtime']>time())
-		{
-		?>
-		<script type="text/javascript">
-
-		function setCountdown()
-			{
-				var ts;
-				cTime = <?PHP echo time();?>;
-				te = <?PHP if($arr['fleet_landtime']) echo $arr['fleet_landtime']; else echo 0;?>;
-				tc = cTime + cnt;
-				window.status = tc;
-				ts = te - tc;
-
-				if (ts>=0)
-				{
-					t = Math.floor(ts / 3600 / 24);
-					h = Math.floor(ts / 3600);
-					m = Math.floor((ts-(h*3600))/60);
-					s = Math.floor((ts-(h*3600)-(m*60)));
-					nv = h+"h "+m+"m "+s+"s";
-				}
-				else
-				{
-					nv = "-";
-					document.location='?page=<?PHP echo $page."&id=".$fleet_id; ;?>';
-				}
-				document.getElementById('flighttime').firstChild.nodeValue=nv;
-				cnt = cnt + 1;
-				setTimeout("setCountdown()",1000);
-			}
-			if (document.getElementById('flighttime')!=null)
-			{
-				cnt = 0;
-				setCountdown();
-			}
-		</script>
-		<?PHP
-		}
+		countDown('flighttime',$fd->landTime());
 	}
 	else
 	{
