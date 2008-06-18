@@ -358,7 +358,9 @@
 				}			
 			}
 			else
-				die ("Ungültige ID");
+			{
+				return false;
+			}
 		}			
 		
 					

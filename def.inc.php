@@ -172,6 +172,7 @@
 	define("RES_PLASTIC","PVC");
 	define("RES_FUEL","Tritium");
 	define("RES_FOOD","Nahrung");
+	define("RES_POWER","Energiezellen");
 
 	// Universum
 	define("CELL_NUM_X",$conf['num_of_cells']['p1']);		// Anzahl Zellen x

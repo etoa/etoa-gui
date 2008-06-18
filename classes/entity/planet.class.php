@@ -155,15 +155,6 @@
 				$this->people=zeroPlus($arr['planet_people']);
 				$this->people_place=zeroPlus($arr['planet_people_place']);
 
-				/*
-				$this->res->metal=zeroPlus($arr['planet_res_metal']);
-				$this->res->crystal=zeroPlus($arr['planet_res_crystal']);
-				$this->res->plastic=zeroPlus($arr['planet_res_plastic']);
-				$this->res->fuel=zeroPlus($arr['planet_res_fuel']);
-				$this->res->food=zeroPlus($arr['planet_res_food']);
-				$this->use->power=zeroPlus($arr['planet_use_power']);
-				*/
-
 				$this->resMetal=zeroPlus($arr['planet_res_metal']);
 				$this->resCrystal=zeroPlus($arr['planet_res_crystal']);
 				$this->resPlastic=zeroPlus($arr['planet_res_plastic']);
@@ -171,29 +162,11 @@
 				$this->resFood=zeroPlus($arr['planet_res_food']);
 				$this->usePower=zeroPlus($arr['planet_use_power']);
 
-				/*
-				$this->store->metal=$arr['planet_store_metal'];
-				$this->store->crystal=$arr['planet_store_crystal'];
-				$this->store->plastic=$arr['planet_store_plastic'];
-				$this->store->fuel=$arr['planet_store_fuel'];
-				$this->store->food=$arr['planet_store_food'];
-				*/
-
 				$this->storeMetal=$arr['planet_store_metal'];
 				$this->storeCrystal=$arr['planet_store_crystal'];
 				$this->storePlastic=$arr['planet_store_plastic'];
 				$this->storeFuel=$arr['planet_store_fuel'];
 				$this->storeFood=$arr['planet_store_food'];
-				
-				/*
-				$this->prod->metal=$arr['planet_prod_metal'];
-				$this->prod->crystal=$arr['planet_prod_crystal'];
-				$this->prod->plastic=$arr['planet_prod_plastic'];
-				$this->prod->fuel=$arr['planet_prod_fuel'];
-				$this->prod->food=$arr['planet_prod_food'];
-				$this->prod->power=zeroPlus($arr['planet_prod_power']);
-				$this->prod->people=$arr['planet_prod_people'];
-				*/
 				
 				$this->prodMetal=$arr['planet_prod_metal'];
 				$this->prodCrystal=$arr['planet_prod_crystal'];
@@ -202,8 +175,6 @@
 				$this->prodFood=$arr['planet_prod_food'];
 				$this->prodPower=zeroPlus($arr['planet_prod_power']);
 				$this->prodPeople=$arr['planet_prod_people'];
-
-
 
 				if ($arr['planet_user_main']==1)
 					$this->isMain=true;
@@ -419,7 +390,7 @@
 		/**
 		* Changes resources on a planet
 		*/
-		function changeRes($m,$c,$p,$fu,$fo)
+		function changeRes($m,$c,$p,$fu,$fo,$pw=0)
 		{
 		    $sql = "
 		    UPDATE
@@ -566,6 +537,18 @@
 		function resFood() { return $this->resFood; }
 		function usePower() { return $this->usePower; }
 		function people() { return $this->people; }
+		
+		function chgPeople($diff)
+		{
+	    $this->people+=$diff;
+	    $sql = "
+	    UPDATE
+	    	planets
+	    SET
+        planet_people=planet_people+".$diff."
+	    WHERE
+	    	id='".$this->id."';";			
+		}
 		
 		function getRes($i) 
 		{ 

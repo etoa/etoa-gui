@@ -372,7 +372,7 @@
 			echo "<div style=\"color:#0f0\">Die Kampfsperre ist deaktiviert!</div><br/>Aktivierungsgrund:<br/><textarea name=\"ban_reason\" cols=\"50\" rows=\"3\"></textarea><br/><br/><input type=\"submit\" name=\"battleban_activate\" value=\"Aktivieren\" />";
 		echo "</form><br/>";
 		*/
-
+/*
 		//
 		// Schiffrückruf
 		//
@@ -383,7 +383,7 @@
 			{
 				// Schiffe instantan zurückrufen
 				case "instant":
-					$fres=dbquery("SELECT * FROM ".$db_table['fleet'].";");
+					$fres=dbquery("SELECT * FROM fleet;");
 					if (mysql_num_rows($fres))
 					{
 						while ($farr=mysql_fetch_array($fres))
@@ -392,7 +392,7 @@
 								$planet=$farr['fleet_planet_from'];
 							else
 								$planet=$farr['fleet_planet_to'];
-							dbquery("DELETE FROM ".$db_table['fleet']." WHERE fleet_id=".$farr['fleet_id'].";");
+							dbquery("DELETE FROM fleet WHERE fleet_id=".$farr['fleet_id'].";");
 							dbquery("
 							UPDATE
 								".$db_table['planets']."
@@ -405,12 +405,12 @@
                                 planet_people=planet_people+".(max($farr['fleet_res_people'],0)+max($farr['fleet_pilots'],0))."
 							WHERE
 								planet_id='$planet';");
-							$sres=dbquery("SELECT * FROM ".$db_table['fleet_ships']." WHERE fs_fleet_id=".$farr['fleet_id'].";");
+							$sres=dbquery("SELECT * FROM fleet_ships WHERE fs_fleet_id=".$farr['fleet_id'].";");
 							if (mysql_num_rows($sres)>0)
 							{
 								while ($sarr=mysql_fetch_array($sres))
 								{
-									dbquery("DELETE FROM ".$db_table['fleet_ships']." WHERE fs_fleet_id=".$farr['fleet_id']." AND fs_ship_id=".$sarr['fs_ship_id'].";");
+									dbquery("DELETE FROM fleet_ships WHERE fs_fleet_id=".$farr['fleet_id']." AND fs_ship_id=".$sarr['fs_ship_id'].";");
 									shiplistAdd($planet,$farr['fleet_user_id'],$sarr['fs_ship_id'],$sarr['fs_ship_cnt']);
 								}
 							}
@@ -422,7 +422,7 @@
 					break;
 				// Schiffe per Rückflug zuückrufen
 				case "return":
-					$res = dbquery("SELECT * FROM ".$db_table['fleet'].";");
+					$res = dbquery("SELECT * FROM fleet;");
 					if (mysql_num_rows($res)>0)
 					{
 						$cnt=0;
@@ -435,7 +435,7 @@
 								$action = strtr($arr['fleet_action'],"o","r");
 								dbquery("
 								UPDATE
-									".$db_table['fleet']."
+									fleet
 								SET
                                     fleet_launchtime='$stime',
                                     fleet_landtime='$etime',
@@ -456,7 +456,7 @@
 					break;
 				// Schiffe per Abbruch zuückrufen
 				case "cancel":
-					$res = dbquery("SELECT * FROM ".$db_table['fleet'].";");
+					$res = dbquery("SELECT * FROM fleet;");
 					if (mysql_num_rows($res)>0)
 					{
 						$cnt=0;
@@ -469,7 +469,7 @@
 								$action = $arr['fleet_action']."c";
 								dbquery("
 								UPDATE
-									".$db_table['fleet']."
+									fleet
 								SET
                                     fleet_launchtime='$stime',
                                     fleet_landtime='$etime',
@@ -495,7 +495,7 @@
 		echo "<input type=\"radio\" name=\"recall\" value=\"cancel\"> Alle Flotten zur&uuml;ckrufen (per Flugabbruch)<br/>";
 		echo "<br/><input type=\"submit\" name=\"flightrecall\" value=\"Durchf&uuml;hren\" /></form>";
 
-
+*/
 		echo "</form>";
 	}
 	
@@ -504,57 +504,73 @@
 	//
 	else
 	{
-		echo "<h2>Flotten</h2>";
+		echo "<h1>Flotten</h1>";
+
+
 
 		//
 		// Flotte bearbeiten
 		//
 		if ($_GET['fleetedit']>0)
 		{
-			echo "<h3>Flotte bearbeiten</h3>";
-			if (count($_POST)>0)
+			echo "<h2>Flotte bearbeiten</h2>";
+			if (isset($_POST['submit_edit']))
 			{
-				$launchtime=mktime($_POST['fleet_launchtime_h'],$_POST['fleet_launchtime_i'],$_POST['fleet_launchtime_s'],$_POST['fleet_launchtime_m'],$_POST['fleet_launchtime_d'],$_POST['fleet_launchtime_y']);
-				$landtime=mktime($_POST['fleet_landtime_h'],$_POST['fleet_landtime_i'],$_POST['fleet_landtime_s'],$_POST['fleet_landtime_m'],$_POST['fleet_landtime_d'],$_POST['fleet_landtime_y']);
+				$launchtime=mktime($_POST['launchtime_h'],$_POST['launchtime_i'],$_POST['launchtime_s'],$_POST['launchtime_m'],$_POST['launchtime_d'],$_POST['launchtime_y']);
+				$landtime=mktime($_POST['landtime_h'],$_POST['landtime_i'],$_POST['landtime_s'],$_POST['landtime_m'],$_POST['landtime_d'],$_POST['landtime_y']);
 				if ($landtime<=$launchtime) $landtime=$launchtime+60;
-				$scres=dbquery("SELECT cell_id FROM ".$db_table['space_cells']." WHERE cell_sx='".$_POST['sx_start']."' AND cell_sy='".$_POST['sy_start']."' AND cell_cx='".$_POST['cx_start']."' AND cell_cy='".$_POST['cy_start']."';");
-				$scarr=mysql_fetch_array($scres);
-				$ecres=dbquery("SELECT cell_id FROM ".$db_table['space_cells']." WHERE cell_sx='".$_POST['sx_end']."' AND cell_sy='".$_POST['sy_end']."' AND cell_cx='".$_POST['cx_end']."' AND cell_cy='".$_POST['cy_end']."';");
-				$ecarr=mysql_fetch_array($ecres);
-				if ($scarr[0]=="")
+
+				if ($srcEnt = Entity::createFactoryByCoords($_POST['sx_start'],$_POST['sy_start'],$_POST['cx_start'],$_POST['cy_start'],$_POST['p_start']))
 				{
-					$scarr[0]=$_POST['fleet_cell_from_old'];
-					cms_err_msg("Diese Startzelle kann nicht gew&auml;hlt werden da es leerer Raum ist!");
+					$srcstr = "entity_from=".$srcEnt->id().",";
 				}
-				if ($ecarr[0]=="")
+				else
 				{
-					$ecarr[0]=$_POST['fleet_cell_to_old'];
-					cms_err_msg("Diese Zielzelle kann nicht gew&auml;hlt werden da es leerer Raum ist!");
+					err_msg("Startentität nicht vorhanden");
 				}
-				if ($_POST['fleet_cell_from_old']!=$scarr[0]) $planet_from=0; else $planet_from=$_POST['fleet_planet_from'];
-				if ($_POST['fleet_cell_to_old']!=$ecarr[0]) $planet_to=0; else $planet_to=$_POST['fleet_planet_to'];
-				dbquery("UPDATE 
-				".$db_table['fleet']." 
+				if ($trgEnt = Entity::createFactoryByCoords($_POST['sx_end'],$_POST['sy_end'],$_POST['cx_end'],$_POST['cy_end'],$_POST['p_end']))
+				{
+					$trgstr = "entity_to=".$trgEnt->id().",";
+				}
+				else
+				{
+					err_msg("Zielentität nicht vorhanden");
+				}
+
+				dbquery("
+				UPDATE 
+					fleet
 				SET 
-					fleet_cell_from='".$scarr[0]."',
-					fleet_cell_to='".$ecarr[0]."',
-					fleet_planet_from='".$planet_from."',
-					fleet_planet_to='".$planet_to."',
-					fleet_user_id='".$_POST['fleet_user_id']."',
-					fleet_launchtime='$launchtime',
-					fleet_landtime='$landtime',
-					fleet_action='".$_POST['fleet_action']."',
-					fleet_res_metal='".intval($_POST['fleet_res_metal'])."',
-					fleet_res_crystal='".intval($_POST['fleet_res_crystal'])."',
-					fleet_res_plastic='".intval($_POST['fleet_res_plastic'])."',
-					fleet_res_fuel='".intval($_POST['fleet_res_fuel'])."',
-					fleet_res_food='".intval($_POST['fleet_res_food'])."',
-					fleet_res_people='".intval($_POST['fleet_res_people'])."',
-					fleet_updating='".intval($_POST['fleet_updating'])."'
-					WHERE fleet_id='".$_GET['fleetedit']."';");
-
+					user_id='".$_POST['user_id']."',
+					launchtime='$launchtime',
+					landtime='$landtime',
+					".$srcstr."
+					".$trgstr."
+					action='".$_POST['action']."',
+					status='".$_POST['status']."',
+					pilots='".$_POST['pilots']."',
+					usage_fuel='".$_POST['usage_fuel']."',
+					usage_food='".$_POST['usage_food']."',
+					usage_power='".$_POST['usage_power']."',
+					res_metal='".intval($_POST['res_metal'])."',
+					res_crystal='".intval($_POST['res_crystal'])."',
+					res_plastic='".intval($_POST['res_plastic'])."',
+					res_fuel='".intval($_POST['res_fuel'])."',
+					res_food='".intval($_POST['res_food'])."',
+					res_power='".intval($_POST['res_power'])."',
+					res_people='".intval($_POST['res_people'])."',
+					fetch_metal='".intval($_POST['fetch_metal'])."',
+					fetch_crystal='".intval($_POST['fetch_crystal'])."',
+					fetch_plastic='".intval($_POST['fetch_plastic'])."',
+					fetch_fuel='".intval($_POST['fetch_fuel'])."',
+					fetch_food='".intval($_POST['fetch_food'])."',
+					fetch_power='".intval($_POST['fetch_power'])."',
+					fetch_people='".intval($_POST['fetch_people'])."'
+				WHERE 
+					id='".$_GET['fleetedit']."';");
+				ok_msg("Flottendaten geändert!");
 			}
-
+			
 			$ures=dbquery("SELECT user_id,user_nick FROM ".$db_table['users']." ORDER BY user_nick;");
 			$users=array();
 			while ($uarr=mysql_fetch_array($ures))
@@ -567,220 +583,468 @@
 			FROM 
 				fleet
 			WHERE
-				fleet_id='".$_GET['fleetedit']."'
+				id='".$_GET['fleetedit']."'
 			;");
 			if (mysql_num_rows($res)>0)
 			{
 				$arr=mysql_fetch_array($res);
-				echo "<form action=\"?page=$page&amp;sub=$sub&amp;fleetedit=".$_GET['fleetedit']."\" method=\"post\" name=\"fleetform\">";
-				echo "<input type=\"hidden\" name=\"fleet_cell_from_old\" value=\"".$arr['fleet_entity_from']."\" />";
-				echo "<input type=\"hidden\" name=\"fleet_cell_to_old\" value=\"".$arr['fleet_entity_to']."\" />";
-				echo "<table class=\"tbl\">";
-				echo "<tr><th class=\"tbltitle\">Besitzer:</th><td class=\"tbldata\"><select name=\"fleet_user_id\"><option value=\"\" style=\"font-style:italic\">(niemand)</option>";
-				foreach ($users as $id=>$val)
-				{
-					echo "<option value=\"$id\"";
-					if ($id==$arr['fleet_user_id']) echo " selected=\"selected\"";
-					echo ">$val</option>";
+				
+				// Cancel flight
+				if (isset($_POST['submit_cancel']) && $arr['status']==0)
+				{			
+					$difftime = time()-$arr['launchtime'];
+					$landtime = time() + $difftime ;
+					dbquery("
+					UPDATE 
+						fleet
+					SET 
+						launchtime='".time()."',
+						landtime='".$landtime."',
+						entity_from=".$arr['entity_to'].",
+						entity_to=".$arr['entity_from'].",
+						status='2'
+					WHERE 
+						id='".$_GET['fleetedit']."';");
+					$res=dbquery("
+					SELECT 
+						*
+					FROM 
+						fleet
+					WHERE
+						id='".$_GET['fleetedit']."'
+					;");
+					$arr=mysql_fetch_array($res);
 				}
-				echo "</select></td></tr>";
-				echo "<tr><th class=\"tbltitle\">Startzeit:</th><td class=\"tbldata\">";
-				show_timebox("fleet_launchtime",$arr['fleet_launchtime'],1);
-				echo "</td></tr>";
-				echo "<tr><th class=\"tbltitle\">Landezeit:</th><td class=\"tbldata\">";
-				show_timebox("fleet_landtime",$arr['fleet_landtime'],1);
-				echo "</td></tr>";
-				echo "<tr><td class=\"tbltitle\">Startzelle</td><td class=\"tbldata\">
-				<select name=\"sx_start\" onchange=\"submitForm();\">";
-				for ($x=1;$x<=$conf['num_of_sectors']['p1'];$x++)
-				{
-					echo "<option value=\"$x\"";
-					if ($arr['ssx']==$x) echo " selected=\"selected\"";
-					echo ">$x</option>";
+				
+				// Return flight
+				if (isset($_POST['submit_return']) && $arr['status']==0)
+				{			
+					$difftime = time()-$arr['launchtime'];
+					$landtime = time() + $difftime ;
+					dbquery("
+					UPDATE 
+						fleet
+					SET 
+						launchtime='".time()."',
+						landtime='".$landtime."',
+						entity_from=".$arr['entity_to'].",
+						entity_to=".$arr['entity_from'].",
+						status='1'
+					WHERE 
+						id='".$_GET['fleetedit']."';");
+					$res=dbquery("
+					SELECT 
+						*
+					FROM 
+						fleet
+					WHERE
+						id='".$_GET['fleetedit']."'
+					;");
+					$arr=mysql_fetch_array($res);
 				}
-				echo "</select>/<select name=\"sy_start\" onchange=\"submitForm();\">";
-				for ($x=1;$x<=$conf['num_of_sectors']['p2'];$x++)
-				{
-					echo "<option value=\"$x\"";
-					if ($arr['ssy']==$x) echo " selected=\"selected\"";
-					echo ">$x</option>";
-				}
-				echo "</select> : <select name=\"cx_start\" onchange=\"submitForm();\">";
-				for ($x=1;$x<=$conf['num_of_cells']['p1'];$x++)
-				{
-					echo "<option value=\"$x\"";
-					if ($arr['scx']==$x) echo " selected=\"selected\"";
-					echo ">$x</option>";
-				}
-				echo "</select>/<select name=\"cy_start\" onchange=\"submitForm();\">";
-				for ($x=1;$x<=$conf['num_of_cells']['p2'];$x++)
-				{
-					echo "<option value=\"$x\"";
-				if ($arr['scy']==$x) echo " selected=\"selected\"";
-					echo ">$x</option>";
-				}
-				echo "</select> ";
+				
+				// Land fleet
+				if (isset($_POST['submit_land']))
+				{			
+					$trgEnt = Entity::createFactoryById($arr['entity_to']);
 
-				echo "</td></tr>";
-				echo "<tr><td class=\"tbltitle\">Endzelle</td><td class=\"tbldata\">
-				<select name=\"sx_end\" onchange=\"submitForm();\">";
-				for ($x=1;$x<=$conf['num_of_sectors']['p1'];$x++)
-				{
-					echo "<option value=\"$x\"";
-					if ($arr['esx']==$x) echo " selected=\"selected\"";
-					echo ">$x</option>";
-				}
-				echo "</select>/<select name=\"sy_end\" onchange=\"submitForm();\">";
-				for ($x=1;$x<=$conf['num_of_sectors']['p2'];$x++)
-				{
-					echo "<option value=\"$x\"";
-					if ($arr['esy']==$x) echo " selected=\"selected\"";
-					echo ">$x</option>";
-				}
-				echo "</select> : <select name=\"cx_end\" onchange=\"submitForm();\">";
-				for ($x=1;$x<=$conf['num_of_cells']['p1'];$x++)
-				{
-					echo "<option value=\"$x\"";
-					if ($arr['ecx']==$x) echo " selected=\"selected\"";
-					echo ">$x</option>";
-				}
-				echo "</select>/<select name=\"cy_end\" onchange=\"submitForm();\">";
-				for ($x=1;$x<=$conf['num_of_cells']['p2'];$x++)
-				{
-					echo "<option value=\"$x\"";
-					if ($arr['ecy']==$x) echo " selected=\"selected\"";
-					echo ">$x</option>";
-				}
-				echo "</select> ";
+					if (($arr['user_id']==0 || $arr['user_id']==$trgEnt->ownerId()) && $trgEnt->ownerId() > 0)
+					{
+						$sres=dbquery("
+						SELECT
+							fs_id,
+				      fs_ship_id,
+				      fs_ship_cnt
+						FROM
+			       	fleet_ships
+						WHERE
+			      	fs_fleet_id=".$_GET['fleetedit']."
+			      	AND fs_ship_faked='0';");
+						if (mysql_num_rows($sres)>0)
+						{
+							$sl = new ShipList($trgEnt->id(),$trgEnt->ownerId());
+							while ($sarr=mysql_fetch_array($sres))
+							{		
+								$sl->add($sarr['fs_ship_id'],$sarr['fs_ship_cnt']);
+								dbquery("
+								DELETE FROM
+									fleet_ships
+								WHERE
+									fs_id=".$sarr['fs_id']."
+								");
+							}
+						}
+						
+						// TODO: Perhaps all entities can get res in the future...
+						if ($trgEnt->code == 'p')
+						{
+							$trgEnt->changeRes($arr['res_metal'],$arr['res_crystal'],$arr['res_plastic'],$arr['res_fuel'],$arr['res_food'],$arr['res_power']);
+							$trgEnt->chgPeople($arr['pilots']+$arr['res_people']);
+						}
+						
+						// TODO: Add parts of usaged stuff (power cells, fuel, food)
 
-				echo "</td></tr>";
-				echo "<tr><td class=\"tbltitle\">Aktion:</td><td class=\"tbldata\"><select name=\"fleet_action\">";
-				echo "<option value=\"\">(egal)</option>";
-				foreach ($fleet_actions as $key=>$val)
-				{
-					echo "<option value=\"$key\"";
-					if ($arr['fleet_action']==$key) echo " selected=\"selected\"";
-					echo ">$val</option>";
+						dbquery("
+						DELETE FROM
+							fleet
+						WHERE
+							id=".$_GET['fleetedit'].";");
+						ok_msg("Flotte gelandet!");
+						unset($arr);
+					}
+					else
+					{
+						err_msg("Kann Flotte nicht landen, Ziel ist unbewohnt oder Flottenbesitzer entspricht nicht Zielbesitzer.");
+					}
 				}
-				echo "</select></td></tr>";
-				echo "<tr><td class=\"tbltitle\">Titan:</td><td class=\"tbldata\"><input type=\"text\" name=\"fleet_res_metal\" value=\"".$arr['fleet_res_metal']."\" size=\"10\" /></td></tr>";
-				echo "<tr><td class=\"tbltitle\">Silizium::</td><td class=\"tbldata\"><input type=\"text\" name=\"fleet_res_crystal\" value=\"".$arr['fleet_res_crystal']."\" size=\"10\" /></td></tr>";
-				echo "<tr><td class=\"tbltitle\">PVC:</td><td class=\"tbldata\"><input type=\"text\" name=\"fleet_res_plastic\" value=\"".$arr['fleet_res_plastic']."\" size=\"10\" /></td></tr>";
-				echo "<tr><td class=\"tbltitle\">Tritium:</td><td class=\"tbldata\"><input type=\"text\" name=\"fleet_res_fuel\" value=\"".$arr['fleet_res_fuel']."\" size=\"10\" /></td></tr>";
-				echo "<tr><td class=\"tbltitle\">Nahrung:</td><td class=\"tbldata\"><input type=\"text\" name=\"fleet_res_food\" value=\"".$arr['fleet_res_food']."\" size=\"10\" /></td></tr>";
-				echo "<tr><td class=\"tbltitle\">Mannschaft:</td><td class=\"tbldata\"><input type=\"text\" name=\"fleet_res_people\" value=\"".$arr['fleet_res_people']."\" size=\"10\" /></td></tr>";
-				echo "<tr><td class=\"tbltitle\">Update läuft:</td><td class=\"tbldata\"><input type=\"text\" name=\"fleet_updating\" value=\"".$arr['fleet_updating']."\" size=\"1\" /></td></tr>";
-				echo "</table><br/><input type=\"submit\" value=\"&Uuml;bernehmen\" name=\"submit_edit\" /> ";
-				echo "<input type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&sub=$sub&action=searchresults'\" /> ";
-				echo "<input type=\"button\" value=\"Neue Suche\" onclick=\"document.location='?page=$page&sub=$sub'\" />";
-				echo "</form>";
-				echo "<script>
-				function submitForm()
+				
+				if (isset($arr))
 				{
-					document.fleetform.submit();
+					echo "<form action=\"?page=$page&amp;sub=$sub&amp;fleetedit=".$_GET['fleetedit']."\" method=\"post\" name=\"fleetform\">";
+					echo "<table class=\"tbl\">";
+					
+					// Owner
+					echo "<tr><th class=\"tbltitle\">Besitzer:</th><td class=\"tbldata\"><select name=\"user_id\"><option value=\"\" style=\"font-style:italic\">(niemand)</option>";
+					foreach ($users as $id=>$val)
+					{
+						echo "<option value=\"$id\"";
+						if ($id==$arr['user_id']) echo " selected=\"selected\"";
+						echo ">$val</option>";
+					}
+					echo "</select></td></tr>";
+					
+					// Time Data
+					echo "<tr><th class=\"tbltitle\">Startzeit:</th><td class=\"tbldata\">";
+					show_timebox("launchtime",$arr['launchtime'],1);
+					echo "</td></tr>";
+					echo "<tr><th class=\"tbltitle\">Landezeit:</th><td class=\"tbldata\">";
+					show_timebox("landtime",$arr['landtime'],1);
+					echo " &nbsp; Flugdauer: ".tf($arr['landtime']-$arr['launchtime'])."</td></tr>";
+					
+					// Source and Target Data
+					$srcEnt = Entity::createFactoryById($arr['entity_from']);
+					$trgEnt = Entity::createFactoryById($arr['entity_to']);
+					
+					echo "<tr><td class=\"tbltitle\">Startzelle</td><td class=\"tbldata\">
+					<select name=\"sx_start\" onchange=\"submitForm();\">";
+					for ($x=1;$x<=$conf['num_of_sectors']['p1'];$x++)
+					{
+						echo "<option value=\"$x\"";
+						if ($srcEnt->sx()==$x) echo " selected=\"selected\"";
+						echo ">$x</option>";
+					}
+					echo "</select>/<select name=\"sy_start\" onchange=\"submitForm();\">";
+					for ($x=1;$x<=$conf['num_of_sectors']['p2'];$x++)
+					{
+						echo "<option value=\"$x\"";
+						if ($srcEnt->sy()==$x) echo " selected=\"selected\"";
+						echo ">$x</option>";
+					}
+					echo "</select> : <select name=\"cx_start\" onchange=\"submitForm();\">";
+					for ($x=1;$x<=$conf['num_of_cells']['p1'];$x++)
+					{
+						echo "<option value=\"$x\"";
+						if ($srcEnt->cx()==$x) echo " selected=\"selected\"";
+						echo ">$x</option>";
+					}
+					echo "</select>/<select name=\"cy_start\" onchange=\"submitForm();\">";
+					for ($x=1;$x<=$conf['num_of_cells']['p2'];$x++)
+					{
+						echo "<option value=\"$x\"";
+						if ($srcEnt->cy()==$x) echo " selected=\"selected\"";
+						echo ">$x</option>";
+					}
+					echo "</select> : <select name=\"p_start\" onchange=\"submitForm();\">";
+					for ($x=0;$x<=$conf['num_planets']['p2'];$x++)
+					{
+						echo "<option value=\"$x\"";
+						if ($srcEnt->pos()==$x) echo " selected=\"selected\"";
+						echo ">$x</option>";
+					}
+					echo "</select> &nbsp; ".$srcEnt->name()." (".$srcEnt->entityCodeString().")";
+	
+					echo "</td></tr>";
+					echo "<tr><td class=\"tbltitle\">Endzelle</td><td class=\"tbldata\">
+					<select name=\"sx_end\" onchange=\"submitForm();\">";
+					for ($x=1;$x<=$conf['num_of_sectors']['p1'];$x++)
+					{
+						echo "<option value=\"$x\"";
+						if ($trgEnt->sx()==$x) echo " selected=\"selected\"";
+						echo ">$x</option>";
+					}
+					echo "</select>/<select name=\"sy_end\" onchange=\"submitForm();\">";
+					for ($x=1;$x<=$conf['num_of_sectors']['p2'];$x++)
+					{
+						echo "<option value=\"$x\"";
+						if ($trgEnt->sy()==$x) echo " selected=\"selected\"";
+						echo ">$x</option>";
+					}
+					echo "</select> : <select name=\"cx_end\" onchange=\"submitForm();\">";
+					for ($x=1;$x<=$conf['num_of_cells']['p1'];$x++)
+					{
+						echo "<option value=\"$x\"";
+						if ($trgEnt->cx()==$x) echo " selected=\"selected\"";
+						echo ">$x</option>";
+					}
+					echo "</select>/<select name=\"cy_end\" onchange=\"submitForm();\">";
+					for ($x=1;$x<=$conf['num_of_cells']['p2'];$x++)
+					{
+						echo "<option value=\"$x\"";
+						if ($trgEnt->cy()==$x) echo " selected=\"selected\"";
+						echo ">$x</option>";
+					}
+					echo "</select>  : <select name=\"p_end\" onchange=\"submitForm();\">";
+					for ($x=0;$x<=$conf['num_planets']['p2'];$x++)
+					{
+						echo "<option value=\"$x\"";
+						if ($trgEnt->pos()==$x) echo " selected=\"selected\"";
+						echo ">$x</option>";
+					}
+					echo "</select> &nbsp; ".$trgEnt->name()." (".$trgEnt->entityCodeString().")";
+	
+					// Action
+					echo "</td></tr>";
+					echo "<tr><td class=\"tbltitle\">Aktion:</td><td class=\"tbldata\"><select name=\"action\">";
+					echo "<option value=\"\">(egal)</option>";
+					$fas = FleetAction::getAll();
+					foreach ($fas as $fa)
+					{
+						echo "<option value=\"".$fa->code()."\" style=\"color:".FleetAction::$attitudeColor[$fa->attitude()]."\"";
+						if ($arr['action']==$fa->code()) 
+							echo " selected=\"selected\"";
+					
+						echo ">".$fa->name()."</option>";
+					}
+					echo "</select> &nbsp; <select name=\"status\">";
+					echo "<option value=\"\">(egal)</option>";
+					foreach (FleetAction::$statusCode as $k => $v)
+					{
+						echo "<option value=\"".$k."\" ";
+						if ($arr['status']==$k) 
+							echo " selected=\"selected\"";
+						echo ">".$v."</option>";
+					}
+					echo "</select></td></tr>";			
+					
+					// Usage
+					echo "<tr><td style=\"background:#000;height:2px;\" colspan=\"2\"></td></tr>";
+					echo "<tr>
+						<td class=\"tbltitle\">Piloten:</td>
+						<td class=\"tbldata\">
+							<input type=\"text\" name=\"pilots\" value=\"".$arr['pilots']."\" size=\"10\" /></td></tr>";
+					echo "<tr>
+						<td class=\"tbltitle\">Verbrauch: ".RES_FUEL.":</td>
+						<td class=\"tbldata\">
+							<input type=\"text\" name=\"usage_fuel\" value=\"".$arr['usage_fuel']."\" size=\"10\" /></td></tr>";
+					echo "<tr>
+						<td class=\"tbltitle\">Verbrauch: ".RES_FOOD.":</td>
+						<td class=\"tbldata\">
+							<input type=\"text\" name=\"usage_food\" value=\"".$arr['usage_food']."\" size=\"10\" /></td></tr>";
+					echo "<tr>
+						<td class=\"tbltitle\">Verbrauch: ".RES_POWER.":</td>
+						<td class=\"tbldata\">
+							<input type=\"text\" name=\"usage_power\" value=\"".$arr['usage_power']."\" size=\"10\" /></td></tr>";
+	
+					// Freight
+					echo "<tr><td style=\"background:#000;height:2px;\" colspan=\"2\"></td></tr>";
+					echo "<tr>
+						<td class=\"tbltitle\">Fracht: ".RES_METAL.":</td>
+						<td class=\"tbldata\">
+							<input type=\"text\" name=\"res_metal\" value=\"".$arr['res_metal']."\" size=\"10\" /></td></tr>";
+					echo "<tr>
+						<td class=\"tbltitle\">Fracht: ".RES_CRYSTAL."::</td>
+						<td class=\"tbldata\">
+							<input type=\"text\" name=\"res_crystal\" value=\"".$arr['res_crystal']."\" size=\"10\" /></td></tr>";
+					echo "<tr>
+						<td class=\"tbltitle\">Fracht: ".RES_PLASTIC.":</td>
+						<td class=\"tbldata\">
+							<input type=\"text\" name=\"res_plastic\" value=\"".$arr['res_plastic']."\" size=\"10\" /></td></tr>";
+					echo "<tr>
+						<td class=\"tbltitle\">Fracht: ".RES_FUEL.":</td>
+						<td class=\"tbldata\">
+							<input type=\"text\" name=\"res_fuel\" value=\"".$arr['res_fuel']."\" size=\"10\" /></td></tr>";
+					echo "<tr>
+						<td class=\"tbltitle\">Fracht: ".RES_FOOD.":</td>
+						<td class=\"tbldata\">
+							<input type=\"text\" name=\"res_food\" value=\"".$arr['res_food']."\" size=\"10\" /></td></tr>";
+					echo "<tr>
+						<td class=\"tbltitle\">Fracht: ".RES_POWER.":</td>
+						<td class=\"tbldata\">
+							<input type=\"text\" name=\"res_power\" value=\"".$arr['res_power']."\" size=\"10\" /></td></tr>";
+					echo "<tr>
+						<td class=\"tbltitle\">Passagiere:</td>
+						<td class=\"tbldata\">
+							<input type=\"text\" name=\"res_people\" value=\"".$arr['res_people']."\" size=\"10\" /></td></tr>";
+	
+					echo "<tr><td style=\"background:#000;height:2px;\" colspan=\"2\"></td></tr>";
+					echo "<tr>
+						<td class=\"tbltitle\">Abholen: ".RES_METAL.":</td>
+						<td class=\"tbldata\">
+							<input type=\"text\" name=\"fetch_metal\" value=\"".$arr['fetch_metal']."\" size=\"10\" /></td></tr>";
+					echo "<tr>
+						<td class=\"tbltitle\">Abholen: ".RES_CRYSTAL."::</td>
+						<td class=\"tbldata\">
+							<input type=\"text\" name=\"fetch_crystal\" value=\"".$arr['fetch_crystal']."\" size=\"10\" /></td></tr>";
+					echo "<tr>
+						<td class=\"tbltitle\">Abholen: ".RES_PLASTIC.":</td>
+						<td class=\"tbldata\">
+							<input type=\"text\" name=\"fetch_plastic\" value=\"".$arr['fetch_plastic']."\" size=\"10\" /></td></tr>";
+					echo "<tr>
+						<td class=\"tbltitle\">Abholen: ".RES_FUEL.":</td>
+						<td class=\"tbldata\">
+							<input type=\"text\" name=\"fetch_fuel\" value=\"".$arr['fetch_fuel']."\" size=\"10\" /></td></tr>";
+					echo "<tr>
+						<td class=\"tbltitle\">Abholen: ".RES_FOOD.":</td>
+						<td class=\"tbldata\">
+							<input type=\"text\" name=\"fetch_food\" value=\"".$arr['fetch_food']."\" size=\"10\" /></td></tr>";
+					echo "<tr>
+						<td class=\"tbltitle\">Abholen: ".RES_POWER.":</td>
+						<td class=\"tbldata\">
+							<input type=\"text\" name=\"fetch_power\" value=\"".$arr['fetch_power']."\" size=\"10\" /></td></tr>";
+					echo "<tr>
+						<td class=\"tbltitle\">Abholen: Passagiere:</td>
+						<td class=\"tbldata\">
+							<input type=\"text\" name=\"fetch_people\" value=\"".$arr['fetch_people']."\" size=\"10\" /></td></tr>";
+	
+					echo "</table><br/>
+						<input type=\"submit\" value=\"&Uuml;bernehmen\" name=\"submit_edit\" /> ";
+					if ($arr['status']==0)
+					{
+						echo "	<input type=\"submit\" value=\"Flug abbrechen\" name=\"submit_cancel\" /> 
+						<input type=\"submit\" value=\"Flug zurückschicken\" name=\"submit_return\" /> 
+						<input type=\"submit\" value=\"Flotte auf dem Ziel landen\" name=\"submit_land\" /> 
+						";
+					}
+					else
+					{
+						echo "	<input type=\"submit\" value=\"Flotte auf dem Ziel landen\" name=\"submit_land\" /> 
+						";
+					}
+					echo "</form><br/>";
+					echo "<script>
+					function submitForm()
+					{
+						//document.fleetform.submit();
+					}
+					</script>";
+				
+				
+				// Ships
+				echo "<h3>Schiffe der Flotte bearbeiten</h3>";
+				if ($_POST['newship_submit']!="" && $_POST['fs_ship_cnt_new']>0 && $_POST['fs_ship_id_new']>0)
+				{
+					if (mysql_num_rows(dbquery("SELECT * FROM fleet_ships WHERE fs_fleet_id=".$_GET['fleetedit']." AND fs_ship_id=".$_POST['fs_ship_id_new'].";"))<1)
+						dbquery("INSERT INTO fleet_ships (fs_fleet_id,fs_ship_id,fs_ship_cnt) VALUES (".$_GET['fleetedit'].",".$_POST['fs_ship_id_new'].",".$_POST['fs_ship_cnt_new'].");");
+					else
+						dbquery("UPDATE fleet_ships SET fs_ship_cnt=fs_ship_cnt+".$_POST['fs_ship_cnt_new']." WHERE fs_fleet_id=".$_GET['fleetedit']." AND fs_ship_id=".$_POST['fs_ship_id_new'].";");
+					ok_msg("Schiffe hinzugefügt");
 				}
-				</script>";
+				if ($_POST['editship_submit']!="")
+				{
+					foreach ($_POST['fs_ship_cnt'] as $ship=>$cnt)
+					dbquery("UPDATE fleet_ships SET fs_ship_cnt=$cnt WHERE fs_fleet_id=".$_GET['fleetedit']." AND fs_ship_id=$ship;");
+					ok_msg("Schiffe geändert");
+				}
+				if ($_GET['shipdel']>0)
+				{
+					dbquery("DELETE FROM fleet_ships WHERE fs_fleet_id=".$_GET['fleetedit']." AND fs_ship_id=".$_GET['shipdel'].";");
+					ok_msg("Schiffe gelöscht");
+				}
+	
+				$sres=dbquery("
+				SELECT
+		      ship_name,
+		      ship_id,
+		      fs_ship_cnt
+				FROM
+	       	fleet_ships
+	     	INNER JOIN
+	     		ships
+				WHERE
+	      	fs_ship_id=ship_id
+	      	AND fs_fleet_id=".$_GET['fleetedit']."
+	      	AND fs_ship_faked='0';");
+				if (mysql_num_rows($sres)>0)
+				{
+					echo "<form action=\"?page=$page&amp;sub=$sub&amp;fleetedit=".$_GET['fleetedit']."\" method=\"post\">";
+					echo "<table class=\"tbl\">";
+					echo "<tr><th class=\"tbltitle\">Typ</th><th class=\"tbltitle\">Anzahl</th><th class=\"tbltitle\">&nbsp;</th></tr>";
+					while ($sarr=mysql_fetch_array($sres))
+					{
+						echo "<tr><td class=\"tbldata\">".$sarr['ship_name']."</td>";
+						echo "<td class=\"tbldata\">
+							<input type=\"text\" name=\"fs_ship_cnt[".$sarr['ship_id']."]\" value=\"".$sarr['fs_ship_cnt']."\" size=\"5\" /></td>";
+						echo "<td class=\"tbldata\">
+							<a href=\"?page=$page&amp;sub=$sub&amp;fleetedit=".$_GET['fleetedit']."&amp;shipdel=".$sarr['ship_id']."\" onclick=\"return confirm('Soll ".$sarr['ship_name']." wirklich aus der Flotte entfernt werden?');\">L&ouml;schen</a></td>";
+						echo "</tr>";
+					}
+	
+					echo "</table><br/>";
+	
+					//Zeigt alle gefakten schiffe in der flotte
+	                $sfres=dbquery("
+	                SELECT
+	                    ship_name,
+	                    ship_id,
+	                    fs_ship_cnt
+	                FROM
+	                    fleet_ships,
+	                    ships
+	                WHERE
+	                    fs_ship_id=ship_id
+	                    AND fs_fleet_id=".$_GET['fleetedit']."
+	                    AND fs_ship_faked='1';");
+	                if (mysql_num_rows($sfres)>0)
+	                {
+	                    echo "<table class=\"tbl\">";
+	                    echo "<tr><th class=\"tbltitle\" colspan=\"3\">Gefakte Schiffe</th></tr>";
+	                    echo "<tr><th class=\"tbltitle\">Typ</th><th class=\"tbltitle\">Anzahl</th><th class=\"tbltitle\">&nbsp;</th></tr>";
+	                    while ($sfarr=mysql_fetch_array($sfres))
+	                    {
+	                        echo "<tr><td class=\"tbldata\">".$sfarr['ship_name']."</td>";
+	                        echo "<td class=\"tbldata\"><input type=\"text\" name=\"fs_ship_cnt[".$sfarr['ship_id']."]\" value=\"".$sfarr['fs_ship_cnt']."\" size=\"5\" /></td>";
+	
+	
+	                        	echo "<td class=\"tbldata\"><a href=\"?page=$page&amp;sub=$sub&amp;fleetedit=".$_GET['fleetedit']."&amp;shipdel=".$sfarr['ship_id']."\" onclick=\"return confirm('Soll ".$sfarr['ship_name']." wirklich aus der Flotte entfernt werden?');\">L&ouml;schen</a></td>";
+	
+	                        echo "</tr>";
+						}
+	
+						echo "</table><br/>";
+					}
+	
+					echo "<input type=\"submit\" name=\"editship_submit\" value=\"&Auml;nderungen &uuml;bernehmen\" />
+					<br/><br/>";
+					
+					echo "<input type=\"text\" name=\"fs_ship_cnt_new\" value=\"1\" size=\"5\" /> Schiffe des Typs 
+					<select name=\"fs_ship_id_new\">";
+					$ssres=dbquery("SELECT ship_id,ship_name FROM ".$db_table['ships']." ORDER BY ship_name;");
+					while ($ssarr=mysql_fetch_array($ssres))
+					{
+						echo "<option value=\"".$ssarr['ship_id']."\">".$ssarr['ship_name']."</option>";
+					}
+					echo "</select> hinzuf&uuml;gen: 
+					<input type=\"submit\" name=\"newship_submit\" value=\"Asuf&uuml;hren\" /></form><br/>";
+				}
+				else
+				{
+					cms_err_msg("Diese Flotte besitzt keine Schiffe!");
+				}
+				}
+				else
+				{
+					echo "Flotte nicht mehr vorhanden!";
+				}
+				
+				echo "<br/><br/><input type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&sub=$sub&action=searchresults'\" /> ";
+				echo "<input type=\"button\" value=\"Neue zur Suche\" onclick=\"document.location='?page=$page&sub=$sub'\" />";
+
 			}
 			else
 				cms_err_msg("Datensatz nicht vorhanden!");
 		}
 
-		//
-		// Schiffe der Flotte bearbeiten
-		//
-		elseif ($_GET['fleetships']>0)
-		{
-			echo "<h3>Schiffe der Flotte bearbeiten</h3>";
-			if ($_POST['newship_submit']!="" && $_POST['fs_ship_cnt_new']>0 && $_POST['fs_ship_id_new']>0)
-			{
-				if (mysql_num_rows(dbquery("SELECT * FROM ".$db_table['fleet_ships']." WHERE fs_fleet_id=".$_GET['fleetships']." AND fs_ship_id=".$_POST['fs_ship_id_new'].";"))<1)
-					dbquery("INSERT INTO ".$db_table['fleet_ships']." (fs_fleet_id,fs_ship_id,fs_ship_cnt) VALUES (".$_GET['fleetships'].",".$_POST['fs_ship_id_new'].",".$_POST['fs_ship_cnt_new'].");");
-				else
-					dbquery("UPDATE ".$db_table['fleet_ships']." SET fs_ship_cnt=fs_ship_cnt+".$_POST['fs_ship_cnt_new']." WHERE fs_fleet_id=".$_GET['fleetships']." AND fs_ship_id=".$_POST['fs_ship_id_new'].";");
-			}
-			if ($_POST['editship_submit']!="")
-			{
-				foreach ($_POST['fs_ship_cnt'] as $ship=>$cnt)
-				dbquery("UPDATE ".$db_table['fleet_ships']." SET fs_ship_cnt=$cnt WHERE fs_fleet_id=".$_GET['fleetships']." AND fs_ship_id=$ship;");
-			}
-			if ($_GET['shipdel']>0)
-			{
-				dbquery("DELETE FROM ".$db_table['fleet_ships']." WHERE fs_fleet_id=".$_GET['fleetships']." AND fs_ship_id=".$_GET['shipdel'].";");
-			}
 
-			$sres=dbquery("
-			SELECT
-                ship_name,
-                ship_id,
-                fs_ship_cnt
-			FROM
-                ".$db_table['fleet_ships'].",
-                ".$db_table['ships']."
-			WHERE
-                fs_ship_id=ship_id
-                AND fs_fleet_id=".$_GET['fleetships']."
-                AND fs_ship_faked='0';");
-			if (mysql_num_rows($sres)>0)
-			{
-				echo "<form action=\"?page=$page&amp;sub=$sub&amp;fleetships=".$_GET['fleetships']."\" method=\"post\">";
-				echo "<table class=\"tbl\">";
-				echo "<tr><th class=\"tbltitle\">Typ</th><th class=\"tbltitle\">Anzahl</th><th class=\"tbltitle\">&nbsp;</th></tr>";
-				while ($sarr=mysql_fetch_array($sres))
-				{
-					echo "<tr><td class=\"tbldata\">".$sarr['ship_name']."</td>";
-					echo "<td class=\"tbldata\"><input type=\"text\" name=\"fs_ship_cnt[".$sarr['ship_id']."]\" value=\"".$sarr['fs_ship_cnt']."\" size=\"5\" /></td>";
-					echo "<td class=\"tbldata\"><a href=\"?page=$page&amp;sub=$sub&amp;fleetships=".$_GET['fleetships']."&amp;shipdel=".$sarr['ship_id']."\" onclick=\"return confirm('Soll ".$sarr['ship_name']." wirklich aus der Flotte entfernt werden?');\">L&ouml;schen</a></td>";
-					echo "</tr>";
-				}
-
-				echo "</table><br/>";
-
-				//Zeigt alle gefakten schiffe in der flotte
-                $sfres=dbquery("
-                SELECT
-                    ship_name,
-                    ship_id,
-                    fs_ship_cnt
-                FROM
-                    ".$db_table['fleet_ships'].",
-                    ".$db_table['ships']."
-                WHERE
-                    fs_ship_id=ship_id
-                    AND fs_fleet_id=".$_GET['fleetships']."
-                    AND fs_ship_faked='1';");
-                if (mysql_num_rows($sfres)>0)
-                {
-                    echo "<table class=\"tbl\">";
-                    echo "<tr><th class=\"tbltitle\" colspan=\"3\">Gefakte Schiffe</th></tr>";
-                    echo "<tr><th class=\"tbltitle\">Typ</th><th class=\"tbltitle\">Anzahl</th><th class=\"tbltitle\">&nbsp;</th></tr>";
-                    while ($sfarr=mysql_fetch_array($sfres))
-                    {
-                        echo "<tr><td class=\"tbldata\">".$sfarr['ship_name']."</td>";
-                        echo "<td class=\"tbldata\"><input type=\"text\" name=\"fs_ship_cnt[".$sfarr['ship_id']."]\" value=\"".$sfarr['fs_ship_cnt']."\" size=\"5\" /></td>";
-
-
-                        	echo "<td class=\"tbldata\"><a href=\"?page=$page&amp;sub=$sub&amp;fleetships=".$_GET['fleetships']."&amp;shipdel=".$sfarr['ship_id']."\" onclick=\"return confirm('Soll ".$sfarr['ship_name']." wirklich aus der Flotte entfernt werden?');\">L&ouml;schen</a></td>";
-
-                        echo "</tr>";
-					}
-
-					echo "</table><br/>";
-				}
-
-				echo "<input type=\"submit\" name=\"editship_submit\" value=\"&Auml;nderungen &uuml;bernehmen\" /></form><br/>";
-				echo "<form action=\"?page=$page&amp;sub=$sub&amp;fleetships=".$_GET['fleetships']."\" method=\"post\"><input type=\"text\" name=\"fs_ship_cnt_new\" value=\"1\" size=\"5\" /> Schiffe des Typs <select name=\"fs_ship_id_new\">";
-				$ssres=dbquery("SELECT ship_id,ship_name FROM ".$db_table['ships']." ORDER BY ship_name;");
-				while ($ssarr=mysql_fetch_array($ssres))
-				{
-					echo "<option value=\"".$ssarr['ship_id']."\">".$ssarr['ship_name']."</option>";
-				}
-				echo "</select> hinzuf&uuml;gen: <input type=\"submit\" name=\"newship_submit\" value=\"Asuf&uuml;hren\" /></form><br/>";
-				echo "<input type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&sub=$sub&action=searchresults'\" /> ";
-				echo "<input type=\"button\" value=\"Neue zur Suche\" onclick=\"document.location='?page=$page&sub=$sub'\" />";
-			}
-			else
-				cms_err_msg("Diese Flotte besitzt keine Schiffe!");
-		}
 
 		//
 		// Suchergebnisse anzeigen
@@ -790,122 +1054,57 @@
 			// Flotte löschen
 			if ($_GET['fleetdel']>0)
 			{
-				dbquery("DELETE FROM ".$db_table['fleet']." WHERE fleet_id='".$_GET['fleetdel']."';");
-				dbquery("DELETE FROM ".$db_table['fleet_ships']." WHERE fs_fleet_id='".$_GET['fleetdel']."';");
+				dbquery("DELETE FROM fleet WHERE id='".$_GET['fleetdel']."';");
+				dbquery("DELETE FROM fleet_ships WHERE fs_fleet_id='".$_GET['fleetdel']."';");
 				cms_ok_msg("Die Flotte wurde gel&ouml;scht!");
-			}
-
-			// Flotte zurückschicken
-			if ($_GET['fleetreturn']>0)
-			{
-				$res = dbquery("SELECT * FROM ".$db_table['fleet']." WHERE fleet_id='".$_GET['fleetreturn']."';");
-				if (mysql_num_rows($res)>0)
-				{
-					$arr=mysql_fetch_array($res);
-					if (!stristr($arr['fleet_action'],"r") && !stristr($arr['fleet_action'],"c"))
-					{
-						$stime = time();
-						$etime = (2*time())-$arr['fleet_launchtime'];
-						$action = $arr['fleet_action']."c";
-
-						dbquery("UPDATE ".$db_table['fleet']." SET
-						fleet_launchtime='$stime',
-						fleet_landtime='$etime',
-						fleet_action='$action',
-						fleet_planet_from='".$arr['fleet_planet_to']."',
-						fleet_planet_to='".$arr['fleet_planet_from']."',
-						fleet_cell_from='".$arr['fleet_cell_to']."',
-						fleet_cell_to='".$arr['fleet_cell_from']."'
-						WHERE fleet_id='".$_GET['fleetreturn']."';");
-						cms_ok_msg("Die Flotte wurde zur&uuml;ckgeschickt!");
-					}
-					else
-						cms_err_msg("Die Flotte kann nicht zur&uuml;ckgeschickt werden!");
-				}
-				else
-					cms_err_msg("Die Flotte <b>".$_GET['fleetreturn']."</b> wurde nicht gefunden!");
 			}
 
 			// Suchquery zusammenstellen
 			if ($_SESSION['fleetedit']['query']=="")
 			{
-				if ($_POST['sx_start']>0)
-					$sql.= " AND s.cell_sx=".$_POST['sx_start'];
-				if ($_POST['sy_start']>0)
-					$sql.= " AND s.cell_sy=".$_POST['sy_start'];
-				if ($_POST['cx_start']>0)
-					$sql.= " AND s.cell_cx=".$_POST['cx_start'];
-				if ($_POST['cy_start']>0)
-					$sql.= " AND s.cell_cy=".$_POST['cy_start'];
-				if ($_POST['sx_end']>0)
-					$sql.= " AND e.cell_sx=".$_POST['sx_end'];
-				if ($_POST['sy_end']>0)
-					$sql.= " AND e.cell_sy=".$_POST['sy_end'];
-				if ($_POST['cx_end']>0)
-					$sql.= " AND e.cell_cx=".$_POST['cx_end'];
-				if ($_POST['cy_end']>0)
-					$sql.= " AND e.cell_cy=".$_POST['cy_end'];
-				if ($_POST['typ_start']!="")
+				if ($_POST['sx_start']>0 && $_POST['sy_start']>0 && $_POST['cx_start']>0 && $_POST['cy_start']>0 && $_POST['p_start']!="")
 				{
-					switch ($_POST['typ_start'])
+					if ($srcEnt = Entity::createFactoryByCoords($_POST['sx_start'],$_POST['sy_start'],$_POST['cx_start'],$_POST['cy_start'],$_POST['p_start']))
 					{
-						case "solsys":
-							$typ=" s.cell_solsys_num_planets>0 AND s.cell_solsys_solsys_sol_type>0";
-							break;
-						case "asteroid":
-							$typ=" s.cell_asteroid>0";
-							break;
-						case "nebula":
-							$typ=" s.cell_nebula>0";
-							break;
-						case "wormhole":
-							$typ=" s.cell_wormhole_id>0";
-							break;
+						$sql.=" AND entity_from=".$srcEnt->id()."";
 					}
-					$sql.= " AND ".$typ;
+					else
+					{
+						err_msg("Startentität existiert nicht, Bedingung ausgelassen!");
+					}					
 				}
-				if ($_POST['typ_end']!="")
+				
+				if ($_POST['sx_end']>0 && $_POST['sy_end']>0 && $_POST['cx_end']>0 && $_POST['cy_end']>0 && $_POST['p_end']!="")
 				{
-					switch ($_POST['typ_end'])
+					if ($trgEnt = Entity::createFactoryByCoords($_POST['sx_end'],$_POST['sy_end'],$_POST['cx_end'],$_POST['cy_end'],$_POST['p_end']))
 					{
-						case "solsys":
-							$typ=" e.cell_solsys_num_planets>0 AND e.cell_solsys_solsys_sol_type>0";
-							break;
-						case "asteroid":
-							$typ=" e.cell_asteroid>0";
-							break;
-						case "nebula":
-							$typ=" e.cell_nebula>0";
-							break;
-						case "wormhole":
-							$typ=" e.cell_wormhole_id>0";
-							break;
+						$sql.=" AND entity_to=".$trgEnt->id()."";
 					}
-					$sql.= " AND ".$typ;
-				}
+					else
+					{
+						err_msg("Startentität existiert nicht, Bedingung ausgelassen!");
+					}					
+				}	
+				
 				if ($_POST['fleet_action']!="")
 				{
 					if ($_POST['fleet_action']=="-")
-						$sql.=" AND fleet_action=''";
+						$sql.=" AND action=''";
 					else
-						$sql.=" AND fleet_action='".$_POST['fleet_action']."'";
+						$sql.=" AND action='".$_POST['fleet_action']."'";
 				}
-				if ($_POST['planet_name_start']!="")
+				if ($_POST['entity_from_id']!="")
 				{
-					if (stristr($_POST['qmode']['planet_name_start'],"%"))
-						$addchars = "%";else $addchars = "";
-					$sql.= " AND ps.planet_name ".stripslashes($_POST['qmode']['planet_name_start']).$_POST['planet_name_start']."$addchars'";
+					$sql.= " AND entity_from=".$_POST['entity_from_id']."";
 				}
-				if ($_POST['planet_name_end']!="")
+				if ($_POST['entity_to_id']!="")
 				{
-					if (stristr($_POST['qmode']['planet_name_end'],"%"))
-						$addchars = "%";else $addchars = "";
-					$sql.= " AND es.planet_name ".stripslashes($_POST['qmode']['planet_name_end']).$_POST['planet_name_end']."$addchars'";
+					$sql.= " AND entity_to=".$_POST['entity_to_id']."";
 				}
 				if ($_POST['user_id']!="")
 					$sql.=" AND user_id=".$_POST['user_id'];
 				if ($_POST['fleet_id']!="")
-					$sql.=" AND fleet_id=".$_POST['fleet_id'];
+					$sql.=" AND id=".$_POST['id'];
 				if ($_POST['user_nick']!="")
 				{
 					if (stristr($_POST['qmode']['user_nick'],"%"))
@@ -915,19 +1114,21 @@
 
 				$sqlstart = "
 				SELECT
-          fleet_id,
-          fleet_entity_from,
-          fleet_entity_to,
-          user_nick,
-          fleet_action,
-          fleet_status,
-          fleet_launchtime,
-          fleet_landtime
+          f.id,
+          entity_from,
+          entity_to,
+          u.user_nick,
+          action,
+          status,
+          launchtime,
+          landtime
 				FROM
-        	fleet
+        	fleet f
         LEFT JOIN
-        	users 
-        	ON fleet_user_id=user_id
+        	users u
+        	ON f.user_id=u.user_id
+        WHERE 
+        	1
 				";
 				
 				$sqlend.= " ORDER BY ";
@@ -935,25 +1136,23 @@
 				switch ($_POST['fleet_order'])
 				{
 					case "launchtime":
-						$sqlend.="fleet_launchtime DESC;";
+						$sqlend.="launchtime DESC;";
 						break;
 					case "landtime":
-						$sqlend.="fleet_landtime ASC;";
+						$sqlend.="landtime ASC;";
 						break;
 					case "user":
 						$sqlend.="user_nick ASC;";
 						break;
 					case "action":
-						$sqlend.="fleet_action ASC;";
+						$sqlend.="action ASC;";
 						break;
 					default:
-						$sqlend.="fleet_landtime DESC;";
+						$sqlend.="landtime DESC;";
 						break;
 				}
 				
 				$sql = $sqlstart.$sql.$sqlend;
-				
-				//echo nl2br($sql);
 				
 				$_SESSION['fleetedit']['query']=$sql;
 			}
@@ -968,15 +1167,10 @@
 				if ($nr > 20)
 					echo "<input type=\"button\" value=\"Neue Suche\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" /><br/><br/>";
 
-				if ($arr['fleet_updating']==1)
-					$style=" style=\"color:orange;\"";
-				else
-					$style="";
 				echo "<table class=\"tbl\">";
 				echo "<tr>";
 				echo "<td class=\"tbltitle\" $style>Besitzer</td>";
 				echo "<td class=\"tbltitle\" $style>Aktion</td>";
-				echo "<td class=\"tbltitle\" $style>Status</td>";
 				echo "<td class=\"tbltitle\" $style>Start</td>";
 				echo "<td class=\"tbltitle\" $style>Ziel</td>";
 				echo "<td class=\"tbltitle\" $style>Startzeit</td>";
@@ -985,11 +1179,7 @@
 				while ($arr = mysql_fetch_array($res))
 				{
 					$stl="";
-					if ($arr['fleet_updating']==1)
-					{
-						$stl="style=\"color:red;\"";
-					}
-					if ($arr['fleet_landtime']< time())
+					if ($arr['landtime']< time())
 					{
 						$stl="style=\"color:orange;\"";
 					}
@@ -1005,24 +1195,22 @@
 
 					echo "<tr>";
 					echo "<td class=\"tbldata\" $stl>".$owner."</td>";
-					$fa = FleetAction::createFactory($arr['fleet_action']);
-					echo "<td class=\"tbldata\" style=\"color:".FleetAction::$attitudeColor[$fa->attitude()]."\">";
-					echo $fa;
+					$fa = FleetAction::createFactory($arr['action']);
+					echo "<td class=\"tbldata\"><span style=\"color:".FleetAction::$attitudeColor[$fa->attitude()]."\">";
+					echo $fa."</span><br/>";
+					echo FleetAction::$statusCode[$arr['status']];
 					echo "</td>";
 					echo "<td class=\"tbldata\" $stl>";
-					echo FleetAction::$statusCode[$arr['fleet_status']];
-					echo "</td>";
+					$startEntity = Entity::createFactoryById($arr['entity_from']);
+					echo $startEntity."<br/>".$startEntity->entityCodeString()."</td>";
 					echo "<td class=\"tbldata\" $stl>";
-					$startEntity = Entity::createFactoryById($arr['fleet_entity_from']);
-					echo $startEntity."</td>";
-					echo "<td class=\"tbldata\" $stl>";
-					$endEntity = Entity::createFactoryById($arr['fleet_entity_to']);
-					echo $endEntity."</td>";
-					echo "<td class=\"tbldata\" $stl>".date("d.m.y",$arr['fleet_landtime'])." &nbsp; ".date("H:i:s",$arr['fleet_launchtime'])."</td>";
-					echo "<td class=\"tbldata\" $stl>".date("d.m.y",$arr['fleet_landtime'])." &nbsp; ".date("H:i:s",$arr['fleet_landtime'])."</td>";
+					$endEntity = Entity::createFactoryById($arr['entity_to']);
+					echo $endEntity."<br/>".$endEntity->entityCodeString()."</td>";
+					echo "<td class=\"tbldata\" $stl>".date("d.m.y",$arr['landtime'])." &nbsp; ".date("H:i:s",$arr['launchtime'])."</td>";
+					echo "<td class=\"tbldata\" $stl>".date("d.m.y",$arr['landtime'])." &nbsp; ".date("H:i:s",$arr['landtime'])."</td>";
 					echo "<td class=\"tbldata\">";
-					echo edit_button("?page=$page&amp;sub=$sub&fleetedit=".$arr['fleet_id'])." ";
-					echo del_button("?page=$page&amp;sub=$sub&fleetdel=".$arr['fleet_id']."&amp;action=searchresults","return confirm('Soll diese Flotte wirklich gel&ouml;scht werden?');");
+					echo edit_button("?page=$page&amp;sub=$sub&fleetedit=".$arr['id'])." ";
+					echo del_button("?page=$page&amp;sub=$sub&fleetdel=".$arr['id']."&amp;action=searchresults","return confirm('Soll diese Flotte wirklich gel&ouml;scht werden?');");
 					echo "</tr>";
 				}
 				echo "</table>";
@@ -1041,8 +1229,11 @@
 		//
 		else
 		{
+
+			// Search mask
 			$_SESSION['fleetedit']['query']=Null;
-			echo "Suchmaske:<br/><br/>";
+			echo "<h2>Suchmaske</h2>";
+		
 			echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
 			echo "<table class=\"tbl\">";
 			echo "<tr><td class=\"tbltitle\">Startentität-Koordinaten</td><td class=\"tbldata\"><select name=\"sx_start\">";
@@ -1088,8 +1279,8 @@
 				echo "<option value=\"$x\">$x</option>";
 			echo "</select>		
 			</td></tr>";
-			echo "<tr><td class=\"tbltitle\">Startentität-Name</td><td class=\"tbldata\"><input type=\"text\" name=\"planet_name_start\" value=\"\" size=\"20\" maxlength=\"250\" /> ";fieldqueryselbox('planet_name_start');echo "</td></tr>";
-			echo "<tr><td class=\"tbltitle\">Zielentität-Name</td><td class=\"tbldata\"><input type=\"text\" name=\"planet_name_end\" value=\"\" size=\"20\" maxlength=\"250\" /> ";fieldqueryselbox('planet_name_end');echo "</td></tr>";
+			echo "<tr><td class=\"tbltitle\">Startentität-ID</td><td class=\"tbldata\"><input type=\"text\" name=\"entity_from_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
+			echo "<tr><td class=\"tbltitle\">Zielentität-ID</td><td class=\"tbldata\"><input type=\"text\" name=\"entity_to_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
 
 
 			echo "<tr><td class=\"tbltitle\">Flottenaktion</td><td class=\"tbldata\"><select name=\"fleet_action\">";
@@ -1119,8 +1310,201 @@
 			
 			echo "</table>";
 			echo "<br/><input type=\"submit\" class=\"button\" name=\"fleet_search\" value=\"Suche starten\" /></form>";
-			$tblcnt = mysql_fetch_row(dbquery("SELECT count(fleet_id) FROM ".$db_table['fleet'].";"));
+			$tblcnt = mysql_fetch_row(dbquery("SELECT count(id) FROM fleet;"));
 			echo "<br/>Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.";
+			
+			//
+			// Create fleet
+			//
+			$ures=dbquery("SELECT user_id,user_nick FROM ".$db_table['users']." ORDER BY user_nick;");
+			$users=array();
+			while ($uarr=mysql_fetch_array($ures))
+			{
+				$users[$uarr['user_id']]=$uarr['user_nick'];
+			}			
+			echo "<h2>Flotte erstellen</h2>";
+			
+			if (isset($_POST['submit_new_fleet']))
+			{
+				if ($srcEnt = Entity::createFactoryByCoords($_POST['sx_start'],$_POST['sy_start'],$_POST['cx_start'],$_POST['cy_start'],$_POST['p_start']))
+				{
+					if ($trgEnt = Entity::createFactoryByCoords($_POST['sx_end'],$_POST['sy_end'],$_POST['cx_end'],$_POST['cy_end'],$_POST['p_end']))
+					{
+						$launchtime=mktime($_POST['launchtime_h'],$_POST['launchtime_i'],$_POST['launchtime_s'],$_POST['launchtime_m'],$_POST['launchtime_d'],$_POST['launchtime_y']);
+						$landtime=mktime($_POST['landtime_h'],$_POST['landtime_i'],$_POST['landtime_s'],$_POST['landtime_m'],$_POST['landtime_d'],$_POST['landtime_y']);
+
+						dbquery("
+						INSERT INTO 
+							fleet
+						(
+						user_id,
+						launchtime,
+						landtime,
+						entity_from,
+						entity_to,
+						action,
+						status
+						)
+						VALUES
+						( 
+							".$_POST['user_id'].",
+							".$launchtime.",
+							".$landtime.",
+							".$srcEnt->id().",
+							".$trgEnt->id().",
+							'".$_POST['action']."',
+							".$_POST['status']."
+						);");				
+						$fid = mysql_insert_id();
+						dbquery("
+						INSERT INTO 
+							fleet_ships 
+						(
+							fs_fleet_id,
+							fs_ship_id,
+							fs_ship_cnt
+						) 
+						VALUES 
+						(
+							".$fid.",
+							".$_POST['fs_ship_id_new'].",
+							".$_POST['fs_ship_cnt_new']."
+						);");
+						ok_msg("Neue Flotte erstellt! [url ?page=$page&amp;sub=$sub&fleetedit=".$fid."]Details[/url]");
+					}
+					else
+					{
+						err_msg("Zielentität nicht vorhanden");
+					}		
+				}
+				else
+				{
+					err_msg("Startentität nicht vorhanden");
+				}
+			}			
+			
+			echo "<form action=\"?page=$page\" method=\"post\" name=\"fleetform\">";
+			echo "<table class=\"tbl\">";
+					
+			// Owner
+			echo "<tr>
+				<th class=\"tbltitle\">Besitzer:</th>
+				<td class=\"tbldata\">
+					<select name=\"user_id\"><option value=\"\" style=\"font-style:italic\">(niemand)</option>";
+					foreach ($users as $id=>$val)
+					{
+						echo "<option value=\"$id\"";
+						echo ">$val</option>";
+					}
+			echo "</select></td></tr>";
+					
+			// Time Data
+			echo "<tr><th class=\"tbltitle\">Startzeit:</th><td class=\"tbldata\">";
+			show_timebox("launchtime",time()+10,1);
+			echo "</td></tr>";
+			echo "<tr><th class=\"tbltitle\">Landezeit:</th><td class=\"tbldata\">";
+			show_timebox("landtime",time()+90,1);
+			echo " </td></tr>";
+					
+			// Source and Target Data
+			echo "<tr><td class=\"tbltitle\">Startzelle</td><td class=\"tbldata\">
+			<select name=\"sx_start\" onchange=\"submitForm();\">";
+			for ($x=1;$x<=$conf['num_of_sectors']['p1'];$x++)
+			{
+				echo "<option value=\"$x\"";
+				echo ">$x</option>";
+			}
+			echo "</select>/<select name=\"sy_start\" onchange=\"submitForm();\">";
+			for ($x=1;$x<=$conf['num_of_sectors']['p2'];$x++)
+			{
+				echo "<option value=\"$x\"";
+				echo ">$x</option>";
+			}
+			echo "</select> : <select name=\"cx_start\" onchange=\"submitForm();\">";
+			for ($x=1;$x<=$conf['num_of_cells']['p1'];$x++)
+			{
+				echo "<option value=\"$x\"";
+				echo ">$x</option>";
+			}
+			echo "</select>/<select name=\"cy_start\" onchange=\"submitForm();\">";
+			for ($x=1;$x<=$conf['num_of_cells']['p2'];$x++)
+			{
+				echo "<option value=\"$x\"";
+				echo ">$x</option>";
+			}
+			echo "</select> : <select name=\"p_start\" onchange=\"submitForm();\">";
+			for ($x=0;$x<=$conf['num_planets']['p2'];$x++)
+			{
+				echo "<option value=\"$x\"";
+				echo ">$x</option>";
+			}
+			echo "</select> ";
+
+			echo "</td></tr>";
+			echo "<tr><td class=\"tbltitle\">Endzelle</td><td class=\"tbldata\">
+			<select name=\"sx_end\" onchange=\"submitForm();\">";
+			for ($x=1;$x<=$conf['num_of_sectors']['p1'];$x++)
+			{
+				echo "<option value=\"$x\"";
+				echo ">$x</option>";
+			}
+			echo "</select>/<select name=\"sy_end\" onchange=\"submitForm();\">";
+			for ($x=1;$x<=$conf['num_of_sectors']['p2'];$x++)
+			{
+				echo "<option value=\"$x\"";
+				echo ">$x</option>";
+			}
+			echo "</select> : <select name=\"cx_end\" onchange=\"submitForm();\">";
+			for ($x=1;$x<=$conf['num_of_cells']['p1'];$x++)
+			{
+				echo "<option value=\"$x\"";
+				echo ">$x</option>";
+			}
+			echo "</select>/<select name=\"cy_end\" onchange=\"submitForm();\">";
+			for ($x=1;$x<=$conf['num_of_cells']['p2'];$x++)
+			{
+				echo "<option value=\"$x\"";
+				echo ">$x</option>";
+			}
+			echo "</select>  : <select name=\"p_end\" onchange=\"submitForm();\">";
+			for ($x=0;$x<=$conf['num_planets']['p2'];$x++)
+			{
+				echo "<option value=\"$x\"";
+				echo ">$x</option>";
+			}
+			echo "</select>";
+	
+			// Action
+			echo "</td></tr>";
+			echo "<tr><td class=\"tbltitle\">Aktion:</td><td class=\"tbldata\"><select name=\"action\">";
+			$fas = FleetAction::getAll();
+			foreach ($fas as $fa)
+			{
+				echo "<option value=\"".$fa->code()."\" style=\"color:".FleetAction::$attitudeColor[$fa->attitude()]."\"";
+				echo ">".$fa->name()."</option>";
+			}
+			echo "</select> &nbsp; <select name=\"status\">";
+			foreach (FleetAction::$statusCode as $k => $v)
+			{
+				echo "<option value=\"".$k."\" ";
+				echo ">".$v."</option>";
+			}
+			echo "</select></td></tr>";			
+			echo "<tr>
+			<td class=\"tbltitle\">Schiffe:</td>
+				<td class=\"tbldata\">
+					<input type=\"text\" name=\"fs_ship_cnt_new\" value=\"1\" size=\"5\" /> 
+					<select name=\"fs_ship_id_new\">";
+					$ssres=dbquery("SELECT ship_id,ship_name FROM ".$db_table['ships']." ORDER BY ship_name;");
+					while ($ssarr=mysql_fetch_array($ssres))
+					{
+						echo "<option value=\"".$ssarr['ship_id']."\">".$ssarr['ship_name']."</option>";
+					}
+				echo "</select></td></tr>";					
+			echo "</table><br/>
+			<input type=\"submit\" value=\"Erstellen\" name=\"submit_new_fleet\" /> ";
+			
+			
 		}
 	}
 ?>	

@@ -31,7 +31,7 @@
 		static public $attitudeColor = array("#ff0","#0f0","#f90","#f00");
 		
 		// Status descriptions
-		static public $statusCode = array("Hinflug","Rückflug","Rückflug (Abbruch)");
+		static public $statusCode = array("Hinflug","RÃ¼ckflug","RÃ¼ckflug (Abbruch)");
 
 		//
 		// Class variables
