@@ -1202,10 +1202,10 @@
 					echo "</td>";
 					echo "<td class=\"tbldata\" $stl>";
 					$startEntity = Entity::createFactoryById($arr['entity_from']);
-					echo $startEntity."<br/>".$startEntity->entityCodeString()."</td>";
+					echo $startEntity."<br/>".$startEntity->entityCodeString().", ".$startEntity->owner()."</td>";
 					echo "<td class=\"tbldata\" $stl>";
 					$endEntity = Entity::createFactoryById($arr['entity_to']);
-					echo $endEntity."<br/>".$endEntity->entityCodeString()."</td>";
+					echo $endEntity."<br/>".$endEntity->entityCodeString().", ".$endEntity->owner()."</td>";
 					echo "<td class=\"tbldata\" $stl>".date("d.m.y",$arr['landtime'])." &nbsp; ".date("H:i:s",$arr['launchtime'])."</td>";
 					echo "<td class=\"tbldata\" $stl>".date("d.m.y",$arr['landtime'])." &nbsp; ".date("H:i:s",$arr['landtime'])."</td>";
 					echo "<td class=\"tbldata\">";

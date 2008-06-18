@@ -40,18 +40,18 @@
 	//Lädt Flottendaten
 	$fres = dbquery("
 	SELECT
-		fleet_id,
-		fleet_entity_from,
-		fleet_entity_to,
-		fleet_launchtime,
-		fleet_landtime,
-		fleet_action
+		id,
+		entity_from,
+		entity_to,
+		launchtime,
+		landtime,
+		action
 	FROM
 		fleet
 	WHERE
-		fleet_user_id='".$cu->id()."'
+		user_id='".$cu->id()."'
 	ORDER BY
-		fleet_landtime DESC;");
+		landtime DESC;");
 	if (mysql_num_rows($fres)>0)
 	{
 		infobox_start("Eigene Flotten",1);
@@ -62,33 +62,33 @@
 		$cdarr = array();
 		while ($farr = mysql_fetch_array($fres))
 		{
-			$ef = Entity::createFactoryById($farr['fleet_entity_from']);
-			$et = Entity::createFactoryById($farr['fleet_entity_to']);
-			$fa = FleetAction::createFactory($farr['fleet_action']);
+			$ef = Entity::createFactoryById($farr['entity_from']);
+			$et = Entity::createFactoryById($farr['entity_to']);
+			$fa = FleetAction::createFactory($farr['action']);
 			
 			echo "<tr>";
 			echo "<td class=\"tbldata\"><b>".$ef->entityCodeString()."</b> ".$ef."<br/>";
 			echo "<b>".$et->entityCodeString()."</b> ".$et."</td>";			
-			echo "<td class=\"tbldata\">".date("d.m.y, H:i:s",$farr['fleet_launchtime'])."<br/>";
-			echo date("d.m.y, H:i:s",$farr['fleet_landtime'])."</td>";
+			echo "<td class=\"tbldata\">".date("d.m.y, H:i:s",$farr['launchtime'])."<br/>";
+			echo date("d.m.y, H:i:s",$farr['landtime'])."</td>";
 			echo "<td class=\"tbldata\">
-				<a href=\"?page=fleetinfo&id=".$farr['fleet_id']."\" style=\"color:".FleetAction::$attitudeColor[$fa->attitude()]."\">
+				<a href=\"?page=fleetinfo&id=".$farr['id']."\" style=\"color:".FleetAction::$attitudeColor[$fa->attitude()]."\">
 				".$fa->name()."</a><br/>";
 			
-			$cdarr["cd".$farr['fleet_id']] = $farr['fleet_landtime'];
+			$cdarr["cd".$farr['id']] = $farr['landtime'];
 			
 			//Flotte landet
-			if ($farr['fleet_landtime']<time())
+			if ($farr['landtime']<time())
 			{
-				if ($farr['fleet_action']=="po")
+				if ($farr['action']=="po")
 				{
 					echo "Flotte wird stationiert...";
 				}
-				elseif ($farr['fleet_action']=="ko")
+				elseif ($farr['action']=="ko")
 				{
 					echo "Kolonie wird errichtet...";
 				}
-				elseif (stristr($farr['fleet_action'],"c") || stristr($farr['fleet_action'],"r"))
+				elseif (stristr($farr['action'],"c") || stristr($farr['action'],"r"))
 				{
 					echo "Flotte landet...";
 				}
@@ -99,10 +99,10 @@
 			}
 			else
 			{
-				echo "Flotte ist unterwegs [<span id=\"cd".$farr['fleet_id']."\">-</span>]";
+				echo "Flotte ist unterwegs [<span id=\"cd".$farr['id']."\">-</span>]";
 			}
 			echo "</td></tr>";
-			$fleet_landtime[$cnt]=$farr['fleet_landtime'];
+			$fleet_landtime[$cnt]=$farr['landtime'];
 			$cnt++;
 		}
 		infobox_end(1);
@@ -130,24 +130,17 @@
 	$spy_tech_level = get_spy_tech($cu->id());
 	$fres = dbquery("
 	SELECT
-      f.fleet_id,
-      f.fleet_user_id,
-			f.fleet_entity_from,
-			f.fleet_entity_to,
-      f.fleet_launchtime,
-      f.fleet_landtime,
-      f.fleet_action
+      f.id,
+      f.user_id,
+			f.entity_from,
+			f.entity_to,
+      f.launchtime,
+      f.landtime,
+      f.action
 	FROM
       fleet AS f
-  INNER JOIN
-      planets AS p
-			ON f.fleet_entity_to=p.id
-      AND f.fleet_user_id!='".$cu->id()."'
-      AND p.planet_user_id='".$cu->id()."'
-      AND f.fleet_action!='wo'
-      AND f.fleet_action!='zo'
 	ORDER BY
-		f.fleet_landtime ASC;");
+		f.landtime ASC;");
 	if (mysql_num_rows($fres)>0)
 	{
 		infobox_start("Fremde Flotten",1);
@@ -159,7 +152,7 @@
 			$show_tarn=0;
 
 			//Handelsflotte wird nie getarnt
-			if ($farr['fleet_action']=="mo")
+			if ($farr['action']=="mo")
 			{
 				$show_tarn=1;
 			}
@@ -173,7 +166,7 @@
           INNER JOIN
           ".$db_table['ships']." AS s
      			ON s.ship_id=fs.fs_ship_id
-     			AND fs.fs_fleet_id='".$farr['fleet_id']."'
+     			AND fs.fs_fleet_id='".$farr['id']."'
           AND s.ship_tarned!='1';");
       if(mysql_num_rows($tarn_ship_res)>0)
       {
@@ -195,7 +188,7 @@
       	INNER JOIN
         ".$db_table['ships']." AS s
         ON fs.fs_ship_id=s.ship_id
-        AND	fs.fs_fleet_id='".$farr['fleet_id']."'
+        AND	fs.fs_fleet_id='".$farr['id']."'
 				AND fs.fs_special_ship='1';");
       if(mysql_num_rows($special_boni_res)>0)
       {
@@ -212,7 +205,7 @@
       FROM
           ".$db_table['techlist']."
       WHERE
-          techlist_user_id='".$farr['fleet_user_id']."'
+          techlist_user_id='".$farr['user_id']."'
           AND techlist_tech_id='11'");
       $tarn_arr=mysql_fetch_array($tarn_res);
 
@@ -232,9 +225,9 @@
 
 
 			//Fakeangriff
-			if ($farr['fleet_action']=="eo")
+			if ($farr['action']=="eo")
 			{
-				$farr['fleet_action']="ao";
+				$farr['action']="ao";
 				$fake=1;
 			}
 
@@ -244,7 +237,7 @@
 			{
 				$show_attitude=1;
 
-				if ($farr['fleet_action']=="ao" || $farr['fleet_action']=="io" || $farr['fleet_action']=="so" || $farr['fleet_action']=="bo" || $farr['fleet_action']=="xo" || $farr['fleet_action']=="vo" || $farr['fleet_action']=="lo" || $farr['fleet_action']=="do" || $farr['fleet_action']=="ho")
+				if ($farr['action']=="ao" || $farr['action']=="io" || $farr['action']=="so" || $farr['action']=="bo" || $farr['action']=="xo" || $farr['action']=="vo" || $farr['action']=="lo" || $farr['action']=="do" || $farr['action']=="ho")
 				{
 					$style = "color:#f00;";
 					$action="Feindlich";
@@ -280,7 +273,7 @@
             FROM 
             	".$db_table['fleet_ships']." 
             WHERE 
-            	fs_fleet_id='".$farr['fleet_id']." '
+            	fs_fleet_id='".$farr['id']." '
             	AND fs_ship_faked='1' 
             GROUP BY 
             	fs_fleet_id;");
@@ -288,7 +281,7 @@
             $ships_count = $fsarr[0];
         }
 				//Zählt alle nicht getarnten Schiffe bei einem Tarnangriff
-        elseif($farr['fleet_action']=="vo" && $show_tarn==1)
+        elseif($farr['action']=="vo" && $show_tarn==1)
         {
             $fsres = dbquery("
             SELECT 
@@ -298,7 +291,7 @@
             	INNER JOIN
             	".$db_table['ships']." 
             	ON fs_ship_id=ship_id
-            	AND fs_fleet_id='".$farr['fleet_id']." '
+            	AND fs_fleet_id='".$farr['id']." '
             	AND ship_tarned!='1' 
             GROUP BY 
             	fs_fleet_id;");
@@ -313,7 +306,7 @@
 						FROM 
 							".$db_table['fleet_ships']." 
 						WHERE 
-							fs_fleet_id='".$farr['fleet_id']."'
+							fs_fleet_id='".$farr['id']."'
 						GROUP BY 
 							fs_fleet_id;");
 						$fsarr= mysql_fetch_row($fsres);
@@ -338,10 +331,10 @@
                	INNER JOIN
                 ".$db_table['ships']." AS s
                 ON fs.fs_ship_id=s.ship_id
-                AND fs.fs_fleet_id='".$farr['fleet_id']."'
+                AND fs.fs_fleet_id='".$farr['id']."'
                 AND fs.fs_ship_faked='1';");
         }
-        elseif($farr['fleet_action']=="vo" && $show_tarn==1)
+        elseif($farr['action']=="vo" && $show_tarn==1)
         {
             $fshipres = dbquery("
             SELECT
@@ -352,7 +345,7 @@
                	INNER JOIN
                 ".$db_table['ships']." AS s
                 ON fs.fs_ship_id=s.ship_id
-                AND fs.fs_fleet_id='".$farr['fleet_id']."'
+                AND fs.fs_fleet_id='".$farr['id']."'
                 AND s.ship_tarned!='1';");
         }
         else
@@ -366,7 +359,7 @@
                 INNER JOIN
                 ".$db_table['ships']." AS s
             		ON fs.fs_ship_id=s.ship_id
-                AND fs.fs_fleet_id='".$farr['fleet_id']."';");
+                AND fs.fs_fleet_id='".$farr['id']."';");
         }
         $cnt=1;
         while ($fshiparr = mysql_fetch_array($fshipres))
@@ -392,11 +385,11 @@
 			if (SPY_TECH_SHOW_ACTION<=$spy_tech_level)
 			{
 				$show_action = 1;
-				if($farr['fleet_action']=='vo')
+				if($farr['action']=='vo')
 				{
-					$farr['fleet_action']="ao";
+					$farr['action']="ao";
 				}
-				$ship_action = fa($farr['fleet_action']);
+				$ship_action = fa($farr['action']);
 			}
 
 			$tarned = $diff_time_factor+$special_ship_bonus_tarn;
@@ -408,7 +401,7 @@
 
 
 			//Zeigt die Infos an, sofern die Flotte nicht getarnt ist. (Infos richten sich nach dem spiotechlevels des opfers)
-			if (time() - $farr['fleet_landtime'] - ($farr['fleet_launchtime'] - $farr['fleet_landtime']) * (1-(0.1*$tarned))>0 && $show_tarn==1)
+			if (time() - $farr['landtime'] - ($farr['launchtime'] - $farr['landtime']) * (1-(0.1*$tarned))>0 && $show_tarn==1)
 			{
 				if ($header!=1) 
 				{
@@ -422,8 +415,8 @@
 				}
 				$deal=1;
 				
-			$ef = Entity::createFactoryById($farr['fleet_entity_from']);
-			$et = Entity::createFactoryById($farr['fleet_entity_to']);
+			$ef = Entity::createFactoryById($farr['entity_from']);
+			$et = Entity::createFactoryById($farr['entity_to']);
 				
 				echo "<tr>
 								<td class=\"tbldata\" style=\"".$style."\">
@@ -431,42 +424,42 @@
 									<b>".$et->entityCodeString()."</b> ".$et."
 								</td>
 								<td class=\"tbldata\" style=\"".$style."\">
-									".date("d.m.y, H:i:s",$farr['fleet_launchtime'])."<br/>
-									".date("d.m.y H:i:s",$farr['fleet_landtime'])."
+									".date("d.m.y, H:i:s",$farr['launchtime'])."<br/>
+									".date("d.m.y H:i:s",$farr['landtime'])."
 								</td>
 								<td class=\"tbldata\" style=\"".$style."\">".$action."</td>";
-								if($farr['fleet_action']=='mo')
+								if($farr['action']=='mo')
 								{
 									$ress = "";
-									if($farr['fleet_res_metal']>0)
+									if($farr['res_metal']>0)
 									{
-										$ress .= "".RES_METAL.": ".nf($farr['fleet_res_metal'])."";
+										$ress .= "".RES_METAL.": ".nf($farr['res_metal'])."";
 									}
 									
-									if($farr['fleet_res_crystal']>0)
+									if($farr['res_crystal']>0)
 									{
-										$ress .= "".RES_CRYSTAL.": ".nf($farr['fleet_res_crystal'])."";
+										$ress .= "".RES_CRYSTAL.": ".nf($farr['res_crystal'])."";
 									}
 									
-									if($farr['fleet_res_plastic']>0)
+									if($farr['res_plastic']>0)
 									{
-										$ress .= "".RES_PLASTIC.": ".nf($farr['fleet_res_plastic'])."";
+										$ress .= "".RES_PLASTIC.": ".nf($farr['res_plastic'])."";
 									}
 									
-									if($farr['fleet_res_fuel']>0)
+									if($farr['res_fuel']>0)
 									{
-										$ress .= "".RES_FUEL.": ".nf($farr['fleet_res_fuel'])."";
+										$ress .= "".RES_FUEL.": ".nf($farr['res_fuel'])."";
 									}
 									
-									if($farr['fleet_res_food']>0)
+									if($farr['res_food']>0)
 									{
-										$ress .= "".RES_FOOD.": ".nf($farr['fleet_res_food'])."";
+										$ress .= "".RES_FOOD.": ".nf($farr['res_food'])."";
 									}
-									if($farr['fleet_res_metal']>0
-										OR $farr['fleet_res_crystal']>0
-										OR $farr['fleet_res_plastic']>0
-										OR $farr['fleet_res_fuel']>0
-										OR $farr['fleet_res_food']>0)
+									if($farr['res_metal']>0
+										OR $farr['res_crystal']>0
+										OR $farr['res_plastic']>0
+										OR $farr['res_fuel']>0
+										OR $farr['res_food']>0)
 									{
 										echo "<td class=\"tbldata\" ".tm("Marktanlieferung",$ress).">Markt</td>";
 									}
@@ -478,7 +471,7 @@
 								else
 								{
 									echo "<td class=\"tbldata\" style=\"".$style."\">
-													<a href=\"?page=messages&mode=new&message_user_to=".$farr['fleet_user_id']."\">".get_user_nick($farr['fleet_user_id'])."</a>
+													<a href=\"?page=messages&mode=new&message_user_to=".$farr['user_id']."\">".get_user_nick($farr['user_id'])."</a>
 												</td>";
 								}
 								
