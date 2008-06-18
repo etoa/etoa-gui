@@ -416,7 +416,7 @@
 					
 					// Daten anzeigen
 					echo "<tr><td width=\"25%\"><b>Ziel-Informationen:</b></td>
-						<td class=\"tbldata\" id=\"targetinfo\" style=\"padding:16px 2px 2px 60px;background:#000;color:#fff;height:47px;\">
+						<td class=\"tbldata\" id=\"targetinfo\" style=\"padding:2px 2px 3px 6px;background:#000;color:#fff;height:47px;\">
 							<img src=\"images/loading.gif\" alt=\"Loading\" /> Lade Daten...
 						</td></tr>";
 					echo "<tr><td>Entfernung:</td>
@@ -777,9 +777,10 @@
 				$fleet = unserialize($_SESSION['haven']['fleetObj']);
 				$fleet->setTarget($ent);
 				$fleet->setSpeedPercent($form['speed_percent']);
+
+				echo "<img src=\"".$ent->imagePath()."\" style=\"float:left;\" >";
 				
-				echo $ent." (".$ent->entityCodeString().", Besitzer: ".$ent->owner().")";
-				$response->assign('targetinfo','style.background',"#000 url('".$ent->imagePath()."') no-repeat 3px 3px;");
+				echo "<br/>&nbsp;&nbsp; ".$ent." (".$ent->entityCodeString().", Besitzer: ".$ent->owner().")";
 				$response->assign('distance','innerHTML',nf($fleet->getDistance())." AE");
 				$response->assign('duration','innerHTML',tf($fleet->getDuration())."");
 				$response->assign('speed','innerHTML',nf($fleet->getSpeed())." AE/h");
@@ -792,7 +793,7 @@
 			{
 				echo "<div style=\"color:#f00\">Ziel nicht vorhanden!</div>";
 				$response->assign('distance','innerHTML',"Unbekannt");
-				$response->assign('targetinfo','style.background',"#000");
+				$response->assign('targetinfo','style.background',"#f00");
 			}	
 			$response->assign('targetinfo','innerHTML',ob_get_contents());
 			ob_end_clean();

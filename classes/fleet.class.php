@@ -285,19 +285,19 @@
 			INSERT INTO
 				fleet
 			(
-				fleet_user_id,
-				fleet_entity_from,
-				fleet_entity_to,
-				fleet_launchtime,
-				fleet_landtime,
-				fleet_action,
-				fleet_pilots,
-				fleet_res_metal,
-				fleet_res_crystal,
-				fleet_res_plastic,
-				fleet_res_fuel,
-				fleet_res_food,
-				fleet_res_people
+				user_id,
+				entity_from,
+				entity_to,
+				launchtime,
+				landtime,
+				action,
+				pilots,
+				res_metal,
+				res_crystal,
+				res_plastic,
+				res_fuel,
+				res_food,
+				res_people
 			)
 			VALUES
 			(

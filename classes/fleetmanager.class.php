@@ -13,20 +13,20 @@
 		{
 			$res = dbquery("
 			SELECT 
-				COUNT(fleet_id) 
+				COUNT(id) 
 			FROM 
 				fleet 
 			WHERE 
-				fleet_user_id='".$this->userId."' 
+				user_id='".$this->userId."' 
 			AND 
 				(
-					fleet_entity_from='".$entId."' 
-					AND fleet_status=0
+					entity_from='".$entId."' 
+					AND status=0
 				) 
 				OR 
 				(
-					fleet_entity_to='".$entId."' 
-					AND fleet_status>0  
+					entity_to='".$entId."' 
+					AND status>0  
 				);");
 			$arr = mysql_fetch_row($res);
 			return $arr[0];		
