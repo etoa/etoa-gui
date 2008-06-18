@@ -99,7 +99,7 @@
 			}
 
 			// Fleet object
-			$fleet = new Fleet();
+			$fleet = new FleetLaunch();
 			$fleet->setSource($cp);
 			$fleet->setOwnerId($cu->id());
 			$_SESSION['haven']['fleetObj']=serialize($fleet);

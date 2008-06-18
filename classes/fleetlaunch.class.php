@@ -1,6 +1,11 @@
 <?PHP
 
-	class Fleet
+	/**
+	* Fleet object
+	*
+	* @author Nicolas Perrenoud <mrcage@etoa.ch>
+	*/
+	class FleetLaunch
 	{
 		public $sourceEntity;
 		public $targetEntity;
@@ -13,7 +18,6 @@
 		var $speed;
 		var $speedPercent;
 		var $duration;
-		private $action;
 		var $costsPerHundredAE;
 		var $timeLaunchLand;
 		var $costsLaunchLand;
@@ -25,19 +29,14 @@
 		var $capacityPeopleLoaded;
 		
 		var $distance;
+
+		private $action;
 		private $resources;
 		private $launchError;
-				
 		
-		function Fleet($args="")
+		function Fleetlaunch()
 		{
-			if ($args!="")
-			{
-				
-				
-			}
-			else
-			{
+
 				$this->ships = array();
 				$this->speedPercent=100;
 				$this->speed = 0;
@@ -56,7 +55,7 @@
 				$this->distance=0;
 				$this->shipsFixed=false;
 				$this->resources = array();
-			}
+
 		}
 		
 		function addShip($sid,$cnt)
