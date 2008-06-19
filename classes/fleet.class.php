@@ -1,13 +1,26 @@
 <?PHP
-
+	
+	/**
+	*	Handles data and actions for a fleet object
+	*
+	* @author Nicolas Perrenoud <mrcage@etoa.ch>
+	*/
 	class Fleet
 	{
-		private $id,$valid;
+		//
+		// Variables
+		//
+		private $id,$valid, $ownerId;
 		private $sourceId, $targetId;
 		private $actionCode, $status;
 		private $launchTime, $landTime;
 		
-		
+		/**
+		* Constructor
+		*
+		* Creates a new fleet objects and loads
+		* it's data from the table
+		*/
 		function Fleet($fid,$uid=-1)
 		{
 			if ($uid>=0)
@@ -26,6 +39,7 @@
 			{
 				$arr = mysql_fetch_assoc($res);
 				$this->id = $fid;
+				$this->ownerId = $arr['user_id'];
 				$this->sourceId = $arr['entity_from'];
 				$this->targetId = $arr['entity_to'];
 				$this->actionCode = $arr['action'];
@@ -50,6 +64,9 @@
 			}		
 		}
 		
+		//
+		// Getters
+		//
 		function valid() { return $this->valid;	}
 		function launchTime() {	return $this->launchTime; }
 		function landTime() {	return $this->landTime;	}
@@ -68,6 +85,9 @@
 		function resPower() { return $this->resPower; }
 		function resPeople() { return $this->resPeople; }
 		
+		/**
+		* Loads the source entity (if needed) and returns it
+		*/		
 		function getSource()
 		{
 			if (!isset($this->source))
@@ -77,6 +97,9 @@
 			return $this->source;
 		}		
 
+		/**
+		* Loads the target entity (if needed) and returns it
+		*/
 		function getTarget()
 		{
 			if (!isset($this->target))
@@ -86,6 +109,9 @@
 			return $this->target;
 		}
 		
+		/**
+		* Loads and returns the flet action object
+		*/
 		function getAction()
 		{
 			if (!isset($this->action))
@@ -95,6 +121,10 @@
 			return $this->action;
 		}
 		
+		/**
+		* Load fleet's ship id's and stores them 
+		* in the shipIds array
+		*/
 		private function loadShipIds()
 		{
 			$this->shipsIds = array();
@@ -120,6 +150,10 @@
 			}			
 		}
 		
+		/**
+		* Returns the total amount of ships
+		* in the fleet (load them first if needed)
+		*/
 		function countShips()
 		{
 			if (!isset($this->shipsIds))
@@ -129,6 +163,9 @@
 			return $this->shipCount;			
 		}
 		
+		/**
+		* Returns the array of the ship id's
+		*/
 		function getShipIds()
 		{
 			if (!isset($this->shipsIds))
@@ -138,24 +175,26 @@
 			return $this->shipsIds;			
 		}
 		
-		private function loadShips()
-		{
-			$this->ships = array();
-			foreach ($this->getShipIds() as $sid=>$cnt)
-			{
-				$this->ships[$cnt] = new Ship($sid);
-			}			
-		}
-		
+		/**
+		* Loads and returns an array of
+		* all ship objects
+		*/
 		function getShips()
 		{
 			if (!isset($this->ships))
 			{
-				$this->loadShips();
+				$this->ships = array();
+				foreach ($this->getShipIds() as $sid=>$cnt)
+				{
+					$this->ships[$cnt] = new Ship($sid);
+				}		
 			}
 			return $this->ships;			
 		}	
 		
+		/**
+		* Returns the full storage capacity
+		*/
 		function getCapacity()
 		{
 			$this->capacity = 0;
@@ -166,6 +205,9 @@
 			return $this->capacity;
 		}
 
+		/**
+		* Returns the full passenger capacity
+		*/
 		function getPeopleCapacity()
 		{
 			$this->peopleCapacity = 0;
@@ -176,11 +218,17 @@
 			return $this->peopleCapacity;
 		}
 
+		/**
+		* Returns the free space for passengers
+		*/
 		function getFreePeopleCapacity()
 		{
 			return $this->getPeopleCapacity() - $this->resPeople;
 		}
 		
+		/**
+		* Returns the free storage capacity
+		*/
 		function getFreeCapacity()
 		{
 			return $this->getCapacity() 
@@ -195,6 +243,11 @@
 			-	$this->resPower;
 		}
 		
+		/**
+		* Cancels the flight, this means that it sets on a
+		* return course with the cancelled status flag enabled.
+		* This is only possible if the fleet hasn't reached it's destination
+		*/
 		function cancelFlight()
 		{
 			if ($this->stauts == 0)
@@ -222,11 +275,19 @@
 			return false;
 		}
 
+		/**
+		* Returns the flight. This switches the source
+		* and the target and adjusts the correct time
+		*/
 		function returnFlight()
 		{
 			if ($this->stauts == 0)
 			{
-				$difftime = time() - $this->launchTime;
+				if ($this->landTime() > time())
+					$difftime = $this->landTime() - $this->launchTime;
+				else
+					$difftime = time() - $this->launchTime;
+				
 				$this->launchTime = time();
 				$this->landTime = $this->launchTime + $difftime ;
 				
@@ -244,6 +305,9 @@
 			return false;
 		}
 		
+		/**
+		* Updates changed data with the database
+		*/
 		private function update()
 		{
 			dbquery("
@@ -261,7 +325,105 @@
 				return true;
 			return false;
 		}
+
+		/** 
+		* Add a given ammount of ships specified by
+		* their id to the fleet
+		*/
+		function addShips($shipId,$count)
+		{
+			dbquery("
+			UPDATE 
+				fleet_ships 
+			SET 
+				fs_ship_cnt=fs_ship_cnt+".$count." 
+			WHERE 
+				fs_fleet_id=".$this->id." 
+				AND fs_ship_id=".$shipId.";");
+			if (mysql_affected_rows()==0)
+			{
+				dbquery("
+				INSERT INTO 
+					fleet_ships 
+				(
+					fs_fleet_id,
+					fs_ship_id,
+					fs_ship_cnt
+				) 
+				VALUES 
+				(
+					".$this->id.",
+					".$shipId.",
+					".$count."
+				);");
+			}
+			$this->shipIds[$shipId] = $this->shipIds[$shipId] + $count;
+			return true;
+		}
 		
+		/**
+		* Remove all ships of the given ship id from the fleet
+		*/
+		function removeShips($shipId)
+		{
+			dbquery("
+			DELETE FROM
+				fleet_ships
+			WHERE
+				fs_ship_id=".$shipId."
+				AND fs_fleet_id=".$this->id."
+			;");		
+			unset ($this->shipIds[$shipId]);
+			unset ($this->ships[$shipId]);
+			return (boolean)mysql_affected_rows();
+		}
+		
+
+		/**
+		* Land fleet
+		*/
+		function land()
+		{			
+
+			if (($this->ownerId==0 || $this->ownerId==$this->getTarget()->ownerId()) && $this->getTarget()->ownerId() > 0)
+			{
+				$sl = new ShipList($this->targetId,$this->getTarget()->ownerId());
+
+				foreach ($this->getShipIds() as $sid => $scnt)
+				{
+					$sl->add($sid,$scnt);
+					$this->removeShips($sid);
+				}
+				
+				// TODO: Perhaps all entities can get res in the future...
+				if ($trgEnt->code == 'p')
+				{
+					$trgEnt->changeRes($arr['res_metal'],$arr['res_crystal'],$arr['res_plastic'],$arr['res_fuel'],$arr['res_food'],$arr['res_power']);
+					$trgEnt->chgPeople($arr['pilots']+$arr['res_people']);
+				}
+				
+				// TODO: Add parts of usaged stuff (power cells, fuel, food)
+
+				dbquery("
+				DELETE FROM
+					fleet
+				WHERE
+					id=".$_GET['fleetedit'].";");
+				ok_msg("Flotte gelandet!");
+				
+				$this->valid = false;
+			}
+			else
+			{
+				err_msg("Kann Flotte nicht landen, Ziel ist unbewohnt oder Flottenbesitzer entspricht nicht Zielbesitzer.");
+			}
+		}
+
+		
+		/**
+		* Returns an error message (if setup)
+		* or false
+		*/
 		function getError()
 		{
 			if (isset($this->error))
