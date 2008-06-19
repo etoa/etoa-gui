@@ -592,7 +592,7 @@
 				// Cancel flight
 				if (isset($_POST['submit_cancel']) && $arr['status']==0)
 				{			
-					$difftime = time()-$arr['launchtime'];
+					$difftime = time() - $arr['launchtime'];
 					$landtime = time() + $difftime ;
 					dbquery("
 					UPDATE 
@@ -619,7 +619,7 @@
 				// Return flight
 				if (isset($_POST['submit_return']) && $arr['status']==0)
 				{			
-					$difftime = time()-$arr['launchtime'];
+					$difftime = time() - $arr['launchtime'];
 					$landtime = time() + $difftime ;
 					dbquery("
 					UPDATE 
@@ -761,7 +761,7 @@
 						if ($srcEnt->pos()==$x) echo " selected=\"selected\"";
 						echo ">$x</option>";
 					}
-					echo "</select> &nbsp; ".$srcEnt->name()." (".$srcEnt->entityCodeString().")";
+					echo "</select> &nbsp; ".$srcEnt->name()." (".$srcEnt->entityCodeString().", ".$srcEnt->owner().")";
 	
 					echo "</td></tr>";
 					echo "<tr><td class=\"tbltitle\">Endzelle</td><td class=\"tbldata\">
@@ -800,7 +800,7 @@
 						if ($trgEnt->pos()==$x) echo " selected=\"selected\"";
 						echo ">$x</option>";
 					}
-					echo "</select> &nbsp; ".$trgEnt->name()." (".$trgEnt->entityCodeString().")";
+					echo "</select> &nbsp; ".$trgEnt->name()." (".$trgEnt->entityCodeString().", ".$trgEnt->owner().")";
 	
 					// Action
 					echo "</td></tr>";

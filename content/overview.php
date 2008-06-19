@@ -103,7 +103,7 @@
 	/***********
 	* Flotten  *
 	************/
-
+/*
 		//
 		// Eigene Flotten
 		//
@@ -154,7 +154,7 @@
 		{
 			$style="color:#0f0";
 		}
-	
+	*/
 		//Mehrere fremde Flotten
 	  if ($all>1)
 	  {

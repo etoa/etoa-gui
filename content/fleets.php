@@ -55,9 +55,9 @@
 
 			echo "<tr>";
 			echo "<td class=\"tbldata\"><b>".$fd->getSource()->entityCodeString()."</b> 
-			<a href=\"?page=cell&amp;id=".$fd->getSource()->cellId()."\">".$fd->getSource()."</a><br/>";
+			<a href=\"?page=cell&amp;id=".$fd->getSource()->cellId()."&amp;hl=".$fd->getSource()->id()."\">".$fd->getSource()."</a><br/>";
 			echo "<b>".$fd->getTarget()->entityCodeString()."</b> 
-			<a href=\"?page=cell&amp;id=".$fd->getTarget()->cellId()."\">".$fd->getTarget()."</a></td>";			
+			<a href=\"?page=cell&amp;id=".$fd->getTarget()->cellId()."&amp;hl=".$fd->getTarget()->id()."\">".$fd->getTarget()."</a></td>";			
 			echo "<td class=\"tbldata\">
 			".date("d.m.y, H:i:s",$fd->launchTime())."<br/>";
 			echo date("d.m.y, H:i:s",$fd->landTime())."</td>";

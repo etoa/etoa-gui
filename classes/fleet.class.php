@@ -95,9 +95,179 @@
 			return $this->action;
 		}
 		
+		private function loadShipIds()
+		{
+			$this->shipsIds = array();
+			$this->shipCount = 0;
+			$sres = dbquery("
+			SELECT
+				fs_ship_id,
+        fs_ship_cnt
+			FROM
+      	fleet_ships
+			WHERE
+        fs_fleet_id='".$this->id."'
+        AND fs_ship_cnt>'0'
+        AND fs_ship_faked='0'
+			;");
+			if (mysql_num_rows($sres)>0)
+			{
+				while ($arr=mysql_fetch_row($sres))
+				{
+					$this->shipsIds[$arr[0]] = $arr[1];
+					$this->shipCount += $arr[1];
+				}
+			}			
+		}
+		
+		function countShips()
+		{
+			if (!isset($this->shipsIds))
+			{
+				$this->loadShipIds();
+			}
+			return $this->shipCount;			
+		}
+		
+		function getShipIds()
+		{
+			if (!isset($this->shipsIds))
+			{
+				$this->loadShipIds();
+			}
+			return $this->shipsIds;			
+		}
+		
+		private function loadShips()
+		{
+			$this->ships = array();
+			foreach ($this->getShipIds() as $sid=>$cnt)
+			{
+				$this->ships[$cnt] = new Ship($sid);
+			}			
+		}
+		
+		function getShips()
+		{
+			if (!isset($this->ships))
+			{
+				$this->loadShips();
+			}
+			return $this->ships;			
+		}	
+		
+		function getCapacity()
+		{
+			$this->capacity = 0;
+			foreach ($this->getShips() as $cnt => $sobj)
+			{
+				$this->capacity += $sobj->capacity() * $cnt;
+			}
+			return $this->capacity;
+		}
 
+		function getPeopleCapacity()
+		{
+			$this->peopleCapacity = 0;
+			foreach ($this->getShips() as $cnt => $sobj)
+			{
+				$this->peopleCapacity += $sobj->peopleCapacity() * $cnt;
+			}
+			return $this->peopleCapacity;
+		}
+
+		function getFreePeopleCapacity()
+		{
+			return $this->getPeopleCapacity() - $this->resPeople;
+		}
 		
+		function getFreeCapacity()
+		{
+			return $this->getCapacity() 
+			- $this->usageFuel
+			- $this->usageFood
+			-	$this->usagePower
+			-	$this->resMetal
+			-	$this->resCrystal
+			-	$this->resPlastic
+			-	$this->resFuel
+			-	$this->resFood
+			-	$this->resPower;
+		}
 		
+		function cancelFlight()
+		{
+			if ($this->stauts == 0)
+			{
+				if ($this->landTime() > time())
+				{
+					$difftime = time() - $this->launchTime;
+					$this->launchTime = time();
+					$this->landTime = $this->launchTime + $difftime ;
+					
+					$tmp = $this->targetId;
+					$this->targetId = $this->sourceId;
+					$this->sourceId = $tmp;
+					
+					$this->status = 2;
+	
+					$this->update();	
+					return true;			
+				}
+				else
+					$this->error = "Flotte ist bereits beim Ziel angekommen!";
+			}
+			else
+				$this->error = "Flotte ist bereits auf dem Rückflug!";
+			return false;
+		}
+
+		function returnFlight()
+		{
+			if ($this->stauts == 0)
+			{
+				$difftime = time() - $this->launchTime;
+				$this->launchTime = time();
+				$this->landTime = $this->launchTime + $difftime ;
+				
+				$tmp = $this->targetId;
+				$this->targetId = $this->sourceId;
+				$this->sourceId = $tmp;
+				
+				$this->status = 1;
+	
+				$this->update();	
+				return true;			
+			}
+			else
+				$this->error = "Flotte ist bereits auf dem Rückflug!";
+			return false;
+		}
+		
+		private function update()
+		{
+			dbquery("
+			UPDATE 
+				fleet
+			SET 
+				launchtime='".$this->launchTime."',
+				landtime='".$this->landTime."',
+				entity_from=".$this->sourceId.",
+				entity_to=".$this->targetId.",
+				status='".$this->status."'
+			WHERE 
+				id='".$this->id."';");			
+			if (mysql_affected_rows()>0)
+				return true;
+			return false;
+		}
+		
+		function getError()
+		{
+			if (isset($this->error))
+				return $this->error;
+			return false;
+		}
 		
 	}
 
