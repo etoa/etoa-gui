@@ -271,6 +271,8 @@
 					return new Nebula($id);
 				case 'w':
 					return new Wormhole($id);
+				case 'e':
+					return new EmptySpace($id);					
 				default:
 					return new UnknownEntity($id);
 			}			
@@ -307,6 +309,8 @@
 						return new Nebula($id);
 					case 'w':
 						return new Wormhole($id);
+					case 'e':
+						return new EmptySpace($id);						
 					default:
 						return new UnknownEntity($id);
 				}			
@@ -353,6 +357,8 @@
 						return new Nebula($id);
 					case 'w':
 						return new Wormhole($id);
+					case 'e':
+						return new EmptySpace($id);
 					default:
 						return new UnknownEntity($id);
 				}			

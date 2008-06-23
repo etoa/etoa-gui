@@ -1,9 +1,9 @@
 <?PHP
 	
 	/**
-	* Class for unknown space entities
+	* Class for empty space entities
 	*/
-	class UnknownEntity extends Entity
+	class EmptySpace extends Entity
 	{
 		private $name;		
 		protected $id;
@@ -19,7 +19,7 @@
 		/**
 		* The constructor
 		*/
-		function UnknownEntity($id=0)
+		function EmptySpace($id=0)
 		{
 			$this->isValid = true;
 			$this->id = $id;
@@ -58,7 +58,7 @@
 		/**
 		* Returns type string
 		*/                        
-		function entityCodeString() { return "Unbekannter Raum"; }      
+		function entityCodeString() { return "Leerer Raum"; }      
 	
 		/**
 		* Returns type
@@ -79,7 +79,7 @@
 		*/
 		function entityCode() 
 		{ 
-			return "u"; 
+			return "e"; 
 		}	      
 		
 		/**
