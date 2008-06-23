@@ -66,7 +66,7 @@
 						WHERE id=".$arr['id'].";");						
 						if (mysql_num_rows($eres)==0)
 						{
-							echo "Fehlender Detaildatensatz bei Entität ".$arr['id']." (Stern)";							
+							echo "Fehlender Detaildatensatz bei Entität ".$arr['id']." (Stern)<br/>";							
 							$errcnt++;
 						}
 						break;
@@ -79,7 +79,7 @@
 						WHERE id=".$arr['id'].";");						
 						if (mysql_num_rows($eres)==0)
 						{
-							echo "Fehlender Detaildatensatz bei Entität ".$arr['id']." (Planet)";							
+							echo "Fehlender Detaildatensatz bei Entität ".$arr['id']." (Planet)<br/>";							
 							$errcnt++;
 						}
 						break;
@@ -92,7 +92,7 @@
 						WHERE id=".$arr['id'].";");						
 						if (mysql_num_rows($eres)==0)
 						{
-							echo "Fehlender Detaildatensatz bei Entität ".$arr['id']." (Stern)";							
+							echo "Fehlender Detaildatensatz bei Entität ".$arr['id']." (Stern)<br/>";							
 							$errcnt++;
 						}
 						break;
@@ -105,7 +105,7 @@
 						WHERE id=".$arr['id'].";");						
 						if (mysql_num_rows($eres)==0)
 						{
-							echo "Fehlender Detaildatensatz bei Entität ".$arr['id']." (Nebel)";							
+							echo "Fehlender Detaildatensatz bei Entität ".$arr['id']." (Nebel)<br/>";							
 							$errcnt++;
 						}
 						break;
@@ -118,7 +118,7 @@
 						WHERE id=".$arr['id'].";");						
 						if (mysql_num_rows($eres)==0)
 						{
-							echo "Fehlender Detaildatensatz bei Entität ".$arr['id']." (Wurmloch)";							
+							echo "Fehlender Detaildatensatz bei Entität ".$arr['id']." (Wurmloch)<br/>";							
 							$errcnt++;
 						}
 						break;
@@ -131,22 +131,22 @@
 						WHERE id=".$arr['id'].";");						
 						if (mysql_num_rows($eres)==0)
 						{
-							echo "Fehlender Detaildatensatz bei Entität ".$arr['id']." (Leerer Raum)";							
+							echo "Fehlender Detaildatensatz bei Entität ".$arr['id']." (Leerer Raum)<br/>";							
 							$errcnt++;
 						}
 						break;
 					default:
-						echo "Achtung! Entität ".$arr['id']." hat einen unbekannten Code (".$arr['code'].")";							
+						echo "Achtung! Entität ".$arr['id']." hat einen unbekannten Code (".$arr['code'].")<br/>";							
 						$errcnt++;					
 				}
 			}
 			if ($errcnt>0)
 			{
-				echo mysql_num_rows($res)." Datensätze geprüft. Es wurden $errcnt Fehler gefunden!";
+				echo mysql_num_rows($res)." Datensätze geprüft. Es wurden <b>$errcnt</b> Fehler gefunden!<br/>";
 			}
 			else
 			{
-				echo mysql_num_rows($res)." Datensätze geprüft. Keine Fehler gefunden!";
+				echo mysql_num_rows($res)." Datensätze geprüft. Keine Fehler gefunden!<br/>";
 			}
 		}
 		else
@@ -158,7 +158,7 @@
 		if (mysql_num_rows($res)>0)
 		{
 			$errcnt = 0;	
-			echo "Zellen werden auf Integrität geprüft...<br/>";
+			echo "<br/>Zellen werden auf Integrität geprüft...<br/>";
 			while ($arr=mysql_fetch_assoc($res))
 			{
 				$eres = dbquery("
@@ -170,17 +170,17 @@
 				if (mysql_num_rows($eres)==0)
 				{
 					$earr = mysql_fetch_assoc($eres);
-					echo "Fehlende Entität ".$earr['id']." bei Zelle ".$arr['id']."";							
+					echo "Fehlende Entität ".$earr['id']." bei Zelle ".$arr['id']."<br/>";							
 					$errcnt++;
 				}
 			}
 			if ($errcnt>0)
 			{
-				echo mysql_num_rows($res)." Datensätze geprüft. Es wurden $errcnt Fehler gefunden!";
+				echo mysql_num_rows($res)." Datensätze geprüft. Es wurden <b>$errcnt</b> Fehler gefunden!<br/>";
 			}
 			else
 			{
-				echo mysql_num_rows($res)." Datensätze geprüft. Keine Fehler gefunden!";
+				echo mysql_num_rows($res)." Datensätze geprüft. Keine Fehler gefunden!<br/>";
 			}
 		}
 		
