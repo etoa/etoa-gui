@@ -57,7 +57,9 @@
       }      
       else
       {
-	    	die('Class '.$class_name.' not found ('.$file.')!');
+	    	echo 'Class '.$class_name.' not found ('.$file.')!\n\n';
+	    	debug_print_backtrace();
+	    	exit;
 	    }
 	  }
 	}
