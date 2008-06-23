@@ -40,6 +40,167 @@
 		echo "<img src=\"../misc/map.image.php\" alt=\"Galaxiekarte\" id=\"img\" usemap=\"#Galaxy\" style=\"border:none;\"/>";		
 		
 	}
+
+	//
+	// Beistzerprüfung
+	//
+	elseif ($sub=="galaxycheck")
+	{	
+		echo "<h1>Entitäten pr&uuml;fen</h1>";
+
+		echo "Entitäten werden auf Integrität geprüft...<br/>";
+		
+		$res=dbquery("SELECT id,code FROM entities;");
+		if (mysql_num_rows($res)>0)
+		{
+			while ($arr=mysql_fetch_assoc($res))
+			{
+				switch ($arr['code'])
+				{
+					case 's':
+						$eres = dbquery("
+						SELECT
+							id
+						FROM
+							stars
+						WHERE id=".$arr['id'].";");						
+						if (mysql_num_rows($res)==0)
+						{
+							echo "Fehlender Detaildatensatz bei Entität ".$arr['id']." (Stern)";							
+						}
+						break;
+					case 'p':
+						$eres = dbquery("
+						SELECT
+							id
+						FROM
+							planets
+						WHERE id=".$arr['id'].";");						
+						if (mysql_num_rows($res)==0)
+						{
+							echo "Fehlender Detaildatensatz bei Entität ".$arr['id']." (Planet)";							
+						}
+						break;
+					case 'a':
+						$eres = dbquery("
+						SELECT
+							id
+						FROM
+							stars
+						WHERE id=".$arr['id'].";");						
+						if (mysql_num_rows($res)==0)
+						{
+							echo "Fehlender Detaildatensatz bei Entität ".$arr['id']." (Stern)";							
+						}
+						break;
+					case 'n':
+						$eres = dbquery("
+						SELECT
+							id
+						FROM
+							nebulas
+						WHERE id=".$arr['id'].";");						
+						if (mysql_num_rows($res)==0)
+						{
+							echo "Fehlender Detaildatensatz bei Entität ".$arr['id']." (Nebel)";							
+						}
+						break;
+					case 'w':
+						$eres = dbquery("
+						SELECT
+							id
+						FROM
+							wormholes
+						WHERE id=".$arr['id'].";");						
+						if (mysql_num_rows($res)==0)
+						{
+							echo "Fehlender Detaildatensatz bei Entität ".$arr['id']." (Wurmloch)";							
+						}
+						break;
+					case 'e':
+						$eres = dbquery("
+						SELECT
+							id
+						FROM
+							space
+						WHERE id=".$arr['id'].";");						
+						if (mysql_num_rows($res)==0)
+						{
+							echo "Fehlender Detaildatensatz bei Entität ".$arr['id']." (Leerer Raum)";							
+						}
+						break;
+					default:
+						echo "Achtung! Entität ".$arr['id']." hat einen unbekannten Code (".$arr['code'].")";							
+					
+				}
+			}
+		}
+		$res=dbquery("
+		SELECT 
+			id,
+			planet_user_id,
+			planet_user_main 
+		FROM 
+			planets 
+		WHERE 
+			planet_user_id>0
+		;");
+		$cnt=0;
+		if (mysql_num_rows($res)>0)
+		{
+			echo "<table class=\"tb\"><tr><th>Name</th><th>Id</th><th>User-Id</th><th>Id</th><th>Aktionen</th></tr>";
+			while ($arr=mysql_fetch_array($res))
+			{
+				if (count($user[$arr['planet_user_id']])==0)
+				{
+					$cnt++;
+					echo "<tr><td>".$arr['planet_name']."</td><td>".$arr['id']."</td><td>".$arr['planet_user_id']."</td>
+					<td><a href=\"?page=$page&sub=edit&amp;id=".$arr['id']."\">Bearbeiten</a></td></tr>";
+				}
+			}
+			if ($cnt==0)
+			{
+				echo "<tr><td colspan=\"5\">Keine Fehler gefunden!</td></th>";
+			}			
+			echo "</table>";
+		}
+		else
+		{
+			echo "<i>Keine bewohnten Planeten gefunden!</i>";
+		}
+
+		
+		echo "<br/><br/>Prüfe auf Hauptplaneten ohne User...<br/>";
+		$res=dbquery("
+		SELECT
+			planet_name,
+			id
+		FROM
+			planets
+		WHERE
+			planet_user_main=1
+			AND planet_user_id=0
+		");
+		if (mysql_num_rows($res)>0)
+		{
+			echo "<table class=\"tb\"><tr><th>Name</th><th>Id</th><th>Aktionen</th></tr>";
+			while ($arr=mysql_fetch_array($res))
+			{
+				if (count($user[$arr['planet_user_id']])==0)
+				{
+					echo "<tr><td>".$arr['planet_name']."</td><td>".$arr['id']."</td><td><a href=\"?page=$page&sub=edit&amp;id=".$arr['id']."\">Bearbeiten</a></td></tr>";
+				}
+			}
+			echo "</table>";			
+		}
+		else
+		{
+			echo "<i>Keine Fehler gefunden!</i>";
+		}
+		
+	}
+
+
 	
 	//
 	// Beistzerprüfung

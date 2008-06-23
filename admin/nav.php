@@ -325,6 +325,11 @@
 	$navmenu['Planeten und Galaxie']['Planetenbesitzer pr&uuml;fen']['sub']="planetcheck";
 	$navmenu['Planeten und Galaxie']['Planetenbesitzer pr&uuml;fen']['level']=1;
 
+	$navmenu['Planeten und Galaxie']['Integrität prüfen']['page']="galaxy";
+	$navmenu['Planeten und Galaxie']['Integrität prüfen']['sub']="galaxycheck";
+	$navmenu['Planeten und Galaxie']['Integrität prüfen']['level']=1;
+
+
 	$navmenu['Planeten und Galaxie']['bar'][0] = true;
 
 	$navmenu['Planeten und Galaxie']['Planetentypen']['page']="galaxy";
