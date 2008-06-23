@@ -50,6 +50,9 @@
 	{	
 		require(GAME_ROOT_DIR."/conf.inc.php");               
 		dbconnect(); 	
+		if (!defined('CLASS_ROOT'))	
+			define('CLASS_ROOT',GAME_ROOT_DIR.'/classes');
+		
 		$conf = get_all_config();
 		require(GAME_ROOT_DIR."/def.inc.php");
 	
