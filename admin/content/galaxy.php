@@ -169,8 +169,8 @@
 					WHERE cell_id=".$arr['id'].";");						
 				if (mysql_num_rows($eres)==0)
 				{
-					$earr = mysql_fetch_assoc($eres)
-					echo "Fehlende Entität ".$earr['id']." bei Zelle ".$arr['id']."");							
+					$earr = mysql_fetch_assoc($eres);
+					echo "Fehlende Entität ".$earr['id']." bei Zelle ".$arr['id']."";							
 					$errcnt++;
 				}
 			}
