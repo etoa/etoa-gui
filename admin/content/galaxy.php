@@ -88,11 +88,11 @@
 						SELECT
 							id
 						FROM
-							stars
+							asteroids
 						WHERE id=".$arr['id'].";");						
 						if (mysql_num_rows($eres)==0)
 						{
-							echo "Fehlender Detaildatensatz bei Entität ".$arr['id']." (Stern)<br/>";							
+							echo "Fehlender Detaildatensatz bei Entität ".$arr['id']." (Asteroidenfeld)<br/>";							
 							$errcnt++;
 						}
 						break;
