@@ -153,6 +153,102 @@
 		{
 			echo "Keine Entitäten vorhanden!<br/>";
 		}
+		
+		
+		$res=dbquery("
+		SELECT 
+			id
+		FROM
+			stars;");
+		if (mysql_num_rows($res)>0)
+		{
+			$errcnt = 0;	
+			echo "Sterne werden auf Integrität geprüft...<br/>";
+			while ($arr=mysql_fetch_assoc($res))
+			{
+				$eres=dbquery("
+				SELECT 
+					code 
+				FROM 
+					entities
+				WHERE
+					id=".$arr['id'].";");
+				if (mysql_num_rows($eres)==0)
+				{
+					echo "Fehlender Entitätsdatemsatz bei Stern ".$arr['id']."<br/>";							
+					$errcnt++;
+				}
+				else
+				{
+					$earr = mysql_fetch_array($eres);
+					if($earr['code']!='s')
+					{
+						echo "Falscher Code (".$earr['code'].") bei Stern ".$arr['id']."<br/>";							
+						$errcnt++;
+					}					
+				}
+			}
+			if ($errcnt>0)
+			{
+				echo mysql_num_rows($res)." Datensätze geprüft. Es wurden <b>$errcnt</b> Fehler gefunden!<br/>";
+			}
+			else
+			{
+				echo mysql_num_rows($res)." Datensätze geprüft. Keine Fehler gefunden!<br/>";
+			}
+		}
+		else
+		{
+			echo "Keine Sterne vorhanden!<br/>";
+		}		
+		$res=dbquery("
+		SELECT 
+			id
+		FROM
+			wormholes;");
+		if (mysql_num_rows($res)>0)
+		{
+			$errcnt = 0;	
+			echo "Wurmlöcher werden auf Integrität geprüft...<br/>";
+			while ($arr=mysql_fetch_assoc($res))
+			{
+				$eres=dbquery("
+				SELECT 
+					code 
+				FROM 
+					entities
+				WHERE
+					id=".$arr['id'].";");
+				if (mysql_num_rows($eres)==0)
+				{
+					echo "Fehlender Entitätsdatemsatz bei Wurmloch ".$arr['id']."<br/>";							
+					$errcnt++;
+				}
+				else
+				{
+					$earr = mysql_fetch_array($eres);
+					if($earr['code']!='w')
+					{
+						echo "Falscher Code (".$earr['code'].") bei Wurmloch ".$arr['id']."<br/>";							
+						$errcnt++;
+					}					
+				}
+			}
+			if ($errcnt>0)
+			{
+				echo mysql_num_rows($res)." Datensätze geprüft. Es wurden <b>$errcnt</b> Fehler gefunden!<br/>";
+			}
+			else
+			{
+				echo mysql_num_rows($res)." Datensätze geprüft. Keine Fehler gefunden!<br/>";
+			}
+		}
+		else
+		{
+			echo "Keine Sterne vorhanden!<br/>";
+		}	
+
+		
 
 		$res=dbquery("SELECT id FROM cells;");
 		if (mysql_num_rows($res)>0)
