@@ -64,7 +64,7 @@
 						FROM
 							stars
 						WHERE id=".$arr['id'].";");						
-						if (mysql_num_rows($res)==0)
+						if (mysql_num_rows($eres)==0)
 						{
 							echo "Fehlender Detaildatensatz bei Entität ".$arr['id']." (Stern)";							
 							$errcnt++;
@@ -77,7 +77,7 @@
 						FROM
 							planets
 						WHERE id=".$arr['id'].";");						
-						if (mysql_num_rows($res)==0)
+						if (mysql_num_rows($eres)==0)
 						{
 							echo "Fehlender Detaildatensatz bei Entität ".$arr['id']." (Planet)";							
 							$errcnt++;
@@ -90,7 +90,7 @@
 						FROM
 							stars
 						WHERE id=".$arr['id'].";");						
-						if (mysql_num_rows($res)==0)
+						if (mysql_num_rows($eres)==0)
 						{
 							echo "Fehlender Detaildatensatz bei Entität ".$arr['id']." (Stern)";							
 							$errcnt++;
@@ -103,7 +103,7 @@
 						FROM
 							nebulas
 						WHERE id=".$arr['id'].";");						
-						if (mysql_num_rows($res)==0)
+						if (mysql_num_rows($eres)==0)
 						{
 							echo "Fehlender Detaildatensatz bei Entität ".$arr['id']." (Nebel)";							
 							$errcnt++;
@@ -116,7 +116,7 @@
 						FROM
 							wormholes
 						WHERE id=".$arr['id'].";");						
-						if (mysql_num_rows($res)==0)
+						if (mysql_num_rows($eres)==0)
 						{
 							echo "Fehlender Detaildatensatz bei Entität ".$arr['id']." (Wurmloch)";							
 							$errcnt++;
@@ -129,7 +129,7 @@
 						FROM
 							space
 						WHERE id=".$arr['id'].";");						
-						if (mysql_num_rows($res)==0)
+						if (mysql_num_rows($eres)==0)
 						{
 							echo "Fehlender Detaildatensatz bei Entität ".$arr['id']." (Leerer Raum)";							
 							$errcnt++;
@@ -153,6 +153,38 @@
 		{
 			echo "Keine Entitäten vorhanden!<br/>";
 		}
+
+		$res=dbquery("SELECT id FROM cells;");
+		if (mysql_num_rows($res)>0)
+		{
+			$errcnt = 0;	
+			echo "Zellen werden auf Integrität geprüft...<br/>";
+			while ($arr=mysql_fetch_assoc($res))
+			{
+				$eres = dbquery("
+					SELECT
+						id
+					FROM
+						entities
+					WHERE cell_id=".$arr['id'].";");						
+				if (mysql_num_rows($eres)==0)
+				{
+					$earr = mysql_fetch_assoc($eres)
+					echo "Fehlende Entität ".$earr['id']." bei Zelle ".$arr['id']."");							
+					$errcnt++;
+				}
+			}
+			if ($errcnt>0)
+			{
+				echo mysql_num_rows($res)." Datensätze geprüft. Es wurden $errcnt Fehler gefunden!";
+			}
+			else
+			{
+				echo mysql_num_rows($res)." Datensätze geprüft. Keine Fehler gefunden!";
+			}
+		}
+		
+
 	}
 
 
