@@ -150,7 +150,13 @@
 			if ($nohtml)
 				echo "Bei Ihrer Datenbankabfrage trat ein Fehler auf!\n\n[b]MySQL-Meldung:[/b] [i]".mysql_error()."[/i]\n\n[b]Originalabfrage:[/b] ".$string;
 			else
-				errBox("Datenbankfehler","Bei Ihrer Datenbankabfrage trat ein Fehler auf!\n\n[b]MySQL-Meldung:[/b] [i]".mysql_error()."[/i]\n\n[b]Originalabfrage:[/b] ".$string);
+			{
+				ob_start();
+				debug_print_backtrace();
+				$dbg = ob_get_contents();
+				ob_end_clean();
+				errBox("Datenbankfehler","Bei Ihrer Datenbankabfrage trat ein Fehler auf!\n\n[b]MySQL-Meldung:[/b]\n [i]".mysql_error()."[/i]\n\n[b]Originalabfrage:[/b]\n ".$string."\n\n[b]Stack-Trace:[/b]\n ".$dbg);
+			}
 		}
 	}
 

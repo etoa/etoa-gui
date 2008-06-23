@@ -916,7 +916,7 @@
 	}
 	else
 	{
-		echo "<h1>Planeten</h1>";
+		echo "<h1>Entitäten</h1>";
 		
 		$order_array=array();		
 		$order_array['id']="Planeten-ID";
@@ -958,9 +958,11 @@
 			}
 			
 				// Define tables
-				$tables = "planets";
-				$joins = " INNER JOIN space_cells ON space_cells.cell_id=planets.planet_solsys_id 
-				INNER JOIN planet_types ON type_id = planet_type_id ";
+				$tables = "entities e";
+				$joins = " INNER JOIN cells c ON c.id=e.cell_id ";
+				
+				$selects = "";
+				//INNER JOIN planet_types ON type_id = planet_type_id ";
 
 				// Set default order and limit values
 				$_POST['limit'] = ($_POST['limit']=="") ? 100 : $_POST['limit'];
@@ -968,139 +970,143 @@
 				$_POST['order'] = ($_POST['order']=="") ? $oak[0] : $_POST['order'];
 
 				// Build query
-				if ($_POST['planet_name']!="")
-				{
-					$sql.= " AND planet_name ".searchFielsOptionsSql($_POST['planet_name'],$_POST['qmode']['planet_name']);
-					$search_text['Planetenname'] = searchFieldOptionsName($_POST['qmode']['planet_name'])." ".$_POST['planet_name'];
-					$query_save[] = "planet_name:".$_POST['qmode']['planet_name'].":".$_POST['planet_name'];
-				}
 				if ($_POST['id']!="")
 				{
-					$sql.= " AND planets.id=".$_POST['id'];
-					$search_text['Planeten-ID'] = $_POST['id'];
-					$query_save[] = "id:=:".$_POST['id'];
+					$sql.= " AND e.id=".intval($_POST['id']);
+					$search_text['Entitäts-ID'] = intval($_POST['id']);
+					$query_save[] = "e.id:=:".intval($_POST['id']);
+				}
+				if ($_POST['code']!="")
+				{
+					$sql.= " AND (";
+					$i=0;
+					foreach ($_POST['code'] as $code)
+					{
+						if ($i>0)			
+							$sql.=" OR";
+						$sql .= " e.code='".$code."'";
+						$i++;
+					}
+					$sql.= ") ";
 				}
 				if ($_POST['cell_cx']!="")
 				{
-					$sql.= " AND space_cells.cell_cx=".$_POST['cell_cx'];
+					$sql.= " AND c.cx=".$_POST['cell_cx'];
 					$search_text['Zelle X'] = $_POST['cell_cx'];
-					$query_save[] = "cell_cx:=:".$_POST['cell_cx'];
+					$query_save[] = "c.cx:=:".$_POST['cell_cx'];
 				}
 				if ($_POST['cell_cy']!="")
 				{
-					$sql.= " AND space_cells.cell_cy=".$_POST['cell_cy'];
-					$search_text['Zekke Y'] = $_POST['cell_cy'];
-					$query_save[] = "cell_cy:=:".$_POST['cell_cy'];
+					$sql.= " AND c.cy=".$_POST['cell_cy'];
+					$search_text['Zelle Y'] = $_POST['cell_cy'];
+					$query_save[] = "c.cy:=:".$_POST['cell_cy'];
 				}
 				if ($_POST['cell_sx']!="")
 				{
-					$sql.= " AND space_cells.cell_sx=".$_POST['cell_sx'];
+					$sql.= " AND c.sx=".$_POST['cell_sx'];
 					$search_text['Sektor X'] = $_POST['cell_sx'];
-					$query_save[] = "cell_sx:=:".$_POST['cell_sx'];
+					$query_save[] = "c.sx:=:".$_POST['cell_sx'];
 				}
 				if ($_POST['cell_sy']!="")
 				{
-					$sql.= " AND space_cells.cell_sy=".$_POST['cell_sy'];
+					$sql.= " AND c.sy=".$_POST['cell_sy'];
 					$search_text['Sektor Y'] = $_POST['cell_sy'];
-					$query_save[] = "cell_sy:=:".$_POST['cell_sy'];
+					$query_save[] = "c.sy:=:".$_POST['cell_sy'];
 				}
 				if ($_POST['planet_solsys_pos']!="")
 				{
-					$sql.= " AND planets.planet_solsys_pos=".$_POST['planet_solsys_pos'];
-					$search_text['Sonnensystem-Position'] = $_POST['planet_solsys_pos'];
-					$query_save[] = "planet_solsys_pos:=:".$_POST['planet_solsys_pos'];
+					$sql.= " AND e.pos=".$_POST['planet_solsys_pos'];
+					$search_text['Position'] = $_POST['planet_solsys_pos'];
+					$query_save[] = "e.pos:=:".$_POST['planet_solsys_pos'];
+				}
+
+
+				if ($_POST['planet_name']!="")
+				{
+					$joins.= " INNER JOIN planets p ON p.id=e.id ";
+					$selects = ",p.planet_user_id,p.planet_type_id,p.planet_name";
+					
+					$sql.= " AND p.planet_name ".searchFielsOptionsSql($_POST['planet_name'],$_POST['qmode']['planet_name']);
+					$search_text['Planetenname'] = searchFieldOptionsName($_POST['qmode']['planet_name'])." ".$_POST['planet_name'];
+					$query_save[] = "p.planet_name:".$_POST['qmode']['planet_name'].":".$_POST['planet_name'];
 				}
 				if ($_POST['planet_user_id']!="")
 				{
-					$sql.= " AND planets.planet_user_id ".searchFielsOptionsSql($_POST['planet_user_id'],$_POST['qmode']['planet_user_id']);
-					$search_text['Besitzer-ID'] = searchFieldOptionsName($_POST['qmode']['planet_user_id'])." ".$_POST['planet_user_id'];
-					$query_save[] = "planet_user_id:".$_POST['qmode']['planet_user_id'].":".$_POST['planet_user_id'];
-
+					if (!stristr($joins,"planets p"))
+					{
+						$joins.= " INNER JOIN planets p ON p.id=e.id ";	
+						$selects = ",p.planet_user_id,p.planet_type_id,p.planet_name";
+					}
+					$sql.= " AND p.planet_user_id=".intval($_POST['planet_user_id']);
+					$search_text['Besitzer-ID'] = intval($_POST['planet_user_id']);
+					$query_save[] = "p.planet_user_id:=:".intval($_POST['planet_user_id']);
 				}
 				if (isset($_POST['planet_user_main']) && $_POST['planet_user_main']<2 )
 				{
-					$sql.= " AND planets.planet_user_main LIKE '".$_POST['planet_user_main']."'";
+					if (!stristr($joins,"planets p"))
+					{
+						$joins.= " INNER JOIN planets p ON p.id=e.id ";	
+						$selects = ",p.planet_user_id,p.planet_type_id,p.planet_name";
+					}
+					$sql.= " AND p.planet_user_main LIKE '".$_POST['planet_user_main']."'";
 					$search_text['Hauptplanet'] = $_POST['planet_user_main']==1 ? "Ja" : "Nein";
-					$query_save[] = "planet_user_main:=:".$_POST['planet_user_main'];
+					$query_save[] = "p.planet_user_main:=:".$_POST['planet_user_main'];
 				}
 				if (isset($_POST['planet_wf']) && $_POST['planet_wf']<2)
 				{
-					$sql.= " AND (planets.planet_wf_metal>0 OR planets.planet_wf_crystal>0 OR planets.planet_wf_plastic>0)";
+					if (!stristr($joins,"planets p"))
+					{
+						$joins.= " INNER JOIN planets p ON p.id=e.id ";	
+						$selects = ",p.planet_user_id,p.planet_type_id,p.planet_name";
+					}
+					$sql.= " AND (p.planet_wf_metal>0 OR p.planet_wf_crystal>0 OR p.planet_wf_plastic>0)";
 					$search_text['Trümmerfeld'] = $_POST['planet_wf']==1 ? "Ja" : "Nein";
 					$query_save[] = "planet_wf:=:".$_POST['planet_wf'];
 				}
-				if ($_POST['planet_res_metal']!="")
-				{
-					$sql.= " AND planets.planet_res_metal ".searchFielsOptionsSql($_POST['planet_res_metal'],$_POST['qmode']['planet_res_metal']);
-					$search_text[RES_METAL] = searchFieldOptionsName($_POST['qmode']['planet_res_metal'])." ".$_POST['planet_res_metal'];
-					$query_save[] = "planet_res_metal:".$_POST['qmode']['planet_res_metal'].":".$_POST['planet_res_metal'];
-				}
-				if ($_POST['planet_res_crystal']!="")
-				{
-					$sql.= " AND planet_res_crystal ".searchFielsOptionsSql($_POST['planet_res_crystal'],$_POST['qmode']['planet_res_crystal']);
-					$search_text[RES_CRYSTAL] = searchFieldOptionsName($_POST['qmode']['planet_res_crystal'])." ".$_POST['planet_res_crystal'];
-					$query_save[] = "planet_res_crystal:".$_POST['qmode']['planet_res_crystal'].":".$_POST['planet_res_crystal'];
-				}
-				if ($_POST['planet_res_plastic']!="")
-				{
-					$sql.= " AND planet_res_plastic ".searchFielsOptionsSql($_POST['planet_res_plastic'],$_POST['qmode']['planet_res_plastic']);
-					$search_text[RES_PLASTIC] = searchFieldOptionsName($_POST['qmode']['planet_res_plastic'])." ".$_POST['planet_res_plastic'];
-					$query_save[] = "planet_res_plastic:".$_POST['qmode']['planet_res_plastic'].":".$_POST['planet_res_plastic'];
-				}
-				if ($_POST['planet_fuel']!="")
-				{
-					$sql.= " AND planet_fuel ".searchFielsOptionsSql($_POST['planet_fuel'],$_POST['qmode']['planet_fuel']);
-					$search_text[RES_FUEL] = searchFieldOptionsName($_POST['qmode']['planet_fuel'])." ".$_POST['planet_fuel'];
-					$query_save[] = "planet_fuel:".$_POST['qmode']['planet_fuel'].":".$_POST['planet_fuel'];
-				}
-				if ($_POST['planet_res_food']!="")
-				{
-					$sql.= " AND planet_res_food ".searchFielsOptionsSql($_POST['planet_res_food'],$_POST['qmode']['planet_res_food']);
-					$search_text[RES_FOOD] = searchFieldOptionsName($_POST['qmode']['planet_res_food'])." ".$_POST['planet_res_food'];
-					$query_save[] = "planet_res_food:".$_POST['qmode']['planet_res_food'].":".$_POST['planet_res_food'];
-				}
-				if ($_POST['planet_people']!="")
-				{
-					$sql.= " AND planet_people ".searchFielsOptionsSql($_POST['planet_people'],$_POST['qmode']['planet_people']);
-					$search_text['Bewohner'] = searchFieldOptionsName($_POST['qmode']['planet_people'])." ".$_POST['planet_people'];
-					$query_save[] = "planet_people:".$_POST['qmode']['planet_people'].":".$_POST['planet_people'];
-				}
+
 				if ($_POST['user_nick']!="")
 				{
+					if (!stristr($joins,"planets p"))
+					{
+						$joins.= " INNER JOIN planets p ON p.id=e.id ";	
+						$selects = ",p.planet_user_id,p.planet_type_id,p.planet_name";
+					}
+
 					$sql.= " AND users.user_nick ".searchFielsOptionsSql($_POST['user_nick'],$_POST['qmode']['user_nick']);
-					$joins.= " INNER JOIN users ON planet_user_id=user_id ";
+					$joins.= " INNER JOIN users ON p.planet_user_id=user_id ";
 					$search_text['Besitzer-Nick'] = searchFieldOptionsName($_POST['qmode']['user_nick'])." ".$_POST['user_nick'];
 					$query_save[] = "user_nick:".$_POST['qmode']['user_nick'].":".$_POST['user_nick'];
 				}
-				/*
-				if ($_POST['alliance_tag']!="")
-				{
-					if (stristr($_POST['qmode']['alliance_tag'],"%"))
-						$addchars = "%";else $addchars = "";
-					$sql.= " AND planets.planet_user_id=users.user_id AND users.user_alliance_id=alliances.alliance_id AND alliances.alliance_tag ".stripslashes($_POST['qmode']['alliance_tag']).$_POST['alliance_tag']."$addchars'";
-					
-					if($_POST['user_nick']!="")
-						$tables.= ",".$db_table['alliances'];
-					else
-						$tables.= ",".$db_table['users'].",".$db_table['alliances'];
-					$search_text['Allianz-Tag'] = $_POST['alliance_tag'];
-				}*/
 				if (isset($_POST['planet_desc']) && $_POST['planet_desc']<2)
 				{
+					if (!stristr($joins,"planets p"))
+					{
+						$joins.= " INNER JOIN planets p ON p.id=e.id ";	
+						$selects = ",p.planet_user_id,p.planet_type_id,p.planet_name";
+					}
+
 					if ($_POST['planet_desc']==1)
 					{
-						$sql.= " AND planets.planet_desc!='' ";
+						$sql.= " AND p.planet_desc!='' ";
 						$search_text['Beschreibung'] = "Vorhanden";
 					}
 					else
 					{
-						$sql.= " AND planets.planet_desc='' ";
+						$sql.= " AND p.planet_desc='' ";
 						$search_text['Beschreibung'] = "Nicht vorhanden";
 					}
 					$query_save[] = "planet_desc:=:".$_POST['planet_desc'];
 				}
 
-				$sqlstart = "SELECT * FROM ".$tables." ".$joins." WHERE 1 ";
+				$sqlstart = "SELECT   
+					SQL_CALC_FOUND_ROWS e.id,
+					e.id,
+					e.code, 
+					e.pos,
+					c.sx,c.sy,c.cx,c.cy ".
+					$selects
+					."
+				FROM ".$tables." ".$joins." WHERE 1 ";
 				$sqlend = " ORDER BY ".$_POST['order']." LIMIT ".$_POST['limit'].";";
 				$sql = $sqlstart.$sql.$sqlend;
 				
@@ -1111,7 +1117,10 @@
 			
 
 			$res = dbquery($sql);
-			$nr = mysql_num_rows($res);
+			
+			$ares = dbquery("SELECT FOUND_ROWS()");			
+			$aarr = mysql_fetch_row($ares);
+			$nr =$aarr[0];
 
 			echo "<h2>Suchresultate</h2>";
 			echo "<form acton=\"?page=".$page."\" method=\"post\">";
@@ -1168,45 +1177,52 @@
 						$users[$uarr['user_id']]['alliance_id']=$uarr['user_alliance_id'];
 					}
 				}
- 				$ares = dbquery("SELECT alliance_id,alliance_tag FROM ".$db_table['alliances'].";");
- 				$alliances=array();
-				if (mysql_num_rows($ares))
-				{
-					while ($aarr=mysql_fetch_array($ares))
-					{
-						$alliances[$aarr['alliance_id']]=$aarr['alliance_tag'];
-					}
-				}
 
 				echo "<table class=\"tbl\">";
 				echo "<tr>";
 				echo "<td class=\"tbltitle\" valign=\"top\" style=\"width:40px;\">ID</td>";
 				echo "<td class=\"tbltitle\" valign=\"top\" style=\"width:90px;\">Koordinaten</td>";
+				echo "<td class=\"tbltitle\" valign=\"top\">Entitätstyp</td>";
 				echo "<td class=\"tbltitle\" valign=\"top\">Name</td>";
 				echo "<td class=\"tbltitle\" valign=\"top\">Besitzer</td>";
-				echo "<td class=\"tbltitle\" valign=\"top\">Allianz</td>";
 				echo "<td class=\"tbltitle\" valign=\"top\" style=\"width:150px;\">Typ</td>";
 				echo "<td style=\"width:20px;\">&nbsp;</td>";
 				echo "</tr>";
 				while ($arr = mysql_fetch_array($res))
 				{
-					if ($arr['planet_user_id']>0)
-					{
-						$uarr = @mysql_fetch_row(dbquery("SELECT user_nick,user_alliance_id FROM ".$db_table['users']." WHERE user_id=".$arr['planet_user_id'].";"));
-						if ($uarr[1]>0)
-						{
-							$aarr = @mysql_fetch_row(dbquery("SELECT alliance_tag FROM ".$db_table['alliances']." WHERE alliance_id=".$uarr[1].";"));
-						}
-						else
-							$aarr = Null;
-					}
-					else
-						$uarr = Null;
-
 					echo "<tr>";
-					echo "<td class=\"tbldata\">".$arr['id']."</td>";
-					echo "<td class=\"tbldata\">".$arr['cell_sx']."/".$arr['cell_sy']." : ".$arr['cell_cx']."/".$arr['cell_cy']." : ".$arr['planet_solsys_pos']."</td>";
-					echo "<td class=\"tbldata\" ".tm($arr['planet_name'],stripslashes($arr['planet_desc'])).">".$arr['planet_name']."</td>";
+					echo "<td class=\"tbldata\">
+						".$arr['id']."</td>";
+					echo "<td class=\"tbldata\">
+					<a href=\"?page=$page&sub=edit&id=".$arr['id']."\">
+						".$arr['sx']."/".$arr['sy']." : ".$arr['cx']."/".$arr['cy']." : ".$arr['pos']."
+					</a></td>";
+					echo "<td class=\"tbldata\" style=\"color:".Entity::$entityColors[$arr['code']]."\">";
+					switch ($arr['code'])
+					{
+						case 'p':
+							echo "Planet";
+							break;
+						case 's':
+							echo "Stern";
+							break;
+						case 'a':
+							echo "Asteroiden";
+							break;
+						case 'n':
+							echo "Nebel";
+							break;
+						case 'w':
+							echo "Wurmloch";
+							break;
+						case 'e':
+							echo "Raum";
+							break;
+						default:
+							echo "Unbekannt";						
+					}
+					echo "</td>";
+					echo "<td class=\"tbldata\">".$arr['planet_name']."</td>";
 					echo "<td class=\"tbldata\">
 						<a href=\"?page=user&amp;sub=edit&amp;user_id=".$arr['planet_user_id']."\" title=\"Spieler bearbeiten\">
 							".$users[$arr['planet_user_id']]['nick']."
@@ -1217,7 +1233,6 @@
 						}
 						echo "
 					</td>";
-					echo "<td class=\"tbldata\"><a href=\"?page=alliances&amp;sub=edit&amp;alliance_id=".$users[$arr['planet_user_id']]['alliance_id']."\" title=\"Allianz bearbeiten\">".$alliances[$users[$arr['planet_user_id']]['alliance_id']]."</td>";
 					echo "<td class=\"tbldata\"><a href=\"?page=galaxy&sub=planet_types&action=edit&id=".$arr['planet_type_id']."\" title=\"Typ bearbeiten\">".$arr['type_name']."</a></td>";
   				echo "<td class=\"tbldata\">".edit_button("?page=$page&sub=edit&id=".$arr['id'])."</td>";
 					echo "</tr>";
@@ -1488,21 +1503,8 @@
 			echo "<form action=\"?page=$page\" method=\"post\" name=\"advancedsearch\"  autocomplete=\"off\">";
 			echo "<table class=\"tbl\" style=\"width:550px;margin:0px\">";
 			echo "<tr>
-				<td class=\"tbltitle\" style=\"width:160px\">Planetenname:</td>
-				<td class=\"tbldata\">".searchFieldTextOptions('planet_name')." <input type=\"text\" name=\"planet_name\" value=\"\" size=\"20\" maxlength=\"250\" /> </td></tr>";
-			echo "<tr>
-				<td class=\"tbltitle\">Besitzer:</td>
-				<td class=\"tbldata\">".searchFieldTextOptions('user_nick')." <input type=\"text\" name=\"user_nick\" value=\"\" size=\"20\" maxlength=\"250\" autocomplete=\"off\"  />&nbsp;";
-				// onkeyup=\"xajax_searchUser(this.value,'user_nick','citybox1');\"
-				//<br><div class=\"citybox\" id=\"citybox1\">&nbsp;</div>
-				echo "</td></tr>";
-			echo "<tr>
-				<td class=\"tbltitle\">Planeten-ID:</td>
+				<td class=\"tbltitle\">ID:</td>
 				<td class=\"tbldata\"><input type=\"text\" name=\"id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
-			echo "<tr>
-				<td class=\"tbltitle\">Besitzer-ID:</td>
-				<td class=\"tbldata\">".searchFieldNumberOptions('planet_user_id')." <input type=\"text\" name=\"planet_user_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td>";
-
 			echo "<tr>
 				<td class=\"tbltitle\">Koordinaten:</td>
 				<td class=\"tbldata\"><select name=\"cell_sx\">";
@@ -1526,10 +1528,31 @@
 			for ($x=1;$x<=$conf['num_planets']['p2'];$x++)
 				echo "<option value=\"$x\">$x</option>";
 			echo "</select></td></tr>";
-			/*echo "<tr>
-				<td class=\"tbltitle\">Allianz-Tag:</td>
-				<td class=\"tbldata\">".searchFieldTextOptions('alliance_tag')." <input type=\"text\" name=\"alliance_tag\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
-			*/
+			echo "<tr>
+				<td class=\"tbltitle\" style=\"width:160px\">Entitätstyp:</td>
+				<td class=\"tbldata\">
+					<input type=\"checkbox\" name=\"code[]\" value=\"s\" checked=\"checked\" /> Stern
+					<br/><input type=\"checkbox\" name=\"code[]\" value=\"p\" checked=\"checked\" /> Planet
+					<br/><input type=\"checkbox\" name=\"code[]\" value=\"n\" checked=\"checked\" /> Nebel
+					<br/><input type=\"checkbox\" name=\"code[]\" value=\"a\" checked=\"checked\" /> Asteroidenfeld
+					<br/><input type=\"checkbox\" name=\"code[]\" value=\"w\" checked=\"checked\" /> Wurmloch
+					<br/><input type=\"checkbox\" name=\"code[]\" value=\"e\" checked=\"checked\" /> Leerer Raum
+				</td></tr>";
+
+			echo "<tr>
+				<td class=\"tbltitle\" style=\"height:2px\" colspan=\"2\"></td></tr>";
+
+			echo "<tr>
+				<td class=\"tbltitle\" style=\"width:160px\">Name:</td>
+				<td class=\"tbldata\">".searchFieldTextOptions('planet_name')." <input type=\"text\" name=\"planet_name\" value=\"\" size=\"20\" maxlength=\"250\" /> </td></tr>";
+			echo "<tr>
+				<td class=\"tbltitle\">Besitzer-ID:</td>
+				<td class=\"tbldata\"><input type=\"text\" name=\"planet_user_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td>";
+			echo "<tr>
+				<td class=\"tbltitle\">Besitzer:</td>
+				<td class=\"tbldata\">".searchFieldTextOptions('user_nick')." <input type=\"text\" name=\"user_nick\" value=\"\" size=\"20\" maxlength=\"250\" autocomplete=\"off\"  />&nbsp;";
+				echo "</td></tr>";
+
 			echo "<tr>
 				<td class=\"tbltitle\">Hauptplanet:</td>
 				<td class=\"tbldata\"><input type=\"radio\" name=\"planet_user_main\" value=\"2\" checked=\"checked\" /> Egal &nbsp;
@@ -1544,24 +1567,6 @@
 				<td class=\"tbldata\"><input type=\"radio\" name=\"planet_desc\" value=\"2\" checked=\"checked\" /> Egal &nbsp;
 				<input type=\"radio\" name=\"planet_desc\" value=\"0\" /> Keine &nbsp;
 				<input type=\"radio\" name=\"planet_desc\" value=\"1\"  /> Vorhanden</td></tr>";
-			echo "<tr>
-				<td class=\"tbltitle\">Titan:</td>
-				<td class=\"tbldata\">".searchFieldNumberOptions('planet_res_metal')." <input type=\"text\" name=\"planet_res_metal\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
-			echo "<tr>
-				<td class=\"tbltitle\">Silizium:</td>
-				<td class=\"tbldata\">".searchFieldNumberOptions('planet_res_crystal')." <input type=\"text\" name=\"planet_res_crystal\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
-			echo "<tr>
-				<td class=\"tbltitle\">PVC:</td>
-				<td class=\"tbldata\">".searchFieldNumberOptions('planet_res_plastic')." <input type=\"text\" name=\"planet_res_plastic\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
-			echo "<tr>
-				<td class=\"tbltitle\">Tritium:</td>
-				<td class=\"tbldata\">".searchFieldNumberOptions('planet_res_fuel')." <input type=\"text\" name=\"planet_res_fuel\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
-			echo "<tr>
-				<td class=\"tbltitle\">Nahrung:</td>
-				<td class=\"tbldata\">".searchFieldNumberOptions('planet_res_food')." <input type=\"text\" name=\"planet_res_food\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
-			echo "<tr>
-				<td class=\"tbltitle\">Bewohner:</td>
-				<td class=\"tbldata\">".searchFieldNumberOptions('planet_people')." <input type=\"text\" name=\"planet_people\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
 			echo "</table>";
 			echo "<br/>
 			<select name=\"limit\">";

@@ -369,6 +369,7 @@
 			}
 		}			
 		
+		static public $entityColors = array('s'=>'#ff0','p'=>'#0f0','a'=>'#ccc','n'=>'#FF00FF','w'=>'#8000FF','e'=>'#55f');
 					
 	}
 

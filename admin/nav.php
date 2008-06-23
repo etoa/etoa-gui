@@ -308,37 +308,37 @@
 
 */
 
-	$navmenu['Planeten und Galaxie']['Planeten']['page']="galaxy";
-	$navmenu['Planeten und Galaxie']['Planeten']['sub']="";
-	$navmenu['Planeten und Galaxie']['Planeten']['level']=1;
+	$navmenu['Galaxie']['Entitäten']['page']="galaxy";
+	$navmenu['Galaxie']['Entitäten']['sub']="";
+	$navmenu['Galaxie']['Entitäten']['level']=1;
 
-	$navmenu['Planeten und Galaxie']['Zellen']['page']="galaxy";
-	$navmenu['Planeten und Galaxie']['Zellen']['sub']="cells";
-	$navmenu['Planeten und Galaxie']['Zellen']['level']=1;
+	$navmenu['Galaxie']['Zellen']['page']="galaxy";
+	$navmenu['Galaxie']['Zellen']['sub']="cells";
+	$navmenu['Galaxie']['Zellen']['level']=1;
 
-	$navmenu['Planeten und Galaxie']['Karte']['page']="galaxy";
-	$navmenu['Planeten und Galaxie']['Karte']['sub']="map";
-	$navmenu['Planeten und Galaxie']['Karte']['level']=1;
-
-
-	$navmenu['Planeten und Galaxie']['Planetenbesitzer pr&uuml;fen']['page']="galaxy";
-	$navmenu['Planeten und Galaxie']['Planetenbesitzer pr&uuml;fen']['sub']="planetcheck";
-	$navmenu['Planeten und Galaxie']['Planetenbesitzer pr&uuml;fen']['level']=1;
-
-	$navmenu['Planeten und Galaxie']['Integrität prüfen']['page']="galaxy";
-	$navmenu['Planeten und Galaxie']['Integrität prüfen']['sub']="galaxycheck";
-	$navmenu['Planeten und Galaxie']['Integrität prüfen']['level']=1;
+	$navmenu['Galaxie']['Karte']['page']="galaxy";
+	$navmenu['Galaxie']['Karte']['sub']="map";
+	$navmenu['Galaxie']['Karte']['level']=1;
 
 
-	$navmenu['Planeten und Galaxie']['bar'][0] = true;
+	$navmenu['Galaxie']['Planetenbesitzer pr&uuml;fen']['page']="galaxy";
+	$navmenu['Galaxie']['Planetenbesitzer pr&uuml;fen']['sub']="planetcheck";
+	$navmenu['Galaxie']['Planetenbesitzer pr&uuml;fen']['level']=1;
 
-	$navmenu['Planeten und Galaxie']['Planetentypen']['page']="galaxy";
-	$navmenu['Planeten und Galaxie']['Planetentypen']['sub']="planet_types";
-	$navmenu['Planeten und Galaxie']['Planetentypen']['level']=2;
+	$navmenu['Galaxie']['Integrität prüfen']['page']="galaxy";
+	$navmenu['Galaxie']['Integrität prüfen']['sub']="galaxycheck";
+	$navmenu['Galaxie']['Integrität prüfen']['level']=1;
 
-	$navmenu['Planeten und Galaxie']['Sonnentypen']['page']="galaxy";
-	$navmenu['Planeten und Galaxie']['Sonnentypen']['sub']="sol_types";
-	$navmenu['Planeten und Galaxie']['Sonnentypen']['level']=2;
+
+	$navmenu['Galaxie']['bar'][0] = true;
+
+	$navmenu['Galaxie']['Planetentypen']['page']="galaxy";
+	$navmenu['Galaxie']['Planetentypen']['sub']="planet_types";
+	$navmenu['Galaxie']['Planetentypen']['level']=2;
+
+	$navmenu['Galaxie']['Sonnentypen']['page']="galaxy";
+	$navmenu['Galaxie']['Sonnentypen']['sub']="sol_types";
+	$navmenu['Galaxie']['Sonnentypen']['level']=2;
 
 
 

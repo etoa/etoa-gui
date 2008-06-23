@@ -2,6 +2,7 @@
 	session_start();
 	include("../conf.inc.php");
 	include("../functions.php");
+	define("CLASS_ROOT","../classes");
 	dbconnect();
 	$conf=get_all_config();
 	include("../def.inc.php");
@@ -97,24 +98,32 @@
 	}
 	elseif (isset($_GET['type']) && $_GET['type']=="populated")
 	{
-		$res=dbquery("SELECT cell_sx, cell_cx, cell_sy, cell_cy,
-		COUNT(planet_id) AS cnt
-		FROM space_cells,
-		planets
+		$res=dbquery("		
+		SELECT 
+			c.sx, 
+			c.cx, 
+			c.sy,
+			c.cy,
+			COUNT(p.id) AS cnt
+		FROM 
+			cells c,
+			planets p,
+			entities e
 		WHERE
-			planet_solsys_id=cell_id
-			AND planet_user_id>0
-		GROUP BY
-			cell_id;
+			p.id=e.id
+			AND e.cell_id=c.id
+			AND p.planet_user_id>0
+		GROUP BY 
+			e.cell_id
 		");
 		for ($x=1;$x<=$p_num_max;$x++)
 		{
-			$col[$x] = imagecolorallocate($im,0,(255/$p_num_max*$x),0);
+			$col[$x] = imagecolorallocate($im,(255/$p_num_max*$x),(255/$p_num_max*$x),0);
 		}
-		while ($arr=mysql_fetch_array($res))
+		while ($arr=mysql_fetch_assoc($res))
 		{
-			$x = ((($arr['cell_sx']-1)*$cx_num + $arr['cell_cx']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
-			$y = $h-GALAXY_MAP_LEGEND_HEIGHT+GALAXY_IMAGE_SCALE-((($arr['cell_sy']-1)*$cy_num + $arr['cell_cy']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
+			$x = ((($arr['sx']-1)*$cx_num + $arr['cx']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
+			$y = $h-GALAXY_MAP_LEGEND_HEIGHT+GALAXY_IMAGE_SCALE-((($arr['sy']-1)*$cy_num + $arr['cy']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
 			imagefilledellipse ($im,$x,$y,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[$arr['cnt']]);
 		}		
 		imagestring($im,3,10,$h-GALAXY_MAP_LEGEND_HEIGHT+10,"Legende:    Viel    Mittel    Wenig",$colWhite);

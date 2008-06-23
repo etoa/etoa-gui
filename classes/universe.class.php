@@ -603,6 +603,7 @@
 			$tbl[]="user_sitting";
 			$tbl[]="user_sitting_date";
 			$tbl[]="user_stats";
+			$tbl[]="user_ratings";
 			$tbl[]="user_onlinestats";
 			$tbl[]="user_comments";
 			$tbl[]="user_warnings";
@@ -622,6 +623,8 @@
 			$tbl[]="logs_game";
 			$tbl[]="logs_battle";
 			$tbl[]="tickets";
+			$tbl[]="chat";
+			$tbl[]="chat_users";
 			
 	
 			foreach ($tbl as $t)
