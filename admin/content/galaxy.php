@@ -201,6 +201,7 @@
 		{
 			echo "Keine Sterne vorhanden!<br/>";
 		}		
+
 		$res=dbquery("
 		SELECT 
 			id
@@ -245,9 +246,55 @@
 		}
 		else
 		{
-			echo "Keine Sterne vorhanden!<br/>";
+			echo "Keine Wurmlöcher vorhanden!<br/>";
 		}	
 
+		$res=dbquery("
+		SELECT 
+			id
+		FROM
+			space;");
+		if (mysql_num_rows($res)>0)
+		{
+			$errcnt = 0;	
+			echo "Leere Räume werden auf Integrität geprüft...<br/>";
+			while ($arr=mysql_fetch_assoc($res))
+			{
+				$eres=dbquery("
+				SELECT 
+					code 
+				FROM 
+					entities
+				WHERE
+					id=".$arr['id'].";");
+				if (mysql_num_rows($eres)==0)
+				{
+					echo "Fehlender Entitätsdatemsatz bei leerem Raum ".$arr['id']."<br/>";							
+					$errcnt++;
+				}
+				else
+				{
+					$earr = mysql_fetch_array($eres);
+					if($earr['code']!='e')
+					{
+						echo "Falscher Code (".$earr['code'].") bei leerem Raum ".$arr['id']."<br/>";							
+						$errcnt++;
+					}					
+				}
+			}
+			if ($errcnt>0)
+			{
+				echo mysql_num_rows($res)." Datensätze geprüft. Es wurden <b>$errcnt</b> Fehler gefunden!<br/>";
+			}
+			else
+			{
+				echo mysql_num_rows($res)." Datensätze geprüft. Keine Fehler gefunden!<br/>";
+			}
+		}
+		else
+		{
+			echo "Keine leeren Räume vorhanden!<br/>";
+		}
 		
 
 		$res=dbquery("SELECT id FROM cells;");
