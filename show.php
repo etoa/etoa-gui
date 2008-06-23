@@ -186,66 +186,102 @@
 		<div id="outGameContent">
 			
 		<?PHP
-			if ($index!="")
+			
+			$show = true;
+			if ($conf['register_key']['v']!="")
 			{
-				$page=$index;
-				$sub="index/";
-			}
-			elseif ($info!="")
-			{
-				$page=$info;
-				$sub="info/";
-			}		
-			elseif (($page!="" && isset($s['user_id'])) || $page=="help")
-			{	
-				$showed=true;
-				$page=$page;
-				$sub="content/";
-				$external=true;
-			}
-			else
-			{
-				showTitle('Übersicht öffentlicher Seiten');
-				echo '<table id="outgameOverviewTable">';
-				echo '<tr>
-					<td><a href="?index=register"><img src="images/outgame/register.png" alt="Anmelden" /><br/>Anmelden</a></td>
-					<td><a href="?index=pwforgot"><img src="images/outgame/pwforgot.png" alt="Passwort anfordern" /><br/>Passwort vergessen?</a></td>
-					<td><a href="?index=stats"><img src="images/outgame/stats.png" alt="Rangliste" /><br/>Rangliste</a></td>
-				</tr>';
-				echo '<tr>
-					<td><a href="?index=gamestats"><img src="images/outgame/gamestats.png" alt="Serverstatistiken" /><br/>Serverstatistiken</a></td>
-					<td><a href="?index=pillory"><img src="images/outgame/pillory.png" alt="Pranger" /><br/>Pranger</a></td>
-					<td><a href="?index=feeds"><img src="images/outgame/feeds.png" alt="Feeds" /><br/>Feeds</a></td>
-				</tr>';
-				echo '<tr>
-					<td><a href="?index=contact"><img src="images/outgame/contact.png" alt="Kontakt" /><br/>Kontakt</a></td>
-					<td><a href="?page=help"><img src="images/outgame/help.png" alt="Hilfe" /><br/>Hilfe</a></td>
-					<td></td>
-				</tr>';
+				if (isset($_POST['reg_key_auth_submit']))
+				{
 				
-				echo '</table>';
-				exit;
+					if ($_POST['reg_key_auth_value']==$conf['register_key']['v'])
+					{
+						$_SESSION['reg_key_auth']=$conf['register_key']['v'];
+					}
+					else
+					{
+						echo "Falscher Schlüssel!<br/><br/>";						
+					}
+				}
+				
+				if ($_SESSION['reg_key_auth']!=$conf['register_key']['v'])
+				{
+					$show = false;
+				}
 			}
 			
 			
-			if (!eregi("^[a-z\_]+$",$page) || strlen($page)>50)
+			if ($show)
 			{
-				die("<h1>Fehler</h1>Der Seitenname <b>".$page."</b> enth&auml;lt unerlaubte Zeichen!<br/><br/>
-				<a href=\"javascript:window.close();\">Schliessen</a><br/><br/>");
-			}
-			if (file_exists($sub.$page.".php"))
-			{
-				include ($sub.$page.".php");
+				
+				if ($index!="")
+				{
+					$page=$index;
+					$sub="index/";
+				}
+				elseif ($info!="")
+				{
+					$page=$info;
+					$sub="info/";
+				}		
+				elseif (($page!="" && isset($s['user_id'])) || $page=="help")
+				{	
+					$showed=true;
+					$page=$page;
+					$sub="content/";
+					$external=true;
+				}
+				else
+				{
+					showTitle('Übersicht öffentlicher Seiten');
+					echo '<table id="outgameOverviewTable">';
+					echo '<tr>
+						<td><a href="?index=register"><img src="images/outgame/register.png" alt="Anmelden" /><br/>Anmelden</a></td>
+						<td><a href="?index=pwforgot"><img src="images/outgame/pwforgot.png" alt="Passwort anfordern" /><br/>Passwort vergessen?</a></td>
+						<td><a href="?index=stats"><img src="images/outgame/stats.png" alt="Rangliste" /><br/>Rangliste</a></td>
+					</tr>';
+					echo '<tr>
+						<td><a href="?index=gamestats"><img src="images/outgame/gamestats.png" alt="Serverstatistiken" /><br/>Serverstatistiken</a></td>
+						<td><a href="?index=pillory"><img src="images/outgame/pillory.png" alt="Pranger" /><br/>Pranger</a></td>
+						<td><a href="?index=feeds"><img src="images/outgame/feeds.png" alt="Feeds" /><br/>Feeds</a></td>
+					</tr>';
+					echo '<tr>
+						<td><a href="?index=contact"><img src="images/outgame/contact.png" alt="Kontakt" /><br/>Kontakt</a></td>
+						<td><a href="?page=help"><img src="images/outgame/help.png" alt="Hilfe" /><br/>Hilfe</a></td>
+						<td></td>
+					</tr>';
+					
+					echo '</table>';
+					exit;
+				}
+				
+				
+				if (!eregi("^[a-z\_]+$",$page) || strlen($page)>50)
+				{
+					die("<h1>Fehler</h1>Der Seitenname <b>".$page."</b> enth&auml;lt unerlaubte Zeichen!<br/><br/>
+					<a href=\"javascript:window.close();\">Schliessen</a><br/><br/>");
+				}
+				if (file_exists($sub.$page.".php"))
+				{
+					include ($sub.$page.".php");
+				}
+				else
+				{
+					echo "<h1>Fehler:</h1> Die Seite <b>".$page."</b> existiert nicht!<br/><br/>";
+					echo '<script type="text/javascript">setTimeout("document.location=\'?\'",1000);</script>';
+				}
+				echo "<input type=\"button\" value=\"Fenster schliessen\" onclick=\"window.close();\" /><br/><br/>";
+				
+				dbclose();
+				$_SESSION[ROUNDID] = $s;
 			}
 			else
 			{
-				echo "<h1>Fehler:</h1> Die Seite <b>".$page."</b> existiert nicht!<br/><br/>";
-				echo '<script type="text/javascript">setTimeout("document.location=\'?\'",1000);</script>';
+				echo "<h1>Zugang erfordert Schlüssel</h1>";
+				echo "<form action=\"?index=".$_GET['index']."\" method=\"post\">
+				Bitte Schlüssel eingeben: <input type=\"text\" value=\"\" name=\"reg_key_auth_value\" /> &nbsp;
+				<input type=\"submit\" value=\"Prüfen\" name=\"reg_key_auth_submit\" />
+				</form>";
 			}
-			echo "<input type=\"button\" value=\"Fenster schliessen\" onclick=\"window.close();\" /><br/><br/>";
-			
-			dbclose();
-			$_SESSION[ROUNDID] = $s;
 		?>
 		
 		</div>

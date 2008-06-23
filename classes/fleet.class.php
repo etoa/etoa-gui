@@ -68,6 +68,7 @@
 		// Getters
 		//
 		function valid() { return $this->valid;	}
+		function ownerId() { return $this->ownerId; }
 		function launchTime() {	return $this->launchTime; }
 		function landTime() {	return $this->landTime;	}
 		function pilots()	{	return $this->pilots;	}		
@@ -254,6 +255,7 @@
 			{
 				if ($this->landTime() > time())
 				{
+					$tottime = $this->landTime() - $this->launchTime;
 					$difftime = time() - $this->launchTime;
 					$this->launchTime = time();
 					$this->landTime = $this->launchTime + $difftime ;
@@ -264,6 +266,18 @@
 					
 					$this->status = 2;
 	
+					$passed = $difftime / $tottime;
+					$returnFactor = 1 - $passed;
+					
+					// Fleet gets unused costs back
+					$this->resFuel += ceil($this->usageFuel * $returnFactor);
+					$this->resFood += ceil($this->usageFood * $returnFactor);
+					$this->resPower += ceil($this->usagePower * $returnFactor);
+					
+					$this->usageFuel = floor($this->usageFuel * $passed);
+					$this->usageFood = floor($this->usageFood * $passed);
+					$this->usagePower = floor($this->usagePower * $passed);
+					
 					$this->update();	
 					return true;			
 				}
@@ -318,7 +332,17 @@
 				landtime='".$this->landTime."',
 				entity_from=".$this->sourceId.",
 				entity_to=".$this->targetId.",
-				status='".$this->status."'
+				status='".$this->status."',
+				usage_fuel='".$this->usageFuel."',
+				usage_food='".$this->usageFood."',
+				usage_power='".$this->usagePower."',
+				res_metal='".$this->resMetal."',
+				res_crystal='".$this->resCrystal."',
+				res_plastic='".$this->resPlastic."',
+				resFuel='".$this->res_fuel."',
+				resFood='".$this->res_food."',
+				resPower='".$this->res_power."',
+				resPeople='".$this->res_people."'
 			WHERE 
 				id='".$this->id."';");			
 			if (mysql_affected_rows()>0)
@@ -383,8 +407,7 @@
 		* Land fleet
 		*/
 		function land()
-		{			
-
+		{
 			if (($this->ownerId==0 || $this->ownerId==$this->getTarget()->ownerId()) && $this->getTarget()->ownerId() > 0)
 			{
 				$sl = new ShipList($this->targetId,$this->getTarget()->ownerId());
@@ -396,27 +419,33 @@
 				}
 				
 				// TODO: Perhaps all entities can get res in the future...
-				if ($trgEnt->code == 'p')
+				if ($this->getTarget()->code == 'p')
 				{
-					$trgEnt->changeRes($arr['res_metal'],$arr['res_crystal'],$arr['res_plastic'],$arr['res_fuel'],$arr['res_food'],$arr['res_power']);
-					$trgEnt->chgPeople($arr['pilots']+$arr['res_people']);
+					$this->getTarget()->changeRes($this->resMetal,$this->resCrystal,$this->resPlasic,$this->resFuel,$this->resFood,$this->resPower);
+					$this->getTarget()->chgPeople($this->pilots + $this->resPeople);
+
+					// Add halve of the resources used for the engines to the target, 
+					// if the action, for example, is colonize or position
+					if ($this->status == 0)
+					{
+						$this->getTarget()->changeRes(0,0,0,$this->usageFuel/2,$this->usageFood/2,$this->usagePower/2);
+					}
 				}
 				
-				// TODO: Add parts of usaged stuff (power cells, fuel, food)
-
 				dbquery("
 				DELETE FROM
 					fleet
 				WHERE
 					id=".$_GET['fleetedit'].";");
-				ok_msg("Flotte gelandet!");
 				
 				$this->valid = false;
+				return true;
 			}
 			else
 			{
-				err_msg("Kann Flotte nicht landen, Ziel ist unbewohnt oder Flottenbesitzer entspricht nicht Zielbesitzer.");
+				$this->error = "Kann Flotte nicht landen, Ziel ist unbewohnt oder Flottenbesitzer entspricht nicht Zielbesitzer.";
 			}
+			return false;
 		}
 
 		

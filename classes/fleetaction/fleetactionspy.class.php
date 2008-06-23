@@ -17,6 +17,8 @@
 			$this->allowSourceEntity = false;
 		}
 
+		function displayName() { return "blabliblup"; }
+
 		function startAction() {} 
 		function cancelAction() {}		
 		function targetAction() {} 

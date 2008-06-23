@@ -29,7 +29,8 @@
 		);
 
 		// Colors for different attitudes
-		static public $attitudeColor = array("#ff0","#0f0","#f90","#f00");
+		static public $attitudeColor = array("#ff0","#0f0","#f90","#f00","#999");
+		static public $attitudeString = array("Neutral","Friedlich","Agressiv","Feindlich","Unbekannt");
 		
 		// Status descriptions
 		static public $statusCode = array("Hinflug","Rückflug","Abgebrochen");
@@ -64,6 +65,11 @@
 		
 		function code() { return $this->code; }
 		function name() { return $this->name; }
+
+		function displayName() { return $this->name; }
+		function faked() { return false; }
+
+
 		function __toString() { return $this->name; }
 		function desc() { return $this->desc; }
 		

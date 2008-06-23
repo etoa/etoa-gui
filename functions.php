@@ -1050,29 +1050,6 @@
 	}
 
 
-
-	function get_spy_tech($user_id)
-	{
-		global $db_table;
-		global $conf;
-
-		$res = dbquery("
-		SELECT
-			techlist_current_level
-		FROM
-			".$db_table['techlist']."
-		WHERE
-			techlist_user_id=$user_id
-			AND techlist_tech_id='".SPY_TECH_ID."';");
-		if (mysql_num_rows($res)>0)
-		{
-			$arr = mysql_fetch_assoc($res);
-			return 	$arr['techlist_current_level'];
-		}
-		else
-			return 0;
-	}
-
 	/**
 	* Tabellen optimieren
 	*/

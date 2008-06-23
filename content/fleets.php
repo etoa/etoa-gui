@@ -103,59 +103,36 @@
 	//
 
 
-	//Liest alle Flotten aus die auf dem weg zu einem eigenen Planeten gehen, ausser:
-	//Trümmer sammeln (wo), Trümmerfeld erstellen (zo)
-	$spy_tech_level = get_spy_tech($cu->id());
-	$fres = dbquery("
-	SELECT
-      f.id,
-      f.user_id,
-			f.entity_from,
-			f.entity_to,
-      f.launchtime,
-      f.landtime,
-      f.action
-	FROM
-      fleet AS f
-	ORDER BY
-		f.landtime ASC;");
-	if (mysql_num_rows($fres)>0)
-	{
+	$tl = new TechList($cu->id());
+	$mySpyTech = $tl->getLevel(SPY_TECH_ID);
+		
+	$fm->loadForeign();
+	if ($fm->count() > 0)
+	{	
 		infobox_start("Fremde Flotten",1);
-		$number=mysql_num_rows($fres);
-		while ($farr = mysql_fetch_array($fres))
+		foreach ($fm->getAll() as $fid=>$fd)
 		{
-			$number--;
-			$fake=0;
-			$show_tarn=0;
+		
+			$otl = new TechList($fd->ownerId());
+			$opTarnTech = $otl->getLevel(TARN_TECH_ID);
 
-			//Handelsflotte wird nie getarnt
-			if ($farr['action']=="mo")
-			{
-				$show_tarn=1;
-			}
+	    //Tarn Bonus nur durch tarntechnik
+	    if ($opTarnTech - $mySpyTech < 0)
+	    {
+	    	$diff_time_factor=0;
+	    }
+	    elseif ($opTarnTech-$mySpyTech>9)
+	    {
+	      $diff_time_factor=9;
+	    }
+	    else
+	    {
+	      $diff_time_factor = $opTarnTech - $mySpyTech;
+	    }
 
-      //sucht Schiffe die NICHT getarnt sind in der Flotte
-      $tarn_ship_res=dbquery("
-      SELECT
-          s.ship_id
-      FROM
-          ".$db_table['fleet_ships']." AS fs
-          INNER JOIN
-          ".$db_table['ships']." AS s
-     			ON s.ship_id=fs.fs_ship_id
-     			AND fs.fs_fleet_id='".$farr['id']."'
-          AND s.ship_tarned!='1';");
-      if(mysql_num_rows($tarn_ship_res)>0)
-      {
-          $show_tarn=1;
-      }
-
-		//
-		//Errechnet ob User diese Flotte sieht oder nicht
-		//
 			$special_ship_bonus_tarn = 0;
 
+/*
 			//Liest Tarnbonus von den Spezialschiffen aus
 			$special_boni_res=dbquery("
 			SELECT
@@ -175,71 +152,27 @@
           $special_ship_bonus_tarn+=$special_boni_arr['special_ship_bonus_tarn'] * $special_boni_arr['fs_special_ship_bonus_tarn'];
         }
       }
+*/
+			//Flotte kann maximum zu 90% des Fluges getarnt werden, auch mit Spezialschiffsboni
+			$tarned = $diff_time_factor+$special_ship_bonus_tarn;
+			$tarned = min($tarned,9);
 
-			//Gegnerische tarntech
-      $tarn_res=dbquery("
-      SELECT
-          techlist_current_level
-      FROM
-          ".$db_table['techlist']."
-      WHERE
-          techlist_user_id='".$farr['user_id']."'
-          AND techlist_tech_id='11'");
-      $tarn_arr=mysql_fetch_array($tarn_res);
-
-      //Tarn Bonus nur durch tarntechnik
-      if ($tarn_arr['techlist_current_level']-$spy_tech_level<0)
-      {
-          $diff_time_factor=0;
-      }
-      elseif ($tarn_arr['techlist_current_level']-$spy_tech_level>9)
-      {
-          $diff_time_factor=9;
-      }
-      else
-      {
-          $diff_time_factor=$tarn_arr['techlist_current_level']-$spy_tech_level;
-      }
-
-
-			//Fakeangriff
-			if ($farr['action']=="eo")
+			// Is the attitude visible?
+			if (SPY_TECH_SHOW_ATTITUDE<=$mySpyTech)
 			{
-				$farr['action']="ao";
-				$fake=1;
+				$attitude = $fd->getAction->attitude();
 			}
-
-
-			//Opfer sieht nur Gesinnung des Gegners (Freund/Feind)
-			if (SPY_TECH_SHOW_ATTITUDE<=$spy_tech_level)
-			{
-				$show_attitude=1;
-
-				if ($farr['action']=="ao" || $farr['action']=="io" || $farr['action']=="so" || $farr['action']=="bo" || $farr['action']=="xo" || $farr['action']=="vo" || $farr['action']=="lo" || $farr['action']=="do" || $farr['action']=="ho")
-				{
-					$style = "color:#f00;";
-					$action="Feindlich";
-					$act_color=2;
-				}
-				else
-				{
-					$diff_time_factor=0;
-					$style = "color:#0f0";
-					$action="Friedlich";
-					$act_color=1;
-				}
-
-			}
-			//Opfer sieht nur das eine Flotte in anflug ist, sonst nichts
 			else
 			{
-				$style = "color:#fff";
-				$action="Unbekannt";
-				$act_color=0;
+				$attitude = 4;				
 			}
-			//Opfer sieht die anzahl aller Schiffe in der Flotte
-			if(SPY_TECH_SHOW_NUM<=$spy_tech_level)
+			$attitudeColor = FleetAction::$attitudeColor[$attitude];
+			$attitudeString = FleetAction::$attitudeString[$attitude];
+			
+			// Is the number of ships visible?
+			if(SPY_TECH_SHOW_NUM<=$mySpyTech)
 			{
+				/*
 				$show_num = 1;
 
 				//Zählt gefakte Schiffe wenn Aktion=Fakeangriff
@@ -277,27 +210,20 @@
             $ships_count = $fsarr[0];
         }
         else
-        {
-						$fsres = dbquery("
-						SELECT 
-							SUM(fs_ship_cnt) 
-						FROM 
-							".$db_table['fleet_ships']." 
-						WHERE 
-							fs_fleet_id='".$farr['id']."'
-						GROUP BY 
-							fs_fleet_id;");
-						$fsarr= mysql_fetch_row($fsres);
-						$ships_count = $fsarr[0];        	
-        }
-
+        {*/
+       $shipCount = $fd->countShips();
 			}
-			//Opfer sieht die einzelnen Schiffstypen in der Flotte
-			if(SPY_TECH_SHOW_SHIPS<=$spy_tech_level)
+			else
 			{
-				$show_ships = 1;
-				$ship_infos = "";
+				$shipCount = -1;
+			}
+			
+			//Opfer sieht die einzelnen Schiffstypen in der Flotte
+			$shipStr = array();
+			if(SPY_TECH_SHOW_SHIPS<=$mySpyTech)
+			{
 
+/*
         if ($fake==1)
         {
             $fshipres = dbquery("
@@ -327,59 +253,32 @@
                 AND s.ship_tarned!='1';");
         }
         else
-        {
-            $fshipres = dbquery("
-            SELECT
-                fs.fs_ship_cnt,
-                s.ship_name
-            FROM
-                ".$db_table['fleet_ships']." AS fs
-                INNER JOIN
-                ".$db_table['ships']." AS s
-            		ON fs.fs_ship_id=s.ship_id
-                AND fs.fs_fleet_id='".$farr['id']."';");
-        }
-        $cnt=1;
-        while ($fshiparr = mysql_fetch_array($fshipres))
-        {
-
+        {*/
+				foreach ($fd->getShipIds() as $sid=> $scnt)
+				{
+        	$str = "";
+        	$ship = new Ship($sid);
         	//Opfer sieht die genau Anzahl jedes Schifftypes in einer Flotte
-            if (SPY_TECH_SHOW_NUMSHIPS<=$spy_tech_level)
-            {
-            	$ship_infos.= "".$fshiparr['fs_ship_cnt']." ";
-            }
-
-            $ship_infos.= "".$fshiparr['ship_name'];
-
-            if ($cnt<mysql_num_rows($fshipres))
-            {
-            	$ship_infos.= ", ";
-            }
-
-            $cnt++;
+          if (SPY_TECH_SHOW_NUMSHIPS<=$mySpyTech)
+          {
+          	$str= "".$scnt." ";
+          }
+          $str.= "".$ship->name();
+          $shipStr[] = $str;
         }
-
 			}
+
+			// Show action
 			if (SPY_TECH_SHOW_ACTION<=$spy_tech_level)
 			{
-				$show_action = 1;
-				if($farr['action']=='vo')
-				{
-					$farr['action']="ao";
-				}
-				$ship_action = fa($farr['action']);
+				$shipAction = $fd->getAction->displayName();
 			}
-
-			$tarned = $diff_time_factor+$special_ship_bonus_tarn;
-			//Flotte kann maximum zu 90% des Fluges getarnt werden, auch mit Spezialschiffsboni
-			if($tarned>9)
+			else
 			{
-				$tarned=9;
+				$shipAction = $attitudeString;
 			}
 
-
-			//Zeigt die Infos an, sofern die Flotte nicht getarnt ist. (Infos richten sich nach dem spiotechlevels des opfers)
-			if (time() - $farr['landtime'] - ($farr['launchtime'] - $farr['landtime']) * (1-(0.1*$tarned))>0 && $show_tarn==1)
+			if (time() - $fd->landTime() - ($fd->launchTime() - $fd->landTime()) * (1-(0.1*$tarned))>0 )
 			{
 				if ($header!=1) 
 				{
@@ -391,11 +290,7 @@
 							</tr>";
 					$header=1;
 				}
-				$deal=1;
-				
-			$ef = Entity::createFactoryById($farr['entity_from']);
-			$et = Entity::createFactoryById($farr['entity_to']);
-				
+	
 				echo "<tr>
 								<td class=\"tbldata\" style=\"".$style."\">
 									<b>".$ef->entityCodeString()."</b> ".$ef."<br/>
@@ -471,14 +366,12 @@
 										}
 									}
 									echo "</td></tr>";
-								}
+								}	
+				
+				
+			}
 
-			}
-			elseif ($num!=1 && $number==0 && $deal!=1)
-			{
-			 	echo "<tr><td colspan=\"4\" class=\"tbldata\"><div align=\"center\">Es sind keine fremden Flotten zu deinen Planeten unterwegs!</div></td></tr>";
-				$num=1;
-			}
+
 		}
 		infobox_end(1);
 	}
@@ -487,7 +380,9 @@
 		infobox_start("Fremde Flotten");
 		echo "Es sind keine fremden Flotten zu deinen Planeten unterwegs!";
 		infobox_end();
-	}
+	}	
+	
+	
 
 
 
