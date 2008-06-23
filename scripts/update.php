@@ -162,10 +162,8 @@
 		$tmr = timerStart();
 
 		check_missiles();
-        
-    // Update-Flag setzen
-    dbquery("UPDATE ".$db_table['config']." SET config_value=1,config_param2=".time()." WHERE config_name='updating_fleet';");
-
+      
+     /*  
     $fa = updateAllFleet();
     $log .= "Es wurden [b]".$fa[0]."[/b] Flotten aktualisiert!\n";
     $log .= "Dauer: ".timerStop($tmr)." sec\n";
@@ -173,14 +171,11 @@
     {
         $log .= "Flotte [b]".$fa[1][$i]."[/b]\n";
     }
+		*/
 
 		// Chat-Cleanup
 		dbquery("DELETE FROM chat_users WHERE timestamp < ".(time()-120));		
-
-
-    //Flag deaktivieren
-    dbquery("UPDATE ".$db_table['config']." SET config_value=0 WHERE config_name='updating_fleet';");
-		
+	
 		return $log;
 	}
 
@@ -226,13 +221,6 @@
       {
           dbquery("UPDATE config SET config_value=0 WHERE config_name='updating';");
       }
-
-      // Flottenupdate
-      if ($conf['updating_fleet']['v']!=0 && ($conf['updating_fleet']['p2']=="" || $conf['updating_fleet']['p2']<time()-300))
-			{
-          dbquery("UPDATE config SET config_value=0 WHERE config_name='updating_fleet';");
-      }
-
 
 			// Prüfen ob nicht bereits ein Update läuft
 			if ($conf['updating']['v']==0)

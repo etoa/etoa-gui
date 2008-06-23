@@ -156,7 +156,7 @@
 		// Datensatznavigation
 		$usrcnt = mysql_fetch_row(dbquery("
 		SELECT 
-			COUNT(user_id) 
+			COUNT(id) 
 		FROM 
 			user_stats 
 		"));
@@ -209,13 +209,13 @@
 
 		// Punktetabelle
 		if ($mode=="ships")
-			$order="user_points_ships";
+			$order="rank_ships";
 		elseif ($mode=="tech")
-			$order="user_points_tech";
+			$order="rank_tech";
 		elseif ($mode=="buildings")
-			$order="user_points_buildings";
+			$order="rank_buildings";
 		else
-			$order="user_points";
+			$order="rank";
 			
 		if (isset($_POST['search']) && $_POST['search']!="" && $_POST['user_nick']!="")
 		{
@@ -239,21 +239,20 @@
 		else
 		{
 			$res=dbquery("SELECT 
-				user_rank_current,
-				user_rank_last,
-				user_nick,
-				$order AS points,
+				rank,
+				rankshift,
+				nick,
+				points,
 				race_name,
 				alliance_tag,
-				user_blocked,
-				user_hmod,
-				user_inactive				
+				blocked,
+				hmod,
+				inactive				
 			FROM 
 				user_stats
 			ORDER BY 
-				$order DESC,
-				user_rank_current,
-				user_nick ASC 
+				$order ASC,
+				nick ASC 
 			LIMIT 
 				$limit;");			
 		}
@@ -290,13 +289,13 @@
 
 				if ($mode=="user")
 				{
-					echo "<td $addstyle class=\"tbldata\" align=\"right\">".nf($arr['user_rank_current'])."";
+					echo "<td $addstyle class=\"tbldata\" align=\"right\">".nf($arr['rank'])."";
 
-					if ($arr['user_rank_current']==$arr['user_rank_last'])
+					if ($arr['rankshift']==0)
 						echo "<img src=\"images/stats/stat_same.gif\" alt=\"same\" width=\"21\" height=\"9\" />";
-					elseif ($arr['user_rank_current']<$arr['user_rank_last'])
+					elseif ($arr['rankshift']==1)
 						echo "<img src=\"images/stats/stat_up.gif\" alt=\"down\" width=\"9\" height=\"12\" />";
-					elseif ($arr['user_rank_current']>$arr['user_rank_last'])
+					else
 						echo "<img src=\"images/stats/stat_down.gif\" alt=\"up\" width=\"9\" height=\"11\" />";
 				}
 				else
@@ -304,7 +303,7 @@
 					echo "<td $addstyle class=\"tbldata\" align=\"right\">$cnt (".nf($arr['user_rank_last']).")";
 				}
 				echo "</td>";
-				echo "<td $addstyle class=\"tbldata\">".$arr['user_nick']."</td>";
+				echo "<td $addstyle class=\"tbldata\">".$arr['nick']."</td>";
 				echo "<td $addstyle class=\"tbldata\">".$arr['race_name']."</td>";
 				echo "<td class=\"tbldata\" $addstyle >".$arr['alliance_tag']."</td>";
 				echo "<td $addstyle class=\"tbldata\">".nf($arr['points'])."</td>";
