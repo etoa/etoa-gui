@@ -277,8 +277,7 @@
 					$earr = mysql_fetch_array($eres);
 					if($earr['code']!='e')
 					{
-						dbquery("UPDATE entities SET code='e' WHERE id=".$arr['id'].".");			
-						echo "Falscher Code (".$earr['code'].") bei leerem Raum ".$arr['id'].". Fehler wurde korrigiert!<br/>";				
+						echo "Falscher Code (".$earr['code'].") bei leerem Raum ".$arr['id'].".<br/>";				
 						$errcnt++;
 					}					
 				}
