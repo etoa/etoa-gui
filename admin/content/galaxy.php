@@ -48,11 +48,11 @@
 	{	
 		echo "<h1>Entitäten pr&uuml;fen</h1>";
 
-		echo "Entitäten werden auf Integrität geprüft...<br/>";
-		
 		$res=dbquery("SELECT id,code FROM entities;");
 		if (mysql_num_rows($res)>0)
 		{
+			$errcnt = 0;	
+			echo "Entitäten werden auf Integrität geprüft...<br/>";
 			while ($arr=mysql_fetch_assoc($res))
 			{
 				switch ($arr['code'])
@@ -67,6 +67,7 @@
 						if (mysql_num_rows($res)==0)
 						{
 							echo "Fehlender Detaildatensatz bei Entität ".$arr['id']." (Stern)";							
+							$errcnt++;
 						}
 						break;
 					case 'p':
@@ -79,6 +80,7 @@
 						if (mysql_num_rows($res)==0)
 						{
 							echo "Fehlender Detaildatensatz bei Entität ".$arr['id']." (Planet)";							
+							$errcnt++;
 						}
 						break;
 					case 'a':
@@ -91,6 +93,7 @@
 						if (mysql_num_rows($res)==0)
 						{
 							echo "Fehlender Detaildatensatz bei Entität ".$arr['id']." (Stern)";							
+							$errcnt++;
 						}
 						break;
 					case 'n':
@@ -103,6 +106,7 @@
 						if (mysql_num_rows($res)==0)
 						{
 							echo "Fehlender Detaildatensatz bei Entität ".$arr['id']." (Nebel)";							
+							$errcnt++;
 						}
 						break;
 					case 'w':
@@ -115,6 +119,7 @@
 						if (mysql_num_rows($res)==0)
 						{
 							echo "Fehlender Detaildatensatz bei Entität ".$arr['id']." (Wurmloch)";							
+							$errcnt++;
 						}
 						break;
 					case 'e':
@@ -127,77 +132,27 @@
 						if (mysql_num_rows($res)==0)
 						{
 							echo "Fehlender Detaildatensatz bei Entität ".$arr['id']." (Leerer Raum)";							
+							$errcnt++;
 						}
 						break;
 					default:
 						echo "Achtung! Entität ".$arr['id']." hat einen unbekannten Code (".$arr['code'].")";							
-					
+						$errcnt++;					
 				}
 			}
-		}
-		$res=dbquery("
-		SELECT 
-			id,
-			planet_user_id,
-			planet_user_main 
-		FROM 
-			planets 
-		WHERE 
-			planet_user_id>0
-		;");
-		$cnt=0;
-		if (mysql_num_rows($res)>0)
-		{
-			echo "<table class=\"tb\"><tr><th>Name</th><th>Id</th><th>User-Id</th><th>Id</th><th>Aktionen</th></tr>";
-			while ($arr=mysql_fetch_array($res))
+			if ($errcnt>0)
 			{
-				if (count($user[$arr['planet_user_id']])==0)
-				{
-					$cnt++;
-					echo "<tr><td>".$arr['planet_name']."</td><td>".$arr['id']."</td><td>".$arr['planet_user_id']."</td>
-					<td><a href=\"?page=$page&sub=edit&amp;id=".$arr['id']."\">Bearbeiten</a></td></tr>";
-				}
+				echo mysql_num_rows($res)." Datensätze geprüft. Es wurden $errcnt Fehler gefunden!";
 			}
-			if ($cnt==0)
+			else
 			{
-				echo "<tr><td colspan=\"5\">Keine Fehler gefunden!</td></th>";
-			}			
-			echo "</table>";
+				echo mysql_num_rows($res)." Datensätze geprüft. Keine Fehler gefunden!";
+			}
 		}
 		else
 		{
-			echo "<i>Keine bewohnten Planeten gefunden!</i>";
+			echo "Keine Entitäten vorhanden!<br/>";
 		}
-
-		
-		echo "<br/><br/>Prüfe auf Hauptplaneten ohne User...<br/>";
-		$res=dbquery("
-		SELECT
-			planet_name,
-			id
-		FROM
-			planets
-		WHERE
-			planet_user_main=1
-			AND planet_user_id=0
-		");
-		if (mysql_num_rows($res)>0)
-		{
-			echo "<table class=\"tb\"><tr><th>Name</th><th>Id</th><th>Aktionen</th></tr>";
-			while ($arr=mysql_fetch_array($res))
-			{
-				if (count($user[$arr['planet_user_id']])==0)
-				{
-					echo "<tr><td>".$arr['planet_name']."</td><td>".$arr['id']."</td><td><a href=\"?page=$page&sub=edit&amp;id=".$arr['id']."\">Bearbeiten</a></td></tr>";
-				}
-			}
-			echo "</table>";			
-		}
-		else
-		{
-			echo "<i>Keine Fehler gefunden!</i>";
-		}
-		
 	}
 
 
