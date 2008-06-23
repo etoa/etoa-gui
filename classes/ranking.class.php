@@ -375,9 +375,9 @@
 						fleet AS f
 					INNER JOIN 
 						fleet_ships AS fs
-						ON f.fleet_id = fs.fs_fleet_id
+						ON f.id = fs.fs_fleet_id
 						AND fs.fs_ship_faked='0'
-						AND f.fleet_user_id='".$user_id."'
+						AND f.user_id='".$user_id."'
 						;
 				");
 				while ($arr = mysql_fetch_assoc($res))
