@@ -57,7 +57,7 @@
       }      
       else
       {
-	    	echo "Class '.$class_name.' not found (".$dir."/".$file")!\n\n";
+	    	echo "Class '.$class_name.' not found (".$dir."/".$file.")!\n\n";
 	    	debug_print_backtrace();
 	    	exit;
 	    }
