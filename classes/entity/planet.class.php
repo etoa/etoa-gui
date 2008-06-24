@@ -600,6 +600,75 @@
 	    WHERE
 	    	id='".$this->id."';";
 	   	dbquery($sql);			
-		}	
+		}
+		
+		/**
+		* Übrnimmt einen Planeten (Invasion)
+		*
+		* @param int $new_user_id User ID des 'Übernehmers'
+		* @athor Lamborghini
+		*/
+		function chown($new_user_id)
+		{
+			$this->name = "Unbenannt";
+			$this->userId = $new_user_id;
+			$this->changed = time();
+			
+      // Planet übernehmen
+			dbquery("
+				UPDATE
+					planets
+				SET
+					planet_user_id='".$this->userId."',
+					planet_name='".$this->name."',
+					planet_user_changed=".$this->changed."
+				WHERE
+					id='".$this->id."';
+			");
+	
+      // Gebäude übernehmen
+      dbquery("
+			UPDATE
+				buildlist
+			SET
+				buildlist_user_id='".$this->userId."'
+			WHERE
+				buildlist_planet_id='".$this->id."';
+			");
+	
+	
+	    // Bestehende Schiffs-Einträge löschen
+	    dbquery("
+				DELETE FROM
+					shiplist
+				WHERE
+					shiplist_planet_id='".$this->id."';
+			");
+	    dbquery("
+				DELETE FROM
+					ship_queue
+				WHERE
+					queue_planet_id='".$this->id."';
+			");		
+			
+	
+	
+	    // Bestehende Verteidigungs-Einträge löschen
+	    dbquery("
+				DELETE FROM
+					deflist
+				WHERE
+					deflist_planet_id='".$this->id."';
+			");
+	    dbquery("
+				DELETE FROM
+					def_queue
+				WHERE
+					queue_planet_id='".$this->id."';
+			");
+	
+		}		
+		
+			
 	}
 ?>

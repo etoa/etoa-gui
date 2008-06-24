@@ -312,10 +312,10 @@
 	$navmenu['Galaxie']['Entitäten']['sub']="";
 	$navmenu['Galaxie']['Entitäten']['level']=1;
 
-	$navmenu['Galaxie']['Zellen']['page']="galaxy";
-	$navmenu['Galaxie']['Zellen']['sub']="cells";
-	$navmenu['Galaxie']['Zellen']['level']=1;
-
+//	$navmenu['Galaxie']['Zellen']['page']="galaxy";
+//	$navmenu['Galaxie']['Zellen']['sub']="cells";
+//	$navmenu['Galaxie']['Zellen']['level']=1;
+//
 	$navmenu['Galaxie']['Karte']['page']="galaxy";
 	$navmenu['Galaxie']['Karte']['sub']="map";
 	$navmenu['Galaxie']['Karte']['level']=1;

@@ -34,6 +34,8 @@
 	$render_time = explode(" ",microtime());
 	$render_starttime=$render_time[1]+$render_time[0];
 
+	define(IMAGE_PATH,"../images/imagepacks/Discovery");
+	define(IMAGE_EXT,"png");
 
 	// Session-Cookie setzen
 	ini_set('arg_separator.output',  '&amp;');
