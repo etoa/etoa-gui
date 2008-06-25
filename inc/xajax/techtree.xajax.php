@@ -251,6 +251,13 @@ function reqInfo($id,$cat='b')
 		}
 	}
 
+
+	echo "<br/><br/><table style=\"margin:0px auto;\"><tr>";
+	echo "<td style=\"padding:4px;border:1px solid #bbb;background:#eef;width:150px;\">Gebäude</td>";
+	echo "<td style=\"padding:4px;border:1px solid #bbb;background:#efe;width:150px;\">Technologie</td>";
+	echo "<td style=\"padding:4px;border:1px solid #bbb;background:#fee;width:150px;\">Schiff</td>";
+	echo "<td style=\"padding:4px;border:1px solid #bbb;background:#ffe;width:150px;\">Verteidigung</td>";
+	echo "</tr></table>";
 	
 	$out=ob_get_clean();
 	$or->assign('reqInfo','innerHTML',$out);	

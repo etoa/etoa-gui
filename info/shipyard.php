@@ -128,28 +128,36 @@
 	    echo "<tr>
 	    	<td class=\"tbldata\">
 	    	<table style=\"width:100%\">";
-				echo "<tr><td class=\"tbldata\" style=\"width:170px;\">".RES_ICON_METAL."".RES_METAL."</td>
+			echo "<tr>
+						<td class=\"tbldata\" style=\"width:170px;font-weight:bold;\">".RES_ICON_METAL."".RES_METAL."</td>
 						<td class=\"tbldata\" style=\"width:350px\">".nf($arr['ship_costs_metal'])." t</td>    	
 				</tr>";
-			echo "<tr><td class=\"tbldata\">".RES_ICON_CRYSTAL."".RES_CRYSTAL."</td>
+			echo "<tr>
+						<td class=\"tbldata\" style=\"font-weight:bold;\">".RES_ICON_CRYSTAL."".RES_CRYSTAL."</td>
 						<td class=\"tbldata\" style=\"width:350px\">".nf($arr['ship_costs_crystal'])." t</td>
 				</tr>";
-			echo "<tr><td class=\"tbldata\">".RES_ICON_PLASTIC."".RES_PLASTIC."</td>
+			echo "<tr>
+						<td class=\"tbldata\" style=\"font-weight:bold;\">".RES_ICON_PLASTIC."".RES_PLASTIC."</td>
 						<td class=\"tbldata\" style=\"width:350px\">".nf($arr['ship_costs_plastic'])." t</td>
 				</tr>";
-			echo "<tr><td class=\"tbldata\">".RES_ICON_FUEL."".RES_FUEL."</td>
+			echo "<tr>
+						<td class=\"tbldata\" style=\"font-weight:bold;\">".RES_ICON_FUEL."".RES_FUEL."</td>
 						<td class=\"tbldata\" style=\"width:350px\">".nf($arr['ship_costs_fuel'])." t</td>
 				</tr>";
-			echo "<tr><td class=\"tbldata\">".RES_ICON_FOOD."".RES_FOOD."</td>
+			echo "<tr>
+						<td class=\"tbldata\" style=\"font-weight:bold;\">".RES_ICON_FOOD."".RES_FOOD."</td>
 						<td class=\"tbldata\" style=\"width:350px\">".nf($arr['ship_costs_food'])." t</td>
 				</tr>";
-			echo "<tr><td class=\"tbldata\">".RES_ICON_FUEL."/100 AE</td>
+			echo "<tr>
+						<td class=\"tbldata\" style=\"font-weight:bold;\">".RES_ICON_FUEL."/100 AE</td>
 						<td class=\"tbldata\" style=\"width:350px\">".nf($arr['ship_fuel_use'])." t</td>
 				</tr>";
-			echo "<tr><td class=\"tbldata\">".RES_ICON_FUEL."Start</td>
+			echo "<tr>
+						<td class=\"tbldata\" style=\"font-weight:bold;\">".RES_ICON_FUEL."Start</td>
 						<td class=\"tbldata\" style=\"width:350px\">".nf($arr['ship_fuel_use_launch'])." t</td>
 				</tr>";
-			echo "<tr><td class=\"tbldata\">".RES_ICON_FUEL."Landung</td>
+			echo "<tr>
+						<td class=\"tbldata\" style=\"font-weight:bold;\">".RES_ICON_FUEL."Landung</td>
 						<td class=\"tbldata\" style=\"width:350px\">".nf($arr['ship_fuel_use_landing'])." t</td>
 				</tr>";
 	    	
@@ -158,19 +166,19 @@
 	    	<td class=\"tbldata\" colspan=\"3\">
 				<table style=\"width:100%\">";
 				echo "<tr>
-						<td class=\"tbldata\" style=\"width:200px\">Struktur</td>
-						<td class=\"tbldata\" style=\"width:275px\">".nf($arr['ship_structure'])."</td></tr>";
+						<td class=\"tbldata\" style=\"width:200px;font-weight:bold;\">Struktur</td>
+						<td class=\"tbldata\">".nf($arr['ship_structure'])."</td></tr>";
 				echo "<tr>
-						<td class=\"tbldata\" style=\"width:200px\">Schutzschild</td>
-						<td class=\"tbldata\" style=\"width:250px\">".nf($arr['ship_shield'])."</td></tr>";
+						<td class=\"tbldata\" style=\"width:200px;font-weight:bold;\">Schutzschild</td>
+						<td class=\"tbldata\">".nf($arr['ship_shield'])."</td></tr>";
 				echo "<tr>
-						<td class=\"tbldata\" style=\"width:200px\">Waffen</td>
-						<td class=\"tbldata\" style=\"width:250px\">".nf($arr['ship_weapon'])."</td></tr>";
+						<td class=\"tbldata\" style=\"width:200px;font-weight:bold;\">Waffen</td>
+						<td class=\"tbldata\">".nf($arr['ship_weapon'])."</td></tr>";
 				echo "<tr>
-						<td class=\"tbldata\" style=\"width:200px\">Heilung</td>
-						<td class=\"tbldata\" style=\"width:250px\">".nf($arr['ship_heal'])."</td></tr>";
+						<td class=\"tbldata\" style=\"width:200px;font-weight:bold;\">Heilung</td>
+						<td class=\"tbldata\">".nf($arr['ship_heal'])."</td></tr>";
 				echo "<tr>
-						<td class=\"tbldata\" style=\"width:200px\">Antriebstechnologie</td>
+						<td class=\"tbldata\" style=\"width:200px;font-weight:bold;\">Antriebstechnologie</td>
 						<td class=\"tbldata\">";
 						if (mysql_num_rows($vres)>0)
 						{
@@ -181,20 +189,20 @@
 						}
 	    			echo "</td></tr>";
 				echo "<tr>
-						<td class=\"tbldata\" style=\"width:200px\">Laderaum</td>
-						<td class=\"tbldata\" style=\"width:250px\">".nf($arr['ship_capacity'])." t</td></tr>";
+						<td class=\"tbldata\" style=\"width:200px;font-weight:bold;\">Laderaum</td>
+						<td class=\"tbldata\">".nf($arr['ship_capacity'])." t</td></tr>";
 				echo "<tr>
-						<td class=\"tbldata\" style=\"width:200px\">Passagierraum</td>
-						<td class=\"tbldata\" style=\"width:250px\">".nf($arr['ship_people_capacity'])."</td></tr>";
+						<td class=\"tbldata\" style=\"width:200px;font-weight:bold;\">Passagierraum</td>
+						<td class=\"tbldata\">".nf($arr['ship_people_capacity'])."</td></tr>";
 				echo "<tr>
-						<td class=\"tbldata\" style=\"width:200px\">Geschwindigkeit</td>
-						<td class=\"tbldata\" style=\"width:250px\">".nf($arr['ship_speed']/FLEET_FACTOR_F)." AE/h</td></tr>";
+						<td class=\"tbldata\" style=\"width:200px;font-weight:bold;\">Geschwindigkeit</td>
+						<td class=\"tbldata\">".nf($arr['ship_speed']/FLEET_FACTOR_F)." AE/h</td></tr>";
 				echo "<tr>
-						<td class=\"tbldata\" style=\"width:200px\">Startdauer</td>
-						<td class=\"tbldata\" style=\"width:250px\">".tf($arr['ship_time2start']/FLEET_FACTOR_S)."</td></tr>";
+						<td class=\"tbldata\" style=\"width:200px;font-weight:bold;\">Startdauer</td>
+						<td class=\"tbldata\">".tf($arr['ship_time2start']/FLEET_FACTOR_S)."</td></tr>";
 				echo "<tr>
-						<td class=\"tbldata\" style=\"width:200px\">Landedauer</td>
-						<td class=\"tbldata\" style=\"width:275px\">".tf($arr['ship_time2land']/FLEET_FACTOR_L)."</td></tr>";
+						<td class=\"tbldata\" style=\"width:200px;font-weight:bold;\">Landedauer</td>
+						<td class=\"tbldata\">".tf($arr['ship_time2land']/FLEET_FACTOR_L)."</td></tr>";
 				echo "</table>	    	
 	    	</td></tr>";
 
@@ -226,6 +234,18 @@
 			}
 			if ($accnt==0)
 				echo "<tr><td class=\"tbldata\" colspan=\"4\" style=\"text-align:center\">Keine Spezialfähigkeit vorhanden!</td></tr>";
+
+			echo "<tr><td colspan=\"4\" style=\"height:30px;\"></td></tr>";
+		
+		
+			echo "<tr><th class=\"tbltitle\" colspan=\"4\" style=\"text-align:center\">Voraussetzungen</th></tr>";			
+			echo "<tr><td class=\"tbldata\" colspan=\"4\" style=\"text-align:center\">";
+			echo "<div id=\"reqInfo\" style=\"width:100%;text-align:center;;margin:0px;padding:10px 0px;
+			background:#fff;color:#000;\">
+			Bitte warten...
+			</div>";	
+			echo '<script type="text/javascript">xajax_reqInfo('.$arr['ship_id'].',"s")</script>';
+			echo "</td></tr>";	
 		
 	    infobox_end(1);
 		}

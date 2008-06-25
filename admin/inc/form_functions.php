@@ -220,7 +220,7 @@
 			{
 				case "readonly":
 					echo "<tr><th class=\"tbltitle\" width=\"200\">".$a['text'].":</th>";
-					echo "<td class=\"tbldata\" width=\"200\">".$a['size']."</td></tr>";
+					echo "<td class=\"tbldata\" width=\"200\">".$arr[$a['name']]."</td></tr>";
 				break;
 
 				case "text":
@@ -321,6 +321,7 @@
 			switch ($a['type'])
 			{
 				case "readonly":
+					$sql .= "`".$a['name']."` = `".$a['name']."`";
 				break;
 				case "text":
 					$sql .= "`".$a['name']."` = '".addslashes($_POST[$a['name']])."'";

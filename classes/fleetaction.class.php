@@ -52,8 +52,11 @@
 		protected $code;	// Flight code
 		protected $name;	// Name 
 		protected $desc; 	// Short description of the action
+		protected $longDesc; 	// Long description of the action
 		
 		protected $attitude;	// 0: Neutral, 1: Peacefull, 2: A bit hostile 3: Very hostile
+		protected $visible;	// True: Visible to other players, False: Hidden for other players
+		protected $exclusive; // True: Only ships with this action can take part in the fleet
 
 		protected $allowPlayerEntities;
 		protected $allowOwnEntities;
@@ -75,17 +78,17 @@
 		
 		function code() { return $this->code; }
 		function name() { return $this->name; }
+		function __toString() { return "<span style=\"color:".self::$attitudeColor[$this->attitude]."\">".$this->name."</span>"; }
+		function desc() { return $this->desc; }
+		function longDesc() { return $this->longDesc; }
+		function attitude() { return $this->attitude; }
+		function visible() { return $this->visible; }
+		function exclusive() { return $this->exclusive; }
 
 		// Overwritable functions
 		function displayName() { return $this->name; }
-		function faked() { return false; }
-
-
-		function __toString() { return "<span style=\"color:".self::$attitudeColor[$this->attitude]."\">".$this->name."</span>"; }
-		function desc() { return $this->desc; }
 		
-		function attitude() { return $this->attitude; }
-		
+		// Other functions		
 		function allowPlayerEntities() { return $this->allowPlayerEntities; }
 		function allowOwnEntities() { return $this->allowOwnEntities; }
 		function allowNpcEntities() { return $this->allowNpcEntities; }
@@ -106,7 +109,6 @@
 				return new $className();			
 			}
 			echo "Problem mit Flottenaktion $code ($classFile)!<br/>";
-			echo "Problem mit Flottenaktion $code ($classFile)!<br/>";
 			return false;
 		}
 		
@@ -116,8 +118,9 @@
 			foreach (self::$sublist as $i)
 			{
 				if ($tmp = self::createFactory($i))
-					$arr[] = $tmp; 
-				
+				{
+					$arr[$i] = $tmp; 
+				}
 			}
 			return $arr;			
 		}

@@ -38,7 +38,7 @@
 		{
 			require_once("inc/xajax/market.xajax.php");
 		}
-		elseif ($page=="techtree")
+		elseif ($page=="techtree" || $page=="help")
 		{
 			require_once("inc/xajax/techtree.xajax.php");
 		}		
