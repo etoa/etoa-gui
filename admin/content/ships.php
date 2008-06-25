@@ -156,6 +156,7 @@
 	{
 		advanced_form("ships");
 	}
+	
 	//
 	// Schiffsanforderungen
 	//
@@ -182,7 +183,7 @@
 		if (isset($_POST['submit_changes']))
 		{
 			// Gebäudeänderungen speichern
-			foreach ($_POST['building_id'] as $id=>$val)
+			foreach ($_POST['building_level'] as $id=>$val)
 			{
 				if ($_POST['building_level'][$id]<1)
 					dbquery("DELETE FROM ".$db_table[REQ_TBL]." WHERE req_id=$id;");
@@ -190,45 +191,56 @@
 					dbquery("UPDATE ".$db_table[REQ_TBL]." SET req_req_building_id=$val,req_req_building_level=".$_POST['building_level'][$id]." WHERE req_id=$id;");
 			}
 			// Technologieänderungen speichern
-			foreach ($_POST['tech_id'] as $id=>$val)
+			foreach ($_POST['tech_level'] as $id=>$val)
 			{
 				if ($_POST['tech_level'][$id]<1)
 					dbquery("DELETE FROM ".$db_table[REQ_TBL]." WHERE req_id=$id;");
 				else
 					dbquery("UPDATE ".$db_table[REQ_TBL]." SET req_req_tech_id=$val,req_req_tech_level=".$_POST['tech_level'][$id]." WHERE req_id=$id;");
 			}
+			ok_msg("Änderungen übernommen!");
 		}
 
 		// Gebäudeverknüpfung speichern
 		if (isset($_POST['add_building']))
 		{
-			if (isset($_POST['new_item_id']))
+			foreach ($_POST['add_building'] as $itemId => $tmp)
 			{
-				if (mysql_num_rows(dbquery("SELECT req_id FROM ".$db_table[REQ_TBL]." WHERE ".REQ_ITEM_FLD."=".$_POST['new_id']." AND req_req_building_id=".$_POST['new_item_id'].";"))==0)
+				if ($_POST['new_b_item_id'][$itemId]>0)
 				{
-					dbquery("INSERT INTO ".$db_table[REQ_TBL]." (".REQ_ITEM_FLD.",req_req_building_id,req_req_building_level) VALUES ('".$_POST['new_id']."','".$_POST['new_item_id']."','".$_POST['new_item_level']."');");
+					if (mysql_num_rows(dbquery("SELECT req_id FROM ".$db_table[REQ_TBL]." WHERE ".REQ_ITEM_FLD."=".$itemId." AND req_req_building_id=".$_POST['new_b_item_id'][$itemId].";"))==0)
+					{
+						dbquery("INSERT INTO ".$db_table[REQ_TBL]." (".REQ_ITEM_FLD.",req_req_building_id,req_req_building_level) VALUES ('".$itemId."','".$_POST['new_b_item_id'][$itemId]."','".$_POST['new_b_item_level'][$itemId]."');");
+						ok_msg("Bedingung hinzugefügt!");
+					}
+					else
+						err_msg("Diese Geb&auml;udeverkn&uuml;pfung existiert bereits!");
 				}
 				else
-					echo "Fehler! Diese Geb&auml;udeverkn&uuml;pfung existiert bereits!<br/><br/>";
+					err_msg("Kein verkn&uuml;pfendes Geb&auml;ude ausgew&auml;hlt!");
+				break;
 			}
-			else
-				echo "Fehler! Kein verkn&uuml;pfendes Geb&auml;ude ausgew&auml;hlt!<br/><br/>";
 		}
 
 		// Technologieverknüpfung speicher
 		if (isset($_POST['add_tech']))
 		{
-			if (isset($_POST['new_item_id']))
-			{
-				if (mysql_num_rows(dbquery("SELECT req_id FROM ".$db_table[REQ_TBL]." WHERE ".REQ_ITEM_FLD."=".$_POST['new_id']." AND req_req_tech_id=".$_POST['new_item_id'].";"))==0)
+			foreach ($_POST['add_tech'] as $itemId => $tmp)
+			{			
+				if ($_POST['new_t_item_id'][$itemId]>0)
 				{
-					dbquery("INSERT INTO ".$db_table[REQ_TBL]." (".REQ_ITEM_FLD.",req_req_tech_id,req_req_tech_level) VALUES ('".$_POST['new_id']."','".$_POST['new_item_id']."','".$_POST['new_item_level']."');");
+					if (mysql_num_rows(dbquery("SELECT req_id FROM ".$db_table[REQ_TBL]." WHERE ".REQ_ITEM_FLD."=".$itemId." AND req_req_tech_id=".$_POST['new_t_item_id'][$itemId].";"))==0)
+					{
+						dbquery("INSERT INTO ".$db_table[REQ_TBL]." (".REQ_ITEM_FLD.",req_req_tech_id,req_req_tech_level) VALUES ('".$itemId."','".$_POST['new_t_item_id'][$itemId]."','".$_POST['new_t_item_level'][$itemId]."');");
+						ok_msg("Bedingung hinzugefügt!");
+					}
+					else
+						err_msg("Fehler! Diese Forschungsverkn&uuml;pfung existiert bereits!");
 				}
 				else
-					echo "Fehler! Diese Forschungsverkn&uuml;pfung existiert bereits!<br/><br/>";
+					err_msg("Fehler! Keine verkn&uuml;pfende Forschung ausgew&auml;hlt!");
+				break;
 			}
-			else
-				echo "Fehler! Keine verkn&uuml;pfende Forschung ausgew&auml;hlt!<br/><br/>";
 		}
 
 		// Gebäudeverknüpfungen löschen
@@ -243,6 +255,7 @@
 						dbquery("DELETE FROM ".$db_table[REQ_TBL]." WHERE ".REQ_ITEM_FLD."=$req_building_id AND req_req_building_id=$key;");
 					}
 				}
+				ok_msg("Bedingung gelöscht!");
 			}
 		}
 
@@ -258,6 +271,7 @@
 						dbquery("DELETE FROM ".$db_table[REQ_TBL]." WHERE ".REQ_ITEM_FLD."=$req_building_id AND req_req_tech_id=$key;");
 					}
 				}
+				ok_msg("Bedingung gelöscht!");
 			}
 		}
 
@@ -292,96 +306,107 @@
 
 			while ($arr=mysql_fetch_array($res))
 			{
-				echo "<form action=\"?page=$page&sub=$sub\" method=\"post\">";
-				echo "<table width=\"400\"  border=\"0\" class=\"tbl\" cellspacing=\"1\" cellpadding=\"2\">";
-				echo "<tr><td colspan=\"3\" >".$arr[ITEM_NAME_FLD]."</td></tr>";
+				echo "<form action=\"?page=$page&sub=$sub#i".$arr[ITEM_ID_FLD]."\" method=\"post\">";
+				echo "<a name=\"i".$arr[ITEM_ID_FLD]."\"></a>";
+				echo "<table class=\"tb\">";
+				echo "<tr><th colspan=\"4\" >".$arr[ITEM_NAME_FLD]." 
+				<input type=\"submit\" class=\"button\" name=\"submit_changes\" value=\"&Auml;nderungen &uuml;bernehmen\" /></th></tr>";
 				$using_something=0;
 
 				// Gespeicherte Gebäudeanforderungen
 				if (count($b_req[$arr[ITEM_ID_FLD]]['b'])>0)
 				{
+					$cnt=0;
 					foreach ($b_req[$arr[ITEM_ID_FLD]]['b'] as $b=>$l)
 					{
-						echo "<tr>";
-						echo "<td class=\"tbldata\" width=\"200\"><select name=\"building_id[".$b_req[$arr[ITEM_ID_FLD]]['i'][$b]."]\" $form_addition>";
-						if ($b==0)
-						echo "<option value=\"\"><i>Geb&auml;ude w&auml;hlen</i></option>";
-						foreach ($bu_name as $key=>$val)
-						{
-							echo "<option value=\"$key\"";
-							if ($b==$key) echo " selected=\"selected\"";
-							echo ">$val</option>";
-						}
-						echo "</select></td><td class=\"tbldata\" width=\"50\"><input type=\"text\" name=\"building_level[".$b_req[$arr[ITEM_ID_FLD]]['i'][$b]."]\" size=\"1\" maxlength=\"3\" value=\"$l\"$form_addition /></td>";
-						if (isset($_GET['action']) && $_GET['action']!="new_building" && $_GET['action']!="new_tech")
-							echo "<td class=\"tbldata\"><input type=\"submit\" class=\"button\" name=\"del_building[".$arr[ITEM_ID_FLD]."][$b]\" value=\"L&ouml;schen\" /></td></tr>";
+						if ($cnt==0)
+							echo "<tr><td rowspan=\"".count($b_req[$arr[ITEM_ID_FLD]]['b'])."\"><b>Gebäude:</b></td>";
 						else
-							echo "<td class=\"tbldata\">&nbsp;</td></tr>";
+							echo "<tr>";
+						echo "<td class=\"tbldata\" width=\"200\">
+						".$bu_name[$b]."
+						</td>
+						<td class=\"tbldata\" width=\"50\">
+							<input type=\"text\" name=\"building_level[".$b_req[$arr[ITEM_ID_FLD]]['i'][$b]."]\" size=\"1\" maxlength=\"3\" value=\"$l\"$form_addition />
+						</td>";
+						echo "<td class=\"tbldata\">
+							<input type=\"submit\" class=\"button\" name=\"del_building[".$arr[ITEM_ID_FLD]."][$b]\" value=\"L&ouml;schen\" />
+						</td></tr>";
+						$cnt++;
 					}
 					$using_something=1;
-				}
-				// Neue Gebäudeanforderung
-				if ($_GET['action']=="new_building" && $_GET['id']==$arr[ITEM_ID_FLD])
-				{
-					echo "<input type=\"hidden\" name=\"new_id\" value=\"".$arr[ITEM_ID_FLD]."\">";
-					echo "<tr><td class=\"tbldata\" width=\"200\"><select name=\"new_item_id\">";
-					echo "<option value=\"\" style=\"font-style:italic;\">Geb&auml;ude w&auml;hlen</option>";
-					foreach ($bu_name as $key=>$val)
-					{
-						if ($key!=$arr[ITEM_ID_FLD])
-							echo "<option value=\"$key\">$val</option>";
-					}
-					echo "</select></td><td class=\"tbldata\"><input type=\"text\" name=\"new_item_level\" size=\"1\" maxlength=\"3\" value=\"1\" /></td>";
-					echo "<td class=\"tbldata\"><input type=\"submit\" class=\"button\" name=\"add_building\" value=\"&Uuml;bernehmen\" /></td></tr>";
+					echo "<tr><td colspan=\"4\" style=\"height:2px;background:#000\"></td></tr>";
 				}
 
 				// Gespeicherte Forschungsanforderungen
 				if (count($b_req[$arr[ITEM_ID_FLD]]['t'])>0)
 				{
+					$cnt=0;
 					foreach ($b_req[$arr[ITEM_ID_FLD]]['t'] as $b=>$l)
 					{
-						echo "<tr><td class=\"tbldata\" width=\"200\"><select name=\"tech_id[".$b_req[$arr[ITEM_ID_FLD]]['i'][$b]."]\" $form_addition>";
-						if ($b==0)
-						echo "<option value=\"\"><i>Geb&auml;ude w&auml;hlen</i></option>";
-						foreach ($te_name as $key=>$val)
-						{
-							echo "<option value=\"$key\"";
-							if ($b==$key) echo " selected=\"selected\"";
-							echo ">$val</option>";
-						}
-						echo "</select></td><td class=\"tbldata\" width=\"50\"><input type=\"text\" name=\"tech_level[".$b_req[$arr[ITEM_ID_FLD]]['i'][$b]."]\" size=\"1\" maxlength=\"3\" value=\"$l\"$form_addition /></td>";
-						if (isset($_GET['action']) && $_GET['action']!="new_building" && $_GET['action']!="new_tech")
-							echo "<td class=\"tbldata\"><input type=\"submit\" class=\"button\" name=\"del_tech[".$arr[ITEM_ID_FLD]."][$b]\" value=\"L&ouml;schen\"$form_addition /></td></tr>";
+						if ($cnt==0)
+							echo "<tr><td rowspan=\"".count($b_req[$arr[ITEM_ID_FLD]]['t'])."\"><b>Techs:</b></td>";
 						else
-							echo "<td class=\"tbldata\">&nbsp;</td></tr>";
+							echo "<tr>";
+						
+						echo "<td class=\"tbldata\" width=\"200\">
+						".$te_name[$b]."
+						</td>
+						<td class=\"tbldata\" width=\"50\"><input type=\"text\" name=\"tech_level[".$b_req[$arr[ITEM_ID_FLD]]['i'][$b]."]\" size=\"1\" maxlength=\"3\" value=\"$l\"$form_addition /></td>";
+						echo "<td class=\"tbldata\"><input type=\"submit\" class=\"button\" name=\"del_tech[".$arr[ITEM_ID_FLD]."][$b]\" value=\"L&ouml;schen\"$form_addition /></td></tr>";
+						$cnt++;
 					}
 					$using_something=1;
+					echo "<tr><td colspan=\"4\" style=\"height:2px;background:#000\"></td></tr>";
 				}
-				// Neue Forschungsanforderung
-				if ($_GET['action']=="new_tech" && $_GET['id']==$arr[ITEM_ID_FLD])
+				
+				// Neue Gebäudeanforderung
+				echo "<tr>
+				<td rowspan=\"2\"><b>Hinzufügen:</b></td>
+				<td class=\"tbldata\" width=\"200\">
+				<select name=\"new_b_item_id[".$arr[ITEM_ID_FLD]."]\">";
+				echo "<option value=\"\" style=\"font-style:italic;\">Geb&auml;ude w&auml;hlen</option>";
+				foreach ($bu_name as $key=>$val)
 				{
-					echo "<input type=\"hidden\" name=\"new_id\" value=\"".$arr[ITEM_ID_FLD]."\">";
-					echo "<tr><td class=\"tbldata\" width=\"200\"><select name=\"new_item_id\">";
-					echo "<option value=\"\" style=\"font-style:italic;\">Technologie w&auml;hlen</option>";
-					foreach ($te_name as $key=>$val)
-					{
+					if ($key!=$arr[ITEM_ID_FLD])
 						echo "<option value=\"$key\">$val</option>";
-					}
-					echo "</select></td><td class=\"tbldata\"><input type=\"text\" name=\"new_item_level\" size=\"1\" maxlength=\"3\" value=\"1\" /></td>";
-					echo "<td class=\"tbldata\"><input type=\"submit\" class=\"button\" name=\"add_tech\" value=\"&Uuml;bernehmen\" /></td></tr>";
 				}
+				echo "</select></td>
+				<td class=\"tbldata\">
+					<input type=\"text\" name=\"new_b_item_level[".$arr[ITEM_ID_FLD]."]\" size=\"1\" maxlength=\"3\" value=\"1\" /></td>";
+				echo "<td class=\"tbldata\">
+					<input type=\"submit\" class=\"button\" name=\"add_building[".$arr[ITEM_ID_FLD]."]\" value=\"Hinzufügen\" /></td></tr>";
+				
+				
+				// Neue Forschungsanforderung
+				echo "<tr><td class=\"tbldata\" width=\"200\">
+				<select name=\"new_t_item_id[".$arr[ITEM_ID_FLD]."]\">";
+				echo "<option value=\"\" style=\"font-style:italic;\">Technologie w&auml;hlen</option>";
+				foreach ($te_name as $key=>$val)
+				{
+					echo "<option value=\"$key\">$val</option>";
+				}
+				echo "</select></td><td class=\"tbldata\">
+				<input type=\"text\" name=\"new_t_item_level[".$arr[ITEM_ID_FLD]."]\" size=\"1\" maxlength=\"3\" value=\"1\" /></td>";
+				echo "<td class=\"tbldata\">
+				<input type=\"submit\" class=\"button\" name=\"add_tech[".$arr[ITEM_ID_FLD]."]\" value=\"Hinzufügen\" /></td></tr>";
+
+
 				if ($using_something==0)
 					echo "<tr><td width=\"200\" class=\"tbldata\">&nbsp;</td><td colspan=\"2\" class=\"techtreeBuildingNoReq\">Keine Voraussetzungen</td></tr>";
 				if (isset($_GET['action']) && $_GET['action']!="new_building" && $_GET['action']!="new_tech")
 				{
-					echo "<tr><td class=\"tbldata\">Neue Voraussetzung?</td>";
-					echo "<td class=\"tbldata\" colspan=\"2\"><input type=\"button\" class=\"button\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;action=new_building&amp;id=".$arr[ITEM_ID_FLD]."';\" value=\"Geb&auml;ude\" />&nbsp;";
+					echo "<tr>
+						<td class=\"tbldata\">Neue Voraussetzung?</td>";
+					echo "<td class=\"tbldata\" colspan=\"2\">
+						<input type=\"button\" class=\"button\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;action=new_building&amp;id=".$arr[ITEM_ID_FLD]."';\" value=\"Geb&auml;ude\" />&nbsp;";
 					echo "<input type=\"button\" class=\"button\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;action=new_tech&amp;id=".$arr[ITEM_ID_FLD]."';\" value=\"Forschung\" /></tr>";
 				}
-				echo "</table><br/>";
+				echo "</table>
+				</form><br/>";
 			}
-			if ($form_addition=="")
-				echo "<p align=\"center\"><input type=\"submit\" class=\"button\" name=\"submit_changes\" value=\"&Auml;nderungen &uuml;bernehmen\" /></p>";
+			//if ($form_addition=="")
+			//	echo "<p align=\"center\"><input type=\"submit\" class=\"button\" name=\"submit_changes\" value=\"&Auml;nderungen &uuml;bernehmen\" /></p>";
 		}
 		else
 			echo "<p class=\"infomsg\">".NO_ITEMS_MSG."</p>";
