@@ -180,6 +180,11 @@
 	$navmenu['Geb&auml;ude']['Voraussetzungen']['sub']="req";
 	$navmenu['Geb&auml;ude']['Voraussetzungen']['level']=2;
 
+	$navmenu['Geb&auml;ude']['Technikbaum']['page']="buildings";
+	$navmenu['Geb&auml;ude']['Technikbaum']['sub']="reqmap";
+	$navmenu['Geb&auml;ude']['Technikbaum']['level']=2;
+
+
 	$navmenu['Geb&auml;ude']['Geb&auml;udepunkte']['page']="buildings";
 	$navmenu['Geb&auml;ude']['Geb&auml;udepunkte']['sub']="points";
 	$navmenu['Geb&auml;ude']['Geb&auml;udepunkte']['level']=2;

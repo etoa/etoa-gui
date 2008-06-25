@@ -33,6 +33,9 @@ $xajax->register(XAJAX_FUNCTION,"lockUser");
 $xajax->register(XAJAX_FUNCTION,"buildingPrices");
 $xajax->register(XAJAX_FUNCTION,"totalBuildingPrices");
 
+$xajax->register(XAJAX_FUNCTION,"reqInfo");
+
+
 
 function planetSelectorByCell($form,$function,$show_user_id=0)
 {
@@ -964,5 +967,79 @@ function totalBuildingPrices($form)
 	return $objResponse;	
 }
 
+
+function reqInfo($id)
+{
+	$or = new xajaxResponse();
+	ob_start();
+	
+	$bures = dbquery("SELECT building_id,building_name FROM buildings;");
+	while ($buarr = mysql_fetch_array($bures))
+	{
+		$bu_name[$buarr['building_id']]=$buarr['building_name'];
+	}		
+
+	$res = dbquery("SELECT * FROM building_requirements WHERE req_building_id=".$id.";");
+	$nr = mysql_num_rows($res);
+	if ($nr>0)
+	{
+		echo "<table style=\"margin:0px auto;\"><tr>";
+		$cnt=0;
+		while($arr=mysql_fetch_assoc($res))
+		{
+			echo "<td>
+			<a href=\"javascript:;\" style=\"color:#00f\" onclick=\"xajax_reqInfo(".$arr['req_req_building_id'].")\">
+			<img src=\"".IMAGE_PATH."/buildings/building".$arr['req_req_building_id']."_small.".IMAGE_EXT."\" align=\"middle\"/>
+			</a><br/>
+	 		<b>".$bu_name[$arr['req_req_building_id']]."</b><br/>
+	 		Stufe ".$arr['req_req_building_level']."			
+			</td>";
+			$cnt++;
+			if ($cnt==3)
+			{
+				echo "</tr><tr>";
+				$cnt=0;
+			}
+		}
+		echo "</tr></table>";
+		echo "<br/>wird benötigt für<br/><br/>";		
+	}
+
+
+	
+	echo "<div style=\"border:1px solid black;padding:5px;\"><img src=\"".IMAGE_PATH."/buildings/building".$id."_small.".IMAGE_EXT."\" align=\"middle\"/><br/>
+	 <b>".$bu_name[$id]."</b></div><br/>";
+
+	$res = dbquery("SELECT * FROM building_requirements WHERE req_req_building_id=".$id.";");
+	$nr = mysql_num_rows($res);
+	if ($nr>0)
+	{
+		echo "ermöglicht<br/><br/>
+		<table style=\"margin:0px auto;\"><tr>";
+		$cnt=0;
+		while($arr=mysql_fetch_assoc($res))
+		{
+			echo "<td style=\"padding:4px;\">
+			mit Stufe ".$arr['req_req_building_level']."<br/><br/>
+			<a href=\"javascript:;\" style=\"color:#00f\" onclick=\"xajax_reqInfo(".$arr['req_building_id'].")\">
+			<img src=\"".IMAGE_PATH."/buildings/building".$arr['req_building_id']."_small.".IMAGE_EXT."\" align=\"middle\"/>
+			</a><br/>
+	 		<b>".$bu_name[$arr['req_building_id']]."</b>			
+			</td>";
+			$cnt++;
+			if ($cnt==3)
+			{
+				echo "</tr><tr>";
+				$cnt=0;
+			}
+			
+		}
+		echo "</tr></table>";
+	}
+	
+	$out=ob_get_clean();
+	$or->assign('reqInfo','innerHTML',$out);	
+	return $or;	
+}
 
 ?>
