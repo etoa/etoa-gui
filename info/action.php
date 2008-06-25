@@ -10,64 +10,57 @@
 		$action = $_GET['action'];
 		if ($site!="" AND $action!="")
 		{
-			if (@file_exists("info/action/$action.php"))
+			Help::navi(array("Schiffsaktionen","action"),array("$action","$action"),1);
+			echo "<select onchange=\"document.location='?page=$page&site=action&action='+this.options[this.selectedIndex].value\">";
+			$actions = FleetAction::getAll();
+			foreach($actions as $data)			
 			{
-				$actio['colonie']="Kolonialisieren";
-				$actio['invasion']="Invasieren";
-				$actio['spy']="Spionage";
-				$actio['tech_steal']="Techklau";
-				$actio['transport']="Transport";
-				$actio['recycling']="Tr&uuml;mmer recyclen";
-				$actio['nebula']="Gas/Nebel saugen";
-				$actio['asteroid']="Asteroiden sammeln";
-				$actio['bomb']="Bombardieren";
-				$actio['deactivate']="Deaktivieren (EMP)";
-				$actio['antrax']="Antrax";
-				$actio['giftgas']="Giftgas";
-				$actio['tarned']="Tarnangriff";
-				$actio['fake']="Fakeangriff";
-				$actio['analyze']="Analysieren";
+				echo "<option value=\"".$data->code()."\"";
+				if ($data->code()==$action) echo " selected=\"selected\"";
+				echo ">".$data->name()."</option>\n";
+			}
+			echo "</select><br/><br/>";
 				
-				Help::navi(array("Schiffsaktionen","action"),array("$action","$action"),1);
-				echo "<select onchange=\"document.location='?page=$page&site=action&action='+this.options[this.selectedIndex].value\">";
-				foreach ($actio as $ak=>$av)
-				{
-					echo "<option value=\"$ak\"";
-					if ($ak==$action) echo " selected=\"selected\"";
-					echo ">$av</option>";
-				}
-				echo "</select><br/><br/>";
+			$ac  = FleetAction::createFactory($action);
+			infobox_start($ac->name());
+			echo $ac->desc();
+			echo "<br/><br/><b>Gesinnung:</b> 
+			<span style=\"color:".FleetAction::$attitudeColor[$ac->attitude()]."\">
+			".FleetAction::$attitudeString[$ac->attitude()]."</span>";
+			infobox_end();				
 				
 				//Liest alle notwenidgen Daten aus der Schiffs-DB
 				$res = dbquery("
 				SELECT 
-			        ship_id, 
-			        ship_name, 
-			        ship_people_capacity, 
-			        ship_colonialize, 
-			        ship_invade, 
-			        ship_recycle, 
-			        ship_asteroid, 
-			        ship_nebula, 
-			        ship_antrax,
-			        ship_forsteal, 
-			        ship_build_destroy, 
-			        ship_tarned, 
-			        ship_fake, 
-			        ship_heal, 
-			        ship_antrax_food, 
-			        ship_deactivade, 
-			        ship_analyze,
-			        ship_tf
+	        ship_id, 
+	        ship_name
 				FROM 
-					".$db_table['ships']." 
+					ships 
 				WHERE 
 					ship_buildable='1'
 					AND special_ship='0'
+					AND (
+					ship_actions LIKE '%,".$ac->code()."'
+					OR ship_actions LIKE '".$ac->code().",%'
+					OR ship_actions LIKE '%,".$ac->code().",%'
+					OR ship_actions LIKE '".$ac->code()."'
+					)
 				ORDER BY 
 					ship_name ASC");
-				include ("info/action/$action.php");
+				
+			infobox_start("Schiffe",1,0);
+			if (mysql_num_rows($res)>0)
+			{
+				while($arr=mysql_fetch_array($res))
+				{
+					echo "<tr><td class=\"tbldata\"><a href=\"".HELP_URL."&amp;id=".$arr[ship_id]."\">".$arr['ship_name']."</a></td></tr> ";
+				}
 			}
+			else
+			{
+				echo "<tr><td class=\"tbldata\">Keine bekannten Schiffe haben diese Aktion</td></tr>";
+			}
+			infobox_end(1);		
 		}
 		echo "&nbsp;<input type=\"button\" value=\"Schiffsaktionen\" onclick=\"document.location='?page=$page&site=action'\" />";
 	}
@@ -76,68 +69,28 @@
 		Help::navi(array("Schiffsaktionen","action"));
 		echo "Alle Schiffsaktionen in der &Uuml;bersicht:<br/><br/>";
 
-		infobox_start("Planeten&uuml;bernahme",1);
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Kolonialisieren</td>
-		<td class=\"tbldata\">Funktion, Nutzen und Wissenswertes</td>
-		<td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=action&action=colonie\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Invasieren</td>
-		<td class=\"tbldata\">Funktion, Nutzen und Wissenswertes</td>
-		<td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=action&action=invasion\">Anzeigen</a></td></tr>";
-		infobox_end(1);
+		$attitudes = array(); 
 
-		infobox_start("Spionage",1);
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Spionage</td>
-		<td class=\"tbldata\">Wie das Spionagesystem funktioniert</td>
-		<td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=action&action=spy\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Techklau</td>
-		<td class=\"tbldata\">Techklau/Spionageangriff</td>
-		<td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=action&action=tech_steal\">Anzeigen</a></td></tr>";
-    echo "<tr><td class=\"tbltitle\" width=\"25%\">Analysieren</td>
-    <td class=\"tbldata\">Analyse von Raumobjekten</td>
-	  <td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=action&action=analyze\">Anzeigen</a></td></tr>";
-		infobox_end(1);
+		$actions = FleetAction::getAll();
+		foreach($actions as $key => $data)
+		{
+			$attitudes[$data->attitude()][] = $data;
+		}
+		
+		ksort($attitudes);
 
-		infobox_start("Transport/Recycling/Asteroid",1);
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Transport</td>
-		<td class=\"tbldata\">Was kann mit welchen Schiffen transportiert werden</td>
-		<td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=action&action=transport\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Tr&uuml;mmer recyclen</td>
-		<td class=\"tbldata\">Sammle die Tr&uuml;mmerfelder und recycle sie</td>
-		<td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=action&action=recycling\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Gas/Nebel saugen</td>
-		<td class=\"tbldata\">Was Gas/Nebel ist und was es bringt</td>
-		<td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=action&action=nebula\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Asteroiden sammeln</td>
-		<td class=\"tbldata\">Was es ist und was man beachten sollte</td>
-		<td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=action&action=asteroid\">Anzeigen</a></td></tr>";
-		infobox_end(1);
+		foreach ($attitudes as $a => $actions)
+		{
+			infobox_start("<span style=\"color:".FleetAction::$attitudeColor[$a]."\">".FleetAction::$attitudeString[$a]."</span>",1);			
+			foreach($actions as $data)
+			{
+				echo "<tr><td class=\"tbltitle\" width=\"25%\">".$data->name()."</td>
+				<td class=\"tbldata\">".$data->desc()."</td>
+				<td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=action&action=".$data->code()."\">Anzeigen</a></td></tr>";
 
-		infobox_start("Bombardieren",1);
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Bombardieren</td>
-		<td class=\"tbldata\">Geb&auml;ude um 1 Level senken</td>
-		<td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=action&action=bomb\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Deaktivieren (EMP)</td>
-		<td class=\"tbldata\">Mit EMP-Technologie Geb&auml;ude deaktivieren</td>
-		<td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=action&action=deactivate\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Antrax</td>
-		<td class=\"tbldata\">Der Weg, Bewohner und Nahrung zu vernichten</td>
-		<td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=action&action=antrax\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Giftgas</td>
-		<td class=\"tbldata\">Die Vernichtunswaffe der Nahrung</td>
-		<td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=action&action=giftgas\">Anzeigen</a></td></tr>";
-		infobox_end(1);
-
-		infobox_start("Tarnung",1);
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Tarnangriff</td>
-		<td class=\"tbldata\">Unsichtbare Flotte</td>
-		<td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=action&action=tarned\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Fakeangriff</td>
-		<td class=\"tbldata\">Gaukelt dem Gegner eine Flotte vor die gar nicht da ist</td>
-		<td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=action&action=fake\">Anzeigen</a></td></tr>";
-		infobox_end(1);
-
-
-
+			}			
+			infobox_end(1);
+		}
 	}
 
 ?>

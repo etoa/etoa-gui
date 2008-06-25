@@ -1,15 +1,15 @@
 <?PHP
 
-	class FleetActionSpy extends FleetAction
+	class FleetActionStealthattack extends FleetAction
 	{
 
-		function FleetActionSpy()
+		function FleetActionStealthattack()
 		{
-			$this->code = "spy";
-			$this->name = "Ausspionieren";
-			$this->desc = "Sammelt Informationen über das Ziel";
+			$this->code = "stealthattack";
+			$this->name = "Tarnangriff";
+			$this->desc = "Greift das Ziel getarnt an und klaut Rohstoffe";
 			
-			$this->attitude = 2;
+			$this->attitude = 3;
 			
 			$this->allowPlayerEntities = true;
 			$this->allowOwnEntities = false;

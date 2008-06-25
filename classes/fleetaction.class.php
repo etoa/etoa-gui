@@ -19,12 +19,22 @@
 		"position",
 		"attack",
 		"spy",
+		"invade",
+		"spyattack",
+		"stealthattack",
+		"fakeattack",
+		"bombard",
+		"emp",
+		"antrax",
+		"gasattack",
+		"createdebris",
 		"colonize",
 		"collectmetal",
 		"collectcrystal",
 		"collectfuel",
 		"analyze",
 		"explore",
+		"market",
 		"flight"
 		);
 
@@ -66,11 +76,12 @@
 		function code() { return $this->code; }
 		function name() { return $this->name; }
 
+		// Overwritable functions
 		function displayName() { return $this->name; }
 		function faked() { return false; }
 
 
-		function __toString() { return $this->name; }
+		function __toString() { return "<span style=\"color:".self::$attitudeColor[$this->attitude]."\">".$this->name."</span>"; }
 		function desc() { return $this->desc; }
 		
 		function attitude() { return $this->attitude; }
@@ -94,6 +105,8 @@
 				include_once($classFile);
 				return new $className();			
 			}
+			echo "Problem mit Flottenaktion $code ($classFile)!<br/>";
+			echo "Problem mit Flottenaktion $code ($classFile)!<br/>";
 			return false;
 		}
 		
@@ -102,7 +115,9 @@
 			$arr = array();
 			foreach (self::$sublist as $i)
 			{
-				$arr[] = self::createFactory($i);
+				if ($tmp = self::createFactory($i))
+					$arr[] = $tmp; 
+				
 			}
 			return $arr;			
 		}

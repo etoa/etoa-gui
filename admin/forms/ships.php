@@ -18,7 +18,7 @@
 	//////////////////////////////////////////////////
 	//
 	// 	Dateiname: ships.php
-	// 	Topic: Formular-Definitionen für Schiffe
+	// 	Topic: Formular-Definitionen fÃ¼r Schiffe
 	// 	Autor: Nicolas Perrenoud alias MrCage
 	// 	Erstellt: 01.12.2004
 	// 	Bearbeitet von: Nicolas Perrenoud alias MrCage
@@ -29,10 +29,18 @@
 	// VARIABLES
 
 	define("MODUL_NAME","Schiffe");
-	define("DB_TABLE", $db_table['ships']);
+	define("DB_TABLE", 'ships');
 	define("DB_TABLE_ID", "ship_id");
-	define("DB_OVERVIEW_ORDER_FIELD","special_ship DESC, ship_name");
+	define("DB_OVERVIEW_ORDER_FIELD","ship_cat_id ASC, ship_order, ship_name");
 	define("DB_OVERVIEW_ORDER","ASC");
+
+	define("DB_IMAGE_PATH",IMAGE_PATH."/ships/ship<DB_TABLE_ID>_small.".IMAGE_EXT);
+
+	define("DB_TABLE_SORT",'ship_order');
+	define("DB_TABLE_SORT_PARENT",'ship_cat_id');
+
+	
+	$form_switches = array("Anzeigen"=>'ship_show','Baubar'=>'ship_buildable','Startbar'=>'ship_launchable');
 	
 	// FIELDS
 
@@ -52,7 +60,13 @@
 	// select_elem_checked				// Value of default checked Select Element (desc=>value)
 	// show_overview							// Set 1 to show on overview page
 
-	$db_fields = array ( 0	=> 	array	(	"name" => "ship_name",
+	$db_fields = array (  60	=> 	array	(	"name" => "ship_id",
+																		"text" => "ID",
+																		"type" => "readonly",
+																		"show_overview" => 1
+																	),
+	
+		0	=> 	array	(	"name" => "ship_name",
 																		"text" => "Name",
 																		"type" => "text",
 																		"def_val" => "",
@@ -79,7 +93,7 @@
 																		"rcb_elem_chekced" => "",
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
-																		"show_overview" => 1
+																		"show_overview" => 0
 																	),
 											2	=> 	array	(	"name" => "ship_longcomment",
 																		"text" => "Beschreibung",
@@ -95,6 +109,36 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
+											30	=> 	array	(	"name" => "ship_cat_id",
+																		"text" => "Kategorie",
+																		"type" => "select",
+																		"def_val" => "",
+																		"size" => "20",
+																		"maxlen" => "250",
+																		"rows" => "",
+																		"cols" => "",
+																		"rcb_elem" => "",
+																		"rcb_elem_chekced" => "",
+																		"select_elem" => admin_get_select_elements($db_table['ship_cat'],"cat_id","cat_name","cat_name",array("0"=>"-")),
+																		"select_elem_checked" => "",
+																		"show_overview" => 1
+																	),																		
+											24	=> 	array	(	"name" => "ship_race_id",
+																		"text" => "Rasse",
+																		"type" => "select",
+																		"def_val" => "",
+																		"size" => "20",
+																		"maxlen" => "250",
+																		"rows" => "",
+																		"cols" => "",
+																		"rcb_elem" => "",
+																		"rcb_elem_chekced" => "",
+																		"select_elem" => admin_get_select_elements($db_table['races'],"race_id","race_name","race_name",array("0"=>"-")),
+																		"select_elem_checked" => "",
+																		"show_overview" => 1
+																	),
+																
+																	
 											3	=> 	array	(	"name" => "ship_costs_metal",
 																		"text" => "Kosten Metall",
 																		"type" => "text",
@@ -208,7 +252,7 @@
 																		"show_overview" => 0
 																	),
 											11	=> 	array	(	"name" => "ship_capacity",
-																		"text" => "Kapazität",
+																		"text" => "Laderaum",
 																		"type" => "text",
 																		"def_val" => "",
 																		"size" => "20",
@@ -221,6 +265,21 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
+											21	=> 	array	(	"name" => "ship_people_capacity",
+																		"text" => "Passagierraum",
+																		"type" => "text",
+																		"def_val" => "",
+																		"size" => "20",
+																		"maxlen" => "250",
+																		"rows" => "",
+																		"cols" => "",
+																		"rcb_elem" => "",
+																		"rcb_elem_chekced" => "",
+																		"select_elem" => "",
+																		"select_elem_checked" => "",
+																		"show_overview" => 0
+																	),
+
 											12	=> 	array	(	"name" => "ship_pilots",
 																		"text" => "Piloten",
 																		"type" => "text",
@@ -277,105 +336,9 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											16	=> 	array	(	"name" => "ship_colonialize",
-																		"text" => "Kolonialisieren",
-																		"type" => "radio",
-																		"def_val" => "",
-																		"size" => "",
-																		"maxlen" => "",
-																		"rows" => "",
-																		"cols" => "",
-																		"rcb_elem" => array("Ja"=>1,"Nein"=>0),
-																		"rcb_elem_chekced" => "0",
-																		"select_elem" => "",
-																		"select_elem_checked" => "",
-																		"show_overview" => 0
-																	),
-											17	=> 	array	(	"name" => "ship_invade",
-																		"text" => "Invasieren",
-																		"type" => "radio",
-																		"def_val" => "",
-																		"size" => "",
-																		"maxlen" => "",
-																		"rows" => "",
-																		"cols" => "",
-																		"rcb_elem" => array("Ja"=>1,"Nein"=>0),
-																		"rcb_elem_chekced" => "0",
-																		"select_elem" => "",
-																		"select_elem_checked" => "",
-																		"show_overview" => 0
-																	),
-											18	=> 	array	(	"name" => "ship_recycle",
-																		"text" => "Recyclen",
-																		"type" => "radio",
-																		"def_val" => "",
-																		"size" => "",
-																		"maxlen" => "",
-																		"rows" => "",
-																		"cols" => "",
-																		"rcb_elem" => array("Ja"=>1,"Nein"=>0),
-																		"rcb_elem_chekced" => "0",
-																		"select_elem" => "",
-																		"select_elem_checked" => "",
-																		"show_overview" => 0
-																	),
-											19	=> 	array	(	"name" => "ship_asteroid",
-																		"text" => "Asteroiden",
-																		"type" => "radio",
-																		"def_val" => "",
-																		"size" => "",
-																		"maxlen" => "",
-																		"rows" => "",
-																		"cols" => "",
-																		"rcb_elem" => array("Ja"=>1,"Nein"=>0),
-																		"rcb_elem_chekced" => "0",
-																		"select_elem" => "",
-																		"select_elem_checked" => "",
-																		"show_overview" => 0
-																	),
-											20	=> 	array	(	"name" => "ship_nebula",
-																		"text" => "Nebel",
-																		"type" => "radio",
-																		"def_val" => "",
-																		"size" => "",
-																		"maxlen" => "",
-																		"rows" => "",
-																		"cols" => "",
-																		"rcb_elem" => array("Ja"=>1,"Nein"=>0),
-																		"rcb_elem_chekced" => "0",
-																		"select_elem" => "",
-																		"select_elem_checked" => "",
-																		"show_overview" => 0
-																	),
-											49	=> 	array	(	"name" => "ship_spy",
-																		"text" => "Spionieren",
-																		"type" => "radio",
-																		"def_val" => "",
-																		"size" => "",
-																		"maxlen" => "",
-																		"rows" => "",
-																		"cols" => "",
-																		"rcb_elem" => array("Ja"=>1,"Nein"=>0),
-																		"rcb_elem_chekced" => "0",
-																		"select_elem" => "",
-																		"select_elem_checked" => "",
-																		"show_overview" => 0
-																	),
-												50 => array ( "name" => "ship_explore",
-	                                  "text" => "Nebel/Asteroidenfelder erkunden",
-	                                  "type" => "radio",
-	                                  "def_val" => "",
-	                                  "size" => "",
-	                                  "maxlen" => "",
-	                                  "rows" => "",
-	                                  "cols" => "",
-	                                  "rcb_elem" => array("Ja"=>1,"Nein"=>0),
-	                                  "rcb_elem_chekced" => "0",
-	                                  "select_elem" => "",
-	                                  "select_elem_checked" => "",
-	                                  "show_overview" => 0
-	                                ),
-												21	=> 	array	(	"name" => "ship_structure",
+																	
+																	
+												16	=> 	array	(	"name" => "ship_structure",
 																		"text" => "Struktur",
 																		"type" => "text",
 																		"def_val" => "",
@@ -389,7 +352,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											22	=> 	array	(	"name" => "ship_shield",
+											17	=> 	array	(	"name" => "ship_shield",
 																		"text" => "Schild",
 																		"type" => "text",
 																		"def_val" => "",
@@ -403,7 +366,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											23	=> 	array	(	"name" => "ship_weapon",
+											18	=> 	array	(	"name" => "ship_weapon",
 																		"text" => "Waffe",
 																		"type" => "text",
 																		"def_val" => "",
@@ -417,9 +380,9 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											24	=> 	array	(	"name" => "ship_race_id",
-																		"text" => "Rasse",
-																		"type" => "select",
+											19	=> 	array	(	"name" => "ship_heal",
+																		"text" => "Heilung pro Runde",
+																		"type" => "text",
 																		"def_val" => "",
 																		"size" => "20",
 																		"maxlen" => "250",
@@ -427,108 +390,26 @@
 																		"cols" => "",
 																		"rcb_elem" => "",
 																		"rcb_elem_chekced" => "",
-																		"select_elem" => admin_get_select_elements($db_table['races'],"race_id","race_name","race_name",array("0"=>"(Keine)")),
-																		"select_elem_checked" => "",
-																		"show_overview" => 1
-																	),
-											25	=> 	array	(	"name" => "ship_order",
-																		"text" => "Reihenfolge",
-																		"type" => "text",
-																		"def_val" => "",
-																		"size" => "1",
-																		"maxlen" => "2",
-																		"rows" => "",
-																		"cols" => "",
-																		"rcb_elem" => "",
-																		"rcb_elem_chekced" => "",
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											26	=> 	array	(	"name" => "ship_show",
-																		"text" => "Anzeigen",
-																		"type" => "radio",
-																		"def_val" => "",
-																		"size" => "",
-																		"maxlen" => "",
-																		"rows" => "",
-																		"cols" => "",
-																		"rcb_elem" => array("Ja"=>1,"Nein"=>0),
-																		"rcb_elem_chekced" => "1",
-																		"select_elem" => "",
-																		"select_elem_checked" => "",
-																		"show_overview" => 0
-																	),
-											27	=> 	array	(	"name" => "ship_buildable",
-																		"text" => "Baubar",
-																		"type" => "radio",
-																		"def_val" => "",
-																		"size" => "",
-																		"maxlen" => "",
-																		"rows" => "",
-																		"cols" => "",
-																		"rcb_elem" => array("Ja"=>1,"Nein"=>0),
-																		"rcb_elem_chekced" => "1",
-																		"select_elem" => "",
-																		"select_elem_checked" => "",
-																		"show_overview" => 0
-																	),
-											28	=> 	array	(	"name" => "ship_launchable",
-																		"text" => "Startbar",
-																		"type" => "radio",
-																		"def_val" => "",
-																		"size" => "",
-																		"maxlen" => "",
-																		"rows" => "",
-																		"cols" => "",
-																		"rcb_elem" => array("Ja"=>1,"Nein"=>0),
-																		"rcb_elem_chekced" => "1",
-																		"select_elem" => "",
-																		"select_elem_checked" => "",
-																		"show_overview" => 0
-																	),
-											29	=> 	array	(	"name" => "ship_fieldsprovide",
-																		"text" => "Zur Verfüg. gest. Felder",
-																		"type" => "text",
-																		"def_val" => "0",
-																		"size" => "1",
-																		"maxlen" => "3",
-																		"rows" => "",
-																		"cols" => "",
-																		"rcb_elem" => "",
-																		"rcb_elem_chekced" => "",
-																		"select_elem" => "",
-																		"select_elem_checked" => "",
-																		"show_overview" => 0
-																	),
-											30	=> 	array	(	"name" => "ship_cat_id",
-																		"text" => "Kategorie",
-																		"type" => "select",
+																	
+											49	=> 	array	(	"name" => "ship_actions",
+																		"text" => "Aktionen",
+																		"type" => "fleetaction",
 																		"def_val" => "",
 																		"size" => "20",
 																		"maxlen" => "250",
-																		"rows" => "",
-																		"cols" => "",
+																		"rows" => "2",
+																		"cols" => "60",
 																		"rcb_elem" => "",
 																		"rcb_elem_chekced" => "",
-																		"select_elem" => admin_get_select_elements($db_table['ship_cat'],"cat_id","cat_name","cat_name",array("0"=>"(Keine)")),
-																		"select_elem_checked" => "",
-																		"show_overview" => 1
-																	),
-											31	=> 	array	(	"name" => "special_ship",
-																		"text" => "Spezial Schiff",
-																		"type" => "radio",
-																		"def_val" => "",
-																		"size" => "",
-																		"maxlen" => "",
-																		"rows" => "",
-																		"cols" => "",
-																		"rcb_elem" => array("Ja"=>1,"Nein"=>0),
-																		"rcb_elem_chekced" => "0",
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
-																	),
+																	),		
+																																		
 											32	=> 	array	(	"name" => "ship_max_count",
 																		"text" => "Max. Anzahl (0=unentlich)",
 																		"type" => "text",
@@ -543,6 +424,56 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
+
+
+										29	=> 	array	(	"name" => "ship_fieldsprovide",
+																		"text" => "Zur VerfÃ¼g. gest. Felder",
+																		"type" => "text",
+																		"def_val" => "0",
+																		"size" => "1",
+																		"maxlen" => "3",
+																		"rows" => "",
+																		"cols" => "",
+																		"rcb_elem" => "",
+																		"rcb_elem_chekced" => "",
+																		"select_elem" => "",
+																		"select_elem_checked" => "",
+																		"show_overview" => 0
+																	),
+																	
+															
+
+											27	=> 	array	(	"name" => "ship_fakeable",
+																		"text" => "TÃ¤uschbar",
+																		"type" => "radio",
+																		"def_val" => "",
+																		"size" => "",
+																		"maxlen" => "",
+																		"rows" => "",
+																		"cols" => "",
+																		"rcb_elem" => array("Ja"=>1,"Nein"=>0),
+																		"rcb_elem_chekced" => "0",
+																		"select_elem" => "",
+																		"select_elem_checked" => "",
+																		"show_overview" => 0
+																	),
+
+
+											31	=> 	array	(	"name" => "special_ship",
+																		"text" => "Spezial Schiff",
+																		"type" => "radio",
+																		"def_val" => "",
+																		"size" => "",
+																		"maxlen" => "",
+																		"rows" => "",
+																		"cols" => "",
+																		"rcb_elem" => array("Ja"=>1,"Nein"=>0),
+																		"rcb_elem_chekced" => "0",
+																		"select_elem" => "",
+																		"select_elem_checked" => "",
+																		"show_overview" => 0
+																	),
+
 											33	=> 	array	(	"name" => "special_ship_max_level",
 																		"text" => "Max. Level (0=unentlich)",
 																		"type" => "text",
@@ -642,7 +573,7 @@
 																		"show_overview" => 0
 																	),
 											40	=> 	array	(	"name" => "special_ship_bonus_capacity",
-																		"text" => "Kapazität-Bonus",
+																		"text" => "KapazitÃ¤t-Bonus",
 																		"type" => "text",
 																		"def_val" => "",
 																		"size" => "20",
@@ -766,8 +697,8 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
-																	)																																																																																
-
+																	),																																																																																
+		
 											);
 
 ?>

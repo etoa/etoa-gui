@@ -1,15 +1,15 @@
 <?PHP
 
-	class FleetActionSpy extends FleetAction
+	class FleetActionGasAttack extends FleetAction
 	{
 
-		function FleetActionSpy()
+		function FleetActionGasAttack()
 		{
-			$this->code = "spy";
-			$this->name = "Ausspionieren";
-			$this->desc = "Sammelt Informationen über das Ziel";
+			$this->code = "gasattack";
+			$this->name = "Gasangriff";
+			$this->desc = "Greift das Ziel an und vernichtet Nahrung.";
 			
-			$this->attitude = 2;
+			$this->attitude = 3;
 			
 			$this->allowPlayerEntities = true;
 			$this->allowOwnEntities = false;

@@ -1,21 +1,23 @@
 <?PHP
 
-	class FleetActionSpy extends FleetAction
+	class FleetActionFakeattack extends FleetAction
 	{
 
-		function FleetActionSpy()
+		function FleetActionFakeattack()
 		{
-			$this->code = "spy";
-			$this->name = "Ausspionieren";
-			$this->desc = "Sammelt Informationen über das Ziel";
+			$this->code = "fakeattack";
+			$this->name = "Täuschungsangriff";
+			$this->desc = "Täuscht einen Angriff auf das Ziel an";
 			
-			$this->attitude = 2;
+			$this->attitude = 3;
 			
 			$this->allowPlayerEntities = true;
 			$this->allowOwnEntities = false;
 			$this->allowNpcEntities = false;
 			$this->allowSourceEntity = false;
 		}
+
+		function displayName() { return "Angriff"; }
 
 		function startAction() {} 
 		function cancelAction() {}		

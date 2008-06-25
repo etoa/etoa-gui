@@ -139,6 +139,49 @@
 			}
 		}
 
+
+		if (isset($_GET['sortup']) && isset($_GET['parentid']))
+		{
+			$res = dbquery("SELECT ".DB_TABLE_ID." FROM ".DB_TABLE." WHERE ".DB_TABLE_SORT_PARENT."=".$_GET['parentid']." ORDER BY ".DB_TABLE_SORT."");
+			$cnt = 0;
+			while ($arr = mysql_fetch_array($res))
+			{
+				dbquery("UPDATE ".DB_TABLE." SET ".DB_TABLE_SORT."=".$cnt." WHERE ".DB_TABLE_ID."=".$arr[DB_TABLE_ID]."");
+				if ($_GET['sortup'] == $arr[DB_TABLE_ID])
+				{
+					$sorter = $cnt;
+				}
+				$cnt++;
+			}
+			dbquery("UPDATE ".DB_TABLE." SET ".DB_TABLE_SORT."=".($sorter)." WHERE ".DB_TABLE_SORT_PARENT."=".$_GET['parentid']." AND ".DB_TABLE_SORT."=".($sorter-1)."");
+			dbquery("UPDATE ".DB_TABLE." SET ".DB_TABLE_SORT."=".($sorter-1)." WHERE ".DB_TABLE_ID."=".$_GET['sortup']."");
+		}
+		
+		if (isset($_GET['sortdown']) && isset($_GET['parentid']))
+		{
+			$res = dbquery("SELECT ".DB_TABLE_ID." FROM ".DB_TABLE." WHERE ".DB_TABLE_SORT_PARENT."=".$_GET['parentid']." ORDER BY ".DB_TABLE_SORT.";");
+			$cnt = 0;
+			while ($arr = mysql_fetch_array($res))
+			{
+				dbquery("UPDATE ".DB_TABLE." SET ".DB_TABLE_SORT."=".$cnt." WHERE ".DB_TABLE_ID."=".$arr[DB_TABLE_ID]."");
+				if ($_GET['sortdown'] == $arr[DB_TABLE_ID])
+				{
+					$sorter = $cnt;
+				}
+				$cnt++;
+			}
+			dbquery("UPDATE ".DB_TABLE." SET ".DB_TABLE_SORT."=".($sorter)." WHERE ".DB_TABLE_SORT_PARENT."=".$_GET['parentid']." AND ".DB_TABLE_SORT."=".($sorter+1)."");
+			dbquery("UPDATE ".DB_TABLE." SET ".DB_TABLE_SORT."=".($sorter+1)." WHERE ".DB_TABLE_ID."=".$_GET['sortdown']."");
+		}	
+
+
+		// Switcher
+		if (isset($form_switches) && isset($_GET['switch']) && $_GET['id']>0)
+		{
+			dbquery("UPDATE ".DB_TABLE." SET `".$_GET['switch']."`=(`".$_GET['switch']."`+1)%2 WHERE `".DB_TABLE_ID."`=".$_GET['id']."");
+			ok_msg("Aktion ausgeführt!");
+		}	
+
 		// Show overview
 		echo "<form action=\"?".URL_SEARCH_STRING."\" method=\"post\">";
 		echo "<input type=\"button\" value=\"Neuer Datensatz hinzuf&uuml;gen\" name=\"new\" onclick=\"document.location='?".URL_SEARCH_STRING."&amp;action=new'\" /><br/><br/>";
@@ -159,14 +202,67 @@
 					echo "<th valign=\"top\" class=\"tbltitle\">".$a['text']."</a>";
 				}
 			}
+			if (isset($form_switches))
+			{
+				foreach ($form_switches as $k=>$v)
+				{
+					echo "<th valign=\"top\" class=\"tbltitle\">";
+					echo "$k";
+					echo "</th>";					
+				}
+			}
+			if (defined('DB_TABLE_SORT') && defined('DB_TABLE_SORT_PARENT'))
+			{
+				echo "<th valign=\"top\" class=\"tbltitle\">";
+				echo "Sort";
+				echo "</th>";					
+			}
+			
 			echo "<th valign=\"top\" width=\"50\" colspan=\"2\">&nbsp;</td></tr>";
+			$cnt=0;
 			while ($arr=mysql_fetch_array($res))
 			{
 				echo "<tr>";
+				if (defined('DB_IMAGE_PATH'))
+				{
+					$path = ereg_replace('<DB_TABLE_ID>',$arr[DB_TABLE_ID],DB_IMAGE_PATH);
+					echo "<td class=\"tbldata\" style=\"background:#000\"><img src=\"".$path."\" align=\"top\"/></td>";
+				}
+				
 				admin_show_overview($db_fields,$arr);
+				
+				if (isset($form_switches))
+				{
+					foreach ($form_switches as $k=>$v)
+					{
+						echo "<td valign=\"top\" class=\"tbldata\">
+						<a href=\"?".URL_SEARCH_STRING."&amp;switch=".$v."&amp;id=".$arr[DB_TABLE_ID]."\">";
+						if ($arr[$v]==1)
+							echo "<img src=\"../images/true.gif\" alt=\"true\" />";
+						else
+							echo "<img src=\"../images/false.gif\" alt=\"true\" />";
+						echo "</td>";					
+					}
+				}
+				
+				if (defined('DB_TABLE_SORT') && defined('DB_TABLE_SORT_PARENT'))
+				{
+					echo "<td valign=\"top\" class=\"tbldata\">";
+					if ($cnt!=0)
+						echo "<a href=\"?".URL_SEARCH_STRING."&amp;sortup=".$arr[DB_TABLE_ID]."&amp;parentid=".$arr[DB_TABLE_SORT_PARENT]."\"><img src=\"../images/up.gif\" alt=\"up\" /></a> ";						
+					else
+						echo "<img src=\"../images/blank.gif\" alt=\"blank\" /> ";						
+					if ($cnt < mysql_num_rows($res)-1)
+						echo "<a href=\"?".URL_SEARCH_STRING."&amp;sortdown=".$arr[DB_TABLE_ID]."&amp;parentid=".$arr[DB_TABLE_SORT_PARENT]."\"><img src=\"../images/down.gif\" alt=\"down\" /></a> ";						
+					else
+						echo "<img src=\"../images/blank.gif\" alt=\"blank\" /> ";						
+					echo "</td>";
+				}
+				
 				echo "<td valign=\"top\" class=\"tbldata\" style=\"width:50px\">".edit_button("?".URL_SEARCH_STRING."&amp;action=edit&amp;id=".$arr[DB_TABLE_ID])." ";
 				echo del_button("?".URL_SEARCH_STRING."&amp;action=del&amp;id=".$arr[DB_TABLE_ID])."</td>";
 				echo "</tr>\n";
+				$cnt++;
 			}
 		}
 		echo "</table></form>";

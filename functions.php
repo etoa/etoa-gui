@@ -51,14 +51,17 @@
       {
         include_once($dir.'/entity/'.$file);
       }
-      elseif (file_exists($dir.'/fleetAction'.$file))
+      elseif (file_exists($dir.'/fleetaction/'.$file))
       {
-        include_once($dir.'/fleetAction'.$file);
+        include_once($dir.'/fleetaction/'.$file);
       }      
       else
       {
 	    	echo "Class ".$class_name." not found (".$dir."/".$file.")!\n\n";
-	    	debug_print_backtrace();
+				ob_start();
+				debug_print_backtrace();
+				$var = ob_get_clean();
+	    	echo nl2br($var);
 	    	exit;
 	    }
 	  }

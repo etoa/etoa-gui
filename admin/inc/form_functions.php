@@ -6,6 +6,9 @@
 		{
 			switch ($a['type'])
 			{
+				case "readonly":
+				break;
+
 				case "text":
 					echo "<tr><th class=\"tbltitle\" width=\"200\">".$a['text'].":</th>";
 					echo "<td class=\"tbldata\" width=\"200\"><input type=\"text\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"".$a['def_val']."\" /></td></tr>";
@@ -74,6 +77,21 @@
 					echo "<tr><th class=\"tbltitle\" width=\"200\">".$a['text'].":</th>";
 					echo "<td class=\"tbldata\" width=\"200\"><input type=\"file\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" /></td></tr>";
 				break;
+				case "fleetaction":
+					echo "<tr><th class=\"tbltitle\" width=\"200\">".$a['text'].":</th>";
+					echo "<td class=\"tbldata\" width=\"200\">";
+					$actions = FleetAction::getAll();
+					foreach ($actions as $ac)
+					{
+						echo "<input name=\"".$a['name']."[]\" type=\"checkbox\" value=\"".$ac->code()."\"";
+						echo " /> ".$ac."<br/>";				
+					}
+					echo "</td></tr>";
+					break;		
+				default:
+					echo "<tr><th class=\"tbltitle\" width=\"200\">".$a['text'].":</th>";
+					echo "<td class=\"tbldata\" width=\"200\"><input type=\"text\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"".$a['def_val']."\" /></td></tr>";
+				break;									
 			}
 		}
 	}
@@ -91,15 +109,20 @@
 		$vsqlsp = "";
 		foreach ($db_fields as $k=>$a)
 		{
-			$fsql .= "`".$a['name']."`";
-			if ($cnt < sizeof($db_fields)) $fsql .= ",";
-			$cnt++;
+			if ($a['type']!="readonly")
+			{
+				$fsql .= "`".$a['name']."`";
+				if ($cnt < sizeof($db_fields)) $fsql .= ",";
+				$cnt++;
+			}
 		}
 		$cnt = 1;
 		foreach ($db_fields as $k=>$a)
 		{
 			switch ($a['type'])
 			{
+				case "readonly":
+				break;				
 				case "text":
 					$vsql .= "'".addslashes($_POST[$a['name']])."'";
 				break;
@@ -164,6 +187,16 @@
 					$vsqlsp .= ",'".$imtdata."','".$_FILES[$a['name']]['type']."'";
 					$vsql .= "'".$imdata."'";
 				break;
+				case "fleetaction":
+					if (is_array($_POST[$a['name']]))
+						$str = implode(",",$_POST[$a['name']]);
+					else
+						$str = "";
+					$vsql .= "'".$str."'";
+				break;		
+				default:
+					$vsql .= "'".addslashes($_POST[$a['name']])."'";
+				break;						
 			}
 			if ($cnt < sizeof($db_fields)) $vsql .= ",";
 			$cnt++;
@@ -185,6 +218,11 @@
 		{
 			switch ($a['type'])
 			{
+				case "readonly":
+					echo "<tr><th class=\"tbltitle\" width=\"200\">".$a['text'].":</th>";
+					echo "<td class=\"tbldata\" width=\"200\">".$a['size']."</td></tr>";
+				break;
+
 				case "text":
 					echo "<tr><th class=\"tbltitle\" width=\"200\">".$a['text'].":</th>";
 					echo "<td class=\"tbldata\" width=\"200\"><input type=\"text\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"".stripslashes($arr[$a['name']])."\" /></td></tr>";
@@ -250,6 +288,23 @@
 					}
 					echo "</td></tr>";
 				break;
+				case "fleetaction":
+					echo "<tr><th class=\"tbltitle\" width=\"200\">".$a['text'].":</th>";
+					echo "<td class=\"tbldata\" width=\"200\">";
+					$keys = explode(",",$arr[$a['name']]);
+					$actions = FleetAction::getAll();
+					foreach ($actions as $ac)
+					{
+						echo "<input name=\"".$a['name']."[]\" type=\"checkbox\" value=\"".$ac->code()."\"";
+						if (in_array($ac->code(),$keys))
+							echo " checked=\"checked\"";
+						echo " /> ".$ac."<br/>";				
+					}
+					echo "</td></tr>";
+					break;			
+				default:
+					echo "<tr><th class=\"tbltitle\" width=\"200\">".$a['text'].":</th>";
+					echo "<td class=\"tbldata\" width=\"200\"><input type=\"text\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"".stripslashes($arr[$a['name']])."\" /></td></tr>";
 			}
 		}
 	}
@@ -265,6 +320,8 @@
 			$cntadd = 1;
 			switch ($a['type'])
 			{
+				case "readonly":
+				break;
 				case "text":
 					$sql .= "`".$a['name']."` = '".addslashes($_POST[$a['name']])."'";
 				break;
@@ -297,6 +354,16 @@
 				break;
 				case "select":
 					$sql .= "`".$a['name']."` = '".$_POST[$a['name']]."'";
+				break;
+				case "fleetaction":
+					if (is_array($_POST[$a['name']]))
+						$str = implode(",",$_POST[$a['name']]);
+					else
+						$str = "";
+					$sql .= "`".$a['name']."` = '".$str."'";
+				break;
+				default:
+					$sql .= "`".$a['name']."` = '".addslashes($_POST[$a['name']])."'";
 				break;
 			}
 			if ($cntadd==1)
@@ -372,6 +439,10 @@
 					echo "<tr><th class=\"tbltitle\" width=\"200\">".$a['text'].":</th>";
 					echo "<td class=\"tbldata\" width=\"200\">".$arr[$a['name']]."</td></tr>";
 				break;
+				default:
+					echo "<tr><th class=\"tbltitle\" width=\"200\">".$a['text'].":</th>";
+					echo "<td class=\"tbldata\" width=\"200\">".$arr[$a['name']]."</td></tr>";
+				break;				
 			}
 		}
 	}

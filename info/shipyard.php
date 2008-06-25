@@ -97,7 +97,7 @@
 			infobox_start($arr['ship_name'],1);
 
     	echo "<tr>
-    		<td class=\"tbltitle\" style=\"width:220px;\">
+    		<td class=\"tbltitle\" style=\"width:220px;background:#000\">
     			<img src=\"".IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$arr['ship_id'].".".IMAGE_EXT."\" width=\"220\" height=\"220\" alt=\"Schiff\" />
     		</td>
     		<td class=\"tbldata\" colspan=\"3\">
@@ -124,24 +124,52 @@
 
 	    echo "<tr><th class=\"tbltitle\" colspan=\"2\" style=\"text-align:center\">Kosten</th>
 	    			<th class=\"tbltitle\" colspan=\"2\" style=\"text-align:center\">Technische Daten</th></tr>";
-			
-			echo "<tr><td class=\"tbldata\" style=\"width:100px\">".RES_ICON_METAL."".RES_METAL."</td>
-						<td class=\"tbldata\" style=\"width:350px\">".nf($arr['ship_costs_metal'])." t</td>
+
+	    echo "<tr>
+	    	<td class=\"tbldata\">
+	    	<table style=\"width:100%\">";
+				echo "<tr><td class=\"tbldata\" style=\"width:170px;\">".RES_ICON_METAL."".RES_METAL."</td>
+						<td class=\"tbldata\" style=\"width:350px\">".nf($arr['ship_costs_metal'])." t</td>    	
+				</tr>";
+			echo "<tr><td class=\"tbldata\">".RES_ICON_CRYSTAL."".RES_CRYSTAL."</td>
+						<td class=\"tbldata\" style=\"width:350px\">".nf($arr['ship_costs_crystal'])." t</td>
+				</tr>";
+			echo "<tr><td class=\"tbldata\">".RES_ICON_PLASTIC."".RES_PLASTIC."</td>
+						<td class=\"tbldata\" style=\"width:350px\">".nf($arr['ship_costs_plastic'])." t</td>
+				</tr>";
+			echo "<tr><td class=\"tbldata\">".RES_ICON_FUEL."".RES_FUEL."</td>
+						<td class=\"tbldata\" style=\"width:350px\">".nf($arr['ship_costs_fuel'])." t</td>
+				</tr>";
+			echo "<tr><td class=\"tbldata\">".RES_ICON_FOOD."".RES_FOOD."</td>
+						<td class=\"tbldata\" style=\"width:350px\">".nf($arr['ship_costs_food'])." t</td>
+				</tr>";
+			echo "<tr><td class=\"tbldata\">".RES_ICON_FUEL."/100 AE</td>
+						<td class=\"tbldata\" style=\"width:350px\">".nf($arr['ship_fuel_use'])." t</td>
+				</tr>";
+			echo "<tr><td class=\"tbldata\">".RES_ICON_FUEL."Start</td>
+						<td class=\"tbldata\" style=\"width:350px\">".nf($arr['ship_fuel_use_launch'])." t</td>
+				</tr>";
+			echo "<tr><td class=\"tbldata\">".RES_ICON_FUEL."Landung</td>
+						<td class=\"tbldata\" style=\"width:350px\">".nf($arr['ship_fuel_use_landing'])." t</td>
+				</tr>";
+	    	
+	    	echo "</table>
+	    	</td>
+	    	<td class=\"tbldata\" colspan=\"3\">
+				<table style=\"width:100%\">";
+				echo "<tr>
 						<td class=\"tbldata\" style=\"width:200px\">Struktur</td>
 						<td class=\"tbldata\" style=\"width:275px\">".nf($arr['ship_structure'])."</td></tr>";
-						
-			echo "<tr><td class=\"tbldata\" style=\"width:100px\">".RES_ICON_CRYSTAL."".RES_CRYSTAL."</td>
-						<td class=\"tbldata\" style=\"width:350px\">".nf($arr['ship_costs_crystal'])." t</td>
+				echo "<tr>
 						<td class=\"tbldata\" style=\"width:200px\">Schutzschild</td>
 						<td class=\"tbldata\" style=\"width:250px\">".nf($arr['ship_shield'])."</td></tr>";
-						
-			echo "<tr><td class=\"tbldata\" style=\"width:100px\">".RES_ICON_PLASTIC."".RES_PLASTIC."</td>
-						<td class=\"tbldata\" style=\"width:350px\">".nf($arr['ship_costs_plastic'])." t</td>
+				echo "<tr>
 						<td class=\"tbldata\" style=\"width:200px\">Waffen</td>
 						<td class=\"tbldata\" style=\"width:250px\">".nf($arr['ship_weapon'])."</td></tr>";
-						
-			echo "<tr><td class=\"tbldata\" style=\"width:100px\">".RES_ICON_FUEL."".RES_FUEL."</td>
-						<td class=\"tbldata\" style=\"width:350px\">".nf($arr['ship_costs_fuel'])." t</td>
+				echo "<tr>
+						<td class=\"tbldata\" style=\"width:200px\">Heilung</td>
+						<td class=\"tbldata\" style=\"width:250px\">".nf($arr['ship_heal'])."</td></tr>";
+				echo "<tr>
 						<td class=\"tbldata\" style=\"width:200px\">Antriebstechnologie</td>
 						<td class=\"tbldata\">";
 						if (mysql_num_rows($vres)>0)
@@ -152,129 +180,51 @@
 							}
 						}
 	    			echo "</td></tr>";
-						
-						
-			echo "<tr><td class=\"tbldata\" style=\"width:100px\">".RES_ICON_FOOD."".RES_FOOD."</td>
-						<td class=\"tbldata\" style=\"width:350px\">".nf($arr['ship_costs_food'])." t</td>
-						<td class=\"tbldata\" style=\"width:200px\">Kapazität</td>
+				echo "<tr>
+						<td class=\"tbldata\" style=\"width:200px\">Laderaum</td>
 						<td class=\"tbldata\" style=\"width:250px\">".nf($arr['ship_capacity'])." t</td></tr>";
-						
-			echo "<tr><td class=\"tbldata\" style=\"width:100px\">".RES_ICON_FUEL."/100 AE</td>
-						<td class=\"tbldata\" style=\"width:350px\">".nf($arr['ship_fuel_use'])." t</td>
+				echo "<tr>
+						<td class=\"tbldata\" style=\"width:200px\">Passagierraum</td>
+						<td class=\"tbldata\" style=\"width:250px\">".nf($arr['ship_people_capacity'])."</td></tr>";
+				echo "<tr>
 						<td class=\"tbldata\" style=\"width:200px\">Geschwindigkeit</td>
 						<td class=\"tbldata\" style=\"width:250px\">".nf($arr['ship_speed']/FLEET_FACTOR_F)." AE/h</td></tr>";
-						
-			echo "<tr><td class=\"tbldata\" style=\"width:100px\">".RES_ICON_FUEL."Start</td>
-						<td class=\"tbldata\" style=\"width:350px\">".nf($arr['ship_fuel_use_launch'])." t</td>
+				echo "<tr>
 						<td class=\"tbldata\" style=\"width:200px\">Startdauer</td>
 						<td class=\"tbldata\" style=\"width:250px\">".tf($arr['ship_time2start']/FLEET_FACTOR_S)."</td></tr>";
-						
-			echo "<tr><td class=\"tbldata\" style=\"width:100px\">".RES_ICON_FUEL."Landung</td>
-						<td class=\"tbldata\" style=\"width:350px\">".nf($arr['ship_fuel_use_landing'])." t</td>
+				echo "<tr>
 						<td class=\"tbldata\" style=\"width:200px\">Landedauer</td>
 						<td class=\"tbldata\" style=\"width:275px\">".tf($arr['ship_time2land']/FLEET_FACTOR_L)."</td></tr>";
+				echo "</table>	    	
+	    	</td></tr>";
+
+			
+
 			
 			echo "<tr><td colspan=\"4\" style=\"height:30px;\"></td></tr>";
 			
-			echo "<tr><th class=\"tbltitle\" colspan=\"4\" style=\"text-align:center\">Spezialfähigkeiten</th></tr>";
-			$specials = array();
-
-				if ($arr['ship_colonialize']==1)
+			echo "<tr><th class=\"tbltitle\" colspan=\"4\" style=\"text-align:center\">Fähigkeiten</th></tr>";			
+			
+			$actions = explode(",",$arr['ship_actions']);
+			$accnt=0;
+			if (count($actions)>0)
+			{
+				echo "<tr><td colspan=\"4\"><table style=\"width:100%\">";
+				foreach ($actions as $i)
 				{
-					array_push($specials,"<tr><td class=\"tbldata\" colspan=\"2\" style=\"width:300px\">Kolonialisieren</td>
-								<td class=\"tbldata\" style=\"width:650px\" colspan=\"2\"><a href=\"?page=help&site=action&action=colonie\">Zur näheren Beschreibung hier klicken</a></td></tr>");
+					if ($ac = FleetAction::createFactory($i))
+					{
+						echo "<tr>
+							<td class=\"tbldata\" style=\"width:150px;\">".$ac."</td>
+							<td class=\"tbldata\">".$ac->desc()."</td>
+							<td class=\"tbldata\" style=\"width:150px;\" ><a href=\"?page=help&site=action&action=".$i."\">Details</a></td></tr>";
+							$accnt++;
+					}
 				}
-				
-				if ($arr['ship_invade']==1)
-				{
-					array_push($specials,"<tr><td class=\"tbldata\" colspan=\"2\" style=\"width:300px\">Invasieren</td>
-								<td class=\"tbldata\" style=\"width:650px\" colspan=\"2\"><a href=\"?page=help&site=action&action=invasion\">Zur näheren Beschreibung hier klicken</a></td></tr>");	
-				}
-				
-				if ($arr['ship_recycle']==1)
-				{
-					array_push($specials,"<tr><td class=\"tbldata\" colspan=\"2\" style=\"width:300px\">TrÃ¼mmer sammeln</td>
-								<td class=\"tbldata\" style=\"width:650px\" colspan=\"2\"><a href=\"?page=help&site=action&action=recycling\">Zur näheren Beschreibung hier klicken</a></td></tr>");	
-				}
-				
-				if ($arr['ship_nebula']==1)
-				{
-					array_push($specials,"<tr><td class=\"tbldata\" colspan=\"2\" style=\"width:300px\">Gas saugen</td>
-								<td class=\"tbldata\" style=\"width:650px\" colspan=\"2\"><a href=\"?page=help&site=action&action=nebula\">Zur näheren Beschreibung hier klicken</a></td></tr>");	
-				}
-				
-				if ($arr['ship_asteroid']==1)
-				{
-					array_push($specials,"<tr><td class=\"tbldata\" colspan=\"2\" style=\"width:300px\">Asteroiden sammeln</td>
-								<td class=\"tbldata\" style=\"width:650px\" colspan=\"2\"><a href=\"?page=help&site=action&action=asteroid\">Zur näheren Beschreibung hier klicken</a></td></tr>");	
-				}
-				
-				if ($arr['ship_antrax']==1)
-				{
-					array_push($specials,"<tr><td class=\"tbldata\" colspan=\"2\" style=\"width:300px\">Giftgasangriff</td>
-								<td class=\"tbldata\" style=\"width:650px\" colspan=\"2\"><a href=\"?page=help&site=action&action=giftgas\">Zur näheren Beschreibung hier klicken</a></td></tr>");	
-				}
-				
-				if ($arr['ship_forsteal']==1)
-				{
-					array_push($specials,"<tr><td class=\"tbldata\" colspan=\"2\" style=\"width:300px\">Technologie klauen</td>
-								<td class=\"tbldata\" style=\"width:650px\" colspan=\"2\"><a href=\"?page=help&site=action&action=tech_steal\">Zur näheren Beschreibung hier klicken</a></td></tr>");	
-				}
-				
-				if ($arr['ship_build_destroy']==1)
-				{
-					array_push($specials,"<tr><td class=\"tbldata\" colspan=\"2\" style=\"width:300px\">Bombardieren</td>
-								<td class=\"tbldata\" style=\"width:650px\" colspan=\"2\"><a href=\"?page=help&site=action&action=bomb\">Zur näheren Beschreibung hier klicken</a></td></tr>");	
-				}
-				
-				if ($arr['ship_tarned']==1)
-				{
-					array_push($specials,"<tr><td class=\"tbldata\" colspan=\"2\" style=\"width:300px\">Tarnangriff</td>
-								<td class=\"tbldata\" style=\"width:650px\" colspan=\"2\"><a href=\"?page=help&site=action&action=tarned\">Zur näheren Beschreibung hier klicken</a></td></tr>");	
-				}
-				
-				if ($arr['ship_fake']==1)
-				{
-					array_push($specials,"<tr><td class=\"tbldata\" colspan=\"2\" style=\"width:300px\">Fakeangriff</td>
-								<td class=\"tbldata\" style=\"width:650px\" colspan=\"2\"><a href=\"?page=help&site=action&action=fake\">Zur näheren Beschreibung hier klicken</a></td></tr>");	
-				}
-				
-				if ($arr['ship_heal']>0)
-				{
-					array_push($specials,"<tr><td class=\"tbldata\" colspan=\"2\" style=\"width:300px\">Heilt ".nf($arr['ship_heal'])." Punkte</td>
-								<td class=\"tbldata\" style=\"width:650px\" colspan=\"2\">In jeder Runde des Kampfes heilen die ".$arr['ship_name']." eine gewisse Menge an Strukturpunkten. Setze sie darum geziehlt ein, um deine Flotte ohne grosse Verluste wieder nach Hause zu bringen.</td></tr>");	
-				}
-				
-				if ($arr['ship_antrax_food']==1)
-				{
-					array_push($specials,"<tr><td class=\"tbldata\" colspan=\"2\" style=\"width:300px\">Antraxangriff</td>
-								<td class=\"tbldata\" style=\"width:650px\" colspan=\"2\"><a href=\"?page=help&site=action&action=antrax\">Zur näheren Beschreibung hier klicken</a></td></tr>");	
-				}
-				
-				if ($arr['ship_deactivade']==1)
-				{
-					array_push($specials,"<tr><td class=\"tbldata\" colspan=\"2\" style=\"width:300px\">Gebäude temporär deaktivieren (EMP)</td>
-								<td class=\"tbldata\" style=\"width:650px\" colspan=\"2\"><a href=\"?page=help&site=action&action=deactivate\">Zur näheren Beschreibung hier klicken</a></td></tr>");	
-				}
-				
-				if ($arr['ship_tf']==1)
-				{
-					array_push($specials,"<tr><td class=\"tbldata\" colspan=\"2\" style=\"width:300px\">Trümmerfeld erstellen</td>
-								<td class=\"tbldata\" style=\"width:650px\" colspan=\"2\">Dieses Schiff lÃ¤sst sich selbst explodieren, um beim Gegner ein kleines TrÃ¼mmerfeld zu erstellen. Du kannst dadurch schon vor dem Kampf deine TrÃ¼mmersammler losschicken, um sicher zu gehen, dass sofort nach dem Kampf das Trümmerfeld eingesammlet wird.</td></tr>");	
-				}
-				if ($arr['ship_analyze']==1)
-				{
-					array_push($specials,"<tr><td class=\"tbldata\" colspan=\"2\" style=\"width:300px\">Nebel/Asteroidenfelder erkunden</td>
-								<td class=\"tbldata\" style=\"width:650px\" colspan=\"2\"><a href=\"?page=help&site=action&action=analyze\">Zur n&#228;heren Beschreibung hier klicken</a></td></tr>");
-				}
-			if (sizeof($specials)>0)
-			{	
-				foreach ($specials as $sp)
-				{
-					echo $sp;
-				}
+				echo "</table>";
+				echo "</td></tr>";
 			}
-			else
+			if ($accnt==0)
 				echo "<tr><td class=\"tbldata\" colspan=\"4\" style=\"text-align:center\">Keine Spezialfähigkeit vorhanden!</td></tr>";
 		
 	    infobox_end(1);

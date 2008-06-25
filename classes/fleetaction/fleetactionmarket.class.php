@@ -1,17 +1,17 @@
 <?PHP
 
-	class FleetActionSpy extends FleetAction
+	class FleetActionMarket extends FleetAction
 	{
 
-		function FleetActionSpy()
+		function FleetActionMarket()
 		{
-			$this->code = "spy";
-			$this->name = "Ausspionieren";
-			$this->desc = "Sammelt Informationen über das Ziel";
+			$this->code = "market";
+			$this->name = "Marktlieferung";
+			$this->desc = "Bringt Waren und Schiffe vom Markt.";
 			
-			$this->attitude = 2;
+			$this->attitude = 1;
 			
-			$this->allowPlayerEntities = true;
+			$this->allowPlayerEntities = false;
 			$this->allowOwnEntities = false;
 			$this->allowNpcEntities = false;
 			$this->allowSourceEntity = false;
