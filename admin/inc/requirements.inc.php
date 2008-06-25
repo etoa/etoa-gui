@@ -186,6 +186,10 @@
 					$using_something=1;
 					echo "<tr><td colspan=\"4\" style=\"height:2px;background:#000\"></td></tr>";
 				}
+
+				if ($using_something==0)
+					echo "<tr><td colspan=\"4\" style=\"color:#f90\" class=\"tlbdata\">Keine Voraussetzungen</td></tr>";
+
 				
 				// Neue Gebäudeanforderung
 				echo "<tr>
@@ -219,16 +223,6 @@
 				<input type=\"submit\" class=\"button\" name=\"add_tech[".$arr[ITEM_ID_FLD]."]\" value=\"Hinzufügen\" /></td></tr>";
 
 
-				if ($using_something==0)
-					echo "<tr><td width=\"200\" class=\"tbldata\">&nbsp;</td><td colspan=\"2\" class=\"techtreeBuildingNoReq\">Keine Voraussetzungen</td></tr>";
-				if (isset($_GET['action']) && $_GET['action']!="new_building" && $_GET['action']!="new_tech")
-				{
-					echo "<tr>
-						<td class=\"tbldata\">Neue Voraussetzung?</td>";
-					echo "<td class=\"tbldata\" colspan=\"2\">
-						<input type=\"button\" class=\"button\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;action=new_building&amp;id=".$arr[ITEM_ID_FLD]."';\" value=\"Geb&auml;ude\" />&nbsp;";
-					echo "<input type=\"button\" class=\"button\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;action=new_tech&amp;id=".$arr[ITEM_ID_FLD]."';\" value=\"Forschung\" /></tr>";
-				}
 				echo "</table>
 				</form><br/>";
 			}

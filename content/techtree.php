@@ -34,7 +34,7 @@
 	if(isset($_GET['mode']) && $_GET['mode']!="") 
 		$mode=$_GET['mode']; 
 	else 
-		$mode="buildings";
+		$mode="";
 	
 
 	if ($mode=="tech")
@@ -104,7 +104,7 @@
 		define('NO_ITEMS_MSG',"In dieser Kategorie gibt es keine Raketen!");
 		define('HELP_URL',"?page=help&site=missiles");
 	}	
-	else
+	elseif ($mode=="buildings")
 	{
 		define('ITEMS_TBL',"buildings");
 		define('TYPES_TBL',"building_types");
@@ -126,6 +126,24 @@
 
 	if (isset($cp))
 	{
+		
+		// Daten anzeigen
+		echo "<h1>Technikbaum des Planeten ".$cp->name()."</h1>";
+
+		// Tab-Navigation anzeigen
+		show_tab_menu("mode",array(
+		""=>"Grafik",
+		"buildings"=>"Geb&auml;ude",
+		"tech"=>"Technologien",
+		"ships"=>"Schiffe",
+		"defense"=>"Verteidigung",
+		"missiles"=>"Raketen"
+		));
+		echo "<br>";	
+		
+		if ($mode!="")
+		{	
+		
 		//
 		// Läd alle benötigten Daten
 		//
@@ -219,18 +237,6 @@
 			if ($rarr['req_req_building_id']>0) $b_req[$rarr[REQ_ITEM_FLD]]['b'][$rarr['req_req_building_id']]=$rarr['req_req_building_level'];
 			if ($rarr['req_req_tech_id']>0) $b_req[$rarr[REQ_ITEM_FLD]]['t'][$rarr['req_req_tech_id']]=$rarr['req_req_tech_level'];
 		}
-
-		// Daten anzeigen
-		echo "<h1>Technikbaum des Planeten ".$cp->name()."</h1>";
-
-		// Tab-Navigation anzeigen
-		show_tab_menu("mode",array("buildings"=>"Geb&auml;ude",
-		"tech"=>"Technologien",
-		"ships"=>"Schiffe",
-		"defense"=>"Verteidigung",
-		"missiles"=>"Raketen"
-		));
-		echo "<br>";
 
 		// Wenn Kategorien vorhanden sind (Gebäude, Forschungen)
 		if (defined("TYPES_TBL") && defined("ITEM_TYPE_FLD") && defined("TYPE_ORDER_FLD"))
@@ -559,6 +565,56 @@
 			else
 				echo "<tr><td align=\"center\" colspan=\"3\" class=\"tbldata\">".NO_ITEMS_MSG."</td></tr>";
 			infobox_end(1);
+	}
+	
+	}
+	else
+	{
+		$starItem = 6;
+		
+		echo "<select onchange=\"xajax_reqInfo(this.value,'b')\">
+		<option value=\"0\">Gebäude wählen...</option>";
+		$bures = dbquery("SELECT building_id,building_name FROM buildings WHERE building_show=1 ORDER BY building_name;");
+		while ($buarr = mysql_fetch_array($bures))
+		{
+			echo "<option value=\"".$buarr['building_id']."\">".$buarr['building_name']."</option>";
+		}
+		echo "</select> ";
+		
+				
+		echo "<select onchange=\"xajax_reqInfo(this.value,'t')\">
+		<option value=\"0\">Technologie wählen...</option>";
+		$teres = dbquery("SELECT tech_id,tech_name FROM technologies WHERE tech_show=1 ORDER BY tech_name;");
+		while ($tearr = mysql_fetch_array($teres))
+		{
+			echo "<option value=\"".$tearr['tech_id']."\">".$tearr['tech_name']."</option>";
+		}	
+		echo "</select> ";
+	
+		echo "<select onchange=\"xajax_reqInfo(this.value,'s')\">
+		<option value=\"0\">Schiff wählen...</option>";
+		$teres = dbquery("SELECT ship_id,ship_name FROM ships WHERE ship_show=1 AND special_ship=0 ORDER BY ship_name;");
+		while ($tearr = mysql_fetch_array($teres))
+		{
+			echo "<option value=\"".$tearr['ship_id']."\">".$tearr['ship_name']."</option>";
+		}	
+		echo "</select> ";
+		
+		echo "<select onchange=\"xajax_reqInfo(this.value,'d')\">
+		<option value=\"0\">Verteidigung wählen...</option>";
+		$teres = dbquery("SELECT def_id,def_name FROM defense WHERE def_show=1 ORDER BY def_name;");
+		while ($tearr = mysql_fetch_array($teres))
+		{
+			echo "<option value=\"".$tearr['def_id']."\">".$tearr['def_name']."</option>";
+		}			
+		echo "</select><br/><br/>";
+		
+		echo "<div id=\"reqInfo\" style=\"width:650px;text-align:center;;margin-left:10px;padding:10px;
+		background:#fff;color:#000;border:1px solid #000\">
+		Bitte warten...
+		</div>";	
+		echo '<script type="text/javascript">xajax_reqInfo('.$starItem.',"b")</script>';
+		
 	}
 }
 ?>

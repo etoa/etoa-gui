@@ -38,6 +38,10 @@
 		{
 			require_once("inc/xajax/market.xajax.php");
 		}
+		elseif ($page=="techtree")
+		{
+			require_once("inc/xajax/techtree.xajax.php");
+		}		
 	}	
 		
 	if (isset($index))

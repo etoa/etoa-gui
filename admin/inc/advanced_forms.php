@@ -195,6 +195,10 @@
 		if (!mysql_error())
 		{
 			echo "<table width=\"100%\" cellpadding=\"3\" cellspacing=\"1\" align=\"center\"><tr>";
+			if (defined('DB_IMAGE_PATH'))
+			{
+				echo "<th valign=\"top\" class=\"tbltitle\">Bild</a>";
+			}			
 			foreach ($db_fields as $k=>$a)
 			{
 				if ($a['show_overview']==1)

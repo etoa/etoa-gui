@@ -458,6 +458,9 @@
 			{
 				switch ($a['type'])
 				{
+					case "readonly":
+	 					echo "<td class=\"tbldata\">".$arr[$a['name']]."</td>";
+					break;					
 					case "text":
 	 					echo "<td class=\"tbldata\">".$arr[$a['name']]."</td>";
 					break;
@@ -515,6 +518,9 @@
 	 					}
 	 					echo "</td>";
 					break;
+					default:
+	 					echo "<td class=\"tbldata\">".$arr[$a['name']]."</td>";
+					break;					
 				}
 			}
 		}
