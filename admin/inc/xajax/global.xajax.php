@@ -978,8 +978,14 @@ function reqInfo($id)
 	{
 		$bu_name[$buarr['building_id']]=$buarr['building_name'];
 	}		
+	$teres = dbquery("SELECT tech_id,tech_name FROM technologies;");
+	while ($tearr = mysql_fetch_array($teres))
+	{
+		$te_name[$tearr['tech_id']]=$tearr['tech_name'];
+	}	
+	
 
-	$res = dbquery("SELECT * FROM building_requirements WHERE req_building_id=".$id.";");
+	$res = dbquery("SELECT * FROM building_requirements WHERE req_building_id=".$id." AND req_req_building_level>0;");
 	$nr = mysql_num_rows($res);
 	if ($nr>0)
 	{
@@ -1002,9 +1008,33 @@ function reqInfo($id)
 			}
 		}
 		echo "</tr></table>";
-		echo "<br/>wird benötigt für<br/><br/>";		
+	}
+	$res = dbquery("SELECT * FROM building_requirements WHERE req_building_id=".$id." AND req_req_tech_level>0;");
+	$nr2 = mysql_num_rows($res);
+	if ($nr2>0)
+	{
+		echo "<table style=\"margin:0px auto;\"><tr>";
+		$cnt=0;
+		while($arr=mysql_fetch_assoc($res))
+		{
+			echo "<td>
+			<img src=\"".IMAGE_PATH."/technologies/technology".$arr['req_req_tech_id']."_small.".IMAGE_EXT."\" align=\"middle\"/>
+			<br/>
+	 		<b>".$te_name[$arr['req_req_tech_id']]."</b><br/>
+	 		Stufe ".$arr['req_req_tech_level']."			
+			</td>";
+			$cnt++;
+			if ($cnt==3)
+			{
+				echo "</tr><tr>";
+				$cnt=0;
+			}
+		}
+		echo "</tr></table>";
 	}
 
+	if ($nr>0 || $nr2>0)
+		echo "<br/>wird benötigt für<br/><br/>";		
 
 	
 	echo "<div style=\"border:1px solid black;padding:5px;\"><img src=\"".IMAGE_PATH."/buildings/building".$id."_small.".IMAGE_EXT."\" align=\"middle\"/><br/>
@@ -1035,6 +1065,7 @@ function reqInfo($id)
 			
 		}
 		echo "</tr></table>";
+	
 	}
 	
 	$out=ob_get_clean();
