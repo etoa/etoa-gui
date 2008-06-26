@@ -52,8 +52,8 @@ if ($_GET['id']!="")
 
 		infobox_start(text2html($arr['building_name']),1);
 		echo "<tr>
-			<td class=\"tbltitle\" width=\"220\" rowspan=\"2\">
-				<img src=\"".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$arr['building_id'].".".IMAGE_EXT."\" style=\"width:220px;height:220px;\" alt=\"Bild ".$arr['building_name']."\" />
+			<td class=\"tbltitle\" style=\"width:220px;background:#000;padding:0px;\" rowspan=\"2\">
+				<img src=\"".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$arr['building_id'].".".IMAGE_EXT."\" style=\"width:220px;height:220px;background:#000;margin:0px;\" align=\"top\" alt=\"Bild ".$arr['building_name']."\" />
 			</td>
 			<td class=\"tbldata\" colspan=\"2\">
 				<div align=\"justify\">".text2html($arr['building_longcomment'])."</div>
@@ -417,7 +417,7 @@ elseif($_GET['type_id']>0)
 		echo "Du kannst auf einem Planeten nicht unentlich viele Rohstoffe lagern. Jeder Planet hat eine Lagerkapazit&auml;t von ".intval($conf['def_store_capacity']['v']).". Um die Lagerkapazit&auml;t zu erh&ouml;hen, kannst du eine Planetenbasis und danach verschiedene Speicher, Lagerhallen und Silos bauen, welche die Kapazit&auml;t erh&ouml;hen. Wenn eine Zahl in der Rohstoffanzeige rot gef&auml;rbt ist, bedeutet das, dass dieser Rohstoff die Lagerkapazit&auml;t &uuml;berschreitet. Baue in diesem Fall den Speicher aus. Eine &uuml;berschrittene Lagerkapazit&auml;t bedeutet, dass nichts mehr produziert wird, jedoch werden Rohstoffe, die z.B. mit einer Flotte ankommen, trotzdem auf dem Planeten gespeichert.<br>";
 		echo "</div>";
 		infobox_end();
-		echo "Klicke <a href=\"?page=ressources\">hier</a> um zu der Speicher&uuml;bersicht des aktuellen Planeten zu gelangen.";
+		echo "Klicke <a href=\"?page=economy\">hier</a> um zu der Speicher&uuml;bersicht des aktuellen Planeten zu gelangen.";
 	}
 	elseif($_GET['type_id']==BUILDING_POWER_CAT)
 	{
@@ -428,7 +428,7 @@ elseif($_GET['type_id']>0)
 		Hat es zu wenig Energie, wird die Produktion prozentual gedrosselt, was verheerende Auswirkungen haben kann!";
 		echo "</div>";
 		infobox_end();
-		echo "Klicke <a href=\"?page=ressources\">hier</a> um zu der Energie&uuml;bersicht des aktuellen Planeten zu gelangen.";
+		echo "Klicke <a href=\"?page=economy\">hier</a> um zu der Energie&uuml;bersicht des aktuellen Planeten zu gelangen.";
 	}
 	elseif($_GET['type_id']==BUILDING_GENERAL_CAT)
 	{
@@ -447,7 +447,7 @@ elseif($_GET['type_id']>0)
 		echo "Diese Geb&auml;ude liefern Rohstoffe, welche du f&uuml;r den Aufbau deiner Zivilisation brauchst.";
 		echo "</div>";
 		infobox_end();
-		echo "Klicke <a href=\"?page=ressources\">hier</a> um zu der Produktions&uuml;bersicht des aktuellen Planeten zu gelangen.";
+		echo "Klicke <a href=\"?page=economy\">hier</a> um zu der Produktions&uuml;bersicht des aktuellen Planeten zu gelangen.";
 	}
 	else
 	{
@@ -502,7 +502,10 @@ else
 				infobox_start(text2html($tarr['type_name'])." [<a href=\"?page=$page&amp;site=$site&amp;type_id=".$tarr['type_id']."\">info</a>]",1);
 				while ($arr = mysql_fetch_array($res))
 				{
-					echo "<tr><td class=\"tbldata\" style=\"width:40px\" ".tm("Info","Klicke auf das Bild f&uuml;r Details")."><a href=\"?page=$page&site=$site&id=".$arr['building_id']."\"><img src=\"".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$arr['building_id']."_small.".IMAGE_EXT."\" style=\"width:40px;height:40px;\" alt=\"Bild ".text2html($arr['building_name'])."\" border=\"0\"/></a></td>";
+					echo "<tr>
+						<td class=\"tbltitle\" style=\"width:40px;padding:0px;\" ".tm("Info","Klicke auf das Bild f&uuml;r Details").">
+							<a href=\"?page=$page&site=$site&id=".$arr['building_id']."\">
+								<img src=\"".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$arr['building_id']."_small.".IMAGE_EXT."\" align=\"top\" style=\"width:40px;height:40px;background:#000;margin:0px;\" alt=\"Bild ".text2html($arr['building_name'])."\" border=\"0\"/></a></td>";
 					echo "<th class=\"tbltitle\" style=\"width:160px\" ".tm("Info","Klicke auf das Bild f&uuml;r Details").">".text2html($arr['building_name'])."</th>";
 					echo "<td class=\"tbldata\" ".tm(text2html($arr['building_name']),text2html($arr['building_longcomment'])).">".text2html($arr['building_shortcomment'])."</td>";
 					echo "<td class=\"tbldata\" style=\"width:90px\" ".tm("Info","Ben&ouml;tigte Felder pro Stufe").">";

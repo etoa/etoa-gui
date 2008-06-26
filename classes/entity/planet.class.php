@@ -188,7 +188,23 @@
 
     public function allowedFleetActions()
     {
-    	$arr = array("transport","fetch","position","attack","spy");
+    	$arr = array();
+    	if ($this->ownerId()>0)
+			{
+				$arr[] = "transport";
+				$arr[] = "fetch";
+				$arr[] = "position";
+				$arr[] = "attack";
+				$arr[] = "spy";
+				$arr[] = "invade";
+				$arr[] = "spyattack";
+				$arr[] = "stealthattack";
+				$arr[] = "fakeattack";
+				$arr[] = "bombard";
+				$arr[] = "antrax";
+				$arr[] = "gasattack";
+				$arr[] = "createdebris";
+			}
     	if ($this->ownerId()==0 && $this->habitable)
     		$arr[] = "colonize";
     	if ($this->debrisField)	

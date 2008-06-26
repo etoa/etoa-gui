@@ -37,7 +37,7 @@
 
     public function allowedFleetActions()
     {
-    	return array("flight");
+    	return array("flight","explore");
     }
 
 		/**

@@ -31,7 +31,7 @@
 
     public function allowedFleetActions()
     {
-    	return array("collectmetal","analyze","flight");
+    	return array("collectmetal","analyze","flight","explore");
     }
 
 

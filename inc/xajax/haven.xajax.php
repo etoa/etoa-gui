@@ -75,7 +75,7 @@
 			    echo "<tr>
 			    	<td style=\"width:40px;background:#000;\">
 			    		<a href=\"?page=ship_upgrade&amp;id=".$arr['ship_id']."\">
-			    			<img src=\"".IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$arr['ship_id']."_small.".IMAGE_EXT."\" width=\"40\" height=\"40\" alt=\"Ship\" border=\"0\"/>
+			    			<img src=\"".IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$arr['ship_id']."_small.".IMAGE_EXT."\" align=\"top\" width=\"40\" height=\"40\" alt=\"Ship\" border=\"0\"/>
 			    		</a>
 			    	</td>";
 				}
@@ -84,7 +84,7 @@
 			    echo "<tr>
 			    	<td style=\"width:40px;background:#000;\">
 			    		<a href=\"?page=help&amp;site=shipyard&amp;id=".$arr['ship_id']."\">
-			    			<img src=\"".IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$arr['ship_id']."_small.".IMAGE_EXT."\" width=\"40\" height=\"40\" alt=\"Ship\" border=\"0\"/>
+			    			<img src=\"".IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$arr['ship_id']."_small.".IMAGE_EXT."\" align=\"top\" width=\"40\" height=\"40\" alt=\"Ship\" border=\"0\"/>
 			    		</a>
 			    	</td>";
 				}
@@ -285,6 +285,22 @@
 					{
 						echo "<tr><td colspan=\"5\">Schnellere Schiffe nehmen im Flottenverband automatisch die Geschwindigkeit des langsamsten Schiffes an, sie brauchen daf&uuml;r aber auch entsprechend weniger Treibstoff!</td></tr>";
 					}
+					
+					/*
+					echo "<tr><td colspan=\"5\">Mögliche Aktionen: ";
+					$cnt=0;
+					$shipAcCnt = count($fleet->shipActions);
+					foreach ($fleet->shipActions as $ac)
+					{
+						$action = FleetAction::createFactory($ac);
+						echo $action;
+						if ($cnt< $shipAcCnt-1)
+							echo ", ";
+						$cnt++;
+					}
+					echo "</td></tr>";
+					*/
+					
 					echo "</table><br/>";					
 					$response->assign("havenContentShips","innerHTML",ob_get_contents());				
 					ob_end_clean();		
@@ -553,31 +569,15 @@
 						<th colspan=\"2\">Ladung</th>
 					</tr>";
 					echo "<tr><td rowspan=\"8\">";
-					$actions = FleetAction::getAll();
 					
 					$actionsAvailable = 0;
-					foreach ($actions as $ai)
+					foreach ($fleet->getAllowedActions() as $ac)
 					{
-						// Source and target the same
-						if (
-						($fleet->sourceEntity->id() == $fleet->targetEntity->id() && $ai->allowSourceEntity()) || 
-						($fleet->sourceEntity->ownerId() == $fleet->targetEntity->ownerId() && $fleet->sourceEntity->id() != $fleet->targetEntity->id() && $ai->allowOwnEntities()) ||
-						($fleet->sourceEntity->ownerId() != $fleet->targetEntity->ownerId() && $fleet->targetEntity->ownerId()>0 && $ai->allowPlayerEntities()) ||
-						($fleet->targetEntity->ownerId() == 0 && $ai->allowNpcEntities()) 
-						)
-						{
-							if (in_array($ai->code(),$fleet->targetEntity->allowedFleetActions()))
-							{
-								echo "<input type=\"radio\" name=\"fleet_action\" value=\"".$ai->code()."\"";
-								if ($actionsAvailable == 0)
-									echo " checked=\"checked\"";
-								echo " /> 
-								<span style=\"font-weight:bold;color:".FleetAction::$attitudeColor[$ai->attitude()]."\">".$ai->name()."</span> ".$ai->desc()."<br/>";
-								$actionsAvailable++;
-							}
-						}
-						
-						
+						echo "<input type=\"radio\" name=\"fleet_action\" value=\"".$ac->code()."\"";
+						if ($actionsAvailable == 0)
+							echo " checked=\"checked\"";
+						echo " /><span ".tm($ac->name(),$ac->desc())."> ".$ac."</span><br/>";
+						$actionsAvailable++;
 					}
 					if ($actionsAvailable==0)
 					{
@@ -743,7 +743,7 @@
 	}
 	
 	/**
-	*
+	* Shows information about the target
 	*/
 	function havenTargetInfo($form)
 	{
@@ -796,7 +796,24 @@
 				$response->assign('targetinfo','style.background',"#f00");
 			}	
 			$response->assign('targetinfo','innerHTML',ob_get_contents());
-			ob_end_clean();
+			ob_end_clean(); 
+
+			/*
+			ob_start();
+			echo "Erlaubte Aktionen: ";
+			$cnt=0;
+			$entAcCnt = count($ent->allowedFleetActions());
+			foreach ($ent->allowedFleetActions() as $ac)
+			{
+				$action = FleetAction::createFactory($ac);
+				echo $action;
+				if ($cnt < $entAcCnt -1)
+					echo ", ";
+				$cnt++;
+			}
+			$response->assign('comment','innerHTML',ob_get_clean());
+			*/
+			
 		}
 	  return $response;					
 	}

@@ -56,6 +56,7 @@
 				$this->shipsFixed=false;
 				$this->resources = array();
 
+				$this->shipActions = array();
 		}
 		
 		function addShip($sid,$cnt)
@@ -87,6 +88,9 @@
 					"name" => $arr['ship_name'],
 					"pilots" => $arr['ship_pilots'] * $cnt					
 					);
+		
+					$this->shipActions = array_merge($this->shipActions,explode(",",$arr['ship_actions']));
+					$this->shipActions = array_unique($this->shipActions);
 		
 					// Set global speed
 					if ($this->speed <= 0)
@@ -122,6 +126,36 @@
 				}
 			}
 		}
+		
+		/**
+		* 
+		*/
+		function getAllowedActions()
+		{
+			// Get possible actions by intersecting ship actions and allowed target actions
+			$actions = array_intersect($this->shipActions,$this->targetEntity->allowedFleetActions());
+			$actionObjs = array();
+			
+			// Test each possible action
+			foreach ($actions as $i)
+			{
+				$ai = FleetAction::createFactory($i);
+
+				// Permission checks
+				if (
+				($this->sourceEntity->id() == $this->targetEntity->id() && $ai->allowSourceEntity()) || 
+				($this->sourceEntity->ownerId() == $this->targetEntity->ownerId() && $this->sourceEntity->id() != $this->targetEntity->id() && $ai->allowOwnEntities()) ||
+				($this->sourceEntity->ownerId() != $this->targetEntity->ownerId() && $this->targetEntity->ownerId()>0 && $ai->allowPlayerEntities()) ||
+				($this->targetEntity->ownerId() == 0 && $ai->allowNpcEntities()) 
+				)
+				{
+					$actionObjs[] = $ai;
+				}
+			}
+								
+			return $actionObjs;			
+		}
+		
 		
 		function resetShips()
 		{	
