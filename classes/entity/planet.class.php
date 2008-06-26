@@ -74,7 +74,13 @@
 					$ures = dbquery("
 					SELECT
 						user_nick,
-						user_race_id
+						user_race_id,
+						user_points,
+						user_hmode_from,
+						user_hmode_to,
+            user_blocked_from,
+            user_blocked_to,
+            user_alliance_id
 					FROM
 						users
 					WHERE
@@ -83,11 +89,19 @@
 					$uarr = mysql_Fetch_row($ures);
 					$this->owner = $uarr[0];
 					$this->ownerRaceId = $uarr[1];
+					$this->ownerPoints = $uarr[2];
+					$this->ownerHoliday = ($uarr[3]!=0 && $uarr[4]!=0) ? true : false;
+					$this->ownerLocked = ($uarr[5]< time() && $uarr[6] > time()) ? true : false;
+					$this->ownerAlliance = $uarr[7];
 				}
 				else
 				{
 					$this->owner = "Niemand";	
 					$this->ownerRaceId = 0;
+					$this->ownerPoints = 0;
+					$this->ownerHoliday = false;
+					$this->ownerLocked = false;
+					$this->ownerAlliance = false;
 				}
 				
 				
@@ -553,7 +567,12 @@
 		function resFood() { return $this->resFood; }
 		function usePower() { return $this->usePower; }
 		function people() { return $this->people; }
-		
+
+		function ownerPoints() { return $this->ownerPoints; }
+		function ownerHoliday() { return $this->ownerHoliday; }
+		function ownerLocked() { return $this->ownerLocked; }
+		function ownerAlliance() { return $this->ownerAlliance; }
+					
 		function chgPeople($diff)
 		{
 	    $this->people+=$diff;

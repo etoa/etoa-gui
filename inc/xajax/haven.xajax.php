@@ -19,6 +19,53 @@
 	{
 		$response = new xajaxResponse();
 		ob_start();
+
+		$fleet = unserialize($_SESSION['haven']['fleetObj']);			
+
+		// Infobox
+  	infobox_start("Hafen-Infos",1);
+  		
+		// Flotten unterwegs
+  	echo "<tr><th class=\"tbltitle\">Aktive Flotten:</th><td class=\"tbldata\">";
+		if ($fleet->fleetSlotsUsed() > 1)
+			echo "<b>".$fleet->fleetSlotsUsed()."</b> Flotten dieses Planeten sind <a href=\"?page=fleets\">unterwegs</a>.";
+		elseif ($fleet->fleetSlotsUsed()==1)
+			echo "<b>Eine</b> Flotte dieses Planeten ist <a href=\"?page=fleets\">unterwegs</a>.";
+		else
+			echo "Es sind <b>keine</b> Flotten dieses Planeten unterwegs.";
+		echo "</td></tr>";
+	
+		// Flotten startbar?
+  	echo "<tr><th class=\"tbltitle\">Flottenstart:</th><td class=\"tbldata\">";
+		if ($fleet->possibleFleetStarts() > 1 )
+			echo "<b>".$fleet->possibleFleetStarts()."</b> Flotten k&ouml;nnen von diesem Planeten starten!";
+		elseif ($fleet->possibleFleetStarts()==1 )
+			echo "<b>Eine</b> Flotte kann von diesem Planeten starten!";
+		else
+			echo "Es k&ouml;nnen <b>keine</b> Flotten von diesem Planeten starten!";
+		echo " (Flottenkontrolle Stufe ".$fleet->fleetControlLevel().")</td></tr>";
+	
+		// Piloten		
+  	echo "<tr><th class=\"tbltitle\">Piloten:</th><td class=\"tbldata\">";
+		if ($fleet->pilotsAvailable() >1)
+			echo "<b>".$fleet->pilotsAvailable()."</b> Piloten k&ouml;nnen eingesetzt werden.";
+		elseif ($fleet->pilotsAvailable()==1)
+			echo "<b>Ein</b> Pilot kann eingesetzt werden.";
+		else
+			echo "Es sind <b>keine</b> Piloten verf&uuml;gbar.";
+		echo "</td></tr>";
+				
+		// Rasse		
+		if ($fleet->raceSpeedFactor() != 1)
+		{
+			echo "<tr><th class=\"tbltitle\">Piloten:</th><td class=\"tbldata\">";
+			echo "Die Schiffe fliegen aufgrund deiner Rasse <b>".$cu->raceName()."</b> mit ".get_percent_string($cu->raceSpeedFactor(),1)." Geschwindigkeit!";
+			echo "</td></tr>";
+		}
+		infobox_end(1);
+	
+	
+	
 						
 		// Schiffe auflisten
 		$res = dbquery("
@@ -30,8 +77,8 @@
 		  ships AS s
 		ON
 	    s.ship_id=sl.shiplist_ship_id
-			AND sl.shiplist_user_id='".$_SESSION['haven']['user_id']."'
-			AND sl.shiplist_planet_id='".$_SESSION['haven']['planet_id']."'
+			AND sl.shiplist_user_id='".$fleet->ownerId()."'
+			AND sl.shiplist_planet_id='".$fleet->sourceEntity->Id()."'
 	    AND sl.shiplist_count>0
 		ORDER BY
 			s.special_ship DESC,
@@ -40,7 +87,6 @@
 
 		if (mysql_num_rows($res)!=0)
 		{
-			$fleet = unserialize($_SESSION['haven']['fleetObj']);			
 			$ships = $fleet->getShips();
 						
 	    $tabulator=1;
@@ -106,15 +152,15 @@
             AND ship_requirements.req_req_tech_id=technologies.tech_id
             AND technologies.tech_id=techlist.techlist_tech_id
             AND techlist.techlist_tech_id=ship_requirements.req_req_tech_id
-            AND techlist.techlist_user_id=".$_SESSION['haven']['user_id']."
+            AND techlist.techlist_user_id=".$fleet->ownerId()."
         GROUP BY
             ship_requirements.req_id;");
-        if ($_SESSION['haven']['race_speed_factor']!=1)
-            $speedtechstring="Rasse: ".get_percent_string($_SESSION['haven']['race_speed_factor'],1)."<br>";
+        if ($fleet->raceSpeedFactor()!=1)
+            $speedtechstring="Rasse: ".get_percent_string($fleet->raceSpeedFactor(),1)."<br>";
         else
             $speedtechstring="";
 
-        $timefactor=$_SESSION['haven']['race_speed_factor'];
+        $timefactor=$fleet->raceSpeedFactor();
         if (mysql_num_rows($vres)>0)
         {
             while ($varr=mysql_fetch_array($vres))
@@ -141,7 +187,7 @@
 	      
 	      echo "</td>";
 	      echo "<td width=\"110\">";
-	      if ($arr['ship_launchable']==1 && $_SESSION['haven']['people_available']>$arr['ship_pilots'])
+	      if ($arr['ship_launchable']==1 && $fleet->pilotsAvailable() > $arr['ship_pilots'])
 	      {
 	      	echo "<input type=\"text\" 
 	      		id=\"ship_count_".$arr['ship_id']."\" 
@@ -177,7 +223,7 @@
 			infobox_end(1);
 		
 			// Show buttons if possible
-			if ($_SESSION['haven']['fleets_start_possible']>0)
+			if ($fleet->possibleFleetStarts() > 0)
 			{
 				if ($launchable>0)
 				{
@@ -246,14 +292,9 @@
 				}
 			}
 			
-			// Check if ships are selected
-			if ($fleet->getShipCount() >0)
+			// Check if there are enough people
+			if ($fleet->fixShips())
 			{
-				$fleet->fixShips();
-				
-				// Check if there are enough people
-				if ($_SESSION['haven']['people_available'] >= $fleet->getPilots())
-				{
 					//
 					// Show ships in fleet
 					//
@@ -468,15 +509,10 @@
 					
 					ob_end_clean();				
 					
-				}
-				else
-				{
-					$response->alert("Fehler! Nicht genügend Piloten (".$_SESSION['haven']['people_available']." verfügbar, ".$_SESSION['haven']['fleet']['pilots']." benötigt)!");
-				}		
 			}
 			else
 			{
-				$response->alert("Fehler! Keine Schiffe ausgewählt!");
+				$response->alert($fleet->error());
 			}		
 		}
 		else
@@ -523,115 +559,118 @@
 				$arr=mysql_fetch_row($res);
 				$ent = Entity::createFactory($arr[1],$arr[0]);
 				
-				$fleet->setTarget($ent);
-				$fleet->setSpeedPercent($form['speed_percent']);
-							
-				if ($fleet->sourceEntity->resFuel() >= $fleet->getCosts())
-				{							
-
-					//
-					// Target infos
-					//	
-					ob_start();
-					echo "<table class=\"tb\">";
-					echo "<tr>
-						<th colspan=\"2\">Zielinfos</th>
-					</tr>";
-					echo "<tr><td width=\"25%\"><b>Ziel-Informationen:</b></td>
-						<td class=\"tbldata\" id=\"targetinfo\" style=\"padding:16px 2px 2px 60px;color:#fff;height:47px;background:#000 url('".$ent->imagePath()."') no-repeat 3px 3px;\">
-							".$ent." (".$ent->entityCodeString().", Besitzer: ".$ent->owner().")
-						</td></tr>";
-					echo "<tr>
-						<td class=\"tbltitle\" width=\"25%\">Speedfaktor:</td>
-						<td class=\"tbldata\" width=\"75%\" align=\"left\">";
-					echo $fleet->getSpeedPercent();
-					echo "%</td></tr>";
-					echo "<tr><td class=\"tbltitle\">Entfernung:</td>
-						<td id=\"distance\">".nf($fleet->getDistance())." AE</td></tr>";
-					echo "<tr><td class=\"tbltitle\">Dauer:</td>
-						<td><span id=\"duration\" style=\"font-weight:bold;\">".tf($fleet->getDuration())."</span></td></tr>";
-					echo "<tr><td class=\"tbltitle\">Treibstoff:</td>
-						<td><span id=\"costs\" style=\"font-weight:bold;\">".nf($fleet->getCosts())." t ".RES_FUEL."</span></td></tr>";
-					echo "</table><br/>";			
-					
-					$response->assign("havenContentTarget","innerHTML",ob_get_contents());				
-					$response->assign("havenContentTarget","style.display",'');			
-					ob_end_clean();
-					
-					//
-					// Action chooser
-					//						
-					ob_start();
-					echo "<form id=\"actionForm\">";
-					echo "<table class=\"tb\">";
-					echo "<tr>
-						<th>Aktionswahl</th>
-						<th colspan=\"2\">Ladung</th>
-					</tr>";
-					echo "<tr><td rowspan=\"8\">";
-					
-					$actionsAvailable = 0;
-					foreach ($fleet->getAllowedActions() as $ac)
-					{
-						echo "<input type=\"radio\" name=\"fleet_action\" value=\"".$ac->code()."\"";
-						if ($actionsAvailable == 0)
-							echo " checked=\"checked\"";
-						echo " /><span ".tm($ac->name(),$ac->desc())."> ".$ac."</span><br/>";
-						$actionsAvailable++;
+				if ($fleet->setTarget($ent,$form['speed_percent']))
+				{
+												
+					if ($fleet->checkTarget())
+					{							
+	
+						//
+						// Target infos
+						//	
+						ob_start();
+						echo "<table class=\"tb\">";
+						echo "<tr>
+							<th colspan=\"2\">Zielinfos</th>
+						</tr>";
+						echo "<tr><td width=\"25%\"><b>Ziel-Informationen:</b></td>
+							<td class=\"tbldata\" id=\"targetinfo\" style=\"padding:16px 2px 2px 60px;color:#fff;height:47px;background:#000 url('".$ent->imagePath()."') no-repeat 3px 3px;\">
+								".$ent." (".$ent->entityCodeString().", Besitzer: ".$ent->owner().")
+							</td></tr>";
+						echo "<tr>
+							<td class=\"tbltitle\" width=\"25%\">Speedfaktor:</td>
+							<td class=\"tbldata\" width=\"75%\" align=\"left\">";
+						echo $fleet->getSpeedPercent();
+						echo "%</td></tr>";
+						echo "<tr><td class=\"tbltitle\">Entfernung:</td>
+							<td id=\"distance\">".nf($fleet->getDistance())." AE</td></tr>";
+						echo "<tr><td class=\"tbltitle\">Dauer:</td>
+							<td><span id=\"duration\" style=\"font-weight:bold;\">".tf($fleet->getDuration())."</span></td></tr>";
+						echo "<tr><td class=\"tbltitle\">Treibstoff:</td>
+							<td><span id=\"costs\" style=\"font-weight:bold;\">".nf($fleet->getCosts())." t ".RES_FUEL."</span></td></tr>";
+						echo "</table><br/>";			
+						
+						$response->assign("havenContentTarget","innerHTML",ob_get_contents());				
+						$response->assign("havenContentTarget","style.display",'');			
+						ob_end_clean();
+						
+						//
+						// Action chooser
+						//						
+						ob_start();
+						echo "<form id=\"actionForm\">";
+						echo "<table class=\"tb\">";
+						echo "<tr>
+							<th>Aktionswahl</th>
+							<th colspan=\"2\">Ladung</th>
+						</tr>";
+						echo "<tr><td rowspan=\"8\">";
+						
+						$actionsAvailable = 0;
+						foreach ($fleet->getAllowedActions() as $ac)
+						{
+							echo "<input type=\"radio\" name=\"fleet_action\" value=\"".$ac->code()."\"";
+							if ($actionsAvailable == 0)
+								echo " checked=\"checked\"";
+							echo " /><span ".tm($ac->name(),$ac->desc())."> ".$ac."</span><br/>";
+							$actionsAvailable++;
+						}
+						if ($actionsAvailable==0)
+						{
+							echo "<i>Keine Aktion auf dieses Ziel verfügbar!</i><br/>";
+						}
+						echo "<br/>".$fleet->actionError();
+						
+						$tabindex = 1;
+						
+						echo "</td>
+						<th style=\"width:170px;\">
+						Freie Kapazität:</th>
+						<td style=\"width:150px;\" id=\"resfree\">".nf($fleet->getCapacity())."</td></tr>
+						<tr><th>Freie Passagierplätze:</th>
+						<td>".nf($fleet->getPeopleCapacity())."</td>
+						</td></tr>
+						<tr><th>".RES_ICON_METAL."".RES_METAL."</th>
+						<td><input type=\"text\" name=\"res1\" id=\"res1\" value=\"".$fleet->getLoadedRes(1)."\" size=\"8\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckRes(1,this.value)\" /> 
+						<a href=\"javascript:;\" onclick=\"xajax_havenCheckRes(1,".floor($fleet->sourceEntity->getRes(1)).");\">max</a></td></tr>
+						<tr><th>".RES_ICON_CRYSTAL."".RES_CRYSTAL."</th>
+						<td><input type=\"text\" name=\"res2\" id=\"res2\" value=\"".$fleet->getLoadedRes(2)."\" size=\"8\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckRes(2,this.value)\" /> 
+						<a href=\"javascript:;\" onclick=\"xajax_havenCheckRes(2,".floor($fleet->sourceEntity->getRes(2)).");\">max</a></td></tr>
+						<tr><th>".RES_ICON_PLASTIC."".RES_PLASTIC."</th>
+						<td><input type=\"text\" name=\"res3\" id=\"res3\" value=\"".$fleet->getLoadedRes(3)."\" size=\"8\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckRes(3,this.value)\" /> 
+						<a href=\"javascript:;\" onclick=\"xajax_havenCheckRes(3,".floor($fleet->sourceEntity->getRes(3)).");\">max</a></td></tr>
+						<tr><th>".RES_ICON_FUEL."".RES_FUEL."</th>
+						<td><input type=\"text\" name=\"res4\" id=\"res4\" value=\"".$fleet->getLoadedRes(4)."\" size=\"8\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckRes(4,this.value)\" /> 
+						<a href=\"javascript:;\" onclick=\"xajax_havenCheckRes(4,".floor($fleet->sourceEntity->getRes(4)).");\">max</a></td></tr>
+						<tr><th>".RES_ICON_FOOD."".RES_FOOD."</th>
+						<td><input type=\"text\" name=\"res5\" id=\"res5\" value=\"".$fleet->getLoadedRes(5)."\" size=\"8\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckRes(5,this.value)\" /> 
+						<a href=\"javascript:;\" onclick=\"xajax_havenCheckRes(5,".floor($fleet->sourceEntity->getRes(5)).");\">max</a></td></tr>
+						<tr><th>".RES_ICON_PEOPLE."Passagiere</th>
+						<td><input type=\"text\" name=\"resp\" id=\"resp\" value=\"0\" size=\"8\" tabindex=\"".($tabindex++)."\"/></td></tr>					
+						</table><br/>";                                                                                   
+						
+						echo "<input type=\"button\" onclick=\"xajax_havenShowTarget(null)\" value=\"&lt;&lt; Zurück zur Zielwahl\" /> &nbsp; ";
+						if ($actionsAvailable>0)
+						{
+							echo "<input type=\"button\" onclick=\"xajax_havenShowLaunch(xajax.getFormValues('actionForm'))\" value=\"Start! &gt;&gt;&gt;\"  /> &nbsp; ";
+						}
+						echo "<input type=\"button\" onclick=\"xajax_havenReset()\" value=\"Reset\" />";
+						echo "</form>";			
+						
+						$response->assign("havenContentAction","innerHTML",ob_get_contents());				
+						$response->assign("havenContentAction","style.display",'');			
+			
+						ob_end_clean();
 					}
-					if ($actionsAvailable==0)
+					else
 					{
-						echo "<i>Keine Aktion auf dieses Ziel verfügbar!</i>";
-					}
-					
-					$tabindex = 1;
-					
-					echo "</td>
-					<th style=\"width:170px;\">
-					Freie Kapazität:</th>
-					<td style=\"width:150px;\" id=\"resfree\">".nf($fleet->getCapacity())."</td></tr>
-					<tr><th>Freie Passagierplätze:</th>
-					<td>".nf($fleet->getPeopleCapacity())."</td>
-					</td></tr>
-					<tr><th>".RES_ICON_METAL."".RES_METAL."</th>
-					<td><input type=\"text\" name=\"res1\" id=\"res1\" value=\"".$fleet->getLoadedRes(1)."\" size=\"8\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckRes(1,this.value)\" /> 
-					<a href=\"javascript:;\" onclick=\"xajax_havenCheckRes(1,".floor($fleet->sourceEntity->getRes(1)).");\">max</a></td></tr>
-					<tr><th>".RES_ICON_CRYSTAL."".RES_CRYSTAL."</th>
-					<td><input type=\"text\" name=\"res2\" id=\"res2\" value=\"".$fleet->getLoadedRes(2)."\" size=\"8\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckRes(2,this.value)\" /> 
-					<a href=\"javascript:;\" onclick=\"xajax_havenCheckRes(2,".floor($fleet->sourceEntity->getRes(2)).");\">max</a></td></tr>
-					<tr><th>".RES_ICON_PLASTIC."".RES_PLASTIC."</th>
-					<td><input type=\"text\" name=\"res3\" id=\"res3\" value=\"".$fleet->getLoadedRes(3)."\" size=\"8\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckRes(3,this.value)\" /> 
-					<a href=\"javascript:;\" onclick=\"xajax_havenCheckRes(3,".floor($fleet->sourceEntity->getRes(3)).");\">max</a></td></tr>
-					<tr><th>".RES_ICON_FUEL."".RES_FUEL."</th>
-					<td><input type=\"text\" name=\"res4\" id=\"res4\" value=\"".$fleet->getLoadedRes(4)."\" size=\"8\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckRes(4,this.value)\" /> 
-					<a href=\"javascript:;\" onclick=\"xajax_havenCheckRes(4,".floor($fleet->sourceEntity->getRes(4)).");\">max</a></td></tr>
-					<tr><th>".RES_ICON_FOOD."".RES_FOOD."</th>
-					<td><input type=\"text\" name=\"res5\" id=\"res5\" value=\"".$fleet->getLoadedRes(5)."\" size=\"8\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckRes(5,this.value)\" /> 
-					<a href=\"javascript:;\" onclick=\"xajax_havenCheckRes(5,".floor($fleet->sourceEntity->getRes(5)).");\">max</a></td></tr>
-					<tr><th>".RES_ICON_PEOPLE."Passagiere</th>
-					<td><input type=\"text\" name=\"resp\" id=\"resp\" value=\"0\" size=\"8\" tabindex=\"".($tabindex++)."\"/></td></tr>					
-					</table><br/>";                                                                                   
-					
-					
-					echo "<input type=\"button\" onclick=\"xajax_havenShowTarget(null)\" value=\"&lt;&lt; Zurück zur Zielwahl\" /> &nbsp; ";
-					if ($actionsAvailable>0)
-					{
-						echo "<input type=\"button\" onclick=\"xajax_havenShowLaunch(xajax.getFormValues('actionForm'))\" value=\"Start! &gt;&gt;&gt;\"  /> &nbsp; ";
-					}
-					echo "<input type=\"button\" onclick=\"xajax_havenReset()\" value=\"Reset\" />";
-					echo "</form>";			
-					
-					$response->assign("havenContentAction","innerHTML",ob_get_contents());				
-					$response->assign("havenContentAction","style.display",'');			
-		
-					
-		
-					ob_end_clean();
+						$response->alert($fleet->error());				
+					}	
 				}
 				else
 				{
-					$response->alert("Zuwenig Treibstoff! ".nf($fleet->sourceEntity->resFuel())." t ".RES_FUEL." vorhanden, ".nf($fleet->getCosts())." t benötigt.");				
-				}				
+					$response->alert($fleet->error());				
+				}
 			}
 			else
 			{
@@ -672,51 +711,58 @@
 				$load4 = $fleet->loadResource(4,$form['res4'],1);
 				$load5 = $fleet->loadResource(5,$form['res5'],1);
 					
-				$fleet->launch();
+				if ($fleet->launch())
+				{
 
-				$ac = FleetAction::createFactory($form['fleet_action']);
-				echo "<table class=\"tb\">";
-				echo "<tr>
-					<th colspan=\"2\" style=\"color:#0f0\">Flotte gestartet!</th>
-				</tr>";				
-				echo "<tr>
-					<td style=\"width:50%\"><b>Aktion:</b></td>
-					<td style=\"color:".FleetAction::$attitudeColor[$ac->attitude()]."\">".$ac->name()."</td>
-				</tr>";
-				echo "<tr>
-					<td><b>Ladung: ".RES_METAL."</b></td>
-					<td>".nf($load1)."</td>
-				</tr>";				
-				echo "<tr>
-					<td><b>Ladung: ".RES_CRYSTAL."</b></td>
-					<td>".nf($load2)."</td>
-				</tr>";				
-				echo "<tr>
-					<td><b>Ladung: ".RES_PLASTIC."</b></td>
-					<td>".nf($load3)."</td>
-				</tr>";				
-				echo "<tr>
-					<td><b>Ladung: ".RES_FUEL."</b></td>
-					<td>".nf($load4)."</td>
-				</tr>";				
-				echo "<tr>
-					<td><b>Ladung: ".RES_FOOD."</b></td>
-					<td>".nf($load5)."</td>
-				</tr>";				
-				echo "</table><br/>";
-				echo "<input type=\"button\" onclick=\"xajax_havenReset()\" value=\"Weitere Flotte starten\" />";
-
-
-
-
-				$response->assign("havenContentAction","innerHTML",ob_get_contents());				
-				$response->assign("havenContentAction","style.display",'');			
-				ob_end_clean();
-				$_SESSION['haven']['fleetObj']=serialize($fleet);				
+					$ac = FleetAction::createFactory($form['fleet_action']);
+					echo "<table class=\"tb\">";
+					echo "<tr>
+						<th colspan=\"2\" style=\"color:#0f0\">Flotte gestartet!</th>
+					</tr>";				
+					echo "<tr>
+						<td style=\"width:50%\"><b>Aktion:</b></td>
+						<td style=\"color:".FleetAction::$attitudeColor[$ac->attitude()]."\">".$ac->name()."</td>
+					</tr>";
+					echo "<tr>
+						<td><b>Ladung: ".RES_METAL."</b></td>
+						<td>".nf($load1)."</td>
+					</tr>";				
+					echo "<tr>
+						<td><b>Ladung: ".RES_CRYSTAL."</b></td>
+						<td>".nf($load2)."</td>
+					</tr>";				
+					echo "<tr>
+						<td><b>Ladung: ".RES_PLASTIC."</b></td>
+						<td>".nf($load3)."</td>
+					</tr>";				
+					echo "<tr>
+						<td><b>Ladung: ".RES_FUEL."</b></td>
+						<td>".nf($load4)."</td>
+					</tr>";				
+					echo "<tr>
+						<td><b>Ladung: ".RES_FOOD."</b></td>
+						<td>".nf($load5)."</td>
+					</tr>";				
+					echo "</table><br/>";
+					echo "<input type=\"button\" onclick=\"xajax_havenReset()\" value=\"Weitere Flotte starten\" />";
+	
+	
+	
+	
+					$response->assign("havenContentAction","innerHTML",ob_get_contents());				
+					$response->assign("havenContentAction","style.display",'');			
+					ob_end_clean();
+					$_SESSION['haven']['fleetObj']=serialize($fleet);				
+				
+				}
+				else
+				{
+					$response->alert("Fehler! Kann Flotte nicht starten! ".$fleet->launchError());
+				}				
 			}
 			else
 			{
-				$response->alert("Fehler! Ungültige Aktion!");
+				$response->alert("Fehler! Ungültige Aktion! ".$fleet->actionError());
 			}
 		}
 		else

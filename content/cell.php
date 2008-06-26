@@ -47,6 +47,7 @@
 		$cellId = $cp->cellId();
 	}
 	
+	$_SESSION['currentEntity']=serialize($cp);
 	
 	// Systemnamen updaten
 	if (isset($_POST['starname_submit']) && $_POST['starname']!="" && $_POST['starname_id']>0 && checker_verify())
@@ -160,7 +161,7 @@
 								// Besiedelte Planete
 								if($ent->ownerId() > 0)
 								{
-									//echo "&nbsp;<a href=\"javascript:;\" onclick=\"xajax_launchSypProbe(".$arr['planet_id'].",".$c->id.",".$c->res->fuel.");\" title=\"Ausspionieren\">Spionage</a>";
+									echo "<a href=\"javascript:;\" onclick=\"xajax_launchSypProbe(".$ent->id().");\" title=\"Ausspionieren\">Spionage</a> ";
 									echo "<a href=\"?page=missiles&amp;target=".$ent->id()."\" title=\"Raketenangriff starten\">Rakete</a> ";
 									echo "<a href=\"?page=crypto&amp;target=".$ent->id()."\" title=\"Flottenbewegungen analysieren\">Kryptoscan</a> ";					
 								}

@@ -45,6 +45,23 @@
 				");
 			}
 		}
+		
+		function remove($shipId,$cnt)
+		{
+			$res = dbquery("SELECT shiplist_count FROM shiplist WHERE shiplist_ship_id=".$shipId.";");
+			$arr = mysql_fetch_row($res);
+
+			$delable = min($cnt,$arr[0]);
+			
+			dbquery("UPDATE
+				shiplist
+			SET
+				shiplist_count = shiplist_count - ".$delable."
+			WHERE 
+				shiplist_ship_id=".$shipId.";");
+
+			return $delable;
+		}
 	
 	
 	}

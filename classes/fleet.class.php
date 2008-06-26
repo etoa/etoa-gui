@@ -278,8 +278,8 @@
 					$this->usageFood = floor($this->usageFood * $passed);
 					$this->usagePower = floor($this->usagePower * $passed);
 					
-					$this->update();	
-					return true;			
+					if ($this->update())
+						return true;			
 				}
 				else
 					$this->error = "Flotte ist bereits beim Ziel angekommen!";
@@ -339,10 +339,10 @@
 				res_metal='".$this->resMetal."',
 				res_crystal='".$this->resCrystal."',
 				res_plastic='".$this->resPlastic."',
-				resFuel='".$this->res_fuel."',
-				resFood='".$this->res_food."',
-				resPower='".$this->res_power."',
-				resPeople='".$this->res_people."'
+				res_fuel='".$this->res_fuel."',
+				res_food='".$this->res_food."',
+				res_power='".$this->res_power."',
+				res_people='".$this->res_people."'
 			WHERE 
 				id='".$this->id."';");			
 			if (mysql_affected_rows()>0)

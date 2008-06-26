@@ -93,6 +93,8 @@
 		function allowOwnEntities() { return $this->allowOwnEntities; }
 		function allowNpcEntities() { return $this->allowNpcEntities; }
 		function allowSourceEntity() { return $this->allowSourceEntity; }
+		function allowOnHoliday() { return false; }
+
 
 
 		//

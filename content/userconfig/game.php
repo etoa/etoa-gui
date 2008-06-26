@@ -6,7 +6,7 @@
               UPDATE
                   users
               SET
-                  user_spyship_count='".intval($_POST['user_spyship_count'])."',
+                  user_spyship_count='".max(1,intval($_POST['user_spyship_count']))."',
                   user_spyship_id='".$_POST['user_spyship_id']."',
                   user_fleet_rtn_msg='".$_POST['user_fleet_rtn_msg']."'
              	WHERE
@@ -32,16 +32,22 @@
             echo "<tr><td class=\"tbldata\" style=\"\">
             <b>Typ des Spionageschiffs für Direktscan:</b></td>
             <td class=\"tbldata\">";
-            $sres = dbquery("
-            SELECT
-            	ship_id,
-            	ship_name
-            FROM
-            	ships
-         		WHERE 
-         			ship_spy=1
-         		ORDER BY ship_name
-         		;");
+						$sres = dbquery("
+						SELECT 
+			        ship_id, 
+			        ship_name
+						FROM 
+							ships 
+						WHERE 
+							ship_buildable='1'
+							AND (
+							ship_actions LIKE '%,spy'
+							OR ship_actions LIKE 'spy,%'
+							OR ship_actions LIKE '%,spy,%'
+							OR ship_actions LIKE 'spy'
+							)
+						ORDER BY 
+							ship_name ASC");
             if (mysql_num_rows($sres)>0)
             {
             	echo '<select name="user_spyship_id"><option value="0">(keines)</option>';

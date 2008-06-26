@@ -129,7 +129,13 @@
 			}			
 			return $this->pos; 
 		}      
-    
+
+		// Overwritable functions  
+		function ownerPoints() { return 0; }
+		function ownerHoliday() { return false; }
+		function ownerLocked() { return false; }
+		function ownerAlliance() { return 0; }
+   
     
 		/**
 		* check if data could be loaded
@@ -275,7 +281,8 @@
 					return new EmptySpace($id);					
 				default:
 					return new UnknownEntity($id);
-			}			
+			}		
+			return false;	
 		}	
 		
 	  /**
@@ -315,8 +322,8 @@
 						return new UnknownEntity($id);
 				}			
 			}
-			else
-				die ("Ungültige ID");
+			return false;
+			//die ("Ungültige ID");
 		}
 		
 	  /**

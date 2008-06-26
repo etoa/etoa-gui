@@ -19,7 +19,11 @@
 			$this->allowOwnEntities = true;
 			$this->allowNpcEntities = true;
 			$this->allowSourceEntity = true;
+			
 		}
+
+		function allowOnHoliday() { return true; }
+
 
 		function startAction() {} 
 		function cancelAction() {}		

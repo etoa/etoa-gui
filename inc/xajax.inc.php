@@ -34,6 +34,10 @@
 		{
 			require_once("inc/xajax/userconfig.xajax.php");
 		}
+		elseif ($page=="cell")
+		{
+			require_once("inc/xajax/cell.xajax.php");
+		}
 		elseif ($page=="market")
 		{
 			require_once("inc/xajax/market.xajax.php");
