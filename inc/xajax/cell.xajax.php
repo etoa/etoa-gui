@@ -10,6 +10,8 @@ $xajax->register(XAJAX_FUNCTION,'launchSypProbe');
 		
 		$objResponse = new xajaxResponse();
 		ob_start();
+		$launched = false;
+
 		if ($cu->spyship_id>0)
 		{			
 			$fleet = new FleetLaunch($cp,$cu);
@@ -27,42 +29,58 @@ $xajax->register(XAJAX_FUNCTION,'launchSypProbe');
 								{
 									if ($fleet->setAction("spy"))
 									{
-										echo "$probeCount Spionagesonden unterwegs";
+										if ($fid = $fleet->launch())
+										{
+											$flObj = new Fleet($fid);
+											
+											
+											$str= "$probeCount Spionagesonden unterwegs. Ankunft in ".tf($flObj->remainingTime());
+											$launched = true;
+										}
+										else
+											$str= $fleet->error();
 									}
 									else
-										echo $fleet->error();
+										$str= $fleet->error();
 								}
 								else
-									echo $fleet->error();
+									$str= $fleet->error();
 							}
 							else
-								echo $fleet->error();
+								$str= $fleet->error();
 						}
 						else
 						{
-							echo "Problem beim Finden des Zielobjekts!";
+							$str= "Problem beim Finden des Zielobjekts!";
 						}
 					}
 					else
 					{
-						echo $fleet->error();
+						$str= $fleet->error();
 					}				
 				}
 				else
 				{
-					echo "Auf deinem Planeten befinden sich keine Spionagesonden des <a href=\"?page=userconfig&mode=game\">gewählten</a> Typs!";
+					$str= "Auf deinem Planeten befinden sich keine Spionagesonden des <a href=\"?page=userconfig&mode=game\">gewählten</a> Typs!";
 				}
 			}
 			else
 			{
-				echo $fleet->error();
+				$str= $fleet->error();
 			}
 		}
 		else
 		{
-			echo "Du hast noch keine Standard-Spionagesonde gewählt, überprüfe bitte deine <a href=\"?page=userconfig&mode=game\">Spieleinstellungen</a>!";
+			$str= "Du hast noch keine Standard-Spionagesonde gewählt, überprüfe bitte deine <a href=\"?page=userconfig&mode=game\">Spieleinstellungen</a>!";
 		}				
-		echo "<br/>";
+		if ($launched)
+		{
+			echo "<div style=\"color:#0f0\">".$str."<div>";
+		}
+		else
+		{
+			echo "<div style=\"color:#f90\">".$str."<div>";
+		}
 		$objResponse->assign("spy_info_box","style.display",'block');				
 		$objResponse->append("spy_info","innerHTML",ob_get_contents());				
 		ob_end_clean();

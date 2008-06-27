@@ -70,7 +70,7 @@
 			$this->capacityPeopleLoaded=0;		
 			$this->shipCount=0;
 			$this->distance=0;
-			$this->resources = array();
+			$this->res = array(0,0,0,0,0,0);
 			$this->costs = 0;
 			$this->costsFood = 0;
 			$this->costsPower = 0;
@@ -243,6 +243,13 @@
 					else
 						$this->error = "Es sind zuwenig Piloten für diese Flotte vorhanden.(".$this->pilotsAvailable()." verfügbar, ".$this->getPilots()." benötigt)";
 				}
+				else
+					$this->error = "Kann Schiffauswahl nicht fertigstellen, es wurde keine Schiffe zur Flotte hinzugefügt.";
+			}
+			else
+				$this->error = "Kann Schiffauswahl nicht fertigstellen, die Flotte wurde bereits fertig zusammengestellt!";
+			return false;
+		}		
 
 		/**
 		* Sets the target entity
@@ -265,15 +272,8 @@
 				else
 					$this->error = "Ungültiges Zielobjekt";
 			}
-				else
-					$this->error = "Kann Schiffauswahl nicht fertigstellen, es wurde keine Schiffe zur Flotte hinzugefügt.";
-			}
 			else
-				$this->error = "Kann Schiffauswahl nicht fertigstellen, die Flotte wurde bereits fertig zusammengestellt!";
-			return false;
-		}
-			else
-				$this->error = "Flotte nicht fertig zusammengestellt";
+				$this->error = "Flotte nicht fertig zusammengestellt";					
 			return false;
 		}			
 
@@ -312,11 +312,103 @@
 					return true;
 				}
 			}
-			else
-			{
-				$this->error = "DAs Ziel ist noch nicht in Ordnung!";
-			}
 			return false;
+		}
+
+		
+		function launch()
+		{
+			if ($this->actionOk)
+			{
+				$time = time();
+				
+				// Subtract ships from source
+				$sl = new ShipList($this->sourceEntity->id(),$this->ownerId);
+				$addcnt = 0;
+				foreach ($this->ships as $sid => $sda)
+				{
+					$this->ships[$sid]['count'] = $sl->remove($sid,$sda['count']);
+					$addcnt+=$this->ships[$sid]['count'];
+				}
+				
+				if ($addcnt > 0)
+				{
+					// Subtract flight costs from source
+					$this->sourceEntity->chgRes(4,-$this->getCosts());
+	
+					// Create fleet record
+					$sql = "
+					INSERT INTO
+						fleet
+					(
+						user_id,
+						entity_from,
+						entity_to,
+						launchtime,
+						landtime,
+						action,
+						status,
+						pilots,
+						usage_fuel,
+						usage_food,
+						usage_power,				
+						res_metal,
+						res_crystal,
+						res_plastic,
+						res_fuel,
+						res_food,
+						res_people
+					)
+					VALUES
+					(
+						".$this->ownerId.",
+						".$this->sourceEntity->id().",
+						".$this->targetEntity->id().",
+						".$time.",
+						".($time+$this->duration).",
+						'".$this->action."',
+						0,
+						".$this->pilots.",
+						".$this->getCosts().",
+						".$this->getCostsFood().",
+						".$this->getCostsPower().",
+						".$this->res[1].",
+						".$this->res[2].",
+						".$this->res[3].",
+						".$this->res[4].",
+						".$this->res[5].",
+						".$this->capacityPeopleLoaded."
+					)
+					";
+					dbquery($sql);
+					$fid = mysql_insert_id();
+					
+					foreach ($this->ships as $sid => $sda)
+					{				
+						dbquery("INSERT INTO
+						fleet_ships
+						(
+							fs_fleet_id,
+							fs_ship_id,
+							fs_ship_cnt
+						)
+						VALUES
+						(
+							".$fid.",
+							".$sid.",
+							".$sda['count']."
+						);");
+					}
+					return $fid;
+				}
+				else
+					$this->error = "Konnte keine Schiffe zur Flotte hinzufügen da keine vorhanden sind!";
+			}
+			else
+			{	
+				$this->error = "Aktion nocht nicht festgelegt!";
+			}
+			return false;		
 		}
 
 
@@ -462,7 +554,7 @@
 			return $this->costsFood;
 		}
 
-		function costsPower()
+		function getCostsPower()
 		{
 			return $this->costsPower;
 		}		
@@ -547,93 +639,6 @@
 		}
 		
 		
-		function launch()
-		{
-			$time = time();
-			
-			// Subtract ships from source
-			$sl = new ShipList($this->sourceEntity->id(),$this->ownerId);
-			$addcnt = 0;
-			foreach ($this->ships as $sid => $sda)
-			{
-				$this->ships[$sid]['count'] = $sl->remove($sid,$sda['count']);
-				$addcnt+=$this->ships[$sid]['count'];
-			}
-			
-			if ($addcnt > 0)
-			{
-				// Subtract flight costs from source
-				$this->sourceEntity->chgRes(4,-$this->getCosts());
-
-				// Create fleet record
-				$sql = "
-				INSERT INTO
-					fleet
-				(
-					user_id,
-					entity_from,
-					entity_to,
-					launchtime,
-					landtime,
-					action,
-					status,
-					pilots,
-					usage_fuel,
-					usage_food,
-					usage_power,				
-					res_metal,
-					res_crystal,
-					res_plastic,
-					res_fuel,
-					res_food,
-					res_people
-				)
-				VALUES
-				(
-					".$this->ownerId.",
-					".$this->sourceEntity->id().",
-					".$this->targetEntity->id().",
-					".$time.",
-					".($time+$this->duration).",
-					'".$this->action."',
-					0,
-					".$this->pilots.",
-					".$this->getCosts().",
-					".$this->getCostsFood().",
-					".$this->getCostsPower().",
-					".$this->res[1].",
-					".$this->res[2].",
-					".$this->res[3].",
-					".$this->res[4].",
-					".$this->res[5].",
-					".$this->capacityPeopleLoaded."
-				)
-				";
-				dbquery($sql);
-				$fid = mysql_insert_id();
-				
-				foreach ($this->ships as $sid => $sda)
-				{				
-					dbquery("INSERT INTO
-					fleet_ships
-					(
-						fs_fleet_id,
-						fs_ship_id,
-						fs_ship_cnt
-					)
-					VALUES
-					(
-						".$fid.",
-						".$sid.",
-						".$sda['count']."
-					);");
-				}
-				return true;
-			}
-			else
-				$this->error = "Konnte keine Schiffe zur Flotte hinzufügen da keine vorhanden sind!";
-			return false;		
-		}
 		
 		//
 		// Getters

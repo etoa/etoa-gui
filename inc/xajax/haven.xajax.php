@@ -560,8 +560,7 @@
 				$ent = Entity::createFactory($arr[1],$arr[0]);
 				
 				if ($fleet->setTarget($ent,$form['speed_percent']))
-				{
-												
+				{												
 					if ($fleet->checkTarget())
 					{							
 	
@@ -619,7 +618,7 @@
 						{
 							echo "<i>Keine Aktion auf dieses Ziel verfügbar!</i><br/>";
 						}
-						echo "<br/>".$fleet->actionError();
+						echo "<br/>".$fleet->error();
 						
 						$tabindex = 1;
 						
@@ -711,7 +710,7 @@
 				$load4 = $fleet->loadResource(4,$form['res4'],1);
 				$load5 = $fleet->loadResource(5,$form['res5'],1);
 					
-				if ($fleet->launch())
+				if ($fid = $fleet->launch())
 				{
 
 					$ac = FleetAction::createFactory($form['fleet_action']);
@@ -744,7 +743,8 @@
 						<td>".nf($load5)."</td>
 					</tr>";				
 					echo "</table><br/>";
-					echo "<input type=\"button\" onclick=\"xajax_havenReset()\" value=\"Weitere Flotte starten\" />";
+					echo "<input type=\"button\" onclick=\"xajax_havenReset()\" value=\"Weitere Flotte starten\" />
+					&nbsp; <input type=\"button\" onclick=\"document.location='?page=fleetinfo&amp;id=".$fid."'\" value=\"Flotte beobachten\" />";
 	
 	
 	
@@ -757,12 +757,12 @@
 				}
 				else
 				{
-					$response->alert("Fehler! Kann Flotte nicht starten! ".$fleet->launchError());
+					$response->alert("Fehler! Kann Flotte nicht starten! ".$fleet->error());
 				}				
 			}
 			else
 			{
-				$response->alert("Fehler! Ungültige Aktion! ".$fleet->actionError());
+				$response->alert("Fehler! Ungültige Aktion! ".$fleet->error());
 			}
 		}
 		else

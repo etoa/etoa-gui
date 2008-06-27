@@ -71,6 +71,9 @@
 		function ownerId() { return $this->ownerId; }
 		function launchTime() {	return $this->launchTime; }
 		function landTime() {	return $this->landTime;	}
+
+		function remainingTime() {	return max(0,$this->landTime-time()); }
+
 		function pilots()	{	return $this->pilots;	}		
 		function status() { return $this->status; }
 

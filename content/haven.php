@@ -77,7 +77,7 @@
 			}
 			else
 			{
-				echo err_msg($fleet->havenError());
+				echo err_msg($fleet->error());
 			}
 	}
 ?>
