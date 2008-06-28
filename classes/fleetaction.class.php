@@ -78,6 +78,7 @@
 		
 		function code() { return $this->code; }
 		function name() { return $this->name; }
+		function color() { return self::$attitudeColor[$this->attitude]; }
 		function __toString() { return "<span style=\"color:".self::$attitudeColor[$this->attitude]."\">".$this->name."</span>"; }
 		function desc() { return $this->desc; }
 		function longDesc() { return $this->longDesc; }
