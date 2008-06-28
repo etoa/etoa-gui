@@ -4678,6 +4678,21 @@ Forum: http://www.etoa.ch/forum";
 		return 42;
 	}
 
+
+	/**
+	* Startet den Javascript Counter bzw. die Uhr
+	*
+	* @param $time int Gibt die Restzeit oder den Timestamp an
+	* @param $target string Gibt die Ziel-ID an
+	* @param $format int 0=Counter, 1=Uhr
+	* @param $text string Ein optionaler Text kann eingebunden werden -> "Es geht noch TIME bis zum Ende"
+	*/
+	function startTime($time, $target, $format=0, $text="")
+	{
+		return "<script type=\"text/javascript\">time(".$time.", '".$target."', ".$format.", '".$text."');</script>";
+	}
+
+
 	/**
 	* Textfunktionen einbinden
 	*/

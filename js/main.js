@@ -29,6 +29,111 @@
 		}
 	}
 		
+	/**
+	* Dynamische Zeitangabe
+	*
+	* @param time int Gibt die Restzeit oder den Timestamp an
+	* @param target string Gibt die Ziel-ID an
+	* @param format int 0=Counter, 1=Uhr
+	* @param text string Ein optionaler Text kann eingebunden werden -> "Es geht noch TIME bis zum Ende"
+	*/
+	function time(time, target, format, text)
+	{
+		// Countdown
+		if(format==0)
+		{
+			// Wandelt Restzeit in Stunden, Minuten und Sekunden um
+			var d = Math.floor(time / 3600 / 24);
+			var h = Math.floor((time - d*3600*24) / 3600);
+			var m = Math.floor((time - d*3600*24 - h*3600) / 60);
+			var s = Math.floor(time - d*3600*24 - h*3600 - m*60);		
+			
+			// Gibt Zeitstring an
+			if(time>=0)
+			{
+				// Gibt Tage aus, sofern die Zeit mehrere Tage geht
+				if(d > 0)
+				{
+					var time_string = d+"d "+h+"h "+m+"m "+s+"s";
+				}
+				else
+				{
+					var time_string = h+"h "+m+"m "+s+"s";
+				}
+			}
+			else
+			{
+				var time_string = "Fertig";
+			}
+	
+			// Text wird eingebunden
+			if(text!="")
+			{
+				// Ersetzt alle "TIME" im Text durch den Counter
+				var out = text.replace(/TIME/g, time_string);
+			}
+			else
+			{
+				var out = time_string;
+			}
+	
+			document.getElementById(target).innerHTML = out;	
+			time = time - 1;
+		}
+		
+		// Uhr
+		else if(format==1)
+		{
+			// Wandelt Timestamp in Javascript Timestamp um (Milliskunden)
+			var timestamp = time * 1000;
+			
+			// Setzt Datum
+			clock = new Date(timestamp);
+	
+			// Wandelt Timestamp in Stunden, Minuten und Sekunden um
+			var h = clock.getHours();
+			var m = clock.getMinutes();
+			var s = clock.getSeconds();
+			
+			// Gibt Zahlen formatiert aus -> 05 statt 5
+			if(h>=0 && h<=9)
+			{
+				var h = "0"+h+"";
+			}
+			if(m>=0 && m<=9)
+			{
+				var m = "0"+m+"";
+			}
+			if(s>=0 && s<=9)
+			{
+				var s = "0"+s+"";
+			}
+			
+			// Gibt Zeitstring an
+			var time_string = h+":"+m+":"+s;
+	
+			// Text wird eingebunden
+			if(text!="")
+			{
+				// Ersetzt alle "TIME" im Text durch den Counter
+				var out = text.replace(/TIME/g, time_string);
+			}
+			else
+			{
+				var out = time_string;
+			}
+	
+	
+			document.getElementById(target).innerHTML = out;	
+			time = time + 1;
+		}
+		
+		setTimeout("time("+time+", '"+target+"', "+format+", '"+text+"')",1000);
+	}	
+		
+		
+		
+		
 	var cdarray = new Object();
 
 	function detectChangeRegister(elem,keyname)

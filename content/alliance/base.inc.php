@@ -54,35 +54,28 @@
 	</script>";	
 		
 	// Stellt die ganzen Bauoptionen dar, und errechnet und formatiert die Preise und gibt die Infos in einem Array zurück
-	function show_buildoptions($typ="building", $id=0, $res_metal=0, $res_crystal=0, $res_plastic=0, $res_fuel=0, $res_food=0, $costs_metal=0, $costs_crystal=0, $costs_plastic=0, $costs_fuel=0, $costs_food=0, $costs_factor=0, $level=0, $max_level=0, $buildsomething=false, $members=1, $end_time=0)
+	function show_buildoptions($typ="building", $id=0, $res_metal=0, $res_crystal=0, $res_plastic=0, $res_fuel=0, $res_food=0, $costs_metal=0, $costs_crystal=0, $costs_plastic=0, $costs_fuel=0, $costs_food=0, $build_time=0, $costs_factor=0, $level=0, $max_level=0, $buildsomething=false, $members=1, $end_time=0)
 	{		
 		global $conf;
 		
 		// Prüft Max. Level
 		if($level<$max_level)
 		{
-			// Errechnet Baukosten (ohne Mitgliederanzahl)
-			$factor = pow($costs_factor,$level);
-			$costs_metal = $costs_metal * $factor;
-			$costs_crystal = $costs_crystal * $factor;
-			$costs_plastic = $costs_plastic * $factor;
-			$costs_fuel = $costs_fuel * $factor;
-			$costs_food = $costs_food * $factor;
-			
-			// Bauzeit (10mal schneller als die Usergebäude)
-			$btime = ($costs_metal+$costs_crystal+$costs_plastic+$costs_fuel+$costs_food) / 10 * $conf['global_time']['v'];
-			
+			// Bauzeit (Fixe Zeit * Level)
+			$btime = $build_time * ($level+1);
+
 			// Errechnet die Effektiven Kosten für die Allianz in Abgängigkeit von der Mitgliederanzahl
-			$factor = pow($members,$conf['alliance_membercosts_factor']['v']);
+			$factor = pow($costs_factor,$level);
+			$member_factor = pow($members,$conf['alliance_membercosts_factor']['v']);
 			if($factor<1)
 			{
 				$factor = 1;
 			}
-			$costs_metal = ceil($costs_metal * $factor);
-			$costs_crystal = ceil($costs_crystal * $factor);
-			$costs_plastic = ceil($costs_plastic * $factor);
-			$costs_fuel = ceil($costs_fuel * $factor);
-			$costs_food = ceil($costs_food * $factor);
+			$costs_metal = ceil($costs_metal * $factor * $member_factor);
+			$costs_crystal = ceil($costs_crystal * $factor * $member_factor);
+			$costs_plastic = ceil($costs_plastic * $factor * $member_factor);
+			$costs_fuel = ceil($costs_fuel * $factor * $member_factor);
+			$costs_food = ceil($costs_food * $factor * $member_factor);
 	
 			// Rechnet fehlende Rohstoffe (Vorhandene Rohstoffe - Kosten -> Wenn Resultat positiv ist, sind genug Rohstoffe vorhanden)
 			$need_metal = $res_metal - $costs_metal;
@@ -182,13 +175,13 @@
 				{
 					$build_button = "Ausbauen";
 				}
-				$status_message = "Wird ausgebaut auf Stufe ".($level+1)."";
+				$status_message = startTime($end_time-time(), 'build_message_'.$typ.'_'.$id.'', 0, 'Wird ausgebaut auf Stufe '.($level+1).' (TIME)');
 				$status_message2 = "Es wird bereits gebaut!";
 			}
 			elseif($typ=="research")
 			{
 				$build_button = "Erforschen";
-				$status_message = "Stufe ".($level+1)." wird erforscht";
+				$status_message = startTime($end_time-time(), 'build_message_'.$typ.'_'.$id.'', 0, 'Stufe '.($level+1).' wird erforscht (TIME)');
 				$status_message2 = "Es wird bereits geforscht!";
 			}
 			else
@@ -205,16 +198,6 @@
 				{
 					$style_message = "class=\"tbldata3\"";
 					$build_message = $status_message;
-					
-					// Zeigt Restzeit an
-					if($end_time<=time())
-					{
-						$build_message .= " (Fertig)";
-					}
-					else
-					{
-						 $build_message .= " (".tf($end_time-time()).")";
-					}
 				}
 				// Ein anderes Objekt ist in Bau
 				else
@@ -255,9 +238,8 @@
 			        <td ".$style_food." width=\"15%\">".nf($costs_food)."</td>
 						</tr>
 						<tr>
-							<td ".$style_message." colspan=\"7\" style=\"text-align:center;\" name=\"build_message\" id=\"build_message\">".$build_message."</td>
+							<td ".$style_message." colspan=\"7\" style=\"text-align:center;\" name=\"build_message_".$typ."_".$id."\" id=\"build_message_".$typ."_".$id."\">".$build_message."</td>
 						</tr>";
-			
 			// Packt alle infos in ein Array und gibt dieses zurück
 			// Kosten
 			$return['costs_metal'] = $costs_metal;
@@ -644,7 +626,7 @@
 				}
 				
 				// Berechnet Kosten
-				$options_arr = show_buildoptions('', '',$aarr['alliance_res_metal'], $aarr['alliance_res_crystal'], $aarr['alliance_res_plastic'], $aarr['alliance_res_fuel'], $aarr['alliance_res_food'], $buildings[$id]['alliance_building_costs_metal'], $buildings[$id]['alliance_building_costs_crystal'], $buildings[$id]['alliance_building_costs_plastic'], $buildings[$id]['alliance_building_costs_fuel'], $buildings[$id]['alliance_building_costs_food'], $buildings[$id]['alliance_building_costs_factor'], $b_level, $buildings[$id]['alliance_building_last_level'], $buildsomething, $alliance_member_cnt);
+				$options_arr = show_buildoptions('', '',$aarr['alliance_res_metal'], $aarr['alliance_res_crystal'], $aarr['alliance_res_plastic'], $aarr['alliance_res_fuel'], $aarr['alliance_res_food'], $buildings[$id]['alliance_building_costs_metal'], $buildings[$id]['alliance_building_costs_crystal'], $buildings[$id]['alliance_building_costs_plastic'], $buildings[$id]['alliance_building_costs_fuel'], $buildings[$id]['alliance_building_costs_food'], $buildings[$id]['alliance_building_build_time'], $buildings[$id]['alliance_building_costs_factor'], $b_level, $buildings[$id]['alliance_building_last_level'], $buildsomething, $alliance_member_cnt);
 				
 				// Prüft Allianzrohstoffe
 				if($aarr['alliance_res_metal']>=$options_arr['costs_metal']
@@ -761,7 +743,7 @@
 				}
 				
 				// Berechnet Kosten
-				$options_arr = show_buildoptions('', '',$aarr['alliance_res_metal'], $aarr['alliance_res_crystal'], $aarr['alliance_res_plastic'], $aarr['alliance_res_fuel'], $aarr['alliance_res_food'], $techs[$id]['alliance_tech_costs_metal'], $techs[$id]['alliance_tech_costs_crystal'], $techs[$id]['alliance_tech_costs_plastic'], $techs[$id]['alliance_tech_costs_fuel'], $techs[$id]['alliance_tech_costs_food'], $techs[$id]['alliance_tech_costs_factor'], $b_level, $techs[$id]['alliance_tech_last_level'], $researchsomething, $alliance_member_cnt);
+				$options_arr = show_buildoptions('', '',$aarr['alliance_res_metal'], $aarr['alliance_res_crystal'], $aarr['alliance_res_plastic'], $aarr['alliance_res_fuel'], $aarr['alliance_res_food'], $techs[$id]['alliance_tech_costs_metal'], $techs[$id]['alliance_tech_costs_crystal'], $techs[$id]['alliance_tech_costs_plastic'], $techs[$id]['alliance_tech_costs_fuel'], $techs[$id]['alliance_tech_costs_food'], $techs[$id]['alliance_tech_build_time'], $techs[$id]['alliance_tech_costs_factor'], $b_level, $techs[$id]['alliance_tech_last_level'], $researchsomething, $alliance_member_cnt);
 				
 				// Prüft Allianzrohstoffe
 				if($aarr['alliance_res_metal']>=$options_arr['costs_metal']
@@ -917,7 +899,7 @@
                   	<img src=\"".$path."\" style=\"width:120px;height:120px;border:none;\" alt=\"".$data['alliance_building_name']."\"/>
                   </td>
                   <td class=\"tbldata\" style=\"vertical-align:top;height:100px;\">
-                  	".$data['alliance_building_longcomment']."
+                  	".$data['alliance_building_comment']."
                  	</td>
 				     </tr>";
 				infobox_end(1,1);
@@ -927,7 +909,7 @@
 				//
         
         // Generiert Bauoptionen mit allen Überprüfungen
-  			$options_arr = show_buildoptions("building", $data['alliance_building_id'], $aarr['alliance_res_metal'], $aarr['alliance_res_crystal'], $aarr['alliance_res_plastic'], $aarr['alliance_res_fuel'], $aarr['alliance_res_food'], $data['alliance_building_costs_metal'], $data['alliance_building_costs_crystal'], $data['alliance_building_costs_plastic'], $data['alliance_building_costs_fuel'], $data['alliance_building_costs_food'], $data['alliance_building_costs_factor'], $b_level, $data['alliance_building_last_level'], $buildsomething, $alliance_member_cnt, $end_time);
+  			$options_arr = show_buildoptions("building", $data['alliance_building_id'], $aarr['alliance_res_metal'], $aarr['alliance_res_crystal'], $aarr['alliance_res_plastic'], $aarr['alliance_res_fuel'], $aarr['alliance_res_food'], $data['alliance_building_costs_metal'], $data['alliance_building_costs_crystal'], $data['alliance_building_costs_plastic'], $data['alliance_building_costs_fuel'], $data['alliance_building_costs_food'], $data['alliance_building_build_time'], $data['alliance_building_costs_factor'], $b_level, $data['alliance_building_last_level'], $buildsomething, $alliance_member_cnt, $end_time);
   			
   			// Stellt Optionsbox dar
   			infobox_start("",1);
@@ -1007,7 +989,7 @@
                   	<img src=\"".$path."\" style=\"width:120px;height:120px;border:none;\" alt=\"".$data['alliance_tech_name']."\"/>
                   </td>
                   <td class=\"tbldata\" style=\"vertical-align:top;height:100px;\">
-                  	".$data['alliance_tech_longcomment']."
+                  	".$data['alliance_tech_comment']."
                  	</td>
 				     </tr>";
 				infobox_end(1,1);
@@ -1017,7 +999,7 @@
 				//
         
         // Generiert Bauoptionen mit allen Überprüfungen
-  			$options_arr = show_buildoptions("research", $data['alliance_tech_id'], $aarr['alliance_res_metal'], $aarr['alliance_res_crystal'], $aarr['alliance_res_plastic'], $aarr['alliance_res_fuel'], $aarr['alliance_res_food'], $data['alliance_tech_costs_metal'], $data['alliance_tech_costs_crystal'], $data['alliance_tech_costs_plastic'], $data['alliance_tech_costs_fuel'], $data['alliance_tech_costs_food'], $data['alliance_tech_costs_factor'], $b_level, $data['alliance_tech_last_level'], $researchsomething, $alliance_member_cnt, $end_time);
+  			$options_arr = show_buildoptions("research", $data['alliance_tech_id'], $aarr['alliance_res_metal'], $aarr['alliance_res_crystal'], $aarr['alliance_res_plastic'], $aarr['alliance_res_fuel'], $aarr['alliance_res_food'], $data['alliance_tech_costs_metal'], $data['alliance_tech_costs_crystal'], $data['alliance_tech_costs_plastic'], $data['alliance_tech_costs_fuel'], $data['alliance_tech_costs_food'], $data['alliance_tech_build_time'], $data['alliance_tech_costs_factor'], $b_level, $data['alliance_tech_last_level'], $researchsomething, $alliance_member_cnt, $end_time);
   			
   			// Stellt Optionsbox dar
   			infobox_start("",1);
