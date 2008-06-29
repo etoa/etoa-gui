@@ -43,7 +43,7 @@
 		static public $attitudeString = array("Neutral","Friedlich","Agressiv","Feindlich","Unbekannt");
 		
 		// Status descriptions
-		static public $statusCode = array("Hinflug","Rückflug","Abgebrochen");
+		static public $statusCode = array("Hinflug","Rückflug","Abgebrochen","Allianz");
 
 		//
 		// Class variables
