@@ -44,7 +44,7 @@
 	// Funktionen und Config einlesen
 	if (!@include_once("../conf.inc.php")) die("conf.inc.php does not exist, please read INSTALL for how to create this file or <a href=\"..\">click here</a> for the setup wizard!!");
 	require("../functions.php");
-	require("../inc/fleet_action.inc.php");
+	
 	require("inc/admin_functions.inc.php");
 
 	// Mit der DB verbinden
