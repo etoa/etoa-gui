@@ -30,7 +30,7 @@
 	*/	
 
 	// DEFINITIONEN //
-	require_once("inc/fleet_action.inc.php");
+	//require_once("inc/fleet_action.inc.php");
 	
 
 	// BEGIN SKRIPT //
@@ -67,7 +67,12 @@
 	}
 
 	echo "<table class=\"tb\" style=\"margin:0px auto;width:100%\">";
-	echo "<tr><th>Rathaus</th><th>Eigene Flotten</th><th>Fremde Flotten</th><th>Forschung</th></tr>";
+	echo "<tr>
+					<th style=\"width:30%;\">Rathaus</th>
+					<th style=\"width:20%;\">Eigene Flotten</th>
+					<th style=\"width:20%;\">Fremde Flotten</th>
+					<th style=\"width:30%;\">Forschung</th>
+				</tr>";
 
 
 
@@ -154,7 +159,7 @@
 		{
 			$style="color:#0f0";
 		}
-	*/
+	
 		//Mehrere fremde Flotten
 	  if ($all>1)
 	  {
@@ -170,7 +175,12 @@
 	  {
 	  	echo "<td>Keine fremden Flotten</td>";
 	  }
+	  */
 
+
+		//übergangslösung
+		echo "<td>...</td>";
+		echo "<td>...</td>";
 
 
 	/*****************
@@ -193,7 +203,7 @@
 		if (mysql_num_rows($bres)>0)
 		{
 			$barr = mysql_fetch_array($bres);
-			echo "<td><a href=\"?page=research&amp;planet_id=".$barr['techlist_planet_id']."\" style=\"color:#ff0\">";
+			echo "<td class=\"tbldata\"><a href=\"?page=research&amp;planet_id=".$barr['techlist_planet_id']."\" id=\"tech_counter\">";
 			//Forschung ist fertig
 			if($barr['techlist_build_end_time']-time()<=0)
 			{
@@ -202,16 +212,109 @@
 			//Noch am forschen
 			else
 			{
-				echo "".$barr['tech_name']." ".tf($barr['techlist_build_end_time']-time())."";
+				echo startTime($barr['techlist_build_end_time']-time(), 'tech_counter', 0, ''.$barr['tech_name'].' TIME');
 			}
 	
-			echo "</a></td>";
+			echo "</a></td></tr>";
 		}
 		else
 		{
-			echo "<td>Es wird nirgendwo geforscht!</td></tr>";
+			echo "<td class=\"tbldata\">Es wird nirgendwo geforscht!</td></tr>";
 		}
-		echo "</table><br/>";
+		
+		/*****************
+		* Allianzegebäude *
+		******************/
+		
+		if($cu->alliance_id!=0)
+		{
+			
+			echo "<tr>
+							<th class=\"tbltitle\" colspan=\"2\">Allianzgebäde</th>
+							<th class=\"tbltitle\" colspan=\"2\">Allianzforschungen</th>
+						</tr>";
+						
+			// Lädt bauende Allianzgebäude
+		  $res = dbquery("
+		  SELECT
+		    alliance_building_name,
+		    alliance_buildlist_build_end_time
+		  FROM
+		      alliance_buildlist
+		    INNER JOIN
+		      alliance_buildings
+		    ON alliance_building_id=alliance_buildlist_building_id
+		  WHERE
+		    alliance_buildlist_alliance_id='".$cu->alliance_id."'
+		    AND alliance_buildlist_build_end_time>'0';");
+			if (mysql_num_rows($res)>0)
+			{
+				$arr = mysql_fetch_array($res);
+				echo "<td class=\"tbldata\" colspan=\"2\">
+								<a href=\"?page=alliance&amp;action=base&amp;action2=buildings\" id=\"alliance_building_counter\">";
+								
+								//Forschung ist fertig
+								if($arr['alliance_buildlist_build_end_time']-time()<=0)
+								{
+									echo "".$arr['alliance_building_name']." Fertig";
+								}
+								//Noch am forschen
+								else
+								{
+									echo startTime($arr['alliance_buildlist_build_end_time']-time(), 'alliance_building_counter', 0, ''.$arr['alliance_building_name'].' TIME');
+								}
+		
+					echo "</a>
+							</td>";
+			}
+			else
+			{
+				echo "<td class=\"tbldata\" colspan=\"2\">Es wird nicht gebaut!</td></tr>";
+			}	
+				
+				
+			// Lädt forschende Allianztech
+		  $res = dbquery("
+		  SELECT
+		    alliance_tech_name,
+		    alliance_techlist_build_end_time
+		  FROM
+		      alliance_techlist
+		    INNER JOIN
+		      alliance_technologies
+		    ON alliance_tech_id=alliance_techlist_tech_id
+		  WHERE
+		    alliance_techlist_alliance_id='".$cu->alliance_id."'
+		    AND alliance_techlist_build_end_time>'0';");
+			if (mysql_num_rows($res)>0)
+			{
+				$arr = mysql_fetch_array($res);
+				echo "<td class=\"tbldata\" colspan=\"2\">
+								<a href=\"?page=alliance&amp;action=base&amp;action2=research\" id=\"alliance_tech_counter\">";
+								
+								//Forschung ist fertig
+								if($arr['alliance_techlist_build_end_time']-time()<=0)
+								{
+									echo "".$arr['alliance_tech_name']." Fertig";
+								}
+								//Noch am forschen
+								else
+								{
+									echo startTime($arr['alliance_techlist_build_end_time']-time(), 'alliance_tech_counter', 0, ''.$arr['alliance_tech_name'].' TIME');
+								}
+		
+					echo "</a>
+							</td>";
+			}
+			else
+			{
+				echo "<td class=\"tbldata\" colspan=\"2\">Es wird nicht geforscht!</td></tr>";
+			}
+		}
+		
+		
+		
+		infobox_end(1);
 
 
 
@@ -259,7 +362,7 @@
 
             document.getElementById("planet_info_defense_name").firstChild.nodeValue=defense_name;
             document.getElementById("planet_info_defense_time").firstChild.nodeValue=defense_time;
-
+            
 
 						//Alle Beschriftungen anzeigen
 						document.getElementById("planet_info_text_building").innerHTML ='<a href=\"?page=buildings&planet_id='+planet_id+'\">Bauhof:</a>';
@@ -612,9 +715,8 @@
         $defense_name[$arr_planet['id']] = "";
       }
 	
-			$planet_info = "<b>".$arr_planet['planet_name']."</b><br>".$building_name." ".$building_level."<br>".$building_time."";
+			$planet_info = "<b>".$arr_planet['planet_name']."</b><br>".$building_name." ".$building_level."<br>(TIME)";
 			$planet_image_path = "".IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$arr_planet['planet_image']."_middle.gif";
-	
 	
 			// Planet bild mit link zum bauhof und der informationen übergabe beim mouseover
 	    $planet_link = "<a href=\"?page=buildings&planet_id=".$arr_planet['id']."\"><img id=\"Planet\" src=\"".$planet_image_path."\" width=\"".$pic_width."\" height=\"".$pic_height."\" border=\"0\" 
@@ -702,8 +804,7 @@
 				$top=$middle_top+(($d_infos/2)*sin(deg2rad($degree+270)))-$pic_height/2;
 			}
 	
-			echo "<div style=\"position:absolute; left:".$left."px; top:".$top."px; width:".$info_box_width."px; height:".$info_box_height."px; text-align:".$text."; vertical-align:middle;\">".$planet_info."</div>";
-	
+			echo "<div id=\"planet_info_".$arr_planet['id']."\" style=\"position:absolute; left:".$left."px; top:".$top."px; width:".$info_box_width."px; height:".$info_box_height."px; text-align:".$text."; vertical-align:middle;\">".startTime($building_rest_time, 'planet_info_'.$arr_planet['id'].'', 0, $planet_info)."</div>";
 			$degree = $degree + (360/$division);
 		}
 
