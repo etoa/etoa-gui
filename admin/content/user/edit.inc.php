@@ -576,16 +576,22 @@
 			        	<td class=\"tbltitle\">Spionagesonden für Direktscan:</td>
 			          <td class=\"tbldata\">
 			          	<input type=\"text\" name=\"user_spyship_count\" maxlength=\"5\" size=\"5\" value=\"".$arr['user_spyship_count']."\"> &nbsp; ";
-					        $sres = dbquery("
-					        SELECT
-					        	ship_id,
-					        	ship_name
-					        FROM
-					        	ships
-					     		WHERE 
-					     			ship_spy=1
-					     		ORDER BY ship_name
-					     		;");
+						$sres = dbquery("
+						SELECT 
+			        ship_id, 
+			        ship_name
+						FROM 
+							ships 
+						WHERE 
+							ship_buildable='1'
+							AND (
+							ship_actions LIKE '%,spy'
+							OR ship_actions LIKE 'spy,%'
+							OR ship_actions LIKE '%,spy,%'
+							OR ship_actions LIKE 'spy'
+							)
+						ORDER BY 
+							ship_name ASC");
 					        if (mysql_num_rows($sres)>0)
 					        {
 					        	echo '<select name="user_spyship_id"><option value="0">(keines)</option>';
