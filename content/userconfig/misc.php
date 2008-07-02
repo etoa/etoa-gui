@@ -86,7 +86,7 @@
 					dbquery("UPDATE 
 								buildlist 
 							SET 
-								buildlist_type = buildlist_type - 2,
+								buildlist_build_type = buildlist_build_type - 2,
 								buidlist_start_time=".time()." 
 							WHERE 
 								buildlist_user_id='".$cu->id()."' 
@@ -94,7 +94,7 @@
 					dbquery("UPDATE 
 								techlist 
 							SET 
-								techlist_type=1, 
+								techlist_build_type=1, 
 								techlist_start_time=".time()." 
 							WHERE 
 								techlist_user_id='".$cu->id()."' 
