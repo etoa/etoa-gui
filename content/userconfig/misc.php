@@ -19,7 +19,7 @@
 									fleet as f
 								INNER JOIN
 									planets as p
-								ON f.entity_id=p.id
+								ON f.entity_to=p.id
 								AND p.planet_user_id='".$cu->id()."';");
 				$parr = mysql_fetch_row($pres);
 				if ($parr[0]==0)
