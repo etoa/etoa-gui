@@ -30,6 +30,7 @@ namespace def
 		<< "	def_queue "
 		<< "WHERE "
 		<< "	queue_starttime<" << time <<" "
+		<< "	AND queue_build_type<1 "
 		<< "ORDER BY queue_planet_id;";
     mysqlpp::Result res = query.store();		
 		query.reset();
@@ -39,7 +40,7 @@ namespace def
     {
     	int resSize = res.size();
     	bool empty=false;
-    	
+
     	if (resSize>0)
     	{
 	      mysqlpp::Row arr;

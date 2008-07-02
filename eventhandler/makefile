@@ -1,4 +1,4 @@
-OBJECTS = etoa.o FleetHandler.o BuildingHandler.o TechHandler.o ShipHandler.o ShipList.o DefHandler.o DefList.o Planet.o PlanetManager.o Functions.o ConfigHandler.o MarketHandler.o
+OBJECTS = etoa.o FleetHandler.o BuildingHandler.o TechHandler.o ShipHandler.o ShipList.o DefHandler.o DefList.o Planet.o PlanetManager.o Functions.o ConfigHandler.o MarketHandler.o aTechHandler.o aBuildingHandler.o
 OPTS = -lmysqlpp #-lmysqlclient
 
 etoa: ${OBJECTS}
@@ -36,3 +36,9 @@ ConfigHandler.o: config/ConfigHandler.cpp config/ConfigHandler.h
 
 MarketHandler.o: market/MarketHandler.cpp market/MarketHandler.h
 	g++ -c market/MarketHandler.cpp
+
+aTechHandler.o: alliance/aTechHandler.cpp alliance/aTechHandler.h
+	g++ -c alliance/aTechHandler.cpp
+
+aBuildingHandler.o: alliance/aBuildingHandler.cpp alliance/aBuildingHandler.h
+	g++ -c alliance/aBuildingHandler.cpp

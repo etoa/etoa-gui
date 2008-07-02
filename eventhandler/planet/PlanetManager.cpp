@@ -219,7 +219,7 @@ namespace planet
 			query << "OR buildings.building_people_place>0);";
 		mysqlpp::Result sres = query.store();		
 			query.reset();
-			std::cout << store[0] << " -> ";	
+
 		if (sres) 
 		{
 			int sresSize = sres.size();
@@ -236,9 +236,7 @@ namespace planet
 					store[3] += functions::s_round(srow["building_store_fuel"] * pow(srow["building_store_factor"],level));
 					store[4] += functions::s_round(srow["building_store_food"] * pow(srow["building_store_factor"],level));
 					store[5] += functions::s_round(srow["building_people_place"] * pow(srow["building_store_factor"],level));
-								std::cout << store[0] << " -> ";
 				}
-				std::cout << "\n";
 			}
 		}
 	}
@@ -375,7 +373,6 @@ namespace planet
 	{
 		std::time_t time = std::time(0);
 		mysqlpp::Query query = con_->query();
-		std::cout << store[0] << "\n";
 		query << std::setprecision(18);
 		query << "UPDATE ";
 			query << "planets ";

@@ -44,6 +44,9 @@
 #include "config/ConfigHandler.h"
 #include "market/MarketHandler.h"
 
+#include "alliance/aTechHandler.h"
+#include "alliance/aBuildingHandler.h"
+
 using namespace std;
 
 float minLoopDuration = 1;	// Minimal loop duration
@@ -74,6 +77,12 @@ main(int argc, char *argv[])
 			mtime = std::time(0);
 			delete mh;
 		}
+		
+		abuilding::aBuildingHandler* abh = new abuilding::aBuildingHandler();
+		abh->update();
+		
+		atech::aTechHandler* ath = new atech::aTechHandler();
+		ath->update();
 		
 		building::BuildingHandler* bh = new building::BuildingHandler();
 		bh->update();  
@@ -114,7 +123,7 @@ main(int argc, char *argv[])
  				if (result == v1.end())
  				{
  					v1.push_back(v3[x]);
- 				}						           
+				}
 			}
 			planet::PlanetManager* pm = new planet::PlanetManager(&v1);
 			pm->updateValues(&v1);		

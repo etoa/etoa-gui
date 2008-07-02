@@ -24,7 +24,7 @@ namespace tech
 		query << "	techlist_build_start_time=0, ";
 		query << "	techlist_build_end_time=0 ";
 		query << "WHERE ";
-		query << "	techlist_build_type=1 ";
+		query << "	techlist_build_type=3 ";
 		query << "	AND techlist_build_end_time<" << time << ";";
 		query.store();
    	std::cout << "Upgraded "<<con_->affected_rows()<<" Technologies\n";

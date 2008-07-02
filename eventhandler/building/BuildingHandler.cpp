@@ -19,7 +19,7 @@ namespace building
     query << "FROM ";
 	query << "	buildlist ";
 	query << "WHERE ";
-	query << "	buildlist_build_type!=0 ";
+	query << "	buildlist_build_type>2 ";
 	query << "	AND buildlist_build_end_time<" << time << " ORDER BY buildlist_planet_id;";
     mysqlpp::Result res = query.store();		
 		query.reset();
@@ -56,7 +56,7 @@ namespace building
 		query << "	buildlist_build_start_time=0, ";
 		query << "	buildlist_build_end_time=0 ";
 		query << "WHERE ";
-		query << "	buildlist_build_type=1 ";
+		query << "	buildlist_build_type=3 ";
 		query << "	AND buildlist_build_end_time<" << time << ";";
 		query.store();
    	std::cout << "Upgraded "<<con_->affected_rows()<<" Buildings\n";
@@ -70,7 +70,7 @@ namespace building
 		query << "	buildlist_build_start_time=0, ";
 		query << "	buildlist_build_end_time=0 ";
 		query << "WHERE ";
-		query << "	buildlist_build_type=2 ";
+		query << "	buildlist_build_type=4 ";
 		query << "	AND buildlist_build_end_time<" << time << ";";
 		query.store();   	
 		std::cout << "Downgraded "<<con_->affected_rows()<<" Buildings\n";		
