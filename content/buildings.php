@@ -199,7 +199,7 @@ function calcDemolishingWaitTime($dc,$cp)
 		while ($blarr = mysql_fetch_array($blres))
 		{
 			$buildlist[$blarr['buildlist_building_id']]=$blarr;
-			if ($blarr['buildlist_build_type']!=0)
+			if ($blarr['buildlist_build_type']>2)
 			{ 
 				$builing_something=true;
 			}
@@ -390,7 +390,7 @@ function calcDemolishingWaitTime($dc,$cp)
 									UPDATE 
 										buildlist 
 									SET
-										buildlist_build_type='1',
+										buildlist_build_type='3',
 										buildlist_build_start_time='".time()."',
 										buildlist_build_end_time='".$end_time."'
 									WHERE
@@ -413,7 +413,7 @@ function calcDemolishingWaitTime($dc,$cp)
 									) 
 									VALUES 
 									( 
-										'1',
+										'3',
 										'".time()."',
 										'".$end_time."',
 										'".$arr['building_id']."',
@@ -479,7 +479,7 @@ function calcDemolishingWaitTime($dc,$cp)
 							UPDATE 
 								buildlist 
 							SET
-								buildlist_build_type='2',
+								buildlist_build_type='4',
 								buildlist_build_start_time='".time()."',
 								buildlist_build_end_time='".$end_time."'
 							WHERE 
@@ -1129,7 +1129,7 @@ function calcDemolishingWaitTime($dc,$cp)
 									
 								}
 								// Ist im Bau
-								elseif (isset($buildlist[$bid]['buildlist_build_type']) && $buildlist[$bid]['buildlist_build_type']==1)
+								elseif (isset($buildlist[$bid]['buildlist_build_type']) && $buildlist[$bid]['buildlist_build_type']==3)
 								{
 									$subtitle =  "Ausbau auf Stufe ".($b_level+1);
 									$tmtext = "<span style=\"color:#0f0\">Wird ausgebaut!<br/>Dauer: ".tf($end_time-time())."</span><br/>";
@@ -1144,7 +1144,7 @@ function calcDemolishingWaitTime($dc,$cp)
 									}
 								}
 								// Wird abgerissen
-								elseif (isset($buildlist[$bid]['buildlist_build_type']) && $buildlist[$bid]['buildlist_build_type']==2)
+								elseif (isset($buildlist[$bid]['buildlist_build_type']) && $buildlist[$bid]['buildlist_build_type']==4)
 								{
 									$subtitle = "Abriss auf Stufe ".($b_level-1);
 									$tmtext = "<span style=\"color:#f90\">Wird abgerissen!<br/>Dauer: ".tf($end_time-time())."</span><br/>";

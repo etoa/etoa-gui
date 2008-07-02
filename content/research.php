@@ -96,7 +96,7 @@
 			while ($tarr = mysql_fetch_array($tres))
 			{
 				$techlist[$tarr['techlist_tech_id']]=$tarr;
-				if ($tarr['techlist_build_type']!=0) 
+				if ($tarr['techlist_build_type']>2) 
 				{
 					$builing_something=true;
 				}
@@ -246,7 +246,7 @@
 										UPDATE 
 											techlist 
 										SET
-		                  techlist_build_type='1',
+		                  techlist_build_type='3',
 		                  techlist_build_start_time='".time()."',
 		                  techlist_build_end_time='".$end_time."',
 		                  techlist_planet_id='".$cp->id()."'
@@ -270,7 +270,7 @@
 										VALUES
 										(
 											'".$cp->id()."',
-											'1',
+											'3',
 											'".time()."',
 											'".$end_time."',
 											'".$arr['tech_id']."',
@@ -773,7 +773,7 @@
 										}							
 									}
 									// Ist im Bau
-									elseif (isset($techlist[$bid]['techlist_build_type']) && $techlist[$bid]['techlist_build_type']==1)
+									elseif (isset($techlist[$bid]['techlist_build_type']) && $techlist[$bid]['techlist_build_type']==3)
 									{
 										$subtitle =  "Forschung auf Stufe ".($b_level+1);
 										$tmtext = "<span style=\"color:#0f0\">Wird ausgebaut!<br/>Dauer: ".tf($end_time-time())."</span><br/>";
