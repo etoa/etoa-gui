@@ -282,7 +282,7 @@
 									
 									//Rohstoffe vom Planeten abziehen und aktualisieren
 									$cp->changeRes(-$bc['metal'],-$bc['crystal'],-$bc['plastic'],-$bc['fuel'],-$bc['food']);
-									$b_status=1;
+									$b_status=3;
 									
 									//Log schreiben
 									$log_text = "
@@ -326,7 +326,7 @@
 					}
 	
 	
-					if (isset($_POST['command_cbuild']) && $b_status==1)
+					if (isset($_POST['command_cbuild']) && $b_status==3)
 					{
 						if (isset($techlist[$arr['tech_id']]['techlist_build_end_time']) && $techlist[$arr['tech_id']]['techlist_build_end_time'] > time())
 						{
@@ -380,7 +380,7 @@
 						}
 					}
 	
-					if ($b_status==1)
+					if ($b_status==3)
 					{
 						$color="color:#0f0;";
 						$status_text="Wird erforscht";
@@ -523,7 +523,7 @@
 	
 	
 					// Bau abbrechen
-					if ($b_status==1)
+					if ($b_status==3)
 					{
 						if ($planet_id==$cp->id())
 						{
@@ -546,7 +546,7 @@
 	
 	
 	
-						if ($b_status==1 || $b_status==2)
+						if ($b_status==3 || $b_status==4)
 						{
 							?>
 								<script type="text/javascript">

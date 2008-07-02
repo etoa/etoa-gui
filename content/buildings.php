@@ -425,7 +425,7 @@ function calcDemolishingWaitTime($dc,$cp)
 								
 								//Rohstoffe vom Planeten abziehen und aktualisieren
 								$cp->changeRes(-$bc['metal'],-$bc['crystal'],-$bc['plastic'],-$bc['fuel'],-$bc['food']);
-								$b_status=1;
+								$b_status=3;
 								
 								
 								//Log schreiben
@@ -488,7 +488,7 @@ function calcDemolishingWaitTime($dc,$cp)
 								
 							//Rohstoffe vom Planeten abziehen und aktualisieren
 							$cp->changeRes(-$dc['metal'],-$dc['crystal'],-$dc['plastic'],-$dc['fuel'],-$dc['food']);
-							$b_status=2;
+							$b_status=4;
 							
 							
 							//Log schreiben
@@ -526,7 +526,7 @@ function calcDemolishingWaitTime($dc,$cp)
 				}
 
 				//Bauauftrag abbrechen
-				if (isset($_POST['command_cbuild']) && $b_status==1)
+				if (isset($_POST['command_cbuild']) && $b_status==3)
 				{
 					if ($buildlist[$arr['building_id']]['buildlist_build_end_time'] > time())
 					{
@@ -579,7 +579,7 @@ function calcDemolishingWaitTime($dc,$cp)
 				}
 
 				//Abbruchauftrag abbrechen
-				if (isset($_POST['command_cdemolish']) && $b_status==2)
+				if (isset($_POST['command_cdemolish']) && $b_status==4)
 				{
 					if ($buildlist[$arr['building_id']]['buildlist_build_end_time'] > time())
 					{
@@ -632,17 +632,17 @@ function calcDemolishingWaitTime($dc,$cp)
 				}
 
 
-				if ($b_status==1 && $b_level>0)
+				if ($b_status==3 && $b_level>0)
 				{
 					$color="color:#0f0;";
 					$status_text="Wird ausgebaut";
 				}
-				elseif ($b_status==1)
+				elseif ($b_status==32)
 				{
 					$color="color:#0f0;";
 					$status_text="Wird gebaut";
 				}
-				elseif ($b_status==2)
+				elseif ($b_status==4)
 				{
 					$color="color:#f80;";
 					$status_text="Wird abgerissen";
@@ -879,7 +879,7 @@ function calcDemolishingWaitTime($dc,$cp)
 					}
 	
 					// Bau abbrechen
-					if ($b_status==1)
+					if ($b_status==3)
 					{
 		      	echo "<tr>
 		      					<td class=\"tbldata\">
@@ -904,7 +904,7 @@ function calcDemolishingWaitTime($dc,$cp)
 					}
 	
 					// Abriss abbrechen
-					if ($b_status==2)
+					if ($b_status==4)
 					{
 		      	echo "<tr>
 		      					<td class=\"tbldata\">
@@ -928,7 +928,7 @@ function calcDemolishingWaitTime($dc,$cp)
 					}
 					echo "<br/>";
 	
-					if ($b_status==1 || $b_status==2)
+					if ($b_status==3 || $b_status==4)
 					{
 						?>
 							<script type="text/javascript">
@@ -945,7 +945,7 @@ function calcDemolishingWaitTime($dc,$cp)
 									if(b_level>0)
 									{
 										<?PHP 
-										if ($b_status==2) 
+										if ($b_status==4) 
 											echo "b_level=b_level-1;";
 										else
 											echo "b_level=b_level+1;";

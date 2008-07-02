@@ -8,71 +8,130 @@
 	
 		if (isset($_POST['hmod_on']) && checker_verify())
 		{
-			$cres = dbquery("SELECT COUNT(*) FROM ship_queue WHERE queue_user_id='".$cu->id()."';");
+		
+			$cres = dbquery("SELECT id FROM ".$db_table['fleet']." WHERE user_id='".$cu->id()."';");
 			$carr = mysql_fetch_row($cres);
 			if ($carr[0]==0)
 			{
-				$cres = dbquery("SELECT COUNT(*) FROM def_queue WHERE queue_user_id='".$cu->id()."';");
-				$carr = mysql_fetch_row($cres);
-				if ($carr[0]==0)
+				$pres = dbquery("SELECT 
+									f.id 
+								FROM 
+									fleet as f
+								INNER JOIN
+									planets as p
+								ON f.entity_id=p.id
+								AND p.planet_user_id='".$cu->id()."';");
+				$parr = mysql_fetch_row($pres);
+				if ($parr[0]==0)
 				{
-					$cres = dbquery("SELECT COUNT(*) FROM buildlist WHERE buildlist_user_id='".$cu->id()."' AND buildlist_build_start_time>0;");
-					$carr = mysql_fetch_row($cres);
-					if ($carr[0]==0)
-					{
-						$cres = dbquery("SELECT COUNT(*) FROM techlist WHERE techlist_user_id='".$cu->id()."' AND techlist_build_start_time>0;");
-						$carr = mysql_fetch_row($cres);
-						if ($carr[0]==0)
-						{
-							$cres = dbquery("SELECT fleet_id FROM ".$db_table['fleet']." WHERE fleet_user_id='".$cu->id()."';");
-							$carr = mysql_fetch_row($cres);
-							if ($carr[0]==0)
-							{
-								$hfrom=time();
-								$hto=$hfrom+(MIN_UMOD_TIME*24*3600);
-								if (dbquery("UPDATE ".$db_table['users']." SET user_hmode_from='$hfrom',user_hmode_to='$hto' WHERE user_id='".$cu->id()."';"))
-								{
-									dbquery ("
-									UPDATE 
-										".$db_table['planets']." 
-									SET 
-										planet_last_updated='0',
-										planet_prod_metal=0,
-										planet_prod_crystal=0,
-										planet_prod_plastic=0,
-										planet_prod_fuel=0,
-										planet_prod_food=0
+					$sres = dbquery("SELECT 
+										queue_id,
+										queue_starttime 
+									FROM 
+										ship_queue 
 									WHERE 
-										planet_user_id='".$cu->id()."';");
-									
-									$arr['user_hmode_to'] = $hto;
-									success_msg("Du bist nun im Urlaubsmodus bis [b]".df($hto)."[/b].");
-		              $umod = true;
-								}
-							}
-							else
-							{
-								err_msg("Es sind noch Flotten unterwegs!");
-							}
+										queue_user_id='".$cu->id()."';");
+					while ($sarr=mysql_fetch_row($sres))
+					{
+						if ($sarr[1]>time())
+						{
+							dbquery("UPDATE 
+										ship_queue 
+									SET 
+										queue_build_type=1
+									WHERE 
+										queue_user_id='".$cu->id()."';");
 						}
 						else
 						{
-							err_msg("Es sind noch Technologien in Entwicklung!");
+							dbquery("UPDATE 
+										ship_queue 
+									SET 
+										queue_build_type=1, 
+										queue_starttime=".time()." 
+									WHERE 
+										queue_user_id='".$cu->id()."';");
 						}
 					}
-					else
+					$sres = dbquery("SELECT 
+										queue_id,
+										queue_starttime 
+									FROM 
+										def_queue 
+									WHERE 
+										queue_user_id='".$cu->id()."';");
+					while ($sarr=mysql_fetch_row($sres))
 					{
-						err_msg("Es sind noch Geb&auml;ude im Bau!");
+						if ($sarr[1]>time())
+						{
+							dbquery("UPDATE 
+										def_queue 
+									SET 
+										queue_build_type=1
+									WHERE 
+										queue_user_id='".$cu->id()."';");
+						}
+						else
+						{
+							dbquery("UPDATE 
+										def_queue 
+									SET 
+										queue_build_type=1, 
+										queue_starttime=".time()." 
+									WHERE 
+										queue_user_id='".$cu->id()."';");
+						}
+					}
+
+					dbquery("UPDATE 
+								buildlist 
+							SET 
+								buildlist_type = buildlist_type - 2,
+								buidlist_start_time=".time()." 
+							WHERE 
+								buildlist_user_id='".$cu->id()."' 
+								AND buildlist_build_start_time>0;");
+					dbquery("UPDATE 
+								techlist 
+							SET 
+								techlist_type=1, 
+								techlist_start_time=".time()." 
+							WHERE 
+								techlist_user_id='".$cu->id()."' 
+								AND techlist_build_start_time>0;");
+				
+					$hfrom=time();
+					$hto=$hfrom+(MIN_UMOD_TIME*24*3600);
+					if (dbquery("UPDATE ".$db_table['users']." SET user_hmode_from='$hfrom',user_hmode_to='$hto' WHERE user_id='".$cu->id()."';"))
+					{
+						dbquery ("
+							UPDATE 
+								".$db_table['planets']." 
+							SET 
+								planet_last_updated='0',
+								planet_prod_metal=0,
+								planet_prod_crystal=0,
+								planet_prod_plastic=0,
+								planet_prod_fuel=0,
+								planet_prod_food=0
+							WHERE 
+								planet_user_id='".$cu->id()."';");
+									
+							$arr['user_hmode_to'] = $hto;
+							success_msg("Du bist nun im Urlaubsmodus bis [b]".df($hto)."[/b].");
+							$umod = true;
 					}
 				}
 				else
-					err_msg("Es sind noch Verteidigungsanlagen im Bau!");
+				{
+					err_msg("Es sind noch Flotten unterwegs!");
+				}
 			}
 			else
 			{
-				
-				err_msg("Es sind noch Schiffe im Bau!");
+				err_msg("Es sind noch Flotten unterwegs!");
 			}
+				
 		}
 	
 		//
@@ -83,6 +142,86 @@
 		{
 			if ($cu->hmode_from > 0 && $cu->hmode_from < time() && $cu->hmode_to < time())
 			{
+				$bres = dbquery("
+								SELECT
+									builidlist_id,
+									(buildlist_endtime-buildlist_starttime) AS time,
+									buidlist_build_type
+								FROM
+									buildlist
+								WHERE
+									buidlist_starttime>0
+									AND buidlist_build_type>0
+									AND buildlist_user_id=".$cu->id().";");
+									
+				while ($barr=mysql_fetch_row($bres))
+				{
+					dbquery("UPDATE buildlist SET buildlist_build_type='".$barr[2]."+2',buildlist_starttime=".time().", buildlist_endtime='".time()."+".$barr[1]."' WHERE buildlist_id=".$barr[0].";");
+				} 
+				
+				$tres = dbquery("
+								SELECT
+									techlist,
+									(techlist_endtime-techlist_starttime) AS time,
+									techlist_build_type
+								FROM
+									techlist
+								WHERE
+									techlist_starttime>0
+									AND techlist_build_type>0
+									AND techlist_user_id=".$cu->id().";");
+									
+				while ($farr=mysql_fetch_row($fres))
+				{
+					dbquery("UPDATE techlist SET techlist_build_type='".$barr[2]."+2',techlist_starttime=".time().", techlist_endtime='".time()."+".$barr[1]."' WHERE techlist_id=".$barr[0].";");
+				}
+				
+				$sres = dbquery("SELECT 
+									queue_id,
+									(queue_endtime-queue_starttime) AS time,
+								 FROM 
+								 	ship_queue 
+								WHERE 
+									queue_user_id='".$cu->id()."'
+								ORDER BY 
+									queue_starttime ASC;");
+				$time = time();
+				while ($sarr=mysql_fetch_row($sres))
+				{
+					dbquery("UPDATE 
+								ship_queue
+							SET
+								queue_build_type=0,
+								queue_starttime=".$time.",
+								queue_endtime='".$time+$sarr[1]."'
+							WHERE
+								queue_id=".$sarr[0].";");
+					$time+=$sarr[1];
+				}
+				
+			$dres = dbquery("SELECT 
+									queue_id,
+									(queue_endtime-queue_starttime) AS time,
+								 FROM 
+								 	def_queue 
+								WHERE 
+									queue_user_id='".$cu->id()."'
+								ORDER BY 
+									queue_starttime ASC;");
+				$time = time();
+				while ($sarr=mysql_fetch_row($sres))
+				{
+					dbquery("UPDATE 
+								def_queue
+							SET
+								queue_build_type=0,
+								queue_starttime=".$time.",
+								queue_endtime='".$time+$sarr[1]."'
+							WHERE
+								queue_id=".$sarr[0].";");
+					$time+=$sarr[1];
+				}
+					
 				dbquery("UPDATE users SET user_hmode_from=0,user_hmode_to=0 WHERE user_id='".$cu->id()."';");
 				dbquery ("UPDATE planets SET planet_last_updated=".time()." WHERE planet_user_id='".$cu->id()."';");
 				success_msg("Urlaubsmodus aufgehoben! Denke daran, auf allen deinen Planeten die Produktion zu überprüfen!");
