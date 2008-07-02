@@ -83,28 +83,43 @@
 		$s_active = true;
 	}
 	
-	$res = dbquery("
-	SELECT
-		* 
-	FROM
-		".$db_table['specialists']."
-	WHERE
-		specialist_points_req<=".intval($cu->points)."
-	ORDER BY
-		specialist_name
-	;");
-	if (mysql_num_rows($res)>0)
-	{
-		echo '<form action="?page='.$page.'" method="post"><table class="tb" style="">';
-		if ($s_active)
-		{
-			echo '<tr><th colspan="4" style="text-align:center;">Übersicht</th></tr>';
-		}
-		else
-		{
-			echo '<tr><th colspan="5" style="text-align:center;">Übersicht</th></tr>';
-		}
-		while ($arr=mysql_fetch_array($res))
+	infobox_start("Spezialisten",1);
+	show_tab_menu("category",array("admiral"=>"Admiral",
+											"engineer"=>"Ingenieur",
+ 											"geology"=>"Geologe",
+ 											"technocracy"=>"Technokrat",
+ 											"biologist"=>"Biologe",
+ 											"spy"=>"Spion",
+ 											"merchant"=>"Meisterhändler"));
+
+	echo "<tr>
+			<td class=\"tbldata\">
+				<div id=\"specialisten\"  style=\"max-height:500px; overflow:auto;\">
+					<table>"; 
+					?>
+                    
+					<tr>
+						<td class="tbldata"><a href="?page=help&site=shipyard&amp;id=2"><img src="images/imagepacks/Discovery/ships/ship2_small.gif" width="40" height="40" border="0" /></a></td><td class="tbltitle" width="30%">
+	  			      	<span style="font-weight:500">ANTARES Jäger<br/> Gebaut:</span> 0
+	  			      	</td>
+	  			    	<td class="tbldata" width="13%">0h 0m 20s</td>
+	  			    	<td class="tbldata" width="10%" >750</td>
+	  			    	<td class="tbldata" width="10%" >575</td>
+   						<td class="tbldata" width="10%" >420</td>
+						<td class="tbldata" width="10%" >50</td>
+						<td class="tbldata" width="10%" >0</td>
+                        <td class="tbldata"><input type="text" value="0" id="build_count_2" name="build_count[2]" size="5" maxlength="9" onmouseover="stm(['','Es k&ouml;nnen maximal 910`456 Schiffe gebaut werden.'],stl)" onmouseout="htm()" tabindex="3" onkeyup="FormatNumber(this.id,this.value, 910456, '', '');"/><br><a href="javascript:;" onclick="document.getElementById('build_count_2').value=910456;">max</a></td>
+                        </tr>
+                                            
+                   <?PHP 
+	echo "			</table>
+				</div>      							
+			</td>
+		</tr>";
+								
+	infobox_end(1);
+	
+/*	while ($arr=mysql_fetch_array($res))
 		{
 			echo '<tr>';
 			if ($s_active && $s['user']['specialist_id']==$arr['specialist_id'])
@@ -200,15 +215,10 @@
 		}
 		echo '</table><br/>';
 		echo '<input type="button" onclick="document.location=\'?page=economy\'" value="Wirtschaft" /> ';
+		
+		
 		if (!$s_active)
 		{
 			echo '<input type="submit" name="submit_engage" value="Gewählten Spezialisten einstellen" /></form>';
-		}
-	}
-	else
-	{
-		echo 'Du hast zuwenig Punkte ('.nf($s['user']['points']).' um einen Spezialisten anzustellen!<br/><br/>';
-		echo '<input type="button" onclick="document.location=\'?page=economy\'" value="Wirtschaft" /> ';
-	}
-
+		}*/
 ?>

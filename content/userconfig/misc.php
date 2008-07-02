@@ -95,7 +95,7 @@
 								techlist 
 							SET 
 								techlist_build_type=1, 
-								techlist_buid_start_time=".time()." 
+								techlist_build_start_time=".time()." 
 							WHERE 
 								techlist_user_id='".$cu->id()."' 
 								AND techlist_build_start_time>0;");
@@ -145,18 +145,18 @@
 				$bres = dbquery("
 								SELECT
 									builidlist_id,
-									(buildlist_buidl_endtime-buildlist_build_starttime) AS time,
-									buidlist_build_type
+									(buildlist_build_endtime-buildlist_build_starttime) AS time,
+									buildlist_build_type
 								FROM
 									buildlist
 								WHERE
-									buidlist_buid_starttime>0
-									AND buidlist_build_type>0
+									buildlist_build_starttime>0
+									AND buildlist_build_type>0
 									AND buildlist_user_id=".$cu->id().";");
 									
 				while ($barr=mysql_fetch_row($bres))
 				{
-					dbquery("UPDATE buildlist SET buildlist_build_type='".$barr[2]."+2',buildlist_buid_starttime=".time().", buildlist_build_endtime='".time()."+".$barr[1]."' WHERE buildlist_id=".$barr[0].";");
+					dbquery("UPDATE buildlist SET buildlist_build_type='".$barr[2]."+2',buildlist_build_starttime=".time().", buildlist_build_endtime='".time()."+".$barr[1]."' WHERE buildlist_id=".$barr[0].";");
 				} 
 				
 				$tres = dbquery("
