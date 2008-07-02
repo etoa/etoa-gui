@@ -87,7 +87,7 @@
 								buildlist 
 							SET 
 								buildlist_build_type = buildlist_build_type - 2,
-								buidlist_start_time=".time()." 
+								buildlist_build_start_time=".time()." 
 							WHERE 
 								buildlist_user_id='".$cu->id()."' 
 								AND buildlist_build_start_time>0;");
@@ -95,7 +95,7 @@
 								techlist 
 							SET 
 								techlist_build_type=1, 
-								techlist_start_time=".time()." 
+								techlist_buid_start_time=".time()." 
 							WHERE 
 								techlist_user_id='".$cu->id()."' 
 								AND techlist_build_start_time>0;");
@@ -145,35 +145,35 @@
 				$bres = dbquery("
 								SELECT
 									builidlist_id,
-									(buildlist_endtime-buildlist_starttime) AS time,
+									(buildlist_buidl_endtime-buildlist_build_starttime) AS time,
 									buidlist_build_type
 								FROM
 									buildlist
 								WHERE
-									buidlist_starttime>0
+									buidlist_buid_starttime>0
 									AND buidlist_build_type>0
 									AND buildlist_user_id=".$cu->id().";");
 									
 				while ($barr=mysql_fetch_row($bres))
 				{
-					dbquery("UPDATE buildlist SET buildlist_build_type='".$barr[2]."+2',buildlist_starttime=".time().", buildlist_endtime='".time()."+".$barr[1]."' WHERE buildlist_id=".$barr[0].";");
+					dbquery("UPDATE buildlist SET buildlist_build_type='".$barr[2]."+2',buildlist_buid_starttime=".time().", buildlist_build_endtime='".time()."+".$barr[1]."' WHERE buildlist_id=".$barr[0].";");
 				} 
 				
 				$tres = dbquery("
 								SELECT
 									techlist,
-									(techlist_endtime-techlist_starttime) AS time,
+									(techlist_build_endtime-techlist_build_starttime) AS time,
 									techlist_build_type
 								FROM
 									techlist
 								WHERE
-									techlist_starttime>0
+									techlist_build_starttime>0
 									AND techlist_build_type>0
 									AND techlist_user_id=".$cu->id().";");
 									
 				while ($farr=mysql_fetch_row($fres))
 				{
-					dbquery("UPDATE techlist SET techlist_build_type='".$barr[2]."+2',techlist_starttime=".time().", techlist_endtime='".time()."+".$barr[1]."' WHERE techlist_id=".$barr[0].";");
+					dbquery("UPDATE techlist SET techlist_build_type='".$barr[2]."+2',techlist_build_starttime=".time().", techlist_build_endtime='".time()."+".$barr[1]."' WHERE techlist_id=".$barr[0].";");
 				}
 				
 				$sres = dbquery("SELECT 
