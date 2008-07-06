@@ -1,11 +1,16 @@
 #include <iostream>
+#include <ctime>
+#include <math.h>
+#include <stdlib.h>
 
 #include <mysql++/mysql++.h>
 
 #include "AntraxHandler.h"
 #include "../../MysqlHandler.H"
 #include "../../functions/Functions.h"
+#include "../../config/ConfigHandler.h"
 
+#include "../../battle/BattleHandler.h"
 namespace antrax
 {
 	void AntraxHandler::update()
@@ -14,26 +19,32 @@ namespace antrax
 		/**
 		* Fleet-Action: Antrax-Attack
 		*/
+		Config &config = Config::instance();
+		std::time_t time = std::time(0);
+		srand (time);
+
+		
+		BattleHandler *bh = new BattleHandler(con_,fleet_);
+		bh->battle();
 
 		// Send messages
-		int userToId = functions::getUserIdByPlanet((int)fleet_["fleet_target_to"]);
+		int userToId = functions::getUserIdByPlanet((int)fleet_["entity_to"]);
 		std::string subject1 = "Kampfbericht (";
 		subject1 += bstat;
 		subject1 += ")";
-		std::string = subject2 = "Kampfbericht (";
+		std::string subject2 = "Kampfbericht (";
 		subject2 += bstat2;
 		subject2 += ")";
-		functions::sendMsg((int)fleet_["fleet_user_id"],SHIP_WAR_MSG_CAT_ID,subject1,msgFight);
-		functions::sendMsg(userToId,SHIP_WAR_MSG_CAT_ID,subject2,msgFight);
+		functions::sendMsg((int)fleet_["user_id"],config.idget("SHIP_WAR_MSG_CAT_ID"),subject1,bh->msg);
+		functions::sendMsg(userToId,config.idget("SHIP_WAR_MSG_CAT_ID"),subject2,bh->msg);
 
 		// Add log
-		functions::addLog(1,msgFight,(int)fleet_["fleet_landtime"]);
+		functions::addLog(1,bh->msg,(int)fleet_["landtime"]);
 
 		// Aktion durchführen
-		if (returnV==1)
+		if (bh->returnV==1)
 		{
-			returnFleet = true;
-			fleetLoadspecial(); //ToDo
+			bh->returnFleet = true;
 			
 			int tLevel = 0;
 			
@@ -44,8 +55,8 @@ namespace antrax
 			query << "FROM ";
 			query << "	techlist ";
 			query << "WHERE ";
-			query << "	techlist_user_id='" << fleet_["'fleet_user_id"] << "' ";
-			query << "	AND techlist_tech_id='18';";
+			query << "	techlist_user_id='" << fleet_["'user_id"] << "' ";
+			query << "	AND techlist_tech_id='" << config.idget("Gifttechnologie") << "';";
 			mysqlpp::Result tRes = query.store();
 			query.reset();
 			
@@ -53,23 +64,27 @@ namespace antrax
 			{
 				int tSize = tRes.size();
 				
+				mysqlpp::Row tRow;
+				
 				if (tSize > 0)
 				{
-					mysqlpp::Row tRow = Res.at(0),
+					tRow = tRes.at(0);
 					
-					tLevel = (int)tRow["techlist_current_level"];
+					tLevel = (double)tRow["techlist_current_level"];
+
 				}
 			}
 		
-			//40% + Boni Chance, dass Antrax erflogreich
-			double goOrNot=mt_rand(0,100); //ToDo
-			if (goOrNor<=(40+tLevel*5+$special_ship_bonus_antrax_food*100)) //ToDo
-			{
-				std::string coordsTarget = functions::formatCoords(fleet_["fleet_target_to"]);
-				std::string coordsFrom = functions::formatCoords(fleet_["fleet_target_from"]);
+			std::string coordsTarget = functions::formatCoords(fleet_["entity_to"],0);
+			std::string coordsFrom = functions::formatCoords(fleet_["entity_from"],0);
 				
+			//40% + Boni Chance, dass Antrax erflogreich
+			double goOrNot = rand() % 101;
+			if (goOrNot <= (config.nget("antrax_action",0) + tLevel * 5 + bh->specialShipBonusAntrax * 100)) //ToDo
+			{
 				//Rechnet Schadensfaktor (Max. 90%)
-				double fak = mt_rand(1,min((10+tLevel*3),90)); //ToDo
+				int temp = (int)std::min((10 + tLevel * 3),90);
+				double fak = rand() % temp;
 				
 				//Lädt Nahrung und Bewohner
 				query << "SELECT ";
@@ -78,7 +93,7 @@ namespace antrax
 				query << "FROM ";
 				query << "	planets ";
 				query << "WHERE ";
-				query << "	id='" << fleet_["fleet_target_to"] << "';";
+				query << "	id='" << fleet_["entity_to"] << "';";
 				mysqlpp::Result pRes = query.store();
 				query.reset();
 				
@@ -91,10 +106,10 @@ namespace antrax
 						mysqlpp::Row pRow = pRes.at(0);
 				
 						//Rechnet Bewohner und Nahrungsverluste
-						double people = round(pRow["planet_people"] * fak / 100);
-						double peopleRest = pRow["planet_people"] - people;
-						double food = round(pRow["planet_res_food"] * fak / 100);
-						double foodRest = pRow["planet_res_food"] - food;
+						double people = round((double)pRow["planet_people"] * fak / 100);
+						double peopleRest = (double)pRow["planet_people"] - people;
+						double food = round((double)pRow["planet_res_food"] * fak / 100);
+						double foodRest = (double)pRow["planet_res_food"] - food;
 				
 						//Zieht Nahrung und Bewohner vom Planeten ab
 						query << "UPDATE ";
@@ -103,7 +118,7 @@ namespace antrax
 						query << "	planet_res_food='" << foodRest << "', ";
 						query << "	planet_people='" << peopleRest << "' ";
 						query << "WHERE ";
-						query << "	id='" << fleet_["fleet_target_to"] << "';";
+						query << "	id='" << fleet_["target_to"] << "';";
 						query.store();
 						query.reset();
 				
@@ -113,15 +128,15 @@ namespace antrax
 						text += " hat einen Antraxangriff auf den Planeten ";
 						text += coordsTarget;
 						text += " verübt es starben dabei ";
-						text += functions::nf(people);
+						text += functions::nf(functions::d2s(people));
 						text += " Bewohner und ";
-						text += functions::nf(food);
+						text += functions::nf(functions::d2s(food));
 						text += " t Nahrung wurden dabei verbrannt.";
 						
-						functions::sendMsg((int)fleet_["fleet_user_id"],SHIP_WAR_MSG_CAT_ID,"Antraxangriff"$text);
-						functions::sendMsg(userToId,SHIP_WAR_MSG_CAT_ID,"Antraxangriff",text);
+						functions::sendMsg((int)fleet_["user_id"],config.idget("SHIP_WAR_MSG_CAT_ID"),"Antraxangriff",text);
+						functions::sendMsg(userToId,config.idget("SHIP_WAR_MSG_CAT_ID"),"Antraxangriff",text);
 						
-						Ranking::addBattlePoints($arr['fleet_user_id'],BATTLE_POINTS_SPECIAL,"Spezialaktion"); //ToDo
+						//Ranking::addBattlePoints($arr['fleet_user_id'],BATTLE_POINTS_SPECIAL,"Spezialaktion"); //ToDo
 					}
 				}
 			} 
@@ -133,14 +148,14 @@ namespace antrax
 				text += " hat erfolglos einen Antraxangriff auf den Planeten ";
 				text += coordsTarget;
 				text += " verübt.";
-				functions::sendMsg((int)fleet_["fleet_user_id"],SHIP_WAR_MSG_CAT_ID,"Antraxangriff erfolglos",text);
-				functions::sendMsg(userToId,SHIP_WAR_MSG_CAT_ID,"Antraxangriff erfolglos",text);
+				functions::sendMsg((int)fleet_["user_id"],config.idget("SHIP_WAR_MSG_CAT_ID"),"Antraxangriff erfolglos",text);
+				functions::sendMsg(userToId,config.idget("SHIP_WAR_MSG_CAT_ID"),"Antraxangriff erfolglos",text);
 			}
 		}
 	
-		if (returnFleet || returnV==4)
+		if (bh->returnFleet || bh->returnV==4)
 		{
-			fleetReturn("hr");
+			fleetReturn(1);
 		}
 		else
 		{

@@ -3,40 +3,47 @@
 #include <mysql++/mysql++.h>
 
 #include "AttackHandler.h"
-#include "../../MysqlHandler.H"
+#include "../../MysqlHandler.h"
 #include "../../functions/Functions.h"
+#include "../../config/ConfigHandler.h"
+
+#include "../../battle/BattleHandler.h"
 
 namespace attack
 {
 	void AttackHandler::update()
 	{
-	
 		/**
 		* Fleet-Action: Attack
 		*/
-		battle();
+		BattleHandler *bh = new BattleHandler(con_, fleet_);
+		bh->battle();
 
-	
+		Config &config = Config::instance();
+		
+		
 		// Send messages
-		int userToId = functions::getUserIdByPlanet((int)fleet_["fleet_target_to"]);
+		int userToId = functions::getUserIdByPlanet((int)fleet_["entity_to"]);
 		std::string subject1 = "Kampfbericht (";
-		subject1 += bstat;
+		subject1 += bh->bstat;
 		subject1 += ")";
-		std::string = subject2 = "Kampfbericht (";
-		subject2 += bstat2;
+		std::string subject2 = "Kampfbericht (";
+		subject2 += bh->bstat2;
 		subject2 += ")";
-		functions::sendMsg((int)fleet_["fleet_user_id"],SHIP_WAR_MSG_CAT_ID,subject1,msgFight);
-		functions::sendMsg(userToId,SHIP_WAR_MSG_CAT_ID,subject2,msgFight);
+		functions::sendMsg((int)fleet_["user_id"],config.idget("SHIP_WAR_MSG_CAT_ID"),subject1,bh->msg);
+		functions::sendMsg(userToId,config.idget("SHIP_WAR_MSG_CAT_ID"),subject2,bh->msg);
 
 		// Add log
-		functions::addLog(1,msgFight,(int)fleet_["fleet_landtime"]);
+		functions::addLog(1,bh->msg,(int)fleet_["landtime"]);
 
+		std::cout << bh->returnFleet << "\n";
 		// Flotte zurückschicken
-		if (returnFleet)
+		if (bh->returnFleet)
 		{
-			action = "ar";
-			fleetReturn(action);
+			fleetReturn(1,0,0,0,0,0,0);
 		}
+
+		//delete bh;
 	}
 }
 

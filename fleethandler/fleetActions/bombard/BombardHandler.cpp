@@ -1,10 +1,15 @@
 #include <iostream>
+#include <ctime>
+#include <math.h>
+#include <stdlib.h>
 
 #include <mysql++/mysql++.h>
 
 #include "BombardHandler.h"
-#include "../../MysqlHandler.H"
+#include "../../MysqlHandler.h"
 #include "../../functions/Functions.h"
+#include "../../config/ConfigHandler.h"
+#include "../../battle/BattleHandler.h"
 
 namespace bombard
 {
@@ -14,32 +19,35 @@ namespace bombard
 		/**
 		* Fleet-Action: Bombard
 		*/
+		Config &config = Config::instance();
+		std::time_t time = std::time(0);
+		srand (time);
 
 		// Calc battle
-		battle();
+		BattleHandler *bh = new BattleHandler(con_,fleet_);
+		bh->battle();
 
 		// Send messages
-		int userToId = functions::getUserIdByPlanet((int)fleet_["fleet_target_to"]);
+		int userToId = functions::getUserIdByPlanet((int)fleet_["entity_to"]);
 		std::string subject1 = "Kampfbericht (";
 		subject1 += bstat;
 		subject1 += ")";
-		std::string = subject2 = "Kampfbericht (";
+		std::string subject2 = "Kampfbericht (";
 		subject2 += bstat2;
 		subject2 += ")";
-		functions::sendMsg((int)fleet_["fleet_user_id"],SHIP_WAR_MSG_CAT_ID,subject1,msgFight);
-		functions::sendMsg(userToId,SHIP_WAR_MSG_CAT_ID,subject2,msgFight);
+		functions::sendMsg((int)fleet_["user_id"],config.idget("SHIP_WAR_MSG_CAT_ID"),subject1,bh->msg);
+		functions::sendMsg(userToId,config.idget("SHIP_WAR_MSG_CAT_ID"),subject2,bh->msg);
 
 		// Add log
-		functions::addLog(1,msgFight,(int)fleet_["fleet_landtime"]);
+		functions::addLog(1,bh->msg,(int)fleet_["landtime"]);
 
 		// Aktion durchführen
-		if (returnV==1)
+		if (bh->returnV==1)
 		{
-			returnFleet = true;
-			fleetLoadspecial(); //ToDo
+			bh->returnFleet = true;
 		
-			std::string coordsTarget = functions::formatCoords(fleet_["fleet_target_to"]);
-			std::string coordsFrom = functions::formatCoords(fleet_["fleet_planet_from"]);
+			std::string coordsTarget = functions::formatCoords(fleet_["entity_to"],0);
+			std::string coordsFrom = functions::formatCoords(fleet_["entity_from"],0);
 			
 			int tLevel = 0;
 		
@@ -50,8 +58,8 @@ namespace bombard
 			query << "FROM ";
 			query << "	techlist ";
 			query << "WHERE ";
-			query << "	techlist_user_id='" << fleet_["fleet_user_id"] << "' ";
-			query << "	AND techlist_tech_id='" << BOMB_TECH_ID << "'";
+			query << "	techlist_user_id='" << fleet_["user_id"] << "' ";
+			query << "	AND techlist_tech_id='" << config.idget("BOMB_TECH_ID") << "'";
 			mysqlpp::Result tRes = query.store();
 			query.reset();
 			
@@ -61,15 +69,16 @@ namespace bombard
 				
 				if (tSize > 0)
 				{
-					mysqlpp::Row tRow tRes.at(0);
+					mysqlpp::Row tRow = tRes.at(0);
 					tLevel = (int)tRow["techlist_current_level"];
 				}
 			}
 				 
 	
 			// 10% + Bonis, dass Bombardierung erfolgreich
-			double goOrNot=mt_rand(0,100); //ToDo
-			if (goOrNot<=(10+(SHIP_BOMB_FACTOR*tLevel+$special_ship_bonus_build_destroy*100))) //ToDo
+			int goOrNot = rand() % 101;
+			
+			if (goOrNot <= (config.nget("ship_bomb_factor",1) + (config.nget("ship_bomb_factor",0) * tLevel + bh->specialShipBonusBuildDestroy * 100)))
 			{
 				// Wählt EIN gebäude aus, welches nicht im bau ist
 				query << "SELECT ";
@@ -79,7 +88,7 @@ namespace bombard
 				query << "FROM ";
 				query << "	buildlist ";
 				query << "WHERE ";
-				query << "	buildlist_planet_id='" << fleet_["fleet_target_to"] << "' ";
+				query << "	buildlist_planet_id='" << fleet_["entity_to"] << "' ";
 				query << "	AND buildlist_current_level>'0' ";
 				query << "	AND buildlist_build_type='0' ";
 				query << "ORDER BY ";
@@ -105,8 +114,8 @@ namespace bombard
 						query << "FROM ";
 						query << "	buildings ";
 						query << "WHERE ";
-						query << "building_id='" << blRow["buildlist_building_id"] << "'";
-						mysqlpp::Res bRes = query.store();
+						query << "building_id='" << blRow["buildlist_building_id"] << "';";
+						mysqlpp::Result bRes = query.store();
 						query.store();
 						
 						if (bRes)
@@ -115,14 +124,14 @@ namespace bombard
 							
 							if (bSize > 0)
 							{
-								myslpp::Row bRow = bRes.at(0);
+								mysqlpp::Row bRow = bRes.at(0);
 	                
 								//Setzt Gebäude um ein Level zurück
 								query << "UPDATE ";
 								query << "	buildlist ";
 								query << "SET ";
 								query << "buildlist_current_level='" << bLevel << "' ";
-								quer< << "WHERE ";
+								query << "WHERE ";
 								query << "buildlist_id=" << blRow["buildlist_id"] << "";
 								query.store();
 								query.reset();
@@ -150,7 +159,7 @@ namespace bombard
 										query << "SET ";
 										query << "	fs_ship_cnt=fs_ship_cnt-1 ";
 										query << "WHERE ";
-										query << "	fs_fleet_id='" << fleet_["fleet_id"] << "' ";
+										query << "	fs_fleet_id='" << fleet_["id"] << "' ";
 										query << "	AND fs_ship_id='" << sRow["ship_id"] << "';";
 										query.store();
 										query.reset();
@@ -163,7 +172,7 @@ namespace bombard
 								query << "FROM ";
 								query << "	fleet_ships ";
 								query << "WHERE ";
-								query << "	fs_fleet_id='" << fleet_["fleet_id"] << "';";
+								query << "	fs_fleet_id='" << fleet_["id"] << "';";
 								mysqlpp::Result checkRes = query.store();
 								query.reset();
 								
@@ -173,11 +182,11 @@ namespace bombard
 									
 									if (checkSize > 0)
 									{
-										mysqlpp:Row checkRow = checkRes.at(0);
+										mysqlpp::Row checkRow = checkRes.at(0);
 										
-										if (checkRow["cnt"]<=0)
+										if ((int)checkRow["cnt"]<=0)
 										{
-											returnFleet=false;
+											bh->returnFleet = false;
 										}
 									}
 								}
@@ -186,16 +195,16 @@ namespace bombard
 								text = "Eine Flotte vom Planet ";
 								text += coordsFrom;
 								text += " hat das Gebäude ";
-								text += std::string(bRow["building_name"];
+								text += std::string(bRow["building_name"]);
 								text += " des Planeten ";
 								text += coordsTarget;
 								text += " um ein Level auf Stufe ";
-								text += blRow["buildlist_current_level"];
+								text += std::string(blRow["buildlist_current_level"]);
 								text += " zurück gesetzt";
-								functions::sendMsg((int)fleet_["fleet_user_id"],SHIP_WAR_MSG_CAT_ID,"Gebäude bombardiert",text);
-								fucntions::sendMsg(userToId,SHIP_WAR_MSG_CAT_ID,"Gebäude bombardiert",text);
+								functions::sendMsg((int)fleet_["user_id"],config.idget("SHIP_WAR_MSG_CAT_ID"),"Gebäude bombardiert",text);
+								functions::sendMsg(userToId,config.idget("SHIP_WAR_MSG_CAT_ID"),"Gebäude bombardiert",text);
 	                
-								Ranking::addBattlePoints($arr['fleet_user_id'],BATTLE_POINTS_SPECIAL,"Spezialaktion"); //ToDo
+								//Ranking::addBattlePoints($arr['fleet_user_id'],BATTLE_POINTS_SPECIAL,"Spezialaktion"); //ToDo
 							}
 						}
 					}
@@ -208,14 +217,14 @@ namespace bombard
 				text += " hat erfolglos versucht ein Gebäude des Planeten ";
 				text += coordsTarget;
 				text += " um ein Level zu senken";
-				fucntions::sendMsg((int)fleet_["fleet_user_id"],SHIP_WAR_MSG_CAT_ID,"Bombardierung gescheitert",text);
-				functions::sendMsg(userToId,SHIP_WAR_MSG_CAT_ID,"Bombardierung gescheitert",text);
+				functions::sendMsg((int)fleet_["user_id"],config.idget("SHIP_WAR_MSG_CAT_ID"),"Bombardierung gescheitert",text);
+				functions::sendMsg(userToId,config.idget("SHIP_WAR_MSG_CAT_ID"),"Bombardierung gescheitert",text);
 			}
 		}
 
-		if (returnFleet || returnV==4)
+		if (bh->returnFleet || bh->returnV==4)
 		{
-			fleetReturn("br");
+			fleetReturn(1);
 		}
 		else
 		{

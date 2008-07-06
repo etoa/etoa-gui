@@ -1,4 +1,4 @@
-OBJECTS = etoa.o FleetHandler.o ConfigHandler.o Functions.o CancelHandler.o FetchHandler.o ReturnHandler.o DefaultHandler.o AsteroidHandler.o ColonializeHandler.o ExploreHandler.o GasHandler.o MarketHandler.o NebulaHandler.o PositionHandler.o SpyHandler.o TransportHandler.o WreckageHandler.o DebrisHandler.o
+OBJECTS = etoa.o FleetHandler.o ConfigHandler.o Functions.o CancelHandler.o FetchHandler.o ReturnHandler.o DefaultHandler.o AsteroidHandler.o ColonializeHandler.o ExploreHandler.o GasHandler.o MarketHandler.o NebulaHandler.o PositionHandler.o SpyHandler.o TransportHandler.o WreckageHandler.o DebrisHandler.o BattleHandler.o ObjectHandler.o UserHandler.o AttackHandler.o AntraxHandler.o BombardHandler.o GattackHandler.o
 OPTS = -lmysqlpp
 
 etoa: ${OBJECTS}
@@ -60,3 +60,24 @@ WreckageHandler.o: fleetActions/wreckage/WreckageHandler.cpp fleetActions/wrecka
 
 DebrisHandler.o: fleetActions/debris/DebrisHandler.cpp fleetActions/debris/DebrisHandler.h
 	g++ -c fleetActions/debris/DebrisHandler.cpp
+
+BattleHandler.o: battle/BattleHandler.cpp battle/BattleHandler.h
+	g++ -c battle/BattleHandler.cpp
+
+ObjectHandler.o: battle/ObjectHandler.cpp battle/ObjectHandler.h
+	g++ -c battle/ObjectHandler.cpp
+
+UserHandler.o: battle/UserHandler.cpp battle/UserHandler.h
+	g++ -c battle/UserHandler.cpp
+
+AttackHandler.o: fleetActions/attack/AttackHandler.cpp fleetActions/attack/AttackHandler.h
+	g++ -c fleetActions/attack/AttackHandler.cpp
+
+AntraxHandler.o: fleetActions/antrax/AntraxHandler.cpp fleetActions/antrax/AntraxHandler.h
+	g++ -c fleetActions/antrax/AntraxHandler.cpp
+
+BombardHandler.o: fleetActions/bombard/BombardHandler.cpp fleetActions/bombard/BombardHandler.h
+	g++ -c fleetActions/bombard/BombardHandler.cpp
+
+GattackHandler.o: fleetActions/gattack/GattackHandler.cpp fleetActions/gattack/GattackHandler.h
+	g++ -c fleetActions/gattack/GattackHandler.cpp

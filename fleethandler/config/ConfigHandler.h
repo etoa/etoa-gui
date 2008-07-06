@@ -63,16 +63,20 @@
 					}
 				}
 			}
-			
+
+			idConfig["SHIP_WAR_MSG_CAT_ID"] = 3;
+			idConfig["SHIP_MONITOR_MSG_CAT_ID"] = 4;
 			idConfig["SHIP_MISC_MSG_CAT_ID"] = 5;
-			idConfig["SHIP_MONITOR_MSG_CAT_ID"]= 4;
 			
 			idConfig["MARKET_SHIP_ID"] = 16;
+			
 			idConfig["SPY_TECH_ID"] = 7;
-			idConfig["TARN_TECH_ID"] = 11;
 			idConfig["STRUCTURE_TECH_ID"] = 9;
+			idConfig["TARN_TECH_ID"] = 11;
 			idConfig["SHIELD_TECH_ID"] = 10;
 			idConfig["WEAPON_TECH_ID"] = 8;
+			idConfig["BOMB_TECH_ID"] = 15;
+			idConfig["Gifttechnologie"] = 18;
 			idConfig["REGENA_TECH_ID"] = 19;
 			
 			idConfig["SPY_DEFENSE_FACTOR_TECH"] = 20;

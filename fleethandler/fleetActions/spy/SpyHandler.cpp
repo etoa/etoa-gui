@@ -20,8 +20,9 @@ namespace spy
 		*/
 		
 		Config &config = Config::instance();
+		std::string action = "spy";
 
-		int userToId = functions::getUserIdByPlanet((int)fleet_["fleet_entity_to"]);
+		int userToId = functions::getUserIdByPlanet((int)fleet_["entity_to"]);
 
 		// Lädt Spiotechlevel des Angreiffers
 		float spyLevelAtt = 0;
@@ -34,7 +35,7 @@ namespace spy
 		query << "FROM ";
 		query << "	techlist ";
 		query << "WHERE ";
-		query << "	techlist_user_id='" << fleet_["fleet_user_id"] << "' ";
+		query << "	techlist_user_id='" << fleet_["user_id"] << "' ";
 		query << "	AND (techlist_tech_id='" << config.idget("SPY_TECH_ID") << "' ";
 		query << "	OR techlist_tech_id='" << config.idget("TARN_TECH_ID") << "');";
 		mysqlpp::Result levelRes = query.store();
@@ -116,8 +117,12 @@ namespace spy
 		query << "INNER JOIN ";
 		query << "	ships ";
 		query << "	ON fs_ship_id=ship_id ";
-		query << "	AND fs_fleet_id=" << fleet_["fleet_id"] << " ";
-		query << "	AND ship_spy=1 ";
+		query << "	AND fs_fleet_id=" << fleet_["id"] << " ";
+		query << "	AND (";
+		query << "		ship_actions LIKE '%," << action << "'";
+		query << "		OR ship_actions LIKE '" << action << ",%'";
+		query << "		OR ship_actions LIKE '%," << action << ",%'";
+		query << "		OR ship_actions LIKE '" << action << "') ";
 		query << "GROUP BY ";
 		query << "	fs_ship_cnt;";
 		mysqlpp::Result spyRes = query.store();
@@ -144,8 +149,12 @@ namespace spy
 		query << "INNER JOIN ";
 		query << "	ships ";
 		query << "	ON shiplist_ship_id=ship_id ";
-		query << "	AND shiplist_planet_id=" << fleet_["fleet_entity_to"] << " ";
-		query << "	AND ship_spy=1 ";
+		query << "	AND shiplist_planet_id=" << fleet_["entity_to"] << " ";
+		query << "	AND (";
+		query << "		ship_actions LIKE '%," << action << "'";
+		query << "		OR ship_actions LIKE '" << action << ",%'";
+		query << "		OR ship_actions LIKE '%," << action << ",%'";
+		query << "		OR ship_actions LIKE '" << action << "') ";
 		query << "GROUP BY ";
 		query << "	shiplist_count;";
 		spyRes = query.store();
@@ -164,9 +173,9 @@ namespace spy
 			}
 		}
 
-		std::string coordsBlank = functions::formatCoords((int)fleet_["fleet_entity_to"],1);
-		std::string coordsentity = functions::formatCoords((int)fleet_["fleet_entity_to"],0);
-		std::string coordsFrom = functions::formatCoords((int)fleet_["fleet_entity_from"],0);
+		std::string coordsBlank = functions::formatCoords((int)fleet_["entity_to"],1);
+		std::string coordsentity = functions::formatCoords((int)fleet_["entity_to"],0);
+		std::string coordsFrom = functions::formatCoords((int)fleet_["entity_from"],0);
 		
 		if (spyShipsAtt > 0)
 		{
@@ -209,7 +218,7 @@ namespace spy
 					query << "INNER JOIN ";
 					query << "	buildlist AS bl ";
 					query << "	ON bl.buildlist_building_id=b.building_id ";
-					query << "	AND bl.buildlist_planet_id='" << fleet_["fleet_entity_to"] << "' ";
+					query << "	AND bl.buildlist_planet_id='" << fleet_["entity_to"] << "' ";
 					query << "	AND bl.buildlist_user_id='" << userToId << "' ";
 					query << "	AND buildlist_current_level>0 ";
 					query << "ORDER BY ";
@@ -304,7 +313,7 @@ namespace spy
 					query << "FROM ";
 					query << "	shiplist ";
 					query << "WHERE ";
-					query << "	shiplist_planet_id='" << fleet_["fleet_entity_to"] <<  "' ";
+					query << "	shiplist_planet_id='" << fleet_["entity_to"] <<  "' ";
 					query << "	AND shiplist_count>'0';";
 					mysqlpp::Result sRes = query.store();
 					query.reset();
@@ -349,7 +358,7 @@ namespace spy
 					query << "FROM ";
 					query << "	deflist ";
 					query << "WHERE ";
-					query << "	deflist_planet_id='" << fleet_["fleet_entity_to"] << "' ";
+					query << "	deflist_planet_id='" << fleet_["entity_to"] << "' ";
 					query << "	AND deflist_count>0;";
 					mysqlpp::Result dRes = query.store();
 					query.reset();
@@ -396,7 +405,7 @@ namespace spy
 					query << "FROM ";
 					query << "	planets ";
 					query << "WHERE ";
-					query << "	id='" << fleet_["fleet_entity_to"] << "';";
+					query << "	id='" << fleet_["entity_to"] << "';";
 					mysqlpp::Result pRes = query.store();
 					query.reset();
 						
@@ -456,7 +465,7 @@ namespace spy
 				//Spionagebericht senden
 				std::string subject = "Spionagebericht ";
 				subject += coordsBlank;
-				functions::sendMsg((int)fleet_["fleet_user_id"],(int)config.idget("SHIP_SPY_MSG_CAT_ID"),subject,topText);
+				functions::sendMsg((int)fleet_["user_id"],(int)config.idget("SHIP_SPY_MSG_CAT_ID"),subject,topText);
 		
 				// Ausgespionierten Spieler informieren
 				std::string text2 = "Eine fremde Flotte vom Planeten ";
@@ -480,7 +489,7 @@ namespace spy
 				
 				std::string subject = "Spionage fehlgeschlagen auf ";
 				subject += coordsBlank;
-				functions::sendMsg((int)fleet_["fleet_user_id"],(int)config.idget("SHIP_SPY_MSG_CAT_ID"),subject,text);
+				functions::sendMsg((int)fleet_["user_id"],(int)config.idget("SHIP_SPY_MSG_CAT_ID"),subject,text);
 		
 				// Ausgespionierten Spieler informieren
 				std::string text2 = "Auf deinem Planeten ";
@@ -503,12 +512,10 @@ namespace spy
 			
 			std::string subject = "Spionage fehlgeschlagen auf ";
 			subject += coordsBlank;
-			functions::sendMsg((int)fleet_["fleet_user_id"],(int)config.idget("SHIP_SPY_MSG_CAT_ID"),subject,text);
+			functions::sendMsg((int)fleet_["user_id"],(int)config.idget("SHIP_SPY_MSG_CAT_ID"),subject,text);
 		}
 	
-		std::string action = "sr";
-	
 		// Flotte zurückschicken
-		fleetReturn(action);
+		fleetReturn(1);
 	}
 }

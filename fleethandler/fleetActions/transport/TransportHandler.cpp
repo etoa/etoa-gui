@@ -25,37 +25,35 @@ namespace transport
 		fleetLand(2);
 
 		//Sucht User-ID
-		int userToId = functions::getUserIdByPlanet((int)fleet_["fleet_entity_to"]);
+		int userToId = functions::getUserIdByPlanet((int)fleet_["entity_to"]);
 
 		std::string msg = "[B]TRANSPORT GELANDET[/B]\n\nEine Flotte vom Planeten \n[b]";
-		msg += functions::formatCoords((int)fleet_["fleet_entity_from"],0);
+		msg += functions::formatCoords((int)fleet_["entity_from"],0);
 		msg += "[/b]\nhat ihr Ziel erreicht!\n\n[b]Planet:[/b] ";
-		msg += functions::formatCoords((int)fleet_["fleet_entity_to"],0);
+		msg += functions::formatCoords((int)fleet_["entity_to"],0);
 		msg += "\n[b]Zeit:[/b] ";
-		msg += functions::formatTime((int)fleet_["fleet_landtime"]);
-		msg += "\n";
+		msg += functions::formatTime((int)fleet_["landtime"]);
 		msg += msgRes;
 	
 		// Nachrichten senden
-		functions::sendMsg((int)fleet_["fleet_user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Transport angekommen",msg);
+		functions::sendMsg((int)fleet_["user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Transport angekommen",msg);
 	
 		//Nachricht an Empfänger senden, falls Empfänger != Sender
-		if ((int)fleet_["fleet_user_id"]!=userToId)
+		if ((int)fleet_["user_id"]!=userToId)
 		{
 			functions::sendMsg(userToId,(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Transport angekommen",msg);
 		}
 		
-		double capacity = (double)fleet_["fleet_res_metal"] + (double)fleet_["fleet_res_crystal"] + (double)fleet_["fleet_res_plastic"] + (double)fleet_["fleet_res_fuel"] + (double)fleet_["fleet_res_food"];
 		// Flotte zurückschicken & Waren aus dem Frachtraum löschen
-		fleetReturn("tr",0,0,0,0,0,0,capacity);
+		fleetReturn(1,0,0,0,0,0,0);
 
 		// Handel loggen falls der transport an einen anderen user ging
-		if((int)fleet_["fleet_user_id"] != userToId)
+		if((int)fleet_["user_id"] != userToId)
 		{
 			std::string log = "Der Spieler [URL=?page=user&sub=edit&user_id=";
-			log += std::string(fleet_["fleet_user_id"]);
+			log += std::string(fleet_["user_id"]);
 			log += "][B]";
-			log += functions::getUserNick((int)fleet_["fleet_user_id"]);
+			log += functions::getUserNick((int)fleet_["user_id"]);
 			log += "[/B][/URL] sendet dem Spieler [URL=?page=user&sub=edit&user_id=";
 			log += functions::d2s(userToId);
 			log += "][B]";

@@ -1,13 +1,16 @@
 #include <iostream>
-#include <vector>
+#include <ctime>
+#include <math.h>
+#include <stdlib.h>
 
-#include <time.h>
 #include <mysql++/mysql++.h>
 
 #include "GattackHandler.h"
-#include "../../MysqlHandler.h"
+#include "../../MysqlHandler.H"
 #include "../../functions/Functions.h"
+#include "../../config/ConfigHandler.h"
 
+#include "../../battle/BattleHandler.h"
 namespace gattack
 {
 	void GattackHandler::update()
@@ -16,28 +19,32 @@ namespace gattack
 		/**
 		* Fleet-Action: Gas-Attack
 		*/
+	/*	Config &config = Config::instance();
+		std::time_t time = std::time(0);
+		srand (time);
 
-		// Calc battle
-		battle();
+		
+		BattleHandler *bh = new BattleHandler(con_,fleet_);
+		bh->battle();
 
 		// Send messages
-		int userToId = functions::getUserIdByPlanet((int)fleet_["fleet_target_to"]);
+		int userToId = functions::getUserIdByPlanet((int)fleet_["fleet_entity_to"]);
 		std::string subject1 = "Kampfbericht (";
 		subject1 += bstat;
 		subject1 += ")";
-		std::string = subject2 = "Kampfbericht (";
+		std::string subject2 = "Kampfbericht (";
 		subject2 += bstat2;
 		subject2 += ")";
-		functions::sendMsg((int)fleet_["fleet_user_id"],SHIP_WAR_MSG_CAT_ID,subject1,msgFight);
-		functions::sendMsg(userToId,SHIP_WAR_MSG_CAT_ID,subject2,msgFight);
+		functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_WAR_MSG_CAT_ID"),subject1,bh->msg);
+		functions::sendMsg(userToId,config.idget("SHIP_WAR_MSG_CAT_ID"),subject2,bh->msg);
 
 		// Add log
-		functions::addLog(1,msgFight,(int)fleet_["fleet_landtime"]);
+		functions::addLog(1,bh->msg,(int)fleet_["fleet_landtime"]);
 
 		// Aktion durchführen
-		if (returnV==1)
+		if (bh->returnV==1)
 		{
-			returnFleet = true;
+			bh->returnFleet = true;
 			fleetLoadspecial(); //ToDo
 			
 			int tLevel = 0;
@@ -50,7 +57,7 @@ namespace gattack
 			query << "	techlist ";
 			query << "WHERE ";
 			query << "	techlist_user_id='" << fleet_["'fleet_user_id"] << "' ";
-			query << "	AND techlist_tech_id='18';";
+			query << "	AND techlist_tech_id='" << config.idget("Gifttechnologie") << "';";
 			mysqlpp::Result tRes = query.store();
 			query.reset();
 			
@@ -67,14 +74,15 @@ namespace gattack
 			}
 		
 			//40% + Boni Chance, dass Antrax erflogreich
-			double goOrNot=mt_rand(0,100); //ToDo
-			if (goOrNor<=(40+tLevel*5+$special_ship_bonus_antrax*100)) //ToDo
+			double goOrNot = rand() % 101;
+			if (goOrNor<=(config.nget("gasattack_action",0) + tLevel * 5 + bh->specialShipBonusAntrax * 100))
 			{
-				std::string coordsTarget = functions::formatCoords(fleet_["fleet_target_to"]);
-				std::string coordsFrom = functions::formatCoords(fleet_["fleet_target_from"]);
+				std::string coordsTarget = functions::formatCoords(fleet_["fleet_entity_to"]);
+				std::string coordsFrom = functions::formatCoords(fleet_["fleet_entity_from"]);
 				
 				//Rechnet Prozent der Bevölkerung, die ausgelöscht werden (Max. 95%)
-				double percent = mt_rand(1,min((25+tLevel*3),95)); //ToDo
+				double temp = std::min((25+tLevel*3),config.nget("gasattack_action",0));
+				double percent = rand() % temp;
 				
 				//Lädt Anzahl Bewohner
 				query << "SELECT ";
@@ -82,7 +90,7 @@ namespace gattack
 				query << "FROM ";
 				query << "	planets ";
 				query << "WHERE ";
-				query << "	id='" << fleet_["fleet_target_to"] << "';";
+				query << "	id='" << fleet_["fleet_entity_to"] << "';";
 				mysqlpp::Result pRes = query.store();
 				query.reset();
 				
@@ -104,7 +112,7 @@ namespace gattack
 						query << "SET ";
 						query << "	planet_people='" << people << "' ";
 						query << "WHERE ";
-						query << "	id='" << fleet_["fleet_target_to"] << "';";
+						query << "	id='" << fleet_["fleet_entity_to"] << "';";
 						query.store();
 						query.reset();
 					
@@ -114,13 +122,13 @@ namespace gattack
 						text += " hat einen Giftgasangriff auf den Planeten ";
 						text += coordsTarget;
 						text += " verübt es starben dabei ";
-						text += functions::nf(std::string(rest));
+						text += functions::nf(functions::d2s(rest));
 						text += " Bewohner";
 						
-						functions::sendMsg((int)fleet_["fleet_user_id"],SHIP_WAR_MSG_CAT_ID,"Giftgasangriff",text);
-						functions::sendMsg(userToId,SHIP_WAR_MSG_CAT_ID,"Giftgasangriff",text);
+						functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_WAR_MSG_CAT_ID"),"Giftgasangriff",text);
+						functions::sendMsg(userToId,config.idget("SHIP_WAR_MSG_CAT_ID"),"Giftgasangriff",text);
 
-						Ranking::addBattlePoints($arr['fleet_user_id'],BATTLE_POINTS_SPECIAL,"Spezialaktion"); //ToDo
+						//Ranking::addBattlePoints($arr['fleet_user_id'],BATTLE_POINTS_SPECIAL,"Spezialaktion"); //ToDo
 					}
 				}
 			} 
@@ -133,18 +141,18 @@ namespace gattack
 				text += coordsTarget;
 				text += " verübt.";
 				
-				functions::sendMsg((int)fleet_["fleet_user_id"],SHIP_WAR_MSG_CAT_ID,"Giftgasangriff erfolglos",text);
-				functios::sendMsg(userToId,SHIP_WAR_MSG_CAT_ID,"Giftgasangriff erfolglos",text);
+				functions::sendMsg((int)fleet_["fleet_user_id"],config.idget("SHIP_WAR_MSG_CAT_ID"),"Giftgasangriff erfolglos",text);
+				functios::sendMsg(userToId,config.idget("SHIP_WAR_MSG_CAT_ID"),"Giftgasangriff erfolglos",text);
 			}
 		}
 
-		if (returnFleet || returnV==4)
+		if (bh->returnFleet || bh->returnV==4)
 		{
-			fleetReturn("xr");
+			fleetReturn(1);
 		}
 		else
 		{
 			fleetDelete();
-		}
+		}*/
 	}
 }

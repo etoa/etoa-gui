@@ -24,7 +24,7 @@ namespace market
 		query << "FROM ";
 		query << "	fleet_ships ";
 		query << "WHERE ";
-		query << "	fs_fleet_id=" << fleet_["fleet_id"] << ";";
+		query << "	fs_fleet_id=" << fleet_["id"] << ";";
 		mysqlpp::Result sRes = query.store();
 		query.reset();
 		
@@ -44,7 +44,7 @@ namespace market
 		}
 
 		//Sucht User-ID
-		int userToId = functions::getUserIdByPlanet((int)fleet_["fleet_entity_to"]);
+		int userToId = functions::getUserIdByPlanet((int)fleet_["entity_to"]);
 
 		// Resources and ships
 		if (landAction==1)
@@ -54,14 +54,14 @@ namespace market
 
 			//Nachricht senden
 			std::string msg = "Eine Flotte vom Handelsministerium hat folgendes Ziel erreicht:\n[b]Planet:[/b] ";
-			msg += functions::formatCoords((int)fleet_["fleet_entity_to"],0);
+			msg += functions::formatCoords((int)fleet_["entity_to"],0);
 			msg += "\n[b]Zeit:[/b] ";
-			msg += functions::formatTime((int)fleet_["fleet_landtime"]);
+			msg += functions::formatTime((int)fleet_["landtime"]);
 			msg += "\n[b]Bericht:[/b] Die gekauften Schiffe sind gelandet.\n";
 			msg += msgAllShips;
 			
 			//Wenn das schiff auch Rohstoffe mitgebracht hat
-			if((int)fleet_["fleet_res_metal"]!='0' || (int)fleet_["fleet_res_crystal"]!='0' || (int)fleet_["fleet_res_plastic"]!='0' || (int)fleet_["fleet_res_fuel"]!='0' || (int)fleet_["fleet_res_food"]!='0')
+			if((int)fleet_["res_metal"]!='0' || (int)fleet_["res_crystal"]!='0' || (int)fleet_["res_plastic"]!='0' || (int)fleet_["res_fuel"]!='0' || (int)fleet_["res_food"]!='0')
 			{
 				//Nachricht, wie viele Rohstoffe abgeladen wurden
 				msg += "Es wurden zudem folgende Rohstoffe abgeladen:\n";
@@ -81,9 +81,9 @@ namespace market
 
 			//Nachricht senden
 			std::string msg = "Eine Flotte vom Handelsministerium hat folgendes Ziel erreicht:\n[b]Planet:[/b] ";
-			msg += functions::formatCoords((int)fleet_["fleet_entity_to"],0);
+			msg += functions::formatCoords((int)fleet_["entity_to"],0);
 			msg += "\n[b]Zeit:[/b] ";
-			msg += functions::formatTime((int)fleet_["fleet_landtime"]);
+			msg += functions::formatTime((int)fleet_["landtime"]);
 			msg += "\n[b]Bericht:[/b] Folgende Waren wurden ausgeladen:\n";
 			msg += msgRes;
 			msg += "\n\nUnser Unternehmen dankt ihnen f&uuml;r die Unterst&uuml;tzung und wir hoffen sie sind mit uns zufrieden und w&uuml;nschen ihnen auch in Zukunft viel Erfolg.\nDas Handelsministerium";

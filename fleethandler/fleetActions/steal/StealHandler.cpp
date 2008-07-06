@@ -266,7 +266,7 @@ namespace steal
 
 		if (returnFleet || returnV==4)
 		{
-			fleetReturn("lr");
+			fleetReturn(1);
 		}
 		else
 		{

@@ -26,16 +26,16 @@ namespace position
 
 		//Nachricht senden
 		std::string msg = "[b]FLOTTE GELANDET[/b]\n\nEine eurer Flotten hat hat ihr Ziel erreicht!\n\n[b]Zielplanet:[/b] ";
-		msg += functions::formatCoords((int)fleet_["fleet_entity_to"],0);
+		msg += functions::formatCoords((int)fleet_["entity_to"],0);
 		msg += "\n[b]Startplanet:[/b] ";
-		msg += functions::formatCoords((int)fleet_["fleet_entity_from"],0);
+		msg += functions::formatCoords((int)fleet_["entity_from"],0);
 		msg += "\n[b]Zeit:[/b] ";
-		msg += functions::formatTime((int)fleet_["fleet_landtime"]);
+		msg += functions::formatTime((int)fleet_["landtime"]);
 		msg += "\n[b]Auftrag:[/b] ";
-		msg += functions::fa(std::string(fleet_["fleet_action"]));
+		msg += functions::fa(std::string(fleet_["action"]));
 		msg += msgAllShips;
 		msg += msgRes;
 		
-		functions::sendMsg((int)fleet_["fleet_user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Flotte angekommen",msg);
+		functions::sendMsg((int)fleet_["user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Flotte angekommen",msg);
 	}
 }

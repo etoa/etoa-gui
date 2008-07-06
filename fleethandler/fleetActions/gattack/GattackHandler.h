@@ -19,10 +19,6 @@ namespace gattack
 	public:
 		GattackHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }
 		void update();
-
-	private:
-		bool sendMsg;
-		
 	};
 }
 #endif

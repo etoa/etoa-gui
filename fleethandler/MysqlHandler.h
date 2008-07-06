@@ -33,7 +33,7 @@
 		static My* _instance;
 		My () {
 		
-				std::cout << "Guten Tag, sehr geehrter User. Bite quälen Sie sich durch das Anmeldeverfahren, danke\nHost?\n";
+				/*std::cout << "Guten Tag, sehr geehrter User. Bite quälen Sie sich durch das Anmeldeverfahren, danke\nHost?\n";
 				std::cin >> host;
 				const char* DB_SERVER = host.c_str();
 				std::cout << "User?\n";
@@ -50,9 +50,9 @@
 				std::cout << "Database?\n";
 				std::cin >> db;
 				const char* DB_NAME = db.c_str();
-				std::cout << "Vielen Dank, Sie werden jetzt mit der dem Server verbunden\n";
+				std::cout << "Vielen Dank, Sie werden jetzt mit der dem Server verbunden\n";*/
 		
-				mysqlpp::Connection con(DB_NAME,DB_SERVER,DB_USER,DB_PASSWORD);
+				mysqlpp::Connection con("etoatest","perseus.etoa.ch","etoatest","etoatest");
 				
 				con_ = con;
 			

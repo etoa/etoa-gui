@@ -19,9 +19,6 @@ namespace bombard
 	public:
 		BombardHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }
 		void update();
-
-	private:
-		bool sendMsg;
 		
 	};
 }

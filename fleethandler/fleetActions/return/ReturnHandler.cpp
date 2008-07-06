@@ -26,7 +26,7 @@ namespace retour
 		sendMsg = true;
 		
 		// Für Transporte und Spionage prüfen ob Return Nachricht gewünscht ist
-		if (std::string(fleet_["fleet_action"])=="sr" || std::string(fleet_["fleet_action"])=="tr")
+		if (std::string(fleet_["action"])=="sr" || std::string(fleet_["action"])=="tr")
 		{
 			mysqlpp::Query query = con_->query();
 			query << "SELECT ";
@@ -34,7 +34,7 @@ namespace retour
 			query << "FROM ";
 			query << "	users ";
 			query << "WHERE ";
-			query << "	user_id=" << fleet_["fleet_user_id"] << ";";
+			query << "	user_id=" << fleet_["user_id"] << ";";
 			mysqlpp::Result mRes = query.store();
 			query.reset();
 			
@@ -57,19 +57,19 @@ namespace retour
 		if (sendMsg)
 		{
 			//Nachricht senden
-			std::string msg = "[b]FLOTTE GELANDET[/b]\n\nEine eurer Flotten hat ihr Ziel erreicht!\n[b]Zielplanet:[/b] ";
-			msg += functions::formatCoords((int)fleet_["fleet_entity_to"],0);
-			msg += "[b]Startplanet:[/b] ";
-			msg += functions::formatCoords(fleet_["fleet_entity_from"],0);
-			msg += "[b]Zeit:[/b] ";
-			msg += functions::formatTime((int)fleet_["fleet_landtime"]);
-			msg += "[b]Auftrag:[/b] ";
-			msg += functions::fa(std::string(fleet_["fleet_action"]));
+			std::string msg = "[b]FLOTTE GELANDET[/b]\n\nEine eurer Flotten hat ihr Ziel erreicht!\n\n[b]Zielplanet:[/b] ";
+			msg += functions::formatCoords((int)fleet_["entity_to"],0);
+			msg += "\n[b]Startplanet:[/b] ";
+			msg += functions::formatCoords(fleet_["entity_from"],0);
+			msg += "\n[b]Zeit:[/b] ";
+			msg += functions::formatTime((int)fleet_["landtime"]);
+			msg += "\n[b]Auftrag:[/b] ";
+			msg += functions::fa(std::string(fleet_["action"]));
 				
 			msg += msgAllShips;
 			msg += msgRes;
 			
-			functions::sendMsg((int)fleet_["fleet_user_id"],5,"Flotte angekommen",msg);
+			functions::sendMsg((int)fleet_["user_id"],5,"Flotte angekommen",msg);
 		}
 	}
 }

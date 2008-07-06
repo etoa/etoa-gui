@@ -244,7 +244,7 @@ namespace emp
 	
 		if (returnFleet || returnV==4)
 		{
-			fleetReturn("dr");
+			fleetReturn(1);
 		}
 		else
 		{

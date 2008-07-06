@@ -34,8 +34,9 @@ public:
 	* Standartflottenaktionen
 	*/
 	void fleetDelete();
-	void fleetReturn(std::string action,double resMetal=-1,double resCrystal=-1,double resPlastic=-1,double resFuel=-1,double resFood=-1,double resPeople=-1,double capacity=-1);
+	void fleetReturn(int status,double resMetal=-1,double resCrystal=-1,double resPlastic=-1,double resFuel=-1,double resFood=-1,double resPeople=-1);
 	void fleetLand(int fleetAction=0,bool alreadyColonialized=0,bool alreadyInvaded=0);
+	
 
 protected:
 	/**

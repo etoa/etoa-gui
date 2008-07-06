@@ -16,35 +16,35 @@
 		if(fleetAction==1)
 		{
             // Waren entladen
-            double people = (double)fleet_["fleet_pilots"] + (double)fleet_["fleet_res_people"];
+            double people = (double)fleet_["pilots"] + (double)fleet_["res_people"];
 			query << std::setprecision(18);
             query << "UPDATE ";
 			query << "	planets ";
 			query << "SET ";
-			query << "	planet_res_metal=planet_res_metal+'" << fleet_["fleet_res_metal"] << "', ";
-			query << "	planet_res_crystal=planet_res_crystal+'" << fleet_["fleet_res_crystal"] << "', ";
-			query << "	planet_res_plastic=planet_res_plastic+'" << fleet_["fleet_res_plastic"] << "', ";
-			query << "	planet_res_fuel=planet_res_fuel+'" << fleet_["fleet_res_fuel"] << "', ";
-			query << "	planet_res_food=planet_res_food+'" << fleet_["fleet_res_food"] << "', ";
+			query << "	planet_res_metal=planet_res_metal+'" << fleet_["res_metal"] << "', ";
+			query << "	planet_res_crystal=planet_res_crystal+'" << fleet_["res_crystal"] << "', ";
+			query << "	planet_res_plastic=planet_res_plastic+'" << fleet_["res_plastic"] << "', ";
+			query << "	planet_res_fuel=planet_res_fuel+'" << fleet_["res_fuel"] << "', ";
+			query << "	planet_res_food=planet_res_food+'" << fleet_["res_food"] << "', ";
 			query << "	planet_people=planet_people+'" << people << "' ";
 			query << "WHERE ";
-			query << "	id='" << fleet_["fleet_entity_to"] << "';";
+			query << "	id='" << fleet_["entity_to"] << "';";
 			query.store();
 			query.reset();
 
 			//Rohstoffnachricht für den User
 			msgRes= "\n[b]WAREN[/b]\n\n[b]Titan:[/b] ";
-			msgRes += functions::nf(std::string(fleet_["fleet_res_metal"]));
+			msgRes += functions::nf(std::string(fleet_["res_metal"]));
 			msgRes += "\n[b]Silizium:[/b] ";
-			msgRes += functions::nf(std::string(fleet_["fleet_res_crystal"]));
+			msgRes += functions::nf(std::string(fleet_["res_crystal"]));
 			msgRes += "\n[b]PVC:[/b] ";
-			msgRes += functions::nf(std::string(fleet_["fleet_res_plastic"]));
+			msgRes += functions::nf(std::string(fleet_["res_plastic"]));
 			msgRes += "\n[b]Tritium:[/b] ";
-			msgRes += functions::nf(std::string(fleet_["fleet_res_fuel"]));
+			msgRes += functions::nf(std::string(fleet_["res_fuel"]));
 			msgRes += "\n[b]Nahrung:[/b] ";
-			msgRes += functions::nf(std::string(fleet_["fleet_res_food"]));
+			msgRes += functions::nf(std::string(fleet_["res_food"]));
 			msgRes += "\n[b]Bewohner:[/b] ";
-			msgRes += functions::nf(std::string(fleet_["fleet_res_people"]));
+			msgRes += functions::nf(std::string(fleet_["res_people"]));
 			msgRes += "\n";
 
 			// Flotte stationieren
@@ -69,13 +69,12 @@
 			query << "	fs.fs_special_ship_bonus_antrax_food, ";
 			query << "	fs.fs_special_ship_bonus_deactivade, ";
 			query << "	s.ship_name, ";
-			query << "	s.ship_colonialize, ";
-			query << "	s.ship_invade ";
+			query << "	s.ship_actions ";
 			query << "FROM ";
 			query << "	fleet_ships AS fs ";
 			query << "INNER JOIN ";
 			query << "	ships AS s ON fs.fs_ship_id = s.ship_id ";
-			query << "	AND fs.fs_fleet_id='" << fleet_["fleet_id"] << "' ";
+			query << "	AND fs.fs_fleet_id='" << fleet_["id"] << "' ";
 			query << "		AND fs.fs_ship_faked='0'; ";
 			mysqlpp::Result fsRes = query.store();
 			query.reset();
@@ -94,16 +93,33 @@
 						fsRow = fsRes.at(i);
 
 						double shipCnt = (double)fsRow["fs_ship_cnt"];
+						
+						//Kolonisieren und Invasieren aus den Schiffsaktionen auslesen
+						bool canColonize = 0;
+						bool canInvade = 0;
+						char str[] = "";
+						strcpy( str, fsRow["ship_actions"]);
+						char * pch;
+						pch = strtok (str,",");
+						do
+						{
+							std::cout << pch << "\n";
+							if (pch == "colonize")
+								canColonize = 1;
+							else if (pch == "invade")
+								canInvade = 1;
+							pch = strtok (NULL, ",");
+						} while  (pch != NULL);
 
 						// Ein Koloschiff subtrahieren, falls kolonialisieren gewählt ist (einmalig)
-						if ((int)fsRow["ship_colonialize"]==1 && alreadyColonialized==0 && std::string(fleet_["fleet_action"])=="ko")
+						if (canColonize==1 && alreadyColonialized==0 && std::string(fleet_["action"])=="colonize")
 						{
 							shipCnt = (double)fsRow["fs_ship_cnt"]-1;
 							alreadyColonialized=1;
 						}
 
 						// Ein Invasionsschiff subtrahieren, falls invasieren gewählt ist (einmalig)
-						if ((int)fsRow["ship_invade"]==1 && alreadyInvaded==0 && std::string(fleet_["fleet_action"])=="io")
+						if (canInvade==1 && alreadyInvaded==0 && std::string(fleet_["action"])=="invade")
 						{
 							shipCnt = (double)fsRow["fs_ship_cnt"]-1;
 							alreadyInvaded=1;
@@ -117,7 +133,7 @@
 						query << "	shiplist ";							
 						query << "WHERE ";
 						query << "	shiplist_ship_id='" << fsRow["fs_ship_id"] << "' ";
-						query << "	AND shiplist_planet_id='" << fleet_["fleet_entity_to"] << "';";
+						query << "	AND shiplist_planet_id='" << fleet_["entity_to"] << "';";
 						mysqlpp::Result slRes = query.store();
 						query.reset();
 						
@@ -161,13 +177,13 @@
 								int userId;
 								
 								//überprüft, ob die Flotte eine User ID besitzt, sonst eine generieren durch Planet ID (z.b. für Handelsschiffe)
-								if((int)fleet_["fleet_user_id"]!=0)
+								if((int)fleet_["user_id"]!=0)
 								{
-									userId = (int)fleet_["fleet_user_id"];
+									userId = (int)fleet_["user_id"];
 								}
 								else
 								{
-									userId = functions::getUserIdByPlanet((int)fleet_["fleet_entity_to"]);
+									userId = functions::getUserIdByPlanet((int)fleet_["entity_to"]);
 								}
 
 								query << "INSERT INTO ";
@@ -196,7 +212,7 @@
 								query << "VALUES ( ";
 								query << "	'" << userId << "', ";
 								query << "	'" << fsRow["fs_ship_id"] << "', ";
-								query << "	'" << fleet_["fleet_entity_to"] << "', ";
+								query << "	'" << fleet_["entity_to"] << "', ";
 								query << "	'" << shipCnt << "', ";
 								query << "	'" << fsRow["fs_special_ship"] << "', ";
 								query << "	'" << fsRow["fs_special_ship_level"] << "', ";
@@ -247,35 +263,35 @@
 		else if(fleetAction==2)
 		{
             // Waren entladen
-            double people = (double)fleet_["fleet_pilots"] + (double)fleet_["fleet_res_people"];
+            double people = (double)fleet_["pilots"] + (double)fleet_["res_people"];
 			query << std::setprecision(18);
             query << "UPDATE ";
 			query << "	planets ";
 			query << "SET ";
-			query << "	planet_res_metal=planet_res_metal+'" << (double)fleet_["fleet_res_metal"] << "', ";
-			query << "	planet_res_crystal=planet_res_crystal+'" << fleet_["fleet_res_crystal"] << "', ";
-			query << "	planet_res_plastic=planet_res_plastic+'" << fleet_["fleet_res_plastic"] << "', ";
-			query << "	planet_res_fuel=planet_res_fuel+'" << fleet_["fleet_res_fuel"] << "', ";
-			query << "	planet_res_food=planet_res_food+'" << fleet_["fleet_res_food"] << "', ";
+			query << "	planet_res_metal=planet_res_metal+'" << (double)fleet_["res_metal"] << "', ";
+			query << "	planet_res_crystal=planet_res_crystal+'" << fleet_["res_crystal"] << "', ";
+			query << "	planet_res_plastic=planet_res_plastic+'" << fleet_["res_plastic"] << "', ";
+			query << "	planet_res_fuel=planet_res_fuel+'" << fleet_["res_fuel"] << "', ";
+			query << "	planet_res_food=planet_res_food+'" << fleet_["res_food"] << "', ";
 			query << "	planet_people=planet_people+'" << people << "' ";
 			query << "WHERE ";
-			query << "	id='" << fleet_["fleet_entity_to"] << "';";
+			query << "	id='" << fleet_["entity_to"] << "';";
 			query.store();
 			query.reset();
 
 			//Rohstoffnachricht für den User
 			msgRes= "\n[b]WAREN[/b]\n\n[b]Titan:[/b] ";
-			msgRes += functions::nf(std::string(fleet_["fleet_res_metal"]));
+			msgRes += functions::nf(std::string(fleet_["res_metal"]));
 			msgRes += "\n[b]Silizium:[/b] ";
-			msgRes += functions::nf(std::string(fleet_["fleet_res_crystal"]));
+			msgRes += functions::nf(std::string(fleet_["res_crystal"]));
 			msgRes += "\n[b]PVC:[/b] ";
-			msgRes += functions::nf(std::string(fleet_["fleet_res_plastic"]));
+			msgRes += functions::nf(std::string(fleet_["res_plastic"]));
 			msgRes += "\n[b]Tritium:[/b] ";
-			msgRes += functions::nf(std::string(fleet_["fleet_res_fuel"]));
+			msgRes += functions::nf(std::string(fleet_["res_fuel"]));
 			msgRes += "\n[b]Nahrung:[/b] ";
-			msgRes += functions::nf(std::string(fleet_["fleet_res_food"]));
+			msgRes += functions::nf(std::string(fleet_["res_food"]));
 			msgRes += "\n[b]Bewohner:[/b] ";
-			msgRes += functions::nf(std::string(fleet_["fleet_res_people"]));
+			msgRes += functions::nf(std::string(fleet_["res_people"]));
 			msgRes += "\n";
 		}
 		//Fehler, die Flotte hat eine ungültige Aktion
@@ -286,12 +302,12 @@
 	}
 
 
-	void FleetHandler::fleetReturn(std::string action,double resMetal,double resCrystal,double resPlastic,double resFuel,double resFood,double resPeople,double capacity)
+	void FleetHandler::fleetReturn(int status,double resMetal,double resCrystal,double resPlastic,double resFuel,double resFood,double resPeople)
 	{
 
         // Flotte zurückschicken
-		int duration = (int)fleet_["fleet_landtime"] - (int)fleet_["fleet_launchtime"];
-        int launchtime = (int)fleet_["fleet_landtime"];
+		int duration = (int)fleet_["landtime"] - (int)fleet_["launchtime"];
+        int launchtime = (int)fleet_["landtime"];
         int landtime = launchtime + duration;
 		
 		mysqlpp::Query query = con_->query();
@@ -299,29 +315,27 @@
 		query << "UPDATE ";
 		query << "	fleet ";
 		query << "SET ";
-		query << "	fleet_entity_from='" << fleet_["fleet_entity_to"] << "', ";
-		query << "	fleet_entity_to='" << fleet_["fleet_entity_from"] << "', ";
-		query << "	fleet_action='" << action << "', ";
-		query << "	fleet_launchtime='" << launchtime << "', ";
-		query << "	fleet_landtime='" << landtime << "' ";
+		query << "	entity_from='" << fleet_["entity_to"] << "', ";
+		query << "	entity_to='" << fleet_["entity_from"] << "', ";
+		query << "	status='" << status << "', ";
+		query << "	launchtime='" << launchtime << "', ";
+		query << "	landtime='" << landtime << "' ";
 		
 			if (resMetal>-1) 
-				query << ", fleet_res_metal='" << resMetal << "'";
+				query << ", res_metal='" << resMetal << "'";
 			if (resCrystal>-1) 
-				query << ", fleet_res_crystal='" << resCrystal << "'";
+				query << ", res_crystal='" << resCrystal << "'";
 			if (resPlastic>-1) 
-				query << ", fleet_res_plastic='" << resPlastic << "'";
+				query << ", res_plastic='" << resPlastic << "'";
 			if (resFuel>-1) 
-				query << ", fleet_res_fuel='" << resFuel << "'";
+				query << ", res_fuel='" << resFuel << "'";
 			if (resFood>-1) 
-				query << ", fleet_res_food='" << resFood << "'";
+				query << ", res_food='" << resFood << "'";
 			if (resPeople>-1) 
-				query << ", fleet_res_people='" << resPeople << "'";
-			if (capacity>-1)
-				query << ", fleet_capacity='" << capacity << "'";
+				query << ", res_people='" << resPeople << "'";
 		
 		query << " WHERE ";
-		query << "	fleet_id=" << fleet_["fleet_id"] << ";";
+		query << "	id=" << fleet_["id"] << ";";
 		query.store();
 		query.reset();
 	}
@@ -333,7 +347,7 @@
 		query << "DELETE FROM ";
 		query << "	fleet_ships ";
 		query << "WHERE ";
-		query << "	fs_fleet_id='" << fleet_["fleet_id"] << "';";
+		query << "	fs_fleet_id='" << fleet_["id"] << "';";
 		query.store();
 		query.reset();
 		
@@ -341,7 +355,7 @@
 		query << "DELETE FROM ";
 		query << "	fleet ";
 		query << "WHERE ";
-		query << "	fleet_id='" << fleet_["fleet_id"] << "';";
+		query << "	id='" << fleet_["id"] << "';";
 		query.store();
 		query.reset();			
 	}

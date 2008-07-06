@@ -376,7 +376,7 @@ namespace invade
 			}
 			if (returnFleet || returnV==4)
 			{
-				fleetReturn("ir");
+				fleetReturn(1);
 			}
 			else
 			{
