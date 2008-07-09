@@ -619,6 +619,139 @@
 		return $res;
 	}
 
+
+	function calcBuildingPoints($id=0)
+	{
+		$cfg = Config::getInstance();
+		if ($id>0)
+			$sql = "SELECT
+				building_id,
+	      building_costs_metal,
+	      building_costs_crystal,
+	      building_costs_fuel,
+	      building_costs_plastic,
+	      building_costs_food,
+				building_build_costs_factor,
+	      building_last_level
+			FROM
+				buildings
+			WHERE
+				building_id=".$id.";";
+		else	
+			$sql = "SELECT
+				building_id,
+	      building_costs_metal,
+	      building_costs_crystal,
+	      building_costs_fuel,
+	      building_costs_plastic,
+	      building_costs_food,
+				building_build_costs_factor,
+	      building_last_level
+			FROM
+				buildings;";
+			dbquery("DELETE FROM building_points;");
+			$res = dbquery($sql);
+			$mnr = mysql_num_rows($res);
+			if ($mnr>0)
+			{
+				while ($arr = mysql_fetch_array($res))
+				{
+					for ($level=1;$level<=intval($arr['building_last_level']);$level++)
+					{
+						$r = $arr['building_costs_metal']
+						+$arr['building_costs_crystal']
+						+$arr['building_costs_fuel']
+						+$arr['building_costs_plastic']
+						+$arr['building_costs_food'];
+						$p = ($r*(1-pow($arr['building_build_costs_factor'],$level))
+						/(1-$arr['building_build_costs_factor'])) 
+						/ $cfg->p1('points_update');
+						
+						dbquery("
+						INSERT INTO 
+							building_points
+	          (
+	          	bp_building_id,
+	            bp_level,
+	            bp_points
+	          ) 
+						VALUES 
+	            (".$arr['building_id'].",
+	            '".$level."',
+	            '".$p."');");
+					}
+				}
+			}
+			if ($mnr>0)
+				return "Die Geb&auml;udepunkte von $mnr Geb&auml;uden wurden aktualisiert!";
+	}
+
+	function calcTechPoints($id=0)
+	{
+		$cfg = Config::getInstance();
+		if ($id>0)
+			$sql = "SELECT
+				tech_id,
+	      tech_costs_metal,
+	      tech_costs_crystal,
+	      tech_costs_fuel,
+	      tech_costs_plastic,
+	      tech_costs_food,
+				tech_build_costs_factor,
+	      tech_last_level
+			FROM
+				technologies
+			WHERE
+				tech_id=".$id.";";
+		else	
+			$sql = "SELECT
+				tech_id,
+	      tech_costs_metal,
+	      tech_costs_crystal,
+	      tech_costs_fuel,
+	      tech_costs_plastic,
+	      tech_costs_food,
+				tech_build_costs_factor,
+	      tech_last_level
+			FROM
+				technologies;";
+			dbquery("DELETE FROM tech_points;");
+			$res = dbquery($sql);
+			$mnr = mysql_num_rows($res);
+			if ($mnr>0)
+			{
+				while ($arr = mysql_fetch_array($res))
+				{
+					for ($level=1;$level<=intval($arr['tech_last_level']);$level++)
+					{
+						$r = $arr['tech_costs_metal']
+						+$arr['tech_costs_crystal']
+						+$arr['tech_costs_fuel']
+						+$arr['tech_costs_plastic']
+						+$arr['tech_costs_food'];
+						$p = ($r*(1-pow($arr['tech_build_costs_factor'],$level))
+						/(1-$arr['tech_build_costs_factor'])) 
+						/ $cfg->p1('points_update');
+						
+						dbquery("
+						INSERT INTO 
+							tech_points
+	          (
+	          	bp_tech_id,
+	            bp_level,
+	            bp_points
+	          ) 
+						VALUES 
+	            (".$arr['tech_id'].",
+	            '".$level."',
+	            '".$p."');");
+					}
+				}
+			}
+			if ($mnr>0)
+				return "Die Punkte von $mnr Technologien wurden aktualisiert!";
+	}
+
 	function calcShipPoints()
 	{
 		$cfg = Config::getInstance();

@@ -35,36 +35,10 @@
 		echo "<h2>Forschungpsunkte neu berechnen</h2><form action=\"?page=$page&amp;sub=$sub\" method=\"POST\">";
 		if ($_POST['recalc']!="")
 		{
-			dbquery("DELETE FROM ".$db_table['tech_points'].";");
-			$res = dbquery("
-			SELECT
-				tech_id,
-        tech_costs_metal,
-        tech_costs_crystal,
-        tech_costs_fuel,
-        tech_costs_plastic,
-        tech_costs_food,
-				tech_build_costs_factor        
-			FROM
-				".$db_table['technologies'].";");
-			$mnr = mysql_num_rows($res);
-			if ($mnr>0)
-			{
-				while ($arr = mysql_fetch_array($res))
-				{
-					for ($level=1;$level<=intval($_POST['maxlevel']);$level++)
-					{
-						$r = $arr['tech_costs_metal']+$arr['tech_costs_crystal']+$arr['tech_costs_fuel']+$arr['tech_costs_plastic']+$arr['tech_costs_food'];
-						$p = ($r*(1-pow($arr['tech_build_costs_factor'],$level))/(1-$arr['tech_build_costs_factor'])) / $conf['points_update']['p1']; 
-						dbquery("INSERT INTO ".$db_table['tech_points']." (bp_tech_id,bp_level,bp_points) VALUES (".$arr['tech_id'].",$level,$p);");
-					}
-				}
-			}
-			if ($mnr>0)
-				echo "Die Forschungspunkte von <b>$mnr</b> Forschungen wurden aktualisiert!<br/><br/>";			
+			cms_ok_msg(calcTechPoints());
 		}		
-		echo "Nach jeder &Auml;nderung an den Forschungen m&uuml;ssen die Forschungspunkte neu berechnet werden.<br/><br/>Punkte bis und mit Level ";
-		echo "<input type=\"text\" name=\"maxlevel\" value=\"20\" size=\"2\" maxlength=\"2\" /> <input type=\"submit\" name=\"recalc\" value=\"Neu berechnen\" /></form>";		
+		echo "Nach jeder &Auml;nderung an den Forschungen m&uuml;ssen die Forschungspunkte neu berechnet werden.<br/><br/> ";
+		echo "<input type=\"submit\" name=\"recalc\" value=\"Neu berechnen\" /></form>";		
 		
 		echo "<h2>Forschungspunkte</h2>";
 		$res=dbquery("SELECT
@@ -100,6 +74,14 @@
 						else
 							$cnt++;
 					}
+					if ($cnt!=0)
+					{
+						for ($x=$cnt;$x<4;$x++)
+						{
+							echo "<td colspan=\"2\"></td>";
+						}
+						echo "</tr>";
+					}					
 				}
 				echo "</table></td></tr>";
 			}			

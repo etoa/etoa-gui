@@ -148,46 +148,11 @@
 		echo "<h2>Geb&auml;udepunkte neu berechnen</h2><form action=\"?page=$page&amp;sub=$sub\" method=\"POST\">";
 		if ($_POST['recalc']!="")
 		{
-			dbquery("DELETE FROM ".$db_table['building_points'].";");
-			$res = dbquery("
-			SELECT
-				building_id,
-                building_costs_metal,
-                building_costs_crystal,
-                building_costs_fuel,
-                building_costs_plastic,
-                building_costs_food,
-				building_build_costs_factor
-			FROM
-				".$db_table['buildings'].";");
-			$mnr = mysql_num_rows($res);
-			if ($mnr>0)
-			{
-				while ($arr = mysql_fetch_array($res))
-				{
-					for ($level=1;$level<=intval($_POST['maxlevel']);$level++)
-					{
-						$r = $arr['building_costs_metal']+$arr['building_costs_crystal']+$arr['building_costs_fuel']+$arr['building_costs_plastic']+$arr['building_costs_food'];
-						$p = ($r*(1-pow($arr['building_build_costs_factor'],$level))/(1-$arr['building_build_costs_factor'])) / $conf['points_update']['p1'];
-						
-						dbquery("
-						INSERT INTO 
-						".$db_table['building_points']." 
-                            (bp_building_id,
-                            bp_level,
-                            bp_points) 
-						VALUES 
-                            (".$arr['building_id'].",
-                            '".$level."',
-                            '".$p."');");
-					}
-				}
-			}
-			if ($mnr>0)
-				echo "Die Geb&auml;udepunkte von <b>$mnr</b> Geb&auml;uden wurden aktualisiert!<br/><br/>";
+			cms_ok_msg(calcBuildingPoints());
 		}
-		echo "Nach jeder &Auml;nderung an den Geb&auml;uden m&uuml;ssen die Geb&auml;udepunkte neu berechnet werden.<br/><br/>Punkte bis und mit Level ";
-		echo "<input type=\"text\" name=\"maxlevel\" value=\"40\" size=\"2\" maxlength=\"2\" /> <input type=\"submit\" name=\"recalc\" value=\"Neu berechnen\" /></form>";
+		echo "Nach jeder &Auml;nderung an den Geb&auml;uden m&uuml;ssen die Geb&auml;udepunkte neu berechnet werden.<br/><br/>
+		Diese Aktion kann eine Weile dauern! ";
+		echo "<input type=\"submit\" name=\"recalc\" value=\"Neu berechnen\" /></form>";
 
 		echo "<h2>Geb&auml;udepunkte</h2>";
 		$res=dbquery("
@@ -230,6 +195,14 @@
 						}
 						else
 							$cnt++;
+					}
+					if ($cnt!=0)
+					{
+						for ($x=$cnt;$x<4;$x++)
+						{
+							echo "<td colspan=\"2\"></td>";
+						}
+						echo "</tr>";
 					}
 				}
 				echo "</table></td></tr>";
