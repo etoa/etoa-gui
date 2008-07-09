@@ -39,6 +39,7 @@
 	define("DB_TABLE_SORT",'ship_order');
 	define("DB_TABLE_SORT_PARENT",'ship_cat_id');
 
+	define('POST_INSERT_UPDATE_METHOD','calcShipPoints');
 	
 	$form_switches = array("Anzeigen"=>'ship_show','Baubar'=>'ship_buildable','Startbar'=>'ship_launchable');
 	
@@ -60,13 +61,13 @@
 	// select_elem_checked				// Value of default checked Select Element (desc=>value)
 	// show_overview							// Set 1 to show on overview page
 
-	$db_fields = array (  60	=> 	array	(	"name" => "ship_id",
+	$db_fields = array (	array	(	"name" => "ship_id",
 																		"text" => "ID",
 																		"type" => "readonly",
-																		"show_overview" => 1
-																	),
-	
-		0	=> 	array	(	"name" => "ship_name",
+																		"show_overview" => 1,
+																		"link_in_overview" => 1
+																	),   	
+	 											array	(	"name" => "ship_name",
 																		"text" => "Name",
 																		"type" => "text",
 																		"def_val" => "",
@@ -78,10 +79,10 @@
 																		"rcb_elem_chekced" => "",
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
-																		"show_overview" => 1
+																		"show_overview" => 1,
+																		"link_in_overview" => 1
 																	),
-
-											1	=> 	array	(	"name" => "ship_shortcomment",
+												array	(	"name" => "ship_shortcomment",
 																		"text" => "Kurzbeschreibung",
 																		"type" => "textarea",
 																		"def_val" => "",
@@ -95,7 +96,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											2	=> 	array	(	"name" => "ship_longcomment",
+												array	(	"name" => "ship_longcomment",
 																		"text" => "Beschreibung",
 																		"type" => "textarea",
 																		"def_val" => "",
@@ -109,7 +110,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											30	=> 	array	(	"name" => "ship_cat_id",
+												array	(	"name" => "ship_cat_id",
 																		"text" => "Kategorie",
 																		"type" => "select",
 																		"def_val" => "",
@@ -123,23 +124,16 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
 																	),																		
-											24	=> 	array	(	"name" => "ship_race_id",
+												array	(	"name" => "ship_race_id",
 																		"text" => "Rasse",
 																		"type" => "select",
 																		"def_val" => "",
-																		"size" => "20",
-																		"maxlen" => "250",
-																		"rows" => "",
-																		"cols" => "",
-																		"rcb_elem" => "",
-																		"rcb_elem_chekced" => "",
 																		"select_elem" => admin_get_select_elements($db_table['races'],"race_id","race_name","race_name",array("0"=>"-")),
 																		"select_elem_checked" => "",
-																		"show_overview" => 1
-																	),
-																
-																	
-											3	=> 	array	(	"name" => "ship_costs_metal",
+																		"show_overview" => 1,
+																		"line" => 1
+																	),																	
+											array	(	"name" => "ship_costs_metal",
 																		"text" => "Kosten Metall",
 																		"type" => "text",
 																		"def_val" => "",
@@ -153,7 +147,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											4	=> 	array	(	"name" => "ship_costs_crystal",
+											array	(	"name" => "ship_costs_crystal",
 																		"text" => "Kosten Kristall",
 																		"type" => "text",
 																		"def_val" => "",
@@ -167,7 +161,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											5	=> 	array	(	"name" => "ship_costs_plastic",
+											array	(	"name" => "ship_costs_plastic",
 																		"text" => "Kosten Plastik",
 																		"type" => "text",
 																		"def_val" => "",
@@ -181,7 +175,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											6	=> 	array	(	"name" => "ship_costs_fuel",
+											array	(	"name" => "ship_costs_fuel",
 																		"text" => "Kosten Treibstoff",
 																		"type" => "text",
 																		"def_val" => "",
@@ -195,7 +189,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											7	=> 	array	(	"name" => "ship_costs_food",
+											array	(	"name" => "ship_costs_food",
 																		"text" => "Kosten Nahrung",
 																		"type" => "text",
 																		"def_val" => "",
@@ -209,7 +203,13 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											8	=> 	array	(	"name" => "ship_fuel_use",
+											array	(	"name" => "ship_points",
+																		"text" => "Punkte",
+																		"type" => "readonly",
+																		"show_overview" => 0,
+																		"line" => 1
+																	), 																	
+											array	(	"name" => "ship_fuel_use",
 																		"text" => "Treibstoffverbrauch",
 																		"type" => "text",
 																		"def_val" => "",
@@ -223,7 +223,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											9	=> 	array	(	"name" => "ship_fuel_use_launch",
+											array	(	"name" => "ship_fuel_use_launch",
 																		"text" => "Treibstoff Start",
 																		"type" => "text",
 																		"def_val" => "",
@@ -237,7 +237,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											10	=> 	array	(	"name" => "ship_fuel_use_landing",
+											array	(	"name" => "ship_fuel_use_landing",
 																		"text" => "Treibstoff Landung",
 																		"type" => "text",
 																		"def_val" => "",
@@ -251,7 +251,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											11	=> 	array	(	"name" => "ship_capacity",
+											array	(	"name" => "ship_capacity",
 																		"text" => "Laderaum",
 																		"type" => "text",
 																		"def_val" => "",
@@ -265,7 +265,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											21	=> 	array	(	"name" => "ship_people_capacity",
+											array	(	"name" => "ship_people_capacity",
 																		"text" => "Passagierraum",
 																		"type" => "text",
 																		"def_val" => "",
@@ -280,7 +280,7 @@
 																		"show_overview" => 0
 																	),
 
-											12	=> 	array	(	"name" => "ship_pilots",
+											array	(	"name" => "ship_pilots",
 																		"text" => "Piloten",
 																		"type" => "text",
 																		"def_val" => "1",
@@ -294,7 +294,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											13	=> 	array	(	"name" => "ship_speed",
+											array	(	"name" => "ship_speed",
 																		"text" => "Geschwindigkeit",
 																		"type" => "text",
 																		"def_val" => "",
@@ -308,7 +308,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											14	=> 	array	(	"name" => "ship_time2start",
+											array	(	"name" => "ship_time2start",
 																		"text" => "Startzeit",
 																		"type" => "text",
 																		"def_val" => "",
@@ -322,7 +322,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											15	=> 	array	(	"name" => "ship_time2land",
+											array	(	"name" => "ship_time2land",
 																		"text" => "Landezeit",
 																		"type" => "text",
 																		"def_val" => "",
@@ -334,11 +334,11 @@
 																		"rcb_elem_chekced" => "",
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
-																		"show_overview" => 0
+																		"show_overview" => 0,
+																		"line" => 1
 																	),
-																	
-																	
-												16	=> 	array	(	"name" => "ship_structure",
+
+											array	(	"name" => "ship_structure",
 																		"text" => "Struktur",
 																		"type" => "text",
 																		"def_val" => "",
@@ -352,7 +352,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											17	=> 	array	(	"name" => "ship_shield",
+											array	(	"name" => "ship_shield",
 																		"text" => "Schild",
 																		"type" => "text",
 																		"def_val" => "",
@@ -366,7 +366,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											18	=> 	array	(	"name" => "ship_weapon",
+											array	(	"name" => "ship_weapon",
 																		"text" => "Waffe",
 																		"type" => "text",
 																		"def_val" => "",
@@ -380,7 +380,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											19	=> 	array	(	"name" => "ship_heal",
+											array	(	"name" => "ship_heal",
 																		"text" => "Heilung pro Runde",
 																		"type" => "text",
 																		"def_val" => "",
@@ -392,29 +392,15 @@
 																		"rcb_elem_chekced" => "",
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
-																		"show_overview" => 0
+																		"show_overview" => 0,
+																		"line"=> 1
 																	),
-																	
-											49	=> 	array	(	"name" => "ship_actions",
-																		"text" => "Aktionen",
-																		"type" => "fleetaction",
-																		"def_val" => "",
-																		"size" => "20",
-																		"maxlen" => "250",
-																		"rows" => "2",
-																		"cols" => "60",
-																		"rcb_elem" => "",
-																		"rcb_elem_chekced" => "",
-																		"select_elem" => "",
-																		"select_elem_checked" => "",
-																		"show_overview" => 0
-																	),		
-																																		
-											32	=> 	array	(	"name" => "ship_max_count",
+
+											array	(	"name" => "ship_max_count",
 																		"text" => "Max. Anzahl (0=unentlich)",
 																		"type" => "text",
 																		"def_val" => "",
-																		"size" => "20",
+																		"size" => "7",
 																		"maxlen" => "250",
 																		"rows" => "",
 																		"cols" => "",
@@ -424,9 +410,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-
-
-										29	=> 	array	(	"name" => "ship_fieldsprovide",
+										array	(	"name" => "ship_fieldsprovide",
 																		"text" => "Zur Verfüg. gest. Felder",
 																		"type" => "text",
 																		"def_val" => "0",
@@ -440,11 +424,8 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-																	
-															
-
-											27	=> 	array	(	"name" => "ship_fakeable",
-																		"text" => "Täuschbar",
+											array	(	"name" => "ship_fakeable",
+																		"text" => "Verwenden bei Täuschangriff",
 																		"type" => "radio",
 																		"def_val" => "",
 																		"size" => "",
@@ -455,11 +436,28 @@
 																		"rcb_elem_chekced" => "0",
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
-																		"show_overview" => 0
+																		"show_overview" => 0,
+																		"columnend" => 1
 																	),
 
-
-											31	=> 	array	(	"name" => "special_ship",
+																	
+											array	(	"name" => "ship_actions",
+																		"text" => "Aktionen",
+																		"type" => "fleetaction",
+																		"def_val" => "",
+																		"size" => "20",
+																		"maxlen" => "250",
+																		"rows" => "2",
+																		"cols" => "60",
+																		"rcb_elem" => "",
+																		"rcb_elem_chekced" => "",
+																		"select_elem" => "",
+																		"select_elem_checked" => "",
+																		"show_overview" => 0,
+																		"line"=> 1
+																	),		
+																																		
+											array	(	"name" => "special_ship",
 																		"text" => "Spezial Schiff",
 																		"type" => "radio",
 																		"def_val" => "",
@@ -471,10 +469,11 @@
 																		"rcb_elem_chekced" => "0",
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
-																		"show_overview" => 0
+																		"show_overview" => 0,
+																		"show_hide" => array("special_ship_max_level","special_ship_need_exp","special_ship_exp_factor","special_ship_bonus_weapon","special_ship_bonus_structure","special_ship_bonus_shield","special_ship_bonus_heal","special_ship_bonus_capacity","special_ship_bonus_speed","special_ship_bonus_pilots","special_ship_bonus_tarn","special_ship_bonus_antrax","special_ship_bonus_forsteal","special_ship_bonus_build_destroy","special_ship_bonus_antrax_food","special_ship_bonus_deactivade")
 																	),
 
-											33	=> 	array	(	"name" => "special_ship_max_level",
+											array	(	"name" => "special_ship_max_level",
 																		"text" => "Max. Level (0=unentlich)",
 																		"type" => "text",
 																		"def_val" => "",
@@ -488,7 +487,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											34	=> 	array	(	"name" => "special_ship_need_exp",
+											array	(	"name" => "special_ship_need_exp",
 																		"text" => "EXP",
 																		"type" => "text",
 																		"def_val" => "",
@@ -502,7 +501,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											35	=> 	array	(	"name" => "special_ship_exp_factor",
+											array	(	"name" => "special_ship_exp_factor",
 																		"text" => "EXP Faktor",
 																		"type" => "text",
 																		"def_val" => "",
@@ -516,7 +515,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											36	=> 	array	(	"name" => "special_ship_bonus_weapon",
+											array	(	"name" => "special_ship_bonus_weapon",
 																		"text" => "Waffen-Bonus (0.1=10% pro Stufe)",
 																		"type" => "text",
 																		"def_val" => "",
@@ -530,7 +529,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											37	=> 	array	(	"name" => "special_ship_bonus_structure",
+											array	(	"name" => "special_ship_bonus_structure",
 																		"text" => "Struktur-Bonus",
 																		"type" => "text",
 																		"def_val" => "",
@@ -544,7 +543,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											38	=> 	array	(	"name" => "special_ship_bonus_shield",
+											array	(	"name" => "special_ship_bonus_shield",
 																		"text" => "Schild-Bonus",
 																		"type" => "text",
 																		"def_val" => "",
@@ -558,7 +557,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											39	=> 	array	(	"name" => "special_ship_bonus_heal",
+											array	(	"name" => "special_ship_bonus_heal",
 																		"text" => "Heil-Bonus",
 																		"type" => "text",
 																		"def_val" => "",
@@ -572,7 +571,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											40	=> 	array	(	"name" => "special_ship_bonus_capacity",
+											array	(	"name" => "special_ship_bonus_capacity",
 																		"text" => "Kapazität-Bonus",
 																		"type" => "text",
 																		"def_val" => "",
@@ -586,7 +585,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											41	=> 	array	(	"name" => "special_ship_bonus_speed",
+											array	(	"name" => "special_ship_bonus_speed",
 																		"text" => "Speed-Bonus",
 																		"type" => "text",
 																		"def_val" => "",
@@ -600,7 +599,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											42	=> 	array	(	"name" => "special_ship_bonus_pilots",
+											array	(	"name" => "special_ship_bonus_pilots",
 																		"text" => "Piloten-Bonus",
 																		"type" => "text",
 																		"def_val" => "",
@@ -614,7 +613,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											43	=> 	array	(	"name" => "special_ship_bonus_tarn",
+											array	(	"name" => "special_ship_bonus_tarn",
 																		"text" => "Tarn-Bonus",
 																		"type" => "text",
 																		"def_val" => "",
@@ -628,7 +627,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											44	=> 	array	(	"name" => "special_ship_bonus_antrax",
+											array	(	"name" => "special_ship_bonus_antrax",
 																		"text" => "Giftgas-Bonus",
 																		"type" => "text",
 																		"def_val" => "",
@@ -642,7 +641,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),	
-											45	=> 	array	(	"name" => "special_ship_bonus_forsteal",
+											array	(	"name" => "special_ship_bonus_forsteal",
 																		"text" => "Techklau-Bonus",
 																		"type" => "text",
 																		"def_val" => "",
@@ -656,7 +655,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),	
-											46	=> 	array	(	"name" => "special_ship_bonus_build_destroy",
+											array	(	"name" => "special_ship_bonus_build_destroy",
 																		"text" => "Bombardier-Bonus",
 																		"type" => "text",
 																		"def_val" => "",
@@ -670,7 +669,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),	
-											47	=> 	array	(	"name" => "special_ship_bonus_antrax_food",
+											array	(	"name" => "special_ship_bonus_antrax_food",
 																		"text" => "Antrax-Bonus",
 																		"type" => "text",
 																		"def_val" => "",
@@ -684,7 +683,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),	
-											48	=> 	array	(	"name" => "special_ship_bonus_deactivade",
+											array	(	"name" => "special_ship_bonus_deactivade",
 																		"text" => "Deaktivier-Bonus",
 																		"type" => "text",
 																		"def_val" => "",

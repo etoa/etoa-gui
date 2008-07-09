@@ -204,7 +204,7 @@
 			$res = dbquery("
 				SELECT
 					ship_id,
-					ship_battlepoints					
+					ship_points					
 				FROM
 					ships;
 			");
@@ -218,7 +218,7 @@
 			$res = dbquery("
 				SELECT
 					def_id,
-					def_battlepoints					
+					def_points					
 				FROM
 					defense
 			;");

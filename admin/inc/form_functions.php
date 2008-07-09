@@ -214,71 +214,91 @@
 
 	function admin_edit_dataset($db_fields,$arr)
 	{
+		$hidden_rows = array();
+		
+		echo "<tr><td style=\"vertical-align:top;\"><table style=\"width:100%;\">";
 		foreach ($db_fields as $k=>$a)
 		{
+			echo "<tr id=\"row_".$a['name']."\"";
+			if (in_array($a['name'],$hidden_rows))
+				echo " style=\"display:none;\"";
+			
+			echo ">\n<th class=\"tbltitle\" width=\"200\">".$a['text'].":</th>\n";
+			echo "<td class=\"tbldata\" width=\"200\" >\n";
 			switch ($a['type'])
 			{
 				case "readonly":
-					echo "<tr><th class=\"tbltitle\" width=\"200\">".$a['text'].":</th>";
-					echo "<td class=\"tbldata\" width=\"200\">".$arr[$a['name']]."</td></tr>";
+					echo $arr[$a['name']];
 				break;
-
 				case "text":
-					echo "<tr><th class=\"tbltitle\" width=\"200\">".$a['text'].":</th>";
-					echo "<td class=\"tbldata\" width=\"200\"><input type=\"text\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"".stripslashes($arr[$a['name']])."\" /></td></tr>";
+					echo "<input type=\"text\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"".stripslashes($arr[$a['name']])."\" />";
 				break;
 				case "hidden":
-					echo "<input type=\"hidden\" name=\"".$a['name']."\" value=\"".$arr[$a['name']]."\" /></td></tr>";
+					echo "<input type=\"hidden\" name=\"".$a['name']."\" value=\"".$arr[$a['name']]."\" />";
 				break;
 				case "email":
-					echo "<tr><th class=\"tbltitle\" width=\"200\">".$a['text'].":</th>";
-					echo "<td class=\"tbldata\" width=\"200\"><input type=\"text\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"".$arr[$a['name']]."\" /></td></tr>";
+					echo "<input type=\"text\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"".$arr[$a['name']]."\" />";
 				break;
 				case "url":
-					echo "<tr><th class=\"tbltitle\" width=\"200\">".$a['text'].":</th>";
-					echo "<td class=\"tbldata\" width=\"200\"><input type=\"text\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"".$arr[$a['name']]."\" /></td></tr>";
+					echo "<input type=\"text\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"".$arr[$a['name']]."\" />";
 				break;
 				case "numeric":
-					echo "<tr><th class=\"tbltitle\" width=\"200\">".$a['text'].":</th>";
-					echo "<td class=\"tbldata\" width=\"200\"><input type=\"text\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"".$arr[$a['name']]."\" /></td></tr>";
+					echo "<input type=\"text\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"".$arr[$a['name']]."\" />";
 				break;
 				case "password":
-					echo "<tr><th class=\"tbltitle\" width=\"200\">".$a['text'].":</th>";
-					echo "<td class=\"tbldata\" width=\"200\"><input type=\"password\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"\" /></td></tr>";
+					echo "<input type=\"password\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"\" />";
 				break;
 				case "timestamp":
-					echo "<tr><th class=\"tbltitle\" width=\"200\">".$a['text'].":</th>";
-					echo "<td class=\"tbldata\" width=\"200\"><input type=\"text\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"".date(DATE_FORMAT,$arr[$a['name']])."\" /></td></tr>";
+					echo "<input type=\"text\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"".date(DATE_FORMAT,$arr[$a['name']])."\" />";
 				break;
 				case "textarea":
-					echo "<tr><th class=\"tbltitle\" width=\"200\">".$a['text'].":</th>";
-					echo "<td class=\"tbldata\" width=\"200\"><textarea name=\"".$a['name']."\" rows=\"".$a['rows']."\" cols=\"".$a['cols']."\">".stripslashes($arr[$a['name']])."</textarea></td></tr>";
+					echo "<textarea name=\"".$a['name']."\" rows=\"".$a['rows']."\" cols=\"".$a['cols']."\">".stripslashes($arr[$a['name']])."</textarea>";
 				break;
 				case "radio":
-					echo "<tr><th class=\"tbltitle\" width=\"200\">".$a['text'].":</th>";
-					echo "<td class=\"tbldata\" width=\"200\">";
 					foreach ($a['rcb_elem'] as $rk=>$rv)
 					{
 						echo $rk.": <input name=\"".$a['name']."\" type=\"radio\" value=\"$rv\"";
-						if ($arr[$a['name']]==$rv) echo " checked=\"checked\"";
+						if ($arr[$a['name']]==$rv) 
+							echo " checked=\"checked\"";
+
+						if (isset($a['show_hide']) && $rv==1)
+						{
+							echo " onclick=\"";
+							foreach ($a['show_hide'] as $sh)
+							{
+								echo "document.getElementById('row_".$sh."').style.display='';";
+							}
+							echo "\"";
+						}
+						
+						if (isset($a['show_hide']) && $rv==0)
+						{
+							echo " onclick=\"";
+							foreach ($a['show_hide'] as $sh)
+							{
+								echo "document.getElementById('row_".$sh."').style.display='none';";
+							}
+							echo "\"";
+						}						
 						echo " /> ";
 					}
-					echo "</td></tr>";
+					if (isset($a['show_hide']) && $arr[$a['name']]==$rv)					
+					{
+						$hidden_rows = $a['show_hide'];
+					}					
 				break;
 				case "checkbox":
-					echo "<tr><th class=\"tbltitle\" width=\"200\">".$a['text'].":</th>";
-					echo "<td class=\"tbldata\" width=\"200\">";
 					foreach ($a['rcb_elem'] as $rk=>$rv)
 					{
 						echo $rk.": <input name=\"".$a['name']."\" type=\"checkbox\" value=\"$rv\"";
-						if (in_array($rv,explode(";",$arr[$a['name']]))) echo " checked=\"checked\"";
+						if (in_array($rv,explode(";",$arr[$a['name']]))) 
+							echo " checked=\"checked\"";						
 						echo " /> ";
 					}
-					echo "</td></tr>";
+					echo "";
 				break;
 				case "select":
-					echo "<tr><th class=\"tbltitle\" width=\"200\">".$a['text'].":</th>";
-					echo "<td class=\"tbldata\" width=\"200\"><select name=\"".$a['name']."\">";
+					echo "<select name=\"".$a['name']."\">";
 					echo "<option value=\"\">(leer)</option>";
 					foreach ($a['select_elem'] as $rk=>$rv)
 					{
@@ -286,11 +306,10 @@
 						if ($arr[$a['name']]==$rv) echo " selected=\"selected\"";
 						echo ">$rk</option> ";
 					}
-					echo "</td></tr>";
+					echo "";
 				break;
 				case "fleetaction":
-					echo "<tr><th class=\"tbltitle\" width=\"200\">".$a['text'].":</th>";
-					echo "<td class=\"tbldata\" width=\"200\">";
+					echo "";
 					$keys = explode(",",$arr[$a['name']]);
 					$actions = FleetAction::getAll();
 					foreach ($actions as $ac)
@@ -300,13 +319,22 @@
 							echo " checked=\"checked\"";
 						echo " /> ".$ac."<br/>";				
 					}
-					echo "</td></tr>";
+					echo "";
 					break;			
 				default:
-					echo "<tr><th class=\"tbltitle\" width=\"200\">".$a['text'].":</th>";
-					echo "<td class=\"tbldata\" width=\"200\"><input type=\"text\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"".stripslashes($arr[$a['name']])."\" /></td></tr>";
+					echo "<input type=\"text\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"".stripslashes($arr[$a['name']])."\" />";
+			}		
+			echo "</td>\n</tr>\n";	
+			if ($a['line']==1)
+			{
+				echo "<tr><td style=\"height:4px;background:#000\" colspan=\"2\"></td></tr>";
 			}
-		}
+			if ($a['columnend']==1)
+			{
+				echo "</table></td><td style=\"vertical-align:top;\"><table style=\"width:100%;\">";
+			}		
+		}		
+		echo "</table></td></tr>";
 	}
 
 
@@ -457,47 +485,53 @@
 		{
 			if ($a['show_overview']==1)
 			{
+				echo "<td class=\"tbldata\">";
+				if ($a['link_in_overview']==1)
+				{
+					echo "<a href=\"?".URL_SEARCH_STRING."&amp;action=edit&amp;id=".$arr[DB_TABLE_ID]."\">";
+				}
+				
 				switch ($a['type'])
 				{
 					case "readonly":
-	 					echo "<td class=\"tbldata\">".$arr[$a['name']]."</td>";
+	 					echo "".$arr[$a['name']]."";
 					break;					
 					case "text":
-	 					echo "<td class=\"tbldata\">".$arr[$a['name']]."</td>";
+	 					echo "".$arr[$a['name']]."";
 					break;
 					case "email":
-	 					echo "<td class=\"tbldata\">".$arr[$a['name']]."</td>";
+	 					echo "".$arr[$a['name']]."";
 					break;
 					case "url":
-	 					echo "<td class=\"tbldata\">".$arr[$a['name']]."</td>";
+	 					echo "".$arr[$a['name']]."";
 					break;
 					case "numeric":
-	 					echo "<td class=\"tbldata\">".$arr[$a['name']]."</td>";
+	 					echo "".$arr[$a['name']]."";
 					break;
 					case "password":
-	 					echo "<td class=\"tbldata\">".$arr[$a['name']]."</td>";
+	 					echo "".$arr[$a['name']]."";
 					break;
 					case "timestamp":
-	 					echo "<td class=\"tbldata\">".date(DATE_FORMAT,$arr[$a['name']])."</td>";
+	 					echo "".date(DATE_FORMAT,$arr[$a['name']])."";
 					break;
 					case "textarea":
-	 					echo "<td class=\"tbldata\">";
+	 					echo "";
 	 					//if (strlen($arr[$a['name']])>$a['overview_length'])
 						//	echo stripslashes(substr($arr[$a['name']],0,$a['overview_length']-2)."...");
 						//else
 							echo stripslashes($arr[$a['name']]);
-	 					echo "</td>";
+	 					echo "";
 					break;
 					case "radio":
-						echo "<td class=\"tbldata\">";
+						echo "";
 						foreach ($a['rcb_elem'] as $rk=>$rv)
 						{
 							if ($arr[$a['name']]==$rv) echo $rk;
 						}
-						echo "</td>";
+						echo "";
 					break;
 					case "checkbox":
-						echo "<td class=\"tbldata\">";
+						echo "";
 						$cb_temp_arr = array();
 						foreach ($a['rcb_elem'] as $rk=>$rv)
 						{
@@ -508,21 +542,22 @@
 							echo $cb_temp_arr[$cbx];
 							if ($cbx=count($cb_temp_arr)-1) echo ";";
 						}
-						echo "</td>";
+						echo "";
 					break;
 					case "select":
-	 					echo "<td class=\"tbldata\">";
+	 					echo "";
 	 					foreach ($a['select_elem'] as $sd=>$sv)
 	 					{
 	 						if ($sv==$arr[$a['name']])
 	 						echo $sd;
 	 					}
-	 					echo "</td>";
+	 					echo "";
 					break;
 					default:
-	 					echo "<td class=\"tbldata\">".$arr[$a['name']]."</td>";
+	 					echo "".$arr[$a['name']]."";
 					break;					
 				}
+				echo "</td>";
 			}
 		}
 	}

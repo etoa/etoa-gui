@@ -50,6 +50,9 @@
 		echo "<h1>".MODUL_NAME." - Datensatz bearbeiten</h1>";
 		echo "&Auml;ndere die Daten des Datensatzes und klicke auf '&Uuml;bernehmen', um die Daten zu speichern:<br/><br/>";
 		echo "<form action=\"?".URL_SEARCH_STRING."\" method=\"post\">";
+		echo "<input type=\"submit\" value=\"&Uuml;bernehmen\" name=\"edit\" />&nbsp;";
+		echo "<input type=\"button\" value=\"Abbrechen\" name=\"editcancel\" onclick=\"document.location='?".URL_SEARCH_STRING."'\" /><br/><br/>";
+
 		echo "<input type=\"hidden\" name=\"".DB_TABLE_ID."\" value=\"".$_GET['id']."\" />";
 		echo "<table width=\"100%\" cellpadding=\"3\" cellspacing=\"1\" align=\"center\">";
    	admin_edit_dataset($db_fields,$arr);
@@ -102,11 +105,19 @@
 			dbquery($sql);
 			if (!mysql_error())
 			{
-				echo "<p class='amsgok'>Neuer Datensatz gespeichert!</p>";
+				if (defined('POST_INSERT_UPDATE_METHOD'))
+				{
+					$fname = POST_INSERT_UPDATE_METHOD;
+					cms_ok_msg("Datensatz ge&auml;ndert! ".$fname());
+				}
+				else
+				{
+					cms_ok_msg("Neuer Datensatz gespeichert!");
+				}
 			}
 			else
 			{
-				echo "<p class='amsgerr'>".mysql_error()."</p>";
+				cms_err_msg(mysql_error());
 			}
 		}
 
@@ -131,7 +142,15 @@
 			dbquery($sql);
 			if (!mysql_error())
 			{
-				cms_ok_msg("Datensatz ge&auml;ndert!");
+				if (defined('POST_INSERT_UPDATE_METHOD'))
+				{
+					$fname = POST_INSERT_UPDATE_METHOD;
+					cms_ok_msg("Datensatz ge&auml;ndert! ".$fname());
+				}
+				else
+				{
+					cms_ok_msg("Datensatz ge&auml;ndert!");
+				}
 			}
 			else
 			{
@@ -230,7 +249,11 @@
 				if (defined('DB_IMAGE_PATH'))
 				{
 					$path = ereg_replace('<DB_TABLE_ID>',$arr[DB_TABLE_ID],DB_IMAGE_PATH);
-					echo "<td class=\"tbldata\" style=\"background:#000\"><img src=\"".$path."\" align=\"top\"/></td>";
+					$imsize = getimagesize($path);
+					echo "<td class=\"tbldata\" style=\"background:#000;width:".$imsize[0]."px;\">
+					<a href=\"?".URL_SEARCH_STRING."&amp;action=edit&amp;id=".$arr[DB_TABLE_ID]."\">
+					<img src=\"".$path."\" align=\"top\"/>
+					</a></td>";
 				}
 				
 				admin_show_overview($db_fields,$arr);
@@ -251,8 +274,8 @@
 				
 				if (defined('DB_TABLE_SORT') && defined('DB_TABLE_SORT_PARENT'))
 				{
-					echo "<td valign=\"top\" class=\"tbldata\">";
-					if ($cnt!=0)
+					echo "<td valign=\"top\" class=\"tbldata\" style=\"width:40px;\">";
+					if ($cnt!=0 && $parId==$arr[DB_TABLE_SORT_PARENT])
 						echo "<a href=\"?".URL_SEARCH_STRING."&amp;sortup=".$arr[DB_TABLE_ID]."&amp;parentid=".$arr[DB_TABLE_SORT_PARENT]."\"><img src=\"../images/up.gif\" alt=\"up\" /></a> ";						
 					else
 						echo "<img src=\"../images/blank.gif\" alt=\"blank\" /> ";						
@@ -261,9 +284,12 @@
 					else
 						echo "<img src=\"../images/blank.gif\" alt=\"blank\" /> ";						
 					echo "</td>";
+					
+					$parId = $arr[DB_TABLE_SORT_PARENT];
 				}
 				
-				echo "<td valign=\"top\" class=\"tbldata\" style=\"width:50px\">".edit_button("?".URL_SEARCH_STRING."&amp;action=edit&amp;id=".$arr[DB_TABLE_ID])." ";
+				echo "<td valign=\"top\" class=\"tbldata\" style=\"width:50px\">
+				".edit_button("?".URL_SEARCH_STRING."&amp;action=edit&amp;id=".$arr[DB_TABLE_ID])." ";
 				echo del_button("?".URL_SEARCH_STRING."&amp;action=del&amp;id=".$arr[DB_TABLE_ID])."</td>";
 				echo "</tr>\n";
 				$cnt++;

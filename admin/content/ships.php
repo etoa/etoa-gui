@@ -38,33 +38,7 @@
 		echo "<h2>Battlepoints neu berechnen</h2><form action=\"?page=$page&amp;sub=$sub\" method=\"POST\">";
 		if ($_POST['recalc']!="")
 		{
-			$res = dbquery("
-			SELECT
-				ship_id,
-                ship_costs_metal,
-                ship_costs_crystal,
-                ship_costs_fuel,
-                ship_costs_plastic,
-                ship_costs_food
-			FROM
-				".$db_table['ships'].";");
-			$mnr = mysql_num_rows($res);
-			if ($mnr>0)
-			{
-				while ($arr = mysql_fetch_array($res))
-				{
-					$p = ($arr['ship_costs_metal']+$arr['ship_costs_crystal']+$arr['ship_costs_fuel']+$arr['ship_costs_plastic']+$arr['ship_costs_food'])/$conf['points_update']['p1'];
-					dbquery("
-					UPDATE
-						".$db_table['ships']."
-					SET
-						ship_battlepoints=$p
-					WHERE
-						ship_id=".$arr['ship_id'].";");
-				}
-			}
-			if ($mnr>0)
-				echo "Die Battlepoints von <b>$mnr</b> Schiffen wurden aktualisiert!<br/><br/>";
+			echo calcShipPoints();
 		}
 		echo "Nach jeder &Auml;nderung an den Schiffen m&uuml;ssen die Battlepoints neu berechnet werden: ";
 		echo "<input type=\"submit\" name=\"recalc\" value=\"Neu berechnen\" /></form>";
@@ -73,18 +47,18 @@
 		SELECT
 			ship_id,
 			ship_name,
-			ship_battlepoints
+			ship_points
 		FROM
 			".$db_table['ships']."
 		ORDER BY
-			ship_battlepoints DESC,
+			ship_points DESC,
 			ship_name DESC;");
 		if (mysql_num_rows($res)>0)
 		{
 			echo "<table class=\"tb\">";
 			while ($arr=mysql_fetch_array($res))
 			{
-				echo "<tr><th>".$arr['ship_name']."</th><td style=\"width:70%\">".$arr['ship_battlepoints']."</td></tr>";
+				echo "<tr><th>".$arr['ship_name']."</th><td style=\"width:70%\">".$arr['ship_points']."</td></tr>";
 			}
 			echo "</table>";
 		}

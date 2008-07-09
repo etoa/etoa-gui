@@ -1193,9 +1193,10 @@
 						$owner = $arr['user_nick'];
 					}
 
+					if ($fa = FleetAction::createFactory($arr['action']))
+					{
 					echo "<tr>";
 					echo "<td class=\"tbldata\" $stl>".$owner."</td>";
-					$fa = FleetAction::createFactory($arr['action']);
 					echo "<td class=\"tbldata\"><span style=\"color:".FleetAction::$attitudeColor[$fa->attitude()]."\">";
 					echo $fa."</span><br/>";
 					echo FleetAction::$statusCode[$arr['status']];
@@ -1212,6 +1213,28 @@
 					echo edit_button("?page=$page&amp;sub=$sub&fleetedit=".$arr['id'])." ";
 					echo del_button("?page=$page&amp;sub=$sub&fleetdel=".$arr['id']."&amp;action=searchresults","return confirm('Soll diese Flotte wirklich gel&ouml;scht werden?');");
 					echo "</tr>";
+					}
+					else
+					{
+					echo "<tr>";
+					echo "<td class=\"tbldata\" $stl>".$owner."</td>";
+					echo "<td class=\"tbldata\"><span style=\"color:red\">";
+					echo "Ungültig (".$arr['action'].")</span><br/>";
+					echo "</td>";
+					echo "<td class=\"tbldata\" $stl>";
+					$startEntity = Entity::createFactoryById($arr['entity_from']);
+					echo $startEntity."<br/>".$startEntity->entityCodeString().", ".$startEntity->owner()."</td>";
+					echo "<td class=\"tbldata\" $stl>";
+					$endEntity = Entity::createFactoryById($arr['entity_to']);
+					echo $endEntity."<br/>".$endEntity->entityCodeString().", ".$endEntity->owner()."</td>";
+					echo "<td class=\"tbldata\" $stl>".date("d.m.y",$arr['landtime'])." &nbsp; ".date("H:i:s",$arr['launchtime'])."</td>";
+					echo "<td class=\"tbldata\" $stl>".date("d.m.y",$arr['landtime'])." &nbsp; ".date("H:i:s",$arr['landtime'])."</td>";
+					echo "<td class=\"tbldata\">";
+					echo edit_button("?page=$page&amp;sub=$sub&fleetedit=".$arr['id'])." ";
+					echo del_button("?page=$page&amp;sub=$sub&fleetdel=".$arr['id']."&amp;action=searchresults","return confirm('Soll diese Flotte wirklich gel&ouml;scht werden?');");
+					echo "</tr>";
+						
+					}
 				}
 				echo "</table>";
 				echo "<br/><input type=\"button\" value=\"Neue Suche\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" /> ";

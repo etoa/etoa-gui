@@ -53,7 +53,7 @@
 				{
 					$p = ($arr['def_costs_metal']+$arr['def_costs_crystal']+$arr['def_costs_fuel']+$arr['def_costs_plastic']+$arr['def_costs_food'])/$conf['points_update']['p1'];
 					dbquery("UPDATE ".$db_table['defense']." SET 
-						def_battlepoints=$p
+						def_points=$p
 					WHERE 
 						def_id=".$arr['def_id'].";");
 				}
@@ -67,15 +67,15 @@
 		$res=dbquery("SELECT
 			def_id,
 			def_name,
-			def_battlepoints
+			def_points
 		FROM ".$db_table['defense']."
-		ORDER BY def_battlepoints DESC, def_name DESC;");
+		ORDER BY def_points DESC, def_name DESC;");
 		if (mysql_num_rows($res)>0)
 		{
 			echo "<table class=\"tb\">";
 			while ($arr=mysql_fetch_array($res))
 			{
-				echo "<tr><th>".$arr['def_name']."</th><td style=\"width:70%\">".$arr['def_battlepoints']."</td></tr>";
+				echo "<tr><th>".$arr['def_name']."</th><td style=\"width:70%\">".$arr['def_points']."</td></tr>";
 			}			
 			echo "</table>";
 		}	

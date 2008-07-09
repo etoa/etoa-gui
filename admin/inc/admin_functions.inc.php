@@ -619,4 +619,41 @@
 		return $res;
 	}
 
+	function calcShipPoints()
+	{
+		$cfg = Config::getInstance();
+		$res = dbquery("
+		SELECT
+			ship_id,
+              ship_costs_metal,
+              ship_costs_crystal,
+              ship_costs_fuel,
+              ship_costs_plastic,
+              ship_costs_food
+		FROM
+			ships;");
+		$mnr = mysql_num_rows($res);
+		if ($mnr>0)
+		{
+			while ($arr = mysql_fetch_array($res))
+			{
+				$p = ($arr['ship_costs_metal']
+				+$arr['ship_costs_crystal']
+				+$arr['ship_costs_fuel']
+				+$arr['ship_costs_plastic']
+				+$arr['ship_costs_food'])
+				/$cfg->p1('points_update');
+				dbquery("
+				UPDATE
+					ships
+				SET
+					ship_points=".$p."
+				WHERE
+					ship_id=".$arr['ship_id'].";");
+			}
+		}
+		return "Die Punkte von $mnr Schiffen wurden aktualisiert!";		
+	}
+	
+
 ?>

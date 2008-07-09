@@ -29,9 +29,14 @@
 	// VARIABLES
 
 	define("MODUL_NAME","Verteidigung");
-	define("DB_TABLE", $db_table['defense']);
+	define("DB_TABLE", 'defense');
 	define("DB_TABLE_ID", "def_id");
-	define("DB_OVERVIEW_ORDER_FIELD","def_cat_id,def_order");
+	define("DB_OVERVIEW_ORDER_FIELD","def_cat_id,def_order, def_name");
+
+	define("DB_IMAGE_PATH",IMAGE_PATH."/defense/def<DB_TABLE_ID>_small.".IMAGE_EXT);
+
+	define("DB_TABLE_SORT",'def_order');
+	define("DB_TABLE_SORT_PARENT",'def_cat_id');
 
 	// FIELDS
 
@@ -51,7 +56,13 @@
 	// select_elem_checked				// Value of default checked Select Element (desc=>value)
 	// show_overview							// Set 1 to show on overview page
 
-	$db_fields = array ( 0	=> 	array	(	"name" => "def_name",
+	$db_fields = array (	array	(	"name" => "def_id",
+																		"text" => "ID",
+																		"type" => "readonly",
+																		"show_overview" => 1,
+																		"link_in_overview" => 1
+																	),  
+												array	(	"name" => "def_name",
 																		"text" => "Name",
 																		"type" => "text",
 																		"def_val" => "",
@@ -63,10 +74,11 @@
 																		"rcb_elem_chekced" => "",
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
-																		"show_overview" => 1
+																		"show_overview" => 1,
+																		"link_in_overview" => 1
 																	),
 
-											1	=> 	array	(	"name" => "def_shortcomment",
+											array	(	"name" => "def_shortcomment",
 																		"text" => "Kurze Beschreibung",
 																		"type" => "textarea",
 																		"def_val" => "",
@@ -80,7 +92,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
 																	),
-											2	=> 	array	(	"name" => "def_longcomment",
+											array	(	"name" => "def_longcomment",
 																		"text" => "Lange Beschreibung",
 																		"type" => "textarea",
 																		"def_val" => "",
@@ -92,9 +104,10 @@
 																		"rcb_elem_chekced" => "",
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
-																		"show_overview" => 0
+																		"show_overview" => 0,
+																		"line" => 1
 																	),
-											3	=> 	array	(	"name" => "def_costs_metal",
+											array	(	"name" => "def_costs_metal",
 																		"text" => "Kosten Metall",
 																		"type" => "text",
 																		"def_val" => "",
@@ -108,7 +121,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											4	=> 	array	(	"name" => "def_costs_crystal",
+											array	(	"name" => "def_costs_crystal",
 																		"text" => "Kosten Kristall",
 																		"type" => "text",
 																		"def_val" => "",
@@ -122,7 +135,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											5	=> 	array	(	"name" => "def_costs_plastic",
+											array	(	"name" => "def_costs_plastic",
 																		"text" => "Kosten Plastik",
 																		"type" => "text",
 																		"def_val" => "",
@@ -136,7 +149,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											6	=> 	array	(	"name" => "def_costs_fuel",
+											array	(	"name" => "def_costs_fuel",
 																		"text" => "Kosten Treibstoff",
 																		"type" => "text",
 																		"def_val" => "",
@@ -150,7 +163,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											7	=> 	array	(	"name" => "def_costs_food",
+											array	(	"name" => "def_costs_food",
 																		"text" => "Kosten Nahrung",
 																		"type" => "text",
 																		"def_val" => "",
@@ -164,7 +177,14 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-												8	=> 	array	(	"name" => "def_structure",
+											array	(	"name" => "def_points",
+																		"text" => "Punkte",
+																		"type" => "readonly",
+																		"show_overview" => 0,
+																		"columnend" => 1
+																	), 																	
+
+											array	(	"name" => "def_structure",
 																		"text" => "Struktur",
 																		"type" => "text",
 																		"def_val" => "",
@@ -178,7 +198,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											9	=> 	array	(	"name" => "def_shield",
+											array	(	"name" => "def_shield",
 																		"text" => "Schild",
 																		"type" => "text",
 																		"def_val" => "",
@@ -192,7 +212,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											10	=> 	array	(	"name" => "def_weapon",
+											array	(	"name" => "def_weapon",
 																		"text" => "Waffe",
 																		"type" => "text",
 																		"def_val" => "",
@@ -206,7 +226,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											11	=> 	array	(	"name" => "def_heal",
+											array	(	"name" => "def_heal",
 																		"text" => "Reparatur",
 																		"type" => "text",
 																		"def_val" => "",
@@ -218,9 +238,10 @@
 																		"rcb_elem_chekced" => "",
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
-																		"show_overview" => 0
+																		"show_overview" => 0,
+																		"line" => 1
 																	),																	
-											12	=> 	array	(	"name" => "def_fields",
+											array	(	"name" => "def_fields",
 																		"text" => "Felder",
 																		"type" => "text",
 																		"def_val" => "",
@@ -234,7 +255,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											13	=> 	array	(	"name" => "def_max_count",
+											array	(	"name" => "def_max_count",
 																		"text" => "Max Anzahl",
 																		"type" => "text",
 																		"def_val" => "",
@@ -248,7 +269,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											14	=> 	array	(	"name" => "def_order",
+											array	(	"name" => "def_order",
 																		"text" => "Reihenfolge",
 																		"type" => "text",
 																		"def_val" => "",
@@ -262,7 +283,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
 																	),
-											15	=> 	array	(	"name" => "def_show",
+											array	(	"name" => "def_show",
 																		"text" => "Anzeigen",
 																		"type" => "radio",
 																		"def_val" => "",
@@ -276,7 +297,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											16	=> 	array	(	"name" => "def_buildable",
+											array	(	"name" => "def_buildable",
 																		"text" => "Baubar",
 																		"type" => "radio",
 																		"def_val" => "",
@@ -290,7 +311,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											17	=> 	array	(	"name" => "def_cat_id",
+											array	(	"name" => "def_cat_id",
 																		"text" => "Kategorie",
 																		"type" => "select",
 																		"def_val" => "",
@@ -304,7 +325,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
 																	),																	
-											18	=> 	array	(	"name" => "def_race_id",
+											array	(	"name" => "def_race_id",
 																		"text" => "Rasse",
 																		"type" => "select",
 																		"def_val" => "",
