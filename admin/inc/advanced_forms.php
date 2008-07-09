@@ -275,14 +275,17 @@
 				if (defined('DB_TABLE_SORT') && defined('DB_TABLE_SORT_PARENT'))
 				{
 					echo "<td valign=\"top\" class=\"tbldata\" style=\"width:40px;\">";
-					if ($cnt!=0 && $parId==$arr[DB_TABLE_SORT_PARENT])
-						echo "<a href=\"?".URL_SEARCH_STRING."&amp;sortup=".$arr[DB_TABLE_ID]."&amp;parentid=".$arr[DB_TABLE_SORT_PARENT]."\"><img src=\"../images/up.gif\" alt=\"up\" /></a> ";						
-					else
-						echo "<img src=\"../images/blank.gif\" alt=\"blank\" /> ";						
+
 					if ($cnt < mysql_num_rows($res)-1)
 						echo "<a href=\"?".URL_SEARCH_STRING."&amp;sortdown=".$arr[DB_TABLE_ID]."&amp;parentid=".$arr[DB_TABLE_SORT_PARENT]."\"><img src=\"../images/down.gif\" alt=\"down\" /></a> ";						
 					else
-						echo "<img src=\"../images/blank.gif\" alt=\"blank\" /> ";						
+						echo "<img src=\"../images/blank.gif\" alt=\"blank\" style=\"width:16px;\" /> ";						
+
+					if ($cnt!=0 && $parId==$arr[DB_TABLE_SORT_PARENT])
+						echo "<a href=\"?".URL_SEARCH_STRING."&amp;sortup=".$arr[DB_TABLE_ID]."&amp;parentid=".$arr[DB_TABLE_SORT_PARENT]."\"><img src=\"../images/up.gif\" alt=\"up\" /></a> ";						
+					else
+						echo "<img src=\"../images/blank.gif\" alt=\"blank\" style=\"width:16px;\" /> ";						
+
 					echo "</td>";
 					
 					$parId = $arr[DB_TABLE_SORT_PARENT];

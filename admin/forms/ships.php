@@ -64,8 +64,7 @@
 	$db_fields = array (	array	(	"name" => "ship_id",
 																		"text" => "ID",
 																		"type" => "readonly",
-																		"show_overview" => 1,
-																		"link_in_overview" => 1
+																		"show_overview" => 1
 																	),   	
 	 											array	(	"name" => "ship_name",
 																		"text" => "Name",

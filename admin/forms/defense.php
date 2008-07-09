@@ -38,6 +38,11 @@
 	define("DB_TABLE_SORT",'def_order');
 	define("DB_TABLE_SORT_PARENT",'def_cat_id');
 
+	define('POST_INSERT_UPDATE_METHOD','calcDefensePoints');
+
+	$form_switches = array("Anzeigen"=>'def_show','Baubar'=>'def_buildable');
+
+
 	// FIELDS
 
 	// Description:
@@ -59,8 +64,7 @@
 	$db_fields = array (	array	(	"name" => "def_id",
 																		"text" => "ID",
 																		"type" => "readonly",
-																		"show_overview" => 1,
-																		"link_in_overview" => 1
+																		"show_overview" => 1
 																	),  
 												array	(	"name" => "def_name",
 																		"text" => "Name",
@@ -90,7 +94,7 @@
 																		"rcb_elem_chekced" => "",
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
-																		"show_overview" => 1
+																		"show_overview" => 0
 																	),
 											array	(	"name" => "def_longcomment",
 																		"text" => "Lange Beschreibung",
@@ -265,48 +269,6 @@
 																		"cols" => "",
 																		"rcb_elem" => "",
 																		"rcb_elem_chekced" => "",
-																		"select_elem" => "",
-																		"select_elem_checked" => "",
-																		"show_overview" => 0
-																	),
-											array	(	"name" => "def_order",
-																		"text" => "Reihenfolge",
-																		"type" => "text",
-																		"def_val" => "",
-																		"size" => "1",
-																		"maxlen" => "2",
-																		"rows" => "",
-																		"cols" => "",
-																		"rcb_elem" => "",
-																		"rcb_elem_chekced" => "",
-																		"select_elem" => "",
-																		"select_elem_checked" => "",
-																		"show_overview" => 1
-																	),
-											array	(	"name" => "def_show",
-																		"text" => "Anzeigen",
-																		"type" => "radio",
-																		"def_val" => "",
-																		"size" => "",
-																		"maxlen" => "",
-																		"rows" => "",
-																		"cols" => "",
-																		"rcb_elem" => array("Ja"=>1,"Nein"=>0),
-																		"rcb_elem_chekced" => "1",
-																		"select_elem" => "",
-																		"select_elem_checked" => "",
-																		"show_overview" => 0
-																	),
-											array	(	"name" => "def_buildable",
-																		"text" => "Baubar",
-																		"type" => "radio",
-																		"def_val" => "",
-																		"size" => "",
-																		"maxlen" => "",
-																		"rows" => "",
-																		"cols" => "",
-																		"rcb_elem" => array("Ja"=>1,"Nein"=>0),
-																		"rcb_elem_chekced" => "1",
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 0

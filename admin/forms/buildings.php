@@ -31,7 +31,15 @@
 	define("MODUL_NAME","Gebäude");				
 	define("DB_TABLE", $db_table['buildings']);
 	define("DB_TABLE_ID", "building_id");
-	define("DB_OVERVIEW_ORDER_FIELD","building_type_id");
+	define("DB_OVERVIEW_ORDER_FIELD","building_type_id, building_order, building_name");
+
+	define("DB_TABLE_SORT",'building_order');
+	define("DB_TABLE_SORT_PARENT",'building_type_id');
+
+	define("DB_IMAGE_PATH",IMAGE_PATH."/buildings/building<DB_TABLE_ID>_small.".IMAGE_EXT);
+
+	$form_switches = array("Anzeigen"=>'building_show');
+
 	
 	// FIELDS
 	
@@ -51,7 +59,12 @@
 	// select_elem_checked				// Value of default checked Select Element (desc=>value)
 	// show_overview							// Set 1 to show on overview page
   
-	$db_fields = array ( 0	=> 	array	(	"name" => "building_name",
+	$db_fields = array ( array	(	"name" => "building_id",
+																		"text" => "ID",
+																		"type" => "readonly",
+																		"show_overview" => 1
+																	),  
+											array	(	"name" => "building_name",
 																		"text" => "Name",
 																		"type" => "text",
 																		"def_val" => "",
@@ -63,9 +76,10 @@
 																		"rcb_elem_chekced" => "",
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
-																		"show_overview" => 1
+																		"show_overview" => 1,
+																		"link_in_overview" => 1
 																	),
-											1	=> 	array	(	"name" => "building_type_id",
+											array	(	"name" => "building_type_id",
 																		"text" => "Kategorie",
 																		"type" => "select",
 																		"def_val" => "",
@@ -79,35 +93,36 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
 																	),																	
-											2	=> 	array	(	"name" => "building_shortcomment",
+											array	(	"name" => "building_shortcomment",
 																		"text" => "Kurzbeschrieb",
 																		"type" => "textarea",
 																		"def_val" => "",
 																		"size" => "",
 																		"maxlen" => "",
-																		"rows" => "5",
-																		"cols" => "50",
+																		"rows" => "7",
+																		"cols" => "35",
 																		"rcb_elem" => "",
 																		"rcb_elem_chekced" => "",
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											3	=> 	array	(	"name" => "building_longcomment",
+												array	(	"name" => "building_longcomment",
 																		"text" => "Beschreibung",
 																		"type" => "textarea",
 																		"def_val" => "",
 																		"size" => "",
 																		"maxlen" => "",
-																		"rows" => "7",
-																		"cols" => "50",
+																		"rows" => "9",
+																		"cols" => "35",
 																		"rcb_elem" => "",
 																		"rcb_elem_chekced" => "",
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
-																		"show_overview" => 0
+																		"show_overview" => 0,
+																		"line" => 1
 																	),
-											4	=> 	array	(	"name" => "building_costs_metal",
+												array	(	"name" => "building_costs_metal",
 																		"text" => "Kosten Metall",
 																		"type" => "text",
 																		"def_val" => "",
@@ -121,7 +136,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											5	=> 	array	(	"name" => "building_costs_crystal",
+												array	(	"name" => "building_costs_crystal",
 																		"text" => "Kosten Kristall",
 																		"type" => "text",
 																		"def_val" => "",
@@ -135,7 +150,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											6	=> 	array	(	"name" => "building_costs_plastic",
+											array	(	"name" => "building_costs_plastic",
 																		"text" => "Kosten Plastik",
 																		"type" => "text",
 																		"def_val" => "",
@@ -149,7 +164,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											7	=> 	array	(	"name" => "building_costs_fuel",
+											array	(	"name" => "building_costs_fuel",
 																		"text" => "Kosten Treibstoff",
 																		"type" => "text",
 																		"def_val" => "",
@@ -163,7 +178,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											8	=> 	array	(	"name" => "building_costs_food",
+											array	(	"name" => "building_costs_food",
 																		"text" => "Kosten Nahrung",
 																		"type" => "text",
 																		"def_val" => "",
@@ -177,7 +192,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											9	=> 	array	(	"name" => "building_costs_power",
+												array	(	"name" => "building_costs_power",
 																		"text" => "Kosten Energie",
 																		"type" => "text",
 																		"def_val" => "",
@@ -191,7 +206,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),																	
-											10	=> 	array	(	"name" => "building_build_costs_factor",
+											array	(	"name" => "building_build_costs_factor",
 																		"text" => "Kostenfaktor Bau",
 																		"type" => "text",
 																		"def_val" => "",
@@ -205,7 +220,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											11	=> 	array	(	"name" => "building_demolish_costs_factor",
+												array	(	"name" => "building_demolish_costs_factor",
 																		"text" => "Kostenfaktor Abbruch",
 																		"type" => "text",
 																		"def_val" => "",
@@ -217,9 +232,11 @@
 																		"rcb_elem_chekced" => "",
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
-																		"show_overview" => 0
+																		"show_overview" => 0,
+																		"columnend" => 1
 																	),
-											12	=> 	array	(	"name" => "building_power_use",
+																	
+												array	(	"name" => "building_power_use",
 																		"text" => "Stromverbrauch",
 																		"type" => "text",
 																		"def_val" => "",
@@ -233,7 +250,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											13	=> 	array	(	"name" => "building_fuel_use",
+												array	(	"name" => "building_fuel_use",
 																		"text" => "Tritiumverbrauch",
 																		"type" => "text",
 																		"def_val" => "",
@@ -247,7 +264,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											14	=> 	array	(	"name" => "building_power_req",
+												array	(	"name" => "building_power_req",
 																		"text" => "Strombedarf (wird nicht verbraucht)",
 																		"type" => "text",
 																		"def_val" => "",
@@ -259,9 +276,11 @@
 																		"rcb_elem_chekced" => "",
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
-																		"show_overview" => 0
-																	),																	
-											15	=> 	array	(	"name" => "building_prod_metal",
+																		"show_overview" => 0,
+																		"line" => 1
+																	),						
+																												
+											array	(	"name" => "building_prod_metal",
 																		"text" => "Produktion Metall",
 																		"type" => "text",
 																		"def_val" => "",
@@ -275,7 +294,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											16	=> 	array	(	"name" => "building_prod_crystal",
+												array	(	"name" => "building_prod_crystal",
 																		"text" => "Produktion Kristall",
 																		"type" => "text",
 																		"def_val" => "",
@@ -289,7 +308,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											17	=> 	array	(	"name" => "building_prod_plastic",
+												array	(	"name" => "building_prod_plastic",
 																		"text" => "Produktion Plastik",
 																		"type" => "text",
 																		"def_val" => "",
@@ -303,7 +322,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											18	=> 	array	(	"name" => "building_prod_fuel",
+												array	(	"name" => "building_prod_fuel",
 																		"text" => "Produktion Treibstoff",
 																		"type" => "text",
 																		"def_val" => "",
@@ -317,7 +336,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											19	=> 	array	(	"name" => "building_prod_food",
+												array	(	"name" => "building_prod_food",
 																		"text" => "Produktion Nahrung",
 																		"type" => "text",
 																		"def_val" => "",
@@ -331,7 +350,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),																																																																																					
-											20	=> 	array	(	"name" => "building_prod_power",
+												array	(	"name" => "building_prod_power",
 																		"text" => "Produktion Strom",
 																		"type" => "text",
 																		"def_val" => "",
@@ -345,7 +364,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),																																																																																					
-											21	=> 	array	(	"name" => "building_production_factor",
+											array	(	"name" => "building_production_factor",
 																		"text" => "Produktionsfaktor",
 																		"type" => "text",
 																		"def_val" => "",
@@ -357,9 +376,11 @@
 																		"rcb_elem_chekced" => "",
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
-																		"show_overview" => 0
-																	),																																																																																					
-											22	=> 	array	(	"name" => "building_store_metal",
+																		"show_overview" => 0,
+																		"line" => 1
+																	),						
+																																																																																																
+												array	(	"name" => "building_store_metal",
 																		"text" => "Speicher Metall",
 																		"type" => "text",
 																		"def_val" => "",
@@ -373,7 +394,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),																																																																																					
-											23	=> 	array	(	"name" => "building_store_crystal",
+												array	(	"name" => "building_store_crystal",
 																		"text" => "Speicher Kristall",
 																		"type" => "text",
 																		"def_val" => "",
@@ -387,7 +408,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),																																																																																					
-											24	=> 	array	(	"name" => "building_store_plastic",
+												array	(	"name" => "building_store_plastic",
 																		"text" => "Speicher Plastik",
 																		"type" => "text",
 																		"def_val" => "",
@@ -401,7 +422,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),																																																																																					
-											25	=> 	array	(	"name" => "building_store_fuel",
+												array	(	"name" => "building_store_fuel",
 																		"text" => "Speicher Treibstoff",
 																		"type" => "text",
 																		"def_val" => "",
@@ -415,7 +436,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),																																																																																					
-											26	=> 	array	(	"name" => "building_store_food",
+											array	(	"name" => "building_store_food",
 																		"text" => "Speicher Nahrung",
 																		"type" => "text",
 																		"def_val" => "",
@@ -429,7 +450,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),																																																																																					
-											27	=> 	array	(	"name" => "building_store_factor",
+											 	array	(	"name" => "building_store_factor",
 																		"text" => "Speicherfaktor",
 																		"type" => "text",
 																		"def_val" => "",
@@ -441,10 +462,12 @@
 																		"rcb_elem_chekced" => "",
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
-																		"show_overview" => 0
-																	),																																																																																					
-											28	=> 	array	(	"name" => "building_last_level",
-																		"text" => "Maximaler Level",
+																		"show_overview" => 0,
+																		"line" => 1
+																	),						
+																																																																																																
+												array	(	"name" => "building_last_level",
+																		"text" => "Max Level",
 																		"type" => "text",
 																		"def_val" => "",
 																		"size" => "20",
@@ -455,9 +478,9 @@
 																		"rcb_elem_chekced" => "",
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
-																		"show_overview" => 0
+																		"show_overview" => 1
 																	),	
-											29	=> 	array	(	"name" => "building_fields",
+											array	(	"name" => "building_fields",
 																		"text" => "Felderverbrauch",
 																		"type" => "text",
 																		"def_val" => "",
@@ -471,7 +494,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),			
-											30	=> 	array	(	"name" => "building_people_place",
+											array	(	"name" => "building_people_place",
 																		"text" => "Bewohnbare Fläche",
 																		"type" => "text",
 																		"def_val" => "",
@@ -485,35 +508,8 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),			
-											31	=> 	array	(	"name" => "building_order",
-																		"text" => "Reihenfolge",
-																		"type" => "text",
-																		"def_val" => "",
-																		"size" => "1",
-																		"maxlen" => "2",
-																		"rows" => "",
-																		"cols" => "",
-																		"rcb_elem" => "",
-																		"rcb_elem_chekced" => "",
-																		"select_elem" => "",
-																		"select_elem_checked" => "",
-																		"show_overview" => 0
-																	),																																	
-											32	=> 	array	(	"name" => "building_show",
-																		"text" => "Anzeigen",
-																		"type" => "radio",
-																		"def_val" => "",
-																		"size" => "",
-																		"maxlen" => "",
-																		"rows" => "",
-																		"cols" => "",
-																		"rcb_elem" => array("Ja"=>1,"Nein"=>0),
-																		"rcb_elem_chekced" => "1",
-																		"select_elem" => "",
-																		"select_elem_checked" => "",
-																		"show_overview" => 1
-																	),
-											33	=> 	array	(	"name" => "building_fieldsprovide",
+
+											array	(	"name" => "building_fieldsprovide",
 																		"text" => "Zur Verfügung gestellte Felder",
 																		"type" => "text",
 																		"def_val" => "",

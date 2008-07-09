@@ -237,9 +237,9 @@
 	$navmenu['Schiffe']['Kategorien']['sub']="cat";
 	$navmenu['Schiffe']['Kategorien']['level']=2;
 
-	$navmenu['Schiffe']['Battlepoints']['page']="ships";
-	$navmenu['Schiffe']['Battlepoints']['sub']="battlepoints";
-	$navmenu['Schiffe']['Battlepoints']['level']=2;
+	$navmenu['Schiffe']['Punkte']['page']="ships";
+	$navmenu['Schiffe']['Punkte']['sub']="battlepoints";
+	$navmenu['Schiffe']['Punkte']['level']=2;
 
 
 	$navmenu['Flotten']['Flotten']['page']="fleets";
@@ -268,9 +268,9 @@
 	$navmenu['Verteidigung']['Kategorien']['sub']="cat";
 	$navmenu['Verteidigung']['Kategorien']['level']=2;	
 
-	$navmenu['Verteidigung']['Battlepoints']['page']="def";
-	$navmenu['Verteidigung']['Battlepoints']['sub']="battlepoints";
-	$navmenu['Verteidigung']['Battlepoints']['level']=2;
+	$navmenu['Verteidigung']['Punkte']['page']="def";
+	$navmenu['Verteidigung']['Punkte']['sub']="battlepoints";
+	$navmenu['Verteidigung']['Punkte']['level']=2;
 
 	$navmenu['Raketen']['Liste']['page']="missiles";
 	$navmenu['Raketen']['Liste']['sub']="";

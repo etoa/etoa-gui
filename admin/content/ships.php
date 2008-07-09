@@ -34,14 +34,14 @@
 	//
 	if ($sub=="battlepoints")
 	{
-		echo "<h1>Battlepoints</h1>";
-		echo "<h2>Battlepoints neu berechnen</h2><form action=\"?page=$page&amp;sub=$sub\" method=\"POST\">";
+		echo "<h1>Punkte</h1>";
+		echo "<h2>Punkte neu berechnen</h2><form action=\"?page=$page&amp;sub=$sub\" method=\"POST\">";
 		if ($_POST['recalc']!="")
 		{
-			echo calcShipPoints();
+			cms_ok_msg(calcShipPoints());
 		}
-		echo "Nach jeder &Auml;nderung an den Schiffen m&uuml;ssen die Battlepoints neu berechnet werden: ";
-		echo "<input type=\"submit\" name=\"recalc\" value=\"Neu berechnen\" /></form>";
+		echo "Nach jeder direkter &Auml;nderung an den Schiffen via Datenbank m&uuml;ssen die Punkte neu berechnet werden: ";
+		echo "<br/><br/><input type=\"submit\" name=\"recalc\" value=\"Neu berechnen\" /></form>";
 		echo "<h2>Battlepoints</h2>";
 		$res=dbquery("
 		SELECT

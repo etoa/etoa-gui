@@ -655,5 +655,41 @@
 		return "Die Punkte von $mnr Schiffen wurden aktualisiert!";		
 	}
 	
+	function calcDefensePoints()
+	{
+		$cfg = Config::getInstance();		
+			$res = dbquery("
+			SELECT
+				def_id,
+        def_costs_metal,
+        def_costs_crystal,
+        def_costs_fuel,
+        def_costs_plastic,
+        def_costs_food
+			FROM
+				defense;");
+			$mnr = mysql_num_rows($res);
+			if ($mnr>0)
+			{
+				while ($arr = mysql_fetch_array($res))
+				{
+					$p = ($arr['def_costs_metal']+
+					$arr['def_costs_crystal']
+					+$arr['def_costs_fuel']
+					+$arr['def_costs_plastic']
+					+$arr['def_costs_food'])
+					/$cfg->p1('points_update');
+					dbquery("UPDATE 
+					defense
+					 SET 
+						def_points=$p
+					WHERE 
+						def_id=".$arr['def_id'].";");
+				}
+			}
+			if ($mnr>0)
+				return "Die Battlepoints von $mnr Verteidigungsanlagen wurden aktualisiert!";			
+		
+	}
 
 ?>

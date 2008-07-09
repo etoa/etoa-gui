@@ -31,7 +31,14 @@
 	define("MODUL_NAME","Forschung");				
 	define("DB_TABLE", $db_table['technologies']);
 	define("DB_TABLE_ID", "tech_id");
-	define("DB_OVERVIEW_ORDER_FIELD","tech_type_id");
+	define("DB_OVERVIEW_ORDER_FIELD","tech_type_id, tech_order,tech_name");
+
+	define("DB_TABLE_SORT",'tech_order');
+	define("DB_TABLE_SORT_PARENT",'tech_type_id');
+
+	define("DB_IMAGE_PATH",IMAGE_PATH."/technologies/technology<DB_TABLE_ID>_small.".IMAGE_EXT);
+
+	$form_switches = array("Anzeigen"=>'tech_show');
 	
 	// FIELDS
 	
@@ -51,7 +58,12 @@
 	// select_elem_checked				// Value of default checked Select Element (desc=>value)
 	// show_overview							// Set 1 to show on overview page
   
-	$db_fields = array ( 0	=> 	array	(	"name" => "tech_name",
+	$db_fields = array (  array	(	"name" => "tech_id",
+																		"text" => "ID",
+																		"type" => "readonly",
+																		"show_overview" => 1
+																	), 	
+												array	(	"name" => "tech_name",
 																		"text" => "Name",
 																		"type" => "text",
 																		"def_val" => "",
@@ -63,9 +75,10 @@
 																		"rcb_elem_chekced" => "",
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
-																		"show_overview" => 1
+																		"show_overview" => 1,
+																		"link_in_overview" => 1
 																	),
-											1	=> 	array	(	"name" => "tech_type_id",
+											array	(	"name" => "tech_type_id",
 																		"text" => "Kategorie",
 																		"type" => "select",
 																		"def_val" => "",
@@ -79,7 +92,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
 																	),																	
-											2	=> 	array	(	"name" => "tech_shortcomment",
+											array	(	"name" => "tech_shortcomment",
 																		"text" => "Titel",
 																		"type" => "textarea",
 																		"def_val" => "",
@@ -93,7 +106,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											3	=> 	array	(	"name" => "tech_longcomment",
+											array	(	"name" => "tech_longcomment",
 																		"text" => "Text",
 																		"type" => "textarea",
 																		"def_val" => "",
@@ -105,9 +118,10 @@
 																		"rcb_elem_chekced" => "",
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
-																		"show_overview" => 0
+																		"show_overview" => 0,
+																		"line" => 1
 																	),
-											4	=> 	array	(	"name" => "tech_costs_metal",
+											array	(	"name" => "tech_costs_metal",
 																		"text" => "Kosten Metall",
 																		"type" => "text",
 																		"def_val" => "",
@@ -121,7 +135,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											5	=> 	array	(	"name" => "tech_costs_crystal",
+											array	(	"name" => "tech_costs_crystal",
 																		"text" => "Kosten Kristall",
 																		"type" => "text",
 																		"def_val" => "",
@@ -135,7 +149,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											6	=> 	array	(	"name" => "tech_costs_plastic",
+											array	(	"name" => "tech_costs_plastic",
 																		"text" => "Kosten Plastik",
 																		"type" => "text",
 																		"def_val" => "",
@@ -149,7 +163,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											7	=> 	array	(	"name" => "tech_costs_fuel",
+											array	(	"name" => "tech_costs_fuel",
 																		"text" => "Kosten Treibstoff",
 																		"type" => "text",
 																		"def_val" => "",
@@ -163,7 +177,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											8	=> 	array	(	"name" => "tech_costs_food",
+											array	(	"name" => "tech_costs_food",
 																		"text" => "Kosten Nahrung",
 																		"type" => "text",
 																		"def_val" => "",
@@ -177,7 +191,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-											9	=> 	array	(	"name" => "tech_build_costs_factor",
+												array	(	"name" => "tech_build_costs_factor",
 																		"text" => "Kostenfaktor Bau",
 																		"type" => "text",
 																		"def_val" => "",
@@ -189,11 +203,12 @@
 																		"rcb_elem_chekced" => "",
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
-																		"show_overview" => 0
+																		"show_overview" => 0,
+																		"line" => 1
 																	),
-																																																																																			
-											10	=> 	array	(	"name" => "tech_last_level",
-																		"text" => "Maximaler Level",
+											
+												array	(	"name" => "tech_last_level",
+																		"text" => "Max Level",
 																		"type" => "text",
 																		"def_val" => "",
 																		"size" => "20",
@@ -204,37 +219,9 @@
 																		"rcb_elem_chekced" => "",
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
-																		"show_overview" => 0
+																		"show_overview" => 1
 																	),	
-											11	=> 	array	(	"name" => "tech_order",
-																		"text" => "Reihenfolge",
-																		"type" => "text",
-																		"def_val" => "",
-																		"size" => "1",
-																		"maxlen" => "2",
-																		"rows" => "",
-																		"cols" => "",
-																		"rcb_elem" => "",
-																		"rcb_elem_chekced" => "",
-																		"select_elem" => "",
-																		"select_elem_checked" => "",
-																		"show_overview" => 0
-																	),	
-											12	=> 	array	(	"name" => "tech_show",
-																		"text" => "Anzeigen",
-																		"type" => "radio",
-																		"def_val" => "",
-																		"size" => "",
-																		"maxlen" => "",
-																		"rows" => "",
-																		"cols" => "",
-																		"rcb_elem" => array("Ja"=>1,"Nein"=>0),
-																		"rcb_elem_chekced" => "1",
-																		"select_elem" => "",
-																		"select_elem_checked" => "",
-																		"show_overview" => 0
-																	),
-											13	=> 	array	(	"name" => "tech_stealable",
+												array	(	"name" => "tech_stealable",
 																		"text" => "Stehlbar",
 																		"type" => "radio",
 																		"def_val" => "",

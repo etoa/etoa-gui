@@ -32,37 +32,14 @@
 	//
 	if ($sub=="battlepoints")
 	{
-		echo "<h1>Battlepoints</h1>";
-		echo "<h2>Battlepoints neu berechnen</h2><form action=\"?page=$page&amp;sub=$sub\" method=\"POST\">";
+		echo "<h1>Punkte</h1>";
+		echo "<h2>Punkte neu berechnen</h2><form action=\"?page=$page&amp;sub=$sub\" method=\"POST\">";
 		if ($_POST['recalc']!="")
 		{
-			$res = dbquery("
-			SELECT
-				def_id,
-        def_costs_metal,
-        def_costs_crystal,
-        def_costs_fuel,
-        def_costs_plastic,
-        def_costs_food
-			FROM
-				".$db_table['defense'].";");
-			$mnr = mysql_num_rows($res);
-			if ($mnr>0)
-			{
-				while ($arr = mysql_fetch_array($res))
-				{
-					$p = ($arr['def_costs_metal']+$arr['def_costs_crystal']+$arr['def_costs_fuel']+$arr['def_costs_plastic']+$arr['def_costs_food'])/$conf['points_update']['p1'];
-					dbquery("UPDATE ".$db_table['defense']." SET 
-						def_points=$p
-					WHERE 
-						def_id=".$arr['def_id'].";");
-				}
-			}
-			if ($mnr>0)
-				echo "Die Battlepoints von <b>$mnr</b> Verteidigungsanlagen wurden aktualisiert!<br/><br/>";			
+			cms_ok_msg(calcDefensePoints());
 		}		
-		echo "Nach jeder &Auml;nderung an den Verteidigungsanlagen m&uuml;ssen die Battlepoints neu berechnet werden: ";
-		echo "<input type=\"submit\" name=\"recalc\" value=\"Neu berechnen\" /></form>";		
+		echo "Nach jeder direkter &Auml;nderung an den Verteidigungsanlagen via Datenbank m&uuml;ssen die Punkte neu berechnet werden: ";
+		echo "<br/><br/><input type=\"submit\" name=\"recalc\" value=\"Neu berechnen\" /></form>";		
 		echo "<h2>Battlepoints</h2>";
 		$res=dbquery("SELECT
 			def_id,
