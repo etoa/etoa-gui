@@ -270,7 +270,7 @@
 	  						AND buildlist_user_id='".$s['user_id']."'
 	  						AND buildlist_planet_id='".$cp->id."'");
                     }
-                    echo "</td><td class=\"tbldata\">".(nf($sp_arr['buildlist_people_working']*12))." t</td></tr>";
+                    echo "</td><td class=\"tbldata\">".(nf($sp_arr['buildlist_people_working']*$conf['people_food_require']['v']))." t</td></tr>";
 				}
 			}
 
@@ -303,8 +303,8 @@
 			echo "<tr><td class=\"tbldata\" width=\"250\">Bev&ouml;lkerung total</td><td class=\"tbldata\">".nf(floor($cp->people))."</td></tr>";
 			echo "<tr><td class=\"tbldata\" width=\"250\">Arbeiter</td><td class=\"tbldata\">".nf($people_working)."</td></tr>";
 			echo "<tr><td class=\"tbldata\" width=\"250\">Freie Leute</td><td class=\"tbldata\">".nf($people_free)."</td></tr>";
-			echo "<tr><td class=\"tbldata\" width=\"250\">Verarbeitung pro Arbeiter und Stunde</td><td class=\"tbldata\">".$conf['people_work_done']['v']." t/h</td></tr>";
-			echo "<tr><td class=\"tbldata\" width=\"250\">Nahrung pro Arbeiter und Stunde</td><td class=\"tbldata\">".$conf['people_food_require']['v']." t/h</td></tr>";
+			echo "<tr><td class=\"tbldata\" width=\"250\">Zeitreduktion pro Arbeiter und Auftrag</td><td class=\"tbldata\">".tf($conf['people_work_done']['v'])."</td></tr>";
+			echo "<tr><td class=\"tbldata\" width=\"250\">Nahrung pro Arbeiter und Auftrag</td><td class=\"tbldata\">".nf($conf['people_food_require']['v'])." t</td></tr>";
 			echo "<tr><td class=\"tbldata\" width=\"250\">Grundwachstumsrate</td><td class=\"tbldata\">".get_percent_string($conf['people_multiply']['v'])."</td></tr>";
 			echo "<tr><td class=\"tbldata\" width=\"250\">Wachstumsbonus ".$cp->typeName."</td><td class=\"tbldata\">".get_percent_string($cp->typePopulation,1)."</td></tr>";
 			echo "<tr><td class=\"tbldata\" width=\"250\">Wachstumsbonus ".$cu->raceName."</td><td class=\"tbldata\">".get_percent_string($cu->racePopulation,1)."</td></tr>";

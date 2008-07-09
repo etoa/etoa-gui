@@ -45,7 +45,16 @@
 						echo file_exists(CSS_STYLE."/scripts.js") ? "<script src=\"".CSS_STYLE."/scripts.js\" type=\"text/javascript\"></script>" : ''; 
 					?>					
 					
-					<!--<script type="text/javascript" src="js/range.js"></script> -->
+					<!-- Fading blink text-->
+					<script type="text/javascript" src="js/fader.js"></script>
+					
+					<!-- jsProgressBarHandler prerequisites : prototype.js
+					<script type="text/javascript" src="js/prototype/prototype.js"></script>
+
+					<!-- jsProgressBarHandler core 
+					<script type="text/javascript" src="js/bramus/jsProgressBarHandler.js"></script>
+					
+					
 					<!--<script type="text/javascript" src="js/timer.js"></script> -->
 					<!--<script type="text/javascript" src="js/slider.js"></script>-->
 					

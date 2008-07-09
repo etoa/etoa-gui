@@ -205,8 +205,7 @@ function calcDemolishingWaitTime($dc,$cp)
 			}
 		}
 
-		// Technologieliste laden und Gentechlevel definieren
-		define("GEN_TECH_LEVEL",0);
+		// Technologieliste laden
 		$tres = dbquery("
 		SELECT 
 			* 
@@ -218,16 +217,20 @@ function calcDemolishingWaitTime($dc,$cp)
 		while ($tarr = mysql_fetch_array($tres))
 		{
 			$techlist[$tarr['techlist_tech_id']]=$tarr['techlist_current_level'];
-			
-			// Speichert Gentechlevel wenn diese schon erforscht wurde
-			if($tarr['techlist_tech_id']==GEN_TECH_ID && $tarr['techlist_current_level']>0)
-			{
-				define("GEN_TECH_LEVEL",$tarr['techlist_current_level']);
-			}
 		}
-		
-		
-		
+
+		// Load gene technology level
+		$tl = new TechList($cu->id());
+		define("GEN_TECH_LEVEL",$tl->getLevel(GEN_TECH_ID));
+		$minBuildTimeFactor = (0.1-(GEN_TECH_LEVEL/100));
+	
+		// Load working people data
+		$bl = new BuildList($cp->id());
+		$peopleWorking = $bl->getPeopleWorking(BUILD_BUILDING_ID);	
+		$peopleTimeReduction = $cfg->value('people_work_done');
+		$peopleFoodConsumption = $cfg->value('people_food_require');
+	
+	
 		// Requirements
 		$rres = dbquery("
 		SELECT 
@@ -278,6 +281,15 @@ function calcDemolishingWaitTime($dc,$cp)
     	$def_field_needed = 0;
     }
 
+  	infobox_start("Bauhof-Infos");
+  	echo "<div style=\"text-align:left;\">
+  	<b>Eingestellte Arbeiter:</b> ".nf($peopleWorking)."<br/>
+  	<b>Zeitreduktion durch Arbeiter pro Auftrag:</b> ".tf($peopleTimeReduction*$peopleWorking)."<br/>
+  	<b>Nahrungsverbrauch durch Arbeiter pro Auftrag:</b> ".nf($peopleFoodConsumption*$peopleWorking)."<br/>
+  	<b>Gentechnologie:</b> ".GEN_TECH_LEVEL."<br/>
+  	<b>Minimalen Bauzeit (mit Arbeiter):</b> Bauzeit * ".$minBuildTimeFactor."
+  	</div>";   	
+  	infobox_end();
 
 
 /********************
@@ -358,12 +370,13 @@ function calcDemolishingWaitTime($dc,$cp)
 				$dtime = ($dc['metal']+$dc['crystal']+$dc['plastic']+$dc['fuel']+$dc['food']) * $btime_global_factor * $btime_build_factor;
 				$dtime  *= $bonus;
 
-				if (isset($buildlist[BUILD_BUILDING_ID]['buildlist_people_working']) && $buildlist[BUILD_BUILDING_ID]['buildlist_people_working']>0)
+				if ($peopleWorking > 0)
 				{
-					$btime_min=$btime*(0.1-(GEN_TECH_LEVEL/100));
-					$btime=$btime-($buildlist[BUILD_BUILDING_ID]['buildlist_people_working']*3);
-					if ($btime<$btime_min) $btime=$btime_min;
-					$bc['food']+=$buildlist[BUILD_BUILDING_ID]['buildlist_people_working']*12;
+					$btime_min = $btime * $minBuildTimeFactor;
+					$btime = $btime-($peopleWorking * $peopleTimeReduction);
+					if ($btime < $btime_min) 
+						$btime = $btime_min;
+					$bc['food']+= $peopleWorking * $peopleFoodConsumption;
 				}
 
 
@@ -437,7 +450,7 @@ function calcDemolishingWaitTime($dc,$cp)
 								<b>Gebäude Level:</b> ".$b_level." (vor Ausbau)<br>
 								<b>Bau dauer:</b> ".tf($btime)."<br>
 								<b>Ende:</b> ".date("Y-m-d H:i:s",$end_time)."<br>
-								<b>Eingesetzte Bewohner:</b> ".nf($buildlist[BUILD_BUILDING_ID]['buildlist_people_working'])."<br>
+								<b>Eingesetzte Bewohner:</b> ".nf($peopleWorking)."<br>
 								<b>Gen-Tech Level:</b> ".GEN_TECH_LEVEL."<br><br>
 								<b>Kosten</b><br>
 								<b>".RES_METAL.":</b> ".nf($bc['metal'])."<br>
@@ -886,7 +899,7 @@ function calcDemolishingWaitTime($dc,$cp)
 		      						<input type=\"submit\" class=\"button\" id=\"buildcancel\" name=\"command_cbuild\" value=\"Bau abbrechen\" onclick=\"if (this.value=='Bau abbrechen'){return confirm('Wirklich abbrechen?');}\" />
 		      					</td>
 		      					<td class=\"tbldata\" id=\"buildtime\">-</td>
-		      					<td colspan=\"6\" class=\"tbldata\">&nbsp;</td>
+		      					<td colspan=\"6\" class=\"tbldata\" id=\"buildprogress\" style=\"background:#000;text-align:center;\"></td>
 		      				</tr>";
 		      	if ($b_level < $arr['building_last_level']-1)
 		      	{
@@ -930,59 +943,7 @@ function calcDemolishingWaitTime($dc,$cp)
 	
 					if ($b_status==3 || $b_status==4)
 					{
-						?>
-							<script type="text/javascript">
-								function setCountdown()
-								{
-									var ts;
-									cTime = <?PHP echo time();?>;
-									b_level = <?PHP echo $b_level;?>;
-									te = <?PHP if($end_time) echo $end_time; else echo 0;?>;
-									tc = cTime + cnt;
-									window.status = tc;
-									ts = te - tc;
-	
-									if(b_level>0)
-									{
-										<?PHP 
-										if ($b_status==4) 
-											echo "b_level=b_level-1;";
-										else
-											echo "b_level=b_level+1;";
-										?>										
-									}
-									else
-									{
-										b_level=1;
-									}
-	
-									if (ts>=0)
-									{
-										t = Math.floor(ts / 3600 / 24);
-										h = Math.floor(ts / 3600);
-										m = Math.floor((ts-(h*3600))/60);
-										s = Math.floor((ts-(h*3600)-(m*60)));
-										nv = h+"h "+m+"m "+s+"s";
-									}
-									else
-									{
-										nv = "-";
-										document.getElementById('buildstatus').firstChild.nodeValue="Fertig";
-										document.getElementById('buildlevel').innerHTML=b_level;
-										document.getElementById("buildcancel").name = "command_show";
-							  		document.getElementById("buildcancel").value = "Aktualisieren";
-									}
-									document.getElementById('buildtime').firstChild.nodeValue=nv;
-									cnt = cnt + 1;
-									setTimeout("setCountdown()",1000);
-								}
-								if (document.getElementById('buildtime')!=null)
-								{
-									cnt = 0;
-									setCountdown();
-								}
-							</script>
-						<?PHP
+						countDown("buildtime",$end_time,"buildprogress");
 					}
 				
 				}

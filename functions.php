@@ -4656,14 +4656,14 @@ Forum: http://www.etoa.ch/forum";
 		return $base * intpow($base,$exponent-1);
 	}
 
-	function countDown($elem,$targettime)
+	function countDown($elem,$targettime,$progesselem="")
 	{
 		?>
 		<script type="text/javascript">
 			if (document.getElementById('<?PHP echo $elem;?>')!=null)
 			{
 				cnt["<?PHP echo $elem;?>"] = 0;
-				setCountdown('<?PHP echo $elem;?>',<?PHP echo time();?>,<?PHP echo $targettime;?>);
+				setCountdown('<?PHP echo $elem;?>',<?PHP echo time();?>,<?PHP echo $targettime;?>,'<?PHP echo $progesselem;?>');
 			}
 		</script>
 		<?PHP	
@@ -4692,6 +4692,20 @@ Forum: http://www.etoa.ch/forum";
 		return "<script type=\"text/javascript\">time(".$time.", '".$target."', ".$format.", '".$text."');</script>";
 	}
 
+	function fadeBlinker($id,$col1="ffffff",$col2="ff0000")
+	{
+		static $fadecnt = 0;
+
+		
+		echo "<script type=\"text/javascript\">
+		fader[".$fadecnt."] = new fadeObject('".$id."', '".$col1."', '".$col2."', 50, 50);
+		fader[".$fadecnt."].msg[1] = document.getElementById('".$id."').innerHTML;";
+		echo 'setTimeout(function() { throb('.$fadecnt.'); }, 1000);';
+		echo "</script>";
+
+		$fadecnt++;
+
+	}
 
 	/**
 	* Textfunktionen einbinden

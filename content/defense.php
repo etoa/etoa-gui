@@ -580,7 +580,7 @@
 							//Rechnet zeit wenn arbeiter eingeteilt sind
 							$btime_min=$btime*(0.1-(GEN_TECH_LEVEL/100));
 							if ($btime_min<DEFENSE_MIN_BUILD_TIME) $btime_min=DEFENSE_MIN_BUILD_TIME;
-							$btime=$btime-$people_working*3;
+							$btime=$btime-$people_working*$cfg->value('people_work_done');
 							if ($btime<$btime_min) $btime=$btime_min;
 							$obj_time=ceil($btime);
 
@@ -1103,14 +1103,14 @@
     			      	$btime_min=DEFENSE_MIN_BUILD_TIME;
     			      }
     			      
-    			      $btime=ceil($btime-$people_working*3);
+    			      $btime=ceil($btime-$people_working*$cfg->value('people_work_done'));
     			      if ($btime<$btime_min) 
     			      {
     			      	$btime=$btime_min;
     			      }
 
 								//Nahrungskosten berechnen
-								$food_costs = $people_working*12 + $darr['def_costs_food'];
+								$food_costs = $people_working*$cfg->value('people_food_require') + $darr['def_costs_food'];
 								
 								//Nahrungskosten versteckt übermitteln
 								echo "<input type=\"hidden\" name=\"additional_food_costs\" value=\"".$food_costs."\" />";

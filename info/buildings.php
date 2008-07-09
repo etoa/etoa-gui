@@ -70,7 +70,7 @@ if ($_GET['id']!="")
 		// Metallmine
         if ($arr['building_id']==1)
         {
-        infobox_start("Produktion von ".$rsc['metal']." (ohne Boni)",1);
+        infobox_start("Produktion von ".RES_METAL." (ohne Boni)",1);
         echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Produktion</td><td class=\"tbltitle\">Energie</td></tr>";
         for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
         {
@@ -88,7 +88,7 @@ if ($_GET['id']!="")
         // Siliziummine
         if ($arr['building_id']==2)
         {
-            infobox_start("Produktion von ".$rsc['crystal']." (ohne Boni)",1);
+            infobox_start("Produktion von ".RES_CRYSTAL." (ohne Boni)",1);
         echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Produktion</td><td class=\"tbltitle\">Energie</td></tr>";
         for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
         {
@@ -104,7 +104,7 @@ if ($_GET['id']!="")
         // Chemiefabrik
         if ($arr['building_id']==3)
         {
-        infobox_start("Produktion von ".$rsc['plastic']." (ohne Boni)",1);
+        infobox_start("Produktion von ".RES_PLASTIC." (ohne Boni)",1);
         echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Produktion</td><td class=\"tbltitle\">Energie</td></tr>";
         for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
         {
@@ -120,7 +120,7 @@ if ($_GET['id']!="")
         // Tritiumsynthetizer
         if ($arr['building_id']==4)
         {
-        infobox_start("Produktion von ".$rsc['fuel']." (ohne Boni)",1);
+        infobox_start("Produktion von ".RES_FUEL." (ohne Boni)",1);
         echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Produktion</td><td class=\"tbltitle\">Energie</td></tr>";
         for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
         {
@@ -136,7 +136,7 @@ if ($_GET['id']!="")
         // Gew&auml&auml;chshaus
         if ($arr['building_id']==5)
         {
-            infobox_start("Produktion von ".$rsc['food']." (ohne Boni)",1);
+            infobox_start("Produktion von ".RES_FOOD." (ohne Boni)",1);
         echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Produktion</td><td class=\"tbltitle\">Energie</td></tr>";
         for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
         {
@@ -154,11 +154,11 @@ if ($_GET['id']!="")
         {
         infobox_start("Produktion (ohne Boni)",1);
         echo "<tr><td class=\"tbltitle\">Rohstoff</td><td class=\"tbltitle\">Prod.</td><td class=\"tbltitle\">Lager</td></tr>";
-        echo "<tr><td class=\"tbldata\">".$rsc['metal']."</td><td class=\"tbldata\">".nf($arr['building_prod_metal'])."</td><td class=\"tbldata\">".nf($arr['building_store_metal'])."</td></tr>";
-        echo "<tr><td class=\"tbldata\">".$rsc['crystal']."</td><td class=\"tbldata\">".nf($arr['building_prod_crystal'])."</td><td class=\"tbldata\">".nf($arr['building_store_crystal'])."</td></tr>";
-        echo "<tr><td class=\"tbldata\">".$rsc['plastic']."</td><td class=\"tbldata\">".nf($arr['building_prod_plastic'])."</td><td class=\"tbldata\">".nf($arr['building_store_plastic'])."</td></tr>";
-        echo "<tr><td class=\"tbldata\">".$rsc['fuel']."</td><td class=\"tbldata\">".nf($arr['building_prod_fuel'])."</td><td class=\"tbldata\">".nf($arr['building_store_fuel'])."</td></tr>";
-        echo "<tr><td class=\"tbldata\">".$rsc['food']."</td><td class=\"tbldata\">".nf($arr['building_prod_food'])."</td><td class=\"tbldata\">".nf($arr['building_store_food'])."</td></tr>";
+        echo "<tr><td class=\"tbldata\">".RES_METAL."</td><td class=\"tbldata\">".nf($arr['building_prod_metal'])."</td><td class=\"tbldata\">".nf($arr['building_store_metal'])."</td></tr>";
+        echo "<tr><td class=\"tbldata\">".RES_CRYSTAL."</td><td class=\"tbldata\">".nf($arr['building_prod_crystal'])."</td><td class=\"tbldata\">".nf($arr['building_store_crystal'])."</td></tr>";
+        echo "<tr><td class=\"tbldata\">".RES_PLASTIC."</td><td class=\"tbldata\">".nf($arr['building_prod_plastic'])."</td><td class=\"tbldata\">".nf($arr['building_store_plastic'])."</td></tr>";
+        echo "<tr><td class=\"tbldata\">".RES_FUEL."</td><td class=\"tbldata\">".nf($arr['building_prod_fuel'])."</td><td class=\"tbldata\">".nf($arr['building_store_fuel'])."</td></tr>";
+        echo "<tr><td class=\"tbldata\">".RES_FOOD."</td><td class=\"tbldata\">".nf($arr['building_prod_food'])."</td><td class=\"tbldata\">".nf($arr['building_store_food'])."</td></tr>";
         echo "<tr><td class=\"tbldata\">Energie</td><td class=\"tbldata\">".nf($arr['building_prod_metal'])."</td><td class=\"tbldata\">-</td></tr>";
         infobox_end(1);
         }
@@ -332,7 +332,7 @@ if ($_GET['id']!="")
         if ($arr['building_id']==22)
         {
             infobox_start("Zus&auml;tzliche Felder",1);
-        echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Felder</td><td class=\"tbltitle\">Energieverbrauch</td><td class=\"tbltitle\">Speicher ".$rsc['metal']."</td><td class=\"tbltitle\">Speicher ".$rsc['crystal']."</td><td class=\"tbltitle\">Speicher ".$rsc['plastic']."</td></tr>";
+        echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Felder</td><td class=\"tbltitle\">Energieverbrauch</td><td class=\"tbltitle\">Speicher ".RES_METAL."</td><td class=\"tbltitle\">Speicher ".RES_CRYSTAL."</td><td class=\"tbltitle\">Speicher ".RES_PLASTIC."</td></tr>";
         for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
         {
           $prod_item = round($arr['building_fieldsprovide'] * pow($arr['building_production_factor'],$level-1));

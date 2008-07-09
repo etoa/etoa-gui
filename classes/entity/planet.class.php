@@ -327,44 +327,49 @@
 			$style4="class=\"tbldata\"";
 			$style5="class=\"tbldata\"";
 			
-			$store_msg=false;
-			$power_msg=false;
-			$place_msg=false;
+			$store_err=array();
 
 			if ($this->storeMetal<=floor($this->resMetal) && floor($this->resMetal)>0)
 			{
 				$style0="class=\"tbldata2\"";
-				$store_msg=true;
+				$store_msg[1] = tm("Speicher voll","Produktion gestoppt, bitte Speicher ausbauen!");
+				$store_err[1]=true;
 			}
 			if ($this->storeCrystal<=floor($this->resCrystal) && floor($this->resCrystal)>0)
 			{
 				$style1="class=\"tbldata2\"";
-				$store_msg=true;
+				$store_msg[2] = tm("Speicher voll","Produktion gestoppt, bitte Speicher ausbauen!");
+				$store_err[2]=true;
 			}
 			if ($this->storePlastic<=floor($this->resPlastic) && floor($this->resPlastic)>0)
 			{
 				$style2="class=\"tbldata2\"";
-				$store_msg=true;
+				$store_msg[3] = tm("Speicher voll","Produktion gestoppt, bitte Speicher ausbauen!");
+				$store_err[3]=true;
 			}
 			if ($this->storeFuel<=floor($this->resFuel) && floor($this->resFuel)>0)
 			{
 				$style3="class=\"tbldata2\"";
-				$store_msg=true;
+				$store_msg[4] = tm("Speicher voll","Produktion gestoppt, bitte Speicher ausbauen!");
+				$store_err[4]=true;
 			}
 			if ($this->storeFood<=floor($this->resFood) && floor($this->resFood)>0)
 			{
 				$style4="class=\"tbldata2\"";
-				$store_msg=true;
+				$store_msg[5] = tm("Speicher voll","Produktion gestoppt, bitte Speicher ausbauen!");
+				$store_err[5]=true;
 			}
 			if ($this->people_place<=floor($this->people) && floor($this->people)>0)
 			{
 				$style5="class=\"tbldata2\"";
-				$place_msg=true;
+				$store_msg[6] = tm("Wohnraum voll","Wachstum gestoppt, bitte Wohnraum ausbauen!");
+				$store_err[6]=true;
 			}
 			if(floor($this->prodPower)-floor($this->usePower)<0)
 			{
 				$style6="class=\"tbldata2\"";
-				$power_msg=true;
+				$store_msg[7] = tm("Zuwenig Energie","Produktion verringert, bitte Kraftwerk ausbauen!");
+				$store_err[7]=true;
 				$power_rest = floor($this->prodPower)-floor($this->usePower);
 			}
 			else
@@ -382,38 +387,20 @@
 			<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_ICON_PEOPLE." Bewohner</td>
 			<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_ICON_POWER." Energie</td>
 			</tr><tr>
-			<td $style0>".nf(floor($this->resMetal))." t</td>
-			<td $style1>".nf(floor($this->resCrystal))." t</td>
-			<td $style2>".nf(floor($this->resPlastic))." t</td>
-			<td $style3>".nf(floor($this->resFuel))." t</td>
-			<td $style4>".nf(floor($this->resFood))." t</td>
-			<td $style5>".nf(floor($this->people))."</td>
-			<td $style6>".nf($power_rest)."</td>
+			<td $style0 id=\"rb1\" ".$store_msg[1].">".nf(floor($this->resMetal))." t</td>
+			<td $style1 id=\"rb2\" ".$store_msg[2].">".nf(floor($this->resCrystal))." t</td>
+			<td $style2 id=\"rb3\" ".$store_msg[3].">".nf(floor($this->resPlastic))." t</td>
+			<td $style3 id=\"rb4\" ".$store_msg[4].">".nf(floor($this->resFuel))." t</td>
+			<td $style4 id=\"rb5\" ".$store_msg[5].">".nf(floor($this->resFood))." t</td>
+			<td $style5 id=\"rb6\" ".$store_msg[6].">".nf(floor($this->people))."</td>
+			<td $style6 id=\"rb7\" ".$store_msg[7].">".nf($power_rest)."</td>
 			</tr>";
-
-			$text = array();
-			if ($store_msg)
-				array_push($text,"Speicher");
-			if ($place_msg)
-				array_push($text,"Wohnmodule");
-			if ($power_msg)
-				array_push($text,"Kraftwerke");
-
-
-			if (count($text)>0)
+			/*
+			foreach ($store_err as $k => $v)
 			{
-				echo "<tr><td class=\"tbldata\" colspan=\"7\" style=\"text-align:center;color:orange;\"><i>Es werden ben&ouml;tigt: ";
+				fadeBlinker("rb".$k);
+			}*/
 
-				$cnt=0;
-                foreach ($text as $value)
-                {
-                	if($cnt!=0)
-                		echo ", ";
-                	echo "$value";
-                	$cnt++;
-                }
-				echo "</i></td></tr>";
-			}
 			echo "</table><br/>";
 		}
 
@@ -638,9 +625,9 @@
 		}
 		
 		/**
-		* Übrnimmt einen Planeten (Invasion)
+		* Û¢rnimmt einen Planeten (Invasion)
 		*
-		* @param int $new_user_id User ID des 'Übernehmers'
+		* @param int $new_user_id User ID des 'Û¢ernehmers'
 		* @athor Lamborghini
 		*/
 		function chown($new_user_id)
@@ -649,7 +636,7 @@
 			$this->userId = $new_user_id;
 			$this->changed = time();
 			
-      // Planet übernehmen
+      // Planet ï¿½hmen
 			dbquery("
 				UPDATE
 					planets
@@ -661,7 +648,7 @@
 					id='".$this->id."';
 			");
 	
-      // Gebäude übernehmen
+      // Gebã´¤e ï¿½hmen
       dbquery("
 			UPDATE
 				buildlist
@@ -672,7 +659,7 @@
 			");
 	
 	
-	    // Bestehende Schiffs-Einträge löschen
+	    // Bestehende Schiffs-Eintrã¦¥ lï¿½en
 	    dbquery("
 				DELETE FROM
 					shiplist
@@ -688,7 +675,7 @@
 			
 	
 	
-	    // Bestehende Verteidigungs-Einträge löschen
+	    // Bestehende Verteidigungs-Eintrã¦¥ lï¿½en
 	    dbquery("
 				DELETE FROM
 					deflist

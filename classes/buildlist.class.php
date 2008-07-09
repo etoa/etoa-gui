@@ -100,6 +100,11 @@
 		
 		function totalPeopleWorking()
 		{
+			return $this->getPeopleWorking();
+		}
+		
+		function getPeopleWorking()
+		{
 			$res = dbquery("
 			SELECT 
 				SUM(buildlist_people_working) 
@@ -109,7 +114,7 @@
 				buildlist_planet_id='".$this->entityId."';");
 			$pbarr = mysql_fetch_row($res);
 			return $pbarr[0];			
-		}
+		}		
 		
 	}
 

@@ -229,9 +229,9 @@
          fleet AS f
        INNER JOIN
          fleet_ships AS fs
-       ON f.fleet_id=fs.fs_fleet_id
+       ON f.id=fs.fs_fleet_id
      WHERE
-       f.fleet_user_id='".$cu->id()."'
+       f.user_id='".$cu->id()."'
      GROUP BY
      	 fs.fs_ship_id;");
 			while ($arr = mysql_fetch_assoc($res))
@@ -532,13 +532,20 @@
     	        $cp->resFood-=$bc['food'];
 
 							// Bauzeit pro Schiff berechnen
-							$btime = ($ships[$ship_id]['ship_costs_metal'] + $ships[$ship_id]['ship_costs_crystal'] + $ships[$ship_id]['ship_costs_plastic'] + $ships[$ship_id]['ship_costs_fuel'] + $ships[$ship_id]['ship_costs_food']) / 12 * GLOBAL_TIME * SHIP_BUILD_TIME * $time_boni_factor;
+							$btime = ($ships[$ship_id]['ship_costs_metal'] 
+							+ $ships[$ship_id]['ship_costs_crystal'] 
+							+ $ships[$ship_id]['ship_costs_plastic'] 
+							+ $ships[$ship_id]['ship_costs_fuel'] 
+							+ $ships[$ship_id]['ship_costs_food']) 
+							/ 12 
+							* GLOBAL_TIME * SHIP_BUILD_TIME 
+							* $time_boni_factor;
 
 	    				// TODO: Überprüfen
 							//Rechnet zeit wenn arbeiter eingeteilt sind
 							$btime_min=$btime*(0.1-(GEN_TECH_LEVEL/100));
 							if ($btime_min<SHIPYARD_MIN_BUILD_TIME) $btime_min=SHIPYARD_MIN_BUILD_TIME;
-							$btime=$btime-$people_working*3;
+							$btime=$btime-$people_working*$cfg->value('people_work_done');
 							if ($btime<$btime_min) $btime=$btime_min;
 							$obj_time=ceil($btime);
 
@@ -927,14 +934,14 @@
     			      	$btime_min=SHIPYARD_MIN_BUILD_TIME;
     			      }
     			      
-    			      $btime=ceil($btime-$people_working*3);
+    			      $btime=ceil($btime-$people_working*$cfg->value('people_work_done'));
     			      if ($btime<$btime_min) 
     			      {
     			      	$btime=$btime_min;
     			      }
 
 								//Nahrungskosten berechnen
-								$food_costs = $people_working*12 + $data['ship_costs_food'];
+								$food_costs = $people_working*$cfg->value('people_food_require') + $data['ship_costs_food'];
 								
 								//Nahrungskosten versteckt übermitteln
 								echo "<input type=\"hidden\" name=\"additional_food_costs\" value=\"".$food_costs."\" />";

@@ -3,9 +3,12 @@
 	{
 		var cnt = new Array();
 	}
-	function setCountdown(elem,time,diff)
+	function setCountdown(elem,time,diff,progresselem)
 	{
 		var ts;
+		
+		d = diff - time;
+		
 		ts = diff - time - cnt[elem];
 		if (ts>=0)
 		{
@@ -19,9 +22,23 @@
 			else
 				nv = h+"h "+m+"m "+s+"s";
 
+			perc = Math.ceil(cnt[elem] / d * 100);
+			
+			if (progresselem)
+			{
+				document.getElementById(progresselem).innerHTML=perc+"%";
+				document.getElementById(progresselem).style.background="url('images/progressbar.png') no-repeat";
+				document.getElementById(progresselem).style.backgroundPosition=(-500+(perc*5))+"px 0px";
+				if (perc<=48)
+					document.getElementById(progresselem).style.color="#000";
+				else
+					document.getElementById(progresselem).style.color="#fff";
+			}
+			
+			
 			document.getElementById(elem).firstChild.nodeValue=nv;
 			cnt[elem] = cnt[elem] + 1;
-			setTimeout("setCountdown('"+elem+"',"+time+","+diff+")",1000);
+			setTimeout("setCountdown('"+elem+"',"+time+","+diff+",'"+progresselem+"')",1000);
 		}
 		else
 		{

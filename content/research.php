@@ -47,21 +47,20 @@
 	// SKRIPT //
 	if (isset($cp))
 	{
-		$res = dbquery("
-        SELECT 
-        	buildlist_people_working,
-        	buildlist_current_level
-        FROM 
-          ".$db_table['buildlist']."
-     		WHERE
-        	buildlist_planet_id='".$cp->id()."' 
-      		AND buildlist_building_id='".TECH_BUILDING_ID."'
-	  	;");
-		if (mysql_num_rows($res)>0)
+		$bl = new BuildList($cp->id());
+
+		if ($bl->getLevel(TECH_BUILDING_ID) > 0)
 		{
-			$arr=mysql_fetch_row($res);
-			define('CURRENT_LAB_LEVEL',$arr[1]);
-			define('PEOPLE_WORKING',$arr[0]);
+			define('CURRENT_LAB_LEVEL',$bl->getLevel(TECH_BUILDING_ID));
+			
+			$tl = new TechList($cu->id());
+			define("GEN_TECH_LEVEL",$tl->getLevel(GEN_TECH_ID));
+			$minBuildTimeFactor = (0.1-(GEN_TECH_LEVEL/100));			
+			
+			$peopleWorking = $bl->getPeopleWorking(TECH_BUILDING_ID);	
+			$peopleTimeReduction = $cfg->value('people_work_done');
+			$peopleFoodConsumption = $cfg->value('people_food_require');
+
 			
 			// Überschrift
 			echo "<h1>Forschungslabor (Stufe ".CURRENT_LAB_LEVEL.") des Planeten ".$cp->name."</h1>";
@@ -84,7 +83,6 @@
 			//
 			
 			// Forschungsliste laden && Gentech level definieren
-			define("GEN_TECH_LEVEL",0);
 			$tres = dbquery("
 			SELECT 
 				* 
@@ -99,12 +97,6 @@
 				if ($tarr['techlist_build_type']>2) 
 				{
 					$builing_something=true;
-				}
-				
-				// Speichert Gentechlevel wenn diese schon erforscht wurde
-				if($tarr['techlist_tech_id']==GEN_TECH_ID && $tarr['techlist_current_level']>0)
-				{
-					define("GEN_TECH_LEVEL",$tarr['techlist_current_level']);
 				}
 			}
 	
@@ -219,13 +211,13 @@
 	
 	
 					// Berechnet mindest Bauzeit in beachtung von Gentechlevel
-          $btime_min=$btime*(0.1-(GEN_TECH_LEVEL/100));
-          $btime=$btime-PEOPLE_WORKING*3;
+          $btime_min=$btime*$minBuildTimeFactor;
+          $btime=$btime-$peopleWorking*$peopleTimeReduction;
           if ($btime < $btime_min) 
           {
           	$btime=$btime_min;
           }
-	        $bc['food']+=PEOPLE_WORKING*12;
+	        $bc['food']+=$peopleWorking*$peopleFoodConsumption;
 					
 	
 					//
@@ -294,7 +286,7 @@
 									<b>Erforschungsdauer:</b> ".tf($btime)."<br>
 									<b>Ende:</b> ".date("Y-m-d H:i:s",$end_time)."<br>
 									<b>Forschungslabor Level:</b> ".CURRENT_LAB_LEVEL."<br>
-									<b>Eingesetzte Bewohner:</b> ".nf(PEOPLE_WORKING)."<br>
+									<b>Eingesetzte Bewohner:</b> ".nf($peopleWorking)."<br>
 									<b>Gen-Tech Level:</b> ".GEN_TECH_LEVEL."<br><br>
 									<b>Kosten</b><br>
 									<b>".RES_METAL.":</b> ".nf($bc['metal'])."<br>
@@ -620,7 +612,8 @@
 			{
 				
 	    	infobox_start("Labor-Infos");
-	    	echo "<b>Eingestellte Arbeiter:</b> ".nf(PEOPLE_WORKING)."<br/>
+	    	echo "<div style=\"text-align:left;\">
+	    	<b>Eingestellte Arbeiter:</b> ".nf($peopleWorking)."<br/>
 	    	<b>Forschungszeitverringerung:</b> ";
 	    	if ($need_bonus_level>=0)
 	    	{
@@ -630,6 +623,12 @@
 	    	{
 	    		echo "Stufe ".$conf['build_time_boni_forschungslabor']['p1']." erforderlich!<br/>";
 	    	}
+		  	echo"
+		  	<b>Zeitreduktion durch Arbeiter pro Auftrag:</b> ".tf($peopleTimeReduction*$peopleWorking)."<br/>
+		  	<b>Nahrungsverbrauch durch Arbeiter pro Auftrag:</b> ".nf($peopleFoodConsumption*$peopleWorking)."<br/>
+		  	<b>Gentechnologie:</b> ".GEN_TECH_LEVEL."<br/>
+		  	<b>Minimalen Forschungszeit (mit Arbeiter):</b> Forschungszeit * ".$minBuildTimeFactor."
+		  	</div>";   		    	
 	    	infobox_end();			
 				
 				
