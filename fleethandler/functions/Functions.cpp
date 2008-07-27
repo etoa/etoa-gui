@@ -197,7 +197,6 @@ namespace functions
 	
 	std::string fa(std::string fAction)
 	{
-		std::cout << "Calculating fleet Action...\n";
 		return fAction;
 	}
 	
@@ -244,7 +243,6 @@ namespace functions
 	{
 		My &my = My::instance();
 		mysqlpp::Connection *con_ = my.get();
-		std::cout << "->adding Message to db\n";
 		
 		mysqlpp::Query query = con_->query();
 		query << "INSERT INTO ";
@@ -286,34 +284,23 @@ namespace functions
 	{
 		My &my = My::instance();
 		mysqlpp::Connection *con_ = my.get();
-		std::cout << "->formating Coords\n";
 		
 		mysqlpp::Query query = con_->query();
 		query << "SELECT ";
-			query << "c.id, ";
-			query << "c.sx, ";
-			query << "c.sy, ";
-			query << "c.cx, ";
-			query << "c.cy, ";
-			query << "e.pos ";
-		if (blank!=2)
-		{
-			query << ",	p.planet_name ";
-			query << "FROM entities AS e ";
-			query << "INNER JOIN planets AS p ";
-			query << "	ON e.id = '" << planetId << "' ";
-			query << "	AND p.id = e.id ";
-			query << "INNER JOIN cells AS c ";
-			query << "	ON e.cell_id = c.id; ";
-		}
-		else
-		{
-			query << "FROM entities AS e ";
-			query << "INNER JOIN cells AS c ";
-			query << "	ON e.id = '" << planetId << "' ";
-			query << "	AND e.cell_id = c.id; ";
-		}
-		
+		query << "	c.id, ";
+		query << "	c.sx, ";
+		query << "	c.sy, ";
+		query << "	c.cx, ";
+		query << "	c.cy, ";
+		query << "	e.pos, ";
+		query << "	e.code, ";
+		query << "	p.planet_name ";
+		query << "FROM entities AS e ";
+		query << "INNER JOIN cells AS c ";
+		query << "	ON e.cell_id = c.id ";
+		query << "	AND e.id = '" << planetId << "' ";
+		query << "LEFT JOIN planets AS p ";
+		query << "	ON p.id = e.id ";
 		mysqlpp::Result coordsRes = query.store();	
 		query.reset();
 				
@@ -336,30 +323,78 @@ namespace functions
 				coords += (std::string)coordsRow["cy"]; 
 				coords += " : ";
 				coords += (std::string)coordsRow["pos"];
-								
-				if (blank!=2)
+				
+				char str[2] = "";
+				strcpy( str, coordsRow["code"]);
+				std::string fullCoords = "";
+				
+				switch(str[0])
 				{
-					if (std::string(coordsRow["planet_name"])!="" && blank == 0)
+					case 'a':
 					{
-						std::string fullCoords = std::string(coordsRow["planet_name"]);
-						fullCoords += " (";
+						std::string fullCoords = "Asteroidenfeld (";
 						fullCoords += coords;
 						fullCoords += ")";
-						return(fullCoords);
+						return fullCoords;
+						break;
 					}
-					else
+					case 'p':
 					{
-						return(coords);
+						if (blank!=2)
+						{
+							if (blank == 0)
+							{
+								std::cout << std::string(coordsRow["planet_name"]) << "\n";
+								if (std::string(coordsRow["planet_name"])!="")
+									fullCoords = std::string(coordsRow["planet_name"]);
+								else
+									fullCoords = "Unbennant";
+								fullCoords += " (";
+								fullCoords += coords;
+								fullCoords += ")";
+								return(fullCoords);
+							}
+							else
+							{
+								return(coords);
+							}
+						}
+						else
+						{
+							return(coords);
+						}
+						break;
+					}
+					case 'w':
+					{
+						std::string fullCoords = "Wurmloch (";
+						fullCoords += coords;
+						fullCoords += ")";
+						return fullCoords;
+						break;
+					}
+					case 's':
+					{
+						std::string fullCoords = "Stern (";
+						fullCoords += coords;
+						fullCoords += ")";
+						return fullCoords;
+						break;
+					}
+					case 'n':
+					{
+						std::string fullCoords = "Interstellarer Gasnebel (";
+						fullCoords += coords;
+						fullCoords += ")";
+						return fullCoords;
+						break;
+					}
+					default:
+					{
+						return("Unendliche Weiten");
+						break;
 					}
 				}
-				else
-				{
-					return(coords);
-				}
-			}
-			else
-			{
-				return("Unendliche Weiten");
 			}
 		}
 	}
@@ -382,7 +417,6 @@ namespace functions
 	
 	std::string formatTime(int time)
 	{
-		std::cout << "->formating Time\n";
 		time_t Zeitstempel;
 		tm *now;
 		Zeitstempel = time;
@@ -416,12 +450,17 @@ namespace functions
 		ftime += ".";
 		ftime += syear;
 		ftime += ", ";
+		if (hour < 10)
+			ftime += "0";
 		ftime += shour;
 		ftime += ":";
+		if (min < 10)
+			ftime += "0";
 		ftime += smin;
 		ftime += ":";
+		if (sec < 10)
+			ftime += "0";
 		ftime += ssec;
-		ftime += "\n";
 		return(ftime);
 
 	}

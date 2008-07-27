@@ -19,18 +19,18 @@ namespace steal
 		battle();
 
 		// Send messages
-		int userToId = functions::getUserIdByPlanet((int)fleet_["fleet_target_to"]);
+		int userToId = functions::getUserIdByPlanet((int)fleet_["entity_to"]);
 		std::string subject1 = "Kampfbericht (";
 		subject1 += bstat;
 		subject1 += ")";
 		std::string = subject2 = "Kampfbericht (";
 		subject2 += bstat2;
 		subject2 += ")";
-		functions::sendMsg((int)fleet_["fleet_user_id"],SHIP_WAR_MSG_CAT_ID,subject1,msgFight);
+		functions::sendMsg((int)fleet_["user_id"],SHIP_WAR_MSG_CAT_ID,subject1,msgFight);
 		functions::sendMsg(userToId,SHIP_WAR_MSG_CAT_ID,subject2,msgFight);
 
 		// Add log
-		functions::addLog(1,msgFight,(int)fleet_["fleet_landtime"]);
+		functions::addLog(1,msgFight,(int)fleet_["landtime"]);
 
 		// Aktion durchführen
 		if (returnV==1)
@@ -38,8 +38,8 @@ namespace steal
 			returnFleet = true;
 			fleetLoadspecial(); //ToDo
 
-			coordsTarget = functions::formatCoords((int)fleet_["fleet_target_to"]);
-			coordsFrom = functions::formatCoords((int)fleet_["fleet_target_from"]);
+			coordsTarget = functions::formatCoords((int)fleet_["entity_to"]);
+			coordsFrom = functions::formatCoords((int)fleet_["entity_from"]);
 		
 			int tLevelAtt = 0, tLevelDef;
 
@@ -51,7 +51,7 @@ namespace steal
 			query << "FROM ";
 			query << "	techlist ";
 			query << "WHERE ";
-			query << "	techlist_user_id='" << fleet_["fleet_user_id"] << "' ";
+			query << "	techlist_user_id='" << fleet_["user_id"] << "' ";
 			query << "	AND techlist_tech_id='7'";
 			mysqlpp::Result tRes = query.store();
 			query.reset();
@@ -114,7 +114,7 @@ namespace steal
                 query << "			ON def.techlist_tech_id = att.techlist_tech_id ";
                 query << "			AND att.techlist_build_type!=1 ";
                 query << "			AND def.techlist_user_id='" << userToId << "' ";
-				query << "			AND att.techlist_user_id=" < fleet_["fleet_user_id"] << " ";
+				query << "			AND att.techlist_user_id=" < fleet_["user_id"] << " ";
                 query << "			AND def.techlist_current_level>att.techlist_current_level ";
                 query << "			AND att.techlist_current_level>0 ";
 				query << ")";
@@ -145,7 +145,7 @@ namespace steal
 							query << "	techlist_build_start_time='0', ";
 							query << "	techlist_build_end_time='0' ";
 							query << "WHERE ";
-							query << "	techlist_user_id=" << fleet_["fleet_user_id"] << " ";
+							query << "	techlist_user_id=" << fleet_["user_id"] << " ";
 							query << "	AND techlist_tech_id=" << techRow["techlist_tech_id"] << ";";
 							query.store();
 							query.reset();
@@ -157,7 +157,7 @@ namespace steal
 							query << "SET ";
 							query << "	techlist_current_level=" << techRow["def_techlist_current_level"] << " ";
 							query << "WHERE ";
-							query << "	techlist_user_id=" << fleet_["fleet_user_id"] << " ";
+							query << "	techlist_user_id=" << fleet_["user_id"] << " ";
 							query << "	AND techlist_tech_id=" << techRow["techlist_tech_id"] << ";";
 							query.store();
 							query.reset();
@@ -186,7 +186,7 @@ namespace steal
 								query << "SET ";
 								query << "	fs_ship_cnt=fs_ship_cnt-1 ";
 								query << "WHERE ";
-								query << "	fs_fleet_id='" << fleet_["fleet_id"] << "' ";
+								query << "	fs_fleet_id='" << fleet_["id"] << "' ";
 								query << "	AND fs_ship_id='" << sRow["ship_id"] < "';";
 								query.store();
 								query.reset();
@@ -199,7 +199,7 @@ namespace steal
 						query << "FROM ";
 						query << "	fleet_ships ";
 						query << "WHERE ";
-						query << "	fs_fleet_id='" << fleet_["fleet_id"] << "';";
+						query << "	fs_fleet_id='" << fleet_["id"] << "';";
 						mysqlpp::Result checkRes = query.store();
 						query.reset();
 						
@@ -228,10 +228,10 @@ namespace steal
 						text += std::string(techRow["def_techlist_current_level"]);
 						text += "\n";
 						
-						functions::sendMsg((int)fleet_["fleet_user_id"],SHIP_WAR_MSG_CAT_ID,"Spionageangriff",text);
+						functions::sendMsg((int)fleet_["user_id"],SHIP_WAR_MSG_CAT_ID,"Spionageangriff",text);
 						functions::sendMsg(userToId,SHIP_WAR_MSG_CAT_ID,"Spionageangriff",text);
 						
-						functions::addLog(FLEET_ACTION_LOG_CAT,text,(int)fleet_["fleet_landtime"]);
+						functions::addLog(FLEET_ACTION_LOG_CAT,text,(int)fleet_["landtime"]);
                     
 						Ranking::addBattlePoints($arr['fleet_user_id'],BATTLE_POINTS_SPECIAL,"Spezialaktion"); //ToDo
                     
@@ -243,10 +243,10 @@ namespace steal
 						text += coordsFrom;
 						text += " hat erfolglos einen Spionageangriff durchgeführt.\n Das Ziel hat keine Technologie, welche eine höhere Stufe hat!";
 						
-						fucntions::sendMsg((int)fleet_["fleet_user_id"],SHIP_WAR_MSG_CAT_ID,"Spionageangriff erfolglos",text);
+						fucntions::sendMsg((int)fleet_["user_id"],SHIP_WAR_MSG_CAT_ID,"Spionageangriff erfolglos",text);
 						functions::sendMsg(userToId,SHIP_WAR_MSG_CAT_ID,"Spionageangriff erfolglos",text);
 
-						functions::addLog(FLEET_ACTION_LOG_CAT,text,(int)fleet_["fleet_landtime"]);
+						functions::addLog(FLEET_ACTION_LOG_CAT,text,(int)fleet_["landtime"]);
 					}
 				}
 			}
@@ -257,10 +257,10 @@ namespace steal
 				text += coordsFrom;
 				text += " hat erfolglos einen Spionageangriff durchgeführt.";
 				
-				functions::sendMsg((int)fleet_["fleet_user_id"],SHIP_WAR_MSG_CAT_ID,"Spionageangriff erfolglos",text);
+				functions::sendMsg((int)fleet_["user_id"],SHIP_WAR_MSG_CAT_ID,"Spionageangriff erfolglos",text);
 				functions::sendMsg(userToId,SHIP_WAR_MSG_CAT_ID,"Spionageangriff erfolglos",text);
 
-				functions::addLog(FLEET_ACTION_LOG_CAT,text,(int)fleet_["fleet_landtime"]);
+				functions::addLog(FLEET_ACTION_LOG_CAT,text,(int)fleet_["landtime"]);
 			}
 		}
 

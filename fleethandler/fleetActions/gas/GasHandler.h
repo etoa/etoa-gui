@@ -21,7 +21,10 @@ namespace gas
 		void update();
 
 	private:
-		double shipDestroy,destroy,fuel,fuelTotal;
+		double shipDestroy, destroy;
+		double fuel, newFuel, fuelTotal;
+		double gasCapa, fleetCapa, capa;
+		int one, two;
 		std::string destroyedShips,destroyedShipsMsg;
 		
 	};

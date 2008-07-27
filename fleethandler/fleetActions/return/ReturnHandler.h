@@ -22,6 +22,7 @@ namespace retour
 
 	private:
 		bool sendMsg;
+		int pId;
 		
 	};
 }

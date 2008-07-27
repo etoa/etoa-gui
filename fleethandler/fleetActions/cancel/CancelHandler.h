@@ -21,6 +21,7 @@ namespace cancel
 		void update();
 
 	private:
+		int pId;
 		
 	};
 }

@@ -71,16 +71,15 @@ namespace debris
 					
 					if (rSize > 0)
 					{
-						int cnt;
-						double tfMetal, tfCrystal, tfPlastic;
+
 				   		for (mysqlpp::Row::size_type i = 0; i<rSize; i++) 
 						{
 							rRow = rRes.at(i);
 
-							cnt = (int)ceil((int)rRow["fs_ship_cnt"]*0.4);
-							tfMetal += cnt * (double)rRow["ship_costs_metal"];
-							tfCrystal += cnt * (double)rRow["ship_costs_crystal"];
-							tfPlastic += cnt * (double)rRow["ship_costs_plastic"];
+							this->cnt = (int)ceil((int)rRow["fs_ship_cnt"]*0.4);
+							this->tfMetal += cnt * (double)rRow["ship_costs_metal"];
+							this->tfCrystal += cnt * (double)rRow["ship_costs_crystal"];
+							this->tfPlastic += cnt * (double)rRow["ship_costs_plastic"];
 
 							query << "DELETE FROM ";
 							query << "	fleet_ships ";
@@ -95,9 +94,9 @@ namespace debris
 						query << "UPDATE ";
 						query << "	planets ";
 						query << "SET ";
-						query << "	planet_wf_metal=planet_wf_metal+'" << tfMetal << "', ";
-						query << "	planet_wf_crystal=planet_wf_crystal+'" << tfCrystal << "', ";
-						query << "	planet_wf_plastic=planet_wf_plastic+'" << tfPlastic << "' ";
+						query << "	planet_wf_metal=planet_wf_metal+'" << this->tfMetal << "', ";
+						query << "	planet_wf_crystal=planet_wf_crystal+'" << this->tfCrystal << "', ";
+						query << "	planet_wf_plastic=planet_wf_plastic+'" << this->tfPlastic << "' ";
 						query << "WHERE ";
 						query << "	id='" << fleet_["entity_to"] << "';";
 						query.store();

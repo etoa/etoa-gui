@@ -1,6 +1,6 @@
 
-#ifndef __EXPLOREHANDLER__
-#define __EXPLOREHANDLER__
+#ifndef __AEXPLOREHANDLER__
+#define __AEXPLOREHANDLER__
 
 #include <mysql++/mysql++.h>
 
@@ -8,7 +8,7 @@
 #include "../../MysqlHandler.h"
 
 /**
-* Handles Explore....
+* Handles explorer....
 * 
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
@@ -19,9 +19,13 @@ namespace explore
 	public:
 		ExploreHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }
 		void update();
-	private:
-		double destroy;
 		
+	private:
+		std::string event();
+		int absX, absY, pos;
+		double sxNum, cxNum, syNum, cyNum;
+		int one, two;
+		double days;
 	};
 }
 #endif

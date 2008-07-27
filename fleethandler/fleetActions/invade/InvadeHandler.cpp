@@ -38,7 +38,7 @@ namespace invade
 				
 				//Kontrolliert bei einer Invasion, ob der Planet nicht schon demjenigengehört gehört
 				//gehört bereits dem User, dann flotte stationieren
-				if(checkRow["planet_user_id"]==fleet_["fleet_user_id"])
+				if(checkRow["planet_user_id"]==fleet_["user_id"])
 				{
 					//Flotte stationieren & Waren ausladen (ohne den Abzug eines Invasionsschiffes)
 					fleetLand(1,0,1);
@@ -48,13 +48,13 @@ namespace invade
 
 				// Nachricht senden
 				std::string msg = "Die Flotte hat folgendes Ziel erreicht:\n[b]Planet:[/b] ";
-				msg += functions::formatCoords((int)fleet_["fleet_target_to"]);
+				msg += functions::formatCoords((int)fleet_["entity_to"]);
 				msg += "\n[b]Zeit:[/b] ";
-				msg += functions::formatTime((int)fleet_["fleet_landtime"]);
+				msg += functions::formatTime((int)fleet_["landtime"]);
 				msg += "\n[b]Bericht:[/b] Die Flotte ist auf dem Planeten gelandet!";
 				msg += msgAllShips;
 				msg += msgRes;
-				functions::sendMsg((int)fleet_["fleet_user_id"],SHIP_MISC_MSG_CAT_ID,"Flotte angekommen",msg);
+				functions::sendMsg((int)fleet_["user_id"],SHIP_MISC_MSG_CAT_ID,"Flotte angekommen",msg);
 			}
 			//gehört nicht dem User, dann fight
 			else
@@ -63,18 +63,18 @@ namespace invade
 				battle();
 	
 				// Send messages
-				int userToId = functions::getUserIdByPlanet((int)fleet_["fleet_target_to"]);
+				int userToId = functions::getUserIdByPlanet((int)fleet_["entity_to"]);
 				std::string subject1 = "Kampfbericht (";
 				subject1 += bstat;
 				subject1 += ")";
 				std::string = subject2 = "Kampfbericht (";
 				subject2 += bstat2;
 				subject2 += ")";
-				functions::sendMsg((int)fleet_["fleet_user_id"],SHIP_WAR_MSG_CAT_ID,subject1,msgFight);
+				functions::sendMsg((int)fleet_["user_id"],SHIP_WAR_MSG_CAT_ID,subject1,msgFight);
 				functions::sendMsg(userToId,SHIP_WAR_MSG_CAT_ID,subject2,msgFight);
 
 				// Add log
-				functions::addLog(1,msgFight,(int)fleet_["fleet_landtime"]);
+				functions::addLog(1,msgFight,(int)fleet_["landtime"]);
 
 				// Aktion durchführen
 				if (returnV==1)
@@ -92,7 +92,7 @@ namespace invade
 					query << "	fleet_ships ";
 					query << "INNER JOIN ";
 					query << "	ships ON fs_ship_id = ship_id ";
-					query << "	AND fs_fleet_id='" << fleet_["fleet_id"] << "' ";
+					query << "	AND fs_fleet_id='" << fleet_["id"] << "' ";
 					query << "	AND fs_ship_faked='0' ";
 					query << "	AND ship_invade=1;";
 					mysqlpp::Result fsRes = query.store();
@@ -112,8 +112,8 @@ namespace invade
 							if (checkRow["planet_user_main"]==0)
 							{
 
-								std::string coordsTarget = functions::formatCoords(fleet_["fleet_planet_to"]);
-								std::string coordsFrom = functions::formatCoords(fleet_["fleet_planet_from"]);
+								std::string coordsTarget = functions::formatCoords(fleet_["entity_to"]);
+								std::string coordsFrom = functions::formatCoords(fleet_["entity_from"]);
 								
 								double pointsDef = 0, pointsAtt = 0;
 		
@@ -144,7 +144,7 @@ namespace invade
 								query << "FROM ";
 								query << "	users ";
 								query << "WHERE ";
-								query << "	user_id='" << fleet_["fleet_user_id"] << "';";
+								query << "	user_id='" << fleet_["user_id"] << "';";
 								mysqlpp::Result pointsAttRes = query.store();
 								query.reset();
 								
@@ -184,7 +184,7 @@ namespace invade
 									query << "FROM ";
 									query << "	planets ";
 									query << "WHERE ";
-									query << "	planet_user_id='" << fleet_["fleet_user_id"] << "';";
+									query << "	planet_user_id='" << fleet_["user_id"] << "';";
 									mysqlpp::Result maxPlanetRes = query.store();
 									query.reset();
 									
@@ -220,16 +220,16 @@ namespace invade
 																
 														// Alle Flotten des 'Opfers', zum Planeten fliegen zum Hauptplaneten schicken mit der Aktion 'Flug abgebrochen'
 														query << "SELECT ";
-														query << "	fleet_landtime, ";
-														query << "	fleet_launchtime, ";
-														query << "	fleet_target_to, ";
-														query << "	fleet_action, ";
-														query << "	fleet_id ";
+														query << "	landtime, ";
+														query << "	launchtime, ";
+														query << "	entity_to, ";
+														query << "	action, ";
+														query << "	id ";
 														query << "FROM ";
 														query << "	fleet ";
 														query << "WHERE ";
-														query << "	fleet_user_id='" << userToId << "' ";
-														query << "	AND fleet_target_to='" << fleet_["fleet_target_to"] << "';";
+														query << "	user_id='" << userToId << "' ";
+														query << "	AND entity_to='" << fleet_["entity_to"] << "';";
 														mysqlpp::Result iflRes = query.store();
 														query.reset()
 														
@@ -244,24 +244,24 @@ namespace invade
 																{
 																	row = res.at(i);
 	    			
-																	int duration = min(time,(int)iflRow["fleet_landtime"]) - (int)iflRow["fleet_launchtime"];
+																	int duration = min(time,(int)iflRow["landtime"]) - (int)iflRow["fleet_launchtime"];
 																	int launchtime = time;
 																	int landtime = launchtime + duration;
 																    char str[4] = "";
-																	strcpy( str, fleet_["fleet_action"]);
+																	strcpy( str, fleet_["action"]);
 																	action = str[0];
 																	action += "c";
 																	
 																	query << "UPDATE ";
 																	query << "	fleet ";
 																	query << "SET ";
-																	query << "	fleet_target_from='" << iflRow["fleet_cell_to"] << "', ";
-																	query << "	fleet_target_to='" << mPlanetRow["id"] << "', ";
-																    query << "	fleet_action='" << action << "', ";
-																	query << "	fleet_launchtime='" << launchtime << "', ";
-																	query << "	fleet_landtime='" << landtime << "' ";
+																	query << "	entity_from='" << iflRow["entity_to"] << "', ";
+																	query << "	entity_to='" << mPlanetRow["id"] << "', ";
+																    query << "	action='" << action << "', ";
+																	query << "	launchtime='" << launchtime << "', ";
+																	query << "	landtime='" << landtime << "' ";
 																	query << "WHERE ";
-																	query << "	fleet_id='" << iflRow["fleet_id"] << "';";
+																	query << "	id='" << iflRow["id"] << "';";
 																	query.store();
 																	query.reset();
 																}
@@ -277,7 +277,7 @@ namespace invade
 											}
 		
 											// Planet übernehmen
-											functions::invasionPlanet((int)fleet_["fleet_target_to"],(int)fleet_["fleet_user_id"]); //ToDo
+											functions::invasionPlanet((int)fleet_["entity_to"],(int)fleet_["user_id"]); //ToDo
 		
 											//Flotte Stationieren & Waren ausladen
 											fleetLand(1);
@@ -296,10 +296,10 @@ namespace invade
 											text += " stammt, übernommen!\n";
 											text += "Ein Invasionsschiff wurde bei der Übernahme aufgebraucht!\n";
 											text += msg;
-											functions::sendMsg((int)fleet_["fleet_user_id"],SHIP_WAR_MSG_CAT_ID,"Planet erfolgreich invasiert",text);
+											functions::sendMsg((int)fleet_["user_id"],SHIP_WAR_MSG_CAT_ID,"Planet erfolgreich invasiert",text);
 											functions::sendMsg(userToId,SHIP_WAR_MSG_CAT_ID,"Kolonie wurde invasiert",text);
 		
-											Ranking::addBattlePoints($arr['fleet_user_id'],BATTLE_POINTS_SPECIAL,"Spezialaktion"); //ToDo
+											//Ranking::addBattlePoints($arr['fleet_user_id'],BATTLE_POINTS_SPECIAL,"Spezialaktion"); //ToDo
 		
 		
 											returnFleet = false;
@@ -322,7 +322,7 @@ namespace invade
 											text1 += coordsFrom;
 											text1 += " versuchte, das Ziel zu übernehmen. Dieser Versuch schlug aber fehl und die Flotte machte sich auf den Rückweg! Hinweis: Du hast bereits die maximale Anzahl Planeten erreicht!";
 		
-											functions::sendMsg((int)fleet_["fleet_user_id"],SHIP_WAR_MSG_CAT_ID,"Invasionsversuch gescheitert",text1);
+											functions::sendMsg((int)fleet_["user_id"],SHIP_WAR_MSG_CAT_ID,"Invasionsversuch gescheitert",text1);
 											functions::sendMsg(userToId,SHIP_WAR_MSG_CAT_ID,"Invasionsversuch gescheitert",text);
 										}
 									}
@@ -339,7 +339,7 @@ namespace invade
 									text += coordsFrom;
 									text += " versuchte, das Ziel zu übernehmen. Dieser Versuch schlug aber fehl und die Flotte machte sich auf den Rückweg!";
 		
-									functions::sendMsg((int)fleet_["fleet_user_id"],SHIP_WAR_MSG_CAT_ID,"Invasionsversuch gescheitert",text);
+									functions::sendMsg((int)fleet_["user_id"],SHIP_WAR_MSG_CAT_ID,"Invasionsversuch gescheitert",text);
 									functions::sendMsg(userToId,SHIP_WAR_MSG_CAT_ID,"Invasionsversuch gescheitert",text);
 								}
 				
@@ -354,7 +354,7 @@ namespace invade
 								text += coordsFrom;
 								text += " versuchte, das Ziel zu übernehmen. Dies ist aber ein Hauptplanet, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!";
 								
-								functions::sendMsg((int)fleet_["fleet_user_id"],SHIP_WAR_MSG_CAT_ID,"Invasionsversuch gescheitert",text);
+								functions::sendMsg((int)fleet_["user_id"],SHIP_WAR_MSG_CAT_ID,"Invasionsversuch gescheitert",text);
 								functions::sendMsg(userToId,SHIP_WAR_MSG_CAT_ID,"Invasionsversuch gescheitert",text);
 							}
 						}
@@ -368,7 +368,7 @@ namespace invade
 							text += coordsFrom;
 							text += " versuchte, das Ziel zu übernehmen. Leider war kein Schiff mehr in der Flotte, welches einen Planeten invasieren kann, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!";
 							
-							functions::sendMsg((int)fleet_["fleet_user_id"],SHIP_WAR_MSG_CAT_ID,"Invasionsversuch gescheitert",text);
+							functions::sendMsg((int)fleet_["user_id"],SHIP_WAR_MSG_CAT_ID,"Invasionsversuch gescheitert",text);
 							functions::sendMsg(userToId,SHIP_WAR_MSG_CAT_ID,"Invasionsversuch gescheitert",text);
 						}
 					}

@@ -66,7 +66,7 @@ namespace fetch
 
 				if ((int)fleet_["user_id"] == (int)pRow["planet_user_id"])
 				{
-					double capa = 0;
+					this->capa = 0;
 					query << "SELECT ";
 					query << "	SUM(ship_capacity*fs_ship_cnt) as capa ";
 					query << "FROM ";
@@ -85,11 +85,11 @@ namespace fetch
 						if (capaSize > 0)
 						{
 							mysqlpp::Row capaRow = capaRes.at(0);
-							int capa = (double)capaRow["capa"] - (double)fleet_["res_metal"] - (double)fleet_["res_crystal"] - (double)fleet_["res_plastic"] - (double)fleet_["res_fuel"] - (double)fleet_["res_food"];
+							this->capa = (double)capaRow["capa"] - (double)fleet_["res_metal"] - (double)fleet_["res_crystal"] - (double)fleet_["res_plastic"] - (double)fleet_["res_fuel"] - (double)fleet_["res_food"];
 						}
 					}
 					
-					double capaCnt = 0;
+					this->capaCnt = 0;
 			
 					std::vector<double> load (5);
 			
@@ -100,29 +100,29 @@ namespace fetch
 					load[4]=0;
 		
 					load[0] = floor(std::min(std::min((double)fleet_["fetch_metal"],(double)pRow["planet_res_metal"]),capa));
-					capaCnt += load[0];
-					if (capaCnt < capa)
+					this->capaCnt += load[0];
+					if (this->capaCnt < this->capa)
 					{
 						load[1] = floor(std::min(std::min((double)fleet_["fetch_crystal"],(double)pRow["planet_res_crystal"]),capa-capaCnt));
-						capaCnt += load[1];
-						if (capaCnt < capa)
+						this->capaCnt += load[1];
+						if (this->capaCnt < this->capa)
 						{
 							load[2] = floor(std::min(std::min((double)fleet_["fetch_plastic"],(double)pRow["planet_res_plastic"]),capa-capaCnt));
 							capaCnt += load[2];
-							if (capaCnt < capa)
+							if (this->capaCnt < this->capa)
 							{
 								load[3] = floor(std::min(std::min((double)fleet_["fetch_fuel"],(double)pRow["planet_res_fuel"]),capa-capaCnt));
-								capaCnt += load[3];
-								if (capaCnt < capa)
+								this->capaCnt += load[3];
+								if (this->capaCnt < this->capa)
 								{
 									load[4] = floor(std::min(std::min((double)fleet_["fetch_food"],(double)pRow["planet_res_food"]),capa-capaCnt));
-									capaCnt += load[4];
+									this->capaCnt += load[4];
 								}
 							}			
 						}				
 					}		
 		
-					double loadPeople = std::min(std::min((double)fleet_["fetch_people"],(double)fleet_["capacity_people"]),(double)pRow["planet_people"]);
+					this->loadPeople = std::min(std::min((double)fleet_["fetch_people"],(double)fleet_["capacity_people"]),(double)pRow["planet_people"]);
 		
 					std::string msg = "[B]WAREN ABGEHOLT[/B]\n\nEine Flotte vom Planeten \n[b]";
 					msg += functions::formatCoords((int)fleet_["entity_from"],0);
@@ -148,10 +148,10 @@ namespace fetch
 					msg += functions::nf(functions::d2s(load[4]));
 					msg += "[/td][/tr]";
 			
-					if (loadPeople>0)
+					if (this->loadPeople>0)
 					{
 						msg += "[tr][th]Bewohner[/th][td]";
-						msg += functions::nf(functions::d2s(loadPeople));
+						msg += functions::nf(functions::d2s(this->loadPeople));
 						msg += "[/td][/tr]";
 					}
 					msg += "[/table]";
@@ -173,7 +173,7 @@ namespace fetch
 		
 					// Nachrichten senden
 					functions::sendMsg((int)fleet_["user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Warenabholung",msg);
-					fleetReturn(1,load[0],load[1],load[2],load[3],load[4],loadPeople);
+					fleetReturn(1,load[0],load[1],load[2],load[3],load[4],this->loadPeople);
 				}
 				else
 				{

@@ -21,7 +21,6 @@ namespace wreckage
 		Config &config = Config::instance();
 		std::time_t time = std::time(0);
 		std::string action = "collectdebris";
-		double metal,crystal,plastic,sum,capa;
 		
 		// Precheck action==possible?
 		mysqlpp::Query query = con_->query();
@@ -68,7 +67,7 @@ namespace wreckage
 					{
 						mysqlpp::Row capaRow = capaRes.at(0);
 						
-						capa = (double)capaRow["capa"] - (double)fleet_["res_metal"] - (double)fleet_["res_crystal"] - (double)fleet_["res_plastic"] -(double)fleet_["res_fuel"] - (double)fleet_["res_food"];
+						this->capa = (double)capaRow["capa"] - (double)fleet_["res_metal"] - (double)fleet_["res_crystal"] - (double)fleet_["res_plastic"] -(double)fleet_["res_fuel"] - (double)fleet_["res_food"];
 					}
 				}
 				
@@ -92,53 +91,51 @@ namespace wreckage
 					if (wfSize > 0)
 					{
 						mysqlpp::Row wfRow = wfRes.at(0);
-						metal = (double)wfRow["planet_wf_metal"];
-						crystal = (double)wfRow["planet_wf_crystal"];
-						plastic = (double)wfRow["planet_wf_plastic"];
-						sum = metal + crystal + plastic;
+						this->metal = (double)wfRow["planet_wf_metal"];
+						this->crystal = (double)wfRow["planet_wf_crystal"];
+						this->plastic = (double)wfRow["planet_wf_plastic"];
+						this->sum = this->metal + this->crystal + this->plastic;
 					}
 				}
 
 				// Prüfen ob TF nicht leer
-				if (sum>0)
+				if (this->sum>0)
 				{
 					//Rohstoffe prozentual aufteilen, wenn die Kapazität nicht für das ganze TF reicht
-					if (capa <= sum)
+					if (this->capa <= this->sum)
 					{
-						double percent = capa/sum;
-						metal = round(metal * percent);
-						crystal = round(crystal * percent);
-						plastic = round(plastic * percent);
-						sum = metal + crystal + plastic;
+						this->percent = this->capa / this->sum;
+						this->metal = round(this->metal * this->percent);
+						this->crystal = round(this->crystal * this->percent);
+						this->plastic = round(this->plastic * this->percent);
+						this->sum = this->metal + this->crystal + this->plastic;
 					}
 					else
 					{
-						metal = round(metal);
-						crystal = round(crystal);
-						plastic = round(plastic);
+						this->metal = round(this->metal);
+						this->crystal = round(this->crystal);
+						this->plastic = round(this->plastic);
 					}
 	
 					// Rohstoffe vom Planeten abziehen
 					query << "UPDATE ";
 					query << "	planets ";
 					query << "SET ";
-					query << "	planet_wf_metal=planet_wf_metal-'" << metal << "', ";
-					query << "	planet_wf_crystal=planet_wf_crystal-'" << crystal << "', ";
-					query << "	planet_wf_plastic=planet_wf_plastic-'" << plastic << "' ";
+					query << "	planet_wf_metal=planet_wf_metal-'" << this->metal << "', ";
+					query << "	planet_wf_crystal=planet_wf_crystal-'" << this->crystal << "', ";
+					query << "	planet_wf_plastic=planet_wf_plastic-'" << this->plastic << "' ";
 					query << "WHERE ";
 					query << "	id='" << fleet_["entity_to"] << "';";
 					query.store();
 					query.reset();
 		
-					double capacity = capa - sum;
-			
 					//Summiert erhaltene Rohstoffe vom TF zu des Ladung
-					metal += (double)fleet_["res_metal"];
-					crystal += (double)fleet_["res_crystal"];
-					plastic += (double)fleet_["res_plastic"];
+					this->metal += (double)fleet_["res_metal"];
+					this->crystal += (double)fleet_["res_crystal"];
+					this->plastic += (double)fleet_["res_plastic"];
 	
 					// Flotte zurückschicken mit Ress von TF und bestehenden ress
-					fleetReturn(1,metal,crystal,plastic,-1,-1,-1);
+					fleetReturn(1,this->metal,this->crystal,this->plastic,-1,-1,-1);
 	
 					// Nachricht senden
 					std::string msg = "[b]TR&Uuml;MMERSAMMLER-RAPPORT[/b]\n\nEine Flotte vom Planeten \n[b]";
@@ -150,11 +147,11 @@ namespace wreckage
 					msg += "[/b]\n erreicht und Tr&uuml;mmer gesammelt.\n";
 		
 					msgRes = "\n[b]ROHSTOFFE:[/b]\n\nTitan: ";
-					msgRes += functions::nf(functions::d2s(metal));
+					msgRes += functions::nf(functions::d2s(this->metal));
 					msgRes += "\nSilitium: ";
-					msgRes += functions::nf(functions::d2s(crystal));
+					msgRes += functions::nf(functions::d2s(this->crystal));
 					msgRes += "\nPVC: ";
-					msgRes += functions::nf(functions::d2s(plastic));
+					msgRes += functions::nf(functions::d2s(this->plastic));
 					msg += msgRes;
 		
 					functions::sendMsg((int)fleet_["user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Tr&uuml;mmer gesammelt",msg);	
@@ -163,7 +160,7 @@ namespace wreckage
 					query << "UPDATE ";
 					query << "	users ";
 					query << "SET ";
-					query << "	user_res_from_tf=user_res_from_tf+'" << sum << "' ";
+					query << "	user_res_from_tf=user_res_from_tf+'" << this->sum << "' ";
 					query << "WHERE ";
 					query << "	user_id='" << fleet_["user_id"] << "';";
 					query.store();

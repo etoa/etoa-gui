@@ -35,7 +35,11 @@ namespace gas
 		query << "	ships ON fs_ship_id = ship_id ";
 		query << "	AND fs_fleet_id='" << fleet_["id"] << "' ";
 		query << "	AND fs_ship_faked='0' ";
-		query << "	AND ship_nebula='1';";
+		query << "	AND (";
+		query << "		ship_actions LIKE '%," << action << "'";
+		query << "		OR ship_actions LIKE '" << action << ",%'";
+		query << "		OR ship_actions LIKE '%," << action << ",%'";
+		query << "		OR ship_actions LIKE '" << action << "');";
 		mysqlpp::Result fsRes = query.store();
 		query.reset();
 		
@@ -50,17 +54,17 @@ namespace gas
 				functions::updateGasPlanet((int)fleet_["entity_to"]);
 				
 				query << std::setprecision(18);
-				destroyedShips = "";
-				destroy = 0;
-				int one = rand() % 101;
-				int two = (int)config.nget("gascollect_action",0) * 100;
-				if (one  < two)	// 20 % Chance dass Schiffe überhaupt zerstört werden
+				this->destroyedShips = "";
+				this->destroy = 0;
+				this->one = rand() % 101;
+				this->two = (int)config.nget("gascollect_action",0) * 100;
+				if (this->one  < this->two)	// 20 % Chance dass Schiffe überhaupt zerstört werden
 				{
-					destroy = rand() % (int)(config.nget("gascollect_action",1) * 100);		// 0 <= X <= 10 Prozent an Schiffen werden Zerstört
+					this->destroy = rand() % (int)(config.nget("gascollect_action",1) * 100);		// 0 <= X <= 10 Prozent an Schiffen werden Zerstört
 					
 				}
 				
-				if(destroy>0)
+				if(this->destroy>0)
 				{
 					query << "SELECT ";
 					query << "	s.ship_name, ";
@@ -95,21 +99,21 @@ namespace gas
 								cntRow = cntRes.at(i);
 			
 								//Berechnet wie viele Schiffe von jedem Typ zerstört werden
-								shipDestroy = (int)floor((int)cntRow["fs_ship_cnt"] * destroy / 100);
+								this->shipDestroy = (int)floor((int)cntRow["fs_ship_cnt"] * this->destroy / 100);
 						
-								if(shipDestroy>0)
+								if(this->shipDestroy>0)
 								{
 									// "Zerstörte" Schiffe aus der Flotte löschen
 									query << "UPDATE ";
 									query << "	fleet_ships ";
 									query << "SET ";
-									query << "	fs_ship_cnt=fs_ship_cnt-'" << shipDestroy << "' ";
+									query << "	fs_ship_cnt=fs_ship_cnt-'" << this->shipDestroy << "' ";
 									query << "WHERE ";
 									query << "	fs_fleet_id='" << fleet_["id"] << "' ";
 									query << "	AND fs_ship_id='" << cntRow["fs_ship_id"] << "';";
 									query.store();
 									query.reset();
-									destroyedShips += functions::d2s(shipDestroy);
+									destroyedShips += functions::d2s(this->shipDestroy);
 									destroyedShips += " ";
 									destroyedShips += std::string(cntRow["ship_name"]);
 									destroyedShips += "\n";
@@ -118,15 +122,15 @@ namespace gas
 						}
 					}
                 
-					if(shipDestroy > 0)
+					if(this->shipDestroy > 0)
 					{
-						destroyedShipsMsg = "\n\nAufgrund starker Wasserstoffexplosionen sind einige deiner Schiffe zerst&ouml;rt worden:\n\n";
-						destroyedShipsMsg += destroyedShips;
+						this->destroyedShipsMsg = "\n\nAufgrund starker Wasserstoffexplosionen sind einige deiner Schiffe zerst&ouml;rt worden:\n\n";
+						this->destroyedShipsMsg += this->destroyedShips;
 					}
 				}
 				else
 				{
-					destroyedShipsMsg = "";
+					this->destroyedShipsMsg = "";
 				}
 		
 				//Laden der Tritiummenge auf dem Planeten
@@ -154,7 +158,8 @@ namespace gas
 						mysqlpp::Row fuelRow = fuelRes.at(0);
 						
 						//Berechnung der Kapazität (Gesammt und Gas)
-						double gasCapa = 0, fleetCapa = 0;
+						this->gasCapa = 0;
+						this->fleetCapa = 0;
 						query << "SELECT ";
 						query << "	SUM(ship_capacity*fs_ship_cnt) as capa ";
 						query << "FROM ";
@@ -178,7 +183,7 @@ namespace gas
 							if (gasSize > 0)
 							{
 								mysqlpp::Row gasRow = gasRes.at(0);
-								gasCapa = (double)gasRow["capa"];
+								this->gasCapa = (double)gasRow["capa"];
 							}
 						}
 						
@@ -200,34 +205,34 @@ namespace gas
 							if (capaSize > 0)
 							{
 								mysqlpp::Row capaRow = capaRes.at(0);
-								fleetCapa = (double)capaRow["capa"]- (double)fleet_["res_metal"] - (double)fleet_["res_crystal"] - (double)fleet_["res_plastic"] - (double)fleet_["res_fuel"] - (double)fleet_["res_food"];
+								this->fleetCapa = (double)capaRow["capa"]- (double)fleet_["res_metal"] - (double)fleet_["res_crystal"] - (double)fleet_["res_plastic"] - (double)fleet_["res_fuel"] - (double)fleet_["res_food"];
 							}
 						}
 
 						// Anzahl gesammelter Rohstoffe berechen
-						double capa = std::min(fleetCapa,gasCapa);
-						fuel = 1000 + (rand() % (int)(capa - 999));
+						this->capa = std::min(this->fleetCapa, this->gasCapa);
+						this->fuel = 1000 + (rand() % (int)(this->capa - 999));
 		
-						fuel = std::min(fuel, (double)fuelRow["planet_res_fuel"]);
+						this->fuel = std::min(fuel, (double)fuelRow["planet_res_fuel"]);
 			
 						//Tritium nach dem Saugen berechnen und speichern
-						double newFuel = fuelRow["planet_res_fuel"] - fuel;
+						this->newFuel = fuelRow["planet_res_fuel"] - this->fuel;
 						query << "UPDATE ";
 						query << "	planets ";
 						query << "SET ";
-						query << "	planet_res_fuel='" << newFuel << "' ";
+						query << "	planet_res_fuel='" << this->newFuel << "' ";
 						query << "WHERE ";
 						query << "	id='" << fleet_["entity_to"] << "';";
 						query.store();
 						query.reset();
 
 						//Smmiert erhaltenes Tritium zu der Ladung der Flotte
-						fuelTotal = fuel + fleet_["res_fuel"];
+						this->fuelTotal = this->fuel + fleet_["res_fuel"];
 					}
 				}
 
 				// Flotte zurückschicken
-				fleetReturn(1,-1,-1,-1,fuelTotal,-1,-1);
+				fleetReturn(1,-1,-1,-1,this->fuelTotal,-1,-1);
 
 				//Nachricht senden
 				std::string msg = "[b]GASSAUGER-RAPPORT[/b]\n\nEine Flotte vom Planeten \n[b]";
@@ -250,7 +255,7 @@ namespace gas
 				query << "UPDATE ";
 				query << "	users ";
 				query << "SET ";
-				query << "	user_res_from_nebula=user_res_from_nebula+'" << fuel << "' ";
+				query << "	user_res_from_nebula=user_res_from_nebula+'" << this->fuel << "' ";
 				query << "WHERE ";
 				query << "	user_id='" << fleet_["user_id"] << "';";
 				query.store();

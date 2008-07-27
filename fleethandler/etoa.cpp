@@ -37,21 +37,23 @@
 #include "config/ConfigHandler.h"
 #include "MysqlHandler.h"
 
-#include "fleetActions/cancel/CancelHandler.h" //
+#include "fleetActions/analyze/AnalyzeHandler.h" // working
+#include "fleetActions/asteroid/AsteroidHandler.h" //tested, working, startvalues included
+#include "fleetActions/return/ReturnHandler.h" //tested, working
+#include "fleetActions/cancel/CancelHandler.h" //tested, working
 #include "fleetActions/default/DefaultHandler.h" //working
-#include "fleetActions/return/ReturnHandler.h" //
-#include "fleetActions/asteroid/AsteroidHandler.h" //
 #include "fleetActions/colonialize/ColonializeHandler.h"
 #include "fleetActions/debris/DebrisHandler.h" //
-#include "fleetActions/explore/ExploreHandler.h" //
+#include "fleetActions/explore/ExploreHandler.h" //working (without settings)
 #include "fleetActions/fetch/FetchHandler.h" //
 #include "fleetActions/gas/GasHandler.h" //
 #include "fleetActions/market/MarketHandler.h" //
-#include "fleetActions/nebula/NebulaHandler.h" //
-#include "fleetActions/position/PositionHandler.h" //
+#include "fleetActions/nebula/NebulaHandler.h" // tested, working
+#include "fleetActions/position/PositionHandler.h" //tested, working
 #include "fleetActions/spy/SpyHandler.h" //
 #include "fleetActions/transport/TransportHandler.h" //working
 #include "fleetActions/wreckage/WreckageHandler.h" //
+#include "fleetActions/support/SupportHandler.h" //
 
 #include "battle/BattleHandler.h"
 #include "fleetActions/attack/AttackHandler.h"
@@ -113,8 +115,8 @@ main(int argc, char *argv[])
 	    			row = res.at(i);
 	    			
 					std::string action = (std::string)row["action"];
-				   // char str[] = "";
-				   // strcpy( str, row["action"]);
+					
+					std::cout << "User: " << row["user_id"] << " Zeit: " << row["landtime"] << " Aktion: " << action << "\n";
 					
 					// Nachprüfen ob Landezeit wirklich kleider ist als aktuelle Zeit
 					if ((int)row["landtime"] < time)
@@ -124,82 +126,101 @@ main(int argc, char *argv[])
 						{
 							case 0:
 							{
-								if (action == "collectmetal")
+								if (action == "analyze")
+								{
+									analyze::AnalyzeHandler* lh = new analyze::AnalyzeHandler(row);
+									lh->update();
+									delete lh;
+								}
+								else if (action == "antrax")
+								{
+									antrax::AntraxHandler* xh = new antrax::AntraxHandler(row);
+									xh->update();
+									delete xh;
+								}
+								else if (action == "attack")
+								{
+									attack::AttackHandler* ah = new attack::AttackHandler(row);
+									ah->update();
+									delete ah;
+								}
+								else if (action == "bombard")
+								{
+									bombard::BombardHandler* bh = new bombard::BombardHandler(row);
+									bh->update();
+									delete bh;
+								}
+								else if (action == "collectmetal")
 								{
 									asteroid::AsteroidHandler* yh = new asteroid::AsteroidHandler(row);
 									yh->update();
 									delete yh;
-									break;
 								}
 								else if (action == "collectcrystal")
 								{
 									nebula::NebulaHandler* nh = new nebula::NebulaHandler(row);
 									nh->update();
 									delete nh;
-									break;
 								}
 								else if (action == "collectdebris")
 								{
 									wreckage::WreckageHandler* wh = new wreckage::WreckageHandler(row);
 									wh->update();
 									delete wh;
-									break;
 								}
 								else if (action == "collectgas")
 								{
 									gas::GasHandler* gh = new gas::GasHandler(row);
 									gh->update();
 									delete gh;
-									break;
 								}
 								else if (action == "colonize")
 								{
 									colonialize::ColonializeHandler* kh = new colonialize::ColonializeHandler(row);
 									kh->update();
 									delete kh;
-									break;
 								}
 								else if (action == "createdebris")
 								{
 									debris::DebrisHandler* zh = new debris::DebrisHandler(row);
 									zh->update();
 									delete zh;
-									break;
 								}
 								else if (action == "explore")
 								{
 									explore::ExploreHandler* jh = new explore::ExploreHandler(row);
 									jh->update();
 									delete jh;
-									break;
 								}
 								else if (action == "fetch")
 								{
 									fetch::FetchHandler* fh = new fetch::FetchHandler(row);
 									fh->update();
 									delete fh;
-									break;
 								}
 								else if (action == "market")
 								{
 									market::MarketHandler* mh = new market::MarketHandler(row);
 									mh->update();
 									delete mh;
-									break;
 								}
 								else if (action == "position")
 								{
 									position::PositionHandler* ph = new position::PositionHandler(row);
 									ph->update();
 									delete ph;
-									break;
 								}
-								else if (actionn == "spy")
+								else if (action == "spy")
 								{
 									spy::SpyHandler* sh = new spy::SpyHandler(row);
 									sh->update();
 									delete sh;
-									break;
+								}
+								else if (action == "support")
+								{
+									support::SupportHandler* ch = new support::SupportHandler(row);
+									ch->update();
+									delete ch;
 								}
 								else if (action == "transport")
 								{
@@ -229,45 +250,28 @@ main(int argc, char *argv[])
 								delete ch;
 								break;
 							}
+							case 4:
+							{
+								if (action == "support")
+								{
+									support::SupportHandler* ch = new support::SupportHandler(row);
+									ch->update();
+									delete ch;
+								}
+								break;
+							}
 						}
-
-						/*	switch (str[0] )
-							{     
-								case 'a':
-								{
-									attack::AttackHandler* ah = new attack::AttackHandler(row);
-									ah->update();
-									delete ah;
-									break;
-								}
-								case 'b':
-								{
-									bombard::BombardHandler* bh = new bombard::BombardHandler(row);
-									bh->update();
-									delete bh;
-									break;
-								}
-								case 'x':
-								{
-									antrax::AntraxHandler* xh = new antrax::AntraxHandler(row);
-									xh->update();
-									delete xh;
-									break;
-								}
-							} */
 					}
-
-		    		
 		    	}
-			      
 			}
+		
 			else
 			{
 				cout << "0 Fleets\n";
 			}
 		}
-		sleep(10);
 		
+		sleep(10);
 	}		
 
 	return 0;

@@ -20,6 +20,16 @@ namespace asteroid
 		AsteroidHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }
 		void update();
 		
+	private:
+		double fleetCapa, asteroidCapa, capa;
+		double goOrNot;
+		int asteroid;
+		int metal, crystal, plastic, sum;
+		int newMetal, newCrystal, newPlastic;
+		int one, two;
+		double shipDestroy, destroy;
+		std::string destroyedShips,destroyedShipsMsg;
+		
 	};
 }
 #endif

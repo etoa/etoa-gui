@@ -21,7 +21,9 @@ namespace wreckage
 		void update();
 
 	private:
-		bool sendMsg;
+		double metal, crystal, plastic;
+		double sum;
+		double capa, percent;
 		
 	};
 }

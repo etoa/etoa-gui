@@ -1,4 +1,4 @@
-OBJECTS = etoa.o FleetHandler.o ConfigHandler.o Functions.o CancelHandler.o FetchHandler.o ReturnHandler.o DefaultHandler.o AsteroidHandler.o ColonializeHandler.o ExploreHandler.o GasHandler.o MarketHandler.o NebulaHandler.o PositionHandler.o SpyHandler.o TransportHandler.o WreckageHandler.o DebrisHandler.o BattleHandler.o ObjectHandler.o UserHandler.o AttackHandler.o AntraxHandler.o BombardHandler.o GattackHandler.o
+OBJECTS = etoa.o FleetHandler.o ConfigHandler.o Functions.o CancelHandler.o FetchHandler.o ReturnHandler.o DefaultHandler.o AsteroidHandler.o ColonializeHandler.o ExploreHandler.o GasHandler.o MarketHandler.o NebulaHandler.o PositionHandler.o SpyHandler.o TransportHandler.o WreckageHandler.o DebrisHandler.o BattleHandler.o ObjectHandler.o UserHandler.o AttackHandler.o AntraxHandler.o BombardHandler.o GattackHandler.o AnalyzeHandler.o SupportHandler.o
 OPTS = -lmysqlpp
 
 etoa: ${OBJECTS}
@@ -81,3 +81,9 @@ BombardHandler.o: fleetActions/bombard/BombardHandler.cpp fleetActions/bombard/B
 
 GattackHandler.o: fleetActions/gattack/GattackHandler.cpp fleetActions/gattack/GattackHandler.h
 	g++ -c fleetActions/gattack/GattackHandler.cpp
+
+AnalyzeHandler.o: fleetActions/analyze/AnalyzeHandler.cpp fleetActions/analyze/AnalyzeHandler.h
+	g++ -c fleetActions/analyze/AnalyzeHandler.cpp
+
+SupportHandler.o: fleetActions/support/SupportHandler.cpp fleetActions/support/SupportHandler.h
+	g++ -c fleetActions/support/SupportHandler.cpp

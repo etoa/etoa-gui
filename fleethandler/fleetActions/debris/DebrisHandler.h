@@ -19,6 +19,9 @@ namespace debris
 	public:
 		DebrisHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }
 		void update();
+	private:
+		int cnt;
+		double tfMetal, tfCrystal, tfPlastic;
 		
 	};
 }

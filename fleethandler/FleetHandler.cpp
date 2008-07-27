@@ -103,7 +103,6 @@
 						pch = strtok (str,",");
 						do
 						{
-							std::cout << pch << "\n";
 							if (pch == "colonize")
 								canColonize = 1;
 							else if (pch == "invade")
@@ -358,4 +357,40 @@
 		query << "	id='" << fleet_["id"] << "';";
 		query.store();
 		query.reset();			
+	}
+	
+	void FleetHandler::fleetSendMain()
+	{
+		mysqlpp::Query query = con_->query();
+		query << "SELECT ";
+		query << "	planets.id ";
+		query << "FROM ";
+		query << "	planets ";
+		query << "WHERE ";
+		query << "	planets.planet_user_id='" << fleet_["user_id"] << "' ";
+		query << "	AND planets.planet_user_main='1';";
+		mysqlpp::Result mainRes = query.store();
+		query.reset();
+					
+		if (mainRes)
+		{
+			int mainSize = mainRes.size();
+			
+			if (mainSize > 0)
+			{
+				int landtime = 2 * (int)fleet_["landtime"] - (int)fleet_["launchtime"];
+				mysqlpp::Row mainRow = mainRes.at(0);
+				query << "UPDATE ";
+				query << "	fleet ";
+				query << "SET ";
+				query << "	entity_from=entity_to, ";
+				query << " entity_to='" << mainRow["id"] << "', ";
+				query << "	launchtime=landtime, ";
+				query << "	landtime='" << landtime << "', ";
+				query << "	status='2', ";
+				query << "	id='" << fleet_["id"] << "';";
+				query.store();
+				query.reset();
+			}
+		}
 	}

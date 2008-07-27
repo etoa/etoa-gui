@@ -19,18 +19,18 @@ namespace emp
 		battle();
 
 		// Send messages
-		int userToId = functions::getUserIdByPlanet((int)fleet_["fleet_target_to"]);
+		int userToId = functions::getUserIdByPlanet((int)fleet_["entity_to"]);
 		std::string subject1 = "Kampfbericht (";
 		subject1 += bstat;
 		subject1 += ")";
 		std::string = subject2 = "Kampfbericht (";
 		subject2 += bstat2;
 		subject2 += ")";
-		functions::sendMsg((int)fleet_["fleet_user_id"],SHIP_WAR_MSG_CAT_ID,subject1,msgFight);
+		functions::sendMsg((int)fleet_["user_id"],SHIP_WAR_MSG_CAT_ID,subject1,msgFight);
 		functions::sendMsg(userToId,SHIP_WAR_MSG_CAT_ID,subject2,msgFight);
 
 		// Add log
-		functions::addLog(1,msgFight,(int)fleet_["fleet_landtime"]);
+		functions::addLog(1,msgFight,(int)fleet_["landtime"]);
 
 		// Aktion durchführen
 		if (returnV==1)
@@ -38,8 +38,8 @@ namespace emp
 			returnFleet = true;
 			fleetLoadspecial(); //ToDo
 
-			coordsTarget = functions::formatCoords((int)fleet_["fleet_target_to"]);
-			coordsFrom = functions::formatCoords((int)fleet_["fleet_target_from"]);
+			coordsTarget = functions::formatCoords((int)fleet_["entity_to"]);
+			coordsFrom = functions::formatCoords((int)fleet_["entity_from"]);
 		
 			int tLevel = 0;
 			
@@ -50,7 +50,7 @@ namespace emp
 			query << "FROM ";
 			query << "	techlist ";
 			query << "WHERE ";
-			query << "	techlist_user_id='" << fleet_["fleet_user_id"] << "' ";
+			query << "	techlist_user_id='" << fleet_["user_id"] << "' ";
 			query << "	AND techlist_tech_id='17'";
 			mysqlpp::Result tRes = query.store();
 			query.reset();
@@ -86,7 +86,7 @@ namespace emp
 				query << "FROM ";
 				query << "buildlist ";
 				query << "WHERE ";
-				query << "	buildlist_planet_id='" << fleet_["fleet_target_to"] << "' ";
+				query << "	buildlist_planet_id='" << fleet_["entity_to"] << "' ";
 				query << "	AND buildlist_current_level > 0 ";
 				query << "	AND (";
 				query << "		buildlist_building_id='" << FLEET_CONTROL_ID << "' ";
@@ -110,7 +110,7 @@ namespace emp
 						mysqlppRow bRow = bRes.at(0);
 
 						//Rechnet die Deaktivierungszeit (summiert Zeit)
-						int time = max((int)fleet-["fleet_landtime"],(int)bRow["buildlist_deactivated"]);
+						int time = max((int)fleet-["landtime"],(int)bRow["buildlist_deactivated"]);
 						int time2Add = time + plus;
 
 						//Deaktivierzeit Updaten
@@ -119,7 +119,7 @@ namespace emp
 						query << "SET ";
 						query << "	buildlist_deactivated='" << time2add << "' ";
 						query << "WHERE ";
-						query << "	buildlist_planet_id='" << fleet_["fleet_target_to"] << "' ";
+						query << "	buildlist_planet_id='" << fleet_["entity_to"] << "' ";
 						query << "	AND buildlist_building_id='" << bRow["buildlist_building_id"] << "'";
 						query.store();
 						query.reset();
@@ -148,7 +148,7 @@ namespace emp
 								query << "FROM ";
 								query << "	ships ";
 								query << "WHERE ";
-								query << "	ship_deactivade='1'";
+								query << "	ship_deactivade='1'";//ToD
 								mysqlpp::Result sRes = query.store();
 								query.reset();
 						
@@ -165,7 +165,7 @@ namespace emp
 										query << "SET ";
 										query << "	fs_ship_cnt=fs_ship_cnt-1 ";
 										query << "WHERE ";
-										query << "	fs_fleet_id='" << fleet_["fleet_id"] << "' ";
+										query << "	fs_fleet_id='" << fleet_["id"] << "' ";
 										query << "	AND fs_ship_id='" << sRow["ship_id"] << "';";
 										query.store();
 										query.reset();
@@ -178,7 +178,7 @@ namespace emp
 								query << "FROM ";
 								query << "	fleet_ships ";
 								query << "WHERE ";
-								query << "	fs_fleet_id='" << fleet_["fleet_id"] << "';";
+								query << "	fs_fleet_id='" << fleet_["id"] << "';";
 								mysqlpp::Result checkRes = query.store();
 								query.reset();
 							
@@ -209,10 +209,10 @@ namespace emp
 								text += " für ";
 								text += h;
 								text += "h deaktiviert.";
-								functions::sendMsg((int)fleet_["fleet_user_id"],SHIP_WAR_MSG_CAT_ID,"GebäDeaktivierung",text);
+								functions::sendMsg((int)fleet_["user_id"],SHIP_WAR_MSG_CAT_ID,"GebäDeaktivierung",text);
 								fucntions::sendMsg(userToId,SHIP_WAR_MSG_CAT_ID,"Deaktivierung",text);
 	                
-								Ranking::addBattlePoints($arr['fleet_user_id'],BATTLE_POINTS_SPECIAL,"Spezialaktion"); //ToDo
+								//Ranking::addBattlePoints($arr['fleet_user_id'],BATTLE_POINTS_SPECIAL,"Spezialaktion"); //ToDo
 							}
 						}
 					}
@@ -225,7 +225,7 @@ namespace emp
 					text += " hat erfolglos versucht auf dem Planeten ";
 					text += coordsTarget;
 					text += " ein Gebäude zu deaktivieren.\nHinweis: Der Spieler hat keine Gebäudeeinrichtungen, welche deaktiviert werden können!";
-					fucntions::sendMsg((int)fleet_["fleet_user_id"],SHIP_WAR_MSG_CAT_ID,"Deaktivierung erfolglos",text);
+					fucntions::sendMsg((int)fleet_["user_id"],SHIP_WAR_MSG_CAT_ID,"Deaktivierung erfolglos",text);
 					functions::sendMsg(userToId,SHIP_WAR_MSG_CAT_ID,"Deaktivierung erfolglos",text);
 				}
 			}
@@ -237,7 +237,7 @@ namespace emp
 				text += " hat erfolglos versucht auf dem Planeten ";
 				text += coords_target;
 				text += " ein Gebäude zu deaktivieren.";
-				functions::sendMsg((int)fleet_["fleet_user_id"],SHIP_WAR_MSG_CAT_ID,"Deaktivierung erfolglos",text);
+				functions::sendMsg((int)fleet_["user_id"],SHIP_WAR_MSG_CAT_ID,"Deaktivierung erfolglos",text);
 				functions::sendMsg(userToId,SHIP_WAR_MSG_CAT_ID,"Deaktivierung erfolglos",text);
 			}
 		}

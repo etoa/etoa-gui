@@ -20,6 +20,17 @@ namespace nebula
 		NebulaHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }
 		void update();
 		
+	private:
+		double nebulaCapa, fleetCapa, capa;
+		double goOrNot;
+		double nebula;
+		double crystal;
+		double resTotal;
+		double newRess;
+		double maxRess;
+		int one, two;
+		double shipDestroy, destroy;
+		std::string destroyedShips,destroyedShipsMsg;
 	};
 }
 #endif

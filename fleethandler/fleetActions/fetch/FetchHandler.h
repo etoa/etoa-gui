@@ -19,6 +19,10 @@ namespace fetch
 	public:
 		FetchHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }
 		void update();
+
+	private:
+		double capa, capaCnt;
+		double loadPeople;
 	};
 }
 #endif

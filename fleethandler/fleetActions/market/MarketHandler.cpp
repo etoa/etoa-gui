@@ -17,7 +17,7 @@ namespace market
 		*/
 		Config &config = Config::instance();
 
-		int landAction = 1;
+		this->landAction = 1;
 		mysqlpp::Query query = con_->query();
 		query << "SELECT ";
 		query << "	fs_ship_id ";
@@ -44,10 +44,10 @@ namespace market
 		}
 
 		//Sucht User-ID
-		int userToId = functions::getUserIdByPlanet((int)fleet_["entity_to"]);
+		this->userToId = functions::getUserIdByPlanet((int)fleet_["entity_to"]);
 
 		// Resources and ships
-		if (landAction==1)
+		if (this->landAction==1)
 		{
 			//Flotte stationieren und Waren ausladen
 			fleetLand(1);

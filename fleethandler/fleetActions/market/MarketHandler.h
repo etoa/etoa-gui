@@ -19,7 +19,10 @@ namespace market
 	public:
 		MarketHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }
 		void update();
-		
+	
+	private:
+		int landAction;
+		int userToId;
 	};
 }
 #endif

@@ -17,25 +17,47 @@ namespace position
 		*/
 		
 		Config &config = Config::instance();
-            
-		//Flotte stationieren und Waren ausladen
-		fleetLand(1);
-
-		// Flotte-Schiffe-Verknüpfungen löschen
-		fleetDelete();
-
-		//Nachricht senden
-		std::string msg = "[b]FLOTTE GELANDET[/b]\n\nEine eurer Flotten hat hat ihr Ziel erreicht!\n\n[b]Zielplanet:[/b] ";
-		msg += functions::formatCoords((int)fleet_["entity_to"],0);
-		msg += "\n[b]Startplanet:[/b] ";
-		msg += functions::formatCoords((int)fleet_["entity_from"],0);
-		msg += "\n[b]Zeit:[/b] ";
-		msg += functions::formatTime((int)fleet_["landtime"]);
-		msg += "\n[b]Auftrag:[/b] ";
-		msg += functions::fa(std::string(fleet_["action"]));
-		msg += msgAllShips;
-		msg += msgRes;
 		
-		functions::sendMsg((int)fleet_["user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Flotte angekommen",msg);
+		//checkPlanet
+		this->pId =	functions::getUserIdByPlanet((int)fleet_["entity_to"]);
+		
+		if (this->pId == (int)fleet_["user_id"])
+		{
+			//Flotte stationieren und Waren ausladen
+			fleetLand(1);
+
+			// Flotte-Schiffe-Verknüpfungen löschen
+			fleetDelete();
+
+			//Nachricht senden
+			std::string msg = "[b]FLOTTE GELANDET[/b]\n\nEine eurer Flotten hat hat ihr Ziel erreicht!\n\n[b]Zielplanet:[/b] ";
+			msg += functions::formatCoords((int)fleet_["entity_to"],0);
+			msg += "\n[b]Startplanet:[/b] ";
+			msg += functions::formatCoords((int)fleet_["entity_from"],0);
+			msg += "\n[b]Zeit:[/b] ";
+			msg += functions::formatTime((int)fleet_["landtime"]);
+			msg += "\n[b]Auftrag:[/b] ";
+			msg += functions::fa(std::string(fleet_["action"]));
+			msg += msgAllShips;
+			msg += msgRes;
+		
+			functions::sendMsg((int)fleet_["user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Flotte angekommen",msg);
+		}
+		//Wenn Flottenuser != Planetuser
+		else
+		{
+			fleetSendMain();
+			//Nachricht senden
+			std::string msg = "[b]FLOTTE Landen GESCHEITERT[/b]\n\nEine eurer Flotten hat versucht auf ihrem Ziel zu laden Der Versuch scheiterte jedoch und die Flotte macht sich auf den Weg zu eurem Hauptplaneten!\n\n[b]Ziel:[/b] ";
+			msg += functions::formatCoords(fleet_["entity_to"],0);
+			msg += "\n[b]Start:[/b] ";
+			msg += functions::formatCoords(fleet_["entity_from"],0);
+			msg += "\n[b]Zeit:[/b] ";
+			msg += functions::formatTime((int)fleet_["landtime"]);
+			msg += "\n[b]Auftrag:[/b] ";
+			msg += functions::fa(std::string(fleet_["action"]));
+			
+			functions::sendMsg((int)fleet_["user_id"],5,"Flotte umgelenkt",msg);
+		}
 	}
 }
