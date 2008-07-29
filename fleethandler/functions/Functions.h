@@ -21,5 +21,6 @@ namespace functions
 	void addLog(int logCat, std::string logText, std::time_t logTimestamp=0);
 	bool resetPlanet(int id);
 	void updateGasPlanet(int pid);
+	void initGasPlanets();
 }
 #endif

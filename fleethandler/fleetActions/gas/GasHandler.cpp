@@ -23,7 +23,7 @@ namespace gas
 		Config &config = Config::instance();
 		std::time_t time = std::time(0);
 		srand (time);
-		std::string action = "collectgas";
+		std::string action = "collectfuel";
 		
 		//Precheck action==possible?
 		mysqlpp::Query query = con_->query();
@@ -57,13 +57,13 @@ namespace gas
 				this->destroyedShips = "";
 				this->destroy = 0;
 				this->one = rand() % 101;
-				this->two = (int)config.nget("gascollect_action",0) * 100;
+				this->two = (double)config.nget("gascollect_action",0) * 100;
 				if (this->one  < this->two)	// 20 % Chance dass Schiffe überhaupt zerstört werden
 				{
 					this->destroy = rand() % (int)(config.nget("gascollect_action",1) * 100);		// 0 <= X <= 10 Prozent an Schiffen werden Zerstört
 					
 				}
-				
+
 				if(this->destroy>0)
 				{
 					query << "SELECT ";
@@ -75,12 +75,12 @@ namespace gas
 					query << "	fleet_ships AS fs ";
 					query << "INNER JOIN ";
 					query << "	fleet AS f ";
-					query << "	ON fs.fs_fleet_id = f.fleet_id ";
+					query << "	ON fs.fs_fleet_id = f.id ";
 					query << ")"; 
 					query << "INNER JOIN ";
 					query << "	ships AS s ";
 					query << "	ON fs.fs_ship_id = s.ship_id ";
-					query << "	AND f.fleet_id='" << fleet_["id"] << "' ";
+					query << "	AND f.id='" << fleet_["id"] << "' ";
 					query << "GROUP BY ";
 					query << "fs.fs_ship_id;";
 					mysqlpp::Result cntRes = query.store();
@@ -145,8 +145,6 @@ namespace gas
 				query.reset();
 		
 				fuelTotal = fleet_["res_fuel"];
-				
-				std::cout << "fuelTotal -> " << fuelTotal;
 
 				if (fuelRes)
 				{
@@ -237,11 +235,11 @@ namespace gas
 				//Nachricht senden
 				std::string msg = "[b]GASSAUGER-RAPPORT[/b]\n\nEine Flotte vom Planeten \n[b]";
 				msg += functions::formatCoords((int)fleet_["entity_from"],0);
-				msg += "[/b]\nhat [b]";
-				msg += functions::formatCoords((int)fleet_["entity_to"],0);
-				msg += "[/b]\num [b]";
+				msg += "[/b]\nhat den [b]Gasplaneten (";
+				msg += functions::formatCoords((int)fleet_["entity_to"],2);
+				msg += ")[/b]\num [b]";
 				msg += functions::formatTime((int)fleet_["landtime"]);
-				msg += "[/b]\n erreicht und Gas gesaugt\n";
+				msg += "[/b]\n erreicht und Gas gesaugt.\n";
 			
 				std::string msgRes = "\n[b]ROHSTOFFE:[/b]\n\nTritium: ";
 				msgRes += functions::nf(functions::d2s(fuel));

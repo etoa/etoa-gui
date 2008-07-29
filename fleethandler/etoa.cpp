@@ -43,16 +43,16 @@
 #include "fleetActions/cancel/CancelHandler.h" //tested, working
 #include "fleetActions/default/DefaultHandler.h" //working
 #include "fleetActions/colonialize/ColonializeHandler.h"
-#include "fleetActions/debris/DebrisHandler.h" //
+#include "fleetActions/debris/DebrisHandler.h" //tested, working
 #include "fleetActions/explore/ExploreHandler.h" //working (without settings)
 #include "fleetActions/fetch/FetchHandler.h" //
-#include "fleetActions/gas/GasHandler.h" //
+#include "fleetActions/gas/GasHandler.h" //tested, working
 #include "fleetActions/market/MarketHandler.h" //
 #include "fleetActions/nebula/NebulaHandler.h" // tested, working
 #include "fleetActions/position/PositionHandler.h" //tested, working
 #include "fleetActions/spy/SpyHandler.h" //
 #include "fleetActions/transport/TransportHandler.h" //working
-#include "fleetActions/wreckage/WreckageHandler.h" //
+#include "fleetActions/wreckage/WreckageHandler.h" //working, tested
 #include "fleetActions/support/SupportHandler.h" //
 
 #include "battle/BattleHandler.h"
@@ -66,18 +66,23 @@ using namespace std;
 main(int argc, char *argv[])
 {	
 
+	//Initialize Mysql Connection
 	My &my = My::instance();
 	mysqlpp::Connection *con_;
 	con_ = my.get();
 	mysqlpp::Query query = con_->query();
+	
+	//Loading Configdata
+	Config &config = Config::instance();
 
+	//Initialize Gasplanets
+	functions::initGasPlanets();
+	
 	// Main loop
 	while (true)
 	{	
 		//Timestamp
 		std::time_t time = std::time(0);
-		
-		Config &config = Config::instance();
 		
 		// Graphical bling-bling
 		system("clear");
@@ -168,7 +173,7 @@ main(int argc, char *argv[])
 									wh->update();
 									delete wh;
 								}
-								else if (action == "collectgas")
+								else if (action == "collectfuel")
 								{
 									gas::GasHandler* gh = new gas::GasHandler(row);
 									gh->update();

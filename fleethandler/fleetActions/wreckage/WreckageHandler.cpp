@@ -205,7 +205,7 @@ namespace wreckage
 				text += functions::formatCoords((int)fleet_["entity_from"],0);
 				text += " versuchte, Trümmer zu sammeln. Leider war kein Schiff mehr in der Flotte, welches die Aktion ausführen konnte, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!";
 							
-				functions::sendMsg((int)fleet_["user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Trümmer gescheitert",text);
+				functions::sendMsg((int)fleet_["user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Trümmersammeln gescheitert",text);
 				
 				fleetReturn(1);
 			}

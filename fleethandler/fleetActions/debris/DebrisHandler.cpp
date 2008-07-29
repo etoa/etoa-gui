@@ -76,7 +76,7 @@ namespace debris
 						{
 							rRow = rRes.at(i);
 
-							this->cnt = (int)ceil((int)rRow["fs_ship_cnt"]*0.4);
+							this->cnt = ceil((double)rRow["fs_ship_cnt"]*0.4);
 							this->tfMetal += cnt * (double)rRow["ship_costs_metal"];
 							this->tfCrystal += cnt * (double)rRow["ship_costs_crystal"];
 							this->tfPlastic += cnt * (double)rRow["ship_costs_plastic"];

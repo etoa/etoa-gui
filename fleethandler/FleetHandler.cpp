@@ -387,7 +387,8 @@
 				query << " entity_to='" << mainRow["id"] << "', ";
 				query << "	launchtime=landtime, ";
 				query << "	landtime='" << landtime << "', ";
-				query << "	status='2', ";
+				query << "	status='2' ";
+				query << "WHERE ";
 				query << "	id='" << fleet_["id"] << "';";
 				query.store();
 				query.reset();

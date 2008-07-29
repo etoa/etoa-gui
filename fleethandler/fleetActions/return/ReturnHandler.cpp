@@ -82,7 +82,7 @@ namespace retour
 			fleetSendMain();
 			
 			//Nachricht senden
-			std::string msg = "[b]FLOTTE Landen GESCHEITERT[/b]\n\nEine eurer Flotten hat versucht auf ihrem Ziel zu laden Der Versuch scheiterte jedoch und die Flotte macht sich auf den Weg zu eurem Hauptplaneten!\n\n[b]Ziel:[/b] ";
+			std::string msg = "[b]FLOTTE LANDEN GESCHEITERT[/b]\n\nEine eurer Flotten hat versucht auf ihrem Ziel zu laden Der Versuch scheiterte jedoch und die Flotte macht sich auf den Weg zu eurem Hauptplaneten!\n\n[b]Ziel:[/b] ";
 			msg += functions::formatCoords((int)fleet_["entity_to"],0);
 			msg += "\n[b]Start:[/b] ";
 			msg += functions::formatCoords(fleet_["entity_from"],0);

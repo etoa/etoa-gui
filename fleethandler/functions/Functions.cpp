@@ -6,6 +6,23 @@
 
 namespace functions
 {
+	void initGasPlanets()
+	{
+		My &my = My::instance();
+		mysqlpp::Connection *con_ = my.get();
+		Config &config = Config::instance();
+		
+		mysqlpp::Query query = con_->query();
+		query << "UPDATE ";
+		query << "	planets ";
+		query << "SET ";
+		query << "	planet_last_updated='" << config.get("enable_login",1) << "' ";
+		query << "WHERE ";
+		query << "	planet_type_id='" << config.get("gasplanet", 0) << "';";
+		query.store();
+		query.reset();
+	}
+		
 	void updateGasPlanet(int pid)
 	{
 		My &my = My::instance();
@@ -35,16 +52,16 @@ namespace functions
 				Config &config = Config::instance();
 				
 				mysqlpp::Row row = res.at(0);
-				
+				int ptime = time;
 				int last = (int)row["planet_last_updated"];
-				if (last == 0) last = time;
-				double tlast = (time-last)*(int)config.nget("gasplanet", 1);
-				tlast /= 3600;
+				if (last == 0) last = ptime;
+				double tlast = ptime - last;
 				double pfuel = (double)row["planet_res_fuel"];
 				tlast += pfuel;
 					
 				double pSize = (int)config.nget("gasplanet", 2)*int(row["planet_fields"]);
 				double fuel = std::min(tlast,pSize); //ToDo Gas param1 + 2
+
 					
 				query << std::setprecision(18);
 				query << "UPDATE ";
@@ -53,7 +70,7 @@ namespace functions
 				query << "	planet_res_fuel='" << fuel << "', ";
 				query << "	planet_last_updated='" << time << "' ";
 				query << "WHERE ";
-				query << "	id='" << row["id"] << "';";
+				query << "	id='" << pid << "';";
 				query.store();
 				query.reset();
 			}
