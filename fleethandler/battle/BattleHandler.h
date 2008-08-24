@@ -19,6 +19,7 @@ class BattleHandler
 		BattleHandler(mysqlpp::Connection *con,mysqlpp::Row fleet) {
 			this->fleet_ = fleet;
 			this->con_ = con;
+			this->shipSteal = 50;
 		 }
 		void update();
 		void battle();
@@ -35,7 +36,6 @@ class BattleHandler
 		bool dontSteal;
 		int shipSteal;
 		float resRaidFactor;
-		double capa, specialShipBonusCapacity;
 		
 		bool alliancesHaveWar;
 		
@@ -56,6 +56,3 @@ class BattleHandler
 		
 };
 #endif
-		
-		
-		

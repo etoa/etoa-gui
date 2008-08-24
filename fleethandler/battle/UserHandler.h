@@ -5,7 +5,6 @@
 #include <mysql++/mysql++.h>
 #include <vector>
 #include "../MysqlHandler.h"
-#include "ObjectHandler.h"
 
 /**
 * User class
@@ -25,50 +24,35 @@ public:
 		
 		//getUserAlliance();
 		
-		shieldTech = 1;
-		structureTech = 1;
-		weaponTech = 1;
-		healTech = 1;
-		structure = 0;
-		shield = 0;
-		weapon = 0;
-		heal = 0;
-		count = 0;
-		healCount = 0;
+		this->shieldTech = 1;
+		this->structureTech = 1;
+		this->weaponTech = 1;
+		this->healTech = 1;
+		this->shield = 0;
+		this->structure = 0;
+		this->weapon = 0;
+		this -> count = 0;
 		
-
+		this->specialShipBonusCapacity = 1;
+		this->capa = 0;
+		
+		getValues();
 	}
-//	void getUserAlliance();
+	
+	void getValues();
 	
 	//standart Information
 	int userId;
+	std::string userNick;
 	int allianceId;
-	std::string allianceTag, allianceName;
-
-	std::vector <double> loseFleet;
-		
-	//Objectcontainer
-	std::vector < ObjectHandler > objects;
-	std::vector < ObjectHandler > defObjects;
-	
-	//Basicdatas
-	double structure, shield, weapon, count, heal, healCount;
 	
 	//technologielevel
 	float shieldTech, structureTech, weaponTech, healTech;
 	
-	//start Values
-	double initStructureShield, initShield, initStructure, initWeapon, initCount;
-	
-	//current Values
-	double cCount, cStructureShield, cWeapon, cHealPoints, cHealCount, percentage;
-	int newExpInit;
-	
-	//Calculates cCount, cWeapon, cHealPoints, cHealCount while fighting 
-	void updateValues();
-	
-	//Calculates Values after the Fight
-	void updateValuesEnd(std::vector<double> &wf);
+	//Userdata
+	double shield, structure, weapon, count;
+	double capa, specialShipBonusCapacity;
+	std::map < int, double > fleetCapa; //Capa ordered by fleetID
 };
 
 #endif

@@ -13,8 +13,7 @@
 		mysqlpp::Query query = con_->query();
 		
 		//Flotte wird stationiert und Waren werden ausgeladen
-		if(fleetAction==1)
-		{
+		if(fleetAction==1) {
             // Waren entladen
             double people = (double)fleet_["pilots"] + (double)fleet_["res_people"];
 			query << std::setprecision(18);
@@ -79,17 +78,14 @@
 			mysqlpp::Result fsRes = query.store();
 			query.reset();
 			
-			if (fsRes)
-			{
+			if (fsRes) {
 				int fsSize = fsRes.size();
 				
-				if (fsSize > 0)
-				{
+				if (fsSize > 0) {
 					mysqlpp::Row fsRow;
 					msgShips = "";
 					
-					for (mysqlpp::Row::size_type i = 0; i<fsSize; i++) 
-					{
+					for (mysqlpp::Row::size_type i = 0; i<fsSize; i++)  {
 						fsRow = fsRes.at(i);
 
 						double shipCnt = (double)fsRow["fs_ship_cnt"];
@@ -111,15 +107,13 @@
 						} while  (pch != NULL);
 
 						// Ein Koloschiff subtrahieren, falls kolonialisieren gewählt ist (einmalig)
-						if (canColonize==1 && alreadyColonialized==0 && std::string(fleet_["action"])=="colonize")
-						{
+						if (canColonize==1 && alreadyColonialized==0 && std::string(fleet_["action"])=="colonize") {
 							shipCnt = (double)fsRow["fs_ship_cnt"]-1;
 							alreadyColonialized=1;
 						}
 
 						// Ein Invasionsschiff subtrahieren, falls invasieren gewählt ist (einmalig)
-						if (canInvade==1 && alreadyInvaded==0 && std::string(fleet_["action"])=="invade")
-						{
+						if (canInvade==1 && alreadyInvaded==0 && std::string(fleet_["action"])=="invade") {
 							shipCnt = (double)fsRow["fs_ship_cnt"]-1;
 							alreadyInvaded=1;
 						}
@@ -136,12 +130,10 @@
 						mysqlpp::Result slRes = query.store();
 						query.reset();
 						
-						if (slRes)
-						{
+						if (slRes) {
 							int slSize = slRes.size();
 							
-							if (slSize > 0)
-							{
+							if (slSize > 0) {
 								mysqlpp::Row slRow = slRes.at(0);
 
 								//Bestehender Datensatz gefunden -> Stationiert die Schiffe mit all ihren Werten (Update)
@@ -171,17 +163,14 @@
 								query.reset();
 							}
 							//Keinen bestehenden Datensatz gefunden -> Stationiert die Schiffe mit all ihren Werten (Insert)
-							else
-							{
+							else {
 								int userId;
 								
 								//überprüft, ob die Flotte eine User ID besitzt, sonst eine generieren durch Planet ID (z.b. für Handelsschiffe)
-								if((int)fleet_["user_id"]!=0)
-								{
+								if((int)fleet_["user_id"]!=0) {
 									userId = (int)fleet_["user_id"];
 								}
-								else
-								{
+								else {
 									userId = functions::getUserIdByPlanet((int)fleet_["entity_to"]);
 								}
 
@@ -236,20 +225,17 @@
 						}
 						
 						//Schreibt alle Schiffe mit deren Anzahl in ein Array (für Nachricht an den User)
-						if (shipCnt>0)
-						{
+						if (shipCnt>0) {
 							msgShips += "\n[b]";
 							msgShips += std::string(fsRow["ship_name"]);
 							msgShips += ":[/b] ";
 							msgShips += functions::nf(functions::d2s(shipCnt));
 						}
 					}
-					if (msgShips=="")
-					{
+					if (msgShips=="") {
 						msgShips = "\n\n[b]SCHIFFE[/b]\n[i]Keine weiteren Schiffe in der Flotte![/i]\n";					
 					}
-					else
-					{
+					else {
 						msgAllShips = "\n\n[b]SCHIFFE[/b]\n";
 						msgAllShips += msgShips;
 						msgAllShips += "\n";
@@ -259,8 +245,7 @@
 		}
 		
 		//Waren werden ausgeladen
-		else if(fleetAction==2)
-		{
+		else if(fleetAction==2) {
             // Waren entladen
             double people = (double)fleet_["pilots"] + (double)fleet_["res_people"];
 			query << std::setprecision(18);
@@ -294,8 +279,7 @@
 			msgRes += "\n";
 		}
 		//Fehler, die Flotte hat eine ungültige Aktion
-		else
-		{
+		else {
 			msgRes = "Fehler, die Flotte hat eine ungültige Aktion!<br>";
 		}
 	}
@@ -372,12 +356,10 @@
 		mysqlpp::Result mainRes = query.store();
 		query.reset();
 					
-		if (mainRes)
-		{
+		if (mainRes) {
 			int mainSize = mainRes.size();
 			
-			if (mainSize > 0)
-			{
+			if (mainSize > 0) {
 				int landtime = 2 * (int)fleet_["landtime"] - (int)fleet_["launchtime"];
 				mysqlpp::Row mainRow = mainRes.at(0);
 				query << "UPDATE ";

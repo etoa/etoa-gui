@@ -79,8 +79,7 @@ main(int argc, char *argv[])
 	functions::initGasPlanets();
 	
 	// Main loop
-	while (true)
-	{	
+	while (true) {	
 		//Timestamp
 		std::time_t time = std::time(0);
 		
@@ -104,19 +103,16 @@ main(int argc, char *argv[])
 				
 		cout << "Updating ";
 		//Checking queryresult
-		if (res) 
-	    {
+		if (res)  {
 	    	int resSize = res.size();
 			//Checking if there are some results
-	    	if (resSize>0)
-		   	{
+	    	if (resSize>0) {
 				cout << resSize << " Fleet(s)\n\n";
 				
 	    		//Put res into row
 	    		mysqlpp::Row row;
 	    		int lastId = 0;
-	    		for (mysqlpp::Row::size_type i = 0; i<resSize; i++)
-				{
+	    		for (mysqlpp::Row::size_type i = 0; i<resSize; i++) {
 	    			row = res.at(i);
 	    			
 					std::string action = (std::string)row["action"];
@@ -124,117 +120,98 @@ main(int argc, char *argv[])
 					std::cout << "User: " << row["user_id"] << " Zeit: " << row["landtime"] << " Aktion: " << action << "\n";
 					
 					// Nachprüfen ob Landezeit wirklich kleider ist als aktuelle Zeit
-					if ((int)row["landtime"] < time)
-					{
+					if ((int)row["landtime"] < time) {
 						// Load action
 						switch ((int)row["status"])
 						{
 							case 0:
 							{
-								if (action == "analyze")
-								{
+								if (action == "analyze") {
 									analyze::AnalyzeHandler* lh = new analyze::AnalyzeHandler(row);
 									lh->update();
 									delete lh;
 								}
-								else if (action == "antrax")
-								{
+								else if (action == "antrax") {
 									antrax::AntraxHandler* xh = new antrax::AntraxHandler(row);
 									xh->update();
 									delete xh;
 								}
-								else if (action == "attack")
-								{
+								else if (action == "attack") {
 									attack::AttackHandler* ah = new attack::AttackHandler(row);
 									ah->update();
 									delete ah;
 								}
-								else if (action == "bombard")
-								{
+								else if (action == "bombard") {
 									bombard::BombardHandler* bh = new bombard::BombardHandler(row);
 									bh->update();
 									delete bh;
 								}
-								else if (action == "collectmetal")
-								{
+								else if (action == "collectmetal") {
 									asteroid::AsteroidHandler* yh = new asteroid::AsteroidHandler(row);
 									yh->update();
 									delete yh;
 								}
-								else if (action == "collectcrystal")
-								{
+								else if (action == "collectcrystal") {
 									nebula::NebulaHandler* nh = new nebula::NebulaHandler(row);
 									nh->update();
 									delete nh;
 								}
-								else if (action == "collectdebris")
-								{
+								else if (action == "collectdebris") {
 									wreckage::WreckageHandler* wh = new wreckage::WreckageHandler(row);
 									wh->update();
 									delete wh;
 								}
-								else if (action == "collectfuel")
-								{
+								else if (action == "collectfuel") {
 									gas::GasHandler* gh = new gas::GasHandler(row);
 									gh->update();
 									delete gh;
 								}
-								else if (action == "colonize")
-								{
+								else if (action == "colonize") {
 									colonialize::ColonializeHandler* kh = new colonialize::ColonializeHandler(row);
 									kh->update();
 									delete kh;
 								}
-								else if (action == "createdebris")
-								{
+								else if (action == "createdebris") {
 									debris::DebrisHandler* zh = new debris::DebrisHandler(row);
 									zh->update();
 									delete zh;
 								}
-								else if (action == "explore")
-								{
+								else if (action == "explore") {
 									explore::ExploreHandler* jh = new explore::ExploreHandler(row);
 									jh->update();
 									delete jh;
 								}
-								else if (action == "fetch")
-								{
+								else if (action == "fetch") {
 									fetch::FetchHandler* fh = new fetch::FetchHandler(row);
 									fh->update();
 									delete fh;
 								}
-								else if (action == "market")
-								{
+								else if (action == "market") {
 									market::MarketHandler* mh = new market::MarketHandler(row);
 									mh->update();
 									delete mh;
 								}
-								else if (action == "position")
-								{
+								else if (action == "position") {
 									position::PositionHandler* ph = new position::PositionHandler(row);
 									ph->update();
 									delete ph;
 								}
-								else if (action == "spy")
-								{
+								else if (action == "spy") {
 									spy::SpyHandler* sh = new spy::SpyHandler(row);
 									sh->update();
 									delete sh;
 								}
-								else if (action == "support")
-								{
+								else if (action == "support") {
 									support::SupportHandler* ch = new support::SupportHandler(row);
 									ch->update();
 									delete ch;
 								}
-								else if (action == "transport")
-								{
+								else if (action == "transport") {
 									transport::TransportHandler* th = new transport::TransportHandler(row);
 									th->update();
 									delete th;
 								}
-								else
-								{
+								else {
 									defaul::DefaultHandler* dh = new defaul::DefaultHandler(row);
 									dh->update();
 									delete dh;
@@ -270,13 +247,12 @@ main(int argc, char *argv[])
 		    	}
 			}
 		
-			else
-			{
+			else {
 				cout << "0 Fleets\n";
 			}
 		}
 		
-		sleep(10);
+		sleep(1);
 	}		
 
 	return 0;

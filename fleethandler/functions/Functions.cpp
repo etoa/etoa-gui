@@ -44,11 +44,9 @@ namespace functions
 		mysqlpp::Result res = query.store();
 		query.reset();
 		
-		if (res) 
-		{
+		if (res)  {
 			int resSize = res.size();
-			if (resSize>0)
-			{
+			if (resSize>0) {
 				Config &config = Config::instance();
 				
 				mysqlpp::Row row = res.at(0);
@@ -61,8 +59,7 @@ namespace functions
 					
 				double pSize = (int)config.nget("gasplanet", 2)*int(row["planet_fields"]);
 				double fuel = std::min(tlast,pSize); //ToDo Gas param1 + 2
-
-					
+		
 				query << std::setprecision(18);
 				query << "UPDATE ";
 				query << "	planets ";
@@ -83,8 +80,7 @@ namespace functions
 		My &my = My::instance();
 		mysqlpp::Connection *con_ = my.get();
 		
-		if (id>0)
-		{
+		if (id>0) {
 			mysqlpp::Query query = con_->query();
 			query << "UPDATE ";
 			query << "	planets ";
@@ -164,15 +160,17 @@ namespace functions
 		
 		mysqlpp::Query query = con_->query();
 		query << "INSERT INTO logs ";
-			query << "(log_cat, ";
-			query << "log_timestamp, ";
-			query << "log_realtime, ";
-			query << "log_text) ";
+		query << "(";
+		query << "	log_cat, ";
+		query << "	log_timestamp, ";
+		query << "	log_realtime, ";
+		query << "	log_text ";
+		query << ") ";
 		query << "VALUES ";
-			query << "('" << logCat << "', ";
-		 	query << "'" << logTimestamp << "', ";
-		 	query << "'" << time << "', ";
-		 	query << "'" << logText << "');"; //addslashes(log_text)
+		query << "('" << logCat << "', ";
+		query << "'" << logTimestamp << "', ";
+		query << "'" << time << "', ";
+		query << "'" << logText << "');"; //addslashes(log_text)
 		query.store();
 		query.reset();
 	}
@@ -191,23 +189,19 @@ namespace functions
 		mysqlpp::Result res = query.store();		
 		query.reset();
 
-		if (res)
-		{
+		if (res) {
 			int resSize = res.size();			
     	
-			if (resSize>0)
-			{
+			if (resSize>0) {
 				mysqlpp::Row row;
 				row = res.at(0);
 				return (std::string(row["user_nick"]));
 			}
-			else
-			{
+			else {
 				return "<i>Unbekannter Benutzer</i>";
 			}
 		}
-		else
-		{
+		else {
 			return "<i>Unbekannter Benutzer</i>";
 		}
 	}
@@ -231,17 +225,14 @@ namespace functions
 		mysqlpp::Result pRes = query.store();
 		query.reset();
 		
-		if (pRes)
-		{
+		if (pRes) {
 			int pSize = pRes.size();
 			
-			if (pSize > 0)
-			{
+			if (pSize > 0) {
 				mysqlpp::Row pRow = pRes.at(0);
 				return (int)pRow["planet_user_id"];
 			}
-			else
-			{
+			else {
 				return 0;
 			}
 		}
@@ -320,14 +311,11 @@ namespace functions
 		query << "	ON p.id = e.id ";
 		mysqlpp::Result coordsRes = query.store();	
 		query.reset();
-				
-				
-		if (coordsRes)
-		{
+						
+		if (coordsRes) {
 			int coordsSize = coordsRes.size();
 			
-			if (coordsSize > 0)
-			{
+			if (coordsSize > 0) {
 				mysqlpp::Row coordsRow;
 				coordsRow = coordsRes.at(0);
 
@@ -357,10 +345,8 @@ namespace functions
 					}
 					case 'p':
 					{
-						if (blank!=2)
-						{
-							if (blank == 0)
-							{
+						if (blank!=2) {
+							if (blank == 0) {
 								std::cout << std::string(coordsRow["planet_name"]) << "\n";
 								if (std::string(coordsRow["planet_name"])!="")
 									fullCoords = std::string(coordsRow["planet_name"]);
@@ -371,13 +357,11 @@ namespace functions
 								fullCoords += ")";
 								return(fullCoords);
 							}
-							else
-							{
+							else {
 								return(coords);
 							}
 						}
-						else
-						{
+						else {
 							return(coords);
 						}
 						break;

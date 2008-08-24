@@ -38,10 +38,10 @@ namespace attack
 
 		std::cout << bh->returnFleet << "\n";
 		// Flotte zurückschicken
-		if (bh->returnFleet)
+		/*if (bh->returnFleet)
 		{
 			fleetReturn(1,0,0,0,0,0,0);
-		}
+		}*/
 
 		//delete bh;
 	}

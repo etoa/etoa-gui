@@ -44,15 +44,12 @@
 			query << "	config;";
 			mysqlpp::Result res = query.store();	
 			query.reset();
-			if (res) 
-			{
+			if (res) {
 				int resSize = res.size();
-				if (resSize>0)
-				{
+				if (resSize>0) {
 					mysqlpp::Row row;
 					cConfig.reserve(resSize);
-					for (mysqlpp::Row::size_type i = 0; i<resSize; i++) 
-					{
+					for (mysqlpp::Row::size_type i = 0; i<resSize; i++) {
 						row = res.at(i);
 						sConfig[std::string(row["config_name"]) ] =  (int)i;
 						std::vector<std::string> temp (3);

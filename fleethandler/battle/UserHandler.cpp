@@ -1,111 +1,81 @@
 #include <vector>
 #include <math.h>
 #include "../config/ConfigHandler.h"
+#include "../MysqlHandler.h"
 #include "UserHandler.h"
 
-	void UserHandler::updateValues()
+	void UserHandler::getValues()
 	{
-		cCount = 0;
-		cWeapon = 0;
-		cHealPoints = 0;
-		cHealCount = 0;
-		
-		percentage = cStructureShield / initStructureShield;
-		
-		std::vector< ObjectHandler>::iterator it;
-		for ( it = objects.begin() ; it < objects.end(); it++ )
-		{
-			it->newCnt = ceil(percentage * it->cnt);
-			if (it->newCnt > it->cnt) it->newCnt = it->cnt;
-			cCount += it->newCnt;
-			cWeapon += it->newCnt * it->weapon;
-			
-			if (it->heal > 0)
-			{
-				cHealCount += it->newCnt;
-				cHealPoints += ceil(it->heal * it->newCnt);
-			}
-			
-		}
-		
-		for ( it = defObjects.begin() ; it < defObjects.end(); it++ )
-		{
-			it->newCnt = ceil(percentage * it->cnt);
-			if (it->newCnt > it->cnt) it->newCnt = it->cnt;
-			cCount += it->newCnt;
-			cWeapon += it->newCnt * it->weapon;
-			
-			if (it->heal > 0)
-			{
-				cHealCount += it->newCnt;
-				cHealPoints += ceil(it->heal * it->newCnt);
-			}
-			
-		}
-		
-		cWeapon *= weaponTech;
-		cHealPoints *= healTech;
-		
-	}
-	
-	void UserHandler::updateValuesEnd(std::vector<double> &wf)
-	{
+		My &my = My::instance();
+		mysqlpp::Connection *con_ = my.get();
 		Config &config = Config::instance();
-		percentage = cStructureShield / initStructureShield;
 		
-		std::vector< ObjectHandler >::iterator it;
+		mysqlpp::Query query = con_->query();
+		query << "SELECT ";
+		query << "	user_nick, ";
+		query << "	user_alliance_id ";
+		query << "FROM ";
+		query << "	users ";
+		query << "WHERE ";
+		query << "	user_id='" << this->userId << "';";
+		mysqlpp::Result userRes = query.store();
+		query.reset();
 		
-		for ( it = objects.begin() ; it < objects.end(); it++ )
-		{
+		if (userRes) {
+			int userSize = userRes.size();
 			
-			it->newCnt = ceil(percentage * it->cnt);
-			
-			if (it->newCnt * (it->structure + it->shield) <= 0)
-			{
-				it->newCnt = 0;
+			if (userSize > 0) {
+				mysqlpp::Row userRow = userRes.at(0);
+				
+				if (std::string(userRow["user_nick"])!="") {
+					this->userNick = std::string(userRow["user_nick"]);
+				}
+				else {
+					this->userNick = "Unbekannter User";
+				}
+				this->allianceId = (int)userRow["user_alliance_id"];
 			}
-			else if (it->newCnt > it->cnt)
-			{
-				it->newCnt = it->cnt;
-			}
-			
-			loseFleet[0] += round((it->cnt - it->newCnt) * it->metal);
-			loseFleet[1] += round((it->cnt - it->newCnt) * it->crystal);
-			loseFleet[2] += round((it->cnt - it->newCnt) * it->plastic);
-			loseFleet[3] += round((it->cnt - it->newCnt) * it->fuel);
-			loseFleet[4] += round((it->cnt - it->newCnt) * it->food);
-			
-			wf[0] += round((it->cnt - it->newCnt) * config.nget("ship_wf_percent",0) *it->metal);
-			wf[1] += round((it->cnt - it->newCnt) * config.nget("ship_wf_percent",0) *it->crystal);
-			wf[2] += round((it->cnt - it->newCnt) * config.nget("ship_wf_percent",0) *it->plastic);
 		}
 		
-		for ( it = defObjects.begin(); it <  defObjects.end(); it++ )
-		{
-			it->newCnt = ceil(percentage * it->cnt);
+		
+		query << "SELECT ";
+		query << "	techlist_tech_id, ";
+		query << "	techlist_current_level ";
+		query << "FROM ";
+		query << "	techlist ";
+		query << "WHERE ";
+		query << "	techlist_user_id='" << this->userId << "' ";
+		query << "	AND ";
+		query << "	(";
+		query << "		techlist_tech_id='" << config.idget("STRUCTURE_TECH_ID") << "' ";
+		query << "		OR techlist_tech_id='" << config.idget("SHIELD_TECH_ID") <<  "' ";
+		query << "		OR techlist_tech_id='" << config.idget("WEAPON_TECH_ID") << "' ";
+		query << "		OR techlist_tech_id='" << config.idget("REGENA_TECH_ID") << "' ";
+		query << "	);";
+		mysqlpp::Result techRes = query.store();
+		query.reset();
+		
+		if (techRes) {
+			int techSize = techRes.size();
 			
-			double temp = it->newCnt;
-			
-			if (it->newCnt * (it->structure + it->shield) <= 0)
-			{
-				it->newCnt = 0;
+			if (techSize > 0) {
+				mysqlpp::Row techRow;
+				
+				for (mysqlpp::Row::size_type i = 0; i<techSize; i++)  {
+					techRow = techRes.at(i);
+					
+					if ((int)techRow["techlist_tech_id"]==config.idget("SHIELD_TECH_ID"))
+						this->shieldTech += ((float)techRow["techlist_current_level"]/10);
+
+					if ((int)techRow["techlist_tech_id"]==config.idget("STRUCTURE_TECH_ID"))
+						this->structureTech += ((float)techRow["techlist_current_level"]/10);
+
+					if ((int)techRow["techlist_tech_id"]==config.idget("WEAPON_TECH_ID"))
+						this->weaponTech += ((float)techRow["techlist_current_level"]/10);
+
+					if ((int)techRow["techlist_tech_id"]==config.idget("REGENA_TECH_ID"))
+						this->healTech += ((float)techRow["techlist_current_level"]/10);
+				}
 			}
-			
-			it->newCnt += round((it->cnt - it->newCnt) * config.nget("def_restore_percent",0));
-			
-			if (it->newCnt > it->cnt) it->newCnt = it->cnt;
-			
-			it->repairCnt = it->newCnt - temp;
-			
-			loseFleet[0] += round((it->cnt - it->newCnt) * it->metal);
-			loseFleet[1] += round((it->cnt - it->newCnt) * it->crystal);
-			loseFleet[2] += round((it->cnt - it->newCnt) * it->plastic);
-			loseFleet[3] += round((it->cnt - it->newCnt) * it->fuel);
-			loseFleet[4] += round((it->cnt - it->newCnt) * it->food);
-			
-			wf[0] += round((it->cnt - it->newCnt) * config.nget("def_wf_percent",0) *it->metal);
-			wf[1] += round((it->cnt - it->newCnt) * config.nget("def_wf_percent",0) *it->crystal);
-			wf[2] += round((it->cnt - it->newCnt) * config.nget("def_wf_percent",0) *it->plastic);
 		}
 	}
-	

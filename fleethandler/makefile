@@ -1,4 +1,4 @@
-OBJECTS = etoa.o FleetHandler.o ConfigHandler.o Functions.o CancelHandler.o FetchHandler.o ReturnHandler.o DefaultHandler.o AsteroidHandler.o ColonializeHandler.o ExploreHandler.o GasHandler.o MarketHandler.o NebulaHandler.o PositionHandler.o SpyHandler.o TransportHandler.o WreckageHandler.o DebrisHandler.o BattleHandler.o ObjectHandler.o UserHandler.o AttackHandler.o AntraxHandler.o BombardHandler.o GattackHandler.o AnalyzeHandler.o SupportHandler.o
+OBJECTS = etoa.o FleetHandler.o ConfigHandler.o Functions.o CancelHandler.o FetchHandler.o ReturnHandler.o DefaultHandler.o AsteroidHandler.o ColonializeHandler.o ExploreHandler.o GasHandler.o MarketHandler.o NebulaHandler.o PositionHandler.o SpyHandler.o TransportHandler.o WreckageHandler.o DebrisHandler.o BattleHandler.o ObjectHandler.o ShowObjectHandler.o UserHandler.o DivisionHandler.o AttackHandler.o AntraxHandler.o BombardHandler.o GattackHandler.o AnalyzeHandler.o SupportHandler.o
 OPTS = -lmysqlpp
 
 etoa: ${OBJECTS}
@@ -67,8 +67,14 @@ BattleHandler.o: battle/BattleHandler.cpp battle/BattleHandler.h
 ObjectHandler.o: battle/ObjectHandler.cpp battle/ObjectHandler.h
 	g++ -c battle/ObjectHandler.cpp
 
+ShowObjectHandler.o: battle/ShowObjectHandler.cpp battle/ShowObjectHandler.h
+	g++ -c battle/ShowObjectHandler.cpp
+
 UserHandler.o: battle/UserHandler.cpp battle/UserHandler.h
 	g++ -c battle/UserHandler.cpp
+
+DivisionHandler.o: battle/DivisionHandler.cpp battle/DivisionHandler.h
+	g++ -c battle/DivisionHandler.cpp
 
 AttackHandler.o: fleetActions/attack/AttackHandler.cpp fleetActions/attack/AttackHandler.h
 	g++ -c fleetActions/attack/AttackHandler.cpp
