@@ -108,7 +108,7 @@
 		echo "<tr><th>Koordinaten:</th><td>".$tp."</td></tr>";
 		echo "<tr>
 			<th>Sonnentyp:</th>
-			<td>".$tp->starType."</td></tr>";
+			<td>".$tp->starTypeName."</td></tr>";
 		echo "<tr>
 			<th>Planettyp:</th>
 			<td>".$tp->type()."</td></tr>";

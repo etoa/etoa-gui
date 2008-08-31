@@ -35,7 +35,7 @@
 	    	stars.name,
 	    	stars.type_id,
 	    	entities.pos,
-	    	sol_types.type_name
+	    	sol_types.sol_type_name
 			FROM 
 	    	stars
 	    INNER JOIN	
@@ -43,7 +43,7 @@
 	    ON entities.id=stars.id
 				AND	stars.id='".intval($id)."'
 			INNER JOIN sol_types
-				ON stars.type_id=sol_types.type_id;");
+				ON stars.type_id=sol_types.sol_type_id;");
 			if (mysql_num_rows($res))	
 			{
 				$arr = mysql_fetch_row($res);

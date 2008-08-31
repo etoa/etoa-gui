@@ -240,9 +240,9 @@
 				".$cp->getCoordinates()." [<a href=\"?page=cell&id=".$cp->cellId()."&amp;hl=".$cp->id()."\">Zeigen</a>]</td>
 			</tr>";
 			echo "<tr>
-				<td class=\"tbltitle\">Sonnentyp:</td><td class=\"tbldata\">";
-					//".$cp->sol_type_name." [<a href=\"?page=help&site=stars\">Infos</a>]
-					echo "</td></tr>";
+				<td class=\"tbltitle\">Sonnentyp:</td><td class=\"tbldata\">
+					".$cp->starTypeName." [<a href=\"?page=help&site=stars\">Infos</a>]
+					</td></tr>";
 			echo "<tr>
 				<td class=\"tbltitle\">Planettyp:</td><td class=\"tbldata\">
 					".$cp->type()." [<a href=\"?page=help&site=planets\">Infos</a>]</td></tr>";

@@ -5,7 +5,7 @@
 
 	if ($_GET['order']!="")
 	{
-		$order="type_".$_GET['order'];
+		$order="sol_type_".$_GET['order'];
 		if ($_SESSION['help']['orderfield']==$_GET['order'])
 		{
 			if ($_SESSION['help']['ordersort']=="DESC")
@@ -25,7 +25,7 @@
 	}
 	else
 	{
-		$order="type_name";
+		$order="sol_type_name";
 		$sort="ASC";
 	}
 
@@ -52,37 +52,37 @@
 			//$star = new Star();
 			
 			echo "<tr><td class=\"tbldata\" style=\"width:40px;background:#000;vertical-align:middle;\">
-				<img src=\"".IMAGE_PATH."/stars/star".$arr['type_id']."_small.".IMAGE_EXT."\" width=\"40\" height=\"40\" alt=\"Stern\"/></a></td>";
+				<img src=\"".IMAGE_PATH."/stars/star".$arr['sol_type_id']."_small.".IMAGE_EXT."\" width=\"40\" height=\"40\" alt=\"Stern\"/></a></td>";
 				
 			$tt = new ToolTip();
-			$tt->addIcon(IMAGE_PATH."/stars/star".$arr['type_id']."_small.".IMAGE_EXT."");
-			$tt->addTitle($arr['type_name']);
-			$tt->addComment($arr['type_comment']);
-			echo "<td class=\"tbltitle\" ".$tt.">".$arr['type_name']."</td>";
-			echo "<td class=\"tbldata\">".get_percent_string($arr['type_f_metal'],1)."</td>";
-			echo "<td class=\"tbldata\">".get_percent_string($arr['type_f_crystal'],1)."</td>";
-			echo "<td class=\"tbldata\">".get_percent_string($arr['type_f_plastic'],1)."</td>";
-			echo "<td class=\"tbldata\">".get_percent_string($arr['type_f_fuel'],1)."</td>";
-			echo "<td class=\"tbldata\">".get_percent_string($arr['type_f_food'],1)."</td>";
-			echo "<td class=\"tbldata\">".get_percent_string($arr['type_f_power'],1)."</td>";
-			echo "<td class=\"tbldata\">".get_percent_string($arr['type_f_population'],1)."</td>";
-			echo "<td class=\"tbldata\">".get_percent_string($arr['type_f_researchtime'],1,1)."</td>";
-			echo "<td class=\"tbldata\">".get_percent_string($arr['type_f_buildtime'],1,1)."</td>";
-			//$rating = ($arr['type_f_metal']+$arr['type_f_crystal']+$arr['type_f_plastic']+$arr['type_f_fuel']+
-			//$arr['type_f_food']+$arr['type_f_power']+$arr['type_f_population']-
-			//$arr['type_f_researchtime']-$arr['type_f_buildtime']-5);
+			$tt->addIcon(IMAGE_PATH."/stars/star".$arr['sol_type_id']."_small.".IMAGE_EXT."");
+			$tt->addTitle($arr['sol_type_name']);
+			$tt->addComment($arr['sol_type_comment']);
+			echo "<td class=\"tbltitle\" ".$tt.">".$arr['sol_type_name']."</td>";
+			echo "<td class=\"tbldata\">".get_percent_string($arr['sol_type_f_metal'],1)."</td>";
+			echo "<td class=\"tbldata\">".get_percent_string($arr['sol_type_f_crystal'],1)."</td>";
+			echo "<td class=\"tbldata\">".get_percent_string($arr['sol_type_f_plastic'],1)."</td>";
+			echo "<td class=\"tbldata\">".get_percent_string($arr['sol_type_f_fuel'],1)."</td>";
+			echo "<td class=\"tbldata\">".get_percent_string($arr['sol_type_f_food'],1)."</td>";
+			echo "<td class=\"tbldata\">".get_percent_string($arr['sol_type_f_power'],1)."</td>";
+			echo "<td class=\"tbldata\">".get_percent_string($arr['sol_type_f_population'],1)."</td>";
+			echo "<td class=\"tbldata\">".get_percent_string($arr['sol_type_f_researchtime'],1,1)."</td>";
+			echo "<td class=\"tbldata\">".get_percent_string($arr['sol_type_f_buildtime'],1,1)."</td>";
+			//$rating = ($arr['sol_type_f_metal']+$arr['sol_type_f_crystal']+$arr['sol_type_f_plastic']+$arr['sol_type_f_fuel']+
+			//$arr['sol_type_f_food']+$arr['sol_type_f_power']+$arr['sol_type_f_population']-
+			//$arr['sol_type_f_researchtime']-$arr['sol_type_f_buildtime']-5);
 			//echo "<td class=\"tbldata\">".$rating."</td>";
 			echo "</tr>";
 			
-			$cnt_m += $arr['type_f_metal']-1;
-			$cnt_c += $arr['type_f_crystal']-1;
-			$cnt_p += $arr['type_f_plastic']-1;
-			$cnt_fu += $arr['type_f_fuel']-1;
-			$cnt_fo += $arr['type_f_food']-1;
-			$cnt_pow += $arr['type_f_power']-1;
-			$cnt_pop += $arr['type_f_population']-1;
-			$cnt_res += $arr['type_f_researchtime']-1;
-			$cnt_bui += $arr['type_f_buildtime']-1;
+			$cnt_m += $arr['sol_type_f_metal']-1;
+			$cnt_c += $arr['sol_type_f_crystal']-1;
+			$cnt_p += $arr['sol_type_f_plastic']-1;
+			$cnt_fu += $arr['sol_type_f_fuel']-1;
+			$cnt_fo += $arr['sol_type_f_food']-1;
+			$cnt_pow += $arr['sol_type_f_power']-1;
+			$cnt_pop += $arr['sol_type_f_population']-1;
+			$cnt_res += $arr['sol_type_f_researchtime']-1;
+			$cnt_bui += $arr['sol_type_f_buildtime']-1;
 			$cnt_rat += $rating;
 		}
 	}

@@ -29,8 +29,9 @@
         	cells.cx,
         	cells.cy,
         	cells.id as cell_id,
-        	entities.pos,
-        	planet_types.*
+        	pentity.pos,
+        	planet_types.*,
+			sol_types.*
 				FROM 
 				(
 					planets
@@ -41,16 +42,28 @@
 				)
         INNER JOIN 
         (	
-        	entities
+        	entities AS pentity
          	INNER JOIN cells 
-          	ON cells.id = entities.cell_id
+          	ON cells.id = pentity.cell_id
+			INNER JOIN 
+				entities AS sentity
+				ON cells.id = sentity.cell_id
+				AND sentity.pos =0
+				
+				INNER JOIN stars 
+				ON stars.id = sentity.id
+				INNER JOIN sol_types 
+				ON sol_types.sol_type_id = stars.type_id
         )
-        ON planets.id = entities.id
+        ON planets.id = pentity.id
 				;");
+				
+	
 
 				if (mysql_num_rows($res)>0)
 				{
 					$arr=mysql_fetch_assoc($res);
+					
 				}
 				else
 				{
@@ -128,20 +141,8 @@
 				$this->typeResearchtime=$arr['type_f_researchtime'];
 				$this->typeBuildtime=$arr['type_f_buildtime'];
 
-				$this->starTypeId=0;
-				$this->starTypeName="Teststern";
-
-				$this->starMetal=1;
-				$this->starCrystal=1;
-				$this->starPlastic=1;
-				$this->starFuel=1;
-				$this->starFood=1;
-				$this->starPower=1;
-				$this->starPopulation=1;
-				$this->starResearchtime=1;
-				$this->starBuildtime=1;
-
-/*
+				$this->starTypeId=$arr['sol_type_id'];
+				$this->starTypeName=$arr['sol_type_name'];
 				$this->starMetal=$arr['sol_type_f_metal'];
 				$this->starCrystal=$arr['sol_type_f_crystal'];
 				$this->starPlastic=$arr['sol_type_f_plastic'];
@@ -151,7 +152,7 @@
 				$this->starPopulation=$arr['sol_type_f_population'];
 				$this->starResearchtime=$arr['sol_type_f_researchtime'];
 				$this->starBuildtime=$arr['sol_type_f_buildtime'];
-*/
+				
 				$this->debrisMetal = $arr['planet_wf_metal'];
 				$this->debrisCrystal = $arr['planet_wf_crystal'];
 				$this->debrisPlastic = $arr['planet_wf_plastic'];
