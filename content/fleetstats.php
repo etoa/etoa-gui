@@ -66,12 +66,12 @@
 		SELECT
 			shiplist_ship_id,
 			shiplist_count,
-			shiplist_planet_id
+			shiplist_entity_id
 		FROM
 			shiplist
 			INNER JOIN
 			planets
-			ON shiplist_planet_id=id
+			ON shiplist_entity_id=id
 		WHERE
 			 shiplist_user_id='".$cu->id()."'
 		ORDER BY
@@ -79,7 +79,7 @@
 			planet_name DESC;");
   	while ($arr=mysql_fetch_array($res))
   	{
-  		$shiplist_data[$arr['shiplist_ship_id']][$arr['shiplist_planet_id']] = $arr['shiplist_count'];
+  		$shiplist_data[$arr['shiplist_ship_id']][$arr['shiplist_entity_id']] = $arr['shiplist_count'];
   	}	
   		
   	
@@ -89,16 +89,16 @@
 	  SELECT
 	  	SUM(queue_cnt) AS cnt,
 	  	queue_ship_id,
-	  	queue_planet_id
+	  	queue_entity_id
 	  FROM
 	  	ship_queue
 	  	INNER JOIN
 			planets
-			ON queue_planet_id=id
+			ON queue_entity_id=id
 	  WHERE
 	  	queue_user_id='".$cu->id()."'
 	  GROUP BY
-	  	queue_planet_id
+	  	queue_entity_id
 	  ORDER BY
 			planet_user_main DESC,
 			planet_name DESC;");
@@ -106,7 +106,7 @@
 		{
 		 	while ($arr=mysql_fetch_array($res))
 		 	{
-  			$queue_data[$arr['queue_ship_id']][$arr['queue_planet_id']] = $arr['cnt'];
+  			$queue_data[$arr['queue_ship_id']][$arr['queue_entity_id']] = $arr['cnt'];
 		 	}
   	}
   	

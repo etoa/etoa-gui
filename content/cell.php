@@ -115,6 +115,12 @@
 						</td>
 						<td class=\"tbldata\" style=\"text-align:center;vertical-align:middle;background:#000\"><b>".$ent->pos()."</b></td>
 						<td class=\"tbldata\" $addstyle>".$ent->type();
+
+						if ($ent->explore())
+						{			
+							echo "<br/><span style=\"color:#ccc;font-weight:bold\" ".tm($ent->explore->exploreCodeString(),$ent->explore->description()).">".$ent->explore->exploreCodeString()."</span> ";
+						}
+						
 						if ($ent->entityCode()=='w')
 						{
 							$tent = new Wormhole($ent->targetId());
@@ -357,7 +363,7 @@
 						{
 							if ($arr['planet_desc']!="")$pdesc=text2html($arr['planet_desc']);else $pdesc="<i>Keine Beschreibung vorhanden</i>";
 							echo "<td class=\"$class\"  style=\"".$addstyle."\" ".tm($arr['planet_name'],$pdesc).">";
-							if ($c->id==$arr['planet_id'])
+							if ($c->id==$arr['id'])
 							{
 								echo "<b>".$arr['planet_name']."</b>";
 							}

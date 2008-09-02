@@ -47,7 +47,7 @@
   FROM
   	".$db_table['buildlist']."
   WHERE
-  	buildlist_planet_id='".$cp->id()."'
+  	buildlist_entity_id='".$cp->id()."'
   	AND buildlist_building_id='".BUILD_MISSILE_ID."'
   	AND buildlist_current_level>='1'
   	AND buildlist_user_id='".$cu->id()."'");
@@ -99,7 +99,7 @@
 				"	.$db_table['buildlist']." 
 				WHERE 
 					buildlist_user_id='".$cu->id()."' 
-					AND buildlist_planet_id='".$cp->id()."';";
+					AND buildlist_entity_id='".$cp->id()."';";
 				
 				$blres = dbquery($sql);
 				$builing_something=false;
@@ -177,7 +177,7 @@
 					missilelist
 				WHERE 
 					missilelist_user_id=".$cu->id()."
-					AND missilelist_planet_id=".$cp->id()."
+					AND missilelist_entity_id=".$cp->id()."
 				;");
 				$cnt = 0;
 				if (mysql_num_rows($res)>0)
@@ -251,7 +251,7 @@
 								missilelist_count=missilelist_count-".$v."
 							WHERE
 								missilelist_user_id=".$cu->id()."
-								AND missilelist_planet_id=".$cp->id()."							
+								AND missilelist_entity_id=".$cp->id()."							
 								AND missilelist_missile_id=".$k."								
 							;");				
 							$missilelist[$k]-=$v;		
@@ -292,7 +292,7 @@
 						$fcnt++;
 						$flights[$arr['flight_id']]['landtime']=$arr['flight_landtime'];
 						$flights[$arr['flight_id']]['planet_name']=$arr['planet_name'];
-						$flights[$arr['flight_id']]['planet_id']=$arr['id'];
+						$flights[$arr['flight_id']]['id']=$arr['id'];
 						$flights[$arr['flight_id']]['obj']=array();
 						$ores = dbquery("
 						SELECT
@@ -378,7 +378,7 @@
 											missilelist_count=missilelist_count+".$v."
 										WHERE
 											missilelist_user_id=".$cu->id()."
-											AND missilelist_planet_id=".$cp->id()."							
+											AND missilelist_entity_id=".$cp->id()."							
 											AND missilelist_missile_id=".$k."
 										");
 										$missilelist[$k]+=$v;
@@ -390,7 +390,7 @@
 											missilelist
 										(
 											missilelist_user_id,
-											missilelist_planet_id,
+											missilelist_entity_id,
 											missilelist_missile_id,
 											missilelist_count
 										) VALUES (
@@ -446,7 +446,7 @@
 									missilelist_count=missilelist_count-".$bc."
 								WHERE
 									missilelist_user_id=".$cu->id()."
-									AND missilelist_planet_id=".$cp->id()."							
+									AND missilelist_entity_id=".$cp->id()."							
 									AND missilelist_missile_id=".$k."
 								");
 								$missilelist[$k]-=$bc;				

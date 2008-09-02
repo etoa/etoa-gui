@@ -192,7 +192,7 @@ function calcDemolishingWaitTime($dc,$cp)
 		FROM 
 			buildlist
 		WHERE  
-			buildlist_planet_id='".$cp->id()."';";
+			buildlist_entity_id='".$cp->id()."';";
 		
 		$blres = dbquery($sql);
 		$builing_something=false;
@@ -263,7 +263,7 @@ function calcDemolishingWaitTime($dc,$cp)
 			ON
 			d.def_id = dl.deflist_def_id
 		WHERE
-			dl.deflist_planet_id='".$cp->id()."';");
+			dl.deflist_entity_id='".$cp->id()."';");
 		if(mysql_num_rows($res_def)>0)
 		{
 			$arr=mysql_fetch_array($res_def);
@@ -407,7 +407,7 @@ function calcDemolishingWaitTime($dc,$cp)
 										buildlist_build_start_time='".time()."',
 										buildlist_build_end_time='".$end_time."'
 									WHERE
-										buildlist_planet_id='".$cp->id()."'
+										buildlist_entity_id='".$cp->id()."'
 										AND buildlist_building_id='".$arr['building_id']."';");
 								}
 								//Gebäude noch nicht vorhanden
@@ -422,7 +422,7 @@ function calcDemolishingWaitTime($dc,$cp)
 										buildlist_build_end_time,
 										buildlist_building_id,
 										buildlist_user_id,
-										buildlist_planet_id
+										buildlist_entity_id
 									) 
 									VALUES 
 									( 
@@ -496,7 +496,7 @@ function calcDemolishingWaitTime($dc,$cp)
 								buildlist_build_start_time='".time()."',
 								buildlist_build_end_time='".$end_time."'
 							WHERE 
-								buildlist_planet_id='".$cp->id()."'
+								buildlist_entity_id='".$cp->id()."'
 								AND buildlist_building_id='".$arr['building_id']."';");
 								
 							//Rohstoffe vom Planeten abziehen und aktualisieren
@@ -552,7 +552,7 @@ function calcDemolishingWaitTime($dc,$cp)
 							buildlist_build_start_time=0,
 							buildlist_build_end_time=0
 						WHERE 
-							buildlist_planet_id='".$cp->id()."'
+							buildlist_entity_id='".$cp->id()."'
 							AND buildlist_building_id='".$arr['building_id']."';");
 							
 						//Rohstoffe vom Planeten abziehen und aktualisieren
@@ -605,7 +605,7 @@ function calcDemolishingWaitTime($dc,$cp)
 							buildlist_build_start_time=0,
 							buildlist_build_end_time=0
 						WHERE 
-							buildlist_planet_id='".$cp->id()."'
+							buildlist_entity_id='".$cp->id()."'
 							AND buildlist_building_id='".$arr['building_id']."';");
 						
 						//Rohstoffe vom Planeten abziehen und aktualisieren

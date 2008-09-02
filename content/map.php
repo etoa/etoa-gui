@@ -235,7 +235,7 @@
 				}
 				elseif (in_array($cells[$xcoords][$ycoords]['cid'],$user_solsys_ids) && $cells[$xcoords][$ycoords]['eid']!=$cp->id())
 				{
-					if (!$cu->discovered($cell->absX(),$cell->absY()))
+					if ($cu->discovered($cell->absX(),$cell->absY())==0)
 					{
 						$cu->setDiscovered($cell->absX(),$cell->absY());
 					}

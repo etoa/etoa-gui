@@ -85,18 +85,18 @@
 				$t = $cp->userChanged()+COLONY_DELETE_THRESHOLD;
 				if ($t < time())
 				{							
-					if (mysql_num_rows(dbquery("SELECT shiplist_id FROM ".$db_table['shiplist']." WHERE shiplist_planet_id='".$cp->id."' AND shiplist_count>0;"))==0)
+					if (mysql_num_rows(dbquery("SELECT shiplist_id FROM ".$db_table['shiplist']." WHERE shiplist_entity_id='".$cp->id."' AND shiplist_count>0;"))==0)
 					{
-						if (mysql_num_rows(dbquery("SELECT fleet_id FROM ".$db_table['fleet']." WHERE fleet_planet_to='".$cp->id."' OR fleet_planet_from='".$cp->id."';"))==0)
+						if (mysql_num_rows(dbquery("SELECT id FROM ".$db_table['fleet']." WHERE entity_to='".$cp->id."' OR entity_from='".$cp->id."';"))==0)
 						{
-							if (mysql_num_rows(dbquery("SELECT planet_id FROM ".$db_table['planets']." WHERE planet_id='".$cp->id."' AND planet_user_id='".$s['user']['id']."' AND planet_user_main=0;"))==1)
+							if (mysql_num_rows(dbquery("SELECT id FROM ".$db_table['planets']." WHERE id='".$cp->id."' AND planet_user_id='".$s['user']['id']."' AND planet_user_main=0;"))==1)
 							{
 								if (reset_planet($cp->id))
 								{
 									//Liest ID des Hauptplaneten aus
 									$main_res=dbquery("
 									SELECT
-										planet_id
+										id
 									FROM
 		                                ".$db_table['planets']."
 									WHERE
@@ -105,11 +105,11 @@
 									$main_arr=mysql_fetch_array($main_res);
 		
 									echo "<br>Die Kolonie wurde aufgehoben!<br>";
-									echo "<a href=\"?page=overview&planet_id=".$main_arr['planet_id']."\">Zur &Uuml;bersicht</a>";
+									echo "<a href=\"?page=overview&planet_id=".$main_arr['id']."\">Zur &Uuml;bersicht</a>";
 		
 									$cp->id=NULL;
-									$s['currentPlanetId'] = $main_arr['planet_id'];
-									$cpid = $main_arr['planet_id'];
+									$s['currentPlanetId'] = $main_arr['id'];
+									$cpid = $main_arr['id'];
 								}
 								else
 									err_msg("Beim Aufheben der Kolonie trat ein Fehler auf! Bitte wende dich an einen Game-Admin!");
@@ -154,7 +154,7 @@
 				".$db_table['buildlist']."
 			WHERE
 				buildlist.buildlist_building_id=buildings.building_id
-				AND buildlist.buildlist_planet_id=".$cp->id."
+				AND buildlist.buildlist_entity_id=".$cp->id."
 			ORDER BY 
 				fields DESC;");
 			if (mysql_num_rows($res)>0)
@@ -186,7 +186,7 @@
 				".$db_table['deflist']."
 			WHERE
 				deflist.deflist_def_id=defense.def_id
-				AND deflist.deflist_planet_id=".$cp->id."
+				AND deflist.deflist_entity_id=".$cp->id."
 			ORDER BY 
 				fields DESC;");
 			if (mysql_num_rows($res)>0)

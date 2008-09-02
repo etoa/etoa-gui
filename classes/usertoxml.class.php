@@ -66,7 +66,7 @@ $xml = "<userbackup>
 	<planets>";
 			$pres=dbquery("
 				SELECT
-					planet_id,
+					id,
 					planet_name,
 					planet_res_metal,
 					planet_res_crystal,
@@ -89,10 +89,10 @@ $xml = "<userbackup>
 				{
 					if ($parr['planet_user_main']==1)
 					{
-						$mainPlanet = $parr['planet_id'];
+						$mainPlanet = $parr['id'];
 					}
 					$xml.= "
-		<planet id=\"".$parr['planet_id']."\" name=\"".$parr['planet_name']."\" main=\"".$parr['planet_user_main']."\">
+		<planet id=\"".$parr['id']."\" name=\"".$parr['planet_name']."\" main=\"".$parr['planet_user_main']."\">
 			<type id=\"".$parr['planet_type_id']."\">".$parr['type_name']."</type>					
 			<metal>".intval($parr['planet_res_metal'])."</metal>
 			<crystal>".intval($parr['planet_res_crystal'])."</crystal>
@@ -111,7 +111,7 @@ $xml = "<userbackup>
 				SELECT
 					building_name,
 					buildlist_current_level,
-					buildlist_planet_id,
+					buildlist_entity_id,
 					building_id
 				FROM
 					buildings
@@ -120,14 +120,14 @@ $xml = "<userbackup>
 					ON building_id = buildlist_building_id
 					AND buildlist_user_id='".$this->userId."'
 				ORDER BY
-					buildlist_planet_id;
+					buildlist_entity_id;
 			");
 			if (mysql_num_rows($bres)>0)
 			{
 				while ($barr=mysql_fetch_array($bres))
 				{
 					$xml.="
-		<building planet=\"".$barr['buildlist_planet_id']."\" id=\"".$barr['building_id']."\" level=\"".$barr['buildlist_current_level']."\">".$barr['building_name']."</building>";
+		<building planet=\"".$barr['buildlist_entity_id']."\" id=\"".$barr['building_id']."\" level=\"".$barr['buildlist_current_level']."\">".$barr['building_name']."</building>";
 				}
 			}
 			$xml.="
@@ -164,7 +164,7 @@ $xml = "<userbackup>
 					ship_name,
 					ship_id,
 					shiplist_count,
-					shiplist_planet_id
+					shiplist_entity_id
 				FROM
 					shiplist
 				INNER JOIN
@@ -173,14 +173,14 @@ $xml = "<userbackup>
 					AND shiplist_user_id='".$this->userId."'
 					AND shiplist_count>0
 				ORDER BY
-					shiplist_planet_id;
+					shiplist_entity_id;
 			");
 			if (mysql_num_rows($sres)>0)
 			{
 				while ($sarr=mysql_fetch_array($sres))
 				{
 					$xml.="
-		<ship planet=\"".$sarr['shiplist_planet_id']."\" id=\"".$sarr['ship_id']."\" count=\"".$sarr['shiplist_count']."\">".$sarr['ship_name']."</ship>";
+		<ship planet=\"".$sarr['shiplist_entity_id']."\" id=\"".$sarr['ship_id']."\" count=\"".$sarr['shiplist_count']."\">".$sarr['ship_name']."</ship>";
 				}
 			}
 			//Flotten und deren Schiffe
@@ -228,7 +228,7 @@ $xml = "<userbackup>
 					d.def_name,
 					d.def_id,
 					dl.deflist_count,
-					dl.deflist_planet_id
+					dl.deflist_entity_id
 				FROM
 					defense AS d
 				INNER JOIN
@@ -237,14 +237,14 @@ $xml = "<userbackup>
 					AND dl.deflist_user_id='".$this->userId."'
 					AND deflist_count>0
 				ORDER BY
-					dl.deflist_planet_id;
+					dl.deflist_entity_id;
 			");
 			if (mysql_num_rows($dres)>0)
 			{
 				while ($darr=mysql_fetch_array($dres))
 				{
 					$xml.="
-		<defense planet=\"".$darr['deflist_planet_id']."\" id=\"".$darr['def_id']."\" count=\"".$darr['deflist_count']."\">".$darr['def_name']."</defense>";
+		<defense planet=\"".$darr['deflist_entity_id']."\" id=\"".$darr['def_id']."\" count=\"".$darr['deflist_count']."\">".$darr['def_name']."</defense>";
 				}
 			}
 			$xml.="

@@ -95,8 +95,8 @@
 			$parr = mysql_fetch_array($pres);
 			
 			//Bewohner überprüfen
-			$people_total_arr=mysql_fetch_array(dbquery("SELECT planet_people FROM ".$db_table['planets']." WHERE planet_id=".$c->id." AND planet_user_id=".$s['user']['id'].""));
-			$people_working_arr=mysql_fetch_row(dbquery("SELECT SUM(buildlist_people_working) FROM ".$db_table['buildlist']." WHERE buildlist_planet_id='".$c->id."';"));
+			$people_total_arr=mysql_fetch_array(dbquery("SELECT planet_people FROM ".$db_table['planets']." WHERE id=".$c->id." AND planet_user_id=".$s['user']['id'].""));
+			$people_working_arr=mysql_fetch_row(dbquery("SELECT SUM(buildlist_people_working) FROM ".$db_table['buildlist']." WHERE buildlist_entity_id='".$c->id."';"));
 			$people_free = $people_total_arr['planet_people']-$people_working_arr[0]-$_SESSION['haven']['fleet']['total_pilots'];
 			if ($people_free>=0)
 			{
@@ -111,7 +111,7 @@
 						$scnt=0;
 						foreach ($_SESSION['haven']['ships'] as $id=>$cnt)
 						{
-							$res = dbquery("SELECT shiplist_count FROM ".$db_table['shiplist']." WHERE shiplist_ship_id=$id AND shiplist_user_id=".$s['user']['id']." AND shiplist_planet_id='".$c->id."';");
+							$res = dbquery("SELECT shiplist_count FROM ".$db_table['shiplist']." WHERE shiplist_ship_id=$id AND shiplist_user_id=".$s['user']['id']." AND shiplist_entity_id='".$c->id."';");
 							$arr = mysql_fetch_array($res);
 							$_SESSION['haven']['ships'][$id] = min(abs($_SESSION['haven']['ships'][$id]),$arr['shiplist_count']);
 							$scnt+=$_SESSION['haven']['ships'][$id];
@@ -122,7 +122,7 @@
 			  				$c->changeRes(0,0,0,-$_SESSION['haven']['fleettotal']['flight_costs'],-$_SESSION['haven']['fleettotal']['flight_food']);
 	
 							// Piloten abziehen
-							dbquery("UPDATE ".$db_table['planets']." SET planet_people=planet_people-".$_SESSION['haven']['fleet']['total_pilots']." WHERE planet_id='".$c->id."';");
+							dbquery("UPDATE ".$db_table['planets']." SET planet_people=planet_people-".$_SESSION['haven']['fleet']['total_pilots']." WHERE id='".$c->id."';");
 	
 							//Rechnet die Kapazität von Gassaugern und Asteroidensammler
 	                        $capacity_nebula=0;
@@ -303,7 +303,7 @@
 	                            ,'".$c->solsys_id."',
 	                            '".$parr['cell_id']."',
 	                            '".$c->id."',
-	                            '".$parr['planet_id']."',
+	                            '".$parr['id']."',
 	                            '".$launchtime."',
 	                            '".$landtime."',";
 	                            if ($wormhole)
@@ -370,7 +370,7 @@
 	                            FROM
 	                                ".$db_table['shiplist']."
 	                            WHERE
-	                            	shiplist_planet_id='".$c->id."'
+	                            	shiplist_entity_id='".$c->id."'
 	                                AND shiplist_ship_id='".$id."'
 	                                AND shiplist_user_id='".$s['user']['id']."'                              
 	                                AND shiplist_special_ship='1';");
@@ -434,7 +434,7 @@
 	                                    '".$cnt."');");                            
 	                            }
 	                                
-								dbquery("UPDATE ".$db_table['shiplist']." SET shiplist_count=shiplist_count-$cnt WHERE shiplist_ship_id=$id AND shiplist_user_id=".$s['user']['id']." AND shiplist_planet_id='".$c->id."';");
+								dbquery("UPDATE ".$db_table['shiplist']." SET shiplist_count=shiplist_count-$cnt WHERE shiplist_ship_id=$id AND shiplist_user_id=".$s['user']['id']." AND shiplist_entity_id='".$c->id."';");
 							}
 	
 							// Rohstoffe vom Planetenkonto abziehen (falls nicht abholen gewählt ist)
@@ -451,7 +451,7 @@
 		                            planet_res_food=planet_res_food-".$r[4].",
 		                            planet_people=planet_people-".$fleet_people."
 								WHERE 
-									planet_id='".$c->id."';");
+									id='".$c->id."';");
 							}
 	
 							echo "Die Schiffe starteten erfolgreich und sind nun unterwegs!<br/><br/>";

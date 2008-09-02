@@ -21,7 +21,7 @@
 					shiplist_count=shiplist_count+".max($cnt,0)."
 				WHERE
 					shiplist_user_id='".$this->userId."'
-					AND shiplist_planet_id='".$this->entityId."'
+					AND shiplist_entity_id='".$this->entityId."'
 					AND shiplist_ship_id='".$shipId."';
 			");			
 			if(mysql_affected_rows()==0)
@@ -31,7 +31,7 @@
 					shiplist
 					(
 						shiplist_user_id,
-						shiplist_planet_id,
+						shiplist_entity_id,
 						shiplist_ship_id,
 						shiplist_count
 					)

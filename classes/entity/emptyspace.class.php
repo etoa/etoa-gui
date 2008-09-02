@@ -15,18 +15,24 @@
 		public $cx;
 		public $cy;
 		protected $cellId;
+		protected $exploreCode;
+		public $explore;
 		
 		/**
 		* The constructor
 		*/
-		function EmptySpace($id=0)
+		function EmptySpace($id=0,$explore='e')
 		{
 			$this->isValid = true;
 			$this->id = $id;
 			$this->pos = 0;
 			$this->name = "Unbenannt";
 			$this->coordsLoaded=false;
-      $this->isVisible = true;
+    		$this->isVisible = true;
+			$this->exploreCode = $explore;
+			$this->explore = Explore::createFactory($this->exploreCode,$this->id);
+			
+			
 		}
 
     public function allowedFleetActions()
@@ -55,6 +61,11 @@
 		*/                        
 		function ownerId() { return 0; }      
 	
+		/**
+		* Return Explore object
+		*/
+		function explore() { return $this->explore; }
+		
 		/**
 		* Returns type string
 		*/                        

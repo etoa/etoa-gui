@@ -42,7 +42,7 @@
 					SET
 						missilelist_count=missilelist_count+".$marr['obj_cnt']."
 					WHERE
-						missilelist_planet_id=".$arr['flight_planet_from']."							
+						missilelist_entity_id=".$arr['flight_planet_from']."							
 						AND missilelist_missile_id=".$marr['obj_missile_id']."								
 					;");
 				}
@@ -149,7 +149,7 @@
 				INNER JOIN	
 					missiles
 					ON missilelist_missile_id=missile_id
-					AND missilelist_planet_id=".$tid."
+					AND missilelist_entity_id=".$tid."
 					AND missile_def>0
 				;");
 				$dm = array();
@@ -238,7 +238,7 @@
 					INNER JOIN
 						defense
 						ON deflist_def_id=def_id
-						AND deflist_planet_id=".$tid."	
+						AND deflist_entity_id=".$tid."	
 						AND deflist_count>0
 					");
 					if (mysql_num_rows($dres)>0)
@@ -314,7 +314,7 @@
 								SET 
 									deflist_count=0 
 								WHERE
-									deflist_planet_id=".$tid.";");
+									deflist_entity_id=".$tid.";");
 							}
 						}
 						else
@@ -341,7 +341,7 @@
 							INNER JOIN
 								buildings
 								ON building_id=buildlist_building_id
-								AND buildlist_planet_id=".$tid."
+								AND buildlist_entity_id=".$tid."
 								AND buildlist_current_level > 0
 								AND (
 								buildlist_building_id='".FLEET_CONTROL_ID."' 

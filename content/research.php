@@ -107,7 +107,7 @@
 				FROM 
 					buildlist 
 				WHERE  
-					buildlist_planet_id='".$cp->id()."'
+					buildlist_entity_id='".$cp->id()."'
 				;");
 			while ($blarr = mysql_fetch_array($blres))
 			{
@@ -174,7 +174,7 @@
 						$b_status = $techlist[$arr['tech_id']]['techlist_build_type'];
 						$start_time = $techlist[$arr['tech_id']]['techlist_build_start_time'];
 						$end_time = $techlist[$arr['tech_id']]['techlist_build_end_time'];
-						$planet_id = $techlist[$arr['tech_id']]['techlist_planet_id'];
+						$planet_id = $techlist[$arr['tech_id']]['techlist_entity_id'];
 					}
 					// Gebäude wurde noch nicht gebaut. Es werden Default Werte vergeben
 					else
@@ -241,7 +241,7 @@
 		                  techlist_build_type='3',
 		                  techlist_build_start_time='".time()."',
 		                  techlist_build_end_time='".$end_time."',
-		                  techlist_planet_id='".$cp->id()."'
+		                  techlist_entity_id='".$cp->id()."'
 										WHERE
 											techlist_tech_id='".$arr['tech_id']."'
 											AND techlist_user_id='".$cu->id()."';");
@@ -252,7 +252,7 @@
 										INSERT INTO 
 										techlist 
 										(
-											techlist_planet_id,
+											techlist_entity_id,
 											techlist_build_type,
 											techlist_build_start_time,
 											techlist_build_end_time,

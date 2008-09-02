@@ -78,7 +78,7 @@
 		ON
 	    s.ship_id=sl.shiplist_ship_id
 			AND sl.shiplist_user_id='".$fleet->ownerId()."'
-			AND sl.shiplist_planet_id='".$fleet->sourceEntity->Id()."'
+			AND sl.shiplist_entity_id='".$fleet->sourceEntity->Id()."'
 	    AND sl.shiplist_count>0
 		ORDER BY
 			s.special_ship DESC,

@@ -107,7 +107,7 @@
 	                    ON deflist_def_id=def_id
 	                    AND deflist_count>0
 	                    AND def_jam=1
-	                    AND deflist_planet_id=".$target->id().";                  
+	                    AND deflist_entity_id=".$target->id().";                  
 	                  ");
 	                  $op_jam = 0;
 	                  if (mysql_num_rows($jres)>0)
@@ -436,7 +436,7 @@
 										  SET
 											  buildlist_cooldown=".$cd."
 										  WHERE
-									  	  buildlist_planet_id='".$cp->id()."'
+									  	  buildlist_entity_id='".$cp->id()."'
 									  	  AND buildlist_building_id='".BUILD_CRYPTO_ID."'
 									  	  AND buildlist_user_id='".$cu->id()."'");
 									    

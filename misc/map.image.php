@@ -41,7 +41,7 @@
 	{                        
 		$aid=$_SESSION[ROUNDID]['user']['alliance_id'];
 		$res=dbquery("SELECT cell_sx, cell_cx, cell_sy, cell_cy,
-		COUNT(planet_id) AS cnt
+		COUNT(id) AS cnt
 		FROM space_cells,
 		planets,
 		users
@@ -72,7 +72,7 @@
 	{
 		$uid=$_SESSION[ROUNDID]['user']['id'];
 		$res=dbquery("SELECT cell_sx, cell_cx, cell_sy, cell_cy,
-		COUNT(planet_id) AS cnt
+		COUNT(id) AS cnt
 		FROM space_cells,
 		planets
 		WHERE

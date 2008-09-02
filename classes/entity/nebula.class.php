@@ -14,19 +14,23 @@
 		public $cx;
 		public $cy;
 		protected $cellId;
-		private $name;		
+		private $name;	
+		protected $exploreCode;	
+		public $explore;
 		
 		/**
 		* The constructor
 		*/
-		function Nebula($id=0)
+		function Nebula($id=0,$explore='e')
 		{
 			$this->isValid = true;
 			$this->id = $id;
 			$this->pos = 0;
 			$this->name = "Unbenannt";
 			$this->coordsLoaded=false;			
-      $this->isVisible = true;
+      		$this->isVisible = true;
+			$this->exploreCode = $explore;
+			$this->explore = Explore::createFactory($this->exploreCode,$this->id);
 		}
 
     public function allowedFleetActions()
@@ -79,6 +83,11 @@
 		* Returns type
 		*/
 		function entityCode() { return "n"; }	      
+		
+		/**
+		* Return Explore object
+		*/
+		function explore() { return $this->explore; }
 		
 		/**
 		* To-String function

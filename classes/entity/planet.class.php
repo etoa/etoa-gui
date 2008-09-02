@@ -9,13 +9,17 @@
 	{
 		protected $isValid;
 		protected $coordsLoaded;
+		protected $exploreCode;
+		public $explore;
 		
 		/**
 		* Constructor
 		* Erwartet ein Array mit dem Inhalt des MySQL-Datensatzes, oder die ID eines Planeten
 		*/
-		function Planet($arr=null)
+		function Planet($arr=null,$explore='e')
 		{
+			$this->exploreCode = 'e';
+			$this->explore = false;
 			$this->isValid = false;
       $this->isVisible = true;
 			
@@ -242,6 +246,11 @@
 		{
 			return "p";
 		}
+		
+		/**
+		* Return Explore object
+		*/
+		function explore() { return $this->explore; }
 
 		function entityCodeString()
 		{
@@ -656,7 +665,7 @@
 			SET
 				buildlist_user_id='".$this->userId."'
 			WHERE
-				buildlist_planet_id='".$this->id."';
+				buildlist_entity_id='".$this->id."';
 			");
 	
 	
@@ -665,13 +674,13 @@
 				DELETE FROM
 					shiplist
 				WHERE
-					shiplist_planet_id='".$this->id."';
+					shiplist_entity_id='".$this->id."';
 			");
 	    dbquery("
 				DELETE FROM
 					ship_queue
 				WHERE
-					queue_planet_id='".$this->id."';
+					queue_entity_id='".$this->id."';
 			");		
 			
 	
@@ -681,13 +690,13 @@
 				DELETE FROM
 					deflist
 				WHERE
-					deflist_planet_id='".$this->id."';
+					deflist_entity_id='".$this->id."';
 			");
 	    dbquery("
 				DELETE FROM
 					def_queue
 				WHERE
-					queue_planet_id='".$this->id."';
+					queue_entity_id='".$this->id."';
 			");
 	
 		}		

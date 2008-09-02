@@ -20,15 +20,19 @@
 		protected $cx;
 		protected $cy;				
 		protected $cellId;
+		protected $exploreCode;
+		public $explore;
 		
 		/**
 		* The constructor
 		*/
-		function Star($id=0)
+		function Star($id=0,$explore='e')
 		{
 			$this->isValid=false;
 			$this->coordsLoaded=false;
-      $this->isVisible = true;
+     		$this->isVisible = true;
+			$this->exploreCode = $explore;
+			$this->explore = Explore::createFactory($this->exploreCode,$id);
 						
 			$res=dbquery("
 			SELECT 
@@ -124,6 +128,10 @@
 		*/
 		function entityCode() { return "s"; }	      
 		
+		/**
+		* Return Explore object
+		*/
+		function explore() { return $this->explore; }
 		/**
 		* To-String function
 		*/

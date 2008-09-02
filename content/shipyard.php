@@ -57,7 +57,7 @@
   FROM
   	buildlist
   WHERE
-  	buildlist_planet_id='".$cp->id."'
+  	buildlist_entity_id='".$cp->id."'
   	AND buildlist_building_id='".SHIPYARD_ID."'
   	AND buildlist_current_level>='1'
   	AND buildlist_user_id='".$cu->id()."'");
@@ -160,7 +160,7 @@
 			FROM 
 				buildlist 
 			WHERE 
-				buildlist_planet_id='".$cp->id."';");
+				buildlist_entity_id='".$cp->id."';");
 			while ($arr = mysql_fetch_assoc($res))
 			{
 				$buildlist[$arr['buildlist_building_id']]=$arr['buildlist_current_level'];
@@ -170,7 +170,7 @@
 			$res = dbquery("
 			SELECT
 				shiplist_ship_id,
-				shiplist_planet_id,
+				shiplist_entity_id,
     		shiplist_count
 			FROM
     		shiplist
@@ -178,7 +178,7 @@
   			shiplist_user_id='".$cu->id()."';");
 			while ($arr = mysql_fetch_assoc($res))
 			{
-				$shiplist[$arr['shiplist_ship_id']][$arr['shiplist_planet_id']]=$arr['shiplist_count'];
+				$shiplist[$arr['shiplist_ship_id']][$arr['shiplist_entity_id']]=$arr['shiplist_count'];
 			}
 
 			// Bauliste vom aktuellen Planeten laden (wird nach "Abbrechen" nochmals geladen)
@@ -193,7 +193,7 @@
 			FROM
     		ship_queue
 			WHERE
-  			queue_planet_id='".$cp->id."'
+  			queue_entity_id='".$cp->id."'
   			AND queue_endtime>'".$time."'
     	ORDER BY
 				queue_starttime ASC;");
@@ -562,7 +562,7 @@
     	        ".$db_table['ship_queue']."
     	            (queue_user_id,
     	            queue_ship_id,
-    	            queue_planet_id,
+    	            queue_entity_id,
     	            queue_cnt,
     	            queue_starttime,
     	            queue_endtime,
@@ -703,7 +703,7 @@
 						".$db_table['ship_queue']."
 					WHERE
 						queue_starttime>='".$end_time."'
-						AND queue_planet_id='".$cp->id."'
+						AND queue_entity_id='".$cp->id."'
 					ORDER BY
 						queue_starttime ASC
 					;");

@@ -51,7 +51,7 @@
 		
 		$cell = new Cell($ent->cellId());
 		
-		if ($cu->discovered($cell->absX(),$cell->absY()))
+		if ($cu->discovered($cell->absX(),$cell->absY())>0)
 		{						
 		
 			if ($ent->isValid())

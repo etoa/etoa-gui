@@ -240,7 +240,7 @@
               echo "<td class=\"tbldata\" width=\"60%\">Asteroidenfeld (".$parr['cell_sx']."/".$parr['cell_sy']." : ".$parr['cell_cx']."/".$parr['cell_cy'].")</td></tr>";
           else
               echo "<td class=\"tbldata\" width=\"60%\">".$parr['cell_sx']."/".$parr['cell_sy']." : ".$parr['cell_cx']."/".$parr['cell_cy']." : ".$parr['planet_solsys_pos']."</td></tr>";
-          if ($parr['planet_id']>0)
+          if ($parr['id']>0)
           {
               echo "<tr><td class=\"tbltitle\" width=\"40%\">Besitzer:</td>";
               if ($parr['planet_user_id']!=0)
@@ -272,7 +272,7 @@
           echo "<td class=\"tbldata\">";
           
           // Start & Ziel sind identisch
-          if ($c->id==$parr['planet_id'])
+          if ($c->id==$parr['id'])
           {
               if ($wreckage)
                   echo "<input type=\"radio\" name=\"fleet_action\" value=\"wo\" checked=\"checked\"> Tr&uuml;mmer einsammeln<br/>";
@@ -413,7 +413,7 @@
               }
               elseif ($_SESSION['haven']['fleet']['can_colonialize']==1)
               {
-                  if (mysql_num_rows(dbquery("SELECT planet_id FROM ".$db_table['planets']." WHERE planet_user_id='".$s['user']['id']."';"))<=USER_MAX_PLANETS)
+                  if (mysql_num_rows(dbquery("SELECT id FROM ".$db_table['planets']." WHERE planet_user_id='".$s['user']['id']."';"))<=USER_MAX_PLANETS)
                       echo "<input type=\"radio\" name=\"fleet_action\" value=\"ko\" checked=\"checked\"> Kolonie errichten<br/>";
                   else
                   {

@@ -218,13 +218,10 @@
 			}	
 			
 			$pos = $absX + ($cy_num*$sy_num)*($absY-1)-1;
-
-			if ($this->dmask{$pos}=='1')
-				return true;
-			return false;		
+			return ($this->dmask{$pos}%4);		
 		}
 		
-		function setDiscovered($absX,$absY,$save=1)
+		function setDiscovered($absX,$absY,$owner=1,$save=1)
 		{
 			$cfg = Config::getInstance();
 			$sx_num=$cfg->param1('num_of_sectors');
@@ -239,7 +236,14 @@
 					$pos = $x + ($cy_num*$sy_num)*($y-1)-1;
 					if ($pos>= 0 && $pos <= $sx_num*$sy_num*$cx_num*$cy_num)
 					{
-						$this->dmask{$pos} = '1';				
+						if ($owner==1)
+						{
+							$this->dmask{$pos} = '5';				
+						}
+						else
+						{
+							$this->dmask{$pos} = '1';
+						}
 					}
 				}
 			}	

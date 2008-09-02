@@ -325,7 +325,7 @@
             SELECT
                 SUM(planet_res_metal) AS sum,
                 AVG(planet_res_metal) AS avg,
-                COUNT(planet_id) AS cnt
+                COUNT(id) AS cnt
             FROM
                 ".$db_table['planets']."
             INNER JOIN
@@ -347,7 +347,7 @@
             SELECT
                 SUM(planet_res_crystal) AS sum,
                 AVG(planet_res_crystal) AS avg,
-                COUNT(planet_id) AS cnt
+                COUNT(id) AS cnt
             FROM
                 ".$db_table['planets']."
             INNER JOIN
@@ -369,7 +369,7 @@
             SELECT
                 SUM(planet_res_plastic) AS sum,
                 AVG(planet_res_plastic) AS avg,
-                COUNT(planet_id) AS cnt
+                COUNT(id) AS cnt
             FROM
                 ".$db_table['planets']."
             INNER JOIN
@@ -391,7 +391,7 @@
             SELECT
                 SUM(planet_res_fuel) AS sum,
                 AVG(planet_res_fuel) AS avg,
-                COUNT(planet_id) AS cnt
+                COUNT(id) AS cnt
             FROM
                 ".$db_table['planets']."
             INNER JOIN
@@ -413,7 +413,7 @@
             SELECT
                 SUM(planet_res_food) AS sum,
                 AVG(planet_res_food) AS avg,
-                COUNT(planet_id) AS cnt
+                COUNT(id) AS cnt
             FROM
                 ".$db_table['planets']."
             INNER JOIN

@@ -26,7 +26,7 @@
 					(
 						buildlist_building_id,
 						buildlist_user_id,
-						buildlist_planet_id,
+						buildlist_entity_id,
 						buildlist_current_level						
 					)
 					VALUES
@@ -58,7 +58,7 @@
 					(
 						techlist_tech_id,
 						techlist_user_id,
-						techlist_planet_id,
+						techlist_entity_id,
 						techlist_current_level						
 					)
 					VALUES
@@ -90,7 +90,7 @@
 					(
 						shiplist_ship_id,
 						shiplist_user_id,
-						shiplist_planet_id,
+						shiplist_entity_id,
 						shiplist_count						
 					)
 					VALUES
@@ -122,7 +122,7 @@
 					(
 						deflist_def_id,
 						deflist_user_id,
-						deflist_planet_id,
+						deflist_entity_id,
 						deflist_count						
 					)
 					VALUES

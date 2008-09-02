@@ -444,13 +444,11 @@
 						INSERT INTO
 							space
 						(
-							id,
-							lastvisited
+							id
 						)
 						VALUES
 						(
-							".$eid.",
-							0
+							".$eid."
 						);
 					";
 					dbquery($sql);	
@@ -543,7 +541,53 @@
 				");
 				echo mysql_error();
 			} 
-	
+			
+			echo "Platziere Marktplatz...<br />";
+			dbquery("
+				UPDATE
+					entities
+				SET
+					code='m'
+				WHERE
+					code='e'
+				ORDER BY
+					RAND()
+				LIMIT
+					1;");
+			dbquery("
+				DELETE FROM
+					spaces
+				WHERE
+					id='".ysql_insert_id()."'
+				LIMIT
+					1;");
+					
+			echo "Erstelle Piraten, Aliens, Schiffe,..<br />";
+			$res = dbquery("
+							SELECT
+								id,
+								code
+							FROM
+								entities
+							ORDER BY
+								RAND();");
+			while ($arr=mysql_fetch_array($res)) {
+				
+				dbquery("
+						UPDATE
+							entities
+						SET
+							explore_code='".$code."'
+						WHERE
+							id='".$arr["id"]."'
+						LIMIT
+							1;");
+			}
+				
+			
+			
+			
+					
 			echo "Universum erstellt!<br> $sol_count Sonnensysteme mit $planet_count Planeten, $asteroids_count Asteroidenfelder, $nebula_count Nebel und $wormhole_count Wurmlöcher!";
 	
 		}	

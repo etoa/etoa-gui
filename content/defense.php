@@ -79,7 +79,7 @@
   FROM
   	".$db_table['buildlist']."
   WHERE
-  	buildlist_planet_id='".$cp->id()."'
+  	buildlist_entity_id='".$cp->id()."'
   	AND buildlist_building_id='".FACTORY_ID."'
   	AND buildlist_current_level>='1'
   	AND buildlist_user_id='".$cu->id()."'");
@@ -102,7 +102,7 @@
   	defense
   ON
   	deflist_def_id=def_id
-  	AND deflist_planet_id=".$cp->id()."
+  	AND deflist_entity_id=".$cp->id()."
   	AND deflist_count>0;");
   if (mysql_num_rows($res)>0)
   {
@@ -275,7 +275,7 @@
 			INNER JOIN
   			".$db_table['defense']."
   		  ON queue_def_id=def_id
-  		  AND queue_planet_id='".$cp->id()."'
+  		  AND queue_entity_id='".$cp->id()."'
   		  AND queue_endtime>'".time()."'
 				AND queue_user_id='".$cu->id()."'
 			;");
@@ -452,7 +452,7 @@
 				FROM
 					".$db_table['def_queue']."
 				WHERE
-  				queue_planet_id='".$cp->id()."'
+  				queue_entity_id='".$cp->id()."'
   				AND queue_user_id='".$cu->id()."'
   			ORDER BY
   				queue_endtime DESC
@@ -599,7 +599,7 @@
     	        ".$db_table['def_queue']."
     	            (queue_user_id,
     	            queue_def_id,
-    	            queue_planet_id,
+    	            queue_entity_id,
     	            queue_cnt,
     	            queue_starttime,
     	            queue_endtime,
@@ -711,7 +711,7 @@
 	  		  ON queue_def_id=def_id
 					AND queue_id='".intval($_GET['cancel'])."'
 					AND queue_user_id='".$cu->id()."'
-					AND queue_planet_id='".$cp->id()."'
+					AND queue_entity_id='".$cp->id()."'
 					AND queue_endtime>'".$time."'
 				;");
 				if (mysql_num_rows($qres)>0)
@@ -744,7 +744,7 @@
 					WHERE
 						queue_starttime>='".$qarr['queue_endtime']."'
 						AND queue_user_id='".$cu->id()."'
-						AND queue_planet_id='".$cp->id()."'
+						AND queue_entity_id='".$cp->id()."'
 					ORDER BY
 						queue_starttime
 					;");
@@ -820,7 +820,7 @@
     		".$db_table['defense']."
     		ON
     		queue_def_id=def_id
-  			AND queue_planet_id='".$cp->id()."'
+  			AND queue_entity_id='".$cp->id()."'
   			AND queue_user_id='".$cu->id()."'
   			AND queue_endtime>'".$time."'
     	ORDER BY
@@ -956,7 +956,7 @@
 			FROM 
 				".$db_table['buildlist']." 
 			WHERE 
-				buildlist_planet_id='".$cp->id()."' 
+				buildlist_entity_id='".$cp->id()."' 
 				AND buildlist_user_id='".$cu->id()."';");
 			while ($arr = mysql_fetch_array($res))
 			{
@@ -1008,7 +1008,7 @@
     			LEFT JOIN
     				".$db_table['deflist']."
   					ON deflist_def_id=def_id
-  					AND deflist_planet_id='".$cp->id()."'
+  					AND deflist_entity_id='".$cp->id()."'
   	        AND deflist_user_id='".$cu->id()."'
    				WHERE
     				def_buildable='1'
@@ -1076,7 +1076,7 @@
     			      FROM
     			          ".$db_table['deflist']."
     			      WHERE
-    			      		deflist_planet_id='".$cp->id()."'
+    			      		deflist_entity_id='".$cp->id()."'
     			          AND deflist_def_id='".$darr['def_id']."'
     			          AND deflist_user_id='".$cu->id()."';");
     			      if (mysql_num_rows($check_res1)>0)

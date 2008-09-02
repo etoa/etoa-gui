@@ -54,7 +54,11 @@
       elseif (file_exists($dir.'/fleetaction/'.$file))
       {
         include_once($dir.'/fleetaction/'.$file);
-      }      
+      }
+      elseif (file_exists($dir.'/explore/'.$file))
+      {
+        include_once($dir.'/explore/'.$file);
+      }    
       else
       {
 	    	echo "Class ".$class_name." not found (".$dir."/".$file.")!\n\n";
@@ -457,7 +461,7 @@
 			FROM
 				".$db_table['planets']."
 			WHERE
-				planet_id='".$pid."';
+				id='".$pid."';
 		");
 		if (mysql_num_rows($res)>0)
 		{
@@ -553,7 +557,7 @@
 				".$db_table['planets']." AS p
 				INNER JOIN ".$db_table['space_cells']." AS c
 				ON p.planet_solsys_id = c.cell_id
-				AND p.planet_id='".$planet_id."';
+				AND p.id='".$planet_id."';
 		");
 		$arr = mysql_fetch_assoc($res);
 		$coords = $arr['cell_sx']."/".$arr['cell_sy']." : ".$arr['cell_cx']."/".$arr['cell_cy']." : ".$arr['planet_solsys_pos'];
@@ -602,7 +606,7 @@
 				".$db_table['planets']." AS p
 				INNER JOIN ".$db_table['space_cells']." AS c
 				ON p.planet_solsys_id = c.cell_id
-				AND p.planet_id='".$planet_id."';
+				AND p.id='".$planet_id."';
 		");
 		$arr = mysql_fetch_assoc($res);
 		$coords = $arr['cell_sx']."/".$arr['cell_sy']." : ".$arr['cell_cx']."/".$arr['cell_cy']." : ".$arr['planet_solsys_pos'];
@@ -1413,7 +1417,7 @@ die Spielleitung";
 			//
 			$pres=dbquery("
 				SELECT
-					planet_id,
+					id,
 					planet_name,
 					planet_res_metal,
 					planet_res_crystal,
@@ -1432,12 +1436,12 @@ die Spielleitung";
 					//löscht alle markt-handelschiffe die auf dem weg zu dem user sind
                     $fres2=dbquery("
 						SELECT
-							fleet_id
+							id
 						FROM
 							".$db_table['fleet']."
 						WHERE
-							fleet_planet_to='".$parr['planet_id']."'
-							AND (fleet_action='".FLEET_ACTION_RESS."' OR fleet_action='".FLEET_ACTION_SHIP."');
+							entity_to='".$parr['id']."'
+							AND (action='".FLEET_ACTION_RESS."' OR action='".FLEET_ACTION_SHIP."');
 					");
                     if (mysql_num_rows($fres2)>0)
                     {
@@ -1448,12 +1452,12 @@ die Spielleitung";
 								DELETE FROM
 									".$db_table['fleet_ships']."
 								WHERE
-									fs_fleet_id='".$farr2['fleet_id']."';
+									fs_fleet_id='".$farr2['id']."';
 							");
                         }
                     }
 					//Setzt Planet zurück
-					reset_planet($parr['planet_id']);
+					reset_planet($parr['id']);
 				}
 			}
 
@@ -1774,19 +1778,19 @@ die Spielleitung";
 				DELETE FROM
 					".$db_table['shiplist']."
 				WHERE
-					shiplist_planet_id='".$planet_id."';
+					shiplist_entity_id='".$planet_id."';
 			");
 			dbquery("
 				DELETE FROM
 					".$db_table['buildlist']."
 				WHERE
-					buildlist_planet_id='".$planet_id."';
+					buildlist_entity_id='".$planet_id."';
 			");
 			dbquery("
 				DELETE FROM
 					".$db_table['deflist']."
 				WHERE
-					deflist_planet_id='".$planet_id."';
+					deflist_entity_id='".$planet_id."';
 			");
 			add_log("6","Der Planet mit der ID ".$planet_id." wurde zurückgesetzt!",time());
 			return true;
@@ -2137,7 +2141,7 @@ die Spielleitung";
 				".$db_table['buildlist']."
 			WHERE
 				buildlist_user_id='".$user_id."'
-				AND buildlist_planet_id='".$planet_id."'
+				AND buildlist_entity_id='".$planet_id."'
 				AND buildlist_building_id='".$building_id."'
 				AND buildlist_deactivated>'".time()."';
 		");
@@ -2302,7 +2306,7 @@ die Spielleitung";
 						ON s.ship_id = fs.fs_ship_id
 						AND fs.fs_fleet_id='".$farr['fleet_id']."'
 						AND sl.shiplist_user_id='".$farr['fleet_user_id']."'
-						AND sl.shiplist_planet_id='".$farr['fleet_planet_from']."'
+						AND sl.shiplist_entity_id='".$farr['fleet_planet_from']."'
 						AND s.special_ship='1';
 				");
         if(mysql_num_rows($special_boni_res)>0)
@@ -2706,7 +2710,7 @@ die Spielleitung";
 					FROM
 						".$db_table['buildlist']."
 					WHERE
-						buildlist_planet_id='".$arr['auction_planet_id']."'
+						buildlist_entity_id='".$arr['auction_planet_id']."'
 						AND buildlist_building_id='".MARKTPLATZ_ID."'
 						AND buildlist_current_level>'0'
 						AND buildlist_user_id='".$arr['auction_user_id']."';");
@@ -2733,7 +2737,7 @@ die Spielleitung";
 							planet_res_fuel=planet_res_fuel+".($arr['auction_sell_fuel']*$return_factor).",
 							planet_res_food=planet_res_food+".($arr['auction_sell_food']*$return_factor)."
 						WHERE
-							planet_id='".$arr['auction_planet_id']."'
+							id='".$arr['auction_planet_id']."'
 							AND planet_user_id='".$arr['auction_user_id']."';");
 
 
@@ -3032,25 +3036,21 @@ die Spielleitung";
         dbquery("
 				INSERT INTO ".$db_table['fleet']."
 				(
-					fleet_user_id,
-					fleet_cell_from,
-					fleet_cell_to,
-					fleet_planet_from,
-					fleet_planet_to,
-					fleet_launchtime,
-					fleet_landtime,
-					fleet_action,
-					fleet_res_metal,
-					fleet_res_crystal,
-					fleet_res_plastic,
-					fleet_res_fuel,
-					fleet_res_food
+					user_id,
+					entity_from,
+					entity_to,
+					launchtime,
+					landtime,
+					action,
+					res_metal,
+					res_crystal,
+					res_plastic,
+					res_fuel,
+					res_food
 				)
 				VALUES
 				(
 					'0',
-					'0',
-					'".$arr['cell_id']."',
 					'0',
 					'".$arr['planet_id']."',
 					'".$launchtime."',
@@ -3510,7 +3510,7 @@ die Spielleitung";
 					FROM
 						".$db_table['buildlist']."
 					WHERE
-						buildlist_planet_id='".$arr['planet_id']."'
+						buildlist_entity_id='".$arr['planet_id']."'
 						AND buildlist_building_id='".MARKTPLATZ_ID."'
 						AND buildlist_current_level>'0'
 						AND buildlist_user_id='".$arr['user_id']."';");
@@ -3530,7 +3530,7 @@ die Spielleitung";
 						planet_res_fuel=planet_res_fuel+".(floor($arr['sell_fuel']*$return_factor)).",
 						planet_res_food=planet_res_food+".(floor($arr['sell_food']*$return_factor))."
 					WHERE
-						planet_id='".$arr['planet_id']."'
+						id='".$arr['planet_id']."'
 						AND planet_user_id='".$arr['user_id']."';");
 
 
@@ -3586,7 +3586,7 @@ die Spielleitung";
 					FROM
 						".$db_table['buildlist']."
 					WHERE
-						buildlist_planet_id='".$arr['planet_id']."'
+						buildlist_entity_id='".$arr['planet_id']."'
 						AND buildlist_building_id='".MARKTPLATZ_ID."'
 						AND buildlist_current_level>'0'
 						AND buildlist_user_id='".$arr['user_id']."';");
@@ -3603,7 +3603,7 @@ die Spielleitung";
 						shiplist_count=shiplist_count+'".(floor($arr['ship_count']*$return_factor))."' 
 					WHERE 
 						shiplist_user_id='".$arr['user_id']."' 
-						AND shiplist_planet_id='".$arr['planet_id']."' 
+						AND shiplist_entity_id='".$arr['planet_id']."' 
 						AND shiplist_ship_id='".$arr['ship_id']."'");
 
 
@@ -3787,7 +3787,7 @@ Forum: http://www.etoa.ch/forum";
 				".$db_table['shiplist']."
 			WHERE
 				shiplist_user_id='".$user."'
-				AND shiplist_planet_id='".$planet."'
+				AND shiplist_entity_id='".$planet."'
 				AND shiplist_ship_id='".$ship."';
 		");
 		if (mysql_num_rows($res)>0)
@@ -3799,7 +3799,7 @@ Forum: http://www.etoa.ch/forum";
 					shiplist_count=shiplist_count+".max($cnt,0)."
 				WHERE
 					shiplist_user_id='".$user."'
-					AND shiplist_planet_id='".$planet."'
+					AND shiplist_entity_id='".$planet."'
 					AND shiplist_ship_id='".$ship."';
 			");
 		}
@@ -3810,7 +3810,7 @@ Forum: http://www.etoa.ch/forum";
 				".$db_table['shiplist']."
 				(
 					shiplist_user_id,
-					shiplist_planet_id,
+					shiplist_entity_id,
 					shiplist_ship_id,
 					shiplist_count
 				)
@@ -3845,7 +3845,7 @@ Forum: http://www.etoa.ch/forum";
 				".$db_table['deflist']."
 			WHERE
 				deflist_user_id='".$user."'
-				AND deflist_planet_id='".$planet."'
+				AND deflist_entity_id='".$planet."'
 				AND deflist_def_id='".$def."';
 		");
 		if (mysql_num_rows($res)>0)
@@ -3857,7 +3857,7 @@ Forum: http://www.etoa.ch/forum";
 					deflist_count=deflist_count+".max($cnt,0)."
 				WHERE
 					deflist_user_id='".$user."'
-					AND deflist_planet_id='".$planet."'
+					AND deflist_entity_id='".$planet."'
 					AND deflist_def_id='".$def."';
 			");
 		}
@@ -3868,7 +3868,7 @@ Forum: http://www.etoa.ch/forum";
 				".$db_table['deflist']."
 				(
 					deflist_user_id,
-					deflist_planet_id,
+					deflist_entity_id,
 					deflist_def_id,
 					deflist_count
 				)
@@ -3902,7 +3902,7 @@ Forum: http://www.etoa.ch/forum";
 				missilelist
 			WHERE
 				missilelist_user_id='".$user."'
-				AND missilelist_planet_id='".$planet."'
+				AND missilelist_entity_id='".$planet."'
 				AND missilelist_missile_id='".$ship."';
 		");
 		if (mysql_num_rows($res)>0)
@@ -3914,7 +3914,7 @@ Forum: http://www.etoa.ch/forum";
 					missilelist_count=missilelist_count+".max($cnt,0)."
 				WHERE
 					missilelist_user_id='".$user."'
-					AND missilelist_planet_id='".$planet."'
+					AND missilelist_entity_id='".$planet."'
 					AND missilelist_missile_id='".$ship."';
 			");
 		}
@@ -3925,7 +3925,7 @@ Forum: http://www.etoa.ch/forum";
 				missilelist
 				(
 					missilelist_user_id,
-					missilelist_planet_id,
+					missilelist_entity_id,
 					missilelist_missile_id,
 					missilelist_count
 				)
@@ -4034,7 +4034,7 @@ Forum: http://www.etoa.ch/forum";
 		// User-Planeten aktualisieren
 		$res=dbquery("
 			SELECT
-				planet_id
+				id
 			FROM
 				".$db_table['planets']."
 			WHERE
@@ -4068,7 +4068,7 @@ Forum: http://www.etoa.ch/forum";
 		// User-Planeten aktualisieren
 		$res=dbquery("
 			SELECT
-				planet_id
+				id
 			FROM
 				".$db_table['planets']."
 			WHERE
@@ -4103,7 +4103,7 @@ Forum: http://www.etoa.ch/forum";
 		// Gasplanet-Update
 		$res=dbquery("
 			SELECT
-				planet_id,
+				id,
 				planet_res_fuel,
 				planet_fields,
 				planet_last_updated
@@ -4128,7 +4128,7 @@ Forum: http://www.etoa.ch/forum";
 						planet_res_fuel='".$fuel."',
 						planet_last_updated='".$time."'
 					WHERE
-						planet_id='".$arr['planet_id']."';
+						id='".$arr['planet_id']."';
 				");
 			}
 		}
@@ -4444,7 +4444,7 @@ Forum: http://www.etoa.ch/forum";
 			cell_cx,
 			cell_cy,
 			cell_id,
-			planet_id,
+			id,
 			planet_solsys_pos,
 			planet_user_id
 		FROM
@@ -4452,7 +4452,7 @@ Forum: http://www.etoa.ch/forum";
 		INNER JOIN
 			space_cells
 			ON planet_solsys_id=cell_id
-			AND planet_id='".$id."'				
+			AND id='".$id."'				
 		");
 		if (mysql_num_rows($res)>0)
 		{

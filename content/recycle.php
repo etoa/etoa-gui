@@ -95,7 +95,7 @@
             		ON
                 ships.ship_id=shiplist.shiplist_ship_id
                 AND shiplist.shiplist_user_id='".$cu->id()."'
-                AND shiplist.shiplist_planet_id='".$cp->id()."'
+                AND shiplist.shiplist_entity_id='".$cp->id()."'
                 AND shiplist.shiplist_ship_id='".$id."';");
             if (mysql_num_rows($res)>0)
             {
@@ -114,7 +114,7 @@
                 SET
                     shiplist_count=shiplist_count-".$num."
                 WHERE
-                    shiplist_planet_id='".$cp->id()."'
+                    shiplist_entity_id='".$cp->id()."'
                     AND shiplist_ship_id='".$id."'
                     AND shiplist_user_id='".$cu->id()."';");
 
@@ -143,7 +143,7 @@
           planet_res_fuel=planet_res_fuel+".$pb[3].",
           planet_res_food=planet_res_food+".$pb[4]."
 				WHERE
-					planet_id='".$cp->id()."';");
+					id='".$cp->id()."';");
 					
 					
 				//Rohstoffe auf dem Planeten aktualisieren
@@ -191,7 +191,7 @@
                 ".$db_table['defense']."
             		ON
                 defense.def_id=deflist.deflist_def_id
-                AND deflist.deflist_planet_id='".$cp->id()."'
+                AND deflist.deflist_entity_id='".$cp->id()."'
                 AND deflist.deflist_def_id='".$id."'
                 AND deflist.deflist_user_id='".$cu->id()."' ;");
             if (mysql_num_rows($res)>0)
@@ -211,7 +211,7 @@
                 SET
                     deflist_count=deflist_count-".$num."
                 WHERE
-                    deflist_planet_id='".$cp->id()."'
+                    deflist_entity_id='".$cp->id()."'
                     AND deflist_def_id='".$id."'
                     AND deflist_user_id='".$cu->id()."';");
 
@@ -241,7 +241,7 @@
           planet_res_food=planet_res_food+".$pb[4].",
           planet_fields_used=planet_fields_used-".$fields."
 				WHERE
-					planet_id='".$cp->id()."';");
+					id='".$cp->id()."';");
 
 				//Rohstoffe auf dem Planeten aktualisieren
 		    $cp->resMetal+=$pb[0];
@@ -274,7 +274,7 @@
       INNER JOIN
       ".$db_table['shiplist']." AS sl
       ON s.ship_id=sl.shiplist_ship_id
-      AND sl.shiplist_planet_id='".$cp->id()."'
+      AND sl.shiplist_entity_id='".$cp->id()."'
       AND s.ship_buildable='1'
       AND s.special_ship='0'
       AND sl.shiplist_count>'0'
@@ -329,7 +329,7 @@
       INNER JOIN
       ".$db_table['deflist']." AS dl
       ON d.def_id=dl.deflist_def_id
-      AND dl.deflist_planet_id='".$cp->id()."'
+      AND dl.deflist_entity_id='".$cp->id()."'
       AND d.def_buildable='1'
       AND dl.deflist_user_id='".$cu->id()."'
       AND dl.deflist_count>0

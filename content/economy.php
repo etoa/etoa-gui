@@ -48,7 +48,7 @@
 						buildlist_prod_percent=$val 
 					WHERE 
 						buildlist_user_id=".$cu->id()." 
-						AND buildlist_planet_id=".$cp->id." 
+						AND buildlist_entity_id=".$cp->id." 
 						AND buildlist_building_id='$id'
 					;");
 				}
@@ -92,7 +92,7 @@
     	buildlist AS l
 			ON	b.building_id=l.buildlist_building_id
 	    AND l.buildlist_user_id=".$cu->id()."
-	    AND l.buildlist_planet_id=".$cp->id()."
+	    AND l.buildlist_entity_id=".$cp->id()."
 	    AND l.buildlist_current_level>0
 	    AND (b.building_prod_metal>0
 	        OR b.building_prod_crystal>0
@@ -291,7 +291,7 @@
       buildlist AS l
       ON b.building_id=l.buildlist_building_id
       AND l.buildlist_user_id='".$cu->id()."'
-      AND l.buildlist_planet_id='".$cp->id."'
+      AND l.buildlist_entity_id='".$cp->id."'
       AND l.buildlist_current_level>'0'
       AND b.building_prod_power>'0'
 		ORDER BY 
@@ -325,7 +325,7 @@
 		INNER JOIN
 			ships
 			ON shiplist_ship_id=ship_id
-			AND shiplist_planet_id=".$cp->id."
+			AND shiplist_entity_id=".$cp->id."
 			AND shiplist_user_id=".$cu->id()."
 			AND ship_prod_power>0
 		");
@@ -388,7 +388,7 @@
             buildlist AS l
 		WHERE
             b.building_id = l.buildlist_building_id
-            AND l.buildlist_planet_id=".$cp->id."
+            AND l.buildlist_entity_id=".$cp->id."
             AND l.buildlist_current_level>0
             AND 
                 (b.building_store_metal>0 

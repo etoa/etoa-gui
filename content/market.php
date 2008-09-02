@@ -80,7 +80,7 @@
 	FROM 
 		".$db_table['buildlist']." 
 	WHERE 
-	buildlist_planet_id='".$cp->id()."'
+	buildlist_entity_id='".$cp->id()."'
 		AND buildlist_building_id='".MARKTPLATZ_ID."' 
 		AND buildlist_current_level>0 
 		AND buildlist_user_id='".$cu->id()."';");
@@ -2310,7 +2310,7 @@
 	      INSERT INTO
 	      ".$db_table['market_ressource']."
 	          (user_id,
-	          planet_id,
+	          id,
 	          cell_id,
 	          sell_metal,
 	          sell_crystal,
@@ -2387,7 +2387,7 @@
       FROM
       	".$db_table['shiplist']."
       WHERE
-      	shiplist_planet_id='".$cp->id()."'
+      	shiplist_entity_id='".$cp->id()."'
       	AND shiplist_ship_id='".$ship_id."'");
       if(mysql_num_rows($check_res)>0)
       {
@@ -2402,7 +2402,7 @@
           SET
           	shiplist_count=shiplist_count-".$ship_count."
           WHERE
-              shiplist_planet_id='".$cp->id()."'
+              shiplist_entity_id='".$cp->id()."'
               AND shiplist_ship_id='".$_POST['ship_list']."';");
 
 					// Angebot speicherns
@@ -3742,7 +3742,7 @@
 						shiplist_count=shiplist_count+'".(floor($scrow['ship_count']*$return_factor))."' 
 					WHERE 
 						shiplist_user_id='".$scrow['user_id']."' 
-						AND shiplist_planet_id='".$scrow['planet_id']."' 
+						AND shiplist_entity_id='".$scrow['planet_id']."' 
 						AND shiplist_ship_id='".$scrow['ship_id']."'");
 						
 					dbquery("
@@ -4403,7 +4403,7 @@
 					FROM 
 						".$db_table['shiplist']." 
 					WHERE 
-						shiplist_planet_id='".$cp->id()."'");
+						shiplist_entity_id='".$cp->id()."'");
 					
           //Zuerst wird überprüft ob auf dem Planeten Schiffe sind
           if (mysql_result($check_res,0)>0)
@@ -4427,7 +4427,7 @@
                 ".$db_table['ships']."
                 ON shiplist.shiplist_ship_id=ships.ship_id
             WHERE
-            		shiplist.shiplist_planet_id='".$cp->id()."'
+            		shiplist.shiplist_entity_id='".$cp->id()."'
                 AND shiplist.shiplist_count>'0'
                 AND ships.special_ship='0'
             ORDER BY
@@ -4588,7 +4588,7 @@
 				if(MIN_MARKET_LEVEL_SHIP<=MARKET_LEVEL)
 				{
           //Zuerst wird überprüft ob auf dem Planeten Schiffe sind, auch ob diese dem User gehören
-          if (mysql_num_rows(dbquery("SELECT shiplist_id FROM ".$db_table['shiplist']." WHERE shiplist_planet_id='".$cp->id()."'"))>0)
+          if (mysql_num_rows(dbquery("SELECT shiplist_id FROM ".$db_table['shiplist']." WHERE shiplist_entity_id='".$cp->id()."'"))>0)
           {
           	// Folgender Javascript Abschnitt, welcher von PHP-Teilen erzeugt wird, lädt die Daten von den Schiffen, welche sich auf dem aktuellen Planeten befinden, in ein JS-Array. Dies wird für die Preisberechnung benötigt        	
           	
@@ -4608,7 +4608,7 @@
                   INNER JOIN
                   ".$db_table['ships']."
                   ON shiplist.shiplist_ship_id=ships.ship_id
-                  AND shiplist.shiplist_planet_id='".$cp->id()."'
+                  AND shiplist.shiplist_entity_id='".$cp->id()."'
                   AND shiplist.shiplist_count>'0'
                   AND ships.special_ship='0'
               ORDER BY

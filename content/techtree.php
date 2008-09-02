@@ -170,7 +170,7 @@
 		FROM 
 			buildlist 
 		WHERE 
-			buildlist_planet_id='".$cp->id()."'
+			buildlist_entity_id='".$cp->id()."'
 		;");
 		while ($barr = mysql_fetch_array($bres))
 		{

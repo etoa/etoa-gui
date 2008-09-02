@@ -130,7 +130,7 @@
 							buildlist_deactivated=".$t."
 						WHERE
 							buildlist_building_id=".$d['id']."
-							AND buildlist_planet_id=".$this->planetId."
+							AND buildlist_entity_id=".$this->planetId."
 						");
 						
 					}				

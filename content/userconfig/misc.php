@@ -228,7 +228,7 @@
 				
 				$rres = dbquery ("
 				SELECT
-					planet_id
+					id
 				FROM
 					".$db_table['planets']." 
 				WHERE 

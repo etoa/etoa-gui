@@ -192,7 +192,7 @@
 	  SELECT
 	      technologies.tech_name,
 	      techlist.techlist_build_end_time,
-	      techlist.techlist_planet_id
+	      techlist.techlist_entity_id
 	  FROM
 	      ".$db_table['techlist']."
 	      INNER JOIN
@@ -203,7 +203,7 @@
 		if (mysql_num_rows($bres)>0)
 		{
 			$barr = mysql_fetch_array($bres);
-			echo "<td class=\"tbldata\"><a href=\"?page=research&amp;planet_id=".$barr['techlist_planet_id']."\" id=\"tech_counter\">";
+			echo "<td class=\"tbldata\"><a href=\"?page=research&amp;planet_id=".$barr['techlist_entity_id']."\" id=\"tech_counter\">";
 			//Forschung ist fertig
 			if($barr['techlist_build_end_time']-time()<=0)
 			{
@@ -583,7 +583,7 @@
         INNER JOIN
         ".$db_table['buildings']." AS b
         ON b.building_id=bl.buildlist_building_id
-        AND bl.buildlist_planet_id='".$arr_planet['id']."'
+        AND bl.buildlist_entity_id='".$arr_planet['id']."'
         AND bl.buildlist_build_type>'0'");
 
       if (mysql_num_rows($res_building)>0)
@@ -637,7 +637,7 @@
     	INNER JOIN
     		".$db_table['ships']."
     		ON queue_ship_id=ship_id
-  			AND queue_planet_id='".$arr_planet['id']."'
+  			AND queue_entity_id='".$arr_planet['id']."'
   			AND queue_endtime>'".time()."'
     	ORDER BY
 				queue_starttime ASC
@@ -682,7 +682,7 @@
     	INNER JOIN
     		".$db_table['defense']."
     		ON queue_def_id=def_id
-  			AND queue_planet_id='".$arr_planet['id']."'
+  			AND queue_entity_id='".$arr_planet['id']."'
   			AND queue_endtime>'".time()."'
     	ORDER BY
 				queue_starttime ASC

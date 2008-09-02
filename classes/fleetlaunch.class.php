@@ -167,7 +167,7 @@
 					ON
 		        ship_id=shiplist_ship_id
 						AND shiplist_user_id='".$this->ownerId."'
-						AND shiplist_planet_id='".$this->sourceEntity->id()."'
+						AND shiplist_entity_id='".$this->sourceEntity->id()."'
 		        AND ship_id=".$sid."
 		        AND shiplist_count>0;");
 					if (mysql_num_rows($res)>0)

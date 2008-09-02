@@ -51,7 +51,7 @@
             buildings
 		ON
             buildlist.buildlist_building_id=buildings.building_id
-            AND buildlist.buildlist_planet_id=".$cp->id."
+            AND buildlist.buildlist_entity_id=".$cp->id."
             AND buildings.building_people_place>0
             AND buildlist.buildlist_current_level>0;");
 		if (mysql_num_rows($res)>0)
@@ -84,7 +84,7 @@
         FROM
         	".$db_table['buildlist']."
         WHERE
-        	buildlist_planet_id=".$cp->id."
+        	buildlist_entity_id=".$cp->id."
         	AND buildlist_people_working_status='1';");
         $check_arr = mysql_fetch_array($check_res);
 
@@ -113,7 +113,7 @@
                 buildlist_people_working='".$work."'
             WHERE
                 buildlist_building_id='".$id."'
-                AND buildlist_planet_id=".$cp->id."");
+                AND buildlist_entity_id=".$cp->id."");
 					}
 				}
 			}
@@ -126,7 +126,7 @@
 			FROM
 				".$db_table['ship_queue']."
 			WHERE
-            	queue_planet_id='".$cp->id."'
+            	queue_entity_id='".$cp->id."'
                 AND queue_user_id='".$s['user_id']."'
                 AND queue_starttime>'0'
                 AND queue_endtime>'0';";
@@ -141,7 +141,7 @@
 			FROM
 				".$db_table['def_queue']."
 			WHERE
-				queue_planet_id='".$cp->id."'
+				queue_entity_id='".$cp->id."'
 				AND queue_user_id='".$s['user_id']."'
 				AND queue_starttime>'0'
 	            AND queue_endtime>'0';";
@@ -156,7 +156,7 @@
 			FROM
             	".$db_table['techlist']."
 			WHERE
-            	techlist_planet_id='".$cp->id."'
+            	techlist_entity_id='".$cp->id."'
                 AND techlist_user_id='".$s['user_id']."'
                 AND techlist_build_start_time>'0'
                 AND techlist_build_end_time>'0';";
@@ -171,7 +171,7 @@
 			FROM
 	        	".$db_table['buildlist']."
 			WHERE
-	        	buildlist_planet_id='".$cp->id."'
+	        	buildlist_entity_id='".$cp->id."'
 	            AND buildlist_user_id='".$s['user_id']."'
 	            AND buildlist_build_start_time>'0'
 	            AND buildlist_build_end_time>'0';";
@@ -194,7 +194,7 @@
 	  					WHERE
 	  						buildlist_building_id='".$id."'
 	  						AND buildlist_user_id='".$s['user_id']."'
-	  						AND buildlist_planet_id='".$cp->id."'");
+	  						AND buildlist_entity_id='".$cp->id."'");
 	  				}
 	  			}
 			}
@@ -220,7 +220,7 @@
 			WHERE
                 buildlist.buildlist_building_id=buildings.building_id
                 AND buildings.building_workplace='1'
-                AND buildlist.buildlist_planet_id='".$cp->id."'
+                AND buildlist.buildlist_entity_id='".$cp->id."'
             ORDER BY
             	buildings.building_id;");
 			$work_available=false;
@@ -249,7 +249,7 @@
 	  					WHERE
 	  						buildlist_building_id='".$sp_arr['building_id']."'
 	  						AND buildlist_user_id='".$s['user_id']."'
-	  						AND buildlist_planet_id='".$cp->id."'");
+	  						AND buildlist_entity_id='".$cp->id."'");
                     }
                     else
                     {
@@ -268,7 +268,7 @@
 	  					WHERE
 	  						buildlist_building_id='".$sp_arr['building_id']."'
 	  						AND buildlist_user_id='".$s['user_id']."'
-	  						AND buildlist_planet_id='".$cp->id."'");
+	  						AND buildlist_entity_id='".$cp->id."'");
                     }
                     echo "</td><td class=\"tbldata\">".(nf($sp_arr['buildlist_people_working']*$conf['people_food_require']['v']))." t</td></tr>";
 				}
@@ -291,7 +291,7 @@
 			FROM
 				".$db_table['buildlist']."
 			WHERE
-				buildlist_planet_id=".$cp->id.";");
+				buildlist_entity_id=".$cp->id.";");
 			$barr = mysql_fetch_array($bres);
 			$people_working = $barr[0];
 

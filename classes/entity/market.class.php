@@ -3,7 +3,7 @@
 	/**
 	* Class for unknown space entities
 	*/
-	class UnknownEntity extends Entity
+	class Market extends Entity
 	{
 		private $name;		
 		protected $id;
@@ -21,21 +21,21 @@
 		/**
 		* The constructor
 		*/
-		function UnknownEntity($id=0,$explore='e')
+		function Market($id=0,$explore='e')
 		{
 			$this->isValid = true;
 			$this->id = $id;
 			$this->pos = 0;
-			$this->name = "Unbenannt";
+			$this->name = "Marktplatz";
 			$this->coordsLoaded=false;
       		$this->isVisible = true;
-	  		$this->exploreCode = 'e';
+			$this->exploreCode = $explore;
 			$this->explore = false;
 		}
 
     public function allowedFleetActions()
     {
-    	return array("flight","explore");
+    	return array("market");
     }
 
 		/**
@@ -60,21 +60,16 @@
 		function ownerId() { return 0; }      
 	
 		/**
-		* Return Explore object
-		*/
-		function explore() { return $this->explore; }
-		
-		/**
 		* Returns type string
 		*/                        
-		function entityCodeString() { return "Unbekannter Raum"; }      
+		function entityCodeString() { return "Marktplatz"; }      
 	
 		/**
 		* Returns type
 		*/
 		function type()
 		{
-			return "Unbekannt";
+			return "Marktplatz";
 		}							
 
 		function imagePath($opt="")
@@ -88,8 +83,13 @@
 		*/
 		function entityCode() 
 		{ 
-			return "u"; 
+			return "m"; 
 		}	      
+		
+		/**
+		* Return Explore object
+		*/
+		function explore() { return $this->explore; }
 		
 		/**
 		* To-String function

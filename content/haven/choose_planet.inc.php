@@ -56,7 +56,7 @@
 				ON 
 					ships.ship_id=shiplist.shiplist_ship_id
           AND shiplist.shiplist_user_id=".$s['user']['id']."
-          AND shiplist.shiplist_planet_id=".$c->id."
+          AND shiplist.shiplist_entity_id=".$c->id."
           AND shiplist.shiplist_count>0
           AND ship_launchable=1
 				ORDER BY
@@ -78,7 +78,7 @@
           ".$db_table['shiplist']." AS shiplist
           ON ships.ship_id=shiplist.shiplist_ship_id
           AND shiplist.shiplist_user_id='".$s['user']['id']."'
-          AND shiplist.shiplist_planet_id='".$c->id."'
+          AND shiplist.shiplist_entity_id='".$c->id."'
           AND shiplist.shiplist_count>'0'
           AND shiplist.shiplist_special_ship='1';");
 			}
@@ -113,7 +113,7 @@
 				WHERE
           ships.ship_id=shiplist.shiplist_ship_id
           AND shiplist.shiplist_user_id=".$s['user']['id']."
-          AND shiplist.shiplist_planet_id=".$c->id."
+          AND shiplist.shiplist_entity_id=".$c->id."
           AND (";
           $x=1;
           foreach ($ship_count as $id=>$num)
@@ -148,7 +148,7 @@
 				WHERE
           ships.ship_id=shiplist.shiplist_ship_id
           AND shiplist.shiplist_user_id=".$s['user']['id']."
-          AND shiplist.shiplist_planet_id=".$c->id."
+          AND shiplist.shiplist_entity_id=".$c->id."
           AND (";
           $x=1;
           foreach ($ship_count as $id=>$num)
@@ -348,15 +348,15 @@
 		// Bugfix: Check working people for capacity
 		if ($_SESSION['haven']['fleet']['people_capacity']>0)
 		{
-			$parr= mysql_fetch_row(dbquery("SELECT planet_people FROM ".$db_table['planets']." WHERE planet_id='".$c->id."';"));
-			$pbarr= mysql_fetch_row(dbquery("SELECT SUM(buildlist_people_working) FROM ".$db_table['buildlist']." WHERE buildlist_planet_id='".$c->id."';"));
+			$parr= mysql_fetch_row(dbquery("SELECT planet_people FROM ".$db_table['planets']." WHERE id='".$c->id."';"));
+			$pbarr= mysql_fetch_row(dbquery("SELECT SUM(buildlist_people_working) FROM ".$db_table['buildlist']." WHERE buildlist_entity_id='".$c->id."';"));
 			$_SESSION['haven']['fleet']['people_capacity'] = min(floor($parr[0]-$pbarr[0]-$_SESSION['haven']['fleet']['total_pilots']),$_SESSION['haven']['fleet']['people_capacity']);
 		}
 
 
 		// Piloten berechnen
-		$parr= mysql_fetch_row(dbquery("SELECT planet_people FROM ".$db_table['planets']." WHERE planet_id='".$c->id."';"));
-		$pbarr1= mysql_fetch_row(dbquery("SELECT SUM(buildlist_people_working) FROM ".$db_table['buildlist']." WHERE buildlist_planet_id='".$c->id."';"));
+		$parr= mysql_fetch_row(dbquery("SELECT planet_people FROM ".$db_table['planets']." WHERE id='".$c->id."';"));
+		$pbarr1= mysql_fetch_row(dbquery("SELECT SUM(buildlist_people_working) FROM ".$db_table['buildlist']." WHERE buildlist_entity_id='".$c->id."';"));
 		$people_available=floor($parr[0]-$pbarr1[0]);
 
 
@@ -429,7 +429,7 @@
                     ".$db_table['target_bookmarks']."
 				WHERE
                     target_bookmarks.bookmark_user_id=".$s['user']['id']."
-                    AND target_bookmarks.bookmark_planet_id=planets.planet_id
+                    AND target_bookmarks.bookmark_planet_id=planets.id
                     AND target_bookmarks.bookmark_cell_id=space_cells.cell_id
                     AND planets.planet_solsys_id=space_cells.cell_id
 				GROUP BY
@@ -700,7 +700,7 @@
 						".$db_table['planets']." AS p
 					WHERE
 						p.planet_solsys_id=s.cell_id
-						AND p.planet_id='$pt';"));
+						AND p.id='$pt';"));
 					$csx = $parr['cell_sx'];
 					$csy = $parr['cell_sy'];
 					$ccx = $parr['cell_cx'];

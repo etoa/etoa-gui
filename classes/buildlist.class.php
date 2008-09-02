@@ -27,7 +27,7 @@
 					buildlist 
 				WHERE 
 					buildlist_building_id=".$bid." 
-					AND buildlist_planet_id='".$this->entityId."';");
+					AND buildlist_entity_id='".$this->entityId."';");
 				if (mysql_num_rows($res)>0)
 				{		
 					$arr = mysql_fetch_row($res);
@@ -93,7 +93,7 @@
 					buildlist_cooldown=".$cd."
 				WHERE 
 					buildlist_building_id=".$bid." 
-					AND buildlist_planet_id='".$this->entityId."';");				
+					AND buildlist_entity_id='".$this->entityId."';");				
 
 			}
 		}		
@@ -111,7 +111,7 @@
 			FROM 
 				buildlist
 			WHERE 
-				buildlist_planet_id='".$this->entityId."';");
+				buildlist_entity_id='".$this->entityId."';");
 			$pbarr = mysql_fetch_row($res);
 			return $pbarr[0];			
 		}		

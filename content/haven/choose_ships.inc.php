@@ -52,7 +52,7 @@
   	ships
   ON
 		shiplist_ship_id=ship_id
-  	AND shiplist_planet_id=".$cp->id."
+  	AND shiplist_entity_id=".$cp->id."
   	AND shiplist_count>0;");
   $struct_tech_special=0;
   $shield_tech_special=0;
@@ -259,7 +259,7 @@
 	WHERE
         buildlist_building_id=".FLEET_CONTROL_ID."
         AND buildlist_user_id='".$cu->id()."'
-        AND buildlist_planet_id='".$cp->id."';");
+        AND buildlist_entity_id='".$cp->id."';");
 	if (mysql_num_rows($bres)>0)
 	{
 		$barr = mysql_fetch_array($bres);
@@ -285,7 +285,7 @@
 	FROM 
 		buildlist
 	WHERE 
-		buildlist_planet_id='".$cp->id."';"));
+		buildlist_entity_id='".$cp->id."';"));
 	$people_available = floor($cp->people - $pbarr[0]);
 
 	if ($people_available>1)
@@ -326,7 +326,7 @@
 	ON
     s.ship_id=sl.shiplist_ship_id
     AND sl.shiplist_user_id='".$cu->id()."'
-    AND sl.shiplist_planet_id='".$cp->id."'
+    AND sl.shiplist_entity_id='".$cp->id."'
     AND sl.shiplist_count>0
 	ORDER BY
 		s.special_ship DESC,
