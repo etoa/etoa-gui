@@ -62,7 +62,7 @@ function planetSelectorByCell($form,$function,$show_user_id=0)
 			{
 				$pres=dbquery("
 				SELECT
-					planet_id,
+					id,
 					planet_name,
 					planet_user_id,
 					planet_solsys_pos,
@@ -83,11 +83,11 @@ function planetSelectorByCell($form,$function,$show_user_id=0)
 					{
 						if ($show_user_id==1)
 						{
-							$val=$parr['planet_id'].":".$parr['planet_user_id'];;
+							$val=$parr['id'].":".$parr['planet_user_id'];;
 						}
 						else
 						{
-							$val=$parr['planet_id'];
+							$val=$parr['id'];
 						}
 						if ($parr['planet_user_id']>0)
 							$out.="<option value=\"$val\">".$parr['planet_solsys_pos']." ".$parr['planet_name']." (".$parr['user_nick'].")</option>";
@@ -193,7 +193,7 @@ function showShipsOnPlanet($pid)
 		INNER JOIN
 			ships
 			ON shiplist_ship_id=ship_id
-			AND shiplist_planet_id='".$pid."'
+			AND shiplist_entity_id='".$pid."'
 		WHERE
 			shiplist_count>0
 		ORDER BY
@@ -299,7 +299,7 @@ function editShip($form,$listId)
 		ships
 		ON shiplist_ship_id=ship_id		
 	AND
-		shiplist_planet_id=".$updata[0]."
+		shiplist_entity_id=".$updata[0]."
 	;");
 	if (mysql_num_rows($res))
 	{
@@ -406,7 +406,7 @@ function showMissilesOnPlanet($pid)
 		INNER JOIN
 			missiles
 			ON missilelist_missile_id=missile_id
-			AND missilelist_planet_id='".$pid."'
+			AND missilelist_entity_id='".$pid."'
 		ORDER BY
 			missile_name
 		;");
@@ -481,7 +481,7 @@ function editMissile($form,$listId)
 	FROM
 		missilelist
 	WHERE
-		missilelist_planet_id=".$updata[0]."
+		missilelist_entity_id=".$updata[0]."
 	;");
 	if (mysql_num_rows($res))
 	{
@@ -543,7 +543,7 @@ function showDefenseOnPlanet($pid)
 		INNER JOIN
 			defense
 			ON deflist_def_id=def_id
-			AND deflist_planet_id='".$pid."'
+			AND deflist_entity_id='".$pid."'
 		ORDER BY
 			def_name
 		;");
@@ -618,7 +618,7 @@ function editDefense($form,$listId)
 	FROM
 		deflist
 	WHERE
-		deflist_planet_id=".$updata[0]."
+		deflist_entity_id=".$updata[0]."
 	;");
 	if (mysql_num_rows($res))
 	{

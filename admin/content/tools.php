@@ -34,7 +34,7 @@ echo "<h1>Tools</h1>";
 		$start4 = microtime();
 		for ($i = 0; $i < 10; $i++)
 		{
-			$res = mysql_query("SELECT planet_id FROM ".$db_table['planets'].";");
+			$res = mysql_query("SELECT id FROM ".$db_table['planets'].";");
 		}
 		$ende4 = microtime();
 		echo "<br>Verbrauchte Zeit mit rationioneller Auslesung ( ".$i."x SELECT xy FROM): ".($ende4 - $start4);

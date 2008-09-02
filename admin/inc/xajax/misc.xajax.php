@@ -36,7 +36,7 @@ function planetSelectorByCell($form,$show_user_id=0)
 			{
 				$pres=dbquery("
 				SELECT
-					planet_id,
+					id,
 					planet_name,
 					planet_user_id,
 					planet_solsys_pos,
@@ -57,7 +57,7 @@ function planetSelectorByCell($form,$show_user_id=0)
 					{
 						if ($show_user_id==1)
 						{
-							$val=$parr['planet_id'].":".$parr['planet_user_id'];;
+							$val=$parr['id'].":".$parr['planet_user_id'];;
 						}
 						else
 						{
@@ -98,7 +98,7 @@ function planetSelectorByUser($userNick,$show_user_id=1)
 	{
 		$pres=dbquery("
 		SELECT
-			planet_id,
+			id,
 			planet_name,
 			planet_user_id,
 			cell_sx,
@@ -126,11 +126,11 @@ function planetSelectorByUser($userNick,$show_user_id=1)
 			{
 				if ($show_user_id==1)
 				{
-					$val=$parr['planet_id'].":".$parr['planet_user_id'];;
+					$val=$parr['id'].":".$parr['planet_user_id'];;
 				}
 				else
 				{
-					$val=$parr['planet_id'];
+					$val=$parr['id'];
 				}
 				$out.="<option value=\"$val\">".$parr['cell_sx']."/".$parr['cell_sy']." : ".$parr['cell_cx']."/".$parr['cell_cy']." : ".$parr['planet_solsys_pos']." - ".$parr['planet_name']."</option>";
 			}
@@ -168,7 +168,7 @@ function showShipsOnPlanet($pid)
 		INNER JOIN
 			".$db_table['ships']."
 			ON shiplist_ship_id=ship_id
-			AND shiplist_planet_id='".$pid."'
+			AND shiplist_entity_id='".$pid."'
 		ORDER BY
 			ship_name
 		;");
@@ -246,7 +246,7 @@ function editShip($form,$listId)
 	FROM
 		".$db_table['shiplist']."
 	WHERE
-		shiplist_planet_id=".$updata[0]."
+		shiplist_entity_id=".$updata[0]."
 	;");
 	if (mysql_num_rows($res))
 	{

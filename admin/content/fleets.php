@@ -404,7 +404,7 @@
                                 planet_res_food=planet_res_food+".max($farr['fleet_res_food'],0).",
                                 planet_people=planet_people+".(max($farr['fleet_res_people'],0)+max($farr['fleet_pilots'],0))."
 							WHERE
-								planet_id='$planet';");
+								id='$planet';");
 							$sres=dbquery("SELECT * FROM fleet_ships WHERE fs_fleet_id=".$farr['fleet_id'].";");
 							if (mysql_num_rows($sres)>0)
 							{

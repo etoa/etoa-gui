@@ -581,7 +581,7 @@
 			INNER JOIN
                 planets
 			ON 
-				buildlist.buildlist_planet_id=planets.id
+				buildlist.buildlist_entity_id=planets.id
 			INNER JOIN
                 users
 			ON 
@@ -634,12 +634,12 @@
 			if (isset($_POST['new']))
 			{
 				$updata=explode(":",$_POST['planet_id']);
-				if (mysql_num_rows(dbquery("SELECT buildlist_id FROM ".$db_table['buildlist']." WHERE buildlist_planet_id=".$updata[0]." AND buildlist_building_id=".$_POST['building_id'].";"))==0)
+				if (mysql_num_rows(dbquery("SELECT buildlist_id FROM ".$db_table['buildlist']." WHERE buildlist_entity_id=".$updata[0]." AND buildlist_building_id=".$_POST['building_id'].";"))==0)
 				{
 					dbquery("
 					INSERT INTO 
 					".$db_table['buildlist']." 
-                        (buildlist_planet_id,
+                        (buildlist_entity_id,
                         buildlist_user_id,
                         buildlist_building_id,
                         buildlist_current_level) 
@@ -724,7 +724,7 @@
 				if ($_POST['user_nick']!="")
 				{
 					if (stristr($_POST['qmode']['user_nick'],"%")) $addchars = "%";else $addchars = "";
-					$sql.= "user_nick ".stripslashes($_POST['qmode']['user_nick'])."'".$_POST['user_nick']."$addchars' AND ";
+					$sql.= "user_nick ".stripslashes($_POST['qmode']['user_nick']).$_POST['user_nick']."$addchars' AND ";
 				}
 				if ($_POST['building_id']!="")
 				{
@@ -734,9 +734,9 @@
 
 			echo "<h2>Suchergebnisse</h2>";
 			$sqlstart = "SELECT * FROM $tables WHERE ";
-			$sqlend = "buildlist_building_id=building_id AND user_id=buildlist_user_id AND planets.id=buildlist_planet_id
+			$sqlend = "buildlist_building_id=building_id AND user_id=buildlist_user_id AND planets.id=buildlist_entity_id
 			GROUP BY buildlist_id
-			ORDER BY buildlist_user_id,buildlist_planet_id,building_type_id,building_order,building_name;";
+			ORDER BY buildlist_user_id,buildlist_entity_id,building_type_id,building_order,building_name;";
 
   		if ($_SESSION['admin']['building_query']=="")
   			$_SESSION['admin']['building_query']=$sqlstart.$sql.$sqlend;
@@ -771,9 +771,9 @@
 					elseif ($larr['user_id']==$arr['user_id'] && $larr['id']==$arr['id'])
 						echo "<td class=\"tbldatawt\">&nbsp;</td>";
 					elseif ($narr['user_id']==$arr['user_id'] && $narr['id']==$arr['id'])
-						echo "<td class=\"tbldatawb\"><a href=\"?page=galaxy&amp;sub=edit&amp;planet_id=".$arr['buildlist_planet_id']."\" title=\"".$arr['planet_name']."\">".cut_string($arr['planet_name'],11)."</a></td>";
+						echo "<td class=\"tbldatawb\"><a href=\"?page=galaxy&amp;sub=edit&amp;planet_id=".$arr['buildlist_entity_id']."\" title=\"".$arr['planet_name']."\">".cut_string($arr['planet_name'],11)."</a></td>";
 					else
-						echo "<td class=\"tbldata\"><a href=\"?page=galaxy&amp;sub=edit&amp;planet_id=".$arr['buildlist_planet_id']."\" title=\"".$arr['planet_name']."\">".cut_string($arr['planet_name'],11)."</a></td>";
+						echo "<td class=\"tbldata\"><a href=\"?page=galaxy&amp;sub=edit&amp;planet_id=".$arr['buildlist_entity_id']."\" title=\"".$arr['planet_name']."\">".cut_string($arr['planet_name'],11)."</a></td>";
 
 					if ($larr['user_id']==$arr['user_id'] && $narr['user_id']==$arr['user_id'] && $larr['id']==$arr['id'] && $narr['id']==$arr['id'])
 						echo "<td class=\"tbldatawtb\">&nbsp;</td>";

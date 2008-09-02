@@ -25,7 +25,7 @@
 	// 	Bearbeitet am: 31.03.2006
 	// 	Kommentar: 	
 	//
-
+	
 
 	//
 	// Battlepoints
@@ -131,26 +131,26 @@
 		    AND	entities.cell_id=cells.id 
 					AND deflist_def_id=def_id 
 					AND user_id=deflist_user_id 
-					AND planets.id=deflist_planet_id ";
+					AND planets.id=deflist_entity_id ";
 			$sqlend = " 
 			GROUP BY 
 					deflist_id 
 			ORDER BY 
-					deflist_planet_id,
+					deflist_entity_id,
 					def_order,def_name;";
   
 			// Verteidigung hinzufügen
 			if (isset($_POST['new']))
 			{
 				$updata=explode(":",$_POST['planet_id']);
-				if (mysql_num_rows(dbquery("SELECT deflist_id FROM deflist WHERE deflist_planet_id=".$updata[0]." AND deflist_def_id=".$_POST['def_id'].";"))==0)
+				if (mysql_num_rows(dbquery("SELECT deflist_id FROM deflist WHERE deflist_entity_id=".$updata[0]." AND deflist_def_id=".$_POST['def_id'].";"))==0)
 				{
-					dbquery("INSERT INTO deflist (deflist_planet_id,deflist_user_id,deflist_def_id,deflist_count) VALUES (".$updata[0].",".$updata[1].",".$_POST['def_id'].",".$_POST['deflist_count'].");");					
+					dbquery("INSERT INTO deflist (deflist_entity_id,deflist_user_id,deflist_def_id,deflist_count) VALUES (".$updata[0].",".$updata[1].",".$_POST['def_id'].",".$_POST['deflist_count'].");");					
 					echo "Verteidigung wurde hinzugef&uuml;gt!<br/>";
 				}
 				else
 				{
-					dbquery("UPDATE deflist SET deflist_count=deflist_count+".$_POST['deflist_count']." WHERE deflist_planet_id=".$updata[0]." AND deflist_def_id=".$_POST['def_id'].";");
+					dbquery("UPDATE deflist SET deflist_count=deflist_count+".$_POST['deflist_count']." WHERE deflist_entity_id=".$updata[0]." AND deflist_def_id=".$_POST['def_id'].";");
 					echo "Verteidigung wurde hinzugef&uuml;gt!<br/>";
 				}
 				$sql= " AND planets.id=".$updata[0];
@@ -180,12 +180,34 @@
 					$v=1;
 				echo "<tr><th class=\"tbltitle\">Anzahl</th><td class=\"tbldata\"><input type=\"text\" name=\"deflist_count\" value=\"$v\" size=\"1\" maxlength=\"3\" /></td></tr>";
 				echo "<tr><th class=\"tbltitle\">auf dem Planeten</th><td class=\"tbldata\"> <select name=\"planet_id\"><";
-				$pres=dbquery("SELECT user_id,planet_id,planet_name,user_nick,planet_solsys_pos,cell_sx,cell_sy,cell_cx,cell_cy FROM ".$db_table['planets'].",".$db_table['space_cells'].",".$db_table['users']." WHERE planet_user_id=user_id AND planet_solsys_id=cell_id ORDER BY planet_id;");
+				$pres=dbquery("SELECT 
+								users.user_id,
+								planets.id,
+								planet_name,
+								users.user_nick,
+								entities.pos,
+								cells.sx,
+								cells.sy,
+								cells.cx,
+								cells.cy 
+							FROM 
+								users
+							INNER JOIN
+								planets
+								ON planets.planet_user_id=users.user_id
+							INNER JOIN
+								entities
+								ON entities.id=planets.id
+							INNER JOIN
+								cells
+								ON cells.id=entities.cell_id
+							ORDER BY 
+								planets.id;");
 				while ($parr=mysql_fetch_array($pres))
 				{
-					echo "<option value=\"".$parr['planet_id'].":".$parr['user_id']."\"";
-					if ($updata[0]==$parr['planet_id']) echo " selected=\"selected\"";
-					echo ">".$parr['cell_sx']."/".$parr['cell_sy']." : ".$parr['cell_cx']."/".$parr['cell_cy']." : ".$parr['planet_solsys_pos']." &nbsp; ".$parr['planet_name']." (".$parr['user_nick'].")</option>";
+					echo "<option value=\"".$parr['id'].":".$parr['user_id']."\"";
+					if ($updata[0]==$parr['id']) echo " selected=\"selected\"";
+					echo ">".$parr['sx']."/".$parr['sy']." : ".$parr['cx']."/".$parr['cy']." : ".$parr['pos']." &nbsp; ".$parr['planet_name']." (".$parr['user_nick'].")</option>";
 				}
 				echo "</select></td></tr>";
 				infobox_end(1);
@@ -198,7 +220,7 @@
 			elseif ($_SESSION['defedit']['query']=="")
 			{
 				if ($_POST['planet_id']!="")
-					$sql.= " AND planet_id='".$_POST['planet_id']."'";
+					$sql.= " AND id='".$_POST['planet_id']."'";
 				if ($_POST['planet_name']!="")
 				{
 					if (stristr($_POST['qmode']['planet_name'],"%")) 
@@ -316,7 +338,7 @@
 							INNER JOIN
 								planets
 							ON
-								deflist.deflist_planet_id=planets.id;");
+								deflist.deflist_entity_id=planets.id;");
 			if (mysql_num_rows($res)>0)
 			{
 				$arr = mysql_fetch_array($res);

@@ -366,7 +366,7 @@
 			INNER JOIN 
 				planets
 			ON
-				techlist_planet_id=planets.id
+				techlist_entity_id=planets.id
 			INNER JOIN
 				entities
 			ON
@@ -384,7 +384,7 @@
 			GROUP BY 
 				techlist_id 
 			ORDER BY 
-				techlist_planet_id,
+				techlist_entity_id,
 				tech_type_id,
 				tech_order,
 				tech_name;";
@@ -395,7 +395,7 @@
 				$updata=explode(":",$_POST['planet_id']);
 				if (mysql_num_rows(dbquery("SELECT techlist_id FROM ".$db_table['techlist']." WHERE techlist_user_id=".$updata[1]." AND techlist_tech_id=".$_POST['tech_id'].";"))==0)
 				{
-					dbquery("INSERT INTO ".$db_table['techlist']." (techlist_planet_id,techlist_user_id,techlist_tech_id,techlist_current_level) VALUES (".$updata[0].",".$updata[1].",".$_POST['tech_id'].",".$_POST['techlist_current_level'].");");					
+					dbquery("INSERT INTO ".$db_table['techlist']." (techlist_entity_id,techlist_user_id,techlist_tech_id,techlist_current_level) VALUES (".$updata[0].",".$updata[1].",".$_POST['tech_id'].",".$_POST['techlist_current_level'].");");					
 					echo "Technologie wurde hinzugef&uuml;gt!<br/>";
 				}
 				else
@@ -432,7 +432,7 @@
 				$pres=dbquery("SELECT user_id,user_nick,planets.id FROM ".$db_table['users'].",".$db_table['planets']." WHERE planet_user_id=user_id AND planet_user_main=1 ORDER BY user_nick;");
 				while ($parr=mysql_fetch_array($pres))
 				{
-					echo "<option value=\"".$parr['planet_id'].":".$parr['user_id']."\"";
+					echo "<option value=\"".$parr['id'].":".$parr['user_id']."\"";
 					if ($updata[1]==$parr['user_id']) echo " selected=\"selected\"";
 					echo ">".$parr['user_nick']."</option>";
 				}
@@ -453,7 +453,7 @@
 				{
 					if (stristr($_POST['qmode']['planet_name'],"%")) 
 						$addchars = "%";else $addchars = "";
-					$sql.= " AND planet_name ".stripslashes($_POST['qmode']['planet_name'])."'".$_POST['planet_name']."$addchars'";
+					$sql.= " AND planet_name ".stripslashes($_POST['qmode']['planet_name']).$_POST['planet_name']."$addchars'";
 				}
 				if ($_POST['user_id']!='')
 					$sql.=" AND user_id='".$_POST['user_id']."'";
@@ -537,7 +537,7 @@
 							INNER JOIN
 								planets
 							ON
-								techlist.techlist_planet_id=planets.id
+								techlist.techlist_entity_id=planets.id
 							INNER JOIN
 								users
 							ON

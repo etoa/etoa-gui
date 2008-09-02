@@ -186,7 +186,7 @@
 			INNER JOIN
 				".$db_table['planets']."
 				ON
-					queue_planet_id=planets.id
+					queue_entity_id=planets.id
 			INNER JOIN
 				entities
 				ON
@@ -208,7 +208,7 @@
 			GROUP BY
 					queue_id
 			ORDER BY
-					queue_planet_id,
+					queue_entity_id,
 					queue_endtime
 					;";
 
@@ -218,7 +218,7 @@
 				if ($_POST['planet_id']!="")
 				{
 					if ($sql!="") $sql.=" AND ";
-					$sql.= "queue_planet_id=".$_POST['planet_id'];
+					$sql.= "queue_entity_id=".$_POST['planet_id'];
 				}
 				if ($_POST['planet_name']!="")
 				{
@@ -284,11 +284,11 @@
 				$pid=0;
 				while ($arr = mysql_fetch_array($res))
 				{
-					if ($pid>0 && $pid!=$arr['planet_id'])
+					if ($pid>0 && $pid!=$arr['id'])
 					{
 						echo "<tr><td colspan=\"8\" style=\"height:3px;background:#000;\" class=\"tbldata\"></td></tr>";
 					}
-					$pid=$arr['planet_id'];
+					$pid=$arr['id'];
 
 					$error=false;
 
@@ -323,7 +323,7 @@
 					echo "<td class=\"tbldata\" $style>".$arr['queue_id']."</a></td>";
 					echo "<td class=\"tbldata\"$style ".tm($arr['ship_name'],"<b>Schiff-ID:</b> ".$arr['ship_id']).">".$arr['ship_name']."</td>";
 					echo "<td class=\"tbldata\"$style>".nf($arr['queue_cnt'])."</td>";
-					echo "<td class=\"tbldata\"$style ".tm($arr['planet_name'],"<b>Planet-ID:</b> ".$arr['planet_id']."<br/><b>Koordinaten:</b> ".$arr['cell_sx']."/".$arr['cell_sy']." : ".$arr['cell_cx']."/".$arr['cell_cy']." : ".$arr['planet_solsys_pos']).">".cut_string($arr['planet_name'],11)."</td>";
+					echo "<td class=\"tbldata\"$style ".tm($arr['planet_name'],"<b>Planet-ID:</b> ".$arr['id']."<br/><b>Koordinaten:</b> ".$arr['cell_sx']."/".$arr['cell_sy']." : ".$arr['cell_cx']."/".$arr['cell_cy']." : ".$arr['planet_solsys_pos']).">".cut_string($arr['planet_name'],11)."</td>";
 					echo "<td class=\"tbldata\"$style ".tm($arr['user_nick'],"<b>User-ID:</b> ".$arr['user_id']."<br/><b>Punkte:</b> ".nf($arr['user_points'])).">".cut_string($arr['user_nick'],11)."</td>";
 					echo "<td class=\"tbldata\"$style>".df($arr['queue_starttime'],1)."</td>";
 					echo "<td class=\"tbldata\"$style>".df($arr['queue_endtime'],1)."</td>";
@@ -379,7 +379,7 @@
 			{
 				$res = dbquery("
 				SELECT
-					queue_planet_id,
+					queue_entity_id,
 					queue_user_id,
 					queue_ship_id,
 					queue_cnt
@@ -391,7 +391,7 @@
 	      if (mysql_num_rows($res)>0)
 	      {
 	      	$arr=mysql_fetch_array($res);
-					shiplistAdd($arr['queue_planet_id'],$arr['queue_user_id'],$arr['queue_ship_id'],$arr['queue_cnt']);
+					shiplistAdd($arr['queue_entity_id'],$arr['queue_user_id'],$arr['queue_ship_id'],$arr['queue_cnt']);
 					dbquery("
 					DELETE FROM
 						".$db_table['ship_queue']."
@@ -422,7 +422,7 @@
       	ON queue_user_id=user_id
       INNER JOIN
       	".$db_table['planets']."
-      	ON queue_planet_id=planet_id
+      	ON queue_entity_id=planets.id
 			WHERE
 	       queue_id=".intval($_GET['id']).";");
 
@@ -517,7 +517,7 @@
 			$sqlstart = "
 			SELECT
 				planet_name,
-				planet_id,
+				id,
 				planet_user_id,
 		      planet_solsys_pos,
 		      cell_sx,cell_sy,
@@ -533,7 +533,7 @@
 					".$db_table['shiplist']."
 			INNER JOIN
 				".$db_table['planets']."
-				ON planet_id=shiplist_planet_id
+				ON planets.id=shiplist_entity_id
 			INNER JOIN
 				".$db_table['space_cells']."
 				ON planet_solsys_id=cell_id
@@ -548,7 +548,7 @@
 			GROUP BY
 					shiplist_id
 			ORDER BY
-					shiplist_planet_id,special_ship DESC,
+					shiplist_entity_id,special_ship DESC,
 					ship_name;";
 
 			// Fehlerkorrektur
@@ -560,7 +560,7 @@
 					$arr=mysql_fetch_array($res);
 					if ($arr['user_id']!=$arr['planet_user_id'])
 					{
-						$pres=dbquery("SELECT planet_id FROM ".$db_table['planets']." WHERE planet_user_main=1 AND planet_user_id=".$arr['user_id']." LIMIT 1;");
+						$pres=dbquery("SELECT id FROM ".$db_table['planets']." WHERE planet_user_main=1 AND planet_user_id=".$arr['user_id']." LIMIT 1;");
 						if (mysql_num_rows($pres))
 						{
 							$parr=mysql_fetch_row($pres);
@@ -579,11 +579,11 @@
 					else
 					{
 						// Doppelschiffe reparieren
-						$lres=dbquery($sqlstart." AND shiplist_planet_id=".$arr['planet_id']." AND shiplist_user_id=".$arr['user_id']." AND shiplist_ship_id=".$arr['ship_id']." AND shiplist_id!=".$arr['shiplist_id'].$sqlend);
+						$lres=dbquery($sqlstart." AND shiplist_entity_id=".$arr['id']." AND shiplist_user_id=".$arr['user_id']." AND shiplist_ship_id=".$arr['ship_id']." AND shiplist_id!=".$arr['shiplist_id'].$sqlend);
 						if (mysql_num_rows($lres))
 						{
 							dbquery("DELETE FROM ".$db_table['shiplist']." WHERE shiplist_id=".$arr['shiplist_id'].";");
-							shiplistAdd($arr['planet_id'],$arr['user_id'],$arr['ship_id'],$arr['shiplist_count']);
+							shiplistAdd($arr['id'],$arr['user_id'],$arr['ship_id'],$arr['shiplist_count']);
 							cms_ok_msg("Doppelschiffe zusammengef&uuml;hrt!!");
 						}
 						else
@@ -600,7 +600,7 @@
 				if ($_POST['planet_id']!="")
 				{
 					if ($sql!="") $sql.=" AND ";
-					$sql.= "planet_id=".$_POST['planet_id'];
+					$sql.= "id=".$_POST['planet_id'];
 				}
 				if ($_POST['planet_name']!="")
 				{
@@ -661,21 +661,21 @@
 				$pid=0;
 				while ($arr = mysql_fetch_array($res))
 				{
-					if ($pid>0 && $pid!=$arr['planet_id'])
+					if ($pid>0 && $pid!=$arr['id'])
 					{
 						echo "<tr><td colspan=\"8\" style=\"height:3px;background:#000;\" class=\"tbldata\"></td></tr>";
 					}
-					$pid=$arr['planet_id'];
+					$pid=$arr['id'];
 
 					$error=false;
 					// Doppeleinträge prüfen
-					if ($check[$arr['planet_id']][$arr['user_id']][$arr['ship_id']])
+					if ($check[$arr['id']][$arr['user_id']][$arr['ship_id']])
 					{
 						$error=true;
 						$errorMsg="Doppelter Eintrag! Wird zusammengef&uuml;hrt!";
 					}
 					else
-						$check[$arr['planet_id']][$arr['user_id']][$arr['ship_id']]=true;
+						$check[$arr['id']][$arr['user_id']][$arr['ship_id']]=true;
 					// Planet gehört nicht dem Besitzer
 					if ($arr['user_id']!=$arr['planet_user_id'])
 					{
@@ -689,7 +689,7 @@
 						$style="";
 					echo "<tr>";
 					echo "<td class=\"tbldata\" $style>".$arr['shiplist_id']."</a></td>";
-					echo "<td class=\"tbldata\"$style ".tm($arr['planet_name'],"<b>Planet-ID:</b> ".$arr['planet_id']."<br/><b>Koordinaten:</b> ".$arr['cell_sx']."/".$arr['cell_sy']." : ".$arr['cell_cx']."/".$arr['cell_cy']." : ".$arr['planet_solsys_pos']).">".cut_string($arr['planet_name'],11)."</td>";
+					echo "<td class=\"tbldata\"$style ".tm($arr['planet_name'],"<b>Planet-ID:</b> ".$arr['id']."<br/><b>Koordinaten:</b> ".$arr['cell_sx']."/".$arr['cell_sy']." : ".$arr['cell_cx']."/".$arr['cell_cy']." : ".$arr['planet_solsys_pos']).">".cut_string($arr['planet_name'],11)."</td>";
 					echo "<td class=\"tbldata\"$style ".tm($arr['user_nick'],"<b>User-ID:</b> ".$arr['user_id']."<br/><b>Punkte:</b> ".nf($arr['user_points'])).">".cut_string($arr['user_nick'],11)."</td>";
 					echo "<td class=\"tbldata\"$style ".tm($arr['ship_name'],"<b>Schiff-ID:</b> ".$arr['ship_id']).">".$arr['ship_name']."</td>";
 					echo "<td class=\"tbldata\"$style>".nf($arr['shiplist_count'])."</td>";
@@ -808,7 +808,7 @@
       	".$db_table['shiplist']."
       INNER JOIN
       	".$db_table['planets']."
-      	ON shiplist_planet_id=planet_id
+      	ON shiplist_entity_id=planets.id
       INNER JOIN
       	".$db_table['users']."
       	ON shiplist_user_id=user_id

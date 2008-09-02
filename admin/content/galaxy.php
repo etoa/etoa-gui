@@ -585,7 +585,7 @@
 					// Fehlende Planeten erstellen
 					if ($_GET['action']=="createmissingplanets")
 					{
-						$pres=dbquery("SELECT planet_id,planet_solsys_pos FROM planets WHERE planet_solsys_id=".$arr['cell_id']." ORDER BY planet_solsys_pos;");
+						$pres=dbquery("SELECT id,planet_solsys_pos FROM planets WHERE planet_solsys_id=".$arr['cell_id']." ORDER BY planet_solsys_pos;");
 						$createCnt = $arr['cell_solsys_num_planets']-mysql_num_rows($pres);
 						$positions=array();
 						if (mysql_num_rows($pres)>0)
@@ -663,7 +663,7 @@
 					}
 					echo "</select></td></tr>";
 					echo "<tr><th class=\"tbltitle\">Planeten</th><td class=\"tbldata\">";
-					$pres=dbquery("SELECT planet_name,planet_id,planet_solsys_pos,type_name FROM planets,".$db_table['planet_types']." WHERE planet_type_id=type_id AND planet_solsys_id=".$arr['cell_id']." ORDER BY planet_solsys_pos;");
+					$pres=dbquery("SELECT planet_name,id,planet_solsys_pos,type_name FROM planets,".$db_table['planet_types']." WHERE planet_type_id=type_id AND planet_solsys_id=".$arr['cell_id']." ORDER BY planet_solsys_pos;");
 					if (mysql_num_rows($res)>0)
 					{
 						echo "<table class=\"tb\">";
@@ -673,9 +673,9 @@
 							echo "<tr><td>".$parr['planet_solsys_pos']."</td>";
 							echo "<td>".$parr['planet_name']."</td>";
 							echo "<td>".$parr['type_name']."</td>";
-							echo "<td>".edit_button("?page=galaxy&amp;sub=edit&amp;planet_id=".$parr['planet_id']);
+							echo "<td>".edit_button("?page=galaxy&amp;sub=edit&amp;planet_id=".$parr['id']);
 							//if ($parr['planet_user_id']==0)
-							//	echo " ".del_button("?page=$page&amp;sub=$sub&amp;action=deleteplanet&amp;planet_id=".$parr['planet_id']);
+							//	echo " ".del_button("?page=$page&amp;sub=$sub&amp;action=deleteplanet&amp;planet_id=".$parr['id']);
 							echo "</td></tr>";
 						}
 						echo "</table>";

@@ -129,7 +129,7 @@
 	function fieldqueryselbox($name)
 	{
 		echo "<select name=\"qmode[$name]\">";
-		echo "<option value=\"=\">enth&auml;lt</option>";
+		echo "<option value=\"LIKE '%\">enth&auml;lt</option>";
 		echo "<option value=\"LIKE '\">ist gleich</option>";
 		echo "<option value=\"NOT LIKE '%\">enth&auml;lt nicht</option>";
 		echo "<option value=\"NOT LIKE '\">ist ungleich</option>";
