@@ -237,15 +237,15 @@
 			$powerUsed = $pwrcnt;
 
 			// Bei zuwenig Strom Warnmessage
-			if ($pwrcnt > $cp->prod->power)
+			if ($pwrcnt > $cp->prodPower)
 			{
-				echo "<tr><td class=\"tbldata\" colspan=\"8\" style=\"color:#f00; text-align:center;\">Zuwenig Energie! ".nf(floor($pwrcnt))." ben&ouml;tigt, ".nf(floor($cp->prod->power))." verf&uuml;gbar. Gesamtproduktion wird auf ".(round($cp->prod->power / $pwrcnt,3)*100)."% gesenkt!</td></tr>";
+				echo "<tr><td class=\"tbldata\" colspan=\"8\" style=\"color:#f00; text-align:center;\">Zuwenig Energie! ".nf(floor($pwrcnt))." ben&ouml;tigt, ".nf(floor($cp->prodPower))." verf&uuml;gbar. Gesamtproduktion wird auf ".(round($cp->prodPower / $pwrcnt,3)*100)."% gesenkt!</td></tr>";
 
-				$cnt['metal'] = floor($cnt['metal'] * $cp->prod->power / $pwrcnt);
-				$cnt['crystal'] = floor($cnt['crystal'] * $cp->prod->power / $pwrcnt);
-				$cnt['fuel'] = floor($cnt['fuel'] * $cp->prod->power / $pwrcnt);
-				$cnt['plastic'] = floor($cnt['plastic'] * $cp->prod->power / $pwrcnt);
-				$cnt['food'] = floor($cnt['food'] * $cp->prod->power / $pwrcnt);
+				$cnt['metal'] = floor($cnt['metal'] * $cp->prodPower / $pwrcnt);
+				$cnt['crystal'] = floor($cnt['crystal'] * $cp->prodPower / $pwrcnt);
+				$cnt['fuel'] = floor($cnt['fuel'] * $cp->prodPower / $pwrcnt);
+				$cnt['plastic'] = floor($cnt['plastic'] * $cp->prodPower / $pwrcnt);
+				$cnt['food'] = floor($cnt['food'] * $cp->prodPower / $pwrcnt);
 
 				echo "<tr><td class=\"tbltitle\">TOTAL</td>";
 				echo "<td class=\"tbldata\">".nf($cnt['metal'])."</td>";
@@ -253,7 +253,7 @@
 				echo "<td class=\"tbldata\">".nf($cnt['plastic'])."</td>";
 				echo "<td class=\"tbldata\">".nf($cnt['fuel'])."</td>";
 				echo "<td class=\"tbldata\">".nf($cnt['food'])."</td>";
-				echo "<td class=\"tbldata\" colspan=\"2\">".nf(floor($cp->prod->power))."</td>";
+				echo "<td class=\"tbldata\" colspan=\"2\">".nf(floor($cp->prodPower))."</td>";
 				echo "</tr>";
 			}
 			infobox_end(1);
