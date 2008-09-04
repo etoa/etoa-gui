@@ -59,10 +59,10 @@
 	//
 	// Admin-Infos
 	//
-	if ($conf['info']['v']!="")
+	if ($cfg->param1("info")==1 && $cfg->value('info')!="")
 	{
 		infobox_start(": Wichtige Information :");
-		echo text2html($conf['info']['v']);
+		echo text2html($cfg->value('info'));
 		infobox_end();
 	}
 

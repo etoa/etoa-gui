@@ -471,29 +471,34 @@
 	//
 	elseif ($sub=="ingamenews")
 	{
+		echo "<h1>Ingame-News</h1>";
+    echo "<form action=\"?page=$page&sub=$sub#writer\" method=\"post\">";
+
 		if (isset($_POST['save']))
 		{
-				dbquery("UPDATE ".$db_table['config']." SET config_value='".$_POST['config_value']."' WHERE config_name='info';");
+			$cfg->set("info",$_POST['config_value'],$_POST['enable']);
 		}
-		echo "<h1>Ingame-News</h1>";
-		
-    echo "<form action=\"?page=$page&sub=$sub\" method=\"post\">";
-		$res = dbquery("SELECT * FROM ".$db_table['config']." WHERE config_name='info';");
-		if (mysql_num_rows($res)>0)
+
+
+		if ($cfg->param1("info")==1 && $cfg->value('info')!="")
 		{
-			$arr = mysql_fetch_array($res);
 			echo "Diese News erscheinen auf der Startseite im Game:<br/><br/>";
-			if ($arr['config_value']!="")
-			{
-				infobox_start("Vorschau");
-				echo text2html($arr['config_value']);
-				infobox_end();
-			}
-			echo "<textarea name=\"config_value\" cols=\"100\" rows=\"15\">".$arr['config_value']."</textarea><br/><br/>";
-			echo "<input type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" class=\"button\" />";
+			infobox_start("Vorschau");
+			echo text2html($cfg->value('info'));
+			infobox_end();
 		}
-		else
-			echo "Es ist kein Datensatz vorhanden!";
+
+		echo "<a name=\"writer\"></a>";
+		if (isset($_POST['save']))
+		{
+			success_msg("Nachricht geändert!");
+		}
+
+		echo "<input type=\"radio\" name=\"enable\" value=\"1\" ".($cfg->param1("info")==1 ? ' checked="checked"' :'')." /> Anzeigen
+		<input type=\"radio\" name=\"enable\" value=\"0\" ".($cfg->param1("info")!=1 ? ' checked="checked"' :'')." /> Verstecken<br/><br/>";
+
+		echo "<textarea name=\"config_value\" cols=\"120\" rows=\"20\">".$cfg->value('info')."</textarea><br/><br/>";
+		echo "<input type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" class=\"button\" />";
 		echo "</form>";	
 	}	
 	
@@ -503,12 +508,12 @@
 	//
 	elseif ($sub=="systemmessage")
 	{
+		echo "<h1>Systemnachricht</h1>";
 		if (isset($_POST['save']))
 		{
-				dbquery("UPDATE ".$db_table['config']." SET config_value='".$_POST['config_value']."' WHERE config_name='system_message';");
-		}
-		echo "<h1>Systemnachricht</h1>";
-		
+			$cfg->set("system_message",$_POST['config_value']);
+			success_msg("Nachricht geändert!");
+		}		
     echo "<form action=\"?page=$page&sub=$sub\" method=\"post\">";
 		$res = dbquery("SELECT * FROM ".$db_table['config']." WHERE config_name='system_message';");
 		if (mysql_num_rows($res)>0)
@@ -681,6 +686,14 @@
 			infobox_end();			
 		}
 		
+		if ($cfg->value('register_key')!="")
+		{
+			infobox_start("Schutz der öffentlichen Seiten");
+			echo "Die öffentlichen Seiten (Anmeldung, Statistiken etc) sind durch den Schlüssel <span style=\"font-weight:bold;color:#f90\">".$cfg->value('register_key')."</span> geschützt!";
+			infobox_end();				
+		}
+		
+		
 		if ($cfg->value('offline')==1)
 		{
 			echo "<br/>";
@@ -689,11 +702,6 @@
 			infobox_end();			
 		}
 		
-		//if ($cfg->get("admin_htaccess_auth_user") == "" || $cfg->get("admin_htaccess_auth_pw")=="")
-		//{
-		//	echo "<div style=\"color:#f90\">Der Passwort-Schutz ist noch nicht aktiv! <a href=\"?page=config&amp;sub=htaccess\">Hier einrichten</a></div><br/>";
-		//}
-
 		//
 		// Schnellsuche
 		//
