@@ -16,7 +16,7 @@ namespace ship
 		<< "	shiplist "
 		<< "WHERE "
 		<< "	shiplist_user_id=" << userId <<" "
-		<< "	AND shiplist_planet_id=" << planetId <<" "
+		<< "	AND shiplist_entity_id=" << planetId <<" "
 		<< "	AND shiplist_ship_id=" << shipId <<";";
     mysqlpp::Result res = query.store();		
 		query.reset();
@@ -49,7 +49,7 @@ namespace ship
 				query << "INSERT INTO "
 					<< "	shiplist ("
 					<< "	shiplist_user_id, "
-					<< "	shiplist_planet_id, "
+					<< "	shiplist_entity_id, "
 					<< "	shiplist_ship_id, "
 					<< "	shiplist_count "
 					<< ") VALUES ( "

@@ -46,16 +46,16 @@ namespace planet
 			query << "    races.race_f_population, ";
 			query << "    races.race_f_researchtime, ";
 			query << "    races.race_f_buildtime, ";
-			query << "    sol_types.type_name as sol_type_name, ";
-			query << "    sol_types.type_f_metal as sol_type_f_metal, ";
-			query << "    sol_types.type_f_crystal as sol_type_f_crystal, ";
-			query << "    sol_types.type_f_plastic as sol_type_f_plastic, ";
-			query << "    sol_types.type_f_fuel as sol_type_f_fuel, ";
-			query << "    sol_types.type_f_food as sol_type_f_food, ";
-			query << "    sol_types.type_f_power as sol_type_f_power, ";
-			query << "    sol_types.type_f_population as sol_type_f_population, ";
-			query << "    sol_types.type_f_researchtime as sol_type_f_researchtime, ";
-			query << "    sol_types.type_f_buildtime as sol_type_f_buildtime, ";
+			query << "    sol_types.sol_type_name, ";
+			query << "    sol_types.sol_type_f_metal, ";
+			query << "    sol_types.sol_type_f_crystal, ";
+			query << "    sol_types.sol_type_f_plastic, ";
+			query << "    sol_types.sol_type_f_fuel, ";
+			query << "    sol_types.sol_type_f_food, ";
+			query << "    sol_types.sol_type_f_power, ";
+			query << "    sol_types.sol_type_f_population, ";
+			query << "    sol_types.sol_type_f_researchtime, ";
+			query << "    sol_types.sol_type_f_buildtime, ";
 			query << "    planet_types.type_name as planet_type_name, ";
 			query << "    planet_types.type_f_metal as planet_type_f_metal, ";
 			query << "    planet_types.type_f_crystal as planet_type_f_crystal, ";
@@ -93,7 +93,7 @@ namespace planet
 			query << "			) ";
 			query << "		INNER JOIN ";
 			query << "			sol_types ";
-			query << "		ON sol_types.type_id=stars.type_id ";
+			query << "		ON sol_types.sol_type_id=stars.type_id ";
 			query << "		) ";
 			query << "  	INNER JOIN  ";
 			query << "			users  ";
@@ -131,7 +131,7 @@ namespace planet
 		query << "WHERE ";
 			query << "buildlist.buildlist_building_id=buildings.building_id ";
 			query << "AND buildlist.buildlist_current_level>'0' ";
-			query << "AND buildlist.buildlist_planet_id=" << planetId << ";";
+			query << "AND buildlist.buildlist_entity_id=" << planetId << ";";
 		mysqlpp::Result bres = query.store();		
 			query.reset();
 
@@ -157,7 +157,7 @@ namespace planet
 			query << "defense ";
 		query << "WHERE ";
 			query << "deflist.deflist_def_id=defense.def_id ";
-			query << "AND deflist.deflist_planet_id='" << planetId << "';";
+			query << "AND deflist.deflist_entity_id='" << planetId << "';";
 		mysqlpp::Result dres = query.store();		
 			query.reset();
 
@@ -209,7 +209,7 @@ namespace planet
 			query << "INNER JOIN ";
 			query << "buildlist ";
 			query << "ON buildings.building_id = buildlist.buildlist_building_id ";
-			query << "AND buildlist.buildlist_planet_id=" << planetId << " ";
+			query << "AND buildlist.buildlist_entity_id=" << planetId << " ";
 			query << "AND buildlist.buildlist_current_level>0 ";
 			query << "AND (buildings.building_store_metal>0 ";
 			query << "OR buildings.building_store_crystal>0 ";
@@ -274,7 +274,7 @@ namespace planet
 		query << "INNER JOIN ";
 			query << "buildlist ";
 			query  << "ON buildings.building_id = buildlist.buildlist_building_id ";
-			query << "AND buildlist.buildlist_planet_id=" << planetId << " ";
+			query << "AND buildlist.buildlist_entity_id=" << planetId << " ";
 			query << "AND buildlist.buildlist_current_level>0 ";
 			query << "AND (buildings.building_prod_metal>0 ";
 			query << "OR buildings.building_prod_crystal>0 ";
@@ -318,7 +318,7 @@ namespace planet
 		query << "INNER JOIN ";
 			query << "ships ";
 			query << "ON shiplist_ship_id=ship_id ";
-			query<< "AND shiplist_planet_id=" << planetId << " ";
+			query<< "AND shiplist_entity_id=" << planetId << " ";
 			query << "AND ship_prod_power>0;";
 		mysqlpp::Result sres = query.store();		
 			query.reset();
@@ -518,8 +518,7 @@ namespace planet
 	
 	void PlanetManager::updateUserPlanets()
 	{
-		std::time_t ptime = std::time(0);
-		std::time_t utime = std::time(0) - 2400;
+		std::time_t ptime = std::time(0)-300;
 		mysqlpp::Query query = con_->query();
 			query << "SELECT ";
 			query << "	  planets.id, ";
@@ -543,7 +542,7 @@ namespace planet
 			query << "	  planets.planet_people, ";
 			query << "	  planets.planet_people_place, ";
 			query << "    races.race_f_population, ";
-			query << "    sol_types.type_f_population as sol_type_f_population, ";
+			query << "    sol_types.sol_type_f_population, ";
 			query << "    planet_types.type_f_population as planet_type_f_population ";
 			query << "FROM  ";
 			query << "  ( ";
@@ -572,12 +571,11 @@ namespace planet
 			query << "			) ";
 			query << "		INNER JOIN ";
 			query << "			sol_types ";
-			query << "		ON sol_types.type_id=stars.type_id ";
+			query << "		ON sol_types.sol_type_id=stars.type_id ";
 			query << "		) ";
 			query << "  	INNER JOIN  ";
 			query << "			users  ";
 			query << "		ON planets.planet_user_id = users.user_id ";
-			//query << "	AND users.user_acttime > '" << utime << "' ";
 			query << "	) ";
 			query << "INNER JOIN  ";
 			query << "	races  ";

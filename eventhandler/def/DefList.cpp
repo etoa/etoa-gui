@@ -16,7 +16,7 @@ namespace def
 			<< "	deflist "
 			<< "WHERE "
 			<< "	deflist_user_id=" << userId <<" "
-			<< "	AND deflist_planet_id=" << planetId <<" "
+			<< "	AND deflist_entity_id=" << planetId <<" "
 			<< "	AND deflist_def_id=" << defId <<";";
 		mysqlpp::Result res = query.store();		
 			query.reset();
@@ -49,7 +49,7 @@ namespace def
 				query << "INSERT INTO "
 					<< "	deflist ("
 					<< "	deflist_user_id, "
-					<< "	deflist_planet_id, "
+					<< "	deflist_entity_id, "
 					<< "	deflist_def_id, "
 					<< "	deflist_count "
 					<< ") VALUES ( "

@@ -25,13 +25,13 @@ namespace def
 		<< "	queue_objtime, "
 		<< "	queue_cnt, "
 		<< "	queue_id, "
-		<< "	queue_planet_id "
+		<< "	queue_entity_id "
 		<< "FROM "
 		<< "	def_queue "
 		<< "WHERE "
 		<< "	queue_starttime<" << time <<" "
 		<< "	AND queue_build_type<1 "
-		<< "ORDER BY queue_planet_id;";
+		<< "ORDER BY queue_entity_id;";
     mysqlpp::Result res = query.store();		
 		query.reset();
 
@@ -56,7 +56,7 @@ namespace def
 	  			{
 	  				if ((int)arr["queue_cnt"]>0)
 	  				{
-	  					DefList::add(				(int)arr["queue_planet_id"], 
+	  					DefList::add(				(int)arr["queue_entity_id"], 
 	  												(int)arr["queue_user_id"],
 	  												(int)arr["queue_def_id"],
 	  												(int)arr["queue_cnt"]);
@@ -69,7 +69,7 @@ namespace def
 	  			else
 	  			{
 	  				int obj_cnt = (int)arr["queue_cnt"] - (int)ceil((double)((int)arr["queue_endtime"] - time)/(int)arr["queue_objtime"]);
-					DefList::add(				(int)arr["queue_planet_id"], 
+					DefList::add(				(int)arr["queue_entity_id"], 
   												(int)arr["queue_user_id"],
   												(int)arr["queue_def_id"],
   												(int)obj_cnt);	  				
@@ -90,7 +90,7 @@ namespace def
 	  			}	      	
 				
 				// Make sure there are no duplicate planet id's
-				int pid = (int)arr["queue_planet_id"];
+				int pid = (int)arr["queue_entity_id"];
 				if (pid!=lastId && updatePlanet)
 				{
 					this->changedPlanets_.push_back(pid);
@@ -105,7 +105,7 @@ namespace def
 						<< "	def_queue "
 						<< "WHERE "
 						<< "	queue_endtime<=" << time <<" "
-						<< "ORDER BY queue_planet_id;";
+						<< "ORDER BY queue_entity_id;";
 					query.store();		
 						query.reset();	  			
 				}	  	    	

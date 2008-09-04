@@ -15,12 +15,12 @@ namespace building
 		// Load planets who needs updating
     mysqlpp::Query query = con_->query();
     query << "SELECT ";
-    query << "	buildlist_planet_id ";
+    query << "	buildlist_entity_id ";
     query << "FROM ";
 	query << "	buildlist ";
 	query << "WHERE ";
 	query << "	buildlist_build_type>2 ";
-	query << "	AND buildlist_build_end_time<" << time << " ORDER BY buildlist_planet_id;";
+	query << "	AND buildlist_build_end_time<" << time << " ORDER BY buildlist_entity_id;";
     mysqlpp::Result res = query.store();		
 		query.reset();
 		
@@ -36,7 +36,7 @@ namespace building
 	      for (mysqlpp::Row::size_type i = 0; i<resSize; i++) 
 	      {
 	      	row = res.at(i);
-	      	int pid = (int)row["buildlist_planet_id"];
+	      	int pid = (int)row["buildlist_entity_id"];
 	      	// Make sure there are no duplicate planet id's
 	      	if (pid!=lastId)
 	      	{
