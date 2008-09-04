@@ -252,7 +252,7 @@
 			if ((isset($_POST['cl_sesslog']) && $_POST['cl_sesslog']==1) || $all)
 			{
 				$tstamp = time()-$_POST['sess_log_timestamp'];
-				dbquery("DELETE FROM ".$db_table['user_log']." WHERE log_logintime<$tstamp;");
+				dbquery("DELETE FROM user_sessionlog WHERE log_logintime<$tstamp;");
 				echo mysql_affected_rows()." Session-Logs wurden gelöscht!<br/>";
 			}
 			
@@ -400,7 +400,7 @@
 		SELECT 
 			COUNT(*) 
 		FROM 
-			".$db_table['user_log']."
+			user_sessionlog
 		;"));
 		echo "<b>Session-Logs löschen:</b> ";
 		echo "Eintr&auml;ge löschen die &auml;lter als <select name=\"sess_log_timestamp\">";

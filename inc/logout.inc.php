@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
  */	
 
- 	dbquery ("UPDATE user_log SET log_logouttime=".time()." WHERE log_user_id='".$_SESSION[ROUNDID]['user_id']."' AND log_session_key='".$_SESSION[ROUNDID]['key']."';");
+ 	dbquery ("UPDATE user_sessionlog SET log_logouttime=".time()." WHERE log_user_id='".$_SESSION[ROUNDID]['user_id']."' AND log_session_key='".$_SESSION[ROUNDID]['key']."';");
 	$_SESSION[ROUNDID]=Null;
 	session_destroy();
 	header('Location: '.LOGINSERVER_URL.'?page=logout');

@@ -11,7 +11,7 @@
 				log_ip,
 				log_hostname 
 			FROM 
-				".$db_table['user_log']." 
+				user_sessionlog 
 			WHERE
 				log_user_id=".$cu->id()."
 			ORDER BY 

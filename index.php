@@ -269,7 +269,7 @@
 			{
 				// Zeit der letzten User-Aktion speichern
 				dbquery("UPDATE users SET user_acttime='".time()."' WHERE user_id='".$s['user_id']."';");
-				dbquery ("UPDATE user_log SET log_acttime=".time()." WHERE log_user_id=".$s['user_id']." AND log_session_key='".$s['key']."';");
+				dbquery ("UPDATE user_sessionlog SET log_acttime=".time()." WHERE log_user_id=".$s['user_id']." AND log_session_key='".$s['key']."';");
 				
 				if ($cu->isSetup())
 				{

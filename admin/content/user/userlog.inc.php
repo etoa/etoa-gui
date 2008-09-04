@@ -12,12 +12,12 @@
 					$uarr=mysql_fetch_array($ures);
 					echo "<h2>Session-Log f&uuml;r <a href=\"?page=user&sub=edit&user_id=".$uarr['user_id']."\">".$uarr['user_nick']."</a></h2>";
 				}
-				$res=dbquery("SELECT * FROM ".$db_table['user_log']." WHERE log_user_id=".$userid." ORDER BY log_id DESC;");
+				$res=dbquery("SELECT * FROM user_sessionlog WHERE log_user_id=".$userid." ORDER BY log_id DESC;");
 
 			}
 			else
 			{
-				$sqlstart="SELECT * FROM ".$db_table['user_log'].",".$db_table['users']." WHERE user_id=log_user_id";
+				$sqlstart="SELECT * FROM user_sessionlog,".$db_table['users']." WHERE user_id=log_user_id";
 				$sqlend=" ORDER BY log_user_id, log_id DESC;";
 				$sql='';
 				if ($_POST['user_id']!="")
@@ -125,7 +125,7 @@
 			}
 
 			echo "<h2>Session-Log</h2>";
-			$res=dbquery("SELECT user_nick,user_id,COUNT(*) as cnt FROM ".$db_table['users'].",".$db_table['user_log']." WHERE log_user_id=user_id GROUP BY user_id ORDER BY user_nick;");
+			$res=dbquery("SELECT user_nick,user_id,COUNT(*) as cnt FROM ".$db_table['users'].",user_sessionlog WHERE log_user_id=user_id GROUP BY user_id ORDER BY user_nick;");
 			if (mysql_num_rows($res)>0)
 			{
 				echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
@@ -142,7 +142,7 @@
 				echo "</select></td></tr>";
 				echo "</table>";
 				echo "<br/><input type=\"submit\" name=\"logshow\" value=\"Suche starten\" /></form>";
-				$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM ".$db_table['user_log'].";"));
+				$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM user_sessionlog;"));
 				echo "<br/>Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.<br/><br/>";
 			}
 			else

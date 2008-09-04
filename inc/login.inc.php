@@ -176,7 +176,7 @@
 				// Log hinzufügen
         dbquery("
         INSERT INTO
-        	user_log
+        	user_sessionlog
             (log_user_id,
             log_logintime,
             log_ip,

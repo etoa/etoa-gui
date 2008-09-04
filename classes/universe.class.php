@@ -642,6 +642,7 @@
 			$tbl[]="user_history";
 			$tbl[]="user_multi";
 			$tbl[]="user_log";
+			$tbl[]="user_sessionlog";
 			$tbl[]="user_points";
 			$tbl[]="user_requests";
 			$tbl[]="user_sitting";
