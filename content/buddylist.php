@@ -119,7 +119,7 @@
 				{
 					dbquery("INSERT INTO buddylist (bl_user_id,bl_buddy_id,bl_allow) VALUES('".$cu->id()."','".$arr['user_id']."',0);");
 					ok_msg("[b]".$arr['user_nick']."[/b] wurde zu deiner Liste hinzugef&uuml;gt und ihm wurde eine Best&auml;tigungsnachricht gesendet!");
-					send_msg($arr['user_id'],5,"Buddylist-Anfrage von ".$cu->nick,"Der Spieler will dich zu seiner Freundesliste hinzuf&uuml;gen. Willst du dies erlauben?\n\n[url ?page=buddylist&allow=".$cu->id()."]Erlauben[/url] [url ?page=buddylist&deny=".$cu->id()."]Verbieten[/url]");
+					send_msg($arr['user_id'],5,"Buddylist-Anfrage von ".$cu->nick,"Der Spieler will dich zu seiner Freundesliste hinzuf&uuml;gen.\n\n[url ?page=buddylist]Anfrage bearbeiten[/url]");
 				}
 				else
 					err_msg("Dieser Eintrag ist schon vorhanden!");
@@ -249,20 +249,18 @@
 	if (mysql_num_rows($res)>0)
 	{
 		infobox_start("Meine Freunde",1);
-		echo "<tr><th class=\"tbltitle\">Nick</th><th class=\"tbltitle\">Punkte</th><th class=\"tbltitle\">Hauptplanet</th><th class=\"tbltitle\">Zuletzt online</th><th class=\"tbltitle\">Aktion</th></tr>";
+		echo "<tr>
+			<th class=\"tbltitle\">Nick</th>
+			<th class=\"tbltitle\">Punkte</th>
+			<th class=\"tbltitle\">Hauptplanet</th>
+			<th class=\"tbltitle\">Online</th>
+			<th class=\"tbltitle\">Kommentar</th>
+			<th class=\"tbltitle\">Aktion</th>
+		</tr>";
 		while($arr=mysql_fetch_array($res))
 		{
-			echo "<tr><td class=\"tbldata\">".$arr['user_nick']." ";
-			if ($arr['bl_comment']!="" && $arr['bl_user_id']==$cu->id())
-			{
-				echo " <img src=\"images/infohelp.png\" alt=\"Info\" style=\"height:10px;\" ".tm("Kommentar",text2html($arr['bl_comment']))."></a>";
-			}
-			if ($arr['bl_comment_buddy']!="" && $arr['bl_buddy_id']==$cu->id())
-			{
-				echo " <img src=\"images/infohelp.png\" alt=\"Info\" style=\"height:10px;\" ".tm("Kommentar",text2html($arr['bl_comment_buddy']))."></a>";
-			}
-
-			echo "</td>";
+			echo "<tr>
+			<td class=\"tbldata\">".$arr['user_nick']."</td>";
 			if ($arr['bl_allow']==1)
 			{
 				$tp = new Planet($arr['pid']);
@@ -275,9 +273,20 @@
 			}
 			else
 				echo "<td class=\"tbldata\" colspan=\"3\"><i>Noch keine Erlaubnis</i></td>";
+			echo "<td class=\"tbldata\">";
+			if ($arr['bl_comment']!="" && $arr['bl_user_id']==$cu->id())
+			{
+				echo text2html($arr['bl_comment']);
+			}
+			if ($arr['bl_comment_buddy']!="" && $arr['bl_buddy_id']==$cu->id())
+			{
+				echo text2html($arr['bl_comment_buddy']);
+			}
+			echo "</td>";
 			echo "<td class=\"tbldata\">
-				<a href=\"?page=messages&mode=new&message_user_to=".$arr['user_id']."\" title=\"Nachricht\">Nachricht</a> &nbsp; 
-				<a href=\"?page=$page&comment=".$arr['bl_id']."\" title=\"Kommentar bearbeiten\">Kommentar</a> &nbsp; ";
+				<a href=\"?page=messages&mode=new&message_user_to=".$arr['user_id']."\" title=\"Nachricht\">Nachricht</a>  
+				<a href=\"?page=userinfo&amp;id=".$arr['user_id']."\" title=\"Info\">Userinfo</a> 
+				<a href=\"?page=$page&comment=".$arr['bl_id']."\" title=\"Kommentar bearbeiten\">Kommentar</a> ";
 			echo "<a href=\"?page=$page&remove=".$arr['user_id']."\" onclick=\"return confirm('Willst du ".$arr['user_nick']." wirklich von deiner Liste entfernen?');\">Entfernen</a></td>";
 
 			echo "</tr>";
@@ -285,10 +294,76 @@
 		infobox_end(1);
 	}
 	else
+	{
 		echo "Es sind noch keine Freunde in deiner Buddyliste eingetragen!<br/><br/>";
-		echo "<form action=\"?page=$page\" method=\"post\"><b>Nick:</b> <input type=\"text\" name=\"buddy_nick\" id=\"user_nick\"  maxlength=\"20\" size=\"20\" autocomplete=\"off\" value=\"\" onkeyup=\"xajax_searchUser(this.value)\"><br/><div class=\"citybox\" id=\"citybox\">&nbsp;</div><br>
-	  <input type=\"submit\" name=\"submit_buddy\" value=\"Freund hinzuf&uuml;gen\" />
-		</form><br/><br/>";
+	}
+
+$res=dbquery("
+	SELECT
+    users.user_id,
+    users.user_nick,
+    users.user_points,
+    bl_id,
+    bl_user_id,
+    bl_buddy_id
+	FROM
+    buddylist
+  INNER JOIN
+  (
+    users
+  )
+	ON 
+  	buddylist.bl_buddy_id='".$cu->id()."'
+    AND buddylist.bl_user_id=users.user_id
+    AND bl_allow=0
+	ORDER BY
+		users.user_nick ASC;");
+	if (mysql_num_rows($res)>0)
+	{
+		infobox_start("Offene Anfragen",1);
+		echo "<tr>
+			<th class=\"tbltitle\">Nick</th>
+			<th class=\"tbltitle\">Punkte</th>
+			<th class=\"tbltitle\">Aktion</th>
+		</tr>";
+		while($arr=mysql_fetch_array($res))
+		{
+			echo "<tr>
+				<td class=\"tbldata\">".$arr['user_nick']." ";
+			if ($arr['bl_comment']!="" && $arr['bl_user_id']==$cu->id())
+			{
+				echo " <img src=\"images/infohelp.png\" alt=\"Info\" style=\"height:10px;\" ".tm("Kommentar",text2html($arr['bl_comment']))."></a>";
+			}
+			if ($arr['bl_comment_buddy']!="" && $arr['bl_buddy_id']==$cu->id())
+			{
+				echo " <img src=\"images/infohelp.png\" alt=\"Info\" style=\"height:10px;\" ".tm("Kommentar",text2html($arr['bl_comment_buddy']))."></a>";
+			}
+
+			echo "</td>";
+			echo "<td class=\"tbldata\">".nf($arr['user_points'])."</td>";
+			echo "<td class=\"tbldata\" style=\"width:280px;\">
+				<a href=\"?page=messages&mode=new&message_user_to=".$arr['user_id']."\" title=\"Nachricht\">Nachricht</a>  
+				<a href=\"?page=userinfo&amp;id=".$arr['user_id']."\" title=\"Info\">Userinfo</a> 
+				<a href=\"?page=$page&amp;allow=".$arr['user_id']."\" style=\"color:#0f0\">Annehmen</a> 
+				<a href=\"?page=$page&amp;deny=".$arr['user_id']."\" style=\"color:#f90\">Zurückweisen</a>
+			</td>";
+
+			echo "</tr>";
+		}
+		infobox_end(1);
+	}
+
+	echo "
+	<h2>Füge einen Freund hinzu</h2>
+	<form action=\"?page=$page\" method=\"post\"><b>Nick:</b> <input type=\"text\" name=\"buddy_nick\" id=\"user_nick\"  maxlength=\"20\" size=\"20\" autocomplete=\"off\" value=\"\" onkeyup=\"xajax_searchUser(this.value)\"><br/><div class=\"citybox\" id=\"citybox\">&nbsp;</div><br>
+  <input type=\"submit\" name=\"submit_buddy\" value=\"Freund hinzuf&uuml;gen\" />
+	</form><br/><br/>";
 
 	}
+	
+	
+	
+	
+	
+	
 ?>
