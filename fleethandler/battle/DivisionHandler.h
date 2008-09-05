@@ -5,7 +5,7 @@
 #include <mysql++/mysql++.h>
 #include <vector>
 #include "../MysqlHandler.h"
-#include "ObjectHandler.h"
+#include "FightObjectHandler.h"
 #include "UserHandler.h"
 #include "ShowObjectHandler.h"
 
@@ -39,7 +39,7 @@ public:
 	std::vector <double> loseFleet;
 		
 	//Objectcontainer
-	std::vector < ObjectHandler > objects;
+	std::vector < FightObjectHandler > objects;
 	std::map < int,ShowObjectHandler > showObjectsShip;
 	std::map < int,ShowObjectHandler > showObjectsDef;
 	std::map < int, UserHandler > users;
@@ -61,7 +61,7 @@ public:
 	
 	//getter
 	std::string getIds(short type);
-	std::string getNicks();
+	std::string getNicks(int entityId=0);
 	std::string getObjects(short type, bool repair=false);
 		
 	//Calculates cCount, cWeapon, cHealPoints, cHealCount while fighting 

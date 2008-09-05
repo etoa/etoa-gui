@@ -1,6 +1,5 @@
 #include <iostream>
 #include <vector>
-
 #include <time.h>
 #include <mysql++/mysql++.h>
 
@@ -21,12 +20,12 @@ namespace transport
 		Config &config = Config::instance();
 		std::time_t time = std::time(0);	
 
-		//Waren ausladen
+		/** Unload the resources **/
 		fleetLand(2);
 
-		//Sucht User-ID
-		int userToId = functions::getUserIdByPlanet((int)fleet_["entity_to"]);
+		this->planetUserId = functions::getUserIdByPlanet((int)fleet_["entity_to"]);
 
+		/** Send a message to the fleet user **/
 		std::string msg = "[B]TRANSPORT GELANDET[/B]\n\nEine Flotte vom Planeten \n[b]";
 		msg += functions::formatCoords((int)fleet_["entity_from"],0);
 		msg += "[/b]\nhat ihr Ziel erreicht!\n\n[b]Planet:[/b] ";
@@ -35,32 +34,27 @@ namespace transport
 		msg += functions::formatTime((int)fleet_["landtime"]);
 		msg += msgRes;
 	
-		// Nachrichten senden
 		functions::sendMsg((int)fleet_["user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Transport angekommen",msg);
 	
-		//Nachricht an Empfänger senden, falls Empfänger != Sender
-		if ((int)fleet_["user_id"]!=userToId)
-		{
-			functions::sendMsg(userToId,(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Transport angekommen",msg);
-		}
-		
-		// Flotte zurückschicken & Waren aus dem Frachtraum löschen
-		fleetReturn(1,0,0,0,0,0,0);
-
-		// Handel loggen falls der transport an einen anderen user ging
-		if((int)fleet_["user_id"] != userToId)
-		{
+		/** If the planet user is not the same as the fleet user, send him a message too */
+		if ((int)fleet_["user_id"] != this->planetUserId) {
+			functions::sendMsg(this->planetUserId,(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Transport angekommen",msg);
+			
+			/** Add a log **/
 			std::string log = "Der Spieler [URL=?page=user&sub=edit&user_id=";
 			log += std::string(fleet_["user_id"]);
 			log += "][B]";
 			log += functions::getUserNick((int)fleet_["user_id"]);
 			log += "[/B][/URL] sendet dem Spieler [URL=?page=user&sub=edit&user_id=";
-			log += functions::d2s(userToId);
+			log += functions::d2s(this->planetUserId);
 			log += "][B]";
-			log += functions::getUserNick(userToId);
+			log += functions::getUserNick(this->planetUserId);
 			log += "[/B][/URL] folgende Rohstoffe\n\n";
 			log += msgRes;
 			functions::addLog(11,log,(int)time);
 		}
+		
+		/** Send fleet back home and delete the resources tonnage **/
+		fleetReturn(1,0,0,0,0,0,0);
 	}
 }

@@ -20,7 +20,7 @@ namespace attack
 	public:
 		AttackHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }
 		void update();
-		
+
 	};
 }
 #endif

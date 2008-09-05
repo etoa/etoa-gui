@@ -1,6 +1,6 @@
 
-#ifndef __OBJECTHANDLER__
-#define __OBJECTHANDLER__
+#ifndef __FIGHOBJECTHANDLER__
+#define __FIGHOBJECTHANDLER__
 
 #include <mysql++/mysql++.h>
 #include "../MysqlHandler.h"
@@ -11,14 +11,14 @@
 * @author Stephan Vock<glaubinx@etoa.ch>
 */
 
-class ObjectHandler	
+class FightObjectHandler	
 {
 public:
 	/**
 	* Eventhandler constructor for all handler classes.
 	* Sets the internal MySQL connection pointer
 	*/
-	ObjectHandler(mysqlpp::Row object, short type) {
+	FightObjectHandler(mysqlpp::Row object, short type) {
 		this->object=object;
 		
 		this->oId = (int)object["id"];

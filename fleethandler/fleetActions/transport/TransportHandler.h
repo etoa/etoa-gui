@@ -9,6 +9,7 @@
 
 /**
 * Handles Transport....
+* Well the word transport explains itself
 * 
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
@@ -21,7 +22,10 @@ namespace transport
 		void update();
 
 	private:
-		bool sendMsg;
+		/**
+		* User id of the planer user
+		**/
+		int planetUserId;
 		
 	};
 }

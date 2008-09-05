@@ -1,6 +1,5 @@
 #include <iostream>
 #include <math.h>
-
 #include <time.h>
 #include <mysql++/mysql++.h>
 
@@ -22,7 +21,11 @@ namespace debris
 		
 		Config &config = Config::instance();
 		std::time_t time = std::time(0);
-		std::string action = "createdebris";
+		
+		this->action = std::string(fleet_["action"]);
+		
+		std::string coordsTarget = functions::formatCoords(fleet_["entity_to"],0);
+		std::string coordsFrom = functions::formatCoords(fleet_["entity_from"],0);
 		
 		// Precheck action==possible?
 		mysqlpp::Query query = con_->query();
@@ -34,23 +37,15 @@ namespace debris
 		query << "	ships ON fs_ship_id = ship_id ";
 		query << "	AND fs_fleet_id='" << fleet_["id"] << "' ";
 		query << "	AND fs_ship_faked='0' ";
-		query << "	AND (";
-		query << "		ship_actions LIKE '%," << action << "'";
-		query << "		OR ship_actions LIKE '" << action << ",%'";
-		query << "		OR ship_actions LIKE '%," << action << ",%'";
-		query << "		OR ship_actions LIKE '" << action << "');";
+		query << "	AND ship_actions LIKE '%" << this->action << "%';";
 		mysqlpp::Result fsRes = query.store();
 		query.reset();
 		
-					
-		if (fsRes)
-		{
+		if (fsRes) {
 			int fsSize = fsRes.size();
 			
-			if (fsSize > 0)
-			{
-
-				//Verwandelt die ganze Flotte in ein TF (Grösse = 40% der Baukosten)
+			if (fsSize > 0) {
+				/** Create a debris field with the fleet (every single ship 40% of the costs) **/
 				query << "SELECT ";
 				query << "	s.ship_id, ";
 				query << "	s.ship_costs_metal, ";
@@ -64,22 +59,19 @@ namespace debris
 				mysqlpp::Result rRes = query.store();
 				query.reset();
 				
-				if (rRes)
-				{
+				if (rRes) {
 					int rSize = rRes.size();
 					mysqlpp::Row rRow;
 					
-					if (rSize > 0)
-					{
+					if (rSize > 0) {
 
-				   		for (mysqlpp::Row::size_type i = 0; i<rSize; i++) 
-						{
+				   		for (mysqlpp::Row::size_type i = 0; i<rSize; i++) {
 							rRow = rRes.at(i);
 
-							this->cnt = ceil((double)rRow["fs_ship_cnt"]*0.4);
-							this->tfMetal += cnt * (double)rRow["ship_costs_metal"];
-							this->tfCrystal += cnt * (double)rRow["ship_costs_crystal"];
-							this->tfPlastic += cnt * (double)rRow["ship_costs_plastic"];
+							this->shipCnt = ceil((double)rRow["fs_ship_cnt"]*0.4);
+							this->tfMetal += shipCnt * (double)rRow["ship_costs_metal"];
+							this->tfCrystal += shipCnt * (double)rRow["ship_costs_crystal"];
+							this->tfPlastic += shipCnt * (double)rRow["ship_costs_plastic"];
 
 							query << "DELETE FROM ";
 							query << "	fleet_ships ";
@@ -90,7 +82,7 @@ namespace debris
 							query.reset();
 						}
 
-						//Speichert enstandenes TF (Rohstoffe werden zum bestehenden TF summiert)
+						/** Save the created field **/
 						query << "UPDATE ";
 						query << "	planets ";
 						query << "SET ";
@@ -102,12 +94,10 @@ namespace debris
 						query.store();
 						query.reset();
 
-						// Flotte-Schiffe-Verknüpfungen löschen
+						/** Delete the fleet in the db **/
 						fleetDelete();
 
-						//Nachricht senden
-						std::string coordsTarget = functions::formatCoords((int)fleet_["entity_to"],0);
-						std::string coordsFrom = functions::formatCoords((int)fleet_["entity_from"],0);
+						/** Send a message to the fleet user **/
 						std::string msg = "Eine Flotte vom Planeten ";
 						msg += coordsFrom;
 						msg += " hat auf dem Planeten ";
@@ -116,7 +106,7 @@ namespace debris
 						
 						functions::sendMsg(fleet_["user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Trümmerfeld erstellt",msg);
 
-						//Log schreiben
+						/** Add a log **/
 						std::string log = "Eine Flotte des Spielers [B]";
 						log += functions::getUserNick((int)fleet_["user_id"]);
 						log += "[/B] vom Planeten ";
@@ -129,10 +119,11 @@ namespace debris
 					}
 				}
 			}
-			else
-			{
+			
+			/** If no ship with the action was in the fleet **/
+			else {
 				std::string text = "Eine Flotte vom Planeten ";
-				text += functions::formatCoords((int)fleet_["entity_from"],0);
+				text += coordsFrom;
 				text += " versuchte, ein Trümmerfel zu erstellen. Leider war kein Schiff mehr in der Flotte, welches die Aktion ausführen konnte, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!";
 							
 				functions::sendMsg((int)fleet_["user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Trümmer erstellen gescheitert",text);

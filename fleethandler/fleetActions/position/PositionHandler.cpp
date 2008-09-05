@@ -18,18 +18,15 @@ namespace position
 		
 		Config &config = Config::instance();
 		
-		//checkPlanet
+		/** Preckeck, if planet user is the same as the fleet user **/
 		this->pId =	functions::getUserIdByPlanet((int)fleet_["entity_to"]);
 		
-		if (this->pId == (int)fleet_["user_id"])
-		{
-			//Flotte stationieren und Waren ausladen
+		if (this->pId == (int)fleet_["user_id"]) {
+			/** Land the fleet and delete it in the db **/
 			fleetLand(1);
-
-			// Flotte-Schiffe-Verknüpfungen löschen
 			fleetDelete();
 
-			//Nachricht senden
+			/** Send a message to the user **/
 			std::string msg = "[b]FLOTTE GELANDET[/b]\n\nEine eurer Flotten hat hat ihr Ziel erreicht!\n\n[b]Zielplanet:[/b] ";
 			msg += functions::formatCoords((int)fleet_["entity_to"],0);
 			msg += "\n[b]Startplanet:[/b] ";
@@ -43,11 +40,13 @@ namespace position
 		
 			functions::sendMsg((int)fleet_["user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Flotte angekommen",msg);
 		}
-		//Wenn Flottenuser != Planetuser
-		else
-		{
+		
+		/** If the fleet user is not the same as the planet user **/
+		else {
+			/** Send the fleet to the main planet of the fleet user **/
 			fleetSendMain();
-			//Nachricht senden
+			
+			/** Send a message to the fleet user **/
 			std::string msg = "[b]FLOTTE Landen GESCHEITERT[/b]\n\nEine eurer Flotten hat versucht auf ihrem Ziel zu laden Der Versuch scheiterte jedoch und die Flotte macht sich auf den Weg zu eurem Hauptplaneten!\n\n[b]Ziel:[/b] ";
 			msg += functions::formatCoords(fleet_["entity_to"],0);
 			msg += "\n[b]Start:[/b] ";

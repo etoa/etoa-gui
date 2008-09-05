@@ -36,29 +36,35 @@
 #include "functions/Functions.h"
 #include "config/ConfigHandler.h"
 #include "MysqlHandler.h"
+#include "objectData/ObjectDataHandler.h"
 
-#include "fleetActions/analyze/AnalyzeHandler.h" // working
-#include "fleetActions/asteroid/AsteroidHandler.h" //tested, working, startvalues included
-#include "fleetActions/return/ReturnHandler.h" //tested, working
-#include "fleetActions/cancel/CancelHandler.h" //tested, working
-#include "fleetActions/default/DefaultHandler.h" //working
+#include "fleetActions/analyze/AnalyzeHandler.h"
+#include "fleetActions/antrax/AntraxHandler.h"
+#include "fleetActions/asteroid/AsteroidHandler.h"
+#include "fleetActions/attack/AttackHandler.h"
+#include "fleetActions/bombard/BombardHandler.h"
+#include "fleetActions/cancel/CancelHandler.h"
 #include "fleetActions/colonialize/ColonializeHandler.h"
-#include "fleetActions/debris/DebrisHandler.h" //tested, working
-#include "fleetActions/explore/ExploreHandler.h" //working (without settings)
-#include "fleetActions/fetch/FetchHandler.h" //
-#include "fleetActions/gas/GasHandler.h" //tested, working
-#include "fleetActions/market/MarketHandler.h" //
-#include "fleetActions/nebula/NebulaHandler.h" // tested, working
-#include "fleetActions/position/PositionHandler.h" //tested, working
-#include "fleetActions/spy/SpyHandler.h" //
-#include "fleetActions/transport/TransportHandler.h" //working
-#include "fleetActions/wreckage/WreckageHandler.h" //working, tested
-#include "fleetActions/support/SupportHandler.h" //
+#include "fleetActions/debris/DebrisHandler.h"
+#include "fleetActions/default/DefaultHandler.h"
+#include "fleetActions/emp/EmpHandler.h"
+#include "fleetActions/explore/ExploreHandler.h"
+#include "fleetActions/fetch/FetchHandler.h"
+#include "fleetActions/gas/GasHandler.h"
+#include "fleetActions/gattack/GattackHandler.h"
+#include "fleetActions/invade/InvadeHandler.h"
+#include "fleetActions/market/MarketHandler.h"
+#include "fleetActions/nebula/NebulaHandler.h"
+#include "fleetActions/position/PositionHandler.h"
+#include "fleetActions/return/ReturnHandler.h"
+#include "fleetActions/spy/SpyHandler.h"
+#include "fleetActions/steal/StealHandler.h"
+#include "fleetActions/stealth/StealthHandler.h"
+#include "fleetActions/support/SupportHandler.h"
+#include "fleetActions/transport/TransportHandler.h"
+#include "fleetActions/wreckage/WreckageHandler.h"
 
 #include "battle/BattleHandler.h"
-#include "fleetActions/attack/AttackHandler.h"
-#include "fleetActions/antrax/AntraxHandler.h"
-#include "fleetActions/bombard/BombardHandler.h"
 
 using namespace std;
 
@@ -74,14 +80,23 @@ main(int argc, char *argv[])
 	
 	//Loading Configdata
 	Config &config = Config::instance();
+	
+	//Loadgin Shipdate
+	objectData &objectData = objectData::instance();
 
 	//Initialize Gasplanets
 	functions::initGasPlanets();
 	
 	// Main loop
 	while (true) {	
+	
 		//Timestamp
 		std::time_t time = std::time(0);
+
+		/** Update the data, everyday once at about 02:17:00 AM **/
+		if ((time-1021)%86400==0) {
+			objectData.reloadData();
+		}
 		
 		// Graphical bling-bling
 		system("clear");
@@ -89,7 +104,7 @@ main(int argc, char *argv[])
 		cout << "----------------------------------------------------------------\n";
 		cout << "- EtoA Fleethandler, (C) 2007 by EtoA Gaming, Time: "<< time <<" -\n";
 		cout << "----------------------------------------------------------------\n\n";
-		
+
 		//Fleetquery
 		query << "SELECT ";
 		query << "	* ";
@@ -176,6 +191,11 @@ main(int argc, char *argv[])
 									zh->update();
 									delete zh;
 								}
+								else if (action == "emp") {
+									emp::EmpHandler* eh = new emp::EmpHandler(row);
+									eh->update();
+									delete eh;
+								}
 								else if (action == "explore") {
 									explore::ExploreHandler* jh = new explore::ExploreHandler(row);
 									jh->update();
@@ -185,6 +205,16 @@ main(int argc, char *argv[])
 									fetch::FetchHandler* fh = new fetch::FetchHandler(row);
 									fh->update();
 									delete fh;
+								}
+								else if (action == "gasattack") {
+									gattack::GattackHandler* gh = new gattack::GattackHandler(row);
+									gh->update();
+									delete gh;
+								}
+								else if (action == "invade") {
+									invade::InvadeHandler* ih = new invade::InvadeHandler(row);
+									ih->update();
+									delete ih;
 								}
 								else if (action == "market") {
 									market::MarketHandler* mh = new market::MarketHandler(row);
@@ -198,6 +228,16 @@ main(int argc, char *argv[])
 								}
 								else if (action == "spy") {
 									spy::SpyHandler* sh = new spy::SpyHandler(row);
+									sh->update();
+									delete sh;
+								}
+								else if (action == "spyattack") {
+									steal::StealHandler* sh = new steal::StealHandler(row);
+									sh->update();
+									delete sh;
+								}
+								else if (action == "stealthattack") {
+									stealth::StealthHandler* sh = new stealth::StealthHandler(row);
 									sh->update();
 									delete sh;
 								}

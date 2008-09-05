@@ -9,6 +9,7 @@
 
 /**
 * Handles Asteroid....
+* Collecting resources from an asteroidfield
 * 
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
@@ -21,14 +22,41 @@ namespace asteroid
 		void update();
 		
 	private:
+		/**
+		* different capacitys
+		**/
 		double fleetCapa, asteroidCapa, capa;
-		double goOrNot;
-		int asteroid;
-		int metal, crystal, plastic, sum;
-		int newMetal, newCrystal, newPlastic;
+		
+		/**
+		*Calculated/collected resources
+		**/
+		double asteroid;
+		double metal, crystal, plastic, sum;
+		
+		/**
+		* Resources from the new asteroid field
+		**/
+		double newMetal, newCrystal, newPlastic;
+		
+		/**
+		* Possibilitys, if the action succed
+		**/
 		int one, two;
+		
+		/**
+		* Number on percentage ships were destroyed
+		**/
 		double shipDestroy, destroy;
-		std::string destroyedShips,destroyedShipsMsg;
+		
+		/**
+		* Message for the destroyed ships
+		**/
+		std::string destroyedShips, destroyedShipsMsg;
+		
+		/**
+		* Actionname (lots of problems with the string variable)
+		**/
+		std::string action;
 		
 	};
 }

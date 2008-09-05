@@ -19,9 +19,10 @@ namespace fetch
 		* Fleet-Action: Fetch
 		*/
 		Config &config = Config::instance();
-		std::string action = "fetch";
+		
+		this->action = std::string(fleet_["action"]);
 
-		// Precheck action==possible?
+		/** Precheck action==possible? **/
 		mysqlpp::Query query = con_->query();
 		query << "SELECT ";
 		query << "	ship_id ";
@@ -31,21 +32,16 @@ namespace fetch
 		query << "	ships ON fs_ship_id = ship_id ";
 		query << "	AND fs_fleet_id='" << fleet_["id"] << "' ";
 		query << "	AND fs_ship_faked='0' ";
-		query << "	AND (";
-		query << "		ship_actions LIKE '%," << action << "'";
-		query << "		OR ship_actions LIKE '" << action << ",%'";
-		query << "		OR ship_actions LIKE '%," << action << ",%'";
-		query << "		OR ship_actions LIKE '" << action << "');";
+		query << "	AND ship_actions LIKE '%" << this->action << "%';";
 		mysqlpp::Result fsRes = query.store();
 		query.reset();
 							
-		if (fsRes)
-		{
+		if (fsRes) {
 			int fsSize = fsRes.size();
 			
-			if (fsSize > 0)
-			{
-		
+			if (fsSize > 0) {
+				
+				/** Select resources on the planet **/
 				mysqlpp::Query query = con_->query();
 				query << "SELECT ";
 				query << "	planet_res_metal, ";
@@ -63,9 +59,9 @@ namespace fetch
 				query.reset();
 		
 				mysqlpp::Row pRow = pRes.at(0);
-
-				if ((int)fleet_["user_id"] == (int)pRow["planet_user_id"])
-				{
+				
+				/** Function is only allowed if the fleet user is the same as the planet user **/
+				if ((int)fleet_["user_id"] == (int)pRow["planet_user_id"]) {
 					this->capa = 0;
 					query << "SELECT ";
 					query << "	SUM(ship_capacity*fs_ship_cnt) as capa ";
@@ -78,13 +74,13 @@ namespace fetch
 					mysqlpp::Result capaRes = query.store();
 					query.reset();	
 					
-					if (capaRes)
-					{
+					if (capaRes){
 						int capaSize = capaRes.size();
 						
-						if (capaSize > 0)
-						{
+						if (capaSize > 0) {
 							mysqlpp::Row capaRow = capaRes.at(0);
+							
+							/** Calculate the free capacity **/
 							this->capa = (double)capaRow["capa"] - (double)fleet_["res_metal"] - (double)fleet_["res_crystal"] - (double)fleet_["res_plastic"] - (double)fleet_["res_fuel"] - (double)fleet_["res_food"];
 						}
 					}
@@ -92,38 +88,36 @@ namespace fetch
 					this->capaCnt = 0;
 			
 					std::vector<double> load (5);
-			
 					load[0]=0;
 					load[1]=0;
 					load[2]=0;
 					load[3]=0;
 					load[4]=0;
-		
+					
+					/** Calculate the fetched resources **/
 					load[0] = floor(std::min(std::min((double)fleet_["fetch_metal"],(double)pRow["planet_res_metal"]),capa));
 					this->capaCnt += load[0];
-					if (this->capaCnt < this->capa)
-					{
+					if (this->capaCnt < this->capa) {
 						load[1] = floor(std::min(std::min((double)fleet_["fetch_crystal"],(double)pRow["planet_res_crystal"]),capa-capaCnt));
 						this->capaCnt += load[1];
-						if (this->capaCnt < this->capa)
-						{
+						if (this->capaCnt < this->capa) {
 							load[2] = floor(std::min(std::min((double)fleet_["fetch_plastic"],(double)pRow["planet_res_plastic"]),capa-capaCnt));
 							capaCnt += load[2];
-							if (this->capaCnt < this->capa)
-							{
+							if (this->capaCnt < this->capa) {
 								load[3] = floor(std::min(std::min((double)fleet_["fetch_fuel"],(double)pRow["planet_res_fuel"]),capa-capaCnt));
 								this->capaCnt += load[3];
-								if (this->capaCnt < this->capa)
-								{
+								if (this->capaCnt < this->capa) {
 									load[4] = floor(std::min(std::min((double)fleet_["fetch_food"],(double)pRow["planet_res_food"]),capa-capaCnt));
 									this->capaCnt += load[4];
 								}
-							}			
-						}				
-					}		
-		
+							}
+						}
+					}
+					
+					/** if there are some peoeple the catch up, catch them up **/
 					this->loadPeople = std::min(std::min((double)fleet_["fetch_people"],(double)fleet_["capacity_people"]),(double)pRow["planet_people"]);
-		
+					
+					/** Calculate the message for the user **/
 					std::string msg = "[B]WAREN ABGEHOLT[/B]\n\nEine Flotte vom Planeten \n[b]";
 					msg += functions::formatCoords((int)fleet_["entity_from"],0);
 					msg += "[/b]\nhat ihr Ziel erreicht!\n\n[b]Planet:[/b] ";
@@ -148,15 +142,17 @@ namespace fetch
 					msg += functions::nf(functions::d2s(load[4]));
 					msg += "[/td][/tr]";
 			
-					if (this->loadPeople>0)
-					{
+					if (this->loadPeople>0) {
 						msg += "[tr][th]Bewohner[/th][td]";
 						msg += functions::nf(functions::d2s(this->loadPeople));
 						msg += "[/td][/tr]";
 					}
 					msg += "[/table]";
 					
+					/** Send a message to the user **/
+					functions::sendMsg((int)fleet_["user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Warenabholung",msg);
 					
+					/** Update the planet with the new values **/
 					query << "UPDATE ";
 					query << "	planets ";
 					query << "SET ";
@@ -169,25 +165,15 @@ namespace fetch
 					query << "WHERE ";
 					query << "	id='" << fleet_["entity_to"] << "';";
 					query.store();
-					query.reset();		
-		
-					// Nachrichten senden
-					functions::sendMsg((int)fleet_["user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Warenabholung",msg);
+					query.reset();
+					
+					/** Send the fleet home again with the new values **/
 					fleetReturn(1,load[0],load[1],load[2],load[3],load[4],this->loadPeople);
 				}
-				else
-				{
-					fleetReturn(1);
-				}
+				else fleetReturn(1);
 			}
-			else
-			{
-				fleetReturn(1);
-			}
+			else fleetReturn(1);
 		}
-		else
-		{
-			fleetReturn(1);
-		}
+		else fleetReturn(1);
 	}
 }

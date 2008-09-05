@@ -19,9 +19,6 @@ namespace stealth
 	public:
 		StealthHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }
 		void update();
-
-	private:
-		bool sendMsg;
 		
 	};
 }

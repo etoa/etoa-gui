@@ -9,6 +9,7 @@
 
 /**
 * Handles Market....
+* For market deliverys, ships and resources
 * 
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
@@ -21,8 +22,15 @@ namespace market
 		void update();
 	
 	private:
+		/**
+		* Defines wheter there are ships or only resources to deliver
+		**/
 		int landAction;
-		int userToId;
+		
+		/**
+		* Planet user id
+		**/
+		int planetUserID;
 	};
 }
 #endif

@@ -9,6 +9,7 @@
 
 /**
 * Handles Wreackage....
+* Collect the wreckage field
 * 
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
@@ -21,8 +22,15 @@ namespace wreckage
 		void update();
 
 	private:
+		/**
+		* Wreckage resources
+		**/
 		double metal, crystal, plastic;
 		double sum;
+		
+		/**
+		* Fleet capacity and percentage fleet capacity / resources on the field
+		**/
 		double capa, percent;
 		
 	};

@@ -23,9 +23,13 @@ namespace explore
 		Config &config = Config::instance();
 		std::time_t time = std::time(0);
 		srand (time);
-		std::string action = "explore";
-
-		// Precheck action==possible?
+		
+		this->action = std::string(fleet_["action"]);
+		
+		std::string coordsFrom = functions::formatCoords(fleet_["entity_from"],0);
+		std::string coordsGas = functions::formatCoords(fleet_["entity_to"],2);
+		
+		/** Precheck action==possible? **/
 		mysqlpp::Query query = con_->query();
 		query << "SELECT ";
 		query << "	ship_id ";
@@ -35,20 +39,14 @@ namespace explore
 		query << "	ships ON fs_ship_id = ship_id ";
 		query << "	AND fs_fleet_id='" << fleet_["id"] << "' ";
 		query << "	AND fs_ship_faked='0' ";
-		query << "	AND (";
-		query << "		ship_actions LIKE '%," << action << "'";
-		query << "		OR ship_actions LIKE '" << action << ",%'";
-		query << "		OR ship_actions LIKE '%," << action << ",%'";
-		query << "		OR ship_actions LIKE '" << action << "');";
+		query << "	AND ship_actions LIKE '%" << this->action << "%';";
 		mysqlpp::Result fsRes = query.store();
 		query.reset();
 
-		if (fsRes)
-		{
+		if (fsRes) {
 			int fsSize = fsRes.size();
 
-			if (fsSize > 0)
-			{
+			if (fsSize > 0) {
 				query << "SELECT ";
 				query << "	sx, ";
 				query << "	sy, ";
@@ -65,15 +63,13 @@ namespace explore
 				mysqlpp::Result cellRes = query.store();
 				query.reset();
 
-				//the mask
+				/** the mask **/
 				char mask[1000] = "";
 
-				if (cellRes)
-				{
+				if (cellRes) {
 					int cellSize = cellRes.size();
 
-					if (cellSize > 0)
-					{
+					if (cellSize > 0) {
 						mysqlpp::Row cellRow = cellRes.at(0);
 
 						query << "SELECT ";
@@ -85,17 +81,16 @@ namespace explore
 						mysqlpp::Result maskRes = query.store();
 						query.reset();
 						
-						if (maskRes)
-						{
+						if (maskRes) {
 							int maskSize = maskRes.size();
 							
-							if (maskSize > 0)
-							{
+							if (maskSize > 0) {
 								mysqlpp::Row maskRow = maskRes.at(0);
 								strcpy( mask, maskRow["discoverymask"]);
 							}
 						}
-
+						
+						/** Discovere all the entity's **/
 						this->absX = 10 * ((int)cellRow["sx"] - 1) + (int)cellRow["cx"];
 						this->absY = 10 * ((int)cellRow["sy"] - 1) + (int)cellRow["cy"];
 
@@ -104,18 +99,16 @@ namespace explore
 						this->syNum = config.nget("num_of_sectors",2);
 						this->cyNum = config.nget("num_of_cells",2);
 
-						for (int x = this->absX - 1; x <= this->absX + 1; x++)
-						{
-							for (int y = this->absY - 1; y <= this->absY + 1; y++)
-							{
+						for (int x = this->absX - 1; x <= this->absX + 1; x++) {
+							for (int y = this->absY - 1; y <= this->absY + 1; y++) {
 								this->pos = x + (this->cyNum * this->syNum) * (y - 1) - 1;
-								if (this->pos >= 0 && this->pos <= this->sxNum * this->syNum * this->cxNum * this->cyNum)
-								{
+								if (this->pos >= 0 && this->pos <= this->sxNum * this->syNum * this->cxNum * this->cyNum) {
 									mask[this->pos] = '1';				
 								}
 							}
 						}	
-
+						
+						/** Update the mask **/
 						query << "UPDATE ";
 						query << "	users ";
 						query << "SET ";
@@ -125,6 +118,7 @@ namespace explore
 						query.store();
 						query.reset();
 						
+						/** Send a message to the user **/
 						std::string text = "Eine Flotte vom Planeten ";
 						text += functions::formatCoords((int)fleet_["entity_from"],0);
 						text += " hat das Ziel ";
@@ -132,23 +126,19 @@ namespace explore
 						text += " erkundet.";
 							
 						functions::sendMsg((int)fleet_["user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Erkundung",text);
-				
-						fleetReturn(1);
 					}			
 				}	
 
 			}
-			else
-			{
+			else {
 				std::string text = "\n\nEine Flotte vom Planeten ";
 				text += functions::formatCoords((int)fleet_["entity_from"],0);
 				text += " versuchte, das Ziel zu erkunden. Leider war kein Schiff mehr in der Flotte, welches die Aktion ausführen konnte, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!";
 							
 				functions::sendMsg((int)fleet_["user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Erkundung gescheitert",text);
-				
-				fleetReturn(1);
 			}
 		}
+		fleetReturn(1);
 	}
 	
 	std::string ExploreHandler::event()

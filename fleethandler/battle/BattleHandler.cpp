@@ -9,23 +9,8 @@
 #include "BattleHandler.h"
 
 #include "DivisionHandler.h"
-#include "ObjectHandler.h"
+#include "FightObjectHandler.h"
 #include "UserHandler.h"
-
-
-	//////////////////////////////////////////////////
-	// The Andromeda-Project-Browsergame						//
-	// Ein Massive-Multiplayer-Online-Spiel					//
-	// Programmiert von Nicolas Perrenoud						//
-	// www.nicu.ch | mail@nicu.ch										//
-	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
-	// ---------------------------------------------//
-	// Datei: battle.php													//
-	// Topic: Kampfscript			 									//
-	// Version: 0.1																	//
-	// Letzte Änderung: 21.05.2005									//
-	//////////////////////////////////////////////////
-		 
 		 
 void BattleHandler::battle()
 {
@@ -48,19 +33,13 @@ void BattleHandler::battle()
 
 	//
 	// Flotten Daten
-	//
-
 	attacker->loadFleet((int)fleet_["id"]);
-	attacker->loadShipValues();
 	attacker->initValues();
 
 	//Vertidiung Daten
-
 	defender->loadShips((int)fleet_["entity_to"]);
 	defender->loadSupport((int)fleet_["entity_to"]);
 	defender->loadDefense((int)fleet_["entity_to"]);
-	defender->loadShipValues();
-	defender->loadDefValues();
 	defender->initValues();
 
    	// Kampf abbrechen falls User gleich
@@ -74,7 +53,7 @@ void BattleHandler::battle()
 		msgFight += attacker->getNicks();
 		msgFight += "\n";
 	    msgFight += "[b]Verteidiger:[/b] ";
-		msgFight += defender->getNicks();
+		msgFight += defender->getNicks((int)fleet_["entity_to"]);
 		msgFight += "\n\n";
     	msgFight += "Der Kampf wurde abgebrochen da Angreifer und Verteidiger demselben Imperium angehören!";
     	
@@ -95,7 +74,7 @@ void BattleHandler::battle()
 		msgFight += attacker->getNicks();
 		msgFight += "\n";
 	    msgFight += "[b]Verteidiger:[/b] ";
-		msgFight += defender->getNicks();
+		msgFight += defender->getNicks((int)fleet_["entity_to"]);
 		msgFight += "\n\n";
     	msg += config.get("battleban_arrival_text",1);
     	
@@ -106,7 +85,7 @@ void BattleHandler::battle()
 	}
 	else {
 
-		/*// Prüft, ob Krieg herrscht
+		// Prüft, ob Krieg herrscht
 		if(attacker->allianceId!=0 && defender->allianceId!=0)
 		{
 			query << "SELECT ";
@@ -132,7 +111,7 @@ void BattleHandler::battle()
 					alliancesHaveWar = 1;
 				}
 			}
-		}*/
+		}
 
 		msg = "[b]KAMPFBERICHT[/b]\nvom Planeten ";
 		msg += functions::formatCoords((int)fleet_["entity_to"],0);
@@ -143,7 +122,7 @@ void BattleHandler::battle()
 		msg += attacker->getNicks();
 		msg += "\n";
 		msg += "[b]Verteidiger:[/b] ";
-		msg += defender->getNicks();
+		msg += defender->getNicks((int)fleet_["entity_to"]);
 		msg += "\n\n";
 		msg += "[b]ANGREIFENDE FLOTTE:[/b]\n";
 		msg += attacker->getObjects(1);
@@ -330,7 +309,7 @@ void BattleHandler::battle()
 		query << "SET ";
 		query << "	deflist_count='0' ";
 		query << "WHERE ";
-		query << "	deflist_planet_id='" << fleet_["entity_to"] << "';";
+		query << "	deflist_entity_id='" << fleet_["entity_to"] << "';";
 		query.store();
 		query.reset();
 		
@@ -339,7 +318,7 @@ void BattleHandler::battle()
 		query << "SET ";
 		query << "	shiplist_count='0' ";
 		query << "WHERE ";
-		query << "	shiplist_planet_id='" << fleet_["entity_to"] << "';";
+		query << "	shiplist_entity_id='" << fleet_["entity_to"] << "';";
 		query.store();
 		query.reset();
 		
@@ -351,14 +330,14 @@ void BattleHandler::battle()
 		query.reset();
 		
 		query << "SELECT ";
-		query << "	id ";
+		query << "	fleet.id ";
 		query << "FROM ";
 		query << "	fleet_ships ";
 		query << "INNER JOIN ";
 		query << "	fleet ";
 		query << "ON ";
-		query << "	fs_fleet_id=id ";
-		query << "	AND leader_id='" << fleet_["id"] << "';";
+		query << "	fs_fleet_id=fleet.id ";
+		query << "	AND fleet.leader_id='" << fleet_["id"] << "';";
 		mysqlpp::Result fsRes = query.store();
 		query.reset();
 		
@@ -386,7 +365,7 @@ void BattleHandler::battle()
 		//
 		//Schiffe/Def wiederherstellen
 		//
-		std::vector< ObjectHandler>::iterator it;
+		std::vector< FightObjectHandler >::iterator it;
 		
 		std::string attMsg = "[b]Zustand nach dem Kampf:[/b]\n\n";
 		attMsg += "[b]ANGREIFENDE FLOTTE:[/b]\n";
@@ -707,6 +686,31 @@ void BattleHandler::battle()
 				//Ranking::addBattlePoints($user_d_id,BATTLE_POINTS_D_D,"Verteidigung gegen ".$user_a_id);
 				break;
 		}
+		
+		/** Send fight message to the fighter **/
+		std::string subject1 = "Kampfbericht (";
+		subject1 += bstat;
+		subject1 += ")";
+		std::string subject2 = "Kampfbericht (";
+		subject2 += bstat2;
+		subject2 += ")";
+		std::map< int,UserHandler>::iterator at;
+		for ( at = attacker->users.begin() ; at != attacker->users.end(); at++ ) {
+			functions::sendMsg((*at).second.userId,config.idget("SHIP_WAR_MSG_CAT_ID"),subject1,msg);
+		}
+		if (defender->users.size()>0) {
+			for ( at = defender->users.begin() ; at != defender->users.end(); at++ ) {
+				functions::sendMsg((*at).second.userId,config.idget("SHIP_WAR_MSG_CAT_ID"),subject2,msg);
+			}		
+		}
+		else {
+			int userToId = functions::getUserIdByPlanet((int)fleet_["entity_to"]);
+			functions::sendMsg(userToId,config.idget("SHIP_WAR_MSG_CAT_ID"),subject2,msg);
+		}
+
+		/** Add log **/
+		functions::addLog(1,msg,(int)fleet_["landtime"]);
+
 		delete attacker, defender;
 	}
 }

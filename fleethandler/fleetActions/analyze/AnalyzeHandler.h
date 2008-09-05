@@ -9,6 +9,7 @@
 
 /**
 * Handles Analyze....
+* You can analyze an entity to find out the resources
 * 
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
@@ -17,13 +18,20 @@ namespace analyze
 	class AnalyzeHandler	: FleetHandler
 	{
 	public:
-		AnalyzeHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }
+		AnalyzeHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) {	}
 		void update();
-	private:
-		double shipDestroy, destroy;
-		int userToId;
-		int fuel;
 		
+	private:
+		/**
+		* Destroypossibility and percentage
+		**/
+		double shipDestroy, destroy;
+
+		/**
+		* Actionname (lots of problems with the string variable)
+		**/
+		std::string action;
+
 	};
 }
 #endif

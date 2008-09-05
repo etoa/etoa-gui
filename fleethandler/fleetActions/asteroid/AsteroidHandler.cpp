@@ -2,7 +2,6 @@
 #include <ctime>
 #include <math.h>
 #include <stdlib.h>
-
 #include <mysql++/mysql++.h>
 
 #include "AsteroidHandler.h"
@@ -19,11 +18,14 @@ namespace asteroid
 		* Fleet-Action: Collect asteroids
 		*/ 
 
-		//Init
+		/** Initialzing **/
 		Config &config = Config::instance();
 		std::time_t time = std::time(0);
 		srand (time);
-		std::string action = "collectmetal";
+		
+		this->action = std::string(fleet_["action"]);
+		
+		std::string coordsFrom = functions::formatCoords(fleet_["entity_from"],0);
 
 		//Precheck action==possible?
 		mysqlpp::Query query = con_->query();
@@ -36,21 +38,14 @@ namespace asteroid
 		query << "	ships ON fs_ship_id = ship_id ";
 		query << "	AND fs_fleet_id='" << fleet_["id"] << "' ";
 		query << "	AND fs_ship_faked='0'";
-		query << "	AND (";
-		query << "		ship_actions LIKE '%," << action << "'";
-		query << "		OR ship_actions LIKE '" << action << ",%'";
-		query << "		OR ship_actions LIKE '%," << action << ",%'";
-		query << "		OR ship_actions LIKE '" << action << "');";
+		query << "	AND ship_actions LIKE '%" << this->action << "%';";
 		mysqlpp::Result fsRes = query.store();
 		query.reset();
 				
-		if (fsRes)
-		{
+		if (fsRes) {
 			int fsSize = fsRes.size();
 
-			if (fsSize > 0)
-			{		
-				// ist das asteroiden feld noch vorhanden?
+			if (fsSize > 0) {		
 				query << "SELECT ";
 				query << " res_metal, ";
 				query << " res_crystal, ";
@@ -65,26 +60,24 @@ namespace asteroid
 				mysqlpp::Result asteroidRes = query.store();
 				query.reset();
 				
-				if (asteroidRes)
-				{
+				/** asteroidfield avaiable? **/
+				if (asteroidRes) {
 					int asteroidSize = asteroidRes.size();
 
-					if (asteroidSize > 0)
-					{
+					if (asteroidSize > 0) {
 						mysqlpp::Row asteroidRow = asteroidRes.at(0);
 
 						this->destroyedShips = "";
 						this->destroy = 0;
 						this->one = rand() % 101;
-						this->two = (double)config.nget("asteroid_action",0) * 100;
-
-						if (this->one  < this->two)	// 20 % Chance dass Schiffe überhaupt zerstört werden
-						{
-							this->destroy = rand() % (int)(config.nget("asteroid_action",1) * 100);		// 0 <= X <= 10 Prozent an Schiffen werden Zerstört					
+						this->two = (int)(config.nget("asteroid_action",0) * 100);
+						
+						/** Ship were destroyed? **/
+						if (this->one  < this->two)	{
+							this->destroy = rand() % (int)(config.nget("asteroid_action",1) * 100);
 						}
-
-						if(this->destroy>0)
-						{
+						
+						if(this->destroy>0) {
 							query << "SELECT ";
 							query << "	s.ship_name, ";
 							query << "	fs.fs_ship_id, ";
@@ -105,24 +98,20 @@ namespace asteroid
 							mysqlpp::Result cntRes = query.store();
 							query.reset();
 							
-							if (cntRes)
-							{
+							if (cntRes) {
 								int cntSize = cntRes.size();
 							
-								if (cntSize > 0)
-								{
+								if (cntSize > 0) {
 									mysqlpp::Row cntRow = cntRes.at(0);
 				
-									for (mysqlpp::Row::size_type i = 0; i<cntSize; i++) 
-									{
+									for (mysqlpp::Row::size_type i = 0; i<cntSize; i++)  {
 										cntRow = cntRes.at(i);
 
-										//Berechnet wie viele Schiffe von jedem Typ zerstört werden
+										/** Calculate how many ships of any type were destroyed **/
 										this->shipDestroy = (int)floor((int)cntRow["fs_ship_cnt"] * this->destroy / 100);
-					
-										if(this->shipDestroy>0)
-										{
-											// "Zerstörte" Schiffe aus der Flotte löschen
+										
+										/** Delete destroyed ships **/
+										if(this->shipDestroy>0) {
 											query << "UPDATE ";
 											query << "	fleet_ships ";
 											query << "SET ";
@@ -132,6 +121,8 @@ namespace asteroid
 											query << "	AND fs_ship_id='" << cntRow["fs_ship_id"] << "';";
 											query.store();
 											query.reset();
+											
+											/** Write the message **/
 											this->destroyedShips += functions::d2s(this->shipDestroy);
 											this->destroyedShips += " ";
 											this->destroyedShips += std::string(cntRow["ship_name"]);
@@ -141,19 +132,22 @@ namespace asteroid
 								}
 							}
 							
-							if(this->shipDestroy > 0)
-							{
+							/** Write the message **/
+							if(this->shipDestroy > 0) {
 								this->destroyedShipsMsg = "\n\nAufrund einer Kolision mit einem Asteroiden sind einige deiner Schiffe zerst&ouml;rt worden:\n\n";
 								this->destroyedShipsMsg += this->destroyedShips;
 							}
 						}
-						else
-						{
+						
+						/** If everything is fine **/
+						else {
 							this->destroyedShipsMsg = "";
 						}
-				
+						
+						/** Initialize capacity **/
 						this->fleetCapa = 0;
 						this->asteroidCapa = 0;
+						
 						query << "SELECT ";
 						query << "	SUM(ship_capacity*fs_ship_cnt) as capa ";
 						query << "FROM ";
@@ -162,29 +156,22 @@ namespace asteroid
 						query << "	ships ON fs_ship_id = ship_id ";
 						query << "	AND fs_fleet_id='" << fleet_["id"] << "' ";
 						query << "	AND fs_ship_faked='0' ";
-						query << "	AND (";
-						query << "		ship_actions LIKE '%," << action << "'";
-						query << "		OR ship_actions LIKE '" << action << ",%'";
-						query << "		OR ship_actions LIKE '%," << action << ",%'";
-						query << "		OR ship_actions LIKE '" << action << "');";
+						query << "	AND ship_actions LIKE '%" << this->action << "%';";
 						mysqlpp::Result asteroidRes = query.store();
 						query.reset();
 						
-						if (asteroidRes)
-						{
+						if (asteroidRes) {
 							int asteroidSize = asteroidRes.size();
 						
-							if (asteroidSize > 0)
-							{
+							if (asteroidSize > 0) {
 								mysqlpp::Row asteroidRow = asteroidRes.at(0);
 									
 								this->asteroidCapa = (int)asteroidRow["capa"];
 							}
 						}
 
-						//Wenn noch Asteroidensammler vorhanden sind
-						if (this->asteroidCapa > 0)
-						{
+						/** If there are still some ships, they were able to collect asteroidfields **/
+						if (this->asteroidCapa > 0) {
 							query << "SELECT ";
 							query << "	SUM(ship_capacity*fs_ship_cnt) as capa ";
 							query << "FROM ";
@@ -196,29 +183,29 @@ namespace asteroid
 							mysqlpp::Result capaRes = query.store();
 							query.reset();	
 						
-							if (capaRes)
-							{
+							if (capaRes) {
 								int capaSize = capaRes.size();
 							
-								if (capaSize > 0)
-								{
+								if (capaSize > 0) {
 									mysqlpp::Row capaRow = capaRes.at(0);
 									this->fleetCapa = (double)capaRow["capa"] - (double)fleet_["res_metal"] - (double)fleet_["res_crystal"] - (double)fleet_["res_plastic"] - (double)fleet_["res_fuel"] - (double)fleet_["res_food"];
 								}
 							}
-
+							
+							/** Calculate the collect resources **/
 							this->capa = std::min(this->fleetCapa, this->asteroidCapa);
 							this->capa /= 3;
 
 							this->asteroid = config.nget("asteroid_action",2) + (rand() % (int)(this->capa - config.nget("asteroid_action",1) + 1));
-							this->metal = round(std::min(this->asteroid,(int)asteroidRow["res_metal"]));
+							this->metal = round(std::min(this->asteroid,(double)asteroidRow["res_metal"]));
 					
 							this->asteroid = config.nget("asteroid_action",2) + (rand() % (int)(this->capa - config.nget("asteroid_action",1) + 1));
-							this->crystal = round(std::min(this->asteroid,(int)asteroidRow["res_crystal"]));
+							this->crystal = round(std::min(this->asteroid,(double)asteroidRow["res_crystal"]));
 					
 							this->asteroid = config.nget("asteroid_action",2) + (rand() % (int)(this->capa - config.nget("asteroid_action",1) + 1));
-							this->plastic = round(std::min(this->asteroid,(int)asteroidRow["res_plastic"]));
-
+							this->plastic = round(std::min(this->asteroid,(double)asteroidRow["res_plastic"]));
+							
+							/** Update the asteroidfield **/
 							query << "UPDATE ";
 							query << "	asteroids ";
 							query << "SET ";
@@ -230,9 +217,7 @@ namespace asteroid
 							query.store();
 							query.reset();
 
-							//
-							//Wenn Asteroidenfeld keine ress mehr hat -> löschen und neues erstellen
-							//
+							/** If the field is to small -> delete it and create a new one **/
 							query << "SELECT ";
 							query << " SUM(res_metal+res_crystal+res_plastic+res_fuel+res_food) as res ";
 							query << "FROM ";
@@ -242,19 +227,15 @@ namespace asteroid
 							mysqlpp::Result checkRes = query.store();
 							query.reset();
 					
-							if (checkRes)
-							{
+							if (checkRes) {
 								int checkSize = checkRes.size();
 
-								if (checkSize > 0)
-								{
+								if (checkSize > 0) {
 									mysqlpp::Row checkRow = checkRes.at(0);
 									
-
-							
-									if ((int)checkRow["res"] < config.nget("asteroid_action",2))
-									{
-										// altes "löschen"
+									/** Delete the old one **/
+									if ((int)checkRow["res"] < config.nget("asteroid_action",2)) {
+										/** Update the entitycode **/
 										query << "UPDATE ";
 										query << "	entities ";
 										query << "SET ";
@@ -264,7 +245,7 @@ namespace asteroid
 										query.store();
 										query.reset();
 
-										//asteroid löschen
+										/** Delete the field **/
 										query << "DELETE FROM";
 										query << "	asteroids ";
 										query << "WHERE ";
@@ -272,7 +253,7 @@ namespace asteroid
 										query.store();
 										query.reset();
 								
-										//space erstellen
+										/** Create an empty field at this place **/
 										query << "INSERT INTO ";
 										query << " space ";
 										query << "(";
@@ -287,16 +268,13 @@ namespace asteroid
 										query.reset();
 
 
-										// neues erstellen //
+										/** Create a new asteroidfield **/
 										this->newMetal = config.nget("asteroid_ress",1) + (rand() % (int)(config.nget("asteroid_ress",2) - config.nget("asteroid_ress",1) + 1));
-										this->newMetal /= 3;
 										this->newCrystal = config.nget("asteroid_ress",1) + (rand() % (int)(config.nget("asteroid_ress",2) - config.nget("asteroid_ress",1) + 1));
-										this->newCrystal /= 3;
 										this->newPlastic = config.nget("asteroid_ress",1) + (rand() % (int)(config.nget("asteroid_ress",2) - config.nget("asteroid_ress",1) + 1));
-										this->newPlastic /= 3;
 
 										
-										// hat es noch leere felder?
+										/** Select an empty field **/
 										query << "SELECT ";
 										query << "	id ";
 										query << "FROM ";
@@ -309,16 +287,13 @@ namespace asteroid
 										mysqlpp::Result searchRes = query.store();
 										query.reset();
 								
-										if (searchRes)
-										{
+										if (searchRes) {
 											int searchSize = searchRes.size();
 									
-											//wenn ja...
-											if (searchSize > 0)
-											{
+											if (searchSize > 0) {
 												mysqlpp::Row searchRow = searchRes.at(0);
 
-												// neues erstellen
+												/** Update the entity code **/
 												query << "UPDATE ";
 												query << "	entities ";
 												query << "SET ";
@@ -328,6 +303,7 @@ namespace asteroid
 												query.store();
 												query.reset();
 										
+												/** Create the new asteroidfield **/
 												query << "INSERT INTO ";
 												query << "	asteroids ";
 												query << "(";
@@ -345,6 +321,7 @@ namespace asteroid
 												query.store();
 												query.reset();
 
+												/** Delete the empty field **/
 												query << "DELETE FROM ";
 												query << "	space ";
 												query << "WHERE ";
@@ -355,18 +332,19 @@ namespace asteroid
 										}
 									}
 									
-									//Summiert Rohstoffe zu der Ladung der Flotte
+									/** Calculate the fleet resources **/
 									this->metal += (double)fleet_["res_metal"];
 									this->crystal += (double)fleet_["res_crystal"];
 									this->plastic += (double)fleet_["res_plastic"];
 							
 									this->sum = this->metal + this->crystal + this->plastic;
-															// Flotte zurückschicken
+									
+									/** Send the fleet back home **/
 									fleetReturn(1,this->metal,this->crystal,this->plastic,-1,-1,-1);
 
-									//Nachricht senden
+									/** Send a message to the user **/
 									std::string msg = "Eine Flotte vom Planeten \n[b]";
-									msg += functions::formatCoords((int)fleet_["entity_from"],0);
+									msg += coordsFrom;
 									msg += "[/b]\nhat [b]ein Asteroidenfeld[/b]\num [b]";
 									msg += functions::formatTime((int)fleet_["landtime"]);
 									msg += "[/b]\n erreicht und Rohstoffe gesammelt.\n";
@@ -383,7 +361,7 @@ namespace asteroid
 							
 									functions::sendMsg((int)fleet_["user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Asteroiden gesammelt",msg);
 
-									//Erbeutete Rohstoffsumme speichern
+									/** Save the collected resources **/
 									query << "UPDATE ";
 									query << "	users ";
 									query << "SET ";
@@ -393,11 +371,11 @@ namespace asteroid
 									query.store();
 									query.reset();  
 
-									//Log schreiben
+									/** Add a log **/
 									std::string log = "Eine Flotte des Spielers [B]";
 									log += functions::getUserNick((int)fleet_["user_id"]);
 									log += "[/B] vom Planeten [b]";
-									log += functions::formatCoords((int)fleet_["entity_from"],0);
+									log += coordsFrom;
 									log += "[/b] hat [b]ein Asteroidenfeld[/b] um [b]",
 									log += functions::formatTime((int)fleet_["landtime"]);
 									log += "[/b]erreicht und Rohstoffe gesammelt.";
@@ -409,62 +387,62 @@ namespace asteroid
 							}
 						}
 
-						//Wenn keine Asteroidensammler mehr vorhanden sind
-						else
-						{
-							//Nachricht senden
+						/** If there arent any asteroid collecter anymore **/
+						else {
+							/** Send a message to the user **/
 							std::string msg = "Eine Flotte vom Planeten \n[b]";
-							msg += functions::formatCoords((int)fleet_["entity_from"],0);
+							msg += coordsFrom;
 							msg += "[/b]\n wurde bei einem Asteroidenfeld abgeschossen.";
 
 							functions::sendMsg((int)fleet_["user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Flotte abgeschossen",msg);
 
-							//Log schreiben
+							/** Add a log **/
 							std::string log = "Eine Flotte des Spielers [B]";
 							log += functions::getUserNick((int)fleet_["user_id"]),
 							log += "[/B] vom Planeten [b]";
-							log += functions::formatCoords((int)fleet_["entity_from"],0);
+							log += coordsFrom;
 							log += "[/b] wurde bei einem Asteroidenfeld abgeschossen.";
 					
 							functions::addLog(13,log,time);
 
-							// Flotte-Schiffe-Verknüpfungen löschen
+							/** Delete the fleet **/
 							fleetDelete();
 						}
 					}
 		
-					// Asteroiden feld nicht mehr vorhanden
-					else
-					{
-						// Flotte zurückschicken
+					/** If the asteroid field isnt there anymore **/
+					else {
+						/** Send the fleet back home **/
 						fleetReturn(1);
 
-						// Nachricht senden
+						/** Send a message to the user **/
 						std::string msg = "Die Flotte vom Planeten \n[b]";
-						msg += functions::formatCoords((int)fleet_["entity_from"],0);
+						msg += coordsFrom;
 						msg += "[/b]\n fand kein Asteroidenfeld mehr vor.\n";
 						functions::sendMsg((int)fleet_["user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Asteroidensammeln gescheitert",msg);
 
-						//Log schreiben
+						/** Add a log **/
 						std::string log = "Eine Flotte des Spielers [B]";
 						log += functions::getUserNick((int)fleet_["user_id"]);
 						log += "[/B] vom Planeten [b]";
-						log += functions::formatCoords((int)fleet_["entity_from"],0);
+						log += coordsFrom;
 						log += "[/b] fand kein Asteroidenfeld mehr vor.";
 
 						functions::addLog(13,log,time);
 					}
 				}
 			}
-			//Wenn keine Asteroidensammler vorhanden sind
-			else
-			{
+			
+			/** If there isnt any asteroid colecter in the fleet **/
+			else{
+				/** Send a message to the user **/
 				std::string text = "Eine Flotte vom Planeten ";
-				text += functions::formatCoords((int)fleet_["entity_from"],0);
+				text += coordsFrom;
 				text += " versuchte, Asteroiden zu sammeln. Leider war kein Schiff mehr in der Flotte, welches die Aktion ausführen konnte, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!";
 							
 				functions::sendMsg((int)fleet_["user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Asteroidensammeln gescheitert",text);
 				
+				/** Send the flet back home again **/
 				fleetReturn(1);
 			}
 		}

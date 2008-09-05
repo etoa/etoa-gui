@@ -19,14 +19,18 @@ namespace spy
 		* Fleet-Action: Spy
 		*/
 		
+		/** Init Data **/
 		Config &config = Config::instance();
-		std::string action = "spy";
+		this->action = std::string(this->fleet_["action"]);	
 
-		int userToId = functions::getUserIdByPlanet((int)fleet_["entity_to"]);
+		this->userToId = functions::getUserIdByPlanet((int)fleet_["entity_to"]);
+		std::string coordsBlank = functions::formatCoords((int)fleet_["entity_to"],1);
+		std::string coordsTarget = functions::formatCoords((int)fleet_["entity_to"],0);
+		std::string coordsFrom = functions::formatCoords((int)fleet_["entity_from"],0);
 
-		// Lädt Spiotechlevel des Angreiffers
-		float spyLevelAtt = 0;
-		float tarnLevelAtt = 0;
+		/** Load tech levels first agressor **/
+		this->spyLevelAtt = 0;
+		this->tarnLevelAtt = 0;
 		
 		mysqlpp::Query query = con_->query();
 		query << "SELECT ";
@@ -41,34 +45,29 @@ namespace spy
 		mysqlpp::Result levelRes = query.store();
 		query.reset();
 		
-		if (levelRes)
-		{
+		if (levelRes) {
 			int levelSize = levelRes.size();
 			
-			if (levelSize > 0)
-			{
+			if (levelSize > 0) {
 		
 				mysqlpp::Row levelRow = levelRes.at(0);
 				
-	    		for (mysqlpp::Row::size_type i = 0; i<levelSize; i++) 
-				{
+	    		for (mysqlpp::Row::size_type i = 0; i<levelSize; i++) {
 	    			levelRow = levelRes.at(i);
 
-					if ((int)levelRow["techlist_tech_id"] == config.idget("SPY_TECH_ID"))
-					{
-						spyLevelAtt = (int)levelRow["techlist_current_level"];
+					if ((int)levelRow["techlist_tech_id"] == config.idget("SPY_TECH_ID")) {
+						this->spyLevelAtt = (int)levelRow["techlist_current_level"];
 					}
-					else if((int)levelRow["techlist_tech_id"] == config.idget("TARN_TECH_ID"))
-					{
-						tarnLevelAtt = (int)levelRow["techlist_current_level"];
+					else if((int)levelRow["techlist_tech_id"] == config.idget("TARN_TECH_ID")) {
+						this->tarnLevelAtt = (int)levelRow["techlist_current_level"];
 					}
 				}
 			}
 		}
 
-		// Lädt Spiotechlevel des Verteidigers
-		float spyLevelDef = 0;
-		float tarnLevelDef = 0;
+		/** Then load the tech levels of the victim **/
+		this->spyLevelDef = 0;
+		this->tarnLevelDef = 0;
 		
 		query << "SELECT ";
 		query << "	techlist_current_level, ";
@@ -82,33 +81,28 @@ namespace spy
 		levelRes = query.store();
 		query.reset();
 		
-		if (levelRes)
-		{
+		if (levelRes) {
 			int levelSize = levelRes.size();
 			
-			if (levelSize > 0)
-			{
+			if (levelSize > 0) {
 		
 				mysqlpp::Row levelRow = levelRes.at(0);
 				
-	    		for (mysqlpp::Row::size_type i = 0; i<levelSize; i++) 
-				{
+	    		for (mysqlpp::Row::size_type i = 0; i<levelSize; i++) {
 	    			levelRow = levelRes.at(i);
 
-					if ((int)levelRow["techlist_tech_id"] == config.idget("SPY_TECH_ID"))
-					{
-						spyLevelDef = (int)levelRow["techlist_current_level"];
+					if ((int)levelRow["techlist_tech_id"] == config.idget("SPY_TECH_ID")) {
+						this->spyLevelDef = (int)levelRow["techlist_current_level"];
 					}
-					else if ((int)levelRow["techlist_tech_id"] == config.idget("TARN_TECH_ID"))
-					{
-						tarnLevelDef = (int)levelRow["techlist_current_level"];
+					else if ((int)levelRow["techlist_tech_id"] == config.idget("TARN_TECH_ID")) {
+						this->tarnLevelDef = (int)levelRow["techlist_current_level"];
 					}
 				}
 			}
 		}
 
-		// Lade Spiosonden des Angreiffers
-		int spyShipsAtt = 0;
+		/** Load spy ships agressor **/
+		this->spyShipsAtt = 0;
 		
 		query << "SELECT ";
 		query << "	SUM(fs_ship_cnt) as cnt ";
@@ -118,11 +112,7 @@ namespace spy
 		query << "	ships ";
 		query << "	ON fs_ship_id=ship_id ";
 		query << "	AND fs_fleet_id=" << fleet_["id"] << " ";
-		query << "	AND (";
-		query << "		ship_actions LIKE '%," << action << "'";
-		query << "		OR ship_actions LIKE '" << action << ",%'";
-		query << "		OR ship_actions LIKE '%," << action << ",%'";
-		query << "		OR ship_actions LIKE '" << action << "') ";
+		query << "	AND ship_actions LIKE '%" << this->action << "%'";
 		query << "GROUP BY ";
 		query << "	fs_ship_cnt;";
 		mysqlpp::Result spyRes = query.store();
@@ -135,12 +125,12 @@ namespace spy
 			if (spySize > 0)
 			{
 				mysqlpp::Row spyRow = spyRes.at(0);
-				spyShipsAtt = spyRow["cnt"];
+				this->spyShipsAtt = spyRow["cnt"];
 			}
 		}
 
-		// Lade Spiosonden des Verteidigers
-		int spyShipsDef = 0;
+		/** Load spy ships defender or sometimes victim **/
+		this->spyShipsDef = 0;
 		
 		query << "SELECT ";
 		query << "	SUM(shiplist_count) AS cnt ";
@@ -149,66 +139,84 @@ namespace spy
 		query << "INNER JOIN ";
 		query << "	ships ";
 		query << "	ON shiplist_ship_id=ship_id ";
-		query << "	AND shiplist_planet_id=" << fleet_["entity_to"] << " ";
-		query << "	AND (";
-		query << "		ship_actions LIKE '%," << action << "'";
-		query << "		OR ship_actions LIKE '" << action << ",%'";
-		query << "		OR ship_actions LIKE '%," << action << ",%'";
-		query << "		OR ship_actions LIKE '" << action << "') ";
+		query << "	AND shiplist_entity_id=" << fleet_["entity_to"] << " ";
+		query << "	AND ship_actions LIKE '%" << this->action << "%'";
 		query << "GROUP BY ";
 		query << "	shiplist_count;";
 		spyRes = query.store();
 		query.reset();
 
-		if (spyRes)
-		{
+		if (spyRes) {
 			int spySize = spyRes.size();
 
-			if (spySize > 0)
-			{
+			if (spySize > 0) {
 
 				mysqlpp::Row spyRow = spyRes.at(0);
 
-				spyShipsDef = (int)spyRow["cnt"];
+				this->spyShipsDef = (int)spyRow["cnt"];
 			}
 		}
-
-		std::string coordsBlank = functions::formatCoords((int)fleet_["entity_to"],1);
-		std::string coordsentity = functions::formatCoords((int)fleet_["entity_to"],0);
-		std::string coordsFrom = functions::formatCoords((int)fleet_["entity_from"],0);
 		
-		if (spyShipsAtt > 0)
-		{
-			// Calculate spy defense
-			double spyDefense1 = (spyLevelDef / (spyLevelAtt + tarnLevelAtt) * config.idget("SPY_DEFENSE_FACTOR_TECH"));
-			double spyDefense2 = ((spyShipsDef / spyShipsAtt) * config.idget("SPY_DEFENSE_FACTOR_SHIPS"));
-			double spyDefense = std::min(spyDefense1 + spyDefense,config.idget("SPY_DEFENSE_MAX"));
-			bool defended = false;
+		/** Add the support ships to the defender **/
+		query << "SELECT ";
+		query << "	SUM(fleet_ships.fs_ship_cnt) AS cnt ";
+		query << "FROM ";
+		query << "	fleet_ships ";
+		query << "INNER JOIN ";
+		query << "	fleet ";
+		query << "	ON fleet.id=fleet_ships.fs_fleet_id ";
+		query << "INNER JOIN ";
+		query << "	ships ";
+		query << "	ON fleet_ships.fs_ship_id=ships.ship_id ";
+		query << "	AND ships.ship_actions LIKE '%" << this->action << "%'";
+		query << "	AND fleet.action='support' ";
+		query << "	AND fleet.entity_from='" << fleet_["entity_to"] << "' ";
+		query << "	AND fleet.entity_to='" << fleet_["entity_to"] << "' ";
+		query << "GROUP BY ";
+		query << "	fleet_ships.fs_ship_cnt;";
+		spyRes = query.store();
+		query.reset();
 
-			double roll = rand() % 101;
+		if (spyRes) {
+			int spySize = spyRes.size();
+
+			if (spySize > 0) {
+
+				mysqlpp::Row spyRow = spyRes.at(0);
+
+				this->spyShipsDef = (int)spyRow["cnt"];
+			}
+		}
 		
-			if (roll <= spyDefense)
-			{
-				defended = true;
+		/** If there are some spy ships in the fleet **/
+		if (spyShipsAtt > 0) {
+			/** Calculate the defense **/
+			this->spyDefense1 = std::max(0.0,(this->spyLevelDef / (this->spyLevelAtt + this->tarnLevelAtt) * config.idget("SPY_DEFENSE_FACTOR_TECH")));
+			this->spyDefense2 = std::max(0.0,((this->spyShipsDef / this->spyShipsAtt) * config.idget("SPY_DEFENSE_FACTOR_SHIPS")));
+			this->spyDefense = std::min(this->spyDefense1 + this->spyDefense2,config.idget("SPY_DEFENSE_MAX"));
+			this->defended = false;
+
+			this->roll = rand() % 101;
+		
+			if (this->roll <= this->spyDefense) {
+				this->defended = true;
 			}	
 
-			if (!defended)
-			{
-				// Calculate stealth bonus
-				double tarnDefense = std::min((tarnLevelDef / spyLevelAtt * config.idget("SPY_DEFENSE_FACTOR_TARN")),config.idget("SPY_DEFENSE_MAX"));
+			if (!this->defended) {
+				/** Calculate stealth bonus **/
+				this->tarnDefense = std::max(0.0,std::min((this->tarnLevelDef / this->spyLevelAtt * config.idget("SPY_DEFENSE_FACTOR_TARN")),config.idget("SPY_DEFENSE_MAX")));
 					
-				// Message header
+				/** Prepare the message header **/
 				std::string topText = "[b]Planet:[/b] ";
-				topText += coordsentity;
+				topText += coordsTarget;
 				topText += "\n[b]Besitzer:[/b] ";
-				topText += functions::getUserNick(userToId);
+				topText += functions::getUserNick(this->userToId);
 				topText += "\n";
 				
 				std::string text = "";
 
-				//Gebäude anzeigen, wenn Spiotechlevel genug hoch ist
-				if (spyLevelAtt >= config.idget("SPY_ATTACK_SHOW_BUILDINGS") && (rand() % 101) > tarnDefense)
-				{
+				/** If the spy tech level is high enough show the buildings **/
+				if (this->spyLevelAtt >= config.idget("SPY_ATTACK_SHOW_BUILDINGS") && (rand() % 101) > this->tarnDefense) {
 					// Lädt Gebäudedaten
 					query << "SELECT ";
 					query << "	b.building_name, ";
@@ -218,26 +226,23 @@ namespace spy
 					query << "INNER JOIN ";
 					query << "	buildlist AS bl ";
 					query << "	ON bl.buildlist_building_id=b.building_id ";
-					query << "	AND bl.buildlist_planet_id='" << fleet_["entity_to"] << "' ";
-					query << "	AND bl.buildlist_user_id='" << userToId << "' ";
+					query << "	AND bl.buildlist_entity_id='" << fleet_["entity_to"] << "' ";
+					query << "	AND bl.buildlist_user_id='" << this->userToId << "' ";
 					query << "	AND buildlist_current_level>0 ";
 					query << "ORDER BY ";
 					query << "	b.building_name;";
 					mysqlpp::Result bRes = query.store();
 					query.reset();
 
-					if (bRes)
-					{
+					if (bRes) {
 						int bSize = bRes.size();
 						text += "\n[b]GEBÄUDE:[/b]\n";
 						
-						if (bSize > 0)
-						{
+						if (bSize > 0) {
 							mysqlpp::Row bRow;
 							text += "[table]";
 
-							for (mysqlpp::Row::size_type i = 0; i<bSize; i++) 
-							{
+							for (mysqlpp::Row::size_type i = 0; i<bSize; i++) {
 								bRow = bRes.at(i);
 								
 								text = "[tr][td]";
@@ -248,17 +253,14 @@ namespace spy
 							}
 							text += "[/table]";
 						}
-						else
-						{
+						else {
 							text += "[i]Nichts vorhanden[/i]\n";
 						}
 					}
 				}
 
-				// Techs anzeigen, wenn Spiotechlevel genug hoch ist
-				if (spyLevelAtt >= config.idget("SPY_ATTACK_SHOW_RESEARCH") && (rand() % 101) > tarnDefense)
-				{
-					// Lädt Technologiedaten
+				/** Same with the technologies **/
+				if (this->spyLevelAtt >= config.idget("SPY_ATTACK_SHOW_RESEARCH") && (rand() % 101) > this->tarnDefense) {
 					query << "SELECT ";
 					query << "	t.tech_name, ";
 					query << "	tl.techlist_current_level ";
@@ -267,25 +269,22 @@ namespace spy
 					query << "INNER JOIN ";
 					query << "	techlist AS tl ";
 					query << "	ON tl.techlist_tech_id=t.tech_id ";
-					query << "	AND tl.techlist_user_id='" << userToId << "' ";
+					query << "	AND tl.techlist_user_id='" << this->userToId << "' ";
 					query << "	AND techlist_current_level>0 ";
 					query << "ORDER BY";
 					query << "	t.tech_name;";
 					mysqlpp::Result tRes = query.store();
 					query.reset();
 					
-					if (tRes)
-					{
+					if (tRes) {
 						int tSize = tRes.size();
 						text += "\n[b]TECHNOLOGIEN[/b]:\n";
 						
-						if (tSize > 0)
-						{	
+						if (tSize > 0) {	
 							mysqlpp::Row tRow;
 							text += "[table]";
 							
-							for (mysqlpp::Row::size_type i = 0; i<tSize; i++) 
-							{
+							for (mysqlpp::Row::size_type i = 0; i<tSize; i++) {
 								tRow = tRes.at(i);
 								
 								text = "[tr][td]";
@@ -296,40 +295,34 @@ namespace spy
 							}
 							text += "[/table]";
 						}
-						else
-						{
+						else {
 							text += "[i]Nichts vorhanden[/i]\n";
 						}
 					}
 				}
 		
-				// Schiffe anzeigen, wenn Spiotechlevel genug hoch ist
-				if (spyLevelAtt >= config.idget("SPY_ATTACK_SHOW_SHIPS") && (rand() % 101) > tarnDefense)
-				{
-					//Lädt Schiffsdaten
+				/** Next to go are the ships **/
+				if (this->spyLevelAtt >= config.idget("SPY_ATTACK_SHOW_SHIPS") && (rand() % 101) > this->tarnDefense) {
 					query << "SELECT ";
 					query << "	shiplist_ship_id, ";
 					query << "	shiplist_count ";
 					query << "FROM ";
 					query << "	shiplist ";
 					query << "WHERE ";
-					query << "	shiplist_planet_id='" << fleet_["entity_to"] <<  "' ";
+					query << "	shiplist_entity_id='" << fleet_["entity_to"] <<  "' ";
 					query << "	AND shiplist_count>'0';";
 					mysqlpp::Result sRes = query.store();
 					query.reset();
 					
-					if (sRes)
-					{
+					if (sRes) {
 						int sSize = sRes.size();
 						text += "\n[b]SCHIFFE[/b]:\n";
 						
-						if (sSize > 0)
-						{
+						if (sSize > 0) {
 							mysqlpp::Row sRow;
 							text += "[table]";
 	
-							for (mysqlpp::Row::size_type i = 0; i<sSize; i++) 
-							{
+							for (mysqlpp::Row::size_type i = 0; i<sSize; i++) {
 								sRow = sRes.at(i);
 								
 								text += "[tr][td]";
@@ -341,40 +334,34 @@ namespace spy
 							
 							text += "[/table]";
 						}
-						else
-						{
+						else {
 							text += "[i]Nichts vorhanden[/i]\n";
 						}
 					}
 				}
 		
-				// Verteidigung anzeigen, wenn Spiotechlevel genug hoch ist
-				if (spyLevelAtt >= config.idget("SPY_ATTACK_SHOW_DEFENSE") && (rand() % 101) > tarnDefense)
-				{
-					//Lädt Verteidigungsdaten
+				/** .., the defense, ... **/
+				if (this->spyLevelAtt >= config.idget("SPY_ATTACK_SHOW_DEFENSE") && (rand() % 101) > this->tarnDefense) {
 					query << "SELECT ";
 					query << "	deflist_def_id, ";
 					query << "	deflist_count ";
 					query << "FROM ";
 					query << "	deflist ";
 					query << "WHERE ";
-					query << "	deflist_planet_id='" << fleet_["entity_to"] << "' ";
+					query << "	deflist_entity_id='" << fleet_["entity_to"] << "' ";
 					query << "	AND deflist_count>0;";
 					mysqlpp::Result dRes = query.store();
 					query.reset();
 					  
-					if (dRes)
-					{
+					if (dRes) {
 						int dSize = dRes.size();
 						text += "\n[b]VERTEIDIGUNG[/b]:\n";
 							
-						if (dSize > 0)
-						{
+						if (dSize > 0) {
 							mysqlpp::Row dRow;
 							text += "[table]";
 	
-							for (mysqlpp::Row::size_type i = 0; i<dSize; i++) 
-							{
+							for (mysqlpp::Row::size_type i = 0; i<dSize; i++) {
 								dRow = dRes.at(i);
 								
 								text += "[tr][td]";
@@ -386,16 +373,14 @@ namespace spy
 							
 							text += "[/table]";
 						}
-						else
-						{
+						else {
 							text += "[i]Nichts vorhanden[/i]\n";
 						}
 					}
 				}
 		
-				//Rohstoffe anzeigen, wenn Spiotechlevel genug hoch ist
-				if (spyLevelAtt >= config.idget("SPY_ATTACK_SHOW_RESSOURCEN") && (rand() % 101) > tarnDefense)
-				{
+				/** and at last the resources on the planet **/
+				if (this->spyLevelAtt >= config.idget("SPY_ATTACK_SHOW_RESSOURCEN") && (rand() % 101) > this->tarnDefense) {
 					query << "SELECT ";
 					query << "	planet_res_metal, ";
 					query << "	planet_res_crystal, ";
@@ -409,14 +394,12 @@ namespace spy
 					mysqlpp::Result pRes = query.store();
 					query.reset();
 						
-					if (pRes)
-					{
+					if (pRes) {
 						int pSize = pRes.size();
 						text += "\n[b]RESSOURCEN:[/b]\n";
 						text += "[table]";
 							
-						if (pSize > 0)
-						{
+						if (pSize > 0) {
 							mysqlpp::Row pRow = pRes.at(0);
 					
 							text += "[tr][td]Titan[/td][td]";
@@ -443,71 +426,70 @@ namespace spy
 						text += "[/table]";
 					}
 				}
-		
-				if (text!="")
-				{
+				
+				/** Finish the spy message **/
+				if (text!="") {
 					topText += text;
 					topText += "\n\n[b]Spionageabwehr:[/b] ";
-					topText += functions::d2s(round(spyDefense));
+					topText += functions::d2s(round(this->spyDefense));
 					topText += "%\n[b]Tarnung:[/b] ";
-					topText += functions::d2s(round(tarnDefense));
+					topText += functions::d2s(round(this->tarnDefense));
 					topText += "%";
 				}
-				else
-				{
+				else {
 					topText += "\nDu konntest leider nichts über den Planeten herausfinden da deine Spionagetechnologie zu wenig weit entwickelt oder der Gegner zu gut getarnt ist!\n\n[b]Spionageabwehr:[/b] ";
-					topText += functions::d2s(round(spyDefense));
+					topText += functions::d2s(round(this->spyDefense));
 					topText += "%\n[b]Tarnung:[/b] ";
-					topText += functions::d2s(tarnDefense);
+					topText += functions::d2s(this->tarnDefense);
 					topText += "%";
 				}
 		
-				//Spionagebericht senden
+				/** Send the spy message to the fleet user **/
 				std::string subject = "Spionagebericht ";
 				subject += coordsBlank;
 				functions::sendMsg((int)fleet_["user_id"],(int)config.idget("SHIP_SPY_MSG_CAT_ID"),subject,topText);
-		
-				// Ausgespionierten Spieler informieren
+				
+				/** drop a note to the victim, that someone dudeling around the planet **/
 				std::string text2 = "Eine fremde Flotte vom Planeten ";
 				text2 += coordsFrom;
 				text2 += " wurde in der Nähe deines Planeten ";
-				text2 += coordsentity;
+				text2 += coordsTarget;
 				text2 += " gesichtet!\n\n[b]Spionageabwehr:[/b] ";
-				text2 += functions::d2s(round(spyDefense));
+				text2 += functions::d2s(round(this->spyDefense));
 				text2 += "%";
 				
 				functions::sendMsg(userToId,(int)config.idget("SHIP_MONITOR_MSG_CAT_ID"),"Raumüberwachung",text2);
 			}
-			else
-			{
-				//Spionagebericht senden
+			/** if the mission failed **/
+			else {
+				/** Send a message to the fleet user **/
 				std::string text = "Dein Versuch, den Planeten ";
-				text += coordsentity;
+				text += coordsTarget;
 				text += " auszuspionieren schlug fehl, da du entdeckt wurdest. Deine Sonden kehren ohne Ergebniss zurück!\n\n[b]Spionageabwehr:[/b] ";
-				text += functions::d2s(round(spyDefense));
+				text += functions::d2s(round(this->spyDefense));
 				text += "%";
 				
 				std::string subject = "Spionage fehlgeschlagen auf ";
 				subject += coordsBlank;
 				functions::sendMsg((int)fleet_["user_id"],(int)config.idget("SHIP_SPY_MSG_CAT_ID"),subject,text);
 		
-				// Ausgespionierten Spieler informieren
+				/** send a note to the planet user **/
 				std::string text2 = "Auf deinem Planeten ";
-				text2 += coordsentity;
+				text2 += coordsTarget;
 				text2 += " wurde ein Spionageversuch vom Planeten ";
 				text2 += coordsFrom;
 				text2 += " erfolgreich verhindert!\n\n[b]Spionageabwehr:[/b] ";
-				text2 += functions::d2s(round(spyDefense));
+				text2 += functions::d2s(round(this->spyDefense));
 				text2 += "%";
 				
-				functions::sendMsg(userToId,(int)config.idget("SHIP_MONITOR_MSG_CAT_ID"),"Raumüberwachung",text2);
+				functions::sendMsg(this->userToId,(int)config.idget("SHIP_MONITOR_MSG_CAT_ID"),"Raumüberwachung",text2);
 			}
 		}
-		else
-		{
-			//Spionagebericht senden
+		/** if there was no spy ship in the fleet **/
+		else {
+			/** Only send a message to the fleet user **/
 			std::string text = "Dein Versuch, den Planeten ";
-			text += coordsentity;
+			text += coordsTarget;
 			text += " auszuspionieren schlug fehl, da du keine Spionagesonden mitgeschickt hast!";
 			
 			std::string subject = "Spionage fehlgeschlagen auf ";
@@ -515,7 +497,7 @@ namespace spy
 			functions::sendMsg((int)fleet_["user_id"],(int)config.idget("SHIP_SPY_MSG_CAT_ID"),subject,text);
 		}
 	
-		// Flotte zurückschicken
+		/** Send fleet back home again **/
 		fleetReturn(1);
 	}
 }

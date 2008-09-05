@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 
 #include <mysql++/mysql++.h>
 
@@ -126,7 +127,7 @@
 						query << "	shiplist ";							
 						query << "WHERE ";
 						query << "	shiplist_ship_id='" << fsRow["fs_ship_id"] << "' ";
-						query << "	AND shiplist_planet_id='" << fleet_["entity_to"] << "';";
+						query << "	AND shiplist_entity_id='" << fleet_["entity_to"] << "';";
 						mysqlpp::Result slRes = query.store();
 						query.reset();
 						
@@ -178,7 +179,7 @@
 								query << "	shiplist ( ";
 								query << "	shiplist_user_id, ";
 								query << "	shiplist_ship_id, ";
-								query << "	shiplist_planet_id, ";
+								query << "	shiplist_entity_id, ";
 								query << "	shiplist_count, ";
 								query << "	shiplist_special_ship, ";
 								query << "	shiplist_special_ship_level, ";
@@ -318,7 +319,8 @@
 				query << ", res_people='" << resPeople << "'";
 		
 		query << " WHERE ";
-		query << "	id=" << fleet_["id"] << ";";
+		query << "	id='" << fleet_["id"] << "' ";
+		query << "	OR leader_id='" << fleet_["id"] << "';";
 		query.store();
 		query.reset();
 	}
@@ -343,7 +345,7 @@
 		query.reset();			
 	}
 	
-	void FleetHandler::fleetSendMain()
+	void FleetHandler::fleetSendMain(int userId)
 	{
 		mysqlpp::Query query = con_->query();
 		query << "SELECT ";
@@ -351,7 +353,10 @@
 		query << "FROM ";
 		query << "	planets ";
 		query << "WHERE ";
-		query << "	planets.planet_user_id='" << fleet_["user_id"] << "' ";
+		if (userId==0)
+			query << "	planets.planet_user_id='" << fleet_["user_id"] << "' ";
+		else
+			query << "	planets.planet_user_id='" << userId << "' ";
 		query << "	AND planets.planet_user_main='1';";
 		mysqlpp::Result mainRes = query.store();
 		query.reset();

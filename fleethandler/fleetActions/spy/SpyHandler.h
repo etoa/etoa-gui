@@ -21,7 +21,37 @@ namespace spy
 		void update();
 
 	private:
-		bool sendMsg;
+		/**
+		* Actionname (lots of problems with the string variable)
+		**/
+		std::string action;
+
+		/**
+		* Tech level agressor and victim
+		**/
+		short spyLevelAtt, tarnLevelAtt;
+		short spyLevelDef, tarnLevelDef;
+		
+		/**
+		* Spy ships
+		**/
+		int spyShipsDef, spyShipsAtt;
+
+		/**
+		* Different spy defense values
+		**/
+		double spyDefense, spyDefense1, spyDefense2, tarnDefense;
+		bool defended;
+		
+		/**
+		* Something like a go or not variable
+		**/
+		double roll;
+		
+		/**
+		* Entity user id
+		**/
+		int userToId;
 		
 	};
 }

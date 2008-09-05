@@ -9,6 +9,7 @@
 
 /**
 * Handles Gas....
+* Collect gas from a gas planet
 * 
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
@@ -20,12 +21,38 @@ namespace gas
 		GasHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }
 		void update();
 
-	private:
-		double shipDestroy, destroy;
-		double fuel, newFuel, fuelTotal;
-		double gasCapa, fleetCapa, capa;
-		int one, two;
+	private:		
+		/**
+		* Actionname (lots of problems with the string variable)
+		**/
+		std::string action;
+
+		/**
+		* Message part for destroyed ships
+		**/
 		std::string destroyedShips,destroyedShipsMsg;
+
+		/**
+		* Variables to calculate the destroyed ships
+		**/
+		double shipDestroy, destroy;
+		
+		/**
+		* Variables to calculate if there got any ships destroyed
+		**/
+		int one, two;
+				
+		/**
+		* Variables to calculate the collected fuel
+		**/
+		double fuel, newFuel, fuelTotal;
+
+		/**
+		* Variables to calculate the capacity
+		**/
+		double gasCapa, fleetCapa, capa;
+
+		
 		
 	};
 }

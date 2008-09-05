@@ -1,6 +1,5 @@
 #include <iostream>
 #include <math.h>
-
 #include <time.h>
 #include <mysql++/mysql++.h>
 
@@ -20,9 +19,8 @@ namespace wreckage
 		
 		Config &config = Config::instance();
 		std::time_t time = std::time(0);
-		std::string action = "collectdebris";
 		
-		// Precheck action==possible?
+		/** Precheck action==possible? **/
 		mysqlpp::Query query = con_->query();
 		query << "SELECT ";
 		query << "	ship_id ";
@@ -33,21 +31,18 @@ namespace wreckage
 		query << "	AND fs_fleet_id='" << fleet_["id"] << "' ";
 		query << "	AND fs_ship_faked='0' ";
 		query << "	AND (";
-		query << "		ship_actions LIKE '%," << action << "'";
-		query << "		OR ship_actions LIKE '" << action << ",%'";
-		query << "		OR ship_actions LIKE '%," << action << ",%'";
-		query << "		OR ship_actions LIKE '" << action << "');";
+		query << "		ship_actions LIKE '%," << std::string(fleet_["action"]) << "'";
+		query << "		OR ship_actions LIKE '" << std::string(fleet_["action"]) << ",%'";
+		query << "		OR ship_actions LIKE '%," << std::string(fleet_["action"]) << ",%'";
+		query << "		OR ship_actions LIKE '" << std::string(fleet_["action"]) << "');";
 		mysqlpp::Result fsRes = query.store();
 		query.reset();
-		
 					
-		if (fsRes)
-		{
+		if (fsRes) {
 			int fsSize = fsRes.size();
 			
-			if (fsSize > 0)
-			{
-				//Lade Kapazität
+			if (fsSize > 0) {
+				/** Calculate the fleet capacity **/
 				query << "SELECT ";
 				query << "	SUM(fs_ship_cnt*ship_capacity) as capa ";
 				query << "FROM ";
@@ -59,19 +54,17 @@ namespace wreckage
 				mysqlpp::Result capaRes = query.store();
 				query.reset();
 				
-				if (capaRes)
-				{
+				if (capaRes) {
 					int capaSize = capaRes.size();
 					
-					if (capaSize > 0)
-					{
+					if (capaSize > 0) {
 						mysqlpp::Row capaRow = capaRes.at(0);
 						
 						this->capa = (double)capaRow["capa"] - (double)fleet_["res_metal"] - (double)fleet_["res_crystal"] - (double)fleet_["res_plastic"] -(double)fleet_["res_fuel"] - (double)fleet_["res_food"];
 					}
 				}
 				
-				//Lädt Trümmerfeld Rohstoffe
+				/** Load the wreckage field **/
 				query << std::setprecision(18);
 				query << "SELECT ";
 				query << "	planet_wf_metal, ";
@@ -84,12 +77,10 @@ namespace wreckage
 				mysqlpp::Result wfRes = query.store();
 				query.reset();
 		
-				if (wfRes)
-				{
+				if (wfRes) {
 					int wfSize = wfRes.size();
 			
-					if (wfSize > 0)
-					{
+					if (wfSize > 0) {
 						mysqlpp::Row wfRow = wfRes.at(0);
 						this->metal = (double)wfRow["planet_wf_metal"];
 						this->crystal = (double)wfRow["planet_wf_crystal"];
@@ -98,26 +89,23 @@ namespace wreckage
 					}
 				}
 
-				// Prüfen ob TF nicht leer
-				if (this->sum>0)
-				{
-					//Rohstoffe prozentual aufteilen, wenn die Kapazität nicht für das ganze TF reicht
-					if (this->capa <= this->sum)
-					{
+				/** Check if there is a field **/
+				if (this->sum>0) {
+					/** Calculate the collected resources **/
+					if (this->capa <= this->sum) {
 						this->percent = this->capa / this->sum;
 						this->metal = round(this->metal * this->percent);
 						this->crystal = round(this->crystal * this->percent);
 						this->plastic = round(this->plastic * this->percent);
 						this->sum = this->metal + this->crystal + this->plastic;
 					}
-					else
-					{
+					else {
 						this->metal = round(this->metal);
 						this->crystal = round(this->crystal);
 						this->plastic = round(this->plastic);
 					}
 	
-					// Rohstoffe vom Planeten abziehen
+					/** Update the field **/
 					query << "UPDATE ";
 					query << "	planets ";
 					query << "SET ";
@@ -129,15 +117,15 @@ namespace wreckage
 					query.store();
 					query.reset();
 		
-					//Summiert erhaltene Rohstoffe vom TF zu des Ladung
+					/** Add collected resources to the fleet **/
 					this->metal += (double)fleet_["res_metal"];
 					this->crystal += (double)fleet_["res_crystal"];
 					this->plastic += (double)fleet_["res_plastic"];
 	
-					// Flotte zurückschicken mit Ress von TF und bestehenden ress
+					/** Send fleet back home again **/
 					fleetReturn(1,this->metal,this->crystal,this->plastic,-1,-1,-1);
 	
-					// Nachricht senden
+					/** Send a message to the user **/
 					std::string msg = "[b]TR&Uuml;MMERSAMMLER-RAPPORT[/b]\n\nEine Flotte vom Planeten \n[b]";
 					msg += functions::formatCoords((int)fleet_["entity_from"],0);
 					msg += "[/b]\nhat das Tr&uuml;mmerfeld bei \n[b]";
@@ -156,7 +144,7 @@ namespace wreckage
 		
 					functions::sendMsg((int)fleet_["user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Tr&uuml;mmer gesammelt",msg);	
 	
-					//Erbeutete Rohstoffsumme speichern
+					/** Update collected resources for the userstatistic **/
 					query << "UPDATE ";
 					query << "	users ";
 					query << "SET ";
@@ -166,7 +154,7 @@ namespace wreckage
 					query.store();
 					query.reset();  
 	
-					//Log schreiben
+					/** Add a log **/
 					std::string log = "Eine Flotte des Spielers [B]";
 					log += functions::getUserNick((int)fleet_["user_id"]);
 					log += "[/B] vom Planeten [b]";
@@ -179,13 +167,13 @@ namespace wreckage
 					log += msgRes;
 					functions::addLog(13,log,(int)time);
 				}
-				// TF ist leer...
-				else
-				{
-					// Flotte zurückschicken 
+				
+				/** If the field is empty **/
+				else {
+					/** Send fleet back home again **/ 
 					fleetReturn(1);
 	
-					// Nachricht senden
+					/** Send a message to the user **/
 					std::string msg = "[b]TRÜMMERSAMMLER-RAPPORT[/b]\n\nEine Flotte vom Planeten \n[b]";
 					msg += functions::formatCoords((int)fleet_["entity_from"],0);
 					msg += "[/b]\nhat das Tr&uuml;mmerfeld bei \n[b]";
@@ -199,8 +187,9 @@ namespace wreckage
 					functions::sendMsg((int)fleet_["user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Tr&uuml;mmer gesammelt",msg);
 				}
 			}
-			else
-			{
+			
+			/** If there is no wreckage collecter in the fleet **/
+			else {
 				std::string text = "Eine Flotte vom Planeten ";
 				text += functions::formatCoords((int)fleet_["entity_from"],0);
 				text += " versuchte, Trümmer zu sammeln. Leider war kein Schiff mehr in der Flotte, welches die Aktion ausführen konnte, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!";

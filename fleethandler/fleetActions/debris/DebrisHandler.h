@@ -9,6 +9,7 @@
 
 /**
 * Handles Debris....
+* Creates a debris field or add the resources to an existing field. The whole fleet will be destroyed
 * 
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
@@ -19,8 +20,21 @@ namespace debris
 	public:
 		DebrisHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }
 		void update();
+		
 	private:
-		double cnt;
+		/**
+		* Actionname (lots of problems with the string variable)
+		**/
+		std::string action;
+		
+		/**
+		* Ship count per ship
+		**/
+		double shipCnt;
+		
+		/**
+		* Size of the debris field
+		**/
 		double tfMetal, tfCrystal, tfPlastic;
 		
 	};

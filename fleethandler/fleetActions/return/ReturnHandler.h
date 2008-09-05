@@ -9,6 +9,7 @@
 
 /**
 * Handles Return....
+* After every action the fleet returns to the startplanet, that's it
 * 
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
@@ -21,9 +22,15 @@ namespace retour
 		void update();
 
 	private:
-		bool sendMsg;
-		int pId;
+		/**
+		* User id of the planet user
+		**/
+		int planetUserId;
 		
+		/**
+		* User wanna have a return message or not
+		**/
+		bool sendMsg;
 	};
 }
 #endif

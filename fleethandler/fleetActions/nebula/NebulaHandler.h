@@ -21,16 +21,56 @@ namespace nebula
 		void update();
 		
 	private:
-		double nebulaCapa, fleetCapa, capa;
-		double goOrNot;
-		double nebula;
-		double crystal;
-		double resTotal;
-		double newRess;
-		double maxRess;
-		int one, two;
+		/**
+		* Actionname (lots of problems with the string variable)
+		**/
+		std::string action;
+		
+		/**
+		* Variable to calculate if there got some ships destroyed
+		**/
 		double shipDestroy, destroy;
-		std::string destroyedShips,destroyedShipsMsg;
+				
+		/**
+		* Message part for the destroyed ships
+		**/
+		std::string destroyedShips, destroyedShipsMsg;
+		
+		/**
+		* Variables to calculate the possibility if the action failed or not
+		**/
+		int one, two;
+		
+		/**
+		* Different capacitys
+		**/
+		double nebulaCapa, fleetCapa, capa;
+		
+		/**
+		* Calculated collected nebula (Can be higher then the effectiv 
+		**/
+		double nebula;
+		
+		/**
+		* Nebula on the planet
+		**/
+		double maxRess;
+		
+		/**
+		* Effectiv collected nebula
+		**/
+		double crystal;
+		
+		/**
+		* Crystal at the fleet after collect from the field
+		**/
+		double resTotal;
+		
+		/**
+		* Resource of the new field
+		**/
+		double newRess;
+		
 	};
 }
 #endif

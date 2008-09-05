@@ -1,6 +1,5 @@
 #include <iostream>
 #include <vector>
-
 #include <time.h>
 #include <mysql++/mysql++.h>
 
@@ -16,18 +15,16 @@ namespace cancel
 		* Fleet-Action: Cancelled flight
 		*/
 
-		//checkPlanet
-		this->pId =	functions::getUserIdByPlanet((int)fleet_["entity_to"]);
+		/** Check it fleet user is the same as the planet user **/
+		this->planetUserId =	functions::getUserIdByPlanet((int)fleet_["entity_to"]);
 		
-		if (this->pId == (int)fleet_["user_id"])
-		{            
-			//Flotte stationieren und Waren ausladen
+		if (this->planetUserId == (int)fleet_["user_id"]) {
+			/** Land the fleet and delete it in the database **/
 			fleetLand(1);
 
-			// Flotte-Schiffe-Verknüpfungen löschen
 			fleetDelete();
 	
-			//Nachricht senden
+			/** Send a message to the user **/
 			std::string msg = "[b]FLOTTE GELANDET[/b]\n\nEine eurer Flotten hat ihr Ziel erreicht!\n\n[b]Zielplanet:[/b] ";
 			msg += functions::formatCoords((int)fleet_["entity_to"],0);
 			msg += "\n[b]Startplanet:[/b] ";
@@ -41,11 +38,13 @@ namespace cancel
 			msg += "";
 			functions::sendMsg((int)fleet_["user_id"],5,"Flotte angekommen",msg);
 		}
-		else
-		{
+		
+		/** If the fleet user isnt the same as the planet user **/
+		else {
+			/** Send the fleet to user's mainplanet **/
 			fleetSendMain();
 			
-			//Nachricht senden
+			/** Send a message to the user **/
 			std::string msg = "[b]FLOTTE Landen GESCHEITERT[/b]\n\nEine eurer Flotten hat versucht auf ihrem Ziel zu laden Der Versuch scheiterte jedoch und die Flotte macht sich auf den Weg zu eurem Hauptplaneten!\n\n[b]Ziel:[/b] ";
 			msg += functions::formatCoords((int)fleet_["entity_to"],0);
 			msg += "\n[b]Start:[/b] ";

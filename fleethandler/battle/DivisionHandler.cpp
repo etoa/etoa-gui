@@ -1,44 +1,44 @@
 #include <vector>
 #include <math.h>
+#include <string>
 #include "../config/ConfigHandler.h"
 #include "../functions/Functions.h"
 #include "DivisionHandler.h"
+#include "../objectData/ObjectHandler.h"
+#include "../objectData/ObjectDataHandler.h"
 	
 	void DivisionHandler::initValues()
 	{
+		objectData &objectData = objectData::instance();
+
 		this->initCount = 0;
 		this->initWeapon = 0;
 
-		std::vector< ObjectHandler>::iterator it;
+		std::vector< FightObjectHandler>::iterator it;
 		std::map< int,UserHandler>::iterator at;
 		std::map< int,ShowObjectHandler >::iterator ot;
 
 		for ( it = objects.begin() ; it < objects.end(); it++ ) {
 			at = this->users.find(it->userId);
-			if (it->type==0) {
-				ot = this->showObjectsDef.find(it->oId);
-			}
-			else {
-					ot = this->showObjectsShip.find(it->oId);
-			}
-			if ((*ot).second.special==1) {
+			ObjectHandler::ObjectHandler object = objectData.get(it->oId,it->type);
+			
+			if (object.special()) {
 				//bonus von spezialschiffe dazu rechnen
-				(*at).second.weaponTech += it->shipsBonusWeapon * (*ot).second.bonusWeapon;
-				(*at).second.structureTech += it->shipsBonusStructure * (*ot).second.bonusStructure;
-				(*at).second.shieldTech += it->shipsBonusShield * (*ot).second.bonusShield;
-				(*at).second.healTech += it->shipsBonusHeal * (*ot).second.bonusHeal;
+				(*at).second.weaponTech += it->shipsBonusWeapon * object.bonusWeapon();
+				(*at).second.structureTech += it->shipsBonusStructure * object.bonusStructure();
+				(*at).second.shieldTech += it->shipsBonusShield * object.bonusShield();
+				(*at).second.healTech += it->shipsBonusHeal * object.bonusHeal();
 			}
-			(*at).second.structure += it->cnt * (*ot).second.structure;
-			(*at).second.shield += it->cnt * (*ot).second.shield;
-			(*at).second.weapon += it->cnt * (*ot).second.weapon;
+			(*at).second.structure += it->cnt * object.structure();
+			(*at).second.shield += it->cnt * object.shield();
+			(*at).second.weapon += it->cnt * object.weapon();
 			(*at).second.count += it->cnt;
-			(*ot).second.cnt += it->cnt;
 		}
 		
 		for ( at = users.begin() ; at != users.end(); at++ ) {
-			this->weapon = (*at).second.weapon;
-			this->structure = (*at).second.structure;
-			this->shield = (*at).second.shield;
+			this->weapon += (*at).second.weapon;
+			this->structure += (*at).second.structure;
+			this->shield += (*at).second.shield;
 			(*at).second.weapon *= (*at).second.weaponTech;
 			(*at).second.structure *= (*at).second.structureTech;
 			(*at).second.shield *= (*at).second.shieldTech;
@@ -52,6 +52,8 @@
 	
 	void DivisionHandler::updateValues()
 	{
+		objectData &objectData = objectData::instance();
+		
 		this->cCount = 0;
 		this->cWeapon = 0;
 		this->cHealPoints = 0;
@@ -59,25 +61,20 @@
 		
 		this->percentage = this->cStructureShield / this->initStructureShield;
 		
-		std::vector< ObjectHandler>::iterator it;
+		std::vector< FightObjectHandler>::iterator it;
 		std::map< int,UserHandler>::iterator at;
-		std::map< int,ShowObjectHandler >::iterator ot;
 		for ( it = objects.begin() ; it < objects.end(); it++ ) {
 			at = this->users.find(it->userId);
-			if (it->type==0) {
-				ot = this->showObjectsDef.find(it->oId);
-			}
-			else {
-				ot = this->showObjectsShip.find(it->oId);
-			}
+			ObjectHandler::ObjectHandler object = objectData.get(it->oId,it->type);
+			
 			it->newCnt = ceil(this->percentage * it->cnt);
 			if (it->newCnt > it->cnt) it->newCnt = it->cnt;
 			this->cCount += it->newCnt;
-			this->cWeapon += it->newCnt * (*ot).second.weapon * (*at).second.weaponTech;
+			this->cWeapon += it->newCnt * object.weapon() * (*at).second.weaponTech;
 			
-			if ((*ot).second.heal > 0) {
+			if (object.heal() > 0) {
 				this->cHealCount += it->newCnt;
-				this->cHealPoints += ceil((*ot).second.heal * (*at).second.healTech * it->newCnt);
+				this->cHealPoints += ceil(object.heal() * (*at).second.healTech * it->newCnt);
 			}
 			
 		}
@@ -85,10 +82,11 @@
 	
 	void DivisionHandler::updateValuesEnd(std::vector<double> &wf)
 	{
+		objectData &objectData = objectData::instance();
 		Config &config = Config::instance();
 		this->percentage = this->cStructureShield / this->initStructureShield;
 		
-		std::vector< ObjectHandler >::iterator it;
+		std::vector< FightObjectHandler >::iterator it;
 		std::map< int,ShowObjectHandler >::iterator ot;
 		
 		for ( ot = showObjectsShip.begin() ; ot != showObjectsShip.end(); ot++ ) {
@@ -100,6 +98,7 @@
 		
 		
 		for ( it = objects.begin() ; it < objects.end(); it++ ) {
+			ObjectHandler::ObjectHandler object = objectData.get(it->oId,it->type);
 			if (it->type==0) {
 				ot = this->showObjectsDef.find(it->oId);
 			}
@@ -108,7 +107,7 @@
 			}
 			it->newCnt = ceil(this->percentage * it->cnt);
 			
-			if (it->newCnt * ((*ot).second.structure + (*ot).second.shield) <= 0) {
+			if (it->newCnt * (object.structure() + object.shield()) <= 0) {
 				it->newCnt = 0;
 			}
 			else if (it->newCnt > it->cnt) {
@@ -123,15 +122,15 @@
 				it->newCnt += it->repairCnt;
 			}
 			
-			this->loseFleet[0] += floor((it->cnt - it->newCnt) * (*ot).second.metal);
-			this->loseFleet[1] += floor((it->cnt - it->newCnt) * (*ot).second.crystal);
-			this->loseFleet[2] += floor((it->cnt - it->newCnt) * (*ot).second.plastic);
-			this->loseFleet[3] += floor((it->cnt - it->newCnt) * (*ot).second.fuel);
-			this->loseFleet[4] += floor((it->cnt - it->newCnt) * (*ot).second.food);
+			this->loseFleet[0] += floor((it->cnt - it->newCnt) * object.costsMetal());
+			this->loseFleet[1] += floor((it->cnt - it->newCnt) * object.costsCrystal());
+			this->loseFleet[2] += floor((it->cnt - it->newCnt) * object.costsPlastic());
+			this->loseFleet[3] += floor((it->cnt - it->newCnt) * object.costsFuel());
+			this->loseFleet[4] += floor((it->cnt - it->newCnt) * object.costsFood());
 			
-			wf[0] += floor((it->cnt - it->newCnt) * config.nget("ship_wf_percent",0) * (*ot).second.metal);
-			wf[1] += floor((it->cnt - it->newCnt) * config.nget("ship_wf_percent",0) * (*ot).second.crystal);
-			wf[2] += floor((it->cnt - it->newCnt) * config.nget("ship_wf_percent",0) * (*ot).second.plastic);
+			wf[0] += floor((it->cnt - it->newCnt) * config.nget("ship_wf_percent",0) * object.costsMetal());
+			wf[1] += floor((it->cnt - it->newCnt) * config.nget("ship_wf_percent",0) * object.costsCrystal());
+			wf[2] += floor((it->cnt - it->newCnt) * config.nget("ship_wf_percent",0) * object.costsPlastic());
 		}
 	}
 	
@@ -144,14 +143,14 @@
 		
 		mysqlpp::Query query = con_->query();
 		query << "SELECT ";
-		query << "	deflist_planet_id AS planet_id, ";
+		query << "	deflist_entity_id AS planet_id, ";
 		query << "	deflist_user_id AS user_id, ";
 		query << "	deflist_def_id AS id, ";
 		query << "	deflist_count AS cnt ";
 		query << "FROM ";
 		query << "	deflist ";
 		query << "WHERE ";
-		query << "	deflist_planet_id='" << entityId << "' ";
+		query << "	deflist_entity_id='" << entityId << "' ";
 		query << "	AND deflist_count>'0';";
 		mysqlpp::Result objectsRes = query.store();
 		query.reset();
@@ -165,8 +164,17 @@
 				for (mysqlpp::Row::size_type i = 0; i<objectsSize; i++) {
 					objectsRow = objectsRes.at(i);
 					
-					ObjectHandler object(objectsRow,0);
+					FightObjectHandler object(objectsRow,0);
 					this->objects.push_back(object);
+					
+					if (!showObjectsDef.count((int)objectsRow["id"])) {
+						ShowObjectHandler object(objectsRow,0);
+						this->showObjectsDef.insert ( std::pair<int,ShowObjectHandler> ( (int)objectsRow["id"],object) );
+					}
+					
+					std::map< int,ShowObjectHandler >::iterator it;
+					it = showObjectsDef.find((int)objectsRow["id"]);
+					(*it).second.cnt += (double)objectsRow["cnt"];
 					
 					if (!users.count((int)objectsRow["user_id"])) {
 						UserHandler user((int)objectsRow["user_id"]);
@@ -185,7 +193,7 @@
 		
 		mysqlpp::Query query = con_->query();
 		query << "SELECT ";
-		query << "	shiplist_planet_id AS planet_id, ";
+		query << "	shiplist_entity_id AS planet_id, ";
 		query << "	shiplist_user_id AS user_id, ";
 		query << "	shiplist_ship_id AS id, ";
 		query << "	shiplist_count AS cnt, ";
@@ -207,7 +215,7 @@
 		query << "FROM ";
 		query << "	shiplist ";
 		query << "WHERE ";
-		query << "	shiplist_planet_id='" << entityId << "' ";
+		query << "	shiplist_entity_id='" << entityId << "' ";
 		query << "	AND shiplist_count>'0';";
 		mysqlpp::Result objectsRes = query.store();
 		query.reset();
@@ -221,8 +229,16 @@
 				for (mysqlpp::Row::size_type i = 0; i<objectsSize; i++) {
 					objectsRow = objectsRes.at(i);
 					
-					ObjectHandler object(objectsRow,2);
+					FightObjectHandler object(objectsRow,2);
 					this->objects.push_back(object);
+					
+					if (!showObjectsShip.count((int)objectsRow["id"])) {
+						ShowObjectHandler object(objectsRow,1);
+						this->showObjectsShip.insert ( std::pair<int,ShowObjectHandler> ( (int)objectsRow["id"],object) );
+					}
+					std::map< int,ShowObjectHandler >::iterator it;
+					it = showObjectsShip.find((int)objectsRow["id"]);
+					(*it).second.cnt += (double)objectsRow["cnt"];
 					
 					if (!users.count((int)objectsRow["user_id"])) {
 						UserHandler user((int)objectsRow["user_id"]);
@@ -281,8 +297,16 @@
 				for (mysqlpp::Row::size_type i = 0; i<objectsSize; i++) {
 					objectsRow = objectsRes.at(i);
 					
-					ObjectHandler object(objectsRow,1);
+					FightObjectHandler object(objectsRow,1);
 					this->objects.push_back(object);
+					
+					if (!showObjectsShip.count((int)objectsRow["id"])) {
+						ShowObjectHandler object(objectsRow,1);
+						this->showObjectsShip.insert ( std::pair<int,ShowObjectHandler> ( (int)objectsRow["id"],object) );
+					}
+					std::map< int,ShowObjectHandler >::iterator it;
+					it = showObjectsShip.find((int)objectsRow["id"]);
+					(*it).second.cnt += (double)objectsRow["cnt"];
 					
 					if (!users.count((int)objectsRow["user_id"])) {
 						UserHandler user((int)objectsRow["user_id"]);
@@ -327,7 +351,8 @@
 		query << "ON ";
 		query << "	(leader_id='" << fId << "' ";
 		query << "	OR id='" << fId << "') ";
-		query << "	AND fs_ship_cnt>'0'; ";
+		query << "	AND fs_fleet_id=id ";
+		query << "	AND fs_ship_cnt>'0';";
 		mysqlpp::Result objectsRes = query.store();
 		query.reset();
 
@@ -340,8 +365,16 @@
 				for (mysqlpp::Row::size_type i = 0; i<objectsSize; i++) {
 					objectsRow = objectsRes.at(i);
 					
-					ObjectHandler object(objectsRow,1);
+					FightObjectHandler object(objectsRow,1);
 					this->objects.push_back(object);
+
+					if (!showObjectsShip.count((int)objectsRow["id"])) {
+						ShowObjectHandler object(objectsRow,1);
+						this->showObjectsShip.insert ( std::pair<int,ShowObjectHandler> ( (int)objectsRow["id"],object) );
+					}
+					std::map< int,ShowObjectHandler >::iterator it;
+					it = showObjectsShip.find((int)objectsRow["id"]);
+					(*it).second.cnt += (double)objectsRow["cnt"];
 
 					if (!users.count((int)objectsRow["user_id"])) {
 						UserHandler user((int)objectsRow["user_id"]);
@@ -352,109 +385,10 @@
 		}
 	}
 	
-	void DivisionHandler::loadShipValues()
-	{
-		My &my = My::instance();
-		mysqlpp::Connection *con_ = my.get();
-		
-		std::string ids = getIds(1);
-		
-		if (ids != "") {
-			mysqlpp::Query query = con_->query();
-			query << "SELECT ";
-			query << "	ship_id AS id, ";
-			query << "	ship_name AS name, ";
-			query << "	ship_structure AS structure, ";
-			query << "	ship_shield AS shield, ";
-			query << "	ship_weapon AS weapon, ";
-			query << "	ship_heal AS heal, ";
-			query << "	ship_costs_metal AS costs_metal, ";
-			query << "	ship_costs_crystal AS costs_crystal, ";
-			query << "	ship_costs_plastic AS costs_plastic, ";
-			query << "	ship_costs_fuel AS costs_fuel, ";
-			query << "	ship_costs_food AS costs_food, ";
-			query << "	ship_capacity, ";
-			query << "	special_ship, ";
-			query << "	special_ship_need_exp, ";
-			query << "	special_ship_exp_factor, ";
-			query << "	special_ship_bonus_weapon, ";
-			query << "	special_ship_bonus_structure, ";
-			query << "	special_ship_bonus_shield, ";
-			query << "	special_ship_bonus_heal, ";
-			query << "	special_ship_bonus_capacity ";
-			query << "FROM ";
-			query << "	ships ";
-			query << "WHERE ";
-			query << "	ship_id IN (" << ids << ") ";
-			query << "ORDER BY ";
-			query << "	special_ship DESC, ";
-			query << "	ship_name;";
-			mysqlpp::Result res = query.store();
-			query.reset();
-		
-			if (res) {
-				int resSize = res.size();
-			
-				if (resSize > 0) {
-					mysqlpp::Row objectsRow;
-					for (mysqlpp::Row::size_type i = 0; i<resSize; i++) {
-						objectsRow = res.at(i);
-						ShowObjectHandler object(objectsRow,1);
-						this->showObjectsShip.insert ( std::pair<int,ShowObjectHandler> ( (int)objectsRow["id"],object) );
-					}
-				}
-			}
-		}
-	}
-	
-	void DivisionHandler::loadDefValues()
-	{
-		My &my = My::instance();
-		mysqlpp::Connection *con_ = my.get();
-		
-		std::string ids = getIds(0);
-		
-		if (ids !="") {
-			mysqlpp::Query query = con_->query();
-			query << "SELECT ";
-			query << "	def_id AS id, ";
-			query << "	def_name AS name, ";
-			query << "	def_structure AS structure, ";
-			query << "	def_shield AS shield, ";
-			query << "	def_weapon AS weapon, ";
-			query << "	def_heal AS heal, ";
-			query << "	def_costs_metal AS costs_metal, ";
-			query << "	def_costs_crystal AS costs_crystal, ";
-			query << "	def_costs_plastic AS costs_plastic, ";
-			query << "	def_costs_fuel AS costs_fuel, ";
-			query << "	def_costs_food AS costs_food ";
-			query << "FROM ";
-			query << "	defense ";
-			query << "WHERE ";
-			query << "	def_id IN (" << ids << ") ;";
-			mysqlpp::Result res = query.store();
-			query.reset();
-		
-			if (res) {
-				int resSize = res.size();
-			
-				if (resSize > 0) {
-					mysqlpp::Row objectsRow;
-				
-					for (mysqlpp::Row::size_type i = 0; i<resSize; i++) {
-						objectsRow = res.at(i);
-						ShowObjectHandler object(objectsRow,0);
-						this->showObjectsDef.insert ( std::pair<int,ShowObjectHandler> ( (int)objectsRow["id"],object) );
-					}
-				}
-			}
-		}
-	}
-	
 	std::string DivisionHandler::getIds(short type)
 	{
 		std::string id;
-		std::vector< ObjectHandler>::iterator it;
+		std::vector< FightObjectHandler>::iterator it;
 		bool done = 0;
 
 		for ( it = objects.begin() ; it < objects.end(); it++ ) {
@@ -471,34 +405,40 @@
 		return id;
 	}
 
-	std::string DivisionHandler::getNicks()
+	std::string DivisionHandler::getNicks(int entityId)
 	{
 		bool done = 0;
 		std::string nicks;
 		std::map< int,UserHandler>::iterator at;
 		for ( at = users.begin() ; at != users.end(); at++ ) {
-			nicks += (*at).second.userNick;
 			if (done) {
 				nicks += ", ";
 			}
+			nicks += (*at).second.userNick;
 			done = 1;
 		}
+		if (nicks.length()==0) {
+			nicks = functions::getUserNick(functions::getUserIdByPlanet(entityId));
+		}
+			
 		return nicks;
 	}
 	
 	std::string DivisionHandler::getObjects(short type, bool repair)
 	{
+		objectData &objectData = objectData::instance();
 		std::string objects;
 		std::map< int,ShowObjectHandler >::iterator it;
 		
 		if (type==0) {
 			for ( it = showObjectsDef.begin() ; it != showObjectsDef.end(); it++ ) {
-				objects += (*it).second.name;
+				ObjectHandler::ObjectHandler object = objectData.get((*it).second.oid,(*it).second.type);
+				objects += object.name();
 				objects += ": ";
-				objects += functions::d2s((*it).second.cnt);
+				objects += functions::nf(functions::d2s((*it).second.cnt));
 				if (repair) {
 					objects += " (+";
-					objects += functions::d2s((*it).second.repairCnt);
+					objects += functions::nf(functions::d2s((*it).second.repairCnt));
 					objects += ")";
 				}
 				objects += "\n";
@@ -506,9 +446,10 @@
 		}
 		else {
 			for ( it = showObjectsShip.begin() ; it != showObjectsShip.end(); it++ ) {
-				objects += (*it).second.name;
+				ObjectHandler::ObjectHandler object = objectData.get((*it).second.oid,(*it).second.type);
+				objects += object.name();
 				objects += ": ";
-				objects += functions::d2s((*it).second.cnt);
+				objects += functions::nf(functions::d2s((*it).second.cnt));
 				objects += "\n";
 			}
 		}
@@ -522,21 +463,22 @@
 		My &my = My::instance();
 		mysqlpp::Connection *con_ = my.get();
 		mysqlpp::Query query = con_->query();
+		objectData &objectData = objectData::instance();
 
-		std::vector < ObjectHandler >::iterator it;
+		std::vector < FightObjectHandler >::iterator it;
 		std::map< int,ShowObjectHandler >::iterator ot;
 		std::map< int,UserHandler>::iterator at;
 		std::map< int,double >::iterator ft;
 		bool special;
 		
 		for ( it = objects.begin() ; it < objects.end(); it++ ) {
+			ObjectHandler::ObjectHandler object = objectData.get(it->oId,it->type);
 			if (it->type==1 && it->fleetId!=0) {
-				ot = this->showObjectsShip.find(it->oId);
 				at = this->users.find(it->userId);
 			
-				if (it->newCnt > 0 && (*ot).second.special) {
+				if (it->newCnt > 0 && object.special()) {
 					it->shipExp += this->newExpInit;
-					(*at).second.specialShipBonusCapacity += (*ot).second.bonusCapacity * it->shipsBonusCapacity;
+					(*at).second.specialShipBonusCapacity += object.bonusCapacity() * it->shipsBonusCapacity;
 					special = true;
 					query << "INSERT INTO ";
 					query << "	fleet_ships ";
@@ -605,11 +547,10 @@
 				}
 
 				//Kapazität der überlebenden Schiffe rechnen
-				(*at).second.fleetCapa[it->fleetId] += ((*ot).second.capacity * it->newCnt);
-				(*at).second.capa += (*ot).second.capacity * it->newCnt;
+				(*at).second.fleetCapa[it->fleetId] += (object.capacity() * it->newCnt);
+				(*at).second.capa += object.capacity() * it->newCnt;
 			}
 			else if (it->type==1 && it->planetId!=0) {
-				ot = this->showObjectsShip.find(it->oId);
 				it->shipExp += this->newExpInit;
 				if (it->newCnt > 0) {
 					query << "SELECT ";
@@ -617,7 +558,7 @@
 					query << "FROM ";
 					query << "	shiplist ";
 					query << "WHERE ";
-					query << "	shiplist_planet_id='" << it->planetId << "' ";
+					query << "	shiplist_entity_id='" << it->planetId << "' ";
 					query << "	AND shiplist_ship_id='" << it->oId << "';";
 					mysqlpp::Result slRes = query.store();
 					query.reset();
@@ -631,9 +572,9 @@
 							query << "	shiplist ";
 							query << "SET ";
 							query << "	shiplist_count='" << it->newCnt << "' ";
-							if ((*ot).second.special) query << ",	shiplist_special_ship_exp='" << it->shipExp << "' ";
+							if (object.special()) query << ",	shiplist_special_ship_exp='" << it->shipExp << "' ";
 							query << "WHERE ";
-							query << "	shiplist_planet_id='" << it->planetId << "' ";
+							query << "	shiplist_entity_id='" << it->planetId << "' ";
 							query << "	AND shiplist_ship_id='" << it->oId << "';";
 							query.store();
 							query.reset();
@@ -643,10 +584,10 @@
 							query << "	shiplist ";
 							query << "(";
 							query << "	shiplist_user_id, ";
-							query << "	shiplist_planet_id, ";
+							query << "	shiplist_entity_id, ";
 							query << "	shiplist_ship_id, ";
 							query << "	shiplist_count ";
-							if ((*ot).second.special) query << ",	shiplist_special_ship_exp ";
+							if (object.special()) query << ",	shiplist_special_ship_exp ";
 							query << ") ";
 							query << "VALUES ";
 							query << "( ";
@@ -654,14 +595,14 @@
 							query << "	'" << it->planetId << "', ";
 							query << "	'" << it->oId << "', ";
 							query << "	'" << it->newCnt << "' ";
-							if ((*ot).second.special) query << ", '" << it->shipExp << "' ";
+							if (object.special()) query << ", '" << it->shipExp << "' ";
 							query << ");";
 							query.store();
 							query.reset();
 						}
 					}
 				}
-				else if ((*ot).second.special) {
+				else if (object.special()) {
 					special = true;
 					query << "UPDATE ";
 					query << "	shiplist ";
@@ -695,7 +636,7 @@
 					query << "FROM ";
 					query << " deflist ";
 					query << "WHERE ";
-					query << "	deflist_planet_id='" << it->planetId << "' ";
+					query << "	deflist_entity_id='" << it->planetId << "' ";
 					query << "	AND deflist_def_id='" << it->oId << "';";
 					mysqlpp::Result dlRes = query.store();
 					query.reset();
@@ -709,7 +650,7 @@
 							query << "SET ";
 							query << "	deflist_count='" << it->newCnt << "' ";
 							query << "WHERE ";
-							query << "	deflist_planet_id='" << it->planetId << "' ";
+							query << "	deflist_entity_id='" << it->planetId << "' ";
 							query << "	AND deflist_def_id='" << it->oId << "';";
 							query.store();
 							query.reset();
@@ -719,7 +660,7 @@
 							query << "	deflist ";
 							query << "(";
 							query << "	deflist_user_id, ";
-							query << "	deflist_planet_id, ";
+							query << "	deflist_entity_id, ";
 							query << "	deflist_def_id, ";
 							query << "	deflist_count ";
 							query << ")";

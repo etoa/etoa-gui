@@ -9,6 +9,7 @@
 
 /**
 * Handles Cancel....
+* For every action, that failed, was stopped or canceled
 * 
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
@@ -21,7 +22,10 @@ namespace cancel
 		void update();
 
 	private:
-		int pId;
+		/**
+		* User id from the planet, needed for precheck
+		**/
+		int planetUserId;
 		
 	};
 }

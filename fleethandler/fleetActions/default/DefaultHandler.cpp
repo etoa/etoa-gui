@@ -11,7 +11,7 @@ namespace defaul
 		* Default fleet action (return fleed immediately)
 		*/ 
 
-		// Flotte zurückschicken
+		/** Send the fleet back home **/
 		fleetReturn(1);
 	}
 }

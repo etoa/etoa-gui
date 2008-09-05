@@ -1,6 +1,5 @@
 #include <iostream>
 #include <vector>
-
 #include <time.h>
 #include <mysql++/mysql++.h>
 
@@ -17,22 +16,18 @@ namespace retour
 		* Fleet-Action: Returned flight
 		*/
 
-		//checkPlanet
-		this->pId =	functions::getUserIdByPlanet((int)fleet_["entity_to"]);
+		/** Check if the planet User is the same as the fleet user **/
+		this->planetUserId =	functions::getUserIdByPlanet((int)fleet_["entity_to"]);
 		
-		if (this->pId == (int)fleet_["user_id"])
-		{
-			//Flotte stationieren und Waren ausladen
+		if (this->planetUserId == (int)fleet_["user_id"]) {
+			/** Land fleet and delete entries in the database **/
 			fleetLand(1);
-
-			// Flotte-Schiffe-VerknÃ¼pfungen lÃ¶schen
 			fleetDelete();
-
+			
+			/** Check if the user'd like to have a return message for spy and transport **/
 			this->sendMsg = true;
 		
-			// Für Transporte und Spionage prüfen ob Return Nachricht gewünscht ist
-			if (std::string(fleet_["action"])=="spy" || std::string(fleet_["action"])=="transport")
-			{
+			if (std::string(fleet_["action"])=="spy" || std::string(fleet_["action"])=="transport") {
 				mysqlpp::Query query = con_->query();
 				query << "SELECT ";
 				query << "	user_fleet_rtn_msg ";
@@ -43,25 +38,21 @@ namespace retour
 				mysqlpp::Result mRes = query.store();
 				query.reset();
 			
-				if (mRes)
-				{
+				if (mRes) {
 					int mSize = mRes.size();
 				
-					if (mSize > 0)
-					{
+					if (mSize > 0) {
 						mysqlpp::Row mRow = mRes.at(0);
 					
-						if (mRow["user_fleet_rtn_msg"]!="0")
-						{
+						if (mRow["user_fleet_rtn_msg"]!="0") {
 							this->sendMsg = false;
 						}
 					}
 				}
 			}
-		
-			if (this->sendMsg)
-			{
-				//Nachricht senden
+			
+			/** If the check is ok, send a message to the user **/
+			if (this->sendMsg) {
 				std::string msg = "[b]FLOTTE GELANDET[/b]\n\nEine eurer Flotten hat ihr Ziel erreicht!\n\n[b]Ziel:[/b] ";
 				msg += functions::formatCoords((int)fleet_["entity_to"],0);
 				msg += "\n[b]Start:[/b] ";
@@ -77,11 +68,11 @@ namespace retour
 				functions::sendMsg((int)fleet_["user_id"],5,"Flotte angekommen",msg);
 			}
 		}
-		else
-		{
+		
+		/** If the planet user is not the same as the fleet user, send fleet to the main and send a message with the info **/
+		else {
 			fleetSendMain();
 			
-			//Nachricht senden
 			std::string msg = "[b]FLOTTE LANDEN GESCHEITERT[/b]\n\nEine eurer Flotten hat versucht auf ihrem Ziel zu laden Der Versuch scheiterte jedoch und die Flotte macht sich auf den Weg zu eurem Hauptplaneten!\n\n[b]Ziel:[/b] ";
 			msg += functions::formatCoords((int)fleet_["entity_to"],0);
 			msg += "\n[b]Start:[/b] ";

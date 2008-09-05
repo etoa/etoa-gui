@@ -16,8 +16,12 @@ namespace colonialize
 		* Fleet-Action: Colonialize
 		*/
 		Config &config = Config::instance();
-		std::string action = "colonize";
+		
+		this->action = std::string(fleet_["action"]);;
 
+		std::string coordsFrom = functions::formatCoords(fleet_["entity_from"],0);
+		std::string coordsTarget = functions::formatCoords(fleet_["entity_to"],0);
+		
 		// Precheck action==possible?
 		mysqlpp::Query query = con_->query();
 		query << "SELECT ";
@@ -28,23 +32,15 @@ namespace colonialize
 		query << "	ships ON fs_ship_id = ship_id ";
 		query << "	AND fs_fleet_id='" << fleet_["id"] << "' ";
 		query << "	AND fs_ship_faked='0' ";
-		query << "	AND (";
-		query << "		ship_actions LIKE '%," << action << "'";
-		query << "		OR ship_actions LIKE '" << action << ",%'";
-		query << "		OR ship_actions LIKE '%," << action << ",%'";
-		query << "		OR ship_actions LIKE '" << action << "');";
+		query << "	AND ship_actions LIKE '%" << this->action << "%';";
 		mysqlpp::Result fsRes = query.store();
 		query.reset();
-		
 					
-		if (fsRes)
-		{
+		if (fsRes) {
 			int fsSize = fsRes.size();
 			
-			if (fsSize > 0)
-			{
-	
-				// Planet auf Besitzer prüfen
+			if (fsSize > 0) {
+				/** Check if the planet has alreasy an user **/
 				query << "SELECT  ";
 				query << "	planet_user_id ";
 				query << "FROM ";
@@ -55,26 +51,20 @@ namespace colonialize
 				mysqlpp::Result uRes = query.store();
 				query.reset();
 		
-				if (uRes)
-				{
+				if (uRes) {
 					int uSize = uRes.size();
 			
-					//Planet ist bereits kolonialisiert
-					if (uSize > 0)
-					{
+					if (uSize > 0) {
 						mysqlpp::Row uRow = uRes.at(0);
 				
-						//Planet wurde bereits vom gleichen User kolonialisiert
-						if((int)uRow["planet_user_id"] == (int)fleet_["user_id"])
-						{
-							//Flotte stationieren & Waren ausladen (ohne abzug eines Kolonieschiffes)
+						/** If the planet user ist the same as the fleet user, land the fleet **/
+						if((int)uRow["planet_user_id"] == (int)fleet_["user_id"]) {
 							fleetLand(1,1);
-
 							fleetDelete();
 
-							//Nachricht senden
+							/** Send a message to the user **/
 							std::string msg = "Die Flotte hat folgendes Ziel erreicht:\n[b]Planet:[/b] ";
-							msg += functions::formatCoords((int)fleet_["entity_to"],0);
+							msg += coordsTarget;
 							msg += "\n[b]Zeit:[/b] ";
 							msg += functions::formatTime((int)fleet_["landtime"]);
 							msg += "\n[b]Bericht:[/b] Die Flotte ist auf dem Planeten gelandet!";
@@ -84,23 +74,21 @@ namespace colonialize
 							functions::sendMsg((int)fleet_["user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Flotte angekommen",msg);
 						}
 	  
-						//Planet gehört bereits an einem anderen User
-						else
-						{
-							//Nachricht senden
+						/** If the planet belongs to en other user, return the fleet back home **/
+						else {
+							/** Send a message to the user **/
 							std::string msg = "Die Flotte kann den Planeten nicht kolonialisieren, da er bereits von einem anderen Volk kolonialisiert wurde!\n";
 					
 							functions::sendMsg((int)fleet_["user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Landung nicht möglich",msg);
 
-							// Flotte zurückschicken
+							/** Send the fleet back home again **/
 							fleetReturn(2);
 						}
 					}
 			
-					// Planet ist noch frei und kann kolonialisiert werden
-					else
-					{
-						// Auf eigene Maximalanzahl prüfen
+					/** if the planet has not yet a user **/
+					else {
+						/** Check if the user has already its planet maximum **/
 						query << "SELECT ";
 						query << "	COUNT(planet_user_id) AS cnt ";
 						query << "FROM ";
@@ -110,33 +98,29 @@ namespace colonialize
 						mysqlpp::Result uRes = query.store();
 						query.reset();
 				
-						if (uRes)
-						{
+						if (uRes) {
 							int uSize = uRes.size();
 					
-							if (uSize > 0)
-							{
+							if (uSize > 0) {
 								mysqlpp::Row uRow = uRes.at(0);
 		
-								// Spieler hat bereits maximalanzahl an Planeten
-								if ((int)uRow["cnt"] >= config.nget("user_max_planets",0))
-								{
-									//Nachricht senden
+								/** User has already the maximum **/
+								if ((int)uRow["cnt"] >= config.nget("user_max_planets",0)) {
+									/** Send a message to the user **/
 									std::string msg = "Die Flotte kann den Planeten nicht kolonialisieren, da die maximale Zahl an Planeten auf denen du regieren darfst, bereits erreicht worden ist!\n";
 							
 									functions::sendMsg((int)fleet_["user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Landung nicht möglich",msg);
 	
-									// Flotte zurückschicken
+									/** Send fleet home again **/
 									fleetReturn(2);
 								}
     
-								//Kolonie erfolgreich gewonnen
-								else
-								{
-									//Planet zurücksetzen
-									functions::resetPlanet((int)fleet_["entity_to"]); //ToDo
+								/** if up to now everything is fine, let's colonialize the planet **/
+								else {
+									/** reset the planet **/
+									functions::resetPlanet((int)fleet_["entity_to"]);
 
-									// Planet übernehmen
+									/** Take it **/
 									query << "UPDATE ";
 									query << "	planets ";
 									query << "SET ";
@@ -147,15 +131,15 @@ namespace colonialize
 									query.store();
 									query.reset();
 
-									//Flotte stationieren & Waren ausladen (mit abzug eines Kolonieschiffes)
+									/** Land the fleet and delete one ship (action colonialize **/
 									fleetLand(1);
 
-									// Flotte-Schiffe-Verknüpfungen löschen
+									/** Delete the fleet from the db **/
 									fleetDelete();
 
-									//Nachricht senden
+									/** Send a message to the user **/
 									std::string msg = "Die Flottehat folgendes Ziel erreicht:\n[b]Planet:[/b] ";
-									msg += functions::formatCoords((int)fleet_["entity_to"],0);
+									msg += coordsTarget;
 									msg += "\n[b]Zeit:[/b] ",
 									msg	+= functions::formatTime((int)fleet_["landtime"]);
 									msg += "\n";
@@ -170,10 +154,10 @@ namespace colonialize
 					}
 				}
 			}
-			else
-			{
+			/** If there isnt any asteroid colecter in the fleet **/
+			else {
 				std::string text = "Eine Flotte vom Planeten ";
-				text += functions::formatCoords((int)fleet_["entity_from"],0);
+				text += coordsFrom;
 				text += " versuchte, eine Kolonie zu errichten. Leider war kein Schiff mehr in der Flotte, welches die Aktion ausführen konnte, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!";
 							
 				functions::sendMsg((int)fleet_["user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Kolonisieren gescheitert",text);

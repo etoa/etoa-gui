@@ -6,247 +6,7 @@
 
 namespace functions
 {
-	void initGasPlanets()
-	{
-		My &my = My::instance();
-		mysqlpp::Connection *con_ = my.get();
-		Config &config = Config::instance();
-		
-		mysqlpp::Query query = con_->query();
-		query << "UPDATE ";
-		query << "	planets ";
-		query << "SET ";
-		query << "	planet_last_updated='" << config.get("enable_login",1) << "' ";
-		query << "WHERE ";
-		query << "	planet_type_id='" << config.get("gasplanet", 0) << "';";
-		query.store();
-		query.reset();
-	}
-		
-	void updateGasPlanet(int pid)
-	{
-		My &my = My::instance();
-		mysqlpp::Connection *con_ = my.get();
-		Config &config = Config::instance();
-		std::time_t time = std::time(0);
-				
-		mysqlpp::Query query = con_->query();
-		query << "SELECT ";
-		query << "	id, ";
-		query << "	planet_res_fuel, ";
-		query << "	planet_fields, ";
-		query << "	planet_last_updated ";
-		query << "FROM ";
-		query << "	planets ";
-		query << "WHERE ";
-		query << "	planet_type_id='" << config.get("gasplanet", 0) << "' ";
-		query << "	AND id='" << pid << "';";
-		mysqlpp::Result res = query.store();
-		query.reset();
-		
-		if (res)  {
-			int resSize = res.size();
-			if (resSize>0) {
-				Config &config = Config::instance();
-				
-				mysqlpp::Row row = res.at(0);
-				int ptime = time;
-				int last = (int)row["planet_last_updated"];
-				if (last == 0) last = ptime;
-				double tlast = ptime - last;
-				double pfuel = (double)row["planet_res_fuel"];
-				tlast += pfuel;
-					
-				double pSize = (int)config.nget("gasplanet", 2)*int(row["planet_fields"]);
-				double fuel = std::min(tlast,pSize); //ToDo Gas param1 + 2
-		
-				query << std::setprecision(18);
-				query << "UPDATE ";
-				query << "	planets ";
-				query << "SET ";
-				query << "	planet_res_fuel='" << fuel << "', ";
-				query << "	planet_last_updated='" << time << "' ";
-				query << "WHERE ";
-				query << "	id='" << pid << "';";
-				query.store();
-				query.reset();
-			}
-		std::cout << "Updated Nebulaplanet " << pid << "\n";
-		}
-	}
-
-	bool resetPlanet(int id)
-	{
-		My &my = My::instance();
-		mysqlpp::Connection *con_ = my.get();
-		
-		if (id>0) {
-			mysqlpp::Query query = con_->query();
-			query << "UPDATE ";
-			query << "	planets ";
-			query << "SET ";
-			query << "	planet_user_id=0, ";
-			query << "	planet_name='', ";
-			query << "	planet_user_main=0, ";
-			query << "	planet_fields_used=0, ";
-			query << "	planet_fields_extra=0, ";
-			query << "	planet_res_metal=0, ";
-			query << "	planet_res_crystal=0, ";
-			query << "	planet_res_fuel=0, ";
-			query << "	planet_res_plastic=0, ";
-			query << "	planet_res_food=0, ";
-			query << "	planet_use_power=0, ";
-			query << "	planet_last_updated=0, ";
-			query << "	planet_prod_metal=0, ";
-			query << "	planet_prod_crystal=0, ";
-			query << "	planet_prod_plastic=0, ";
-			query << "	planet_prod_fuel=0, ";
-			query << "	planet_prod_food=0, ";
-			query << "	planet_prod_power=0, ";
-			query << "	planet_store_metal=0, ";
-			query << "	planet_store_crystal=0, ";
-			query << "	planet_store_plastic=0, ";
-			query << "	planet_store_fuel=0, ";
-			query << "	planet_store_food=0, ";
-			query << "	planet_people=1, ";
-			query << "	planet_people_place=0, ";
-			query << "	planet_desc='' ";
-			query << "WHERE ";
-			query << "	id='" << id << "';";
-			query.store();
-			query.reset();
-
-			query << "DELETE FROM ";
-			query << "	shiplist ";
-			query << "WHERE ";
-			query << "	shiplist_planet_id='" << id << "';";
-			query.store();
-			query.reset();
-			
-			query << "DELETE FROM ";
-			query << "	buildlist ";
-			query << "WHERE ";
-			query << "	buildlist_planet_id='" << id << "';";
-			query.store();
-			query.reset();
-			
-			query << "DELETE FROM ";
-			query << "	deflist ";
-			query << "WHERE ";
-			query << "	deflist_planet_id='" << id << "';";
-			query.store();
-			query.reset();
-			
-			std::string log = "Der Planet mit der ID ";
-			log += id;
-			log += " wurde zurückgesetzt!";
-			addLog(6,log,std::time(0));
-			return true;
-		}
-		else
-			return false;
-	}
-	
-	void addLog(int logCat, std::string logText, std::time_t logTimestamp)
-	{
-		My &my = My::instance();
-		mysqlpp::Connection *con_ = my.get();
-		if (logTimestamp==0)
-		{
-		 	logTimestamp = std::time(0);
-		}
-		
-		std::time_t time = std::time(0);
-		
-		mysqlpp::Query query = con_->query();
-		query << "INSERT INTO logs ";
-		query << "(";
-		query << "	log_cat, ";
-		query << "	log_timestamp, ";
-		query << "	log_realtime, ";
-		query << "	log_text ";
-		query << ") ";
-		query << "VALUES ";
-		query << "('" << logCat << "', ";
-		query << "'" << logTimestamp << "', ";
-		query << "'" << time << "', ";
-		query << "'" << logText << "');"; //addslashes(log_text)
-		query.store();
-		query.reset();
-	}
-	
-	std::string getUserNick(int pid)
-	{
-		My &my = My::instance();
-		mysqlpp::Connection *con_ = my.get();
-		mysqlpp::Query query = con_->query();
-		query << "SELECT ";
-			query << "user_nick ";
-		query << "FROM ";
-			query << "users ";
-		query << "WHERE ";
-			query << "user_id='" << pid << "';";
-		mysqlpp::Result res = query.store();		
-		query.reset();
-
-		if (res) {
-			int resSize = res.size();			
-    	
-			if (resSize>0) {
-				mysqlpp::Row row;
-				row = res.at(0);
-				return (std::string(row["user_nick"]));
-			}
-			else {
-				return "<i>Unbekannter Benutzer</i>";
-			}
-		}
-		else {
-			return "<i>Unbekannter Benutzer</i>";
-		}
-	}
-	
-	std::string fa(std::string fAction)
-	{
-		return fAction;
-	}
-	
-	int getUserIdByPlanet(int pid)
-	{
-		My &my = My::instance();
-		mysqlpp::Connection *con_ = my.get();
-		mysqlpp::Query query = con_->query();
-		query << "SELECT ";
-		query << "	planet_user_id ";
-		query << "FROM ";
-		query << "	planets ";
-		query << "WHERE ";
-		query << "	id='" << pid << "';";
-		mysqlpp::Result pRes = query.store();
-		query.reset();
-		
-		if (pRes) {
-			int pSize = pRes.size();
-			
-			if (pSize > 0) {
-				mysqlpp::Row pRow = pRes.at(0);
-				return (int)pRow["planet_user_id"];
-			}
-			else {
-				return 0;
-			}
-		}
-	}
-	
-	std::string d2s(double number)
-	{
-		std::ostringstream Str;
-		Str << std::setprecision(18);
-		Str << number;
-		std::string zAs(Str.str());
-		return zAs;
-	}
-	
+	/** Versendet eine Nachricht **/
 	void sendMsg(int userId, int msgType, std::string subject, std::string text)
 	{
 		My &my = My::instance();
@@ -284,11 +44,135 @@ namespace functions
 		query << ");";
 		query.store();
 		query.reset();
-	
 	}
 	
+	/** Schreibt einen Logeintrag (Alle Aktionen müssen gelogt werden!!) **/
+	void addLog(int logCat, std::string logText, std::time_t logTimestamp)
+	{
+		My &my = My::instance();
+		mysqlpp::Connection *con_ = my.get();
+		if (logTimestamp==0) {
+		 	logTimestamp = std::time(0);
+		}
+		
+		std::time_t time = std::time(0);
+		
+		mysqlpp::Query query = con_->query();
+		query << "INSERT INTO logs ";
+		query << "(";
+		query << "	log_cat, ";
+		query << "	log_timestamp, ";
+		query << "	log_realtime, ";
+		query << "	log_text ";
+		query << ") ";
+		query << "VALUES ";
+		query << "('" << logCat << "', ";
+		query << "'" << logTimestamp << "', ";
+		query << "'" << time << "', ";
+		query << "'" << logText << "');"; //addslashes(log_text)
+		query.store();
+		query.reset();
+	}
 	
-	std::string formatCoords(int planetId, short blank)
+	/** Liefet den Namen der Aktion zurück **/
+	std::string fa(std::string fAction)
+	{
+		return fAction;
+	}
+	
+	/** Formatiert eine Zahl **/
+	std::string nf(std::string  value)
+	{
+		/** Schneidet den Rest ab, wenn ein Punkt und Nachkommazeichen vorhanden sind **/
+		std:size_t found = value.find(".");
+		if (found!=std::string::npos) {
+			value.erase(value.begin()+(int)found,value.end());
+		}
+		
+		/** Fügt die Tausenderzeichen hinzu **/
+		int length = value.length();
+		int i=3;
+		while (length > i) {
+			int toDo = length-i;
+			value.insert(toDo, "`");
+			i += 3;
+					
+		}
+		return(value);
+	}
+	
+	/** Wandelt eine Zahl in einen String um **/
+	std::string d2s(double number)
+	{
+		std::ostringstream Str;
+		Str << std::setprecision(18);
+		Str << number;
+		std::string zAs(Str.str());
+		return zAs;
+	}
+	
+	/** Liefert den Nich anhand der PlanetenId **/
+	std::string getUserNick(int userId)
+	{
+		My &my = My::instance();
+		mysqlpp::Connection *con_ = my.get();
+		mysqlpp::Query query = con_->query();
+		query << "SELECT ";
+			query << "user_nick ";
+		query << "FROM ";
+			query << "users ";
+		query << "WHERE ";
+			query << "user_id='" << userId << "';";
+		mysqlpp::Result res = query.store();		
+		query.reset();
+
+		if (res) {
+			int resSize = res.size();			
+    	
+			if (resSize>0) {
+				mysqlpp::Row row;
+				row = res.at(0);
+				return (std::string(row["user_nick"]));
+			}
+			else {
+				return "[i]Unbekannter Benutzer[/i]";
+			}
+		}
+		else {
+			return "[i]Unbekannter Benutzer[/i]";
+		}
+	}
+	
+	/** Liefert die User Id anhand der Planeten Id **/
+	int getUserIdByPlanet(int planetId)
+	{
+		My &my = My::instance();
+		mysqlpp::Connection *con_ = my.get();
+		mysqlpp::Query query = con_->query();
+		query << "SELECT ";
+		query << "	planet_user_id ";
+		query << "FROM ";
+		query << "	planets ";
+		query << "WHERE ";
+		query << "	id='" << planetId << "';";
+		mysqlpp::Result pRes = query.store();
+		query.reset();
+		
+		if (pRes) {
+			int pSize = pRes.size();
+			
+			if (pSize > 0) {
+				mysqlpp::Row pRow = pRes.at(0);
+				return (int)pRow["planet_user_id"];
+			}
+			else {
+				return 0;
+			}
+		}
+	}
+
+	/** Liefert die Koordinaten einer Entity **/
+	std::string formatCoords(int entityId, short blank)
 	{
 		My &my = My::instance();
 		mysqlpp::Connection *con_ = my.get();
@@ -306,7 +190,7 @@ namespace functions
 		query << "FROM entities AS e ";
 		query << "INNER JOIN cells AS c ";
 		query << "	ON e.cell_id = c.id ";
-		query << "	AND e.id = '" << planetId << "' ";
+		query << "	AND e.id = '" << entityId << "' ";
 		query << "LEFT JOIN planets AS p ";
 		query << "	ON p.id = e.id ";
 		mysqlpp::Result coordsRes = query.store();	
@@ -400,22 +284,7 @@ namespace functions
 		}
 	}
 	
-
-	std::string nf(std::string  value)
-	{
-		int length = value.length();
-		
-		int i=3;
-		while (length > i)
-		{
-			int to_do = length-i;
-			value.insert(to_do, "`");
-			i += 3;
-					
-		}
-		return(value);
-	}
-	
+	/** Formatiert einen Timestamp **/
 	std::string formatTime(int time)
 	{
 		time_t Zeitstempel;
@@ -466,4 +335,208 @@ namespace functions
 
 	}
 	
+	/** Resetet einen Planeten **/
+	bool resetPlanet(int planetId)
+	{
+		My &my = My::instance();
+		mysqlpp::Connection *con_ = my.get();
+		
+		if (planetId>0) {
+			mysqlpp::Query query = con_->query();
+			query << "UPDATE ";
+			query << "	planets ";
+			query << "SET ";
+			query << "	planet_user_id=0, ";
+			query << "	planet_name='', ";
+			query << "	planet_user_main=0, ";
+			query << "	planet_fields_used=0, ";
+			query << "	planet_fields_extra=0, ";
+			query << "	planet_res_metal=0, ";
+			query << "	planet_res_crystal=0, ";
+			query << "	planet_res_fuel=0, ";
+			query << "	planet_res_plastic=0, ";
+			query << "	planet_res_food=0, ";
+			query << "	planet_use_power=0, ";
+			query << "	planet_last_updated=0, ";
+			query << "	planet_prod_metal=0, ";
+			query << "	planet_prod_crystal=0, ";
+			query << "	planet_prod_plastic=0, ";
+			query << "	planet_prod_fuel=0, ";
+			query << "	planet_prod_food=0, ";
+			query << "	planet_prod_power=0, ";
+			query << "	planet_store_metal=0, ";
+			query << "	planet_store_crystal=0, ";
+			query << "	planet_store_plastic=0, ";
+			query << "	planet_store_fuel=0, ";
+			query << "	planet_store_food=0, ";
+			query << "	planet_people=1, ";
+			query << "	planet_people_place=0, ";
+			query << "	planet_desc='' ";
+			query << "WHERE ";
+			query << "	id='" << planetId << "';";
+			query.store();
+			query.reset();
+
+			query << "DELETE FROM ";
+			query << "	shiplist ";
+			query << "WHERE ";
+			query << "	shiplist_entity_id='" << planetId << "';";
+			query.store();
+			query.reset();
+			
+			query << "DELETE FROM ";
+			query << "	buildlist ";
+			query << "WHERE ";
+			query << "	buildlist_entity_id='" << planetId << "';";
+			query.store();
+			query.reset();
+			
+			query << "DELETE FROM ";
+			query << "	deflist ";
+			query << "WHERE ";
+			query << "	deflist_entity_id='" << planetId << "';";
+			query.store();
+			query.reset();
+			
+			std::string log = "Der Planet mit der ID ";
+			log += planetId;
+			log += " wurde zurückgesetzt!";
+			addLog(6,log,std::time(0));
+			return true;
+		}
+		else
+			return false;
+	}
+	
+	/** Invasiert einen Planeten **/
+	void invasionPlanet(int entityId, int newUserId)
+	{
+		std::time_t time = std::time(0);
+		My &my = My::instance();
+		mysqlpp::Connection *con_ = my.get();
+		mysqlpp::Query query = con_->query();
+
+        /** Planet übernehmen **/
+        query << "UPDATE ";
+		query << "	planets ";
+		query << "SET ";
+		query << "	planet_user_id='" << newUserId << "', ";
+		query << "	planet_name='Unbenannt', ";
+		query << "	planet_user_changed='" << time << "' ";
+		query << "WHERE ";
+		query << "	planet_id='" << entityId << "';";
+		query.store();
+		query.reset();
+		
+        /** Gebäude übernehmen **/
+        query << "UPDATE ";
+		query << "	buildlist ";
+		query << "	SET ";
+		query << "	buildlist_user_id='" << newUserId << "' ";
+		query << "WHERE ";
+		query << "	buildlist_planet_id='" << entityId << "'; ";
+		query.store();
+		query.reset();
+		
+		/** Bestehende Schiffs-Einträge löschen **/
+		query << "DELETE FROM ";
+		query << "	shiplist ";
+		query << "WHERE ";
+		query << "	shiplist_planet_id='" << entityId << "';";
+		query.store();
+		query.reset();
+		
+		query << "DELETE FROM ";
+		query << "	ship_queue ";
+		query << "WHERE ";
+		query << "	queue_planet_id='" << entityId << "';";
+		query.store();
+		query.reset();
+		
+		/** Bestehende Verteidigungs-Einträge löschen **/
+		query << "DELETE FROM ";
+		query << "	deflist ";
+		query << "WHERE ";
+		query << "	deflist_planet_id='" << entityId << "';";
+		query.store(),
+		query.reset();
+		
+		query << "DELETE FROM ";
+		query << "	def_queue ";
+		query << "WHERE ";
+		query << "	queue_planet_id='" << entityId << "';";
+		query.store();
+		query.reset();
+	}
+	
+	/** Aktualisiert die Werte eines Gasplaneten **/
+	void updateGasPlanet(int planetId)
+	{
+		My &my = My::instance();
+		mysqlpp::Connection *con_ = my.get();
+		Config &config = Config::instance();
+		std::time_t time = std::time(0);
+				
+		mysqlpp::Query query = con_->query();
+		query << "SELECT ";
+		query << "	id, ";
+		query << "	planet_res_fuel, ";
+		query << "	planet_fields, ";
+		query << "	planet_last_updated ";
+		query << "FROM ";
+		query << "	planets ";
+		query << "WHERE ";
+		query << "	planet_type_id='" << config.get("gasplanet", 0) << "' ";
+		query << "	AND id='" << planetId << "';";
+		mysqlpp::Result res = query.store();
+		query.reset();
+		
+		if (res)  {
+			int resSize = res.size();
+			if (resSize>0) {
+				Config &config = Config::instance();
+				
+				mysqlpp::Row row = res.at(0);
+				int ptime = time;
+				int last = (int)row["planet_last_updated"];
+				if (last == 0) last = ptime;
+				double tlast = ptime - last;
+				double pfuel = (double)row["planet_res_fuel"];
+				tlast += pfuel;
+					
+				double pSize = (int)config.nget("gasplanet", 2)*int(row["planet_fields"]);
+				double fuel = std::min(tlast,pSize); //ToDo Gas param1 + 2
+		
+				query << std::setprecision(18);
+				query << "UPDATE ";
+				query << "	planets ";
+				query << "SET ";
+				query << "	planet_res_fuel='" << fuel << "', ";
+				query << "	planet_last_updated='" << time << "' ";
+				query << "WHERE ";
+				query << "	id='" << planetId << "';";
+				query.store();
+				query.reset();
+			}
+		}
+	}
+	
+	/** Initialisiert alle Gasplaneten mit der erstmöglichen Loginzeit **/
+	void initGasPlanets()
+	{
+		My &my = My::instance();
+		mysqlpp::Connection *con_ = my.get();
+		Config &config = Config::instance();
+		
+		mysqlpp::Query query = con_->query();
+		query << "UPDATE ";
+		query << "	planets ";
+		query << "SET ";
+		query << "	planet_last_updated='" << config.get("enable_login",1) << "' ";
+		query << "WHERE ";
+		query << "	planet_type_id='" << config.get("gasplanet", 0) << "' ";
+		query << " AND planet_last_updated<'" << config.get("enable_login",1) << "';";
+		query.store();
+		query.reset();
+	}
 }
