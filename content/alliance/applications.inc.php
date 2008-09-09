@@ -32,6 +32,9 @@ if (Alliance::checkActionRights('applications'))
 						add_alliance_history($cu->alliance_id,"Die Bewerbung von [b]".$nick."[/b] wurde akzeptiert!");
 						add_log(5,"Der Spieler [b]".$nick."[/b] tritt der Allianz [b][".$alliances[$cu->alliance_id]['tag']."] ".$alliances[$cu->alliance_id]['name']."[/b] bei!",time());
 						
+						$tu = new User($id);
+						$tu->addToUserLog("alliance","{nick} ist nun ein Mitglied der der Allianz ".$alliances[$cu->alliance_id]['name'].".");
+						
 						// Speichern
 						dbquery("
 						UPDATE 

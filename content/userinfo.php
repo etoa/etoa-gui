@@ -143,7 +143,7 @@
 		user_id=".$arr['user_id']." 
 		AND public=1
 	ORDER BY timestamp DESC
-	LIMIT 30;");
+	LIMIT 10;");
 	if (mysql_num_rows($lres) > 0)
 	{
 		while ($larr = mysql_fetch_array($lres))
@@ -157,7 +157,7 @@
 			echo "</span>
 			</div>";
 		}
-		echo "<div style=\"font-size:7pt;padding-top:6px;\">Nur die 30 neusten Nachrichten werden angezeigt.</div>";
+		echo "<div style=\"font-size:7pt;padding-top:6px;\">Nur die 10 neusten Nachrichten werden angezeigt.</div>";
 	}
 	else
 	{

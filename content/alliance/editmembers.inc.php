@@ -44,8 +44,8 @@ if (Alliance::checkActionRights('editmembers'))
 			{
 				dbquery("UPDATE alliances SET alliance_founder_id=".$_GET['setfounder']." WHERE alliance_id=".$arr['alliance_id'].";");
 				$arr['alliance_founder_id']=$_GET['setfounder'];
-				add_alliance_history($cu->alliance_id,"Der Spieler [b]".get_user_nick($_GET['setfounder'])."[/b] wird vom Spieler [b]".$cu->nick."[/b] zum Gründer befördert.");
-				add_log(5,"Der Spieler [b]".get_user_nick($_GET['setfounder'])."[/b] wird vom Spieler [b]".$cu->nick."[/b] zum Gründer befördert.",time());
+				add_alliance_history($cu->alliance_id,"Der Spieler [b]".get_user_nick($_GET['setfounder'])."[/b] wird vom Spieler [b]".$cu->nick()."[/b] zum Gründer befördert.");
+				add_log(5,"Der Spieler [b]".get_user_nick($_GET['setfounder'])."[/b] wird vom Spieler [b]".$cu->nick()."[/b] zum Gründer befördert.",time());
 				send_msg($_GET['setfounder'],MSG_ALLYMAIL_CAT,"Gründer","Du hast nun die Gründerrechte deiner Allianz!");
 				echo "Gründer ge&auml;ndert!<br/><br/>";
 			}
@@ -85,8 +85,12 @@ if (Alliance::checkActionRights('editmembers'))
 					user_alliance_id=".$arr['alliance_id']." 
 					AND user_id='".intval($_GET['kickuser'])."';");
 				send_msg(intval($_GET['kickuser']),MSG_ALLYMAIL_CAT,"Allianzausschluss","Du wurdest aus der Allianz ausgeschlossen!");
-				add_alliance_history($cu->alliance_id,"Der Spieler [b]".$uarr['user_nick']."[/b] wurde von [b]".$cu->nick."[/b] aus der Allianz ausgeschlossen!");
-				add_log(5,"Der Spieler [b]".$uarr['user_nick']."[/b] wurde von [b]".$cu->nick."[/b] aus der Allianz [b][".$arr['alliance_tag']."] ".$arr['alliance_name']."[/b] ausgeschlossen!",time());
+				
+				$tu = new User($_GET['kickuser']);
+				$tu->addToUserLog("alliance","{nick} ist nun kein Mitglied mehr der Allianz ".$arr['alliance_name'].".");
+				
+				add_alliance_history($cu->alliance_id,"Der Spieler [b]".$uarr['user_nick']."[/b] wurde von [b]".$cu->nick()."[/b] aus der Allianz ausgeschlossen!");
+				add_log(5,"Der Spieler [b]".$uarr['user_nick']."[/b] wurde von [b]".$cu->nick()."[/b] aus der Allianz [b][".$arr['alliance_tag']."] ".$arr['alliance_name']."[/b] ausgeschlossen!",time());
 			}
 			else
 			{

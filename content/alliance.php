@@ -260,10 +260,14 @@
 						echo "Du bist aus der Allianz ausgetreten!<br/><br/><input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"&Uuml;bersicht\" />";
 						$alliances = get_alliance_names();
 						dbquery("UPDATE users SET user_alliance_rank_id=0,user_alliance_id=0 WHERE user_id='".$cu->id()."';");
-						send_msg($alliances[$cu->alliance_id]['founder_id'],MSG_ALLYMAIL_CAT,"Allianzaustritt","Der Spieler ".$cu->nick." trat aus der Allianz aus!");
-						add_alliance_history($cu->alliance_id,"Der Spieler [b]".$cu->nick."[/b] trat aus der Allianz aus!");
+						
+						send_msg($alliances[$cu->alliance_id]['founder_id'],MSG_ALLYMAIL_CAT,"Allianzaustritt","Der Spieler ".$cu->nick()." trat aus der Allianz aus!");
+						add_alliance_history($cu->alliance_id,"Der Spieler [b]".$cu->nick()."[/b] trat aus der Allianz aus!");
 						$allys = get_alliance_names();
-						add_log(5,"Der Spieler [b]".$cu->nick."[/b] ist aus der Allianz [b][".$allys[$cu->alliance_id]['tag']."] ".$allys[$cu->alliance_id]['name']."[/b] ausgetreten!",time());
+						add_log(5,"Der Spieler [b]".$cu->nick()."[/b] ist aus der Allianz [b][".$allys[$cu->alliance_id]['tag']."] ".$allys[$cu->alliance_id]['name']."[/b] ausgetreten!",time());
+
+						$cu->addToUserLog("alliance","{nick} ist aus der Allianz ".$allys[$cu->alliance_id]['name']." ausgetreten.");
+
 						$cu->alliance_id=0;
 					}
 					else
@@ -339,7 +343,7 @@
 							$alliance_tag = $_POST['alliance_tag'];
 							$alliance_name = $_POST['alliance_name'];
 							
-							add_alliance_history($cu->alliance_id,"[b]".$cu->nick."[/b] ändert den Allianzname und/oder Tag von [b]".$arr['alliance_name']." (".$arr['alliance_tag'].")[/b] in [b]".$_POST['alliance_name']." (".$_POST['alliance_tag'].")[/b]!");
+							add_alliance_history($cu->alliance_id,"[b]".$cu->nick()."[/b] ändert den Allianzname und/oder Tag von [b]".$arr['alliance_name']." (".$arr['alliance_tag'].")[/b] in [b]".$_POST['alliance_name']." (".$_POST['alliance_tag'].")[/b]!");
 						}
 						// Name und/oder Tag sind fehlerhaft
 						else
@@ -600,7 +604,11 @@
 						if ($isFounder || $myRight['relations']) array_push($adminBox,"<a href=\"?page=$page&action=relations\">Diplomatie</a>");
 						if ($isFounder || $myRight['polls']) array_push($adminBox,"<a href=\"?page=$page&action=polls\">Umfragen verwalten</a>");
 						if ($isFounder || $myRight['liquidate']) array_push($adminBox,"<a href=\"?page=$page&action=liquidate\">Allianz aufl&ouml;sen</a>");
+						
 						array_push($adminBox,"<a href=\"?page=$page&action=base\">Allianzbasis</a>");
+
+						if (!$isFounder) array_push($adminBox,"<a href=\"?page=$page&action=leave\" onclick=\"return confirm('Allianz wirklich verlassen?');\">Allianz verlassen</a>");
+
 						$cnt=count($adminBox);
 						if ($cnt>0)
 						{
