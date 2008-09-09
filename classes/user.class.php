@@ -154,6 +154,11 @@
 			$this->setup = false;
 		}
 		
+		function nick()
+		{
+			return $this->nick;
+		}
+		
 		function setRace($raceid)
 		{
 	    $sql = "
@@ -290,9 +295,10 @@
      *
      * @param string $zone
      * @param string $message
+     * @param int $public
      * @return bool
      */
-    public function addToUserLog($zone,$message)
+    public function addToUserLog($zone,$message,$public=1)
     {
 			$search = array("{user}","{nick}");
 			$replace = array($this->nick,$this->nick);
@@ -306,7 +312,8 @@
 				timestamp,
 				zone,
 				message,
-				host
+				host,
+				public
 			)
 			VALUES
 			(
@@ -314,7 +321,8 @@
 				".time().",
 				'".$zone."',
 				'".$message."',
-				'".gethostbyname($_SERVER['REMOTE_ADDR'])."'
+				'".gethostbyname($_SERVER['REMOTE_ADDR'])."',
+				".intval($public)."
 			);
       ");
 			return true;

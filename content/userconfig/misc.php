@@ -119,6 +119,7 @@
 									
 							$arr['user_hmode_to'] = $hto;
 							success_msg("Du bist nun im Urlaubsmodus bis [b]".df($hto)."[/b].");
+							$cu->addToUserLog("settings","{nick} ist nun im Urlaub.",1);
 							$umod = true;
 					}
 				}
@@ -144,41 +145,41 @@
 			{
 				$bres = dbquery("
 								SELECT
-									builidlist_id,
-									(buildlist_build_endtime-buildlist_build_starttime) AS time,
+									buildlist_id,
+									(buildlist_build_end_time-buildlist_build_start_time) AS time,
 									buildlist_build_type
 								FROM
 									buildlist
 								WHERE
-									buildlist_build_starttime>0
+									buildlist_build_start_time>0
 									AND buildlist_build_type>0
 									AND buildlist_user_id=".$cu->id().";");
-									
+							
 				while ($barr=mysql_fetch_row($bres))
 				{
 					dbquery("UPDATE buildlist SET buildlist_build_type='".$barr[2]."+2',buildlist_build_starttime=".time().", buildlist_build_endtime='".time()."+".$barr[1]."' WHERE buildlist_id=".$barr[0].";");
 				} 
 				
-				$tres = dbquery("
+				$bres = dbquery("
 								SELECT
-									techlist,
-									(techlist_build_endtime-techlist_build_starttime) AS time,
+									techlist_id,
+									(techlist_build_end_time-techlist_build_start_time) AS time,
 									techlist_build_type
 								FROM
 									techlist
 								WHERE
-									techlist_build_starttime>0
+									techlist_build_start_time>0
 									AND techlist_build_type>0
 									AND techlist_user_id=".$cu->id().";");
 									
-				while ($farr=mysql_fetch_row($fres))
+				while ($barr=mysql_fetch_row($bres))
 				{
 					dbquery("UPDATE techlist SET techlist_build_type='".$barr[2]."+2',techlist_build_starttime=".time().", techlist_build_endtime='".time()."+".$barr[1]."' WHERE techlist_id=".$barr[0].";");
 				}
 				
 				$sres = dbquery("SELECT 
 									queue_id,
-									(queue_endtime-queue_starttime) AS time,
+									(queue_endtime-queue_starttime) AS time
 								 FROM 
 								 	ship_queue 
 								WHERE 
@@ -201,7 +202,7 @@
 				
 			$dres = dbquery("SELECT 
 									queue_id,
-									(queue_endtime-queue_starttime) AS time,
+									(queue_endtime-queue_starttime) AS time
 								 FROM 
 								 	def_queue 
 								WHERE 
@@ -225,20 +226,8 @@
 				dbquery("UPDATE users SET user_hmode_from=0,user_hmode_to=0 WHERE user_id='".$cu->id()."';");
 				dbquery ("UPDATE planets SET planet_last_updated=".time()." WHERE planet_user_id='".$cu->id()."';");
 				success_msg("Urlaubsmodus aufgehoben! Denke daran, auf allen deinen Planeten die Produktion zu überprüfen!");
+				$cu->addToUserLog("settings","{nick} ist nun aus dem Urlaub zurück.",1);
 				
-				$rres = dbquery ("
-				SELECT
-					id
-				FROM
-					".$db_table['planets']." 
-				WHERE 
-					planet_user_id='".$cu->id()."';");				
-				while ($rarr=mysql_fetch_row($rres))
-				{
-					$tp = new Planet($rarr[0]);
-					$tp->updateEconomy();
-					$tp->update(1);
-				}
 				echo '<input type="button" value="Zur Übersicht" onclick="document.location=\'?page=overview\'" />';
 			}
 			else
@@ -292,6 +281,7 @@
 					$s=Null;
 					session_destroy();
 					success_msg("Deine Daten werden am ".df($t)." Uhr von unserem System gelöscht! <br/>Wir w&uuml;nschen weiterhin viel Erfolg im Netz!");
+					$cu->addToUserLog("settings","{nick} hat seinen Account zur Löschung freigegeben.",1);
 					echo '<input type="button" value="Zur Startseite" onclick="document.location=\''.LOGINSERVER_URL.'\'" />';
 			}
 			else
@@ -315,6 +305,7 @@
 				user_id=".$cu->id()."
 			;");
 			success_msg("Löschantrag aufgehoben!");
+			$cu->addToUserLog("settings","{nick} hat seine Accountlöschung aufgehoben.",1);
 			echo '<input type="button" value="Weiter" onclick="document.location=\'?page=userconfig&mode=misc\'" />';
 		}
 

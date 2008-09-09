@@ -3722,7 +3722,7 @@ Forum: http://www.etoa.ch/forum";
 			// queue disabled
         	if (!mail($adress,$topic,$email_text,$email_header))
         	{
-        		echo"Die Mail konnte nicht versendet werden. Inhalt: ".$email_text."<br/><br/>";
+        		error_msg("Die Mail konnte nicht versendet werden.\n\n".$email_text."");
         	}
 
         	//Arrays löschen (Speicher freigeben)

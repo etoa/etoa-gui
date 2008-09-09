@@ -113,6 +113,7 @@
                 user_id='".$cu->id()."';");
                 
             success_msg("Benutzer-Daten wurden ge&auml;ndert!");
+            $cu->addToUserLog("settings","{nick} hat sein Profil aktualisiert.",1);
             
             $res = dbquery("SELECT * FROM ".$db_table['users']." WHERE user_id='".$cu->id()."';");
             $arr = mysql_fetch_array($res);
@@ -124,6 +125,11 @@
       echo "<form action=\"?page=$page&mode=general\" method=\"post\" enctype=\"multipart/form-data\">";
       $cstr = checker_init();
       infobox_start("Benutzeroptionen",1);
+      echo "<tr>
+      	<th class=\"tbldata\" width=\"35%\">&Ouml;ffentliches Profil:</th>
+      	<td class=\"tbldata\" width=\"65%\" style=\"color:#0f0;\">Klicke <a href=\"?page=userinfo&amp;id=".$cu->id()."\">hier</a> um dein Profil anzuzeigen.</td>
+      </tr>";
+
       echo "<tr>
       	<th class=\"tbldata\" width=\"35%\">Benutzername:</th>
       	<td class=\"tbldata\" width=\"65%\">".$arr['user_nick']."</td>

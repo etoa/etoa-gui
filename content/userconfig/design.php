@@ -76,6 +76,7 @@
           )
           {
             success_msg("Design-Daten wurden geändert!");
+            $cu->addToUserLog("settings","{nick} ändert das Design.",0);
             if (mysql_affected_rows()>0)
             {
             	echo "<script type=\"text/javascript\">document.location='?page=$page&mode=design&changes=1';</script>";

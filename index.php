@@ -381,7 +381,7 @@
 				$tpl->assign("usersTotal",$ucarr[0]);
 				$tpl->assign("notes",$numNotes);
 				$tpl->assign("userPoints",nf($cu->points));
-				$tpl->assign("userNick",$cu->nick);
+				$tpl->assign("userNick",$cu->nick());
 				$tpl->assign("gameWidth",GAME_WIDTH);
 				$tpl->assign("page",$page);
 				$tpl->assign("topNav",$topnav);

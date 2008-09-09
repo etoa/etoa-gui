@@ -39,6 +39,7 @@
 		
 		$res = dbquery("
 		SELECT 
+			user_id,
             user_visits,
             user_nick,
             user_points,
@@ -130,6 +131,73 @@
 		echo "<b>Fehler:</b> Keine ID angegeben!";
 
 	echo "<input type=\"button\" class=\"button\" onclick=\"history.back();;\" value=\"Zur&uuml;ck\" />";
+
+	echo "<br/><br/>";
+	infobox_start("&Ouml;ffentliches Benutzer-Log");
+	$lres = dbquery("
+	SELECT
+		*
+	FROM
+		user_log
+	WHERE
+		user_id=".$arr['user_id']." 
+		AND public=1
+	ORDER BY timestamp DESC
+	LIMIT 30;");
+	if (mysql_num_rows($lres) > 0)
+	{
+		while ($larr = mysql_fetch_array($lres))
+		{
+			echo "<div style=\"border-bottom:1px solid #aaa;padding:3px 0px 5px 0px;text-align:left;\">".stripslashes($larr['message']);			
+			echo "<span style=\"color:#ddd;font-size:7pt;padding-left:20px;\">".df($larr['timestamp'])."";
+			if ($arr['user_id']==$cu->id())
+			{
+				echo ", ".$larr['host'];
+			}
+			echo "</span>
+			</div>";
+		}
+		echo "<div style=\"font-size:7pt;padding-top:6px;\">Nur die 30 neusten Nachrichten werden angezeigt.</div>";
+	}
+	else
+	{
+		echo "Keine Nachrichten!";
+	}
+	infobox_end();
+
+
+	if ($arr['user_id']==$cu->id())
+	{
+		echo "<br/>";
+		infobox_start("Privates Benutzer-Log");
+		$lres = dbquery("
+		SELECT
+			*
+		FROM
+			user_log
+		WHERE
+			user_id=".$arr['user_id']." 
+			AND public=0
+		ORDER BY timestamp DESC
+		LIMIT 30;");
+		if (mysql_num_rows($lres) > 0)
+		{
+			while ($larr = mysql_fetch_array($lres))
+			{
+				echo "<div style=\"border-bottom:1px solid #aaa;padding:3px 0px 5px 0px;text-align:left;\">".stripslashes($larr['message']);			
+				echo "<span style=\"color:#ddd;font-size:7pt;padding-left:20px;\">".df($larr['timestamp'])."";
+				echo ", ".$larr['host'];
+				echo "</span>
+				</div>";
+			}
+			echo "<div style=\"font-size:7pt;padding-top:6px;\">Nur die 30 neusten Nachrichten werden angezeigt.</div>";
+		}
+		else
+		{
+			echo "Keine Nachrichten!";
+		}
+		infobox_end();
+	}
 
 
 ?>
