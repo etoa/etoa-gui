@@ -200,9 +200,6 @@
 
 	else
 	{
-		$res = dbquery("SELECT * FROM users WHERE user_id='".$cu->id()."';");
-		$arr = mysql_fetch_array($res);
-
     /****************/
     /* Spiel    */
     /****************/
@@ -289,14 +286,14 @@
 		/****************/
 		elseif($mode=='password')
   	{
-        if($s['sitter_active']==0)
-        {
-        	require("content/userconfig/password.php");
-      	}
-        else
-        {
-        	echo "Im Sittermodus ist dieser Bereich gesperrt!";
-        }
+      if($s['sitter_active']==0)
+      {
+      	require("content/userconfig/password.php");
+    	}
+      else
+      {
+      	echo "Im Sittermodus ist dieser Bereich gesperrt!";
+      }
     }
 
 		/****************/

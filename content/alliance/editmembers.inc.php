@@ -12,7 +12,7 @@ if (Alliance::checkActionRights('editmembers'))
 		FROM
 			".$db_table['alliance_ranks']."
 		WHERE
-			rank_alliance_id=".$cu->alliance_id.";");
+			rank_alliance_id=".$cu->allianceId().";");
 		while ($rarr=mysql_fetch_assoc($rres))
 		{
 			$rank[$rarr['rank_id']]=$rarr['rank_name'];
@@ -28,7 +28,7 @@ if (Alliance::checkActionRights('editmembers'))
 				{
 					if (mysql_num_rows(dbquery("SELECT user_id FROM users WHERE user_alliance_rank_id!='$rid' AND user_id='$uid';"))>0)
 					{
-						add_alliance_history($cu->alliance_id,"Der Spieler [b]".get_user_nick($uid)."[/b] bekommt den Rang [b]".$rank[$rid]."[/b].");
+						add_alliance_history($cu->allianceId(),"Der Spieler [b]".get_user_nick($uid)."[/b] bekommt den Rang [b]".$rank[$rid]."[/b].");
 						dbquery("UPDATE users SET user_alliance_rank_id='$rid' WHERE user_id='$uid';");
 					}
 				}
@@ -44,7 +44,7 @@ if (Alliance::checkActionRights('editmembers'))
 			{
 				dbquery("UPDATE alliances SET alliance_founder_id=".$_GET['setfounder']." WHERE alliance_id=".$arr['alliance_id'].";");
 				$arr['alliance_founder_id']=$_GET['setfounder'];
-				add_alliance_history($cu->alliance_id,"Der Spieler [b]".get_user_nick($_GET['setfounder'])."[/b] wird vom Spieler [b]".$cu->nick()."[/b] zum Gründer befördert.");
+				add_alliance_history($cu->allianceId(),"Der Spieler [b]".get_user_nick($_GET['setfounder'])."[/b] wird vom Spieler [b]".$cu->nick()."[/b] zum Gründer befördert.");
 				add_log(5,"Der Spieler [b]".get_user_nick($_GET['setfounder'])."[/b] wird vom Spieler [b]".$cu->nick()."[/b] zum Gründer befördert.",time());
 				send_msg($_GET['setfounder'],MSG_ALLYMAIL_CAT,"Gründer","Du hast nun die Gründerrechte deiner Allianz!");
 				echo "Gründer ge&auml;ndert!<br/><br/>";
@@ -70,7 +70,7 @@ if (Alliance::checkActionRights('editmembers'))
 			ON
                         users.user_alliance_id=alliances.alliance_id
                         AND users.user_id=".intval($_GET['kickuser'])."
-                        AND alliances.alliance_id='".$cu->alliance_id."';");
+                        AND alliances.alliance_id='".$cu->allianceId()."';");
 			if (mysql_num_rows($res))
 			{
 				$uarr = mysql_fetch_assoc($ures);
@@ -89,7 +89,7 @@ if (Alliance::checkActionRights('editmembers'))
 				$tu = new User($_GET['kickuser']);
 				$tu->addToUserLog("alliance","{nick} ist nun kein Mitglied mehr der Allianz ".$arr['alliance_name'].".");
 				
-				add_alliance_history($cu->alliance_id,"Der Spieler [b]".$uarr['user_nick']."[/b] wurde von [b]".$cu->nick()."[/b] aus der Allianz ausgeschlossen!");
+				add_alliance_history($cu->allianceId(),"Der Spieler [b]".$uarr['user_nick']."[/b] wurde von [b]".$cu->nick()."[/b] aus der Allianz ausgeschlossen!");
 				add_log(5,"Der Spieler [b]".$uarr['user_nick']."[/b] wurde von [b]".$cu->nick()."[/b] aus der Allianz [b][".$arr['alliance_tag']."] ".$arr['alliance_name']."[/b] ausgeschlossen!",time());
 			}
 			else
@@ -114,7 +114,7 @@ if (Alliance::checkActionRights('editmembers'))
 			planets AS p 
 		ON 
 			p.planet_user_id=u.user_id 
-			AND u.user_alliance_id='".$cu->alliance_id."' 
+			AND u.user_alliance_id='".$cu->allianceId()."' 
 			AND p.planet_user_main=1 
 			GROUP BY u.user_id  
 		ORDER BY 

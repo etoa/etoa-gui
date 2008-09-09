@@ -34,104 +34,90 @@
 
 	if (intval($_GET['id'])>0)
 	{
-		// Besuchercounter
-		dbquery("UPDATE ".$db_table['users']." SET user_visits=user_visits+1 WHERE user_id='".intval($_GET['id'])."';");
+		$user = new User($_GET['id']);
 		
-		$res = dbquery("
-		SELECT 
-			user_id,
-            user_visits,
-            user_nick,
-            user_points,
-            user_profile_text,
-            user_profile_img,
-            user_alliance_id,
-            alliance_tag,
-            alliance_name,
-            user_rank_highest,
-            user_rank,
-            user_profile_board_url,
-            user_registered,
-            battle_rating,
-            trade_rating,
-            diplomacy_rating
-		FROM 
-			".$db_table['users']." 
-		LEFT JOIN
-			user_ratings
-			ON user_id=id
-		LEFT JOIN
-			".$db_table['alliances']." 
-			ON user_alliance_id=alliance_id
-		WHERE 
-			user_id='".intval($_GET['id'])."';");
-		if (mysql_num_rows($res)>0)
-		{
-			$arr = mysql_fetch_array($res);
-			
+		// Besuchercounter
+		$user->increaseVisitorCounter();
+
+		if ($user->isValid())
+		{			
  			echo '<table class="tb" style="width:640px;">';
- 			echo '<tr><th colspan="2" style="text-align:center;">'.$arr['user_nick'].'</th></tr>';
-			if ($arr['user_profile_img']!="")
+ 			echo '<tr><th colspan="2" style="text-align:center;">'.$user->nick().'</th></tr>';
+			if ($user->profileImage() != "")
 			{
-				$im = PROFILE_IMG_DIR."/".$arr['user_profile_img'];
+				$im = PROFILE_IMG_DIR."/".$user->profileImage();
 				$ims = getimagesize($im);
 				echo "<tr><td class=\"tblblack\" colspan=\"2\" style=\"text-align:center;background:#000;\">
 				<img src=\"".$im."\" style=\"width:".$ims[0]."px;height:".$ims[1]."px;\" alt=\"Profil\" /></td></tr>";
 			}
-			if ($arr['user_profile_text']!="")
+			if ($user->profileText()!="")
 			{
-				echo "<tr><td colspan=\"2\" style=\"text-align:center\">".text2html($arr['user_profile_text'])."</td></tr>";
+				echo "<tr><td colspan=\"2\" style=\"text-align:center\">".text2html($user->profileText())."</td></tr>";
 			}
-			echo "<tr><th style=\"width:120px;\">Punkte:</th><td class=\"tbldata\">".nf($arr['user_points'])."</td></tr>";
-			if ($arr['user_alliance_id']>0)
+			echo "<tr><th style=\"width:120px;\">Punkte:</th><td class=\"tbldata\">".nf($user->points())."</td></tr>";
+      echo "<tr>
+      	<th class=\"tbldata\" width=\"35%\">Rasse:</th>
+      	<td class=\"tbldata\" width=\"65%\">".$user->raceName()."</td>
+      </tr>";
+			if ($user->allianceName() != "")
 			{
-				echo "<tr><th style=\"width:120px;\">Allianz:</th><td class=\"tbldata\"><a href=\"?page=alliance&amp;info_id=".$arr['user_alliance_id']."\">[".$arr['alliance_tag']."] ".$arr['alliance_name']."</a></td></tr>";
+				echo "<tr><th style=\"width:120px;\">Allianz:</th><td class=\"tbldata\">";
+				if ($user->allianceRankName() !="")
+				{
+					echo $user->allianceRankName()." von ";
+				}
+				echo "<a href=\"?page=alliance&amp;info_id=".$user->allianceId."\">".$user->allianceName()."</a></td></tr>";
 			}
-			if ($arr['user_visits']>0)
+			if ($user->visits()>0)
 			{
-				echo "<tr><th style=\"width:120px;\">Besucherz&auml;hler:</th><td class=\"tbldata\">".nf($arr['user_visits'])." Besucher</td></tr>";
+				echo "<tr><th style=\"width:120px;\">Besucherz&auml;hler:</th><td class=\"tbldata\">".nf($user->visits())." Besucher</td></tr>";
 			}
-			if ($arr['user_rank']>0)
+			if ($user->rank()>0)
 			{
-				echo "<tr><th style=\"width:120px;\">Aktueller Rang:</th><td class=\"tbldata\">".nf($arr['user_rank'])."</td></tr>";
+				echo "<tr><th style=\"width:120px;\">Aktueller Rang:</th><td class=\"tbldata\">".nf($user->rank())."</td></tr>";
 			}					
-			if ($arr['user_rank_highest']>0)
+			if ($user->rankHighest()>0)
 			{
-				echo "<tr><th style=\"width:120px;\">Bester Rang:</th><td class=\"tbldata\">".nf($arr['user_rank_highest'])."</td></tr>";
+				echo "<tr><th style=\"width:120px;\">Bester Rang:</th><td class=\"tbldata\">".nf($user->rankHighest())."</td></tr>";
 			}
-			if ($arr['battle_rating']>0)
+			if ($user->rating('battle_rating') > 0)
 			{
-				echo "<tr><th style=\"width:120px;\">Kampfpunkte:</th><td class=\"tbldata\">".nf($arr['battle_rating'])."</td></tr>";
+				echo "<tr><th style=\"width:120px;\">Kampfpunkte:</th><td class=\"tbldata\">".nf($user->rating('battle_rating'))."</td></tr>";
 			}			
-			if ($arr['trade_rating']>0)
+			if ($user->rating('trade_rating') > 0)
 			{
-				echo "<tr><th style=\"width:120px;\">Handelspunkte:</th><td class=\"tbldata\">".nf($arr['trade_rating'])."</td></tr>";
+				echo "<tr><th style=\"width:120px;\">Handelspunkte:</th><td class=\"tbldata\">".nf($user->rating('trade_rating'))."</td></tr>";
 			}			
-			if ($arr['diplomacy_rating']>0)
+			if ($user->rating('diplomacy_rating') >0)
 			{
-				echo "<tr><th style=\"width:120px;\">Diplomatiepunkte:</th><td class=\"tbldata\">".nf($arr['diplomacy_rating'])."</td></tr>";
-			}			
-
-			if ($arr['user_profile_board_url']!="")
-			{
-				echo "<tr><th style=\"width:120px;\">Foren-Profil:</th><td class=\"tbldata\"><a href=\"".$arr['user_profile_board_url']."\" onclick=\"window.open('".$arr['user_profile_board_url']."');return false;\">".$arr['user_profile_board_url']."</a></td></tr>";
+				echo "<tr><th style=\"width:120px;\">Diplomatiepunkte:</th><td class=\"tbldata\">".nf($user->rating('diplomacy_rating'))."</td></tr>";
 			}
-			if ($arr['user_registered']>0)
+			if ($user->profileBoardUrl() !="")
 			{
-				echo "<tr><th style=\"width:120px;\">Registriert:</th><td class=\"tbldata\">".df($arr['user_registered'])." (dabei seit ".tf(time()-$arr['user_registered']).")</td></tr>";
+				echo "<tr><th style=\"width:120px;\">Foren-Profil:</th><td class=\"tbldata\"><a href=\"".$user->profileBoardUrl()."\">".$user->profileBoardUrl()."</a></td></tr>";
+			}
+			if ($user->registered()>0)
+			{
+				echo "<tr><th style=\"width:120px;\">Registriert:</th><td class=\"tbldata\">".df($user->registered())." (dabei seit ".tf(time()-$user->registered()).")</td></tr>";
 			}			
 			echo '</table><br/>';
-			echo "<input type=\"button\" value=\"Nachricht senden\" onclick=\"document.location='?page=messages&amp;mode=new&amp;message_user_to=".intval($_GET['id'])."'\" /> &nbsp; ";
-			echo "<input type=\"button\" value=\"Punkteverlauf anzeigen\" onclick=\"document.location='?page=stats&amp;mode=user&amp;userdetail=".intval($_GET['id'])."'\" /> &nbsp; ";
+			echo "<input type=\"button\" value=\"Nachricht senden\" onclick=\"document.location='?page=messages&amp;mode=new&amp;message_user_to=".intval($user->id())."'\" /> &nbsp; ";
+			echo "<input type=\"button\" value=\"Punkteverlauf anzeigen\" onclick=\"document.location='?page=stats&amp;mode=user&amp;userdetail=".intval($user->id())."'\" /> &nbsp; ";
 		}
 		else
 			echo "<b>Fehler:</b> Dieser Spieler existiert nicht!<br/><br/>";
 	}
 	else
+	{
 		echo "<b>Fehler:</b> Keine ID angegeben!";
+	}
 
 	echo "<input type=\"button\" class=\"button\" onclick=\"history.back();;\" value=\"Zur&uuml;ck\" />";
 
+	//
+	// User-Log
+	//
+	
 	echo "<br/><br/>";
 	infobox_start("&Ouml;ffentliches Benutzer-Log");
 	$lres = dbquery("
@@ -140,7 +126,7 @@
 	FROM
 		user_log
 	WHERE
-		user_id=".$arr['user_id']." 
+		user_id=".$user->id()." 
 		AND public=1
 	ORDER BY timestamp DESC
 	LIMIT 10;");
@@ -150,7 +136,7 @@
 		{
 			echo "<div style=\"border-bottom:1px solid #aaa;padding:3px 0px 5px 0px;text-align:left;\">".text2html($larr['message']);			
 			echo "<span style=\"color:#ddd;font-size:7pt;padding-left:20px;\">".df($larr['timestamp'])."";
-			if ($arr['user_id']==$cu->id())
+			if ($user->id()==$cu->id())
 			{
 				echo ", ".$larr['host'];
 			}
@@ -166,7 +152,7 @@
 	infobox_end();
 
 
-	if ($arr['user_id']==$cu->id())
+	if ($user->id()==$cu->id())
 	{
 		echo "<br/>";
 		infobox_start("Privates Benutzer-Log");
@@ -176,7 +162,7 @@
 		FROM
 			user_log
 		WHERE
-			user_id=".$arr['user_id']." 
+			user_id=".$user->id()." 
 			AND public=0
 		ORDER BY timestamp DESC
 		LIMIT 30;");

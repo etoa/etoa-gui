@@ -10,7 +10,7 @@ if (Alliance::checkActionRights('liquidate'))
 		FROM 
 			users
 		WHERE 
-			user_alliance_id='".$cu->alliance_id."' 
+			user_alliance_id='".$cu->allianceId()."' 
 			AND user_id!='".$cu->id()."';");
 		
 		if (mysql_num_rows($res)>0)
@@ -21,7 +21,7 @@ if (Alliance::checkActionRights('liquidate'))
 		else
 		{
 			echo "<form action=\"?page=$page\" method=\"post\">";
-			echo "<input name=\"id_control\" type=\"hidden\" value=\"".$cu->alliance_id."\" />";
+			echo "<input name=\"id_control\" type=\"hidden\" value=\"".$cu->allianceId()."\" />";
 			checker_init();
 			echo "Willst du die Allianz wirklich aufl&ouml;sen?<br/><br/>
 			<input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"Nein\" />&nbsp;&nbsp;&nbsp;

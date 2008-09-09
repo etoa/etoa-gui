@@ -117,7 +117,7 @@
 		global $res;
 		global $query_counter; 
 		global $queries;
-		if (ETOA_DEBUG==1)
+		if (ETOA_DEBUG==1 && false)
 		{
 			echo "Queries done: ".$query_counter."<br/>";
 			foreach ($queries as $q)
@@ -4706,6 +4706,19 @@ Forum: http://www.etoa.ch/forum";
 		$fadecnt++;
 
 	}
+	
+	/**
+	* Prints an array
+	* For debug purposes only
+	*/
+	function print_a($val)
+	{	
+		ob_start();
+		print_r($val);
+		$tmp = ob_get_clean();
+		echo nl2br($tmp);
+	}
+
 
 	/**
 	* Textfunktionen einbinden

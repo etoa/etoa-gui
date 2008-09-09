@@ -127,25 +127,7 @@
 	}
 
 	// Session prüfen
-	$session_valid=false;
-	if ($s['key']!="")
-	{
-		// Valid browser values
-		if (substr($s['key'],64,32)==md5(ROUNDID) 
-		&& substr($s['key'],96,32)==md5($_SERVER['REMOTE_ADDR']) 
-		&& substr($s['key'],128,32)==md5($_SERVER['HTTP_USER_AGENT']) 
-		&& substr($s['key'],160)==session_id() )
-		{
-			// Valid user valies
-			if ($cu->lt=substr($s['key'],0,32) && 
-			$cu->uid==substr($s['key'],32,32) && 
-			$cu->sk==$s['key'])
-			{
-				$session_valid=true;
-			}
-		}
-	}
-	if (!$session_valid)
+	if (!$cu->validateSession($s['key']))
 	{
 		// Zum Loginserver wechseln falls das Session-Cookie noch nicht gesetzt oder fehlerhaft ist
 		session_destroy();
@@ -159,19 +141,19 @@
 	//
 
 	// Layout-/Grafikdefinitionen
-	if ($cu->css_style!='')
+	if ($cu->getp("css_style")!='')
 	{
-		define('CSS_STYLE',DESIGN_DIRECTORY."/".$cu->css_style);
+		define('CSS_STYLE',DESIGN_DIRECTORY."/".$cu->getp("css_style"));
 	}
 	else
 	{
 		define('CSS_STYLE',DESIGN_DIRECTORY."/".$cfg->value('default_css_style'));
 	}
-	define('GAME_WIDTH',$cu->game_width);
-	if ($cu->image_url!='' && $cu->image_ext!='')
+	define('GAME_WIDTH',$cu->getp("game_width"));
+	if ($cu->getp("image_url") != '' && $cu->getp("image_ext") != '')
 	{
-		define('IMAGE_PATH',$cu->image_url);
-		define('IMAGE_EXT',$cu->image_ext);
+		define('IMAGE_PATH',$cu->getp("image_url"));
+		define('IMAGE_EXT',$cu->getp("image_ext"));
 	}
 	else
 	{
@@ -353,8 +335,8 @@
 
 				// Assign template variables
 				$tpl->assign("messages",NEW_MESSAGES);
-				$tpl->assign("blinkMessages",$cu->msg_blink);
-				$tpl->assign("buddys",check_buddys_online($s['user_id']));
+				$tpl->assign("blinkMessages",$cu->getp("msg_blink"));
+				$tpl->assign("buddys",check_buddys_online($cu->id()));
 				$tpl->assign("fleetAttack",check_fleet_incomming($cu->id()));
 				$tpl->assign("templateDir",CSS_STYLE);
 				$tpl->assign("serverTime",date('H:i:s'));
@@ -398,16 +380,16 @@
 						
 				if (ADD_BANNER=="")		
 					$tpl->assign("adds",false);
-				elseif ($cu->show_adds==1 || FORCE_ADDS==1)
+				elseif ($cu->getp("show_adds")==1 || FORCE_ADDS==1)
 					$tpl->assign("adds",true);
 				else
 					$tpl->assign("adds",false);
 				$tpl->assign("addBanner",ADD_BANNER);
-				if ($cu->helpbox==1)
+				if ($cu->getp("helpbox")==1)
 					$tpl->assign("helpBox",true);
 				else
 					$tpl->assign("helpBox",false);
-				if ($cu->notebox==1)
+				if ($cu->getp("notebox")==1)
 					$tpl->assign("noteBox",true);
 				else
 					$tpl->assign("noteBox",false);

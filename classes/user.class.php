@@ -8,12 +8,12 @@
 	*/
 	class User
 	{
-		private $id;	// Database record id
-		private $nick; // Unicke nickname
-		private $setup; // Cheker if account is propperly setup
-		private $valid; // Checker if class instance belongs to valid user
-		private $maskMatrix; // Matrix for the "fog of war" effect in the space map
-		private $raceId;
+		protected $id;	// Database record id
+		protected $nick; // Unicke nickname
+		protected $setup; // Cheker if account is propperly setup
+		protected $valid; // Checker if class instance belongs to valid user
+		protected $maskMatrix; // Matrix for the "fog of war" effect in the space map
+		protected $raceId;
 		
 		/**
 		* The constructor initializes and loads 
@@ -44,13 +44,15 @@
 				$this->lt = $arr['lt'];
 				$this->sk = $arr['sk'];
 
-	    	$this->loadRaceData($arr['user_race_id']);	 				
-				
+			
+				$this->nick=$arr['user_nick'];
+				$this->realName=$arr['user_name'];
+				$this->email=$arr['user_email'];
+				$this->emailFix=$arr['user_email_fix'];
+
+				$this->last_online=$arr['user_last_online'];
 				$this->acttime = $arr['user_acttime'];
-		    
-		    // deprecated
-		    $this->race_id = $arr['user_race_id'];
-		    
+				$this->points=$arr['user_points'];
 		    $this->blocked_from = $arr['user_blocked_from'];
 		    $this->blocked_to = $arr['user_blocked_to'];
 		    $this->ban_reason = $arr['user_ban_reason'];
@@ -60,49 +62,36 @@
 		    $this->points = $arr['user_points'];
 		    $this->deleted = $arr['user_deleted'];
 		    $this->registered = $arr['user_registered'];
-		    $this->show_adds = $arr['user_show_adds'];
 		    $this->setup = $arr['user_setup']==1 ? true : false;
-	
-
-				$this->id=$arr['user_id'];
-				$this->nick=$arr['user_nick'];
-				$this->email=$arr['user_email'];
-				$this->last_online=$arr['user_last_online'];
-				$this->points=$arr['user_points'];
-				$this->alliance_id=$arr['user_alliance_id'];
-				$this->alliance_rank_id=$arr['user_alliance_rank_id'];
-				$this->css_style=$arr['user_css_style'];
-				$this->game_width=$arr['user_game_width'];
-				$this->planet_circle_width=$arr['user_planet_circle_width'];
-				$this->image_url=$arr['user_image_url'];
-				$this->image_ext=$arr['user_image_ext'];
-				$this->item_show=$arr['user_item_show'];
-				$this->item_order_ship=$arr['user_item_order_ship'];
-				$this->item_order_def=$arr['user_item_order_def'];
-				$this->item_order_way=$arr['user_item_order_way'];
-				$this->image_filter=$arr['user_image_filter'];
+				$this->admin=$arr['user_admin']==1 ? true : false;
+				$this->ip=$_SERVER['REMOTE_ADDR'];
 				$this->blocked_from=$arr['user_blocked_from'];
 				$this->blocked_to=$arr['user_blocked_to'];
 				$this->hmode_from=$arr['user_hmode_from'];
 				$this->hmode_to=$arr['user_hmode_to'];
-				$this->helpbox=$arr['user_helpbox'];
-				$this->notebox=$arr['user_notebox'];
-				 
-				$this->admin=$arr['user_admin']==1 ? true : false;
-				$this->ip=$_SERVER['REMOTE_ADDR'];
-				$this->msg_preview=$arr['user_msg_preview'];
-				$this->msgcreation_preview=$arr['user_msgcreation_preview'];
-				$this->msgsignature=$arr['user_msgsignature'];
-				$this->msg_copy=$arr['user_msg_copy'];
-				$this->msg_blink=$arr['user_msg_blink'];
-			
 				$this->specialist_time=$arr['user_specialist_time'];
 				$this->specialist_id=$arr['user_specialist_id'];
-         
-        $this->spyship_count=$arr['user_spyship_count'];
-        $this->spyship_id=$arr['user_spyship_id'];
-        $this->havenships_buttons=$arr['user_havenships_buttons'];
-				 
+				$this->visits = $arr['user_visits'];
+				
+				$this->profileImage = $arr['user_profile_img'];
+				$this->profileText = $arr['user_profile_text'];
+				$this->profileBoardUrl = $arr['user_profile_board_url'];
+				$this->signature = $arr['user_signature'];
+
+				$this->allianceId = $arr['user_alliance_id'];
+				$this->allianceRankId = $arr['user_alliance_rank_id'];
+				$this->allianceName = "";
+				$this->allianceRankName = "";				
+
+				$this->rank = $arr['user_rank'];
+				$this->rankHighest = $arr['user_rank_highest'];
+
+
+				// Todo: remove and add where it is needed
+	    	$this->loadRaceData($arr['user_race_id']);	 				
+	
+				$this->rating = array();
+	
 				$this->valid=true;
 			}
 		}
@@ -111,40 +100,74 @@
 		// Getters
 		// 		
 		
-		/** 
-		* Return if user is valid 
-		*/
-		function isValid() { 	return $this->valid;	}
+		final public function isValid() { 	return $this->valid;	}
+		final public function isSetup() 	{	return $this->setup; }		
+		final public function id() { return $this->id; }
+		final public function nick()	{ return $this->nick; }
+		final public function raceId() { return $this->raceId; }
+		final public function visits() { return $this->visits; }
+		final public function profileImage() { return $this->profileImage; }
+		final public function profileText() { return $this->profileText; }
+		final public function profileBoardUrl() { return $this->profileBoardUrl; }
+		final public function registered() { return $this->registered; }
+		final public function points() { return $this->points; }
+		final public function rank() { return $this->rank; }
+		final public function rankHighest() { return $this->rankHighest; }
+		final public function allianceId() { return $this->allianceId; }
+		final public function allianceRankId() { return $this->allianceRankId; }
+		final public function lastOnline() { return $this->last_online; }
+		final public function signature() { return $this->signature; }
+		
 
-		/**
-		* Return if user is finally set up (main planet, race)
-		*/
-		function isSetup() 	{	return $this->setup; }		
+		final public function allianceName() 
+		{ 
+			if ($this->allianceName == "") 	{ $this->loadAllianceData(); }
+			return $this->allianceName;
+		}
+		
+		final public function allianceRankName() 
+		{ 
+			if ($this->allianceRankName == "") 	{ $this->loadAllianceData(); }
+			return $this->allianceRankName;
+		}
 
-		/**
-		* Returns the users id
-		*/
-		function id() { return $this->id; }
-
-		/**
-		* Returns the users nickname
-		*/
-		function nick()	{ return $this->nick; }
-
-		/**
-		* Returns the name of the users race
-		*/ 
-		function raceName() 
+		public function raceName() 
 		{ 			
 			return $this->raceName; 
 		}
 
-		/**
-		* Returns the id of the users race
-		*/ 
-		function raceId() 
-		{ 			
-			return $this->raceId; 
+		public function rating($field)
+		{
+			if (!isset($this->rating[$field]))
+			{
+				$res = dbquery("SELECT * FROM user_ratings WHERE id=".$this->id.";");
+				if (mysql_num_rows($res)>0)
+				{
+					$arr = mysql_fetch_array($res);
+					$this->rating['battle_rating'] = $arr['battle_rating'];
+					$this->rating['trade_rating'] = $arr['trade_rating'];
+					$this->rating['diplomacy_rating'] = $arr['diplomacy_rating'];
+				}
+				else
+				{
+					$this->rating['battle_rating'] = 0;
+					$this->rating['trade_rating'] = 0;
+					$this->rating['diplomacy_rating'] = 0;
+				}
+			}
+			return $this->rating[$field];			
+		}
+
+		public function setAllianceId($id) 
+		{ 
+			$this->allianceId = $id; 
+			dbquery("
+			UPDATE 
+				users 
+			SET 
+				user_alliance_rank_id=0,
+				user_alliance_id=".$id." 
+			WHERE user_id='".$this->id()."';");
 		}
 
 
@@ -155,10 +178,57 @@
 		/**
 		* Returns true if the users session has timed out
 		*/
-		function isTimeout()
+		final public function isTimeout()
 		{
 			$cfg = Config::getInstance();
 			return $this->acttime + $cfg->value('user_timeout') < time();			
+		}
+		
+		/**
+		* Load alliance data
+		*/
+		function loadAllianceData()
+		{
+			if ($this->allianceId > 0)
+			{
+				$ares = dbquery("
+				SELECT
+					alliance_tag,
+					alliance_name,
+					alliance_founder_id
+				FROM
+					alliances
+				WHERE
+					alliance_id=".$this->allianceId.";
+				");	
+				if (mysql_num_rows($ares)>0)				
+				{
+					$aarr = mysql_fetch_row($ares);
+					$this->allianceName = "[".$aarr[0]."] ".$aarr[1];
+					
+					if ($aarr[2] == $this->id)
+					{
+						$this->allianceRankName = "Gründer";
+					}
+					elseif ($this->allianceRankId > 0)
+					{
+						$ares = dbquery("
+						SELECT
+							rank_name
+						FROM
+							alliance_ranks
+						WHERE
+							rank_alliance_id=".$this->allianceId."
+							AND rank_id=".$this->allianceRankId.";
+						");	
+						if (mysql_num_rows($ares)>0)				
+						{
+							$aarr = mysql_fetch_row($ares);
+							$this->allianceRankName = $aarr[0];
+						}					
+					}					
+				}					
+			}				
 		}
 		
 		
@@ -190,7 +260,7 @@
 		{
 			$rres = dbquery("
 			SELECT
-				race_name,
+				race_name
 			FROM
 				races
 			WHERE
@@ -218,7 +288,7 @@
      * @param int $public
      * @return bool
      */
-    public function addToUserLog($zone,$message,$public=1)
+    final public function addToUserLog($zone,$message,$public=1)
     {
 			$search = array("{user}","{nick}");
 			$replace = array($this->nick,$this->nick);
@@ -247,6 +317,20 @@
       ");
 			return true;
     }
+    
+		function increaseVisitorCounter()
+		{
+			dbquery("
+			UPDATE 
+				users 
+			SET 
+				user_visits=user_visits+1 
+			WHERE 
+				user_id='".intval($this->id)."';");
+			$this->visits++;
+		}
+
+    
 	}
 
 ?>

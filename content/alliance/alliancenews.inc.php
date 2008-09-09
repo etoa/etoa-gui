@@ -27,7 +27,7 @@ if (Alliance::checkActionRights('alliancenews'))
 			alliance_news_date,
 			alliance_news_alliance_to_id)
 			VALUES
-			(".$cu->alliance_id.",
+			(".$cu->allianceId().",
 			".$cu->id().",
 			'".addslashes($_POST['news_title'])."',
 			'".addslashes($_POST['news_text'])."',
@@ -37,7 +37,7 @@ if (Alliance::checkActionRights('alliancenews'))
 			echo "<div style=\"color:#0f0;\">News wurde gesendet!</div><br/>";
 						
 			// Gebe nur Punkte falls Nachricht öffentlich oder an andere Allianz
-			if ($cu->alliance_id!=$_POST['alliance_id'])
+			if ($cu->allianceId()!=$_POST['alliance_id'])
 			{
 				Ranking::addDiplomacyPoints($cu->id(),DIPLOMACY_POINTS_PER_NEWS,"Rathausnews verfasst (ID:".mysql_insert_id().", ".addslashes($_POST['news_text']).")");
 			}
@@ -80,7 +80,7 @@ if (Alliance::checkActionRights('alliancenews'))
 	}
 	else
 	{
-		$aid = $cu->alliance_id;
+		$aid = $cu->allianceId();
 	} 
 	
 	if(isset($_SESSION['alliance']['news']['news_title']))

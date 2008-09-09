@@ -8,8 +8,144 @@
 	*/
 	class CurrentUser extends User
 	{
+		protected $property;
+		
+		/**
+		* Constructor which calls the default parent constructor
+		* and loads settings
+		*/
+		public function CurrentUser($userId)
+		{
+			parent::User($userId);
+			$this->loadProperties();
+			
+			// Todo: remove and add where it is needed
+			$this->loadRaceData($this->id);
+		}
+
+		//
+		// Getters
+		//
+		
+		final public function realName() { return $this->realName; }
+		final public function email() { return $this->email; }
+		final public function emailFix() { return $this->emailFix; }
 
 
+		//
+		// Methods
+		//		
+
+		/**
+		* Loads the users personal settings 
+		from the user settings table
+		*/
+		private function loadProperties()
+		{
+			$res = dbquery("
+			SELECT 
+				*
+			FROM 
+				user_properties
+			WHERE 
+				id='".$this->id."' 
+			;");			
+			if (mysql_num_rows($res)>0)		
+			{			
+				$arr = mysql_fetch_assoc($res);
+				
+				$this->property = array();
+				
+				$this->property['css_style'] = $arr['css_style'];
+				$this->property['image_url'] = $arr['image_url'];
+				$this->property['image_ext'] = $arr['image_ext'];
+				$this->property['game_width'] = $arr['game_width'];
+				$this->property['planet_circle_width'] = $arr['planet_circle_width'];
+				$this->property['item_show'] = $arr['item_show'];
+				$this->property['item_order_ship'] = $arr['item_order_ship'];
+				$this->property['item_order_def'] = $arr['item_order_def'];
+				$this->property['item_order_way'] = $arr['item_order_way'];
+				$this->property['image_filter'] = $arr['image_filter'];
+				$this->property['msgsignature'] = $arr['msgsignature'];
+				$this->property['msgcreation_preview'] = $arr['msgcreation_preview'];
+				$this->property['msg_preview'] = $arr['msg_preview'];
+				$this->property['helpbox'] = $arr['helpbox'];
+				$this->property['notebox'] = $arr['notebox'];
+				$this->property['msg_copy'] = $arr['msg_copy'];
+				$this->property['msg_blink'] = $arr['msg_blink'];
+        $this->property['spyship_id'] = $arr['spyship_id'];
+        $this->property['spyship_count'] = $arr['spyship_count'];
+        $this->property['havenships_buttons'] = $arr['havenships_buttons'];
+		    $this->property['show_adds'] = $arr['show_adds'];
+		    $this->property['fleet_rtn_msg'] = $arr['fleet_rtn_msg'];
+        return true;
+			}
+			// This part should never be used, it is for repairing missing user settings only
+			else
+			{
+				dbquery("
+				INSERT INTO 
+					user_properties
+				(id)
+				VALUES
+				(".$this->id.")
+				");
+				// Take care: This is a recursion! With mysql_insert_id we check that the record has been created and thus 
+				// the recursion should has to finish the next time
+				if (mysql_insert_id()>0)
+				{
+					$this->loadSettings();
+				}
+			}
+		}
+		
+    public function getp($property)
+    {
+      return $this->property[$property];
+    }
+
+    public function setp($property,$argument)
+    {
+    	if ($this->property[$property] != $argument)
+    	{
+    		$this->property[$property] = $argument;
+    		dbquery("
+    		UPDATE
+    			user_properties
+    		SET
+    			".$property."='".$argument."'
+    		WHERE
+    			id=".$this->id."");
+    		return true;
+    	}
+    }
+		
+		
+		/**
+		* Validates the user session against a given key
+		*/
+		public function validateSession($sessionKey)
+		{
+			$session_valid=false;
+			if ($sessionKey!="")
+			{
+				// Valid browser values
+				if (substr($sessionKey,64,32)==md5(ROUNDID) 
+				&& substr($sessionKey,96,32)==md5($_SERVER['REMOTE_ADDR']) 
+				&& substr($sessionKey,128,32)==md5($_SERVER['HTTP_USER_AGENT']) 
+				&& substr($sessionKey,160)==session_id() )
+				{
+					// Valid user valies
+					if ($this->lt=substr($sessionKey,0,32) && 
+					$this->uid==substr($sessionKey,32,32) && 
+					$this->sk==$sessionKey)
+					{
+						$session_valid=true;
+					}
+				}
+			}
+			return $session_valid;			
+		}
 		
 		/**
 		* Set setup status to false
@@ -190,6 +326,8 @@
 			}		
 		}
 	
-	}
+	}  
+	
+	
 
 ?>

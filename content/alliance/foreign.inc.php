@@ -1,5 +1,5 @@
 <?PHP
-	if ($cu->alliance_id == 0)
+	if ($cu->allianceId() == 0)
 	{
 		// Check application
 		$application_alliance=0;
@@ -107,7 +107,8 @@
 						dbquery("INSERT INTO alliances (alliance_tag,alliance_name,alliance_text,alliance_url,alliance_founder_id,alliance_foundation_date) VALUES ('".addslashes($_POST['alliance_tag'])."','".addslashes($_POST['alliance_name'])."','".addslashes($_POST['alliance_text'])."','".$_POST['alliance_url']."','".$cu->id()."','".time()."');");
 						$aid = mysql_insert_id();
 						dbquery("UPDATE ".$db_table['users']." SET user_alliance_id='$aid' WHERE user_id='".$cu->id()."';");
-						$cu->alliance_id=$aid;
+						
+						$cu->setAllianceId($aid);
 						add_log(5,"Die Allianz [b]".$_POST['alliance_name']." (".$_POST['alliance_tag'].")[/b] wurde vom Spieler [b]".$cu->nick()."[/b] gegr&uuml;ndet!",time());
 						add_alliance_history($aid,"Die Allianz [b]".$_POST['alliance_name']." (".$_POST['alliance_tag'].")[/b] wurde vom Spieler [b]".$cu->nick()."[/b] gegründet!");
 						

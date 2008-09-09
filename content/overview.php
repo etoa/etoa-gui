@@ -45,7 +45,7 @@
 			login_failures
 		WHERE
 			failure_user_id=".$cu->id()."
-			AND failure_time > ".$cu->last_online."
+			AND failure_time > ".$cu->lastOnline()."
 		");
 		$arr = mysql_fetch_row($res);
 		if ($arr[0]>0)
@@ -87,10 +87,10 @@
 			".$db_table['alliance_news']."
 		WHERE
 			(
-	      alliance_news_alliance_to_id='".$cu->alliance_id."'
+	      alliance_news_alliance_to_id='".$cu->allianceId()."'
 		    OR alliance_news_alliance_to_id = 0 
 			)
-	    AND alliance_news_date>'".$cu->last_online."'
+	    AND alliance_news_date>'".$cu->lastOnline()."'
 		ORDER BY
 	        alliance_news_date DESC
 		LIMIT 5;");
@@ -226,7 +226,7 @@
 		* Allianzegebäude *
 		******************/
 		
-		if($cu->alliance_id!=0)
+		if($cu->allianceId()!=0)
 		{
 			
 			echo "<tr>
@@ -245,7 +245,7 @@
 		      alliance_buildings
 		    ON alliance_building_id=alliance_buildlist_building_id
 		  WHERE
-		    alliance_buildlist_alliance_id='".$cu->alliance_id."'
+		    alliance_buildlist_alliance_id='".$cu->allianceId()."'
 		    AND alliance_buildlist_build_end_time>'0';");
 			if (mysql_num_rows($res)>0)
 			{
@@ -284,7 +284,7 @@
 		      alliance_technologies
 		    ON alliance_tech_id=alliance_techlist_tech_id
 		  WHERE
-		    alliance_techlist_alliance_id='".$cu->alliance_id."'
+		    alliance_techlist_alliance_id='".$cu->allianceId()."'
 		    AND alliance_techlist_build_end_time>'0';");
 			if (mysql_num_rows($res)>0)
 			{
@@ -519,8 +519,8 @@
 
 	//Kreis Definitionen
 	$division=15;			//Kreis Teilung: So hoch wie die maximale Anzahl Planeten
-	$d_planets = $cu->planet_circle_width;	//Durchmesser der Bilder (in Pixel)
-	$d_infos = $cu->planet_circle_width;		//Durchmesser der Infos (in Pixel)
+	$d_planets = $cu->getp("planet_circle_width");	//Durchmesser der Bilder (in Pixel)
+	$d_infos = $cu->getp("planet_circle_width");		//Durchmesser der Infos (in Pixel)
 	$pic_height=75;			//Planet Bildhöhe
 	$pic_width=75;			//Planet Bildbreite
 	$info_box_height=50;	//Info Höhe

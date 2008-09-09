@@ -33,10 +33,10 @@
 	echo "<h1>Allianzforum</h1>";
 
 	// Prüfen ob User in Allianz ist
-	if ($cu->alliance_id>0)
+	if ($cu->allianceId()>0)
 	{
 		// Prüfen ob Allianz existiert
-		$res=dbquery("SELECT alliance_id,alliance_founder_id FROM ".$db_table['alliances']." WHERE alliance_id='".$cu->alliance_id."';");
+		$res=dbquery("SELECT alliance_id,alliance_founder_id FROM ".$db_table['alliances']." WHERE alliance_id='".$cu->allianceId()."';");
 		if (mysql_num_rows($res)>0)
 		{
 			$arr=mysql_fetch_array($res);

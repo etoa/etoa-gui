@@ -132,30 +132,31 @@
 
       echo "<tr>
       	<th class=\"tbldata\" width=\"35%\">Benutzername:</th>
-      	<td class=\"tbldata\" width=\"65%\">".$arr['user_nick']."</td>
+      	<td class=\"tbldata\" width=\"65%\">".$cu->nick()."</td>
       </tr>";
       echo "<tr>
       	<th class=\"tbldata\" width=\"35%\">Vollst&auml;ndiger Name:</th>
-      	<td class=\"tbldata\" width=\"65%\">".$arr['user_name']." [<a href=\"?page=$page&amp;request=change_name\">&Auml;nderung beantragen</a>]</td>
+      	<td class=\"tbldata\" width=\"65%\">".$cu->realName()." [<a href=\"?page=$page&amp;request=change_name\">&Auml;nderung beantragen</a>]</td>
       </tr>";
       echo "<tr>
       	<th class=\"tbldata\" width=\"35%\">Fixe E-Mail:</th>
-      	<td class=\"tbldata\" width=\"65%\">".$arr['user_email_fix']." [<a href=\"?page=$page&amp;request=change_email\">&Auml;nderung beantragen</a>]</td>
+      	<td class=\"tbldata\" width=\"65%\">".$cu->emailFix()." [<a href=\"?page=$page&amp;request=change_email\">&Auml;nderung beantragen</a>]</td>
       </tr>";
       echo "<tr>
       	<th class=\"tbldata\" width=\"35%\">E-Mail:</th>
-      	<td class=\"tbldata\" width=\"65%\"><input type=\"text\" name=\"user_email\" maxlength=\"255\" size=\"30\" value=\"".$arr['user_email']."\"></td>
+      	<td class=\"tbldata\" width=\"65%\"><input type=\"text\" name=\"user_email\" maxlength=\"255\" size=\"30\" value=\"".$cu->email()."\"></td>
       </tr>";
+
       echo "<tr>
       	<th class=\"tbldata\" width=\"35%\">Beschreibung:</th>
-      	<td class=\"tbldata\"><textarea name=\"user_profile_text\" cols=\"50\" rows=\"10\" width=\"65%\">".stripslashes($arr['user_profile_text'])."</textarea></td>
+      	<td class=\"tbldata\"><textarea name=\"user_profile_text\" cols=\"50\" rows=\"10\" width=\"65%\">".stripslashes($cu->profileText())."</textarea></td>
       </tr>";
       echo "<tr>
       	<th class=\"tbldata\" width=\"35%\">User-Bild:</th>
       	<td class=\"tbldata\">";
         if ($arr['user_profile_img']!="")
         {
-          echo '<img src="'.PROFILE_IMG_DIR.'/'.$arr['user_profile_img'].'" alt="Profil" /><br/>';
+          echo '<img src="'.PROFILE_IMG_DIR.'/'.$cu->profileImage().'" alt="Profil" /><br/>';
           echo "<input type=\"checkbox\" value=\"1\" name=\"profile_img_del\"> Bild l&ouml;schen<br/>";
         }
       	echo "Profilbild heraufladen/&auml;ndern: <input type=\"file\" name=\"user_profile_img_file\" /><br/>
@@ -165,7 +166,7 @@
       </tr>";   
       echo "<tr>
       	<th class=\"tbldata\" width=\"35%\">Allianzforum-Signatur:</th>
-      	<td class=\"tbldata\"><textarea name=\"user_signature\" cols=\"50\" rows=\"2\" width=\"65%\">".stripslashes($arr['user_signature'])."</textarea></td>
+      	<td class=\"tbldata\"><textarea name=\"user_signature\" cols=\"50\" rows=\"2\" width=\"65%\">".stripslashes($cu->signature())."</textarea></td>
       </tr>";
       echo "<tr>
       	<th class=\"tbldata\" width=\"35%\">Allianzforum-Avatar:</th>
