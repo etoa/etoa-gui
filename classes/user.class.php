@@ -4,6 +4,7 @@
 		private $id;
 		private $setup;
 		private $valid;
+		private $nick;
 		
 		private $maskMatrix;
 		
@@ -282,6 +283,42 @@
 		{
 			return $this->raceName;
 		}
+
+		/**
+     * Adds a message to this users personal log
+     * The message string is parsed for the users nickname
+     *
+     * @param string $zone
+     * @param string $message
+     * @return bool
+     */
+    public function addToUserLog($zone,$message)
+    {
+			$search = array("{user}","{nick}");
+			$replace = array($this->nick,$this->nick);
+			$message = str_replace($search,$replace,$message);
+
+      dbquery("
+      INSERT INTO
+				user_log
+			(
+				user_id,
+				timestamp,
+				zone,
+				message,
+				host
+			)
+			VALUES
+			(
+				".$this->id.",
+				".time().",
+				'".$zone."',
+				'".$message."',
+				'".gethostbyname($_SERVER['REMOTE_ADDR'])."'
+			);
+      ");
+			return true;
+    }
 	}
 
 ?>
