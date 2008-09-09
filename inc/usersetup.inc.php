@@ -21,12 +21,16 @@
 		$cu->setSetupFinished();
 		$mode = "finished";		
 	}
-	elseif (isset($_POST['submit_chooseplanet']) && $_POST['choosenplanetid']>0 && checker_verify())
+	elseif (isset($_POST['submit_chooseplanet']) && $_POST['choosenplanetid']>0 && checker_verify() && !isset($cp))
 	{
+		
+		
 		$tp = new Planet($_POST['choosenplanetid']);
 		$tp->reset();
 		$tp->assignToUser($cu->id(),1);
 		$tp->setDefaultResources();	
+		
+		$cu->addToUserLog("planets","{nick} wählt [b]".$tp."[/b] als Hauptplanet aus.",0);
 		
 		$res = dbquery("
 		SELECT

@@ -1,13 +1,23 @@
 <?PHP
+	
+	/**
+	* Provides methods for accessing user information
+	* and changing it.
+	*
+	* @author Nicolas Perrenoud<mrcage@etoa.ch>
+	*/
 	class User
 	{
-		private $id;
-		private $setup;
-		private $valid;
-		private $nick;
+		private $id;	// Database record id
+		private $nick; // Unicke nickname
+		private $setup; // Cheker if account is propperly setup
+		private $valid; // Checker if class instance belongs to valid user
+		private $maskMatrix; // Matrix for the "fog of war" effect in the space map
 		
-		private $maskMatrix;
-		
+		/**
+		* The constructor initializes and loads 
+		* all importand data about this user
+		*/
 		function User($id)
 		{
 			$this->valid = false;

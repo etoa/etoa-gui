@@ -148,7 +148,7 @@
 	{
 		while ($larr = mysql_fetch_array($lres))
 		{
-			echo "<div style=\"border-bottom:1px solid #aaa;padding:3px 0px 5px 0px;text-align:left;\">".stripslashes($larr['message']);			
+			echo "<div style=\"border-bottom:1px solid #aaa;padding:3px 0px 5px 0px;text-align:left;\">".text2html($larr['message']);			
 			echo "<span style=\"color:#ddd;font-size:7pt;padding-left:20px;\">".df($larr['timestamp'])."";
 			if ($arr['user_id']==$cu->id())
 			{
@@ -184,7 +184,7 @@
 		{
 			while ($larr = mysql_fetch_array($lres))
 			{
-				echo "<div style=\"border-bottom:1px solid #aaa;padding:3px 0px 5px 0px;text-align:left;\">".stripslashes($larr['message']);			
+				echo "<div style=\"border-bottom:1px solid #aaa;padding:3px 0px 5px 0px;text-align:left;\">".text2html($larr['message']);			
 				echo "<span style=\"color:#ddd;font-size:7pt;padding-left:20px;\">".df($larr['timestamp'])."";
 				echo ", ".$larr['host'];
 				echo "</span>
