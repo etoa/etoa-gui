@@ -13,6 +13,7 @@
 		private $setup; // Cheker if account is propperly setup
 		private $valid; // Checker if class instance belongs to valid user
 		private $maskMatrix; // Matrix for the "fog of war" effect in the space map
+		private $raceId;
 		
 		/**
 		* The constructor initializes and loads 
@@ -38,47 +39,18 @@
 			{
 				$arr = mysql_fetch_assoc($res);
 
-				$rres = dbquery("
-				SELECT
-					race_name,
-			  	race_f_researchtime,
-					race_f_buildtime,
-					race_f_fleettime,
-					race_f_metal,
-					race_f_crystal,
-					race_f_plastic,
-					race_f_fuel,
-					race_f_food,
-					race_f_power,
-					race_f_population		
-				FROM
-					races
-				WHERE
-					race_id=".$arr['user_race_id']."			
-				");
-				if (mysql_num_rows($rres)>0)
-				{
-					$rarr = mysql_fetch_assoc($rres);
-					$this->raceName = $rarr['race_name'];
-					$this->raceResearchtime = $rarr['race_f_researchtime'];
-					$this->raceBuildtime = $rarr['race_f_buildtime'];
-					$this->raceFleettime = $rarr['race_f_fleettime'];
-					$this->raceMetal = $rarr['race_f_metal'];
-					$this->raceCrystal = $rarr['race_f_crystal'];
-					$this->racePlastic = $rarr['race_f_plastic'];
-					$this->raceFuel = $rarr['race_f_fuel'];
-					$this->raceFood = $rarr['race_f_food'];
-					$this->racePower = $rarr['race_f_power'];
-					$this->racePopulation = $rarr['race_f_population'];
-				}
-
 				// Those are for session controll				
 				$this->uid = $arr['uid'];
 				$this->lt = $arr['lt'];
 				$this->sk = $arr['sk'];
+
+	    	$this->loadRaceData($arr['user_race_id']);	 				
 				
 				$this->acttime = $arr['user_acttime'];
+		    
+		    // deprecated
 		    $this->race_id = $arr['user_race_id'];
+		    
 		    $this->blocked_from = $arr['user_blocked_from'];
 		    $this->blocked_to = $arr['user_blocked_to'];
 		    $this->ban_reason = $arr['user_ban_reason'];
@@ -96,7 +68,6 @@
 				$this->nick=$arr['user_nick'];
 				$this->email=$arr['user_email'];
 				$this->last_online=$arr['user_last_online'];
-				$this->race_id=$arr['user_race_id'];
 				$this->points=$arr['user_points'];
 				$this->alliance_id=$arr['user_alliance_id'];
 				$this->alliance_rank_id=$arr['user_alliance_rank_id'];
@@ -133,170 +104,109 @@
         $this->havenships_buttons=$arr['user_havenships_buttons'];
 				 
 				$this->valid=true;
-				
-		
 			}
 		}
+
+		//
+		// Getters
+		// 		
 		
-		function isValid()
-		{
-			return $this->valid;
+		/** 
+		* Return if user is valid 
+		*/
+		function isValid() { 	return $this->valid;	}
+
+		/**
+		* Return if user is finally set up (main planet, race)
+		*/
+		function isSetup() 	{	return $this->setup; }		
+
+		/**
+		* Returns the users id
+		*/
+		function id() { return $this->id; }
+
+		/**
+		* Returns the users nickname
+		*/
+		function nick()	{ return $this->nick; }
+
+		/**
+		* Returns the name of the users race
+		*/ 
+		function raceName() 
+		{ 			
+			return $this->raceName; 
 		}
-		
+
+		/**
+		* Returns the id of the users race
+		*/ 
+		function raceId() 
+		{ 			
+			return $this->raceId; 
+		}
+
+
+		//
+		// Methods
+		//
+
+		/**
+		* Returns true if the users session has timed out
+		*/
 		function isTimeout()
 		{
 			$cfg = Config::getInstance();
 			return $this->acttime + $cfg->value('user_timeout') < time();			
 		}
 		
-		function id()
+		
+		/**
+		* Set the users race
+		*/
+		public function setRace($raceId)
 		{
-			return $this->id;
+	    if ($this->loadRaceData($raceId))
+	    {
+		    $sql = "
+		    UPDATE
+		    	users
+		    SET
+					user_race_id=".$raceid."
+		    WHERE
+		    	user_id='".$this->id."';";
+		    dbquery($sql);		
+		    return true;    	
+	    }
+	    return false;
 		}
 		
-		function isSetup()
+		/**
+		* Loads data for the given race and sets it 
+		* as the users race
+		*/
+		private function loadRaceData($raceId)
 		{
-			return $this->setup;
-		}		
-		
-		function setNotSetup()
-		{
-			$this->setup = false;
-		}
-		
-		function nick()
-		{
-			return $this->nick;
-		}
-		
-		function setRace($raceid)
-		{
-	    $sql = "
-	    UPDATE
-	    	users
-	    SET
-				user_race_id=".$raceid."
-	    WHERE
-	    	user_id='".$this->id."';";
-	    dbquery($sql);					
-		}
-
-		function setSetupFinished()
-		{
-	    $sql = "
-	    UPDATE
-	    	users
-	    SET
-				user_setup=1
-	    WHERE
-	    	user_id='".$this->id."';";
-	    dbquery($sql);
-	    $this->setup=true;					
-		}
-
-		function loadDiscoveryMask()
-		{
-			$res = dbquery("
+			$rres = dbquery("
 			SELECT
-				discoverymask
-			FROM				
-				users
+				race_name,
+			FROM
+				races
 			WHERE
-				user_id=".$this->id()."
+				race_id=".$raceId."			
 			");
-			$this->dmask = '';
-			$arr = mysql_fetch_row($res);
-			if ($arr[0]=='')
+			if (mysql_num_rows($rres)>0)
 			{
-				for ($x=1;$x<=30;$x++)
-				{
-					for ($y=1;$y<=30;$y++)
-					{
-						$this->dmask.= '0';
-					}
-				}
+				$rarr = mysql_fetch_assoc($rres);
+		    $this->raceId = $raceId;
+				$this->raceName = $rarr['race_name'];
+				return true;
 			}
-			else
-			{
-				$this->dmask=$arr[0];
-			}			
-		}
 
-		function discovered($absX,$absY)
-		{
-			$cfg = Config::getInstance();
-			$sy_num=$cfg->param2('num_of_sectors');
-			$cy_num=$cfg->param2('num_of_cells');
-			
-			if (!isset($this->dmask))
-			{
-				$this->loadDiscoveryMask();
-			}	
-			
-			$pos = $absX + ($cy_num*$sy_num)*($absY-1)-1;
-			return ($this->dmask{$pos}%4);		
-		}
-		
-		function setDiscovered($absX,$absY,$owner=1,$save=1)
-		{
-			$cfg = Config::getInstance();
-			$sx_num=$cfg->param1('num_of_sectors');
-			$cx_num=$cfg->param1('num_of_cells');
-			$sy_num=$cfg->param2('num_of_sectors');
-			$cy_num=$cfg->param2('num_of_cells');
-			
-			for ($x=$absX-1; $x<=$absX+1; $x++)
-			{
-				for ($y=$absY-1; $y<=$absY+1; $y++)
-				{
-					$pos = $x + ($cy_num*$sy_num)*($y-1)-1;
-					if ($pos>= 0 && $pos <= $sx_num*$sy_num*$cx_num*$cy_num)
-					{
-						if ($owner==1)
-						{
-							$this->dmask{$pos} = '5';				
-						}
-						else
-						{
-							$this->dmask{$pos} = '1';
-						}
-					}
-				}
-			}	
-			
-			if ($save==1)
-			{
-				$this->saveDiscoveryMask();
-			}			
-		}	
-
-		function saveDiscoveryMask()
-		{
-			dbquery("
-			UPDATE
-				users
-			SET
-				discoverymask='".$this->dmask."'
-			WHERE
-				user_id=".$this->id()."
-			");
-		}
-		
-		function raceSpeedFactor()
-		{
-			if ($this->raceFleettime!=1)
-			{
-				return 2-$this->raceFleettime;
-			}
-			else
-			{
-				return 1;
-			}		
-		}
-		
-		function raceName()
-		{
-			return $this->raceName;
+	    $this->raceId = 0;
+	    $this->raceName = "Keine Rasse";
+			return false;
 		}
 
 		/**

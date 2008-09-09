@@ -106,7 +106,7 @@
 	}
 	
 	// Benutzerdaten laden
-	$cu = new User($s['user_id']);
+	$cu = new CurrentUser($s['user_id']);
 
 	// Check if is valid user
 	if (!$cu->isValid())
