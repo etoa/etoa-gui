@@ -232,7 +232,8 @@
 			echo "<tr>
 							<th class=\"tbltitle\" colspan=\"2\">Allianzgebäde</th>
 							<th class=\"tbltitle\" colspan=\"2\">Allianzforschungen</th>
-						</tr>";
+						</tr>
+						<tr>";
 						
 			// Lädt bauende Allianzgebäude
 		  $res = dbquery("
@@ -269,7 +270,7 @@
 			}
 			else
 			{
-				echo "<td class=\"tbldata\" colspan=\"2\">Es wird nicht gebaut!</td></tr>";
+				echo "<td class=\"tbldata\" colspan=\"2\">Es wird nicht gebaut!</td>";
 			}	
 				
 				
@@ -804,7 +805,12 @@
 				$top=$middle_top+(($d_infos/2)*sin(deg2rad($degree+270)))-$pic_height/2;
 			}
 	
-			echo "<div id=\"planet_info_".$arr_planet['id']."\" style=\"position:absolute; left:".$left."px; top:".$top."px; width:".$info_box_width."px; height:".$info_box_height."px; text-align:".$text."; vertical-align:middle;\">".startTime($building_rest_time, 'planet_info_'.$arr_planet['id'].'', 0, $planet_info)."</div>";
+			echo "<div id=\"planet_info_".$arr_planet['id']."\" style=\"position:absolute; left:".$left."px; top:".$top."px; width:".$info_box_width."px; height:".$info_box_height."px; text-align:".$text."; vertical-align:middle;\">";
+			if(isset($building_rest_time) && $building_rest_time>0)
+			{
+				echo "".startTime($building_rest_time, 'planet_info_'.$arr_planet['id'].'', 0, $planet_info)."";
+			}
+			echo "</div>";
 			$degree = $degree + (360/$division);
 		}
 
