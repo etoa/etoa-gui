@@ -139,7 +139,7 @@
                     for ($x=70;$x<=100;$x+=10)
                     {
                         echo "<option value=\"$x\"";
-                        if ($cu->game_width==$x) echo " selected=\"selected\"";
+                        if ($cu->getp("game_width")==$x) echo " selected=\"selected\"";
                         echo ">".$x."%</option>";
                     }
                     echo "</select> <span ".tm("Info","Das Spiel wurde optimiert f&uuml;r eine Aufl&ouml;sung von 1280*1024 Pixeln! Wenn du diese besitzt empfiehlt es sich bei den Classic Designs (Blue und Dark) eine Spielgr&ouml;sse von 80% zu w&auml;hlen. Bei einer kleineren Aufl&ouml;sung empfiehlt es sich eine Spielgr&ouml;sse von 100% einzustellen!",1)."><u>Info</u></span>
@@ -154,7 +154,7 @@
                   for ($x=450;$x<=700;$x+=50)
                   {
                       echo "<option value=\"$x\"";
-                      if ($cu->planet_circle_width==$x) echo " selected=\"selected\"";
+                      if ($cu->getp("planet_circle_width")==$x) echo " selected=\"selected\"";
                       echo ">".$x."</option>";
                   }
                 echo "</select> <span ".tm("Info","Mit dieser Option l&auml;sst sich die gr&ouml;sse des Planetkreises in der &Uuml;bersicht einstellen.<br>Je nach Aufl&ouml;sung die du verwendest ist es beispielsweise nicht m&ouml;glich eine Gr&ouml;sse von 700 Pixeln zu haben. Finde selber heraus welche Gr&ouml;sse am besten Aussieht.",1)."><u>Info</u></span>

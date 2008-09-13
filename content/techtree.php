@@ -264,7 +264,7 @@
 						AND 
 						(
 							".ITEM_RACE_FLD."=0 
-							OR ".ITEM_RACE_FLD."=".$cu->race_id."
+							OR ".ITEM_RACE_FLD."=".$cu->raceId()."
 						) 
 						AND ".ITEM_TYPE_FLD."=".$tarr[TYPE_ID_FLD]." 
 					ORDER BY 
@@ -448,7 +448,7 @@
 					AND 
 					(
 						".ITEM_RACE_FLD."=0 
-						OR ".ITEM_RACE_FLD."=".$cu->race_id."
+						OR ".ITEM_RACE_FLD."=".$cu->raceId()."
 					) 
 					ORDER BY 
 						".ITEM_ORDER_FLD.";

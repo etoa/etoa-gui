@@ -115,11 +115,6 @@
 						</td>
 						<td class=\"tbldata\" style=\"text-align:center;vertical-align:middle;background:#000\"><b>".$ent->pos()."</b></td>
 						<td class=\"tbldata\" $addstyle>".$ent->type();
-
-						if ($ent->explore())
-						{			
-							echo "<br/><span style=\"color:#ccc;font-weight:bold\" ".tm($ent->explore->exploreCodeString(),$ent->explore->description()).">".$ent->explore->exploreCodeString()."</span> ";
-						}
 						
 						if ($ent->entityCode()=='w')
 						{

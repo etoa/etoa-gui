@@ -420,7 +420,7 @@
 
 						send_msg($arr['alliance_founder_id'],MSG_ALLYMAIL_CAT,"Bündnisanfrage","Die Allianz [b][".$alliances[$cu->allianceId()]['tag']."] ".$alliances[$cu->allianceId()]['name']."[/b] fragt euch für ein Bündnis an.\n
 						[b]Text:[/b] ".addslashes($_POST['alliance_bnd_text'])."\n 
-						Geschrieben von [b]".$cu->nick."[/b].\n Gehe auf die [page=alliance]Allianzseite[/page] um die Anfrage zu bearbeiten!");
+						Geschrieben von [b]".$cu->nick()."[/b].\n Gehe auf die [page=alliance]Allianzseite[/page] um die Anfrage zu bearbeiten!");
 					}
 				}
 				
@@ -485,7 +485,7 @@
 						$arr=mysql_fetch_array($res);
 
 						send_msg($arr['alliance_founder_id'],MSG_ALLYMAIL_CAT,"Kriegserklärung","Die Allianz [b][".$alliances[$cu->allianceId()]['tag']."] ".$alliances[$cu->allianceId()]['name']."[/b] erklärt euch den Krieg!\n
-						Die Kriegserklärung wurde von [b]".$cu->nick."[/b] geschrieben.\n Geh auf die Allianzseite für mehr Details!");
+						Die Kriegserklärung wurde von [b]".$cu->nick()."[/b] geschrieben.\n Geh auf die Allianzseite für mehr Details!");
 					}
 				}
 
@@ -571,7 +571,7 @@
 						;");
 						$farr=mysql_fetch_array($fres);
 						send_msg($farr['alliance_founder_id'],MSG_ALLYMAIL_CAT,"Bündnis ".$arr['alliance_bnd_name']." beendet","Die Allianz [b][".$selfTag."] ".$selfName."[/b] beendet ihr Bündnis [b]".$arr['alliance_bnd_name']."[/b] mit eurer Allianz!\n
-						Ausgelöst von [b]".$cu->nick."[/b].\nBegründung: ".$_POST['pact_end_text']);
+						Ausgelöst von [b]".$cu->nick()."[/b].\nBegründung: ".$_POST['pact_end_text']);
 							
 						echo "Das B&uuml;ndnis <b>".$arr['alliance_bnd_name']."</b> mit der Allianz <b>".$opName."</b> wurde aufgel&ouml;st!<br/><br/>";
 					}

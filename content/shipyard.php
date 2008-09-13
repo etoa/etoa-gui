@@ -35,7 +35,7 @@
 	define('REQ_ITEM_FLD',"req_ship_id");
 	define('ITEM_ID_FLD',"ship_id");
 	define('ITEM_NAME_FLD',"ship_name");
-	define('RACE_TO_ADD'," AND (ship_race_id=0 OR ship_race_id='".$cu->race_id."')");
+	define('RACE_TO_ADD'," AND (ship_race_id=0 OR ship_race_id='".$cu->raceId()."')");
 	define('ITEM_SHOW_FLD',"ship_show");
 	define('ITEM_ORDER_FLD',"ship_order");
 	define('NO_ITEMS_MSG',"In dieser Kategorie gibt es keine Schiffe!");
@@ -99,8 +99,8 @@
 					user_id='".$cu->id()."'
 				");		
 				
-				$cu->item_order_ship=$_POST['sort_value'];
-        $cu->item_order_way=$_POST['sort_way'];	
+				$cu->setp("item_order_ship")=$_POST['sort_value'];
+        $cu->setp("item_order_way")=$_POST['sort_way'];	
 			}
 			
 			
@@ -242,7 +242,7 @@
 
 			// Alle Schiffe laden
 			//Schiffsordnung des Users beachten
-			$order="ship_".$cu->item_order_ship." ".$cu->item_order_way."";
+			$order="ship_".$cu->getp("item_order_ship")." ".$cu->getp("item_order_way")."";
 			$res = dbquery("
 			SELECT
 				ship_id,
@@ -273,7 +273,7 @@
 			WHERE
 				ship_buildable='1'
 				AND ship_show='1'
-				AND (ship_race_id='0' OR ship_race_id='".$cu->race_id."')
+				AND (ship_race_id='0' OR ship_race_id='".$cu->raceId()."')
 			ORDER BY
 				cat_order,
 				special_ship DESC,
@@ -362,7 +362,7 @@
 								foreach ($values as $value => $name)
 								{		
 									echo "<option value=\"".$value."\"";
-									if($cu->item_order_ship==$value)
+									if($cu->setp("item_order_ship")==$value)
 									{
 										echo " selected=\"selected\"";
 									}
@@ -374,12 +374,12 @@
 								
 									//Aufsteigend
 									echo "<option value=\"ASC\"";
-									if($cu->item_order_way=='ASC') echo " selected=\"selected\"";
+									if($cu->setp("item_order_way")=='ASC') echo " selected=\"selected\"";
 									echo ">Aufsteigend</option>";
 									
 									//Absteigend
 									echo "<option value=\"DESC\"";
-									if($cu->item_order_way=='DESC') echo " selected=\"selected\"";
+									if($cu->set("item_order_way")=='DESC') echo " selected=\"selected\"";
 									echo ">Absteigend</option>";	
 																	
 					echo "</select>						
@@ -622,7 +622,7 @@
 				//Log schreiben
 				$log_text = "
 				<b>Schiffsauftrag Bauen</b><br><br>
-				<b>User:</b> [USER_ID=".$cu->id().";USER_NICK=".$cu->nick."]<br>
+				<b>User:</b> [USER_ID=".$cu->id().";USER_NICK=".$cu->nick()."]<br>
 				<b>Planeten:</b> [PLANET_ID=".$cp->id.";PLANET_NAME=".$cp->name."]<br>
 				<b>Dauer des gesamten Auftrages:</b> ".tf($total_duration)."<br>
 				<b>Ende des gesamten Auftrages:</b> ".date("Y-m-d H:i:s",$end_time)."<br>
@@ -646,7 +646,7 @@
 				";
 				
 				//Log Speichern
-				add_log_game_ship($log_text,$cu->id(),$cu->alliance_id,$cp->id,1,time());					
+				add_log_game_ship($log_text,$cu->id(),$cu->allianceId(),$cp->id,1,time());					
 				
 				if ($counter==0)
 				{
@@ -742,7 +742,7 @@
 					//Log schreiben
 					$log_text = "
 					<b>Schiffsauftrag Abbruch</b><br><br>
-					<b>User:</b> [USER_ID=".$cu->id().";USER_NICK=".$cu->nick."]<br>
+					<b>User:</b> [USER_ID=".$cu->id().";USER_NICK=".$cu->nick()."]<br>
 					<b>Planeten:</b> [PLANET_ID=".$cp->id.";PLANET_NAME=".$cp->name."]<br>
 					<b>Schiff:</b> ".$ship_name."<br>
 					<b>Anzahl:</b> ".nf($queue_count)."<br>
@@ -763,7 +763,7 @@
 					";
 					
 					//Log Speichern
-					add_log_game_ship($log_text,$cu->id(),$cu->alliance_id,$cp->id,0,time());					
+					add_log_game_ship($log_text,$cu->id(),$cu->allianceId(),$cp->id,0,time());					
 				}
 			}
 
@@ -861,7 +861,7 @@
 					if (isset($ships))
 					{
 						//Einfache Ansicht
-						if ($cu->item_show!='full')
+						if ($cu->setp("item_show")!='full')
 						{
 							echo '<tr>
 											<th colspan="2" class="tbltitle">Schiff</th>
@@ -1147,7 +1147,7 @@
  			      				$shiplist_count = 0;
  			      			}
 									// Volle Ansicht
-    			      	if($cu->item_show=='full')
+    			      	if($cu->getp("item_show")=='full')
     			      	{
     			      		if ($ccnt>0)
     			      		{

@@ -703,7 +703,7 @@
 					echo "<script type=\"text/javascript\">changeResBox(".$aarr['alliance_res_metal'].", ".$aarr['alliance_res_crystal'].", ".$aarr['alliance_res_plastic'].", ".$aarr['alliance_res_fuel'].", ".$aarr['alliance_res_food'].");</script>";
 		      
 		      // Ausbau zur Allianzgeschichte hinzufügen
-		      add_alliance_history($cu->allianceId(),"[b]".$cu->nick."[/b] hat das Gebäude \"".$buildings[$id]['alliance_building_name']." (".($buildlist[$id]['alliance_buildlist_current_level']+1).")\" in Auftrag gegeben.");
+		      add_alliance_history($cu->allianceId(),"[b]".$cu->nick()."[/b] hat das Gebäude \"".$buildings[$id]['alliance_building_name']." (".($buildlist[$id]['alliance_buildlist_current_level']+1).")\" in Auftrag gegeben.");
 		      
 		      echo "Gebäude wurde erfolgreich in Auftrag gegeben!<br><br>";
 				}
@@ -820,7 +820,7 @@
 					echo "<script type=\"text/javascript\">changeResBox(".$aarr['alliance_res_metal'].", ".$aarr['alliance_res_crystal'].", ".$aarr['alliance_res_plastic'].", ".$aarr['alliance_res_fuel'].", ".$aarr['alliance_res_food'].");</script>";
 		      
 		      // Ausbau zur Allianzgeschichte hinzufügen
-		      add_alliance_history($cu->allianceId(),"[b]".$cu->nick."[/b] hat die Forschung \"".$techs[$id]['alliance_tech_name']." (".($techlist[$id]['alliance_techlist_current_level']+1).")\" in Auftrag gegeben.");
+		      add_alliance_history($cu->allianceId(),"[b]".$cu->nick()."[/b] hat die Forschung \"".$techs[$id]['alliance_tech_name']." (".($techlist[$id]['alliance_techlist_current_level']+1).")\" in Auftrag gegeben.");
 		      
 		      echo "Forschung wurde erfolgreich in Auftrag gegeben!<br><br>";
 				}

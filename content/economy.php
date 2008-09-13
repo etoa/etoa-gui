@@ -58,7 +58,7 @@
 		echo "<h1>Wirtschaft des Planeten ".$cp->name."</h1>";
 		$cp->resBox();
 
-		if (SPECIALIST_MIN_POINTS_REQ <= $cu->points)
+		if (SPECIALIST_MIN_POINTS_REQ <= $cu->points())
 		{
 			echo '<input type="button" onclick="document.location=\'?page=specialists\'" value="Spezialisten einstellen" /> ';
 		}
@@ -450,7 +450,7 @@
 
 		echo "<tr><td class=\"tbltitle\">Rohstoff</td>
 		<td class=\"tbltitle\">".$cp->typeName."</td>";
-		echo "<td class=\"tbltitle\">".$cu->raceName."</td>";
+		echo "<td class=\"tbltitle\">".$cu->raceName()."</td>";
 		echo "<td class=\"tbltitle\">".$cp->starTypeName."</td>";
 		echo "<td class=\"tbltitle\">TOTAL</td></tr>";
 

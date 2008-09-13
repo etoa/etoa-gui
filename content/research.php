@@ -33,7 +33,7 @@
 
   define('NUM_BUILDINGS_PER_ROW',4);
   define('CELL_WIDTH',175);
-
+  
 	// Aktiviert / Deaktiviert Bildfilter
 	if ($cu->image_filter==1)
 	{
@@ -279,7 +279,7 @@
 									//Log schreiben
 									$log_text = "
 									<b>Forschung Ausbau</b><br><br>
-									<b>User:</b> [USER_ID=".$cu->id().";USER_NICK=".$cu->nick."]<br>
+									<b>User:</b> [USER_ID=".$cu->id().";USER_NICK=".$cu->nick()."]<br>
 									<b>Planeten:</b> [PLANET_ID=".$cp->id().";PLANET_NAME=".$cp->name."]<br>
 									<b>Technologie:</b> ".$arr['tech_name']."<br>
 									<b>Technologie Level:</b> ".$b_level." (vor Ausbau)<br>
@@ -303,7 +303,7 @@
 									";
 									
 									//Log Speichern
-									add_log_game_research($log_text,$cu->id(),$cu->alliance_id,$cp->id(),$arr['tech_id'],$b_status,time());								
+									add_log_game_research($log_text,$cu->id(),$cu->allianceId(),$cp->id(),$arr['tech_id'],$b_status,time());								
 									
 								}
 								else
@@ -342,7 +342,7 @@
 							//Log schreiben
 							$log_text = "
 							<b>Forschungs Abbruch</b><br><br>
-							<b>User:</b> [USER_ID=".$cu->id().";USER_NICK=".$cu->nick."]<br>
+							<b>User:</b> [USER_ID=".$cu->id().";USER_NICK=".$cu->nick()."]<br>
 							<b>Planeten:</b> [PLANET_ID=".$cp->id().";PLANET_NAME=".$cp->name."]<br>
 							<b>Forschung:</b> ".$arr['tech_name']."<br>
 							<b>Forschungs Level:</b> ".$b_level." (nach Abbruch)<br>
@@ -364,7 +364,7 @@
 							";
 							
 							//Log Speichern
-							add_log_game_research($log_text,$cu->id(),$cu->alliance_id,$cp->id(),$arr['tech_id'],$b_status,time());								
+							add_log_game_research($log_text,$cu->id(),$cu->allianceId(),$cp->id(),$arr['tech_id'],$b_status,time());								
 						}
 						else
 						{

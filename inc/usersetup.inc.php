@@ -67,7 +67,7 @@
 		}		
 	}
 	
-	elseif ($cu->race_id >0 && !isset($cp))
+	elseif ($cu->raceId() >0 && !isset($cp))
 	{
 		$mode = "choosesector";	
 	}
@@ -76,7 +76,7 @@
 		$cu->setRace($_POST['register_user_race_id']);
 		$mode = "choosesector";	
 	}
-	elseif ($cu->race_id==0)
+	elseif ($cu->raceId()==0)
 	{
 		$mode = "race";
 	}

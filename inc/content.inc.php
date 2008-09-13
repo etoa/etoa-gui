@@ -120,7 +120,7 @@
 				echo "<h1>Cheat-Schutz</h1> Du hast anscheinend versucht, über ein externes Formular eine Aktion durchzuführen. 
 				Dies ist nicht erlaubt!<br/><br/>";
 				
-				$str = "Der Spieler ".$cu->nick." (".$s['user_id'].") hat versucht, über ein externes Formular auf das Spiel zuzugreifen!\n";
+				$str = "Der Spieler ".$cu->nick()." (".$s['user_id'].") hat versucht, über ein externes Formular auf das Spiel zuzugreifen!\n";
 				$str.= "IP-Adresse: ".$_SERVER['REMOTE_ADDR']."\n";
 				$str.= "Host: ".gethostbyaddr($_SERVER['REMOTE_ADDR'])."";
 				$str.="\nSeite: $page\n";

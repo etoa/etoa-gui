@@ -32,8 +32,8 @@
 	// DEFINITIONEN //
 
 
-	$msgpreview = $cu->msg_preview==1 ? true : false;
-	$msgcreatpreview = $cu->msgcreation_preview==1 ? true : false;
+	$msgpreview = $cu->getp("msg_preview")==1 ? true : false;
+	$msgcreatpreview = $cu->getp("msgcreation_preview")==1 ? true : false;
 
 
 	// BEGIN SKRIPT //
@@ -82,13 +82,13 @@
 		{
 			dbquery("UPDATE ".$db_table['users']." SET user_msg_preview=1 WHERE user_id=".$cu->id().";");
 			$msgpreview=true;
-			$cu->msg_preview=1;
+			$cu->setp("msg_preview")=1;
 		}
 		else
 		{
 			dbquery("UPDATE ".$db_table['users']." SET user_msg_preview=0 WHERE user_id=".$cu->id().";");
 			$msgpreview=false;
-			$cu->msg_preview=0;
+			$cu->setp("msg_preview")=0;
 		}
 	}
 	if (isset($_GET['msgcreatprev']))
@@ -97,13 +97,13 @@
 		{
 			dbquery("UPDATE ".$db_table['users']." SET user_msgcreation_preview=1 WHERE user_id=".$cu->id().";");
 			$msgcreatpreview=true;
-			$cu->msgcreation_preview=1;
+			$cu->setp("msgcreation_preview")=1;
 		}
 		else
 		{
 			dbquery("UPDATE ".$db_table['users']." SET user_msgcreation_preview=0 WHERE user_id=".$cu->id().";");
 			$msgcreatpreview=false;
-			$cu->msgcreation_preview=0;
+			$cu->setp("msgcreation_preview")=0;
 		}
 	}	
 	echo '<div style="float:right;font-size:8pt;text-align:right;">';
@@ -272,7 +272,7 @@
 					echo "<input type=\"hidden\" name=\"message_id\" value=\"".intval($_GET['msg_id'])."\" />";
 					echo "<input type=\"hidden\" name=\"message_subject\" value=\"".$marr['subject']."\" />";
 					echo "<input type=\"hidden\" name=\"message_sender\" value=\"".$sender."\" />";
-					if ($cu->msg_copy)
+					if ($cu->getp("msg_copy"))
 					{
 						// Muss mit echo 'text'; erfolgen, da sonst der Text beim ersten " - Zeichen abgeschnitten wird!
 						// Allerdings ist so das selbe Problem mit den ' - Zeichen!
@@ -696,7 +696,7 @@
 								echo "<input type=\"button\" value=\"Weiterleiten\" onclick=\"document.location='?page=$page&mode=new&amp;message_subject=".base64_encode("Fw: ".$marr['subject'])."".$msgadd."'\" name=\"remit\" />&nbsp;";
 								if ($marr['message_user_from']>0)
 								{				
-									if ($cu->msg_copy)
+									if ($cu->getp("msg_copy"))
 									{
 										echo "<input type=\"button\" value=\"Antworten\" name=\"answer\" onclick=\"document.location='?page=$page&mode=new&message_user_to=".$marr['message_user_from']."&amp;message_subject=".base64_encode("Re: ".$marr['subject'])."".$msgadd."'\" />&nbsp;";
 									}

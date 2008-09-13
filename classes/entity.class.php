@@ -276,26 +276,26 @@
 	  * Creates an instance of a child class
 	  * using the factory design pattern
 	  */ 
-		static public function createFactory($type,$id=0,$explore='e')
+		static public function createFactory($type,$id=0)
 		{
 			switch ($type)
 			{
 				case 's':
-					return new Star($id,$explore);
+					return new Star($id);
 				case 'p':
-					return new Planet($id,$explore);
+					return new Planet($id);
 				case 'a':
-					return new AsteroidField($id,$explore);
+					return new AsteroidField($id);
 				case 'n':
-					return new Nebula($id,$explore);
+					return new Nebula($id);
 				case 'w':
-					return new Wormhole($id,$explore);
+					return new Wormhole($id);
 				case 'e':
-					return new EmptySpace($id,$explore);
+					return new EmptySpace($id);
 				case 'm':
-					return new Market($id,$explore);			
+					return new Market($id);			
 				default:
-					return new UnknownEntity($id,$explore);
+					return new UnknownEntity($id);
 			}		
 			return false;	
 		}	
@@ -308,8 +308,7 @@
 		{
 			$res=dbquery("
 			SELECT
-				code,
-				explore_code
+				code
 			FROM
 				entities
 			WHERE
@@ -319,26 +318,25 @@
 			{
 				$arr = mysql_fetch_array($res);
 				$type = $arr[0];
-				$explore = $arr[1];
 				
 				switch ($type)
 				{
 					case 's':
-						return new Star($id,$explore);
+						return new Star($id);
 					case 'p':
-						return new Planet($id,$explore);
+						return new Planet($id);
 					case 'a':
-						return new AsteroidField($id,$explore);
+						return new AsteroidField($id);
 					case 'n':
-						return new Nebula($id,$explore);
+						return new Nebula($id);
 					case 'w':
-						return new Wormhole($id,$explore);
+						return new Wormhole($id);
 					case 'e':
-						return new EmptySpace($id,$explore);
+						return new EmptySpace($id);
 					case 'm':
-						return new Market($id,$explore);				
+						return new Market($id);				
 					default:
-						return new UnknownEntity($id,$explore);
+						return new UnknownEntity($id);
 				}			
 			}
 			return false;
@@ -354,8 +352,7 @@
 			$res=dbquery("
 			SELECT
 				entities.id,
-				code,
-				explore_code
+				code
 			FROM
 				entities
 			INNER JOIN	
@@ -371,26 +368,25 @@
 				$arr = mysql_fetch_array($res);
 				$type = $arr[1];
 				$id = $arr[0];
-				$explore = $arr[2];
 				
 				switch ($type)
 				{
 					case 's':
-						return new Star($id,$explore);
+						return new Star($id);
 					case 'p':
-						return new Planet($id,$explore);
+						return new Planet($id);
 					case 'a':
-						return new AsteroidField($id,$explore);
+						return new AsteroidField($id);
 					case 'n':
-						return new Nebula($id,$explore);
+						return new Nebula($id);
 					case 'w':
-						return new Wormhole($id,$explore);
+						return new Wormhole($id);
 					case 'e':
-						return new EmptySpace($id,$explore);
+						return new EmptySpace($id);
 					case 'm':
-						return new Market($id,$explore);
+						return new Market($id);
 					default:
-						return new UnknownEntity($id,$explore);
+						return new UnknownEntity($id);
 				}			
 			}
 			else

@@ -302,7 +302,7 @@
 	FROM 
 		races 
 	WHERE 
-		race_id=".$cu->race_id.";");
+		race_id=".$cu->raceId().";");
 	$rarr=mysql_fetch_array($rres);
 	if ($rarr['race_f_fleettime']!=1)
 	{
@@ -444,7 +444,7 @@
 		{
 			$btn1 = "<input type=\"submit\" name=\"submit_shipselection_all\" value=\"Alle Schiffe ausw&auml;hlen &gt;&gt;&gt;\" title=\"Klicke hier um alle Schiffe auszuw&auml;hlen\" tabindex=\"".($tabulator+2)."\">&nbsp;";
 			$btn2 = "<input type=\"submit\" name=\"submit_shipselection\" value=\"Weiter zur Zielauswahl &gt;&gt;&gt;\" title=\"Wenn du die Schiffe ausgew&auml;hlt hast, klicke hier um das Ziel auszuw&auml;hlen\" tabindex=\"".($tabulator+1)."\" /> &nbsp;";
-			if ($cu->havenships_buttons==1)
+			if ($cu->getp("havenships_buttons")==1)
 			{
 				echo $btn2.$btn1;
 			}

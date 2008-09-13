@@ -358,8 +358,8 @@
 					user_id='".$cu->id()."'
 				");		
 				
-				$cu->item_order_def=$_POST['sort_value'];
-        $cu->item_order_way=$_POST['sort_way'];	
+				$cu->setp("item_order_def",$_POST['sort_value']);
+       			$cu->setp("item_order_way",$_POST['sort_way']);	
 			}
 
 			
@@ -390,7 +390,7 @@
 								foreach ($values as $value => $name)
 								{		
 									echo "<option value=\"".$value."\"";
-									if($cu->item_order_def==$value)
+									if($cu->getp("item_order_def")==$value)
 									{
 										echo " selected=\"selected\"";
 									}
@@ -402,12 +402,12 @@
 								
 									//Aufsteigend
 									echo "<option value=\"ASC\"";
-									if($cu->item_order_way=='ASC') echo " selected=\"selected\"";
+									if($cu->getp("item_order_way")=='ASC') echo " selected=\"selected\"";
 									echo ">Aufsteigend</option>";
 									
 									//Absteigend
 									echo "<option value=\"DESC\"";
-									if($cu->item_order_way=='DESC') echo " selected=\"selected\"";
+									if($cu->getp("item_order_way")=='DESC') echo " selected=\"selected\"";
 									echo ">Absteigend</option>";	
 																	
 					echo "</select>						
@@ -649,7 +649,7 @@
 				//Log schreiben
 				$log_text = "
 				<b>Verteidigungsauftrag Bauen</b><br><br>
-				<b>User:</b> [USER_ID=".$cu->id().";USER_NICK=".$cu->nick."]<br>
+				<b>User:</b> [USER_ID=".$cu->id().";USER_NICK=".$cu->nick()."]<br>
 				<b>Planeten:</b> [PLANET_ID=".$cp->id().";PLANET_NAME=".$cp->name."]<br>
 				<b>Dauer des gesamten Auftrages:</b> ".tf($total_duration)."<br>
 				<b>Ende des gesamten Auftrages:</b> ".date("Y-m-d H:i:s",$end_time)."<br>
@@ -673,7 +673,7 @@
 				";
 				
 				//Log Speichern
-				add_log_game_def($log_text,$cu->id(),$cu->alliance_id,$cp->id(),1,time());					
+				add_log_game_def($log_text,$cu->id(),$cu->allianceId(),$cp->id(),1,time());					
 				
 				if ($counter==0)
 				{
@@ -775,7 +775,7 @@
 					//Log schreiben
 					$log_text = "
 					<b>Verteidigungsauftrag Abbruch</b><br><br>
-					<b>User:</b> [USER_ID=".$cu->id().";USER_NICK=".$cu->nick."]<br>
+					<b>User:</b> [USER_ID=".$cu->id().";USER_NICK=".$cu->nick()."]<br>
 					<b>Planeten:</b> [PLANET_ID=".$cp->id().";PLANET_NAME=".$cp->name."]<br>
 					<b>Anlage:</b> ".$qarr['def_name']."<br>
 					<b>Anzahl:</b> ".nf($qarr['queue_cnt'])."<br>
@@ -796,7 +796,7 @@
 					";
 					
 					//Log Speichern
-					add_log_game_def($log_text,$cu->id(),$cu->alliance_id,$cp->id(),0,time());					
+					add_log_game_def($log_text,$cu->id(),$cu->allianceId(),$cp->id(),0,time());					
 				}
 			}
 
@@ -981,7 +981,7 @@
 					$cnt = 0;
 
 					//Ordnung des Users beachten
-					$order="def_".$cu->item_order_def." ".$cu->item_order_way."";
+					$order="def_".$cu->getp("item_order_def")." ".$cu->getp("item_order_way")."";
 
 					// Auflistung der Schiffe (auch diese, die noch nicht gebaut wurden)
 					$dres = dbquery("
@@ -1020,7 +1020,7 @@
 					if (mysql_num_rows($dres)>0)
 					{
 						//Einfache Ansicht
-						if ($cu->item_show!='full')
+						if ($cu->getp("item_show")!='full')
 						{
 							echo '<tr>
 											<th colspan="2" class="tbltitle">Anlage</th>
@@ -1318,7 +1318,7 @@
 								}
 
 								// Volle Ansicht
-  			      	if($cu->item_show=='full')
+  			      	if($cu->getp("item_show")=='full')
   			      	{	
   			      		if ($cnt>0)
   			      		{

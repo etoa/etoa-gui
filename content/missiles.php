@@ -737,7 +737,7 @@
 							}
 
 							// Volle Ansicht
-			      	if($cu->item_show=='full')
+			      	if($cu->getp("item_show")=='full')
 			      	{	
 			      		if ($cnt2>0)
   			      	{

@@ -54,10 +54,6 @@
       elseif (file_exists($dir.'/fleetaction/'.$file))
       {
         include_once($dir.'/fleetaction/'.$file);
-      }
-      elseif (file_exists($dir.'/explore/'.$file))
-      {
-        include_once($dir.'/explore/'.$file);
       }    
       else
       {
