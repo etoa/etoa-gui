@@ -3,6 +3,7 @@
 			// Geänderte Daten speichern
 			if (isset($_POST['save']))
 			{
+				// Speichert Usertdaten in der Tabelle "users"
 				$sql = "UPDATE ".$db_table['users']." SET
 				user_name='".$_POST['user_name']."',
 				user_nick='".$_POST['user_nick']."',
@@ -11,34 +12,18 @@
 				user_email_fix='".$_POST['user_email_fix']."',
 				user_race_id='".$_POST['user_race_id']."',
 				user_alliance_id='".$_POST['user_alliance_id']."',
-				user_css_style='".$_POST['user_css_style']."',
-				user_image_url='".$_POST['user_image_url']."',
-				user_image_ext='".$_POST['user_image_ext']."',
 				user_profile_text='".addslashes($_POST['user_profile_text'])."',
 				user_comment='".addslashes($_POST['user_comment'])."',
 				user_signature='".addslashes($_POST['user_signature'])."',
-				user_msgsignature='".addslashes($_POST['user_msgsignature'])."',
 				user_multi_delets=".$_POST['user_multi_delets'].",
 				user_sitting_days=".$_POST['user_sitting_days'].",
 				user_admin=".$_POST['user_admin'].",
 				user_show_stats=".$_POST['user_show_stats'].",
-				user_profile_board_url='".$_POST['user_profile_board_url']."',
-				user_spyship_count=".$_POST['user_spyship_count'].",
-				user_spyship_id=".$_POST['user_spyship_id'].",
-				user_fleet_rtn_msg=".$_POST['user_fleet_rtn_msg'].",
-				user_msg_preview=".$_POST['user_msg_preview'].",
-				user_msgcreation_preview=".$_POST['user_msgcreation_preview'].",
-				user_msg_blink=".$_POST['user_msg_blink'].",
-				user_msg_copy=".$_POST['user_msg_copy'].",
-				user_game_width=".$_POST['user_game_width'].",
-				user_planet_circle_width=".$_POST['user_planet_circle_width'].",
-				user_item_show='".$_POST['user_item_show']."',
-				user_image_filter=".$_POST['user_image_filter'].",
-				user_helpbox=".$_POST['user_helpbox'].",
-				user_notebox=".$_POST['user_notebox'].",
-				user_havenships_buttons=".$_POST['user_havenships_buttons'].",
-				user_show_adds=".$_POST['user_show_adds']."
-				";				
+				user_profile_board_url='".$_POST['user_profile_board_url']."'";	
+				
+				// 13.09.08, Lamborhgini: Die folgende Zeile wurde entfernt, weil die Zelle nicht mehr vorhanden ist in der DB
+				// user_msgsignature='".addslashes($_POST['user_msgsignature'])."',
+
 				if (isset($_POST['user_alliance_rank_id']))
 				{
 					$sql.= ",user_alliance_rank_id=".intval($_POST['user_alliance_rank_id'])."";
@@ -136,6 +121,37 @@
 				// Perform query
 				$sql .= " WHERE user_id='".$_GET['user_id']."';";
 				dbquery($sql);
+				
+				
+				
+				//
+				// Speichert Usereinstellungen in der Tabelle "user_properties"
+				//
+				
+				$sql = "UPDATE user_properties SET
+				image_url='".$_POST['user_image_url']."',
+				image_ext='".$_POST['user_image_ext']."',
+				css_style='".$_POST['user_css_style']."',
+				game_width=".$_POST['user_game_width'].",
+				planet_circle_width=".$_POST['user_planet_circle_width'].",
+				item_show='".$_POST['user_item_show']."',
+				image_filter=".$_POST['user_image_filter'].",
+				msgcreation_preview=".$_POST['user_msgcreation_preview'].",
+				msg_preview=".$_POST['user_msg_preview'].",
+				helpbox=".$_POST['user_helpbox'].",
+				notebox=".$_POST['user_notebox'].",
+				msg_copy=".$_POST['user_msg_copy'].",
+				msg_blink=".$_POST['user_msg_blink'].",
+				spyship_id=".$_POST['user_spyship_id'].",
+				spyship_count='".$_POST['user_spyship_count']."',
+				havenships_buttons=".$_POST['user_havenships_buttons'].",
+				show_adds=".$_POST['user_show_adds'].",
+				fleet_rtn_msg=".$_POST['user_fleet_rtn_msg']."";	
+				
+				// Perform query
+				$sql .= " WHERE id='".$_GET['user_id']."';";
+				dbquery($sql);
+				
 				cms_ok_msg("&Auml;nderungen wurden &uuml;bernommen!","submitresult");
 
 				//Aktuelles Sitten Stoppen
