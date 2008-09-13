@@ -18,11 +18,10 @@ namespace abuilding
 		query << "	alliance_buildlist ";
 		query << "SET ";
 		query << "	alliance_buildlist_current_level=alliance_buildlist_current_level+1, ";
-		//query << "	alliance_buildlist_build_type=0, ";
 		query << "	alliance_buildlist_build_start_time=0, ";
 		query << "	alliance_buildlist_build_end_time=0 ";
 		query << "WHERE ";
-		//query << "	alliance_buildlist_build_type=1 AND";
+		query << "	alliance_buildlist_build_end_time>0 AND";
 		query << " alliance_buildlist_build_end_time<" << time << ";";
 		query.store();
 		std::cout << "Upgraded "<<con_->affected_rows()<<" Alliance Buildings\n";

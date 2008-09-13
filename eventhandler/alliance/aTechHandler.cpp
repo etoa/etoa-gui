@@ -20,11 +20,10 @@ namespace atech
 		query << "	alliance_techlist ";
 		query << "SET ";
 		query << "	alliance_techlist_current_level=alliance_techlist_current_level+1, ";
-		//query << "	alliance_techlist_build_type=0, ";
 		query << "	alliance_techlist_build_start_time=0, ";
 		query << "	alliance_techlist_build_end_time=0 ";
 		query << "WHERE ";
-		//query << "	alliance_techlist_build_type=1 AND";
+		query << "	alliance_techlist_build_start_time>0 AND";
 		query << " alliance_techlist_build_end_time<" << time << ";";
 		query.store();
 		std::cout << "Upgraded "<<con_->affected_rows()<<" Alliance Technologies\n";
