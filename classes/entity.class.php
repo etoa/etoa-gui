@@ -39,19 +39,6 @@
 		* Return entity-code 
 		*/
 		public abstract function entityCode();	
-		
-		/**
-		* Return entity-code 
-		*/
-		public function exploreCode()
-		{
-			return $this->exploreCode;
-		}	
-		
-		/**
-		* Return if an explore object exists
-		**/
-		public abstract function explore();
 
 		/**
 		* Return entity-code string

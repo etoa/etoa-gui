@@ -80,30 +80,26 @@
 	{
 		if ($_GET['msgprev']=='on')
 		{
-			dbquery("UPDATE ".$db_table['users']." SET user_msg_preview=1 WHERE user_id=".$cu->id().";");
 			$msgpreview=true;
-			$cu->setp("msg_preview")=1;
+			$cu->setp("msg_preview",1);
 		}
 		else
 		{
-			dbquery("UPDATE ".$db_table['users']." SET user_msg_preview=0 WHERE user_id=".$cu->id().";");
 			$msgpreview=false;
-			$cu->setp("msg_preview")=0;
+			$cu->setp("msg_preview",0);
 		}
 	}
 	if (isset($_GET['msgcreatprev']))
 	{
 		if ($_GET['msgcreatprev']=='on')
 		{
-			dbquery("UPDATE ".$db_table['users']." SET user_msgcreation_preview=1 WHERE user_id=".$cu->id().";");
 			$msgcreatpreview=true;
-			$cu->setp("msgcreation_preview")=1;
+			$cu->setp("msgcreation_preview",1);
 		}
 		else
 		{
-			dbquery("UPDATE ".$db_table['users']." SET user_msgcreation_preview=0 WHERE user_id=".$cu->id().";");
 			$msgcreatpreview=false;
-			$cu->setp("msgcreation_preview")=0;
+			$cu->setp("msgcreation_preview",0);
 		}
 	}	
 	echo '<div style="float:right;font-size:8pt;text-align:right;">';

@@ -18,13 +18,11 @@
 		private $targetId;
 		private $changed;
 		private $dataLoaded;
-		protected $exploreCode;
-		public $explore;
 		
 		/**
 		* The constructor
 		*/
-		function Wormhole($id=0,$explore='e')
+		function Wormhole($id=0)
 		{
 			$this->isValid = false;
 			$this->id = $id;
@@ -34,8 +32,6 @@
 			$this->dataLoaded=false;
 			$this->targetId=-1;
 			$this->changed=-1;
-			$this->exploreCode=$explore;
-			$this->explore = Explore::createFactory($this->exploreCode,$this->id);
 			$this->isVisible = true;
 		}
 
@@ -88,11 +84,6 @@
 		* Returns type
 		*/
 		function entityCode() { return "w"; }	      
-		
-		/**
-		* Return Explore object
-		*/
-		function explore() { return $this->explore; }
 		
 		/**
 		* To-String function

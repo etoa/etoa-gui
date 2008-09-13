@@ -44,7 +44,7 @@ if ($_GET['id']!="")
 		}
 		echo "</select><br/><br/>";		
 
-		$res_level = dbquery("SELECT buildlist_current_level FROM ".$db_table['buildlist']." WHERE buildlist_building_id ='".$_GET['id']."' AND buildlist_user_id='".$_SESSION[ROUNDID]['user']['id']."' AND buildlist_planet_id='".$c->id."';");
+		$res_level = dbquery("SELECT buildlist_current_level FROM ".$db_table['buildlist']." WHERE buildlist_building_id ='".$_GET['id']."' AND buildlist_user_id='".$_SESSION[ROUNDID]['user']['id']."' AND buildlist_entity_id='".$c->id."';");
 		if(mysql_num_rows($res_level)>0)
 		{
 			$arr_level = mysql_fetch_array($res_level);

@@ -48,6 +48,7 @@
 		
 			$this->sourceEntity = $sourceEnt;
 			$this->ownerId = $ownerEnt->id();
+			$this->ownerRaceName = $ownerEnt->raceName();
 			$this->raceSpeedFactor = $ownerEnt->raceSpeedFactor();
 			$this->possibleFleetStarts = 0;
 			$this->fleetSlotsUsed = 0;
@@ -544,6 +545,7 @@
 		{
 			$this->costs = ceil($this->costsPerHundredAE / 100 * $this->distance * $this->speedPercent / 100);
 			$this->costs += $this->costsLaunchLand;
+			$this->capacityFuelUsed =$this->costs;
 			return $this->costs;
 		}
 		
@@ -595,7 +597,7 @@
 		       
 		function getCapacity()
 		{
-			return $this->capacityTotal - $this->capacityResLoaded - $this->capacityFuelUsed;
+			return $this->capacityTotal - $this->capacityResLoaded - $this->capacityFuelUsed - $this->costsFood;
 		}
 
 		function getTotalCapacity()

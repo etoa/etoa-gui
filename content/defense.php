@@ -348,16 +348,6 @@
 
 			if(count($_POST)>0 && isset($_POST['sort_submit']))
 			{
-				dbquery("
-				UPDATE
-					".$db_table['users']."
-				SET
-					user_item_order_def='".$_POST['sort_value']."',
-					user_item_order_way='".$_POST['sort_way']."'
-				WHERE
-					user_id='".$cu->id()."'
-				");		
-				
 				$cu->setp("item_order_def",$_POST['sort_value']);
        			$cu->setp("item_order_way",$_POST['sort_way']);	
 			}

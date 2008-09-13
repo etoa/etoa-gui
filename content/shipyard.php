@@ -89,18 +89,8 @@
 			****************************/
 			if(count($_POST)>0 && isset($_POST['sort_submit']))
 			{
-				dbquery("
-				UPDATE
-					users
-				SET
-					user_item_order_ship='".$_POST['sort_value']."',
-					user_item_order_way='".$_POST['sort_way']."'
-				WHERE
-					user_id='".$cu->id()."'
-				");		
-				
-				$cu->setp("item_order_ship")=$_POST['sort_value'];
-        $cu->setp("item_order_way")=$_POST['sort_way'];	
+				$cu->setp("item_order_ship",$_POST['sort_value']);
+       			$cu->setp("item_order_way",$_POST['sort_way']);	
 			}
 			
 			
@@ -362,7 +352,7 @@
 								foreach ($values as $value => $name)
 								{		
 									echo "<option value=\"".$value."\"";
-									if($cu->setp("item_order_ship")==$value)
+									if($cu->getp("item_order_ship")==$value)
 									{
 										echo " selected=\"selected\"";
 									}
@@ -374,7 +364,7 @@
 								
 									//Aufsteigend
 									echo "<option value=\"ASC\"";
-									if($cu->setp("item_order_way")=='ASC') echo " selected=\"selected\"";
+									if($cu->getp("item_order_way")=='ASC') echo " selected=\"selected\"";
 									echo ">Aufsteigend</option>";
 									
 									//Absteigend
@@ -861,7 +851,7 @@
 					if (isset($ships))
 					{
 						//Einfache Ansicht
-						if ($cu->setp("item_show")!='full')
+						if ($cu->getp("item_show")!='full')
 						{
 							echo '<tr>
 											<th colspan="2" class="tbltitle">Schiff</th>

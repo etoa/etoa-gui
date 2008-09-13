@@ -58,8 +58,8 @@
 		// Rasse		
 		if ($fleet->raceSpeedFactor() != 1)
 		{
-			echo "<tr><th class=\"tbltitle\">Piloten:</th><td class=\"tbldata\">";
-			echo "Die Schiffe fliegen aufgrund deiner Rasse <b>".$cu->raceName()."</b> mit ".get_percent_string($cu->raceSpeedFactor(),1)." Geschwindigkeit!";
+			echo "<tr><th class=\"tbltitle\">Rassenbonus:</th><td class=\"tbldata\">";
+			echo "Die Schiffe fliegen aufgrund deiner Rasse <b>".$fleet->ownerRaceName."</b> mit ".get_percent_string($fleet->raceSpeedFactor,1)." Geschwindigkeit!";
 			echo "</td></tr>";
 		}
 		infobox_end(1);
@@ -486,6 +486,8 @@
 						<td><span id=\"duration\" style=\"font-weight:bold;\">-</span> (inkl. Start- und Landezeit von ".tf($fleet->getTimeLaunchLand()).")</td></tr>";
 					echo "<tr><td>Treibstoff:</td>
 						<td><span id=\"costs\" style=\"font-weight:bold;\">-</span> (inkl. Start- und Landeverbrauch von ".nf($fleet->getCostsLaunchLand())." ".RES_FUEL.")</td></tr>";
+					echo "<tr><td>Nahrung:</td>
+						<td><span id=\"food\"  style=\"font-weight:bold;\">-</span></td></tr>";
 					echo "<tr><td>Piloten:</td>
 						<td>".nf($fleet->getPilots())."</td></tr>";
 					echo "<tr><td>Bemerkungen:</td>
@@ -587,6 +589,8 @@
 							<td><span id=\"duration\" style=\"font-weight:bold;\">".tf($fleet->getDuration())."</span></td></tr>";
 						echo "<tr><td class=\"tbltitle\">Treibstoff:</td>
 							<td><span id=\"costs\" style=\"font-weight:bold;\">".nf($fleet->getCosts())." t ".RES_FUEL."</span></td></tr>";
+						echo "<tr><td class=\"tbltitle\">Nahrung:</td>
+							<td><span id=\"costs\" style=\"font-weight:bold;\">".nf($fleet->getCostsFood())." t ".RES_FUEL."</span></td></tr>";
 						echo "</table><br/>";			
 						
 						$response->assign("havenContentTarget","innerHTML",ob_get_contents());				
@@ -832,6 +836,7 @@
 				$response->assign('speed','innerHTML',nf($fleet->getSpeed())." AE/h");
 				$response->assign('costae','innerHTML',nf($fleet->getCostsPerHundredAE())." t ".RES_FUEL."");
 				$response->assign('costs','innerHTML',nf($fleet->getCosts())." t ".RES_FUEL."");
+				$response->assign('food','innerHTML',nf($fleet->getCostsFood())." t ".RES_FOOD."");
 				
 				$_SESSION['haven']['fleetObj']=serialize($fleet);
 			}

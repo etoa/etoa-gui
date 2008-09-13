@@ -4,17 +4,17 @@
             {
               dbquery("
               UPDATE
-                  users
+                  user_properties
               SET
-                  user_spyship_count='".max(1,intval($_POST['user_spyship_count']))."',
-                  user_spyship_id='".$_POST['user_spyship_id']."',
-                  user_fleet_rtn_msg='".$_POST['user_fleet_rtn_msg']."'
+                  spyship_count='".max(1,intval($_POST['spyship_count']))."',
+                  spyship_id='".$_POST['spyship_id']."',
+                  fleet_rtn_msg='".$_POST['fleet_rtn_msg']."'
              	WHERE
-                  user_id='".$cu->id()."';");
+                  id='".$cu->id()."';");
                       
               success_msg("Benutzer-Daten wurden ge&auml;ndert!");
                   
-              $res = dbquery("SELECT * FROM ".$db_table['users']." WHERE user_id='".$cu->id()."';");
+              $res = dbquery("SELECT * FROM user_properties WHERE id='".$cu->id()."';");
               $arr = mysql_fetch_array($res);
             }
 
@@ -25,7 +25,7 @@
             echo "<tr>
             	<td class=\"tbldata\" style=\"width:250px;\"><b>Anzahl Spionagesonden für Direktscan:</b></td>
               <td class=\"tbldata\">
-              	<input type=\"text\" name=\"user_spyship_count\" maxlength=\"5\" size=\"5\" value=\"".$arr['user_spyship_count']."\">
+              	<input type=\"text\" name=\"spyship_count\" maxlength=\"5\" size=\"5\" value=\"".$arr['spyship_count']."\">
               </td>
             </tr>";
             
@@ -50,11 +50,11 @@
 							ship_name ASC");
             if (mysql_num_rows($sres)>0)
             {
-            	echo '<select name="user_spyship_id"><option value="0">(keines)</option>';
+            	echo '<select name="spyship_id"><option value="0">(keines)</option>';
             	while ($sarr=mysql_fetch_array($sres))
             	{
             		echo '<option value="'.$sarr['ship_id'].'"';
-            		if ($arr['user_spyship_id']==$sarr['ship_id'])
+            		if ($arr['spyship_id']==$sarr['ship_id'])
             		 echo ' selected="selected"';
             		echo '>'.$sarr['ship_name'].'</option>';
             	}
@@ -69,12 +69,12 @@
 	          echo "<tr>
             			<th class=\"tbldata\" width=\"36%\">Nachricht bei Transport-/Spionagerückkehr:</th>
             			<td class=\"tbldata\" width=\"16%\">
-                      <input type=\"radio\" name=\"user_fleet_rtn_msg\" value=\"1\" ";
-                      if ($arr['user_fleet_rtn_msg']==1) echo " checked=\"checked\"";
+                      <input type=\"radio\" name=\"fleet_rtn_msg\" value=\"1\" ";
+                      if ($arr['fleet_rtn_msg']==1) echo " checked=\"checked\"";
                       echo "/> Aktiviert &nbsp;
                   
-                      <input type=\"radio\" name=\"user_fleet_rtn_msg\" value=\"0\" ";
-                      if ($arr['user_fleet_rtn_msg']==0) echo " checked=\"checked\"";
+                      <input type=\"radio\" name=\"fleet_rtn_msg\" value=\"0\" ";
+                      if ($arr['fleet_rtn_msg']==0) echo " checked=\"checked\"";
             					echo "/> Deaktiviert
             		</td>
           		</tr>"; 

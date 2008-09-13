@@ -75,10 +75,10 @@
 				</tr>";
 				echo "<tr>
 					<td width=\"100\" class=\"tbltitle\">Sonnentyp:</td>
-					<td class=\"tbldata\">".$arr['stype']."</td></tr>";
+					<td class=\"tbldata\">".$ent->starTypeName."</td></tr>";
 				echo "<tr>
 					<td width=\"100\" class=\"tbltitle\">Planettyp:</td>
-					<td class=\"tbldata\">".$arr['ptype']."</td></tr>";
+					<td class=\"tbldata\">".$ent->typeName."</td></tr>";
 				echo "<tr>
 					<td width=\"100\" class=\"tbltitle\">Felder:</td>
 					<td class=\"tbldata\">".$ent->fields." total</td></tr>";

@@ -40,10 +40,10 @@
 		//
 		// Kampfsperre prüfen
 		//
-		if ($conf['battleban']['v']!=0 && $conf['battleban_time']['p1']<=time() && $conf['battleban_time']['p2']>time())
+		if ($cfg->get("battleban")!=0 && $cfg->param1("battleban_time")<=time() && $cfg-param2("battleban_time")>time())
 		{
 			infobox_start("Kampfsperre");
-			echo "Es ist momentan nicht m&ouml;glich andere Spieler anzugreifen. Grund: ".text2html($conf['battleban']['p1'])."<br>Die Sperre dauert vom ".date("d.m.Y",$conf['battleban_time']['p1'])." um ".date("H:i",$conf['battleban_time']['p1'])." Uhr bis am ".date("d.m.Y",$conf['battleban_time']['p2'])." um ".date("H:i",$conf['battleban_time']['p2'])." Uhr!";
+			echo "Es ist momentan nicht m&ouml;glich andere Spieler anzugreifen. Grund: ".text2html($cfg->param1("battleban"))."<br>Die Sperre dauert vom ".date("d.m.Y",$cfg->param1("battleban_time"))." um ".date("H:i",$cfg->param1("battleban_time"))." Uhr bis am ".date("d.m.Y",$cfg->param2("battleban_time"))." um ".date("H:i",$cfg->param2("battleban_time"))." Uhr!";
 			infobox_end();
 		}
 

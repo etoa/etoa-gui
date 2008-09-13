@@ -5,13 +5,13 @@
 		//change Theme skript
 		echo "<script type=\"text/javascript\">";
 		echo "function changeTheme()\n{";
-		echo "var id=document.getElementById('user_image_select').options[document.getElementById('user_image_select').selectedIndex].value;\n";
+		echo "var id=document.getElementById('image_select').options[document.getElementById('image_select').selectedIndex].value;\n";
 		echo "switch (id)\n{";
 		foreach ($themes as $k => $v)
 		{
-			echo "case '$k': document.getElementById('user_image_url').value='".$k."';\n document.getElementById('user_image_ext').value='".$v['extensions'][0]."'\n;break;";
+			echo "case '$k': document.getElementById('image_url').value='".$k."';\n document.getElementById('image_ext').value='".$v['extensions'][0]."'\n;break;";
 		}
-		echo "default: document.getElementById('user_image_url').value='';document.getElementById('user_image_ext').value='';";
+		echo "default: document.getElementById('image_url').value='';document.getElementById('image_ext').value='';";
 		echo "}\n";
 		echo "}\n</script>";
 		
@@ -24,15 +24,15 @@
         if (isset($_POST['data_submit_design']) && $_POST['data_submit_design']!="")
         {
           //Prüft eingaben auf unerlaube Zeichen
-          $check_image = check_illegal_signs($_POST['user_image_url']);
+          $check_image = check_illegal_signs($_POST['image_url']);
           $sqla = "";
           if ($check_image=="")
           {
-              if($_POST['user_image_ext']!="" && $_POST['user_image_url']!="")
+              if($_POST['image_ext']!="" && $_POST['image_url']!="")
               {
                   //Wandelt alle \ (backslash) in / um (Da windows den pfad mit \ angibt!)
-                  $grafikpack = str_replace("\\", "/", $_POST['user_image_url']);
-                  $sqla = " user_image_url='".$grafikpack."',";
+                  $grafikpack = str_replace("\\", "/", $_POST['image_url']);
+                  $sqla = " image_url='".$grafikpack."',";
               }
               else
               {
@@ -46,33 +46,33 @@
             echo "Du hast ein unerlaubtes Zeichen ( ".$signs." ) im Grafikpfad!";
           }
           
-          if ($_POST['user_image_select']!='')
+          if ($_POST['image_select']!='')
           {
-          	$sqla = " user_image_url='".$_POST['user_image_select']."',";
+          	$sqla = " image_url='".$_POST['image_select']."',";
           }
           
           // Ändert die Bildendung, aber nur, wenn ein neues Packet gewählt wurde
-          if(isset($_POST['user_image_ext']))
+          if(isset($_POST['image_ext']))
           {
-          	$sqla .= " user_image_ext='".$_POST['user_image_ext']."',";
+          	$sqla .= " image_ext='".$_POST['image_ext']."',";
           }
           
           if (dbquery("
           UPDATE
-              users
+              user_properties
           SET
           		".$sqla."
-              user_css_style='".$_POST['user_css_style']."',
-              user_game_width='".$_POST['user_game_width']."',
-              user_planet_circle_width='".$_POST['user_planet_circle_width']."',
-              user_item_show='".$_POST['user_item_show']."',
-              user_image_filter='".$_POST['user_image_filter']."',
-              user_helpbox='".$_POST['user_helpbox']."',                          
-              user_notebox='".$_POST['user_notebox']."',
-              user_havenships_buttons='".$_POST['user_havenships_buttons']."',
-              user_show_adds=".$_POST['user_show_adds']."                          
+              css_style='".$_POST['css_style']."',
+              game_width='".$_POST['game_width']."',
+              planet_circle_width='".$_POST['planet_circle_width']."',
+              item_show='".$_POST['item_show']."',
+              image_filter='".$_POST['image_filter']."',
+              helpbox='".$_POST['helpbox']."',                          
+              notebox='".$_POST['notebox']."',
+              havenships_buttons='".$_POST['havenships_buttons']."',
+              show_adds=".$_POST['show_adds']."                          
           WHERE
-              user_id='".$cu->id()."';")
+              id='".$cu->id()."';")
           )
           {
             success_msg("Design-Daten wurden geändert!");
@@ -101,7 +101,7 @@
         echo "<tr>
             <th class=\"tbldata\" width=\"36%\">Design w&auml;hlen:</th>
             <td class=\"tbldata\" width=\"64%\" colspan=\"4\">
-                    <select name=\"user_css_style\" id=\"designSelector\" onchange=\"xajax_designInfo(this.options[this.selectedIndex].value);\">";
+                    <select name=\"css_style\" id=\"designSelector\" onchange=\"xajax_designInfo(this.options[this.selectedIndex].value);\">";
                     foreach ($designs as $k => $v)
                     {
                         echo "<option value=\"$k\"";
@@ -117,7 +117,7 @@
         echo "<tr>
                 <th class=\"tbldata\" width=\"36%\">Bildpaket w&auml;hlen:</th>
                 <td class=\"tbldata\" width=\"64%\" colspan=\"4\">
-                    <select id=\"user_image_select\" name=\"user_image_select\" onchange=\"xajax_imagePackInfo(this.options[this.selectedIndex].value);\">";
+                    <select id=\"image_select\" name=\"image_select\" onchange=\"xajax_imagePackInfo(this.options[this.selectedIndex].value);\">";
                     echo "<option value=\"\">(Selbstdefiniert oder Standard)</option>";
                     foreach ($themes as $k => $v)
                     {
@@ -127,7 +127,7 @@
                     }
                     echo "</select> <span id=\"imagePackExtension\"></span><br/>
                     <div id=\"imagePackInfo\"></div>";
-                    echo "<script type=\"text/javascript;\">xajax_imagePackInfo(document.getElementById('user_image_select').options[document.getElementById('user_image_select').selectedIndex].value,'".IMAGE_EXT."','".IMAGE_PATH."');</script>";
+                    echo "<script type=\"text/javascript;\">xajax_imagePackInfo(document.getElementById('image_select').options[document.getElementById('image_select').selectedIndex].value,'".IMAGE_EXT."','".IMAGE_PATH."');</script>";
              echo "</td>";
         echo "</tr>";
 
@@ -135,7 +135,7 @@
         echo "<tr>
                 <th class=\"tbldata\" width=\"36%\">Spielgr&ouml;sse: (nur alte Designs)</th>
                 <td class=\"tbldata\" width=\"64%\" colspan=\"4\">
-                    <select name=\"user_game_width\">";
+                    <select name=\"game_width\">";
                     for ($x=70;$x<=100;$x+=10)
                     {
                         echo "<option value=\"$x\"";
@@ -150,7 +150,7 @@
         echo "<tr>
                 <th class=\"tbldata\" width=\"36%\">Planetkreisgr&ouml;sse:</th>
                 <td class=\"tbldata\" width=\"64%\" colspan=\"4\">
-                  <select name=\"user_planet_circle_width\">";
+                  <select name=\"planet_circle_width\">";
                   for ($x=450;$x<=700;$x+=50)
                   {
                       echo "<option value=\"$x\"";
@@ -165,13 +165,13 @@
         echo "<tr>
             		<th class=\"tbldata\" width=\"36%\">Schiff/Def Ansicht:</th>";
           echo "<td class=\"tbldata\" width=\"16%\">
-          				<input type=\"radio\" name=\"user_item_show\" value=\"full\"";
-          				if($arr['user_item_show']=='full') echo " checked=\"checked\"";
+          				<input type=\"radio\" name=\"item_show\" value=\"full\"";
+          				if($cu->getp("item_show")=='full') echo " checked=\"checked\"";
           				echo " /> Volle Ansicht 
           			</td>
           			<td class=\"tbldata\" width=\"48%\" colspan=\"3\">
-           				<input type=\"radio\" name=\"user_item_show\" value=\"small\"";
-          				if($arr['user_item_show']=='small') echo " checked=\"checked\"";
+           				<input type=\"radio\" name=\"item_show\" value=\"small\"";
+          				if($cu->getp("item_show")=='small') echo " checked=\"checked\"";
           				echo " /> Einfache Ansicht
            			</td>";
         echo "</tr>";
@@ -181,13 +181,13 @@
         echo "<tr>
             		<th class=\"tbldata\" width=\"36%\">Bildfilter:</th>";
           echo "<td class=\"tbldata\" width=\"16%\">
-          				<input type=\"radio\" name=\"user_image_filter\" value=\"1\"";
-          				if($arr['user_image_filter']==1) echo " checked=\"checked\"";
+          				<input type=\"radio\" name=\"image_filter\" value=\"1\"";
+          				if($cu->getp("image_filter")==1) echo " checked=\"checked\"";
           				echo "/> An  
           			</td>
           			<td class=\"tbldata\" width=\"48%\" colspan=\"3\">
-          				<input type=\"radio\" name=\"user_image_filter\" value=\"0\"";
-          				if($arr['user_image_filter']==0) echo " checked=\"checked\"";
+          				<input type=\"radio\" name=\"image_filter\" value=\"0\"";
+          				if($cu->getp("image_filter")==0) echo " checked=\"checked\"";
           				echo "/> Aus
           			</td>";
        	echo "</tr>";
@@ -196,13 +196,13 @@
           echo "<tr>
             			<th class=\"tbldata\" width=\"36%\">Separates Hilfefenster:</th>
             			<td class=\"tbldata\" width=\"16%\">
-                      <input type=\"radio\" name=\"user_helpbox\" value=\"1\" ";
-                      if ($arr['user_helpbox']==1) echo " checked=\"checked\"";
+                      <input type=\"radio\" name=\"helpbox\" value=\"1\" ";
+                      if ($cu->getp("helpbox")==1) echo " checked=\"checked\"";
                       echo "/> Aktiviert
                   </td>
                   <td class=\"tbldata\" width=\"48%\" colspan=\"3\">
-                      <input type=\"radio\" name=\"user_helpbox\" value=\"0\" ";
-                      if ($arr['user_helpbox']==0) echo " checked=\"checked\"";
+                      <input type=\"radio\" name=\"helpbox\" value=\"0\" ";
+                      if ($cu->getp("helpbox")==0) echo " checked=\"checked\"";
             					echo "/> Deaktiviert
             		</td>
           		</tr>";            
@@ -211,13 +211,13 @@
           echo "<tr>
             			<th class=\"tbldata\" width=\"36%\">Separater Notizbox:</th>
             			<td class=\"tbldata\" width=\"16%\">
-                      <input type=\"radio\" name=\"user_notebox\" value=\"1\" ";
-                      if ($arr['user_notebox']==1) echo " checked=\"checked\"";
+                      <input type=\"radio\" name=\"notebox\" value=\"1\" ";
+                      if ($cu->getp("notebox")==1) echo " checked=\"checked\"";
                       echo "/> Aktiviert
                   </td>
                   <td class=\"tbldata\" width=\"48%\" colspan=\"3\">
-                      <input type=\"radio\" name=\"user_notebox\" value=\"0\" ";
-                      if ($arr['user_notebox']==0) echo " checked=\"checked\"";
+                      <input type=\"radio\" name=\"notebox\" value=\"0\" ";
+                      if ($cu->getp("notebox")==0) echo " checked=\"checked\"";
             					echo "/> Deaktiviert
             		</td>
           		</tr>";   
@@ -226,13 +226,13 @@
           echo "<tr>
             			<th class=\"tbldata\" width=\"36%\">Vertausche Buttons in Hafen-Schiffauswahl:</th>
             			<td class=\"tbldata\" width=\"16%\">
-                      <input type=\"radio\" name=\"user_havenships_buttons\" value=\"1\" ";
-                      if ($arr['user_havenships_buttons']==1) echo " checked=\"checked\"";
+                      <input type=\"radio\" name=\"havenships_buttons\" value=\"1\" ";
+                      if ($cu->getp("havenships_buttons")==1) echo " checked=\"checked\"";
                       echo "/> Aktiviert
                   </td>
                   <td class=\"tbldata\" width=\"48%\" colspan=\"3\">
-                      <input type=\"radio\" name=\"user_havenships_buttons\" value=\"0\" ";
-                      if ($arr['user_havenships_buttons']==0) echo " checked=\"checked\"";
+                      <input type=\"radio\" name=\"havenships_buttons\" value=\"0\" ";
+                      if ($cu->getp("havenships_buttons")==0) echo " checked=\"checked\"";
             					echo "/> Deaktiviert
             		</td>
           		</tr>";     
@@ -241,13 +241,13 @@
           echo "<tr>
             			<th class=\"tbldata\" width=\"36%\">Werbung anzeigen:</th>
             			<td class=\"tbldata\" width=\"16%\">
-                      <input type=\"radio\" name=\"user_show_adds\" value=\"1\" ";
-                      if ($arr['user_show_adds']==1) echo " checked=\"checked\"";
+                      <input type=\"radio\" name=\"show_adds\" value=\"1\" ";
+                      if ($cu->getp("show_adds")==1) echo " checked=\"checked\"";
                       echo "/> Aktiviert
                   </td>
                   <td class=\"tbldata\" width=\"48%\" colspan=\"3\">
-                      <input type=\"radio\" name=\"user_show_adds\" value=\"0\" ";
-                      if ($arr['user_show_adds']==0) echo " checked=\"checked\"";
+                      <input type=\"radio\" name=\"show_adds\" value=\"0\" ";
+                      if ($cu->getp("show_adds")==0) echo " checked=\"checked\"";
             					echo "/> Deaktiviert
             		</td>
           		</tr>";           		         

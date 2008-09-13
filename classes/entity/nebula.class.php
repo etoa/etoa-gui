@@ -15,13 +15,11 @@
 		public $cy;
 		protected $cellId;
 		private $name;	
-		protected $exploreCode;	
-		public $explore;
 		
 		/**
 		* The constructor
 		*/
-		function Nebula($id=0,$explore='e')
+		function Nebula($id=0)
 		{
 			$this->isValid = true;
 			$this->id = $id;
@@ -29,8 +27,6 @@
 			$this->name = "Unbenannt";
 			$this->coordsLoaded=false;			
       		$this->isVisible = true;
-			$this->exploreCode = $explore;
-			$this->explore = Explore::createFactory($this->exploreCode,$this->id);
 		}
 
     public function allowedFleetActions()
@@ -84,10 +80,6 @@
 		*/
 		function entityCode() { return "n"; }	      
 		
-		/**
-		* Return Explore object
-		*/
-		function explore() { return $this->explore; }
 		
 		/**
 		* To-String function

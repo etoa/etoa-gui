@@ -15,13 +15,11 @@
 		public $cx;
 		public $cy;
 		protected $cellId;
-		protected $exploreCode;
-		public $explore;
 		
 		/**
 		* The constructor
 		*/
-		function Market($id=0,$explore='e')
+		function Market($id=0)
 		{
 			$this->isValid = true;
 			$this->id = $id;
@@ -29,8 +27,6 @@
 			$this->name = "Marktplatz";
 			$this->coordsLoaded=false;
       		$this->isVisible = true;
-			$this->exploreCode = $explore;
-			$this->explore = false;
 		}
 
     public function allowedFleetActions()
@@ -85,11 +81,6 @@
 		{ 
 			return "m"; 
 		}	      
-		
-		/**
-		* Return Explore object
-		*/
-		function explore() { return $this->explore; }
 		
 		/**
 		* To-String function

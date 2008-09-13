@@ -15,13 +15,11 @@
 		public $cx;
 		public $cy;
 		protected $cellId;
-		protected $exploreCode;
-		public $explore;
 		
 		/**
 		* The constructor
 		*/
-		function UnknownEntity($id=0,$explore='e')
+		function UnknownEntity($id=0)
 		{
 			$this->isValid = true;
 			$this->id = $id;
@@ -29,8 +27,6 @@
 			$this->name = "Unbenannt";
 			$this->coordsLoaded=false;
       		$this->isVisible = true;
-	  		$this->exploreCode = 'e';
-			$this->explore = false;
 		}
 
     public function allowedFleetActions()
@@ -58,11 +54,6 @@
 		* Returns owner
 		*/                        
 		function ownerId() { return 0; }      
-	
-		/**
-		* Return Explore object
-		*/
-		function explore() { return $this->explore; }
 		
 		/**
 		* Returns type string

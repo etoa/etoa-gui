@@ -9,14 +9,13 @@
 	{
 		protected $isValid;
 		protected $coordsLoaded;
-		protected $exploreCode;
-		public $explore;
+	
 		
 		/**
 		* Constructor
 		* Erwartet ein Array mit dem Inhalt des MySQL-Datensatzes, oder die ID eines Planeten
 		*/
-		function Planet($arr=null,$explore='e')
+		function Planet($arr=null)
 		{
 			$this->exploreCode = 'e';
 			$this->explore = false;
@@ -247,10 +246,6 @@
 			return "p";
 		}
 		
-		/**
-		* Return Explore object
-		*/
-		function explore() { return $this->explore; }
 
 		function entityCodeString()
 		{
