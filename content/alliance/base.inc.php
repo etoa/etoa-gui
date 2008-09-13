@@ -1,6 +1,18 @@
 <?PHP
-
+	
+	// Zeigt eigene Rohstoffe an
+	$cp->resBox();
+	
 	echo "<h2><a href=\"?page=".$page."&amp;action=".$_GET['action']."\">Allianzbasis</a></h2>";
+		
+		
+	//
+	// Definitionen
+	//	
+		
+	define('ALLIANCE_SHIPYARD_ID',3);
+		
+		
 		
 	//
 	// Funktionen				
@@ -14,7 +26,7 @@
 		document.getElementById('tabBuildings').style.display='none';
 		document.getElementById('tabResearch').style.display='none';
 		document.getElementById('tabStorage').style.display='none';
-		document.getElementById('tabSpends').style.display='none';
+		document.getElementById('tabShipyard').style.display='none';
 		
 		document.getElementById(idx).style.display='';
 	}
@@ -265,7 +277,8 @@
 		
 		
  	//
- 	// Datenverarbeitung
+ 	// Datenverarbeitung 1: Muss vor dem laden der neuen Daten geschehen
+ 	// Spenden und Einzahlungsoptionen speichern
  	//
  	
  	// Speichert Nachricht, welche später ausgegeben wird
@@ -429,16 +442,23 @@
 	$res = dbquery("
 	SELECT
 		user_id,
-		user_nick
+		user_nick,
+		user_alliace_shippoints
 	FROM
 		users
 	WHERE
 		user_alliance_id='".$cu->allianceId()."';");
 	$alliance_member_cnt = mysql_num_rows($res);
+	echo "<script type=\"text/javascript\">
+	alliance_members = Array(); ";
 	while($arr=mysql_fetch_assoc($res))		
 	{
-		$alliance_members[$arr['user_id']] = $arr['user_nick'];
+		$alliance_members[$arr['user_id']] = $arr;
+		
+		echo "alliance_members[".$arr['user_id']."] = ".$arr['user_alliace_shippoints'].";";
 	}
+
+	echo "</script>";
 
 	// Allianzgebäude
 	$res = dbquery("
@@ -453,8 +473,9 @@
 		$buildings[$arr['alliance_building_id']] = $arr;
 	}
 	
-	// Gebaute Gebäude laden und markieren, falls etwas im Bau ist
+	// Gebaute Gebäude laden und vormerken, falls etwas im Bau ist. AUsserdem werden diverse Gebäude als "gebaut" markiert
 	$buildsomething = false;
+	$shipyard = false;
 	$res = dbquery("
 	SELECT
 		*
@@ -469,6 +490,12 @@
 		if($arr['alliance_buildlist_build_end_time']>0)
 		{
 			$buildsomething = true;
+		}
+		
+		// Schiffswerft
+		if($arr['alliance_buildlist_building_id']==ALLIANCE_SHIPYARD_ID && $arr['alliance_buildlist_current_level']>=1)
+		{
+			$shipyard = true;
 		}
 	}	
 	
@@ -485,7 +512,7 @@
 		$techs[$arr['alliance_tech_id']] = $arr;
 	}
 	
-	// Erforschte Techs laden und markieren, falls etwas im Bau ist
+	// Erforschte Techs laden und vormerken, falls etwas im Bau ist
 	$researchsomething = false;
 	$res = dbquery("
 	SELECT
@@ -520,9 +547,18 @@
 		$action2 = "buildings";
 	}
 	
-	echo "<a href=\"javascript:;\" onclick=\"showTab('tabBuildings')\">Gebäude</a> | <a href=\"javascript:;\" onclick=\"showTab('tabResearch')\">Technologien</a> | <a href=\"javascript:;\" onclick=\"showTab('tabStorage')\">Speicher</a> | <a href=\"javascript:;\" onclick=\"showTab('tabSpends')\">Einzahlungen</a><br><br><br>";
+	// Stellt standart Links dar
+	echo "<a href=\"javascript:;\" onclick=\"showTab('tabBuildings')\">Gebäude</a> | <a href=\"javascript:;\" onclick=\"showTab('tabResearch')\">Technologien</a> | <a href=\"javascript:;\" onclick=\"showTab('tabStorage')\">Speicher</a>";
 	
+	// Stellt Objektbezogene Links dar
 	
+	// Schiffswerft
+	if($shipyard)
+	{
+		echo " | <a href=\"javascript:;\" onclick=\"showTab('tabShipyard')\">Schiffswerft</a>";
+	}
+	
+	echo "<br><br><br>";
 	
 	//
 	// ResBox
@@ -557,13 +593,13 @@
 	}
 	
 	
-	infobox_start("Rohstoffe",1);
+	infobox_start("Allianz Ressourcen",1);
 	echo "<tr>
-					<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_ICON_METAL." ".RES_METAL."</td>
-					<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_ICON_CRYSTAL." ".RES_CRYSTAL."</td>
-					<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_ICON_PLASTIC." ".RES_PLASTIC."</td>
-					<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_ICON_FUEL." ".RES_FUEL."</td>
-					<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_ICON_FOOD." ".RES_FOOD."</td>
+					<td class=\"tbltitle\" style=\"width:20%;vertical-align:middle;\">".RES_ICON_METAL." ".RES_METAL."</td>
+					<td class=\"tbltitle\" style=\"width:20%;vertical-align:middle;\">".RES_ICON_CRYSTAL." ".RES_CRYSTAL."</td>
+					<td class=\"tbltitle\" style=\"width:20%;vertical-align:middle;\">".RES_ICON_PLASTIC." ".RES_PLASTIC."</td>
+					<td class=\"tbltitle\" style=\"width:20%;vertical-align:middle;\">".RES_ICON_FUEL." ".RES_FUEL."</td>
+					<td class=\"tbltitle\" style=\"width:20%;vertical-align:middle;\">".RES_ICON_FOOD." ".RES_FOOD."</td>
 				</tr>
 				<tr>
 					<td ".$style0." id=\"resBoxMetal\">".nf($aarr['alliance_res_metal'])." t</td>
@@ -603,9 +639,10 @@
 	
 	
 	
-	//
-	// Gebäude
-	//
+ 	//
+ 	// Datenverarbeitung 2: Muss nach dem Laden der Daten geschehen
+ 	// -> Gebäude und Techs speichern
+ 	//
 	
 	// Gebäude in Auftrag geben
 	if(isset($_POST['building_submit']) && checker_verify())
@@ -724,7 +761,7 @@
 	}
 	
 	
-		// Technologie in Auftrag geben
+	// Technologie in Auftrag geben
 	if(isset($_POST['research_submit']) && checker_verify())
 	{
 		if(isset($_POST['research_id']) && $_POST['research_id']!=0)
@@ -842,8 +879,10 @@
 	
 	
 	
+	//
+	// Gebäude
+	//
 	
-	/// 123
 	if($action2=="buildings")
 	{
 		$display = "";
@@ -1020,7 +1059,7 @@
 	
 	
 	//
-	// Speicher
+	// Speicher + Einzahlungen
 	//
 	
 	if($action2=="storage")
@@ -1076,31 +1115,17 @@
 	infobox_end(1);
 	
 	echo "<input type=\"submit\" class=\"button\" name=\"storage_submit\" id=\"storage_submit\" value=\"Einzahlen\"/>";
-	echo "</form><br><br>";
+	echo "</form><br><br><br><br>";
 
 
-	echo "</div>";
-	
-	
-	
 	//
 	// Einzahlungen
 	//
-	
-	if($action2=="spends")
-	{
-		$display = "";
-	}
-	else
-	{
-		$display = "none";
-	}
-	echo "<div id=\"tabSpends\" style=\"display:".$display.";\">";
 
- 	echo "<form action=\"?page=".$page."&amp;action=".$_GET['action']."&amp;action2=spends\" method=\"post\" id=\"alliance_spends\">\n";
+ 	echo "<form action=\"?page=".$page."&amp;action=".$_GET['action']."&amp;action2=storage\" method=\"post\" id=\"alliance_spends\">\n";
 	echo $cstr;  
   
-  echo "<h1>Einzahlungen</h1>";
+  echo "<h1>Einzahlungen / Statistik</h1>";
   
   
   //
@@ -1137,9 +1162,9 @@
   					<select id=\"user_spends\" name=\"user_spends\">
 							<option value=\"0\">alle</option>";
 					  	// Allianzuser
-							foreach($alliance_members as $id => $nick)
+							foreach($alliance_members as $id => $data)
 							{
-					  		echo "<option value=\"".$id."\">".$nick."</option>";
+					  		echo "<option value=\"".$id."\">".$data['user_nick']."</option>";
 					  	}
   		echo "</select>
   				</td>
@@ -1163,7 +1188,7 @@
   	if($user>0)
 	  {
 	  	$user_sql = "AND alliance_spend_user_id='".$user."'";
-	  	$user_message = "von ".$alliance_members[$user]." ";
+	  	$user_message = "von ".$alliance_members[$user]['user_nick']." ";
 	  }
 	  else
 	  {
@@ -1214,14 +1239,14 @@
 			infobox_end();
 		}
 	}
-	// Einzahlungen werden einzelen ausgegeb
+	// Einzahlungen werden einzelen ausgegeben
 	else
 	{
 
   	if($user>0)
 	  {
 	  	$user_sql = "AND alliance_spend_user_id='".$user."'";
-	  	$user_message = "von ".$alliance_members[$user]." ";
+	  	$user_message = "von ".$alliance_members[$user]['user_nick']." ";
 	  }
 	  else
 	  {
@@ -1266,7 +1291,7 @@
 		{						
 			while($arr=mysql_fetch_assoc($res))
 			{
-				infobox_start("".$alliance_members[$arr['alliance_spend_user_id']]." - ".df($arr['alliance_spend_time'])."",1);
+				infobox_start("".$alliance_members[$arr['alliance_spend_user_id']]['user_nick']." - ".df($arr['alliance_spend_time'])."",1);
 				echo "<tr>
 								<td class=\"tbltitle\" style=\"width:20%\">".RES_METAL."</td>
 								<td class=\"tbltitle\" style=\"width:20%\">".RES_CRYSTAL."</td>
@@ -1293,6 +1318,61 @@
 		}
 	}
 
+	echo "</div>";
+	
+	
+	
+	//
+	// Schiffswerft
+	//
+	
+	if($action2=="shipyard")
+	{
+		$display = "";
+	}
+	else
+	{
+		$display = "none";
+	}
+	echo "<div id=\"tabShipyard\" style=\"display:".$display.";\">";
+
+	if($shipyard)
+	{
+		echo "<h1>Schiffswerft</h1>";
+		
+ 		echo "<form action=\"?page=".$page."&amp;action=".$_GET['action']."&amp;action2=shipyard\" method=\"post\" id=\"alliance_shipyard\">\n";
+		echo $cstr;
+		
+		infobox_start("Guthaben Übersicht",1);
+		
+		echo "<tr>
+						<td class=\"tbldata\" style=\"text-align:center;\">Punkte: ".$alliance_members[$cu->id()]['user_alliace_shippoints']."</td>
+					</tr>";
+		
+		infobox_end(1);
+		
+		
+		infobox_start("Kauf",1);
+		
+		echo "<tr>
+						<td class=\"tbldata\" style=\"text-align:center;\">
+							<select id=\"user_shippoints\" name=\"user_shippoints\">
+							<option value=\"0\">User wählen...</option>";
+					  	// Allianzuser
+							foreach($alliance_members as $id => $data)
+							{
+					  		echo "<option value=\"".$id."\">".$data['user_nick']." (".$data['user_alliace_shippoints'].")</option>";
+					  	}
+  			echo "</select><br><br>
+  						<input type=\"button\" value=\"Kaufen\" ".tm("Kaufen","Kauft Schiffe für den gewählten User").">
+						</td>
+					</tr>";
+		
+		infobox_end(1);
+  		
+		echo "</form>";
+	}
+	
 	echo "</div>";
 
 ?>
