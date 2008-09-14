@@ -3,7 +3,7 @@
 	/**
 	* Class for alliance space entities
 	*/
-	class Aliance extends Entity
+	class Alliance extends Entity
 	{
 		private $name;		
 		protected $id;
@@ -19,7 +19,7 @@
 		/**
 		* The constructor
 		*/
-		function Market($id=0)
+		function Alliance($id=0)
 		{
 			$this->isValid = true;
 			$this->id = $id;
