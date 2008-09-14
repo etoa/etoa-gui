@@ -19,6 +19,7 @@ Die Chance für ein Gelingen ist relativ klein, kann aber durch Erforschen der Sp
 			$this->allowOwnEntities = false;
 			$this->allowNpcEntities = false;
 			$this->allowSourceEntity = false;
+			$this->allowAllianceEntities = false;
 		}
 
 		function startAction() {} 

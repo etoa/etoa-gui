@@ -1041,12 +1041,16 @@ function calcDemolishingWaitTime($dc,$cp)
 						{
 							foreach ($bdata as $bid => $bv)
 							{
-								
 								// Aktuellen Level feststellen
 								if(isset($buildlist[$bid]['buildlist_current_level']))
 								{
 									$b_level = intval($buildlist[$bid]['buildlist_current_level']);
 									$end_time = intval($buildlist[$bid]['buildlist_build_end_time']);
+								}
+								else
+								{
+									$b_level=0;
+									$end_time=0;
 								}
 
 

@@ -35,7 +35,7 @@
 	define("REQ_ITEM_FLD","req_def_id");
 	define("ITEM_ID_FLD","def_id");
 	define("ITEM_NAME_FLD","def_name");
-	define("RACE_TO_ADD","");
+	define("RACE_TO_ADD"," AND (def_race_id=0 OR def_race_id='".$cu->raceId()."')");
 	define("ITEM_SHOW_FLD","def_show");
 	define("ITEM_ORDER_FLD","def_order");
 	define("NO_ITEMS_MSG","In dieser Kategorie gibt es keine Verteidigungsanlagen!");

@@ -37,7 +37,7 @@
 	$sy_num = $cfg->param2('num_of_sectors');
 	$cx_num = $cfg->param1('num_of_cells');
 	$cy_num = $cfg->param2('num_of_cells');
-
+	
 	echo "<h2>Galaxie-Grafik</h2>";
 	echo "<input type=\"button\" onclick=\"document.location='?page=map'\" value=\"Raumkarte des aktuellen Sektors\" /><br/><br/>";
 	echo "Anzeigen: <select onchange=\"document.getElementById('img').src='misc/map.image.php'+this.options[this.selectedIndex].value;\">

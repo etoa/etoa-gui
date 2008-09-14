@@ -474,13 +474,15 @@
 				foreach ($actions as $i)
 				{
 					$ai = FleetAction::createFactory($i);
+					
+					
 	
 					// Permission checks
 					if (
 					($this->sourceEntity->id() == $this->targetEntity->id() && $ai->allowSourceEntity()) || 
 					($this->sourceEntity->ownerId() == $this->targetEntity->ownerId() && $this->sourceEntity->id() != $this->targetEntity->id() && $ai->allowOwnEntities()) ||
 					($this->sourceEntity->ownerId() != $this->targetEntity->ownerId() && $this->targetEntity->ownerId()>0 && $ai->allowPlayerEntities()) ||
-					($this->targetEntity->ownerId() == 0 && $ai->allowNpcEntities()) 
+					($this->targetEntity->ownerId() == 0 && $ai->allowNpcEntities()) || ($ai->allowAllianceEntities && $this->sourceEntity->ownerAlliance()==$this->targetEntity->ownerAlliance())
 					)
 					{
 						if($this->targetEntity->ownerId()>0)

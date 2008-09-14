@@ -19,6 +19,7 @@ Baue spezielle Transporter um kostengünstig zu transportieren.";
 			$this->allowOwnEntities = true;
 			$this->allowNpcEntities = false;
 			$this->allowSourceEntity = false;
+			$this->allowAllianceEntities = false;
 		}
 
 		function startAction() {} 

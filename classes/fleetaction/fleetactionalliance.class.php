@@ -1,14 +1,14 @@
 <?PHP
 
-	class FleetActionAttack extends FleetAction
+	class FleetActionAlliance extends FleetAction
 	{
 
-		function FleetActionAttack()
+		function FleetActionAlliance()
 		{
-			$this->code = "attack";
-			$this->name = "Angreifen";
+			$this->code = "alliance";
+			$this->name = "Allianzangriff";
 			$this->desc = "Greift das Ziel an und klaut Rohstoffe";
-			$this->longDesc = "Der Standard-Angriff auf ein bewohntes Ziel. Falls der Kampf gewonnen wird, wird (meistens) die Hälfte der Rohstoffe geklaut.";
+			$this->longDesc = "Der Allianz-Angriff auf ein bewohntes Ziel, ermöglicht es Allianzmitgliedern zusammen ein Ziel anzugreiffen. Falls der Kampf gewonnen wird, wird (meistens) die Hälfte der Rohstoffe geklaut.";
 			$this->visible = true;
 			$this->exclusive = false;
 			$this->attitude = 3;

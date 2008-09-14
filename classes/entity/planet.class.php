@@ -222,6 +222,8 @@
 				$arr[] = "antrax";
 				$arr[] = "gasattack";
 				$arr[] = "createdebris";
+				$arr[] = "alliance";
+				$arr[] = "support";
 			}
     	if ($this->ownerId()==0 && $this->habitable)
     		$arr[] = "colonize";
@@ -467,6 +469,15 @@
 			}
 			return $v;
 		}	
+		
+		/**
+		* Calculate bonus power production based on temperature
+		*/
+		function getFuelProductionBonus()
+		{
+			$v = floor(($this->temp_from + $this->temp_to)/25);
+			return $v/100;
+		}
 		
 		function assignToUser($uid,$main=0)
 		{

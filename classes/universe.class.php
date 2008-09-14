@@ -562,28 +562,30 @@
 				LIMIT
 					1;");
 					
-			echo "Erstelle Piraten, Aliens, Schiffe,..<br />";
-			$res = dbquery("
-							SELECT
-								id,
-								code
-							FROM
-								entities
-							ORDER BY
-								RAND();");
-			while ($arr=mysql_fetch_array($res)) {
-				
-				dbquery("
-						UPDATE
-							entities
-						SET
-							explore_code='".$code."'
-						WHERE
-							id='".$arr["id"]."'
-						LIMIT
-							1;");
-			}
-				
+					
+			echo "Erstelle Markt und Allianz entity...<br />";
+			dbquery("
+					UPDATE
+						entities
+					SET
+						code='m'
+					WHERE
+						code='e'
+					ORDER BY
+						RAND()
+					LIMIT 1;");
+					
+			dbquery("
+					UPDATE
+						entities
+					SET
+						code='x'
+					WHERE
+						code='e'
+					ORDER BY
+						RAND()
+					LIMIT 1;");
+			
 			
 			
 			
@@ -624,6 +626,7 @@
 
 			$tbl[]="alliances";
 			$tbl[]="alliance_bnd";
+			$tbl[]="alliance_applications";
 			$tbl[]="alliance_history";
 			$tbl[]="alliance_news";
 			$tbl[]="alliance_ranks";
@@ -637,6 +640,9 @@
 			$tbl[]="alliance_shoutbox";
 			$tbl[]="alliance_polls";
 			$tbl[]="alliance_points";
+			$tbl[]="alliance_buildlst";
+			$tbl[]="alliance_spends";
+			$tbl[]="alliance_techlist";
 
 			$tbl[]="users";
 			$tbl[]="user_history";
@@ -652,7 +658,8 @@
 			$tbl[]="user_onlinestats";
 			$tbl[]="user_comments";
 			$tbl[]="user_warnings";
-
+			$tbl[]="user_properties";
+			$tbl[]="user_minimap";
 			
 			$tbl[]="buddylist";
 			$tbl[]="messages";
@@ -661,8 +668,14 @@
 			$tbl[]="notepad";
 			$tbl[]="notepad_data";
 			$tbl[]="bookmarks";
+			$tbl[]="fleet_bookmarks";
 
 			$tbl[]="logs";
+			$tbl[]="logs_alliance";
+			$tbl[]="logs_battle";
+			$tbl[]="logs_fleet";
+			$tbl[]="logs_game";
+			
 			$tbl[]="login_failures";
 			$tbl[]="admin_user_log";
 			$tbl[]="logs_game";
@@ -670,13 +683,30 @@
 			$tbl[]="tickets";
 			$tbl[]="chat";
 			$tbl[]="chat_users";
-			
+			$tbl[]="attack_ban";
 	
 			foreach ($tbl as $t)
 			{
 				dbquery("TRUNCATE $t;");
 				echo "Leere Tabelle <b>$t</b><br/>";
 			}
+			
+			dbquer("
+					UPDATE
+						config
+					SET
+						config_value='0',
+						config_param1='0'
+					WHERE
+						config_name LIKE '%logger%';");
+			dbquery("
+					UPDATE
+						config
+					SET
+						config_value='1'
+					WHERE
+						config_name IN ('market_metal_factor','market_crystal_factor','market_plastic_factor','market_fuel_factor','market_food_factor');");
+						
 			return true;
 		}
 		

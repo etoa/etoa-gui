@@ -327,8 +327,8 @@
 						echo "<tr><td colspan=\"5\">Schnellere Schiffe nehmen im Flottenverband automatisch die Geschwindigkeit des langsamsten Schiffes an, sie brauchen daf&uuml;r aber auch entsprechend weniger Treibstoff!</td></tr>";
 					}
 					
-					/*
-					echo "<tr><td colspan=\"5\">Mögliche Aktionen: ";
+					
+					/*echo "<tr><td colspan=\"5\">Mögliche Aktionen: ";
 					$cnt=0;
 					$shipAcCnt = count($fleet->shipActions);
 					foreach ($fleet->shipActions as $ac)
@@ -339,8 +339,7 @@
 							echo ", ";
 						$cnt++;
 					}
-					echo "</td></tr>";
-					*/
+					echo "</td></tr>";*/
 					
 					echo "</table><br/>";					
 					$response->assign("havenContentShips","innerHTML",ob_get_contents());				
@@ -803,22 +802,25 @@
 		&& $form['man_sx']>0 && $form['man_sy']>0 && $form['man_cx']>0 && $form['man_cy']>0 && $form['man_p']>=0)
 		{		
 			ob_start();
+			$absX = ($form['man_sx'] * CELL_NUM_X) + $form['man_cx'];
+			$absY = (($form['man_sy']-1) * CELL_NUM_Y) + $form['man_cy'];	
+			
 			$res = dbquery("
-			SELECT
-				entities.id,
-				entities.code
-			FROM
-				entities
-			INNER JOIN	
-				cells
-			ON
-				entities.cell_id=cells.id
-				AND cells.sx=".$form['man_sx']."
-				AND cells.sy=".$form['man_sy']."
-				AND cells.cx=".$form['man_cx']."
-				AND cells.cy=".$form['man_cy']."
-				AND entities.pos=".$form['man_p']."
-			");
+				SELECT
+					entities.id,
+					entities.code
+				FROM
+					entities
+				INNER JOIN	
+					cells
+				ON
+					entities.cell_id=cells.id
+					AND cells.sx=".$form['man_sx']."
+					AND cells.sy=".$form['man_sy']."
+					AND cells.cx=".$form['man_cx']."
+					AND cells.cy=".$form['man_cy']."
+					AND entities.pos=".$form['man_p']."
+				");
 			if (mysql_num_rows($res)>0)
 			{
 				$arr=mysql_fetch_row($res);

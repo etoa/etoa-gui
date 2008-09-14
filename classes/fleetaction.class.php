@@ -35,7 +35,9 @@
 		"analyze",
 		"explore",
 		"market",
-		"flight"
+		"flight",
+		"support",
+		"alliance"
 		);
 
 		// Colors for different attitudes
@@ -94,6 +96,7 @@
 		function allowOwnEntities() { return $this->allowOwnEntities; }
 		function allowNpcEntities() { return $this->allowNpcEntities; }
 		function allowSourceEntity() { return $this->allowSourceEntity; }
+		function allowAllianceEntities() { return $this->allowAllianceEntities; }
 		function allowOnHoliday() { return false; }
 
 

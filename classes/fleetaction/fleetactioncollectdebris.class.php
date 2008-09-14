@@ -19,6 +19,7 @@
 			$this->allowOwnEntities = true;
 			$this->allowNpcEntities = true;
 			$this->allowSourceEntity = true;
+			$this->allowAllianceEntities = true;
 			
 		}
 

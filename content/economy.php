@@ -155,13 +155,13 @@
           }
           if ($bp['fuel']!="")
           {
-          	$bp['fuel'] = $bp['fuel'] + ($bp['fuel'] * ($cp->typeFuel-1)) + ($bp['fuel'] * ($cu->raceFuel-1) + ($bp['fuel'] * ($cp->starFuel-1)));
+          	$bp['fuel'] = $bp['fuel'] + ($bp['fuel'] * ($cp->typeFuel-1)) + ($bp['fuel'] * ($cu->raceFuel-1) + ($bp['fuel'] * ($cp->starFuel-1))) + ($bp['fuel'] * $cp->getFuelProductionBonus());
           }
           if ($bp['food']!="")
           {
           	$bp['food'] = $bp['food'] + ($bp['food'] * ($cp->typeFood-1)) + ($bp['food'] * ($cu->raceFood-1) + ($bp['food'] * ($cp->starFood-1)));
           }
-
+		  
           // Zum Total hinzufügen
           $cnt['metal'] += floor($bp['metal']*$barr['buildlist_prod_percent']);
           $cnt['crystal'] += floor($bp['crystal']*$barr['buildlist_prod_percent']);

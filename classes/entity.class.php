@@ -280,7 +280,9 @@
 				case 'e':
 					return new EmptySpace($id);
 				case 'm':
-					return new Market($id);			
+					return new Market($id);	
+				case 'x':
+					return new Alliance($id);			
 				default:
 					return new UnknownEntity($id);
 			}		
@@ -321,7 +323,9 @@
 					case 'e':
 						return new EmptySpace($id);
 					case 'm':
-						return new Market($id);				
+						return new Market($id);	
+					case 'x':
+						return new Alliance($id);	
 					default:
 						return new UnknownEntity($id);
 				}			
@@ -372,6 +376,8 @@
 						return new EmptySpace($id);
 					case 'm':
 						return new Market($id);
+					case 'x':
+						return new Alliance($id);
 					default:
 						return new UnknownEntity($id);
 				}			
