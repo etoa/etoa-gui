@@ -282,7 +282,7 @@
 				case 'm':
 					return new Market($id);	
 				case 'x':
-					return new Alliance($id);			
+					return new Allianz($id);			
 				default:
 					return new UnknownEntity($id);
 			}		
@@ -325,7 +325,7 @@
 					case 'm':
 						return new Market($id);	
 					case 'x':
-						return new Alliance($id);	
+						return new Allianz($id);	
 					default:
 						return new UnknownEntity($id);
 				}			
@@ -377,7 +377,7 @@
 					case 'm':
 						return new Market($id);
 					case 'x':
-						return new Alliance($id);
+						return new Allianz($id);
 					default:
 						return new UnknownEntity($id);
 				}			

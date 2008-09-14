@@ -290,63 +290,22 @@
 							</tr>";
 					$header=1;
 				}
-	
+				
 				echo "<tr>
-								<td class=\"tbldata\" style=\"".$style."\">
-									<b>".$ef->entityCodeString()."</b> ".$ef."<br/>
-									<b>".$et->entityCodeString()."</b> ".$et."
-								</td>
-								<td class=\"tbldata\" style=\"".$style."\">
-									".date("d.m.y, H:i:s",$farr['launchtime'])."<br/>
-									".date("d.m.y H:i:s",$farr['landtime'])."
-								</td>
-								<td class=\"tbldata\" style=\"".$style."\">".$action."</td>";
-								if($farr['action']=='mo')
-								{
-									$ress = "";
-									if($farr['res_metal']>0)
-									{
-										$ress .= "".RES_METAL.": ".nf($farr['res_metal'])."";
-									}
-									
-									if($farr['res_crystal']>0)
-									{
-										$ress .= "".RES_CRYSTAL.": ".nf($farr['res_crystal'])."";
-									}
-									
-									if($farr['res_plastic']>0)
-									{
-										$ress .= "".RES_PLASTIC.": ".nf($farr['res_plastic'])."";
-									}
-									
-									if($farr['res_fuel']>0)
-									{
-										$ress .= "".RES_FUEL.": ".nf($farr['res_fuel'])."";
-									}
-									
-									if($farr['res_food']>0)
-									{
-										$ress .= "".RES_FOOD.": ".nf($farr['res_food'])."";
-									}
-									if($farr['res_metal']>0
-										OR $farr['res_crystal']>0
-										OR $farr['res_plastic']>0
-										OR $farr['res_fuel']>0
-										OR $farr['res_food']>0)
-									{
-										echo "<td class=\"tbldata\" ".tm("Marktanlieferung",$ress).">Markt</td>";
-									}
-									else
-									{
-										echo "<td class=\"tbldata\">Markt</td>";
-									}
-								}
-								else
-								{
-									echo "<td class=\"tbldata\" style=\"".$style."\">
-													<a href=\"?page=messages&mode=new&message_user_to=".$farr['user_id']."\">".get_user_nick($farr['user_id'])."</a>
+					<td class=\"tbldata\"><b>".$fd->getSource()->entityCodeString()."</b> 
+					<a href=\"?page=cell&amp;id=".$fd->getSource()->cellId()."&amp;hl=".$fd->getSource()->id()."\">".$fd->getSource()."</a><br/>";
+				echo "<b>".$fd->getTarget()->entityCodeString()."</b> 
+					<a href=\"?page=cell&amp;id=".$fd->getTarget()->cellId()."&amp;hl=".$fd->getTarget()->id()."\">".$fd->getTarget()."</a></td>";			
+				echo "<td class=\"tbldata\">
+					".date("d.m.y, H:i:s",$fd->launchTime())."<br/>";
+				echo date("d.m.y, H:i:s",$fd->landTime())."</td>";
+				echo "<td class=\"tbldata\">
+					<span style=\"color:".FleetAction::$attitudeColor[$fd->getAction()->attitude()]."\">
+					".$fd->getAction()->name()."
+					</span> [".FleetAction::$statusCode[$fd->status()]."]<br/>";				
+				echo "<td class=\"tbldata\" style=\"".$style."\">
+					<a href=\"?page=messages&mode=new&message_user_to=".$fd->ownerId()."\">".get_user_nick($fd->ownerId())."</a>
 												</td>";
-								}
 								
 								echo "</tr>";
 								if ($show_num==1)

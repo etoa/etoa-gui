@@ -369,7 +369,7 @@
 									
 									//Absteigend
 									echo "<option value=\"DESC\"";
-									if($cu->set("item_order_way")=='DESC') echo " selected=\"selected\"";
+									if($cu->getp("item_order_way")=='DESC') echo " selected=\"selected\"";
 									echo ">Absteigend</option>";	
 																	
 					echo "</select>						

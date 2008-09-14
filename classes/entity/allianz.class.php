@@ -1,9 +1,9 @@
 <?PHP
 	
 	/**
-	* Class for alliance space entities
+	* Class for Allianz space entities
 	*/
-	class Alliance extends Entity
+	class Allianz extends Entity
 	{
 		private $name;		
 		protected $id;
@@ -19,7 +19,7 @@
 		/**
 		* The constructor
 		*/
-		function Alliance($id=0)
+		function Allianz($id=0)
 		{
 			$this->isValid = true;
 			$this->id = $id;
@@ -79,7 +79,7 @@
 		*/
 		function entityCode() 
 		{ 
-			return "x"; 
+			return "m"; 
 		}	      
 		
 		/**

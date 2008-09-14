@@ -121,8 +121,8 @@
       fleet_ships AS fs
       INNER JOIN
       fleet AS f
-      ON fs.fs_fleet_id=f.fleet_id
-      AND f.fleet_user_id='".$cu->id()."'
+      ON fs.fs_fleet_id=f.id
+      AND f.user_id='".$cu->id()."'
 		GROUP BY
 			fs.fs_ship_id;");
 		if(mysql_num_rows($res)>0)
@@ -179,7 +179,6 @@
 			  					<td class=\"tbltitle\">
 			  						".$sarr['ship_name']."
 			  					</td>";
-			  					
 			  				//Spalte gebauter Schiffe
 		  					if(isset($shiplist_data[$sarr['ship_id']]))
 		  					{
@@ -237,7 +236,7 @@
 		  					if(isset($fleet_data[$sarr['ship_id']]))
 		  					{
 		  						// Summiert die Anzahl Schiffe von allen Planeten
-		  						$total = array_sum($fleet_data[$sarr['ship_id']]);
+		  						$total = $fleet_data[$sarr['ship_id']];
 		  						echo "
 			  					<td class=\"tbldata\">
 			  						".nf($total)."
