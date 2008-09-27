@@ -84,7 +84,14 @@
 			$this->actionOk=false;			
 			
 			$this->error="";
-
+			
+			//Create targetentity
+			if (isset($_SESSION['haven']['targetId'])) {
+				$this->targetEntity = Entity::createFactoryById($_SESSION['haven']['targetId']);
+			}
+			elseif (isset($_SESSION['haven']['cellTargetId'])) {
+				$this->targetEntity = Entity::createFactoryUnkownCell($_SESSION['haven']['cellTargetId']);
+			}
 
 		}
 

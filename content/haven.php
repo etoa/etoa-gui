@@ -53,7 +53,10 @@
 			{
 				$_SESSION['haven']['targetId']=$_GET['target'];
 			}
-
+			elseif (isset ($_GET['cellTarget']) && intval($_GET['cellTarget'])>0)
+			{
+				$_SESSION['haven']['cellTargetId']=$_GET['cell'];
+			}
 
 
 			// Fleet object

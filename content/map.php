@@ -208,11 +208,10 @@
 			$cells[$arr['cx']][$arr['cy']]['eid']=$arr['eid'];
 			$cells[$arr['cx']][$arr['cy']]['code']=$arr['code'];
 		}
-		
 		for ($y=0;$y<$cx_num;$y++)
 		{
 			$ycoords = $cy_num-$y;
-
+			
 			$counter_left="".IMAGE_PATH."/map/GalaxyFrameCounterLeft";
 			$counter_left_high="".IMAGE_PATH."/map/GalaxyFrameCounterLeftHighlight";
 
@@ -224,10 +223,10 @@
 			for ($x=0;$x<$cy_num;$x++)
 			{
 				$xcoords = $x+1;				
-
-				$ent = Entity::createFactory($cells[$xcoords][$ycoords]['code'],$cells[$xcoords][$ycoords]['eid']);
+				
+				/** Creating the cell object
 				$cell = new Cell($cells[$xcoords][$ycoords]['cid']);
-
+				*/
 
 				if ($cp->id()==$cells[$xcoords][$ycoords]['eid'])
 				{
@@ -235,10 +234,15 @@
 				}
 				elseif (in_array($cells[$xcoords][$ycoords]['cid'],$user_solsys_ids) && $cells[$xcoords][$ycoords]['eid']!=$cp->id())
 				{
+					if ($cu->discovered((($sx - 1) * $cx_num) + $xcoords,(($sy - 1) * $cy_num) + $ycoords)==0)
+					{
+						$cu->setDiscovered((($sx - 1) * $cx_num) + $xcoords,(($sy - 1) * $cy_num) + $ycoords);
+					}
+					/* With the cell object
 					if ($cu->discovered($cell->absX(),$cell->absY())==0)
 					{
 						$cu->setDiscovered($cell->absX(),$cell->absY());
-					}
+					}*/
 					echo "<td class=\"spaceCellUser\" onmouseover=\"counter_left_$ycoords.src='$counter_left_high$ycoords.gif';counter_bottom_$xcoords.src='$counter_bottom_high$xcoords.gif';\" onmouseout=\"counter_left_$ycoords.src='$counter_left$ycoords.gif';counter_bottom_$xcoords.src='$counter_bottom$xcoords.gif';\">";
 				}
 				else
@@ -247,11 +251,16 @@
 				}
 				
 				// Symbole anzeigen
+				if ($cu->discovered((($sx - 1) * $cx_num) + $xcoords,(($sy - 1) * $cy_num) + $ycoords))
+				{
+				/*With the cell object
 				if ($cu->discovered($cell->absX(),$cell->absY()))
-				{		
+				{		*/
+					$ent = Entity::createFactory($cells[$xcoords][$ycoords]['code'],$cells[$xcoords][$ycoords]['eid']);
+					
 					$tt = new Tooltip();
 					$tt->addTitle($ent->entityCodeString());
-					$tt->addText("Position: $sx/$sy : $xcoords/$ycoords  $absX $absY");
+					$tt->addText("Position: $sx/$sy : $xcoords/$ycoords");
 					$tt->addComment($ent->name());
 					echo "<a href=\"?page=cell&amp;id=".$cells[$xcoords][$ycoords]['cid']."\" ".$tt.">
 						<img src=\"".$ent->imagePath()."\" style=\"border:none;background:#000;width:".$img_width."px;height:".$img_height."px\" />
@@ -262,10 +271,10 @@
 				{
 					$tt = new Tooltip();
 					$tt->addTitle("Unerforschte Raumzelle!");
-					$tt->addText("Position: $sx/$sy : $xcoords/$ycoords  $absX $absY $absP");
+					$tt->addText("Position: $sx/$sy : $xcoords/$ycoords");
 					$tt->addComment("Expedition senden um Zelle sichtbar zu machen.");
 
-					echo "<a href=\"?page=haven\" ".$tt.">
+					echo "<a href=\"?page=haven&cellTarget=".$cells[$xcoords][$ycoords]['cid']."\" ".$tt.">
 						<img src=\"".IMAGE_PATH."/unexplored/ue1.png\" style=\"border:none;background:#000;width:".$img_width."px;height:".$img_height."px\" />
 					</a>";
 				}

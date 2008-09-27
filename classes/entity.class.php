@@ -386,7 +386,32 @@
 			{
 				return false;
 			}
-		}			
+		}	
+		
+  	  /**
+	  * Creates an instance of a child class
+	  * 
+	  */ 
+		static public function createFactoryUnkownCell($cell=0)
+		{
+			$res=dbquery("
+			SELECT
+				entities.id
+			FROM
+				entities
+			WHERE 	
+				entities.cell_id='".$cell."'
+				AND entities.pos='0';");
+			
+			if (mysql_num_rows($res)>0)
+			{
+				$arr = mysql_fetch_array($res);
+				$id = $arr[0];
+				return new UnknownEntity($id);
+			}
+				
+			return false;	
+		}		
 		
 		static public $entityColors = array('s'=>'#ff0','p'=>'#0f0','a'=>'#ccc','n'=>'#FF00FF','w'=>'#8000FF','e'=>'#55f');
 					

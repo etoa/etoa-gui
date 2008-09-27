@@ -56,8 +56,7 @@
 				$res = dbquery("
 				SELECT
 					id,
-					code,
-					explore_code
+					code
 				FROM
 					entities
 				WHERE
@@ -67,7 +66,7 @@
 				");
 				while ($arr=mysql_fetch_row($res))
 				{
-					$this->entities[] = Entity::createFactory($arr[1],$arr[0],$arr[2]);
+					$this->entities[] = Entity::createFactory($arr[1],$arr[0]);
 				}
 			}
 			return $this->entities;

@@ -6,8 +6,8 @@
 		function FleetActionSupport()
 		{
 			$this->code = "support";
-			$this->name = "Unterstützen";
-			$this->desc = "Fliegt zum Ziel, um dort ein Allianzmitglied zu unterstützen.";
+			$this->name = "UnterstÃ¼tzen";
+			$this->desc = "Fliegt zum Ziel, um dort ein Allianzmitglied zu unterstÃ¼tzen.";
 			$this->longDesc = "Die Flotte fliegt zu einem eigenen Ziel und die Schiffe verweilen dort im Orbit und stehen dem dortigen Planetenbesitzer im Kampfe bei.";
 			$this->visible = true;
 			$this->exclusive = false;					
