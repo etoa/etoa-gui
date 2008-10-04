@@ -108,28 +108,22 @@
 	/***********
 	* Flotten  *
 	************/
-/*
+
 		//
 		// Eigene Flotten
 		//
-		$fres = dbquery("
-		SELECT 
-			fleet_id 
-		FROM 
-			fleet 
-		WHERE 
-			fleet_user_id='".$cu->id()." '
-		ORDER BY 
-			fleet_landtime ASC;");
+		$fm = new FleetManager($cu->id(),$cu->allianceId());
+		$fm->loadOwn();	
+		
 		//Mehrere Flotten
-		if (mysql_num_rows($fres)>1)
+		if ($fm->count() > 1)
 		{
-			echo "<td><a href=\"?page=fleets\" style=\"color:#0f0\"><b>".mysql_num_rows($fres)."</b> eigene Flotten</a></td>";
+			echo "<td><a href=\"?page=fleets\" style=\"color:#0f0\"><b>".$fm->count()."</b> eigene Flotten</a></td>";
 		}
 		//Eine Flotte
-		elseif (mysql_num_rows($fres)==1)
+		elseif ($fm->count()==1)
 		{
-			echo "<td><a href=\"?page=fleets\" style=\"color:#0f0\"><b>".mysql_num_rows($fres)."</b> eigene Flotte</a></td>";
+			echo "<td><a href=\"?page=fleets\" style=\"color:#0f0\"><b>".$fm->count()."</b> eigene Flotte</a></td>";
 		}
 		//Keine Flotten
 		else
@@ -141,46 +135,23 @@
 		//
 		// Fremde Flotten
 		//
-		$num_friend=check_fleet_incomming_friendly($cu->id()); //Nicht feindliche Flotten
-		$num=check_fleet_incomming($cu->id()); //Feindliche Flotten
-		$all = $num + $num_friend;
-		//Nur feindliche Flotten -> rot
-		if($num>0 && $num_friend==0)
+		$fm->loadForeign();
+		//Mehrere Flotten
+		if ($fm->count() > 1)
 		{
-			$style="color:#f00";
+			echo "<td><a href=\"?page=fleets\" style=\"".$fm->attitude()."\"><b>".$fm->count()."</b> fremde Flotten</a></td>";
 		}
-		//Feindlich- und friedlich gesinnte Flotten -> organge
-		elseif($num>0 && $num_friend>0)
+		//Eine Flotte
+		elseif ($fm->count()==1)
 		{
-			$style="color:orange";
+			echo "<td><a href=\"?page=fleets\" style=\"".$fm->attitude()."\"><b>".$fm->count()."</b> fremde Flotte</a></td>";
 		}
-		//Freundliche Flotten -> grün
-		elseif($num==0 && $num_friend>0)
+		//Keine Flotten
+		else
 		{
-			$style="color:#0f0";
+			echo "<td>Keine fremde Flotten</td>";
 		}
-	
-		//Mehrere fremde Flotten
-	  if ($all>1)
-	  {
-	      echo "<td><a href=\"?page=fleets\" style=\"".$style."\"><b>".$all."</b> fremde Flotten</a></td>";
-	  }
-	  //Eine fremde Flotte
-	  elseif($all==1)
-	  {
-	      echo "<td><a href=\"?page=fleets\" style=\"".$style."\"><b>".$all."</b> fremde Flotte</a></td>";
-	  }
-	  //Keine fremde Flotten
-	  else
-	  {
-	  	echo "<td>Keine fremden Flotten</td>";
-	  }
-	  */
 
-
-		//übergangslösung
-		echo "<td>...</td>";
-		echo "<td>...</td>";
 
 
 	/*****************
@@ -572,6 +543,8 @@
 		
 		while ($arr_planet = mysql_fetch_array($res_planet))
 		{
+			if ($arr_planet['planet_name']=="") $planet_name="Unbenannt";
+			else $planet_name = $arr_planet['planet_name'];
       // Bauhof infos
       $res_building = dbquery("
       SELECT
@@ -716,14 +689,14 @@
         $defense_name[$arr_planet['id']] = "";
       }
 	
-			$planet_info = "<b>".$arr_planet['planet_name']."</b><br>".$building_name." ".$building_level."<br>(TIME)";
+			$planet_info = "<b>".$planet_name."</b><br>".$building_name." ".$building_level."<br>(TIME)";
 			$planet_image_path = "".IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$arr_planet['planet_image']."_middle.gif";
 	
 			// Planet bild mit link zum bauhof und der informationen übergabe beim mouseover
 	    $planet_link = "<a href=\"?page=buildings&planet_id=".$arr_planet['id']."\"><img id=\"Planet\" src=\"".$planet_image_path."\" width=\"".$pic_width."\" height=\"".$pic_height."\" border=\"0\" 
 	    onMouseOver=\"show_info(
 			'".$arr_planet['id']."',
-			'".$arr_planet['planet_name']."',
+			'".$planet_name."',
 			'".$building_name."',
 			'".$building_time."',
 			'".$shipyard_name[$arr_planet['id']]."',

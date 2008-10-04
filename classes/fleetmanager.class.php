@@ -4,8 +4,10 @@
 	{
 		private $userId;
 		private $allianceId;
+		private $userSpyTechLevel;
 		private $count;
-		private $fleet;		
+		private $aggressivCount;
+		private $fleet;
 		
 		function FleetManager($userId,$allianceId=0)
 		{
@@ -66,6 +68,7 @@
 		function loadForeign()
 		{
 			$this->count = 0;
+			$this->aggressivCount = 0;
 			$this->fleet = array();
 			
 			//Lädt Flottendaten
@@ -84,13 +87,56 @@
 				landtime DESC;");
 			if (mysql_num_rows($fres)>0)
 			{	
+				//User Spytech
+				$tl = new TechList($this->userId);
+				$this->userSpyTechLevel = $tl->getLevel(SPY_TECH_ID);
+				
 				while ($farr = mysql_fetch_row($fres))
 				{
-					$this->fleet[$farr[0]] = new Fleet($farr[0]);
-					$this->count++;
+					$cFleet = new Fleet($farr[0]);			
+					
+					if ($cFleet->getAction()->visible()) {
+						if ($cFleet->getAction()->attitude()==3) {
+							$otl = new TechList($cFleet->ownerId());
+							$opTarnTech = $otl->getLevel(TARN_TECH_ID);
+							
+							$diffTimeFactor = max($opTarnTech-$this->userSpyTechLevel,0);
+							
+							$specialShipBonusTarn = 0;
+							$specialBoniRes = dbquery("
+								SELECT
+									s.special_ship_bonus_tarn,
+									fs.fs_special_ship_bonus_tarn
+								FROM
+									ships s
+								INNER JOIN
+									fleet_ships fs
+								ON s.ship_id = fs.fs_ship_id
+									AND fs.fs_fleet_id='".$farr[0]."'
+									AND s.special_ship='1';
+								");
+							if(mysql_num_rows($specialBoniRes)>0)
+        					{
+            					while ($specialBoniArr = mysql_fetch_assoc($specialBoniRes))
+								{
+									$specialShipBonusTarn += $specialBoniArr['special_ship_bonus_tarn'] * $specialBoniArr['fs_special_ship_bonus_tarn'];
+            					}
+        					}
+							$diffTimeFactor = 0.1 * min(9,$diffTimeFactor + 10 * $specialShipBonusTarn);
+							
+							if ($cFleet->remainingTime() <  ($cFleet->landTime() - $cFleet->launchTime())*(1 - $diffTimeFactor)) {
+								$this->fleet[$farr[0]] = $cFleet;
+								$this->count++;
+								$this->aggressivCount++;
+							}
+						} else {						
+							$this->fleet[$farr[0]] = $cFleet;
+							$this->count++;
+						}
+					}
 				}		
 			}
-		}
+		}	
 		
 		function loadAllianceSupport()
 		{
@@ -156,10 +202,27 @@
 		{
 			return $this->count;
 		}
-		
+	
 		function getAll()
 		{
 			return $this->fleet;
+		}
+		
+		function spyTech()
+		{
+			return $this->userSpyTechLevel;
+		}
+		
+		function attitude()
+		{
+			if ($agressivCount==$this->count) return "color:#0f0";
+			elseif ($aggressivCount==0) return "color:#f00";
+			else return "color:orange";
+		}
+		
+		function loadAggressiv()
+		{
+			return $this->aggressivCount;
 		}
 	
 	}
