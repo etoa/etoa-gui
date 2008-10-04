@@ -543,8 +543,15 @@
 		
 		while ($arr_planet = mysql_fetch_array($res_planet))
 		{
-			if ($arr_planet['planet_name']=="") $planet_name="Unbenannt";
-			else $planet_name = $arr_planet['planet_name'];
+			if ($arr_planet['planet_name']!="")
+			{
+				$planet_name = $arr_planet['planet_name'];
+			}
+			else 
+			{
+				$planet_name = "Unbenannt";
+			}
+			
       // Bauhof infos
       $res_building = dbquery("
       SELECT
@@ -593,6 +600,7 @@
       else
       {
         $building_time = "";
+        $building_rest_time = "";
         $building_name = "";
         $building_level = "";
       }
@@ -670,7 +678,7 @@
       	//Defname
       	$defense_name[$arr_planet['id']] = $arr_defense['def_name'];
 
-        //infos über den raumschiffswerft
+        // Infos über die Waffenfabrik
         $defense_h=floor($defense_rest_time[$arr_planet['id']]/3600);
         $defense_m=floor(($defense_rest_time[$arr_planet['id']]-$defense_h*3600)/60);
         $defense_s=$defense_rest_time[$arr_planet['id']]-$defense_h*3600-$defense_m*60;
@@ -689,7 +697,7 @@
         $defense_name[$arr_planet['id']] = "";
       }
 	
-			$planet_info = "<b>".$planet_name."</b><br>".$building_name." ".$building_level."<br>(TIME)";
+			$planet_info = "<b>".$planet_name."</b><br>".$building_name." ".$building_level."";
 			$planet_image_path = "".IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$arr_planet['planet_image']."_middle.gif";
 	
 			// Planet bild mit link zum bauhof und der informationen übergabe beim mouseover
@@ -779,10 +787,18 @@
 			}
 	
 			echo "<div id=\"planet_info_".$arr_planet['id']."\" style=\"position:absolute; left:".$left."px; top:".$top."px; width:".$info_box_width."px; height:".$info_box_height."px; text-align:".$text."; vertical-align:middle;\">";
+			
+			// Stellt Zeit Counter dar, wenn ein Gebäude in bau ist
 			if(isset($building_rest_time) && $building_rest_time>0)
 			{
-				echo "".startTime($building_rest_time, 'planet_info_'.$arr_planet['id'].'', 0, $planet_info)."";
+				$planet_info .= "<br>(TIME)";
+				echo "".startTime($building_rest_time, "planet_info_".$arr_planet['id']."", 0, $planet_info)."";
 			}
+			else
+			{
+				echo $planet_info;
+			}
+			
 			echo "</div>";
 			$degree = $degree + (360/$division);
 		}
