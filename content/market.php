@@ -2310,7 +2310,7 @@
 	      INSERT INTO
 	      ".$db_table['market_ressource']."
 	          (user_id,
-	          id,
+	          planet_id,
 	          cell_id,
 	          sell_metal,
 	          sell_crystal,
@@ -4183,11 +4183,6 @@
             infobox_end(1);
             echo "<br/><br/>";
             
-							/*
-						$cnt++;
-						if ($cnt<mysql_num_rows($res))
-							echo "<tr><td class=\"tbldata\" colspan=\"6\" style=\"height:10px;background:#000\"></td></tr>";
-							*/
 					}
 					echo "<script type=\"text/javascript\">";
                 foreach ($acnts as $cfield=> $ctime)
@@ -4251,6 +4246,28 @@
 			// Summiert die eingestellten Angebote und berechnet die Anzahl der noch einstellbaren Angebote
 			$anzahl = $cnt_arr['ress_cnt'] + $cnt_arr['ship_cnt'] + $cnt_arr['auction_cnt'];
 			$possible=MARKET_LEVEL-$anzahl;
+			
+			
+			// Lädt Stufe des Allianzmarktplatzes
+			$alliance_market_res=dbquery("
+			SELECT 
+				alliance_buildlist_current_level
+			FROM 
+				alliance_buildlist
+			WHERE
+				alliance_buildlist_alliance_id='".$cu->allianceId()."' 
+				AND alliance_buildlist_building_id='".ALLIANCE_MARKET_ID."'
+			;");
+			if(mysql_num_rows($alliance_market_res)>0)
+			{
+				$alliance_market_row=mysql_fetch_row($alliance_market_res);
+				$alliance_market_level = $alliance_market_row[0];
+			}
+			else
+			{
+				$alliance_market_level = 0;
+			}
+			
 			
 			echo "Im Moment hast du ".$anzahl." Angebote von diesem Planet auf dem Markt<br/>";
 			echo "Du kannst noch ".$possible." Angebote einstellen<br/>";
@@ -4364,8 +4381,8 @@
           				<td class=\"tbldata\" colspan=\"4\" style=\"vertical-align:middle;\">
           					<input type=\"text\" value=\"\" name=\"ressource_text\" id=\"ressource_text\" size=\"55\" maxlength=\"60\" ".tm("Text","Schreib einen kleinen Werbetext f&uuml;r deine Waren.")." onkeyup=\"calcMarketRessPrice('0');\"/>	
           				</td>";
-          //Für allianzmitglied reservieren
-          if($cu->allianceId()!=0)
+          //Für Allianzmitglied reservieren wenn in einer Allianz und diese den Allianzmarktplatz auf Stufe 1 oder höher hat
+          if($cu->allianceId()!=0 && $alliance_market_level>=1)
           {
             echo "<td class=\"tbldata\" colspan=\"1\" style=\"vertical-align:middle;\" ".tm("Reservation","Fall dieses Angebot nur Spieler aus deiner Allianz kaufen sollen, mach hier ein H&auml;kchen").">
             				<input type=\"checkbox\" name=\"ressource_for_alliance\" value=\"1\" /> F&uuml;r Allianzmitglieder Reservieren
@@ -4389,8 +4406,6 @@
         }		
 				
 				
-				
-
 
 				//
 				// Schiffe
@@ -4555,9 +4570,9 @@
 	          				<td class=\"tbldata\" colspan=\"4\" style=\"vertical-align:middle;\">
 	          					<input type=\"text\" value=\"\" name=\"ship_text\" id=\"ship_text\" size=\"55\" maxlength=\"60\" ".tm("Text","Schreib einen kleinen Werbetext f&uuml;r deine Waren.")." onkeyup=\"calcMarketShipPrice(0, 0);\"/>	
 	          				</td>";
-	          //Für allianzmitglied reservieren
-	          if($cu->allianceId()!=0)
-	          {
+	          //Für Allianzmitglied reservieren wenn in einer Allianz und diese den Allianzmarktplatz auf Stufe 2 oder höher hat
+          	if($cu->allianceId()!=0 && $alliance_market_level>=2)
+          	{
 	            echo "<td class=\"tbldata\" colspan=\"1\" style=\"vertical-align:middle;\" ".tm("Reservation","Fall dieses Angebot nur Spieler aus deiner Allianz kaufen sollen, mach hier ein H&auml;kchen").">
 	            				<input type=\"checkbox\" name=\"ship_for_alliance\" value=\"1\"/> F&uuml;r Allianzmitglieder Reservieren
 	            			</td>
@@ -4581,319 +4596,13 @@
           }
         }
         
-				/*
-				//
-				// Schiffe
-				//
-				if(MIN_MARKET_LEVEL_SHIP<=MARKET_LEVEL)
-				{
-          //Zuerst wird überprüft ob auf dem Planeten Schiffe sind, auch ob diese dem User gehören
-          if (mysql_num_rows(dbquery("SELECT shiplist_id FROM ".$db_table['shiplist']." WHERE shiplist_entity_id='".$cp->id()."'"))>0)
-          {
-          	// Folgender Javascript Abschnitt, welcher von PHP-Teilen erzeugt wird, lädt die Daten von den Schiffen, welche sich auf dem aktuellen Planeten befinden, in ein JS-Array. Dies wird für die Preisberechnung benötigt        	
-          	
-          		// Lädt Daten von den vorhandenen Schiffen auf dem aktuellen Planeten
-              $sres=dbquery("
-              SELECT
-                  ships.ship_id,
-                  ships.ship_name,
-                  ships.ship_costs_metal,
-                  ships.ship_costs_crystal,
-                  ships.ship_costs_plastic,
-                  ships.ship_costs_fuel,
-                  ships.ship_costs_food,
-                  shiplist.shiplist_count                            
-              FROM
-                  ".$db_table['shiplist']."
-                  INNER JOIN
-                  ".$db_table['ships']."
-                  ON shiplist.shiplist_ship_id=ships.ship_id
-                  AND shiplist.shiplist_entity_id='".$cp->id()."'
-                  AND shiplist.shiplist_count>'0'
-                  AND ships.special_ship='0'
-              ORDER BY
-                  ships.ship_name;");
-              $ships=array();
-              while ($sarr=mysql_fetch_array($sres))
-              {
-                  $ships[$sarr['ship_id']]=$sarr;
-              }
 
-		          echo "<form action=\"?page=".$page."\" method=\"post\" name=\"ship_selector\" id=\"ship_selector\">\n";
-		          echo $cstr;
-
-							//Check Feld (wird beim Klicken auf den Submit-Button noch einmal aktualisiert)
-          		echo "<input type=\"hidden\" value=\"0\" name=\"ship_check_submit\" id=\"ship_check_submit\"/>";
-          		echo "<input type=\"hidden\" value=\"0\" name=\"ship_last_update\" id=\"ship_last_update\"/>";			
-
-		          infobox_start("Schiffe verkaufen",1);
-		
-							// Übergibt Schiffsdaten dem xajax Tool
-							$_SESSION['market']['ship_data']=$ships;
-															
-										
-										
-							// Header Angebot
-							echo "<tr>
-											<td class=\"tbldata\" height=\"30\" colspan=\"3\" style=\"vertical-align:middle;\">
-												<select name=\"ship_list\" id=\"ship_list\" onchange=\"xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'),1);\">";
-												// Listet alle vorhandenen Schiffe auf
-					              foreach ($ships as $sarr)
-					              {
-					                echo "<option value=\"".$sarr['ship_id']."\">".$sarr['ship_name']." (".$sarr['shiplist_count'].")</option>";
-					              }
-              		echo "</select>
-              				</td>
-              				<td class=\"tbldata\" height=\"30\" colspan=\"2\" style=\"vertical-align:middle;\">
-              					<input type=\"text\" value=\"0\" name=\"ship_count\" id=\"ship_count\" size=\"5\" maxlength=\"7\" onkeyup=\"xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'),1);\" /> St&uuml;ck
-              				</td>
-              			</tr>";										
-																
-							
-							//Header Preis
-							echo "<tr>
-											<td class=\"tbltitle\" style=\"width:15%;vertical-align:middle;\">Rohstoff</td>
-											<td class=\"tbltitle\" style=\"width:10%;vertical-align:middle;\">Angebot</td>
-											<td class=\"tbltitle\" style=\"width:5%;text-align:center;vertical-align:middle;\">Kurs</td>
-											<td class=\"tbltitle\" style=\"width:10%;vertical-align:middle;\">Preis</td>
-											<td class=\"tbltitle\" style=\"width:40%;vertical-align:middle;\">Min./Max.</td>
-										</tr>";
-							// Titan
-							echo "<tr>
-											<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_METAL.":</td>
-											<td class=\"tbldata\" id=\"ship_sell_metal_field\" style=\"vertical-align:middle;\">
-												<input type=\"text\" value=\"0\" name=\"ship_sell_metal\" id=\"ship_sell_metal\" size=\"7\" maxlength=\"15\" disabled=\"disabled\"/>
-											</td>		
-											<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_METAL_FACTOR."</td>	<td class=\"tbldata\" id=\"ship_buy_metal_field\" style=\"vertical-align:middle;\">
-												<input type=\"text\" value=\"0\" name=\"ship_buy_metal\" id=\"ship_buy_metal\" size=\"7\" maxlength=\"15\" onkeyup=\"xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));\"/>
-											</td>
-											<td class=\"tbltitle\" id=\"ship_min_max_metal\" style=\"vertical-align:middle;\"> - </td>
-										</tr>";
-							// Silizium
-							echo "<tr>
-											<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_CRYSTAL.":</td>
-											<td class=\"tbldata\" id=\"ship_sell_crystal_field\" style=\"vertical-align:middle;\">
-												<input type=\"text\" value=\"0\" name=\"ship_sell_crystal\" id=\"ship_sell_crystal\" size=\"7\" maxlength=\"15\" disabled=\"disabled\"/>
-											</td>	
-											<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_CRYSTAL_FACTOR."</td>										
-											<td class=\"tbldata\" id=\"ship_buy_crystal_field\" style=\"vertical-align:middle;\">
-												<input type=\"text\" value=\"0\" name=\"ship_buy_crystal\" id=\"ship_buy_crystal\" size=\"7\" maxlength=\"15\" onkeyup=\"xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));\"/>
-											</td>
-											<td class=\"tbltitle\" id=\"ship_min_max_crystal\" style=\"vertical-align:middle;\"> - </td>
-										</tr>";		
-							// PVC
-							echo "<tr>
-											<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_PLASTIC.":</td>
-											<td class=\"tbldata\" id=\"ship_sell_plastic_field\" style=\"vertical-align:middle;\">
-												<input type=\"text\" value=\"0\" name=\"ship_sell_plastic\" id=\"ship_sell_plastic\" size=\"7\" maxlength=\"15\" disabled=\"disabled\"/>
-											</td>	
-											<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_PLASTIC_FACTOR."</td>											
-											<td class=\"tbldata\" id=\"ship_buy_plastic_field\" style=\"vertical-align:middle;\">
-												<input type=\"text\" value=\"0\" name=\"ship_buy_plastic\" id=\"ship_buy_plastic\" size=\"7\" maxlength=\"15\" onkeyup=\"xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));\"/>
-											</td>
-											<td class=\"tbltitle\" id=\"ship_min_max_plastic\" style=\"vertical-align:middle;\"> - </td>
-										</tr>";	
-							// Tritium
-							echo "<tr>
-											<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_FUEL.":</td>
-											<td class=\"tbldata\" id=\"ship_sell_fuel_field\" style=\"vertical-align:middle;\">
-												<input type=\"text\" value=\"0\" name=\"ship_sell_fuel\" id=\"ship_sell_fuel\" size=\"7\" maxlength=\"15\" disabled=\"disabled\"/>
-											</td>	
-											<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_FUEL_FACTOR."</td>		<td class=\"tbldata\" id=\"ship_buy_fuel_field\" style=\"vertical-align:middle;\">
-												<input type=\"text\" value=\"0\" name=\"ship_buy_fuel\" id=\"ship_buy_fuel\" size=\"7\" maxlength=\"15\" onkeyup=\"xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));\"/>
-											</td>
-											<td class=\"tbltitle\" id=\"ship_min_max_fuel\" style=\"vertical-align:middle;\"> - </td>
-										</tr>";
-							// Nahrung
-							echo "<tr>
-											<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_FOOD.":</td>
-											<td class=\"tbldata\" id=\"ship_sell_food_field\" style=\"vertical-align:middle;\">
-												<input type=\"text\" value=\"0\" name=\"ship_sell_food\" id=\"ship_sell_food\" size=\"7\" maxlength=\"15\" disabled=\"disabled\"/>
-											</td>		
-											<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_FOOD_FACTOR."</td>		<td class=\"tbldata\" id=\"ship_buy_food_field\" style=\"vertical-align:middle;\">
-												<input type=\"text\" value=\"0\" name=\"ship_buy_food\" id=\"ship_buy_food\" size=\"7\" maxlength=\"15\" onkeyup=\"xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));\"/>
-											</td>
-											<td class=\"tbltitle\" id=\"ship_min_max_food\" style=\"vertical-align:middle;\"> - </td>
-										</tr>";		
-										
-		          //Verkaufstext und für Allianzmitglied reservieren
-		          echo "<tr>
-		          				<td class=\"tbltitle\" colspan=\"5\" style=\"text-align:center;vertical-align:middle;\">Beschreibung und Reservation</td>
-		          			</tr>
-		          			<tr>
-		          				<td class=\"tbldata\" colspan=\"4\" style=\"vertical-align:middle;\">
-		          					<input type=\"text\" value=\"\" name=\"ship_text\" size=\"55\" maxlength=\"60\" ".tm("Text","Schreib einen kleinen Werbetext f&uuml;r deine Waren.")." onkeyup=\"xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));\"/>	
-		          				</td>";
-		          //Für allianzmitglied reservieren
-		          if($cu->allianceId()!=0)
-		          {
-		            echo "<td class=\"tbldata\" colspan=\"1\" style=\"vertical-align:middle;\" ".tm("Reservation","Fall dieses Angebot nur Spieler aus deiner Allianz kaufen sollen, mach hier ein H&auml;kchen").">
-		            				<input type=\"checkbox\" name=\"ship_for_alliance\" value=\"1\"/> F&uuml;r Allianzmitglieder Reservieren
-		            			</td>
-		            		</tr>";
-		          }
-		          else
-		          {
-		            echo "<td class=\"tbldata\" colspan=\"1\" style=\"vertical-align:middle;\">&nbsp;</td></tr>";
-		          }			
-		          					
-							// Status Nachricht (Ajax Überprüfungstext)
-							echo "<tr>
-											<td class=\"tbldata\" colspan=\"5\" id=\"ship_check_message\" style=\"text-align:center;vertical-align:middle;height:30px;\">&nbsp;</td>
-										</tr>";								
-		
-		          infobox_end(1);
-		          
-		          // Absend-Button (Per Ajax freigegeben)
-		          echo "<input type=\"button\" class=\"button\" name=\"ship_sell_submit\" id=\"ship_sell_submit\" value=\"Angebot aufgeben\" style=\"color:#f00;\" disabled=\"disabled\" onclick=\"checkUpdate('ship_selector', 'ship_last_update','ship_check_submit');xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'),0,1);\"/></form><br/><br/>";
- 
-          }
-        }
-				*/
 
 				//
 				// Auktionen
 				//
 				if(MIN_MARKET_LEVEL_AUCTION<=MARKET_LEVEL)
-				{
-					/*
-          echo "<form action=\"?page=".$page."\" method=\"post\" name=\"auction_selector\" id=\"auction_selector\">\n";
-          echo $cstr;
-          infobox_start("Rohstoffe versteigern",1);
-          
-          // Frühstes Auktionsende
-          $auction_time = time() + (AUCTION_MIN_DURATION*24*3600);
-          
-        
-
-					//Header
-					echo "<tr>
-									<td class=\"tbltitle\" style=\"width:15%;vertical-align:middle;\">Rohstoff";
-									
-          // Min. Auktionsende an XAJAX weitergeben
-          echo "<input type=\"hidden\" value=\"".$auction_time."\" name=\"auction_time_min\" />";
-          
-          //Roshtoff übergabe an XAJAX (da die $c-variabeln nicht abgerufen werden könnnen)
-          echo "<input type=\"hidden\" value=\"".$cp->resMetal."\" name=\"res_metal\" />";
-          echo "<input type=\"hidden\" value=\"".$cp->resCrystal."\" name=\"res_crystal\" />";
-          echo "<input type=\"hidden\" value=\"".$cp->resPlastic."\" name=\"res_plastic\" />";
-          echo "<input type=\"hidden\" value=\"".$cp->resFuel."\" name=\"res_fuel\" />";
-          echo "<input type=\"hidden\" value=\"".$cp->resFood."\" name=\"res_food\" />";
-          
-          //Check Feld (wird beim Klicken auf den Submit-Button noch einmal aktualisiert)
-          echo "<input type=\"hidden\" value=\"0\" name=\"auction_check_submit\" id=\"auction_check_submit\"/>";
-          echo "<input type=\"hidden\" value=\"0\" name=\"auction_last_update\" id=\"auction_last_update\"/>";
-									
-									
-									echo "</td>
-									<td class=\"tbltitle\" style=\"width:10%;vertical-align:middle;\">Angebot</td>
-									<td class=\"tbltitle\" style=\"width:5%;text-align:center;vertical-align:middle;\">Kurs</td>
-									<td class=\"tbltitle\" style=\"width:5%;vertical-align:middle;\">Preis</td>
-									<td class=\"tbltitle\" colspan=\"2\" style=\"width:45%;text-align:center;vertical-align:middle;\">Zeit</td>
-								</tr>";
-					// Titan
-					echo "<tr>
-									<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_METAL.":</td>
-									<td class=\"tbldata\" style=\"vertical-align:middle;\">
-										<input type=\"text\" value=\"0\" name=\"auction_sell_metal\" id=\"auction_sell_metal\" size=\"7\" maxlength=\"15\" onkeyup=\"xajax_checkMarketAuctionFormular(xajax.getFormValues('auction_selector'));\"/>
-									</td>
-									<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_METAL_FACTOR."</td>
-									<td class=\"tbldata\" id=\"auction_buy_metal_field\" style=\"text-align:center;vertical-align:middle;\">
-										<input type=\"checkbox\" name=\"auction_buy_metal\" value=\"1\" onclick=\"xajax_checkMarketAuctionFormular(xajax.getFormValues('auction_selector'));\" checked=\"checked\"/>
-									</td>
-									<td class=\"tbltitle\" colspan=\"2\" style=\"vertical-align:middle;\">&nbsp;</td>
-								</tr>";												
-					// Silizium und "Dauer" Feld
-					echo "<tr>
-									<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_CRYSTAL.":</td>
-									<td class=\"tbldata\" style=\"vertical-align:middle;\">
-										<input type=\"text\" value=\"0\" name=\"auction_sell_crystal\" id=\"auction_sell_crystal\" size=\"7\" maxlength=\"15\" onkeyup=\"xajax_checkMarketAuctionFormular(xajax.getFormValues('auction_selector'));\"/>
-									</td>
-									<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_CRYSTAL_FACTOR."</td>
-									<td class=\"tbldata\" id=\"auction_buy_crystal_field\" style=\"text-align:center;vertical-align:middle;\">
-										<input type=\"checkbox\" name=\"auction_buy_crystal\" value=\"1\" onclick=\"xajax_checkMarketAuctionFormular(xajax.getFormValues('auction_selector'));\" checked=\"checked\"/>
-									</td>
-									<td class=\"tbltitle\" style=\"vertical-align:middle;\">Dauer:</td>
-									<td class=\"tbldata\" id=\"auction_time_field\" style=\"vertical-align:middle;\">
-										".AUCTION_MIN_DURATION." Tage + ";
-				
-					          //... in Tagen ...
-					          echo "<select name=\"auction_time_days\" id=\"auction_time_days\" onchange=\"xajax_calcMarketAuctionTime(xajax.getFormValues('auction_selector'));\">";
-					          for($x=0;$x<=10;$x++)
-					          {
-					                  echo "<option value=\"".$x."\">".$x."</option>";
-					          }
-					          echo "</select> Tage und ";
-					
-					          //... und in Stunden
-					          echo "<select name=\"auction_time_hours\" id=\"auction_time_hours\" onchange=\"xajax_calcMarketAuctionTime(xajax.getFormValues('auction_selector'));\">";
-					          for($x=0;$x<=24;$x++)
-					          {
-					                  echo "<option value=\"".$x."\">".$x."</option>";
-					          }
-
-					          echo "</select> Stunden";														
-						echo "</td>					
-								</tr>";										
-					// PVC
-					echo "<tr>
-									<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_PLASTIC.":</td>
-									<td class=\"tbldata\" style=\"vertical-align:middle;\">
-										<input type=\"text\" value=\"0\" name=\"auction_sell_plastic\" id=\"auction_sell_plastic\" size=\"7\" maxlength=\"15\" onkeyup=\"xajax_checkMarketAuctionFormular(xajax.getFormValues('auction_selector'));\"/>
-									</td>
-									<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_PLASTIC_FACTOR."</td>
-									<td class=\"tbldata\" id=\"auction_buy_plastic_field\" style=\"text-align:center;vertical-align:middle;\">
-										<input type=\"checkbox\" name=\"auction_buy_plastic\" value=\"1\" onclick=\"xajax_checkMarketAuctionFormular(xajax.getFormValues('auction_selector'));\" checked=\"checked\"/>
-									</td>
-									<td class=\"tbltitle\" colspan=\"2\" style=\"vertical-align:middle;\">&nbsp;</td>
-								</tr>";	
-					// Tritium und "Ende" Feld
-					echo "<tr>
-									<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_FUEL.":</td>
-									<td class=\"tbldata\" style=\"vertical-align:middle;\">
-										<input type=\"text\" value=\"0\" name=\"auction_sell_fuel\" id=\"auction_sell_fuel\" size=\"7\" maxlength=\"15\" onkeyup=\"xajax_checkMarketAuctionFormular(xajax.getFormValues('auction_selector'));\"/>
-									</td>
-									<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_FUEL_FACTOR."</td>
-									<td class=\"tbldata\" id=\"auction_buy_fuel_field\" style=\"text-align:center;vertical-align:middle;\">
-										<input type=\"checkbox\" name=\"auction_buy_fuel\" value=\"1\" onclick=\"xajax_checkMarketAuctionFormular(xajax.getFormValues('auction_selector'));\" checked=\"checked\"/>
-									</td>
-									<td class=\"tbltitle\" style=\"vertical-align:middle;\">Ende:</td>
-									<td class=\"tbldata\" id=\"auction_end_time\" style=\"vertical-align:middle;\">".date("d.m.Y H:i",$auction_time)."</td>										
-								</tr>";
-					// Nahrung
-					echo "<tr>
-									<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_FOOD.":</td>
-									<td class=\"tbldata\" style=\"vertical-align:middle;\">
-										<input type=\"text\" value=\"0\" name=\"auction_sell_food\" id=\"auction_sell_food\" size=\"7\" maxlength=\"15\" onkeyup=\"xajax_checkMarketAuctionFormular(xajax.getFormValues('auction_selector'));\"/>
-									</td>
-									<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_FOOD_FACTOR."</td>
-									<td class=\"tbldata\" id=\"auction_buy_food_field\" style=\"text-align:center;vertical-align:middle;\">
-										<input type=\"checkbox\" name=\"auction_buy_food\" value=\"1\" onclick=\"xajax_checkMarketAuctionFormular(xajax.getFormValues('auction_selector'));\" checked=\"checked\"/>
-									</td>
-									<td class=\"tbltitle\" colspan=\"2\" style=\"vertical-align:middle;\">&nbsp;</td>
-								</tr>";	
-          //Verkaufstext und für Allianzmitglied reservieren
-          echo "<tr>
-          				<td class=\"tbltitle\" colspan=\"6\" style=\"text-align:center;vertical-align:middle;\">Beschreibung</td>
-          			</tr>
-          			<tr>
-          				<td class=\"tbldata\" colspan=\"6\" style=\"text-align:center;vertical-align:middle;\">
-          					<input type=\"text\" value=\"\" name=\"auction_text\" size=\"100\" maxlength=\"60\" ".tm("Text","Schreib einen kleinen Werbetext f&uuml;r deine Waren.")." onkeyup=\"xajax_checkMarketAuctionFormular(xajax.getFormValues('auction_selector'));\"/>	
-          				</td>
-          			</tr>";												
-					// Status Nachricht (Ajax Überprüfungstext)
-					echo "<tr>
-									<td class=\"tbldata\" colspan=\"6\" id=\"auction_check_message\" style=\"text-align:center;vertical-align:middle;height:30px;\">&nbsp;</td>
-								</tr>";		
-														
-          infobox_end(1);
-          
-          // Absend-Button (Per Ajax freigegeben)
-          echo "<input type=\"button\" class=\"button\" name=\"auction_sell_submit\" id=\"auction_sell_submit\" value=\"Angebot aufgeben\" style=\"color:#f00;\" disabled=\"disabled\" onclick=\"checkUpdate('auction_selector', 'auction_last_update','auction_check_submit');xajax_checkMarketAuctionFormular(xajax.getFormValues('auction_selector'),1);\"/></form><br/><br/>";		
-          */	
-          
-          
-          
+				{   
           echo "<form action=\"?page=".$page."\" method=\"post\" name=\"auction_selector\" id=\"auction_selector\">\n";
           echo $cstr;
           infobox_start("Rohstoffe versteigern",1);

@@ -336,6 +336,9 @@
 	define("BUILD_MISSILE_ID",25);								// ID des Raketensilos
 
 	define("BUILD_TECH_ID",14);										// ???
+	
+	// Allianzgebäude
+	define("ALLIANCE_MARKET_ID",2);								// ID des Allianzmarktplatzes
 
 	// Schiffswerft
 	define("SHIPYARD_MIN_BUILD_TIME",20);					// Absolute minimal Bauzeit in Sekunden

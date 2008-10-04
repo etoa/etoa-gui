@@ -18,8 +18,9 @@
 	// Funktionen				
 	//
 	
-	// Wechselt zwischen den Verschiedenen Tabs
 	echo "<script type=\"text/javascript\">
+	
+	// Wechselt zwischen den Verschiedenen Tabs
 	function showTab(idx)
 	{
 		document.getElementById('submitMessage').style.display='none';
@@ -43,7 +44,7 @@
 		// Wechselt Tab
 		showTab('tabStorage');
 		
-		// Wenn zu wenig Rohstoffe auf dem aktuellen Planeten sind, wir eine Nachricht ausgegeben
+		// Wenn zu wenig Rohstoffe auf dem aktuellen Planeten sind, wird eine Nachricht ausgegeben
 		if(".$cp->resMetal."<metal
 				|| ".$cp->resCrystal."<crystal
 				|| ".$cp->resPlastic."<plastic
@@ -58,11 +59,12 @@
 	function changeResBox(metal, crystal, plastic, fuel, food)
 	{
 		document.getElementById('resBoxMetal').innerHTML=FormatNumber('return',metal,'','','');
-		document.getElementById('resBoxCrystal').innerHTML=FormatNumber('return',crystal,'','','');;
-		document.getElementById('resBoxPlastic').innerHTML=FormatNumber('return',plastic,'','','');;
-		document.getElementById('resBoxFuel').innerHTML=FormatNumber('return',fuel,'','','');;
-		document.getElementById('resBoxFood').innerHTML=FormatNumber('return',food,'','','');;
+		document.getElementById('resBoxCrystal').innerHTML=FormatNumber('return',crystal,'','','');
+		document.getElementById('resBoxPlastic').innerHTML=FormatNumber('return',plastic,'','','');
+		document.getElementById('resBoxFuel').innerHTML=FormatNumber('return',fuel,'','','');
+		document.getElementById('resBoxFood').innerHTML=FormatNumber('return',food,'','','');
 	}
+	
 	</script>";	
 		
 	// Stellt die ganzen Bauoptionen dar, und errechnet und formatiert die Preise und gibt die Infos in einem Array zurück
@@ -278,7 +280,7 @@
 		
  	//
  	// Datenverarbeitung 1: Muss vor dem laden der neuen Daten geschehen
- 	// Spenden und Einzahlungsoptionen speichern
+ 	// Spenden und Einzahlungsoptionen speichern, Schiffe kaufen
  	//
  	
  	// Speichert Nachricht, welche später ausgegeben wird
@@ -414,6 +416,253 @@
 	}		
 		
 		
+	//
+	// Schiffe kaufen
+	//
+		
+	if(isset($_POST['ship_submit']) && checker_verify())
+	{
+		// Prüft, ob ein User gewählt wurde
+		if($_POST['user_buy_ship']>0)
+		{		
+			// Gebaute Schiffe laden
+			$res = dbquery("
+			SELECT
+				shiplist_ship_id,
+				shiplist_entity_id,
+    		shiplist_count
+			FROM
+    		shiplist
+			WHERE
+  			shiplist_user_id='".$_POST['user_buy_ship']."';");
+			while ($arr = mysql_fetch_assoc($res))
+			{
+				$shiplist[$arr['shiplist_ship_id']][$arr['shiplist_entity_id']]=$arr['shiplist_count'];
+			}
+			
+			print_r($shiplist);
+			echo "shiplist<br><br>";
+			
+			// Bauliste von allen Planeten laden und nach Schiffe zusammenfassen
+			$res = dbquery("
+			SELECT
+    		queue_id,
+    		queue_ship_id,
+    		SUM(queue_cnt) AS cnt
+			FROM
+    		ship_queue
+			WHERE
+  			queue_user_id='".$_POST['user_buy_ship']."'
+  			AND queue_endtime>'".$time."'
+  		GROUP BY
+    		queue_ship_id;");
+			while ($arr = mysql_fetch_assoc($res))
+			{
+				$queue_total[$arr['queue_ship_id']] = $arr['cnt'];
+			}	
+			print_r($queue_total);
+			echo "queue<br><br>";
+			// Flotten laden und nach Schiffe zusammenfassen
+			$res = dbquery("
+      SELECT
+      	fs_ship_id,
+       	SUM(fs.fs_ship_cnt) AS cnt
+      FROM
+         fleet AS f
+       INNER JOIN
+         fleet_ships AS fs
+       ON f.id=fs.fs_fleet_id
+	    WHERE
+	      f.user_id='".$_POST['user_buy_ship']."'
+	    GROUP BY
+	    	fs.fs_ship_id;");
+			while ($arr = mysql_fetch_assoc($res))
+			{
+				$fleet[$arr['fs_ship_id']] = $arr['cnt'];
+			}
+			print_r($fleet);
+			echo "fleet<br><br>";
+			
+			$ship_costs = 0;
+			$to_much = false;
+			foreach ($_POST['buy_ship'] as $ship_id => $build_cnt)
+			{
+				// Formatiert die eingegebene Zahl (entfernt z.B. die Trennzeichen)
+				$build_cnt = nf_back($build_cnt);
+				
+				if($build_cnt>0)
+				{
+					// Zählt die Anzahl Schiffe dieses Typs im ganzen Account...
+		      $ship_count = 0;
+		      // ... auf den Planeten
+		      if(isset($shiplist[$ship_id]))
+		      {
+		      	$ship_count += array_sum($shiplist[$ship_id]);
+		      }
+		      // ... in der Bauliste
+		      if(isset($queue_total[$ship_id]))
+		      {
+		      	$ship_count += $queue_total[$ship_id];
+		      }
+					// ... in der Luft
+		      if(isset($fleet[$ship_id]))
+		      {
+		      	$ship_count += $fleet[$ship_id];
+		      }
+		      
+		      // Total Schiffe mit den zu bauenden
+					$total_count = $build_cnt + $ship_count;
+								
+					echo "<br><br>SChiffsanzahl:<br><br>shiplist: ".array_sum($shiplist[$ship_id])."<br>queue: ".$queue_total[$ship_id]."<br>luft: ".$fleet[$ship_id]."<br><br>total cnt: ".$total_count."<br><br>max cnt: ".$_POST['ship_max_count_'.$ship_id.'']."<br><br>";		
+					
+					// Prüft ob Anzahl grösser ist als Schiffsmaximum
+					if($_POST['ship_max_count_'.$ship_id.''] >= $total_count || $_POST['ship_max_count_'.$ship_id.''] == 0)
+					{
+						// Berechnet die Kosten
+						$ship_costs += $build_cnt * $_POST['ship_costs_'.$ship_id.''];
+					}
+					// Die Anzahl übersteigt die Max. Anzahl -> Nachricht wird ausgegeben
+					else
+					{
+						$to_much = true;
+					}
+				}
+			}
+			
+			// Prüft, ob die Maximalanzahl nicht überschritten wird
+			if(!$to_much)
+			{
+				// Lädt Schiffspunkte und Hauptplanet des gewählten Users
+				$res = dbquery("
+				SELECT
+					users.user_alliace_shippoints,
+					planets.id
+				FROM
+						users
+					INNER JOIN
+						planets
+					ON planet_user_id=user_id
+				WHERE
+					planets.planet_user_main='1'
+					AND users.user_id='".$_POST['user_buy_ship']."';");		
+				$arr = mysql_fetch_assoc($res);
+				
+				// Prüft ob Schiffspunkte noch ausreichend sind
+				if($arr['user_alliace_shippoints'] >= $ship_costs)
+				{
+					// Zieht Punkte vom Konto ab
+					dbquery("
+					UPDATE
+						users
+					SET
+						user_alliace_shippoints=user_alliace_shippoints-'".$ship_costs."',
+						user_alliace_shippoints_used=user_alliace_shippoints_used+'".$ship_costs."'
+					WHERE
+						user_id='".$_POST['user_buy_ship']."'
+					");
+					
+					
+					// Lädt das Allianzentity
+					$res = dbquery("
+					SELECT
+						id
+					FROM
+						entities
+					WHERE
+						code='x';");		
+					$row = mysql_fetch_row($res);
+					
+					
+					// Speichert Flotte
+	        $launchtime = time(); // Startzeit
+	        $duration = 3600; // Dauer 1h
+	        $landtime = $launchtime + $duration; // Landezeit
+	        dbquery("
+					INSERT INTO fleet
+					(
+						user_id,
+						entity_from,
+						entity_to,
+						launchtime,
+						landtime,
+						action
+					)
+					VALUES
+					(
+						'".$_POST['user_buy_ship']."',
+						'".$row[0]."',
+						'".$arr['id']."',
+						'".$launchtime."',
+						'".$landtime."',
+						'delivery'
+					);");
+					
+					
+					// Speichert Schiffe in der Flotte
+					$sql = "";
+					$log = "";
+					$cnt = 0;
+					foreach ($_POST['buy_ship'] as $ship_id => $build_cnt)
+					{
+						// Formatiert die eingegebene Zahl (entfernt z.B. die Trennzeichen)
+						$build_cnt = nf_back($build_cnt);
+				
+						if($build_cnt>0)
+						{
+							// Stellt SQL-String her
+							if($cnt==0)
+							{
+								$sql .= "('".mysql_insert_id()."', '".$ship_id."', '".$build_cnt."')";
+								
+								// Gibt einmalig eine OK-Medlung aus
+								$submit_message .= "Schiffe wurden erfolgreich hergestellt!<br><br>";
+							}
+							else
+							{
+								$sql .= ", ('".mysql_insert_id()."', '".$ship_id."', '".$build_cnt."')";
+							}
+							
+							// Listet gewählte Schiffe für Log auf
+							$log .= "[b]".$_POST['ship_name_'.$ship_id.''].":[/b] ".nf($build_cnt)."\n";
+							
+							$cnt++;
+						}
+					}
+					
+					// Speichert Schiffe durch durch den generierten String
+	        dbquery("
+					INSERT INTO
+					".$db_table['fleet_ships']."
+					(
+						fs_fleet_id,
+						fs_ship_id,
+						fs_ship_cnt
+					)
+					VALUES
+						".$sql."
+					;");
+					
+					// Zur Allianzgeschichte hinzufügen
+		      add_alliance_history($cu->allianceId(),"Folgende Schiffe wurden für [b]".get_user_nick($_POST['user_buy_ship'])."[/b] hergestellt:\n".$log."\n".nf($ship_costs)." Teile wurden dafür benötigt.");
+					
+				}
+				else
+				{
+					$submit_message .= "Der gewählte User hat nicht genügend Teile übrig!<br><br>";
+				}
+			}
+			else
+			{
+				$submit_message .= "Die Maximalanzahl der Schiffe würde mit der eingegebenen Menge überschritten werden!<br><br>";
+			}
+		}
+		else
+		{
+			$submit_message .= "Es wurde kein User ausgewählt!<br><br>";
+		}
+	}	
+		
+		
 		
 		
 	//
@@ -449,16 +698,11 @@
 	WHERE
 		user_alliance_id='".$cu->allianceId()."';");
 	$alliance_member_cnt = mysql_num_rows($res);
-	echo "<script type=\"text/javascript\">
-	alliance_members = Array(); ";
 	while($arr=mysql_fetch_assoc($res))		
 	{
-		$alliance_members[$arr['user_id']] = $arr;
-		
-		echo "alliance_members[".$arr['user_id']."] = ".$arr['user_alliace_shippoints'].";";
+		$alliance_members[$arr['user_id']] = $arr;	
 	}
 
-	echo "</script>";
 
 	// Allianzgebäude
 	$res = dbquery("
@@ -530,6 +774,38 @@
 			$researchsomething = true;
 		}
 	}	
+	
+	// Allianzschiffe (wenn Schiffswerft gebaut)
+	if($shipyard)
+	{
+		
+		$res = dbquery("
+		SELECT
+			ship_id,
+			ship_name,
+			ship_longcomment,
+			ship_speed,
+			ship_time2start,
+			ship_time2land,
+			ship_structure,
+			ship_shield,
+			ship_weapon,
+			ship_max_count,
+			ship_alliance_shipyard_level,
+			ship_alliance_costs
+		FROM
+			ships
+		WHERE
+			ship_alliance_shipyard_level<='".$buildlist[ALLIANCE_SHIPYARD_ID]['alliance_buildlist_current_level']."'
+			AND ship_alliance_shipyard_level>0
+		ORDER BY
+			ship_alliance_shipyard_level;");
+		while($arr=mysql_fetch_assoc($res))		
+		{
+			$ships[$arr['ship_id']] = $arr;
+		}
+	}
+	
 	
 	
 	
@@ -1346,25 +1622,85 @@
 		infobox_start("Guthaben Übersicht",1);
 		
 		echo "<tr>
-						<td class=\"tbldata\" style=\"text-align:center;\">Punkte: ".$alliance_members[$cu->id()]['user_alliace_shippoints']."</td>
+						<td class=\"tbldata\" style=\"text-align:center;\">Schiffsteile pro Stunde: ".(2*$conf['alliance_shippoints_per_hour']['v'] + $conf['alliance_shippoints_per_hour']['v']*$buildlist[ALLIANCE_SHIPYARD_ID]['alliance_buildlist_current_level'])."</td>
+					</tr>
+					<tr>
+						<td class=\"tbldata\" style=\"text-align:center;\">Vorhandene Teile: ".$alliance_members[$cu->id()]['user_alliace_shippoints']."</td>
 					</tr>";
 		
 		infobox_end(1);
 		
 		
-		infobox_start("Kauf",1);
+		// Listet Schiffe auf
+		if(isset($ships))
+		{
+			foreach($ships as $id => $data)
+			{						
+				$path = IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$data['ship_id']."_middle.".IMAGE_EXT;
+				infobox_start($data['ship_name'],1);
+				echo "<tr>
+	                <td class=\"tbldata\" style=\"width:120px;background:#000;vertical-align:middle;\">
+	                	<img src=\"".$path."\" style=\"width:120px;height:120px;border:none;\" alt=\"".$data['ship_name']."\"/>
+	                	<input type=\"hidden\" value=\"".$data['ship_name']."\" id=\"ship_name_".$data['ship_id']."\" name=\"ship_name_".$data['ship_id']."\" />
+	                </td>
+	                <td class=\"tbldata\" style=\"vertical-align:top;height:100px;\">
+	                	".$data['ship_longcomment']."
+	               	</td>
+				     </tr>";
+				infobox_end(1,1);
+				
+				infobox_start("",1);
+				echo "<tr>
+								<td class=\"tbltitle\" style=\"width:13%\">Waffen</td>
+								<td class=\"tbltitle\" style=\"width:13%\">Struktur</td>
+								<td class=\"tbltitle\" style=\"width:13%\">Schild</td>
+								<td class=\"tbltitle\" style=\"width:13%\">Speed</td>
+								<td class=\"tbltitle\" style=\"width:13%\">Startzeit</td>
+								<td class=\"tbltitle\" style=\"width:13%\">Landezeit</td>
+								<td class=\"tbltitle\" style=\"width:12%\">Kosten</td>
+								<td class=\"tbltitle\" style=\"width:10%\">Anzahl</td>
+							</tr>
+							<tr>
+								<td class=\"tbldata\">".nf($data['ship_weapon'])."</td>
+								<td class=\"tbldata\">".nf($data['ship_structure'])."</td>
+								<td class=\"tbldata\">".nf($data['ship_shield'])."</td>
+								<td class=\"tbldata\">".nf($data['ship_speed'])." AE/h</td>
+								<td class=\"tbldata\">".tf($data['ship_time2start']/FLEET_FACTOR_S)."</td>
+								<td class=\"tbldata\">".tf($data['ship_time2land']/FLEET_FACTOR_S)."</td>
+								<td class=\"tbldata\">".nf($data['ship_alliance_costs'])." <input type=\"hidden\" value=\"".$data['ship_alliance_costs']."\" id=\"ship_costs_".$data['ship_id']."\" name=\"ship_costs_".$data['ship_id']."\" /></td>
+								<td class=\"tbldata\">
+									<input type=\"text\" value=\"0\" name=\"buy_ship[".$data['ship_id']."]\" id=\"buy_ship_".$data['ship_id']."\" size=\"4\" maxlength=\"6\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/>
+									<input type=\"hidden\" value=\"".$data['ship_max_count']."\" id=\"ship_max_count_".$data['ship_id']."\" name=\"ship_max_count_".$data['ship_id']."\" />
+								</td>
+							</tr>";
+				
+				
+				infobox_end(1);
+			}
+		}
+		else
+		{
+			infobox_start("Schiffe");
+			echo "Es sind keine Allianzschiffe vorhanden!";
+			infobox_end();
+		}
+		
+		
+		
+		infobox_start("Fertigung",1);
 		
 		echo "<tr>
 						<td class=\"tbldata\" style=\"text-align:center;\">
-							<select id=\"user_shippoints\" name=\"user_shippoints\">
+							<input type=\"hidden\" value=\"".$max_ship_id."\" id=\"max_ship_id\" name=\"max_ship_id\" />
+							<select id=\"user_buy_ship\" name=\"user_buy_ship\">
 							<option value=\"0\">User wählen...</option>";
 					  	// Allianzuser
 							foreach($alliance_members as $id => $data)
 							{
-					  		echo "<option value=\"".$id."\">".$data['user_nick']." (".$data['user_alliace_shippoints'].")</option>";
+					  		echo "<option value=\"".$id."\">".$data['user_nick']." (".nf($data['user_alliace_shippoints']).")</option>";
 					  	}
   			echo "</select><br><br>
-  						<input type=\"button\" value=\"Kaufen\" ".tm("Kaufen","Kauft Schiffe für den gewählten User").">
+  						<input type=\"submit\" class=\"button\" name=\"ship_submit\" id=\"ship_submit\" value=\"Schiffe herstellen\" ".tm("Schiffe herstellen","Stellt aus den vorhandenen Teilen die gewünschten Schiffe für den ausgewählten User her.").">
 						</td>
 					</tr>";
 		
