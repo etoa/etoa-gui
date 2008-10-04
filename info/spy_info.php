@@ -41,7 +41,7 @@
 	FROM
 		ships
 	WHERE
-		ship_spy=1
+		ship_actions LIKE '%spy%'
 	ORDER BY
 		ship_name;");
 	while ($arr=mysql_fetch_array($res))

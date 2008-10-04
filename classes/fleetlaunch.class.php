@@ -47,6 +47,7 @@
 		{
 		
 			$this->sourceEntity = $sourceEnt;
+			$this->owner = $ownerEnt;
 			$this->ownerId = $ownerEnt->id();
 			$this->ownerRaceName = $ownerEnt->raceName();
 			$this->raceSpeedFactor = $ownerEnt->raceSpeedFactor();
@@ -75,6 +76,12 @@
 			$this->costs = 0;
 			$this->costsFood = 0;
 			$this->costsPower = 0;
+			$this->supportTime = 0;
+			$this->supportCostsFood = 0;
+			$this->supportCostsFuel = 0;
+			$this->supportCostsFuelPerSec = 0;
+			$this->supportCostsFoodPerSec = 0;
+			$this->leaderId = 0;
 
 			$this->shipActions = array();
 
@@ -238,7 +245,6 @@
 				{
 					if ($this->pilotsAvailable() >= $this->getPilots())
 					{					
-						$this->shipsFixed=true;
 						// Calc Costs for all ships, based on regulated speed
 						foreach ($this->ships as $sid => $sd)
 						{
@@ -246,6 +252,7 @@
 							$this->ships[$sid]['costs_per_ae'] = $cpae;
 							$this->costsPerHundredAE += $cpae;				
 						}
+						$this->shipsFixed=true;
 						return $this->shipsFixed;
 					}
 					else
@@ -283,7 +290,8 @@
 			else
 				$this->error = "Flotte nicht fertig zusammengestellt";					
 			return false;
-		}			
+		}
+			
 
 		/**
 		* Check if fleet can fly to this target
@@ -294,8 +302,18 @@
 		{
 			if ($this->sourceEntity->resFuel() >= $this->getCosts())
 			{
-				$this->targetOk = true;
-				return $this->targetOk;
+				if ($this->sourceEntity->resFood() >= $this->getCostsFood())
+				{
+					if ($this->getCapacity()>0)
+					{
+						$this->targetOk = true;
+						return $this->targetOk;
+					}
+					else
+					$this->error = "Zu wenig Laderaum für soviel Treibstoff und Nahrung (".nf(abs($this->getCapacity()))." zuviel)!";
+				}
+				else
+					$this->error = "Zuwenig Nahrung! ".nf($this->sourceEntity->resFood())." t ".RES_FOOD." vorhanden, ".nf($this->getCostsFood())." t benötigt.";
 			}
 			else	
 				$this->error = "Zuwenig Treibstoff! ".nf($this->sourceEntity->resFuel())." t ".RES_FUEL." vorhanden, ".nf($this->getCosts())." t benötigt.";
@@ -350,16 +368,20 @@
 						fleet
 					(
 						user_id,
+						leader_id,
 						entity_from,
 						entity_to,
 						launchtime,
 						landtime,
+						nextactiontime,
 						action,
 						status,
 						pilots,
 						usage_fuel,
 						usage_food,
-						usage_power,				
+						usage_power,
+						support_usage_food,
+						support_usage_fuel,				
 						res_metal,
 						res_crystal,
 						res_plastic,
@@ -370,16 +392,20 @@
 					VALUES
 					(
 						".$this->ownerId.",
+						".$this->leaderId.",
 						".$this->sourceEntity->id().",
 						".$this->targetEntity->id().",
 						".$time.",
 						".($time+$this->duration).",
+						".$this->supportTime.",
 						'".$this->action."',
 						0,
 						".$this->pilots.",
 						".$this->getCosts().",
 						".$this->getCostsFood().",
 						".$this->getCostsPower().",
+						".$this->supportCostsFood.",
+						".$this->supportCostsFuel.",
 						".$this->res[1].",
 						".$this->res[2].",
 						".$this->res[3].",
@@ -407,6 +433,18 @@
 							".$sda['count']."
 						);");
 					}
+					
+					if ($this->action=="alliance" && $this->leaderId==0) {
+						dbquery("
+								UPDATE
+									fleet
+								SET
+									leader_id='".$fid."',
+									next_id='".$this->sourceEntity->ownerAlliance()."'
+								WHERE
+									id='".$fid."';");
+					}
+					$this->sourceEntity->chgRes(5,-$this->getCostsFood());
 					return $fid;
 				}
 				else
@@ -582,11 +620,11 @@
 		
 		function setSpeedPercent($perc)
 		{
+			$this->speedPercent = min(100,$perc);
 			$this->duration = $this->distance / $this->getSpeed();	// Calculate duration
 			$this->duration *= 3600;	// Convert to seconds
 			$this->duration += $this->timeLaunchLand;	// Add launch and land time
 			$this->duration = ceil($this->duration);
-			$this->speedPercent = min(100,$perc);
 		}
 		
 		function getCostsPerHundredAE()
@@ -649,6 +687,42 @@
 			return $loaded;
 		}
 		
+		function getSupportTime() {
+			return $this->supportTime;
+		}
+		
+		function calcSupportTime() {
+			$this->supportCostsFuelPerSec = $this->costsPerHundredAE*$this->getSpeed()/$this->getSpeedPercent()/3600;
+			$this->supportCostsFoodPerSec = $this->costsFood/$this->getDuration();
+			
+			$supportTimeFuel = $this->getLoadedRes(4)/$this->supportCostsFuelPerSec;
+			
+			if ($this->costsFood>0)
+				$supportTimeFood = $this->getLoadedRes(5)/$this->supportCostsFoodPerSec;
+			else
+				$supportTimeFood = $supportTimeFuel;
+			
+			$this->supportTime = min($supportTimeFuel,$supportTimeFood);
+			if ($this->supportTime>0) {
+				$this->supportCostsFood = $this->getLoadedRes(5) * $this->supportTime / $supportTimeFood;
+				$this->supportCostsFuel = $this->getLoadedRes(4) * $this->supportTime / $supportTimeFuel;
+			}	
+		}
+		
+		function getSupport() {
+			return "Supportkosten";
+		}
+		
+		function getSupportDesc() {
+			$this->calcSupportTime();
+			
+			return "".RES_FUEL.": ".nf($this->supportCostsFuelPerSec*$this->supportTime)." (".nf($this->supportCostsFuelPerSec*3600)." pro h)<br style=\"clear:both\" />".RES_FOOD.": ".nf($this->supportCostsFoodPerSec*$this->supportTime)." (".nf($this->supportCostsFoodPerSec*3600)." pro h)";
+		}
+		
+		function setLeader($id) {
+			$this->leaderId = $id;
+		}
+		
 		
 		
 		//
@@ -676,6 +750,8 @@
 		{
 			return $this->pilots;	
 		}
+		
+		function getLeader() { return $this->leaderId; }
 
 
 	}

@@ -281,6 +281,8 @@
 					return new EmptySpace($id);
 				case 'm':
 					return new Market($id);	
+				case 'u':
+					return new UnExplored($id);
 				case 'x':
 					return new Allianz($id);			
 				default:

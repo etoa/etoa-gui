@@ -48,17 +48,26 @@
 		
 		function remove($shipId,$cnt)
 		{
-			$res = dbquery("SELECT shiplist_count FROM shiplist WHERE shiplist_ship_id=".$shipId.";");
+			$res = dbquery("SELECT 
+								shiplist_id, 
+								shiplist_count 
+							FROM 
+								shiplist 
+							WHERE 
+								shiplist_ship_id=".$shipId." 
+								AND shiplist_user_id='".$this->userId."' 
+								AND shiplist_entity_id='".$this->entityId."';");
 			$arr = mysql_fetch_row($res);
 
-			$delable = min($cnt,$arr[0]);
+			$delable = min($cnt,$arr[1]);
 			
 			dbquery("UPDATE
 				shiplist
 			SET
 				shiplist_count = shiplist_count - ".$delable."
 			WHERE 
-				shiplist_ship_id=".$shipId.";");
+				shiplist_ship_id=".$shipId."
+				AND shiplist_id='".$arr[0]."';");
 
 			return $delable;
 		}

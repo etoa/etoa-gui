@@ -37,7 +37,7 @@
 	
 	echo "<input type=\"button\" onclick=\"document.location='?page=fleetstats'\" value=\"Schiffs&uuml;bersicht anzeigen\" /><br/><br/>";
 	
-	$fm = new FleetManager($cu->id());
+	$fm = new FleetManager($cu->id(),$cu->allianceId());
 	$fm->loadOwn();		
 
 	if ($fm->count() > 0)
@@ -339,9 +339,126 @@
 		infobox_start("Fremde Flotten");
 		echo "Es sind keine fremden Flotten zu deinen Planeten unterwegs!";
 		infobox_end();
-	}	
+	}
 	
 	
+	$fm->loadAllianceSupport();		
+
+	if ($fm->count() > 0)
+	{
+		$cdarr = array();
+		
+		echo "Klicke auf den Auftrag um die Details einer Flotte anzuzeigen<br/><br/>";
+		infobox_start("Allianz Supportflotten",1);
+		echo "<tr><td class=\"tbltitle\">Start / Ziel</td>
+		<td class=\"tbltitle\">Start / Landung</td>
+		<td class=\"tbltitle\">Auftrag / Status</td></tr>";
+		foreach ($fm->getAll() as $fid=>$fd)
+		{
+			$cdarr["cd".$fid] = $fd->landTime();
+
+			echo "<tr>";
+			echo "<td class=\"tbldata\"><b>".$fd->getSource()->entityCodeString()."</b> 
+			<a href=\"?page=cell&amp;id=".$fd->getSource()->cellId()."&amp;hl=".$fd->getSource()->id()."\">".$fd->getSource()."</a><br/>";
+			echo "<b>".$fd->getTarget()->entityCodeString()."</b> 
+			<a href=\"?page=cell&amp;id=".$fd->getTarget()->cellId()."&amp;hl=".$fd->getTarget()->id()."\">".$fd->getTarget()."</a></td>";			
+			echo "<td class=\"tbldata\">
+			".date("d.m.y, H:i:s",$fd->launchTime())."<br/>";
+			echo date("d.m.y, H:i:s",$fd->landTime())."</td>";
+			echo "<td class=\"tbldata\">
+				<a href=\"?page=fleetinfo&id=".$fid."\">
+				<span style=\"color:".FleetAction::$attitudeColor[$fd->getAction()->attitude()]."\">
+				".$fd->getAction()->name()."
+				</span> [".FleetAction::$statusCode[$fd->status()]."]</a><br/>";
+			if ($fd->landTime() < time())
+			{
+				if ($fd->status() > 0)
+				{
+					echo "Flotte landet...";
+				}
+				else
+				{
+					echo "Zielaktion wird durchgef&uuml;hrt...";
+				}
+			}
+			else
+			{
+				echo "Ankunft in <b><span id=\"cd".$fid."\">-</span></b>";
+			}
+			echo "</td></tr>";
+		}
+		infobox_end(1);
+			
+		foreach ($cdarr as $elem=>$t)
+		{
+			countDown($elem,$t);
+		}		
+	}
+	else
+	{
+		infobox_start("Allianz Supportflotten");
+		echo "Es sind keine Allianz Supportflotten unterwegs!";
+		infobox_end();
+	}
+	
+	
+	$fm->loadAllianceAttacks();		
+	if ($fm->count() > 0)
+	{
+		$cdarr = array();
+		
+		echo "Klicke auf den Auftrag um die Details einer Flotte anzuzeigen<br/><br/>";
+		infobox_start("Allianz Angriffe",1);
+		echo "<tr><td class=\"tbltitle\">Start / Ziel</td>
+		<td class=\"tbltitle\">Start / Landung</td>
+		<td class=\"tbltitle\">Auftrag / Status</td></tr>";
+		foreach ($fm->getAll() as $fid=>$fd)
+		{
+			$cdarr["cd".$fid] = $fd->landTime();
+
+			echo "<tr>";
+			echo "<td class=\"tbldata\"><b>".$fd->getSource()->entityCodeString()."</b> 
+			<a href=\"?page=cell&amp;id=".$fd->getSource()->cellId()."&amp;hl=".$fd->getSource()->id()."\">".$fd->getSource()."</a><br/>";
+			echo "<b>".$fd->getTarget()->entityCodeString()."</b> 
+			<a href=\"?page=cell&amp;id=".$fd->getTarget()->cellId()."&amp;hl=".$fd->getTarget()->id()."\">".$fd->getTarget()."</a></td>";			
+			echo "<td class=\"tbldata\">
+			".date("d.m.y, H:i:s",$fd->launchTime())."<br/>";
+			echo date("d.m.y, H:i:s",$fd->landTime())."</td>";
+			echo "<td class=\"tbldata\">
+				<a href=\"?page=fleetinfo&id=".$fid."\">
+				<span style=\"color:".FleetAction::$attitudeColor[$fd->getAction()->attitude()]."\">
+				".$fd->getAction()->name()."
+				</span> [".FleetAction::$statusCode[$fd->status()]."]</a><br/>";
+			if ($fd->landTime() < time())
+			{
+				if ($fd->status() > 0)
+				{
+					echo "Flotte landet...";
+				}
+				else
+				{
+					echo "Zielaktion wird durchgef&uuml;hrt...";
+				}
+			}
+			else
+			{
+				echo "Ankunft in <b><span id=\"cd".$fid."\">-</span></b>";
+			}
+			echo "</td></tr>";
+		}
+		infobox_end(1);
+			
+		foreach ($cdarr as $elem=>$t)
+		{
+			countDown($elem,$t);
+		}		
+	}
+	else
+	{
+		infobox_start("Allianz Angriffe");
+		echo "Es sind keine Allianz Angriffe unterwegs!";
+		infobox_end();
+	}
 
 
 

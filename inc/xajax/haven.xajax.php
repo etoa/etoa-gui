@@ -10,6 +10,8 @@
 	$xajax->register(XAJAX_FUNCTION,"havenReset");
 	$xajax->register(XAJAX_FUNCTION,"havenTargetInfo");
 	$xajax->register(XAJAX_FUNCTION,"havenCheckRes");
+	$xajax->register(XAJAX_FUNCTION,"havenCheckAction");
+	$xajax->register(XAJAX_FUNCTION,"havenAllianceAttack");
 
 	
 	/**
@@ -491,10 +493,11 @@
 						<td>".nf($fleet->getPilots())."</td></tr>";
 					echo "<tr><td>Bemerkungen:</td>
 						<td id=\"comment\">-</td></tr>";
+					echo "<tr id=\"allianceAttacks\"></tr>";
 					echo "</table><br/>";
-					echo "<input tabindex=\"8\" type=\"button\" onclick=\"xajax_havenShowShips()\" value=\"&lt;&lt; Zurück zur Schiffauswahl\" /> &nbsp; ";
-					echo "<input tabindex=\"7\" type=\"submit\" value=\"Weiter zur Aktionsauswahl &gt;&gt;&gt;\"  /> &nbsp; ";
-					echo "<input tabindex=\"9\" type=\"button\" onclick=\"xajax_havenReset()\" value=\"Reset\" />";
+					echo "<div style=\"float:left;\">&nbsp;<input tabindex=\"8\" type=\"button\" onclick=\"xajax_havenShowShips()\" value=\"&lt;&lt; Zurück zur Schiffauswahl\" />&nbsp;</div>";
+					echo "<div style=\"float:left;\" id=\"chooseAction\"></div>";
+					echo "<div style=\"float:left;\"><input tabindex=\"9\" type=\"button\" onclick=\"xajax_havenReset()\" value=\"Reset\" /></div>";
 					echo "</form>";
 					
 					$response->assign("havenContentTarget","innerHTML",ob_get_contents());				
@@ -538,7 +541,14 @@
 		{
 			// Get fleet object
 			$fleet = unserialize($_SESSION['haven']['fleetObj']);
-
+			
+			$absX = ($form['man_sx'] * CELL_NUM_X) + $form['man_cx'];
+			$absY = (($form['man_sy']-1) * CELL_NUM_Y) + $form['man_cy'];
+			if ($fleet->owner->discovered($absX,$absY) == 0)
+				$code='u';
+			else 
+				$code = '';
+			
 			$res = dbquery("
 			SELECT
 				entities.id,
@@ -558,8 +568,11 @@
 			if (mysql_num_rows($res)>0)
 			{
 				$arr=mysql_fetch_row($res);
-				$ent = Entity::createFactory($arr[1],$arr[0]);
-				
+				if ($code == '')
+					$ent = Entity::createFactory($arr[1],$arr[0]);
+				else 
+					$ent = Entity::createFactory($code,$arr[0]);
+					
 				if ($fleet->setTarget($ent,$form['speed_percent']))
 				{												
 					if ($fleet->checkTarget())
@@ -590,6 +603,7 @@
 							<td><span id=\"costs\" style=\"font-weight:bold;\">".nf($fleet->getCosts())." t ".RES_FUEL."</span></td></tr>";
 						echo "<tr><td class=\"tbltitle\">Nahrung:</td>
 							<td><span id=\"costs\" style=\"font-weight:bold;\">".nf($fleet->getCostsFood())." t ".RES_FUEL."</span></td></tr>";
+						echo "<tr id=\"support\"></tr>";
 						echo "</table><br/>";			
 						
 						$response->assign("havenContentTarget","innerHTML",ob_get_contents());				
@@ -607,14 +621,23 @@
 							<th colspan=\"2\">Ladung</th>
 						</tr>";
 						echo "<tr><td rowspan=\"8\">";
-						
 						$actionsAvailable = 0;
 						foreach ($fleet->getAllowedActions() as $ac)
 						{
-							echo "<input type=\"radio\" name=\"fleet_action\" value=\"".$ac->code()."\"";
-							if ($actionsAvailable == 0)
-								echo " checked=\"checked\"";
-							echo " /><span ".tm($ac->name(),$ac->desc())."> ".$ac."</span><br/>";
+							if ($fleet->getLeader()>0) {
+								if ($ac->code() == "alliance") {
+									echo "<input type=\"radio\" onchange=\"xajax_havenCheckAction('".$ac->code()."');\" name=\"fleet_action\" value=\"".$ac->code()."\"";
+
+									echo " checked=\"checked\"";
+									echo " /><span ".tm($ac->name(),$ac->desc())."> ".$ac." (unterstützen)</span><br/>";
+								}
+							} else {									
+								echo "<input type=\"radio\" onchange=\"xajax_havenCheckAction('".$ac->code()."');\" name=\"fleet_action\" value=\"".$ac->code()."\"";
+
+								if ($actionsAvailable == 0)
+									echo " checked=\"checked\"";
+								echo " /><span ".tm($ac->name(),$ac->desc())."> ".$ac."</span><br/>";
+							}
 							$actionsAvailable++;
 						}
 						if ($actionsAvailable==0)
@@ -797,13 +820,20 @@
 	function havenTargetInfo($form)
 	{
 		$response = new xajaxResponse();
-		
+		 $allianceAttack = "";
+		 $comment = "-";
+		 ob_start();
 		if ($form['man_sx']!="" && $form['man_sy']!="" && $form['man_cx']!="" && $form['man_cy']!="" && $form['man_p']!=""
 		&& $form['man_sx']>0 && $form['man_sy']>0 && $form['man_cx']>0 && $form['man_cy']>0 && $form['man_p']>=0)
 		{		
-			ob_start();
 			$absX = ($form['man_sx'] * CELL_NUM_X) + $form['man_cx'];
 			$absY = (($form['man_sy']-1) * CELL_NUM_Y) + $form['man_cy'];	
+			$fleet = unserialize($_SESSION['haven']['fleetObj']);
+
+			if ($fleet->owner->discovered($absX,$absY) == 0)
+				$code='u';
+			else 
+				$code = '';
 			
 			$res = dbquery("
 				SELECT
@@ -821,15 +851,20 @@
 					AND cells.cy=".$form['man_cy']."
 					AND entities.pos=".$form['man_p']."
 				");
-			if (mysql_num_rows($res)>0)
+			if (mysql_num_rows($res)>0 && !($code=='u' && $form['man_p']))
 			{
 				$arr=mysql_fetch_row($res);
-				$ent = Entity::createFactory($arr[1],$arr[0]);
-
-				$fleet = unserialize($_SESSION['haven']['fleetObj']);
+				
+				if ($code=='')
+					$ent = Entity::createFactory($arr[1],$arr[0]);
+				else
+					$ent = Entity::createFactory($code,$arr[0]);
+				
 				$fleet->setTarget($ent);
 				$fleet->setSpeedPercent($form['speed_percent']);
-
+				$fleet->setLeader(0);
+				$allianceAttack = "";
+				
 				echo "<img src=\"".$ent->imagePath()."\" style=\"float:left;\" >";
 				
 				echo "<br/>&nbsp;&nbsp; ".$ent." (".$ent->entityCodeString().", Besitzer: ".$ent->owner().")";
@@ -839,17 +874,50 @@
 				$response->assign('costae','innerHTML',nf($fleet->getCostsPerHundredAE())." t ".RES_FUEL."");
 				$response->assign('costs','innerHTML',nf($fleet->getCosts())." t ".RES_FUEL."");
 				$response->assign('food','innerHTML',nf($fleet->getCostsFood())." t ".RES_FOOD."");
+				$response->assign('targetinfo','style.background',"#000");
 				
-				$_SESSION['haven']['fleetObj']=serialize($fleet);
+				$action = "<input id=\"cooseAction\" tabindex=\"7\" type=\"submit\" value=\"Weiter zur Aktionsauswahl &gt;&gt;&gt;\"  /> &nbsp;";
+					
+				if ($ent->ownerId()>0) {
+					$res = dbquery("
+						SELECT
+							id,
+							user_id,
+							landtime
+						FROM
+							fleet
+						WHERE
+							leader_id>'0'
+							AND next_id='".$fleet->sourceEntity->ownerAlliance()."'
+							AND entity_to='".$ent->id()."'
+						ORDER BY
+							landtime ASC;");
+
+					if (mysql_num_rows($res)>0) {
+						$allianceAttack = "<td>Allianzangriff(e)</td><td>";
+						$allianceAttack .= "<table style=\"width:100%;\">";
+						while($arr=mysql_fetch_assoc($res)) {
+							$allianceAttack .= "<tr><input type=\"button\" style=\"width:100%;\" onclick=\"xajax_havenAllianceAttack(".$arr["id"].")\" name=\"".$arr["id"]."\" value=\"Flottenleader: ".get_user_nick($arr["user_id"])." Ankunftszeit: ".date("d.m.y, H:i:s",$arr["landtime"])."\"/></tr>";
+						}
+						$allianceAttack .= "</table></td>";
+					}
+				}
+				
 			}
 			else
 			{
 				echo "<div style=\"color:#f00\">Ziel nicht vorhanden!</div>";
 				$response->assign('distance','innerHTML',"Unbekannt");
 				$response->assign('targetinfo','style.background',"#f00");
-			}	
+				$action = "&nbsp; ";
+			}
 			$response->assign('targetinfo','innerHTML',ob_get_contents());
+			$response->assign('comment','innerHTML',$comment);
+			$response->assign('chooseAction','innerHTML',$action);
+			$response->assign('allianceAttacks','innerHTML',$allianceAttack);
 			ob_end_clean(); 
+			
+			$_SESSION['haven']['fleetObj']=serialize($fleet);
 
 			/*
 			ob_start();
@@ -865,6 +933,7 @@
 				$cnt++;
 			}
 			$response->assign('comment','innerHTML',ob_get_clean());
+			ob_end_clean(); 
 			*/
 			
 		}
@@ -884,10 +953,96 @@
 	  
 		$response->assign('resfree','innerHTML',nf($fleet->getCapacity())." / ".nf($fleet->getTotalCapacity())	);
 		$response->assign('resfree','style.color',"#0f0");
+		$response->assign('supporttime','innerHTML',"<span ".tm($fleet->getSupport(),$fleet->getSupportDesc())." style=\"font-weight:bold;\">".tf($fleet->getSupportTime())."</span>" );
 	  
 	  $_SESSION['haven']['fleetObj']=serialize($fleet);
 	  
 	  return $response;					
 	}
+	
+	function havenCheckAction($code)
+	{
+		$response = new xajaxResponse();
+		$fleet = unserialize($_SESSION['haven']['fleetObj']);
+		
+		ob_start();
+		
+		if ($code == "support") {
+			echo "<td class=\"tbltitle\">Supportzeit:</td>
+							<td id=\"supporttime\"><span ".tm($fleet->getSupport(),$fleet->getSupportDesc())." style=\"font-weight:bold;\">".tf($fleet->getSupportTime())."</span></td>";
+		}
+		
+		$response->assign('support','innerHTML',ob_get_contents() );
+		ob_end_clean();
+		
+		$_SESSION['haven']['fleetObj']=serialize($fleet);
+		
+		return $response;
+	}
+	
+	function havenAllianceAttack($id)
+	{
+		$response = new xajaxResponse();
+		$fleet = unserialize($_SESSION['haven']['fleetObj']);
+		
+		$percentageSpeed = 100;
+		$comment = "-";
+		$fleet->setSpeedPercent($percentageSpeed);
+		
+		if ($id > 0 && $fleet->getLeader()!=$id) {
+			$res = dbquery("
+							SELECT
+								id,
+								user_id,
+								landtime
+							FROM
+								fleet
+							WHERE
+								leader_id='$id'
+								AND id='$id'
+								AND next_id='".$fleet->sourceEntity->ownerAlliance()."'
+							LIMIT 1;");
+
+			if (mysql_num_rows($res)>0) {
+				$arr=mysql_fetch_assoc($res);
+				$duration = $fleet->distance / $fleet->getSpeed();	// Calculate duration
+				$duration *= 3600;	// Convert to seconds
+				$duration = ceil($duration);
+				$maxTime = $arr["landtime"] - time() - $fleet->timeLaunchLand - 120;
+				
+				if ($duration < $maxTime) {
+					$percentageSpeed =  ceil(100 * $duration / $maxTime);
+					$fleet->setSpeedPercent($percentageSpeed);
+					$fleet->setLeader($id);
+					$comment = "Unterstützung des Allianzangriffes, mit geschätzter Ankunft: ".date("d.m.y, H:i:s",$arr["landtime"]);
+				}
+				else $comment = "Tut mir leid, aber den gewählten Angriff können wir nicht mehr erreichen.";
+
+			}
+				
+				
+		}
+		elseif ($fleet->getLeader()==$id) $fleet->setLeader(0);
+		ob_start();
+		for ($x=100;$x>0;$x-=1)
+		{
+			echo "<option value=\"$x\"";
+			if ($percentageSpeed == $x) echo " selected=\"selected\"";
+			echo ">".$x."</option>\n";
+		}
+		$response->assign('duration_percent','innerHTML',ob_get_contents() );
+		$response->assign('speed','innerHTML',nf($fleet->getSpeed())." AE/h");
+		$response->assign('costae','innerHTML',nf($fleet->getCostsPerHundredAE())." t ".RES_FUEL."");
+		$response->assign('duration','innerHTML',tf($fleet->getDuration())."");
+		$response->assign('costs','innerHTML',nf($fleet->getCosts())." t ".RES_FUEL."");
+		$response->assign('food','innerHTML',nf($fleet->getCostsFood())." t ".RES_FOOD."");
+		$response->assign('comment','innerHTML',$comment);
+		
+		ob_end_clean();
+		$_SESSION['haven']['fleetObj']=serialize($fleet);
+		
+		return $response;	
+	
+	} 
 
 ?>

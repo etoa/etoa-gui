@@ -46,16 +46,14 @@
 			echo "Es ist momentan nicht m&ouml;glich andere Spieler anzugreifen. Grund: ".text2html($cfg->param1("battleban"))."<br>Die Sperre dauert vom ".date("d.m.Y",$cfg->param1("battleban_time"))." um ".date("H:i",$cfg->param1("battleban_time"))." Uhr bis am ".date("d.m.Y",$cfg->param2("battleban_time"))." um ".date("H:i",$cfg->param2("battleban_time"))." Uhr!";
 			infobox_end();
 		}
-
-						
-
-			if (isset ($_GET['target']) && intval($_GET['target'])>0)
+		
+			if (isset($_GET['target']) && intval($_GET['target'])>0)
 			{
 				$_SESSION['haven']['targetId']=$_GET['target'];
 			}
-			elseif (isset ($_GET['cellTarget']) && intval($_GET['cellTarget'])>0)
+			elseif (isset($_GET['cellTarget']) && intval($_GET['cellTarget'])>0)
 			{
-				$_SESSION['haven']['cellTargetId']=$_GET['cell'];
+				$_SESSION['haven']['cellTargetId']=$_GET['cellTarget'];
 			}
 
 
