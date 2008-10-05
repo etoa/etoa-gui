@@ -8,7 +8,7 @@
 			$this->code = "alliance";
 			$this->name = "Allianzangriff";
 			$this->desc = "Greift das Ziel an und klaut Rohstoffe";
-			$this->longDesc = "Der Allianz-Angriff auf ein bewohntes Ziel, ermöglicht es Allianzmitgliedern zusammen ein Ziel anzugreiffen. Falls der Kampf gewonnen wird, wird (meistens) die Hälfte der Rohstoffe geklaut.";
+			$this->longDesc = "Der Allianz-Angriff auf ein bewohntes Ziel, ermÃ¶glicht es Allianzmitgliedern zusammen ein Ziel anzugreiffen. Falls der Kampf gewonnen wird, wird (meistens) die HÃ¤lfte der Rohstoffe geklaut.";
 			$this->visible = true;
 			$this->exclusive = false;
 			$this->attitude = 3;

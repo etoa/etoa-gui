@@ -288,7 +288,7 @@
 			}       
 			
 			//Berechnet freie Felder   
-			$fields_available = $cp->fields+$cp->fields_extra-$cp->fields_used-$def_fields-$build0.ing_fields;		
+			$fields_available = $cp->fields+$cp->fields_extra-$cp->fields_used-$def_fields-$building_fields;		
 
     	// level zählen welches die waffenfabrik über dem angegeben level ist und faktor berechnen
     	$need_bonus_level = CURRENT_FACTORY_LEVEL - $conf['build_time_boni_waffenfabrik']['p1'];
@@ -1004,7 +1004,7 @@
     				def_buildable='1'
     				AND def_cat_id='".$carr['cat_id']."'
     				AND def_show='1'
-    				AND (def_race_id='0' OR def_race_id='".$cu->race_id."')
+    				AND (def_race_id='0' OR def_race_id='".$cu->raceId()."')
     			ORDER BY
     				".$order.";");
 					if (mysql_num_rows($dres)>0)

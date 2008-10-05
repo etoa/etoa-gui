@@ -1,10 +1,10 @@
 <?PHP
 	echo "<h2>Schiffsaktionen</h2>";
 	
-	define(HELP_URL,"?page=$page&site=shipyard");
+	define("HELP_URL","?page=$page&site=shipyard");
 	
 	
-	if ($_GET['action']!="")
+	if (isset($_GET['action']))
 	{
 		$site = $_GET['site'];
 		$action = $_GET['action'];
@@ -55,7 +55,7 @@
 			{
 				while($arr=mysql_fetch_array($res))
 				{
-					echo "<tr><td class=\"tbldata\"><a href=\"".HELP_URL."&amp;id=".$arr[ship_id]."\">".$arr['ship_name']."</a></td></tr> ";
+					echo "<tr><td class=\"tbldata\"><a href=\"".HELP_URL."&amp;id=".$arr['ship_id']."\">".$arr['ship_name']."</a></td></tr> ";
 				}
 			}
 			else

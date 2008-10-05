@@ -8,7 +8,7 @@
 			$this->code = "attack";
 			$this->name = "Angreifen";
 			$this->desc = "Greift das Ziel an und klaut Rohstoffe";
-			$this->longDesc = "Der Standard-Angriff auf ein bewohntes Ziel. Falls der Kampf gewonnen wird, wird (meistens) die Hälfte der Rohstoffe geklaut.";
+			$this->longDesc = "Der Standard-Angriff auf ein bewohntes Ziel. Falls der Kampf gewonnen wird, wird (meistens) die HÃ¤lfte der Rohstoffe geklaut.";
 			$this->visible = true;
 			$this->exclusive = false;
 			$this->attitude = 3;

@@ -14,11 +14,11 @@
              	WHERE
                   id='".$cu->id()."';");
                       
-              success_msg("Nachrichten-Einstellungen wurden ge&auml;ndert!");
-                  
-              $res = dbquery("SELECT * FROM user_properties WHERE id='".$cu->id()."';");
-              $arr = mysql_fetch_array($res);
+              success_msg("Nachrichten-Einstellungen wurden ge&auml;ndert!"); 
             }
+            
+			$res = dbquery("SELECT * FROM user_properties WHERE id='".$cu->id()."';");
+            $arr = mysql_fetch_array($res);
 
             echo "<form action=\"?page=$page&mode=messages\" method=\"post\" enctype=\"multipart/form-data\">";
             $cstr = checker_init();

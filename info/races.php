@@ -2,7 +2,7 @@
 	echo "<h2>Rassen</h2>";
 	Help::navi(array("Rassen","races"));
 
-	if ($_GET['order']!="")
+	if (isset($_GET['order']))
 	{
 		$order="race_".$_GET['order'];
 		if ($_SESSION['help']['orderfield']==$_GET['order'])

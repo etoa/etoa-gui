@@ -447,7 +447,6 @@
 	* User-Id via Planeten-Id auslesen
 	*
 	* @param int $pid Planet-ID
-	* @Todo: propabely remove
 	*/
 	function get_user_id_by_planet($pid)
 	{
@@ -528,6 +527,132 @@
 		if ($t>0)
 			return $t."d ".$h."h ".$m."m ".$s."s";
 		return $h."h ".$m."m ".$s."s";
+	}
+
+
+	/**
+	* Koordinaten formatieren
+	*
+	* @todo Remove this method and let the classes do their job
+	*/
+	function coords_format2($planet_id,$link=0,$action_color=0)
+	{
+		global $db_table;
+		if ($planet_id>0)
+		{
+		$res = dbquery("
+			SELECT
+				c.cell_id,
+				c.cell_sx,
+				c.cell_sy,
+				c.cell_cx,
+				c.cell_cy,
+				p.planet_solsys_pos,
+				p.planet_name
+			FROM
+				".$db_table['planets']." AS p
+				INNER JOIN ".$db_table['space_cells']." AS c
+				ON p.planet_solsys_id = c.cell_id
+				AND p.id='".$planet_id."';
+		");
+		$arr = mysql_fetch_assoc($res);
+		$coords = $arr['cell_sx']."/".$arr['cell_sy']." : ".$arr['cell_cx']."/".$arr['cell_cy']." : ".$arr['planet_solsys_pos'];
+		if ($action_color==1) $col="#0f0";
+		if ($action_color==2) $col="#f00";
+
+		if ($arr['planet_name']!="")
+		{
+			if ($link==1)
+				return "<a style=\"color:$col;\" href=\"?page=solsys&id=".$arr['cell_id']."\">".$arr['planet_name']." ($coords)</a>";
+			else
+				return $arr['planet_name']." ($coords)";
+		}
+		else
+		{
+			if ($link==1)
+				return "<a style=\"color:$col;\" href=\"?page=solsys&id=".$arr['cell_id']."\">$coords</a>";
+			else
+				return $coords;
+		}
+		}
+		else
+		{
+			return "Unendliche Weiten";
+		}
+	}
+
+	/**
+	* Koordinaten formatieren
+	*
+	* @todo Remove this method and let the classes do their job
+	*/
+	function coords_format3($planet_id,$link=0,$action_color=0)
+	{
+		global $db_table;
+		$res = dbquery("
+			SELECT
+				c.cell_id,
+				c.cell_sx,
+				c.cell_sy,
+				c.cell_cx,
+				c.cell_cy,
+				p.planet_solsys_pos,
+				p.planet_name
+			FROM
+				".$db_table['planets']." AS p
+				INNER JOIN ".$db_table['space_cells']." AS c
+				ON p.planet_solsys_id = c.cell_id
+				AND p.id='".$planet_id."';
+		");
+		$arr = mysql_fetch_assoc($res);
+		$coords = $arr['cell_sx']."/".$arr['cell_sy']." : ".$arr['cell_cx']."/".$arr['cell_cy']." : ".$arr['planet_solsys_pos'];
+		if ($action_color==1) $col="#0f0";
+		if ($action_color==2) $col="#f00";
+
+			return $coords;
+	}
+
+	/**
+	* Koordinaten formatieren
+	*
+	* @todo Remove this method and let the classes do their job
+	*/
+	function coords_format4($cell_id,$link=1)
+	{
+		global $db_table;
+		$res = dbquery("
+			SELECT
+				cell_sx,
+				cell_sy,
+				cell_cx,
+				cell_cy,
+				cell_asteroid,
+				cell_nebula
+			FROM
+				".$db_table['space_cells']."
+			WHERE
+				cell_id='".$cell_id."';
+		");
+		$arr = mysql_fetch_assoc($res);
+		$coords = $arr['cell_sx']."/".$arr['cell_sy']." : ".$arr['cell_cx']."/".$arr['cell_cy'];
+		if ($link==1)
+		{
+			if ($arr['cell_asteroid']==1)
+				return "<a href=\"?page=space&cell_id=$cell_id\">Asteoridenfeld ($coords)</a>";
+			elseif ($arr['cell_nebula']==1)
+				return "<a href=\"?page=space&cell_id=$cell_id\">Nebelfeld ($coords)</a>";
+			else
+				return $coords;
+		}
+		else
+		{
+			if ($arr['cell_asteroid']==1)
+				return "Asteoridenfeld ($coords)";
+			elseif ($arr['cell_nebula']==1)
+				return "Nebelfeld ($coords)";
+			else
+				return $coords;
+		}
 	}
 
 	/**
@@ -969,8 +1094,6 @@
 
 	/**
 	* Tabellen reparieren
-	*
-	*@Todo: outsource, is only for >admins
 	*/
 	function repair_tables($manual=false)
 	{
@@ -1002,7 +1125,6 @@
 
 	/**
 	* Tabellen prüfen
-	*@Todo: outsource, is only for >admins
 	*/
 	function check_tables()
 	{
@@ -1025,7 +1147,6 @@
 	
 	/**
 	* Tabellen analysieren
-	*@Todo: outsource, is only for >admins
 	*/
 	function analyze_tables()
 	{
@@ -1110,7 +1231,6 @@
 
 	/**
 	* Remove inactive users
-	*@Todo: outsource, is only for updates, maybe into backend
 	*/
 	function remove_inactive($manual=false)
 	{
@@ -1181,7 +1301,6 @@ die Spielleitung";
 
 	/**
 	* Delete user marked as delete
-	*@Todo: outsource, is only for updates, maybe into backend
 	*/
 	function remove_deleted_users($manual=false)
 	{
@@ -1228,8 +1347,6 @@ die Spielleitung";
 
 	/**
 	* Benutzer löschen
-	*
-	*@Todo: outsource, function is only for admins
 	*/
 	function delete_user($user_id,$self=false,$from="")
 	{
@@ -1535,8 +1652,6 @@ die Spielleitung";
 
 	/**
 	* Abgelaufene Sperren löschen
-	*
-	*@Todo: outsource, updates, maybe backend
 	*/
 	function remove_old_banns()
 	{
@@ -2035,6 +2150,17 @@ die Spielleitung";
 			return false;
 	}
 
+	/**
+	* Fremde, nicht feindliche Flotten
+	*
+	* @todo Fix this
+	*/
+	function check_fleet_incomming_friendly($user_id)
+	{
+		
+        return 0;
+	}
+
   /**
 	* Fremde, feindliche Flotten
   * Gibt Anzahl feindliche Flotten zurück unter beachtung von Tarn- und Spionagetechnik
@@ -2043,11 +2169,13 @@ die Spielleitung";
   * @author MrCage
   * @param int $user_id User ID
   *
+  * @todo fix this
   */
 	function check_fleet_incomming($user_id)
 	{
 		$fm = new FleetManager($user_id);
-		return $fm->loadAggressiv();	
+		$fm->loadForeign();	
+		return 0;
 	}
 
 	/**
@@ -2343,6 +2471,983 @@ die Spielleitung";
 				$string = date("d.m.Y, H:i",$date);
 		}
 		return $string;
+	}
+
+
+	/**
+	* Markt: Abgelaufene Auktionen löschen
+	*
+	* @todo source this out
+	*/
+	function market_auction_update()
+	{
+		global $db_table;
+		global $conf;
+
+
+    $res=dbquery("
+		SELECT
+			*
+		FROM
+			".$db_table['market_auction']."
+		WHERE
+			auction_end<'".time()."'
+			OR auction_delete_date!='0';");
+    if(mysql_num_rows($res) > 0)
+    {
+    	$buy_metal_total = 0;
+			$buy_crystal_total = 0;
+			$buy_plastic_total = 0;
+			$buy_fuel_total = 0;
+			$buy_food_total = 0;
+    	$sell_metal_total = 0;
+			$sell_crystal_total = 0;
+			$sell_plastic_total = 0;
+			$sell_fuel_total = 0;
+			$sell_food_total = 0;
+			
+      while($arr=mysql_fetch_assoc($res))
+      {
+          //Markt Level vom Verkäufer laden
+          $mres = dbquery("
+					SELECT
+						buildlist_current_level
+					FROM
+						".$db_table['buildlist']."
+					WHERE
+						buildlist_entity_id='".$arr['auction_planet_id']."'
+						AND buildlist_building_id='".MARKTPLATZ_ID."'
+						AND buildlist_current_level>'0'
+						AND buildlist_user_id='".$arr['auction_user_id']."';");
+          $marr = mysql_fetch_assoc($mres);
+          
+          // Definiert den Rückgabefaktor
+          $return_factor = 1 - (1/($marr['buildlist_current_level']+1));
+
+          $partner_user_nick = get_user_nick($arr['auction_user_id']);
+          $buyer_user_nick = get_user_nick($arr['auction_current_buyer_id']);
+          $delete_date = time() + (AUCTION_DELAY_TIME * 3600);
+
+          //überprüfen ob geboten wurde, wenn nicht, Waren dem Verkäufer zurückgeben
+          if($arr['auction_current_buyer_id']=='0')
+          {
+            // Ress dem besitzer zurückgeben (mit dem faktor)
+            dbquery("
+						UPDATE
+							".$db_table['planets']."
+						SET
+							planet_res_metal=planet_res_metal+".($arr['auction_sell_metal']*$return_factor).",
+							planet_res_crystal=planet_res_crystal+".($arr['auction_sell_crystal']*$return_factor).",
+							planet_res_plastic=planet_res_plastic+".($arr['auction_sell_plastic']*$return_factor).",
+							planet_res_fuel=planet_res_fuel+".($arr['auction_sell_fuel']*$return_factor).",
+							planet_res_food=planet_res_food+".($arr['auction_sell_food']*$return_factor)."
+						WHERE
+							id='".$arr['auction_planet_id']."'
+							AND planet_user_id='".$arr['auction_user_id']."';");
+
+
+            // Nachricht senden
+            $msg = "Folgende Auktion ist erfolglos abgelaufen und wurde gelöscht.\n\n"; 
+            
+            $msg .= "Start: ".date("d.m.Y H:i",$arr['auction_start'])."\n";
+            $msg .= "Ende: ".date("d.m.Y H:i",$arr['auction_end'])."\n\n";
+            
+            $msg .= "[b]Waren:[/b]\n";
+            $msg .= "".RES_METAL.": ".nf($arr['auction_sell_metal'])."\n";
+            $msg .= "".RES_CRYSTAL.": ".nf($arr['auction_sell_crystal'])."\n";
+            $msg .= "".RES_PLASTIC.": ".nf($arr['auction_sell_plastic'])."\n";
+            $msg .= "".RES_FUEL.": ".nf($arr['auction_sell_fuel'])."\n";
+            $msg .= "".RES_FOOD.": ".nf($arr['auction_sell_food'])."\n\n";
+            
+            $msg .= "Du erhälst ".(round($return_factor,2)*100)."% deiner Rohstoffe wieder zurück (abgerundet)!\n\n";
+            
+            $msg .= "Das Handelsministerium";
+            send_msg($arr['auction_user_id'],SHIP_MISC_MSG_CAT_ID,"Auktion beendet",$msg);
+
+            //Auktion löschen
+            dbquery("
+						DELETE FROM
+							".$db_table['market_auction']."
+						WHERE
+							auction_market_id='".$arr['auction_market_id']."';");
+
+          }
+          //Jemand hat geboten: Waren zum Versenden freigeben und Nachricht schreiben
+          elseif($arr['auction_current_buyer_id']!='0' && $arr['auction_buyable']=='1')
+          {
+            // Nachricht an Verkäufer
+            $msg = "Die Auktion vom ".date("d.m.Y H:i",$arr['auction_start']).", welche am ".date("d.m.Y H:i",$arr['auction_end'])." endete, ist erfolgteich abgelaufen und wird nach ".AUCTION_DELAY_TIME." Stunden gelöscht. Die Waren werden nach wenigen Minuten versendet.\n\nDer Spieler ".$buyer_user_nick." hat von dir folgende Rohstoffe ersteigert:\n\n";
+            
+            $msg .= "".RES_METAL.": ".nf($arr['auction_sell_metal'])."\n";
+            $msg .= "".RES_CRYSTAL.": ".nf($arr['auction_sell_crystal'])."\n";
+            $msg .= "".RES_PLASTIC.": ".nf($arr['auction_sell_plastic'])."\n";
+            $msg .= "".RES_FUEL.": ".nf($arr['auction_sell_fuel'])."\n";
+            $msg .= "".RES_FOOD.": ".nf($arr['auction_sell_food'])."\n\n";
+            
+            $msg .= "Dies macht dich um folgende Rohstoffe reicher:\n";   
+            $msg .= "".RES_METAL.": ".nf($arr['auction_buy_metal'])."\n";   
+            $msg .= "".RES_CRYSTAL.": ".nf($arr['auction_buy_crystal'])."\n";
+            $msg .= "".RES_PLASTIC.": ".nf($arr['auction_buy_plastic'])."\n";
+            $msg .= "".RES_FUEL.": ".nf($arr['auction_buy_fuel'])."\n";   
+            $msg .= "".RES_FOOD.": ".nf($arr['auction_buy_food'])."\n\n";   
+            
+            $msg .= "Das Handelsministerium";
+            send_msg($arr['auction_user_id'],SHIP_MISC_MSG_CAT_ID,"Auktion beendet",$msg);
+
+            // Nachricht an Käufer
+            $msg = "Du warst der höchstbietende in der Auktion vom Spieler ".$partner_user_nick.", welche am ".date("d.m.Y H:i",$arr['auction_end'])." zu Ende ging.\n
+            Du hast folgende Rohstoffe ersteigert:\n\n";
+            
+            $msg .= "".RES_METAL.": ".nf($arr['auction_sell_metal'])."\n";
+            $msg .= "".RES_CRYSTAL.": ".nf($arr['auction_sell_crystal'])."\n";
+            $msg .= "".RES_PLASTIC.": ".nf($arr['auction_sell_plastic'])."\n";
+            $msg .= "".RES_FUEL.": ".nf($arr['auction_sell_fuel'])."\n";  
+            $msg .= "".RES_FOOD.": ".nf($arr['auction_sell_food'])."\n\n";
+            
+            $msg .= "Dies hat dich folgende Rohstoffe gekostet:\n\n"; 
+            
+            $msg .= "".RES_METAL.": ".nf($arr['auction_buy_metal'])."\n"; 
+            $msg .= "".RES_CRYSTAL.": ".nf($arr['auction_buy_crystal'])."\n";
+            $msg .= "".RES_PLASTIC.": ".nf($arr['auction_buy_plastic'])."\n";
+            $msg .= "".RES_FUEL.": ".nf($arr['auction_buy_fuel'])."\n";   
+            $msg .= "".RES_FOOD.": ".nf($arr['auction_buy_food'])."\n\n"; 
+            
+            $msg .= "Die Auktion wird nach ".AUCTION_DELAY_TIME." Stunden gelöscht und die Waren in wenigen Minuten versendet.\n\n";
+            
+            $msg .= "Das Handelsministerium";
+            send_msg($arr['auction_current_buyer_id'],SHIP_MISC_MSG_CAT_ID,"Auktion beendet",$msg);
+
+            
+
+            //Log schreiben, falls dieser Handel regelwidrig ist
+            $multi_res1=dbquery("
+						SELECT
+							user_multi_multi_user_id
+						FROM
+							".$db_table['user_multi']."
+						WHERE
+							user_multi_user_id='".$arr['auction_user_id']."'
+							AND user_multi_multi_user_id='".$arr['auction_current_buyer_id']."';");
+
+            $multi_res2=dbquery("
+						SELECT
+							user_multi_multi_user_id
+						FROM
+							".$db_table['user_multi']."
+						WHERE
+							user_multi_user_id='".$arr['auction_current_buyer_id']."'
+							AND user_multi_multi_user_id='".$arr['auction_user_id']."';");
+
+            if(mysql_num_rows($multi_res1)!=0 && mysql_num_rows($multi_res2)!=0)
+            {
+              add_log(10,"[URL=?page=user&sub=edit&user_id=".$arr['auction_current_buyer_id']."][B]".$buyer_user_nick."[/B][/URL] hat an einer Auktion von [URL=?page=user&sub=edit&user_id=".$arr['auction_user_id']."][B]".$partner_user_nick."[/B][/URL] gewonnen:\n\nSchiffe:\n".nf($arr['auction_ship_count'])." ".$arr['auction_ship_name']."\n\nRohstoffe:\n".RES_METAL.": ".nf($arr['auction_sell_metal'])."\n".RES_CRYSTAL.": ".nf($arr['auction_sell_crystal'])."\n".RES_PLASTIC.": ".nf($arr['auction_sell_plastic'])."\n".RES_FUEL.": ".nf($arr['auction_sell_fuel'])."\n".RES_FOOD.": ".nf($arr['auction_sell_food'])."\n\nDies hat ihn folgende Rohstoffe gekostet:\n".RES_METAL.": ".nf($arr['auction_buy_metal'])."\n".RES_CRYSTAL.": ".nf($arr['auction_buy_crystal'])."\n".RES_PLASTIC.": ".nf($arr['auction_buy_plastic'])."\n".RES_FUEL.": ".nf($arr['auction_buy_fuel'])."\n".RES_FOOD.": ".nf($arr['auction_buy_food'])."",time());
+            }
+
+
+            // Log schreiben
+            add_log(7,"Auktion erfolgreich abgelaufen.\nDer Spieler ".$buyer_user_nick." hat vom Spieler ".$partner_user_nick." folgende Waren ersteigert:\n\nRohstoffe:\n".RES_METAL.": ".nf($arr['auction_sell_metal'])."\n".RES_CRYSTAL.": ".nf($arr['auction_sell_crystal'])."\n".RES_PLASTIC.": ".nf($arr['auction_sell_plastic'])."\n".RES_FUEL.": ".nf($arr['auction_sell_fuel'])."\n".RES_FOOD.": ".nf($arr['auction_sell_food'])."\n\nDies hat ihn folgende Rohstoffe gekostet:\n".RES_METAL.": ".nf($arr['auction_buy_metal'])."\n".RES_CRYSTAL.": ".nf($arr['auction_buy_crystal'])."\n".RES_PLASTIC.": ".nf($arr['auction_buy_plastic'])."\n".RES_FUEL.": ".nf($arr['auction_buy_fuel'])."\n".RES_FOOD.": ".nf($arr['auction_buy_food'])."\n\nDie Auktion und wird nach ".AUCTION_DELAY_TIME." Stunden gelöscht.",time());
+
+            //Auktion noch eine zeit lang anzeigen, aber unkäuflich machen
+            dbquery("
+						UPDATE
+							".$db_table['market_auction']."
+						SET
+							auction_buyable='0',
+							auction_delete_date='".$delete_date."',
+							auction_sent='0'
+						WHERE
+							auction_market_id='".$arr['auction_market_id']."';");
+							
+						// Verkauftse Roshtoffe summieren für Config
+						$sell_metal_total += $arr['auction_sell_metal'];
+						$sell_crystal_total += $arr['auction_sell_crystal'];
+						$sell_plastic_total += $arr['auction_sell_plastic'];
+						$sell_fuel_total += $arr['auction_sell_fuel'];
+						$sell_food_total += $arr['auction_sell_food'];
+						
+						
+						// Faktor = Kaufzeit - Verkaufzeit (in ganzen Tagen, mit einem Max. von 7)
+						// Total = Mengen / Faktor
+						$factor = min( ceil( (time() - $arr['auction_start']) / 3600 / 24 ) ,7);
+						
+						// Summiert gekaufte Rohstoffe für Config
+						$buy_metal_total += $arr['auction_buy_metal'] / $factor;
+						$buy_crystal_total += $arr['auction_buy_crystal'] / $factor;
+						$buy_plastic_total += $arr['auction_buy_plastic'] / $factor;
+						$buy_fuel_total += $arr['auction_buy_fuel'] / $factor;
+						$buy_food_total += $arr['auction_buy_food'] / $factor;
+						
+						// Summiert verkaufte Rohstoffe für Config
+						$sell_metal_total += $arr['auction_sell_metal'] / $factor;
+						$sell_crystal_total += $arr['auction_sell_crystal'] / $factor;
+						$sell_plastic_total += $arr['auction_sell_plastic'] / $factor;
+						$sell_fuel_total += $arr['auction_sell_fuel'] / $factor;
+						$sell_food_total += $arr['auction_sell_food'] / $factor;
+
+          }
+          // Waren sind gesendet, jetzt nur noch nachricht schreiben und löschendatum festlegen
+          elseif($arr['auction_delete_date']==0 && $arr['auction_sent']==1)
+          {
+              // Nachricht senden
+              $msg = "Die Auktion vom ".date("d.m.Y H:i",$arr['auction_start']).", welche am ".date("d.m.Y H:i",$arr['auction_end'])." endete, ist erfolgreich abgelaufen und wird nach ".AUCTION_DELAY_TIME." Stunden gelöscht.\n\n";
+              
+              $msg .= "Das Handelsministerium";
+              send_msg($arr['auction_user_id'],SHIP_MISC_MSG_CAT_ID,"Auktion abgelaufen",$msg);
+
+              //Auktion noch eine zeit lang anzeigen, aber unkäuflich machen
+              dbquery("
+							UPDATE
+								".$db_table['market_auction']."
+							SET
+								auction_buyable='0',
+								auction_delete_date='".$delete_date."'
+							WHERE
+								auction_market_id='".$arr['auction_market_id']."';
+						");
+          }
+
+          //Auktionen löschen, welche bereits abgelaufen sind und die Anzeigedauer auch hinter sich haben
+          dbquery("
+					DELETE FROM
+						".$db_table['market_auction']."
+					WHERE
+						auction_market_id='".$arr['auction_market_id']."'
+						AND auction_delete_date<='".time()."'
+						AND auction_sent='1';");
+      }
+      
+			// Gekaufte/Verkaufte Rohstoffe in Config-DB speichern für Kursberechnung
+			// Titan
+			dbquery("
+			UPDATE
+				".$db_table['config']."
+			SET
+				config_value=config_value+".(round($buy_metal_total)).",
+				config_param1=config_param1+".(round($sell_metal_total))."
+			WHERE
+				config_name='market_metal_logger'");		
+				
+			// Silizium
+			dbquery("
+			UPDATE
+				".$db_table['config']."
+			SET
+				config_value=config_value+".(round($buy_crystal_total)).",
+				config_param1=config_param1+".(round($sell_crystal_total))."
+			WHERE
+				config_name='market_crystal_logger'");	
+				
+			// PVC
+			dbquery("
+			UPDATE
+				".$db_table['config']."
+			SET
+				config_value=config_value+".(round($buy_plastic_total)).",
+				config_param1=config_param1+".(round($sell_plastic_total))."
+			WHERE
+				config_name='market_plastic_logger'");		
+				
+			// Tritium
+			dbquery("
+			UPDATE
+				".$db_table['config']."
+			SET
+				config_value=config_value+".(round($buy_fuel_total)).",
+				config_param1=config_param1+".(round($sell_fuel_total))."
+			WHERE
+				config_name='market_fuel_logger'");	
+				
+			// Food
+			dbquery("
+			UPDATE
+				".$db_table['config']."
+			SET
+				config_value=config_value+".(round($buy_food_total)).",
+				config_param1=config_param1+".(round($sell_food_total))."
+			WHERE
+				config_name='market_food_logger'");
+    }
+	}
+
+
+	/**
+	* Markt Update 
+	*
+	* Verschicken von allen gekauften/ersteigerten Waren
+	* und berechnen der Roshtoffkurse. 
+	* Löschen alter Angebote
+	*
+	* @todo source this out
+	*/
+	function market_update()
+	{
+		global $db_table;
+		$conf = get_all_config();
+
+		//Auktionen Updaten (beenden)
+		market_auction_update();
+
+		// Ermittelt die Geschwindigkeit des Handelsschiffes
+		$res=dbquery("
+		SELECT
+			ship_speed,
+			ship_time2start,
+			ship_time2land
+		FROM
+			".$db_table['ships']."
+		WHERE
+			ship_id='".MARKET_SHIP_ID."';");		
+    if (mysql_num_rows($res) > 0)
+    {
+    	$arr=mysql_fetch_assoc($res);
+    	$ship_speed = $arr['ship_speed'];
+    	$ship_starttime = $arr['ship_time2start'];
+    	$ship_landtime = $arr['ship_time2land'];
+    }
+    else
+    {
+    	$speed = 1;
+    }
+
+		//
+		// Rohstoffe
+		//
+		$res=dbquery("
+		SELECT
+			*
+		FROM
+			".$db_table['market_ressource']."
+		WHERE
+			ressource_buyable='0';");    			
+    if (mysql_num_rows($res) > 0)
+    {
+    	while($arr=mysql_fetch_assoc($res))
+    	{
+    		// Add trade points
+    		$tradepoints_buyer = TRADE_POINTS_PER_TRADE;
+    		$tradepoints_seller = TRADE_POINTS_PER_TRADE;
+    		if (strlen($arr['ressource_text']) > TRADE_POINTS_TRADETEXT_MIN_LENGTH) 
+    		{
+    			$tradepoints_seller+=TRADE_POINTS_PER_TRADETEXT;
+    		}
+    		Ranking::addTradePoints($arr['ressource_buyer_id'],$tradepoints_buyer,"Rohstoffkauf von ".$arr['user_id']);
+    		Ranking::addTradePoints($arr['user_id'],$tradepoints_seller,"Rohstoffverkauf an ".$arr['ressource_buyer_id']);
+    		
+        //Flotte zum Verkäufer schicken
+        $launchtime = time(); // Startzeit
+        $duration = calcDistanceByPlanetId($arr['planet_id'],$arr['ressource_buyer_planet_id']) / $ship_speed * 3600 + $ship_starttime + $ship_landtime; // Dauer
+        $landtime = $launchtime + $duration; // Landezeit
+
+        dbquery("
+				INSERT INTO ".$db_table['fleet']."
+				(
+					user_id,
+					entity_from,
+					entity_to,
+					launchtime,
+					landtime,
+					action,
+					res_metal,
+					res_crystal,
+					res_plastic,
+					res_fuel,
+					res_food
+				)
+				VALUES
+				(
+					'0',
+					'0',
+					'".$arr['planet_id']."',
+					'".$launchtime."',
+					'".$landtime."',
+					'".FLEET_ACTION_RESS."',
+					'".($arr['buy_metal'])."',
+					'".($arr['buy_crystal'])."',
+					'".($arr['buy_plastic'])."',
+					'".($arr['buy_fuel'])."',
+					'".($arr['buy_food'])."'
+				);");
+			
+        dbquery("
+				INSERT INTO
+				".$db_table['fleet_ships']."
+				(
+					fs_fleet_id,
+					fs_ship_id,
+					fs_ship_cnt
+				)
+				VALUES
+				(
+					'".mysql_insert_id()."',
+					'".MARKET_SHIP_ID."',
+					'1'
+				);");
+
+        //Flotte zum Käufer schicken
+        dbquery("
+				INSERT INTO
+				".$db_table['fleet']."
+				(
+					fleet_user_id,
+					fleet_cell_from,
+					fleet_cell_to,
+					fleet_planet_from,
+					fleet_planet_to,
+					fleet_launchtime,
+					fleet_landtime,
+					fleet_action,
+					fleet_res_metal,
+					fleet_res_crystal,
+					fleet_res_plastic,
+					fleet_res_fuel,
+					fleet_res_food
+				)
+				VALUES
+				(
+					'0',
+					'0',
+					'".$arr['ressource_buyer_cell_id']."',
+					'0',
+					'".$arr['ressource_buyer_planet_id']."',
+					'".$launchtime."',
+					'".$landtime."',
+					'".FLEET_ACTION_RESS."',
+					'".$arr['sell_metal']."',
+					'".$arr['sell_crystal']."',
+					'".$arr['sell_plastic']."',
+					'".$arr['sell_fuel']."',
+					'".$arr['sell_food']."'
+				);");
+
+        dbquery("
+				INSERT INTO
+				".$db_table['fleet_ships']."
+				(
+					fs_fleet_id,
+					fs_ship_id,
+					fs_ship_cnt
+				)
+				VALUES
+				(
+					'".mysql_insert_id()."',
+					'".MARKET_SHIP_ID."',
+					'1'
+				);");
+
+        //Angebot löschen
+        dbquery("
+				DELETE FROM
+					".$db_table['market_ressource']."
+				WHERE
+					ressource_market_id='".$arr['ressource_market_id']."';");
+    	}
+  	}
+
+		//
+  	// Schiffe
+  	//
+  	$res=dbquery("
+		SELECT
+			*
+		FROM
+			".$db_table['market_ship']."
+		WHERE
+			ship_buyable='0';");
+		if (mysql_num_rows($res)!=0)
+		{
+    	while($arr=mysql_fetch_assoc($res))
+    	{
+
+    		// Add trade points
+    		$tradepoints_buyer = TRADE_POINTS_PER_TRADE;
+    		$tradepoints_seller = TRADE_POINTS_PER_TRADE;
+    		if (strlen($arr['ship_text']) > TRADE_POINTS_TRADETEXT_MIN_LENGTH) 
+    		{
+    			$tradepoints_seller+=TRADE_POINTS_PER_TRADETEXT;
+    		}
+    		Ranking::addTradePoints($arr['ship_buyer_planet_id'],$tradepoints_buyer,"Schiffkaufkauf von ".$arr['user_id']);
+    		Ranking::addTradePoints($arr['user_id'],$tradepoints_seller,"Schiffverkauf an ".$arr['ship_buyer_planet_id']);
+
+
+				//Flotte zum Verkäufer schicken
+        $launchtime = time(); // Startzeit
+        $duration = calcDistanceByPlanetId($arr['planet_id'],$arr['ship_buyer_planet_id']) / $ship_speed * 3600 + $ship_starttime + $ship_landtime; // Dauer
+        $landtime = $launchtime + $duration; // Landezeit
+
+				dbquery("
+					INSERT INTO
+					".$db_table['fleet']."
+					(
+						fleet_user_id,
+						fleet_cell_from,
+						fleet_cell_to,
+						fleet_planet_from,
+						fleet_planet_to,
+						fleet_launchtime,
+						fleet_landtime,
+						fleet_action,
+						fleet_res_metal,
+						fleet_res_crystal,
+						fleet_res_plastic,
+						fleet_res_fuel,
+						fleet_res_food
+					)
+					VALUES
+					(
+						'0',
+						'0',
+						'".$arr['cell_id']."',
+						'0',
+						'".$arr['planet_id']."',
+						'".$launchtime."',
+						'".$landtime."',
+						'".FLEET_ACTION_RESS."',
+						'".$arr['ship_costs_metal']."',
+						'".$arr['ship_costs_crystal']."',
+						'".$arr['ship_costs_plastic']."',
+						'".$arr['ship_costs_fuel']."',
+						'".$arr['ship_costs_food']."'
+					);");
+
+				dbquery("
+				INSERT INTO
+				".$db_table['fleet_ships']."
+				(
+					fs_fleet_id,
+					fs_ship_id,
+					fs_ship_cnt
+				)
+				VALUES
+				(
+					'".mysql_insert_id()."',
+					'".MARKET_SHIP_ID."',
+					'1'
+				);");
+
+				//Flotte zum Käufer schicken
+				dbquery("
+				INSERT INTO
+				".$db_table['fleet']."
+				(
+					fleet_user_id,
+					fleet_cell_from,
+					fleet_cell_to,
+					fleet_planet_from,
+					fleet_planet_to,
+					fleet_launchtime,
+					fleet_landtime,
+					fleet_action,
+					fleet_res_metal,
+					fleet_res_crystal,
+					fleet_res_plastic,
+					fleet_res_fuel,
+					fleet_res_food
+				)
+				VALUES
+				(
+					'0',
+					'0',
+					'".$arr['ship_buyer_cell_id']."',
+					'0',
+					'".$arr['ship_buyer_planet_id']."',
+					'".$launchtime."',
+					'".$landtime."',
+					'".FLEET_ACTION_SHIP."',
+					'0',
+					'0',
+					'0',
+					'0',
+					'0'
+				);");
+
+				dbquery("
+				INSERT INTO
+				".$db_table['fleet_ships']."
+				(
+					fs_fleet_id,
+					fs_ship_id,
+					fs_ship_cnt
+				)
+				VALUES
+				(
+					'".mysql_insert_id()."',
+					'".$arr['ship_id']."',
+					'".$arr['ship_count']."'
+				);");
+
+				//Angebot löschen
+				dbquery("
+				DELETE FROM
+					".$db_table['market_ship']."
+				WHERE
+					ship_market_id='".$arr['ship_market_id']."';");
+    	}
+		}
+
+		//
+    // Auktionen
+    //
+    $res=dbquery("
+		SELECT
+			*
+		FROM
+			".$db_table['market_auction']."
+		WHERE
+			auction_buyable='0'
+			AND auction_sent='0'
+			AND auction_delete_date>'".time()."';");
+    if (mysql_num_rows($res)!=0)
+    {
+      while($arr=mysql_fetch_assoc($res))
+      {
+      	
+    		// Add trade points
+    		$tradepoints_buyer = TRADE_POINTS_PER_AUCTION;
+    		$tradepoints_seller = TRADE_POINTS_PER_AUCTION;
+    		if (strlen($arr['auction_text']) > TRADE_POINTS_TRADETEXT_MIN_LENGTH) 
+    		{
+    			$tradepoints_seller+=TRADE_POINTS_PER_TRADETEXT;
+    		}
+    		Ranking::addTradePoints($arr['auction_current_buyer_id'],$tradepoints_buyer,"Auktion von ".$arr['auction_user_id']);
+    		Ranking::addTradePoints($arr['auction_user_id'],$tradepoints_seller,"Auktion an ".$arr['auction_current_buyer_id']);
+
+      	
+      	
+        //Flotte zum verkäufer der auktion schicken
+        $launchtime = time(); // Startzeit
+        $duration = calcDistanceByPlanetId($arr['auction_planet_id'],$arr['auction_current_buyer_planet_id']) / $ship_speed * 3600 + $ship_starttime + $ship_landtime; // Dauer
+        $landtime = $launchtime + $duration; // Landezeit
+
+        dbquery("
+				INSERT INTO ".$db_table['fleet']."
+				(
+					fleet_user_id,
+					fleet_cell_from,
+					fleet_cell_to,
+					fleet_planet_from,
+					fleet_planet_to,
+					fleet_launchtime,
+					fleet_landtime,
+					fleet_action,
+					fleet_res_metal,
+					fleet_res_crystal,
+					fleet_res_plastic,
+					fleet_res_fuel,
+					fleet_res_food
+				)
+				VALUES
+				(
+					'0',
+					'0',
+					'".$arr['auction_cell_id']."',
+					'0',
+					'".$arr['auction_planet_id']."',
+					'".$launchtime."',
+					'".$landtime."',
+					'".FLEET_ACTION_RESS."',
+					'".$arr['auction_buy_metal']."',
+					'".$arr['auction_buy_crystal']."',
+					'".$arr['auction_buy_plastic']."',
+					'".$arr['auction_buy_fuel']."',
+					'".$arr['auction_buy_food']."'
+				);");
+
+        dbquery("
+				INSERT INTO
+				".$db_table['fleet_ships']."
+				(
+					fs_fleet_id,
+					fs_ship_id,
+					fs_ship_cnt
+				)
+				VALUES
+				(
+					'".mysql_insert_id()."',
+					'".MARKET_SHIP_ID."',
+					'1'
+				);");
+
+        
+
+        //Flotte zum hochstbietenden schicken (Käufer)
+        dbquery("
+				INSERT INTO ".$db_table['fleet']."
+				(
+					fleet_user_id,
+					fleet_cell_from,
+					fleet_cell_to,
+					fleet_planet_from,
+					fleet_planet_to,
+					fleet_launchtime,
+					fleet_landtime,
+					fleet_action,
+					fleet_res_metal,
+					fleet_res_crystal,
+					fleet_res_plastic,
+					fleet_res_fuel,
+					fleet_res_food
+				)
+				VALUES
+				(
+					'0',
+					'0',
+					'".$arr['auction_current_buyer_cell_id']."',
+					'0',
+					'".$arr['auction_current_buyer_planet_id']."',
+					'".$launchtime."',
+					'".$landtime."',
+					'".FLEET_ACTION_RESS."',
+					'".$arr['auction_sell_metal']."',
+					'".$arr['auction_sell_crystal']."',
+					'".$arr['auction_sell_plastic']."',
+					'".$arr['auction_sell_fuel']."',
+					'".$arr['auction_sell_food']."'
+				);");
+
+
+        // Schickt gekaufte Rohstoffe mit Handelsschiff
+        dbquery("
+				INSERT INTO
+				".$db_table['fleet_ships']."
+				(
+					fs_fleet_id,
+					fs_ship_id,
+					fs_ship_cnt
+				)
+				VALUES
+				(
+					'".mysql_insert_id()."',
+					'".MARKET_SHIP_ID."',
+					'1'
+				);");
+        
+
+        //Waren als "gesendet" markieren
+        dbquery("
+				UPDATE
+					".$db_table['market_auction']."
+				SET
+					auction_sent='1'
+				WHERE
+					auction_market_id='".$arr['auction_market_id']."';");
+
+      }
+    }
+
+
+		//
+		// Rohstoffkurs Berechnung & Update (Der Schiffshandel beeinflusst die Kurse nicht!)
+		//
+											
+		// Berechnet die neuen Kurse -> Kurs = Gekaufte Rohstoffe / Verkaufte Rohstoffe
+		// conf V = Gekaufte Rohstoffe
+		// conf p1 = Verkaufte Rohstoffe
+		// conf p2 = Startwert
+		$metal_tax = round(($conf['market_metal_logger']['v'] + $conf['market_metal_logger']['p2']) / ($conf['market_metal_logger']['p1'] + $conf['market_metal_logger']['p2']),2);
+		$crystal_tax = round(($conf['market_crystal_logger']['v'] + $conf['market_crystal_logger']['p2']) / ($conf['market_crystal_logger']['p1'] + $conf['market_crystal_logger']['p2']),2);
+		$plastic_tax = round(($conf['market_plastic_logger']['v'] + $conf['market_plastic_logger']['p2']) / ($conf['market_plastic_logger']['p1'] + $conf['market_plastic_logger']['p2']),2);
+		$fuel_tax = round(($conf['market_fuel_logger']['v'] + $conf['market_fuel_logger']['p2']) / ($conf['market_fuel_logger']['p1'] + $conf['market_fuel_logger']['p2']),2);
+		$food_tax = round(($conf['market_food_logger']['v'] + $conf['market_food_logger']['p2']) / ($conf['market_food_logger']['p1'] + $conf['market_food_logger']['p2']),2);
+
+		// Update der Kurse
+		// Titan
+		dbquery("
+		UPDATE
+			".$db_table['config']."
+		SET
+			config_value='".$metal_tax."'
+		WHERE
+			config_name='market_metal_factor'");		
+			
+		// Silizium
+		dbquery("
+		UPDATE
+			".$db_table['config']."
+		SET
+			config_value='".$crystal_tax."'
+		WHERE
+			config_name='market_crystal_factor'");	
+			
+		// PVC
+		dbquery("
+		UPDATE
+			".$db_table['config']."
+		SET
+			config_value='".$plastic_tax."'
+		WHERE
+			config_name='market_plastic_factor'");		
+			
+		// Tritium
+		dbquery("
+		UPDATE
+			".$db_table['config']."
+		SET
+			config_value='".$fuel_tax."'
+		WHERE
+			config_name='market_fuel_factor'");	
+			
+		// Food
+		dbquery("
+		UPDATE
+			".$db_table['config']."
+		SET
+			config_value='".$food_tax."'
+		WHERE
+			config_name='market_food_factor'");		
+
+
+		// Löscht alte Rohstoffangebote
+		$res=dbquery("
+		SELECT
+			*
+		FROM
+			".$db_table['market_ressource']."
+		WHERE
+			datum<=".(time()-$conf['market_response_time']['v']*3600*24).";");    			
+    if (mysql_num_rows($res) > 0)
+    {
+    	while($arr=mysql_fetch_assoc($res))
+    	{
+    			// Markt Level vom Verkäufer laden
+          $mres = dbquery("
+					SELECT
+						buildlist_current_level
+					FROM
+						".$db_table['buildlist']."
+					WHERE
+						buildlist_entity_id='".$arr['planet_id']."'
+						AND buildlist_building_id='".MARKTPLATZ_ID."'
+						AND buildlist_current_level>'0'
+						AND buildlist_user_id='".$arr['user_id']."';");
+          $marr = mysql_fetch_assoc($mres);
+          
+          // Definiert den Rückgabefaktor
+          $return_factor = 1 - (1/($marr['buildlist_current_level']+1));
+          
+         	// Ress dem besitzer zurückgeben (mit dem faktor)
+          dbquery("
+					UPDATE
+						".$db_table['planets']."
+					SET
+						planet_res_metal=planet_res_metal+".(floor($arr['sell_metal']*$return_factor)).",
+						planet_res_crystal=planet_res_crystal+".(floor($arr['sell_crystal']*$return_factor)).",
+						planet_res_plastic=planet_res_plastic+".(floor($arr['sell_plastic']*$return_factor)).",
+						planet_res_fuel=planet_res_fuel+".(floor($arr['sell_fuel']*$return_factor)).",
+						planet_res_food=planet_res_food+".(floor($arr['sell_food']*$return_factor))."
+					WHERE
+						id='".$arr['planet_id']."'
+						AND planet_user_id='".$arr['user_id']."';");
+
+
+          // Nachricht senden
+          $msg = "Folgendes Rohstoffangebot wurde nicht innerhalb von ".$conf['market_response_time']['v']." Tagen gekauft und deshalb gelöscht.\n\n"; 
+                    
+          $msg .= "[b]Angebot:[/b]\n";
+          $msg .= "".RES_METAL.": ".nf($arr['sell_metal'])."\n";
+          $msg .= "".RES_CRYSTAL.": ".nf($arr['sell_crystal'])."\n";
+          $msg .= "".RES_PLASTIC.": ".nf($arr['sell_plastic'])."\n";
+          $msg .= "".RES_FUEL.": ".nf($arr['sell_fuel'])."\n";
+          $msg .= "".RES_FOOD.": ".nf($arr['sell_food'])."\n\n";
+          
+          $msg .= "[b]Preis:[/b]\n";
+          $msg .= "".RES_METAL.": ".nf($arr['buy_metal'])."\n";
+          $msg .= "".RES_CRYSTAL.": ".nf($arr['buy_crystal'])."\n";
+          $msg .= "".RES_PLASTIC.": ".nf($arr['buy_plastic'])."\n";
+          $msg .= "".RES_FUEL.": ".nf($arr['buy_fuel'])."\n";
+          $msg .= "".RES_FOOD.": ".nf($arr['buy_food'])."\n\n";
+          
+          $msg .= "Du erhälst ".(round($return_factor,2)*100)."% deiner Rohstoffe wieder zurück (abgerundet)!\n\n";
+          
+          $msg .= "Das Handelsministerium";
+          send_msg($arr['user_id'],SHIP_MISC_MSG_CAT_ID,"Angebot gelöscht",$msg);
+
+          // Angebot löschen
+          dbquery("
+					DELETE FROM
+						".$db_table['market_ressource']."
+					WHERE
+						ressource_market_id='".$arr['ressource_market_id']."';");
+    		
+    	}
+    }
+
+
+		// Löscht alte Schiffsangebote
+		$res=dbquery("
+		SELECT
+			*
+		FROM
+			".$db_table['market_ship']."
+		WHERE
+			datum<=".(time()-$conf['market_response_time']['v']*3600*24).";");    			
+    if (mysql_num_rows($res) > 0)
+    {
+    	while($arr=mysql_fetch_assoc($res))
+    	{
+    			// Markt Level vom Verkäufer laden
+          $mres = dbquery("
+					SELECT
+						buildlist_current_level
+					FROM
+						".$db_table['buildlist']."
+					WHERE
+						buildlist_entity_id='".$arr['planet_id']."'
+						AND buildlist_building_id='".MARKTPLATZ_ID."'
+						AND buildlist_current_level>'0'
+						AND buildlist_user_id='".$arr['user_id']."';");
+          $marr = mysql_fetch_assoc($mres);
+          
+          // Definiert den Rückgabefaktor
+          $return_factor = 1 - (1/($marr['buildlist_current_level']+1));
+          
+         	// Schiffe dem besitzer zurückgeben (mit dem faktor)
+         	dbquery("
+					UPDATE 
+						".$db_table['shiplist']." 
+					SET 
+						shiplist_count=shiplist_count+'".(floor($arr['ship_count']*$return_factor))."' 
+					WHERE 
+						shiplist_user_id='".$arr['user_id']."' 
+						AND shiplist_entity_id='".$arr['planet_id']."' 
+						AND shiplist_ship_id='".$arr['ship_id']."'");
+
+
+          // Nachricht senden
+          $msg = "Folgendes Schiffsangebot wurde nicht innerhalb von ".$conf['market_response_time']['v']." Tagen gekauft und deshalb gelöscht.\n\n"; 
+                    
+          $msg .= "".$arr['ship_name'].": ".nf($arr['ship_count'])."\n\n";  
+                  
+          $msg .= "[b]Preis:[/b]\n";
+          $msg .= "".RES_METAL.": ".nf($arr['ship_costs_metal'])."\n";
+          $msg .= "".RES_CRYSTAL.": ".nf($arr['ship_costs_crystal'])."\n";
+          $msg .= "".RES_PLASTIC.": ".nf($arr['ship_costs_plastic'])."\n";
+          $msg .= "".RES_FUEL.": ".nf($arr['ship_costs_fuel'])."\n";
+          $msg .= "".RES_FOOD.": ".nf($arr['ship_costs_food'])."\n\n";
+          
+          $msg .= "Du erhälst ".(round($return_factor,2)*100)."% deiner Schiffe wieder zurück (abgerundet)!\n\n";
+          
+          $msg .= "Das Handelsministerium";
+          send_msg($arr['user_id'],SHIP_MISC_MSG_CAT_ID,"Angebot gelöscht",$msg);
+
+          // Angebot löschen
+          dbquery("
+					DELETE FROM
+						".$db_table['market_ship']."
+					WHERE
+						ship_market_id='".$arr['ship_market_id']."';");
+    		
+    	}
+    }
+
+    //Arrays löschen (Speicher freigeben)
+		mysql_free_result($res);
+		unset($arr);
+		if ($mres)
+		{
+			mysql_free_result($mres);
+			unset($marr);
+		}
+		unset($msg);
 	}
 
 	/**
@@ -2722,6 +3827,161 @@ Forum: http://www.etoa.ch/forum";
 		echo "<img id=\"avatar\" src=\"".BOARD_AVATAR_DIR."/".$avatar."\" alt=\"avatar\" style=\"width:64px;height:64px;\"/></div>";
 	}
 
+	/**
+	* Ressourcen-Update
+	*
+	* @todo Deprecated! Source this out, it is no longer used
+	*/
+	function updateAllEconomy()
+	{
+		global $conf,$db_table;
+
+		// User-Planeten aktualisieren
+		$res=dbquery("
+			SELECT
+				id
+			FROM
+				".$db_table['planets']."
+			WHERE
+				planet_user_id>'0'
+		");
+		$cnt=mysql_num_rows($res);
+		if ($cnt>0)
+		{
+			while ($arr=mysql_fetch_row($res))
+			{
+				$p = new Planet($arr[0]);
+				$p->updateEconomy();
+			}
+		}
+		return $cnt;
+
+		//Arrays löschen (Speicher freigeben)
+		mysql_free_result($res);
+		unset($arr);
+		unset($p);
+	}
+
+	/**
+	* Objekt-Update
+	* @todo Deprecated! Source this out, it is no longer used
+	*/
+	function updateAllObjects()
+	{
+		global $conf,$db_table;
+
+		// User-Planeten aktualisieren
+		$res=dbquery("
+			SELECT
+				id
+			FROM
+				".$db_table['planets']."
+			WHERE
+				planet_user_id>'0'
+		");
+		$cnt=mysql_num_rows($res);
+		if ($cnt>0)
+		{
+			while ($arr=mysql_fetch_row($res))
+			{
+				$p = new Planet($arr[0]);
+				$p->update();
+			}
+		}
+		return $cnt;
+
+		//Arrays löschen (Speicher freigeben)
+		mysql_free_result($res);
+		unset($arr);
+		unset($p);
+	}
+
+	/**
+	* Gasplaneten-Update
+	* @author MrCage
+	* @todo Deprecated! Source this out, it is no longer used
+	*/
+	function updateGasPlanets()
+	{
+		global $conf,$db_table;
+
+		// Gasplanet-Update
+		$res=dbquery("
+			SELECT
+				id,
+				planet_res_fuel,
+				planet_fields,
+				planet_last_updated
+			FROM
+				".$db_table['planets']."
+			WHERE
+				planet_type_id='".$conf['gasplanet']['v']."';
+		");
+		$cnt=mysql_num_rows($res);
+		if ($cnt>0)
+		{
+			$time = time();
+			while ($arr=mysql_fetch_assoc($res))
+			{
+				if ($arr['planet_last_updated']==0) $arr['planet_last_updated']=$time;
+				$fuel = min((max($time-$arr['planet_last_updated'],0)*$conf['gasplanet']['p1']/3600)+$arr['planet_res_fuel'],$conf['gasplanet']['p2']*$arr['planet_fields']);
+
+				dbquery("
+					UPDATE
+					".$db_table['planets']."
+					SET
+						planet_res_fuel='".$fuel."',
+						planet_last_updated='".$time."'
+					WHERE
+						id='".$arr['planet_id']."';
+				");
+			}
+		}
+		return $cnt;
+	}
+
+	/**
+	* Flotten-Update
+	*
+	* @author MrCage
+	*/
+	function updateAllFleet()
+	{
+		global $conf;
+		global $db_table;
+
+		$sql = "
+			SELECT
+				*
+			FROM
+				".$db_table['fleet']."
+			WHERE
+				fleet_updating='0'
+				AND fleet_landtime<'".time()."'
+			ORDER BY
+				fleet_landtime ASC;
+		";
+		$res=dbquery($sql);
+		$nr = mysql_num_rows($res);
+		$ids=array();
+		if ($nr>0)
+		{
+			require_once(GAME_ROOT_DIR."/inc/fleet_action.inc.php");
+			require_once(GAME_ROOT_DIR."/inc/fleet_update.inc.php");
+			while ($arr=mysql_fetch_assoc($res))
+			{
+				update_fleet($arr,0);
+				array_push($ids,$arr['fleet_id']);
+			}
+		}
+		return array($nr,$ids);
+
+		//Arrays löschen (Speicher freigeben)
+		mysql_free_result($res);
+		unset($arr);
+		unset($ids);
+
+	}
 
 	/**
 	* Cuts words
@@ -2937,6 +4197,83 @@ Forum: http://www.etoa.ch/forum";
 			return round($s)." B";
 		}
 	}	
+	
+
+	/**
+	* Deprecated
+	* @todo fix and outsource
+	*/
+	function calcDistance($sx1,$sy1,$cx1,$cy1,$pp1,$sx2,$sy2,$cx2,$cy2,$pp2)
+	{
+		global $conf;
+		// Calc time and distance
+		$nx=$conf['num_of_cells']['p1'];		// Anzahl Zellen Y
+		$ny=$conf['num_of_cells']['p2'];		// Anzahl Zellen X
+		$ae=$conf['cell_length']['v'];			// Länge vom Solsys in AE
+		$np=$conf['num_planets']['p2'];			// Max. Planeten im Solsys
+		$dx = abs(((($sx2-1) * $nx) + $cx2) - ((($sx1-1) * $nx) + $cx1));
+		$dy = abs(((($sy2-1) * $nx) + $cy2) - ((($sy1-1) * $nx) + $cy1));
+		$sd = sqrt(pow($dx,2)+pow($dy,2));			// Distanze zwischen den beiden Zellen
+		$sae = $sd * $ae;											// Distance in AE units
+		if ($sx1==$sx2 && $sy1==$sy2 && $cx1==$cx2 && $cy1=$cy2)
+			$ps = abs($pp2-$pp1)*$ae/4/$np;				// Planetendistanz wenn sie im selben Solsys sind
+		else
+			$ps = ($ae/2) - (($pp2)*$ae/4/$np);	// Planetendistanz wenn sie nicht im selben Solsys sind
+		$ssae = $sae + $ps;
+		return $ssae;	
+	}		
+
+	/**
+	* Deprecated
+	* @todo fix and outsource
+	*/
+	function calcDistanceByPlanetId($pid1,$pid2)
+	{
+		$c1 = getCoordsByPlanetId($pid1);
+		$c2 = getCoordsByPlanetId($pid2);
+		return calcDistance($c1['sx'],$c1['sy'],$c1['cx'],$c1['cy'],$c1['pp'],$c2['sx'],$c2['sy'],$c2['cx'],$c2['cy'],$c2['pp']);
+	}
+
+	
+	/**
+	* Deprecated
+	* @todo fix and outsource
+	*/
+	function getCoordsByPlanetId($id)
+	{		
+		$coords = array();
+		$res = dbquery("
+		SELECT
+			cell_sx,
+			cell_sy,
+			cell_cx,
+			cell_cy,
+			cell_id,
+			id,
+			planet_solsys_pos,
+			planet_user_id
+		FROM
+			planets
+		INNER JOIN
+			space_cells
+			ON planet_solsys_id=cell_id
+			AND id='".$id."'				
+		");
+		if (mysql_num_rows($res)>0)
+		{
+			$arr=mysql_fetch_assoc($res);
+			$coords['id'] = $arr['cell_id'];
+			$coords['sx'] = $arr['cell_sx'];
+			$coords['sy'] = $arr['cell_sy'];
+			$coords['cx'] = $arr['cell_cx'];
+			$coords['cy'] = $arr['cell_cy'];
+			$coords['pp'] = $arr['planet_solsys_pos'];			
+			$coords['user_id'] = $arr['planet_user_id'];
+			$coords['planet_id'] = $id;
+			return $coords;
+		}		
+		return false;		
+	}
 	
 	/**
 	* Generates a password using the password string, a user based seed, and a system wide seed

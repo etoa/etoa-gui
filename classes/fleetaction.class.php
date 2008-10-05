@@ -37,7 +37,8 @@
 		"market",
 		"flight",
 		"support",
-		"alliance"
+		"alliance",
+		"delivery"
 		);
 
 		// Colors for different attitudes

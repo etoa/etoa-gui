@@ -6,7 +6,7 @@
 		function FleetActionCollectFuel()
 		{
 			$this->code = "collectfuel";
-			$this->name = RES_FUEL."gas sammeln";
+			$this->name = RES_FUEL."Gas saugen";
 			$this->desc = RES_FUEL." aus der Atmospähre von Gasplaneten saugen";
 			$this->longDesc = "In Andromeda gibt es Planeten die sich aus verschiedenen Gasen zusammensetzen. Diese Planeten sind nicht bewohnbar!
 			Nichts desto trotz, hat man sich deren Eigenschaft zu Nutze gemacht und Schiffe entwickelt, die deren Gase absaugen und sie in verwendbares Tritium umwandeln können!

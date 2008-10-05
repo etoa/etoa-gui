@@ -1,8 +1,4 @@
 <?php
-    define("MIN_UMOD_TIME",$conf['hmode_days']['v']);
-    define("USER_INACTIVE_DELETE",$conf['user_inactive_days']['p1']);
-    define("USER_INACTIVE_SHOW",$conf['user_inactive_days']['v']);
-    define("USER_NOTLOGIN_DELETE",$conf['user_inactive_days']['v']);
 
     echo "<h2>Urlaubsmodus</h2>";
 		Help::navi(array("Urlaubsmodus","u_mod"));

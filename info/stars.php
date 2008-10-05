@@ -3,7 +3,7 @@
 	echo "<h2>Sterne</h2>";
 	Help::navi(array("Sterne","stars"));
 
-	if ($_GET['order']!="")
+	if (isset($_GET['order']))
 	{
 		$order="sol_type_".$_GET['order'];
 		if ($_SESSION['help']['orderfield']==$_GET['order'])
@@ -74,7 +74,7 @@
 			//echo "<td class=\"tbldata\">".$rating."</td>";
 			echo "</tr>";
 			
-			$cnt_m += $arr['sol_type_f_metal']-1;
+			/*$cnt_m += $arr['sol_type_f_metal']-1;
 			$cnt_c += $arr['sol_type_f_crystal']-1;
 			$cnt_p += $arr['sol_type_f_plastic']-1;
 			$cnt_fu += $arr['sol_type_f_fuel']-1;
@@ -83,7 +83,7 @@
 			$cnt_pop += $arr['sol_type_f_population']-1;
 			$cnt_res += $arr['sol_type_f_researchtime']-1;
 			$cnt_bui += $arr['sol_type_f_buildtime']-1;
-			$cnt_rat += $rating;
+			$cnt_rat += $rating;*/
 		}
 	}
 	/*

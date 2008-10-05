@@ -101,7 +101,7 @@
 	//
 	// Gegnerische Flotten
 	//
-		
+	$header=0;
 	$fm->loadForeign();
 	if ($fm->count() > 0)
 	{	
@@ -140,38 +140,21 @@
             			GROUP BY 
             				fs_fleet_id;");
            			 $fsarr= mysql_fetch_row($fsres);
-            		$ships_count = $fsarr[0];
-        		}
-				//Zählt alle nicht getarnten Schiffe bei einem Tarnangriff
-    		    elseif($farr['action']=="vo" && $show_tarn==1)
-        		{
-            		$fsres = dbquery("
-            			SELECT 
-            				SUM(fs_ship_cnt) 
-            			FROM 
-            				".$db_table['fleet_ships']." 
-            			INNER JOIN
-            				".$db_table['ships']." 
-            				ON fs_ship_id=ship_id
-            				AND fs_fleet_id='".$farr['id']." '
-            				AND ship_tarned!='1' 
-            			GROUP BY 
-            				fs_fleet_id;");
-            		$fsarr= mysql_fetch_row($fsres);
-           			 $ships_count = $fsarr[0];
+            		$shipsCount = $fsarr[0];
         		}
         		else
-    			  $shipCount = $fd->countShips();
+    			  $shipsCount = $fd->countShips();
 			}
 			else
 			{
-				$shipCount = -1;
+				$shipsCount = -1;
 			}
 			
 			//Opfer sieht die einzelnen Schiffstypen in der Flotte
 			$shipStr = array();
 			if(SPY_TECH_SHOW_SHIPS<=$fm->spyTech())
 			{
+				$showShips = true;
     		    if($fd->getAction()->code()=="fakeattack")
 	    	    {
             		$fshipres = dbquery("
@@ -185,20 +168,18 @@
                 		ON fs.fs_ship_id=s.ship_id
                 			AND fs.fs_fleet_id='".$farr['id']."'
                 			AND fs.fs_ship_faked='1';");
-        		}
-        		elseif($farr['action']=="vo" && $show_tarn==1)
-       			{
-            		$fshipres = dbquery("
-        		    	SELECT
-                			fs.fs_ship_cnt,
-              				s.ship_name
-            			FROM
-                			".$db_table['fleet_ships']." AS fs
-               			INNER JOIN
-                			".$db_table['ships']." AS s
-                		ON fs.fs_ship_id=s.ship_id
-               				 AND fs.fs_fleet_id='".$farr['id']."'
-                			AND s.ship_tarned!='1';");
+					while ($fshiparr = mysql_fetch_assoc($fshipres))
+					{
+					 	$str = "";
+						
+        				//Opfer sieht die genau Anzahl jedes Schifftypes in einer Flotte
+        				if (SPY_TECH_SHOW_NUMSHIPS<=$fm->spyTech())
+         				{
+          					$str= "".$fshiparr["fs_ship_cnt"]." ";
+          				}
+          					$str.= "".$fshiparr["ship_name"];
+          					$shipStr[] = $str;
+					}
         		}
         		else
       			{
@@ -206,8 +187,9 @@
 					{
         				$str = "";
         				$ship = new Ship($sid);
+						
         				//Opfer sieht die genau Anzahl jedes Schifftypes in einer Flotte
-        				if (SPY_TECH_SHOW_NUMSHIPS<=$$fm->spyTech())
+        				if (SPY_TECH_SHOW_NUMSHIPS<=$fm->spyTech())
          				{
           					$str= "".$scnt." ";
           				}
@@ -217,59 +199,64 @@
 				}
 
 				// Show action
-				if (SPY_TECH_SHOW_ACTION<=$spy_tech_level)
+				if (SPY_TECH_SHOW_ACTION<=$fm->spyTech())
 				{
-					$shipAction = $fd->getAction->displayName();
+					$shipAction = $fd->getAction()->displayName();
 				}
 				else
 				{
 					$shipAction = $attitudeString;
 				}
 
-				if (time() - $fd->landTime() - ($fd->launchTime() - $fd->landTime()) * (1-(0.1*$tarned))>0 )
+				if ($header!=1) 
 				{
-					if ($header!=1) 
-					{
-						echo "<tr>
-									<td class=\"tbltitle\">Start / Ziel</td>
-									<td class=\"tbltitle\">Startzeit / Landezeit</td>
-									<td class=\"tbltitle\">Gesinnung</td>
-									<td class=\"tbltitle\">Spieler</td>
-							</tr>";
-						$header=1;
-					}
-				
 					echo "<tr>
-						<td class=\"tbldata\"><b>".$fd->getSource()->entityCodeString()."</b> 
-						<a href=\"?page=cell&amp;id=".$fd->getSource()->cellId()."&amp;hl=".$fd->getSource()->id()."\">".$fd->getSource()."</a><br/>";
-					echo "<b>".$fd->getTarget()->entityCodeString()."</b> 
-						<a href=\"?page=cell&amp;id=".$fd->getTarget()->cellId()."&amp;hl=".$fd->getTarget()->id()."\">".$fd->getTarget()."</a></td>";			
-					echo "<td class=\"tbldata\">
-						".date("d.m.y, H:i:s",$fd->launchTime())."<br/>";
-					echo date("d.m.y, H:i:s",$fd->landTime())."</td>";
-					echo "<td class=\"tbldata\">
-						<span style=\"color:".FleetAction::$attitudeColor[$fd->getAction()->attitude()]."\">
-						".$fd->getAction()->name()."
-						</span> [".FleetAction::$statusCode[$fd->status()]."]<br/>";				
-					echo "<td class=\"tbldata\" style=\"".$style."\">
-						<a href=\"?page=messages&mode=new&message_user_to=".$fd->ownerId()."\">".get_user_nick($fd->ownerId())."</a>
-						</td>";	
-					echo "</tr>";
-					if ($show_num==1)
+						<td class=\"tbltitle\">Start / Ziel</td>
+						<td class=\"tbltitle\">Startzeit / Landezeit</td>
+						<td class=\"tbltitle\">Gesinnung</td>
+						<td class=\"tbltitle\">Spieler</td>
+						</tr>";
+					$header=1;
+				}
+				
+				echo "<tr>
+					<td class=\"tbldata\"><b>".$fd->getSource()->entityCodeString()."</b> 
+					<a href=\"?page=cell&amp;id=".$fd->getSource()->cellId()."&amp;hl=".$fd->getSource()->id()."\">".$fd->getSource()."</a><br/>";
+				echo "<b>".$fd->getTarget()->entityCodeString()."</b> 
+					<a href=\"?page=cell&amp;id=".$fd->getTarget()->cellId()."&amp;hl=".$fd->getTarget()->id()."\">".$fd->getTarget()."</a></td>";			
+				echo "<td class=\"tbldata\">
+					".date("d.m.y, H:i:s",$fd->launchTime())."<br/>";
+				echo date("d.m.y, H:i:s",$fd->landTime())."</td>";
+				echo "<td class=\"tbldata\">
+					<span style=\"color:".FleetAction::$attitudeColor[$fd->getAction()->attitude()]."\">
+					".$fd->getAction()->name()."
+					</span> [".FleetAction::$statusCode[$fd->status()]."]<br/>";				
+				echo "<td class=\"tbldata\">
+					<a href=\"?page=messages&mode=new&message_user_to=".$fd->ownerId()."\">".get_user_nick($fd->ownerId())."</a>
+					</td>";	
+				echo "</tr>";
+				if ($show_num==1)
+				{
+					echo "<tr><td class=\"tbldata\" colspan=\"4\">";
+					echo "<b>Anzahl:</b> ".$shipsCount."";
+					if ($showShips)
 					{
-						echo "<tr><td class=\"tbldata\" style=\"".$style."\" colspan=\"4\">";
-						echo "<b>Anzahl:</b> ".$ships_count."";
-						if ($show_ships==1)
-						{
-							echo ";<br><b>Schiffe:</b> ";
-							echo "".$ship_infos."";
-							if ($show_action==1)
-							{
-								echo ";<br><b>Vorhaben:</b> ".$ship_action."";
+						echo ";<br><b>Schiffe:</b> ";
+						$count = false;
+						foreach ($shipStr as $value) {
+   							echo $value;
+							if ($count) { 
+								echo ", "; 
+							} else {
+								$count = true; 
 							}
+  						}
+						if ($shipAction)
+						{
+							echo ";<br><b>Vorhaben:</b> ".$shipAction."";
 						}
-						echo "</td></tr>";
 					}
+					echo "</td></tr>";
 				}	
 			}
 		}

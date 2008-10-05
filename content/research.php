@@ -35,7 +35,7 @@
   define('CELL_WIDTH',175);
   
 	// Aktiviert / Deaktiviert Bildfilter
-	if ($cu->image_filter==1)
+	if ($cu->getp("image_filter")==1)
 	{
 		$use_img_filter = true;
 	}

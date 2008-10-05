@@ -3,7 +3,7 @@
 	echo "<h2>Planeten</h2>";
 	Help::navi(array("Planeten","planets"));
 
-	if ($_GET['order']!="")
+	if (isset($_GET['order']))
 	{
 		$order="type_".$_GET['order'];
 		if ($_SESSION['help']['orderfield']==$_GET['order'])

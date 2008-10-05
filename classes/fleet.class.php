@@ -23,8 +23,11 @@
 		*/
 		function Fleet($fid,$uid=-1)
 		{
-			if ($uid>=0)
+			if ($uid>=0) {
 				$uidStr = " AND user_id=".$uid."";
+			} else {
+				$uidStr = "";
+			}
 			$this->valid = false;
 			$res = dbquery("
 			SELECT

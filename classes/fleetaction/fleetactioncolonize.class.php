@@ -8,8 +8,8 @@
 			$this->code = "colonize";
 			$this->name = "Kolonialisieren";
 			$this->desc = "Eine Basis auf dem Ziel errichten";
-			$this->longDesc = "Am Anfang jeder Spielerkarriere hat man einen Planet zum Verwalten. Im ganzen Universum hat es jedoch noch unzählige andere Planeten, die unbewohnt sind. Um dies zu ändern gibt es spezielle Schiffe, welche diese freien Planeten besiedeln können.
-Ein solches Schiff kann meist nicht grosse Mengen an Ressourcen mitnehmen, aber für diesen Zweck hat man die Möglichkeit andere Schiffe mitzuschicken.
+			$this->longDesc = "Am Anfang jeder Spielerkarriere hat man einen Planet zum Verwalten. Im ganzen Universum hat es jedoch noch unzÃ¤hlige andere Planeten, die unbewohnt sind. Um dies zu Ã¤ndern gibt es spezielle Schiffe, welche diese freien Planeten besiedeln kÃ¶nnen.
+Ein solches Schiff kann meist nicht grosse Mengen an Ressourcen mitnehmen, aber fÃ¼r diesen Zweck hat man die MÃ¶glichkeit andere Schiffe mitzuschicken.
 Es ist zu beachten, dass man maximal 15 Planeten kontrollieren kann! Bei einer erfolgreichen Kolonialisierung wird das Besiedlungsschiff verbraucht.";
 			$this->visible = true;
 			$this->exclusive = false;					

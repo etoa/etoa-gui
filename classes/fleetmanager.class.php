@@ -45,7 +45,7 @@
 			$this->count = 0;
 			$this->fleet = array();
 			
-			//Lädt Flottendaten
+			//LÃ¤dt Flottendaten
 			$fres = dbquery("
 			SELECT
 				id
@@ -71,67 +71,69 @@
 			$this->aggressivCount = 0;
 			$this->fleet = array();
 			
-			//Lädt Flottendaten
-			// TODO: This is not good query because it needs to know the planet table structure
-			$fres = dbquery("
-			SELECT
-				f.id
-			FROM
-				fleet f
-			INNER JOIN
-				planets p
-				ON p.id=f.entity_to
-				AND p.planet_user_id=".$this->userId."
-				AND f.user_id!='".$this->userId."'
-			ORDER BY
-				landtime DESC;");
-			if (mysql_num_rows($fres)>0)
-			{	
-				//User Spytech
-				$tl = new TechList($this->userId);
-				$this->userSpyTechLevel = $tl->getLevel(SPY_TECH_ID);
-				
-				while ($farr = mysql_fetch_row($fres))
-				{
-					$cFleet = new Fleet($farr[0]);			
+			//User Spytech
+			$tl = new TechList($this->userId);
+			$this->userSpyTechLevel = $tl->getLevel(SPY_TECH_ID);
+			
+			if (SPY_TECH_SHOW_ATTITUDE<=$this->userSpyTechLevel) {
+				//LÃ¤dt Flottendaten
+				// TODO: This is not good query because it needs to know the planet table structure
+				$fres = dbquery("
+					SELECT
+						f.id
+					FROM
+						fleet f
+					INNER JOIN
+						planets p
+					ON p.id=f.entity_to
+						AND p.planet_user_id=".$this->userId."
+						AND f.user_id!='".$this->userId."'
+					ORDER BY
+						landtime DESC;");
+				if (mysql_num_rows($fres)>0)
+				{	
+					while ($farr = mysql_fetch_row($fres))
+					{
+						$cFleet = new Fleet($farr[0]);			
 					
-					if ($cFleet->getAction()->visible()) {
-						if ($cFleet->getAction()->attitude()==3) {
-							$otl = new TechList($cFleet->ownerId());
-							$opTarnTech = $otl->getLevel(TARN_TECH_ID);
+						if ($cFleet->getAction()->visible()) {
+							if ($cFleet->getAction()->attitude()==3) {
+								$otl = new TechList($cFleet->ownerId());
+								$opTarnTech = $otl->getLevel(TARN_TECH_ID);
 							
-							$diffTimeFactor = max($opTarnTech-$this->userSpyTechLevel,0);
+								$diffTimeFactor = max($opTarnTech-$this->userSpyTechLevel,0);
 							
-							$specialShipBonusTarn = 0;
-							$specialBoniRes = dbquery("
-								SELECT
-									s.special_ship_bonus_tarn,
-									fs.fs_special_ship_bonus_tarn
-								FROM
-									ships s
-								INNER JOIN
-									fleet_ships fs
-								ON s.ship_id = fs.fs_ship_id
-									AND fs.fs_fleet_id='".$farr[0]."'
-									AND s.special_ship='1';
-								");
-							if(mysql_num_rows($specialBoniRes)>0)
-        					{
-            					while ($specialBoniArr = mysql_fetch_assoc($specialBoniRes))
-								{
-									$specialShipBonusTarn += $specialBoniArr['special_ship_bonus_tarn'] * $specialBoniArr['fs_special_ship_bonus_tarn'];
-            					}
-        					}
-							$diffTimeFactor = 0.1 * min(9,$diffTimeFactor + 10 * $specialShipBonusTarn);
+								$specialShipBonusTarn = 0;
+								$specialBoniRes = dbquery("
+									SELECT
+										s.special_ship_bonus_tarn,
+										fs.fs_special_ship_bonus_tarn
+									FROM
+										ships s
+									INNER JOIN
+										fleet_ships fs
+									ON s.ship_id = fs.fs_ship_id
+										AND fs.fs_fleet_id='".$farr[0]."'
+										AND s.special_ship='1';");
+								
+								if(mysql_num_rows($specialBoniRes)>0)
+    	    					{
+            						while ($specialBoniArr = mysql_fetch_assoc($specialBoniRes))
+									{
+										$specialShipBonusTarn += $specialBoniArr['special_ship_bonus_tarn'] * $specialBoniArr['fs_special_ship_bonus_tarn'];
+            						}
+        						}
+								$diffTimeFactor = 0.1 * min(9,$diffTimeFactor + 10 * $specialShipBonusTarn);
 							
-							if ($cFleet->remainingTime() <  ($cFleet->landTime() - $cFleet->launchTime())*(1 - $diffTimeFactor)) {
+								if ($cFleet->remainingTime() <  ($cFleet->landTime() - $cFleet->launchTime())*(1 - $diffTimeFactor)) {
+									$this->fleet[$farr[0]] = $cFleet;
+									$this->count++;
+									$this->aggressivCount++;
+								}
+							} else {						
 								$this->fleet[$farr[0]] = $cFleet;
 								$this->count++;
-								$this->aggressivCount++;
 							}
-						} else {						
-							$this->fleet[$farr[0]] = $cFleet;
-							$this->count++;
 						}
 					}
 				}		
@@ -142,7 +144,7 @@
 		{
 			$this->count = 0;
 			$this->fleet = array();
-			//Lädt Flottendaten
+			//LÃ¤dt Flottendaten
 			// TODO: This is not good query because it needs to know the planet table structure
 			$fres = dbquery("
 			SELECT
@@ -170,7 +172,7 @@
 		{
 			$this->count = 0;
 			$this->fleet = array();
-			//Lädt Flottendaten
+			//LÃ¤dt Flottendaten
 			// TODO: This is not good query because it needs to know the planet table structure
 			$fres = dbquery("
 			SELECT
@@ -215,13 +217,14 @@
 		
 		function attitude()
 		{
-			if ($agressivCount==$this->count) return "color:#0f0";
-			elseif ($aggressivCount==0) return "color:#f00";
+			if ($this->aggressivCount==$this->count) return "color:#f00";
+			elseif ($this->aggressivCount==0) return "color:#0f0";
 			else return "color:orange";
 		}
 		
 		function loadAggressiv()
 		{
+			$this->loadForeign();
 			return $this->aggressivCount;
 		}
 	

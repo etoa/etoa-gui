@@ -7,7 +7,7 @@
 //Detail
 //
 
-	if ($_GET['id']!="")
+	if (isset($_GET['id']))
 	{
 		if ($_GET['level']==0) $_GET['level']=1;
 		$res = dbquery("SELECT * FROM missiles WHERE missile_id='".$_GET['id']."';");
@@ -102,7 +102,7 @@
 	{
 		Help::navi(array("Raketen","missiles"));		
 		
-		if ($_GET['order']!="")
+		if (isset($_GET['order']))
 		{
 			$order="missile_".$_GET['order'];
 			if ($_SESSION['help']['orderfield']==$_GET['order'])

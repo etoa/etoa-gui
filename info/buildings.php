@@ -6,14 +6,14 @@ else
 	define("SHOWLEVELS",5);
 
 
-define(BUILDING_GENERAL_CAT,1);
-define(BUILDING_RES_CAT,2);
-define(BUILDING_POWER_CAT,3);
-define(BUILDING_STORE_CAT,4);
+define("BUILDING_GENERAL_CAT",1);
+define("BUILDING_RES_CAT",2);
+define("BUILDING_POWER_CAT",3);
+define("BUILDING_STORE_CAT",4);
 
 echo "<h2>Geb&auml;ude</h2>";
 
-if ($_GET['id']!="")
+if (isset($_GET['id']))
 {
 	if ($b_level==0) $b_level=1;
 	$res = dbquery("SELECT * FROM ".$db_table['buildings']." WHERE building_id='".$_GET['id']."';");
@@ -44,7 +44,7 @@ if ($_GET['id']!="")
 		}
 		echo "</select><br/><br/>";		
 
-		$res_level = dbquery("SELECT buildlist_current_level FROM ".$db_table['buildlist']." WHERE buildlist_building_id ='".$_GET['id']."' AND buildlist_user_id='".$_SESSION[ROUNDID]['user']['id']."' AND buildlist_entity_id='".$c->id."';");
+		$res_level = dbquery("SELECT buildlist_current_level FROM ".$db_table['buildlist']." WHERE buildlist_building_id ='".$_GET['id']."' AND buildlist_user_id='".$cu->id()."' AND buildlist_entity_id='".$cp->id."';");
 		if(mysql_num_rows($res_level)>0)
 		{
 			$arr_level = mysql_fetch_array($res_level);
@@ -407,7 +407,7 @@ if ($_GET['id']!="")
 //
 // Kategorieinfos
 //
-elseif($_GET['type_id']>0)
+elseif(isset($_GET['type_id']) && $_GET['type_id']>0)
 {
 	if ($_GET['type_id']==BUILDING_STORE_CAT)
 	{

@@ -47,12 +47,11 @@
 	echo "<h2>Raumschiffe</h2>";
 
 	$race=get_races_array();
-	define(TECH_SPEED_CAT,1);
 
 	//
 	// Details
 	//
-	if ($_GET['id']!="")
+	if (isset($_GET['id']))
 	{
 		$res = dbquery("
 		SELECT 
@@ -268,7 +267,7 @@
 	{
 		Help::navi(array("Schiffe","shipyard"));
 	
-		if ($_GET['order']!="")
+		if (isset($_GET['order']))
 		{
 			$order="ship_".$_GET['order'];
 			if ($_SESSION['help']['orderfield']==$_GET['order'])

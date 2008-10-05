@@ -542,7 +542,7 @@
 			// Get fleet object
 			$fleet = unserialize($_SESSION['haven']['fleetObj']);
 			
-			$absX = ($form['man_sx'] * CELL_NUM_X) + $form['man_cx'];
+			$absX = (($form['man_sx']-1) * CELL_NUM_X) + $form['man_cx'];
 			$absY = (($form['man_sy']-1) * CELL_NUM_Y) + $form['man_cy'];
 			if ($fleet->owner->discovered($absX,$absY) == 0)
 				$code='u';
@@ -826,7 +826,7 @@
 		if ($form['man_sx']!="" && $form['man_sy']!="" && $form['man_cx']!="" && $form['man_cy']!="" && $form['man_p']!=""
 		&& $form['man_sx']>0 && $form['man_sy']>0 && $form['man_cx']>0 && $form['man_cy']>0 && $form['man_p']>=0)
 		{		
-			$absX = ($form['man_sx'] * CELL_NUM_X) + $form['man_cx'];
+			$absX = (($form['man_sx'] - 1)* CELL_NUM_X) + $form['man_cx'];
 			$absY = (($form['man_sy']-1) * CELL_NUM_Y) + $form['man_cy'];	
 			$fleet = unserialize($_SESSION['haven']['fleetObj']);
 

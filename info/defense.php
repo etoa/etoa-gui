@@ -3,7 +3,7 @@
 	echo "<h2>Verteidigung</h2>";
 	$race=get_races_array();
 
-	if ($_GET['id']!="")
+	if (isset($_GET['id']))
 	{
 		if ($_GET['level']==0) $_GET['level']=1;
 		$res = dbquery("SELECT * FROM ".$db_table['defense']." WHERE def_id='".$_GET['id']."';");
@@ -60,7 +60,7 @@
 	{
 		Help::navi(array("Verteidigung","defense"));		
 		
-		if ($_GET['order']!="")
+		if (isset($_GET['order']))
 		{
 			$order="def_".$_GET['order'];
 			if ($_SESSION['help']['orderfield']==$_GET['order'])
