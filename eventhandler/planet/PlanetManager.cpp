@@ -339,7 +339,7 @@ namespace planet
 		}
 		
 		// Addieren der Planeten- und Rassenboni
-		double fuelSolar = 1 - (functions::getSolarFuelBonus((int)row["planet_temp_from"], (int)row["planet_temp_to"])/100);
+		double fuelSolar = 1 - (functions::getSolarFuelBonus((int)row["planet_temp_from"], (int)row["planet_temp_to"]));
 		cnt[0] += (cnt[0] * (float(row["planet_type_f_metal"]) + float(row["race_f_metal"]) + float(row["sol_type_f_metal"]) - 3));
 		cnt[1] += (cnt[1] * (float(row["planet_type_f_crystal"]) + float(row["race_f_crystal"]) + float(row["sol_type_f_crystal"]) - 3));
 		cnt[2] += (cnt[2] * (float(row["planet_type_f_plastic"]) + float(row["race_f_plastic"]) + float(row["sol_type_f_plastic"]) - 3));

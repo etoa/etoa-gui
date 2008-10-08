@@ -48,7 +48,6 @@ public:
 			this->objectTypeId = object["type_id"];
 			this->objectFuelUseLanding = (int)object["fuel_use_landing"];
 			this->objectFuelUseLaunch = (int)object["fuel_use_launch"];
-			this->objectFuelUseEconomize = (int)object["fuel_use_economize"];
 			this->objectProdPower = (int)object["prod_power"];
 			this->objectCapacity = (int)object["capacity"];
 			this->objectPeopleCapacity = (int)object["people_capacity"];
@@ -87,7 +86,6 @@ public:
 			this->objectTypeId=0;
 			this->objectFuelUseLaunch = 0;
 			this->objectFuelUseLanding = 0;
-			this->objectFuelUseEconomize = 0;
 			this->objectProdPower = 0;
 			this->objectCapacity = 0;
 			this->objectPeopleCapacity = 0;
@@ -129,17 +127,16 @@ public:
 	std::string name();
 	short typeId();
 	int costs();
-	int costsMetal();
-	int costsCrystal();
-	int costsPlastic();
-	int costsFuel();
-	int costsFood();
+	double costsMetal();
+	double costsCrystal();
+	double costsPlastic();
+	double costsFuel();
+	double costsFood();
 	int costsPower();
 	int powerUse();
 	int fuelUse();
 	int fuelUseLaunch();
 	int fuelUseLanding();
-	int fuelUseEconomize();
 	int prodPower();
 	int capacity();
 	int peopleCapacity();
@@ -200,7 +197,6 @@ private:
 	int objectFuelUse;
 	int objectFuelUseLaunch;
 	int objectFuelUseLanding;
-	int objectFuelUseEconomize;
 	int objectProdPower;
 	int objectCapacity;
 	int objectPeopleCapacity;

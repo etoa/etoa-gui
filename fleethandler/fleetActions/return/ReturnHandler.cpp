@@ -21,7 +21,7 @@ namespace retour
 		
 		if (this->planetUserId == (int)fleet_["user_id"]) {
 			/** Land fleet and delete entries in the database **/
-			fleetLand(1);
+			fleetLand(1,1,1);
 			fleetDelete();
 			
 			/** Check if the user'd like to have a return message for spy and transport **/
@@ -30,11 +30,11 @@ namespace retour
 			if (std::string(fleet_["action"])=="spy" || std::string(fleet_["action"])=="transport") {
 				mysqlpp::Query query = con_->query();
 				query << "SELECT ";
-				query << "	user_fleet_rtn_msg ";
+				query << "	fleet_rtn_msg ";
 				query << "FROM ";
-				query << "	users ";
+				query << "	user_properties ";
 				query << "WHERE ";
-				query << "	user_id=" << fleet_["user_id"] << ";";
+				query << "	id=" << fleet_["user_id"] << ";";
 				mysqlpp::Result mRes = query.store();
 				query.reset();
 			
@@ -44,7 +44,7 @@ namespace retour
 					if (mSize > 0) {
 						mysqlpp::Row mRow = mRes.at(0);
 					
-						if (mRow["user_fleet_rtn_msg"]!="0") {
+						if (mRow["fleet_rtn_msg"]!="0") {
 							this->sendMsg = false;
 						}
 					}

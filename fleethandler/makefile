@@ -1,4 +1,4 @@
-OBJECTS = etoa.o FleetHandler.o ConfigHandler.o Functions.o AnalyzeHandler.o AntraxHandler.o AsteroidHandler.o AttackHandler.o BombardHandler.o CancelHandler.o ColonializeHandler.o DebrisHandler.o DefaultHandler.o  EmpHandler.o ExploreHandler.o FetchHandler.o GasHandler.o GattackHandler.o InvadeHandler.o MarketHandler.o NebulaHandler.o PositionHandler.o ReturnHandler.o SpyHandler.o StealHandler.o StealthHandler.o SupportHandler.o TransportHandler.o WreckageHandler.o BattleHandler.o FightObjectHandler.o ShowObjectHandler.o UserHandler.o DivisionHandler.o  ObjectDataHandler.o ObjectHandler.o
+OBJECTS = etoa.o FleetHandler.o ConfigHandler.o Functions.o AllianceHandler.o AnalyzeHandler.o AntraxHandler.o AsteroidHandler.o AttackHandler.o BombardHandler.o CancelHandler.o ColonializeHandler.o DebrisHandler.o DefaultHandler.o  DeliveryHandler.o EmpHandler.o ExploreHandler.o FetchHandler.o GasHandler.o GattackHandler.o InvadeHandler.o MarketHandler.o NebulaHandler.o PositionHandler.o ReturnHandler.o SpyHandler.o StealHandler.o StealthHandler.o SupportHandler.o TransportHandler.o WreckageHandler.o BattleHandler.o FightObjectHandler.o ShowObjectHandler.o UserHandler.o DivisionHandler.o  ObjectDataHandler.o ObjectHandler.o
 
 OPTS = -lmysqlpp
 
@@ -16,6 +16,9 @@ ConfigHandler.o: config/ConfigHandler.cpp config/ConfigHandler.h
 
 Functions.o: functions/Functions.cpp functions/Functions.h
 	g++ -c functions/Functions.cpp
+
+AllianceHandler.o: fleetActions/alliance/AllianceHandler.cpp fleetActions/alliance/AllianceHandler.h
+	g++ -c fleetActions/alliance/AllianceHandler.cpp
 
 AnalyzeHandler.o: fleetActions/analyze/AnalyzeHandler.cpp fleetActions/analyze/AnalyzeHandler.h
 	g++ -c fleetActions/analyze/AnalyzeHandler.cpp
@@ -43,6 +46,9 @@ DebrisHandler.o: fleetActions/debris/DebrisHandler.cpp fleetActions/debris/Debri
 	
 DefaultHandler.o: fleetActions/default/DefaultHandler.cpp fleetActions/default/DefaultHandler.h
 	g++ -c fleetActions/default/DefaultHandler.cpp	
+	
+DeliveryHandler.o: fleetActions/delivery/DeliveryHandler.cpp fleetActions/delivery/DeliveryHandler.h
+	g++ -c fleetActions/delivery/DeliveryHandler.cpp	
 	
 EmpHandler.o: fleetActions/emp/EmpHandler.cpp fleetActions/emp/EmpHandler.h
 	g++ -c fleetActions/emp/EmpHandler.cpp	
@@ -107,8 +113,8 @@ UserHandler.o: battle/UserHandler.cpp battle/UserHandler.h
 DivisionHandler.o: battle/DivisionHandler.cpp battle/DivisionHandler.h
 	g++ -c battle/DivisionHandler.cpp
 
-ObjectDataHandler.o: ObjectData/ObjectDataHandler.cpp ObjectData/ObjectDataHandler.h
-	g++ -c ObjectData/ObjectDataHandler.cpp
+ObjectDataHandler.o: objectData/ObjectDataHandler.cpp objectData/ObjectDataHandler.h
+	g++ -c objectData/ObjectDataHandler.cpp
 
-ObjectHandler.o: ObjectData/ObjectHandler.cpp ObjectData/ObjectHandler.h
-	g++ -c ObjectData/ObjectHandler.cpp
+ObjectHandler.o: objectData/ObjectHandler.cpp objectData/ObjectHandler.h
+	g++ -c objectData/ObjectHandler.cpp

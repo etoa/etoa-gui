@@ -27,23 +27,23 @@
 		return (this->objectCostsMetal + this->objectCostsCrystal + this->objectCostsPlastic + this->objectCostsFuel + this->objectCostsFood);
 	}
 	
-	int ObjectHandler::costsMetal() {
+	double ObjectHandler::costsMetal() {
 		return this->objectCostsMetal;
 	}
 	
-	int ObjectHandler::costsCrystal() {
+	double ObjectHandler::costsCrystal() {
 		return this->objectCostsCrystal;
 	}
 	
-	int ObjectHandler::costsPlastic() {
+	double ObjectHandler::costsPlastic() {
 		return this->objectCostsPlastic;
 	}
 	
-	int ObjectHandler::costsFuel() {
+	double ObjectHandler::costsFuel() {
 		return this->objectCostsFuel;
 	}
 	
-	int ObjectHandler::costsFood() {
+	double ObjectHandler::costsFood() {
 		return this->objectCostsFood;
 	}
 	
@@ -65,10 +65,6 @@
 	
 	int ObjectHandler::fuelUseLanding() {
 		return this->objectFuelUseLanding;
-	}
-	
-	int ObjectHandler::fuelUseEconomize() {
-		return this->objectFuelUseEconomize;
 	}
 	
 	int ObjectHandler::prodPower() {

@@ -35,45 +35,45 @@
 		std::map < std::string,std::string > mysql;
 		static My* _instance;
 		My () {
-				loadData();
+			loadData();
 		
-				mysqlpp::Connection con((mysql["DB_DATABASE"]).c_str(),(mysql["DB_SERVER"]).c_str(),(mysql["DB_USER"]).c_str(),(mysql["DB_PASSWORD"]).c_str());
+			mysqlpp::Connection con((mysql["DB_DATABASE"]).c_str(),(mysql["DB_SERVER"]).c_str(),(mysql["DB_USER"]).c_str(),(mysql["DB_PASSWORD"]).c_str());
 
-				con_ = con;
+			con_ = con;
 			
-		 }; 
-	void loadData () {
-		std::ifstream datein;
-		std::string datei = "/Applications/xampp/htdocs/etoa/trunk/conf.inc.php";
-		std::string zeichen;
-		std::string value, key;
-		std:size_t defineFound, middleFound, endFound;
-		datein.open(datei.c_str());
+		}; 
+		void loadData () {
+			std::ifstream datein;
+			std::string datei = "/var/www/test.etoa.ch/htdocs/trunk/conf.inc.php";
+			std::string zeichen;
+			std::string value, key;
+			std:size_t defineFound, middleFound, endFound;
+			datein.open(datei.c_str());
 	
-		if (datein == false) 
-			datein.open("/var/www/test.etoa.ch/htdocs/trunk(conf.inc.php");
+			if (datein == false) 
+				datein.open("/Applications/xampp/htdocs/etoa/trunk/conf.inc.php");
 
-		while (datein.eof() != true) {
-			zeichen += datein.get();
-		}
+			while (datein.eof() != true) {
+				zeichen += datein.get();
+			}
 		
-		defineFound = zeichen.find("define('");
-		while (defineFound!=std::string::npos) {
-			middleFound = zeichen.find("','");
-			endFound = zeichen.find("');");
-			key = "";
-			value = "";
-
-			key += zeichen.substr((int)defineFound + 8, (int)middleFound - (int)defineFound - 8);
-			value += zeichen.substr((int)middleFound + 3, endFound - (int)middleFound -3);
-			mysql.insert ( std::pair<std::string,std::string>(key,value) );
-
-			zeichen.erase(0,endFound+3);
 			defineFound = zeichen.find("define('");
+			while (defineFound!=std::string::npos) {
+				middleFound = zeichen.find("','");
+				endFound = zeichen.find("');");
+				key = "";
+				value = "";
+
+				key += zeichen.substr((int)defineFound + 8, (int)middleFound - (int)defineFound - 8);
+				value += zeichen.substr((int)middleFound + 3, endFound - (int)middleFound -3);
+				mysql.insert ( std::pair<std::string,std::string>(key,value) );
+
+				zeichen.erase(0,endFound+3);
+				defineFound = zeichen.find("define('");
+			}
 		}
-	}
-	My ( const My& );
-	My & operator = (const My &);
+		My ( const My& );
+		My & operator = (const My &);
 	};
 
 #endif

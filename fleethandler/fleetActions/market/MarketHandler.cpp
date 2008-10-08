@@ -58,7 +58,7 @@ namespace market
 			
 				/** If the ship deliver resources add the resource part of the message **/
 				if((int)fleet_["res_metal"]!='0' || (int)fleet_["res_crystal"]!='0' || (int)fleet_["res_plastic"]!='0' || (int)fleet_["res_fuel"]!='0' || (int)fleet_["res_food"]!='0') {
-					msg += "Es wurden zudem folgende Rohstoffe abgeladen:\n";
+					msg += "\nEs wurden zudem folgende Rohstoffe abgeladen:\n";
 					msg += msgRes;
 				}
 

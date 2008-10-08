@@ -100,13 +100,13 @@
 						pch = strtok (str,",");
 						do
 						{
-							if (pch == "colonize")
+							if (!strcmp(pch,"colonize"))
 								canColonize = 1;
-							else if (pch == "invade")
+							else if (!strcmp(pch,"invade"))
 								canInvade = 1;
 							pch = strtok (NULL, ",");
 						} while  (pch != NULL);
-
+						
 						// Ein Koloschiff subtrahieren, falls kolonialisieren gewählt ist (einmalig)
 						if (canColonize==1 && alreadyColonialized==0 && std::string(fleet_["action"])=="colonize") {
 							shipCnt = (double)fsRow["fs_ship_cnt"]-1;

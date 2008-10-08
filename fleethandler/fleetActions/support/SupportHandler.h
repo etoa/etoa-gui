@@ -22,10 +22,8 @@ namespace support
 		
 	private:
 		int flyingHomeTime;
-		int actionTime;
 		int landtime;
 		int entity;
-		int fuelPerMinute;
 		std::string msg;
 		std::string action;
 		

@@ -9,6 +9,8 @@
 #include "../../MysqlHandler.h"
 #include "../../functions/Functions.h"
 #include "../../config/ConfigHandler.h"
+#include "../../objectData/ObjectHandler.h"
+#include "../../objectData/ObjectDataHandler.h"
 
 namespace spy
 {
@@ -21,15 +23,16 @@ namespace spy
 		
 		/** Init Data **/
 		Config &config = Config::instance();
+		objectData &objectData = objectData::instance();
 		this->action = std::string(this->fleet_["action"]);	
-
+	
 		this->userToId = functions::getUserIdByPlanet((int)fleet_["entity_to"]);
 		std::string coordsBlank = functions::formatCoords((int)fleet_["entity_to"],1);
 		std::string coordsTarget = functions::formatCoords((int)fleet_["entity_to"],0);
 		std::string coordsFrom = functions::formatCoords((int)fleet_["entity_from"],0);
 
-		/** Load tech levels first agressor **/
-		this->spyLevelAtt = 0;
+		/** Load tech levels first agressor, needs a value higher then 0 for one of them, cause /0 **/
+		this->spyLevelAtt = 1e-2;
 		this->tarnLevelAtt = 0;
 		
 		mysqlpp::Query query = con_->query();
@@ -186,8 +189,7 @@ namespace spy
 
 				this->spyShipsDef = (int)spyRow["cnt"];
 			}
-		}
-		
+		}	
 		/** If there are some spy ships in the fleet **/
 		if (spyShipsAtt > 0) {
 			/** Calculate the defense **/
@@ -195,13 +197,12 @@ namespace spy
 			this->spyDefense2 = std::max(0.0,((this->spyShipsDef / this->spyShipsAtt) * config.idget("SPY_DEFENSE_FACTOR_SHIPS")));
 			this->spyDefense = std::min(this->spyDefense1 + this->spyDefense2,config.idget("SPY_DEFENSE_MAX"));
 			this->defended = false;
-
 			this->roll = rand() % 101;
 		
 			if (this->roll <= this->spyDefense) {
 				this->defended = true;
-			}	
-
+			}
+			
 			if (!this->defended) {
 				/** Calculate stealth bonus **/
 				this->tarnDefense = std::max(0.0,std::min((this->tarnLevelDef / this->spyLevelAtt * config.idget("SPY_DEFENSE_FACTOR_TARN")),config.idget("SPY_DEFENSE_MAX")));
@@ -245,7 +246,7 @@ namespace spy
 							for (mysqlpp::Row::size_type i = 0; i<bSize; i++) {
 								bRow = bRes.at(i);
 								
-								text = "[tr][td]";
+								text += "[tr][td]";
 								text += std::string(bRow["building_name"]);
 								text += "[/td][td]";
 								text += std::string(bRow["buildlist_current_level"]);
@@ -287,7 +288,7 @@ namespace spy
 							for (mysqlpp::Row::size_type i = 0; i<tSize; i++) {
 								tRow = tRes.at(i);
 								
-								text = "[tr][td]";
+								text += "[tr][td]";
 								text += std::string(tRow["tech_name"]);
 								text += "[/td][td]";
 								text += std::string(tRow["techlist_current_level"]);
@@ -324,12 +325,13 @@ namespace spy
 	
 							for (mysqlpp::Row::size_type i = 0; i<sSize; i++) {
 								sRow = sRes.at(i);
+								ObjectHandler::ObjectHandler object = objectData.get((int)sRow["shiplist_ship_id"],1);
 								
 								text += "[tr][td]";
-								text += std::string(sRow["shiplist_count"]);
-								text +="[/td][td][ship ";
-								text += std::string(sRow["shiplist_ship_id"]);
-								text += "][/td][/tr]";
+								text += object.name();
+								text +="[/td][td]";
+								text += functions::nf(std::string(sRow["shiplist_count"]));
+								text += "[/td][/tr]";
 							}
 							
 							text += "[/table]";
@@ -363,12 +365,13 @@ namespace spy
 	
 							for (mysqlpp::Row::size_type i = 0; i<dSize; i++) {
 								dRow = dRes.at(i);
+								ObjectHandler::ObjectHandler object = objectData.get((int)dRow["deflist_def_id"],0);
 								
 								text += "[tr][td]";
-								text += std::string(dRow["deflist_count"]);
-								text +="[/td][td][def ";
-								text += std::string(dRow["deflist_def_id"]);
-								text += "][/td][/tr]";
+								text += object.name();
+								text +="[/td][td]";
+								text += functions::nf(std::string(dRow["deflist_count"]));
+								text += "[/td][/tr]";
 							}
 							
 							text += "[/table]";

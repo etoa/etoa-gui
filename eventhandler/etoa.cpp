@@ -43,9 +43,11 @@
 #include "functions/Functions.h"
 #include "config/ConfigHandler.h"
 #include "market/MarketHandler.h"
+//#include "quest/QuestHandler.h"
 
 #include "alliance/aTechHandler.h"
 #include "alliance/aBuildingHandler.h"
+#include "alliance/aPointsHandler.h"
 
 using namespace std;
 
@@ -67,6 +69,9 @@ main(int argc, char *argv[])
 		cout << "- EtoA Eventhandler, (C) 2007 by EtoA Gaming, Time: "<< std::time(0) <<" -\n";
 		cout << "----------------------------------------------------------------\n\n";
 		
+		//quest::QuestHandler* qh = new quest::QuestHandler();
+		//qh->update();
+		
 		/**
 		* Start with event handling
 		*/
@@ -77,6 +82,14 @@ main(int argc, char *argv[])
 			mtime = std::time(0);
 			delete mh;
 		}
+		
+		if ((std::time(0) + 60) % 3600 == 0)
+		{
+			aPoints::aPointsHandler* aph = new aPoints::aPointsHandler();
+			aph->update();
+			delete aph;
+		}
+		
 		
 		abuilding::aBuildingHandler* abh = new abuilding::aBuildingHandler();
 		abh->update();

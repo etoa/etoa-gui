@@ -1,4 +1,4 @@
-OBJECTS = etoa.o FleetHandler.o BuildingHandler.o TechHandler.o ShipHandler.o ShipList.o DefHandler.o DefList.o Planet.o PlanetManager.o Functions.o ConfigHandler.o MarketHandler.o aTechHandler.o aBuildingHandler.o
+OBJECTS = etoa.o FleetHandler.o BuildingHandler.o TechHandler.o ShipHandler.o ShipList.o DefHandler.o DefList.o Planet.o PlanetManager.o Functions.o ConfigHandler.o MarketHandler.o aTechHandler.o aBuildingHandler.o aPointsHandler.o
 
 OPTS = -lmysqlpp #-lmysqlclient
 
@@ -43,4 +43,10 @@ aTechHandler.o: alliance/aTechHandler.cpp alliance/aTechHandler.h
 
 aBuildingHandler.o: alliance/aBuildingHandler.cpp alliance/aBuildingHandler.h
 	g++ -c alliance/aBuildingHandler.cpp
+
+aPointsHandler.o: alliance/aPointsHandler.cpp alliance/aPointsHandler.h
+	g++ -c alliance/aPointsHandler.cpp
+
+#QuestHandler.o: quest/QuestHandler.cpp quest/QuestHandler.h
+#	g++ -c quest/QuestHandler.cpp
  

@@ -424,6 +424,41 @@
 		return nicks;
 	}
 	
+	int DivisionHandler::getAllianceId(int entityId)
+	{
+		if (this->allianceId<0) {
+			this->allianceId=0;
+			
+			if (entityId!=0) {
+				My &my = My::instance();
+				mysqlpp::Connection *con_ = my.get();
+				Config &config = Config::instance();
+				
+				mysqlpp::Query query = con_->query();
+				query << "SELECT ";
+				query << "	user_alliance_id ";
+				query << "FROM ";
+				query << "	planets ";
+				query << "INNER JOIN ";
+				query << "	users ";
+				query << "ON users.user_id=planets.planet_user_id ";
+				query << "	AND planet_user_id='" << entityId << "';";
+				mysqlpp::Result allianceRes = query.store();
+				query.reset();
+				
+				if (allianceRes) {
+					int allianceSize = allianceRes.size();
+					
+					if (allianceSize > 0) {
+						mysqlpp::Row allianceRow = allianceRes.at(0);
+						this->allianceId = (int)allianceRow["user_alliance_id"];
+					}
+				}
+			}
+		}
+		return this->allianceId;
+	}
+	
 	std::string DivisionHandler::getObjects(short type, bool repair)
 	{
 		objectData &objectData = objectData::instance();

@@ -231,7 +231,6 @@ namespace functions
 					{
 						if (blank!=2) {
 							if (blank == 0) {
-								std::cout << std::string(coordsRow["planet_name"]) << "\n";
 								if (std::string(coordsRow["planet_name"])!="")
 									fullCoords = std::string(coordsRow["planet_name"]);
 								else
@@ -269,6 +268,14 @@ namespace functions
 					case 'n':
 					{
 						std::string fullCoords = "Interstellarer Gasnebel (";
+						fullCoords += coords;
+						fullCoords += ")";
+						return fullCoords;
+						break;
+					}
+					case 'e':
+					{
+						std::string fullCoords = "Leerer Raum (";
 						fullCoords += coords;
 						fullCoords += ")";
 						return fullCoords;
@@ -424,7 +431,7 @@ namespace functions
 		query << "	planet_name='Unbenannt', ";
 		query << "	planet_user_changed='" << time << "' ";
 		query << "WHERE ";
-		query << "	planet_id='" << entityId << "';";
+		query << "	id='" << entityId << "';";
 		query.store();
 		query.reset();
 		
@@ -434,7 +441,7 @@ namespace functions
 		query << "	SET ";
 		query << "	buildlist_user_id='" << newUserId << "' ";
 		query << "WHERE ";
-		query << "	buildlist_planet_id='" << entityId << "'; ";
+		query << "	buildlist_entity_id='" << entityId << "'; ";
 		query.store();
 		query.reset();
 		
@@ -442,14 +449,14 @@ namespace functions
 		query << "DELETE FROM ";
 		query << "	shiplist ";
 		query << "WHERE ";
-		query << "	shiplist_planet_id='" << entityId << "';";
+		query << "	shiplist_entity_id='" << entityId << "';";
 		query.store();
 		query.reset();
 		
 		query << "DELETE FROM ";
 		query << "	ship_queue ";
 		query << "WHERE ";
-		query << "	queue_planet_id='" << entityId << "';";
+		query << "	queue_entity_id='" << entityId << "';";
 		query.store();
 		query.reset();
 		
@@ -457,14 +464,14 @@ namespace functions
 		query << "DELETE FROM ";
 		query << "	deflist ";
 		query << "WHERE ";
-		query << "	deflist_planet_id='" << entityId << "';";
+		query << "	deflist_entity_id='" << entityId << "';";
 		query.store(),
 		query.reset();
 		
 		query << "DELETE FROM ";
 		query << "	def_queue ";
 		query << "WHERE ";
-		query << "	queue_planet_id='" << entityId << "';";
+		query << "	queue_entity_id='" << entityId << "';";
 		query.store();
 		query.reset();
 	}

@@ -41,67 +41,113 @@ void BattleHandler::battle()
 	defender->loadSupport((int)fleet_["entity_to"]);
 	defender->loadDefense((int)fleet_["entity_to"]);
 	defender->initValues();
-
+std::cout << attacker->getAllianceId() << ". ." << defender->getAllianceId((int)fleet_["entity_to"]) << "\n";
    	// Kampf abbrechen falls User gleich
-    if (attacker->allianceId==defender->allianceId && attacker->allianceId!=0) {
-	    msgFight = "[b]KAMPFBERICHT[/b]\nvom Planeten ";
-		msgFight += functions::formatCoords((int)fleet_["entity_to"],0);
-		msgFight += "\n[b]Zeit:[/b] ";
-		msgFight += functions::formatTime((int)fleet_["landtime"]);
-		msgFight += "\n\n";
-	    msgFight += "[b]Angreifer:[/b] ";
-		msgFight += attacker->getNicks();
-		msgFight += "\n";
-	    msgFight += "[b]Verteidiger:[/b] ";
-		msgFight += defender->getNicks((int)fleet_["entity_to"]);
-		msgFight += "\n\n";
-    	msgFight += "Der Kampf wurde abgebrochen da Angreifer und Verteidiger demselben Imperium angehören!";
-    	
+    if ((int)fleet_["leader_id"]>0 && (attacker->getAllianceId()==defender->getAllianceId((int)fleet_["entity_to"]) && attacker->getAllianceId()!=0)) {
+	    msg = "[b]KAMPFBERICHT[/b]\nvom Planeten ";
+		msg += functions::formatCoords((int)fleet_["entity_to"],0);
+		msg += "\n[b]Zeit:[/b] ";
+		msg += functions::formatTime((int)fleet_["landtime"]);
+		msg += "\n\n";
+	    msg += "[b]Angreifer:[/b] ";
+		msg += attacker->getNicks();
+		msg += "\n";
+	    msg += "[b]Verteidiger:[/b] ";
+		msg += defender->getNicks((int)fleet_["entity_to"]);
+		msg += "\n\n";
+    	msg += "Der Kampf wurde abgebrochen da Angreifer und Verteidiger demselben Imperium angehören!";
+		
 			returnV = 4;
 			bstat = "Unentschieden";
-			bstat2 = "Unentschieden";
 			returnFleet = true;
+			
+		/** Send fight message to the fighter **/
+		std::string subject = "Kampfbericht (";
+		subject += bstat;
+		subject += ")";
+		functions::sendMsg((int)fleet_["user_id"],config.idget("SHIP_WAR_MSG_CAT_ID"),subject,msg);
+		int userToId = functions::getUserIdByPlanet((int)fleet_["entity_to"]);
+		functions::sendMsg(userToId,config.idget("SHIP_WAR_MSG_CAT_ID"),subject,msg);
+		
+		/** Add log **/
+		functions::addLog(1,msg,(int)fleet_["landtime"]);
+  	} 
+	
+   	// Kampf abbrechen falls User gleich
+    else if ((int)fleet_["leader_id"]==0 && ((int)fleet_["user_id"]==functions::getUserIdByPlanet((int)fleet_["entity_to"]))) {
+	    msg = "[b]KAMPFBERICHT[/b]\nvom Planeten ";
+		msg += functions::formatCoords((int)fleet_["entity_to"],0);
+		msg += "\n[b]Zeit:[/b] ";
+		msg += functions::formatTime((int)fleet_["landtime"]);
+		msg += "\n\n";
+	    msg += "[b]Angreifer:[/b] ";
+		msg += attacker->getNicks();
+		msg += "\n";
+	    msg += "[b]Verteidiger:[/b] ";
+		msg += defender->getNicks((int)fleet_["entity_to"]);
+		msg += "\n\n";
+    	msg += "Der Kampf wurde abgebrochen da Angreifer und Verteidiger identisch sind!";
+		
+			returnV = 4;
+			bstat = "Unentschieden";
+			returnFleet = true;
+			
+		/** Send fight message to the fighter **/
+		std::string subject = "Kampfbericht (";
+		subject += bstat;
+		subject += ")";
+		functions::sendMsg((int)fleet_["user_id"],config.idget("SHIP_WAR_MSG_CAT_ID"),subject,msg);
+		int userToId = functions::getUserIdByPlanet((int)fleet_["entity_to"]);
+		functions::sendMsg(userToId,config.idget("SHIP_WAR_MSG_CAT_ID"),subject,msg);
   	} 
   	
   	// Kampf abbrechen und Flotte zum Startplanet schicken wenn Kampfsperre aktiv ist
   	else if ((int)config.nget("battleban",0)!=0 && (int)config.nget("battleban",1)<=time && (int)config.nget("battleban",2)>time) {
-  		msgFight = "[b]KAMPFBERICHT[/b]\nvom Planeten ";
-		msgFight += functions::formatCoords((int)fleet_["entity_to"],0);
-		msgFight += "\n[b]Zeit:[/b] ";
-		msgFight += functions::formatTime((int)fleet_["landtime"]);
-		msgFight += "\n\n";
-	    msgFight += "[b]Angreifer:[/b] ";
-		msgFight += attacker->getNicks();
-		msgFight += "\n";
-	    msgFight += "[b]Verteidiger:[/b] ";
-		msgFight += defender->getNicks((int)fleet_["entity_to"]);
-		msgFight += "\n\n";
+  		msg = "[b]KAMPFBERICHT[/b]\nvom Planeten ";
+		msg += functions::formatCoords((int)fleet_["entity_to"],0);
+		msg += "\n[b]Zeit:[/b] ";
+		msg += functions::formatTime((int)fleet_["landtime"]);
+		msg += "\n\n";
+	    msg += "[b]Angreifer:[/b] ";
+		msg += attacker->getNicks();
+		msg += "\n";
+	    msg += "[b]Verteidiger:[/b] ";
+		msg += defender->getNicks((int)fleet_["entity_to"]);
+		msg += "\n\n";
     	msg += config.get("battleban_arrival_text",1);
-    	
+		
 			returnV = 4;
 			bstat = "Unentschieden";
 			bstat2 = "Unentschieden";
 			returnFleet =true;
+			
+		/** Send fight message to the fighter **/
+		std::string subject = "Kampfbericht (";
+		subject += bstat;
+		subject += ")";
+		functions::sendMsg((int)fleet_["user_id"],config.idget("SHIP_WAR_MSG_CAT_ID"),subject,msg);
+		int userToId = functions::getUserIdByPlanet((int)fleet_["entity_to"]);
+		functions::sendMsg(userToId,config.idget("SHIP_WAR_MSG_CAT_ID"),subject,msg);
 	}
 	else {
 
 		// Prüft, ob Krieg herrscht
-		if(attacker->allianceId!=0 && defender->allianceId!=0)
+		if(attacker->getAllianceId()!=0 && defender->getAllianceId()!=0)
 		{
 			query << "SELECT ";
 			query << "	alliance_bnd_id ";
 			query << "FROM ";
 			query << "	alliance_bnd ";
 			query << "WHERE ";
-			query << "	(alliance_bnd_alliance_id1='" << attacker->allianceId << "' ";
-			query << "	AND alliance_bnd_alliance_id2='" << defender->allianceId << "') ";
+			query << "	(alliance_bnd_alliance_id1='" << attacker->getAllianceId() << "' ";
+			query << "	AND alliance_bnd_alliance_id2='" << defender->getAllianceId() << "') ";
 			query << "OR ";
-			query << "	(alliance_bnd_alliance_id1='" << defender->allianceId << "' ";
-			query << "	AND alliance_bnd_alliance_id2='" << attacker->allianceId << "') ";
+			query << "	(alliance_bnd_alliance_id1='" << defender->getAllianceId() << "' ";
+			query << "	AND alliance_bnd_alliance_id2='" << attacker->getAllianceId() << "') ";
 			query << "	AND alliance_bnd_level='3';";
 			mysqlpp::Result warCheckRes = query.store();
 			query.reset();
-
+			
 			if (warCheckRes)
 			{
 				int warCheckSize = warCheckRes.size();
@@ -295,9 +341,9 @@ void BattleHandler::battle()
         query << "UPDATE ";
 		query << "	planets ";
 		query << "SET ";
-		query << "	planet_wf_metal=planet_wf_metal+'" << abs(wf[0]) << "', ";
-		query << "	planet_wf_crystal=planet_wf_crystal+'" << abs(wf[1]) << "', ";
-		query << "	planet_wf_plastic=planet_wf_plastic+'" << abs(wf[2]) << "' ";
+		query << "	planet_wf_metal=planet_wf_metal+'" << wf[0] << "', ";
+		query << "	planet_wf_crystal=planet_wf_crystal+'" << wf[1] << "', ";
+		query << "	planet_wf_plastic=planet_wf_plastic+'" << wf[2] << "' ";
 		query << "WHERE ";
 		query << "	id='" << fleet_["entity_to"] << "';";
 		query.store();
@@ -551,11 +597,11 @@ void BattleHandler::battle()
 
 		msg += "[b]TR&Uuml;MMERFELD:[/b]\n";
 		msg += "Titan: ";
-		msg += functions::nf(functions::d2s(abs(wf[0])));
+		msg += functions::nf(functions::d2s(wf[0]));
 		msg += "\nSilizium: ";
-		msg += functions::nf(functions::d2s(abs(wf[1])));
+		msg += functions::nf(functions::d2s(wf[1]));
 		msg += "\nPVC: ";
-		msg += functions::nf(functions::d2s(abs(wf[2])));
+		msg += functions::nf(functions::d2s(wf[2]));
 		msg += "\n\n\n";
 		
 		msg += attMsg;
@@ -614,10 +660,10 @@ void BattleHandler::battle()
 		query << "(";
 		query << "	'" << attacker->userId << "', ";
 		query << "	'" << defender->userId << "', ";
-		query << "	'" << attacker->allianceId << "', ";
+		query << "	'" << attacker->getAllianceId() << "', ";
 		query << "	'" << attacker->allianceTag << "', ";
 		query << "	'" << attacker->allianceName << "', ";
-		query << "	'" << defender->allianceId << "', ";
+		query << "	'" << defender->getAllianceId() << "', ";
 		query << "	'" << defender->allianceTag << "', ";
 		query << "	'" << defender->allianceName <<"', ";
 		query << "	'" << alliancesHaveWar << "', ";

@@ -48,7 +48,7 @@ namespace functions
 	float getSolarFuelBonus(int t_min, int t_max)
 	{
 		float v = (int)floor((t_min + t_max)/25);
-		return v;
+		return v/100;
 	}
 	
 	int getSolarPowerBonus(int t_min, int t_max)

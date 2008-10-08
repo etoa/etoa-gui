@@ -26,6 +26,7 @@ namespace invade
 		srand (this->time);
 		
 		this->action = std::string(fleet_["action"]);
+		this->userToId = functions::getUserIdByPlanet((int)fleet_["entity_to"]);
 		
 		std::string coordsTarget = functions::formatCoords(fleet_["entity_to"],0);
 		std::string coordsFrom = functions::formatCoords(fleet_["entity_from"],0);
@@ -68,7 +69,7 @@ namespace invade
 						query << "FROM ";
 						query << "	planets ";
 						query << "WHERE ";
-						query << "	id='" << fleet_["fleet_target_to"] << "'";
+						query << "	id='" << fleet_["entity_to"] << "'";
 						mysqlpp::Result checkRes = query.store();
 						query.reset();
 		
@@ -156,10 +157,10 @@ namespace invade
 										
 										if (one<=two) {
 											bh->returnFleet = false;
-										
+											
 											/** Load planet user count planets **/
 											query << "SELECT ";
-											query << "	COUNT(planet_user_id) as cnt";
+											query << "	COUNT(planet_user_id) as cnt ";
 											query << "FROM ";
 											query << "	planets ";
 											query << "WHERE ";
@@ -172,12 +173,12 @@ namespace invade
 										
 												if (maxPlanetSize > 0) {
 													mysqlpp::Row maxPlanetRow = maxPlanetRes.at(0);
-							
+													
 													/** if the user has already the number of planets **/
 													if((int)maxPlanetRow["cnt"] < (int)config.nget("user_max_planets",0)) {
 														/** Load the main planet of the victim **/
 														query << "SELECT ";
-														query << "	id, ";
+														query << "	id ";
 														query << "FROM ";
 														query << "	planets ";
 														query << "WHERE ";
@@ -255,7 +256,7 @@ namespace invade
 														std::string text = "[b]Planet:[/b] ";
 														text += coordsTarget;
 														text += "\n[b]Besitzer:[/b] ";
-														text += functions::getUserNick(userToId);
+														text += functions::getUserNick(this->userToId);
 														text += "\n\nDieser Planet wurde von einer Flotte, welche vom Planeten ";
 														text += coordsFrom;
 														text += " stammt, übernommen!\n";
@@ -268,10 +269,11 @@ namespace invade
 													}
 													/** if the user has already reached the max number of planets **/
 													else {
+														bh->returnFleet = true;
 														std::string text = "[b]Planet:[/b] ";
 														text += coordsTarget;
 														text += "\n[b]Besitzer:[/b] ";
-														text += functions::getUserNick(userToId);
+														text += functions::getUserNick(this->userToId);
 														text += "\n\nEine Flotte vom Planeten ";
 														text += coordsFrom;
 														text += " versuchte, das Ziel zu übernehmen. Dieser Versuch schlug aber fehl und die Flotte machte sich auf den Rückweg!";

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <set>
 #include <vector>
+#include <string>
 #include "../MysqlHandler.h"
 #include <mysql++/mysql++.h>
 
@@ -97,7 +98,6 @@
 		query << "	ship_fuel_use AS fuel_use, ";
 		query << "	ship_fuel_use_launch AS fuel_use_launch, ";
 		query << "	ship_fuel_use_landing AS fuel_use_landing, ";
-		query << "	ship_fuel_use_economize AS fuel_use_economize, ";
 		query << "	ship_prod_power AS prod_power, ";
 		query << "	ship_capacity AS capacity, ";
 		query << "	ship_people_capacity AS people_capacity, ";
@@ -156,6 +156,10 @@
 					this->idShipData[(int)(sRow["id"]) ] =  this->counter;
 					ObjectHandler object(sRow,1);
 					temp.push_back(object);
+					
+					/** Save the id in the action container **/
+					
+					
 				}
 				this->data.push_back(temp);
 			}

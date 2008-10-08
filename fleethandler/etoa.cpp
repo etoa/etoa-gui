@@ -63,6 +63,8 @@
 #include "fleetActions/support/SupportHandler.h"
 #include "fleetActions/transport/TransportHandler.h"
 #include "fleetActions/wreckage/WreckageHandler.h"
+#include "fleetActions/delivery/DeliveryHandler.h"
+#include "fleetActions/alliance/AllianceHandler.h"
 
 #include "battle/BattleHandler.h"
 
@@ -92,7 +94,7 @@ main(int argc, char *argv[])
 	
 		//Timestamp
 		std::time_t time = std::time(0);
-
+		
 		/** Update the data, everyday once at about 02:17:00 AM **/
 		if ((time-1021)%86400==0) {
 			objectData.reloadData();
@@ -141,7 +143,12 @@ main(int argc, char *argv[])
 						{
 							case 0:
 							{
-								if (action == "analyze") {
+								if (action == "alliance") {
+									alliance::AllianceHandler* ah = new alliance::AllianceHandler(row);
+									ah->update();
+									delete ah;
+								}
+								else if (action == "analyze") {
 									analyze::AnalyzeHandler* lh = new analyze::AnalyzeHandler(row);
 									lh->update();
 									delete lh;
@@ -191,6 +198,11 @@ main(int argc, char *argv[])
 									zh->update();
 									delete zh;
 								}
+								else if (action == "delivery") {
+									delivery::DeliveryHandler* dh = new delivery::DeliveryHandler(row);
+									dh->update();
+									delete dh;
+								}									
 								else if (action == "emp") {
 									emp::EmpHandler* eh = new emp::EmpHandler(row);
 									eh->update();
@@ -272,7 +284,7 @@ main(int argc, char *argv[])
 								delete ch;
 								break;
 							}
-							case 4:
+							case 3:
 							{
 								if (action == "support")
 								{
@@ -292,7 +304,7 @@ main(int argc, char *argv[])
 			}
 		}
 		
-		sleep(1);
+		sleep(5);
 	}		
 
 	return 0;

@@ -29,11 +29,12 @@ public:
 		this->initWeapon = 0;
 		this->initCount = 0;
 
-		this->capa = 0;;
+		this->capa = 0;
+		
+		this->allianceId=-1;
 	}
 	
 	//standart Information
-	int allianceId;
 	std::string allianceTag, allianceName;
 
 	std::vector <double> loseFleet;
@@ -76,6 +77,10 @@ public:
 	void loadShips(int entityId);
 	void loadDefense(int entityId);
 	bool saveObjects();
+	int getAllianceId(int entityId=0);
+
+private:
+	int allianceId;
 };
 
 #endif
