@@ -2142,7 +2142,7 @@ die Spielleitung";
 		global $_POST,$_GET;
 		if ($debug==1)
 			echo "Checker-Session is: ".$_SESSION['checker'].", Checker-POST is: ".$_POST['checker']."<br/><br/>";
-		if (($_SESSION['checker']==$_POST['checker'] || $_SESSION['checker']==$_GET['checker'] )&& $_SESSION['checker']!="")
+		if (isset($_SESSION['checker']) && ((isset($_POST['checker']) && $_SESSION['checker']==$_POST['checker']) || ( isset($_GET['checker']) && $_SESSION['checker']==$_GET['checker'] ))&& $_SESSION['checker']!="")
 		{
 			$_SESSION['checker']=Null;
 			return true;
@@ -2947,6 +2947,8 @@ Forum: http://www.etoa.ch/forum";
 	*/
 	function pw_salt($pw,$seed=0)
 	{
+		//$res = md5($pw.$seed.PASSWORD_SALT).md5(PASSWORD_SALT.$seed.$pw);
+		//echo "SALT: $pw $seed $res";
 		return md5($pw.$seed.PASSWORD_SALT).md5(PASSWORD_SALT.$seed.$pw);
 		
 	}
@@ -3124,18 +3126,31 @@ Forum: http://www.etoa.ch/forum";
 		return $base * intpow($base,$exponent-1);
 	}
 
-	function countDown($elem,$targettime,$progesselem="")
+	
+	function countDown($elem,$targettime,$elementToSetEmpty="")
 	{
 		?>
 		<script type="text/javascript">
 			if (document.getElementById('<?PHP echo $elem;?>')!=null)
 			{
 				cnt["<?PHP echo $elem;?>"] = 0;
-				setCountdown('<?PHP echo $elem;?>',<?PHP echo time();?>,<?PHP echo $targettime;?>,'<?PHP echo $progesselem;?>');
+				setCountdown('<?PHP echo $elem;?>',<?PHP echo time();?>,<?PHP echo $targettime;?>,'<?PHP echo elementToSetEmpty;?>');
 			}
 		</script>
 		<?PHP	
 	}
+	
+	function jsProgressBar($elem,$startTime,$endTime)
+	{
+		?>
+		<script type="text/javascript">
+			if (document.getElementById('<?PHP echo $elem;?>')!=null)
+			{
+				updateProgressBar('<?PHP echo $elem;?>',<?PHP echo ceil($startTime);?>,<?PHP echo ceil($endTime);?>,<?PHP echo time();?>);
+			}
+		</script>
+		<?PHP	
+	}	
 
 
 	/**

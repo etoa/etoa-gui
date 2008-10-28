@@ -2,48 +2,15 @@
 	// Änderungen speichern
 	if (isset($_POST['password_submit']) && checker_verify())
 	{
-			if (mysql_num_rows(dbquery("SELECT user_id FROM ".$db_table['users']." WHERE user_password='".pw_salt($_POST['user_password'],$arr['user_registered'])."' AND user_id=".$cu->id().";"))>0)
-			{
-					if (mysql_num_rows(dbquery("SELECT user_sitting_sitter_password FROM ".$db_table['user_sitting']." WHERE user_sitting_sitter_password='".md5($_POST['user_password1'])."' AND user_sitting_user_id=".$cu->id().";"))==0)
-					{
-							if ($_POST['user_password1']==$_POST['user_password2'])
-							{
-									if (strlen($_POST['user_password1'])>=PASSWORD_MINLENGHT)
-									{
-											if (dbquery("
-												UPDATE
-													".$db_table['users']."
-												SET
-													user_password='".pw_salt($_POST['user_password1'],$arr['user_registered'])."'
-												WHERE
-													user_id='".$cu->id()."'
-												;"))
-											{
-												success_msg("Das Passwort wurde ge&auml;ndert!");
-												add_log(3,"Der Spieler [b]".$cu->nick()."[/b] &auml;ndert sein Passwort!",time());
-												send_mail("",$arr['user_email'],"Passwortänderung","Hallo ".$arr['user_nick']."\n\nDies ist eine Bestätigung, dass du dein Passwort für deinen Account erfolgreich geändert hast!\n\nSolltest du dein Passwort nicht selbst geändet haben, so nimm bitte sobald wie möglich Kontakt mit einem Game-Administrator auf: http://www.etoa.ch/?page=kontakt","","");
-												$cu->addToUserLog("settings","{nick} ändert sein Passwort.",0);
-											}
-									}
-									else
-									{
-										error_msg("Das Passwort muss mindestens ".PASSWORD_MINLENGHT." Zeichen lang sein!");
-									}
-							}
-							else
-							{
-								error_msg("Die Eingaben m&uuml;ssen identisch sein!");
-							}
-					}
-					else
-					{
-						error_msg("Das Passwort darf nicht identisch mit dem Sitterpasswort sein!");
-					}
-			}
-			else
-			{
-				error_msg("Dein altes Passwort stimmt nicht mit dem gespeicherten Passwort &uuml;berein!");
-			}
+		$rtnMsg = "";
+		if ($cu->setPassword($_POST['user_password'],$_POST['user_password1'],$_POST['user_password2'],$rtnMsg))
+		{
+			success_msg("Das Passwort wurde ge&auml;ndert!");
+		}
+		else
+		{
+			error_msg($rtnMsg);
+		}
 	}
 
 	// Formular anzeigen

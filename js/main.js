@@ -3,7 +3,7 @@
 	{
 		var cnt = new Array();
 	}
-	function setCountdown(elem,time,diff,progresselem)
+	function setCountdown(elem,time,diff,elemToSetEmpty)
 	{
 		var ts;
 		
@@ -23,19 +23,7 @@
 				nv = h+"h "+m+"m "+s+"s";
 
 			perc = Math.ceil(cnt[elem] / d * 100);
-			
-			if (progresselem)
-			{
-				document.getElementById(progresselem).innerHTML=perc+"%";
-				document.getElementById(progresselem).style.background="url('images/progressbar.png') no-repeat";
-				document.getElementById(progresselem).style.backgroundPosition=(-500+(perc*5))+"px 0px";
-				if (perc<=48)
-					document.getElementById(progresselem).style.color="#000";
-				else
-					document.getElementById(progresselem).style.color="#fff";
-			}
-			
-			
+		
 			document.getElementById(elem).firstChild.nodeValue=nv;
 			cnt[elem] = cnt[elem] + 1;
 			setTimeout("setCountdown('"+elem+"',"+time+","+diff+",'"+progresselem+"')",1000);
@@ -43,8 +31,42 @@
 		else
 		{
 			nv = "-";
+			document.getElementById(elem).firstChild.nodeValue=nv;
+			document.getElementById(elemToSetEmpty).firstChild.nodeValue="";
 		}
 	}
+	
+
+	function updateProgressBar(progresselem,startTime,endTime,cTime)
+	{
+		if (progresselem)
+		{
+			diff = endTime - startTime;
+			if (endTime>=cTime)
+			{
+				perc = Math.ceil((cTime-startTime) / diff * 100);
+				cTime++;
+				
+				document.getElementById(progresselem).innerHTML=perc+"%";
+				document.getElementById(progresselem).style.background="url('images/progressbar.png') no-repeat";
+				document.getElementById(progresselem).style.backgroundPosition=(-500+(perc*5))+"px 0px";
+				if (perc<=48)
+					document.getElementById(progresselem).style.color="#000";
+				else
+					document.getElementById(progresselem).style.color="#fff";
+
+				setTimeout("updateProgressBar('"+progresselem+"',"+startTime+","+endTime+",'"+cTime+"')",1000);
+			}
+			else
+			{
+				document.getElementById(progresselem).innerHTML="Abgeschlossen!";
+				document.getElementById(progresselem).style.background="url('images/progressbar.png') no-repeat";
+				document.getElementById(progresselem).style.backgroundPosition="0px 0px";
+				document.getElementById(progresselem).style.color="#fff";
+			}
+		}
+	}	
+	
 		
 	/**
 	* Dynamische Zeitangabe

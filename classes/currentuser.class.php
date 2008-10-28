@@ -325,6 +325,71 @@
 				return 1;
 			}		
 		}
+
+		function setPassword($oldPassword, $newPassword1, $newPassword2, &$returnMsg)
+		{
+			$res = dbquery("
+			SELECT
+				COUNT(user_id)
+			FROM
+				users
+			WHERE
+				user_password='".pw_salt($oldPassword,$this->registered)."'
+				AND user_id=".$this->id.";");
+			$arr = mysql_fetch_row($res);
+			if ($arr[0]>0)
+			{
+				$res = dbquery("
+				SELECT 
+					COUNT(user_sitting_sitter_password) 
+				FROM 
+					user_sitting
+				WHERE 
+					user_sitting_sitter_password='".md5($_POST['user_password1'])."' 
+					AND user_sitting_user_id=".$this->id.";");
+				$arr = mysql_fetch_row($res);				
+				if ($arr[0]==0)
+				{
+						if ($newPassword1==$newPassword2)
+						{
+								if (strlen($newPassword1)>=PASSWORD_MINLENGHT)
+								{
+										if (dbquery("
+											UPDATE
+											 	users
+											SET
+												user_password='".pw_salt($newPassword1,$this->registered)."'
+											WHERE
+												user_id='".$this->id()."'
+											;"))
+										{
+											add_log(3,"Der Spieler [b]".$this->nick()."[/b] &auml;ndert sein Passwort!",time());
+											send_mail("",$this->email,"Passwortänderung","Hallo ".$this->nick."\n\nDies ist eine Bestätigung, dass du dein Passwort für deinen Account erfolgreich geändert hast!\n\nSolltest du dein Passwort nicht selbst geändet haben, so nimm bitte sobald wie möglich Kontakt mit einem Game-Administrator auf: http://www.etoa.ch/?page=kontakt","","");
+											$this->addToUserLog("settings","{nick} ändert sein Passwort.",0);
+											return true;
+										}
+								}
+								else
+								{
+									$returnMsg = "Das Passwort muss mindestens ".PASSWORD_MINLENGHT." Zeichen lang sein!";
+								}
+						}
+						else
+						{
+							$returnMsg="Die Eingaben m&uuml;ssen identisch sein!";
+						}
+				}
+				else
+				{
+					$returnMsg="Das Passwort darf nicht identisch mit dem Sitterpasswort sein!";
+				}
+			}
+			else
+			{
+				$returnMsg = "Dein altes Passwort stimmt nicht mit dem gespeicherten Passwort &uuml;berein!";
+			}
+			return false;
+		}
 	
 	}  
 	

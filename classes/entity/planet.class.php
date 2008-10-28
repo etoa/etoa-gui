@@ -376,12 +376,14 @@
 			{
 				$style6="class=\"tbldata2\"";
 				$store_msg[7] = tm("Zuwenig Energie","Produktion verringert, bitte Kraftwerk ausbauen!");
-				$store_err[7]=true;
+				$store_err[7] = true;
 				$power_rest = floor($this->prodPower)-floor($this->usePower);
 			}
 			else
 			{
 				$style6="class=\"tbldata3\"";
+				$store_msg[7] = "";
+				$store_err[7] = "";
 				$power_rest = floor($this->prodPower)-floor($this->usePower);
 			}
 			infobox_start("Ressourcen",1);

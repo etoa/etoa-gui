@@ -132,7 +132,7 @@ function calcDemolishingWaitTime($dc,$cp)
 	if ($cp->prodFuel>0)
 		$dwait['fuel']=ceil(($dc['fuel']-$cp->resFuel)/$cp->prodFuel*3600);
 	else
-		$dwait['plastic']=0;
+		$dwait['fuel']=0;
 	if ($cp->prodFood>0)
 		$dwait['food']=ceil(($dc['food']-$cp->resFood)/$cp->prodFood*3600);
 	else
@@ -394,6 +394,7 @@ function calcDemolishingWaitTime($dc,$cp)
 						{
 							if ($cp->resMetal >= $bc['metal'] && $cp->resCrystal >= $bc['crystal'] && $cp->resPlastic >= $bc['plastic']  && $cp->resFuel >= $bc['fuel']  && $cp->resFood >= $bc['food'])
 							{
+								$start_time = time();
 								$end_time = time()+$btime;
 								
 								//Gebäude bereits vorhanden
@@ -488,6 +489,7 @@ function calcDemolishingWaitTime($dc,$cp)
 						if ($cp->resMetal >= $dc['metal'] && $cp->resCrystal >= $dc['crystal'] && $cp->resPlastic >= $dc['plastic']  && $cp->resFuel >= $dc['fuel']  && $cp->resFood >= $dc['food'])
 						{
 							$end_time = time()+$dtime;
+							$start_time = time();
 							dbquery("
 							UPDATE 
 								buildlist 
@@ -943,7 +945,8 @@ function calcDemolishingWaitTime($dc,$cp)
 	
 					if ($b_status==3 || $b_status==4)
 					{
-						countDown("buildtime",$end_time,"buildprogress");
+						countDown("buildtime",$end_time,"buildcancel");
+						jsProgressBar("buildprogress",$start_time,$end_time);
 					}
 				
 				}
@@ -1046,6 +1049,7 @@ function calcDemolishingWaitTime($dc,$cp)
 								{
 									$b_level = intval($buildlist[$bid]['buildlist_current_level']);
 									$end_time = intval($buildlist[$bid]['buildlist_build_end_time']);
+									$start_time = intval($buildlist[$bid]['buildlist_build_start_time']);
 								}
 								else
 								{
