@@ -12,6 +12,8 @@
 	$xajax->register(XAJAX_FUNCTION,"havenCheckRes");
 	$xajax->register(XAJAX_FUNCTION,"havenCheckAction");
 	$xajax->register(XAJAX_FUNCTION,"havenAllianceAttack");
+	$xajax->register(XAJAX_FUNCTION,"havenCheckSupport");
+	
 
 	
 	/**
@@ -22,7 +24,36 @@
 		$response = new xajaxResponse();
 		ob_start();
 
-		$fleet = unserialize($_SESSION['haven']['fleetObj']);			
+		$fleet = unserialize($_SESSION['haven']['fleetObj']);	
+		
+		//Schiffsinfo
+		echo "<div id=\"ship_info\"></div>";
+			
+		$structure = 0;	
+		$shield = 0;
+		$weapon = 0;
+		$heal = 0;
+		$count = 0;
+		
+		$weapon_tech_a = 1;
+		$structure_tech_a = 1;
+    	$shield_tech_a = 1;
+    	$heal_tech_a = 1;
+		
+		$struct_tech_special=0;
+		$shield_tech_special=0;
+		$weaopn_tech_special=0;
+		$heal_tech_special=0;
+		
+		$structure_tech_name = "";
+		$shield_tech_name = "";
+		$weapon_tech_name = "";
+		$heal_tech_name = "";
+		$structure_tech_level = 0;
+		$shield_tech_level = 0;
+		$weapon_tech_level = 0;
+		$heal_tech_level = 0;
+		
 
 		// Infobox
   	infobox_start("Hafen-Infos",1);
@@ -109,9 +140,17 @@
 			$launchable = 0;	// Counter for launchable ships
 	    while ($arr = mysql_fetch_array($res))
 	    {
+				//Schiff-info calculation
+ 				$structure += $arr['ship_structure'] * $arr['shiplist_count'];
+  				$shield += $arr['ship_shield'] * $arr['shiplist_count'];
+  				$weapon += $arr['ship_weapon'] * $arr['shiplist_count'];
+  				$heal += $arr['ship_heal'] * $arr['shiplist_count'];
+  				$count += $arr['shiplist_count'];
+				
 				if (isset($ships[$arr['ship_id']]))
 				{
-					$val = max(0,$ships[$arr['ship_id']]['count']);			
+					$val = max(0,$ships[$arr['ship_id']]['count']);
+							
 				}
 				else
 				{
@@ -126,6 +165,12 @@
 			    			<img src=\"".IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$arr['ship_id']."_small.".IMAGE_EXT."\" align=\"top\" width=\"40\" height=\"40\" alt=\"Ship\" border=\"0\"/>
 			    		</a>
 			    	</td>";
+					
+					//Schiff-Info calculation
+			  		$struct_tech_special += $arr['shiplist_special_ship_bonus_structure'] * $arr['special_ship_bonus_structure'];
+			  		$shield_tech_special += $arr['shiplist_special_ship_bonus_shield'] * $arr['special_ship_bonus_shield'];
+			  		$weaopn_tech_special += $arr['shiplist_special_ship_bonus_weapon'] * $arr['special_ship_bonus_weapon'];
+			  		$heal_tech_special += $arr['shiplist_special_ship_bonus_heal'] * $arr['special_ship_bonus_heal'];
 				}
 				else
 				{
@@ -245,8 +290,7 @@
 		else
 		{
 			error_msg("Es sind keine Schiffe auf diesem Planeten vorhanden!",1);		
-		}		
-		
+		}
 		
 	
 		$response->assign("havenContentShips","innerHTML",ob_get_contents());		
@@ -257,9 +301,144 @@
 		$response->assign("havenContentAction","innerHTML","");				
 		$response->assign("havenContentAction","style.display",'none');				
 
-		$response->script("document.forms[0].elements[0].select();");				
-	
+		$response->script("document.forms[0].elements[0].select();");
 		ob_end_clean();
+		
+		//Schiff-Info calculation
+		if ($count>0 && FALSE)
+		{
+			ob_start();
+			$techres_a = dbquery("
+				SELECT
+					techlist_tech_id,
+					techlist_current_level,
+					tech_name
+				FROM
+					techlist
+				INNER JOIN
+					technologies
+				ON 
+					techlist_tech_id=tech_id
+				AND
+					techlist_user_id='".$fleet->ownerId()."'
+				AND
+				(
+					techlist_tech_id='".STRUCTURE_TECH_ID."'
+					OR techlist_tech_id='".SHIELD_TECH_ID."'
+					OR techlist_tech_id='".WEAPON_TECH_ID."'
+					OR techlist_tech_id='".REGENA_TECH_ID."'
+				)
+				;");
+	
+			while ($techarr_a = mysql_fetch_array($techres_a))
+			{
+				if ($techarr_a['techlist_tech_id']==SHIELD_TECH_ID)
+				{
+					$shield_tech_a+=($techarr_a['techlist_current_level']/10);
+					$shield_tech_name = $techarr_a["tech_name"];
+					$shield_tech_level = $techarr_a["techlist_current_level"];
+				}
+				if ($techarr_a['techlist_tech_id']==STRUCTURE_TECH_ID)
+				{
+					$structure_tech_a+=($techarr_a['techlist_current_level']/10);
+					$structure_tech_name = $techarr_a["tech_name"];
+					$structure_tech_level = $techarr_a["techlist_current_level"];
+				}
+				if ($techarr_a['techlist_tech_id']==WEAPON_TECH_ID)
+				{
+					$weapon_tech_a+=($techarr_a['techlist_current_level']/10);
+					$weapon_tech_name = $techarr_a["tech_name"];
+					$weapon_tech_level = $techarr_a["techlist_current_level"];
+				}
+				if ($techarr_a['techlist_tech_id']==REGENA_TECH_ID)
+				{
+					$heal_tech_a+=($techarr_a['techlist_current_level']/10);
+					$heal_tech_name = $techarr_a["tech_name"];
+					$heal_tech_level = $techarr_a["techlist_current_level"];
+				}
+			}
+			
+			$struct_str = get_percent_string($structure_tech_a,1)." durch ".$structure_tech_name." ".$structure_tech_level;
+			$shield_str = get_percent_string($shield_tech_a,1)." durch ".$shield_tech_name." ".$shield_tech_level;
+			$weapon_str = get_percent_string($weapon_tech_a,1)." durch ".$weapon_tech_name." ".$weapon_tech_level;
+			$heal_str = get_percent_string($heal_tech_a,1)." durch ".$heal_tech_name." ".$heal_tech_level;
+			
+			if ($struct_tech_special>0)
+			{
+				$structure_tech_a += $struct_tech_special;
+				$struct_str.= ", ".get_percent_string($struct_tech_special+1,1)." durch Spezialschiffe";
+			}
+			if ($shield_tech_special>0)
+			{
+				$shield_tech_a += $shield_tech_special;
+				$shield_str.= ", ".get_percent_string($shield_tech_special+1,1)." durch Spezialschiffe";
+			}
+			if ($weaopn_tech_special>0)
+			{
+				$weapon_tech_a += $weaopn_tech_special;
+				$weapon_str.= ", ".get_percent_string($weaopn_tech_special+1,1)." durch Spezialschiffe";
+			}
+			if ($heal_tech_special>0)
+			{
+				$heal_tech_a += $heal_tech_special;
+				$heal_str.= ", ".get_percent_string($heal_tech_special+1,1)." durch Spezialschiffe";
+			}
+			
+			$structure_tech = nf($structure*$structure_tech_a);
+			if ($structure_tech_a>1)
+			{
+				$structure_tech .= " (".$struct_str.")";
+			}
+			
+			$shield_tech = nf($shield*$shield_tech_a);
+			if ($shield_tech_a>1)
+			{
+				$shield_tech .= " (".$shield_str.")";
+			}
+			
+			$weapon_tech = nf($weapon*$weapon_tech_a);
+			if ($weapon_tech_a>1)
+			{
+				$weapon_tech .= " (".$weapon_str.")";
+			}
+			
+			$heal_tech = nf($heal*$heal_tech_a);
+			if ($heal_tech_a>1)
+			{
+				$heal_tech = " (".$heal_str.")";
+			}
+
+			infobox_start("Schiff-Info",1);	
+			echo "<tr>
+				<td class=\"tbltitle\"><b>Einheit</b></td>
+				<td class=\"tbltitle\">Grundwerte</td>
+				<td class=\"tbltitle\">Aktuelle Werte</td></tr>";
+  			echo "<tr>
+				<td class=\"tbldata\"><b>Struktur:</b></td>
+				<td class=\"tbldata\" id=\"structure\">".nf($structure)."</td>
+				<td class=\"tbldata\" id=\"structure_tech\">".$structure_tech."</td></tr>";
+  			echo "<tr><td class=\"tbldata\"><b>Schilder:</b></td>
+				<td class=\"tbldata\" id=\"shield\">".nf($shield)."</td>
+				<td class=\"tbldata\" id=\"shield_tech\">".$shield_tech."</td></tr>";
+  			echo "<tr><td class=\"tbldata\"><b>Waffen:</b></td>
+				<td class=\"tbldata\" id=\"weapon\">".nf($weapon)."</td>
+				<td class=\"tbldata\" id=\"weapon_tech\">".$weapon_tech."</td></tr>";
+  			echo "<tr><td class=\"tbldata\"><b>Heilung:</b></td>
+				<td class=\"tbldata\" id=\"heal\">".nf($heal)."</td>
+				<td class=\"tbldata\" id=\"heal_tech\">".$heal_tech."</td></tr>";
+		  	echo "<tr>
+				<td class=\"tbldata\"><b>Anzahl Schiffe:</b></td>
+				<td class=\"tbldata\" colspan=\"2\" id=\"count\">".nf($count)."</td></tr>";
+			infobox_end(1);
+			$response->assign("ship_info","innerHTML",ob_get_contents());
+			ob_end_clean();
+		}
+		else
+		{
+			$response->assign("ship_info","innerHTML","");	
+			$response->assign("ship_info","style.display",'none');
+		}
+		
 	  return $response;	
 	}
 
@@ -376,7 +555,7 @@
 					}
 					
 					// Manuelle Auswahl
-					echo "<tr><td class=\"tbltitle\" width=\"25%\">Zielwahl:</td><td class=\"tbldata\" width=\"75%\">
+					echo "<tr><td class=\"tbltitle\" width=\"25%\" rowspan=\"2\">Zielwahl:</td><td class=\"tbldata\" width=\"75%\">
 					Manuelle Eingabe: ";
 					echo "<input type=\"text\" 
 												id=\"man_sx\"
@@ -452,6 +631,18 @@
 												onkeyup=\"if (detectChangeTest(this,'t5')) { showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
 												onkeypress=\"return nurZahlen(event)\"
 					/></td></tr>";
+					
+					echo "<tr><td class=\"tbldata\" width=\"75%\" align=\"left\">Zielfavoriten: ";
+							echo "<select name=\"bookmarks\" 
+											id=\"bookmark_entity\" 
+											onchange=\"showLoader('bookmark');xajax_havenTargetInfo(xajax.getFormValues('targetForm'))\"
+											tabindex=\"6\"
+							>\n";
+							echo "<option value=\"1\"";
+								echo ">Bookmakrs</option>\n";
+					echo "</select>";
+					
+					echo "</td></tr>";
 					
 					// Speedfaktor
 					echo "<tr>
@@ -603,7 +794,7 @@
 							<td><span id=\"costs\" style=\"font-weight:bold;\">".nf($fleet->getCosts())." t ".RES_FUEL."</span></td></tr>";
 						echo "<tr><td class=\"tbltitle\">Nahrung:</td>
 							<td><span id=\"costs\" style=\"font-weight:bold;\">".nf($fleet->getCostsFood())." t ".RES_FUEL."</span></td></tr>";
-						echo "<tr id=\"support\"></tr>";
+						echo "<tr id=\"supportTime\" style=\"display: none;\"><td class=\"tbltitle\">Supportzeit:</td><td id=\"support\"></td></tr>";
 						echo "</table><br/>";			
 						
 						$response->assign("havenContentTarget","innerHTML",ob_get_contents());				
@@ -953,7 +1144,6 @@
 	  
 		$response->assign('resfree','innerHTML',nf($fleet->getCapacity())." / ".nf($fleet->getTotalCapacity())	);
 		$response->assign('resfree','style.color',"#0f0");
-		$response->assign('supporttime','innerHTML',"<span ".tm($fleet->getSupport(),$fleet->getSupportDesc())." style=\"font-weight:bold;\">".tf($fleet->getSupportTime())."</span>" );
 	  
 	  $_SESSION['haven']['fleetObj']=serialize($fleet);
 	  
@@ -964,17 +1154,66 @@
 	{
 		$response = new xajaxResponse();
 		$fleet = unserialize($_SESSION['haven']['fleetObj']);
-		
 		ob_start();
+		$fleet->resetSupport();
 		
 		if ($code == "support") {
-			echo "<td class=\"tbltitle\">Supportzeit:</td>
-							<td id=\"supporttime\"><span ".tm($fleet->getSupport(),$fleet->getSupportDesc())." style=\"font-weight:bold;\">".tf($fleet->getSupportTime())."</span></td>";
+			//echo "<span ".tm($fleet->getSupport(),$fleet->getSupportDesc())." style=\"font-weight:bold;\">";		
+			echo "<form id=\"supportForm\">";
+			echo "<input type=\"text\" 
+								id=\"hour\"
+								name=\"hour\" 
+								size=\"1\" 
+								maxlength=\"2\" 
+								value=\"0\" 
+								title=\"Stunden\" 
+								tabindex=\"7\"
+								autocomplete=\"off\" 
+								onfocus=\"this.select()\" 
+								onclick=\"this.select()\" 
+								onkeydown=\"detectChangeRegister(this,'t1');\"
+								onkeyup=\"if (detectChangeTest(this,'t1')) { xajax_havenCheckSupport(xajax.getFormValues('supportForm')); }\"
+								onkeypress=\"return nurZahlen(event)\"
+	/>&nbsp;:&nbsp;";
+	echo "<input type=\"text\" 
+								id=\"min\" 
+								name=\"min\" 
+								size=\"1\" 
+								maxlength=\"2\" 
+								value=\"0\" 
+								title=\"Minuten\" 
+								tabindex=\"8\"
+								autocomplete=\"off\" 
+								onfocus=\"this.select()\" 
+								onclick=\"this.select()\" 
+								onkeydown=\"detectChangeRegister(this,'t2');\"
+								onkeyup=\"if (detectChangeTest(this,'t2')) { xajax_havenCheckSupport(xajax.getFormValues('supportForm')); }\"
+								onkeypress=\"return nurZahlen(event)\"
+	/>&nbsp;&nbsp;:&nbsp;&nbsp;";
+	echo "<input type=\"text\" 
+								id=\"second\" 
+								name=\"second\" 
+								size=\"1\" 
+								maxlength=\"2\" 
+								value=\"0\" 
+								title=\"Sekunden\" 
+								tabindex=\"9\"
+								autocomplete=\"off\" 
+								onfocus=\"this.select()\" 
+								onclick=\"this.select()\" 
+								onkeydown=\"detectChangeRegister(this,'t3');\"
+								onkeyup=\"if (detectChangeTest(this,'t3')) { xajax_havenCheckSupport(xajax.getFormValues('supportForm')); }\"
+								onkeypress=\"return nurZahlen(event)\"
+	/></form>";//</span>";*/
+			$response->assign('supportTime',"style.display",'');
+			$response->assign('support','innerHTML',ob_get_contents() );
+			ob_end_clean();
 		}
-		
-		$response->assign('support','innerHTML',ob_get_contents() );
-		ob_end_clean();
-		
+		else
+		{
+			$response->assign("supportTime","style.display",'none');
+			$response->assign("support","innerHTML","");
+		}
 		$_SESSION['haven']['fleetObj']=serialize($fleet);
 		
 		return $response;
@@ -1042,7 +1281,32 @@
 		$_SESSION['haven']['fleetObj']=serialize($fleet);
 		
 		return $response;	
-	
 	} 
-
+	
+	function havenCheckSupport($form) {
+		
+		$response = new xajaxResponse();
+		$fleet = unserialize($_SESSION['haven']['fleetObj']);
+		ob_start();
+		
+		$supportTime = $form["second"] + $form["minute"]*60 + $form["hour"]*3600;
+		$maxTime = getSupportMaxTime();
+		
+		//if ($maxTime < $supportTime) {
+			$hour = floor($maxTime/3600);
+			$temp = $maxTime - $hour;
+			$minute = floor($temp/60);
+			$second = $temp - $minute;
+			
+			$response->assign('hour','innerHTML',$hour);
+			$response->assign('minute','innerHTML',$minute);
+			$response->assign('second','innerHTML',$second);
+			$response->assign('duration','innerHTML',$supportTime);
+		//}
+		ob_end_clean();
+		$_SESSION['haven']['fleetObj']=serialize($fleet);
+		
+		return $response;
+	
+	}
 ?>

@@ -644,7 +644,7 @@
 		       
 		function getCapacity()
 		{
-			return $this->capacityTotal - $this->capacityResLoaded - $this->capacityFuelUsed - $this->costsFood;
+			return $this->capacityTotal - $this->capacityResLoaded - $this->capacityFuelUsed - $this->costsFood - $this->supportCostsFood - $this->supportCostsFuel;
 		}
 
 		function getTotalCapacity()
@@ -687,12 +687,20 @@
 			return $loaded;
 		}
 		
+		function resetSupport() {
+			$this->supportTime=0;
+			$this->supportCostsFood=0;
+			$this->supportCostsFuel=0;
+		}
+			
 		function getSupportTime() {
 			return $this->supportTime;
 		}
 		
-		function calcSupportTime() {
-			$this->supportCostsFuelPerSec = $this->costsPerHundredAE*$this->getSpeed()/$this->getSpeedPercent()/3600;
+		function getSupportMaxTime() {
+			return 100;
+			
+			/*$this->supportCostsFuelPerSec = $this->costsPerHundredAE*$this->getSpeed()/$this->getSpeedPercent()/3600;
 			$this->supportCostsFoodPerSec = $this->costsFood/$this->getDuration();
 			
 			$supportTimeFuel = $this->getLoadedRes(4)/$this->supportCostsFuelPerSec;
@@ -706,7 +714,7 @@
 			if ($this->supportTime>0) {
 				$this->supportCostsFood = $this->getLoadedRes(5) * $this->supportTime / $supportTimeFood;
 				$this->supportCostsFuel = $this->getLoadedRes(4) * $this->supportTime / $supportTimeFuel;
-			}	
+			}	*/
 		}
 		
 		function getSupport() {

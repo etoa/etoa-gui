@@ -201,8 +201,10 @@
 		{
 			
 			echo "<tr>
-							<th class=\"tbltitle\" colspan=\"2\">Allianzgebäde</th>
-							<th class=\"tbltitle\" colspan=\"2\">Allianzforschungen</th>
+							<th class=\"tbltitle\">Allianzgebäde</th>
+							<th class=\"tbltitle\">Supportflotten</th>
+							<th class=\"tbltitle\">Allianzangriffe</th>
+							<th class=\"tbltitle\">Allianzforschungen</th>
 						</tr>
 						<tr>";
 						
@@ -222,7 +224,7 @@
 			if (mysql_num_rows($res)>0)
 			{
 				$arr = mysql_fetch_array($res);
-				echo "<td class=\"tbldata\" colspan=\"2\">
+				echo "<td class=\"tbldata\">
 								<a href=\"?page=alliance&amp;action=base&amp;action2=buildings\" id=\"alliance_building_counter\">";
 								
 								//Forschung ist fertig
@@ -241,8 +243,48 @@
 			}
 			else
 			{
-				echo "<td class=\"tbldata\" colspan=\"2\">Es wird nicht gebaut!</td>";
+				echo "<td class=\"tbldata\">Es wird nicht gebaut!</td>";
 			}	
+			
+		//
+		// Supportflotten Flotten
+		//
+		$fm->loadAllianceSupport();
+		//Mehrere Flotten
+		if ($fm->count() > 1)
+		{
+			echo "<td><a href=\"?page=fleets&mode=alliance\"><b>".$fm->count()."</b> Supportlotten</a></td>";
+		}
+		//Eine Flotte
+		elseif ($fm->count()==1)
+		{
+			echo "<td><a href=\"?page=fleets&mode=alliance\"><b>".$fm->count()."</b> Supportlotte</a></td>";
+		}
+		//Keine Flotten
+		else
+		{
+			echo "<td>Keine Supportflotten</td>";
+		}
+		
+		//
+		// Allianzangriffs
+		//
+		$fm->loadAllianceAttacks();
+		//Mehrere Flotten
+		if ($fm->count() > 1)
+		{
+			echo "<td><a href=\"?page=fleets&mode=alliance\"><b>".$fm->count()."</b> Allianzangriffe</a></td>";
+		}
+		//Eine Flotte
+		elseif ($fm->count()==1)
+		{
+			echo "<td><a href=\"?page=fleets&mode=alliance\"><b>".$fm->count()."</b> Allianzangriff</a></td>";
+		}
+		//Keine Flotten
+		else
+		{
+			echo "<td>Keine Allianzangriffe</td>";
+		}
 				
 				
 			// Lädt forschende Allianztech
@@ -261,7 +303,7 @@
 			if (mysql_num_rows($res)>0)
 			{
 				$arr = mysql_fetch_array($res);
-				echo "<td class=\"tbldata\" colspan=\"2\">
+				echo "<td class=\"tbldata\">
 								<a href=\"?page=alliance&amp;action=base&amp;action2=research\" id=\"alliance_tech_counter\">";
 								
 								//Forschung ist fertig
@@ -280,10 +322,11 @@
 			}
 			else
 			{
-				echo "<td class=\"tbldata\" colspan=\"2\">Es wird nicht geforscht!</td></tr>";
+				echo "<td class=\"tbldata\">Es wird nicht geforscht!</td>";
 			}
 		}
 		
+		echo "</tr>";
 		
 		
 		infobox_end(1);

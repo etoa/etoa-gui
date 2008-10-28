@@ -87,6 +87,12 @@
 	
 	// Verteidigungs-Infos
 	ob_start();
+	
+	$struct = 0;
+	$shield = 0;
+	$weapon = 0;
+	$heal = 0;
+	$count = 0;
 
   infobox_start("Verteidigungs-Infos",1);
   $res = dbquery("
