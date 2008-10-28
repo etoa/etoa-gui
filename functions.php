@@ -3134,7 +3134,7 @@ Forum: http://www.etoa.ch/forum";
 			if (document.getElementById('<?PHP echo $elem;?>')!=null)
 			{
 				cnt["<?PHP echo $elem;?>"] = 0;
-				setCountdown('<?PHP echo $elem;?>',<?PHP echo time();?>,<?PHP echo $targettime;?>,'<?PHP echo elementToSetEmpty;?>');
+				setCountdown('<?PHP echo $elem;?>',<?PHP echo time();?>,<?PHP echo $targettime;?>,'<?PHP echo $elementToSetEmpty;?>');
 			}
 		</script>
 		<?PHP	
@@ -3194,7 +3194,7 @@ Forum: http://www.etoa.ch/forum";
 	* Prints an array
 	* For debug purposes only
 	*/
-	function print_a($val)
+	function dump($val)
 	{	
 		ob_start();
 		print_r($val);

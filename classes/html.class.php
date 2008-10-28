@@ -47,19 +47,7 @@
 					
 					<!-- Fading blink text-->
 					<script type="text/javascript" src="js/fader.js"></script>
-					
-					<!-- jsProgressBarHandler prerequisites : prototype.js
-					<script type="text/javascript" src="js/prototype/prototype.js"></script>
-
-					<!-- jsProgressBarHandler core 
-					<script type="text/javascript" src="js/bramus/jsProgressBarHandler.js"></script>
-					
-					
-					<!--<script type="text/javascript" src="js/timer.js"></script> -->
-					<!--<script type="text/javascript" src="js/slider.js"></script>-->
-					
-					<!--<link type="text/css" rel="StyleSheet" href="css/slider.css" />					-->
-
+				
 				</head> 		
 			<?PHP	
  		}

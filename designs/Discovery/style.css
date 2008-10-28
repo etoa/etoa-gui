@@ -10,6 +10,10 @@ body {
 	border:none;
 }
 
+img	{
+	border:none;
+}
+
 /*
 Fix für PNG-Files
 img, div { behavior: url(misc/iepngfix.htc) }

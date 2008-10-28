@@ -472,13 +472,13 @@ function calcDemolishingWaitTime($dc,$cp)
 								
 							}
 							else
-								echo "<i>Bauauftrag kann nicht gestartet werden, zuwenig Rohstoffe vorhanden!</i><br/><br/>";
+								error_msg("Bauauftrag kann nicht gestartet werden, zuwenig Rohstoffe vorhanden!");
 						}
 						else
-							echo "<i>Bauauftrag kann nicht gestartet werden, zuwenig Felder vorhanden!</i><br/><br/>";
+							error_msg("Bauauftrag kann nicht gestartet werden, zuwenig Felder vorhanden!");
 					}
 					else
-						echo "<i>Bauauftrag kann nicht gestartet werden, es wird bereits an einem Geb&auml;ude gearbeitet!</i><br/><br/>";
+						error_msg("Bauauftrag kann nicht gestartet werden, es wird bereits an einem Geb&auml;ude gearbeitet!");
 				}
 
 				//Gebäude abbrechen
@@ -590,7 +590,7 @@ function calcDemolishingWaitTime($dc,$cp)
 						add_log_game_building($log_text,$cu->id(),$cu->allianceId(),$cp->id(),$arr['building_id'],$b_status,time());								
 					}
 					else
-						echo "<i>Bauauftrag kann nicht mehr abgebrochen werden, die Arbeit ist bereits fertiggestellt!</i><br/><br/>";
+						error_msg("Bauauftrag kann nicht mehr abgebrochen werden, die Arbeit ist bereits fertiggestellt!");
 				}
 
 				//Abbruchauftrag abbrechen
@@ -897,11 +897,11 @@ function calcDemolishingWaitTime($dc,$cp)
 					if ($b_status==3)
 					{
 		      	echo "<tr>
-		      					<td class=\"tbldata\">
-		      						<input type=\"submit\" class=\"button\" id=\"buildcancel\" name=\"command_cbuild\" value=\"Bau abbrechen\" onclick=\"if (this.value=='Bau abbrechen'){return confirm('Wirklich abbrechen?');}\" />
+		      					<td class=\"tbldata\" id=\"buildcancel\">
+		      						<input type=\"submit\" class=\"button\" name=\"command_cbuild\" value=\"Bau abbrechen\" onclick=\"if (this.value=='Bau abbrechen'){return confirm('Wirklich abbrechen?');}\" />
 		      					</td>
 		      					<td class=\"tbldata\" id=\"buildtime\">-</td>
-		      					<td colspan=\"6\" class=\"tbldata\" id=\"buildprogress\" style=\"background:#000;text-align:center;\"></td>
+		      					<td colspan=\"6\" class=\"tbldata\" id=\"buildprogress\" style=\"height:25px;background:#fff;text-align:center;\"></td>
 		      				</tr>";
 		      	if ($b_level < $arr['building_last_level']-1)
 		      	{
@@ -922,11 +922,11 @@ function calcDemolishingWaitTime($dc,$cp)
 					if ($b_status==4)
 					{
 		      	echo "<tr>
-		      					<td class=\"tbldata\">
-		      						<input type=\"submit\" class=\"button\" id=\"buildcancel\" name=\"command_cdemolish\" value=\"Abriss abbrechen\" onclick=\"if (this.value=='Abriss abbrechen'){return confirm('Wirklich abbrechen?');}\" />
+		      					<td class=\"tbldata\" id=\"buildcancel\">
+		      						<input type=\"submit\" class=\"button\" name=\"command_cdemolish\" value=\"Abriss abbrechen\" onclick=\"if (this.value=='Abriss abbrechen'){return confirm('Wirklich abbrechen?');}\" />
 		      					</td>
 		      					<td class=\"tbldata\" id=\"buildtime\">-</td>
-		      					<td class=\"tbldata\" colspan=\"6\">&nbsp;</td>
+		      					<td class=\"tbldata\" colspan=\"6\"  id=\"buildprogress\" style=\"height:25px;background:#fff;text-align:center;\"></td>
 		      				</tr>";
 					}
 					infobox_end(1);

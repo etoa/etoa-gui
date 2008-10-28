@@ -24,15 +24,15 @@
 
 			perc = Math.ceil(cnt[elem] / d * 100);
 		
-			document.getElementById(elem).firstChild.nodeValue=nv;
+			document.getElementById(elem).innerHTML=nv;
 			cnt[elem] = cnt[elem] + 1;
-			setTimeout("setCountdown('"+elem+"',"+time+","+diff+",'"+progresselem+"')",1000);
+			setTimeout("setCountdown('"+elem+"',"+time+","+diff+",'"+elemToSetEmpty+"')",1000);
 		}
 		else
 		{
 			nv = "-";
 			document.getElementById(elem).firstChild.nodeValue=nv;
-			document.getElementById(elemToSetEmpty).firstChild.nodeValue="";
+			document.getElementById(elemToSetEmpty).innerHTML="";
 		}
 	}
 	
@@ -48,7 +48,7 @@
 				cTime++;
 				
 				document.getElementById(progresselem).innerHTML=perc+"%";
-				document.getElementById(progresselem).style.background="url('images/progressbar.png') no-repeat";
+				document.getElementById(progresselem).style.background="#fff url('images/progressbar.png') no-repeat";
 				document.getElementById(progresselem).style.backgroundPosition=(-500+(perc*5))+"px 0px";
 				if (perc<=48)
 					document.getElementById(progresselem).style.color="#000";
