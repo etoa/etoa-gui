@@ -19,7 +19,7 @@
 				missile_id,
 				missile_name 
 			FROM 
-				".$db_table['missiles']." 
+				missiles 
 			WHERE 
 				missile_show=1
 			ORDER BY 

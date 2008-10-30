@@ -9,7 +9,6 @@ $xajax->register(XAJAX_FUNCTION,"showGameLogs");
 
 function logSelectorCat($cat)
 {
-	global $db_table;
 	
 	ob_start();
 	$objResponse = new xajaxResponse();
@@ -495,7 +494,7 @@ function logSelectorCat($cat)
 		SELECT 
 			*
 		FROM
-			".$db_table['logs_game_cat'].";");
+			logs_game_cat;");
 		while ($arr=mysql_fetch_array($res))
 		{
 			$game_cat .= "<option value=\"".$arr['logs_game_cat_id']."\">".$arr['logs_game_cat_name']."</option>";
@@ -592,7 +591,6 @@ function logSelectorCat($cat)
 
 function checkLogFormular($val)
 {
-	global $db_table;
 	
 	ob_start();
 	$objResponse = new xajaxResponse();
@@ -601,7 +599,7 @@ function checkLogFormular($val)
 	if($val['log_cat']=="logs_battle")
 	{
 		$sql_select = "logs_battle_id";
-		$sql_table = $db_table['logs_battle'];
+		$sql_table = 'logs_battle';
 		$sql_where_start = "logs_battle_id!=0";
 		$sql_add = "";
 		$sql_order = "ORDER BY logs_battle_fleet_landtime DESC";
@@ -754,7 +752,7 @@ function checkLogFormular($val)
 	elseif($val['log_cat']=="logs")
 	{
 		$sql_select = "log_id";
-		$sql_table = $db_table['logs'];
+		$sql_table = 'logs';
 		$sql_where_start = "log_id!=0";	
 		$sql_add = "";
 		$sql_order = "";
@@ -766,9 +764,9 @@ function checkLogFormular($val)
 	elseif($val['log_cat']=="logs_game")
 	{
 		$sql_select = "logs_game_id";
-		$sql_table = "".$db_table['logs_game']." 
+		$sql_table = "logs_game 
 									INNER JOIN 
-									".$db_table['logs_game_cat']."
+									logs_game_cat
 									ON logs_game_cat=logs_game_cat_id";
 		$sql_where_start = "logs_game_id!='0'";	
 		$sql_add = "";	
@@ -874,8 +872,6 @@ function checkLogFormular($val)
 
 function logChangeButton()
 {
-	global $db_table;
-	
 	ob_start();
 	$objResponse = new xajaxResponse();
 	

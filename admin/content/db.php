@@ -41,11 +41,11 @@
 			if ($conf['updating']['v']==0)
 			{
         // Update-Flag setzen
-        dbquery("UPDATE ".$db_table['config']." SET config_value=1,config_param2=".time()." WHERE config_name='updating';");
+        dbquery("UPDATE config SET config_value=1,config_param2=".time()." WHERE config_name='updating';");
         $num = updateAllEconomy();
         echo "Ressourcen und Speicher wurden auf ".$num." Planeten aktualisiert!<br/><br/>";
 				// Update-Flag löschen
-				dbquery("UPDATE ".$db_table['config']." SET config_value=0 WHERE config_name='updating';");              
+				dbquery("UPDATE config SET config_value=0 WHERE config_name='updating';");              
       }
       else
       {
@@ -59,14 +59,14 @@
 			if ($conf['updating']['v']==0)
 			{
 	      // Update-Flag setzen
-	      dbquery("UPDATE ".$db_table['config']." SET config_value=1,config_param2=".time()." WHERE config_name='updating';");
+	      dbquery("UPDATE config SET config_value=1,config_param2=".time()." WHERE config_name='updating';");
 	      $num = fieldupdate();
 	      echo "Geb&auml;ude-Feldinformationen wurden verarbeitet.<br/>$num[0] Planeten aktuallisiert!<br/><br/>";
 	      echo "Verteidigungs-Feldinformationen wurden verarbeitet.<br/>$num[1] Planeten aktualisiert!<br/><br/>";
 	      $d = round($num[2]/($num[1]+$num[0]),2);
 	      echo "Es sind durchschnittlich $d Felder belegt!";
 				// Update-Flag löschen
-				dbquery("UPDATE ".$db_table['config']." SET config_value=0 WHERE config_name='updating';");            
+				dbquery("UPDATE config SET config_value=0 WHERE config_name='updating';");            
 			}
       else
       {
@@ -80,11 +80,11 @@
 			if ($conf['updating']['v']==0)
 			{
 	      // Update-Flag setzen
-	      dbquery("UPDATE ".$db_table['config']." SET config_value=1,config_param2=".time()." WHERE config_name='updating';");
+	      dbquery("UPDATE config SET config_value=1,config_param2=".time()." WHERE config_name='updating';");
 				$num = storeupdate(true);
 				echo "Speicherinformationen von $num[1] Geb&auml;uden wurden auf $num[0] Planeten aktualisiert!<br/><br/>";
 				// Update-Flag löschen
-				dbquery("UPDATE ".$db_table['config']." SET config_value=0 WHERE config_name='updating';");            
+				dbquery("UPDATE config SET config_value=0 WHERE config_name='updating';");            
      	}
       else
       {
@@ -98,7 +98,7 @@
 			if ($conf['updating']['v']==0)
 			{
 	    	// Update-Flag setzen
-	    	dbquery("UPDATE ".$db_table['config']." SET config_value=1,config_param2=".time()." WHERE config_name='updating';");
+	    	dbquery("UPDATE config SET config_value=1,config_param2=".time()." WHERE config_name='updating';");
 	    	$num = Ranking::calc(true);
 	    	Ranking::calcTitles();
 	    	echo "Die Punkte von ".$num[0]." Spielern wurden aktualisiert!<br/>";
@@ -106,7 +106,7 @@
 	    	echo "Ein Spieler hat durchschnittlich ".nf($d)." Punkte!<br/><br/>";
 	    	echo "<a href=\"?page=home&amp;sub=stats\">Resultat</a><br/><br/>";
 				// Update-Flag löschen
-				dbquery("UPDATE ".$db_table['config']." SET config_value=0 WHERE config_name='updating';");            
+				dbquery("UPDATE config SET config_value=0 WHERE config_name='updating';");            
 	    }
 	    else
 	    {
@@ -120,11 +120,11 @@
 			if ($conf['updating']['v']==0)
 			{
 	      // Update-Flag setzen
-	      dbquery("UPDATE ".$db_table['config']." SET config_value=1,config_param2=".time()." WHERE config_name='updating';");
+	      dbquery("UPDATE config SET config_value=1,config_param2=".time()." WHERE config_name='updating';");
 	      market_update();
 	      echo "Die Marktangebote wurden Aktualisiert und ausstehende Warenversendungen wurden gemacht!<br/><br/>";
 				// Update-Flag löschen
-				dbquery("UPDATE ".$db_table['config']." SET config_value=0 WHERE config_name='updating';");            
+				dbquery("UPDATE config SET config_value=0 WHERE config_name='updating';");            
        }
        else
        {
@@ -261,7 +261,7 @@
 			if ((isset($_POST['cl_points']) && $_POST['cl_points']==1) || $all)
 			{
 				$time_diff=time()-$_POST['del_user_points'];
-				dbquery("DELETE FROM ".$db_table['user_points']." WHERE point_timestamp<".$time_diff.";");
+				dbquery("DELETE FROM user_points WHERE point_timestamp<".$time_diff.";");
 				echo mysql_affected_rows()." Punkte-Daten wurden gelöscht!<br/>";
 			}
 
@@ -278,7 +278,7 @@
 			{
 				dbquery("
 				DELETE FROM 
-					".$db_table['shiplist']."
+					shiplist
 				WHERE 
 					shiplist_count =0
 					AND shiplist_build_count =0
@@ -287,7 +287,7 @@
 				echo mysql_affected_rows()." leere Schiffdaten wurden gelöscht!<br/>";
 				dbquery("
 				DELETE FROM 
-					".$db_table['deflist']."
+					deflist
 				WHERE 
 					deflist_count =0
 					AND deflist_build_count =0
@@ -295,7 +295,7 @@
 				echo mysql_affected_rows()." leere Verteidigungsdaten wurden gelöscht!<br/>";
 				dbquery("
 				DELETE FROM 
-					".$db_table['buildlist']."
+					buildlist
 				WHERE 
 					buildlist_current_level=0
 					AND buildlist_build_start_time=0
@@ -304,7 +304,7 @@
 				echo mysql_affected_rows()." leere Gebäudedaten wurden gelöscht!<br/>";
 				dbquery("
 				DELETE FROM 
-					".$db_table['techlist']."
+					techlist
 				WHERE 
 					techlist_current_level=0
 					AND techlist_build_start_time=0
@@ -321,7 +321,7 @@
 		if ($_POST['delentrys']!="")
 		{
 			$tstamp = time()-$_POST['log_timestamp'];
-			dbquery("DELETE FROM ".$db_table['logs']." WHERE log_cat=".$_POST['log_cat']." AND log_timestamp<$tstamp;");
+			dbquery("DELETE FROM logs WHERE log_cat=".$_POST['log_cat']." AND log_timestamp<$tstamp;");
 			echo mysql_affected_rows()." Eintr&auml;ge wurden gelöscht!<br/><br/><input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=$page&sub=$sub'\" />";
 		}
 
@@ -367,7 +367,7 @@
 		SELECT 
 			count(log_id) 
 		FROM 
-			".$db_table['logs']."
+			logs
 		;"));
 		echo "<b>Logs löschen:</b> In Kategorie <select name=\"log_cat\">";
 		echo "<option value=\"0\">(alle)</option>";
@@ -377,9 +377,9 @@
 			cat_name,
 			COUNT(log_id) as cnt 
 		FROM 
-			".$db_table['log_cat']."
+			log_cat
 		INNER JOIN
-			".$db_table['logs']." 
+			logs 
 			ON log_cat=cat_id 
 		GROUP BY cat_id;");
 		while ($arr=mysql_fetch_array($res))
@@ -416,7 +416,7 @@
 		SELECT 
 			COUNT(*) 
 		FROM 
-			".$db_table['user_points']."
+			user_points
 		;"));
 		echo "<b>Punkteverläufe löschen:</b> Eintr&auml;ge löschen die &auml;lter als <select name=\"del_user_points\">";
 		echo "<option value=\"172800\">2 Tage</option>";
@@ -434,7 +434,7 @@
 			SELECT
 				COUNT(user_id)
 			FROM
-				".$db_table['users']."
+				users
 			WHERE
 				user_show_stats='1'
 				AND (user_registered<'".$register_time."' AND user_points='0')
@@ -451,7 +451,7 @@
 		SELECT
 			 COUNT( shiplist_id )
 		FROM 
-			".$db_table['shiplist']."
+			shiplist
 		WHERE 
 			shiplist_count =0
 			AND shiplist_build_count =0
@@ -462,7 +462,7 @@
 		SELECT
 			 COUNT( shiplist_id )
 		FROM 
-			".$db_table['shiplist']."
+			shiplist
 		;");		
 		$stcnt = mysql_fetch_row($res);		
 		
@@ -470,7 +470,7 @@
 		SELECT
 			 COUNT( deflist_id )
 		FROM 
-			".$db_table['deflist']."
+			deflist
 		WHERE 
 			deflist_count =0
 			AND deflist_build_count =0;
@@ -480,7 +480,7 @@
 		SELECT
 			 COUNT( deflist_id )
 		FROM 
-			".$db_table['deflist']."
+			deflist
 		;");		
 		$dtcnt = mysql_fetch_row($res);
 				
@@ -488,7 +488,7 @@
 		SELECT
 			 COUNT( buildlist_id )
 		FROM 
-			".$db_table['buildlist']."
+			buildlist
 		WHERE 
 			buildlist_current_level=0
 			AND buildlist_build_start_time=0
@@ -499,7 +499,7 @@
 		SELECT
 			 COUNT( buildlist_id )
 		FROM 
-			".$db_table['buildlist']."
+			buildlist
 		;");		
 		$btcnt = mysql_fetch_row($res);		
 		
@@ -507,7 +507,7 @@
 		SELECT
 			 COUNT( techlist_id )
 		FROM 
-			".$db_table['techlist']."
+			techlist
 		WHERE 
 			techlist_current_level=0
 			AND techlist_build_start_time=0
@@ -518,7 +518,7 @@
 		SELECT
 			 COUNT( techlist_id )
 		FROM 
-			".$db_table['techlist']."
+			techlist
 		;");		
 		$ttcnt = mysql_fetch_row($res);
 

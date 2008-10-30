@@ -12,7 +12,7 @@
 			planet_wf_crystal,
 			planet_wf_plastic 
 		FROM 
-			".$db_table['planets']." 
+			planets 
 		WHERE 
 			planet_id='".$arr['fleet_planet_to']."';
 	"));
@@ -36,7 +36,7 @@
 		// Rohstoffe vom Planeten abziehen
 		dbquery("
 			UPDATE
-				".$db_table['planets']."
+				planets
 			SET
 				planet_wf_metal=planet_wf_metal-'".$raid_r_to_ship[0]."',
 				planet_wf_crystal=planet_wf_crystal-'".$raid_r_to_ship[1]."',
@@ -63,7 +63,7 @@
 	        $res_sum=array_sum($raid_r_to_ship);
 	        dbquery("
 			UPDATE
-				".$db_table['users']."
+				users
 			SET
 				user_res_from_tf=user_res_from_tf+'".$res_sum."'
 			WHERE

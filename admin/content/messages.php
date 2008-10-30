@@ -280,7 +280,7 @@
                             echo "<tr><td width=\"30%\" valign=\"top\">&nbsp;</td><td class=\"tbltitle\" width=\"70%\">Neue Nachricht</td></tr>";
                             echo "<tr><td class=\"tbltitle\" width=\"30%\" valign=\"top\">E-Mail Adresse:</td><td class=\"tbldata\" width=\"70%\"><input type=\"text\" name=\"email_user_to_self\" value=\"".$_POST['email_user_to_self']."\" size=\"30\" maxlength=\"255\"> <select name=\"email_user_to\">";
                             echo "<option value=\"0\" selected=\"selected\">------</option>";
-                            $res=dbquery("SELECT user_id,user_nick FROM ".$db_table['users']." ORDER BY user_nick;");
+                            $res=dbquery("SELECT user_id,user_nick FROM users ORDER BY user_nick;");
                             while ($arr=mysql_fetch_array($res))
                             {
                                 echo "<option value=\"".$arr['user_id']."\"";
@@ -347,7 +347,7 @@
 			echo "<tr><td width=\"30%\" valign=\"top\">&nbsp;</td><td class=\"tbltitle\" width=\"70%\">Neue Nachricht</td></tr>";
 			echo "<tr><td class=\"tbltitle\" width=\"30%\" valign=\"top\">E-Mail Adresse:</td><td class=\"tbldata\" width=\"70%\"><input type=\"text\" name=\"email_user_to_self\" value=\"\" size=\"30\" maxlength=\"255\"> <select name=\"email_user_to\">";
 			echo "<option value=\"0\" selected=\"selected\">------</option>";
-			$res=dbquery("SELECT user_id,user_nick FROM ".$db_table['users']." ORDER BY user_nick;");
+			$res=dbquery("SELECT user_id,user_nick FROM users ORDER BY user_nick;");
 			while ($arr=mysql_fetch_array($res))
 			{
 				echo "<option value=\"".$arr['user_id']."\">".$arr['user_nick']."</option>";
@@ -600,7 +600,7 @@
 			<input type=\"radio\" name=\"message_deleted\" value=\"1\" /> Ja</td></tr>";
 			echo "<tr><th>Kategorie</th><td><select name=\"message_cat_id\">";
 			echo "<option value=\"\">(egal)</option>";
-			$cres = dbquery("SELECT cat_id,cat_name FROM ".$db_table['message_cat']." ORDER BY cat_order;");
+			$cres = dbquery("SELECT cat_id,cat_name FROM message_cat ORDER BY cat_order;");
 			while ($carr = mysql_fetch_array($cres))
 			{
 				echo "<option value=\"".$carr['cat_id']."\">".$carr['cat_name']."</option>";

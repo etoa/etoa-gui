@@ -28,7 +28,7 @@
 			$xml = simplexml_load_file($file);
 			
 			echo "<h2>Details ".base64_decode($_GET['file'])."</h2>";
-			infobox_start("Allgemeines",1);
+			tableStart("Allgemeines");
 			if (isset($xml->export))
 			{
 				echo "<tr>
@@ -87,7 +87,7 @@
 			}
 			tableEnd();
 	
-			infobox_start("Planeten",1);
+			tableStart("Planeten");
 			if (isset($xml->planets))
 			{
 				if (isset($xml->planets->planet))
@@ -131,7 +131,7 @@
 			}
 			tableEnd();	
 
-			infobox_start("Gebäude",1);
+			tableStart("Gebäude");
 			if (isset($xml->buildings))
 			{
 				if (isset($xml->buildings->building))
@@ -149,7 +149,7 @@
 			}
 			tableEnd();	
 	
-			infobox_start("Technologien",1);
+			tableStart("Technologien");
 			if (isset($xml->technologies))
 			{
 				if (isset($xml->technologies->technology))
@@ -166,7 +166,7 @@
 			}
 			tableEnd();	
 			
-			infobox_start("Schiffe",1);
+			tableStart("Schiffe");
 			if (isset($xml->ships))
 			{
 				if (isset($xml->ships->ship))
@@ -184,7 +184,7 @@
 			}
 			tableEnd();			
 			
-			infobox_start("Verteidigung",1);
+			tableStart("Verteidigung");
 			if (isset($xml->defenses))
 			{
 				if (isset($xml->defenses->defense))

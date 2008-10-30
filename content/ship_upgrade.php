@@ -43,7 +43,7 @@
     {
         dbquery("
         UPDATE
-        	".$db_table['shiplist']."
+        	shiplist
         SET
         	shiplist_special_ship_level=shiplist_special_ship_level+1,
         	shiplist_special_ship_bonus_".$_POST['upgrade']."=shiplist_special_ship_bonus_".$_POST['upgrade']."+1
@@ -92,9 +92,9 @@
         shiplist.shiplist_special_ship_bonus_antrax_food,
         shiplist.shiplist_special_ship_bonus_deactivade
     FROM
-        	".$db_table['ships']." AS ships
+        	ships AS ships
         INNER JOIN
-        	".$db_table['shiplist']." AS shiplist
+        	shiplist AS shiplist
         ON ships.ship_id=shiplist.shiplist_ship_id
         AND ships.special_ship='1'
         AND shiplist.shiplist_user_id='".$cu->id()."'
@@ -367,9 +367,9 @@
         shiplist.shiplist_special_ship_level,
         shiplist.shiplist_special_ship_exp
       FROM
-        ".$db_table['ships']." AS ships
+        ships AS ships
         INNER JOIN
-        ".$db_table['shiplist']." AS shiplist
+        shiplist AS shiplist
         ON ships.ship_id=shiplist.shiplist_ship_id
         AND shiplist.shiplist_user_id='".$cu->id()."'
         AND ships.special_ship='1'

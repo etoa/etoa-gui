@@ -494,7 +494,7 @@
 			$res=dbquery("SELECT * FROM space_cells WHERE cell_id='".$_GET['editcell']."';");
 			if (mysql_num_rows($res)>0)
 			{
- 				$tres = dbquery("SELECT type_id,type_name FROM ".$db_table['sol_types'].";");
+ 				$tres = dbquery("SELECT type_id,type_name FROM sol_types;");
  				$solsys_types=array();
 				if (mysql_num_rows($tres))
 				{
@@ -600,7 +600,7 @@
 						{
 							if (!in_array($pos,$positions))
 							{
-								$num_planet_types=mysql_num_rows(dbquery("SELECT type_id FROM ".$db_table['planet_types'].";"));
+								$num_planet_types=mysql_num_rows(dbquery("SELECT type_id FROM planet_types;"));
 								$num_planet_images = $conf['num_planet_images']['v'];
 								$planet_fields_min=$conf['planet_fields']['p1'];
 								$planet_fields_max=$conf['planet_fields']['p2'];
@@ -663,7 +663,7 @@
 					}
 					echo "</select></td></tr>";
 					echo "<tr><th class=\"tbltitle\">Planeten</th><td class=\"tbldata\">";
-					$pres=dbquery("SELECT planet_name,id,planet_solsys_pos,type_name FROM planets,".$db_table['planet_types']." WHERE planet_type_id=type_id AND planet_solsys_id=".$arr['cell_id']." ORDER BY planet_solsys_pos;");
+					$pres=dbquery("SELECT planet_name,id,planet_solsys_pos,type_name FROM planets,planet_types WHERE planet_type_id=type_id AND planet_solsys_id=".$arr['cell_id']." ORDER BY planet_solsys_pos;");
 					if (mysql_num_rows($res)>0)
 					{
 						echo "<table class=\"tb\">";
@@ -822,7 +822,7 @@
 				if (mysql_num_rows($res)>20)
 					echo "<input type=\"button\" onclick=\"document.location='?page=$page&sub=$sub'\" value=\"Neue Suche\" /><br/><br/>";
 
- 				$tres = dbquery("SELECT type_id,type_name FROM ".$db_table['sol_types'].";");
+ 				$tres = dbquery("SELECT type_id,type_name FROM sol_types;");
  				$solsys_types=array();
 				if (mysql_num_rows($tres))
 				{
@@ -1323,7 +1323,7 @@
 					echo "<td class=\"tbltitle\" valign=\"top\">Typ</td>
 					<td class=\"tbldata\">
 					<select name=\"planet_type_id\">";
-					$tres = dbquery("SELECT * FROM ".$db_table['planet_types']." ORDER BY type_name;");
+					$tres = dbquery("SELECT * FROM planet_types ORDER BY type_name;");
 					while ($tarr = mysql_fetch_array($tres))
 					{
 						echo "<option value=\"".$tarr['type_id']."\"";
@@ -1351,7 +1351,7 @@
 					echo "<input type=\"hidden\" name=\"planet_user_id_old\" value=\"".$arr['planet_user_id']."\">";
 					if ($users[$planet_user_id]['alliance_id']>0)
 					{
-						$aarr = mysql_fetch_array(dbquery("SELECT alliance_tag FROM ".$db_table['alliances']." WHERE alliance_id='".$users[$planet_user_id]['alliance_id']."';"));
+						$aarr = mysql_fetch_array(dbquery("SELECT alliance_tag FROM alliances WHERE alliance_id='".$users[$planet_user_id]['alliance_id']."';"));
 						echo $aarr['alliance_tag'];
 					}
 					echo "</td></tr>";
@@ -1371,7 +1371,7 @@
 					<td class=\"tbldata\">
 					<img src=\"".IMAGE_PATH."/planets/planet".$arr['planet_image']."_small.".IMAGE_EXT."\" style=\"float:left;\" />
 					<select name=\"planet_image\">";
-					$tres = dbquery("SELECT * FROM ".$db_table['planet_types']." ORDER BY type_name;");
+					$tres = dbquery("SELECT * FROM planet_types ORDER BY type_name;");
 					
 					while ($tarr = mysql_fetch_array($tres))
 					{

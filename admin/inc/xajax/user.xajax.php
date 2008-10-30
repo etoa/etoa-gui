@@ -458,7 +458,7 @@ function loadEconomy($uid,$target)
 						planet_user_id='".$uid."'");
 				if(mysql_num_rows($pres)>0)
 				{ 
-					infobox_start("Rohstoff- und Produktionsübersicht",0);
+					iBoxStart("Rohstoff- und Produktionsübersicht");
 					echo "<div align=\"center\">";
 					echo "<table class=\"tbc\">";
 					echo "<tr>
@@ -818,11 +818,11 @@ function loadEconomy($uid,$target)
 					echo "</tr>";
 					echo "</table><br><br>";
 					
-					infobox_end(0);
+					iBoxEnd();
 				}
 				else
 				{
-					infobox_start("Rohstoff- und Produktionsübersicht");
+					iBoxStart("Rohstoff- und Produktionsübersicht");
 					echo "Der User hat noch keinen Planeten!";
 					iBoxEnd();
 				}
@@ -859,7 +859,7 @@ function loadEconomy($uid,$target)
 					5;");
 				if(mysql_num_rows($lbres)>0)
 				{ 
-					infobox_start("5 letzte Bauaufträge",1);
+					tableStart("5 letzte Bauaufträge");
 					echo "<tr>
 									<td class=\"tbltitle\" style=\"width:25%\">Zeit</td>
 									<td class=\"tbltitle\" style=\"width:30%\">Gebäude</td>
@@ -901,7 +901,7 @@ function loadEconomy($uid,$target)
 				}
 				else
 				{
-					infobox_start("5 letzte Bauaufträge");
+					iBoxStart("5 letzte Bauaufträge");
 					echo "Es sind keine Logs vorhanden!";
 					iBoxEnd();
 				}
@@ -939,7 +939,7 @@ function loadEconomy($uid,$target)
 					5;");
 				if(mysql_num_rows($lres)>0)
 				{ 
-					infobox_start("5 letzte Forschungsaufträge",1);
+					tableStart("5 letzte Forschungsaufträge");
 					echo "<tr>
 									<td class=\"tbltitle\" style=\"width:25%\">Zeit</td>
 									<td class=\"tbltitle\" style=\"width:30%\">Forschung</td>
@@ -978,7 +978,7 @@ function loadEconomy($uid,$target)
 				}
 				else
 				{
-					infobox_start("5 letzte Forschungsaufträge");
+					iBoxStart("5 letzte Forschungsaufträge");
 					echo "Es sind keine Logs vorhanden!";
 					iBoxEnd();
 				}
@@ -1008,7 +1008,7 @@ function loadEconomy($uid,$target)
 					5;");
 				if(mysql_num_rows($lres)>0)
 				{ 
-					infobox_start("5 letzte Schiffsaufträge",1);
+					tableStart("5 letzte Schiffsaufträge");
 					echo "<tr>
 									<td class=\"tbltitle\" style=\"width:45%\">Zeit</td>
 									<td class=\"tbltitle\" style=\"width:40%\">Aktion</td>
@@ -1045,7 +1045,7 @@ function loadEconomy($uid,$target)
 				}
 				else
 				{
-					infobox_start("5 letzte Schiffsaufträge");
+					iBoxStart("5 letzte Schiffsaufträge");
 					echo "Es sind keine Logs vorhanden!";
 					iBoxEnd();
 				}
@@ -1076,7 +1076,7 @@ function loadEconomy($uid,$target)
 					5;");
 				if(mysql_num_rows($lres)>0)
 				{ 
-					infobox_start("5 letzte Verteidigungsaufträge",1);
+					tableStart("5 letzte Verteidigungsaufträge");
 					echo "<tr>
 									<td class=\"tbltitle\" style=\"width:45%\">Zeit</td>
 									<td class=\"tbltitle\" style=\"width:40%\">Aktion</td>
@@ -1113,7 +1113,7 @@ function loadEconomy($uid,$target)
 				}
 				else
 				{
-					infobox_start("5 letzte Schiffsaufträge");
+					iBoxStart("5 letzte Schiffsaufträge");
 					echo "Es sind keine Logs vorhanden!";
 					iBoxEnd();
 				}

@@ -89,7 +89,7 @@
 		            SELECT
 		                user_points
 		            FROM
-		                ".$db_table['users']."
+		                users
 		            WHERE
 		                user_id='".$user_to_id."';");
 		            $points_def_arr=mysql_fetch_array($points_def_res);
@@ -99,7 +99,7 @@
 		            SELECT
 		                user_points
 		            FROM
-		                ".$db_table['users']."
+		                users
 		            WHERE
 		                user_id='".$arr['fleet_user_id']."';");
 		            $points_att_arr=mysql_fetch_array($points_att_res);
@@ -142,7 +142,7 @@
 		                        planet_id,
 		                        planet_solsys_id
 		                    FROM
-		                        ".$db_table['planets']."
+		                        planets
 		                    WHERE
 		                        planet_user_id='".$user_to_id."'
 		                        AND planet_user_main='1';");
@@ -158,7 +158,7 @@
 		                        fleet_action,
 		                        fleet_id
 		                    FROM
-		                        ".$db_table['fleet']."
+		                        fleet
 		                    WHERE
 		                        fleet_user_id='".$user_to_id."'
 		                        AND fleet_planet_to='".$arr['fleet_planet_to']."' 
@@ -174,7 +174,7 @@
 															$action = substr($iflarr['fleet_action'],0,1)."c";
 			                        dbquery("
 			                        UPDATE
-			                            ".$db_table['fleet']."
+			                            fleet
 			                        SET
 			                            fleet_cell_from='".$iflarr['fleet_cell_to']."',
 			                            fleet_cell_to='".$mplanet_arr['planet_solsys_id']."',

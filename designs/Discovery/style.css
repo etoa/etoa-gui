@@ -309,7 +309,7 @@ input,select,textarea	{
 	background:#000;
 }
 
-/* Allgemeine Tabellen definition welche gestreckt ist (infobox_start("",1)) */
+/* Allgemeine Tabellen definition welche gestreckt ist (infobox) */
 .tbl, table.tb	{
 	width:100%;
 	margin:0px auto;

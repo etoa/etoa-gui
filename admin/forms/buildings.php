@@ -29,7 +29,7 @@
 	// VARIABLES
 	
 	define("MODUL_NAME","Gebäude");				
-	define("DB_TABLE", $db_table['buildings']);
+	define("DB_TABLE", 'buildings');
 	define("DB_TABLE_ID", "building_id");
 	define("DB_OVERVIEW_ORDER_FIELD","building_type_id, building_order, building_name");
 
@@ -89,7 +89,7 @@
 																		"cols" => "",
 																		"rcb_elem" => "",
 																		"rcb_elem_chekced" => "",
-																		"select_elem" => admin_get_select_elements($db_table['building_types'],"type_id","type_name","type_name"),
+																		"select_elem" => admin_get_select_elements('building_types',"type_id","type_name","type_name"),
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
 																	),																	

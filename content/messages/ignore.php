@@ -8,14 +8,14 @@
 			}
 			dbquery("
 			DELETE FROM
-				".$db_table['message_ignore']."
+				message_ignore
 			WHERE
 				ignore_owner_id=".$cu->id()."
 				AND ignore_target_id=".intval($_POST['target_id'])."
 			;");				
 			dbquery("
 			INSERT INTO
-				".$db_table['message_ignore']."
+				message_ignore
 			(
 				ignore_owner_id,
 				ignore_target_id
@@ -35,7 +35,7 @@
 		{
 			dbquery("
 			DELETE FROM
-				".$db_table['message_ignore']."
+				message_ignore
 			WHERE
 				ignore_owner_id=".$cu->id()."
 				AND ignore_target_id=".intval($_GET['remove'])."
@@ -48,7 +48,7 @@
 			user_id,
 			user_nick
 		FROM
-			".$db_table['users']."
+			users
 		WHERE
 			user_admin=0
 			AND user_id!=".$cu->id()."
@@ -70,9 +70,9 @@
 			user_id,
 			user_nick
 		FROM
-			".$db_table['message_ignore']."			
+			message_ignore			
 		INNER JOIN
-			".$db_table['users']."
+			users
 			ON ignore_target_id=user_id
 			AND ignore_owner_id=".$cu->id()."
 		ORDER BY
@@ -100,9 +100,9 @@
 			user_id,
 			user_nick
 		FROM
-			".$db_table['message_ignore']."			
+			message_ignore			
 		INNER JOIN
-			".$db_table['users']."
+			users
 			ON ignore_owner_id=user_id
 			AND ignore_target_id=".$cu->id()."
 		ORDER BY

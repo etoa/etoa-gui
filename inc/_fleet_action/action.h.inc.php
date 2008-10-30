@@ -26,7 +26,7 @@
 			SELECT 
 				techlist_current_level 
 			FROM 
-				".$db_table['techlist']." 
+				techlist 
 			WHERE 
         techlist_user_id='".$arr['fleet_user_id']."' 
         AND techlist_tech_id='18';");
@@ -48,7 +48,7 @@
           planet_res_food,
           planet_people 
 				FROM 
-					".$db_table['planets']." 
+					planets 
 				WHERE 
 					planet_id='".$arr['fleet_planet_to']."';");
 				$parr=mysql_fetch_array($pres);
@@ -62,7 +62,7 @@
 				//Zieht Nahrung und Bewohner vom Planeten ab
 				dbquery("
 				UPDATE 
-					".$db_table['planets']." 
+					planets 
 				SET 
                     planet_res_food='".$food_rest."',
                     planet_people='".$people_rest."'

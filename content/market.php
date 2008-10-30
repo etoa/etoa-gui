@@ -78,7 +78,7 @@
 	SELECT 
 		buildlist_current_level 
 	FROM 
-		".$db_table['buildlist']." 
+		buildlist 
 	WHERE 
 	buildlist_entity_id='".$cp->id()."'
 		AND buildlist_building_id='".MARKTPLATZ_ID."' 
@@ -1546,7 +1546,7 @@
 				SELECT 
 					* 
 				FROM 
-					".$db_table['market_ressource']." 
+					market_ressource 
 				WHERE 
 					ressource_market_id='".$id."' 
 					AND ressource_buyable='1';");
@@ -1567,7 +1567,7 @@
 						//Angebot reservieren (wird zu einem späteren Zeitpunkt verschickt)
 						dbquery("
 						UPDATE
-							".$db_table['market_ressource']."
+							market_ressource
 						SET
 							ressource_buyable='0',
 							ressource_buyer_id='".$cu->id()."',
@@ -1630,7 +1630,7 @@
 						SELECT
 							user_multi_multi_user_id
 						FROM
-							".$db_table['user_multi']."
+							user_multi
 						WHERE
 							user_multi_user_id='".$cu->id()."'
 							AND user_multi_multi_user_id='".$arr['user_id']."';");
@@ -1639,7 +1639,7 @@
 						SELECT
 							user_multi_multi_user_id
 						FROM
-							".$db_table['user_multi']."
+							user_multi
 						WHERE
 							user_multi_user_id='".$arr['user_id']."'
 							AND user_multi_multi_user_id='".$cu->id()."';");
@@ -1703,7 +1703,7 @@
 			// Titan
 			dbquery("
 			UPDATE
-				".$db_table['config']."
+				config
 			SET
 				config_value=config_value+".(round($buy_metal_total)).",
 				config_param1=config_param1+".(round($sell_metal_total))."
@@ -1713,7 +1713,7 @@
 			// Silizium
 			dbquery("
 			UPDATE
-				".$db_table['config']."
+				config
 			SET
 				config_value=config_value+".(round($buy_crystal_total)).",
 				config_param1=config_param1+".(round($sell_crystal_total))."
@@ -1723,7 +1723,7 @@
 			// PVC
 			dbquery("
 			UPDATE
-				".$db_table['config']."
+				config
 			SET
 				config_value=config_value+".(round($buy_plastic_total)).",
 				config_param1=config_param1+".(round($sell_plastic_total))."
@@ -1733,7 +1733,7 @@
 			// Tritium
 			dbquery("
 			UPDATE
-				".$db_table['config']."
+				config
 			SET
 				config_value=config_value+".(round($buy_fuel_total)).",
 				config_param1=config_param1+".(round($sell_fuel_total))."
@@ -1743,7 +1743,7 @@
 			// Food
 			dbquery("
 			UPDATE
-				".$db_table['config']."
+				config
 			SET
 				config_value=config_value+".(round($buy_food_total)).",
 				config_param1=config_param1+".(round($sell_food_total))."
@@ -1768,7 +1768,7 @@
 				SELECT 
 					* 
 				FROM 
-					".$db_table['market_ship']." 
+					market_ship 
 				WHERE 
 					ship_market_id='".$id."' 
 					AND ship_buyable='1';");
@@ -1789,7 +1789,7 @@
 						//Angebot reservieren (wird zu einem späteren Zeitpunkt verschickt)
 						dbquery("
 						UPDATE
-							".$db_table['market_ship']."
+							market_ship
 						SET
 							ship_buyable='0',
 							ship_buyer_id='".$cu->id()."',
@@ -1844,7 +1844,7 @@
 						SELECT
 							user_multi_multi_user_id
 						FROM
-							".$db_table['user_multi']."
+							user_multi
 						WHERE
 							user_multi_user_id='".$cu->id()."'
 							AND user_multi_multi_user_id='".$arr['user_id']."';");
@@ -1853,7 +1853,7 @@
 						SELECT
 							user_multi_multi_user_id
 						FROM
-							".$db_table['user_multi']."
+							user_multi
 						WHERE
 							user_multi_user_id='".$arr['user_id']."'
 							AND user_multi_multi_user_id='".$cu->id()."';");
@@ -1910,7 +1910,7 @@
 			SELECT
 				*
 			FROM
-				".$db_table['market_auction']."
+				market_auction
 			WHERE
         auction_market_id='".$_POST['auction_market_id']."'
         AND auction_end>'".time()."'
@@ -2045,7 +2045,7 @@
                 $delete_date=time()+(AUCTION_DELAY_TIME*3600);
                 dbquery("
                 UPDATE
-                    ".$db_table['market_auction']."
+                    market_auction
                 SET
                     auction_current_buyer_id='".$cu->id()."',
                     auction_current_buyer_planet_id='".$cp->id()."',
@@ -2066,7 +2066,7 @@
                 SELECT
                     user_multi_multi_user_id
                 FROM
-                    ".$db_table['user_multi']."
+                    user_multi
                 WHERE
                     user_multi_user_id='".$arr['auction_user_id']."'
                     AND user_multi_multi_user_id='".$cu->id()."';");
@@ -2075,7 +2075,7 @@
                 SELECT
                     user_multi_multi_user_id
                 FROM
-                    ".$db_table['user_multi']."
+                    user_multi
                 WHERE
                     user_multi_user_id='".$cu->id()."'
                     AND user_multi_multi_user_id='".$arr['auction_user_id']."';");
@@ -2100,7 +2100,7 @@
 								// Titan
 								dbquery("
 								UPDATE
-									".$db_table['config']."
+									config
 								SET
 									config_value=config_value+".(round($_POST['auction_new_buy_metal']/$factor)).",
 									config_param1=config_param1+".(round($arr['auction_sell_metal']/$factor))."
@@ -2110,7 +2110,7 @@
 								// Silizium
 								dbquery("
 								UPDATE
-									".$db_table['config']."
+									config
 								SET
 									config_value=config_value+".(round($_POST['auction_new_buy_crystal']/$factor)).",
 									config_param1=config_param1+".(round($arr['auction_sell_crystal']/$factor))."
@@ -2120,7 +2120,7 @@
 								// PVC
 								dbquery("
 								UPDATE
-									".$db_table['config']."
+									config
 								SET
 									config_value=config_value+".(round($_POST['auction_new_buy_plastic']/$factor)).",
 									config_param1=config_param1+".(round($arr['auction_sell_plastic']/$factor))."
@@ -2130,7 +2130,7 @@
 								// Tritium
 								dbquery("
 								UPDATE
-									".$db_table['config']."
+									config
 								SET
 									config_value=config_value+".(round($_POST['auction_new_buy_fuel']/$factor)).",
 									config_param1=config_param1+".(round($arr['auction_sell_fuel']/$factor))."
@@ -2140,7 +2140,7 @@
 								// Food
 								dbquery("
 								UPDATE
-									".$db_table['config']."
+									config
 								SET
 									config_value=config_value+".(round($_POST['auction_new_buy_food']/$factor)).",
 									config_param1=config_param1+".(round($arr['auction_sell_food']/$factor))."
@@ -2195,7 +2195,7 @@
                 //Das neue Angebot Speichern
                 dbquery("
                 UPDATE
-                  ".$db_table['market_auction']."
+                  market_auction
                 SET
                   auction_current_buyer_id='".$cu->id()."',
                   auction_current_buyer_planet_id='".$cp->id()."',
@@ -2308,7 +2308,7 @@
 				// Angebot speichern
 	      dbquery("
 	      INSERT INTO
-	      ".$db_table['market_ressource']."
+	      market_ressource
 	          (user_id,
 	          planet_id,
 	          cell_id,
@@ -2385,7 +2385,7 @@
       SELECT
       	shiplist_count
       FROM
-      	".$db_table['shiplist']."
+      	shiplist
       WHERE
       	shiplist_entity_id='".$cp->id()."'
       	AND shiplist_ship_id='".$ship_id."'");
@@ -2398,7 +2398,7 @@
       		// Schiffe vom Planeten abziehen
           dbquery("
           UPDATE
-          	".$db_table['shiplist']."
+          	shiplist
           SET
           	shiplist_count=shiplist_count-".$ship_count."
           WHERE
@@ -2408,7 +2408,7 @@
 					// Angebot speicherns
           dbquery("
           INSERT INTO
-          ".$db_table['market_ship']."
+          market_ship
               (user_id,
               planet_id,
               cell_id,
@@ -2523,7 +2523,7 @@
 
         // Angebot speichern
         dbquery("
-        INSERT INTO ".$db_table['market_auction']."
+        INSERT INTO market_auction
             (auction_user_id,
             auction_planet_id,
             auction_cell_id,
@@ -2602,7 +2602,7 @@
 			SELECT
 				*
 			FROM
-				".$db_table['market_ressource']."
+				market_ressource
 			WHERE
 				ressource_buyable='1'
         AND user_id!='".$cu->id()."'
@@ -2773,7 +2773,7 @@
 			SELECT
 				*
 			FROM
-				".$db_table['market_ship']."
+				market_ship
 			WHERE
 				ship_buyable='1'
         AND user_id!='".$cu->id()."'
@@ -2913,7 +2913,7 @@
 			SELECT
 				*
 			FROM
-				".$db_table['market_auction']."
+				market_auction
 			WHERE
 				auction_user_id!='".$cu->id()."'
         ".stripslashes($_POST['auction_sql_add'])."
@@ -3256,7 +3256,7 @@
 			SELECT 
 				* 
 			FROM 
-				".$db_table['market_auction']." 
+				market_auction 
 			WHERE 
 				auction_market_id='".intval($_POST['auction_market_id'])."'
 				AND auction_user_id!='".$cu->id()."' ");
@@ -3630,7 +3630,7 @@
         ship_id,
         ship_name                           
       FROM
-         ".$db_table['ships']."
+         ships
 			WHERE
 				ship_buildable='1'
 				AND ship_show='1'
@@ -3727,7 +3727,7 @@
 				SELECT
 				 	* 
 				FROM 
-					".$db_table['market_ship']." 
+					market_ship 
 				WHERE 
 					ship_market_id='".$_POST['ship_market_id']."' 
 					AND user_id='".$cu->id()."'");
@@ -3737,7 +3737,7 @@
 					$scrow=mysql_fetch_array($scres);
 					dbquery("
 					UPDATE 
-						".$db_table['shiplist']." 
+						shiplist 
 					SET 
 						shiplist_count=shiplist_count+'".(floor($scrow['ship_count']*$return_factor))."' 
 					WHERE 
@@ -3747,7 +3747,7 @@
 						
 					dbquery("
 					DELETE FROM 
-						".$db_table['market_ship']." 
+						market_ship 
 					WHERE 
 						ship_market_id='".$_POST['ship_market_id']."'");
 					echo "Angebot wurde gel&ouml;scht und du hast ".(round($return_factor,2)*100)."% der angebotenen Schiffe zur&uuml;ck erhalten (es wird abgerundet)";
@@ -3766,7 +3766,7 @@
 				SELECT 
 					* 
 				FROM 
-					".$db_table['market_ressource']." 
+					market_ressource 
 				WHERE 
 					ressource_market_id='".$_POST['ressource_market_id']."' 
 					AND user_id='".$cu->id()."'");
@@ -3790,7 +3790,7 @@
 						
 					dbquery("
 					DELETE FROM 
-						".$db_table['market_ressource']." 
+						market_ressource 
 					WHERE 
 						ressource_market_id='".$_POST['ressource_market_id']."'");
 						
@@ -3811,7 +3811,7 @@
 				SELECT 
 					* 
 				FROM 
-					".$db_table['market_auction']." 
+					market_auction 
 				WHERE 
 					auction_market_id='".$_POST['auction_market_id']."' 
 					AND auction_user_id='".$cu->id()."'");
@@ -3834,7 +3834,7 @@
 						AND id='".$acrow['auction_planet_id']."'");
 
 					//Auktion löschen
-					dbquery("DELETE FROM ".$db_table['market_auction']." WHERE auction_market_id='".$_POST['auction_market_id']."'");
+					dbquery("DELETE FROM market_auction WHERE auction_market_id='".$_POST['auction_market_id']."'");
 
 					add_log(7,"Der Spieler ".$cu->nick()." zieht folgende Auktion zur&uuml;ck:\nRohstoffe:\n".RES_METAL.": ".$acrow['sell_metal']."\n".RES_CRYSTAL.": ".$acrow['sell_crystal']."\n".RES_PLASTIC.": ".$acrow['sell_plastic']."\n".RES_FUEL.": ".$acrow['sell_fuel']."\n".RES_FOOD.": ".$acrow['sell_food']."\n\nEr erh&auml;lt ".(round($return_factor,2)*100)."% der Waren erstattet!",time());
 
@@ -3864,7 +3864,7 @@
 				SELECT 
 					* 
 				FROM 
-					".$db_table['market_ressource']." 
+					market_ressource 
 				WHERE 
 					user_id='".$cu->id()."' 
 					AND ressource_buyable='1' 
@@ -3926,7 +3926,7 @@
 				SELECT 
 					* 
 				FROM 
-					".$db_table['market_ship']." 
+					market_ship 
 				WHERE 
 					user_id='".$cu->id()."' 
 					AND ship_buyable='1' 
@@ -3986,7 +3986,7 @@
 				SELECT 
 					* 
 				FROM 
-					".$db_table['market_auction']." 
+					market_auction 
 				WHERE 
 					auction_user_id='".$cu->id()."' 
 				ORDER BY 
@@ -4416,7 +4416,7 @@
 					SELECT 
 						COUNT(*)
 					FROM 
-						".$db_table['shiplist']." 
+						shiplist 
 					WHERE 
 						shiplist_entity_id='".$cp->id()."'");
 					
@@ -4437,9 +4437,9 @@
                 ships.ship_costs_food,
                 shiplist.shiplist_count                            
             FROM
-                ".$db_table['shiplist']."
+                shiplist
                 INNER JOIN
-                ".$db_table['ships']."
+                ships
                 ON shiplist.shiplist_ship_id=ships.ship_id
             WHERE
             		shiplist.shiplist_entity_id='".$cp->id()."'

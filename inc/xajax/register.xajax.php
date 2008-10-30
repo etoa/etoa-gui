@@ -7,7 +7,7 @@
 //Überprüft die Korrektheit der Eingabe von Vor- und Nachname
 function registerCheckName($val)
 {
-	global $db_table, $db;
+	global $db;
 
 	$objResponse = new xajaxResponse();
 	if (checkValidName($val))

@@ -71,7 +71,7 @@
 					$check = true;
 				}
 				
-				$ares=dbquery("SELECT * FROM ".$db_table['alliances']." WHERE alliance_id='".$_GET['begin_war']."';");
+				$ares=dbquery("SELECT * FROM alliances WHERE alliance_id='".$_GET['begin_war']."';");
 				if (mysql_num_rows($ares)>0 && $check)
 				{
 					$aarr=mysql_fetch_array($ares);
@@ -106,7 +106,7 @@
 					alliance_name,
 					alliance_accept_bnd
 				FROM
-					".$db_table['alliances']."
+					alliances
 				WHERE
 					alliance_id='".$_GET['begin_bnd']."';");
 				if (mysql_num_rows($ares)>0 && isset($_GET['begin_bnd']) && $_GET['begin_bnd']!=$cu->allianceId())
@@ -166,7 +166,7 @@
 					alliance_bnd_name,
 					alliance_bnd_level
 				FROM 
-					".$db_table['alliance_bnd']." 
+					alliance_bnd 
 				INNER JOIN
 					alliances as a1
 					ON a1.alliance_id=alliance_bnd_alliance_id1
@@ -314,7 +314,7 @@
 					alliance_bnd_name,
 					alliance_bnd_level
 				FROM 
-					".$db_table['alliance_bnd']." 
+					alliance_bnd 
 				INNER JOIN
 					alliances as a1
 					ON a1.alliance_id=alliance_bnd_alliance_id1
@@ -372,7 +372,7 @@
 					SELECT 
 						alliance_bnd_id 
 					FROM 
-						".$db_table['alliance_bnd']." 
+						alliance_bnd 
 					WHERE 
 						(
 							(alliance_bnd_alliance_id1='".$cu->allianceId()."' 
@@ -392,7 +392,7 @@
 					{
 						dbquery("
 						INSERT INTO 
-							".$db_table['alliance_bnd']." 
+							alliance_bnd 
 						(
 							alliance_bnd_alliance_id1,
 							alliance_bnd_alliance_id2,
@@ -415,7 +415,7 @@
 						echo "Du hast einer Allianz erfolgreich ein B&uuml;ndnis angeboten!<br/><br/>";
 
 						//Nachricht an den Leader der gegnerischen Allianz schreiben
-						$res=dbquery("SELECT alliance_founder_id FROM ".$db_table['alliances']." WHERE alliance_id='".$_POST['alliance_bnd_alliance_id']."'");
+						$res=dbquery("SELECT alliance_founder_id FROM alliances WHERE alliance_id='".$_POST['alliance_bnd_alliance_id']."'");
 						$arr=mysql_fetch_array($res);
 
 						send_msg($arr['alliance_founder_id'],MSG_ALLYMAIL_CAT,"Bündnisanfrage","Die Allianz [b][".$alliances[$cu->allianceId()]['tag']."] ".$alliances[$cu->allianceId()]['name']."[/b] fragt euch für ein Bündnis an.\n
@@ -433,7 +433,7 @@
 					SELECT 
 						alliance_bnd_id 
 					FROM 
-						".$db_table['alliance_bnd']." 
+						alliance_bnd 
 					WHERE 
 						(
 							(alliance_bnd_alliance_id1='".$cu->allianceId()."' 
@@ -452,7 +452,7 @@
 					{
 						dbquery("
 						INSERT INTO 
-						".$db_table['alliance_bnd']."
+						alliance_bnd
 						(
 							alliance_bnd_alliance_id1,
 							alliance_bnd_alliance_id2,
@@ -481,7 +481,7 @@
 						add_alliance_history($_POST['alliance_bnd_alliance_id'],"Die Allianz [b][".$alliances[$cu->allianceId()]['tag']."] ".$alliances[$cu->allianceId()]['name']."[/b] erkl&auml;rt den Krieg!");
 
 						//Nachricht an den Leader der gegnerischen Allianz schreiben
-						$res=dbquery("SELECT alliance_founder_id FROM ".$db_table['alliances']." WHERE alliance_id='".$_POST['alliance_bnd_alliance_id']."'");
+						$res=dbquery("SELECT alliance_founder_id FROM alliances WHERE alliance_id='".$_POST['alliance_bnd_alliance_id']."'");
 						$arr=mysql_fetch_array($res);
 
 						send_msg($arr['alliance_founder_id'],MSG_ALLYMAIL_CAT,"Kriegserklärung","Die Allianz [b][".$alliances[$cu->allianceId()]['tag']."] ".$alliances[$cu->allianceId()]['name']."[/b] erklärt euch den Krieg!\n
@@ -503,7 +503,7 @@
 						alliance_bnd_name,
 						alliance_bnd_level
 					FROM 
-						".$db_table['alliance_bnd']." 
+						alliance_bnd 
 					INNER JOIN
 						alliances as a1
 						ON a1.alliance_id=alliance_bnd_alliance_id1
@@ -551,7 +551,7 @@
 						// Delete entity
 						dbquery("
 						DELETE FROM 
-							".$db_table['alliance_bnd']." 
+							alliance_bnd 
 						WHERE 
 							alliance_bnd_id=".$_POST['id']."
 						;");
@@ -565,7 +565,7 @@
 						SELECT 
 							alliance_founder_id 
 						FROM 
-							".$db_table['alliances']." 
+							alliances 
 						WHERE 
 							alliance_id='".$opId."'
 						;");
@@ -597,13 +597,13 @@
 						// Remove request
 						dbquery("
 						DELETE FROM 
-							".$db_table['alliance_bnd']." 
+							alliance_bnd 
 						WHERE 
 							alliance_bnd_id='".$arr['alliance_bnd_id']."'
 						;");
 
 						// Inform opposite leader
-						$res=dbquery("SELECT alliance_founder_id,alliance_name FROM ".$db_table['alliances']." WHERE alliance_id='".$arr['alliance_bnd_alliance_id2']."'");
+						$res=dbquery("SELECT alliance_founder_id,alliance_name FROM alliances WHERE alliance_id='".$arr['alliance_bnd_alliance_id2']."'");
 	          $arr=mysql_fetch_array($res);
 	   				send_msg($arr['alliance_founder_id'],MSG_ALLYMAIL_CAT,"Anfrage zurückgenommen","Die Allianz [b][".$alliances[$cu->allianceId()]['tag']."] ".$alliances[$cu->allianceId()]['name']."[/b] hat ihre Büdnisanfrage wieder zurückgezogen.");
 
@@ -656,7 +656,7 @@
 						// Save pact
 						dbquery("
 						UPDATE 
-							".$db_table['alliance_bnd']." 
+							alliance_bnd 
 						SET 
 							alliance_bnd_level='2',
 							alliance_bnd_points=".DIPLOMACY_POINTS_PER_PACT." 
@@ -707,7 +707,7 @@
 						// Löscht BND
 						dbquery("
 						DELETE FROM 
-							".$db_table['alliance_bnd']." 
+							alliance_bnd 
 						WHERE 
 							alliance_bnd_id=".$id." 
 						");
@@ -766,7 +766,7 @@
 				SELECT 
 					* 
 				FROM 
-					".$db_table['alliance_bnd']." 
+					alliance_bnd 
 				WHERE 
 					alliance_bnd_alliance_id1='".$cu->allianceId()."' 
 					OR alliance_bnd_alliance_id2='".$cu->allianceId()."'
@@ -802,7 +802,7 @@
 				SELECT
 					*
 				FROM
-					".$db_table['alliances']."
+					alliances
 				WHERE
 					alliance_id!='".$cu->allianceId()."'
 				ORDER BY

@@ -9,7 +9,7 @@
 				SELECT 
 					cell_asteroid 
 				FROM 
-					".$db_table['space_cells']." 
+					space_cells 
 				WHERE 
 					cell_id='".$cell_id."';
 			");
@@ -29,7 +29,7 @@
 						SELECT 
 							cell_asteroid_ress 
 						FROM 
-							".$db_table['space_cells']." 
+							space_cells 
 						WHERE 
 							cell_id='".$cell_id."';
 					");
@@ -49,7 +49,7 @@
                     $ress_total = $metal + $crystal + $plastic;
                     dbquery("
 						UPDATE 
-							".$db_table['space_cells']." 
+							space_cells 
 						SET 
 							cell_asteroid_ress=cell_asteroid_ress-'".$ress_total."' 
 						WHERE 
@@ -63,7 +63,7 @@
 						SELECT 
 							cell_asteroid_ress 
 						FROM 
-							".$db_table['space_cells']." 
+							space_cells 
 						WHERE 
 							cell_id='".$cell_id."';
 					");
@@ -74,7 +74,7 @@
                         // altes "löschen" //
                         dbquery("
 							UPDATE 
-								".$db_table['space_cells']." 
+								space_cells 
 							SET 
 								cell_asteroid_ress='0', 
 								cell_asteroid='0', 
@@ -91,7 +91,7 @@
 							SELECT 
 								cell_id 
 							FROM 
-								".$db_table['space_cells']." 
+								space_cells 
 							WHERE 
 								cell_type='0';
 						");
@@ -104,7 +104,7 @@
 								SELECT 
 									cell_id 
 								FROM 
-									".$db_table['space_cells']." 
+									space_cells 
 								WHERE 
 									cell_type='0';
 							");
@@ -120,7 +120,7 @@
                             // neues erstellen
                             dbquery("
 								UPDATE 
-									".$db_table['space_cells']." 
+									space_cells 
 								SET 
 									cell_asteroid_ress='".$new_ress."', 
 									cell_asteroid='1', 
@@ -149,7 +149,7 @@
                     $res_sum=$metal+$crystal+$plastic;
                     dbquery("
 						UPDATE
-							".$db_table['users']."
+							users
 						SET
 							user_res_from_asteroid=user_res_from_asteroid+'".$res_sum."'
 						WHERE
@@ -173,7 +173,7 @@
                     // Flotte-Schiffe-Verknüpfungen löschen
                     dbquery("
 						DELETE FROM 
-							".$db_table['fleet_ships']." 
+							fleet_ships 
 						WHERE 
 							fs_fleet_id='".$arr['fleet_id']."';
 					");
@@ -181,7 +181,7 @@
                     // Flotte aufheben
                     dbquery("
 						DELETE FROM 
-							".$db_table['fleet']." 
+							fleet 
 						WHERE 
 							fleet_id='".$arr['fleet_id']."';
 					");

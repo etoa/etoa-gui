@@ -29,7 +29,7 @@
 	// VARIABLES
 	
 	define("MODUL_NAME","Admin Benutzer");				
-	define("DB_TABLE", $db_table['admin_users']);
+	define("DB_TABLE", 'admin_users');
 	define("DB_TABLE_ID", "user_id");
 	define("DB_OVERVIEW_ORDER_FIELD","user_nick");
 	
@@ -118,7 +118,7 @@
 																		"cols" => "",
 																		"rcb_elem" => "",
 																		"rcb_elem_chekced" => "",
-																		"select_elem" => admin_get_select_elements($db_table['admin_groups'],"group_id","group_name","group_level"),
+																		"select_elem" => admin_get_select_elements('admin_groups',"group_id","group_name","group_level"),
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
 																	),			

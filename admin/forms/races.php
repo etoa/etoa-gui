@@ -29,7 +29,7 @@
 	// VARIABLES
 	
 	define("MODUL_NAME","Rassen");				
-	define("DB_TABLE", $db_table['races']);
+	define("DB_TABLE", 'races');
 	define("DB_TABLE_ID", "race_id");
 	define("DB_OVERVIEW_ORDER_FIELD","race_name");
 	

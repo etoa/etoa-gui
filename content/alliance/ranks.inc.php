@@ -10,7 +10,7 @@ if (Alliance::checkActionRights('ranks'))
 						{
 							if(isset($_POST['ranknew']))
 							{
-								dbquery("INSERT INTO ".$db_table['alliance_ranks']." (rank_alliance_id) VALUES (".$arr['alliance_id'].");");
+								dbquery("INSERT INTO alliance_ranks (rank_alliance_id) VALUES (".$arr['alliance_id'].");");
 							}
 							if(isset($_POST['ranksubmit']) || isset($_POST['ranknew']))
 							{
@@ -18,20 +18,20 @@ if (Alliance::checkActionRights('ranks'))
 								{
 									foreach ($_POST['rank_name'] as $id=>$name)
 									{
-										dbquery("DELETE FROM ".$db_table['alliance_rankrights']." WHERE rr_rank_id=$id;");
+										dbquery("DELETE FROM alliance_rankrights WHERE rr_rank_id=$id;");
 										if (isset($_POST['rank_del'][$id]) && $_POST['rank_del'][$id]==1)
 										{
-											dbquery("DELETE FROM ".$db_table['alliance_ranks']." WHERE rank_id=$id;");
-											dbquery("UPDATE ".$db_table['users']." SET user_alliance_rank_id=0 WHERE user_alliance_rank_id=$id;");
+											dbquery("DELETE FROM alliance_ranks WHERE rank_id=$id;");
+											dbquery("UPDATE users SET user_alliance_rank_id=0 WHERE user_alliance_rank_id=$id;");
 										}
 										else
 										{
-											dbquery("UPDATE ".$db_table['alliance_ranks']." SET rank_name='".$name."' WHERE rank_id=$id;");
+											dbquery("UPDATE alliance_ranks SET rank_name='".$name."' WHERE rank_id=$id;");
 											if (isset($_POST['rankright']))
 											{
 												foreach ($_POST['rankright'][$id] as $rid=>$rv)
 												{
-													dbquery("INSERT INTO ".$db_table['alliance_rankrights']." (rr_right_id,rr_rank_id) VALUES ($rid,$id);");
+													dbquery("INSERT INTO alliance_rankrights (rr_right_id,rr_rank_id) VALUES ($rid,$id);");
 												}
 											}
 										}
@@ -49,7 +49,7 @@ if (Alliance::checkActionRights('ranks'))
 							rank_id,
 							rank_level 
 						FROM 
-							".$db_table['alliance_ranks']." 
+							alliance_ranks 
 						WHERE 
 							rank_alliance_id=".$arr['alliance_id'].";");
 						if (mysql_num_rows($rankres)>0)
@@ -63,7 +63,7 @@ if (Alliance::checkActionRights('ranks'))
 								foreach ($rights as $k=>$v)
 								{
 									echo "<input type=\"checkbox\" name=\"rankright[".$rarr['rank_id']."][".$k."]\" value=\"1\" ";
-									$rrres=dbquery("SELECT rr_id FROM ".$db_table['alliance_rankrights']." WHERE rr_right_id=".$k." AND rr_rank_id=".$rarr['rank_id'].";");
+									$rrres=dbquery("SELECT rr_id FROM alliance_rankrights WHERE rr_right_id=".$k." AND rr_rank_id=".$rarr['rank_id'].";");
 									if (mysql_num_rows($rrres)>0)
 										echo " checked=\"checked\" /><span style=\"color:#0f0;\">".$v['desc']."</span><br/>";
 									else

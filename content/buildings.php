@@ -322,7 +322,7 @@ function calcDemolishingWaitTime($dc,$cp)
 			SELECT 
 				* 
 			FROM 
-				".$db_table['buildings']." 
+				buildings 
 			WHERE 
 				building_show='1' 
 				AND building_id='".$bid."';");

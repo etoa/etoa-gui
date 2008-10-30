@@ -119,7 +119,7 @@
 																		"cols" => "",
 																		"rcb_elem" => "",
 																		"rcb_elem_chekced" => "",
-																		"select_elem" => admin_get_select_elements($db_table['ship_cat'],"cat_id","cat_name","cat_name",array("0"=>"-")),
+																		"select_elem" => admin_get_select_elements('ship_cat',"cat_id","cat_name","cat_name",array("0"=>"-")),
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
 																	),																		
@@ -127,7 +127,7 @@
 																		"text" => "Rasse",
 																		"type" => "select",
 																		"def_val" => "",
-																		"select_elem" => admin_get_select_elements($db_table['races'],"race_id","race_name","race_name",array("0"=>"-")),
+																		"select_elem" => admin_get_select_elements('races',"race_id","race_name","race_name",array("0"=>"-")),
 																		"select_elem_checked" => "",
 																		"show_overview" => 1,
 																		"line" => 1

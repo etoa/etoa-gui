@@ -15,7 +15,7 @@
 		techlist_current_level,
 		techlist_tech_id		
 	FROM 
-		".$db_table['techlist']." 
+		techlist 
 	WHERE 
 		techlist_user_id='".$arr['fleet_user_id']."'
 		AND (techlist_tech_id='".SPY_TECH_ID."'
@@ -43,7 +43,7 @@
 		techlist_current_level,
 		techlist_tech_id 
 	FROM 
-		".$db_table['techlist']." 
+		techlist 
 	WHERE 
 		techlist_user_id='".$user_to_id."'
 		AND (techlist_tech_id='".SPY_TECH_ID."'
@@ -130,9 +130,9 @@
 			    b.building_name,
 			    bl.buildlist_current_level
 				FROM
-			    ".$db_table['buildings']." AS b
+			    buildings AS b
 			    INNER JOIN
-			    ".$db_table['buildlist']." AS bl
+			    buildlist AS bl
 			    ON bl.buildlist_building_id=b.building_id
 			    AND bl.buildlist_planet_id='".$arr['fleet_planet_to']."'
 			    AND bl.buildlist_user_id='".$user_to_id."'
@@ -165,9 +165,9 @@
 			    t.tech_name,
 			    tl.techlist_current_level
 				FROM
-			    ".$db_table['technologies']." AS t
+			    technologies AS t
 			    INNER JOIN
-			    ".$db_table['techlist']." AS tl
+			    techlist AS tl
 			    ON tl.techlist_tech_id=t.tech_id
 			    AND tl.techlist_user_id='".$user_to_id."'
 			    AND techlist_current_level>0

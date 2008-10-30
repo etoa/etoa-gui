@@ -8,7 +8,7 @@
 		SELECT 
 			planet_user_id 
 		FROM 
-			".$db_table['planets']." 
+			planets 
 		WHERE 
 			planet_user_id>0 
 			AND planet_id='".$arr['fleet_planet_to']."';
@@ -27,7 +27,7 @@
       // Flotte-Schiffe-Verknüpfungen löschen
       dbquery("
 				DELETE FROM 
-					".$db_table['fleet_ships']." 
+					fleet_ships 
 				WHERE 
 					fs_fleet_id='".$arr['fleet_id']."';
 			");
@@ -35,7 +35,7 @@
       // Flotte aufheben
       dbquery("
 				DELETE FROM 
-					".$db_table['fleet']." 
+					fleet 
 				WHERE 
 					fleet_id='".$arr['fleet_id']."';
 			");
@@ -68,7 +68,7 @@
 			SELECT 
 				COUNT(planet_user_id)
 			FROM 
-				".$db_table['planets']." 
+				planets 
 			WHERE 
 				planet_user_id='".$arr['fleet_user_id']."';
 		");
@@ -94,7 +94,7 @@
       // Planet übernehmen
       dbquery("
 			UPDATE
-				".$db_table['planets']."
+				planets
 			SET
 				planet_user_id='".$arr['fleet_user_id']."',
 				planet_name='Unbenannt'
@@ -108,7 +108,7 @@
 		  // Flotte-Schiffe-Verknüpfungen löschen
 		  dbquery("
 				DELETE FROM 
-					".$db_table['fleet_ships']." 
+					fleet_ships 
 				WHERE 
 					fs_fleet_id='".$arr['fleet_id']."';
 			");
@@ -116,7 +116,7 @@
       // Flotte aufheben
       dbquery("
 				DELETE FROM 
-					".$db_table['fleet']." 
+					fleet 
 				WHERE 
 					fleet_id='".$arr['fleet_id']."';
 			");

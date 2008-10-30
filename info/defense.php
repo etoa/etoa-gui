@@ -6,7 +6,7 @@
 	if (isset($_GET['id']))
 	{
 		if ($_GET['level']==0) $_GET['level']=1;
-		$res = dbquery("SELECT * FROM ".$db_table['defense']." WHERE def_id='".$_GET['id']."';");
+		$res = dbquery("SELECT * FROM defense WHERE def_id='".$_GET['id']."';");
 		if ($arr = @mysql_fetch_array($res))
 		{
 			Help::navi(array("Verteidigung","defense"),array(text2html($arr['def_name']),$arr['def_id']),1);
@@ -15,7 +15,7 @@
 				def_id,
 				def_name 
 			FROM 
-				".$db_table['defense']." 
+				defense 
 			WHERE 
 				def_show=1
 			ORDER BY 
@@ -86,7 +86,7 @@
 			$sort="ASC";
 		}
 
-		$res = dbquery("SELECT * FROM ".$db_table['defense']." WHERE def_buildable=1 ORDER BY $order $sort;");
+		$res = dbquery("SELECT * FROM defense WHERE def_buildable=1 ORDER BY $order $sort;");
 		if (mysql_num_rows($res)>0)
 		{
 			tableStart("&Uuml;bersicht");

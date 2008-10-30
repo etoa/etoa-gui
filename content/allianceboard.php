@@ -36,7 +36,7 @@
 	if ($cu->allianceId()>0)
 	{
 		// Prüfen ob Allianz existiert
-		$res=dbquery("SELECT alliance_id,alliance_founder_id FROM ".$db_table['alliances']." WHERE alliance_id='".$cu->allianceId()."';");
+		$res=dbquery("SELECT alliance_id,alliance_founder_id FROM alliances WHERE alliance_id='".$cu->allianceId()."';");
 		if (mysql_num_rows($res)>0)
 		{
 			$arr=mysql_fetch_array($res);
@@ -46,7 +46,7 @@
 			$legal=TRUE;
 			if (isset($_GET['bnd']) && $_GET['bnd']>0)
 			{
-				$bres=dbquery("SELECT * FROM ".$db_table['alliance_bnd']." WHERE (alliance_bnd_alliance_id1=".BOARD_ALLIANCE_ID." || alliance_bnd_alliance_id2=".BOARD_ALLIANCE_ID.") AND alliance_bnd_id=".$_GET['bnd']." AND alliance_bnd_level=2;");
+				$bres=dbquery("SELECT * FROM alliance_bnd WHERE (alliance_bnd_alliance_id1=".BOARD_ALLIANCE_ID." || alliance_bnd_alliance_id2=".BOARD_ALLIANCE_ID.") AND alliance_bnd_id=".$_GET['bnd']." AND alliance_bnd_level=2;");
 				if (mysql_num_rows($bres)>0)
 				{		
 					$barr=mysql_fetch_array($bres);
@@ -77,7 +77,7 @@
 			SELECT
 				user_alliance_rank_id
 			FROM
-				".$db_table['users']."
+				users
 			WHERE
 				user_id=".$cu->id()."
 				AND user_alliance_id=".BOARD_ALLIANCE_ID.";");
@@ -90,7 +90,7 @@
   			$myRankId=0;
 			
 			// Rechte laden
-			$rightres=dbquery("SELECT * FROM ".$db_table['alliance_rights']." ORDER BY right_desc;");
+			$rightres=dbquery("SELECT * FROM alliance_rights ORDER BY right_desc;");
 			$rights=array();
 			if (mysql_num_rows($rightres)>0)
 			{
@@ -98,7 +98,7 @@
 				{
 					$rights[$rightarr['right_id']]['key']=$rightarr['right_key'];
 					$rights[$rightarr['right_id']]['desc']=$rightarr['right_desc'];
-					if (mysql_num_rows(dbquery("SELECT rr_id FROM ".$db_table['alliance_rankrights'].",".$db_table['alliance_ranks']." WHERE rank_id=rr_rank_id AND rank_alliance_id=".BOARD_ALLIANCE_ID." AND rr_right_id=".$rightarr['right_id']." AND rr_rank_id=".$myRankId.";"))>0)								
+					if (mysql_num_rows(dbquery("SELECT rr_id FROM alliance_rankrights,alliance_ranks WHERE rank_id=rr_rank_id AND rank_alliance_id=".BOARD_ALLIANCE_ID." AND rr_right_id=".$rightarr['right_id']." AND rr_rank_id=".$myRankId.";"))>0)								
 						$myRight[$rightarr['right_key']]=true;
 					else
 						$myRight[$rightarr['right_key']]=false;
@@ -106,7 +106,7 @@
 			}	
 			
 			// Ränge laden
-			$rres = dbquery("SELECT rank_name,rank_id FROM ".$db_table['alliance_ranks']." WHERE rank_alliance_id=".BOARD_ALLIANCE_ID.";");
+			$rres = dbquery("SELECT rank_name,rank_id FROM alliance_ranks WHERE rank_alliance_id=".BOARD_ALLIANCE_ID.";");
 			$rank=array();
 			while ($rarr=mysql_fetch_array($rres))
 			{
@@ -119,7 +119,7 @@
 			{
 				while ($catarr=mysql_fetch_array($catres))
 				{
-					if (mysql_num_rows(dbquery("SELECT cr_id FROM ".$db_table['allianceboard_catranks'].",".$db_table['alliance_ranks']." WHERE rank_id=cr_rank_id AND rank_alliance_id=".BOARD_ALLIANCE_ID." AND cr_cat_id=".$catarr['cat_id']." AND cr_rank_id=".$myRankId.";"))>0)								
+					if (mysql_num_rows(dbquery("SELECT cr_id FROM allianceboard_catranks,alliance_ranks WHERE rank_id=cr_rank_id AND rank_alliance_id=".BOARD_ALLIANCE_ID." AND cr_cat_id=".$catarr['cat_id']." AND cr_rank_id=".$myRankId.";"))>0)								
 						$myCat[$catarr['cat_id']]=true;
 					else
 						$myCat[$catarr['cat_id']]=false;
@@ -319,7 +319,7 @@
 								echo "<tr><th style=\"width:150px;\"><a name=\"".$arr['post_id']."\"></a><a href=\"?page=userinfo&amp;id=".$arr['post_user_id']."\">".$arr['post_user_nick']."</a><br/>";
 								show_avatar($user[$arr['post_user_id']]['avatar']);
 								$parr=mysql_fetch_row(dbquery("SELECT COUNT(*) FROM ".BOARD_POSTS_TABLE.",".BOARD_TOPIC_TABLE.",".BOARD_CAT_TABLE." WHERE post_topic_id=topic_id AND topic_cat_id=cat_id AND cat_alliance_id=".BOARD_ALLIANCE_ID." AND post_user_id=".$arr['post_user_id'].";"));
-								$parr1=mysql_fetch_row(dbquery("SELECT COUNT(*) FROM ".BOARD_POSTS_TABLE.",".BOARD_TOPIC_TABLE.",".$db_table['alliance_bnd']." WHERE post_topic_id=topic_id AND topic_bnd_id=alliance_bnd_id AND (alliance_bnd_alliance_id1=".BOARD_ALLIANCE_ID." OR alliance_bnd_alliance_id2=".BOARD_ALLIANCE_ID.") AND post_user_id=".$arr['post_user_id'].";"));
+								$parr1=mysql_fetch_row(dbquery("SELECT COUNT(*) FROM ".BOARD_POSTS_TABLE.",".BOARD_TOPIC_TABLE.",alliance_bnd WHERE post_topic_id=topic_id AND topic_bnd_id=alliance_bnd_id AND (alliance_bnd_alliance_id1=".BOARD_ALLIANCE_ID." OR alliance_bnd_alliance_id2=".BOARD_ALLIANCE_ID.") AND post_user_id=".$arr['post_user_id'].";"));
 								$cpost=$parr[0]+$parr1[0];
 								echo "Beitr&auml;ge: ".$cpost."<br/><br/>".df($arr['post_timestamp'])." Uhr";
 								if ($s['admin'] || $arr['post_user_id']==$s['user_id'])
@@ -736,7 +736,7 @@
 					foreach ($rank as $k=>$v)
 					{
 						echo "<input type=\"checkbox\" name=\"cr[".$k."]\" value=\"1\" ";
-						$crres=dbquery("SELECT cr_id FROM ".$db_table['allianceboard_catranks']." WHERE cr_rank_id=".$k." AND cr_cat_id=".$arr['cat_id'].";");								
+						$crres=dbquery("SELECT cr_id FROM allianceboard_catranks WHERE cr_rank_id=".$k." AND cr_cat_id=".$arr['cat_id'].";");								
 						if (mysql_num_rows($crres)>0)
 							echo " checked=\"checked\" /><span style=\"color:#0f0;\">".$v."</span><br/>";
 						else
@@ -768,7 +768,7 @@
 		elseif(isset($_GET['editbnd']) && $_GET['editbnd']>0 && $s['admin'])
 			{
 				echo "<h2>Kategorie bearbeiten</h2>";
-				$res=dbquery("SELECT * FROM ".$db_table['alliance_bnd']." WHERE (alliance_bnd_alliance_id1=".BOARD_ALLIANCE_ID." || alliance_bnd_alliance_id2=".BOARD_ALLIANCE_ID.") AND alliance_bnd_id=".$_GET['editbnd'].";");		
+				$res=dbquery("SELECT * FROM alliance_bnd WHERE (alliance_bnd_alliance_id1=".BOARD_ALLIANCE_ID." || alliance_bnd_alliance_id2=".BOARD_ALLIANCE_ID.") AND alliance_bnd_id=".$_GET['editbnd'].";");		
 				if (mysql_num_rows($res)>0)
 				{
 					$arr=mysql_fetch_array($res);
@@ -802,7 +802,7 @@
 					foreach ($rank as $k=>$v)
 					{
 						echo "<input type=\"checkbox\" name=\"cr[".$k."]\" value=\"1\" ";
-						$crres=dbquery("SELECT cr_id FROM ".$db_table['allianceboard_catranks']." WHERE cr_rank_id=".$k." AND cr_bnd_id=".$arr['alliance_bnd_id'].";");								
+						$crres=dbquery("SELECT cr_id FROM allianceboard_catranks WHERE cr_rank_id=".$k." AND cr_bnd_id=".$arr['alliance_bnd_id'].";");								
 						if (mysql_num_rows($crres)>0)
 							echo " checked=\"checked\" /><span style=\"color:#0f0;\">".$v."</span><br/>";
 						else
@@ -879,7 +879,7 @@
 						{
 							foreach ($_POST['cr'] as $k=>$v)
 							{
-								dbquery("INSERT INTO ".$db_table['allianceboard_catranks']." (cr_cat_id,cr_rank_id) VALUES (".$cid.",$k);");
+								dbquery("INSERT INTO allianceboard_catranks (cr_cat_id,cr_rank_id) VALUES (".$cid.",$k);");
 							}
 						}
 						echo "Neue Kategorie gespeichert!<br/><br/>";
@@ -892,24 +892,24 @@
 						cat_order='".$_POST['cat_order']."',
 						cat_bullet='".$_POST['cat_bullet']."' 
 						WHERE cat_id=".$_POST['cat_id']." AND cat_alliance_id=".BOARD_ALLIANCE_ID.";");
-						dbquery("DELETE FROM ".$db_table['allianceboard_catranks']." WHERE cr_cat_id=".$_POST['cat_id'].";");
+						dbquery("DELETE FROM allianceboard_catranks WHERE cr_cat_id=".$_POST['cat_id'].";");
 						if (isset($_POST['cr']))
 						{
 							foreach ($_POST['cr'] as $k=>$v)
 							{
-								dbquery("INSERT INTO ".$db_table['allianceboard_catranks']." (cr_cat_id,cr_rank_id) VALUES (".$_POST['cat_id'].",$k);");
+								dbquery("INSERT INTO allianceboard_catranks (cr_cat_id,cr_rank_id) VALUES (".$_POST['cat_id'].",$k);");
 							}
 						}
 						echo "&Auml;nderungen gespeichert!<br/><br/>";
 					}
 					elseif (isset($_POST['cat_edit']) && isset($_POST['bnd_id']) && $_POST['bnd_id']>0)
 					{
-						dbquery("DELETE FROM ".$db_table['allianceboard_catranks']." WHERE cr_bnd_id=".$_POST['bnd_id'].";");
+						dbquery("DELETE FROM allianceboard_catranks WHERE cr_bnd_id=".$_POST['bnd_id'].";");
 						if (isset($_POST['cr']))
 						{
 							foreach ($_POST['cr'] as $k=>$v)
 							{
-								dbquery("INSERT INTO ".$db_table['allianceboard_catranks']." (cr_bnd_id,cr_rank_id) VALUES (".$_POST['bnd_id'].",$k);");
+								dbquery("INSERT INTO allianceboard_catranks (cr_bnd_id,cr_rank_id) VALUES (".$_POST['bnd_id'].",$k);");
 							}
 						}
 						echo "&Auml;nderungen gespeichert!<br/><br/>";
@@ -962,7 +962,7 @@
 									$rstr="";
 									foreach ($rank as $k=>$v)
 									{
-										$crres=dbquery("SELECT cr_id FROM ".$db_table['allianceboard_catranks']." WHERE cr_rank_id=".$k." AND cr_cat_id=".$arr['cat_id'].";");								
+										$crres=dbquery("SELECT cr_id FROM allianceboard_catranks WHERE cr_rank_id=".$k." AND cr_cat_id=".$arr['cat_id'].";");								
 										if (mysql_num_rows($crres)>0)
 											$rstr.= $v.", ";
 									}									
@@ -1002,7 +1002,7 @@
 					
 					
 					//shows Bnd forums
-					$res=dbquery("SELECT * FROM ".$db_table['alliance_bnd']." WHERE (alliance_bnd_alliance_id1=".BOARD_ALLIANCE_ID." || alliance_bnd_alliance_id2=".BOARD_ALLIANCE_ID.") AND alliance_bnd_level=2 ORDER BY alliance_bnd_id");		
+					$res=dbquery("SELECT * FROM alliance_bnd WHERE (alliance_bnd_alliance_id1=".BOARD_ALLIANCE_ID." || alliance_bnd_alliance_id2=".BOARD_ALLIANCE_ID.") AND alliance_bnd_level=2 ORDER BY alliance_bnd_id");		
 					if (mysql_num_rows($res)>0)
 					{
 						echo "<table class=\"tb\">";
@@ -1046,7 +1046,7 @@
 									$rstr="";
 									foreach ($rank as $k=>$v)
 									{
-										$crres=dbquery("SELECT cr_id FROM ".$db_table['allianceboard_catranks']." WHERE cr_rank_id=".$k." AND cr_bnd_id=".$arr['alliance_bnd_id'].";");								
+										$crres=dbquery("SELECT cr_id FROM allianceboard_catranks WHERE cr_rank_id=".$k." AND cr_bnd_id=".$arr['alliance_bnd_id'].";");								
 										if (mysql_num_rows($crres)>0)
 											$rstr.= $v.", ";
 									}									

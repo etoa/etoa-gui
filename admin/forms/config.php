@@ -29,7 +29,7 @@
 	// VARIABLES
 	
 	define("MODUL_NAME","Config");				
-	define("DB_TABLE", $db_table['config']);
+	define("DB_TABLE", 'config');
 	define("DB_TABLE_ID", "config_id");
 	define("DB_OVERVIEW_ORDER_FIELD","config_name");
 	

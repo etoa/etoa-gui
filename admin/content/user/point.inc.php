@@ -5,7 +5,7 @@
 			user_id,
 			user_nick 
 		FROM 
-			".$db_table['users']." 
+			users 
 		ORDER BY 
 			user_nick
 		;");
@@ -27,7 +27,7 @@
 			SELECT 
 				COUNT(point_id) 
 			FROM 
-				".$db_table['user_points']."
+				user_points
 			;"));
 			echo "Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.<br/><br/>";
 		}
@@ -45,7 +45,7 @@
 				user_rank_current,
 				user_id 
 			FROM 
-				".$db_table['users']."
+				users
 			WHERE 
 				user_id='".$_GET['user_id']."'
 			;");
@@ -55,7 +55,7 @@
 				echo "<h2>Punktedetails f&uuml;r ".$arr['user_nick']."</h2>";
 				echo "<b>Punkte aktuell:</b> ".nf($arr['user_points']).", <b>Rang aktuell:</b> ".$arr['user_rank_current']."<br/><br/>";
 				echo "<img src=\"../misc/stats.image.php?user=".$arr['user_id']."\" alt=\"Diagramm\" /><br/><br/>";
-				$pres=dbquery("SELECT * FROM ".$db_table['user_points']." WHERE point_user_id='".$_GET['user_id']."' ORDER BY point_timestamp DESC;");
+				$pres=dbquery("SELECT * FROM user_points WHERE point_user_id='".$_GET['user_id']."' ORDER BY point_timestamp DESC;");
 				if (mysql_num_rows($pres)>0)
 				{
 					$points=array();

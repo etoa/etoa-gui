@@ -29,7 +29,7 @@
 	// VARIABLES
 	
 	define("MODUL_NAME","Forschung");				
-	define("DB_TABLE", $db_table['technologies']);
+	define("DB_TABLE", 'technologies');
 	define("DB_TABLE_ID", "tech_id");
 	define("DB_OVERVIEW_ORDER_FIELD","tech_type_id, tech_order,tech_name");
 
@@ -88,7 +88,7 @@
 																		"cols" => "",
 																		"rcb_elem" => "",
 																		"rcb_elem_chekced" => "",
-																		"select_elem" => admin_get_select_elements($db_table['tech_types'],"type_id","type_name","type_name"),
+																		"select_elem" => admin_get_select_elements('tech_types',"type_id","type_name","type_name"),
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
 																	),																	

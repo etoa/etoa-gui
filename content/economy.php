@@ -291,7 +291,7 @@
 			l.buildlist_current_level,
 			l.buildlist_prod_percent
 		FROM 
-      ".$db_table['buildings']." AS b
+      buildings AS b
       INNER JOIN
       buildlist AS l
       ON b.building_id=l.buildlist_building_id
@@ -389,7 +389,7 @@
             b.building_store_factor,
             l.buildlist_current_level
 		FROM
-            ".$db_table['buildings']." AS b,
+            buildings AS b,
             buildlist AS l
 		WHERE
             b.building_id = l.buildlist_building_id

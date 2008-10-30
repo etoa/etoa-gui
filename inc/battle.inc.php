@@ -16,7 +16,7 @@
 
 function battle($fleet_id,$planet_id)
 {
-		global $db_table, $conf;
+		global $conf;
 
     // BEGIN SKRIPT //
 
@@ -47,7 +47,7 @@ function battle($fleet_id,$planet_id)
 			fleet_capacity,
 			fleet_action
 		FROM
-			".$db_table['fleet']."
+			fleet
 		WHERE
 			fleet_id='".$fleet_id."';
 		"));
@@ -96,7 +96,7 @@ function battle($fleet_id,$planet_id)
 			SELECT
 				alliance_bnd_id
 			FROM
-				".$db_table['alliance_bnd']."
+				alliance_bnd
 			WHERE
 					(alliance_bnd_alliance_id1='".$alliance_info_a['alliance_id']."'
 					AND alliance_bnd_alliance_id2='".$alliance_info_d['alliance_id']."')
@@ -162,18 +162,18 @@ function battle($fleet_id,$planet_id)
 				fs.fs_special_ship_bonus_antrax_food,
 				fs.fs_special_ship_bonus_deactivade
 			FROM
-				".$db_table['shiplist']." AS sl 
+				shiplist AS sl 
 				INNER JOIN
 				(
 					(
-						".$db_table['fleet_ships']." AS fs
+						fleet_ships AS fs
 						INNER JOIN 
-						".$db_table['fleet']." AS f 
+						fleet AS f 
 						ON fs.fs_fleet_id = f.fleet_id
 						AND f.fleet_id='".$fleet_id."'
 					)
 					INNER JOIN 
-					".$db_table['ships']." AS s 
+					ships AS s 
 					ON fs.fs_ship_id = s.ship_id
 					AND s.special_ship='1'
 				)
@@ -265,14 +265,14 @@ function battle($fleet_id,$planet_id)
 				fs.fs_ship_cnt
 			FROM
 				(
-					".$db_table['fleet_ships']." AS fs 
+					fleet_ships AS fs 
 					INNER JOIN 
-					".$db_table['fleet']." AS f 
+					fleet AS f 
 					ON fs.fs_fleet_id = f.fleet_id
 					AND f.fleet_id='".$fleet_id."'
 				)
 				INNER JOIN 
-				".$db_table['ships']." AS s ON 
+				ships AS s ON 
 				fs.fs_ship_id = s.ship_id
 				AND s.special_ship='0'
 			ORDER BY
@@ -323,14 +323,14 @@ function battle($fleet_id,$planet_id)
 				s.ship_heal
 			FROM
 				(
-					".$db_table['fleet_ships']." AS fs 
+					fleet_ships AS fs 
 					INNER JOIN 
-					".$db_table['fleet']." AS f 
+					fleet AS f 
 					ON fs.fs_fleet_id = f.fleet_id
 					AND f.fleet_id='".$fleet_id."'
 				)
 				INNER JOIN 
-				".$db_table['ships']." AS s 
+				ships AS s 
 				ON fs.fs_ship_id = s.ship_id
 				AND s.ship_heal>'0';
 		");
@@ -393,9 +393,9 @@ function battle($fleet_id,$planet_id)
 				sl.shiplist_special_ship_bonus_antrax_food,
 				sl.shiplist_special_ship_bonus_deactivade
 			FROM
-				".$db_table['shiplist']." AS sl
+				shiplist AS sl
 				INNER JOIN 
-				".$db_table['ships']." AS s 
+				ships AS s 
 				ON sl.shiplist_ship_id = s.ship_id
 				AND sl.shiplist_planet_id='".$planet_id."'
 				AND sl.shiplist_user_id='".$user_d_id."'
@@ -494,9 +494,9 @@ function battle($fleet_id,$planet_id)
 					sl.shiplist_count,
 					s.ship_heal
 				FROM
-					".$db_table['shiplist']." AS sl
+					shiplist AS sl
 					INNER JOIN 
-					".$db_table['ships']." AS s 
+					ships AS s 
 					ON sl.shiplist_ship_id = s.ship_id
 					AND sl.shiplist_planet_id='".$planet_id."'
 					AND sl.shiplist_user_id='".$user_d_id."'
@@ -533,9 +533,9 @@ function battle($fleet_id,$planet_id)
 				d.def_costs_fuel,
 				d.def_costs_food
 			FROM
-				".$db_table['deflist']." AS dl
+				deflist AS dl
 				INNER JOIN 
-				".$db_table['defense']." AS d ON 
+				defense AS d ON 
 				dl.deflist_def_id = d.def_id
 				AND dl.deflist_planet_id='".$planet_id."'
 				AND dl.deflist_user_id='".$user_d_id."'
@@ -577,9 +577,9 @@ function battle($fleet_id,$planet_id)
 					dl.deflist_count,
 					d.def_heal
 				FROM
-					".$db_table['deflist']." AS dl
+					deflist AS dl
 					INNER JOIN 
-					".$db_table['defense']." AS d 
+					defense AS d 
 					ON dl.deflist_def_id = d.def_id
 					AND dl.deflist_planet_id='".$planet_id."'
 					AND dl.deflist_user_id='".$user_d_id."'
@@ -617,7 +617,7 @@ function battle($fleet_id,$planet_id)
 				techlist_tech_id,
 				techlist_current_level
 			FROM
-				".$db_table['techlist']."
+				techlist
 			WHERE
 				techlist_user_id='".$user_a_id."'
 				AND
@@ -670,7 +670,7 @@ function battle($fleet_id,$planet_id)
 				techlist_tech_id,
 				techlist_current_level
 			FROM
-				".$db_table['techlist']."
+				techlist
 			WHERE
 				techlist_user_id='".$user_d_id."'
 				AND
@@ -1002,7 +1002,7 @@ function battle($fleet_id,$planet_id)
 		//Das entstandene Trümmerfeld erstellen/hochladen
         dbquery("
 			UPDATE
-				".$db_table['planets']."
+				planets
 			SET
 				planet_wf_metal=planet_wf_metal+'".abs($wf[0])."',
 				planet_wf_crystal=planet_wf_crystal+'".abs($wf[1])."',
@@ -1014,7 +1014,7 @@ function battle($fleet_id,$planet_id)
         //Löscht die flotte und setzt alle schiffe & def zurück (es wird wieder eingetragen!)
         dbquery("
 			UPDATE
-				".$db_table['deflist']."
+				deflist
 			SET
 				deflist_count='0'
 			WHERE
@@ -1022,7 +1022,7 @@ function battle($fleet_id,$planet_id)
 		");
         dbquery("
 			UPDATE
-				".$db_table['shiplist']."
+				shiplist
 			SET
 				shiplist_count='0'
 			WHERE
@@ -1030,7 +1030,7 @@ function battle($fleet_id,$planet_id)
 		");
         dbquery("
 			DELETE FROM
-				".$db_table['fleet_ships']."
+				fleet_ships
 			WHERE
 				fs_fleet_id='".$fleet_id."';
 		");
@@ -1057,7 +1057,7 @@ function battle($fleet_id,$planet_id)
 				{
                     dbquery("
 						INSERT INTO
-							".$db_table['fleet_ships']."
+							fleet_ships
 							(
 								fs_fleet_id,
 								fs_ship_id,
@@ -1082,7 +1082,7 @@ function battle($fleet_id,$planet_id)
 			
 			              dbquery("
 			              	INSERT INTO
-			              		".$db_table['fleet_ships']."
+			              		fleet_ships
 			                  	(
 								fs_fleet_id,
 								fs_ship_id,
@@ -1139,7 +1139,7 @@ function battle($fleet_id,$planet_id)
 						SELECT
 							deflist_def_id
 						FROM
-							".$db_table['deflist']."
+							deflist
 						WHERE
 							deflist_planet_id='".$planet_id."'
 							AND deflist_def_id='".$data['id']."';
@@ -1147,7 +1147,7 @@ function battle($fleet_id,$planet_id)
               {
                 dbquery("
 								UPDATE
-									".$db_table['deflist']."
+									deflist
 								SET
 									deflist_count='".$data['new_cnt']."'
 								WHERE
@@ -1158,7 +1158,7 @@ function battle($fleet_id,$planet_id)
               {
                   dbquery("
 				INSERT INTO
-					".$db_table['deflist']."
+					deflist
 					(
 						deflist_user_id,
 						deflist_planet_id,
@@ -1182,7 +1182,7 @@ function battle($fleet_id,$planet_id)
       {
          dbquery("
 				UPDATE
-					".$db_table['shiplist']."
+					shiplist
 				SET
 					shiplist_special_ship_level='0',
 					shiplist_special_ship_exp='0',
@@ -1221,13 +1221,13 @@ function battle($fleet_id,$planet_id)
 					SUM(s.ship_capacity*fs.fs_ship_cnt) AS capa
 				FROM
 					(
-						".$db_table['fleet_ships']." AS fs 
+						fleet_ships AS fs 
 						INNER JOIN 
-						".$db_table['ships']." AS s 
+						ships AS s 
 						ON fs.fs_ship_id = s.ship_id
 					)
 					INNER JOIN 
-					".$db_table['fleet']." AS f 
+					fleet AS f 
 					ON fs.fs_fleet_id = f.fleet_id
 					AND f.fleet_id='".$fleet_id."'
 				GROUP BY
@@ -1250,7 +1250,7 @@ function battle($fleet_id,$planet_id)
 					planet_res_fuel,
 					planet_res_food
 				FROM
-					".$db_table['planets']."
+					planets
 				WHERE
 					planet_id='".$planet_id."';
 			"));
@@ -1271,7 +1271,7 @@ function battle($fleet_id,$planet_id)
 
             $sql = "
 				UPDATE
-					".$db_table['fleet']."
+					fleet
 				SET
 					fleet_res_metal=fleet_res_metal+'".$raid_r_to_ship[0]."',
 					fleet_res_crystal=fleet_res_crystal+'".$raid_r_to_ship[1]."',
@@ -1285,7 +1285,7 @@ function battle($fleet_id,$planet_id)
 
             dbquery("
 				UPDATE
-					".$db_table['planets']."
+					planets
 				SET
 					planet_res_metal=planet_res_metal-'".$raid_r_to_ship[0]."',
 					planet_res_crystal=planet_res_crystal-'".$raid_r_to_ship[1]."',
@@ -1300,7 +1300,7 @@ function battle($fleet_id,$planet_id)
             $res_sum=array_sum($raid_r_to_ship);
             dbquery("
 				UPDATE
-					".$db_table['users']."
+					users
 				SET
 					user_res_from_raid=user_res_from_raid+'".$res_sum."'
 				WHERE
@@ -1327,7 +1327,7 @@ function battle($fleet_id,$planet_id)
 				//löscht die angreiffende flotte
         dbquery("
 				DELETE FROM
-					".$db_table['fleet']."
+					fleet
 				WHERE
 					fleet_id='".$fleet_id."';");
 
@@ -1336,7 +1336,7 @@ function battle($fleet_id,$planet_id)
         {
             dbquery("
 			UPDATE
-				".$db_table['shiplist']."
+				shiplist
 			SET
 				shiplist_special_ship_level='0',
 				shiplist_special_ship_exp='0',
@@ -1369,7 +1369,7 @@ function battle($fleet_id,$planet_id)
 							SELECT
 								shiplist_ship_id
 							FROM
-								".$db_table['shiplist']."
+								shiplist
 							WHERE
 								shiplist_planet_id='".$planet_id."'
 								AND shiplist_ship_id='".$data['id']."';
@@ -1377,7 +1377,7 @@ function battle($fleet_id,$planet_id)
 			                {
 			                    dbquery("
 								UPDATE
-									".$db_table['shiplist']."
+									shiplist
 								SET
 									shiplist_count='".$data['new_cnt']."'
 								WHERE
@@ -1389,7 +1389,7 @@ function battle($fleet_id,$planet_id)
 			                {
 			                    dbquery("
 								INSERT INTO
-									".$db_table['shiplist']."
+									shiplist
 									(
 										shiplist_user_id,
 										shiplist_planet_id,
@@ -1419,7 +1419,7 @@ function battle($fleet_id,$planet_id)
 				SELECT
 					shiplist_ship_id
 				FROM
-					".$db_table['shiplist']."
+					shiplist
 				WHERE
 					shiplist_planet_id='".$planet_id."'
 					AND shiplist_ship_id='".$data['id']."';
@@ -1427,7 +1427,7 @@ function battle($fleet_id,$planet_id)
                 {
                     dbquery("
 					UPDATE
-						".$db_table['shiplist']."
+						shiplist
 					SET
 						shiplist_count='".$data['new_cnt']."',
 						shiplist_special_ship='1',
@@ -1455,7 +1455,7 @@ function battle($fleet_id,$planet_id)
                 {
                     dbquery("
 					INSERT INTO
-						".$db_table['shiplist']."
+						shiplist
 						(
 							shiplist_user_id,
 							shiplist_planet_id,
@@ -1515,7 +1515,7 @@ function battle($fleet_id,$planet_id)
 				SELECT
 					deflist_def_id
 				FROM
-					".$db_table['deflist']."
+					deflist
 				WHERE
 					deflist_planet_id='".$planet_id."'
 					AND deflist_def_id='".$data['id']."';
@@ -1523,7 +1523,7 @@ function battle($fleet_id,$planet_id)
                 {
                     dbquery("
 					UPDATE
-						".$db_table['deflist']."
+						deflist
 					SET
 						deflist_count='".$data['new_cnt']."'
 					WHERE
@@ -1535,7 +1535,7 @@ function battle($fleet_id,$planet_id)
                 {
                     dbquery("
 					INSERT INTO
-						".$db_table['deflist']."
+						deflist
 						(
 							deflist_user_id,
 							deflist_planet_id,
@@ -1573,7 +1573,7 @@ function battle($fleet_id,$planet_id)
             //löscht die angreiffende flotte
             dbquery("
 						DELETE FROM
-							".$db_table['fleet']."
+							fleet
 						WHERE
 							fleet_id='$fleet_id';");
 
@@ -1582,7 +1582,7 @@ function battle($fleet_id,$planet_id)
             {
                 dbquery("
 								UPDATE
-									".$db_table['shiplist']."
+									shiplist
 								SET
 									shiplist_special_ship_level='0',
 									shiplist_special_ship_exp='0',
@@ -1609,7 +1609,7 @@ function battle($fleet_id,$planet_id)
             {
                 dbquery("
 								UPDATE
-									".$db_table['shiplist']."
+									shiplist
 								SET
 									shiplist_special_ship_level='0',
 									shiplist_special_ship_exp='0',
@@ -1640,7 +1640,7 @@ function battle($fleet_id,$planet_id)
 					SELECT
 						deflist_def_id
 					FROM
-						".$db_table['deflist']."
+						deflist
 					WHERE
 						deflist_planet_id='".$planet_id."'
 						AND deflist_def_id='".$data['id']."';
@@ -1648,7 +1648,7 @@ function battle($fleet_id,$planet_id)
                     {
                         dbquery("
 						UPDATE
-							".$db_table['deflist']."
+							deflist
 						SET
 							deflist_count='".$data['new_cnt']."'
 						WHERE
@@ -1660,7 +1660,7 @@ function battle($fleet_id,$planet_id)
                     {
                         dbquery("
 						INSERT INTO
-							".$db_table['deflist']."
+							deflist
 							(
 								deflist_user_id,
 								deflist_planet_id,
@@ -1696,7 +1696,7 @@ function battle($fleet_id,$planet_id)
               {
                   dbquery("
 									INSERT INTO
-										".$db_table['fleet_ships']."
+										fleet_ships
 										(
 											fs_fleet_id,
 											fs_ship_id,
@@ -1720,7 +1720,7 @@ function battle($fleet_id,$planet_id)
 
                 dbquery("
                 INSERT INTO
-                ".$db_table['fleet_ships']."
+                fleet_ships
                 (
 									fs_fleet_id,
 									fs_ship_id,
@@ -1777,7 +1777,7 @@ function battle($fleet_id,$planet_id)
 									SELECT
 										shiplist_ship_id
 									FROM
-										".$db_table['shiplist']."
+										shiplist
 									WHERE
 										shiplist_planet_id='".$planet_id."'
 										AND shiplist_ship_id='".$data['id']."';")
@@ -1785,7 +1785,7 @@ function battle($fleet_id,$planet_id)
                 {
                     dbquery("
 										UPDATE
-											".$db_table['shiplist']."
+											shiplist
 										SET
 											shiplist_count='".$data['new_cnt']."'
 										WHERE
@@ -1796,7 +1796,7 @@ function battle($fleet_id,$planet_id)
                 {
                     dbquery("
 										INSERT INTO
-										".$db_table['shiplist']."
+										shiplist
 										(
 											shiplist_user_id,
 											shiplist_planet_id,
@@ -1826,7 +1826,7 @@ function battle($fleet_id,$planet_id)
 											SELECT
 												shiplist_ship_id
 											FROM
-												".$db_table['shiplist']."
+												shiplist
 											WHERE
 												shiplist_planet_id='".$planet_id."'
 												AND shiplist_ship_id='".$data['id']."'
@@ -1835,7 +1835,7 @@ function battle($fleet_id,$planet_id)
                   {
                     dbquery("
 										UPDATE
-											".$db_table['shiplist']."
+											shiplist
 										SET
 											shiplist_count='".$data['new_cnt']."',
 											shiplist_special_ship='1',
@@ -1862,7 +1862,7 @@ function battle($fleet_id,$planet_id)
                   {
                     dbquery("
 										INSERT INTO
-										".$db_table['shiplist']."
+										shiplist
 										(
 											shiplist_user_id,
 											shiplist_planet_id,
@@ -1922,7 +1922,7 @@ function battle($fleet_id,$planet_id)
 											SELECT
 												deflist_def_id
 											FROM
-												".$db_table['deflist']."
+												deflist
 											WHERE
 												deflist_planet_id='".$planet_id."'
 												AND deflist_def_id='".$data['id']."';")
@@ -1930,7 +1930,7 @@ function battle($fleet_id,$planet_id)
 						        {
 							        dbquery("
 											UPDATE
-												".$db_table['deflist']."
+												deflist
 											SET
 												deflist_count='".$data['new_cnt']."'
 											WHERE
@@ -1941,7 +1941,7 @@ function battle($fleet_id,$planet_id)
                     {
                       dbquery("
 											INSERT INTO
-											".$db_table['deflist']."
+											deflist
 											(
 												deflist_user_id,
 												deflist_planet_id,
@@ -2051,7 +2051,7 @@ function battle($fleet_id,$planet_id)
         //Log schreiben
         dbquery("
 			INSERT INTO
-				".$db_table['logs_battle']."
+				logs_battle
 				(
 					logs_battle_user1_id,
 					logs_battle_user2_id,
@@ -2199,7 +2199,7 @@ function battle($fleet_id,$planet_id)
 
 function battle_simulation($ships_a,$special_ships_a,$ships_d,$special_ships_d,$tech_a,$tech_d,$def_d)
 {
-		global $db_table,$conf;
+		global $conf;
 
         // BEGIN SKRIPT //
 

@@ -14,8 +14,8 @@
 					s.ship_costs_plastic,
 					fs.fs_ship_cnt
 				FROM
-					".$db_table['fleet_ships']." AS fs 
-					INNER JOIN ".$db_table['ships']." AS s ON fs.fs_ship_id = s.ship_id
+					fleet_ships AS fs 
+					INNER JOIN ships AS s ON fs.fs_ship_id = s.ship_id
 					AND fs.fs_fleet_id='".$arr['fleet_id']."';
 			");
 			while ($rarr=mysql_fetch_array($rres))
@@ -27,7 +27,7 @@
 
 				dbquery("
 					DELETE FROM 
-						".$db_table['fleet_ships']." 
+						fleet_ships 
 					WHERE 
 						fs_fleet_id='".$arr['fleet_id']."' 
 						AND fs_ship_id='".$rarr['ship_id']."';
@@ -37,7 +37,7 @@
 			//Speichert enstandenes TF (Rohstoffe werden zum bestehenden TF summiert)
 			dbquery("
 				UPDATE
-					".$db_table['planets']."
+					planets
 				SET
 					planet_wf_metal=planet_wf_metal+'".$tf_metal."',
 					planet_wf_crystal=planet_wf_crystal+'".$tf_crystal."',
@@ -49,7 +49,7 @@
             // Flotte-Schiffe-Verknüpfungen löschen
             dbquery("
 				DELETE FROM 
-					".$db_table['fleet_ships']." 
+					fleet_ships 
 				WHERE 
 					fs_fleet_id='".$arr['fleet_id']."';
 			");
@@ -57,7 +57,7 @@
             // Flotte aufheben
             dbquery("
 				DELETE FROM 
-					".$db_table['fleet']." 
+					fleet 
 				WHERE 
 					fleet_id='".$arr['fleet_id']."';
 			");

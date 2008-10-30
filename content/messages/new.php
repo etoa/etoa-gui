@@ -14,7 +14,7 @@
 					SELECT 
 						COUNT(ignore_id)
 					FROM
-						".$db_table['message_ignore']."
+						message_ignore
 					WHERE
 						ignore_owner_id=".$uid."
 						AND ignore_target_id=".$cu->id()."

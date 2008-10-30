@@ -30,7 +30,7 @@
 			SELECT 
 				techlist_current_level 
 			FROM 
-				".$db_table['techlist']." 
+				techlist 
 			WHERE 
         techlist_user_id='".$arr['fleet_user_id']."' 
         AND techlist_tech_id='7';");
@@ -41,7 +41,7 @@
 			SELECT 
 				techlist_current_level 
 			FROM 
-				".$db_table['techlist']." 
+				techlist 
 			WHERE 
           techlist_user_id='".$user_to_id."' 
           AND techlist_tech_id='7';");
@@ -63,12 +63,12 @@
             def.techlist_current_level AS def_techlist_current_level,
             att.techlist_current_level AS att_techlist_current_level
         FROM
-          ".$db_table['technologies']." AS t
+          technologies AS t
             INNER JOIN
             (
-                	".$db_table['techlist']." AS def
+                	techlist AS def
                 INNER JOIN
-                	".$db_table['techlist']." AS att
+                	techlist AS att
                 ON def.techlist_tech_id = att.techlist_tech_id
                 AND att.techlist_build_type!=1
                 AND def.techlist_user_id='".$user_to_id."'
@@ -90,7 +90,7 @@
 					{
 	          dbquery("
 	          UPDATE
-	              ".$db_table['techlist']."
+	              techlist
 	          SET
 	          	techlist_current_level='".$techarr['def_techlist_current_level']."',
               techlist_build_type='0',
@@ -104,7 +104,7 @@
           {
               dbquery("
               UPDATE
-                  ".$db_table['techlist']."
+                  techlist
               SET
                   techlist_current_level=".$techarr['def_techlist_current_level']."
               WHERE
@@ -117,14 +117,14 @@
           SELECT 
              ship_id 
           FROM 
-              ".$db_table['ships']." 
+              ships 
           WHERE 
           	ship_forsteal='1'");
           $sarr=mysql_fetch_array($sres);
           
           dbquery("
           UPDATE 
-              ".$db_table['fleet_ships']." 
+              fleet_ships 
           SET 
               fs_ship_cnt=fs_ship_cnt-1 
           WHERE 
@@ -136,7 +136,7 @@
           SELECT 
               SUM(fs_ship_cnt) AS cnt 
           FROM 
-              ".$db_table['fleet_ships']." 
+              fleet_ships 
           WHERE 
               fs_fleet_id='".$arr['fleet_id']."';");
           $check_arr=mysql_fetch_array($check_res);

@@ -205,13 +205,12 @@
 	*/
 	function get_races_array()
 	{
-		global $db_table;
 		$race_name = array();
 		$res = dbquery("
 		SELECT
 			*
 		FROM
-			".$db_table['races']."
+			races
 		ORDER BY
 			race_name;");
 		while ($arr = mysql_fetch_assoc($res))
@@ -226,7 +225,6 @@
 	*/
 	function get_alliance_names()
 	{
-		global $db_table;
 		$names = array();
 
 		$res = dbquery("
@@ -236,7 +234,7 @@
       alliance_name,
       alliance_founder_id
 		FROM
-			".$db_table['alliances']."
+			alliances
 		ORDER BY
 			alliance_name;");
 		while ($arr = mysql_fetch_assoc($res))
@@ -253,7 +251,6 @@
 	*/
 	function get_alliance_names1($id)
 	{
-		global $db_table;
 		$names = array();
 		$res = dbquery("
 			SELECT
@@ -262,7 +259,7 @@
 				alliance_name,
 				alliance_founder_id
 			FROM
-				".$db_table['alliances']."
+				alliances
 			WHERE
 				alliance_id!='".$id."'
 			ORDER BY
@@ -283,7 +280,6 @@
 	*/
 	function get_alliance_names2($id)
 	{
-		global $db_table;
 		$names = array();
 		$res = dbquery("
 			SELECT
@@ -292,7 +288,7 @@
 				alliance_name,
 				alliance_founder_id
 			FROM
-				".$db_table['alliances']."
+				alliances
 			WHERE
 				alliance_id='".$id."'
 			ORDER BY
@@ -312,7 +308,6 @@
 	*/
 	function get_user_nick($id)
 	{
-		global $db_table;
 		$res = dbquery("
 			SELECT
 				user_nick
@@ -339,7 +334,6 @@
 	*/
 	function get_user_alliance($id)
 	{
-		global $db_table;
 		$res = dbquery("
 		SELECT
 			a.alliance_name,
@@ -347,7 +341,7 @@
 			a.alliance_tag
 		FROM
 			users AS u
-			INNER JOIN ".$db_table['alliances']." AS a
+			INNER JOIN alliances AS a
 			ON u.user_alliance_id = a.alliance_id
 			AND u.user_id='".$id."';
 		");
@@ -368,12 +362,11 @@
 	*/
 	function get_alliance_id_by_name($name)
 	{
-		global $db_table;
 		$res = dbquery("
 			SELECT
 				alliance_id
 			FROM
-				".$db_table['alliances']."
+				alliances
 			WHERE
 				alliance_name='".$name."';
 		");
@@ -396,12 +389,11 @@
 	*/
 	function get_alliance_id($tag)
 	{
-		global $db_table;
 		$res = dbquery("
 			SELECT
 				alliance_id
 			FROM
-				".$db_table['alliances']."
+				alliances
 			WHERE
 				alliance_tag='".$tag."';
 		");
@@ -423,7 +415,6 @@
 	*/
 	function get_user_id($nick)
 	{
-		global $db_table;
 		$res = dbquery("
 			SELECT
 				user_id
@@ -451,12 +442,11 @@
 	*/
 	function get_user_id_by_planet($pid)
 	{
-		global $db_table;
 		$res = dbquery("
 			SELECT
 				planet_user_id
 			FROM
-				".$db_table['planets']."
+				planets
 			WHERE
 				id='".$pid."';
 		");
@@ -644,14 +634,13 @@
 	*/
 	function add_log($log_cat,$log_text,$log_timestamp=0)
 	{
-		global $db_table;
 		if ($log_timestamp==0)
 		{
 		 	$log_timestamp=time();
 		}
 		 dbquery("
 		 INSERT INTO
-		 ".$db_table['logs']."
+		 logs
 		 (
 			 log_cat,
 			 log_timestamp,
@@ -676,14 +665,13 @@
 	*/
 	function add_log_user($log_cat,$log_text,$uid1,$uid2=0,$pid=0,$sid=0,$log_timestamp=0)
 	{
-		global $db_table;
 		if ($log_timestamp==0)
 		{
 		 	$log_timestamp=time();
 		}
 		 dbquery("
 		 INSERT INTO
-		 ".$db_table['logs']."
+		 logs
 		 (
 			 log_cat,
 			 log_timestamp,
@@ -726,7 +714,6 @@
 
 	function add_log_game_building($log_text,$user_id,$alliance_id,$planet_id,$building_id,$build_type=0,$log_timestamp=0)
 	{
-		global $db_table;
 		
 		//Setzt auktuelle Zeit wenn keine andere angegeben wird
 		if ($log_timestamp==0)
@@ -737,7 +724,7 @@
 		//Speichert Log
 		dbquery("
 		INSERT INTO
-		".$db_table['logs_game']."
+		logs_game
 		(
 			logs_game_cat,
 			logs_game_timestamp,
@@ -783,7 +770,6 @@
 
 	function add_log_game_research($log_text,$user_id,$alliance_id,$planet_id,$tech_id,$build_type=0,$log_timestamp=0)
 	{
-		global $db_table;
 		
 		//Setzt auktuelle Zeit wenn keine andere angegeben wird
 		if ($log_timestamp==0)
@@ -794,7 +780,7 @@
 		//Speichert Log
 		dbquery("
 		INSERT INTO
-		".$db_table['logs_game']."
+		logs_game
 		(
 			logs_game_cat,
 			logs_game_timestamp,
@@ -840,7 +826,6 @@
 
 	function add_log_game_ship($log_text,$user_id,$alliance_id,$planet_id,$build_type=0,$log_timestamp=0)
 	{
-		global $db_table;
 		
 		//Setzt auktuelle Zeit wenn keine andere angegeben wird
 		if ($log_timestamp==0)
@@ -851,7 +836,7 @@
 		//Speichert Log
 		dbquery("
 		INSERT INTO
-		".$db_table['logs_game']."
+		logs_game
 		(
 			logs_game_cat,
 			logs_game_timestamp,
@@ -896,7 +881,6 @@
 
 	function add_log_game_def($log_text,$user_id,$alliance_id,$planet_id,$build_type=0,$log_timestamp=0)
 	{
-		global $db_table;
 		
 		//Setzt auktuelle Zeit wenn keine andere angegeben wird
 		if ($log_timestamp==0)
@@ -907,7 +891,7 @@
 		//Speichert Log
 		dbquery("
 		INSERT INTO
-		".$db_table['logs_game']."
+		logs_game
 		(
 			logs_game_cat,
 			logs_game_timestamp,
@@ -1086,7 +1070,6 @@
 	*/
 	function get_user_names()
 	{
-		global $db_table;
 		$names = array();
 		$res = dbquery("
 			SELECT
@@ -1114,7 +1097,7 @@
 	*/
 	function remove_inactive($manual=false)
 	{
-		global $conf,$db_table;
+		global $conf;
 
 		$register_time = time()-(24*3600*$conf['user_inactive_days']['p2']);		// Zeit nach der ein User gelöscht wird wenn er noch 0 Punkte hat
 		$online_time = time()-(24*3600*$conf['user_inactive_days']['p1']);	// Zeit nach der ein User normalerweise gelöscht wird
@@ -1185,7 +1168,6 @@ die Spielleitung";
 	*/
 	function remove_deleted_users($manual=false)
 	{
-		global $db_table;
 
 		$res =	dbquery("
 			SELECT
@@ -1215,11 +1197,11 @@ die Spielleitung";
 	*/
 	function remove_logs()
 	{
-		global $conf,$db_table;
+		global $conf;
 		$tstamp=time()-(24*3600*$conf['log_threshold_days']['v']);
 		dbquery("
 			DELETE FROM
-				".$db_table['logs']."
+				logs
 			WHERE
 				log_timestamp<'".$tstamp."';
 		");
@@ -1233,7 +1215,6 @@ die Spielleitung";
 	*/
 	function delete_user($user_id,$self=false,$from="")
 	{
-		global $db_table;
   	$conf = get_all_config();
    	define(FLEET_ACTION_RESS,$conf['market_ship_action_ress']['v']); // Ressourcen
    	define(FLEET_ACTION_SHIP,$conf['market_ship_action_ship']['v']); // Schiffe
@@ -1265,7 +1246,7 @@ die Spielleitung";
 				SELECT
 					fleet_id
 				FROM
-					".$db_table['fleet']."
+					fleet
 				WHERE
 					fleet_user_id='".$user_id."';
 			");
@@ -1276,7 +1257,7 @@ die Spielleitung";
 					// Flotten-Schiffe löschen
 					dbquery("
 						DELETE FROM
-							".$db_table['fleet_ships']."
+							fleet_ships
 						WHERE
 							fs_fleet_id='".$farr['fleet_id']."';
 					");
@@ -1285,7 +1266,7 @@ die Spielleitung";
 			// Flotten löschen
 			dbquery("
 				DELETE FROM
-					".$db_table['fleet']."
+					fleet
 				WHERE
 					fleet_user_id=".$user_id.";
 			");
@@ -1304,7 +1285,7 @@ die Spielleitung";
 					planet_res_fuel,
 					planet_res_food
 				FROM
-					".$db_table['planets']."
+					planets
 				WHERE
 					planet_user_id='".$user_id."';
 			");
@@ -1317,7 +1298,7 @@ die Spielleitung";
 						SELECT
 							id
 						FROM
-							".$db_table['fleet']."
+							fleet
 						WHERE
 							entity_to='".$parr['id']."'
 							AND (action='".FLEET_ACTION_RESS."' OR action='".FLEET_ACTION_SHIP."');
@@ -1329,7 +1310,7 @@ die Spielleitung";
                         	// Flotten-Schiffe löschen
                             dbquery("
 								DELETE FROM
-									".$db_table['fleet_ships']."
+									fleet_ships
 								WHERE
 									fs_fleet_id='".$farr2['id']."';
 							");
@@ -1353,7 +1334,7 @@ die Spielleitung";
 					FROM
 						users AS u
 						INNER JOIN
-						".$db_table['alliances']." AS a
+						alliances AS a
 						ON u.user_alliance_id = a.alliance_id
 						AND a.alliance_id=".$arr['user_alliance_id']."
 						AND u.user_id!='".$user_id."'
@@ -1371,7 +1352,7 @@ die Spielleitung";
 					{
 						dbquery("
 							UPDATE
-								".$db_table['alliances']."
+								alliances
 							SET
 								alliance_founder_id='".$aarr['user_id']."'
 							WHERE
@@ -1396,18 +1377,18 @@ die Spielleitung";
 
 
 			//Baulisten löschen
-			dbquery("DELETE FROM ".$db_table['shiplist']." WHERE shiplist_user_id='".$user_id."';");		// Schiffe löschen
-			dbquery("DELETE FROM ".$db_table['deflist']." WHERE deflist_user_id='".$user_id."';");			// Verteidigung löschen
-			dbquery("DELETE FROM ".$db_table['techlist']." WHERE techlist_user_id='".$user_id."';");		// Forschung löschen
-			dbquery("DELETE FROM ".$db_table['buildlist']." WHERE buildlist_user_id='".$user_id."';");		// Gebäude löschen
+			dbquery("DELETE FROM shiplist WHERE shiplist_user_id='".$user_id."';");		// Schiffe löschen
+			dbquery("DELETE FROM deflist WHERE deflist_user_id='".$user_id."';");			// Verteidigung löschen
+			dbquery("DELETE FROM techlist WHERE techlist_user_id='".$user_id."';");		// Forschung löschen
+			dbquery("DELETE FROM buildlist WHERE buildlist_user_id='".$user_id."';");		// Gebäude löschen
 
 			//Buddyliste löschen
-			dbquery("DELETE FROM ".$db_table['buddylist']." WHERE bl_user_id='".$user_id."' OR bl_buddy_id='".$user_id."';");
+			dbquery("DELETE FROM buddylist WHERE bl_user_id='".$user_id."' OR bl_buddy_id='".$user_id."';");
 
 			//Markt Angebote löschen
-			dbquery("DELETE FROM ".$db_table['market_ressource']." WHERE user_id='".$user_id."' AND ressource_buyable='1';"); 	// Rohstoff Angebot
-			dbquery("DELETE FROM ".$db_table['market_ship']." WHERE user_id='".$user_id."' AND ship_buyable='1';"); 				// Schiff Angebot
-			dbquery("DELETE FROM ".$db_table['market_auction']." WHERE auction_user_id='".$user_id."' AND auction_buyable='1';"); // Auktionen
+			dbquery("DELETE FROM market_ressource WHERE user_id='".$user_id."' AND ressource_buyable='1';"); 	// Rohstoff Angebot
+			dbquery("DELETE FROM market_ship WHERE user_id='".$user_id."' AND ship_buyable='1';"); 				// Schiff Angebot
+			dbquery("DELETE FROM market_auction WHERE auction_user_id='".$user_id."' AND auction_buyable='1';"); // Auktionen
 
 			//Notitzen löschen
 			$np = new Notepad($user_id);
@@ -1415,15 +1396,17 @@ die Spielleitung";
 			unset($np);
 
 			//Gespeicherte Koordinaten löschen
-			dbquery("DELETE FROM ".$db_table['target_bookmarks']." WHERE bookmark_user_id='".$user_id."';");
+			dbquery("DELETE FROM bookmarks WHERE user_id='".$user_id."';");
+			dbquery("DELETE FROM fleet_bookmarks WHERE user_id='".$user_id."';");
 
 			//'user' Info löschen
-			//dbquery("DELETE FROM ".$db_table['user_log']." WHERE log_user_id='".$user_id."';"); 			//Log löschen
-			dbquery("DELETE FROM ".$db_table['user_multi']." WHERE user_multi_user_id='".$user_id."' OR user_multi_multi_user_id='".$user_id."';"); //Multiliste löschen
-			dbquery("DELETE FROM ".$db_table['user_points']." WHERE point_user_id='".$user_id."';"); 					//Punkte löschen
-			dbquery("DELETE FROM ".$db_table['user_requests']." WHERE request_user_id='".$user_id."';"); 				//Nickänderungsanträge löschen
-			dbquery("DELETE FROM ".$db_table['user_sitting']." WHERE user_sitting_user_id='".$user_id."';"); 			//Sitting löschen
-			dbquery("DELETE FROM ".$db_table['user_sitting_date']." WHERE user_sitting_date_user_id='".$user_id."';"); //Sitting Daten löschen
+			//dbquery("DELETE FROM user_log WHERE log_user_id='".$user_id."';"); 			//Log löschen
+			dbquery("DELETE FROM user_multi WHERE user_multi_user_id='".$user_id."' OR user_multi_multi_user_id='".$user_id."';"); //Multiliste löschen
+			dbquery("DELETE FROM user_points WHERE point_user_id='".$user_id."';"); 					//Punkte löschen
+			dbquery("DELETE FROM user_requests WHERE request_user_id='".$user_id."';"); 				//Nickänderungsanträge löschen
+			dbquery("DELETE FROM user_sitting WHERE user_sitting_user_id='".$user_id."';"); 			//Sitting löschen
+			dbquery("DELETE FROM user_sitting_date WHERE user_sitting_date_user_id='".$user_id."';"); //Sitting Daten löschen
+			// Todo: clean tickets
 
 			//
 			//Benutzer löschen
@@ -1465,12 +1448,11 @@ die Spielleitung";
 	*/
 	function delete_alliance($alliance_id,$self=false)
 	{
-		global $db_table;
 		$res=dbquery("
 			SELECT
 				alliance_name
 			FROM
-				".$db_table['alliances']."
+				alliances
 			WHERE
 				alliance_id='".$alliance_id."';
 		");
@@ -1479,7 +1461,7 @@ die Spielleitung";
 		//Daten löschen
 		dbquery("
 		DELETE FROM
-			".$db_table['alliances']."
+			alliances
 		WHERE
 			alliance_id='".$alliance_id."';");
 
@@ -1487,7 +1469,7 @@ die Spielleitung";
 		$bndres=dbquery("SELECT 
 							* 
 						FROM 
-							".$db_table['alliance_bnd']."
+							alliance_bnd
 						WHERE
 							alliance_bnd_alliance_id1='".$alliance_id."'
 							OR alliance_bnd_alliance_id2='".$alliance_id."';");
@@ -1505,16 +1487,16 @@ die Spielleitung";
 		}
 		dbquery("
 			DELETE FROM
-				".$db_table['alliance_bnd']."
+				alliance_bnd
 			WHERE
 				alliance_bnd_alliance_id1='".$alliance_id."'
 				OR alliance_bnd_alliance_id2='".$alliance_id."';
 		");
-		dbquery("DELETE FROM ".$db_table['alliance_ranks']." WHERE rank_alliance_id='".$alliance_id."';");
-		dbquery("DELETE FROM ".$db_table['alliance_history']." WHERE history_alliance_id='".$alliance_id."';");
+		dbquery("DELETE FROM alliance_ranks WHERE rank_alliance_id='".$alliance_id."';");
+		dbquery("DELETE FROM alliance_history WHERE history_alliance_id='".$alliance_id."';");
 		dbquery("DELETE FROM allianceboard_cat WHERE cat_alliance_id='".$alliance_id."';");
-		dbquery("DELETE FROM ".$db_table['alliance_polls']." WHERE poll_alliance_id='".$alliance_id."';");
-		dbquery("DELETE FROM ".$db_table['alliance_poll_votes']." WHERE vote_alliance_id='".$alliance_id."';");
+		dbquery("DELETE FROM alliance_polls WHERE poll_alliance_id='".$alliance_id."';");
+		dbquery("DELETE FROM alliance_poll_votes WHERE vote_alliance_id='".$alliance_id."';");
 		dbquery("DELETE FROM alliance_applications WHERE alliance_id='".$alliance_id."';");
 		dbquery("
 			UPDATE
@@ -1540,7 +1522,6 @@ die Spielleitung";
 	*/
 	function remove_old_banns()
 	{
-		global $db_table;
 		dbquery("
 			UPDATE
 				users
@@ -1621,7 +1602,6 @@ die Spielleitung";
 	*/
 	function reset_planet($planet_id)
 	{
-		global $db_table;
 		if ($planet_id>0)
 		{
 			dbquery("
@@ -1660,19 +1640,19 @@ die Spielleitung";
 
 			dbquery("
 				DELETE FROM
-					".$db_table['shiplist']."
+					shiplist
 				WHERE
 					shiplist_entity_id='".$planet_id."';
 			");
 			dbquery("
 				DELETE FROM
-					".$db_table['buildlist']."
+					buildlist
 				WHERE
 					buildlist_entity_id='".$planet_id."';
 			");
 			dbquery("
 				DELETE FROM
-					".$db_table['deflist']."
+					deflist
 				WHERE
 					deflist_entity_id='".$planet_id."';
 			");
@@ -2017,12 +1997,11 @@ die Spielleitung";
 	*/
 	function check_building_deactivated($user_id,$planet_id,$building_id)
 	{
-		global $db_table;
 		$res=dbquery("
 			SELECT
 				buildlist_deactivated
 			FROM
-				".$db_table['buildlist']."
+				buildlist
 			WHERE
 				buildlist_user_id='".$user_id."'
 				AND buildlist_entity_id='".$planet_id."'
@@ -2058,10 +2037,9 @@ die Spielleitung";
 	*/
 	function add_alliance_history($alliance_id,$text)
 	{
-		global $db_table;
 		dbquery("
 			INSERT INTO
-			".$db_table['alliance_history']."
+			alliance_history
 			(
 				history_alliance_id,
 				history_text,
@@ -2081,10 +2059,9 @@ die Spielleitung";
 	*/
 	function add_user_history($user_id,$text)
 	{
-		global $db_table;
 		dbquery("
 			INSERT INTO
-			".$db_table['user_history']."
+			user_history
 			(
 				history_user_id,
 				history_text,
@@ -2103,12 +2080,12 @@ die Spielleitung";
 	*/
 	function check_buddys_online($id)
 	{
-		global $db_table,$conf;
+		global $conf;
 		return mysql_num_rows(dbquery("
 			SELECT
 				user_id
 			FROM
-				".$db_table['buddylist']." AS bl
+				buddylist AS bl
 				INNER JOIN users AS u
 				ON bl.bl_buddy_id = u.user_id
 				AND bl_user_id='".$id."'
@@ -2355,7 +2332,6 @@ die Spielleitung";
 	*/
     function send_mail($preview,$adress,$topic,$text,$style,$align,$force=0)
     {
-        global $db_table;
         $conf = get_all_config();
 
         if($style=="")
@@ -2482,12 +2458,11 @@ Forum: http://www.etoa.ch/forum";
 	*/
 	function shiplistAdd($planet,$user,$ship,$cnt)
 	{
-		global $db_table;
 		$res=dbquery("
 			SELECT
 				shiplist_id
 			FROM
-				".$db_table['shiplist']."
+				shiplist
 			WHERE
 				shiplist_user_id='".$user."'
 				AND shiplist_entity_id='".$planet."'
@@ -2497,7 +2472,7 @@ Forum: http://www.etoa.ch/forum";
 		{
 			dbquery("
 				UPDATE
-					".$db_table['shiplist']."
+					shiplist
 				SET
 					shiplist_count=shiplist_count+".max($cnt,0)."
 				WHERE
@@ -2510,7 +2485,7 @@ Forum: http://www.etoa.ch/forum";
 		{
 			dbquery("
 				INSERT INTO
-				".$db_table['shiplist']."
+				shiplist
 				(
 					shiplist_user_id,
 					shiplist_entity_id,
@@ -2540,12 +2515,11 @@ Forum: http://www.etoa.ch/forum";
 	*/
 	function deflistAdd($planet,$user,$def,$cnt)
 	{
-		global $db_table;
 		$res=dbquery("
 			SELECT
 				deflist_id
 			FROM
-				".$db_table['deflist']."
+				deflist
 			WHERE
 				deflist_user_id='".$user."'
 				AND deflist_entity_id='".$planet."'
@@ -2555,7 +2529,7 @@ Forum: http://www.etoa.ch/forum";
 		{
 			dbquery("
 				UPDATE
-					".$db_table['deflist']."
+					deflist
 				SET
 					deflist_count=deflist_count+".max($cnt,0)."
 				WHERE
@@ -2568,7 +2542,7 @@ Forum: http://www.etoa.ch/forum";
 		{
 			dbquery("
 				INSERT INTO
-				".$db_table['deflist']."
+				deflist
 				(
 					deflist_user_id,
 					deflist_entity_id,
@@ -2597,7 +2571,6 @@ Forum: http://www.etoa.ch/forum";
 	*/
 	function missilelistAdd($planet,$user,$ship,$cnt)
 	{
-		global $db_table;
 		$res=dbquery("
 			SELECT
 				missilelist_id
@@ -2655,10 +2628,9 @@ Forum: http://www.etoa.ch/forum";
 	*/
 	function mail_queue($msg_to,$msg_subject,$msg_text,$msg_header)
 	{
-		global $db_table;
 		dbquery("
 			INSERT INTO
-			".$db_table['mail_queue']."
+			mail_queue
 			(
 				msg_to,
 				msg_subject,
@@ -2686,12 +2658,11 @@ Forum: http://www.etoa.ch/forum";
 	*/
 	function mail_queue_send($cnt=1)
 	{
-		global $db_table;
 		$res=dbquery("
 			SELECT
 				*
 			FROM
-				".$db_table['mail_queue']."
+				mail_queue
 			ORDER BY
 				msg_timestamp ASC
 			LIMIT $cnt
@@ -2705,7 +2676,7 @@ Forum: http://www.etoa.ch/forum";
 				
 				dbquery("
 					DELETE FROM
-						".$db_table['mail_queue']."
+						mail_queue
 					WHERE
 						msg_id='".$arr['msg_id']."';
 				");

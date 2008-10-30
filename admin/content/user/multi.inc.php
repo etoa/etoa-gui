@@ -3,7 +3,7 @@
 		{
 			$ip = $_GET['ip'];
 			echo "<h1>Multi-Erkennung: Details</b><br/>$ip (".gethostbyaddr($ip).")</h1>";
-			$ipres = dbquery("SELECT user_blocked_from,user_blocked_to,user_alliance_id,user_id,user_points,user_nick,user_acttime,user_name,user_email,user_email_fix FROM ".$db_table['users']." WHERE user_ip='$ip' ORDER BY user_acttime DESC;");
+			$ipres = dbquery("SELECT user_blocked_from,user_blocked_to,user_alliance_id,user_id,user_points,user_nick,user_acttime,user_name,user_email,user_email_fix FROM users WHERE user_ip='$ip' ORDER BY user_acttime DESC;");
 
 			echo "<table class=\"tbl\" width=\"100%\">";
 			echo "<tr><td class=\"tbltitle\">Nick</td><td class=\"tbltitle\">Name</td><td class=\"tbltitle\">E-Mail</td><td class=\"tbltitle\">Online</td><td class=\"tbltitle\">Punkte</td><td class=\"tbltitle\">Eingetragene Multis</td><td class=\"tbltitle\">Gel&ouml;schte Multis</td></tr>";
@@ -13,7 +13,7 @@
                 SELECT
                     *
                 FROM
-                    ".$db_table['user_multi']."
+                    user_multi
                 WHERE
                     user_multi_user_id='".$iparr['user_id']."'
                     AND user_multi_multi_user_id!='0';");
@@ -26,7 +26,7 @@
 				echo "<td class=\"tbldata\" valign=\"top\" style=\"color:$uCol;\">".$iparr['user_nick']."";
 				if ($iparr['user_alliance_id']>0)
 				{
-					$aarr = mysql_fetch_array(dbquery("SELECT alliance_tag FROM ".$db_table['alliances']." WHERE alliance_id=".$iparr['user_alliance_id'].";"));
+					$aarr = mysql_fetch_array(dbquery("SELECT alliance_tag FROM alliances WHERE alliance_id=".$iparr['user_alliance_id'].";"));
 					echo "<br/><b>".$aarr['alliance_tag']."</b>";
 				}
 				echo "</td>";
@@ -71,7 +71,7 @@
 		{
 			echo "<h1>Multi-Erkennung: Zusammenfassung</h1>";
 			echo "Multi-Merkmale:</br><ul><li>Gleiche IP (durch dieses Tool pr&uuml;fen)</li><li>&Auml;hnliche Onlinezeit (mit Session-Log pr&uuml;fen)</li><li>evtl. dieselbe Allianz</li><li>&Auml;hnliche Mailadresse</li><li>&Auml;hnliche Fantasienamen</li></ul></br>";
-			$res = dbquery("SELECT count(user_ip) as ip_count,user_id,user_ip FROM ".$db_table['users']." WHERE user_ip!='' GROUP by user_ip ORDER BY ip_count DESC;");
+			$res = dbquery("SELECT count(user_ip) as ip_count,user_id,user_ip FROM users WHERE user_ip!='' GROUP by user_ip ORDER BY ip_count DESC;");
 			$multi_ips=array();
 			while ($arr=mysql_fetch_array($res))
 			{
@@ -100,7 +100,7 @@
                         user_name,
                         user_email
 					FROM
-						".$db_table['users']."
+						users
 					WHERE
 						user_ip='$ip'
 					ORDER BY
@@ -118,7 +118,7 @@
                         SELECT
                             *
                         FROM
-                            ".$db_table['user_multi']."
+                            user_multi
                         WHERE
                             user_multi_user_id='".$iparr['user_id']."'
                             AND user_multi_multi_user_id!='0';");

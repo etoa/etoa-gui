@@ -67,7 +67,7 @@
 
 	// Feste Konstanten
 	define('SESSION_NAME',"adminsession");
-	define('USER_TABLE_NAME',$db_table['admin_users']);
+	define('USER_TABLE_NAME','admin_users');
 
 	define('URL_SEARCH_STRING', "page=$page&amp;sub=$sub&amp;tmp=1");
 	define('URL_SEARCH_STRING2', "page=$page");
@@ -199,7 +199,7 @@
 
 				// Admin-Gruppen laden				
 				$admingroup=array();
-				$gres=dbquery("SELECT * FROM ".$db_table['admin_groups']." ORDER BY group_level DESC;");
+				$gres=dbquery("SELECT * FROM admin_groups ORDER BY group_level DESC;");
 				while ($garr=mysql_fetch_array($gres))
 				{
 					$admingroup[$garr['group_id']] =$garr['group_name'];
@@ -309,12 +309,12 @@
 								$o_style=" style=\"color:#fa0\"";
 								$r_style=" style=\"color:#f55\"";
 
-								$ures=dbquery("SELECT count(*) FROM ".$db_table['users'].";");
+								$ures=dbquery("SELECT count(*) FROM users;");
 								$uarr=mysql_fetch_row($ures);
 								$up=$uarr[0]/$conf['enable_register']['p2'];
-								$p1res=dbquery("SELECT count(*) FROM ".$db_table['planets']." WHERE planet_user_id>0;");
+								$p1res=dbquery("SELECT count(*) FROM planets WHERE planet_user_id>0;");
 								$p1arr=mysql_fetch_row($p1res);
-								$p2res=dbquery("SELECT count(*) FROM ".$db_table['planets'].";");
+								$p2res=dbquery("SELECT count(*) FROM planets;");
 								$p2arr=mysql_fetch_row($p2res);
 								if ($p2arr[0]>0)
 									$pp=$p1arr[0]/$p2arr[0];
@@ -352,15 +352,15 @@
 
 								// Online
 								echo "<br/><div class=\"menutitle\">Online:</div>";
-								$gres=dbquery("SELECT COUNT(*) FROM ".$db_table['users']." WHERE user_acttime>".(time()-$conf['user_timeout']['v']).";");
+								$gres=dbquery("SELECT COUNT(*) FROM users WHERE user_acttime>".(time()-$conf['user_timeout']['v']).";");
 								$garr=mysql_fetch_row($gres);
 								if ($uarr[0]>0)
 									$gp=$garr[0]/$uarr[0]*100;
 								else
 									$gp=0;
-								$a1res=dbquery("SELECT COUNT(*)  FROM ".$db_table['admin_users']." WHERE user_acttime>".(time()-TIMEOUT)." AND user_session_key!='';");
+								$a1res=dbquery("SELECT COUNT(*)  FROM admin_users WHERE user_acttime>".(time()-TIMEOUT)." AND user_session_key!='';");
 								$a1arr=mysql_fetch_row($a1res);
-								$a2res=dbquery("SELECT COUNT(*)  FROM ".$db_table['admin_users'].";");
+								$a2res=dbquery("SELECT COUNT(*)  FROM admin_users;");
 								$a2arr=mysql_fetch_row($a2res);
 								if ($a2arr[0]>0)
 									$ap=$a1arr[0]/$a2arr[0]*100;

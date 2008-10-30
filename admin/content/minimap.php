@@ -197,13 +197,13 @@
 		//
 		
 		// Ermöglicht dem User das Einstellen der Angezeigten Felder
-		infobox_start("Anzeigeoptionen",0);
+		iBoxStart("Anzeigeoptionen");
 		echo "<form action=\"?page=".$page."\" method=\"post\">
 						<b>Angezeigte Felder</b> [<span style=\"font-style:italic\" ".tm("Angezeigte Felder","- Es dürfen nur ganze, gerade Zahlen verwendet werden, ansonsten werden die Bilder nicht geladen<br><br>- Bei zu hohen Zahlen werden die Ladezeiten extrem!<br><br>- Sollte der Angezeige Ausschnitt mehr als die doppelte Grösse der Map betragen, werden die Bilder an den Randstellen auch nicht mehr dargestellt!").">INFO</span>]<br>
 						<input type=\"text\" id=\"show_x\" name=\"show_x\" value=\"".$show_x."\" maxlength=\"3\" size=\"2\" title=\"X-Richtung\"> x <input type=\"text\" id=\"show_y\" name=\"show_y\" value=\"".$show_y."\" maxlength=\"3\" size=\"2\" title=\"Y-Richtung\"> (Max. ".$arr['fields_x']."x".$arr['fields_y'].")<br><br>
 						<input type=\"submit\" class=\"button\" name=\"change_settings\" value=\"Speichern\"><br><br>";
 		echo "</form>";
-		infobox_end(0);
+		iBoxEnd();
 		
 		
 		
@@ -584,7 +584,7 @@
 		// Stellt Minimap dar
 		//
 		
-		infobox_start("Minimap",0);
+		iBoxStart("Minimap");
 		
 		echo "<form action=\"?page=".$page."\" method=\"post\">
 		<div style=\"text-align:center;\"><b>Zentrum</b><br>";
@@ -658,7 +658,7 @@
 		
 		echo "</table>";
 		echo "<br><br><div style=\"text-align:center;\"><input type=\"button\" value=\"Load\" onclick=\"move('wasauchimmer');\" /><br><br><input type=\"submit\" value=\"Änderungen speichern\" id=\"save_settings\" name=\"save_settings\" style=\"color:#f00;\" disabled=\"true\"/></div></form>";
-		infobox_end(0);
+		iBoxEnd();
 			
 		
 		
@@ -666,7 +666,7 @@
 		// Map bearbeiten: Zeigt die Bearbeitungstool an
 		//
 		
-		infobox_start("Map bearbeiten",0);
+		iBoxStart("Map bearbeiten");
 		echo "<div style=\"text-align:center;\">";
 		
 		// Mit diesen Buttons kann man zwischen den verschiedenen Bereichen wechseln
@@ -741,7 +741,7 @@
 		echo "ändere das event";
 		echo "</div>";
 		echo "</div>";
-		infobox_end(0);
+		iBoxEnd();
 	}
 	// Es besteht noch keine Map
 	else

@@ -290,9 +290,9 @@
 								fs.fs_ship_cnt,
 								s.ship_name
 							 FROM
-							  ".$db_table['fleet_ships']." AS fs
+							  fleet_ships AS fs
 							INNER JOIN
-								".$db_table['ships']." AS s
+								ships AS s
 							ON fs.fs_ship_id=s.ship_id
 								AND fs.fs_fleet_id='".$farr['id']."'
 								AND fs.fs_ship_faked='1';");

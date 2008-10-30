@@ -17,7 +17,7 @@
 				message_data as md
 				ON md.id=message_id						
 			LEFT JOIN
-				".$db_table['users']."
+				users
 				ON user_id=message_user_from
 			WHERE
           m.message_id='".intval($_GET['msg_id'])."'
@@ -83,7 +83,7 @@
 				message_cat
 				ON message_cat_id=cat_id
 			LEFT JOIN
-				".$db_table['users']."
+				users
 				ON user_id=message_user_from
 			WHERE
 				message_user_to='".$cu->id()."'

@@ -45,7 +45,7 @@
   	buildlist_deactivated,
   	buildlist_prod_percent
   FROM
-  	".$db_table['buildlist']."
+  	buildlist
   WHERE
   	buildlist_entity_id='".$cp->id()."'
   	AND buildlist_building_id='".BUILD_MISSILE_ID."'
@@ -96,7 +96,7 @@
 					buildlist_current_level,
 					buildlist_building_id
 				FROM 
-				"	.$db_table['buildlist']." 
+					buildlist
 				WHERE 
 					buildlist_user_id='".$cu->id()."' 
 					AND buildlist_entity_id='".$cp->id()."';";
@@ -113,7 +113,7 @@
 					techlist_tech_id,
 					techlist_current_level 
 				FROM 
-					".$db_table['techlist']." 
+					techlist 
 				WHERE 
 					techlist_user_id='".$cu->id()."'
 				;");

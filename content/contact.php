@@ -88,9 +88,9 @@
 				group_name,
 				user_board_url
 			FROM 
-				".$db_table['admin_users']."
+				admin_users
 			INNER JOIN
-				".$db_table['admin_groups']."
+				admin_groups
 				ON user_admin_rank=group_id
 				AND group_level<3
 		;");

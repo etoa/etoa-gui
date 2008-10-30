@@ -24,7 +24,7 @@ if (Alliance::checkActionRights('polls'))
 					{
 						if ($_POST['poll_a1_text']!="" && $_POST['poll_a2_text']!="")
 						{
-							dbquery("INSERT INTO ".$db_table['alliance_polls']." (
+							dbquery("INSERT INTO alliance_polls (
 								poll_alliance_id,
 								poll_title,
 								poll_question,
@@ -93,7 +93,7 @@ if (Alliance::checkActionRights('polls'))
 		//
 		elseif (isset($_GET['edit']) && $_GET['edit']>0)
 		{
-			$pres=dbquery("SELECT * FROM ".$db_table['alliance_polls']." WHERE poll_id=".$_GET['edit']." AND poll_alliance_id=".$arr['alliance_id'].";");
+			$pres=dbquery("SELECT * FROM alliance_polls WHERE poll_id=".$_GET['edit']." AND poll_alliance_id=".$arr['alliance_id'].";");
 			if (mysql_num_rows($pres)>0)
 			{
 				$parr=mysql_fetch_array($pres);
@@ -126,7 +126,7 @@ if (Alliance::checkActionRights('polls'))
 						{
 							if ($_POST['poll_a1_text']!="" && $_POST['poll_a2_text']!="")
 							{
-								dbquery("UPDATE ".$db_table['alliance_polls']." SET
+								dbquery("UPDATE alliance_polls SET
 									poll_title='".addslashes($_POST['poll_title'])."',
 									poll_question='".addslashes($_POST['poll_question'])."',
 									poll_a1_text='".addslashes($_POST['poll_a1_text'])."',
@@ -184,20 +184,20 @@ if (Alliance::checkActionRights('polls'))
 		{
 			if (isset($_GET['del']) && $_GET['del']>0)
 			{
-				dbquery("DELETE FROM ".$db_table['alliance_polls']." WHERE poll_id=".$_GET['del']." AND poll_alliance_id=".$arr['alliance_id'].";");
+				dbquery("DELETE FROM alliance_polls WHERE poll_id=".$_GET['del']." AND poll_alliance_id=".$arr['alliance_id'].";");
 				if (mysql_affected_rows()>0)
 				{
-					dbquery("DELETE FROM ".$db_table['alliance_poll_votes']." WHERE vote_poll_id=".$_GET['del']." AND vote_alliance_id=".$arr['alliance_id'].";");
+					dbquery("DELETE FROM alliance_poll_votes WHERE vote_poll_id=".$_GET['del']." AND vote_alliance_id=".$arr['alliance_id'].";");
 					echo "Umfrage wurde gel&ouml;scht!<br/><br/>";
 				}
 			}
 			if (isset($_GET['deactivate']) && $_GET['deactivate'])
-				dbquery("UPDATE ".$db_table['alliance_polls']." SET poll_active=0 WHERE poll_id=".$_GET['deactivate']." AND poll_alliance_id=".$arr['alliance_id'].";");
+				dbquery("UPDATE alliance_polls SET poll_active=0 WHERE poll_id=".$_GET['deactivate']." AND poll_alliance_id=".$arr['alliance_id'].";");
 			if (isset($_GET['activate']) && $_GET['activate'])
-				dbquery("UPDATE ".$db_table['alliance_polls']." SET poll_active=1 WHERE poll_id=".$_GET['activate']." AND poll_alliance_id=".$arr['alliance_id'].";");
+				dbquery("UPDATE alliance_polls SET poll_active=1 WHERE poll_id=".$_GET['activate']." AND poll_alliance_id=".$arr['alliance_id'].";");
 
 			$_SESSION['alliance_poll']=null;
-			$pres=dbquery("SELECT * FROM ".$db_table['alliance_polls']." WHERE poll_alliance_id=".$arr['alliance_id'].";");
+			$pres=dbquery("SELECT * FROM alliance_polls WHERE poll_alliance_id=".$arr['alliance_id'].";");
 			if (mysql_num_rows($pres)>0)
 			{
 				echo "<table class=\"tb\"><tr><th>Titel</th><th>Frage</th><th>Erstellt</th><th style=\"width:200px;\">Aktionen</th></tr>";

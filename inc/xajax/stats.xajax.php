@@ -6,7 +6,7 @@ $xajax->register(XAJAX_FUNCTION,'statsShowTable');
 
 function statsShowBox($mode, $sort="", $sortOrder="")
 {
-	global $db_table, $page, $conf;
+	global $page, $conf;
   $objResponse = new xajaxResponse();
 
 	$_SESSION['statsmode']=$mode;
@@ -117,9 +117,9 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 			a.user_nick AS admin_nick,
 			a.user_email AS admin_email
 		FROM 
-			".$db_table['users']." AS u
+			users AS u
 		LEFT JOIN
-			".$db_table['admin_users']." AS a
+			admin_users AS a
 		ON
 			u.user_ban_admin_id = a.user_id
 		WHERE 
@@ -416,7 +416,7 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 
 function statsShowTable($mode, $limit=0, $userstring="", $absolute=0)
 {
-	global $db_table, $page;
+	global $page;
   $objResponse = new xajaxResponse();
 		// Datensatznavigation
 		$res = dbquery("

@@ -36,9 +36,9 @@
 		a.user_nick AS admin_nick,
 		a.user_email AS admin_email
 	FROM 
-		".$db_table['users']." AS u
+		users AS u
 	LEFT JOIN
-		".$db_table['admin_users']." AS a
+		admin_users AS a
 	ON
 		u.user_ban_admin_id = a.user_id
 	WHERE 

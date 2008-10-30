@@ -28,7 +28,6 @@
 	function fleet_land($arr,$fleet_action=0,$already_colonialized=0,$already_invaded=0)
 	{
         global $conf;
-        global $db_table;
 
 		//Flotte wird stationiert und Waren werden ausgeladen
 		if($fleet_action==1)
@@ -37,7 +36,7 @@
             $people=$arr['fleet_pilots']+$arr['fleet_res_people'];
             dbquery("
 				UPDATE
-					".$db_table['planets']."
+					planets
 				SET
 					planet_res_metal=planet_res_metal+'".$arr['fleet_res_metal']."',
 					planet_res_crystal=planet_res_crystal+'".$arr['fleet_res_crystal']."',
@@ -78,9 +77,9 @@
 					s.ship_colonialize,
 					s.ship_invade
 				FROM
-					".$db_table['fleet_ships']." AS fs 
+					fleet_ships AS fs 
 				INNER JOIN 
-					".$db_table['ships']." AS s ON fs.fs_ship_id = s.ship_id
+					ships AS s ON fs.fs_ship_id = s.ship_id
 					AND fs.fs_fleet_id='".$arr['fleet_id']."'
 					AND fs.fs_ship_faked='0';
 			");
@@ -112,7 +111,7 @@
 						SELECT
 							shiplist_id
 						FROM
-							".$db_table['shiplist']."
+							shiplist
 						WHERE
 							shiplist_ship_id='".$fsarr['fs_ship_id']."'
 							AND shiplist_planet_id='".$arr['fleet_planet_to']."';
@@ -124,7 +123,7 @@
                     {
                         dbquery("
 							UPDATE
-								".$db_table['shiplist']."
+								shiplist
 							SET
 								shiplist_count=shiplist_count+'".$ship_cnt."',
 								shiplist_special_ship='".$fsarr['fs_special_ship']."',
@@ -163,7 +162,7 @@
 
                         dbquery("
 							INSERT INTO
-							".$db_table['shiplist']." (
+							shiplist (
 								shiplist_user_id,
 								shiplist_ship_id,
 								shiplist_planet_id,
@@ -236,7 +235,7 @@
             $people=$arr['fleet_pilots']+$arr['fleet_res_people'];
             dbquery("
 				UPDATE
-					".$db_table['planets']."
+					planets
 				SET
 					planet_res_metal=planet_res_metal+'".$arr['fleet_res_metal']."',
 					planet_res_crystal=planet_res_crystal+'".$arr['fleet_res_crystal']."',
@@ -270,7 +269,6 @@
 	function fleet_return($arr,$action,$res_metal=-1,$res_crystal=-1,$res_plastic=-1,$res_fuel=-1,$res_food=-1,$res_people=-1)
 	{
         global $conf;
-        global $db_table;
 
         // Flotte zurückschicken
         $duration = $arr['fleet_landtime'] - $arr['fleet_launchtime'];
@@ -279,7 +277,7 @@
 
         $sql = "
 			UPDATE
-				".$db_table['fleet']."
+				fleet
 			SET
 				fleet_cell_from='".$arr['fleet_cell_to']."',
 				fleet_cell_to='".$arr['fleet_cell_from']."',
@@ -336,7 +334,7 @@
 */
 function update_fleet($arr,$output=0)
 {
-	global $conf,$db_table;
+	global $conf;
 	$time = time();
 	
 	// Nachprüfen ob Landezeit wirklich kleider ist als aktuelle Zeit
@@ -345,7 +343,7 @@ function update_fleet($arr,$output=0)
 		// Update-Flag setzen
 		dbquery("
 		UPDATE 
-			".$db_table['fleet']." 
+			fleet 
 		SET 
 			fleet_updating=1 
 		WHERE 
@@ -405,7 +403,7 @@ function update_fleet($arr,$output=0)
 					// Flotte-Schiffe-Verknüpfungen löschen
 					dbquery("
 						DELETE FROM 
-							".$db_table['fleet_ships']." 
+							fleet_ships 
 						WHERE 
 							fs_fleet_id='".$arr['fleet_id']."';
 					");
@@ -413,7 +411,7 @@ function update_fleet($arr,$output=0)
 					// Flotte aufheben
 					dbquery("
 						DELETE FROM 
-							".$db_table['fleet']." 
+							fleet 
 						WHERE 
 							fleet_id='".$arr['fleet_id']."';
 					");
@@ -440,7 +438,7 @@ function update_fleet($arr,$output=0)
 					// Flotte-Schiffe-Verknüpfungen löschen
 					dbquery("
 						DELETE FROM 
-							".$db_table['fleet_ships']." 
+							fleet_ships 
 						WHERE 
 							fs_fleet_id='".$arr['fleet_id']."';
 					");
@@ -448,7 +446,7 @@ function update_fleet($arr,$output=0)
 					// Flotte aufheben
 					dbquery("
 						DELETE FROM 
-							".$db_table['fleet']." 
+							fleet 
 						WHERE 
 							fleet_id='".$arr['fleet_id']."';
 					");
@@ -458,7 +456,7 @@ function update_fleet($arr,$output=0)
 		// Update-Flag löschen, Update-Counter erhöhen
 		dbquery("
 		UPDATE
-			".$db_table['fleet']."
+			fleet
 		SET
 			fleet_updating=0,
 			fleet_update_counter=fleet_update_counter+1

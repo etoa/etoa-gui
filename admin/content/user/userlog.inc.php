@@ -6,7 +6,7 @@
 			if(isset($_GET['id']) && $_GET['id']>0)
 			{
 				$userid=$_GET['id'];
-				$ures=dbquery("SELECT user_nick, user_id FROM ".$db_table['users']." WHERE user_id='".$userid."';");
+				$ures=dbquery("SELECT user_nick, user_id FROM users WHERE user_id='".$userid."';");
 				if (mysql_num_rows($ures)>0)
 				{
 					$uarr=mysql_fetch_array($ures);
@@ -17,7 +17,7 @@
 			}
 			else
 			{
-				$sqlstart="SELECT * FROM user_sessionlog,".$db_table['users']." WHERE user_id=log_user_id";
+				$sqlstart="SELECT * FROM user_sessionlog,users WHERE user_id=log_user_id";
 				$sqlend=" ORDER BY log_user_id, log_id DESC;";
 				$sql='';
 				if ($_POST['user_id']!="")
@@ -112,20 +112,20 @@
 			// Alle User kicken
 			if(isset($_POST['kick_all']))
 			{
-        dbquery("UPDATE ".$db_table['users']." SET user_session_key='';");
+        dbquery("UPDATE users SET user_session_key='';");
         add_log(8,$_SESSION[SESSION_NAME]['user_nick']." l&ouml;scht die Sessions aller Spieler / wirft alle Spieler aus dem Spiel",time());
         cms_ok_msg("Alle Spieler wurden gekickt!");
 			}
 			// Ein User kicken
 			if (isset($_GET['kick']) && $_GET['kick']>0)
 			{
-				dbquery("UPDATE ".$db_table['users']." SET user_session_key='' WHERE user_id=".$_GET['kick'].";");
+				dbquery("UPDATE users SET user_session_key='' WHERE user_id=".$_GET['kick'].";");
 				add_log(8,$_SESSION[SESSION_NAME]['user_nick']." l&ouml;scht die Session des Spielers mit der ID ".$_GET['kick'],time());
 				cms_ok_msg("Der Spieler mit der ID ".$_GET['kick']." wurde gekickt!");
 			}
 
 			echo "<h2>Session-Log</h2>";
-			$res=dbquery("SELECT user_nick,user_id,COUNT(*) as cnt FROM ".$db_table['users'].",user_sessionlog WHERE log_user_id=user_id GROUP BY user_id ORDER BY user_nick;");
+			$res=dbquery("SELECT user_nick,user_id,COUNT(*) as cnt FROM users,user_sessionlog WHERE log_user_id=user_id GROUP BY user_id ORDER BY user_nick;");
 			if (mysql_num_rows($res)>0)
 			{
 				echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
@@ -151,7 +151,7 @@
 			echo "<h2>Aktive Sessions</h2>";
 			echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
 			echo "Das User-Timeout betr&auml;gt ".$conf['user_timeout']['v']." Sekunden.";
-			$res=dbquery("SELECT * FROM ".$db_table['users']." WHERE user_acttime>".(time()-$conf['user_timeout']['v'])." AND user_session_key!='' ORDER BY user_acttime DESC;");
+			$res=dbquery("SELECT * FROM users WHERE user_acttime>".(time()-$conf['user_timeout']['v'])." AND user_session_key!='' ORDER BY user_acttime DESC;");
 			if (mysql_num_rows($res)>0)
 			{
  				echo "Es sind ".mysql_num_rows($res)." Sessions aktiv. <input type=\"submit\" name=\"kick_all\" value=\"Alle User kicken\" onclick=\"return confirm('Sollen wirklich alle User aus dem Spiel geworfen werden?');\" /><br/><br/>";

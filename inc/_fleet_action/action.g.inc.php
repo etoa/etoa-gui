@@ -14,13 +14,13 @@
 						fs.fs_ship_cnt
 					FROM
 						(
-							".$db_table['fleet_ships']." AS fs 
+							fleet_ships AS fs 
 							INNER JOIN 
-							".$db_table['fleet']." AS f 
+							fleet AS f 
 							ON fs.fs_fleet_id = f.fleet_id 
 						) 
 						INNER JOIN 
-						".$db_table['ships']." AS s 
+						ships AS s 
 						ON fs.fs_ship_id = s.ship_id
 						AND f.fleet_id='".$arr['fleet_id']."'
 					GROUP BY
@@ -36,7 +36,7 @@
                     		// "Zerstörte" Schiffe aus der Flotte löschen
                         dbquery("
 												UPDATE
-													".$db_table['fleet_ships']."
+													fleet_ships
 												SET
 													fs_ship_cnt=fs_ship_cnt-'".$ship_destroy."'
 												WHERE
@@ -59,7 +59,7 @@
 			$fuelRes = dbquery("SELECT
 									planet_res_fuel
 								FROM
-									".$db_table['planets']."
+									planets
 								WHERE
 									planet_id='".$arr['fleet_planet_to']."';");
 			$fuelArr = mysql_fetch_array($fuelRes);
@@ -74,7 +74,7 @@
 			//Tritium nach dem Saugen berechnen und speichern
 			$newFuel = $fuelArr['planet_res_fuel'] - $fuel;
 			dbquery("UPDATE 
-						".$db_table['planets']." 
+						planets 
 					SET 
 						planet_res_fuel='".$newFuel."' 
 					WHERE 
@@ -94,7 +94,7 @@
       //Erbeutete Rohstoffsumme speichern
       dbquery("
 			UPDATE
-				".$db_table['users']."
+				users
 			SET
 				user_res_from_nebula=user_res_from_nebula+'".$fuel."'
 			WHERE

@@ -632,7 +632,7 @@
 					// Speichert Schiffe durch durch den generierten String
 	        dbquery("
 					INSERT INTO
-					".$db_table['fleet_ships']."
+					fleet_ships
 					(
 						fs_fleet_id,
 						fs_ship_id,

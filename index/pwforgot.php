@@ -38,7 +38,7 @@
 				user_css_style,
 				user_registered 
 			FROM 
-				".$db_table['users']." 
+				users 
 			WHERE 
 				LCASE(user_nick)='".strtolower($_POST['user_nick'])."' 
 				AND user_email_fix='".$_POST['user_email_fix']."'
@@ -56,7 +56,7 @@
 				send_mail(0,$_POST['user_email_fix'],"Passwort-Anforderung",$email_text,$arr['user_css_style'],"left");
 	
 				// Passwort updaten
-				dbquery("UPDATE ".$db_table['users']." SET user_password='".pw_salt($pw,$arr['user_registered'])."' WHERE user_nick='".$_POST['user_nick']."' AND user_email_fix='".$_POST['user_email_fix']."';");
+				dbquery("UPDATE users SET user_password='".pw_salt($pw,$arr['user_registered'])."' WHERE user_nick='".$_POST['user_nick']."' AND user_email_fix='".$_POST['user_email_fix']."';");
 			
 				// Log hinzufügen
 				add_log(3,"Der Benutzer ".$_POST['user_nick']." hat ein neues Passwort per E-Mail angefordert!",time());

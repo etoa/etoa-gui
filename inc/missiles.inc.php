@@ -7,7 +7,7 @@
 	*/
 	function missile_battle($fid)
 	{
-		global $db_table, $conf;
+		global $conf;
 			
  		// Kampf abbrechen und Raketen zum Startplanet schicken wenn Kampfsperre aktiv ist
  	 	if ($conf['battleban']['v']!=0 && $conf['battleban_time']['p1']<=time() && $conf['battleban_time']['p2']>time())

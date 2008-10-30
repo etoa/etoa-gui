@@ -12,7 +12,7 @@
 	// VARIABLES
 	
 	define("MODUL_NAME","Schiff-Kategorien");				
-	define("DB_TABLE", $db_table['ship_cat']);
+	define("DB_TABLE", 'ship_cat');
 	define("DB_TABLE_ID", "cat_id");
 	define("DB_OVERVIEW_ORDER_FIELD","cat_order");
 	

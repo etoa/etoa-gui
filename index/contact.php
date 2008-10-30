@@ -38,9 +38,9 @@
 				user_email,
 				group_name
 			FROM 
-				".$db_table['admin_users']."
+				admin_users
 			INNER JOIN
-				".$db_table['admin_groups']."
+				admin_groups
 				ON user_admin_rank=group_id
 				AND group_level<3
 		;");

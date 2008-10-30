@@ -197,40 +197,40 @@
 
 		if ($_GET['action']=="cleanranks")
 		{
-			$res=dbquery("SELECT rank_alliance_id,rank_id FROM ".$db_table['alliance_ranks'].";");
+			$res=dbquery("SELECT rank_alliance_id,rank_id FROM alliance_ranks;");
 			if (mysql_num_rows($res)>0)
 			{
 				while($arr=mysql_fetch_array($res))
 					if (!in_array($arr['rank_alliance_id'],$ally_ids))
-						dbquery("DELETE FROM ".$db_table['alliance_ranks']." WHERE rank_id=".$arr['rank_id'].";");
+						dbquery("DELETE FROM alliance_ranks WHERE rank_id=".$arr['rank_id'].";");
 			}			
 			echo "Fehlerhafte Daten gel&ouml;scht<br/>";
 		}
 		elseif ($_GET['action']=="clearbnd")
 		{
-			$res=dbquery("SELECT alliance_bnd_alliance_id1,alliance_bnd_alliance_id2,alliance_bnd_id FROM ".$db_table['alliance_bnd'].";");
+			$res=dbquery("SELECT alliance_bnd_alliance_id1,alliance_bnd_alliance_id2,alliance_bnd_id FROM alliance_bnd;");
 			if (mysql_num_rows($res)>0)
 			{
 				while($arr=mysql_fetch_array($res))
 					if (!in_array($arr['alliance_bnd_alliance_id1'],$ally_ids) || !in_array($arr['alliance_bnd_alliance_id2'],$ally_ids))
-						dbquery("DELETE FROM ".$db_table['alliance_bnd']." WHERE alliance_bnd_id=".$arr['alliance_bnd_id'].";");
+						dbquery("DELETE FROM alliance_bnd WHERE alliance_bnd_id=".$arr['alliance_bnd_id'].";");
 			}		
 			echo "Fehlerhafte Daten gel&ouml;scht<br/>";
 		}
 		elseif ($_GET['action']=="dropinactive")
 		{
-			$res = dbquery("SELECT * FROM ".$db_table['alliances']." ORDER BY alliance_tag;");
+			$res = dbquery("SELECT * FROM alliances ORDER BY alliance_tag;");
 			if (mysql_num_rows($res)>0)
 			{
 				$cnt=0;
 				while ($arr = mysql_fetch_array($res))
 				{
-					$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM ".$db_table['users']." WHERE user_alliance_id=".$arr['alliance_id'].";"));
+					$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM users WHERE user_alliance_id=".$arr['alliance_id'].";"));
 					if ($tblcnt[0]==0)
 					{
-						dbquery("DELETE FROM ".$db_table['alliances']." WHERE alliance_id=".$arr['alliance_id'].";");
-						dbquery("DELETE FROM ".$db_table['alliance_ranks']." WHERE rank_alliance_id='".$arr['alliance_id']."';");
-						dbquery("DELETE FROM ".$db_table['alliance_bnd']." WHERE alliance_bnd_alliance_id1='".$arr['alliance_id']."' OR alliance_bnd_alliance_id2='".$arr['alliance_id']."';");
+						dbquery("DELETE FROM alliances WHERE alliance_id=".$arr['alliance_id'].";");
+						dbquery("DELETE FROM alliance_ranks WHERE rank_alliance_id='".$arr['alliance_id']."';");
+						dbquery("DELETE FROM alliance_bnd WHERE alliance_bnd_alliance_id1='".$arr['alliance_id']."' OR alliance_bnd_alliance_id2='".$arr['alliance_id']."';");
 						$cnt++;
 					}
 				}
@@ -243,7 +243,7 @@
 		{
 			// Ränge ohne Allianz    	
 			echo "<h2>R&auml;nge ohne Allianz:</h2>";
-			$res=dbquery("SELECT rank_alliance_id FROM ".$db_table['alliance_ranks'].";");
+			$res=dbquery("SELECT rank_alliance_id FROM alliance_ranks;");
 			if (mysql_num_rows($res)>0)
 			{
 				$cnt=0;
@@ -258,7 +258,7 @@
 			
 			// Bündnisse/Kriege ohne Allianz
 			echo "<h2>B&uuml;ndnisse/Kriege ohne Allianz:</h2>";
-			$res=dbquery("SELECT alliance_bnd_alliance_id1,alliance_bnd_alliance_id2 FROM ".$db_table['alliance_bnd'].";");
+			$res=dbquery("SELECT alliance_bnd_alliance_id1,alliance_bnd_alliance_id2 FROM alliance_bnd;");
 			if (mysql_num_rows($res)>0)
 			{
 				$cnt=0;
@@ -350,7 +350,7 @@
 		
 		if (($_POST['alliance_search']!="" || $_SESSION['admin']['queries']['alliances']!="") && $_GET['action']=="search")
 		{
-			$tables = $db_table['alliances'];
+			$tables = 'alliances';
   	
   		if ($_SESSION['admin']['queries']['alliances']=="")
   		{
@@ -412,7 +412,7 @@
 				echo "</tr>";
 				while ($arr = mysql_fetch_array($res))
 				{
-					$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM ".$db_table['users']." WHERE user_alliance_id=".$arr['alliance_id'].";"));
+					$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM users WHERE user_alliance_id=".$arr['alliance_id'].";"));
 					if ($tblcnt[0]==0)
 						$allyCol=USER_COLOR_INACTIVE;
 					else
@@ -446,7 +446,7 @@
 		elseif ($_GET['sub']=="dropinactive")
 		{
 			echo "Sollen folgende leeren Allianzen gel&ouml;scht werden?<br/><br/>";
-			$res = dbquery("SELECT * FROM ".$db_table['alliances']." ORDER BY alliance_tag;");
+			$res = dbquery("SELECT * FROM alliances ORDER BY alliance_tag;");
 			
 			if (mysql_num_rows($res)>0)
 			{
@@ -463,7 +463,7 @@
 				$cnt=0;
 				while ($arr = mysql_fetch_array($res))
 				{
-					$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM ".$db_table['users']." WHERE user_alliance_id=".$arr['alliance_id'].";"));
+					$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM users WHERE user_alliance_id=".$arr['alliance_id'].";"));
 					if ($tblcnt[0]==0)
 					{
 						echo "<tr>";
@@ -516,7 +516,7 @@
 				// Daten speichern
 				dbquery("
 				UPDATE 
-					".$db_table['alliances']." 
+					alliances 
 				SET 
 					alliance_name='".$_POST['alliance_name']."',
 					alliance_tag='".$_POST['alliance_tag']."',
@@ -531,20 +531,20 @@
 				// Ränge speichern
 				if (count($_POST['rank_del'])>0)
 					foreach($_POST['rank_del'] as $k=>$v)
-						dbquery("DELETE FROM ".$db_table['alliance_ranks']." WHERE rank_id='$k';");
+						dbquery("DELETE FROM alliance_ranks WHERE rank_id='$k';");
 				if (count($_POST['rank_name'])>0)
 					foreach($_POST['rank_name'] as $k=>$v)
-						dbquery("UPDATE ".$db_table['alliance_ranks']." SET rank_name='".addslashes($v)."',rank_level='".$_POST['rank_level'][$k]."',rank_points='".$_POST['rank_points'][$k]."' WHERE rank_id='$k';");
+						dbquery("UPDATE alliance_ranks SET rank_name='".addslashes($v)."',rank_level='".$_POST['rank_level'][$k]."',rank_points='".$_POST['rank_points'][$k]."' WHERE rank_id='$k';");
 				// Bündnisse / Kriege speichern
 				if (count($_POST['alliance_bnd_del'])>0)
 					foreach($_POST['alliance_bnd_del'] as $k=>$v)
-						dbquery("DELETE FROM ".$db_table['alliance_bnd']." WHERE alliance_bnd_id='$k';");
+						dbquery("DELETE FROM alliance_bnd WHERE alliance_bnd_id='$k';");
 				if (count($_POST['alliance_bnd_alliance_id2'])>0)
 					foreach($_POST['alliance_bnd_alliance_id2'] as $k=>$v)
-						dbquery("UPDATE ".$db_table['alliance_bnd']." SET alliance_bnd_alliance_id2='".$v."',alliance_bnd_level='".$_POST['alliance_bnd_level'][$k]."',alliance_bnd_text='".$_POST['alliance_bnd_text'][$k]."' WHERE alliance_bnd_id='$k';");
+						dbquery("UPDATE alliance_bnd SET alliance_bnd_alliance_id2='".$v."',alliance_bnd_level='".$_POST['alliance_bnd_level'][$k]."',alliance_bnd_text='".$_POST['alliance_bnd_text'][$k]."' WHERE alliance_bnd_id='$k';");
 			}
 			
-			$res = dbquery("SELECT * FROM ".$db_table['alliances']." WHERE alliance_id=".$_GET['alliance_id'].";");
+			$res = dbquery("SELECT * FROM alliances WHERE alliance_id=".$_GET['alliance_id'].";");
 			if (mysql_num_rows($res)>0)
 			{
 				$arr = mysql_fetch_array($res);
@@ -577,7 +577,7 @@
 				
 				
 				echo "<tr><td class=\"tbltitle\" valign=\"top\">Mitglieder</td><td class=\"tbldata\">";
-				$ures = dbquery("SELECT user_id,user_nick,user_points FROM ".$db_table['users']." WHERE user_alliance_id=".$arr['alliance_id']." ORDER BY user_points DESC,user_nick;");
+				$ures = dbquery("SELECT user_id,user_nick,user_points FROM users WHERE user_alliance_id=".$arr['alliance_id']." ORDER BY user_points DESC,user_nick;");
 				if (mysql_num_rows($ures)>0)
 				{
 					echo "<table style=\"width:100%\">";
@@ -589,7 +589,7 @@
 					echo "<b>KEINE MITGLIEDER!</b>";
 				echo "</td></tr>";
 				echo "<tr><td class=\"tbltitle\" valign=\"top\">R&auml;nge</td><td class=\"tbldata\">";
-				$rres = dbquery("SELECT rank_id,rank_level,rank_name,rank_points FROM ".$db_table['alliance_ranks']." WHERE rank_alliance_id=".$arr['alliance_id']." ORDER BY rank_level DESC;");
+				$rres = dbquery("SELECT rank_id,rank_level,rank_name,rank_points FROM alliance_ranks WHERE rank_alliance_id=".$arr['alliance_id']." ORDER BY rank_level DESC;");
 				if (mysql_num_rows($rres)>0)
 				{
 					echo "<table style=\"width:100%\">";
@@ -614,7 +614,7 @@
 					echo "<b>Keine R&auml;nge vorhanden!</b>";
 				echo "</td></tr>";
 				echo "<tr><td class=\"tbltitle\" valign=\"top\">B&uuml;ndnisse/Kriege</td><td class=\"tbldata\">";
-				$bres = dbquery("SELECT * FROM ".$db_table['alliance_bnd']." WHERE alliance_bnd_alliance_id1=".$arr['alliance_id']." ORDER BY alliance_bnd_level DESC,alliance_bnd_date DESC;");
+				$bres = dbquery("SELECT * FROM alliance_bnd WHERE alliance_bnd_alliance_id1=".$arr['alliance_id']." ORDER BY alliance_bnd_level DESC,alliance_bnd_date DESC;");
 				if (mysql_num_rows($bres)>0)
 				{
 					echo "<table style=\"width:100%\">";
@@ -666,7 +666,7 @@
 		
 		elseif ($_GET['sub']=="drop")
 		{
-			$res = dbquery("SELECT * FROM ".$db_table['alliances']." WHERE alliance_id=".$_GET['alliance_id'].";");
+			$res = dbquery("SELECT * FROM alliances WHERE alliance_id=".$_GET['alliance_id'].";");
 			if (mysql_num_rows($res)>0)
 			{
 				$arr = mysql_fetch_array($res);
@@ -683,7 +683,7 @@
 				echo "<tr><td class=\"tbltitle\" valign=\"top\">Website</td><td class=\"tbldata\">".$arr['alliance_url']."</td></tr>";
 				echo "<tr><td class=\"tbltitle\" valign=\"top\">Bild</td><td class=\"tbldata\">".$arr['alliance_img']."<br/><img src=\"".$arr['alliance_img']."\" width=\"100%\" /></td></tr>";
 				echo "<tr><td class=\"tbltitle\" valign=\"top\">Mitglieder</td><td class=\"tbldata\">";
-				$ures = dbquery("SELECT user_id,user_nick,user_points FROM ".$db_table['users']." WHERE user_alliance_id=".$arr['alliance_id']." ORDER BY user_nick;");
+				$ures = dbquery("SELECT user_id,user_nick,user_points FROM users WHERE user_alliance_id=".$arr['alliance_id']." ORDER BY user_nick;");
 				if (mysql_num_rows($ures)>0)
 				{
 					echo "<table style=\"width:100%\">";
@@ -723,18 +723,18 @@
 			// Leere Allianzen löschen
 			if ($_GET['action']=="dropinactive")
 			{
-				$res = dbquery("SELECT * FROM ".$db_table['alliances']." ORDER BY alliance_tag;");
+				$res = dbquery("SELECT * FROM alliances ORDER BY alliance_tag;");
 				if (mysql_num_rows($res)>0)
 				{
 					$cnt=0;
 					while ($arr = mysql_fetch_array($res))
 					{
-						$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM ".$db_table['users']." WHERE user_alliance_id=".$arr['alliance_id'].";"));
+						$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM users WHERE user_alliance_id=".$arr['alliance_id'].";"));
 						if ($tblcnt[0]==0)
 						{
-							dbquery("DELETE FROM ".$db_table['alliances']." WHERE alliance_id=".$arr['alliance_id'].";");
-							dbquery("DELETE FROM ".$db_table['alliance_ranks']." WHERE rank_alliance_id='".$arr['alliance_id']."';");
-							dbquery("DELETE FROM ".$db_table['alliance_bnd']." WHERE alliance_bnd_alliance_id1='".$arr['alliance_id']."' OR alliance_bnd_alliance_id2='".$arr['alliance_id']."';");
+							dbquery("DELETE FROM alliances WHERE alliance_id=".$arr['alliance_id'].";");
+							dbquery("DELETE FROM alliance_ranks WHERE rank_alliance_id='".$arr['alliance_id']."';");
+							dbquery("DELETE FROM alliance_bnd WHERE alliance_bnd_alliance_id1='".$arr['alliance_id']."' OR alliance_bnd_alliance_id2='".$arr['alliance_id']."';");
 							$cnt++;
 						}
 					}
@@ -752,7 +752,7 @@
 			echo "<tr><td class=\"tbltitle\">Text</td><td class=\"tbldata\"><input type=\"text\" name=\"alliance_text\" value=\"\" size=\"20\" maxlength=\"250\" /> ";fieldqueryselbox('alliance_text');echo "</td></tr>";
 			echo "</table>";
 			echo "<br/><input type=\"submit\" name=\"alliance_search\" value=\"Suche starten\" /></form>";
-			$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM ".$db_table['alliances'].";"));
+			$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM alliances;"));
 			echo "<br/>Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.";	
 			
 		}

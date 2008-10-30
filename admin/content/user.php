@@ -160,7 +160,7 @@
 
 		if ((isset($_GET['special']) || isset($_POST['user_search']) || isset($_SESSION['admin']['user_query'])) && isset($_GET['action']) && $_GET['action']=="search")
 		{
-			$tables = $db_table['users'];
+			$tables = 'users';
 
 			if (isset($_GET['special']))
 			{
@@ -218,7 +218,7 @@
 				if ($_POST['user_alliance']!="")
 				{
 					$sql.= " AND user_alliance_id=alliance_id AND alliance_name LIKE '%".$_POST['user_alliance']."%'";
-					$tables.=",".$db_table['alliances'];
+					$tables.=",".'alliances';
 				}
 				if ($_POST['user_race_id']!="")
 				{
@@ -383,7 +383,7 @@
 			echo "</table>";
 			echo "<br/><input type=\"submit\" name=\"user_search\" value=\"Suche starten\" /></form>";
 
-			$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM ".$db_table['users'].";"));
+			$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM users;"));
 			echo "<br/>Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.";
 
 		}

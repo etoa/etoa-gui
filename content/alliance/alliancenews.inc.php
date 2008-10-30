@@ -19,7 +19,7 @@ if (Alliance::checkActionRights('alliancenews'))
 			
 			dbquery("
 			INSERT INTO 
-			".$db_table['alliance_news']."
+			alliance_news
 			(alliance_news_alliance_id,
 			alliance_news_user_id,
 			alliance_news_title,
@@ -119,7 +119,7 @@ if (Alliance::checkActionRights('alliancenews'))
       alliance_tag,
       alliance_name
 		FROM
-			".$db_table['alliances']."");
+			alliances");
 		while ($alliances=mysql_fetch_assoc($alliance))
 		{
 			echo "<option value=\"".$alliances['alliance_id']."\"";

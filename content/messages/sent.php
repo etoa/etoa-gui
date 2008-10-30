@@ -59,7 +59,7 @@
 				message_data as md
 				ON md.id=message_id							
 			LEFT JOIN
-				".$db_table['users']."
+				users
 				ON message_user_to=user_id				
 			WHERE
         message_user_from='".$cu->id()."'

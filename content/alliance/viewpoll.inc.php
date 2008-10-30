@@ -5,10 +5,10 @@
 
 	if (isset($_POST['vote_submit']) && checker_verify() && isset($_GET['vote']) && $_GET['vote']>0 && isset($_POST['poll_answer']) && $_POST['poll_answer']>0)
 	{
-		dbquery("UPDATE ".$db_table['alliance_polls']." SET poll_a".$_POST['poll_answer']."_count=poll_a".$_POST['poll_answer']."_count+1 WHERE poll_alliance_id=".$arr['alliance_id']." AND poll_id=".$_GET['vote'].";");
+		dbquery("UPDATE alliance_polls SET poll_a".$_POST['poll_answer']."_count=poll_a".$_POST['poll_answer']."_count+1 WHERE poll_alliance_id=".$arr['alliance_id']." AND poll_id=".$_GET['vote'].";");
 		if (mysql_affected_rows()==1)
 		{
-			dbquery("INSERT INTO ".$db_table['alliance_poll_votes']." (
+			dbquery("INSERT INTO alliance_poll_votes (
 				vote_poll_id,
 				vote_user_id,
 				vote_alliance_id,
@@ -26,7 +26,7 @@
 	SELECT
 		*
 	FROM
-		".$db_table['alliance_polls']."
+		alliance_polls
 	WHERE
 		poll_alliance_id=".$arr['alliance_id']."
 	ORDER BY
@@ -41,7 +41,7 @@
 			SELECT
 				vote_id
 			FROM
-				".$db_table['alliance_poll_votes']."
+				alliance_poll_votes
 			WHERE
 				vote_poll_id=".$parr['poll_id']."
 				AND vote_user_id=".$cu->id()."

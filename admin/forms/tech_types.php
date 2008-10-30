@@ -29,7 +29,7 @@
 	// VARIABLES
 	
 	define("MODUL_NAME","Technoligiekategorien");				
-	define("DB_TABLE", $db_table['tech_types']);
+	define("DB_TABLE", 'tech_types');
 	define("DB_TABLE_ID", "type_id");
 	define("DB_OVERVIEW_ORDER_FIELD","type_order");
 	

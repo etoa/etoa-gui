@@ -192,7 +192,7 @@
 							SELECT 
 								COUNT(alliance_bnd_id)
 							FROM 
-								".$db_table['alliance_bnd']." 
+								alliance_bnd 
 							WHERE 
 								(
 									(
@@ -213,7 +213,7 @@
 							SELECT 
 								COUNT(alliance_bnd_id) 
 							FROM 
-								".$db_table['alliance_bnd']." 
+								alliance_bnd 
 							WHERE 
 								(
 									(

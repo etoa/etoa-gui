@@ -45,7 +45,7 @@
 			def_id,
 			def_name,
 			def_points
-		FROM ".$db_table['defense']."
+		FROM defense
 		ORDER BY def_points DESC, def_name DESC;");
 		if (mysql_num_rows($res)>0)
 		{
@@ -122,10 +122,10 @@
 			FROM 
 				deflist,
 				entities,
-				".$db_table['planets'].",
+				planets,
 				cells,
-				".$db_table['users'].",
-				".$db_table['defense']." 
+				users,
+				defense 
 			WHERE 
 				planets.id=entities.id
 		    AND	entities.cell_id=cells.id 
@@ -157,7 +157,7 @@
 				$_SESSION['defedit']['query']="";
 				
 				// Verteidigung laden
-				$bres = dbquery("SELECT def_id,def_name FROM ".$db_table['defense']." ORDER BY def_name;");
+				$bres = dbquery("SELECT def_id,def_name FROM defense ORDER BY def_name;");
 				$slist=array();
 				while ($barr=mysql_fetch_array($bres))
 					$slist[$barr['def_id']]=$barr['def_name'];					
@@ -372,7 +372,7 @@
 			$_SESSION['defedit']['query']="";
 
 			// Verteidigung laden
-			$bres = dbquery("SELECT def_id,def_name FROM ".$db_table['defense']." ORDER BY def_name;");
+			$bres = dbquery("SELECT def_id,def_name FROM defense ORDER BY def_name;");
 			$dlist=array();
 			while ($barr=mysql_fetch_array($bres))
 				$dlist[$barr['def_id']]=$barr['def_name'];	

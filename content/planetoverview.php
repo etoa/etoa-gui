@@ -85,11 +85,11 @@
 				$t = $cp->userChanged()+COLONY_DELETE_THRESHOLD;
 				if ($t < time())
 				{							
-					if (mysql_num_rows(dbquery("SELECT shiplist_id FROM ".$db_table['shiplist']." WHERE shiplist_entity_id='".$cp->id."' AND shiplist_count>0;"))==0)
+					if (mysql_num_rows(dbquery("SELECT shiplist_id FROM shiplist WHERE shiplist_entity_id='".$cp->id."' AND shiplist_count>0;"))==0)
 					{
-						if (mysql_num_rows(dbquery("SELECT id FROM ".$db_table['fleet']." WHERE entity_to='".$cp->id."' OR entity_from='".$cp->id."';"))==0)
+						if (mysql_num_rows(dbquery("SELECT id FROM fleet WHERE entity_to='".$cp->id."' OR entity_from='".$cp->id."';"))==0)
 						{
-							if (mysql_num_rows(dbquery("SELECT id FROM ".$db_table['planets']." WHERE id='".$cp->id."' AND planet_user_id='".$s['user']['id']."' AND planet_user_main=0;"))==1)
+							if (mysql_num_rows(dbquery("SELECT id FROM planets WHERE id='".$cp->id."' AND planet_user_id='".$s['user']['id']."' AND planet_user_main=0;"))==1)
 							{
 								if (reset_planet($cp->id))
 								{
@@ -98,7 +98,7 @@
 									SELECT
 										id
 									FROM
-		                                ".$db_table['planets']."
+		                                planets
 									WHERE
 		                                planet_user_id='".$s['user']['id']."'
 		                                AND planet_user_main=1;");
@@ -150,8 +150,8 @@
 				buildings.building_fields * buildlist.buildlist_current_level AS fields,
 				buildlist.buildlist_current_level as cnt
 			FROM
-				".$db_table['buildings'].",
-				".$db_table['buildlist']."
+				buildings,
+				buildlist
 			WHERE
 				buildlist.buildlist_building_id=buildings.building_id
 				AND buildlist.buildlist_entity_id=".$cp->id."
@@ -182,8 +182,8 @@
 				defense.def_fields * deflist.deflist_count AS fields,
 				deflist.deflist_count as cnt
 			FROM
-				".$db_table['defense'].",
-				".$db_table['deflist']."
+				defense,
+				deflist
 			WHERE
 				deflist.deflist_def_id=defense.def_id
 				AND deflist.deflist_entity_id=".$cp->id."

@@ -315,14 +315,14 @@ select#nav_mode_select	{
 	background:#000000;
 }
 
-/* Allgemeine Tabellen definition welche gestreckt ist (infobox_start("",1)) */
+/* Allgemeine Tabellen definition welche gestreckt ist (infobox) */
 .tbl, table.tb	{
 	width:100%;
 	margin:0px auto;
 	border:1px solid #ffffff;
 }
 
-/* Allgemeine Tabellen definition für "gestauchte" tabellen (infobox_start("",0)) */
+/* Allgemeine Tabellen definition für "gestauchte" tabellen (infobox) */
 .tblc	{
 	margin:0px auto;
 	border:1px solid #ffffff;

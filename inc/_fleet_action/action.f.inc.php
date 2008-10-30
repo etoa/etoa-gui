@@ -72,7 +72,7 @@
 		
      dbquery("
 			UPDATE
-				".$db_table['planets']."
+				planets
 			SET
 				planet_res_metal=planet_res_metal-'".$load[0]."',
 				planet_res_crystal=planet_res_crystal-'".$load[1]."',

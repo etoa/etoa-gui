@@ -8,8 +8,6 @@ function showAllianceMembers($alliance_id=0,$field_id)
 	ob_start();
   $objResponse = new xajaxResponse();
   
-  global $db_table;
-	
 	if($alliance_id!=0)
 	{
 		$members = "";
@@ -28,7 +26,7 @@ function showAllianceMembers($alliance_id=0,$field_id)
 			points_buildings,
 			points_exp
 		FROM 
-			".$db_table['users']."
+			users
 		LEFT JOIN
 			user_stats
 			ON id=user_id

@@ -18,7 +18,7 @@
 		{
 			dbquery("
 			UPDATE 
-				".$db_table['config']." 
+				config 
 			SET 
 				config_value=0,
 				config_param1='' 
@@ -38,7 +38,7 @@
 			{
 				dbquery("
 				UPDATE 
-					".$db_table['config']." 
+					config 
 				SET 
 					config_param1='".$flightban_from."',
 					config_param2='".$flightban_to."' 
@@ -47,7 +47,7 @@
 					
 				dbquery("
 				UPDATE 
-					".$db_table['config']." 
+					config 
 				SET 
 					config_value=1,
 					config_param1='".addslashes($_POST['flightban_reason'])."' 
@@ -70,7 +70,7 @@
 		{
 			dbquery("
 			UPDATE 
-				".$db_table['config']." 
+				config 
 			SET 
 				config_value=0,
 				config_param1='' 
@@ -91,7 +91,7 @@
 				
 				dbquery("
 				UPDATE 
-					".$db_table['config']." 
+					config 
 				SET 
 					config_value=1,
 					config_param1='".addslashes($_POST['battleban_reason'])."'
@@ -100,7 +100,7 @@
 					
 				dbquery("
 				UPDATE 
-					".$db_table['config']." 
+					config 
 				SET 
 					config_param1='".addslashes($_POST['battleban_arrival_text_fleet'])."',
 					config_param2='".addslashes($_POST['battleban_arrival_text_missiles'])."'
@@ -109,7 +109,7 @@
 					
 				dbquery("
 				UPDATE 
-					".$db_table['config']." 
+					config 
 				SET 
 					config_param1='".$battleban_from."',
 					config_param2='".$battleban_to."' 
@@ -144,7 +144,7 @@
 		{
 			dbquery("
 			UPDATE 
-				".$db_table['config']." 
+				config 
 			SET 
 				config_value=0,
 				config_param1='' 
@@ -158,7 +158,7 @@
 		{
 			dbquery("
 			UPDATE 
-				".$db_table['config']." 
+				config 
 			SET 
 				config_value=1,
 				config_param1='".addslashes($_POST['ban_reason'])."' 
@@ -357,12 +357,12 @@
 		echo "<h2>Kampfsperre</h2><form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
 		if ($_POST['battleban_deactivate']!="")
 		{
-			dbquery("UPDATE ".$db_table['config']." SET config_value=0,config_param1='' WHERE config_name='battleban';");
+			dbquery("UPDATE config SET config_value=0,config_param1='' WHERE config_name='battleban';");
 			$conf['battleban']['v']=0;
 		}
 		if ($_POST['battleban_activate']!="")
 		{
-			dbquery("UPDATE ".$db_table['config']." SET config_value=1,config_param1='".addslashes($_POST['ban_reason'])."' WHERE config_name='battleban';");
+			dbquery("UPDATE config SET config_value=1,config_param1='".addslashes($_POST['ban_reason'])."' WHERE config_name='battleban';");
 			$conf['battleban']['v']=1;
 			$conf['battleban']['p1']=addslashes($_POST['ban_reason']);
 		}
@@ -395,7 +395,7 @@
 							dbquery("DELETE FROM fleet WHERE fleet_id=".$farr['fleet_id'].";");
 							dbquery("
 							UPDATE
-								".$db_table['planets']."
+								planets
 							SET
                                 planet_res_metal=planet_res_metal+".max($farr['fleet_res_metal'],0).",
                                 planet_res_crystal=planet_res_crystal+".max($farr['fleet_res_crystal'],0).",
@@ -571,7 +571,7 @@
 				ok_msg("Flottendaten geändert!");
 			}
 			
-			$ures=dbquery("SELECT user_id,user_nick FROM ".$db_table['users']." ORDER BY user_nick;");
+			$ures=dbquery("SELECT user_id,user_nick FROM users ORDER BY user_nick;");
 			$users=array();
 			while ($uarr=mysql_fetch_array($ures))
 			{
@@ -1018,7 +1018,7 @@
 					
 					echo "<input type=\"text\" name=\"fs_ship_cnt_new\" value=\"1\" size=\"5\" /> Schiffe des Typs 
 					<select name=\"fs_ship_id_new\">";
-					$ssres=dbquery("SELECT ship_id,ship_name FROM ".$db_table['ships']." ORDER BY ship_name;");
+					$ssres=dbquery("SELECT ship_id,ship_name FROM ships ORDER BY ship_name;");
 					while ($ssarr=mysql_fetch_array($ssres))
 					{
 						echo "<option value=\"".$ssarr['ship_id']."\">".$ssarr['ship_name']."</option>";
@@ -1339,7 +1339,7 @@
 			//
 			// Create fleet
 			//
-			$ures=dbquery("SELECT user_id,user_nick FROM ".$db_table['users']." ORDER BY user_nick;");
+			$ures=dbquery("SELECT user_id,user_nick FROM users ORDER BY user_nick;");
 			$users=array();
 			while ($uarr=mysql_fetch_array($ures))
 			{
@@ -1518,7 +1518,7 @@
 				<td class=\"tbldata\">
 					<input type=\"text\" name=\"fs_ship_cnt_new\" value=\"1\" size=\"5\" /> 
 					<select name=\"fs_ship_id_new\">";
-					$ssres=dbquery("SELECT ship_id,ship_name FROM ".$db_table['ships']." ORDER BY ship_name;");
+					$ssres=dbquery("SELECT ship_id,ship_name FROM ships ORDER BY ship_name;");
 					while ($ssarr=mysql_fetch_array($ssres))
 					{
 						echo "<option value=\"".$ssarr['ship_id']."\">".$ssarr['ship_name']."</option>";

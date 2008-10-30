@@ -549,7 +549,7 @@
 							// Auftrag speichern
     	        dbquery("
     	        INSERT INTO
-    	        ".$db_table['ship_queue']."
+    	        ship_queue
     	            (queue_user_id,
     	            queue_ship_id,
     	            queue_entity_id,
@@ -676,7 +676,7 @@
 					//Auftrag löschen
 					dbquery("
 					DELETE FROM
-					 ".$db_table['ship_queue']."
+					 ship_queue
 					WHERE
 						queue_id='".$id."';");
 						
@@ -690,7 +690,7 @@
 		    		queue_endtime,
 		    		queue_objtime
 					FROM
-						".$db_table['ship_queue']."
+						ship_queue
 					WHERE
 						queue_starttime>='".$end_time."'
 						AND queue_entity_id='".$cp->id."'
@@ -705,7 +705,7 @@
 							$new_endtime = $new_starttime + $tarr['queue_endtime'] - $tarr['queue_starttime'];
 							dbquery("
 							UPDATE
-								".$db_table['ship_queue']."
+								ship_queue
 							SET
 								queue_starttime='".$new_starttime."',
 								queue_endtime='".$new_endtime."'

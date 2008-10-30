@@ -18,17 +18,17 @@
         FROM 
 			(
 				(
-					".$db_table['fleet_ships']." AS fs 
+					fleet_ships AS fs 
 				INNER JOIN 
-					".$db_table['fleet']." AS f 
+					fleet AS f 
 				ON fs.fs_fleet_id = f.fleet_id
 				) 
 			INNER JOIN 
-				".$db_table['ships']." AS s 
+				ships AS s 
 			ON fs.fs_ship_id = s.ship_id
 			) 
 		INNER JOIN 
-			".$db_table['shiplist']." AS sl 
+			shiplist AS sl 
 		ON sl.shiplist_planet_id = f.fleet_planet_from 
 		AND sl.shiplist_user_id = f.fleet_user_id 
 		AND s.ship_id = sl.shiplist_ship_id

@@ -10,8 +10,8 @@
                 user_sitting_date,
                 user_sitting_days
             FROM
-                ".$db_table['user_sitting'].",
-                ".$db_table['users']."
+                user_sitting,
+                users
             WHERE
                 user_sitting_id='".$_GET['id']."'
                 AND user_sitting_user_id=user_id;");
@@ -44,7 +44,7 @@
             SELECT
                 *
             FROM
-                ".$db_table['user_sitting_date']."
+                user_sitting_date
             WHERE
                 user_sitting_date_user_id='".$arr['user_sitting_user_id']."'
                 AND user_sitting_date_from!=0
@@ -86,7 +86,7 @@
                 user_sitting_sitter_user_id,
                 user_sitting_date
             FROM
-                ".$db_table['user_sitting']."
+                user_sitting
             WHERE
                 user_sitting_active='1';");
             while ($arr = mysql_fetch_array($res))

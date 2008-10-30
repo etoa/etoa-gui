@@ -56,7 +56,7 @@
 	SELECT
 		techlist_current_level
 	FROM
-		".$db_table['techlist']."
+		techlist
 	WHERE
     techlist_user_id='".$cu->id()."'
     AND techlist_tech_id='".GEN_TECH_ID."';");
@@ -77,7 +77,7 @@
   	buildlist_people_working,
   	buildlist_deactivated
   FROM
-  	".$db_table['buildlist']."
+  	buildlist
   WHERE
   	buildlist_entity_id='".$cp->id()."'
   	AND buildlist_building_id='".FACTORY_ID."'
@@ -258,9 +258,9 @@
     	SELECT 
     			building_fields
     	FROM  
-    			".$db_table['buildings']." 
+    			buildings 
     			INNER JOIN
-    			".$db_table['buildlist']." 
+    			buildlist 
     			ON building_id=buildlist_building_id
     			AND buildlist_build_end_time>'0';");
 			if (mysql_num_rows($field_res)>0)
@@ -277,9 +277,9 @@
 			SELECT
 				SUM(def_fields * queue_cnt) AS fields
 			FROM
-				".$db_table['def_queue']."
+				def_queue
 			INNER JOIN
-  			".$db_table['defense']."
+  			defense
   		  ON queue_def_id=def_id
   		  AND queue_entity_id='".$cp->id()."'
   		  AND queue_endtime>'".time()."'
@@ -444,7 +444,7 @@
 				SELECT
 					queue_endtime
 				FROM
-					".$db_table['def_queue']."
+					def_queue
 				WHERE
   				queue_entity_id='".$cp->id()."'
   				AND queue_user_id='".$cu->id()."'
@@ -476,7 +476,7 @@
 						SELECT
 							*
 						FROM
-							".$db_table['defense']."
+							defense
 						WHERE
 							def_id='".$def_id."';
 						");
@@ -590,7 +590,7 @@
 							// Auftrag speichern
     	        dbquery("
     	        INSERT INTO
-    	        ".$db_table['def_queue']."
+    	        def_queue
     	            (queue_user_id,
     	            queue_def_id,
     	            queue_entity_id,
@@ -699,9 +699,9 @@
     			queue_objtime,
     			queue_cnt
 				FROM
-					".$db_table['def_queue']."
+					def_queue
 				INNER JOIN
- 	  			".$db_table['defense']."
+ 	  			defense
 	  		  ON queue_def_id=def_id
 					AND queue_id='".intval($_GET['cancel'])."'
 					AND queue_user_id='".$cu->id()."'
@@ -723,7 +723,7 @@
 					//Auftrag löschen
 					dbquery("
 					DELETE FROM
-					 ".$db_table['def_queue']."
+					 def_queue
 					WHERE
 						queue_id='".intval($_GET['cancel'])."';");
 
@@ -734,7 +734,7 @@
 						queue_starttime,
 						queue_endtime
 					FROM
-						".$db_table['def_queue']."
+						def_queue
 					WHERE
 						queue_starttime>='".$qarr['queue_endtime']."'
 						AND queue_user_id='".$cu->id()."'
@@ -750,7 +750,7 @@
 							$new_endtime=$new_starttime+$tarr['queue_endtime']-$tarr['queue_starttime'];
 							dbquery("
 							UPDATE
-								".$db_table['def_queue']."
+								def_queue
 							SET
 								queue_starttime='".$new_starttime."',
 								queue_endtime='".$new_endtime."'
@@ -809,9 +809,9 @@
     		queue_endtime,
     		queue_objtime
 			FROM
-    		".$db_table['def_queue']."
+    		def_queue
     	INNER JOIN
-    		".$db_table['defense']."
+    		defense
     		ON
     		queue_def_id=def_id
   			AND queue_entity_id='".$cp->id()."'
@@ -913,7 +913,7 @@
 	***********************/
 
 			// Vorausetzungen laden
-			$res = dbquery("SELECT * FROM ".$db_table['def_requirements'].";");
+			$res = dbquery("SELECT * FROM def_requirements;");
 			while ($arr = mysql_fetch_array($res))
 			{
 				//Gebäude Vorausetzungen
@@ -935,7 +935,7 @@
 			SELECT 
 				* 
 			FROM 
-				".$db_table['techlist']." 
+				techlist 
 			WHERE 
 				techlist_user_id='".$cu->id()."';");
 			while ($arr = mysql_fetch_array($res))
@@ -948,7 +948,7 @@
 			SELECT 
 				* 
 			FROM 
-				".$db_table['buildlist']." 
+				buildlist 
 			WHERE 
 				buildlist_entity_id='".$cp->id()."' 
 				AND buildlist_user_id='".$cu->id()."';");
@@ -963,7 +963,7 @@
 					cat_name,
 					cat_id
 				FROM
-					".$db_table['def_cat']."
+					def_cat
 				ORDER BY
 					cat_order
 			;");
@@ -998,9 +998,9 @@
     				def_max_count,
     				deflist_count
  					FROM
-    				".$db_table['defense']."
+    				defense
     			LEFT JOIN
-    				".$db_table['deflist']."
+    				deflist
   					ON deflist_def_id=def_id
   					AND deflist_entity_id='".$cp->id()."'
   	        AND deflist_user_id='".$cu->id()."'
@@ -1068,7 +1068,7 @@
     			      SELECT
     			          deflist_count
     			      FROM
-    			          ".$db_table['deflist']."
+    			          deflist
     			      WHERE
     			      		deflist_entity_id='".$cp->id()."'
     			          AND deflist_def_id='".$darr['def_id']."'

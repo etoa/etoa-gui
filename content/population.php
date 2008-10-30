@@ -82,7 +82,7 @@
         SELECT
         	SUM(buildlist_people_working)
         FROM
-        	".$db_table['buildlist']."
+        	buildlist
         WHERE
         	buildlist_entity_id=".$cp->id."
         	AND buildlist_people_working_status='1';");
@@ -108,7 +108,7 @@
 
             dbquery("
             UPDATE
-                ".$db_table['buildlist']."
+                buildlist
             SET
                 buildlist_people_working='".$work."'
             WHERE
@@ -124,7 +124,7 @@
 			SELECT
 				COUNT(queue_id)
 			FROM
-				".$db_table['ship_queue']."
+				ship_queue
 			WHERE
             	queue_entity_id='".$cp->id."'
                 AND queue_user_id='".$s['user_id']."'
@@ -139,7 +139,7 @@
 			SELECT
 				COUNT(queue_id)
 			FROM
-				".$db_table['def_queue']."
+				def_queue
 			WHERE
 				queue_entity_id='".$cp->id."'
 				AND queue_user_id='".$s['user_id']."'
@@ -154,7 +154,7 @@
 			SELECT
 				COUNT(techlist_id)
 			FROM
-            	".$db_table['techlist']."
+            	techlist
 			WHERE
             	techlist_entity_id='".$cp->id."'
                 AND techlist_user_id='".$s['user_id']."'
@@ -169,7 +169,7 @@
 			SELECT
 				COUNT(buildlist_id)
 			FROM
-	        	".$db_table['buildlist']."
+	        	buildlist
 			WHERE
 	        	buildlist_entity_id='".$cp->id."'
 	            AND buildlist_user_id='".$s['user_id']."'
@@ -188,7 +188,7 @@
 					{
 						dbquery("
 	  					UPDATE
-	  						".$db_table['buildlist']."
+	  						buildlist
 	  					SET
 	  						buildlist_people_working='0'
 	  					WHERE
@@ -215,8 +215,8 @@
                 buildings.building_people_place,
                 buildings.building_id
 			FROM
-                ".$db_table['buildlist'].",
-                ".$db_table['buildings']."
+                buildlist,
+                buildings
 			WHERE
                 buildlist.buildlist_building_id=buildings.building_id
                 AND buildings.building_workplace='1'
@@ -243,7 +243,7 @@
                         //Sperrt arbeiter
 	  					dbquery("
 	  					UPDATE
-	  						".$db_table['buildlist']."
+	  						buildlist
 	  					SET
 	  						buildlist_people_working_status='1'
 	  					WHERE
@@ -262,7 +262,7 @@
                         //Entsperrt arbeiter
 	  					dbquery("
 	  					UPDATE
-	  						".$db_table['buildlist']."
+	  						buildlist
 	  					SET
 	  						buildlist_people_working_status='0'
 	  					WHERE
@@ -289,7 +289,7 @@
 			SELECT
 				SUM(buildlist_people_working)
 			FROM
-				".$db_table['buildlist']."
+				buildlist
 			WHERE
 				buildlist_entity_id=".$cp->id.";");
 			$barr = mysql_fetch_array($bres);

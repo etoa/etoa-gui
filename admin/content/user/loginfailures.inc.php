@@ -31,7 +31,7 @@
 				failure_ip,
 				failure_host 
 			FROM 
-				".$db_table['login_failures']." 
+				login_failures 
 			INNER JOIN
 				users ON
 				failure_user_id=user_id

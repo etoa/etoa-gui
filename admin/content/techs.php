@@ -44,7 +44,7 @@
 		$res=dbquery("SELECT
 			tech_id,
 			tech_name
-		FROM ".$db_table['technologies']."
+		FROM technologies
 		ORDER BY tech_order,tech_name;");
 		if (mysql_num_rows($res)>0)
 		{
@@ -55,7 +55,7 @@
 				$pres=dbquery("SELECT
 					bp_level,
 					bp_points
-				FROM ".$db_table['tech_points']."
+				FROM tech_poins
 				WHERE bp_tech_id=".$arr['tech_id']."
 				ORDER BY bp_level ASC;");
 				if (mysql_num_rows($pres)>0)
@@ -131,17 +131,17 @@
 			foreach ($_POST['building_id'] as $id=>$val)
 			{
 				if ($_POST['building_level'][$id]<1)
-					dbquery("DELETE FROM ".$db_table[REQ_TBL]." WHERE req_id=$id;");
+					dbquery("DELETE FROM ".REQ_TBL." WHERE req_id=$id;");
 				else
-					dbquery("UPDATE ".$db_table[REQ_TBL]." SET req_req_building_id=$val,req_req_building_level=".$_POST['building_level'][$id]." WHERE req_id=$id;");
+					dbquery("UPDATE ".REQ_TBL." SET req_req_building_id=$val,req_req_building_level=".$_POST['building_level'][$id]." WHERE req_id=$id;");
 			}			
 			// Technologieänderungen speichern
 			foreach ($_POST['tech_id'] as $id=>$val)
 			{
 				if ($_POST['tech_level'][$id]<1)
-					dbquery("DELETE FROM ".$db_table[REQ_TBL]." WHERE req_id=$id;");
+					dbquery("DELETE FROM ".REQ_TBL." WHERE req_id=$id;");
 				else
-					dbquery("UPDATE ".$db_table[REQ_TBL]." SET req_req_tech_id=$val,req_req_tech_level=".$_POST['tech_level'][$id]." WHERE req_id=$id;");
+					dbquery("UPDATE ".REQ_TBL." SET req_req_tech_id=$val,req_req_tech_level=".$_POST['tech_level'][$id]." WHERE req_id=$id;");
 			}							
 		}
 
@@ -150,9 +150,9 @@
 		{
 			if ($_POST['new_item_id']!="")
 			{			
-				if (mysql_num_rows(dbquery("SELECT req_id FROM ".$db_table[REQ_TBL]." WHERE ".REQ_ITEM_FLD."=".$_POST['new_id']." AND req_req_building_id=".$_POST['new_item_id'].";"))==0)
+				if (mysql_num_rows(dbquery("SELECT req_id FROM ".REQ_TBL." WHERE ".REQ_ITEM_FLD."=".$_POST['new_id']." AND req_req_building_id=".$_POST['new_item_id'].";"))==0)
 				{
-					dbquery("INSERT INTO ".$db_table[REQ_TBL]." (".REQ_ITEM_FLD.",req_req_building_id,req_req_building_level) VALUES ('".$_POST['new_id']."','".$_POST['new_item_id']."','".$_POST['new_item_level']."');");
+					dbquery("INSERT INTO ".REQ_TBL." (".REQ_ITEM_FLD.",req_req_building_id,req_req_building_level) VALUES ('".$_POST['new_id']."','".$_POST['new_item_id']."','".$_POST['new_item_level']."');");
 				}			
 				else
 					echo "Fehler! Diese Geb&auml;udeverkn&uuml;pfung existiert bereits!<br/><br/>";
@@ -166,9 +166,9 @@
 		{
 			if ($_POST['new_item_id']!="")
 			{			
-				if (mysql_num_rows(dbquery("SELECT req_id FROM ".$db_table[REQ_TBL]." WHERE ".REQ_ITEM_FLD."=".$_POST['new_id']." AND req_req_tech_id=".$_POST['new_item_id'].";"))==0)
+				if (mysql_num_rows(dbquery("SELECT req_id FROM ".REQ_TBL." WHERE ".REQ_ITEM_FLD."=".$_POST['new_id']." AND req_req_tech_id=".$_POST['new_item_id'].";"))==0)
 				{
-					dbquery("INSERT INTO ".$db_table[REQ_TBL]." (".REQ_ITEM_FLD.",req_req_tech_id,req_req_tech_level) VALUES ('".$_POST['new_id']."','".$_POST['new_item_id']."','".$_POST['new_item_level']."');");
+					dbquery("INSERT INTO ".REQ_TBL." (".REQ_ITEM_FLD.",req_req_tech_id,req_req_tech_level) VALUES ('".$_POST['new_id']."','".$_POST['new_item_id']."','".$_POST['new_item_level']."');");
 				}			
 				else
 					echo "Fehler! Diese Forschungsverkn&uuml;pfung existiert bereits!<br/><br/>";
@@ -186,7 +186,7 @@
 				{
 					foreach ($req_req_building_id as $key=>$val)
 					{
-						dbquery("DELETE FROM ".$db_table[REQ_TBL]." WHERE ".REQ_ITEM_FLD."=$req_building_id AND req_req_building_id=$key;");
+						dbquery("DELETE FROM ".REQ_TBL." WHERE ".REQ_ITEM_FLD."=$req_building_id AND req_req_building_id=$key;");
 					}
 				}
 			}
@@ -201,7 +201,7 @@
 				{
 					foreach ($req_req_tech_id as $key=>$val)
 					{
-						dbquery("DELETE FROM ".$db_table[REQ_TBL]." WHERE ".REQ_ITEM_FLD."=$req_building_id AND req_req_tech_id=$key;");
+						dbquery("DELETE FROM ".REQ_TBL." WHERE ".REQ_ITEM_FLD."=$req_building_id AND req_req_tech_id=$key;");
 					}
 				}
 			}
@@ -209,19 +209,19 @@
 
 
 		// Lade Gebäude- & Technologienamen
-		$bures = dbquery("SELECT building_id,building_name FROM ".$db_table['buildings']." WHERE building_show=1;");
+		$bures = dbquery("SELECT building_id,building_name FROM buildings WHERE building_show=1;");
 		while ($buarr = mysql_fetch_array($bures))
 		{
 			$bu_name[$buarr['building_id']]=$buarr['building_name'];
 		}
-		$teres = dbquery("SELECT tech_id,tech_name FROM ".$db_table['technologies']." WHERE tech_show=1;");
+		$teres = dbquery("SELECT tech_id,tech_name FROM technologies WHERE tech_show=1;");
 		while ($tearr = mysql_fetch_array($teres))
 		{
 			$te_name[$tearr['tech_id']]=$tearr['tech_name'];
 		}	
   	
 		// Lade Anforderungen
-		$rres = dbquery("SELECT * FROM ".$db_table[REQ_TBL].";");
+		$rres = dbquery("SELECT * FROM ".REQ_TBL.";");
 		while ($rarr = mysql_fetch_array($rres))
 		{
 			$b_req[$rarr[REQ_ITEM_FLD]]['i'][$rarr['req_req_building_id']]=$rarr['req_id'];
@@ -230,7 +230,7 @@
 			if ($rarr['req_req_tech_id']>0) $b_req[$rarr[REQ_ITEM_FLD]]['t'][$rarr['req_req_tech_id']]=$rarr['req_req_tech_level'];
 		}
   	
-		$res = dbquery("SELECT * FROM ".$db_table[ITEMS_TBL]." WHERE ".ITEM_SHOW_FLD."=1 ORDER BY ".ITEM_ORDER_FLD.";");
+		$res = dbquery("SELECT * FROM ".ITEMS_TBL." WHERE ".ITEM_SHOW_FLD."=1 ORDER BY ".ITEM_ORDER_FLD.";");
 		if (mysql_num_rows($res)>0)
 		{
 			if ($_GET['action']=="new_building" || $_GET['action']=="new_tech")
@@ -393,9 +393,9 @@
 			if (isset($_POST['new']))
 			{
 				$updata=explode(":",$_POST['planet_id']);
-				if (mysql_num_rows(dbquery("SELECT techlist_id FROM ".$db_table['techlist']." WHERE techlist_user_id=".$updata[1]." AND techlist_tech_id=".$_POST['tech_id'].";"))==0)
+				if (mysql_num_rows(dbquery("SELECT techlist_id FROM techlist WHERE techlist_user_id=".$updata[1]." AND techlist_tech_id=".$_POST['tech_id'].";"))==0)
 				{
-					dbquery("INSERT INTO ".$db_table['techlist']." (techlist_entity_id,techlist_user_id,techlist_tech_id,techlist_current_level) VALUES (".$updata[0].",".$updata[1].",".$_POST['tech_id'].",".$_POST['techlist_current_level'].");");					
+					dbquery("INSERT INTO techlist (techlist_entity_id,techlist_user_id,techlist_tech_id,techlist_current_level) VALUES (".$updata[0].",".$updata[1].",".$_POST['tech_id'].",".$_POST['techlist_current_level'].");");					
 					echo "Technologie wurde hinzugef&uuml;gt!<br/>";
 				}
 				else
@@ -406,7 +406,7 @@
 				$_SESSION['techedit']['query']="";
 				
 				// Technologien laden
-				$bres = dbquery("SELECT tech_id,tech_name FROM ".$db_table['technologies']." ORDER BY tech_type_id,tech_order,tech_name;");
+				$bres = dbquery("SELECT tech_id,tech_name FROM technologies ORDER BY tech_type_id,tech_order,tech_name;");
 				$tlist=array();
 				while ($barr=mysql_fetch_array($bres))
 					$tlist[$barr['tech_id']]=$barr['tech_name'];	
@@ -429,7 +429,7 @@
 					$v=1;
 				echo "<tr><th class=\"tbltitle\">Stufe</th><td class=\"tbldata\"><input type=\"text\" name=\"techlist_current_level\" value=\"$v\" size=\"1\" maxlength=\"3\" /></td></tr>";
 				echo "<tr><th class=\"tbltitle\">f&uuml;r den Spieler</th><td class=\"tbldata\"> <select name=\"planet_id\"><";
-				$pres=dbquery("SELECT user_id,user_nick,planets.id FROM ".$db_table['users'].",".$db_table['planets']." WHERE planet_user_id=user_id AND planet_user_main=1 ORDER BY user_nick;");
+				$pres=dbquery("SELECT user_id,user_nick,planets.id FROM users,planets WHERE planet_user_id=user_id AND planet_user_main=1 ORDER BY user_nick;");
 				while ($parr=mysql_fetch_array($pres))
 				{
 					echo "<option value=\"".$parr['id'].":".$parr['user_id']."\"";
@@ -518,11 +518,11 @@
 		{
 			if (isset($_POST['save']))
 			{
-				dbquery("UPDATE ".$db_table['techlist']." SET techlist_current_level='".$_POST['techlist_current_level']."',techlist_build_type='".$_POST['techlist_build_type']."',techlist_build_start_time=UNIX_TIMESTAMP('".$_POST['techlist_build_start_time']."'),techlist_build_end_time=UNIX_TIMESTAMP('".$_POST['techlist_build_end_time']."') WHERE techlist_id='".$_GET['techlist_id']."';");
+				dbquery("UPDATE techlist SET techlist_current_level='".$_POST['techlist_current_level']."',techlist_build_type='".$_POST['techlist_build_type']."',techlist_build_start_time=UNIX_TIMESTAMP('".$_POST['techlist_build_start_time']."'),techlist_build_end_time=UNIX_TIMESTAMP('".$_POST['techlist_build_end_time']."') WHERE techlist_id='".$_GET['techlist_id']."';");
 			}
 			elseif (isset($_POST['del']))
 			{
-				dbquery("DELETE FROM ".$db_table['techlist']." WHERE techlist_id='".$_GET['techlist_id']."';");
+				dbquery("DELETE FROM techlist WHERE techlist_id='".$_GET['techlist_id']."';");
 			}
 			
 			$res = dbquery("SELECT 
@@ -584,7 +584,7 @@
 			$_SESSION['techedit']['query']="";
 			
 			// Technologien laden
-			$bres = dbquery("SELECT tech_id,tech_name FROM ".$db_table['technologies']." ORDER BY tech_type_id,tech_order,tech_name;");
+			$bres = dbquery("SELECT tech_id,tech_name FROM technologies ORDER BY tech_type_id,tech_order,tech_name;");
 			$tlist=array();
 			while ($barr=mysql_fetch_array($bres))
 				$tlist[$barr['tech_id']]=$barr['tech_name'];	
@@ -608,7 +608,7 @@
 			$tblcnt = mysql_fetch_row(dbquery("SELECT 
 													count(*) 
 												FROM 
-													".$db_table['techlist'].";"));
+													techlist;"));
 			echo "<br/>Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.<br/>";	
 			
 			// Hinzufügen

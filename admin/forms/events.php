@@ -29,7 +29,7 @@
 	// VARIABLES
 	
 	define(MODUL_NAME,"Ereignisse");				
-	define(DB_TABLE, $db_table['events']);
+	define(DB_TABLE, 'events');
 	define("DB_TABLE_ID", "event_id");
 	define("DB_OVERVIEW_ORDER_FIELD","event_title");
 	
@@ -331,7 +331,7 @@
 																		"cols" => "",
 																		"rcb_elem" => "",
 																		"rcb_elem_chekced" => "",
-																		"select_elem" => admin_get_select_elements($db_table['ships'],"ship_id","ship_name","ship_name",array("0"=>"(Keins)")),
+																		"select_elem" => admin_get_select_elements('ships',"ship_id","ship_name","ship_name",array("0"=>"(Keins)")),
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),				
@@ -373,7 +373,7 @@
 																		"cols" => "",
 																		"rcb_elem" => "",
 																		"rcb_elem_chekced" => "",
-																		"select_elem" => admin_get_select_elements($db_table['defense'],"def_id","def_name","def_name",array("0"=>"(Keins)")),
+																		"select_elem" => admin_get_select_elements('defense',"def_id","def_name","def_name",array("0"=>"(Keins)")),
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),				
@@ -415,7 +415,7 @@
 																		"cols" => "",
 																		"rcb_elem" => "",
 																		"rcb_elem_chekced" => "",
-																		"select_elem" => admin_get_select_elements($db_table['buildings'],"building_id","building_name","building_name",array("0"=>"(Keins)")),
+																		"select_elem" => admin_get_select_elements('buildings',"building_id","building_name","building_name",array("0"=>"(Keins)")),
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),				
@@ -443,7 +443,7 @@
 																		"cols" => "",
 																		"rcb_elem" => "",
 																		"rcb_elem_chekced" => "",
-																		"select_elem" => admin_get_select_elements($db_table['technologies'],"tech_id","tech_name","tech_name",array("0"=>"(Keins)")),
+																		"select_elem" => admin_get_select_elements('technologies',"tech_id","tech_name","tech_name",array("0"=>"(Keins)")),
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),				
@@ -656,7 +656,7 @@
 																		"cols" => "",
 																		"rcb_elem" => "",
 																		"rcb_elem_chekced" => "",
-																		"select_elem" => admin_get_select_elements($db_table['ships'],"ship_id","ship_name","ship_name",array("0"=>"(Keins)")),
+																		"select_elem" => admin_get_select_elements('ships',"ship_id","ship_name","ship_name",array("0"=>"(Keins)")),
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),				
@@ -698,7 +698,7 @@
 																		"cols" => "",
 																		"rcb_elem" => "",
 																		"rcb_elem_chekced" => "",
-																		"select_elem" => admin_get_select_elements($db_table['defense'],"def_id","def_name","def_name",array("0"=>"(Keins)")),
+																		"select_elem" => admin_get_select_elements('defense',"def_id","def_name","def_name",array("0"=>"(Keins)")),
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),				
@@ -740,7 +740,7 @@
 																		"cols" => "",
 																		"rcb_elem" => "",
 																		"rcb_elem_chekced" => "",
-																		"select_elem" => admin_get_select_elements($db_table['buildings'],"building_id","building_name","building_name",array("0"=>"(Keins)")),
+																		"select_elem" => admin_get_select_elements('buildings',"building_id","building_name","building_name",array("0"=>"(Keins)")),
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),				
@@ -768,7 +768,7 @@
 																		"cols" => "",
 																		"rcb_elem" => "",
 																		"rcb_elem_chekced" => "",
-																		"select_elem" => admin_get_select_elements($db_table['technologies'],"tech_id","tech_name","tech_name",array("0"=>"(Keins)")),
+																		"select_elem" => admin_get_select_elements('technologies',"tech_id","tech_name","tech_name",array("0"=>"(Keins)")),
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),				
@@ -986,7 +986,7 @@
 																		"cols" => "",
 																		"rcb_elem" => "",
 																		"rcb_elem_chekced" => "",
-																		"select_elem" => admin_get_select_elements($db_table['ships'],"ship_id","ship_name","ship_name",array("0"=>"(Keins)")),
+																		"select_elem" => admin_get_select_elements('ships',"ship_id","ship_name","ship_name",array("0"=>"(Keins)")),
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),				
@@ -1028,7 +1028,7 @@
 																		"cols" => "",
 																		"rcb_elem" => "",
 																		"rcb_elem_chekced" => "",
-																		"select_elem" => admin_get_select_elements($db_table['defense'],"def_id","def_name","def_name",array("0"=>"(Keins)")),
+																		"select_elem" => admin_get_select_elements('defense',"def_id","def_name","def_name",array("0"=>"(Keins)")),
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),				
@@ -1070,7 +1070,7 @@
 																		"cols" => "",
 																		"rcb_elem" => "",
 																		"rcb_elem_chekced" => "",
-																		"select_elem" => admin_get_select_elements($db_table['buildings'],"building_id","building_name","building_name",array("0"=>"(Keins)")),
+																		"select_elem" => admin_get_select_elements('buildings',"building_id","building_name","building_name",array("0"=>"(Keins)")),
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),				
@@ -1098,7 +1098,7 @@
 																		"cols" => "",
 																		"rcb_elem" => "",
 																		"rcb_elem_chekced" => "",
-																		"select_elem" => admin_get_select_elements($db_table['technologies'],"tech_id","tech_name","tech_name",array("0"=>"(Keins)")),
+																		"select_elem" => admin_get_select_elements('technologies',"tech_id","tech_name","tech_name",array("0"=>"(Keins)")),
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),				
@@ -1313,7 +1313,7 @@
 																		"cols" => "",
 																		"rcb_elem" => "",
 																		"rcb_elem_chekced" => "",
-																		"select_elem" => admin_get_select_elements($db_table['ships'],"ship_id","ship_name","ship_name",array("0"=>"(Keins)")),
+																		"select_elem" => admin_get_select_elements('ships',"ship_id","ship_name","ship_name",array("0"=>"(Keins)")),
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),				
@@ -1355,7 +1355,7 @@
 																		"cols" => "",
 																		"rcb_elem" => "",
 																		"rcb_elem_chekced" => "",
-																		"select_elem" => admin_get_select_elements($db_table['defense'],"def_id","def_name","def_name",array("0"=>"(Keins)")),
+																		"select_elem" => admin_get_select_elements('defense',"def_id","def_name","def_name",array("0"=>"(Keins)")),
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),				
@@ -1397,7 +1397,7 @@
 																		"cols" => "",
 																		"rcb_elem" => "",
 																		"rcb_elem_chekced" => "",
-																		"select_elem" => admin_get_select_elements($db_table['buildings'],"building_id","building_name","building_name",array("0"=>"(Keins)")),
+																		"select_elem" => admin_get_select_elements('buildings',"building_id","building_name","building_name",array("0"=>"(Keins)")),
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),				
@@ -1425,7 +1425,7 @@
 																		"cols" => "",
 																		"rcb_elem" => "",
 																		"rcb_elem_chekced" => "",
-																		"select_elem" => admin_get_select_elements($db_table['technologies'],"tech_id","tech_name","tech_name",array("0"=>"(Keins)")),
+																		"select_elem" => admin_get_select_elements('technologies',"tech_id","tech_name","tech_name",array("0"=>"(Keins)")),
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),				

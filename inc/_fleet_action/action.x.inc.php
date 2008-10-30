@@ -27,7 +27,7 @@
 			SELECT 
 				techlist_current_level 
 			FROM 
-				".$db_table['techlist']." 
+				techlist 
 			WHERE 
         techlist_user_id='".$arr['fleet_user_id']."' 
         AND techlist_tech_id='18'");
@@ -48,7 +48,7 @@
 				SELECT 
 					planet_people 
 				FROM 
-					".$db_table['planets']." 
+					planets 
 				WHERE 
 					planet_id='".$arr['fleet_planet_to']."';");
 				$parr=mysql_fetch_array($pres);
@@ -60,7 +60,7 @@
 				//Bewohner werden abgezogen
 				dbquery("
 				UPDATE 
-					".$db_table['planets']." 
+					planets 
 				SET 
 					planet_people='".$people."' 
 				WHERE 

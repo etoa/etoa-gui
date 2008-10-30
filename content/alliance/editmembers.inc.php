@@ -10,7 +10,7 @@ if (Alliance::checkActionRights('editmembers'))
 			rank_name,
 			rank_id
 		FROM
-			".$db_table['alliance_ranks']."
+			alliance_ranks
 		WHERE
 			rank_alliance_id=".$cu->allianceId().";");
 		while ($rarr=mysql_fetch_assoc($rres))

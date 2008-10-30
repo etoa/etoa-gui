@@ -140,7 +140,7 @@
 	if (isset($_GET['logout']) && $_SESSION[SESSION_NAME]['user_id']!="")
 	{
 		dbquery ("UPDATE ".USER_TABLE_NAME." SET user_session_key='' WHERE user_id=".$_SESSION[SESSION_NAME]['user_id'].";");
- 		dbquery ("UPDATE ".$db_table['admin_user_log']." SET log_logouttime=".time()." WHERE log_user_id=".$_SESSION[SESSION_NAME]['user_id']." AND log_session_key='".$_SESSION[SESSION_NAME]['key']."';");
+ 		dbquery ("UPDATE admin_user_log SET log_logouttime=".time()." WHERE log_user_id=".$_SESSION[SESSION_NAME]['user_id']." AND log_session_key='".$_SESSION[SESSION_NAME]['key']."';");
 		login_error("logout");		
 	}
 	
@@ -148,7 +148,7 @@
 	{
 		if (substr($_SESSION[SESSION_NAME]['key'],64,32)==md5(GAMEROUND_NAME) && substr($_SESSION[SESSION_NAME]['key'],96,32)==md5($_SERVER['REMOTE_ADDR']) && substr($_SESSION[SESSION_NAME]['key'],128,32)==md5($_SERVER['HTTP_USER_AGENT']) && substr($_SESSION[SESSION_NAME]['key'],160)==session_id())
 		{
-			$res = dbquery("SELECT * FROM ".USER_TABLE_NAME.",".$db_table['admin_groups']." WHERE MD5(user_id)='".substr($_SESSION[SESSION_NAME]['key'],32,32)."' AND MD5(user_last_login)='".substr($_SESSION[SESSION_NAME]['key'],0,32)."' AND user_admin_rank=group_id AND user_locked=0;");
+			$res = dbquery("SELECT * FROM ".USER_TABLE_NAME.",admin_groups WHERE MD5(user_id)='".substr($_SESSION[SESSION_NAME]['key'],32,32)."' AND MD5(user_last_login)='".substr($_SESSION[SESSION_NAME]['key'],0,32)."' AND user_admin_rank=group_id AND user_locked=0;");
 			if (mysql_num_rows($res)>0)
 			{
 				$arr=mysql_fetch_array($res);
@@ -158,7 +158,7 @@
 					{
 						create_sess_array($arr);
   					dbquery ("UPDATE ".USER_TABLE_NAME." SET user_acttime=".time()." WHERE user_id=".$arr['user_id'].";");
- 						dbquery ("UPDATE ".$db_table['admin_user_log']." SET log_acttime=".time()." WHERE log_user_id=".$_SESSION[SESSION_NAME]['user_id']." AND log_session_key='".$_SESSION[SESSION_NAME]['key']."';");
+ 						dbquery ("UPDATE admin_user_log SET log_acttime=".time()." WHERE log_user_id=".$_SESSION[SESSION_NAME]['user_id']." AND log_session_key='".$_SESSION[SESSION_NAME]['key']."';");
   				}
   				else
   					login_error("cookie3");
@@ -182,7 +182,7 @@
 				$_POST['login_nick']=str_replace("'","",$_POST['login_nick']);
 				$_POST['login_password']=str_replace("\'","",$_POST['login_password']);
 				$_POST['login_password']=str_replace("'","",$_POST['login_password']);
-				$res = dbquery("SELECT * FROM ".USER_TABLE_NAME.",".$db_table['admin_groups']." WHERE user_nick='".$_POST['login_nick']."' AND user_admin_rank>0 AND user_admin_rank=group_id;");
+				$res = dbquery("SELECT * FROM ".USER_TABLE_NAME.",admin_groups WHERE user_nick='".$_POST['login_nick']."' AND user_admin_rank>0 AND user_admin_rank=group_id;");
 				if (mysql_num_rows($res)!=0)
 				{					
 					$arr = mysql_fetch_array($res);
@@ -197,7 +197,7 @@
 			  			$_SESSION[SESSION_NAME]['key']=md5($login_time).md5($arr['user_id']).md5(GAMEROUND_NAME).md5($_SERVER['REMOTE_ADDR']).md5($_SERVER['HTTP_USER_AGENT']).session_id();
 			  			// Loginzeit in DB speichern
 			  			dbquery ("UPDATE ".USER_TABLE_NAME." SET user_last_login=".$login_time.",user_acttime=".time().",user_session_key='".$_SESSION[SESSION_NAME]['key']."',user_ip='".$_SERVER['REMOTE_ADDR']."',user_hostname='".$_SERVER['REMOTE_ADDR']."' WHERE user_id=".$arr['user_id'].";");
-				  		dbquery ("INSERT INTO  ".$db_table['admin_user_log']." (log_user_id,log_logintime,log_ip,log_hostname,log_session_key) VALUES (".$arr['user_id'].",".time().",'".$_SERVER['REMOTE_ADDR']."','".$_SERVER['REMOTE_ADDR']."','".$_SESSION[SESSION_NAME]['key']."');");
+				  		dbquery ("INSERT INTO  admin_user_log (log_user_id,log_logintime,log_ip,log_hostname,log_session_key) VALUES (".$arr['user_id'].",".time().",'".$_SERVER['REMOTE_ADDR']."','".$_SERVER['REMOTE_ADDR']."','".$_SESSION[SESSION_NAME]['key']."');");
 							
 						}
 						else

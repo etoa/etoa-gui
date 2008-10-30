@@ -10,7 +10,6 @@ $xajax->register(XAJAX_FUNCTION,"allianceNewsSetBanTime");
 
 function allianceNewsLoad()
 {
-	global $db_table;
 	ob_start();
 
 		$res=dbquery("
@@ -29,15 +28,15 @@ function allianceNewsLoad()
 			user_nick,
 			user_id			
 		FROM 
-			".$db_table['alliance_news']."
+			alliance_news
 		LEFT JOIN
-			".$db_table['alliances']." as a
+			alliances as a
 			ON a.alliance_id=alliance_news_alliance_id
 		LEFT JOIN
-			".$db_table['alliances']." as e
+			alliances as e
 			ON e.alliance_id=alliance_news_alliance_to_id
 		LEFT JOIN
-			".$db_table['users']." 
+			users 
 			ON user_id=alliance_news_user_id
 		ORDER BY
 			alliance_news_date DESC
@@ -116,10 +115,9 @@ function allianceNewsLoad()
 
 function allianceNewsDel($id)
 {
-	global $db_table;
 	dbquery("
 	DELETE FROM
-		".$db_table['alliance_news']."
+		alliance_news
 	WHERE
 		alliance_news_id='".$id."'
 	;");	
@@ -130,11 +128,10 @@ function allianceNewsDel($id)
 
 function allianceNewsRemoveOld($ts)
 {
-	global $db_table;
 	$t = time()-$ts;
 	dbquery("
 	DELETE FROM
-		".$db_table['alliance_news']."
+		alliance_news
 	WHERE
 		alliance_news_date<'".$t."'
 	;");	
@@ -146,14 +143,13 @@ function allianceNewsRemoveOld($ts)
 
 function allianceNewsEdit($id)
 {
-	global $db_table;
 	$objResponse = new xajaxResponse();
 
 	$res = dbquery("
 	SELECT 
 		alliance_news_id
 	FROM
-		".$db_table['alliance_news']."
+		alliance_news
 	WHERE
 		alliance_news_id!='".$id."'
 	;");
@@ -170,7 +166,7 @@ function allianceNewsEdit($id)
 	SELECT 
 		*
 	FROM
-		".$db_table['alliance_news']."
+		alliance_news
 	WHERE
 		alliance_news_id='".$id."'
 	;");			
@@ -183,7 +179,7 @@ function allianceNewsEdit($id)
 			alliance_name,
 			alliance_tag
 		FROM
-			".$db_table['alliances']."
+			alliances
 		ORDER BY 
 			alliance_tag
 		;");
@@ -258,7 +254,6 @@ function allianceNewsEdit($id)
 
 function allianceNewsLoadUserList($nid,$aid,$uid)
 {
-	global $db_table;
 	$objResponse = new xajaxResponse();
 
 	if ($aid>0)
@@ -269,7 +264,7 @@ function allianceNewsLoadUserList($nid,$aid,$uid)
 			user_id,
 			user_nick
 		FROM
-			".$db_table['users']."
+			users
 		WHERE
 			user_alliance_id='".$aid."'
 		;");
@@ -301,10 +296,9 @@ function allianceNewsLoadUserList($nid,$aid,$uid)
 
 function allianceNewsSave($id,$form)
 {
-	global $db_table;
 	dbquery("
 	UPDATE
-		".$db_table['alliance_news']."
+		alliance_news
 	SET
 		alliance_news_alliance_id='".$form['alliance_id']."',
 		alliance_news_alliance_to_id='".$form['alliance_to_id']."',
@@ -322,10 +316,9 @@ function allianceNewsSave($id,$form)
 
 function allianceNewsSetBanTime($time,$text)
 {
-	global $db_table;
 	dbquery("
 	UPDATE
-		".$db_table['config']."
+		config
 	SET
 		config_value='".$time."',
 		config_param1='".addslashes($text)."'

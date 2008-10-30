@@ -72,7 +72,7 @@
 				$arr = mysql_fetch_array($res);
 
 				// Rechte laden
-				$rightres=dbquery("SELECT * FROM ".$db_table['alliance_rights']." ORDER BY right_desc;");
+				$rightres=dbquery("SELECT * FROM alliance_rights ORDER BY right_desc;");
 				$rights=array();
 				if (mysql_num_rows($rightres)>0)
 				{
@@ -84,8 +84,8 @@
             SELECT
                 alliance_rankrights.rr_id
             FROM
-                ".$db_table['alliance_rankrights'].",
-                ".$db_table['alliance_ranks']."
+               	alliance_rankrights,
+                alliance_ranks
             WHERE
                 alliance_ranks.rank_id=alliance_rankrights.rr_rank_id
                 AND alliance_ranks.rank_alliance_id=".$cu->allianceId()."
@@ -511,7 +511,7 @@
 								".BOARD_POSTS_TABLE.",
 								".BOARD_TOPIC_TABLE.",
 								".BOARD_CAT_TABLE.",
-								".$db_table['allianceboard_catranks']."
+								allianceboard_catranks
 							WHERE
 								cr_cat_id=cat_id
 								AND cr_rank_id=".$myRankId."
@@ -533,7 +533,7 @@
 						echo "<tr><td class=\"tbltitle\">Internes Forum</td><td class=\"tbldata\" colspan=\"2\"><b><a href=\"?page=allianceboard\">Forum&uuml;bersicht</a></b> &nbsp; $ps</td></tr>";
 
 						// Umfrage verlinken
-						$pres=dbquery("SELECT poll_title,poll_question,poll_id FROM ".$db_table['alliance_polls']." WHERE poll_alliance_id=".$arr['alliance_id']." ORDER BY poll_timestamp DESC LIMIT 2;");
+						$pres=dbquery("SELECT poll_title,poll_question,poll_id FROM alliance_polls WHERE poll_alliance_id=".$arr['alliance_id']." ORDER BY poll_timestamp DESC LIMIT 2;");
 						$pcnt=mysql_num_rows($pres);
 						if ($pcnt>0)
 						{
@@ -572,7 +572,7 @@
 							SELECT 
 								alliance_bnd_id 
 							FROM 
-								".$db_table['alliance_bnd']." 
+								alliance_bnd 
 							WHERE 
 								alliance_bnd_alliance_id2='".$cu->allianceId()."' 
 								AND alliance_bnd_level='0';");
@@ -585,7 +585,7 @@
 
 						// Kriegserklärung anzeigen
 						$time=time()-192600;
-						if (mysql_num_rows(dbquery("SELECT alliance_bnd_id FROM ".$db_table['alliance_bnd']." WHERE alliance_bnd_alliance_id2='".$cu->allianceId()."' AND alliance_bnd_level='3' AND alliance_bnd_date>'$time';"))>0)
+						if (mysql_num_rows(dbquery("SELECT alliance_bnd_id FROM alliance_bnd WHERE alliance_bnd_alliance_id2='".$cu->allianceId()."' AND alliance_bnd_level='3' AND alliance_bnd_date>'$time';"))>0)
 						if ($isFounder || $myRight['relations'])
 							echo "<tr><td class=\"tbltitle\" colspan=\"3\" align=\"center\"><b><div align=\"center\"><a href=\"?page=$page&action=relations\">Deiner Allianz wurde in den letzten 36h der Krieg erkl&auml;rt!</a></div></b></td></tr>";
 						else

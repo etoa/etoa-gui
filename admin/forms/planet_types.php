@@ -29,7 +29,7 @@
 	// VARIABLES
 	
 	define("MODUL_NAME","Planetentypen");				
-	define("DB_TABLE", $db_table['planet_types']);
+	define("DB_TABLE", 'planet_types');
 	define("DB_TABLE_ID", "type_id");
 	define("DB_OVERVIEW_ORDER_FIELD","type_name");
 	

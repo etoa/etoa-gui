@@ -22,7 +22,7 @@
 			tech_build_costs_factor,
 			tech_last_level 
 		FROM 
-			".$db_table['technologies']." 
+			technologies 
 		WHERE 
 			tech_id='".$_GET['id']."'
 			;");
@@ -35,9 +35,9 @@
 				tech_id,
 				tech_name 
 			FROM 
-				".$db_table['technologies']." 
+				technologies 
 			INNER JOIN
-				".$db_table['tech_types']." 
+				tech_types 
 			ON
 				tech_type_id=type_id		
 			WHERE 
@@ -71,8 +71,8 @@
 					ship_id,
 					req_req_tech_level 
 				FROM 
-					".$db_table['ship_requirements'].",
-					".$db_table['ships']." 
+					ship_requirements,
+					ships 
 				WHERE
 					req_req_tech_id=".$arr['tech_id']."
 				AND req_ship_id=ship_id
@@ -123,12 +123,12 @@
 	else
 	{
 		Help::navi(array("Technologien","research"));
-		$tres=dbquery("SELECT * FROM ".$db_table['tech_types']." ORDER BY type_order,type_name;");
+		$tres=dbquery("SELECT * FROM tech_types ORDER BY type_order,type_name;");
 		if (mysql_num_rows($tres)>0)
 		{
 			while ($tarr=mysql_fetch_array($tres))
 			{
-				$res=dbquery("SELECT tech_name,tech_shortcomment,tech_id FROM ".$db_table['technologies']." WHERE tech_type_id=".$tarr['type_id']." AND tech_show=1 GROUP BY tech_id ORDER BY tech_order,tech_name;");
+				$res=dbquery("SELECT tech_name,tech_shortcomment,tech_id FROM technologies WHERE tech_type_id=".$tarr['type_id']." AND tech_show=1 GROUP BY tech_id ORDER BY tech_order,tech_name;");
 				if (mysql_num_rows($res)>0)
 				{
 					tableStart($tarr['type_name']);

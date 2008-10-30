@@ -719,7 +719,7 @@
 		*/
 		function expansion_universe($sx_num_new,$sy_num_new)
 		{
-			global $conf,$db_table;
+			global $conf;
 	
 			$sx_num=$conf['num_of_sectors']['p1'];
 			$sy_num=$conf['num_of_sectors']['p2'];
@@ -737,9 +737,9 @@
 			$perc_wormholes=$conf['space_percent_wormholes']['v'];
 			$num_planets_min=$conf['num_planets']['p1'];
 			$num_planets_max=$conf['num_planets']['p2'];
-			$num_sol_types=mysql_num_rows(dbquery("SELECT * FROM ".$db_table['sol_types'].";"));
+			$num_sol_types=mysql_num_rows(dbquery("SELECT * FROM sol_types;"));
 			$sol_types = get_sol_types_array();
-			$num_planet_types=mysql_num_rows(dbquery("SELECT * FROM ".$db_table['planet_types'].";"));
+			$num_planet_types=mysql_num_rows(dbquery("SELECT * FROM planet_types;"));
 			$planet_types = get_planet_types_array();
 			$num_planet_images = $conf['num_planet_images']['v'];
 			$planet_count = 0;
@@ -759,7 +759,7 @@
 						SELECT
 							cell_id
 						FROM
-							".$db_table['space_cells']."
+							space_cells
 						WHERE
 							cell_sx='".$sx."'
 							AND cell_sy='".$sy."';
@@ -778,7 +778,7 @@
 	                                $np = mt_rand($num_planets_min,$num_planets_max);
 	                                $sql = "
 										INSERT INTO
-										".$db_table['space_cells']."
+										space_cells
 										(
 											cell_sx,
 											cell_sy,
@@ -812,7 +812,7 @@
 	                                    $tmax = $temp + $planet_temp_diff;
 	                                    $sql = "
 											INSERT INTO
-											".$db_table['planets']."
+											planets
 											(
 												planet_solsys_id,
 												planet_solsys_pos,
@@ -844,7 +844,7 @@
 	                                $asteroid_ress = mt_rand($conf['asteroid_ress']['p1'],$conf['asteroid_ress']['p2']);
 	                                $sql = "
 										INSERT INTO
-										".$db_table['space_cells']."
+										space_cells
 										(
 											cell_sx,
 											cell_sy,
@@ -875,7 +875,7 @@
 	
 	                                $sql = "
 										INSERT INTO
-										".$db_table['space_cells']."
+										space_cells
 										(
 											cell_sx,
 											cell_sy,
@@ -905,7 +905,7 @@
 	                                // echo "$sx/$sy : $cx/$cy &nbsp;-&nbsp; Wurmloch<br>";
 	                                $sql = "
 										INSERT INTO
-										".$db_table['space_cells']."
+										space_cells
 										(
 											cell_sx,
 											cell_sy,
@@ -932,7 +932,7 @@
 	                            {
 	                                $sql = "
 										INSERT INTO
-										".$db_table['space_cells']."
+										space_cells
 										(
 											cell_sx,
 											cell_sy,
@@ -963,7 +963,7 @@
 	        SELECT
 	            *
 	        FROM
-	            ".$db_table['space_cells']."
+	            space_cells
 	        WHERE
 	            cell_wormhole_id!='0';
 			");
@@ -972,7 +972,7 @@
 				echo "<br>Eins ist zuviel!<br>";
 				dbquery("
 	            UPDATE
-	            	".$db_table['space_cells']."
+	            	space_cells
 	            SET
 	            	cell_wormhole_id='0'
 	            WHERE
@@ -984,7 +984,7 @@
 	            SELECT
 	            	*
 	            FROM
-	            	".$db_table['space_cells']."
+	            	space_cells
 	            WHERE
 	            	cell_wormhole_id!='0';
 				");
@@ -1003,7 +1003,7 @@
 			{
 				dbquery("
 	            UPDATE
-	            	".$db_table['space_cells']."
+	            	space_cells
 	            SET
 	            	cell_wormhole_id='".$k."'
 	            WHERE
@@ -1012,7 +1012,7 @@
 				echo mysql_error();
 				dbquery("
 	            UPDATE
-	            	".$db_table['space_cells']."
+	            	space_cells
 	            SET
 	            	cell_wormhole_id='".$v."'
 	            WHERE
@@ -1024,7 +1024,7 @@
 			//Neue Sektorenanzahl in der Config speichern
 			dbquery("
 			UPDATE
-				".$db_table['config']."
+				config
 			SET
 	            config_param1='".$sx_num_new."',
 	            config_param2='".$sy_num_new."'

@@ -9,7 +9,7 @@
 		if (isset($_POST['hmod_on']) && checker_verify())
 		{
 		
-			$cres = dbquery("SELECT id FROM ".$db_table['fleet']." WHERE user_id='".$cu->id()."';");
+			$cres = dbquery("SELECT id FROM fleet WHERE user_id='".$cu->id()."';");
 			$carr = mysql_fetch_row($cres);
 			if ($carr[0]==0)
 			{
@@ -102,11 +102,11 @@
 				
 					$hfrom=time();
 					$hto=$hfrom+(MIN_UMOD_TIME*24*3600);
-					if (dbquery("UPDATE ".$db_table['users']." SET user_hmode_from='$hfrom',user_hmode_to='$hto' WHERE user_id='".$cu->id()."';"))
+					if (dbquery("UPDATE users SET user_hmode_from='$hfrom',user_hmode_to='$hto' WHERE user_id='".$cu->id()."';"))
 					{
 						dbquery ("
 							UPDATE 
-								".$db_table['planets']." 
+								planets 
 							SET 
 								planet_last_updated='0',
 								planet_prod_metal=0,
@@ -261,7 +261,7 @@
 				user_password,
 				user_registered 
 			FROM 
-				".$db_table['users']." 
+				users 
 			WHERE 
 				user_id=".$cu->id()."
 			;");

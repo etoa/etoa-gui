@@ -33,7 +33,7 @@
 			SELECT 
 				* 
 			FROM 
-				".$db_table['login_failures']." 
+				login_failures 
 			WHERE
 				failure_user_id=".$cu->id()."
 			ORDER BY 

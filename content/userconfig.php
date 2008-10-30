@@ -63,7 +63,7 @@
             {
                 //Normaler Name
                 case "change_name":
-                    if(mysql_num_rows(dbquery("SELECT request_id FROM ".$db_table['user_requests']." WHERE request_user_id='".$cu->id()."' AND request_field='user_name';"))>0)
+                    if(mysql_num_rows(dbquery("SELECT request_id FROM user_requests WHERE request_user_id='".$cu->id()."' AND request_field='user_name';"))>0)
                     {
                         echo "Du hast schon einen Anfrage geschrieben!<br>";
                     }
@@ -71,7 +71,7 @@
                     {
                         dbquery("
                         INSERT INTO 
-                        ".$db_table['user_requests']." 
+                        user_requests 
                           (request_user_id,
                           request_field,
                           request_value,
@@ -89,7 +89,7 @@
                 
                 //Nickname
                 case "change_nick":
-                    if(mysql_num_rows(dbquery("SELECT request_id FROM ".$db_table['user_requests']." WHERE request_user_id='".$cu->id()."' AND request_field='user_nick';"))>0)
+                    if(mysql_num_rows(dbquery("SELECT request_id FROM user_requests WHERE request_user_id='".$cu->id()."' AND request_field='user_nick';"))>0)
                     {
                         echo "Du hast schon einen Anfrage geschrieben!<br>";
                     }
@@ -97,7 +97,7 @@
                     {
                         dbquery("
                         INSERT INTO 
-                        ".$db_table['user_requests']." 
+                        user_requests 
                           (request_user_id,
                           request_field,
                           request_value,
@@ -115,7 +115,7 @@
                 
                 //Email
                 case "change_email":
-                    if(mysql_num_rows(dbquery("SELECT request_id FROM ".$db_table['user_requests']." WHERE request_user_id='".$cu->id()."' AND request_field='user_email_fix';"))>0)
+                    if(mysql_num_rows(dbquery("SELECT request_id FROM user_requests WHERE request_user_id='".$cu->id()."' AND request_field='user_email_fix';"))>0)
                     {
                         echo "Du hast schon einen Anfrage geschrieben!<br>";
                     }
@@ -123,7 +123,7 @@
                     {
                         dbquery("
                         INSERT INTO 
-                        ".$db_table['user_requests']." 
+                        user_requests 
                           (request_user_id,
                           request_field,
                           request_value,
@@ -252,7 +252,7 @@
         SELECT
             *
         FROM
-            ".$db_table['user_sitting_date']."
+            user_sitting_date
         WHERE
             user_sitting_date_user_id='".$cu->id()."'
             AND user_sitting_date_from!=0

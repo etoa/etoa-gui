@@ -29,7 +29,7 @@
 		$sort="ASC";
 	}
 
-	$res = dbquery("SELECT * FROM ".$db_table['sol_types']." ORDER BY $order $sort;");
+	$res = dbquery("SELECT * FROM sol_types ORDER BY $order $sort;");
 	$nr = mysql_num_rows($res);
 	if ($nr>0)
 	{

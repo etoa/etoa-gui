@@ -26,7 +26,7 @@ echo "<h1>Tools</h1>";
 		$start3 = microtime();
 		for ($i = 0; $i < 1; $i++)
 		{
-			$res = mysql_query("SELECT planet_name, user_nick FROM ".$db_table['planets'].", ".$db_table['users']." ORDER BY planet_name;");
+			$res = mysql_query("SELECT planet_name, user_nick FROM planets, users ORDER BY planet_name;");
 		}
 		$ende3 = microtime();
 		
@@ -34,7 +34,7 @@ echo "<h1>Tools</h1>";
 		$start4 = microtime();
 		for ($i = 0; $i < 10; $i++)
 		{
-			$res = mysql_query("SELECT id FROM ".$db_table['planets'].";");
+			$res = mysql_query("SELECT id FROM planets;");
 		}
 		$ende4 = microtime();
 		echo "<br>Verbrauchte Zeit mit rationioneller Auslesung ( ".$i."x SELECT xy FROM): ".($ende4 - $start4);
@@ -101,8 +101,6 @@ echo "<h1>Tools</h1>";
 	elseif ($sub=="battle_simulation")
 	{
 	echo "<h2>Kampfsimulator</h2>";
-	global $db_table;
-
 
 
 	if($_POST['submit_simulation']!="" && checker_verify())
@@ -118,7 +116,6 @@ echo "<h1>Tools</h1>";
 		$simulade_att=0;
 		$simulade_def=0;
 
-        //infobox_start("Ausgewählte Schiffe Angreifer",1);
         foreach ($_POST['ship_count_a'] as $id_a=> $count_a)
         {
 
@@ -137,7 +134,7 @@ echo "<h1>Tools</h1>";
                     ship_costs_fuel,
                     ship_costs_food
                 FROM
-                	".$db_table['ships']."
+                	ships
                 WHERE
                 	ship_id='$id_a'");
 
@@ -165,10 +162,8 @@ echo "<h1>Tools</h1>";
 
         	}
         }
-        //tableEnd();
 
 
-        //infobox_start("Ausgewählte Spezialschiffe Angreifer",1);
         foreach ($_POST['special_ship_count_a'] as $special_id_a=> $special_count_a)
         {
 
@@ -192,7 +187,7 @@ echo "<h1>Tools</h1>";
                     special_ship_need_exp,
                     special_ship_exp_factor
                 FROM
-                	".$db_table['ships']."
+                	ships
                 WHERE
                 	ship_id='$special_id_a'");
 
@@ -226,11 +221,7 @@ echo "<h1>Tools</h1>";
 				$simulade_att=1;
         	}
         }
-        //tableEnd();
 
-
-
-        //infobox_start("Ausgewählte Tech Angreifer",1);
         foreach ($_POST['tech_a'] as $id_tech_a=> $level_tech_a)
         {
 
@@ -240,7 +231,7 @@ echo "<h1>Tools</h1>";
                     tech_id,
                     tech_name
                 FROM
-                	".$db_table['technologies']."
+                	technologies
                 WHERE
                 	tech_id='$id_tech_a'");
 
@@ -258,9 +249,7 @@ echo "<h1>Tools</h1>";
         	}
 
         }
-        //tableEnd();
 
-        //infobox_start("Ausgewählte Schiffe Verteidiger",1);
         foreach ($_POST['ship_count_d'] as $id_d=> $count_d)
         {
 
@@ -278,7 +267,7 @@ echo "<h1>Tools</h1>";
                     ship_costs_fuel,
                     ship_costs_food
                 FROM
-                	".$db_table['ships']."
+                	ships
                 WHERE
                 	ship_id='$id_d'");
 
@@ -304,11 +293,7 @@ echo "<h1>Tools</h1>";
         	}
 
         }
-        //tableEnd();
 
-
-
-        //infobox_start("Ausgewählte Spezialschiffe Verteidiger",1);
         foreach ($_POST['special_ship_count_d'] as $special_id_d=> $special_count_d)
         {
 
@@ -332,7 +317,7 @@ echo "<h1>Tools</h1>";
                     special_ship_need_exp,
                     special_ship_exp_factor
                 FROM
-                	".$db_table['ships']."
+                	ships
                 WHERE
                 	ship_id='$special_id_d'");
 
@@ -368,10 +353,7 @@ echo "<h1>Tools</h1>";
 
         	}
         }
-        //tableEnd();
 
-
-        //infobox_start("Ausgewählte Verteidigung Verteidiger",1);
         foreach ($_POST['def_count_d'] as $def_id_d=> $def_count_d)
         {
 
@@ -390,7 +372,7 @@ echo "<h1>Tools</h1>";
                     def_costs_fuel,
                     def_costs_food
                 FROM
-                	".$db_table['defense']."
+                	defense
                 WHERE
                 	def_id='$def_id_d'");
 
@@ -416,10 +398,7 @@ echo "<h1>Tools</h1>";
         	}
 
         }
-        //tableEnd();
 
-
-        //infobox_start("Ausgewählte Tech Verteidiger",1);
         foreach ($_POST['tech_d'] as $id_tech_d=> $level_tech_d)
         {
 
@@ -430,7 +409,7 @@ echo "<h1>Tools</h1>";
                     tech_id,
                     tech_name
                 FROM
-                	".$db_table['technologies']."
+                	technologies
                 WHERE
                 	tech_id='$id_tech_d'");
 
@@ -473,7 +452,7 @@ echo "<h1>Tools</h1>";
             ship_id,
             ship_name
         FROM
-        	".$db_table['ships']."
+        	ships
         WHERE
         	ship_buildable=1
         	AND special_ship=0
@@ -483,7 +462,7 @@ echo "<h1>Tools</h1>";
         {
             echo "<form action=\"?page=$page&sub=$sub\" method=\"post\">";
             checker_init();
-            infobox_start("Schiffswahl",1,0);
+            tableStart("Schiffswahl");
             echo "
             <tr>
                 <td class=\"tbltitle\" colspan=\"2\">Typ</td>
@@ -517,7 +496,7 @@ echo "<h1>Tools</h1>";
             ship_name,
             ship_max_count
         FROM
-        	".$db_table['ships']."
+        	ships
         WHERE
         	ship_buildable=1
         	AND special_ship=1
@@ -525,7 +504,7 @@ echo "<h1>Tools</h1>";
         	ship_name;");
         if (mysql_num_rows($ssres)>0)
         {
-            infobox_start("Spezial-Schiffe Auswahl",1,0);
+            tableStart("Spezial-Schiffe Auswahl");
             echo "
             <tr>
                 <td class=\"tbltitle\" valign=\"top\">Typ</td>
@@ -565,7 +544,7 @@ echo "<h1>Tools</h1>";
         SELECT
         	*
         FROM
-        	".$db_table['defense']."
+        	defense
         WHERE
         	def_buildable=1
         ORDER BY
@@ -574,7 +553,7 @@ echo "<h1>Tools</h1>";
         {
             echo "<form action=\"?page=$page&sub=$sub\" method=\"post\">";
             checker_init();
-            infobox_start("Verteidigung",1,0);
+            tableStart("Verteidigung",);
             echo "
             <tr>
                 <td class=\"tbltitle\" colspan=\"2\">Typ</td>
@@ -603,14 +582,14 @@ echo "<h1>Tools</h1>";
         SELECT
         	*
         FROM
-        	".$db_table['technologies']."
+        	technologies
         WHERE
         	tech_show=1
         	AND (tech_id=".STRUCTURE_TECH_ID." OR tech_id=".SHIELD_TECH_ID." OR tech_id=".WEAPON_TECH_ID." OR tech_id=".REGENA_TECH_ID.")");
         if (mysql_num_rows($tres)>0)
         {
 
-            infobox_start("Technologien",1,0);
+            tableStart("Technologien");
             echo "
             <tr>
                 <td class=\"tbltitle\" valign=\"top\">Forschung</td>

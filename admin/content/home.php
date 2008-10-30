@@ -336,13 +336,13 @@
 		
 		if (isset($_POST['logshow']) && $_POST['logshow']!="")
 		{
-			$ures=dbquery("SELECT user_nick FROM ".$db_table['admin_users']." WHERE user_id=".$_POST['user_id'].";");
+			$ures=dbquery("SELECT user_nick FROM admin_users WHERE user_id=".$_POST['user_id'].";");
 			if (mysql_num_rows($ures)>0)
 			{
 				$uarr=mysql_fetch_array($ures);
 				echo "<h2>Session-Log f&uuml;r ".$uarr['user_nick']."</h2>";
 
-				$res=dbquery("SELECT * FROM ".$db_table['admin_user_log']." WHERE log_user_id=".$_POST['user_id']." ORDER BY log_id DESC;");
+				$res=dbquery("SELECT * FROM admin_user_log WHERE log_user_id=".$_POST['user_id']." ORDER BY log_id DESC;");
 				if (mysql_num_rows($res)>0)
 				{
 					echo "<table><tr><th class=\"tbltitle\">Login</th><th class=\"tbltitle\">Letzte Aktivit&auml;t</th>
@@ -393,21 +393,21 @@
 		
 			if (isset($_GET['kick']) && $_GET['kick']>0 && $_GET['kick']!=$s['user_id'])
 			{
-				dbquery("UPDATE ".$db_table['admin_users']." SET user_session_key='' WHERE user_id=".$_GET['kick'].";");	
+				dbquery("UPDATE admin_users SET user_session_key='' WHERE user_id=".$_GET['kick'].";");	
 				add_log(8,$s['user_nick']." l&ouml;scht die Session des Administrators mit der ID ".$_GET['kick'],time());
 			}
 			
 			if (isset($_POST['delentrys']) && $_POST['delentrys']!="")
 			{
 				$tstamp = time()-$_POST['log_timestamp'];
-				dbquery("DELETE FROM ".$db_table['admin_user_log']." WHERE log_logintime<$tstamp;");
+				dbquery("DELETE FROM admin_user_log WHERE log_logintime<$tstamp;");
 				echo mysql_affected_rows()." Eintr&auml;ge wurden gel&ouml;scht!<br/><br/>";
 				add_log(8,$s['user_nick']." l&ouml;scht ".mysql_affected_rows()." Eintr&auml;ge des Admin-Session-Logs",time());
 			}			
 			
 			echo "<h2>Aktive Sessions / Zuletzt aktiv</h2>";
 			echo "Das Timeout betr&auml;gt ".TIMEOUT." Sekunden<br/><br/>";
-			$res=dbquery("SELECT * FROM ".$db_table['admin_users']." WHERE user_acttime>0 ORDER BY user_acttime DESC;");
+			$res=dbquery("SELECT * FROM admin_users WHERE user_acttime>0 ORDER BY user_acttime DESC;");
 			if (mysql_num_rows($res)>0)
 			{
 				echo "<table><tr><th class=\"tbltitle\">Nick</th>
@@ -440,7 +440,7 @@
 				echo "<i>Keine Eintr&auml;ge vorhanden!</i>";
 			
 			echo "<h2>Session-Log</h2>";
-			$res=dbquery("SELECT user_nick,user_id,COUNT(*) as cnt FROM ".$db_table['admin_users'].",".$db_table['admin_user_log']." WHERE log_user_id=user_id GROUP BY user_id ORDER BY user_nick;");
+			$res=dbquery("SELECT user_nick,user_id,COUNT(*) as cnt FROM admin_users,admin_user_log WHERE log_user_id=user_id GROUP BY user_id ORDER BY user_nick;");
 			if (mysql_num_rows($res)>0)
 			{
 				echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
@@ -450,7 +450,7 @@
 					echo "<option value=\"".$arr['user_id']."\">".$arr['user_nick']." (".$arr['cnt']." Sessions)</option>";
 				}
 				echo "</select> &nbsp; <input type=\"submit\" name=\"logshow\" value=\"Anzeigen\" /></form>";
-				$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM ".$db_table['admin_user_log'].";"));
+				$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM admin_user_log;"));
 				echo "<br/>Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.";					
 			}
 			else
@@ -483,7 +483,7 @@
 		if ($cfg->param1("info")==1 && $cfg->value('info')!="")
 		{
 			echo "Diese News erscheinen auf der Startseite im Game:<br/><br/>";
-			infobox_start("Vorschau");
+			iBoxStart("Vorschau");
 			echo text2html($cfg->value('info'));
 			iBoxEnd();
 		}
@@ -515,14 +515,14 @@
 			success_msg("Nachricht geändert!");
 		}		
     echo "<form action=\"?page=$page&sub=$sub\" method=\"post\">";
-		$res = dbquery("SELECT * FROM ".$db_table['config']." WHERE config_name='system_message';");
+		$res = dbquery("SELECT * FROM config WHERE config_name='system_message';");
 		if (mysql_num_rows($res)>0)
 		{
 			$arr = mysql_fetch_array($res);
 			echo "Erscheint sofort auf jeder Seite im Spiel:<br/><br/>";
 			if ($arr['config_value']!="")
 			{
-				infobox_start("Vorschau");
+				iBoxStart("Vorschau");
 				echo text2html($arr['config_value']);
 				iBoxEnd();
 			}
@@ -544,18 +544,18 @@
 	{
 		if (isset($_POST['save']))
 		{
-				dbquery("UPDATE ".$db_table['config']." SET config_value='".$_POST['config_value']."' WHERE config_name='admininfo';");
+				dbquery("UPDATE config SET config_value='".$_POST['config_value']."' WHERE config_name='admininfo';");
 		}
 		echo "<h1>Ingame-News</h1>";
 		echo "Diese News erscheinen auf der Startseite des Adminmodus:<br/><br/>";
     echo "<form action=\"?page=$page&sub=$sub\" method=\"post\">";
-		$res = dbquery("SELECT * FROM ".$db_table['config']." WHERE config_name='admininfo';");
+		$res = dbquery("SELECT * FROM config WHERE config_name='admininfo';");
 		if (mysql_num_rows($res)>0)
 		{
 			$arr = mysql_fetch_array($res);
 			if ($arr['config_value']!="")
 			{
-				infobox_start("Vorschau");
+				iBoxStart("Vorschau");
 				echo text2html($arr['config_value']);
 				iBoxEnd();
 			}
@@ -614,7 +614,7 @@
 		$arr = mysql_fetch_row($res);
 		if ($arr[0]==1)
 		{
-			infobox_start("Passwort");   
+			iBoxStart("Passwort");   
 			echo "<span style=\"color:#f90;\">Dein Passwort wurde seit der letzten automatischen Generierung noch nicht geÃ¤ndert. Bitte mache das jetzt <a href=\"?myprofile=1\">hier</a>!</span>";
 			iBoxEnd();			
 		}
@@ -625,7 +625,7 @@
 		//
 		if ($conf['admininfo']['v']!="")
 		{
-			infobox_start("Admin-News");   
+			iBoxStart("Admin-News");   
 			echo text2html($conf['admininfo']['v']);
 			iBoxEnd();			
 		}
@@ -648,7 +648,7 @@
 			}
 			
 			echo "<br/>";
-			infobox_start("Flottensperre aktiviert");
+			iBoxStart("Flottensperre aktiviert");
 			echo "Die Flottensperre ist aktiviert. Es kÃƒÂ¶nnen keine FlÃƒÂ¼ge gestartet werden!<br><br><b>Status:</b> ".$flightban_time_status."<br><b>Zeit:</b> ".date("d.m.Y H:i",$conf['flightban_time']['p1'])." - ".date("d.m.Y H:i",$conf['flightban_time']['p2'])."<br><b>Grund:</b> ".$conf['flightban']['p1']."<br><br>";
 			echo "Zum deaktivieren: <a href=\"?page=fleets&amp;sub=fleetoptions\">Flottenoptionen</a>";
 			iBoxEnd();
@@ -672,7 +672,7 @@
 			}
 			
 			echo "<br/>";
-			infobox_start("Kampfsperre aktiviert");
+			iBoxStart("Kampfsperre aktiviert");
 			echo "Die Kampfsperre ist aktiviert. Es kÃƒÂ¶nnen keine Angriffe geflogen werden!<br><br><b>Status:</b> ".$battleban_time_status."<br><b>Zeit:</b> ".date("d.m.Y H:i",$conf['battleban_time']['p1'])." - ".date("d.m.Y H:i",$conf['battleban_time']['p2'])."<br><b>Grund:</b> ".$conf['battleban']['p1']."<br><br>";
 			echo "Zum deaktivieren: <a href=\"?page=fleets&amp;sub=fleetoptions\">Flottenoptionen</a>";
 			iBoxEnd();
@@ -681,14 +681,14 @@
 		if ($conf['system_message']['v']!="")
 		{
 			echo "<br/>";
-			infobox_start("<span style=\"color:red;\">Folgende Systemnachricht ist zurzeit aktiviert (<a href=\"?page=$page&amp;sub=systemmessage\">Bearbeiten/Deaktivieren</a>):</span>");
+			iBoxStart("<span style=\"color:red;\">Folgende Systemnachricht ist zurzeit aktiviert (<a href=\"?page=$page&amp;sub=systemmessage\">Bearbeiten/Deaktivieren</a>):</span>");
 			echo text2html($conf['system_message']['v']);
 			iBoxEnd();			
 		}
 		
 		if ($cfg->value('register_key')!="")
 		{
-			infobox_start("Schutz der öffentlichen Seiten");
+			iBoxStart("Schutz der öffentlichen Seiten");
 			echo "Die öffentlichen Seiten (Anmeldung, Statistiken etc) sind durch den Schlüssel <span style=\"font-weight:bold;color:#f90\">".$cfg->value('register_key')."</span> geschützt!";
 			iBoxEnd();				
 		}
@@ -697,7 +697,7 @@
 		if ($cfg->value('offline')==1)
 		{
 			echo "<br/>";
-			infobox_start("<span style=\"color:red;\">Spiel offline</span>");
+			iBoxStart("<span style=\"color:red;\">Spiel offline</span>");
 			echo $cfg->value('p1')." &nbsp; [<a href=\"?page=$page&amp;sub=offline\">&Auml;ndern</a>]";
 			iBoxEnd();			
 		}
@@ -709,7 +709,7 @@
 		$_SESSION['admin']['user_query']="";
 		$_SESSION['admin']['queries']['alliances']="";
 
-		infobox_start("Schnellsuche",1);
+		tableStart("Schnellsuche");
 		echo "<form action=\"?page=user&amp;action=search\" method=\"post\"><tr><th class=\"tbltitle\">Nick:</th>";
 		echo "<td class=\"tbldata\"><input type=\"text\" name=\"user_nick\" size=\"40\" /> <input type=\"hidden\" name=\"qmode[user_nick]\" value=\"LIKE '%\" /><input type=\"submit\" name=\"user_search\" value=\"Suchen\" /></td></tr></form>";
 
@@ -725,13 +725,13 @@
 		echo "<script>document.forms[1].elements[0].focus()</script>";
 
 	
-		infobox_start("Spieler-Tools",1);
+		tableStart("Spieler-Tools");
 		// ÃƒÆ’Ã¢â‚¬Å¾nderungsanfragen
 		$res=dbquery("
 		SELECT 
 			COUNT(request_id)
 		FROM 
-			".$db_table['user_requests']."
+			user_requests
 		WHERE 
 			request_handled=0
 		ORDER BY 

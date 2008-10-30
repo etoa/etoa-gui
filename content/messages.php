@@ -199,13 +199,13 @@
 				FROM
           messages AS m
         INNER JOIN
-        	".$db_table['message_cat']." AS c
+        	message_cat AS c
         	ON c.cat_id=m.message_cat_id
        	INNER JOIN
        		message_data as md
        		ON message_id=md.id
         LEFT JOIN
-        	".$db_table['users']."
+        	users
         	ON message_user_from=user_id
 				WHERE                    
        		message_id='".intval($_GET['msg_id'])."'
@@ -521,7 +521,7 @@
 	        cat_desc,
 	        cat_sender
 				FROM
-					".$db_table['message_cat']."
+					message_cat
 				ORDER BY
 					cat_order;");
 				$msgcnt=0;
@@ -586,7 +586,7 @@
 		       		message_data as md
 		       		ON message_id=md.id							
 						LEFT JOIN
-							".$db_table['users']."
+							users
 							ON message_user_from=user_id														
 						WHERE
 							message_user_to='".$cu->id()."'

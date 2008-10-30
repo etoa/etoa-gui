@@ -19,7 +19,7 @@
 				specialist_costs_fuel,
 				specialist_costs_food
 			FROM
-				".$db_table['specialists']."
+				specialists
 			WHERE		
 				specialist_id='".$_POST['engage']."'
 			");
@@ -39,7 +39,7 @@
 					
 					dbquery("
 					UPDATE
-						".$db_table['users']."
+						users
 					SET
 						user_specialist_id=".$arr['specialist_id'].",
 						user_specialist_time=".$st."

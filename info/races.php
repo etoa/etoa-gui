@@ -64,7 +64,7 @@
 		tableEnd();
 	}
 
-	$res = dbquery("SELECT * FROM ".$db_table['races']." ORDER BY $order $sort;");
+	$res = dbquery("SELECT * FROM races ORDER BY $order $sort;");
 	if (mysql_num_rows($res)>0)
 	{
 

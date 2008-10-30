@@ -79,7 +79,7 @@
                             // Daten Speichern
                             dbquery("
                             UPDATE
-                                ".$db_table['user_multi']."
+                                user_multi
                             SET
                                 user_multi_multi_user_id='".addslashes(get_user_id($user[$id]))."',
                                 user_multi_connection='".addslashes($_POST['user_multi_connection'][$id])."'
@@ -100,12 +100,12 @@
                     {
                         if ($_POST['del_multi'][$id]==1)
                         {
-                            dbquery("DELETE FROM ".$db_table['user_multi']." WHERE user_multi_id=$id;");
+                            dbquery("DELETE FROM user_multi WHERE user_multi_id=$id;");
 
                             // Speichert jeden gelöschten multi (soll vor missbrauch schützen -> mutli erstellen -> löschen -> erstellen -> löschen etc.)
                             dbquery("
                             UPDATE
-                                ".$db_table['users']."
+                                users
                             SET
                                 user_multi_delets=user_multi_delets+1
                             WHERE
@@ -130,7 +130,7 @@
             {
                 dbquery("
                 INSERT INTO
-                ".$db_table['user_sitting_date']."
+                user_sitting_date
                 (user_sitting_date_user_id)
                 VALUES
                 ('".$cu->id()."');");
@@ -158,7 +158,7 @@
                             if (strlen($_POST['user_sitting_sitter_password1'])>=PASSWORD_MINLENGHT || $_POST['user_sitting_sitter_password1']=="")
                             {
                                 //überprüft, ob das eingegebene sitterpasswort nicht gleich dem normalen passwort ist
-                                if(mysql_num_rows(dbquery("SELECT user_password FROM ".$db_table['users']." WHERE user_id='".$cu->id()."' AND user_password='$pw1';"))>0)
+                                if(mysql_num_rows(dbquery("SELECT user_password FROM users WHERE user_id='".$cu->id()."' AND user_password='$pw1';"))>0)
                                 {
                                     echo "<b>Fehler:</b> Du kannst nicht das gleiche Passwort nehmen wie beim Account!<br><br>";
                                 }
@@ -175,7 +175,7 @@
                                     SELECT
                                         user_sitting_id
                                     FROM
-                                        ".$db_table['user_sitting']."
+                                        user_sitting
                                     WHERE
                                         user_sitting_user_id='".$cu->id()."';");
                                     if (mysql_num_rows($check_res)>0)
@@ -183,7 +183,7 @@
                                         // Daten Speichern
                                         dbquery("
                                         UPDATE
-                                            ".$db_table['user_sitting']."
+                                            user_sitting
                                         SET
                                             user_sitting_sitter_user_id='".get_user_id($_POST['user_sitting_sitter_nick'])."',
                                             user_sitting_sitter_password='".$password."'
@@ -195,7 +195,7 @@
                                     {
                                         dbquery("
                                         INSERT INTO
-                                        ".$db_table['user_sitting']."
+                                        user_sitting
                                         (user_sitting_user_id,
                                         user_sitting_sitter_user_id,
                                         user_sitting_sitter_password)
@@ -236,7 +236,7 @@
                     foreach ($_POST['del_sitting_date'] as $id=>$data)
                     {
                         if ($_POST['del_sitting_date'][$id]==1)
-                            dbquery("DELETE FROM ".$db_table['user_sitting_date']." WHERE user_sitting_date_id=".$id.";");
+                            dbquery("DELETE FROM user_sitting_date WHERE user_sitting_date_id=".$id.";");
                     }
                 }
 
@@ -255,7 +255,7 @@
                     SELECT
                         user_sitting_date_to
                     FROM
-                        ".$db_table['user_sitting_date']."
+                        user_sitting_date
                     WHERE
                         user_sitting_date_user_id='".$cu->id()."'
                     ORDER BY
@@ -269,7 +269,7 @@
                         // Sittingzeit Speichern
                         dbquery("
                         UPDATE
-                            ".$db_table['user_sitting_date']."
+                            user_sitting_date
                         SET
                             user_sitting_date_from='".$sitting_from."',
                             user_sitting_date_to='".$sitting_to."'
@@ -299,7 +299,7 @@
                     user_sitting_date_from,
                     user_sitting_date_to
                 FROM
-                    ".$db_table['user_sitting_date']."
+                    user_sitting_date
                 WHERE
                     user_sitting_date_user_id='".$cu->id()."'
                     AND user_sitting_date_from!=0
@@ -319,7 +319,7 @@
                 //Speichert alle nötigen Daten
                 dbquery("
                 UPDATE
-                    ".$db_table['user_sitting']."
+                    user_sitting
                 SET
                     user_sitting_active='1',
                     user_sitting_date='".time()."'
@@ -328,14 +328,14 @@
 
                 dbquery("
                 UPDATE
-                    ".$db_table['users']."
+                    users
                 SET
                     user_sitting_days=user_sitting_days-".$sitting_days."
                 WHERE
                     user_id='".$cu->id()."';");
 
                 //löscht daten beidenen keine zeit festgelegt ist
-                dbquery("DELETE FROM ".$db_table['user_sitting_date']." WHERE user_sitting_date_from=0 AND user_sitting_date_to=0;");
+                dbquery("DELETE FROM user_sitting_date WHERE user_sitting_date_from=0 AND user_sitting_date_to=0;");
 
                 echo "<b>Der Sittermodus wurde aktiviert!</b><br><br>";
             }
@@ -351,7 +351,7 @@
             SELECT
                 *
             FROM
-                ".$db_table['user_multi']."
+                user_multi
             WHERE
                 user_multi_user_id='".$cu->id()."'
             ORDER BY
@@ -361,7 +361,7 @@
             SELECT
                 user_sitting_days
             FROM
-                ".$db_table['users']."
+                users
             WHERE
                 user_id='".$cu->id()."';");
             $user_arr = mysql_fetch_array($user_res);
@@ -432,7 +432,7 @@
                 SELECT
                     *
                 FROM
-                    ".$db_table['user_sitting']."
+                    user_sitting
                 WHERE
                     user_sitting_user_id='".$cu->id()."'
                 ORDER BY
@@ -472,7 +472,7 @@
                     SELECT
                         *
                     FROM
-                        ".$db_table['user_sitting_date']."
+                        user_sitting_date
                     WHERE
                         user_sitting_date_user_id='".$cu->id()."'
                         AND user_sitting_date_from!=0
@@ -562,7 +562,7 @@
                     SELECT
                         user_sitting_date_id
                     FROM
-                        ".$db_table['user_sitting_date']."
+                        user_sitting_date
                     WHERE
                         user_sitting_date_user_id='".$cu->id()."'
                         AND user_sitting_date_to=0;");
@@ -631,7 +631,7 @@
                     SELECT
                         *
                     FROM
-                        ".$db_table['user_sitting_date']."
+                        user_sitting_date
                     WHERE
                         user_sitting_date_user_id='".$cu->id()."'
                         AND user_sitting_date_from!=0

@@ -81,7 +81,6 @@
 	*/
 	function advanced_form($module)
 	{
-		global $db_table;
 		require_once("inc/form_functions.php");
 		require_once("forms/$module.php");
 		require_once("inc/advanced_forms.php");
@@ -95,7 +94,6 @@
 	*/
 	function simple_form($module)
 	{
-		global $db_table;
 		require_once("inc/form_functions.php");
 		require_once("forms/$module.php");
 		require_once("inc/simple_forms.php");

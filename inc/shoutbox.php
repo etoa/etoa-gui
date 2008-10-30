@@ -34,9 +34,9 @@
 				u.user_nick
 			FROM
 				(
-					".$db_table['alliance_shoutbox']." AS sb
+					alliance_shoutbox AS sb
 				INNER JOIN
-					".$db_table['users']." AS u
+					users AS u
 				ON
 					sb.shoutbox_user_id = u.user_id
 				)
@@ -66,7 +66,7 @@
 		// ...und einf�/
 		mysql_query("
 			INSERT INTO
-				".$db_table['alliance_shoutbox']."
+				alliance_shoutbox
 				(
 					shoutbox_timestamp,
 					shoutbox_user_id, 

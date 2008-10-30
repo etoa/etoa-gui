@@ -293,7 +293,7 @@
 				echo "<h2>Konfigurationstabelle manuell bearbeiten</h2>";
 				if ($_POST['new']!="")
 				{
-					dbquery("INSERT INTO ".$db_table['config']." () VALUES ();");
+					dbquery("INSERT INTO config () VALUES ();");
 				}
 				if ($_POST['save']!="")
 				{
@@ -302,14 +302,14 @@
 						foreach ($_POST['config_name'] as $id=>$name)
 						{
 							if ($_POST['config_del'][$id]==1)
-								dbquery("DELETE FROM ".$db_table['config']." WHERE config_id=$id;");
+								dbquery("DELETE FROM config WHERE config_id=$id;");
 							else
-								dbquery("UPDATE ".$db_table['config']." SET config_name='$name',config_value='".$_POST['config_value'][$id]."',config_param1='".$_POST['config_param1'][$id]."',config_param2='".$_POST['config_param2'][$id]."' WHERE config_id=$id;");
+								dbquery("UPDATE config SET config_name='$name',config_value='".$_POST['config_value'][$id]."',config_param1='".$_POST['config_param1'][$id]."',config_param2='".$_POST['config_param2'][$id]."' WHERE config_id=$id;");
 						}
 					}
 				}
 				echo "<form action=\"?page=config&amp;configcat=manual\" method=\"post\">";
-				$res = dbquery("SELECT * FROM ".$db_table['config']." ORDER BY config_name;");
+				$res = dbquery("SELECT * FROM config ORDER BY config_name;");
 				if (mysql_num_rows($res)>0)
 				{
 					echo mysql_num_rows($res)." Datens&auml;tze vorhanden<br/><br/>";
@@ -347,9 +347,9 @@
 						$res=dbquery("SELECT * FROM config WHERE config_cat_id=".$_GET['cid']." ORDER BY config_name;");
 						while ($arr=mysql_fetch_array($res))
 						{
-							dbquery("UPDATE ".$db_table['config']." SET config_value='".create_sql_value($arr['config_type_v'],$arr['config_name'],"v",$_POST)."' WHERE config_id='".$arr['config_id']."'");
-							dbquery("UPDATE ".$db_table['config']." SET config_param1='".create_sql_value($arr['config_type_p1'],$arr['config_name'],"p1",$_POST)."' WHERE config_id='".$arr['config_id']."'");
-							dbquery("UPDATE ".$db_table['config']." SET config_param2='".create_sql_value($arr['config_type_p2'],$arr['config_name'],"p2",$_POST)."' WHERE config_id='".$arr['config_id']."'");
+							dbquery("UPDATE config SET config_value='".create_sql_value($arr['config_type_v'],$arr['config_name'],"v",$_POST)."' WHERE config_id='".$arr['config_id']."'");
+							dbquery("UPDATE config SET config_param1='".create_sql_value($arr['config_type_p1'],$arr['config_name'],"p1",$_POST)."' WHERE config_id='".$arr['config_id']."'");
+							dbquery("UPDATE config SET config_param2='".create_sql_value($arr['config_type_p2'],$arr['config_name'],"p2",$_POST)."' WHERE config_id='".$arr['config_id']."'");
 						}
 						echo "&Auml;nderungen wurden &uuml;bernommen!<br/><br/>";
 						$cfg->reload();

@@ -26,7 +26,7 @@
 	// 	Kommentar:
 	//
 
-	$lres=dbquery("SELECT cat_id,cat_name,COUNT(*) as cnt FROM ".$db_table['log_cat'].",".$db_table['logs']." WHERE log_cat=cat_id GROUP BY cat_id;;");
+	$lres=dbquery("SELECT cat_id,cat_name,COUNT(*) as cnt FROM log_cat,logs WHERE log_cat=cat_id GROUP BY cat_id;;");
 	$log_type=array();
 	while ($larr=mysql_fetch_array($lres))
 	{
@@ -43,7 +43,7 @@
 		if ($_POST['delentrys']!="")
 		{
 			$tstamp = time()-$_POST['log_timestamp'];
-			dbquery("DELETE FROM ".$db_table['logs']." WHERE log_cat=".$_POST['log_cat']." AND log_timestamp<$tstamp;");
+			dbquery("DELETE FROM logs WHERE log_cat=".$_POST['log_cat']." AND log_timestamp<$tstamp;");
 			echo mysql_affected_rows()." Eintr&auml;ge wurden gel&ouml;scht!<br/><br/><input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=$page&sub=$sub'\" />";
 		}
 		else
@@ -63,7 +63,7 @@
 			echo "<option value=\"2419200\">4 Wochen</option>";
 			echo "</select> sind.<br/>";
 			echo "<br/><input type=\"submit\" name=\"delentrys\" value=\"Ausf&uuml;hren\" /></form>";
-			$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM ".$db_table['logs'].";"));
+			$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM logs;"));
 			echo "<br/>Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.";
 		}
 	}
@@ -73,7 +73,7 @@
 		{
 			if ($_SESSION['logs']['query']=="")
 			{
-				$sqlstart = "SELECT * FROM ".$db_table['logs'].",".$db_table['log_cat']." WHERE log_cat=cat_id ";
+				$sqlstart = "SELECT * FROM logs,log_cat WHERE log_cat=cat_id ";
 				$sqlend = " ORDER BY log_realtime DESC, log_timestamp DESC";
 				if ($_POST['limit']>0)
 					$sqlend.=" LIMIT ".$_POST['limit'].";";
@@ -148,7 +148,7 @@
 		}
 		elseif ($_GET['sub']=="view")
 		{
-			$res = dbquery("SELECT * FROM ".$db_table['logs'].",".$db_table['log_cat']." WHERE log_cat=cat_id AND log_id=".$_GET['log_id'].";");
+			$res = dbquery("SELECT * FROM logs,log_cat WHERE log_cat=cat_id AND log_id=".$_GET['log_id'].";");
 			$arr = mysql_fetch_array($res);
 			echo "<table class=\"tbl\">";
 			echo "<tr><td class=\"tbltitle\" valign=\"top\">Zeit</td><td class=\"tbldata\">".date("Y-m-d H:i:s",$arr['log_timestamp'])."</td></tr>";
@@ -178,9 +178,9 @@
 				logs_game_cat_name,
 				COUNT(logs_game_id) as cnt 
 			FROM 
-				".$db_table['logs_game_cat']."
+				logs_game_cat
 				INNER JOIN
-				".$db_table['logs_game']." 
+				logs_game 
 				ON logs_game_cat=logs_game_cat_id	
 			GROUP BY 
 				logs_game_cat_id;");
@@ -251,7 +251,7 @@
 				
 				$res = dbquery($sql_query);
 
-				infobox_start("".mysql_num_rows($res)." Ergebnisse",1);
+				tableStart("".mysql_num_rows($res)." Ergebnisse");
 				echo "<tr>
 								<td class=\"tbltitle\" style=\"width:26%\">Zeit</td>
 								<td class=\"tbltitle\" style=\"width:18%\">Krieg?</td>
@@ -349,7 +349,7 @@
 				
 				$res = dbquery($sql_query);
 
-				infobox_start("".mysql_num_rows($res)." Ergebnisse",1);
+				tableStart("".mysql_num_rows($res)." Ergebnisse");
 				echo "<tr>
 								<td class=\"tbltitle\" style=\"width:26%\">Zeit</td>
 								<td class=\"tbltitle\" style=\"width:18%\">Kategorie</td>
@@ -366,7 +366,7 @@
 						SELECT 
 							building_name
 						FROM
-							".$db_table['buildings']."
+							buildings
 						WHERE
 							building_id='".$arr['logs_game_building_id']."';");
 							
@@ -387,7 +387,7 @@
 						SELECT 
 							tech_name
 						FROM
-							".$db_table['technologies']."
+							technologies
 						WHERE
 							tech_id='".$arr['logs_game_tech_id']."';");
 							
@@ -498,7 +498,7 @@
 				logs_battle_planet_id,
 				logs_battle_fleet_landtime
 			FROM 
-				".$db_table['logs_battle']."
+				logs_battle
 			WHERE
 				logs_battle_fleet_landtime>".(time()-$can_attack_total_time)."
 				AND logs_battle_bann_mark='0'
@@ -772,7 +772,7 @@
 			echo "</select></td></tr></table>";
 			echo "<br/><input type=\"submit\" name=\"alliance_search\" value=\"Suche starten\" /></form>";
 
-			$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM ".$db_table['logs'].";"));
+			$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM logs;"));
 			echo "<br/>Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.<br><br>";
 			
 		}

@@ -12,7 +12,6 @@ $xajax->registerFunction("logSelectorCat");
 
 function planetSelectorByCell($form,$show_user_id=0)
 {
-	global $db_table;
 	$objResponse = new xajaxResponse();
 	if ($form['cell_sx']!=0 && $form['cell_sy']!=0 && $form['cell_cx']!=0 && $form['cell_cy']!=0)
 	{
@@ -22,7 +21,7 @@ function planetSelectorByCell($form,$show_user_id=0)
 			cell_solsys_num_planets,
 			cell_solsys_solsys_sol_type
 		FROM
-			".$db_table['space_cells']."
+			space_cells
 		WHERE
 			cell_sx='".$form['cell_sx']."'
 			AND cell_sy='".$form['cell_sy']."'
@@ -42,9 +41,9 @@ function planetSelectorByCell($form,$show_user_id=0)
 					planet_solsys_pos,
 					user_nick
 				FROM
-					".$db_table['planets']."
+					planets
 				LEFT JOIN
-					".$db_table['users']."
+					users
 					ON planet_user_id=user_id
 				WHERE
 					planet_solsys_id=".$arr['cell_id'].";
@@ -92,7 +91,6 @@ function planetSelectorByCell($form,$show_user_id=0)
 
 function planetSelectorByUser($userNick,$show_user_id=1)
 {
-	global $db_table;
 	$objResponse = new xajaxResponse();
 	if ($userNick!="")
 	{
@@ -107,12 +105,12 @@ function planetSelectorByUser($userNick,$show_user_id=1)
 			cell_cy,
 			planet_solsys_pos
 		FROM
-			".$db_table['planets']."
+			planets
 		INNER JOIN
-			".$db_table['users']."
+			users
 			ON planet_user_id=user_id
 		INNER JOIN
-			".$db_table['space_cells']."
+			space_cells
 			ON planet_solsys_id=cell_id
 		WHERE
 			user_nick='$userNick'				
@@ -151,7 +149,6 @@ function planetSelectorByUser($userNick,$show_user_id=1)
 
 function showShipsOnPlanet($pid)
 {
-	global $db_table;
 	$objResponse = new xajaxResponse();	
 	
 	if ($pid!=0)
@@ -164,9 +161,9 @@ function showShipsOnPlanet($pid)
 			shiplist_count,
 			shiplist_id
 		FROM
-			".$db_table['shiplist']."
+			shiplist
 		INNER JOIN
-			".$db_table['ships']."
+			ships
 			ON shiplist_ship_id=ship_id
 			AND shiplist_entity_id='".$pid."'
 		ORDER BY
@@ -200,7 +197,6 @@ function showShipsOnPlanet($pid)
 
 function addShipToPlanet($form)
 {
-	global $db_table;
 	$objResponse = new xajaxResponse();	
 	
 	$updata=explode(":",$form['planet_id']);
@@ -219,13 +215,12 @@ function addShipToPlanet($form)
 
 function removeShipFromPlanet($form,$listId)
 {
-	global $db_table;
 	$objResponse = new xajaxResponse();	
 	
 	$updata=explode(":",$form['planet_id']);
 	dbquery("
 	DELETE FROM
-		".$db_table['shiplist']."
+		shiplist
 	WHERE
 		shiplist_id=".intval($listId)."
 	;");
@@ -235,7 +230,6 @@ function removeShipFromPlanet($form,$listId)
 
 function editShip($form,$listId)
 {
-	global $db_table;
 	$objResponse = new xajaxResponse();	
 	
 	$updata=explode(":",$form['planet_id']);
@@ -244,7 +238,7 @@ function editShip($form,$listId)
 		shiplist_count,
 		shiplist_id
 	FROM
-		".$db_table['shiplist']."
+		shiplist
 	WHERE
 		shiplist_entity_id=".$updata[0]."
 	;");
@@ -272,13 +266,12 @@ function editShip($form,$listId)
 
 function submitEditShip($form,$listId)
 {
-	global $db_table;
 	$objResponse = new xajaxResponse();	
 	
 	$updata=explode(":",$form['planet_id']);
 	dbquery("
 	UPDATE
-		".$db_table['shiplist']."
+		shiplist
 	SET
 		shiplist_count=".intval($form['editcnt_'.$listId])."
 	WHERE
@@ -291,7 +284,6 @@ function submitEditShip($form,$listId)
 //Listet gefundene User auf
 function searchUser($val)
 {
-	global $db_table;
 	$targetId = 'userlist';
 	$inputId = 'user_nick';
 

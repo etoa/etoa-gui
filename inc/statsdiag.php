@@ -47,7 +47,7 @@
 				user_nick,
 				user_rank_current 
 			FROM 
-				".$db_table['users']." 
+				users 
 			WHERE 
 				user_id='".$_GET['user']."';
 		");
@@ -58,7 +58,7 @@
 				SELECT 
 					* 
 				FROM 
-					".$db_table['user_points']." 
+					user_points 
 				WHERE 
 					point_user_id='".$_GET['user']."' 
 				ORDER BY 

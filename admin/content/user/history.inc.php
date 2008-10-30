@@ -6,7 +6,7 @@
 		echo "Spieler ausw&auml;hlen: <select name=\"user_id\">";
 		foreach ($users as $id=>$data)
 		{
-			$hcnt = mysql_fetch_row(dbquery("SELECT COUNT(*) FROM ".$db_table['user_history']." WHERE history_user_id='".$id."' ORDER BY history_timestamp ASC;"));
+			$hcnt = mysql_fetch_row(dbquery("SELECT COUNT(*) FROM user_history WHERE history_user_id='".$id."' ORDER BY history_timestamp ASC;"));
 			if ($hcnt[0]>0)
 				echo "<option value=\"$id\">".$data['nick']." (".$hcnt[0]." Eintr&auml;ge)</option>";
 		}
@@ -20,7 +20,7 @@
 			else
 				$userid=$_GET['id'];
 			echo "<h2>Geschichte der Users <a href=\"?page=user&sub=edit&user_id=".$userid."\">".$users[$userid]['nick']."</a> (".$users[$userid]['name'].", ".$users[$userid]['email'].")</h2>";
-			$hres=dbquery("SELECT * FROM ".$db_table['user_history']." WHERE history_user_id='".$userid."' ORDER BY history_timestamp ASC;");
+			$hres=dbquery("SELECT * FROM user_history WHERE history_user_id='".$userid."' ORDER BY history_timestamp ASC;");
 			if (mysql_num_rows($hres)>0)
 			{
 				echo "<table>";

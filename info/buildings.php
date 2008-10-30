@@ -17,7 +17,7 @@ if (isset($_GET['id']))
 {
 	// what is this good for?
 	//if ($b_level==0) $b_level=1;
-	$res = dbquery("SELECT * FROM ".$db_table['buildings']." WHERE building_id='".$_GET['id']."';");
+	$res = dbquery("SELECT * FROM buildings WHERE building_id='".$_GET['id']."';");
 	if ($arr = @mysql_fetch_array($res))
 	{
 		Help::navi(array("Geb&auml;ude","buildings"),array(text2html($arr['building_name']),$arr['building_id']),1);
@@ -26,9 +26,9 @@ if (isset($_GET['id']))
 			building_id,
 			building_name 
 		FROM 
-			".$db_table['buildings']." 
+			buildings 
 		INNER JOIN
-			".$db_table['building_types']." 
+			building_types 
 		ON
 			building_type_id=type_id		
 		WHERE 
@@ -45,7 +45,7 @@ if (isset($_GET['id']))
 		}
 		echo "</select><br/><br/>";		
 
-		$res_level = dbquery("SELECT buildlist_current_level FROM ".$db_table['buildlist']." WHERE buildlist_building_id ='".$_GET['id']."' AND buildlist_user_id='".$cu->id()."' AND buildlist_entity_id='".$cp->id."';");
+		$res_level = dbquery("SELECT buildlist_current_level FROM buildlist WHERE buildlist_building_id ='".$_GET['id']."' AND buildlist_user_id='".$cu->id()."' AND buildlist_entity_id='".$cp->id."';");
 		if(mysql_num_rows($res_level)>0)
 		{
 			$arr_level = mysql_fetch_array($res_level);
@@ -251,7 +251,7 @@ if (isset($_GET['id']))
         // Titanspeicher
         if ($arr['building_id']==16)
         {
-        $pbarr = mysql_fetch_row(dbquery("SELECT building_store_metal FROM ".$db_table['buildings']." WHERE building_id=6;"));
+        $pbarr = mysql_fetch_row(dbquery("SELECT building_store_metal FROM buildings WHERE building_id=6;"));
             tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf(STD_FIELDS).") des Planeten)");
         echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Kapazit&auml;t</td></tr>";
         for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
@@ -267,7 +267,7 @@ if (isset($_GET['id']))
         // Siliziumspeicher
         if ($arr['building_id']==17)
         {
-        $pbarr = mysql_fetch_row(dbquery("SELECT building_store_crystal FROM ".$db_table['buildings']." WHERE building_id=6;"));
+        $pbarr = mysql_fetch_row(dbquery("SELECT building_store_crystal FROM buildings WHERE building_id=6;"));
             tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf(STD_FIELDS).") des Planeten)");
         echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Kapazit&auml;t</td></tr>";
         for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
@@ -283,7 +283,7 @@ if (isset($_GET['id']))
         // Lagerhalle
         if ($arr['building_id']==18)
         {
-        $pbarr = mysql_fetch_row(dbquery("SELECT building_store_plastic FROM ".$db_table['buildings']." WHERE building_id=6;"));
+        $pbarr = mysql_fetch_row(dbquery("SELECT building_store_plastic FROM buildings WHERE building_id=6;"));
             tableStart("Kapazit&auml;t inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf(STD_FIELDS).")");
         echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Kapazit&auml;t</td></tr>";
         for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
@@ -299,7 +299,7 @@ if (isset($_GET['id']))
         // Nahrungssilos
         if ($arr['building_id']==19)
         {
-        $pbarr = mysql_fetch_row(dbquery("SELECT building_store_food FROM ".$db_table['buildings']." WHERE building_id=6;"));
+        $pbarr = mysql_fetch_row(dbquery("SELECT building_store_food FROM buildings WHERE building_id=6;"));
             tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf(STD_FIELDS).") des Planeten)");
         echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Kapazit&auml;t</td></tr>";
         for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
@@ -315,7 +315,7 @@ if (isset($_GET['id']))
         // Tritiumsilo
         if ($arr['building_id']==20)
         {
-        $pbarr = mysql_fetch_row(dbquery("SELECT building_store_fuel FROM ".$db_table['buildings']." WHERE building_id=6;"));
+        $pbarr = mysql_fetch_row(dbquery("SELECT building_store_fuel FROM buildings WHERE building_id=6;"));
         tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf(STD_FIELDS).") des Planeten)");
         echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Kapazit&auml;t</td></tr>";
         for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
@@ -471,7 +471,7 @@ else
         type_id,
         type_name 
 	FROM 
-		".$db_table['building_types']." 
+		building_types 
 	ORDER BY 
 		type_order,
 		type_name;");
@@ -488,8 +488,8 @@ else
                 type_name,
                 building_fields 
 			FROM 
-				".$db_table['buildings'].",
-				".$db_table['building_types']." 
+				buildings,
+				building_types 
 			WHERE 
 				building_type_id=".$tarr['type_id']." 
 				AND building_show=1 

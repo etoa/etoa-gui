@@ -115,7 +115,7 @@
             success_msg("Benutzer-Daten wurden ge&auml;ndert!");
             $cu->addToUserLog("settings","{nick} hat sein Profil aktualisiert.",1);
             
-            $res = dbquery("SELECT * FROM ".$db_table['users']." WHERE user_id='".$cu->id()."';");
+            $res = dbquery("SELECT * FROM users WHERE user_id='".$cu->id()."';");
             $arr = mysql_fetch_array($res);
         }
         else

@@ -80,7 +80,7 @@
 		SELECT
 			alliance_news_id
 		FROM
-			".$db_table['alliance_news']."
+			alliance_news
 		WHERE
 			(
 	      alliance_news_alliance_to_id='".$cu->allianceId()."'
@@ -161,9 +161,9 @@
 	      techlist.techlist_build_end_time,
 	      techlist.techlist_entity_id
 	  FROM
-	      ".$db_table['techlist']."
+	      techlist
 	      INNER JOIN
-	      ".$db_table['technologies']."
+	      technologies
 	      ON technologies.tech_id=techlist.techlist_tech_id
 	      AND techlist.techlist_user_id='".$cu->id()."'
 	      AND techlist.techlist_build_type>'0';");
@@ -598,9 +598,9 @@
         bl.buildlist_current_level,
         bl.buildlist_build_type
       FROM
-        ".$db_table['buildlist']." AS bl
+        buildlist AS bl
         INNER JOIN
-        ".$db_table['buildings']." AS b
+        buildings AS b
         ON b.building_id=bl.buildlist_building_id
         AND bl.buildlist_entity_id='".$arr_planet['id']."'
         AND bl.buildlist_build_type>'0'");
@@ -653,9 +653,9 @@
     		queue_endtime,
     		queue_objtime
 			FROM
-    		".$db_table['ship_queue']."
+    		ship_queue
     	INNER JOIN
-    		".$db_table['ships']."
+    		ships
     		ON queue_ship_id=ship_id
   			AND queue_entity_id='".$arr_planet['id']."'
   			AND queue_endtime>'".time()."'
@@ -698,9 +698,9 @@
     		queue_endtime,
     		queue_objtime
 			FROM
-    		".$db_table['def_queue']."
+    		def_queue
     	INNER JOIN
-    		".$db_table['defense']."
+    		defense
     		ON queue_def_id=def_id
   			AND queue_entity_id='".$arr_planet['id']."'
   			AND queue_endtime>'".time()."'

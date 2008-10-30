@@ -283,7 +283,7 @@
 																		"cols" => "",
 																		"rcb_elem" => "",
 																		"rcb_elem_chekced" => "",
-																		"select_elem" => admin_get_select_elements($db_table['def_cat'],"cat_id","cat_name","cat_name",array("0"=>"(Keine)")),
+																		"select_elem" => admin_get_select_elements('def_cat',"cat_id","cat_name","cat_name",array("0"=>"(Keine)")),
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
 																	),																	
@@ -297,7 +297,7 @@
 																		"cols" => "",
 																		"rcb_elem" => "",
 																		"rcb_elem_chekced" => "",
-																		"select_elem" => admin_get_select_elements($db_table['races'],"race_id","race_name","race_name",array("0"=>"(Keine)")),
+																		"select_elem" => admin_get_select_elements('races',"race_id","race_name","race_name",array("0"=>"(Keine)")),
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
 																	)

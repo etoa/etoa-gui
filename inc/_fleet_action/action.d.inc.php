@@ -29,7 +29,7 @@
 		SELECT 
 			techlist_current_level 
 		FROM 
-			".$db_table['techlist']." 
+			techlist 
 		WHERE 
               techlist_user_id='".$arr['fleet_user_id']."' 
               AND techlist_tech_id='17'");
@@ -54,7 +54,7 @@
 				buildlist_deactivated,
 				buildlist_building_id
 			FROM
-				".$db_table['buildlist']."
+				buildlist
 			WHERE
 				buildlist_planet_id='".$arr['fleet_planet_to']."'
 				AND buildlist_current_level > 0
@@ -79,7 +79,7 @@
                   //Deaktivierzeit Updaten
                   dbquery("
                   UPDATE
-                      ".$db_table['buildlist']."
+                      buildlist
                   SET
                       buildlist_deactivated='".$time_to_add."'
                   WHERE
@@ -91,7 +91,7 @@
                   SELECT 
                       building_name 
                   FROM 
-                      ".$db_table['buildings']." 
+                      buildings 
                   WHERE 
                       building_id='".$barr['buildlist_building_id']."';");
                   $name_arr=mysql_fetch_array($name_res);
@@ -102,14 +102,14 @@
                   SELECT 
                       ship_id 
                   FROM 
-                      ".$db_table['ships']." 
+                      ships 
                   WHERE 
                       ship_deactivade='1'");
                   $sarr=mysql_fetch_array($sres);
                   
                   dbquery("
                   UPDATE 
-                      ".$db_table['fleet_ships']." 
+                      fleet_ships 
                   SET 
                       fs_ship_cnt=fs_ship_cnt-1 
                   WHERE 
@@ -121,7 +121,7 @@
                   SELECT 
                       SUM(fs_ship_cnt) AS cnt 
                   FROM 
-                      ".$db_table['fleet_ships']." 
+                      fleet_ships 
                   WHERE 
                       fs_fleet_id='".$arr['fleet_id']."';");
                   $check_arr=mysql_fetch_array($check_res);

@@ -57,7 +57,7 @@
 		SELECT 
 			* 
 		FROM 
-			".$db_table['ships']." 
+			ships 
 		LEFT JOIN
 			ship_cat
 			ON ship_cat_id=cat_id
@@ -73,7 +73,7 @@
 				ship_id,
 				ship_name
 			FROM 
-				".$db_table['ships']."
+				ships
 			WHERE
 				ship_buildable=1 
 				AND special_ship=0
@@ -87,7 +87,7 @@
 			}
 			echo "</select><br/><br/>";		
 			
-			$vres=dbquery("Select tech_id,tech_name,req_req_tech_level FROM ".$db_table['ship_requirements'].",".$db_table['technologies']." WHERE
+			$vres=dbquery("Select tech_id,tech_name,req_req_tech_level FROM ship_requirements,technologies WHERE
 			req_ship_id=".$arr['ship_id']."
 			AND tech_type_id='".TECH_SPEED_CAT."'
 			AND req_req_tech_id=tech_id
@@ -298,7 +298,7 @@
 		SELECT 
 			* 
 		FROM 
-			".$db_table['ships']." 
+			ships 
 		LEFT JOIN
 			ship_cat
 		ON ship_cat_id=cat_id

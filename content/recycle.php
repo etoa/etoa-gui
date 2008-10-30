@@ -44,7 +44,7 @@
 	SELECT
 		techlist_current_level
 	FROM
-		".$db_table['techlist']."
+		techlist
 	WHERE
 		techlist_user_id=".$cu->id()."
         AND techlist_tech_id=".RECYC_TECH_ID."
@@ -89,9 +89,9 @@
                 ships.ship_costs_food,
                 shiplist.shiplist_count
             FROM
-                ".$db_table['shiplist']."
+                shiplist
                 INNER JOIN
-                ".$db_table['ships']."
+                ships
             		ON
                 ships.ship_id=shiplist.shiplist_ship_id
                 AND shiplist.shiplist_user_id='".$cu->id()."'
@@ -110,7 +110,7 @@
                 //Schiffe vom Planeten abziehen
                 dbquery("
                 UPDATE
-                    ".$db_table['shiplist']."
+                    shiplist
                 SET
                     shiplist_count=shiplist_count-".$num."
                 WHERE
@@ -135,7 +135,7 @@
 				//Rohstoffe Updaten
 				dbquery("
 				UPDATE
-					".$db_table['planets']."
+					planets
 				SET
           planet_res_metal=planet_res_metal+".$pb[0].",
           planet_res_crystal=planet_res_crystal+".$pb[1].",
@@ -186,9 +186,9 @@
                 defense.def_fields,
                 deflist.deflist_count
             FROM
-                ".$db_table['deflist']."
+                deflist
                 INNER JOIN
-                ".$db_table['defense']."
+                defense
             		ON
                 defense.def_id=deflist.deflist_def_id
                 AND deflist.deflist_entity_id='".$cp->id()."'
@@ -207,7 +207,7 @@
                 //Defese vom Planeten Abziehen
                 dbquery("
                 UPDATE
-                    ".$db_table['deflist']."
+                    deflist
                 SET
                     deflist_count=deflist_count-".$num."
                 WHERE
@@ -232,7 +232,7 @@
 				//Rohstoffe und Felder updaten
 				dbquery("
 				UPDATE
-					".$db_table['planets']."
+					planets
 				SET
           planet_res_metal=planet_res_metal+".$pb[0].",
           planet_res_crystal=planet_res_crystal+".$pb[1].",
@@ -268,9 +268,9 @@
 			s.ship_name,
 			sl.shiplist_count
 		FROM
-      ".$db_table['ships']." AS s
+      ships AS s
       INNER JOIN
-      ".$db_table['shiplist']." AS sl
+      shiplist AS sl
       ON s.ship_id=sl.shiplist_ship_id
       AND sl.shiplist_entity_id='".$cp->id()."'
       AND s.ship_buildable='1'
@@ -322,9 +322,9 @@
 			d.def_name,
 			dl.deflist_count
 		FROM
-      ".$db_table['defense']." AS d
+      defense AS d
       INNER JOIN
-      ".$db_table['deflist']." AS dl
+      deflist AS dl
       ON d.def_id=dl.deflist_def_id
       AND dl.deflist_entity_id='".$cp->id()."'
       AND d.def_buildable='1'

@@ -29,7 +29,7 @@
 	// VARIABLES
 	
 	define("MODUL_NAME","Sonnentypen");				
-	define("DB_TABLE", $db_table['sol_types']);
+	define("DB_TABLE", 'sol_types');
 	define("DB_TABLE_ID", "type_id");
 	define("DB_OVERVIEW_ORDER_FIELD","type_name");
 	

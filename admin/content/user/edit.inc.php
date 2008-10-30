@@ -4,7 +4,7 @@
 			if (isset($_POST['save']))
 			{
 				// Speichert Usertdaten in der Tabelle "users"
-				$sql = "UPDATE ".$db_table['users']." SET
+				$sql = "UPDATE users SET
 				user_name='".$_POST['user_name']."',
 				user_nick='".$_POST['user_nick']."',
 				user_email='".$_POST['user_email']."',
@@ -159,7 +159,7 @@
 				{
                     dbquery("
                     UPDATE
-                        ".$db_table['user_sitting']."
+                        user_sitting
                     SET
                         user_sitting_active='0',
                         user_sitting_sitter_user_id='0',
@@ -169,7 +169,7 @@
                         user_sitting_user_id='".$_GET['user_id']."';");
 
                 	//löscht alle gespeichertet Sittingdaten des users
-               		dbquery("DELETE FROM ".$db_table['user_sitting_date']." WHERE user_sitting_date_user_id='".$_GET['user_id']."';");
+               		dbquery("DELETE FROM user_sitting_date WHERE user_sitting_date_user_id='".$_GET['user_id']."';");
 
 				}
 				//Sitter Passwort ändern
@@ -177,7 +177,7 @@
 				{
                     dbquery("
                     UPDATE
-                        ".$db_table['user_sitting']."
+                        user_sitting
                     SET
                         user_sitting_sitter_password='".md5($_POST['user_sitting_sitter_password'])."'
                     WHERE
@@ -538,7 +538,7 @@
 								<td class=\"tbltitle\">Rasse:</td>
 								<td class=\"tbldata\">
 									<select name=\"user_race_id\">";
-									$tres = dbquery("SELECT * FROM ".$db_table['races']." ORDER BY race_name;");
+									$tres = dbquery("SELECT * FROM races ORDER BY race_name;");
 									while ($tarr = mysql_fetch_array($tres))
 									{
 										echo "<option value=\"".$tarr['race_id']."\"";
@@ -558,7 +558,7 @@
 										specialist_name,
 										specialist_id
 									FROM
-										".$db_table['specialists']."
+										specialists
 									ORDER BY
 										specialist_name				
 									;");
@@ -943,7 +943,7 @@
 				SELECT 
 					* 
 				FROM 
-					".$db_table['login_failures']." 
+					login_failures 
 				WHERE
 					failure_user_id=".$arr['user_id']."
 				ORDER BY 
@@ -1063,7 +1063,7 @@
 								<td class=\"tbldata\">
 									<select name=\"user_ban_admin_id\" id=\"user_ban_admin_id\">
 									<option value=\"0\">(niemand)</option>";
-									$tres = dbquery("SELECT * FROM ".$db_table['admin_users']." ORDER BY user_nick;");
+									$tres = dbquery("SELECT * FROM admin_users ORDER BY user_nick;");
 									while ($tarr = mysql_fetch_array($tres))
 									{
 										echo "<option value=\"".$tarr['user_id']."\"";
@@ -1158,7 +1158,7 @@
 								<tr>
 									<td class=\"tbltitle\" valign=\"top\">Eingetragene Multis</td>
 									<td class=\"tbldata\">";
-									$multi_res = dbquery("SELECT user_multi_multi_user_id,user_multi_connection FROM ".$db_table['user_multi']." WHERE user_multi_user_id=".$arr['user_id'].";");
+									$multi_res = dbquery("SELECT user_multi_multi_user_id,user_multi_connection FROM user_multi WHERE user_multi_user_id=".$arr['user_id'].";");
 									while ($multi_arr = mysql_fetch_array($multi_res))
 									{
 										echo "<a href=\"?page=user&sub=edit&user_id=".$multi_arr['user_multi_multi_user_id']."\">".get_user_nick($multi_arr['user_multi_multi_user_id'])."</a> (".$multi_arr['user_multi_connection'].")<br>";
@@ -1178,7 +1178,7 @@
 								user_sitting_sitter_ip,
 								user_sitting_date 
 							FROM 
-								".$db_table['user_sitting']." 
+								user_sitting 
 							WHERE 
 								user_sitting_user_id='".$arr['user_id']."' 
 								AND user_sitting_active='1';");
@@ -1201,7 +1201,7 @@
 			                    SELECT
 			                        *
 			                    FROM
-			                        ".$db_table['user_sitting_date']."
+			                        user_sitting_date
 			                    WHERE
 			                        user_sitting_date_user_id='".$arr['user_id']."'
 			                        AND user_sitting_date_from!=0

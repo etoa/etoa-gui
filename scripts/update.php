@@ -31,7 +31,7 @@
 
 	function update_day()
 	{
-		global $db_table, $conf;
+		global $conf;
 
 	 	// Inaktive User löschen
 		$tmr = timerStart();
@@ -65,7 +65,7 @@
 
 	function update_hour()
 	{
-		global $db_table, $conf;
+		global $conf;
 
 		// Punkteberechnung
 		$tmr = timerStart();
@@ -90,7 +90,7 @@
 
 	function update_30minute()
 	{
-		global $db_table, $conf;
+		global $conf;
 
 		// Objekt updaten
 		//$tmr = timerStart();
@@ -103,12 +103,12 @@
 
 	function update_5minute()
 	{
-		global $db_table, $conf;
+		global $conf;
 
 		// User Statistik speichern
-		$rres=dbquery("SELECT COUNT(user_id) FROM ".$db_table['users'].";");
+		$rres=dbquery("SELECT COUNT(user_id) FROM users;");
 		$rarr=mysql_fetch_row($rres);
-		$gres=dbquery("SELECT COUNT(user_id) FROM ".$db_table['users']." WHERE user_acttime>".(time()-$conf['user_timeout']['v']).";");
+		$gres=dbquery("SELECT COUNT(user_id) FROM users WHERE user_acttime>".(time()-$conf['user_timeout']['v']).";");
 		$garr=mysql_fetch_row($gres);
 		dbquery("INSERT INTO user_onlinestats (stats_timestamp,stats_count,stats_regcount) VALUES (".time().",".$garr[0].",".$rarr[0].");");
 		$log = "\nUser-Statistik: ".$garr[0]." User online, ".$rarr[0]." User registriert\n\n";
@@ -146,7 +146,7 @@
 
 	function update_minute()
 	{
-		global $db_table, $conf;
+		global $conf;
 
 		// Zufalls-Event auslösen
 		//PlanetEventHandler::doEvent(RANDOM_EVENTS_PER_UPDATE);
@@ -228,7 +228,7 @@
 			if ($conf['updating']['v']==0)
 			{
 				// Update-Flag setzen
-				dbquery("UPDATE ".$db_table['config']." SET config_value=1,config_param2=".time()." WHERE config_name='updating';");
+				dbquery("UPDATE config SET config_value=1,config_param2=".time()." WHERE config_name='updating';");
 
 				// Messung starten
 				$tmr = timerStart();
@@ -294,7 +294,7 @@
 				unset($log);
 
 				// Update-Flag löschen
-				dbquery("UPDATE ".$db_table['config']." SET config_value=0 WHERE config_name='updating';");
+				dbquery("UPDATE config SET config_value=0 WHERE config_name='updating';");
 			}
 			else
 			{

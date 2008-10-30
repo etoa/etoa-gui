@@ -230,7 +230,7 @@
 		SELECT 
 			* 
 		FROM 
-			".$db_table[REQ_TBL].";
+			".REQ_TBL.";
 		");
 		while ($rarr = mysql_fetch_array($rres))
 		{
@@ -245,7 +245,7 @@
 			SELECT 
 				* 
 			FROM 
-				".$db_table[TYPES_TBL]." 
+				".TYPES_TBL." 
 			ORDER BY 
 				".TYPE_ORDER_FLD." ASC;");
 			while ($tarr=mysql_fetch_array($tres))
@@ -258,7 +258,7 @@
 					SELECT 
 						* 
 					FROM 
-						".$db_table[ITEMS_TBL]." 
+						".ITEMS_TBL." 
 					WHERE 
 						".ITEM_SHOW_FLD."=1 
 						AND 
@@ -277,7 +277,7 @@
 					SELECT 
 						* 
 					FROM 
-						".$db_table[ITEMS_TBL]." 
+						".ITEMS_TBL." 
 					WHERE 
 						".ITEM_SHOW_FLD."=1 
 						AND ".ITEM_TYPE_FLD."=".$tarr[TYPE_ID_FLD]." 
@@ -442,7 +442,7 @@
 				SELECT 
 					* 
 				FROM 
-					".$db_table[ITEMS_TBL]." 
+					".ITEMS_TBL." 
 				WHERE 
 					".ITEM_SHOW_FLD."=1 
 					AND 
@@ -460,7 +460,7 @@
 				SELECT 
 					* 
 				FROM 
-					".$db_table[ITEMS_TBL]." 
+					".ITEMS_TBL." 
 				WHERE 
 					".ITEM_SHOW_FLD."=1 
 				ORDER BY 

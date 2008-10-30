@@ -30,7 +30,7 @@
 	*/	
 
 
-$res = dbquery("SELECT * FROM ".$db_table['space_cells']." WHERE cell_wormhole_id='".intval($_GET['id'])."' OR cell_id='".intval($_GET['id'])."';");
+$res = dbquery("SELECT * FROM space_cells WHERE cell_wormhole_id='".intval($_GET['id'])."' OR cell_id='".intval($_GET['id'])."';");
 $arr1 = mysql_fetch_array($res);
 $arr2 = mysql_fetch_array($res);
 $coords1= $arr1['cell_sx']."/".$arr1['cell_sy']." : ".$arr1['cell_cx']."/".$arr1['cell_cy'];

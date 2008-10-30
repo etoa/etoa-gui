@@ -160,7 +160,7 @@
 			building_id,
 			building_name
 		FROM 
-			".$db_table['buildings']."
+			buildings
 		ORDER BY 
 			building_order,
 			building_name;");
@@ -175,7 +175,7 @@
 					bp_level,
 					bp_points
 				FROM 
-					".$db_table['building_points']."
+					building_points
 				WHERE
 					bp_building_id=".$arr['building_id']."
 				ORDER BY 
@@ -237,7 +237,7 @@
 		$starItem = 6;
 		
 		// Lade Gebäude
-		$bures = dbquery("SELECT building_id,building_name FROM ".$db_table['buildings'].";");
+		$bures = dbquery("SELECT building_id,building_name FROM buildings;");
 		while ($buarr = mysql_fetch_array($bures))
 		{
 			$bu_name[$buarr['building_id']]=$buarr['building_name'];
@@ -324,17 +324,17 @@
 			foreach ($_POST['building_id'] as $id=>$val)
 			{
 				if ($_POST['building_level'][$id]<1)
-					dbquery("DELETE FROM ".$db_table['building_requirements']." WHERE req_id=$id;");
+					dbquery("DELETE FROM building_requirements WHERE req_id=$id;");
 				else
-					dbquery("UPDATE ".$db_table['building_requirements']." SET req_req_building_id=$val,req_req_building_level=".$_POST['building_level'][$id]." WHERE req_id=$id;");
+					dbquery("UPDATE building_requirements SET req_req_building_id=$val,req_req_building_level=".$_POST['building_level'][$id]." WHERE req_id=$id;");
 			}
 			// Technologieänderungen speichern
 			foreach ($_POST['tech_id'] as $id=>$val)
 			{
 				if ($_POST['tech_level'][$id]<1)
-					dbquery("DELETE FROM ".$db_table['building_requirements']." WHERE req_id=$id;");
+					dbquery("DELETE FROM building_requirements WHERE req_id=$id;");
 				else
-					dbquery("UPDATE ".$db_table['building_requirements']." SET req_req_tech_id=$val,req_req_tech_level=".$_POST['tech_level'][$id]." WHERE req_id=$id;");
+					dbquery("UPDATE building_requirements SET req_req_tech_id=$val,req_req_tech_level=".$_POST['tech_level'][$id]." WHERE req_id=$id;");
 			}
 		}
 
@@ -343,9 +343,9 @@
 		{
 			if ($_POST['new_item_id']!="")
 			{
-				if (mysql_num_rows(dbquery("SELECT req_id FROM ".$db_table['building_requirements']." WHERE req_building_id=".$_POST['new_id']." AND req_req_building_id=".$_POST['new_item_id'].";"))==0)
+				if (mysql_num_rows(dbquery("SELECT req_id FROM building_requirements WHERE req_building_id=".$_POST['new_id']." AND req_req_building_id=".$_POST['new_item_id'].";"))==0)
 				{
-					dbquery("INSERT INTO ".$db_table['building_requirements']." (req_building_id,req_req_building_id,req_req_building_level) VALUES ('".$_POST['new_id']."','".$_POST['new_item_id']."','".$_POST['new_item_level']."');");
+					dbquery("INSERT INTO building_requirements (req_building_id,req_req_building_id,req_req_building_level) VALUES ('".$_POST['new_id']."','".$_POST['new_item_id']."','".$_POST['new_item_level']."');");
 				}
 				else
 					echo "Fehler! Diese Geb&auml;udeverkn&uuml;pfung existiert bereits!<br/><br/>";
@@ -359,9 +359,9 @@
 		{
 			if ($_POST['new_item_id']!="")
 			{
-				if (mysql_num_rows(dbquery("SELECT req_id FROM ".$db_table['building_requirements']." WHERE req_building_id=".$_POST['new_id']." AND req_req_tech_id=".$_POST['new_item_id'].";"))==0)
+				if (mysql_num_rows(dbquery("SELECT req_id FROM building_requirements WHERE req_building_id=".$_POST['new_id']." AND req_req_tech_id=".$_POST['new_item_id'].";"))==0)
 				{
-					dbquery("INSERT INTO ".$db_table['building_requirements']." (req_building_id,req_req_tech_id,req_req_tech_level) VALUES ('".$_POST['new_id']."','".$_POST['new_item_id']."','".$_POST['new_item_level']."');");
+					dbquery("INSERT INTO building_requirements (req_building_id,req_req_tech_id,req_req_tech_level) VALUES ('".$_POST['new_id']."','".$_POST['new_item_id']."','".$_POST['new_item_level']."');");
 				}
 				else
 					echo "Fehler! Diese Forschungsverkn&uuml;pfung existiert bereits!<br/><br/>";
@@ -379,7 +379,7 @@
 				{
 					foreach ($req_req_building_id as $key=>$val)
 					{
-						dbquery("DELETE FROM ".$db_table['building_requirements']." WHERE req_building_id=$req_building_id AND req_req_building_id=$key;");
+						dbquery("DELETE FROM building_requirements WHERE req_building_id=$req_building_id AND req_req_building_id=$key;");
 					}
 				}
 			}
@@ -394,7 +394,7 @@
 				{
 					foreach ($req_req_tech_id as $key=>$val)
 					{
-						dbquery("DELETE FROM ".$db_table['building_requirements']." WHERE req_building_id=$req_building_id AND req_req_tech_id=$key;");
+						dbquery("DELETE FROM building_requirements WHERE req_building_id=$req_building_id AND req_req_tech_id=$key;");
 					}
 				}
 			}
@@ -402,19 +402,19 @@
 
 
 		// Lade Gebäude- & Technologienamen
-		$bures = dbquery("SELECT building_id,building_name FROM ".$db_table['buildings']." WHERE building_show=1;");
+		$bures = dbquery("SELECT building_id,building_name FROM buildings WHERE building_show=1;");
 		while ($buarr = mysql_fetch_array($bures))
 		{
 			$bu_name[$buarr['building_id']]=$buarr['building_name'];
 		}
-		$teres = dbquery("SELECT tech_id,tech_name FROM ".$db_table['technologies']." WHERE tech_show=1;");
+		$teres = dbquery("SELECT tech_id,tech_name FROM technologies WHERE tech_show=1;");
 		while ($tearr = mysql_fetch_array($teres))
 		{
 			$te_name[$tearr['tech_id']]=$tearr['tech_name'];
 		}
 
 		// Lade Anforderungen
-		$rres = dbquery("SELECT * FROM ".$db_table[REQ_TBL].";");
+		$rres = dbquery("SELECT * FROM ".REQ_TBL.";");
 		while ($rarr = mysql_fetch_array($rres))
 		{
 			$b_req[$rarr[REQ_ITEM_FLD]]['i'][$rarr['req_req_building_id']]=$rarr['req_id'];
@@ -423,7 +423,7 @@
 			if ($rarr['req_req_tech_id']>0) $b_req[$rarr[REQ_ITEM_FLD]]['t'][$rarr['req_req_tech_id']]=$rarr['req_req_tech_level'];
 		}
 
-		$res = dbquery("SELECT * FROM ".$db_table[ITEMS_TBL]." WHERE ".ITEM_SHOW_FLD."=1 ORDER BY ".ITEM_ORDER_FLD.";");
+		$res = dbquery("SELECT * FROM ".ITEMS_TBL." WHERE ".ITEM_SHOW_FLD."=1 ORDER BY ".ITEM_ORDER_FLD.";");
 		if (mysql_num_rows($res)>0)
 		{
 			if ($_GET['action']=="new_building" || $_GET['action']=="new_tech")
@@ -545,7 +545,7 @@
 		{
 			dbquery("
 			UPDATE 
-				".$db_table['buildlist']." 
+				buildlist 
 			SET 
                 buildlist_current_level='".$_POST['buildlist_current_level']."',
                 buildlist_build_type='".$_POST['buildlist_build_type']."',
@@ -556,7 +556,7 @@
 		}
 		elseif (isset($_POST['del']))
 		{
-			dbquery("DELETE FROM ".$db_table['buildlist']." WHERE buildlist_id='".$_POST['buildlist_id']."';");
+			dbquery("DELETE FROM buildlist WHERE buildlist_id='".$_POST['buildlist_id']."';");
 		}
 
 
@@ -630,15 +630,15 @@
 		//
 		elseif ((isset($_POST['buildlist_search']) || isset($_POST['new']) || isset($_SESSION['admin']['building_query'])) && (isset($_GET['action']) &&$_GET['action']=="search"))
 		{
-			$tables = $db_table['buildlist'].",".$db_table['planets'].",".$db_table['users'].",".$db_table['buildings'];
+			$tables = "buildlist,planets,users,buildings";
 			if (isset($_POST['new']))
 			{
 				$updata=explode(":",$_POST['planet_id']);
-				if (mysql_num_rows(dbquery("SELECT buildlist_id FROM ".$db_table['buildlist']." WHERE buildlist_entity_id=".$updata[0]." AND buildlist_building_id=".$_POST['building_id'].";"))==0)
+				if (mysql_num_rows(dbquery("SELECT buildlist_id FROM buildlist WHERE buildlist_entity_id=".$updata[0]." AND buildlist_building_id=".$_POST['building_id'].";"))==0)
 				{
 					dbquery("
 					INSERT INTO 
-					".$db_table['buildlist']." 
+					buildlist 
                         (buildlist_entity_id,
                         buildlist_user_id,
                         buildlist_building_id,
@@ -660,7 +660,7 @@
 				echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\">";
 				tableStart();
 				echo "<tr><th class=\"tbltitle\">Geb&auml;ude</th><td class=\"tbldata\"><select name=\"building_id\">";
-				$bres = dbquery("SELECT building_id,building_name FROM ".$db_table['buildings']." ORDER BY building_type_id,building_order,building_name;");
+				$bres = dbquery("SELECT building_id,building_name FROM buildings ORDER BY building_type_id,building_order,building_name;");
 				while ($barr=mysql_fetch_array($bres))
 				{
 					echo "<option value=\"".$barr['building_id']."\">".$barr['building_name']."</option>";
@@ -807,7 +807,7 @@
 		//
 		else
 		{
-			$bres = dbquery("SELECT building_id,building_name FROM ".$db_table['buildings']." ORDER BY building_type_id,building_order,building_name;");
+			$bres = dbquery("SELECT building_id,building_name FROM buildings ORDER BY building_type_id,building_order,building_name;");
 			while ($barr=mysql_fetch_array($bres))
 			{
 				$bdata[$barr['building_id']]=$barr;
@@ -832,7 +832,7 @@
 			echo "</select></td>";
 			echo "</table>";
 			echo "<br/><input type=\"submit\" name=\"buildlist_search\" value=\"Suche starten\" /></form>";
-			$tblcnt = mysql_fetch_row(dbquery("SELECT count(buildlist_id) FROM ".$db_table['buildlist'].";"));
+			$tblcnt = mysql_fetch_row(dbquery("SELECT count(buildlist_id) FROM buildlist;"));
 			echo "<br/>Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.<br/><br/>";
 
 

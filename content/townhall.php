@@ -75,7 +75,7 @@
 		user_id,
 		user_nick
 	FROM 
-		".$db_table['alliance_news']." 
+		alliance_news 
 	LEFT JOIN
 		alliances as af
 	ON 

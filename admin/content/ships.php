@@ -49,7 +49,7 @@
 			ship_name,
 			ship_points
 		FROM
-			".$db_table['ships']."
+			ships
 		ORDER BY
 			ship_points DESC,
 			ship_name DESC;");
@@ -182,9 +182,9 @@
 				user_id,
 				user_points
 			FROM
-					".$db_table['ship_queue']."
+					ship_queue
 			INNER JOIN
-				".$db_table['planets']."
+				planets
 				ON
 					queue_entity_id=planets.id
 			INNER JOIN
@@ -196,11 +196,11 @@
 				ON
 					entities.cell_id=cells.id
 			INNER JOIN
-				".$db_table['users']."
+				users
 				ON
 					queue_user_id=user_id
 			INNER JOIN
-				".$db_table['ships']."
+				ships
 				ON
 					queue_ship_id=ship_id
 			";
@@ -354,7 +354,7 @@
 			{
 				dbquery("
 				UPDATE
-					".$db_table['ship_queue']."
+					ship_queue
 				SET
         	queue_cnt='".$_POST['queue_cnt']."',
         	queue_starttime=UNIX_TIMESTAMP('".$_POST['queue_starttime']."'),
@@ -368,7 +368,7 @@
 			{
 				dbquery("
 				DELETE FROM
-					".$db_table['ship_queue']."
+					ship_queue
 				WHERE
 					queue_id='".$_GET['id']."';");
 				echo "Datensatz entfernt!<br/><br/>";
@@ -384,7 +384,7 @@
 					queue_ship_id,
 					queue_cnt
 				FROM
-	      	".$db_table['ship_queue']."
+	      	ship_queue
 	      WHERE
 	      	queue_id='".$_GET['id']."'
 	      ;");
@@ -394,7 +394,7 @@
 					shiplistAdd($arr['queue_entity_id'],$arr['queue_user_id'],$arr['queue_ship_id'],$arr['queue_cnt']);
 					dbquery("
 					DELETE FROM
-						".$db_table['ship_queue']."
+						ship_queue
 					WHERE
 						queue_id='".$_GET['id']."'
 					;");
@@ -413,15 +413,15 @@
 				planet_name,
 				user_nick
 			FROM
-      	".$db_table['ship_queue']."
+      	ship_queue
       INNER JOIN
-      	".$db_table['ships']."
+      	ships
       	ON queue_ship_id=ship_id
       INNER JOIN
-      	".$db_table['users']."
+      	users
       	ON queue_user_id=user_id
       INNER JOIN
-      	".$db_table['planets']."
+      	planets
       	ON queue_entity_id=planets.id
 			WHERE
 	       queue_id=".intval($_GET['id']).";");
@@ -476,7 +476,7 @@
 			$_SESSION['shipqueue']['query']="";
 
 			// Schiffe laden
-			$bres = dbquery("SELECT ship_id,ship_name FROM ".$db_table['ships']." ORDER BY ship_name;");
+			$bres = dbquery("SELECT ship_id,ship_name FROM ships ORDER BY ship_name;");
 			$slist=array();
 			while ($barr=mysql_fetch_array($bres))
 			{
@@ -499,7 +499,7 @@
 			echo "</select></td>";
 			echo "</table>";
 			echo "<br/><input type=\"submit\" class=\"button\" name=\"shipqueue_search\" value=\"Suche starten\" /></form>";
-			$tblcnt = mysql_fetch_row(dbquery("SELECT COUNT(queue_id) FROM ".$db_table['ship_queue'].";"));
+			$tblcnt = mysql_fetch_row(dbquery("SELECT COUNT(queue_id) FROM ship_queue;"));
 			echo "<br/>Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.<br/>";
 		}
 	}
@@ -530,18 +530,18 @@
 		      shiplist_id,
 		      shiplist_count
 			FROM
-					".$db_table['shiplist']."
+					shiplist
 			INNER JOIN
-				".$db_table['planets']."
+				planets
 				ON planets.id=shiplist_entity_id
 			INNER JOIN
-				".$db_table['space_cells']."
+				space_cells
 				ON planet_solsys_id=cell_id
 			INNER JOIN
-				".$db_table['users']."
+				users
 				ON user_id=shiplist_user_id
 			INNER JOIN
-				".$db_table['ships']."
+				ships
 		    ON shiplist_ship_id=ship_id
 			";
 			$sqlend = "
@@ -560,12 +560,12 @@
 					$arr=mysql_fetch_array($res);
 					if ($arr['user_id']!=$arr['planet_user_id'])
 					{
-						$pres=dbquery("SELECT id FROM ".$db_table['planets']." WHERE planet_user_main=1 AND planet_user_id=".$arr['user_id']." LIMIT 1;");
+						$pres=dbquery("SELECT id FROM planets WHERE planet_user_main=1 AND planet_user_id=".$arr['user_id']." LIMIT 1;");
 						if (mysql_num_rows($pres))
 						{
 							$parr=mysql_fetch_row($pres);
 							shiplistAdd($parr[0],$arr['user_id'],$arr['ship_id'],$arr['shiplist_count']);
-							dbquery("DELETE FROM ".$db_table['shiplist']." WHERE shiplist_id=".$arr['shiplist_id'].";");
+							dbquery("DELETE FROM shiplist WHERE shiplist_id=".$arr['shiplist_id'].";");
 							cms_ok_msg("Schiffe wurden auf den Hauptplaneten verschoben!");
 						}
 						else
@@ -573,7 +573,7 @@
 					}
 					elseif  ($arr['shiplist_count']<0)
 					{
-						dbquery("UPDATE ".$db_table['shiplist']." SET shiplist_count=0 WHERE shiplist_id=".$arr['shiplist_id'].";");
+						dbquery("UPDATE shiplist SET shiplist_count=0 WHERE shiplist_id=".$arr['shiplist_id'].";");
 						cms_ok_msg("Fehlerhafte Anzahl wurde behoben!");
 					}
 					else
@@ -582,7 +582,7 @@
 						$lres=dbquery($sqlstart." AND shiplist_entity_id=".$arr['id']." AND shiplist_user_id=".$arr['user_id']." AND shiplist_ship_id=".$arr['ship_id']." AND shiplist_id!=".$arr['shiplist_id'].$sqlend);
 						if (mysql_num_rows($lres))
 						{
-							dbquery("DELETE FROM ".$db_table['shiplist']." WHERE shiplist_id=".$arr['shiplist_id'].";");
+							dbquery("DELETE FROM shiplist WHERE shiplist_id=".$arr['shiplist_id'].";");
 							shiplistAdd($arr['id'],$arr['user_id'],$arr['ship_id'],$arr['shiplist_count']);
 							cms_ok_msg("Doppelschiffe zusammengef&uuml;hrt!!");
 						}
@@ -761,7 +761,7 @@
 
 				dbquery("
 				UPDATE
-					".$db_table['shiplist']."
+					shiplist
 				SET
        		shiplist_count='".$_POST['shiplist_count']."'
        		".$sql."
@@ -773,7 +773,7 @@
 			{
 				dbquery("
 				DELETE FROM
-					".$db_table['shiplist']."
+					shiplist
 				WHERE
 					shiplist_id='".$_GET['shiplist_id']."'
 				;");
@@ -805,15 +805,15 @@
 				special_ship_need_exp,
 				special_ship_exp_factor
 			FROM
-      	".$db_table['shiplist']."
+      	shiplist
       INNER JOIN
-      	".$db_table['planets']."
+      	planets
       	ON shiplist_entity_id=planets.id
       INNER JOIN
-      	".$db_table['users']."
+      	users
       	ON shiplist_user_id=user_id
       INNER JOIN
-      	".$db_table['ships']."
+      	ships
       	ON shiplist_ship_id=ship_id
 			WHERE
 				shiplist_id=".$_GET['shiplist_id'].";");
@@ -899,14 +899,14 @@
 				ship_id,
 				ship_name 
 			FROM 
-				".$db_table['ships']." 
+				ships 
 			ORDER BY 
 				ship_name;");
 			$slist=array();
 			while ($barr=mysql_fetch_array($bres))
 				$slist[$barr['ship_id']]=$barr['ship_name'];
 
-			$tblcnt = mysql_fetch_row(dbquery("SELECT count(shiplist_id) FROM ".$db_table['shiplist'].";"));
+			$tblcnt = mysql_fetch_row(dbquery("SELECT count(shiplist_id) FROM shiplist;"));
 			
 			// Hinzufügen
 			echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\" id=\"selector\" name=\"selector\">";

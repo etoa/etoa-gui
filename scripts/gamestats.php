@@ -14,8 +14,6 @@
 	
 	function generate_gamestats()
 	{
-		global $db_table;
-
 		// Renderzeit-Start festlegen
 		$render_time = explode(" ",microtime());
 		$render_starttime=$render_time[1]+$render_time[0];
@@ -44,12 +42,12 @@
                 planet_types.type_name,
                 COUNT(planets.planet_type_id) as cnt
             FROM
-                ".$db_table['planet_types']."
+                planet_types
             INNER JOIN
                 (   
-                    ".$db_table['planets']."
+                    planets
                 INNER JOIN
-                    ".$db_table['users']."
+                    users
                 ON
                     planet_user_id=user_id
                     AND user_show_stats=1
@@ -85,9 +83,9 @@
                 type_name,
                 COUNT(cell_id) as cnt
             FROM
-                ".$db_table['space_cells']."
+                space_cells
             INNER JOIN
-                ".$db_table['sol_types']."
+                sol_types
             ON
                 cell_solsys_solsys_sol_type=type_id
                 AND cell_solsys_name!=''
@@ -120,9 +118,9 @@
                 races.race_name,
                 COUNT(users.user_race_id) as cnt
             FROM
-                ".$db_table['users']."
+                users
             INNER JOIN
-                ".$db_table['races']."
+                races
             ON 
                 users.user_race_id=races.race_id
                 AND users.user_show_stats=1
@@ -169,12 +167,12 @@
                 planet_res_metal AS res,
                 type_name AS type
             FROM
-                ".$db_table['planet_types']."
+                planet_types
             INNER JOIN
                 (   
-                    ".$db_table['planets']."
+                    planets
                 INNER JOIN
-                    ".$db_table['users']."
+                    users
                 ON
                     planet_user_id=user_id
                     AND user_show_stats=1
@@ -198,12 +196,12 @@
                 planet_res_crystal AS res,
                 type_name AS type
             FROM
-                ".$db_table['planet_types']."
+                planet_types
             INNER JOIN
                 (   
-                    ".$db_table['planets']."
+                    planets
                 INNER JOIN
-                    ".$db_table['users']."
+                    users
                 ON
                     planet_user_id=user_id
                     AND user_show_stats=1
@@ -227,12 +225,12 @@
                 planet_res_plastic AS res,
                 type_name AS type
             FROM
-                ".$db_table['planet_types']."
+                planet_types
             INNER JOIN
                 (   
-                    ".$db_table['planets']."
+                    planets
                 INNER JOIN
-                    ".$db_table['users']."
+                    users
                 ON
                     planet_user_id=user_id
                     AND user_show_stats=1
@@ -256,12 +254,12 @@
                 planet_res_fuel AS res,
                 type_name AS type
             FROM
-                ".$db_table['planet_types']."
+                planet_types
             INNER JOIN
                 (   
-                    ".$db_table['planets']."
+                    planets
                 INNER JOIN
-                    ".$db_table['users']."
+                    users
                 ON
                     planet_user_id=user_id
                     AND user_show_stats=1
@@ -285,12 +283,12 @@
                 planet_res_food AS res,
                 type_name AS type
             FROM
-                ".$db_table['planet_types']."
+                planet_types
             INNER JOIN
                 (   
-                    ".$db_table['planets']."
+                    planets
                 INNER JOIN
-                    ".$db_table['users']."
+                    users
                 ON
                     planet_user_id=user_id
                     AND user_show_stats=1
@@ -327,9 +325,9 @@
                 AVG(planet_res_metal) AS avg,
                 COUNT(id) AS cnt
             FROM
-                ".$db_table['planets']."
+                planets
             INNER JOIN
-                ".$db_table['users']."
+                users
             ON
                 planet_user_id=user_id
                 AND user_show_stats=1   
@@ -349,9 +347,9 @@
                 AVG(planet_res_crystal) AS avg,
                 COUNT(id) AS cnt
             FROM
-                ".$db_table['planets']."
+                planets
             INNER JOIN
-                ".$db_table['users']."
+                users
             ON
                 planet_user_id=user_id
                 AND user_show_stats=1   
@@ -371,9 +369,9 @@
                 AVG(planet_res_plastic) AS avg,
                 COUNT(id) AS cnt
             FROM
-                ".$db_table['planets']."
+                planets
             INNER JOIN
-                ".$db_table['users']."
+                users
             ON
                 planet_user_id=user_id
                 AND user_show_stats=1   
@@ -393,9 +391,9 @@
                 AVG(planet_res_fuel) AS avg,
                 COUNT(id) AS cnt
             FROM
-                ".$db_table['planets']."
+                planets
             INNER JOIN
-                ".$db_table['users']."
+                users
             ON
                 planet_user_id=user_id
                 AND user_show_stats=1   
@@ -415,9 +413,9 @@
                 AVG(planet_res_food) AS avg,
                 COUNT(id) AS cnt
             FROM
-                ".$db_table['planets']."
+                planets
             INNER JOIN
-                ".$db_table['users']."
+                users
             ON
                 planet_user_id=user_id
                 AND user_show_stats=1   
@@ -446,9 +444,9 @@
             SELECT
                 SUM(planet_res_metal) AS sum
             FROM
-                ".$db_table['planets']."
+                planets
             INNER JOIN
-                ".$db_table['users']."
+                users
             ON
                 user_id=planet_user_id
                 AND user_show_stats=1
@@ -469,9 +467,9 @@
             SELECT
                 SUM(planet_res_crystal) AS sum
             FROM
-                ".$db_table['planets']."
+                planets
             INNER JOIN
-                ".$db_table['users']."
+                users
             ON
                 user_id=planet_user_id
                 AND user_show_stats=1
@@ -492,9 +490,9 @@
             SELECT
                 SUM(planet_res_plastic) AS sum
             FROM
-                ".$db_table['planets']."
+                planets
             INNER JOIN
-                ".$db_table['users']."
+                users
             ON
                 user_id=planet_user_id
                 AND user_show_stats=1
@@ -515,9 +513,9 @@
             SELECT
                 SUM(planet_res_fuel) AS sum
             FROM
-                ".$db_table['planets']."
+                planets
             INNER JOIN
-                ".$db_table['users']."
+                users
             ON
                 user_id=planet_user_id
                 AND user_show_stats=1
@@ -538,9 +536,9 @@
             SELECT
                 SUM(planet_res_food) AS sum
             FROM
-                ".$db_table['planets']."
+                planets
             INNER JOIN
-                ".$db_table['users']."
+                users
             ON
                 user_id=planet_user_id
                 AND user_show_stats=1
@@ -588,12 +586,12 @@
             SUM(shiplist.shiplist_count) as cnt,
             MAX(shiplist.shiplist_count) as max
         FROM
-            ".$db_table['ships']."
+            ships
         INNER JOIN
             (   
-                ".$db_table['shiplist']."
+                shiplist
             INNER JOIN
-                ".$db_table['users']."
+                users
             ON
                 shiplist_user_id=user_id
                 AND user_show_stats=1
@@ -631,12 +629,12 @@
             SUM(deflist.deflist_count) as cnt,
             MAX(deflist.deflist_count) as max       
         FROM
-            ".$db_table['defense']."
+            defense
         INNER JOIN
             (   
-                ".$db_table['deflist']."
+                deflist
             INNER JOIN
-                ".$db_table['users']."
+                users
             ON
                 deflist_user_id=user_id
                 AND user_show_stats=1
@@ -672,12 +670,12 @@
             buildings.building_name,
             SUM(buildlist.buildlist_current_level) as cnt
         FROM
-            ".$db_table['buildings']."
+            buildings
         INNER JOIN
             (   
-                ".$db_table['buildlist']."
+                buildlist
             INNER JOIN
-                ".$db_table['users']."
+                users
             ON
                 buildlist_user_id=user_id
                 AND user_show_stats=1
@@ -724,12 +722,12 @@
 	    technologies.tech_name,
 	    MAX(techlist.techlist_current_level) as max
 	FROM
-	    ".$db_table['technologies']."
+	    technologies
 	INNER JOIN
 	    (   
-	        ".$db_table['techlist']."
+	        techlist
 	    INNER JOIN
-	        ".$db_table['users']."
+	        users
 	    ON
 	        techlist_user_id=user_id
 	        AND user_show_stats=1
@@ -763,12 +761,12 @@
 	    buildings.building_name,
 	    MAX(buildlist.buildlist_current_level) as max
 	FROM
-	    ".$db_table['buildings']."
+	    buildings
 	INNER JOIN
 	    (   
-	        ".$db_table['buildlist']."
+	        buildlist
 	    INNER JOIN
-	        ".$db_table['users']."
+	        users
 	    ON
 	        buildlist_user_id=user_id
 	        AND user_show_stats=1
@@ -803,12 +801,12 @@
 	    MAX(shiplist.shiplist_special_ship_level) as level,
 	    MAX(shiplist.shiplist_special_ship_exp) as exp
 	FROM
-	    ".$db_table['ships']."
+	    ships
 	INNER JOIN
 	    (   
-	        ".$db_table['shiplist']."
+	        shiplist
 	    INNER JOIN
-	        ".$db_table['users']."
+	        users
 	    ON
 	        shiplist_user_id=user_id
 	        AND user_show_stats=1
@@ -855,7 +853,7 @@
 		    user_css_style,
 		    COUNT(user_id) as cnt 
 		FROM 
-		    ".$db_table['users']." 
+		    users 
 		GROUP BY 
 		    user_css_style 
 		ORDER BY 
@@ -897,7 +895,7 @@
 		    user_image_url,
 		    COUNT(user_id) as cnt 
 		FROM 
-		    ".$db_table['users']." 
+		    users 
 		GROUP BY 
 		    user_image_url 
 		ORDER BY 
@@ -938,7 +936,7 @@
         user_image_ext,
         COUNT(user_id) as cnt 
     FROM 
-        ".$db_table['users']." 
+        users 
     GROUP BY 
         user_image_ext 
     ORDER BY 
@@ -979,7 +977,7 @@
 		user_client, 
 		COUNT(user_id) as cnt 
 	FROM 
-		".$db_table['users']." 
+		users 
 	WHERE 
 		user_client!='' 
 	GROUP BY 

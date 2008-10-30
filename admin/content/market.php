@@ -37,10 +37,10 @@
 		echo "<h2>Rohstoffe</h2>";
 		if($_GET['ressource_delete']>0)
 		{
-			dbquery("DELETE FROM ".$db_table['market_ressource']." WHERE ressource_market_id=".$_GET['ressource_delete']."");
+			dbquery("DELETE FROM market_ressource WHERE ressource_market_id=".$_GET['ressource_delete']."");
 			cms_ok_msg("Angebot gel&ouml;scht!");
 		}
-		$res=dbquery("SELECT * FROM ".$db_table['market_ressource']." ORDER BY datum ASC");
+		$res=dbquery("SELECT * FROM market_ressource ORDER BY datum ASC");
 		if (mysql_num_rows($res)>0)
 		{
 			while ($arr=mysql_fetch_array($res))
@@ -64,10 +64,10 @@
 		echo "<h2>Schiffe</h2>";
 		if ($_GET['ship_delete']!="")
 		{
-				dbquery("DELETE FROM ".$db_table['market_ship']." WHERE ship_market_id=".$_GET['ship_delete']."");
+				dbquery("DELETE FROM market_ship WHERE ship_market_id=".$_GET['ship_delete']."");
 				cms_ok_msg("Angebot gel&ouml;scht");
 		}
-		$res=dbquery("SELECT * FROM ".$db_table['market_ship']." ORDER BY datum DESC;");
+		$res=dbquery("SELECT * FROM market_ship ORDER BY datum DESC;");
 		if (mysql_num_rows($res)>0)
 		{
 			while ($arr=mysql_fetch_array($res))
@@ -91,10 +91,10 @@
 		echo "<h2>Auktionen</h2>";
 		if ($_GET['auction_delete']!="")
 		{
-				dbquery("DELETE FROM ".$db_table['market_auction']." WHERE auction_market_id=".$_GET['auction_delete']."");
+				dbquery("DELETE FROM market_auction WHERE auction_market_id=".$_GET['auction_delete']."");
 				cms_ok_msg("Auktion gel&ouml;scht");
 		}
-		$res=dbquery("SELECT * FROM ".$db_table['market_auction']." ORDER BY auction_end ASC;");
+		$res=dbquery("SELECT * FROM market_auction ORDER BY auction_end ASC;");
 		if (mysql_num_rows($res)>0)
 		{
 			while ($arr=mysql_fetch_array($res))

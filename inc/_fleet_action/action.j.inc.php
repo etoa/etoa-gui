@@ -30,7 +30,7 @@
 					SELECT 
 						* 
 					FROM 
-						".$db_table['space_cells']." 
+						space_cells 
 					WHERE 
 						cell_id='".$cell_id."';
 				");
@@ -75,7 +75,7 @@
 					SELECT 
 						*
 					FROM 
-						".$db_table['planets']." 
+						planets 
 					WHERE 
 						planet_id='".$planet_id."';");
 						

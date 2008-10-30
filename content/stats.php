@@ -49,7 +49,7 @@
             user_rank,
             user_id 
 		FROM 
-			".$db_table['users']." 
+			users 
 		WHERE 
 			user_id='".$_GET['userdetail']."';");
 		if (mysql_num_rows($res)>0)
@@ -67,7 +67,7 @@
 			SELECT 
 				* 
 			FROM 
-				".$db_table['user_points']." 
+				user_points 
 			WHERE 
 				point_user_id='".$_GET['userdetail']."' 
 			ORDER BY 
@@ -115,7 +115,7 @@
             alliance_rank_current,
             alliance_id 
 		FROM 
-			".$db_table['alliances']." 
+			alliances 
 		WHERE 
 			alliance_id='".$_GET['alliancedetail']."';");
 		if (mysql_num_rows($res)>0)

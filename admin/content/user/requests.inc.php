@@ -20,7 +20,7 @@
       	request_answer,
       	user_nick as admin
 			FROM
-      	".$db_table['user_requests']."
+      	user_requests
       LEFT JOIN
       	admin_users
       	ON request_admin_id=user_id
@@ -35,7 +35,7 @@
        		".$arr['request_field']." AS field,
        		user_nick
        	FROM
-       	    ".$db_table['users']."
+       	    users
        	WHERE
        	    user_id=".$arr['request_user_id'].";");
 				$arr2=mysql_fetch_array($res2);
@@ -82,16 +82,16 @@
 
 			if (isset($_POST['submit']))
 			{
-				$res=dbquery("SELECT request_user_id,request_field,request_value FROM ".$db_table['user_requests']." WHERE request_id=".$_POST['request_id'].";");
+				$res=dbquery("SELECT request_user_id,request_field,request_value FROM user_requests WHERE request_id=".$_POST['request_id'].";");
 				if (mysql_num_rows($res)>0)
 				{
 					$arr=mysql_fetch_array($res);
 					// User-Nick und E-Mail laden
-					$ures=dbquery("SELECT user_nick,user_email FROM ".$db_table['users']." WHERE user_id=".$arr['request_user_id'].";");
+					$ures=dbquery("SELECT user_nick,user_email FROM users WHERE user_id=".$arr['request_user_id'].";");
 					$uarr=mysql_fetch_array($ures);
 					if ($_POST['answer']=="allow")
 					{
-						dbquery("UPDATE ".$db_table['users']." SET ".$arr['request_field']."='".addslashes($arr['request_value'])."' WHERE user_id=".$arr['request_user_id'].";");
+						dbquery("UPDATE users SET ".$arr['request_field']."='".addslashes($arr['request_value'])."' WHERE user_id=".$arr['request_user_id'].";");
 						send_msg($arr['request_user_id'],5,"Änderungsanfrage bearbeitet","Hier die Antwort auf deine Änderungsanfrage:\n\n".addslashes($_POST['answer_text'])."");
 						$mail_subject="Antrag angenommen";
 						$mail_text="Hallo ".$uarr['user_nick']."\n\nDeine Anfrage wurde angenommen. Hier unsere Antwort:\n\n".addslashes($_POST['answer_text']);
@@ -114,7 +114,7 @@
 					
 					dbquery("
 					UPDATE 
-						".$db_table['user_requests']."
+						user_requests
 					SET 
 						request_handled=1,
 						request_allowed=".($_POST['answer']=="allow" ? 1 : 0).",
@@ -133,9 +133,9 @@
 				request_field,
 				request_value 
 			FROM 
-				".$db_table['user_requests']."
+				user_requests
 			LEFT JOIN
-				".$db_table['users']." 
+				users 
 			ON
 				user_id=request_user_id
 			WHERE
@@ -180,9 +180,9 @@
 				request_value,
 				request_allowed
 			FROM 
-				".$db_table['user_requests']."
+				user_requests
 			LEFT JOIN
-				".$db_table['users']." 
+				users 
 			ON
 				user_id=request_user_id 
 			WHERE

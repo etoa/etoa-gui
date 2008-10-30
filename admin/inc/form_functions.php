@@ -582,8 +582,7 @@
 
 	function admin_get_user_rank($user_rank_id)
 	{
-		global $db_table;
-		$res = dbquery("SELECT rank_desc FROM ".$db_table['admin_user_ranks']." WHERE rank_id='".$user_rank_id."';");
+		$res = dbquery("SELECT rank_desc FROM admin_user_ranks WHERE rank_id='".$user_rank_id."';");
 		while ($arr = mysql_fetch_array($res))
 		$user_rank_name = $arr['rank_desc'];
 		return $user_rank_name;

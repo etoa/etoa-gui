@@ -157,7 +157,7 @@
 				SELECT 
 					* 
 				FROM 
-					".$db_table['technologies']." 
+					technologies 
 				WHERE  
 					tech_id='".$bid."'
 					AND tech_show='1';");
