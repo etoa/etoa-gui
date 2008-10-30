@@ -3172,7 +3172,7 @@
 										}
 							echo "</td>
 									</tr>";
-            infobox_end(1,1);
+            tableEnd();
             echo "<br/><br/><br/>";				
 				}
 			}
@@ -3566,7 +3566,7 @@
 				echo "<tr>
 								<td class=\"tbldata\" colspan=\"6\" id=\"auction_check_message\" style=\"text-align:center;vertical-align:middle;height:30px;\">&nbsp;</td>
 							</tr>";		
-				infobox_end(1,1);
+				tableEnd();
 				
 				echo "<br/><br/><input type=\"button\" class=\"button\" name=\"auction_submit\" id=\"auction_submit\" value=\"Bieten\" disabled=\"disabled\" onclick=\"calcMarketAuctionPrice(1);checkUpdate('auctionShowFormular', 'auction_show_last_update');\"/><br/><br/><input type=\"button\" class=\"button\" name=\"auction_back_submit\" id=\"auction_back_submit\" value=\"Zurück\" onclick=\"auctionBack();\" />";
 				echo "</form>";					
@@ -4033,8 +4033,8 @@
 					
 					echo "<form action=\"?page=".$page."&amp;mode=user_sell\" method=\"post\">\n";
 					echo $cstr;
-					tableStart("Auktionen");
-					infobox_end(0);
+					iBoxStart("Auktionen");
+					iBoxEnd();
 					$cnt=0;
 					$acnts=array();
 					$acnt=0;

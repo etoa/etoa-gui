@@ -1217,7 +1217,7 @@
                   	".$data['alliance_building_comment']."
                  	</td>
 				     </tr>";
-				infobox_end(1,1);
+				tableEnd();
 				
 				//
 				// Baumenü
@@ -1307,7 +1307,7 @@
                   	".$data['alliance_tech_comment']."
                  	</td>
 				     </tr>";
-				infobox_end(1,1);
+				tableEnd();
 				
 				//
 				// Baumenü
@@ -1647,7 +1647,7 @@
 	                	".$data['ship_longcomment']."
 	               	</td>
 				     </tr>";
-				infobox_end(1,1);
+				tableEnd();
 				
 				tableStart();
 				echo "<tr>

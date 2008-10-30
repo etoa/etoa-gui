@@ -109,7 +109,7 @@
       				<td class="tbldata" style="text-align:right;">'.nf($bc['fuel']).'</td>
       				<td class="tbldata" style="text-align:right;">'.nf($bc['food']).'</td></tr>';        	
       }
-      infobox_end (1);			
+      tableEnd();			
 			
 		}
 		else
