@@ -2,7 +2,7 @@
 	echo "<h2>Ressourcen</h2>";
 	Help::navi(array("Ressourcen","resources"));
 
-	infobox_start("Grundeinstellungen",1);
+	tableStart("Grundeinstellungen");
 	echo "<tr>
 		<td class=\"tbltitle\" style=\"width:40px;\"><img src=\"images/resources/metal.png\"></td>
 		<td class=\"tbldata\"><b>".RES_METAL." (Marktwert: ".$conf['market_metal_factor']['v'].")</b><br/>
@@ -71,6 +71,6 @@
 	
 	
 	
-	infobox_end(1);
+	tableEnd();
 ?>
 

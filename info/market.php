@@ -3,7 +3,7 @@
 	echo "<h2>Markt</h2>";
 	Help::navi(array("Markt","market"));
 
-	infobox_start("Markt");
+	iBoxStart("Markt");
 	echo "<div align=\"justify\">";
 	
 	echo "Der Marktplatz, das Handelszentrum von Andromeda.<br>
@@ -12,10 +12,10 @@
 		Wird ein Handel erfolgreich abgeschlossen, so werden die Waren in den nächsten paar Minuten an die betroffenen Spieler versendet.";
 	
 	echo "</div>";
-	infobox_end();
+	iBoxEnd();
 
 	
-	infobox_start("Die verschiedenen Funktionen");
+	iBoxStart("Die verschiedenen Funktionen");
 	echo "<div align=\"justify\">";
 
 		echo "
@@ -96,9 +96,9 @@
 	        Wird eine Auktion angezeigt f&uuml;r die man gar nicht mehr bieten kann, so ist diese bereits verkauft und wird nur noch aus Sicherheitsgr&uuml;nden angezeigt!
 	      </ul>";
 	echo "</div>";
-	infobox_end();
+	iBoxEnd();
 	
-	infobox_start("Rohstoffkurse");
+	iBoxStart("Rohstoffkurse");
 	echo "<div align=\"justify\">";
 	
 	echo "Wie einigemale erwähnt, rechnet der Markt der Wert eines Angebots mit speziellen Rohstoffkursen.<br>
@@ -107,7 +107,7 @@
 	Eine Tabelle zu den aktuellen Kursen findest du <a href=\"?page=help&site=rates\">hier</a>.";
 	
 	echo "</div>";
-	infobox_end();	
+	iBoxEnd();	
 	
 	
 ?>

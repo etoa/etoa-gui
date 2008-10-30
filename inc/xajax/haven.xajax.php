@@ -56,7 +56,7 @@
 		
 
 		// Infobox
-  	infobox_start("Hafen-Infos",1);
+  	tableStart("Hafen-Infos");
   		
 		// Flotten unterwegs
   	echo "<tr><th class=\"tbltitle\">Aktive Flotten:</th><td class=\"tbldata\">";
@@ -95,7 +95,7 @@
 			echo "Die Schiffe fliegen aufgrund deiner Rasse <b>".$fleet->ownerRaceName."</b> mit ".get_percent_string($fleet->raceSpeedFactor,1)." Geschwindigkeit!";
 			echo "</td></tr>";
 		}
-		infobox_end(1);
+		tableEnd();
 	
 	
 	
@@ -267,7 +267,7 @@
 			}
 			echo "\">Alle wählen</a>";			
 			echo "</td></tr>";
-			infobox_end(1);
+			tableEnd();
 		
 			// Show buttons if possible
 			if ($fleet->possibleFleetStarts() > 0)
@@ -408,7 +408,7 @@
 				$heal_tech = " (".$heal_str.")";
 			}
 
-			infobox_start("Schiff-Info",1);	
+			tableStart("Schiff-Info");	
 			echo "<tr>
 				<td class=\"tbltitle\"><b>Einheit</b></td>
 				<td class=\"tbltitle\">Grundwerte</td>
@@ -429,7 +429,7 @@
 		  	echo "<tr>
 				<td class=\"tbldata\"><b>Anzahl Schiffe:</b></td>
 				<td class=\"tbldata\" colspan=\"2\" id=\"count\">".nf($count)."</td></tr>";
-			infobox_end(1);
+			tableEnd();
 			$response->assign("ship_info","innerHTML",ob_get_contents());
 			ob_end_clean();
 		}

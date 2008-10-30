@@ -2,7 +2,7 @@
 	echo "<h2>Temperaturbonus</h2>";
 	Help::navi(array("Temperaturbonus","tempbonus"));
 
-	infobox_start("Temperaturbonus",1);
+	tableStart("Temperaturbonus");
 	echo "<tr>
 		<td class=\"tbltitle\" style=\"width:40px;\">Wärmebonus <br/>
 		<img src=\"images/heat.png\" alt=\"Heat\"  style=\"width:100px;\" /></td>
@@ -18,7 +18,7 @@
 		Tritiumproduktion aus (zusätzlich zu allen anderen Boni). Kältere Planeten sind weit weg von einem Stern; sie sind für eine grosse Tritiumproduktion sehr zu empfehlen. 
 		</td>
 	</tr>";	
-	infobox_end(1);
+	tableEnd();
 ?>
 
 

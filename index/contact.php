@@ -46,7 +46,7 @@
 		;");
 		if (mysql_num_rows($res)>0)
 		{
-			infobox_start('Kontaktpersonen für diese Runde',1);
+			tableStart('Kontaktpersonen für diese Runde');
 			while ($arr = mysql_fetch_array($res))
 			{
 				echo '<tr><td class="tbldata">'.$arr['user_nick'].'</td>';
@@ -57,7 +57,7 @@
 	      	echo '<td class="tbldata">-</td>';
 				echo '</tr>';
 			}
-			infobox_end(1);
+			tableEnd();
 		}
 		else
 			echo "<i>Keine Kontaktpersonen vorhanden!</i>";

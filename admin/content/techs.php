@@ -414,7 +414,7 @@
 				// Hinzufügen
 				echo "<h2>Neue Technologien hinzuf&uuml;gen</h2>";
 				echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\">";
-				infobox_start("",1);
+				tableStart();
 				echo "<tr><th class=\"tbltitle\">Technologie:</th><td class=\"tbldata\"><select name=\"tech_id\">";
 				foreach ($tlist as $k=>$v)
 				{
@@ -437,7 +437,7 @@
 					echo ">".$parr['user_nick']."</option>";
 				}
 				echo "</select></td></tr>";
-				infobox_end(1);
+				tableEnd();
 				echo "<input type=\"submit\" name=\"new\" value=\"Hinzuf&uuml;gen\" /></form><br/>";				
 				$sql = $sqlstart.$sql.$sqlend;
 				$_SESSION['techedit']['query']=$sql;
@@ -614,7 +614,7 @@
 			// Hinzufügen
 			echo "<h2>Neue Forschung hinzuf&uuml;gen</h2>";
 			echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\">";
-			infobox_start("",1);
+			tableStart();
 			echo "<tr><th class=\"tbltitle\">Technologie</th><td class=\"tbldata\"><select name=\"tech_id\">";
 			foreach ($tlist as $k=>$v)
 				echo "<option value=\"".$k."\">".$v."</option>";
@@ -639,7 +639,7 @@
 				echo "<option value=\"".$parr['id'].":".$parr['user_id']."\">".$parr['user_nick']."</option>";
 			}
 			echo "</select></td></tr>";
-			infobox_end(1);
+			tableEnd();
 			echo "<input type=\"submit\" name=\"new\" value=\"Hinzuf&uuml;gen\" /></form>";				
 		}		
 	}

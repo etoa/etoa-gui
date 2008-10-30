@@ -181,16 +181,16 @@
 			if ($arr['bl_user_id']==$cu->id())
 			{
 				$nick = get_user_nick($arr['bl_buddy_id']);
-				infobox_start("Kommentar für ".$nick."");
+				iBoxStart("Kommentar für ".$nick."");
 				echo "<textarea name=\"bl_comment\" rows=\"5\" cols=\"60\">".stripslashes($arr['bl_comment'])."</textarea>";
-				infobox_end();
+				iBoxEnd();
 			}
 			else
 			{
 				$nick = get_user_nick($arr['bl_user_id']);
-				infobox_start("Kommentar für ".$nick."");
+				iBoxStart("Kommentar für ".$nick."");
 				echo "<textarea name=\"bl_comment_buddy\" rows=\"5\" cols=\"60\">".stripslashes($arr['bl_comment_buddy'])."</textarea>";
-				infobox_end();
+				iBoxEnd();
 			}			
 			
 			echo "<input type=\"hidden\" name=\"bl_id\" value=\"".$arr['bl_id']."\" />";
@@ -248,7 +248,7 @@
 		users.user_nick ASC;");
 	if (mysql_num_rows($res)>0)
 	{
-		infobox_start("Meine Freunde",1);
+		tableStart("Meine Freunde","100%");
 		echo "<tr>
 			<th class=\"tbltitle\">Nick</th>
 			<th class=\"tbltitle\">Punkte</th>
@@ -285,13 +285,13 @@
 			echo "</td>";
 			echo "<td class=\"tbldata\">
 				<a href=\"?page=messages&mode=new&message_user_to=".$arr['user_id']."\" title=\"Nachricht\">Nachricht</a>  
-				<a href=\"?page=userinfo&amp;id=".$arr['user_id']."\" title=\"Info\">Userinfo</a> 
+				<a href=\"?page=userinfo&amp;id=".$arr['user_id']."\" title=\"Info\">Profil</a><br/>
 				<a href=\"?page=$page&comment=".$arr['bl_id']."\" title=\"Kommentar bearbeiten\">Kommentar</a> ";
 			echo "<a href=\"?page=$page&remove=".$arr['user_id']."\" onclick=\"return confirm('Willst du ".$arr['user_nick']." wirklich von deiner Liste entfernen?');\">Entfernen</a></td>";
 
 			echo "</tr>";
 		}
-		infobox_end(1);
+		tableEnd();
 	}
 	else
 	{
@@ -305,7 +305,9 @@ $res=dbquery("
     users.user_points,
     bl_id,
     bl_user_id,
-    bl_buddy_id
+    bl_buddy_id,
+    bl_comment,
+    bl_comment_buddy
 	FROM
     buddylist
   INNER JOIN
@@ -320,7 +322,7 @@ $res=dbquery("
 		users.user_nick ASC;");
 	if (mysql_num_rows($res)>0)
 	{
-		infobox_start("Offene Anfragen",1);
+		tableStart("Offene Anfragen","100%");
 		echo "<tr>
 			<th class=\"tbltitle\">Nick</th>
 			<th class=\"tbltitle\">Punkte</th>
@@ -343,14 +345,14 @@ $res=dbquery("
 			echo "<td class=\"tbldata\">".nf($arr['user_points'])."</td>";
 			echo "<td class=\"tbldata\" style=\"width:280px;\">
 				<a href=\"?page=messages&mode=new&message_user_to=".$arr['user_id']."\" title=\"Nachricht\">Nachricht</a>  
-				<a href=\"?page=userinfo&amp;id=".$arr['user_id']."\" title=\"Info\">Userinfo</a> 
+				<a href=\"?page=userinfo&amp;id=".$arr['user_id']."\" title=\"Info\">Profil</a> 
 				<a href=\"?page=$page&amp;allow=".$arr['user_id']."\" style=\"color:#0f0\">Annehmen</a> 
 				<a href=\"?page=$page&amp;deny=".$arr['user_id']."\" style=\"color:#f90\">Zurückweisen</a>
 			</td>";
 
 			echo "</tr>";
 		}
-		infobox_end(1);
+		tableEnd();
 	}
 
 	echo "

@@ -340,7 +340,7 @@ if (Alliance::checkActionRights('applications'))
 			AND aa.alliance_id=".$cu->allianceId().";");
 		if (mysql_num_rows($res)>0)
 		{
-			infobox_start("Bewerbungen prüfen",1);
+			tableStart("Bewerbungen prüfen");
 			echo "<tr>
 							<td class=\"tbltitle\" width=\"10%\">User</td>
 							<td class=\"tbltitle\" width=\"35%\">Datum / Text</td>
@@ -367,7 +367,7 @@ if (Alliance::checkActionRights('applications'))
 				</td>
 				</tr>";
 			}
-			infobox_end(1);
+			tableEnd();
 			echo "<input type=\"submit\" name=\"applicationsubmit\" value=\"&Uuml;bernehmen\" />&nbsp;&nbsp;&nbsp;";
 		}
 		else

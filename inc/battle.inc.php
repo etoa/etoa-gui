@@ -2853,9 +2853,9 @@ function battle_simulation($ships_a,$special_ships_a,$ships_d,$special_ships_d,$
 
     $msg.="<br><br><a href=\"?page=battle_simulation\">zurück</a>";
     //send_msg($_SESSION[ROUNDID]['user']['id'],SHIP_WAR_MSG_CAT_ID,"Kampfbericht (Simulation)",$msg);
-    infobox_start("Kampfbericht (Simulation)");
+    iBoxStart("Kampfbericht (Simulation)");
     echo $msg;
-    infobox_end();
+    iBoxEnd();
 
 }
 ?>

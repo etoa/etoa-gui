@@ -467,7 +467,7 @@
 						$marr = mysql_fetch_row($mres);
 						$member_count = $marr[0];						
 						
-						infobox_start("[".stripslashes($arr['alliance_tag'])."] ".stripslashes($arr['alliance_name']),1);
+						tableStart("[".stripslashes($arr['alliance_tag'])."] ".stripslashes($arr['alliance_name']));
 						if ($arr['alliance_img']!="")
 						{
 							$im = ALLIANCE_IMG_DIR."/".$arr['alliance_img'];

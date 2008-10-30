@@ -113,7 +113,7 @@
 	$bb[26]['b']="[flag ch-be]";	
 	
 	// Table code
-	infobox_start("Liste der wichtigsten BB-Codes",1);
+	tableStart("Liste der wichtigsten BB-Codes");
 		
 		echo "<tr><th class=\"tbltitle\">Das m&ouml;chtest du machen</th><th class=\"tbltitle\">BBCode an einem kleinen Beispiel</th><th class=\"tbltitle\">Sichtbares Resultat</th></tr>";
 		
@@ -124,28 +124,28 @@
 			echo "<td class=\"tbldata\" style=\"text-align:left\">".$code['b']."</td>";
 			echo "<td class=\"tbldata\" style=\"text-align:left\">".text2html($code['b'])."</td></tr>";
 		}
-	infobox_end(1);
+	tableEnd();
 	
 	
 	//Table flags
-	infobox_start("Liste mit den vorhandenen Flaggen",2);
+	iBoxStart("Liste mit den vorhandenen Flaggen");
 		{
 			echo "Klicke auf den jeweiligen Link, wenn du eine Flagge für ein Land oder eine Flagge für einen schweizer Kanton einfügen möchtest. Als BBCode musst du dann jeweils nur den aufgeführten Tag in deinen text schreiben.<br/>
 						Bemerkung: Beide Listen sind nicht vollständig, d.h. es kann sein, dass dein Kanton oder dein Lieblingsland gerade fehlt!<br/><br/>";
 			echo "<b><a href=\"javascript:;\" onclick=\"window.open('show.php?info=flags_land','infobox','width=800,height=600,scrollbars=yes')\">Land</a></b><br/><br/>";
 			echo "<b><a href=\"javascript:;\" onclick=\"window.open('show.php?info=flag_kanton','infobox','width=800,height=600,scrollbars=yes')\">Kanton</a></b><br/>";
 		}
-	infobox_end(2);
+	iBoxEnd();
 	
 	//Table colour
-	infobox_start("Erlaubte Schriftfarben",2);
+	iBoxStart("Erlaubte Schriftfarben");
 		{
 			echo "Klicke auf den Link, um eine Tabelle mit allen erlaubten Farben für den BBCode zu öffnen. Im BBCode kannst du entweder den Farbnamen eingeben oder den Hexadecimalcode.<br/><br/>";
 			echo "<b><a href=\"javascript:;\" onclick=\"window.open('show.php?info=colorlist','infobox','width=800,height=600,scrollbars=yes')\">Farbliste</a></b><br/>";
 		}		
-	infobox_end(2);
+	iBoxEnd();
 	
-	infobox_start("Fehlerquellen",2);
+	iBoxStart("Fehlerquellen");
 		{
 			echo "Es kann vorkommen, dass du mehrere BB-Codes kombinieren möchtest (zum Beispiel eine grössere Schrift und andere Farbe).<br/>
 						Dabei ist es wichtig, dass du die Reihenfolge der Tags beachtest; es gillt, immer von innen nach aussen arbeiten.<br/><br/>
@@ -153,5 +153,5 @@
 						[color=red][size=15]EtoA[/size][/color] ist richtig und ergibt ".text2html('[color=red][size=15]EtoA[/size][/color]').", aber [color=red][size=15]EtoA[/color][/size] ist falsch und gibt kein gültiges Resultat!<br/><br/>
 						Theoretisch kannst du so viele verschiedene Tags hinterinander hängen. Wichtig ist einfach, dass die Reihenfole immer beachtet wird. Um nicht unschöne Fehler in einer Nachricht oder in einem Forenpost zu haben, ist es immer gut, wenn ingame die Nachrichtenvorschau eingeschaltet ist und wenn man vor dem absenden des Posts noch schnell auf Vorschau klickt im Forum. So sparrt man Zeit und verhindert unschöne Fehler.";
 		}
-	infobox_end(2);
+	iBoxEnd();
 ?>

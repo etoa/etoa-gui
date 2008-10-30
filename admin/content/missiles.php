@@ -251,7 +251,7 @@
 		
 			// Hinzufügen
 			echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\" id=\"selector\">";
-			infobox_start("",1);
+			tableStart();
 			
 			//Sonnensystem
 			echo "<tr><th class=\"tbltitle\">Sonnensystem</th><td class=\"tbldata\">
@@ -294,7 +294,7 @@
 			
 			//Vorhandene Schiffe
 			echo "<tr><th class=\"tbltitle\">Vorhandene Raketen:</th><td class=\"tbldata\" id=\"shipsOnPlanet\">Planet w&auml;hlen...</td></tr>";
-			infobox_end(1);
+			tableEnd();
 			echo "</form>";
 			echo '<script type="text/javascript">document.forms[0].user_nick.focus();</script>';
 

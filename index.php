@@ -136,6 +136,9 @@
 		exit;
 	}
 
+	// Set popup identifiert to false
+	$popup = false;
+
 	//
 	// Misc settings
 	//

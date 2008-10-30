@@ -65,7 +65,7 @@
 		echo "<table style=\"width:100%\"><tr><td style=\"width:50%;vertical-align:top;\">";
 
 		// Flugdaten
-		infobox_start("Flugdaten",1);
+		tableStart("Flugdaten");
 		
 		echo "<tr>
 			<td class=\"tbltitle\">Auftrag:</td>
@@ -90,9 +90,9 @@
 		echo "<tr>
 			<td class=\"tbltitle\">Verbleibend:</td>
 			<td class=\"tbldata\" id=\"flighttime\" style=\"color:#ff0\">-</td></tr>";
-		infobox_end(1);
+		tableEnd();
 
-		infobox_start("Piloten &amp; Verbrauch",1);
+		tableStart("Piloten &amp; Verbrauch");
 		echo "<tr><td class=\"tbltitle\" style=\"width:150px;\">".RES_ICON_PEOPLE."Piloten:</td>
 			<td class=\"tbldata\">".nf($fd->pilots())."</td></tr>";
 		echo "<tr><td class=\"tbltitle\">".RES_ICON_FUEL."".RES_FUEL.":</td>
@@ -101,12 +101,12 @@
 			<td class=\"tbldata\">".nf($fd->usageFood())."</td></tr>";
 		echo "<tr><td class=\"tbltitle\">".RES_ICON_POWER." ".RES_POWER.":</td>
 			<td class=\"tbldata\">".nf($fd->usagePower())."</td></tr>";
-		infobox_end(1);
+		tableEnd();
 
 		echo "</td><td style=\"width:5%;vertical-align:top;\"></td><td style=\"width:45%;vertical-align:top;\">";
 
 		// Frachtraum
-		infobox_start("Frachtraum",1);
+		tableStart("Frachtraum");
 		echo "<tr><td class=\"tbltitle\">".RES_ICON_METAL."".RES_METAL."</td><td class=\"tbldata\">".nf($fd->resMetal())." t</td></tr>";
 		echo "<tr><td class=\"tbltitle\">".RES_ICON_CRYSTAL."".RES_CRYSTAL."</td><td class=\"tbldata\" >".nf($fd->resCrystal())." t</td></tr>";
 		echo "<tr><td class=\"tbltitle\">".RES_ICON_PLASTIC."".RES_PLASTIC."</td><td class=\"tbldata\">".nf($fd->resPlastic())." t</td></tr>";
@@ -115,13 +115,13 @@
 		echo "<tr><td class=\"tbltitle\">".RES_ICON_POWER."".RES_POWER."</td><td class=\"tbldata\">".nf($fd->resPower())." t</td></tr>";
 		echo "<tr><td class=\"tbltitle\" style=\"width:150px;\">Freier Frachtraum:</td><td class=\"tbldata\">".nf($fd->getFreeCapacity())." t</td></tr>";
 		echo "<tr><td class=\"tbltitle\" style=\"width:150px;\">Totaler Frachtraum:</td><td class=\"tbldata\">".nf($fd->getCapacity())." t</td></tr>";
-		infobox_end(1);
+		tableEnd();
 
-		infobox_start("Passagierraum",1);
+		tableStart("Passagierraum");
 		echo "<tr><td class=\"tbltitle\">".RES_ICON_PEOPLE."Passagiere</td><td class=\"tbldata\">".nf($fd->resPeople())."</td></tr>";
 		echo "<tr><td class=\"tbltitle\" style=\"width:150px;\">Freier Platz:</td><td class=\"tbldata\">".nf($fd->getFreePeopleCapacity())."</td></tr>";
 		echo "<tr><td class=\"tbltitle\" style=\"width:150px;\">Totaler Platz:</td><td class=\"tbldata\">".nf($fd->getPeopleCapacity())."</td></tr>";
-		infobox_end(1);
+		tableEnd();
 
 		echo "</td></tr></table>";
 
@@ -129,7 +129,7 @@
 		if ($fd->countShips() > 0)
 		{
 			// Schiffe anzeigen
-			infobox_start("Schiffe",1);
+			tableStart("Schiffe");
 			echo "<tr>
 				<td class=\"tbltitle\" colspan=\"2\">Schifftyp</td>
 				<td class=\"tbltitle\" width=\"50\">Anzahl</td></tr>";
@@ -144,7 +144,7 @@
 				".text2html($ship->shortComment())."</td>";
 				echo "<td class=\"tbldata\" style=\"width:50px;\">".nf($scnt)."</td></tr>";
 			}
-			infobox_end(1);
+			tableEnd();
 		}
 
 		echo "<form action=\"?page=$page&amp;id=$fleet_id\" method=\"post\">";

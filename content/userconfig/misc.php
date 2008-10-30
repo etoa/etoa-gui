@@ -242,10 +242,10 @@
 		elseif (isset($_POST['remove']) && checker_verify())
 		{
 				echo "<form action=\"?page=$page&amp;mode=misc\" method=\"post\">";
-	    	infobox_start("Löschung bestätigen");
+	    	iBoxStart("Löschung bestätigen");
 				echo "Soll dein Account wirklich zur Löschung vorgeschlagen werden?<br/><br/>";
 				echo "<b>Passwort eingeben:</b> <input type=\"password\" name=\"remove_password\" value=\"\" />";
-				infobox_end();
+				iBoxEnd();
 				echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?page=$page&mode=misc'\" /> 
 				<input type=\"submit\" name=\"remove_submit\" value=\"Account l&ouml;schen\" />";
 				echo "</form>";
@@ -316,7 +316,7 @@
 		{
 				echo "<form action=\"?page=$page&amp;mode=misc\" method=\"post\">";		
 	    	checker_init();
-	    	infobox_start("Sonstige Accountoptionen",1);
+	    	tableStart("Sonstige Accountoptionen");
 	  		 
 	    	// Urlaubsmodus
 	    	echo "<tr><th class=\"tbltitle\" style=\"width:150px;\">Urlaubsmodus</th>
@@ -352,7 +352,7 @@
 	    	echo "</td></tr>";
 	    	
 
-	    	infobox_end(1);
+	    	tableEnd();
 				echo "</form>";
 		}
 	

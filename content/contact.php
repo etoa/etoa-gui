@@ -40,11 +40,11 @@
 			user_nick,
 			user_email
 		FROM
-			".$db_table['admin_users']."
+			admin_users
 		WHERE
 			user_id=".$_GET['rcpt'].";
 		");
-		$arr=mysql_fetch_row($res);
+		$arr = mysql_fetch_row($res);
 		echo '<input type="hidden" name="mail_rcpt" value="'.$arr[0].'<'.$arr[1].'>" />';
 		echo '<table class="tb">';
 		echo '<tr><th>Sender:</th><td>'.$cu->nick().'&lt;'.$cu->email().'&gt;</td></tr>';
@@ -76,7 +76,10 @@
 			echo '<div style="color:#0f0"><b>Vielen Dank!</b> Deine Nachricht wurde gesendet!</div><br/>';
 		}
 		
-		echo text2html($conf['contact_message']['v'])."<br/><br/>";
+		iBoxStart("Wichtig");
+		echo text2html($conf['contact_message']['v']);
+		iBoxEnd();
+		
 		$res = dbquery("
 			SELECT 
 				user_id,
@@ -93,7 +96,7 @@
 		;");
 		if (mysql_num_rows($res)>0)
 		{
-			infobox_start('Kontaktpersonen für diese Runde',1);
+			tableStart('Kontaktpersonen für diese Runde');
 			while ($arr = mysql_fetch_array($res))
 			{
 				echo '<tr><td class="tbldata">'.$arr['user_nick'].'</td>';
@@ -124,16 +127,16 @@
 	      }	      
 				echo '</tr>';
 			}
-			infobox_end(1);
+			tableEnd();
 		}
 		else
 			echo "<i>Keine Kontaktpersonen vorhanden!</i>";
 
-		infobox_start('Impressum');
+		iBoxStart('Impressum');
 		echo 'EtoA Gaming<br/>Grenzweg 4<br/>3377 Walliswil-Wangen<br/>Schweiz<br/><a href="mailto:mail@etoa.ch">mail@etoa.ch</a>';     
-		infobox_end();   
+		iBoxEnd();
 
-		infobox_start('Powered by');
+		iBoxStart('Powered by');
 		echo '<img style="border:1px solid #000;margin:5px 10px;" src="images/powered/php.png" alt="PHP" />';
 		echo '<img style="border:1px solid #000;margin:5px 10px;" src="images/powered/mysql.png" alt="PHP" />';
 		echo '<img style="border:1px solid #000;margin:5px 10px;" src="images/powered/apache.png" alt="PHP" />';
@@ -142,7 +145,7 @@
 		echo '<img style="border:1px solid #000;margin:5px 10px;" src="images/powered/pma.png" alt="phpMyAdmin" />';
 		echo '<img style="border:1px solid #000;margin:5px 10px;" src="images/powered/xhtml.png" alt="PHP" />';
 		echo '<img style="border:1px solid #000;margin:5px 10px;" src="images/powered/css.png" alt="PHP" />';     
-		infobox_end();                                    
+		iBoxEnd();
 	}
 ?>                                                  
                                                     

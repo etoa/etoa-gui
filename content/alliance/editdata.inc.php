@@ -31,7 +31,7 @@ if (Alliance::checkActionRights('editdata'))
 		$accept_bnd_no = "checked=\"checked\"";
 	}
 	
-	infobox_start("Daten der Info-Seite",1);
+	tableStart("Daten der Info-Seite");
 	echo "<tr>
 					<td class=\"tbltitle\">Allianz-Tag:</td>
 					<td class=\"tbldata\">
@@ -78,7 +78,7 @@ if (Alliance::checkActionRights('editdata'))
 						<input type=\"radio\" name=\"alliance_accept_bnd\" value=\"1\" ".$accept_bnd_yes."/> <span ".tm("Bündnisanfragen zulassen","Bündnisanfragen von jeder Allianz sind zugelassen.").">Ja</span> <input type=\"radio\" name=\"alliance_accept_bnd\" value=\"0\" ".$accept_bnd_no."/> <span ".tm("Bewerbungen zulassen","Es werden keine Bündnisanfragen angenommen.").">Nein</span>
 					</td>
 				</tr>"; 
-	infobox_end(1);
+	tableEnd();
 	
 	echo "<input type=\"submit\" name=\"editsubmit\" value=\"Speichern\" /> &nbsp; <input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"Zur&uuml;ck\" /></form>";
 	

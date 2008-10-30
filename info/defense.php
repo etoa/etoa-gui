@@ -28,7 +28,7 @@
 			}
 			echo "</select><br/><br/>";		
 			
-		 	infobox_start($arr['def_name'],1);
+		 	tableStart($arr['def_name']);
 	   	echo "<tr><td width=\"220\" class=\"tbltitle\"><img src=\"".IMAGE_PATH."/".IMAGE_DEF_DIR."/def".$arr['def_id'].".".IMAGE_EXT."\" width=\"220\" height=\"220\" alt=\"Verteidigung\" /></td>";
 	   	echo "<td class=\"tbldata\">".text2html($arr['def_longcomment'])."</td></tr>";
 			echo "<tr><td class=\"tbltitle\">Rasse</td><td class=\"tbldata\">";
@@ -47,7 +47,7 @@
 	    echo "<tr><td class=\"tbltitle\">Reparatur</td><td class=\"tbldata\">".nf($arr['def_heal'])."</td></tr>";
 	    echo "<tr><td class=\"tbltitle\">Platzverbrauch</td><td class=\"tbldata\">".nf($arr['def_fields'])." Felder</td></tr>";
 	    echo "<tr><td class=\"tbltitle\">Max. Anzahl</td><td class=\"tbldata\">".nf($arr['def_max_count'])."</td></tr>";
-	    infobox_end(1);
+	    tableEnd();
 		}
 		else
 		  echo "Verteidigungsdaten nicht gefunden!";
@@ -89,7 +89,7 @@
 		$res = dbquery("SELECT * FROM ".$db_table['defense']." WHERE def_buildable=1 ORDER BY $order $sort;");
 		if (mysql_num_rows($res)>0)
 		{
-			infobox_start("&Uuml;bersicht",1);
+			tableStart("&Uuml;bersicht");
 
 			echo "<tr></th><th class=\"tbltitle\" colspan=\"2\"><a href=\"?page=$page&amp;site=$site&amp;order=name\">Name</a></th>";
 			echo "<th class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=race_id\">Rasse</a></th>";
@@ -117,7 +117,7 @@
 				echo "<td class=\"tbldata\">".nf($arr['def_heal'])."</td></tr>";
 				//echo "<td class=\"tbldata\"><a href=\"?page=$page&site=$site&id=".$arr['def_id']."\">Details</a></td></tr>";
 			}
-			infobox_end(1);
+			tableEnd();
 		}
 		else
 			echo "<i>Keine Daten vorhanden!</i>";

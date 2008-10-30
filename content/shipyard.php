@@ -77,9 +77,9 @@
 		// Prüfen ob dieses Gebäude deaktiviert wurde
 		if ($werft_arr['buildlist_deactivated']>time())
 		{
-			infobox_start("Geb&auml;ude nicht bereit");
+			iBoxStart("Geb&auml;ude nicht bereit");
 			echo "Diese Schiffswerft ist bis ".date("d.m.Y H:i",$werft_arr['buildlist_deactivated'])." deaktiviert.";
-			infobox_end();
+			iBoxEnd();
 		}
 		// Werft anzeigen
 		else
@@ -123,7 +123,7 @@
 
 
 			//Technologien laden und Gentechlevel definieren
-			define("GEN_TECH_LEVEL",0);
+			$gen_tech_level = 0;
 			$res = dbquery("
 			SELECT 
 				techlist_tech_id,
@@ -138,7 +138,7 @@
 				
 				if($arr['techlist_tech_id']==GEN_TECH_ID && $arr['techlist_current_level']>0)
 				{
-					define("GEN_TECH_LEVEL",$arr['techlist_current_level']);
+					$gen_tech_level = $arr['techlist_current_level'];
 				}
 			}
 
@@ -299,7 +299,7 @@
     	// Infos anzeigen
     	echo "<div>";
     	//echo '<div><div style="float:left;width:450px;text-align:left;font-size:9pt;">';											
-    	infobox_start("Werft-Infos",1);
+    	tableStart("Werft-Infos");
     	echo "<tr><td class=\"tbldata\">";
     	echo "<b>Eingestellte Arbeiter:</b> ".nf($people_working)."<br/>
     	<b>Bauzeitverringerung:</b> ";
@@ -377,7 +377,7 @@
 								<input type=\"submit\" class=\"button\" name=\"sort_submit\" value=\"Sortieren\"/>
 							</td>
 						</tr>";
-			infobox_end(1);
+			tableEnd();
 
 			echo '<br style="clear:both;" /></div>';
 			echo "</form>";
@@ -618,7 +618,7 @@
 				<b>Ende des gesamten Auftrages:</b> ".date("Y-m-d H:i:s",$end_time)."<br>
 				<b>Schiffswerft Level:</b> ".CURRENT_SHIPYARD_LEVEL."<br>
 				<b>Eingesetzte Bewohner:</b> ".nf($people_working)."<br>
-				<b>Gen-Tech Level:</b> ".GEN_TECH_LEVEL."<br><br>
+				<b>Gen-Tech Level:</b> ".$gen_tech_level."<br><br>
 				<b>Kosten</b><br>
 				<b>".RES_METAL.":</b> ".nf($total_metal)."<br>
 				<b>".RES_CRYSTAL.":</b> ".nf($total_crystal)."<br>
@@ -763,7 +763,7 @@
 	*********************************/
 			if(isset($queue))
 			{
-				infobox_start("Bauliste",1);
+				tableStart("Bauliste");
 				$first=true;
 				$absolut_starttime=0;
 				foreach ($queue as $data)
@@ -784,10 +784,10 @@
 	
 							$obj_t_passed = $data['queue_objtime']-$obj_t_remaining;
 							echo "<tr>
-									<td class=\"tbltitle\" colspan=\"2\">Aktuell</td>
-									<td class=\"tbltitle\" style=\"width:150px;\">Start</td>
-									<td class=\"tbltitle\" style=\"width:150px;\">Ende</td>
-									<td class=\"tbltitle\" style=\"width:80px;\" colspan=\"2\">Verbleibend</td>
+									<th colspan=\"2\">Aktuell</th>
+									<th style=\"width:150px;\">Start</th>
+									<th style=\"width:150px;\">Ende</th>
+									<th style=\"width:80px;\" colspan=\"2\">Verbleibend</th>
 								</tr>";
 							echo "<tr>";
 							echo "<td class=\"tbldata\" colspan=\"2\">".$ships[$data['queue_ship_id']]['ship_name']."</td>";
@@ -796,12 +796,12 @@
 							echo "<td class=\"tbldata\" colspan=\"2\">".tf($obj_t_remaining)."</td>
 							</tr>";
 							echo "<tr>
-									<td class=\"tbltitle\" style=\"width:40px;\">Anzahl</td>
-									<td class=\"tbltitle\">Bauauftrag</td>
-									<td class=\"tbltitle\" style=\"width:150px;\">Start</td>
-									<td class=\"tbltitle\" style=\"width:150px;\">Ende</td>
-									<td class=\"tbltitle\" style=\"width:150px;\">Verbleibend</td>
-									<td class=\"tbltitle\" style=\"width:80px;\">Aktionen</td>
+									<th style=\"width:40px;\">Anzahl</th>
+									<th>Bauauftrag</th>
+									<th style=\"width:150px;\">Start</th>
+									<th style=\"width:150px;\">Ende</th>
+									<th style=\"width:150px;\">Verbleibend</th>
+									<th style=\"width:80px;\">Aktionen</th>
 								</tr>";
 							$first=false; 
 						}
@@ -828,7 +828,7 @@
 						$absolute_starttime=$data['queue_endtime'];
 					}
 				}
-				infobox_end(1);
+				tableEnd();
 			 	echo "<br/><br/>";
 
 			}
@@ -844,7 +844,7 @@
 			{
 				foreach ($cat as $cat_id => $cat_name)
 				{
-					infobox_start($cat_name,1);
+					tableStart($cat_name);
 					$ccnt = 0;
 
 					// Auflistung der Schiffe (auch diese, die noch nicht gebaut wurden) 
@@ -916,7 +916,7 @@
 
     						// Bauzeit berechnen
 								$btime = ($data['ship_costs_metal']+$data['ship_costs_crystal']+$data['ship_costs_plastic']+$data['ship_costs_fuel']+$data['ship_costs_food']) / 12 * GLOBAL_TIME * SHIP_BUILD_TIME * $time_boni_factor;
-    			      $btime_min=$btime*(0.1-(GEN_TECH_LEVEL/100));
+    			      $btime_min=$btime*(0.1-($gen_tech_level/100));
     			      
     			      //Mindest Bauzeit
     			      if ($btime_min<SHIPYARD_MIN_BUILD_TIME) 
@@ -1148,7 +1148,7 @@
     			      	  $s_img = IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$data['ship_id']."_middle.".IMAGE_EXT;
     			      	  
     			      	  echo "<tr>
-    			      	  				<td class=\"tbltitle\" colspan=\"5\" height=\"20\">".$data['ship_name']."</td>
+    			      	  				<th colspan=\"5\" height=\"20\">".$data['ship_name']."</th>
     			      	  			</tr>
     			      	  			<tr>
     			      	  				<td class=\"tbldata\" width=\"120\" height=\"120\" rowspan=\"3\">";
@@ -1187,11 +1187,11 @@
 				    			      	  }
     			      	  echo "</tr>";
     			      	  echo "<tr>
-				    			      	  <td class=\"tbltitle\" height=\"20\" width=\"110\">".RES_METAL.":</td>
-				    			      	  <td class=\"tbltitle\" height=\"20\" width=\"97\">".RES_CRYSTAL.":</td>
-				    			      	  <td class=\"tbltitle\" height=\"20\" width=\"98\">".RES_PLASTIC.":</td>
-				    			      	  <td class=\"tbltitle\" height=\"20\" width=\"97\">".RES_FUEL.":</td>
-				    			      	  <td class=\"tbltitle\" height=\"20\" width=\"98\">".RES_FOOD."</td></tr>";
+				    			      	  <th height=\"20\" width=\"110\">".RES_METAL.":</th>
+				    			      	  <th height=\"20\" width=\"97\">".RES_CRYSTAL.":</th>
+				    			      	  <th height=\"20\" width=\"98\">".RES_PLASTIC.":</th>
+				    			      	  <th height=\"20\" width=\"97\">".RES_FUEL.":</th>
+				    			      	  <th height=\"20\" width=\"98\">".RES_FOOD."</th></tr>";
     			      	  echo "<tr>
     			      	  				<td class=\"tbldata\" height=\"20\" width=\"110\" ".$ress_style_metal.">
     			      	  					".nf($data['ship_costs_metal'])."
@@ -1229,10 +1229,10 @@
 				  			      				echo "<a href=\"".HELP_URL."&amp;id=".$data[ITEM_ID_FLD]."\"><img src=\"".$s_img."\" width=\"40\" height=\"40\" border=\"0\" /></a></td>";
 				  			      			}
 				  			      			
-	  			      			echo "<td class=\"tbltitle\" width=\"30%\">
+	  			      			echo "<th width=\"30%\">
 	  			      							<span style=\"font-weight:500\">".$data['ship_name']."<br/>
 	  			      							Gebaut:</span> ".nf($shiplist_count)."
-	  			      						</td>
+	  			      						</th>
 	  			      						<td class=\"tbldata\" width=\"13%\">".tf($btime)."</td>
 	  			      						<td class=\"tbldata\" width=\"10%\" ".$ress_style_metal.">".nf($data['ship_costs_metal'])."</td>
 	  			      						<td class=\"tbldata\" width=\"10%\" ".$ress_style_crystal.">".nf($data['ship_costs_crystal'])."</td>
@@ -1275,7 +1275,7 @@
 						echo "<tr><td align=\"center\" colspan=\"3\" class=\"tbldata\">Es gibt noch keine Schiffe!</td></tr>";
 					}
 
-   				infobox_end(1);
+   				tableEnd();
    				
    				//Lücke zwischen Kategorien
    				echo "<br/>";

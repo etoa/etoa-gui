@@ -7,7 +7,7 @@
                    
           // Avatar
           $avatar_string="";
-          if ($_POST['avatar_del']==1)
+          if (isset($_POST['avatar_del']) && $_POST['avatar_del']==1)
           {
             if (file_exists(BOARD_AVATAR_DIR."/".$arr['user_avatar']))
             {
@@ -38,7 +38,7 @@
           
           // Profil-Bild
           $profil_img_string="";
-          if ($_POST['profile_img_del']==1)
+          if (isset($_POST['profile_img_del']) && $_POST['profile_img_del']==1)
           {
             if (file_exists(PROFILE_IMG_DIR."/".$arr['user_profile_img']))
             {
@@ -101,7 +101,7 @@
           
             dbquery("
             UPDATE
-                ".$db_table['users']."
+                users
             SET
                 user_email='".$_POST['user_email']."',
                 user_profile_text='".addslashes($_POST['user_profile_text'])."',
@@ -124,36 +124,38 @@
 
       echo "<form action=\"?page=$page&mode=general\" method=\"post\" enctype=\"multipart/form-data\">";
       $cstr = checker_init();
-      infobox_start("Benutzeroptionen",1);
+      tableStart("Benutzeroptionen");
       echo "<tr>
-      	<th class=\"tbldata\" width=\"35%\">&Ouml;ffentliches Profil:</th>
-      	<td class=\"tbldata\" width=\"65%\" style=\"color:#0f0;\">Klicke <a href=\"?page=userinfo&amp;id=".$cu->id()."\">hier</a> um dein Profil anzuzeigen.</td>
+      	<th width=\"35%\">&Ouml;ffentliches Profil:</th>
+      	<td width=\"65%\" style=\"color:#0f0;\">Klicke <a href=\"?page=userinfo&amp;id=".$cu->id()."\">hier</a> um dein Profil anzuzeigen.</td>
       </tr>";
 
       echo "<tr>
-      	<th class=\"tbldata\" width=\"35%\">Benutzername:</th>
-      	<td class=\"tbldata\" width=\"65%\">".$cu->nick()."</td>
+      	<th width=\"35%\">Benutzername:</th>
+      	<td width=\"65%\">".$cu->nick()."</td>
+      </tr>";
+      // <a href=\"?page=$page&amp;request=change_name\">&Auml;nderung beantragen</a>
+      echo "<tr>
+      	<th width=\"35%\">Vollst&auml;ndiger Name:</th>
+      	<td width=\"65%\">".$cu->realName()." [".ticketLink("&Auml;nderung beantragen",10)."]</td>
+      </tr>";
+      //<a href=\"?page=$page&amp;request=change_email\">&Auml;nderung beantragen</a>
+      echo "<tr>
+      	<th width=\"35%\">Fixe E-Mail:</th>
+      	<td width=\"65%\">".$cu->emailFix()." [".ticketLink("&Auml;nderung beantragen",9)."]</td>
       </tr>";
       echo "<tr>
-      	<th class=\"tbldata\" width=\"35%\">Vollst&auml;ndiger Name:</th>
-      	<td class=\"tbldata\" width=\"65%\">".$cu->realName()." [<a href=\"?page=$page&amp;request=change_name\">&Auml;nderung beantragen</a>]</td>
-      </tr>";
-      echo "<tr>
-      	<th class=\"tbldata\" width=\"35%\">Fixe E-Mail:</th>
-      	<td class=\"tbldata\" width=\"65%\">".$cu->emailFix()." [<a href=\"?page=$page&amp;request=change_email\">&Auml;nderung beantragen</a>]</td>
-      </tr>";
-      echo "<tr>
-      	<th class=\"tbldata\" width=\"35%\">E-Mail:</th>
-      	<td class=\"tbldata\" width=\"65%\"><input type=\"text\" name=\"user_email\" maxlength=\"255\" size=\"30\" value=\"".$cu->email()."\"></td>
+      	<th width=\"35%\">E-Mail:</th>
+      	<td width=\"65%\"><input type=\"text\" name=\"user_email\" maxlength=\"255\" size=\"30\" value=\"".$cu->email()."\"></td>
       </tr>";
 
       echo "<tr>
-      	<th class=\"tbldata\" width=\"35%\">Beschreibung:</th>
-      	<td class=\"tbldata\"><textarea name=\"user_profile_text\" cols=\"50\" rows=\"10\" width=\"65%\">".stripslashes($cu->profileText())."</textarea></td>
+      	<th width=\"35%\">Beschreibung:</th>
+      	<td><textarea name=\"user_profile_text\" cols=\"50\" rows=\"10\" width=\"65%\">".stripslashes($cu->profileText())."</textarea></td>
       </tr>";
       echo "<tr>
-      	<th class=\"tbldata\" width=\"35%\">User-Bild:</th>
-      	<td class=\"tbldata\">";
+      	<th width=\"35%\">User-Bild:</th>
+      	<td>";
         if ($arr['user_profile_img']!="")
         {
           echo '<img src="'.PROFILE_IMG_DIR.'/'.$cu->profileImage().'" alt="Profil" /><br/>';
@@ -165,12 +167,12 @@
       	Format: GIF, JPG oder PNG. Grösse: Max ".nf(PROFILE_IMG_MAX_SIZE)." Byte</td>
       </tr>";   
       echo "<tr>
-      	<th class=\"tbldata\" width=\"35%\">Allianzforum-Signatur:</th>
-      	<td class=\"tbldata\"><textarea name=\"user_signature\" cols=\"50\" rows=\"2\" width=\"65%\">".stripslashes($cu->signature())."</textarea></td>
+      	<th width=\"35%\">Allianzforum-Signatur:</th>
+      	<td><textarea name=\"user_signature\" cols=\"50\" rows=\"2\" width=\"65%\">".stripslashes($cu->signature())."</textarea></td>
       </tr>";
       echo "<tr>
-      	<th class=\"tbldata\" width=\"35%\">Allianzforum-Avatar:</th>
-      	<td class=\"tbldata\">";
+      	<th width=\"35%\">Allianzforum-Avatar:</th>
+      	<td>";
         if ($arr['user_avatar']!=BOARD_DEFAULT_IMAGE && $arr['user_avatar']!="")
         {
           show_avatar($arr['user_avatar']);
@@ -179,12 +181,12 @@
       	echo "Eigener Avatar heraufladen/&auml;ndern (".BOARD_AVATAR_WIDTH."*".BOARD_AVATAR_HEIGHT." Pixel, GIF): <input type=\"file\" name=\"user_avatar_file\" /></td>
       </tr>";
       echo "<tr>
-      	<th class=\"tbldata\" width=\"35%\">Öffentliches Foren-Profil:<br/>
+      	<th width=\"35%\">Öffentliches Foren-Profil:<br/>
       	<span style=\"font-weight:500;font-size:7pt;\">(zb http://www.etoa.ch/forum/profile.php?userid=1)</span></th>
-      	<td class=\"tbldata\" width=\"65%\"><input type=\"text\" name=\"user_profile_board_url\" maxlength=\"200\" size=\"50\" value=\"".$arr['user_profile_board_url']."\"></td>
+      	<td width=\"65%\"><input type=\"text\" name=\"user_profile_board_url\" maxlength=\"200\" size=\"50\" value=\"".$arr['user_profile_board_url']."\"></td>
       </tr>";
 
-      infobox_end(1);
+      tableEnd();
 
       echo "<input type=\"submit\" name=\"data_submit\" value=\"&Uuml;bernehmen\"/>";
       echo "</form><br/><br/>";

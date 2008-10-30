@@ -28,7 +28,7 @@
 			$titles2 = array('battle','trade','diplomacy');
 
 			
-			infobox_start("Allgemeine Titel",1);
+			tableStart("Allgemeine Titel");
 			$cnt = 0;
 			foreach ($titles as $k=> $v)
 			{
@@ -106,8 +106,8 @@
 			{
 				echo "<tr><td class=\"tbldata\">Keine Titel vorhanden (kein Spieler hat die minimale Punktzahl zum Erwerb eines Titels erreicht)!</td></tr>";
 			}
-			infobox_end(1);
-			infobox_start("Rassenleader",1);
+			tableEnd();
+			tableStart("Rassenleader");
 			$rres = dbquery("
 			SELECT
 				race_id,
@@ -157,7 +157,7 @@
 					</tr>";
 				}
 			}
-			infobox_end(1);
+			tableEnd();
 		
 			$rtn = ob_get_contents();
 			ob_end_clean();

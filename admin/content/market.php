@@ -99,7 +99,7 @@
 		{
 			while ($arr=mysql_fetch_array($res))
 			{
-						infobox_start("",1);
+						tableStart();
 						echo "<tr>
 						<td class=\"tbltitle\">Anbieter</td>
 						<td class=\"tbltitle\">Auktion Start/Ende</td>
@@ -187,7 +187,7 @@
                             echo "<tr><td class=\"tbldata\"><b>".$rsc['fuel']."</b>:</td><td class=\"tbldata\" colspan=\"2\">".nf($arr['auction_buy_fuel'])."</td></tr>";
                             echo "<tr><td class=\"tbldata\"><b>".$rsc['food']."</b>:</td><td class=\"tbldata\" colspan=\"2\">".nf($arr['auction_buy_food'])."</td></tr>";
                         }
-                        infobox_end(1);
+                        tableEnd();
 
 
 			}

@@ -52,7 +52,7 @@
 		Help::navi();
 		echo "Hier findest du Informationen zu verschiedenen Objekten des Spiels:<br/><br/>";
 
-		infobox_start("Tools",1);
+		tableStart("Tools");
 		echo "<tr>
 		<td class=\"tbldata\" style=\"text-align:center;width:20%\">
 			<a href=\"?page=ticket\"><img src=\"images/abuse.png\" border=\"0\" alt=\"Missbrauch\" style=\"width:40px;height:40px;\" title=\"Ticket erstellen\"></a><br/>
@@ -75,43 +75,41 @@
 			Fehler melden
 		</td>
 		</td></tr>";
-		infobox_end(1);
+		tableEnd();
 
 
-		infobox_start("Daten",1);
+		tableStart("Daten");
+		echo "<tr><td class=\"tbltitle\" width=\"25%\">Einstellungen</td><td class=\"tbldata\">Grundlegende Einstellungen dieser Runde</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=settings\">Anzeigen</a></td></tr>";
 		echo "<tr><td class=\"tbltitle\" width=\"25%\">Geb&auml;ude</td><td class=\"tbldata\">Liste aller Geb&auml;ude</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=buildings\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Technologien</td><td class=\"tbldata\">Liste aller Technologien</td><td class=\"tbldata\"><a href=\"?page=$page&site=research\" width=\"60\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Schiffe</td><td class=\"tbldata\">Liste aller Schiffe</td><td class=\"tbldata\"><a href=\"?page=$page&site=shipyard\" width=\"60\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Verteidigung</td><td class=\"tbldata\">Liste aller Verteidigungsanlagen</td><td class=\"tbldata\"><a href=\"?page=$page&site=defense\" width=\"60\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Raketen</td><td class=\"tbldata\">Liste aller Raketen</td><td class=\"tbldata\"><a href=\"?page=$page&site=missiles\" width=\"60\">Anzeigen</a></td></tr>";
 		echo "<tr><td class=\"tbltitle\" width=\"25%\">Planeten</td><td class=\"tbldata\">Liste aller Planeten</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=planets\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Sterne</td><td class=\"tbldata\">Liste aller Sterne</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=stars\">Anzeigen</a></td></tr>";
+		echo "<tr><td class=\"tbltitle\" width=\"25%\">Raketen</td><td class=\"tbldata\">Liste aller Raketen</td><td class=\"tbldata\"><a href=\"?page=$page&site=missiles\" width=\"60\">Anzeigen</a></td></tr>";
 		echo "<tr><td class=\"tbltitle\" width=\"25%\">Rassen</td><td class=\"tbldata\">Liste aller Rassen</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=races\">Anzeigen</a></td></tr>";
 		echo "<tr><td class=\"tbltitle\" width=\"25%\">Ressourcen</td><td class=\"tbldata\">Liste aller Ressourcen</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=resources\">Anzeigen</a></td></tr>";
 		echo "<tr><td class=\"tbltitle\" width=\"25%\">Rohstoffkurse</td><td class=\"tbldata\">Welche Werte die Rohstoffe akuell haben</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=rates\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Einstellungen</td><td class=\"tbldata\">Grundlegende Einstellungen dieser Runde</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=settings\">Anzeigen</a></td></tr>";
+		echo "<tr><td class=\"tbltitle\" width=\"25%\">Schiffe</td><td class=\"tbldata\">Liste aller Schiffe</td><td class=\"tbldata\"><a href=\"?page=$page&site=shipyard\" width=\"60\">Anzeigen</a></td></tr>";
 		echo "<tr><td class=\"tbltitle\" width=\"25%\">Schiffsaktionen</td><td class=\"tbldata\">Die verschiedenen Aktionen in der &Uuml;bersicht</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=action\">Anzeigen</a></td></tr>";
 		echo "<tr><td class=\"tbltitle\" width=\"25%\">Spezialisten</td><td class=\"tbldata\">Was man mit Spezialisten machen kann</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=specialists\">Anzeigen</a></td></tr>";
-		infobox_end(1);
+		echo "<tr><td class=\"tbltitle\" width=\"25%\">Sterne</td><td class=\"tbldata\">Liste aller Sterne</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=stars\">Anzeigen</a></td></tr>";
+		echo "<tr><td class=\"tbltitle\" width=\"25%\">Technologien</td><td class=\"tbldata\">Liste aller Technologien</td><td class=\"tbldata\"><a href=\"?page=$page&site=research\" width=\"60\">Anzeigen</a></td></tr>";
+		echo "<tr><td class=\"tbltitle\" width=\"25%\">Verteidigung</td><td class=\"tbldata\">Liste aller Verteidigungsanlagen</td><td class=\"tbldata\"><a href=\"?page=$page&site=defense\" width=\"60\">Anzeigen</a></td></tr>";
+		tableEnd();
 
 
-		infobox_start("Mechanismen",1);
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Raumkarte</td><td class=\"tbldata\">Wie ist das Universum aufgebaut</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=space\">Anzeigen</a></td></tr>";
+		tableStart("Mechanismen");
 		echo "<tr><td class=\"tbltitle\" width=\"25%\">Bewohner</td><td class=\"tbldata\">Wie arbeite ich mit Bewohnern und was muss ich beachten</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=population\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Statistik</td><td class=\"tbldata\">Was sind Statistiken und wie werden sie berechnet</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=stats\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Technikbaum</td><td class=\"tbldata\">Wie lese ich daraus die Voraussetzungen ab</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=techtree\">Anzeigen</a></td></tr>";
+		echo "<tr><td class=\"tbltitle\" width=\"25%\">Kryptocenter</td><td class=\"tbldata\">Wie man fremde Flottenbewegungen scannt</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=crypto\">Anzeigen</a></td></tr>";
 		echo "<tr><td class=\"tbltitle\" width=\"25%\">Markt</td><td class=\"tbldata\">Wie der Marktplatz funktioniert</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=market\">Anzeigen</a></td></tr>";
 		echo "<tr><td class=\"tbltitle\" width=\"25%\">Multis und Sitting</td><td class=\"tbldata\">Wie wir Mehrfachaccounts handhaben und wie Sitting funktioniert</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=multi_sitting\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Kryptocenter</td><td class=\"tbldata\">Wie man fremde Flottenbewegungen scannt</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=crypto\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Spezialpunkte</td><td class=\"tbldata\">Wie man Spezialpunkte und Titel erwerben kann</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=specialpoints\">Anzeigen</a></td></tr>";
 		echo "<tr><td class=\"tbltitle\" width=\"25%\">Raketen</td><td class=\"tbldata\">Wie das Raketensystem funktioniert</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=missile_system\">Anzeigen</a></td></tr>";
+		echo "<tr><td class=\"tbltitle\" width=\"25%\">Raumkarte</td><td class=\"tbldata\">Wie ist das Universum aufgebaut</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=space\">Anzeigen</a></td></tr>";
+		echo "<tr><td class=\"tbltitle\" width=\"25%\">Spezialpunkte</td><td class=\"tbldata\">Wie man Spezialpunkte und Titel erwerben kann</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=specialpoints\">Anzeigen</a></td></tr>";
 		echo "<tr><td class=\"tbltitle\" width=\"25%\">Spionage</td><td class=\"tbldata\">Wie das Spionagesystem funktioniert</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=spy_info\">Anzeigen</a></td></tr>";
+		echo "<tr><td class=\"tbltitle\" width=\"25%\">Statistik</td><td class=\"tbldata\">Was sind Statistiken und wie werden sie berechnet</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=stats\">Anzeigen</a></td></tr>";
+		echo "<tr><td class=\"tbltitle\" width=\"25%\">Technikbaum</td><td class=\"tbldata\">Wie lese ich daraus die Voraussetzungen ab</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=techtree\">Anzeigen</a></td></tr>";
 		echo "<tr><td class=\"tbltitle\" width=\"25%\">Textformatierung</td><td class=\"tbldata\">Wie man Text formatieren kann (BBcode)</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=textformat\">Anzeigen</a></td></tr>";
 		echo "<tr><td class=\"tbltitle\" width=\"25%\">Urlaubsmodus</td><td class=\"tbldata\">Was das ist und wie es funktioniert</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=u_mod\">Anzeigen</a></td></tr>";
 		echo "<tr><td class=\"tbltitle\" width=\"25%\">Wärme- und Kältebonus</td><td class=\"tbldata\">Welche Auswirkungen hat die Planetentemperatur</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=tempbonus\">Anzeigen</a></td></tr>";
-	
-		
-		infobox_end(1);
+		tableEnd();
 
 
 

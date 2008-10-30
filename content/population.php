@@ -59,7 +59,7 @@
 			//
 			// Wohnfläche
 			//
-			infobox_start("Wohnfl&auml;che",1,0);
+			tableStart("Wohnfl&auml;che");
 			echo "<tr><td class=\"tbldata\">Grundwohnfl&auml;che</td><td class=\"tbldata\">".nf($conf['user_start_people']['p1'])."</td></tr>";
 			$pcnt=$conf['user_start_people']['p1'];
 			while ($arr=mysql_fetch_array($res))
@@ -69,7 +69,7 @@
 				$pcnt+=$place;
 			}
 			echo "<tr><td class=\"tbldata\"><b>TOTAL</b></td><td class=\"tbldata\"><b>".nf($pcnt)."</b></td></tr>";
-			infobox_end(1);
+			tableEnd();
 
 
   		//
@@ -204,7 +204,7 @@
 			echo "Wenn einem Geb&auml;ude Arbeiter zugeteilt werden, wird es entsprechend schneller gebaut. Die Arbeiter ben&ouml;tigen jedoch Nahrung. ";
 			echo "Die Zuteilung der Arbeiter kann erst ge&auml;ndert werden wenn entsprechende Bauauftr&auml;ge abgeschlossen sind. ";
 			echo "Die gesamte Nahrung f&uuml;r die Arbeiter wird beim Start eines Bauvorgangs sofort vom Planetenkonto abgezogen.<br/><br/>";
-			infobox_start("Arbeiter zuteilen",1,0);
+			tableStart("Arbeiter zuteilen");
 			echo "<tr><th class=\"tbltitle\">Geb&auml;ude</th><th class=\"tbltitle\">Arbeiter</th><th class=\"tbltitle\">Zus&auml;tzliche Nahrung</th></tr>";
 
 			// Gebäudede mit Arbeitsplätzen auswählen
@@ -280,7 +280,7 @@
 				<td class=\"tbldata\"><input type=\"submit\" name=\"submit_people_work\" value=\"Speichern\" /></td>
 				<td class=\"tbldata\"><input type=\"submit\" name=\"submit_people_free\" value=\"Alle Arbeiter freigeben\" /></td></tr>";
 			}
-			infobox_end(1);
+			tableEnd();
 			echo "</form>";
 
 
@@ -299,7 +299,7 @@
 			$people_free = floor($cp->people)-$people_working;
 			$people_div = $cp->people/50 * ($conf['people_multiply']['v'] + $cp->typePopulation + $cu->racePopulation + $cp->starPopulation -3);
 			if($people_div<=3) $people_div=3;
-			infobox_start("Daten",1,0);
+			tableStart("Daten");
 			echo "<tr><td class=\"tbldata\" width=\"250\">Bev&ouml;lkerung total</td><td class=\"tbldata\">".nf(floor($cp->people))."</td></tr>";
 			echo "<tr><td class=\"tbldata\" width=\"250\">Arbeiter</td><td class=\"tbldata\">".nf($people_working)."</td></tr>";
 			echo "<tr><td class=\"tbldata\" width=\"250\">Freie Leute</td><td class=\"tbldata\">".nf($people_free)."</td></tr>";
@@ -311,7 +311,7 @@
 			echo "<tr><td class=\"tbldata\" width=\"250\">Wachstumsbonus ".$cp->starTypeName."</td><td class=\"tbldata\">".get_percent_string($cp->starPopulation,1)."</td></tr>";
 			echo "<tr><td class=\"tbldata\" width=\"250\">Wachstumsbonus total</td><td class=\"tbldata\">".get_percent_string(array($cp->typePopulation,$cu->racePopulation,$cp->starPopulation),1)."</td></tr>";
 			echo "<tr><td class=\"tbldata\" width=\"250\">Bev&ouml;lkerungszuwachs pro Stunde</td><td class=\"tbldata\">".nf($people_div)."</td></tr>";
-			infobox_end(1);
+			tableEnd();
 		}
 		else
 			echo "Es sind noch keine Geb&auml;ude gebaut, in denen deine Bev&ouml;lkerung wohnen oder arbeiten kann!";

@@ -386,7 +386,7 @@
 					//
 					// Forschungsdaten anzeigen
 					//
-					infobox_start(text2html($arr['tech_name']." ".$b_level),1);
+					tableStart(text2html($arr['tech_name']." ".$b_level));
 					echo "<tr><td width=\"220\" rowspan=\"3\" class=\"tbldata\"><a href=\"?page=help&amp;site=research&amp;id=".$arr['tech_id']."\"><img src=\"".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$arr['tech_id'].".".IMAGE_EXT."\" width=\"220\" height=\"220\" border=\"0\" /></a></td>";
 					echo "<td valign=\"top\" class=\"tbldata\" colspan=\"2\">".text2html($arr['tech_shortcomment'])."</td></tr>";
 					echo "<tr><td class=\"tbltitle\" height=\"20\" width=\"50%\">Status:</td>";
@@ -401,7 +401,7 @@
 					{
 						echo "<td id=\"buildlevel\" class=\"tbldata\" width=\"50%\">Noch nicht erforscht</td></tr>";
 					}
-					infobox_end(1);
+					tableEnd();
 	
 	
 					// Check requirements for this building
@@ -438,7 +438,7 @@
 	                
 					if ($requirements_passed)
 					{
-					infobox_start("Forschoptionen",1);
+					tableStart("Forschoptionen");
 					echo "<tr>
 					<td class=\"tbltitle\" width=\"16%\">Aktion</td>
 					<td class=\"tbltitle\" width=\"14%\">Zeit</th>
@@ -531,7 +531,7 @@
 					}
 	
 	
-					infobox_end(1);
+					tableEnd();
 	
 					if (isset($bwmax) && $bwmax>0)
 						echo "Wartezeit bis gen&uuml;gend Rohstoffe zum Forschen vorhanden sind: <b>".tf($bwmax)."</b><br/><br/>";
@@ -611,7 +611,7 @@
 			else
 			{
 				
-	    	infobox_start("Labor-Infos");
+	    	iBoxStart("Labor-Infos");
 	    	echo "<div style=\"text-align:left;\">
 	    	<b>Eingestellte Arbeiter:</b> ".nf($peopleWorking)."<br/>
 	    	<b>Forschungszeitverringerung:</b> ";
@@ -629,7 +629,7 @@
 		  	<b>Gentechnologie:</b> ".GEN_TECH_LEVEL."<br/>
 		  	<b>Minimalen Forschungszeit (mit Arbeiter):</b> Forschungszeit * ".$minBuildTimeFactor."
 		  	</div>";   		    	
-	    	infobox_end();			
+	    	iBoxEnd();			
 				
 				
 				// Load categories
@@ -692,7 +692,7 @@
 					echo $cstr;
 					while ($tarr = mysql_fetch_array($tres))
 					{
-						infobox_start($tarr['type_name'],1,1);
+						tableStart($tarr['type_name']);
 	
 						$cnt = 0; // Counter for current row
 						$scnt = 0; // Counter for shown techs
@@ -759,7 +759,7 @@
 									// Voraussetzungen nicht erfüllt
 									if (!$requirements_passed)
 									{
-										$subtitle =  'Voraussetzungen nicht erfüllt';
+										$subtitle =  'Voraussetzungen fehlen';
 										$tmtext = '<span style="color:#999">Baue zuerst die nötigen Gebäude und erforsche die nötigen Technologien um diese Technologie zu erforschen!</span><br/>';
 										$color = '#999';
 										if($use_img_filter)
@@ -885,7 +885,7 @@
 						{
 							echo "<tr><td class=\"tbldata\" colspan=\"4\" style=\"text-align:center;border:0;width:100%\"><i>In dieser Kategorie kann momentan noch nichts erforscht werden!</i></td></tr>";
 						}
-						infobox_end(1);
+						tableEnd();
 					}
 					echo '</div></form>';				
 				}

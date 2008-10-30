@@ -12,7 +12,7 @@
 		private $name;
 		private $typeId;
 		protected $isValid;		
-		private $typeName;
+		protected $typeName;
 		public $named;
 		protected $coordsLoaded;
 		protected $sx;
@@ -66,6 +66,32 @@
 				$this->isValid=true;
 			}
 		}
+		
+		public function typeData()
+		{
+				$res = dbquery("
+				SELECT
+					*
+				FROM 
+					sol_types
+				WHERE
+					sol_type_id=".$this->typeId."	
+				;");
+				$arr = mysql_fetch_assoc($res);
+				$rtn = array(
+				"metal" => $arr['sol_type_f_metal'],
+				"crystal" => $arr['sol_type_f_crystal'],
+				"plastic" => $arr['sol_type_f_plastic'],
+				"fuel" => $arr['sol_type_f_fuel'],
+				"food" => $arr['sol_type_f_food'],
+				"power" => $arr['sol_type_f_power'],
+				"population" => $arr['sol_type_f_population'],
+				"buildtime" => $arr['sol_type_f_buildtime'],
+				"researchtime" => $arr['sol_type_f_researchtime'],				
+				"comment" => $arr['sol_type_comment']				
+				);
+				return $rtn;					
+		}
 
     public function allowedFleetActions()
     {
@@ -116,6 +142,10 @@
 
 		function imagePath($opt="")
 		{
+			if ($opt=="b")
+			{
+				return IMAGE_PATH."/stars/star".$this->typeId.".".IMAGE_EXT;
+			}
 			return IMAGE_PATH."/stars/star".$this->typeId."_small.".IMAGE_EXT;
 		}
 

@@ -38,12 +38,12 @@
 	if (isset($_GET['action']) && $_GET['action']=="new")
 	{
 		echo "<form action=\"?page=$page\" method=\"post\">";
-		infobox_start("Neue Notiz",1);
+		tableStart("Neue Notiz");
 		echo "<tr><th class=\"tbltitle\">Titel:</th>
 		<td class=\"tbldata\"><input type=\"text\" name=\"note_subject\" value=\"\" size=\"40\" /></td></tr>";
 		echo "<tr><th class=\"tbltitle\">Text:</th>
 		<td class=\"tbldata\"><textarea name=\"note_text\" cols=\"50\" rows=\"10\"></textarea></td></tr>";
-		infobox_end(1);
+		tableEnd();
 		echo "<input type=\"submit\" value=\"Speichern\" name=\"submit_new\" > &nbsp; ";
 		echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?page=$page'\" /> &nbsp; ";			
 		echo "</form><br/>";
@@ -58,10 +58,10 @@
 		{
 			echo "<form action=\"?page=$page\" method=\"post\">";
 			echo "<input type=\"hidden\" name=\"note_id\" value=\"".$n->id()."\" />";
-			infobox_start("Notiz bearbeiten",1);
+			tableStart("Notiz bearbeiten");
 			echo "<tr><th class=\"tbltitle\">Titel:</th><td class=\"tbldata\"><input type=\"text\" name=\"note_subject\" value=\"".stripslashes($n->subject())."\" size=\"40\" /></td></tr>";
 			echo "<tr><th class=\"tbltitle\">Text:</th><td class=\"tbldata\"><textarea name=\"note_text\" cols=\"50\" rows=\"10\">".stripslashes($n->text())."</textarea></td></tr>";
-			infobox_end(1);
+			tableEnd();
 			echo "<input type=\"submit\" value=\"Speichern\" name=\"submit_edit\" > &nbsp; ";
 			echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?page=$page'\" /> &nbsp; ";			
 			echo "</form><br/>";
@@ -98,7 +98,7 @@
 
 		if ($np->numNotes()>0)
 		{
-			infobox_start("Meine Notizen",1);			
+			tableStart("Meine Notizen");			
 			foreach ($np->getArray() as $id=>$n)
 			{
 				echo "<tr><td class=\"tbldata\" width=\"120px\"><b>".$n->subject()."</b>
@@ -107,7 +107,7 @@
 				echo "<td class=\"tbldata\" style=\"width:130px;\"><a href=\"?page=$page&amp;action=edit&amp;id=".$id."\">Bearbeiten</a> &nbsp; ";
 				echo "<a href=\"?page=$page&amp;action=delete&amp;id=".$id."\" onclick=\"return confirm('Soll die Notiz ".$n->subject()." wirklich gel&ouml;scht werden?');\">L&ouml;schen</a></td></tr>";
 			}
-			infobox_end(1);
+			tableEnd();
 		}
 		else
 		{

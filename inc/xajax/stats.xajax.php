@@ -185,7 +185,7 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 					<th style=\"\">Rasse</th>
 					<th style=\"\">Allianz</th>
 					<th style=\"\">Bewertung</th>
-					<th style=\"width:160px;\">Details</th>
+					<th style=\"width:160px;\">Aktionen</th>
 				</tr>";
 				while ($arr=mysql_fetch_array($res))
 				{
@@ -254,7 +254,7 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 					<th style=\"\">Kämpfe Verloren</th>
 					<th style=\"\">Kämpfe Total</th>
 					<th style=\"\">Bewertung</th>
-					<th style=\"width:160px;\">Details</th>
+					<th style=\"width:160px;\">Aktionen</th>
 				</tr>";
 				while ($arr=mysql_fetch_array($res))
 				{
@@ -324,7 +324,7 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 					<th style=\"\">Einkäufe</th>
 					<th style=\"\">Verkäufe</th>
 					<th style=\"\">Bewertung</th>
-					<th style=\"width:160px;\">Details</th>
+					<th style=\"width:160px;\">Aktionen</th>
 				</tr>";
 				while ($arr=mysql_fetch_array($res))
 				{
@@ -607,7 +607,7 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0)
 					<th style=\"\">Sektor</th>
 					<th style=\"\">Allianz</th>
 					<th style=\"\">Punkte</th>
-					<th style=\"width:150px;\">Details</th>
+					<th style=\"width:150px;\">Aktionen</th>
 				</tr>";
 				while ($arr=mysql_fetch_array($res))
 				{
@@ -646,8 +646,8 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0)
 					$out.= "<td $addstyle >".$arr['alliance_tag']."</td>";
 					$out.= "<td $addstyle >".nf($arr['points'])."</td>";
 					$out.= "<td $addstyle >";
-					$out.=  "<a href=\"?page=userinfo&id=".$arr['id']."\" title=\"Userinfo\">Info</a> ";
-					$out.=  "<a href=\"?page=$page&amp;mode=$mode&amp;userdetail=".$arr['id']."\">Verlauf</a> ";
+					$out.=  popUp("Profil","page=userinfo&id=".$arr['id']);
+					$out.=  popUp("Details","page=$page&amp;mode=$mode&amp;userdetail=".$arr['id']);
 					if ($arr['id']!=$_SESSION[ROUNDID]['user_id'])
 					{
 						$out.=  "<a href=\"?page=messages&mode=new&message_user_to=".$arr['id']."\" title=\"Nachricht senden\">Mail</a> ";

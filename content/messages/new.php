@@ -29,37 +29,37 @@
 								$s['messages']['sent'][$uid]=$time;
 								Message::sendFromUserToUser($cu->id(),$uid,$_POST['message_subject'],$_POST['message_text']);
 
-         		    infobox_start("Nachrichtenversand",1);
+         		    tableStart("Nachrichtenversand");
          		    echo "Nachricht wurde an <b>".$_POST['message_user_to']."</b> gesendet!";
-         		    infobox_end();
+         		    iBoxEnd();
          		    $_POST['message_user_to']=null;
          		}
          		else
          		{
-       		    infobox_start("Nachrichtenversand");
+       		    iBoxStart("Nachrichtenversand");
          			echo "Du hast ein unerlaubtes Zeichen ( ".$check_subject." ) im Betreff!";
-       		    infobox_end();
+       		    iBoxEnd();
          		}
          	}
 					else
 					{
-						infobox_start("Nachrichtenversand");
+						iBoxStart("Nachrichtenversand");
 						echo "<b>Fehler:</b> Dieser Benutzer hat dich ignoriert, die Nachricht wurde nicht gesendet!";
-						infobox_end();
+						iBoxEnd();
 					}         	
 				}
 				else
 				{
-					infobox_start("Nachrichtenversand");
+					iBoxStart("Nachrichtenversand");
 					echo "<b>Flood-Kontrolle!</b> Du kannst erst nach ".FLOOD_CONTROL." Sekunden eine neue Nachricht an ".$_POST['message_user_to']." schreiben!";
-					infobox_end();
+					iBoxEnd();
 				}
 			}
 			else
 			{
-				infobox_start("Nachrichtenversand");
+				iBoxStart("Nachrichtenversand");
 				echo "<b>Fehler:</b>: Dieser Benutzer existiert nicht!";
-				infobox_end();
+				iBoxEnd();
 			}
 		}
 			

@@ -366,7 +366,7 @@
                 user_id='".$cu->id()."';");
             $user_arr = mysql_fetch_array($user_res);
 
-            infobox_start("Multierkennung [<a href=\"?page=help&site=multi_sitting\">Info</a>]",1);
+            tableStart("Multierkennung [<a href=\"?page=help&site=multi_sitting\">Info</a>]");
 
             echo "<tr>
                     <th class=\"tbltitle\" width=\"35%\">User</th>
@@ -415,7 +415,7 @@
                         echo "<tr><td class=\"tbldata\" style=\"text-align:center;\" colspan=\"3\"><input type=\"submit\" name=\"new_multi\" value=\"User hinzuf&uuml;gen\"/></td></tr>";
                     }
 
-            infobox_end(1);
+            tableEnd();
 
             echo "<input type=\"submit\" name=\"data_submit_multi\" value=\"&Uuml;bernehmen\"/></form><br/><br/><br>";
 
@@ -443,7 +443,7 @@
                 //Sperrt Formular wenn der Modus aktiv ist
                 if($arr['user_sitting_active']==0)
                 {
-                    infobox_start("Sitter Einstellungen [<a href=\"?page=help&site=multi_sitting\">Info</a>]",1);
+                    tableStart("Sitter Einstellungen [<a href=\"?page=help&site=multi_sitting\">Info</a>]");
                     echo "<form action=\"?page=$page&mode=sitting\" method=\"post\">";
                     echo $cstr;
 
@@ -617,14 +617,14 @@
                     }
 
                     echo "</div></td></tr>";
-                    infobox_end(1);
+                    tableEnd();
 
                     echo "<input type=\"submit\" name=\"data_submit_sitting\" value=\"&Uuml;bernehmen\" ".tm("Übernehmen","Speichert die angegebenen Daten. Mit diesem Button wird der Sittingmodus aber NICHT aktiviert!")."/>";
                     echo "</form><br/><br/><br>";
                 }
                 else
                 {
-                    infobox_start("Sitter Einstellungen",1);
+                    tableStart("Sitter Einstellungen");
                     echo "<tr><td class=\"tbldata\"><div align=\"center\"><b>Modus aktiv!</b></div></td></tr>";
 
                     $date_res = dbquery("
@@ -656,15 +656,15 @@
                         }
                     }
                     echo "</td></tr>";
-                    infobox_end(1);
+                    tableEnd();
                 }
             }
             //Dem User stehen keine Sittertage mehr zur Verfügung
             else
             {
-              infobox_start("Sitter Einstellungen",1);
+              tableStart("Sitter Einstellungen");
               echo "<tr><td class=\"tbldata2\"><div align=\"center\">Dir stehen keine weiteren Sittertage zur verf&uuml;gung!</div></td></tr>";
-              infobox_end(1);
+              tableEnd();
             }
 
 ?>

@@ -93,7 +93,7 @@
 			AND req_req_tech_id=tech_id
 			GROUP BY req_id;");
 
-			infobox_start($arr['ship_name'],1);
+			tableStart($arr['ship_name']);
 
     	echo "<tr>
     		<td class=\"tbltitle\" style=\"width:220px;background:#000\">
@@ -246,7 +246,7 @@
 			echo '<script type="text/javascript">xajax_reqInfo('.$arr['ship_id'].',"s")</script>';
 			echo "</td></tr>";	
 		
-	    infobox_end(1);
+	    tableEnd();
 		}
 		else
 		  echo "Schiffdaten nicht gefunden!<br><br>";
@@ -309,7 +309,7 @@
 			$order $sort;");
 		if (mysql_num_rows($res)>0)
 		{
-			infobox_start("Raumschiff&uuml;bersicht",1);
+			tableStart("Raumschiff&uuml;bersicht");
 			echo "<tr><th class=\"tbltitle\" colspan=\"2\"><a href=\"?page=$page&amp;site=$site&amp;order=name\">Name</a></th>";
 			echo "<th class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=race_id\">Rasse</a></th>";
 			echo "<th class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=capacity\">Kapazität</a></th>";
@@ -343,7 +343,7 @@
 				echo "<td class=\"tbldata\">".nf($arr['ship_pilots'])."</td>
 				</tr>";
 			}
-			infobox_end(1);
+			tableEnd();
 		}
 		else
 			echo "<i>Keine Daten vorhanden!</i>";

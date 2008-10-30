@@ -341,7 +341,7 @@
 				}
 				
 				
-				infobox_end(1);
+				tableEnd();
 			}
 			elseif ($_POST['log_cat']=="logs_game")
 			{
@@ -426,7 +426,7 @@
 								</tr>";
 				}
 				
-				infobox_end(1);
+				tableEnd();
 			}
 			
 		}
@@ -440,7 +440,7 @@
 			echo "<form action=\"?page=$page\" method=\"post\" id=\"log_selector\">";
 			$cstr = checker_init();
 			
-			infobox_start("",1);
+			tableStart();
 			
 			//Kategorie wählen
 			echo "<tr>
@@ -453,7 +453,7 @@
 								</select>
 							</td>
 						</tr>";							
-			infobox_end(1);	
+			tableEnd();	
 			
 			// Suchformular
 			echo "<div id=\"catSelector\"></div>";			

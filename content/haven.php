@@ -42,9 +42,9 @@
 		//
 		if ($cfg->get("battleban")!=0 && $cfg->param1("battleban_time")<=time() && $cfg-param2("battleban_time")>time())
 		{
-			infobox_start("Kampfsperre");
+			iBoxStart("Kampfsperre");
 			echo "Es ist momentan nicht m&ouml;glich andere Spieler anzugreifen. Grund: ".text2html($cfg->param1("battleban"))."<br>Die Sperre dauert vom ".date("d.m.Y",$cfg->param1("battleban_time"))." um ".date("H:i",$cfg->param1("battleban_time"))." Uhr bis am ".date("d.m.Y",$cfg->param2("battleban_time"))." um ".date("H:i",$cfg->param2("battleban_time"))." Uhr!";
-			infobox_end();
+			iBoxEnd();
 		}
 		
 			if (isset($_GET['target']) && intval($_GET['target'])>0)

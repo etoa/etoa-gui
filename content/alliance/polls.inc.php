@@ -72,7 +72,7 @@ if (Alliance::checkActionRights('polls'))
 				echo "Es müssen mindestens <b>zwei</b> Antwortfelder ausgefüllt sein!<br/><br/>";
 				echo "<form action=\"?page=$page&amp;action=polls&amp;pollaction=create\" method=\"post\">";
 				checker_init();
-				infobox_start("Neue Umfrage erstellen",1);
+				tableStart("Neue Umfrage erstellen");
 				echo "<tr><th class=\"tbltitle\">Titel:</th><td class=\"tbldata\"><input type=\"text\" name=\"poll_title\" size=\"80\" maxlength=\"150\" value=\"".$_SESSION['alliance_poll']['poll_title']."\" /></td></tr>";
 				echo "<tr><th class=\"tbltitle\">Frage:</th><td class=\"tbldata\"><input type=\"text\" name=\"poll_question\" size=\"80\" maxlength=\"150\" value=\"".$_SESSION['alliance_poll']['poll_question']."\" /></td></tr>";
 				echo "<tr><th class=\"tbltitle\">Antwort 1:</th><td class=\"tbldata\"><input type=\"text\" name=\"poll_a1_text\" size=\"70\" maxlength=\"150\" value=\"".$_SESSION['alliance_poll']['poll_a1_text']."\" /></td></tr>";
@@ -83,7 +83,7 @@ if (Alliance::checkActionRights('polls'))
 				echo "<tr><th class=\"tbltitle\">Antwort 6:</th><td class=\"tbldata\"><input type=\"text\" name=\"poll_a6_text\" size=\"70\" maxlength=\"150\" value=\"".$_SESSION['alliance_poll']['poll_a6_text']."\" /></td></tr>";
 				echo "<tr><th class=\"tbltitle\">Antwort 7:</th><td class=\"tbldata\"><input type=\"text\" name=\"poll_a7_text\" size=\"70\" maxlength=\"150\" value=\"".$_SESSION['alliance_poll']['poll_a7_text']."\" /></td></tr>";
 				echo "<tr><th class=\"tbltitle\">Antwort 8:</th><td class=\"tbldata\"><input type=\"text\" name=\"poll_a8_text\" size=\"70\" maxlength=\"150\" value=\"".$_SESSION['alliance_poll']['poll_a8_text']."\" /></td></tr>";
-				infobox_end(1);
+				tableEnd();
 				echo "<input type=\"submit\" name=\"pollsubmitnew\" value=\"Speichern\" /> &nbsp; ";
 				echo "<input type=\"button\" onclick=\"document.location='?page=$page&amp;action=".$_GET['action']."';\" value=\"Zur&uuml;ck\" /></form>";
 			}
@@ -160,7 +160,7 @@ if (Alliance::checkActionRights('polls'))
 				{
 					echo "<form action=\"?page=$page&amp;action=polls&amp;edit=".$parr['poll_id']."\" method=\"post\">";
 					checker_init();
-					infobox_start("Umfrage bearbeiten",1);
+					tableStart("Umfrage bearbeiten");
 					echo "<tr><th class=\"tbltitle\">Titel:</th><td class=\"tbldata\"><input type=\"text\" name=\"poll_title\" size=\"80\" maxlength=\"150\" value=\"".$_SESSION['alliance_poll']['poll_title']."\" /></td></tr>";
 					echo "<tr><th class=\"tbltitle\">Frage:</th><td class=\"tbldata\"><input type=\"text\" name=\"poll_question\" size=\"80\" maxlength=\"150\" value=\"".$_SESSION['alliance_poll']['poll_question']."\" /></td></tr>";
 					echo "<tr><th class=\"tbltitle\">Antwort 1:</th><td class=\"tbldata\"><input type=\"text\" name=\"poll_a1_text\" size=\"70\" maxlength=\"150\" value=\"".$_SESSION['alliance_poll']['poll_a1_text']."\" /> ".$parr['poll_a1_count']." Stimmen</td></tr>";
@@ -171,7 +171,7 @@ if (Alliance::checkActionRights('polls'))
 					echo "<tr><th class=\"tbltitle\">Antwort 6:</th><td class=\"tbldata\"><input type=\"text\" name=\"poll_a6_text\" size=\"70\" maxlength=\"150\" value=\"".$_SESSION['alliance_poll']['poll_a6_text']."\" /> ".$parr['poll_a6_count']." Stimmen</td></tr>";
 					echo "<tr><th class=\"tbltitle\">Antwort 7:</th><td class=\"tbldata\"><input type=\"text\" name=\"poll_a7_text\" size=\"70\" maxlength=\"150\" value=\"".$_SESSION['alliance_poll']['poll_a7_text']."\" /> ".$parr['poll_a7_count']." Stimmen</td></tr>";
 					echo "<tr><th class=\"tbltitle\">Antwort 8:</th><td class=\"tbldata\"><input type=\"text\" name=\"poll_a8_text\" size=\"70\" maxlength=\"150\" value=\"".$_SESSION['alliance_poll']['poll_a8_text']."\" /> ".$parr['poll_a8_count']." Stimmen</td></tr>";
-					infobox_end(1);
+					tableEnd();
 					echo "<input type=\"submit\" name=\"pollsubmit\" value=\"Speichern\" /> &nbsp; ";
 					echo "<input type=\"button\" onclick=\"document.location='?page=$page&amp;action=".$_GET['action']."';\" value=\"Zur&uuml;ck\" /></form>";
 				}

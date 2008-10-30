@@ -32,7 +32,7 @@
 	if (mysql_num_rows($res)>0)
 	{
 
-		infobox_start("Rassenboni",1);
+		tableStart("Rassenboni");
 		echo "<tr><td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=name\">Name</a></td>";
 		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_metal\">".RES_METAL."</a></td>";
 		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_crystal\">".RES_CRYSTAL."</a></td>";
@@ -61,14 +61,14 @@
 			echo "<td class=\"tbldata\">".get_percent_string($arr['race_f_fleettime'],1,1)."</td></tr>";
 
 		}
-		infobox_end(1);
+		tableEnd();
 	}
 
 	$res = dbquery("SELECT * FROM ".$db_table['races']." ORDER BY $order $sort;");
 	if (mysql_num_rows($res)>0)
 	{
 
-		infobox_start("Rasseninfos",1);
+		tableStart("Rasseninfos");
 		echo "<tr><td class=\"tbltitle\">Name</td>";
 		echo "<td class=\"tbltitle\">Beschreibung</td></tr>";
 
@@ -79,7 +79,7 @@
 			echo "<td class=\"tbldata\">".text2html($arr['race_comment'])."</td></tr>";
 
 		}
-		infobox_end(1);
+		tableEnd();
 	}
 
 

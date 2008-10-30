@@ -21,18 +21,17 @@
 
             echo "<form action=\"?page=$page&mode=game\" method=\"post\" enctype=\"multipart/form-data\">";
             $cstr = checker_init();
-            infobox_start("Spieloptionen",1);
+            tableStart("Spieloptionen");
 
             echo "<tr>
-            	<td class=\"tbldata\" style=\"width:250px;\"><b>Anzahl Spionagesonden für Direktscan:</b></td>
-              <td class=\"tbldata\">
+            	<th style=\"width:250px;\"><b>Anzahl Spionagesonden für Direktscan:</b></th>
+              <td>
               	<input type=\"text\" name=\"spyship_count\" maxlength=\"5\" size=\"5\" value=\"".$arr['spyship_count']."\">
               </td>
             </tr>";
             
-            echo "<tr><td class=\"tbldata\" style=\"\">
-            <b>Typ des Spionageschiffs für Direktscan:</b></td>
-            <td class=\"tbldata\">";
+            echo "<tr><th>Typ des Spionageschiffs für Direktscan:</th>
+            <td>";
 						$sres = dbquery("
 						SELECT 
 			        ship_id, 
@@ -68,8 +67,8 @@
 	
 						// Rückflug-Benachrichtingung für Flotten
 	          echo "<tr>
-            			<th class=\"tbldata\" width=\"36%\">Nachricht bei Transport-/Spionagerückkehr:</th>
-            			<td class=\"tbldata\" width=\"16%\">
+            			<th width=\"36%\">Nachricht bei Transport-/Spionagerückkehr:</th>
+            			<td width=\"16%\">
                       <input type=\"radio\" name=\"fleet_rtn_msg\" value=\"1\" ";
                       if ($arr['fleet_rtn_msg']==1) echo " checked=\"checked\"";
                       echo "/> Aktiviert &nbsp;
@@ -80,7 +79,7 @@
             		</td>
           		</tr>"; 
 
-            infobox_end(1);
+            tableEnd();
             echo "<input type=\"submit\" name=\"data_submit\" value=\"&Uuml;bernehmen\"/>";
             echo "</form><br/><br/>";
 ?>

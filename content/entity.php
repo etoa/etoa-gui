@@ -60,7 +60,7 @@
 			echo "<h1>&Uuml;bersicht &uuml;ber ".$ent." (".$ent->entityCodeString().")</h1>";
 			if ($ent->entityCode()=='p')
 			{
-				infobox_start("Planetendaten",1);
+				tableStart("Planetendaten");
 				echo "<tr>
 					<td width=\"320\" class=\"tbldata\" style=\"background:#000 url('".IMAGE_PATH."/backgrounds/bg".mt_rand(1,PLANET_BACKGROUND_COUNT).".jpg');;vertical-align:middle\" rowspan=\"".($ent->debrisField ? 8 : 7)."\">
 						<img src=\"".$ent->imagePath("b")."\" alt=\"planet\" width=\"310\" height=\"310\"/>
@@ -87,8 +87,8 @@
 					<td class=\"tbldata\">".nf($conf['field_squarekm']['v']*$ent->fields)." km&sup2;</td></tr>";
 				echo "<tr>
 					<td width=\"100\" class=\"tbltitle\">Temperatur:</td>
-					<td class=\"tbldata\">".$ent->temp_from."&deg;C bis ".$ent->temp_to."&deg;C <br/>";
-					echo "<img src=\"images/heat_small.png\" alt=\"Heat\" style=\"width:16px;float:left;\" /> <a href=\"?page=help&amp;site=tempbonus\">Wärmebonus</a>: ";
+					<td class=\"tbldata\">".$ent->temp_from."&deg;C bis ".$ent->temp_to."&deg;C <br/><br/>";
+					echo "<img src=\"images/heat_small.png\" alt=\"Heat\" style=\"width:16px;float:left;\" /> <a href=\"?page=help&amp;site=tempbonus\">Wärmebonus</a>:<br/> ";
 					$spw = $ent->solarPowerBonus();
 					if ($spw>=0)
 					{
@@ -98,8 +98,8 @@
 					{
 						echo "<span style=\"color:#f00\">".$spw."</span>";
 					}
-					echo " Energie pro Solarsatellit<br style=\"clear:both;\"/>
-					<img src=\"images/ice_small.png\" alt=\"Cold\" style=\"width:16px;float:left;\" /> <a href=\"?page=help&amp;site=tempbonus\"> Kältebonus</a>: ";
+					echo " Energie pro Solarsatellit<br style=\"clear:both;\"/><br/>
+					<img src=\"images/ice_small.png\" alt=\"Cold\" style=\"width:16px;float:left;\" /> <a href=\"?page=help&amp;site=tempbonus\"> Kältebonus</a>:<br/> ";
 					$spw = $ent->fuelProductionBonus();
 					if ($spw>=0)
 					{
@@ -123,13 +123,31 @@
 					</td></tr>';
 				}				
 					
-				infobox_end(1);
+				tableEnd();
 			}
+			elseif ($ent->entityCode()=='s')
+			{
+				tableStart("Sterndaten");
+				echo "<tr>
+					<td width=\"220\" class=\"tbldata\" style=\"background:#000;vertical-align:middle\" rowspan=\"2\">
+						<img src=\"".$ent->imagePath("b")."\" alt=\"star\" width=\"220\" height=\"220\"/>
+					</td>";
+				echo "<th style=\"height:20px;\">Typ:</th>
+				<td>".$ent->type()." ".helpLink("stars")."</td>
+				</tr>";
+
+				$data = $ent->typeData();
+				
+				echo "<tr><th>Beschreibung:</th><td>".$data['comment']."</td></tr>";
+
+					
+				tableEnd();
+			}			
 			else
 			{
-				infobox_start("Objektdaten");			
+				iBoxStart("Objektdaten");			
 				echo "Über dieses Objekt sind keine weiteren Daten verfügbar!";
-				infobox_end();
+				iBoxEnd();
 			}
 			
 				// Previous and next entity
@@ -170,7 +188,7 @@
 	
 	
 	echo "<form action=\"?page=$page\" method=\"post\" name=\"planetsearch\">";
-	infobox_start("Objektsuche",1,0);
+	tableStart("Objektsuche");
 	echo "<tr>";
 		if (isset($str_prev)) echo $str_prev;
 		echo "<th class=\"tbltitle\">Kennung:</th>
@@ -180,7 +198,7 @@
 		</td>";
 		if (isset($str_next)) echo $str_next;
 	echo "</tr>";
-	infobox_end(1);
+	tableEnd();
 	echo "<input type=\"button\" value=\"Zur Raumkarte\" onclick=\"document.location='?page=map'\" /> &nbsp; ";
 	if ($ent)
 		echo "<input type=\"button\" value=\"Zur Systemkarte\" onclick=\"document.location='?page=cell&amp;id=".$ent->cellId()."'\" />";			

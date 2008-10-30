@@ -69,7 +69,7 @@
  		echo "Deine Recyclingtechnologie ist auf Stufe ".$tech_level." entwickelt. Es werden ".$pb_percent." % der Kosten zur&uuml;ckerstattet.<br/>Der Recyclingvorgang kann nicht r&uuml;ckgangig gemacht werden, die Objekte werden sofort verschrottet!<br>";	
 
 		//Schiffe recyceln
-		if ($_POST['submit_recycle_ships']!="")
+		if (isset($_POST['submit_recycle_ships']) && $_POST['submit_recycle_ships']!="")
 		{
 			//Anzahl muss grösser als 0 sein
 			if (count($_POST['ship_count'])>0)
@@ -165,7 +165,7 @@
 
 
 		//Verteidigungsanlagen recyceln
-		if ($_POST['submit_recycle_def']!="")
+		if (isset($_POST['submit_recycle_def']) && $_POST['submit_recycle_def']!="")
 		{
 			//Anzahl muss grösser als 0 sein
 			if (count($_POST['def_count'])>0)
@@ -262,8 +262,6 @@
 		//
 		//Schiffe
 		//
-		echo "<h2>Schiffe</h2>";
-
 		$res = dbquery("
 		SELECT
 			s.ship_id,
@@ -284,11 +282,11 @@
 		if (mysql_num_rows($res)>0)
 		{
 			echo "<form action=\"?page=$page\" method=\"POST\">";
-			echo "<table width=\"500\" cellspacing=\"".TBL_SPACING."\" cellpadding=\"".TBL_PADDING."\" align=\"center\" class=\"tbl\">\n";
+			tableStart("Schiffe");
 			echo "<tr>
-							<td class=\"tbltitle\" width=\"390\" colspan=\"2\" valign=\"top\">Typ</td>
-							<td class=\"tbltitle\" valign=\"top\" width=\"110\">Anzahl</td>
-							<td class=\"tbltitle\" valign=\"top\" width=\"110\">Auswahl</td>
+							<th width=\"390\" colspan=\"2\" valign=\"top\">Typ</th>
+							<th valign=\"top\" width=\"110\">Anzahl</th>
+							<th valign=\"top\" width=\"110\">Auswahl</th>
 						</tr>\n";
 
 			$tabulator=1;
@@ -311,14 +309,13 @@
 		}
 		else
 		{
-			echo "Es sind keine Schiffe auf diesem Planeten vorhanden!";
+			echo "Es sind keine Schiffe auf diesem Planeten vorhanden!<br/><br/>";
 		}
 
 
 		//
 		//Verteidigung
 		//
-		echo "<h2>Verteidigungsanlagen</h2>";
 		$res = dbquery("
 		SELECT
 			d.def_id,
@@ -338,11 +335,11 @@
 		if (mysql_num_rows($res)>0)
 		{
 			echo "<form action=\"?page=$page\" method=\"POST\">";
-			echo "<table width=\"500\" cellspacing=\"".TBL_SPACING."\" cellpadding=\"".TBL_PADDING."\" align=\"center\" class=\"tbl\">\n";
+			tableStart("Verteidigungsanlagen");
 			echo "<tr>
-							<td class=\"tbltitle\"  colspan=\"2\">Typ</td>
-							<td class=\"tbltitle\" valign=\"top\" width=\"110\">Anzahl</td>
-							<td class=\"tbltitle\" valign=\"top\" width=\"110\">Auswahl</td>
+							<th colspan=\"2\">Typ</th>
+							<th valign=\"top\" width=\"110\">Anzahl</th>
+							<th valign=\"top\" width=\"110\">Auswahl</th>
 						</tr>\n";
 			$tabulator=1;
 			while ($arr = mysql_fetch_array($res))
@@ -362,7 +359,7 @@
 			echo "<input type=\"submit\" class=\"button\" name=\"submit_recycle_def\" value=\"Ausgew&auml;hlte Anlagen recyceln\"></form>";
 		}
 		else
-			echo "Es sind keine Verteidigungsanlagen auf diesem Planeten vorhanden!";
+			echo "Es sind keine Verteidigungsanlagen auf diesem Planeten vorhanden!<br/><br/>";
 	}
 	else
 	{

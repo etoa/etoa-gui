@@ -48,7 +48,7 @@
 				AND vote_alliance_id=".$arr['alliance_id'].";");
 			if (mysql_num_rows($upres)>0 || $parr['poll_active']==0)
 			{
-				infobox_start(stripslashes($parr['poll_title']),1);
+				tableStart(stripslashes($parr['poll_title']));
 				echo "<tr><th colspan=\"2\" class=\"tbltitle\">".stripslashes($parr['poll_question'])."</th></tr>";
 				$num_votes = $parr['poll_a1_count']+$parr['poll_a2_count']+$parr['poll_a3_count']+$parr['poll_a4_count']+$parr['poll_a5_count']+$parr['poll_a6_count']+$parr['poll_a7_count']+$parr['poll_a8_count'];
 				for ($x=1;$x<=8;$x++)
@@ -71,20 +71,20 @@
 						echo "<td class=\"tbldata\" style=\"width:250px;\"><img src=\"images/".$img.".jpg\" width=\"$iw\" height=\"10\" alt=\"Poll\" /><img src=\"images/blank.gif\" width=\"$iiw\" height=\"10\"> ".round($p,2)." % (".$parr['poll_a'.$x.'_count']." Stimmen)</td></tr>";
 					}
 				}
-				infobox_end(1);
+				tableEnd();
 			}
 			else
 			{
 				echo "<form action=\"?page=$page&amp;action=".$_GET['action']."&amp;vote=".$parr['poll_id']."\" method=\"post\">";
 				echo $chk;
-				infobox_start(stripslashes($parr['poll_title']),1);
+				tableStart(stripslashes($parr['poll_title']));
 				echo "<tr><th colspan=\"2\" class=\"tbltitle\">".stripslashes($parr['poll_question'])."</th></tr>";
 				for ($x=1;$x<=8;$x++)
 				{
 					if ($parr['poll_a'.$x.'_text']!="")
 						echo "<tr><td class=\"tbldata\"><input type=\"radio\" name=\"poll_answer\" value=\"$x\" /> ".stripslashes($parr['poll_a'.$x.'_text'])."</td>";
 				}
-				infobox_end(1);
+				tableEnd();
 				echo "<input type=\"submit\" value=\"Abstimmen!\" name=\"vote_submit\"></form><br/><br/>";
 			}
 		}

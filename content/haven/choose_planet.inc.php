@@ -744,7 +744,7 @@
 				}
 
 
-				infobox_start("Koordinatenwahl",1);
+				tableStart("Koordinatenwahl");
 				if ($wormhole)
 				{
 					echo "<tr><td class=\"tbltitle\" width=\"25%\">Startplanet:</td><td class=\"tbldata\" width=\"75%\">".$c->getString()."</td></tr>";
@@ -848,7 +848,7 @@
 				echo "<tr><td class=\"tbltitle\" width=\"25%\">Treibstoff:</td><td class=\"tbldata\" width=\"75%\" align=\"left\" id=\"costs\">-</td></tr>";
 				echo "<tr><td class=\"tbltitle\" width=\"25%\">Piloten:</td><td class=\"tbldata\" width=\"75%\">".nf($_SESSION['haven']['fleet']['total_pilots'])."</td></tr>";
 				echo "<tr><td class=\"tbltitle\" width=\"25%\">Bemerkungen:</td><td class=\"tbldata\" width=\"75%\" align=\"left\" id=\"comment\">-</td></tr>";
-				infobox_end(1);
+				tableEnd();
 
 				echo "Schnellere Schiffe nehmen im Flottenverband automatisch die Geschwindigkeit des langsamsten Schiffes an, sie brauchen daf&uuml;r aber auch entsprechend weniger Treibstoff!<br/>";
 
@@ -862,12 +862,12 @@
 				//
 				// Schiffe anzeigen
 				//
-				infobox_start("Ausgewählte Schiffe",1);
+				tableStart("Ausgewählte Schiffe");
 				foreach ($_SESSION['haven']['ship_names'] as $id=> $name)
 				{
 					echo "<tr><td class=\"tbldata\">$name</td><td class=\"tbldata\">".$_SESSION['haven']['ships'][$id]."</td></tr>";
 				}
-				infobox_end(1);
+				tableEnd();
 
 			}
 			else

@@ -37,7 +37,7 @@
 	$item['people_food_require']['v']="Nahrungsverbrauch pro Arbeiter";
 	$item['people_multiply']['v']="Bevölkerungswachstum";
 
-		infobox_start("Grundeinstellungen",1);
+		tableStart("Grundeinstellungen");
 		echo "<tr><td class=\"tbltitle\">Name</td>";
 		echo "<td class=\"tbltitle\">Wert</td></tr>";
 		if (UNIX)
@@ -56,5 +56,5 @@
 			echo "<td class=\"tbldata\">".$conf[$conf_name][$par]."</td></tr>";
 			}
 		}
-		infobox_end(1);
+		tableEnd();
 ?>

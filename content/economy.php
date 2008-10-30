@@ -105,18 +105,24 @@
 			b.building_order;");
 		if (mysql_num_rows($bres)>0)
 		{
-			infobox_start("Produktion pro Stunde und Energieverbrauch",1);
+			tableStart("Produktion pro Stunde und Energieverbrauch",'98%');
 			echo "<tr>
-						<td style=\"\" class=\"tbltitle\">Geb&auml;ude</td>";
-			echo "<td style=\"\" class=\"tbltitle\">".RES_ICON_METAL." ".RES_METAL."</td>";
-			echo "<td style=\"\" class=\"tbltitle\">".RES_ICON_CRYSTAL."".RES_CRYSTAL."</td>";
-			echo "<td style=\"\" class=\"tbltitle\">".RES_ICON_PLASTIC."".RES_PLASTIC."</td>";
-			echo "<td style=\"\" class=\"tbltitle\">".RES_ICON_FUEL."".RES_FUEL."</td>";
-			echo "<td style=\"\" class=\"tbltitle\">".RES_ICON_FOOD."".RES_FOOD."</td>";
-			echo "<td style=\"\" class=\"tbltitle\" colspan=\"2\">".RES_ICON_POWER_USE."Energie</td>";
+						<th style=\"\">Geb&auml;ude</th>";
+			echo "<th style=\"\">".RES_ICON_METAL." ".RES_METAL."</th>";
+			echo "<th style=\"\">".RES_ICON_CRYSTAL."".RES_CRYSTAL."</th>";
+			echo "<th style=\"\">".RES_ICON_PLASTIC."".RES_PLASTIC."</th>";
+			echo "<th style=\"\">".RES_ICON_FUEL."".RES_FUEL."</th>";
+			echo "<th style=\"\">".RES_ICON_FOOD."".RES_FOOD."</th>";
+			echo "<th style=\"\" colspan=\"2\">".RES_ICON_POWER_USE."Energie</th>";
 			echo "</tr>";
 
-			$cnt = array();
+			$cnt = array(
+			"metal"=>0,
+			"crystal"=>0,
+			"plastic"=>0,
+			"fuel"=>0,
+			"food"=>0		
+			);
 			$pwrcnt = 0;
 			while ($barr = mysql_fetch_array($bres))
 			{
@@ -125,13 +131,13 @@
 				{
 					// Errechnen der Produktion pro Gebäude
           echo "<tr>
-          	<td class=\"tbltitle\" style=\"width:170px;\">
+          	<th style=\"width:170px;\">
           		".$barr['building_name']." (".$barr['buildlist_current_level'].")";
           if ($barr['buildlist_prod_percent']==0)
           {
           	echo "<br/><span style=\"color:red;font-size:8pt;\">Produktion ausgeschaltet!</span>";
           }          		
-          echo "</td>";
+          echo "</th>";
           
           $bpb['metal'] = $bp['metal'] = $barr['building_prod_metal'] * pow($barr['building_production_factor'],$barr['buildlist_current_level']-1);
           $bpb['crystal'] = $bp['crystal'] = $barr['building_prod_crystal'] * pow($barr['building_production_factor'],$barr['buildlist_current_level']-1);
@@ -220,11 +226,10 @@
       	}
 			}
 			$pwrcnt=floor($pwrcnt);
-			//echo "<tr><td class=\"tbltitle\" colspan=\"8\" height=\"4\"></td></tr>";
 
 			// Anzeigen der Gesamtproduktion
-			echo "<tr><td class=\"tbltitle\" style=\"height:2px;\" colspan=\"8\"></td></tr>";
-			echo "<tr><td class=\"tbltitle\">TOTAL</td>";
+			echo "<tr><th style=\"height:2px;\" colspan=\"8\"></td></tr>";
+			echo "<tr><th>TOTAL</th>";
 			echo "<td class=\"tbldata\" style=\"color:#0f0\">".nf($cnt['metal'])."</td>";
 			echo "<td class=\"tbldata\" style=\"color:#0f0\">".nf($cnt['crystal'])."</td>";
 			echo "<td class=\"tbldata\" style=\"color:#0f0\">".nf($cnt['plastic'])."</td>";
@@ -247,7 +252,7 @@
 				$cnt['plastic'] = floor($cnt['plastic'] * $cp->prodPower / $pwrcnt);
 				$cnt['food'] = floor($cnt['food'] * $cp->prodPower / $pwrcnt);
 
-				echo "<tr><td class=\"tbltitle\">TOTAL</td>";
+				echo "<tr><th>TOTAL</th>";
 				echo "<td class=\"tbldata\">".nf($cnt['metal'])."</td>";
 				echo "<td class=\"tbldata\">".nf($cnt['crystal'])."</td>";
 				echo "<td class=\"tbldata\">".nf($cnt['plastic'])."</td>";
@@ -256,7 +261,7 @@
 				echo "<td class=\"tbldata\" colspan=\"2\">".nf(floor($cp->prodPower))."</td>";
 				echo "</tr>";
 			}
-			infobox_end(1);
+			tableEnd();
 		}
 		else
 		{
@@ -270,9 +275,9 @@
 		//
 		// Energie
 		//
-		infobox_start("Energieproduktion",1);
-		echo "<tr><th style=\"width:250px;\" class=\"tbltitle\">Gebäude</th>
-		<th class=\"tbltitle\" colspan=\"2\">".RES_ICON_POWER."Energie</th></tr>";
+		tableStart("Energieproduktion",'98%');
+		echo "<tr><th style=\"width:250px;\">Gebäude</th>
+		<th colspan=\"2\">".RES_ICON_POWER."Energie</th></tr>";
 
 		$cnt['power']=0;
 		$pres = dbquery("
@@ -305,7 +310,7 @@
 				// Addieren der Planeten- und Rassenboni
 				if ($bp['power']!="") $bp['power'] = $bp['power'] + ($bp['power'] * ($cp->typePower-1)) + ($bp['power'] * ($cu->racePower-1) + ($bp['power'] * ($cp->starPower-1)));
 
-				echo "<tr><td class=\"tbltitle\">".$parr['building_name']." (".$parr['buildlist_current_level'].")</td>";
+				echo "<tr><th>".$parr['building_name']." (".$parr['buildlist_current_level'].")</th>";
 				echo "<td class=\"tbldata\" colspan=\"2\">".nf(floor($bp['power']))."</td></tr>";
 
 				// Zum Total hinzufügen
@@ -343,30 +348,30 @@
 				if ($pwr!="") 
 					$pwr = $pwr * $power_bonus;
 				$pwrt = $pwr * $sarr['shiplist_count'];
-				echo '<tr><td class="tbltitle">'.$sarr['ship_name'].' ('.nf($sarr['shiplist_count']).')</td>';
+				echo '<tr><th>'.$sarr['ship_name'].' ('.nf($sarr['shiplist_count']).')</th>';
 				echo '<td colspan="2" class="tbldata">'.nf($pwrt).' 
-				(Energie pro Satellit: '.(($pwr)).' = '.$sarr['ship_prod_power'].' Basis '.$dtempstr.' Solar '.get_percent_string($power_bonus,1).' Bonus)</td>';
+				(Energie pro Satellit: '.(($pwr)).' = '.$sarr['ship_prod_power'].' Basis, '.$dtempstr.' bedingt durch Entfernung zur Sonne, '.get_percent_string($power_bonus,1).' durch Energiebonus)</td>';
 				echo '</tr>';
 				$cnt['power'] += $pwrt;
 			}
 		}		
 					
 		$powerProduced = $cnt['power']; 
-		echo "<tr><td class=\"tbltitle\" style=\"height:2px;\" colspan=\"3\"></td></tr>";			
-		echo "<tr><td class=\"tbltitle\">TOTAL produziert</td><td class=\"tbldata\" colspan=\"2\">".nf($powerProduced)."</td></tr>";
+		echo "<tr><th style=\"height:2px;\" colspan=\"3\"></th></tr>";			
+		echo "<tr><th>TOTAL produziert</td><td class=\"tbldata\" colspan=\"2\">".nf($powerProduced)."</th></tr>";
 		if ($powerProduced!=0)
 		{
 			$powerFree = $powerProduced - $powerUsed;
-			echo "<tr><td class=\"tbltitle\">Benutzt</td><td class=\"tbldata\"";
-			echo ">".nf($powerUsed)."</td><td class=\"tbldata\">".round($powerUsed/$powerProduced*100,2)."%</td></tr>";
+			echo "<tr><th>Benutzt</td><td class=\"tbldata\"";
+			echo ">".nf($powerUsed)."</td><td class=\"tbldata\">".round($powerUsed/$powerProduced*100,2)."%</th></tr>";
 			if ($powerFree<0)
 				$style=" style=\"color:#f00\"";
 			else
 				$style=" style=\"color:#0f0\"";
-			echo "<tr><td class=\"tbltitle\">Verfügbar</td><td class=\"tbldata\" $style";
-			echo ">".nf($powerFree)."</td><td class=\"tbldata\" $style>".round($powerFree/$powerProduced*100,2)."%</td></tr>";
+			echo "<tr><th>Verfügbar</td><td class=\"tbldata\" $style";
+			echo ">".nf($powerFree)."</td><td class=\"tbldata\" $style>".round($powerFree/$powerProduced*100,2)."%</th></tr>";
 		}
-		echo "</table><br/><br/>";
+		echo "</table>";
 		
 
 		//
@@ -398,16 +403,16 @@
                 OR b.building_store_food>0);");
 		if (mysql_num_rows($bres)>0)
 		{
-			infobox_start("Lagerkapazit&auml;t",1);
-			echo "<tr><td class=\"tbltitle\" style=\"width:160px\">Geb&auml;ude</td>";
-			echo "<td class=\"tbltitle\">".RES_ICON_METAL."".RES_METAL."</td>";
-			echo "<td class=\"tbltitle\">".RES_ICON_CRYSTAL."".RES_CRYSTAL."</td>";
-			echo "<td class=\"tbltitle\">".RES_ICON_PLASTIC."".RES_PLASTIC."</td>";
-			echo "<td class=\"tbltitle\">".RES_ICON_FUEL."".RES_FUEL."</td>";
-			echo "<td class=\"tbltitle\">".RES_ICON_FOOD."".RES_FOOD."</td>";
+			tableStart("Lagerkapazit&auml;t",'98%');
+			echo "<tr><th style=\"width:160px\">Geb&auml;ude</th>";
+			echo "<th>".RES_ICON_METAL."".RES_METAL."</th>";
+			echo "<th>".RES_ICON_CRYSTAL."".RES_CRYSTAL."</th>";
+			echo "<th>".RES_ICON_PLASTIC."".RES_PLASTIC."</th>";
+			echo "<th>".RES_ICON_FUEL."".RES_FUEL."</th>";
+			echo "<th>".RES_ICON_FOOD."".RES_FOOD."</th>";
 			echo "</tr>";
 
-			echo "<tr><td class=\"tbltitle\">Grundkapazit&auml;t</td>";
+			echo "<tr><th>Grundkapazit&auml;t</th>";
 			for ($x=0;$x<5;$x++)
 			{
   			echo "<td class=\"tbldata\">".nf($conf['def_store_capacity']['v'])."</td>";
@@ -416,7 +421,7 @@
   		echo "</tr>";
 			while ($barr=mysql_fetch_array($bres))
 			{
-					echo "<tr><td class=\"tbltitle\">".$barr['building_name']." (".$barr['buildlist_current_level'].")</td>";
+					echo "<tr><th>".$barr['building_name']." (".$barr['buildlist_current_level'].")</th>";
 					$level = $barr['buildlist_current_level']-1;
 					$store[0]=round($barr['building_store_metal'] * pow($barr['building_store_factor'],$level));
 					$store[1]=round($barr['building_store_crystal'] * pow($barr['building_store_factor'],$level));
@@ -430,14 +435,14 @@
 					}
 					echo "</tr>";
 			}
-			echo "<tr><td class=\"tbltitle\" style=\"height:2px;\" colspan=\"6\"></td></tr>";			
-			echo "<tr><td class=\"tbltitle\">TOTAL</td>";
+			echo "<tr><th style=\"height:2px;\" colspan=\"6\"></th></tr>";			
+			echo "<tr><th>TOTAL</th>";
 			foreach ($storetotal as $id=>$sd)
 			{
 				echo "<td class=\"tbldata\">".nf($sd,1)."</td>";
 			}
 			echo "</tr>";
-			infobox_end(1);
+			tableEnd();
 		}
 
 
@@ -445,14 +450,14 @@
 		// Boni
 		//
 
-		infobox_start("Boni",1);
+		tableStart("Boni",'98%');
 
 
-		echo "<tr><td class=\"tbltitle\">Rohstoff</td>
-		<td class=\"tbltitle\">".$cp->typeName."</td>";
-		echo "<td class=\"tbltitle\">".$cu->raceName()."</td>";
-		echo "<td class=\"tbltitle\">".$cp->starTypeName."</td>";
-		echo "<td class=\"tbltitle\">TOTAL</td></tr>";
+		echo "<tr><th>Rohstoff</th>
+		<th>".$cp->typeName."</th>";
+		echo "<th>".$cu->raceName()."</th>";
+		echo "<th>".$cp->starTypeName."</th>";
+		echo "<th>TOTAL</th></tr>";
 
 		echo "<tr><td class=\"tbldata\">".RES_ICON_METAL."Produktion ".RES_METAL."</td>";
 		echo "<td class=\"tbldata\">".get_percent_string($cp->typeMetal,1)."</td>";
@@ -514,7 +519,7 @@
 		echo "<td class=\"tbldata\">-</td>";
 		echo "<td class=\"tbldata\">".get_percent_string($cu->raceFleettime,1,1)."</td></tr>";
 
-		infobox_end(1);
+		tableEnd();
 
 	}
 	else

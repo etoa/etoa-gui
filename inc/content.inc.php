@@ -30,9 +30,9 @@
 				{
 					$arr = mysql_fetch_array($res);
 					echo "<br/>";
-					infobox_start("<span style=\"color:#0f0;\">TIPP</span>");
+					iBoxStart("<span style=\"color:#0f0;\">TIPP</span>");
 					echo text2html($arr[0]);
-					infobox_end();			
+					iBoxEnd();			
 				}
 				$s['tipp_shown'] = true;
 			}
@@ -42,9 +42,9 @@
 		if ($cfg->value('system_message')!="")
 		{
 			echo "<br/>";
-			infobox_start("<span style=\"color:red;\">WICHTIGE SYSTEMNACHRICHT</span>");
+			iBoxStart("<span style=\"color:red;\">WICHTIGE SYSTEMNACHRICHT</span>");
 			echo text2html($cfg->value('system_message'));
-			infobox_end();
+			iBoxEnd();
 		}
 		
 		// Auf Löschung prüfen

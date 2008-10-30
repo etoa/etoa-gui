@@ -50,9 +50,9 @@ if (Alliance::checkActionRights('alliancenews'))
 			$_SESSION['alliance']['news']['news_title']=$_POST['news_title'];
 			$_SESSION['alliance']['news']['news_text']=$_POST['news_text'];
 			$_SESSION['alliance']['news']['alliance_id']=$_POST['alliance_id'];
-			infobox_start("Vorschau - ".$_POST['news_title']);
+			iBoxStart("Vorschau - ".$_POST['news_title']);
 			echo text2html($_POST['news_text']);
-			infobox_end();
+			iBoxEnd();
 			$_SESSION['alliance']['news']['preview']=true;
 		}
 		else
@@ -73,7 +73,7 @@ if (Alliance::checkActionRights('alliancenews'))
 		$_SESSION['alliance']['news']['news_title']=$_GET['message_subject'];
 	}
 	
-	infobox_start("Neue Allianzenews",1);
+	tableStart("Neue Allianzenews");
 	if(isset($_SESSION['alliance']['news']['alliance_id']) && $_SESSION['alliance']['news']['alliance_id']!=0)
 	{
 		$aid = $_SESSION['alliance']['news']['alliance_id'];
@@ -128,7 +128,7 @@ if (Alliance::checkActionRights('alliancenews'))
 		}
 		echo "</select></td>
 	</tr>";
-	infobox_end(1);
+	tableEnd();
 	if (isset($_SESSION['alliance']['news']['preview']) && $_SESSION['alliance']['news']['preview'])
 	{
 		echo "<input type=\"submit\" name=\"newssubmitsend\" value=\"Senden\"> &nbsp; ";

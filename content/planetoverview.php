@@ -39,10 +39,10 @@
 			echo "<h2>:: Planetenname/-beschreibung &auml;ndern ::</h2>";
 			echo '<script type="text/javascript" src="js/planetname.js"></script>';
 			echo "<form action=\"?page=$page\" method=\"POST\" style=\"text-align:center;\">";
-			infobox_start("Hier den neuen Namen eingeben:",1);
+			tableStart("Hier den neuen Namen eingeben:");
 			echo "<tr><th class=\"tbltitle\">Name:</th><td class=\"tbldata\"><input type=\"text\" name=\"planet_name\" id=\"planet_name\" value=\"".$cp->name."\" length=\"16\" maxlength=\"15\"></td></tr>";
 			echo "<tr><th class=\"tbltitle\">Beschreibung:</th><td class=\"tbldata\"><textarea name=\"planet_desc\" rows=\"2\" cols=\"30\">".stripslashes($cp->desc)."</textarea></td></tr>";
-			infobox_end(1);
+			tableEnd();
 			echo "<input type=\"submit\" name=\"submit_change\" value=\"Speichern\"> &nbsp; ";
 			echo '<input onclick="GenPlot();" type="button" value="Name generieren" /> &nbsp; ';
 			echo '<input onclick="document.location=\'?page='.$page.'\';" type="button" value="Abbrechen" /> &nbsp; ';
@@ -60,9 +60,9 @@
 				if ($t < time())
 				{			
 					echo "<form action=\"?page=$page\" method=\"POST\">";
-					infobox_start("Sicherheitsabfrage");
+					iBoxStart("Sicherheitsabfrage");
 					echo "Willst du die Kolonie auf dem Planeten <b>".$cp->getString()."</b> wirklich l&ouml;schen?";
-					infobox_end();
+					iBoxEnd();
 					echo "<input type=\"submit\" name=\"submit_noremove\" value=\"Nein, Vorgang abbrechen\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type=\"submit\" name=\"submit_remove\" value=\"Ja, die Kolonie soll aufgehoben werden\">";
 					echo "</form>";
 				}
@@ -160,7 +160,7 @@
 			if (mysql_num_rows($res)>0)
 			{
 				$fcnt=0;
-				infobox_start("Felderbenutzung durch Geb&auml;ude",1);
+				tableStart("Felderbenutzung durch Geb&auml;ude",'48%');
 				echo "<tr><th class=\"tbltitle\">Name</th><th class=\"tbltitle\">Stufe</th><th class=\"tbltitle\">Felder</th></tr>";
 				while ($arr=mysql_fetch_array($res))
 				{
@@ -170,7 +170,7 @@
 					$fcnt+=$arr['fields'];
 				}
 				echo "<tr><th class=\"tbltitle\" colspan=\"2\">Total</th><td class=\"tbldata\">".nf($fcnt)."</td></tr>";
-				infobox_end(1);
+				tableEnd();
 			}
 			else
 				echo "<i>Keine Geb&auml;ude vorhanden!</i><br/>";
@@ -192,7 +192,7 @@
 			if (mysql_num_rows($res)>0)
 			{
 				$dfcnt=0;
-				infobox_start("Felderbenutzung durch Verteidigungsanlagen",1);
+				tableStart("Felderbenutzung durch Verteidigungsanlagen",'48%');
 				echo "<tr><th class=\"tbltitle\">Name</th><th class=\"tbltitle\">Anzahl</th><th class=\"tbltitle\">Felder</th></tr>";
 				while ($arr=mysql_fetch_array($res))
 				{
@@ -202,7 +202,7 @@
 					$dfcnt+=$arr['fields'];
 				}
 				echo "<tr><th class=\"tbltitle\" colspan=\"2\">Total</th><td class=\"tbldata\">".nf($dfcnt)."</td></tr>";
-				infobox_end(1);
+				tableEnd();
 			}
 			else
 				echo "<i>Keine Verteidigungsanlagen vorhanden!</i><br/><br/>";
@@ -228,7 +228,7 @@
 		 	echo "<h1>&Uuml;bersicht &uuml;ber den Planeten ".$cp->name."</h1>";
 			$cp->resBox();
 
-			echo "<table class=\"tbl\">";
+			tableStart("Details",750);
 			echo "<tr>
 				<td style=\"width:330px;background:#000 url('".IMAGE_PATH."/backgrounds/bg".mt_rand(1,PLANET_BACKGROUND_COUNT).".jpg');\" rowspan=\"".($cp->debrisField ? 11 : 10)."\">
 				<img src=\"".IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$cp->image.".".IMAGE_EXT."\" alt=\"Planet\" style=\"width:310px;height:310px\"/>
@@ -315,9 +315,9 @@
 			else
 			{
 				echo "<br/><br/>";
-				infobox_start("Hauptplanet");
+				iBoxStart("Hauptplanet");
 				echo "<b>Dies ist dein Hauptplanet. Hauptplaneten können nicht invasiert oder aufgegeben werden!</b>";
-				infobox_end();
+				iBoxEnd();
 			}	
 		}
 	}

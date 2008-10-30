@@ -30,7 +30,7 @@
 
 	// Schiff-Infos
 
-  infobox_start("Schiff-Infos",1);
+  tableStart("Schiff-Infos");
   $res = dbquery("
   SELECT
   	ship_structure,
@@ -213,7 +213,7 @@
   {
   	echo "<tr><td class=\"tbldata\"><i>Keine Schiffe vorhanden!</i></td></tr>";
   }
-  infobox_end(1);
+  tableEnd();
 
 
 
@@ -340,7 +340,7 @@
 		//
 		// Auflistung der Schiffe
 		//
-        infobox_start("Verf&uuml;gbare Schiffe",1);
+        tableStart("Verf&uuml;gbare Schiffe");
         echo "<tr><td class=\"tbltitle\" colspan=\"2\">Typ</td><td class=\"tbltitle\" valign=\"top\" width=\"110\">Speed</td><td class=\"tbltitle\" valign=\"top\" width=\"110\">Piloten</td><td class=\"tbltitle\" valign=\"top\" width=\"110\">Anzahl</td><td class=\"tbltitle\" valign=\"top\" width=\"110\">Auswahl</td></tr>\n";
 
         $tabulator=1;
@@ -428,7 +428,7 @@
             echo "</td></tr>\n";
             $tabulator++;
         }
-        infobox_end(1);
+        tableEnd();
 
 /*
 		if (intval($_GET['planet_to'])>0)

@@ -54,7 +54,7 @@ if (Alliance::checkActionRights('ranks'))
 							rank_alliance_id=".$arr['alliance_id'].";");
 						if (mysql_num_rows($rankres)>0)
 						{
-							infobox_start("Verf&uuml;gbare R&auml;nge",1);
+							tableStart("Verf&uuml;gbare R&auml;nge");
 							echo "<tr><td class=\"tbltitle\">Rangname</td><td class=\"tbltitle\">Rechte</td><td class=\"tbltitle\">L&ouml;schen</td></tr>";
 							while ($rarr = mysql_fetch_array($rankres))
 							{
@@ -73,7 +73,7 @@ if (Alliance::checkActionRights('ranks'))
 
 								echo "<td class=\"tbldata\"><input type=\"checkbox\" name=\"rank_del[".$rarr['rank_id']."]\" value=\"1\" /></td></tr>";
 							}
-							infobox_end(1);
+							tableEnd();
 							echo "<input type=\"submit\" name=\"ranksubmit\" value=\"&Uuml;bernehmen\" />&nbsp;&nbsp;&nbsp;";
 						}
 						else

@@ -80,7 +80,7 @@
 		</tr>
 		<tr>
 			<th>Beschreibung:</th>
-			<td><textarea name=\"abuse_text\" rows=\"10\" cols=\"60\"></textarea></td>
+			<td><textarea name=\"abuse_text\" id=\"abuse_text\" rows=\"10\" cols=\"60\"></textarea></td>
 		</tr>
 		<tr>
 			<th>Betreffenden Spieler * </th>
@@ -124,8 +124,10 @@
 			echo "</select></td>
 		</tr>
 		</table><br/>
-		<input type=\"submit\" name=\"abuse_submit\" value=\"Einsenden\" /> &nbsp; (* z.B. bei Regelverstössen)<br/><br/>";
+		 &nbsp; (* z.B. bei Regelverstössen)<br/><br/>
+		<input type=\"submit\" name=\"abuse_submit\" value=\"Einsenden\" /><br/><br/>";
 		echo "</form>";
+		echo "<script type=\"text/javascript\">document.getElementById('abuse_text').focus()</script>";
 		
 		if ($ext)
 		{

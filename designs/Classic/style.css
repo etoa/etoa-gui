@@ -301,7 +301,7 @@ select#nav_mode_select	{
 }
 
 /* Allianz Seite */
-.tblblack {
+.tblblack, .tb td.tblblack, .tb th.tblblack {
 	font-size:8pt;
 	color:#fff;
 	border:1px solid #fff;
@@ -327,18 +327,18 @@ div.infoboxtitle	{
 	font-size:10pt;
 	font-weight:bold;
 	border:1px solid #fff;
-	background:#225;
-	padding:4px;
+	background:#225 url('images/cellbg.png') repeat-x;
+	padding:6px;
 	text-align:center;
 }
 
 /* allgemeine gebäude, wohnfläche, boni, ratshaus-news, fremde flotten... */
-td.infoboxtitle	{
+td.infoboxtitle, .tb td.infoboxtitle	{
 	font-size:10pt;
 	font-weight:bold;
 	border:1px solid #fff;
-	background:#225;
-	padding:4px;
+	background:#225 url('images/cellbg.png') repeat-x;
+	padding:6px;
 	text-align:center;
 }
 

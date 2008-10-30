@@ -658,7 +658,7 @@
 
 				echo "<h2>Neues Geb&auml;ude hinzuf&uuml;gen</h2>";
 				echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\">";
-				infobox_start("",1);
+				tableStart();
 				echo "<tr><th class=\"tbltitle\">Geb&auml;ude</th><td class=\"tbldata\"><select name=\"building_id\">";
 				$bres = dbquery("SELECT building_id,building_name FROM ".$db_table['buildings']." ORDER BY building_type_id,building_order,building_name;");
 				while ($barr=mysql_fetch_array($bres))
@@ -701,7 +701,7 @@
 					echo ">".$parr['sx']."/".$parr['sy']." : ".$parr['cx']."/".$parr['cy']." : ".$parr['pos']." &nbsp; ".$parr['planet_name']." (".$parr['user_nick'].")</option>";
 				}
 				echo "</select></td></tr>";
-				infobox_end(1);
+				tableEnd();
 				echo "<input type=\"submit\" name=\"new\" value=\"Hinzuf&uuml;gen\" /></form><br/>";
 
 
@@ -839,7 +839,7 @@
 
 			echo "<h2>Neues Geb&auml;ude hinzuf&uuml;gen</h2>";
 			echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\">";
-			infobox_start("",1);
+			tableStart();
 			echo "<tr><th class=\"tbltitle\">Geb&auml;ude</th><td class=\"tbldata\"><select name=\"building_id\">";
 			foreach ($bdata as $barr)
 			{
@@ -867,7 +867,7 @@
 				echo "<option value=\"".$parr['id'].":".$parr['user_id']."\">".($parr['planet_name']!="" ? $parr['planet_name']: "Unbenannt")." (".$parr['user_nick'].")</option>";
 			}
 			echo "</select></td></tr>";
-			infobox_end(1);
+			tableEnd();
 			echo "<input type=\"submit\" name=\"new\" value=\"Hinzuf&uuml;gen\" /></form>";
 		}
 	}

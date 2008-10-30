@@ -1,10 +1,10 @@
 <?PHP
-			infobox_start("Logins");
+			iBoxStart("Logins");
 			echo "Hier findest du eine Liste der letzten 10 Logins in deinen Account, ebenfalls kannst du weiter unten
 			sehen wann dass fehlerhafte Loginversuche stattgefunden haben. Solltest du feststellen, dass jemand unbefugten 
-			Zugriff auf deinen Account hatte, solltest du umgehend dein Passwort &auml;ndern und einen Game-Admin informieren.<br/><br/>";
-			infobox_end();
-    	infobox_start("Letzte 10 Logins",1);
+			Zugriff auf deinen Account hatte, solltest du umgehend dein Passwort &auml;ndern und ein ".ticketLink("Ticket",16)." schreiben.";
+			iBoxEnd();
+    	tableStart("Letzte 10 Logins");
 			$res=dbquery("
 			SELECT 
 				log_logintime,
@@ -27,8 +27,8 @@
 				echo "<td class=\"tbldata\">".$arr['log_ip']."</td>";
 				echo "<td class=\"tbldata\">".$arr['log_hostname']."</td></tr>";
 			}
-    	infobox_end(1);
-    	infobox_start("Letzte 10 fehlgeschlagene Logins",1);
+    	tableEnd();
+    	tableStart("Letzte 10 fehlgeschlagene Logins");
 			$res=dbquery("
 			SELECT 
 				* 
@@ -58,5 +58,5 @@
 			{
 				echo "<tr><td class=\"tbldata\">Keine fehlgeschlagenen Logins</td></tr>";
 			}
-    	infobox_end(1);
+    	tableEnd();
 ?>

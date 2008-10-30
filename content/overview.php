@@ -29,10 +29,6 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/	
 
-	// DEFINITIONEN //
-	//require_once("inc/fleet_action.inc.php");
-	
-
 	// BEGIN SKRIPT //
 	echo "<h1>&Uuml;bersicht</h1>";
 
@@ -50,9 +46,9 @@
 		$arr = mysql_fetch_row($res);
 		if ($arr[0]>0)
 		{
-			infobox_start("Fehlerhafte Logins");
+			iBoxStart("Fehlerhafte Logins");
 			echo "<div style=\"color:red;\"><b>Seit deinem letzten Login gab es ".$arr[0]." <a href=\"?page=userconfig&amp;mode=logins\">fehlerhafte Loginversuche</a>!</b></div>";
-			infobox_end();
+			iBoxEnd();
 		}
 	}
 
@@ -61,12 +57,12 @@
 	//
 	if ($cfg->param1("info")==1 && $cfg->value('info')!="")
 	{
-		infobox_start(": Wichtige Information :");
+		iBoxStart(": Wichtige Information :");
 		echo text2html($cfg->value('info'));
-		infobox_end();
+		iBoxEnd();
 	}
 
-	echo "<table class=\"tb\" style=\"margin:0px auto;width:100%\">";
+	tableStart("Status","100%");
 	echo "<tr>
 					<th style=\"width:30%;\">Rathaus</th>
 					<th style=\"width:20%;\">Eigene Flotten</th>
@@ -328,8 +324,7 @@
 		
 		echo "</tr>";
 		
-		
-		infobox_end(1);
+		tableEnd();
 
 
 

@@ -22,14 +22,14 @@
 			echo "</select><br/><br/>";
 				
 			$ac  = FleetAction::createFactory($action);
-			infobox_start($ac->name());
+			iBoxStart($ac->name());
 			echo $ac->desc()."<br/><br/>".$ac->longDesc();
 			echo "<br/><br/><b>Gesinnung:</b> 
 			<span style=\"color:".FleetAction::$attitudeColor[$ac->attitude()]."\">
 			".FleetAction::$attitudeString[$ac->attitude()]."</span>
 			<br/><b>Sichtbar:</b> ".($ac->visible() ? 'Ja, für den Zielbesitzer sichtbar.' : 'Nein, nur für mich sichtbar.')."
 			<br/><b>Exklusiv:</b> ".($ac->exclusive() ? 'Ja, nur Schiffe welche diese Aktion können, dürfen mitfliegen.' : 'Nein, alle Schiffe können mitfliegen.');
-			infobox_end();				
+			iBoxEnd();				
 				
 				//Liest alle notwenidgen Daten aus der Schiffs-DB
 				$res = dbquery("
@@ -50,7 +50,7 @@
 				ORDER BY 
 					ship_name ASC");
 				
-			infobox_start("Schiffe",1,0);
+			tableStart("Schiffe",);
 			if (mysql_num_rows($res)>0)
 			{
 				while($arr=mysql_fetch_array($res))
@@ -62,7 +62,7 @@
 			{
 				echo "<tr><td class=\"tbldata\">Keine bekannten Schiffe haben diese Aktion</td></tr>";
 			}
-			infobox_end(1);		
+			tableEnd();		
 		}
 		echo "&nbsp;<input type=\"button\" value=\"Schiffsaktionen\" onclick=\"document.location='?page=$page&site=action'\" />";
 	}
@@ -83,7 +83,7 @@
 
 		foreach ($attitudes as $a => $actions)
 		{
-			infobox_start("<span style=\"color:".FleetAction::$attitudeColor[$a]."\">".FleetAction::$attitudeString[$a]."</span>",1);			
+			tableStart("<span style=\"color:".FleetAction::$attitudeColor[$a]."\">".FleetAction::$attitudeString[$a]."</span>");			
 			foreach($actions as $data)
 			{
 				echo "<tr><td class=\"tbltitle\" width=\"25%\">".$data->name()."</td>
@@ -91,7 +91,7 @@
 				<td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=action&action=".$data->code()."\">Anzeigen</a></td></tr>";
 
 			}			
-			infobox_end(1);
+			tableEnd();
 		}
 	}
 

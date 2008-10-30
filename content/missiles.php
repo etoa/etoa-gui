@@ -509,7 +509,7 @@
 					// Rechnet %-Werte für Tabelle
 					$store_width = ceil($cnt/$max_space*100);
 					
-					infobox_start("Silobelegung",1);
+					tableStart("Silobelegung");
 					echo '<tr>
 									<td class="tbldata" style="padding:0px;height:10px;"><img src="images/poll3.jpg" style="height:10px;width:'.$store_width.'%;" alt="poll" />
 								</tr>
@@ -517,9 +517,9 @@
 									<td class="tbldata" style="text-align:center;">
 										'.nf($cnt).' von '.nf($max_space).', '.round($cnt/$max_space*100,0).'% ('.MISSILE_SILO_MISSILES_PER_LEVEL.' pro Gebäudestufe)
 								</tr>';
-					infobox_end(1);
+					tableEnd();
 					
-					infobox_start("Raketen verwalten",1);
+					tableStart("Raketen verwalten");
 					
 					$cnt2 = 0;
 					foreach ($missiles as $mid => $arr)
@@ -891,7 +891,7 @@
 							
 						}							
 					}
-					infobox_end(1);
+					tableEnd();
 					echo '<br/><input type="submit" name="buy" value="Ausgewählte Anzahl kaufen" /> &nbsp; ';
 					echo '<input type="submit" name="scrap" value="Ausgewählte Anzahl verschrotten" onclick="return confirm(\'Sollen die gewählten Raketen wirklich verschrottet werden? Es werden keine Ressourcen zurückerstattet!\')" /></form><br/><br><br>';
 					
@@ -902,9 +902,9 @@
 						// Kampfsperre prüfen
 						if ($conf['battleban']['v']!=0 && $conf['battleban_time']['p1']<=time() && $conf['battleban_time']['p2']>time())
 						{
-							infobox_start("Kampfsperre");
+							iBoxStart("Kampfsperre");
 							echo "Es ist momentan nicht m&ouml;glich andere Spieler anzugreifen. Grund: ".text2html($conf['battleban']['p1'])."<br>Die Sperre dauert vom ".date("d.m.Y",$conf['battleban_time']['p1'])." um ".date("H:i",$conf['battleban_time']['p1'])." Uhr bis am ".date("d.m.Y",$conf['battleban_time']['p2'])." um ".date("H:i",$conf['battleban_time']['p2'])." Uhr!";
-							infobox_end();
+							iBoxEnd();
 						}
 						else
 						{

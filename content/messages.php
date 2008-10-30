@@ -72,7 +72,7 @@
 	}
 	
 	</script>
-	<?
+	<?PHP
 
 
 	// Einstellungs-Schalter oben rechts

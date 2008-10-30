@@ -32,7 +32,7 @@
 			}
 			echo "</select><br/><br/>";		
 			
-		 	infobox_start($arr['missile_name'],1);
+		 	tableStart($arr['missile_name']);
 		 	
 	   	echo "<tr><td width=\"220\" class=\"tbltitle\"><img src=\"".IMAGE_PATH."/missiles/missile".$arr['missile_id'].".".IMAGE_EXT."\" width=\"220\" height=\"220\" alt=\"Raketen\" /></td>";
 	   	echo "<td class=\"tbldata\">".text2html($arr['missile_ldesc'])."</td></tr>";
@@ -84,7 +84,7 @@
 	  		{
 	  			echo "Kein EMP-Angriff m&ouml;glich</td></tr>";
 	  		}
-	    infobox_end(1);
+	    tableEnd();
 		}
 		else
 		  echo "Ragetendaten nicht gefunden!";
@@ -131,7 +131,7 @@
 		$res = dbquery("SELECT * FROM missiles WHERE missile_show=1 ORDER BY missile_name;");
 		if (mysql_num_rows($res)>0)
 		{
-			infobox_start("&Uuml;bersicht",1);
+			tableStart("&Uuml;bersicht");
 
 			echo "<tr></th><th class=\"tbltitle\" colspan=\"2\">Name</th>";
 			echo "<th class=\"tbltitle\">Kurzbeschreibung</th>";
@@ -161,7 +161,7 @@
 				echo "<td class=\"tbldata\">".nf($arr['missile_damage'])."</td></tr>";
 				//echo "<td class=\"tbldata\"><a href=\"?page=$page&site=$site&id=".$arr['missile_id']."\">Details</a></td></tr>";
 			}
-			infobox_end(1);
+			tableEnd();
 		}
 		else
 			echo "<i>Keine Daten vorhanden!</i>";

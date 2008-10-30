@@ -386,31 +386,25 @@
 				$store_err[7] = "";
 				$power_rest = floor($this->prodPower)-floor($this->usePower);
 			}
-			infobox_start("Ressourcen",1);
+			tableStart("Ressourcen");
 			echo "<tr>
-			<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_ICON_METAL." ".RES_METAL."</td>
-			<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_ICON_CRYSTAL." ".RES_CRYSTAL."</td>
-			<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_ICON_PLASTIC." ".RES_PLASTIC."</td>
-			<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_ICON_FUEL." ".RES_FUEL."</td>
-			<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_ICON_FOOD." ".RES_FOOD."</td>
-			<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_ICON_PEOPLE." Bewohner</td>
-			<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_ICON_POWER." Energie</td>
+			<th>".RES_ICON_METAL." ".RES_METAL."</th>
+			<th>".RES_ICON_CRYSTAL." ".RES_CRYSTAL."</th>
+			<th>".RES_ICON_PLASTIC." ".RES_PLASTIC."</th>
+			<th>".RES_ICON_FUEL." ".RES_FUEL."</th>
+			<th>".RES_ICON_FOOD." ".RES_FOOD."</th>
+			<th>".RES_ICON_PEOPLE." Bewohner</th>
+			<th>".RES_ICON_POWER." Energie</th>
 			</tr><tr>
-			<td $style0 id=\"rb1\" ".$store_msg[1].">".nf(floor($this->resMetal))." t</td>
-			<td $style1 id=\"rb2\" ".$store_msg[2].">".nf(floor($this->resCrystal))." t</td>
-			<td $style2 id=\"rb3\" ".$store_msg[3].">".nf(floor($this->resPlastic))." t</td>
-			<td $style3 id=\"rb4\" ".$store_msg[4].">".nf(floor($this->resFuel))." t</td>
-			<td $style4 id=\"rb5\" ".$store_msg[5].">".nf(floor($this->resFood))." t</td>
-			<td $style5 id=\"rb6\" ".$store_msg[6].">".nf(floor($this->people))."</td>
-			<td $style6 id=\"rb7\" ".$store_msg[7].">".nf($power_rest)."</td>
+			<td $style0 ".$store_msg[1].">".nf(floor($this->resMetal))." t</td>
+			<td $style1 ".$store_msg[2].">".nf(floor($this->resCrystal))." t</td>
+			<td $style2 ".$store_msg[3].">".nf(floor($this->resPlastic))." t</td>
+			<td $style3 ".$store_msg[4].">".nf(floor($this->resFuel))." t</td>
+			<td $style4 ".$store_msg[5].">".nf(floor($this->resFood))." t</td>
+			<td $style5 ".$store_msg[6].">".nf(floor($this->people))."</td>
+			<td $style6 ".$store_msg[7].">".nf($power_rest)."</td>
 			</tr>";
-			/*
-			foreach ($store_err as $k => $v)
-			{
-				fadeBlinker("rb".$k);
-			}*/
-
-			echo "</table><br/>";
+			tableEnd();
 		}
 
 		/**

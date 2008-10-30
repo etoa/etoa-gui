@@ -134,12 +134,12 @@
   	}
   	
   	
-		infobox_start("Schiffe",1,0);
+		tableStart("Schiffe");
 		echo "<tr>
-						<td class=\"tbltitle\" colspan=\"2\">Schiff</td>
-						<td class=\"tbltitle\" width=\"100\">Im Orbit</td>
-						<td class=\"tbltitle\" width=\"100\">Im Bau</td>
-						<td class=\"tbltitle\" width=\"100\">Im All</td>
+						<th colspan=\"2\">Schiff</th>
+						<th width=\"100\">Im Orbit</th>
+						<th width=\"100\">Im Bau</th>
+						<th width=\"100\">Im All</th>
 					</tr>";
 		
 		//Listet alle Schiffe auf, die allgemein gebaut werden können (auch die, die der User nach dem Technikbaum noch nicht bauen könnte oder nicht seiner Rasse entsprechen)
@@ -165,7 +165,7 @@
 			  {
 			  	$s_img = IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$sarr['ship_id']."_small.".IMAGE_EXT;
 			  	echo "<tr>
-			  					<td class=\"tbldata\">";
+			  					<td style=\"background:#000\">";
 			  					
 			  					if($sarr['special_ship']==1)
 			  					{
@@ -193,14 +193,14 @@
 							  	}
 		  						
 		  						echo "
-			  					<td class=\"tbldata\" ".tm("Anzahl",$tm).">
+			  					<td ".tm("Anzahl",$tm).">
 			  						".nf($total)."
 			  					</td>";
 			  				}
 			  				else
 			  				{
 			  					echo "
-			  					<td class=\"tbldata\">
+			  					<td>
 			  						&nbsp;
 			  					</td>";		  					
 			  				}
@@ -219,14 +219,14 @@
 							  	}
 							  	
 		  						echo "
-			  					<td class=\"tbldata\" ".tm("Anzahl",$tm).">
+			  					<td ".tm("Anzahl",$tm).">
 			  						".nf($total)."
 			  					</td>";
 			  				}
 			  				else
 			  				{
 			  					echo "
-			  					<td class=\"tbldata\">
+			  					<td>
 			  						&nbsp;
 			  					</td>";		  					
 			  				}
@@ -238,14 +238,14 @@
 		  						// Summiert die Anzahl Schiffe von allen Planeten
 		  						$total = $fleet_data[$sarr['ship_id']];
 		  						echo "
-			  					<td class=\"tbldata\">
+			  					<td>
 			  						".nf($total)."
 			  					</td>";
 			  				}
 			  				else
 			  				{
 			  					echo "
-			  					<td class=\"tbldata\">
+			  					<td>
 			  						&nbsp;
 			  					</td>";		  					
 			  				}			  				
@@ -254,7 +254,7 @@
 	  	}    	
 	  }		
 		
-		infobox_end(1);
+		tableEnd();
 		
 		//Arrays löschen (Speicher freigeben)
 		mysql_free_result($res);

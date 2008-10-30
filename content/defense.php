@@ -94,7 +94,7 @@
 	$heal = 0;
 	$count = 0;
 
-  infobox_start("Verteidigungs-Infos",1);
+  tableStart("Verteidigungs-Infos");
   $res = dbquery("
   SELECT
   	def_structure,
@@ -179,7 +179,7 @@
 					}
       }
 
-		echo "<tr><td class=\"tbltitle\"><b>Einheit</b></td><td class=\"tbltitle\">Grundwerte</td><td class=\"tbltitle\">Aktuelle Werte</td></tr>";
+		echo "<tr><th><b>Einheit</b></th><th>Grundwerte</th><th>Aktuelle Werte</th></tr>";
   	echo "<tr>
 			<td class=\"tbldata\"><b>Struktur:</b></td>
 			<td class=\"tbldata\">".nf($struct)."</td>
@@ -219,7 +219,7 @@
   {
   	echo "<tr><td class=\"tbldata\"><i>Keine Verteidigung vorhanden!</i></td></tr>";
   }
-  infobox_end(1);
+  tableEnd();
   $def_info_string = ob_get_contents();
   ob_end_clean();
 
@@ -240,9 +240,9 @@
 		// Prüfen ob dieses Gebäude deaktiviert wurde
 		if ($werft_arr['buildlist_deactivated']>time())
 		{
-			infobox_start("Geb&auml;ude nicht bereit");
+			iBoxStart("Geb&auml;ude nicht bereit");
 			echo "Diese Waffenfabrik ist bis ".date("d.m.Y H:i",$werft_arr['buildlist_deactivated'])." deaktiviert.";
-			infobox_end();
+			iBoxEnd();
 		}
 		// Werft anzeigen
 		else
@@ -322,7 +322,7 @@
     	echo '<div>';
     	
     	//echo '<div style="float:left;width:450px;text-align:left;font-size:9pt;">';											
-    	infobox_start("Fabrik-Infos",1);
+    	tableStart("Fabrik-Infos");
     	echo "<tr><td class=\"tbldata\"><b>Eingestellte Arbeiter:</b> ".nf($people_working)."<br/>
     	<b>Bauzeitverringerung:</b> ";
     	if ($need_bonus_level>=0)
@@ -344,7 +344,7 @@
     		$cancelable = false;
     	}    	
     	echo "</td></tr>";
-    	//infobox_end();
+    	//iBoxEnd();
     	//echo '</div>';
 
 
@@ -378,8 +378,6 @@
 											"costs_fuel"=>"Tritium"
 											);
 											
-			//echo '<div style="width:300px;float:right;">';											
-			//infobox_start("Sortieren",1,0);
 			echo "<tr>
 							<td class=\"tbldata\" style=\"text-align:center;\">
 								<select name=\"sort_value\">";
@@ -411,7 +409,7 @@
 								<input type=\"submit\" class=\"button\" name=\"sort_submit\" value=\"Sortieren\"/>
 							</td>
 						</tr>";
-			infobox_end(1);
+			tableEnd();
 			//echo '</div>';
 			echo '<br style="clear:both;" /></div>';
 			
@@ -823,14 +821,14 @@
 				queue_starttime ASC;");
 			if (mysql_num_rows($qres)>0)
 			{
-				infobox_start("Bauliste",1);
+				tableStart("Bauliste");
 				echo "<tr>
-								<td class=\"tbltitle\" style=\"width:40px;\">Anzahl</td>
-								<td class=\"tbltitle\">Bauauftrag</td>
-								<td class=\"tbltitle\" style=\"width:120px;\">Start</td>
-								<td class=\"tbltitle\" style=\"width:120px;\">Ende</td>
-								<td class=\"tbltitle\" style=\"width:80px;\">Verbleibend</td>
-								<td class=\"tbltitle\" style=\"width:80px;\">Aktionen</td>
+								<th style=\"width:40px;\">Anzahl</th>
+								<th>Bauauftrag</th>
+								<th style=\"width:120px;\">Start</th>
+								<th style=\"width:120px;\">Ende</th>
+								<th style=\"width:80px;\">Verbleibend</th>
+								<th style=\"width:80px;\">Aktionen</th>
 							</tr>";
 				$first=true;
 				$absolut_starttime=0;
@@ -848,10 +846,10 @@
 
 						$obj_t_passed = $qarr['queue_objtime']-$obj_t_remaining;
 						echo "<tr>
-								<td class=\"tbltitle\" colspan=\"2\">Aktuell</td>
-								<td class=\"tbltitle\" style=\"width:150px;\">Start</td>
-								<td class=\"tbltitle\" style=\"width:150px;\">Ende</td>
-								<td class=\"tbltitle\" style=\"width:80px;\" colspan=\"2\">Verbleibend</td>
+								<th colspan=\"2\">Aktuell</th>
+								<th style=\"width:150px;\">Start</th>
+								<th style=\"width:150px;\">Ende</th>
+								<th style=\"width:80px;\" colspan=\"2\">Verbleibend</th>
 							</tr>";
 						echo "<tr>";
 						echo "<td class=\"tbldata\" colspan=\"2\">".$qarr['def_name']."</td>";
@@ -860,12 +858,12 @@
 						echo "<td class=\"tbldata\" colspan=\"2\">".tf($obj_t_remaining)."</td>
 						</tr>";
 						echo "<tr>
-								<td class=\"tbltitle\" style=\"width:40px;\">Anzahl</td>
-								<td class=\"tbltitle\">Bauauftrag</td>
-								<td class=\"tbltitle\" style=\"width:150px;\">Start</td>
-								<td class=\"tbltitle\" style=\"width:150px;\">Ende</td>
-								<td class=\"tbltitle\" style=\"width:150px;\">Verbleibend</td>
-								<td class=\"tbltitle\" style=\"width:80px;\">Aktionen</td>
+								<th style=\"width:40px;\">Anzahl</th>
+								<th>Bauauftrag</th>
+								<th style=\"width:150px;\">Start</th>
+								<th style=\"width:150px;\">Ende</th>
+								<th style=\"width:150px;\">Verbleibend</th>
+								<th style=\"width:80px;\">Aktionen</th>
 							</tr>";
 						$first=false; 
 					}
@@ -903,7 +901,7 @@
 						$queue_cnt[$qarr['queue_def_id']]=$qarr['queue_cnt'];
 					}					
 				}
-				infobox_end(1);
+				tableEnd();
 			 	echo "<br/><br/>";
 
 			}
@@ -973,7 +971,7 @@
 			{
 				while($carr=mysql_fetch_array($cres))
 				{
-					infobox_start($carr['cat_name'],1);
+					tableStart($carr['cat_name']);
 					$cnt = 0;
 
 					//Ordnung des Users beachten
@@ -1325,7 +1323,7 @@
   			      	  $d_img = IMAGE_PATH."/".IMAGE_DEF_DIR."/def".$darr['def_id']."_middle.".IMAGE_EXT;
   			      	  
   			      	  echo "<tr>
-  			      	  				<td class=\"tbltitle\" colspan=\"5\" height=\"20\">".$darr['def_name']."</td>
+  			      	  				<th colspan=\"5\" height=\"20\">".$darr['def_name']."</th>
   			      	  			</tr>
   			      	  			<tr>
   			      	  				<td class=\"tbldata\" width=\"120\" height=\"120\" rowspan=\"3\">";
@@ -1357,11 +1355,11 @@
 			    			      	  }
   			      	  echo "</tr>";
   			      	  echo "<tr>
-			    			      	  <td class=\"tbltitle\" height=\"20\" width=\"110\">".RES_METAL.":</td>
-			    			      	  <td class=\"tbltitle\" height=\"20\" width=\"97\">".RES_CRYSTAL.":</td>
-			    			      	  <td class=\"tbltitle\" height=\"20\" width=\"98\">".RES_PLASTIC.":</td>
-			    			      	  <td class=\"tbltitle\" height=\"20\" width=\"97\">".RES_FUEL.":</td>
-			    			      	  <td class=\"tbltitle\" height=\"20\" width=\"98\">".RES_FOOD."</td></tr>";
+			    			      	  <th height=\"20\" width=\"110\">".RES_METAL.":</th>
+			    			      	  <th height=\"20\" width=\"97\">".RES_CRYSTAL.":</th>
+			    			      	  <th height=\"20\" width=\"98\">".RES_PLASTIC.":</th>
+			    			      	  <th height=\"20\" width=\"97\">".RES_FUEL.":</th>
+			    			      	  <th height=\"20\" width=\"98\">".RES_FOOD."</th></tr>";
   			      	  echo "<tr>
   			      	  				<td class=\"tbldata\" height=\"20\" width=\"110\" ".$ress_style_metal.">
   			      	  					".nf($darr['def_costs_metal'])."
@@ -1389,12 +1387,12 @@
 			      							<td class=\"tbldata\">";
   			      							//Bild mit Link zur Hilfe darstellen
 			  			      				echo "<a href=\"".HELP_URL."&amp;id=".$darr[ITEM_ID_FLD]."\"><img src=\"".$d_img."\" width=\"40\" height=\"40\" border=\"0\" /></a></td>";
-  			      			echo "<td class=\"tbltitle\" width=\"30%\">
+  			      			echo "<th width=\"30%\">
   			      							".$darr['def_name']."<br/>
   			      							<span style=\"font-weight:500;font-size:8pt;\">
   			      							<b>Gebaut:</b> ".nf($darr['deflist_count'])." &nbsp; 
   			      							<b>Felder:</b> ".nf($darr['def_fields'])." / Stück<br/>
-  			      						</span></td>
+  			      						</span></th>
   			      						<td class=\"tbldata\" width=\"13%\">".tf($btime)."</td>
   			      						<td class=\"tbldata\" width=\"10%\" ".$ress_style_metal.">".nf($darr['def_costs_metal'])."</td>
   			      						<td class=\"tbldata\" width=\"10%\" ".$ress_style_crystal.">".nf($darr['def_costs_crystal'])."</td>
@@ -1437,7 +1435,7 @@
 						echo "<tr><td align=\"center\" colspan=\"3\" class=\"infomsg\">Es gibt noch keine Verteidigungsanlagen!</td></tr>";
 					}
 
-   				infobox_end(1);
+   				tableEnd();
    				
    				//Lücke zwischen Kategorien
    				echo "<br><br><br>";

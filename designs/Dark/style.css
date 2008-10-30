@@ -308,7 +308,7 @@ select#nav_mode_select	{
 }
 
 /* Allianz Seite */
-.tblblack {
+.tblblack, .tb td.tblblack, .tb th.tblblack {
 	font-size:8pt;
 	color:#ffffff;
 	border:1px solid #ffffff;
@@ -341,7 +341,7 @@ div.infoboxtitle	{
 }
 
 /* allgemeine gebäude, wohnfläche, boni, ratshaus-news, fremde flotten... */
-td.infoboxtitle	{
+td.infoboxtitle, .tb td.infoboxtitle	{
 	font-size:10pt;
 	font-weight:bold;
 	border:1px solid #ffffff;

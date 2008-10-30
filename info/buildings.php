@@ -15,7 +15,8 @@ echo "<h2>Geb&auml;ude</h2>";
 
 if (isset($_GET['id']))
 {
-	if ($b_level==0) $b_level=1;
+	// what is this good for?
+	//if ($b_level==0) $b_level=1;
 	$res = dbquery("SELECT * FROM ".$db_table['buildings']." WHERE building_id='".$_GET['id']."';");
 	if ($arr = @mysql_fetch_array($res))
 	{
@@ -50,7 +51,7 @@ if (isset($_GET['id']))
 			$arr_level = mysql_fetch_array($res_level);
 		}
 
-		infobox_start(text2html($arr['building_name']),1);
+		tableStart(text2html($arr['building_name']));
 		echo "<tr>
 			<td class=\"tbltitle\" style=\"width:220px;background:#000;padding:0px;\" rowspan=\"2\">
 				<img src=\"".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$arr['building_id'].".".IMAGE_EXT."\" style=\"width:220px;height:220px;background:#000;margin:0px;\" align=\"top\" alt=\"Bild ".$arr['building_name']."\" />
@@ -63,14 +64,14 @@ if (isset($_GET['id']))
 			<td class=\"tbltitle\" style=\"height:20px;width:120px;\">Maximale Stufe:</td>
 			<td class=\"tbldata\" style=\"height:20px;\">".$arr['building_last_level']."</td>
 		</tr>";
-		infobox_end(1);
+		tableEnd();
 
 
 
 		// Metallmine
         if ($arr['building_id']==1)
         {
-        infobox_start("Produktion von ".RES_METAL." (ohne Boni)",1);
+        tableStart("Produktion von ".RES_METAL." (ohne Boni)");
         echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Produktion</td><td class=\"tbltitle\">Energie</td></tr>";
         for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
         {
@@ -82,13 +83,13 @@ if (isset($_GET['id']))
                 echo "<tr><td class=\"tbldata\">$level</td><td class=\"tbldata\">".nf($prod_item)."</td><td class=\"tbldata\">".nf($power_use)."</td></tr>";
 
         }
-            infobox_end(1);
+            tableEnd();
         }
 
         // Siliziummine
         if ($arr['building_id']==2)
         {
-            infobox_start("Produktion von ".RES_CRYSTAL." (ohne Boni)",1);
+            tableStart("Produktion von ".RES_CRYSTAL." (ohne Boni)");
         echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Produktion</td><td class=\"tbltitle\">Energie</td></tr>";
         for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
         {
@@ -99,12 +100,12 @@ if (isset($_GET['id']))
             else
                 echo "<tr><td class=\"tbldata\">$level</td><td class=\"tbldata\">".nf($prod_item)."</td><td class=\"tbldata\">".nf($power_use)."</td></tr>";
         }
-            infobox_end(1);
+            tableEnd();
         }
         // Chemiefabrik
         if ($arr['building_id']==3)
         {
-        infobox_start("Produktion von ".RES_PLASTIC." (ohne Boni)",1);
+        tableStart("Produktion von ".RES_PLASTIC." (ohne Boni)");
         echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Produktion</td><td class=\"tbltitle\">Energie</td></tr>";
         for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
         {
@@ -115,12 +116,12 @@ if (isset($_GET['id']))
             else
                 echo "<tr><td class=\"tbldata\">$level</td><td class=\"tbldata\">".nf($prod_item)."</td><td class=\"tbldata\">".nf($power_use)."</td></tr>";
         }
-        infobox_end(1);
+        tableEnd();
         }
         // Tritiumsynthetizer
         if ($arr['building_id']==4)
         {
-        infobox_start("Produktion von ".RES_FUEL." (ohne Boni)",1);
+        tableStart("Produktion von ".RES_FUEL." (ohne Boni)");
         echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Produktion</td><td class=\"tbltitle\">Energie</td></tr>";
         for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
         {
@@ -131,12 +132,12 @@ if (isset($_GET['id']))
             else
                 echo "<tr><td class=\"tbldata\">$level</td><td class=\"tbldata\">".nf($prod_item)."</td><td class=\"tbldata\">".nf($power_use)."</td></tr>";
         }
-        infobox_end(1);
+        tableEnd();
         }
         // Gew&auml&auml;chshaus
         if ($arr['building_id']==5)
         {
-            infobox_start("Produktion von ".RES_FOOD." (ohne Boni)",1);
+            tableStart("Produktion von ".RES_FOOD." (ohne Boni)");
         echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Produktion</td><td class=\"tbltitle\">Energie</td></tr>";
         for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
         {
@@ -147,12 +148,12 @@ if (isset($_GET['id']))
             else
                 echo "<tr><td class=\"tbldata\">$level</td><td class=\"tbldata\">".nf($prod_item)."</td><td class=\"tbldata\">".nf($power_use)."</td></tr>";
         }
-        infobox_end(1);
+        tableEnd();
         }
         // Planetenbasis
         if ($arr['building_id']==6)
         {
-        infobox_start("Produktion (ohne Boni)",1);
+        tableStart("Produktion (ohne Boni)");
         echo "<tr><td class=\"tbltitle\">Rohstoff</td><td class=\"tbltitle\">Prod.</td><td class=\"tbltitle\">Lager</td></tr>";
         echo "<tr><td class=\"tbldata\">".RES_METAL."</td><td class=\"tbldata\">".nf($arr['building_prod_metal'])."</td><td class=\"tbldata\">".nf($arr['building_store_metal'])."</td></tr>";
         echo "<tr><td class=\"tbldata\">".RES_CRYSTAL."</td><td class=\"tbldata\">".nf($arr['building_prod_crystal'])."</td><td class=\"tbldata\">".nf($arr['building_store_crystal'])."</td></tr>";
@@ -160,13 +161,13 @@ if (isset($_GET['id']))
         echo "<tr><td class=\"tbldata\">".RES_FUEL."</td><td class=\"tbldata\">".nf($arr['building_prod_fuel'])."</td><td class=\"tbldata\">".nf($arr['building_store_fuel'])."</td></tr>";
         echo "<tr><td class=\"tbldata\">".RES_FOOD."</td><td class=\"tbldata\">".nf($arr['building_prod_food'])."</td><td class=\"tbldata\">".nf($arr['building_store_food'])."</td></tr>";
         echo "<tr><td class=\"tbldata\">Energie</td><td class=\"tbldata\">".nf($arr['building_prod_metal'])."</td><td class=\"tbldata\">-</td></tr>";
-        infobox_end(1);
+        tableEnd();
         }
 
         // Wohnmodul
         if ($arr['building_id']==7)
         {
-        infobox_start("Platz f&uuml;r Bewohner",1);
+        tableStart("Platz f&uuml;r Bewohner");
         echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Wohnplatz</td></tr>";
 
         for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
@@ -177,13 +178,13 @@ if (isset($_GET['id']))
           else
                  echo "<tr><td class=\"tbldata\">$level</td><td class=\"tbldata\">".nf($prod_item)."</td></tr>";
         }
-        infobox_end(1);
+        tableEnd();
         }
 
         // Windkraftwerk
         if ($arr['building_id']==12)
         {
-            infobox_start("Energieproduktion (ohne Boni)",1);
+            tableStart("Energieproduktion (ohne Boni)");
         echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Produktion</td></tr>";
         for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
         {
@@ -194,13 +195,13 @@ if (isset($_GET['id']))
           else
                  echo "<tr><td class=\"tbldata\">$level</td><td class=\"tbldata\">".nf($prod_item)."</td></tr>";
         }
-        infobox_end(1);
+        tableEnd();
         }
 
         // Solarkaftwerk
         if ($arr['building_id']==13)
         {
-            infobox_start("Energieproduktion (ohne Boni)",1);
+            tableStart("Energieproduktion (ohne Boni)");
         echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Produktion</td></tr>";
         for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
         {
@@ -211,13 +212,13 @@ if (isset($_GET['id']))
           else
                  echo "<tr><td class=\"tbldata\">$level</td><td class=\"tbldata\">".nf($prod_item)."</td></tr>";
         }
-        infobox_end(1);
+        tableEnd();
         }
 
         // Fusionskraftwerk
         if ($arr['building_id']==14)
         {
-          infobox_start("Energieproduktion (ohne Boni)",1);
+          tableStart("Energieproduktion (ohne Boni)");
         echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Produktion</td></tr>";
         for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
         {
@@ -228,13 +229,13 @@ if (isset($_GET['id']))
           else
                  echo "<tr><td class=\"tbldata\">$level</td><td class=\"tbldata\">".nf($prod_item)."</td></tr>";
         }
-            infobox_end(1);
+            tableEnd();
         }
 
         // Gezeitenkraftwerk
         if ($arr['building_id']==15)
         {
-            infobox_start("Energieproduktion (ohne Boni)",1);
+            tableStart("Energieproduktion (ohne Boni)");
         echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Produktion</td></tr>";
         for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
         {
@@ -245,13 +246,13 @@ if (isset($_GET['id']))
           else
                  echo "<tr><td class=\"tbldata\">$level</td><td class=\"tbldata\">".nf($prod_item)."</td></tr>";
         }
-        infobox_end(1);
+        tableEnd();
         }
         // Titanspeicher
         if ($arr['building_id']==16)
         {
         $pbarr = mysql_fetch_row(dbquery("SELECT building_store_metal FROM ".$db_table['buildings']." WHERE building_id=6;"));
-            infobox_start("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf(STD_FIELDS).") des Planeten)",1);
+            tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf(STD_FIELDS).") des Planeten)");
         echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Kapazit&auml;t</td></tr>";
         for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
         {
@@ -261,13 +262,13 @@ if (isset($_GET['id']))
           else
                  echo "<tr><td class=\"tbldata\">$level</td><td class=\"tbldata\">".nf($prod_item)."</td></tr>";
         }
-        infobox_end(1);
+        tableEnd();
         }
         // Siliziumspeicher
         if ($arr['building_id']==17)
         {
         $pbarr = mysql_fetch_row(dbquery("SELECT building_store_crystal FROM ".$db_table['buildings']." WHERE building_id=6;"));
-            infobox_start("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf(STD_FIELDS).") des Planeten)",1);
+            tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf(STD_FIELDS).") des Planeten)");
         echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Kapazit&auml;t</td></tr>";
         for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
         {
@@ -277,13 +278,13 @@ if (isset($_GET['id']))
           else
                  echo "<tr><td class=\"tbldata\">$level</td><td class=\"tbldata\">".nf($prod_item)."</td></tr>";
         }
-            infobox_end(1);
+            tableEnd();
         }
         // Lagerhalle
         if ($arr['building_id']==18)
         {
         $pbarr = mysql_fetch_row(dbquery("SELECT building_store_plastic FROM ".$db_table['buildings']." WHERE building_id=6;"));
-            infobox_start("Kapazit&auml;t inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf(STD_FIELDS).")",1);
+            tableStart("Kapazit&auml;t inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf(STD_FIELDS).")");
         echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Kapazit&auml;t</td></tr>";
         for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
         {
@@ -293,13 +294,13 @@ if (isset($_GET['id']))
           else
                  echo "<tr><td class=\"tbldata\">$level</td><td class=\"tbldata\">".nf($prod_item)."</td></tr>";
         }
-          infobox_end(1);
+          tableEnd();
         }
         // Nahrungssilos
         if ($arr['building_id']==19)
         {
         $pbarr = mysql_fetch_row(dbquery("SELECT building_store_food FROM ".$db_table['buildings']." WHERE building_id=6;"));
-            infobox_start("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf(STD_FIELDS).") des Planeten)",1);
+            tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf(STD_FIELDS).") des Planeten)");
         echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Kapazit&auml;t</td></tr>";
         for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
         {
@@ -309,13 +310,13 @@ if (isset($_GET['id']))
           else
                  echo "<tr><td class=\"tbldata\">$level</td><td class=\"tbldata\">".nf($prod_item)."</td></tr>";
         }
-            infobox_end(1);
+            tableEnd();
         }
         // Tritiumsilo
         if ($arr['building_id']==20)
         {
         $pbarr = mysql_fetch_row(dbquery("SELECT building_store_fuel FROM ".$db_table['buildings']." WHERE building_id=6;"));
-        infobox_start("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf(STD_FIELDS).") des Planeten)",1);
+        tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf(STD_FIELDS).") des Planeten)");
         echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Kapazit&auml;t</td></tr>";
         for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
         {
@@ -325,13 +326,13 @@ if (isset($_GET['id']))
           else
                  echo "<tr><td class=\"tbldata\">$level</td><td class=\"tbldata\">".nf($prod_item)."</td></tr>";
         }
-        infobox_end(1);
+        tableEnd();
         }
 
         // Orbitalplatform
         if ($arr['building_id']==22)
         {
-            infobox_start("Zus&auml;tzliche Felder",1);
+            tableStart("Zus&auml;tzliche Felder");
         echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Felder</td><td class=\"tbltitle\">Energieverbrauch</td><td class=\"tbltitle\">Speicher ".RES_METAL."</td><td class=\"tbltitle\">Speicher ".RES_CRYSTAL."</td><td class=\"tbltitle\">Speicher ".RES_PLASTIC."</td></tr>";
         for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
         {
@@ -361,10 +362,10 @@ if (isset($_GET['id']))
           else
             echo "<td class=\"tbldata\">".nf($prod_item)."</td>";
         }
-        infobox_end(1);
+        tableEnd();
         }
         
-        infobox_start ("Kostenentwicklung (Faktor: ".$arr['building_build_costs_factor'].")",1);
+        tableStart ("Kostenentwicklung (Faktor: ".$arr['building_build_costs_factor'].")");
         
         echo "<tr><th class=\"tbltitle\" style=\"text-align:center;\">Level</th>
         			<th class=\"tbltitle\">".RES_ICON_METAL."".RES_METAL."</th>
@@ -391,7 +392,7 @@ if (isset($_GET['id']))
         	
         }
         
-        infobox_end (1);
+        tableEnd();
      }
      else
       echo "Geb&auml;udeinfodaten nicht gefunden!<br/><br/>";
@@ -412,41 +413,41 @@ elseif(isset($_GET['type_id']) && $_GET['type_id']>0)
 	if ($_GET['type_id']==BUILDING_STORE_CAT)
 	{
 		Help::navi(array("Geb&auml;ude","buildings"),array("Kategorie: Speicher",$_GET['type_id']));
-		infobox_start("Lagerkapazit&auml;t");
+		iBoxStart("Lagerkapazit&auml;t");
 		echo "<div align=\"justify\">";
 		echo "Du kannst auf einem Planeten nicht unentlich viele Rohstoffe lagern. Jeder Planet hat eine Lagerkapazit&auml;t von ".intval($conf['def_store_capacity']['v']).". Um die Lagerkapazit&auml;t zu erh&ouml;hen, kannst du eine Planetenbasis und danach verschiedene Speicher, Lagerhallen und Silos bauen, welche die Kapazit&auml;t erh&ouml;hen. Wenn eine Zahl in der Rohstoffanzeige rot gef&auml;rbt ist, bedeutet das, dass dieser Rohstoff die Lagerkapazit&auml;t &uuml;berschreitet. Baue in diesem Fall den Speicher aus. Eine &uuml;berschrittene Lagerkapazit&auml;t bedeutet, dass nichts mehr produziert wird, jedoch werden Rohstoffe, die z.B. mit einer Flotte ankommen, trotzdem auf dem Planeten gespeichert.<br>";
 		echo "</div>";
-		infobox_end();
+		iBoxEnd();
 		echo "Klicke <a href=\"?page=economy\">hier</a> um zu der Speicher&uuml;bersicht des aktuellen Planeten zu gelangen.";
 	}
 	elseif($_GET['type_id']==BUILDING_POWER_CAT)
 	{
 		Help::navi(array("Geb&auml;ude","buildings"),array("Kategorie: Kraftwerke",$_GET['type_id']));
-		infobox_start("Energie");
+		iBoxStart("Energie");
 		echo "<div align=\"justify\">";
 		echo "Wo es eine Produkion hat, braucht es auch Energie. Diese Energie, welche von verschiedenen Anlagen gebraucht wird, spenden uns verschiedene Kraftwerkstypen. Je h&ouml;her diese Ausgebaut sind, desto mehr Leistung erbringen sie und versorgen so die wachsende Wirtschaft.<br>
 		Hat es zu wenig Energie, wird die Produktion prozentual gedrosselt, was verheerende Auswirkungen haben kann!";
 		echo "</div>";
-		infobox_end();
+		iBoxEnd();
 		echo "Klicke <a href=\"?page=economy\">hier</a> um zu der Energie&uuml;bersicht des aktuellen Planeten zu gelangen.";
 	}
 	elseif($_GET['type_id']==BUILDING_GENERAL_CAT)
 	{
 		Help::navi(array("Geb&auml;ude","buildings"),array("Kategorie: Allgemeine Geb&auml;ude",$_GET['type_id']));
-		infobox_start("Allgemeine Geb&auml;ude");
+		iBoxStart("Allgemeine Geb&auml;ude");
 		echo "<div align=\"justify\">";
 		echo "Diese Geb&auml;ude werden ben&ouml;tigt um deinen Planeten auszubauen und die Produktion und Forschung zu erm&ouml;glichen.";
 		echo "</div>";
-		infobox_end();
+		iBoxEnd();
 	}
 	elseif($_GET['type_id']==BUILDING_RES_CAT)
 	{
 		Help::navi(array("Geb&auml;ude","buildings"),array("Kategorie: Rohstoffgeb&auml;ude",$_GET['type_id']));
-		infobox_start("Rohstoffgeb&auml;ude");
+		iBoxStart("Rohstoffgeb&auml;ude");
 		echo "<div align=\"justify\">";
 		echo "Diese Geb&auml;ude liefern Rohstoffe, welche du f&uuml;r den Aufbau deiner Zivilisation brauchst.";
 		echo "</div>";
-		infobox_end();
+		iBoxEnd();
 		echo "Klicke <a href=\"?page=economy\">hier</a> um zu der Produktions&uuml;bersicht des aktuellen Planeten zu gelangen.";
 	}
 	else
@@ -499,7 +500,7 @@ else
                 building_name;");
 			if (mysql_num_rows($res)>0)
 			{
-				infobox_start(text2html($tarr['type_name'])." [<a href=\"?page=$page&amp;site=$site&amp;type_id=".$tarr['type_id']."\">info</a>]",1);
+				tableStart(text2html($tarr['type_name'])." [<a href=\"?page=$page&amp;site=$site&amp;type_id=".$tarr['type_id']."\">info</a>]");
 				while ($arr = mysql_fetch_array($res))
 				{
 					echo "<tr>
@@ -517,7 +518,7 @@ else
 						echo "<b>".$arr['building_fields']." Felder</b></td>";
 					echo "</tr>";
 				}
-				infobox_end(1);
+				tableEnd();
 			}
 		}
 	}

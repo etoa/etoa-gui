@@ -281,7 +281,7 @@ function calcDemolishingWaitTime($dc,$cp)
     	$def_field_needed = 0;
     }
 
-  	infobox_start("Bauhof-Infos");
+  	iBoxStart("Bauhof-Infos");
   	echo "<div style=\"text-align:left;\">
   	<b>Eingestellte Arbeiter:</b> ".nf($peopleWorking)."<br/>
   	<b>Zeitreduktion durch Arbeiter pro Auftrag:</b> ".tf($peopleTimeReduction*$peopleWorking)."<br/>
@@ -289,7 +289,7 @@ function calcDemolishingWaitTime($dc,$cp)
   	<b>Gentechnologie:</b> ".GEN_TECH_LEVEL."<br/>
   	<b>Minimalen Bauzeit (mit Arbeiter):</b> Bauzeit * ".$minBuildTimeFactor."
   	</div>";   	
-  	infobox_end();
+  	iBoxEnd();
 
 
 /********************
@@ -675,32 +675,32 @@ function calcDemolishingWaitTime($dc,$cp)
 				$title = $arr['building_name'].' <span id="buildlevel">';
 				$title.= $b_level > 0 ? $b_level : '';
 				$title.= '</span>';
-				infobox_start($title,1);
+				tableStart($title);
 				echo "<tr>
-                  <td rowspan=\"4\" class=\"tbldata\" style=\"width:220px;background:#000;vertical-align:middle;\">
+                  <td rowspan=\"4\" style=\"width:220px;background:#000;vertical-align:middle;\">
                   	<a href=\"?page=help&amp;site=buildings&amp;id=".$arr['building_id']."\">
                   		<img src=\"".$path."\" style=\"width:220px;height:220px;border:none;\" alt=\"".$arr['building_name']."\" />
                   	</a>
                   </td>
-                  <td colspan=\"2\" class=\"tbldata\" style=\"vertical-align:top;height:150px;\">
+                  <td colspan=\"2\" style=\"vertical-align:top;height:150px;\">
                   	".$arr['building_longcomment']."
                  	</td>
 				     </tr>";
        	$f = $arr['building_fields'];
 				echo "<tr>
-                  <td class=\"tbltitle\" style=\"width:250px;height:20px;\">Platzverbrauch pro Ausbaustufe:</td>
-                  <td class=\"tbldata\">".$f." ".($f!=1 ? 'Felder' : 'Feld')."</td>
+                  <th style=\"width:250px;height:20px;\">Platzverbrauch pro Ausbaustufe:</th>
+                  <td>".$f." ".($f!=1 ? 'Felder' : 'Feld')."</td>
       	</tr>";
       	$f = $arr['building_fields'] * $b_level;
 				echo "<tr>
-                  <td class=\"tbltitle\" style=\"width:250px;height:20px;\">Platzverbrauch total:</td>
-       						<td class=\"tbldata\">".$f." ".($f!=1 ? 'Felder' : 'Feld')."</td>
+                  <th style=\"width:250px;height:20px;\">Platzverbrauch total:</th>
+       						<td>".$f." ".($f!=1 ? 'Felder' : 'Feld')."</td>
 						</tr>";
 				echo "<tr>
-                  <td class=\"tbltitle\" style=\"width:250px;height:20px;\">Status:</td>
-                  <td class=\"tbldata\" style=\"".$color."\" id=\"buildstatus\" >$status_text</td>
+                  <th style=\"width:250px;height:20px;\">Status:</th>
+                  <td style=\"".$color."\" id=\"buildstatus\" >$status_text</td>
 				     </tr>";
-				infobox_end(1);
+				tableEnd();
 
 
 				// Check requirements for this building
@@ -738,16 +738,16 @@ function calcDemolishingWaitTime($dc,$cp)
         // Voraussetzungen sind erfüllt
         if ($requirements_passed)
         {
-					infobox_start("Bauoptionen",1);
+					tableStart("Bauoptionen");
 					echo "<tr>
-	                <td class=\"tbltitle\" width=\"16%\">Aktion</td>
-	                <td class=\"tbltitle\" width=\"14%\">".RES_ICON_TIME." Zeit</th>
-	                <td class=\"tbltitle\" width=\"14%\">".RES_ICON_METAL."</td>
-	                <td class=\"tbltitle\" width=\"14%\">".RES_ICON_CRYSTAL."</td>
-	                <td class=\"tbltitle\" width=\"14%\">".RES_ICON_PLASTIC."</td>
-	                <td class=\"tbltitle\" width=\"14%\">".RES_ICON_FUEL."</td>
-	                <td class=\"tbltitle\" width=\"14%\">".RES_ICON_FOOD."</td>
-	                <td class=\"tbltitle\" width=\"14%\">".RES_ICON_POWER."</td>
+	                <th width=\"16%\">Aktion</td>
+	                <th width=\"14%\">".RES_ICON_TIME." Zeit</th>
+	                <th width=\"14%\">".RES_ICON_METAL."</td>
+	                <th width=\"14%\">".RES_ICON_CRYSTAL."</td>
+	                <th width=\"14%\">".RES_ICON_PLASTIC."</td>
+	                <th width=\"14%\">".RES_ICON_FUEL."</td>
+	                <th width=\"14%\">".RES_ICON_FOOD."</td>
+	                <th width=\"14%\">".RES_ICON_POWER."</td>
 							</tr>";
 	
 					// Bauen
@@ -929,7 +929,7 @@ function calcDemolishingWaitTime($dc,$cp)
 		      					<td class=\"tbldata\" colspan=\"6\"  id=\"buildprogress\" style=\"height:25px;background:#fff;text-align:center;\"></td>
 		      				</tr>";
 					}
-					infobox_end(1);
+					tableEnd();
 					
 					
 	
@@ -1034,7 +1034,7 @@ function calcDemolishingWaitTime($dc,$cp)
 
 				while ($tarr = mysql_fetch_array($tres))
 				{
-					infobox_start($tarr['type_name'],1,1);
+					tableStart($tarr['type_name']);
 
 						$cnt = 0; // Counter for current row
 						$scnt = 0; // Counter for shown buildings
@@ -1084,7 +1084,7 @@ function calcDemolishingWaitTime($dc,$cp)
 								// Voraussetzungen nicht erfüllt
 								if (!$requirements_passed)
 								{
-									$subtitle =  'Voraussetzungen nicht erfüllt';
+									$subtitle =  'Voraussetzungen fehlen';
 									$tmtext = '<span style="color:#999">Baue zuerst die nötigen Gebäude und erforsche die nötigen Technologien um diese Gebäude zu bauen!</span><br/>';
 									$color = '#999';
 									if($use_img_filter)
@@ -1200,7 +1200,7 @@ function calcDemolishingWaitTime($dc,$cp)
 							{
 								for ($x=0;$x < NUM_BUILDINGS_PER_ROW-$cnt;$x++)
 								{
-									echo "<td class=\"tbldata\" style=\"width:".CELL_WIDTH."px;\">&nbsp;</td>";
+									echo "<td style=\"width:".CELL_WIDTH."px;\">&nbsp;</td>";
 								}
 								echo '</tr>';
 							}							
@@ -1208,7 +1208,7 @@ function calcDemolishingWaitTime($dc,$cp)
 							if ($scnt==0)
 							{								
 								echo "<tr>
-												<td class=\"tbldata\" colspan=\"".NUM_BUILDINGS_PER_ROW."\" style=\"text-align:center;border:0;width:100%\">
+												<td colspan=\"".NUM_BUILDINGS_PER_ROW."\" style=\"text-align:center;border:0;width:100%\">
 													<i>In dieser Kategorie kann momentan noch nichts gebaut werden!</i>
 												</td>
 											</tr>";								
@@ -1217,12 +1217,12 @@ function calcDemolishingWaitTime($dc,$cp)
 						else
 						{
 							echo "<tr>
-											<td class=\"tbldata\" colspan=\"".NUM_BUILDINGS_PER_ROW."\" style=\"text-align:center;border:0;width:100%\">
+											<td colspan=\"".NUM_BUILDINGS_PER_ROW."\" style=\"text-align:center;border:0;width:100%\">
 												<i>In dieser Kategorie kann momentan noch nichts gebaut werden!</i>
 											</td>
 										</tr>";
 						}
-					infobox_end(1);
+					tableEnd();
 				}				
 				echo '</div></form>';
 			}

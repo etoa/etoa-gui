@@ -69,7 +69,7 @@
 	$kt[22]['f']="[flag ch-ge]";
 	
 	//Table Flag
-	infobox_start("Liste mit den vorhandenen Flaggen",1);
+	tableStart("Liste mit den vorhandenen Flaggen");
 		
 		echo "<tr><th class=\"tbltitle\">Kanton</th><th class=\"tbltitle\">BBCode</th><th class=\"tbltitle\">Flagge</th></tr>";
   	
@@ -79,6 +79,6 @@
 			echo "<td class=\"tbldata\" style=\"text-align:left\">".$city['f']."</td>";
 			echo "<td class=\"tbldata\" style=\"text-align:left\">".text2html($city['f'])."</td></tr>";
 		}
-	infobox_end(1);
+	tableEnd();
 
 ?>

@@ -222,7 +222,7 @@
           else
               $addrow=0;
 
-          infobox_start("Aktion und Waren w&auml;hlen",1);
+          tableStart("Aktion und Waren w&auml;hlen");
 
           echo "<tr><td class=\"tbltitle\" width=\"25%\">Startplanet:</td><td class=\"tbldata\" width=\"75%\">".$c->getString()."</td></tr>";
           if ($wormhole)
@@ -470,7 +470,7 @@
                 		</tr>";
             }
           }
-          infobox_end(1);
+          tableEnd();
           echo "<input type=\"hidden\" name=\"flight_cell_to\" value=\"".$parr['cell_id']."\">";
           echo "<input type=\"submit\" name=\"reset\" value=\"Vorgang abbrechen\" title=\"Vorgang abbrechen\"/> &nbsp; ";
           echo "<input type=\"submit\" name=\"back\" value=\"&lt;&lt;&lt; Zur&uuml;ck zur Zielauswahl\" title=\"Zur&uuml;ck zur Zielauswahl\" /> &nbsp; ";
@@ -478,12 +478,12 @@
               echo "<input type=\"submit\" name=\"submit_actionselection\" value=\"Start &gt;&gt;&gt;\" title=\"Klicke hier um zu starten\">&nbsp;";
           echo "</form><br/><br/>";
 
-          infobox_start("Ausgew&auml;hlte Schiffe",1);
+          tableStart("Ausgew&auml;hlte Schiffe");
           foreach ($_SESSION['haven']['ship_names'] as $id=> $name)
           {
               echo "<tr><td class=\"tbldata\">$name</td><td class=\"tbldata\">".$_SESSION['haven']['ships'][$id]."</td></tr>";
           }
-          infobox_end(1);
+          tableEnd();
 
 
 				}

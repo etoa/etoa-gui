@@ -8,7 +8,7 @@
 					{if $topNav[id].onclick neq ""}
 						<a href="javascript:;" onclick="{$topNav[id].onclick}">{$topNav[id].name}</a> | 
 					{else}
-						<a href="{$topNav[id].url}" target="_blank">{$topNav[id].name}</a> | 
+						<a href="{$topNav[id].url}">{$topNav[id].name}</a> | 
 					{/if}
 				{/strip}
 				{/section}

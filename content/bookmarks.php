@@ -140,7 +140,7 @@
 			echo "</select></div>";
 		
 			echo "<form action=\"?page=$page&amp;mode=$mode\" method=\"post\">";
-			infobox_start("Favorit hinzuf&uuml;gen");
+			iBoxStart("Favorit hinzuf&uuml;gen");
 			checker_init();
 			echo "Name: <input type=\"text\" name=\"name\" size=\"20\" maxlen=\"200\" value=\"Name\" onfocus=\"if (this.value=='Name') this.value=''\" /> &nbsp; ";
 			echo "Ziel: <select name=\"sx\">";
@@ -220,7 +220,7 @@
 			<br style=\"clear:both\" />";                                                                                   
 			echo "<br/>Wichtug: Die Flotte wird nur starten, falls die Schiffe und das Ziel die gewählte Aktion unterstützen.
 			<br/><br/><input type=\"submit\" value=\"Speichern\" name=\"submit_new\" />";
-			infobox_end();
+			iBoxEnd();
 			echo "</form>";
 
 			$res = dbquery("
@@ -232,7 +232,7 @@
 			 name;");
 			if (mysql_num_rows($res)>0)
 			{
-				infobox_start("Gespeicherte Favoriten",1);
+				tableStart("Gespeicherte Favoriten");
 				echo "<tr>
 								<th class=\"tbltitle\">Name</th>
 								<th class=\"tbltitle\" colspan=\"2\">Ziel</th>
@@ -267,7 +267,7 @@
 						</td>
 					</tr>";
 				}
-				infobox_end(1);
+				tableEnd();
 			}
 			else
 			{
@@ -301,7 +301,7 @@
 				$arr=mysql_fetch_assoc($res);
 				$ent = Entity::createFactory($arr['code'],$arr['entity_id']);
 				
-				infobox_start("Favorit bearbeiten",1);
+				tableStart("Favorit bearbeiten");
 				echo "<tr>
 								<th class=\"tbltitle\">Koordinaten</th>
 								<td class=\"tbldata\">".$ent->entityCodeString()." - ".$ent."</td>
@@ -312,7 +312,7 @@
 									<textarea name=\"bookmark_comment\" rows=\"3\" cols=\"60\">".stripslashes($arr['comment'])."</textarea>
 								</td>
 							</tr>";
-				infobox_end(1);
+				tableEnd();
 				
 				echo "<input type=\"hidden\" name=\"bookmark_id\" value=\"".$_GET['edit']."\" />";
 				echo "<input type=\"submit\" value=\"Speichern\" name=\"submit_edit_target\" /> &nbsp; ";
@@ -458,7 +458,7 @@
 	
 	
 			// Add-Bookmakr-Box
-			infobox_start("Favorit hinzuf&uuml;gen");
+			iBoxStart("Favorit hinzuf&uuml;gen");
 			echo "<form action=\"?page=$page\" method=\"post\">";
 			checker_init();
 			echo "<select name=\"sx\">";
@@ -489,7 +489,7 @@
 			echo "</select> &nbsp; ";
 			echo "<input type=\"text\" name=\"bookmark_comment\" size=\"20\" maxlen=\"200\" value=\"Kommentar\" onfocus=\"if (this.value=='Kommentar') this.value=''\" /> &nbsp;";
 			echo "<input type=\"submit\" value=\"Speichern\" name=\"submit_target\" />";
-			infobox_end();
+			iBoxEnd();
 	
 			// List bookmarks
 			$res = dbquery("
@@ -508,7 +508,7 @@
 			 	bookmarks.comment;");
 			if (mysql_num_rows($res)>0)
 			{
-				infobox_start("Gespeicherte Favoriten",1);
+				tableStart("Gespeicherte Favoriten");
 				echo "<tr>
 								<th class=\"tbltitle\" colspan=\"2\">Typ</th>
 								<th class=\"tbltitle\">Koordinaten</th>
@@ -535,7 +535,7 @@
 									</td>
 							</tr>";
 				}
-				infobox_end(1);
+				tableEnd();
 			}
 			else
 			{

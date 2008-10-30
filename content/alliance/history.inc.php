@@ -4,7 +4,7 @@ if (Alliance::checkActionRights('history'))
 
 
 						echo "<h2>Allianzgeschichte</h2>";
-						infobox_start("Geschichtsdaten",1);
+						tableStart("Geschichtsdaten");
 						echo "<tr><th class=\"tbltitle\" style=\"width:120px;\">Datum / Zeit</th><th class=\"tbltitle\">Ereignis</th></tr>";
 						$hres=dbquery("
 						SELECT 
@@ -18,7 +18,7 @@ if (Alliance::checkActionRights('history'))
 						{
 							echo "<tr><td class=\"tbldata\">".date("d.m.Y H:i",$harr['history_timestamp'])."</td><td class=\"tbldata\">".text2html($harr['history_text'])."</td></tr>";
 						}
-						infobox_end(1);
+						tableEnd();
 						echo "<input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=$page'\" />";
 }
 ?>

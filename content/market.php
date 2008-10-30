@@ -2613,7 +2613,7 @@
 			{
 				echo "<form action=\"?page=$page&amp;mode=ressource\" method=\"post\" id=\"ress_buy_selector\">\n";
 				checker_init();				
-				infobox_start("Angebots&uuml;bersicht",1);
+				tableStart("Angebots&uuml;bersicht");
 					echo "<tr>
 								<td class=\"tbltitle\" colspan=\"2\" width=\"25%\">Angebot:</td>
 								<td class=\"tbltitle\" width=\"15%\">Anbieter:</td>
@@ -2730,9 +2730,9 @@
 					}
 
 				}
-				infobox_end(1);
+				tableEnd();
 				
-				infobox_start("",1);
+				tableStart();
 				echo "<tr>
 								<td class=\"tbldata\" colspan=\"7\" id=\"ressource_check_message\" style=\"text-align:center;vertical-align:middle;height:30px;\">&nbsp;</td>
 							</tr>
@@ -2741,7 +2741,7 @@
 									<input type=\"submit\" class=\"button\" name=\"ressource_submit\" id=\"ressource_submit\" value=\"Angebot annehmen\" disabled=\"disabled\"/>
 								</td>
 							</tr>";
-				infobox_end(1);
+				tableEnd();
 				echo "</form>";
 			}
 			else
@@ -2760,7 +2760,7 @@
 			echo "<form action=\"?page=".$page."&amp;mode=ships\" method=\"post\" id=\"ship_buy_selector\">\n";
 			checker_init();
 				
-			infobox_start("Angebots&uuml;bersicht",1);
+			tableStart("Angebots&uuml;bersicht");
 			echo "<tr>
 						<td class=\"tbltitle\" width=\"25%\">Angebot:</td>
 						<td class=\"tbltitle\" width=\"15%\">Anbieter:</td>
@@ -2880,9 +2880,9 @@
 					}
 
 				}
-				infobox_end(1);
+				tableEnd();
 				
-				infobox_start("",1);
+				tableStart();
 				echo "<tr>
 								<td class=\"tbldata\" colspan=\"7\" id=\"ship_buy_check_message\" style=\"text-align:center;vertical-align:middle;height:30px;\">&nbsp;</td>
 							</tr>
@@ -2891,7 +2891,7 @@
 									<input type=\"submit\" name=\"ship_submit\" id=\"ship_submit\" value=\"Angebot annehmen\" disabled=\"disabled\"/>
 								</td>
 							</tr>";
-				infobox_end(1);
+				tableEnd();
 			}
 			else
 			{
@@ -2930,8 +2930,8 @@
 				// SQL weitergeben (Für "Zurück" auf diese Page)
 				echo "<input type=\"hidden\" value=\"".stripslashes($_POST['auction_sql_add'])."\" id=\"auction_sql_add\" name=\"auction_sql_add\"/>";
 				
-				infobox_start("Angebots&uuml;bersicht",1);
-				infobox_end(1,1);
+				tableStart("Angebots&uuml;bersicht");
+				tableEnd();
 				$cnt=0;
 				$acnts=array();
 				$acnt=0;
@@ -3064,7 +3064,7 @@
 						}				
 											
 							
-						infobox_start("",1);	
+						tableStart();	
 						
 						// Header
 						echo "<tr>
@@ -3355,7 +3355,7 @@
 				
 				
 				// Allgemeine Angebotsinfo
-				infobox_start("Angebotsinfo",1,0);
+				tableStart("Angebotsinfo");
 				echo "<tr>
                 <td class=\"tbltitle\">Anbieter</td>
 								<td class=\"tbldata\">
@@ -3429,7 +3429,7 @@
 												</td>
 											</tr>";
 							}
-				infobox_end(1);
+				tableEnd();
 				
 				echo "<script type=\"text/javascript\">";
 				foreach ($acnts as $cfield=> $ctime)
@@ -3441,7 +3441,7 @@
 				
 				// Angebots/Preis Maske
 				//Header
-				infobox_start("",1);
+				tableStart();
 				echo "<tr>
 								<td class=\"tbltitle\" style=\"width:15%;vertical-align:middle;\">Rohstoff</td>
 								<td class=\"tbltitle\" style=\"width:15%;vertical-align:middle;\">Angebot</td>
@@ -3665,7 +3665,7 @@
 			echo "<input type=\"hidden\" value=\"\" id=\"ship_sql_add\" name=\"ship_sql_add\"/>";	
 			echo "<input type=\"hidden\" value=\"\" id=\"auction_sql_add\" name=\"auction_sql_add\"/>";
 			
-			infobox_start("Suche");
+			iBoxStart("Suche");
 			
 			// Kategorie
 			echo "<div id=\"search_cat_field\" style=\"text-align:center;vertical-align:middle;height:30px;\">
@@ -3686,26 +3686,26 @@
 								}
 					echo "</select>
 						</div>";
-			infobox_end(0,1);
+			iBoxEnd();
 			
 			// Content
-			infobox_start("");
+			iBoxStart("");
 			echo "<div id=\"search_content\">
 							&nbsp;
 						</div>";
-			infobox_end(0,1);	
+			iBoxEnd();	
 			
 			// Check Message
-			infobox_start("");
+			iBoxStart("");
 			echo "<div id=\"search_check_message\" style=\"text-align:center;vertical-align:middle;height:30px;\">
 							<div style=\"color:red;font-weight:bold;\">Wähle eine Kategorie!</div>
 						</div>";
-			infobox_end(0,1);
+			iBoxEnd();
 			
 			// Sumbit
-			infobox_start("");
+			iBoxStart("");
 			echo "<input type=\"submit\" class=\"button\" name=\"search_submit\" id=\"search_submit\" value=\"Angebote anzeigen\" disabled=\"disabled\"/>";
-			infobox_end(0,1);
+			iBoxEnd();
 														
 
 			echo "</form>";
@@ -3874,7 +3874,7 @@
 				{
 					echo "<form action=\"?page=$page&amp;mode=user_sell\" method=\"post\">\n";
 					echo $cstr;
-					infobox_start("Rohstoffe",1);
+					tableStart("Rohstoffe");
 						echo "<tr><td class=\"tbltitle\" colspan=\"2\" width=\"25%\">Angebot:</td>
 						<td class=\"tbltitle\" width=\"15%\">Anbieter:</td>
 						<td class=\"tbltitle\" width=\"25%\">Datum/Text:</td>
@@ -3906,15 +3906,15 @@
 						if ($cnt<mysql_num_rows($res))
 							echo "<tr><td class=\"tbldata\" colspan=\"7\" style=\"height:10px;background:#000\"></td></tr>";
 					}
-					infobox_end(1);
+					tableEnd();
 					echo "<input type=\"submit\" class=\"button\" name=\"ressource_cancel\" value=\"Angebot zur&uuml;ckziehen\"/>";
 					echo "</form><br/><br/>";
 				}
 				else
 				{
-					infobox_start("Rohstoffe");
+					iBoxStart("Rohstoffe");
 					echo "Keine Angebote vorhanden!";
-					infobox_end(0);
+					iBoxEnd();
 				}
 
 
@@ -3936,7 +3936,7 @@
 				{
 					echo "<form action=\"?page=$page&amp;mode=user_sell\" method=\"post\">\n";
 					echo $cstr;
-					infobox_start("Schiffe",1);
+					tableStart("Schiffe");
 
                     echo "<tr><td class=\"tbltitle\" width=\"25%\">Angebot:</td>
                     <td class=\"tbltitle\" width=\"15%\">Anbieter:</td>
@@ -3966,15 +3966,15 @@
 						if ($cnt<mysql_num_rows($res))
 							echo "<tr><td class=\"tbldata\" colspan=\"6\" style=\"height:10px;background:#000\"></td></tr>";
 					}
-					infobox_end(1);
+					tableEnd();
 					echo "<input type=\"submit\" class=\"button\" name=\"ship_cancel\" value=\"Angebot zur&uuml;ckziehen\"/>";
 					echo "</form><br/><br/>";
 				}
 				else
 				{
-					infobox_start("Schiffe");
+					iBoxEnd("Schiffe");
 					echo "Keine Angebote vorhanden!";
-					infobox_end(0);
+					iBoxEnd();
 				}
 
 
@@ -4033,7 +4033,7 @@
 					
 					echo "<form action=\"?page=".$page."&amp;mode=user_sell\" method=\"post\">\n";
 					echo $cstr;
-					infobox_start("Auktionen",1);
+					tableStart("Auktionen");
 					infobox_end(0);
 					$cnt=0;
 					$acnts=array();
@@ -4041,7 +4041,7 @@
 					while ($arr=mysql_fetch_array($res))
 					{
 						$acnt++;
-						infobox_start("",1);
+						tableStart();
 						echo "<tr>
 						<td class=\"tbltitle\">Anbieter</td>
 						<td class=\"tbltitle\">Auktion Start/Ende</td>
@@ -4180,7 +4180,7 @@
               				<td class=\"tbldata\">".nf($arr['auction_buy_food'])."</td>
               			</tr>";
             }
-            infobox_end(1);
+            tableEnd();
             echo "<br/><br/>";
             
 					}
@@ -4195,9 +4195,9 @@
 				}
 				else
 				{
-					infobox_start("Auktionen");
+					iBoxStart("Auktionen");
 					echo "Keine Angebote vorhanden!";
-					infobox_end(0);
+					iBoxEnd(0);
 				}
 			}
 		}
@@ -4287,7 +4287,7 @@
           echo "<form action=\"?page=".$page."\" method=\"post\" name=\"ress_selector\" id=\"ress_selector\">\n";
           $cstr=checker_init();         
           
-          infobox_start("Rohstoffe verkaufen",1);
+          tableStart("Rohstoffe verkaufen");
           
 
 					//Header
@@ -4399,7 +4399,7 @@
 									<td class=\"tbldata\" colspan=\"5\" id=\"check_message\" style=\"text-align:center;vertical-align:middle;height:30px;\">&nbsp;</td>
 								</tr>";								
 
-          infobox_end(1);
+          tableEnd();
           
           // Absend-Button (Per Ajax freigegeben)
           echo "<input type=\"button\" class=\"button\" name=\"ressource_sell_submit\" id=\"ressource_sell_submit\" value=\"Angebot aufgeben\" style=\"color:#f00;\" disabled=\"disabled\" onclick=\"calcMarketRessPrice('1');checkUpdate('ress_selector', 'ress_last_update');\"/></form><br/><br/>";
@@ -4477,7 +4477,7 @@
         		// Übergibt den Schiffsnamen zum Spichern an PHP weiter	
         		echo "<input type=\"hidden\" value=\"0\" name=\"ship_name\" id=\"ship_name\"/>";	
 
-	          infobox_start("Schiffe verkaufen",1);
+	          tableStart("Schiffe verkaufen");
 		
 						// Header Angebot
 						echo "<tr>
@@ -4588,7 +4588,7 @@
 										<td class=\"tbldata\" colspan=\"5\" id=\"ship_check_message\" style=\"text-align:center;vertical-align:middle;height:30px;\">&nbsp;</td>
 									</tr>";								
 	
-	          infobox_end(1);
+	          tableEnd();
 	          
 	          // Absend-Button (Per Ajax freigegeben)
 	          echo "<input type=\"button\" class=\"button\" name=\"ship_sell_submit\" id=\"ship_sell_submit\" value=\"Angebot aufgeben\" style=\"color:#f00;\" disabled=\"disabled\" onclick=\"calcMarketShipPrice(0, 1);checkUpdate('ship_selector', 'ship_last_update');\"/></form><br/><br/>";
@@ -4605,7 +4605,7 @@
 				{   
           echo "<form action=\"?page=".$page."\" method=\"post\" name=\"auction_selector\" id=\"auction_selector\">\n";
           echo $cstr;
-          infobox_start("Rohstoffe versteigern",1);
+          tableStart("Rohstoffe versteigern");
           
           // Frühstes Auktionsende
           $auction_time = time() + (AUCTION_MIN_DURATION*24*3600);
@@ -4730,7 +4730,7 @@
 									<td class=\"tbldata\" colspan=\"6\" name=\"auction_check_message\" id=\"auction_check_message\" style=\"text-align:center;vertical-align:middle;height:30px;\">&nbsp;</td>
 								</tr>";		
 														
-          infobox_end(1);
+          tableEnd();
           
           // Absend-Button (Per Ajax freigegeben)
           echo "<input type=\"button\" class=\"button\" name=\"auction_sell_submit\" id=\"auction_sell_submit\" value=\"Angebot aufgeben\" style=\"color:#f00;\" disabled=\"disabled\" onclick=\"checkMarketAuctionFormular(1);checkUpdate('auction_selector', 'auction_last_update');\"/></form><br/><br/>";						

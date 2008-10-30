@@ -1554,60 +1554,63 @@ die Spielleitung";
 		");
 	}
 
-	/**
-	* Infobox-Header
-	*/
-	function infobox_start($title,$table=0,$stretch=1,$width=0)
+	function tableStart($title="",$width=0)
 	{
 		if ($width>0)
 		{
-			$w = " style=\"width:".$width."px\"";
+			$w = "width:".$width."px;";
+		}
+		elseif ($width!="")
+		{
+			$w = "width:".$width."";
 		}
 		else
 		{
-			$w = "";
+			$w = "width:650px";
+		}
+
+		echo "<table class=\"tb boxLayout\" style=\"".$w."\">";
+		if ($title!="")
+			echo "<tr><td class=\"infoboxtitle\" colspan=\"20\">$title</td></tr>";
+	}
+
+	function tableEnd()
+	{
+		echo "</table>";
+	}
+
+	/**
+	* Infobox-Header
+	*/
+	function iBoxStart($title="",$width=0)
+	{
+		if ($width>0)
+		{
+			$w = "width:".$width."px;";
+		}
+		elseif ($width!="")
+		{
+			$w = "width:".$width."";
+		}
+		else
+		{
+			$w = "width:650px";
 		}
 		
-		if ($table==1)
-		{
-			if ($stretch==1)
-				echo "<table class=\"tbl\" $w>";
-			else
-				echo "<table class=\"tblc\" $w>";
-			if ($title!="")
-				echo "<tr><td class=\"infoboxtitle\" colspan=\"20\">$title</td></tr>";
-		}
-		else
-		{
-			if ($title!="")
-				echo "<div class=\"infoboxtitle\" $w>$title</div>";
-			echo "<div class=\"infoboxcontent\" $w>";
-		}
+		echo "<div class=\"boxLayout\" style=\"".$w."\">";
+
+		if ($title!="")
+			echo "<div class=\"infoboxtitle\">$title</div>";
+		echo "<div class=\"infoboxcontent\">";
 	}
 
 	/**
 	* Infobox-Footer
 	*/
-	function infobox_end($table=0,$dontbreak=0)
+	function iBoxEnd()
 	{
-		if ($table==1)
-		{
-			echo "</table>";
-
-			if($dontbreak==0)
-			{
-				echo "<br/><br/>";
-			}
-		}
-		else
-		{
-			echo "</div>";
-
-			if($dontbreak==0)
-			{
-				echo "<br/><br/>";
-			}
-		}
+		echo "</div>";
+		echo "</div>";
 	}
 
 	/**
@@ -3200,6 +3203,25 @@ Forum: http://www.etoa.ch/forum";
 		print_r($val);
 		$tmp = ob_get_clean();
 		echo nl2br($tmp);
+	}
+
+	function popUp($caption, $args,$width=800,$height=600)
+	{
+		return "<a href=\"?".$args."\" onclick=\"window.open('show.php?".$args."','popup','status=no,width=".$width.",height=".$height.",scrollbars=yes');return false;\">".$caption."</a> ";		
+	}
+
+	function ticketLink($caption,$category)
+	{
+		$width=700;
+		$height=600;
+		return "<a href=\"?page=ticket&amp;cat=".$category."\" onclick=\"window.open('show.php?page=ticket&amp;cat=".$category."','popup','status=no,width=".$width.",height=".$height.",scrollbars=yes');return false;\">".$caption."</a>";		
+	}
+
+	function helpLink($site,$caption="Hilfe")
+	{
+		$width=900;
+		$height=600;
+		return "[<a href=\"?page=help&amp;site=".$site."\" onclick=\"window.open('show.php?page=help&amp;site=".$site."','popup','status=no,width=".$width.",height=".$height.",scrollbars=yes');return false;\">".$caption."</a>]";		
 	}
 
 

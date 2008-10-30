@@ -49,7 +49,7 @@
 	}
 	
 	</script>
-	<?
+	<?PHP
 
 	echo "<h1>Ratshaus</h1>";
 	echo "Im Rathaus k&ouml;nnen Allianzen Nachrichten an ihre Mitglieder oder an 
@@ -91,7 +91,7 @@
 	LIMIT 10;");
 	if (mysql_num_rows($anres))
 	{
-		infobox_start("Die neusten 10 Nachrichten",1);
+		tableStart("Die neusten 10 Nachrichten");
 		echo "<tr>
 						<th class=\"tbltitle\" style=\"width:50%;\">Titel</th>
 						<th class=\"tbltitle\" style=\"width:20%;\">Datum</th>
@@ -132,13 +132,13 @@
 				echo "</td>
 			</tr>";				
 		}
-		infobox_end(1);		
+		tableEnd();		
 	}
 	else
 	{
-		infobox_start("Die neusten 10 Nachrichten");
+		iBoxStart("Die neusten 10 Nachrichten");
 		echo "Es sind momentan keine Nachrichten vorhanden!";
-		infobox_end();
+		iBoxEnd();
 	}
 
 
@@ -175,7 +175,7 @@
 	;");
 	if (mysql_num_rows($anres))
 	{
-		infobox_start("Allianzinterne Nachrichten",1);
+		tableStart("Allianzinterne Nachrichten");
 		echo "<tr>
 						<th class=\"tbltitle\" style=\"width:50%;\">Titel</th>
 						<th class=\"tbltitle\" style=\"width:20%;\">Datum</th>
@@ -217,13 +217,13 @@
 				echo "</td>
 			</tr>";				
 		}
-		infobox_end(1);		
+		tableEnd();		
 	}
 	else
 	{
-		infobox_start("Allianzinterne Nachrichten");
+		iBoxStart("Allianzinterne Nachrichten");
 		echo "Es sind momentan keine Nachrichten vorhanden!";
-		infobox_end();
+		iBoxEnd();
 	}
 
 
@@ -258,7 +258,7 @@
 	");
 	if (mysql_num_rows($res)>0)
 	{
-		infobox_start("Neuste Bündnisse",1);
+		tableStart("Neuste Bündnisse");
 		echo "
 		<tr>
 			<td class=\"tbltitle\" style=\"width:25%;\">Allianz 1</th>
@@ -291,13 +291,13 @@
 				<td class=\"tbldata\" colspan=\"5\">".text2html(stripslashes($arr['alliance_bnd_text_pub']))."</td>
 			</tr>";
 		}		
-		infobox_end(1);
+		tableEnd();
 	}
 	else
 	{
-		infobox_start("Neuste Bündnisse");
+		iBoxStart("Neuste Bündnisse");
 		echo "Es sind momentan keine Nachrichten vorhanden!";
-		infobox_end();
+		iBoxEnd();
 	}
 	
 
@@ -330,7 +330,7 @@
 	");
 	if (mysql_num_rows($res)>0)
 	{
-		infobox_start("Aktuelle Kriege (Dauer ".round(WAR_DURATION/3600)."h)",1);
+		tableStart("Aktuelle Kriege (Dauer ".round(WAR_DURATION/3600)."h)");
 		echo "<tr>
 						<td class=\"tbltitle\" width=\"25%\">Allianz 1</th>
 						<td class=\"tbltitle\" width=\"25%\">Allianz 2</th>
@@ -362,13 +362,13 @@
 				<td class=\"tbldata\" colspan=\"5\">".text2html(stripslashes($arr['alliance_bnd_text_pub']))."</td>
 			</tr>";
 		}		
-		infobox_end(1);
+		tableEnd();
 	}
 	else
 	{
-		infobox_start("Aktuelle Kriege (Dauer ".round(WAR_DURATION/3600)."h)");
+		iBoxStart("Aktuelle Kriege (Dauer ".round(WAR_DURATION/3600)."h)");
 		echo "Es sind momentan keine Nachrichten vorhanden!";
-		infobox_end();
+		iBoxEnd();
 	}
 	
 
@@ -399,7 +399,7 @@
 	");
 	if (mysql_num_rows($res)>0)
 	{
-		infobox_start("Aktuelle Friedensabkommen (Dauer ".round(PEACE_DURATION/3600)."h)",1);
+		tableStart("Aktuelle Friedensabkommen (Dauer ".round(PEACE_DURATION/3600)."h)");
 		echo "<tr>
 			<td class=\"tbltitle\" width=\"30%\">Allianz 1</th>
 			<td class=\"tbltitle\" width=\"30%\">Allianz 2</th>
@@ -415,13 +415,13 @@
 				<td class=\"tbldata\">".df($arr['alliance_bnd_date']+PEACE_DURATION)."</td>
 			</tr>";			
 		}		
-		infobox_end(1);
+		tableEnd();
 	}
 	else
 	{
-		infobox_start("Aktuelle Friedensabkommen (Dauer ".round(PEACE_DURATION/3600)."h)");
+		iBoxStart("Aktuelle Friedensabkommen (Dauer ".round(PEACE_DURATION/3600)."h)");
 		echo "Es sind momentan keine Nachrichten vorhanden!";
-		infobox_end();
+		iBoxEnd();
 	}
 
 

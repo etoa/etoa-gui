@@ -83,7 +83,8 @@
 		$s_active = true;
 	}
 	
-	infobox_start("Spezialisten",1);
+	tableStart("Spezialisten");
+	/*
 	show_tab_menu("category",array("admiral"=>"Admiral",
 											"engineer"=>"Ingenieur",
  											"geology"=>"Geologe",
@@ -91,7 +92,7 @@
  											"biologist"=>"Biologe",
  											"spy"=>"Spion",
  											"merchant"=>"Meisterhändler"));
-
+*/
 	echo "<tr>
 			<td class=\"tbldata\">
 				<div id=\"specialisten\"  style=\"max-height:500px; overflow:auto;\">
@@ -117,7 +118,7 @@
 			</td>
 		</tr>";
 								
-	infobox_end(1);
+	tableEnd();
 	
 /*	while ($arr=mysql_fetch_array($res))
 		{

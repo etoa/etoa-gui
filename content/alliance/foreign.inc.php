@@ -129,13 +129,13 @@
 			{
 				echo "<form action=\"?page=$page&amp;action=create\" method=\"post\">";
 				checker_init();
-				infobox_start("Allianz-Daten",1);
+				tableStart("Allianz-Daten");
 				echo "<tr><td class=\"tbltitle\">Allianz-Tag:</td><td class=\"tbldata\"><input type=\"text\" name=\"alliance_tag\" size=\"6\" maxlength=\"6\" value=\"".$s['alliance_creation_tag']."\" /></td></tr>";
 				echo "<tr><td class=\"tbltitle\">Allianz-Name:</td><td class=\"tbldata\"><input type=\"text\" name=\"alliance_name\" size=\"25\" maxlength=\"25\" value=\"".$s['alliance_creation_name']."\" /></td></tr>";
 				echo "<tr><td class=\"tbltitle\">Beschreibung:</td><td class=\"tbldata\"><textarea rows=\"10\" cols=\"50\" name=\"alliance_text\">".$s['alliance_creation_text']."</textarea></td></tr>";
 				echo "<tr><td class=\"tbltitle\">Website/Forum:</td><td class=\"tbldata\"><input type=\"text\" name=\"alliance_url\" size=\"40\" maxlength=\"255\" value=\"".$s['alliance_creation_url']."\" /></td></tr>";
 				echo "<tr><td class=\"tbltitle\">Bildpfad:</td><td class=\"tbldata\">Das Allianz-Bild kann nachträglich in den Allianz-Einstellungen heraufgeladen werden!</td></tr>";
-				infobox_end(1);
+				tableEnd();
 				echo "<input type=\"submit\" name=\"createsubmit\" value=\"Speichern\" /></form>";
 			}
 		}
@@ -167,9 +167,9 @@
 					{
 						echo "<form action=\"?page=$page&amp;action=join\" method=\"post\">";
 						checker_init();
-						infobox_start("Bewerbungstext",1);
+						tableStart("Bewerbungstext");
 						echo "<tr><td class=\"tbltitle\">Nachricht:</td><td class=\"tbldata\"><textarea rows=\"15\" cols=\"80\" name=\"user_alliance_application\">".$arr['alliance_application_template']."</textarea></td>";
-						infobox_end(1);
+						tableEnd();
 						echo "<input type=\"hidden\" name=\"user_alliance_id\" value=\"".intval($arr['alliance_id'])."\" />";
 						echo "<input type=\"submit\" name=\"submitapplication\" value=\"Senden\" />&nbsp;<input type=\"button\" onclick=\"document.location='?page=alliance&action=join'\" value=\"Zur&uuml;ck\" /></form>";
 					}

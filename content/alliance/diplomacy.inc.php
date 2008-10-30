@@ -78,10 +78,10 @@
 					echo "<form action=\"?page=$page&amp;action=relations\" method=\"post\" name=\"wardeclaration\">";
 					checker_init();
 					
-					infobox_start("Kriegserkl&auml;rung an die Allianz [".$aarr['alliance_tag']."] ".$aarr['alliance_name'],1);
+					tableStart("Kriegserkl&auml;rung an die Allianz [".$aarr['alliance_tag']."] ".$aarr['alliance_name']);
 					echo "<tr><th class=\"tbltitle\">Nachricht:</th><td class=\"tbldata\"><textarea rows=\"10\" cols=\"50\" name=\"alliance_bnd_text\"></textarea></td></tr>";
 					echo "<tr><th class=\"tbltitle\">Öffentlicher Text:</th><td class=\"tbldata\"><textarea rows=\"10\" cols=\"50\" name=\"alliance_bnd_text_pub\"></textarea></td></tr>";
-					infobox_end(1);
+					tableEnd();
 					
 					echo "<input type=\"hidden\" name=\"alliance_bnd_alliance_id\" value=\"".$aarr['alliance_id']."\" />";
 					echo "<input type=\"submit\" name=\"sbmit_new_war\" value=\"Senden\" onclick=\"return checkWarDeclaration()\" onsubmit=\"return checkWarDeclaration()\" />&nbsp;
@@ -118,7 +118,7 @@
 						echo "<form action=\"?page=$page&amp;action=relations\" method=\"post\" name=\"pactoffer\">";
 						checker_init();
 						
-						infobox_start("B&uuml;ndnisanfrage an die Allianz [".$aarr['alliance_tag']."] ".$aarr['alliance_name'],1);
+						tableStart("B&uuml;ndnisanfrage an die Allianz [".$aarr['alliance_tag']."] ".$aarr['alliance_name']);
 						echo "<tr>
 							<th class=\"tbltitle\">Name des Bündnisses:</th>
 							<td class=\"tbldata\">
@@ -131,7 +131,7 @@
 								<textarea rows=\"10\" cols=\"50\" name=\"alliance_bnd_text\"></textarea>
 							</td>
 						</tr>";
-						infobox_end(1);
+						tableEnd();
 						
 						echo "<input type=\"hidden\" name=\"alliance_bnd_alliance_id\" value=\"".$aarr['alliance_id']."\" />";
 						echo "<input type=\"submit\" name=\"sbmit_new_bnd\" value=\"Senden\" onclick=\"return checkPactOffer()\" onsubmit=\"return checkPactOffer()\" />&nbsp;
@@ -197,7 +197,7 @@
 					switch ($arr['alliance_bnd_level'])
 					{
 						case 0:
-							infobox_start("Status der Bündnissanfrage",1);
+							tableStart("Status der Bündnissanfrage");
 							echo "<tr>
 								<th class=\"tbltitle\" style=\"width:200px;\">Allianz</th>
 								<td class=\"tbldata\">".$opName."</td>
@@ -224,7 +224,7 @@
 									<td class=\"tbldata\"><textarea name=\"pact_answer\" rows=\"6\" cols=\"70\"></textarea></td>
 								</tr>";
 							}
-							infobox_end(1);				
+							tableEnd();				
 							echo "<input type=\"hidden\" name=\"id\" value=\"".$id."\" />";					
 							if ($arr['a1id']==$cu->allianceId())
 							{							
@@ -237,7 +237,7 @@
 							}								
 							break;
 						case 2:
-							infobox_start("Bündnis \"".$arr['alliance_bnd_name']."\"",1);
+							tableStart("Bündnis \"".$arr['alliance_bnd_name']."\"");
 							echo "<tr>
 								<th class=\"tbltitle\" style=\"width:200px;\">Allianz</th>
 								<td class=\"tbldata\">".$opName."</td>
@@ -250,12 +250,12 @@
 								<th class=\"tbltitle\" style=\"width:200px;\">Öffentlicher Text</th>
 								<td class=\"tbldata\"><textarea name=\"alliance_bnd_text_pub\" rows=\"6\" cols=\"70\">".stripslashes($arr['alliance_bnd_text_pub'])."</textarea></td>
 							</tr>";
-							infobox_end(1);				
+							tableEnd();				
 							echo "<input type=\"hidden\" name=\"id\" value=\"".$id."\" />";					
 							echo "<input type=\"submit\" name=\"submit_pact_public_text\" value=\"Speichern\" /> &nbsp; ";
 							break;		
 						case 3:
-							infobox_start("Krieg",1);
+							tableStart("Krieg");
 							echo "<tr>
 								<th class=\"tbltitle\" style=\"width:200px;\">Allianz</th>
 								<td class=\"tbldata\">".$opName."</td>
@@ -278,7 +278,7 @@
 									<td class=\"tbldata\">".text2html($arr['alliance_bnd_text_pub'])."</td>
 								</tr>";
 							}
-							infobox_end(1);				
+							tableEnd();				
 							if ($arr['a1id']==$cu->allianceId())
 							{
 								echo "<input type=\"hidden\" name=\"id\" value=\"".$id."\" />";					
@@ -343,7 +343,7 @@
 					
 					echo "<form action=\"?page=$page&amp;action=relations\" method=\"post\" name=\"endpact\">";
 
-					infobox_start("Bündnis \"".stripslashes($arr['alliance_bnd_name'])."\" beenden",1);
+					tableStart("Bündnis \"".stripslashes($arr['alliance_bnd_name'])."\" beenden");
 					echo "<tr>
 						<th class=\"tbltitle\" style=\"width:200px;\">Allianz</th>
 						<td class=\"tbldata\">".$opName."</td>
@@ -352,7 +352,7 @@
 						<th class=\"tbltitle\" style=\"width:200px;\">Begründung</th>
 						<td class=\"tbldata\"><textarea name=\"pact_end_text\" rows=\"6\" cols=\"70\"></textarea></td>
 					</tr>";
-					infobox_end(1);				
+					tableEnd();				
 					echo "<input type=\"hidden\" name=\"id\" value=\"".$id."\" />";					
 					echo "<input type=\"submit\" name=\"submit_pact_end\" value=\"Auflösen\"  onclick=\"return checkEndPact()\" onsubmit=\"return checkEndPact()\" /> &nbsp; ";
 					echo "<input type=\"button\" onclick=\"document.location='?page=alliance&amp;action=relations';\" value=\"Zur&uuml;ck\" />";
@@ -810,7 +810,7 @@
 					alliance_tag;");
 				if (mysql_num_rows($ares)>0)
 				{
-					infobox_start("&Uuml;bersicht",1);
+					tableStart("&Uuml;bersicht");
 					echo "<tr><td class=\"tbltitle\" colspan=\"2\">Allianz</td>
 					<td class=\"tbltitle\">Status</td>
 					<td class=\"tbltitle\">Start</td>
@@ -923,7 +923,7 @@
 						}
 						echo "</td></tr>";
 					}
-					infobox_end(1);
+					tableEnd();
 				}
 				else
 					echo "Es gibt noch keine Allianzen, welcher du den Krieg erkl&auml;ren kannst.<br/><br/>";

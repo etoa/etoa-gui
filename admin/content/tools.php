@@ -165,7 +165,7 @@ echo "<h1>Tools</h1>";
 
         	}
         }
-        //infobox_end(1);
+        //tableEnd();
 
 
         //infobox_start("Ausgewählte Spezialschiffe Angreifer",1);
@@ -226,7 +226,7 @@ echo "<h1>Tools</h1>";
 				$simulade_att=1;
         	}
         }
-        //infobox_end(1);
+        //tableEnd();
 
 
 
@@ -258,7 +258,7 @@ echo "<h1>Tools</h1>";
         	}
 
         }
-        //infobox_end(1);
+        //tableEnd();
 
         //infobox_start("Ausgewählte Schiffe Verteidiger",1);
         foreach ($_POST['ship_count_d'] as $id_d=> $count_d)
@@ -304,7 +304,7 @@ echo "<h1>Tools</h1>";
         	}
 
         }
-        //infobox_end(1);
+        //tableEnd();
 
 
 
@@ -368,7 +368,7 @@ echo "<h1>Tools</h1>";
 
         	}
         }
-        //infobox_end(1);
+        //tableEnd();
 
 
         //infobox_start("Ausgewählte Verteidigung Verteidiger",1);
@@ -416,7 +416,7 @@ echo "<h1>Tools</h1>";
         	}
 
         }
-        //infobox_end(1);
+        //tableEnd();
 
 
         //infobox_start("Ausgewählte Tech Verteidiger",1);
@@ -449,7 +449,7 @@ echo "<h1>Tools</h1>";
         	}
 
         }
-        //infobox_end(1);
+        //tableEnd();
 
 
 		if($simulade_att==1 && $simulade_def==1)
@@ -505,7 +505,7 @@ echo "<h1>Tools</h1>";
                 $tabulator+=2;
             }
 
-            infobox_end(1);
+            tableEnd();
         }
 
 
@@ -557,7 +557,7 @@ echo "<h1>Tools</h1>";
                 $tabulator+=2;
             }
 
-            infobox_end(1);
+            tableEnd();
         }
 
         // Verteidigung anzeigen
@@ -594,7 +594,7 @@ echo "<h1>Tools</h1>";
                 $tabulator++;
             }
 
-            infobox_end(1);
+            tableEnd();
         }
 
 
@@ -628,7 +628,7 @@ echo "<h1>Tools</h1>";
             	</tr>";
 
             }
-            infobox_end(1);
+            tableEnd();
             echo "<input type=\"submit\" name=\"submit_simulation\" value=\"Simulieren\" title=\"Kampf simulieren\"/> &nbsp;";
             echo "</form>";
         }

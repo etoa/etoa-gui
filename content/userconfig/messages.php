@@ -22,16 +22,18 @@
 
             echo "<form action=\"?page=$page&mode=messages\" method=\"post\" enctype=\"multipart/form-data\">";
             $cstr = checker_init();
-            infobox_start("Nachrichtenoptionen",1);
+            tableStart("Nachrichtenoptionen");
 
             echo "<tr>
-            	<th class=\"tbldata\" width=\"35%\">Nachrichten-Signatur:</th>
-            	<td class=\"tbldata\"><textarea name=\"msgsignature\" cols=\"50\" rows=\"2\" width=\"65%\">".stripslashes($arr['msgsignature'])."</textarea></td>
+            	<th width=\"35%\">Nachrichten-Signatur:</th>
+            	<td>
+            		<textarea name=\"msgsignature\" cols=\"50\" rows=\"4\" width=\"65%\">
+            		".stripslashes($arr['msgsignature'])."</textarea></td>
             </tr>";
 		        //Nachrichtenvorschau (Neue/Archiv) (An/Aus)
 		    		echo "<tr>
-	    				 		<th class=\"tbldata\" width=\"36%\">Nachrichtenvorschau (Neue/Archiv):</th>
-    						<td class=\"tbldata\" width=\"16%\">
+	    				 		<th width=\"36%\">Nachrichtenvorschau (Neue/Archiv):</th>
+    						<td width=\"16%\">
                     <input type=\"radio\" name=\"msg_preview\" value=\"1\" ";
                     if ($arr['msg_preview']==1) echo " checked=\"checked\"";
                     echo "/> Aktiviert
@@ -43,8 +45,8 @@
            	     
 		          //Nachrichtenvorschau (Erstellen) (An/Aus)
 		          echo "<tr>
-		              		<th class=\"tbldata\" width=\"36%\">Nachrichtenvorschau (Erstellen):</th>
-              		<td class=\"tbldata\" width=\"16%\">
+		              		<th width=\"36%\">Nachrichtenvorschau (Erstellen):</th>
+              		<td width=\"16%\">
                       <input type=\"radio\" name=\"msgcreation_preview\" value=\"1\" ";
                       if ($arr['msgcreation_preview']==1) echo " checked=\"checked\"";
                       echo "/> Aktiviert
@@ -56,8 +58,8 @@
 
 		          // Blinkendes Nachrichtensymbol (An/Aus)
 		          echo "<tr>
-		              		<th class=\"tbldata\" width=\"36%\">Blinkendes Nachrichtensymbol:</th>
-              		<td class=\"tbldata\" width=\"16%\">
+		              		<th width=\"36%\">Blinkendes Nachrichtensymbol:</th>
+              		<td width=\"16%\">
                       <input type=\"radio\" name=\"msg_blink\" value=\"1\" ";
                       if ($arr['msg_blink']==1) echo " checked=\"checked\"";
                       echo "/> Aktiviert
@@ -69,8 +71,8 @@
                
 		          // Text kopieren (An/Aus)
 		          echo "<tr>
-		              		<th class=\"tbldata\" width=\"36%\">Text bei Antwort/Weiterleiten kopieren:</th>
-              		<td class=\"tbldata\" width=\"16%\">
+		              		<th width=\"36%\">Text bei Antwort/Weiterleiten kopieren:</th>
+              		<td width=\"16%\">
                       <input type=\"radio\" name=\"msg_copy\" value=\"1\" ";
                       if ($arr['msg_copy']==1) echo " checked=\"checked\"";
                       echo "/> Aktiviert
@@ -80,7 +82,7 @@
                   </td>
                </tr>";               
 
-            infobox_end(1);
+            tableEnd();
             echo "<input type=\"submit\" name=\"data_submit\" value=\"&Uuml;bernehmen\"/>";
             echo "</form><br/><br/>";
  

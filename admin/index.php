@@ -394,30 +394,30 @@
 									if ($conf['updating']['v']!=0 && ($conf['updating']['p2']=="" || $conf['updating']['p2']<time()-120))
 									{
 										echo "<br/>";
-										infobox_start("Update-Problem");
+										iBoxStart("Update-Problem");
 										echo "Das Update k&ouml;nnte unter Umst&auml;nden festh&auml;ngen.";
 										if ($conf['updating']['p2']>0)
 											echo "Es wurde um ".date("d.m.Y, H:i",$conf['updating']['p2'])." zuletzt ausgeführt";
 										echo " <a href=\"?page=$page&amp;releaseupdate=1\">L&ouml;sen</a>";
-										infobox_end();
+										iBoxEnd();
 									}
 									if ($conf['updating_fleet']['v']!=0 && ($conf['updating_fleet']['p2']=="" || $conf['updating_fleet']['p2']<time()-120))
 									{
 										echo "<br/>";
-										infobox_start("Flottenupdate-Problem");
+										iBoxStart("Flottenupdate-Problem");
 										echo "Das Flottenupdate k&ouml;nnte unter Umst&auml;nden festh&auml;ngen.";
 										if ($conf['updating_fleet']['p2']>0)
 											echo "Es wurde um ".date("d.m.Y, H:i",$conf['updating_fleet']['p2'])." zuletzt ausgefhrt";
 										echo " <a href=\"?page=$page&amp;releasefleetupdate=1\">L&ouml;sen</a>";
-										infobox_end();
+										iBoxEnd();
 									}
 									if ($conf['update_enabled']['v']!=1)
 									{
 										echo "<br/>";
-										infobox_start("Updates deaktiviert");
+										iBoxStart("Updates deaktiviert");
 										echo "Die Updates sind momentan deaktiviert!";
 										echo " <a href=\"?page=$page&amp;activateupdate=1\">Aktivieren</a>";
-										infobox_end();
+										iBoxEnd();
 									}
 									
 									$allow_inc=false;

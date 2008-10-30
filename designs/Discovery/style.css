@@ -302,7 +302,7 @@ input,select,textarea	{
 }
 
 
-.tblblack {
+.tblblack, .tb td.tblblack, .tb th.tblblack {
 	font-size:8pt;
 	color:#fff;
 	border:1px solid #fff;
@@ -331,7 +331,7 @@ div.infoboxtitle	{
 	text-align:center;
 }
 
-td.infoboxtitle	{
+td.infoboxtitle, .tb td.infoboxtitle	{
 	font-size:10pt;
 	font-weight:bold;
 	background:#225 url(images/cellpic.gif);

@@ -125,7 +125,7 @@
 			echo "<form action=\"?page=$page&amp;id=".intval($_GET['id'])."\" method=\"post\">";
 			checker_init();
 
-			infobox_start($arr['ship_name'],1,1);
+			tableStart($arr['ship_name']);
 			echo "
 			     <tr>
 			     	<td class=\"tbltitle\" width=\"25%\">Level</td>";
@@ -169,10 +169,10 @@
 			     </tr>
 
 			     ";
-			infobox_end(1);
+			tableEnd();
 
 			//Zeigt alle Bonis die das Schiff upgraden kann
-			infobox_start("Bonis",1,1);
+			tableStart("Bonis");
 			echo "
 			     <tr>
 			     	<td class=\"tbltitle\" width=\"25%\">Skill</td>
@@ -317,7 +317,7 @@
 
 
 
-			infobox_end(1);
+			tableEnd();
 
 			//Level Button anzeigen, wenn genügend EXP vorhaden
 			if($level-$init_level>0 && ($arr['special_ship_max_level']>$init_level || $arr['special_ship_max_level']==0))
@@ -395,7 +395,7 @@
             $exp_for_next_level = ceil($arr['special_ship_need_exp'] * pow($arr['special_ship_exp_factor'],$level));
 
 
-            infobox_start($arr['ship_name'],1,1);
+            tableStart($arr['ship_name']);
 
     				echo "
     					<tr>
@@ -442,7 +442,7 @@
                          </tr>
 
                          ";
-                    infobox_end(1);
+                    tableEnd();
 
         }
 

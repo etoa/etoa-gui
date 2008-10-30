@@ -159,19 +159,19 @@
 			switch ($_GET['request'])
 			{
 				case "change_name":
-					infobox_start("&Auml;nderungsantrag: Vollst&auml;ndiger Name",1);
+					tableStart("&Auml;nderungsantrag: Vollst&auml;ndiger Name");
 					$res=dbquery("SELECT user_name FROM users WHERE user_id='".$cu->id()."';");
 					$arr=mysql_fetch_row($res);
 					$oldval=$arr[0];
 					break;
 				case "change_nick":
-					infobox_start("&Auml;nderungsantrag: Benutzername",1);
+					tableStart("&Auml;nderungsantrag: Benutzername");
 					$res=dbquery("SELECT user_nick FROM users WHERE user_id='".$cu->id()."';");
 					$arr=mysql_fetch_row($res);
 					$oldval=$arr[0];
 					break;
 				case "change_email":
-					infobox_start("&Auml;nderungsantrag: Fixe E-Mail",1);
+					tableStart("&Auml;nderungsantrag: Fixe E-Mail");
 					$res=dbquery("SELECT user_email_fix FROM users WHERE user_id='".$cu->id()."';");
 					$arr=mysql_fetch_row($res);
 					$oldval=$arr[0];
@@ -182,7 +182,7 @@
 			echo "<tr><th class=\"tbltitle\">Alter Wert:</th><td class=\"tbldata\">".$oldval."</td></tr>";
 			echo "<tr><th class=\"tbltitle\">Neuer Wert:</th><td class=\"tbldata\"><input type=\"text\" name=\"value\" value=\"\" /></td></tr>";
 			echo "<tr><th class=\"tbltitle\">Bemerkungen:</th><td class=\"tbldata\"><textarea name=\"comment\" cols=\"70\" rows=\"5\"></textarea></td></tr>";
-			infobox_end(1);
+			tableEnd();
 			echo "<input type=\"submit\" name=\"submit\" value=\"&Uuml;bermitteln\" /> &nbsp; <input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?page=$page'\" /></form>";
 		}
 	}
@@ -245,7 +245,7 @@
         echo "Im Sittermodus ist dieser Bereich gesperrt!<br><br>";
         
         // Aktive Sittingdaten Anzeigen
-        infobox_start("Sitter Einstellungen",1);
+        tableStart("Sitter Einstellungen");
         echo "<tr><td class=\"tbldata\"><div align=\"center\"><b>Modus aktiv!</b></div></td></tr>";
 
         $date_res = dbquery("
@@ -277,7 +277,7 @@
             }
         }
         echo "</td></tr>";
-        infobox_end(1);
+        tableEnd();
       }
     }
 

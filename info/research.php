@@ -54,14 +54,14 @@
 			}
 			echo "</select><br/><br/>";		
 
-			infobox_start($arr['tech_name'],1);
+			tableStart($arr['tech_name']);
 			echo "<tr><th class=\"tbltitle\" style=\"width:220px;\" rowspan=\"2\"><img src=\"".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$arr['tech_id'].".".IMAGE_EXT."\" style=\"width:220px;height:220px;\" alt=\"Bild ".$arr['tech_name']."\" /></td>";
 			echo "<td class=\"tbldata\" colspan=\"2\"><div align=\"justify\">".text2html($arr['tech_longcomment'])."</div></td></tr>";
 			echo "<tr>
 				<td class=\"tbltitle\" style=\"height:20px;width:120px;\">Maximale Stufe:</td>
 				<td class=\"tbldata\" style=\"height:20px;\">".$arr['tech_last_level']."</td>
 			</tr>";			
-			infobox_end(1);
+			tableEnd();
 			
 			if ($arr['tech_type_id']==TECH_SPEED_CAT)
 			{
@@ -82,17 +82,17 @@
 					
 				if (mysql_num_rows($vres)>0)
 				{
-					infobox_start("Folgende Schiffe verwenden diesen Antrieb",1);
+					tableStart("Folgende Schiffe verwenden diesen Antrieb");
 					while ($varr=mysql_fetch_array($vres))
 					{
 						echo "<tr><td class=\"tbldata\"><a href=\"?page=help&amp;site=shipyard&amp;id=".$varr['ship_id']."\">".$varr['ship_name']."</a></td><td class=\"tbldata\">ben&ouml;tigt Stufe ".$varr['req_req_tech_level']."</td></tr>";
 					}
-					infobox_end(1);
+					tableEnd();
 				}
 			}
 
 			// Kostenentwicklung			
-			infobox_start ("Kostenentwicklung (Faktor: ".$arr['tech_build_costs_factor'].")",1);
+			tableStart ("Kostenentwicklung (Faktor: ".$arr['tech_build_costs_factor'].")");
       echo "<tr><th class=\"tbltitle\" style=\"text-align:center;\">Level</th>
       			<th class=\"tbltitle\">".RES_ICON_METAL."".RES_METAL."</th>
       			<th class=\"tbltitle\">".RES_ICON_CRYSTAL."".RES_CRYSTAL."</th>
@@ -131,14 +131,14 @@
 				$res=dbquery("SELECT tech_name,tech_shortcomment,tech_id FROM ".$db_table['technologies']." WHERE tech_type_id=".$tarr['type_id']." AND tech_show=1 GROUP BY tech_id ORDER BY tech_order,tech_name;");
 				if (mysql_num_rows($res)>0)
 				{
-					infobox_start($tarr['type_name'],1);
+					tableStart($tarr['type_name']);
 					while ($arr = mysql_fetch_array($res))
 					{
 						echo "<tr><td class=\"tbldata\" style=\"width:40px;\"><a href=\"?page=$page&site=$site&id=".$arr['tech_id']."\"><img src=\"".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$arr['tech_id']."_small.".IMAGE_EXT."\" width=\"40\" height=\"40\" alt=\"Bild ".$arr['tech_name']."\" border=\"0\"/></a></td>";
 						echo "<td class=\"tbltitle\" style=\"width:160px;\">".$arr['tech_name']."</td>";
 						echo "<td class=\"tbldata\">".$arr['tech_shortcomment']."</td></tr>";
 					}
-					infobox_end(1);
+					tableEnd();
 				}
 			}
 		}

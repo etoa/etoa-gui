@@ -33,7 +33,7 @@
 	if (mysql_num_rows($res)>0)
 	{
 
-		infobox_start("Planetenboni",1);
+		tableStart("Planetenboni");
 		echo "<tr><td class=\"tbltitle\" colspan=\"2\"><a href=\"?page=$page&amp;site=$site&amp;order=name\">Name</a></td>";
 		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_metal\">".RES_METAL."</td>";
 		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_crystal\">".RES_CRYSTAL."</td>";
@@ -79,7 +79,7 @@
 			echo "</tr>";
 		}
 	}
-	infobox_end(1);
+	tableEnd();
 
 
 ?>

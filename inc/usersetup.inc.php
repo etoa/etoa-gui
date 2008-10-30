@@ -86,7 +86,7 @@
 		$k = mt_rand(10000,99999);
 		$s['itemset_key']=$k;
 		$s['itemset_planet']=$tp->id();
-		infobox_start("Start-Objekte");
+		iBoxStart("Start-Objekte");
 		echo "<form action=\"?\" method=\"post\">";
 		checker_init();
 		echo "Euch stehen mehrere Vorlagen von Start-Objekte zur Auswahl. Bitte wählt eine Vorlage aus, die darin definierten Objekte
@@ -96,7 +96,7 @@
 			echo "<option value=\"".$arr['set_id']."\">".$arr['set_name']."</option>";
 		}
 		echo "</select> <input type=\"submit\" value=\"Weiter\" name=\"".md5($k)."\" /></form>";
-		infobox_end();		
+		iBoxEnd();		
 	}	
 	elseif ($mode=="checkplanet")
 	{
@@ -256,9 +256,9 @@
 	elseif ($mode=="finished")
 	{
 		echo "<h2>Einrichtung abgeschlossen</h2>";
-		infobox_start("Willkommen");
+		iBoxStart("Willkommen");
 		echo text2html($conf['welcome_message']['v']);
-		infobox_end();
+		iBoxEnd();
 		echo '<input type="button" value="Zum Heimatplaneten" onclick="document.location=\'?page=planetoverview\'" />';
 		if (!isset($s['allow_planet_change_counter']) || $s['allow_planet_change_counter']==0)
 		{

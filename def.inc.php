@@ -107,6 +107,7 @@
 	define("FORUM_PATH","http://www.etoa.ch/forum");	// Forum Link
 	
 	define("DEVCENTER_PATH","https://dev.etoa.ch");	// Entwickler Link
+	define("DEVCENTER_ONCLICK","window.open('".DEVCENTER_PATH."','dev','width=1024,height=768,scrollbars=yes');");	// Entwickler Link
 
 	//define('CHAT_URL',"http://chat.etoa.ch");	// Chat
 	//define('CHAT_ONCLICK',"window.open('".CHAT_URL."','chat','width=900,height=700,scrollbars=yes');");

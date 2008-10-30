@@ -111,7 +111,7 @@
 	$fl[36]['f']="[flag world]";
 	
 	//Table flags
-	infobox_start("Liste mit den vorhandenen Flaggen",1);
+	tableStart("Liste mit den vorhandenen Flaggen");
 		
 		echo "<tr><th class=\"tbltitle\">Land</th><th class=\"tbltitle\">BBCode</th><th class=\"tbltitle\">Flagge</th></tr>";
   	
@@ -121,6 +121,6 @@
 			echo "<td class=\"tbldata\" style=\"text-align:left\">".$land['f']."</td>";
 			echo "<td class=\"tbldata\" style=\"text-align:left\">".text2html($land['f'])."</td></tr>";
 		}
-	infobox_end(1);
+	tableEnd();
 	
 ?>

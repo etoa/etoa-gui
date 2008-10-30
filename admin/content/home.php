@@ -83,9 +83,9 @@
 
 	
 		echo "<br/><br/><h2>Feedliste</h2>";
-		infobox_start("Vorhandene Feeds",1);
+		tableStart("Vorhandene Feeds");
 		Rss::showOverview();
-		infobox_end(1);
+		tableEnd();
 		
 	}
 	
@@ -485,7 +485,7 @@
 			echo "Diese News erscheinen auf der Startseite im Game:<br/><br/>";
 			infobox_start("Vorschau");
 			echo text2html($cfg->value('info'));
-			infobox_end();
+			iBoxEnd();
 		}
 
 		echo "<a name=\"writer\"></a>";
@@ -524,7 +524,7 @@
 			{
 				infobox_start("Vorschau");
 				echo text2html($arr['config_value']);
-				infobox_end();
+				iBoxEnd();
 			}
 			echo "<textarea name=\"config_value\" cols=\"100\" rows=\"15\">".$arr['config_value']."</textarea><br/><br/>";
 			echo "<input type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" class=\"button\" />";
@@ -557,7 +557,7 @@
 			{
 				infobox_start("Vorschau");
 				echo text2html($arr['config_value']);
-				infobox_end();
+				iBoxEnd();
 			}
 			echo "<textarea name=\"config_value\" cols=\"100\" rows=\"15\">".$arr['config_value']."</textarea><br/><br/>";
 			echo "<input type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" class=\"button\" />";
@@ -616,7 +616,7 @@
 		{
 			infobox_start("Passwort");   
 			echo "<span style=\"color:#f90;\">Dein Passwort wurde seit der letzten automatischen Generierung noch nicht geÃ¤ndert. Bitte mache das jetzt <a href=\"?myprofile=1\">hier</a>!</span>";
-			infobox_end();			
+			iBoxEnd();			
 		}
 		
 		
@@ -627,7 +627,7 @@
 		{
 			infobox_start("Admin-News");   
 			echo text2html($conf['admininfo']['v']);
-			infobox_end();			
+			iBoxEnd();			
 		}
 
 		// Flottensperre aktiv
@@ -651,7 +651,7 @@
 			infobox_start("Flottensperre aktiviert");
 			echo "Die Flottensperre ist aktiviert. Es kÃƒÂ¶nnen keine FlÃƒÂ¼ge gestartet werden!<br><br><b>Status:</b> ".$flightban_time_status."<br><b>Zeit:</b> ".date("d.m.Y H:i",$conf['flightban_time']['p1'])." - ".date("d.m.Y H:i",$conf['flightban_time']['p2'])."<br><b>Grund:</b> ".$conf['flightban']['p1']."<br><br>";
 			echo "Zum deaktivieren: <a href=\"?page=fleets&amp;sub=fleetoptions\">Flottenoptionen</a>";
-			infobox_end();
+			iBoxEnd();
 		}
 		
 		// Kampfsperre aktiv
@@ -675,7 +675,7 @@
 			infobox_start("Kampfsperre aktiviert");
 			echo "Die Kampfsperre ist aktiviert. Es kÃƒÂ¶nnen keine Angriffe geflogen werden!<br><br><b>Status:</b> ".$battleban_time_status."<br><b>Zeit:</b> ".date("d.m.Y H:i",$conf['battleban_time']['p1'])." - ".date("d.m.Y H:i",$conf['battleban_time']['p2'])."<br><b>Grund:</b> ".$conf['battleban']['p1']."<br><br>";
 			echo "Zum deaktivieren: <a href=\"?page=fleets&amp;sub=fleetoptions\">Flottenoptionen</a>";
-			infobox_end();
+			iBoxEnd();
 		}
 
 		if ($conf['system_message']['v']!="")
@@ -683,14 +683,14 @@
 			echo "<br/>";
 			infobox_start("<span style=\"color:red;\">Folgende Systemnachricht ist zurzeit aktiviert (<a href=\"?page=$page&amp;sub=systemmessage\">Bearbeiten/Deaktivieren</a>):</span>");
 			echo text2html($conf['system_message']['v']);
-			infobox_end();			
+			iBoxEnd();			
 		}
 		
 		if ($cfg->value('register_key')!="")
 		{
 			infobox_start("Schutz der öffentlichen Seiten");
 			echo "Die öffentlichen Seiten (Anmeldung, Statistiken etc) sind durch den Schlüssel <span style=\"font-weight:bold;color:#f90\">".$cfg->value('register_key')."</span> geschützt!";
-			infobox_end();				
+			iBoxEnd();				
 		}
 		
 		
@@ -699,7 +699,7 @@
 			echo "<br/>";
 			infobox_start("<span style=\"color:red;\">Spiel offline</span>");
 			echo $cfg->value('p1')." &nbsp; [<a href=\"?page=$page&amp;sub=offline\">&Auml;ndern</a>]";
-			infobox_end();			
+			iBoxEnd();			
 		}
 		
 		//
@@ -721,7 +721,7 @@
 
 		echo "<form action=\"?page=alliances&amp;action=search\" method=\"post\"><tr><th class=\"tbltitle\">Allianz-Tag:</th>";
 		echo "<td class=\"tbldata\"><input type=\"text\" name=\"alliance_tag\" size=\"40\" /> <input type=\"hidden\" name=\"qmode[alliance_tag]\" value=\"LIKE '%\" /><input type=\"submit\" name=\"alliance_search\" value=\"Suchen\" /></td></tr></form>";
-		infobox_end(1);
+		tableEnd();
 		echo "<script>document.forms[1].elements[0].focus()</script>";
 
 	
@@ -800,7 +800,7 @@
 			echo "</td></tr>";
 		}
 
-		infobox_end(1);		
+		tableEnd();		
 		
 		Cache::checkPerm();
 		

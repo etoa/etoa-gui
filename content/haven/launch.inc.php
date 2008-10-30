@@ -455,11 +455,11 @@
 							}
 	
 							echo "Die Schiffe starteten erfolgreich und sind nun unterwegs!<br/><br/>";
-							infobox_start("Flotteninfo",1);
+							tableStart("Flotteninfo");
 							echo "<tr><td class=\"tbltitle\" width=\"40%\">Startzeit:</td><td class=\"tbldata\" width=\"60%\" align=\"left\">".date("d.m.Y H:i:s",$launchtime)."</td></tr>";
 							echo "<tr><td class=\"tbltitle\" width=\"40%\">Ende des Fluges:</td><td class=\"tbldata\" width=\"60%\" align=\"left\">".date("d.m.Y H:i:s",$landtime)."</td></tr>";
 							echo "<tr><td class=\"tbltitle\" width=\"40%\">Dauer:</td><td class=\"tbldata\" width=\"60%\" align=\"left\">".tf($_SESSION['haven']['fleettotal']['flight_duration'])."</td></tr>";
-							infobox_end(1);
+							tableEnd();
 							echo "<input type=\"button\" name=\"new\" onclick=\"document.location='?page=$page'\" value=\"Eine neue Flotte losschicken\" title=\"Eine neue Flotte losschicken\" />&nbsp;";
 							echo "<input type=\"button\" name=\"new\" onClick=\"document.location='?page=fleetinfo&amp;id=$fleet_id'\" value=\"Diese Flotte beobachten\" title=\"Flotte beobachten\" />";
 							$_SESSION['haven']=Null;

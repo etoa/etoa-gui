@@ -35,9 +35,10 @@
 
 	echo "<h1>Flotten</h1>";
 	
-	echo "<input type=\"button\" onclick=\"document.location='?page=fleetstats'\" value=\"Schiffs&uuml;bersicht anzeigen\" />";
+	echo "<input type=\"button\" onclick=\"document.location='?page=fleetstats'\" value=\"Schiffs&uuml;bersicht anzeigen\" /> &nbsp; ";
 	
-	if (isset($_GET['mode']) && $_GET['mode']=="alliance" && $cu->allianceId()>0) {
+	if (isset($_GET['mode']) && $_GET['mode']=="alliance" && $cu->allianceId()>0) 
+	{
 		echo "<input type=\"button\" onclick=\"document.location='?page=fleets'\" value=\"Flotten anzeigen\" /><br/><br/>";
 		
 		$fm = new FleetManager($cu->id(),$cu->allianceId());
@@ -48,7 +49,7 @@
 			$cdarr = array();
 			
 			echo "Klicke auf den Auftrag um die Details einer Flotte anzuzeigen<br/><br/>";
-			infobox_start("Allianz Supportflotten",1);
+			tableStart("Allianz Supportflotten");
 			echo "<tr><td class=\"tbltitle\">Start / Ziel</td>
 			<td class=\"tbltitle\">Start / Landung</td>
 			<td class=\"tbltitle\">Auftrag / Status</td></tr>";
@@ -86,7 +87,7 @@
 				}
 				echo "</td></tr>";
 			}
-			infobox_end(1);
+			tableEnd();
 				
 			foreach ($cdarr as $elem=>$t)
 			{
@@ -95,9 +96,9 @@
 		}
 		else
 		{
-			infobox_start("Allianz Supportflotten");
+			iBoxStart("Allianz Supportflotten");
 			echo "Es sind keine Allianz Supportflotten unterwegs!";
-			infobox_end();
+			iBoxEnd();
 		}
 		
 		
@@ -107,7 +108,7 @@
 			$cdarr = array();
 			
 			echo "Klicke auf den Auftrag um die Details einer Flotte anzuzeigen<br/><br/>";
-			infobox_start("Allianz Angriffe",1);
+			tableStart("Allianz Angriffe");
 			echo "<tr><td class=\"tbltitle\">Start / Ziel</td>
 			<td class=\"tbltitle\">Start / Landung</td>
 			<td class=\"tbltitle\">Auftrag / Status</td></tr>";
@@ -145,7 +146,7 @@
 				}
 				echo "</td></tr>";
 			}
-			infobox_end(1);
+			tableEnd();
 				
 			foreach ($cdarr as $elem=>$t)
 			{
@@ -154,9 +155,9 @@
 		}
 		else
 		{
-			infobox_start("Allianz Angriffe");
+			iBoxStart("Allianz Angriffe");
 			echo "Es sind keine Allianz Angriffe unterwegs!";
-			infobox_end();
+			iBoxEnd();
 		}
 	}
 	
@@ -172,7 +173,7 @@
 			$cdarr = array();
 			
 			echo "Klicke auf den Auftrag um die Details einer Flotte anzuzeigen<br/><br/>";
-			infobox_start("Eigene Flotten",1);
+			tableStart("Eigene Flotten");
 			echo "<tr><td class=\"tbltitle\">Start / Ziel</td>
 			<td class=\"tbltitle\">Start / Landung</td>
 			<td class=\"tbltitle\">Auftrag / Status</td></tr>";
@@ -210,7 +211,7 @@
 				}
 				echo "</td></tr>";
 			}
-			infobox_end(1);
+			tableEnd();
 				
 			foreach ($cdarr as $elem=>$t)
 			{
@@ -219,9 +220,9 @@
 		}
 		else
 		{
-			infobox_start("Eigene Flotten");
+			iBoxStart("Eigene Flotten");
 			echo "Es sind keine eigenen Flotten unterwegs!";
-			infobox_end();
+			iBoxEnd();
 		}
 	
 	
@@ -232,7 +233,7 @@
 		$fm->loadForeign();
 		if ($fm->count() > 0)
 		{	
-			infobox_start("Fremde Flotten",1);
+			tableStart("Fremde Flotten");
 			foreach ($fm->getAll() as $fid=>$fd)
 			{
 	
@@ -387,13 +388,13 @@
 					}	
 				}
 			}
-			infobox_end(1);
+			tableEnd();
 		}
 		else
 		{
-			infobox_start("Fremde Flotten");
+			iBoxStart("Fremde Flotten");
 			echo "Es sind keine fremden Flotten zu deinen Planeten unterwegs!";
-			infobox_end();
+			iBoxEnd();
 		}
 	}
 

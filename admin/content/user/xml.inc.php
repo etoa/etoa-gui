@@ -85,7 +85,7 @@
 				
 				
 			}
-			infobox_end(1);
+			tableEnd();
 	
 			infobox_start("Planeten",1);
 			if (isset($xml->planets))
@@ -129,7 +129,7 @@
 					}
 				}
 			}
-			infobox_end(1);	
+			tableEnd();	
 
 			infobox_start("Gebäude",1);
 			if (isset($xml->buildings))
@@ -147,7 +147,7 @@
 					}
 				}
 			}
-			infobox_end(1);	
+			tableEnd();	
 	
 			infobox_start("Technologien",1);
 			if (isset($xml->technologies))
@@ -164,7 +164,7 @@
 					}
 				}
 			}
-			infobox_end(1);	
+			tableEnd();	
 			
 			infobox_start("Schiffe",1);
 			if (isset($xml->ships))
@@ -182,7 +182,7 @@
 					}
 				}
 			}
-			infobox_end(1);			
+			tableEnd();			
 			
 			infobox_start("Verteidigung",1);
 			if (isset($xml->defenses))
@@ -200,7 +200,7 @@
 					}
 				}
 			}
-			infobox_end(1);						
+			tableEnd();						
 			
 		}
 		else

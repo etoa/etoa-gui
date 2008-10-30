@@ -32,15 +32,6 @@
 	echo '<h1>Planetenstatistik</h1>';
 
 	echo "<input type=\"button\" onclick=\"document.location='?page=economy'\" value=\"Wirtschaft des aktuellen Planeten anzeigen\" /><br/><br/>";
-	echo "<div align=\"center\">";
-	echo "<table>";
-	echo "<tr><td class=\"tbldata2\">Minimum</td>
-	<td class=\"tbldata3\">Maximum</td>
-	<td class=\"tbldata\" style=\"font-style:italic\">Speicher bald voll</td>
-	<td class=\"tbldata\" style=\"font-weight:bold\">Speicher voll</td>
-	</tr>";
-	echo "</table>";
-	echo "</div><br><br>";
 
 	$planets=$pm->itemObjects();
 
@@ -203,32 +194,31 @@
 	// Rohstoffe/Bewohner und Speicher
 	//
 
-	echo "<h2>Rohstoffe und Bewohner</h2><br>";
-	echo "<table class=\"tbl\">";
-	echo "<tr><th class=\"tbltitle\">Name:</th>
-	<th class=\"tbltitle\">".RES_METAL."</th>
-	<th class=\"tbltitle\">".RES_CRYSTAL."</th>
-	<th class=\"tbltitle\">".RES_PLASTIC."</th>
-	<th class=\"tbltitle\">".RES_FUEL."</th>
-	<th class=\"tbltitle\">".RES_FOOD."</th>
-	<th class=\"tbltitle\">Bewohner</th></tr>";
+	tableStart("Rohstoffe und Bewohner");
+	echo "<tr><th>Name:</th>
+	<th>".RES_METAL."</th>
+	<th>".RES_CRYSTAL."</th>
+	<th>".RES_PLASTIC."</th>
+	<th>".RES_FUEL."</th>
+	<th>".RES_FOOD."</th>
+	<th>Bewohner</th></tr>";
 	foreach ($planets as $p)
 	{
-		echo "<tr><td class=\"tbldata\"><a href=\"?page=economy&amp;planet_id=".$p->id."\">".$p->name."</a></td>";
+		echo "<tr><td><a href=\"?page=economy&amp;planet_id=".$p->id."\">".$p->name."</a></td>";
 		for ($x=0;$x<6;$x++)
 		{
 			echo "<td";
 			if ($max_res[$x]==$val_res[$p->id][$x])
 			{
-				echo " class=\"tbldata3\"";
+				echo " style=\"color:#0f0\"";
 			}
 			elseif ($min_res[$x]==$val_res[$p->id][$x])
 			{
-				 echo " class=\"tbldata2\"";
+				 echo " style=\"color:#f00\"";
 			}
 			else
 			{
-				 echo " class=\"tbldata\"";
+				 echo " ";
 			}
 
 
@@ -254,14 +244,14 @@
 		echo "</tr>";
 		$cnt_res++;
 	}
-	echo "<tr><td colspan=\"6\"></td></tr>";
-	echo "<tr><th class=\"tbltitle\">Total</th>";
+	echo "<tr><td colspan=\"7\"></td></tr>";
+	echo "<tr><th>Total</th>";
 	for ($x=0;$x<6;$x++)
-		echo "<td class=\"tbltitle\">".nf($tot_res[$x])."</td>";
-	echo "</tr><tr><th class=\"tbltitle\">Durchschnitt</th>";
+		echo "<td>".nf($tot_res[$x])."</td>";
+	echo "</tr><tr><th>Durchschnitt</th>";
 	for ($x=0;$x<6;$x++)
-		echo "<td class=\"tbltitle\">".nf($tot_res[$x]/$cnt_res)."</td>";
-	echo "</tr></table><br/><br>";
+		echo "<th>".nf($tot_res[$x]/$cnt_res)."</th>";
+	echo "</tr></table>";
 
 
 
@@ -287,45 +277,54 @@
 
 
 
-	echo "<h2>Produktion</h2><br>";
-	echo "<table class=\"tbl\">";
-	echo "<tr><th class=\"tbltitle\">Name:</th>
-	<th class=\"tbltitle\">".RES_METAL."</th>
-	<th class=\"tbltitle\">".RES_CRYSTAL."</th>
-	<th class=\"tbltitle\">".RES_PLASTIC."</th>
-	<th class=\"tbltitle\">".RES_FUEL."</th>
-	<th class=\"tbltitle\">".RES_FOOD."</th>
-	<th class=\"tbltitle\">Energie</th></tr>";
+	tableStart("Produktion");
+	echo "<tr><th>Name:</th>
+	<th>".RES_METAL."</th>
+	<th>".RES_CRYSTAL."</th>
+	<th>".RES_PLASTIC."</th>
+	<th>".RES_FUEL."</th>
+	<th>".RES_FOOD."</th>
+	<th>Energie</th></tr>";
 	foreach ($planets as $p)
 	{
-		echo "<tr><td class=\"tbldata\"><a href=\"?page=economy&amp;planet_id=".$p->id."\">".$p->name."</a></td>";
+		echo "<tr><td><a href=\"?page=economy&amp;planet_id=".$p->id."\">".$p->name."</a></td>";
 		for ($x=0;$x<6;$x++)
 		{
 			echo "<td";
 			if ($max_prod[$x]==$val_prod[$p->id][$x])
 			{
-				echo " class=\"tbldata3\"";
+				echo "  style=\"color:#0f0\"";
 			}
 			elseif ($min_prod[$x]==$val_prod[$p->id][$x])
 			{
-				 echo " class=\"tbldata2\"";
+				 echo "  style=\"color:#f00\"";
 			}
 			else
 			{
-				 echo " class=\"tbldata\"";
+				 echo "";
 			}
 			echo ">".nf($val_prod[$p->id][$x])."</td>";
 		}
 		echo "</tr>";
 		$cnt_prod++;
 	}
-	echo "<tr><td colspan=\"6\"></td></tr>";
-	echo "<tr><th class=\"tbltitle\">Total</th>";
+	echo "<tr><td colspan=\"7\"></td></tr>";
+	echo "<tr><th>Total</th>";
 	for ($x=0;$x<6;$x++)
-		echo "<td class=\"tbltitle\">".nf($tot_prod[$x])."</td>";
-	echo "</tr><tr><th class=\"tbltitle\">Durchschnitt</th>";
+		echo "<td>".nf($tot_prod[$x])."</td>";
+	echo "</tr><tr><th>Durchschnitt</th>";
 	for ($x=0;$x<6;$x++)
-		echo "<td class=\"tbltitle\">".nf($tot_prod[$x]/$cnt_prod)."</td>";
-	echo "</tr></table><br/>";
+		echo "<th>".nf($tot_prod[$x]/$cnt_prod)."</th>";
+	echo "</tr></table>";
+	
+	tableStart("Legende");
+	echo "<tr>
+	<td style=\"color:#f00\">Minimum</td>
+	<td style=\"color:#0f0\">Maximum</td>
+	<td style=\"font-style:italic\">Speicher bald voll</td>
+	<td style=\"font-weight:bold\">Speicher voll</td>
+	</tr>";
+	echo "</table>";
+
 
 ?>

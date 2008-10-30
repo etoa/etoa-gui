@@ -824,7 +824,7 @@ function loadEconomy($uid,$target)
 				{
 					infobox_start("Rohstoff- und Produktionsübersicht");
 					echo "Der User hat noch keinen Planeten!";
-					infobox_end();
+					iBoxEnd();
 				}
 
 				//
@@ -897,13 +897,13 @@ function loadEconomy($uid,$target)
 									</tr>"; 
 					}
 					
-					infobox_end(1);
+					tableEnd();
 				}
 				else
 				{
 					infobox_start("5 letzte Bauaufträge");
 					echo "Es sind keine Logs vorhanden!";
-					infobox_end();
+					iBoxEnd();
 				}
 				
 				
@@ -974,13 +974,13 @@ function loadEconomy($uid,$target)
 									</tr>"; 
 					}
 					
-					infobox_end(1);
+					tableEnd();
 				}
 				else
 				{
 					infobox_start("5 letzte Forschungsaufträge");
 					echo "Es sind keine Logs vorhanden!";
-					infobox_end();
+					iBoxEnd();
 				}
 				
 				
@@ -1041,13 +1041,13 @@ function loadEconomy($uid,$target)
 									</tr>"; 
 					}
 					
-					infobox_end(1);
+					tableEnd();
 				}
 				else
 				{
 					infobox_start("5 letzte Schiffsaufträge");
 					echo "Es sind keine Logs vorhanden!";
-					infobox_end();
+					iBoxEnd();
 				}
 				
 				
@@ -1109,13 +1109,13 @@ function loadEconomy($uid,$target)
 									</tr>"; 
 					}
 					
-					infobox_end(1);
+					tableEnd();
 				}
 				else
 				{
 					infobox_start("5 letzte Schiffsaufträge");
 					echo "Es sind keine Logs vorhanden!";
-					infobox_end();
+					iBoxEnd();
 				}
 				
 				echo "Wirtschaftsseite geladen in ".timerStop($tmr)." sec<br/>";

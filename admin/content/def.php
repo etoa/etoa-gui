@@ -165,7 +165,7 @@
 				// Hinzufügen
 				echo "<h2>Neue Verteidigungsanlagen hinzuf&uuml;gen</h2>";
 				echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\">";
-				infobox_start("",1);
+				tableStart();
 				echo "<tr><th class=\"tbltitle\">Verteidigung:</th><td class=\"tbldata\"><select name=\"def_id\">";
 				foreach ($slist as $k=>$v)
 				{
@@ -210,7 +210,7 @@
 					echo ">".$parr['sx']."/".$parr['sy']." : ".$parr['cx']."/".$parr['cy']." : ".$parr['pos']." &nbsp; ".$parr['planet_name']." (".$parr['user_nick'].")</option>";
 				}
 				echo "</select></td></tr>";
-				infobox_end(1);
+				tableEnd();
 				echo "<input type=\"submit\" name=\"new\" value=\"Hinzuf&uuml;gen\" /></form><br/>";				
 				$sql = $sqlstart.$sql.$sqlend;
 				$_SESSION['defedit']['query']=$sql;
@@ -405,7 +405,7 @@
 			echo "<h2>Schnellsuche</h2>";
 			// Hinzufügen
 			echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\" id=\"selector\">";
-			infobox_start("",1);
+			tableStart();
 			
 			//Sonnensystem
 			echo "<tr><th class=\"tbltitle\">Sonnensystem</th><td class=\"tbldata\">
@@ -448,7 +448,7 @@
 			
 			//Vorhandene Schiffe
 			echo "<tr><th class=\"tbltitle\">Vorhandene Verteidigung:</th><td class=\"tbldata\" id=\"shipsOnPlanet\">Planet w&auml;hlen...</td></tr>";
-			infobox_end(1);
+			tableEnd();
 			echo "</form>";
 			echo '<script type="text/javascript">document.forms[0].user_nick.focus();</script>';
 

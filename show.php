@@ -72,7 +72,7 @@
 
 	if (isset($s['user_id']))
 	{
-		$cu = new User($s['user_id']);
+		$cu = new CurrentUser($s['user_id']);
 	}
 	else
 		$cu = null;
@@ -141,7 +141,6 @@
 		<meta http-equiv="Page-Exit" content="blendTrans(Duration=0.3)" />
 		
 		<script src="js/main.js" type="text/javascript"></script>
-		<link rel="stylesheet" href="css/general.css" type="text/css" />
 
 		<?PHP
 			// XAJAX
@@ -153,10 +152,13 @@
 			if (file_exists(CSS_STYLE."/scripts.js"))
 			echo "<script src=\"".CSS_STYLE."/scripts.js\" type=\"text/javascript\"></script>";			 
 		?>
+
+		<link rel="stylesheet" href="css/general.css" type="text/css" />
+
 	</head>
 	<body id="outGameBody">
 		<?PHP
-			if ($index!="" || ($page=="help" && isset($s['user_id'])))
+			if ($index!="" || ($page=="help" && !isset($s['user_id'])))
 			{
 	    	echo '<div id="outGameTop">';
 	    	echo '<div><a href="'.LOGINSERVER_URL.'">Startseite</a><a href="?">Übersicht</a></div><b>'.GAMEROUND_NAME.'</b> &nbsp; ';
@@ -262,7 +264,9 @@
 				}
 				if (file_exists($sub.$page.".php"))
 				{
+					$popup = true;
 					include ($sub.$page.".php");
+					echo "<br/><br/>";
 				}
 				else
 				{

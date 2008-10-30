@@ -869,7 +869,7 @@
 	}
 	
 	
-	infobox_start("Allianz Ressourcen",1);
+	tableStart("Allianz Ressourcen");
 	echo "<tr>
 					<td class=\"tbltitle\" style=\"width:20%;vertical-align:middle;\">".RES_ICON_METAL." ".RES_METAL."</td>
 					<td class=\"tbltitle\" style=\"width:20%;vertical-align:middle;\">".RES_ICON_CRYSTAL." ".RES_CRYSTAL."</td>
@@ -884,7 +884,7 @@
 					<td ".$style3."id=\"resBoxFuel\">".nf($aarr['alliance_res_fuel'])." t</td>
 					<td ".$style4."id=\"resBoxFood\">".nf($aarr['alliance_res_food'])." t</td>
 				</tr>";
- 	infobox_end(1);
+ 	tableEnd();
  	
  	
  	
@@ -1208,7 +1208,7 @@
 				$title = $data['alliance_building_name'].' <span id="buildlevel">';
 				$title.= $b_level > 0 ? $b_level : '';
 				$title.= '</span>';
-				infobox_start($title,1);
+				tableStart($title);
 				echo "<tr>
                   <td class=\"tbldata\" style=\"width:120px;background:#000;vertical-align:middle;\">
                   	<img src=\"".$path."\" style=\"width:120px;height:120px;border:none;\" alt=\"".$data['alliance_building_name']."\"/>
@@ -1227,9 +1227,9 @@
   			$options_arr = show_buildoptions("building", $data['alliance_building_id'], $aarr['alliance_res_metal'], $aarr['alliance_res_crystal'], $aarr['alliance_res_plastic'], $aarr['alliance_res_fuel'], $aarr['alliance_res_food'], $data['alliance_building_costs_metal'], $data['alliance_building_costs_crystal'], $data['alliance_building_costs_plastic'], $data['alliance_building_costs_fuel'], $data['alliance_building_costs_food'], $data['alliance_building_build_time'], $data['alliance_building_costs_factor'], $b_level, $data['alliance_building_last_level'], $buildsomething, $alliance_member_cnt, $end_time);
   			
   			// Stellt Optionsbox dar
-  			infobox_start("",1);
+  			tableStart();
   			echo $options_arr['optionsbox'];
-  			infobox_end(1);
+  			tableEnd();
 			}
 		}
 	}
@@ -1298,7 +1298,7 @@
 				$title = $data['alliance_tech_name'].' <span id="buildlevel">';
 				$title.= $b_level > 0 ? $b_level : '';
 				$title.= '</span>';
-				infobox_start($title,1);
+				tableStart($title);
 				echo "<tr>
                   <td class=\"tbldata\" style=\"width:120px;background:#000;vertical-align:middle;\">
                   	<img src=\"".$path."\" style=\"width:120px;height:120px;border:none;\" alt=\"".$data['alliance_tech_name']."\"/>
@@ -1317,9 +1317,9 @@
   			$options_arr = show_buildoptions("research", $data['alliance_tech_id'], $aarr['alliance_res_metal'], $aarr['alliance_res_crystal'], $aarr['alliance_res_plastic'], $aarr['alliance_res_fuel'], $aarr['alliance_res_food'], $data['alliance_tech_costs_metal'], $data['alliance_tech_costs_crystal'], $data['alliance_tech_costs_plastic'], $data['alliance_tech_costs_fuel'], $data['alliance_tech_costs_food'], $data['alliance_tech_build_time'], $data['alliance_tech_costs_factor'], $b_level, $data['alliance_tech_last_level'], $researchsomething, $alliance_member_cnt, $end_time);
   			
   			// Stellt Optionsbox dar
-  			infobox_start("",1);
+  			tableStart();
   			echo $options_arr['optionsbox'];
-  			infobox_end(1);
+  			tableEnd();
 			}
 		}
 	}
@@ -1351,7 +1351,7 @@
  	echo "<form action=\"?page=".$page."&amp;action=".$_GET['action']."&amp;action2=storage\" method=\"post\" id=\"alliance_storage\">\n";
 	echo $cstr;
 
-	infobox_start("Rohstoffe einzahlen",1,0);	
+	tableStart("Rohstoffe einzahlen");	
 	
 	// Titan
 	echo "<tr>
@@ -1388,7 +1388,7 @@
 						<input type=\"text\" value=\"0\" name=\"spend_food\" id=\"spend_food\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resFood.",'','');\"> <a href=\"javascript:;\" onclick=\"document.getElementById('spend_food').value='".nf($cp->resFood)."';\">alles</a>
 					</td>
 				</tr>";			
-	infobox_end(1);
+	tableEnd();
 	
 	echo "<input type=\"submit\" class=\"button\" name=\"storage_submit\" id=\"storage_submit\" value=\"Einzahlen\"/>";
 	echo "</form><br><br><br><br>";
@@ -1408,7 +1408,7 @@
   // Filter
   //
   
-  infobox_start("Filter",1,0);
+  tableStart("Filter");
   
   // Ausgabe
   echo "<tr>
@@ -1450,7 +1450,7 @@
   					<input type=\"submit\" class=\"button\" name=\"filter_submit\" id=\"filter_submit\" value=\"Anzeigen\"\"/>
   				</td>
   			</tr>";
-  infobox_end(1);
+  tableEnd();
   echo "</form>";
   
   
@@ -1491,7 +1491,7 @@
 		{						
 			$arr=mysql_fetch_assoc($res);
 			
-			infobox_start("Total eingezahlte Rohstoffe ".$user_message."",1);
+			tableStart("Total eingezahlte Rohstoffe ".$user_message."");
 			echo "<tr>
 							<td class=\"tbltitle\" style=\"width:20%\">".RES_METAL."</td>
 							<td class=\"tbltitle\" style=\"width:20%\">".RES_CRYSTAL."</td>
@@ -1506,13 +1506,13 @@
 							<td class=\"tbldata\">".nf($arr['fuel'])."</td>
 							<td class=\"tbldata\">".nf($arr['food'])."</td>
 						</tr>";
-			infobox_end(1);
+			tableEnd();
 		}
 		else
 		{
-			infobox_start("Einzahlungen");
+			iBoxStart("Einzahlungen");
 			echo "Es wurden noch keine Rohstoffe eingezahlt!";
-			infobox_end();
+			iBoxEnd();
 		}
 	}
 	// Einzahlungen werden einzelen ausgegeben
@@ -1567,7 +1567,7 @@
 		{						
 			while($arr=mysql_fetch_assoc($res))
 			{
-				infobox_start("".$alliance_members[$arr['alliance_spend_user_id']]['user_nick']." - ".df($arr['alliance_spend_time'])."",1);
+				tableStart("".$alliance_members[$arr['alliance_spend_user_id']]['user_nick']." - ".df($arr['alliance_spend_time'])."");
 				echo "<tr>
 								<td class=\"tbltitle\" style=\"width:20%\">".RES_METAL."</td>
 								<td class=\"tbltitle\" style=\"width:20%\">".RES_CRYSTAL."</td>
@@ -1582,15 +1582,15 @@
 								<td class=\"tbldata\">".nf($arr['alliance_spend_fuel'])."</td>
 								<td class=\"tbldata\">".nf($arr['alliance_spend_food'])."</td>
 							</tr>";
-				infobox_end(1);
+				tableEnd();
 			}
 			
 		}
 		else
 		{
-			infobox_start("Einzahlungen");
+			iBoxStart("Einzahlungen");
 			echo "Es wurden noch keine Rohstoffe eingezahlt!";
-			infobox_end();
+			iBoxEnd();
 		}
 	}
 
@@ -1619,7 +1619,7 @@
  		echo "<form action=\"?page=".$page."&amp;action=".$_GET['action']."&amp;action2=shipyard\" method=\"post\" id=\"alliance_shipyard\">\n";
 		echo $cstr;
 		
-		infobox_start("Guthaben Übersicht",1);
+		tableStart("Guthaben Übersicht");
 		
 		echo "<tr>
 						<td class=\"tbldata\" style=\"text-align:center;\">Schiffsteile pro Stunde: ".(2*$conf['alliance_shippoints_per_hour']['v'] + $conf['alliance_shippoints_per_hour']['v']*$buildlist[ALLIANCE_SHIPYARD_ID]['alliance_buildlist_current_level'])."</td>
@@ -1628,7 +1628,7 @@
 						<td class=\"tbldata\" style=\"text-align:center;\">Vorhandene Teile: ".$alliance_members[$cu->id()]['user_alliace_shippoints']."</td>
 					</tr>";
 		
-		infobox_end(1);
+		tableEnd();
 		
 		
 		// Listet Schiffe auf
@@ -1637,7 +1637,7 @@
 			foreach($ships as $id => $data)
 			{						
 				$path = IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$data['ship_id']."_middle.".IMAGE_EXT;
-				infobox_start($data['ship_name'],1);
+				tableStart($data['ship_name']);
 				echo "<tr>
 	                <td class=\"tbldata\" style=\"width:120px;background:#000;vertical-align:middle;\">
 	                	<img src=\"".$path."\" style=\"width:120px;height:120px;border:none;\" alt=\"".$data['ship_name']."\"/>
@@ -1649,7 +1649,7 @@
 				     </tr>";
 				infobox_end(1,1);
 				
-				infobox_start("",1);
+				tableStart();
 				echo "<tr>
 								<td class=\"tbltitle\" style=\"width:13%\">Waffen</td>
 								<td class=\"tbltitle\" style=\"width:13%\">Struktur</td>
@@ -1675,19 +1675,19 @@
 							</tr>";
 				
 				
-				infobox_end(1);
+				tableEnd();
 			}
 		}
 		else
 		{
-			infobox_start("Schiffe");
+			iBoxStart("Schiffe");
 			echo "Es sind keine Allianzschiffe vorhanden!";
-			infobox_end();
+			iBoxEnd();
 		}
 		
 		
 		
-		infobox_start("Fertigung",1);
+		tableStart("Fertigung");
 		
 		echo "<tr>
 						<td class=\"tbldata\" style=\"text-align:center;\">
@@ -1704,7 +1704,7 @@
 						</td>
 					</tr>";
 		
-		infobox_end(1);
+		tableEnd();
   		
 		echo "</form>";
 	}

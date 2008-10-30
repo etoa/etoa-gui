@@ -44,10 +44,10 @@ if (Alliance::checkActionRights('massmail'))
 		{
 			$subject = "";
 		}
-		infobox_start("Nachricht verfassen",1);
+		tableStart("Nachricht verfassen");
 		echo "<tr><td class=\"tbltitle\" style=\"width:50px;\">Betreff:</td><td class=\"tbldata\"><input type=\"text\" name=\"message_subject\" value=\"".$subject."\" size=\"30\" maxlength=\"255\"></td></tr>";
 		echo "<tr><td class=\"tbltitle\">Text:</td><td class=\"tbldata\"><textarea name=\"message_text\" rows=\"5\" cols=\"50\"></textarea></td></tr>";
-		infobox_end(1);
+		tableEnd();
 		echo "<input type=\"submit\" name=\"submit\" value=\"Senden\" /> &nbsp;<input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=$page'\" />";
 		echo "</form>";
 	}

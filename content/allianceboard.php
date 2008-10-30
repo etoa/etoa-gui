@@ -241,9 +241,9 @@
 					{
 						echo "<form action=\"?page=$page&amp;bnd=".$_GET['bnd']."&topic=".$arr['post_topic_id']."\" method=\"post\">";
 						echo "<input type=\"hidden\" name=\"post_id\" value=\"".$arr['post_id']."\" />";
-						infobox_start("Soll der folgende Beitrag wirklich gelöscht werden?");
+						iBoxStart("Soll der folgende Beitrag wirklich gelöscht werden?");
 						echo text2html($arr['post_text']);
-						infobox_end();
+						iBoxEnd();
 						echo "<input type=\"submit\" value=\"L&ouml;schen\" name=\"post_delete\" onclick=\"return confirm('Wirklich löschen?');\" /> &nbsp; ";
 					}
 					else

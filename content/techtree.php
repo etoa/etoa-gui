@@ -250,7 +250,7 @@
 				".TYPE_ORDER_FLD." ASC;");
 			while ($tarr=mysql_fetch_array($tres))
 			{
-				infobox_start($tarr[TYPE_NAME_FLD],1);
+				tableStart($tarr[TYPE_NAME_FLD]);
 
 				if (ITEM_RACE_FLD!="")
 				{
@@ -429,13 +429,13 @@
 				else
 					echo "<tr><td align=\"center\" colspan=\"3\" class=\"tbldata\">".NO_ITEMS_MSG."</td></tr>";
 				
-				infobox_end(1);
+				tableEnd();
 			}
 		}
 		// Wenn keine Kategorien vorhanden sind (Schiffe, Verteidigungsanlagen)
 		else
 		{
-			infobox_start("",1);
+			tableStart();
 			if (ITEM_RACE_FLD!="")
 			{
 				$res = dbquery("
@@ -564,7 +564,7 @@
 			}
 			else
 				echo "<tr><td align=\"center\" colspan=\"3\" class=\"tbldata\">".NO_ITEMS_MSG."</td></tr>";
-			infobox_end(1);
+			tableEnd();
 	}
 	
 	}
@@ -610,7 +610,7 @@
 		echo "</select><br/><br/>";
 		
 		echo "<div id=\"reqInfo\" style=\"width:650px;text-align:center;;margin-left:10px;padding:10px;
-		background:#fff;color:#000;border:1px solid #000\">
+		background:#fff;color:#000;border:1px solid #000;margin:0px auto;\">
 		Bitte warten...
 		</div>";	
 		echo '<script type="text/javascript">xajax_reqInfo('.$starItem.',"b")</script>';

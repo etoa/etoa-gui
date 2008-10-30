@@ -49,15 +49,16 @@
 			$cp->resBox();
 	
 			// Todo: This is useless at the moment
-			if ($cp->prodPower >= $werft_arr['building_power_req'])
+			if (true) //$cp->prodPower >= $werft_arr['building_power_req'])
 			{
+				
 
 				// Prüfen ob dieses Gebäude deaktiviert wurde
 				if ($dt = $bl->getDeactivated(BUILD_CRYPTO_ID))
 		 		{
-					infobox_start("Geb&auml;ude nicht bereit");
+					iBoxStart("Geb&auml;ude nicht bereit");
 					echo "Dieses Gebäude ist noch bis <span id=\"decd\">".df($dt)."</span> deaktiviert.";
-					infobox_end();
+					iBoxEnd();
 				}
 				else
 				{
@@ -413,9 +414,9 @@
 	                    }
 	                                        
 	                    // Display result
-										  infobox_start("Ergebnis der Analyse");
+										  iBoxStart("Ergebnis der Analyse");
 										  echo text2html($out);
-										  infobox_end();
+										  iBoxEnd();
 										                   
 											// Add note to user's notepad if selected
 											if (isset($_POST['scan_to_notes']))
@@ -485,12 +486,12 @@
 					}			
 						
 		
-					infobox_start("Kryptocenter-Infos",1);
+					tableStart("Kryptocenter-Infos");
 					echo "<tr><th class=\"tbltitle\">Aktuelle Reichweite:</th><td class=\"tbldata\">".(CRYPTO_RANGE_PER_LEVEL*$cryptoCenterLevel)." AE (+".CRYPTO_RANGE_PER_LEVEL." pro Stufe)</td></tr>";
 					echo "<tr><th class=\"tbltitle\">Kosten pro Scan:</th><td class=\"tbldata\">".nf(CRYPTO_FUEL_COSTS_PER_SCAN)." ".RES_FUEL."</td></tr>";
 					echo "<tr><th class=\"tbltitle\">Abklingzeit:</th><td class=\"tbldata\">".tf($cooldown)." (-".tf($cfg->param1("cryptocenter"))." pro Stufe, minimal ".tf($cfg->param2("cryptocenter")).")</td></tr>";
 					echo "<tr><th class=\"tbltitle\">Status:</th><td class=\"tbldata\">".$status_text."</td></tr>";
-					infobox_end(1);
+					tableEnd();
 					
 					if (!$cd_enabled)
 					{				
@@ -517,7 +518,7 @@
 						}  		
 						echo '<form action="?page='.$page.'" method="post">';		
 						checker_init();
-						infobox_start("Ziel für Flottenanalyse wahlen:");
+						iBoxStart("Ziel für Flottenanalyse wahlen:");
 		
 						//
 						// Bookmarks laden
@@ -536,7 +537,7 @@
 						echo "<i>oder</i> Favorit wählen: ".$bm->drawSelector("bookmarkselect","applyBookmark();")."<br/><br/>
 						<input type=\"checkbox\" name=\"scan_to_notes\" value=\"1\" checked=\"checked\" /> Bericht zu meinem Notizblock hinzufügen";					
 						echo $bm->drawSelectorJavaScript("bookmarkselect","applyBookmark");
-						infobox_end();
+						iBoxEnd();
 						if ($cp->resFuel >= CRYPTO_FUEL_COSTS_PER_SCAN)
 						{
 							echo '<input type="submit" name="scan" value="Analyse für '.nf(CRYPTO_FUEL_COSTS_PER_SCAN).' '.RES_FUEL.' starten" />';
@@ -560,7 +561,7 @@
 			}
 			else
 			{
-				echo "Gebäude ist deaktiviert! Zu wenig Energie verfügbar, ".nf($werft_arr['building_power_req'])." muss produziert werden, ".nf($cp->prodPower)." wird produziert.";
+				//echo "Gebäude ist deaktiviert! Zu wenig Energie verfügbar, ".nf($werft_arr['building_power_req'])." muss produziert werden, ".nf($cp->prodPower)." wird produziert.";
 			}
 		}
 		else

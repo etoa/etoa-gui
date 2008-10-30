@@ -194,12 +194,12 @@
           	          send_mail(0,$_POST['register_user_email'],"EtoA Registrierung",$email_text,"","left",1);
           	
           	          add_log(3,"Der Benutzer ".$_POST['register_user_nick']." (".$_POST['register_user_name'].", ".$_POST['register_user_email'].") hat sich registriert!",time());
-          	          infobox_start("Registration erfolgreich!");
+          	          iBoxStart("Registration erfolgreich!");
           	          echo "Es wurde eine E-Mail an <b>".$_POST['register_user_email']."</b> verschickt, in der ein automatisch generiertes Passwort f&uuml;r deine Erstanmeldung steht.<br/>
           	          Bitte &auml;ndere dieses Passwort sobald als m&ouml;glich in den Einstellungen.<br/><br/>
           	          Solltest du innerhalb der n&auml;chsten 5 Minuten keine E-Mail erhalten, pr&uuml;fe zun&auml;chst dein Spam-Verzeichnis.<br/><br/>
           	          Melde dich bei einem <a href=\"?index=contact\">Admin</a>, falls du keine E-Mail erh&auml;ltst oder andere Anmeldeprobleme auftreten.";
-          	          infobox_end();
+          	          iBoxEnd();
           	      }
           	      else
           	      {

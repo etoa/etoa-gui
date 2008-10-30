@@ -95,12 +95,12 @@
 				
         echo "<form action=\"?page=$page&mode=design\" method=\"post\">";
         $cstr = checker_init();
-        infobox_start("Designoptionen",1);
+        tableStart("Designoptionen");
         
         //Design wählen
         echo "<tr>
-            <th class=\"tbldata\" width=\"36%\">Design w&auml;hlen:</th>
-            <td class=\"tbldata\" width=\"64%\" colspan=\"4\">
+            <th width=\"36%\">Design w&auml;hlen:</th>
+            <td width=\"64%\" colspan=\"4\">
                     <select name=\"css_style\" id=\"designSelector\" onchange=\"xajax_designInfo(this.options[this.selectedIndex].value);\">";
                     foreach ($designs as $k => $v)
                     {
@@ -115,8 +115,8 @@
 
         // Bildpacket wählen
         echo "<tr>
-                <th class=\"tbldata\" width=\"36%\">Bildpaket w&auml;hlen:</th>
-                <td class=\"tbldata\" width=\"64%\" colspan=\"4\">
+                <th width=\"36%\">Bildpaket w&auml;hlen:</th>
+                <td width=\"64%\" colspan=\"4\">
                     <select id=\"image_select\" name=\"image_select\" onchange=\"xajax_imagePackInfo(this.options[this.selectedIndex].value);\">";
                     echo "<option value=\"\">(Selbstdefiniert oder Standard)</option>";
                     foreach ($themes as $k => $v)
@@ -133,8 +133,8 @@
 
         //Spielgrösse
         echo "<tr>
-                <th class=\"tbldata\" width=\"36%\">Spielgr&ouml;sse: (nur alte Designs)</th>
-                <td class=\"tbldata\" width=\"64%\" colspan=\"4\">
+                <th width=\"36%\">Spielgr&ouml;sse: (nur alte Designs)</th>
+                <td width=\"64%\" colspan=\"4\">
                     <select name=\"game_width\">";
                     for ($x=70;$x<=100;$x+=10)
                     {
@@ -148,8 +148,8 @@
 
         //Planetkreisgrösse
         echo "<tr>
-                <th class=\"tbldata\" width=\"36%\">Planetkreisgr&ouml;sse:</th>
-                <td class=\"tbldata\" width=\"64%\" colspan=\"4\">
+                <th width=\"36%\">Planetkreisgr&ouml;sse:</th>
+                <td width=\"64%\" colspan=\"4\">
                   <select name=\"planet_circle_width\">";
                   for ($x=450;$x<=700;$x+=50)
                   {
@@ -163,13 +163,13 @@
 	
 				//Schiff/Def Ansicht (Einfach/Voll)
         echo "<tr>
-            		<th class=\"tbldata\" width=\"36%\">Schiff/Def Ansicht:</th>";
-          echo "<td class=\"tbldata\" width=\"16%\">
+            		<th width=\"36%\">Schiff/Def Ansicht:</th>";
+          echo "<td width=\"16%\">
           				<input type=\"radio\" name=\"item_show\" value=\"full\"";
           				if($cu->getp("item_show")=='full') echo " checked=\"checked\"";
           				echo " /> Volle Ansicht 
           			</td>
-          			<td class=\"tbldata\" width=\"48%\" colspan=\"3\">
+          			<td width=\"48%\" colspan=\"3\">
            				<input type=\"radio\" name=\"item_show\" value=\"small\"";
           				if($cu->getp("item_show")=='small') echo " checked=\"checked\"";
           				echo " /> Einfache Ansicht
@@ -179,13 +179,13 @@
 
 				//Bildfilter (An/Aus)
         echo "<tr>
-            		<th class=\"tbldata\" width=\"36%\">Bildfilter:</th>";
-          echo "<td class=\"tbldata\" width=\"16%\">
+            		<th width=\"36%\">Bildfilter:</th>";
+          echo "<td width=\"16%\">
           				<input type=\"radio\" name=\"image_filter\" value=\"1\"";
           				if($cu->getp("image_filter")==1) echo " checked=\"checked\"";
           				echo "/> An  
           			</td>
-          			<td class=\"tbldata\" width=\"48%\" colspan=\"3\">
+          			<td width=\"48%\" colspan=\"3\">
           				<input type=\"radio\" name=\"image_filter\" value=\"0\"";
           				if($cu->getp("image_filter")==0) echo " checked=\"checked\"";
           				echo "/> Aus
@@ -194,13 +194,13 @@
             	
 					//Hilfefenster (Aktiviert/Deaktiviert)
           echo "<tr>
-            			<th class=\"tbldata\" width=\"36%\">Separates Hilfefenster:</th>
-            			<td class=\"tbldata\" width=\"16%\">
+            			<th width=\"36%\">Separates Hilfefenster:</th>
+            			<td width=\"16%\">
                       <input type=\"radio\" name=\"helpbox\" value=\"1\" ";
                       if ($cu->getp("helpbox")==1) echo " checked=\"checked\"";
                       echo "/> Aktiviert
                   </td>
-                  <td class=\"tbldata\" width=\"48%\" colspan=\"3\">
+                  <td width=\"48%\" colspan=\"3\">
                       <input type=\"radio\" name=\"helpbox\" value=\"0\" ";
                       if ($cu->getp("helpbox")==0) echo " checked=\"checked\"";
             					echo "/> Deaktiviert
@@ -209,13 +209,13 @@
             
 					//Notizbox (Aktiviert/Deaktiviert)
           echo "<tr>
-            			<th class=\"tbldata\" width=\"36%\">Separater Notizbox:</th>
-            			<td class=\"tbldata\" width=\"16%\">
+            			<th width=\"36%\">Separater Notizbox:</th>
+            			<td width=\"16%\">
                       <input type=\"radio\" name=\"notebox\" value=\"1\" ";
                       if ($cu->getp("notebox")==1) echo " checked=\"checked\"";
                       echo "/> Aktiviert
                   </td>
-                  <td class=\"tbldata\" width=\"48%\" colspan=\"3\">
+                  <td width=\"48%\" colspan=\"3\">
                       <input type=\"radio\" name=\"notebox\" value=\"0\" ";
                       if ($cu->getp("notebox")==0) echo " checked=\"checked\"";
             					echo "/> Deaktiviert
@@ -224,13 +224,13 @@
           		
 					// Hafen Buttons
           echo "<tr>
-            			<th class=\"tbldata\" width=\"36%\">Vertausche Buttons in Hafen-Schiffauswahl:</th>
-            			<td class=\"tbldata\" width=\"16%\">
+            			<th width=\"36%\">Vertausche Buttons in Hafen-Schiffauswahl:</th>
+            			<td width=\"16%\">
                       <input type=\"radio\" name=\"havenships_buttons\" value=\"1\" ";
                       if ($cu->getp("havenships_buttons")==1) echo " checked=\"checked\"";
                       echo "/> Aktiviert
                   </td>
-                  <td class=\"tbldata\" width=\"48%\" colspan=\"3\">
+                  <td width=\"48%\" colspan=\"3\">
                       <input type=\"radio\" name=\"havenships_buttons\" value=\"0\" ";
                       if ($cu->getp("havenships_buttons")==0) echo " checked=\"checked\"";
             					echo "/> Deaktiviert
@@ -239,24 +239,24 @@
           		
 					// Werbebanner
           echo "<tr>
-            			<th class=\"tbldata\" width=\"36%\">Werbung anzeigen:</th>
-            			<td class=\"tbldata\" width=\"16%\">
+            			<th width=\"36%\">Werbung anzeigen:</th>
+            			<td width=\"16%\">
                       <input type=\"radio\" name=\"show_adds\" value=\"1\" ";
                       if ($cu->getp("show_adds")==1) echo " checked=\"checked\"";
                       echo "/> Aktiviert
                   </td>
-                  <td class=\"tbldata\" width=\"48%\" colspan=\"3\">
+                  <td width=\"48%\" colspan=\"3\">
                       <input type=\"radio\" name=\"show_adds\" value=\"0\" ";
                       if ($cu->getp("show_adds")==0) echo " checked=\"checked\"";
             					echo "/> Deaktiviert
             		</td>
           		</tr>";           		         
-            infobox_end(1);
+            tableEnd();
 
             echo "<input type=\"submit\" name=\"data_submit_design\" value=\"&Uuml;bernehmen\"></form><br/><br/>";
 
 
-            infobox_start("Bildpakete herunterladen",1);
+            tableStart("Bildpakete herunterladen");
             $cnt=0;
             echo '<tr>
             <th class="tbltitle">Bildpaket</th>
@@ -277,11 +277,11 @@
 		            		$fs = filesize($path);
 		            		$t = filemtime($path);
 		                echo "<tr>
-		                <td class=\"tbldata\">".$v['name']."</td>
-		                <td class=\"tbldata\"><a href=\"".$path."\">".$file."</a></td>
-		                <td class=\"tbldata\"><a href=\"mailto:".$v['email']."\">".$v['author']."</a></td>
-		                <td class=\"tbldata\">".byte_format($fs)."</td>
-		                <td class=\"tbldata\">".df($t)."</td>
+		                <td>".$v['name']."</td>
+		                <td><a href=\"".$path."\">".$file."</a></td>
+		                <td><a href=\"mailto:".$v['email']."\">".$v['author']."</a></td>
+		                <td>".byte_format($fs)."</td>
+		                <td>".df($t)."</td>
 		                </tr>";
 		            	}
 								}
@@ -291,7 +291,7 @@
             {
             	echo '<tr><td colspan="5" class="tbldata"><i>Keine Downloads vorhanden!</i></tr>';
             }
-            infobox_end(1);
+            tableEnd();
 
 
 ?>
