@@ -678,9 +678,7 @@ function calcDemolishingWaitTime($dc,$cp)
 				tableStart($title);
 				echo "<tr>
                   <td rowspan=\"4\" style=\"width:220px;background:#000;vertical-align:middle;\">
-                  	<a href=\"?page=help&amp;site=buildings&amp;id=".$arr['building_id']."\">
-                  		<img src=\"".$path."\" style=\"width:220px;height:220px;border:none;\" alt=\"".$arr['building_name']."\" />
-                  	</a>
+                 		".helpImageLink("buildings&amp;id=".$arr['building_id'],$path,$arr['building_name'],"width:220px;height:220px")."
                   </td>
                   <td colspan=\"2\" style=\"vertical-align:top;height:150px;\">
                   	".$arr['building_longcomment']."

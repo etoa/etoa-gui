@@ -402,7 +402,7 @@
 			<td $style3 ".$store_msg[4].">".nf(floor($this->resFuel))." t</td>
 			<td $style4 ".$store_msg[5].">".nf(floor($this->resFood))." t</td>
 			<td $style5 ".$store_msg[6].">".nf(floor($this->people))."</td>
-			<td $style6 ".$store_msg[7].">".nf($power_rest)."</td>
+			<td $style6 ".$store_msg[7].">".nf($power_rest)." MW</td>
 			</tr>";
 			tableEnd();
 		}

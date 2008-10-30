@@ -331,12 +331,11 @@ select#nav_mode_select	{
 
 /* übersicht -> wichtige infos, fremde flotten */
 div.infoboxtitle	{
-	width:99%;
 	font-size:10pt;
 	font-weight:bold;
 	border:1px solid #ffffff;
-	background:#333333;
-	padding:3px;
+	background:#ffa500 url('images/cellbg.png') repeat-x;
+	padding:6px;
 	text-align:center;
 }
 
@@ -345,13 +344,12 @@ td.infoboxtitle, .tb td.infoboxtitle	{
 	font-size:10pt;
 	font-weight:bold;
 	border:1px solid #ffffff;
-	background:#333333;
-	padding:3px;
+	background:#ffa500 url('images/cellbg.png') repeat-x;
+	padding:6px;
 	text-align:center;
 }
 /* übersicht -> wichtige infos, fremde flotten die dazugehörende unterspalte */
 div.infoboxcontent {
-	width:99%;
 	font-size:8pt;
 	color:#ffffff;
 	border-left:1px solid #fff;

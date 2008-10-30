@@ -228,12 +228,13 @@
 		 	echo "<h1>&Uuml;bersicht &uuml;ber den Planeten ".$cp->name."</h1>";
 			$cp->resBox();
 
-			tableStart("Details",750);
+			tableStart("Details",650);
 			echo "<tr>
-				<td style=\"width:330px;background:#000 url('".IMAGE_PATH."/backgrounds/bg".mt_rand(1,PLANET_BACKGROUND_COUNT).".jpg');\" rowspan=\"".($cp->debrisField ? 11 : 10)."\">
+				<td style=\"vertical-align:middle;width:330px;padding:0px;background:#000 url('".IMAGE_PATH."/backgrounds/bg".mt_rand(1,PLANET_BACKGROUND_COUNT).".jpg');\" rowspan=\"".($cp->debrisField ? 11 : 10)."\">
 				<img src=\"".IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$cp->image.".".IMAGE_EXT."\" alt=\"Planet\" style=\"width:310px;height:310px\"/>
 			</td>";
-			echo "<td class=\"tbltitle\">Kennung:</td><td class=\"tbldata\">
+			echo "<td class=\"tbltitle\" style=\"width:110px;\">Kennung:</td>
+			<td class=\"tbldata\" style=\"width:210px;\">
 				".$cp->id()." [<a href=\"?page=entity&id=".$cp->id()."\">Suchen</a>]</td>
 			</tr>";
 			echo "<td class=\"tbltitle\">Koordinaten:</td><td class=\"tbldata\">
@@ -241,11 +242,11 @@
 			</tr>";
 			echo "<tr>
 				<td class=\"tbltitle\">Sonnentyp:</td><td class=\"tbldata\">
-					".$cp->starTypeName." [<a href=\"?page=help&site=stars\">Infos</a>]
+					".$cp->starTypeName." ".helpLink("stars")."
 					</td></tr>";
 			echo "<tr>
 				<td class=\"tbltitle\">Planettyp:</td><td class=\"tbldata\">
-					".$cp->type()." [<a href=\"?page=help&site=planets\">Infos</a>]</td></tr>";
+					".$cp->type()." ".helpLink("planets")."</td></tr>";
 			echo "<tr>
 				<td class=\"tbltitle\">Felder:</td><td class=\"tbldata\">
 					".nf($cp->fields_used)." benutzt, ".(nf($cp->fields))." total (".round($cp->fields_used/$cp->fields*100)."%)</td></tr>";
@@ -258,7 +259,7 @@
 			echo "<tr>
 				<td class=\"tbltitle\">Temperatur:</td><td class=\"tbldata\">
 					".$cp->temp_from."&deg;C bis ".$cp->temp_to."&deg;C &nbsp; <br/>
-					<img src=\"images/heat_small.png\" alt=\"Heat\" style=\"width:16px;float:left;\" /> <a href=\"?page=help&amp;site=tempbonus\">Wärmebonus</a>: ";
+					<img src=\"images/heat_small.png\" alt=\"Heat\" style=\"width:16px;float:left;\" />Wärmebonus: ";
 				$spw = $cp->solarPowerBonus();
 				if ($spw>=0)
 				{
@@ -268,8 +269,9 @@
 				{
 					echo "<span style=\"color:#f00\">".$spw."</span>";
 				}
-				echo " Energie pro Solarsatellit<br style=\"clear:both;\"/>
-				<img src=\"images/ice_small.png\" alt=\"Cold\" style=\"width:16px;float:left;\" /> <a href=\"?page=help&amp;site=tempbonus\"> Kältebonus</a>: ";
+				echo " MW ".helpLink("tempbonus")."<br style=\"clear:both;\"/>
+				<img src=\"images/ice_small.png\" alt=\"Cold\" style=\"width:16px;float:left;\" />
+				Kältebonus: ";
 				$spw = $cp->fuelProductionBonus();
 				if ($spw>=0)
 				{
@@ -279,7 +281,7 @@
 				{
 					echo "<span style=\"color:#f00\">".$spw."%</span>";
 				}				
-			echo " ".RES_FUEL."-Produktion</td></tr>";
+			echo " ".helpLink("tempbonus")."</td></tr>";
 			echo "<tr><td class=\"tbltitle\">Produktion:</td><td class=\"tbldata\">
 			".RES_ICON_METAL."".nf($cp->prodMetal)." / h<br style=\"clear:both;\" /> 
 			".RES_ICON_CRYSTAL."".nf($cp->prodCrystal)." / h<br style=\"clear:both;\" /> 

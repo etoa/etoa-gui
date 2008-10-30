@@ -115,6 +115,7 @@
 		else
 		  echo "Technologiedaten nicht gefunden!";
 		echo "<input type=\"button\" value=\"Technologie&uuml;bersicht\" onclick=\"document.location='?page=$page&site=$site'\" /> &nbsp; ";
+		if (!$popup)
 		echo "<input type=\"button\" value=\"Technikbaum\" onclick=\"document.location='?page=techtree&mode=tech'\" /> &nbsp; ";
 	}
 	

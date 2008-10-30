@@ -387,11 +387,13 @@
 					// Forschungsdaten anzeigen
 					//
 					tableStart(text2html($arr['tech_name']." ".$b_level));
-					echo "<tr><td width=\"220\" rowspan=\"3\" class=\"tbldata\"><a href=\"?page=help&amp;site=research&amp;id=".$arr['tech_id']."\"><img src=\"".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$arr['tech_id'].".".IMAGE_EXT."\" width=\"220\" height=\"220\" border=\"0\" /></a></td>";
+					echo "<tr><td width=\"220\" rowspan=\"3\" class=\"tbldata\" style=\"background:#000;;vertical-align:middle;\">
+					".helpImageLink("research&amp;id=".$arr['tech_id'],IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$arr['tech_id'].".".IMAGE_EXT,$arr['tech_name'],"width:220px;height:220px")."
+					</td>";
 					echo "<td valign=\"top\" class=\"tbldata\" colspan=\"2\">".text2html($arr['tech_shortcomment'])."</td></tr>";
-					echo "<tr><td class=\"tbltitle\" height=\"20\" width=\"50%\">Status:</td>";
+					echo "<tr><th height=\"20\" width=\"50%\">Status:</th>";
 					echo "<td id=\"buildstatus\" class=\"tbldata\" width=\"50%\" style=\"".$color."\">$status_text</td></tr>";
-					echo "<tr><td class=\"tbltitle\" height=\"20\" width=\"50%\">Stufe:</td>";
+					echo "<tr><th height=\"20\" width=\"50%\">Stufe:</th>";
 	
 					if ($b_level>0)
 					{
@@ -440,13 +442,13 @@
 					{
 					tableStart("Forschoptionen");
 					echo "<tr>
-					<td class=\"tbltitle\" width=\"16%\">Aktion</td>
-					<td class=\"tbltitle\" width=\"14%\">Zeit</th>
-					<td class=\"tbltitle\" width=\"14%\">".RES_METAL."</td>
-					<td class=\"tbltitle\" width=\"14%\">".RES_CRYSTAL."</td>
-					<td class=\"tbltitle\" width=\"14%\">".RES_PLASTIC."</td>
-					<td class=\"tbltitle\" width=\"14%\">".RES_FUEL."</td>
-					<td class=\"tbltitle\" width=\"14%\">".RES_FOOD."</td></tr>";
+					<th width=\"16%\">Aktion</th>
+					<th width=\"14%\">Zeit</th>
+					<th width=\"14%\">".RES_METAL."</th>
+					<th width=\"14%\">".RES_CRYSTAL."</th>
+					<th width=\"14%\">".RES_PLASTIC."</th>
+					<th width=\"14%\">".RES_FUEL."</th>
+					<th width=\"14%\">".RES_FOOD."</th></tr>";
 	
 					$notAvStyle=" style=\"color:red;\"";
 	

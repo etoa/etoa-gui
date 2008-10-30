@@ -323,7 +323,6 @@ select#nav_mode_select	{
 
 /* übersicht -> wichtige infos, fremde flotten */
 div.infoboxtitle	{
-	width:99%;
 	font-size:10pt;
 	font-weight:bold;
 	border:1px solid #fff;
@@ -344,7 +343,6 @@ td.infoboxtitle, .tb td.infoboxtitle	{
 
 /* übersicht -> wichtige infos, fremde flotten die dazugehörende unterspalte */
 div.infoboxcontent {
-	width:99%;
 	font-size:8pt;
 	color:#fff;
 	border: none;

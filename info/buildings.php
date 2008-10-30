@@ -398,10 +398,13 @@ if (isset($_GET['id']))
       echo "Geb&auml;udeinfodaten nicht gefunden!<br/><br/>";
 
 	echo "<input type=\"button\" value=\"Geb&auml;ude&uuml;bersicht\" onclick=\"document.location='?page=$page&site=$site'\" /> &nbsp; ";
-	echo "<input type=\"button\" value=\"Technikbaum\" onclick=\"document.location='?page=techtree&mode=buildings'\" /> &nbsp; ";
+	if (!$popup)
+		echo "<input type=\"button\" value=\"Technikbaum\" onclick=\"document.location='?page=techtree&mode=buildings'\" /> &nbsp; ";
 
-	if ($_SESSION['lastpage']=="buildings")
+	if ($_SESSION['lastpage']=="buildings" && !$popup)
+	{
 	   echo "<input type=\"button\" value=\"Zur&uuml;ck zum Bauhof\" onclick=\"document.location='?page=buildings'\" /> &nbsp; ";
+	}
 
 }
 

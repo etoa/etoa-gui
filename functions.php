@@ -3195,6 +3195,14 @@ Forum: http://www.etoa.ch/forum";
 		return "[<a href=\"?page=help&amp;site=".$site."\" onclick=\"window.open('show.php?page=help&amp;site=".$site."','popup','status=no,width=".$width.",height=".$height.",scrollbars=yes');return false;\">".$caption."</a>]";		
 	}
 
+	function helpImageLink($site,$url,$alt="Item",$style="")
+	{
+		$width=900;
+		$height=600;
+		return "<a href=\"?page=help&amp;site=".$site."\" onclick=\"window.open('show.php?page=help&amp;site=".$site."','popup','status=no,width=".$width.",height=".$height.",scrollbars=yes');return false;\">
+		<img src=\"".$url."\" alt=\"".$alt."\" style=\"border:none;".$style."\" />
+		</a>";		
+	}
 
 	/**
 	* Textfunktionen einbinden
