@@ -29,7 +29,7 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/	
 
-	echo '<h1>Planetenstatistik</h1>';
+	echo '<h1>Wirtschaftsübersicht</h1>';
 
 	echo "<input type=\"button\" onclick=\"document.location='?page=economy'\" value=\"Wirtschaft des aktuellen Planeten anzeigen\" /><br/><br/>";
 

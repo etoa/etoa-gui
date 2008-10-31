@@ -53,7 +53,7 @@
 		define('TYPE_ID_FLD',"type_id");
 		define('TYPE_NAME_FLD',"type_name");
 		define('NO_ITEMS_MSG',"In dieser Kategorie gibt es keine Technologien!");
-		define('HELP_URL',"?page=help&site=research");
+		define('HELP_URL',"research");
 	}
 	elseif ($mode=="ships")
 	{
@@ -71,7 +71,7 @@
 		define('TYPE_ID_FLD',"cat_id");
 		define('TYPE_NAME_FLD',"cat_name");
 		define('NO_ITEMS_MSG',"In dieser Kategorie gibt es keine Schiffe!");
-		define('HELP_URL',"?page=help&site=shipyard");
+		define('HELP_URL',"shipyard");
 	}
 	elseif ($mode=="defense")
 	{
@@ -89,7 +89,7 @@
 		define('TYPE_ID_FLD',"cat_id");
 		define('TYPE_NAME_FLD',"cat_name");
 		define('NO_ITEMS_MSG',"In dieser Kategorie gibt es keine Verteidigungsanlagen!");
-		define('HELP_URL',"?page=help&site=defense");
+		define('HELP_URL',"defense");
 	}
 	elseif ($mode=="missiles")
 	{
@@ -102,7 +102,7 @@
 		define('ITEM_SHOW_FLD',"missile_show");
 		define('ITEM_ORDER_FLD',"missile_name");
 		define('NO_ITEMS_MSG',"In dieser Kategorie gibt es keine Raketen!");
-		define('HELP_URL',"?page=help&site=missiles");
+		define('HELP_URL',"missiles");
 	}	
 	elseif ($mode=="buildings")
 	{
@@ -120,7 +120,7 @@
 		define('TYPE_ID_FLD',"type_id");
 		define('TYPE_NAME_FLD',"type_name");
 		define('NO_ITEMS_MSG',"In dieser Kategorie gibt es keine Geb&auml;ude!");
-		define('HELP_URL',"?page=help&site=buildings");
+		define('HELP_URL',"buildings");
 	}
 
 
@@ -313,11 +313,11 @@
 							
 							if ($b_cnt + $t_cnt>0)
 							{
-								echo "<tr><td width=\"200\" class=\"tbldata\" rowspan=\"".($b_cnt + $t_cnt)."\"><b>".$arr[ITEM_NAME_FLD]."</b> [<a href=\"".HELP_URL."&amp;id=".$arr[ITEM_ID_FLD]."\">info</a>]";
+								echo "<tr><td width=\"200\" class=\"tbldata\" rowspan=\"".($b_cnt + $t_cnt)."\"><b>".$arr[ITEM_NAME_FLD]."</b> ".helpLink(HELP_URL."&amp;id=".$arr[ITEM_ID_FLD])."";
 							}
 							else
 							{
-								echo "<tr><td width=\"200\" class=\"tbldata\"><b>".$arr[ITEM_NAME_FLD]."</b> [<a href=\"".HELP_URL."&amp;id=".$arr[ITEM_ID_FLD]."\">info</a>]";
+								echo "<tr><td width=\"200\" class=\"tbldata\"><b>".$arr[ITEM_NAME_FLD]."</b> ".helpLink(HELP_URL."&amp;id=".$arr[ITEM_ID_FLD])."";
 							}
 							
 							if (ITEM_RACE_FLD!="" && $arr[ITEM_RACE_FLD]>0)
@@ -472,11 +472,11 @@
 				{
 					if (count($b_req[$arr[ITEM_ID_FLD]]['b'])+count($b_req[$arr[ITEM_ID_FLD]]['t'])>0)
 					{
-						echo "<tr><td width=\"200\" class=\"tbldata\" rowspan=\"".(count($b_req[$arr[ITEM_ID_FLD]]['b'])+count($b_req[$arr[ITEM_ID_FLD]]['t']))."\"><b>".$arr[ITEM_NAME_FLD]."</b> [<a href=\"".HELP_URL."&amp;id=".$arr[ITEM_ID_FLD]."\">info</a>]</td>";
+						echo "<tr><td width=\"200\" class=\"tbldata\" rowspan=\"".(count($b_req[$arr[ITEM_ID_FLD]]['b'])+count($b_req[$arr[ITEM_ID_FLD]]['t']))."\"><b>".$arr[ITEM_NAME_FLD]."</b> ".helpLink(HELP_URL."&amp;id=".$arr[ITEM_ID_FLD])."</td>";
 					}
 					else
 					{
-						echo "<tr><td width=\"200\" class=\"tbldata\"><b>".$arr[ITEM_NAME_FLD]."</b> [<a href=\"".HELP_URL."&amp;id=".$arr[ITEM_ID_FLD]."\">info</a>]</td>";
+						echo "<tr><td width=\"200\" class=\"tbldata\"><b>".$arr[ITEM_NAME_FLD]."</b> ".helpLink(HELP_URL."&amp;id=".$arr[ITEM_ID_FLD])."</td>";
 					}
 					$using_something=0;
 					
@@ -570,7 +570,7 @@
 	}
 	else
 	{
-		$starItem = 6;
+		$startItem = 6;
 		
 		echo "<select onchange=\"xajax_reqInfo(this.value,'b')\">
 		<option value=\"0\">Gebäude wählen...</option>";
@@ -609,11 +609,9 @@
 		}			
 		echo "</select><br/><br/>";
 		
-		echo "<div id=\"reqInfo\" style=\"width:650px;text-align:center;;margin-left:10px;padding:10px;
-		background:#fff;color:#000;border:1px solid #000;margin:0px auto;\">
-		Bitte warten...
-		</div>";	
-		echo '<script type="text/javascript">xajax_reqInfo('.$starItem.',"b")</script>';
+		iBoxStart("Grafische Darastellung");
+		showTechTree("b",$startItem);
+		iBoxEnd();
 		
 	}
 }

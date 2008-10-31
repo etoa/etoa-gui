@@ -43,6 +43,8 @@
 	// Zufallsgenerator initialisieren
 	mt_srand(time());
 
+	define('IS_ADMIN_MODE',false);
+
 	// Funktionen und Config einlesen
 	require_once("functions.php");
 	if (!@include_once("conf.inc.php"))

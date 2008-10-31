@@ -87,7 +87,7 @@ function reqInfo($id,$cat='b')
 	
 	if (count($items)>0)
 	{
-		echo "<table style=\"margin:0px auto;\"><tr>";
+		echo "<table style=\"margin:0px auto;color:#000\"><tr>";
 		$cnt=0;
 		foreach ($items as $i)
 		{
@@ -110,7 +110,7 @@ function reqInfo($id,$cat='b')
 		echo "<br/>wird benötigt für<br/><br/>";		
 	}
 	
-	echo "<div style=\"border:1px solid black;padding:20px 1px;background:#eee;width:150px;margin:10px auto;\">";
+	echo "<div style=\"border:1px solid black;padding:20px 1px;background:#eee;color:#000;width:150px;margin:10px auto;\">";
 		
 	if ($cat=='b')
 	{	
@@ -228,7 +228,7 @@ function reqInfo($id,$cat='b')
 		if (count($items)>0)
 		{	
 			echo "ermöglicht<br/><br/>
-			<table style=\"margin:0px auto;\"><tr>";
+			<table style=\"margin:0px auto;color:#000\"><tr>";
 			$cnt=0;
 			foreach ($items as $i)
 			{
@@ -253,10 +253,10 @@ function reqInfo($id,$cat='b')
 
 
 	echo "<br/><br/><table style=\"margin:0px auto;\"><tr>";
-	echo "<td style=\"padding:4px;border:1px solid #bbb;background:#eef;width:150px;\">Gebäude</td>";
-	echo "<td style=\"padding:4px;border:1px solid #bbb;background:#efe;width:150px;\">Technologie</td>";
-	echo "<td style=\"padding:4px;border:1px solid #bbb;background:#fee;width:150px;\">Schiff</td>";
-	echo "<td style=\"padding:4px;border:1px solid #bbb;background:#ffe;width:150px;\">Verteidigung</td>";
+	echo "<td style=\"color:#000;padding:4px;border:1px solid #bbb;background:#eef;width:150px;\">Gebäude</td>";
+	echo "<td style=\"color:#000;padding:4px;border:1px solid #bbb;background:#efe;width:150px;\">Technologie</td>";
+	echo "<td style=\"color:#000;padding:4px;border:1px solid #bbb;background:#fee;width:150px;\">Schiff</td>";
+	echo "<td style=\"color:#000;padding:4px;border:1px solid #bbb;background:#ffe;width:150px;\">Verteidigung</td>";
 	echo "</tr></table>";
 	
 	$out=ob_get_clean();

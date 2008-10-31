@@ -42,6 +42,8 @@
 	session_start();
 	mt_srand();
 	
+	define('IS_ADMIN_MODE',false);
+
 	require_once("conf.inc.php");
 	require_once("functions.php");
 
@@ -190,7 +192,7 @@
 		<?PHP
 			
 			$show = true;
-			if ($conf['register_key']['v']!="")
+			if ($conf['register_key']['v']!="" && !isset($s['user_id']))
 			{
 				if (isset($_POST['reg_key_auth_submit']))
 				{

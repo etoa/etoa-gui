@@ -15,8 +15,8 @@ echo "<h2>Geb&auml;ude</h2>";
 
 if (isset($_GET['id']))
 {
-	// what is this good for?
-	//if ($b_level==0) $b_level=1;
+	$b_level = 1;
+
 	$res = dbquery("SELECT * FROM buildings WHERE building_id='".$_GET['id']."';");
 	if ($arr = @mysql_fetch_array($res))
 	{
@@ -40,7 +40,8 @@ if (isset($_GET['id']))
 		while ($barr=mysql_fetch_array($bres))		
 		{
 			echo "<option value=\"".$barr['building_id']."\"";
-			if ($barr['building_id']==$_GET['id']) echo " selected=\"selected\"";
+			if ($barr['building_id']==$_GET['id']) 
+				echo " selected=\"selected\"";
 			echo ">".$barr['building_name']."</option>";
 		}
 		echo "</select><br/><br/>";		
@@ -53,354 +54,363 @@ if (isset($_GET['id']))
 
 		tableStart(text2html($arr['building_name']));
 		echo "<tr>
-			<td class=\"tbltitle\" style=\"width:220px;background:#000;padding:0px;\" rowspan=\"2\">
+			<th style=\"width:220px;background:#000;padding:0px;\" rowspan=\"2\">
 				<img src=\"".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$arr['building_id'].".".IMAGE_EXT."\" style=\"width:220px;height:220px;background:#000;margin:0px;\" align=\"top\" alt=\"Bild ".$arr['building_name']."\" />
-			</td>
-			<td class=\"tbldata\" colspan=\"2\">
+			</th>
+			<td colspan=\"2\">
 				<div align=\"justify\">".text2html($arr['building_longcomment'])."</div>
 			</td>
 		</tr>
 		<tr>
-			<td class=\"tbltitle\" style=\"height:20px;width:120px;\">Maximale Stufe:</td>
-			<td class=\"tbldata\" style=\"height:20px;\">".$arr['building_last_level']."</td>
+			<th style=\"height:20px;width:120px;\">Maximale Stufe:</th>
+			<td style=\"height:20px;\">".$arr['building_last_level']."</td>
 		</tr>";
 		tableEnd();
 
 
 
 		// Metallmine
-        if ($arr['building_id']==1)
-        {
-        tableStart("Produktion von ".RES_METAL." (ohne Boni)");
-        echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Produktion</td><td class=\"tbltitle\">Energie</td></tr>";
-        for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
-        {
-            $prod_item = round($arr['building_prod_metal'] * pow($arr['building_production_factor'],$level-1));
-            $power_use = round($arr['building_power_use'] * pow($arr['building_production_factor'],$level-1));
-            if($level==$arr_level['buildlist_current_level'])
-                echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td><td class=\"tbldata2\">".nf($power_use)."</td></tr>";
-            else
-                echo "<tr><td class=\"tbldata\">$level</td><td class=\"tbldata\">".nf($prod_item)."</td><td class=\"tbldata\">".nf($power_use)."</td></tr>";
+    if ($arr['building_id']==1)
+    {
+	    tableStart("Produktion von ".RES_METAL." (ohne Boni)");
+	    echo "<tr><th>Stufe</th><th>Produktion</th><th>Energie</th></tr>";
+	    for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
+	    {
+	        $prod_item = round($arr['building_prod_metal'] * pow($arr['building_production_factor'],$level-1));
+	        $power_use = round($arr['building_power_use'] * pow($arr['building_production_factor'],$level-1));
+	        if($level==$arr_level['buildlist_current_level'])
+	            echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td><td class=\"tbldata2\">".nf($power_use)."</td></tr>";
+	        else
+	            echo "<tr><td>$level</td><td>".nf($prod_item)."</td><td>".nf($power_use)."</td></tr>";
+	    }
+			tableEnd();
+    }
+    
+    // Siliziummine
+    elseif ($arr['building_id']==2)
+    {
+       tableStart("Produktion von ".RES_CRYSTAL." (ohne Boni)");
+	    echo "<tr><th>Stufe</th><th>Produktion</th><th>Energie</th></tr>";
+	    for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
+	    {
+	      $prod_item = round($arr['building_prod_crystal'] * pow($arr['building_production_factor'],$level-1));
+	      $power_use = round($arr['building_power_use'] * pow($arr['building_production_factor'],$level-1));
+	        if($level==$arr_level['buildlist_current_level'])
+	            echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td><td class=\"tbldata2\">".nf($power_use)."</td></tr>";
+	        else
+	            echo "<tr><td>$level</td><td>".nf($prod_item)."</td><td>".nf($power_use)."</td></tr>";
+	    }
+	    tableEnd();
+    }
+    
+    // Chemiefabrik
+    elseif ($arr['building_id']==3)
+    {
+    	tableStart("Produktion von ".RES_PLASTIC." (ohne Boni)");
+    	echo "<tr><th>Stufe</th><th>Produktion</th><th>Energie</th></tr>";
+    	for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
+    	{
+      	$prod_item = round($arr['building_prod_plastic'] * pow($arr['building_production_factor'],$level-1));
+	      $power_use = round($arr['building_power_use'] * pow($arr['building_production_factor'],$level-1));
+        if($level==$arr_level['buildlist_current_level'])
+            echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td><td class=\"tbldata2\">".nf($power_use)."</td></tr>";
+        else
+            echo "<tr><td>$level</td><td>".nf($prod_item)."</td><td>".nf($power_use)."</td></tr>";
+  	  }
+    	tableEnd();
+    }
+    
+  	// Tritiumsynthetizer
+ 		elseif ($arr['building_id']==4)
+    {
+	    tableStart("Produktion von ".RES_FUEL." (ohne Boni)");
+	    echo "<tr><th>Stufe</th><th>Produktion</th><th>Energie</th></tr>";
+	    for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
+	    {
+	      $prod_item = round($arr['building_prod_fuel'] * pow($arr['building_production_factor'],$level-1));
+	      $power_use = round($arr['building_power_use'] * pow($arr['building_production_factor'],$level-1));
+	        if($level==$arr_level['buildlist_current_level'])
+	            echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td><td class=\"tbldata2\">".nf($power_use)."</td></tr>";
+	        else
+	            echo "<tr><td>$level</td><td>".nf($prod_item)."</td><td>".nf($power_use)."</td></tr>";
+	    }
+	    tableEnd();
+   	}
+   	
+    // Gew&auml&auml;chshaus
+    elseif ($arr['building_id']==5)
+    {
+      tableStart("Produktion von ".RES_FOOD." (ohne Boni)");
+	    echo "<tr><th>Stufe</th><th>Produktion</th><th>Energie</th></tr>";
+	    for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
+	    {
+	      $prod_item = round($arr['building_prod_food'] * pow($arr['building_production_factor'],$level-1));
+	      $power_use = round($arr['building_power_use'] * pow($arr['building_production_factor'],$level-1));
+	        if($level==$arr_level['buildlist_current_level'])
+	            echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td><td class=\"tbldata2\">".nf($power_use)."</td></tr>";
+	        else
+	            echo "<tr><td>$level</td><td>".nf($prod_item)."</td><td>".nf($power_use)."</td></tr>";
+	    }
+	    tableEnd();
+    }
+    
+    // Planetenbasis
+    elseif ($arr['building_id']==6)
+    {
+	    tableStart("Produktion (ohne Boni)");
+	    echo "<tr><th>Rohstoff</th><th>Prod.</th><th>Lager</th></tr>";
+	    echo "<tr><td>".RES_METAL."</td><td>".nf($arr['building_prod_metal'])."</td><td>".nf($arr['building_store_metal'])."</td></tr>";
+	    echo "<tr><td>".RES_CRYSTAL."</td><td>".nf($arr['building_prod_crystal'])."</td><td>".nf($arr['building_store_crystal'])."</td></tr>";
+	    echo "<tr><td>".RES_PLASTIC."</td><td>".nf($arr['building_prod_plastic'])."</td><td>".nf($arr['building_store_plastic'])."</td></tr>";
+	    echo "<tr><td>".RES_FUEL."</td><td>".nf($arr['building_prod_fuel'])."</td><td>".nf($arr['building_store_fuel'])."</td></tr>";
+	    echo "<tr><td>".RES_FOOD."</td><td>".nf($arr['building_prod_food'])."</td><td>".nf($arr['building_store_food'])."</td></tr>";
+	    echo "<tr><td>Energie</td><td>".nf($arr['building_prod_metal'])."</td><td>-</td></tr>";
+	    tableEnd();
+    }
 
-        }
-            tableEnd();
-        }
+    // Wohnmodul
+    elseif ($arr['building_id']==7)
+    {
+	    tableStart("Platz f&uuml;r Bewohner");
+	    echo "<tr><th>Stufe</th><th>Wohnplatz</th></tr>";
+	
+	    for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
+	    {
+	      $prod_item = round($arr['building_people_place'] * pow($arr['building_store_factor'],$level-1));
+	      if($level==$arr_level['buildlist_current_level'])
+	         echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
+	      else
+	             echo "<tr><td>$level</td><td>".nf($prod_item)."</td></tr>";
+	    }
+	    tableEnd();
+    }
 
-        // Siliziummine
-        if ($arr['building_id']==2)
-        {
-            tableStart("Produktion von ".RES_CRYSTAL." (ohne Boni)");
-        echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Produktion</td><td class=\"tbltitle\">Energie</td></tr>";
-        for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
-        {
-          $prod_item = round($arr['building_prod_crystal'] * pow($arr['building_production_factor'],$level-1));
-          $power_use = round($arr['building_power_use'] * pow($arr['building_production_factor'],$level-1));
-            if($level==$arr_level['buildlist_current_level'])
-                echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td><td class=\"tbldata2\">".nf($power_use)."</td></tr>";
-            else
-                echo "<tr><td class=\"tbldata\">$level</td><td class=\"tbldata\">".nf($prod_item)."</td><td class=\"tbldata\">".nf($power_use)."</td></tr>";
-        }
-            tableEnd();
-        }
-        // Chemiefabrik
-        if ($arr['building_id']==3)
-        {
-        tableStart("Produktion von ".RES_PLASTIC." (ohne Boni)");
-        echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Produktion</td><td class=\"tbltitle\">Energie</td></tr>";
-        for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
-        {
-          $prod_item = round($arr['building_prod_plastic'] * pow($arr['building_production_factor'],$level-1));
-          $power_use = round($arr['building_power_use'] * pow($arr['building_production_factor'],$level-1));
-            if($level==$arr_level['buildlist_current_level'])
-                echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td><td class=\"tbldata2\">".nf($power_use)."</td></tr>";
-            else
-                echo "<tr><td class=\"tbldata\">$level</td><td class=\"tbldata\">".nf($prod_item)."</td><td class=\"tbldata\">".nf($power_use)."</td></tr>";
-        }
-        tableEnd();
-        }
-        // Tritiumsynthetizer
-        if ($arr['building_id']==4)
-        {
-        tableStart("Produktion von ".RES_FUEL." (ohne Boni)");
-        echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Produktion</td><td class=\"tbltitle\">Energie</td></tr>";
-        for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
-        {
-          $prod_item = round($arr['building_prod_fuel'] * pow($arr['building_production_factor'],$level-1));
-          $power_use = round($arr['building_power_use'] * pow($arr['building_production_factor'],$level-1));
-            if($level==$arr_level['buildlist_current_level'])
-                echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td><td class=\"tbldata2\">".nf($power_use)."</td></tr>";
-            else
-                echo "<tr><td class=\"tbldata\">$level</td><td class=\"tbldata\">".nf($prod_item)."</td><td class=\"tbldata\">".nf($power_use)."</td></tr>";
-        }
-        tableEnd();
-        }
-        // Gew&auml&auml;chshaus
-        if ($arr['building_id']==5)
-        {
-            tableStart("Produktion von ".RES_FOOD." (ohne Boni)");
-        echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Produktion</td><td class=\"tbltitle\">Energie</td></tr>";
-        for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
-        {
-          $prod_item = round($arr['building_prod_food'] * pow($arr['building_production_factor'],$level-1));
-          $power_use = round($arr['building_power_use'] * pow($arr['building_production_factor'],$level-1));
-            if($level==$arr_level['buildlist_current_level'])
-                echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td><td class=\"tbldata2\">".nf($power_use)."</td></tr>";
-            else
-                echo "<tr><td class=\"tbldata\">$level</td><td class=\"tbldata\">".nf($prod_item)."</td><td class=\"tbldata\">".nf($power_use)."</td></tr>";
-        }
-        tableEnd();
-        }
-        // Planetenbasis
-        if ($arr['building_id']==6)
-        {
-        tableStart("Produktion (ohne Boni)");
-        echo "<tr><td class=\"tbltitle\">Rohstoff</td><td class=\"tbltitle\">Prod.</td><td class=\"tbltitle\">Lager</td></tr>";
-        echo "<tr><td class=\"tbldata\">".RES_METAL."</td><td class=\"tbldata\">".nf($arr['building_prod_metal'])."</td><td class=\"tbldata\">".nf($arr['building_store_metal'])."</td></tr>";
-        echo "<tr><td class=\"tbldata\">".RES_CRYSTAL."</td><td class=\"tbldata\">".nf($arr['building_prod_crystal'])."</td><td class=\"tbldata\">".nf($arr['building_store_crystal'])."</td></tr>";
-        echo "<tr><td class=\"tbldata\">".RES_PLASTIC."</td><td class=\"tbldata\">".nf($arr['building_prod_plastic'])."</td><td class=\"tbldata\">".nf($arr['building_store_plastic'])."</td></tr>";
-        echo "<tr><td class=\"tbldata\">".RES_FUEL."</td><td class=\"tbldata\">".nf($arr['building_prod_fuel'])."</td><td class=\"tbldata\">".nf($arr['building_store_fuel'])."</td></tr>";
-        echo "<tr><td class=\"tbldata\">".RES_FOOD."</td><td class=\"tbldata\">".nf($arr['building_prod_food'])."</td><td class=\"tbldata\">".nf($arr['building_store_food'])."</td></tr>";
-        echo "<tr><td class=\"tbldata\">Energie</td><td class=\"tbldata\">".nf($arr['building_prod_metal'])."</td><td class=\"tbldata\">-</td></tr>";
-        tableEnd();
-        }
+    // Windkraftwerk
+    elseif ($arr['building_id']==12)
+    {
+     	tableStart("Energieproduktion (ohne Boni)");
+	    echo "<tr><th>Stufe</th><th>Produktion</th></tr>";
+	    for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
+	    {
+	      $prod_item = round($arr['building_prod_power'] * pow($arr['building_production_factor'],$level-1));
+	      $power_use = round($arr['building_power_use'] * pow($arr['building_production_factor'],$level-1));
+	      if($level==$arr_level['buildlist_current_level'])
+	         echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
+	      else
+	             echo "<tr><td>$level</td><td>".nf($prod_item)."</td></tr>";
+	    }
+	    tableEnd();
+    }
 
-        // Wohnmodul
-        if ($arr['building_id']==7)
-        {
-        tableStart("Platz f&uuml;r Bewohner");
-        echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Wohnplatz</td></tr>";
+    // Solarkaftwerk
+    elseif ($arr['building_id']==13)
+    {
+     	tableStart("Energieproduktion (ohne Boni)");
+	    echo "<tr><th>Stufe</t><th>Produktion</th></tr>";
+	    for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
+	    {
+	      $prod_item = round($arr['building_prod_power'] * pow($arr['building_production_factor'],$level-1));
+	      $power_use = round($arr['building_power_use'] * pow($arr['building_production_factor'],$level-1));
+	      if($level==$arr_level['buildlist_current_level'])
+	         echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
+	      else
+	             echo "<tr><td>$level</td><td>".nf($prod_item)."</td></tr>";
+	    }
+	    tableEnd();
+    }
 
-        for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
-        {
-          $prod_item = round($arr['building_people_place'] * pow($arr['building_store_factor'],$level-1));
-          if($level==$arr_level['buildlist_current_level'])
-             echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
-          else
-                 echo "<tr><td class=\"tbldata\">$level</td><td class=\"tbldata\">".nf($prod_item)."</td></tr>";
-        }
-        tableEnd();
-        }
+    // Fusionskraftwerk
+    elseif ($arr['building_id']==14)
+    {
+      tableStart("Energieproduktion (ohne Boni)");
+	    echo "<tr><th>Stufe</th><th>Produktion</th></tr>";
+	    for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
+	    {
+	      $prod_item = round($arr['building_prod_power'] * pow($arr['building_production_factor'],$level-1));
+	      $power_use = round($arr['building_power_use'] * pow($arr['building_production_factor'],$level-1));
+	      if($level==$arr_level['buildlist_current_level'])
+	         echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
+	      else
+	             echo "<tr><td>$level</td><td>".nf($prod_item)."</td></tr>";
+	    }
+	    tableEnd();
+    }
 
-        // Windkraftwerk
-        if ($arr['building_id']==12)
-        {
-            tableStart("Energieproduktion (ohne Boni)");
-        echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Produktion</td></tr>";
-        for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
-        {
-          $prod_item = round($arr['building_prod_power'] * pow($arr['building_production_factor'],$level-1));
-          $power_use = round($arr['building_power_use'] * pow($arr['building_production_factor'],$level-1));
-          if($level==$arr_level['buildlist_current_level'])
-             echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
-          else
-                 echo "<tr><td class=\"tbldata\">$level</td><td class=\"tbldata\">".nf($prod_item)."</td></tr>";
-        }
-        tableEnd();
-        }
+    // Gezeitenkraftwerk
+    elseif ($arr['building_id']==15)
+    {
+      tableStart("Energieproduktion (ohne Boni)");
+	    echo "<tr><th>Stufe</t><th>Produktion</th></tr>";
+	    for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
+	    {
+	      $prod_item = round($arr['building_prod_power'] * pow($arr['building_production_factor'],$level-1));
+	      $power_use = round($arr['building_power_use'] * pow($arr['building_production_factor'],$level-1));
+	      if($level==$arr_level['buildlist_current_level'])
+	         echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
+	      else
+	             echo "<tr><td>$level</td><td>".nf($prod_item)."</td></tr>";
+	    }
+	    tableEnd();
+    }
+    
+    // Titanspeicher
+    elseif ($arr['building_id']==16)
+    {
+    	$pbarr = mysql_fetch_row(dbquery("SELECT building_store_metal FROM buildings WHERE building_id=6;"));
+      tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf(STD_FIELDS).") des Planeten)");
+	    echo "<tr><th>Stufe</th><th>Kapazit&auml;t</th></tr>";
+	    for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
+	    {
+	      $prod_item = STD_FIELDS + $pbarr[0] + round($arr['building_store_metal'] * pow($arr['building_store_factor'],$level-1));
+	      if($level==$arr_level['buildlist_current_level'])
+	         echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
+	      else
+	             echo "<tr><td>$level</td><td>".nf($prod_item)."</td></tr>";
+	    }
+	    tableEnd();
+    }
+    
+    // Siliziumspeicher
+    elseif ($arr['building_id']==17)
+    {
+    	$pbarr = mysql_fetch_row(dbquery("SELECT building_store_crystal FROM buildings WHERE building_id=6;"));
+      tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf(STD_FIELDS).") des Planeten)");
+	    echo "<tr><th>Stufe</th><th>Kapazit&auml;t</th></tr>";
+	    for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
+	    {
+	      $prod_item = STD_FIELDS + $pbarr[0] + round($arr['building_store_crystal'] * pow($arr['building_store_factor'],$level-1));
+	      if($level==$arr_level['buildlist_current_level'])
+	         echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
+	      else
+	             echo "<tr><td>$level</td><td>".nf($prod_item)."</td></tr>";
+	    }
+      tableEnd();
+    }
+    
+    // Lagerhalle
+    elseif ($arr['building_id']==18)
+    {
+	    $pbarr = mysql_fetch_row(dbquery("SELECT building_store_plastic FROM buildings WHERE building_id=6;"));
+	    tableStart("Kapazit&auml;t inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf(STD_FIELDS).")");
+	    echo "<tr><th>Stufe</th><th>Kapazit&auml;t</th></tr>";
+	    for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
+	    {
+	      $prod_item = STD_FIELDS + $pbarr[0] + round($arr['building_store_plastic'] * pow($arr['building_store_factor'],$level-1));
+	      if($level==$arr_level['buildlist_current_level'])
+	         echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
+	      else
+	             echo "<tr><td>$level</td><td>".nf($prod_item)."</td></tr>";
+	    }
+      tableEnd();
+    }
+    
+    // Nahrungssilos
+    elseif ($arr['building_id']==19)
+    {
+	    $pbarr = mysql_fetch_row(dbquery("SELECT building_store_food FROM buildings WHERE building_id=6;"));
+      tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf(STD_FIELDS).") des Planeten)");
+	    echo "<tr><th>Stufe</th><th>Kapazit&auml;t</th></tr>";
+	    for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
+	    {
+	      $prod_item = STD_FIELDS + $pbarr[0] + round($arr['building_store_food'] * pow($arr['building_store_factor'],$level-1));
+	      if($level==$arr_level['buildlist_current_level'])
+	         echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
+	      else
+	             echo "<tr><td>$level</td><td>".nf($prod_item)."</td></tr>";
+	    }
+    	tableEnd();
+    }
+    
+    // Tritiumsilo
+    elseif ($arr['building_id']==20)
+    {
+	    $pbarr = mysql_fetch_row(dbquery("SELECT building_store_fuel FROM buildings WHERE building_id=6;"));
+	    tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf(STD_FIELDS).") des Planeten)");
+	    echo "<tr><th>Stufe</th><th>Kapazit&auml;t</th></tr>";
+	    for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
+	    {
+	      $prod_item = STD_FIELDS + $pbarr[0] + round($arr['building_store_fuel'] * pow($arr['building_store_factor'],$level-1));
+	      if($level==$arr_level['buildlist_current_level'])
+	         echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
+	      else
+	             echo "<tr><td>$level</td><td>".nf($prod_item)."</td></tr>";
+	    }
+	    tableEnd();
+    }
 
-        // Solarkaftwerk
-        if ($arr['building_id']==13)
-        {
-            tableStart("Energieproduktion (ohne Boni)");
-        echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Produktion</td></tr>";
-        for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
-        {
-          $prod_item = round($arr['building_prod_power'] * pow($arr['building_production_factor'],$level-1));
-          $power_use = round($arr['building_power_use'] * pow($arr['building_production_factor'],$level-1));
-          if($level==$arr_level['buildlist_current_level'])
-             echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
-          else
-                 echo "<tr><td class=\"tbldata\">$level</td><td class=\"tbldata\">".nf($prod_item)."</td></tr>";
-        }
-        tableEnd();
-        }
-
-        // Fusionskraftwerk
-        if ($arr['building_id']==14)
-        {
-          tableStart("Energieproduktion (ohne Boni)");
-        echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Produktion</td></tr>";
-        for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
-        {
-          $prod_item = round($arr['building_prod_power'] * pow($arr['building_production_factor'],$level-1));
-          $power_use = round($arr['building_power_use'] * pow($arr['building_production_factor'],$level-1));
-          if($level==$arr_level['buildlist_current_level'])
-             echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
-          else
-                 echo "<tr><td class=\"tbldata\">$level</td><td class=\"tbldata\">".nf($prod_item)."</td></tr>";
-        }
-            tableEnd();
-        }
-
-        // Gezeitenkraftwerk
-        if ($arr['building_id']==15)
-        {
-            tableStart("Energieproduktion (ohne Boni)");
-        echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Produktion</td></tr>";
-        for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
-        {
-          $prod_item = round($arr['building_prod_power'] * pow($arr['building_production_factor'],$level-1));
-          $power_use = round($arr['building_power_use'] * pow($arr['building_production_factor'],$level-1));
-          if($level==$arr_level['buildlist_current_level'])
-             echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
-          else
-                 echo "<tr><td class=\"tbldata\">$level</td><td class=\"tbldata\">".nf($prod_item)."</td></tr>";
-        }
-        tableEnd();
-        }
-        // Titanspeicher
-        if ($arr['building_id']==16)
-        {
-        $pbarr = mysql_fetch_row(dbquery("SELECT building_store_metal FROM buildings WHERE building_id=6;"));
-            tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf(STD_FIELDS).") des Planeten)");
-        echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Kapazit&auml;t</td></tr>";
-        for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
-        {
-          $prod_item = STD_FIELDS + $pbarr[0] + round($arr['building_store_metal'] * pow($arr['building_store_factor'],$level-1));
-          if($level==$arr_level['buildlist_current_level'])
-             echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
-          else
-                 echo "<tr><td class=\"tbldata\">$level</td><td class=\"tbldata\">".nf($prod_item)."</td></tr>";
-        }
-        tableEnd();
-        }
-        // Siliziumspeicher
-        if ($arr['building_id']==17)
-        {
-        $pbarr = mysql_fetch_row(dbquery("SELECT building_store_crystal FROM buildings WHERE building_id=6;"));
-            tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf(STD_FIELDS).") des Planeten)");
-        echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Kapazit&auml;t</td></tr>";
-        for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
-        {
-          $prod_item = STD_FIELDS + $pbarr[0] + round($arr['building_store_crystal'] * pow($arr['building_store_factor'],$level-1));
-          if($level==$arr_level['buildlist_current_level'])
-             echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
-          else
-                 echo "<tr><td class=\"tbldata\">$level</td><td class=\"tbldata\">".nf($prod_item)."</td></tr>";
-        }
-            tableEnd();
-        }
-        // Lagerhalle
-        if ($arr['building_id']==18)
-        {
-        $pbarr = mysql_fetch_row(dbquery("SELECT building_store_plastic FROM buildings WHERE building_id=6;"));
-            tableStart("Kapazit&auml;t inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf(STD_FIELDS).")");
-        echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Kapazit&auml;t</td></tr>";
-        for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
-        {
-          $prod_item = STD_FIELDS + $pbarr[0] + round($arr['building_store_plastic'] * pow($arr['building_store_factor'],$level-1));
-          if($level==$arr_level['buildlist_current_level'])
-             echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
-          else
-                 echo "<tr><td class=\"tbldata\">$level</td><td class=\"tbldata\">".nf($prod_item)."</td></tr>";
-        }
-          tableEnd();
-        }
-        // Nahrungssilos
-        if ($arr['building_id']==19)
-        {
-        $pbarr = mysql_fetch_row(dbquery("SELECT building_store_food FROM buildings WHERE building_id=6;"));
-            tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf(STD_FIELDS).") des Planeten)");
-        echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Kapazit&auml;t</td></tr>";
-        for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
-        {
-          $prod_item = STD_FIELDS + $pbarr[0] + round($arr['building_store_food'] * pow($arr['building_store_factor'],$level-1));
-          if($level==$arr_level['buildlist_current_level'])
-             echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
-          else
-                 echo "<tr><td class=\"tbldata\">$level</td><td class=\"tbldata\">".nf($prod_item)."</td></tr>";
-        }
-            tableEnd();
-        }
-        // Tritiumsilo
-        if ($arr['building_id']==20)
-        {
-        $pbarr = mysql_fetch_row(dbquery("SELECT building_store_fuel FROM buildings WHERE building_id=6;"));
-        tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf(STD_FIELDS).") des Planeten)");
-        echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Kapazit&auml;t</td></tr>";
-        for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
-        {
-          $prod_item = STD_FIELDS + $pbarr[0] + round($arr['building_store_fuel'] * pow($arr['building_store_factor'],$level-1));
-          if($level==$arr_level['buildlist_current_level'])
-             echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
-          else
-                 echo "<tr><td class=\"tbldata\">$level</td><td class=\"tbldata\">".nf($prod_item)."</td></tr>";
-        }
-        tableEnd();
-        }
-
-        // Orbitalplatform
-        if ($arr['building_id']==22)
-        {
-            tableStart("Zus&auml;tzliche Felder");
-        echo "<tr><td class=\"tbltitle\">Stufe</td><td class=\"tbltitle\">Felder</td><td class=\"tbltitle\">Energieverbrauch</td><td class=\"tbltitle\">Speicher ".RES_METAL."</td><td class=\"tbltitle\">Speicher ".RES_CRYSTAL."</td><td class=\"tbltitle\">Speicher ".RES_PLASTIC."</td></tr>";
-        for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
-        {
-          $prod_item = round($arr['building_fieldsprovide'] * pow($arr['building_production_factor'],$level-1));
-          $power_use = round($arr['building_power_use'] * pow($arr['building_production_factor'],$level-1));
-
-          if($level==$arr_level['buildlist_current_level'])
-             echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td><td class=\"tbldata2\">".nf($power_use)."</td>";
-          else
-            echo "<tr><td class=\"tbldata\">$level</td><td class=\"tbldata\">".nf($prod_item)."</td><td class=\"tbldata\">".nf($power_use)."</td>";
-
-          $prod_item = round($arr['building_store_metal'] * pow($arr['building_store_factor'],$level-1));
-          if($level==$arr_level['buildlist_current_level'])
-            echo "<td class=\"tbldata2\">".nf($prod_item)."</td>";
-          else
-            echo "<td class=\"tbldata\">".nf($prod_item)."</td>";
-
-          $prod_item = round($arr['building_store_crystal'] * pow($arr['building_store_factor'],$level-1));
-          if($level==$arr_level['buildlist_current_level'])
-            echo "<td class=\"tbldata2\">".nf($prod_item)."</td>";
-          else
-            echo "<td class=\"tbldata\">".nf($prod_item)."</td>";
-
-          $prod_item = round($arr['building_store_plastic'] * pow($arr['building_store_factor'],$level-1));
-          if($level==$arr_level['buildlist_current_level'])
-            echo "<td class=\"tbldata2\">".nf($prod_item)."</td>";
-          else
-            echo "<td class=\"tbldata\">".nf($prod_item)."</td>";
-        }
-        tableEnd();
-        }
+    // Orbitalplatform
+    elseif ($arr['building_id']==22)
+    {
+      tableStart("Zus&auml;tzliche Felder");
+	    echo "<tr><th>Stufe</th><th>Felder</th><th>Energieverbrauch</th><th>Speicher ".RES_METAL."</th><th>Speicher ".RES_CRYSTAL."</th><th>Speicher ".RES_PLASTIC."</th></tr>";
+	    for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
+	    {
+	      $prod_item = round($arr['building_fieldsprovide'] * pow($arr['building_production_factor'],$level-1));
+	      $power_use = round($arr['building_power_use'] * pow($arr['building_production_factor'],$level-1));
+	
+	      if($level==$arr_level['buildlist_current_level'])
+	         echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td><td class=\"tbldata2\">".nf($power_use)."</td>";
+	      else
+	        echo "<tr><td>$level</td><td>".nf($prod_item)."</td><td>".nf($power_use)."</td>";
+	
+	      $prod_item = round($arr['building_store_metal'] * pow($arr['building_store_factor'],$level-1));
+	      if($level==$arr_level['buildlist_current_level'])
+	        echo "<td class=\"tbldata2\">".nf($prod_item)."</td>";
+	      else
+	        echo "<td>".nf($prod_item)."</td>";
+	
+	      $prod_item = round($arr['building_store_crystal'] * pow($arr['building_store_factor'],$level-1));
+	      if($level==$arr_level['buildlist_current_level'])
+	        echo "<td class=\"tbldata2\">".nf($prod_item)."</td>";
+	      else
+	        echo "<td>".nf($prod_item)."</td>";
+	
+	      $prod_item = round($arr['building_store_plastic'] * pow($arr['building_store_factor'],$level-1));
+	      if($level==$arr_level['buildlist_current_level'])
+	        echo "<td class=\"tbldata2\">".nf($prod_item)."</td>";
+	      else
+	        echo "<td>".nf($prod_item)."</td>";
+	    }
+	    tableEnd();
+    }
+    
+    tableStart ("Kostenentwicklung (Faktor: ".$arr['building_build_costs_factor'].")");
+    echo "<tr><th style=\"text-align:center;\">Level</th>
+    			<th>".RES_ICON_METAL."".RES_METAL."</th>
+    			<th>".RES_ICON_CRYSTAL."".RES_CRYSTAL."</th>
+    			<th>".RES_ICON_PLASTIC."".RES_PLASTIC."</th>
+    			<th>".RES_ICON_FUEL."".RES_FUEL."</th>
+    			<th>".RES_ICON_FOOD."".RES_FOOD."</th>
+    			<th>".RES_ICON_POWER."Energie</th>
+    			<th>Felder</th></tr>";
+    for ($x=0;$x<min(30,$arr['building_last_level']);$x++)
+    {
+    	$bc = calcBuildingCosts($arr,$x);
+    	echo '<tr><td>'.($x+1).'</td>
+    				<td style="text-align:right;">'.nf($bc['metal']).'</td>
+    				<td style="text-align:right;">'.nf($bc['crystal']).'</td>
+    				<td style="text-align:right;">'.nf($bc['plastic']).'</td>
+    				<td style="text-align:right;">'.nf($bc['fuel']).'</td>
+    				<td style="text-align:right;">'.nf($bc['food']).'</td>
+    				<td style="text-align:right;">'.nf($bc['power']).'</td>
+    				<td style="text-align:right;">'.nf($arr['building_fields']*$x).'</td></tr>';
+    }
+    tableEnd();
         
-        tableStart ("Kostenentwicklung (Faktor: ".$arr['building_build_costs_factor'].")");
-        
-        echo "<tr><th class=\"tbltitle\" style=\"text-align:center;\">Level</th>
-        			<th class=\"tbltitle\">".RES_ICON_METAL."".RES_METAL."</th>
-        			<th class=\"tbltitle\">".RES_ICON_CRYSTAL."".RES_CRYSTAL."</th>
-        			<th class=\"tbltitle\">".RES_ICON_PLASTIC."".RES_PLASTIC."</th>
-        			<th class=\"tbltitle\">".RES_ICON_FUEL."".RES_FUEL."</th>
-        			<th class=\"tbltitle\">".RES_ICON_FOOD."".RES_FOOD."</th>
-        			<th class=\"tbltitle\">".RES_ICON_POWER."Energie</th>
-        			<th class=\"tbltitle\">Felder</th></tr>";
-        
-        for ($x=0;$x<min(30,$arr['building_last_level']);$x++)
-        {
-        	 	
-        	$bc = calcBuildingCosts($arr,$x);
-        	echo '<tr><td class="tbldata">'.($x+1).'</td>
-        				<td class="tbldata" style="text-align:right;">'.nf($bc['metal']).'</td>
-        				<td class="tbldata" style="text-align:right;">'.nf($bc['crystal']).'</td>
-        				<td class="tbldata" style="text-align:right;">'.nf($bc['plastic']).'</td>
-        				<td class="tbldata" style="text-align:right;">'.nf($bc['fuel']).'</td>
-        				<td class="tbldata" style="text-align:right;">'.nf($bc['food']).'</td>
-        				<td class="tbldata" style="text-align:right;">'.nf($bc['power']).'</td>
-        				<td class="tbldata" style="text-align:right;">'.nf($arr['building_fields']*$x).'</td></tr>';
-        	
-        	
-        }
-        
-        tableEnd();
-     }
-     else
-      echo "Geb&auml;udeinfodaten nicht gefunden!<br/><br/>";
+		iBoxStart("Technikbaum");
+    showTechTree("b",$arr['building_id']);
+		iBoxEnd();
+	}
+  else
+  {
+  	err_msg("Geb&auml;udeinfodaten nicht gefunden!");
+  }
 
 	echo "<input type=\"button\" value=\"Geb&auml;ude&uuml;bersicht\" onclick=\"document.location='?page=$page&site=$site'\" /> &nbsp; ";
 	if (!$popup)
+	{
 		echo "<input type=\"button\" value=\"Technikbaum\" onclick=\"document.location='?page=techtree&mode=buildings'\" /> &nbsp; ";
-
+	}
 	if ($_SESSION['lastpage']=="buildings" && !$popup)
 	{
 	   echo "<input type=\"button\" value=\"Zur&uuml;ck zum Bauhof\" onclick=\"document.location='?page=buildings'\" /> &nbsp; ";
@@ -413,51 +423,33 @@ if (isset($_GET['id']))
 //
 elseif(isset($_GET['type_id']) && $_GET['type_id']>0)
 {
-	if ($_GET['type_id']==BUILDING_STORE_CAT)
+
+	if ($_GET['id']==BUILDING_STORE_CAT)
 	{
-		Help::navi(array("Geb&auml;ude","buildings"),array("Kategorie: Speicher",$_GET['type_id']));
-		iBoxStart("Lagerkapazit&auml;t");
-		echo "<div align=\"justify\">";
+		echo "<b>Lagerkapazit&auml;t</b><br>";
 		echo "Du kannst auf einem Planeten nicht unentlich viele Rohstoffe lagern. Jeder Planet hat eine Lagerkapazit&auml;t von ".intval($conf['def_store_capacity']['v']).". Um die Lagerkapazit&auml;t zu erh&ouml;hen, kannst du eine Planetenbasis und danach verschiedene Speicher, Lagerhallen und Silos bauen, welche die Kapazit&auml;t erh&ouml;hen. Wenn eine Zahl in der Rohstoffanzeige rot gef&auml;rbt ist, bedeutet das, dass dieser Rohstoff die Lagerkapazit&auml;t &uuml;berschreitet. Baue in diesem Fall den Speicher aus. Eine &uuml;berschrittene Lagerkapazit&auml;t bedeutet, dass nichts mehr produziert wird, jedoch werden Rohstoffe, die z.B. mit einer Flotte ankommen, trotzdem auf dem Planeten gespeichert.<br>";
-		echo "</div>";
-		iBoxEnd();
-		echo "Klicke <a href=\"?page=economy\">hier</a> um zu der Speicher&uuml;bersicht des aktuellen Planeten zu gelangen.";
 	}
-	elseif($_GET['type_id']==BUILDING_POWER_CAT)
+	elseif($_GET['id']==BUILDING_POWER_CAT)
 	{
-		Help::navi(array("Geb&auml;ude","buildings"),array("Kategorie: Kraftwerke",$_GET['type_id']));
-		iBoxStart("Energie");
-		echo "<div align=\"justify\">";
+		echo "<b>Energie</b><br>";
 		echo "Wo es eine Produkion hat, braucht es auch Energie. Diese Energie, welche von verschiedenen Anlagen gebraucht wird, spenden uns verschiedene Kraftwerkstypen. Je h&ouml;her diese Ausgebaut sind, desto mehr Leistung erbringen sie und versorgen so die wachsende Wirtschaft.<br>
 		Hat es zu wenig Energie, wird die Produktion prozentual gedrosselt, was verheerende Auswirkungen haben kann!";
-		echo "</div>";
-		iBoxEnd();
-		echo "Klicke <a href=\"?page=economy\">hier</a> um zu der Energie&uuml;bersicht des aktuellen Planeten zu gelangen.";
 	}
-	elseif($_GET['type_id']==BUILDING_GENERAL_CAT)
+	elseif($_GET['id']==BUILDING_GENERAL_CAT)
 	{
-		Help::navi(array("Geb&auml;ude","buildings"),array("Kategorie: Allgemeine Geb&auml;ude",$_GET['type_id']));
-		iBoxStart("Allgemeine Geb&auml;ude");
-		echo "<div align=\"justify\">";
+		echo "<b>Allgemeine Geb&auml;ude</b><br/>";
 		echo "Diese Geb&auml;ude werden ben&ouml;tigt um deinen Planeten auszubauen und die Produktion und Forschung zu erm&ouml;glichen.";
-		echo "</div>";
-		iBoxEnd();
 	}
-	elseif($_GET['type_id']==BUILDING_RES_CAT)
+	elseif($_GET['id']==BUILDING_RES_CAT)
 	{
-		Help::navi(array("Geb&auml;ude","buildings"),array("Kategorie: Rohstoffgeb&auml;ude",$_GET['type_id']));
-		iBoxStart("Rohstoffgeb&auml;ude");
-		echo "<div align=\"justify\">";
+		echo "<b>Rohstoffgeb&auml;ude</b><br/>";
 		echo "Diese Geb&auml;ude liefern Rohstoffe, welche du f&uuml;r den Aufbau deiner Zivilisation brauchst.";
-		echo "</div>";
-		iBoxEnd();
-		echo "Klicke <a href=\"?page=economy\">hier</a> um zu der Produktions&uuml;bersicht des aktuellen Planeten zu gelangen.";
 	}
 	else
 	{
 		echo "<i>Zu dieser Kategorie sind keine Informationen vorhanden!</i>";
 	}
-
+	
 	echo "<br/><br/><input type=\"button\" value=\"Geb&auml;ude&uuml;bersicht\" onclick=\"document.location='?page=$page&site=$site'\" /> &nbsp; ";
 	echo "<input type=\"button\" value=\"Technikbaum\" onclick=\"document.location='?page=techtree&mode=buildings'\" /> &nbsp; ";
 }
@@ -503,16 +495,18 @@ else
                 building_name;");
 			if (mysql_num_rows($res)>0)
 			{
-				tableStart(text2html($tarr['type_name'])." [<a href=\"?page=$page&amp;site=$site&amp;type_id=".$tarr['type_id']."\">info</a>]");
+				tableStart("<span class=\"cluetip\" rel=\"tooltip.php?a=buildingcat&id=".$tarr['type_id']."\">".text2html($tarr['type_name'])."</span>");
 				while ($arr = mysql_fetch_array($res))
 				{
 					echo "<tr>
-						<td class=\"tbltitle\" style=\"width:40px;padding:0px;\" ".tm("Info","Klicke auf das Bild f&uuml;r Details").">
+						<td style=\"width:40px;padding:0px;\">
 							<a href=\"?page=$page&site=$site&id=".$arr['building_id']."\">
 								<img src=\"".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$arr['building_id']."_small.".IMAGE_EXT."\" align=\"top\" style=\"width:40px;height:40px;background:#000;margin:0px;\" alt=\"Bild ".text2html($arr['building_name'])."\" border=\"0\"/></a></td>";
-					echo "<th class=\"tbltitle\" style=\"width:160px\" ".tm("Info","Klicke auf das Bild f&uuml;r Details").">".text2html($arr['building_name'])."</th>";
-					echo "<td class=\"tbldata\" ".tm(text2html($arr['building_name']),text2html($arr['building_longcomment'])).">".text2html($arr['building_shortcomment'])."</td>";
-					echo "<td class=\"tbldata\" style=\"width:90px\" ".tm("Info","Ben&ouml;tigte Felder pro Stufe").">";
+					echo "<td style=\"width:130px;\">
+						<a href=\"?page=$page&site=$site&id=".$arr['building_id']."\"><b>".text2html($arr['building_name'])."</a></a>
+					</td>";
+					echo "<td class=\"cluetip\" rel=\"tooltip.php?a=buildingdesc&id=".$arr['building_id']."\">".text2html($arr['building_shortcomment'])."</td>";
+					echo "<td style=\"width:90px\">";
 					if($arr['building_fields']=='0')
 						echo "<b>Keine Felder</b></td>";
 					elseif($arr['building_fields']=='1')

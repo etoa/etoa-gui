@@ -327,7 +327,7 @@ div.infoboxtitle	{
 	font-size:10pt;
 	font-weight:bold;
 	border:1px solid #fff;
-	background:#225;
+	background:#225 url('../images/cellbg.png') repeat-x;
 	padding:4px;
 	text-align:center;
 }
@@ -336,7 +336,7 @@ td.infoboxtitle	{
 	font-size:10pt;
 	font-weight:bold;
 	border:1px solid #fff;
-	background:#225;
+	background:#225 url('../images/cellbg.png') repeat-x;
 	padding:4px;
 	text-align:center;
 }

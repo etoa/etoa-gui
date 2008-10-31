@@ -1,5 +1,4 @@
-﻿<?PHP
-
+<?PHP
 	//////////////////////////////////////////////////
 	//		 	 ____    __           ______       			//
 	//			/\  _`\ /\ \__       /\  _  \      			//
@@ -27,20 +26,26 @@
 	*
 	* @author MrCage <mrcage@etoa.ch>
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
-	*/	
+	*/
 
-
-	// BEGIN SKRIPT //
-
-	echo "<h1>Help & Info</h1>"; //Titel angepasst <h1> by Lamborghini
+	echo "<h1>Hilfe</h1>"; 
+	
 	if (isset($_GET['site']) && $_GET['site']!="")
 	{
 		$site = $_GET['site'];
 		if ($site!="")
 		{
-			if (@file_exists("info/$site.php"))
+			if (IS_ADMIN_MODE && file_exists("../info/$site.php"))
+			{
+				include ("../info/$site.php");
+			}
+			elseif (file_exists("info/$site.php"))
 			{
 				include ("info/$site.php");
+			}
+			else
+			{
+				err_msg("Hilfedatei nicht gefunden!");
 			}
 		}
 		echo "&nbsp;&nbsp;<input type=\"button\" value=\"Hilfe&uuml;bersicht\" onclick=\"document.location='?page=$page'\" /><br/><br/>";
@@ -48,74 +53,77 @@
 	}
 	else
 	{
+
 		echo "<h2>&Uuml;bersicht</h2>";
 		Help::navi();
 		echo "Hier findest du Informationen zu verschiedenen Objekten des Spiels:<br/><br/>";
 
-		tableStart("Tools");
-		echo "<tr>
-		<td class=\"tbldata\" style=\"text-align:center;width:20%\">
-			<a href=\"?page=ticket\"><img src=\"images/abuse.png\" border=\"0\" alt=\"Missbrauch\" style=\"width:40px;height:40px;\" title=\"Ticket erstellen\"></a><br/>
-			Ticket an einen Admin schreiben
-		</td>
-		<td class=\"tbldata\" style=\"text-align:center;width:20%\">
-			<a href=\"?page=contact\"><img src=\"images/mail.png\" border=\"0\" alt=\"Kontakt\" style=\"width:40px;height:40px;\" title=\"Kontakt\"></a><br/>
-			Admin per E-Mail kontaktieren
-		</td>
-		<td class=\"tbldata\" style=\"text-align:center;width:20%\">
-			<a href=\"javascript:;\" onclick=\"".HELPCENTER_ONCLICK."\"><img src=\"images/help.png\" border=\"0\" alt=\"FAQ\" style=\"width:40px;height:40px;\" title=\"Hilfecenter und FAQ\"></a><br/>
-			Häufig gestellte Fragen (FAQ)
-		</td>
-		<td class=\"tbldata\" style=\"text-align:center;width:20%\">
-			<a href=\"".FORUM_PATH."\" target=\"_Blank\"><img src=\"images/users.png\" border=\"0\" alt=\"Forum\" title=\"Forum\" style=\"width:40px;height:40px;\"></a><br/>
-			Forum
-		</td>
-		<td class=\"tbldata\" style=\"text-align:center;width:20%\">
-			<a href=\"".DEVCENTER_PATH."\" target=\"_Blank\"><img src=\"images/bug.png\" border=\"0\" alt=\"FAQ\" style=\"width:40px;height:40px;\" title=\"FAQ\"></a><br/>
-			Fehler melden
-		</td>
-		</td></tr>";
-		tableEnd();
-
-
-		tableStart("Daten");
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Einstellungen</td><td class=\"tbldata\">Grundlegende Einstellungen dieser Runde</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=settings\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Geb&auml;ude</td><td class=\"tbldata\">Liste aller Geb&auml;ude</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=buildings\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Planeten</td><td class=\"tbldata\">Liste aller Planeten</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=planets\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Raketen</td><td class=\"tbldata\">Liste aller Raketen</td><td class=\"tbldata\"><a href=\"?page=$page&site=missiles\" width=\"60\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Rassen</td><td class=\"tbldata\">Liste aller Rassen</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=races\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Ressourcen</td><td class=\"tbldata\">Liste aller Ressourcen</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=resources\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Rohstoffkurse</td><td class=\"tbldata\">Welche Werte die Rohstoffe akuell haben</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=rates\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Schiffe</td><td class=\"tbldata\">Liste aller Schiffe</td><td class=\"tbldata\"><a href=\"?page=$page&site=shipyard\" width=\"60\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Schiffsaktionen</td><td class=\"tbldata\">Die verschiedenen Aktionen in der &Uuml;bersicht</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=action\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Spezialisten</td><td class=\"tbldata\">Was man mit Spezialisten machen kann</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=specialists\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Sterne</td><td class=\"tbldata\">Liste aller Sterne</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=stars\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Technologien</td><td class=\"tbldata\">Liste aller Technologien</td><td class=\"tbldata\"><a href=\"?page=$page&site=research\" width=\"60\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Verteidigung</td><td class=\"tbldata\">Liste aller Verteidigungsanlagen</td><td class=\"tbldata\"><a href=\"?page=$page&site=defense\" width=\"60\">Anzeigen</a></td></tr>";
-		tableEnd();
-
-
-		tableStart("Mechanismen");
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Bewohner</td><td class=\"tbldata\">Wie arbeite ich mit Bewohnern und was muss ich beachten</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=population\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Kryptocenter</td><td class=\"tbldata\">Wie man fremde Flottenbewegungen scannt</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=crypto\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Markt</td><td class=\"tbldata\">Wie der Marktplatz funktioniert</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=market\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Multis und Sitting</td><td class=\"tbldata\">Wie wir Mehrfachaccounts handhaben und wie Sitting funktioniert</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=multi_sitting\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Raketen</td><td class=\"tbldata\">Wie das Raketensystem funktioniert</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=missile_system\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Raumkarte</td><td class=\"tbldata\">Wie ist das Universum aufgebaut</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=space\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Spezialpunkte</td><td class=\"tbldata\">Wie man Spezialpunkte und Titel erwerben kann</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=specialpoints\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Spionage</td><td class=\"tbldata\">Wie das Spionagesystem funktioniert</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=spy_info\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Statistik</td><td class=\"tbldata\">Was sind Statistiken und wie werden sie berechnet</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=stats\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Technikbaum</td><td class=\"tbldata\">Wie lese ich daraus die Voraussetzungen ab</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=techtree\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Textformatierung</td><td class=\"tbldata\">Wie man Text formatieren kann (BBcode)</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=textformat\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Urlaubsmodus</td><td class=\"tbldata\">Was das ist und wie es funktioniert</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=u_mod\">Anzeigen</a></td></tr>";
-		echo "<tr><td class=\"tbltitle\" width=\"25%\">Wärme- und Kältebonus</td><td class=\"tbldata\">Welche Auswirkungen hat die Planetentemperatur</td><td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=tempbonus\">Anzeigen</a></td></tr>";
-		tableEnd();
-
-
-
+		if (!IS_ADMIN_MODE)
+		{
+			tableStart("Tools");
+			echo "<tr>
+			<td style=\"text-align:center;width:20%\">
+				<a href=\"?page=ticket\"><img src=\"images/abuse.png\" border=\"0\" alt=\"Missbrauch\" style=\"width:40px;height:40px;\" title=\"Ticket erstellen\"></a><br/>
+				Ticket an einen Admin schreiben
+			</td>
+			<td style=\"text-align:center;width:20%\">
+				<a href=\"?page=contact\"><img src=\"images/mail.png\" border=\"0\" alt=\"Kontakt\" style=\"width:40px;height:40px;\" title=\"Kontakt\"></a><br/>
+				Admin per E-Mail kontaktieren
+			</td>
+			<td style=\"text-align:center;width:20%\">
+				<a href=\"javascript:;\" onclick=\"".HELPCENTER_ONCLICK."\"><img src=\"images/help.png\" border=\"0\" alt=\"FAQ\" style=\"width:40px;height:40px;\" title=\"Hilfecenter und FAQ\"></a><br/>
+				Häufig gestellte Fragen (FAQ)
+			</td>
+			<td style=\"text-align:center;width:20%\">
+				<a href=\"".FORUM_PATH."\" target=\"_Blank\"><img src=\"images/users.png\" border=\"0\" alt=\"Forum\" title=\"Forum\" style=\"width:40px;height:40px;\"></a><br/>
+				Forum
+			</td>
+			<td style=\"text-align:center;width:20%\">
+				<a href=\"".DEVCENTER_PATH."\" target=\"_Blank\"><img src=\"images/bug.png\" border=\"0\" alt=\"FAQ\" style=\"width:40px;height:40px;\" title=\"FAQ\"></a><br/>
+				Fehler melden
+			</td>
+			</td></tr>";
+			tableEnd();
+		}
+				
+		$helpNav = array();
+    $helpNav["Datenbank"]["Einstellungen"] = array('settings','Grundlegende Einstellungen dieser Runde');
+    $helpNav["Datenbank"]["Gebäude"] = array('buildings','Liste aller Geb&auml;ude');
+    $helpNav["Datenbank"]["Planeten"] = array('planets','Liste aller Planeten');
+    $helpNav["Datenbank"]["Raketen"] = array('missiles','Liste aller Raketen');
+    $helpNav["Datenbank"]["Rassen"] = array('races','Liste aller Rassen');
+    $helpNav["Datenbank"]["Ressourcen"] = array('resources','Liste aller Ressourcen');
+    $helpNav["Datenbank"]["Rohstoffkurse"] = array('rates','Welche Werte die Rohstoffe akuell haben');
+    $helpNav["Datenbank"]["Schiffe"] = array('shipyard','Liste aller Schiffe');
+    $helpNav["Datenbank"]["Schiffsaktionen"] = array('action','Die verschiedenen Aktionen in der &Uuml;bersicht');
+    $helpNav["Datenbank"]["Spezialisten"] = array('specialists','Was man mit Spezialisten machen kann');
+    $helpNav["Datenbank"]["Sterne"] = array('stars','Liste aller Sterne');
+    $helpNav["Datenbank"]["Technologien"] = array('research','Liste aller Technologien');
+    $helpNav["Datenbank"]["Verteidigung"] = array('defense','Liste aller Verteidigungsanlagen');
+    $helpNav["Spielmechanismen"]["Bewohner"] = array('population','Wie arbeite ich mit Bewohnern und was muss ich beachten');
+    $helpNav["Spielmechanismen"]["Kryptocenter"] = array('crypto','Wie man fremde Flottenbewegungen scannt');
+    $helpNav["Spielmechanismen"]["Markt"] = array('market','Wie der Marktplatz funktioniert');
+    $helpNav["Spielmechanismen"]["Multis und Sitting"] = array('multi_sitting','Wie wir Mehrfachaccounts handhaben und wie Sitting funktioniert');
+    $helpNav["Spielmechanismen"]["Raketen"] = array('missile_system','Wie das Raketensystem funktioniert');
+    $helpNav["Spielmechanismen"]["Raumkarte"] = array('space','Wie ist das Universum aufgebaut');
+    $helpNav["Spielmechanismen"]["Spezialpunkte"] = array('specialpoints','Wie man Spezialpunkte und Titel erwerben kann');
+    $helpNav["Spielmechanismen"]["Spionage"] = array('spy_info','Wie das Spionagesystem funktioniert');
+    $helpNav["Spielmechanismen"]["Statistik"] = array('stats','Was sind Statistiken und wie werden sie berechnet');
+    $helpNav["Spielmechanismen"]["Technikbaum"] = array('techtree','Wie lese ich daraus die Voraussetzungen ab');
+    $helpNav["Spielmechanismen"]["Textformatierung"] = array('textformat','Wie man Text formatieren kann (BBcode)');
+    $helpNav["Spielmechanismen"]["Urlaubsmodus"] = array('u_mod','Was das ist und wie es funktioniert');
+    $helpNav["Spielmechanismen"]["Wärme- und Kältebonus"] = array('tempbonus','Welche Auswirkungen hat die Planetentemperatur');
+  
+		foreach ($helpNav as $cat => $data)
+		{
+			tableStart($cat);
+			foreach ($data as $title=>$item)
+			{
+				echo "<tr><td width=\"35%\"><b><a href=\"?page=$page&site=".$item[0]."\">".$title."</b></td><td>".$item[1]."</td></tr>";
+			}
+			tableEnd();
+		}    
 
 
 	}
-
-
 ?>

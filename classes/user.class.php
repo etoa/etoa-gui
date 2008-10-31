@@ -87,6 +87,10 @@
 				$this->rankHighest = $arr['user_rank_highest'];
 
 
+		    $this->specialistId = $arr['user_specialist_id'];
+		    $this->specialistTime = $arr['user_specialist_time'];
+
+
 				// Todo: remove and add where it is needed
 	    	$this->loadRaceData($arr['user_race_id']);	 				
 	
@@ -117,7 +121,9 @@
 		final public function allianceRankId() { return $this->allianceRankId; }
 		final public function lastOnline() { return $this->last_online; }
 		final public function signature() { return $this->signature; }
-		
+		final public function specialistId() { return $this->specialistId; }
+		final public function specialistTime() { return $this->specialistTime; }
+	
 
 		final public function allianceName() 
 		{ 

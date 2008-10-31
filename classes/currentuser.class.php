@@ -78,6 +78,7 @@
         $this->property['havenships_buttons'] = $arr['havenships_buttons'];
 		    $this->property['show_adds'] = $arr['show_adds'];
 		    $this->property['fleet_rtn_msg'] = $arr['fleet_rtn_msg'];
+		    
         return true;
 			}
 			// This part should never be used, it is for repairing missing user settings only

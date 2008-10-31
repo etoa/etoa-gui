@@ -64,8 +64,9 @@
 	// Navigation laden
 	require_once('nav.php');
 
-
 	// Feste Konstanten
+	define('IS_ADMIN_MODE',true);
+
 	define('SESSION_NAME',"adminsession");
 	define('USER_TABLE_NAME','admin_users');
 
@@ -148,14 +149,12 @@
 		 header("HTTP/1.0 401 Unauthorized"); 
 		}
 	}
-
 ?>
-
 <?PHP	echo '<?xml version="1.0" encoding="UTF-8"?>';?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">	
 	<head>
-		<title><? echo $conf['game_name']['v']." ".$conf['game_name']['p1']." Administration - ".GAMEROUND_NAME;?></title>
+		<title><?PHP echo $conf['game_name']['v']." ".$conf['game_name']['p1']." Administration - ".GAMEROUND_NAME;?></title>
 		<link rel="stylesheet" type="text/css" href="style.css" />
 		<link rel="stylesheet" href="../css/general.css" type="text/css" />
 
@@ -177,6 +176,8 @@
 	</head>
 	<body class="index">
 		<?PHP
+
+			/*
 			if (!$http_auth)
 			{
 				echo "<div style=\"width:400px;margin:50px auto;text-align:center;\">";
@@ -187,6 +188,7 @@
 			}
 			else
 			{
+				*/
 		
 			// Check Login
 			include("inc/admin_login.inc.php");
@@ -195,7 +197,6 @@
 			{
 				// Define s as the current session variable
 				$s = $_SESSION[SESSION_NAME];
-				
 
 				// Admin-Gruppen laden				
 				$admingroup=array();
@@ -205,6 +206,7 @@
 					$admingroup[$garr['group_id']] =$garr['group_name'];
 					$adminlevel[$garr['group_level']] =$garr['group_name'];
 				}
+
 				?>
 
 				<!-- Stuff for DHTML Tipps -->
@@ -222,7 +224,7 @@
 							<?PHP
 								foreach ($topnav as $title=> $data)
 								{
-									echo " &nbsp; <a href=\"".$data['url']."\" target=\"_blank\">$title</a>";
+									echo " &nbsp; <a href=\"".$data['url']."\" onclick=\"window.open('".$data['url']."');return false;\">$title</a>";
 								}
 								echo "<br/>";
 								
@@ -253,6 +255,7 @@
 					<tr>
 						<td id="menu1">
 							<?php
+							
 								//
 								// Linke Navigation anzeigen
 								//
@@ -295,11 +298,13 @@
 									}
 								}
 
-								echo "<br/><form action=\"?page=user&amp;action=search\" method=\"post\">
-										 &nbsp;<input type=\"text\" name=\"user_nick_search\" size=\"9\" autocomplete=\"off\" onkeyup=\"\" id=\"user_search_box1\">
+								echo "<br/>
+								<form action=\"?page=user&amp;action=search\" method=\"post\">
+								<div>
+										 &nbsp;<input type=\"text\" name=\"user_nick_search\" size=\"9\" autocomplete=\"off\" onkeyup=\"\" id=\"user_search_box1\" />
 										<input type=\"hidden\" name=\"qmode[user_nick_search]\" value=\"LIKE '%\" />
 										<input type=\"submit\" name=\"user_search\" value=\"Usersuche\" />
-									</form>";
+									</div></form>";
 
 								//
 								// Auslastung
@@ -468,12 +473,12 @@
 					</tr>
 				</table>
 				
-				<?
+				<?PHP
 				// Write all changes of $s to the session variable
 				$_SESSION[SESSION_NAME]=$s;
+
 			}
-			
-			}
+			//}
 			dbclose();
 		?>
 	</body>

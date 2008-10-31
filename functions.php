@@ -1672,7 +1672,7 @@ die Spielleitung";
 	{
 		error_msg($msg);
 	}
-
+	
 	/**
 	* Formatierte OK-Meldung anzeigen
 	*
@@ -3202,6 +3202,15 @@ Forum: http://www.etoa.ch/forum";
 		return "<a href=\"?page=help&amp;site=".$site."\" onclick=\"window.open('show.php?page=help&amp;site=".$site."','popup','status=no,width=".$width.",height=".$height.",scrollbars=yes');return false;\">
 		<img src=\"".$url."\" alt=\"".$alt."\" style=\"border:none;".$style."\" />
 		</a>";		
+	}
+
+	function showTechTree($type,$itemId)
+	{
+		echo "<div id=\"reqInfo\" style=\"width:100%;text-align:center;;
+		color:#fff;border:none;margin:0px auto;\">
+		Bitte warten...
+		</div>";	
+		echo '<script type="text/javascript">xajax_reqInfo('.$itemId.',"'.$type.'")</script>';
 	}
 
 	/**

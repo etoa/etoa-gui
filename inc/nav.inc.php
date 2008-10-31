@@ -10,10 +10,13 @@
 	$navmenu=array();
 	$navmenu[0]['cat'] = "Allgemeines";
 	$navmenu[0]['items'][] = array ("name"=>"Übersicht","url"=>"?page=overview");
-	$navmenu[0]['items'][] = array ("name"=>"Statistiken","url"=>"?page=stats");
 	$navmenu[0]['items'][] = array ("name"=>"Raumkarte","url"=>"?page=map");
 	$navmenu[0]['items'][] = array ("name"=>"Sonnensystem","url"=>"?page=cell");
 	$navmenu[0]['items'][] = array ("name"=>"Flotten","url"=>"?page=fleets");
+	$navmenu[0]['items'][] = array ("name"=>"Statistiken","url"=>"?page=stats");
+	$navmenu[0]['items'][] = array ("name"=>"Wirtschaftsübersicht","url"=>"?page=planetstats");
+	$navmenu[0]['items'][] = array ("name"=>"Schiffsübersicht","url"=>"?page=fleetstats");
+	$navmenu[0]['items'][] = array ("name"=>"Spezialisten","url"=>"?page=specialists");
 
 	$navmenu[1]['cat'] = "Kommunikation";
 	$navmenu[1]['items'][] = array ("name"=>"Allianz","url"=>"?page=alliance");
