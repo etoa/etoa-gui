@@ -31,7 +31,6 @@
 
 	echo '<h1>Wirtschaftsübersicht</h1>';
 
-	echo "<input type=\"button\" onclick=\"document.location='?page=economy'\" value=\"Wirtschaft des aktuellen Planeten anzeigen\" /><br/><br/>";
 
 	$planets=$pm->itemObjects();
 
@@ -325,6 +324,10 @@
 	<td style=\"font-weight:bold\">Speicher voll</td>
 	</tr>";
 	echo "</table>";
+
+	echo "<div><br/>
+	<input type=\"button\" onclick=\"document.location='?page=economy'\" value=\"Wirtschaft des aktuellen Planeten anzeigen\" />
+	</div>";
 
 
 ?>

@@ -112,9 +112,10 @@
 			if ($a['type']!="readonly")
 			{
 				$fsql .= "`".$a['name']."`";
-				if ($cnt < sizeof($db_fields)) $fsql .= ",";
-				$cnt++;
+				if ($cnt < sizeof($db_fields)) 
+					$fsql .= ",";
 			}
+			$cnt++;
 		}
 		$cnt = 1;
 		foreach ($db_fields as $k=>$a)
@@ -198,7 +199,8 @@
 					$vsql .= "'".addslashes($_POST[$a['name']])."'";
 				break;						
 			}
-			if ($cnt < sizeof($db_fields)) $vsql .= ",";
+			if ($cnt < sizeof($db_fields) && $a['type']!="readonly") 
+				$vsql .= ",";
 			$cnt++;
 		}
 
@@ -224,35 +226,36 @@
 				echo " style=\"display:none;\"";
 			
 			echo ">\n<th class=\"tbltitle\" width=\"200\">".$a['text'].":</th>\n";
-			echo "<td class=\"tbldata\" width=\"200\" >\n";
+			echo "<td class=\"tbldata\" width=\"200\">\n";
+			$stl = ($arr[$a['name']]!=$a['def_val'] ? ' style="color:yellow"' : '');
 			switch ($a['type'])
 			{
 				case "readonly":
 					echo $arr[$a['name']];
 				break;
 				case "text":
-					echo "<input type=\"text\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"".stripslashes($arr[$a['name']])."\" />";
+					echo "<input $stl type=\"text\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"".stripslashes($arr[$a['name']])."\" />";
 				break;
 				case "hidden":
 					echo "<input type=\"hidden\" name=\"".$a['name']."\" value=\"".$arr[$a['name']]."\" />";
 				break;
 				case "email":
-					echo "<input type=\"text\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"".$arr[$a['name']]."\" />";
+					echo "<input $stl type=\"text\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"".$arr[$a['name']]."\" />";
 				break;
 				case "url":
-					echo "<input type=\"text\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"".$arr[$a['name']]."\" />";
+					echo "<input $stl type=\"text\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"".$arr[$a['name']]."\" />";
 				break;
 				case "numeric":
-					echo "<input type=\"text\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"".$arr[$a['name']]."\" />";
+					echo "<input $stl type=\"text\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"".$arr[$a['name']]."\" />";
 				break;
 				case "password":
-					echo "<input type=\"password\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"\" />";
+					echo "<input $stl type=\"password\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"\" />";
 				break;
 				case "timestamp":
-					echo "<input type=\"text\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"".date(DATE_FORMAT,$arr[$a['name']])."\" />";
+					echo "<input $stl type=\"text\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"".date(DATE_FORMAT,$arr[$a['name']])."\" />";
 				break;
 				case "textarea":
-					echo "<textarea name=\"".$a['name']."\" rows=\"".$a['rows']."\" cols=\"".$a['cols']."\">".stripslashes($arr[$a['name']])."</textarea>";
+					echo "<textarea $stl name=\"".$a['name']."\" rows=\"".$a['rows']."\" cols=\"".$a['cols']."\">".stripslashes($arr[$a['name']])."</textarea>";
 				break;
 				case "radio":
 					foreach ($a['rcb_elem'] as $rk=>$rv)

@@ -337,6 +337,13 @@
 		}
 
 
+		static public function count()
+		{
+			$ures = dbquery("SELECT COUNT(user_id) FROM users;");
+			$uarr = mysql_fetch_row($ures);
+			return $uarr[0];			
+		}
+
     
 	}
 

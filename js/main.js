@@ -964,3 +964,32 @@ function statsSearchLoader()
 {
 	document.getElementById('statsTable').innerHTML='<div style=\"padding:20px;background:#335\"><img src=\"images/loading335.gif\" alt=\"Loading\" /> Suche Spieler...</div>';
 }
+
+function tabActivate(tabName,elemId)
+{
+	i = 0;
+	while (true)
+	{
+		if (document.getElementById(tabName+"Content"+i))
+		{
+			if (i==elemId)
+			{
+				document.getElementById(tabName+"Content"+i).style.display='';
+				document.getElementById(tabName+"Nav"+i).setAttribute("class", "tabTabActive");
+				document.getElementById(tabName+"Nav"+i).setAttribute("className", "tabTabActive");
+			}
+			else
+			{
+				document.getElementById(tabName+"Content"+i).style.display='none';
+				document.getElementById(tabName+"Nav"+i).setAttribute("class", "tabTab");
+				document.getElementById(tabName+"Nav"+i).setAttribute("className", "tabTab");
+			}
+			i++;
+		}
+		else
+		{
+			break;
+		}
+	}
+	
+}

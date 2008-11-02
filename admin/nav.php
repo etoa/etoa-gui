@@ -140,6 +140,10 @@
 	$navmenu['Spieler']['Rassen']['sub']="race";
 	$navmenu['Spieler']['Rassen']['level']=2;
 
+	$navmenu['Spieler']['Spezialisten']['page']="user";
+	$navmenu['Spieler']['Spezialisten']['sub']="specialists";
+	$navmenu['Spieler']['Spezialisten']['level']=2;
+
 
 	$navmenu['Allianzen']['Allianzen bearbeiten']['page']="alliances";
 	$navmenu['Allianzen']['Allianzen bearbeiten']['sub']="";

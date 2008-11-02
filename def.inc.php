@@ -232,7 +232,13 @@
 	define("PEOPLE_FOOD_USE",$conf["people_food_require"]["v"]);			// Anzahl Nahrung, welche Arbeiter benötigen
 	define("COLLECT_FUEL_MAX_AMOUNT",10000);													// ???
 	define("USER_MAX_PLANETS",$conf["user_max_planets"]["v"]);				// Maximale Anzahl Planeten
-	define("SPECIALIST_MIN_POINTS_REQ",100000);												// Minimal Punkte für Spezialist
+	
+	// Spezialiasten
+	define("SPECIALIST_MIN_POINTS_REQ",100000);												// Minimal Punkte für Spezialist (VERALTET)
+	define('SPECIALIST_MAX_COSTS_FACTOR',5);													// Maximale Kostensteigerung
+	define('SPECIALIST_AVAILABILITY_FACTOR',0.5);											// Verfügbare Spezialisten pro Typ basierend auf Faktor * Anzahl User
+	
+	
 
 	// User Planetwechsel
 	define("MAX_MAINPLANET_CHANGES",20);

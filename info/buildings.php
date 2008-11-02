@@ -67,8 +67,9 @@ if (isset($_GET['id']))
 		</tr>";
 		tableEnd();
 
-
-
+		$tc = new TabControl("help",array("Spezielles","Kosten","Technikbaum"));
+		$tc->open();
+		
 		// Metallmine
     if ($arr['building_id']==1)
     {
@@ -374,6 +375,9 @@ if (isset($_GET['id']))
 	    tableEnd();
     }
     
+    $tc->close();
+    $tc->open();
+    
     tableStart ("Kostenentwicklung (Faktor: ".$arr['building_build_costs_factor'].")");
     echo "<tr><th style=\"text-align:center;\">Level</th>
     			<th>".RES_ICON_METAL."".RES_METAL."</th>
@@ -396,10 +400,16 @@ if (isset($_GET['id']))
     				<td style="text-align:right;">'.nf($arr['building_fields']*$x).'</td></tr>';
     }
     tableEnd();
+    
+    $tc->close();
+    $tc->open();    
         
 		iBoxStart("Technikbaum");
     showTechTree("b",$arr['building_id']);
 		iBoxEnd();
+		
+		$tc->close();
+    $tc->end();
 	}
   else
   {
@@ -495,7 +505,8 @@ else
                 building_name;");
 			if (mysql_num_rows($res)>0)
 			{
-				tableStart("<span class=\"cluetip\" rel=\"tooltip.php?a=buildingcat&id=".$tarr['type_id']."\">".text2html($tarr['type_name'])."</span>");
+				// class=\"cluetip\" rel=\"tooltip.php?a=buildingcat&id=".$tarr['type_id']."\"
+				tableStart("<span>".text2html($tarr['type_name'])."</span>");
 				while ($arr = mysql_fetch_array($res))
 				{
 					echo "<tr>
@@ -505,7 +516,8 @@ else
 					echo "<td style=\"width:130px;\">
 						<a href=\"?page=$page&site=$site&id=".$arr['building_id']."\"><b>".text2html($arr['building_name'])."</a></a>
 					</td>";
-					echo "<td class=\"cluetip\" rel=\"tooltip.php?a=buildingdesc&id=".$arr['building_id']."\">".text2html($arr['building_shortcomment'])."</td>";
+					//class=\"cluetip\" rel=\"tooltip.php?a=buildingdesc&id=".$arr['building_id']."\"
+					echo "<td>".text2html($arr['building_shortcomment'])."</td>";
 					echo "<td style=\"width:90px\">";
 					if($arr['building_fields']=='0')
 						echo "<b>Keine Felder</b></td>";

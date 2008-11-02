@@ -58,14 +58,8 @@
 		echo "<h1>Wirtschaft des Planeten ".$cp->name."</h1>";
 		$cp->resBox();
 
-		if (SPECIALIST_MIN_POINTS_REQ <= $cu->points())
-		{
-			echo '<input type="button" onclick="document.location=\'?page=specialists\'" value="Spezialisten einstellen" /> ';
-		}
-
-
-		echo "<input type=\"button\" onclick=\"document.location='?page=planetstats'\" value=\"Ressourcen aller Planeten anzeigen\" />
-		<br/><br/>";
+		$tc = new TabControl("ecoTab",array("Produktion","Energie","Lager","Bonus/Malus"));
+		$tc->open();
 
 		//
 		// Produktion pro Stunde und Energieverbrauch
@@ -269,7 +263,8 @@
 		}
 		echo "</form>";
 
-
+		$tc->close();
+		$tc->open();
 
 
 		//
@@ -372,7 +367,10 @@
 			echo ">".nf($powerFree)."</td><td class=\"tbldata\" $style>".round($powerFree/$powerProduced*100,2)."%</th></tr>";
 		}
 		echo "</table>";
-		
+	
+			$tc->close();
+		$tc->open();
+	
 
 		//
 		// Lager
@@ -444,6 +442,9 @@
 			echo "</tr>";
 			tableEnd();
 		}
+
+		$tc->close();
+		$tc->open();
 
 
 		//
@@ -520,6 +521,16 @@
 		echo "<td class=\"tbldata\">".get_percent_string($cu->raceFleettime,1,1)."</td></tr>";
 
 		tableEnd();
+		
+		$tc->close();
+		$tc->end();
+			
+		echo '<div>
+		<input type="button" onclick="document.location=\'?page=specialists\'" value="Spezialisten" /> &nbsp; ';
+		echo "<input type=\"button\" onclick=\"document.location='?page=planetstats'\" value=\"Ressourcen aller Planeten anzeigen\" />
+		</div>";
+
+
 
 	}
 	else

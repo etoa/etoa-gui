@@ -128,8 +128,48 @@ a img	{
 	text-align:right;
 }
 
+/* Outer box of every iBox() or table() */
 table.boxLayout, div.boxLayout	{
 	margin:10px auto;
 	padding:0px;
+}
+
+.tabOuter {
+	margin:10px auto;
+	padding:0px;
+}
+
+.tabOuter .tabTab	{
+	background:#225;
+	padding-top:5px;
+	border:1px solid #fff;
+	border-bottom:none;
+	width:150px;
+	height:20px;
+	float:left;
+	margin-top:3px;
+}
+
+.tabOuter .tabTab:hover	{
+	background:#225;
+	margin-top:0px;
+	height:23px;
+}
+
+.tabOuter .tabTabActive	{
+	background:#225;
+	padding-top:5px;
+	border:1px solid #fff;
+	border-bottom:none;
+	width:150px;
+	height:23px;
+	float:left;
+	font-weight:bold;
+}
+
+.tabOuter .tabContent {
+	border:1px solid #fff;
+	background:#223;
+	padding:5px;
 }
 

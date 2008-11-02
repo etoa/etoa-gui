@@ -36,6 +36,14 @@
 	}
 
 	//
+	// Fehlerhafte Logins
+	//
+	elseif ($sub=="specialists")
+	{
+			advanced_form("specialists");
+	}
+
+	//
 	// Statistics-Graph
 	//
 	elseif ($sub=="userstats")
