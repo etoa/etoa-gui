@@ -1535,7 +1535,7 @@ die Spielleitung";
 		");
 	}
 
-	function tableStart($title="",$width=0)
+	function tableStart($title="",$width=0,$layout="")
 	{
 		if ($width>0)
 		{
@@ -1549,8 +1549,16 @@ die Spielleitung";
 		{
 			$w = "width:650px";
 		}
-
-		echo "<table class=\"tb boxLayout\" style=\"".$w."\">";
+		
+		if ($layout=="double")
+		{
+			echo "<table style=\"".$w."\"><tr><td style=\"width:50%;vertical-align:top;\">";
+		}
+		else
+		{
+			echo "<table class=\"tb boxLayout\" style=\"".$w."\">";
+		}
+		
 		if ($title!="")
 			echo "<tr><td class=\"infoboxtitle\" colspan=\"20\">$title</td></tr>";
 	}
@@ -1608,7 +1616,7 @@ die Spielleitung";
 				UPDATE
 					planets
 				SET
-					user_id=0,
+					planet_user_id=0,
 					planet_name='',
 					planet_user_main=0,
 					planet_fields_used=0,

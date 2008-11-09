@@ -181,7 +181,7 @@
 		        shiplist
 					ON
 		        ship_id=shiplist_ship_id
-						AND shiplist_user_id='".$this->ownerId."'
+						AND shiplist_user_id='".$this->ownerId()."'
 						AND shiplist_entity_id='".$this->sourceEntity->id()."'
 		        AND ship_id=".$sid."
 		        AND shiplist_count>0;");
@@ -676,7 +676,15 @@
 			$ammount = max(0,$ammount);
 			$this->res[$id] = 0;
 			$this->calcResLoaded();
-			$loaded = floor(min($ammount,$this->getCapacity(),$this->sourceEntity->getRes($id)));
+			if ($id==4) {
+				$loaded = floor(min($ammount,$this->getCapacity(),$this->sourceEntity->getRes($id)-$this->getSupportFuel()-$this->getCosts()));
+			}
+			elseif ($id==5) {
+				$loaded = floor(min($ammount,$this->getCapacity(),$this->sourceEntity->getRes($id)-$this->getSupportFood()-$this->getCostsFood()));
+			}
+			else {
+				$loaded = floor(min($ammount,$this->getCapacity(),$this->sourceEntity->getRes($id)));
+			}
 			$this->res[$id] = $loaded;
 			$this->calcResLoaded();
 			
@@ -697,24 +705,41 @@
 			return $this->supportTime;
 		}
 		
+		function setSupportTime($time) {
+			$this->supportTime = $time;
+			
+			$this->supportCostsFood = ceil($time*$this->supportCostsFoodPerSec);
+			$this->supportCostsFuel = ceil($time*$this->supportCostsFuelPerSec);
+		}
+		
+		function getSupportFood() {
+			return $this->supportCostsFood;
+		}
+		
+		function getSupportFuel() {
+			return $this->supportCostsFuel;
+		}
+		
 		function getSupportMaxTime() {
-			return 100;
+			$cfg = Config::getInstance();
 			
-			/*$this->supportCostsFuelPerSec = $this->costsPerHundredAE*$this->getSpeed()/$this->getSpeedPercent()/3600;
-			$this->supportCostsFoodPerSec = $this->costsFood/$this->getDuration();
+			$this->supportCostsFuel = 0;
+			$this->supportCostsFood = 0;
 			
-			$supportTimeFuel = $this->getLoadedRes(4)/$this->supportCostsFuelPerSec;
+			$this->supportCostsFoodPerSec = $this->pilots * $cfg->value('people_food_require')/36000;
+			$this->supportCostsFuelPerSec = $this->costsPerHundredAE*$this->getSpeed()/$this->getSpeedPercent()/3600000;
 			
-			if ($this->costsFood>0)
-				$supportTimeFood = $this->getLoadedRes(5)/$this->supportCostsFoodPerSec;
+			$maxTime = $this->getCapacity() / ($this->supportCostsFuelPerSec+$this->supportCostsFoodPerSec);
+			
+			$supportTimeFuel = ($this->sourceEntity->getRes(4)-$this->getLoadedRes(4)-$this->getCosts())/$this->supportCostsFuelPerSec;
+			if ($this->supportCostsFoodPerSec)
+				$supportTimeFood = ($this->sourceEntity->getRes(5)-$this->getLoadedRes(5)-$this->getCostsFood())/$this->supportCostsFoodPerSec;
 			else
 				$supportTimeFood = $supportTimeFuel;
+				
+			$maxTime = min($maxTime,min($supportTimeFuel,$supportTimeFood));
 			
-			$this->supportTime = min($supportTimeFuel,$supportTimeFood);
-			if ($this->supportTime>0) {
-				$this->supportCostsFood = $this->getLoadedRes(5) * $this->supportTime / $supportTimeFood;
-				$this->supportCostsFuel = $this->getLoadedRes(4) * $this->supportTime / $supportTimeFuel;
-			}	*/
+			return floor($maxTime);
 		}
 		
 		function getSupport() {

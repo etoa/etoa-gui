@@ -327,6 +327,8 @@
 		*/
 		function resBox()
 		{
+			$cfg = Config::getInstance();
+
 			$style0="class=\"tbldata\"";
 			$style1="class=\"tbldata\"";
 			$style2="class=\"tbldata\"";
@@ -338,50 +340,50 @@
 
 			if ($this->storeMetal<=floor($this->resMetal) && floor($this->resMetal)>0)
 			{
-				$style0="class=\"tbldata2\"";
+				$style0="style=\"color:#f00\"";
 				$store_msg[1] = tm("Speicher voll","Produktion gestoppt, bitte Speicher ausbauen!");
 				$store_err[1]=true;
 			}
 			if ($this->storeCrystal<=floor($this->resCrystal) && floor($this->resCrystal)>0)
 			{
-				$style1="class=\"tbldata2\"";
+				$style1="style=\"color:#f00\"";
 				$store_msg[2] = tm("Speicher voll","Produktion gestoppt, bitte Speicher ausbauen!");
 				$store_err[2]=true;
 			}
 			if ($this->storePlastic<=floor($this->resPlastic) && floor($this->resPlastic)>0)
 			{
-				$style2="class=\"tbldata2\"";
+				$style2="style=\"color:#f00\"";
 				$store_msg[3] = tm("Speicher voll","Produktion gestoppt, bitte Speicher ausbauen!");
 				$store_err[3]=true;
 			}
 			if ($this->storeFuel<=floor($this->resFuel) && floor($this->resFuel)>0)
 			{
-				$style3="class=\"tbldata2\"";
+				$style3="style=\"color:#f00\"";
 				$store_msg[4] = tm("Speicher voll","Produktion gestoppt, bitte Speicher ausbauen!");
 				$store_err[4]=true;
 			}
 			if ($this->storeFood<=floor($this->resFood) && floor($this->resFood)>0)
 			{
-				$style4="class=\"tbldata2\"";
+				$style4="style=\"color:#f00\"";
 				$store_msg[5] = tm("Speicher voll","Produktion gestoppt, bitte Speicher ausbauen!");
 				$store_err[5]=true;
 			}
 			if ($this->people_place<=floor($this->people) && floor($this->people)>0)
 			{
-				$style5="class=\"tbldata2\"";
+				$style5="style=\"color:#f00\"";
 				$store_msg[6] = tm("Wohnraum voll","Wachstum gestoppt, bitte Wohnraum ausbauen!");
 				$store_err[6]=true;
 			}
 			if(floor($this->prodPower)-floor($this->usePower)<0)
 			{
-				$style6="class=\"tbldata2\"";
+				$style6="style=\"color:#f00\"";
 				$store_msg[7] = tm("Zuwenig Energie","Produktion verringert, bitte Kraftwerk ausbauen!");
 				$store_err[7] = true;
 				$power_rest = floor($this->prodPower)-floor($this->usePower);
 			}
 			else
 			{
-				$style6="class=\"tbldata3\"";
+				$style6="style=\"color:#0f0\"";
 				$store_msg[7] = "";
 				$store_err[7] = "";
 				$power_rest = floor($this->prodPower)-floor($this->usePower);
@@ -403,8 +405,10 @@
 			<td $style4 ".$store_msg[5].">".nf(floor($this->resFood))." t</td>
 			<td $style5 ".$store_msg[6].">".nf(floor($this->people))."</td>
 			<td $style6 ".$store_msg[7].">".nf($power_rest)." MW</td>
-			</tr>";
+			</tr>
+			<td colspan=\"7\" id=\"resprogress\" style=\"height:10px;background:#fff;text-align:center;\"></td>";
 			tableEnd();
+			jsProgressBar("resprogress",$this->updated,($this->updated + $cfg->value("res_update")));
 		}
 
 		/**

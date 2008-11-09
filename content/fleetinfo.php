@@ -62,10 +62,10 @@
 		}
 
 
-		echo "<table style=\"width:100%\"><tr><td style=\"width:50%;vertical-align:top;\">";
+		tableStart("","","double");
 
 		// Flugdaten
-		tableStart("Flugdaten");
+		tableStart("Flugdaten","50%");
 		
 		echo "<tr>
 			<td class=\"tbltitle\">Auftrag:</td>
@@ -92,7 +92,7 @@
 			<td class=\"tbldata\" id=\"flighttime\" style=\"color:#ff0\">-</td></tr>";
 		tableEnd();
 
-		tableStart("Piloten &amp; Verbrauch");
+		tableStart("Piloten &amp; Verbrauch","50%");
 		echo "<tr><td class=\"tbltitle\" style=\"width:150px;\">".RES_ICON_PEOPLE."Piloten:</td>
 			<td class=\"tbldata\">".nf($fd->pilots())."</td></tr>";
 		echo "<tr><td class=\"tbltitle\">".RES_ICON_FUEL."".RES_FUEL.":</td>
@@ -106,7 +106,7 @@
 		echo "</td><td style=\"width:5%;vertical-align:top;\"></td><td style=\"width:45%;vertical-align:top;\">";
 
 		// Frachtraum
-		tableStart("Frachtraum");
+		tableStart("Frachtraum","50%");
 		echo "<tr><td class=\"tbltitle\">".RES_ICON_METAL."".RES_METAL."</td><td class=\"tbldata\">".nf($fd->resMetal())." t</td></tr>";
 		echo "<tr><td class=\"tbltitle\">".RES_ICON_CRYSTAL."".RES_CRYSTAL."</td><td class=\"tbldata\" >".nf($fd->resCrystal())." t</td></tr>";
 		echo "<tr><td class=\"tbltitle\">".RES_ICON_PLASTIC."".RES_PLASTIC."</td><td class=\"tbldata\">".nf($fd->resPlastic())." t</td></tr>";
@@ -117,13 +117,14 @@
 		echo "<tr><td class=\"tbltitle\" style=\"width:150px;\">Totaler Frachtraum:</td><td class=\"tbldata\">".nf($fd->getCapacity())." t</td></tr>";
 		tableEnd();
 
-		tableStart("Passagierraum");
+		tableStart("Passagierraum","50%");
 		echo "<tr><td class=\"tbltitle\">".RES_ICON_PEOPLE."Passagiere</td><td class=\"tbldata\">".nf($fd->resPeople())."</td></tr>";
 		echo "<tr><td class=\"tbltitle\" style=\"width:150px;\">Freier Platz:</td><td class=\"tbldata\">".nf($fd->getFreePeopleCapacity())."</td></tr>";
 		echo "<tr><td class=\"tbltitle\" style=\"width:150px;\">Totaler Platz:</td><td class=\"tbldata\">".nf($fd->getPeopleCapacity())."</td></tr>";
 		tableEnd();
 
-		echo "</td></tr></table>";
+		echo "</td></tr>";
+		tableEnd();
 
 		// Schiffe laden
 		if ($fd->countShips() > 0)

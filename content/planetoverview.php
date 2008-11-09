@@ -61,7 +61,7 @@
 				{			
 					echo "<form action=\"?page=$page\" method=\"POST\">";
 					iBoxStart("Sicherheitsabfrage");
-					echo "Willst du die Kolonie auf dem Planeten <b>".$cp->getString()."</b> wirklich l&ouml;schen?";
+					echo "Willst du die Kolonie auf dem Planeten <b>".$cp->name()."</b> wirklich l&ouml;schen?";
 					iBoxEnd();
 					echo "<input type=\"submit\" name=\"submit_noremove\" value=\"Nein, Vorgang abbrechen\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type=\"submit\" name=\"submit_remove\" value=\"Ja, die Kolonie soll aufgehoben werden\">";
 					echo "</form>";
@@ -89,7 +89,7 @@
 					{
 						if (mysql_num_rows(dbquery("SELECT id FROM fleet WHERE entity_to='".$cp->id."' OR entity_from='".$cp->id."';"))==0)
 						{
-							if (mysql_num_rows(dbquery("SELECT id FROM planets WHERE id='".$cp->id."' AND planet_user_id='".$s['user']['id']."' AND planet_user_main=0;"))==1)
+							if (mysql_num_rows(dbquery("SELECT id FROM planets WHERE id='".$cp->id."' AND planet_user_id='".$cu->id()."' AND planet_user_main=0;"))==1)
 							{
 								if (reset_planet($cp->id))
 								{
@@ -100,7 +100,7 @@
 									FROM
 		                                planets
 									WHERE
-		                                planet_user_id='".$s['user']['id']."'
+		                                planet_user_id='".$cu->id()."'
 		                                AND planet_user_main=1;");
 									$main_arr=mysql_fetch_array($main_res);
 		
@@ -299,12 +299,12 @@
 			</tr>";
 			if ($cp->debrisField)
 			{
-				echo '<tr>
-				<th class="tbltitle">Trümmerfeld:</th><td class="tbldata">
-				'.RES_ICON_METAL."".nf($cp->debrisMetal).'<br style="clear:both;" /> 
-				'.RES_ICON_CRYSTAL."".nf($cp->debrisCrystal).'<br style="clear:both;" /> 
-				'.RES_ICON_PLASTIC."".nf($cp->debrisPlastic).'<br style="clear:both;" /> 
-				</td></tr>';
+				echo "<tr>
+				<td class=\"tbltitle\">Trümmerfeld:</td><td class=\"tbldata\">
+				".RES_ICON_METAL."".nf($cp->debrisMetal)."<br style=\"clear:both;\" /> 
+				".RES_ICON_CRYSTAL."".nf($cp->debrisCrystal)."<br style=\"clear:both;\" /> 
+				".RES_ICON_PLASTIC."".nf($cp->debrisPlastic)."<br style=\"clear:both;\" /> 
+				</td></tr>";
 			}
 			
 			echo "</table><br/>";

@@ -249,8 +249,8 @@
 					
 					echo "<tr>
 						<td class=\"tbldata\">".text2html($arr['name'])."</td>
-						<td class=\"tbldata\" style=\"width:40px;background:#000\"><img src=\"".$ent->imagePath()."\" /></td>
-						<td class=\"tbldata\">".$ent."<br/>".$ent->entityCodeString()."</td>
+						<td class=\"tbldata\" style=\"width:40px;background:#000\"><img src=\""./*$ent->imagePath().*/"\" /></td>
+						<td class=\"tbldata\">"./*$ent.*/"<br/>"./*$ent->entityCodeString().*/"</td>
 						<td class=\"tbldata\">".$ac."</td>
 						<td class=\"tbldata\">";
 						foreach ($sidarr as $sd)
