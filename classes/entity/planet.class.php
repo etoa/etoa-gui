@@ -408,7 +408,7 @@
 			</tr>
 			<td colspan=\"7\" id=\"resprogress\" style=\"height:10px;background:#fff;text-align:center;\"></td>";
 			tableEnd();
-			jsProgressBar("resprogress",$this->updated,($this->updated + $cfg->value("res_update")));
+			jsProgressBar("resprogress",$this->updated,($this->updated + $cfg->value("res_update")),650);
 		}
 
 		/**

@@ -59,6 +59,20 @@ $xajax->register(XAJAX_FUNCTION,'launchBookmarkProbe');
 								{
 									if ($fleet->setAction($barr['action']))
 									{
+										$resarr = explode(",",$barr['res']);
+										foreach ($resarr as $id=>$res)
+										{
+											$id++;
+											if ($id==6)
+											{
+												//ToDO $fleet->
+											}
+											else
+											{
+												$fleet->loadResource($id,$res);
+											}
+										}
+										
 										if ($fid = $fleet->launch())
 										{
 											$flObj = new Fleet($fid);

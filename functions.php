@@ -3122,13 +3122,13 @@ Forum: http://www.etoa.ch/forum";
 		<?PHP	
 	}
 	
-	function jsProgressBar($elem,$startTime,$endTime)
+	function jsProgressBar($elem,$startTime,$endTime,$length=450)
 	{
 		?>
 		<script type="text/javascript">
 			if (document.getElementById('<?PHP echo $elem;?>')!=null)
 			{
-				updateProgressBar('<?PHP echo $elem;?>',<?PHP echo ceil($startTime);?>,<?PHP echo ceil($endTime);?>,<?PHP echo time();?>);
+				updateProgressBar('<?PHP echo $elem;?>',<?PHP echo ceil($startTime);?>,<?PHP echo ceil($endTime);?>,<?PHP echo time();?>,<?PHP echo $length; ?>);
 			}
 		</script>
 		<?PHP	

@@ -129,12 +129,6 @@
 				WHERE 
 					id='".$_GET['del']."' 
 					AND user_id='".$cu->id()."';");
-				echo "
-				DELETE FROM 
-					fleet_bookmarks
-				WHERE 
-					id='".$_GET['del']."' 
-					AND user_id='".$cu->id()."';";
 				if (mysql_affected_rows()>0)
 					ok_msg("Gelöscht");
 			}
