@@ -81,6 +81,7 @@
 				$this->allianceId = $arr['user_alliance_id'];
 				$this->allianceRankId = $arr['user_alliance_rank_id'];
 				$this->allianceName = "";
+				$this->allianceTag = "";
 				$this->allianceRankName = "";				
 
 				$this->rank = $arr['user_rank'];
@@ -92,7 +93,7 @@
 
 
 				// Todo: remove and add where it is needed
-	    	$this->loadRaceData($arr['user_race_id']);	 				
+				$this->raceId = $arr['user_race_id'];
 	
 				$this->rating = array();
 	
@@ -131,6 +132,12 @@
 			return $this->allianceName;
 		}
 		
+		final public function allianceTag() 
+		{ 
+			if ($this->allianceTag == "") 	{ $this->loadAllianceData(); }
+			return $this->allianceTag;
+		}
+		
 		final public function allianceRankName() 
 		{ 
 			if ($this->allianceRankName == "") 	{ $this->loadAllianceData(); }
@@ -138,7 +145,9 @@
 		}
 
 		public function raceName() 
-		{ 			
+		{
+			if (!$this->raceName)
+				$this->loadRaceData($this->raceId());
 			return $this->raceName; 
 		}
 
@@ -211,6 +220,7 @@
 				{
 					$aarr = mysql_fetch_row($ares);
 					$this->allianceName = "[".$aarr[0]."] ".$aarr[1];
+					$this->allianceTag = $aarr[0];
 					
 					if ($aarr[2] == $this->id)
 					{
@@ -249,7 +259,7 @@
 		    UPDATE
 		    	users
 		    SET
-					user_race_id=".$raceid."
+					user_race_id=".$raceId."
 		    WHERE
 		    	user_id='".$this->id."';";
 		    dbquery($sql);		

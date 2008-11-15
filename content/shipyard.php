@@ -392,7 +392,7 @@
 
 			if(count($_POST)>0 && isset($_POST['submit']) && checker_verify())
 			{
-				echo "<table class=\"tb\">";
+				tableStart();
 				echo "<tr><th>Ergebnisse des Bauauftrags</th></tr>";
 				
 				//Log variablen setzten
@@ -642,7 +642,7 @@
 				{
 					echo "<tr><td>Keine Schiffe gew&auml;hlt!</td></tr>";
 				}
-				echo "</table><br/>";
+				tableEnd();
 			}
 
 			

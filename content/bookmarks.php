@@ -38,13 +38,15 @@
 
 	if ($mode=="fleet")
 	{
+		$_SESSION['currentEntity']=serialize($cp);
+		
 		$res = dbquery("SELECT ship_id,ship_name FROM ships WHERE ship_show=1 ORDER BY ship_type_id,ship_order;");
 		while ($arr = mysql_fetch_row($res))
 		{
 			$ships[$arr[0]] = $arr[1];
 		}
 	
-			// Favorit speichern
+			// Favorit speichern ok
 			if (isset($_POST['submit_new']))
 			{
 				$res=dbquery("
@@ -118,7 +120,7 @@
 				}
 			}
 
-			// Favorit löschen
+			// Favorit löschen ok
 			if (isset($_GET['del']) && $_GET['del']>0)
 			{
 				dbquery("
@@ -127,6 +129,12 @@
 				WHERE 
 					id='".$_GET['del']."' 
 					AND user_id='".$cu->id()."';");
+				echo "
+				DELETE FROM 
+					fleet_bookmarks
+				WHERE 
+					id='".$_GET['del']."' 
+					AND user_id='".$cu->id()."';";
 				if (mysql_affected_rows()>0)
 					ok_msg("Gelöscht");
 			}
@@ -249,8 +257,8 @@
 					
 					echo "<tr>
 						<td class=\"tbldata\">".text2html($arr['name'])."</td>
-						<td class=\"tbldata\" style=\"width:40px;background:#000\"><img src=\""./*$ent->imagePath().*/"\" /></td>
-						<td class=\"tbldata\">"./*$ent.*/"<br/>"./*$ent->entityCodeString().*/"</td>
+						<td class=\"tbldata\" style=\"width:40px;background:#000\"><img src=\"".$ent->imagePath()."\" /></td>
+						<td class=\"tbldata\">".$ent."<br/>(".$ent->entityCodeString().")</td>
 						<td class=\"tbldata\">".$ac."</td>
 						<td class=\"tbldata\">";
 						foreach ($sidarr as $sd)
@@ -261,13 +269,19 @@
 						}
 						echo "</td>
 						<td class=\"tbldata\">
-							<a href=\"javascript:;\" onclick=\"\">Starten</a> 
+							<a href=\"javascript:;\" onclick=\"xajax_launchBookmarkProbe(".$arr['id'].");\"  onclick=\"\">Starten</a> 
 							<a href=\"?page=$page&amp;mode=$mode&amp;edit=".$arr['id']."\">Bearbeiten</a> 
 							<a href=\"?page=$page&amp;mode=$mode&amp;del=".$arr['id']."\" onclick=\"return confirm('Soll dieser Favorit wirklich gel&ouml;scht werden?');\">Entfernen</a>
 						</td>
 					</tr>";
 				}
 				tableEnd();
+				
+				echo '<div id="fleet_info_box" style="display:none;">';
+				iBoxStart("Flotten");
+				echo '<div id="fleet_info"></div>';
+				iBoxEnd();
+				echo '</div>';
 			}
 			else
 			{
@@ -357,54 +371,63 @@
 			// Neuer Favorit speichern
 			if (isset($_POST['submit_target']) && $_POST['submit_target']!="" && checker_verify())
 			{
-				$res=dbquery("
-				SELECT
-					entities.id
-				FROM
-					entities
-				INNER JOIN
-					cells
-				ON entities.cell_id=cells.id
-					AND sx='".$_POST['sx']."'
-	        AND sy='".$_POST['sy']."'
-	        AND cx='".$_POST['cx']."'
-	        AND cy='".$_POST['cy']."'
-	        AND pos='".$_POST['pos']."';");
-				if (mysql_num_rows($res)>0)
+				$absX = (($_POST['sx']-1) * CELL_NUM_X) + $_POST['cx'];
+				$absY = (($_POST['sy']-1) * CELL_NUM_Y) + $_POST['cy'];
+				if ($cu->discovered($absX,$absY))
 				{
-					$arr=mysql_fetch_row($res);
-					$check_res = dbquery("
-					SELECT 
-						id 
-					FROM 
-						bookmarks
-					WHERE 
-						entity_id='".$arr[0]."' 
-						AND user_id='".$cu->id()."';");
-					if (mysql_num_rows($check_res)==0)
+					$res=dbquery("
+						SELECT
+							entities.id
+						FROM
+							entities
+						INNER JOIN
+							cells
+						ON entities.cell_id=cells.id
+							AND sx='".$_POST['sx']."'
+	    				    AND sy='".$_POST['sy']."'
+	        				AND cx='".$_POST['cx']."'
+	        				AND cy='".$_POST['cy']."'
+	        				AND pos='".$_POST['pos']."';");
+					if (mysql_num_rows($res)>0)
 					{
-						dbquery("
-						INSERT INTO 
-							bookmarks
-						(
-							user_id,
-							entity_id,
-							comment) 
-						VALUES 
-							('".$cu->id()."',
-							'".$arr[0]."',
-							'".addslashes($_POST['bookmark_comment'])."');");
+						$arr=mysql_fetch_row($res);
+						$check_res = dbquery("
+							SELECT 
+								id 
+							FROM 
+								bookmarks
+							WHERE 
+								entity_id='".$arr[0]."' 
+								AND user_id='".$cu->id()."';");
+						if (mysql_num_rows($check_res)==0)
+						{
+							dbquery("
+								INSERT INTO 
+									bookmarks
+								(
+									user_id,
+									entity_id,
+									comment) 
+								VALUES 
+									('".$cu->id()."',
+									'".$arr[0]."',
+									'".addslashes($_POST['bookmark_comment'])."');");
 								
-						echo "Der Favorit wurde hinzugef&uuml;gt!<br/><br/>";
+							echo "Der Favorit wurde hinzugef&uuml;gt!<br/><br/>";
+						}
+						else
+						{
+							echo "<b>Fehler:</b> Dieser Favorit existiert schon!<br/><br/>";
+						}
 					}
 					else
 					{
-						echo "<b>Fehler:</b> Dieser Favorit existiert schon!<br/><br/>";
+						echo "<b>Fehler:</b> Es existiert kein Objekt an den angegebenen Koordinaten!!<br/><br/>";
 					}
 				}
 				else
 				{
-					echo "<b>Fehler:</b> Es existiert kein Objekt an den angegebenen Koordinaten!!<br/><br/>";
+					echo "<b>Fehler:</b> Das Gebiet ist noch nicht erkundet!!<br/><br/>";
 				}
 			}
 	
@@ -455,8 +478,7 @@
 					echo "<b>Fehler:</b> Es existiert kein Objekt an den angegebenen Koordinaten!!<br/><br/>";
 				}
 			}
-	
-	
+			
 			// Add-Bookmakr-Box
 			iBoxStart("Favorit hinzuf&uuml;gen");
 			echo "<form action=\"?page=$page\" method=\"post\">";

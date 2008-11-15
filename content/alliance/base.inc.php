@@ -1617,7 +1617,7 @@
 		echo "<h1>Schiffswerft</h1>";
 		
  		echo "<form action=\"?page=".$page."&amp;action=".$_GET['action']."&amp;action2=shipyard\" method=\"post\" id=\"alliance_shipyard\">\n";
-		echo $cstr;
+		//echo $cstr;
 		
 		tableStart("Guthaben Übersicht");
 		

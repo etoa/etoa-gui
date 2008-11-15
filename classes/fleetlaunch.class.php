@@ -188,7 +188,7 @@
 					if (mysql_num_rows($res)>0)
 					{
 						$arr = mysql_fetch_array($res);	
-						$cnt = min($cnt,$arr['shiplist_count']);
+						$cnt = min(nf_back($cnt),$arr['shiplist_count']);
 						
 						$this->ships[$sid] = array(
 						"count" => $cnt,
@@ -361,6 +361,7 @@
 				{
 					// Subtract flight costs from source
 					$this->sourceEntity->chgRes(4,-$this->getCosts());
+					$this->sourceEntity->chgPeople(-($this->pilots+$this->capacityPeopleLoaded));
 	
 					// Create fleet record
 					$sql = "

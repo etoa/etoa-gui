@@ -62,7 +62,7 @@
 		iBoxEnd();
 	}
 
-	tableStart("Status","100%");
+	tableStart("Status");
 	echo "<tr>
 					<th style=\"width:30%;\">Rathaus</th>
 					<th style=\"width:20%;\">Eigene Flotten</th>

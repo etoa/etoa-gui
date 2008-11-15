@@ -578,14 +578,14 @@
 					
 		function chgPeople($diff)
 		{
-	    $this->people+=$diff;
-	    $sql = "
-	    UPDATE
-	    	planets
-	    SET
-        planet_people=planet_people+".$diff."
-	    WHERE
-	    	id='".$this->id."';";			
+		    $sql = "
+			    UPDATE
+	    			planets
+	    		SET
+        			planet_people=planet_people+".$diff."
+	    		WHERE
+	    			id='".$this->id."';";
+			dbquery($sql);
 		}
 		
 		function getRes($i) 

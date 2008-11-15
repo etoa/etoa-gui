@@ -20,7 +20,7 @@
 			$this->loadProperties();
 			
 			// Todo: remove and add where it is needed
-			$this->loadRaceData($this->id);
+			$this->loadRaceData($this->raceId);
 		}
 
 		//

@@ -45,7 +45,11 @@
 		elseif ($page=="techtree" || $page=="help")
 		{
 			require_once("inc/xajax/techtree.xajax.php");
-		}		
+		}
+		elseif ($page=="bookmarks")
+		{
+			require_once("inc/xajax/bookmarks.xajax.php");
+		}
 	}	
 		
 	if (isset($index))

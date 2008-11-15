@@ -125,7 +125,7 @@
 				".date("d.m.y, H:i:s",$fd->launchTime())."<br/>";
 				echo date("d.m.y, H:i:s",$fd->landTime())."</td>";
 				echo "<td class=\"tbldata\">
-					<a href=\"?page=fleetinfo&id=".$fid."\">
+					<a href=\"?page=fleetinfo&id=".$fid."&lead_id=".$fid."\">
 					<span style=\"color:".FleetAction::$attitudeColor[$fd->getAction()->attitude()]."\">
 					".$fd->getAction()->name()."
 					</span> [".FleetAction::$statusCode[$fd->status()]."]</a><br/>";

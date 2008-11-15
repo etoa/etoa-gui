@@ -21,13 +21,20 @@
 		* Creates a new fleet objects and loads
 		* it's data from the table
 		*/
-		function Fleet($fid,$uid=-1)
+		function Fleet($fid,$uid=-1,$leadid=-1)
 		{
 			if ($uid>=0) {
 				$uidStr = " AND user_id=".$uid."";
 			} else {
 				$uidStr = "";
 			}
+				
+			if ($leadid>0) {
+				$leadStr = " leader_id=".$leadid."";
+			} else {
+				$leadStr = " id=".$fid."";
+			}
+			
 			$this->valid = false;
 			$res = dbquery("
 			SELECT
@@ -35,24 +42,28 @@
 			FROM
 				fleet
 			WHERE
-				id=".$fid."
+				 ".$leadStr."
 				".$uidStr."
-			");
+			ORDER BY 
+				launchtime ASC
+			;");
 			if (mysql_num_rows($res) > 0)
 			{
 				$arr = mysql_fetch_assoc($res);
 				$this->id = $fid;
 				$this->ownerId = $arr['user_id'];
+				$this->leaderId = $arr['leader_id'];
 				$this->sourceId = $arr['entity_from'];
 				$this->targetId = $arr['entity_to'];
+				$this->nextId = $arr['next_id']; //special value for alliance Actions
 				$this->actionCode = $arr['action'];
 				$this->status = $arr['status'];
 				$this->launchTime = $arr['launchtime'];
 				$this->landTime = $arr['landtime'];
 				$this->pilots = $arr['pilots'];
 
-				$this->usageFuel = $arr['usage_fuel'];
-				$this->usageFood = $arr['usage_food'];
+				$this->usageFuel = $arr['usage_fuel'] + $arr['support_usage_fuel'];
+				$this->usageFood = $arr['usage_food'] + $arr['support_usage_food'];
 				$this->usagePower = $arr['usage_power'];
 
 				$this->resMetal = $arr['res_metal'];
@@ -64,33 +75,164 @@
 				$this->resPeople = $arr['res_people'];
 			
 				$this->valid = true;
-			}		
+				
+				if (mysql_num_rows($res) > 1)
+				{
+					$this->fleets = array();
+					while ($arr = mysql_fetch_assoc($res))
+					{
+						$this->fleets[$arr['id']] = new Fleet($arr['id']);
+					}
+				}	
+			}
 		}
 		
 		//
 		// Getters
 		//
 		function valid() { return $this->valid;	}
+		function id() { return $this->id; }
 		function ownerId() { return $this->ownerId; }
+		function leaderId() { return $this->leaderId; }
 		function launchTime() {	return $this->launchTime; }
 		function landTime() {	return $this->landTime;	}
 
 		function remainingTime() {	return max(0,$this->landTime-time()); }
 
-		function pilots()	{	return $this->pilots;	}		
+		function pilots($fleet=-1)
+		{
+			$cnt = 0;
+			if (count($this->fleets) && $fleet<0)
+			{
+				foreach($this->fleets as $id=>$f)
+				{
+					$cnt += $f->pilots();
+				}
+			}
+			return $this->pilots + $cnt;
+		
+		}		
 		function status() { return $this->status; }
 
-		function usageFuel() { return $this->usageFuel; }
-		function usageFood() { return $this->usageFood; }
-		function usagePower() { return $this->usagePower; }
-
-		function resMetal() { return $this->resMetal; }
-		function resCrystal() { return $this->resCrystal; }
-		function resPlastic() { return $this->resPlastic; }
-		function resFuel() { return $this->resFuel; }
-		function resFood() { return $this->resFood; }
-		function resPower() { return $this->resPower; }
-		function resPeople() { return $this->resPeople; }
+		function usageFuel($fleet=-1) {
+			$cnt = 0;
+			if (count($this->fleets) && $fleet<0)
+			{
+				foreach($this->fleets as $id=>$f)
+				{
+					$cnt += $f->usageFuel();
+				}
+			}
+			return $this->usageFuel + $cnt;
+		}
+		
+		function usageFood($fleet=-1) {
+			$cnt = 0;
+			if (count($this->fleets) && $fleet<0)
+			{
+				foreach($this->fleets as $id=>$f)
+				{
+					$cnt += $f->usageFood();
+				}
+			}
+			return $this->usageFood + $cnt;
+		}
+		
+		function usagePower($fleet=-1) {
+			$cnt = 0;
+			if (count($this->fleets) && $fleet<0)
+			{
+				foreach($this->fleets as $id=>$f)
+				{
+					$cnt += $f->usagePower();
+				}
+			}
+			return $this->usagePower + $cnt;
+		}
+	
+		function resMetal($fleet=-1) {
+			$cnt = 0;
+			if (count($this->fleets) && $fleet<0)
+			{
+				foreach($this->fleets as $id=>$f)
+				{
+					$cnt += $f->resMetal();
+				}
+			}
+			return $this->resMetal + $cnt;
+		}
+	
+		function resCrystal($fleet=-1) {
+			$cnt = 0;
+			if (count($this->fleets) && $fleet<0)
+			{
+				foreach($this->fleets as $id=>$f)
+				{
+					$cnt += $f->resCrystal();
+				}
+			}
+			return $this->resCrystal + $cnt;
+		}
+	
+		function resPlastic($fleet=-1) {
+			$cnt = 0;
+			if (count($this->fleets) && $fleet<0)
+			{
+				foreach($this->fleets as $id=>$f)
+				{
+					$cnt += $f->resPlastic();
+				}
+			}
+			return $this->resPlastic + $cnt;
+		}
+	
+		function resFuel($fleet=-1) {
+			$cnt = 0;
+			if (count($this->fleets) && $fleet<0)
+			{
+				foreach($this->fleets as $id=>$f)
+				{
+					$cnt += $f->resFuel();
+				}
+			}
+			return $this->resFuel + $cnt;
+		}
+	
+		function resFood($fleet=-1) {
+			$cnt = 0;
+			if (count($this->fleets) && $fleet<0)
+			{
+				foreach($this->fleets as $id=>$f)
+				{
+					$cnt += $f->resFood();
+				}
+			}
+			return $this->resFood + $cnt;
+		}
+	
+		function resPower($fleet=-1) {
+			$cnt = 0;
+			if (count($this->fleets) && $fleet<0)
+			{
+				foreach($this->fleets as $id=>$f)
+				{
+					$cnt += $f->resPower();
+				}
+			}
+			return $this->resPower + $cnt;
+		}
+	
+		function resPeople($fleet=-1) {
+			$cnt = 0;
+			if (count($this->fleets) && $fleet<0)
+			{
+				foreach($this->fleets as $id=>$f)
+				{
+					$cnt += $f->resPeople();
+				}
+			}
+			return $this->resPeople + $cnt;
+		}
 		
 		/**
 		* Loads the source entity (if needed) and returns it
@@ -117,6 +259,18 @@
 		}
 		
 		/**
+		* Loads the home entity (if needed) and returns it, special for the support action!!
+		*/
+		function getHome()
+		{
+			if (!isset($this->home))
+			{
+				$this->home = Entity::createFactoryById($this->nextId);
+			}
+			return $this->home;
+		}
+		
+		/**
 		* Loads and returns the flet action object
 		*/
 		function getAction()
@@ -133,21 +287,45 @@
 		* Load fleet's ship id's and stores them 
 		* in the shipIds array
 		*/
-		private function loadShipIds()
+		private function loadShipIds($fleet=-1)
 		{
 			$this->shipsIds = array();
-			$this->shipCount = 0;
-			$sres = dbquery("
-			SELECT
-				fs_ship_id,
-        fs_ship_cnt
-			FROM
-      	fleet_ships
-			WHERE
-        fs_fleet_id='".$this->id."'
-        AND fs_ship_cnt>'0'
-        AND fs_ship_faked='0'
-			;");
+			$this->shipCount = 0;	
+			if (count($this->fleets) && $fleet<0)
+			{	
+				$sres = dbquery("
+					SELECT 
+						fs_ship_id, 
+						SUM( fs_ship_cnt )
+					FROM 
+						fleet_ships
+					INNER JOIN 
+						fleet 
+					ON 
+						fleet.id = fs_fleet_id
+						AND fleet.leader_id = '1'
+						AND fs_ship_cnt > '0'
+						AND fs_ship_faked = '0'
+					GROUP BY 
+						fs_ship_id
+				;");
+				
+			}
+			else
+			{
+
+				$sres = dbquery("
+				SELECT
+					fs_ship_id,
+			fs_ship_cnt
+				FROM
+			fleet_ships
+				WHERE
+			fs_fleet_id='".$this->id."'
+			AND fs_ship_cnt>'0'
+			AND fs_ship_faked='0'
+				;");
+			}
 			if (mysql_num_rows($sres)>0)
 			{
 				while ($arr=mysql_fetch_row($sres))
@@ -155,7 +333,7 @@
 					$this->shipsIds[$arr[0]] = $arr[1];
 					$this->shipCount += $arr[1];
 				}
-			}			
+			}
 		}
 		
 		/**
@@ -194,11 +372,11 @@
 				$this->ships = array();
 				foreach ($this->getShipIds() as $sid=>$cnt)
 				{
-					$this->ships[$cnt] = new Ship($sid);
+					$this->ships[$sid] = new Ship($sid);
 				}		
 			}
 			return $this->ships;			
-		}	
+		}
 		
 		/**
 		* Returns the full storage capacity
@@ -206,9 +384,9 @@
 		function getCapacity()
 		{
 			$this->capacity = 0;
-			foreach ($this->getShips() as $cnt => $sobj)
+			foreach ($this->getShips() as $sid => $sobj)
 			{
-				$this->capacity += $sobj->capacity() * $cnt;
+				$this->capacity += $sobj->capacity() * $this->shipsIds[$sid];
 			}
 			return $this->capacity;
 		}
@@ -219,9 +397,9 @@
 		function getPeopleCapacity()
 		{
 			$this->peopleCapacity = 0;
-			foreach ($this->getShips() as $cnt => $sobj)
+			foreach ($this->getShips() as $sid => $sobj)
 			{
-				$this->peopleCapacity += $sobj->peopleCapacity() * $cnt;
+				$this->peopleCapacity += $sobj->peopleCapacity() * $this->shipsIds[$sid];
 			}
 			return $this->peopleCapacity;
 		}

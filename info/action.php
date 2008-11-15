@@ -50,7 +50,7 @@
 				ORDER BY 
 					ship_name ASC");
 				
-			tableStart("Schiffe",);
+			tableStart("Schiffe");
 			if (mysql_num_rows($res)>0)
 			{
 				while($arr=mysql_fetch_array($res))
