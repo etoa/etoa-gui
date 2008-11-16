@@ -381,7 +381,7 @@
 	          user_password,
 	          user_email,
 	          user_email_fix,
-	          user_race,
+	          user_race_id,
 	          user_registered
 	          )
 	      VALUES
@@ -402,6 +402,10 @@
 					");        	
         	return true;
         }	
+      }
+      else
+      {
+      	$errorCode = "user_exists";
       }
       return false;
 		}
