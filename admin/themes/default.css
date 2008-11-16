@@ -3,7 +3,7 @@ body	{
 	color: white;
 	font-family:verdana, sans-serif, ARIAL;
 	font-size: 10pt;
-	background:#000 url('../images/background.jpg');
+	background:#000 url('../../images/background.jpg');
 	text-align:left;
 }
 
@@ -72,13 +72,13 @@ input:focus,textarea:focus, select:focus {
 }
 
 input[type="submit"],input[type="reset"],input[type="button"]	{
-	background:#225 url('../images/button1.jpg');
+	background:#225 url('../../images/button1.jpg');
 	color:#fff;
 	font-weight:bold;
 }
 
 input:hover[type="submit"],input:hover[type="reset"],input:hover[type="button"]	{
-	background:#225 url('../images/button2.jpg');
+	background:#225 url('../../images/button2.jpg');
 	color:#fff;
 	font-weight:bold;
 }
@@ -120,7 +120,7 @@ input,select,textarea	{
 }
 
 #logo	{
-	background:#000 url('../images/logo.jpg') no-repeat;
+	background:#000 url('../../images/logo.jpg') no-repeat;
 	width:175px;
 	height:72px;
 	border:1px solid #fff;
@@ -131,7 +131,7 @@ input,select,textarea	{
 	vertical-align:bottom;
 	font-weight:bold;
 	font-size:16pt;
-	background:#000 url('../images/banner.jpg') no-repeat;
+	background:#000 url('../../images/banner.jpg') no-repeat;
 	height:72px;
 	border:1px solid #fff;
 	padding:5px;
@@ -327,7 +327,7 @@ div.infoboxtitle	{
 	font-size:10pt;
 	font-weight:bold;
 	border:1px solid #fff;
-	background:#225 url('../images/cellbg.png') repeat-x;
+	background:#225 url('../../images/cellbg.png') repeat-x;
 	padding:4px;
 	text-align:center;
 }
@@ -336,7 +336,7 @@ td.infoboxtitle	{
 	font-size:10pt;
 	font-weight:bold;
 	border:1px solid #fff;
-	background:#225 url('../images/cellbg.png') repeat-x;
+	background:#225 url('../../images/cellbg.png') repeat-x;
 	padding:4px;
 	text-align:center;
 }

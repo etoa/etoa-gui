@@ -582,7 +582,7 @@
 	{
 		echo "<h1>&Uuml;bersicht</h1>";
 		
-		if (!$s['home_visited'])
+		if (!isset($s['home_visited']))
 		{
 			echo "Hallo <b>".$s['user_nick']."</b>, willkommen im Administrationsmodus! Dein Rang ist <b>".$s['group_name']."</b><br/>";
 			echo "<span style=\"color:#0f0;\">Dein letzter Login war <b>".df($s['user_last_login'])."</b>, Host: <b>".gethostbyaddr($s['user_last_host'])."</b> (aktuell: ".gethostbyaddr($_SERVER['REMOTE_ADDR'])."), IP: <b>".$s['user_last_ip']."</b> (aktuell: ".$_SERVER['REMOTE_ADDR'].")</span><br/><br/>";
@@ -739,8 +739,9 @@
 		$arr=mysql_fetch_row($res);
 		echo "<tr><th class=\"tbltitle\" style=\"width:200px;\">&Auml;nderungsanfragen:</th>";
 		echo "<td class=\"tbldata\"";
-		if ($arr[0]>0) echo " style=\"background:#880;\"";	
-		echo "><a href=\"?page=user&amp;sub=requests\">".$arr[0]." Anfragen</a> vorhanden</td></tr>";
+		echo "><a href=\"?page=user&amp;sub=requests\"";
+		if ($arr[0]>0) echo " style=\"font-weight:bold;color:#f90;\"";	
+		echo ">".$arr[0]." Anfragen</a> vorhanden</td></tr>";
 		
 		// Tickets		
 		$res = dbquery("
@@ -764,8 +765,9 @@
 		$arr2=mysql_fetch_row($res2);		
 		echo "<tr><th class=\"tbltitle\">Ticket-System:</th>";
 		echo "<td class=\"tbldata\"";
-		if ($arr[0]>0) echo " style=\"background:#880;\"";			
-		echo "><a href=\"?page=user&amp;sub=tickets\">".$arr[0]." neue Tickets</a> vorhanden";
+		echo "><a href=\"?page=user&amp;sub=tickets\"";
+		if ($arr[0]>0) echo " style=\"font-weight:bold;color:#f90;\"";			
+		echo ">".$arr[0]." neue Tickets</a> vorhanden";
 		if ($arr2[0]>0) echo ", <a href=\"?page=user&amp;sub=tickets\">".$arr2[0]." offene Tickets</a> vorhanden";
 		echo "</td></tr>";
 		
@@ -781,8 +783,9 @@
 		$arr = mysql_fetch_row($res);
 		echo "<tr><th class=\"tbltitle\">Beobachter:</th>";
 		echo "<td class=\"tbldata\"";
-		if ($arr[0]>0) echo " style=\"background:#880;\"";
-		echo "><a href=\"?page=user&amp;sub=observed\">".$arr[0]." User stehen unter Beobachtung</a></td></tr>";
+		echo "><a href=\"?page=user&amp;sub=observed\"";
+		if ($arr[0]>0) echo " style=\"font-weight:bold;color:#f90;\"";
+		echo ">".$arr[0]." User</a> stehen unter Beobachtung</td></tr>";
 
 			
 		$res = dbquery("SELECT

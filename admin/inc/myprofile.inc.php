@@ -68,7 +68,8 @@
 		SET 
 			user_name='".$_POST['user_name']."',
 			user_email='".$_POST['user_email']."',
-			user_board_url='".$_POST['user_board_url']."'
+			user_board_url='".$_POST['user_board_url']."',
+			user_theme='".$_POST['user_theme']."'
 		WHERE 
 			user_id='".$s['user_id']."';");
 		cms_ok_msg("Die Daten wurden ge&auml;ndert!");
@@ -82,7 +83,8 @@
 	SELECT
 		user_name,
 		user_email,
-		user_board_url
+		user_board_url,
+		user_theme
 	FROM
 		admin_users
 	WHERE
@@ -99,6 +101,26 @@
 	echo "<tr>
 		<th class=\"tbltitle\">Forum-Profil:</th>
 		<td class=\"tbldata\"><input type=\"text\" name=\"user_board_url\" size=\"80\" value=\"".$darr['user_board_url']."\" /></td></tr>";
+	echo "<tr>
+		<th class=\"tbltitle\">Design-Theme:</th>
+		<td class=\"tbldata\"><select name=\"user_theme\">";
+		echo "<option value=\"\">Bitte wählen...</option>";
+		if ($d = opendir("themes"))
+		{
+			while ($f = readdir($d))
+			{
+				if (is_file("themes/$f") && substr($f,strlen($f)-4)==".css")
+				{
+					echo "<option value=\"".$f."\"";
+					if ($f == $darr['user_theme'])
+					{
+						echo " selected=\"selected\"";
+					}
+					echo ">".substr($f,0,strrpos($f,".css"))."</option>";
+				}
+			}
+		}
+		echo "</select></td></tr>";
 	echo "</table><br/><br/><input type=\"submit\" name=\"submitdata\" value=\"&Uuml;bernehmen\" />";
 	
 	echo "</fieldset><br/>";

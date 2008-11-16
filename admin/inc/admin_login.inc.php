@@ -30,8 +30,9 @@
 	
 	function login_prompt($str="",$clr=0)
 	{
+		adminHtmlHeader();
 		$logo = 1;
-		global $page, $login_successfull;
+		global $page;
 		if ($logo==1)
 		{
 			echo "<div  style=\"text-align:center\"><br/><a href=\"..\"><img src=\"../images/game_logo.jpg\" alt=\"Logo\" width=\"450\" height=\"150\" border=\"0\" /></a>";
@@ -61,12 +62,13 @@
 			
 		</div></form></div>";
 		echo '<script type="text/javascript">document.forms[0].elements[0].focus()</script>';
-		$login_successfull=false;
+		adminHtmlFooter();
+		exit;
 	}
 	
 	function login_error($typ)
 	{
-		global $login_successfull, $page;
+		global $page;
 		switch ($typ) 
 		{
 			case "password":
@@ -113,14 +115,8 @@
 				$str = "Sorry, ein unbekannter Fehler trat auf!";
 				$clr = 2;
 		}
-		//echo "<br/><div style=\"margin:0px auto\">$str</div>";
-		//echo '<br/><input type="button" onclick="document.location=\'?\'" value="Neu anmelden" /></div>';
-		//echo '<script type="text/javascript">setTimeout(\'document.location="?"\',1000);</script>';
 		$_SESSION[SESSION_NAME]=Null;
-		$login_successfull=false;
 		login_prompt($str,$clr);	
-		echo "</body></html>";
-		die();
 	}
 	
 	function create_sess_array($arr)
@@ -135,6 +131,7 @@
 		$_SESSION[SESSION_NAME]['user_last_login']=$arr['user_last_login'];
 		$_SESSION[SESSION_NAME]['group_name']=$arr['group_name'];
 		$_SESSION[SESSION_NAME]['group_level']=$arr['group_level'];
+		$_SESSION[SESSION_NAME]['theme']=$arr['user_theme'];
 	}
 	
 	if (isset($_GET['logout']) && $_SESSION[SESSION_NAME]['user_id']!="")
@@ -227,6 +224,7 @@
 	}
 	elseif (isset($_GET['sendpass']))
 	{
+		adminHtmlHeader();
 		echo "<div style=\"width:500px;margin:10px auto;text-align:center;\">" .
 		"<br/><a href=\"..\"><img src=\"../images/game_logo.jpg\" alt=\"Logo\" width=\"450\" height=\"150\" border=\"0\" /></a>";
 		echo "<h1 style=\"text-align:center;\">Administration - ".GAMEROUND_NAME."</h1>
@@ -271,7 +269,8 @@
 			echo "</form></div>";
 			echo '<script type="text/javascript">document.forms[0].elements[0].focus()</script>';
 		}
-		$login_successfull=false;
+		adminHtmlFooter();
+		exit;
 	}
 	else
 	{
@@ -279,6 +278,7 @@
 		$arr = mysql_fetch_row($res);
 		if ($arr[0]==0)
 		{
+			adminHtmlHeader();
 			if (isset($_POST['newuser_submit']) && $_POST['user_nick']!="" && $_POST['user_password']!='')
 			{
 				dbquery("INSERT INTO admin_users (user_nick,user_password,user_admin_rank) VALUES ('".$_POST['user_nick']."','".md5($_POST['user_password'])."',8);");
@@ -297,8 +297,9 @@
 				echo '</table><br/><input type="submit" name="newuser_submit" value="Admin-User erstellen" />';
 				echo "</form></div>";
 				echo '<script type="text/javascript">document.forms[0].elements[0].focus()</script>';
-			}
-			$login_successfull=false;
+			}			
+			adminHtmlFooter();
+			exit;
 		}
 		else
 		{

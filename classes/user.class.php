@@ -346,13 +346,66 @@
 			$this->visits++;
 		}
 
-
+		/**
+		* Returns the total number of users
+		*/
 		static public function count()
 		{
 			$ures = dbquery("SELECT COUNT(user_id) FROM users;");
 			$uarr = mysql_fetch_row($ures);
 			return $uarr[0];			
 		}
+		
+		/**
+		* Registers a new user
+		*/
+		static public function register($data, &$errorCode)
+		{
+			$time = time();
+
+  	  $res = mysql_query("
+  	  SELECT 
+  	  	user_id 
+  	  FROM 
+  	  	users 
+  	  WHERE 
+  	  	user_nick='".$_POST['register_user_nick']."' 
+  	  	OR user_email_fix='".$_POST['register_user_email']."';");
+  	  if (mysql_num_rows($res)==0)
+  	  {
+ 	      if (dbquery("
+	      INSERT INTO
+	      users (
+	          user_name,
+	          user_nick,
+	          user_password,
+	          user_email,
+	          user_email_fix,
+	          user_race,
+	          user_registered
+	          )
+	      VALUES
+	          ('".$data['name']."',
+	          '".$data['nick']."',
+	          '".pw_salt((isset($data['password']) && $data['password']!="") ? $data['password'] : mt_rand(100000000,9999999999),$time)."',
+	          '".$data['email']."',
+	          '".$data['email']."',
+	          '".(isset($data['race']) ? $data['race'] : 0)."',
+	          '".$time."');"))
+        {
+					dbquery("
+					INSERT INTO 
+						user_properties
+					(id)
+					VALUES
+					(".mysql_insert_id().")
+					");        	
+        	return true;
+        }	
+      }
+      return false;
+		}
+		
 
     
 	}

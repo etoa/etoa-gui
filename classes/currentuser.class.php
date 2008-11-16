@@ -81,7 +81,6 @@
 		    
         return true;
 			}
-			// This part should never be used, it is for repairing missing user settings only
 			else
 			{
 				dbquery("
@@ -92,10 +91,15 @@
 				(".$this->id.")
 				");
 				// Take care: This is a recursion! With mysql_insert_id we check that the record has been created and thus 
-				// the recursion should has to finish the next time
+				// the recursion should have to finish the next time
 				if (mysql_insert_id()>0)
 				{
-					$this->loadSettings();
+					$this->loadProperties();
+				}
+				else
+				{
+					errBox("Fehler beim Erstellen der persönlichen Einstellungen! Bitte Entwickler kontaktieren!");					
+					die();
 				}
 			}
 		}

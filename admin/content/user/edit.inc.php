@@ -323,34 +323,32 @@
 				echo "<form action=\"?page=$page&amp;sub=edit&amp;user_id=".$_GET['user_id']."\" method=\"post\">
 				<input type=\"hidden\" id=\"tabactive\" name=\"tabactive\" value=\"\" />";
 
-				
-				// Show the navigation
-				echo "<div id=\"tabNav\">
-					<a href=\"javascript:;\" onclick=\"showTab('tabGeneral')\">Allgemeines</a>
-					<a href=\"javascript:;\" onclick=\"showTab('tabData');\">Daten</a>
-					<a href=\"javascript:;\" onclick=\"showTab('tabAccount')\">Account</a>
-					<a href=\"javascript:;\" onclick=\"showTab('tabProfile')\">Profil</a>
-					<a href=\"javascript:;\" onclick=\"showTab('tabGame');\">Spiel</a>
-					<a href=\"javascript:;\" onclick=\"showTab('tabMessages');\">Nachrichten</a>
-					<a href=\"javascript:;\" onclick=\"showTab('tabDesign')\">Design</a>
-					<a href=\"javascript:;\" onclick=\"showTab('tabFailures')\">Loginfehler</a>
-					<a href=\"javascript:;\" onclick=\"showTab('tabPoints');\">Punkte</a>
-					<a href=\"javascript:;\" onclick=\"showTab('tabTickets');\">Tickets</a>
-					<a href=\"javascript:;\" onclick=\"showTab('tabComments');\">Kommentare</a>
-					<a href=\"javascript:;\" onclick=\"showTab('tabEconomy')\">Wirtschaft</a>
-					
-					<!--<a href=\"javascript:;\" onclick=\"showTab('tabWarnings')\">Verwarnungen</a>-->
-				<br style=\"clear:both;\" />
-				</div><br>";
-				//echo "<div id=\"tabContent\">";
+		
 				
 				
+			$tc = new TabControl("userTab",array(
+			"Info",
+			"Daten",
+			"Account",
+			"Profil",
+			"Spiel",
+			"Nachrichten",
+			"Loginfehler",
+			"Punkte",
+			"Tickets",
+			"Kommentare",
+			"Wirtschaft"
+			),
+			'100%',
+			0
+			);
+		
+			$tc->open();				
 				
 				
 				/**
 				* Allgemeines
 				*/				
-				echo "<div id=\"tabGeneral\">";
 				
 				echo "<table class=\"tbl\">";
 				echo "<tr>
@@ -445,14 +443,14 @@
 							</tr>";					
 				
 				echo "</table>";
-				echo "</div>";
+				$tc->close();
 				
 				
 				
 				/**
 				* Daten
 				*/
-				echo "<div id=\"tabData\" style=\"display:none;\">";
+		$tc->open();			
 				
 				echo "<table class=\"tbl\">";
 				echo "<tr>
@@ -524,14 +522,14 @@
 							</tr>";
 				echo "</table>";
 				
-				echo "</div>";
+				$tc->close();
 				
 				
 				
 				/**
 				* Game-Einstellungen
 				*/
-				echo "<div id=\"tabGame\" style=\"display:none;\">";
+		$tc->open();			
 				
 				echo "<table class=\"tbl\">";
 				echo "<tr>
@@ -645,14 +643,14 @@
       				</tr>"; 
 				echo "</table>";
 				
-				echo "</div>";
+				$tc->close();
 
 
 
 				/**
 				* Profil
 				*/
-				echo "<div id=\"tabProfile\" style=\"display:none;\">";
+		$tc->open();			
 				
 				echo "<table class=\"tbl\">";
 				echo "<tr>
@@ -705,14 +703,16 @@
 				      </tr>";
 				echo "</table>";
 				
-				echo "</div>";
+				$tc->close();
+				
+				
 				
 				
 				
 				/**
 				* Messages
 				*/		
-				echo "<div id=\"tabMessages\" style=\"display:none;\">";
+		$tc->open();			
 				
 				echo "<table class=\"tbl\">";		
 				echo "<tr>
@@ -782,14 +782,14 @@
        	echo "<input type=\"button\" onclick=\"showLoader('lastmsgbox');xajax_showLast5Messages(".$arr['user_id'].",'lastmsgbox');\" value=\"Neu laden\" /><br><br>";
        	echo "<div id=\"lastmsgbox\">Lade...</div>";
 				
-				echo "</div>";
+				$tc->close();
 
 				
 				
 				/**
 				* Design
 				*/								
-				echo "<div id=\"tabDesign\" style=\"display:none;\">";
+		$tc->open();			
 				
 				$imagepacks = get_imagepacks("../");
 				$designs = get_designs("../");
@@ -929,14 +929,14 @@
           		</tr>";				
 				echo "</table>";
 				
-				echo "</div>";
+				$tc->close();
 				
 				
 				
 				/**
 				* Loginfailures
 				*/		
-				echo "<div id=\"tabFailures\" style=\"display:none;\">";
+		$tc->open();			
 				
 				echo "<table class=\"tbl\">";			
 				$lres=dbquery("
@@ -978,36 +978,44 @@
 				}
 				echo "</table>";
 				
-				echo "</div>";
+				$tc->close();
 				
 				
 	
 				/**
 				* Points
 				*/
-				echo "<div id=\"tabPoints\" style=\"display:none;\">
+						$tc->open();			
+				echo "
 					<div style=\"text-align:center;\"><img src=\"../images/loadingmiddle.gif\" /><br/>Wird geladen...</div>
-				</div>";	
+				";	
+				$tc->close();
+
 				
 				/**
 				* Tickets
 				*/				
-				echo "<div id=\"tabTickets\" style=\"display:none;\">
+						$tc->open();			
+				echo "
 					<div style=\"text-align:center;\"><img src=\"../images/loadingmiddle.gif\" /><br/>Wird geladen...</div>
-				</div>";	
+				";	
+				$tc->close();
 				
 
 				/**
 				* Kommentare
-				*/				
-				echo "<div id=\"tabComments\" style=\"display:none;\">
+				*/			
+						$tc->open();				
+				echo "
 					<div style=\"text-align:center;\"><img src=\"../images/loadingmiddle.gif\" /><br/>Wird geladen...</div>
-				</div>";	
+				";
+				$tc->close();
+				
 				
 				/**
 				* Account
 				*/				
-				echo "<div id=\"tabAccount\" style=\"display:none;\">";
+						$tc->open();			
 				
 				echo "<table class=\"tbl\">";
 				// Sperrung
@@ -1224,20 +1232,21 @@
 							}
 				echo "</table>";
 				
-				echo "</div>";
+				$tc->close();
 				
 				
 				
 				/**
 				* Wirtschaft
 				*/
-				echo "<div id=\"tabEconomy\" style=\"display:none;\">";
+						$tc->open();			
 				
 				echo "Das Laden aller Wirtschaftsdaten kann einige Sekunden dauern!<br/><br/>
 				<input type=\"button\" value=\"Wirtschaftsdaten laden\" onclick=\"showLoader('tabEconomy');xajax_loadEconomy(".$arr['user_id'].",'tabEconomy');\" /> ";
 				
-				echo "</div>";
+				$tc->close();
 				
+				$tc->end();
 				
 				// Buttons
 				echo "<br/>";
@@ -1274,11 +1283,6 @@
 				if ($arr['user_hmode_from']==0)
 					echo "<script>umodEnable(false);</script>";
 				
-				if(isset($_POST['tabactive']) && $_POST['tabactive']!="")
-				{
-					echo "<script>showTab('".$_POST['tabactive']."');</script>";
-					
-				}
 					
 			}
 			else

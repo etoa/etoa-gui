@@ -26,6 +26,42 @@
 	// 	Kommentar:
 	//
 
+	function adminHtmlHeader($themePath = "default.css")
+	{
+		global $conf,$xajax;		
+		if (!is_file("themes/".$themePath))
+			$themePath = "default.css";
+		echo '<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">	
+	<head>
+		<title>'.$conf['game_name']['v'].' '.$conf['game_name']['p1'].' Administration - '.GAMEROUND_NAME.'</title>
+		<link rel="stylesheet" type="text/css" href="themes/'.$themePath.'" />
+		<link rel="stylesheet" href="../css/general.css" type="text/css" />
+
+		<meta name="author" content="Nicolas Perrenoud" />
+		<meta name="keywords" content="Escape to Andromeda, Browsergame, Strategie, Simulation, Andromeda, MMPOG, RPG" />
+		<meta name="robots" content="nofollow" />
+
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+		<meta http-equiv="Content-Script-Type" content="text/javascript" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<meta http-equiv="content-language" content="de" />
+
+		<script src="../js/main.js" type="text/javascript"></script>
+		<script src="../js/admin.js" type="text/javascript"></script>';
+		$xajax->printJavascript("../".XAJAX_DIR); 
+
+	echo '	</head>
+	<body class="index">';
+	}
+	
+	function adminHtmlFooter()
+	{
+		echo '	</body>
+</html>';
+	}
+
 	/**
 	* Shows a table view of a given mysql result
 	*

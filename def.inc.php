@@ -38,17 +38,17 @@
 		error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
 	// OS-Version feststellen
-	if (stristr($_SERVER['SERVER_SIGNATURE'],"win32") || stristr($_SERVER['SERVER_SIGNATURE'],"win64"))
-	{
-		define('UNIX',false);
-		define('WINDOWS',true);
-	}
-	else
+	if (defined('POSIX_F_OK'))
 	{
 		define('UNIX',true);
 		define('WINDOWS',false);
 		define('UNIX_USER',"etoa");
 		define('UNIX_GROUP',"apache");
+	}
+	else
+	{
+		define('UNIX',false);
+		define('WINDOWS',true);
 	}
 
 	///////////////////////////////////////////////////////////////
@@ -67,7 +67,8 @@
 	if (!defined('CACHE_ROOT')) define('CACHE_ROOT','cache');
 	if (!defined('CLASS_ROOT'))	define('CLASS_ROOT','classes');
 	define('RSS_DIR',CACHE_ROOT."/rss");
-	define('DATA_DIR',"data");
+	if (!defined('DATA_DIR'))
+		define('DATA_DIR',"data");
 
 	// Townhall-RSS-File
 	define('RSS_TOWNHALL_FILE',RSS_DIR."/townhall.rss");

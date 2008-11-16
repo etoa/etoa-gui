@@ -46,10 +46,23 @@ if (isset($_GET['id']))
 		}
 		echo "</select><br/><br/>";		
 
-		$res_level = dbquery("SELECT buildlist_current_level FROM buildlist WHERE buildlist_building_id ='".$_GET['id']."' AND buildlist_user_id='".$cu->id()."' AND buildlist_entity_id='".$cp->id."';");
-		if(mysql_num_rows($res_level)>0)
+		$currentLevel = 0;
+		if (isset($cu) && isset($cp))
 		{
-			$arr_level = mysql_fetch_array($res_level);
+			$res_level = dbquery("
+			SELECT 
+				buildlist_current_level 
+			FROM 
+				buildlist 
+			WHERE 
+				buildlist_building_id ='".$_GET['id']."' 
+				AND buildlist_user_id='".$cu->id()."' 
+				AND buildlist_entity_id='".$cp->id."';");
+			if(mysql_num_rows($res_level)>0)
+			{
+				$arr_level = mysql_fetch_row($res_level);
+				$currentLevel = $arr_level[0];
+			}
 		}
 
 		tableStart(text2html($arr['building_name']));
@@ -79,7 +92,7 @@ if (isset($_GET['id']))
 	    {
 	        $prod_item = round($arr['building_prod_metal'] * pow($arr['building_production_factor'],$level-1));
 	        $power_use = round($arr['building_power_use'] * pow($arr['building_production_factor'],$level-1));
-	        if($level==$arr_level['buildlist_current_level'])
+	        if($level==$currentLevel)
 	            echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td><td class=\"tbldata2\">".nf($power_use)."</td></tr>";
 	        else
 	            echo "<tr><td>$level</td><td>".nf($prod_item)."</td><td>".nf($power_use)."</td></tr>";
@@ -96,7 +109,7 @@ if (isset($_GET['id']))
 	    {
 	      $prod_item = round($arr['building_prod_crystal'] * pow($arr['building_production_factor'],$level-1));
 	      $power_use = round($arr['building_power_use'] * pow($arr['building_production_factor'],$level-1));
-	        if($level==$arr_level['buildlist_current_level'])
+	        if($level==$currentLevel)
 	            echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td><td class=\"tbldata2\">".nf($power_use)."</td></tr>";
 	        else
 	            echo "<tr><td>$level</td><td>".nf($prod_item)."</td><td>".nf($power_use)."</td></tr>";
@@ -113,7 +126,7 @@ if (isset($_GET['id']))
     	{
       	$prod_item = round($arr['building_prod_plastic'] * pow($arr['building_production_factor'],$level-1));
 	      $power_use = round($arr['building_power_use'] * pow($arr['building_production_factor'],$level-1));
-        if($level==$arr_level['buildlist_current_level'])
+        if($level==$currentLevel)
             echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td><td class=\"tbldata2\">".nf($power_use)."</td></tr>";
         else
             echo "<tr><td>$level</td><td>".nf($prod_item)."</td><td>".nf($power_use)."</td></tr>";
@@ -130,7 +143,7 @@ if (isset($_GET['id']))
 	    {
 	      $prod_item = round($arr['building_prod_fuel'] * pow($arr['building_production_factor'],$level-1));
 	      $power_use = round($arr['building_power_use'] * pow($arr['building_production_factor'],$level-1));
-	        if($level==$arr_level['buildlist_current_level'])
+	        if($level==$currentLevel)
 	            echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td><td class=\"tbldata2\">".nf($power_use)."</td></tr>";
 	        else
 	            echo "<tr><td>$level</td><td>".nf($prod_item)."</td><td>".nf($power_use)."</td></tr>";
@@ -147,7 +160,7 @@ if (isset($_GET['id']))
 	    {
 	      $prod_item = round($arr['building_prod_food'] * pow($arr['building_production_factor'],$level-1));
 	      $power_use = round($arr['building_power_use'] * pow($arr['building_production_factor'],$level-1));
-	        if($level==$arr_level['buildlist_current_level'])
+	        if($level==$currentLevel)
 	            echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td><td class=\"tbldata2\">".nf($power_use)."</td></tr>";
 	        else
 	            echo "<tr><td>$level</td><td>".nf($prod_item)."</td><td>".nf($power_use)."</td></tr>";
@@ -178,7 +191,7 @@ if (isset($_GET['id']))
 	    for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
 	    {
 	      $prod_item = round($arr['building_people_place'] * pow($arr['building_store_factor'],$level-1));
-	      if($level==$arr_level['buildlist_current_level'])
+	      if($level==$currentLevel)
 	         echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
 	      else
 	             echo "<tr><td>$level</td><td>".nf($prod_item)."</td></tr>";
@@ -195,7 +208,7 @@ if (isset($_GET['id']))
 	    {
 	      $prod_item = round($arr['building_prod_power'] * pow($arr['building_production_factor'],$level-1));
 	      $power_use = round($arr['building_power_use'] * pow($arr['building_production_factor'],$level-1));
-	      if($level==$arr_level['buildlist_current_level'])
+	      if($level==$currentLevel)
 	         echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
 	      else
 	             echo "<tr><td>$level</td><td>".nf($prod_item)."</td></tr>";
@@ -212,7 +225,7 @@ if (isset($_GET['id']))
 	    {
 	      $prod_item = round($arr['building_prod_power'] * pow($arr['building_production_factor'],$level-1));
 	      $power_use = round($arr['building_power_use'] * pow($arr['building_production_factor'],$level-1));
-	      if($level==$arr_level['buildlist_current_level'])
+	      if($level==$currentLevel)
 	         echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
 	      else
 	             echo "<tr><td>$level</td><td>".nf($prod_item)."</td></tr>";
@@ -229,7 +242,7 @@ if (isset($_GET['id']))
 	    {
 	      $prod_item = round($arr['building_prod_power'] * pow($arr['building_production_factor'],$level-1));
 	      $power_use = round($arr['building_power_use'] * pow($arr['building_production_factor'],$level-1));
-	      if($level==$arr_level['buildlist_current_level'])
+	      if($level==$currentLevel)
 	         echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
 	      else
 	             echo "<tr><td>$level</td><td>".nf($prod_item)."</td></tr>";
@@ -246,7 +259,7 @@ if (isset($_GET['id']))
 	    {
 	      $prod_item = round($arr['building_prod_power'] * pow($arr['building_production_factor'],$level-1));
 	      $power_use = round($arr['building_power_use'] * pow($arr['building_production_factor'],$level-1));
-	      if($level==$arr_level['buildlist_current_level'])
+	      if($level==$currentLevel)
 	         echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
 	      else
 	             echo "<tr><td>$level</td><td>".nf($prod_item)."</td></tr>";
@@ -263,7 +276,7 @@ if (isset($_GET['id']))
 	    for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
 	    {
 	      $prod_item = STD_FIELDS + $pbarr[0] + round($arr['building_store_metal'] * pow($arr['building_store_factor'],$level-1));
-	      if($level==$arr_level['buildlist_current_level'])
+	      if($level==$currentLevel)
 	         echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
 	      else
 	             echo "<tr><td>$level</td><td>".nf($prod_item)."</td></tr>";
@@ -280,7 +293,7 @@ if (isset($_GET['id']))
 	    for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
 	    {
 	      $prod_item = STD_FIELDS + $pbarr[0] + round($arr['building_store_crystal'] * pow($arr['building_store_factor'],$level-1));
-	      if($level==$arr_level['buildlist_current_level'])
+	      if($level==$currentLevel)
 	         echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
 	      else
 	             echo "<tr><td>$level</td><td>".nf($prod_item)."</td></tr>";
@@ -297,7 +310,7 @@ if (isset($_GET['id']))
 	    for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
 	    {
 	      $prod_item = STD_FIELDS + $pbarr[0] + round($arr['building_store_plastic'] * pow($arr['building_store_factor'],$level-1));
-	      if($level==$arr_level['buildlist_current_level'])
+	      if($level==$currentLevel)
 	         echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
 	      else
 	             echo "<tr><td>$level</td><td>".nf($prod_item)."</td></tr>";
@@ -314,7 +327,7 @@ if (isset($_GET['id']))
 	    for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
 	    {
 	      $prod_item = STD_FIELDS + $pbarr[0] + round($arr['building_store_food'] * pow($arr['building_store_factor'],$level-1));
-	      if($level==$arr_level['buildlist_current_level'])
+	      if($level==$currentLevel)
 	         echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
 	      else
 	             echo "<tr><td>$level</td><td>".nf($prod_item)."</td></tr>";
@@ -331,7 +344,7 @@ if (isset($_GET['id']))
 	    for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
 	    {
 	      $prod_item = STD_FIELDS + $pbarr[0] + round($arr['building_store_fuel'] * pow($arr['building_store_factor'],$level-1));
-	      if($level==$arr_level['buildlist_current_level'])
+	      if($level==$currentLevel)
 	         echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
 	      else
 	             echo "<tr><td>$level</td><td>".nf($prod_item)."</td></tr>";
@@ -349,25 +362,25 @@ if (isset($_GET['id']))
 	      $prod_item = round($arr['building_fieldsprovide'] * pow($arr['building_production_factor'],$level-1));
 	      $power_use = round($arr['building_power_use'] * pow($arr['building_production_factor'],$level-1));
 	
-	      if($level==$arr_level['buildlist_current_level'])
+	      if($level==$currentLevel)
 	         echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td><td class=\"tbldata2\">".nf($power_use)."</td>";
 	      else
 	        echo "<tr><td>$level</td><td>".nf($prod_item)."</td><td>".nf($power_use)."</td>";
 	
 	      $prod_item = round($arr['building_store_metal'] * pow($arr['building_store_factor'],$level-1));
-	      if($level==$arr_level['buildlist_current_level'])
+	      if($level==$currentLevel)
 	        echo "<td class=\"tbldata2\">".nf($prod_item)."</td>";
 	      else
 	        echo "<td>".nf($prod_item)."</td>";
 	
 	      $prod_item = round($arr['building_store_crystal'] * pow($arr['building_store_factor'],$level-1));
-	      if($level==$arr_level['buildlist_current_level'])
+	      if($level==$currentLevel)
 	        echo "<td class=\"tbldata2\">".nf($prod_item)."</td>";
 	      else
 	        echo "<td>".nf($prod_item)."</td>";
 	
 	      $prod_item = round($arr['building_store_plastic'] * pow($arr['building_store_factor'],$level-1));
-	      if($level==$arr_level['buildlist_current_level'])
+	      if($level==$currentLevel)
 	        echo "<td class=\"tbldata2\">".nf($prod_item)."</td>";
 	      else
 	        echo "<td>".nf($prod_item)."</td>";
@@ -421,7 +434,7 @@ if (isset($_GET['id']))
 	{
 		echo "<input type=\"button\" value=\"Technikbaum\" onclick=\"document.location='?page=techtree&mode=buildings'\" /> &nbsp; ";
 	}
-	if ($_SESSION['lastpage']=="buildings" && !$popup)
+	if (isset($_SESSION['lastpage']) && $_SESSION['lastpage']=="buildings" && !$popup)
 	{
 	   echo "<input type=\"button\" value=\"Zur&uuml;ck zum Bauhof\" onclick=\"document.location='?page=buildings'\" /> &nbsp; ";
 	}

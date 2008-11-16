@@ -321,7 +321,7 @@
 					echo "<td class=\"tbldata\" style=\"color:".$uCol.";\" title=\"".$arr['user_email']."\">".cut_string($arr['user_email'],15)."</td>";
 					echo "<td class=\"tbldata\" style=\"color:".$uCol.";\">".nf($arr['user_points'])."</td>";
 					echo "<td class=\"tbldata\" style=\"color:".$uCol.";\">".($arr['user_alliance_id']>0 ? $allys[$arr['user_alliance_id']]['tag']:'-')."</td>";
-					echo "<td class=\"tbldata\" style=\"color:".$uCol.";\">".$race[$arr['user_race_id']]['race_name']."</td>";
+					echo "<td class=\"tbldata\" style=\"color:".$uCol.";\">".($arr['user_race_id']>0 ? $race[$arr['user_race_id']]['race_name'] : '-')."</td>";
 					if ($arr['user_comment']!="")
 						echo "<td class=\"tbldata\" style=\"color:".$uCol.";\" ".tm("Interne Bemerkungen",$arr['user_comment']).">".cut_string($arr['user_comment'],11)."</td>";
 					else
