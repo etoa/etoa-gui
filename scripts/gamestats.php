@@ -50,7 +50,7 @@
                     users
                 ON
                     planet_user_id=user_id
-                    AND user_show_stats=1
+                    AND user_ghost=0
                 )
             ON
                 planet_type_id=type_id
@@ -123,7 +123,7 @@
                 races
             ON 
                 users.user_race_id=races.race_id
-                AND users.user_show_stats=1
+                AND users.user_ghost=0
             GROUP BY
                 races.race_id
             ORDER BY
@@ -175,7 +175,7 @@
                     users
                 ON
                     planet_user_id=user_id
-                    AND user_show_stats=1
+                    AND user_ghost=0
                 )
             ON
                 planet_type_id=type_id
@@ -204,7 +204,7 @@
                     users
                 ON
                     planet_user_id=user_id
-                    AND user_show_stats=1
+                    AND user_ghost=0
                 )
             ON
                 planet_type_id=type_id
@@ -233,7 +233,7 @@
                     users
                 ON
                     planet_user_id=user_id
-                    AND user_show_stats=1
+                    AND user_ghost=0
                 )
             ON
                 planet_type_id=type_id
@@ -262,7 +262,7 @@
                     users
                 ON
                     planet_user_id=user_id
-                    AND user_show_stats=1
+                    AND user_ghost=0
                 )
             ON
                 planet_type_id=type_id
@@ -291,7 +291,7 @@
                     users
                 ON
                     planet_user_id=user_id
-                    AND user_show_stats=1
+                    AND user_ghost=0
                 )
             ON
                 planet_type_id=type_id
@@ -330,7 +330,7 @@
                 users
             ON
                 planet_user_id=user_id
-                AND user_show_stats=1   
+                AND user_ghost=0   
                 AND planet_res_metal>0");
             $arr=mysql_fetch_array($res);
             $out.="<tr>
@@ -352,7 +352,7 @@
                 users
             ON
                 planet_user_id=user_id
-                AND user_show_stats=1   
+                AND user_ghost=0   
                 AND planet_res_crystal>0");
             $arr=mysql_fetch_array($res);
             $out.="<tr>
@@ -374,7 +374,7 @@
                 users
             ON
                 planet_user_id=user_id
-                AND user_show_stats=1   
+                AND user_ghost=0   
                 AND planet_res_plastic>0");
             $arr=mysql_fetch_array($res);
             $out.="<tr>
@@ -396,7 +396,7 @@
                 users
             ON
                 planet_user_id=user_id
-                AND user_show_stats=1   
+                AND user_ghost=0   
                 AND planet_res_fuel>0");
             $arr=mysql_fetch_array($res);
             $out.="<tr>
@@ -418,7 +418,7 @@
                 users
             ON
                 planet_user_id=user_id
-                AND user_show_stats=1   
+                AND user_ghost=0   
                 AND planet_res_food>0");
             $arr=mysql_fetch_array($res);
             $out.="<tr>
@@ -449,7 +449,7 @@
                 users
             ON
                 user_id=planet_user_id
-                AND user_show_stats=1
+                AND user_ghost=0
             GROUP BY
                 planet_user_id
             ORDER BY
@@ -472,7 +472,7 @@
                 users
             ON
                 user_id=planet_user_id
-                AND user_show_stats=1
+                AND user_ghost=0
             GROUP BY
                 planet_user_id
             ORDER BY
@@ -495,7 +495,7 @@
                 users
             ON
                 user_id=planet_user_id
-                AND user_show_stats=1
+                AND user_ghost=0
             GROUP BY
                 planet_user_id
             ORDER BY
@@ -518,7 +518,7 @@
                 users
             ON
                 user_id=planet_user_id
-                AND user_show_stats=1
+                AND user_ghost=0
             GROUP BY
                 planet_user_id
             ORDER BY
@@ -541,7 +541,7 @@
                 users
             ON
                 user_id=planet_user_id
-                AND user_show_stats=1
+                AND user_ghost=0
             GROUP BY
                 planet_user_id
             ORDER BY
@@ -594,7 +594,7 @@
                 users
             ON
                 shiplist_user_id=user_id
-                AND user_show_stats=1
+                AND user_ghost=0
             )
         ON
             shiplist_ship_id=ship_id
@@ -637,7 +637,7 @@
                 users
             ON
                 deflist_user_id=user_id
-                AND user_show_stats=1
+                AND user_ghost=0
             )
         ON
             deflist_def_id=def_id            
@@ -678,7 +678,7 @@
                 users
             ON
                 buildlist_user_id=user_id
-                AND user_show_stats=1
+                AND user_ghost=0
             )
         ON
             building_id=buildlist_building_id          
@@ -730,7 +730,7 @@
 	        users
 	    ON
 	        techlist_user_id=user_id
-	        AND user_show_stats=1
+	        AND user_ghost=0
 	    )
 	ON
 	    tech_id=techlist_tech_id              
@@ -769,7 +769,7 @@
 	        users
 	    ON
 	        buildlist_user_id=user_id
-	        AND user_show_stats=1
+	        AND user_ghost=0
 	    )
 	ON
 	    building_id=buildlist_building_id          
@@ -809,7 +809,7 @@
 	        users
 	    ON
 	        shiplist_user_id=user_id
-	        AND user_show_stats=1
+	        AND user_ghost=0
 	    )
 	ON
 	    shiplist_ship_id=ship_id

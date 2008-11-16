@@ -36,6 +36,68 @@
 	}
 
 	//
+	// Erstellen
+	//
+	elseif ($sub=="create")
+	{
+		echo "<h1>Spieler erstellen</h1>";
+		
+		if (isset($_POST['create']))
+		{
+			$errorCode = "";
+			if (User::register(array(
+				"name" => $_POST['user_name'],
+				"nick" => $_POST['user_nick'],
+				"password" => $_POST['user_password'],
+				"email" => $_POST['user_email'],
+				"race" => $_POST['user_race'],
+				"ghost" => $_POST['user_ghost']
+				),$errorCode))
+			{
+				ok_msg("Benutzer wurde erstellt! [[url ?page=user&sub=edit&user_id=".$errorCode."]Details[/url]]");
+			}
+			else
+			{
+				error_msg("Benutzer konnte nicht erstellt werden!\n\n".$errorCode."");
+			}
+		}
+		
+		echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
+		tableStart("","400");
+		echo "<tr><th>Name:</th><td>
+		<input type=\"text\" name=\"user_name\" value=\"\" />
+		</td></td>";
+		echo "<tr><th>Nick:</th><td>
+		<input type=\"text\" name=\"user_nick\" value=\"\" />
+		</td></td>";
+		echo "<tr><th>Passwort:</th><td>
+		<input type=\"text\" name=\"user_password\" value=\"\" />
+		</td></td>";
+		echo "<tr><th>E-Mail:</th><td>
+		<input type=\"text\" name=\"user_email\" value=\"\" />
+		</td></td>";
+		echo "<tr><th>Rasse:</th><td>
+		<select name=\"user_race\" />
+		<option value=\"0\">Keine</option>";
+		$res = dbquery("SELECT * FROM races ORDER BY race_name");
+		while ($arr = mysql_fetch_assoc($res))
+		{
+			echo "<option value=\"".$arr['race_id']."\">".$arr['race_name']."</option>";
+		}
+		echo "</select>
+		</td></td>";
+		echo "<tr><th>Geist:</th><td>
+		<input type=\"radio\" name=\"user_ghost\" value=\"1\" /> Ja &nbsp;
+		<input type=\"radio\" name=\"user_ghost\" value=\"0\" checked=\"checked\" /> Nein
+		</td></td>";
+
+		tableEnd();
+		echo "<div style=\"text-align:center;\"><input type=\"submit\" name=\"create\" value=\"Erstellen\" /></div>
+		</form>";
+	}
+
+
+	//
 	// Fehlerhafte Logins
 	//
 	elseif ($sub=="specialists")

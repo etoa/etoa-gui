@@ -362,6 +362,39 @@
 		static public function register($data, &$errorCode)
 		{
 			$time = time();
+			
+			if ($data['name']=="" || $data['nick']=="" || $data['email']=="")
+			{
+				$errorCode = "Nicht alle Felder sind ausgef&uuml;llt!";
+				return false;
+			}
+
+			$nick=str_replace(' ','',trim($data['nick']));
+			
+			if (!checkValidNick($nick) || !checkValidName($data['name']))
+			{			
+      	$errorCode = "Du hast ein unerlaubtes Zeichen im Benutzernamen oder im vollst&auml;ndigen Namen!";
+				return false;			
+			}
+			
+			$nick_length=strlen(utf8_decode($nick));
+			if($nick=='')
+			{
+      	$errorCode = "Dein Nickname darf nicht nur aus Leerzeichen bestehen!";
+				return false;
+			}
+
+			if($nick_length<NICK_MINLENGHT || $nick_length>NICK_MAXLENGHT)
+			{						
+				$errorCode = "Dein Nickname muss mindestens ".NICK_MINLENGHT." Zeichen und maximum ".NICK_MAXLENGHT." Zeichen haben!";
+				return false;
+			}			
+
+    	if (!checkEmail($data['email']))
+    	{
+    		$errorCode = "Diese E-Mail-Adresse scheint ung&uuml;ltig zu sein. Pr&uuml;fe nach, ob dein E-Mail-Server online ist und die Adresse im korrekten Format vorliegt!";
+    		return false;
+    	}
 
   	  $res = mysql_query("
   	  SELECT 
@@ -369,47 +402,72 @@
   	  FROM 
   	  	users 
   	  WHERE 
-  	  	user_nick='".$_POST['register_user_nick']."' 
-  	  	OR user_email_fix='".$_POST['register_user_email']."';");
-  	  if (mysql_num_rows($res)==0)
+  	  	user_nick='".$nick."' 
+  	  	OR user_email_fix='".$data['email']."';");
+  	  if (mysql_num_rows($res)>0)
   	  {
- 	      if (dbquery("
-	      INSERT INTO
-	      users (
-	          user_name,
-	          user_nick,
-	          user_password,
-	          user_email,
-	          user_email_fix,
-	          user_race_id,
-	          user_registered
-	          )
-	      VALUES
-	          ('".$data['name']."',
-	          '".$data['nick']."',
-	          '".pw_salt((isset($data['password']) && $data['password']!="") ? $data['password'] : mt_rand(100000000,9999999999),$time)."',
-	          '".$data['email']."',
-	          '".$data['email']."',
-	          '".(isset($data['race']) ? $data['race'] : 0)."',
-	          '".$time."');"))
-        {
-					dbquery("
-					INSERT INTO 
-						user_properties
-					(id)
-					VALUES
-					(".mysql_insert_id().")
-					");        	
-        	return true;
-        }	
-      }
-      else
+      	$errorCode = "Der Benutzer mit diesem Nicknamen oder dieser E-Mail-Adresse existiert bereits!";
+      	return false;
+      }  	  	  
+  	  
+      if (dbquery("
+      INSERT INTO
+      users (
+          user_name,
+          user_nick,
+          user_password,
+          user_email,
+          user_email_fix,
+          user_race_id,
+          user_ghost,
+          user_registered
+          )
+      VALUES
+          ('".$data['name']."',
+          '".$nick."',
+          '".pw_salt((isset($data['password']) && $data['password']!="") ? $data['password'] : mt_rand(100000000,9999999999),$time)."',
+          '".$data['email']."',
+          '".$data['email']."',
+          '".(isset($data['race']) ? $data['race'] : 0)."',
+          '".(isset($data['ghost']) ? $data['ghost'] : 0)."',
+          '".$time."');"))
       {
-      	$errorCode = "user_exists";
-      }
+      	$errorCode = mysql_insert_id();
+				dbquery("
+				INSERT INTO 
+					user_properties
+				(id)
+				VALUES
+				(".mysql_insert_id().")
+				");      
+				
+				if (!isset($data['password']))
+        	add_log(3,"Der Benutzer ".$nick." (".$data['name'].", ".$data['email'].") hat sich registriert!");
+        else
+        	add_log(3,"Der Benutzer ".$nick." (".$data['name'].", ".$data['email'].") wurde registriert!");
+				  	
+      	return true;
+      }	
+
+			$errorCode = "Ein unbekannter Fehler trat auf!";
       return false;
 		}
 		
+		static public function sendWelcomeMail()
+		{
+      $email_text = "Hallo ".$_POST['register_user_nick']."\n\nDu hast dich erfolgreich beim Sci-Fi Browsergame Escape to Andromeda registriert.\nHier nochmals deine Daten:\n\n";
+      $email_text.= "Universum: ".GAMEROUND_NAME."\n";
+      $email_text.= "Name: ".$_POST['register_user_name']."\n";
+      $email_text.= "E-Mail: ".$_POST['register_user_email']."\n\n";
+      $email_text.= "Nick: ".$_POST['register_user_nick']."\n";
+      $email_text.= "Passwort: ".$pw."\n\n";
+      $email_text.= "WICHTIG: Gib das Passwort an niemanden weiter. Gib dein Passwort auch auf keiner Seite ausser der Login- und der Einstellungs-Seite ein. Ein Game-Admin oder Entwickler wird dich auch nie nach dem Passwort fragen!\n";
+      $email_text.= "Desweiteren solltest du dich mit den Regeln (".LOGINSERVER_URL."?page=regeln) bekannt machen, da ein Regelverstoss eine (zeitweilige) Sperrung deines Accounts zur Folge haben kann!\n\n";
+      $email_text.= "Viel Spass beim Spielen!\nDas EtoA-Team";
+
+      send_mail(0,$_POST['register_user_email'],"EtoA Registrierung",$email_text,"","left",1);			
+			
+		}
 
     
 	}

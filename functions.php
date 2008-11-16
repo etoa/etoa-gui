@@ -1108,7 +1108,7 @@
 			FROM
 				users
 			WHERE
-				user_show_stats='1'
+				user_ghost='0'
 				AND (user_registered<'".$register_time."' AND user_points='0')
 				OR (user_last_online<'".$online_time."' AND user_last_online>0 AND user_hmode_from='0');
 		");
@@ -1134,7 +1134,7 @@
 			FROM
 				users
 			WHERE
-				user_show_stats='1'
+				user_ghost='0'
 				AND user_last_online<'".USER_INACTIVE_TIME_LONG."' 
 				AND user_last_online>'".(USER_INACTIVE_TIME_LONG-3600*24)."' 
 				AND user_hmode_from='0';

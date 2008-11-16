@@ -129,7 +129,7 @@
 					users
 				WHERE
 					user_race_id=".$rarr['race_id']."
-					AND user_show_stats=1
+					AND user_ghost=0
 				ORDER BY
 					user_points DESC
 				LIMIT 1;

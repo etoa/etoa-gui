@@ -18,7 +18,7 @@
 				user_multi_delets=".$_POST['user_multi_delets'].",
 				user_sitting_days=".$_POST['user_sitting_days'].",
 				user_admin=".$_POST['user_admin'].",
-				user_show_stats=".$_POST['user_show_stats'].",
+				user_ghost=".$_POST['user_ghost'].",
 				user_profile_board_url='".$_POST['user_profile_board_url']."'";	
 				
 				// 13.09.08, Lamborhgini: Die folgende Zeile wurde entfernt, weil die Zelle nicht mehr vorhanden ist in der DB
@@ -490,15 +490,15 @@
 								</td>
 							</tr>
 							<tr>
-								<td class=\"tbltitle\">Statistikanzeige:</td>
+								<td class=\"tbltitle\">Geist:</td>
 								<td class=\"tbldata\">
-									Ja: <input type=\"radio\" name=\"user_show_stats\" value=\"1\"";
-									if ($arr['user_show_stats']==1)
+									Ja: <input type=\"radio\" name=\"user_ghost\" value=\"1\"";
+									if ($arr['user_ghost']==1)
 									{
 										echo " checked=\"checked\" ";
 									}
-									echo " /> Nein: <input type=\"radio\" name=\"user_show_stats\" value=\"0\" ";
-									if ($arr['user_show_stats']==0)
+									echo " /> Nein: <input type=\"radio\" name=\"user_ghost\" value=\"0\" ";
+									if ($arr['user_ghost']==0)
 									{
 										echo " checked=\"checked\" ";
 									}

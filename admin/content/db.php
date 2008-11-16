@@ -436,7 +436,7 @@
 			FROM
 				users
 			WHERE
-				user_show_stats='1'
+				user_ghost='0'
 				AND (user_registered<'".$register_time."' AND user_points='0')
 				OR (user_last_online<'".$online_time."' AND user_hmode_from='0');
 		;");		

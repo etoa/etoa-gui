@@ -43,10 +43,6 @@
 	$navmenu['Allgemeines']['Rangliste']['sub']="stats";
 	$navmenu['Allgemeines']['Rangliste']['level']=0;
 
-	$navmenu['Allgemeines']['Technikbaum']['page']="home";
-	$navmenu['Allgemeines']['Technikbaum']['sub']="techtree";
-	$navmenu['Allgemeines']['Technikbaum']['level']=1;
-
 	$navmenu['Allgemeines']['RSS']['page']="home";
 	$navmenu['Allgemeines']['RSS']['sub']="rss";
 	$navmenu['Allgemeines']['RSS']['level']=0;
@@ -81,10 +77,19 @@
 	$navmenu['In-Game Hilfe']['Übersicht']['page']="help";
 	$navmenu['In-Game Hilfe']['Übersicht']['sub']="";
 	$navmenu['In-Game Hilfe']['Übersicht']['level']=0;
+	
+	$navmenu['In-Game Hilfe']['Technikbaum']['page']="help";
+	$navmenu['In-Game Hilfe']['Technikbaum']['sub']="techtree";
+	$navmenu['In-Game Hilfe']['Technikbaum']['level']=1;
+	
 
 	$navmenu['Spieler']['Spieler bearbeiten']['page']="user";
 	$navmenu['Spieler']['Spieler bearbeiten']['sub']="";
 	$navmenu['Spieler']['Spieler bearbeiten']['level']=0;
+
+	$navmenu['Spieler']['Spieler erstellen']['page']="user";
+	$navmenu['Spieler']['Spieler erstellen']['sub']="create";
+	$navmenu['Spieler']['Spieler erstellen']['level']=0;
 
 	$navmenu['Spieler']['Multi-Kontrolle']['page']="user";
 	$navmenu['Spieler']['Multi-Kontrolle']['sub']="multi";
