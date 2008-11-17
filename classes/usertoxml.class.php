@@ -9,10 +9,10 @@ class UserToXml
     }
     
     
-	function toCacheFile($path="")
+	function toCacheFile()
 	{
 		$filename = $this->userId."_".date("Y-m-d_H-i").".xml";
-		$file = $path."cache/user_xml/".$filename;
+		$file = CACHE_ROOT."/user_xml/".$filename;
 		if ($xml =  $this->__toString())
 		{
 			if ($d=@fopen($file,"w+"))
@@ -40,7 +40,7 @@ class UserToXml
 			users
 		LEFT JOIN
 			alliances ON user_alliance_id=alliance_id
-		INNER JOIN
+		LEFT JOIN
 			races ON user_race_id=race_id
 		WHERE user_id=".$this->userId."
 		;");
@@ -56,7 +56,7 @@ $xml = "<userbackup>
 		<name>".$arr['user_name']."</name>
 		<email>".$arr['user_email']."</email>
 		<points>".$arr['user_points']."</points>
-		<rank>".$arr['user_rank_current']."</rank>
+		<rank>".$arr['user_rank']."</rank>
 		<online>".date("d.m.Y, H:i",$arr['user_last_online'])."</online>		
 		<ip>".$arr['user_ip']."</ip>		
 		<host>".$arr['user_hostname']."</host>		
@@ -186,11 +186,11 @@ $xml = "<userbackup>
 			//Flotten und deren Schiffe
 			$fres=dbquery("
 				SELECT
-					fleet_id
+					id
 				FROM
 					fleet
 				WHERE
-					fleet_user_id='".$this->userId."';
+					user_id='".$this->userId."';
 			");
 			if (mysql_num_rows($fres)>0)
 			{
@@ -207,7 +207,7 @@ $xml = "<userbackup>
 							ships AS s
 							ON fs.fs_ship_id = s.ship_id
 							AND fs.fs_ship_faked=0
-							AND fs.fs_fleet_id='".$farr['fleet_id']."';
+							AND fs.fs_fleet_id='".$farr['id']."';
 					");
 					if (mysql_num_rows($sres)>0)
 					{

@@ -188,8 +188,9 @@
 			// User löschen
 			if (isset($_POST['delete_user']))
 			{
-				delete_user($_GET['user_id'],false,$_SESSION[SESSION_NAME]['user_nick']);
-				echo "L&ouml;schung erfolgreich!<br/><br/>";
+				$user = new User($_GET['user_id']);
+				if ($user->delete(false,$_SESSION[SESSION_NAME]['user_nick']))				
+					success_msg("L&ouml;schung erfolgreich!");
 			}
 			
 			// Löschantrag speichern
