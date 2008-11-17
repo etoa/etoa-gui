@@ -2342,8 +2342,8 @@ die Spielleitung";
     {
         $conf = get_all_config();
 
-        if($style=="")
-			$style=$conf['default_css_style']['v'];
+        //if($style=="")
+		//	$style=$conf['default_css_style']['v'];
 
 		if($align=="")
 			$align="center";

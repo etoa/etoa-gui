@@ -362,7 +362,10 @@
 					// Subtract flight costs from source
 					$this->sourceEntity->chgRes(4,-$this->getCosts());
 					$this->sourceEntity->chgPeople(-($this->pilots+$this->capacityPeopleLoaded));
-	
+					
+					if ($this->action=="alliance" && $this->leaderId!=0) $status=3;
+					else $status = 0;
+					
 					// Create fleet record
 					$sql = "
 					INSERT INTO
@@ -400,7 +403,7 @@
 						".($time+$this->duration).",
 						".$this->supportTime.",
 						'".$this->action."',
-						0,
+						'".$status."',
 						".$this->pilots.",
 						".$this->getCosts().",
 						".$this->getCostsFood().",

@@ -440,9 +440,6 @@
 				$shiplist[$arr['shiplist_ship_id']][$arr['shiplist_entity_id']]=$arr['shiplist_count'];
 			}
 			
-			print_r($shiplist);
-			echo "shiplist<br><br>";
-			
 			// Bauliste von allen Planeten laden und nach Schiffe zusammenfassen
 			$res = dbquery("
 			SELECT
@@ -460,8 +457,7 @@
 			{
 				$queue_total[$arr['queue_ship_id']] = $arr['cnt'];
 			}	
-			print_r($queue_total);
-			echo "queue<br><br>";
+
 			// Flotten laden und nach Schiffe zusammenfassen
 			$res = dbquery("
       SELECT
@@ -480,8 +476,6 @@
 			{
 				$fleet[$arr['fs_ship_id']] = $arr['cnt'];
 			}
-			print_r($fleet);
-			echo "fleet<br><br>";
 			
 			$ship_costs = 0;
 			$to_much = false;
@@ -512,8 +506,6 @@
 		      
 		      // Total Schiffe mit den zu bauenden
 					$total_count = $build_cnt + $ship_count;
-								
-					echo "<br><br>SChiffsanzahl:<br><br>shiplist: ".array_sum($shiplist[$ship_id])."<br>queue: ".$queue_total[$ship_id]."<br>luft: ".$fleet[$ship_id]."<br><br>total cnt: ".$total_count."<br><br>max cnt: ".$_POST['ship_max_count_'.$ship_id.'']."<br><br>";		
 					
 					// Prüft ob Anzahl grösser ist als Schiffsmaximum
 					if($_POST['ship_max_count_'.$ship_id.''] >= $total_count || $_POST['ship_max_count_'.$ship_id.''] == 0)
@@ -1617,7 +1609,7 @@
 		echo "<h1>Schiffswerft</h1>";
 		
  		echo "<form action=\"?page=".$page."&amp;action=".$_GET['action']."&amp;action2=shipyard\" method=\"post\" id=\"alliance_shipyard\">\n";
-		//echo $cstr;
+		echo $cstr;
 		
 		tableStart("Guthaben Übersicht");
 		

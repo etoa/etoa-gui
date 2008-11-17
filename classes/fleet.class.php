@@ -303,7 +303,7 @@
 						fleet 
 					ON 
 						fleet.id = fs_fleet_id
-						AND fleet.leader_id = '1'
+						AND fleet.leader_id = '".$this->id."'
 						AND fs_ship_cnt > '0'
 						AND fs_ship_faked = '0'
 					GROUP BY 

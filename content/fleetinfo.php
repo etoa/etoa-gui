@@ -70,7 +70,7 @@
 	
 	
 			tableStart("","","double");
-	
+			
 			// Flugdaten
 			tableStart("Flugdaten","50%");
 			
