@@ -17,12 +17,9 @@
 				user_signature='".addslashes($_POST['user_signature'])."',
 				user_multi_delets=".$_POST['user_multi_delets'].",
 				user_sitting_days=".$_POST['user_sitting_days'].",
-				user_admin=".$_POST['user_admin'].",
+				user_chatadmin=".$_POST['user_chatadmin'].",
 				user_ghost=".$_POST['user_ghost'].",
 				user_profile_board_url='".$_POST['user_profile_board_url']."'";	
-				
-				// 13.09.08, Lamborhgini: Die folgende Zeile wurde entfernt, weil die Zelle nicht mehr vorhanden ist in der DB
-				// user_msgsignature='".addslashes($_POST['user_msgsignature'])."',
 
 				if (isset($_POST['user_alliance_rank_id']))
 				{
@@ -136,17 +133,18 @@
 				planet_circle_width=".$_POST['user_planet_circle_width'].",
 				item_show='".$_POST['user_item_show']."',
 				image_filter=".$_POST['user_image_filter'].",
-				msgcreation_preview=".$_POST['user_msgcreation_preview'].",
-				msg_preview=".$_POST['user_msg_preview'].",
+				msgsignature='".addslashes($_POST['msgsignature'])."',
+				msgcreation_preview=".$_POST['msgcreation_preview'].",
+				msg_preview=".$_POST['msg_preview'].",
 				helpbox=".$_POST['user_helpbox'].",
 				notebox=".$_POST['user_notebox'].",
-				msg_copy=".$_POST['user_msg_copy'].",
-				msg_blink=".$_POST['user_msg_blink'].",
-				spyship_id=".$_POST['user_spyship_id'].",
-				spyship_count='".$_POST['user_spyship_count']."',
+				msg_copy=".$_POST['msg_copy'].",
+				msg_blink=".$_POST['msg_blink'].",
+				spyship_id=".$_POST['spyship_id'].",
+				spyship_count='".$_POST['spyship_count']."',
 				havenships_buttons=".$_POST['user_havenships_buttons'].",
 				show_adds=".$_POST['user_show_adds'].",
-				fleet_rtn_msg=".$_POST['user_fleet_rtn_msg']."";	
+				fleet_rtn_msg=".$_POST['fleet_rtn_msg']."";	
 				
 				// Perform query
 				$sql .= " WHERE id='".$_GET['user_id']."';";
@@ -229,6 +227,9 @@
 				* 
 			FROM 
 				users
+			INNER JOIN
+				user_properties
+				ON user_id=id
 			LEFT JOIN
         races
         ON user_race_id=race_id
@@ -328,11 +329,11 @@
 				
 			$tc = new TabControl("userTab",array(
 			"Info",
-			"Daten",
 			"Account",
+			"Daten",
 			"Profil",
-			"Spiel",
 			"Nachrichten",
+			"Design",
 			"Loginfehler",
 			"Punkte",
 			"Tickets",
@@ -506,14 +507,14 @@
 								</td>
 							</tr>
 							<tr>
-								<td class=\"tbltitle\">Admin:</td>
-								<td class=\"tbldata\">Ja: <input type=\"radio\" name=\"user_admin\" value=\"1\"";
-									if ($arr['user_admin']==1)
+								<td class=\"tbltitle\">Chat-Admin:</td>
+								<td class=\"tbldata\">Ja: <input type=\"radio\" name=\"user_chatadmin\" value=\"1\"";
+									if ($arr['user_chatadmin']==1)
 										echo " checked=\"checked\" ";
-									echo " /> Nein: <input type=\"radio\" name=\"user_admin\" value=\"0\" ";
-									if ($arr['user_admin']==0)
+									echo " /> Nein: <input type=\"radio\" name=\"user_chatadmin\" value=\"0\" ";
+									if ($arr['user_chatadmin']==0)
 										echo " checked=\"checked\" ";
-									echo "/> (Der Spieler und seine Planeten werden als Admin markiert)
+									echo "/> (Der Spieler hat Adminrechte im Chat)
 								</td>
 							</tr>
 							<tr>
@@ -535,7 +536,8 @@
 				echo "<tr>
 								<td class=\"tbltitle\">Rasse:</td>
 								<td class=\"tbldata\">
-									<select name=\"user_race_id\">";
+									<select name=\"user_race_id\">
+									<option value=\"0\">(Keine)</option>";
 									$tres = dbquery("SELECT * FROM races ORDER BY race_name;");
 									while ($tarr = mysql_fetch_array($tres))
 									{
@@ -569,7 +571,7 @@
 										}
 										echo '>'.$sarr[0].'</option>';
 									}
-									echo "</select> &nbsp; Arbeitsbeginn:&nbsp; <span id=\"spt\">-</span>
+									echo "</select> &nbsp; Ab:&nbsp; <span id=\"spt\">-</span>
 								</td>
 							</tr>
 							<tr>
@@ -589,7 +591,7 @@
 							echo "<tr>
 			        	<td class=\"tbltitle\">Spionagesonden für Direktscan:</td>
 			          <td class=\"tbldata\">
-			          	<input type=\"text\" name=\"user_spyship_count\" maxlength=\"5\" size=\"5\" value=\"".$arr['user_spyship_count']."\"> &nbsp; ";
+			          	<input type=\"text\" name=\"spyship_count\" maxlength=\"5\" size=\"5\" value=\"".$arr['spyship_count']."\"> &nbsp; ";
 						$sres = dbquery("
 						SELECT 
 			        ship_id, 
@@ -608,11 +610,11 @@
 							ship_name ASC");
 					        if (mysql_num_rows($sres)>0)
 					        {
-					        	echo '<select name="user_spyship_id"><option value="0">(keines)</option>';
+					        	echo '<select name="spyship_id"><option value="0">(keines)</option>';
 					        	while ($sarr=mysql_fetch_array($sres))
 					        	{
 					        		echo '<option value="'.$sarr['ship_id'].'"';
-					        		if ($arr['user_spyship_id']==$sarr['ship_id'])
+					        		if ($arr['spyship_id']==$sarr['ship_id'])
 					        		 echo ' selected="selected"';
 					        		echo '>'.$sarr['ship_name'].'</option>';
 					        	}
@@ -623,25 +625,7 @@
 					        }
 					echo "</td>
 							</tr>
-							<tr>
-	        			<td class=\"tbltitle\">Nachricht bei Transport-/Spionagerückkehr:</td>
-	        			<td class=\"tbldata\">
-	                  <input type=\"radio\" name=\"user_fleet_rtn_msg\" value=\"1\" ";
-	                  if ($arr['user_fleet_rtn_msg']==1)
-	                  {
-	                  	echo " checked=\"checked\"";
-	                  }
-	                  echo "/> Aktiviert &nbsp;
-	              
-	                  <input type=\"radio\" name=\"user_fleet_rtn_msg\" value=\"0\" ";
-	                  if ($arr['user_fleet_rtn_msg']==0)
-	                  {
-	                  	echo " checked=\"checked\"";
-	                  }
-	        					echo "/> Deaktiviert
-	        			</td>
-      				</tr>"; 
-				echo "</table>";
+					</table>";
 				
 				$tc->close();
 
@@ -718,53 +702,72 @@
 				echo "<tr>
 								<td class=\"tbltitle\">Nachrichten-Signatur:</td>
 								<td class=\"tbldata\">
-									<textarea name=\"user_msgsignature\" cols=\"60\" rows=\"8\">".stripslashes($arr['user_msgsignature'])."</textarea>
+									<textarea name=\"msgsignature\" cols=\"60\" rows=\"8\">".stripslashes($arr['msgsignature'])."</textarea>
 								</td>
 							</tr>
 							<tr>
 	  				 		<td class=\"tbltitle\">Nachrichtenvorschau (Neue/Archiv):</td>
 								<td class=\"tbldata\">
-		                <input type=\"radio\" name=\"user_msg_preview\" value=\"1\" ";
-		                if ($arr['user_msg_preview']==1) echo " checked=\"checked\"";
+		                <input type=\"radio\" name=\"msg_preview\" value=\"1\" ";
+		                if ($arr['msg_preview']==1) echo " checked=\"checked\"";
 		                echo "/> Aktiviert
-		                <input type=\"radio\" name=\"user_msg_preview\" value=\"0\" ";
-		                if ($arr['user_msg_preview']==0) echo " checked=\"checked\"";
+		                <input type=\"radio\" name=\"msg_preview\" value=\"0\" ";
+		                if ($arr['msg_preview']==0) echo " checked=\"checked\"";
 		                echo "/> Deaktiviert
 		       			</td>
 		       	 </tr>
 		       	 <tr>
              		<td class=\"tbltitle\">Nachrichtenvorschau (Erstellen):</td>
           			<td class=\"tbldata\">
-                  <input type=\"radio\" name=\"user_msgcreation_preview\" value=\"1\" ";
-                  if ($arr['user_msgcreation_preview']==1) echo " checked=\"checked\"";
+                  <input type=\"radio\" name=\"msgcreation_preview\" value=\"1\" ";
+                  if ($arr['msgcreation_preview']==1) echo " checked=\"checked\"";
                   echo "/> Aktiviert
-                  <input type=\"radio\" name=\"user_msgcreation_preview\" value=\"0\" ";
-                  if ($arr['user_msgcreation_preview']==0) echo " checked=\"checked\"";
+                  <input type=\"radio\" name=\"msgcreation_preview\" value=\"0\" ";
+                  if ($arr['msgcreation_preview']==0) echo " checked=\"checked\"";
                   echo "/> Deaktiviert
               	</td>
            		</tr>
            		<tr>
               	<td class=\"tbltitle\">Blinkendes Nachrichtensymbol:</td>
           			<td class=\"tbldata\">
-                  <input type=\"radio\" name=\"user_msg_blink\" value=\"1\" ";
-                  if ($arr['user_msg_blink']==1) echo " checked=\"checked\"";
+                  <input type=\"radio\" name=\"msg_blink\" value=\"1\" ";
+                  if ($arr['msg_blink']==1) echo " checked=\"checked\"";
                   echo "/> Aktiviert
-                  <input type=\"radio\" name=\"user_msg_blink\" value=\"0\" ";
-                  if ($arr['user_msg_blink']==0) echo " checked=\"checked\"";
+                  <input type=\"radio\" name=\"msg_blink\" value=\"0\" ";
+                  if ($arr['msg_blink']==0) echo " checked=\"checked\"";
                   echo "/> Deaktiviert
               	</td>
            		</tr>
            		<tr>
               	<td class=\"tbltitle\">Text bei Antwort/Weiterleiten kopieren:</td>
 	          		<td class=\"tbldata\">
-	                <input type=\"radio\" name=\"user_msg_copy\" value=\"1\" ";
-	                if ($arr['user_msg_copy']==1) echo " checked=\"checked\"";
+	                <input type=\"radio\" name=\"msg_copy\" value=\"1\" ";
+	                if ($arr['msg_copy']==1) echo " checked=\"checked\"";
 	                echo "/> Aktiviert
-	                <input type=\"radio\" name=\"user_msg_copy\" value=\"0\" ";
-	                if ($arr['user_msg_copy']==0) echo " checked=\"checked\"";
+	                <input type=\"radio\" name=\"msg_copy\" value=\"0\" ";
+	                if ($arr['msg_copy']==0) echo " checked=\"checked\"";
 	                echo "/> Deaktiviert
 	              </td>
            		</tr>
+
+							<tr>
+	        			<td class=\"tbltitle\">Nachricht bei Transport-/Spionagerückkehr:</td>
+	        			<td class=\"tbldata\">
+	                  <input type=\"radio\" name=\"fleet_rtn_msg\" value=\"1\" ";
+	                  if ($arr['fleet_rtn_msg']==1)
+	                  {
+	                  	echo " checked=\"checked\"";
+	                  }
+	                  echo "/> Aktiviert &nbsp;
+	              
+	                  <input type=\"radio\" name=\"fleet_rtn_msg\" value=\"0\" ";
+	                  if ($arr['fleet_rtn_msg']==0)
+	                  {
+	                  	echo " checked=\"checked\"";
+	                  }
+	        					echo "/> Deaktiviert
+	        			</td>
+      				</tr>           		
            		<tr>
            			<td colspan=\"2\" class=\"tabSeparator\"></td>
            		</tr>

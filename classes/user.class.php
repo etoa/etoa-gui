@@ -359,7 +359,7 @@
 		/**
 		* Registers a new user
 		*/
-		static public function register($data, &$errorCode)
+		static public function register($data, &$errorCode, $welcomeMail=1)
 		{
 			$time = time();
 			
@@ -410,6 +410,7 @@
       	return false;
       }  	  	  
   	  
+  	  $pw = (isset($data['password']) && $data['password']!="") ? $data['password'] : mt_rand(100000000,9999999999);
       if (dbquery("
       INSERT INTO
       users (
@@ -425,7 +426,7 @@
       VALUES
           ('".$data['name']."',
           '".$nick."',
-          '".pw_salt((isset($data['password']) && $data['password']!="") ? $data['password'] : mt_rand(100000000,9999999999),$time)."',
+          '".pw_salt($pw,$time)."',
           '".$data['email']."',
           '".$data['email']."',
           '".(isset($data['race']) ? $data['race'] : 0)."',
@@ -445,29 +446,29 @@
         	add_log(3,"Der Benutzer ".$nick." (".$data['name'].", ".$data['email'].") hat sich registriert!");
         else
         	add_log(3,"Der Benutzer ".$nick." (".$data['name'].", ".$data['email'].") wurde registriert!");
-				  	
-      	return true;
-      }	
-
+				
+				if ($welcomeMail == 1)
+				{
+		      $email_text = "Hallo ".$data['nick']."\n\nDu hast dich erfolgreich beim Sci-Fi Browsergame Escape to Andromeda registriert.\nHier nochmals deine Daten:\n\n";
+		      $email_text.= "Universum: ".GAMEROUND_NAME."\n";
+		      $email_text.= "Name: ".$data['name']."\n";
+		      $email_text.= "E-Mail: ".$data['email']."\n\n";
+		      $email_text.= "Nick: ".$data['nick']."\n";
+		      $email_text.= "Passwort: ".$pw."\n\n";
+		      $email_text.= "WICHTIG: Gib das Passwort an niemanden weiter. Gib dein Passwort auch auf keiner Seite ausser der Login- und der Einstellungs-Seite ein. Ein Game-Admin oder Entwickler wird dich auch nie nach dem Passwort fragen!\n";
+		      $email_text.= "Desweiteren solltest du dich mit den Regeln (".LOGINSERVER_URL."?page=regeln) bekannt machen, da ein Regelverstoss eine (zeitweilige) Sperrung deines Accounts zur Folge haben kann!\n\n";
+		      $email_text.= "Viel Spass beim Spielen!\nDas EtoA-Team";
+		
+		      send_mail(0,$data['email'],"EtoA Registrierung",$email_text,"","left",1);			
+				}
+					  	
+	      	return true;
+	    }	
+	
 			$errorCode = "Ein unbekannter Fehler trat auf!";
       return false;
 		}
 		
-		static public function sendWelcomeMail()
-		{
-      $email_text = "Hallo ".$_POST['register_user_nick']."\n\nDu hast dich erfolgreich beim Sci-Fi Browsergame Escape to Andromeda registriert.\nHier nochmals deine Daten:\n\n";
-      $email_text.= "Universum: ".GAMEROUND_NAME."\n";
-      $email_text.= "Name: ".$_POST['register_user_name']."\n";
-      $email_text.= "E-Mail: ".$_POST['register_user_email']."\n\n";
-      $email_text.= "Nick: ".$_POST['register_user_nick']."\n";
-      $email_text.= "Passwort: ".$pw."\n\n";
-      $email_text.= "WICHTIG: Gib das Passwort an niemanden weiter. Gib dein Passwort auch auf keiner Seite ausser der Login- und der Einstellungs-Seite ein. Ein Game-Admin oder Entwickler wird dich auch nie nach dem Passwort fragen!\n";
-      $email_text.= "Desweiteren solltest du dich mit den Regeln (".LOGINSERVER_URL."?page=regeln) bekannt machen, da ein Regelverstoss eine (zeitweilige) Sperrung deines Accounts zur Folge haben kann!\n\n";
-      $email_text.= "Viel Spass beim Spielen!\nDas EtoA-Team";
-
-      send_mail(0,$_POST['register_user_email'],"EtoA Registrierung",$email_text,"","left",1);			
-			
-		}
 
     
 	}

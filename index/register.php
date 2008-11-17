@@ -107,7 +107,7 @@
 			"nick" => $_POST['register_user_nick'],
 			"email" => $_POST['register_user_email']),$errorCode))
     {
-				User::sendWelcomeMail();
+				
 
         iBoxStart("Registration erfolgreich!");
         echo "Es wurde eine E-Mail an <b>".$_POST['register_user_email']."</b> verschickt, in der ein automatisch generiertes Passwort f&uuml;r deine Erstanmeldung steht.
