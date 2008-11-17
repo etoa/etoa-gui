@@ -16,24 +16,24 @@
 		//Flotte wird stationiert und Waren werden ausgeladen
 		if(fleetAction==1) {
             // Waren entladen
-            double people = (double)fleet_["pilots"] + (double)fleet_["res_people"];
+            double people = this->f->getPilots() + this->f->getResPeople();
 			query << std::setprecision(18);
             query << "UPDATE ";
 			query << "	planets ";
 			query << "SET ";
-			query << "	planet_res_metal=planet_res_metal+'" << fleet_["res_metal"] << "', ";
-			query << "	planet_res_crystal=planet_res_crystal+'" << fleet_["res_crystal"] << "', ";
-			query << "	planet_res_plastic=planet_res_plastic+'" << fleet_["res_plastic"] << "', ";
-			query << "	planet_res_fuel=planet_res_fuel+'" << fleet_["res_fuel"] << "', ";
-			query << "	planet_res_food=planet_res_food+'" << fleet_["res_food"] << "', ";
+			query << "	planet_res_metal=planet_res_metal+'" << this->f->getResMetal() << "', ";
+			query << "	planet_res_crystal=planet_res_crystal+'" << this->f->getResCrystal() << "', ";
+			query << "	planet_res_plastic=planet_res_plastic+'" << this->f->getResPlastic() << "', ";
+			query << "	planet_res_fuel=planet_res_fuel+'" << this->f->getResFuel() << "', ";
+			query << "	planet_res_food=planet_res_food+'" << this->f->getResFood() << "', ";
 			query << "	planet_people=planet_people+'" << people << "' ";
 			query << "WHERE ";
-			query << "	id='" << fleet_["entity_to"] << "';";
+			query << "	id='" << this->f->getEntityTo() << "';";
 			query.store();
 			query.reset();
 
 			//Rohstoffnachricht für den User
-			msgRes= "\n[b]WAREN[/b]\n\n[b]Titan:[/b] ";
+			msgRes= "\n\n[b]WAREN[/b]\n\n[b]Titan:[/b] ";
 			msgRes += functions::nf(std::string(fleet_["res_metal"]));
 			msgRes += "\n[b]Silizium:[/b] ";
 			msgRes += functions::nf(std::string(fleet_["res_crystal"]));
@@ -74,7 +74,7 @@
 			query << "	fleet_ships AS fs ";
 			query << "INNER JOIN ";
 			query << "	ships AS s ON fs.fs_ship_id = s.ship_id ";
-			query << "	AND fs.fs_fleet_id='" << fleet_["id"] << "' ";
+			query << "	AND fs.fs_fleet_id='" << this->f->getFId() << "' ";
 			query << "		AND fs.fs_ship_faked='0'; ";
 			mysqlpp::Result fsRes = query.store();
 			query.reset();
@@ -108,13 +108,13 @@
 						} while  (pch != NULL);
 						
 						// Ein Koloschiff subtrahieren, falls kolonialisieren gewählt ist (einmalig)
-						if (canColonize==1 && alreadyColonialized==0 && std::string(fleet_["action"])=="colonize") {
+						if (canColonize==1 && alreadyColonialized==0 && this->f->getAction()=="colonize") {
 							shipCnt = (double)fsRow["fs_ship_cnt"]-1;
 							alreadyColonialized=1;
 						}
 
 						// Ein Invasionsschiff subtrahieren, falls invasieren gewählt ist (einmalig)
-						if (canInvade==1 && alreadyInvaded==0 && std::string(fleet_["action"])=="invade") {
+						if (canInvade==1 && alreadyInvaded==0 && this->f->getAction()=="invade") {
 							shipCnt = (double)fsRow["fs_ship_cnt"]-1;
 							alreadyInvaded=1;
 						}
@@ -127,7 +127,7 @@
 						query << "	shiplist ";							
 						query << "WHERE ";
 						query << "	shiplist_ship_id='" << fsRow["fs_ship_id"] << "' ";
-						query << "	AND shiplist_entity_id='" << fleet_["entity_to"] << "';";
+						query << "	AND shiplist_entity_id='" << this->f->getEntityTo() << "';";
 						mysqlpp::Result slRes = query.store();
 						query.reset();
 						
@@ -168,11 +168,11 @@
 								int userId;
 								
 								//überprüft, ob die Flotte eine User ID besitzt, sonst eine generieren durch Planet ID (z.b. für Handelsschiffe)
-								if((int)fleet_["user_id"]!=0) {
-									userId = (int)fleet_["user_id"];
+								if(this->f->getUserId()!=0) {
+									userId = this->f->getUserId();
 								}
 								else {
-									userId = functions::getUserIdByPlanet((int)fleet_["entity_to"]);
+									userId = this->f->getEntityToUserId();
 								}
 
 								query << "INSERT INTO ";
@@ -201,7 +201,7 @@
 								query << "VALUES ( ";
 								query << "	'" << userId << "', ";
 								query << "	'" << fsRow["fs_ship_id"] << "', ";
-								query << "	'" << fleet_["entity_to"] << "', ";
+								query << "	'" << this->f->getEntityTo() << "', ";
 								query << "	'" << shipCnt << "', ";
 								query << "	'" << fsRow["fs_special_ship"] << "', ";
 								query << "	'" << fsRow["fs_special_ship_level"] << "', ";
@@ -248,24 +248,24 @@
 		//Waren werden ausgeladen
 		else if(fleetAction==2) {
             // Waren entladen
-            double people = (double)fleet_["pilots"] + (double)fleet_["res_people"];
+            double people = this->f->getPilots() + this->f->getResPeople();
 			query << std::setprecision(18);
             query << "UPDATE ";
 			query << "	planets ";
 			query << "SET ";
-			query << "	planet_res_metal=planet_res_metal+'" << (double)fleet_["res_metal"] << "', ";
-			query << "	planet_res_crystal=planet_res_crystal+'" << fleet_["res_crystal"] << "', ";
-			query << "	planet_res_plastic=planet_res_plastic+'" << fleet_["res_plastic"] << "', ";
-			query << "	planet_res_fuel=planet_res_fuel+'" << fleet_["res_fuel"] << "', ";
-			query << "	planet_res_food=planet_res_food+'" << fleet_["res_food"] << "', ";
+			query << "	planet_res_metal=planet_res_metal+'" << this->f->getResMetal() << "', ";
+			query << "	planet_res_crystal=planet_res_crystal+'" << this->f->getResCrystal() << "', ";
+			query << "	planet_res_plastic=planet_res_plastic+'" << this->f->getResPlastic() << "', ";
+			query << "	planet_res_fuel=planet_res_fuel+'" << this->f->getResFuel() << "', ";
+			query << "	planet_res_food=planet_res_food+'" << this->f->getResFood() << "', ";
 			query << "	planet_people=planet_people+'" << people << "' ";
 			query << "WHERE ";
-			query << "	id='" << fleet_["entity_to"] << "';";
+			query << "	id='" << this->f->getEntityTo() << "';";
 			query.store();
 			query.reset();
 
 			//Rohstoffnachricht für den User
-			msgRes= "\n[b]WAREN[/b]\n\n[b]Titan:[/b] ";
+			msgRes= "\n\n[b]WAREN[/b]\n\n[b]Titan:[/b] ";
 			msgRes += functions::nf(std::string(fleet_["res_metal"]));
 			msgRes += "\n[b]Silizium:[/b] ";
 			msgRes += functions::nf(std::string(fleet_["res_crystal"]));
@@ -299,8 +299,8 @@
 		query << "UPDATE ";
 		query << "	fleet ";
 		query << "SET ";
-		query << "	entity_from='" << fleet_["entity_to"] << "', ";
-		query << "	entity_to='" << fleet_["entity_from"] << "', ";
+		query << "	entity_from='" << this->f->getEntityTo() << "', ";
+		query << "	entity_to='" << this->f->getEntityFrom() << "', ";
 		query << "	status='" << status << "', ";
 		query << "	launchtime='" << launchtime << "', ";
 		query << "	landtime='" << landtime << "' ";
@@ -319,8 +319,8 @@
 				query << ", res_people='" << resPeople << "'";
 		
 		query << " WHERE ";
-		query << "	id='" << fleet_["id"] << "' ";
-		query << "	OR leader_id='" << fleet_["id"] << "';";
+		query << "	id='" << this->f->getFId() << "' ";
+		query << "	OR leader_id='" << this->f->getFId() << "';";
 		query.store();
 		query.reset();
 	}
@@ -332,7 +332,7 @@
 		query << "DELETE FROM ";
 		query << "	fleet_ships ";
 		query << "WHERE ";
-		query << "	fs_fleet_id='" << fleet_["id"] << "';";
+		query << "	fs_fleet_id='" << this->f->getFId() << "';";
 		query.store();
 		query.reset();
 		
@@ -340,7 +340,7 @@
 		query << "DELETE FROM ";
 		query << "	fleet ";
 		query << "WHERE ";
-		query << "	id='" << fleet_["id"] << "';";
+		query << "	id='" << this->f->getFId() << "';";
 		query.store();
 		query.reset();			
 	}
@@ -354,7 +354,7 @@
 		query << "	planets ";
 		query << "WHERE ";
 		if (userId==0)
-			query << "	planets.planet_user_id='" << fleet_["user_id"] << "' ";
+			query << "	planets.planet_user_id='" << this->f->getUserId() << "' ";
 		else
 			query << "	planets.planet_user_id='" << userId << "' ";
 		query << "	AND planets.planet_user_main='1';";
@@ -365,7 +365,7 @@
 			int mainSize = mainRes.size();
 			
 			if (mainSize > 0) {
-				int landtime = 2 * (int)fleet_["landtime"] - (int)fleet_["launchtime"];
+				int landtime = 2 * this->f->getLandtime() - this->f->getLaunchtime();
 				mysqlpp::Row mainRow = mainRes.at(0);
 				query << "UPDATE ";
 				query << "	fleet ";
@@ -376,7 +376,7 @@
 				query << "	landtime='" << landtime << "', ";
 				query << "	status='2' ";
 				query << "WHERE ";
-				query << "	id='" << fleet_["id"] << "';";
+				query << "	id='" << this->f->getFId() << "';";
 				query.store();
 				query.reset();
 			}

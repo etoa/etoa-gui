@@ -20,13 +20,6 @@ namespace transport
 	public:
 		TransportHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }
 		void update();
-
-	private:
-		/**
-		* User id of the planer user
-		**/
-		int planetUserId;
-		
 	};
 }
 #endif

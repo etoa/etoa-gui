@@ -1,4 +1,3 @@
-#include <iostream>
 
 #include "DefaultHandler.h"
 
@@ -11,7 +10,7 @@ namespace defaul
 		* Default fleet action (return fleed immediately)
 		*/ 
 
-		/** Send the fleet back home **/
+		// Send the fleet back home
 		fleetReturn(1);
 	}
 }

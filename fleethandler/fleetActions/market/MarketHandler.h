@@ -26,11 +26,6 @@ namespace market
 		* Defines wheter there are ships or only resources to deliver
 		**/
 		int landAction;
-		
-		/**
-		* Planet user id
-		**/
-		int planetUserID;
 	};
 }
 #endif

@@ -1,4 +1,3 @@
-#include <iostream>
 #include <mysql++/mysql++.h>
 
 #include "DeliveryHandler.h"
@@ -16,22 +15,20 @@ namespace delivery
 		*/
 		Config &config = Config::instance();
 
-		/** Precheck, watch if the buyer is the same as the planet user **/
-		this->planetUserID = functions::getUserIdByPlanet((int)fleet_["entity_to"]);
-		
-		if (this->planetUserID == (int)fleet_["user_id"]) {
-			/** Deliver ships **/
+		// Precheck, watch if the buyer is the same as the planet user
+		if (this->f->getEntityToUserId() == this->f->getUserId()) {
+			// Deliver ships
 			fleetLand(1);
 
-			/** Send a message to the suer **/
+			// Send a message to the user
 			std::string msg = "Eine Flotte von der Allianzbasis hat folgendes Ziel erreicht:\n[b]Planet:[/b] ";
-			msg += functions::formatCoords((int)fleet_["entity_to"],0);
+			msg += this->f->getEntityToString(0);
 			msg += "\n[b]Zeit:[/b] ";
-			msg += functions::formatTime((int)fleet_["landtime"]);
+			msg += this->f->getLandtimeString();
 			msg += "\n[b]Bericht:[/b] Die erstellten Schiffe sind gelandet.\n";
 			msg += msgAllShips;
 			
-			functions::sendMsg(planetUserID,(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Flotte von der Allianzbasis",msg);
+			functions::sendMsg(this->f->getEntityToUserId(),(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Flotte von der Allianzbasis",msg);
 
 			/** Delete the fleet data **/
 			fleetDelete();
@@ -42,15 +39,15 @@ namespace delivery
 			fleetSendMain((int)fleet_["user_id"]);
 			
 			std::string msg = "[b]FLOTTE LANDEN GESCHEITERT[/b]\n\nEine eurer Flotten hat versucht auf ihrem Ziel zu laden Der Versuch scheiterte jedoch und die Flotte macht sich auf den Weg zu eurem Hauptplaneten!\n\n[b]Ziel:[/b] ";
-			msg += functions::formatCoords((int)fleet_["entity_to"],0);
-			msg += "\n[b]Start:[/b] ";
-			msg += functions::formatCoords(fleet_["entity_from"],0);
+			msg += this->f->getEntityToString(0);
+			msg += "\n[b]Startplanet:[/b] ";
+			msg += this->f->getEntityFromString(0);
 			msg += "\n[b]Zeit:[/b] ";
-			msg += functions::formatTime((int)fleet_["landtime"]);
+			msg += this->f->getLandtimeString();
 			msg += "\n[b]Auftrag:[/b] ";
-			msg += functions::fa(std::string(fleet_["action"]));
+			msg += this->f->getActionString();
 			
-			functions::sendMsg((int)fleet_["user_id"],5,"Flotte umgelenkt",msg);
+			functions::sendMsg(this->f->getUserId(),5,"Flotte umgelenkt",msg);
 		}
 	}
 }

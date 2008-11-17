@@ -25,7 +25,6 @@ namespace support
 		int landtime;
 		int entity;
 		std::string msg;
-		std::string action;
 		
 	};
 }

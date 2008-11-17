@@ -20,13 +20,6 @@ namespace cancel
 	public:
 		CancelHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }
 		void update();
-
-	private:
-		/**
-		* User id from the planet, needed for precheck
-		**/
-		int planetUserId;
-		
 	};
 }
 #endif

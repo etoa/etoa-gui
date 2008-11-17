@@ -20,12 +20,6 @@ namespace delivery
 	public:
 		DeliveryHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }
 		void update();
-	
-	private:
-		/**
-		* Planet user id
-		**/
-		int planetUserID;
 	};
 }
 #endif

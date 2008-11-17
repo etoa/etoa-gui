@@ -19,8 +19,6 @@ namespace position
 	public:
 		PositionHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }
 		void update();
-	private:
-		int pId;
 	};
 }
 #endif

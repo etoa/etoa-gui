@@ -1,4 +1,4 @@
-OBJECTS = etoa.o FleetHandler.o ConfigHandler.o Functions.o AllianceHandler.o AnalyzeHandler.o AntraxHandler.o AsteroidHandler.o AttackHandler.o BombardHandler.o CancelHandler.o ColonializeHandler.o DebrisHandler.o DefaultHandler.o  DeliveryHandler.o EmpHandler.o ExploreHandler.o FetchHandler.o GasHandler.o GattackHandler.o InvadeHandler.o MarketHandler.o NebulaHandler.o PositionHandler.o ReturnHandler.o SpyHandler.o StealHandler.o StealthHandler.o SupportHandler.o TransportHandler.o WreckageHandler.o BattleHandler.o FightObjectHandler.o ShowObjectHandler.o UserHandler.o DivisionHandler.o  ObjectDataHandler.o ObjectHandler.o
+OBJECTS = etoa.o FleetHandler.o Fleet.o ConfigHandler.o Functions.o AllianceHandler.o AnalyzeHandler.o AntraxHandler.o AsteroidHandler.o AttackHandler.o BombardHandler.o CancelHandler.o ColonializeHandler.o DebrisHandler.o DefaultHandler.o  DeliveryHandler.o EmpHandler.o ExploreHandler.o FetchHandler.o GasHandler.o GattackHandler.o InvadeHandler.o MarketHandler.o NebulaHandler.o PositionHandler.o ReturnHandler.o SpyHandler.o StealHandler.o StealthHandler.o SupportHandler.o TransportHandler.o WreckageHandler.o BattleHandler.o FightObjectHandler.o ShowObjectHandler.o UserHandler.o DivisionHandler.o  ObjectDataHandler.o ObjectHandler.o
 
 OPTS = -lmysqlpp
 
@@ -10,6 +10,9 @@ etoa.o: etoa.cpp
 	g++ -c etoa.cpp
 FleetHandler.o: FleetHandler.cpp FleetHandler.h
 	g++ -c FleetHandler.cpp
+
+Fleet.o: Fleet.cpp Fleet.h
+	g++ -c Fleet.cpp
 
 ConfigHandler.o: config/ConfigHandler.cpp config/ConfigHandler.h
 	g++ -c config/ConfigHandler.cpp

@@ -4,6 +4,7 @@
 
 #include <mysql++/mysql++.h>
 #include "MysqlHandler.h"
+#include "Fleet.h"
 #include <string>
 
 /**
@@ -23,8 +24,15 @@ public:
 		this->fleet_=fleet;
 		My &my = My::instance();
 		this->con_ = my.get();
+		this-> f = new Fleet(fleet);
 
 	};
+	
+	FleetHandler(Fleet *f) {
+		My &my = My::instance();
+		this->con_ = my.get();
+		this->f=f;
+	}
 		
 	/**
 	* Abstract class for handling the events
@@ -46,6 +54,7 @@ protected:
 	*/
 	mysqlpp::Connection* con_;
 	mysqlpp::Row fleet_;
+	Fleet *f;
 	std::string msgRes, msgShips, msgAllShips, text;
 	
 	//Fight

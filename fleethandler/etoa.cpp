@@ -33,6 +33,7 @@
 #include <mysql++/mysql++.h>
 
 #include "FleetHandler.h"
+#include "Fleet.h"
 #include "functions/Functions.h"
 #include "config/ConfigHandler.h"
 #include "MysqlHandler.h"
@@ -136,6 +137,7 @@ main(int argc, char *argv[])
 					
 					std::cout << "User: " << row["user_id"] << " Zeit: " << row["landtime"] << " Aktion: " << action << "\n";
 					
+
 					// Nachprüfen ob Landezeit wirklich kleider ist als aktuelle Zeit
 					if ((int)row["landtime"] < time) {
 						// Load action

@@ -23,11 +23,6 @@ namespace retour
 
 	private:
 		/**
-		* User id of the planet user
-		**/
-		int planetUserId;
-		
-		/**
 		* User wanna have a return message or not
 		**/
 		bool sendMsg;
