@@ -1,6 +1,6 @@
 #! /usr/bin/php -q
 <?PHP
-	/**
+
 	//////////////////////////////////////////////////
 	//		 	 ____    __           ______       			//
 	//			/\  _`\ /\ \__       /\  _  \      			//
@@ -27,7 +27,6 @@
 	// 	Kommentar: Diese Datei führt Aktionen aus die einmal pro Minute erledigt werden müssen
 	// 	Die Datei wird auf einer Shell aufgerufen (via Cron-Job realisiert)
 	//	Sie wird jede Stunde aufgerufen
-	*/
 
 	function update_day()
 	{

@@ -1,32 +1,30 @@
 #! /usr/bin/php -q
-<?php
-/*
-#
-#	//////////////////////////////////////////////////
-#	//		 	 ____    __           ______       			//
-#	//			/\  _`\ /\ \__       /\  _  \      			//
-#	//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
-#	//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
-#	//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
-#	//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
-#	//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
-#	//																					 		//
-#	//////////////////////////////////////////////////
-#	// The Andromeda-Project-Browsergame				 		//
-#	// Ein Massive-Multiplayer-Online-Spiel			 		//
-#	// Programmiert von Nicolas Perrenoud				 		//
-#	// www.nicu.ch | mail@nicu.ch								 		//
-#	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
-#	//////////////////////////////////////////////////
-#
-#	Dateiname: backup.php
-#	Topic: Datenbank-Wiederherstellung
-#	Autor: Nicolas Perrenoud alias MrCage
-#	Erstellt: 01.12.2004
-#	Bearbeitet von: Nicolas Perrenoud alias MrCage
-#	Bearbeitet am: 07.03.2006
-#	Kommentar: 	Diese Date erstellt ein Backup einer Datenbank mit dem Datum im Dateinamen
-#*/
+<?PHP
+
+	//////////////////////////////////////////////////
+	//		 	 ____    __           ______       			//
+	//			/\  _`\ /\ \__       /\  _  \      			//
+	//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
+	//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
+	//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
+	//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
+	//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
+	//																					 		//
+	//////////////////////////////////////////////////
+	// The Andromeda-Project-Browsergame				 		//
+	// Ein Massive-Multiplayer-Online-Spiel			 		//
+	// Programmiert von Nicolas Perrenoud				 		//
+	// www.nicu.ch | mail@nicu.ch								 		//
+	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
+	//////////////////////////////////////////////////
+	// 
+	//  Dateiname: backup.php
+	//  Topic: Datenbank-Wiederherstellung
+	//  Autor: Nicolas Perrenoud alias MrCage
+	//  Erstellt: 01.12.2004
+	//  Bearbeitet von: Nicolas Perrenoud alias MrCage
+	//  Bearbeitet am: 07.03.2006
+	//  Kommentar: 	Diese Date erstellt ein Backup einer Datenbank mit dem Datum im Dateinamen
 
 	// Gamepfad feststellen
 	if ($_SERVER['argv'][1]!="")
@@ -70,28 +68,7 @@
 			$result = shell_exec("gzip -9 --best ".$file.".sql");
 			if ($result=="")
 			{
-				/*
-				$ftp_con = ftp_connect(BACKUP_REMOTE_IP,21);
-				if ($ftp_con)
-				{
-					$ftp_login = ftp_login($ftp_con, BACKUP_REMOTE_USER, BACKUP_REMOTE_PASSWORD); 
-					if ($ftp_login)				
-					{
-						$ftp_up = ftp_put($ftp_con, BACKUP_REMOTE_PATH."/".$file_wo_path.".sql.gz", $file.".sql.gz", FTP_BINARY); 					
-						if (!$ftp_up)
-						{
-							echo "Could not upload ".$file.".sql.gz to ftp server!\n";
-						}
-					}
-					else
-					{
-						echo "Could not login to FTP server ".BACKUP_REMOTE_IP." with user ".BACKUP_REMOTE_USER."!\n";
-					}				
-				}
-				else
-				{					
-					echo "FTP connection to ".BACKUP_REMOTE_IP." failed!\n";
-				}*/
+
 			}
 			else
 				echo "Error while zipping Backup-Dump $file: $result\n";

@@ -39,21 +39,17 @@
 	$navmenu['Allgemeines']['Systemnachricht']['sub']="systemmessage";
 	$navmenu['Allgemeines']['Systemnachricht']['level']=0;
 
+	$navmenu['Allgemeines']['Offline nehmen']['page']="home";
+	$navmenu['Allgemeines']['Offline nehmen']['sub']="offline";
+	$navmenu['Allgemeines']['Offline nehmen']['level']=1;
+
 	$navmenu['Allgemeines']['Rangliste']['page']="home";
 	$navmenu['Allgemeines']['Rangliste']['sub']="stats";
 	$navmenu['Allgemeines']['Rangliste']['level']=0;
 
-	$navmenu['Allgemeines']['RSS']['page']="home";
-	$navmenu['Allgemeines']['RSS']['sub']="rss";
-	$navmenu['Allgemeines']['RSS']['level']=0;
-
 	$navmenu['Allgemeines']['Tipps']['page']="home";
 	$navmenu['Allgemeines']['Tipps']['sub']="tipps";
 	$navmenu['Allgemeines']['Tipps']['level']=0;
-
-	$navmenu['Allgemeines']['Offline nehmen']['page']="home";
-	$navmenu['Allgemeines']['Offline nehmen']['sub']="offline";
-	$navmenu['Allgemeines']['Offline nehmen']['level']=1;
 
 	$navmenu['Allgemeines']['Datei-Austausch']['page']="home";
 	$navmenu['Allgemeines']['Datei-Austausch']['sub']="filesharing";
@@ -73,6 +69,7 @@
 	$navmenu['Allgemeines']['Admin-Sessionlog']['page']="home";
 	$navmenu['Allgemeines']['Admin-Sessionlog']['sub']="adminlog";
 	$navmenu['Allgemeines']['Admin-Sessionlog']['level']=2;
+
 
 	$navmenu['In-Game Hilfe']['Übersicht']['page']="help";
 	$navmenu['In-Game Hilfe']['Übersicht']['sub']="";
@@ -419,10 +416,6 @@
 	$navmenu['Konfiguration']['Konfiguration']['sub']="";
 	$navmenu['Konfiguration']['Konfiguration']['level']=3;
 
-	$navmenu['Konfiguration']['Passwort-Schutz']['page']="config";
-	$navmenu['Konfiguration']['Passwort-Schutz']['sub']="htaccess";
-	$navmenu['Konfiguration']['Passwort-Schutz']['level']=3;
-
 	$navmenu['Konfiguration']['Runde & Universum']['page']="config";
 	$navmenu['Konfiguration']['Runde & Universum']['sub']="uni";
 	$navmenu['Konfiguration']['Runde & Universum']['level']=3;
@@ -435,11 +428,18 @@
 	$navmenu['Konfiguration']['Start-Items']['sub']="defaultitems";
 	$navmenu['Konfiguration']['Start-Items']['level']=3;
 
-
+	$navmenu['Konfiguration']['RSS']['page']="config";
+	$navmenu['Konfiguration']['RSS']['sub']="rss";
+	$navmenu['Konfiguration']['RSS']['level']=0;
 
 	$navmenu['Tools']['PHP-Infos']['page']="tools";
 	$navmenu['Tools']['PHP-Infos']['sub']="php";
 	$navmenu['Tools']['PHP-Infos']['level']=3;
+
+	$navmenu['Tools']['Game-Statistik']['page']="tools";
+	$navmenu['Tools']['Game-Statistik']['sub']="gamestats";
+	$navmenu['Tools']['Game-Statistik']['level']=3;
+
 
 	$navmenu['Tools']['IP-Resolver']['page']="tools";
 	$navmenu['Tools']['IP-Resolver']['sub']="ipresolver";

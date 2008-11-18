@@ -79,8 +79,8 @@
 	
 	// Smarty Path
 	define('SMARTY_DIR', "libs/smarty/");
-	define('SMARTY_TEMPLATE_DIR', "cache/smarty_templates");
-	define('SMARTY_COMPILE_DIR', "cache/smarty_compile");
+	define('SMARTY_TEMPLATE_DIR', CACHE_ROOT."/smarty_templates");
+	define('SMARTY_COMPILE_DIR', CACHE_ROOT."/smarty_compile");
 
 	// xAjax
 	define('XAJAX_DIR',"libs/xajax");
@@ -97,7 +97,7 @@
 	// Pfade
 	define("SMILIE_DIR","images/smilies");								// Smilies
 	define("IMAGEPACK_DIRECTORY","images/imagepacks");				// Bilder
-	define("IMAGEPACK_DOWNLOAD_DIRECTORY","cache/imagepacks");				// Bilder
+	define("IMAGEPACK_DOWNLOAD_DIRECTORY",CACHE_ROOT."/imagepacks");				// Bilder
 
 	define("PLANET_BACKGROUND_COUNT",7);
 
@@ -452,7 +452,7 @@
   /****************/
   
 	define("BOARD_BULLET_DIR","images/boardbullets");		// Verzeichnis der Forenicons
-	define("BOARD_AVATAR_DIR","cache/avatars");		// Verzeichnis der Avatare
+	define("BOARD_AVATAR_DIR",CACHE_ROOT."/avatars");		// Verzeichnis der Avatare
 	define("BOARD_DEFAULT_IMAGE","default.png");									// Standard Foren-Icon
 	define("BOARD_ADMIN_RANK",4);																	// ???
 	define("BOARD_TOPIC_TABLE","allianceboard_topics");						// Tabelle der Forentopics
@@ -465,7 +465,7 @@
 		define("GD_VERSION",2);	
 	
 	// Profilbild
-	define("PROFILE_IMG_DIR","cache/userprofiles");							// Verzeichnis der User-Profilbilder
+	define("PROFILE_IMG_DIR",CACHE_ROOT."/userprofiles");							// Verzeichnis der User-Profilbilder
 	define("PROFILE_IMG_WIDTH",640);															// Profilbild-Breite
 	define("PROFILE_IMG_HEIGHT",480);															// Profilbild-Höhe
 	define("PROFILE_MAX_IMG_WIDTH",1280);													// Max. Profilbild-Breite
@@ -473,7 +473,7 @@
 	define("PROFILE_IMG_MAX_SIZE",2000000);												// Profilbild-Grösse in Byte
 	
 	// Allianzbild
-	define("ALLIANCE_IMG_DIR","cache/allianceprofiles");					// Verzeichnis der Allianz-Bilder
+	define("ALLIANCE_IMG_DIR",CACHE_ROOT."/allianceprofiles");					// Verzeichnis der Allianz-Bilder
 	define("ALLIANCE_IMG_WIDTH",800);															// Allianzbild-Breite
 	define("ALLIANCE_IMG_HEIGHT",600);														// Allianzbild-Höhe
 	define("ALLIANCE_IMG_MAX_WIDTH",1280);												// Max. Allianzbild-Breite
@@ -497,6 +497,10 @@
   /****************/	
 	
 	define('FORCE_ADDS',0); // Banner immer anzeigen
+	
+	define ('GAMESTATS_FILE',CACHE_ROOT."/out/gamestats.html");
+	define ('GAMESTATS_ROW_LIMIT',15);
+
 	
 	// Referers
 	$referers=explode("\n",$conf['referers']['v']);

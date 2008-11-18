@@ -2990,7 +2990,14 @@ Forum: http://www.etoa.ch/forum";
 		</div>";	
 		echo '<script type="text/javascript">xajax_reqInfo('.$itemId.',"'.$type.'")</script>';
 	}
-
+	
+	/**
+	* Returns the hostname of the given ip address
+	* Lookup results are cached in a static array and used
+	* if this function is used multiple times with the same ip. Additionally
+	* the values are stored in a memory database table for faster lookups. This records
+	* expire after one day.
+	*/
 	function resolveIp($ip)
 	{        
 		if (!isset($hostcache))

@@ -65,29 +65,6 @@
 		echo "</form>";
 	}	
 	
-	//
-	// RSS
-	//
-	elseif ($sub=="rss")
-	{
-		echo "<h1>RSS-Feeds</h1>";
-	
-		if (isset($_GET['action']) && $_GET['action']=="gen_townhall")
-		{
-			Townhall::genRss();
-			success_msg("RSS erstellt!");
-		}
-
-		echo "<h2>Feeds (neu) generieren</h2>";
-		echo "<a href=\"?page=$page&amp;sub=$sub&amp;action=gen_townhall\">Rathaus-Feed generieren</a>";
-
-	
-		echo "<br/><br/><h2>Feedliste</h2>";
-		tableStart("Vorhandene Feeds");
-		Rss::showOverview();
-		tableEnd();
-		
-	}
 	
 	//
 	// Rangliste

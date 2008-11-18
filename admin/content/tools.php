@@ -93,6 +93,18 @@ echo "<h1>Tools</h1>";
 		echo "<h2>PHP-Infos</h2>";
 		echo '<iframe src="phpinfo.php" style="width:850px;height:650px;" ></iframe>';
 	}
+
+
+	//
+	// gamestats
+	//
+	elseif ($sub=="gamestats")
+	{
+		echo "<h2>Spielstatistiken</h2>";
+		echo readfile(GAMESTATS_FILE);
+	}
+	
+	
 	
 		
 	//

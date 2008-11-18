@@ -1,6 +1,6 @@
 #! /usr/bin/php -q
-<?php
-	/**
+<?PHP
+
 	/////////////////////////////////////////////////
 	//		 	 ____    __           ______       			//
 	//			/\  _`\ /\ \__       /\  _  \      			//
@@ -25,7 +25,6 @@
 	// 	Bearbeitet von: Nicolas Perrenoud alias MrCage
 	// 	Bearbeitet am: 07.03.2006
 	// 	Kommentar: 	Diese Date erstellt ein Backup einer Datenbank mit dem Datum im Dateinamen
-	*/
 
 	if ($_SERVER['argv'][2]!="")
 		define(GAME_ROOT_DIR,$_SERVER['argv'][1]);
