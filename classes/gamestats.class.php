@@ -81,10 +81,10 @@
             INNER JOIN
                 sol_types t
             ON
-                s.type_id=t.type_id
+                s.type_id=t.sol_type_id
                 AND s.name!=''
             GROUP BY
-                t.type_id
+                s.type_id
             ORDER BY
                 cnt DESC;");
             $rank=1;
