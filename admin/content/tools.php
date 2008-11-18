@@ -103,7 +103,7 @@ echo "<h1>Tools</h1>";
 		echo "<h2>Spielstatistiken</h2>";
 		if (isset($_GET['regen']))
 		{
-			if (GameStats::generateAndSave(GAMESTATS_FILE);
+			if (GameStats::generateAndSave(GAMESTATS_FILE))
 			{
 				ok_msg("Statistiken erneuert!");				
 			}
