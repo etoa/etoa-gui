@@ -140,6 +140,10 @@
 			dbquery("DELETE FROM chat WHERE id < ".$arr[0]);		
 		}
 
+		// Userstats
+		UserStats::generateImage(GAME_ROOT_DIR."/".USERSTATS_OUTFILE);
+		UserStats::generateXml(GAME_ROOT_DIR."/".XML_INFO_FILE);
+
 		return $log;
 	}
 
@@ -273,6 +277,7 @@
 				elseif (date("i")%5==0 && date("i")!=30)
 				{
 					$logt = "[b]5-Minuten-Update ".date("H:i")."[/b]\n";
+					
 					$log = update_minute();
 					$log .= update_5minute();
 				}
@@ -294,6 +299,8 @@
 					// Statistiken generieren und speichern
 					Gamestats::generateAndSave(GAME_ROOT_DIR."/".GAMESTATS_FILE);					
 				}
+
+
 
 				// Log schreiben
 				if (LOG_UPDATES)
