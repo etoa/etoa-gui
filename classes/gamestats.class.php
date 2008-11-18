@@ -74,17 +74,17 @@
             $out.="<tr><th class=\"tbltitle\" colspan=\"3\">Benannte Systeme</th></tr>";
             $res=dbquery("
             SELECT
-                type_name,
-                COUNT(cell_id) as cnt
+                t.type_name,
+                COUNT(id) as cnt
             FROM
-                space_cells
+                stars s
             INNER JOIN
-                sol_types
+                sol_types t
             ON
-                cell_solsys_solsys_sol_type=type_id
-                AND cell_solsys_name!=''
+                s.type_id=t.type_id
+                AND s.name!=''
             GROUP BY
-                type_id
+                t.type_id
             ORDER BY
                 cnt DESC;");
             $rank=1;
@@ -844,12 +844,12 @@
 		$out.="<tr><th class=\"tbltitle\" colspan=\"4\">Design</th></tr>";
 		$res=dbquery("
 		SELECT 
-		    user_css_style,
-		    COUNT(user_id) as cnt 
+		    css_style,
+		    COUNT(id) as cnt 
 		FROM 
-		    users 
+		    user_properties
 		GROUP BY 
-		    user_css_style 
+		    css_style 
 		ORDER BY 
 		    cnt DESC 
 		LIMIT $limit;");
@@ -866,7 +866,7 @@
 		{
 		    $out.="<tr><td class=\"tbldata\">".$rank."</td>";
 		    if ($arr['user_css_style']!="")
-		        $out.="<td class=\"tbldata\">".strtr($arr['user_css_style'],$rplc)."</td>";
+		        $out.="<td class=\"tbldata\">".strtr($arr['css_style'],$rplc)."</td>";
 		    else
 		        $out.="<td class=\"tbldata\"><i>Standard</i></td>";
 		    $out.="<td class=\"tbldata\">".nf($arr['cnt'])."</td>";
@@ -886,12 +886,12 @@
 		$out.="<tr><th class=\"tbltitle\" colspan=\"4\">Bildpaket</th></tr>";
 		$res=dbquery("
 		SELECT 
-		    user_image_url,
-		    COUNT(user_id) as cnt 
+		    image_url,
+		    COUNT(id) as cnt 
 		FROM 
-		    users 
+		    user_properties 
 		GROUP BY 
-		    user_image_url 
+		    image_url 
 		ORDER BY 
 		    cnt DESC 
 		LIMIT $limit;");
@@ -908,7 +908,7 @@
 		{
 		    $out.="<tr><td class=\"tbldata\">".$rank."</td>";
 		    if ($arr['user_image_url']!="")
-		        $out.="<td class=\"tbldata\">".strtr($arr['user_image_url'],$rplc)."</td>";
+		        $out.="<td class=\"tbldata\">".strtr($arr['image_url'],$rplc)."</td>";
 		    else
 		        $out.="<td class=\"tbldata\"><i>Standard</i></td>";
 		    $out.="<td class=\"tbldata\">".nf($arr['cnt'])."</td>";
@@ -927,12 +927,12 @@
     $out.="<tr><th class=\"tbltitle\" colspan=\"4\">Bild-Erweiterung</th></tr>";
     $res=dbquery("
     SELECT 
-        user_image_ext,
-        COUNT(user_id) as cnt 
+        image_ext,
+        COUNT(id) as cnt 
     FROM 
-        users 
+        user_properties
     GROUP BY 
-        user_image_ext 
+        image_ext 
     ORDER BY 
         cnt DESC 
     LIMIT $limit;");
@@ -949,7 +949,7 @@
     {
         $out.="<tr><td class=\"tbldata\">".$rank."</td>";
         if ($arr['user_image_ext']!="")
-            $out.="<td class=\"tbldata\">".$arr['user_image_ext']."</td>";
+            $out.="<td class=\"tbldata\">".$arr['image_ext']."</td>";
         else
             $out.="<td class=\"tbldata\"><i>Standard</i></td>";
         $out.="<td class=\"tbldata\">".nf($arr['cnt'])."</td>";

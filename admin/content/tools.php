@@ -101,6 +101,24 @@ echo "<h1>Tools</h1>";
 	elseif ($sub=="gamestats")
 	{
 		echo "<h2>Spielstatistiken</h2>";
+		if (isset($_GET['regen']))
+		{
+			if ($f=fopen(GAMESTATS_FILE,"w+"))
+			{
+				$str = Gamestats::generate();
+				if (!fwrite($f,$str))
+				{
+					echo "Error! Could not write file!";
+				}
+				else
+				{
+					ok_msg("Statistiken erneuert!");				
+				}
+				fclose($f);				
+			}
+		}
+		echo "<a href=\"?page=$page&amp;sub=$sub&amp;regen=1\">Erneuern</a><br/><br/>";		
+		
 		echo readfile(GAMESTATS_FILE);
 	}
 	
