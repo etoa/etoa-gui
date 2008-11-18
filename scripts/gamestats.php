@@ -40,19 +40,7 @@
 		$nohtml=true;
 
 		// Statistiken generieren und speichern
-		if ($f=fopen(GAME_ROOT_DIR."/".GAMESTATS_FILE,"w+"))
-		{
-			$str = Gamestats::generate();
-			if (!fwrite($f,$str))
-			{
-				echo "Error! Could not write file!";
-			}
-			fclose($f);	
-		}
-		else
-		{
-			echo "Error! Could not open file!";
-		}
+		Gamestats::generateAndSave(GAME_ROOT_DIR."/".GAMESTATS_FILE);
 		
 		// DB schliessen
 		dbclose();

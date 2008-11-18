@@ -74,7 +74,7 @@
             $out.="<tr><th class=\"tbltitle\" colspan=\"3\">Benannte Systeme</th></tr>";
             $res=dbquery("
             SELECT
-                t.type_name,
+                t.sol_type_name,
                 COUNT(id) as cnt
             FROM
                 stars s
@@ -91,7 +91,7 @@
             $total=0;
             while ($arr=mysql_fetch_array($res))
             {
-                $out.="<tr><td class=\"tbldata\">".$rank."</td><td class=\"tbldata\">".$arr['type_name']."</td><td class=\"tbldata\">".$arr['cnt']."</td></tr>";
+                $out.="<tr><td class=\"tbldata\">".$rank."</td><td class=\"tbldata\">".$arr['sol_type_name']."</td><td class=\"tbldata\">".$arr['cnt']."</td></tr>";
                 $rank++;
                 $total+=$arr['cnt'];
             }
@@ -1067,7 +1067,23 @@
 		
 		return $out;
 	}
-		
+	
+	static function generateAndSave($file)
+	{
+			if ($f=fopen($file,"w+"))
+			{
+				$str = self::generate();
+				if (!fwrite($f,$str))
+				{
+					echo "Error! Could not write gamestats file $file!";
+					return false;
+				}
+				fclose($f);				
+				return true;
+			}	
+			echo "Error! Could not open gamestats file $file!";
+			return false;
+		}
 		
 	}
 
