@@ -498,9 +498,12 @@
 	
 	define('FORCE_ADDS',0); // Banner immer anzeigen
 	
-	define ('GAMESTATS_FILE',CACHE_ROOT."/out/gamestats.html");
-	define ('GAMESTATS_ROW_LIMIT',15);
-
+	/***********
+	* Updates *
+	***********/
+	define('GAMESTATS_FILE',CACHE_ROOT."/out/gamestats.html");
+	define('GAMESTATS_ROW_LIMIT',15);
+	define('LOG_UPDATES',false);
 	
 	// Referers
 	$referers=explode("\n",$conf['referers']['v']);

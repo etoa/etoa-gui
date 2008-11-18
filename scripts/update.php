@@ -286,8 +286,18 @@
 					$log = update_minute();
 				}
 
+				//
+				// 3-nach Update
+				//
+				if (date("i")=="3") 
+				{
+					// Statistiken generieren und speichern
+					Gamestats::generateAndSave(GAME_ROOT_DIR."/".GAMESTATS_FILE);					
+				}
+
 				// Log schreiben
-				add_log (15,$logt."Gesamtdauer: ".timerStop($tmr)."\n\n".$log,time());
+				if (LOG_UPDATES)
+					add_log (15,$logt."Gesamtdauer: ".timerStop($tmr)."\n\n".$log,time());
 
 				//Löscht Arrays (gibt Speicher wieder frei)
 				unset($log);
