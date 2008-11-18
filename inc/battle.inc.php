@@ -2138,6 +2138,9 @@ function battle($fleet_id,$planet_id)
 					'".$fleetarr['fleet_landtime']."');"
 				);
 
+		
+				$attUser = new User($user_a_id);
+				$defUser = new User($user_d_id);
 
 				switch ($return_v)
 				{
@@ -2145,29 +2148,29 @@ function battle($fleet_id,$planet_id)
 						$bstat = "Gewonnen";
 						$bstat2 = "Verloren";
 						$return_fleet=true;
-						Ranking::addBattlePoints($user_a_id,BATTLE_POINTS_A_W,"Angriff gegen ".$user_d_id);
-						Ranking::addBattlePoints($user_d_id,BATTLE_POINTS_D_L,"Verteidigung gegen ".$user_a_id);
+						$attUser->addBattleRating(BATTLE_POINTS_A_W,"Angriff gegen ".$user_d_id);
+						$defUser->addBattleRating(BATTLE_POINTS_D_L,"Verteidigung gegen ".$user_a_id);
 						break;
 					case 2:	//agreifer hat verloren
 						$bstat = "Verloren";
 						$bstat2 = "Gewonnen";
 						$return_fleet=false;
-						Ranking::addBattlePoints($user_a_id,BATTLE_POINTS_A_L,"Angriff gegen ".$user_d_id);
-						Ranking::addBattlePoints($user_d_id,BATTLE_POINTS_D_W,"Verteidigung gegen ".$user_a_id);
+						$attUser->addBattleRating(BATTLE_POINTS_A_L,"Angriff gegen ".$user_d_id);
+						$defUser->addBattleRating(BATTLE_POINTS_D_W,"Verteidigung gegen ".$user_a_id);
 						break;
 					case 3:	//beide flotten sind kaputt
 						$bstat = "Unentschieden";
 						$bstat2 = "Unentschieden";
 						$return_fleet=false;
-						Ranking::addBattlePoints($user_a_id,BATTLE_POINTS_A_D,"Angriff gegen ".$user_d_id);
-						Ranking::addBattlePoints($user_d_id,BATTLE_POINTS_D_D,"Verteidigung gegen ".$user_a_id);
+						$attUser->addBattleRating(BATTLE_POINTS_A_D,"Angriff gegen ".$user_d_id);
+						$defUser->addBattleRating(BATTLE_POINTS_D_D,"Verteidigung gegen ".$user_a_id);
 						break;
 					case 4: //beide flotten haben überlebt
 						$bstat = "Unentschieden";
 						$bstat2 = "Unentschieden";
 						$return_fleet=true;
-						Ranking::addBattlePoints($user_a_id,BATTLE_POINTS_A_D,"Angriff gegen ".$user_d_id);
-						Ranking::addBattlePoints($user_d_id,BATTLE_POINTS_D_D,"Verteidigung gegen ".$user_a_id);
+						$attUser->addBattleRating(BATTLE_POINTS_A_D,"Angriff gegen ".$user_d_id);
+						$defUser->addBattleRating(BATTLE_POINTS_D_D,"Verteidigung gegen ".$user_a_id);
 						break;
 				}			
 

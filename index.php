@@ -196,13 +196,14 @@
 			$referer_allow=false;
 			if (isset($_SERVER["HTTP_REFERER"]))
 			{
-				foreach ($referers as $rfr)
+				foreach ($referers as &$rfr)
 				{
 					if (substr($_SERVER["HTTP_REFERER"],0,strlen($rfr))==$rfr)
 					{
 						$referer_allow=true;
 					}
 				}
+				unset($rfr);
 			} 				
 
 			// Spiel ist generell gesperrt (ausser für erlaubte IP's)

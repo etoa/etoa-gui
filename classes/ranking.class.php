@@ -844,50 +844,7 @@
 	    unset($arr);
 		}		
 
-		/**
-		* Add battle points
-		*/
-		static function addBattlePoints($userId,$points,$reason="")
-		{
-			if ($points!=0)
-			{
-				dbquery("
-				UPDATE
-					users
-				SET
-					user_points_battle=user_points_battle+".$points."
-				WHERE
-					user_id=".$userId.";");
-				add_log(17,"Der Spieler ".$userId." erhält ".$points." Kampfpunkte. Grund: ".$reason);
-			}
-		}
-		
-		static function addTradePoints($userId,$points,$reason="")
-		{
-			dbquery("
-			UPDATE
-				users
-			SET
-				user_points_trade=user_points_trade+".$points."
-			WHERE
-				user_id=".$userId.";");			
-			add_log(17,"Der Spieler ".$userId." erhält ".$points." Handelspunkte. Grund: ".$reason);
-		}
-		
-		/**
-		* Add diplomacy points
-		*/
-		static function addDiplomacyPoints($userId,$points,$reason="")
-		{
-			dbquery("
-			UPDATE
-				users
-			SET
-				user_points_diplomacy=user_points_diplomacy+".$points."
-			WHERE
-				user_id=".$userId.";");			
-			add_log(17,"Der Spieler ".$userId." erhält ".$points." Diplomatiepunke. Grund: ".$reason);
-		}				
+
 
 	}
 

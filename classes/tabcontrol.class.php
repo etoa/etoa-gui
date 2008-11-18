@@ -5,7 +5,7 @@
 		private $count;
 		private $current;
 		
-		function TabControl($name,$elements,$width="670px",$tabWidth="140px")
+		function TabControl($name,$elements,$default=0,$width="670px",$tabWidth="140px")
 		{
 			echo "<div class=\"tabOuter\" style=\"width:".$width."\">";
 			$cnt=0;
@@ -17,10 +17,16 @@
 				$tWidthStyle = "";
 			foreach ($elements as $e)
 			{
-				if ($cnt==0)
-					echo "<div $tWidthStyle onclick=\"tabActivate('".$name."',".$cnt.")\" id=\"".$name."Nav".$cnt."\" class=\"tabTabActive\">".$e."</div>";
+				if ($cnt==$default)
+					$class = "tabTabActive";
 				else         
-					echo "<div $tWidthStyle onclick=\"tabActivate('".$name."',".$cnt.")\" id=\"".$name."Nav".$cnt."\" class=\"tabTab\">".$e."</div>";
+					$class = "tabTab";
+				if (is_array($e))	
+				{
+					echo "<div $tWidthStyle onclick=\"tabActivate('".$name."',".$cnt.");".$e['js']."\" id=\"".$name."Nav".$cnt."\" class=\"".$class."\">".$e['name']."</div>";
+				}
+				else
+					echo "<div $tWidthStyle onclick=\"tabActivate('".$name."',".$cnt.")\" id=\"".$name."Nav".$cnt."\" class=\"".$class."\">".$e."</div>";
 				$cnt++;
 			}
 			echo "<br style=\"clear:both;\" />";

@@ -2744,7 +2744,8 @@ Forum: http://www.etoa.ch/forum";
 		{
 			while ($arr=mysql_fetch_assoc($res))
 			{
-				Ranking::addDiplomacyPoints($arr['alliance_bnd_diplomat_id'],$arr['alliance_bnd_points'],"Bündnis ".$arr['alliance_bnd_alliance_id1']." mit ".$arr['alliance_bnd_alliance_id1']);
+				$user = new User($arr['alliance_bnd_diplomat_id']);
+				$user->addDiplomacyRating($arr['alliance_bnd_diplomat_id'],$arr['alliance_bnd_points'],"Bündnis ".$arr['alliance_bnd_alliance_id1']." mit ".$arr['alliance_bnd_alliance_id1']);
 				dbquery("
 				UPDATE
 					alliance_bnd
@@ -2797,7 +2798,8 @@ Forum: http://www.etoa.ch/forum";
 				send_msg($arr['a2f'],MSG_ALLYMAIL_CAT,"Krieg beendet",$text." Während dieser Friedenszeit kann kein neuer Krieg erklärt werden!");
 		
 				// Assing diplomacy points
-				Ranking::addDiplomacyPoints($arr['alliance_bnd_diplomat_id'],$arr['alliance_bnd_points'],"Krieg ".$arr['a1id']." gegen ".$arr['a2id']);
+				$user = new User($arr['alliance_bnd_diplomat_id']);
+				$user->addDiplomacyRating($arr['alliance_bnd_points'],"Krieg ".$arr['a1id']." gegen ".$arr['a2id']);
 
 				dbquery("
 				UPDATE

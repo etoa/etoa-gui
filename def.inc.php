@@ -500,7 +500,10 @@
 	
 	// Referers
 	$referers=explode("\n",$conf['referers']['v']);
-	foreach ($referers as $k=>$v)
-	$referers[$k] = trim($v);
+	foreach ($referers as $k=>&$v)
+	{
+		$referers[$k] = trim($v);
+	}
+	unset($v);
 
 ?>

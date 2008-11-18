@@ -373,18 +373,16 @@ function userComments($uid,$target)
 	if (mysql_num_rows($lres)>0)
 	{
 		echo "<tr>
-			<th>Datum</th>
-			<th>Admin</th>
 			<th>Text</th>
+			<th>Verfasst</th>
 			<th>Aktionen</th>
 		</tr>";
 		while ($larr=mysql_fetch_array($lres))
 		{
 			echo "<tr>
-				<td class=\"tbldata\">".df($larr['comment_timestamp'])."</td>
-				<td class=\"tbldata\">".$larr['user_nick']."</td>
-				<td class=\"tbldata\">".text2html($larr['comment_text'])."</td>
-				<td class=\"tbldata\"><a href=\"javascript:;\" onclick=\"if (confirm('Wirklich löschen?')) {xajax_delUserComment('".$uid."','".$target."',".$larr['comment_id'].")}\">Löschen</a></td>
+				<td class=\"tbldata\" >".text2html($larr['comment_text'])."</td>
+				<td class=\"tbldata\" style=\"width:200px;\">".df($larr['comment_timestamp'])." von ".$larr['user_nick']."</td>
+				<td class=\"tbldata\" style=\"width:50px;\"><a href=\"javascript:;\" onclick=\"if (confirm('Wirklich löschen?')) {xajax_delUserComment('".$uid."','".$target."',".$larr['comment_id'].")}\">Löschen</a></td>
 			</tr>";   
 		}           
 	}             
@@ -490,11 +488,11 @@ function loadEconomy($uid,$target)
 					foreach ($planets as $p)
 					{
 						//Speichert die aktuellen Rohstoffe in ein Array
-						$val_res[$p->id][0]=floor($p->res->metal);
-						$val_res[$p->id][1]=floor($p->res->crystal);
-						$val_res[$p->id][2]=floor($p->res->plastic);
-						$val_res[$p->id][3]=floor($p->res->fuel);
-						$val_res[$p->id][4]=floor($p->res->food);
+						$val_res[$p->id][0]=floor($p->resMetal);
+						$val_res[$p->id][1]=floor($p->resCrystal);
+						$val_res[$p->id][2]=floor($p->resPlastic);
+						$val_res[$p->id][3]=floor($p->resFuel);
+						$val_res[$p->id][4]=floor($p->resFood);
 						$val_res[$p->id][5]=floor($p->people);
 				
 						for ($x=0;$x<6;$x++)
@@ -505,12 +503,12 @@ function loadEconomy($uid,$target)
 						}
 				
 						//Speichert die aktuellen Rohstoffproduktionen in ein Array
-						$val_prod[$p->id][0]=floor($p->prod->metal);
-						$val_prod[$p->id][1]=floor($p->prod->crystal);
-						$val_prod[$p->id][2]=floor($p->prod->plastic);
-						$val_prod[$p->id][3]=floor($p->prod->fuel);
-						$val_prod[$p->id][4]=floor($p->prod->food);
-						$val_prod[$p->id][5]=floor($p->prod->people);
+						$val_prod[$p->id][0]=floor($p->prodMetal);
+						$val_prod[$p->id][1]=floor($p->prodCrystal);
+						$val_prod[$p->id][2]=floor($p->prodPlastic);
+						$val_prod[$p->id][3]=floor($p->prodFuel);
+						$val_prod[$p->id][4]=floor($p->prodFood);
+						$val_prod[$p->id][5]=floor($p->prodPeople);
 				
 						for ($x=0;$x<6;$x++)
 						{
@@ -520,21 +518,21 @@ function loadEconomy($uid,$target)
 						}
 				
 						//Speichert die aktuellen Speicher in ein Array
-						$val_store[$p->id][0]=floor($p->store->metal);
-						$val_store[$p->id][1]=floor($p->store->crystal);
-						$val_store[$p->id][2]=floor($p->store->plastic);
-						$val_store[$p->id][3]=floor($p->store->fuel);
-						$val_store[$p->id][4]=floor($p->store->food);
+						$val_store[$p->id][0]=floor($p->storeMetal);
+						$val_store[$p->id][1]=floor($p->storeCrystal);
+						$val_store[$p->id][2]=floor($p->storePlastic);
+						$val_store[$p->id][3]=floor($p->storeFuel);
+						$val_store[$p->id][4]=floor($p->storeFood);
 						$val_store[$p->id][5]=floor($p->people_place);
 				
 						//Berechnet die dauer bis die Speicher voll sind (zuerst prüfen ob Division By Zero!)
 				
 						//Titan
-						if($p->prod->metal>0)
+						if($p->prodMetal>0)
 						{
-				      if ($p->store->metal - $p->res->metal > 0)
+				      if ($p->storeMetal - $p->resMetal > 0)
 				      {
-				      	$val_time[$p->id][0]=ceil(($p->store->metal-$p->res->metal)/$p->prod->metal*3600);
+				      	$val_time[$p->id][0]=ceil(($p->storeMetal-$p->resMetal)/$p->prodMetal*3600);
 				      }
 				      else
 				      {
@@ -547,11 +545,11 @@ function loadEconomy($uid,$target)
 				    }
 				    
 						//Silizium
-						if($p->prod->crystal>0)
+						if($p->prodCrystal>0)
 						{
-				      if ($p->store->crystal - $p->res->crystal > 0)
+				      if ($p->storeCrystal - $p->resCrystal > 0)
 				      {
-				      	$val_time[$p->id][1]=ceil(($p->store->crystal-$p->res->crystal)/$p->prod->crystal*3600);
+				      	$val_time[$p->id][1]=ceil(($p->storeCrystal-$p->resCrystal)/$p->prodCrystal*3600);
 				      }
 				      else
 				      {
@@ -564,11 +562,11 @@ function loadEconomy($uid,$target)
 				    }
 				    
 						//PVC
-						if($p->prod->plastic>0)
+						if($p->prodPlastic>0)
 						{
-				      if ($p->store->plastic - $p->res->plastic > 0)
+				      if ($p->storePlastic - $p->resPlastic > 0)
 				      {
-				        $val_time[$p->id][2]=ceil(($p->store->plastic-$p->res->plastic)/$p->prod->plastic*3600);
+				        $val_time[$p->id][2]=ceil(($p->storePlastic-$p->resPlastic)/$p->prodPlastic*3600);
 				      }
 				      else
 				      {
@@ -581,11 +579,11 @@ function loadEconomy($uid,$target)
 				    }
 				    
 						//Tritium
-						if($p->prod->fuel>0)
+						if($p->prodFuel>0)
 						{
-				      if ($p->store->fuel - $p->res->fuel > 0)
+				      if ($p->storeFuel - $p->resFuel > 0)
 				      {
-				       	$val_time[$p->id][3]=ceil(($p->store->fuel-$p->res->fuel)/$p->prod->fuel*3600);
+				       	$val_time[$p->id][3]=ceil(($p->storeFuel-$p->resFuel)/$p->prodFuel*3600);
 				      }
 				      else
 				      {
@@ -598,11 +596,11 @@ function loadEconomy($uid,$target)
 				    }
 				    
 						//Nahrung
-						if($p->prod->food>0)
+						if($p->prodFood>0)
 						{
-					    if ($p->store->food - $p->res->food > 0)
+					    if ($p->storeFood - $p->resFood > 0)
 					    {
-					      $val_time[$p->id][4]=ceil(($p->store->food-$p->res->food)/$p->prod->food*3600);
+					      $val_time[$p->id][4]=ceil(($p->storeFood-$p->resFood)/$p->prodFood*3600);
 					    }
 					    else
 					   	{
@@ -615,11 +613,11 @@ function loadEconomy($uid,$target)
 				    }
 				
 						//Bewohner
-						if($p->prod->people>0)
+						if($p->prodPeople>0)
 						{
 				      if ($p->people_place - $p->people > 0)
 				      {
-				        $val_time[$p->id][5]=ceil(($p->people_place-$p->people)/$p->prod->people*3600);
+				        $val_time[$p->id][5]=ceil(($p->people_place-$p->people)/$p->prodPeople*3600);
 				      }
 				      else
 				      {
@@ -723,7 +721,7 @@ function loadEconomy($uid,$target)
 					foreach ($planets as $p)
 					{
 						//Speichert die aktuellen Energieproduktionen in ein Array (Bewohnerproduktion [5] wird überschrieben)
-						$val_prod[$p->id][5]=floor($p->prod->power);
+						$val_prod[$p->id][5]=floor($p->prodPower);
 						
 						// Gibt Min. / Max. aus
 						$max_prod[5]=max($max_prod[5],$val_prod[$p->id][5]);

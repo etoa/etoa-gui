@@ -553,7 +553,7 @@ echo "<h1>Tools</h1>";
         {
             echo "<form action=\"?page=$page&sub=$sub\" method=\"post\">";
             checker_init();
-            tableStart("Verteidigung",);
+            tableStart("Verteidigung");
             echo "
             <tr>
                 <td class=\"tbltitle\" colspan=\"2\">Typ</td>

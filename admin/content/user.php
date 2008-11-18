@@ -54,7 +54,7 @@
 				"ghost" => $_POST['user_ghost']
 				),$errorCode))
 			{
-				ok_msg("Benutzer wurde erstellt! [[url ?page=user&sub=edit&user_id=".$errorCode."]Details[/url]]");
+				ok_msg("Benutzer wurde erstellt! [[url ?page=user&sub=edit&id=".$errorCode."]Details[/url]]");
 			}
 			else
 			{
@@ -319,13 +319,6 @@
 					else
 						$sql.= " AND user_admin=0 ";
 				}				
-				if (isset($_POST['user_comment']) && $_POST['user_comment']<2)
-				{
-					if ($_POST['user_comment']==1)
-						$sql.= " AND user_comment!='' ";
-					else
-						$sql.= " AND user_comment='' ";
-				}
 
 				$sqlstart="SELECT * FROM $tables WHERE 1 ";
 				$sqlend=" ORDER BY user_nick;";
@@ -340,8 +333,8 @@
 			if ($nr==1)
 			{
 				$arr = mysql_fetch_array($res);
-				echo "<script>document.location='?page=$page&sub=edit&user_id=".$arr['user_id']."';</script>
-				Klicke <a href=\"?page=$page&sub=edit&user_id=".$arr['user_id']."\">hier</a> falls du nicht automatisch weitergeleitet wirst...";				
+				echo "<script>document.location='?page=$page&sub=edit&id=".$arr['user_id']."';</script>
+				Klicke <a href=\"?page=$page&sub=edit&id=".$arr['user_id']."\">hier</a> falls du nicht automatisch weitergeleitet wirst...";				
 			}
 			elseif ($nr>0)
 			{
@@ -364,7 +357,6 @@
 				echo "<td class=\"tbltitle\" valign=\"top\">Punkte</td>";
 				echo "<td class=\"tbltitle\" valign=\"top\">Allianz</td>";
 				echo "<td class=\"tbltitle\" valign=\"top\">Rasse</td>";
-				echo "<td class=\"tbltitle\" valign=\"top\">Bemerkungen</td>";
 				echo "</tr>";
 				while ($arr = mysql_fetch_array($res))
 				{
@@ -384,12 +376,8 @@
 					echo "<td class=\"tbldata\" style=\"color:".$uCol.";\">".nf($arr['user_points'])."</td>";
 					echo "<td class=\"tbldata\" style=\"color:".$uCol.";\">".($arr['user_alliance_id']>0 ? $allys[$arr['user_alliance_id']]['tag']:'-')."</td>";
 					echo "<td class=\"tbldata\" style=\"color:".$uCol.";\">".($arr['user_race_id']>0 ? $race[$arr['user_race_id']]['race_name'] : '-')."</td>";
-					if ($arr['user_comment']!="")
-						echo "<td class=\"tbldata\" style=\"color:".$uCol.";\" ".tm("Interne Bemerkungen",$arr['user_comment']).">".cut_string($arr['user_comment'],11)."</td>";
-					else
-						echo "<td class=\"tbldata\" style=\"color:".$uCol.";\">-</td>";
 					echo "<td class=\"tbldata\">
-					".edit_button("?page=$page&amp;sub=edit&amp;&user_id=".$arr['user_id'])."
+					".edit_button("?page=$page&amp;sub=edit&amp;id=".$arr['user_id'])."
 					".cb_button("add_user=".$arr['user_id']."")."
 					</td>";
 					echo "</tr>";

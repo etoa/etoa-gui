@@ -14,6 +14,7 @@
 		protected $valid; // Checker if class instance belongs to valid user
 		protected $maskMatrix; // Matrix for the "fog of war" effect in the space map
 		protected $raceId;
+		protected $rating;
 		
 		/**
 		* The constructor initializes and loads 
@@ -151,27 +152,108 @@
 			return $this->raceName; 
 		}
 
+		
+		/**
+		* Gets the users different rating statistics
+		*/
 		public function rating($field)
 		{
 			if (!isset($this->rating[$field]))
 			{
-				$res = dbquery("SELECT * FROM user_ratings WHERE id=".$this->id.";");
+				$res = dbquery("
+				SELECT
+					* 
+				FROM 
+					user_ratings 
+				WHERE 
+					id=".$this->id.";");
 				if (mysql_num_rows($res)>0)
 				{
-					$arr = mysql_fetch_array($res);
+					$arr = mysql_fetch_assoc($res);
 					$this->rating['battle_rating'] = $arr['battle_rating'];
 					$this->rating['trade_rating'] = $arr['trade_rating'];
 					$this->rating['diplomacy_rating'] = $arr['diplomacy_rating'];
+					$this->rating['battles_fought'] = $arr['battles_fought'];
+					$this->rating['battles_won'] = $arr['battles_won'];
+					$this->rating['battles_lost'] = $arr['battles_lost'];
+					$this->rating['trades_sell'] = $arr['trades_sell'];
+					$this->rating['trades_buy'] = $arr['trades_buy'];
 				}
 				else
 				{
+					dbquery("
+					INSERT INTO 
+						user_ratings
+					(id)
+					VALUES
+					(".$this->id.")
+					");
 					$this->rating['battle_rating'] = 0;
 					$this->rating['trade_rating'] = 0;
 					$this->rating['diplomacy_rating'] = 0;
+					$this->rating['battles_fought'] = 0;
+					$this->rating['battles_won'] = 0;
+					$this->rating['battles_lost'] = 0;
+					$this->rating['trades_sell'] = 0;
+					$this->rating['trades_buy'] = 0;
 				}
 			}
 			return $this->rating[$field];			
 		}
+
+		/**
+		* Add battle rating
+		*/
+		function addBattleRating($rating,$reason="")
+		{
+			if ($points!=0)
+			{
+				dbquery("
+				UPDATE
+					user_ratings
+				SET
+					battle_rating=battle_rating+".$rating."
+				WHERE
+					id=".$this->id.";");
+				if ($reason!="")
+					add_log(17,"Der Spieler ".$this->id." erhält ".$rating." Kampfpunkte. Grund: ".$reason);
+			}
+		}
+		
+		/**
+		* Add trade rating
+		*/
+		function addTradeRating($rating,$reason="")
+		{
+			dbquery("
+			UPDATE
+				user_ratings
+			SET
+				trade_rating=trade_rating+".$rating."
+			WHERE
+				id=".$this->id.";");			
+			if ($reason!="")
+				add_log(17,"Der Spieler ".$this->id." erhält ".$rating." Handelspunkte. Grund: ".$reason);
+		}
+		
+		/**
+		* Add diplomacy rating
+		*/
+		function addDiplomacyRating($rating,$reason="")
+		{
+			dbquery("
+			UPDATE
+				user_ratings
+			SET
+				  	diplomacy_rating=  	diplomacy_rating+".$rating."
+			WHERE
+				id=".$this->id.";");			
+			if ($reason!="")
+			add_log(17,"Der Spieler ".$this->id." erhält ".$rating." Diplomatiepunke. Grund: ".$reason);
+		}	
+
+		
+
 
 		public function setAllianceId($id) 
 		{ 
@@ -658,7 +740,14 @@ die Spielleitung";
 					user_properties
 				(id)
 				VALUES
-				(".mysql_insert_id().")
+				(".$errorCode.")
+				");      
+				dbquery("
+				INSERT INTO 
+					user_ratings
+				(id)
+				VALUES
+				(".$errorCode.")
 				");      
 				
 				if (!isset($data['password']))

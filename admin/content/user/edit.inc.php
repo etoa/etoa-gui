@@ -1,5 +1,13 @@
 <?PHP
 
+			if (isset($_GET['id']))
+				$id = $_GET['id'];
+			elseif(isset($_GET['user_id']))
+				$id = $_GET['user_id'];
+			else
+				$id = 0;
+
+
 			// Geänderte Daten speichern
 			if (isset($_POST['save']))
 			{
@@ -13,7 +21,6 @@
 				user_race_id='".$_POST['user_race_id']."',
 				user_alliance_id='".$_POST['user_alliance_id']."',
 				user_profile_text='".addslashes($_POST['user_profile_text'])."',
-				user_comment='".addslashes($_POST['user_comment'])."',
 				user_signature='".addslashes($_POST['user_signature'])."',
 				user_multi_delets=".$_POST['user_multi_delets'].",
 				user_sitting_days=".$_POST['user_sitting_days'].",
@@ -116,7 +123,7 @@
 				}
 
 				// Perform query
-				$sql .= " WHERE user_id='".$_GET['user_id']."';";
+				$sql .= " WHERE user_id='".$id."';";
 				dbquery($sql);
 				
 				
@@ -126,28 +133,28 @@
 				//
 				
 				$sql = "UPDATE user_properties SET
-				image_url='".$_POST['user_image_url']."',
-				image_ext='".$_POST['user_image_ext']."',
-				css_style='".$_POST['user_css_style']."',
-				game_width=".$_POST['user_game_width'].",
-				planet_circle_width=".$_POST['user_planet_circle_width'].",
-				item_show='".$_POST['user_item_show']."',
-				image_filter=".$_POST['user_image_filter'].",
+				image_url='".$_POST['image_url']."',
+				image_ext='".$_POST['image_ext']."',
+				css_style='".$_POST['css_style']."',
+				game_width=".$_POST['game_width'].",
+				planet_circle_width=".$_POST['planet_circle_width'].",
+				item_show='".$_POST['item_show']."',
+				image_filter=".$_POST['image_filter'].",
 				msgsignature='".addslashes($_POST['msgsignature'])."',
 				msgcreation_preview=".$_POST['msgcreation_preview'].",
 				msg_preview=".$_POST['msg_preview'].",
-				helpbox=".$_POST['user_helpbox'].",
-				notebox=".$_POST['user_notebox'].",
+				helpbox=".$_POST['helpbox'].",
+				notebox=".$_POST['notebox'].",
 				msg_copy=".$_POST['msg_copy'].",
 				msg_blink=".$_POST['msg_blink'].",
 				spyship_id=".$_POST['spyship_id'].",
 				spyship_count='".$_POST['spyship_count']."',
-				havenships_buttons=".$_POST['user_havenships_buttons'].",
-				show_adds=".$_POST['user_show_adds'].",
+				havenships_buttons=".$_POST['havenships_buttons'].",
+				show_adds=".$_POST['show_adds'].",
 				fleet_rtn_msg=".$_POST['fleet_rtn_msg']."";	
 				
 				// Perform query
-				$sql .= " WHERE id='".$_GET['user_id']."';";
+				$sql .= " WHERE id='".$id."';";
 				dbquery($sql);
 				
 				cms_ok_msg("&Auml;nderungen wurden &uuml;bernommen!","submitresult");
@@ -222,6 +229,7 @@
 				success_msg("Löschantrag aufgehoben!");
 			}
 
+
 			// Fetch all data
 			$res = dbquery("
 			SELECT 
@@ -235,7 +243,7 @@
         races
         ON user_race_id=race_id
 			WHERE 
-				user_id='".$_GET['user_id']."';");
+				user_id='".$id."';");
 			if (mysql_num_rows($res)>0)
 			{
 				// Load data				
@@ -246,51 +254,7 @@
 				
 				// Javascript				
 				echo "<script type=\"text/javascript\">
-				function showTab(idx)
-				{
-					document.getElementById('tabGeneral').style.display='none';
-					document.getElementById('tabData').style.display='none';
-					document.getElementById('tabGame').style.display='none';
-					document.getElementById('tabProfile').style.display='none';
-					document.getElementById('tabAccount').style.display='none';
-					document.getElementById('tabMessages').style.display='none';
-					document.getElementById('tabDesign').style.display='none';
-					document.getElementById('tabFailures').style.display='none';
-					document.getElementById('tabPoints').style.display='none';
-					//document.getElementById('tabWarnings').style.display='none';
-					document.getElementById('tabTickets').style.display='none';
-					document.getElementById('tabComments').style.display='none';
-					document.getElementById('tabEconomy').style.display='none';
-					
-					document.getElementById(idx).style.display='';
-					document.getElementById('tabactive').value=idx;
-					if (document.getElementById('submitresult'))
-					{
-						document.getElementById('submitresult').style.display='none';
-					}
-					
-					if (idx=='tabGame')
-					{
-						loadSpecialist(".$st.");loadAllianceRanks(".$arr['user_alliance_rank_id'].");
-					}
-					else if (idx=='tabMessages')
-					{
-						xajax_showLast5Messages(".$arr['user_id'].",'lastmsgbox');
-					}
-					else if (idx=='tabPoints')
-					{
-						xajax_userPointsTable(".$arr['user_id'].",'tabPoints');
-					}
-					else if (idx=='tabTickets')
-					{
-						xajax_userTickets(".$arr['user_id'].",'tabTickets');
-					}
-					else if (idx=='tabComments')
-					{
-						xajax_userComments(".$arr['user_id'].",'tabComments');
-					}
-				}				
-				
+
 				function loadSpecialist(st)
 				{
 					var elem = document.getElementById('user_specialist_id');
@@ -322,25 +286,25 @@
 			
 				echo "<h2>Details <span style=\"color:#0f0;\">".$arr['user_nick']."</span> ".cb_button("add_user=".$arr['user_id']."")."</h2>";
 
-				echo "<form action=\"?page=$page&amp;sub=edit&amp;user_id=".$_GET['user_id']."\" method=\"post\">
+				echo "<form action=\"?page=$page&amp;sub=edit&amp;id=".$id."\" method=\"post\">
 				<input type=\"hidden\" id=\"tabactive\" name=\"tabactive\" value=\"\" />";
 
-		
 				
 				
 			$tc = new TabControl("userTab",array(
 			"Info",
 			"Account",
-			"Daten",
+			array("name"=>"Daten","js"=>""),
 			"Profil",
-			"Nachrichten",
 			"Design",
+			array("name"=>"Nachrichten","js"=>"xajax_showLast5Messages(".$arr['user_id'].",'lastmsgbox');"),
 			"Loginfehler",
-			"Punkte",
-			"Tickets",
-			"Kommentare",
+			array("name"=>"Punkte","js"=>"xajax_userPointsTable(".$arr['user_id'].",'pointsBox');"),
+			array("name"=>"Tickets","js"=>"xajax_userTickets(".$arr['user_id'].",'ticketsBox');"),
+			array("name"=>"Kommentare","js"=>"xajax_userComments(".$arr['user_id'].",'commentsBox');"),
 			"Wirtschaft"
 			),
+			0,
 			'100%',
 			0
 			);
@@ -366,12 +330,8 @@
 								<td class=\"tbldata\">".df($arr['user_acttime'])."</td>
 							</tr>
 							<tr>
-								<td class=\"tbltitle\">IP:</td>
-								<td class=\"tbldata\">".$arr['user_ip']."</td>
-							</tr>
-							<tr>
-								<td class=\"tbltitle\">Host:</td>
-								<td class=\"tbldata\">".$arr['user_hostname']."</td>
+								<td class=\"tbltitle\">IP/Host:</td>
+								<td class=\"tbldata\">".$arr['user_ip'].", ".$arr['user_hostname']."</td>
 							</tr>
 							<tr>
 								<td class=\"tbltitle\">Punkte:</td>
@@ -382,12 +342,8 @@
 								</td>
 							</tr>
 							<tr>
-								<td class=\"tbltitle\">Aktueller Rang:</td>
-								<td class=\"tbldata\">".nf($arr['user_rank'])."</td>
-							</tr>
-							<tr>
-								<td class=\"tbltitle\">Höchster Rang:</td>
-								<td class=\"tbldata\">".nf($arr['user_rank_highest'])."</td>
+								<td class=\"tbltitle\">Rang:</td>
+								<td class=\"tbldata\">".nf($arr['user_rank'])." (aktuell), ".nf($arr['user_rank_highest'])." (max)</td>
 							</tr>
 							<tr>
 								<td class=\"tbltitle\">Rohstoffe von...</td>
@@ -436,11 +392,7 @@
 										</div>";
 									}	
 									
-									// Bemerkung
-									if ($arr['user_comment']!="")
-									{
-										echo "<div><b>Bemerkungen:</b> ".$arr['user_comment']." [<a href=\"javascript:;\" onclick=\"showTab('tabData');\">Ändern</a>]</div>";
-									}							
+				
 					echo "</td>
 							</tr>";					
 				
@@ -450,9 +402,9 @@
 				
 				
 				/**
-				* Daten
+				* Account
 				*/
-		$tc->open();			
+				$tc->open();			
 				
 				echo "<table class=\"tbl\">";
 				echo "<tr>
@@ -504,7 +456,7 @@
 									{
 										echo " checked=\"checked\" ";
 									}
-									echo "/> (Legt fest ob der Spieler in der Rangliste angezeigt wird)
+									echo "/> (Legt fest ob der Spieler in der Rangliste ausgeblendet wird)
 								</td>
 							</tr>
 							<tr>
@@ -518,20 +470,131 @@
 									echo "/> (Der Spieler hat Adminrechte im Chat)
 								</td>
 							</tr>
+							";
+							
+				
+				echo "<tr>
+								<td class=\"tbltitle\" valign=\"top\">Sperren</td>
+								<td class=\"tbldata\">
+									Nein:<input type=\"radio\" name=\"ban_enable\" value=\"0\" onclick=\"banEnable(false);\"";
+									if ($arr['user_blocked_from']==0)
+									{
+										echo " checked=\"checked\"";
+									}
+									echo " /> Ja:<input type=\"radio\" name=\"ban_enable\" value=\"1\" onclick=\"banEnable(true);\" ";
+									if ($arr['user_blocked_from']>0)
+									{
+										echo " checked=\"checked\"";
+									}
+									echo " />";
+									if ($arr['user_blocked_from']>0 && $arr['user_blocked_to']<time())
+									{
+										echo " <i><b>Diese Sperre ist abgelaufen!</b></i>";
+									}	
+									
+					echo "</td>
+							</tr>
 							<tr>
-								<td class=\"tbltitle\">Interne Bemerkungen:</td>
-								<td class=\"tbldata\"><textarea name=\"user_comment\" cols=\"60\" rows=\"8\">".stripslashes($arr['user_comment'])."</textarea></td>
+								<td class=\"tbltitle\" valign=\"top\">Gesperrt von </td>
+								<td class=\"tbldata\">";
+									if ($arr['user_blocked_from']==0)
+									{
+										show_timebox("user_blocked_from",time());
+									}
+									else
+									{
+										show_timebox("user_blocked_from",$arr['user_blocked_from']);
+									}
+					echo "</td>
+							</tr>
+							<tr>
+								<td class=\"tbltitle\" valign=\"top\">Gesperrt bis</td>
+								<td class=\"tbldata\">";
+									if ($arr['user_blocked_to']==0)
+									{
+										show_timebox("user_blocked_to",time()+USER_BLOCKED_DEFAULT_TIME);
+									}
+									else
+									{
+										show_timebox("user_blocked_to",$arr['user_blocked_to']);
+									}
+					echo "</td>
+							</tr>
+							<tr>
+								<td class=\"tbltitle\" valign=\"top\">Gesperrt von</td>
+								<td class=\"tbldata\">
+									<select name=\"user_ban_admin_id\" id=\"user_ban_admin_id\">
+									<option value=\"0\">(niemand)</option>";
+									$tres = dbquery("SELECT * FROM admin_users ORDER BY user_nick;");
+									while ($tarr = mysql_fetch_array($tres))
+									{
+										echo "<option value=\"".$tarr['user_id']."\"";
+										if ($arr['user_ban_admin_id']==$tarr['user_id']) echo " selected=\"selected\"";
+										echo ">".$tarr['user_nick']."</option>\n";
+									}
+									echo "</select>
+								</td>
+							</tr>
+							<tr>
+								<td class=\"tbltitle\" valign=\"top\">Sperrgrund</td>
+								<td class=\"tbldata\">
+									<textarea name=\"user_ban_reason\" id=\"user_ban_reason\" cols=\"60\" rows=\"2\">".stripslashes($arr['user_ban_reason'])."</textarea>
+								</td>
 							</tr>";
+
+				echo "<tr>
+								<td class=\"tbltitle\" valign=\"top\">U-Mod</td>
+								<td class=\"tbldata\">
+									Nein:<input type=\"radio\" name=\"umod_enable\" value=\"0\" onclick=\"umodEnable(false);\" checked=\"checked\" /> Ja:<input type=\"radio\" name=\"umod_enable\" value=\"1\" onclick=\"umodEnable(true);\" ";
+									if ($arr['user_hmode_from']>0)
+									{
+										echo " checked=\"checked\"";
+									}
+									echo "/>";
+									if ($arr['user_hmode_from']>0 && $arr['user_hmode_to']<time())
+									{
+										echo "<i><b>Dieser Urlaubsmodus ist abgelaufen!</b></i>";
+									}
+					echo "</td>
+							</tr>
+							<tr>
+								<td class=\"tbltitle\" valign=\"top\">U-Mod von</td>
+								<td class=\"tbldata\">";
+									if ($arr['user_hmode_from']==0)
+									{
+										show_timebox("user_hmode_from",time());
+									}
+									else
+									{
+										show_timebox("user_hmode_from",$arr['user_hmode_from']);
+									}
+					echo "</td>
+							</tr>
+							<tr>
+								<td class=\"tbltitle\" valign=\"top\">U-Mod bis</td>
+								<td class=\"tbldata\">";
+									if ($arr['user_hmode_to']==0)
+									{
+										show_timebox("user_hmode_to",time()+USER_HMODE_DEFAULT_TIME);
+									}
+									else
+									{
+										show_timebox("user_hmode_to",$arr['user_hmode_to']);
+									}
+					echo "</td>
+							</tr>";
+											
+							
 				echo "</table>";
 				
 				$tc->close();
 				
-				
+
 				
 				/**
-				* Game-Einstellungen
+				* Game-Daten
 				*/
-		$tc->open();			
+				$tc->open();			
 				
 				echo "<table class=\"tbl\">";
 				echo "<tr>
@@ -625,8 +688,88 @@
 					        	echo "Momentan steht kein Schiff zur Auswahl!";
 					        }
 					echo "</td>
+							</tr>";
+							
+				// Multis & Sitting
+				echo "<tr>
+								<td class=\"tbltitle\" valign=\"top\">Gel&ouml;schte Multis</td>
+								<td class=\"tbldata\">
+									<input type=\"text\" name=\"user_multi_delets\" value=\"".$arr['user_multi_delets']."\" size=\"3\" maxlength=\"3\" />
+								</td>
+								</tr>
+								<tr>
+									<td class=\"tbltitle\" valign=\"top\">Eingetragene Multis</td>
+									<td class=\"tbldata\">";
+									$multi_res = dbquery("SELECT user_multi_multi_user_id,user_multi_connection FROM user_multi WHERE user_multi_user_id=".$arr['user_id'].";");
+									while ($multi_arr = mysql_fetch_array($multi_res))
+									{
+										echo "<a href=\"?page=user&sub=edit&user_id=".$multi_arr['user_multi_multi_user_id']."\">".get_user_nick($multi_arr['user_multi_multi_user_id'])."</a> (".$multi_arr['user_multi_connection'].")<br>";
+									}
+					echo "</td>
 							</tr>
-					</table>";
+							<tr>
+								<td class=\"tbltitle\" valign=\"top\">Sittertage</td>
+								<td class=\"tbldata\">
+									<input type=\"text\" name=\"user_sitting_days\" value=\"".$arr['user_sitting_days']."\" size=\"3\" maxlength=\"3\" />
+								</td>
+							</tr>";
+
+							$sitting_res=dbquery("
+							SELECT 
+								user_sitting_sitter_user_id,
+								user_sitting_sitter_ip,
+								user_sitting_date 
+							FROM 
+								user_sitting 
+							WHERE 
+								user_sitting_user_id='".$arr['user_id']."' 
+								AND user_sitting_active='1';");
+							if(mysql_num_rows($sitting_res)>0)
+							{
+								$sitting_arr = mysql_fetch_array($sitting_res);
+								
+								echo "<tr>
+												<td class=\"tbltitle\" valign=\"top\">Sitter Passwort</td>
+												<td class=\"tbldata\">
+													<input type=\"text\" name=\"user_sitting_sitter_password\" value=\"\" size=\"35\" maxlength=\"250\" />
+												</td>
+											</tr>
+											<tr>
+												<td class=\"tbltitle\" valign=\"top\">Sitting Infos</td>
+												<td class=\"tbldata\">
+													Sitter: ".get_user_nick($sitting_arr['user_sitting_sitter_user_id'])."<br>Aktiviert am: ".date("d.m.Y H:i",$sitting_arr['user_sitting_date'])."<br><br>Zugriffsdaten:<br>";
+			
+			                    $date_res = dbquery("
+			                    SELECT
+			                        *
+			                    FROM
+			                        user_sitting_date
+			                    WHERE
+			                        user_sitting_date_user_id='".$arr['user_id']."'
+			                        AND user_sitting_date_from!=0
+			                        AND user_sitting_date_to!=0
+			                    ORDER BY
+			                        user_sitting_date_from;");
+			
+			                    while ($date_arr=mysql_fetch_array($date_res))
+			                    {
+			                    	echo "Von ".date("d.m.Y H:i",$date_arr['user_sitting_date_from'])." bis ".date("d.m.Y H:i",$date_arr['user_sitting_date_to'])."<br>";
+			                    }
+			            echo "</td>
+			            		</tr>
+			            		<tr>
+			            			<td class=\"tbltitle\" valign=\"top\">Sitting Deaktivieren</td>
+			            			<td class=\"tbldata\">
+			                    Ja: <input type=\"radio\" name=\"user_sitting_active\" value=\"1\"/>
+													Nein: <input type=\"radio\" name=\"user_sitting_active\" value=\"0\" checked=\"checked\"/>
+												</td></tr>";
+							}							
+							
+					echo "</table>";
+					echo "
+					<script type=\"text/javascript\">
+					loadSpecialist(".$st.");loadAllianceRanks(".$arr['user_alliance_rank_id'].");
+					</script>";
 				
 				$tc->close();
 
@@ -635,7 +778,7 @@
 				/**
 				* Profil
 				*/
-		$tc->open();			
+				$tc->open();			
 				
 				echo "<table class=\"tbl\">";
 				echo "<tr>
@@ -691,13 +834,157 @@
 				$tc->close();
 				
 				
+				/**
+				* Design
+				*/								
+				$tc->open();			
+				
+				$imagepacks = get_imagepacks("../");
+				$designs = get_designs("../");
+				
+				echo "<table class=\"tbl\">";
+ 				echo "<tr>
+			 					<td class=\"tbltitle\">Design:</td>
+			 					<td class=\"tbldata\">
+			 						<input type=\"text\" name=\"css_style\" id=\"css_style\" size=\"45\" maxlength=\"250\" value=\"".$arr['css_style']."\"> 
+			 						&nbsp; <input type=\"button\" onclick=\"document.getElementById('css_style').value = document.getElementById('designSelector').options[document.getElementById('designSelector').selectedIndex].value\" value=\"&lt;&lt;\" /> &nbsp; ";
+					        echo "<select id=\"designSelector\">
+					        <option value=\"\">(Bitte wählen)</option>";
+			            foreach ($designs as $k => $v)
+			            {
+			                echo "<option value=\"$k\"";
+			                if ($arr['css_style']==$k) echo " selected=\"selected\"";
+			                echo ">".$v['name']."</option>";
+			            }
+			            echo "</select>
+			          </td>
+ 							</tr>
+ 							<tr>
+								<td class=\"tbltitle\">Bildpaket / Dateiendung:</td>
+								<td class=\"tbldata\">
+									<input type=\"text\" name=\"image_url\" id=\"image_url\" size=\"45\" maxlength=\"250\" value=\"".$arr['image_url']."\"> 
+									<input type=\"text\" name=\"image_ext\" id=\"image_ext\" value=\"".$arr['image_ext']."\" size=\"3\" maxlength=\"6\" />
+			 						&nbsp; <input type=\"button\" onclick=\"
+			 						var ImageSet = document.getElementById('imageSelector').options[document.getElementById('imageSelector').selectedIndex].value.split(':');
+			 						document.getElementById('image_url').value=ImageSet[0];
+			 						document.getElementById('image_ext').value=ImageSet[1];
+			 						\" value=\"&lt;&lt;\" /> &nbsp; ";
+					        echo "<select id=\"imageSelector\">
+					        <option value=\"\">(Bitte wählen)</option>";
+			            foreach ($imagepacks as $k => $v)
+			            {
+			            	foreach ($v['extensions'] as $e)
+			            	{
+			                echo "<option value=\"$k:$e\"";
+			                if ($arr['image_url']==$k) echo " selected=\"selected\"";
+			                echo ">".$v['name']." ($e)</option>";
+			               }
+			            }
+			            echo "</select>
+			          </td>
+							</tr>
+							<tr>
+                <td class=\"tbltitle\">Spielgrösse: (nur alte Designs)</td>
+                <td class=\"tbldata\" width=\"64%\" colspan=\"4\">
+                    <select name=\"game_width\">";
+                    for ($x=70;$x<=100;$x+=10)
+                    {
+                        echo "<option value=\"$x\"";
+                        if ($arr['game_width']==$x) echo " selected=\"selected\"";
+                        echo ">".$x."%</option>";
+                    }
+                    echo "</select>
+                </td>
+             </tr>
+             <tr>
+                <td class=\"tbltitle\">Planetkreisgr&ouml;sse:</td>
+                <td class=\"tbldata\" width=\"64%\" colspan=\"4\">
+                  <select name=\"planet_circle_width\">";
+                  for ($x=450;$x<=700;$x+=50)
+                  {
+                      echo "<option value=\"$x\"";
+                      if ($arr['planet_circle_width']==$x) echo " selected=\"selected\"";
+                      echo ">".$x."</option>";
+                  }
+                echo "</select>
+                </td>
+            	</tr>
+            	<tr>
+            		<td class=\"tbltitle\">Schiff/Def Ansicht:</td>
+            		<td class=\"tbldata\">
+          				<input type=\"radio\" name=\"item_show\" value=\"full\"";
+          				if($arr['item_show']=='full') echo " checked=\"checked\"";
+          				echo " /> Volle Ansicht  &nbsp; 
+           				<input type=\"radio\" name=\"item_show\" value=\"small\"";
+          				if($arr['item_show']=='small') echo " checked=\"checked\"";
+          				echo " /> Einfache Ansicht
+           			</td>
+           		</tr>
+           		<tr>
+            		<td class=\"tbltitle\">Bildfilter:</td>
+            		<td class=\"tbldata\">
+          				<input type=\"radio\" name=\"image_filter\" value=\"1\"";
+          				if($arr['image_filter']==1) echo " checked=\"checked\"";
+          				echo "/> An   &nbsp; 
+          				<input type=\"radio\" name=\"image_filter\" value=\"0\"";
+          				if($arr['image_filter']==0) echo " checked=\"checked\"";
+          				echo "/> Aus
+          			</td>
+          		</tr>
+       				<tr>
+          			<td class=\"tbltitle\">Separates Hilfefenster:</td>
+          			<td class=\"tbldata\">
+                    <input type=\"radio\" name=\"helpbox\" value=\"1\" ";
+                    if ($arr['helpbox']==1) echo " checked=\"checked\"";
+                    echo "/> Aktiviert &nbsp; 
+                    <input type=\"radio\" name=\"helpbox\" value=\"0\" ";
+                    if ($arr['helpbox']==0) echo " checked=\"checked\"";
+          					echo "/> Deaktiviert
+            		</td>
+          		</tr>
+          		<tr>
+          			<td class=\"tbltitle\">Separater Notizbox:</td>
+          			<td class=\"tbldata\">
+                    <input type=\"radio\" name=\"notebox\" value=\"1\" ";
+                    if ($arr['notebox']==1) echo " checked=\"checked\"";
+                    echo "/> Aktiviert &nbsp; 
+                    <input type=\"radio\" name=\"notebox\" value=\"0\" ";
+                    if ($arr['notebox']==0) echo " checked=\"checked\"";
+          					echo "/> Deaktiviert
+            		</td>
+          		</tr>
+          		<tr>
+          			<td class=\"tbltitle\">Vertausche Buttons in Hafen-Schiffauswahl:</td>
+          			<td class=\"tbldata\">
+                    <input type=\"radio\" name=\"havenships_buttons\" value=\"1\" ";
+                    if ($arr['havenships_buttons']==1) echo " checked=\"checked\"";
+                    echo "/> Aktiviert &nbsp; 
+                    <input type=\"radio\" name=\"havenships_buttons\" value=\"0\" ";
+                    if ($arr['havenships_buttons']==0) echo " checked=\"checked\"";
+          					echo "/> Deaktiviert
+            		</td>
+          		</tr>
+          		<tr>
+          			<td class=\"tbltitle\">Werbung anzeigen:</td>
+          			<td class=\"tbldata\">
+                    <input type=\"radio\" name=\"show_adds\" value=\"1\" ";
+                    if ($arr['show_adds']==1) echo " checked=\"checked\"";
+                    echo "/> Aktiviert &nbsp; 
+                    <input type=\"radio\" name=\"show_adds\" value=\"0\" ";
+                    if ($arr['show_adds']==0) echo " checked=\"checked\"";
+          					echo "/> Deaktiviert
+            		</td>
+          		</tr>";				
+				echo "</table>";
+				
+				$tc->close();				
 				
 				
 				
 				/**
 				* Messages
 				*/		
-		$tc->open();			
+				$tc->open();			
 				
 				echo "<table class=\"tbl\">";		
 				echo "<tr>
@@ -790,157 +1077,14 @@
 
 				
 				
-				/**
-				* Design
-				*/								
-		$tc->open();			
-				
-				$imagepacks = get_imagepacks("../");
-				$designs = get_designs("../");
-				
-				echo "<table class=\"tbl\">";
- 				echo "<tr>
-			 					<td class=\"tbltitle\">Design:</td>
-			 					<td class=\"tbldata\">
-			 						<input type=\"text\" name=\"user_css_style\" id=\"user_css_style\" size=\"45\" maxlength=\"250\" value=\"".$arr['user_css_style']."\"> 
-			 						&nbsp; <input type=\"button\" onclick=\"document.getElementById('user_css_style').value = document.getElementById('designSelector').options[document.getElementById('designSelector').selectedIndex].value\" value=\"&lt;&lt;\" /> &nbsp; ";
-					        echo "<select id=\"designSelector\">
-					        <option value=\"\">(Bitte wählen)</option>";
-			            foreach ($designs as $k => $v)
-			            {
-			                echo "<option value=\"$k\"";
-			                if ($arr['user_css_style']==$k) echo " selected=\"selected\"";
-			                echo ">".$v['name']."</option>";
-			            }
-			            echo "</select>
-			          </td>
- 							</tr>
- 							<tr>
-								<td class=\"tbltitle\">Bildpaket / Dateiendung:</td>
-								<td class=\"tbldata\">
-									<input type=\"text\" name=\"user_image_url\" id=\"user_image_url\" size=\"45\" maxlength=\"250\" value=\"".$arr['user_image_url']."\"> 
-									<input type=\"text\" name=\"user_image_ext\" id=\"user_image_ext\" value=\"".$arr['user_image_ext']."\" size=\"3\" maxlength=\"6\" />
-			 						&nbsp; <input type=\"button\" onclick=\"
-			 						var ImageSet = document.getElementById('imageSelector').options[document.getElementById('imageSelector').selectedIndex].value.split(':');
-			 						document.getElementById('user_image_url').value=ImageSet[0];
-			 						document.getElementById('user_image_ext').value=ImageSet[1];
-			 						\" value=\"&lt;&lt;\" /> &nbsp; ";
-					        echo "<select id=\"imageSelector\">
-					        <option value=\"\">(Bitte wählen)</option>";
-			            foreach ($imagepacks as $k => $v)
-			            {
-			            	foreach ($v['extensions'] as $e)
-			            	{
-			                echo "<option value=\"$k:$e\"";
-			                if ($arr['user_image_url']==$k) echo " selected=\"selected\"";
-			                echo ">".$v['name']." ($e)</option>";
-			               }
-			            }
-			            echo "</select>
-			          </td>
-							</tr>
-							<tr>
-                <td class=\"tbltitle\">Spielgrösse: (nur alte Designs)</td>
-                <td class=\"tbldata\" width=\"64%\" colspan=\"4\">
-                    <select name=\"user_game_width\">";
-                    for ($x=70;$x<=100;$x+=10)
-                    {
-                        echo "<option value=\"$x\"";
-                        if ($s['user']['game_width']==$x) echo " selected=\"selected\"";
-                        echo ">".$x."%</option>";
-                    }
-                    echo "</select>
-                </td>
-             </tr>
-             <tr>
-                <td class=\"tbltitle\">Planetkreisgr&ouml;sse:</td>
-                <td class=\"tbldata\" width=\"64%\" colspan=\"4\">
-                  <select name=\"user_planet_circle_width\">";
-                  for ($x=450;$x<=700;$x+=50)
-                  {
-                      echo "<option value=\"$x\"";
-                      if ($s['user']['planet_circle_width']==$x) echo " selected=\"selected\"";
-                      echo ">".$x."</option>";
-                  }
-                echo "</select>
-                </td>
-            	</tr>
-            	<tr>
-            		<td class=\"tbltitle\">Schiff/Def Ansicht:</td>
-            		<td class=\"tbldata\">
-          				<input type=\"radio\" name=\"user_item_show\" value=\"full\"";
-          				if($arr['user_item_show']=='full') echo " checked=\"checked\"";
-          				echo " /> Volle Ansicht  &nbsp; 
-           				<input type=\"radio\" name=\"user_item_show\" value=\"small\"";
-          				if($arr['user_item_show']=='small') echo " checked=\"checked\"";
-          				echo " /> Einfache Ansicht
-           			</td>
-           		</tr>
-           		<tr>
-            		<td class=\"tbltitle\">Bildfilter:</td>
-            		<td class=\"tbldata\">
-          				<input type=\"radio\" name=\"user_image_filter\" value=\"1\"";
-          				if($arr['user_image_filter']==1) echo " checked=\"checked\"";
-          				echo "/> An   &nbsp; 
-          				<input type=\"radio\" name=\"user_image_filter\" value=\"0\"";
-          				if($arr['user_image_filter']==0) echo " checked=\"checked\"";
-          				echo "/> Aus
-          			</td>
-          		</tr>
-       				<tr>
-          			<td class=\"tbltitle\">Separates Hilfefenster:</td>
-          			<td class=\"tbldata\">
-                    <input type=\"radio\" name=\"user_helpbox\" value=\"1\" ";
-                    if ($arr['user_helpbox']==1) echo " checked=\"checked\"";
-                    echo "/> Aktiviert &nbsp; 
-                    <input type=\"radio\" name=\"user_helpbox\" value=\"0\" ";
-                    if ($arr['user_helpbox']==0) echo " checked=\"checked\"";
-          					echo "/> Deaktiviert
-            		</td>
-          		</tr>
-          		<tr>
-          			<td class=\"tbltitle\">Separater Notizbox:</td>
-          			<td class=\"tbldata\">
-                    <input type=\"radio\" name=\"user_notebox\" value=\"1\" ";
-                    if ($arr['user_notebox']==1) echo " checked=\"checked\"";
-                    echo "/> Aktiviert &nbsp; 
-                    <input type=\"radio\" name=\"user_notebox\" value=\"0\" ";
-                    if ($arr['user_notebox']==0) echo " checked=\"checked\"";
-          					echo "/> Deaktiviert
-            		</td>
-          		</tr>
-          		<tr>
-          			<td class=\"tbltitle\">Vertausche Buttons in Hafen-Schiffauswahl:</td>
-          			<td class=\"tbldata\">
-                    <input type=\"radio\" name=\"user_havenships_buttons\" value=\"1\" ";
-                    if ($arr['user_havenships_buttons']==1) echo " checked=\"checked\"";
-                    echo "/> Aktiviert &nbsp; 
-                    <input type=\"radio\" name=\"user_havenships_buttons\" value=\"0\" ";
-                    if ($arr['user_havenships_buttons']==0) echo " checked=\"checked\"";
-          					echo "/> Deaktiviert
-            		</td>
-          		</tr>
-          		<tr>
-          			<td class=\"tbltitle\">Werbung anzeigen:</td>
-          			<td class=\"tbldata\">
-                    <input type=\"radio\" name=\"user_show_adds\" value=\"1\" ";
-                    if ($arr['user_show_adds']==1) echo " checked=\"checked\"";
-                    echo "/> Aktiviert &nbsp; 
-                    <input type=\"radio\" name=\"user_show_adds\" value=\"0\" ";
-                    if ($arr['user_show_adds']==0) echo " checked=\"checked\"";
-          					echo "/> Deaktiviert
-            		</td>
-          		</tr>";				
-				echo "</table>";
-				
-				$tc->close();
+
 				
 				
 				
 				/**
 				* Loginfailures
 				*/		
-		$tc->open();			
+				$tc->open();			
 				
 				echo "<table class=\"tbl\">";			
 				$lres=dbquery("
@@ -989,9 +1133,37 @@
 				/**
 				* Points
 				*/
-						$tc->open();			
-				echo "
+				
+				$cUser = new User($arr['id']);
+				
+				$tc->open();			
+				tableStart("Bewertung");							
+				echo "<tr>
+								<td>Kampfpunkte</td>
+								<td>".$cUser->rating('battle_rating')."</td>
+							</tr>";
+				echo "<tr>
+								<td>Kämpfe gewonnen/verloren/total</td>
+								<td>".$cUser->rating('battles_won')."/".$cUser->rating('battles_lost')."/".$cUser->rating('battles_fought')."</td>
+							</tr>";
+				echo "<tr>
+								<td>Handelspunkte</td>
+								<td>".$cUser->rating('trade_rating')."</td>
+							</tr>";
+				echo "<tr>
+								<td>Handel Einkauf/Verkauf</td>
+								<td>".$cUser->rating('trades_buy')."/".$cUser->rating('trades_sell')."</td>
+							</tr>";
+				echo "<tr>
+								<td>Diplomatiepunkte</td>
+								<td>".$cUser->rating('diplomacy_rating')."</td>
+							</tr>";
+				tableEnd();
+						
+						
+				echo "<div id=\"pointsBox\">
 					<div style=\"text-align:center;\"><img src=\"../images/loadingmiddle.gif\" /><br/>Wird geladen...</div>
+				</div>
 				";	
 				$tc->close();
 
@@ -1000,9 +1172,9 @@
 				* Tickets
 				*/				
 						$tc->open();			
-				echo "
+				echo "<div id=\"ticketsBox\">
 					<div style=\"text-align:center;\"><img src=\"../images/loadingmiddle.gif\" /><br/>Wird geladen...</div>
-				";	
+				</div>";	
 				$tc->close();
 				
 
@@ -1010,234 +1182,13 @@
 				* Kommentare
 				*/			
 						$tc->open();				
-				echo "
+				echo "<div id=\"commentsBox\">
 					<div style=\"text-align:center;\"><img src=\"../images/loadingmiddle.gif\" /><br/>Wird geladen...</div>
-				";
+				</div>";
 				$tc->close();
 				
 				
-				/**
-				* Account
-				*/				
-						$tc->open();			
-				
-				echo "<table class=\"tbl\">";
-				// Sperrung
-				echo "<tr>
-								<td class=\"tbltitle\" valign=\"top\">Sperren</td>
-								<td class=\"tbldata\">
-									Nein:<input type=\"radio\" name=\"ban_enable\" value=\"0\" onclick=\"banEnable(false);\"";
-									if ($arr['user_blocked_from']==0)
-									{
-										echo " checked=\"checked\"";
-									}
-									echo " /> Ja:<input type=\"radio\" name=\"ban_enable\" value=\"1\" onclick=\"banEnable(true);\" ";
-									if ($arr['user_blocked_from']>0)
-									{
-										echo " checked=\"checked\"";
-									}
-									echo " />";
-									if ($arr['user_blocked_from']>0 && $arr['user_blocked_to']<time())
-									{
-										echo " <i><b>Diese Sperre ist abgelaufen!</b></i>";
-									}	
-									
-					echo "</td>
-							</tr>
-							<tr>
-								<td class=\"tbltitle\" valign=\"top\">Gesperrt von </td>
-								<td class=\"tbldata\">";
-									if ($arr['user_blocked_from']==0)
-									{
-										show_timebox("user_blocked_from",time());
-									}
-									else
-									{
-										show_timebox("user_blocked_from",$arr['user_blocked_from']);
-									}
-					echo "</td>
-							</tr>
-							<tr>
-								<td class=\"tbltitle\" valign=\"top\">Gesperrt bis</td>
-								<td class=\"tbldata\">";
-									if ($arr['user_blocked_to']==0)
-									{
-										show_timebox("user_blocked_to",time()+USER_BLOCKED_DEFAULT_TIME);
-									}
-									else
-									{
-										show_timebox("user_blocked_to",$arr['user_blocked_to']);
-									}
-					echo "</td>
-							</tr>
-							<tr>
-								<td class=\"tbltitle\" valign=\"top\">Gesperrt von</td>
-								<td class=\"tbldata\">
-									<select name=\"user_ban_admin_id\" id=\"user_ban_admin_id\">
-									<option value=\"0\">(niemand)</option>";
-									$tres = dbquery("SELECT * FROM admin_users ORDER BY user_nick;");
-									while ($tarr = mysql_fetch_array($tres))
-									{
-										echo "<option value=\"".$tarr['user_id']."\"";
-										if ($arr['user_ban_admin_id']==$tarr['user_id']) echo " selected=\"selected\"";
-										echo ">".$tarr['user_nick']."</option>\n";
-									}
-									echo "</select>
-								</td>
-							</tr>
-							<tr>
-								<td class=\"tbltitle\" valign=\"top\">Sperrgrund</td>
-								<td class=\"tbldata\">
-									<textarea name=\"user_ban_reason\" id=\"user_ban_reason\" cols=\"60\" rows=\"2\">".stripslashes($arr['user_ban_reason'])."</textarea>
-								</td>
-							</tr>";
-				// Urlaubsmodus
-				echo "<tr>
-								<td class=\"tbltitle\" valign=\"top\">U-Mod</td>
-								<td class=\"tbldata\">
-									Nein:<input type=\"radio\" name=\"umod_enable\" value=\"0\" onclick=\"umodEnable(false);\" checked=\"checked\" /> Ja:<input type=\"radio\" name=\"umod_enable\" value=\"1\" onclick=\"umodEnable(true);\" ";
-									if ($arr['user_hmode_from']>0)
-									{
-										echo " checked=\"checked\"";
-									}
-									echo "/>";
-									if ($arr['user_hmode_from']>0 && $arr['user_hmode_to']<time())
-									{
-										echo "<i><b>Dieser Urlaubsmodus ist abgelaufen!</b></i>";
-									}
-					echo "</td>
-							</tr>
-							<tr>
-								<td class=\"tbltitle\" valign=\"top\">U-Mod von</td>
-								<td class=\"tbldata\">";
-									if ($arr['user_hmode_from']==0)
-									{
-										show_timebox("user_hmode_from",time());
-									}
-									else
-									{
-										show_timebox("user_hmode_from",$arr['user_hmode_from']);
-									}
-					echo "</td>
-							</tr>
-							<tr>
-								<td class=\"tbltitle\" valign=\"top\">U-Mod bis</td>
-								<td class=\"tbldata\">";
-									if ($arr['user_hmode_to']==0)
-									{
-										show_timebox("user_hmode_to",time()+USER_HMODE_DEFAULT_TIME);
-									}
-									else
-									{
-										show_timebox("user_hmode_to",$arr['user_hmode_to']);
-									}
-					echo "</td>
-							</tr>";
-
-					echo "</td>
-							</tr>
-							<tr>
-								<td class=\"tbltitle\" valign=\"top\">Kampfpunkte</td>
-								<td class=\"tbldata\">
-									<input type=\"text\" name=\"user_points_battle\" value=\"".$arr['user_points_battle']."\" size=\"3\" maxlength=\"5\" />
-								</td>
-							</tr>";
-					echo "</td>
-							</tr>
-							<tr>
-								<td class=\"tbltitle\" valign=\"top\">Handelspunkte</td>
-								<td class=\"tbldata\">
-									<input type=\"text\" name=\"user_points_trade\" value=\"".$arr['user_points_trade']."\" size=\"3\" maxlength=\"5\" />
-								</td>
-							</tr>";
-					echo "</td>
-							</tr>
-							<tr>
-								<td class=\"tbltitle\" valign=\"top\">Diplomatiepunkte</td>
-								<td class=\"tbldata\">
-									<input type=\"text\" name=\"user_points_diplomacy\" value=\"".$arr['user_points_diplomacy']."\" size=\"3\" maxlength=\"5\" />
-								</td>
-							</tr>";
-
-
-				// Multis & Sitting
-				echo "<tr>
-								<td class=\"tbltitle\" valign=\"top\">Gel&ouml;schte Multis</td>
-								<td class=\"tbldata\">
-									<input type=\"text\" name=\"user_multi_delets\" value=\"".$arr['user_multi_delets']."\" size=\"3\" maxlength=\"3\" />
-								</td>
-								</tr>
-								<tr>
-									<td class=\"tbltitle\" valign=\"top\">Eingetragene Multis</td>
-									<td class=\"tbldata\">";
-									$multi_res = dbquery("SELECT user_multi_multi_user_id,user_multi_connection FROM user_multi WHERE user_multi_user_id=".$arr['user_id'].";");
-									while ($multi_arr = mysql_fetch_array($multi_res))
-									{
-										echo "<a href=\"?page=user&sub=edit&user_id=".$multi_arr['user_multi_multi_user_id']."\">".get_user_nick($multi_arr['user_multi_multi_user_id'])."</a> (".$multi_arr['user_multi_connection'].")<br>";
-									}
-					echo "</td>
-							</tr>
-							<tr>
-								<td class=\"tbltitle\" valign=\"top\">Sittertage</td>
-								<td class=\"tbldata\">
-									<input type=\"text\" name=\"user_sitting_days\" value=\"".$arr['user_sitting_days']."\" size=\"3\" maxlength=\"3\" />
-								</td>
-							</tr>";
-
-							$sitting_res=dbquery("
-							SELECT 
-								user_sitting_sitter_user_id,
-								user_sitting_sitter_ip,
-								user_sitting_date 
-							FROM 
-								user_sitting 
-							WHERE 
-								user_sitting_user_id='".$arr['user_id']."' 
-								AND user_sitting_active='1';");
-							if(mysql_num_rows($sitting_res)>0)
-							{
-								$sitting_arr = mysql_fetch_array($sitting_res);
-								
-								echo "<tr>
-												<td class=\"tbltitle\" valign=\"top\">Sitter Passwort</td>
-												<td class=\"tbldata\">
-													<input type=\"text\" name=\"user_sitting_sitter_password\" value=\"\" size=\"35\" maxlength=\"250\" />
-												</td>
-											</tr>
-											<tr>
-												<td class=\"tbltitle\" valign=\"top\">Sitting Infos</td>
-												<td class=\"tbldata\">
-													Sitter: ".get_user_nick($sitting_arr['user_sitting_sitter_user_id'])."<br>Aktiviert am: ".date("d.m.Y H:i",$sitting_arr['user_sitting_date'])."<br><br>Zugriffsdaten:<br>";
 			
-			                    $date_res = dbquery("
-			                    SELECT
-			                        *
-			                    FROM
-			                        user_sitting_date
-			                    WHERE
-			                        user_sitting_date_user_id='".$arr['user_id']."'
-			                        AND user_sitting_date_from!=0
-			                        AND user_sitting_date_to!=0
-			                    ORDER BY
-			                        user_sitting_date_from;");
-			
-			                    while ($date_arr=mysql_fetch_array($date_res))
-			                    {
-			                    	echo "Von ".date("d.m.Y H:i",$date_arr['user_sitting_date_from'])." bis ".date("d.m.Y H:i",$date_arr['user_sitting_date_to'])."<br>";
-			                    }
-			            echo "</td>
-			            		</tr>
-			            		<tr>
-			            			<td class=\"tbltitle\" valign=\"top\">Sitting Deaktivieren</td>
-			            			<td class=\"tbldata\">
-			                    Ja: <input type=\"radio\" name=\"user_sitting_active\" value=\"1\"/>
-													Nein: <input type=\"radio\" name=\"user_sitting_active\" value=\"0\" checked=\"checked\"/>
-												</td></tr>";
-							}
-				echo "</table>";
-				
-				$tc->close();
-				
 				
 				
 				/**
@@ -1245,9 +1196,11 @@
 				*/
 						$tc->open();			
 				
-				echo "Das Laden aller Wirtschaftsdaten kann einige Sekunden dauern!<br/><br/>
-				<input type=\"button\" value=\"Wirtschaftsdaten laden\" onclick=\"showLoader('tabEconomy');xajax_loadEconomy(".$arr['user_id'].",'tabEconomy');\" /> ";
-				
+				echo "
+				<div id=\"tabEconomy\">
+				Das Laden aller Wirtschaftsdaten kann einige Sekunden dauern!<br/><br/>
+				<input type=\"button\" value=\"Wirtschaftsdaten laden\" onclick=\"showLoader('tabEconomy');xajax_loadEconomy(".$arr['user_id'].",'tabEconomy');\" /> 
+				</div>";
 				$tc->close();
 				
 				$tc->end();

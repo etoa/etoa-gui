@@ -37,18 +37,20 @@
 			echo "<select id=\"".$id."\" onchange=\"".$js."\">";
 			echo "<option value=\"\">W&auml;hlen...</option>";
 			
-			foreach ($pm->itemObjects() as $i)
+			foreach ($pm->itemObjects() as &$i)
 			{
 				echo "<option value=\"".$i->id()."\">".$i."</option>";
 			}
+			unset($i);			
 			
 			if ($this->loaded)
 			{
 				echo "<option value=\"\">-----------------------------</option>";						
-				foreach ($this->items as $i)
+				foreach ($this->items as &$i)
 				{
 					echo "<option value=\"".$i->entityId."\">".$i->target->entityCodeString()." ".$i->target." (".$i->comment.")</option>";
 				}
+				unset($i);			
 			}
 			echo "</select>";					
 			$rtn = ob_get_contents();
@@ -71,7 +73,7 @@
 					switch(select_val)
 					{
 						";
-						foreach ($pm->itemObjects() as $i)
+						foreach ($pm->itemObjects() as &$i)
 						{
 							$c = $i->coordsArray();
 							echo "case \"".$i->id()."\":\n";
@@ -82,8 +84,9 @@
 							echo "document.getElementById('p').value='".$c[4]."';\n";
 							echo "break;\n";
 							
-						}						
-						foreach ($this->items as $i)
+						}			
+						unset($i);			
+						foreach ($this->items as &$i)
 						{
 							$c = $i->target->coordsArray();
 							echo "case \"".$i->entityId."\":\n";
@@ -94,6 +97,7 @@
 							echo "document.getElementById('p').value='".$c[4]."';\n";
 							echo "break;\n";
 						}
+						unset($i);			
 						echo "
 					}
 
