@@ -55,9 +55,9 @@
 	$navmenu['Allgemeines']['Offline nehmen']['sub']="offline";
 	$navmenu['Allgemeines']['Offline nehmen']['level']=1;
 
-	$navmenu['Allgemeines']['Filesharing']['page']="home";
-	$navmenu['Allgemeines']['Filesharing']['sub']="filesharing";
-	$navmenu['Allgemeines']['Filesharing']['level']=1;
+	$navmenu['Allgemeines']['Datei-Austausch']['page']="home";
+	$navmenu['Allgemeines']['Datei-Austausch']['sub']="filesharing";
+	$navmenu['Allgemeines']['Datei-Austausch']['level']=1;
 
 
 	$navmenu['Allgemeines']['bar'][0] = true;

@@ -93,7 +93,7 @@
 	define('USER_BLOCKED_DEFAULT_TIME',3600*24*$conf['user_ban_min_length']['v']);	// Standardsperrzeit
 	define('USER_HMODE_DEFAULT_TIME',3600*24*$conf['user_umod_min_length']['v']);	// Standardurlaubszeit
 
-	define('ADMIN_FILESHARING_DIR',"cache/admin");
+	define('ADMIN_FILESHARING_DIR',CACHE_ROOT."/admin");
 
 	// XAJAX
 	include("inc/xajax_admin.inc.php");

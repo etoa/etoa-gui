@@ -11,7 +11,7 @@
 	{
 		if ($_GET['level']==0) $_GET['level']=1;
 		$res = dbquery("SELECT * FROM missiles WHERE missile_id='".$_GET['id']."';");
-		if ($arr = @mysql_fetch_array($res))
+		if ($arr = mysql_fetch_array($res))
 		{
 			Help::navi(array("Raketen","missiles"),array(text2html($arr['missile_name']),$arr['missile_id']),1);
 			echo "<select onchange=\"document.location='?page=help&site=missiles&id='+this.options[this.selectedIndex].value\">";

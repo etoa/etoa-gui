@@ -46,7 +46,7 @@
 		<input type=\"button\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" value=\"Abbrechen\" />";
 		echo "</form>";
 	}	
-	elseif ($_GET['edit']>0)
+	elseif (isset($_GET['edit']) && $_GET['edit']>0)
 	{
 		echo "<h2>Bearbeiten</h2>";
 		$res = dbquery("
@@ -202,7 +202,7 @@
 			}			
 		}
 		
-		if ($_GET['del']>0 && $_GET['del']!=$s['user_id'])
+		if (isset($_GET['del']) && $_GET['del']>0 && $_GET['del']!=$s['user_id'])
 		{
 			$res = dbquery("
 			SELECT

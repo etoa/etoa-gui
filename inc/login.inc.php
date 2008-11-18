@@ -111,7 +111,7 @@
 			}
 
 			$userIp = $_SERVER['REMOTE_ADDR'];
-			$userHost = gethostbyaddr($_SERVER['REMOTE_ADDR']);
+			$userHost = resolveIp($_SERVER['REMOTE_ADDR']);
 			$userAgent = $_SERVER['HTTP_USER_AGENT'];
 
 			if ($login_ok || $sitter_login_ok)

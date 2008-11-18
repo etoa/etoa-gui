@@ -489,7 +489,7 @@
 			if ($a['show_overview']==1)
 			{
 				echo "<td class=\"tbldata\">";
-				if ($a['link_in_overview']==1)
+				if (isset($a['link_in_overview']) && $a['link_in_overview']==1)
 				{
 					echo "<a href=\"?".URL_SEARCH_STRING."&amp;action=edit&amp;id=".$arr[DB_TABLE_ID]."\">";
 				}

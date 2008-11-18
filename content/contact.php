@@ -62,7 +62,7 @@
 			$text = "InGame-Anfrage ".GAMEROUND_NAME."\n----------------------\n\n";
 			$text.= "Nick: ".$cu->nick()."\n";
 			$text.= "ID: ".$s['user_id']."\n";
-			$text.= "IP/Host: ".$_SERVER['REMOTE_ADDR']." (".gethostbyaddr($_SERVER['REMOTE_ADDR']).")\n";
+			$text.= "IP/Host: ".$_SERVER['REMOTE_ADDR']." (".resolveIp($_SERVER['REMOTE_ADDR']).")\n";
 			$text.= "Titel: ".$_POST['mail_subject']."\n\n";
 			$text.= $_POST['mail_text'];
 			

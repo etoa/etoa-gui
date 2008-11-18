@@ -33,6 +33,9 @@
 	define("DB_TABLE_ID", "tip_id");
 	define("DB_OVERVIEW_ORDER_FIELD","tip_text");
 	
+	$form_switches = array("Anzeigen"=>'tip_active');
+
+	
 	// FIELDS
 	
 	// Description:
@@ -65,21 +68,7 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
-																	),
-											2	=> 	array	(	"name" => "tip_active",
-																		"text" => "Aktiv",
-																		"type" => "radio",
-																		"def_val" => "",
-																		"size" => "",
-																		"maxlen" => "",
-																		"rows" => "",
-																		"cols" => "",
-																		"rcb_elem" => array("Ja"=>1,"Nein"=>0),
-																		"rcb_elem_chekced" => "1",
-																		"select_elem" => "",
-																		"select_elem_checked" => "",
-																		"show_overview" => 1
-																	)																													
+																	)																											
 
 											);
         

@@ -7,7 +7,7 @@
 	{
 		if ($_GET['level']==0) $_GET['level']=1;
 		$res = dbquery("SELECT * FROM defense WHERE def_id='".$_GET['id']."';");
-		if ($arr = @mysql_fetch_array($res))
+		if ($arr = mysql_fetch_array($res))
 		{
 			Help::navi(array("Verteidigung","defense"),array(text2html($arr['def_name']),$arr['def_id']),1);
 			echo "<select onchange=\"document.location='?page=help&site=defense&id='+this.options[this.selectedIndex].value\">";

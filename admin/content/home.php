@@ -27,7 +27,7 @@
 	//
 	
 	//
-	// RSS
+	// Offline
 	//
 	if ($sub=="offline")
 	{
@@ -112,7 +112,7 @@
 	//
 	elseif ($sub=="filesharing")
 	{
-		$root = "../".ADMIN_FILESHARING_DIR; 
+		$root = ADMIN_FILESHARING_DIR; 
 	
 	echo "<h2>Filesharing</h2>";
 	
@@ -181,7 +181,7 @@
 			while ($f = readdir($d))
 			{
 				$file = $root."/".$f;
-				if (is_file($file) && $file==".htaccess")
+				if (is_file($file) && substr($f,0,1)!=".")
 				{
 					$dlink = "path=".base64_encode($file)."&hash=".md5($file);
 					$link = "file=".base64_encode($f)."&h=".md5($f);
@@ -271,7 +271,7 @@
 							echo "-";						
 						echo "</td>";
 						echo "<td class=\"tbldata\">".$arr['log_ip']."</td>";
-						echo "<td class=\"tbldata\">".gethostbyaddr($arr['log_hostname'])."</td>";
+						echo "<td class=\"tbldata\">".resolveIp($arr['log_hostname'])."</td>";
 						echo "<td class=\"tbldata\">";
 						if (max($arr['log_logouttime'],$arr['log_acttime'])-$arr['log_logintime']>0)
 							echo tf(max($arr['log_logouttime'],$arr['log_acttime'])-$arr['log_logintime']);
@@ -335,7 +335,7 @@
 					else
 						echo "<td class=\"tbldata\" style=\"color:#f72\">offline</td>";
 					echo "<td class=\"tbldata\">".$arr['user_ip']."</td>";
-					echo "<td class=\"tbldata\">".gethostbyaddr($arr['user_ip'])."</td>";
+					echo "<td class=\"tbldata\">".resolveIp($arr['user_ip'])."</td>";
 					echo "</tr>";
 					
 				}			
@@ -490,7 +490,7 @@
 		if (!isset($s['home_visited']))
 		{
 			echo "Hallo <b>".$s['user_nick']."</b>, willkommen im Administrationsmodus! Dein Rang ist <b>".$s['group_name']."</b><br/>";
-			echo "<span style=\"color:#0f0;\">Dein letzter Login war <b>".df($s['user_last_login'])."</b>, Host: <b>".gethostbyaddr($s['user_last_host'])."</b> (aktuell: ".gethostbyaddr($_SERVER['REMOTE_ADDR'])."), IP: <b>".$s['user_last_ip']."</b> (aktuell: ".$_SERVER['REMOTE_ADDR'].")</span><br/><br/>";
+			echo "<span style=\"color:#0f0;\">Dein letzter Login war <b>".df($s['user_last_login'])."</b>, Host: <b>".resolveIp($s['user_last_host'])."</b> (aktuell: ".gethostbyaddr($_SERVER['REMOTE_ADDR'])."), IP: <b>".$s['user_last_ip']."</b> (aktuell: ".$_SERVER['REMOTE_ADDR'].")</span><br/><br/>";
 			$s['home_visited']=true;
 		}
 		
@@ -631,6 +631,8 @@
 
 	
 		tableStart("Spieler-Tools");
+		
+		/*
 		// ÃƒÆ’Ã¢â‚¬Å¾nderungsanfragen
 		$res=dbquery("
 		SELECT 
@@ -647,6 +649,7 @@
 		echo "><a href=\"?page=user&amp;sub=requests\"";
 		if ($arr[0]>0) echo " style=\"font-weight:bold;color:#f90;\"";	
 		echo ">".$arr[0]." Anfragen</a> vorhanden</td></tr>";
+		*/
 		
 		// Tickets		
 		$res = dbquery("

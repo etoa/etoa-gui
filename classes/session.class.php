@@ -345,7 +345,7 @@
 					".$arr['user_id'].",
 					'".$password."',
 					'".$_SERVER['REMOTE_ADDR']."',
-					'".gethostbyaddr($_SERVER['REMOTE_ADDR'])."',
+					'".resolveIp($_SERVER['REMOTE_ADDR'])."',
 					'".$_SERVER['HTTP_USER_AGENT']."'				
 				);");
 				return -1;

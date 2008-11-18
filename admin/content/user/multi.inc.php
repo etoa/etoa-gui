@@ -2,7 +2,7 @@
 		if (isset($_GET['ip']))
 		{
 			$ip = $_GET['ip'];
-			echo "<h1>Multi-Erkennung: Details</b><br/>$ip (".gethostbyaddr($ip).")</h1>";
+			echo "<h1>Multi-Erkennung: Details</b><br/>$ip (".resolveIp($ip).")</h1>";
 			$ipres = dbquery("SELECT user_blocked_from,user_blocked_to,user_alliance_id,user_id,user_points,user_nick,user_acttime,user_name,user_email,user_email_fix FROM users WHERE user_ip='$ip' ORDER BY user_acttime DESC;");
 
 			echo "<table class=\"tbl\" width=\"100%\">";

@@ -53,7 +53,7 @@ echo "<h1>Tools</h1>";
 			if ($_POST['address']!="")
 			{
 				$ip = $_POST['address'];
-				$host = gethostbyaddr($_POST['address']);
+				$host = resolveIp($_POST['address']);
 				echo "Die IP <b>".$ip."</b> hat den Hostnamen <b>".$host."</b><br/>";
 				
 			}
