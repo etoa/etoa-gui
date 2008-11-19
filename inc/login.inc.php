@@ -297,14 +297,16 @@
 					 	failure_time,
 					 	failure_ip,
 					 	failure_host,
-					 	failure_user_id
+					 	failure_user_id,
+					 	failure_client
 					 )
 					 VALUES
 					 (
 					 	".$login_time.",
 					 	'".$userIp."',
 					 	'".$userHost."',
-					 	".$arr[0]."					 	
+					 	".$arr[0].",
+					 	'".$_SERVER['HTTP_USER_AGENT']."'					 	
 					 )					 	
 					;");
 				}

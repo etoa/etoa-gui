@@ -76,8 +76,6 @@
 		else
 		{
             echo "<h1>Sitting: Laufende Sitteraccounts</h1>";
-            echo "<table class=\"tbl\" width=\"100%\">";
-            echo "<tr><th class=\"tbltitle\">User</th><th class=\"tbltitle\">Sitter</th><th class=\"tbltitle\">Aktiviert am</th><th class=\"tbltitle\">Details</th></tr>";
 
             $res = dbquery("
             SELECT
@@ -89,6 +87,10 @@
                 user_sitting
             WHERE
                 user_sitting_active='1';");
+            if (mysql_num_rows($res)>0)
+            {
+            echo "<table class=\"tbl\" width=\"100%\">";
+            echo "<tr><th class=\"tbltitle\">User</th><th class=\"tbltitle\">Sitter</th><th class=\"tbltitle\">Aktiviert am</th><th class=\"tbltitle\">Details</th></tr>";
             while ($arr = mysql_fetch_array($res))
             {
                 echo "<tr>";
@@ -99,6 +101,11 @@
                 echo "</tr>";
             }
             echo "</table>";
+            }
+            else
+            {
+            	echo "<i>Keine Datensätze vorhanden!</i>";
+            }
 		}
 		
 ?>

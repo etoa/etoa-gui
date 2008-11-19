@@ -1108,12 +1108,11 @@
 									{
 										echo "<tr>
 														<td class=\"tbldata\">".df($larr['failure_time'])."</td>
-														<td class=\"tbldata\">".$larr['failure_ip']." 
-															[<a href=\"?page=user&amp;action=search&amp;special=ip&amp;val=".base64_encode($larr['failure_ip'])."\">Suche Spieler</a>] 
-															[<a href=\"?page=user\">Suche Session</a>]
+														<td class=\"tbldata\">
+															<a href=\"?page=$page&amp;sub=ipsearch&amp;ip=".$larr['failure_ip']."\">".$larr['failure_ip']."</a>
 														</td>
-														<td class=\"tbldata\">".$larr['failure_host']."
-															[<a href=\"?page=user&amp;action=search&amp;special=host&amp;val=".base64_encode($larr['failure_host'])."\">Suche Spieler</a>]
+														<td class=\"tbldata\">
+															<a href=\"?page=$page&amp;sub=ipsearch&amp;host=".$larr['failure_host']."\">".$larr['failure_host']."</a>
 														</td>
 													</tr>";
 									}

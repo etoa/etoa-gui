@@ -1,5 +1,5 @@
 <?PHP
-		echo "<h1>User-Sessions und -Logs</h1>";
+		echo "<h1>User-Sessionlogs</h1>";
 
 		if (isset($_POST['logshow']) || (isset($_GET['id']) && $_GET['id']>0))
 		{
@@ -150,7 +150,7 @@
 
 			echo "<h2>Aktive Sessions</h2>";
 			echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
-			echo "Das User-Timeout betr&auml;gt ".$conf['user_timeout']['v']." Sekunden.";
+			echo "Das User-Timeout betr&auml;gt ".tf($conf['user_timeout']['v'])." Sekunden.";
 			$res=dbquery("SELECT * FROM users WHERE user_acttime>".(time()-$conf['user_timeout']['v'])." AND user_session_key!='' ORDER BY user_acttime DESC;");
 			if (mysql_num_rows($res)>0)
 			{
@@ -192,6 +192,6 @@
 				echo "</form><br/>";
 			}
 			else
-				echo "<i>Keine Eintr&auml;ge vorhanden!</i><br/>";
+				echo "<br/><br/><i>Keine Eintr&auml;ge vorhanden!</i><br/>";
 		}
 ?>

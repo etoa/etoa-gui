@@ -683,8 +683,8 @@
 		if ($arr[0]>0)
 		{
 			echo "<tr><th class=\"tbltitle\">Profil-Bilder:</th>";
-			echo "<td class=\"tbldata\" style=\"background:#880;\">";
-			echo $arr[0]." Spieler-Profilbilder wurden noch nicht verifiziert. Gewisse Bilder könnten gegen die Regeln verstossen. <a href=\"?page=user&amp;sub=imagecheck\">Jetzt prüfen</a>";
+			echo "<td class=\"tbldata\">";
+			echo "<a href=\"?page=user&amp;sub=imagecheck\" style=\"font-weight:bold;color:#f90;\">".$arr[0]." Spieler-Profilbilder</a> wurden noch nicht verifiziert. Gewisse Bilder könnten gegen die Regeln verstossen. <a href=\"?page=user&amp;sub=imagecheck\">Jetzt prüfen</a>";
 			echo "</td></tr>";
 		}
 

@@ -92,6 +92,10 @@
 	$navmenu['Spieler']['Multi-Kontrolle']['sub']="multi";
 	$navmenu['Spieler']['Multi-Kontrolle']['level']=0;
 
+	$navmenu['Spieler']['IP-Suche']['page']="user";
+	$navmenu['Spieler']['IP-Suche']['sub']="ipsearch";
+	$navmenu['Spieler']['IP-Suche']['level']=1;
+
 	$navmenu['Spieler']['Sitting']['page']="user";
 	$navmenu['Spieler']['Sitting']['sub']="sitting";
 	$navmenu['Spieler']['Sitting']['level']=0;
@@ -103,10 +107,6 @@
 	$navmenu['Spieler']['Sessionlogs']['page']="user";
 	$navmenu['Spieler']['Sessionlogs']['sub']="userlog";
 	$navmenu['Spieler']['Sessionlogs']['level']=1;
-
-	$navmenu['Spieler']['&Auml;nderungsantr&auml;ge']['page']="user";
-	$navmenu['Spieler']['&Auml;nderungsantr&auml;ge']['sub']="requests";
-	$navmenu['Spieler']['&Auml;nderungsantr&auml;ge']['level']=0;
 
 	$navmenu['Spieler']['Profilbilder pr&uuml;fen']['page']="user";
 	$navmenu['Spieler']['Profilbilder pr&uuml;fen']['sub']="imagecheck";

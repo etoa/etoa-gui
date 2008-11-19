@@ -36,6 +36,14 @@
 	}
 
 	//
+	// Ip-Search
+	//
+	elseif ($sub=="ipsearch")
+	{
+		require("user/ipsearch.inc.php");
+	}
+
+	//
 	// Erstellen
 	//
 	elseif ($sub=="create")

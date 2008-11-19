@@ -3044,6 +3044,53 @@ Forum: http://www.etoa.ch/forum";
 		return $host;
 	}
 
+	function resolveHostname($host)
+	{
+		if (!isset($ipcache))
+			static $ipcache = array();       
+			
+		if (isset($ipcache[$host]))
+			return $ipcache[$host];
+		
+		$t = time();
+		$res = dbquery("
+		SELECT
+			addr
+		FROM
+			hostname_cache
+		WHERE
+			host='".$host."'
+			AND timestamp>".($t-86400)."
+		");
+		if (mysql_num_rows($res)>0)
+		{
+			$arr = mysql_fetch_row($res);
+			$ip = $arr[0];
+			$ipcache[$host] = $ip;
+			return $ip;
+		}
+		
+		$ip = @gethostbyname($host);
+		$ipcache[$host] = $ip;
+		$res = dbquery("
+		REPLACE INTO
+			hostname_cache
+		(
+		  addr,
+			host,
+			timestamp
+		)
+		VALUES
+		(
+			'".$ip."',
+			'".$host."',
+			".$t."
+		);
+		");		
+		return $ip;		
+		
+	}
+
 	/**
 	* Textfunktionen einbinden
 	*/

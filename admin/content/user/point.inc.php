@@ -42,7 +42,7 @@
 			SELECT 
 				user_nick,
 				user_points,
-				user_rank_current,
+				user_rank,
 				user_id 
 			FROM 
 				users
@@ -52,8 +52,8 @@
 			if (mysql_num_rows($res)>0)
 			{
 				$arr=mysql_fetch_array($res);
-				echo "<h2>Punktedetails f&uuml;r ".$arr['user_nick']."</h2>";
-				echo "<b>Punkte aktuell:</b> ".nf($arr['user_points']).", <b>Rang aktuell:</b> ".$arr['user_rank_current']."<br/><br/>";
+				echo "<h2>Punktedetails f&uuml;r <a href=\"?page=$page&amp;action=edit&amp;id=".$arr['user_id']."\">".$arr['user_nick']."</a></h2>";
+				echo "<b>Punkte aktuell:</b> ".nf($arr['user_points']).", <b>Rang aktuell:</b> ".$arr['user_rank']."<br/><br/>";
 				echo "<img src=\"../misc/stats.image.php?user=".$arr['user_id']."\" alt=\"Diagramm\" /><br/><br/>";
 				$pres=dbquery("SELECT * FROM user_points WHERE point_user_id='".$_GET['user_id']."' ORDER BY point_timestamp DESC;");
 				if (mysql_num_rows($pres)>0)
