@@ -58,6 +58,14 @@
 		optimize_tables();
 		$log.= "Tabellen optimiert.\nDauer: ".timerStop($tmr)." sec\n\n";
 
+		// Remove old ip-hostname combos from cache
+		$res = dbquery("
+		DELETE FROM
+			hostname_cache
+		WHERE
+			timestamp<".(time()-86400)."
+		");
+
 		return $log;
 	}
 
