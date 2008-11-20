@@ -276,12 +276,14 @@
 			}
 			
 			
-			// Register Login faiulure
+			// Register Login failure
 			else
 			{
 				$res = dbquery("
 				SELECT
-					user_id
+					user_id,
+					user_email_fix,
+					user_nick
 				FROM
 					users
 				WHERE
@@ -309,6 +311,30 @@
 					 	'".$_SERVER['HTTP_USER_AGENT']."'					 	
 					 )					 	
 					;");
+					$mres = dbquery("
+					SELECT
+						COUNT(failure_user_id)
+					FROM
+						login_failures
+					WHERE
+						failure_user_id=".$arr[0]."
+						AND failure_time>".(time() - 6000)."
+					");
+					$marr = mysql_fetch_row($mres);
+					if ($marr[0] > 3)
+					{
+						$text = "Hallo ".$arr[2]."\n\nSoeben haben wir 3 oder mehr fehlerhafte Loginversuche in deinen Account *".$arr[2]."* in *".ROUNDID."* festgestellt, 
+						zuletzt vom Computer ".$userIp." (".$userHost.") aus mit dem Passwort ".$_POST['login_pw'].". 
+						Sollten diese Logins nicht von dir verursacht worden sein dann nimm bitte *so bald wie möglich* Kontakt mit einem Admin auf 
+						(InGame auf Kontakt klicken oder im Forum anschreiben) damit wir Nachforschungen zu diesem Account-Hackversuch anstellen können.\n
+						Sind diese Logins von dir selbst verursacht, dann lösche bitte diese Mail unverzüglich, da darin Teile deines Passworts stehen könnten. \n
+						Freundliche Grüsse\nDas EtoA-Team\n\n
+						*Dies ist eine automatisch generierte Nachricht!*						
+						";
+						send_mail('',$arr[1],'Fehlerhafte Logins bei Escape to Andromeda',$text,'','');
+					}
+					
+					
 				}
 				
 				header("Location: ".LOGINSERVER_URL."?page=err&err=pass");
