@@ -323,8 +323,7 @@
 					$marr = mysql_fetch_row($mres);
 					if ($marr[0] > 3)
 					{
-						$text = "Hallo ".$arr[2]."\n\nSoeben haben wir 3 oder mehr fehlerhafte Loginversuche in deinen Account *".$arr[2]."* in *".ROUNDID."* festgestellt, 
-zuletzt vom Computer ".$userIp." (".$userHost.") aus mit dem Passwort ".$_POST['login_pw'].". 
+						$text = "Hallo ".$arr[2]."\n\nSoeben haben wir ".$marr[0]." oder mehr fehlerhafte Loginversuche in deinen Account *".$arr[2]."* in ".ROUNDID." innerhalb der letzten 10 Minuten festgestellt, zuletzt vom Computer ".$userIp." (".$userHost.") aus mit dem Passwort ".$_POST['login_pw'].". 
 Sollten diese Logins nicht von dir verursacht worden sein dann nimm bitte *so bald wie möglich* Kontakt mit einem Admin auf 
 (InGame auf Kontakt klicken oder im Forum anschreiben) damit wir Nachforschungen zu diesem Account-Hackversuch anstellen können.\n
 Sind diese Logins von dir selbst verursacht, dann lösche bitte diese Mail unverzüglich, da darin Teile deines Passworts stehen könnten. \n
