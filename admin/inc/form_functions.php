@@ -328,11 +328,11 @@
 					echo "<input type=\"text\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"".stripslashes($arr[$a['name']])."\" />";
 			}		
 			echo "</td>\n</tr>\n";	
-			if ($a['line']==1)
+			if (isset($a['line']) && $a['line']==1)
 			{
 				echo "<tr><td style=\"height:4px;background:#000\" colspan=\"2\"></td></tr>";
 			}
-			if ($a['columnend']==1)
+			if (isset($a['columnend']) && $a['columnend']==1)
 			{
 				echo "</table></td><td style=\"vertical-align:top;\"><table style=\"width:100%;\">";
 			}		

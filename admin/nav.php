@@ -124,9 +124,6 @@
 	$navmenu['Spieler']['Verwarnungen']['sub']="warnings";
 	$navmenu['Spieler']['Verwarnungen']['level']=1;
 
-	$navmenu['Spieler']['Tickets']['page']="user";
-	$navmenu['Spieler']['Tickets']['sub']="tickets";
-	$navmenu['Spieler']['Tickets']['level']=1;
 
 	$navmenu['Spieler']['XML-Export/Import']['page']="user";
 	$navmenu['Spieler']['XML-Export/Import']['sub']="xml";

@@ -267,7 +267,7 @@
 			{
 				echo "<tr>
 				<td>".$arr['id']."</td>
-				<td>".$arr['user_nick']."</td>
+				<td><a href=\"javascript:;\" onclick=\"opener.document.location='index.php?page=user&sub=edit&id=".$arr['user_id']."'\">".$arr['user_nick']."</a></td>
 				<td>".$arr['cname']."</td>
 				<td>".df($arr['timestamp'])."</td>
 				<td>

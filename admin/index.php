@@ -26,99 +26,7 @@
 	// 	Kommentar: 	Layout und generelle Definitionen f� Admin-Modus
 	//
 
-	// Seitenwahl zuweisen
-	$page = isset($_GET['page']) ? $_GET['page'] : 'home';
-	$sub = isset($_GET['sub']) ? $_GET['sub'] : '';
-
-	// Renderzeit-Start festlegen
-	$render_time = explode(" ",microtime());
-	$render_starttime=$render_time[1]+$render_time[0];
-
-	define(IMAGE_PATH,"../images/imagepacks/Discovery");
-	define(IMAGE_EXT,"png");
-
-	// Session-Cookie setzen
-	ini_set('arg_separator.output',  '&amp;');
-	session_start();
-
-	// Funktionen und Config einlesen
-	if (!@include_once("../conf.inc.php")) die("conf.inc.php does not exist, please read INSTALL for how to create this file or <a href=\"..\">click here</a> for the setup wizard!!");
-	require("../functions.php");
-	
-	require("inc/admin_functions.inc.php");
-
-	// Mit der DB verbinden
-	dbconnect();
-	
-	// Admin defs
-	
-	define('CACHE_ROOT','../cache');
-	define('CLASS_ROOT','../classes');
-	define('DATA_DIR',"../data");
-	
-	// Config-Werte laden
-	$cfg = Config::getInstance();
-	$conf = $cfg->getArray();
-	include("../def.inc.php");
-
-	// Navigation laden
-	require_once('nav.php');
-
-	// Feste Konstanten
-	define('IS_ADMIN_MODE',true);
-
-	define('SESSION_NAME',"adminsession");
-	define('USER_TABLE_NAME','admin_users');
-
-	define('URL_SEARCH_STRING', "page=$page&amp;sub=$sub&amp;tmp=1");
-	define('URL_SEARCH_STRING2', "page=$page");
-	define('URL_SEARCH_STRING3', "page=$page");
-
-	define('DATE_FORMAT',$conf['admin_dateformat']['v']);
-	define('TIMEOUT',$conf['admin_timeout']['v']);
-
-	define('HTPASSWD_COMMAND',$conf['htaccess']['v']);
-	define('HTPASSWD_FILE',$conf['htaccess']['p2']);
-	define('HTPASSWD_USER',$conf['admin_htaccess']['p1']);
-
-	// User-Farben
-	define('USER_COLOR_DEFAULT',$conf['color_default']['v']);
-	define('USER_COLOR_BANNED',$conf['color_banned']['v']);
-	define('USER_COLOR_INACTIVE',$conf['color_inactive']['v']);
-	define('USER_COLOR_HOLIDAY',$conf['color_umod']['v']);
-	define('USER_COLOR_FRIEND',$conf['color_friend']['v']);
-	define('USER_COLOR_ENEMY',$conf['color_enemy']['v']);
-	define('USER_COLOR_DELETED','#09f');
-
-	define('USER_BLOCKED_DEFAULT_TIME',3600*24*$conf['user_ban_min_length']['v']);	// Standardsperrzeit
-	define('USER_HMODE_DEFAULT_TIME',3600*24*$conf['user_umod_min_length']['v']);	// Standardurlaubszeit
-
-	define('ADMIN_FILESHARING_DIR',CACHE_ROOT."/admin");
-
-	// XAJAX
-	include("inc/xajax_admin.inc.php");
-
-
-	// Release update lock
-	if (isset($_GET['releaseupdate']) && $_GET['releaseupdate']==1)
-	{
-		dbquery("UPDATE config SET config_value=0 WHERE config_name='updating';");
-	}
-	
-	// Release fleet update lock  
-	if (isset($_GET['releasefleetupdate']) && $_GET['releasefleetupdate']==1)
-	{
-		dbquery("UPDATE config SET config_value=0 WHERE config_name='updating_fleet';");
-	}
-	
-	// Activate update system
-	if (isset($_GET['activateupdate']) && $_GET['activateupdate']==1)
-	{
-		dbquery("UPDATE config SET config_value=1 WHERE config_name='update_enabled';");
-	}
-
-	// Zufallsgenerator initialisieren
-	mt_srand(time());
+	require("inc/includer.inc.php");
 
 	// Zwischenablage
 	if (isset($_GET['cbclose']))
@@ -128,24 +36,18 @@
 	$cb = isset ($_SESSION['clipboard']) && $_SESSION['clipboard']==1 ? true : false;
 
 
-			// Check Login
-			include("inc/admin_login.inc.php");
 
-			// Define s as the current session variable
-			$s = $_SESSION[SESSION_NAME];
 			
-			adminHtmlHeader($s['theme']);
+	adminHtmlHeader($s['theme']);
 			
-
-
-				// Admin-Gruppen laden				
-				$admingroup=array();
-				$gres=dbquery("SELECT * FROM admin_groups ORDER BY group_level DESC;");
-				while ($garr=mysql_fetch_array($gres))
-				{
-					$admingroup[$garr['group_id']] =$garr['group_name'];
-					$adminlevel[$garr['group_level']] =$garr['group_name'];
-				}
+	// Admin-Gruppen laden				
+	$admingroup=array();
+	$gres=dbquery("SELECT * FROM admin_groups ORDER BY group_level DESC;");
+	while ($garr=mysql_fetch_array($gres))
+	{
+		$admingroup[$garr['group_id']] =$garr['group_name'];
+		$adminlevel[$garr['group_level']] =$garr['group_name'];
+	}
 
 				?>
 
@@ -166,25 +68,33 @@
 								{
 									echo " &nbsp; <a href=\"".$data['url']."\" onclick=\"window.open('".$data['url']."');return false;\">$title</a>";
 								}
-								echo "<br/>";
-								
-							$nres = dbquery("select COUNT(*) from admin_notes where admin_id='".$s['user_id']."'");
-							$narr = mysql_fetch_row($nres);
+								echo "<br/>";								
 							
-							echo '<a href="?adminlist=1" style="color:#0f0;">Adminliste</a> | ';
-							echo '<a href="?myprofile=1" style="color:#0f0;">Mein Profil</a> | ';
-							echo "<a href=\"javascript:;\" style=\"color:#0f0;\" onclick=\"window.open('misc/notepad.php','Notepad','width=600, height=500, status=no, scrollbars=yes')\">";
-							echo "Notizblock";
-							if ($narr[0]>0)
-							{
-								echo " (".$narr[0].")";
-							}
-							echo "</a> | ";
-							if (!$cb)
-							{
-								echo "<a href=\"frameset.php?page=$page&amp;sub=$sub\" target=\"_top\" style=\"color:#ff0;\">Zwischenablage</a> | ";
-							}
-							echo '<a href="?logout=1" style="color:#f90;">Logout</a>';
+								echo '<a href="?adminlist=1" style="color:#0f0;">Adminliste</a> | ';
+								echo '<a href="?myprofile=1" style="color:#0f0;">Mein Profil</a> | ';
+								echo "<a href=\"javascript:;\" style=\"color:#f90;\" onclick=\"window.open('popup.php?page=notepad','Notepad','width=600, height=500, status=no, scrollbars=yes')\">";
+								echo "Notizblock";
+								$nres = dbquery("select COUNT(*) from admin_notes where admin_id='".$s['user_id']."'");
+								$narr = mysql_fetch_row($nres);
+								if ($narr[0]>0)
+								{
+									echo " (".$narr[0].")";
+								}
+								echo "</a> | ";
+								echo "<a href=\"javascript:;\" style=\"color:#f90;\" onclick=\"window.open('popup.php?page=tickets','Tickets','width=700, height=600, status=no, scrollbars=yes')\">";
+								echo "Tickets";
+								$nres = dbquery("select COUNT(*) from tickets where status=0");
+								$narr = mysql_fetch_row($nres);
+								if ($narr[0]>0)
+								{
+									echo " (".$narr[0].")";
+								}
+								echo "</a> | ";
+								if (!$cb)
+								{
+									echo "<a href=\"frameset.php?page=$page&amp;sub=$sub\" target=\"_top\" style=\"color:#ff0;\">Zwischenablage</a> | ";
+								}
+								echo '<a href="?logout=1" style="color:#f90;">Logout</a>';
 							?>
 						</td>
 					</tr>
@@ -336,6 +246,24 @@
 								}
 								else
 								{
+									// Release update lock
+									if (isset($_GET['releaseupdate']) && $_GET['releaseupdate']==1)
+									{
+										dbquery("UPDATE config SET config_value=0 WHERE config_name='updating';");
+									}
+									
+									// Release fleet update lock  
+									if (isset($_GET['releasefleetupdate']) && $_GET['releasefleetupdate']==1)
+									{
+										dbquery("UPDATE config SET config_value=0 WHERE config_name='updating_fleet';");
+									}
+									
+									// Activate update system
+									if (isset($_GET['activateupdate']) && $_GET['activateupdate']==1)
+									{
+										dbquery("UPDATE config SET config_value=1 WHERE config_name='update_enabled';");
+									}							
+									
 									if ($conf['updating']['v']!=0 && ($conf['updating']['p2']=="" || $conf['updating']['p2']<time()-120))
 									{
 										echo "<br/>";
@@ -413,12 +341,10 @@
 					</tr>
 				</table>
 				
-				<?PHP
-				// Write all changes of $s to the session variable
-				$_SESSION[SESSION_NAME]=$s;
-			
-			dbclose();
-			adminHtmlFooter();			
+	<?PHP
+		adminHtmlFooter();			
+		
+	require("inc/footer.inc.php");
 ?>
 
 

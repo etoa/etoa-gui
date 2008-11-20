@@ -28,7 +28,7 @@
 			UPDATE
 				users
 			SET
-				user_observe='Bitte Beobachtungsgrund beschreiben!'
+				user_observe='".addslashes($_POST['user_observe'])."'
 			WHERE
 				user_id=".$_POST['user_id']."
 			");
@@ -50,14 +50,18 @@
 			UPDATE
 				users
 			SET
-				user_observe='".addslashes($_POST['user_observe'])."'
+				user_observe='".addslashes($_POST['user_observe'])."',
 			WHERE
 				user_id=".$_POST['user_id']."
 			");
 		}	
 		
 		echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">
-		<select name=\"user_id\">";
+		<fieldset>
+		<legend>Hinzufügen</legend>
+		<table class=\"tb\">
+		<tr><th>
+		Benutzer:</th><td><select name=\"user_id\">";
 			$res = dbquery("
 			SELECT
 				user_nick,
@@ -76,8 +80,11 @@
 					echo "<option value=\"".$arr['user_id']."\">".$arr['user_nick']."</option>";
 				}
 			}
-			echo "</select>
-		 zur Beobachtungsliste <input type=\"submit\" name=\"observe_add\" value=\"hinzufügen\" />
+			echo "</select></td></tr>
+			<tr><th>Grund:</th><td><textarea name=\"user_observe\" cols=\"80\" rows=\"5\">Multiverdacht</textarea></td></tr>
+			</table><br/>
+		 <input type=\"submit\" name=\"observe_add\" value=\"Zur Beobachtungsliste hinzufügen\" />
+		 </fieldset>
 		</form><br/>";
 		
 		echo "Folgende User stehen unter Beobachtung:<br/><br/>";
@@ -101,7 +108,7 @@
 				<th style=\"width:150px;\">Nick</th>
 				<th style=\"width:100px;\">Punkte</th>
 				<th>Text</th>
-				<th style=\"width:150px;\">Optionen</th>
+				<th style=\"width:250px;\">Optionen</th>
 			</tr>";
 			while ($arr=mysql_fetch_array($res))
 			{
@@ -111,7 +118,7 @@
 					<td>".stripslashes($arr['user_observe'])."</td>
 					<td>
 						<a href=\"?page=$page&amp;sub=edit&amp;user_id=".$arr['user_id']."\">Daten</a>
-						<a href=\"?page=$page&amp;sub=$sub&amp;text=".$arr['user_id']."\">Text</a>
+						<a href=\"?page=$page&amp;sub=$sub&amp;text=".$arr['user_id']."\">Text ändern</a>
 						<a href=\"?page=$page&amp;sub=$sub&amp;del=".$arr['user_id']."\">Entfernen</a>
 					</td>
 				</tr>";

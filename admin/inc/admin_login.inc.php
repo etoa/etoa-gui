@@ -26,8 +26,7 @@
 	// 	Kommentar: 	
 	//
 
-	$login_successfull=true;
-	
+
 	function login_prompt($str="",$clr=0)
 	{
 		adminHtmlHeader();

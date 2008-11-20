@@ -128,6 +128,14 @@
 		{
 			error_msg("Run scripts/userstats.php periodically to update the image!",1);			
 		}	
+		if (file_exists(XML_INFO_FILE))
+		{
+			echo "<a href=\"".XML_INFO_FILE."\">XML</a>";
+		}
+		else
+		{
+			error_msg("Run scripts/userstats.php periodically to update the xml!",1);			
+		}	
 	}
 	
 	//
