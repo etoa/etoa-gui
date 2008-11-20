@@ -650,9 +650,11 @@
 		$arr2=mysql_fetch_row($res2);		
 		echo "<tr><th class=\"tbltitle\">Ticket-System:</th>";
 		echo "<td class=\"tbldata\"";
-		echo "><a href=\"?page=user&amp;sub=tickets\"";
+		echo ">
+		<a href=\"?page=user&amp;sub=tickets\"";
 		if ($arr[0]>0) echo " style=\"font-weight:bold;color:#f90;\"";			
-		echo ">".$arr[0]." neue Tickets</a> vorhanden";
+		echo " onclick=\"window.open('popup.php?page=tickets','Tickets','width=700, height=600, status=no, scrollbars=yes')\"
+		>".$arr[0]." neue Tickets</a> vorhanden";
 		if ($arr2[0]>0) echo ", <a href=\"?page=user&amp;sub=tickets\">".$arr2[0]." offene Tickets</a> vorhanden";
 		echo "</td></tr>";
 		
