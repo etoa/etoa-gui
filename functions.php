@@ -2076,7 +2076,7 @@ die Spielleitung";
 	*/
 	function tt($text)
 	{
-		return mTT($title,$text);
+		return mTT("",$text);
 		/*
 		$text = cut_word($text,150,1);
 		$text = str_replace('"',"\'",$text);
@@ -3107,12 +3107,13 @@ Forum: http://www.etoa.ch/forum";
 
 	function cTT($title,$content)
 	{
-		return " onclick=\"showTT('".$title."','".$content."',0,event,this);return false;\" ";
+		return " onclick=\"showTT('".str_replace('"',"\'",$title)."','".str_replace('"',"\'",$content)."',0,event,this);return false;\" ";
 	}
 
 	function mTT($title,$content)
 	{
-		return " onmouseover=\"showTT('".$title."','".$content."',1,event,this);\" onmouseout=\"hideTT()\" ";
+		
+		return " onmouseover=\"showTT('".str_replace('"',"\'",$title)."','".str_replace('"',"\'",$content)."',1,event,this);\" onmouseout=\"hideTT()\" ";
 	}
 
 	/**

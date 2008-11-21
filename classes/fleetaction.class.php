@@ -108,14 +108,17 @@
 
 		static function createFactory($code)
 		{
-			$className = "fleetAction".ucfirst($code);
-			$classFile = CLASS_ROOT."/fleetaction/".strtolower($className).".class.php";
-			if (file_exists($classFile))
+			if ($code!="")
 			{
-				include_once($classFile);
-				return new $className();			
+				$className = "fleetAction".ucfirst($code);
+				$classFile = CLASS_ROOT."/fleetaction/".strtolower($className).".class.php";
+				if (file_exists($classFile))
+				{
+					include_once($classFile);
+					return new $className();			
+				}
+				echo "Problem mit Flottenaktion $code ($classFile)!<br/>";
 			}
-			echo "Problem mit Flottenaktion $code ($classFile)!<br/>";
 			return false;
 		}
 		

@@ -123,7 +123,7 @@
 						}				
 						elseif ($ent->entityCode()=='p' && $ent->debrisField)					
 						{				
-							echo "<br/><span style=\"color:#ccc;font-weight:bold\" ".tm("Resourcen",RES_ICON_METAL.nf($ent->debrisMetal)." ".RES_METAL."<br style=\"clear:both\" />".RES_ICON_CRYSTAL.nf($ent->debrisCrystal)." ".RES_CRYSTAL."<br style=\"clear:both\" />".RES_ICON_PLASTIC.nf($ent->debrisPlastic)." ".RES_PLASTIC."<br style=\"clear:both\" />").">Trümmerfeld</span> ";
+							echo "<br/><span style=\"color:#817339;font-weight:bold\" ".tm("Trümmerfeld",RES_ICON_METAL.nf($ent->debrisMetal)." ".RES_METAL."<br style=\"clear:both\" />".RES_ICON_CRYSTAL.nf($ent->debrisCrystal)." ".RES_CRYSTAL."<br style=\"clear:both\" />".RES_ICON_PLASTIC.nf($ent->debrisPlastic)." ".RES_PLASTIC."<br style=\"clear:both\" />").">Trümmerfeld</span> ";
 						}	
 						echo "</td>
 						<td class=\"tbldata\" $addstyle><a href=\"?page=entity&amp;id=".$ent->id()."\">".$ent->name()."</a></td>

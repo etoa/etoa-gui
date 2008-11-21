@@ -9,9 +9,11 @@ define('TOOLTIP_COND_BAD_COLOR','#f00');
 class Tooltip
 {
 	private $text;
+	private $title;
 	
 	function Tooltip($bgimage="")
 	{
+		$this->title="";
 		if ($bgimage!="")
 		{
 			$this->text = '<div style="background:url('.$bgimage.') no-repeat;">';
@@ -29,7 +31,7 @@ class Tooltip
 	  	
 	function __toString()
 	{
-		return tt($this->text);
+		return mTT($this->title,$this->text);
 	}	
 
 	function addIcon($path)
@@ -49,7 +51,7 @@ class Tooltip
 
 	function addTitle($text)
 	{
-		$this->add("<div style=\"color:".TOOLTIP_TITLE_COLOR."\"><b>".$text."</b></div>");
+		$this->title .= "<div style=\"color:".TOOLTIP_TITLE_COLOR."\"><b>".$text."</b></div>";
 	}	
 
 	function addGoodCond($text)

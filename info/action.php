@@ -27,8 +27,8 @@
 			echo "<br/><br/><b>Gesinnung:</b> 
 			<span style=\"color:".FleetAction::$attitudeColor[$ac->attitude()]."\">
 			".FleetAction::$attitudeString[$ac->attitude()]."</span>
-			<br/><b>Sichtbar:</b> ".($ac->visible() ? 'Ja, für den Zielbesitzer sichtbar.' : 'Nein, nur für mich sichtbar.')."
-			<br/><b>Exklusiv:</b> ".($ac->exclusive() ? 'Ja, nur Schiffe welche diese Aktion können, dürfen mitfliegen.' : 'Nein, alle Schiffe können mitfliegen.');
+			<br/><b>Sichtbarkeit:</b> ".($ac->visible() ? 'Für das Ziel sichtbar.' : 'Nur für mich sichtbar.')."
+			<br/><b>Exklusiv:</b> ".($ac->exclusive() ? 'Ja, nur Schiffe mit dieser Fähigkeit dürfen mitfliegen.' : 'Nein, alle Schiffe können mitfliegen.');
 			iBoxEnd();				
 				
 				//Liest alle notwenidgen Daten aus der Schiffs-DB
