@@ -40,6 +40,8 @@
 			
 	adminHtmlHeader($s['theme']);
 			
+			
+			
 	// Admin-Gruppen laden				
 	$admingroup=array();
 	$gres=dbquery("SELECT * FROM admin_groups ORDER BY group_level DESC;");

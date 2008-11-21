@@ -180,6 +180,9 @@
 
 	// Show body
 	echo file_exists(CSS_STYLE."/template.php") ? '<body onload="preloadImages();">' : '<body>';
+	
+	initTT();
+	
 	?>	
 
 		<!-- Stuff for DHTML Tipps -->

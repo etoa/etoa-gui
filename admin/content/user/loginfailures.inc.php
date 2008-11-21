@@ -28,6 +28,7 @@
 		
 			$res=dbquery("
 			SELECT 
+				failure_id,
 				failure_time,
 				failure_pw,
 				user_nick,
@@ -50,8 +51,8 @@
 				echo "<table class=\"tb\">";
 				echo "<tr>
 				<th><a href=\"?page=$page&amp;sub=$sub&amp;order=0\">Zeit</a></th>
-				<th><a href=\"?page=$page&amp;sub=$sub&amp;order=1\">User</a></th>";
-				echo "<th><a href=\"?page=$page&amp;sub=$sub&amp;order=2\">IP-Adresse</a></th>
+				<th><a href=\"?page=$page&amp;sub=$sub&amp;order=1\">User</a></th>
+				<th><a href=\"?page=$page&amp;sub=$sub&amp;order=2\">IP-Adresse</a></th>
 				<th><a href=\"?page=$page&amp;sub=$sub&amp;order=3\">Hostname</a></th>
 				<th><a href=\"?page=$page&amp;sub=$sub&amp;order=4\">Client</a></th>
 				<th>Aktionen</th></tr>";

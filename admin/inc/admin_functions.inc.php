@@ -49,11 +49,15 @@
 		<meta http-equiv="content-language" content="de" />
 
 		<script src="../js/main.js" type="text/javascript"></script>
-		<script src="../js/admin.js" type="text/javascript"></script>';
+		<script src="../js/admin.js" type="text/javascript"></script>
+		<script src="../js/tooltip.js" type="text/javascript" ></script>
+		';
 		$xajax->printJavascript("../".XAJAX_DIR); 
 
 	echo '	</head>
 	<body class="index">';
+	initTT();
+		
 	}
 	
 	function adminHtmlFooter()

@@ -40,6 +40,8 @@
 					<?PHP include("inc/csshacks.inc.php"); ?>
 			
 					<script src="js/main.js" type="text/javascript"></script>
+					<script src="js/tooltip.js" type="text/javascript"></script>
+
 					<?PHP
 						echo $xajax->printJavascript(XAJAX_DIR);
 						echo file_exists(CSS_STYLE."/scripts.js") ? "<script src=\"".CSS_STYLE."/scripts.js\" type=\"text/javascript\"></script>" : ''; 

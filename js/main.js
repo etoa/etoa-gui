@@ -413,7 +413,7 @@ function sliceString(string, value) {
  Email: (migoicons@hotmail.com)
  Updated on :7/30/2003
 */
-
+/*
 var MI_IE=MI_IE4=MI_NN4=MI_ONN=MI_NN=MI_pSub=MI_sNav=0;mig_dNav()
 var Style=[],Text=[],Count=0,move=0,fl=0,isOK=1,hs,e_d,tb,w=window,PX=(MI_pSub)?"px":""
 var d_r=(MI_IE&&document.compatMode=="CSS1Compat")? "document.documentElement":"document.body"
@@ -535,7 +535,7 @@ function mig_clay(){
 if(!mig_lay()){isOK=0
 alert("DHTML TIP MESSAGE VERSION 1.5 ERROR NOTICE.\n<DIV ID=\""+TipId+"\"></DIV> tag missing or its ID has been altered")}
 else{mig_hand();mig_cssf()}}
-
+*/
 
 //
 //Fügt per Klick BB-Codes ein bbcode(arg1=formular ort, arg2=Kürzel, arg3=text)

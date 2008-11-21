@@ -33,11 +33,11 @@
 	{
 		echo "<h1>Spiel offline nehmen</h1>";
 		
-		if ($_GET['off']==1)
+		if (isset($_GET['off']) && $_GET['off']==1)
 		{
 			$cfg->set('offline',1);
 		}
-		if ($_GET['on']==1)
+		if (isset($_GET['on']) && $_GET['on']==1)
 		{
 			$cfg->set('offline',0);
 		}
@@ -651,7 +651,7 @@
 		echo "<tr><th class=\"tbltitle\">Ticket-System:</th>";
 		echo "<td class=\"tbldata\"";
 		echo ">
-		<a href=\"?page=user&amp;sub=tickets\"";
+		<a href=\"javascript:;\"";
 		if ($arr[0]>0) echo " style=\"font-weight:bold;color:#f90;\"";			
 		echo " onclick=\"window.open('popup.php?page=tickets','Tickets','width=700, height=600, status=no, scrollbars=yes')\"
 		>".$arr[0]." neue Tickets</a> vorhanden";

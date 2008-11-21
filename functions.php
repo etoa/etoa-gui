@@ -3090,6 +3090,25 @@ Forum: http://www.etoa.ch/forum";
 		return $ip;		
 		
 	}
+	
+	
+	function initTT()
+	{
+		echo '<div class="tooltip" id="tooltip" style="display:none;">
+  	<div class="tttitle" id="tttitle"></div>
+  	<div class="ttcontent" id="ttcontent"></div>
+ </div> ';		
+	}
+
+	function cTT($title,$content)
+	{
+		return " onclick=\"showTT('".$title."','".$content."',0,event,this);return false;\" ";
+	}
+
+	function mTT($title,$content)
+	{
+		return " onmouseover=\"showTT('".$title."','".$content."',1,event,this);\" onmouseout=\"hideTT()\" ";
+	}
 
 	/**
 	* Textfunktionen einbinden

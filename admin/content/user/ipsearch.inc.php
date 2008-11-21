@@ -42,6 +42,7 @@
 		if (mysql_num_rows($res)>0)
 		{
 			$arr = mysql_fetch_assoc($res);
+
 			echo "<b>Nick:</b> <a href=\"?page=$page&amp;sub=edit&amp;id=".$user."\">".$arr['user_nick']."</a><br/>";
 
 			if (!isset($_SESSION['admin_ipsearch_concat']))
@@ -151,7 +152,8 @@
 					log_acttime,
 					log_client,
 					log_hostname,
-					log_ip
+					log_ip,
+					log_id
 				FROM	
 					user_sessionlog
 				WHERE
@@ -414,11 +416,16 @@
 				<th>Client</th></tr>";
 				while ($arr = mysql_fetch_array($res))
 				{
+					echo "<div id=\"tt".$arr['user_id']."\" style=\"display:none;\">
+					<a href=\"?page=user&amp;sub=ipsearch&amp;user=".$arr['user_id']."\">IP-Adressen suchen</a><br/>
+					<a href=\"?page=$page&amp;sub=edit&amp;id=".$arr['user_id']."\">Daten bearbeiten</a><br/>
+					</div>";
+
 					echo "<tr>
-					<td><a href=\"?page=$page&amp;sub=$sub&amp;user=".$arr['user_id']."\">".$arr['user_nick']."</a></td>
+					<td><a href=\"?page=$page&amp;sub=$sub&amp;user=".$arr['user_id']."\" ".cTT($arr['user_nick'],"tt".$arr['user_id']).">".$arr['user_nick']."</a></td>
 					<td>".df($arr['user_acttime'])."</td>        
-					<td><a href=\"?page=$page&amp;sub=$sub&amp;ip=".$arr['user_ip']."\" ".tm('IP',$arr['user_ip']).">".($ip==$arr['user_ip'] ? 'IP':'-')."</a> / 
-					<a href=\"?page=$page&amp;sub=$sub&amp;host=".$arr['user_hostname']."\" ".tm('Host',$arr['user_hostname']).">".($host==$arr['user_hostname'] ? 'Host':'-')."</a></td>
+					<td><a href=\"?page=$page&amp;sub=$sub&amp;ip=".$arr['user_ip']."\" ".mTT('IP',$arr['user_ip']).">".($ip==$arr['user_ip'] ? 'IP':'-')."</a> / 
+					<a href=\"?page=$page&amp;sub=$sub&amp;host=".$arr['user_hostname']."\" ".mTT('Host',$arr['user_hostname']).">".($host==$arr['user_hostname'] ? 'Host':'-')."</a></td>
 					<td>".$arr['user_client']."</td>
 					</tr>";
 				}
@@ -461,11 +468,15 @@
 				<th>Client</th></tr>";
 				while ($arr = mysql_fetch_array($res))
 				{
+					echo "<div id=\"tt".$arr['user_id']."\" style=\"display:none;\">
+					<a href=\"?page=user&amp;sub=ipsearch&amp;user=".$arr['user_id']."\">IP-Adressen suchen</a><br/>
+					<a href=\"?page=$page&amp;sub=edit&amp;id=".$arr['user_id']."\">Daten bearbeiten</a><br/>
+					</div>";
 					echo "<tr>
-					<td><a href=\"?page=$page&amp;sub=$sub&amp;user=".$arr['user_id']."\">".$arr['user_nick']."</a></td>
+					<td><a href=\"?page=$page&amp;sub=$sub&amp;user=".$arr['user_id']."\" ".cTT($arr['user_nick'],"tt".$arr['user_id']).">".$arr['user_nick']."</a></td>
 					<td>".df($arr['log_acttime'])."</td>        
-					<td><a href=\"?page=$page&amp;sub=$sub&amp;ip=".$arr['log_ip']."\" ".tm('IP',$arr['log_ip']).">".($ip==$arr['log_ip'] ? 'IP':'-')."</a> / 
-					<a href=\"?page=$page&amp;sub=$sub&amp;host=".$arr['log_hostname']."\" ".tm('Host',$arr['log_hostname']).">".($host==$arr['log_hostname'] ? 'Host':'-')."</a></td>
+					<td><a href=\"?page=$page&amp;sub=$sub&amp;ip=".$arr['log_ip']."\" ".mTT('IP',$arr['log_ip']).">".($ip==$arr['log_ip'] ? 'IP':'-')."</a> / 
+					<a href=\"?page=$page&amp;sub=$sub&amp;host=".$arr['log_hostname']."\" ".mTT('Host',$arr['log_hostname']).">".($host==$arr['log_hostname'] ? 'Host':'-')."</a></td>
 					<td>".$arr['log_client']."</td>
 					</tr>";
 				}
@@ -507,11 +518,15 @@
 				</tr>";
 				while ($arr=mysql_fetch_array($res))
 				{
+					echo "<div id=\"tt".$arr['user_id']."\" style=\"display:none;\">
+					<a href=\"?page=user&amp;sub=ipsearch&amp;user=".$arr['user_id']."\">IP-Adressen suchen</a><br/>
+					<a href=\"?page=$page&amp;sub=edit&amp;id=".$arr['user_id']."\">Daten bearbeiten</a><br/>
+					</div>";					
 					echo "<tr>
-					<td><a href=\"?page=user&amp;sub=$sub&amp;user=".$arr['user_id']."\">".$arr['user_nick']."</a></td>
+					<td><a href=\"?page=user&amp;sub=$sub&amp;user=".$arr['user_id']."\" ".cTT($arr['user_nick'],"tt".$arr['user_id']).">".$arr['user_nick']."</a></td>
 					<td>".df($arr['failure_time'])."</td>
-					<td><a href=\"?page=$page&amp;sub=$sub&amp;ip=".$arr['failure_ip']."\" ".tm('IP',$arr['failure_ip']).">".($ip==$arr['failure_ip'] ? 'IP':'-')."</a> / 
-					<a href=\"?page=$page&amp;sub=$sub&amp;host=".$arr['failure_host']."\" ".tm('Host',$arr['failure_host']).">".($host==$arr['failure_host'] ? 'Host':'-')."</a></td>
+					<td><a href=\"?page=$page&amp;sub=$sub&amp;ip=".$arr['failure_ip']."\" ".mTT('IP',$arr['failure_ip']).">".($ip==$arr['failure_ip'] ? 'IP':'-')."</a> / 
+					<a href=\"?page=$page&amp;sub=$sub&amp;host=".$arr['failure_host']."\" ".mTT('Host',$arr['failure_host']).">".($host==$arr['failure_host'] ? 'Host':'-')."</a></td>
 					<td>".$arr['failure_client']."</td>
 					</tr>";
 				}

@@ -180,3 +180,40 @@ table.boxLayout, div.boxLayout	{
 	padding:5px;
 }
 
+
+/*------- Tooltip ----------*/
+
+.tooltip {
+  position: absolute;
+  display: none;
+  background: #223;
+  color:#fff;
+  border:1px solid #415680;
+  font-size:9pt;
+  font-family:arial;
+  padding:1px;
+}
+
+.tooltip .tttitle	{
+	background:#225;
+  border:1px solid #415680;
+	padding: 2px;
+	font-weight:bold;
+	margin-bottom:2px;
+}
+
+.tooltip .ttcontent	{
+  border:1px solid #415680;
+	padding: 4px;
+}
+
+.tooltip a	{
+	color:#eee;
+	text-decoration:underline;
+	font-weight:bold;
+}
+.tooltip a:hover	{
+	color:#fff;
+	text-decoration:none;;
+}
+
