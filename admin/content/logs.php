@@ -329,12 +329,12 @@
 									<td class=\"tbldata\">".$war."</td>
 									<td class=\"tbldata\">".$attack."</td>
 									<td class=\"tbldata\">".fa($arr['logs_battle_fleet_action'])."</td>
-									<td class=\"tbldata\" onclick=\"xajax_showBattle('".$battle."',".$arr['logs_battle_id'].");\" ".tm("","Klicken für Anzeige des Berichtes!").">
+									<td class=\"tbldata\" onclick=\"xajax_showBattle('".$battle."',".$arr['logs_battle_id'].");\" ".mTT("","Klicken für Anzeige des Berichtes!").">
 										<a href=\"javascript:;\">Anzeigen</a>
 									</td>
 								</tr>
 								<tr>
-									<td class=\"tbldata\" id=\"show_battle_".$arr['logs_battle_id']."\" style=\"vertical-align:middle;\" colspan=\"5\" ondblclick=\"xajax_showBattle('',".$arr['logs_battle_id'].");\" ".tm("","Doppelklick zum deaktivieren des Fensters!").">
+									<td class=\"tbldata\" id=\"show_battle_".$arr['logs_battle_id']."\" style=\"vertical-align:middle;\" colspan=\"5\" ondblclick=\"xajax_showBattle('',".$arr['logs_battle_id'].");\" ".mTT("","Doppelklick zum deaktivieren des Fensters!").">
 									</td>
 								</tr>
 								";
@@ -416,12 +416,12 @@
 									<td class=\"tbldata\">".$arr['logs_game_cat_name']."</td>
 									<td class=\"tbldata\">".get_user_nick($arr['logs_game_user_id'])."</td>
 									<td class=\"tbldata\">".$object."</td>
-									<td class=\"tbldata\" onclick=\"xajax_showGameLogs('".$log_text."',".$arr['logs_game_id'].");\" ".tm("","Klicken für Anzeige des Berichtes!").">
+									<td class=\"tbldata\" onclick=\"xajax_showGameLogs('".$log_text."',".$arr['logs_game_id'].");\" ".mTT("","Klicken für Anzeige des Berichtes!").">
 										<a href=\"javascript:;\">Anzeigen</a>
 									</td>
 								</tr>
 								<tr>
-									<td class=\"tbldata\" id=\"show_game_logs_".$arr['logs_game_id']."\" style=\"vertical-align:middle;\" colspan=\"5\" ondblclick=\"xajax_showGameLogs('',".$arr['logs_game_id'].");\" ".tm("","Doppelklick zum deaktivieren des Fensters!").">
+									<td class=\"tbldata\" id=\"show_game_logs_".$arr['logs_game_id']."\" style=\"vertical-align:middle;\" colspan=\"5\" ondblclick=\"xajax_showGameLogs('',".$arr['logs_game_id'].");\" ".mTT("","Doppelklick zum deaktivieren des Fensters!").">
 									</td>
 								</tr>";
 				}

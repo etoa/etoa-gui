@@ -321,10 +321,10 @@
 						$style="";
 					echo "<tr>";
 					echo "<td class=\"tbldata\" $style>".$arr['queue_id']."</a></td>";
-					echo "<td class=\"tbldata\"$style ".tm($arr['ship_name'],"<b>Schiff-ID:</b> ".$arr['ship_id']).">".$arr['ship_name']."</td>";
+					echo "<td class=\"tbldata\"$style ".mTT($arr['ship_name'],"<b>Schiff-ID:</b> ".$arr['ship_id']).">".$arr['ship_name']."</td>";
 					echo "<td class=\"tbldata\"$style>".nf($arr['queue_cnt'])."</td>";
-					echo "<td class=\"tbldata\"$style ".tm($arr['planet_name'],"<b>Planet-ID:</b> ".$arr['id']."<br/><b>Koordinaten:</b> ".$arr['cell_sx']."/".$arr['cell_sy']." : ".$arr['cell_cx']."/".$arr['cell_cy']." : ".$arr['planet_solsys_pos']).">".cut_string($arr['planet_name'],11)."</td>";
-					echo "<td class=\"tbldata\"$style ".tm($arr['user_nick'],"<b>User-ID:</b> ".$arr['user_id']."<br/><b>Punkte:</b> ".nf($arr['user_points'])).">".cut_string($arr['user_nick'],11)."</td>";
+					echo "<td class=\"tbldata\"$style ".mTT($arr['planet_name'],"<b>Planet-ID:</b> ".$arr['id']."<br/><b>Koordinaten:</b> ".$arr['cell_sx']."/".$arr['cell_sy']." : ".$arr['cell_cx']."/".$arr['cell_cy']." : ".$arr['planet_solsys_pos']).">".cut_string($arr['planet_name'],11)."</td>";
+					echo "<td class=\"tbldata\"$style ".mTT($arr['user_nick'],"<b>User-ID:</b> ".$arr['user_id']."<br/><b>Punkte:</b> ".nf($arr['user_points'])).">".cut_string($arr['user_nick'],11)."</td>";
 					echo "<td class=\"tbldata\"$style>".df($arr['queue_starttime'],1)."</td>";
 					echo "<td class=\"tbldata\"$style>".df($arr['queue_endtime'],1)."</td>";
 					echo "<td class=\"tbldata\"$style>".edit_button("?page=$page&sub=$sub&action=edit&id=".$arr['queue_id']);
@@ -689,9 +689,9 @@
 						$style="";
 					echo "<tr>";
 					echo "<td class=\"tbldata\" $style>".$arr['shiplist_id']."</a></td>";
-					echo "<td class=\"tbldata\"$style ".tm($arr['planet_name'],"<b>Planet-ID:</b> ".$arr['id']."<br/><b>Koordinaten:</b> ".$arr['cell_sx']."/".$arr['cell_sy']." : ".$arr['cell_cx']."/".$arr['cell_cy']." : ".$arr['planet_solsys_pos']).">".cut_string($arr['planet_name'],11)."</td>";
-					echo "<td class=\"tbldata\"$style ".tm($arr['user_nick'],"<b>User-ID:</b> ".$arr['user_id']."<br/><b>Punkte:</b> ".nf($arr['user_points'])).">".cut_string($arr['user_nick'],11)."</td>";
-					echo "<td class=\"tbldata\"$style ".tm($arr['ship_name'],"<b>Schiff-ID:</b> ".$arr['ship_id']).">".$arr['ship_name']."</td>";
+					echo "<td class=\"tbldata\"$style ".mTT($arr['planet_name'],"<b>Planet-ID:</b> ".$arr['id']."<br/><b>Koordinaten:</b> ".$arr['cell_sx']."/".$arr['cell_sy']." : ".$arr['cell_cx']."/".$arr['cell_cy']." : ".$arr['planet_solsys_pos']).">".cut_string($arr['planet_name'],11)."</td>";
+					echo "<td class=\"tbldata\"$style ".mTT($arr['user_nick'],"<b>User-ID:</b> ".$arr['user_id']."<br/><b>Punkte:</b> ".nf($arr['user_points'])).">".cut_string($arr['user_nick'],11)."</td>";
+					echo "<td class=\"tbldata\"$style ".mTT($arr['ship_name'],"<b>Schiff-ID:</b> ".$arr['ship_id']).">".$arr['ship_name']."</td>";
 					echo "<td class=\"tbldata\"$style>".nf($arr['shiplist_count'])."</td>";
 					echo "<td class=\"tbldata\"$style>".edit_button("?page=$page&sub=$sub&action=edit&shiplist_id=".$arr['shiplist_id']);
 					if ($error)

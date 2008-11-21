@@ -10,7 +10,7 @@ body {
 }
 
 /*
-Fix für PNG-Files
+Fix fï¿½r PNG-Files
 img, div { behavior: url(scripts/iepngfix.htc) }
 */
 
@@ -57,7 +57,7 @@ table	{
 }
 
 /* Wenn sich der cursor in einem text feld befindet... */
-/* Internet Explorer unterstützt diese funktion nicht!!!*/
+/* Internet Explorer unterstï¿½tzt diese funktion nicht!!!*/
 input:focus,textarea:focus, select:focus {
   border: 1px #ffffff solid;
   background:#000000;
@@ -71,7 +71,7 @@ button	{
 }
 
 /* Definiert die verschieden button typen im normal zustand */
-/* Internet Explorer unterstützt diese funktion nicht!!!*/
+/* Internet Explorer unterstï¿½tzt diese funktion nicht!!!*/
 input[type="submit"],input[type="reset"],input[type="button"]	{
 	background:#222255 url('images/button1.jpg');
 	color:#fff;
@@ -79,7 +79,7 @@ input[type="submit"],input[type="reset"],input[type="button"]	{
 }
 
 /* Definiert die verschieden button typen im hover zustand */
-/* Internet Explorer unterstützt diese funktion nicht!!!*/
+/* Internet Explorer unterstï¿½tzt diese funktion nicht!!!*/
 input:hover[type="submit"],input:hover[type="reset"],input:hover[type="button"]	{
 	background:#222255 url('images/button2.jpg');
 	color:#fff;
@@ -251,7 +251,7 @@ input,select,textarea	{
 	text-align:left;
 }
 
-/* Ressourcen Speicher voll / Bewohner -> farbe wenn gebäude baut */
+/* Ressourcen Speicher voll / Bewohner -> farbe wenn gebï¿½ude baut */
 /* rest muss gleich wie .tbldata sein! */
 .tbldata2 {
 	font-size:8pt;
@@ -263,7 +263,7 @@ input,select,textarea	{
 	text-align:left;
 }
 
-/* Energie wenn sie Positiv ist (standart ist hellgrün) */
+/* Energie wenn sie Positiv ist (standart ist hellgrï¿½n) */
 /* rest muss gleich wie .tbldata sein! */
 .tbldata3 {
 	font-size:8pt;
@@ -316,7 +316,7 @@ div.infoboxcontent {
 	width:99%;
 	font-size:8pt;
 	color:#fff;
-	border: null;
+	border: none;
 	border-left:1px solid #fff;
 	border-right:1px solid #fff;
 	border-bottom:1px solid #fff;
@@ -420,7 +420,7 @@ table#innerspacetbl {
 
 
 
-//übersicht -> planetenliste
+//ï¿½bersicht -> planetenliste
 // \"Courier New\", Courier, mono;
 
 .PlaniTextLinks {

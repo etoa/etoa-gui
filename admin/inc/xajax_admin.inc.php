@@ -19,7 +19,7 @@
 		require_once("inc/xajax/alliances.xajax.php");
 	}
 
-	if (isset($page) && $page=="user")
+	if (isset($page) && ($page=="user" || $page=="sendmessage"))
 	{
 		require_once("inc/xajax/user.xajax.php");
 	}

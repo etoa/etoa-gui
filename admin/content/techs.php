@@ -494,8 +494,8 @@
 					else
 						$style="";
 					echo "<tr>";
-					echo "<td class=\"tbldata\"$style ".tm($arr['planet_name'],$arr['sx']."/".$arr['sy']." : ".$arr['cx']."/".$arr['cy']." : ".$arr['pos']).">".cut_string($arr['planet_name'],11)."</a></td>";
-					echo "<td class=\"tbldata\"$style ".tm($arr['user_nick'],nf($arr['user_points'])." Punkte").">".cut_string($arr['user_nick'],11)."</a></td>";
+					echo "<td class=\"tbldata\"$style ".mTT($arr['planet_name'],$arr['sx']."/".$arr['sy']." : ".$arr['cx']."/".$arr['cy']." : ".$arr['pos']).">".cut_string($arr['planet_name'],11)."</a></td>";
+					echo "<td class=\"tbldata\"$style ".mTT($arr['user_nick'],nf($arr['user_points'])." Punkte").">".cut_string($arr['user_nick'],11)."</a></td>";
 					echo "<td class=\"tbldata\"$style>".$arr['tech_name']."</a></td>";
 					echo "<td class=\"tbldata\"$style>".nf($arr['techlist_current_level'])."</a></td>";
 					echo "<td class=\"tbldata\"$style>".$build_type[$arr['techlist_build_type']]."</a></td>";

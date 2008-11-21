@@ -13,6 +13,7 @@
 			u.user_id as uid,
 			t.timestamp,
 			c.name as cname,
+			c.id as cid,
 			t.id,
 			t.text,
 			t.status,
@@ -48,19 +49,38 @@
 		{
 			$arr=mysql_fetch_array($res);
 			echo "<h2>Details Ticket #".$arr['id']."</h2>";
+
+			echo "<div id=\"ttuser\" style=\"display:none;\">
+			".openerLink("page=user&sub=edit&id=".$arr['uid'],"Daten anzeigen")."<br/>
+			".popupLink("sendmessage","Nachricht senden","","id=".$arr['uid'])."<br/>
+			</div>";			
+			
 			echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
 			echo "<input type=\"hidden\" name=\"user_id\" value=\"".$arr['uid']."\" />";
 			echo "<table class=\"tb\">
 			<tr>
 				<th>Spieler</th>
-				<td>".$arr['unick']." 
-					[<a href=\"?page=user&sub=edit&amp;user_id=".$arr['uid']."\">Daten</a>]
-					[<a href=\"?page=messages&sub=sendmsg&user_id=".$arr['uid']."\">Nachricht</a>]
-				</td>
+				<td><a href=\"#\" ".cTT($arr['unick'],"ttuser").">".$arr['unick']."</a></td>
 			</tr>
 			<tr>
 				<th>Kategorie</th>
-				<td>".$arr['cname']."</td>
+				<td><select name=\"abuse_cat\">";
+				$cres = dbquery("
+				SELECT
+					id,
+					name
+				FROM
+					ticket_cat
+				ORDER By
+					sort			
+				");			
+				while ($carr = mysql_fetch_row($cres))
+				{
+					echo "<option value=\"".$carr[0]."\"";
+					if (isset($arr['cid']) && $arr['cid']==$carr[0]) echo " selected=\"selected\"";
+					echo ">".$carr[1]."</option>";			
+				}				
+				echo "</select></td>
 			</tr>
 			<tr>
 				<th>Zeit</th>
@@ -72,11 +92,13 @@
 			</tr>";
 			if ($arr['cunick']!="")
 			{
+				echo "<div id=\"ttcuser\" style=\"display:none;\">
+				".openerLink("page=user&sub=edit&id=".$arr['cuid'],"Daten anzeigen")."<br/>
+				".popupLink("sendmessage","Nachricht senden","","id=".$arr['cuid'])."<br/>
+				</div>";							
 				echo "<tr>
 				<th>Betreffenden Spieler</th>
-				<td>".$arr['cunick']." 
-					[<a href=\"?page=user&sub=edit&amp;user_id=".$arr['cuid']."\">Daten</a>]
-					[<a href=\"?page=messages&sub=sendmsg&user_id=".$arr['cuid']."\">Nachricht</a>]
+				<td><a href=\"#\" ".cTT($arr['cunick'],"ttcuser").">".$arr['cunick']."</a>
 				</td>
 				</tr>";				
 			}
@@ -84,8 +106,7 @@
 			{
 				echo "<tr>
 				<th>Betreffende Allianz</th>
-				<td>[".$arr['alliance_tag']."] ".$arr['alliance_name']." 
-					[<a href=\"?page=alliances&sub=edit&amp;alliance_id=".$arr['alliance_id']."\">Daten</a>]
+				<td>".openerLink("page=alliances&sub=edit&amp;alliance_id=".$arr['alliance_id'],"[".$arr['alliance_tag']."] ".$arr['alliance_name'])."
 				</td>
 				</tr>";				
 			}			
@@ -161,13 +182,14 @@
 			SET
 				admin_id=".$_POST['abuse_admin_id'].",
 				status='".$_POST['abuse_status']."',
+					cat_id 	='".$_POST['abuse_cat']."',
 				admin_timestamp=UNIX_TIMESTAMP(),
-				solution='".addslashes($_POST['abuse_solution'])."',
-				notice='".addslashes($_POST['abuse_notice'])."'
+				solution='".addslashes($_POST['abuse_solution'])."'
+				".(isset($_POST['abuse_notice']) ? ",notice='".addslashes($_POST['abuse_notice'])."'" : "")."
 			WHERE
 				id=".$_POST['abuse_id']."
 			;");	
-			echo "Ticket geändert!<br/>";
+			echo ok_msg("Ticket geändert!");
 		}
 		if (isset($_POST['submit_chown']))
 		{
@@ -177,12 +199,13 @@
 			SET
 				admin_id=".$s['user_id'].",
 				status=1,
+					cat_id 	='".$_POST['abuse_cat']."',
 				admin_timestamp=UNIX_TIMESTAMP(),
 				solution='".addslashes($_POST['abuse_solution'])."'
 			WHERE
 				id=".$_POST['abuse_id']."
 			;");	
-			echo "Ticket geändert!<br/>";
+			echo ok_msg("Ticket geändert!");
 			$text = "Hallo!\n\nEin Administrator hat dein Ticket erhalten und wird sich um das Problem kümmern ! Klicke [url ?page=ticket&id=".$_POST['abuse_id']."]hier[/url] um Informationen dazu anzuzeigen.";
 			send_msg($_POST['user_id'],USER_MSG_CAT_ID,"Dein Ticket ".$_POST['abuse_id']."",$text);
 		}	
@@ -193,16 +216,17 @@
 				tickets
 			SET
 				status=2,
+					cat_id 	='".$_POST['abuse_cat']."',
 				admin_timestamp=UNIX_TIMESTAMP(),
-				solution='".addslashes($_POST['abuse_solution'])."',
-				notice='".addslashes($_POST['abuse_notice'])."'
+				solution='".addslashes($_POST['abuse_solution'])."'
+				".(isset($_POST['abuse_notice']) ? ",notice='".addslashes($_POST['abuse_notice'])."'" : "")."
 			WHERE
 				id=".$_POST['abuse_id']."
 			;");	
 			$text = "Hallo!\n\nDein Ticket wurde bearbeitet! Klicke [url ?page=ticket&id=".$_POST['abuse_id']."]hier[/url] um Informationen dazu anzuzeigen.";
 			send_msg($_POST['user_id'],USER_MSG_CAT_ID,"Dein Ticket #".$_POST['abuse_id']."",$text);
 			
-			echo "Ticket geändert!<br/>";
+			echo ok_msg("Ticket geändert!");
 		}				
 		if (isset($_POST['submit_delete']))
 		{
@@ -212,13 +236,14 @@
 			SET
 				admin_id=".$s['user_id'].",
 				status=3,
+					cat_id 	='".$_POST['abuse_cat']."',
 				admin_timestamp=UNIX_TIMESTAMP(),
-				solution='".addslashes($_POST['abuse_solution'])."',
-				notice='".addslashes($_POST['abuse_notice'])."'
+				solution='".addslashes($_POST['abuse_solution'])."'
+				".(isset($_POST['abuse_notice']) ? ",notice='".addslashes($_POST['abuse_notice'])."'" : "")."
 			WHERE
 				id=".$_POST['abuse_id']."
 			;");	
-			echo "Ticket geändert!<br/>";
+			echo ok_msg("Ticket geändert!");
 		}	
 		if (isset($_GET['action']) && $_GET['action']=="delall")
 		{
@@ -231,11 +256,11 @@
 			echo "Tickets gelöscht!<br/>";
 		}	
 		
-		echo "<h2>Unbearbeitete Tickets</h2>";
-		$res = dbquery("
-		SELECT		
-			u.user_nick,
-			u.user_id,  
+		$types = array(
+		"Unbearbeitete Tickets" => 
+		"SELECT		
+			u.user_nick as unick,
+			u.user_id as uid,  
 			c.name as cname,
 			t.timestamp,
 			t.id		
@@ -252,39 +277,10 @@
 			t.status=0	
 		ORDER BY
 			t.timestamp
-		;");
-		if (mysql_num_rows($res)>0)
-		{
-			echo "<table class=\"tb\">
-			<tr>
-				<th>ID</th>
-				<th>Spieler</th>
-				<th>Kategorie</th>
-				<th>Zeit</th>
-				<th>Optionen</th>
-			</tr>";
-			while($arr=mysql_fetch_array($res))
-			{
-				echo "<tr>
-				<td>".$arr['id']."</td>
-				<td><a href=\"javascript:;\" onclick=\"opener.document.location='index.php?page=user&sub=edit&id=".$arr['user_id']."'\">".$arr['user_nick']."</a></td>
-				<td>".$arr['cname']."</td>
-				<td>".df($arr['timestamp'])."</td>
-				<td>
-					<a href=\"?page=$page&amp;sub=$sub&amp;view=".$arr['id']."\">Anzeigen</a>
-				</td>
-				</tr>";			
-			}
-			echo "</table>";
-		}
-		else
-		{
-			echo "<i>Keine vorhanden!</i>";
-		}
-	
-		echo "<h2>Zugewiesene Tickets</h2>";
-		$res = dbquery("
-		SELECT		
+		;",
+		
+		"Zugewiesene Tickets" =>
+		"SELECT		
 			u.user_nick as unick,
 			u.user_id as uid,
 			a.user_nick as anick,
@@ -309,44 +305,10 @@
 			t.status=1	
 		ORDER BY
 			t.timestamp DESC
-		;");
-		if (mysql_num_rows($res)>0)
-		{
-			echo "<table class=\"tb\">
-			<tr>
-				<th>ID</th>
-				<th>Spieler</th>
-				<th>Kategorie</th>
-				<th>Eingesendet</th>
-				<th>Admin</th>
-				<th>Zugewiesen</th>
-				<th>Optionen</th>
-			</tr>";
-			while($arr=mysql_fetch_array($res))
-			{
-				echo "<tr>
-				<td>#".$arr['id']."</td>
-				<td>".$arr['unick']."</td>
-				<td>".$arr['cname']."</td>
-				<td>".df($arr['timestamp'])."</td>
-				<td>".$arr['anick']."</td>
-				<td>".df($arr['admin_timestamp'])."</td>
-				<td>
-					<a href=\"?page=$page&amp;sub=$sub&amp;view=".$arr['id']."\">Anzeigen</a>
-				</td>
-				</tr>";			
-			}
-			echo "</table>";
-		}
-		else
-		{
-			echo "<i>Keine vorhanden!</i>";
-		}
-
-	
-		echo "<h2>Bearbeitete Tickets</h2>";
-		$res = dbquery("
-		SELECT		
+		;",
+		
+		"Bearbeitete Tickets" =>
+		"SELECT		
 			u.user_nick as unick,
 			u.user_id as uid,
 			a.user_nick as anick,
@@ -371,44 +333,10 @@
 			t.status=2	
 		ORDER BY
 			t.timestamp DESC
-		;");
-		if (mysql_num_rows($res)>0)
-		{
-			echo "<table class=\"tb\">
-			<tr>
-				<th>ID</th>
-				<th>Spieler</th>
-				<th>Kategorie</th>
-				<th>Eingesendet</th>
-				<th>Admin</th>
-				<th>Zugewiesen</th>
-				<th>Optionen</th>
-			</tr>";
-			while($arr=mysql_fetch_array($res))
-			{
-				echo "<tr>
-				<td>#".$arr['id']."</td>
-				<td>".$arr['unick']."</td>
-				<td>".$arr['cname']."</td>
-				<td>".df($arr['timestamp'])."</td>
-				<td>".$arr['anick']."</td>
-				<td>".df($arr['admin_timestamp'])."</td>
-				<td>
-					<a href=\"?page=$page&amp;sub=$sub&amp;view=".$arr['id']."\">Anzeigen</a>
-				</td>
-				</tr>";			
-			}
-			echo "</table>";
-		}
-		else
-		{
-			echo "<i>Keine vorhanden!</i>";
-		}
-	
-	
-		echo "<h2>Gelöschte Tickets</h2>";
-		$res = dbquery("
-		SELECT		
+		;",
+		
+		"Gelöschte Tickets" =>
+		"SELECT		
 			u.user_nick as unick,
 			u.user_id as uid,
 			a.user_nick as anick,
@@ -433,40 +361,54 @@
 			t.status=3	
 		ORDER BY
 			t.timestamp DESC
-		;");
-		if (mysql_num_rows($res)>0)
+		;"
+		);
+		
+		
+		foreach ($types as $k => $v)
 		{
-			echo "<table class=\"tb\">
-			<tr>
-				<th>ID</th>
-				<th>Spieler</th>
-				<th>Kategorie</th>
-				<th>Eingesendet</th>
-				<th>Admin</th>
-				<th>Zugewiesen</th>
-				<th>Optionen</th>
-			</tr>";
-			while($arr=mysql_fetch_array($res))
+			echo "<h2>".$k."</h2>";
+			$res = dbquery($v);
+			if (mysql_num_rows($res)>0)
 			{
-				echo "<tr>
-				<td>#".$arr['id']."</td>
-				<td>".$arr['unick']."</td>
-				<td>".$arr['cname']."</td>
-				<td>".df($arr['timestamp'])."</td>
-				<td>".$arr['anick']."</td>
-				<td>".df($arr['admin_timestamp'])."</td>
-				<td>
-					<a href=\"?page=$page&amp;sub=$sub&amp;view=".$arr['id']."\">Anzeigen</a>
-				</td>
-				</tr>";			
+				echo "<table class=\"tb\">
+				<tr>
+					<th style=\"width:50px;\">ID</th>
+					<th style=\"width:150px;\">Spieler</th>
+					<th>Kategorie</th>
+					<th style=\"width:130px;\">Zeit</th>
+				</tr>";
+				while($arr=mysql_fetch_array($res))
+				{
+					echo "<div id=\"tt".$arr['id']."\" style=\"display:none;\">
+					".openerLink("page=user&sub=edit&id=".$arr['uid'],"Daten anzeigen")."<br/>
+					".popupLink("sendmessage","Nachricht senden","","id=".$arr['uid'])."<br/>
+					</div>";
+					
+					echo "<tr>
+					<td><a href=\"?page=$page&amp;sub=$sub&amp;view=".$arr['id']."\">".$arr['id']."</a></td>
+					<td><a href=\"#\" ".cTT($arr['unick'],"tt".$arr['id']).">".$arr['unick']."</a></td>
+					<td>".$arr['cname']."</td>
+					<td>".df($arr['timestamp'])."</td>
+					</tr>";			
+				}
+				echo "</table>";
+				if ($k == "Gelöschte Tickets")
+				echo "<br/><a href=\"?page=$page&amp;sub=$sub&amp;action=delall\" onclick=\"return confirm('Wirklich löschen?')\">Gelöschte endgültig löschen</a>";
 			}
-			echo "</table>";
-			echo "<br/><a href=\"?page=$page&amp;sub=$sub&amp;action=delall\" onclick=\"return confirm('Wirklich löschen?')\">Gelöschte endgültig löschen</a>";
+			else
+			{
+				echo "<i>Keine vorhanden!</i>";
+			}
 		}
-		else
-		{
-			echo "<i>Keine vorhanden!</i>";
-		}
+	
+
+
+
+	
+	
+
+
 
 
 	}

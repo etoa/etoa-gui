@@ -199,7 +199,7 @@
 		// Ermöglicht dem User das Einstellen der Angezeigten Felder
 		iBoxStart("Anzeigeoptionen");
 		echo "<form action=\"?page=".$page."\" method=\"post\">
-						<b>Angezeigte Felder</b> [<span style=\"font-style:italic\" ".tm("Angezeigte Felder","- Es dürfen nur ganze, gerade Zahlen verwendet werden, ansonsten werden die Bilder nicht geladen<br><br>- Bei zu hohen Zahlen werden die Ladezeiten extrem!<br><br>- Sollte der Angezeige Ausschnitt mehr als die doppelte Grösse der Map betragen, werden die Bilder an den Randstellen auch nicht mehr dargestellt!").">INFO</span>]<br>
+						<b>Angezeigte Felder</b> [<span style=\"font-style:italic\" ".mTT("Angezeigte Felder","- Es dürfen nur ganze, gerade Zahlen verwendet werden, ansonsten werden die Bilder nicht geladen<br><br>- Bei zu hohen Zahlen werden die Ladezeiten extrem!<br><br>- Sollte der Angezeige Ausschnitt mehr als die doppelte Grösse der Map betragen, werden die Bilder an den Randstellen auch nicht mehr dargestellt!").">INFO</span>]<br>
 						<input type=\"text\" id=\"show_x\" name=\"show_x\" value=\"".$show_x."\" maxlength=\"3\" size=\"2\" title=\"X-Richtung\"> x <input type=\"text\" id=\"show_y\" name=\"show_y\" value=\"".$show_y."\" maxlength=\"3\" size=\"2\" title=\"Y-Richtung\"> (Max. ".$arr['fields_x']."x".$arr['fields_y'].")<br><br>
 						<input type=\"submit\" class=\"button\" name=\"change_settings\" value=\"Speichern\"><br><br>";
 		echo "</form>";

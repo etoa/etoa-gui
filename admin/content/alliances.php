@@ -73,7 +73,7 @@
 					if (substr($arr['alliance_img'],0,7)!="http://")
 					{
 						echo "<tr><td>".$arr['alliance_name']."</td>";
-						echo "<td ".tm("Profilbild von ".$arr['alliance_name'],"<img src=\'".$arr['alliance_img']."\' />")."><a href=\"".$arr['alliance_img']."\">".cut_string($arr['alliance_img'],70)."</a></td>";
+						echo "<td ".mTT("Profilbild von ".$arr['alliance_name'],"<img src=\'".$arr['alliance_img']."\' />")."><a href=\"".$arr['alliance_img']."\">".cut_string($arr['alliance_img'],70)."</a></td>";
 						echo "<td><a href=\"?page=$page&amp;sub=$sub&amp;remove_profile=".$arr['alliance_id']."\">Entfernen</a> 
 						<a href=\"?page=$page&amp;sub=$sub&amp;edit_profile=".$arr['alliance_id']."\">&Auml;ndern</a> 
 						<a href=\"?page=$page&amp;sub=edit&amp;alliance_id=".$arr['alliance_id']."\">Profil</a></td></tr>";

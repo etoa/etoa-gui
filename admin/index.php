@@ -74,24 +74,22 @@
 							
 								echo '<a href="?adminlist=1" style="color:#0f0;">Adminliste</a> | ';
 								echo '<a href="?myprofile=1" style="color:#0f0;">Mein Profil</a> | ';
-								echo "<a href=\"javascript:;\" style=\"color:#f90;\" onclick=\"window.open('popup.php?page=notepad','Notepad','width=600, height=500, status=no, scrollbars=yes')\">";
-								echo "Notizblock";
 								$nres = dbquery("select COUNT(*) from admin_notes where admin_id='".$s['user_id']."'");
 								$narr = mysql_fetch_row($nres);
 								if ($narr[0]>0)
-								{
-									echo " (".$narr[0].")";
-								}
-								echo "</a> | ";
-								echo "<a href=\"javascript:;\" style=\"color:#f90;\" onclick=\"window.open('popup.php?page=tickets','Tickets','width=700, height=600, status=no, scrollbars=yes')\">";
-								echo "Tickets";
+									echo popupLink("notepad","Notizblock (".$narr[0].")","color:#f90;");
+								else
+									echo popupLink("notepad","Notizblock","color:#f90;");
+								echo " | ";
 								$nres = dbquery("select COUNT(*) from tickets where status=0");
 								$narr = mysql_fetch_row($nres);
 								if ($narr[0]>0)
-								{
-									echo " (".$narr[0].")";
-								}
-								echo "</a> | ";
+									echo popupLink("tickets","Tickets (".$narr[0].")","color:#f90;");
+								else
+									echo popupLink("tickets","Tickets","color:#f90;");
+
+
+								echo " | ";
 								if (!$cb)
 								{
 									echo "<a href=\"frameset.php?page=$page&amp;sub=$sub\" target=\"_top\" style=\"color:#ff0;\">Zwischenablage</a> | ";

@@ -511,7 +511,7 @@
 					echo "<tr>";
 					echo "<td $style>".cut_string($uidf,11)."</a></td>";
 					echo "<td $style>".cut_string($uidt,11)."</a></td>";
-					echo "<td $style ".tm($arr['subject'],text2html(substr($arr['text'], 0, 500))).">".cut_string($arr['subject'],20)."</a></td>";
+					echo "<td $style ".mTT($arr['subject'],text2html(substr($arr['text'], 0, 500))).">".cut_string($arr['subject'],20)."</a></td>";
 					echo "<td $style>".date("Y-d-m H:i",$arr['message_timestamp'])."</a></td>";
 					echo "<td $style>".$arr['cat_name']."</td>";
 					echo "<td>".edit_button("?page=$page&sub=edit&message_id=".$arr['message_id'])."</td>";
