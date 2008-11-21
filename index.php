@@ -183,18 +183,7 @@
 	
 	initTT();
 	
-	?>	
 
-		<!-- Stuff for DHTML Tipps -->
-		<div id="Migoicons" style="visibility:hidden;position:absolute;z-index:1000;top:0px;border:none;"></div>
-		<script type="text/javascript">
-			//stl=["white","##222255","","","",,"white","#606578","","","",,,,2,"#222255",2,,,,,"",,,,]
-			var TipId="Migoicons"
-			var FiltersEnabled = 1
-			mig_clay()
-		</script>
-
-		<?PHP
 			// Referers prüfen
 			$referer_allow=false;
 			if (isset($_SERVER["HTTP_REFERER"]))

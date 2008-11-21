@@ -53,16 +53,7 @@
 
 				?>
 
-				<!-- Stuff for DHTML Tipps -->
-				<div id="Migoicons" style="visibility:hidden;position:absolute;z-index:1000;top:0;border:none"></div>
-				<script  type="text/javascript">
-					stl=["white","##222255","","","",,"white","#606578","","","",,,,2,"#222255",2,,,,,"",,,,]
-					var TipId="Migoicons"
-					var FiltersEnabled = 1
-					mig_clay()
-				</script>
-
-				<table id="layoutbox">
+	 			<table id="layoutbox">
 					<tr>
 						<td id="topbar" colspan="3">
 							<?PHP

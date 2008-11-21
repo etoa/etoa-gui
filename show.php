@@ -174,22 +174,13 @@
 	    	}	    	
 	    	echo '<br style="clear:both;" /></div>';
 	  	}
-		?>
-		
-		<!-- Stuff for DHTML Tipps -->
-		<div id="Migoicons" style="visibility:hidden;position:absolute;z-index:1000;top:-100px;border:none"></div>
-		<script type="text/javascript">
-			//stl=["white","##222255","","","",,"white","#606578","","","",,,,2,"#222255",2,,,,,"",,,,]
-			var TipId="Migoicons"
-			var FiltersEnabled = 1
-			mig_clay()
-		</script>		
+
+		initTT();		
 		
 		
-		
-		<div id="outGameContent">
+		echo '<div id="outGameContent">';
 			
-		<?PHP
+		
 			
 			$show = true;
 			if ($conf['register_key']['v']!="" && !isset($s['user_id']))
