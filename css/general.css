@@ -193,6 +193,7 @@ table.boxLayout, div.boxLayout	{
   font-family:arial;
   padding:1px;
   max-width:400px;
+  z-index:1000;
 }
 
 .tooltip .tttitle	{
