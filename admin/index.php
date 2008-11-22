@@ -63,21 +63,21 @@
 								}
 								echo "<br/>";								
 							
-								echo '<a href="?adminlist=1" style="color:#0f0;">Adminliste</a> | ';
-								echo '<a href="?myprofile=1" style="color:#0f0;">Mein Profil</a> | ';
+								echo '<a href="?adminlist=1">Adminliste</a> | ';
+								echo '<a href="?myprofile=1">Mein Profil</a> | ';
 								$nres = dbquery("select COUNT(*) from admin_notes where admin_id='".$s['user_id']."'");
 								$narr = mysql_fetch_row($nres);
 								if ($narr[0]>0)
 									echo popupLink("notepad","Notizblock (".$narr[0].")","color:#f90;");
 								else
-									echo popupLink("notepad","Notizblock","color:#f90;");
+									echo popupLink("notepad","Notizblock");
 								echo " | ";
 								$nres = dbquery("select COUNT(*) from tickets where status=0");
 								$narr = mysql_fetch_row($nres);
 								if ($narr[0]>0)
 									echo popupLink("tickets","Tickets (".$narr[0].")","color:#f90;");
 								else
-									echo popupLink("tickets","Tickets","color:#f90;");
+									echo popupLink("tickets","Tickets");
 
 
 								echo " | ";
@@ -96,6 +96,13 @@
 					<tr>
 						<td id="menu1">
 							<?php
+								echo "							
+								<form action=\"?page=search\" method=\"post\">
+								<div style=\"margin-top:3px;margin-bottom:5px;\">
+										 &nbsp;<input class=\"search\" type=\"text\" value=\"".(isset($_POST['search_query']) ? $_POST['search_query']:'' )."\" name=\"search_query\" size=\"9\" autocomplete=\"off\" />
+										<input type=\"submit\" name=\"search_submit\" value=\"Suchen\" />
+									</div></form>";
+							
 							
 								//
 								// Linke Navigation anzeigen
@@ -139,13 +146,7 @@
 									}
 								}
 
-								echo "<br/>
-								<form action=\"?page=user&amp;action=search\" method=\"post\">
-								<div>
-										 &nbsp;<input type=\"text\" name=\"user_nick_search\" size=\"9\" autocomplete=\"off\" onkeyup=\"\" id=\"user_search_box1\" />
-										<input type=\"hidden\" name=\"qmode[user_nick_search]\" value=\"LIKE '%\" />
-										<input type=\"submit\" name=\"user_search\" value=\"Usersuche\" />
-									</div></form>";
+								echo "<br/>";
 
 								//
 								// Auslastung

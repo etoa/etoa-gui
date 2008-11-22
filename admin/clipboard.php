@@ -19,6 +19,7 @@
 			echo "<h2>Benutzer [<a href=\"index.php?page=home&amp;sub=stats\" target=\"main\">alle</a>]</h2>";
 			if (isset($s['cp_users']) && count($s['cp_users'])>0)
 			{
+				echo "<ul style=\"list-style-type:none;margin-left:-20px;\">";
 				foreach ($s['cp_users'] as $uid)
 				{
 					if ($uid>0)
@@ -27,16 +28,20 @@
 						if (mysql_num_rows($res)>0)
 						{
 							$arr = mysql_fetch_row($res);
-							echo "<a href=\"index.php?page=user&amp;sub=edit&amp;user_id=".$uid."\" target=\"main\">
-							<a href=\"index.php?page=user&amp;sub=edit&amp;user_id=".$uid."\" target=\"main\">
-							".$arr[0]."</a>&nbsp;
-							<a href=\"?rem_user=".$uid."\" target=\"_self\">
-							<img src=\"../images/delete.gif\" style=\"border:none;height:10px;\"></a>
-
-							<br/>";
+							
+							echo "<div id=\"ttuser".$uid."\" style=\"display:none;\">
+							<a href=\"index.php?page=user&amp;sub=edit&amp;id=".$uid."\" target=\"main\">Daten anzeigen</a><br/>
+							".popupLink("sendmessage","Nachricht senden","","id=".$uid)."<br/>
+							<a href=\"?rem_user=".$uid."\" target=\"_self\">Entfernen</a>
+							</div>";		
+							
+							
+							echo "<li><a href=\"index.php?page=user&amp;sub=edit&amp;user_id=".$uid."\" target=\"main\" ".cTT($arr[0],"ttuser".$uid).">
+							".$arr[0]."</a></li>";
 						}
 					}
 				}
+				echo "</ul>";
 			}
 			else
 			{			

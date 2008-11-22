@@ -389,8 +389,9 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 	{
 		$out.= "<table class=\"tbl\">
 			<tr>
-				<td style=\"width:470px;text-align:left;\" class=\"statsNav\"><b>&nbsp;&nbsp;Suche:</b> 
-					<input type=\"text\" name=\"user_nick\" autocomplete=\"off\" value=\"\" size=\"\" onkeyup=\"statsSearchLoader();xajax_statsShowTable('$mode',0,this.value);\" id=\"searchString\"/>
+				<td style=\"width:470px;text-align:left;\" class=\"statsNav\">
+					<b>&nbsp;&nbsp;Suche:</b> 
+					<input type=\"text\" class=\"search\" name=\"user_nick\" autocomplete=\"off\" value=\"\" size=\"\" onkeyup=\"statsSearchLoader();xajax_statsShowTable('$mode',0,this.value);\" id=\"searchString\"/>
 					<input type=\"button\" onclick=\"getElementById('searchString').value='';xajax_statsShowTable('$mode');\" value=\"Reset\" />
 					<input type=\"button\" onclick=\"xajax_statsShowTable('$mode',0,'".$_SESSION[ROUNDID]['user_nick']."',1);\" value=\"".$_SESSION[ROUNDID]['user_nick']."\" />
 		</td>";
@@ -607,7 +608,6 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0)
 					<th style=\"\">Sektor</th>
 					<th style=\"\">Allianz</th>
 					<th style=\"\">Punkte</th>
-					<th style=\"width:150px;\">Aktionen</th>
 				</tr>";
 				while ($arr=mysql_fetch_array($res))
 				{
@@ -640,20 +640,22 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0)
 					else
 						$out.= "<img src=\"images/stats/stat_same.gif\" alt=\"same\" width=\"21\" height=\"9\" />";
 					$out.= "</td>";
-					$out.= "<td $addstyle >".$arr['nick']."</td>";
+					$out.= "<td $addstyle >
+					<div id=\"ttuser".$arr['id']."\" style=\"display:none;\">
+					".popUp("Profil anzeigen","page=userinfo&id=".$arr['id'])."<br/>
+					".popUp("Punkteverlauf","page=$page&amp;mode=$mode&amp;userdetail=".$arr['id'])."<br/>";
+						if ($arr['id']!=$_SESSION[ROUNDID]['user_id'])
+						{
+							$out.=  "<a href=\"?page=messages&mode=new&message_user_to=".$arr['id']."\">Nachricht senden</a><br/>";
+							$out.=  "<a href=\"?page=buddylist&add_id=".$arr['id']."\">Als Freund hinzufügen</a>";
+						}
+
+					$out.="</div>
+					<a href=\"#\" ".cTT($arr['nick'],"ttuser".$arr['id']).">".$arr['nick']."</a></td>";
 					$out.= "<td $addstyle >".$arr['race_name']."</td>";
 					$out.= "<td $addstyle >".$arr['sx']."/".$arr['sy']."</td>";
 					$out.= "<td $addstyle >".$arr['alliance_tag']."</td>";
 					$out.= "<td $addstyle >".nf($arr['points'])."</td>";
-					$out.= "<td $addstyle >";
-					$out.=  popUp("Profil","page=userinfo&id=".$arr['id']);
-					$out.=  popUp("Details","page=$page&amp;mode=$mode&amp;userdetail=".$arr['id']);
-					if ($arr['id']!=$_SESSION[ROUNDID]['user_id'])
-					{
-						$out.=  "<a href=\"?page=messages&mode=new&message_user_to=".$arr['id']."\" title=\"Nachricht senden\">Mail</a> ";
-						$out.=  "<a href=\"?page=buddylist&add_id=".$arr['id']."\" title=\"Info\">Buddy</a></td>";
-					}
-					$out.= "</td>";
 					$out.= "</tr>";
 				}
 				

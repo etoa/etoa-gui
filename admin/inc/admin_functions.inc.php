@@ -73,7 +73,7 @@
 		switch ($type)
 		{
 			case "tickets":
-				$res .= " onclick=\"window.open('popup.php?page=tickets".$p."','Tickets','width=700, height=600, status=no, scrollbars=yes')\"";
+				$res .= " onclick=\"window.open('popup.php?page=tickets".$p."','Tickets','top=20,left='+(screen.availWidth-720)+',width=700, height=600, status=no, scrollbars=yes')\"";
 				break;
 			case "notepad":
 			 	$res .= " onclick=\"window.open('popup.php?page=notepad','Notepad','width=600, height=500, status=no, scrollbars=yes')\"";

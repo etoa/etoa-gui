@@ -2055,20 +2055,9 @@ die Spielleitung";
 	/**
 	* Tipmessage
 	*/
-	function tm($title,$text,$mouse=0)
+	function tm($title,$text)
 	{
 		return mTT($title,$text);
-		/*
-		$text = cut_word($text,150,1);
-		$text = str_replace('"',"\'",$text);
-		if($mouse==0)
-		{
-			return "onmouseover=\"stm(['".$title."','".$text."'],stl)\" onmouseout=\"htm()\"";
-		}
-		else
-		{
-			return "onclick=\"stm(['".$title."','".$text."'],stl)\" onmouseout=\"htm()\"";
-		}*/
 	}
 	
 	/**
@@ -2077,11 +2066,6 @@ die Spielleitung";
 	function tt($text)
 	{
 		return mTT("",$text);
-		/*
-		$text = cut_word($text,150,1);
-		$text = str_replace('"',"\'",$text);
-		return "onmouseover=\"stm(['','".$text."'],tooltipstyle)\" onmouseout=\"htm()\"";
-		*/
 	}	
 
 	/**

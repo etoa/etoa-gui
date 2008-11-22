@@ -121,7 +121,7 @@ input,select,textarea	{
 
 #logo	{
 	background:#000 url('../../images/logo.jpg') no-repeat;
-	width:175px;
+	width:180px;
 	height:72px;
 	border:1px solid #fff;
 }
@@ -139,11 +139,11 @@ input,select,textarea	{
 
 #selectbar	{
 	background:#222;
-	width:175px;
+	width:180px;
 }
 
 #selectbar select {
-	width:175px;
+	width:180px;
 	background:#222;
 	color:#fff;
 }
@@ -195,7 +195,7 @@ input,select,textarea	{
 #menu1	{
 	padding:0px 0px 40px 0px;
 	background:#223;
-	width:175px;
+	width:180px;
 	vertical-align:top;
 	border:1px solid #fff;
 }
@@ -207,7 +207,7 @@ a.menu1Title {
 	/*background:#225;*/
 	color:#fff;
 	text-decoration:none;
-	width:175px;
+	width:180px;
 	padding: 2px 2px 2px 8px;
 	margin: 0px auto;
 	/*border-bottom:solid 1px #e6e6e6;
@@ -245,7 +245,7 @@ a.menu1Item:hover {
 	background:#225;
 	color:#fff;
 	text-decoration:none;
-	width:175px;
+	width:180px;
 	padding: 2px 2px 2px 8px;
 	margin: 0px auto;
 	border-top:solid 1px #e6e6e6;

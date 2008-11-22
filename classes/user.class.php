@@ -15,6 +15,7 @@
 		protected $maskMatrix; // Matrix for the "fog of war" effect in the space map
 		protected $raceId;
 		protected $rating;
+		protected $raceName;
 		
 		/**
 		* The constructor initializes and loads 
