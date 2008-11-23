@@ -48,8 +48,7 @@
 		if (mysql_num_rows($res)>0)
 		{
 			$arr=mysql_fetch_array($res);
-			echo "<h2>Details Ticket #".$arr['id']."</h2>";
-
+	
 			echo "<div id=\"ttuser\" style=\"display:none;\">
 			".openerLink("page=user&sub=edit&id=".$arr['uid'],"Daten anzeigen")."<br/>
 			".popupLink("sendmessage","Nachricht senden","","id=".$arr['uid'])."<br/>
@@ -57,7 +56,8 @@
 			
 			echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
 			echo "<input type=\"hidden\" name=\"user_id\" value=\"".$arr['uid']."\" />";
-			echo "<table class=\"tb\">
+			tableStart("Details Ticket #".$arr['id']."",'95%');
+			echo "
 			<tr>
 				<th>Spieler</th>
 				<td><a href=\"#\" ".cTT($arr['unick'],"ttuser").">".$arr['unick']."</a></td>
@@ -364,15 +364,14 @@
 		;"
 		);
 		
-		
+		$cnt=0;
 		foreach ($types as $k => $v)
 		{
-			echo "<h2>".$k."</h2>";
 			$res = dbquery($v);
 			if (mysql_num_rows($res)>0)
 			{
-				echo "<table class=\"tb\">
-				<tr>
+				tableStart($k,'95%');
+				echo "<tr>
 					<th style=\"width:50px;\">ID</th>
 					<th style=\"width:150px;\">Spieler</th>
 					<th>Kategorie</th>
@@ -391,26 +390,19 @@
 					<td>".$arr['cname']."</td>
 					<td>".df($arr['timestamp'])."</td>
 					</tr>";			
+					$cnt++;
 				}
-				echo "</table>";
+				tableEnd();
 				if ($k == "Gelöschte Tickets")
 				echo "<br/><a href=\"?page=$page&amp;sub=$sub&amp;action=delall\" onclick=\"return confirm('Wirklich löschen?')\">Gelöschte endgültig löschen</a>";
 			}
-			else
-			{
-				echo "<i>Keine vorhanden!</i>";
-			}
 		}
-	
-
-
-
-	
-	
-
-
-
-
+		
+		if ($cnt==0)
+		{
+			echo "<i>Keine Tickets vorhanden!</i>";
+		}
+		
 	}
 
 ?>

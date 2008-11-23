@@ -328,13 +328,20 @@
 					else
 						$sql.= " AND (user_blocked_to<".time().")";
 				}
-				if (isset($_POST['user_admin']) && $_POST['user_admin']<2)
+				if (isset($_POST['user_chatadmin']) && $_POST['user_chatadmin']<2)
 				{
-					if ($_POST['user_admin']==1)
-						$sql.= " AND user_admin=1 ";
+					if ($_POST['user_chatadmin']==1)
+						$sql.= " AND user_chatadmin=1 ";
 					else
-						$sql.= " AND user_admin=0 ";
-				}				
+						$sql.= " AND user_chatadmin=0 ";
+				}			
+				if (isset($_POST['user_ghost']) && $_POST['user_ghost']<2)
+				{
+					if ($_POST['user_ghost']==1)
+						$sql.= " AND user_ghost=1 ";
+					else
+						$sql.= " AND user_ghost=0 ";
+				}							
 
 				$sqlstart="SELECT * FROM $tables WHERE 1 ";
 				$sqlend=" ORDER BY user_nick;";
@@ -430,32 +437,31 @@
 		else
 		{
 			$_SESSION['admin']['user_query']="";
-			echo "Suchmaske (wenn nichts eingegeben wird werden alle Datens&auml;tze angezeigt):<br/><br/>";
 			echo "<form action=\"?page=$page&amp;action=search\" method=\"post\">";
-			echo "<table class=\"tbl\">";
-			echo "<tr><td class=\"tbltitle\">ID</td><td class=\"tbldata\"><input type=\"text\" name=\"user_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
-			echo "<tr><td class=\"tbltitle\">Nickname</td><td class=\"tbldata\"><input type=\"text\" name=\"user_nick\" value=\"\" size=\"20\" maxlength=\"250\" autocomplete=\"off\" onkeyup=\"xajax_searchUser(this.value,'user_nick','citybox1');\"/> <br><div class=\"citybox\" id=\"citybox1\">&nbsp;</div></td></tr>";
-			echo "<tr><td class=\"tbltitle\">Name</td><td class=\"tbldata\"><input type=\"text\" name=\"user_name\" value=\"\" size=\"20\" maxlength=\"250\" /> </td></tr>";
-			echo "<tr><td class=\"tbltitle\">E-Mail</td><td class=\"tbldata\"><input type=\"text\" name=\"user_email\" value=\"\" size=\"20\" maxlength=\"250\" /> </td></tr>";
-			echo "<tr><td class=\"tbltitle\">Fixe E-Mail</td><td class=\"tbldata\"><input type=\"text\" name=\"user_email_fix\" value=\"\" size=\"20\" maxlength=\"250\" /> </td></tr>";
-			echo "<tr><td class=\"tbltitle\">Passwort</td><td class=\"tbldata\"><input type=\"text\" name=\"user_password\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
-			echo "<tr><td class=\"tbltitle\">IP-Adresse</td><td class=\"tbldata\"><input type=\"text\" name=\"user_ip\" value=\"\" size=\"20\" maxlength=\"250\" /> </td></tr>";
-			echo "<tr><td class=\"tbltitle\">Allianz</td><td class=\"tbldata\"><input type=\"text\" name=\"user_alliance\" value=\"\" size=\"20\" maxlength=\"250\" autocomplete=\"off\" onkeyup=\"xajax_searchAlliance(this.value,'user_alliance','citybox2');\"/> <br><div class=\"citybox\" id=\"citybox2\">&nbsp;</div></td></tr>";
+			tableStart("Suchmaske");
+			echo "<tr><th>ID</th><td class=\"tbldata\"><input type=\"text\" name=\"user_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
+			echo "<tr><th>Nickname</th><td class=\"tbldata\"><input type=\"text\" name=\"user_nick\" value=\"\" size=\"20\" maxlength=\"250\" autocomplete=\"off\" onkeyup=\"xajax_searchUser(this.value,'user_nick','citybox1');\"/> <br><div class=\"citybox\" id=\"citybox1\">&nbsp;</div></td></tr>";
+			echo "<tr><th>Name</th><td class=\"tbldata\"><input type=\"text\" name=\"user_name\" value=\"\" size=\"20\" maxlength=\"250\" /> </td></tr>";
+			echo "<tr><th>E-Mail</th><td class=\"tbldata\"><input type=\"text\" name=\"user_email\" value=\"\" size=\"20\" maxlength=\"250\" /> </td></tr>";
+			echo "<tr><th>Fixe E-Mail</th><td class=\"tbldata\"><input type=\"text\" name=\"user_email_fix\" value=\"\" size=\"20\" maxlength=\"250\" /> </td></tr>";
+			echo "<tr><th>Passwort</th><td class=\"tbldata\"><input type=\"text\" name=\"user_password\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
+			echo "<tr><th>IP-Adresse</th><td class=\"tbldata\"><input type=\"text\" name=\"user_ip\" value=\"\" size=\"20\" maxlength=\"250\" /> </td></tr>";
+			echo "<tr><th>Allianz</th><td class=\"tbldata\"><input type=\"text\" name=\"user_alliance\" value=\"\" size=\"20\" maxlength=\"250\" autocomplete=\"off\" onkeyup=\"xajax_searchAlliance(this.value,'user_alliance','citybox2');\"/> <br><div class=\"citybox\" id=\"citybox2\">&nbsp;</div></td></tr>";
 			$race = get_races_array();
-			echo "<tr><td class=\"tbltitle\">Rasse</td><td class=\"tbldata\"><select name=\"user_race_id\">";
+			echo "<tr><th>Rasse</th><td class=\"tbldata\"><select name=\"user_race_id\">";
 			echo "<option value=\"\">(egal)</option>";
 			foreach ($race as $id=>$racedata)
 			{
 				echo "<option value=\"$id\">".$racedata['race_name']."</option>";
 			}
 			echo "</select></td></tr>";
-			echo "<tr><td class=\"tbltitle\">Profil-Text</td><td class=\"tbldata\"><input type=\"text\" name=\"user_profile_text\" value=\"\" size=\"20\" maxlength=\"250\" /> </td></tr>";
-			echo "<tr><td class=\"tbltitle\">Urlaubsmodus</td><td class=\"tbldata\"><input type=\"radio\" name=\"user_hmode\" value=\"2\" checked=\"checked\" /> Egal &nbsp; <input type=\"radio\" name=\"user_hmode\" value=\"0\" /> Nein &nbsp; <input type=\"radio\" name=\"user_hmode\" value=\"1\" /> Ja</td></tr>";
-			echo "<tr><td class=\"tbltitle\">Gesperrt</td><td class=\"tbldata\"><input type=\"radio\" name=\"user_blocked\" value=\"2\" checked=\"checked\" /> Egal &nbsp; <input type=\"radio\" name=\"user_blocked\" value=\"0\" /> Nein &nbsp; <input type=\"radio\" name=\"user_blocked\" value=\"1\"  /> Ja</td></tr>";
-			echo "<tr><td class=\"tbltitle\">Admin</td><td class=\"tbldata\"><input type=\"radio\" name=\"user_admin\" value=\"2\" checked=\"checked\" /> Egal &nbsp; <input type=\"radio\" name=\"user_admin\" value=\"0\" /> Nein &nbsp; <input type=\"radio\" name=\"user_admin\" value=\"1\"  /> Ja</td></tr>";
-			echo "<tr><td class=\"tbltitle\">Bemerkungen</td><td class=\"tbldata\"><input type=\"radio\" name=\"user_comment\" value=\"2\" checked=\"checked\" /> Egal &nbsp; <input type=\"radio\" name=\"user_comment\" value=\"0\" /> Keine &nbsp; <input type=\"radio\" name=\"user_comment\" value=\"1\"  /> Vorhanden</td></tr>";
+			echo "<tr><th>Profil-Text</th><td class=\"tbldata\"><input type=\"text\" name=\"user_profile_text\" value=\"\" size=\"20\" maxlength=\"250\" /> </td></tr>";
+			echo "<tr><th>Urlaubsmodus</th><td class=\"tbldata\"><input type=\"radio\" name=\"user_hmode\" value=\"2\" checked=\"checked\" /> Egal &nbsp; <input type=\"radio\" name=\"user_hmode\" value=\"0\" /> Nein &nbsp; <input type=\"radio\" name=\"user_hmode\" value=\"1\" /> Ja</td></tr>";
+			echo "<tr><th>Gesperrt</th><td class=\"tbldata\"><input type=\"radio\" name=\"user_blocked\" value=\"2\" checked=\"checked\" /> Egal &nbsp; <input type=\"radio\" name=\"user_blocked\" value=\"0\" /> Nein &nbsp; <input type=\"radio\" name=\"user_blocked\" value=\"1\"  /> Ja</td></tr>";
+			echo "<tr><th>Geist</th><td class=\"tbldata\"><input type=\"radio\" name=\"user_ghost\" value=\"2\" checked=\"checked\" /> Egal &nbsp; <input type=\"radio\" name=\"user_ghost\" value=\"0\" /> Nein &nbsp; <input type=\"radio\" name=\"user_ghost\" value=\"1\"  /> Ja</td></tr>";
+			echo "<tr><th>Chat-Admin</th><td class=\"tbldata\"><input type=\"radio\" name=\"user_chatadmin\" value=\"2\" checked=\"checked\" /> Egal &nbsp; <input type=\"radio\" name=\"user_chatadmin\" value=\"0\" /> Nein &nbsp; <input type=\"radio\" name=\"user_chatadmin\" value=\"1\"  /> Ja</td></tr>";
 			echo "</table>";
-			echo "<br/><input type=\"submit\" name=\"user_search\" value=\"Suche starten\" /></form>";
+			echo "<br/><input type=\"submit\" name=\"user_search\" value=\"Suche starten\" /> (wenn nichts eingegeben wird werden alle Datens&auml;tze angezeigt)</form>";
 
 			$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM users;"));
 			echo "<br/>Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.";

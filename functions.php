@@ -2686,10 +2686,7 @@ Forum: http://www.etoa.ch/forum";
 	*/
 	function pw_salt($pw,$seed=0)
 	{
-		//$res = md5($pw.$seed.PASSWORD_SALT).md5(PASSWORD_SALT.$seed.$pw);
-		//echo "SALT: $pw $seed $res";
 		return md5($pw.$seed.PASSWORD_SALT).md5(PASSWORD_SALT.$seed.$pw);
-		
 	}
 	
 	/**
@@ -3099,6 +3096,9 @@ Forum: http://www.etoa.ch/forum";
 		
 		return " onmouseover=\"showTT('".str_replace('"',"\'",$title)."','".str_replace('"',"\'",$content)."',1,event,this);\" onmouseout=\"hideTT()\" ";
 	}
+	
+
+
 
 	/**
 	* Textfunktionen einbinden

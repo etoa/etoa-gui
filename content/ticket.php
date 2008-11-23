@@ -46,6 +46,56 @@
 			UNIX_TIMESTAMP(),
 			'".addslashes($_POST['abuse_text'])."'	
 		);");
+		$tid = mysql_insert_id();
+	
+		$tres = dbquery("
+		SELECT
+			name
+		FROM
+			ticket_cat
+		WHERE
+			id=".$_POST['abuse_cat']."
+		");
+		$tarr = mysql_fetch_row($tres);
+		
+		$res = dbquery("
+			SELECT 
+				user_id,
+				user_nick,
+				user_email,
+				group_name,
+				user_board_url
+			FROM 
+				admin_users
+			INNER JOIN
+				admin_groups
+				ON user_admin_rank=group_id
+				AND group_level<3
+		;");
+		if (mysql_num_rows($res)>0)
+		{
+			while ($arr = mysql_fetch_array($res))
+			{
+				$text = "Ticket #".$tid." ".GAMEROUND_NAME."\n----------------------\n\n";
+				$text.= "Nick: ".$cu->nick()."\n";
+				$text.= "ID: ".$cu->id()."\n";
+				$text.= "IP/Host: ".$_SERVER['REMOTE_ADDR']." (".resolveIp($_SERVER['REMOTE_ADDR']).")\n";
+				$text.= "\n\n".$tarr[0]."\n\n";
+				$text.= $_POST['abuse_text'];
+				
+	      $email_header = "From: Escape to Andromeda Ticketsystem ".GAMEROUND_NAME."<etoa@dev.etoa.ch>\n";
+	      $email_header .= "Reply-To: ".$cu->nick()."<".$cu->email().">\n";
+	      $email_header .= "X-Mailer: PHP/" . phpversion(). "\n";
+	      $email_header .= "X-Sender-IP: ".$_SERVER['REMOTE_ADDR']."\n";
+	      $email_header .= "Content-Style-Type: text/css\n";					
+				mail($arr['user_email'],"Neues Nicket #".$tid." (".GAMEROUND_NAME."): ".$tarr[0],$text,$email_header);
+				
+			}	
+		}
+	
+
+	
+	
 		echo "Vielen Dank, dein Text wurde gespeichert.<br/>Ein Game-Administrator wird sich dem Problem annehmen.<br/><br/>";
 		if (!$ext)
 			echo "<input type=\"button\" onclick=\"document.location='?page=help'\" value=\"Weiter\" />";

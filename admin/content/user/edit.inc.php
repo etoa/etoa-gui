@@ -54,7 +54,7 @@
 				// Handle  image
         if (isset($_POST['profile_img_del']) && $_POST['profile_img_del']==1)
         {
-					$res = dbquery("SELECT user_profile_img FROM users WHERE user_id=".$_GET['user_id'].";");
+					$res = dbquery("SELECT user_profile_img FROM users WHERE user_id=".$id.";");
 					if (mysql_num_rows($res)>0)
 					{
 						$arr=mysql_fetch_array($res);
@@ -69,7 +69,7 @@
         // Handle avatar
         if (isset($_POST['avatar_img_del']) && $_POST['avatar_img_del']==1)
         {
-					$res = dbquery("SELECT user_avatar FROM users WHERE user_id=".$_GET['user_id'].";");
+					$res = dbquery("SELECT user_avatar FROM users WHERE user_id=".$id.";");
 					if (mysql_num_rows($res)>0)
 					{
 						$arr=mysql_fetch_array($res);
@@ -84,7 +84,7 @@
 				// Handle password
 				if (isset($_POST['user_password']) && $_POST['user_password']!="")
 				{
-					$pres = dbquery("SELECT user_registered FROM users WHERE user_id='".$_GET['user_id']."';");
+					$pres = dbquery("SELECT user_registered FROM users WHERE user_id='".$id."';");
 					$parr = mysql_fetch_row($pres);
 					$sql.= ",user_password='".pw_salt($_POST['user_password'],$parr[0])."'";
 					echo "Das Passwort wurde ge&auml;ndert!<br>";
@@ -100,7 +100,9 @@
 					$sql.= ",user_blocked_to='".$ban_to."'";
 					$sql.= ",user_ban_admin_id='".$_POST['user_ban_admin_id']."'";
 					$sql.= ",user_ban_reason='".addslashes($_POST['user_ban_reason'])."'";
-					add_user_history($_GET['user_id'],"[b]Accountsperrung[/b] von [b]".date("d.m.Y H:i",$ban_from)."[/b] bis [b]".date("d.m.Y H:i",$ban_to)."[/b]\n[b]Grund:[/b] ".addslashes($_POST['user_ban_reason'])."\n[b]Verantwortlich: [/b] ".$_SESSION[SESSION_NAME]['user_nick']);
+					
+					$usr = new User($id);
+					$urs->addToUserLog("account","{nick} wird von [b]".date("d.m.Y H:i",$ban_from)."[/b] bis [b]".date("d.m.Y H:i",$ban_to)."[/b] gesperrt.\n[b]Grund:[/b] ".addslashes($_POST['user_ban_reason'])."\n[b]Verantwortlich: [/b] ".$_SESSION[SESSION_NAME]['user_nick'],1);
 				}
 				else
 				{
@@ -171,10 +173,10 @@
                         user_sitting_sitter_password='0',
                         user_sitting_date='0'
                     WHERE
-                        user_sitting_user_id='".$_GET['user_id']."';");
+                        user_sitting_user_id='".$id."';");
 
                 	//löscht alle gespeichertet Sittingdaten des users
-               		dbquery("DELETE FROM user_sitting_date WHERE user_sitting_date_user_id='".$_GET['user_id']."';");
+               		dbquery("DELETE FROM user_sitting_date WHERE user_sitting_date_user_id='".$id."';");
 
 				}
 				//Sitter Passwort ändern
@@ -186,7 +188,7 @@
                     SET
                         user_sitting_sitter_password='".md5($_POST['user_sitting_sitter_password'])."'
                     WHERE
-                        user_sitting_user_id='".$_GET['user_id']."';");
+                        user_sitting_user_id='".$id."';");
 					echo "Das Sitter Passwort wurde ge&auml;ndert!<br>";
 					add_log(8,$_SESSION[SESSION_NAME]['user_nick']." &auml;ndert das Sitterpasswort von ".$_POST['user_nick']."",time());
 				}				
@@ -195,7 +197,7 @@
 			// User löschen
 			if (isset($_POST['delete_user']))
 			{
-				$user = new User($_GET['user_id']);
+				$user = new User($id);
 				if ($user->delete(false,$_SESSION[SESSION_NAME]['user_nick']))				
 					success_msg("L&ouml;schung erfolgreich!");
 			}
@@ -210,7 +212,7 @@
 				SET
 					user_deleted=".$t."
 				WHERE
-					user_id=".$_GET['user_id']."
+					user_id=".$id."
 				;");	
 				success_msg("Löschantrag gespeichert!");		
 			}
@@ -224,7 +226,7 @@
 				SET
 					user_deleted=0
 				WHERE
-					user_id=".$_GET['user_id']."
+					user_id=".$id."
 				;");
 				success_msg("Löschantrag aufgehoben!");
 			}
@@ -302,6 +304,7 @@
 			array("name"=>"Punkte","js"=>"xajax_userPointsTable(".$arr['user_id'].",'pointsBox');"),
 			array("name"=>"Tickets","js"=>"xajax_userTickets(".$arr['user_id'].",'ticketsBox');"),
 			array("name"=>"Kommentare","js"=>"xajax_userComments(".$arr['user_id'].",'commentsBox');"),
+			"Log",
 			"Wirtschaft"
 			),
 			0,
@@ -331,7 +334,8 @@
 							</tr>
 							<tr>
 								<td class=\"tbltitle\">IP/Host:</td>
-								<td class=\"tbldata\">".$arr['user_ip'].", ".$arr['user_hostname']."</td>
+								<td class=\"tbldata\"><a href=\"?page=user&amp;sub=ipsearch&amp;ip=".$arr['user_ip']."\">".$arr['user_ip']."</a>,
+								 <a href=\"?page=user&amp;sub=ipsearch&amp;host=".$arr['user_hostname']."\">".$arr['user_hostname']."</a></td>
 							</tr>
 							<tr>
 								<td class=\"tbltitle\">Punkte:</td>
@@ -1187,8 +1191,32 @@
 				$tc->close();
 				
 				
-			
-				
+				/**
+				* Log
+				*/					
+				$tc->open();				
+					tableStart("",'100%');
+					echo "<tr><th>Nachricht</th><th>Datum</th><th>IP</th></tr>";
+					$lres = dbquery("
+					SELECT
+						*
+					FROM
+						user_log
+					WHERE
+						user_id=".$id." 
+					ORDER BY timestamp DESC
+					LIMIT 100;");
+					if (mysql_num_rows($lres) > 0)
+					{
+						while ($larr = mysql_fetch_array($lres))
+						{
+							echo "<tr><td>".text2html($larr['message'])."</td>
+							<td>".df($larr['timestamp'])."</td>
+							<td><a href=\"?page=user&amp;sub=ipsearch&amp;ip=".$larr['host']."\">".$larr['host']."</a></td></tr>";
+						}
+					}
+					tableEnd();
+				$tc->end();
 				
 				/**
 				* Wirtschaft
@@ -1225,6 +1253,9 @@
 				echo "<input type=\"button\" value=\"Schiffe\" onclick=\"document.location='?page=messages&sub=sendmsg&user_id=".$arr['user_id']."'\" /> &nbsp;";
 				echo "<input type=\"button\" value=\"Verteidigung\" onclick=\"document.location='?page=messages&sub=sendmsg&user_id=".$arr['user_id']."'\" /> &nbsp;";
 				echo "<input type=\"button\" value=\"Raketen\" onclick=\"document.location='?page=messages&sub=sendmsg&user_id=".$arr['user_id']."'\" /> ";
+				echo "<input type=\"button\" value=\"IP-Adressen &amp; Hosts\" onclick=\"document.location='?page=user&amp;sub=ipsearch&amp;user=".$arr['user_id']."'\" /> ";
+
+
 				
 				echo "<hr/>";
 				echo "<input type=\"button\" value=\"Spielerdaten neu laden\" onclick=\"document.location='?page=$page&sub=edit&amp;user_id=".$arr['user_id']."'\" /> &nbsp;";

@@ -363,7 +363,7 @@
 		echo "<form action=\"?page=$page&amp;sub=$sub&amp;mode=$mode\" method=\"post\">";
 		echo "<table class=\"tbl\">";
 		echo "<tr><td class=\"tbldata\" colspan=\"5\">";
-		echo "Suche nach Spieler: <input type=\"text\" name=\"user_nick\" value=\"".(isset($_POST['user_nick']) ? $_POST['user_nick'] : '')."\" size=\"20\" /> 
+		echo "Suche nach Spieler: <input type=\"text\" class=\"search\" name=\"user_nick\" value=\"".(isset($_POST['user_nick']) ? $_POST['user_nick'] : '')."\" size=\"20\" /> 
 		<input type=\"submit\" name=\"search\" value=\"Suchen\" />";
 		if (isset($_POST['user_nick']))			
 		{

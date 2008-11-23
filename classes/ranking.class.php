@@ -331,7 +331,9 @@
 					user_hmode_from,
 					user_acttime
 				FROM
-					users;
+					users
+				WHERE
+					user_ghost=0;
 			");
 			$user_stats_query = "";
 			$user_points_query = "";

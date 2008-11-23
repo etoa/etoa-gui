@@ -69,7 +69,7 @@
       $email_header = "From: Escape to Andromeda<etoa@orion.etoa.net>\n";
       $email_header .= "Reply-To: ".$cu->nick()."<".$cu->email().">\n";
       $email_header .= "X-Mailer: PHP/" . phpversion(). "\n";
-      $email_header .= "X-Sender-IP: ".$REMOTE_ADDR."\n";
+      $email_header .= "X-Sender-IP: ".$_SERVER['REMOTE_ADDR']."\n";
       //$email_header .= "Content-type: text/html\n";
       $email_header .= "Content-Style-Type: text/css\n";					
 			mail($_POST['mail_rcpt'],"EtoA InGame-Anfrage (".GAMEROUND_NAME."): ".$_POST['mail_subject'],$text,$email_header);

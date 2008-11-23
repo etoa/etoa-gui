@@ -222,7 +222,7 @@ function userTickets($uid,$target)
 				<td class=\"tbldata\" style=\"color:".$abuse_colors[$larr['status']]."\">".$abuse_status[$larr['status']]."</td>
 				<td class=\"tbldata\">".$larr['user_nick']."</td>
 				<td class=\"tbldata\">".df($larr['admin_timestamp'])."</td>
-				<td class=\"tbldata\">[<a href=\"?page=user&sub=tickets&view=".$larr['id']."\">Details</a>]</td>
+				<td class=\"tbldata\">".popupLink("tickets","Details","","&view=".$larr['id'])."</td>
 			</tr>";   
 		}           
 	}             
