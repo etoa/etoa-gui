@@ -103,7 +103,7 @@
 					) 
 					VALUES 
 					(
-						'".$cu->id()."',
+						'".$cu->id."',
 						'".addslashes($_POST['name'])."',
 						'".$arr[0]."',
 						'".$addships."',
@@ -128,7 +128,7 @@
 					fleet_bookmarks
 				WHERE 
 					id='".$_GET['del']."' 
-					AND user_id='".$cu->id()."';");
+					AND user_id='".$cu->id."';");
 				if (mysql_affected_rows()>0)
 					ok_msg("Gelöscht");
 			}
@@ -303,7 +303,7 @@
 				entities	
 				ON bookmarks.entity_id=entities.id
 				AND bookmarks.id='".$_GET['edit']."'
-				AND bookmarks.user_id=".$cu->id().";");
+				AND bookmarks.user_id=".$cu->id.";");
 			if (mysql_num_rows($res)>0)
 			{
 				$arr=mysql_fetch_assoc($res);
@@ -344,7 +344,7 @@
 					comment='".addslashes($_POST['bookmark_comment'])."' 
 				WHERE 
 					id='".$_POST['bookmark_id']."' 
-					AND user_id='".$cu->id()."';");
+					AND user_id='".$cu->id."';");
 				if (mysql_affected_rows()>0)
 					ok_msg("Gespeichert");
 			}
@@ -357,7 +357,7 @@
 					bookmarks
 				WHERE 
 					id='".$_GET['del']."' 
-					AND user_id='".$cu->id()."';");
+					AND user_id='".$cu->id."';");
 				if (mysql_affected_rows()>0)
 					ok_msg("Gelöscht");
 			}
@@ -392,7 +392,7 @@
 								bookmarks
 							WHERE 
 								entity_id='".$arr[0]."' 
-								AND user_id='".$cu->id()."';");
+								AND user_id='".$cu->id."';");
 						if (mysql_num_rows($check_res)==0)
 						{
 							dbquery("
@@ -403,7 +403,7 @@
 									entity_id,
 									comment) 
 								VALUES 
-									('".$cu->id()."',
+									('".$cu->id."',
 									'".$arr[0]."',
 									'".addslashes($_POST['bookmark_comment'])."');");
 								
@@ -445,7 +445,7 @@
 						bookmarks
 					WHERE 
 						entity_id='".$arr[0]."' 
-						AND user_id='".$cu->id()."';");
+						AND user_id='".$cu->id."';");
 					if (mysql_num_rows($check_res)==0)
 					{
 						dbquery("
@@ -456,7 +456,7 @@
 							entity_id,
 							comment) 
 						VALUES 
-							('".$cu->id()."',
+							('".$cu->id."',
 							'".$arr[0]."',
 							'-');");
 								
@@ -518,7 +518,7 @@
 				bookmarks
 			INNER JOIN
 				entities	
-				ON bookmarks.user_id=".$cu->id()."
+				ON bookmarks.user_id=".$cu->id."
 				AND bookmarks.entity_id=entities.id
 			ORDER BY
 			 	bookmarks.comment;");

@@ -44,7 +44,7 @@
 	//
 	// Flottendaten laden und überprüfen ob die Flotte existiert
 	//
-	$fd = new Fleet($fleet_id,$cu->id());
+	$fd = new Fleet($fleet_id,$cu->id);
 	if ($fd->valid())
 	{
 		if ($fd->getAction()->code()=="support") {

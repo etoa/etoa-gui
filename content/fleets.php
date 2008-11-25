@@ -37,11 +37,11 @@
 	
 	echo "<input type=\"button\" onclick=\"document.location='?page=fleetstats'\" value=\"Schiffs&uuml;bersicht anzeigen\" /> &nbsp; ";
 	
-	if (isset($_GET['mode']) && $_GET['mode']=="alliance" && $cu->allianceId()>0) 
+	if (isset($_GET['mode']) && $_GET['mode']=="alliance" && $cu->allianceId>0) 
 	{
 		echo "<input type=\"button\" onclick=\"document.location='?page=fleets'\" value=\"Flotten anzeigen\" /><br/><br/>";
 		
-		$fm = new FleetManager($cu->id(),$cu->allianceId());
+		$fm = new FleetManager($cu->id,$cu->allianceId);
 		$fm->loadAllianceSupport();		
 	
 		if ($fm->count() > 0)
@@ -165,7 +165,7 @@
 	else {	
 		echo "<input type=\"button\" onclick=\"document.location='?page=fleets&mode=alliance'\" value=\"Allianzflotten anzeigen\" /><br/><br/>";
 		
-		$fm = new FleetManager($cu->id(),$cu->allianceId());
+		$fm = new FleetManager($cu->id,$cu->allianceId);
 		$fm->loadOwn();		
 	
 		if ($fm->count() > 0)

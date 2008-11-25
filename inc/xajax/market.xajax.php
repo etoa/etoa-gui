@@ -2110,12 +2110,12 @@ function checkMarketSearchFormular($val)
 			// Für Allianzmitglieder
 			if(isset($val['search_ress_for_alliance']) && $val['search_ress_for_alliance']==1)
 			{
-				$sql_add .= " AND ressource_for_alliance='".$cu->allianceId()."'";
+				$sql_add .= " AND ressource_for_alliance='".$cu->allianceId."'";
 				$out_add_alliance = " reservierte(s)";
 			}
 			else
 			{
-				$sql_add .= " AND (ressource_for_alliance='0' OR ressource_for_alliance='".$cu->allianceId()."')";
+				$sql_add .= " AND (ressource_for_alliance='0' OR ressource_for_alliance='".$cu->allianceId."')";
 			}
 
 			
@@ -2288,12 +2288,12 @@ function checkMarketSearchFormular($val)
 			// Für Allianzmitglieder
 			if(isset($val['search_ship_for_alliance']) && $val['search_ship_for_alliance']==1)
 			{
-				$sql_add .= " AND ship_for_alliance='".$cu->allianceId()."'";
+				$sql_add .= " AND ship_for_alliance='".$cu->allianceId."'";
 				$out_add_alliance = " reservierte(s)";
 			}
 			else
 			{
-				$sql_add .= " AND (ship_for_alliance='0' OR ship_for_alliance='".$cu->allianceId()."')";
+				$sql_add .= " AND (ship_for_alliance='0' OR ship_for_alliance='".$cu->allianceId."')";
 			}
 
 			

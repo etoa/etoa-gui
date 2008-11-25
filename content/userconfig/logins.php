@@ -13,7 +13,7 @@
 			FROM 
 				user_sessionlog 
 			WHERE
-				log_user_id=".$cu->id()."
+				log_user_id=".$cu->id."
 			ORDER BY 
 				log_logintime DESC
 			LIMIT 
@@ -35,7 +35,7 @@
 			FROM 
 				login_failures 
 			WHERE
-				failure_user_id=".$cu->id()."
+				failure_user_id=".$cu->id."
 			ORDER BY 
 				failure_time DESC
 			LIMIT 

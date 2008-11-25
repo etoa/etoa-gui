@@ -1,21 +1,63 @@
 <?PHP
-	
+	   
 	/**
 	* Provides methods for accessing user information
 	* and changing it.
-	*
+	*  
 	* @author Nicolas Perrenoud<mrcage@etoa.ch>
-	*/
+	*/ 
 	class User
-	{
+	{  
+		// Fields
 		protected $id;	// Database record id
 		protected $nick; // Unicke nickname
 		protected $setup; // Cheker if account is propperly setup
-		protected $valid; // Checker if class instance belongs to valid user
+		protected $isValid; // Checker if class instance belongs to valid user
 		protected $maskMatrix; // Matrix for the "fog of war" effect in the space map
+		protected $uid;
+		protected $lt;
+		protected $sk;
+		protected $realName;
+		protected $email;
+		protected $emailFix;
+		protected $lastOnline;
+		protected $acttime;
+		protected $points;
+    protected $blocked_from;
+    protected $blocked_to;
+    protected $ban_reason;
+    protected $ban_admin_id;
+    protected $hmode_from;
+    protected $hmode_to;
+    protected $deleted;
+    protected $registered;
+		protected $chatadmin;
+		protected $ip;
+		protected $specialist_time;
+		protected $specialist_id;
+		protected $visits;
+		protected $profileImage;
+		protected $profileText;
+		protected $profileBoardUrl;
+		protected $signature;
+		protected $avatar;
+		protected $allianceId;
+		protected $allianceRankId;
+		protected $allianceName;
+		protected $allianceTag;
+		protected $allianceRankName;				
+		protected $rank;
+		protected $rankHighest;
+    protected $specialistId;
+    protected $specialistTime;
+		
+		protected $race = null;
 		protected $raceId;
+
 		protected $rating;
-		protected $raceName;
+
+
+		protected $changedFields;
 		
 		/**
 		* The constructor initializes and loads 
@@ -23,7 +65,7 @@
 		*/
 		function User($id)
 		{
-			$this->valid = false;
+			$this->isValid = false;
 			$this->id = $id;
 
 			$res = dbquery("
@@ -52,25 +94,25 @@
 				$this->email=$arr['user_email'];
 				$this->emailFix=$arr['user_email_fix'];
 
-				$this->last_online=$arr['user_last_online'];
+				$this->lastOnline=$arr['user_last_online'];
 				$this->acttime = $arr['user_acttime'];
 				$this->points=$arr['user_points'];
+				
 		    $this->blocked_from = $arr['user_blocked_from'];
 		    $this->blocked_to = $arr['user_blocked_to'];
 		    $this->ban_reason = $arr['user_ban_reason'];
 		    $this->ban_admin_id = $arr['user_ban_admin_id'];
+		    
 		    $this->hmode_from = $arr['user_hmode_from'];
 		    $this->hmode_to = $arr['user_hmode_to'];
-		    $this->points = $arr['user_points'];
+		    
 		    $this->deleted = $arr['user_deleted'];
 		    $this->registered = $arr['user_registered'];
 		    $this->setup = $arr['user_setup']==1 ? true : false;
 				$this->chatadmin=$arr['user_chatadmin']==1 ? true : false;
+				
 				$this->ip=$_SERVER['REMOTE_ADDR'];
-				$this->blocked_from=$arr['user_blocked_from'];
-				$this->blocked_to=$arr['user_blocked_to'];
-				$this->hmode_from=$arr['user_hmode_from'];
-				$this->hmode_to=$arr['user_hmode_to'];
+				
 				$this->specialist_time=$arr['user_specialist_time'];
 				$this->specialist_id=$arr['user_specialist_id'];
 				$this->visits = $arr['user_visits'];
@@ -79,6 +121,8 @@
 				$this->profileText = $arr['user_profile_text'];
 				$this->profileBoardUrl = $arr['user_profile_board_url'];
 				$this->signature = $arr['user_signature'];
+				$this->avatar = $arr['user_avatar'];
+				
 
 				$this->allianceId = $arr['user_alliance_id'];
 				$this->allianceRankId = $arr['user_alliance_rank_id'];
@@ -94,38 +138,111 @@
 		    $this->specialistTime = $arr['user_specialist_time'];
 
 
-				// Todo: remove and add where it is needed
+				$this->race = null;
 				$this->raceId = $arr['user_race_id'];
-	
+
+
 				$this->rating = array();
-	
-				$this->valid=true;
+				$this->changedFields = array();
+				
+				$this->isValid=true;
 			}
 		}
 
-		//
-		// Getters
-		// 		
+		function __destruct()
+		{
+			$cnt = count($this->changedFields);
+			if ($cnt > 0)
+			{
+				$sql = "UPDATE 
+					users
+				SET ";
+				foreach ($this->changedFields as $k=>$v)
+				{
+					if ($k=="race")	
+					{
+				    $sql.= "
+							user_race_id=".$this->race->id.",";
+					}
+				}
+				$sql.=" user_id=user_id WHERE
+				    	user_id=".$this->id.";";
+				    	// todo remove debug msg
+				echo $sql;
+				dbquery($sql);
+			}
+			echo "exit";
+			
+		}
+
+		public function __set($key, $val)
+		{
+			try
+			{
+				if (!property_exists($this,$key))
+					throw new EException("Property $key existiert nicht in der Klasse ".__CLASS__);
+					
+				$this->$key = $val;
+				
+				if ($key == "race")
+				{
+ 					$this->raceId = $this->race->id;
+				}
+				
+				
+				$this->changedFields[$key] = true;
+			}
+			catch (EException $e)
+			{
+				echo $e;
+			}
+		}
 		
-		final public function isValid() { 	return $this->valid;	}
+		public function __get($key)
+		{
+			try
+			{
+				if (!property_exists($this,$key))
+					throw new EException("Property $key existiert nicht in ".__CLASS__);
+				
+				if ($key == "race" && $this->race==null)
+				{
+ 					$this->race = new Race($this->raceId);
+				}
+
+				return $this->$key;
+			}
+			catch (EException $e)
+			{
+				echo $e;
+				return null;
+			}
+		}
+		
+		
+		
 		final public function isSetup() 	{	return $this->setup; }		
+
+/*
 		final public function id() { return $this->id; }
 		final public function nick()	{ return $this->nick; }
-		final public function raceId() { return $this->raceId; }
-		final public function visits() { return $this->visits; }
+		final public function allianceId() { return $this->allianceId; }
+		final public function lastOnline() { return $this->last_online; }
 		final public function profileImage() { return $this->profileImage; }
-		final public function profileText() { return $this->profileText; }
-		final public function profileBoardUrl() { return $this->profileBoardUrl; }
-		final public function registered() { return $this->registered; }
 		final public function points() { return $this->points; }
+		final public function visits() { return $this->visits; }
+		final public function registered() { return $this->registered; }
 		final public function rank() { return $this->rank; }
 		final public function rankHighest() { return $this->rankHighest; }
-		final public function allianceId() { return $this->allianceId; }
-		final public function allianceRankId() { return $this->allianceRankId; }
-		final public function lastOnline() { return $this->last_online; }
 		final public function signature() { return $this->signature; }
+		final public function profileText() { return $this->profileText; }
+		final public function profileBoardUrl() { return $this->profileBoardUrl; }
 		final public function specialistId() { return $this->specialistId; }
 		final public function specialistTime() { return $this->specialistTime; }
+
+
+		final public function allianceRankId() { return $this->allianceRankId; }
+		*/
 	
 
 		final public function allianceName() 
@@ -146,14 +263,6 @@
 			return $this->allianceRankName;
 		}
 
-		public function raceName() 
-		{
-			if (!$this->raceName)
-				$this->loadRaceData($this->raceId());
-			return $this->raceName; 
-		}
-
-		
 		/**
 		* Gets the users different rating statistics
 		*/
@@ -331,53 +440,7 @@
 		}
 		
 		
-		/**
-		* Set the users race
-		*/
-		public function setRace($raceId)
-		{
-	    if ($this->loadRaceData($raceId))
-	    {
-		    $sql = "
-		    UPDATE
-		    	users
-		    SET
-					user_race_id=".$raceId."
-		    WHERE
-		    	user_id='".$this->id."';";
-		    dbquery($sql);		
-		    return true;    	
-	    }
-	    return false;
-		}
-		
-		/**
-		* Loads data for the given race and sets it 
-		* as the users race
-		*/
-		private function loadRaceData($raceId)
-		{
-			$rres = dbquery("
-			SELECT
-				race_name
-			FROM
-				races
-			WHERE
-				race_id=".$raceId."			
-			");
-			if (mysql_num_rows($rres)>0)
-			{
-				$rarr = mysql_fetch_assoc($rres);
-		    $this->raceId = $raceId;
-				$this->raceName = $rarr['race_name'];
-				return true;
-			}
-
-	    $this->raceId = 0;
-	    $this->raceName = "Keine Rasse";
-			return false;
-		}
-
+	
 		/**
      * Adds a message to this users personal log
      * The message string is parsed for the users nickname

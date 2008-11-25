@@ -18,9 +18,6 @@
 		{
 			parent::User($userId);
 			$this->loadProperties();
-			
-			// Todo: remove and add where it is needed
-			$this->loadRaceData($this->raceId);
 		}
 
 		//
@@ -160,64 +157,6 @@
 			$this->setup = false;
 		}
 		
-		/**
-		* Loads data for the given race and sets it 
-		* as the users race
-		* THIS FUNCTION OVERLOADS THE DEFAULT
-		*/
-		private function loadRaceData($raceId)
-		{
-			$rres = dbquery("
-			SELECT
-				race_name,
-		  	race_f_researchtime,
-				race_f_buildtime,
-				race_f_fleettime,
-				race_f_metal,
-				race_f_crystal,
-				race_f_plastic,
-				race_f_fuel,
-				race_f_food,
-				race_f_power,
-				race_f_population		
-			FROM
-				races
-			WHERE
-				race_id=".$raceId."			
-			");
-			if (mysql_num_rows($rres)>0)
-			{
-				$rarr = mysql_fetch_assoc($rres);
-		    $this->raceId = $raceId;
-				$this->raceName = $rarr['race_name'];
-				$this->raceResearchtime = $rarr['race_f_researchtime'];
-				$this->raceBuildtime = $rarr['race_f_buildtime'];
-				$this->raceFleettime = $rarr['race_f_fleettime'];
-				$this->raceMetal = $rarr['race_f_metal'];
-				$this->raceCrystal = $rarr['race_f_crystal'];
-				$this->racePlastic = $rarr['race_f_plastic'];
-				$this->raceFuel = $rarr['race_f_fuel'];
-				$this->raceFood = $rarr['race_f_food'];
-				$this->racePower = $rarr['race_f_power'];
-				$this->racePopulation = $rarr['race_f_population'];
-				return true;
-			}
-
-	    $this->raceId = 0;
-	    $this->raceName = "Keine Rasse";
-			$this->raceResearchtime = 1;
-			$this->raceBuildtime = 1;
-			$this->raceFleettime = 1;
-			$this->raceMetal = 1;
-			$this->raceCrystal = 1;
-			$this->racePlastic = 1;
-			$this->raceFuel = 1;
-			$this->raceFood = 1;
-			$this->racePower = 1;
-			$this->racePopulation = 1;
-			return false;
-		}
-
 		function setSetupFinished()
 		{
 	    $sql = "
@@ -239,7 +178,7 @@
 			FROM				
 				users
 			WHERE
-				user_id=".$this->id()."
+				user_id=".$this->id."
 			");
 			$this->dmask = '';
 			$arr = mysql_fetch_row($res);
@@ -315,22 +254,10 @@
 			SET
 				discoverymask='".$this->dmask."'
 			WHERE
-				user_id=".$this->id()."
+				user_id=".$this->id."
 			");
 		}
 		
-		function raceSpeedFactor()
-		{
-			if ($this->raceFleettime!=1)
-			{
-				return 2-$this->raceFleettime;
-			}
-			else
-			{
-				return 1;
-			}		
-		}
-
 		function setPassword($oldPassword, $newPassword1, $newPassword2, &$returnMsg)
 		{
 			$res = dbquery("
@@ -365,10 +292,10 @@
 											SET
 												user_password='".pw_salt($newPassword1,$this->registered)."'
 											WHERE
-												user_id='".$this->id()."'
+												user_id='".$this->id."'
 											;"))
 										{
-											add_log(3,"Der Spieler [b]".$this->nick()."[/b] &auml;ndert sein Passwort!",time());
+											add_log(3,"Der Spieler [b]".$this->nick."[/b] &auml;ndert sein Passwort!",time());
 											send_mail("",$this->email,"Passwortänderung","Hallo ".$this->nick."\n\nDies ist eine Bestätigung, dass du dein Passwort für deinen Account erfolgreich geändert hast!\n\nSolltest du dein Passwort nicht selbst geändet haben, so nimm bitte sobald wie möglich Kontakt mit einem Game-Administrator auf: http://www.etoa.ch/?page=kontakt","","");
 											$this->addToUserLog("settings","{nick} ändert sein Passwort.",0);
 											return true;

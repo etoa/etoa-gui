@@ -17,7 +17,7 @@
 						message_ignore
 					WHERE
 						ignore_owner_id=".$uid."
-						AND ignore_target_id=".$cu->id()."
+						AND ignore_target_id=".$cu->id."
 					;");
 					$arr=mysql_fetch_row($res);
 					if ($arr[0]==0)
@@ -27,7 +27,7 @@
 						if($check_subject=="")
 						{
 								$s['messages']['sent'][$uid]=$time;
-								Message::sendFromUserToUser($cu->id(),$uid,$_POST['message_subject'],$_POST['message_text']);
+								Message::sendFromUserToUser($cu->id,$uid,$_POST['message_subject'],$_POST['message_text']);
 
          		    tableStart("Nachrichtenversand");
          		    echo "Nachricht wurde an <b>".$_POST['message_user_to']."</b> gesendet!";

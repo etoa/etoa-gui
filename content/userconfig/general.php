@@ -23,7 +23,7 @@
               //überprüft Bildgrösse
               if ($ims[0]==BOARD_AVATAR_WIDTH && $ims[1]==BOARD_AVATAR_HEIGHT)
               {
-                  $fname = "user_".$cu->id()."_".time().".gif";
+                  $fname = "user_".$cu->id."_".time().".gif";
                   if (file_exists(BOARD_AVATAR_DIR."/".$arr['user_avatar']))
                       @unlink(BOARD_AVATAR_DIR."/".$arr['user_avatar']);
                   move_uploaded_file($source,BOARD_AVATAR_DIR."/".$fname);
@@ -59,7 +59,7 @@
                 //überprüft Bildgrösse
                 if ($ims[0]<=PROFILE_MAX_IMG_WIDTH && $ims[1]<=PROFILE_MAX_IMG_HEIGHT)
                 {
-                    $fname = "user_".$cu->id()."_".time().".".$ext;
+                    $fname = "user_".$cu->id."_".time().".".$ext;
                     if (file_exists(PROFILE_IMG_DIR."/".$arr['user_profile_img']))
                         @unlink(PROFILE_IMG_DIR."/".$arr['user_profile_img']);
                     move_uploaded_file($source,PROFILE_IMG_DIR."/".$fname);
@@ -110,12 +110,12 @@
                 $profil_img_string
                 user_profile_board_url='".$_POST['user_profile_board_url']."'
             WHERE
-                user_id='".$cu->id()."';");
+                user_id='".$cu->id."';");
                 
             success_msg("Benutzer-Daten wurden ge&auml;ndert!");
             $cu->addToUserLog("settings","{nick} hat sein Profil aktualisiert.",1);
             
-            $res = dbquery("SELECT * FROM users WHERE user_id='".$cu->id()."';");
+            $res = dbquery("SELECT * FROM users WHERE user_id='".$cu->id."';");
             $arr = mysql_fetch_array($res);
         }
         else
@@ -127,19 +127,17 @@
       tableStart("Benutzeroptionen");
       echo "<tr>
       	<th width=\"35%\">&Ouml;ffentliches Profil:</th>
-      	<td width=\"65%\" style=\"color:#0f0;\">Klicke <a href=\"?page=userinfo&amp;id=".$cu->id()."\">hier</a> um dein Profil anzuzeigen.</td>
+      	<td width=\"65%\" style=\"color:#0f0;\">Klicke <a href=\"?page=userinfo&amp;id=".$cu->id."\">hier</a> um dein Profil anzuzeigen.</td>
       </tr>";
 
       echo "<tr>
       	<th width=\"35%\">Benutzername:</th>
-      	<td width=\"65%\">".$cu->nick()."</td>
+      	<td width=\"65%\">".$cu->nick."</td>
       </tr>";
-      // <a href=\"?page=$page&amp;request=change_name\">&Auml;nderung beantragen</a>
       echo "<tr>
       	<th width=\"35%\">Vollst&auml;ndiger Name:</th>
       	<td width=\"65%\">".$cu->realName()." [".ticketLink("&Auml;nderung beantragen",10)."]</td>
       </tr>";
-      //<a href=\"?page=$page&amp;request=change_email\">&Auml;nderung beantragen</a>
       echo "<tr>
       	<th width=\"35%\">Fixe E-Mail:</th>
       	<td width=\"65%\">".$cu->emailFix()." [".ticketLink("&Auml;nderung beantragen",9)."]</td>
@@ -151,31 +149,31 @@
 
       echo "<tr>
       	<th width=\"35%\">Beschreibung:</th>
-      	<td><textarea name=\"user_profile_text\" cols=\"50\" rows=\"10\" width=\"65%\">".stripslashes($cu->profileText())."</textarea></td>
+      	<td><textarea name=\"user_profile_text\" cols=\"50\" rows=\"10\" width=\"65%\">".stripslashes($cu->profileText)."</textarea></td>
       </tr>";
       echo "<tr>
       	<th width=\"35%\">User-Bild:</th>
       	<td>";
-        if ($arr['user_profile_img']!="")
+        if ($cu->profileImage!="")
         {
-          echo '<img src="'.PROFILE_IMG_DIR.'/'.$cu->profileImage().'" alt="Profil" /><br/>';
+          echo '<img src="'.PROFILE_IMG_DIR.'/'.$cu->profileImage.'" alt="Profil" /><br/>';
           echo "<input type=\"checkbox\" value=\"1\" name=\"profile_img_del\"> Bild l&ouml;schen<br/>";
         }
       	echo "Profilbild heraufladen/&auml;ndern: <input type=\"file\" name=\"user_profile_img_file\" /><br/>
       	<b>Regeln:</b> Max ".PROFILE_MAX_IMG_WIDTH."*".PROFILE_MAX_IMG_HEIGHT." Pixel, Bilder grösser als 
       	".PROFILE_IMG_WIDTH."*".PROFILE_IMG_HEIGHT." werden automatisch verkleinert.<br/>
-      	Format: GIF, JPG oder PNG. Grösse: Max ".nf(PROFILE_IMG_MAX_SIZE)." Byte</td>
+      	Format: GIF, JPG oder PNG. Grösse: Max ".byte_format(PROFILE_IMG_MAX_SIZE)." </td>
       </tr>";   
       echo "<tr>
       	<th width=\"35%\">Allianzforum-Signatur:</th>
-      	<td><textarea name=\"user_signature\" cols=\"50\" rows=\"2\" width=\"65%\">".stripslashes($cu->signature())."</textarea></td>
+      	<td><textarea name=\"user_signature\" cols=\"50\" rows=\"2\" width=\"65%\">".stripslashes($cu->signature)."</textarea></td>
       </tr>";
       echo "<tr>
       	<th width=\"35%\">Allianzforum-Avatar:</th>
       	<td>";
-        if ($arr['user_avatar']!=BOARD_DEFAULT_IMAGE && $arr['user_avatar']!="")
+        if ($cu->avatar!="" && $cu->avatar!=BOARD_DEFAULT_IMAGE)
         {
-          show_avatar($arr['user_avatar']);
+          show_avatar($cu->avatar);
           echo "<input type=\"checkbox\" value=\"1\" name=\"avatar_del\"> Avatar l&ouml;schen<br/>";
         }
       	echo "Eigener Avatar heraufladen/&auml;ndern (".BOARD_AVATAR_WIDTH."*".BOARD_AVATAR_HEIGHT." Pixel, GIF): <input type=\"file\" name=\"user_avatar_file\" /></td>
@@ -183,7 +181,7 @@
       echo "<tr>
       	<th width=\"35%\">Öffentliches Foren-Profil:<br/>
       	<span style=\"font-weight:500;font-size:7pt;\">(zb http://www.etoa.ch/forum/profile.php?userid=1)</span></th>
-      	<td width=\"65%\"><input type=\"text\" name=\"user_profile_board_url\" maxlength=\"200\" size=\"50\" value=\"".$arr['user_profile_board_url']."\"></td>
+      	<td width=\"65%\"><input type=\"text\" name=\"user_profile_board_url\" maxlength=\"200\" size=\"50\" value=\"".$cu->profileBoardUrl."\"></td>
       </tr>";
 
       tableEnd();

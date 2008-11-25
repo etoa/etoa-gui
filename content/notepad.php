@@ -30,7 +30,7 @@
 	*/	
 
 	echo "<h1>Notizen</h1>"; //Titel angepasst <h1> by Lamborghini
-	$np = new Notepad($cu->id(),1);		
+	$np = new Notepad($cu->id,1);		
 
 	//
 	// Neue Notiz

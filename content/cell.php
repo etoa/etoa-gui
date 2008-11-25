@@ -145,19 +145,19 @@
 						}
 						elseif ($ent->entityCode()=='p')					
 						{
-							if ($ent->ownerId()>0 && $cu->id()==$ent->ownerId())
+							if ($ent->ownerId()>0 && $cu->id==$ent->ownerId())
 							{
 								$hasPlanetInSystem = true;
 							}
 							
 							// Nachrichten-Link
-							if ($ent->ownerId()>0 && $cu->id()!=$ent->ownerId())
+							if ($ent->ownerId()>0 && $cu->id!=$ent->ownerId())
 							{
 								echo "<a href=\"?page=messages&amp;mode=new&amp;message_user_to=".$ent->ownerId()."\" title=\"Nachricht senden\">Mail</a> ";
 							}
 								
 							// Diverse Links
-							if ($cu->id()!=$ent->ownerId())
+							if ($cu->id!=$ent->ownerId())
 							{
 								// Besiedelte Planete
 								if($ent->ownerId() > 0)
@@ -176,7 +176,7 @@
 						}
 	
 						// Favorit
-						if ($cu->id()!=$ent->ownerId())
+						if ($cu->id!=$ent->ownerId())
 						{
 							echo "<a href=\"?page=bookmarks&amp;add=".$ent->id()."\" title=\"Zu den Favoriten hinzuf&uuml;gen\">Favorit</a> ";
 						}					

@@ -66,7 +66,7 @@
 	    }
 	  }
 	}
-
+	
 	/**
 	* Baut die Datenbankverbindung auf
 	*/

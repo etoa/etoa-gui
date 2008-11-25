@@ -157,7 +157,7 @@
 	                    techlist
 	                  WHERE
 	                    techlist_tech_id=".SPY_TECH_ID."
-	                    AND techlist_user_id=".$cu->id()."
+	                    AND techlist_user_id=".$cu->id."
 	                  ");
 	                  $self_spy = 0;
 	                  if (mysql_num_rows($tres)>0)
@@ -172,7 +172,7 @@
 	                    techlist
 	                  WHERE
 	                    techlist_tech_id=".COMPUTER_TECH_ID."
-	                    AND techlist_user_id=".$cu->id()."
+	                    AND techlist_user_id=".$cu->id."
 	                  ");
 	                  $self_computer = 0;
 	                  if (mysql_num_rows($tres)>0)
@@ -421,12 +421,12 @@
 											// Add note to user's notepad if selected
 											if (isset($_POST['scan_to_notes']))
 											{
-												$np = new Notepad($cu->id());
+												$np = new Notepad($cu->id);
 												$np->add("Flottenscan: ".$target,$out);
 											}										                   
 										                   
 	                    // Mail result (deprecated)
-										  //send_msg($cu->id(),SHIP_MISC_MSG_CAT_ID,"Kryptocenter-Bericht",$out);
+										  //send_msg($cu->id,SHIP_MISC_MSG_CAT_ID,"Kryptocenter-Bericht",$out);
 										  
 	                    
 										  // Set cooldown
@@ -439,7 +439,7 @@
 										  WHERE
 									  	  buildlist_entity_id='".$cp->id()."'
 									  	  AND buildlist_building_id='".BUILD_CRYPTO_ID."'
-									  	  AND buildlist_user_id='".$cu->id()."'");
+									  	  AND buildlist_user_id='".$cu->id."'");
 									    
 									    $bl->setCooldown(BUILD_CRYPTO_ID,$cd);
 									    
@@ -524,7 +524,7 @@
 						// Bookmarks laden
 						//
 	
-						$bm = new BookmarkManager($cu->id());
+						$bm = new BookmarkManager($cu->id);
 						
 						echo 'Koordinaten eingeben: 
 							<input type="text" name="sx" id="sx" value="'.$coords[0].'" size="2" maxlength="2" /> / 

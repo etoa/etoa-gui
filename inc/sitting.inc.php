@@ -9,7 +9,7 @@
       user_sitting
     	ON user_sitting_date_user_id=user_sitting_user_id
   WHERE
-  	user_sitting_user_id='".$cu->id()."'
+  	user_sitting_user_id='".$cu->id."'
     AND user_sitting_active='1'
     AND user_sitting_date_from<".time()."
 		AND user_sitting_date_to>".time().";");

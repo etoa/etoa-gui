@@ -53,6 +53,8 @@
 		exit();
 	}
 
+	define(USE_HTML,true);
+
 	// Renderzeit-Start festlegen
 	$render_time = explode(" ",microtime());
 	$render_starttime=$render_time[1]+$render_time[0];
@@ -111,7 +113,7 @@
 	$cu = new CurrentUser($s['user_id']);
 
 	// Check if is valid user
-	if (!$cu->isValid())
+	if (!$cu->isValid)
 	{
 		session_destroy();
 		header("Location: ".LOGINSERVER_URL."?page=err&err=usernotfound");
@@ -263,7 +265,7 @@
 					FROM	
 						planets
 					WHERE
-						planet_user_id=".$cu->id()."
+						planet_user_id=".$cu->id."
 					ORDER BY
 						planet_user_main DESC, planet_name ASC;
 					");
@@ -313,7 +315,7 @@
 				require_once('inc/adds.inc.php');
 
 				// Count Messages
-				define('NEW_MESSAGES',Message::checkNew($cu->id()));
+				define('NEW_MESSAGES',Message::checkNew($cu->id));
 				
 				// Count users
 				$ucres=dbquery('SELECT COUNT(user_id) FROM users;');
@@ -324,7 +326,7 @@
 				$garr=mysql_fetch_row($gres);
 				
 				// Count notes
-				$np = new Notepad($cu->id());
+				$np = new Notepad($cu->id);
 				$numNotes = $np->numNotes();
 				unset($np);
 
@@ -336,8 +338,8 @@
 				// Assign template variables
 				$tpl->assign("messages",NEW_MESSAGES);
 				$tpl->assign("blinkMessages",$cu->getp("msg_blink"));
-				$tpl->assign("buddys",check_buddys_online($cu->id()));
-				$tpl->assign("fleetAttack",check_fleet_incomming($cu->id()));
+				$tpl->assign("buddys",check_buddys_online($cu->id));
+				$tpl->assign("fleetAttack",check_fleet_incomming($cu->id));
 				$tpl->assign("templateDir",CSS_STYLE);
 				$tpl->assign("serverTime",date('H:i:s'));
 				$tpl->assign("currentPlanetName","Planet");
@@ -363,7 +365,7 @@
 				$tpl->assign("usersTotal",$ucarr[0]);
 				$tpl->assign("notes",$numNotes);
 				$tpl->assign("userPoints",nf($cu->points));
-				$tpl->assign("userNick",$cu->nick());
+				$tpl->assign("userNick",$cu->nick);
 				$tpl->assign("gameWidth",GAME_WIDTH);
 				$tpl->assign("page",$page);
 				$tpl->assign("topNav",$topnav);

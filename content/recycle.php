@@ -46,7 +46,7 @@
 	FROM
 		techlist
 	WHERE
-		techlist_user_id=".$cu->id()."
+		techlist_user_id=".$cu->id."
         AND techlist_tech_id=".RECYC_TECH_ID."
         AND techlist_current_level>0;");
 
@@ -94,7 +94,7 @@
                 ships
             		ON
                 ships.ship_id=shiplist.shiplist_ship_id
-                AND shiplist.shiplist_user_id='".$cu->id()."'
+                AND shiplist.shiplist_user_id='".$cu->id."'
                 AND shiplist.shiplist_entity_id='".$cp->id()."'
                 AND shiplist.shiplist_ship_id='".$id."';");
             if (mysql_num_rows($res)>0)
@@ -116,7 +116,7 @@
                 WHERE
                     shiplist_entity_id='".$cp->id()."'
                     AND shiplist_ship_id='".$id."'
-                    AND shiplist_user_id='".$cu->id()."';");
+                    AND shiplist_user_id='".$cu->id."';");
 
                 //Rohstoffe summieren
                 $pb[0]+=ceil($payback*$arr['ship_costs_metal']*$num);
@@ -155,7 +155,7 @@
 
 
 				//Log schreiben
-				$log="Der User [URL=?page=user&sub=edit&user_id=".$cu->id()."] [B]".$_SESSION[ROUNDID]['user']['nick']."[/B] [/URL] hat auf dem Planeten [URL=?page=galaxy&sub=edit&planet_id=".$cp->id()."][B]".$cp->name."[/B][/URL] folgende Schiffe mit dem r&uuml;ckgabewert von ".($payback*100)."% recycelt:\n\n".$log_ships."\nDies hat ihm folgende Rohstoffe gegeben:\n".RES_METAL.": ".nf($pb[0])."\n".RES_CRYSTAL.": ".nf($pb[1])."\n".RES_PLASTIC.": ".nf($pb[2])."\n".RES_FUEL.": ".nf($pb[3])."\n".RES_FOOD.": ".nf($pb[4])."\n";
+				$log="Der User [URL=?page=user&sub=edit&user_id=".$cu->id."] [B]".$_SESSION[ROUNDID]['user']['nick']."[/B] [/URL] hat auf dem Planeten [URL=?page=galaxy&sub=edit&planet_id=".$cp->id()."][B]".$cp->name."[/B][/URL] folgende Schiffe mit dem r&uuml;ckgabewert von ".($payback*100)."% recycelt:\n\n".$log_ships."\nDies hat ihm folgende Rohstoffe gegeben:\n".RES_METAL.": ".nf($pb[0])."\n".RES_CRYSTAL.": ".nf($pb[1])."\n".RES_PLASTIC.": ".nf($pb[2])."\n".RES_FUEL.": ".nf($pb[3])."\n".RES_FOOD.": ".nf($pb[4])."\n";
 
 				add_log(12,$log,time());
 
@@ -193,7 +193,7 @@
                 defense.def_id=deflist.deflist_def_id
                 AND deflist.deflist_entity_id='".$cp->id()."'
                 AND deflist.deflist_def_id='".$id."'
-                AND deflist.deflist_user_id='".$cu->id()."' ;");
+                AND deflist.deflist_user_id='".$cu->id."' ;");
             if (mysql_num_rows($res)>0)
             {
                 $arr = mysql_fetch_array($res);
@@ -213,7 +213,7 @@
                 WHERE
                     deflist_entity_id='".$cp->id()."'
                     AND deflist_def_id='".$id."'
-                    AND deflist_user_id='".$cu->id()."';");
+                    AND deflist_user_id='".$cu->id."';");
 
                 //Rohstoffe summieren
                 $pb[0]+=ceil($payback*$arr['def_costs_metal']*$num);
@@ -251,7 +251,7 @@
 		    $cp->resFood+=$pb[4];
 
 				//Log schreiben
-				$log="Der User [URL=?page=user&sub=edit&user_id=".$cu->id()."] [B]".$_SESSION[ROUNDID]['user']['nick']."[/B] [/URL] hat auf dem Planeten [URL=?page=galaxy&sub=edit&planet_id=".$cp->id()."][B]".$cp->name."[/B][/URL] folgende Verteidigungsanlagen mit dem r&uuml;ckgabewert von ".($payback*100)."% recycelt:\n\n".$log_def."\nDies hat ihm folgende Rohstoffe gegeben:\n".RES_METAL.": ".nf($pb[0])."\n".RES_CRYSTAL.": ".nf($pb[1])."\n".RES_PLASTIC.": ".nf($pb[2])."\n".RES_FUEL.": ".nf($pb[3])."\n".RES_FOOD.": ".nf($pb[4])."\n";
+				$log="Der User [URL=?page=user&sub=edit&user_id=".$cu->id."] [B]".$_SESSION[ROUNDID]['user']['nick']."[/B] [/URL] hat auf dem Planeten [URL=?page=galaxy&sub=edit&planet_id=".$cp->id()."][B]".$cp->name."[/B][/URL] folgende Verteidigungsanlagen mit dem r&uuml;ckgabewert von ".($payback*100)."% recycelt:\n\n".$log_def."\nDies hat ihm folgende Rohstoffe gegeben:\n".RES_METAL.": ".nf($pb[0])."\n".RES_CRYSTAL.": ".nf($pb[1])."\n".RES_PLASTIC.": ".nf($pb[2])."\n".RES_FUEL.": ".nf($pb[3])."\n".RES_FOOD.": ".nf($pb[4])."\n";
 
 				add_log(12,$log,time());
 			}
@@ -276,7 +276,7 @@
       AND s.ship_buildable='1'
       AND s.special_ship='0'
       AND sl.shiplist_count>'0'
-      AND sl.shiplist_user_id='".$cu->id()."'
+      AND sl.shiplist_user_id='".$cu->id."'
 		ORDER BY
 			s.ship_name;");
 		if (mysql_num_rows($res)>0)
@@ -328,7 +328,7 @@
       ON d.def_id=dl.deflist_def_id
       AND dl.deflist_entity_id='".$cp->id()."'
       AND d.def_buildable='1'
-      AND dl.deflist_user_id='".$cu->id()."'
+      AND dl.deflist_user_id='".$cu->id."'
       AND dl.deflist_count>0
 		ORDER BY
 			def_name;");

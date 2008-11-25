@@ -35,7 +35,7 @@
 	define("REQ_ITEM_FLD","req_def_id");
 	define("ITEM_ID_FLD","def_id");
 	define("ITEM_NAME_FLD","def_name");
-	define("RACE_TO_ADD"," AND (def_race_id=0 OR def_race_id='".$cu->raceId()."')");
+	define("RACE_TO_ADD"," AND (def_race_id=0 OR def_race_id='".$cu->raceId."')");
 	define("ITEM_SHOW_FLD","def_show");
 	define("ITEM_ORDER_FLD","def_order");
 	define("NO_ITEMS_MSG","In dieser Kategorie gibt es keine Verteidigungsanlagen!");
@@ -58,7 +58,7 @@
 	FROM
 		techlist
 	WHERE
-    techlist_user_id='".$cu->id()."'
+    techlist_user_id='".$cu->id."'
     AND techlist_tech_id='".GEN_TECH_ID."';");
 	if(mysql_num_rows($tlres)>0)
 	{
@@ -82,7 +82,7 @@
   	buildlist_entity_id='".$cp->id()."'
   	AND buildlist_building_id='".FACTORY_ID."'
   	AND buildlist_current_level>='1'
-  	AND buildlist_user_id='".$cu->id()."'");
+  	AND buildlist_user_id='".$cu->id."'");
 	
 	
 	// Verteidigungs-Infos
@@ -141,7 +141,7 @@
 		ON 
 			techlist_tech_id=tech_id
 		AND
-			techlist_user_id='".$cu->id()."'
+			techlist_user_id='".$cu->id."'
 			AND
 			(
 				techlist_tech_id='".STRUCTURE_TECH_ID."'
@@ -283,7 +283,7 @@
   		  ON queue_def_id=def_id
   		  AND queue_entity_id='".$cp->id()."'
   		  AND queue_endtime>'".time()."'
-				AND queue_user_id='".$cu->id()."'
+				AND queue_user_id='".$cu->id."'
 			;");
 			if (mysql_num_rows($field_res)>0)
 			{
@@ -447,7 +447,7 @@
 					def_queue
 				WHERE
   				queue_entity_id='".$cp->id()."'
-  				AND queue_user_id='".$cu->id()."'
+  				AND queue_user_id='".$cu->id."'
   			ORDER BY
   				queue_endtime DESC
   			LIMIT 1;
@@ -599,7 +599,7 @@
     	            queue_endtime,
     	            queue_objtime)
     	        VALUES
-    	            ('".$cu->id()."',
+    	            ('".$cu->id."',
     	            '".$def_id."',
     	            '".$cp->id()."',
     	            '".$build_cnt."',
@@ -643,7 +643,7 @@
 				//Log schreiben
 				$log_text = "
 				<b>Verteidigungsauftrag Bauen</b><br><br>
-				<b>User:</b> [USER_ID=".$cu->id().";USER_NICK=".$cu->nick()."]<br>
+				<b>User:</b> [USER_ID=".$cu->id.";USER_NICK=".$cu->nick."]<br>
 				<b>Planeten:</b> [PLANET_ID=".$cp->id().";PLANET_NAME=".$cp->name."]<br>
 				<b>Dauer des gesamten Auftrages:</b> ".tf($total_duration)."<br>
 				<b>Ende des gesamten Auftrages:</b> ".date("Y-m-d H:i:s",$end_time)."<br>
@@ -667,7 +667,7 @@
 				";
 				
 				//Log Speichern
-				add_log_game_def($log_text,$cu->id(),$cu->allianceId(),$cp->id(),1,time());					
+				add_log_game_def($log_text,$cu->id,$cu->allianceId,$cp->id(),1,time());					
 				
 				if ($counter==0)
 				{
@@ -704,7 +704,7 @@
  	  			defense
 	  		  ON queue_def_id=def_id
 					AND queue_id='".intval($_GET['cancel'])."'
-					AND queue_user_id='".$cu->id()."'
+					AND queue_user_id='".$cu->id."'
 					AND queue_entity_id='".$cp->id()."'
 					AND queue_endtime>'".$time."'
 				;");
@@ -737,7 +737,7 @@
 						def_queue
 					WHERE
 						queue_starttime>='".$qarr['queue_endtime']."'
-						AND queue_user_id='".$cu->id()."'
+						AND queue_user_id='".$cu->id."'
 						AND queue_entity_id='".$cp->id()."'
 					ORDER BY
 						queue_starttime
@@ -769,7 +769,7 @@
 					//Log schreiben
 					$log_text = "
 					<b>Verteidigungsauftrag Abbruch</b><br><br>
-					<b>User:</b> [USER_ID=".$cu->id().";USER_NICK=".$cu->nick()."]<br>
+					<b>User:</b> [USER_ID=".$cu->id.";USER_NICK=".$cu->nick."]<br>
 					<b>Planeten:</b> [PLANET_ID=".$cp->id().";PLANET_NAME=".$cp->name."]<br>
 					<b>Anlage:</b> ".$qarr['def_name']."<br>
 					<b>Anzahl:</b> ".nf($qarr['queue_cnt'])."<br>
@@ -790,7 +790,7 @@
 					";
 					
 					//Log Speichern
-					add_log_game_def($log_text,$cu->id(),$cu->allianceId(),$cp->id(),0,time());					
+					add_log_game_def($log_text,$cu->id,$cu->allianceId,$cp->id(),0,time());					
 				}
 			}
 
@@ -815,7 +815,7 @@
     		ON
     		queue_def_id=def_id
   			AND queue_entity_id='".$cp->id()."'
-  			AND queue_user_id='".$cu->id()."'
+  			AND queue_user_id='".$cu->id."'
   			AND queue_endtime>'".$time."'
     	ORDER BY
 				queue_starttime ASC;");
@@ -937,7 +937,7 @@
 			FROM 
 				techlist 
 			WHERE 
-				techlist_user_id='".$cu->id()."';");
+				techlist_user_id='".$cu->id."';");
 			while ($arr = mysql_fetch_array($res))
 			{
 				$techlist[$arr['techlist_tech_id']]=$arr['techlist_current_level'];
@@ -951,7 +951,7 @@
 				buildlist 
 			WHERE 
 				buildlist_entity_id='".$cp->id()."' 
-				AND buildlist_user_id='".$cu->id()."';");
+				AND buildlist_user_id='".$cu->id."';");
 			while ($arr = mysql_fetch_array($res))
 			{
 				$buildlist[$arr['buildlist_building_id']]=$arr['buildlist_current_level'];
@@ -1003,12 +1003,12 @@
     				deflist
   					ON deflist_def_id=def_id
   					AND deflist_entity_id='".$cp->id()."'
-  	        AND deflist_user_id='".$cu->id()."'
+  	        AND deflist_user_id='".$cu->id."'
    				WHERE
     				def_buildable='1'
     				AND def_cat_id='".$carr['cat_id']."'
     				AND def_show='1'
-    				AND (def_race_id='0' OR def_race_id='".$cu->raceId()."')
+    				AND (def_race_id='0' OR def_race_id='".$cu->raceId."')
     			ORDER BY
     				".$order.";");
 					if (mysql_num_rows($dres)>0)
@@ -1072,7 +1072,7 @@
     			      WHERE
     			      		deflist_entity_id='".$cp->id()."'
     			          AND deflist_def_id='".$darr['def_id']."'
-    			          AND deflist_user_id='".$cu->id()."';");
+    			          AND deflist_user_id='".$cu->id."';");
     			      if (mysql_num_rows($check_res1)>0)
     			      {
     			        while ($check_arr1=mysql_fetch_array($check_res1))

@@ -85,7 +85,7 @@ if (Alliance::checkActionRights('viewmembers'))
 			else
 				echo "<td class=\"tbldata\">".date("d.m.Y H.i",$uarr['user_acttime'])."</td>";
 
-			if ($cu->id()!=$uarr['user_id'])
+			if ($cu->id!=$uarr['user_id'])
 				echo"<td class=\"tbldata\"><a href=\"?page=messages&amp;mode=new&amp;message_user_to=".$uarr['user_id']."\">Nachricht</a></td></tr>";
 			else
 				echo "<td class=\"tbldata\">-</td></tr>";

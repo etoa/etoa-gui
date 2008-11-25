@@ -112,7 +112,7 @@
   		ON cells.id=entities.cell_id
   )
  	ON entities.id=planets.id
-  	AND planet_user_id='".$cu->id()."';");
+  	AND planet_user_id='".$cu->id."';");
 
   while ($arr = mysql_fetch_row($res))
   {

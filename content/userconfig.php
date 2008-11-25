@@ -63,7 +63,7 @@
             {
                 //Normaler Name
                 case "change_name":
-                    if(mysql_num_rows(dbquery("SELECT request_id FROM user_requests WHERE request_user_id='".$cu->id()."' AND request_field='user_name';"))>0)
+                    if(mysql_num_rows(dbquery("SELECT request_id FROM user_requests WHERE request_user_id='".$cu->id."' AND request_field='user_name';"))>0)
                     {
                         echo "Du hast schon einen Anfrage geschrieben!<br>";
                     }
@@ -78,7 +78,7 @@
                           request_comment,
                           request_timestamp) 
                         VALUES
-                          ('".$cu->id()."',
+                          ('".$cu->id."',
                           'user_name',
                           '".addslashes($_POST['value'])."',
                           '".addslashes($_POST['comment'])."',
@@ -89,7 +89,7 @@
                 
                 //Nickname
                 case "change_nick":
-                    if(mysql_num_rows(dbquery("SELECT request_id FROM user_requests WHERE request_user_id='".$cu->id()."' AND request_field='user_nick';"))>0)
+                    if(mysql_num_rows(dbquery("SELECT request_id FROM user_requests WHERE request_user_id='".$cu->id."' AND request_field='user_nick';"))>0)
                     {
                         echo "Du hast schon einen Anfrage geschrieben!<br>";
                     }
@@ -104,7 +104,7 @@
                           request_comment,
                           request_timestamp) 
                         VALUES
-                          ('".$cu->id()."',
+                          ('".$cu->id."',
                           'user_nick',
                           '".addslashes($_POST['value'])."',
                           '".addslashes($_POST['comment'])."',
@@ -115,7 +115,7 @@
                 
                 //Email
                 case "change_email":
-                    if(mysql_num_rows(dbquery("SELECT request_id FROM user_requests WHERE request_user_id='".$cu->id()."' AND request_field='user_email_fix';"))>0)
+                    if(mysql_num_rows(dbquery("SELECT request_id FROM user_requests WHERE request_user_id='".$cu->id."' AND request_field='user_email_fix';"))>0)
                     {
                         echo "Du hast schon einen Anfrage geschrieben!<br>";
                     }
@@ -130,7 +130,7 @@
                           request_comment,
                           request_timestamp) 
                         VALUES
-                          ('".$cu->id()."',
+                          ('".$cu->id."',
                           'user_email_fix',
                           '".addslashes($_POST['value'])."',
                           '".addslashes($_POST['comment'])."',
@@ -160,19 +160,19 @@
 			{
 				case "change_name":
 					tableStart("&Auml;nderungsantrag: Vollst&auml;ndiger Name");
-					$res=dbquery("SELECT user_name FROM users WHERE user_id='".$cu->id()."';");
+					$res=dbquery("SELECT user_name FROM users WHERE user_id='".$cu->id."';");
 					$arr=mysql_fetch_row($res);
 					$oldval=$arr[0];
 					break;
 				case "change_nick":
 					tableStart("&Auml;nderungsantrag: Benutzername");
-					$res=dbquery("SELECT user_nick FROM users WHERE user_id='".$cu->id()."';");
+					$res=dbquery("SELECT user_nick FROM users WHERE user_id='".$cu->id."';");
 					$arr=mysql_fetch_row($res);
 					$oldval=$arr[0];
 					break;
 				case "change_email":
 					tableStart("&Auml;nderungsantrag: Fixe E-Mail");
-					$res=dbquery("SELECT user_email_fix FROM users WHERE user_id='".$cu->id()."';");
+					$res=dbquery("SELECT user_email_fix FROM users WHERE user_id='".$cu->id."';");
 					$arr=mysql_fetch_row($res);
 					$oldval=$arr[0];
 					break;
@@ -254,7 +254,7 @@
         FROM
             user_sitting_date
         WHERE
-            user_sitting_date_user_id='".$cu->id()."'
+            user_sitting_date_user_id='".$cu->id."'
             AND user_sitting_date_from!=0
             AND user_sitting_date_to!=0
         ORDER BY

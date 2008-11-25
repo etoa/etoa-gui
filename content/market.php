@@ -83,7 +83,7 @@
 	buildlist_entity_id='".$cp->id()."'
 		AND buildlist_building_id='".MARKTPLATZ_ID."' 
 		AND buildlist_current_level>0 
-		AND buildlist_user_id='".$cu->id()."';");
+		AND buildlist_user_id='".$cu->id."';");
 	
 	if (mysql_num_rows($mres)>0)
 	{
@@ -1570,7 +1570,7 @@
 							market_ressource
 						SET
 							ressource_buyable='0',
-							ressource_buyer_id='".$cu->id()."',
+							ressource_buyer_id='".$cu->id."',
 							ressource_buyer_planet_id='".$cp->id()."',
 							ressource_buyer_cell_id='".$cp->cellId()."'
 						WHERE
@@ -1581,7 +1581,7 @@
 						
 						// Nachricht an Verkäufer
 						$msg = "Ein Handel ist zustande gekommen\n";
-						$msg .= "Der Spieler ".$cu->nick()." hat von dir folgende Rohstoffe gekauft:\n\n";
+						$msg .= "Der Spieler ".$cu->nick." hat von dir folgende Rohstoffe gekauft:\n\n";
 						
 						$msg .= "".RES_METAL.": ".nf($arr['sell_metal'])."\n";
 						$msg .= "".RES_CRYSTAL.": ".nf($arr['sell_crystal'])."\n";
@@ -1623,7 +1623,7 @@
 						$msg .= "Die Rohstoffe werden in wenigen Minuten versendet.\n\n";
 						
 						$msg .= "Das Handelsministerium";
-						send_msg($cu->id(),SHIP_MISC_MSG_CAT_ID,"Handel vollzogen",$msg);
+						send_msg($cu->id,SHIP_MISC_MSG_CAT_ID,"Handel vollzogen",$msg);
 	
 						//Log schreiben, falls dieser Handel regelwidrig ist
 						$multi_res1=dbquery("
@@ -1632,7 +1632,7 @@
 						FROM
 							user_multi
 						WHERE
-							user_multi_user_id='".$cu->id()."'
+							user_multi_user_id='".$cu->id."'
 							AND user_multi_multi_user_id='".$arr['user_id']."';");
 	
 						$multi_res2=dbquery("
@@ -1642,15 +1642,15 @@
 							user_multi
 						WHERE
 							user_multi_user_id='".$arr['user_id']."'
-							AND user_multi_multi_user_id='".$cu->id()."';");
+							AND user_multi_multi_user_id='".$cu->id."';");
 	
 						if(mysql_num_rows($multi_res1)!=0 && mysql_num_rows($multi_res2)!=0)
 						{
-					    add_log(10,"[URL=?page=user&sub=edit&user_id=".$cu->id()."][B]".$cu->nick()."[/B][/URL] hat von [URL=?page=user&sub=edit&user_id=".$arr['user_id']."][B]".$seller_user_nick."[/B][/URL] Rohstoffe gekauft:\n\n".RES_METAL.": ".nf($arr['sell_metal'])."\n".RES_CRYSTAL.": ".nf($arr['sell_crystal'])."\n".RES_PLASTIC.": ".nf($arr['sell_plastic'])."\n".RES_FUEL.": ".nf($arr['sell_fuel'])."\n".RES_FOOD.": ".nf($arr['sell_food'])."\n\nDies hat ihn folgende Rohstoffe gekostet:\n".RES_METAL.": ".nf($arr['buy_metal'])."\n".RES_CRYSTAL.": ".nf($arr['buy_crystal'])."\n".RES_PLASTIC.": ".nf($arr['buy_plastic'])."\n".RES_FUEL.": ".nf($arr['buy_fuel'])."\n".RES_FOOD.": ".nf($arr['buy_food']),time());
+					    add_log(10,"[URL=?page=user&sub=edit&user_id=".$cu->id."][B]".$cu->nick."[/B][/URL] hat von [URL=?page=user&sub=edit&user_id=".$arr['user_id']."][B]".$seller_user_nick."[/B][/URL] Rohstoffe gekauft:\n\n".RES_METAL.": ".nf($arr['sell_metal'])."\n".RES_CRYSTAL.": ".nf($arr['sell_crystal'])."\n".RES_PLASTIC.": ".nf($arr['sell_plastic'])."\n".RES_FUEL.": ".nf($arr['sell_fuel'])."\n".RES_FOOD.": ".nf($arr['sell_food'])."\n\nDies hat ihn folgende Rohstoffe gekostet:\n".RES_METAL.": ".nf($arr['buy_metal'])."\n".RES_CRYSTAL.": ".nf($arr['buy_crystal'])."\n".RES_PLASTIC.": ".nf($arr['buy_plastic'])."\n".RES_FUEL.": ".nf($arr['buy_fuel'])."\n".RES_FOOD.": ".nf($arr['buy_food']),time());
 						}
 	
 						// Log schreiben
-						add_log(7,"Ein Handel ist zustande gekommen\nDer Spieler ".$cu->nick()." hat vom Spieler ".$seller_user_nick."  folgende Rohstoffe gekauft:\n\n".RES_METAL.": ".nf($arr['sell_metal'])."\n".RES_CRYSTAL.": ".nf($arr['sell_crystal'])."\n".RES_PLASTIC.": ".nf($arr['sell_plastic'])."\n".RES_FUEL.": ".nf($arr['sell_fuel'])."\n".RES_FOOD.": ".nf($arr['sell_food'])."\n\nDies hat ihn folgende Rohstoffe gekostet:\n".RES_METAL.": ".nf($arr['buy_metal'])."\n".RES_CRYSTAL.": ".nf($arr['buy_crystal'])."\n".RES_PLASTIC.": ".nf($arr['buy_plastic'])."\n".RES_FUEL.": ".nf($arr['buy_fuel'])."\n".RES_FOOD.": ".nf($arr['buy_food'])."\n\n",time());
+						add_log(7,"Ein Handel ist zustande gekommen\nDer Spieler ".$cu->nick." hat vom Spieler ".$seller_user_nick."  folgende Rohstoffe gekauft:\n\n".RES_METAL.": ".nf($arr['sell_metal'])."\n".RES_CRYSTAL.": ".nf($arr['sell_crystal'])."\n".RES_PLASTIC.": ".nf($arr['sell_plastic'])."\n".RES_FUEL.": ".nf($arr['sell_fuel'])."\n".RES_FOOD.": ".nf($arr['sell_food'])."\n\nDies hat ihn folgende Rohstoffe gekostet:\n".RES_METAL.": ".nf($arr['buy_metal'])."\n".RES_CRYSTAL.": ".nf($arr['buy_crystal'])."\n".RES_PLASTIC.": ".nf($arr['buy_plastic'])."\n".RES_FUEL.": ".nf($arr['buy_fuel'])."\n".RES_FOOD.": ".nf($arr['buy_food'])."\n\n",time());
 						
 						
 						
@@ -1792,7 +1792,7 @@
 							market_ship
 						SET
 							ship_buyable='0',
-							ship_buyer_id='".$cu->id()."',
+							ship_buyer_id='".$cu->id."',
 							ship_buyer_planet_id='".$cp->id()."',
 							ship_buyer_cell_id='".$cp->cellId()."'
 						WHERE
@@ -1802,7 +1802,7 @@
 						$cp->changeRes(-$arr['ship_costs_metal'],-$arr['ship_costs_crystal'],-$arr['ship_costs_plastic'],-$arr['ship_costs_fuel'],-$arr['ship_costs_food']);	
 							
 						// Nachricht an Verkäufer
-						$msg = "Der Handel war erfolgreich: Der User ".$cu->nick()." hat folgende Schiffe von dir gekauft:\n\n";
+						$msg = "Der Handel war erfolgreich: Der User ".$cu->nick." hat folgende Schiffe von dir gekauft:\n\n";
 						
 						$msg .= "".$arr['ship_name'].": ".$arr['ship_count']."\n\n";
 						
@@ -1836,7 +1836,7 @@
 						$msg .= "Die Waren werden in wenigen Minuten versendet.\n\n";
 						
 						$msg .= "Das Handelsministerium";
-						send_msg($cu->id(),SHIP_MISC_MSG_CAT_ID,"Handel vollzogen",$msg);
+						send_msg($cu->id,SHIP_MISC_MSG_CAT_ID,"Handel vollzogen",$msg);
 	
 	
 						//Log schreiben, falls dieser Handel regelwidrig ist
@@ -1846,7 +1846,7 @@
 						FROM
 							user_multi
 						WHERE
-							user_multi_user_id='".$cu->id()."'
+							user_multi_user_id='".$cu->id."'
 							AND user_multi_multi_user_id='".$arr['user_id']."';");
 	
 						$multi_res2=dbquery("
@@ -1856,15 +1856,15 @@
 							user_multi
 						WHERE
 							user_multi_user_id='".$arr['user_id']."'
-							AND user_multi_multi_user_id='".$cu->id()."';");
+							AND user_multi_multi_user_id='".$cu->id."';");
 	
 						if(mysql_num_rows($multi_res1)!=0 && mysql_num_rows($multi_res2)!=0)
 						{
-					    add_log(10,"[URL=?page=user&sub=edit&user_id=".$cu->id()."][B]".$cu->nick()."[/B][/URL] hat von [URL=?page=user&sub=edit&user_id=".$arr['user_id']."][B]".$seller_user_nick."[/B][/URL] Schiffe gekauft:\n\n".$arr['ship_count']." ".$arr['ship_name']."\n\nund das zu folgendem Preis:\n\n".RES_METAL.": ".nf($arr['ship_costs_metal'])."\n".RES_CRYSTAL.": ".nf($arr['ship_costs_crystal'])."\n".RES_PLASTIC.": ".nf($arr['ship_costs_plastic'])."\n".RES_FUEL.": ".nf($arr['ship_costs_fuel'])."\n".RES_FOOD.": ".nf($arr['ship_costs_food']),time());
+					    add_log(10,"[URL=?page=user&sub=edit&user_id=".$cu->id."][B]".$cu->nick."[/B][/URL] hat von [URL=?page=user&sub=edit&user_id=".$arr['user_id']."][B]".$seller_user_nick."[/B][/URL] Schiffe gekauft:\n\n".$arr['ship_count']." ".$arr['ship_name']."\n\nund das zu folgendem Preis:\n\n".RES_METAL.": ".nf($arr['ship_costs_metal'])."\n".RES_CRYSTAL.": ".nf($arr['ship_costs_crystal'])."\n".RES_PLASTIC.": ".nf($arr['ship_costs_plastic'])."\n".RES_FUEL.": ".nf($arr['ship_costs_fuel'])."\n".RES_FOOD.": ".nf($arr['ship_costs_food']),time());
 						}
 	
 						//Marktlog schreiben
-						add_log(7,"Der Spieler ".$cu->nick()." hat folgende Schiffe von ".$seller_user_nick." gekauft:\n\n".$arr['ship_count']." ".$arr['ship_name']."\n\nund das zu folgendem Preis:\n\n".RES_METAL.": ".nf($arr['ship_costs_metal'])."\n".RES_CRYSTAL.": ".nf($arr['ship_costs_crystal'])."\n".RES_PLASTIC.": ".nf($arr['ship_costs_plastic'])."\n".RES_FUEL.": ".nf($arr['ship_costs_fuel'])."\n".RES_FOOD.": ".nf($arr['ship_costs_food']),time());		
+						add_log(7,"Der Spieler ".$cu->nick." hat folgende Schiffe von ".$seller_user_nick." gekauft:\n\n".$arr['ship_count']." ".$arr['ship_name']."\n\nund das zu folgendem Preis:\n\n".RES_METAL.": ".nf($arr['ship_costs_metal'])."\n".RES_CRYSTAL.": ".nf($arr['ship_costs_crystal'])."\n".RES_PLASTIC.": ".nf($arr['ship_costs_plastic'])."\n".RES_FUEL.": ".nf($arr['ship_costs_fuel'])."\n".RES_FOOD.": ".nf($arr['ship_costs_food']),time());		
 						
 						// Zählt die erfolgreich abgewickelten Angebote
 						$cnt++;
@@ -1972,7 +1972,7 @@
                         AND planet_user_id=".$arr['auction_current_buyer_id']."");
 
                     // Nachricht dem überbotenen User schicken
-                    $msg = "Du wurdest vom Spieler ".$cu->nick()." in einer Auktion &uuml;berboten\n";
+                    $msg = "Du wurdest vom Spieler ".$cu->nick." in einer Auktion &uuml;berboten\n";
                     $msg .= "Die Auktion ist nun zu Ende und wird nach ".AUCTION_DELAY_TIME." Stunden gel&ouml;scht.\n";
                     $msg .= "[URL=?page=market&mode=auction&id=".$arr['auction_market_id']."Hier[/URL] gehts zu der Auktion.\n\n";
                     
@@ -1993,12 +1993,12 @@
                     planet_res_food=planet_res_food-'".$_POST['auction_new_buy_food']."'
                 WHERE
                     id='".$cp->id()."'
-                    AND planet_user_id='".$cu->id()."'");
+                    AND planet_user_id='".$cu->id."'");
 
 
                 // Nachricht an Verkäufer
                 $msg = "Ein Handel ist erfolgreich zustande gekommen.\n";
-                $msg .= "Der Spieler ".$cu->nick()." hat von dir folgende Rohstoffe ersteigert: \n\n";
+                $msg .= "Der Spieler ".$cu->nick." hat von dir folgende Rohstoffe ersteigert: \n\n";
 
                 $msg .= "".RES_METAL.": ".nf($arr['auction_sell_metal'])."\n";
                 $msg .= "".RES_CRYSTAL.": ".nf($arr['auction_sell_crystal'])."\n";
@@ -2038,7 +2038,7 @@
                 $msg .= "Die Auktion wird nach ".AUCTION_DELAY_TIME." Stunden gel&ouml;scht und die Waren werden in wenigen Minuten versendet.\n\n";
                 
                 $msg .= "Das Handelsministerium";
-                send_msg($cu->id(),SHIP_MISC_MSG_CAT_ID,"Auktion vorzeitig beendet",$msg);
+                send_msg($cu->id,SHIP_MISC_MSG_CAT_ID,"Auktion vorzeitig beendet",$msg);
 
 
                 // Auktion Speichern und "Stoppen" so dass nicht mehr geboten werden kann
@@ -2047,7 +2047,7 @@
                 UPDATE
                     market_auction
                 SET
-                    auction_current_buyer_id='".$cu->id()."',
+                    auction_current_buyer_id='".$cu->id."',
                     auction_current_buyer_planet_id='".$cp->id()."',
                     auction_current_buyer_cell_id='".$cp->cellId()."',
                     auction_current_buyer_date='".time()."',
@@ -2069,7 +2069,7 @@
                     user_multi
                 WHERE
                     user_multi_user_id='".$arr['auction_user_id']."'
-                    AND user_multi_multi_user_id='".$cu->id()."';");
+                    AND user_multi_multi_user_id='".$cu->id."';");
 
                 $multi_res2=dbquery("
                 SELECT
@@ -2077,16 +2077,16 @@
                 FROM
                     user_multi
                 WHERE
-                    user_multi_user_id='".$cu->id()."'
+                    user_multi_user_id='".$cu->id."'
                     AND user_multi_multi_user_id='".$arr['auction_user_id']."';");
 
                 if(mysql_num_rows($multi_res1)!=0 && mysql_num_rows($multi_res2)!=0)
                 {
-			            add_log(10,"[URL=?page=user&sub=edit&user_id=".$cu->id()."][B]".$cu->nick()."[/B][/URL] hat an einer Auktion von [URL=?page=user&sub=edit&user_id=".$arr['auction_user_id']."][B]".$partner_user_nick."[/B][/URL] gewonnen:\n\nRohstoffe:\n".RES_METAL.": ".nf($arr['auction_sell_metal'])."\n".RES_CRYSTAL.": ".nf($arr['auction_sell_crystal'])."\n".RES_PLASTIC.": ".nf($arr['auction_sell_plastic'])."\n".RES_FUEL.": ".nf($arr['auction_sell_fuel'])."\n".RES_FOOD.": ".nf($arr['auction_sell_food'])."\n\nDies hat ihn folgende Rohstoffe gekostet:\n".RES_METAL.": ".nf($_POST['auction_new_buy_metal'])."\n".RES_CRYSTAL.": ".nf($_POST['auction_new_buy_crystal'])."\n".RES_PLASTIC.": ".nf($_POST['auction_new_buy_plastic'])."\n".RES_FUEL.": ".nf($_POST['auction_new_buy_fuel'])."\n".RES_FOOD.": ".nf($_POST['auction_new_buy_food'])."",time());
+			            add_log(10,"[URL=?page=user&sub=edit&user_id=".$cu->id."][B]".$cu->nick."[/B][/URL] hat an einer Auktion von [URL=?page=user&sub=edit&user_id=".$arr['auction_user_id']."][B]".$partner_user_nick."[/B][/URL] gewonnen:\n\nRohstoffe:\n".RES_METAL.": ".nf($arr['auction_sell_metal'])."\n".RES_CRYSTAL.": ".nf($arr['auction_sell_crystal'])."\n".RES_PLASTIC.": ".nf($arr['auction_sell_plastic'])."\n".RES_FUEL.": ".nf($arr['auction_sell_fuel'])."\n".RES_FOOD.": ".nf($arr['auction_sell_food'])."\n\nDies hat ihn folgende Rohstoffe gekostet:\n".RES_METAL.": ".nf($_POST['auction_new_buy_metal'])."\n".RES_CRYSTAL.": ".nf($_POST['auction_new_buy_crystal'])."\n".RES_PLASTIC.": ".nf($_POST['auction_new_buy_plastic'])."\n".RES_FUEL.": ".nf($_POST['auction_new_buy_fuel'])."\n".RES_FOOD.": ".nf($_POST['auction_new_buy_food'])."",time());
                 }
 
                 // Log schreiben
-                add_log(7,"Es wurde folgende Auktion erfolgreich beendet: Der Spieler ".$cu->nick()." hat vom Spieler ".$partner_user_nick."  folgende Waren ersteigert:\n\nRohstoffe:\n".RES_METAL.": ".nf($arr['auction_sell_metal'])."\n".RES_CRYSTAL.": ".nf($arr['auction_sell_crystal'])."\n".RES_PLASTIC.": ".nf($arr['auction_sell_plastic'])."\n".RES_FUEL.": ".nf($arr['auction_sell_fuel'])."\n".RES_FOOD.": ".nf($arr['auction_sell_food'])."\n\nDies hat ihn folgende Rohstoffe gekostet:".RES_METAL.": ".nf($_POST['auction_new_buy_metal'])."\n".RES_CRYSTAL.": ".nf($_POST['auction_new_buy_crystal'])."\n".RES_PLASTIC.": ".nf($_POST['auction_new_buy_plastic'])."\n".RES_FUEL.": ".nf($_POST['auction_new_buy_fuel'])."\n".RES_FOOD.": ".nf($_POST['auction_new_buy_food'])."\n\nDie Auktion wird nach ".AUCTION_DELAY_TIME." Stunden gel&ouml;scht",time());
+                add_log(7,"Es wurde folgende Auktion erfolgreich beendet: Der Spieler ".$cu->nick." hat vom Spieler ".$partner_user_nick."  folgende Waren ersteigert:\n\nRohstoffe:\n".RES_METAL.": ".nf($arr['auction_sell_metal'])."\n".RES_CRYSTAL.": ".nf($arr['auction_sell_crystal'])."\n".RES_PLASTIC.": ".nf($arr['auction_sell_plastic'])."\n".RES_FUEL.": ".nf($arr['auction_sell_fuel'])."\n".RES_FOOD.": ".nf($arr['auction_sell_food'])."\n\nDies hat ihn folgende Rohstoffe gekostet:".RES_METAL.": ".nf($_POST['auction_new_buy_metal'])."\n".RES_CRYSTAL.": ".nf($_POST['auction_new_buy_crystal'])."\n".RES_PLASTIC.": ".nf($_POST['auction_new_buy_plastic'])."\n".RES_FUEL.": ".nf($_POST['auction_new_buy_fuel'])."\n".RES_FOOD.": ".nf($_POST['auction_new_buy_food'])."\n\nDie Auktion wird nach ".AUCTION_DELAY_TIME." Stunden gel&ouml;scht",time());
 
 
                 echo "Gratulation, du hast die Auktion gewonnen, da du den maximal Betrag geboten hast!<br/>";
@@ -2168,7 +2168,7 @@
                         AND planet_user_id=".$arr['auction_current_buyer_id']."");
 
                     // Nachricht dem überbotenen user schicken
-                    $msg = "Du wurdest vom Spieler ".$cu->nick()." in einer Auktion &uuml;berboten\n";
+                    $msg = "Du wurdest vom Spieler ".$cu->nick." in einer Auktion &uuml;berboten\n";
                     $msg .= "Die Auktion dauert noch bis am ".date("d.m.Y H:i",$arr['auction_end']).".\n";
                     $msg .= "[URL=?page=market&mode=auction&id=".$_POST['auction_market_id']."]Hier[/URL] gehts zu der Auktion.\n\n";
                     
@@ -2190,14 +2190,14 @@
                     planet_res_food=planet_res_food-'".$_POST['auction_new_buy_food']."'
                 WHERE
                     id='".$cp->id()."'
-                    AND planet_user_id='".$cu->id()."'");
+                    AND planet_user_id='".$cu->id."'");
 
                 //Das neue Angebot Speichern
                 dbquery("
                 UPDATE
                   market_auction
                 SET
-                  auction_current_buyer_id='".$cu->id()."',
+                  auction_current_buyer_id='".$cu->id."',
                   auction_current_buyer_planet_id='".$cp->id()."',
                   auction_current_buyer_date='".time()."',
                   auction_buy_metal='".$_POST['auction_new_buy_metal']."',
@@ -2256,7 +2256,7 @@
 			}
 			else
 			{
-				$_POST['ressource_for_alliance']=$cu->allianceId();
+				$_POST['ressource_for_alliance']=$cu->allianceId;
 				$for_alliance="f&uuml;r ein Allianzmitglied ";
 			}
 
@@ -2285,10 +2285,10 @@
 	      $msg .= "".RES_FOOD.": ".nf($_POST['ress_buy_food'])."\n\n";
 
 	      $msg .= "Das Handelsministerium";
-	      send_msg($cu->id(),SHIP_MISC_MSG_CAT_ID,"Angebot eingetragen",$msg);
+	      send_msg($cu->id,SHIP_MISC_MSG_CAT_ID,"Angebot eingetragen",$msg);
 	
 	      // Log schreiben
-	      add_log(7,"Der Spieler ".$cu->nick()." hat folgende Rohstoffe ".$for_alliance."angeboten:\n\n".RES_METAL.": ".nf($_POST['ress_sell_metal'])."\n".RES_CRYSTAL.": ".nf($_POST['ress_sell_crystal'])."\n".RES_PLASTIC.": ".nf($_POST['ress_sell_plastic'])."\n".RES_FUEL.": ".nf($_POST['ress_sell_fuel'])."\n".RES_FOOD.": ".nf($_POST['ress_sell_food'])."\n\nFolgender Preis muss daf&uuml;r gezahlt werden:\n\n".RES_METAL.": ".nf($_POST['ress_buy_metal'])."\n".RES_CRYSTAL.": ".nf($_POST['ress_buy_crystal'])."\n".RES_PLASTIC.": ".nf($_POST['ress_buy_plastic'])."\n".RES_FUEL.": ".nf($_POST['ress_buy_fuel'])."\n".RES_FOOD.": ".nf($_POST['ress_buy_food'])."\n\n",time());
+	      add_log(7,"Der Spieler ".$cu->nick." hat folgende Rohstoffe ".$for_alliance."angeboten:\n\n".RES_METAL.": ".nf($_POST['ress_sell_metal'])."\n".RES_CRYSTAL.": ".nf($_POST['ress_sell_crystal'])."\n".RES_PLASTIC.": ".nf($_POST['ress_sell_plastic'])."\n".RES_FUEL.": ".nf($_POST['ress_sell_fuel'])."\n".RES_FOOD.": ".nf($_POST['ress_sell_food'])."\n\nFolgender Preis muss daf&uuml;r gezahlt werden:\n\n".RES_METAL.": ".nf($_POST['ress_buy_metal'])."\n".RES_CRYSTAL.": ".nf($_POST['ress_buy_crystal'])."\n".RES_PLASTIC.": ".nf($_POST['ress_buy_plastic'])."\n".RES_FUEL.": ".nf($_POST['ress_buy_fuel'])."\n".RES_FOOD.": ".nf($_POST['ress_buy_food'])."\n\n",time());
 	
 	      // Rohstoffe vom Planet abziehen
         	// TODO: use planet class
@@ -2303,7 +2303,7 @@
 	        planet_res_food=planet_res_food-".($_POST['ress_sell_food']*MARKET_SELL_TAX)."
 	      WHERE
 	      	id='".$cp->id()."'
-	      	AND planet_user_id='".$cu->id()."';");
+	      	AND planet_user_id='".$cu->id."';");
 	
 				// Angebot speichern
 	      dbquery("
@@ -2326,7 +2326,7 @@
 	          ressource_text,
 	          datum)
 	      VALUES
-	          ('".$cu->id()."',
+	          ('".$cu->id."',
 	          '".$cp->id()."',
 	          '".$cp->cellId()."',
 	          '".$_POST['ress_sell_metal']."',
@@ -2367,7 +2367,7 @@
 			}
 			else
 			{
-				$_POST['ship_for_alliance']=$cu->allianceId();
+				$_POST['ship_for_alliance']=$cu->allianceId;
 				$for_alliance="für ein Allianzmitglied ";
 			}
 
@@ -2424,7 +2424,7 @@
               ship_text,
               datum)
           VALUES
-              ('".$cu->id()."',
+              ('".$cu->id."',
               '".$cp->id()."',
               '".$cp->cellId()."',
               '".$ship_id."',
@@ -2454,10 +2454,10 @@
           $msg .= "".RES_FOOD.": ".nf($_POST['ship_buy_food'])."\n\n";
 
           $msg .= "Das Handelsministerium";
-          send_msg($cu->id(),SHIP_MISC_MSG_CAT_ID,"Angebot eingetragen",$msg);
+          send_msg($cu->id,SHIP_MISC_MSG_CAT_ID,"Angebot eingetragen",$msg);
 
           //Log schreiben
-          add_log(LOG_CAT,"Der Spieler ".$cu->nick()." hat folgende Schiffe zum Verkauf ".$for_alliance."angeboten:\n\n".nf($ship_count)." ".$ship_name."\n\nPreis:\n ".RES_METAL.": ".nf($_POST['ship_buy_metal'])."\n".RES_CRYSTAL.": ".nf($_POST['ship_buy_crystal'])."\n".RES_PLASTIC.": ".nf($_POST['ship_buy_plastic'])."\n".RES_FUEL.": ".nf($_POST['ship_buy_fuel'])."\n".RES_FOOD.": ".nf($_POST['ship_buy_food'])."\n\n",time());
+          add_log(LOG_CAT,"Der Spieler ".$cu->nick." hat folgende Schiffe zum Verkauf ".$for_alliance."angeboten:\n\n".nf($ship_count)." ".$ship_name."\n\nPreis:\n ".RES_METAL.": ".nf($_POST['ship_buy_metal'])."\n".RES_CRYSTAL.": ".nf($_POST['ship_buy_crystal'])."\n".RES_PLASTIC.": ".nf($_POST['ship_buy_plastic'])."\n".RES_FUEL.": ".nf($_POST['ship_buy_fuel'])."\n".RES_FOOD.": ".nf($_POST['ship_buy_food'])."\n\n",time());
 
         	echo "Angebot erfolgreich abgesendet<br/><br/>";
           return_btn();
@@ -2519,7 +2519,7 @@
             planet_res_food=planet_res_food-".($_POST['auction_sell_food']*MARKET_SELL_TAX)."
         WHERE
             id=".$cp->id()."
-            AND planet_user_id=".$cu->id()."");
+            AND planet_user_id=".$cu->id."");
 
         // Angebot speichern
         dbquery("
@@ -2542,7 +2542,7 @@
             auction_currency_food,
             auction_buyable)
         VALUES
-            ('".$cu->id()."',
+            ('".$cu->id."',
             '".$cp->id()."',
             '".$cp->cellId()."',
             '".time()."',
@@ -2573,9 +2573,9 @@
         $msg .= "Die Auktion endet am ".date("d.m.Y",$auction_end_time)." um ".date("H:i",$auction_end_time)." Uhr.\n\n";
         
         $msg .= "Das Handelsministerium";
-        send_msg($cu->id(),SHIP_MISC_MSG_CAT_ID,"Auktion eingetragen",$msg);
+        send_msg($cu->id,SHIP_MISC_MSG_CAT_ID,"Auktion eingetragen",$msg);
 
-        add_log(LOG_CAT,"Der Spieler ".$cu->nick()." hat folgende Rohstoffe zur versteigerung angeboten:\n\n".RES_METAL.": ".nf($_POST['auction_sell_metal'])."\n".RES_CRYSTAL.": ".nf($_POST['auction_sell_crystal'])."\n".RES_PLASTIC.": ".nf($_POST['auction_sell_plastic'])."\n".RES_FUEL.": ".nf($_POST['auction_sell_fuel'])."\n".RES_FOOD.": ".nf($_POST['auction_sell_food'])."\n\nAuktionsende: ".date("d.m.Y H:i",$auction_end_time)."",time());
+        add_log(LOG_CAT,"Der Spieler ".$cu->nick." hat folgende Rohstoffe zur versteigerung angeboten:\n\n".RES_METAL.": ".nf($_POST['auction_sell_metal'])."\n".RES_CRYSTAL.": ".nf($_POST['auction_sell_crystal'])."\n".RES_PLASTIC.": ".nf($_POST['auction_sell_plastic'])."\n".RES_FUEL.": ".nf($_POST['auction_sell_fuel'])."\n".RES_FOOD.": ".nf($_POST['auction_sell_food'])."\n\nAuktionsende: ".date("d.m.Y H:i",$auction_end_time)."",time());
 
         echo "Auktion erfolgreich lanciert<br/><br/>";
         return_btn();
@@ -2605,7 +2605,7 @@
 				market_ressource
 			WHERE
 				ressource_buyable='1'
-        AND user_id!='".$cu->id()."'
+        AND user_id!='".$cu->id."'
         ".stripslashes($_POST['ressource_sql_add'])."
       ORDER BY
 				datum ASC;");				
@@ -2776,7 +2776,7 @@
 				market_ship
 			WHERE
 				ship_buyable='1'
-        AND user_id!='".$cu->id()."'
+        AND user_id!='".$cu->id."'
         ".stripslashes($_POST['ship_sql_add'])."
       ORDER BY
 				datum ASC;");															
@@ -2915,7 +2915,7 @@
 			FROM
 				market_auction
 			WHERE
-				auction_user_id!='".$cu->id()."'
+				auction_user_id!='".$cu->id."'
         ".stripslashes($_POST['auction_sql_add'])."
       ORDER BY
 				auction_end ASC;");							
@@ -3154,7 +3154,7 @@
 										if($arr['auction_buyable']==1)
 										{
 											// Der Höchstbietende kann nicht sein eigenes Gebot überbieten
-											if($arr['auction_current_buyer_id']==$cu->id())
+											if($arr['auction_current_buyer_id']==$cu->id)
 											{
 												$disabled = "disabled=\"disabled\"";
 											}
@@ -3259,7 +3259,7 @@
 				market_auction 
 			WHERE 
 				auction_market_id='".intval($_POST['auction_market_id'])."'
-				AND auction_user_id!='".$cu->id()."' ");
+				AND auction_user_id!='".$cu->id."' ");
 			if (mysql_num_rows($res)>0)
 			{
 				$arr=mysql_fetch_array($res);
@@ -3598,8 +3598,8 @@
 						market_ressource
 					WHERE
 						ressource_buyable='1'
-        		AND user_id!='".$cu->id()."'
-        		AND (ressource_for_alliance='0' OR ressource_for_alliance='".$cu->allianceId()."')
+        		AND user_id!='".$cu->id."'
+        		AND (ressource_for_alliance='0' OR ressource_for_alliance='".$cu->allianceId."')
 				) AS ress_cnt,
 				(
 					SELECT 
@@ -3608,8 +3608,8 @@
 						market_ship
 					WHERE
 						ship_buyable='1'
-						AND user_id!='".$cu->id()."'
-						AND (ship_for_alliance='0' OR ship_for_alliance='".$cu->allianceId()."')
+						AND user_id!='".$cu->id."'
+						AND (ship_for_alliance='0' OR ship_for_alliance='".$cu->allianceId."')
 				) AS ship_cnt,
 				(
 					SELECT 
@@ -3617,7 +3617,7 @@
 					FROM 
 						market_auction
 					WHERE
-						auction_user_id!='".$cu->id()."'
+						auction_user_id!='".$cu->id."'
 				) AS auction_cnt
 				;");
 	
@@ -3730,7 +3730,7 @@
 					market_ship 
 				WHERE 
 					ship_market_id='".$_POST['ship_market_id']."' 
-					AND user_id='".$cu->id()."'");
+					AND user_id='".$cu->id."'");
 					
 				if (mysql_num_rows($scres)>0)
 				{
@@ -3769,7 +3769,7 @@
 					market_ressource 
 				WHERE 
 					ressource_market_id='".$_POST['ressource_market_id']."' 
-					AND user_id='".$cu->id()."'");
+					AND user_id='".$cu->id."'");
 					
 				if (mysql_num_rows($rcres)>0)
 				{
@@ -3794,7 +3794,7 @@
 					WHERE 
 						ressource_market_id='".$_POST['ressource_market_id']."'");
 						
-					add_log(7,"Der Spieler ".$cu->nick()." zieht folgendes Rohstoffangebot zur&uuml;ck: \n\n".RES_METAL.": ".$rcrow['sell_metal']."\n".RES_CRYSTAL.": ".$rcrow['sell_crystal']."\n".RES_PLASTIC.": ".$rcrow['sell_plastic']."\n".RES_FUEL.": ".$rcrow['sell_fuel']."\n".RES_FOOD.": ".$rcrow['sell_food']."\n\nEr erh&auml;lt ".(round($return_factor,2)*100)."% der Waren erstattet!",time());
+					add_log(7,"Der Spieler ".$cu->nick." zieht folgendes Rohstoffangebot zur&uuml;ck: \n\n".RES_METAL.": ".$rcrow['sell_metal']."\n".RES_CRYSTAL.": ".$rcrow['sell_crystal']."\n".RES_PLASTIC.": ".$rcrow['sell_plastic']."\n".RES_FUEL.": ".$rcrow['sell_fuel']."\n".RES_FOOD.": ".$rcrow['sell_food']."\n\nEr erh&auml;lt ".(round($return_factor,2)*100)."% der Waren erstattet!",time());
 					echo "Angebot wurde gel&ouml;scht und du hast ".(round($return_factor,2)*100)."% der angebotenen Rohstoffe zur&uuml;ck erhalten!";
 				}
 				else
@@ -3814,7 +3814,7 @@
 					market_auction 
 				WHERE 
 					auction_market_id='".$_POST['auction_market_id']."' 
-					AND auction_user_id='".$cu->id()."'");
+					AND auction_user_id='".$cu->id."'");
 				if (mysql_num_rows($acres)>0)
 				{
 					// Rohstoffe zurückgeben
@@ -3836,7 +3836,7 @@
 					//Auktion löschen
 					dbquery("DELETE FROM market_auction WHERE auction_market_id='".$_POST['auction_market_id']."'");
 
-					add_log(7,"Der Spieler ".$cu->nick()." zieht folgende Auktion zur&uuml;ck:\nRohstoffe:\n".RES_METAL.": ".$acrow['sell_metal']."\n".RES_CRYSTAL.": ".$acrow['sell_crystal']."\n".RES_PLASTIC.": ".$acrow['sell_plastic']."\n".RES_FUEL.": ".$acrow['sell_fuel']."\n".RES_FOOD.": ".$acrow['sell_food']."\n\nEr erh&auml;lt ".(round($return_factor,2)*100)."% der Waren erstattet!",time());
+					add_log(7,"Der Spieler ".$cu->nick." zieht folgende Auktion zur&uuml;ck:\nRohstoffe:\n".RES_METAL.": ".$acrow['sell_metal']."\n".RES_CRYSTAL.": ".$acrow['sell_crystal']."\n".RES_PLASTIC.": ".$acrow['sell_plastic']."\n".RES_FUEL.": ".$acrow['sell_fuel']."\n".RES_FOOD.": ".$acrow['sell_food']."\n\nEr erh&auml;lt ".(round($return_factor,2)*100)."% der Waren erstattet!",time());
 
 					echo "Auktion wurde gel&ouml;scht und du hast ".(round($return_factor,2)*100)."% der angebotenen Waren zur&uuml;ck erhalten (es wird abgerundet)!";
 				}
@@ -3866,7 +3866,7 @@
 				FROM 
 					market_ressource 
 				WHERE 
-					user_id='".$cu->id()."' 
+					user_id='".$cu->id."' 
 					AND ressource_buyable='1' 
 				ORDER BY 
 					datum ASC");
@@ -3928,7 +3928,7 @@
 				FROM 
 					market_ship 
 				WHERE 
-					user_id='".$cu->id()."' 
+					user_id='".$cu->id."' 
 					AND ship_buyable='1' 
 				ORDER BY 
 					datum ASC");
@@ -3988,7 +3988,7 @@
 				FROM 
 					market_auction 
 				WHERE 
-					auction_user_id='".$cu->id()."' 
+					auction_user_id='".$cu->id."' 
 				ORDER BY 
 					auction_buyable DESC, 
 					auction_end ASC");
@@ -4218,7 +4218,7 @@
 					FROM 
 						market_ressource
 					WHERE
-						user_id='".$cu->id()."' 
+						user_id='".$cu->id."' 
 						AND planet_id='".$cp->id()."'
 				) AS ress_cnt,
 				(
@@ -4227,7 +4227,7 @@
 					FROM 
 						market_ship
 					WHERE
-						user_id='".$cu->id()."' 
+						user_id='".$cu->id."' 
 						AND planet_id='".$cp->id()."'
 				) AS ship_cnt,
 				(
@@ -4236,7 +4236,7 @@
 					FROM 
 						market_auction
 					WHERE
-						auction_user_id='".$cu->id()."' 
+						auction_user_id='".$cu->id."' 
 						AND auction_planet_id='".$cp->id()."'
 				) AS auction_cnt
 				;");
@@ -4255,7 +4255,7 @@
 			FROM 
 				alliance_buildlist
 			WHERE
-				alliance_buildlist_alliance_id='".$cu->allianceId()."' 
+				alliance_buildlist_alliance_id='".$cu->allianceId."' 
 				AND alliance_buildlist_building_id='".ALLIANCE_MARKET_ID."'
 			;");
 			if(mysql_num_rows($alliance_market_res)>0)
@@ -4382,7 +4382,7 @@
           					<input type=\"text\" value=\"\" name=\"ressource_text\" id=\"ressource_text\" size=\"55\" maxlength=\"60\" ".tm("Text","Schreib einen kleinen Werbetext f&uuml;r deine Waren.")." onkeyup=\"calcMarketRessPrice('0');\"/>	
           				</td>";
           //Für Allianzmitglied reservieren wenn in einer Allianz und diese den Allianzmarktplatz auf Stufe 1 oder höher hat
-          if($cu->allianceId()!=0 && $alliance_market_level>=1)
+          if($cu->allianceId!=0 && $alliance_market_level>=1)
           {
             echo "<td class=\"tbldata\" colspan=\"1\" style=\"vertical-align:middle;\" ".tm("Reservation","Fall dieses Angebot nur Spieler aus deiner Allianz kaufen sollen, mach hier ein H&auml;kchen").">
             				<input type=\"checkbox\" name=\"ressource_for_alliance\" value=\"1\" /> F&uuml;r Allianzmitglieder Reservieren
@@ -4571,7 +4571,7 @@
 	          					<input type=\"text\" value=\"\" name=\"ship_text\" id=\"ship_text\" size=\"55\" maxlength=\"60\" ".tm("Text","Schreib einen kleinen Werbetext f&uuml;r deine Waren.")." onkeyup=\"calcMarketShipPrice(0, 0);\"/>	
 	          				</td>";
 	          //Für Allianzmitglied reservieren wenn in einer Allianz und diese den Allianzmarktplatz auf Stufe 2 oder höher hat
-          	if($cu->allianceId()!=0 && $alliance_market_level>=2)
+          	if($cu->allianceId!=0 && $alliance_market_level>=2)
           	{
 	            echo "<td class=\"tbldata\" colspan=\"1\" style=\"vertical-align:middle;\" ".tm("Reservation","Fall dieses Angebot nur Spieler aus deiner Allianz kaufen sollen, mach hier ein H&auml;kchen").">
 	            				<input type=\"checkbox\" name=\"ship_for_alliance\" value=\"1\"/> F&uuml;r Allianzmitglieder Reservieren

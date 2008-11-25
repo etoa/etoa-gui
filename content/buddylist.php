@@ -48,27 +48,27 @@
 		ON
 			buddylist.bl_user_id=users.user_id
 			AND buddylist.bl_user_id=".$_GET['allow']."
-			AND buddylist.bl_buddy_id=".$cu->id().";");
+			AND buddylist.bl_buddy_id=".$cu->id.";");
 		if (mysql_num_rows($res)>0)
 		{
 			$arr=mysql_fetch_array($res);
-			dbquery("UPDATE buddylist SET bl_allow=1 WHERE bl_user_id=".$_GET['allow']." AND bl_buddy_id=".$cu->id().";");
+			dbquery("UPDATE buddylist SET bl_allow=1 WHERE bl_user_id=".$_GET['allow']." AND bl_buddy_id=".$cu->id.";");
 			$res = dbquery("
 			SELECT
 				bl_id
 			FROM
 				buddylist
 			WHERE
-				bl_user_id=".$cu->id()."
+				bl_user_id=".$cu->id."
 				AND bl_buddy_id=".$_GET['allow']."
 			");
 			if (mysql_num_rows($res)>0)
 			{
-				dbquery("UPDATE buddylist SET bl_allow=1 WHERE bl_user_id=".$cu->id()." AND bl_buddy_id=".$_GET['allow'].";");
+				dbquery("UPDATE buddylist SET bl_allow=1 WHERE bl_user_id=".$cu->id." AND bl_buddy_id=".$_GET['allow'].";");
 			}
 			else
 			{
-				dbquery("INSERT INTO buddylist (bl_allow,bl_user_id,bl_buddy_id) VALUES (1,".$cu->id().",".$_GET['allow'].");");
+				dbquery("INSERT INTO buddylist (bl_allow,bl_user_id,bl_buddy_id) VALUES (1,".$cu->id.",".$_GET['allow'].");");
 			}
 			ok_msg("Erlaubnis erteilt!");
 		}
@@ -90,11 +90,11 @@
 		WHERE
 			buddylist.bl_user_id=".$_GET['deny']."
 			AND buddylist.bl_user_id=users.user_id
-			AND buddylist.bl_buddy_id=".$cu->id().";");
+			AND buddylist.bl_buddy_id=".$cu->id.";");
 		if (mysql_num_rows($res)>0)
 		{
 			$arr=mysql_fetch_array($res);
-			dbquery("DELETE FROM buddylist WHERE bl_user_id=".$_GET['deny']." AND bl_buddy_id=".$cu->id().";");
+			dbquery("DELETE FROM buddylist WHERE bl_user_id=".$_GET['deny']." AND bl_buddy_id=".$cu->id.";");
 			ok_msg("Die Anfrage wurde gel&ouml;scht!");
 		}
 		else
@@ -113,13 +113,13 @@
 		if (mysql_num_rows($res)>0)
 		{
 			$arr=mysql_fetch_array($res);
-			if ($cu->id()!=$arr['user_id'])
+			if ($cu->id!=$arr['user_id'])
 			{
-				if (mysql_num_rows(dbquery("SELECT bl_user_id FROM buddylist WHERE bl_user_id='".$cu->id()."' AND bl_buddy_id='".$arr['user_id']."';"))==0)
+				if (mysql_num_rows(dbquery("SELECT bl_user_id FROM buddylist WHERE bl_user_id='".$cu->id."' AND bl_buddy_id='".$arr['user_id']."';"))==0)
 				{
-					dbquery("INSERT INTO buddylist (bl_user_id,bl_buddy_id,bl_allow) VALUES('".$cu->id()."','".$arr['user_id']."',0);");
+					dbquery("INSERT INTO buddylist (bl_user_id,bl_buddy_id,bl_allow) VALUES('".$cu->id."','".$arr['user_id']."',0);");
 					ok_msg("[b]".$arr['user_nick']."[/b] wurde zu deiner Liste hinzugef&uuml;gt und ihm wurde eine Best&auml;tigungsnachricht gesendet!");
-					send_msg($arr['user_id'],5,"Buddylist-Anfrage von ".$cu->nick(),"Der Spieler will dich zu seiner Freundesliste hinzuf&uuml;gen.\n\n[url ?page=buddylist]Anfrage bearbeiten[/url]");
+					send_msg($arr['user_id'],5,"Buddylist-Anfrage von ".$cu->nick,"Der Spieler will dich zu seiner Freundesliste hinzuf&uuml;gen.\n\n[url ?page=buddylist]Anfrage bearbeiten[/url]");
 				}
 				else
 					err_msg("Dieser Eintrag ist schon vorhanden!");
@@ -137,9 +137,9 @@
 	if (isset($_GET['remove']) && $_GET['remove']>0)
 	{
 		$c = 0;
-		dbquery("DELETE FROM buddylist WHERE bl_user_id='".$cu->id()."' AND bl_buddy_id='".$_GET['remove']."';");
+		dbquery("DELETE FROM buddylist WHERE bl_user_id='".$cu->id."' AND bl_buddy_id='".$_GET['remove']."';");
 		$c+=mysql_affected_rows();
-		dbquery("DELETE FROM buddylist WHERE bl_user_id='".$_GET['remove']."' AND bl_buddy_id='".$cu->id()."';");
+		dbquery("DELETE FROM buddylist WHERE bl_user_id='".$_GET['remove']."' AND bl_buddy_id='".$cu->id."';");
 		$c+=mysql_affected_rows();
 		if ($c>0)
 		{
@@ -152,7 +152,7 @@
 	//
 	if (isset($_GET['removeremote']) && $_GET['removeremote']>0)
 	{
-		dbquery("DELETE FROM buddylist WHERE bl_user_id='".$_GET['removeremote']."' AND bl_buddy_id='".$cu->id()."';");
+		dbquery("DELETE FROM buddylist WHERE bl_user_id='".$_GET['removeremote']."' AND bl_buddy_id='".$cu->id."';");
 	}
 
 	if (isset($_GET['comment']) && $_GET['comment']>0)
@@ -170,15 +170,15 @@
 			bl_id='".$_GET['comment']."'
 			AND
 			(
-				bl_user_id=".$cu->id()."
-				OR bl_buddy_id=".$cu->id()."
+				bl_user_id=".$cu->id."
+				OR bl_buddy_id=".$cu->id."
 			)
 		;");
 		if (mysql_num_rows($res)>0)
 		{
 			$arr=mysql_fetch_array($res);
 			echo "<form action=\"?page=$page\" method=\"post\">";
-			if ($arr['bl_user_id']==$cu->id())
+			if ($arr['bl_user_id']==$cu->id)
 			{
 				$nick = get_user_nick($arr['bl_buddy_id']);
 				iBoxStart("Kommentar für ".$nick."");
@@ -242,7 +242,7 @@
         AND planets.planet_user_main=1
   )
 	ON 
-  	buddylist.bl_user_id='".$cu->id()."'
+  	buddylist.bl_user_id='".$cu->id."'
     AND buddylist.bl_buddy_id=users.user_id
 	ORDER BY
 		users.user_nick ASC;");
@@ -274,11 +274,11 @@
 			else
 				echo "<td class=\"tbldata\" colspan=\"3\"><i>Noch keine Erlaubnis</i></td>";
 			echo "<td class=\"tbldata\">";
-			if ($arr['bl_comment']!="" && $arr['bl_user_id']==$cu->id())
+			if ($arr['bl_comment']!="" && $arr['bl_user_id']==$cu->id)
 			{
 				echo text2html($arr['bl_comment']);
 			}
-			if ($arr['bl_comment_buddy']!="" && $arr['bl_buddy_id']==$cu->id())
+			if ($arr['bl_comment_buddy']!="" && $arr['bl_buddy_id']==$cu->id)
 			{
 				echo text2html($arr['bl_comment_buddy']);
 			}
@@ -315,7 +315,7 @@ $res=dbquery("
     users
   )
 	ON 
-  	buddylist.bl_buddy_id='".$cu->id()."'
+  	buddylist.bl_buddy_id='".$cu->id."'
     AND buddylist.bl_user_id=users.user_id
     AND bl_allow=0
 	ORDER BY
@@ -332,11 +332,11 @@ $res=dbquery("
 		{
 			echo "<tr>
 				<td class=\"tbldata\">".$arr['user_nick']." ";
-			if ($arr['bl_comment']!="" && $arr['bl_user_id']==$cu->id())
+			if ($arr['bl_comment']!="" && $arr['bl_user_id']==$cu->id)
 			{
 				echo " <img src=\"images/infohelp.png\" alt=\"Info\" style=\"height:10px;\" ".tm("Kommentar",text2html($arr['bl_comment']))."></a>";
 			}
-			if ($arr['bl_comment_buddy']!="" && $arr['bl_buddy_id']==$cu->id())
+			if ($arr['bl_comment_buddy']!="" && $arr['bl_buddy_id']==$cu->id)
 			{
 				echo " <img src=\"images/infohelp.png\" alt=\"Info\" style=\"height:10px;\" ".tm("Kommentar",text2html($arr['bl_comment_buddy']))."></a>";
 			}

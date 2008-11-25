@@ -46,7 +46,7 @@
 /**************************************************/
 /* User ist NICHT in einer Allianz                */
 /**************************************************/
-	elseif ($cu->allianceId() == 0)
+	elseif ($cu->allianceId == 0)
 	{
 		require("alliance/foreign.inc.php");
 	}
@@ -66,7 +66,7 @@
 			FROM
 				alliances
 			WHERE
-				alliance_id='".$cu->allianceId()."';");
+				alliance_id='".$cu->allianceId."';");
 			if (mysql_num_rows($res)>0)
 			{
 				$arr = mysql_fetch_array($res);
@@ -88,7 +88,7 @@
                 alliance_ranks
             WHERE
                 alliance_ranks.rank_id=alliance_rankrights.rr_rank_id
-                AND alliance_ranks.rank_alliance_id=".$cu->allianceId()."
+                AND alliance_ranks.rank_alliance_id=".$cu->allianceId."
                 AND alliance_rankrights.rr_right_id=".$rightarr['right_id']."
                 AND alliance_rankrights.rr_rank_id=".$myRankId.";");
 						
@@ -100,7 +100,7 @@
 				}
 
 				// Gründer prüfen
-				if ($arr['alliance_founder_id']==$cu->id())
+				if ($arr['alliance_founder_id']==$cu->id)
 				{
 					$isFounder=true;
 				}
@@ -255,17 +255,17 @@
 				elseif (isset($_GET['action']) && $_GET['action']=="leave" && !$isFounder)
 				{
 					echo "<h2>Allianz-Austritt</h2>";
-					if ($cu->allianceId()!=0)
+					if ($cu->allianceId!=0)
 					{
 						echo "Du bist aus der Allianz ausgetreten!<br/><br/><input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"&Uuml;bersicht\" />";
 						$alliances = get_alliance_names();
 						
-						send_msg($alliances[$cu->allianceId()]['founder_id'],MSG_ALLYMAIL_CAT,"Allianzaustritt","Der Spieler ".$cu->nick()." trat aus der Allianz aus!");
-						add_alliance_history($cu->allianceId(),"Der Spieler [b]".$cu->nick()."[/b] trat aus der Allianz aus!");
+						send_msg($alliances[$cu->allianceId]['founder_id'],MSG_ALLYMAIL_CAT,"Allianzaustritt","Der Spieler ".$cu->nick." trat aus der Allianz aus!");
+						add_alliance_history($cu->allianceId,"Der Spieler [b]".$cu->nick."[/b] trat aus der Allianz aus!");
 						$allys = get_alliance_names();
-						add_log(5,"Der Spieler [b]".$cu->nick()."[/b] ist aus der Allianz [b][".$allys[$cu->allianceId()]['tag']."] ".$allys[$cu->allianceId()]['name']."[/b] ausgetreten!",time());
+						add_log(5,"Der Spieler [b]".$cu->nick."[/b] ist aus der Allianz [b][".$allys[$cu->allianceId]['tag']."] ".$allys[$cu->allianceId]['name']."[/b] ausgetreten!",time());
 
-						$cu->addToUserLog("alliance","{nick} ist aus der Allianz ".$allys[$cu->allianceId()]['name']." ausgetreten.");
+						$cu->addToUserLog("alliance","{nick} ist aus der Allianz ".$allys[$cu->allianceId]['name']." ausgetreten.");
 
 						$cu->setAllianceId(0);
 					}
@@ -342,7 +342,7 @@
 							$alliance_tag = $_POST['alliance_tag'];
 							$alliance_name = $_POST['alliance_name'];
 							
-							add_alliance_history($cu->allianceId(),"[b]".$cu->nick()."[/b] ändert den Allianzname und/oder Tag von [b]".$arr['alliance_name']." (".$arr['alliance_tag'].")[/b] in [b]".$_POST['alliance_name']." (".$_POST['alliance_tag'].")[/b]!");
+							add_alliance_history($cu->allianceId,"[b]".$cu->nick."[/b] ändert den Allianzname und/oder Tag von [b]".$arr['alliance_name']." (".$arr['alliance_tag'].")[/b] in [b]".$_POST['alliance_name']." (".$_POST['alliance_tag'].")[/b]!");
 						}
 						// Name und/oder Tag sind fehlerhaft
 						else
@@ -376,7 +376,7 @@
                   //überprüft Bildgrösse
                   if ($ims[0]<=ALLIANCE_IMG_MAX_WIDTH && $ims[1]<=ALLIANCE_IMG_MAX_HEIGHT)
                   {
-                      $fname = "alliance_".$cu->allianceId()."_".time().".".$ext;
+                      $fname = "alliance_".$cu->allianceId."_".time().".".$ext;
                       if (file_exists(ALLIANCE_IMG_DIR."/".$arr['user_avatar']))
                           @unlink(ALLIANCE_IMG_DIR."/".$arr['user_avatar']);
                       move_uploaded_file($source,ALLIANCE_IMG_DIR."/".$fname);
@@ -433,8 +433,8 @@
 							alliance_accept_applications='".$_POST['alliance_accept_applications']."',
 							alliance_accept_bnd='".$_POST['alliance_accept_bnd']."'
 						WHERE 
-							alliance_id=".$cu->allianceId().";");
-						$res = dbquery("SELECT * FROM alliances WHERE alliance_id='".$cu->allianceId()."';");
+							alliance_id=".$cu->allianceId.";");
+						$res = dbquery("SELECT * FROM alliances WHERE alliance_id='".$cu->allianceId."';");
 						$arr = mysql_fetch_array($res);
 						echo "Die &Auml;nderungen wurden übernommen!<br/>".$message."<br/>";
 					}
@@ -442,12 +442,12 @@
 					// Bewerbungsvorlage speichern
 					if (isset($_POST['applicationtemplatesubmit']) && $_POST['applicationtemplatesubmit']!="" && checker_verify())
 					{
-						dbquery("UPDATE alliances SET alliance_application_template='".addslashes($_POST['alliance_application_template'])."' WHERE alliance_id=".$cu->allianceId().";");
+						dbquery("UPDATE alliances SET alliance_application_template='".addslashes($_POST['alliance_application_template'])."' WHERE alliance_id=".$cu->allianceId.";");
 						echo "Die &Auml;nderungen wurden übernommen!<br/><br/>";
 					}
 
 	        // Allianz auflösen
-					if (isset($_POST['liquidatesubmit']) && $_POST['liquidatesubmit']!="" && $isFounder && $cu->allianceId()==$_POST['id_control'] && checker_verify())
+					if (isset($_POST['liquidatesubmit']) && $_POST['liquidatesubmit']!="" && $isFounder && $cu->allianceId==$_POST['id_control'] && checker_verify())
 					{
 						delete_alliance($arr['alliance_id'],true);
 						$cu->setAllianceId(0);
@@ -462,7 +462,7 @@
 						FROM 
 							users 
 						WHERE 
-							user_alliance_id='".$cu->allianceId()."'
+							user_alliance_id='".$cu->allianceId."'
 						;");
 						$marr = mysql_fetch_row($mres);
 						$member_count = $marr[0];						
@@ -554,7 +554,7 @@
 							FROM
 								alliance_applications
 							WHERE
-								alliance_id=".$cu->allianceId()."	
+								alliance_id=".$cu->allianceId."	
 							;");							
 							$aarr= mysql_fetch_row($ares);
 							if ($aarr[0]>0)
@@ -574,7 +574,7 @@
 							FROM 
 								alliance_bnd 
 							WHERE 
-								alliance_bnd_alliance_id2='".$cu->allianceId()."' 
+								alliance_bnd_alliance_id2='".$cu->allianceId."' 
 								AND alliance_bnd_level='0';");
 							if (mysql_num_rows($bres)>0)
 								echo "<tr>
@@ -585,7 +585,7 @@
 
 						// Kriegserklärung anzeigen
 						$time=time()-192600;
-						if (mysql_num_rows(dbquery("SELECT alliance_bnd_id FROM alliance_bnd WHERE alliance_bnd_alliance_id2='".$cu->allianceId()."' AND alliance_bnd_level='3' AND alliance_bnd_date>'$time';"))>0)
+						if (mysql_num_rows(dbquery("SELECT alliance_bnd_id FROM alliance_bnd WHERE alliance_bnd_alliance_id2='".$cu->allianceId."' AND alliance_bnd_level='3' AND alliance_bnd_date>'$time';"))>0)
 						if ($isFounder || $myRight['relations'])
 							echo "<tr><td class=\"tbltitle\" colspan=\"3\" align=\"center\"><b><div align=\"center\"><a href=\"?page=$page&action=relations\">Deiner Allianz wurde in den letzten 36h der Krieg erkl&auml;rt!</a></div></b></td></tr>";
 						else
@@ -644,7 +644,7 @@
 							FROM 
 								alliance_history 
 							WHERE 
-								history_alliance_id=".$cu->allianceId()." 
+								history_alliance_id=".$cu->allianceId." 
 							ORDER BY 
 								history_timestamp DESC
 							LIMIT 5;");
@@ -685,8 +685,8 @@
 							alliances as a2
 							ON alliance_bnd_alliance_id2=a2.alliance_id
 					 	WHERE 
-					 		(alliance_bnd_alliance_id1='".$cu->allianceId()."' 
-					 		OR alliance_bnd_alliance_id2='".$cu->allianceId()."') 
+					 		(alliance_bnd_alliance_id1='".$cu->allianceId."' 
+					 		OR alliance_bnd_alliance_id2='".$cu->allianceId."') 
 					 		AND alliance_bnd_level=3
 					 	;");
 						if (mysql_num_rows($wars)>0)
@@ -703,7 +703,7 @@
 													</tr>";
 									while ($war=mysql_fetch_array($wars))
 									{
-										if (isset($war['a1id']) && $war['a1id']==$cu->allianceId()) 
+										if (isset($war['a1id']) && $war['a1id']==$cu->allianceId) 
 										{
 											$opId = $war['a2id'];
 											$opTag = $war['a2tag'];
@@ -749,8 +749,8 @@
 							alliances as a2
 							ON alliance_bnd_alliance_id2=a2.alliance_id
 					 	WHERE 
-					 		(alliance_bnd_alliance_id1='".$cu->allianceId()."' 
-					 		OR alliance_bnd_alliance_id2='".$cu->allianceId()."') 
+					 		(alliance_bnd_alliance_id1='".$cu->allianceId."' 
+					 		OR alliance_bnd_alliance_id2='".$cu->allianceId."') 
 					 		AND alliance_bnd_level=4
 					 	;");
 						if (mysql_num_rows($wars)>0)
@@ -766,7 +766,7 @@
 													</tr>";					
 									while ($war=mysql_fetch_array($wars))
 									{
-										if (isset($war['a1id']) && $war['a1id']==$cu->allianceId()) 
+										if (isset($war['a1id']) && $war['a1id']==$cu->allianceId) 
 										{
 											$opId = $war['a2id'];
 											$opTag = $war['a2tag'];
@@ -812,8 +812,8 @@
 							alliances as a2
 							ON alliance_bnd_alliance_id2=a2.alliance_id
 					 	WHERE 
-					 		(alliance_bnd_alliance_id1='".$cu->allianceId()."' 
-					 		OR alliance_bnd_alliance_id2='".$cu->allianceId()."') 
+					 		(alliance_bnd_alliance_id1='".$cu->allianceId."' 
+					 		OR alliance_bnd_alliance_id2='".$cu->allianceId."') 
 					 		AND alliance_bnd_level=2
 					 	;");
 						if (mysql_num_rows($wars)>0)
@@ -830,7 +830,7 @@
 			
 									while ($war=mysql_fetch_array($wars))
 									{
-										if (isset($war['a1id']) && $war['a1id']==$cu->allianceId()) 
+										if (isset($war['a1id']) && $war['a1id']==$cu->allianceId) 
 										{
 											$opId = $war['a2id'];
 											$opTag = $war['a2tag'];
@@ -888,7 +888,7 @@
 						user_alliance_id=0,
 						user_alliance_rank_id=0 
 					WHERE 
-						user_id=".$cu->id().";");
+						user_id=".$cu->id.";");
 					echo "Die fehlerhafte Verkn&uuml;pfung wurde gel&ouml;st!";
 				}
 				else

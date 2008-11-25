@@ -209,7 +209,7 @@
         	ON message_user_from=user_id
 				WHERE                    
        		message_id='".intval($_GET['msg_id'])."'
-       		AND m.message_user_to='".$cu->id()."'
+       		AND m.message_user_to='".$cu->id."'
        		AND m.message_deleted=0");
 				if (mysql_num_rows($mres)>0)
 				{
@@ -315,7 +315,7 @@
 						message_deleted=1 
 					WHERE 
 						message_id='".$_POST['message_id']."' 
-						AND message_user_to='".$cu->id()."';");
+						AND message_user_to='".$cu->id."';");
 					success_msg("Nachricht wurde gel&ouml;scht!");
 				}
 				if (isset($_GET['del']) && $_GET['del']>0)
@@ -327,7 +327,7 @@
 						message_deleted=1 
 					WHERE 
 						message_id='".$_GET['del']."' 
-						AND message_user_to='".$cu->id()."';");
+						AND message_user_to='".$cu->id."';");
 					if (mysql_affected_rows()>0)
 					{
 						success_msg("Nachricht wurde gel&ouml;scht!");
@@ -362,7 +362,7 @@
 								message_deleted=1
 							WHERE
 								message_id='$id'
-								AND message_user_to='".$cu->id()."'
+								AND message_user_to='".$cu->id."'
 								$sqladd;");
 						}
 						if (count($_POST['delmsg'])==1)
@@ -389,7 +389,7 @@
 					SET
 						message_deleted=1
 					WHERE
-						message_user_to='".$cu->id()."'
+						message_user_to='".$cu->id."'
 						$sqladd;");
 					success_msg("Alle Nachrichten wurden gel&ouml;scht!");
 				}
@@ -408,7 +408,7 @@
 					SET
 						message_deleted=1
 					WHERE
-         		message_user_to='".$cu->id()."'
+         		message_user_to='".$cu->id."'
          		AND message_user_from=0
 						$sqladd;");
 					success_msg("Alle Systemnachrichten wurden gel&ouml;scht!");
@@ -428,7 +428,7 @@
 	                    message_archived=1
 	                WHERE
 	                    message_id='".$id."'
-	                    AND message_user_to='".$cu->id()."'
+	                    AND message_user_to='".$cu->id."'
 	                    ;");
 	            }
 	            if (count($_POST['delmsg'])==1)
@@ -451,7 +451,7 @@
 				FROM
 					messages
 				WHERE
-          message_user_to='".$cu->id()."'
+          message_user_to='".$cu->id."'
           AND message_read='1'
           AND message_deleted='0'
           AND message_archived='0'
@@ -466,7 +466,7 @@
 				FROM
 					messages
 				WHERE
-          message_user_to='".$cu->id()."'
+          message_user_to='".$cu->id."'
           AND message_archived='1'
           AND message_deleted='0';");
 				$archived_msg_cnt_arr=mysql_fetch_row($cnt_res);
@@ -558,7 +558,7 @@
 							users
 							ON message_user_from=user_id									
 						WHERE
-							message_user_to='".$cu->id()."'
+							message_user_to='".$cu->id."'
 							AND message_cat_id='".$arr['cat_id']."'
 							AND message_deleted=0
 							AND message_archived=1
@@ -589,7 +589,7 @@
 							users
 							ON message_user_from=user_id														
 						WHERE
-							message_user_to='".$cu->id()."'
+							message_user_to='".$cu->id."'
 							AND message_cat_id='".$arr['cat_id']."'
 							AND message_deleted=0
 							AND message_archived=0

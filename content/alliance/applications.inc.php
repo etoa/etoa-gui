@@ -29,18 +29,18 @@ if (Alliance::checkActionRights('applications'))
 						send_msg($id,MSG_ALLYMAIL_CAT,"Bewerbung angenommen","Deine Allianzbewerbung wurde angnommen!\n\n[b]Antwort:[/b]\n".addslashes($_POST['application_answer_text'][$id]));
 						
 						// Log schreiben
-						add_alliance_history($cu->allianceId(),"Die Bewerbung von [b]".$nick."[/b] wurde akzeptiert!");
-						add_log(5,"Der Spieler [b]".$nick."[/b] tritt der Allianz [b][".$alliances[$cu->allianceId()]['tag']."] ".$alliances[$cu->allianceId()]['name']."[/b] bei!",time());
+						add_alliance_history($cu->allianceId,"Die Bewerbung von [b]".$nick."[/b] wurde akzeptiert!");
+						add_log(5,"Der Spieler [b]".$nick."[/b] tritt der Allianz [b][".$alliances[$cu->allianceId]['tag']."] ".$alliances[$cu->allianceId]['name']."[/b] bei!",time());
 						
 						$tu = new User($id);
-						$tu->addToUserLog("alliance","{nick} ist nun ein Mitglied der der Allianz ".$alliances[$cu->allianceId()]['name'].".");
+						$tu->addToUserLog("alliance","{nick} ist nun ein Mitglied der der Allianz ".$alliances[$cu->allianceId]['name'].".");
 						
 						// Speichern
 						dbquery("
 						UPDATE 
 							users
 						SET 
-							user_alliance_id=".$cu->allianceId()."
+							user_alliance_id=".$cu->allianceId."
 						WHERE 
 							user_id='".$id."';");
 							
@@ -49,7 +49,7 @@ if (Alliance::checkActionRights('applications'))
 							alliance_applications 
 						WHERE
 							user_id=".$id."
-							AND alliance_id=".$cu->allianceId().";");								
+							AND alliance_id=".$cu->allianceId.";");								
 					}
 					// Anfrage ablehnen
 					elseif($answer==1)
@@ -61,7 +61,7 @@ if (Alliance::checkActionRights('applications'))
 						send_msg($id,MSG_ALLYMAIL_CAT,"Bewerbung abgelehnt","Deine Allianzbewerbung wurde abgelehnt!\n\n[b]Antwort:[/b]\n".addslashes($_POST['application_answer_text'][$id]));
 						
 						// Log schreiben
-						add_alliance_history($cu->allianceId(),"Die Bewerbung von [b]".$nick."[/b] wurde abgelehnt!");
+						add_alliance_history($cu->allianceId,"Die Bewerbung von [b]".$nick."[/b] wurde abgelehnt!");
 						
 						// Anfrage löschen
 						dbquery("
@@ -69,7 +69,7 @@ if (Alliance::checkActionRights('applications'))
 							alliance_applications 
 						WHERE
 							user_id=".$id."
-							AND alliance_id=".$cu->allianceId().";");								
+							AND alliance_id=".$cu->allianceId.";");								
 					}
 					// Anfrage unbearbeitet lassen, jedoch Nachricht verschicken wenn etwas geschrieben ist
 					else
@@ -78,7 +78,7 @@ if (Alliance::checkActionRights('applications'))
 						if($text != '')
 						{
 							// Nachricht an den Bewerber schicken
-							send_msg($id,MSG_ALLYMAIL_CAT,"Bewerbung: Nachricht","Antwort auf die Bewerbung an die Allianz [b][".$alliances[$cu->allianceId()]['tag']."] ".$alliances[$cu->allianceId()]['name']."[/b]:\n".$_POST['application_answer_text'][$id]."");
+							send_msg($id,MSG_ALLYMAIL_CAT,"Bewerbung: Nachricht","Antwort auf die Bewerbung an die Allianz [b][".$alliances[$cu->allianceId]['tag']."] ".$alliances[$cu->allianceId]['name']."[/b]:\n".$_POST['application_answer_text'][$id]."");
 							
 							$cnt++;
 							$message .= "<b>".$nick."</b>: Nachricht gesendet<br>";
@@ -98,7 +98,7 @@ if (Alliance::checkActionRights('applications'))
 							FROM 
 								users
 							WHERE
-								user_alliance_id='".$cu->allianceId()."'
+								user_alliance_id='".$cu->allianceId."'
 						) AS member_cnt,
 						(
 							SELECT 
@@ -106,7 +106,7 @@ if (Alliance::checkActionRights('applications'))
 							FROM 
 								alliances
 							WHERE
-								alliance_id='".$cu->allianceId()."'
+								alliance_id='".$cu->allianceId."'
 
 						) AS built_for_members
 						;");
@@ -151,7 +151,7 @@ if (Alliance::checkActionRights('applications'))
 							ON
 								alliance_building_id=alliance_buildlist_building_id
 						WHERE
-							alliance_buildlist_alliance_id='".$cu->allianceId()."';");
+							alliance_buildlist_alliance_id='".$cu->allianceId."';");
 						if(mysql_num_rows($res)>0)
 						{
 							while($arr=mysql_fetch_assoc($res))		
@@ -221,7 +221,7 @@ if (Alliance::checkActionRights('applications'))
 							ON
 								alliance_tech_id=alliance_techlist_tech_id
 						WHERE
-							alliance_techlist_alliance_id='".$cu->allianceId()."';");
+							alliance_techlist_alliance_id='".$cu->allianceId."';");
 						if(mysql_num_rows($res)>0)
 						{
 							while($arr=mysql_fetch_assoc($res))		
@@ -292,10 +292,10 @@ if (Alliance::checkActionRights('applications'))
 				        alliance_res_food=alliance_res_food-'".$food."',
 				        alliance_objects_for_members='".$check_arr['member_cnt']."'
 				      WHERE
-				        alliance_id='".$cu->allianceId()."';");
+				        alliance_id='".$cu->allianceId."';");
 				        
 				      // Log schreiben
-							add_alliance_history($cu->allianceId(),"Dem Allianzkonto wurden folgende Rohstoffe abgezogen:\n[b]".RES_METAL."[/b]: ".nf($metal)."\n[b]".RES_CRYSTAL."[/b]: ".nf($crystal)."\n[b]".RES_PLASTIC."[/b]: ".nf($plastic)."\n[b]".RES_FUEL."[/b]: ".nf($fuel)."\n[b]".RES_FOOD."[/b]: ".nf($food)."\n\nDie Allianzobjekte sind nun für ".$check_arr['member_cnt']." Mitglieder verfügbar!");
+							add_alliance_history($cu->allianceId,"Dem Allianzkonto wurden folgende Rohstoffe abgezogen:\n[b]".RES_METAL."[/b]: ".nf($metal)."\n[b]".RES_CRYSTAL."[/b]: ".nf($crystal)."\n[b]".RES_PLASTIC."[/b]: ".nf($plastic)."\n[b]".RES_FUEL."[/b]: ".nf($fuel)."\n[b]".RES_FOOD."[/b]: ".nf($food)."\n\nDie Allianzobjekte sind nun für ".$check_arr['member_cnt']." Mitglieder verfügbar!");
 						}
 						else
 						{
@@ -305,7 +305,7 @@ if (Alliance::checkActionRights('applications'))
 				      SET
 				        alliance_objects_for_members='".$check_arr['member_cnt']."'
 				      WHERE
-				        alliance_id='".$cu->allianceId()."';");
+				        alliance_id='".$cu->allianceId."';");
 						}
 					}
 						
@@ -337,7 +337,7 @@ if (Alliance::checkActionRights('applications'))
 			users as u
 		ON
 			aa.user_id=u.user_id
-			AND aa.alliance_id=".$cu->allianceId().";");
+			AND aa.alliance_id=".$cu->allianceId.";");
 		if (mysql_num_rows($res)>0)
 		{
 			tableStart("Bewerbungen prüfen");

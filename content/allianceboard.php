@@ -33,10 +33,10 @@
 	echo "<h1>Allianzforum</h1>";
 
 	// Prüfen ob User in Allianz ist
-	if ($cu->allianceId()>0)
+	if ($cu->allianceId>0)
 	{
 		// Prüfen ob Allianz existiert
-		$res=dbquery("SELECT alliance_id,alliance_founder_id FROM alliances WHERE alliance_id='".$cu->allianceId()."';");
+		$res=dbquery("SELECT alliance_id,alliance_founder_id FROM alliances WHERE alliance_id='".$cu->allianceId."';");
 		if (mysql_num_rows($res)>0)
 		{
 			$arr=mysql_fetch_array($res);
@@ -79,7 +79,7 @@
 			FROM
 				users
 			WHERE
-				user_id=".$cu->id()."
+				user_id=".$cu->id."
 				AND user_alliance_id=".BOARD_ALLIANCE_ID.";");
 			if (mysql_num_rows($ures)>0)
 			{
@@ -127,7 +127,7 @@
 			}							
 			
 			// Gründer prüfen
-			if ($arr['alliance_founder_id']==$cu->id())
+			if ($arr['alliance_founder_id']==$cu->id)
 				$isFounder=true;
 			else
 				$isFounder=false;						
@@ -279,7 +279,7 @@
 						// Save new post
 						if (isset($_POST['submit']) && isset($_POST['post_text']) && $s['user_id']>0 && $tarr['topic_closed']==0)
 						{
-							dbquery("INSERT INTO ".BOARD_POSTS_TABLE." (post_topic_id,post_user_id,post_user_nick,post_text,post_timestamp) VALUES (".$_GET['topic'].",".$s['user_id'].",'".$cu->nick()."','".addslashes($_POST['post_text'])."',".time().");");
+							dbquery("INSERT INTO ".BOARD_POSTS_TABLE." (post_topic_id,post_user_id,post_user_nick,post_text,post_timestamp) VALUES (".$_GET['topic'].",".$s['user_id'].",'".$cu->nick."','".addslashes($_POST['post_text'])."',".time().");");
 							$mid=mysql_insert_id();
 							dbquery("UPDATE ".BOARD_TOPIC_TABLE." SET topic_timestamp=".time()." WHERE topic_id=".$_GET['topic'].";");			
 							echo "Beitrag gespeichert!<br/><br/>";
@@ -494,9 +494,9 @@
 						// Save new topic
 						if (isset($_POST['submit']) && isset($_POST['topic_subject']) && isset($_POST['post_text']) && $s['user_id']>0)
 						{
-							dbquery("INSERT INTO ".BOARD_TOPIC_TABLE." (topic_subject,topic_cat_id,topic_user_id,topic_user_nick,topic_timestamp) VALUES ('".addslashes($_POST['topic_subject'])."',".$_GET['cat'].",".$s['user_id'].",'".$cu->nick()."',".time().");");			
+							dbquery("INSERT INTO ".BOARD_TOPIC_TABLE." (topic_subject,topic_cat_id,topic_user_id,topic_user_nick,topic_timestamp) VALUES ('".addslashes($_POST['topic_subject'])."',".$_GET['cat'].",".$s['user_id'].",'".$cu->nick."',".time().");");			
 							$mid=mysql_insert_id();
-							dbquery("INSERT INTO ".BOARD_POSTS_TABLE." (post_topic_id,post_user_id,post_user_nick,post_text,post_timestamp) VALUES (".$mid.",".$s['user_id'].",'".$cu->nick()."','".addslashes($_POST['post_text'])."',".time().");");
+							dbquery("INSERT INTO ".BOARD_POSTS_TABLE." (post_topic_id,post_user_id,post_user_nick,post_text,post_timestamp) VALUES (".$mid.",".$s['user_id'].",'".$cu->nick."','".addslashes($_POST['post_text'])."',".time().");");
 							$pmid=mysql_insert_id();
 							echo "<script type=\"text/javascript\">document.location='?page=$page&topic=".$mid."#".$pmid."';</script>";
 						}			
@@ -583,9 +583,9 @@
 						// Save new topic
 						if (isset($_POST['submit']) && isset($_POST['topic_subject']) && isset($_POST['post_text']) && $s['user_id']>0)
 						{
-							dbquery("INSERT INTO ".BOARD_TOPIC_TABLE." (topic_subject,topic_bnd_id,topic_user_id,topic_user_nick,topic_timestamp) VALUES ('".addslashes($_POST['topic_subject'])."',".$_GET['bnd'].",".$s['user_id'].",'".$cu->nick()."',".time().");");			
+							dbquery("INSERT INTO ".BOARD_TOPIC_TABLE." (topic_subject,topic_bnd_id,topic_user_id,topic_user_nick,topic_timestamp) VALUES ('".addslashes($_POST['topic_subject'])."',".$_GET['bnd'].",".$s['user_id'].",'".$cu->nick."',".time().");");			
 							$mid=mysql_insert_id();
-							dbquery("INSERT INTO ".BOARD_POSTS_TABLE." (post_topic_id,post_user_id,post_user_nick,post_text,post_timestamp) VALUES (".$mid.",".$s['user_id'].",'".$cu->nick()."','".addslashes($_POST['post_text'])."',".time().");");
+							dbquery("INSERT INTO ".BOARD_POSTS_TABLE." (post_topic_id,post_user_id,post_user_nick,post_text,post_timestamp) VALUES (".$mid.",".$s['user_id'].",'".$cu->nick."','".addslashes($_POST['post_text'])."',".time().");");
 							$pmid=mysql_insert_id();
 							echo "<script type=\"text/javascript\">document.location='?page=$page&bnd=".$_GET['bnd']."&topic=".$mid."#".$pmid."';</script>";
 						}			

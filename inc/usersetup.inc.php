@@ -15,7 +15,7 @@
 		// Apply choosen itemset
 	if (isset($s['itemset_key']) && isset($_POST[md5($s['itemset_key'])]) && isset($_POST['itemset_id']))
 	{
-		Usersetup::addItemSetListToPlanet($s['itemset_planet'],$cu->id(),$_POST['itemset_id']);
+		Usersetup::addItemSetListToPlanet($s['itemset_planet'],$cu->id,$_POST['itemset_id']);
 		$s['itemset_key']=null;
 		$s['itemset_planet']=null;
 		$cu->setSetupFinished();
@@ -27,7 +27,7 @@
 		
 		$tp = new Planet($_POST['choosenplanetid']);
 		$tp->reset();
-		$tp->assignToUser($cu->id(),1);
+		$tp->assignToUser($cu->id,1);
 		$tp->setDefaultResources();	
 		
 		$cu->addToUserLog("planets","{nick} wählt [b]".$tp."[/b] als Hauptplanet aus.",0);
@@ -48,7 +48,7 @@
 		elseif(mysql_num_rows($res)==1)
 		{
 			$arr = mysql_fetch_array($res);
-			Usersetup::addItemSetListToPlanet($tp->id,$cu->id(),$arr['set_id']);							
+			Usersetup::addItemSetListToPlanet($tp->id,$cu->id,$arr['set_id']);							
 			$cu->setSetupFinished();
 			$mode = "finished";
 		}		
@@ -67,16 +67,16 @@
 		}		
 	}
 	
-	elseif ($cu->raceId() >0 && !isset($cp))
+	elseif ($cu->raceId >0 && !isset($cp))
 	{
 		$mode = "choosesector";	
 	}
 	elseif (isset($_POST['submit_setup1']) && $_POST['register_user_race_id']>0 && checker_verify())
 	{
-		$cu->setRace($_POST['register_user_race_id']);
+		$cu->race = new Race($_POST['register_user_race_id']);
 		$mode = "choosesector";	
 	}
-	elseif ($cu->raceId()==0)
+	elseif ($cu->raceId==0)
 	{
 		$mode = "race";
 	}
@@ -262,7 +262,7 @@
 		echo '<input type="button" value="Zum Heimatplaneten" onclick="document.location=\'?page=planetoverview\'" />';
 		if (!isset($s['allow_planet_change_counter']) || $s['allow_planet_change_counter']==0)
 		{
-			send_msg($cu->id(),USER_MSG_CAT_ID,'Willkommen',$conf['welcome_message']['v']);
+			send_msg($cu->id,USER_MSG_CAT_ID,'Willkommen',$conf['welcome_message']['v']);
 		}
 	}
 	else

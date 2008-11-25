@@ -50,7 +50,7 @@
   	buildlist_entity_id='".$cp->id()."'
   	AND buildlist_building_id='".BUILD_MISSILE_ID."'
   	AND buildlist_current_level>='1'
-  	AND buildlist_user_id='".$cu->id()."'");
+  	AND buildlist_user_id='".$cu->id."'");
 
   // Prüfen ob Gebäude gebaut ist
   if (mysql_num_rows($werft_res)>0)
@@ -98,7 +98,7 @@
 				FROM 
 					buildlist
 				WHERE 
-					buildlist_user_id='".$cu->id()."' 
+					buildlist_user_id='".$cu->id."' 
 					AND buildlist_entity_id='".$cp->id()."';";
 				
 				$blres = dbquery($sql);
@@ -115,7 +115,7 @@
 				FROM 
 					techlist 
 				WHERE 
-					techlist_user_id='".$cu->id()."'
+					techlist_user_id='".$cu->id."'
 				;");
 				while ($tarr = mysql_fetch_array($tres))
 				{
@@ -176,7 +176,7 @@
 				FROM
 					missilelist
 				WHERE 
-					missilelist_user_id=".$cu->id()."
+					missilelist_user_id=".$cu->id."
 					AND missilelist_entity_id=".$cp->id()."
 				;");
 				$cnt = 0;
@@ -250,7 +250,7 @@
 							SET
 								missilelist_count=missilelist_count-".$v."
 							WHERE
-								missilelist_user_id=".$cu->id()."
+								missilelist_user_id=".$cu->id."
 								AND missilelist_entity_id=".$cp->id()."							
 								AND missilelist_missile_id=".$k."								
 							;");				
@@ -377,7 +377,7 @@
 										SET
 											missilelist_count=missilelist_count+".$v."
 										WHERE
-											missilelist_user_id=".$cu->id()."
+											missilelist_user_id=".$cu->id."
 											AND missilelist_entity_id=".$cp->id()."							
 											AND missilelist_missile_id=".$k."
 										");
@@ -394,7 +394,7 @@
 											missilelist_missile_id,
 											missilelist_count
 										) VALUES (
-											".$cu->id().",
+											".$cu->id.",
 											".$cp->id().",
 											".$k.",
 											".$v."
@@ -445,7 +445,7 @@
 								SET
 									missilelist_count=missilelist_count-".$bc."
 								WHERE
-									missilelist_user_id=".$cu->id()."
+									missilelist_user_id=".$cu->id."
 									AND missilelist_entity_id=".$cp->id()."							
 									AND missilelist_missile_id=".$k."
 								");
@@ -928,7 +928,7 @@
 								INNER JOIN
 				       				entities
 				        ON 
-				        	bookmarks.user_id=".$cu->id()."
+				        	bookmarks.user_id=".$cu->id."
 				         	AND bookmarks.entity_id=entities.id
 								INNER JOIN
 									planets

@@ -186,7 +186,7 @@
 		FROM 
 			techlist 
 		WHERE 
-			techlist_user_id='".$cu->id()."'
+			techlist_user_id='".$cu->id."'
 		;");
 		while ($tarr = mysql_fetch_array($tres))
 		{
@@ -264,7 +264,7 @@
 						AND 
 						(
 							".ITEM_RACE_FLD."=0 
-							OR ".ITEM_RACE_FLD."=".$cu->raceId()."
+							OR ".ITEM_RACE_FLD."=".$cu->raceId."
 						) 
 						AND ".ITEM_TYPE_FLD."=".$tarr[TYPE_ID_FLD]." 
 					ORDER BY 
@@ -448,7 +448,7 @@
 					AND 
 					(
 						".ITEM_RACE_FLD."=0 
-						OR ".ITEM_RACE_FLD."=".$cu->raceId()."
+						OR ".ITEM_RACE_FLD."=".$cu->raceId."
 					) 
 					ORDER BY 
 						".ITEM_ORDER_FLD.";

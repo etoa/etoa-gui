@@ -212,7 +212,7 @@ function calcDemolishingWaitTime($dc,$cp)
 		FROM 
 			techlist
 		WHERE 
-			techlist_user_id='".$cu->id()."'
+			techlist_user_id='".$cu->id."'
 		;");
 		while ($tarr = mysql_fetch_array($tres))
 		{
@@ -220,7 +220,7 @@ function calcDemolishingWaitTime($dc,$cp)
 		}
 
 		// Load gene technology level
-		$tl = new TechList($cu->id());
+		$tl = new TechList($cu->id);
 		define("GEN_TECH_LEVEL",$tl->getLevel(GEN_TECH_ID));
 		$minBuildTimeFactor = (0.1-(GEN_TECH_LEVEL/100));
 	
@@ -431,7 +431,7 @@ function calcDemolishingWaitTime($dc,$cp)
 										'".time()."',
 										'".$end_time."',
 										'".$arr['building_id']."',
-										'".$cu->id()."',
+										'".$cu->id."',
 										'".$cp->id()."'
 									);");
 
@@ -445,7 +445,7 @@ function calcDemolishingWaitTime($dc,$cp)
 								//Log schreiben
 								$log_text = "
 								<b>Gebäude Ausbau</b><br><br>
-								<b>User:</b> [USER_ID=".$cu->id().";USER_NICK=".$cu->nick()."]<br>
+								<b>User:</b> [USER_ID=".$cu->id.";USER_NICK=".$cu->nick."]<br>
 								<b>Planeten:</b> [PLANET_ID=".$cp->id().";PLANET_NAME=".$cp->name."]<br>
 								<b>Gebäude:</b> ".$arr['building_name']."<br>
 								<b>Gebäude Level:</b> ".$b_level." (vor Ausbau)<br>
@@ -468,7 +468,7 @@ function calcDemolishingWaitTime($dc,$cp)
 								";
 								
 								//Log Speichern
-								add_log_game_building($log_text,$cu->id(),$cu->allianceId(),$cp->id(),$arr['building_id'],$b_status,time());
+								add_log_game_building($log_text,$cu->id,$cu->allianceId,$cp->id(),$arr['building_id'],$b_status,time());
 								
 							}
 							else
@@ -509,7 +509,7 @@ function calcDemolishingWaitTime($dc,$cp)
 							//Log schreiben
 							$log_text = "
 							<b>Gebäude Abriss</b><br><br>
-							<b>User:</b> [USER_ID=".$cu->id().";USER_NICK=".$cu->nick()."]<br>
+							<b>User:</b> [USER_ID=".$cu->id.";USER_NICK=".$cu->nick."]<br>
 							<b>Planeten:</b> [PLANET_ID=".$cp->id().";PLANET_NAME=".$cp->name."]<br>
 							<b>Gebäude:</b> ".$arr['building_name']."<br>
 							<b>Gebäude Level:</b> ".$b_level." (vor Abriss)<br>
@@ -530,7 +530,7 @@ function calcDemolishingWaitTime($dc,$cp)
 							";
 							
 							//Log Speichern
-							add_log_game_building($log_text,$cu->id(),$cu->allianceId(),$cp->id(),$arr['building_id'],$b_status,time());	
+							add_log_game_building($log_text,$cu->id,$cu->allianceId,$cp->id(),$arr['building_id'],$b_status,time());	
 							
 						}
 						else
@@ -565,7 +565,7 @@ function calcDemolishingWaitTime($dc,$cp)
 						//Log schreiben
 						$log_text = "
 						<b>Gebäudebau Abbruch</b><br><br>
-						<b>User:</b> [USER_ID=".$cu->id().";USER_NICK=".$cu->nick()."]<br>
+						<b>User:</b> [USER_ID=".$cu->id.";USER_NICK=".$cu->nick."]<br>
 						<b>Planeten:</b> [PLANET_ID=".$cp->id().";PLANET_NAME=".$cp->name."]<br>
 						<b>Gebäude:</b> ".$arr['building_name']."<br>
 						<b>Gebäude Level:</b> ".$b_level." (nach Abbruch)<br>
@@ -587,7 +587,7 @@ function calcDemolishingWaitTime($dc,$cp)
 						";
 						
 						//Log Speichern
-						add_log_game_building($log_text,$cu->id(),$cu->allianceId(),$cp->id(),$arr['building_id'],$b_status,time());								
+						add_log_game_building($log_text,$cu->id,$cu->allianceId,$cp->id(),$arr['building_id'],$b_status,time());								
 					}
 					else
 						error_msg("Bauauftrag kann nicht mehr abgebrochen werden, die Arbeit ist bereits fertiggestellt!");
@@ -618,7 +618,7 @@ function calcDemolishingWaitTime($dc,$cp)
 						//Log schreiben
 						$log_text = "
 						<b>Gebäudeabbruch Abbruch</b><br><br>
-						<b>User:</b> [USER_ID=".$cu->id().";USER_NICK=".$cu->nick()."]<br>
+						<b>User:</b> [USER_ID=".$cu->id.";USER_NICK=".$cu->nick."]<br>
 						<b>Planeten:</b> [PLANET_ID=".$cp->id().";PLANET_NAME=".$cp->name."]<br>
 						<b>Gebäude:</b> ".$arr['building_name']."<br>
 						<b>Gebäude Level:</b> ".$b_level." (nach Abbruch)<br>
@@ -640,7 +640,7 @@ function calcDemolishingWaitTime($dc,$cp)
 						";
 						
 						//Log Speichern
-						add_log_game_building($log_text,$cu->id(),$cu->allianceId(),$cp->id(),$arr['building_id'],$b_status,time());							
+						add_log_game_building($log_text,$cu->id,$cu->allianceId,$cp->id(),$arr['building_id'],$b_status,time());							
 					}
 					else
 						echo "<i>Abbruchauftrag kann nicht mehr abgebrochen werden, die Arbeit ist bereits fertiggestellt!</i><br/><br/>";

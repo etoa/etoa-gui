@@ -23,7 +23,7 @@ $xajax->register(XAJAX_FUNCTION,'launchBookmarkProbe');
 							fleet_bookmarks
 						WHERE
 							id='".$bid."'
-							AND user_id='".$cu->id()."';");
+							AND user_id='".$cu->id."';");
 		if (mysql_num_rows($bres))
 		{
 			$barr = mysql_fetch_assoc($bres);

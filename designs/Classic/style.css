@@ -105,6 +105,11 @@ input[type="checkbox"],input[type="radio"] {
 	background:none;
 }
 
+input[type="file"]	{
+	color:#000;
+	background:#fff;
+}
+
 /* Absolutes Grundgerüst  */
 #layoutbox	{
 	margin:0px auto;

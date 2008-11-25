@@ -49,7 +49,7 @@
         	shiplist_special_ship_bonus_".$_POST['upgrade']."=shiplist_special_ship_bonus_".$_POST['upgrade']."+1
         WHERE
         	shiplist_ship_id='".$_POST['id']."'
-        	AND shiplist_user_id='".$cu->id()."';");
+        	AND shiplist_user_id='".$cu->id."';");
 
         echo "Upgrade erfolgreich duchgeführt!<br>";
     }
@@ -97,7 +97,7 @@
         	shiplist AS shiplist
         ON ships.ship_id=shiplist.shiplist_ship_id
         AND ships.special_ship='1'
-        AND shiplist.shiplist_user_id='".$cu->id()."'
+        AND shiplist.shiplist_user_id='".$cu->id."'
         AND shiplist.shiplist_ship_id='".intval($_GET['id'])."'  
         AND shiplist.shiplist_count>'0'
     ;");
@@ -371,7 +371,7 @@
         INNER JOIN
         shiplist AS shiplist
         ON ships.ship_id=shiplist.shiplist_ship_id
-        AND shiplist.shiplist_user_id='".$cu->id()."'
+        AND shiplist.shiplist_user_id='".$cu->id."'
         AND ships.special_ship='1'
         AND shiplist.shiplist_count>'0'
       ORDER BY

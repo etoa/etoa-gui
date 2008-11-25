@@ -89,7 +89,7 @@
 					{
 						if (mysql_num_rows(dbquery("SELECT id FROM fleet WHERE entity_to='".$cp->id."' OR entity_from='".$cp->id."';"))==0)
 						{
-							if (mysql_num_rows(dbquery("SELECT id FROM planets WHERE id='".$cp->id."' AND planet_user_id='".$cu->id()."' AND planet_user_main=0;"))==1)
+							if (mysql_num_rows(dbquery("SELECT id FROM planets WHERE id='".$cp->id."' AND planet_user_id='".$cu->id."' AND planet_user_main=0;"))==1)
 							{
 								if (reset_planet($cp->id))
 								{
@@ -100,7 +100,7 @@
 									FROM
 		                                planets
 									WHERE
-		                                planet_user_id='".$cu->id()."'
+		                                planet_user_id='".$cu->id."'
 		                                AND planet_user_main=1;");
 									$main_arr=mysql_fetch_array($main_res);
 		

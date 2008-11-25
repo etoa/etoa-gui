@@ -40,7 +40,7 @@
 		VALUES
 		(
 			'".$_POST['abuse_cat']."',
-			'".$cu->id()."',
+			'".$cu->id."',
 			'".$_POST['abuse_c_user_id']."',
 			'".$_POST['abuse_c_alliance_id']."',
 			UNIX_TIMESTAMP(),
@@ -77,14 +77,14 @@
 			while ($arr = mysql_fetch_array($res))
 			{
 				$text = "Ticket #".$tid." ".GAMEROUND_NAME."\n----------------------\n\n";
-				$text.= "Nick: ".$cu->nick()."\n";
-				$text.= "ID: ".$cu->id()."\n";
+				$text.= "Nick: ".$cu->nick."\n";
+				$text.= "ID: ".$cu->id."\n";
 				$text.= "IP/Host: ".$_SERVER['REMOTE_ADDR']." (".resolveIp($_SERVER['REMOTE_ADDR']).")\n";
 				$text.= "\n\n".$tarr[0]."\n\n";
 				$text.= $_POST['abuse_text'];
 				
 	      $email_header = "From: Escape to Andromeda Ticketsystem ".GAMEROUND_NAME."<etoa@dev.etoa.ch>\n";
-	      $email_header .= "Reply-To: ".$cu->nick()."<".$cu->email().">\n";
+	      $email_header .= "Reply-To: ".$cu->nick."<".$cu->email().">\n";
 	      $email_header .= "X-Mailer: PHP/" . phpversion(). "\n";
 	      $email_header .= "X-Sender-IP: ".$_SERVER['REMOTE_ADDR']."\n";
 	      $email_header .= "Content-Style-Type: text/css\n";					
@@ -203,7 +203,7 @@
 		ON
 			t.admin_id=a.user_id
 		WHERE
-			t.user_id=".$cu->id()."	
+			t.user_id=".$cu->id."	
 		ORDER BY
 			t.timestamp DESC
 		;");

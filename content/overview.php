@@ -40,8 +40,8 @@
 		FROM
 			login_failures
 		WHERE
-			failure_user_id=".$cu->id()."
-			AND failure_time > ".$cu->lastOnline()."
+			failure_user_id=".$cu->id."
+			AND failure_time > ".$cu->lastOnline."
 		");
 		$arr = mysql_fetch_row($res);
 		if ($arr[0]>0)
@@ -83,10 +83,10 @@
 			alliance_news
 		WHERE
 			(
-	      alliance_news_alliance_to_id='".$cu->allianceId()."'
+	      alliance_news_alliance_to_id='".$cu->allianceId."'
 		    OR alliance_news_alliance_to_id = 0 
 			)
-	    AND alliance_news_date>'".$cu->lastOnline()."'
+	    AND alliance_news_date>'".$cu->lastOnline."'
 		ORDER BY
 	        alliance_news_date DESC
 		LIMIT 5;");
@@ -108,7 +108,7 @@
 		//
 		// Eigene Flotten
 		//
-		$fm = new FleetManager($cu->id(),$cu->allianceId());
+		$fm = new FleetManager($cu->id,$cu->allianceId);
 		$fm->loadOwn();	
 		
 		//Mehrere Flotten
@@ -165,7 +165,7 @@
 	      INNER JOIN
 	      technologies
 	      ON technologies.tech_id=techlist.techlist_tech_id
-	      AND techlist.techlist_user_id='".$cu->id()."'
+	      AND techlist.techlist_user_id='".$cu->id."'
 	      AND techlist.techlist_build_type>'0';");
 		if (mysql_num_rows($bres)>0)
 		{
@@ -193,7 +193,7 @@
 		* Allianzegebäude *
 		******************/
 		
-		if($cu->allianceId()!=0)
+		if($cu->allianceId!=0)
 		{
 			
 			echo "<tr>
@@ -215,7 +215,7 @@
 		      alliance_buildings
 		    ON alliance_building_id=alliance_buildlist_building_id
 		  WHERE
-		    alliance_buildlist_alliance_id='".$cu->allianceId()."'
+		    alliance_buildlist_alliance_id='".$cu->allianceId."'
 		    AND alliance_buildlist_build_end_time>'0';");
 			if (mysql_num_rows($res)>0)
 			{
@@ -294,7 +294,7 @@
 		      alliance_technologies
 		    ON alliance_tech_id=alliance_techlist_tech_id
 		  WHERE
-		    alliance_techlist_alliance_id='".$cu->allianceId()."'
+		    alliance_techlist_alliance_id='".$cu->allianceId."'
 		    AND alliance_techlist_build_end_time>'0';");
 			if (mysql_num_rows($res)>0)
 			{
@@ -572,7 +572,7 @@
     FROM
     	planets AS p
    	WHERE
-   		p.planet_user_id=".$cu->id()."
+   		p.planet_user_id=".$cu->id."
     ORDER BY
       p.planet_user_main DESC,
       p.planet_name;";

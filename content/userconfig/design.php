@@ -72,7 +72,7 @@
               havenships_buttons='".$_POST['havenships_buttons']."',
               show_adds=".$_POST['show_adds']."                          
           WHERE
-              id='".$cu->id()."';")
+              id='".$cu->id."';")
           )
           {
             success_msg("Design-Daten wurden geändert!");

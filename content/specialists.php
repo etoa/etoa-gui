@@ -51,7 +51,7 @@
 
 
 
-				if ($cu->points() >= $arr['specialist_points_req'])
+				if ($cu->points >= $arr['specialist_points_req'])
 				{
 					if ($cp->resMetal >= $arr['specialist_costs_metal'] &&
 					$cp->resCrystal >= $arr['specialist_costs_crystal'] &&
@@ -69,7 +69,7 @@
 							user_specialist_id=".$arr['specialist_id'].",
 							user_specialist_time=".$st."
 						WHERE
-							user_id=".$cu->id()."
+							user_id=".$cu->id."
 						;");
 						$cu->specialistId = $arr['specialist_id'];
 						$cu->specialistTime = $st;
@@ -121,7 +121,7 @@
 				user_specialist_id=0,
 				user_specialist_time=0
 			WHERE
-				user_id=".$cu->id()."
+				user_id=".$cu->id."
 			;");
 			$cu->specialistId = 0;
 			$cu->specialistTime = 0;
@@ -256,7 +256,7 @@
 				$cp->resPlastic >= $arr['specialist_costs_plastic']*$factor &&
 				$cp->resFuel >= $arr['specialist_costs_fuel']*$factor &&
 				$cp->resFood >= $arr['specialist_costs_food']*$factor &&
-				$cu->points() >= $arr['specialist_points_req']
+				$cu->points >= $arr['specialist_points_req']
 				)
 				{					
 					echo '<input type="radio" name="engage" value="'.$arr['specialist_id'].'" />';

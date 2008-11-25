@@ -56,7 +56,7 @@ if (isset($_GET['id']))
 				buildlist 
 			WHERE 
 				buildlist_building_id ='".$_GET['id']."' 
-				AND buildlist_user_id='".$cu->id()."' 
+				AND buildlist_user_id='".$cu->id."' 
 				AND buildlist_entity_id='".$cp->id."';");
 			if(mysql_num_rows($res_level)>0)
 			{

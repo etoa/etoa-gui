@@ -53,7 +53,7 @@
 		{
 			define('CURRENT_LAB_LEVEL',$bl->getLevel(TECH_BUILDING_ID));
 			
-			$tl = new TechList($cu->id());
+			$tl = new TechList($cu->id);
 			define("GEN_TECH_LEVEL",$tl->getLevel(GEN_TECH_ID));
 			$minBuildTimeFactor = (0.1-(GEN_TECH_LEVEL/100));			
 			
@@ -89,7 +89,7 @@
 			FROM 
 				techlist 
 			WHERE 
-				techlist_user_id='".$cu->id()."';");
+				techlist_user_id='".$cu->id."';");
 			$builing_something=false;
 			while ($tarr = mysql_fetch_array($tres))
 			{
@@ -244,7 +244,7 @@
 		                  techlist_entity_id='".$cp->id()."'
 										WHERE
 											techlist_tech_id='".$arr['tech_id']."'
-											AND techlist_user_id='".$cu->id()."';");
+											AND techlist_user_id='".$cu->id."';");
 									}
 									else
 									{
@@ -266,7 +266,7 @@
 											'".time()."',
 											'".$end_time."',
 											'".$arr['tech_id']."',
-											'".$cu->id()."'
+											'".$cu->id."'
 										);");
 	
 									}
@@ -279,7 +279,7 @@
 									//Log schreiben
 									$log_text = "
 									<b>Forschung Ausbau</b><br><br>
-									<b>User:</b> [USER_ID=".$cu->id().";USER_NICK=".$cu->nick()."]<br>
+									<b>User:</b> [USER_ID=".$cu->id.";USER_NICK=".$cu->nick."]<br>
 									<b>Planeten:</b> [PLANET_ID=".$cp->id().";PLANET_NAME=".$cp->name."]<br>
 									<b>Technologie:</b> ".$arr['tech_name']."<br>
 									<b>Technologie Level:</b> ".$b_level." (vor Ausbau)<br>
@@ -303,7 +303,7 @@
 									";
 									
 									//Log Speichern
-									add_log_game_research($log_text,$cu->id(),$cu->allianceId(),$cp->id(),$arr['tech_id'],$b_status,time());								
+									add_log_game_research($log_text,$cu->id,$cu->allianceId,$cp->id(),$arr['tech_id'],$b_status,time());								
 									
 								}
 								else
@@ -332,7 +332,7 @@
 								techlist_build_end_time='0'
 							WHERE 
 								techlist_tech_id='".$arr['tech_id']."'
-								AND techlist_user_id='".$cu->id()."';");
+								AND techlist_user_id='".$cu->id."';");
 	
 							//Rohstoffe vom Planeten abziehen und aktualisieren
 							$cp->changeRes($bc['metal']*$fac,$bc['crystal']*$fac,$bc['plastic']*$fac,$bc['fuel']*$fac,$bc['food']*$fac);
@@ -342,7 +342,7 @@
 							//Log schreiben
 							$log_text = "
 							<b>Forschungs Abbruch</b><br><br>
-							<b>User:</b> [USER_ID=".$cu->id().";USER_NICK=".$cu->nick()."]<br>
+							<b>User:</b> [USER_ID=".$cu->id.";USER_NICK=".$cu->nick."]<br>
 							<b>Planeten:</b> [PLANET_ID=".$cp->id().";PLANET_NAME=".$cp->name."]<br>
 							<b>Forschung:</b> ".$arr['tech_name']."<br>
 							<b>Forschungs Level:</b> ".$b_level." (nach Abbruch)<br>
@@ -364,7 +364,7 @@
 							";
 							
 							//Log Speichern
-							add_log_game_research($log_text,$cu->id(),$cu->allianceId(),$cp->id(),$arr['tech_id'],$b_status,time());								
+							add_log_game_research($log_text,$cu->id,$cu->allianceId,$cp->id(),$arr['tech_id'],$b_status,time());								
 						}
 						else
 						{

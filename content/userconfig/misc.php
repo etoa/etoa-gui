@@ -9,7 +9,7 @@
 		if (isset($_POST['hmod_on']) && checker_verify())
 		{
 		
-			$cres = dbquery("SELECT id FROM fleet WHERE user_id='".$cu->id()."';");
+			$cres = dbquery("SELECT id FROM fleet WHERE user_id='".$cu->id."';");
 			$carr = mysql_fetch_row($cres);
 			if ($carr[0]==0)
 			{
@@ -20,7 +20,7 @@
 								INNER JOIN
 									planets as p
 								ON f.entity_to=p.id
-								AND p.planet_user_id='".$cu->id()."';");
+								AND p.planet_user_id='".$cu->id."';");
 				$parr = mysql_fetch_row($pres);
 				if ($parr[0]==0)
 				{
@@ -30,7 +30,7 @@
 									FROM 
 										ship_queue 
 									WHERE 
-										queue_user_id='".$cu->id()."';");
+										queue_user_id='".$cu->id."';");
 					while ($sarr=mysql_fetch_row($sres))
 					{
 						if ($sarr[1]>time())
@@ -40,7 +40,7 @@
 									SET 
 										queue_build_type=1
 									WHERE 
-										queue_user_id='".$cu->id()."';");
+										queue_user_id='".$cu->id."';");
 						}
 						else
 						{
@@ -50,7 +50,7 @@
 										queue_build_type=1, 
 										queue_starttime=".time()." 
 									WHERE 
-										queue_user_id='".$cu->id()."';");
+										queue_user_id='".$cu->id."';");
 						}
 					}
 					$sres = dbquery("SELECT 
@@ -59,7 +59,7 @@
 									FROM 
 										def_queue 
 									WHERE 
-										queue_user_id='".$cu->id()."';");
+										queue_user_id='".$cu->id."';");
 					while ($sarr=mysql_fetch_row($sres))
 					{
 						if ($sarr[1]>time())
@@ -69,7 +69,7 @@
 									SET 
 										queue_build_type=1
 									WHERE 
-										queue_user_id='".$cu->id()."';");
+										queue_user_id='".$cu->id."';");
 						}
 						else
 						{
@@ -79,7 +79,7 @@
 										queue_build_type=1, 
 										queue_starttime=".time()." 
 									WHERE 
-										queue_user_id='".$cu->id()."';");
+										queue_user_id='".$cu->id."';");
 						}
 					}
 
@@ -89,7 +89,7 @@
 								buildlist_build_type = buildlist_build_type - 2,
 								buildlist_build_start_time=".time()." 
 							WHERE 
-								buildlist_user_id='".$cu->id()."' 
+								buildlist_user_id='".$cu->id."' 
 								AND buildlist_build_start_time>0;");
 					dbquery("UPDATE 
 								techlist 
@@ -97,12 +97,12 @@
 								techlist_build_type=1, 
 								techlist_build_start_time=".time()." 
 							WHERE 
-								techlist_user_id='".$cu->id()."' 
+								techlist_user_id='".$cu->id."' 
 								AND techlist_build_start_time>0;");
 				
 					$hfrom=time();
 					$hto=$hfrom+(MIN_UMOD_TIME*24*3600);
-					if (dbquery("UPDATE users SET user_hmode_from='$hfrom',user_hmode_to='$hto' WHERE user_id='".$cu->id()."';"))
+					if (dbquery("UPDATE users SET user_hmode_from='$hfrom',user_hmode_to='$hto' WHERE user_id='".$cu->id."';"))
 					{
 						dbquery ("
 							UPDATE 
@@ -115,7 +115,7 @@
 								planet_prod_fuel=0,
 								planet_prod_food=0
 							WHERE 
-								planet_user_id='".$cu->id()."';");
+								planet_user_id='".$cu->id."';");
 									
 							$arr['user_hmode_to'] = $hto;
 							success_msg("Du bist nun im Urlaubsmodus bis [b]".df($hto)."[/b].");
@@ -153,7 +153,7 @@
 								WHERE
 									buildlist_build_start_time>0
 									AND buildlist_build_type>0
-									AND buildlist_user_id=".$cu->id().";");
+									AND buildlist_user_id=".$cu->id.";");
 							
 				while ($barr=mysql_fetch_row($bres))
 				{
@@ -170,7 +170,7 @@
 								WHERE
 									techlist_build_start_time>0
 									AND techlist_build_type>0
-									AND techlist_user_id=".$cu->id().";");
+									AND techlist_user_id=".$cu->id.";");
 									
 				while ($barr=mysql_fetch_row($bres))
 				{
@@ -183,7 +183,7 @@
 								 FROM 
 								 	ship_queue 
 								WHERE 
-									queue_user_id='".$cu->id()."'
+									queue_user_id='".$cu->id."'
 								ORDER BY 
 									queue_starttime ASC;");
 				$time = time();
@@ -206,7 +206,7 @@
 								 FROM 
 								 	def_queue 
 								WHERE 
-									queue_user_id='".$cu->id()."'
+									queue_user_id='".$cu->id."'
 								ORDER BY 
 									queue_starttime ASC;");
 				$time = time();
@@ -223,8 +223,8 @@
 					$time+=$sarr[1];
 				}
 					
-				dbquery("UPDATE users SET user_hmode_from=0,user_hmode_to=0 WHERE user_id='".$cu->id()."';");
-				dbquery ("UPDATE planets SET planet_last_updated=".time()." WHERE planet_user_id='".$cu->id()."';");
+				dbquery("UPDATE users SET user_hmode_from=0,user_hmode_to=0 WHERE user_id='".$cu->id."';");
+				dbquery ("UPDATE planets SET planet_last_updated=".time()." WHERE planet_user_id='".$cu->id."';");
 				success_msg("Urlaubsmodus aufgehoben! Denke daran, auf allen deinen Planeten die Produktion zu überprüfen!");
 				$cu->addToUserLog("settings","{nick} ist nun aus dem Urlaub zurück.",1);
 				
@@ -263,7 +263,7 @@
 			FROM 
 				users 
 			WHERE 
-				user_id=".$cu->id()."
+				user_id=".$cu->id."
 			;");
 			$parr=mysql_fetch_row($pres);
 			if ($parr[0]==pw_salt($_POST['remove_password'],$parr[1]))
@@ -275,7 +275,7 @@
 				SET
 					user_deleted=".$t."
 				WHERE
-					user_id=".$cu->id()."
+					user_id=".$cu->id."
 				;");
 				
 					$s=Null;
@@ -302,7 +302,7 @@
 			SET
 				user_deleted=0
 			WHERE
-				user_id=".$cu->id()."
+				user_id=".$cu->id."
 			;");
 			success_msg("Löschantrag aufgehoben!");
 			$cu->addToUserLog("settings","{nick} hat seine Accountlöschung aufgehoben.",1);

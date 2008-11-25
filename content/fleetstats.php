@@ -45,7 +45,7 @@
   FROM
   	shiplist
   WHERE
-  	shiplist_user_id='".$cu->id()."';");
+  	shiplist_user_id='".$cu->id."';");
   if(mysql_result($res,0)>0)
   {
   	//
@@ -73,7 +73,7 @@
 			planets
 			ON shiplist_entity_id=id
 		WHERE
-			 shiplist_user_id='".$cu->id()."'
+			 shiplist_user_id='".$cu->id."'
 		ORDER BY
 			planet_user_main DESC,
 			planet_name DESC;");
@@ -96,7 +96,7 @@
 			planets
 			ON queue_entity_id=id
 	  WHERE
-	  	queue_user_id='".$cu->id()."'
+	  	queue_user_id='".$cu->id."'
 	  GROUP BY
 	  	queue_entity_id
 	  ORDER BY
@@ -122,7 +122,7 @@
       INNER JOIN
       fleet AS f
       ON fs.fs_fleet_id=f.id
-      AND f.user_id='".$cu->id()."'
+      AND f.user_id='".$cu->id."'
 		GROUP BY
 			fs.fs_ship_id;");
 		if(mysql_num_rows($res)>0)

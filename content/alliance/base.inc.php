@@ -351,7 +351,7 @@
 	        alliance_res_fuel=alliance_res_fuel+'".$fuel."',
 	        alliance_res_food=alliance_res_food+'".$food."'
 	      WHERE
-	        alliance_id='".$cu->allianceId()."';");
+	        alliance_id='".$cu->allianceId."';");
 	        
 	     	// Spende speichern
 	     	dbquery("
@@ -366,8 +366,8 @@
 	          alliance_spend_food,
 	          alliance_spend_time)
 	      VALUES
-	          ('".$cu->allianceId()."',
-	          '".$cu->id()."',
+	          ('".$cu->allianceId."',
+	          '".$cu->id."',
 	          '".$metal."',
 	          '".$crystal."',
 	          '".$plastic."',
@@ -635,7 +635,7 @@
 					;");
 					
 					// Zur Allianzgeschichte hinzufügen
-		      add_alliance_history($cu->allianceId(),"Folgende Schiffe wurden für [b]".get_user_nick($_POST['user_buy_ship'])."[/b] hergestellt:\n".$log."\n".nf($ship_costs)." Teile wurden dafür benötigt.");
+		      add_alliance_history($cu->allianceId,"Folgende Schiffe wurden für [b]".get_user_nick($_POST['user_buy_ship'])."[/b] hergestellt:\n".$log."\n".nf($ship_costs)." Teile wurden dafür benötigt.");
 					
 				}
 				else
@@ -676,7 +676,7 @@
 	FROM
 		alliances
 	WHERE
-		alliance_id='".$cu->allianceId()."';");		
+		alliance_id='".$cu->allianceId."';");		
 	$aarr = mysql_fetch_assoc($res);
 	
 	// Läd die Allianzmitglieder
@@ -688,7 +688,7 @@
 	FROM
 		users
 	WHERE
-		user_alliance_id='".$cu->allianceId()."';");
+		user_alliance_id='".$cu->allianceId."';");
 	$alliance_member_cnt = mysql_num_rows($res);
 	while($arr=mysql_fetch_assoc($res))		
 	{
@@ -718,7 +718,7 @@
 	FROM
 		alliance_buildlist
 	WHERE
-		alliance_buildlist_alliance_id='".$cu->allianceId()."';");
+		alliance_buildlist_alliance_id='".$cu->allianceId."';");
 	while($arr=mysql_fetch_assoc($res))		
 	{
 		$buildlist[$arr['alliance_buildlist_building_id']] = $arr;
@@ -756,7 +756,7 @@
 	FROM
 		alliance_techlist
 	WHERE
-		alliance_techlist_alliance_id='".$cu->allianceId()."';");
+		alliance_techlist_alliance_id='".$cu->allianceId."';");
 	while($arr=mysql_fetch_assoc($res))		
 	{
 		$techlist[$arr['alliance_techlist_tech_id']] = $arr;
@@ -951,7 +951,7 @@
 		        alliance_res_fuel=alliance_res_fuel-'".$options_arr['costs_fuel']."',
 		        alliance_res_food=alliance_res_food-'".$options_arr['costs_food']."'
 		      WHERE
-		        alliance_id='".$cu->allianceId()."';");
+		        alliance_id='".$cu->allianceId."';");
 		        
 		      // Setzt Bauzeit für das Gebäude
 		      $end_time = $options_arr['btime'] + time();
@@ -966,7 +966,7 @@
 			        alliance_buildlist_build_start_time='".time()."',
 			        alliance_buildlist_build_end_time='".$end_time."'
 			      WHERE
-			        alliance_buildlist_alliance_id='".$cu->allianceId()."'
+			        alliance_buildlist_alliance_id='".$cu->allianceId."'
 			        AND alliance_buildlist_building_id='".$id."';");
 		      }
 		      else
@@ -982,7 +982,7 @@
 						) 
 						VALUES 
 						( 
-							'".$cu->allianceId()."',
+							'".$cu->allianceId."',
 							'".$id."',
 							'".time()."',
 							'".$end_time."'
@@ -1008,7 +1008,7 @@
 					echo "<script type=\"text/javascript\">changeResBox(".$aarr['alliance_res_metal'].", ".$aarr['alliance_res_crystal'].", ".$aarr['alliance_res_plastic'].", ".$aarr['alliance_res_fuel'].", ".$aarr['alliance_res_food'].");</script>";
 		      
 		      // Ausbau zur Allianzgeschichte hinzufügen
-		      add_alliance_history($cu->allianceId(),"[b]".$cu->nick()."[/b] hat das Gebäude \"".$buildings[$id]['alliance_building_name']." (".($buildlist[$id]['alliance_buildlist_current_level']+1).")\" in Auftrag gegeben.");
+		      add_alliance_history($cu->allianceId,"[b]".$cu->nick."[/b] hat das Gebäude \"".$buildings[$id]['alliance_building_name']." (".($buildlist[$id]['alliance_buildlist_current_level']+1).")\" in Auftrag gegeben.");
 		      
 		      echo "Gebäude wurde erfolgreich in Auftrag gegeben!<br><br>";
 				}
@@ -1068,7 +1068,7 @@
 		        alliance_res_fuel=alliance_res_fuel-'".$options_arr['costs_fuel']."',
 		        alliance_res_food=alliance_res_food-'".$options_arr['costs_food']."'
 		      WHERE
-		        alliance_id='".$cu->allianceId()."';");
+		        alliance_id='".$cu->allianceId."';");
 		        
 		      // Setzt Bauzeit für das Gebäude
 		      $end_time = $options_arr['btime'] + time();
@@ -1083,7 +1083,7 @@
 			        alliance_techlist_build_start_time='".time()."',
 			        alliance_techlist_build_end_time='".$end_time."'
 			      WHERE
-			        alliance_techlist_alliance_id='".$cu->allianceId()."'
+			        alliance_techlist_alliance_id='".$cu->allianceId."'
 			        AND alliance_techlist_tech_id='".$id."';");
 		      }
 		      else
@@ -1099,7 +1099,7 @@
 						) 
 						VALUES 
 						( 
-							'".$cu->allianceId()."',
+							'".$cu->allianceId."',
 							'".$id."',
 							'".time()."',
 							'".$end_time."'
@@ -1125,7 +1125,7 @@
 					echo "<script type=\"text/javascript\">changeResBox(".$aarr['alliance_res_metal'].", ".$aarr['alliance_res_crystal'].", ".$aarr['alliance_res_plastic'].", ".$aarr['alliance_res_fuel'].", ".$aarr['alliance_res_food'].");</script>";
 		      
 		      // Ausbau zur Allianzgeschichte hinzufügen
-		      add_alliance_history($cu->allianceId(),"[b]".$cu->nick()."[/b] hat die Forschung \"".$techs[$id]['alliance_tech_name']." (".($techlist[$id]['alliance_techlist_current_level']+1).")\" in Auftrag gegeben.");
+		      add_alliance_history($cu->allianceId,"[b]".$cu->nick."[/b] hat die Forschung \"".$techs[$id]['alliance_tech_name']." (".($techlist[$id]['alliance_techlist_current_level']+1).")\" in Auftrag gegeben.");
 		      
 		      echo "Forschung wurde erfolgreich in Auftrag gegeben!<br><br>";
 				}
@@ -1477,7 +1477,7 @@
 		FROM
 			alliance_spends
 		WHERE
-			alliance_spend_alliance_id='".$cu->allianceId()."'
+			alliance_spend_alliance_id='".$cu->allianceId."'
 			".$user_sql.";");		
 		if(mysql_num_rows($res)>0)
 		{						
@@ -1550,7 +1550,7 @@
 		FROM
 			alliance_spends
 		WHERE
-			alliance_spend_alliance_id='".$cu->allianceId()."'
+			alliance_spend_alliance_id='".$cu->allianceId."'
 			".$user_sql."
 		ORDER BY
 			alliance_spend_time DESC
@@ -1617,7 +1617,7 @@
 						<td class=\"tbldata\" style=\"text-align:center;\">Schiffsteile pro Stunde: ".(2*$conf['alliance_shippoints_per_hour']['v'] + $conf['alliance_shippoints_per_hour']['v']*$buildlist[ALLIANCE_SHIPYARD_ID]['alliance_buildlist_current_level'])."</td>
 					</tr>
 					<tr>
-						<td class=\"tbldata\" style=\"text-align:center;\">Vorhandene Teile: ".$alliance_members[$cu->id()]['user_alliace_shippoints']."</td>
+						<td class=\"tbldata\" style=\"text-align:center;\">Vorhandene Teile: ".$alliance_members[$cu->id]['user_alliace_shippoints']."</td>
 					</tr>";
 		
 		tableEnd();

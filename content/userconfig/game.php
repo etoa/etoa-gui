@@ -10,13 +10,13 @@
                   spyship_id='".$_POST['spyship_id']."',
                   fleet_rtn_msg='".$_POST['fleet_rtn_msg']."'
              	WHERE
-                  id='".$cu->id()."';");
+                  id='".$cu->id."';");
                       
               success_msg("Benutzer-Daten wurden ge&auml;ndert!");
                   
             }
 			
-			$res = dbquery("SELECT * FROM user_properties WHERE id='".$cu->id()."';");
+			$res = dbquery("SELECT * FROM user_properties WHERE id='".$cu->id."';");
 			$arr = mysql_fetch_array($res);
 
             echo "<form action=\"?page=$page&mode=game\" method=\"post\" enctype=\"multipart/form-data\">";

@@ -49,8 +49,8 @@
 			$this->sourceEntity = $sourceEnt;
 			$this->owner = $ownerEnt;
 			$this->ownerId = $ownerEnt->id();
-			$this->ownerRaceName = $ownerEnt->raceName();
-			$this->raceSpeedFactor = $ownerEnt->raceSpeedFactor();
+			$this->ownerRaceName = $ownerEnt->race->name;
+			$this->raceSpeedFactor = $ownerEnt->race->speedFactor;
 			$this->possibleFleetStarts = 0;
 			$this->fleetSlotsUsed = 0;
 			$this->fleetControlLevel =0;

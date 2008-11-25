@@ -14,7 +14,7 @@
 				message_data as md
 				ON md.id=message_id				
         AND m.message_id='".intval($_GET['msg_id'])."'
-        AND m.message_user_from='".$cu->id()."'
+        AND m.message_user_from='".$cu->id."'
         ");
 			if (mysql_num_rows($mres)>0)
 			{
@@ -62,7 +62,7 @@
 				users
 				ON message_user_to=user_id				
 			WHERE
-        message_user_from='".$cu->id()."'
+        message_user_from='".$cu->id."'
 			ORDER BY
 				message_timestamp DESC
 			LIMIT 30;");

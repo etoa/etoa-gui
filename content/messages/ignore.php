@@ -10,7 +10,7 @@
 			DELETE FROM
 				message_ignore
 			WHERE
-				ignore_owner_id=".$cu->id()."
+				ignore_owner_id=".$cu->id."
 				AND ignore_target_id=".intval($_POST['target_id'])."
 			;");				
 			dbquery("
@@ -22,7 +22,7 @@
 			)
 			VALUES
 			(
-			  ".$cu->id().",
+			  ".$cu->id.",
 			  ".$_POST['target_id']."
 			)
 			");		
@@ -37,7 +37,7 @@
 			DELETE FROM
 				message_ignore
 			WHERE
-				ignore_owner_id=".$cu->id()."
+				ignore_owner_id=".$cu->id."
 				AND ignore_target_id=".intval($_GET['remove'])."
 			;");		
 			echo "Spieler wurde von der Liste entfernt!<br/><br/>";
@@ -51,7 +51,7 @@
 			users
 		WHERE
 			user_admin=0
-			AND user_id!=".$cu->id()."
+			AND user_id!=".$cu->id."
 		ORDER BY
 			user_nick");
 		if (mysql_num_rows($res)>0)
@@ -74,7 +74,7 @@
 		INNER JOIN
 			users
 			ON ignore_target_id=user_id
-			AND ignore_owner_id=".$cu->id()."
+			AND ignore_owner_id=".$cu->id."
 		ORDER BY
 			user_nick");		
 		if (mysql_num_rows($res)>0)
@@ -104,7 +104,7 @@
 		INNER JOIN
 			users
 			ON ignore_owner_id=user_id
-			AND ignore_target_id=".$cu->id()."
+			AND ignore_target_id=".$cu->id."
 		ORDER BY
 			user_nick");			
 		if (mysql_num_rows($res)>0)

@@ -35,7 +35,7 @@
 	define('REQ_ITEM_FLD',"req_ship_id");
 	define('ITEM_ID_FLD',"ship_id");
 	define('ITEM_NAME_FLD',"ship_name");
-	define('RACE_TO_ADD'," AND (ship_race_id=0 OR ship_race_id='".$cu->raceId()."')");
+	define('RACE_TO_ADD'," AND (ship_race_id=0 OR ship_race_id='".$cu->raceId."')");
 	define('ITEM_SHOW_FLD',"ship_show");
 	define('ITEM_ORDER_FLD',"ship_order");
 	define('NO_ITEMS_MSG',"In dieser Kategorie gibt es keine Schiffe!");
@@ -60,7 +60,7 @@
   	buildlist_entity_id='".$cp->id."'
   	AND buildlist_building_id='".SHIPYARD_ID."'
   	AND buildlist_current_level>='1'
-  	AND buildlist_user_id='".$cu->id()."'");
+  	AND buildlist_user_id='".$cu->id."'");
 
   // Prüfen ob Werft gebaut ist
   if (mysql_num_rows($werft_res)>0)
@@ -131,7 +131,7 @@
 			FROM 
 				techlist 
 			WHERE 
-				techlist_user_id='".$cu->id()."';");
+				techlist_user_id='".$cu->id."';");
 			while ($arr = mysql_fetch_assoc($res))
 			{
 				$techlist[$arr['techlist_tech_id']]=$arr['techlist_current_level'];
@@ -165,7 +165,7 @@
 			FROM
     		shiplist
 			WHERE
-  			shiplist_user_id='".$cu->id()."';");
+  			shiplist_user_id='".$cu->id."';");
 			while ($arr = mysql_fetch_assoc($res))
 			{
 				$shiplist[$arr['shiplist_ship_id']][$arr['shiplist_entity_id']]=$arr['shiplist_count'];
@@ -201,7 +201,7 @@
 			FROM
     		ship_queue
 			WHERE
-  			queue_user_id='".$cu->id()."'
+  			queue_user_id='".$cu->id."'
   			AND queue_endtime>'".$time."'
   		GROUP BY
     		queue_ship_id;");
@@ -221,7 +221,7 @@
          fleet_ships AS fs
        ON f.id=fs.fs_fleet_id
      WHERE
-       f.user_id='".$cu->id()."'
+       f.user_id='".$cu->id."'
      GROUP BY
      	 fs.fs_ship_id;");
 			while ($arr = mysql_fetch_assoc($res))
@@ -263,7 +263,7 @@
 			WHERE
 				ship_buildable='1'
 				AND ship_show='1'
-				AND (ship_race_id='0' OR ship_race_id='".$cu->raceId()."')
+				AND (ship_race_id='0' OR ship_race_id='".$cu->raceId."')
 			ORDER BY
 				cat_order,
 				special_ship DESC,
@@ -558,7 +558,7 @@
     	            queue_endtime,
     	            queue_objtime)
     	        VALUES
-    	            ('".$cu->id()."',
+    	            ('".$cu->id."',
     	            '".$ship_id."',
     	            '".$cp->id."',
     	            '".$build_cnt."',
@@ -612,7 +612,7 @@
 				//Log schreiben
 				$log_text = "
 				<b>Schiffsauftrag Bauen</b><br><br>
-				<b>User:</b> [USER_ID=".$cu->id().";USER_NICK=".$cu->nick()."]<br>
+				<b>User:</b> [USER_ID=".$cu->id.";USER_NICK=".$cu->nick."]<br>
 				<b>Planeten:</b> [PLANET_ID=".$cp->id.";PLANET_NAME=".$cp->name."]<br>
 				<b>Dauer des gesamten Auftrages:</b> ".tf($total_duration)."<br>
 				<b>Ende des gesamten Auftrages:</b> ".date("Y-m-d H:i:s",$end_time)."<br>
@@ -636,7 +636,7 @@
 				";
 				
 				//Log Speichern
-				add_log_game_ship($log_text,$cu->id(),$cu->allianceId(),$cp->id,1,time());					
+				add_log_game_ship($log_text,$cu->id,$cu->allianceId,$cp->id,1,time());					
 				
 				if ($counter==0)
 				{
@@ -732,7 +732,7 @@
 					//Log schreiben
 					$log_text = "
 					<b>Schiffsauftrag Abbruch</b><br><br>
-					<b>User:</b> [USER_ID=".$cu->id().";USER_NICK=".$cu->nick()."]<br>
+					<b>User:</b> [USER_ID=".$cu->id.";USER_NICK=".$cu->nick."]<br>
 					<b>Planeten:</b> [PLANET_ID=".$cp->id.";PLANET_NAME=".$cp->name."]<br>
 					<b>Schiff:</b> ".$ship_name."<br>
 					<b>Anzahl:</b> ".nf($queue_count)."<br>
@@ -753,7 +753,7 @@
 					";
 					
 					//Log Speichern
-					add_log_game_ship($log_text,$cu->id(),$cu->allianceId(),$cp->id,0,time());					
+					add_log_game_ship($log_text,$cu->id,$cu->allianceId,$cp->id,0,time());					
 				}
 			}
 
