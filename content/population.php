@@ -297,7 +297,7 @@
 
   		// Infodaten
 			$people_free = floor($cp->people)-$people_working;
-			$people_div = $cp->people/50 * ($conf['people_multiply']['v'] + $cp->typePopulation + $cu->racePopulation + $cp->starPopulation -3);
+			$people_div = $cp->people/50 * ($conf['people_multiply']['v'] + $cp->typePopulation + $cu->race->population + $cp->starPopulation -3);
 			if($people_div<=3) $people_div=3;
 			tableStart("Daten");
 			echo "<tr><td class=\"tbldata\" width=\"250\">Bev&ouml;lkerung total</td><td class=\"tbldata\">".nf(floor($cp->people))."</td></tr>";
@@ -307,9 +307,9 @@
 			echo "<tr><td class=\"tbldata\" width=\"250\">Nahrung pro Arbeiter und Auftrag</td><td class=\"tbldata\">".nf($conf['people_food_require']['v'])." t</td></tr>";
 			echo "<tr><td class=\"tbldata\" width=\"250\">Grundwachstumsrate</td><td class=\"tbldata\">".get_percent_string($conf['people_multiply']['v'])."</td></tr>";
 			echo "<tr><td class=\"tbldata\" width=\"250\">Wachstumsbonus ".$cp->typeName."</td><td class=\"tbldata\">".get_percent_string($cp->typePopulation,1)."</td></tr>";
-			echo "<tr><td class=\"tbldata\" width=\"250\">Wachstumsbonus ".$cu->raceName()."</td><td class=\"tbldata\">".get_percent_string($cu->racePopulation,1)."</td></tr>";
+			echo "<tr><td class=\"tbldata\" width=\"250\">Wachstumsbonus ".$cu->race->name."</td><td class=\"tbldata\">".get_percent_string($cu->race->population,1)."</td></tr>";
 			echo "<tr><td class=\"tbldata\" width=\"250\">Wachstumsbonus ".$cp->starTypeName."</td><td class=\"tbldata\">".get_percent_string($cp->starPopulation,1)."</td></tr>";
-			echo "<tr><td class=\"tbldata\" width=\"250\">Wachstumsbonus total</td><td class=\"tbldata\">".get_percent_string(array($cp->typePopulation,$cu->racePopulation,$cp->starPopulation),1)."</td></tr>";
+			echo "<tr><td class=\"tbldata\" width=\"250\">Wachstumsbonus total</td><td class=\"tbldata\">".get_percent_string(array($cp->typePopulation,$cu->race->population,$cp->starPopulation),1)."</td></tr>";
 			echo "<tr><td class=\"tbldata\" width=\"250\">Bev&ouml;lkerungszuwachs pro Stunde</td><td class=\"tbldata\">".nf($people_div)."</td></tr>";
 			tableEnd();
 		}

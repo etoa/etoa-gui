@@ -106,6 +106,25 @@ a img	{
 	margin-bottom:15px;
 }
 
+.errorBox	h2 {
+	margin:0px 0px 10px 0px;
+	border:1px #f00 solid;
+	color:#500;
+	background:#fcc;
+	padding:10px;
+	font-size:12pt;
+}
+
+.errorBox	h2:before	{
+	content:none;
+}
+
+.errorBox	h2:after	{
+	content:none;
+}
+
+
+
 .successBox	{
 	border:1px #0f0 solid;
 	padding:5px;

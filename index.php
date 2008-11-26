@@ -411,7 +411,6 @@
 				$tpl->display(getcwd()."/".CSS_STYLE."/footer.tpl");						
 			}
 			
-			
 			$_SESSION['lastpage']=$page;
 			$_SESSION[ROUNDID] = $s;
 			dbclose();

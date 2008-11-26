@@ -54,7 +54,7 @@
 		protected $race = null;
 		protected $raceId;
 
-		protected $rating;
+		protected $rating = null;
 
 
 		protected $changedFields;
@@ -137,12 +137,8 @@
 		    $this->specialistId = $arr['user_specialist_id'];
 		    $this->specialistTime = $arr['user_specialist_time'];
 
-
-				$this->race = null;
 				$this->raceId = $arr['user_race_id'];
 
-
-				$this->rating = array();
 				$this->changedFields = array();
 				
 				$this->isValid=true;
@@ -151,6 +147,7 @@
 
 		function __destruct()
 		{
+			echo "User Destructor called<br/>";
 			$cnt = count($this->changedFields);
 			if ($cnt > 0)
 			{
@@ -160,18 +157,18 @@
 				foreach ($this->changedFields as $k=>$v)
 				{
 					if ($k=="race")	
-					{
-				    $sql.= "
-							user_race_id=".$this->race->id.",";
-					}
+				    $sql.= " user_race_id=".$this->race->id.",";
+					elseif ($k=="visits")	
+				    $sql.= " user_visits=".$this->visits.",";
+					else
+						echo " $k has no valid UPDATE query!";
 				}
 				$sql.=" user_id=user_id WHERE
 				    	user_id=".$this->id.";";
-				    	// todo remove debug msg
 				echo $sql;
 				dbquery($sql);
 			}
-			echo "exit";
+			unset($this->changedFields);
 			
 		}
 
@@ -181,16 +178,26 @@
 			{
 				if (!property_exists($this,$key))
 					throw new EException("Property $key existiert nicht in der Klasse ".__CLASS__);
-					
-				$this->$key = $val;
 				
 				if ($key == "race")
 				{
+					$this->$key = $val;
  					$this->raceId = $this->race->id;
+					$this->changedFields[$key] = true;
+ 					return true;
 				}
+				elseif ($key == "rating")
+				{
+					throw new EException("Property $key der Klasse  ".__CLASS__." ist nicht änderbar!");
+					return false;
+				}				
+				else
+				{
+					$this->$key = $val;
+					$this->changedFields[$key] = true;
+					return true;
+				}			
 				
-				
-				$this->changedFields[$key] = true;
 			}
 			catch (EException $e)
 			{
@@ -209,6 +216,11 @@
 				{
  					$this->race = new Race($this->raceId);
 				}
+				if ($key == "rating" && $this->rating==null)
+				{
+ 					$this->rating = new Rating($this->id);
+				}
+
 
 				return $this->$key;
 			}
@@ -219,31 +231,18 @@
 			}
 		}
 		
+		function __toString()
+		{
+			return $this->nick;
+		}
 		
-		
-		final public function isSetup() 	{	return $this->setup; }		
 
 /*
-		final public function id() { return $this->id; }
-		final public function nick()	{ return $this->nick; }
-		final public function allianceId() { return $this->allianceId; }
-		final public function lastOnline() { return $this->last_online; }
-		final public function profileImage() { return $this->profileImage; }
-		final public function points() { return $this->points; }
-		final public function visits() { return $this->visits; }
-		final public function registered() { return $this->registered; }
-		final public function rank() { return $this->rank; }
-		final public function rankHighest() { return $this->rankHighest; }
-		final public function signature() { return $this->signature; }
-		final public function profileText() { return $this->profileText; }
-		final public function profileBoardUrl() { return $this->profileBoardUrl; }
-		final public function specialistId() { return $this->specialistId; }
-		final public function specialistTime() { return $this->specialistTime; }
-
 
 		final public function allianceRankId() { return $this->allianceRankId; }
 		*/
 	
+		final public function isSetup() 	{	return $this->setup; }		
 
 		final public function allianceName() 
 		{ 
@@ -262,108 +261,6 @@
 			if ($this->allianceRankName == "") 	{ $this->loadAllianceData(); }
 			return $this->allianceRankName;
 		}
-
-		/**
-		* Gets the users different rating statistics
-		*/
-		public function rating($field)
-		{
-			if (!isset($this->rating[$field]))
-			{
-				$res = dbquery("
-				SELECT
-					* 
-				FROM 
-					user_ratings 
-				WHERE 
-					id=".$this->id.";");
-				if (mysql_num_rows($res)>0)
-				{
-					$arr = mysql_fetch_assoc($res);
-					$this->rating['battle_rating'] = $arr['battle_rating'];
-					$this->rating['trade_rating'] = $arr['trade_rating'];
-					$this->rating['diplomacy_rating'] = $arr['diplomacy_rating'];
-					$this->rating['battles_fought'] = $arr['battles_fought'];
-					$this->rating['battles_won'] = $arr['battles_won'];
-					$this->rating['battles_lost'] = $arr['battles_lost'];
-					$this->rating['trades_sell'] = $arr['trades_sell'];
-					$this->rating['trades_buy'] = $arr['trades_buy'];
-				}
-				else
-				{
-					dbquery("
-					INSERT INTO 
-						user_ratings
-					(id)
-					VALUES
-					(".$this->id.")
-					");
-					$this->rating['battle_rating'] = 0;
-					$this->rating['trade_rating'] = 0;
-					$this->rating['diplomacy_rating'] = 0;
-					$this->rating['battles_fought'] = 0;
-					$this->rating['battles_won'] = 0;
-					$this->rating['battles_lost'] = 0;
-					$this->rating['trades_sell'] = 0;
-					$this->rating['trades_buy'] = 0;
-				}
-			}
-			return $this->rating[$field];			
-		}
-
-		/**
-		* Add battle rating
-		*/
-		function addBattleRating($rating,$reason="")
-		{
-			if ($points!=0)
-			{
-				dbquery("
-				UPDATE
-					user_ratings
-				SET
-					battle_rating=battle_rating+".$rating."
-				WHERE
-					id=".$this->id.";");
-				if ($reason!="")
-					add_log(17,"Der Spieler ".$this->id." erhält ".$rating." Kampfpunkte. Grund: ".$reason);
-			}
-		}
-		
-		/**
-		* Add trade rating
-		*/
-		function addTradeRating($rating,$reason="")
-		{
-			dbquery("
-			UPDATE
-				user_ratings
-			SET
-				trade_rating=trade_rating+".$rating."
-			WHERE
-				id=".$this->id.";");			
-			if ($reason!="")
-				add_log(17,"Der Spieler ".$this->id." erhält ".$rating." Handelspunkte. Grund: ".$reason);
-		}
-		
-		/**
-		* Add diplomacy rating
-		*/
-		function addDiplomacyRating($rating,$reason="")
-		{
-			dbquery("
-			UPDATE
-				user_ratings
-			SET
-				  	diplomacy_rating=  	diplomacy_rating+".$rating."
-			WHERE
-				id=".$this->id.";");			
-			if ($reason!="")
-			add_log(17,"Der Spieler ".$this->id." erhält ".$rating." Diplomatiepunke. Grund: ".$reason);
-		}	
-
-		
-
 
 		public function setAllianceId($id) 
 		{ 
@@ -806,13 +703,7 @@ die Spielleitung";
 				VALUES
 				(".$errorCode.")
 				");      
-				dbquery("
-				INSERT INTO 
-					user_ratings
-				(id)
-				VALUES
-				(".$errorCode.")
-				");      
+				$this->rating = new Rating($errorCode);
 				
 				if (!isset($data['password']))
         	add_log(3,"Der Benutzer ".$nick." (".$data['name'].", ".$data['email'].") hat sich registriert!");

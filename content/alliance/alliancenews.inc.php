@@ -39,7 +39,7 @@ if (Alliance::checkActionRights('alliancenews'))
 			// Gebe nur Punkte falls Nachricht öffentlich oder an andere Allianz
 			if ($cu->allianceId!=$_POST['alliance_id'])
 			{
-				$cu->addDiplomacyRating(DIPLOMACY_POINTS_PER_NEWS,"Rathausnews verfasst (ID:".mysql_insert_id().", ".addslashes($_POST['news_text']).")");
+				$cu->rating->addDiplomacyRating(DIPLOMACY_POINTS_PER_NEWS,"Rathausnews verfasst (ID:".mysql_insert_id().", ".addslashes($_POST['news_text']).")");
 			}
 			
 			// Update rss file

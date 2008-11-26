@@ -2148,29 +2148,29 @@ function battle($fleet_id,$planet_id)
 						$bstat = "Gewonnen";
 						$bstat2 = "Verloren";
 						$return_fleet=true;
-						$attUser->addBattleRating(BATTLE_POINTS_A_W,"Angriff gegen ".$user_d_id);
-						$defUser->addBattleRating(BATTLE_POINTS_D_L,"Verteidigung gegen ".$user_a_id);
+						$attUser->rating->addBattleRating(BATTLE_POINTS_A_W,"Angriff gegen ".$user_d_id);
+						$defUser->rating->addBattleRating(BATTLE_POINTS_D_L,"Verteidigung gegen ".$user_a_id);
 						break;
 					case 2:	//agreifer hat verloren
 						$bstat = "Verloren";
 						$bstat2 = "Gewonnen";
 						$return_fleet=false;
-						$attUser->addBattleRating(BATTLE_POINTS_A_L,"Angriff gegen ".$user_d_id);
-						$defUser->addBattleRating(BATTLE_POINTS_D_W,"Verteidigung gegen ".$user_a_id);
+						$attUser->rating->addBattleRating(BATTLE_POINTS_A_L,"Angriff gegen ".$user_d_id);
+						$defUser->rating->addBattleRating(BATTLE_POINTS_D_W,"Verteidigung gegen ".$user_a_id);
 						break;
 					case 3:	//beide flotten sind kaputt
 						$bstat = "Unentschieden";
 						$bstat2 = "Unentschieden";
 						$return_fleet=false;
-						$attUser->addBattleRating(BATTLE_POINTS_A_D,"Angriff gegen ".$user_d_id);
-						$defUser->addBattleRating(BATTLE_POINTS_D_D,"Verteidigung gegen ".$user_a_id);
+						$attUser->rating->addBattleRating(BATTLE_POINTS_A_D,"Angriff gegen ".$user_d_id);
+						$defUser->rating->addBattleRating(BATTLE_POINTS_D_D,"Verteidigung gegen ".$user_a_id);
 						break;
 					case 4: //beide flotten haben überlebt
 						$bstat = "Unentschieden";
 						$bstat2 = "Unentschieden";
 						$return_fleet=true;
-						$attUser->addBattleRating(BATTLE_POINTS_A_D,"Angriff gegen ".$user_d_id);
-						$defUser->addBattleRating(BATTLE_POINTS_D_D,"Verteidigung gegen ".$user_a_id);
+						$attUser->rating->addBattleRating(BATTLE_POINTS_A_D,"Angriff gegen ".$user_d_id);
+						$defUser->rating->addBattleRating(BATTLE_POINTS_D_D,"Verteidigung gegen ".$user_a_id);
 						break;
 				}			
 

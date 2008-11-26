@@ -42,6 +42,8 @@
 	session_start();
 	mt_srand();
 	
+	define(USE_HTML,true);
+
 	define('IS_ADMIN_MODE',false);
 
 	require_once("conf.inc.php");

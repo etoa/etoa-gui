@@ -499,6 +499,9 @@
 	
 	define('FORCE_ADDS',0); // Banner immer anzeigen
 	
+	define('ERROR_LOGFILE',CACHE_ROOT."/errors.txt");
+	define('DBERROR_LOGFILE',CACHE_ROOT."/dberrors.txt");
+	
 	/***********
 	* Updates *
 	***********/

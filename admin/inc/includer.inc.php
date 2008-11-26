@@ -3,6 +3,9 @@
 	$page = isset($_GET['page']) ? $_GET['page'] : 'home';
 	$sub = isset($_GET['sub']) ? $_GET['sub'] : '';
 
+	define(USE_HTML,true);
+
+
 	// Renderzeit-Start festlegen
 	$render_time = explode(" ",microtime());
 	$render_starttime=$render_time[1]+$render_time[0];

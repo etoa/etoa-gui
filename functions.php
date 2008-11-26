@@ -36,35 +36,38 @@
 	*/
 	function __autoload($class_name) 
 	{
-		if ($class_name != "xajax")
+		try
 		{
-			if (defined("CLASS_ROOT"))
-				$dir = CLASS_ROOT;
-			else
-				$dir = "classes";
-			$file = strtolower($class_name).'.class.php';
-      if (file_exists($dir.'/'.$file))
-      {
-        include_once($dir.'/'.$file);
-      }
-      elseif (file_exists($dir.'/entity/'.$file))
-      {
-        include_once($dir.'/entity/'.$file);
-      }
-      elseif (file_exists($dir.'/fleetaction/'.$file))
-      {
-        include_once($dir.'/fleetaction/'.$file);
-      }    
-      else
-      {
-	    	echo "Class ".$class_name." not found (".$dir."/".$file.")!\n\n";
-				ob_start();
-				debug_print_backtrace();
-				$var = ob_get_clean();
-	    	echo nl2br($var);
-	    	exit;
-	    }
-	  }
+			if ($class_name != "xajax")
+			{
+				if (defined("CLASS_ROOT"))
+					$dir = CLASS_ROOT;
+				else
+					$dir = "classes";
+				$file = strtolower($class_name).'.class.php';
+	      if (file_exists($dir.'/'.$file))
+	      {
+	        include_once($dir.'/'.$file);
+	      }
+	      elseif (file_exists($dir.'/entity/'.$file))
+	      {
+	        include_once($dir.'/entity/'.$file);
+	      }
+	      elseif (file_exists($dir.'/fleetaction/'.$file))
+	      {
+	        include_once($dir.'/fleetaction/'.$file);
+	      }    
+	      else
+	      {
+	      	throw new EException("Die Klasse ".$class_name." wurde nicht gefunden (".$dir."/".$file.")!");
+		    }
+		  }
+		}
+		catch (EException $e)
+		{
+			echo $e;
+			exit;
+		}
 	}
 	
 	/**
@@ -75,6 +78,8 @@
 		global $db_handle;
 		global $query_counter;
 		global $queries;
+		global $dbopen;
+
 		$queries = array();
 		$query_counter=0;
 		if (!$db_handle = @mysql_connect(DB_SERVER,DB_USER,DB_PASSWORD))
@@ -100,6 +105,7 @@
 			}
 			return false;
 		}
+		$dbopen = true;
 		dbquery("SET NAMES 'utf8';"); 
 		return true;
 	}
@@ -113,6 +119,7 @@
 		global $res;
 		global $query_counter; 
 		global $queries;
+		global $dbopen;
 		if (false && ETOA_DEBUG==1 )
 		{
 			echo "Queries done: ".$query_counter."<br/>";
@@ -129,6 +136,8 @@
 			@mysql_free_result($res);
 		}
 		@mysql_close($db_handle);
+		unset($db_handle);
+		$dbopen = false;
 	}
 
 	/**
@@ -143,23 +152,28 @@
 		global $nohtml;
 		global $query_counter; 
 		global $queries;
+		global $dbopen;
+		if (!$dbopen)
+		{
+			dbconnect();			
+		}
+			
 		$query_counter++;
 		if (ETOA_DEBUG==1 && stristr($string,"SELECT"))
 			$queries[] = $string;
+			
 		if ($result=mysql_query($string))
 			return $result;
 		elseif ($fehler==1)
 		{
-			if ($nohtml)
-				echo "Bei Ihrer Datenbankabfrage trat ein Fehler auf!\n\n[b]MySQL-Meldung:[/b] [i]".mysql_error()."[/i]\n\n[b]Originalabfrage:[/b] ".$string;
-			else
+			try
 			{
-				ob_start();
-				debug_print_backtrace();
-				$dbg = ob_get_contents();
-				ob_end_clean();
-				errBox("Datenbankfehler","Bei Ihrer Datenbankabfrage trat ein Fehler auf!\n\n[b]MySQL-Meldung:[/b]\n [i]".mysql_error()."[/i]\n\n[b]Originalabfrage:[/b]\n ".$string."\n\n[b]Stack-Trace:[/b]\n ".$dbg);
+				throw new DBException($string);	
 			}
+			catch (DBException $e)
+			{
+				echo $e;
+			}			
 		}
 	}
 
@@ -2731,7 +2745,7 @@ Forum: http://www.etoa.ch/forum";
 			while ($arr=mysql_fetch_assoc($res))
 			{
 				$user = new User($arr['alliance_bnd_diplomat_id']);
-				$user->addDiplomacyRating($arr['alliance_bnd_diplomat_id'],$arr['alliance_bnd_points'],"Bündnis ".$arr['alliance_bnd_alliance_id1']." mit ".$arr['alliance_bnd_alliance_id1']);
+				$user->rating->addDiplomacyRating($arr['alliance_bnd_points'],"Bündnis ".$arr['alliance_bnd_alliance_id1']." mit ".$arr['alliance_bnd_alliance_id1']);
 				dbquery("
 				UPDATE
 					alliance_bnd
@@ -2785,7 +2799,7 @@ Forum: http://www.etoa.ch/forum";
 		
 				// Assing diplomacy points
 				$user = new User($arr['alliance_bnd_diplomat_id']);
-				$user->addDiplomacyRating($arr['alliance_bnd_points'],"Krieg ".$arr['a1id']." gegen ".$arr['a2id']);
+				$user->rating->addDiplomacyRating($arr['alliance_bnd_points'],"Krieg ".$arr['a1id']." gegen ".$arr['a2id']);
 
 				dbquery("
 				UPDATE

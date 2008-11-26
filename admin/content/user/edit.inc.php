@@ -1143,23 +1143,23 @@
 				tableStart("Bewertung");							
 				echo "<tr>
 								<td>Kampfpunkte</td>
-								<td>".$cUser->rating('battle_rating')."</td>
+								<td>".$cUser->rating->battle."</td>
 							</tr>";
 				echo "<tr>
 								<td>Kämpfe gewonnen/verloren/total</td>
-								<td>".$cUser->rating('battles_won')."/".$cUser->rating('battles_lost')."/".$cUser->rating('battles_fought')."</td>
+								<td>".$cUser->rating->battlesWon."/".$cUser->rating->battlesLost."/".$cUser->rating->battlesFought."</td>
 							</tr>";
 				echo "<tr>
 								<td>Handelspunkte</td>
-								<td>".$cUser->rating('trade_rating')."</td>
+								<td>".$cUser->rating->trade."</td>
 							</tr>";
 				echo "<tr>
 								<td>Handel Einkauf/Verkauf</td>
-								<td>".$cUser->rating('trades_buy')."/".$cUser->rating('trades_sell')."</td>
+								<td>".$cUser->rating->tradesBuy."/".$cUser->rating->tradesSell."</td>
 							</tr>";
 				echo "<tr>
 								<td>Diplomatiepunkte</td>
-								<td>".$cUser->rating('diplomacy_rating')."</td>
+								<td>".$cUser->rating->diplomacy."</td>
 							</tr>";
 				tableEnd();
 						

@@ -43,7 +43,8 @@
 		$user = new User($uid);
 		
 		// Besuchercounter
-		$user->increaseVisitorCounter();
+		if ($user->id != $cu->id)
+			$user->visits = $user->visits+1;
 
 		if ($user->isValid)
 		{			
@@ -85,17 +86,17 @@
 			{
 				echo "<tr><th style=\"width:120px;\">Bester Rang:</th><td>".nf($user->rankHighest)."</td></tr>";
 			}
-			if ($user->rating('battle_rating') > 0)
+			if ($user->rating->battle > 0)
 			{
-				echo "<tr><th style=\"width:120px;\">Kampfpunkte:</th><td>".nf($user->rating('battle_rating'))."</td></tr>";
+				echo "<tr><th style=\"width:120px;\">Kampfpunkte:</th><td>".nf($user->rating->battle)." (Gewonnen/Verloren/Total: ".nf($user->rating->battlesWon)."/".nf($user->rating->battlesLost)."/".nf($user->rating->battlesFought).")</td></tr>";
 			}			
-			if ($user->rating('trade_rating') > 0)
+			if ($user->rating->trade > 0)
 			{
-				echo "<tr><th style=\"width:120px;\">Handelspunkte:</th><td>".nf($user->rating('trade_rating'))."</td></tr>";
+				echo "<tr><th style=\"width:120px;\">Handelspunkte:</th><td>".nf($user->rating->trade)." (Einkäufe/Verkäufe: ".nf($user->rating->tradesBuy)."/".nf($user->rating->tradesSell).")</td></tr>";
 			}			
-			if ($user->rating('diplomacy_rating') >0)
+			if ($user->rating->diplomacy > 0)
 			{
-				echo "<tr><th style=\"width:120px;\">Diplomatiepunkte:</th><td>".nf($user->rating('diplomacy_rating'))."</td></tr>";
+				echo "<tr><th style=\"width:120px;\">Diplomatiepunkte:</th><td>".nf($user->rating->diplomacy)."</td></tr>";
 			}
 			if ($user->profileBoardUrl !="")
 			{

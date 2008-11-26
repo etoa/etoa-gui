@@ -41,7 +41,6 @@
 					$this->food = $rarr['race_f_food'];
 					$this->power = $rarr['race_f_power'];
 					$this->population = $rarr['race_f_population'];		
-					echo "11elf";		
 					return;
 				}
 			}
