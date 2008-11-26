@@ -1,5 +1,5 @@
 <?PHP
-	class Rating
+	class UserRating
 	{
 		private $id;
 
@@ -12,7 +12,7 @@
 		private $tradesSell = 0;
 		private $tradesBuy = 0;
 		
-		public function Rating($id)
+		public function UserRating($id)
 		{
 			$this->id = $id;
 			$res = dbquery("

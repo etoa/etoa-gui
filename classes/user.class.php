@@ -55,7 +55,7 @@
 		protected $raceId;
 
 		protected $rating = null;
-
+		protected $properties = null;
 
 		protected $changedFields;
 		
@@ -168,6 +168,17 @@
 				    $sql.= " user_signature='".$this->signature."',";
 					elseif ($k=="profileBoardUrl")	
 				    $sql.= " user_profile_board_url='".$this->profileBoardUrl."',";
+					elseif ($k == "profileImage")
+					{
+						if ($this->profileImage == "")
+					    $sql.= " user_profile_img='',user_profile_img_check=0,";
+            else
+				    	$sql.= " user_profile_img='".$this->profileImage."',user_profile_img_check=1,";
+					}
+					elseif ($k == "avatar")
+					{
+			    	$sql.= " user_avatar='".$this->avatar."',";
+					}
 					else
 						echo " $k has no valid UPDATE query!<br/>";
 				}
@@ -194,18 +205,37 @@
 					$this->changedFields[$key] = true;
  					return true;
 				}
-				if ($key == "visits")
+				elseif ($key == "visits")
 				{
 					$this->$key = intval($val);
 					$this->changedFields[$key] = true;
  					return true;
 				}
-
+				elseif ($key == "profileImage")
+				{
+					if (is_file(PROFILE_IMG_DIR."/".$this->profileImage))
+          {
+          	unlink(PROFILE_IMG_DIR."/".$this->profileImage);
+					}					
+					$this->$key = $val;
+					$this->changedFields[$key] = true;
+ 					return true;
+				}
+				elseif ($key == "avatar")
+				{
+					if (is_file(BOARD_AVATAR_DIR."/".$this->avatar))
+          {
+          	unlink(BOARD_AVATAR_DIR."/".$this->avatar);
+					}					
+					$this->$key = $val;
+					$this->changedFields[$key] = true;
+ 					return true;
+				}				
 				elseif ($key == "rating")
 				{
 					throw new EException("Property $key der Klasse  ".__CLASS__." ist nicht änderbar!");
 					return false;
-				}		
+				}	
 				else
 				{
 					$this->$key = $val;
@@ -233,9 +263,12 @@
 				}
 				if ($key == "rating" && $this->rating==null)
 				{
- 					$this->rating = new Rating($this->id);
+ 					$this->rating = new UserRating($this->id);
 				}
-
+				if ($key == "properties" && $this->properties==null)
+				{
+ 					$this->properties = new UserProperties($this->id);
+				}				
 
 				return $this->$key;
 			}
@@ -688,14 +721,8 @@
           '".$time."');"))
       {
       	$errorCode = mysql_insert_id();
-				dbquery("
-				INSERT INTO 
-					user_properties
-				(id)
-				VALUES
-				(".$errorCode.")
-				");      
-				$this->rating = new Rating($errorCode);
+				$this->rating = new UserRating($errorCode);
+				$this->properties = new UserProperties($errorCode);
 				
 				if (!isset($data['password']))
         	add_log(3,"Der Benutzer ".$nick." (".$data['name'].", ".$data['email'].") hat sich registriert!");

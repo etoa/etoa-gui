@@ -64,9 +64,11 @@
 		{
 			try
 			{
+				throw new EException("Properties der Klasse ".__CLASS__." sind read-only!");
+				/*
 				if (!property_exists($this,$key))
 					throw new EException("Property $key existiert nicht in der Klasse ".__CLASS__);
-				$this->$key = $val;
+				$this->$key = $val;*/
 			}
 			catch (EException $e)
 			{

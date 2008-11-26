@@ -5,47 +5,38 @@
         if (checkEmail($_POST['user_email']))
         {
               
- /*     
           // Avatar
-          $avatar_string="";
           if (isset($_POST['avatar_del']) && $_POST['avatar_del']==1)
           {
-            if (file_exists(BOARD_AVATAR_DIR."/".$arr['user_avatar']))
-            {
-                @unlink(BOARD_AVATAR_DIR."/".$arr['user_avatar']);
-            }
-            $avatar_string="user_avatar='',";
+						$cu->avatar = "";
           }
           elseif ($_FILES['user_avatar_file']['tmp_name']!="")
           {
-              $source=$_FILES['user_avatar_file']['tmp_name'];
-              $ims = getimagesize($source);
-              
-              //überprüft Bildgrösse
-              if ($ims[0]==BOARD_AVATAR_WIDTH && $ims[1]==BOARD_AVATAR_HEIGHT)
-              {
-                  $fname = "user_".$cu->id."_".time().".gif";
-                  if (file_exists(BOARD_AVATAR_DIR."/".$arr['user_avatar']))
-                      @unlink(BOARD_AVATAR_DIR."/".$arr['user_avatar']);
-                  move_uploaded_file($source,BOARD_AVATAR_DIR."/".$fname);
-                  echo "Eigenen Avatar gespeichert!<br/>";
-                  $avatar_string="user_avatar='".$fname."',";
-              }
-              else
-              {
-                  echo "Fehler! Das Avatarbild hat die falsche Gr&ouml;sse!<br/>";
-              }
+            $source=$_FILES['user_avatar_file']['tmp_name'];
+            $ims = getimagesize($source);
+            
+            //überprüft Bildgrösse
+            if ($ims[0]==BOARD_AVATAR_WIDTH && $ims[1]==BOARD_AVATAR_HEIGHT)
+            {
+                $fname = "user_".$cu->id."_".time().".gif";
+                if (file_exists(BOARD_AVATAR_DIR."/".$arr['user_avatar']))
+                    @unlink(BOARD_AVATAR_DIR."/".$arr['user_avatar']);
+                move_uploaded_file($source,BOARD_AVATAR_DIR."/".$fname);
+                
+								$cu->avatar = $fname;
+                echo "Eigenen Avatar gespeichert!<br/>";
+            }
+            else
+            {
+                echo "Fehler! Das Avatarbild hat die falsche Gr&ouml;sse!<br/>";
+            }
           }
           
+          
           // Profil-Bild
-          $profil_img_string="";
           if (isset($_POST['profile_img_del']) && $_POST['profile_img_del']==1)
           {
-            if (file_exists(PROFILE_IMG_DIR."/".$arr['user_profile_img']))
-            {
-                unlink(PROFILE_IMG_DIR."/".$arr['user_profile_img']);
-            }
-            $profil_img_string="user_profile_img='',user_profile_img_check=0,";
+          	$cu->profileImage = "";
           }
           elseif ($_FILES['user_profile_img_file']['tmp_name']!="")
           {
@@ -70,7 +61,7 @@
 											{
 												echo "Bildgrösse wurde angepasst! ";
                       	echo "Profilbild gespeichert!<br/>";
-                      	$profil_img_string="user_profile_img='".$fname."',user_profile_img_check=1,";
+	                    	$cu->profileImage = $fname;
 											}
 											else
 											{
@@ -81,7 +72,7 @@
 										else
 										{
                     	echo "Profilbild gespeichert!<br/>";
-                    	$profil_img_string="user_profile_img='".$fname."',user_profile_img_check=1,";
+                    	$cu->profileImage = $fname;
                     }
                 }
                 else
@@ -98,7 +89,7 @@
            	{
               echo "Fehler! Das Profilbild ist zu gross (Max ".nf(PROFILE_IMG_MAX_SIZE)." Byte)!<br/>";
 						}
-          }     */           
+          }
           
           
           $cu->email = $_POST['user_email'];
