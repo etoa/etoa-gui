@@ -354,8 +354,8 @@
 
 			if(count($_POST)>0 && isset($_POST['sort_submit']))
 			{
-				$cu->setp("item_order_def",$_POST['sort_value']);
-       			$cu->setp("item_order_way",$_POST['sort_way']);	
+				$cu->properties->itemOrderDef = $_POST['sort_value'];
+       	$cu->properties->itemOrderWay = $_POST['sort_way'];	
 			}
 
 			
@@ -384,7 +384,7 @@
 								foreach ($values as $value => $name)
 								{		
 									echo "<option value=\"".$value."\"";
-									if($cu->getp("item_order_def")==$value)
+									if($cu->properties->itemOrderDef==$value)
 									{
 										echo " selected=\"selected\"";
 									}
@@ -396,12 +396,12 @@
 								
 									//Aufsteigend
 									echo "<option value=\"ASC\"";
-									if($cu->getp("item_order_way")=='ASC') echo " selected=\"selected\"";
+									if($cu->properties->itemOrderWay=='ASC') echo " selected=\"selected\"";
 									echo ">Aufsteigend</option>";
 									
 									//Absteigend
 									echo "<option value=\"DESC\"";
-									if($cu->getp("item_order_way")=='DESC') echo " selected=\"selected\"";
+									if($cu->properties->itemOrderWay=='DESC') echo " selected=\"selected\"";
 									echo ">Absteigend</option>";	
 																	
 					echo "</select>						
@@ -975,7 +975,7 @@
 					$cnt = 0;
 
 					//Ordnung des Users beachten
-					$order="def_".$cu->getp("item_order_def")." ".$cu->getp("item_order_way")."";
+					$order="def_".$cu->properties->itemOrderDef." ".$cu->properties->itemOrderWay."";
 
 					// Auflistung der Schiffe (auch diese, die noch nicht gebaut wurden)
 					$dres = dbquery("
@@ -1014,7 +1014,7 @@
 					if (mysql_num_rows($dres)>0)
 					{
 						//Einfache Ansicht
-						if ($cu->getp("item_show")!='full')
+						if ($cu->properties->itemShow != 'full')
 						{
 							echo '<tr>
 											<th colspan="2" class="tbltitle">Anlage</th>
@@ -1312,7 +1312,7 @@
 								}
 
 								// Volle Ansicht
-  			      	if($cu->getp("item_show")=='full')
+  			      	if($cu->properties->itemShow =='full')
   			      	{	
   			      		if ($cnt>0)
   			      		{

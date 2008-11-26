@@ -48,7 +48,7 @@
 		
 			$this->sourceEntity = $sourceEnt;
 			$this->owner = $ownerEnt;
-			$this->ownerId = $ownerEnt->id();
+			$this->ownerId = $ownerEnt->id;
 			$this->ownerRaceName = $ownerEnt->race->name;
 			$this->raceSpeedFactor = $ownerEnt->race->speedFactor;
 			$this->possibleFleetStarts = 0;

@@ -147,7 +147,6 @@
 
 		function __destruct()
 		{
-			echo "User Destructor called<br/>";
 			$cnt = count($this->changedFields);
 			if ($cnt > 0)
 			{
@@ -184,7 +183,6 @@
 				}
 				$sql.=" user_id=user_id WHERE
 				    	user_id=".$this->id.";";
-				echo $sql;
 				dbquery($sql);
 			}
 			unset($this->changedFields);

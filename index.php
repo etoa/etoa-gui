@@ -148,19 +148,19 @@
 	//
 
 	// Layout-/Grafikdefinitionen
-	if ($cu->getp("css_style")!='')
+	if ($cu->properties->cssStyle !='')
 	{
-		define('CSS_STYLE',DESIGN_DIRECTORY."/".$cu->getp("css_style"));
+		define('CSS_STYLE',DESIGN_DIRECTORY."/".$cu->properties->cssStyle);
 	}
 	else
 	{
 		define('CSS_STYLE',DESIGN_DIRECTORY."/".$cfg->value('default_css_style'));
 	}
-	define('GAME_WIDTH',$cu->getp("game_width"));
-	if ($cu->getp("image_url") != '' && $cu->getp("image_ext") != '')
+	define('GAME_WIDTH',$cu->properties->gameWidth);
+	if ($cu->properties->imageUrl != '' && $cu->properties->imageExt != '')
 	{
-		define('IMAGE_PATH',$cu->getp("image_url"));
-		define('IMAGE_EXT',$cu->getp("image_ext"));
+		define('IMAGE_PATH',$cu->properties->imageUrl);
+		define('IMAGE_EXT',$cu->properties->imageExt);
 	}
 	else
 	{
@@ -337,7 +337,7 @@
 
 				// Assign template variables
 				$tpl->assign("messages",NEW_MESSAGES);
-				$tpl->assign("blinkMessages",$cu->getp("msg_blink"));
+				$tpl->assign("blinkMessages",$cu->properties->msgBlink);
 				$tpl->assign("buddys",check_buddys_online($cu->id));
 				$tpl->assign("fleetAttack",check_fleet_incomming($cu->id));
 				$tpl->assign("templateDir",CSS_STYLE);
@@ -382,16 +382,16 @@
 						
 				if (ADD_BANNER=="")		
 					$tpl->assign("adds",false);
-				elseif ($cu->getp("show_adds")==1 || FORCE_ADDS==1)
+				elseif ($cu->properties->showAdds==1 || FORCE_ADDS==1)
 					$tpl->assign("adds",true);
 				else
 					$tpl->assign("adds",false);
 				$tpl->assign("addBanner",ADD_BANNER);
-				if ($cu->getp("helpbox")==1)
+				if ($cu->properties->helpBox==1)
 					$tpl->assign("helpBox",true);
 				else
 					$tpl->assign("helpBox",false);
-				if ($cu->getp("notebox")==1)
+				if ($cu->properties->noteBox==1)
 					$tpl->assign("noteBox",true);
 				else
 					$tpl->assign("noteBox",false);

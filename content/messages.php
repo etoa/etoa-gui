@@ -32,8 +32,8 @@
 	// DEFINITIONEN //
 
 
-	$msgpreview = $cu->getp("msg_preview")==1 ? true : false;
-	$msgcreatpreview = $cu->getp("msgcreation_preview")==1 ? true : false;
+	$msgpreview = $cu->properties->msgPreview==1 ? true : false;
+	$msgcreatpreview = $cu->properties->msgCreationPreview==1 ? true : false;
 
 
 	// BEGIN SKRIPT //
@@ -81,12 +81,12 @@
 		if ($_GET['msgprev']=='on')
 		{
 			$msgpreview=true;
-			$cu->setp("msg_preview",1);
+			$cu->properties->msgPreview = 1;
 		}
 		else
 		{
 			$msgpreview=false;
-			$cu->setp("msg_preview",0);
+			$cu->properties->msgPreview = 0;
 		}
 	}
 	if (isset($_GET['msgcreatprev']))
@@ -94,12 +94,12 @@
 		if ($_GET['msgcreatprev']=='on')
 		{
 			$msgcreatpreview=true;
-			$cu->setp("msgcreation_preview",1);
+			$cu->properties->msgCreationPreview = 1;
 		}
 		else
 		{
 			$msgcreatpreview=false;
-			$cu->setp("msgcreation_preview",0);
+			$cu->properties->msgCreationPreview = 0;
 		}
 	}	
 	echo '<div style="float:right;font-size:8pt;text-align:right;">';
@@ -268,7 +268,7 @@
 					echo "<input type=\"hidden\" name=\"message_id\" value=\"".intval($_GET['msg_id'])."\" />";
 					echo "<input type=\"hidden\" name=\"message_subject\" value=\"".$marr['subject']."\" />";
 					echo "<input type=\"hidden\" name=\"message_sender\" value=\"".$sender."\" />";
-					if ($cu->getp("msg_copy"))
+					if ($cu->properties->msgCopy)
 					{
 						// Muss mit echo 'text'; erfolgen, da sonst der Text beim ersten " - Zeichen abgeschnitten wird!
 						// Allerdings ist so das selbe Problem mit den ' - Zeichen!
@@ -692,7 +692,7 @@
 								echo "<input type=\"button\" value=\"Weiterleiten\" onclick=\"document.location='?page=$page&mode=new&amp;message_subject=".base64_encode("Fw: ".$marr['subject'])."".$msgadd."'\" name=\"remit\" />&nbsp;";
 								if ($marr['message_user_from']>0)
 								{				
-									if ($cu->getp("msg_copy"))
+									if ($cu->properties->msgCopy)
 									{
 										echo "<input type=\"button\" value=\"Antworten\" name=\"answer\" onclick=\"document.location='?page=$page&mode=new&message_user_to=".$marr['message_user_from']."&amp;message_subject=".base64_encode("Re: ".$marr['subject'])."".$msgadd."'\" />&nbsp;";
 									}

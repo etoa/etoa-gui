@@ -50,8 +50,7 @@
 		FROM
 			users
 		WHERE
-			user_admin=0
-			AND user_id!=".$cu->id."
+			user_id!=".$cu->id."
 		ORDER BY
 			user_nick");
 		if (mysql_num_rows($res)>0)

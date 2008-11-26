@@ -529,8 +529,8 @@
 
 	//Kreis Definitionen
 	$division=15;			//Kreis Teilung: So hoch wie die maximale Anzahl Planeten
-	$d_planets = $cu->getp("planet_circle_width");	//Durchmesser der Bilder (in Pixel)
-	$d_infos = $cu->getp("planet_circle_width");		//Durchmesser der Infos (in Pixel)
+	$d_planets = $cu->properties->planetCircleWidth;	//Durchmesser der Bilder (in Pixel)
+	$d_infos = $cu->properties->planetCircleWidth;		//Durchmesser der Infos (in Pixel)
 	$pic_height=75;			//Planet Bildhöhe
 	$pic_width=75;			//Planet Bildbreite
 	$info_box_height=50;	//Info Höhe

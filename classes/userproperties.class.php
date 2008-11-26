@@ -22,7 +22,7 @@
 		private $msgBlink;
     private $spyShipId;
     private $spyShipCount;
-    private $havenshipsButtons;
+    private $havenShipsButtons;
     private $showAdds;
     private $fleetRtnMsg;
 		
@@ -63,11 +63,10 @@
 				$this->msgBlink = $arr['msg_blink'];
         $this->spyShipId = $arr['spyship_id'];
         $this->spyShipCount = $arr['spyship_count'];
-        $this->havenshipsButtons = $arr['havenships_buttons'];
+        $this->havenShipsButtons = $arr['havenships_buttons'];
 		    $this->showAdds = $arr['show_adds'];
 		    $this->fleetRtnMsg = $arr['fleet_rtn_msg'];
 
-				echo "Yuhu Property!!";
 			}
 			else
 			{
@@ -84,7 +83,6 @@
 		
 		function __destruct()
 		{
-			echo "Property Destructor called<br/>";
 			$cnt = count($this->changedFields);
 			if ($cnt > 0)
 			{
@@ -101,7 +99,6 @@
 				}
 				$sql.=" WHERE
 				    	id=".$this->id.";";
-				echo $sql;
 				dbquery($sql);
 			}
 			unset($this->changedFields);
@@ -211,7 +208,7 @@
 					$this->$key = max(1,intval($val));
 					$this->changedFields[$key] = "spyship_count";
 				}
-				elseif ($key == "havenshipsButtons")
+				elseif ($key == "havenShipsButtons")
 				{
 					$this->$key = $val;
 					$this->changedFields[$key] = "havenships_buttons";

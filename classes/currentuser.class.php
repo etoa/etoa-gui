@@ -18,103 +18,12 @@
 		public function CurrentUser($userId)
 		{
 			parent::User($userId);
-			$this->loadProperties();
 		}
 
 		//
 		// Methods
 		//		
 
-		/**
-		* Loads the users personal settings 
-		from the user settings table
-		*/
-		private function loadProperties()
-		{
-			$res = dbquery("
-			SELECT 
-				*
-			FROM 
-				user_properties
-			WHERE 
-				id='".$this->id."' 
-			;");			
-			if (mysql_num_rows($res)>0)		
-			{			
-				$arr = mysql_fetch_assoc($res);
-				
-				$this->property = array();
-				
-				$this->property['css_style'] = $arr['css_style'];
-				$this->property['image_url'] = $arr['image_url'];
-				$this->property['image_ext'] = $arr['image_ext'];
-				$this->property['game_width'] = $arr['game_width'];
-				$this->property['planet_circle_width'] = $arr['planet_circle_width'];
-				$this->property['item_show'] = $arr['item_show'];
-				$this->property['item_order_ship'] = $arr['item_order_ship'];
-				$this->property['item_order_def'] = $arr['item_order_def'];
-				$this->property['item_order_way'] = $arr['item_order_way'];
-				$this->property['image_filter'] = $arr['image_filter'];
-				$this->property['msgsignature'] = $arr['msgsignature'];
-				$this->property['msgcreation_preview'] = $arr['msgcreation_preview'];
-				$this->property['msg_preview'] = $arr['msg_preview'];
-				$this->property['helpbox'] = $arr['helpbox'];
-				$this->property['notebox'] = $arr['notebox'];
-				$this->property['msg_copy'] = $arr['msg_copy'];
-				$this->property['msg_blink'] = $arr['msg_blink'];
-        $this->property['spyship_id'] = $arr['spyship_id'];
-        $this->property['spyship_count'] = $arr['spyship_count'];
-        $this->property['havenships_buttons'] = $arr['havenships_buttons'];
-		    $this->property['show_adds'] = $arr['show_adds'];
-		    $this->property['fleet_rtn_msg'] = $arr['fleet_rtn_msg'];
-		    
-        return true;
-			}
-			else
-			{
-				dbquery("
-				INSERT INTO 
-					user_properties
-				(id)
-				VALUES
-				(".$this->id.")
-				");
-				// Take care: This is a recursion! With mysql_insert_id we check that the record has been created and thus 
-				// the recursion should have to finish the next time
-				if (mysql_insert_id()>0)
-				{
-					$this->loadProperties();
-				}
-				else
-				{
-					errBox("Fehler beim Erstellen der persönlichen Einstellungen! Bitte Entwickler kontaktieren!");					
-					die();
-				}
-			}
-		}
-		
-    public function getp($property)
-    {
-      return $this->property[$property];
-    }
-
-    public function setp($property,$argument)
-    {
-    	if ($this->property[$property] != $argument)
-    	{
-    		$this->property[$property] = $argument;
-    		dbquery("
-    		UPDATE
-    			user_properties
-    		SET
-    			".$property."='".$argument."'
-    		WHERE
-    			id=".$this->id."");
-    		return true;
-    	}
-    }
-		
-		
 		/**
 		* Validates the user session against a given key
 		*/

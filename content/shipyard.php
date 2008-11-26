@@ -89,11 +89,9 @@
 			****************************/
 			if(count($_POST)>0 && isset($_POST['sort_submit']))
 			{
-				$cu->setp("item_order_ship",$_POST['sort_value']);
-       			$cu->setp("item_order_way",$_POST['sort_way']);	
+				$cu->properties->itemOrderShip = $_POST['sort_value'];
+       	$cu->properties->itemOrderWay = $_POST['sort_way'];
 			}
-			
-			
 			
 			
 			//
@@ -232,7 +230,7 @@
 
 			// Alle Schiffe laden
 			//Schiffsordnung des Users beachten
-			$order="ship_".$cu->getp("item_order_ship")." ".$cu->getp("item_order_way")."";
+			$order="ship_".$cu->properties->itemOrderShip." ".$cu->properties->itemOrderWay."";
 			$res = dbquery("
 			SELECT
 				ship_id,
@@ -352,7 +350,7 @@
 								foreach ($values as $value => $name)
 								{		
 									echo "<option value=\"".$value."\"";
-									if($cu->getp("item_order_ship")==$value)
+									if($cu->properties->itemOrderShip==$value)
 									{
 										echo " selected=\"selected\"";
 									}
@@ -364,12 +362,12 @@
 								
 									//Aufsteigend
 									echo "<option value=\"ASC\"";
-									if($cu->getp("item_order_way")=='ASC') echo " selected=\"selected\"";
+									if($cu->properties->itemOrderWay=='ASC') echo " selected=\"selected\"";
 									echo ">Aufsteigend</option>";
 									
 									//Absteigend
 									echo "<option value=\"DESC\"";
-									if($cu->getp("item_order_way")=='DESC') echo " selected=\"selected\"";
+									if($cu->properties->itemOrderWay=='DESC') echo " selected=\"selected\"";
 									echo ">Absteigend</option>";	
 																	
 					echo "</select>						
@@ -851,7 +849,7 @@
 					if (isset($ships))
 					{
 						//Einfache Ansicht
-						if ($cu->getp("item_show")!='full')
+						if ($cu->properties->itemShow!='full')
 						{
 							echo '<tr>
 											<th colspan="2" class="tbltitle">Schiff</th>
@@ -1137,7 +1135,7 @@
  			      				$shiplist_count = 0;
  			      			}
 									// Volle Ansicht
-    			      	if($cu->getp("item_show")=='full')
+    			      	if($cu->properties->itemShow=='full')
     			      	{
     			      		if ($ccnt>0)
     			      		{

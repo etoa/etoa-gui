@@ -80,8 +80,6 @@
 		{
 			try
 			{
-				if (!property_exists($this,$key))
-					throw new EException("Property $key existiert nicht in ".__CLASS__);
 					
 				if ($key == "speedFactor")
 				{
@@ -94,6 +92,10 @@
 						return 1;
 					}		
 				}
+
+				if (!property_exists($this,$key))
+					throw new EException("Property $key existiert nicht in ".__CLASS__);
+
 					
 				return $this->$key;
 			}

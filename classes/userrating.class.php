@@ -33,7 +33,6 @@
 				$this->battlesLost = $arr['battles_lost'];
 				$this->tradesSell = $arr['trades_sell'];
 				$this->tradesBuy = $arr['trades_buy'];
-				echo "Yuhu!!";
 			}
 			else
 			{

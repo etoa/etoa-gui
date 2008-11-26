@@ -12,12 +12,12 @@ $xajax->register(XAJAX_FUNCTION,'launchSypProbe');
 		ob_start();
 		$launched = false;
 
-		if ($cu->getp("spyship_id")>0)
+		if ($cu->properties->spyShipId > 0)
 		{			
 			$fleet = new FleetLaunch($cp,$cu);
 			if ($fleet->checkHaven())
 			{
-				if ($probeCount = $fleet->addShip($cu->getp("spyship_id"),$cu->getp("spyship_count")))
+				if ($probeCount = $fleet->addShip($cu->properties->spyShipId,$cu->properties->spyShipCount))
 				{
 					if ($fleet->fixShips())
 					{
