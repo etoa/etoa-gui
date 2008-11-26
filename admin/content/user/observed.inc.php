@@ -14,11 +14,14 @@
 			user_id='".$_GET['text']."'
 		");	
 		$arr = mysql_Fetch_array($res);
-		echo "<h2>Beobachtungsgrund für ".$arr['user_nick']."</h2>";
+		echo "<h2>Beobachtungsgrund für <a href=\"?page=$page&amp;sub=edit&amp;id=".$arr['user_id']."\">".$arr['user_nick']."</a></h2>";
 		echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">
 		<textarea name=\"user_observe\" cols=\"80\" rows=\"10\">".stripslashes($arr['user_observe'])."</textarea>
 		<input type=\"hidden\" name=\"user_id\" value=\"".$arr['user_id']."\" />
-		<br/><br/><input type=\"submit\" name=\"save_text\" value=\"Speichern\" />";
+		<br/><br/>
+		<input type=\"submit\" name=\"save_text\" value=\"Speichern\" /> &nbsp; 
+		<input type=\"submit\" name=\"del_text\" value=\"Löschen\" /> &nbsp; 
+		<input type=\"submit\" name=\"cancel\" value=\"Abbrechen\" />";
 	}
 	else
 	{	
@@ -44,13 +47,24 @@
 				user_id=".$_GET['del']."
 			");
 		}
+		if (isset($_POST['del_text']))
+		{
+			dbquery("
+			UPDATE
+				users
+			SET
+				user_observe=''
+			WHERE
+				user_id=".$_POST['user_id']."
+			");
+		}		
 		if (isset($_POST['save_text']))
 		{
 			dbquery("
 			UPDATE
 				users
 			SET
-				user_observe='".addslashes($_POST['user_observe'])."',
+				user_observe='".addslashes($_POST['user_observe'])."'
 			WHERE
 				user_id=".$_POST['user_id']."
 			");
@@ -113,11 +127,10 @@
 			while ($arr=mysql_fetch_array($res))
 			{
 				echo "<tr>
-					<td>".$arr['user_nick']."</td>
+					<td><a href=\"?page=$page&amp;sub=edit&amp;id=".$arr['user_id']."\">".$arr['user_nick']."</a></td>
 					<td ".tm("Punkteverlauf","<img src=\"../misc/stats.image.php?user=".$arr['user_id']."\" alt=\"Diagramm\" style=\"width:600px;height:400px;\" />").">".nf($arr['user_points'])."</td>
 					<td>".stripslashes($arr['user_observe'])."</td>
 					<td>
-						<a href=\"?page=$page&amp;sub=edit&amp;user_id=".$arr['user_id']."\">Daten</a>
 						<a href=\"?page=$page&amp;sub=$sub&amp;text=".$arr['user_id']."\">Text ändern</a>
 						<a href=\"?page=$page&amp;sub=$sub&amp;del=".$arr['user_id']."\">Entfernen</a>
 					</td>

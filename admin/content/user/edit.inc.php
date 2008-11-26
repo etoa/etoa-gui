@@ -359,12 +359,12 @@
 							</tr>
 							<tr>
 								<td class=\"tbltitle\">Infos:</td>
-								<td class=\"tbldata\">";
+								<td class=\"tbldata\" style=\"color:#ff0\">";
 
 
 									if ($arr['user_observe']!="")
 									{
-										echo "<div>Benutzer steht unter <b>Beobachtung</b>: ".$arr['user_observe']." [<a href=\"?page=user&sub=observed&text=".$id."\">Ändern</a>]</div>";
+										echo "<div>Benutzer steht unter <b>Beobachtung</b>: ".$arr['user_observe']." &nbsp; [<a href=\"?page=user&sub=observed&text=".$id."\">Ändern</a>]</div>";
 									}						
 									if ($arr['user_deleted']!=0)
 									{

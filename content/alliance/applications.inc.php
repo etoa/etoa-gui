@@ -26,7 +26,7 @@ if (Alliance::checkActionRights('applications'))
 						$message .= "<b>".$nick."</b>: Angenommen<br/>";
 						
 						// Nachricht an den Bewerber schicken
-						send_msg($id,MSG_ALLYMAIL_CAT,"Bewerbung angenommen","Deine Allianzbewerbung wurde angnommen!\n\n[b]Antwort:[/b]\n".addslashes($_POST['application_answer_text'][$id]));
+						send_msg($id,MSG_ALLYMAIL_CAT,"Bewerbung angenommen","Deine Allianzbewerbung wurde angenommen!\n\n[b]Antwort:[/b]\n".addslashes($_POST['application_answer_text'][$id]));
 						
 						// Log schreiben
 						add_alliance_history($cu->allianceId,"Die Bewerbung von [b]".$nick."[/b] wurde akzeptiert!");

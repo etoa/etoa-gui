@@ -70,6 +70,59 @@
         echo "Im Sittermodus ist dieser Bereich gesperrt!";
       }
 		}
+		
+    /****************/
+    /* Verwarnungen    */
+    /****************/
+		elseif($mode=='warnings')
+		{
+      if($s['sitter_active']==0)
+      {
+      	echo "
+				<table class=\"tb\">
+					<tr>
+						<th style=\"\">Text</th>
+						<th style=\"width:130px;\">Datum</th>
+						<th style=\"width:100px;\">Verwarnt von</th>
+					</tr>";
+						$ures = dbquery("
+						SELECT
+							warning_text,
+							warning_date,
+							user_nick as anick,
+							user_id as aid,
+							warning_id
+						FROM
+							user_warnings
+						LEFT JOIN
+							admin_users
+						ON
+							user_id=warning_admin_id
+						WHERE
+							warning_user_id=".$cu->id."
+						ORDER BY
+							warning_date DESC
+						");
+						while ($uarr = mysql_Fetch_array($ures))	
+						{
+							echo "<tr>
+								<td>".stripslashes(nl2br($uarr['warning_text']))."</td>
+								<td>".df($uarr['warning_date'])."</td>	
+								<td><a href=\"?page=contact&rcpt=".$uarr['aid']."\">".$uarr['anick']."</a>
+								</td>
+							</tr>";
+						}			
+				
+				echo "</table>";      	
+      	
+      	
+      }
+      else
+      {
+        echo "Im Sittermodus ist dieser Bereich gesperrt!";
+      }
+		}		
+		
 
     /****************/
     /* Design     	*/
