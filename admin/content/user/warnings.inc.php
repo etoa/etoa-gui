@@ -177,7 +177,7 @@
 				<b>".$arr['user_nick']."</b> &nbsp; 
 				[<a href=\"#\" onclick=\"toggleBox('w".$arr['user_id']."')\">".nf($arr['cnt'])." Verwarnungen</a>] &nbsp; 
 				[<a href=\"?page=user&amp;sub=edit&amp;id=".$arr['user_id']."\">Daten</a>] &nbsp; 
-				<table id=\"w".$arr['user_id']."\" style=\"margin-top:10px;display:none;\" class=\"tb\">
+				<table id=\"w".$arr['user_id']."\" style=\"margin-top:10px;".((isset($_GET['user']) && $_GET['user']==$arr['user_id']) ? "" : "display:none;") ."\" class=\"tb\">
 					<tr>
 						<th style=\"\">Text</th>
 						<th style=\"width:130px;\">Datum</th>

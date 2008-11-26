@@ -47,7 +47,7 @@
 		$arr = mysql_fetch_row($res);
 		echo '<input type="hidden" name="mail_rcpt" value="'.$arr[0].'<'.$arr[1].'>" />';
 		echo '<table class="tb">';
-		echo '<tr><th>Sender:</th><td>'.$cu->nick.'&lt;'.$cu->email().'&gt;</td></tr>';
+		echo '<tr><th>Sender:</th><td>'.$cu->nick.'&lt;'.$cu->email.'&gt;</td></tr>';
 		echo '<tr><th>Empfänger:</th><td>'.$arr[0].'&lt;'.$arr[1].'&gt;</td></tr>';
 		echo '<tr><th>Titel:</th><td><input type="text" name="mail_subject" value="" size="50" /></td></tr>';
 		echo '<tr><th>Text:</th><td><textarea name="mail_text" rows="6" cols="80"></textarea></td></tr>';
@@ -67,7 +67,7 @@
 			$text.= $_POST['mail_text'];
 			
       $email_header = "From: Escape to Andromeda<etoa@orion.etoa.net>\n";
-      $email_header .= "Reply-To: ".$cu->nick."<".$cu->email().">\n";
+      $email_header .= "Reply-To: ".$cu->nick."<".$cu->email.">\n";
       $email_header .= "X-Mailer: PHP/" . phpversion(). "\n";
       $email_header .= "X-Sender-IP: ".$_SERVER['REMOTE_ADDR']."\n";
       //$email_header .= "Content-type: text/html\n";
@@ -142,9 +142,6 @@
 		echo '<img style="border:1px solid #000;margin:5px 10px;" src="images/powered/apache.png" alt="PHP" />';
 		echo '<img style="border:1px solid #000;margin:5px 10px;" src="images/powered/gentoo.png" alt="PHP" />';
 		echo '<img style="border:1px solid #000;margin:5px 10px;" src="images/powered/smarty.png" alt="Smarty" />';
-		echo '<img style="border:1px solid #000;margin:5px 10px;" src="images/powered/pma.png" alt="phpMyAdmin" />';
-		echo '<img style="border:1px solid #000;margin:5px 10px;" src="images/powered/xhtml.png" alt="PHP" />';
-		echo '<img style="border:1px solid #000;margin:5px 10px;" src="images/powered/css.png" alt="PHP" />';     
 		iBoxEnd();
 	}
 ?>                                                  

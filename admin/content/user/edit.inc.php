@@ -398,9 +398,28 @@
 									if ($carr[0] > 0)
 									{
 										echo "<div><b>".$carr[0]." Kommentare</b> vorhanden, neuster Kommentar von ".df($carr[1])."
-										[<a href=\"javascript:;\" onclick=\"showTab('tabComments');\">Zeigen</a>]
+										[<a href=\"javascript:;\" onclick=\"tabActivate('userTab',9);\">Zeigen</a>]
 										</div>";
 									}	
+									
+									// Kommentare
+									$cres=dbquery("
+									SELECT 
+										COUNT(id),
+										MAX(timestamp) 
+									FROM 
+										tickets
+									WHERE
+										user_id=".$arr['user_id']."
+										AND (status=0 OR status=1)
+									;");	
+									$carr = mysql_fetch_row($cres);
+									if ($carr[0] > 0)
+									{
+										echo "<div><b>".$carr[0]." neue/offene Tickets</b> vorhanden, neustes von ".df($carr[1])."
+										[<a href=\"javascript:;\" onclick=\"tabActivate('userTab',8);\">Zeigen</a>]
+										</div>";
+									}										
 									
 									// Verwarnungen
 									$cres=dbquery("
@@ -416,7 +435,7 @@
 									if ($carr[0] > 0)
 									{
 										echo "<div><b>".$carr[0]." Verwarnungen</b> vorhanden, neuste  von ".df($carr[1])."
-										[<a href=\"javascript:;\" onclick=\"showTab('tabComments');\">Zeigen</a>]
+										[<a href=\"?page=user&amp;sub=warnings&amp;user=".$id."\">Zeigen</a>]
 										</div>";
 									}										
 									

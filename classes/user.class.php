@@ -605,7 +605,7 @@
 				//dbquery("DELETE FROM user_log WHERE log_user_id='".$this->id."';"); 			//Log löschen
 				dbquery("DELETE FROM user_multi WHERE user_multi_user_id='".$this->id."' OR user_multi_multi_user_id='".$this->id."';"); //Multiliste löschen
 				dbquery("DELETE FROM user_points WHERE point_user_id='".$this->id."';"); 					//Punkte löschen
-				dbquery("DELETE FROM user_requests WHERE request_user_id='".$this->id."';"); 				//Nickänderungsanträge löschen
+				dbquery("DELETE FROM user_warnings WHERE warning_user_id='".$this->id."';"); 				//Nickänderungsanträge löschen
 				dbquery("DELETE FROM user_sitting WHERE user_sitting_user_id='".$this->id."';"); 			//Sitting löschen
 				dbquery("DELETE FROM user_sitting_date WHERE user_sitting_date_user_id='".$this->id."';"); //Sitting Daten löschen
 				// Todo: clean tickets

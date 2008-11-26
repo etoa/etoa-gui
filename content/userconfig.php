@@ -37,14 +37,28 @@
 
 	$mode = (isset($_GET['mode']) && $_GET['mode']!="") ? $_GET['mode'] : 'general';
 	
- 	show_tab_menu("mode",array("general"=>"Profil",
+	$tabitems = array("general"=>"Profil",
  														"game"=>"Spiel",
  														"messages"=>"Nachrichten",
  														"design"=>"Design",
  														"sitting"=>"Sitting",
  														"password"=>"Passwort",
  														"logins"=>"Logins",
- 														"misc"=>"Sonstiges"));
+ 														"misc"=>"Sonstiges");
+
+	$ures = dbquery("
+	SELECT
+		COUNT(warning_id)
+	FROM
+		user_warnings
+	WHERE
+		warning_user_id=".$cu->id."
+	");
+	$uarr = mysql_fetch_row($ures);
+	if ($uarr[0]>0)
+		$tabitems['warnings'] = "Verwarnungen";
+	
+ 	show_tab_menu("mode",$tabitems);
  	echo '<br/>';
 
 

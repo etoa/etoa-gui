@@ -609,25 +609,7 @@
 	
 		tableStart("Spieler-Tools");
 		
-		/*
-		// ÃƒÆ’Ã¢â‚¬Å¾nderungsanfragen
-		$res=dbquery("
-		SELECT 
-			COUNT(request_id)
-		FROM 
-			user_requests
-		WHERE 
-			request_handled=0
-		ORDER BY 
-			request_timestamp ASC;");
-		$arr=mysql_fetch_row($res);
-		echo "<tr><th class=\"tbltitle\" style=\"width:200px;\">&Auml;nderungsanfragen:</th>";
-		echo "<td class=\"tbldata\"";
-		echo "><a href=\"?page=user&amp;sub=requests\"";
-		if ($arr[0]>0) echo " style=\"font-weight:bold;color:#f90;\"";	
-		echo ">".$arr[0]." Anfragen</a> vorhanden</td></tr>";
-		*/
-		
+
 		// Tickets		
 		$res = dbquery("
 		SELECT		

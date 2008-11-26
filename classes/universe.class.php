@@ -650,7 +650,6 @@
 			$tbl[]="user_log";
 			$tbl[]="user_sessionlog";
 			$tbl[]="user_points";
-			$tbl[]="user_requests";
 			$tbl[]="user_sitting";
 			$tbl[]="user_sitting_date";
 			$tbl[]="user_stats";

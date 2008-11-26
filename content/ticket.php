@@ -84,7 +84,7 @@
 				$text.= $_POST['abuse_text'];
 				
 	      $email_header = "From: Escape to Andromeda Ticketsystem ".GAMEROUND_NAME."<etoa@dev.etoa.ch>\n";
-	      $email_header .= "Reply-To: ".$cu->nick."<".$cu->email().">\n";
+	      $email_header .= "Reply-To: ".$cu->nick."<".$cu->email.">\n";
 	      $email_header .= "X-Mailer: PHP/" . phpversion(). "\n";
 	      $email_header .= "X-Sender-IP: ".$_SERVER['REMOTE_ADDR']."\n";
 	      $email_header .= "Content-Style-Type: text/css\n";					
