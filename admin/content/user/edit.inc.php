@@ -58,9 +58,9 @@
 					if (mysql_num_rows($res)>0)
 					{
 						$arr=mysql_fetch_array($res);
-	          if (file_exists('../'.PROFILE_IMG_DIR."/".$arr['user_profile_img']))
+	          if (file_exists(PROFILE_IMG_DIR."/".$arr['user_profile_img']))
 	          {
-	              unlink('../'.PROFILE_IMG_DIR."/".$arr['user_profile_img']);
+	              unlink(PROFILE_IMG_DIR."/".$arr['user_profile_img']);
 	          }
 	          $sql.=",user_profile_img=''";
 	        }
@@ -73,9 +73,9 @@
 					if (mysql_num_rows($res)>0)
 					{
 						$arr=mysql_fetch_array($res);
-	          if (file_exists('../'.BOARD_AVATAR_DIR."/".$arr['user_avatar']))
+	          if (file_exists(BOARD_AVATAR_DIR."/".$arr['user_avatar']))
 	          {
-	              unlink('../'.BOARD_AVATAR_DIR."/".$arr['user_avatar']);
+	              unlink(BOARD_AVATAR_DIR."/".$arr['user_avatar']);
 	          }
 	          $sql.=",user_avatar=''";
 	        }
@@ -360,6 +360,12 @@
 							<tr>
 								<td class=\"tbltitle\">Infos:</td>
 								<td class=\"tbldata\">";
+
+
+									if ($arr['user_observe']!="")
+									{
+										echo "<div>Benutzer steht unter <b>Beobachtung</b>: ".$arr['user_observe']." [<a href=\"?page=user&sub=observed&text=".$id."\">Ändern</a>]</div>";
+									}						
 									if ($arr['user_deleted']!=0)
 									{
 										echo "<div style=\"color:".USER_COLOR_DELETED."\">Dieser Account ist zur Löschung am ".df($arr['user_deleted'])." vorgemerkt</div>";
@@ -395,6 +401,24 @@
 										[<a href=\"javascript:;\" onclick=\"showTab('tabComments');\">Zeigen</a>]
 										</div>";
 									}	
+									
+									// Verwarnungen
+									$cres=dbquery("
+									SELECT 
+										COUNT(warning_id),
+										MAX(warning_date)
+									FROM 
+										user_warnings
+									WHERE
+										warning_user_id=".$arr['user_id']."
+									;");	
+									$carr = mysql_fetch_row($cres);
+									if ($carr[0] > 0)
+									{
+										echo "<div><b>".$carr[0]." Verwarnungen</b> vorhanden, neuste  von ".df($carr[1])."
+										[<a href=\"javascript:;\" onclick=\"showTab('tabComments');\">Zeigen</a>]
+										</div>";
+									}										
 									
 				
 					echo "</td>
@@ -798,7 +822,7 @@
 					      {
 					        if ($arr['user_profile_img_check']==1)
 					       	 	echo "<input type=\"checkbox\" value=\"0\" name=\"user_profile_img_check\"> Bild-Verifikation bestätigen<br/>";
-					        echo '<img src="../'.PROFILE_IMG_DIR.'/'.$arr['user_profile_img'].'" alt="Profil" /><br/>';
+					        echo '<img src="'.PROFILE_IMG_DIR.'/'.$arr['user_profile_img'].'" alt="Profil" /><br/>';
 					        echo "<input type=\"checkbox\" value=\"1\" name=\"profile_img_del\"> Bild l&ouml;schen<br/>";
 					      }				
 					      else
@@ -818,7 +842,7 @@
 								<td class=\"tbldata\">";
 						      if ($arr['user_avatar']!="")
 						      {
-						        echo '<img src="../'.BOARD_AVATAR_DIR.'/'.$arr['user_avatar'].'" alt="Profil" /><br/>';
+						        echo '<img src="'.BOARD_AVATAR_DIR.'/'.$arr['user_avatar'].'" alt="Profil" /><br/>';
 						        echo "<input type=\"checkbox\" value=\"1\" name=\"avatar_img_del\"> Bild l&ouml;schen<br/>";
 						      }		
 					      else

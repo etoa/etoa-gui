@@ -656,7 +656,8 @@
 				{
 					
 					//Zu erhaltende Rohstoffe errechnen
-					$obj_cnt=ceil(($queue[$id]['queue_endtime']-$time)/$queue[$id]['queue_objtime']);
+					$obj_cnt = min(ceil(($queue[$id]['queue_endtime']-max($time,$queue[$id]['queue_starttime']))/$queue[$id]['queue_objtime']),$queue[$id]['queue_cnt']);
+					
 					$ret['metal']=$ships[$queue[$id]['queue_ship_id']]['ship_costs_metal']*$obj_cnt*$cancel_res_factor;
 					$ret['crystal']=$ships[$queue[$id]['queue_ship_id']]['ship_costs_crystal']*$obj_cnt*$cancel_res_factor;
 					$ret['plastic']=$ships[$queue[$id]['queue_ship_id']]['ship_costs_plastic']*$obj_cnt*$cancel_res_factor;

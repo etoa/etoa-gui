@@ -713,7 +713,9 @@
 					$qarr=mysql_fetch_array($qres);
 					
 					//Zu erhaltende Rohstoffe errechnen
-					$obj_cnt=ceil(($qarr['queue_endtime']-$time)/$qarr['queue_objtime']);
+					$obj_cnt = min(ceil(($qarr['queue_endtime']-max($time,$qarr['queue_starttime']))/$qarr['queue_objtime']),$qarr['queue_cnt']);
+					echo "Breche den Bau von ".$obj_cnt." ".$qarr['def_name']." ab...<br/>";					
+					
 					$ret['metal']=$qarr['def_costs_metal']*$obj_cnt*$cancel_res_factor;
 					$ret['crystal']=$qarr['def_costs_crystal']*$obj_cnt*$cancel_res_factor;
 					$ret['plastic']=$qarr['def_costs_plastic']*$obj_cnt*$cancel_res_factor;
