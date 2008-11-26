@@ -9,6 +9,7 @@
 	class CurrentUser extends User
 	{
 		protected $property;
+		private $dmask;
 		
 		/**
 		* Constructor which calls the default parent constructor
@@ -19,15 +20,6 @@
 			parent::User($userId);
 			$this->loadProperties();
 		}
-
-		//
-		// Getters
-		//
-		
-		final public function realName() { return $this->realName; }
-		final public function email() { return $this->email; }
-		final public function emailFix() { return $this->emailFix; }
-
 
 		//
 		// Methods

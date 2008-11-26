@@ -100,7 +100,7 @@
 			}
 			if ($user->profileBoardUrl !="")
 			{
-				echo "<tr><th style=\"width:120px;\">Foren-Profil:</th><td><a href=\"".$user->profileBoardUrl()."\">".$user->profileBoardUrl."</a></td></tr>";
+				echo "<tr><th style=\"width:120px;\">Foren-Profil:</th><td><a href=\"".$user->profileBoardUrl."\">".$user->profileBoardUrl."</a></td></tr>";
 			}
 			if ($user->registered > 0)
 			{

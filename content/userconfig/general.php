@@ -4,7 +4,8 @@
       {
         if (checkEmail($_POST['user_email']))
         {
-                   
+              
+ /*     
           // Avatar
           $avatar_string="";
           if (isset($_POST['avatar_del']) && $_POST['avatar_del']==1)
@@ -97,26 +98,17 @@
            	{
               echo "Fehler! Das Profilbild ist zu gross (Max ".nf(PROFILE_IMG_MAX_SIZE)." Byte)!<br/>";
 						}
-          }                
+          }     */           
           
-            dbquery("
-            UPDATE
-                users
-            SET
-                user_email='".$_POST['user_email']."',
-                user_profile_text='".addslashes($_POST['user_profile_text'])."',
-                user_signature='".addslashes($_POST['user_signature'])."',
-                $avatar_string
-                $profil_img_string
-                user_profile_board_url='".$_POST['user_profile_board_url']."'
-            WHERE
-                user_id='".$cu->id."';");
-                
-            success_msg("Benutzer-Daten wurden ge&auml;ndert!");
-            $cu->addToUserLog("settings","{nick} hat sein Profil aktualisiert.",1);
+          
+          $cu->email = $_POST['user_email'];
+          $cu->profileText = addslashes($_POST['user_profile_text']);
+          $cu->signature = addslashes($_POST['user_signature']);
+          $cu->profileBoardUrl = $_POST['user_profile_board_url'];
+          
+          success_msg("Benutzer-Daten wurden ge&auml;ndert!");
+          $cu->addToUserLog("settings","{nick} hat sein Profil aktualisiert.",1);
             
-            $res = dbquery("SELECT * FROM users WHERE user_id='".$cu->id."';");
-            $arr = mysql_fetch_array($res);
         }
         else
               echo "<b>Fehler!</b> Die E-Mail-Adresse ist nicht korrekt!<br/><br/>";
@@ -136,17 +128,16 @@
       </tr>";
       echo "<tr>
       	<th width=\"35%\">Vollst&auml;ndiger Name:</th>
-      	<td width=\"65%\">".$cu->realName()." [".ticketLink("&Auml;nderung beantragen",10)."]</td>
+      	<td width=\"65%\">".$cu->realName." [".ticketLink("&Auml;nderung beantragen",10)."]</td>
       </tr>";
       echo "<tr>
       	<th width=\"35%\">Fixe E-Mail:</th>
-      	<td width=\"65%\">".$cu->emailFix()." [".ticketLink("&Auml;nderung beantragen",9)."]</td>
+      	<td width=\"65%\">".$cu->emailFix." [".ticketLink("&Auml;nderung beantragen",9)."]</td>
       </tr>";
       echo "<tr>
       	<th width=\"35%\">E-Mail:</th>
-      	<td width=\"65%\"><input type=\"text\" name=\"user_email\" maxlength=\"255\" size=\"30\" value=\"".$cu->email()."\"></td>
+      	<td width=\"65%\"><input type=\"text\" name=\"user_email\" maxlength=\"255\" size=\"30\" value=\"".$cu->email."\"></td>
       </tr>";
-
       echo "<tr>
       	<th width=\"35%\">Beschreibung:</th>
       	<td><textarea name=\"user_profile_text\" cols=\"50\" rows=\"10\" width=\"65%\">".stripslashes($cu->profileText)."</textarea></td>

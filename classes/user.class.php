@@ -160,8 +160,16 @@
 				    $sql.= " user_race_id=".$this->race->id.",";
 					elseif ($k=="visits")	
 				    $sql.= " user_visits=".$this->visits.",";
+					elseif ($k=="email")	
+				    $sql.= " user_email='".$this->email."',";
+					elseif ($k=="profileText")	
+				    $sql.= " user_profile_text='".$this->profileText."',";
+					elseif ($k=="signature")	
+				    $sql.= " user_signature='".$this->signature."',";
+					elseif ($k=="profileBoardUrl")	
+				    $sql.= " user_profile_board_url='".$this->profileBoardUrl."',";
 					else
-						echo " $k has no valid UPDATE query!";
+						echo " $k has no valid UPDATE query!<br/>";
 				}
 				$sql.=" user_id=user_id WHERE
 				    	user_id=".$this->id.";";
@@ -186,11 +194,18 @@
 					$this->changedFields[$key] = true;
  					return true;
 				}
+				if ($key == "visits")
+				{
+					$this->$key = intval($val);
+					$this->changedFields[$key] = true;
+ 					return true;
+				}
+
 				elseif ($key == "rating")
 				{
 					throw new EException("Property $key der Klasse  ".__CLASS__." ist nicht änderbar!");
 					return false;
-				}				
+				}		
 				else
 				{
 					$this->$key = $val;
@@ -377,246 +392,223 @@
 			return true;
     }
     
-		function increaseVisitorCounter()
+		/**
+		* Benutzer löschen
+		*
+		*/
+		function delete($self=false,$from="")
 		{
-			dbquery("
-			UPDATE 
-				users 
-			SET 
-				user_visits=user_visits+1 
-			WHERE 
-				user_id='".intval($this->id)."';");
-			$this->visits++;
-		}
-
-	/**
-	* Benutzer löschen
-	*
-	*/
-	function delete($self=false,$from="")
-	{
-  	global $conf;
-   	define(FLEET_ACTION_RESS,$conf['market_ship_action_ress']['v']); // Ressourcen
-   	define(FLEET_ACTION_SHIP,$conf['market_ship_action_ship']['v']); // Schiffe
-
-		$utx = new userToXml($this->id);
-		if ($xmlfile = $utx->toCacheFile())
-		{
-
-			//
-			//Flotten und deren Schiffe löschen
-			//
-			$fres=dbquery("
-				SELECT
-					id
-				FROM
-					fleet
-				WHERE
-					user_id='".$this->id."';
-			");
-			if (mysql_num_rows($fres)>0)
+	  	global $conf;
+	   	define(FLEET_ACTION_RESS,$conf['market_ship_action_ress']['v']); // Ressourcen
+	   	define(FLEET_ACTION_SHIP,$conf['market_ship_action_ship']['v']); // Schiffe
+	
+			$utx = new userToXml($this->id);
+			if ($xmlfile = $utx->toCacheFile())
 			{
-				while ($farr=mysql_fetch_assoc($fres))
-				{
-					// Flotten-Schiffe löschen
-					dbquery("
-						DELETE FROM
-							fleet_ships
-						WHERE
-							fs_fleet_id='".$farr['id']."';
-					");
-				}
-			}
-			// Flotten löschen
-			dbquery("
-				DELETE FROM
-					fleet
-				WHERE
-					user_id=".$this->id.";
-			");
-
-
-			//
-			//Planeten Reseten und Handelschiffe die auf dem Weg zu einem Planeten sind löschen
-			//
-			$pres=dbquery("
-				SELECT
-					id,
-					planet_name,
-					planet_res_metal,
-					planet_res_crystal,
-					planet_res_plastic,
-					planet_res_fuel,
-					planet_res_food
-				FROM
-					planets
-				WHERE
-					planet_user_id='".$this->id."';
-			");
-			if (mysql_num_rows($pres)>0)
-			{
-				while ($parr=mysql_fetch_assoc($pres))
-				{
-					//löscht alle markt-handelschiffe die auf dem weg zu dem user sind
-                    $fres2=dbquery("
-						SELECT
-							id
-						FROM
-							fleet
-						WHERE
-							entity_to='".$parr['id']."'
-							AND (action='".FLEET_ACTION_RESS."' OR action='".FLEET_ACTION_SHIP."');
-					");
-                    if (mysql_num_rows($fres2)>0)
-                    {
-                        while ($farr2=mysql_fetch_assoc($fres2))
-                        {
-                        	// Flotten-Schiffe löschen
-                            dbquery("
-								DELETE FROM
-									fleet_ships
-								WHERE
-									fs_fleet_id='".$farr2['id']."';
-							");
-                        }
-                    }
-					//Setzt Planet zurück
-					reset_planet($parr['id']);
-				}
-			}
-
-
-			//
-			// Allianz löschen (falls alleine) oder einen Nachfolger bestimmen
-			//
-			if ($this->allianceId > 0)
-			{
-				$ares=dbquery("
+	
+				//
+				//Flotten und deren Schiffe löschen
+				//
+				$fres=dbquery("
 					SELECT
-						u.user_id,
-						a.alliance_founder_id
+						id
 					FROM
-						users AS u
-						INNER JOIN
-						alliances AS a
-						ON u.user_alliance_id = a.alliance_id
-						AND a.alliance_id=".$this->allianceId."
-						AND u.user_id!='".$this->id."'
-					GROUP BY
-						u.user_id
-					ORDER BY
-						u.user_points DESC;
+						fleet
+					WHERE
+						user_id='".$this->id."';
 				");
-				if (mysql_num_rows($ares)>0)
+				if (mysql_num_rows($fres)>0)
 				{
-					$aarr=mysql_fetch_assoc($ares);
-
-					 // Wenn der User der Gründer der Allianz ist wird der User mit den höchsten Punkten zum neuen Allianzgründer
-					if ($this->id==$aarr['alliance_founder_id'])
+					while ($farr=mysql_fetch_assoc($fres))
 					{
+						// Flotten-Schiffe löschen
 						dbquery("
-							UPDATE
-								alliances
-							SET
-								alliance_founder_id='".$aarr['user_id']."'
+							DELETE FROM
+								fleet_ships
 							WHERE
-								alliance_id='".$this->allianceId."';
+								fs_fleet_id='".$farr['id']."';
 						");
 					}
 				}
-				else
+				// Flotten löschen
+				dbquery("
+					DELETE FROM
+						fleet
+					WHERE
+						user_id=".$this->id.";
+				");
+	
+	
+				//
+				//Planeten Reseten und Handelschiffe die auf dem Weg zu einem Planeten sind löschen
+				//
+				$pres=dbquery("
+					SELECT
+						id,
+						planet_name,
+						planet_res_metal,
+						planet_res_crystal,
+						planet_res_plastic,
+						planet_res_fuel,
+						planet_res_food
+					FROM
+						planets
+					WHERE
+						planet_user_id='".$this->id."';
+				");
+				if (mysql_num_rows($pres)>0)
 				{
-					// Wenn der User das einzige/letzte Mitglied der Allianz ist wird sie aufgelöst
-					delete_alliance($this->allianceId);
+					while ($parr=mysql_fetch_assoc($pres))
+					{
+						//löscht alle markt-handelschiffe die auf dem weg zu dem user sind
+	                    $fres2=dbquery("
+							SELECT
+								id
+							FROM
+								fleet
+							WHERE
+								entity_to='".$parr['id']."'
+								AND (action='".FLEET_ACTION_RESS."' OR action='".FLEET_ACTION_SHIP."');
+						");
+	                    if (mysql_num_rows($fres2)>0)
+	                    {
+	                        while ($farr2=mysql_fetch_assoc($fres2))
+	                        {
+	                        	// Flotten-Schiffe löschen
+	                            dbquery("
+									DELETE FROM
+										fleet_ships
+									WHERE
+										fs_fleet_id='".$farr2['id']."';
+								");
+	                        }
+	                    }
+						//Setzt Planet zurück
+						reset_planet($parr['id']);
+					}
 				}
+	
+	
+				//
+				// Allianz löschen (falls alleine) oder einen Nachfolger bestimmen
+				//
+				if ($this->allianceId > 0)
+				{
+					$ares=dbquery("
+						SELECT
+							u.user_id,
+							a.alliance_founder_id
+						FROM
+							users AS u
+							INNER JOIN
+							alliances AS a
+							ON u.user_alliance_id = a.alliance_id
+							AND a.alliance_id=".$this->allianceId."
+							AND u.user_id!='".$this->id."'
+						GROUP BY
+							u.user_id
+						ORDER BY
+							u.user_points DESC;
+					");
+					if (mysql_num_rows($ares)>0)
+					{
+						$aarr=mysql_fetch_assoc($ares);
+	
+						 // Wenn der User der Gründer der Allianz ist wird der User mit den höchsten Punkten zum neuen Allianzgründer
+						if ($this->id==$aarr['alliance_founder_id'])
+						{
+							dbquery("
+								UPDATE
+									alliances
+								SET
+									alliance_founder_id='".$aarr['user_id']."'
+								WHERE
+									alliance_id='".$this->allianceId."';
+							");
+						}
+					}
+					else
+					{
+						// Wenn der User das einzige/letzte Mitglied der Allianz ist wird sie aufgelöst
+						delete_alliance($this->allianceId);
+					}
+				}
+	
+	
+	
+				//
+				//Rest löschen
+				//
+	
+				dbquery("DELETE FROM alliance_applications WHERE user_id='".$this->id."';");
+	
+	
+				//Baulisten löschen
+				dbquery("DELETE FROM shiplist WHERE shiplist_user_id='".$this->id."';");		// Schiffe löschen
+				dbquery("DELETE FROM deflist WHERE deflist_user_id='".$this->id."';");			// Verteidigung löschen
+				dbquery("DELETE FROM techlist WHERE techlist_user_id='".$this->id."';");		// Forschung löschen
+				dbquery("DELETE FROM buildlist WHERE buildlist_user_id='".$this->id."';");		// Gebäude löschen
+	
+				//Buddyliste löschen
+				dbquery("DELETE FROM buddylist WHERE bl_user_id='".$this->id."' OR bl_buddy_id='".$this->id."';");
+	
+				//Markt Angebote löschen
+				dbquery("DELETE FROM market_ressource WHERE user_id='".$this->id."' AND ressource_buyable='1';"); 	// Rohstoff Angebot
+				dbquery("DELETE FROM market_ship WHERE user_id='".$this->id."' AND ship_buyable='1';"); 				// Schiff Angebot
+				dbquery("DELETE FROM market_auction WHERE auction_user_id='".$this->id."' AND auction_buyable='1';"); // Auktionen
+	
+				//Notitzen löschen
+				$np = new Notepad($this->id);
+				$numNotes = $np->deleteAll();
+				unset($np);
+	
+				//Gespeicherte Koordinaten löschen
+				dbquery("DELETE FROM bookmarks WHERE user_id='".$this->id."';");
+				dbquery("DELETE FROM fleet_bookmarks WHERE user_id='".$this->id."';");
+	
+				//'user' Info löschen
+				//dbquery("DELETE FROM user_log WHERE log_user_id='".$this->id."';"); 			//Log löschen
+				dbquery("DELETE FROM user_multi WHERE user_multi_user_id='".$this->id."' OR user_multi_multi_user_id='".$this->id."';"); //Multiliste löschen
+				dbquery("DELETE FROM user_points WHERE point_user_id='".$this->id."';"); 					//Punkte löschen
+				dbquery("DELETE FROM user_requests WHERE request_user_id='".$this->id."';"); 				//Nickänderungsanträge löschen
+				dbquery("DELETE FROM user_sitting WHERE user_sitting_user_id='".$this->id."';"); 			//Sitting löschen
+				dbquery("DELETE FROM user_sitting_date WHERE user_sitting_date_user_id='".$this->id."';"); //Sitting Daten löschen
+				// Todo: clean tickets
+	
+				//
+				//Benutzer löschen
+				//
+				dbquery("DELETE FROM users WHERE user_id='".$this->id."';");
+	
+	
+	
+	
+				//Log schreiben
+				if($self)
+					add_log("3","Der Benutzer ".$this->nick." hat sich selbst gelöscht!\nDie Daten des Benutzers wurden nach ".$xmlfile." exportiert.",time());
+				elseif(!$self && $from!="")
+					add_log("3","Der Benutzer ".$this->nick." wurde von ".$from." gelöscht!\nDie Daten des Benutzers wurden nach ".$xmlfile." exportiert.",time());
+				else
+					add_log("3","Der Benutzer ".$this->nick." wurde gelöscht!\nDie Daten des Benutzers wurden nach ".$xmlfile." exportiert.",time());
+	
+				$text ="Hallo ".$this->nick."
+				
+	Dein Accouont bei EtoA: Escape to Andromeda ( http://www.etoa.ch ) wurde auf Grund von Inaktivität 
+	oder auf eigenem Wunsch nun gelöscht.
+	
+	Mit freundlichen Grüßen,
+	die Spielleitung";
+				send_mail('',$this->email,'Accountlöschung bei Escape to Andromeda',$text,'','');
+				
+				return true;
+	
 			}
-
-
-
-			//
-			//Rest löschen
-			//
-
-			dbquery("DELETE FROM alliance_applications WHERE user_id='".$this->id."';");
-
-
-			//Baulisten löschen
-			dbquery("DELETE FROM shiplist WHERE shiplist_user_id='".$this->id."';");		// Schiffe löschen
-			dbquery("DELETE FROM deflist WHERE deflist_user_id='".$this->id."';");			// Verteidigung löschen
-			dbquery("DELETE FROM techlist WHERE techlist_user_id='".$this->id."';");		// Forschung löschen
-			dbquery("DELETE FROM buildlist WHERE buildlist_user_id='".$this->id."';");		// Gebäude löschen
-
-			//Buddyliste löschen
-			dbquery("DELETE FROM buddylist WHERE bl_user_id='".$this->id."' OR bl_buddy_id='".$this->id."';");
-
-			//Markt Angebote löschen
-			dbquery("DELETE FROM market_ressource WHERE user_id='".$this->id."' AND ressource_buyable='1';"); 	// Rohstoff Angebot
-			dbquery("DELETE FROM market_ship WHERE user_id='".$this->id."' AND ship_buyable='1';"); 				// Schiff Angebot
-			dbquery("DELETE FROM market_auction WHERE auction_user_id='".$this->id."' AND auction_buyable='1';"); // Auktionen
-
-			//Notitzen löschen
-			$np = new Notepad($this->id);
-			$numNotes = $np->deleteAll();
-			unset($np);
-
-			//Gespeicherte Koordinaten löschen
-			dbquery("DELETE FROM bookmarks WHERE user_id='".$this->id."';");
-			dbquery("DELETE FROM fleet_bookmarks WHERE user_id='".$this->id."';");
-
-			//'user' Info löschen
-			//dbquery("DELETE FROM user_log WHERE log_user_id='".$this->id."';"); 			//Log löschen
-			dbquery("DELETE FROM user_multi WHERE user_multi_user_id='".$this->id."' OR user_multi_multi_user_id='".$this->id."';"); //Multiliste löschen
-			dbquery("DELETE FROM user_points WHERE point_user_id='".$this->id."';"); 					//Punkte löschen
-			dbquery("DELETE FROM user_requests WHERE request_user_id='".$this->id."';"); 				//Nickänderungsanträge löschen
-			dbquery("DELETE FROM user_sitting WHERE user_sitting_user_id='".$this->id."';"); 			//Sitting löschen
-			dbquery("DELETE FROM user_sitting_date WHERE user_sitting_date_user_id='".$this->id."';"); //Sitting Daten löschen
-			// Todo: clean tickets
-
-			//
-			//Benutzer löschen
-			//
-			dbquery("DELETE FROM users WHERE user_id='".$this->id."';");
-
-
-
-
-			//Log schreiben
-			if($self)
-				add_log("3","Der Benutzer ".$this->nick." hat sich selbst gelöscht!\nDie Daten des Benutzers wurden nach ".$xmlfile." exportiert.",time());
-			elseif(!$self && $from!="")
-				add_log("3","Der Benutzer ".$this->nick." wurde von ".$from." gelöscht!\nDie Daten des Benutzers wurden nach ".$xmlfile." exportiert.",time());
 			else
-				add_log("3","Der Benutzer ".$this->nick." wurde gelöscht!\nDie Daten des Benutzers wurden nach ".$xmlfile." exportiert.",time());
-
-			$text ="Hallo ".$this->nick."
-			
-Dein Accouont bei EtoA: Escape to Andromeda ( http://www.etoa.ch ) wurde auf Grund von Inaktivität 
-oder auf eigenem Wunsch nun gelöscht.
-
-Mit freundlichen Grüßen,
-die Spielleitung";
-			send_mail('',$this->email,'Accountlöschung bei Escape to Andromeda',$text,'','');
-			
-			return true;
-
+			{
+				error_msg("Konnte UserXML für ".$this->id." nicht exportieren, User nicht gelöscht!");
+			}		
 		}
-		else
-		{
-			error_msg("Konnte UserXML für ".$this->id." nicht exportieren, User nicht gelöscht!");
-		}		
-	}
 
-
-
-		/**
-		* Returns the total number of users
-		*/
-		static public function count()
-		{
-			$ures = dbquery("SELECT COUNT(user_id) FROM users;");
-			$uarr = mysql_fetch_row($ures);
-			return $uarr[0];			
-		}
 	
 		/**
 		* Registers a new user
@@ -733,6 +725,16 @@ die Spielleitung";
 		}
 		
 
+
+		/**
+		* Returns the total number of users
+		*/
+		static public function count()
+		{
+			$ures = dbquery("SELECT COUNT(user_id) FROM users;");
+			$uarr = mysql_fetch_row($ures);
+			return $uarr[0];			
+		}
     
 	}
 
