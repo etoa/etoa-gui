@@ -59,6 +59,8 @@
 				ON sol_types.sol_type_id = stars.type_id
         )
         ON planets.id = pentity.id
+       
+       LIMIT 1;
 				;");
 				
 	
@@ -101,6 +103,7 @@
 						users
 					WHERE
 						user_id=".$arr['planet_user_id']."
+					LIMIT 1;
 					");
 					$uarr = mysql_Fetch_row($ures);
 					$this->owner = $uarr[0];

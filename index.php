@@ -267,7 +267,7 @@
 					WHERE
 						planet_user_id=".$cu->id."
 					ORDER BY
-						planet_user_main DESC, planet_name ASC;
+						planet_user_main DESC
 					");
 					if (mysql_num_rows($res)>0)
 					{

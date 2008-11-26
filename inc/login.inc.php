@@ -54,6 +54,7 @@
       	users 
       WHERE 
       	LCASE(user_nick)='".strtolower($_POST['login_nick'])."' 
+      LIMIT 1;
       ;");
 			if (mysql_num_rows($ures)>0)
 			{
@@ -70,6 +71,7 @@
 	      WHERE 
 	      	user_id=".$userId."
 					AND user_password='".pw_salt($_POST['login_pw'],$uarr[1])."'
+				LIMIT 1;
 				");
 				if (mysql_num_rows($ures)>0)
 				{
@@ -86,6 +88,7 @@
 	      	user_id=".$userId."		
 	      	AND user_password_temp!=''	
 					AND user_password_temp='".$_POST['login_pw']."'
+				LIMIT 1;
 	      ;");
 				if (mysql_num_rows($ures)>0)
 				{
@@ -103,6 +106,7 @@
 					user_sitting_sitter_password='".md5($_POST['login_pw'])."' 
 					AND user_sitting_user_id='".$userId."' 
 					AND user_sitting_active='1'
+				LIMIT 1;
 				;");
 				if (mysql_num_rows($sres)>0)
 	      {
@@ -201,7 +205,8 @@
         	user_sitting
         WHERE
         	user_sitting_user_id='".$userId."'
-        	AND user_sitting_active='1';");
+        	AND user_sitting_active='1'
+        LIMIT 1;");
         $sittung_check_arr=mysql_fetch_assoc($sittung_check_res);
 
         //überprüft ob sich ein "anderer" user mit der gleichen ip eingeloggt hat (sitter ausgeschlossen)
@@ -288,6 +293,7 @@
 					users
 				WHERE
 	      	LCASE(user_nick)='".strtolower($_POST['login_nick'])."' 
+	      LIMIT 1;
 				");
 				if (mysql_num_rows($res)>0) 
 				{

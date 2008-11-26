@@ -50,12 +50,13 @@
 		protected $rankHighest;
     protected $specialistId;
     protected $specialistTime;
-		
-		protected $race = null;
-		protected $raceId;
 
+		// Sub-objects and their id's		
+		protected $raceId;
+		protected $race = null;
 		protected $rating = null;
 		protected $properties = null;
+		protected $alliance = null;
 
 		protected $changedFields;
 		
@@ -126,6 +127,8 @@
 
 				$this->allianceId = $arr['user_alliance_id'];
 				$this->allianceRankId = $arr['user_alliance_rank_id'];
+				
+				
 				$this->allianceName = "";
 				$this->allianceTag = "";
 				$this->allianceRankName = "";				
@@ -446,7 +449,8 @@
 					FROM
 						fleet
 					WHERE
-						user_id='".$this->id."';
+						user_id='".$this->id."'
+					LIMIT 1;
 				");
 				if (mysql_num_rows($fres)>0)
 				{
@@ -688,7 +692,8 @@
   	  	users 
   	  WHERE 
   	  	user_nick='".$nick."' 
-  	  	OR user_email_fix='".$data['email']."';");
+  	  	OR user_email_fix='".$data['email']."'
+  	  LIMIT 1;");
   	  if (mysql_num_rows($res)>0)
   	  {
       	$errorCode = "Der Benutzer mit diesem Nicknamen oder dieser E-Mail-Adresse existiert bereits!";

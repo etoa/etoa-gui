@@ -163,6 +163,7 @@
 		  		entities 
 		  		ON entities.cell_id=cells.id	  	
 		  		AND entities.id=".$this->id."
+		  	LIMIT 1;
 		  	");
 		  	if (mysql_num_rows($res)>0)
 		  	{
@@ -355,6 +356,7 @@
 			AND cx=".$c3."
 			AND cy=".$c4."
 			AND pos=".$c5."
+			LIMIT 1;
 			");
 			if (mysql_num_rows($res)>0)
 			{
@@ -403,7 +405,8 @@
 				entities
 			WHERE 	
 				entities.cell_id='".$cell."'
-				AND entities.pos='0';");
+				AND entities.pos='0'
+			LIMIT 1;");
 			
 			if (mysql_num_rows($res)>0)
 			{

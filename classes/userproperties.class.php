@@ -39,7 +39,8 @@
 			FROM 
 				user_properties 
 			WHERE 
-				id=".$this->id.";");
+				id=".$this->id."
+			LIMIT 1;");
 			if (mysql_num_rows($res)>0)
 			{
 				$arr = mysql_fetch_assoc($res);

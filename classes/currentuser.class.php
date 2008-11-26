@@ -168,7 +168,8 @@
 				users
 			WHERE
 				user_password='".pw_salt($oldPassword,$this->registered)."'
-				AND user_id=".$this->id.";");
+				AND user_id=".$this->id."
+			LIMIT 1;");
 			$arr = mysql_fetch_row($res);
 			if ($arr[0]>0)
 			{
@@ -179,7 +180,8 @@
 					user_sitting
 				WHERE 
 					user_sitting_sitter_password='".md5($_POST['user_password1'])."' 
-					AND user_sitting_user_id=".$this->id.";");
+					AND user_sitting_user_id=".$this->id."
+				LIMIT 1;");
 				$arr = mysql_fetch_row($res);				
 				if ($arr[0]==0)
 				{
