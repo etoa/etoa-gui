@@ -171,7 +171,28 @@ if (Alliance::checkActionRights('editmembers'))
 			}
 			echo "</td></tr>";
 		}
-		echo "</table>";
+		echo "</table><br/>";
+		
+		
+		$wings = $ally->getWings();
+		if (count($wings) > 0)
+		{
+			foreach ($wings as $wid => $wdata)
+			{			
+				tableStart("Mitglieder des Wings ".$wdata);
+				echo "<tr>
+					<th>Name:</th>
+					<th>Punkte:</th>
+					<th>Rang:</th>
+					<th>Umteilen:</th>
+				</tr>";
+				
+				
+				tableEnd();
+			}
+		}		
+		
+		
 		echo "<br/><br/><input type=\"submit\" name=\"editmemberssubmit\" value=\"&Uuml;bernehmen\" />&nbsp;&nbsp;&nbsp;
 		<input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"Zur&uuml;ck\" /></form>";
 

@@ -57,7 +57,7 @@
 /* User ist in der Allianz                        */
 /**************************************************/
 
-			$myRankId = $cu->allianceRankId();			
+			$myRankId = $cu->allianceRankId;			
 			
 			// Allianzdaten laden
 			$res = dbquery("
@@ -70,6 +70,9 @@
 			if (mysql_num_rows($res)>0)
 			{
 				$arr = mysql_fetch_array($res);
+
+				$ally = new Alliance($cu->allianceId);
+
 
 				// Rechte laden
 				$rightres=dbquery("SELECT * FROM alliance_rights ORDER BY right_desc;");
@@ -246,6 +249,17 @@
 					if (Alliance::checkActionRights('viewmembers'))
 					{
 						require("alliance/viewmembers.inc.php");
+					}
+				}
+
+				//
+				// Wings verwalten
+				//
+				elseif (isset($_GET['action']) && $_GET['action']=="wings")
+				{
+					if (Alliance::checkActionRights('wings'))
+					{
+						require("alliance/wings.inc.php");
 					}
 				}
 
@@ -530,7 +544,7 @@
 						}
 						else
 							$ps="<i>Noch keine Beitr&auml;ge vorhanden";
-						echo "<tr><td class=\"tbltitle\">Internes Forum</td><td class=\"tbldata\" colspan=\"2\"><b><a href=\"?page=allianceboard\">Forum&uuml;bersicht</a></b> &nbsp; $ps</td></tr>";
+						echo "<tr><th>Internes Forum</th><td class=\"tbldata\" colspan=\"2\"><b><a href=\"?page=allianceboard\">Forum&uuml;bersicht</a></b> &nbsp; $ps</td></tr>";
 
 						// Umfrage verlinken
 						$pres=dbquery("SELECT poll_title,poll_question,poll_id FROM alliance_polls WHERE poll_alliance_id=".$arr['alliance_id']." ORDER BY poll_timestamp DESC LIMIT 2;");
@@ -538,7 +552,7 @@
 						if ($pcnt>0)
 						{
 							$parr=mysql_fetch_array($pres);
-							echo "<tr><td class=\"tbltitle\">Umfrage:</td>
+							echo "<tr><th>Umfrage:</th>
 							<td class=\"tbldata\" colspan=\"2\"><a href=\"?page=$page&amp;action=viewpoll\"><b>".stripslashes($parr['poll_title']).":</b> ".stripslashes($parr['poll_question'])."</a>";
 							if ($pcnt>1)
 								echo " &nbsp; (<a href=\"?page=$page&amp;action=viewpoll\">mehr Umfragen</a>)";
@@ -559,9 +573,9 @@
 							$aarr= mysql_fetch_row($ares);
 							if ($aarr[0]>0)
 							{
-								echo "<tr><td class=\"tbltitle\" colspan=\"3\" align=\"center\">
+								echo "<tr><th colspan=\"3\" align=\"center\">
 								<div align=\"center\"><b><a href=\"?page=$page&action=applications\">Es sind Bewerbungen vorhanden!</a></b></div>
-								</td></tr>";
+								</th></tr>";
 							}
 						}
 
@@ -578,18 +592,20 @@
 								AND alliance_bnd_level='0';");
 							if (mysql_num_rows($bres)>0)
 								echo "<tr>
-									<td class=\"tbltitle\" colspan=\"3\" style=\"text-align:center;color:#0f0\">
+									<th colspan=\"3\" style=\"text-align:center;color:#0f0\">
 										<a  style=\"color:#0f0\" href=\"?page=$page&action=relations\">Es sind B&uuml;ndnisanfragen vorhanden!</a>
-								</td></tr>";
+								</th></tr>";
 						}
 
 						// Kriegserklärung anzeigen
 						$time=time()-192600;
 						if (mysql_num_rows(dbquery("SELECT alliance_bnd_id FROM alliance_bnd WHERE alliance_bnd_alliance_id2='".$cu->allianceId."' AND alliance_bnd_level='3' AND alliance_bnd_date>'$time';"))>0)
 						if ($isFounder || $myRight['relations'])
-							echo "<tr><td class=\"tbltitle\" colspan=\"3\" align=\"center\"><b><div align=\"center\"><a href=\"?page=$page&action=relations\">Deiner Allianz wurde in den letzten 36h der Krieg erkl&auml;rt!</a></div></b></td></tr>";
+							echo "<tr>
+								<th colspan=\"3\" align=\"center\"><b>
+									<div align=\"center\"><a href=\"?page=$page&action=relations\">Deiner Allianz wurde in den letzten 36h der Krieg erkl&auml;rt!</a></div></b></th></tr>";
 						else
-							echo "<tr><td class=\"tbltitle\" colspan=\"3\" align=\"center\"><div align=\"center\"><b>Deiner Allianz wurde in den letzten 36h der Krieg erkl&auml;rt!</b></div></td></tr>";
+							echo "<tr><th colspan=\"3\" align=\"center\"><div align=\"center\"><b>Deiner Allianz wurde in den letzten 36h der Krieg erkl&auml;rt!</b></div></th></tr>";
 
 						// Verwaltung
 						$adminBox=array();
@@ -602,6 +618,7 @@
 						if ($isFounder || $myRight['alliancenews']) array_push($adminBox,"<a href=\"?page=$page&action=alliancenews\">Allianznews (Rathaus)</a>");
 						if ($isFounder || $myRight['relations']) array_push($adminBox,"<a href=\"?page=$page&action=relations\">Diplomatie</a>");
 						if ($isFounder || $myRight['polls']) array_push($adminBox,"<a href=\"?page=$page&action=polls\">Umfragen verwalten</a>");
+						if ($isFounder || $myRight['wings']) array_push($adminBox,"<a href=\"?page=$page&action=wings\">Wings verwalten</a>");
 						if ($isFounder || $myRight['liquidate']) array_push($adminBox,"<a href=\"?page=$page&action=liquidate\">Allianz aufl&ouml;sen</a>");
 						
 						array_push($adminBox,"<a href=\"?page=$page&action=base\">Allianzbasis</a>");
@@ -611,7 +628,7 @@
 						$cnt=count($adminBox);
 						if ($cnt>0)
 						{
-							echo"<tr><td class=\"tbltitle\" width=\"120\" rowspan=\"".(ceil($cnt/2)+1)."\">Verwaltung:</td>";
+							echo"<tr><th width=\"120\" rowspan=\"".(ceil($cnt/2)+1)."\">Verwaltung:</th>";
 							$bcnt=0;
 							foreach ($adminBox as $ab)
 							{
@@ -636,7 +653,7 @@
 						if ($isFounder || $myRight['history'])
 						{
 							echo "<tr>
-								<td class=\"tbltitle\" width=\"120\">Letzte Ereignisse:</td>
+								<th width=\"120\">Letzte Ereignisse:</th>
 								<td class=\"tbldata\" colspan=\"2\">";
 							$hres=dbquery("
 							SELECT 
@@ -693,13 +710,13 @@
 						{
 							
 							echo "<tr>
-											<td class=\"tbltitle\">Kriege:</td>
+											<th>Kriege:</th>
 											<td class=\"tbldata\" colspan=\"2\">
 												<table class=\"tbl\">
 													<tr>
-														<td class=\"tbltitle\" style=\"width:50%;\">Allianz</td>
-														<td class=\"tbltitle\" style=\"width:25%;\">Von</td>
-														<td class=\"tbltitle\" style=\"width:25%;\">Bis</td>
+														<th style=\"width:50%;\">Allianz</th>
+														<th style=\"width:25%;\">Von</th>
+														<th style=\"width:25%;\">Bis</th>
 													</tr>";
 									while ($war=mysql_fetch_array($wars))
 									{
@@ -756,13 +773,13 @@
 						if (mysql_num_rows($wars)>0)
 						{			
 							echo "<tr>
-											<td class=\"tbltitle\">Friedensabkommen:</td>
+											<th>Friedensabkommen:</th>
 											<td class=\"tbldata\" colspan=\"2\">
 												<table class=\"tbl\">
 													<tr>
-														<td class=\"tbltitle\" style=\"width:50%;\">Allianz</td>
-														<td class=\"tbltitle\" style=\"width:25%;\">Von</td>
-														<td class=\"tbltitle\" style=\"width:25%;\">Bis</td>
+														<th style=\"width:50%;\">Allianz</th>
+														<th style=\"width:25%;\">Von</th>
+														<th style=\"width:25%;\">Bis</th>
 													</tr>";					
 									while ($war=mysql_fetch_array($wars))
 									{
@@ -819,13 +836,13 @@
 						if (mysql_num_rows($wars)>0)
 						{				
 							echo "<tr>
-											<td class=\"tbltitle\">Bündnisse:</td>
+											<th>Bündnisse:</th>
 											<td class=\"tbldata\" colspan=\"2\">
 												<table class=\"tbl\">
 													<tr>
-														<td class=\"tbltitle\" style=\"width:50%;\">Allianz</td>
-														<td class=\"tbltitle\" style=\"width:25%;\">Von</td>
-														<td class=\"tbltitle\" style=\"width:25%;\">Bündnisname</td>
+														<th style=\"width:50%;\">Allianz</th>
+														<th style=\"width:25%;\">Von</th>
+														<th style=\"width:25%;\">Bündnisname</th>
 													</tr>";		
 			
 									while ($war=mysql_fetch_array($wars))
@@ -860,19 +877,46 @@
 						// Besucher
 						if ($arr['alliance_visits_ext']>0)
 						{
-							echo "<tr><td class=\"tbltitle\" width=\"120\">Besucherz&auml;hler:</td><td class=\"tbldata\" colspan=\"2\">".nf($arr['alliance_visits_ext'])." Besucher</td></tr>\n";
+							echo "<tr><th width=\"120\">Besucherzähler:</th><td class=\"tbldata\" colspan=\"2\">".nf($arr['alliance_visits_ext'])." Besucher</td></tr>\n";
 						}
+						
+						// Wings
+						$wings = $ally->getWings();
+						if (count($wings) > 0)
+						{
+							echo "<tr><th width=\"120\">Wings:</th><td class=\"tbldata\" colspan=\"2\">";
+							tableStart();
+							echo "<tr>
+								<th>Name</th>
+								<th>Punkte</th>
+								<th>Mitglieder</th>
+								<th>Punkteschnitt</th>
+							</tr>";
+							foreach ($wings as $wid => $wdata)
+							{
+								echo "<tr>
+								<td><a href=\"?page=alliance&amp;id=".$wid."\">".$wdata."</a></td>
+								<td>".nf($wdata->points)."</td>
+								<td>".$wdata->memberCount."</td>
+								<td>".nf($wdata->avgPoints)."</td>
+								</tr>";
+							}
+							echo "</td></tr>";
+							tableEnd();
+							echo "</td></tr>";
+						}						
+						
 
 						// Website
 						if ($arr['alliance_url']!="")
 						{
-							echo "<tr><td class=\"tbltitle\" width=\"120\">Website/Forum:</td><td class=\"tbldata\" colspan=\"2\"><b>".
+							echo "<tr><th width=\"120\">Website/Forum:</th><td class=\"tbldata\" colspan=\"2\"><b>".
 							format_link($arr['alliance_url'])."</a></b></td></tr>\n";
 						}
 						
 						// Diverses
-						echo "<tr><td class=\"tbltitle\" width=\"120\">Mitglieder:</td><td class=\"tbldata\" colspan=\"2\">$member_count</td></tr>\n";
-						echo "<tr><td class=\"tbltitle\" width=\"120\">Gr&uuml;nder:</td><td class=\"tbldata\" colspan=\"2\"><a href=\"?page=userinfo&amp;id=".$arr['alliance_founder_id']."\">".get_user_nick($arr['alliance_founder_id'])."</a></td></tr>";
+						echo "<tr><th width=\"120\">Mitglieder:</th><td class=\"tbldata\" colspan=\"2\">$member_count</td></tr>\n";
+						echo "<tr><th width=\"120\">Gr&uuml;nder:</th><td class=\"tbldata\" colspan=\"2\"><a href=\"?page=userinfo&amp;id=".$arr['alliance_founder_id']."\">".get_user_nick($arr['alliance_founder_id'])."</a></td></tr>";
 						echo "\n</table><br/>";
 					}
 				}
