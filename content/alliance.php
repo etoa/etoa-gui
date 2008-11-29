@@ -456,6 +456,9 @@
 						$res = dbquery("SELECT * FROM alliances WHERE alliance_id='".$cu->allianceId."';");
 						$arr = mysql_fetch_array($res);
 						echo "Die &Auml;nderungen wurden übernommen!<br/>".$message."<br/>";
+						
+						// Hack
+						$ally = new Alliance($cu->allianceId);
 					}
 
 					// Bewerbungsvorlage speichern
