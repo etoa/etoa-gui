@@ -2,7 +2,6 @@
 if (Alliance::checkActionRights('editmembers'))
 {
 
-
 		echo "<h2>Allianzmitglieder</h2>";
 		// Ränge laden
 		$rres = dbquery("
@@ -19,6 +18,7 @@ if (Alliance::checkActionRights('editmembers'))
 		}
 		echo "<form action=\"?page=$page&amp;action=editmembers\" method=\"post\">";
 
+
 		// Mitgliederänderungen speichern
 		if (isset($_POST['editmemberssubmit']) && checker_verify())
 		{
@@ -28,12 +28,53 @@ if (Alliance::checkActionRights('editmembers'))
 				{
 					if (mysql_num_rows(dbquery("SELECT user_id FROM users WHERE user_alliance_rank_id!='$rid' AND user_id='$uid';"))>0)
 					{
-						add_alliance_history($cu->allianceId,"Der Spieler [b]".get_user_nick($uid)."[/b] bekommt den Rang [b]".$rank[$rid]."[/b].");
 						dbquery("UPDATE users SET user_alliance_rank_id='$rid' WHERE user_id='$uid';");
+						$ally->addHistory("Der Spieler [b]".get_user_nick($uid)."[/b] erhält den Rang [b]".$rank[$rid]."[/b].");
 					}
 				}
-				echo "&Auml;nderungen wurden übernommen!<br/><br/>";
+				ok_msg("&Auml;nderungen wurden übernommen!");
 			}
+			
+			// Handle user move from wing to wing or main
+			if (count($ally->wings) > 0)
+			{	
+				if (isset($_POST['moveuser']) && count($_POST['moveuser'])>0)
+				{
+					foreach ($_POST['moveuser'] as $wf => $wd)
+					{
+						foreach ($wd as $uk => $wt)
+						{
+							if ($wt!=0)
+							{
+								if ($wf!= $wt && ($wf == $ally->id || isset($ally->wings[$wf])) && ($wt == $ally->id || isset($ally->wings[$wt])))
+								{
+									if ($wf == $ally->id)
+									{
+										$ally->kickMember($uk);
+									}
+									else
+									{
+										$ally->wings[$wf]->kickMember($uk);
+									}
+									
+									if ($wt == $ally->id)
+									{
+										$ally->addMember($uk);
+										success_msg($ally->members[$uk]." wurde umgeteilt!");						
+									}
+									else
+									{
+										$ally->wings[$wt]->addMember($uk);
+										success_msg($ally->wings[$wt]->members[$uk]." wurde verschoben!");						
+									}			
+								}
+							}
+						}
+					}
+				}
+			
+			}			
+			
 		}
 
 		// Gründer wechseln
@@ -56,138 +97,140 @@ if (Alliance::checkActionRights('editmembers'))
 		// Mitglied kicken
 		if (isset($_GET['kickuser']) && intval($_GET['kickuser'])>0 && checker_verify())
 		{
-			$ures = dbquery("
-			SELECT
-                        users.user_nick,
-                        alliances.alliance_name,
-                        alliances.alliance_tag,
-                        alliances.alliance_id,
-                        alliances.alliance_founder_id
-			FROM
-                        alliances
-     	INNER JOIN
-                        users
-			ON
-                        users.user_alliance_id=alliances.alliance_id
-                        AND users.user_id=".intval($_GET['kickuser'])."
-                        AND alliances.alliance_id='".$cu->allianceId."';");
-			if (mysql_num_rows($res))
+			if (isset($ally->members[$_GET['kickuser']]))
 			{
-				$uarr = mysql_fetch_assoc($ures);
-				echo "Der Spieler wurde aus der Allianz ausgeschlossen!<br/><br/>";
-				dbquery("
-				UPDATE 
-					users 
-				SET 
-					user_alliance_rank_id=0,
-					user_alliance_id=0 
-				WHERE 
-					user_alliance_id=".$arr['alliance_id']." 
-					AND user_id='".intval($_GET['kickuser'])."';");
-				send_msg(intval($_GET['kickuser']),MSG_ALLYMAIL_CAT,"Allianzausschluss","Du wurdest aus der Allianz ausgeschlossen!");
-				
-				$tu = new User($_GET['kickuser']);
-				$tu->addToUserLog("alliance","{nick} ist nun kein Mitglied mehr der Allianz ".$arr['alliance_name'].".");
-				
-				add_alliance_history($cu->allianceId,"Der Spieler [b]".$uarr['user_nick']."[/b] wurde von [b]".$cu->nick."[/b] aus der Allianz ausgeschlossen!");
-				add_log(5,"Der Spieler [b]".$uarr['user_nick']."[/b] wurde von [b]".$cu->nick."[/b] aus der Allianz [b][".$arr['alliance_tag']."] ".$arr['alliance_name']."[/b] ausgeschlossen!",time());
+				$tmpUser = $ally->members[$_GET['kickuser']];
+				$ally->kickMember($_GET['kickuser']);
+
+				add_log(5,"Der Spieler [b]".$tmpUser."[/b] wurde von [b]".$cu."[/b] aus der Allianz [b]".$ally."[/b] ausgeschlossen!",time());
+				success_msg("Der Spieler [b]".$tmpUser."[/b] wurde aus der Allianz ausgeschlossen!");
+				unset($tmpUser);
 			}
 			else
 			{
-				echo "Der Spieler konnte nicht aus der Allianz ausgeschlossen werden, da er kein Mitglieder dieser Allianz ist!<br/><br/>";
+				error_msg("Der Spieler konnte nicht aus der Allianz ausgeschlossen werden, da er kein Mitglieder dieser Allianz ist!");
 			}
 		}
 
+
+
 		checker_init();
-		echo "<table class=\"tbl\">";
-		echo "<tr><td class=\"tbltitle\">Nick</td><td class=\"tbltitle\">Heimatplanet</td><td class=\"tbltitle\">Punkte</td><td class=\"tbltitle\">Rang</td><td class=\"tbltitle\">Angriffe</td><td class=\"tbltitle\">Online</td><td class=\"tbltitle\">Aktionen</td>";
-		$ures = dbquery("
-		SELECT 
-			u.user_acttime,
-			u.user_id,u.user_points,
-			u.user_nick,
-			p.id,
-			u.user_alliance_rank_id 
-		FROM 
-			users AS u
-		INNER JOIN
-			planets AS p 
-		ON 
-			p.planet_user_id=u.user_id 
-			AND u.user_alliance_id='".$cu->allianceId."' 
-			AND p.planet_user_main=1 
-			GROUP BY u.user_id  
-		ORDER BY 
-			u.user_points DESC, 
-			u.user_nick;");
-		while ($uarr = mysql_fetch_assoc($ures))
+		echo "<table class=\"tb\">";
+		echo "<tr>
+			<th>Nick:</th>
+			<th>Punkte:</th>
+			<th>Online:</th>
+			<th>Rang:</th>";
+			if (count($ally->wings) > 0)
+				echo "<th>Umteilen</th>";
+			echo "<th>Aktionen</th>
+		</tr>";
+		foreach ($ally->members as $mk => $mv)
 		{
-			$tp = new Planet($uarr['id']);
 			echo "<tr>";
 			// Nick, Planet, Punkte
-			echo "<td class=\"tbldata\">".$uarr['user_nick']."</td>
-			<td class=\"tbldata\">".$tp."</td>
-			<td class=\"tbldata\">".nf($uarr['user_points'])."</td>";
+			echo "<td>".$mv."</td>
+			<td>".nf($mv->points)."</td>";
+			// Zuletzt online
+			if ((time()-$conf['online_threshold']['v']*60) < $mv->acttime)
+				echo "<td class=\"tbldata\" style=\"color:#0f0;\">online</td>";
+			else
+				echo "<td class=\"tbldata\">".date("d.m.Y H:i",$mv->acttime)."</td>";
+			
 			// Rang
-			if ($uarr['user_id']==$arr['alliance_founder_id'])
-				echo "<td class=\"tbldata\">Gründer</td>";
+			if ($mk == $ally->founderId)
+				echo "<td>Gründer</td>";
 			else
 			{
-				echo "<td class=\"tbldata\"><select name=\"user_alliance_rank_id[".$uarr['user_id']."]\">";
+				echo "<td class=\"tbldata\"><select name=\"user_alliance_rank_id[".$mk."]\">";
 				echo "<option value=\"0\">Rang w&auml;hlen...</option>";
 				foreach ($rank as $id=>$name)
 				{
 					echo "<option value=\"$id\"";
-					if ($uarr['user_alliance_rank_id']==$id) echo " selected=\"selected\"";
+					if ($mv->allianceRankId == $id) echo " selected=\"selected\"";
 					echo ">".$name."</option>";
 				}
 				echo "</select></td>";
 			}
 
-      $num=check_fleet_incomming($uarr['user_id']);
-      if ($num>0)
-      {
-          echo "<td style=\"color:#f00;\" align=\"center\">".$num."</td>";
-      } else {
-          echo "<td class=\"tbldata\">-</td>";
-      }
-
-			// Zuletzt online
-			if ((time()-$conf['online_threshold']['v']*60) < $uarr['user_acttime'])
-				echo "<td class=\"tbldata\" style=\"color:#0f0;\">online</td>";
-			else
-				echo "<td class=\"tbldata\">".date("d.m.Y H:i",$uarr['user_acttime'])."</td>";
+			if (count($ally->wings) > 0)
+			{
+				echo "<td>";
+				if ($ally->founderId != $mk)
+				{
+						echo "<select name=\"moveuser[".$ally->id."][".$mk."]\">
+					<option value=\"\">Keine Änderung</option>";
+					foreach ($ally->wings as $wk => $wv)
+					{
+						echo "<option value=\"".$wk."\">Wing ".$wv."</option>";
+					}								
+					echo "</select>";
+				}
+				else
+				{
+					echo "Gründer";
+				}
+				echo "</td>";
+    	}
+    	
 			// Aktionen
 			echo "<td class=\"tbldata\">";
-			if ($cu->id!=$uarr['user_id'])
-				echo "<a href=\"?page=messages&amp;mode=new&amp;message_user_to=".$uarr['user_id']."\">Nachricht</a><br/>";
-			echo "<a href=\"?page=userinfo&amp;id=".$uarr['user_id']."\">Profil</a><br/>";
-			if ($isFounder && $cu->id!=$uarr['user_id'])
-				echo "<a href=\"?page=alliance&amp;action=editmembers&amp;setfounder=".$uarr['user_id']."\" onclick=\"return confirm('Soll der Spieler \'".$uarr['user_nick']."\' wirklich zum Gründer bef&ouml;rdert werden? Dir werden dabei die Gründerrechte entzogen!');\">Gründer</a><br/>";
+			if ($cu->id != $mk)
+				echo "<a href=\"?page=messages&amp;mode=new&amp;message_user_to=".$mk."\">Nachricht</a><br/>";
+			echo "<a href=\"?page=userinfo&amp;id=".$mk."\">Profil</a><br/>";
+			if ($isFounder && $cu->id != $mk)
+				echo "<a href=\"?page=alliance&amp;action=editmembers&amp;setfounder=".$mk."\" onclick=\"return confirm('Soll der Spieler \'".$mv."\' wirklich zum Gründer bef&ouml;rdert werden? Dir werden dabei die Gründerrechte entzogen!');\">Gründer</a><br/>";
 
-			if ($cu->id!=$uarr['user_id'] && $uarr['user_id']!=$arr['alliance_founder_id'])
+			if ($cu->id != $mk && $mk != $ally->founderId)
 			{
-				echo "<a href=\"?page=$page&amp;action=editmembers&amp;kickuser=".$uarr['user_id'].checker_get_link_key()."\" onclick=\"return confirm('Soll ".$uarr['user_nick']." wirklich aus der Allianz ausgeschlosen werden?');\">Kicken</a>";
+				echo "<a href=\"?page=$page&amp;action=editmembers&amp;kickuser=".$mk.checker_get_link_key()."\" onclick=\"return confirm('Soll ".$mv." wirklich aus der Allianz ausgeschlosen werden?');\">Kicken</a>";
 			}
 			echo "</td></tr>";
 		}
 		echo "</table><br/>";
 		
 		
-		$wings = $ally->getWings();
-		if (count($wings) > 0)
+
+		if (count($ally->wings) > 0)
 		{
-			foreach ($wings as $wid => $wdata)
+			foreach ($ally->wings as $wid => $wdata)
 			{			
 				tableStart("Mitglieder des Wings ".$wdata);
 				echo "<tr>
 					<th>Name:</th>
 					<th>Punkte:</th>
-					<th>Rang:</th>
+					<th>Online:</th>
 					<th>Umteilen:</th>
 				</tr>";
-				
-				
+				foreach ($wdata->members as $uid => $udata)
+				{
+						echo "<tr>
+						<td>".$udata."</td>
+						<td>".nf($udata->points)."</td>";
+						// Zuletzt online
+						if ((time()-$conf['online_threshold']['v']*60) < $mv->acttime)
+							echo "<td style=\"color:#0f0;\">online</td>";
+						else
+							echo "<td>".date("d.m.Y H:i",$mv->acttime)."</td>";
+						echo "<td>";
+						if ($wdata->founderId != $uid)
+						{
+								echo "<select name=\"moveuser[".$wid."][".$uid."]\">
+							<option value=\"\">Keine Änderung</option>
+							<option value=\"".$ally->id."\">Hauptallianz ".$ally."</option>";
+							foreach ($ally->wings as $k => $v)
+							{
+								if ($k != $wid)
+									echo "<option value=\"".$k."\">Wing ".$v."</option>";
+							}								
+							echo "</select>";
+						}
+						else
+						{
+							echo "Gründer";
+						}
+						echo "</td></tr>";
+				}
 				tableEnd();
 			}
 		}		

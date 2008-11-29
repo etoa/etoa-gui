@@ -609,8 +609,12 @@
 
 						// Verwaltung
 						$adminBox=array();
-						if ($isFounder || $myRight['editdata']) array_push($adminBox,"<a href=\"?page=$page&amp;action=editdata\">Allianz-Daten</a>");
+
+
+						if ($isFounder || $myRight['viewmembers']) array_push($adminBox,"<a href=\"?page=$page&amp;action=viewmembers\">Mitglieder anzeigen</a>");
 						if ($isFounder || $myRight['editmembers']) array_push($adminBox,"<a href=\"?page=$page&action=editmembers\">Mitglieder verwalten</a>");
+						if ($isFounder || $myRight['editdata']) array_push($adminBox,"<a href=\"?page=$page&amp;action=editdata\">Allianz-Daten</a>");
+						if ($isFounder || $myRight['wings']) array_push($adminBox,"<a href=\"?page=$page&action=wings\">Wings verwalten</a>");
 						if ($isFounder || $myRight['applicationtemplate']) array_push($adminBox,"<a href=\"?page=$page&action=applicationtemplate\">Bewerbungsvorlage</a>");
 						if ($isFounder || $myRight['history']) array_push($adminBox,"<a href=\"?page=$page&action=history\">Geschichte</a>");
 						if ($isFounder || $myRight['massmail']) array_push($adminBox,"<a href=\"?page=$page&action=massmail\">Rundmail</a>");
@@ -618,7 +622,6 @@
 						if ($isFounder || $myRight['alliancenews']) array_push($adminBox,"<a href=\"?page=$page&action=alliancenews\">Allianznews (Rathaus)</a>");
 						if ($isFounder || $myRight['relations']) array_push($adminBox,"<a href=\"?page=$page&action=relations\">Diplomatie</a>");
 						if ($isFounder || $myRight['polls']) array_push($adminBox,"<a href=\"?page=$page&action=polls\">Umfragen verwalten</a>");
-						if ($isFounder || $myRight['wings']) array_push($adminBox,"<a href=\"?page=$page&action=wings\">Wings verwalten</a>");
 						if ($isFounder || $myRight['liquidate']) array_push($adminBox,"<a href=\"?page=$page&action=liquidate\">Allianz aufl&ouml;sen</a>");
 						
 						array_push($adminBox,"<a href=\"?page=$page&action=base\">Allianzbasis</a>");

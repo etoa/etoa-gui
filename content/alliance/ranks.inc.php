@@ -27,7 +27,7 @@ if (Alliance::checkActionRights('ranks'))
 										else
 										{
 											dbquery("UPDATE alliance_ranks SET rank_name='".$name."' WHERE rank_id=$id;");
-											if (isset($_POST['rankright']))
+											if (isset($_POST['rankright']) && isset($_POST['rankright'][$id]))
 											{
 												foreach ($_POST['rankright'][$id] as $rid=>$rv)
 												{

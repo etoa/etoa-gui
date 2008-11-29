@@ -8,8 +8,10 @@ class Alliance
 	protected $motherId;
 	protected $points;
 	protected $memberCount;
+	protected $founderId;
 
 	protected $wings = null;
+	protected $members = null;
 
 	protected $valid;
 	
@@ -40,7 +42,8 @@ class Alliance
   		$this->motherId = $arr['alliance_mother'];
   		$this->points = $arr['alliance_points'];
   		$this->memberCount = $arr['member_count'];
-  		
+			$this->founderId = $arr['alliance_founder_id'];  		
+			
   		$this->valid = true;
   	}
   }
@@ -78,6 +81,13 @@ class Alliance
 			if (!property_exists($this,$key))
 				throw new EException("Property $key existiert nicht in ".__CLASS__);
 
+			if ($key == "members" && $this->members == null)
+				$this->getMembers();
+
+			if ($key == "wings" && $this->wings == null)
+				$this->getWings();
+
+
 			return $this->$key;
 		}
 		catch (EException $e)
@@ -109,7 +119,72 @@ class Alliance
 	}
 	
 	
-	public function getWings()
+	public function & getMembers()
+	{
+		if ($this->members == null)
+		{
+			$this->members = array();
+	  	$res = dbquery("
+	  	SELECT
+	  		user_id
+	  	FROM
+	  		users
+	  	WHERE
+	  		user_alliance_id=".$this->id."
+	  	");			
+	  	if (mysql_num_rows($res)>0)
+	  	{
+	  		while ($arr = mysql_fetch_row($res))
+	  		{
+		  		$this->members[$arr[0]] = new User($arr[0]);
+	  		}
+	  	}
+		}
+		return $this->members;
+	}
+	
+	public function addMember($userId)
+	{
+		$this->getMembers();
+		if (!isset($this->members[$userId]))
+		{
+			$tmpUser = new User($userId);
+			if ($tmpUser->isValid)
+			{
+				if ($tmpUser->alliance = $this)
+				{
+					$this->members[$userId] = $tmpUser;
+					$this->members[$userId]->sendMessage(MSG_ALLYMAIL_CAT,"Allianzaufnahme","Du wurdest in die Allianz [b]".$this."[/b] aufgenommen!");
+					$this->members[$userId]->addToUserLog("alliance","{nick} ist nun Mitglied der Allianz ".$this.".");
+					$this->addHistory("[b]".$tmpUser."[/b] wurde als neues Mitglied aufgenommen");
+					return true;
+				}
+			}
+			unset($tmpUser);
+		}
+		return false;
+	}	
+	
+	public function kickMember($userId)
+	{
+		$this->getMembers();
+		if ($this->members[$userId]->isValid)
+		{
+			$this->members[$userId]->alliance = null;
+			if ($this->members[$userId]->allianceId == 0)
+			{
+				$this->members[$userId]->sendMessage(MSG_ALLYMAIL_CAT,"Allianzausschluss","Du wurdest aus der Allianz [b]".$this."[/b] ausgeschlossen!");
+				$this->members[$userId]->addToUserLog("alliance","{nick} ist nun kein Mitglied mehr der Allianz ".$this.".");
+				$this->addHistory("[b]".$this->members[$userId]."[/b] ist nun kein Mitglied mehr von uns");
+				unset($this->members[$userId]);
+				return true;
+			}
+		}
+		unset($tmpUser);
+		return false;
+	}		
+	
+	public function & getWings()
 	{
 		if ($this->wings == null)
 		{

@@ -41,7 +41,6 @@
 		protected $profileBoardUrl;
 		protected $signature;
 		protected $avatar;
-		protected $allianceId;
 		protected $allianceRankId;
 		protected $allianceName;
 		protected $allianceTag;
@@ -54,9 +53,10 @@
 		// Sub-objects and their id's		
 		protected $raceId;
 		protected $race = null;
+		protected $allianceId;
+		protected $alliance = null;
 		protected $rating = null;
 		protected $properties = null;
-		protected $alliance = null;
 
 		protected $changedFields;
 		
@@ -159,7 +159,11 @@
 				foreach ($this->changedFields as $k=>$v)
 				{
 					if ($k=="race")	
-				    $sql.= " user_race_id=".$this->race->id.",";
+				    $sql.= " user_race_id=".$this->raceId.",";
+					elseif ($k=="alliance")	
+				    $sql.= " user_alliance_id=".$this->allianceId.",";
+					elseif ($k=="allianceRankId")	
+				    $sql.= " user_alliance_rank_id=".$this->allianceRankId.",";
 					elseif ($k=="visits")	
 				    $sql.= " user_visits=".$this->visits.",";
 					elseif ($k=="email")	
@@ -202,10 +206,26 @@
 				if ($key == "race")
 				{
 					$this->$key = $val;
- 					$this->raceId = $this->race->id;
+ 					$this->raceId = ($this->race == null) ? 0 : $this->race->id;
 					$this->changedFields[$key] = true;
  					return true;
 				}
+				if ($key == "alliance")
+				{
+					$this->$key = $val;
+ 					$this->allianceId = ($this->alliance == null) ? 0 : $this->alliance->id;
+ 					$this->allianceRankId = 0;
+					$this->changedFields[$key] = true;
+					$this->changedFields["allianceRankId"] = 0;
+ 					return true;
+				}				
+				if ($key == "race")
+				{
+					$this->$key = $val;
+ 					$this->raceId = $this->race->id;
+					$this->changedFields[$key] = true;
+ 					return true;
+				}				
 				elseif ($key == "visits")
 				{
 					$this->$key = intval($val);
@@ -237,6 +257,16 @@
 					throw new EException("Property $key der Klasse  ".__CLASS__." ist nicht änderbar!");
 					return false;
 				}	
+				elseif ($key == "raceId")
+				{
+					throw new EException("Property $key der Klasse  ".__CLASS__." ist nicht änderbar!");
+					return false;
+				}					
+				elseif ($key == "allianceId")
+				{
+					throw new EException("Property $key der Klasse  ".__CLASS__." ist nicht änderbar!");
+					return false;
+				}					
 				else
 				{
 					$this->$key = $val;
@@ -258,10 +288,14 @@
 				if (!property_exists($this,$key))
 					throw new EException("Property $key existiert nicht in ".__CLASS__);
 				
-				if ($key == "race" && $this->race==null)
+				if ($key == "race" && $this->race==null && $this->raceId > 0)
 				{
  					$this->race = new Race($this->raceId);
 				}
+				if ($key == "alliance" && $this->alliance==null && $this->allianceId > 0)
+				{
+ 					$this->alliance = new Alliance($this->allianceId);
+				}				
 				if ($key == "rating" && $this->rating==null)
 				{
  					$this->rating = new UserRating($this->id);
@@ -286,10 +320,6 @@
 		}
 		
 
-/*
-
-		final public function allianceRankId() { return $this->allianceRankId; }
-		*/
 	
 		final public function isSetup() 	{	return $this->setup; }		
 
@@ -425,6 +455,46 @@
       ");
 			return true;
     }
+    
+		/**
+		* Sends a system message to the user
+		*/
+		function sendMessage($msg_type,$subject,$text)
+		{
+			dbquery("
+				INSERT INTO
+					messages
+				(
+					message_user_from,
+					message_user_to,
+					message_timestamp,
+					message_cat_id
+				)
+				VALUES
+				(
+					'0',
+					'".$this->id."',
+					'".time()."',
+					'".$msg_type."'
+				);
+			");
+			dbquery("
+				INSERT INTO
+					message_data
+				(
+					id,
+					subject,
+					text
+				)
+				VALUES
+				(
+					".mysql_insert_id().",
+					'".addslashes($subject)."',
+					'".addslashes($text)."'
+				);
+			");		
+		}
+    
     
 		/**
 		* Benutzer löschen
