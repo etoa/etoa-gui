@@ -26,7 +26,12 @@ if (Alliance::checkActionRights('ranks'))
 										}
 										else
 										{
-											dbquery("UPDATE alliance_ranks SET rank_name='".$name."' WHERE rank_id=$id;");
+											dbquery("UPDATE 
+												alliance_ranks 
+											SET 
+												rank_name='".$name."',
+												rank_level='".$_POST['rank_level'][$id]."' 
+											WHERE rank_id=$id;");
 											if (isset($_POST['rankright']) && isset($_POST['rankright'][$id]))
 											{
 												foreach ($_POST['rankright'][$id] as $rid=>$rv)
@@ -51,15 +56,24 @@ if (Alliance::checkActionRights('ranks'))
 						FROM 
 							alliance_ranks 
 						WHERE 
-							rank_alliance_id=".$arr['alliance_id'].";");
+							rank_alliance_id=".$arr['alliance_id']."
+						ORDER BY rank_level;");
 						if (mysql_num_rows($rankres)>0)
 						{
 							tableStart("Verf&uuml;gbare R&auml;nge");
-							echo "<tr><td class=\"tbltitle\">Rangname</td><td class=\"tbltitle\">Rechte</td><td class=\"tbltitle\">L&ouml;schen</td></tr>";
+							echo "<tr>
+								<th>Rangname:</th>
+								<th>Rechte:</th>
+								<th>L&ouml;schen:</th>
+							</tr>";
 							while ($rarr = mysql_fetch_array($rankres))
 							{
-								echo "<tr><td class=\"tbldata\"><input type=\"text\" name=\"rank_name[".$rarr['rank_id']."]\" value=\"".$rarr['rank_name']."\" />";
-								echo "<td class=\"tbldata\">";
+								echo "<tr>
+									<td class=\"tbldata\">
+										<input type=\"text\" name=\"rank_name[".$rarr['rank_id']."]\" value=\"".$rarr['rank_name']."\" /><br/>
+										Level: <input type=\"text\" name=\"rank_level[".$rarr['rank_id']."]\" value=\"".$rarr['rank_level']."\" maxlength=\"1\" size=\"2\" />
+									</td>
+									<td>";
 								foreach ($rights as $k=>$v)
 								{
 									echo "<input type=\"checkbox\" name=\"rankright[".$rarr['rank_id']."][".$k."]\" value=\"1\" ";

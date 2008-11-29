@@ -5,16 +5,34 @@ class Alliance
 	protected $id;
 	protected $name;
 	protected $tag;
-	protected $motherId;
 	protected $points;
 	protected $memberCount;
-	protected $founderId;
+	protected $visits;
+	protected $visitsExt;
+	protected $text;
+	protected $image;
+	protected $url;
+	protected $acceptApplications;
+	protected $acceptPact;
+	protected $foundationDate;
+	protected $publicMemberList;
 
 	protected $wings = null;
 	protected $members = null;
+	protected $ranks = null;
 
-	protected $valid;
+	protected $founderId;
+	protected $founder = null;
+
+	protected $motherId;
+	protected $mother = null;
 	
+	protected $valid;
+	protected $changedFields;
+	
+	/**
+	* Constructor
+	*/
   function Alliance($id) 
   {
   	$this->id = $id;
@@ -43,16 +61,71 @@ class Alliance
   		$this->points = $arr['alliance_points'];
   		$this->memberCount = $arr['member_count'];
 			$this->founderId = $arr['alliance_founder_id'];  		
+			$this->visits = $arr['alliance_visits'];
+			$this->visitsExt = $arr['alliance_visits_ext'];
+			$this->text = $arr['alliance_text'];
+			$this->image = $arr['alliance_img'];
+			$this->url = $arr['alliance_url'];
+			$this->acceptApplications = (bool)$arr['alliance_accept_applications'];
+			$this->acceptPact = (bool)$arr['alliance_accept_bnd'];
+			$this->publicMemberList = (bool)$arr['alliance_public_memberlist'];
+			$this->foundationDate = $arr['alliance_foundation_date'];
+			  	
 			
+			$this->changedFields = array();
   		$this->valid = true;
   	}
   }
     
+  /**
+  * Returns a propperly formated alliance name
+  */
 	public function __toString()
 	{
 		return "[".$this->tag."] ".$this->name;
 	}
 	
+	/**
+	* Destruktor
+	*/
+	function __destruct()
+	{
+		$cnt = count($this->changedFields);
+		if ($cnt > 0)
+		{
+			$sql = "UPDATE 
+				alliances
+			SET ";
+			foreach ($this->changedFields as $k=>$v)
+			{
+				if ($k == "visits")	
+			    $sql.= " alliance_visits=".$this->$k.",";
+				elseif ($k == "visitsExt")	
+			    $sql.= " alliance_visits_ext=".$this->$k.",";
+				elseif ($k == "founderId")
+			    $sql.= " alliance_founder_id=".$this->$k.",";
+			   /*
+				elseif ($k == "profileImage")
+				{
+					if ($this->profileImage == "")
+				    $sql.= " user_profile_img='',user_profile_img_check=0,";
+          else
+			    	$sql.= " user_profile_img='".$this->profileImage."',user_profile_img_check=1,";
+				}*/
+				else
+					echo " $k has no valid UPDATE query!<br/>";
+			}
+			$sql.=" alliance_id=alliance_id WHERE
+			    	alliance_id=".$this->id.";";
+			dbquery($sql);
+		}
+		unset($this->changedFields);
+		
+	}	
+	
+	/**
+	* Chances alliance properties
+	*/
 	public function __set($key, $val)
 	{
 		try
@@ -60,33 +133,81 @@ class Alliance
 			if (!property_exists($this,$key))
 				throw new EException("Property $key existiert nicht in der Klasse ".__CLASS__);
 			
+			if ($key=="visits")
+			{
+				$this->$key = intval($val);
+				$this->changedFields[$key] = true;
+				return true;				
+			}
+			if ($key=="visitsExt")
+			{
+				$this->$key = intval($val);
+				$this->changedFields[$key] = true;
+				return true;				
+			}		
+			if ($key=="founderId")
+			{
+				if ($this->members == null)				
+					$this->getMembers();
+				if (isset($this->members[$val]))
+				{
+					$this->$key = $val;
+					$this->founder = & $this->members[$val];
+					$this->addHistory("Der Spieler [b]".$this->founder."[/b] wird zum Gründer befördert.");
+					$this->founder->sendMessage(MSG_ALLYMAIL_CAT,"Gründer","Du hast nun die Gründerrechte deiner Allianz!");
+					$this->founder->addHistory("{nick} ist nun Gründer der Allianz ".$this);
+					$this->changedFields[$key] = true;
+					return true;				
+				}
+				return false;
+			}				
+		
 			throw new EException("Property $key der Klasse  ".__CLASS__." ist nicht änderbar!");
 				return false;
-
-			
 		}
 		catch (EException $e)
 		{
 			echo $e;
 		}
 	}
-	
+
+	/**
+	* Gets alliance properties
+	*/	
 	public function __get($key)
 	{
 		try
 		{
+			// Return special non-defined properties
 			if ($key == "avgPoints")
 				return floor($this->points / $this->memberCount);
-				
-			if (!property_exists($this,$key))
-				throw new EException("Property $key existiert nicht in ".__CLASS__);
+			if ($key == "imageUrl")
+				return ALLIANCE_IMG_DIR."/".$this->image;
 
+			// Check if property exists
+			if (!property_exists($this,$key))
+				throw new EException("Property $key existiert nicht in der Klasse ".__CLASS__);
+
+			// Do actions for some special properties
 			if ($key == "members" && $this->members == null)
 				$this->getMembers();
-
 			if ($key == "wings" && $this->wings == null)
 				$this->getWings();
+			if ($key == "mother" && $this->mother == null)
+				$this->mother = new Alliance($this->motherId);
+			if ($key == "founder" && $this->founder == null) 
+			{
+				if ($this->members == null)
+					$this->getMembers();
+				if (isset($this->members[$this->founderId]))
+					$this->founder = & $this->members[$this->founderId];
+			}
 
+
+			// Protected properties
+			if ($key == "changedFields")
+				throw new EException("Property $key der Klasse ".__CLASS__." ist geschützt!");
+				
 
 			return $this->$key;
 		}
@@ -118,7 +239,9 @@ class Alliance
 			);");
 	}
 	
-	
+	/**
+	* Returns alliance members as an array of user objecs
+	*/
 	public function & getMembers()
 	{
 		if ($this->members == null)
@@ -143,6 +266,9 @@ class Alliance
 		return $this->members;
 	}
 	
+	/**
+	* Adds a new user to the alliance
+	*/
 	public function addMember($userId)
 	{
 		$this->getMembers();
@@ -165,6 +291,9 @@ class Alliance
 		return false;
 	}	
 	
+	/**
+	* Removes an user from the alliance
+	*/
 	public function kickMember($userId)
 	{
 		$this->getMembers();
@@ -184,6 +313,9 @@ class Alliance
 		return false;
 	}		
 	
+	/**
+	* Returns all wings of this alliance as an array of alliance objects
+	*/
 	public function & getWings()
 	{
 		if ($this->wings == null)
@@ -263,6 +395,9 @@ class Alliance
 		return false;
 	}
 	
+	//
+	// Statics
+	//
 	
   static function checkActionRights($action)
   {

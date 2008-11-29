@@ -66,7 +66,8 @@
 			FROM
 				alliances
 			WHERE
-				alliance_id='".$cu->allianceId."';");
+				alliance_id='".$cu->allianceId."'
+			LIMIT 1;");
 			if (mysql_num_rows($res)>0)
 			{
 				$arr = mysql_fetch_array($res);
@@ -374,7 +375,8 @@
               {
                   @unlink(ALLIANCE_IMG_DIR."/".$arr['alliance_img']);
               }
-              $alliance_img_string="alliance_img='',";
+              $alliance_img_string="alliance_img='',
+              lliance_img_check=0,";
             }
             elseif (isset($_FILES['alliance_img_file']['tmp_name']) && $_FILES['alliance_img_file']['tmp_name']!="")
             {
@@ -400,7 +402,8 @@
 												{
 													echo "Bildgrösse wurde angepasst! ";
                         	echo "Allianzbild gespeichert!<br/>";
-                        	$alliance_img_string="alliance_img='".$fname."',";
+                        	$alliance_img_string="alliance_img='".$fname."',
+                        	alliance_img_check=1,";
 												}
 												else
 												{
@@ -411,7 +414,8 @@
 											else
 											{
                       	echo "Allianzbild gespeichert!<br/>";
-                      	$alliance_img_string="alliance_img='".$fname."',";
+                      	$alliance_img_string="alliance_img='".$fname."',
+                      	alliance_img_check=1,";
                       }
                   }
                   else
@@ -445,7 +449,8 @@
 						 	".$alliance_img_string."
 							alliance_url='".$_POST['alliance_url']."',
 							alliance_accept_applications='".$_POST['alliance_accept_applications']."',
-							alliance_accept_bnd='".$_POST['alliance_accept_bnd']."'
+							alliance_accept_bnd='".$_POST['alliance_accept_bnd']."',
+							alliance_public_memberlist='".$_POST['alliance_public_memberlist']."'
 						WHERE 
 							alliance_id=".$cu->allianceId.";");
 						$res = dbquery("SELECT * FROM alliances WHERE alliance_id='".$cu->allianceId."';");
@@ -470,16 +475,6 @@
 					// Allianzdaten anzeigen
 					else
 					{
-						$mres = dbquery("
-						SELECT 
-							COUNT(user_id )
-						FROM 
-							users 
-						WHERE 
-							user_alliance_id='".$cu->allianceId."'
-						;");
-						$marr = mysql_fetch_row($mres);
-						$member_count = $marr[0];						
 						
 						tableStart("[".stripslashes($arr['alliance_tag'])."] ".stripslashes($arr['alliance_name']));
 						if ($arr['alliance_img']!="")
@@ -888,7 +883,7 @@
 						if (count($wings) > 0)
 						{
 							echo "<tr><th width=\"120\">Wings:</th><td class=\"tbldata\" colspan=\"2\">";
-							tableStart();
+							echo "<table class=\"tb\">";
 							echo "<tr>
 								<th>Name</th>
 								<th>Punkte</th>
@@ -918,8 +913,25 @@
 						}
 						
 						// Diverses
-						echo "<tr><th width=\"120\">Mitglieder:</th><td class=\"tbldata\" colspan=\"2\">$member_count</td></tr>\n";
-						echo "<tr><th width=\"120\">Gr&uuml;nder:</th><td class=\"tbldata\" colspan=\"2\"><a href=\"?page=userinfo&amp;id=".$arr['alliance_founder_id']."\">".get_user_nick($arr['alliance_founder_id'])."</a></td></tr>";
+						echo "<tr><th width=\"120\">Mitglieder:</th>
+						<td class=\"tbldata\" colspan=\"2\">".$ally->memberCount."</td></tr>\n";
+						// Punkte
+						echo "<tr>
+										<th>Punkte / Schnitt:</th>
+										<td colspan=\"2\">";
+										echo nf($ally->points)." / ".nf($ally->avgPoints)."";
+										echo "</td>
+									</tr>";
+						echo "<tr><th width=\"120\">Gr&uuml;nder:</th>
+						<td class=\"tbldata\" colspan=\"2\">
+							<a href=\"?page=userinfo&amp;id=".$ally->founderId."\">".$ally->founder."</a></td></tr>";
+						// Gründung
+						echo "<tr>
+										<th>Gründungsdatum:</th>
+										<td class=\"tbldata\" colspan=\"2\">
+											".df($ally->foundationDate)." (vor ".tf(time() - $ally->foundationDate).")
+										</td>
+									</tr>";								
 						echo "\n</table><br/>";
 					}
 				}

@@ -55,41 +55,41 @@ function showAllianceMembers($alliance_id=0,$field_id)
 				
 				$members .= "
 				<tr>
-					<td class=\"tbldata\">
+					<td>
 						".$arr['rank']."
 					</td>
-					<td class=\"tbldata\">
+					<td>
 						".$rank."
 					</td>
-					<td class=\"tbldata\">
+					<td>
 						<a href=\"?page=userinfo&id=".$arr['user_id']."\">".$arr['user_nick']."</a>
 					</td>
-					<td class=\"tbldata\">
+					<td>
 						".nf($arr['points'])."
 					</td>
-					<td class=\"tbldata\">
+					<td>
 						".nf($arr['points_buildings'])."
 					</td>
-					<td class=\"tbldata\">
+					<td>
 						".nf($arr['points_ships'])."
 					</td>
-					<td class=\"tbldata\">
+					<td>
 						".nf($arr['points_tech'])."
 					</td>
-					<td class=\"tbldata\">
+					<td>
 						".nf($arr['points_exp'])."
 					</td>
 				</tr>";
 			}
 			$out = "<table class=\"tbl\">
 							<tr>
-								<td class=\"tbltitle\" width=\"5%\" colspan=\"2\">Rang</td>
-								<td class=\"tbltitle\" width=\"15%\">User</td>
-								<td class=\"tbltitle\" width=\"20%\">Punkte Total</td>
-								<td class=\"tbltitle\" width=\"20%\">Gebäude</td>
-								<td class=\"tbltitle\" width=\"20%\">Flotten</td>
-								<td class=\"tbltitle\" width=\"20%\">Technologien</td>
-								<td class=\"tbltitle\" width=\"20%\">Erfahrung</td>
+								<th width=\"5%\" colspan=\"2\">Rang</th>
+								<th width=\"15%\">User</th>
+								<th>Punkte</th>
+								<th>Gebäude</th>
+								<th>Flotten</th>
+								<th>Tech</th>
+								<th>XP</th>
 							</tr>
 							".$members."
 							</table>";

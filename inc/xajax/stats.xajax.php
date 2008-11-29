@@ -19,30 +19,30 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 	if ($mode=="alliances")
 	{
 		$out.= "<table class=\"tbl\"><tr>";
-		$out.= "<th class=\"tbltitle\" colspan=\"2\">Rang</th>";
-		$out.= "<th class=\"tbltitle\">Tag</th>";
-		$out.= "<th class=\"tbltitle\">Name</th>";
+		$out.= "<th colspan=\"2\">Rang</th>";
+		$out.= "<th>Tag</th>";
+		$out.= "<th>Name</th>";
 		if ($sort=="upoints")
-			$out.= "<th class=\"tbltitle\"><i>Punkte</i> ";
+			$out.= "<th><i>Punkte</i> ";
 		else
-			$out.= "<th class=\"tbltitle\">Punkte ";
+			$out.= "<th>Punkte ";
 		$out.= "<a href=\"javascript:;\" onclick=\"xajax_statsShowBox('$mode','upoints','DESC')\" title=\"Absteigend sortieren\"><img src=\"images/s_desc.png\" alt=\"Absteigend sortieren\" border=\"0\" /></a>";
 		$out.= "<a href=\"javascript:;\" onclick=\"xajax_statsShowBox('$mode','upoints','ASC')\" title=\"Absteigend sortieren\"><img src=\"images/s_asc.png\" alt=\"Aufsteigend sortieren\" border=\"0\" /></a>";
 		if ($sort=="uavg")
-			$out.= "<th class=\"tbltitle\"><i>User-Schnitt</i> ";
+			$out.= "<th><i>User-Schnitt</i> ";
 		else
-			$out.= "<th class=\"tbltitle\">User-Schnitt ";
+			$out.= "<th>User-Schnitt ";
 		$out.= "<a href=\"javascript:;\" onclick=\"xajax_statsShowBox('$mode','uavg','DESC')\" title=\"Absteigend sortieren\"><img src=\"images/s_desc.png\" alt=\"Absteigend sortieren\" border=\"0\" /></a>";
 		$out.= "<a href=\"javascript:;\" onclick=\"xajax_statsShowBox('$mode','uavg','ASC')\" title=\"Absteigend sortieren\"><img src=\"images/s_asc.png\" alt=\"Aufsteigend sortieren\" border=\"0\" /></a>";
 		$out.= "</th>";
 		if ($sort=="cnt")
-			$out.= "<th class=\"tbltitle\"><i>User</i> ";
+			$out.= "<th><i>User</i> ";
 		else
-			$out.= "<th class=\"tbltitle\">User ";
+			$out.= "<th>User ";
 		$out.= "<a href=\"javascript:;\" onclick=\"xajax_statsShowBox('$mode','cnt','DESC')\" title=\"Absteigend sortieren\"><img src=\"images/s_desc.png\" alt=\"Absteigend sortieren\" border=\"0\" /></a>";
 		$out.= "<a href=\"javascript:;\" onclick=\"xajax_statsShowBox('$mode','cnt','ASC')\" title=\"Absteigend sortieren\"><img src=\"images/s_asc.png\" alt=\"Aufsteigend sortieren\" border=\"0\" /></a>";
 
-		$out.= "<th class=\"tbltitle\">Aktionen</th>";
+		$out.= "<th>Aktionen</th>";
 		$out.= "</tr>";
 		if ($sort!="" && $sortOrder!="")
 			$sql="
@@ -78,27 +78,27 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 				else
 					$style="";
 				$out.= "<tr>";
-				$out.= "<td class=\"tbldata\" align=\"right\" $style>".nf2($cnt)."</td>";
-				$out.=  "<td $addstyle class=\"tbldata\" align=\"right\" ".tm("Punkteverlauf","<div><img src=\"misc/alliance_stats.image.php?alliance=".$arr['alliance_id']."\" alt=\"Diagramm\" style=\"width:600px;height:400px;background:#335 url(images/loading335.gif) no-repeat 300px 200px;\" /></div>").">";
+				$out.= "<td align=\"right\" $style>".nf2($cnt)."</td>";
+				$out.=  "<td $addstyle align=\"right\" ".tm("Punkteverlauf","<div><img src=\"misc/alliance_stats.image.php?alliance=".$arr['alliance_id']."\" alt=\"Diagramm\" style=\"width:600px;height:400px;background:#335 url(images/loading335.gif) no-repeat 300px 200px;\" /></div>").">";
 				if ($arr['alliance_rank_current']==$arr['alliance_rank_last'])
 					$out.=  "<img src=\"images/stats/stat_same.gif\" alt=\"same\" width=\"21\" height=\"9\" />";
 				elseif ($arr['alliance_rank_current']<$arr['alliance_rank_last'])
 					$out.=  "<img src=\"images/stats/stat_down.gif\" alt=\"up\" width=\"9\" height=\"12\" />";
 				elseif ($arr['alliance_rank_current']>$arr['alliance_rank_last'])
 					$out.=  "<img src=\"images/stats/stat_up.gif\" alt=\"down\" width=\"9\" height=\"11\" />";
-				$out.= "<td class=\"tbldata\" $style>".(text2html($arr['alliance_tag']))."</td>";
-				$out.= "<td class=\"tbldata\" $style>".text2html($arr['alliance_name'])."</td>";
-				$out.= "<td class=\"tbldata\" $style>".nf2($arr['upoints'])."</td>";
-				$out.= "<td class=\"tbldata\" $style>".nf2($arr['uavg'])."</td>";
-				$out.= "<td class=\"tbldata\" $style>".nf2($arr['cnt'])."</td>";
-				$out.= "<td class=\"tbldata\"><a href=\"?page=alliance&amp;info_id=".$arr['alliance_id']."\">Info</a> <a href=\"?page=$page&amp;mode=$mode&amp;limit=".$_GET['limit']."&amp;alliancedetail=".$arr['alliance_id']."\">Punktedetails</a></td>";
+				$out.= "<td $style>".(text2html($arr['alliance_tag']))."</td>";
+				$out.= "<td $style>".text2html($arr['alliance_name'])."</td>";
+				$out.= "<td $style>".nf2($arr['upoints'])."</td>";
+				$out.= "<td $style>".nf2($arr['uavg'])."</td>";
+				$out.= "<td $style>".nf2($arr['cnt'])."</td>";
+				$out.= "<td><a href=\"?page=alliance&amp;info_id=".$arr['alliance_id']."\">Info</a> <a href=\"?page=$page&amp;mode=$mode&amp;limit=".$_GET['limit']."&amp;alliancedetail=".$arr['alliance_id']."\">Punktedetails</a></td>";
 				$out.= "</tr>";
 				$cnt++;
 			}
 		}
 		else
 		{
-			$out.= "<tr><td colspan=\"8\" align=\"center\" class=\"tbldata\"><i>Keine Allianzen in der Statistik</i></tr>";
+			$out.= "<tr><td colspan=\"8\" align=\"center\"><i>Keine Allianzen in der Statistik</i></tr>";
 		}
 	 	$objResponse->assign('statsBox', 'innerHTML', $out);
 		$out.="</table>";
@@ -127,22 +127,29 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 			AND u.user_blocked_to>".time()." 
 		ORDER BY 
 			u.user_blocked_from DESC;");
-		$out.= "<table class=\"tbl\"><tr><td class=\"tbltitle\">Nick</td><td class=\"tbltitle\">Von:</td><td class=\"tbltitle\">Bis:</td><td class=\"tbltitle\">Admin</td><td class=\"tbltitle\">Grund der Sperrung</td></tr>";
+		$out.= "<table class=\"tbl\">
+		<tr>
+			<th>Nick</th>
+			<th>Von:</th>
+			<th>Bis:</th>
+			<th>Admin</th>
+			<th>Grund der Sperrung</th>
+		</tr>";
 		if (mysql_num_rows($res)>0)
 		{
 			while ($arr = mysql_fetch_array($res))
 			{
 				$out.="<tr>
-				<td class=\"tbldata\" valign=\"top\" width=\"90\">".$arr['user_nick']."</td>
-				<td class=\"tbldata\" valign=\"top\">".df($arr['user_blocked_from'])."</td>
-				<td class=\"tbldata\" valign=\"top\">".df($arr['user_blocked_to'])."</td>
-				<td class=\"tbldata\"><a href=\"mailto:".$arr['admin_email']."\">".$arr['admin_nick']."</a></td>
-				<td class=\"tbldata\">".text2html($arr['user_ban_reason'])."</td>
+				<td valign=\"top\" width=\"90\">".$arr['user_nick']."</td>
+				<td valign=\"top\">".df($arr['user_blocked_from'])."</td>
+				<td valign=\"top\">".df($arr['user_blocked_to'])."</td>
+				<td><a href=\"mailto:".$arr['admin_email']."\">".$arr['admin_nick']."</a></td>
+				<td>".text2html($arr['user_ban_reason'])."</td>
 				</tr>";
 			}
 		}
 		else
-			$out.= "<tr><td class=\"tbldata\" colspan=\"5\"><i>Keine Eintr&auml;ge vorhanden</i></tr>";
+			$out.= "<tr><td colspan=\"5\"><i>Keine Eintr&auml;ge vorhanden</i></tr>";
 		$out.="</table>";
 	 	$objResponse->assign('statsBox', 'innerHTML', $out);
 	}
@@ -181,10 +188,10 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 			{
 				echo "<tr>
 					<th style=\"width:50px;\">#</th>
-					<th style=\"\">Nick</th>
-					<th style=\"\">Rasse</th>
-					<th style=\"\">Allianz</th>
-					<th style=\"\">Bewertung</th>
+					<th>Nick</th>
+					<th>Rasse</th>
+					<th>Allianz</th>
+					<th>Bewertung</th>
 					<th style=\"width:160px;\">Aktionen</th>
 				</tr>";
 				while ($arr=mysql_fetch_array($res))
@@ -247,13 +254,13 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 			{
 				echo "<tr>
 					<th style=\"width:50px;\">#</th>
-					<th style=\"\">Nick</th>
-					<th style=\"\">Rasse</th>
-					<th style=\"\">Allianz</th>
-					<th style=\"\">Kämpfe Gewonnen</th>
-					<th style=\"\">Kämpfe Verloren</th>
-					<th style=\"\">Kämpfe Total</th>
-					<th style=\"\">Bewertung</th>
+					<th>Nick</th>
+					<th>Rasse</th>
+					<th>Allianz</th>
+					<th>Kämpfe Gewonnen</th>
+					<th>Kämpfe Verloren</th>
+					<th>Kämpfe Total</th>
+					<th>Bewertung</th>
 					<th style=\"width:160px;\">Aktionen</th>
 				</tr>";
 				while ($arr=mysql_fetch_array($res))
@@ -318,12 +325,12 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 			{
 				echo "<tr>
 					<th style=\"width:50px;\">#</th>
-					<th style=\"\">Nick</th>
-					<th style=\"\">Rasse</th>
-					<th style=\"\">Allianz</th>
-					<th style=\"\">Einkäufe</th>
-					<th style=\"\">Verkäufe</th>
-					<th style=\"\">Bewertung</th>
+					<th>Nick</th>
+					<th>Rasse</th>
+					<th>Allianz</th>
+					<th>Einkäufe</th>
+					<th>Verkäufe</th>
+					<th>Bewertung</th>
 					<th style=\"width:160px;\">Aktionen</th>
 				</tr>";
 				while ($arr=mysql_fetch_array($res))
@@ -603,11 +610,11 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0)
 				$out.= "<tr><th colspan=\"7\" style=\"text-align:center;\">".$title."</th></tr>";
 				$out.= "<tr>
 					<th style=\"width:50px;\">#</th>
-					<th style=\"\">Nick</th>
-					<th style=\"\">Rasse</th>
-					<th style=\"\">Sektor</th>
-					<th style=\"\">Allianz</th>
-					<th style=\"\">Punkte</th>
+					<th>Nick</th>
+					<th>Rasse</th>
+					<th>Sektor</th>
+					<th>Allianz</th>
+					<th>Punkte</th>
 				</tr>";
 				while ($arr=mysql_fetch_array($res))
 				{
@@ -661,12 +668,12 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0)
 				
 			}
 			else
-				$out.= "<tr><td align=\"center\" class=\"tbldata\"><i>Es wurden keine Spieler gefunden!</i></tr>";
+				$out.= "<tr><td align=\"center\"><i>Es wurden keine Spieler gefunden!</i></tr>";
 		}
 		else
 		{
 			$out.= "<tr>
-				<td align=\"center\" class=\"tbldata\">
+				<td align=\"center\">
 					<i>Momentan sind keine Statistiken vorhanden, sie werden 
 					zur nächsten vollen Stunde erstellt!
 			</i></tr>";

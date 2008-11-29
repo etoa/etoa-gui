@@ -71,23 +71,18 @@ if (Alliance::checkActionRights('editmembers'))
 							}
 						}
 					}
-				}
-			
+				}			
 			}			
-			
 		}
 
 		// Gründer wechseln
 		if (isset($_GET['setfounder']) && $_GET['setfounder']>0 && $isFounder && $cu->id!=$_GET['setfounder'])
 		{
-			$ures=dbquery("SELECT user_id FROM users WHERE user_alliance_id=".$arr['alliance_id']." AND user_id=".$_GET['setfounder'].";");
-			if (mysql_num_rows($ures)>0)
+
+			if (isset($ally->members[$_GET['setfounder']]))
 			{
-				dbquery("UPDATE alliances SET alliance_founder_id=".$_GET['setfounder']." WHERE alliance_id=".$arr['alliance_id'].";");
-				$arr['alliance_founder_id']=$_GET['setfounder'];
-				add_alliance_history($cu->allianceId,"Der Spieler [b]".get_user_nick($_GET['setfounder'])."[/b] wird vom Spieler [b]".$cu->nick."[/b] zum Gründer befördert.");
-				add_log(5,"Der Spieler [b]".get_user_nick($_GET['setfounder'])."[/b] wird vom Spieler [b]".$cu->nick."[/b] zum Gründer befördert.",time());
-				send_msg($_GET['setfounder'],MSG_ALLYMAIL_CAT,"Gründer","Du hast nun die Gründerrechte deiner Allianz!");
+				$ally->founderId = $_GET['setfounder'];
+				add_log(5,"Der Spieler [b]".$ally->founder."[/b] wird vom Spieler [b]".$cu."[/b] zum Gründer befördert.");
 				echo "Gründer ge&auml;ndert!<br/><br/>";
 			}
 			else

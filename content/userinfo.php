@@ -44,7 +44,7 @@
 		
 		// Besuchercounter
 		if ($user->id != $cu->id)
-			$user->visits = $user->visits+1;
+			$user->visits++;
 
 		if ($user->isValid)
 		{			
@@ -65,14 +65,14 @@
       	<th>Rasse:</th>
       	<td>".$user->race->name."</td>
       </tr>";
-			if ($user->allianceName() != "")
+			if ($user->allianceId != 0)
 			{
 				echo "<tr><th style=\"width:120px;\">Allianz:</th><td>";
 				if ($user->allianceRankName() !="")
 				{
 					echo $user->allianceRankName()." von ";
 				}
-				echo "<a href=\"?page=alliance&amp;info_id=".$user->allianceId."\">".$user->allianceName()."</a></td></tr>";
+				echo "<a href=\"?page=alliance&amp;id=".$user->allianceId."\">".$user->alliance."</a></td></tr>";
 			}
 			if ($user->visits > 0)
 			{

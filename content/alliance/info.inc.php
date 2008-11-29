@@ -5,54 +5,37 @@
 		else
 			$id = intval($_GET['info_id']);
 		
-		$res = dbquery("
-		SELECT
-			*
-		FROM
-			alliances
-		WHERE
-			alliance_id='".$id."';");
-		if (mysql_num_rows($res)>0)
+		$infoAlly = new Alliance($id);
+		if ($infoAlly->valid)
 		{
-			$arr = mysql_fetch_array($res);
-			dbquery("UPDATE alliances SET alliance_visits_ext=alliance_visits_ext+1 WHERE alliance_id='".$id."';");
-
-			$member_count = mysql_num_rows(dbquery("
-			SELECT 
-				user_id 
-			FROM 
-				users
-			WHERE 
-				user_alliance_id='".$id."' 
-				;"));
+			$infoAlly->visitsExt++;
 			
- 			echo "<table width=\"500\" cellspacing=\"".TBL_SPACING."\" cellpadding=\"".TBL_PADDING."\" align=\"center\" class=\"tbl\">";
-			echo "<tr>
-							<td class=\"tbltitle\" colspan=\"2\" style=\"text-align:center;\">
-								".stripslashes($arr['alliance_tag'])." ".stripslashes($arr['alliance_name'])."
-							</td>
-						</tr>";
-						if ($arr['alliance_img']!="")
-						{
-							$im = ALLIANCE_IMG_DIR."/".$arr['alliance_img'];
-							if (is_file($im))
-							{
-								$ims = getimagesize($im);
-								echo "<tr>
-												<td class=\"tblblack\" colspan=\"3\" style=\"text-align:center;background:#000\">
-													<img src=\"".$im."\" alt=\"Allianz-Logo\" style=\"width:".$ims[0]."px;height:".$ims[1]."\" />
-												</td>
-											</tr>";
-							}
-						}
-						if ($arr['alliance_text']!="")
-						{
-							echo "<tr>
-											<td class=\"tbldata\" colspan=\"2\" style=\"text-align:center;\">
-												".text2html($arr['alliance_text'])."
-											</td>
-										</tr>";
-						}
+			tableStart($infoAlly);	
+			if ($infoAlly->image != "" && is_file($infoAlly->imageUrl))
+			{
+				$ims = getimagesize($infoAlly->imageUrl);
+				echo "<tr>
+								<td colspan=\"3\" style=\"text-align:center;background:#000\">
+									<img src=\"".$infoAlly->imageUrl."\" alt=\"Allianz-Logo\" style=\"width:".$ims[0]."px;height:".$ims[1]."\" />
+								</td>
+							</tr>";
+			}
+			if ($infoAlly->motherId != 0)
+			{
+				echo "<tr>
+								<th colspan=\"2\" style=\"text-align:center;\">
+									Diese Allianz ist ein Wing von <b><a href=\"?page=$page&amp;action=info&amp;id=".$infoAlly->motherId."\">".$infoAlly->mother."</a></b>
+								</th>
+							</tr>";				
+			}
+			if ($infoAlly->text != "")
+			{
+				echo "<tr>
+								<td colspan=\"2\" style=\"text-align:center;\">
+									".text2html($infoAlly->text)."
+								</td>
+							</tr>";
+			}
 
 			// Kriege
 			$wars=dbquery("
@@ -73,15 +56,15 @@
 				alliances as a2
 				ON alliance_bnd_alliance_id2=a2.alliance_id
 		 	WHERE 
-		 		(alliance_bnd_alliance_id1='".$id."' 
-		 		OR alliance_bnd_alliance_id2='".$id."') 
+		 		(alliance_bnd_alliance_id1='".$infoAlly->id."' 
+		 		OR alliance_bnd_alliance_id2='".$infoAlly->id."') 
 		 		AND alliance_bnd_level=3
 		 	;");
 			if (mysql_num_rows($wars)>0)
 			{
 				
 				echo "<tr>
-								<td class=\"tbltitle\">Kriege:</td>
+								<th>Kriege:</th>
 								<td class=\"tbldata\">
 									<table class=\"tbl\">
 										<tr>
@@ -91,7 +74,7 @@
 										</tr>";
 						while ($war=mysql_fetch_array($wars))
 						{
-							if ($war['a1id']==$id) 
+							if ($war['a1id']==$infoAlly->id) 
 							{
 								$opId = $war['a2id'];
 								$opTag = $war['a2tag'];
@@ -137,14 +120,14 @@
 				alliances as a2
 				ON alliance_bnd_alliance_id2=a2.alliance_id
 		 	WHERE 
-		 		(alliance_bnd_alliance_id1='".$id."' 
-		 		OR alliance_bnd_alliance_id2='".$id."') 
+		 		(alliance_bnd_alliance_id1='".$infoAlly->id."' 
+		 		OR alliance_bnd_alliance_id2='".$infoAlly->id."') 
 		 		AND alliance_bnd_level=4
 		 	;");
 			if (mysql_num_rows($wars)>0)
 			{			
 				echo "<tr>
-								<td class=\"tbltitle\">Friedensabkommen:</td>
+								<th>Friedensabkommen:</th>
 								<td class=\"tbldata\">
 									<table class=\"tbl\">
 										<tr>
@@ -154,7 +137,7 @@
 										</tr>";					
 						while ($war=mysql_fetch_array($wars))
 						{
-							if ($war['a1id']==$id) 
+							if ($war['a1id']==$infoAlly->id) 
 							{
 								$opId = $war['a2id'];
 								$opTag = $war['a2tag'];
@@ -200,14 +183,14 @@
 				alliances as a2
 				ON alliance_bnd_alliance_id2=a2.alliance_id
 		 	WHERE 
-		 		(alliance_bnd_alliance_id1='".$id."' 
-		 		OR alliance_bnd_alliance_id2='".$id."') 
+		 		(alliance_bnd_alliance_id1='".$infoAlly->id."' 
+		 		OR alliance_bnd_alliance_id2='".$infoAlly->id."') 
 		 		AND alliance_bnd_level=2
 		 	;");
 			if (mysql_num_rows($wars)>0)
 			{				
 				echo "<tr>
-								<td class=\"tbltitle\">Bündnisse:</td>
+								<th>Bündnisse:</th>
 								<td class=\"tbldata\">
 									<table class=\"tbl\">
 										<tr>
@@ -218,7 +201,7 @@
 
 						while ($war=mysql_fetch_array($wars))
 						{
-							if ($war['a1id']==$id) 
+							if ($war['a1id']==$infoAlly->id) 
 							{
 								$opId = $war['a2id'];
 								$opTag = $war['a2tag'];
@@ -245,44 +228,63 @@
 							</tr>";
 			}						
 
-			// Url
-			if ($arr['alliance_url']!="")
-			{
-				echo "<tr>
-								<td class=\"tbltitle\" width=\"15%\">Website/Forum:</td>
-								<td class=\"tbldata\"><b>".format_link($arr['alliance_url'])."</b></td>
-							</tr>";
-			}
-			
+			// Mitglieder
+			echo "<tr>
+							<th style=\"width:250px;\">Mitglieder:</th>
+							<td id=\"members\">";
+							echo $infoAlly->memberCount;
+							if ($infoAlly->publicMemberList)
+								echo " [<a href=\"javascript:;\" onclick=\"xajax_showAllianceMembers('".intval($id)."','members')\" >Anzeigen</a>]";
+							echo "</td>
+						</tr>";
+
+			// Punkte
+			echo "<tr>
+							<th>Punkte / Durchschnitt:</th>
+							<td>";
+							echo nf($infoAlly->points)." / ".nf($infoAlly->avgPoints)."";
+							echo "</td>
+						</tr>";
+
 			// Gründer
 			echo "<tr>
-							<td class=\"tbltitle\" width=\"20%\">Gr&uuml;nder:</td>
+							<th>Gr&uuml;nder:</th>
 							<td class=\"tbldata\">
-								<a href=\"?page=userinfo&amp;id=".$arr['alliance_founder_id']."\">".get_user_nick($arr['alliance_founder_id'])."</a>
+								<a href=\"?page=userinfo&amp;id=".$infoAlly->founderId."\">".$infoAlly->founder."</a>
 							</td>
 						</tr>";
 
-			// Diverses
+			// Gründung
 			echo "<tr>
-							<td class=\"tbltitle\" width=\"20%\">Akzeptiert Bewerbungen:</td>
+							<th>Gründungsdatum:</th>
 							<td class=\"tbldata\">
-								".($arr['alliance_accept_applications']==1 ? "Ja" : "Nein")."
-							</td>
-						</tr>";
-			echo "<tr>
-							<td class=\"tbltitle\" width=\"20%\">Akzeptiert Bündnissanfragen:</td>
-							<td class=\"tbldata\">
-								".($arr['alliance_accept_bnd']==1 ? "Ja" : "Nein")."
+								".df($infoAlly->foundationDate)." (vor ".tf(time() - $infoAlly->foundationDate).")
 							</td>
 						</tr>";						
 						
+			// Url
+			if ($infoAlly->url != "")
+			{
+				echo "<tr>
+								<th>Website/Forum:</th>
+								<td><b>".format_link($infoAlly->url)."</b></td>
+							</tr>";
+			}
 			
+			// Diverses
 			echo "<tr>
-							<td class=\"tbltitle\" width=\"20%\">Mitglieder:</td>
-							<td class=\"tbldata\" id=\"members\">";
-							echo $member_count." [<a href=\"javascript:;\" onclick=\"xajax_showAllianceMembers('".intval($id)."','members')\" >Anzeigen</a>]";
-							echo "</td>
+							<th>Akzeptiert Bewerbungen:</tdh
+							<td class=\"tbldata\">
+								".($infoAlly->acceptApplications ? "Ja" : "Nein")."
+							</td>
 						</tr>";
+			echo "<tr>
+							<th>Akzeptiert Bündnissanfragen:</th>
+							<td class=\"tbldata\">
+								".($infoAlly->acceptPact ? "Ja" : "Nein")."
+							</td>
+						</tr>";		
+
 			echo "</table>";
 		}
 		else
