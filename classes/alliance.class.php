@@ -18,6 +18,7 @@ class Alliance
 	protected $publicMemberList;
 
 	protected $wings = null;
+	protected $wingRequests = null;
 	protected $members = null;
 	protected $ranks = null;
 
@@ -26,6 +27,8 @@ class Alliance
 
 	protected $motherId;
 	protected $mother = null;
+	protected $motherRequestId;
+	protected $motherRequest = null;
 	
 	protected $valid;
 	protected $changedFields;
@@ -58,6 +61,7 @@ class Alliance
   		$this->name = $arr['alliance_name'];
   		$this->tag = $arr['alliance_tag'];
   		$this->motherId = $arr['alliance_mother'];
+  		$this->motherRequestId = $arr['alliance_mother_request'];
   		$this->points = $arr['alliance_points'];
   		$this->memberCount = $arr['member_count'];
 			$this->founderId = $arr['alliance_founder_id'];  		
@@ -193,8 +197,12 @@ class Alliance
 				$this->getMembers();
 			if ($key == "wings" && $this->wings == null)
 				$this->getWings();
+			if ($key == "wingRequests" && $this->wingRequests == null)
+				$this->getWingRequests();
 			if ($key == "mother" && $this->mother == null)
 				$this->mother = new Alliance($this->motherId);
+			if ($key == "motherRequest" && $this->motherRequest == null)
+				$this->motherRequest = new Alliance($this->motherRequestId);
 			if ($key == "founder" && $this->founder == null) 
 			{
 				if ($this->members == null)
@@ -341,6 +349,31 @@ class Alliance
 		return $this->wings;
 	}
 	
+	public function & getWingRequests()
+	{
+		if ($this->wingRequests == null)
+		{
+			$this->wingRequests = array();
+	  	$res = dbquery("
+	  	SELECT
+	  		alliance_id
+	  	FROM
+	  		alliances
+	  	WHERE
+	  		alliance_mother_request=".$this->id."
+	  		AND alliance_id!=".$this->id."
+	  	");			
+	  	if (mysql_num_rows($res)>0)
+	  	{
+	  		while ($arr = mysql_fetch_row($res))
+	  		{
+		  		$this->wingRequests[$arr[0]] = new Alliance($arr[0]);
+	  		}
+	  	}
+		}
+		return $this->wingRequests;
+	}	
+	
 	public function addWing($allianceId)
 	{
 		$this->getWings();
@@ -350,7 +383,8 @@ class Alliance
 			UPDATE
 				alliances
 			SET
-				alliance_mother=".$this->id."
+				alliance_mother=".$this->id.",
+				alliance_mother_request=0
 			WHERE
 				alliance_id=".$allianceId."
 			");
@@ -359,11 +393,37 @@ class Alliance
 				$this->wings[$allianceId] = new Alliance($allianceId);
 				$this->addHistory($this->wings[$allianceId]." wurde als neuer Wing hinzugefügt.");
 				$this->wings[$allianceId]->addHistory("Wir sing nun ein Wing von ".$this);
+				$this->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT,"Wing","Die Allianz [b]".$this->wings[$allianceId]."[/b] ist nun ein Wing von [b]".$this."[/b]");
+				$this->wings[$allianceId]->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT,"Wing","Die Allianz [b]".$this->wings[$allianceId]."[/b] ist nun ein Wing von [b]".$this."[/b]");
 				return true;
 			}			
 		}
 		return false;
 	}
+	
+	public function addWingRequest($allianceId)
+	{
+		if ($allianceId != $this->id)
+		{
+			$res = dbquery("
+			UPDATE
+				alliances
+			SET
+				alliance_mother_request=".$this->id."
+			WHERE
+				alliance_mother_request=0
+				AND alliance_mother=0
+				AND alliance_id=".$allianceId."
+			");
+			if (mysql_affected_rows()>0)
+			{
+				$this->wingRequests[$allianceId] = new Alliance($allianceId);
+				$this->wingRequests[$allianceId]->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT,"Wing-Anfrage","Die Allianz [b]".$this."[/b] möchte eure Allianz als Wing hinzufügen. [url ?page=alliance&action=wings]Anfrage beantworten[/url]");
+				return true;
+			}			
+		}
+		return false;
+	}	
 	
 	public function removeWing($wingId)
 	{
@@ -373,7 +433,8 @@ class Alliance
 		SET
 			alliance_mother=0
 		WHERE
-			alliance_id=".$wingId."
+			alliance_mother=".$this->id."
+			AND alliance_id=".$wingId."
 		");
 		if (mysql_affected_rows()>0)
 		{
@@ -381,6 +442,8 @@ class Alliance
 			{
 				$this->addHistory($this->wings[$wingId]." ist nun kein Wing mehr von uns");
 				$this->wings[$wingId]->addHistory("Wir sind nun kein Wing mehr von ".$this);
+				$this->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT,"Wing","Die Allianz [b]".$this->wings[$allianceId]."[/b] ist kein Wing mehr von [b]".$this."[/b]");
+				$this->wings[$wingId]->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT,"Wing","Die Allianz [b]".$this->wings[$allianceId]."[/b] ist kein Wing mehr von [b]".$this."[/b]");
 				unset($this->wings[$wingId]);
 			}
 			else
@@ -394,6 +457,43 @@ class Alliance
 		}
 		return false;
 	}
+	
+	public function cancelWingRequest($wingId,$reverse=0)
+	{
+		dbquery("
+		UPDATE
+			alliances
+		SET
+			alliance_mother_request=0
+		WHERE
+			alliance_mother_request=".$this->id."
+			AND alliance_id=".$wingId."
+		");
+		if (mysql_affected_rows()>0)
+		{
+			if ($this->wingRequests != null)
+			{
+				if ($reverse==1)
+					$this->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT,"Wing-Anfrage zurückgewiesen","Die Allianz [b]".$this->wingRequests[$wingId]."[/b] hat die Wing-Anfrage zurückgewiesen.");
+				else
+					$this->wingRequests[$wingId]->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT,"Wing-Anfrage zurückgezogen","Die Allianz [b]".$this."[/b] hat die Wing-Anfrage zurückgezogen.");
+				unset($this->wingRequests[$wingId]);
+			}
+			else
+			{
+				$tmpWing = new Alliance($wingId);
+				if ($reverse==1)
+					$this->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT,"Wing-Anfrage zurückgewiesen","Die Allianz [b]".$tmpWing."[/b] hat die Wing-Anfrage zurückgewiesen.");
+				else
+					$tmpWing->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT,"Wing-Anfrage zurückgezogen","Die Allianz [b]".$this."[/b] hat die Wing-Anfrage zurückgezogen.");
+				unset($tmpWing);
+			}
+			return true;
+		}
+		return false;
+	}	
+	
+	
 	
 	//
 	// Statics

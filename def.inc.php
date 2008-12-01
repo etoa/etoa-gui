@@ -33,7 +33,7 @@
 
 	// Fehlermeldungs-Level feststellen
 	if (ETOA_DEBUG==1)
-		Error_reporting(E_ALL);
+		error_reporting(E_ALL);
 	else
 		error_reporting(E_ERROR | E_WARNING | E_PARSE);
 

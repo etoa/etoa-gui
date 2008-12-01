@@ -79,6 +79,7 @@
 				users 
 			WHERE 
 				user_id='".$id."' 
+			LIMIT 1
 			;");			
 			if (mysql_num_rows($res)>0)		
 			{

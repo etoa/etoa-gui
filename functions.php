@@ -73,7 +73,7 @@
 	/**
 	* Baut die Datenbankverbindung auf
 	*/
-	function dbconnect($reportError=1)
+	function dbconnect()
 	{
 		global $db_handle;
 		global $query_counter;
@@ -82,32 +82,25 @@
 
 		$queries = array();
 		$query_counter=0;
-		if (!$db_handle = @mysql_connect(DB_SERVER,DB_USER,DB_PASSWORD))
+		try
 		{
-			if ($reportError==1)
+			if (!$db_handle = @mysql_connect(DB_SERVER,DB_USER,DB_PASSWORD))
 			{
-				error_msg("Zum Datenbankserver auf [b]".DB_SERVER."[/b] kann keine Verbindung hergestellt werden! 
-				[i]".mysql_error()."[/i]
-				
-				Bitte schaue später nochmals vorbei.",4,1,1);
+				throw new DBException("Zum Datenbankserver auf [b]".DB_SERVER."[/b] kann keine Verbindung hergestellt werden!");	
 			}
+			if (!mysql_select_db(DB_DATABASE))
+			{
+				throw new DBException("Auf die Datenbank [b]".DB_DATABASE."[/b] auf [b]".DB_SERVER."[/b] kann nicht zugegriffen werden!");				
+			}
+			$dbopen = true;
+			dbquery("SET NAMES 'utf8';"); 
+			return true;		
+		}
+		catch (EException $e)
+		{
+			echo $e;
 			return false;
 		}
-		if (!mysql_select_db(DB_DATABASE))
-		{
-			if ($reportError==1)
-			{
-				error_msg("Auf die Datenbank [b]".DB_DATABASE."[/b] auf [b]".DB_SERVER."</b> kann 
-				nicht zugegriffen werden! 
-				[i]".mysql_error()."[/i]
-				
-				Bitte schaue später nochmals vorbei.",4,1);
-			}
-			return false;
-		}
-		$dbopen = true;
-		dbquery("SET NAMES 'utf8';"); 
-		return true;
 	}
 
 	/**

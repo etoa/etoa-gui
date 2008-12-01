@@ -577,6 +577,24 @@
 							}
 						}
 
+						// Wing-Anfrage
+						if (($isFounder || $myRight['wings']) && $ally->motherRequestId > 0)
+						{
+							echo "<tr><th colspan=\"3\" align=\"center\">
+							<div align=\"center\"><b><a href=\"?page=$page&action=wings\">Es ist eine Wing-Anfrage vorhanden!</a></b></div>
+							</th></tr>";
+						}
+
+						if ($ally->motherId != 0)
+						{
+							echo "<tr>
+											<th colspan=\"3\" style=\"text-align:center;\">
+												Diese Allianz ist ein Wing von <b><a href=\"?page=$page&amp;action=info&amp;id=".$ally->motherId."\">".$ally->mother."</a></b>
+											</th>
+										</tr>";				
+						}
+
+
 						// Bündnissanfragen anzeigen
 						if ($isFounder || $myRight['relations'])
 						{
@@ -670,11 +688,9 @@
 							{
 								while ($harr=mysql_fetch_array($hres))
 								{
-									echo "<div style=\"border-bottom:1px solid #fff;\"><b>".df($harr['history_timestamp']).":</b> 
-										".text2html($harr['history_text'])."</div>";
+									echo "<div class=\"infoLog\">".text2html($harr['history_text'])." <span>".df($harr['history_timestamp'])."</span></div>";
 								}
 							}
-							echo "<br><a href=\"?page=".$page."&action=history\">Alle Ereignisse</a>";
 							echo "</td></tr>";							
 						}						
 

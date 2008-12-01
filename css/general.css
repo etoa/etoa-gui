@@ -210,6 +210,17 @@ table.boxLayout, div.boxLayout	{
 	padding:5px;
 }
 
+.infoLog	{
+	border-bottom:1px solid #556;
+	padding:3px 0px 5px 0px;
+	text-align:left;
+}
+
+.infoLog span	{
+ color:#aaa;
+ font-size:7pt;
+ padding-left:20px;
+}
 
 /*------- Tooltip ----------*/
 

@@ -23,8 +23,8 @@ wmtt = null;
 wmttSender = null;
 wmttMode = 0;
 
-document.onmousemove = updateWMTT;
-function updateWMTT(e) 
+document.onmousemove = updateTT;
+function updateTT(e) 
 {
   if (wmtt != null && wmttMode==1) 
   {

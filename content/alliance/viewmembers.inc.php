@@ -16,16 +16,17 @@ if (Alliance::checkActionRights('viewmembers'))
 			$rank[$rarr['rank_id']]=$rarr['rank_name'];
 		}
 		echo "<form action=\"?page=$page\" method=\"post\">";
-		echo "<table width=\"500\" cellspacing=\"".TBL_SPACING."\" cellpadding=\"".TBL_PADDING."\" align=\"center\" class=\"tbl\">";
+		echo "<table class=\"tb\">";
 		echo "<tr>
-		<td class=\"tbltitle\">Nick</td>
-		<td class=\"tbltitle\">Heimatplanet</td>
-		<td class=\"tbltitle\">Punkte</td>
-		<td class=\"tbltitle\">Rasse</td>
-		<td class=\"tbltitle\">Rang</td>
-		<td class=\"tbltitle\">Attack</td>
-		<td class=\"tbltitle\">Online</td>
-		<td class=\"tbltitle\">Aktionen</td>";
+		<th>Nick</th>
+		<th>Heimatplanet</th>
+		<th>Punkte</th>
+		<th>Rasse</th>
+		<th>Rang</th>
+		<th>Attack</th>
+		<th>Online</th>
+		<th>Aktionen</th>
+		</tr>";
 		$ures = dbquery("
 		SELECT 
 			u.user_acttime,
@@ -85,10 +86,12 @@ if (Alliance::checkActionRights('viewmembers'))
 			else
 				echo "<td class=\"tbldata\">".date("d.m.Y H.i",$uarr['user_acttime'])."</td>";
 
+			echo"<td class=\"tbldata\">";
 			if ($cu->id!=$uarr['user_id'])
-				echo"<td class=\"tbldata\"><a href=\"?page=messages&amp;mode=new&amp;message_user_to=".$uarr['user_id']."\">Nachricht</a></td></tr>";
-			else
-				echo "<td class=\"tbldata\">-</td></tr>";
+				echo "<a href=\"?page=messages&amp;mode=new&amp;message_user_to=".$uarr['user_id']."\">Nachricht</a> ";
+				
+			echo "<a href=\"?page=userinfo&amp;id=".$uarr['user_id']."\">Profil</a>";	
+			echo "</td></tr>";
 		}
 		echo "</table><br>";
 		echo "<input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"Zur&uuml;ck\" />";
