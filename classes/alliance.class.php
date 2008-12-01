@@ -289,7 +289,6 @@ class Alliance
 				{
 					$this->members[$userId] = $tmpUser;
 					$this->members[$userId]->sendMessage(MSG_ALLYMAIL_CAT,"Allianzaufnahme","Du wurdest in die Allianz [b]".$this."[/b] aufgenommen!");
-					$this->members[$userId]->addToUserLog("alliance","{nick} ist nun Mitglied der Allianz ".$this.".");
 					$this->addHistory("[b]".$tmpUser."[/b] wurde als neues Mitglied aufgenommen");
 					return true;
 				}
@@ -302,7 +301,7 @@ class Alliance
 	/**
 	* Removes an user from the alliance
 	*/
-	public function kickMember($userId)
+	public function kickMember($userId,$kick=1)
 	{
 		$this->getMembers();
 		if ($this->members[$userId]->isValid)
@@ -310,9 +309,12 @@ class Alliance
 			$this->members[$userId]->alliance = null;
 			if ($this->members[$userId]->allianceId == 0)
 			{
-				$this->members[$userId]->sendMessage(MSG_ALLYMAIL_CAT,"Allianzausschluss","Du wurdest aus der Allianz [b]".$this."[/b] ausgeschlossen!");
-				$this->members[$userId]->addToUserLog("alliance","{nick} ist nun kein Mitglied mehr der Allianz ".$this.".");
-				$this->addHistory("[b]".$this->members[$userId]."[/b] ist nun kein Mitglied mehr von uns");
+				if ($kick==1)
+					$this->members[$userId]->sendMessage(MSG_ALLYMAIL_CAT,"Allianzausschluss","Du wurdest aus der Allianz [b]".$this."[/b] ausgeschlossen!");
+				else
+					$this->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT,"Allianzaustritt","Der Spieler ".$this->members[$userId]." trat aus der Allianz aus!");
+				
+				$this->addHistory("[b]".$this->members[$userId]."[/b] ist nun kein Mitglied mehr von uns.");
 				unset($this->members[$userId]);
 				return true;
 			}

@@ -213,8 +213,24 @@
 				}
 				if ($key == "alliance")
 				{
+					$tmpAlly = $this->$key;
 					$this->$key = $val;
- 					$this->allianceId = ($this->alliance == null) ? 0 : $this->alliance->id;
+					if ($this->alliance == null)
+					{
+	 					$this->allianceId = 0;
+	 					if ($tmpAlly!=null)
+							$this->addToUserLog("alliance","{nick} ist nun kein Mitglied mehr der Allianz [b]".$tmpAlly."[/b].");
+					}
+					else
+					{
+	 					if ($tmpAlly!=null)
+							$this->addToUserLog("alliance","{nick} ist nun kein Mitglied mehr der Allianz ".$tmpAlly.".");
+						$this->addToUserLog("alliance","{nick} ist nun Mitglied der Allianz ".$this->alliance.".");
+						$this->allianceId = $this->alliance->id;
+					}
+ 					unset($tmpAlly);
+ 					
+ 					
  					$this->allianceRankId = 0;
 					$this->changedFields[$key] = true;
 					$this->changedFields["allianceRankId"] = 0;
@@ -351,7 +367,7 @@
 			SET 
 				user_alliance_rank_id=0,
 				user_alliance_id=".$id." 
-			WHERE user_id='".$this->id()."';");
+			WHERE user_id='".$this->id."';");
 		}
 
 

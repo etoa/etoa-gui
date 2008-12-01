@@ -272,17 +272,15 @@
 					echo "<h2>Allianz-Austritt</h2>";
 					if ($cu->allianceId!=0)
 					{
-						echo "Du bist aus der Allianz ausgetreten!<br/><br/><input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"&Uuml;bersicht\" />";
-						$alliances = get_alliance_names();
+						$ally->kickMember($cu->id,0);
+
 						
-						send_msg($alliances[$cu->allianceId]['founder_id'],MSG_ALLYMAIL_CAT,"Allianzaustritt","Der Spieler ".$cu->nick." trat aus der Allianz aus!");
-						add_alliance_history($cu->allianceId,"Der Spieler [b]".$cu->nick."[/b] trat aus der Allianz aus!");
-						$allys = get_alliance_names();
-						add_log(5,"Der Spieler [b]".$cu->nick."[/b] ist aus der Allianz [b][".$allys[$cu->allianceId]['tag']."] ".$allys[$cu->allianceId]['name']."[/b] ausgetreten!",time());
+						ok_msg("Du bist aus der Allianz ausgetreten!");
+						echo "<input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"&Uuml;bersicht\" />";
+						
 
-						$cu->addToUserLog("alliance","{nick} ist aus der Allianz ".$allys[$cu->allianceId]['name']." ausgetreten.");
+						//add_log(5,"Der Spieler [b]".$cu->nick."[/b] ist aus der Allianz [b][".$allys[$cu->allianceId]['tag']."] ".$allys[$cu->allianceId]['name']."[/b] ausgetreten!",time());
 
-						$cu->setAllianceId(0);
 					}
 					else
 						echo "Du bist in keiner Allianz!<br/><br/><input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"&Uuml;bersicht\" />";
