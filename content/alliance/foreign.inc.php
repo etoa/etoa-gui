@@ -73,70 +73,44 @@
 		elseif (isset($_GET['action']) && $_GET['action']=="create")
 		{
 			echo "<h2>Gr&uuml;ndung einer Allianz</h2>";
-
+	
+			$defTag = "";
+			$defName = "";
+			$finish = false;
 			// Allianzgründung speichern
 			if (isset($_POST['createsubmit']) && $_POST['createsubmit']!="" && checker_verify())
 			{
-				// Prüfen, ob der Allianzname bzw. Tag nicht nur aus Leerschlägen besteht
-				$check_tag = str_replace(' ','',$_POST['alliance_tag']);
-				$check_name = str_replace(' ','',$_POST['alliance_name']);
-				
-				if($check_name!='' && $check_tag!='')
+				$rtnMsg = "";
+				if (Alliance::create(array(
+					"tag" => $_POST['alliance_tag'], 
+					"name" => $_POST['alliance_name'],
+					"founder" => $cu
+					),$rtnMsg))
 				{
-					$s['alliance_creation_tag']=$_POST['alliance_tag'];
-					$s['alliance_creation_name']=$_POST['alliance_name'];
-					$s['alliance_creation_text']=$_POST['alliance_text'];
-					$s['alliance_creation_url']=$_POST['alliance_url'];
-		
-					$check_tag = check_illegal_signs($_POST['alliance_tag']);
-					$check_name = check_illegal_signs($_POST['alliance_name']);
-					$signs= check_illegal_signs("gibt eine liste von unerlaubten zeichen aus! ; < > .&");
-		
-					if ($_POST['alliance_tag']=="" || $_POST['alliance_name']=="" || $check_tag!="" || $check_name!="")
-					{
-						echo "<b>Fehler:</b> Du hast keinen Namen oder kein Tag eingegeben oder ein unerlaubtes Zeichen (".$signs.") verwendet!<br/><br/>";
-						echo "<input type=\"button\" onclick=\"document.location='?page=$page&action=create'\" value=\"Zur&uuml;ck\" />";
-					}
-					elseif (mysql_num_rows(dbquery("SELECT alliance_id FROM alliances WHERE alliance_tag='".$_POST['alliance_tag']."';"))>0)
-					{
-						echo "<b>Fehler:</b> Die Allianz mit dem Tag <b>".$_POST['alliance_tag']."</b> existiert bereits!<br/><br/>";
-						echo "<input type=\"button\" onclick=\"document.location='?page=$page&action=create'\" value=\"Zur&uuml;ck\" />";
-					}
-					else
-					{
-						dbquery("INSERT INTO alliances (alliance_tag,alliance_name,alliance_text,alliance_url,alliance_founder_id,alliance_foundation_date) VALUES ('".addslashes($_POST['alliance_tag'])."','".addslashes($_POST['alliance_name'])."','".addslashes($_POST['alliance_text'])."','".$_POST['alliance_url']."','".$cu->id."','".time()."');");
-						$aid = mysql_insert_id();
-						dbquery("UPDATE users SET user_alliance_id='$aid' WHERE user_id='".$cu->id."';");
-						
-						$cu->setAllianceId($aid);
-						add_log(5,"Die Allianz [b]".$_POST['alliance_name']." (".$_POST['alliance_tag'].")[/b] wurde vom Spieler [b]".$cu->nick."[/b] gegr&uuml;ndet!",time());
-						add_alliance_history($aid,"Die Allianz [b]".$_POST['alliance_name']." (".$_POST['alliance_tag'].")[/b] wurde vom Spieler [b]".$cu->nick."[/b] gegründet!");
-						
-						$cu->addToUserLog("alliance","{nick} hat die Allianz ".$_POST['alliance_name']." gegründet.");
-						
-						
-						echo "Die Allianz <b>".$_POST['alliance_name']." (".$_POST['alliance_tag'].")</b> wurde gegr&uuml;ndet!<br/><br/>";
-						echo "<input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"Zur Allianz-&Uuml;bersicht\" />";
-					}
+					success_msg("Allianz [b]".$rtnMsg."[/b] gegründet!");	
+					echo "<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Weiter\" />";
+					$finish = true;
 				}
 				else
 				{
-					echo "<b>Fehler:</b> Der Allianzname und/oder der Allianztag darf nicht nur aus Leerschlägen bestehen!<br/><br/>
-					<input type=\"button\" onclick=\"document.location='?page=$page&action=create'\" value=\"Zur&uuml;ck\" />";
+					$defTag = $_POST['alliance_tag'];
+					$defName = $_POST['alliance_name'];
+					error_msg($rtnMsg);
 				}
 			}
-			else
+			if (!$finish)
 			{
 				echo "<form action=\"?page=$page&amp;action=create\" method=\"post\">";
 				checker_init();
 				tableStart("Allianz-Daten");
-				echo "<tr><td class=\"tbltitle\">Allianz-Tag:</td><td class=\"tbldata\"><input type=\"text\" name=\"alliance_tag\" size=\"6\" maxlength=\"6\" value=\"".$s['alliance_creation_tag']."\" /></td></tr>";
-				echo "<tr><td class=\"tbltitle\">Allianz-Name:</td><td class=\"tbldata\"><input type=\"text\" name=\"alliance_name\" size=\"25\" maxlength=\"25\" value=\"".$s['alliance_creation_name']."\" /></td></tr>";
-				echo "<tr><td class=\"tbltitle\">Beschreibung:</td><td class=\"tbldata\"><textarea rows=\"10\" cols=\"50\" name=\"alliance_text\">".$s['alliance_creation_text']."</textarea></td></tr>";
-				echo "<tr><td class=\"tbltitle\">Website/Forum:</td><td class=\"tbldata\"><input type=\"text\" name=\"alliance_url\" size=\"40\" maxlength=\"255\" value=\"".$s['alliance_creation_url']."\" /></td></tr>";
-				echo "<tr><td class=\"tbltitle\">Bildpfad:</td><td class=\"tbldata\">Das Allianz-Bild kann nachträglich in den Allianz-Einstellungen heraufgeladen werden!</td></tr>";
+				echo "<tr><th>Tag / Name:</th>
+				<td>
+				[<input type=\"text\" name=\"alliance_tag\" size=\"6\" maxlength=\"6\" value=\"".$defTag."\" />]
+				&nbsp; <input type=\"text\" name=\"alliance_name\" size=\"25\" maxlength=\"25\" value=\"".$defName."\" /></td></tr>
+				<tr><td colspan=\"2\">Alle weiteren Daten könnten nach der Erstellung im Allianzmenü geändert werden.</td></tr>";
 				tableEnd();
-				echo "<input type=\"submit\" name=\"createsubmit\" value=\"Speichern\" /></form>";
+				echo "<input type=\"submit\" name=\"createsubmit\" value=\"Speichern\" /> &nbsp;
+				<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Übersicht\" /></form>";
 			}
 		}
 	

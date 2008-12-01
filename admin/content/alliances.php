@@ -716,7 +716,8 @@
 			// Allianz löschen
 			if ($_POST['drop']!="")
 			{
-				delete_alliance($_POST['alliance_id']);
+				$ally = new Alliance($_POST['alliance_id']);
+				$ally->delete();
 				echo "Die Allianz wurde gel&ouml;scht!<br/><br/>";
 			}
 

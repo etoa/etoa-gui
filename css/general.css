@@ -219,7 +219,27 @@ table.boxLayout, div.boxLayout	{
 .infoLog span	{
  color:#aaa;
  font-size:7pt;
- padding-left:20px;
+ padding-left:15px;
+ padding-right:5px;
+ white-space : nowrap;
+}
+
+.twoColumnList	{
+  overflow:auto;
+}
+
+.twoColumnList ul	{
+	width:49%;
+  display:inline;
+  float:left;
+  list-style-type:none;
+  padding:0px;
+  margin:0px;
+}
+
+.twoColumnList ul	li {
+	margin:0px;
+	padding:5px;
 }
 
 /*------- Tooltip ----------*/

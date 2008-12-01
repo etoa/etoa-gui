@@ -71,12 +71,11 @@
 			if (mysql_num_rows($res)>0)
 			{
 				$arr = mysql_fetch_array($res);
-
 				$ally = new Alliance($cu->allianceId);
 
 
 				// Rechte laden
-				$rightres=dbquery("SELECT * FROM alliance_rights ORDER BY right_desc;");
+				$rightres=dbquery("SELECT * FROM alliance_rights;");
 				$rights=array();
 				if (mysql_num_rows($rightres)>0)
 				{
@@ -104,14 +103,7 @@
 				}
 
 				// Gründer prüfen
-				if ($arr['alliance_founder_id']==$cu->id)
-				{
-					$isFounder=true;
-				}
-				else
-				{
-					$isFounder=false;
-				}
+				$isFounder = ($ally->founderId == $cu->id) ? true : false;
 
 				//
 				// Allianzdaten ändern
@@ -467,15 +459,22 @@
 					}
 
 	        // Allianz auflösen
-					if (isset($_POST['liquidatesubmit']) && $_POST['liquidatesubmit']!="" && $isFounder && $cu->allianceId==$_POST['id_control'] && checker_verify())
+					if (isset($_POST['liquidatesubmit']) 
+					&& $_POST['liquidatesubmit']!="" 
+					&& $isFounder 
+					&& $cu->allianceId==$_POST['id_control'] 
+					&& checker_verify())
 					{
-						delete_alliance($arr['alliance_id'],true);
-						$cu->setAllianceId(0);
-						echo "Die Allianz wurde aufgel&ouml;st!<br/><br/><input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"&Uuml;bersicht\" />";
+						$ally->delete($cu);
+						echo "Die Allianz wurde aufgel&ouml;st!<br/><br/>
+						<input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"&Uuml;bersicht\" />";
 					}
 					// Allianzdaten anzeigen
 					else
 					{
+
+						$ally->visits++;
+
 						
 						tableStart("[".stripslashes($arr['alliance_tag'])."] ".stripslashes($arr['alliance_name']));
 						if ($arr['alliance_img']!="")
@@ -540,7 +539,7 @@
 						}
 						else
 							$ps="<i>Noch keine Beitr&auml;ge vorhanden";
-						echo "<tr><th>Internes Forum</th><td class=\"tbldata\" colspan=\"2\"><b><a href=\"?page=allianceboard\">Forum&uuml;bersicht</a></b> &nbsp; $ps</td></tr>";
+						echo "<tr><th>Internes Forum</th><td colspan=\"2\"><b><a href=\"?page=allianceboard\">Forum&uuml;bersicht</a></b> &nbsp; $ps</td></tr>";
 
 						// Umfrage verlinken
 						$pres=dbquery("SELECT poll_title,poll_question,poll_id FROM alliance_polls WHERE poll_alliance_id=".$arr['alliance_id']." ORDER BY poll_timestamp DESC LIMIT 2;");
@@ -549,7 +548,7 @@
 						{
 							$parr=mysql_fetch_array($pres);
 							echo "<tr><th>Umfrage:</th>
-							<td class=\"tbldata\" colspan=\"2\"><a href=\"?page=$page&amp;action=viewpoll\"><b>".stripslashes($parr['poll_title']).":</b> ".stripslashes($parr['poll_question'])."</a>";
+							<td colspan=\"2\"><a href=\"?page=$page&amp;action=viewpoll\"><b>".stripslashes($parr['poll_title']).":</b> ".stripslashes($parr['poll_question'])."</a>";
 							if ($pcnt>1)
 								echo " &nbsp; (<a href=\"?page=$page&amp;action=viewpoll\">mehr Umfragen</a>)";
 							echo "</td></tr>";
@@ -626,43 +625,39 @@
 
 
 						if ($isFounder || $myRight['viewmembers']) array_push($adminBox,"<a href=\"?page=$page&amp;action=viewmembers\">Mitglieder anzeigen</a>");
-						if ($isFounder || $myRight['editmembers']) array_push($adminBox,"<a href=\"?page=$page&action=editmembers\">Mitglieder verwalten</a>");
-						if ($isFounder || $myRight['editdata']) array_push($adminBox,"<a href=\"?page=$page&amp;action=editdata\">Allianz-Daten</a>");
+						array_push($adminBox,"<a href=\"?page=$page&action=base\">Allianzbasis</a>");
 						if ($isFounder || $myRight['wings']) array_push($adminBox,"<a href=\"?page=$page&action=wings\">Wings verwalten</a>");
-						if ($isFounder || $myRight['applicationtemplate']) array_push($adminBox,"<a href=\"?page=$page&action=applicationtemplate\">Bewerbungsvorlage</a>");
 						if ($isFounder || $myRight['history']) array_push($adminBox,"<a href=\"?page=$page&action=history\">Geschichte</a>");
-						if ($isFounder || $myRight['massmail']) array_push($adminBox,"<a href=\"?page=$page&action=massmail\">Rundmail</a>");
-						if ($isFounder || $myRight['ranks']) array_push($adminBox,"<a href=\"?page=$page&action=ranks\">R&auml;nge</a>");
 						if ($isFounder || $myRight['alliancenews']) array_push($adminBox,"<a href=\"?page=$page&action=alliancenews\">Allianznews (Rathaus)</a>");
 						if ($isFounder || $myRight['relations']) array_push($adminBox,"<a href=\"?page=$page&action=relations\">Diplomatie</a>");
 						if ($isFounder || $myRight['polls']) array_push($adminBox,"<a href=\"?page=$page&action=polls\">Umfragen verwalten</a>");
-						if ($isFounder || $myRight['liquidate']) array_push($adminBox,"<a href=\"?page=$page&action=liquidate\">Allianz aufl&ouml;sen</a>");
+						if ($isFounder || $myRight['massmail']) array_push($adminBox,"<a href=\"?page=$page&action=massmail\">Rundmail</a>");
+						if ($isFounder || $myRight['editmembers']) array_push($adminBox,"<a href=\"?page=$page&action=editmembers\">Mitglieder verwalten</a>");
+						if ($isFounder || $myRight['ranks']) array_push($adminBox,"<a href=\"?page=$page&action=ranks\">R&auml;nge</a>");
+						if ($isFounder || $myRight['editdata']) array_push($adminBox,"<a href=\"?page=$page&amp;action=editdata\">Allianz-Daten</a>");
+						if ($isFounder || $myRight['applicationtemplate']) array_push($adminBox,"<a href=\"?page=$page&action=applicationtemplate\">Bewerbungsvorlage</a>");
+						if ($isFounder) array_push($adminBox,"<a href=\"?page=$page&action=liquidate\">Allianz aufl&ouml;sen</a>");
 						
-						array_push($adminBox,"<a href=\"?page=$page&action=base\">Allianzbasis</a>");
 
 						if (!$isFounder) array_push($adminBox,"<a href=\"?page=$page&action=leave\" onclick=\"return confirm('Allianz wirklich verlassen?');\">Allianz verlassen</a>");
 
 						$cnt=count($adminBox);
 						if ($cnt>0)
 						{
-							echo"<tr><th width=\"120\" rowspan=\"".(ceil($cnt/2)+1)."\">Verwaltung:</th>";
-							$bcnt=0;
+							echo"<tr><th width=\"120\" >Verwaltung:</th>";
+							echo "<td class=\"twoColumnList\" colspan=\"2\">";
+							$bcnt=0;							
 							foreach ($adminBox as $ab)
-							{
-								if ($bcnt%2==0)
-								{
-									echo "<tr>";
-								}
-								
-								echo "<td class=\"tbldata\" width=\"50%\"><b>".$ab."</b></td>\n";
-								if ($bcnt%2==1)
-								{
-									echo "</tr>";
-								}
+							{							
+								if ($bcnt==0)
+									echo "<ul>";
+								echo "<li><b>".$ab."</b></li>";
+								if ($bcnt == floor($cnt/2))							
+									echo "</ul><ul>";
 								$bcnt++;
 							}
-							if ($bcnt%2==1)
-							echo "<td class=\"tbldata\"></td></tr>";
+							echo "</ul>";
+							echo "</td></tr>";							
 						}
 
 
@@ -671,7 +666,7 @@
 						{
 							echo "<tr>
 								<th width=\"120\">Letzte Ereignisse:</th>
-								<td class=\"tbldata\" colspan=\"2\">";
+								<td colspan=\"2\">";
 							$hres=dbquery("
 							SELECT 
 								* 
@@ -686,7 +681,7 @@
 							{
 								while ($harr=mysql_fetch_array($hres))
 								{
-									echo "<div class=\"infoLog\">".text2html($harr['history_text'])." <span>".df($harr['history_timestamp'])."</span></div>";
+									echo "<div class=\"infoLog\">".text2html($harr['history_text'])." <span>".df($harr['history_timestamp'],0)."</span></div>";
 								}
 							}
 							echo "</td></tr>";							
@@ -695,65 +690,47 @@
 						// Text anzeigen
 						if ($arr['alliance_text']!="")
 						{
-							echo "<tr><td class=\"tbldata\" colspan=\"3\" style=\"text-align:center\">".text2html($arr['alliance_text'])."</td></tr>\n";
+							echo "<tr><td colspan=\"3\" style=\"text-align:center\">".text2html($arr['alliance_text'])."</td></tr>\n";
 						}
 			
 						// Kriege
 						$wars=dbquery("
 						SELECT 
-							a1.alliance_tag as a1tag,
-							a1.alliance_name as a1name,
-							a1.alliance_id as a1id,
-							a2.alliance_tag as a2tag,
-							a2.alliance_name as a2name,
-							a2.alliance_id as a2id,
+							alliance_bnd_alliance_id1 as a1id,
+							alliance_bnd_alliance_id2 as a2id,
 							alliance_bnd_date as date
 						FROM 
 							alliance_bnd
-						INNER JOIN
-							alliances as a1
-							ON alliance_bnd_alliance_id1=a1.alliance_id
-						INNER JOIN
-							alliances as a2
-							ON alliance_bnd_alliance_id2=a2.alliance_id
 					 	WHERE 
-					 		(alliance_bnd_alliance_id1='".$cu->allianceId."' 
-					 		OR alliance_bnd_alliance_id2='".$cu->allianceId."') 
-					 		AND alliance_bnd_level=3
+					 		alliance_bnd_level=3
+					 		AND
+					 		(alliance_bnd_alliance_id1='".$ally->id."' 
+					 		OR alliance_bnd_alliance_id2='".$ally->id."') 
 					 	;");
 						if (mysql_num_rows($wars)>0)
 						{
 							
 							echo "<tr>
 											<th>Kriege:</th>
-											<td class=\"tbldata\" colspan=\"2\">
+											<td>
 												<table class=\"tbl\">
 													<tr>
-														<th style=\"width:50%;\">Allianz</th>
-														<th style=\"width:25%;\">Von</th>
-														<th style=\"width:25%;\">Bis</th>
+														<th>Allianz</th>
+														<th>Punkte</th>
+														<th>Zeitraum</th>
 													</tr>";
 									while ($war=mysql_fetch_array($wars))
 									{
-										if (isset($war['a1id']) && $war['a1id']==$cu->allianceId) 
-										{
-											$opId = $war['a2id'];
-											$opTag = $war['a2tag'];
-											$opName = $war['a2name'];
-										}
+										if ($war['a1id']==$ally->id) 
+											$opAlly = new Alliance($war['a2id']);
 										else
-										{
-											$opId = $war['a1id'];
-											$opTag = $war['a1tag'];
-											$opName = $war['a1name'];
-										}
+											$opAlly = new Alliance($war['a1id']);
 										echo "<tr>
-														<td class=\"tbldata\">
-															[".$opTag."] ".$opName." 
-															[<a href=\"?page=$page&amp;id=".$opId."\">Info</a>]
+														<td>
+															<a href=\"?page=$page&amp;id=".$opAlly->id."\">".$opAlly."</a>
 														</td>
-														<td class=\"tbldata\">".df($war['date'])."</td>
-														<td class=\"tbldata\">".df($war['date']+WAR_DURATION)."</td>
+														<td>".nf($opAlly->points)." / ".nf($opAlly->avgPoints)."</td>
+														<td>".df($war['date'],0)." bis ".df($war['date']+WAR_DURATION,0)."</td>
 													</tr>";
 									}
 									echo "</table>
@@ -765,58 +742,41 @@
 						// Friedensabkommen
 						$wars=dbquery("
 						SELECT 
-							a1.alliance_tag as a1tag,
-							a1.alliance_name as a1name,
-							a1.alliance_id as a1id,
-							a2.alliance_tag as a2tag,
-							a2.alliance_name as a2name,
-							a2.alliance_id as a2id,
+							alliance_bnd_alliance_id1 as a1id,
+							alliance_bnd_alliance_id2 as a2id,
 							alliance_bnd_date as date
 						FROM 
 							alliance_bnd
-						INNER JOIN
-							alliances as a1
-							ON alliance_bnd_alliance_id1=a1.alliance_id
-						INNER JOIN
-							alliances as a2
-							ON alliance_bnd_alliance_id2=a2.alliance_id
 					 	WHERE 
-					 		(alliance_bnd_alliance_id1='".$cu->allianceId."' 
-					 		OR alliance_bnd_alliance_id2='".$cu->allianceId."') 
-					 		AND alliance_bnd_level=4
+					 		alliance_bnd_level=4
+					 		AND 
+					 		(alliance_bnd_alliance_id1='".$ally->id."' 
+					 		OR alliance_bnd_alliance_id2='".$ally->id."') 
+					 		
 					 	;");
 						if (mysql_num_rows($wars)>0)
 						{			
 							echo "<tr>
 											<th>Friedensabkommen:</th>
-											<td class=\"tbldata\" colspan=\"2\">
+											<td>
 												<table class=\"tbl\">
 													<tr>
-														<th style=\"width:50%;\">Allianz</th>
-														<th style=\"width:25%;\">Von</th>
-														<th style=\"width:25%;\">Bis</th>
+														<th>Allianz</th>
+														<th>Punkte</th>
+														<th>Zeitraum</th>
 													</tr>";					
 									while ($war=mysql_fetch_array($wars))
 									{
-										if (isset($war['a1id']) && $war['a1id']==$cu->allianceId) 
-										{
-											$opId = $war['a2id'];
-											$opTag = $war['a2tag'];
-											$opName = $war['a2name'];
-										}
+										if ($war['a1id']==$ally->id) 
+											$opAlly = new Alliance($war['a2id']);
 										else
-										{
-											$opId = $war['a1id'];
-											$opTag = $war['a1tag'];
-											$opName = $war['a1name'];
-										}
+											$opAlly = new Alliance($war['a1id']);
 										echo "<tr>
-														<td class=\"tbldata\">
-															[".$opTag."] ".$opName." 
-															[<a href=\"?page=$page&amp;id=".$opId."\">Info</a>]
+														<td>
+															<a href=\"?page=$page&amp;id=".$opAlly->id."\">".$opAlly."</a>
 														</td>
-														<td class=\"tbldata\">".df($war['date'])."</td>
-														<td class=\"tbldata\">".df($war['date']+PEACE_DURATION)."</td>
+														<td>".nf($opAlly->points)." / ".nf($opAlly->avgPoints)."</td>
+														<td>".df($war['date'],0)." bis ".df($war['date']+PEACE_DURATION,0)."</td>
 													</tr>";				
 									}
 									echo "</table>
@@ -827,60 +787,42 @@
 						// Bündnisse
 						$wars=dbquery("
 						SELECT 
-							a1.alliance_tag as a1tag,
-							a1.alliance_name as a1name,
-							a1.alliance_id as a1id,
-							a2.alliance_tag as a2tag,
-							a2.alliance_name as a2name,
-							a2.alliance_id as a2id,
+							alliance_bnd_alliance_id1 as a1id,
+							alliance_bnd_alliance_id2 as a2id,
 							alliance_bnd_date as date,
 							alliance_bnd_name as name
 						FROM 
 							alliance_bnd
-						INNER JOIN
-							alliances as a1
-							ON alliance_bnd_alliance_id1=a1.alliance_id
-						INNER JOIN
-							alliances as a2
-							ON alliance_bnd_alliance_id2=a2.alliance_id
 					 	WHERE 
-					 		(alliance_bnd_alliance_id1='".$cu->allianceId."' 
-					 		OR alliance_bnd_alliance_id2='".$cu->allianceId."') 
-					 		AND alliance_bnd_level=2
+					 		alliance_bnd_level=2
+					 		AND 
+					 		(alliance_bnd_alliance_id1='".$ally->id."' 
+					 		OR alliance_bnd_alliance_id2='".$ally->id."') 
 					 	;");
 						if (mysql_num_rows($wars)>0)
 						{				
 							echo "<tr>
 											<th>Bündnisse:</th>
-											<td class=\"tbldata\" colspan=\"2\">
+											<td>
 												<table class=\"tbl\">
 													<tr>
-														<th style=\"width:50%;\">Allianz</th>
-														<th style=\"width:25%;\">Von</th>
-														<th style=\"width:25%;\">Bündnisname</th>
+														<th>Bündnisname</th>
+														<th>Allianz</th>
+														<th>Punkte</th>
+														<th>Seit</th>
 													</tr>";		
 			
 									while ($war=mysql_fetch_array($wars))
 									{
-										if (isset($war['a1id']) && $war['a1id']==$cu->allianceId) 
-										{
-											$opId = $war['a2id'];
-											$opTag = $war['a2tag'];
-											$opName = $war['a2name'];
-										}
+										if ($war['a1id']==$ally->id) 
+											$opAlly = new Alliance($war['a2id']);
 										else
-										{
-											$opId = $war['a1id'];
-											$opTag = $war['a1tag'];
-											$opName = $war['a1name'];
-										}
+											$opAlly = new Alliance($war['a1id']);
 										echo "<tr>
-														<td class=\"tbldata\">
-															[".$opTag."] ".$opName." 
-															[<a href=\"?page=$page&amp;id=".$opId."\">Info</a>]
-														</td>
-														<td class=\"tbldata\">".df($war['date'])."</td>
-														<td class=\"tbldata\">".stripslashes($war['name'])."</td>
+														<td>".stripslashes($war['name'])."</td>
+														<td><a href=\"?page=$page&amp;id=".$opAlly->id."\">".$opAlly."</a></td>
+														<td>".nf($opAlly->points)." / ".nf($opAlly->avgPoints)."</td>											
+														<td>".df($war['date'])."</td>
 													</tr>";							
 																
 									}
@@ -890,16 +832,13 @@
 						}				
 
 						// Besucher
-						if ($arr['alliance_visits_ext']>0)
-						{
-							echo "<tr><th width=\"120\">Besucherzähler:</th><td class=\"tbldata\" colspan=\"2\">".nf($arr['alliance_visits_ext'])." Besucher</td></tr>\n";
-						}
+						echo "<tr><th width=\"120\">Besucherzähler:</th>
+						<td colspan=\"2\">".nf($ally->visits)." intern / ".nf($ally->visitsExt)." extern</td></tr>\n";
 						
 						// Wings
-						$wings = $ally->getWings();
-						if (count($wings) > 0)
+						if (count($ally->wings) > 0)
 						{
-							echo "<tr><th width=\"120\">Wings:</th><td class=\"tbldata\" colspan=\"2\">";
+							echo "<tr><th width=\"120\">Wings:</th><td colspan=\"2\">";
 							echo "<table class=\"tb\">";
 							echo "<tr>
 								<th>Name</th>
@@ -907,7 +846,7 @@
 								<th>Mitglieder</th>
 								<th>Punkteschnitt</th>
 							</tr>";
-							foreach ($wings as $wid => $wdata)
+							foreach ($ally->wings as $wid => $wdata)
 							{
 								echo "<tr>
 								<td><a href=\"?page=alliance&amp;id=".$wid."\">".$wdata."</a></td>
@@ -925,13 +864,13 @@
 						// Website
 						if ($arr['alliance_url']!="")
 						{
-							echo "<tr><th width=\"120\">Website/Forum:</th><td class=\"tbldata\" colspan=\"2\"><b>".
+							echo "<tr><th width=\"120\">Website/Forum:</th><td colspan=\"2\"><b>".
 							format_link($arr['alliance_url'])."</a></b></td></tr>\n";
 						}
 						
 						// Diverses
 						echo "<tr><th width=\"120\">Mitglieder:</th>
-						<td class=\"tbldata\" colspan=\"2\">".$ally->memberCount."</td></tr>\n";
+						<td colspan=\"2\">".$ally->memberCount."</td></tr>\n";
 						// Punkte
 						echo "<tr>
 										<th>Punkte / Schnitt:</th>
@@ -940,12 +879,12 @@
 										echo "</td>
 									</tr>";
 						echo "<tr><th width=\"120\">Gr&uuml;nder:</th>
-						<td class=\"tbldata\" colspan=\"2\">
+						<td colspan=\"2\">
 							<a href=\"?page=userinfo&amp;id=".$ally->founderId."\">".$ally->founder."</a></td></tr>";
 						// Gründung
 						echo "<tr>
 										<th>Gründungsdatum:</th>
-										<td class=\"tbldata\" colspan=\"2\">
+										<td colspan=\"2\">
 											".df($ally->foundationDate)." (vor ".tf(time() - $ally->foundationDate).")
 										</td>
 									</tr>";								

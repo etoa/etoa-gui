@@ -550,7 +550,7 @@
 	/**
 	* Überprüft ob unerlaubte Zeichen im Text sind und gibt Antwort zurück
 	*
-	* @todo Should be removed (better use some class methods and strip-/addslashes
+	* @todo Should be removed (better use some regex and strip-/addslashes/trim
 	*/
 	function check_illegal_signs($string)
 	{
@@ -1221,77 +1221,6 @@ die Spielleitung";
 	}
 
 
-	/**
-	* Delete alliance
-	*/
-	function delete_alliance($alliance_id,$self=false)
-	{
-		$res=dbquery("
-			SELECT
-				alliance_name
-			FROM
-				alliances
-			WHERE
-				alliance_id='".$alliance_id."';
-		");
-		$arr=mysql_fetch_assoc($res);
-
-		//Daten löschen
-		dbquery("
-		DELETE FROM
-			alliances
-		WHERE
-			alliance_id='".$alliance_id."';");
-
-		//Delete Bnd Forums
-		$bndres=dbquery("SELECT 
-							* 
-						FROM 
-							alliance_bnd
-						WHERE
-							alliance_bnd_alliance_id1='".$alliance_id."'
-							OR alliance_bnd_alliance_id2='".$alliance_id."';");
-		if (mysql_num_rows($bndres)>0)
-		{
-			while ($bndarr=mysql_fetch_assoc($bndres))
-			{
-				$bres=dbquery("SELECT * FROM allianceboard_topics WHERE topic_bnd_id=".$bndarr['alliance_bnd_id'].";");
-				while ($barr=mysql_fetch_assoc($bres))
-				{
-					dbquery("DELETE FROM allianceboard_posts WHERE post_topic_id=".$barr['topic_id'].";");
-				}
-				dbquery("DELETE FROM allianceboard_topics WHERE topic_bnd_id=".$bndar['alliance_bnd_id'].";");				
-			}
-		}
-		dbquery("
-			DELETE FROM
-				alliance_bnd
-			WHERE
-				alliance_bnd_alliance_id1='".$alliance_id."'
-				OR alliance_bnd_alliance_id2='".$alliance_id."';
-		");
-		dbquery("DELETE FROM alliance_ranks WHERE rank_alliance_id='".$alliance_id."';");
-		dbquery("DELETE FROM alliance_history WHERE history_alliance_id='".$alliance_id."';");
-		dbquery("DELETE FROM allianceboard_cat WHERE cat_alliance_id='".$alliance_id."';");
-		dbquery("DELETE FROM alliance_polls WHERE poll_alliance_id='".$alliance_id."';");
-		dbquery("DELETE FROM alliance_poll_votes WHERE vote_alliance_id='".$alliance_id."';");
-		dbquery("DELETE FROM alliance_applications WHERE alliance_id='".$alliance_id."';");
-		dbquery("
-			UPDATE
-				users
-			SET
-				user_alliance_id='0'
-			WHERE
-				user_alliance_id='".$alliance_id."';
-		");
-
-		//Log schreiben
-		if($self)
-			add_log("5","Die Allianz [b]".$arr['alliance_name']."[/b] wurde manuell aufgelöst!",time());
-		else
-			add_log("5","Die Allianz [b]".$arr['alliance_name']."[/b] wurde gelöscht!",time());
-		return true;
-	}
 
 	/**
 	* Abgelaufene Sperren löschen

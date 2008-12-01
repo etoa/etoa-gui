@@ -23,14 +23,14 @@ if (Alliance::checkActionRights('wings'))
 	if (isset($_POST['add_wing_id']) && $_POST['add_wing_id']>0)
 	{
 		if ($ally->addWingRequest($_POST['add_wing_id']))
-			ok_msg("Winganfrage hinzugefügt. Der Gründer der anfegragen Allianz wurde informiert!");		
+			ok_msg("Winganfrage hinzugefügt. Der Gründer der angefragten Allianz wurde informiert!");		
 		else
 			err_msg("Es ist bereits eine Anfrage vorhanden oder die Allianz ist schon ein Wing einer anderen Allianz!");
 	}	
 
 	if (isset($_POST['grant_req']) && $ally->motherRequestId > 0)
 	{
-		if ($ally->motherRequest->addWing($ally->id))
+		if ($ally->grantWingRequest())
 			ok_msg("Winganfrage bestätigt!");		
 		else
 			err_msg("Es ist ein Problem aufgetreten!");
@@ -38,7 +38,7 @@ if (Alliance::checkActionRights('wings'))
 
 	if (isset($_POST['revoke_req']) && $ally->motherRequestId > 0)
 	{
-		if ($ally->motherRequest->cancelWingRequest($ally->id,1))
+		if ($ally->revokeWingRequest())
 			ok_msg("Winganfrage zurückgewiesen!");		
 		else
 			err_msg("Es ist ein Problem aufgetreten!");

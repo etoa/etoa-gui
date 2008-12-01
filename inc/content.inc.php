@@ -142,6 +142,11 @@
 			{			
 				if (eregi('^[a-z\_]+$',$page)  && strlen($page)<=50)
 				{
+					
+					// DEBUG
+					$query_counter=0; 
+					$queries=array();
+					
 					// Content includen
 					if (!include("content/".$page.".php"))
 					{

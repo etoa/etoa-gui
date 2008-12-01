@@ -652,7 +652,7 @@
 					else
 					{
 						// Wenn der User das einzige/letzte Mitglied der Allianz ist wird sie aufgelöst
-						delete_alliance($this->allianceId);
+						$this->__get('alliance')->delete($this);
 					}
 				}
 	
