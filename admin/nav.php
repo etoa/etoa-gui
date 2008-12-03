@@ -148,6 +148,10 @@
 	$navmenu['Allianzen']['Allianzen bearbeiten']['sub']="";
 	$navmenu['Allianzen']['Allianzen bearbeiten']['level']=0;
 
+	$navmenu['Allianzen']['Allianz erstellen']['page']="alliances";
+	$navmenu['Allianzen']['Allianz erstellen']['sub']="create";
+	$navmenu['Allianzen']['Allianz erstellen']['level']=0;
+
 	$navmenu['Allianzen']['Fehlerhafte Daten']['page']="alliances";
 	$navmenu['Allianzen']['Fehlerhafte Daten']['sub']="crab";
 	$navmenu['Allianzen']['Fehlerhafte Daten']['level']=1;
@@ -255,6 +259,10 @@
 	$navmenu['Verteidigung']['Liste']['page']="def";
 	$navmenu['Verteidigung']['Liste']['sub']="";
 	$navmenu['Verteidigung']['Liste']['level']=1;
+	
+	$navmenu['Verteidigung']['Bauliste']['page']="def";
+	$navmenu['Verteidigung']['Bauliste']['sub']="queue";
+	$navmenu['Verteidigung']['Bauliste']['level']=1;	
 
 	$navmenu['Verteidigung']['bar'][0] = true;
 

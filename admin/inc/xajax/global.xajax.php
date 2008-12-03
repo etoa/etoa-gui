@@ -580,7 +580,7 @@ function addDefenseToPlanet($form)
 	$updata=explode(":",$form['planet_id']);
 	if ($updata[1]>0)
 	{
-		deflistAdd($updata[0],$updata[1],$form['ship_id'],intval($form['shiplist_count']));	
+		deflistAdd($updata[0],$updata[1],$form['def_id'],intval($form['deflist_count']));	
   	$objResponse->script("xajax_showDefenseOnPlanet(".$updata[0].")");
   }
   else

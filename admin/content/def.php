@@ -59,6 +59,359 @@
 	}
 	
 	//
+	// Bauliste
+	//
+	elseif ($sub=="queue")
+	{
+		echo "<h2>Bauliste</h2>";
+
+		if ($_POST['defqueue_search']!="" || $_GET['action']=="searchresults")
+		{
+			$sqlstart = "
+			SELECT
+				queue_id,
+				queue_starttime,
+				queue_endtime,
+				queue_objtime,
+				queue_cnt,
+				def_name,
+				def_id,
+				planet_name,
+				planets.id,
+				planet_user_id,
+				entities.pos,
+				cells.sx,
+				cells.sy,
+				cells.cx,
+				cells.cy,
+				user_nick,
+				user_id,
+				user_points
+			FROM
+					def_queue
+			INNER JOIN
+				planets
+				ON
+					queue_entity_id=planets.id
+			INNER JOIN
+				entities
+				ON
+					planets.id=entities.id
+			INNER JOIN
+				cells
+				ON
+					entities.cell_id=cells.id
+			INNER JOIN
+				users
+				ON
+					queue_user_id=user_id
+			INNER JOIN
+				defense
+				ON
+					queue_def_id=def_id
+			";
+			$sqlend = "
+			GROUP BY
+					queue_id
+			ORDER BY
+					queue_entity_id,
+					queue_endtime
+					;";
+
+			// Suchquery generieren
+			if ($_SESSION['defqueue']['query']=="")
+			{
+				if ($_POST['planet_id']!="")
+				{
+					if ($sql!="") $sql.=" AND ";
+					$sql.= "queue_entity_id=".$_POST['planet_id'];
+				}
+				if ($_POST['planet_name']!="")
+				{
+					if ($sql!="") $sql.=" AND ";
+					if (stristr($_POST['qmode']['planet_name'],"%")) $addchars = "%";else $addchars = "";
+					$sql.= "planet_name ".stripslashes($_POST['qmode']['planet_name']).$_POST['planet_name']."$addchars'";
+				}
+				if ($_POST['user_id']!="")
+				{
+					if ($sql!="") $sql.=" AND ";
+					$sql.="queue_user_id=".$_POST['user_id'];
+				}
+				if ($_POST['user_nick']!="")
+				{
+					if ($sql!="") $sql.=" AND ";
+					if (stristr($_POST['qmode']['user_nick'],"%")) $addchars = "%";else $addchars = "";
+					$sql.= "user_nick ".stripslashes($_POST['qmode']['user_nick']).$_POST['user_nick']."$addchars'";
+				}
+				if ($_POST['def_id']!="")
+				{
+					if ($sql!="") $sql.=" AND ";
+					$sql.= "queue_def_id=".$_POST['def_id'];
+				}
+
+				if ($sql!="")
+				{
+					$sql = $sqlstart." WHERE ".$sql.$sqlend;
+				}
+				else
+				{
+					$sql = $sqlstart.$sql.$sqlend;
+				}
+				$_SESSION['defqueue']['query']=$sql;
+			}
+			else
+			{
+				$sql = $_SESSION['defqueue']['query'];
+			}
+
+			$res = dbquery($sql);
+			$nr = mysql_num_rows($res);
+			if ($nr>0)
+			{
+				echo "$nr Datens&auml;tze vorhanden<br/><br/>";
+				if ($nr>20)
+				{
+					echo "<input type=\"button\" value=\"Neue Suche\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" /> ";
+					echo "<input type=\"button\" value=\"Aktualisieren\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;action=searchresults'\" /><br/><br/>";
+				}
+
+				echo "<table class=\"tbl\">";
+				echo "<tr>";
+				echo "<td class=\"tbltitle\">ID</td>";
+				echo "<td class=\"tbltitle\">Schiff</td>";
+				echo "<td class=\"tbltitle\">Anzahl</td>";
+				echo "<td class=\"tbltitle\">Planet</td>";
+				echo "<td class=\"tbltitle\">Spieler</td>";
+				echo "<td class=\"tbltitle\">Start</td>";
+				echo "<td class=\"tbltitle\">Ende</td>";
+				echo "<td></td>";
+				echo "</tr>";
+				$check = array();
+				$pid=0;
+				while ($arr = mysql_fetch_array($res))
+				{
+					if ($pid>0 && $pid!=$arr['id'])
+					{
+						echo "<tr><td colspan=\"8\" style=\"height:3px;background:#000;\" class=\"tbldata\"></td></tr>";
+					}
+					$pid=$arr['id'];
+
+					$error=false;
+
+					// Planet gehört nicht dem Besitzer
+					if ($arr['user_id']!=$arr['planet_user_id'])
+					{
+						$error=true;
+						$errorMsg="Planet geh&ouml;rt nicht dem Schiffbesitzer! Wird auf den Heimatplaneten verschoben";
+					}
+					/*
+					// Zu viele Schiffe im Bau
+					if ($arr['shiplist_build_count']*$arr['shiplist_build_object_time'] > $arr['shiplist_build_end_time']-$arr['shiplist_build_start_time'])
+					{
+						$error=true;
+						$errorMsg="Bauzeit fehlerhaft, zu kurze Gesamtzeit (".tf($arr['shiplist_build_count']*$arr['shiplist_build_object_time'])." n&ouml;tig, ".tf($arr['shiplist_build_end_time']-$arr['shiplist_build_start_time'])." vorhanden)!";
+					}
+					// Bauzeit pro Objekt ist fehlerhaft
+					if ($arr['shiplist_build_object_time']!=0 && ($arr['shiplist_build_end_time']-$arr['shiplist_build_start_time'])%$arr['shiplist_build_object_time']!=0)
+					{
+						$error=true;
+						$errorMsg="Bauanzahl fehlerhaft!";
+					}
+					*/
+
+					if ($error)
+						$style=" style=\"color:#f30\"";
+					elseif ($arr['queue_cnt']==0)
+						$style=" style=\"color:#999\"";
+					else
+						$style="";
+					echo "<tr>";
+					echo "<td class=\"tbldata\" $style>".$arr['queue_id']."</a></td>";
+					echo "<td class=\"tbldata\"$style ".mTT($arr['def_name'],"<b>Schiff-ID:</b> ".$arr['def_id']).">".$arr['def_name']."</td>";
+					echo "<td class=\"tbldata\"$style>".nf($arr['queue_cnt'])."</td>";
+					echo "<td class=\"tbldata\"$style ".mTT($arr['planet_name'],"<b>Planet-ID:</b> ".$arr['id']."<br/><b>Koordinaten:</b> ".$arr['cell_sx']."/".$arr['cell_sy']." : ".$arr['cell_cx']."/".$arr['cell_cy']." : ".$arr['planet_solsys_pos']).">".cut_string($arr['planet_name'],11)."</td>";
+					echo "<td class=\"tbldata\"$style ".mTT($arr['user_nick'],"<b>User-ID:</b> ".$arr['user_id']."<br/><b>Punkte:</b> ".nf($arr['user_points'])).">".cut_string($arr['user_nick'],11)."</td>";
+					echo "<td class=\"tbldata\"$style>".df($arr['queue_starttime'],1)."</td>";
+					echo "<td class=\"tbldata\"$style>".df($arr['queue_endtime'],1)."</td>";
+					echo "<td class=\"tbldata\"$style>".edit_button("?page=$page&sub=$sub&action=edit&id=".$arr['queue_id']);
+					//if ($error)
+					//	echo " ".repair_button("?page=$page&sub=$sub&action=searchresults&amp;repair=".$arr['shiplist_id'],"Fehler!",$errorMsg);
+					echo "</td>";
+					echo "</tr>";
+				}
+				$check=NULL;
+				echo "</table>";
+				echo "<br/><input type=\"button\" value=\"Neue Suche\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" /> ";
+				echo "<input type=\"button\" value=\"Aktualisieren\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;action=searchresults'\" />";
+			}
+			else
+			{
+				echo "Die Suche lieferte keine Resultate!<br/><br/><input type=\"button\" value=\"Neue Suche\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" />";
+			}
+		}
+
+		//
+		// Auftrag bearbeiten
+		//
+		elseif ($_GET['action']=="edit" && $_GET['id']>0)
+		{
+			// Änderungen speichern
+			if ($_POST['save']!="")
+			{
+				dbquery("
+				UPDATE
+					def_queue
+				SET
+        	queue_cnt='".$_POST['queue_cnt']."',
+        	queue_starttime=UNIX_TIMESTAMP('".$_POST['queue_starttime']."'),
+        	queue_endtime=UNIX_TIMESTAMP('".$_POST['queue_endtime']."')
+				WHERE
+					queue_id='".$_GET['id']."';");
+			}
+
+			// Auftrag löschen
+			elseif ($_POST['del']!="")
+			{
+				dbquery("
+				DELETE FROM
+					def_queue
+				WHERE
+					queue_id='".$_GET['id']."';");
+				echo "Datensatz entfernt!<br/><br/>";
+			}
+
+			// Auftrag abschliessen
+			elseif ($_POST['build_finish']!="")
+			{
+				$res = dbquery("
+				SELECT
+					queue_entity_id,
+					queue_user_id,
+					queue_def_id,
+					queue_cnt
+				FROM
+	      	def_queue
+	      WHERE
+	      	queue_id='".$_GET['id']."'
+	      ;");
+	      if (mysql_num_rows($res)>0)
+	      {
+	      	$arr=mysql_fetch_array($res);
+					shiplistAdd($arr['queue_entity_id'],$arr['queue_user_id'],$arr['queue_def_id'],$arr['queue_cnt']);
+					dbquery("
+					DELETE FROM
+						def_queue
+					WHERE
+						queue_id='".$_GET['id']."'
+					;");
+				}
+				echo "Bau abgeschlossen!<br/><br/>";
+			}
+
+			$res = dbquery("
+			SELECT
+				queue_id,
+				queue_objtime,
+				queue_starttime,
+				queue_endtime,
+				queue_cnt,
+				def_name,
+				planet_name,
+				user_nick
+			FROM
+      	def_queue
+      INNER JOIN
+      	defense
+      	ON queue_def_id=def_id
+      INNER JOIN
+      	users
+      	ON queue_user_id=user_id
+      INNER JOIN
+      	planets
+      	ON queue_entity_id=planets.id
+			WHERE
+	       queue_id=".intval($_GET['id']).";");
+
+			if (mysql_num_rows($res)>0)
+			{
+				$arr = mysql_fetch_array($res);
+				if ($arr['queue_starttime']>0)
+					$bst = date(DATE_FORMAT,$arr['queue_starttime']);
+				else
+					$bst = "";
+				if ($arr['queue_endtime']>0)
+					$bet = date(DATE_FORMAT,$arr['queue_endtime']);
+				else
+					$bet = "";
+
+				echo "<form action=\"?page=$page&sub=$sub&action=edit&id=".$arr['queue_id']."\" method=\"post\">";
+				echo "<table class=\"tbl\">";
+				echo "<tr><td class=\"tbltitle\">ID</td><td class=\"tbldata\">".$arr['queue_id']."</td></tr>";
+				echo "<tr><td class=\"tbltitle\">Planet</td><td class=\"tbldata\">".$arr['planet_name']."</td></tr>";
+				echo "<tr><td class=\"tbltitle\">Spieler</td><td class=\"tbldata\">".$arr['user_nick']."</td></tr>";
+				echo "<tr><td class=\"tbltitle\">Schiff</td><td class=\"tbldata\">".$arr['def_name']."</td></tr>";
+				echo "<tr><td class=\"tbltitle\">Anzahl</td><td class=\"tbldata\"><input type=\"text\" name=\"queue_cnt\" value=\"".$arr['queue_cnt']."\" size=\"5\" maxlength=\"20\" /></td></tr>";
+				echo "<tr><td class=\"tbltitle\">Baustart</td><td class=\"tbldata\">
+				<input type=\"text\" id=\"shiplist_build_start_time\" name=\"queue_starttime\" value=\"$bst\" size=\"20\" maxlength=\"30\" />
+				<input type=\"button\" value=\"Jetzt\" onclick=\"document.getElementById('shiplist_build_start_time').value='".date("Y-d-m h:i")."'\" /></td></tr>";
+				echo "<tr><td class=\"tbltitle\">Bauende</td><td class=\"tbldata\">
+				<input type=\"text\" id=\"shiplist_build_end_time\" name=\"queue_endtime\" value=\"$bet\" size=\"20\" maxlength=\"30\" /></td></tr>";
+				echo "<tr><td class=\"tbltitle\">Bauzeit pro Schiff</td><td class=\"tbldata\">".tf($arr['queue_objtime'])."</td></tr>";
+				echo "</table><br/>";
+				echo "<input type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" class=\"button\" />&nbsp;";
+				echo "<input type=\"submit\" name=\"build_finish\" value=\"Bau fertigstellen\" />&nbsp;";
+				echo "<input type=\"submit\" name=\"del\" value=\"L&ouml;schen\" class=\"button\" onclick=\"return confirm('Schiffe wirklich l&ouml;schen?')\" />&nbsp;";
+				echo "<hr/>";
+				echo "<input type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&sub=$sub&action=searchresults'\" />&nbsp;";
+				echo "<input type=\"button\" value=\"Neue Suche\" onclick=\"document.location='?page=$page&sub=$sub';\" />";
+				echo "</form>";
+			}
+			else
+			{
+				echo "Dieser Datensatz existiert nicht mehr!<br/><br/>";
+				echo "<input type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&sub=$sub&action=searchresults'\" />&nbsp;";
+			}
+		}
+
+
+		//
+		// Suchmaske Schiffaufträge
+		//
+		else
+		{
+			$_SESSION['defqueue']['query']="";
+
+			// Schiffe laden
+			$bres = dbquery("SELECT def_id,def_name FROM defense ORDER BY def_name;");
+			$slist=array();
+			while ($barr=mysql_fetch_array($bres))
+			{
+				$slist[$barr['def_id']]=$barr['def_name'];
+			}
+
+			// Suchmaske
+			echo "Suchmaske:<br/><br/>";
+			echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
+			echo "<table class=\"tbl\">";
+			echo "<tr><td class=\"tbltitle\">Planet ID</td><td class=\"tbldata\"><input type=\"text\" name=\"planet_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td>";
+			echo "<tr><td class=\"tbltitle\">Planetname</td><td class=\"tbldata\"><input type=\"text\" name=\"planet_name\" value=\"\" size=\"20\" maxlength=\"250\" /> ";fieldqueryselbox('planet_name');echo "</td></tr>";
+			echo "<tr><td class=\"tbltitle\">Spieler ID</td><td class=\"tbldata\"><input type=\"text\" name=\"user_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
+			echo "<tr><td class=\"tbltitle\">Spieler Nick</td><td class=\"tbldata\"><input type=\"text\" name=\"user_nick\" value=\"\" size=\"20\" maxlength=\"250\" /> ";fieldqueryselbox('user_nick');echo "</td></tr>";
+			echo "<tr><td class=\"tbltitle\">Verteidigung</td><td class=\"tbldata\"><select name=\"def_id\"><option value=\"\"><i>---</i></option>";
+			foreach ($slist as $k=>$v)
+			{
+				echo "<option value=\"".$k."\">".$v."</option>";
+			}
+			echo "</select></td>";
+			echo "</table>";
+			echo "<br/><input type=\"submit\" class=\"button\" name=\"defqueue_search\" value=\"Suche starten\" /></form>";
+			$tblcnt = mysql_fetch_row(dbquery("SELECT COUNT(queue_id) FROM def_queue;"));
+			echo "<br/>Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.<br/>";
+		}
+	}	
+	
+	
+	//
 	// Bearbeiten
 	//	
 	elseif ($sub=="data")
@@ -438,8 +791,8 @@
 			
 			//Schiffe Hinzufügen
 			echo "<tr><th class=\"tbltitle\">Hinzuf&uuml;gen:</th><td class=\"tbldata\">
-			<input type=\"text\" name=\"shiplist_count\" value=\"1\" size=\"1\" maxlength=\"3\" />
-			<select name=\"ship_id\">";
+			<input type=\"text\" name=\"deflist_count\" value=\"1\" size=\"1\" maxlength=\"3\" />
+			<select name=\"def_id\">";
 			foreach ($slist as $k=>$v)
 			{
 				echo "<option value=\"".$k."\">".$v."</option>";

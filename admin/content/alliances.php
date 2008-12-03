@@ -89,6 +89,54 @@
 	}
 
 	//
+	// Erstellen
+	//
+	if ($sub=="create")
+	{
+		echo "<h1>Allianz erstellen</h1";
+
+		if (isset($_POST['create']))
+		{
+			$errorCode = "";
+			if (Alliance::create(array(
+				"name" => $_POST['alliance_name'],
+				"tag" => $_POST['alliance_tag'],
+				"founder" => new User($_POST['alliance_founder_id'])
+				),$errorCode))
+			{
+				ok_msg("Allianz wurde erstellt! [[url ?page=alliances&sub=edit&id=".$errorCode->id."]Details[/url]]");
+			}
+			else
+			{
+				error_msg("Benutzer konnte nicht erstellt werden!\n\n".$errorCode."");
+			}
+		}
+		
+		echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
+		tableStart("","400");
+		echo "<tr><th>Tag:</th><td>
+		<input type=\"text\" name=\"alliance_tag\" value=\"\" />
+		</td></td>";
+		echo "<tr><th>Name:</th><td>
+		<input type=\"text\" name=\"alliance_name\" value=\"\" />
+		</td></td>";
+		echo "<tr><th>Gründer:</th><td>
+		<select name=\"alliance_founder_id\" />";
+		$res = dbquery("SELECT user_id,user_nick FROM users where user_alliance_id=0 ORDER BY user_nick");
+		while ($arr = mysql_fetch_assoc($res))
+		{
+			echo "<option value=\"".$arr['user_id']."\">".$arr['user_nick']."</option>";
+		}
+		echo "</select>
+		</td></td>";
+		tableEnd();
+		echo "<div style=\"text-align:center;\"><input type=\"submit\" name=\"create\" value=\"Erstellen\" /></div>
+		</form>";
+
+
+	}
+
+	//
 	// Allianznews (Rathaus)
 	//
 	elseif ($sub=="news")
@@ -495,12 +543,17 @@
 		
 		elseif ($_GET['sub']=="edit")
 		{
+			if (isset($_GET['alliance_id']))
+				$id = $_GET['alliance_id'];
+			if (isset($_GET['id']))
+				$id = $_GET['id'];
+			
 			if ($_POST['save']!="")
 			{
 				//  Bild löschen wenn nötig
 				if ($_POST['alliance_img_del']==1)
         {
-					$res = dbquery("SELECT alliance_img FROM alliances WHERE alliance_id=".$_GET['alliance_id'].";");
+					$res = dbquery("SELECT alliance_img FROM alliances WHERE alliance_id=".$id.";");
 					if (mysql_num_rows($res)>0)
 					{
 						$arr=mysql_fetch_array($res);
@@ -526,7 +579,7 @@
 					alliance_founder_id='".$_POST['alliance_founder_id']."' 
 					".$img_sql."
 				WHERE 
-					alliance_id='".$_GET['alliance_id']."'
+					alliance_id='".$id."'
 				;");
 				// Ränge speichern
 				if (count($_POST['rank_del'])>0)
@@ -544,11 +597,11 @@
 						dbquery("UPDATE alliance_bnd SET alliance_bnd_alliance_id2='".$v."',alliance_bnd_level='".$_POST['alliance_bnd_level'][$k]."',alliance_bnd_text='".$_POST['alliance_bnd_text'][$k]."' WHERE alliance_bnd_id='$k';");
 			}
 			
-			$res = dbquery("SELECT * FROM alliances WHERE alliance_id=".$_GET['alliance_id'].";");
+			$res = dbquery("SELECT * FROM alliances WHERE alliance_id=".$id.";");
 			if (mysql_num_rows($res)>0)
 			{
 				$arr = mysql_fetch_array($res);
-				echo "<form action=\"?page=$page&sub=edit&alliance_id=".$_GET['alliance_id']."\" method=\"post\">";
+				echo "<form action=\"?page=$page&sub=edit&alliance_id=".$id."\" method=\"post\">";
 				echo "<table class=\"tbl\">";
 				echo "<tr><td class=\"tbltitle\" valign=\"top\">ID</td><td class=\"tbldata\">".$arr['alliance_id']."</td></tr>";
 				echo "<tr><td class=\"tbltitle\" valign=\"top\">Name</td><td class=\"tbldata\"><input type=\"text\" name=\"alliance_name\" value=\"".$arr['alliance_name']."\" size=\"20\" maxlength=\"250\" /></td></tr>";
