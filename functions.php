@@ -96,10 +96,10 @@
 			dbquery("SET NAMES 'utf8';"); 
 			return true;		
 		}
-		catch (EException $e)
+		catch (DBException $e)
 		{
 			echo $e;
-			return false;
+			exit;
 		}
 	}
 

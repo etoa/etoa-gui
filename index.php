@@ -1,5 +1,4 @@
 <?PHP
-
 	//////////////////////////////////////////////////
 	//		 	 ____    __           ______       			//
 	//			/\  _`\ /\ \__       /\  _  \      			//
@@ -53,7 +52,7 @@
 		exit();
 	}
 
-	define(USE_HTML,true);
+	define('USE_HTML',true);
 
 	// Renderzeit-Start festlegen
 	$render_time = explode(" ",microtime());

@@ -65,13 +65,12 @@
 		$result = shell_exec("mysqldump -u".DB_USER." -h".DB_SERVER." -p".DB_PASSWORD." ".DB_DATABASE." > ".$file.".sql");
 		if ($result=="")
 		{
-			$result = shell_exec("gzip -9 --best ".$file.".sql");
-			if ($result=="")
+			if ($conf['backup']['p2']==1)
 			{
-
+				$result = shell_exec("gzip -9 --best ".$file.".sql");
+				if ($result!="")
+					echo "Error while zipping Backup-Dump $file: $result\n";
 			}
-			else
-				echo "Error while zipping Backup-Dump $file: $result\n";
 		}
 		else
 			echo "Error while creating Backup-Dump $file: $result\n";

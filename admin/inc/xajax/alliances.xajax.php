@@ -18,7 +18,6 @@ function allianceNewsLoad()
 			alliance_news_title,
 			alliance_news_text,
 			alliance_news_date,
-			alliance_news_public,
 			a.alliance_name,
 			a.alliance_tag,
 			a.alliance_id,
@@ -75,7 +74,6 @@ function allianceNewsLoad()
 				}				
 				echo '</b></td>';				
 				echo '<td id="news_'.$arr['alliance_news_id'].'_title" style="border-bottom:1px dotted #999;';
-				echo ($arr['alliance_news_public']==1) ? 'color:#FF9900;' : 'color:#99FF99;' ;
 				echo '"><b>'.stripslashes($arr['alliance_news_title']).'</b></td>';
 				echo '<td rowspan="2" id="news_'.$arr['alliance_news_id'].'_actions">
 				<a href="javascript:;" onclick="xajax_allianceNewsEdit('.$arr['alliance_news_id'].');"><img src="../images/edit.gif" alt="Edit" style="border:none;" /></a>
@@ -220,18 +218,6 @@ function allianceNewsEdit($id)
 		$out.= '</select>';	
   	$objResponse->assign("news_".$id."_alliance_to","innerHTML",$out);
 
-		$out = '<input type="radio" name="public" value="1" ';
-		if ($arr['alliance_news_public']==1)
-		{
-			$out.= ' checked="checked"';
-		}
-		$out.= '/> Öffentlich<br/>';
-		$out.= '<input type="radio" name="public" value="0" ';
-		if ($arr['alliance_news_public']==0)
-		{
-			$out.= ' checked="checked"';
-		}
-		$out.= '/> Privat';	
   	$objResponse->assign("news_".$id."_public","innerHTML",$out);
 
   	$objResponse->assign("news_".$id."_user","innerHTML",'Lade Spieler...');
@@ -303,7 +289,6 @@ function allianceNewsSave($id,$form)
 		alliance_news_alliance_id='".$form['alliance_id']."',
 		alliance_news_alliance_to_id='".$form['alliance_to_id']."',
 		alliance_news_user_id='".$form['user_id']."',
-		alliance_news_public='".$form['public']."',
 		alliance_news_title='".addslashes($form['title'])."',
 		alliance_news_text='".addslashes($form['text'])."'
 	WHERE

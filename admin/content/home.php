@@ -497,7 +497,7 @@
 		if ($arr[0]==1)
 		{
 			iBoxStart("Passwort");   
-			echo "<span style=\"color:#f90;\">Dein Passwort wurde seit der letzten automatischen Generierung noch nicht geÃ¤ndert. Bitte mache das jetzt <a href=\"?myprofile=1\">hier</a>!</span>";
+			echo "<span style=\"color:#f90;\">Dein Passwort wurde seit der letzten automatischen Generierung noch nicht geändert. Bitte mache das jetzt <a href=\"?myprofile=1\">hier</a>!</span>";
 			iBoxEnd();			
 		}
 		
@@ -672,6 +672,22 @@
 			echo "<a href=\"?page=user&amp;sub=imagecheck\" style=\"font-weight:bold;color:#f90;\">".$arr[0]." Spieler-Profilbilder</a> wurden noch nicht verifiziert. Gewisse Bilder könnten gegen die Regeln verstossen. <a href=\"?page=user&amp;sub=imagecheck\">Jetzt prüfen</a>";
 			echo "</td></tr>";
 		}
+
+		$res = dbquery("SELECT
+			COUNT(alliance_id)
+		FROM
+			alliances
+		WHERE
+			alliance_img_check=1;");
+		$arr=mysql_fetch_row($res);
+		if ($arr[0]>0)
+		{
+			echo "<tr><th class=\"tbltitle\">Profil-Bilder:</th>";
+			echo "<td class=\"tbldata\">";
+			echo "<a href=\"?page=alliances&amp;sub=imagecheck\" style=\"font-weight:bold;color:#f90;\">".$arr[0]." Allianz-Profilbilder</a> wurden noch nicht verifiziert. Gewisse Bilder könnten gegen die Regeln verstossen. <a href=\"?page=alliances&amp;sub=imagecheck\">Jetzt prüfen</a>";
+			echo "</td></tr>";
+		}
+
 
 		tableEnd();		
 		

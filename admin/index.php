@@ -35,12 +35,7 @@
 	}
 	$cb = isset ($_SESSION['clipboard']) && $_SESSION['clipboard']==1 ? true : false;
 
-
-
-			
 	adminHtmlHeader($s['theme']);
-			
-			
 			
 	// Admin-Gruppen laden				
 	$admingroup=array();

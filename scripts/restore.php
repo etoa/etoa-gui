@@ -66,6 +66,12 @@
 				else
 					echo "Error while unzipping Backup-Dump $file: $result\n";
 			}
+			elseif (file_exists($file.".sql"))
+			{
+				$result = shell_exec("mysql -u".DB_USER." -p".DB_PASSWORD." -h".DB_SERVER." ".DB_DATABASE." < ".$file.".sql");
+				if ($result!="")
+					echo "Error while restoring backup: $result\n";
+			}
 			else
 				echo "Error: File $file not found!\n";	
 		}

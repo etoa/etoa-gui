@@ -27,6 +27,27 @@
 	$topnav['TeamSpeak']['newwindow']=true;
 
 	// Links des linken Menüs
+	/*
+	$navmenu = array
+	(
+		"Allgemeines" => array 
+		(
+			'Startseite' => array
+			(
+				'page' => "home",
+				'sub' => ''
+				'level' = 0;
+			),
+			'Ingame-News' => 
+		)
+		
+	);
+	*/
+	
+	
+	
+	
+	
 	$navmenu['Allgemeines']['Startseite']['page']="home";
 	$navmenu['Allgemeines']['Startseite']['sub']="";
 	$navmenu['Allgemeines']['Startseite']['level']=0;
@@ -153,7 +174,7 @@
 	$navmenu['Allianzen']['Allianz erstellen']['level']=0;
 
 	$navmenu['Allianzen']['Fehlerhafte Daten']['page']="alliances";
-	$navmenu['Allianzen']['Fehlerhafte Daten']['sub']="crab";
+	$navmenu['Allianzen']['Fehlerhafte Daten']['sub']="crap";
 	$navmenu['Allianzen']['Fehlerhafte Daten']['level']=1;
 
 	$navmenu['Allianzen']['Allianz-News (Rathaus)']['page']="alliances";
