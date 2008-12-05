@@ -34,18 +34,24 @@
 
 	 	// Inaktive User löschen
 		$tmr = timerStart();
-		Users::removeInactive();
-		Users::removeDeleted();
+		$ui = Users::removeInactive();
+		$ud = Users::removeDeleted();
 		$log = "Inaktive und als gelöscht markierte User gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
 
+		// Alte Benuterpunkte-Logs löschen
+		$tmr = timerStart();
+		$nr = Users::cleanUpPoints
+		$log.= "$nr alte Userpunkte-Logs gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
+
+		// Alte Session-Logs
+		$tmr = timerStart();
+		$nr = Users::cleanUpSessionLogs();
+		$log.= "$nr alte Session-Logs gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
+		
 		// Alte Logs löschen
 		$tmr = timerStart();
 		$nr = Log::removeOld();
 		$log.= "$nr alte Logs gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
-
-		$tmr = timerStart();
-		$nr = Users::cleanUpSessionLogs();
-		$log.= "$nr alte Session-Logs gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
 
 		// Alte Nachrichten löschen
 		$tmr = timerStart();
@@ -54,7 +60,7 @@
 
 		// Abgelaufene Sperren löschen
 		$tmr = timerStart();
-		remove_old_banns();
+		Users::removeOldBanns();
 		$log.= "Abgelaufene Sperren gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
 
 		// Tabellen optimieren

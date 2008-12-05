@@ -232,7 +232,7 @@
 				echo $nr." Logs wurden gelöscht!<br/>";
 			}
 
-			/* Session-Log cleanup */
+			// Session-Log cleanup
 			if ((isset($_POST['cl_sesslog']) && $_POST['cl_sesslog']==1) || $all)
 			{
 				$nr = Users::cleanUpSessionLogs($_POST['sess_log_timestamp']);
@@ -243,45 +243,24 @@
 			/* Message cleanup */	
 			if ((isset($_POST['cl_msg']) && $_POST['cl_msg']==1) || $all)
 			{
-				if ($_POST['msg_type']=="all")
-				{
-					$tstamp = time()-$_POST['message_timestamp'];
-					dbquery("
-					DELETE FROM 
-						messages
-					WHERE 
-						AND message_timestamp<$tstamp
-					;");
-					echo mysql_affected_rows()." Nachrichten wurden gelöscht!<br/>";
-				}
-				elseif ($_POST['msg_type']=="del")
-				{
-					$tstamp = time()-$_POST['message_timestamp'];
-					dbquery("
-					DELETE FROM 
-						messages
-					WHERE 
-						message_deleted=1 
-						AND message_timestamp<$tstamp
-					;");
-					echo mysql_affected_rows()." 'gelöschte' Nachtichten wurden endgültig gelöscht!<br/>";
-				}				
+				if ($_POST['only_deleted']==1)
+					$nr = Message::removeOld($_POST['message_timestampd'],1);
+				else
+					$nr = Message::removeOld($_POST['message_timestamp']);
+					echo $nr." Nachrichten wurden gelöscht!<br/>";
+
 			}
-
-
-			
-			/* points */
+						
+			// User-Point-History
 			if ((isset($_POST['cl_points']) && $_POST['cl_points']==1) || $all)
 			{
-				$time_diff=time()-$_POST['del_user_points'];
-				dbquery("DELETE FROM user_points WHERE point_timestamp<".$time_diff.";");
-				echo mysql_affected_rows()." Punkte-Daten wurden gelöscht!<br/>";
+				$nr = Users::cleanUpPoints($_POST['del_user_points']);
+				echo $nr." Benutzerpunkte-Logs wurden gelöscht!<br/>";
 			}
 
-			/* inactive */
+			// Inactive and delete jobs
 			if ((isset($_POST['cl_inactive']) && $_POST['cl_inactive']==1) || $all)
 			{
-				$time_diff=time()-$_POST['del_user_points'];
 				$num = Users::removeInactive(true);
 				echo $num." inaktive User wurden gelöscht!<br/>";
 				$num = Users::removeDeleted(true);
@@ -296,7 +275,6 @@
 					shiplist
 				WHERE 
 					shiplist_count =0
-					AND shiplist_build_count =0
 					AND shiplist_special_ship=0
 				;");	
 				echo mysql_affected_rows()." leere Schiffdaten wurden gelöscht!<br/>";
@@ -340,14 +318,20 @@
 			COUNT(message_id) 
 		FROM 
 			messages
+		WHERE
+			message_archived=0
 		;"));
-		echo '<input type="radio" name="msg_type" value="all" /><b>Nachrichten löschen:</b> ';
+		echo '<input type="radio" name="only_deleted" value="0" /><b>Nachrichten löschen:</b> ';
 		echo "Älter als <select name=\"message_timestamp\">";
-		echo "<option value=\"604800\" selected=\"selected\">1 Woche</option>";
-		echo "<option value=\"1209600\">2 Wochen</option>";
-		echo "<option value=\"2419200\">4 Wochen</option>";
+		$days = array(1,7,14,21,28);
+		if (!in_array($cfg->get('messages_threshold_days'),$days))
+			$days[] = $cfg->get('messages_threshold_days');
+		sort($days);
+		foreach ($days as $ds)
+		{
+			echo "<option value=\"".(24*3600*$ds)."\" ".($ds==$cfg->get('messages_threshold_days')  ? " selected=\"selected\"" : "").">".$ds." Tage</option>";
+		}
 		echo "</select> (".nf($tblcnt[0])." total).<br/>";
-
 		$tblcnt = mysql_fetch_row(dbquery("
 		SELECT 
 			COUNT(message_id) 
@@ -356,15 +340,20 @@
 		WHERE 
 			message_deleted=1
 		;"));
-		echo '<input type="radio" name="msg_type" value="del" checked="checked" /> <b>Nur \'gelöschte\' Nachrichten löschen:</b> ';
-		echo 'Älter als <select name="message_timestamp">';
-		echo "<option value=\"604800\">1 Woche</option>";
-		echo "<option value=\"1209600\" selected=\"selected\">2 Wochen</option>";
-		echo "<option value=\"2419200\">4 Wochen</option>";
+		echo '<input type="radio" name="only_deleted" value="1" checked="checked" /> <b>Nur \'gelöschte\' Nachrichten löschen:</b> ';
+		echo 'Älter als <select name="message_timestampd">';
+		$days = array(7,14,21,28);
+		if (!in_array($cfg->p1('messages_threshold_days'),$days))
+			$days[] = $cfg->p1('messages_threshold_days');
+		sort($days);
+		foreach ($days as $ds)
+		{
+			echo "<option value=\"".(24*3600*$ds)."\" ".($ds==$cfg->p1('messages_threshold_days')  ? " selected=\"selected\"" : "").">".$ds." Tage</option>";
+		}
 		echo "</select> (".nf($tblcnt[0])." total).";
 		echo '</fieldset><br/>';
 
-		/* Logs */
+		// Logs 
 		echo '<fieldset><legend><input type="checkbox" value="1" name="cl_log" /> Logs</legend>';
 		$tblcnt = mysql_fetch_row(dbquery("
 		SELECT 
@@ -401,7 +390,7 @@
 		echo "</select> sind (".nf($tblcnt[0])." total).";
 		echo '</fieldset><br/>';
 		
-		/* User-Sessions */
+		// User-Sessions
 		echo '<fieldset><legend><input type="checkbox" value="1" name="cl_sesslog" /> Session-Logs</legend>';
 		$tblcnt = mysql_fetch_row(dbquery("
 		SELECT 
@@ -422,7 +411,7 @@
 		echo "</select> sind (".nf($tblcnt[0])." total).";
 		echo '</fieldset><br/>';
 
-		/* User-Points */
+		// User-Points
 		echo '<fieldset><legend><input type="checkbox" value="1" name="cl_points" /> Punkteverlauf</legend>';
 		$tblcnt = mysql_fetch_row(dbquery("
 		SELECT 
@@ -431,14 +420,18 @@
 			user_points
 		;"));
 		echo "<b>Punkteverläufe löschen:</b> Eintr&auml;ge löschen die &auml;lter als <select name=\"del_user_points\">";
-		echo "<option value=\"172800\">2 Tage</option>";
-		echo "<option value=\"432000\">5 Tage</option>";
-		echo "<option value=\"604800\" selected=\"selected\">1 Woche</option>";
-		echo "<option value=\"1209600\">2 Wochen</option>";
+		$days = array(2,5,7,14,21,28);
+		if (!in_array($cfg->get('log_threshold_days'),$days))
+			$days[] = $cfg->get('log_threshold_days');
+		sort($days);
+		foreach ($days as $ds)
+		{
+			echo "<option value=\"".(24*3600*$ds)."\" ".($ds==$cfg->get('log_threshold_days')  ? " selected=\"selected\"" : "").">".$ds." Tage</option>";
+		}		
 		echo "</select> sind (".nf($tblcnt[0])." total).";
 		echo '</fieldset><br/>';
 
-		/* Inactive */
+		// Inactive 
 		echo '<fieldset><legend><input type="checkbox" value="1" name="cl_inactive" /> User</legend>';
 		$register_time = time()-(24*3600*$conf['user_inactive_days']['p2']);		// Zeit nach der ein User gelöscht wird wenn er noch 0 Punkte hat
 		$online_time = time()-(24*3600*$conf['user_inactive_days']['p1']);	// Zeit nach der ein User normalerweise gelöscht wird
@@ -478,7 +471,6 @@
 			shiplist
 		WHERE 
 			shiplist_count =0
-			AND shiplist_build_count =0
 			AND shiplist_special_ship=0
 		;");		
 		$scnt = mysql_fetch_row($res);

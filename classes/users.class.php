@@ -22,7 +22,8 @@
 					AND (user_registered<'".$register_time."' AND user_points='0')
 					OR (user_last_online<'".$online_time."' AND user_last_online>0 AND user_hmode_from='0');
 			");
-			if (mysql_num_rows($res)>0)
+			$nr = mysql_num_rows($res);
+			if ($nr>0)
 			{
 				while ($arr=mysql_fetch_assoc($res))
 				{
@@ -65,12 +66,9 @@
 				send_mail('',$arr['user_email'],'Inaktivität bei Escape to Andromeda',$text,'','');			
 					
 				}
-			}			
+			}					
 				
-				
-				
-				
-			return mysql_num_rows($res);
+			return $nr;
 		}
 
 		/**
@@ -106,6 +104,7 @@
 		*/
 		static function cleanUpSessionLogs($threshold=0)
 		{
+			$cfg = Config::getInstance();
 			if ($threshold>0)
 				$tstamp = time() - $threshold;
 			else
@@ -120,6 +119,40 @@
 			return $nr;
 		}
 		
+		/**
+		* Remove old point logs
+		*/
+		static function cleanUpPoints($threshold=0)
+		{
+			$cfg = Config::getInstance();
+			if ($threshold>0)
+				$tstamp = time() - $threshold;
+			else
+				$tstamp = time() - (24*3600*$cfg->get('log_threshold_days'));			
+			dbquery("DELETE FROM user_points WHERE point_timestamp<".$tstamp.";");
+			$nr = mysql_affected_rows();
+			add_log("4","$nr Userpunkte-Logs die älter als ".date("d.m.Y H:i",$tstamp)." sind wurden gelöscht!");
+			return $nr;
+		}
+
+		/**
+		* Abgelaufene Sperren löschen
+		*
+		*/
+		function removeOldBanns()
+		{
+			dbquery("
+				UPDATE
+					users
+				SET
+					user_blocked_from='0',
+					user_blocked_to='0',
+					user_ban_reason='',
+					user_ban_admin_id='0'
+				WHERE
+					user_blocked_to<'".time()."';
+			");
+		}
 
 		
 	}

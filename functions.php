@@ -43,7 +43,12 @@
 				if (defined("CLASS_ROOT"))
 					$dir = CLASS_ROOT;
 				else
-					$dir = "classes";
+				{
+					if (stristr($_SERVER["SCRIPT_FILENAME"],"admin/index.php"))
+						$dir = "../classes";
+					else
+						$dir = "classes";
+				}
 				$file = strtolower($class_name).'.class.php';
 	      if (file_exists($dir.'/'.$file))
 	      {
@@ -1101,26 +1106,6 @@
 		return $names;
 	}
 
-
-	/**
-	* Abgelaufene Sperren löschen
-	*
-	*@Todo: outsource, updates, maybe backend
-	*/
-	function remove_old_banns()
-	{
-		dbquery("
-			UPDATE
-				users
-			SET
-				user_blocked_from='0',
-				user_blocked_to='0',
-				user_ban_reason='',
-				user_ban_admin_id='0'
-			WHERE
-				user_blocked_to<'".time()."';
-		");
-	}
 
 	function tableStart($title="",$width=0,$layout="")
 	{

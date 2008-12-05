@@ -87,20 +87,65 @@ class Message
 	}
 
 	/**
-	* Alte Nachrichten löschen
+	* Alte Nachrichten lÃ¶schen
 	*/
-	function removeOld()
+	static function removeOld($threshold=0,$onlyDeleted=0)
 	{
 		$cfg = Config::getInstance();
-		$tstamp=time()-(24*3600*$cfg->value('messages_threshold_days'));
-		$res = 
+
+		$nr = 0;
+		if ($onlyDeleted==0)
+		{
+			// Normal old messages
+			if ($threshold>0)
+				$tstamp = time() - $threshold;
+			else
+				$tstamp=time()-(24*3600*$cfg->value('messages_threshold_days'));
+			echo df($tstamp)." ".$threshold."<br/>";
+			$res = dbquery("
+				SELECT
+					message_id
+				 FROM
+					messages
+				WHERE
+					message_archived=0
+					AND message_timestamp<'".$tstamp."';		
+			");
+			if (mysql_num_rows($res)>0)
+			{
+				while ($arr=mysql_fetch_row($res))
+				{
+					dbquery("
+						DELETE FROM
+							message_data
+						WHERE
+							id=".$arr[0].";
+					");				
+				}			
+			}
+			dbquery("
+				DELETE FROM
+					messages
+				WHERE
+					message_archived=0
+					AND message_timestamp<'".$tstamp."';
+			");		
+			$nr = mysql_affected_rows();
+			add_log("4","Unarchivierte Nachrichten die Ã¤lter als ".date("d.m.Y H:i",$tstamp)." sind wurden gelÃ¶scht!",time());
+		}
+		
+		// Deleted
+		if ($threshold>0)
+			$tstamp = time() - $threshold;
+		else
+			$tstamp=time()-(24*3600*$cfg->p1('messages_threshold_days'));
 		$res = dbquery("
 			SELECT
 				message_id
 			 FROM
 				messages
 			WHERE
-				message_archived='0'
+				message_deleted='1'
 				AND message_timestamp<'".$tstamp."';		
 		");
 		if (mysql_num_rows($res)>0)
@@ -115,15 +160,19 @@ class Message
 				");				
 			}			
 		}
-		dbquery("
+		$res = dbquery("
 			DELETE FROM
 				messages
 			WHERE
-				message_archived='0'
+				message_deleted='1'
 				AND message_timestamp<'".$tstamp."';
-		");
-		add_log("4","Unarchivierte Nachrichten die älter als ".date("d.m.Y H:i",$tstamp)." sind wurden gelöscht!",time());
+		");		
+		add_log("4","Unarchivierte Nachrichten die Ã¤lter als ".date("d.m.Y H:i",$tstamp)." sind wurden gelÃ¶scht!",time());		
+		$nr += mysql_affected_rows();
+		return $nr;
 	}
+	
+	
 
 }
 
