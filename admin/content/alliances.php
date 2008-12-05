@@ -596,7 +596,7 @@
 				echo "<td class=\"tbltitle\" valign=\"top\">Name</td>";
 				echo "<td class=\"tbltitle\" valign=\"top\">Tag</td>";
 				echo "<td class=\"tbltitle\" valign=\"top\">Gr&uuml;nder</td>";
-				echo "<td class=\"tbltitle\" valign=\"top\">Gr&uuml;ndung</td>";
+				echo "<th>Gr&uuml;ndung</th>";
 				echo "<td valign=\"top\">&nbsp;</td>";
 				echo "</tr>";
 				$cnt=0;
@@ -678,14 +678,16 @@
 						dbquery("DELETE FROM alliance_ranks WHERE rank_id='$k';");
 				if (count($_POST['rank_name'])>0)
 					foreach($_POST['rank_name'] as $k=>$v)
-						dbquery("UPDATE alliance_ranks SET rank_name='".addslashes($v)."',rank_level='".$_POST['rank_level'][$k]."',rank_points='".$_POST['rank_points'][$k]."' WHERE rank_id='$k';");
+						dbquery("UPDATE alliance_ranks SET rank_name='".addslashes($v)."',rank_level='".$_POST['rank_level'][$k]."' WHERE rank_id='$k';");
 				// Bündnisse / Kriege speichern
 				if (count($_POST['alliance_bnd_del'])>0)
 					foreach($_POST['alliance_bnd_del'] as $k=>$v)
 						dbquery("DELETE FROM alliance_bnd WHERE alliance_bnd_id='$k';");
 				if (count($_POST['alliance_bnd_alliance_id2'])>0)
 					foreach($_POST['alliance_bnd_alliance_id2'] as $k=>$v)
+					{
 						dbquery("UPDATE alliance_bnd SET alliance_bnd_alliance_id2='".$v."',alliance_bnd_level='".$_POST['alliance_bnd_level'][$k]."',alliance_bnd_text='".$_POST['alliance_bnd_text'][$k]."' WHERE alliance_bnd_id='$k';");
+					}
 			}
 			
 			$res = dbquery("SELECT * FROM alliances WHERE alliance_id=".$id.";");
@@ -739,9 +741,11 @@
 				echo "<form action=\"?page=$page&sub=edit&id=".$id."\" method=\"post\">";
 				echo "<table class=\"tb\">";
 				echo "<tr><th>ID</th><td>".$arr['alliance_id']."</td></tr>";
-				echo "<tr><th>Name</th><td><input type=\"text\" name=\"alliance_name\" value=\"".$arr['alliance_name']."\" size=\"20\" maxlength=\"250\" /></td></tr>";
-				echo "<tr><th>Tag</th><td><input type=\"text\" name=\"alliance_tag\" value=\"".$arr['alliance_tag']."\" size=\"20\" maxlength=\"250\" /></td></tr>";
-				echo "<tr><td class=\"tbltitle\" valign=\"top\">Gr&uuml;nder</td><td><select name=\"alliance_founder_id\">";
+				echo "<tr><th>[Tag] Name</th><td>
+					[<input type=\"text\" name=\"alliance_tag\" value=\"".$arr['alliance_tag']."\" size=\"6\" maxlength=\"6\" />]
+					<input type=\"text\" name=\"alliance_name\" value=\"".$arr['alliance_name']."\" size=\"30\" maxlength=\"25\" />
+				</td></tr>";					
+				echo "<tr><th>Gr&uuml;nder</th><td><select name=\"alliance_founder_id\">";
 				echo "<option value=\"0\">(niemand)</option>";
 				foreach ($members as $uarr)
 				{
@@ -751,20 +755,24 @@
 					echo ">".$uarr['user_nick']."</option>";
 				}			
 				echo "</select></td></tr>";				
-				echo "<tr><td class=\"tbltitle\" valign=\"top\">Text</td><td><textarea cols=\"45\" rows=\"10\" name=\"alliance_text\">".stripslashes($arr['alliance_text'])."</textarea></td></tr>";
-				echo "<tr><td class=\"tbltitle\" valign=\"top\">Gr&uuml;ndung</td><td>".date("Y-m-d H:i:s",$arr['alliance_foundation_date'])."</td></tr>";
-				echo "<tr><td class=\"tbltitle\" valign=\"top\">Website</td><td><input type=\"text\" name=\"alliance_url\" value=\"".$arr['alliance_url']."\" size=\"40\" maxlength=\"250\" /></td></tr>";
-				echo "<tr><td class=\"tbltitle\" valign=\"top\">Bewerbungsvorlage</td><td><textarea cols=\"45\" rows=\"10\" name=\"alliance_application_template\">".stripslashes($arr['alliance_application_template'])."</textarea></td></tr>";
-				echo "<tr><td class=\"tbltitle\" valign=\"top\">Bild</td><td>";
+				echo "<tr><th>Text</th><td><textarea cols=\"45\" rows=\"10\" name=\"alliance_text\">".stripslashes($arr['alliance_text'])."</textarea></td></tr>";
+				echo "<tr><th>Gr&uuml;ndung</th><td>".date("Y-m-d H:i:s",$arr['alliance_foundation_date'])."</td></tr>";
+				echo "<tr><th>Website</th><td><input type=\"text\" name=\"alliance_url\" value=\"".$arr['alliance_url']."\" size=\"40\" maxlength=\"250\" /></td></tr>";
+				echo "<tr><th>Bewerbungsvorlage</th><td><textarea cols=\"45\" rows=\"10\" name=\"alliance_application_template\">".stripslashes($arr['alliance_application_template'])."</textarea></td></tr>";
+				echo "<tr><th>Bild</th><td>";
 	      if ($arr['alliance_img']!="")
 	      {
-	        echo '<img src="../'.ALLIANCE_IMG_DIR.'/'.$arr['alliance_img'].'" alt="Profil" /><br/>';
+	        echo '<img src="'.ALLIANCE_IMG_DIR.'/'.$arr['alliance_img'].'" alt="Profil" /><br/>';
 	        echo "<input type=\"checkbox\" value=\"1\" name=\"alliance_img_del\"> Bild l&ouml;schen<br/>";
-	      }				
+	      }			
+	      else
+	      {
+	      	echo "Keines";
+	      }	
 				echo "</td></tr>";				
 				
 				echo "<tr>
-					<td class=\"tbltitle\" valign=\"top\">Mitglieder</td>
+					<th>Mitglieder</th>
 				<td>";
 				if (count($members)>0)
 				{
@@ -797,7 +805,7 @@
 				else
 					echo "<b>KEINE MITGLIEDER!</b>";
 				echo "</td></tr>";
-				echo "<tr><td class=\"tbltitle\" valign=\"top\">R&auml;nge</td><td>";
+				echo "<tr><th>R&auml;nge</th><td>";
 				
 				if (count($ranks)>0)
 				{
@@ -821,7 +829,7 @@
 				else
 					echo "<b>Keine R&auml;nge vorhanden!</b>";
 				echo "</td></tr>";
-				echo "<tr><td class=\"tbltitle\" valign=\"top\">B&uuml;ndnisse/Kriege</td><td>";
+				echo "<tr><th>B&uuml;ndnisse/Kriege</th><td>";
 				$bres = dbquery("
 				SELECT 
 					alliance_bnd_id,

@@ -59,6 +59,8 @@
 	 	// Alte Backups l�schen
 	 	$cmd = "find ".BACKUP_DIR." -name *.sql.gz -mtime +".$conf['backup']['p1']." -exec rm {} \;";
 		passthru($cmd);
+	 	$cmd = "find ".BACKUP_DIR." -name *.sql -mtime +".$conf['backup']['p1']." -exec rm {} \;";
+		passthru($cmd);
 
 		$file = BACKUP_DIR."/".DB_DATABASE."-".date("Y-m-d-H-i");
 		$file_wo_path = DB_DATABASE."-".date("Y-m-d-H-i");
