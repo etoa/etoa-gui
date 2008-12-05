@@ -35,6 +35,7 @@
 	{
 		echo '<h2>Updates</h2>';
 		
+		/*
 		// Ressourcen
 		if ($_GET['action']=="resources")
 		{
@@ -91,9 +92,27 @@
       	echo "Es kann momentan kein Update getätigt werden, da der Server zurzeit andere Updates am abarbeiten ist!<br>";
       }			
 		}
+		// Markt aktualisieren
+		elseif ($_GET['action']=="market")
+		{
+			if ($conf['updating']['v']==0)
+			{
+	      // Update-Flag setzen
+	      dbquery("UPDATE config SET config_value=1,config_param2=".time()." WHERE config_name='updating';");
+	      market_update();
+	      echo "Die Marktangebote wurden Aktualisiert und ausstehende Warenversendungen wurden gemacht!<br/><br/>";
+				// Update-Flag löschen
+				dbquery("UPDATE config SET config_value=0 WHERE config_name='updating';");            
+       }
+       else
+       {
+       	echo "Es kann momentan kein Update getätigt werden, da der Server zurzeit andere Updates am abarbeiten ist!<br>";
+    	}		
+		}		
+		*/
 		
 		// Punkte aktualisieren
-		elseif ($_GET['action']=="points")
+		if (isset($_GET['action']) && $_GET['action']=="points")
 		{
 			if ($conf['updating']['v']==0)
 			{
@@ -114,27 +133,12 @@
 	  	}		
 		}
 
-		// Markt aktualisieren
-		elseif ($_GET['action']=="market")
-		{
-			if ($conf['updating']['v']==0)
-			{
-	      // Update-Flag setzen
-	      dbquery("UPDATE config SET config_value=1,config_param2=".time()." WHERE config_name='updating';");
-	      market_update();
-	      echo "Die Marktangebote wurden Aktualisiert und ausstehende Warenversendungen wurden gemacht!<br/><br/>";
-				// Update-Flag löschen
-				dbquery("UPDATE config SET config_value=0 WHERE config_name='updating';");            
-       }
-       else
-       {
-       	echo "Es kann momentan kein Update getätigt werden, da der Server zurzeit andere Updates am abarbeiten ist!<br>";
-    	}		
-		}
+
 			
 		echo '<b>Punkte updaten:</b> 
 		Die Punkte aller Spieler aktualisieren 
 		<input type="button" value="Ausführen" onclick="document.location=\'?page='.$page.'&amp;sub='.$sub.'&amp;action=points\'" /><br/><br/>';
+		/*
 		echo '<b>Markt updaten:</b> 
 		Fertige Auktionen und Angebote abschliessen
 		<input type="button" value="Ausführen" onclick="document.location=\'?page='.$page.'&amp;sub='.$sub.'&amp;action=market\'" /><br/><br/>';
@@ -147,6 +151,7 @@
 		echo '<b>Ressourcen updaten:</b> 
 		Ressourcen auf allen Planeten neu berechnen.
 		<input type="button" value="Ausführen" onclick="document.location=\'?page='.$page.'&amp;sub='.$sub.'&amp;action=resources\'" /><br/><br/>';
+		*/
 		
 	}
 
@@ -220,6 +225,21 @@
 			echo "Clean-Up wird durchgeführt...<br/>";
 			$all = isset($_POST['submit_cleanup_all']) ? true : false;
 
+			// Log cleanup
+			if (isset($_POST['cl_log']) || $all)
+			{
+				$nr = Log::removeOld($_POST['log_timestamp'],$_POST['log_cat']);
+				echo $nr." Logs wurden gelöscht!<br/>";
+			}
+
+			/* Session-Log cleanup */
+			if ((isset($_POST['cl_sesslog']) && $_POST['cl_sesslog']==1) || $all)
+			{
+				$nr = Users::cleanUpSessionLogs($_POST['sess_log_timestamp']);
+				echo $nr." Session-Logs wurden gelöscht!<br/>";
+			}
+			
+
 			/* Message cleanup */	
 			if ((isset($_POST['cl_msg']) && $_POST['cl_msg']==1) || $all)
 			{
@@ -248,14 +268,7 @@
 				}				
 			}
 
-			/* Session-Log cleanup */
-			if ((isset($_POST['cl_sesslog']) && $_POST['cl_sesslog']==1) || $all)
-			{
-				$tstamp = time()-$_POST['sess_log_timestamp'];
-				dbquery("DELETE FROM user_sessionlog WHERE log_logintime<$tstamp;");
-				echo mysql_affected_rows()." Session-Logs wurden gelöscht!<br/>";
-			}
-			
+
 			
 			/* points */
 			if ((isset($_POST['cl_points']) && $_POST['cl_points']==1) || $all)
@@ -269,8 +282,10 @@
 			if ((isset($_POST['cl_inactive']) && $_POST['cl_inactive']==1) || $all)
 			{
 				$time_diff=time()-$_POST['del_user_points'];
-				$num = remove_inactive(true);
+				$num = Users::removeInactive(true);
 				echo $num." inaktive User wurden gelöscht!<br/>";
+				$num = Users::removeDeleted(true);
+				echo $num." gelöschte User wurden endgültig gelöscht!<br/>";
 			}			
 
 			/* object lists */
@@ -316,18 +331,6 @@
 			echo "Clean-Up fertig!<br/><br/>";
 		}
 
-
-/* log
-		if ($_POST['delentrys']!="")
-		{
-			$tstamp = time()-$_POST['log_timestamp'];
-			dbquery("DELETE FROM logs WHERE log_cat=".$_POST['log_cat']." AND log_timestamp<$tstamp;");
-			echo mysql_affected_rows()." Eintr&auml;ge wurden gelöscht!<br/><br/><input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=$page&sub=$sub'\" />";
-		}
-
-					
-		*/
-
 		echo "<form action=\"?page=$page&sub=$sub\" method=\"post\">";
 
 		/* Messages */		
@@ -355,14 +358,14 @@
 		;"));
 		echo '<input type="radio" name="msg_type" value="del" checked="checked" /> <b>Nur \'gelöschte\' Nachrichten löschen:</b> ';
 		echo 'Älter als <select name="message_timestamp">';
-		echo "<option value=\"604800\" selected=\"selected\">1 Woche</option>";
-		echo "<option value=\"1209600\">2 Wochen</option>";
+		echo "<option value=\"604800\">1 Woche</option>";
+		echo "<option value=\"1209600\" selected=\"selected\">2 Wochen</option>";
 		echo "<option value=\"2419200\">4 Wochen</option>";
 		echo "</select> (".nf($tblcnt[0])." total).";
 		echo '</fieldset><br/>';
 
 		/* Logs */
-		echo '<fieldset><legend><input type="checkbox" value="1" name="cl_log" /> Logs (noch nicht implementiert)</legend>';
+		echo '<fieldset><legend><input type="checkbox" value="1" name="cl_log" /> Logs</legend>';
 		$tblcnt = mysql_fetch_row(dbquery("
 		SELECT 
 			count(log_id) 
@@ -387,10 +390,14 @@
 			echo "<option value=\"".$arr['cat_id']."\">".$arr['cat_name']." (".$arr['cnt'].")</option>";
 		}
 		echo "</select> welche &auml;lter als <select name=\"log_timestamp\">";
-		echo "<option value=\"432000\">5 Tage</option>";
-		echo "<option value=\"604800\" selected=\"selected\">1 Woche</option>";
-		echo "<option value=\"1209600\">2 Wochen</option>";
-		echo "<option value=\"2419200\">4 Wochen</option>";
+		$days = array(7,14,21,28);
+		if (!in_array($cfg->get('log_threshold_days'),$days))
+			$days[] = $cfg->get('log_threshold_days');
+		sort($days);
+		foreach ($days as $ds)
+		{
+			echo "<option value=\"".(24*3600*$ds)."\" ".($ds==$cfg->get('log_threshold_days')  ? " selected=\"selected\"" : "").">".$ds." Tage</option>";
+		}
 		echo "</select> sind (".nf($tblcnt[0])." total).";
 		echo '</fieldset><br/>';
 		
@@ -404,9 +411,14 @@
 		;"));
 		echo "<b>Session-Logs löschen:</b> ";
 		echo "Eintr&auml;ge löschen die &auml;lter als <select name=\"sess_log_timestamp\">";
-		echo "<option value=\"604800\" selected=\"selected\">1 Woche</option>";
-		echo "<option value=\"1209600\">2 Wochen</option>";
-		echo "<option value=\"2419200\">4 Wochen</option>";
+		$days = array(7,14,21,28);
+		if (!in_array($cfg->get('log_threshold_days'),$days))
+			$days[] = $cfg->get('log_threshold_days');
+		sort($days);
+		foreach ($days as $ds)
+		{
+			echo "<option value=\"".(24*3600*$ds)."\" ".($ds==$cfg->get('log_threshold_days')  ? " selected=\"selected\"" : "").">".$ds." Tage</option>";
+		}
 		echo "</select> sind (".nf($tblcnt[0])." total).";
 		echo '</fieldset><br/>';
 
@@ -427,7 +439,7 @@
 		echo '</fieldset><br/>';
 
 		/* Inactive */
-		echo '<fieldset><legend><input type="checkbox" value="1" name="cl_inactive" /> Inaktive User</legend>';
+		echo '<fieldset><legend><input type="checkbox" value="1" name="cl_inactive" /> User</legend>';
 		$register_time = time()-(24*3600*$conf['user_inactive_days']['p2']);		// Zeit nach der ein User gelöscht wird wenn er noch 0 Punkte hat
 		$online_time = time()-(24*3600*$conf['user_inactive_days']['p1']);	// Zeit nach der ein User normalerweise gelöscht wird
 		$res =	dbquery("
@@ -442,7 +454,19 @@
 		;");		
 		$tblcnt = mysql_fetch_row($res);
 		echo nf($tblcnt[0])." inaktive Benutzer löschen (".$conf['user_inactive_days']['p2']." Tage seit der Registration ohne Login 
-		oder ".$conf['user_inactive_days']['p1']." Tage nicht mehr eingeloggt)";
+		oder ".$conf['user_inactive_days']['p1']." Tage nicht mehr eingeloggt)<br/>";
+		$res =	dbquery("
+			SELECT
+				COUNT(user_id)
+			FROM
+				users
+			WHERE
+				user_deleted>0 
+				AND user_deleted<".time()."				
+		;");		
+		$tblcnt = mysql_fetch_row($res);
+		echo nf($tblcnt[0])." als gelöscht markierte Benutzer endgültig löschen";
+
 		echo '</fieldset><br/>';
 		
 		/* Object lists */

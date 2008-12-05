@@ -34,14 +34,18 @@
 
 	 	// Inaktive User löschen
 		$tmr = timerStart();
-		remove_inactive();
-		remove_deleted_users();
-		$log = "Inaktive gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
+		Users::removeInactive();
+		Users::removeDeleted();
+		$log = "Inaktive und als gelöscht markierte User gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
 
 		// Alte Logs löschen
 		$tmr = timerStart();
-		remove_logs();
-		$log.= "Alte Logs gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
+		$nr = Log::removeOld();
+		$log.= "$nr alte Logs gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
+
+		$tmr = timerStart();
+		$nr = Users::cleanUpSessionLogs();
+		$log.= "$nr alte Session-Logs gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
 
 		// Alte Nachrichten löschen
 		$tmr = timerStart();

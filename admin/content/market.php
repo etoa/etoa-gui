@@ -28,7 +28,6 @@
 
 	define("USER_MESSAGE_CAT_ID",1);
 	define("SYS_MESSAGE_CAT_ID",5);
-	$rsc = get_resources_array();
 
 	echo "<h1>Marktplatz</h1>";
 
@@ -48,11 +47,11 @@
 				$username=get_user_nick($arr['user_id']);
 				echo "<table class=\"tbl\">";
 				echo "<tr><td class=\"tbltitle\" width=\"100\">Datum:</td><td class=\"tbldata\" colspan=\"2\" width=\"200\">".date("d.m.Y - H:i:s", $arr['datum'])."</td><td class=\"tbltitle\" width=\"100\">Spieler:</td><td class=\"tbldata\" width=\"100\"><a href=\"?page=user&amp;sub=edit&amp;user_id=".$arr['user_id']."\">".$username."</a></td><td class=\"tbltitle\"><input type=\"button\" onclick=\"if (confirm('Soll dieses Angebot wirklich gel&ouml;scht werden?')) document.location='?page=$page&sub=$sub&ressource_delete=".$arr['ressource_market_id']."'\" value=\"L&ouml;schen\"/></td></tr>";
-				echo "<tr><td class=\"tbltitle\" rowspan=\"5\">Angebot:</td><td class=\"tbldata\" width=\"110\">".$rsc['metal'].":</td><td class=\"tbldata\" width=\"100\">".nf($arr['sell_metal'])."</td><td class=\"tbltitle\" rowspan=\"5\">Preis:</td><td class=\"tbldata\" width=\"100\">".$rsc['metal'].":</td><td class=\"tbldata\" width=\"100\">".nf($arr['buy_metal'])."</td></tr>";
-				echo "<tr><td class=\"tbldata\" width=\"100\">".$rsc['crystal'].":</td><td class=\"tbldata\" width=\"100\">".nf($arr['sell_crystal'])."</td><td class=\"tbldata\" width=\"100\">".$rsc['crystal'].":</td><td class=\"tbldata\" width=\"100\">".nf($arr['buy_crystal'])."</td></tr>";
-				echo "<tr><td class=\"tbldata\" width=\"100\">".$rsc['plastic'].":</td><td class=\"tbldata\" width=\"100\">".nf($arr['sell_plastic'])."</td><td class=\"tbldata\" width=\"100\">".$rsc['plastic'].":</td><td class=\"tbldata\" width=\"100\">".nf($arr['buy_plastic'])."</td></tr>";
-				echo "<tr><td class=\"tbldata\" width=\"100\">".$rsc['fuel'].":</td><td class=\"tbldata\" width=\"100\">".nf($arr['sell_fuel'])."</td><td class=\"tbldata\" width=\"100\">".$rsc['fuel'].":</td><td class=\"tbldata\" width=\"100\">".nf($arr['buy_fuel'])."</td></tr>";
-				echo "<tr><td class=\"tbldata\" width=\"100\">".$rsc['food']."</td><td class=\"tbldata\" width=\"100\">".nf($arr['sell_food'])."</td><td class=\"tbldata\" width=\"100\">".$rsc['food']."</td><td class=\"tbldata\" width=\"100\">".nf($arr['buy_food'])."</td></tr>";
+				echo "<tr><td class=\"tbltitle\" rowspan=\"5\">Angebot:</td><td class=\"tbldata\" width=\"110\">".RES_METAL.":</td><td class=\"tbldata\" width=\"100\">".nf($arr['sell_metal'])."</td><td class=\"tbltitle\" rowspan=\"5\">Preis:</td><td class=\"tbldata\" width=\"100\">".RES_METAL.":</td><td class=\"tbldata\" width=\"100\">".nf($arr['buy_metal'])."</td></tr>";
+				echo "<tr><td class=\"tbldata\" width=\"100\">".RES_CRYSTAL.":</td><td class=\"tbldata\" width=\"100\">".nf($arr['sell_crystal'])."</td><td class=\"tbldata\" width=\"100\">".RES_CRYSTAL.":</td><td class=\"tbldata\" width=\"100\">".nf($arr['buy_crystal'])."</td></tr>";
+				echo "<tr><td class=\"tbldata\" width=\"100\">".RES_PLASTIC.":</td><td class=\"tbldata\" width=\"100\">".nf($arr['sell_plastic'])."</td><td class=\"tbldata\" width=\"100\">".RES_PLASTIC.":</td><td class=\"tbldata\" width=\"100\">".nf($arr['buy_plastic'])."</td></tr>";
+				echo "<tr><td class=\"tbldata\" width=\"100\">".RES_FUEL.":</td><td class=\"tbldata\" width=\"100\">".nf($arr['sell_fuel'])."</td><td class=\"tbldata\" width=\"100\">".RES_FUEL.":</td><td class=\"tbldata\" width=\"100\">".nf($arr['buy_fuel'])."</td></tr>";
+				echo "<tr><td class=\"tbldata\" width=\"100\">".RES_FOOD."</td><td class=\"tbldata\" width=\"100\">".nf($arr['sell_food'])."</td><td class=\"tbldata\" width=\"100\">".RES_FOOD."</td><td class=\"tbldata\" width=\"100\">".nf($arr['buy_food'])."</td></tr>";
 				echo "</table><br/>";
 			}
 		}else{
@@ -78,7 +77,7 @@
 				echo "<table class=\"tbl\">\n";
 				echo "<tr><td class=\"tbltitle\" width=\"100\">Datum:</td><td class=\"tbldata\" colspan=\"2\" width=\"200\">".date("d.m.Y - H:i:s", $arr['datum'])."</td><td class=\"tbltitle\" width=\"100\">Spieler:</td><td class=\"tbldata\" width=\"100\"><a href=\"?page=user&amp;sub=edit&amp;user_id=".$arr['user_id']."\">".$username."</a></td><td class=\"tbldata\" rowspan=\"4\"><input type=\"button\" onclick=\"if (confirm('Soll dieses Angebot wirklich gel&ouml;scht werden?')) document.location='?page=$page&sub=$sub&ship_delete=".$arr['ship_market_id']."'\" value=\"L&ouml;schen\"/></td></tr>";
 				echo "<tr><td class=\"tbltitle\" width=\"100\">Schiffname:</td><td class=\"tbldata\" colspan=\"2\" width=\"200\">".$arr['ship_name']."</td><td class=\"tbltitle\" width=\"100\">Anzahl:</td><td class=\"tbldata\" width=\"100\">".$arr['ship_count']."</td></tr>";
-				echo "<tr><td class=\"tbltitle\" width=\"100\">".$rsc['metal'].":</td><td class=\"tbltitle\" width=\"100\">".$rsc['crystal'].":</td><td class=\"tbltitle\" width=\"100\">".$rsc['plastic'].":</td><td class=\"tbltitle\" width=\"100\">".$rsc['fuel'].":</td><td class=\"tbltitle\" width=\"100\">".$rsc['food']."</td></tr>";
+				echo "<tr><td class=\"tbltitle\" width=\"100\">".RES_METAL.":</td><td class=\"tbltitle\" width=\"100\">".RES_CRYSTAL.":</td><td class=\"tbltitle\" width=\"100\">".RES_PLASTIC.":</td><td class=\"tbltitle\" width=\"100\">".RES_FUEL.":</td><td class=\"tbltitle\" width=\"100\">".RES_FOOD."</td></tr>";
 				echo "<tr><td class=\"tbldata\" width=\"100\">".nf($arr['ship_costs_metal'])."</td><td class=\"tbldata\" width=\"100\">".nf($arr['ship_costs_crystal'])."</td><td class=\"tbldata\" width=\"100\">".nf($arr['ship_costs_plastic'])."</td><td class=\"tbldata\" width=\"100\">".nf($arr['ship_costs_fuel'])."</td><td class=\"tbldata\" width=\"100\">".nf($arr['ship_costs_food'])."</td></tr>";
 				echo "</table><br/>";
 			}
@@ -131,7 +130,7 @@
 							echo "<td class=\"tbldata\" rowspan=\"5\">Keine Schiffe</td>";
 						}
 
-						echo "<td class=\"tbldata\"><b>".$rsc['metal']."</b>:</td><td class=\"tbldata\">".nf($arr['auction_sell_metal'])."</td>";
+						echo "<td class=\"tbldata\"><b>".RES_METAL."</b>:</td><td class=\"tbldata\">".nf($arr['auction_sell_metal'])."</td>";
 
 						 // Zurückzieh button wenn noch niemand geboten hat
 						if($arr['auction_current_buyer_id']==0)
@@ -150,8 +149,8 @@
 						// Start/Ende Anzeigen sofern die auktion nicht schon beendet ist
 						if($arr['auction_delete_date']==0)
 						{
-							echo "<tr><td class=\"tbldata\">Ende ".date("d.m.Y  G:i:s", $arr['auction_end'])."</td><td class=\"tbldata\"><b>".$rsc['crystal']."</b>:</td><td class=\"tbldata\">".nf($arr['auction_sell_crystal'])."</td></tr>";
-							echo "<tr><td class=\"tbldata\" rowspan=\"3\">$rest_time</td><td class=\"tbldata\"><b>".$rsc['plastic']."</b>:</td><td class=\"tbldata\">".nf($arr['auction_sell_plastic'])."</td></tr>";
+							echo "<tr><td class=\"tbldata\">Ende ".date("d.m.Y  G:i:s", $arr['auction_end'])."</td><td class=\"tbldata\"><b>".RES_CRYSTAL."</b>:</td><td class=\"tbldata\">".nf($arr['auction_sell_crystal'])."</td></tr>";
+							echo "<tr><td class=\"tbldata\" rowspan=\"3\">$rest_time</td><td class=\"tbldata\"><b>".RES_PLASTIC."</b>:</td><td class=\"tbldata\">".nf($arr['auction_sell_plastic'])."</td></tr>";
 						}
 						// sonst das löschdatum anzeigen
 						else
@@ -163,13 +162,13 @@
                             $m = floor(($delete_rest_time-($h*3600))/60);
                             $s = floor(($delete_rest_time-($h*3600)-($m*60)));
 
-							echo "<tr><td class=\"tbldata\">Auktion beendet</td><td class=\"tbldata\"><b>".$rsc['crystal']."</b>:</td><td class=\"tbldata\">".nf($arr['auction_sell_crystal'])."</td></tr>";
-							echo "<tr><td class=\"tbldata\" rowspan=\"3\">Gebot wird nach $h Stunden und $m Minuten gel&ouml;scht</td><td class=\"tbldata\"><b>".$rsc['plastic']."</b>:</td><td class=\"tbldata\">".nf($arr['auction_sell_plastic'])."</td></tr>";
+							echo "<tr><td class=\"tbldata\">Auktion beendet</td><td class=\"tbldata\"><b>".RES_CRYSTAL."</b>:</td><td class=\"tbldata\">".nf($arr['auction_sell_crystal'])."</td></tr>";
+							echo "<tr><td class=\"tbldata\" rowspan=\"3\">Gebot wird nach $h Stunden und $m Minuten gel&ouml;scht</td><td class=\"tbldata\"><b>".RES_PLASTIC."</b>:</td><td class=\"tbldata\">".nf($arr['auction_sell_plastic'])."</td></tr>";
 						}
 
 
-						echo "<tr><td class=\"tbldata\"><b>".$rsc['fuel']."</b>:</td><td class=\"tbldata\">".nf($arr['auction_sell_fuel'])."</td></tr>";
-						echo "<tr><td class=\"tbldata\"><b>".$rsc['food']."</b>:</td><td class=\"tbldata\">".nf($arr['auction_sell_food'])."</td></tr>";
+						echo "<tr><td class=\"tbldata\"><b>".RES_FUEL."</b>:</td><td class=\"tbldata\">".nf($arr['auction_sell_fuel'])."</td></tr>";
+						echo "<tr><td class=\"tbldata\"><b>".RES_FOOD."</b>:</td><td class=\"tbldata\">".nf($arr['auction_sell_food'])."</td></tr>";
 
 						//Hochstgebot Anzeigen wenn schon geboten worden ist
 						if($arr['auction_current_buyer_id']!=0)
@@ -179,13 +178,13 @@
                             echo "<tr><td class=\"tbldata\" rowspan=\"5\"><a href=\"?page=user&amp;sub=edit&amp;user_id=".$arr['auction_current_buyer_id']."\">".get_user_nick($arr['auction_current_buyer_id'])."</a></td>";
                             echo "<td class=\"tbldata\" rowspan=\"5\">Geboten ".date("d.m.Y  G:i:s", $arr['auction_current_buyer_date'])."</td>";
 
-                            echo "<td class=\"tbldata\"><b>".$rsc['metal']."</b>:</td><td class=\"tbldata\" colspan=\"2\">".nf($arr['auction_buy_metal'])."</td>";
+                            echo "<td class=\"tbldata\"><b>".RES_METAL."</b>:</td><td class=\"tbldata\" colspan=\"2\">".nf($arr['auction_buy_metal'])."</td>";
 
                             echo "<td class=\"tbldata\" rowspan=\"5\">&nbsp;</td></tr>";
-                            echo "<tr><td class=\"tbldata\"><b>".$rsc['crystal']."</b>:</td><td class=\"tbldata\" colspan=\"2\">".nf($arr['auction_buy_crystal'])."</td></tr>";
-                            echo "<tr><td class=\"tbldata\"><b>".$rsc['plastic']."</b>:</td><td class=\"tbldata\" colspan=\"2\">".nf($arr['auction_buy_plastic'])."</td></tr>";
-                            echo "<tr><td class=\"tbldata\"><b>".$rsc['fuel']."</b>:</td><td class=\"tbldata\" colspan=\"2\">".nf($arr['auction_buy_fuel'])."</td></tr>";
-                            echo "<tr><td class=\"tbldata\"><b>".$rsc['food']."</b>:</td><td class=\"tbldata\" colspan=\"2\">".nf($arr['auction_buy_food'])."</td></tr>";
+                            echo "<tr><td class=\"tbldata\"><b>".RES_CRYSTAL."</b>:</td><td class=\"tbldata\" colspan=\"2\">".nf($arr['auction_buy_crystal'])."</td></tr>";
+                            echo "<tr><td class=\"tbldata\"><b>".RES_PLASTIC."</b>:</td><td class=\"tbldata\" colspan=\"2\">".nf($arr['auction_buy_plastic'])."</td></tr>";
+                            echo "<tr><td class=\"tbldata\"><b>".RES_FUEL."</b>:</td><td class=\"tbldata\" colspan=\"2\">".nf($arr['auction_buy_fuel'])."</td></tr>";
+                            echo "<tr><td class=\"tbldata\"><b>".RES_FOOD."</b>:</td><td class=\"tbldata\" colspan=\"2\">".nf($arr['auction_buy_food'])."</td></tr>";
                         }
                         tableEnd();
 
@@ -199,7 +198,11 @@
 	}
 	else
 	{
-		echo "Willkommen bei der Marktplatzverwaltung. Bitte w&auml;hle einen Bereich aus dem Men&uuml; rechts aus!";
+		echo "Willkommen bei der Marktplatzverwaltung. Bitte w&auml;hle einen Bereich aus dem Men&uuml; rechts aus!<br/><br/>";
+		
+		echo '<input type="button" value="Schiffe" onclick="document.location=\'?page='.$page.'&amp;sub=ships\'" /><br/><br/>';
+		echo '<input type="button" value="Rohstoffe" onclick="document.location=\'?page='.$page.'&amp;sub=ress\'" /><br/><br/>';
+		echo '<input type="button" value="Auktionen" onclick="document.location=\'?page='.$page.'&amp;sub=auction\'" /><br/><br/>';
 	}
 
 ?>

@@ -1,17 +1,6 @@
 <?PHP
 		echo "<h2>Backups</h2>";
-
-/*		
-		// Alte Backups löschen
-		if ($_GET['action']=="backupremove")
-		{
-			$days = $conf['backup']['p1']*3600*24;
-			$num = remove_old_backups(true);
-			echo "$num Backups die &auml;lter als ".$conf['backup']['p1']." Tage waren wurden gelöscht!<br/><br/>";
-		}
-*/
-
-		
+	
 		// Backup erstellen
 		if (isset($_POST['create']))
 		{
@@ -34,7 +23,7 @@
 		}
 
 		// Backup wiederherstellen
-		elseif ($_GET['action']=="backuprestore" && $_GET['date']!="")
+		elseif (isset($_GET['action']) && $_GET['action']=="backuprestore" && $_GET['date']!="")
 		{
 			$result = shell_exec("../scripts/backup.php"); // Sicherungskopie anlegen
 			if ($result=="")
@@ -50,6 +39,22 @@
 				cms_err_msg("Beim Ausf&uuml;hren des Backup-Befehls trat ein Fehler auf! $result");
 			}
 		}
+
+
+		if (Form::validate("bustn") && isset($_POST['submit_changes']))
+		{
+			$cfg->set("backup",$_POST['backup_v'],$_POST['backup_p1']);
+			ok_msg("Gespeichert");
+		}
+
+		$frm = new Form("bustn","?page=$page&amp;sub=$sub");
+		echo $frm->begin();
+		iBoxStart("Backup-Einstellungen");
+		echo "Speicherpfad: <input type=\"text\" value=\"".$cfg->get("backup")."\" name=\"backup_v\" size=\"50\" /><br/>
+		Aufbewahrungsdauer: <input type=\"text\" value=\"".$cfg->p1("backup")."\" name=\"backup_p1\" size=\"2\" /> Tage 
+		&nbsp; <input type=\"submit\" value=\"Speichern\" name=\"submit_changes\"  />";
+		iBoxEnd();
+		echo $frm->close();
 
 		echo "Im Folgenden sind alle verfügbaren Backups aufgelistet. Backups werden durch ein Skript erstellt dass per Cronjob aufgerufen wird.<br/><br/>";
 
