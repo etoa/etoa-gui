@@ -295,8 +295,14 @@
 		}
 		echo "</select> <input type=\"submit\" name=\"submit\" value=\"Anzeigen\" />";
 
-		
 		if (isset($_POST['submit']) && $_POST['alliance_id']>0)
+			$id = $_POST['alliance_id'];
+		elseif (isset($_GET['id']) && $_GET['id']>0)
+			$id = $_GET['id'];
+		else
+			$id = 0;
+		
+		if ($id>0)
 		{
 			echo "<h2>Geschichte der Allianz [".$alliances[$_POST['alliance_id']]['tag']."] ".$alliances[$_POST['alliance_id']]['name']."</h2>";
 			echo "<table>";
@@ -489,7 +495,7 @@
 		// Suchergebnisse
 		//
 		
-		if (($_POST['alliance_search']!="" || $_SESSION['admin']['queries']['alliances']!="") && $_GET['action']=="search")
+		if ((isset($_POST['alliance_search']) && $_POST['alliance_search']!="" || $_SESSION['admin']['queries']['alliances']!="") && isset($_GET['action']) && $_GET['action']=="search")
 		{
   	
   		if ($_SESSION['admin']['queries']['alliances']=="")
@@ -639,10 +645,11 @@
 			if (isset($_GET['id']))
 				$id = $_GET['id'];
 			
-			if ($_POST['save']!="")
+			if (isset($_POST['save']) && $_POST['save']!="")
 			{
 				//  Bild löschen wenn nötig
-				if ($_POST['alliance_img_del']==1)
+				$img_sql="";
+				if (isset($_POST['alliance_img_del']))
         {
 					$res = dbquery("SELECT alliance_img FROM alliances WHERE alliance_id=".$id.";");
 					if (mysql_num_rows($res)>0)
@@ -672,22 +679,58 @@
 				WHERE 
 					alliance_id='".$id."'
 				;");
+				// Mitgliederänderungen
+				if (isset($_POST['member_kick']) && count($_POST['member_kick'])>0)
+					foreach($_POST['member_kick'] as $k=>$v)
+						dbquery("UPDATE 
+							users
+						SET
+							user_alliance_id=0,
+							user_alliance_rank_id=0
+						WHERE 
+							user_id='$k';");
+				if (count($_POST['member_rank'])>0)
+					foreach($_POST['member_rank'] as $k=>$v)
+						dbquery("UPDATE 
+							users 
+						SET 
+							user_alliance_rank_id=$v 
+						WHERE 
+							user_id='$k';");				
 				// Ränge speichern
-				if (count($_POST['rank_del'])>0)
+				if (isset($_POST['rank_del']) && count($_POST['rank_del'])>0)
 					foreach($_POST['rank_del'] as $k=>$v)
+					{
 						dbquery("DELETE FROM alliance_ranks WHERE rank_id='$k';");
+						dbquery("DELETE FROM alliance_rankrights WHERE rr_rank_id='$k';");
+					}
 				if (count($_POST['rank_name'])>0)
 					foreach($_POST['rank_name'] as $k=>$v)
-						dbquery("UPDATE alliance_ranks SET rank_name='".addslashes($v)."',rank_level='".$_POST['rank_level'][$k]."' WHERE rank_id='$k';");
+						dbquery("UPDATE 
+							alliance_ranks 
+						SET 
+							rank_name='".addslashes($v)."',
+							rank_level='".$_POST['rank_level'][$k]."' 
+						WHERE 
+							rank_id='$k';");
 				// Bündnisse / Kriege speichern
-				if (count($_POST['alliance_bnd_del'])>0)
+				if (isset($_POST['alliance_bnd_del']) && count($_POST['alliance_bnd_del'])>0)
 					foreach($_POST['alliance_bnd_del'] as $k=>$v)
 						dbquery("DELETE FROM alliance_bnd WHERE alliance_bnd_id='$k';");
-				if (count($_POST['alliance_bnd_alliance_id2'])>0)
-					foreach($_POST['alliance_bnd_alliance_id2'] as $k=>$v)
+				if (count($_POST['alliance_bnd_level'])>0)
+				{
+					foreach($_POST['alliance_bnd_level'] as $k=>$v)
 					{
-						dbquery("UPDATE alliance_bnd SET alliance_bnd_alliance_id2='".$v."',alliance_bnd_level='".$_POST['alliance_bnd_level'][$k]."',alliance_bnd_text='".$_POST['alliance_bnd_text'][$k]."' WHERE alliance_bnd_id='$k';");
+						dbquery("UPDATE 
+							alliance_bnd 
+						SET 						
+							alliance_bnd_level='".$_POST['alliance_bnd_level'][$k]."',
+							alliance_bnd_name='".$_POST['alliance_bnd_name'][$k]."' 
+						WHERE 
+							alliance_bnd_id='$k';");
 					}
+				}
+				success_msg("Änderungen gespeichert!");
 			}
 			
 			$res = dbquery("SELECT * FROM alliances WHERE alliance_id=".$id.";");
@@ -739,7 +782,7 @@
 
 
 				echo "<form action=\"?page=$page&sub=edit&id=".$id."\" method=\"post\">";
-				echo "<table class=\"tb\">";
+				tableStart("Allianz <span style=\"color:#0f0;\">".$arr['alliance_name']."</span> bearbeiten","99%");
 				echo "<tr><th>ID</th><td>".$arr['alliance_id']."</td></tr>";
 				echo "<tr><th>[Tag] Name</th><td>
 					[<input type=\"text\" name=\"alliance_tag\" value=\"".$arr['alliance_tag']."\" size=\"6\" maxlength=\"6\" />]
@@ -747,7 +790,7 @@
 				</td></tr>";					
 				echo "<tr><th>Gr&uuml;nder</th><td><select name=\"alliance_founder_id\">";
 				echo "<option value=\"0\">(niemand)</option>";
-				foreach ($members as $uarr)
+				foreach ($members as $uid=>$uarr)
 				{
 					echo "<option value=\"$uid\"";
 					if ($arr['alliance_founder_id']==$uarr['user_id']) 
@@ -855,14 +898,20 @@
 				if (mysql_num_rows($bres)>0)
 				{
 					echo "<table style=\"width:100%\">";
-					echo "<tr><th valign=\"top\">Allianz / Bezeichnung</th><th valign=\"top\">Status / Datum</th><th valign=\"top\">L&ouml;schen</th></tr>";
+					echo "<tr>
+					<th>Allianz</th>
+					<th>Bezeichnung</th>
+					<th>Status / Datum</th>
+					<th>L&ouml;schen</th></tr>";
 					while($barr=mysql_fetch_array($bres))
 					{
 						$opId = ($id==$barr['a2id']) ? $barr['a1id'] : $barr['a2id'];
 						$opName = ($id==$barr['a2id']) ? $barr['a1name'] : $barr['a2name'];
-						echo "<tr><td><a href=\"?page=alliances&amp;action=edit&amp;id=".$opId."\">".$opName."</a><br/>
-						".$barr['name']."</td>";
-						echo "<td><select name=\"alliance_bnd_level[".$barr['alliance_bnd_id']."]\">";
+						echo "<tr>
+							<td><a href=\"?page=alliances&amp;action=edit&amp;id=".$opId."\">".$opName."</a></td>
+							<td><input type=\"text\" value=\"".$barr['name']."\" name=\"alliance_bnd_name[".$barr['alliance_bnd_id']."]\" /></td>";
+						echo "<td>
+						<select name=\"alliance_bnd_level[".$barr['alliance_bnd_id']."]\">";
 						echo "<option value=\"0\">Bündnisanfrage</option>";
 						echo "<option value=\"2\"";
 						if ($barr['lvl']==2) echo " selected=\"selected\"";
@@ -885,7 +934,9 @@
 				echo "</table>";
 				echo "<br/><input type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" />&nbsp;";
 				echo "<input type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&action=search'\" /> ";
-				echo "<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" />";
+				echo "<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" />&nbsp;";
+				echo "<input type=\"button\" onclick=\"document.location='?page=$page&amp;sub=history&amp;id=".$id."'\" value=\"Allianzgeschichte\" />";
+			
 				echo "</form>";
 			}
 			else
@@ -921,7 +972,9 @@
 				{
 					echo "<table style=\"width:100%\">";
 					while($uarr=mysql_fetch_array($ures))
-						echo "<tr><td>".$uarr['user_nick']."</td><td>".$uarr['user_points']." Punkte</td><td>[<a href=\"?page=user&amp;sub=edit&amp;user_id=".$uarr['user_id']."\">details</a>] [<a href=\"?page=messages&amp;sub=sendmsg&amp;user_id=".$uarr['user_id']."\">msg</a>]</td></tr>";
+						echo "<tr><td>".$uarr['user_nick']."</td>
+						<td>".$uarr['user_points']." Punkte</td>
+						<td>[<a href=\"?page=user&amp;sub=edit&amp;user_id=".$uarr['user_id']."\">details</a>] [<a href=\"?page=messages&amp;sub=sendmsg&amp;user_id=".$uarr['user_id']."\">msg</a>]</td></tr>";
 					echo "</table>";
 				}
 				else
