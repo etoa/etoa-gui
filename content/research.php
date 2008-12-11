@@ -201,7 +201,7 @@
 					// Bauzeit
 					$btime_global_factor = $conf['global_time']['v'];
 					$btime_build_factor = $conf['res_build_time']['v'];
-					$bonus = $cu->raceResearchtime + $cp->typeResearchtime + $cp->starResearchtime-2;
+					$bonus = $cu->race->researchTime + $cp->typeResearchtime + $cp->starResearchtime-2;
 	
 					$btime = ($bc['metal']+$bc['crystal']+$bc['plastic']+$bc['fuel']+$bc['food']) * $btime_global_factor * $btime_build_factor * $time_boni_factor;
 					$btime *= $bonus;

@@ -61,7 +61,7 @@
 			else
 			{
 				document.getElementById(progresselem).innerHTML="Abgeschlossen!";
-				document.getElementById(progresselem).style.background="url('progressbar.png') no-repeat";
+				document.getElementById(progresselem).style.background="url('images/progressbar.png') no-repeat";
 				document.getElementById(progresselem).style.backgroundPosition="0px 0px";
 				document.getElementById(progresselem).style.color="#fff";
 			}

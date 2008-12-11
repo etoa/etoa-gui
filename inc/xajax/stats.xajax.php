@@ -18,7 +18,7 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 	//
 	if ($mode=="alliances")
 	{
-		$out.= "<table class=\"tbl\"><tr>";
+		$out.= "<table class=\"tb\"><tr>";
 		$out.= "<th colspan=\"2\">Rang</th>";
 		$out.= "<th>Tag</th>";
 		$out.= "<th>Name</th>";
@@ -127,7 +127,7 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 			AND u.user_blocked_to>".time()." 
 		ORDER BY 
 			u.user_blocked_from DESC;");
-		$out.= "<table class=\"tbl\">
+		$out.= "<table class=\"tb\">
 		<tr>
 			<th>Nick</th>
 			<th>Von:</th>
@@ -192,7 +192,6 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 					<th>Rasse</th>
 					<th>Allianz</th>
 					<th>Bewertung</th>
-					<th style=\"width:160px;\">Aktionen</th>
 				</tr>";
 				while ($arr=mysql_fetch_array($res))
 				{
@@ -200,19 +199,21 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 					{
 						echo "<tr>";
 						echo "<td>".$cnt."</td>";
-						echo "<td>".$arr['user_nick']."</td>";
+						echo "<td>
+							<div id=\"ttuser".$arr['id']."\" style=\"display:none;\">
+							".popUp("Profil anzeigen","page=userinfo&id=".$arr['id'])."<br/>
+							".popUp("Punkteverlauf","page=$page&amp;mode=$mode&amp;userdetail=".$arr['id'])."<br/>";
+							if ($arr['id']!=$_SESSION[ROUNDID]['user_id'])
+							{
+								echo "<a href=\"?page=messages&mode=new&message_user_to=".$arr['id']."\">Nachricht senden</a><br/>";
+								echo "<a href=\"?page=buddylist&add_id=".$arr['id']."\">Als Freund hinzufügen</a>";
+						}
+
+						echo "</div>
+							<a href=\"#\" ".cTT($arr['user_nick'],"ttuser".$arr['id']).">".$arr['user_nick']."</a></td>";
 						echo "<td>".$arr['race_name']."</td>";
 						echo "<td >".$arr['alliance_tag']."</td>";
 						echo "<td>".nf($arr['diplomacy_rating'])."</td>";
-						echo "<td>";
-						echo "<a href=\"?page=userinfo&id=".$arr['id']."\" title=\"Userinfo\">Info</a> ";
-						echo "<a href=\"?page=$page&amp;mode=$mode&amp;userdetail=".$arr['id']."\">Verlauf</a> ";
-						if ($arr['id']!=$_SESSION[ROUNDID]['user_id'])
-						{
-							echo "<a href=\"?page=messages&mode=new&message_user_to=".$arr['id']."\" title=\"Nachricht senden\">Mail</a> ";
-							echo "<a href=\"?page=buddylist&add_id=".$arr['id']."\" title=\"Info\">Buddy</a></td>";
-						}
-						echo "</td>";
 						echo "</tr>";
 						$cnt++;
 					}
@@ -261,7 +262,6 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 					<th>Kämpfe Verloren</th>
 					<th>Kämpfe Total</th>
 					<th>Bewertung</th>
-					<th style=\"width:160px;\">Aktionen</th>
 				</tr>";
 				while ($arr=mysql_fetch_array($res))
 				{
@@ -269,22 +269,24 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 					{
 						echo "<tr>";
 						echo "<td>".$cnt."</td>";
-						echo "<td>".$arr['user_nick']."</td>";
+						echo "<td>
+							<div id=\"ttuser".$arr['id']."\" style=\"display:none;\">
+							".popUp("Profil anzeigen","page=userinfo&id=".$arr['id'])."<br/>
+							".popUp("Punkteverlauf","page=$page&amp;mode=$mode&amp;userdetail=".$arr['id'])."<br/>";
+							if ($arr['id']!=$_SESSION[ROUNDID]['user_id'])
+							{
+								echo "<a href=\"?page=messages&mode=new&message_user_to=".$arr['id']."\">Nachricht senden</a><br/>";
+								echo "<a href=\"?page=buddylist&add_id=".$arr['id']."\">Als Freund hinzufügen</a>";
+						}
+
+						echo "</div>
+							<a href=\"#\" ".cTT($arr['user_nick'],"ttuser".$arr['id']).">".$arr['user_nick']."</a></td>";
 						echo "<td>".$arr['race_name']."</td>";
 						echo "<td >".$arr['alliance_tag']."</td>";
 						echo "<td>".nf($arr['battles_won'])."</td>";
 						echo "<td>".nf($arr['battles_lost'])."</td>";
 						echo "<td>".nf($arr['battles_fought'])."</td>";
 						echo "<td>".nf($arr['battle_rating'])."</td>";
-						echo "<td>";
-						echo "<a href=\"?page=userinfo&id=".$arr['id']."\" title=\"Userinfo\">Info</a> ";
-						echo "<a href=\"?page=$page&amp;mode=$mode&amp;userdetail=".$arr['id']."\">Verlauf</a> ";
-						if ($arr['id']!=$_SESSION[ROUNDID]['user_id'])
-						{
-							echo "<a href=\"?page=messages&mode=new&message_user_to=".$arr['id']."\" title=\"Nachricht senden\">Mail</a> ";
-							echo "<a href=\"?page=buddylist&add_id=".$arr['id']."\" title=\"Info\">Buddy</a></td>";
-						}
-						echo "</td>";
 						echo "</tr>";
 						$cnt++;
 					}
@@ -331,7 +333,6 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 					<th>Einkäufe</th>
 					<th>Verkäufe</th>
 					<th>Bewertung</th>
-					<th style=\"width:160px;\">Aktionen</th>
 				</tr>";
 				while ($arr=mysql_fetch_array($res))
 				{
@@ -339,21 +340,23 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 					{
 						echo "<tr>";
 						echo "<td>".$cnt."</td>";
-						echo "<td>".$arr['user_nick']."</td>";
+						echo "<td>
+							<div id=\"ttuser".$arr['id']."\" style=\"display:none;\">
+							".popUp("Profil anzeigen","page=userinfo&id=".$arr['id'])."<br/>
+							".popUp("Punkteverlauf","page=$page&amp;mode=$mode&amp;userdetail=".$arr['id'])."<br/>";
+							if ($arr['id']!=$_SESSION[ROUNDID]['user_id'])
+							{
+								echo "<a href=\"?page=messages&mode=new&message_user_to=".$arr['id']."\">Nachricht senden</a><br/>";
+								echo "<a href=\"?page=buddylist&add_id=".$arr['id']."\">Als Freund hinzufügen</a>";
+						}
+
+						echo "</div>
+							<a href=\"#\" ".cTT($arr['user_nick'],"ttuser".$arr['id']).">".$arr['user_nick']."</a></td>";
 						echo "<td>".$arr['race_name']."</td>";
 						echo "<td >".$arr['alliance_tag']."</td>";
 						echo "<td>".nf($arr['trades_buy'])."</td>";
 						echo "<td>".nf($arr['trades_sell'])."</td>";
 						echo "<td>".nf($arr['trade_rating'])."</td>";
-						echo "<td>";
-						echo "<a href=\"?page=userinfo&id=".$arr['id']."\" title=\"Userinfo\">Info</a> ";
-						echo "<a href=\"?page=$page&amp;mode=$mode&amp;userdetail=".$arr['id']."\">Verlauf</a> ";
-						if ($arr['id']!=$_SESSION[ROUNDID]['user_id'])
-						{
-							echo "<a href=\"?page=messages&mode=new&message_user_to=".$arr['id']."\" title=\"Nachricht senden\">Mail</a> ";
-							echo "<a href=\"?page=buddylist&add_id=".$arr['id']."\" title=\"Info\">Buddy</a></td>";
-						}
-						echo "</td>";
 						echo "</tr>";
 						$cnt++;
 					}
