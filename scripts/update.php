@@ -40,7 +40,7 @@
 
 		// Alte Benuterpunkte-Logs löschen
 		$tmr = timerStart();
-		$nr = Users::cleanUpPoints
+		$nr = Users::cleanUpPoints();
 		$log.= "$nr alte Userpunkte-Logs gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
 
 		// Alte Session-Logs
