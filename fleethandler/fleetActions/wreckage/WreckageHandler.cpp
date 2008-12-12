@@ -20,7 +20,7 @@ namespace wreckage
 		Config &config = Config::instance();
 		std::time_t time = std::time(0);
 		
-		/** Precheck action==possible? **/
+		// Precheck action==possible?
 		mysqlpp::Query query = con_->query();
 		query << "SELECT ";
 		query << "	ship_id ";
@@ -28,13 +28,13 @@ namespace wreckage
 		query << "	fleet_ships ";
 		query << "INNER JOIN ";
 		query << "	ships ON fs_ship_id = ship_id ";
-		query << "	AND fs_fleet_id='" << fleet_["id"] << "' ";
+		query << "	AND fs_fleet_id='" << f->getId() << "' ";
 		query << "	AND fs_ship_faked='0' ";
 		query << "	AND (";
-		query << "		ship_actions LIKE '%," << std::string(fleet_["action"]) << "'";
-		query << "		OR ship_actions LIKE '" << std::string(fleet_["action"]) << ",%'";
-		query << "		OR ship_actions LIKE '%," << std::string(fleet_["action"]) << ",%'";
-		query << "		OR ship_actions LIKE '" << std::string(fleet_["action"]) << "');";
+		query << "		ship_actions LIKE '%," << f->getAction() << "'";
+		query << "		OR ship_actions LIKE '" << f->getAction() << ",%'";
+		query << "		OR ship_actions LIKE '%," << f->getAction() << ",%'";
+		query << "		OR ship_actions LIKE '" << f->getAction() << "');";
 		mysqlpp::Result fsRes = query.store();
 		query.reset();
 					
@@ -42,14 +42,14 @@ namespace wreckage
 			int fsSize = fsRes.size();
 			
 			if (fsSize > 0) {
-				/** Calculate the fleet capacity **/
+				// Calculate the fleet capacity
 				query << "SELECT ";
 				query << "	SUM(fs_ship_cnt*ship_capacity) as capa ";
 				query << "FROM ";
 				query << "	fleet_ships ";
 				query << "INNER JOIN ";
 				query << "	ships ON fs_ship_id = ship_id ";
-				query << "	AND fs_fleet_id='" << fleet_["id"] << "' ";
+				query << "	AND fs_fleet_id='" << f->getId() << "' ";
 				query << "	AND fs_ship_faked='0';";
 				mysqlpp::Result capaRes = query.store();
 				query.reset();
@@ -60,11 +60,11 @@ namespace wreckage
 					if (capaSize > 0) {
 						mysqlpp::Row capaRow = capaRes.at(0);
 						
-						this->capa = (double)capaRow["capa"] - (double)fleet_["res_metal"] - (double)fleet_["res_crystal"] - (double)fleet_["res_plastic"] -(double)fleet_["res_fuel"] - (double)fleet_["res_food"];
+						this->capa = (double)capaRow["capa"] - f->getResLoaded();
 					}
 				}
 				
-				/** Load the wreckage field **/
+				// Load the wreckage field
 				query << std::setprecision(18);
 				query << "SELECT ";
 				query << "	planet_wf_metal, ";
@@ -73,7 +73,7 @@ namespace wreckage
 				query << "FROM ";
 				query << "	planets ";
 				query << "WHERE ";
-				query << "	id='" << fleet_["entity_to"] << "';";
+				query << "	id='" << f->getEntityTo() << "';";
 				mysqlpp::Result wfRes = query.store();
 				query.reset();
 		
@@ -89,9 +89,9 @@ namespace wreckage
 					}
 				}
 
-				/** Check if there is a field **/
+				// Check if there is a field
 				if (this->sum>0) {
-					/** Calculate the collected resources **/
+					// Calculate the collected resources
 					if (this->capa <= this->sum) {
 						this->percent = this->capa / this->sum;
 						this->metal = round(this->metal * this->percent);
@@ -105,7 +105,7 @@ namespace wreckage
 						this->plastic = round(this->plastic);
 					}
 	
-					/** Update the field **/
+					// Update the field
 					query << "UPDATE ";
 					query << "	planets ";
 					query << "SET ";
@@ -113,25 +113,25 @@ namespace wreckage
 					query << "	planet_wf_crystal=planet_wf_crystal-'" << this->crystal << "', ";
 					query << "	planet_wf_plastic=planet_wf_plastic-'" << this->plastic << "' ";
 					query << "WHERE ";
-					query << "	id='" << fleet_["entity_to"] << "';";
+					query << "	id='" << f->getEntityTo() << "';";
 					query.store();
 					query.reset();
 		
-					/** Add collected resources to the fleet **/
+					// Add collected resources to the fleet
 					this->metal += (double)fleet_["res_metal"];
 					this->crystal += (double)fleet_["res_crystal"];
 					this->plastic += (double)fleet_["res_plastic"];
 	
-					/** Send fleet back home again **/
+					// Send fleet back home again
 					fleetReturn(1,this->metal,this->crystal,this->plastic,-1,-1,-1);
 	
-					/** Send a message to the user **/
+					// Send a message to the user
 					std::string msg = "[b]TR&Uuml;MMERSAMMLER-RAPPORT[/b]\n\nEine Flotte vom Planeten \n[b]";
-					msg += functions::formatCoords((int)fleet_["entity_from"],0);
+					msg += f->getEntityFromString();
 					msg += "[/b]\nhat das Tr&uuml;mmerfeld bei \n[b]";
-					msg += functions::formatCoords((int)fleet_["entity_to"],0);
+					msg += f->getEntityToString();
 					msg += "[/b]\num [b]";
-					msg += functions::formatTime((int)fleet_["landtime"]);
+					msg += f->getLandtimeString();
 					msg += "[/b]\n erreicht und Tr&uuml;mmer gesammelt.\n";
 		
 					msgRes = "\n[b]ROHSTOFFE:[/b]\n\nTitan: ";
@@ -142,59 +142,59 @@ namespace wreckage
 					msgRes += functions::nf(functions::d2s(this->plastic));
 					msg += msgRes;
 		
-					functions::sendMsg((int)fleet_["user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Tr&uuml;mmer gesammelt",msg);	
+					functions::sendMsg(f->getUserId(),(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Tr&uuml;mmer gesammelt",msg);	
 	
-					/** Update collected resources for the userstatistic **/
+					// Update collected resources for the userstatistic
 					query << "UPDATE ";
 					query << "	users ";
 					query << "SET ";
 					query << "	user_res_from_tf=user_res_from_tf+'" << this->sum << "' ";
 					query << "WHERE ";
-					query << "	user_id='" << fleet_["user_id"] << "';";
+					query << "	user_id='" << f->getUserId() << "';";
 					query.store();
 					query.reset();  
 	
-					/** Add a log **/
+					// Add a log
 					std::string log = "Eine Flotte des Spielers [B]";
-					log += functions::getUserNick((int)fleet_["user_id"]);
+					log += functions::getUserNick(f->getUserId());
 					log += "[/B] vom Planeten [b]";
-					log += functions::formatCoords((int)fleet_["entity_from"],0);
+					log += f->getEntityFromString();
 					log += "[/b] hat das Tr&uuml;mmerfeld bei [b]";
-					log += functions::formatCoords((int)fleet_["entity_to"],0);
+					log += f->getEntityToString();
 					log += "[/b] um [b]";
-					log += functions::formatTime((int)fleet_["landtime"]);
+					log += f->getLandtimeString();
 					log += "[/b] erreicht und Tr&uuml;mmer gesammelt.\n";
 					log += msgRes;
 					functions::addLog(13,log,(int)time);
 				}
 				
-				/** If the field is empty **/
+				// If the field is empty
 				else {
-					/** Send fleet back home again **/ 
+					// Send fleet back home again
 					fleetReturn(1);
 	
-					/** Send a message to the user **/
+					// Send a message to the user
 					std::string msg = "[b]TRÜMMERSAMMLER-RAPPORT[/b]\n\nEine Flotte vom Planeten \n[b]";
-					msg += functions::formatCoords((int)fleet_["entity_from"],0);
+					msg += f->getEntityFromString();
 					msg += "[/b]\nhat das Tr&uuml;mmerfeld bei \n[b]";
-					msg += functions::formatCoords((int)fleet_["entity_to"],0);
+					msg += f->getEntityToString();
 					msg += "[/b]\num [b]";
-					msg += functions::formatTime((int)fleet_["landtime"]);
+					msg += f->getLandtimeString();
 					msg += "[/b]\n erreicht.\n\n";
 					msgRes = "Es wurden aber leider keine brauchbaren Trümmerteile mehr gefunden so dass die Flotte unverrichteter Dinge zurückkehren musste.";
 					msg += msgRes;
 				
-					functions::sendMsg((int)fleet_["user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Tr&uuml;mmer gesammelt",msg);
+					functions::sendMsg(f->getUserId(),(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Tr&uuml;mmer gesammelt",msg);
 				}
 			}
 			
-			/** If there is no wreckage collecter in the fleet **/
+			// If there is no wreckage collecter in the fleet
 			else {
 				std::string text = "Eine Flotte vom Planeten ";
-				text += functions::formatCoords((int)fleet_["entity_from"],0);
+				text += f->getEntityFromString();
 				text += " versuchte, Trümmer zu sammeln. Leider war kein Schiff mehr in der Flotte, welches die Aktion ausführen konnte, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!";
 							
-				functions::sendMsg((int)fleet_["user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Trümmersammeln gescheitert",text);
+				functions::sendMsg(f->getUserId(),(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Trümmersammeln gescheitert",text);
 				
 				fleetReturn(1);
 			}

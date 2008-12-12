@@ -128,5 +128,5 @@ namespace functions
 	* @author Glaubinix
 	**/
 	void initGasPlanets();
-}
+};
 #endif

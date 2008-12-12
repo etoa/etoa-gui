@@ -15,7 +15,7 @@
 */
 namespace market
 {
-	class MarketHandler	: FleetHandler
+	class MarketHandler	: public FleetHandler
 	{
 	public:
 		MarketHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }

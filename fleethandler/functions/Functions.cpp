@@ -479,11 +479,12 @@ namespace functions
 	/** Aktualisiert die Werte eines Gasplaneten **/
 	void updateGasPlanet(int planetId)
 	{
+	
 		My &my = My::instance();
 		mysqlpp::Connection *con_ = my.get();
 		Config &config = Config::instance();
 		std::time_t time = std::time(0);
-				
+		
 		mysqlpp::Query query = con_->query();
 		query << "SELECT ";
 		query << "	id, ";
@@ -493,16 +494,16 @@ namespace functions
 		query << "FROM ";
 		query << "	planets ";
 		query << "WHERE ";
+		std::cout << "ta\n";
 		query << "	planet_type_id='" << config.get("gasplanet", 0) << "' ";
-		query << "	AND id='" << planetId << "';";
+		query << "	 AND id='" << planetId << "';";
+		std::cout << "ta\n";
 		mysqlpp::Result res = query.store();
 		query.reset();
 		
 		if (res)  {
 			int resSize = res.size();
 			if (resSize>0) {
-				Config &config = Config::instance();
-				
 				mysqlpp::Row row = res.at(0);
 				int ptime = time;
 				int last = (int)row["planet_last_updated"];
@@ -513,7 +514,7 @@ namespace functions
 					
 				double pSize = (int)config.nget("gasplanet", 2)*int(row["planet_fields"]);
 				double fuel = std::min(tlast,pSize); //ToDo Gas param1 + 2
-		
+				
 				query << std::setprecision(18);
 				query << "UPDATE ";
 				query << "	planets ";

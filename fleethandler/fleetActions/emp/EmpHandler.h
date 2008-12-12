@@ -15,18 +15,13 @@
 */
 namespace emp
 {
-	class EmpHandler	: FleetHandler
+	class EmpHandler	: public FleetHandler
 	{
 	public:
 		EmpHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }
 		void update();
 
 	private:
-		/**
-		* Actionname (lots of problems with the string variable)
-		**/
-		std::string action;
-
 		/**
 		* Ship they are able to antrax a planet
 		**/
@@ -46,11 +41,6 @@ namespace emp
 		* Variables to calculate the damage
 		**/
 		int h, time, time2Add;
-		
-		/**
-		* Entity user id
-		**/
-		int userToId;
 	};
 }
 #endif

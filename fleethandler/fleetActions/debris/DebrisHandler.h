@@ -15,7 +15,7 @@
 */
 namespace debris
 {
-	class DebrisHandler	: FleetHandler
+	class DebrisHandler	: public FleetHandler
 	{
 	public:
 		DebrisHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }

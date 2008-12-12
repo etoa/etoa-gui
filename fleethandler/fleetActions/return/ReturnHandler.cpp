@@ -17,7 +17,6 @@ namespace retour
 			// Land fleet and delete entries in the database
 			fleetLand(1,1,1);
 			fleetDelete();
-			
 			// Check if the user'd like to have a return message for spy and transport
 			this->sendMsg = true;
 		

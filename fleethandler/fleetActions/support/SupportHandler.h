@@ -14,7 +14,7 @@
 */
 namespace support
 {
-	class SupportHandler	: FleetHandler
+	class SupportHandler	: public FleetHandler
 	{
 	public:
 		SupportHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }

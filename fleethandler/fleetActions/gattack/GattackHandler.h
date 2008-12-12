@@ -14,7 +14,7 @@
 */
 namespace gattack
 {
-	class GattackHandler	: FleetHandler
+	class GattackHandler	: public FleetHandler
 	{
 	public:
 		GattackHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }

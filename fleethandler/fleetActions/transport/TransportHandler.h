@@ -15,7 +15,7 @@
 */
 namespace transport
 {
-	class TransportHandler	: FleetHandler
+	class TransportHandler	: public FleetHandler
 	{
 	public:
 		TransportHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }

@@ -15,7 +15,7 @@
 */
 namespace asteroid
 {
-	class AsteroidHandler	: FleetHandler
+	class AsteroidHandler	: public FleetHandler
 	{
 	public:
 		AsteroidHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }

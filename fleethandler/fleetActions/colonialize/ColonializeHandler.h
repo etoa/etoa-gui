@@ -15,17 +15,11 @@
 */
 namespace colonialize
 {
-	class ColonializeHandler	: FleetHandler
+	class ColonializeHandler	: public FleetHandler
 	{
 	public:
 		ColonializeHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }
 		void update();
-		
-	private:
-		/**
-		* Actionname (lots of problems with the string variable)
-		**/
-		std::string action;
 		
 	};
 }

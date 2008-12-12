@@ -14,7 +14,7 @@
 */
 namespace position
 {
-	class PositionHandler	: FleetHandler
+	class PositionHandler	: public FleetHandler
 	{
 	public:
 		PositionHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }

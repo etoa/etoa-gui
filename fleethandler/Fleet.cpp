@@ -35,10 +35,18 @@
 		this->fetchPower = (double)fleet["fetch_power"];
 		this->fetchPeople = (double)fleet["fetch_people"];
 		
+		this->capacity = 0;
+		this->peopleCapacity = 0;
+		this->actionCapacity = 0;
+		
+		this->actionAllowed = false;
+		this->shipsLoaded = false;
+		this->entityLoaded = false;
+		this->shipsChanged = false;
 		this->entityToUserId = 0;
 	}
 	
-	int Fleet::getFId() {
+	int Fleet::getId() {
 		return this->fId;
 	}
 	
@@ -146,5 +154,54 @@
 	
 	std::string Fleet::getEntityFromString(short type) {
 		return functions::formatCoords(this->getEntityTo(),type);
+	}
+	
+	bool Fleet::actionIsAllowed() {
+		if (!this->shipsLoaded)
+			this->loadShips();
+		else if (!this->shipsChanged)
+			this->recalcShips();
+		return this->actionAllowed;
+	}
+	
+	void Fleet::loadShips() {
+		My &my = My::instance();
+		mysqlpp::Connection *con = my.get();
+		mysqlpp::Query query = con->query();
+		query << "SELECT ";
+		query << "	fs_ship_id, ";
+		query << " fsShip_cnt ";
+		query << "FROM ";
+		query << "	fleet_ships ";
+		query << "WHERE ";
+		query << "	fs_fleet_id='" << this->getId() << "' ";
+		query << "	AND fs_ship_faked='0';";
+		mysqlpp::Result fsRes = query.store();
+		query.reset();
+			
+		if (fsRes) {
+			int fsSize = fsRes.size();
+			
+			if (fsSize>0) {
+				objectData &objectData = objectData::instance();
+				mysqlpp::Row fsRow;
+				
+				for (int i=0; i<fsSize; i++) {
+					fsRow = fsRes.at(0);
+					ObjectHandler::ObjectHandler object = objectData.get((int)fsRow["fs_ship_id"]);
+					
+					this->capacity += (int)fsRow["fs_ship_cnt"] * object.capacity();
+					this->peopleCapacity += (int)fsRow["fs_ship_cnt"] * object.peopleCapacity();
+					
+					if (object.actions(this->action)) {
+						this->actionAllowed = true;
+						this->actionCapacity += (int)fsRow["fs_ship_cnt"] * object.capacity();
+					}
+				}
+			}
+		}
+	}
+	
+	void Fleet::recalcShips() {
 	}
 	

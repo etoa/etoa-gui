@@ -15,7 +15,7 @@
 */
 namespace wreckage
 {
-	class WreckageHandler	: FleetHandler
+	class WreckageHandler	: public FleetHandler
 	{
 	public:
 		WreckageHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }

@@ -15,7 +15,7 @@
 */
 namespace antrax
 {
-	class AntraxHandler	: FleetHandler
+	class AntraxHandler	: public FleetHandler
 	{
 	public:
 		AntraxHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }

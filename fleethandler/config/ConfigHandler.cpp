@@ -29,6 +29,12 @@
 		return(idConfig[name]);
 	}
 	
+	/** Liefert die Zahlenwerte gespeicherter Werte **/
+	short Config::getAction(std::string action)
+	{
+		return(actions[action]);
+	}
+	
 	/**	Initialisiert die Configwerte **/
 	void Config::loadConfig ()
 	{
@@ -99,4 +105,30 @@
 		idConfig["SPY_ATTACK_SHOW_DEFENSE"] = 5;
 		idConfig["SPY_ATTACK_SHOW_SHIPS"] = 7;
 		idConfig["SPY_ATTACK_SHOW_RESSOURCEN"] = 9;
+		
+		//->Flottenaktionen
+		actions["analyze"] = 1;
+		actions["antrax"] = 2;
+		actions["attack"] = 3;
+		actions["bombard"] = 4;
+		actions["collectmetal"] = 5;
+		actions["collectcrystal"] = 6;
+		actions["collectdebris"] = 7;
+		actions["collectfuel"] = 8;
+		actions["colonize"] = 9;
+		actions["collectdebris"] = 10;
+		actions["delivery"] = 11;		
+		actions["emp"] = 12;
+		actions["explore"] = 13;
+		actions["fetch"] = 14;
+		actions["gasattack"] = 15;
+		actions["invade"] = 16;
+		actions["market"] = 17;
+		actions["position"] = 18;
+		actions["spy"] = 19;
+		actions["spyattack"] = 20;
+		actions["stealthattack"] = 21;
+		actions["support"] = 22;
+		actions["transport"] = 23;
+		actions["alliance"] = 24;
 	}

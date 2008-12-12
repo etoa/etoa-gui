@@ -15,7 +15,7 @@
 */
 namespace attack
 {
-	class AttackHandler	: FleetHandler
+	class AttackHandler	: public FleetHandler
 	{
 	public:
 		AttackHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }

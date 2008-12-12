@@ -23,8 +23,6 @@ namespace asteroid
 		std::time_t time = std::time(0);
 		srand (time);
 		
-		this->action = std::string(fleet_["action"]);
-		
 		std::string coordsFrom = functions::formatCoords(fleet_["entity_from"],0);
 
 		//Precheck action==possible?
@@ -38,7 +36,7 @@ namespace asteroid
 		query << "	ships ON fs_ship_id = ship_id ";
 		query << "	AND fs_fleet_id='" << fleet_["id"] << "' ";
 		query << "	AND fs_ship_faked='0'";
-		query << "	AND ship_actions LIKE '%" << this->action << "%';";
+		query << "	AND ship_actions LIKE '%" << f->getAction() << "%';";
 		mysqlpp::Result fsRes = query.store();
 		query.reset();
 				
@@ -156,7 +154,7 @@ namespace asteroid
 						query << "	ships ON fs_ship_id = ship_id ";
 						query << "	AND fs_fleet_id='" << fleet_["id"] << "' ";
 						query << "	AND fs_ship_faked='0' ";
-						query << "	AND ship_actions LIKE '%" << this->action << "%';";
+						query << "	AND ship_actions LIKE '%" << f->getAction() << "%';";
 						mysqlpp::Result asteroidRes = query.store();
 						query.reset();
 						

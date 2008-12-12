@@ -15,7 +15,7 @@
 */
 namespace cancel
 {
-	class CancelHandler	: FleetHandler
+	class CancelHandler	: public FleetHandler
 	{
 	public:
 		CancelHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }

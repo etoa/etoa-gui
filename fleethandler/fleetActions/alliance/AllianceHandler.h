@@ -15,7 +15,7 @@
 */
 namespace alliance
 {
-	class AllianceHandler	: FleetHandler
+	class AllianceHandler	: public FleetHandler
 	{
 	public:
 		AllianceHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }

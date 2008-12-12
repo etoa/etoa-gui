@@ -15,7 +15,7 @@
 */
 namespace analyze
 {
-	class AnalyzeHandler	: FleetHandler
+	class AnalyzeHandler	: public FleetHandler
 	{
 	public:
 		AnalyzeHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) {	}

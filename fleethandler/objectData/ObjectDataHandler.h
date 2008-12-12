@@ -31,7 +31,7 @@
 		* @param int value, 0=value, 1=param1, 2=param2
 		* @author Glaubinix
 		**/
-		ObjectHandler::ObjectHandler get(int id, short type);
+		ObjectHandler::ObjectHandler get(int id, short type=1);
 				
 		/**
 		* Initialisiert die Configwerte

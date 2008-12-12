@@ -24,8 +24,6 @@ namespace gas
 		std::time_t time = std::time(0);
 		srand (time);
 		
-		this->action = std::string(fleet_["action"]);
-		
 		/** Precheck action==possible? **/
 		mysqlpp::Query query = con_->query();
 		query << "SELECT ";
@@ -34,19 +32,20 @@ namespace gas
 		query << "	fleet_ships ";
 		query << "INNER JOIN ";
 		query << "	ships ON fs_ship_id = ship_id ";
-		query << "	AND fs_fleet_id='" << fleet_["id"] << "' ";
+		query << "	AND fs_fleet_id='" << f->getId() << "' ";
 		query << "	AND fs_ship_faked='0' ";
-		query << "	AND ship_actions LIKE '%" << this->action << "%';";
+		query << "	AND ship_actions LIKE '%" << f->getAction() << "%';";
 		mysqlpp::Result fsRes = query.store();
 		query.reset();
-		
+				std::cout << "homw\n";
 		if (fsRes) {
 			int fsSize = fsRes.size();
 			
 			if (fsSize > 0) {
 				/** Update the gas planet **/
-				functions::updateGasPlanet((int)fleet_["entity_to"]);
-				
+						std::cout << "homw\n";
+				functions::updateGasPlanet(f->getEntityTo());
+						std::cout << "homw\n";
 				query << std::setprecision(18);
 				
 				/** Calculate if and how many ship got destroyed **/
@@ -57,7 +56,7 @@ namespace gas
 				if (this->one  < this->two)	{
 					this->destroy = rand() % (int)(config.nget("gascollect_action",1) * 100);
 				}
-				
+						std::cout << "homw\n";
 				/** if ships got destroyed, calculate how many and write the message part **/
 				if(this->destroy>0) {
 					query << "SELECT ";
@@ -74,7 +73,7 @@ namespace gas
 					query << "INNER JOIN ";
 					query << "	ships AS s ";
 					query << "	ON fs.fs_ship_id = s.ship_id ";
-					query << "	AND f.id='" << fleet_["id"] << "' ";
+					query << "	AND f.id='" << f->getId() << "' ";
 					query << "GROUP BY ";
 					query << "fs.fs_ship_id;";
 					mysqlpp::Result cntRes = query.store();
@@ -99,7 +98,7 @@ namespace gas
 									query << "SET ";
 									query << "	fs_ship_cnt=fs_ship_cnt-'" << this->shipDestroy << "' ";
 									query << "WHERE ";
-									query << "	fs_fleet_id='" << fleet_["id"] << "' ";
+									query << "	fs_fleet_id='" << f->getId() << "' ";
 									query << "	AND fs_ship_id='" << cntRow["fs_ship_id"] << "';";
 									query.store();
 									query.reset();
@@ -111,7 +110,7 @@ namespace gas
 							}
 						}
 					}
-					
+							std::cout << "homw\n";
 					/** The message part **/
 					if(this->shipDestroy > 0) {
 						this->destroyedShipsMsg = "\n\nAufgrund starker Wasserstoffexplosionen sind einige deiner Schiffe zerst&ouml;rt worden:\n\n";
@@ -130,12 +129,12 @@ namespace gas
 				query << "FROM ";
 				query << "	planets ";
 				query << "WHERE ";
-				query << "id='" << fleet_["entity_to"] << "' ";
+				query << "id='" << f->getEntityTo() << "' ";
 				query << "	AND planet_type_id='" << config.get("gasplanet",0) << "';";
 				mysqlpp::Result fuelRes = query.store();
 				query.reset();
 		
-				fuelTotal = fleet_["res_fuel"];
+				fuelTotal = f->getResFuel();
 
 				if (fuelRes) {
 					int fuelSize = fuelRes.size();
@@ -152,9 +151,9 @@ namespace gas
 						query << "	fleet_ships ";
 						query << "INNER JOIN ";
 						query << "	ships ON fs_ship_id = ship_id ";
-						query << "	AND fs_fleet_id='" << fleet_["id"] << "' ";
+						query << "	AND fs_fleet_id='" << f->getId() << "' ";
 						query << "	AND fs_ship_faked='0' ";
-						query << "	AND ship_actions LIKE '%" << action << "%';";
+						query << "	AND ship_actions LIKE '%" << f->getAction() << "%';";
 						mysqlpp::Result gasRes = query.store();
 						query.reset();
 						
@@ -166,7 +165,7 @@ namespace gas
 								this->gasCapa = (double)gasRow["capa"];
 							}
 						}
-						
+								std::cout << "homw\n";
 						/** Calculate the capacity total **/
 						query << "SELECT ";
 						query << "	SUM(ship_capacity*fs_ship_cnt) as capa ";
@@ -174,7 +173,7 @@ namespace gas
 						query << "	fleet_ships ";
 						query << "INNER JOIN ";
 						query << "	ships ON fs_ship_id = ship_id ";
-						query << "	AND fs_fleet_id='" << fleet_["id"] << "' ";
+						query << "	AND fs_fleet_id='" << f->getId() << "' ";
 						query << "	AND fs_ship_faked='0';";
 						mysqlpp::Result capaRes = query.store();
 						query.reset();
@@ -184,7 +183,7 @@ namespace gas
 							
 							if (capaSize > 0) {
 								mysqlpp::Row capaRow = capaRes.at(0);
-								this->fleetCapa = (double)capaRow["capa"]- (double)fleet_["res_metal"] - (double)fleet_["res_crystal"] - (double)fleet_["res_plastic"] - (double)fleet_["res_fuel"] - (double)fleet_["res_food"];
+								this->fleetCapa = (double)capaRow["capa"] - f->getResLoaded();
 							}
 						}
 
@@ -200,33 +199,33 @@ namespace gas
 						query << "SET ";
 						query << "	planet_res_fuel='" << this->newFuel << "' ";
 						query << "WHERE ";
-						query << "	id='" << fleet_["entity_to"] << "';";
+						query << "	id='" << f->getEntityTo() << "';";
 						query.store();
 						query.reset();
 
 						/** Add the collected fuel to the fuel already in the fleet **/
-						this->fuelTotal = this->fuel + fleet_["res_fuel"];
+						this->fuelTotal = this->fuel + f->getResFuel();
 					}
 				}
 
 				/** Send fleet back home again **/
 				fleetReturn(1,-1,-1,-1,this->fuelTotal,-1,-1);
-
+		std::cout << "homw\n";
 				/** Send a message to the user **/
 				std::string msg = "[b]GASSAUGER-RAPPORT[/b]\n\nEine Flotte vom Planeten \n[b]";
-				msg += functions::formatCoords((int)fleet_["entity_from"],0);
+				msg += f->getEntityFromString();
 				msg += "[/b]\nhat den [b]Gasplaneten (";
-				msg += functions::formatCoords((int)fleet_["entity_to"],2);
+				msg += f->getEntityToString(2);
 				msg += ")[/b]\num [b]";
-				msg += functions::formatTime((int)fleet_["landtime"]);
+				msg += f->getLandtimeString();
 				msg += "[/b]\n erreicht und Gas gesaugt.\n";
 				
 				std::string msgRes = "\n[b]ROHSTOFFE:[/b]\n\nTritium: ";
-				msgRes += functions::nf(functions::d2s(fuel));
+				msgRes += functions::nf(functions::d2s(this->fuel));
 				msgRes += destroyedShipsMsg;
 				msg += msgRes;
-				
-				functions::sendMsg((int)fleet_["user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Gas gesaugt",msg);
+						std::cout << "homw\n";
+				functions::sendMsg(f->getUserId(),(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Gas gesaugt",msg);
 				
 				/** Save the collected fuel in the user stats **/
 				query << "UPDATE ";
@@ -234,7 +233,7 @@ namespace gas
 				query << "SET ";
 				query << "	user_res_from_nebula=user_res_from_nebula+'" << this->fuel << "' ";
 				query << "WHERE ";
-				query << "	user_id='" << fleet_["user_id"] << "';";
+				query << "	user_id='" << f->getUserId() << "';";
 				query.store();
 				query.reset();  
 				
@@ -242,11 +241,11 @@ namespace gas
 				std::string log = "Eine Flotte des Spielers [B]";
 				log += functions::getUserNick((int)fleet_["user_id"]);
 				log += "[/B] vom Planeten [b]";
-				log += functions::formatCoords((int)fleet_["entity_from"],0);
+				log +=  f->getEntityFromString();
 				log += "[/b] hat den Gasplaneten [b]";
-				log += functions::formatCoords((int)fleet_["entity_to"],0);
+				log +=  f->getEntityToString();
 				log += "[/b] um [b]";
-				log += functions::formatTime((int)fleet_["landtime"]);
+				log +=  f->getLandtimeString();
 				log += "[/b] erreicht und Gas gesaugt.\n";
 				log += msgRes;
 				functions::addLog(13,log,(int)time);
@@ -256,9 +255,9 @@ namespace gas
 			else {
 				/** Send a message to the user **/
 				std::string text = "\n\nEine Flotte vom Planeten ";
-				text += functions::formatCoords((int)fleet_["entity_from"],0);
+				text += f->getEntityFromString();
 				text += " versuchte, das Ziel zu übernehmen. Leider war kein Schiff mehr in der Flotte, welches die Aktion ausführen konnte, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!";
-				functions::sendMsg((int)fleet_["user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Gassaugen gescheitert",text);
+				functions::sendMsg(f->getUserId(),(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Gassaugen gescheitert",text);
 				
 				/** Send fleet back home again **/
 				fleetReturn(1);

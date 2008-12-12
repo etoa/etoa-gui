@@ -15,17 +15,13 @@
 */
 namespace gas
 {
-	class GasHandler	: FleetHandler
+	class GasHandler	: public FleetHandler
 	{
 	public:
 		GasHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }
 		void update();
 
 	private:		
-		/**
-		* Actionname (lots of problems with the string variable)
-		**/
-		std::string action;
 
 		/**
 		* Message part for destroyed ships

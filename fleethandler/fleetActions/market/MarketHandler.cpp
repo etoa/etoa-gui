@@ -23,7 +23,7 @@ namespace market
 		query << "FROM ";
 		query << "	fleet_ships ";
 		query << "WHERE ";
-		query << "	fs_fleet_id=" << this->f->getFId() << ";";
+		query << "	fs_fleet_id=" << this->f->getId() << ";";
 		mysqlpp::Result sRes = query.store();
 		query.reset();
 		

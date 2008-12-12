@@ -14,7 +14,7 @@
 */
 namespace spy
 {
-	class SpyHandler	: FleetHandler
+	class SpyHandler	: public FleetHandler
 	{
 	public:
 		SpyHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }

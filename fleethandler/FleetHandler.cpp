@@ -31,7 +31,7 @@
 			query << "	id='" << this->f->getEntityTo() << "';";
 			query.store();
 			query.reset();
-
+			
 			//Rohstoffnachricht für den User
 			msgRes= "\n\n[b]WAREN[/b]\n\n[b]Titan:[/b] ";
 			msgRes += functions::nf(std::string(fleet_["res_metal"]));
@@ -46,7 +46,7 @@
 			msgRes += "\n[b]Bewohner:[/b] ";
 			msgRes += functions::nf(std::string(fleet_["res_people"]));
 			msgRes += "\n";
-
+			
 			// Flotte stationieren
             // Laden der Schiffsdaten
             query << "SELECT ";
@@ -74,7 +74,7 @@
 			query << "	fleet_ships AS fs ";
 			query << "INNER JOIN ";
 			query << "	ships AS s ON fs.fs_ship_id = s.ship_id ";
-			query << "	AND fs.fs_fleet_id='" << this->f->getFId() << "' ";
+			query << "	AND fs.fs_fleet_id='" << this->f->getId() << "' ";
 			query << "		AND fs.fs_ship_faked='0'; ";
 			mysqlpp::Result fsRes = query.store();
 			query.reset();
@@ -88,7 +88,7 @@
 					
 					for (mysqlpp::Row::size_type i = 0; i<fsSize; i++)  {
 						fsRow = fsRes.at(i);
-
+						
 						double shipCnt = (double)fsRow["fs_ship_cnt"];
 						
 						//Kolonisieren und Invasieren aus den Schiffsaktionen auslesen
@@ -118,7 +118,7 @@
 							shipCnt = (double)fsRow["fs_ship_cnt"]-1;
 							alreadyInvaded=1;
 						}
-
+						
 						//Sucht einen bestehenden Datensatz auf dem Zielplanet aus
 						//Achtung: In dem Query darf NICHT auch noch nach der User-ID gefragt werden, weil Handelsschiffe die User-ID=0 haben!
 						query << "SELECT ";
@@ -136,7 +136,7 @@
 							
 							if (slSize > 0) {
 								mysqlpp::Row slRow = slRes.at(0);
-
+								
 								//Bestehender Datensatz gefunden -> Stationiert die Schiffe mit all ihren Werten (Update)
 								query << "UPDATE ";
 								query << "	shiplist ";
@@ -174,7 +174,7 @@
 								else {
 									userId = this->f->getEntityToUserId();
 								}
-
+								
 								query << "INSERT INTO ";
 								query << "	shiplist ( ";
 								query << "	shiplist_user_id, ";
@@ -319,8 +319,8 @@
 				query << ", res_people='" << resPeople << "'";
 		
 		query << " WHERE ";
-		query << "	id='" << this->f->getFId() << "' ";
-		query << "	OR leader_id='" << this->f->getFId() << "';";
+		query << "	id='" << this->f->getId() << "' ";
+		query << "	OR leader_id='" << this->f->getId() << "';";
 		query.store();
 		query.reset();
 	}
@@ -332,7 +332,7 @@
 		query << "DELETE FROM ";
 		query << "	fleet_ships ";
 		query << "WHERE ";
-		query << "	fs_fleet_id='" << this->f->getFId() << "';";
+		query << "	fs_fleet_id='" << this->f->getId() << "';";
 		query.store();
 		query.reset();
 		
@@ -340,7 +340,7 @@
 		query << "DELETE FROM ";
 		query << "	fleet ";
 		query << "WHERE ";
-		query << "	id='" << this->f->getFId() << "';";
+		query << "	id='" << this->f->getId() << "';";
 		query.store();
 		query.reset();			
 	}
@@ -376,7 +376,7 @@
 				query << "	landtime='" << landtime << "', ";
 				query << "	status='2' ";
 				query << "WHERE ";
-				query << "	id='" << this->f->getFId() << "';";
+				query << "	id='" << this->f->getId() << "';";
 				query.store();
 				query.reset();
 			}

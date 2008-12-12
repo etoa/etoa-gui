@@ -15,7 +15,7 @@
 */
 namespace retour
 {
-	class ReturnHandler	: FleetHandler
+	class ReturnHandler	: public FleetHandler
 	{
 	public:
 		ReturnHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }

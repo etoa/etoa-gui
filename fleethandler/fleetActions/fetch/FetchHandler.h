@@ -14,7 +14,7 @@
 */
 namespace fetch
 {
-	class FetchHandler	: FleetHandler
+	class FetchHandler	: public FleetHandler
 	{
 	public:
 		FetchHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }

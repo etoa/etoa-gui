@@ -4,6 +4,8 @@
 
 #include <mysql++/mysql++.h>
 #include "MysqlHandler.h"
+#include "objectData/ObjectHandler.h"
+#include "objectData/ObjectDataHandler.h"
 #include <string>
 
 /**
@@ -14,31 +16,28 @@
 
 class Fleet	
 {
+	/**
+	* Data from fleet table
+	**/
 	std::string action;
 	int fId;
 	int userId;
 	int leaderId;
-	int entityFrom;
-	int entityTo;
-	int nextId;
-	int launchtime;
-	int landtime;
-	int nextactiontime;
+	int entityFrom,	entityTo, nextId;
+	int launchtime, landtime, nextactiontime;
 	short status;
 	double pilots;
-	int usageFuel;
-	int usageFood;
-	int usagePower;
-	int supportUsageFuel;
-	int supportUsageFood;
+	int usageFuel, usageFood, usagePower, supportUsageFuel, supportUsageFood;
 	double resMetal, resCrystal, resPlastic, resFuel, resFood, resPower, resPeople;
 	double fetchMetal, fetchCrystal, fetchPlastic, fetchFuel, fetchFood, fetchPower, fetchPeople;
 	
+	double capacity, actionCapacity, peopleCapacity;
+	bool actionAllowed, shipsLoaded, entityLoaded, shipsChanged;
 	int entityToUserId;
 
 public:
 	Fleet(mysqlpp::Row &fleet);
-	int getFId();
+	int getId();
 	int getUserId();
 	int getEntityFrom();
 	int getEntityTo();
@@ -66,6 +65,12 @@ public:
 	std::string getLaunchtimeString();
 	std::string getEntityToString(short type=0);
 	std::string getEntityFromString(short type=0);
+	
+	bool actionIsAllowed();
+	
+private:
+	void loadShips();
+	void recalcShips();
 };
 
 #endif

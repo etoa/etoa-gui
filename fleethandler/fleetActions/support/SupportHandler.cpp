@@ -31,7 +31,7 @@ namespace support
 			query << "	res_fuel='0', ";
 			query << "	status='1' ";
 			query << "WHERE ";
-			query << "	id='" << this->f->getFId() << "';";
+			query << "	id='" << this->f->getId() << "';";
 			query.store();
 			query.reset();
 			
@@ -108,7 +108,7 @@ namespace support
 						query << "	landtime='" << this->landtime << "', ";
 						query << "	status='3' ";
 						query << "WHERE ";
-						query << "	id='" << this->f->getFId() << "';";
+						query << "	id='" << this->f->getId() << "';";
 						query.store();
 						query.reset();
 

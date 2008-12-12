@@ -15,7 +15,7 @@
 */
 namespace bombard
 {
-	class BombardHandler	: FleetHandler
+	class BombardHandler	: public FleetHandler
 	{
 	public:
 		BombardHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }

@@ -15,7 +15,7 @@
 */
 namespace defaul
 {
-	class DefaultHandler	: FleetHandler
+	class DefaultHandler	: public FleetHandler
 	{
 	public:
 		DefaultHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }

@@ -14,7 +14,7 @@
 */
 namespace stealth
 {
-	class StealthHandler	: FleetHandler
+	class StealthHandler	: public FleetHandler
 	{
 	public:
 		StealthHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }

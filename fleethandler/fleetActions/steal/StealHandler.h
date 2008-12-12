@@ -14,18 +14,13 @@
 */
 namespace steal
 {
-	class StealHandler	: FleetHandler
+	class StealHandler	: public FleetHandler
 	{
 	public:
 		StealHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }
 		void update();
 		
 	private:
-		/**
-		* Actionname (lots of problems with the string variable)
-		**/
-		std::string action;
-
 		/**
 		* Ship they are able to antrax a planet
 		**/
@@ -46,10 +41,6 @@ namespace steal
 		**/
 		int temp, fak;
 		
-		/**
-		* Entity user id
-		**/
-		int userToId;
 	};
 }
 #endif

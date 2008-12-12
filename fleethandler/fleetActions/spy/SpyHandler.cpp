@@ -25,6 +25,7 @@ namespace spy
 		Config &config = Config::instance();
 		objectData &objectData = objectData::instance();
 		this->action = std::string(this->fleet_["action"]);	
+		std::cout << "home\n";
 	
 		this->userToId = functions::getUserIdByPlanet((int)fleet_["entity_to"]);
 		std::string coordsBlank = functions::formatCoords((int)fleet_["entity_to"],1);

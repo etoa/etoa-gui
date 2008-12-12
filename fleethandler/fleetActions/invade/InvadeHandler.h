@@ -14,18 +14,13 @@
 */
 namespace invade
 {
-	class InvadeHandler	: FleetHandler
+	class InvadeHandler	: public FleetHandler
 	{
 	public:
 		InvadeHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }
 		void update();
 		
 	private:
-		/**
-		* Actionname (lots of problems with the string variable)
-		**/
-		std::string action;
-
 		/**
 		* Ship they are able to invade a planet
 		**/

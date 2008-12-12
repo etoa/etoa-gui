@@ -49,6 +49,14 @@
 		**/
 		double idget(std::string name);
 		
+		/**
+		* Liefert die Zahlenwerte gespeicherter Flottenaktionen
+		*
+		* @param string name, Flottenaktionsnamen
+		* @author Glaubinix
+		**/
+		short getAction(std::string action);
+		
 	private:
 	
 		/**
@@ -72,6 +80,11 @@
 		* Mapcontainer mit den gespeicherten Configwerten
 		**/
 		std::vector<std::vector<std::string> > cConfig;
+		
+		/**
+		* Mapcontainer mit fleetactions
+		**/
+		std::map<std::string, short> actions;
 		
 		static Config* _instance;
 		

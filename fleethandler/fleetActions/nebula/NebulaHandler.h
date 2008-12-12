@@ -14,7 +14,7 @@
 */
 namespace nebula
 {
-	class NebulaHandler	: FleetHandler
+	class NebulaHandler	: public FleetHandler
 	{
 	public:
 		NebulaHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }

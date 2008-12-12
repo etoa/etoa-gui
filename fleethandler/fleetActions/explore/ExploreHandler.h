@@ -15,7 +15,7 @@
 */
 namespace explore
 {
-	class ExploreHandler	: FleetHandler
+	class ExploreHandler	: public FleetHandler
 	{
 	public:
 		ExploreHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }

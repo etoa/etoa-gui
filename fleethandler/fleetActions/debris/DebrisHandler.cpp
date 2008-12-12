@@ -22,10 +22,6 @@ namespace debris
 		Config &config = Config::instance();
 		std::time_t time = std::time(0);
 		
-		this->action = std::string(fleet_["action"]);
-		
-		std::string coordsTarget = functions::formatCoords(fleet_["entity_to"],0);
-		std::string coordsFrom = functions::formatCoords(fleet_["entity_from"],0);
 		
 		// Precheck action==possible?
 		mysqlpp::Query query = con_->query();
@@ -35,9 +31,9 @@ namespace debris
 		query << "	fleet_ships ";
 		query << "INNER JOIN ";
 		query << "	ships ON fs_ship_id = ship_id ";
-		query << "	AND fs_fleet_id='" << fleet_["id"] << "' ";
+		query << "	AND fs_fleet_id='" << f->getId() << "' ";
 		query << "	AND fs_ship_faked='0' ";
-		query << "	AND ship_actions LIKE '%" << this->action << "%';";
+		query << "	AND ship_actions LIKE '%" << f->getAction() << "%';";
 		mysqlpp::Result fsRes = query.store();
 		query.reset();
 		
@@ -45,7 +41,7 @@ namespace debris
 			int fsSize = fsRes.size();
 			
 			if (fsSize > 0) {
-				/** Create a debris field with the fleet (every single ship 40% of the costs) **/
+				// Create a debris field with the fleet (every single ship 40% of the costs)
 				query << "SELECT ";
 				query << "	s.ship_id, ";
 				query << "	s.ship_costs_metal, ";
@@ -55,7 +51,7 @@ namespace debris
 				query << "FROM ";
 				query << "	fleet_ships AS fs ";
 				query << "	INNER JOIN ships AS s ON fs.fs_ship_id = s.ship_id ";
-				query << "	AND fs.fs_fleet_id='" << fleet_["id"] << "';";
+				query << "	AND fs.fs_fleet_id='" << f->getId() << "';";
 				mysqlpp::Result rRes = query.store();
 				query.reset();
 				
@@ -76,7 +72,7 @@ namespace debris
 							query << "DELETE FROM ";
 							query << "	fleet_ships ";
 							query << "WHERE ";
-							query << "	fs_fleet_id='" << fleet_["id"] << "' ";
+							query << "	fs_fleet_id='" << f->getId() << "' ";
 							query << "	AND fs_ship_id='" << rRow["ship_id"] << "';";
 							query.store();
 							query.reset();
@@ -90,7 +86,7 @@ namespace debris
 						query << "	planet_wf_crystal=planet_wf_crystal+'" << this->tfCrystal << "', ";
 						query << "	planet_wf_plastic=planet_wf_plastic+'" << this->tfPlastic << "' ";
 						query << "WHERE ";
-						query << "	id='" << fleet_["entity_to"] << "';";
+						query << "	id='" << f->getEntityTo() << "';";
 						query.store();
 						query.reset();
 
@@ -99,20 +95,20 @@ namespace debris
 
 						/** Send a message to the fleet user **/
 						std::string msg = "Eine Flotte vom Planeten ";
-						msg += coordsFrom;
+						msg += f->getEntityFromString();
 						msg += " hat auf dem Planeten ";
-						msg += coordsTarget;
+						msg += f->getEntityToString();
 						msg += " ein Trümmerfeld erstellt.";
 						
-						functions::sendMsg(fleet_["user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Trümmerfeld erstellt",msg);
+						functions::sendMsg(f->getUserId(),(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Trümmerfeld erstellt",msg);
 
 						/** Add a log **/
 						std::string log = "Eine Flotte des Spielers [B]";
-						log += functions::getUserNick((int)fleet_["user_id"]);
+						log += functions::getUserNick(f->getUserId());
 						log += "[/B] vom Planeten ";
-						log += coordsFrom;
+						log += f->getEntityFromString();
 						log += " hat auf dem Planeten ";
-						log += coordsTarget;
+						log += f->getEntityToString();
 						log += " ein Trümmerfeld erstellt.";
 						
 						functions::addLog(13,log,time);
@@ -123,10 +119,10 @@ namespace debris
 			/** If no ship with the action was in the fleet **/
 			else {
 				std::string text = "Eine Flotte vom Planeten ";
-				text += coordsFrom;
+				text += f->getEntityFromString();
 				text += " versuchte, ein Trümmerfel zu erstellen. Leider war kein Schiff mehr in der Flotte, welches die Aktion ausführen konnte, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!";
 							
-				functions::sendMsg((int)fleet_["user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Trümmer erstellen gescheitert",text);
+				functions::sendMsg(f->getUserId(),(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Trümmer erstellen gescheitert",text);
 				
 				fleetReturn(1);
 			}

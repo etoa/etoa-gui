@@ -15,7 +15,7 @@ namespace attack
 		BattleHandler *bh = new BattleHandler(con_, fleet_);
 		bh->battle();
 		
-		/** if fleet user has won the fight, send fleet home **/
+		// if fleet user has won the fight, send fleet home
 		if (bh->returnFleet)
 		{
 			fleetReturn(1,0,0,0,0,0,0);

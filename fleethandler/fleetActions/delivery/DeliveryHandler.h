@@ -15,7 +15,7 @@
 */
 namespace delivery
 {
-	class DeliveryHandler	: FleetHandler
+	class DeliveryHandler	: public FleetHandler
 	{
 	public:
 		DeliveryHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }
