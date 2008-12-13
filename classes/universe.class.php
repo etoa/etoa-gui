@@ -37,12 +37,12 @@
 			$sol_types = array();
 			$res = dbquery("
 			SELECT
-		    type_id
+		      	sol_type_id
 			FROM
 				sol_types;");
 			while ($arr = mysql_fetch_array($res))
 			{
-				$sol_types[] = $arr['type_id'];
+				$sol_types[] = $arr['sol_type_id'];
 			}
 			
 			$planet_types = array();
@@ -71,7 +71,7 @@
 			//
 			
 			// by image
-			$imgpath = "../images/galaxylayouts/".($sx_num*$cx_num)."_".($sy_num*$cy_num).".png";
+			$imgpath = "../images/galaxylayout_".($sx_num*$cx_num)."_".($sy_num*$cy_num).".png";
 			if (is_file($imgpath))	
 			{
 				$im = imagecreatefrompng($imgpath);
@@ -322,18 +322,24 @@
 					dbquery($sql);
 					$eid = mysql_insert_id();
 
-					$asteroid_ress = mt_rand($cfg->param1('asteroid_ress'),$conf['asteroid_ress']['p2']);
+					$asteroid_metal = mt_rand($cfg->param1('asteroid_ress'),$conf['asteroid_ress']['p2']);
+					$asteroid_crystal = mt_rand($cfg->param1('asteroid_ress'),$conf['asteroid_ress']['p2']);
+					$asteroid_plastic = mt_rand($cfg->param1('asteroid_ress'),$conf['asteroid_ress']['p2']);
 					$sql = "
 						INSERT INTO
 							asteroids
 						(
 							id,
-							resources
+							res_metal,
+							res_crystal,
+							res_plastic
 						)
 						VALUES
 						(
 							".$eid.",
-							".$asteroid_ress."
+							".$asteroid_metal.",
+							".$asteroid_crystal.",
+							".$asteroid_plastic."
 						);
 					";
 					dbquery($sql);				
@@ -368,7 +374,7 @@
 							nebulas
 						(
 							id,
-							resources
+							res_crystal
 						)
 						VALUES
 						(
@@ -556,9 +562,9 @@
 					1;");
 			dbquery("
 				DELETE FROM
-					spaces
+					space
 				WHERE
-					id='".ysql_insert_id()."'
+					id='".mysql_insert_id()."'
 				LIMIT
 					1;");
 					
@@ -574,6 +580,14 @@
 					ORDER BY
 						RAND()
 					LIMIT 1;");
+			
+			dbquery("
+				DELETE FROM
+					space
+				WHERE
+					id='".mysql_insert_id()."'
+				LIMIT
+					1;");
 					
 			dbquery("
 					UPDATE
@@ -585,6 +599,14 @@
 					ORDER BY
 						RAND()
 					LIMIT 1;");
+			
+			dbquery("
+				DELETE FROM
+					space
+				WHERE
+					id='".mysql_insert_id()."'
+				LIMIT
+					1;");
 			
 			
 			
@@ -637,15 +659,13 @@
 			$tbl[]="allianceboard_catranks";
 			$tbl[]="allianceboard_topics";
 			$tbl[]="alliance_stats";
-			$tbl[]="alliance_shoutbox";
 			$tbl[]="alliance_polls";
 			$tbl[]="alliance_points";
-			$tbl[]="alliance_buildlst";
+			$tbl[]="alliance_buildlist";
 			$tbl[]="alliance_spends";
 			$tbl[]="alliance_techlist";
 
 			$tbl[]="users";
-			$tbl[]="user_history";
 			$tbl[]="user_multi";
 			$tbl[]="user_log";
 			$tbl[]="user_sessionlog";
@@ -683,14 +703,14 @@
 			$tbl[]="chat";
 			$tbl[]="chat_users";
 			$tbl[]="attack_ban";
-	
+			
 			foreach ($tbl as $t)
 			{
 				dbquery("TRUNCATE $t;");
 				echo "Leere Tabelle <b>$t</b><br/>";
 			}
 			
-			dbquer("
+			dbquery("
 					UPDATE
 						config
 					SET
