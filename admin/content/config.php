@@ -194,7 +194,7 @@
 			echo "<tr><th>Anzahl verschiedener Planetenbilder / Typ:</th><td>".$cfg->value('num_planet_images')."</td></tr>";
 			echo "</table><br/>";
 
-			$imgpath = "../images/galaxylayout_".($cfg->param1('num_of_sectors')*$cfg->param1('num_of_cells'))."_".($cfg->param2('num_of_sectors')*$cfg->param2('num_of_cells')).".png";
+			$imgpath = "../images/galaxylayouts/".($cfg->param1('num_of_sectors')*$cfg->param1('num_of_cells'))."_".($cfg->param2('num_of_sectors')*$cfg->param2('num_of_cells')).".png";
 			if (is_file($imgpath))	
 			{
 				echo "Bildvorlage gefunden, verwende diese: <img src=\"".$imgpath."\" /><br/><br/>";

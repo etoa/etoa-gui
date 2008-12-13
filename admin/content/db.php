@@ -228,7 +228,7 @@
 			// Log cleanup
 			if (isset($_POST['cl_log']) || $all)
 			{
-				$nr = Log::removeOld($_POST['log_timestamp'],$_POST['log_cat']);
+				$nr = Log::removeOld($_POST['log_timestamp']);
 				echo $nr." Logs wurden gelöscht!<br/>";
 			}
 
@@ -361,24 +361,7 @@
 		FROM 
 			logs
 		;"));
-		echo "<b>Logs löschen:</b> In Kategorie <select name=\"log_cat\">";
-		echo "<option value=\"0\">(alle)</option>";
-		$res=dbquery("
-		SELECT 
-			cat_id,
-			cat_name,
-			COUNT(log_id) as cnt 
-		FROM 
-			log_cat
-		INNER JOIN
-			logs 
-			ON log_cat=cat_id 
-		GROUP BY cat_id;");
-		while ($arr=mysql_fetch_array($res))
-		{
-			echo "<option value=\"".$arr['cat_id']."\">".$arr['cat_name']." (".$arr['cnt'].")</option>";
-		}
-		echo "</select> welche &auml;lter als <select name=\"log_timestamp\">";
+		echo "<b>Logs löschen:</b> Einträge löschen welche &auml;lter als <select name=\"log_timestamp\">";
 		$days = array(7,14,21,28);
 		if (!in_array($cfg->get('log_threshold_days'),$days))
 			$days[] = $cfg->get('log_threshold_days');
