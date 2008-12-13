@@ -811,8 +811,8 @@
           '".$time."');"))
       {
       	$errorCode = mysql_insert_id();
-				$this->rating = new UserRating($errorCode);
-				$this->properties = new UserProperties($errorCode);
+				$rating = new UserRating($errorCode);
+				$properties = new UserProperties($errorCode);
 				
 				if (!isset($data['password']))
         	add_log(3,"Der Benutzer ".$nick." (".$data['name'].", ".$data['email'].") hat sich registriert!");
