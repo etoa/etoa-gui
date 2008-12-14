@@ -508,7 +508,7 @@
 					$this->motherRequestId = 0;
 					$this->motherRequest = null;					
 					$this->__get('mother')->addHistory("[b]".$this."[/b] wurde als neuer Wing hinzugefügt.");
-					$this->addHistory("Wir sing nun ein Wing von [b]".$this->__get('mother')."[/b]");
+					$this->addHistory("Wir sind nun ein Wing von [b]".$this->__get('mother')."[/b]");
 					$this->__get('mother')->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT,"Neuer Wing","Die Allianz [b]".$this."[/b] ist nun ein Wing von [b]".$this->__get('mother')."[/b]");
 					return true;
 				}					

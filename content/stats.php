@@ -214,7 +214,7 @@
 
 		// Legende
 		iBoxStart("Legende zur Statistik");
-		echo "<p align=\"center\">Die Aktualisierung der <span ".tm("Punkteberechnung","F&uuml;r ".STATS_USER_POINTS."t verbaute Rohstoffe bekommt der Spieler 1 Punkt in der Statistik<br>F&uuml;r ".STATS_ALLIANCE_POINTS." Spielerpunkte bekommt die Allianz 1 Punkt in der Statisik")."><u>Punkte</u></span> erfolgt ";
+		echo "<p align=\"center\">Die Aktualisierung der <span ".tm("Punkteberechnung","F&uuml;r ".STATS_USER_POINTS."t verbaute Rohstoffe bekommt der Spieler 1 Punkt in der Statistik<br>F&uuml;r ".STATS_ALLIANCE_POINTS." Spielerpunkte bekommt die Allianz 1 Punkt in der Statistik")."><u>Punkte</u></span> erfolgt ";
 		$h = $conf['points_update']['v']/3600;
 		if ($h>1)
 			echo "alle $h Stunden!<br>";

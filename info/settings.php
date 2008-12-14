@@ -8,7 +8,7 @@
 	$item['points_update']['p1']="Einheiten/Userpunkt";
 	$item['points_update']['p2']="Userpunkte/Allypunk";
 	$item['user_delete_days']['v']="Tage bis zur endgültigen Löschung eines Accounts";
-	$item['user_inactive_days']['v']="Spieler werde inaktiv nach (in Tagen)";
+	$item['user_inactive_days']['v']="Spieler werden inaktiv nach (in Tagen)";
 	$item['user_inactive_days']['p1']="Löschung wegen Inaktivität nach (in Tagen)";
 	$item['user_timeout']['v']="Timeout in Sekunden";
 
