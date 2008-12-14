@@ -202,8 +202,8 @@
 	tableStart("Galaktisches Arbeitsamt ".helpLink('specialists')."",'95%');
 	echo "<tr>
 	<th>Name</th>
-	<th>Anstellbar für</th>
 	<th>Benötigte Punkte</th>
+	<th>Anstellbar für</th>
 	<th>Verfügbar</th>
 	<th>Kosten</th>";
 	if (!$s_active)

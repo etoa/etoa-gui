@@ -316,8 +316,9 @@
 									FROM 
 										alliances
 									WHERE 
-										alliance_tag='".$_POST['alliance_tag']."'
-										OR alliance_name='".$_POST['alliance_name']."'
+										(alliance_tag='".$_POST['alliance_tag']."'
+										OR alliance_name='".$_POST['alliance_name']."')
+										AND alliance_id!='".$cu->allianceId."'
 									;");
 									// Name / Tag sind bereits vergeben
 									if(mysql_result($check_res,0)>0)
