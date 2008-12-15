@@ -23,6 +23,7 @@
     
     if (isset($_POST['data_submit_design']) && $_POST['data_submit_design']!="")
     {
+
     	$designChange = false;
     	if ($cu->properties->cssStyle != $_POST['css_style'])
     	{
@@ -37,9 +38,10 @@
       $cu->properties->noteBox=$_POST['notebox'];
       $cu->properties->showAdds=$_POST['show_adds'];
 
-      if($_POST['image_ext']!="" && $_POST['image_url']!="")
+      if($_POST['image_ext']!="" && isset($_POST['image_url']) && $_POST['image_url']!="")
       {
-      	$cu->properties->imageUrl = $grafikpack;
+      	$cu->properties->imageUrl = $_POST['image_url'];
+      	$cu->properties->imageExt = $_POST['image_ext'];
       }
       
       if ($_POST['image_select']!='')
@@ -53,7 +55,6 @@
       }
       
       success_msg("Design-Daten wurden geändert!");
-      //$cu->addToUserLog("settings","{nick} ändert das Design.",0);
 
 			if ($designChange)
 			{
@@ -70,7 +71,7 @@
 		//
 		//Formular
 		//
-		
+
     echo "<form action=\"?page=$page&mode=design\" method=\"post\">";
     $cstr = checker_init();
     tableStart("Designoptionen");

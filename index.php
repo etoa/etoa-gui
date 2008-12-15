@@ -164,7 +164,7 @@
 	else
 	{
 		define("IMAGE_PATH",$cfg->value('default_image_path'));
-		define("IMAGE_EXT","gif");
+		define("IMAGE_EXT","png");
 	}
 	
 	// Check sitting

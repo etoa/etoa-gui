@@ -52,10 +52,11 @@
 		}
 	}
 
+	// REMOVE / DISABLE AFTER BETA
 	iBoxStart("BETA");		
-	echo "Aktuelle Version: ";
+	echo "Aktuelle Version: <span style=\"color:#f90;font-weight:bold;\">";
 	passthru("svnversion");
-	echo " <a href=\"http://dev.etoa.ch:8000/game/changeset";
+	echo "</span> <a href=\"http://dev.etoa.ch:8000/game/changeset/";
 	passthru("svnversion");
 	echo "\" target=\"_blank\">Changelog</a><br/>";
 	echo "Fehler melden: <a href=\"http://dev.etoa.ch:8000/game/newticket\" target=\"_blank\">Ticket erstellen</a><br/>";
