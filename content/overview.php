@@ -52,6 +52,17 @@
 		}
 	}
 
+	iBoxStart("BETA");		
+	echo "Aktuelle Version: ";
+	passthru("svnversion");
+	echo " <a href=\"http://dev.etoa.ch:8000/game/changeset";
+	passthru("svnversion");
+	echo "\" target=\"_blank\">Changelog</a><br/>";
+	echo "Fehler melden: <a href=\"http://dev.etoa.ch:8000/game/newticket\" target=\"_blank\">Ticket erstellen</a><br/>";
+	echo "Diskussionen: <a href=\"http://www.etoa.ch/forum/board.php?boardid=8\" target=\"_blank\">Testerforum</a>";
+	iBoxEnd();
+	
+
 	//
 	// Admin-Infos
 	//
@@ -61,6 +72,8 @@
 		echo text2html($cfg->value('info'));
 		iBoxEnd();
 	}
+	
+
 
 	tableStart("Status");
 	echo "<tr>
