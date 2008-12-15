@@ -107,8 +107,8 @@
 		um dein Anliegen zu beschrieben; je mehr Infos du uns gibts, desto besser können wir dir helfen:<br/><br/>";
 		echo "<form action=\"?page=$page\" method=\"post\">";
 		checker_init();
-		echo "<table class=\"tb\">
-		<tr>
+		tableStart("Neues Ticket",700);
+		echo "<tr>
 			<th>Kategorie:</th>
 			<td><select name=\"abuse_cat\">";
 			$cres = dbquery("
@@ -171,17 +171,17 @@
 				if (isset($_GET['aid']) && $_GET['aid']==$arr[2]) echo " selected=\"selected\"";
 				echo ">[".$arr[1]."] ".$arr[0]."</option>";			
 			}
-			echo "</select></td>
+			echo "</select> (* z.B. bei Regelverstössen angeben)</td>
 		</tr>
 		</table><br/>
-		 &nbsp; (* z.B. bei Regelverstössen)<br/><br/>
+		
 		<input type=\"submit\" name=\"abuse_submit\" value=\"Einsenden\" /><br/><br/>";
 		echo "</form>";
 		echo "<script type=\"text/javascript\">document.getElementById('abuse_text').focus()</script>";
 		
 		if ($ext)
 		{
-		echo "<h2>Gemeldete Tickets</h2>";
+		
 		$res = dbquery("
 		SELECT		
 			a.user_nick as anick,
@@ -209,8 +209,8 @@
 		;");
 		if (mysql_num_rows($res)>0)
 		{
-			echo "<table class=\"tb\">
-			<tr>
+			tableStart("Vorhandene Tickets",700);
+			echo "<tr>
 				<th>ID</th>
 				<th>Kategorie</th>
 				<th>Eingesendet</th>
@@ -250,10 +250,6 @@
 				</tr>";			
 			}
 			echo "</table>";
-		}
-		else
-		{
-			echo "<i>Keine vorhanden!</i>";
 		}
 		}		
 	}

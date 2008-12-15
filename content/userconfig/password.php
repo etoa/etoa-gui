@@ -24,9 +24,9 @@
 	echo "<form action=\"?page=$page&mode=password\" method=\"post\">";
 	echo $cstr;
 	tableStart("Passwort &auml;ndern");
-	echo "<tr><th class=\"tbldata\" width=\"35%\">Altes Passwort:</th><td class=\"tbldata\" width=\"65%\"><input type=\"password\" name=\"user_password\" maxlength=\"255\" size=\"20\"></td></tr>";
-	echo "<tr><th class=\"tbldata\" width=\"35%\">Neues Passwort (mind. ".PASSWORD_MINLENGHT." Zeichen):</th><td class=\"tbldata\" width=\"65%\"><input type=\"password\" name=\"user_password1\" maxlength=\"255\" size=\"20\"></td></tr>";
-	echo "<tr><th class=\"tbldata\" width=\"35%\">Neues Passwort wiederholen:</th><td class=\"tbldata\" width=\"65%\"><input type=\"password\" name=\"user_password2\" maxlength=\"255\" size=\"20\"></td></tr>";
+	echo "<tr><th>Altes Passwort:</th><td><input type=\"password\" name=\"user_password\" maxlength=\"255\" size=\"20\"></td></tr>";
+	echo "<tr><th>Neues Passwort (mind. ".PASSWORD_MINLENGHT." Zeichen):</th><td><input type=\"password\" name=\"user_password1\" maxlength=\"255\" size=\"20\"></td></tr>";
+	echo "<tr><th>Neues Passwort wiederholen:</th><td><input type=\"password\" name=\"user_password2\" maxlength=\"255\" size=\"20\"></td></tr>";
 	tableEnd();
 	echo "Beachte dass Passw&ouml;rter eine L&auml;nge von mindestens ".PASSWORD_MINLENGHT." Zeichen haben m&uuml;ssen!<br/><br/>";
 	echo "<input type=\"submit\" name=\"password_submit\" value=\"Passwort &auml;ndern\"></form><br/><br/>";

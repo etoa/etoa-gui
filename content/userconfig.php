@@ -92,12 +92,12 @@
 		{
       if($s['sitter_active']==0)
       {
+      	tableStart("Ausgesprochene Verwarnungne");
       	echo "
-				<table class=\"tb\">
 					<tr>
-						<th style=\"\">Text</th>
-						<th style=\"width:130px;\">Datum</th>
-						<th style=\"width:100px;\">Verwarnt von</th>
+						<th>Text</th>
+						<th>Datum</th>
+						<th>Verwarnt von</th>
 					</tr>";
 						$ures = dbquery("
 						SELECT

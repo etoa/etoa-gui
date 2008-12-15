@@ -158,6 +158,7 @@
 		?>
 
 		<link rel="stylesheet" href="css/general.css" type="text/css" />
+		<link rel="stylesheet" href="css/outgame.css" type="text/css" />
 
 	</head>
 	<body id="outGameBody">

@@ -13,7 +13,7 @@
   tableStart("Spieloptionen");
 
   echo "<tr>
-  	<th style=\"width:250px;\"><b>Anzahl Spionagesonden für Direktscan:</b></th>
+  	<th><b>Anzahl Spionagesonden für Direktscan:</b></th>
     <td>
     	<input type=\"text\" name=\"spyship_count\" maxlength=\"5\" size=\"5\" value=\"".$cu->properties->spyShipCount."\">
     </td>

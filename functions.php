@@ -1303,20 +1303,6 @@
 	function error_msg($text,$type=0,$exit=0,$addition=0,$stacktrace=null)
 	{
 		// TODO: Do check on headers
-		if (false)
-		{
-			echo '<html><header>
-			<title>Fehler</title>
-			<link rel="stylesheet" type="text/css" href="css/general.css">
-			<meta http-equiv="expires" content="0" />
-			<meta http-equiv="pragma" content="no-cache" />
-		 	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-			<meta http-equiv="content-script-type" content="text/javascript" />
-			<meta http-equiv="content-style-type" content="text/css" />
-			<meta http-equiv="content-language" content="de" />			
-			</header><body>
-			<div id="altLogo"></div>';
-		}
 		
 		echo "<div class=\"errorBox\">";
 		switch($type)
@@ -1423,16 +1409,17 @@
 	function show_tab_menu($varname,$data)
 	{
 		global $page,$$varname;
-		$width = 100/count($data);
-		echo "<table class=\"tbl\"><tr>";
+		
+		echo "<div class=\"tabMenu\">";
 		foreach ($data as $val => $text)
 		{
 			if ($$varname==$val)
-				echo "<td class=\"statsTab\" style=\"width:".$width."%;vertical-align:middle;\"><a href=\"?page=$page&amp;".$varname."=$val\" class=\"tabEnabled\">$text</a></td>";
+				echo "<a href=\"?page=$page&amp;".$varname."=$val\" class=\"tabEnabled\">$text</a>";
 			else
-				echo "<td class=\"statsTab\" style=\"width:".$width."%;vertical-align:middle;\"><a href=\"?page=$page&amp;".$varname."=$val\" class=\"tabDefault\">$text</a></td>";
+				echo "<a href=\"?page=$page&amp;".$varname."=$val\">$text</a>";
 		}
-		echo "</tr></table>";
+		echo "<br style=\"clear:both;\"/>";
+		echo "</div>";
 	}
 	
 	/**

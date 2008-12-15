@@ -468,3 +468,34 @@ div.infoboxtitle	{
 	color:#f50;	
 }
 
+/* Tab Menu */
+.tabMenu	{
+}
+
+.tabMenu	a	{
+	display:block;
+	float:left;
+	height:20px;
+	color:#fff;
+	padding:8px 10px 3px 10px;	
+	background:url('images/tab1.png') top right no-repeat;
+}
+
+.tabMenu	a:hover	{
+	display:block;
+	float:left;
+	height:20px;
+	color:#B3A08E;
+	padding:8px 10px 3px 10px;	
+	background:url('images/tab2.png') top right no-repeat;
+}
+
+.tabMenu	a.tabEnabled	{
+	display:block;
+	float:left;
+	color:#B3A08E;
+	height:20px;
+	padding:8px 10px 3px 10px;	
+	background:url('images/tab2.png') top right no-repeat;
+}
+
