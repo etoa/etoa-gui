@@ -5,8 +5,8 @@
 	$item['game_name']['p1']="Spielversion";
 	$item['enable_register']['p2']="Max. Spieler";
 	$item['hmode_days']['v']="Urlaubsmodus Mindestdauer";
-	$item['points_update']['p1']="Einheiten/Userpunkt";
-	$item['points_update']['p2']="Userpunkte/Allypunk";
+	$item['points_update']['p1']="Einheiten/Userpunkte";
+	$item['points_update']['p2']="Userpunkte/Allianzpunkte";
 	$item['user_delete_days']['v']="Tage bis zur endgültigen Löschung eines Accounts";
 	$item['user_inactive_days']['v']="Spieler werden inaktiv nach (in Tagen)";
 	$item['user_inactive_days']['p1']="Löschung wegen Inaktivität nach (in Tagen)";
@@ -26,12 +26,12 @@
 	$item['planet_fields']['p2']="Maximale Feldanzahl";
 	$item['num_planets']['p1']="Minimale Planetenanzahl";
 	$item['num_planets']['p2']="Maximale Planetenanzahl";
-	$item['user_max_planets']['v']="Max Planeten/User";
+	$item['user_max_planets']['v']="Maximale Planeten/User";
 
 	$item['def_restore_percent']['v']="Verteidigungswiederherstellung";
 	$item['def_wf_percent']['v']="Verteidigung ins Trümmerfeld";
 	$item['ship_wf_percent']['v']="Schiffe ins Trümmerfeld";
-	$item['user_attack_min_points']['v']="Noobschutz: Min Punkte";
+	$item['user_attack_min_points']['v']="Noobschutz: Minimale Punkte";
 	$item['user_attack_percentage']['v']="Noobschutz: Verhältnis %";
 		
 	$item['people_food_require']['v']="Nahrungsverbrauch pro Arbeiter";

@@ -287,7 +287,7 @@ function calcDemolishingWaitTime($dc,$cp)
   	<b>Zeitreduktion durch Arbeiter pro Auftrag:</b> ".tf($peopleTimeReduction*$peopleWorking)."<br/>
   	<b>Nahrungsverbrauch durch Arbeiter pro Auftrag:</b> ".nf($peopleFoodConsumption*$peopleWorking)."<br/>
   	<b>Gentechnologie:</b> ".GEN_TECH_LEVEL."<br/>
-  	<b>Minimalen Bauzeit (mit Arbeiter):</b> Bauzeit * ".$minBuildTimeFactor."
+  	<b>Minimale Bauzeit (mit Arbeiter):</b> Bauzeit * ".$minBuildTimeFactor."
   	</div>";   	
   	iBoxEnd();
 

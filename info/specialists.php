@@ -4,11 +4,11 @@
 	
 	iBoxStart("Info");
 	echo "Spezialisten können für eine fixe Zeitdauer angestellt werden und verstärken während dieser Zeit
-	dein Imperium in einer bestimmten Richtung. Sie können erst ab einer bestimmten Punktzahl eingestellt werden. Von jedem Typ
-	ist nur eine gewisse Anzahl verfügbar. Ebenfalls steigt der Preis mit steigender Nachrfrage nach einem bestimmten Spezialisten. Die
+	dein Imperium in eine bestimmte Richtung. Sie können erst ab einer bestimmten Punktzahl eingestellt werden. Von jedem Typ
+	ist nur eine gewisse Anzahl verfügbar. Ebenfalls steigt der Preis mit steigender Nachfrage, nach einem bestimmten Spezialisten. Die
 	Einstellung geschieht per sofort, und nach Ablauf der Anstellung verlässt der Spezialist dein Imperium wieder. 
 	Es kann immer nur ein Spezialist gleichzeitig angestellt werden. Man kann aber einen Spezialisten vorzeitig entlassen,
-	um Platz für einen neuen zu schaffen; man erhält in diesem Fall aber keine Ressourcen zurück. ";	
+	um Platz für einen neuen zu schaffen; man erhält in diesem Fall aber keine Ressourcen zurück.";	
 	iBoxEnd();
 	
 	
@@ -48,7 +48,7 @@
 		if ($arr['specialist_prod_fuel']!=1)
 			$bonus.= get_percent_string($arr['specialist_prod_fuel'],1).' '.RES_FUEL.'produktion<br/>';
 		if ($arr['specialist_prod_food']!=1)
-			$bonus.= get_percent_string($arr['specialist_prod_food'],1).' '.RES_FOOD.'produktion<br/>';
+			$bonus.= get_percent_string($arr['specialist_prod_food'],1).' '.RES_FOOD.'sproduktion<br/>';
 		if ($arr['specialist_power']!=1)
 			$bonus.= get_percent_string($arr['specialist_power'],1).' Stromerzeugung<br/>';
 		if ($arr['specialist_population']!=1)

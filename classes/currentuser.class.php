@@ -199,8 +199,8 @@
 											;"))
 										{
 											add_log(3,"Der Spieler [b]".$this->nick."[/b] &auml;ndert sein Passwort!",time());
-											send_mail("",$this->email,"Passwortänderung","Hallo ".$this->nick."\n\nDies ist eine Bestätigung, dass du dein Passwort für deinen Account erfolgreich geändert hast!\n\nSolltest du dein Passwort nicht selbst geändet haben, so nimm bitte sobald wie möglich Kontakt mit einem Game-Administrator auf: http://www.etoa.ch/?page=kontakt","","");
-											$this->addToUserLog("settings","{nick} ändert sein Passwort.",0);
+											send_mail("",$this->email,"PasswortÃ¤nderung","Hallo ".$this->nick."\n\nDies ist eine BestÃ¤tigung, dass du dein Passwort fÃ¼r deinen Account erfolgreich geÃ¤ndert hast!\n\nSolltest du dein Passwort nicht selbst geÃ¤ndet haben, so nimm bitte sobald wie mÃ¶glich Kontakt mit einem Game-Administrator auf: http://www.etoa.ch/?page=kontakt","","");
+											$this->addToUserLog("settings","{nick} Ã¤ndert sein Passwort.",0);
 											return true;
 										}
 								}

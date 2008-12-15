@@ -100,19 +100,19 @@
     $helpNav["Datenbank"]["Sterne"] = array('stars','Liste aller Sterne');
     $helpNav["Datenbank"]["Technologien"] = array('research','Liste aller Technologien');
     $helpNav["Datenbank"]["Verteidigung"] = array('defense','Liste aller Verteidigungsanlagen');
-    $helpNav["Spielmechanismen"]["Bewohner"] = array('population','Wie arbeite ich mit Bewohnern und was muss ich beachten');
-    $helpNav["Spielmechanismen"]["Kryptocenter"] = array('crypto','Wie man fremde Flottenbewegungen scannt');
-    $helpNav["Spielmechanismen"]["Markt"] = array('market','Wie der Marktplatz funktioniert');
-    $helpNav["Spielmechanismen"]["Multis und Sitting"] = array('multi_sitting','Wie wir Mehrfachaccounts handhaben und wie Sitting funktioniert');
-    $helpNav["Spielmechanismen"]["Raketen"] = array('missile_system','Wie das Raketensystem funktioniert');
-    $helpNav["Spielmechanismen"]["Raumkarte"] = array('space','Wie ist das Universum aufgebaut');
-    $helpNav["Spielmechanismen"]["Spezialpunkte"] = array('specialpoints','Wie man Spezialpunkte und Titel erwerben kann');
-    $helpNav["Spielmechanismen"]["Spionage"] = array('spy_info','Wie das Spionagesystem funktioniert');
-    $helpNav["Spielmechanismen"]["Statistik"] = array('stats','Was sind Statistiken und wie werden sie berechnet');
-    $helpNav["Spielmechanismen"]["Technikbaum"] = array('techtree','Wie lese ich daraus die Voraussetzungen ab');
-    $helpNav["Spielmechanismen"]["Textformatierung"] = array('textformat','Wie man Text formatieren kann (BBcode)');
-    $helpNav["Spielmechanismen"]["Urlaubsmodus"] = array('u_mod','Was das ist und wie es funktioniert');
-    $helpNav["Spielmechanismen"]["Wärme- und Kältebonus"] = array('tempbonus','Welche Auswirkungen hat die Planetentemperatur');
+    $helpNav["Spielmechanismen"]["Bewohner"] = array('population','Wie arbeite ich mit Bewohnern und was muss ich beachten?');
+    $helpNav["Spielmechanismen"]["Kryptocenter"] = array('crypto','Wie man fremde Flottenbewegungen scannt?');
+    $helpNav["Spielmechanismen"]["Markt"] = array('market','Wie der Marktplatz funktioniert?');
+    $helpNav["Spielmechanismen"]["Multis und Sitting"] = array('multi_sitting','Wie wir Mehrfachaccounts handhaben und wie Sitting funktioniert?');
+    $helpNav["Spielmechanismen"]["Raketen"] = array('missile_system','Wie das Raketensystem funktioniert?');
+    $helpNav["Spielmechanismen"]["Raumkarte"] = array('space','Wie ist das Universum aufgebaut?');
+    $helpNav["Spielmechanismen"]["Spezialpunkte"] = array('specialpoints','Wie man Spezialpunkte und Titel erwerben kann?');
+    $helpNav["Spielmechanismen"]["Spionage"] = array('spy_info','Wie das Spionagesystem funktioniert?');
+    $helpNav["Spielmechanismen"]["Statistik"] = array('stats','Was sind Statistiken und wie werden sie berechnet?');
+    $helpNav["Spielmechanismen"]["Technikbaum"] = array('techtree','Wie lese ich daraus die Voraussetzungen ab?');
+    $helpNav["Spielmechanismen"]["Textformatierung"] = array('textformat','Wie man Text formatieren kann (BBcode)?');
+    $helpNav["Spielmechanismen"]["Urlaubsmodus"] = array('u_mod','Was das ist und wie es funktioniert?');
+    $helpNav["Spielmechanismen"]["Wärme- und Kältebonus"] = array('tempbonus','Welche Auswirkungen hat die Planetentemperatur?');
   
 		foreach ($helpNav as $cat => $data)
 		{

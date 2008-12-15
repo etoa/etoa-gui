@@ -282,7 +282,7 @@
 			}
 			echo "<tr><td colspan=\"3\">
 			Wenn einem Geb&auml;ude Arbeiter zugeteilt werden, wird es entsprechend schneller gebaut. Die Arbeiter ben&ouml;tigen jedoch Nahrung. ";
-			echo "Die Zuteilung der Arbeiter kann erst ge&auml;ndert werden wenn entsprechende Bauauftr&auml;ge abgeschlossen sind. ";
+			echo "Die Zuteilung der Arbeiter kann erst ge&auml;ndert werden, wenn entsprechende Bauauftr&auml;ge abgeschlossen sind. ";
 			echo "Die gesamte Nahrung f&uuml;r die Arbeiter wird beim Start eines Bauvorgangs sofort vom Planetenkonto abgezogen.
 			</td></tr>";
 			tableEnd();

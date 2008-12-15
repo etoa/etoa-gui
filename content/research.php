@@ -629,7 +629,7 @@
 		  	<b>Zeitreduktion durch Arbeiter pro Auftrag:</b> ".tf($peopleTimeReduction*$peopleWorking)."<br/>
 		  	<b>Nahrungsverbrauch durch Arbeiter pro Auftrag:</b> ".nf($peopleFoodConsumption*$peopleWorking)."<br/>
 		  	<b>Gentechnologie:</b> ".GEN_TECH_LEVEL."<br/>
-		  	<b>Minimalen Forschungszeit (mit Arbeiter):</b> Forschungszeit * ".$minBuildTimeFactor."
+		  	<b>Minimale Forschungszeit (mit Arbeiter):</b> Forschungszeit * ".$minBuildTimeFactor."
 		  	</div>";   		    	
 	    	iBoxEnd();			
 				

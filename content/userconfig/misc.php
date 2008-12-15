@@ -339,7 +339,7 @@
 	
 				// Account löschen
 	    	echo "<tr><th class=\"tbltitle\">Account l&ouml;schen</th>
-	    	<td class=\"tbldata\">Hier kannst du deinen Account mitsamt aller Daten löschen</td>
+	    	<td class=\"tbldata\">Hier kannst du deinen Account mitsamt aller Daten löschen.</td>
 	    	<td class=\"tbldata\">";
 	    	if ($arr['user_deleted']>0)
 	    	{

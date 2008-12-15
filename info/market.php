@@ -7,7 +7,7 @@
 	echo "<div align=\"justify\">";
 	
 	echo "Der Marktplatz, das Handelszentrum von Andromeda.<br>
-		Baue den Marktplatz aus um Zugang zum \"<a href=\"?page=market\">Markt</a>\" zu erhalten und somit in das Reich der H&auml;ndler einzutauchen.
+		Baue den Marktplatz aus, um Zugang zum \"<a href=\"?page=market\">Markt</a>\" zu erhalten und somit in das Reich der H&auml;ndler einzutauchen.
 		Erwerbe Waren von anderen Spielern oder stelle deine eigenen Angebote ein. Je h&ouml;her du den Markt ausgebaut hast, desto mehr Angebote kannst du einstellen und desto mehr Handelsm&ouml;glichkeiten hast du: <br>Stufe ".MIN_MARKET_LEVEL_RESS." -> Rohstoffhandel<br>Stufe ".MIN_MARKET_LEVEL_SHIP." -> Schiffshandel<br>Stufe ".MIN_MARKET_LEVEL_AUCTION." -> Auktionen<br>
 		Wird ein Handel erfolgreich abgeschlossen, so werden die Waren in den nächsten paar Minuten an die betroffenen Spieler versendet.";
 	
@@ -19,7 +19,7 @@
 	echo "<div align=\"justify\">";
 
 		echo "
-		<b>Angebote Aufgeben</b><br>
+		<b>Angebote aufgeben</b><br>
 		Hier kannst du eigene Angebote in den Markt stellen.<br><br>";
 
 		echo "
@@ -30,17 +30,17 @@
         Dieser Wert wird aus der Summe der zu verkaufenden Rohstoffe, welche mit den aktuellen Rohstoffkursen verrechnet wurden, gebildet.<br>
         Der Mindestpreis betr&auml;gt beim Rohstoffhandel ".(RESS_PRICE_FACTOR_MIN*100)."% und der Maximalpreis ".(RESS_PRICE_FACTOR_MAX*100)."% des Gesamtwertes. Der Markt rechnet dir immer diese Mindest- und Höchstpreise aus.<br>
         Beim Rohstoffhandel fallen dem Verkäufer die Marktgebühren (".((MARKET_SELL_TAX-1)*100)."%) zur Last, welche sich auf die maximal zu verkaufenden Rohstoffmengen auswirken. Es ist also nicht möglich 100% der aktuellen Rohstoffe auf dem Planeten zum Verkauf anzubieten!<br>
-        Wird das Angebot nicht innerhalb von ".$conf['market_response_time']['v']." Tagen verkauft, so wird es automatisch gelöscht. Du erhälst dannach aber nur noch einen gewissen Prozentsatz zurück. Dieser Wert ist der gleiche, wie wenn du das Angebot manuel zurückziehst!
+        Wird das Angebot nicht innerhalb von ".$conf['market_response_time']['v']." Tagen verkauft, so wird es automatisch gelöscht. Du erhälst dannach aber nur noch einen gewissen Prozentsatz zurück. Dieser Wert ist der gleiche, wie wenn du das Angebot manuell zurückziehst!
 		</ul><br>";
 		echo "
 		<ul>
         <i>Schiffshandel:</i><br>
-        Der Markt bietet auch die M&ouml;glichkeit Schiffe zu kaufen oder verkaufen. Wenn du ein Schiff verkaufen willst, w&auml;hle das gew&uuml;nschte Schiff aus dem Optionsfeld aus und bestimme die Anzahl die du verkaufen willst. Nun kannst du den Preis der Schiffe festlegen. Die Zahlen die bereits in den Feldern stehen, sollen nur als Hilfe dienen um dich &uuml;ber den Wert der Schiffe zu informieren. Diese Zahlen k&ouml;nnen beliebig ge&auml;ndert werden!
-        Es ist aber darauf zu achten, dass auch bei dieser Art von Handel der Markt einen Mindest- sowie einen Maximalbetrag festlegt der nicht unter- bzw. &uuml;berschritten werden kann.
+        Der Markt bietet auch die M&ouml;glichkeit Schiffe zu kaufen oder verkaufen. Wenn du ein Schiff verkaufen willst, w&auml;hle das gew&uuml;nschte Schiff aus dem Optionsfeld aus und bestimme die Anzahl die du verkaufen willst. Nun kannst du den Preis der Schiffe festlegen. Die Zahlen die bereits in den Feldern stehen, sollen nur als Hilfe dienen, um dich &uuml;ber den Wert der Schiffe zu informieren. Diese Zahlen k&ouml;nnen beliebig ge&auml;ndert werden!
+        Es ist aber darauf zu achten, dass auch bei dieser Art von Handel der Markt einen Mindest- sowie einen Maximalbetrag festlegt, der nicht unter- bzw. &uuml;berschritten werden kann.
         Dieser Wert wird aus der Summe der Baurohstoffe errechnet, welche alle Schiffe zusammen gekostet haben (exklusiv Nahrung).
         Der Mindestpreis betr&auml;gt beim Schiffshandel ".(SHIP_PRICE_FACTOR_MIN*100)."% und der Maximalpreis ".(SHIP_PRICE_FACTOR_MAX*100)."% des Gesamtwertes.<br>
         Der Schiffshandel ist von den Marktgebühren ausgeschlossen, sowohl Käufer wie auch Verkäufer zahlen keine Zuschläge!<br>
-        Wird das Angebot nicht innerhalb von ".$conf['market_response_time']['v']." Tagen verkauft, so wird es automatisch gelöscht. Du erhälst dannach aber nur noch einen gewissen Prozentsatz zurück. Dieser Wert ist der gleiche, wie wenn du das Angebot manuel zurückziehst!
+        Wird das Angebot nicht innerhalb von ".$conf['market_response_time']['v']." Tagen verkauft, so wird es automatisch gelöscht. Du erhälst dannach aber nur noch einen gewissen Prozentsatz zurück. Dieser Wert ist der gleiche, wie wenn du das Angebot manuell zurückziehst!
 		</ul><br>";
 		echo "
 		<ul>

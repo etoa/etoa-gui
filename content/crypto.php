@@ -570,7 +570,7 @@
 			echo "<h1>Kryptocenter des Planeten ".$cp->name."</h1>";		
 			$cp->resBox();
 
-			echo "<h2>Fehler!</h2>Das Cryptocenter wurde noch nicht gebaut!<br>";
+			echo "<h2>Fehler!</h2>Das Kryptocenter wurde noch nicht gebaut!<br>";
 		}
   }
   else

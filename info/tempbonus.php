@@ -14,7 +14,7 @@
 	echo "<tr>
 		<td class=\"tbltitle\" style=\"width:40px;\">Kältebonus <br/>
 		<img src=\"images/ice.png\" alt=\"Cold\" style=\"width:100px;\"/></td>
-		<td class=\"tbldata\">Tritium kann auf kälteren Planeten besonders leicht hergestellt werden. mit Der Kältebonus wirkt sich daher prozentual auf die
+		<td class=\"tbldata\">Tritium kann auf kälteren Planeten besonders leicht hergestellt werden. Der Kältebonus wirkt sich daher prozentual auf die
 		Tritiumproduktion aus (zusätzlich zu allen anderen Boni). Kältere Planeten sind weit weg von einem Stern; sie sind für eine grosse Tritiumproduktion sehr zu empfehlen. 
 		</td>
 	</tr>";	
