@@ -141,8 +141,9 @@
 	<input type=\"button\" onclick=\"document.location='?page=galaxy'\" value=\"Galaxiegrafik\" />";
 	iBoxEnd();
 
-	iBoxStart("Sektorkarte","500px;");
-	echo "<table id=\"outerspacetbl\" cellspacing=\"0\" cellpadding=\"0\">";
+	iBoxStart("Sektorkarte","600px;");
+	echo "<div style=\"background:#000;text-align:center;\">";
+	echo "<table id=\"outerspacetbl\">";
 
 	echo "<tr>";
 
@@ -313,7 +314,8 @@
 		else
 			echo "<td>&nbsp;</td>";
 		echo "</tr></table></form>";
-		echo "<br/>Die Galaxie besteht aus $sx_num x $sy_num Sektoren.";
+		echo "<br/>Die Galaxie besteht aus $sx_num x $sy_num Sektoren.<br/><br/>";
+		echo "</div>";
 		iBoxEnd();
 
 ?>

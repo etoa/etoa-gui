@@ -610,3 +610,23 @@ td.havenTab:hover	{
   background:#575763;
 }
 
+.buildOverviewObjectTitle	{
+	font-weight:bold;
+	position:absolute;
+	background:#223;
+	padding:3px;	
+	width:172px;
+	text-align:center;
+}
+
+.buildOverviewObjectLevel	{
+	text-align:center;
+	font-weight:bold;
+	background:#223;
+	position:absolute;
+	left:0px;
+	bottom:0px;
+	width:172px;
+	padding:3px;
+		
+}

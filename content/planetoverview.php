@@ -241,26 +241,26 @@
 			tableStart("Übersicht");
 			echo "<tr><td colspan=\"2\" style=\"padding:0px;\">";
 			echo "<div style=\"position:relative;height:380px;padding:0px;background:#000 url('images/sunset.jpg');\">";
-			echo "<div style=\"position:absolute;left:20px;bottom:20px;\">
-			<div style=\"float:left;width:110px;\"><b>Grösse</b></div> ".nf($conf['field_squarekm']['v']*$cp->fields)." km&sup2;<br style=\"clear:left;\"/>
-			<div style=\"float:left;width:110px;\"><b>Temperatur</b></div>	".$cp->temp_from."&deg;C bis ".$cp->temp_to."&deg;C ($tw) <br style=\"clear:left;\"/>
-			<div style=\"float:left;width:110px;\"><b>System</b></div> <a href=\"?page=cell&amp;id=".$cp->cellId()."&amp;hl=".$cp->id()."\">".$cp->getSectorSolsys()."</a> (Position ".$cp->pos.")<br style=\"clear:left;\"/>
-			<div style=\"float:left;width:110px;\"><b>Kennung</b></div> <a href=\"?page=entity&amp;id=".$cp->id()."\">".$cp->id()."</a><br style=\"clear:left;\"/>
-			<div style=\"float:left;width:110px;\"><b>Stern</b></div> ".$cp->starTypeName." ".helpLink("stars")."<br style=\"clear:left;\"/>
-			<div style=\"float:left;width:110px;\"><b>Planetentyp</b></div> ".$cp->type()." ".helpLink("planets")."<br style=\"clear:left;\"/>
-			<div style=\"float:left;width:110px;\"><b>Felder</b></div> ".nf($cp->fields_used)." benutzt (".round($cp->fields_used/$cp->fields*100)."%), ".(nf($cp->fields))." total, ".$cp->fields_extra." extra<br style=\"clear:left;\"/>";
+			echo "<div class=\"planetOverviewList\">
+			<div class=\"planetOverviewItem\">Grösse</div> ".nf($conf['field_squarekm']['v']*$cp->fields)." km&sup2;<br style=\"clear:left;\"/>
+			<div class=\"planetOverviewItem\">Temperatur</div>	".$cp->temp_from."&deg;C bis ".$cp->temp_to."&deg;C ($tw) <br style=\"clear:left;\"/>
+			<div class=\"planetOverviewItem\">System</div> <a href=\"?page=cell&amp;id=".$cp->cellId()."&amp;hl=".$cp->id()."\">".$cp->getSectorSolsys()."</a> (Position ".$cp->pos.")<br style=\"clear:left;\"/>
+			<div class=\"planetOverviewItem\">Kennung</div> <a href=\"?page=entity&amp;id=".$cp->id()."\">".$cp->id()."</a><br style=\"clear:left;\"/>
+			<div class=\"planetOverviewItem\">Stern</div> ".$cp->starTypeName." ".helpLink("stars")."<br style=\"clear:left;\"/>
+			<div class=\"planetOverviewItem\">Planetentyp</div> ".$cp->type()." ".helpLink("planets")."<br style=\"clear:left;\"/>
+			<div class=\"planetOverviewItem\">Felder</div> ".nf($cp->fields_used)." benutzt (".round($cp->fields_used/$cp->fields*100)."%), ".(nf($cp->fields))." total, ".$cp->fields_extra." extra<br style=\"clear:left;\"/>";
 			if ($cp->debrisField)
 			{
-				echo "<div style=\"float:left;width:110px;\"><b>Trümmerfeld:</b></div> 
+				echo "<div class=\"planetOverviewItem\">Trümmerfeld</div> 
 				<span class=\"resmetal\">".nf($cp->debrisMetal,0,1)."</span>
 				<span class=\"rescrystal\">".nf($cp->debrisCrystal,0,1)."</span>
 				<span class=\"resfuel\">".nf($cp->debrisPlastic,0,1)."</span>
 				<br style=\"clear:left;\"/>";
 			}			
 			if ($cp->desc!="")			
-				echo "<div style=\"float:left;width:110px;\"><b>Beschreibung</b></div> ".stripslashes($cp->desc)."<br style=\"clear:left;\"/>";
+				echo "<div class=\"planetOverviewItem\">Beschreibung</div> ".stripslashes($cp->desc)."<br style=\"clear:left;\"/>";
 			if ($cp->isMain)				
-				echo "<div style=\"float:left;width:110px;\"><b>Hauptplanet</b></div> Hauptplaneten können nicht invasiert oder aufgegeben werden!<br style=\"clear:left;\"/>";
+				echo "<div class=\"planetOverviewItem\">Hauptplanet</div> Hauptplaneten können nicht invasiert oder aufgegeben werden!<br style=\"clear:left;\"/>";
 			echo "</div>";
 			echo "</div>";
 			echo "</td></tr>";

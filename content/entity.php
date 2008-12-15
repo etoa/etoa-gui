@@ -47,8 +47,11 @@
 
 	if ($id>0)
 	{
-		$ent = Entity::createFactoryById($id);
 		
+		
+		
+		if ($ent = Entity::createFactoryById($id))
+		{
 		$cell = new Cell($ent->cellId());
 		
 		if ($cu->discovered($cell->absX(),$cell->absY())>0)
@@ -180,6 +183,12 @@
 		{
 			echo "<h1>Raumobjekt-Datenbank</h1>
 			Das Objekt mit der Kennung <b>".$id."</b> wurde noch nicht entdeckt!<br/><br/>";
+		}
+		}
+		else
+		{
+			echo "<h1>Raumobjekt-Datenbank</h1>
+			Das Objekt mit der Kennung <b>".$id."</b> existiert nicht!<br/><br/>";
 		}
 	}
 	else

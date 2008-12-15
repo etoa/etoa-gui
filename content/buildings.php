@@ -1183,12 +1183,12 @@ function calcDemolishingWaitTime($dc,$cp)
 
 									echo "<td style=\"background:url('".$img."') no-repeat -10px 0px;width:180px;height:180px ;padding:0px;\">
 									<div style=\"position:relative;height:180px;\">
-									<div style=\"font-weight:bold;position:absolute;background:url('images/transheader1.png') no-repeat;width:130px;padding:3px;\">".$bv['name']."</div>";
+									<div class=\"buildOverviewObjectTitle\">".$bv['name']."</div>";
+									echo "<a href=\"?page=$page&amp;id=".$bid."\" ".tm($bv['name'],"<b>".$subtitle."</b><br/>".$tmtext.$bv['shortcomment'])." style=\"display:block;height:180px;\"></a>";
 									if ($b_level>0) 
 									{
-										echo "<div style=\"text-align:right;font-size:20pt;font-weight:bold;background:url('images/transfooter1.png') no-repeat;position:absolute;right:0px;bottom:0px;width:60px;padding:3px;\">".$b_level."</div>";
+										echo "<div class=\"buildOverviewObjectLevel\">".$b_level."</div>";
 									}
-									echo "<a href=\"?page=$page&amp;id=".$bid."\" ".tm($bv['name'],"<b>".$subtitle."</b><br/>".$tmtext.$bv['shortcomment'])." style=\"display:block;height:180px;\">asa</a>";
 									echo "</div></td>\n";
 									$cnt++;
 									$scnt++;

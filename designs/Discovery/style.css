@@ -1404,3 +1404,39 @@ td.havenTab:hover	{
 .resfull	{
 	color:#f50;	
 }
+
+.buildOverviewObjectTitle	{
+	font-weight:bold;
+	position:absolute;
+	background:url('images/transheader1.png') no-repeat;
+	width:130px;
+	padding:3px;	
+}
+
+.buildOverviewObjectLevel	{
+	text-align:right;
+	font-size:20pt;
+	font-weight:bold;
+	background:url('images/transfooter1.png') no-repeat;
+	position:absolute;
+	right:0px;
+	bottom:0px;
+	width:60px;
+	padding:3px;
+	padding-right:5px;	
+}
+
+.planetOverviewList	{
+	position:absolute;
+	left:20px;
+	bottom:20px;
+	font-size:10pt;
+}
+
+.planetOverviewItem	{
+	float:left;
+	width:120px;	
+	font-size:10pt;
+	font-weight:bold;
+	height:17px;
+}
