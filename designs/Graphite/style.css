@@ -94,13 +94,19 @@ img	{
 
 #planetname	{
 	position:absolute;
-	left:8px;
-	top:188px;	
+	left:5px;
+	top:187px;	
 	height:20px;
 	font-family: verdana, sans-serif, arial;
 	font-size: 8pt;	
 	width:190px;
-	cursor:pointer;
+}
+
+#planetname select	{
+	padding:0px;
+	font-size: 8pt;	
+	width:185px;
+	border:none:
 }
 
 #planetimage	{
@@ -471,8 +477,8 @@ div.infoboxtitle	{
 	background:#242426;
 }
 
-.resfull	{
-	color:#f50;	
+.resfull, .tb td.resfull	{
+	color:#f20;	
 }
 
 /* Tab Menu */
@@ -511,9 +517,8 @@ div.infoboxtitle	{
 .buildOverviewObjectTitle	{
 	font-weight:bold;
 	position:absolute;
-	background:url('images/transheader1.png') no-repeat;
-	width:130px;
-	padding:3px;	
+	background:url('images/transheader1.png') top right no-repeat;
+	padding:3px 15px 3px 3px;	
 }
 
 .buildOverviewObjectLevel	{

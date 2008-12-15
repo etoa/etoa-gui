@@ -222,7 +222,7 @@
 		echo "<h1>Raumschiffswerft (Stufe ".CURRENT_SHIPYARD_LEVEL.") des Planeten ".$cp->name."</h1>";
 
 		// Ressourcen anzeigen
-		$cp->resBox();
+		$cp->resBox($cu->properties->smallResBox);
 
 		echo $ship_info_string;
 
@@ -1450,7 +1450,7 @@
 		echo "<h1>Raumschiffswerft des Planeten ".$cp->name."</h1>";		
 		
 		// Ressourcen anzeigen
-		$cp->resBox();
+		$cp->resBox($cu->properties->smallResBox);
 		echo "<br>Die Schiffswerft wurde noch nicht gebaut!<br>";
 
 

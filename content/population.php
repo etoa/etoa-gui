@@ -36,7 +36,7 @@
 
 		echo "<h1>Bev&ouml;lkerungs&uuml;bersicht des Planeten ".$cp->name."</h1>";
 		echo "<div id=\"population_info\"></div>"; // Nur zu testzwecken
-		$cp->resBox();
+		$cp->resBox($cu->properties->smallResBox);
 
 		$res = dbquery("
 		SELECT

@@ -37,7 +37,7 @@
 	// BEGIN SKRIPT //
 
 	echo "<h1>Recyclingstation des Planeten ".$cp->name."</h1>";
-  $cp->resBox();
+  $cp->resBox($cu->properties->smallResBox);
 	
 	//Recycling Level laden
 	$rtres = dbquery("

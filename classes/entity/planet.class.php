@@ -328,7 +328,7 @@
 		/** 
 		* Displays a box with resources, power and population
 		*/
-		function resBox()
+		function resBox($small=0)
 		{
 			$cfg = Config::getInstance();
 
@@ -341,70 +341,163 @@
 			
 			$store_err=array();
 
-			if ($this->storeMetal<=floor($this->resMetal) && floor($this->resMetal)>0)
+			if ($small==0)
 			{
-				$style0=" resfull";
-				$store_msg[1] = tm("Speicher voll","Produktion gestoppt, bitte Speicher ausbauen!");
-				$store_err[1]=true;
-			}
-			if ($this->storeCrystal<=floor($this->resCrystal) && floor($this->resCrystal)>0)
-			{
-				$style1=" resfull";
-				$store_msg[2] = tm("Speicher voll","Produktion gestoppt, bitte Speicher ausbauen!");
-				$store_err[2]=true;
-			}
-			if ($this->storePlastic<=floor($this->resPlastic) && floor($this->resPlastic)>0)
-			{
-				$style2=" resfull";
-				$store_msg[3] = tm("Speicher voll","Produktion gestoppt, bitte Speicher ausbauen!");
-				$store_err[3]=true;
-			}
-			if ($this->storeFuel<=floor($this->resFuel) && floor($this->resFuel)>0)
-			{
-				$style3=" resfull";
-				$store_msg[4] = tm("Speicher voll","Produktion gestoppt, bitte Speicher ausbauen!");
-				$store_err[4]=true;
-			}
-			if ($this->storeFood<=floor($this->resFood) && floor($this->resFood)>0)
-			{
-				$style4=" resfull";
-				$store_msg[5] = tm("Speicher voll","Produktion gestoppt, bitte Speicher ausbauen!");
-				$store_err[5]=true;
-			}
-			if ($this->people_place<=floor($this->people) && floor($this->people)>0)
-			{
-				$style5=" resfull";
-				$store_msg[6] = tm("Wohnraum voll","Wachstum gestoppt, bitte Wohnraum ausbauen!");
-				$store_err[6]=true;
-			}
-			if(floor($this->prodPower)-floor($this->usePower)<0)
-			{
-				$style6=" resfull";
-				$store_msg[7] = tm("Zuwenig Energie","Produktion verringert, bitte Kraftwerk ausbauen!");
-				$store_err[7] = true;
-				$power_rest = floor($this->prodPower)-floor($this->usePower);
+				$store_msg=false;
+				$power_msg=false;
+				$place_msg=false;
+	
+				if ($this->storeMetal<=floor($this->resMetal) && floor($this->resMetal)>0)
+				{
+					$style0="resfull";
+					$store_msg=true;
+				}
+				if ($this->storeCrystal<=floor($this->resCrystal) && floor($this->resCrystal)>0)
+				{
+					$style1="resfull";
+					$store_msg=true;
+				}
+				if ($this->storePlastic<=floor($this->resPlastic) && floor($this->resPlastic)>0)
+				{
+					$style2="resfull";
+					$store_msg=true;
+				}
+				if ($this->storeFuel<=floor($this->resFuel) && floor($this->resFuel)>0)
+				{
+					$style3="resfull";
+					$store_msg=true;
+				}
+				if ($this->storeFood<=floor($this->resFood) && floor($this->resFood)>0)
+				{
+					$style4="resfull";
+					$store_msg=true;
+				}
+				if ($this->people_place<=floor($this->people) && floor($this->people)>0)
+				{
+					$style5="resfull";
+					$place_msg=true;
+				}
+				if(floor($this->prodPower)-floor($this->usePower)<0)
+				{
+					$style6="resfull";
+					$power_msg=true;
+					$power_rest = floor($this->prodPower)-floor($this->usePower);
+				}
+				else
+				{
+					$style6="class=\"tbldata3\"";
+					$power_rest = floor($this->prodPower)-floor($this->usePower);
+				}
+				tableStart("Ressourcen");
+				echo "<tr>
+				<th style=\"vertical-align:middle;\">".RES_ICON_METAL." ".RES_METAL."</th>
+				<th style=\"vertical-align:middle;\">".RES_ICON_CRYSTAL." ".RES_CRYSTAL."</th>
+				<th style=\"vertical-align:middle;\">".RES_ICON_PLASTIC." ".RES_PLASTIC."</th>
+				<th style=\"vertical-align:middle;\">".RES_ICON_FUEL." ".RES_FUEL."</th>
+				<th style=\"vertical-align:middle;\">".RES_ICON_FOOD." ".RES_FOOD."</th>
+				<th style=\"vertical-align:middle;\">".RES_ICON_PEOPLE." Bewohner</th>
+				<th style=\"vertical-align:middle;\">".RES_ICON_POWER." Energie</th>
+				</tr><tr>
+				<td class=\"$style0\">".nf(floor($this->resMetal))." t</td>
+				<td class=\"$style1\">".nf(floor($this->resCrystal))." t</td>
+				<td class=\"$style2\">".nf(floor($this->resPlastic))." t</td>
+				<td class=\"$style3\">".nf(floor($this->resFuel))." t</td>
+				<td class=\"$style4\">".nf(floor($this->resFood))." t</td>
+				<td class=\"$style5\">".nf(floor($this->people))."</td>
+				<td class=\"$style6\">".nf($power_rest)."</td>
+				</tr>";
+	
+				$text = array();
+				if ($store_msg)
+					array_push($text,"Speicher");
+				if ($place_msg)
+					array_push($text,"Wohnmodule");
+				if ($power_msg)
+					array_push($text,"Kraftwerke");
+	
+	
+				if (count($text)>0)
+				{
+					echo "<tr><td class=\"tbldata\" colspan=\"7\" style=\"text-align:center;color:orange;\"><i>Es werden ben&ouml;tigt: ";
+	
+					$cnt=0;
+	                foreach ($text as $value)
+	                {
+	                	if($cnt!=0)
+	                		echo ", ";
+	                	echo "$value";
+	                	$cnt++;
+	                }
+					echo "</i></td></tr>";
+				}
+				tableEnd();
 			}
 			else
 			{
-				$style6="";
-				$store_msg[7] = "";
-				$store_err[7] = "";
-				$power_rest = floor($this->prodPower)-floor($this->usePower);
+				if ($this->storeMetal<=floor($this->resMetal) && floor($this->resMetal)>0)
+				{
+					$style0="resfull";
+					$store_msg[1] = tm("Speicher voll","Produktion gestoppt, bitte Speicher ausbauen!");
+					$store_err[1]=true;
+				}
+				if ($this->storeCrystal<=floor($this->resCrystal) && floor($this->resCrystal)>0)
+				{
+					$style1="resfull";
+					$store_msg[2] = tm("Speicher voll","Produktion gestoppt, bitte Speicher ausbauen!");
+					$store_err[2]=true;
+				}
+				if ($this->storePlastic<=floor($this->resPlastic) && floor($this->resPlastic)>0)
+				{
+					$style2=" resfull";
+					$store_msg[3] = tm("Speicher voll","Produktion gestoppt, bitte Speicher ausbauen!");
+					$store_err[3]=true;
+				}
+				if ($this->storeFuel<=floor($this->resFuel) && floor($this->resFuel)>0)
+				{
+					$style3=" resfull";
+					$store_msg[4] = tm("Speicher voll","Produktion gestoppt, bitte Speicher ausbauen!");
+					$store_err[4]=true;
+				}
+				if ($this->storeFood<=floor($this->resFood) && floor($this->resFood)>0)
+				{
+					$style4=" resfull";
+					$store_msg[5] = tm("Speicher voll","Produktion gestoppt, bitte Speicher ausbauen!");
+					$store_err[5]=true;
+				}
+				if ($this->people_place<=floor($this->people) && floor($this->people)>0)
+				{
+					$style5=" resfull";
+					$store_msg[6] = tm("Wohnraum voll","Wachstum gestoppt, bitte Wohnraum ausbauen!");
+					$store_err[6]=true;
+				}
+				if(floor($this->prodPower)-floor($this->usePower)<0)
+				{
+					$style6=" resfull";
+					$store_msg[7] = tm("Zuwenig Energie","Produktion verringert, bitte Kraftwerk ausbauen!");
+					$store_err[7] = true;
+					$power_rest = floor($this->prodPower)-floor($this->usePower);
+				}
+				else
+				{
+					$style6="";
+					$store_msg[7] = "";
+					$store_err[7] = "";
+					$power_rest = floor($this->prodPower)-floor($this->usePower);
+				}				
+				echo "<div id=\"resbox\">
+				<div id=\"resboxheader\">Resourcen</div>
+				<div id=\"resboxcontent\">			
+				<span class=\"resmetal ".$style0."\" ".mTT(RES_METAL,"<img src=\"images/resources/metal.png\" style=\"float:left;margin-right:5px;\"/> <b>Vorhanden:</b> ".nf($this->resMetal)."<br/><b>Speicher:</b> ".nf($this->storeMetal)."<br style=\"clear:both;\"/>").">".nf($this->resMetal,0,1)."</span>
+				<span class=\"rescrystal ".$style1."\" ".mTT(RES_CRYSTAL,"<img src=\"images/resources/crystal.png\" style=\"float:left;margin-right:5px;\"/> <b>Vorhanden:</b> ".nf($this->resCrystal)."<br/><b>Speicher:</b> ".nf($this->storeCrystal)."<br style=\"clear:both;\"/>").">".nf($this->resCrystal,0,1)."</span>
+				<span class=\"resplastic ".$style2."\" ".mTT(RES_PLASTIC,"<img src=\"images/resources/plastic.png\" style=\"float:left;margin-right:5px;\"/> <b>Vorhanden:</b> ".nf($this->resPlastic)."<br/><b>Speicher:</b> ".nf($this->storePlastic)."<br style=\"clear:both;\"/>").">".nf($this->resPlastic,0,1)."</span>
+				<span class=\"resfuel ".$style3."\" ".mTT(RES_FUEL,"<img src=\"images/resources/fuel.png\" style=\"float:left;margin-right:5px;\"/> <b>Vorhanden:</b> ".nf($this->resFuel)."<br/><b>Speicher:</b> ".nf($this->storeFuel)."<br style=\"clear:both;\"/>").">".nf($this->resFuel,0,1)."</span>
+				<span class=\"resfood ".$style4."\" ".mTT(RES_FOOD,"<img src=\"images/resources/food.png\" style=\"float:left;margin-right:5px;\"/> <b>Vorhanden:</b> ".nf($this->resFood)."<br/><b>Speicher:</b> ".nf($this->storeFood)."<br style=\"clear:both;\"/>").">".nf($this->resFood,0,1)."</span>
+				<span class=\"respeople ".$style5."\" ".mTT("Bevölkerung","<img src=\"images/resources/people.png\" style=\"float:left;margin-right:5px;\"/> <b>Vorhanden:</b> ".nf($this->people)."<br/><b>Platz:</b> ".nf($this->people_place)."<br style=\"clear:both;\"/>").">".nf($this->people,0,1)."</span>
+				<span class=\"respower ".$style6."\" ".mTT(RES_POWER,"<img src=\"images/resources/power.png\" style=\"float:left;margin-right:5px;\"/> <b>Produktion:</b> ".nf($this->prodPower)."<br/><b>Verfügbar:</b> ".nf($power_rest)."<br/><b>Verbrauch:</b> ".nf($this->usePower)."<br style=\"clear:both;\"/>").">".nf($power_rest,0,1)."</span>
+				</div>
+				</div>";			
 			}
-			
-			echo "<div id=\"resbox\">
-			<div id=\"resboxheader\">Resourcen</div>
-			<div id=\"resboxcontent\">			
-			<span class=\"resmetal".$style0."\" ".mTT(RES_METAL,"<img src=\"images/resources/metal.png\" style=\"float:left;margin-right:5px;\"/> <b>Vorhanden:</b> ".nf($this->resMetal)."<br/><b>Speicher:</b> ".nf($this->storeMetal)."<br style=\"clear:both;\"/>").">".nf($this->resMetal,0,1)."</span>
-			<span class=\"rescrystal".$style1."\" ".mTT(RES_CRYSTAL,"<img src=\"images/resources/crystal.png\" style=\"float:left;margin-right:5px;\"/> <b>Vorhanden:</b> ".nf($this->resCrystal)."<br/><b>Speicher:</b> ".nf($this->storeCrystal)."<br style=\"clear:both;\"/>").">".nf($this->resCrystal,0,1)."</span>
-			<span class=\"resplastic".$style2."\" ".mTT(RES_PLASTIC,"<img src=\"images/resources/plastic.png\" style=\"float:left;margin-right:5px;\"/> <b>Vorhanden:</b> ".nf($this->resPlastic)."<br/><b>Speicher:</b> ".nf($this->storePlastic)."<br style=\"clear:both;\"/>").">".nf($this->resPlastic,0,1)."</span>
-			<span class=\"resfuel".$style3."\" ".mTT(RES_FUEL,"<img src=\"images/resources/fuel.png\" style=\"float:left;margin-right:5px;\"/> <b>Vorhanden:</b> ".nf($this->resFuel)."<br/><b>Speicher:</b> ".nf($this->storeFuel)."<br style=\"clear:both;\"/>").">".nf($this->resFuel,0,1)."</span>
-			<span class=\"resfood".$style4."\" ".mTT(RES_FOOD,"<img src=\"images/resources/food.png\" style=\"float:left;margin-right:5px;\"/> <b>Vorhanden:</b> ".nf($this->resFood)."<br/><b>Speicher:</b> ".nf($this->storeFood)."<br style=\"clear:both;\"/>").">".nf($this->resFood,0,1)."</span>
-			<span class=\"respeople".$style5."\" ".mTT("Bevölkerung","<img src=\"images/resources/people.png\" style=\"float:left;margin-right:5px;\"/> <b>Vorhanden:</b> ".nf($this->people)."<br/><b>Platz:</b> ".nf($this->people_place)."<br style=\"clear:both;\"/>").">".nf($this->people,0,1)."</span>
-			<span class=\"respower".$style6."\" ".mTT(RES_POWER,"<img src=\"images/resources/power.png\" style=\"float:left;margin-right:5px;\"/> <b>Produktion:</b> ".nf($this->prodPower)."<br/><b>Verfügbar:</b> ".nf($power_rest)."<br/><b>Verbrauch:</b> ".nf($this->usePower)."<br style=\"clear:both;\"/>").">".nf($power_rest,0,1)."</span>
-			</div>
-			</div>";
-			
+
 			/*
 //			<td colspan=\"7\" id=\"resprogress\" style=\"height:10px;background:#fff;text-align:center;\"></td>";
 //		jsProgressBar("resprogress",$this->updated,($this->updated + $cfg->value("res_update")),650);

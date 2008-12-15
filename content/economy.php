@@ -58,7 +58,7 @@
 		}
 
 		echo "<h1>Wirtschaft des Planeten ".$cp->name."</h1>";
-		$cp->resBox();
+		$cp->resBox($cu->properties->smallResBox);
 
 		if ($tabsEnable)
 		{

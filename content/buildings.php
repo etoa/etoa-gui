@@ -178,7 +178,7 @@ function calcDemolishingWaitTime($dc,$cp)
 	if (isset($cp))
 	{
 		echo "<h1>Bauhof des Planeten ".$cp->name()."</h1>";
-		$cp->resBox();
+		$cp->resBox($cu->properties->smallResBox);
 
 
 		//
@@ -1142,6 +1142,7 @@ function calcDemolishingWaitTime($dc,$cp)
 									{
 										$tmtext = "<span style=\"color:#f00\">Zuwenig Ressourcen f&uuml;r weiteren Ausbau!</span><br/>";
 										$color = '#f00';
+										/*
 										if($use_img_filter)
 										{
 											$img = "inc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid.".".IMAGE_EXT."&filter=lowres";
@@ -1149,7 +1150,7 @@ function calcDemolishingWaitTime($dc,$cp)
 										else
 										{
 											$img="".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid.".".IMAGE_EXT."";
-										}
+										}*/
 									}
 									else
 									{
@@ -1172,6 +1173,9 @@ function calcDemolishingWaitTime($dc,$cp)
 									}
 								}
 
+								$img="".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid.".".IMAGE_EXT."";
+
+
 								// Display all buildings that are buildable or are already built
 								if (($requirements_passed && $bv['show']==1) || $b_level>0)
 								{			
@@ -1182,12 +1186,12 @@ function calcDemolishingWaitTime($dc,$cp)
 									}
 
 									echo "<td style=\"background:url('".$img."') no-repeat -10px 0px;width:180px;height:180px ;padding:0px;\">
-									<div style=\"position:relative;height:180px;\">
+									<div style=\"position:relative;height:180px;overflow:hidden;\">
 									<div class=\"buildOverviewObjectTitle\">".$bv['name']."</div>";
 									echo "<a href=\"?page=$page&amp;id=".$bid."\" ".tm($bv['name'],"<b>".$subtitle."</b><br/>".$tmtext.$bv['shortcomment'])." style=\"display:block;height:180px;\"></a>";
 									if ($b_level>0) 
 									{
-										echo "<div class=\"buildOverviewObjectLevel\">".$b_level."</div>";
+										echo "<div class=\"buildOverviewObjectLevel\" style=\"color:".$color."\">".$b_level."</div>";
 									}
 									echo "</div></td>\n";
 									$cnt++;

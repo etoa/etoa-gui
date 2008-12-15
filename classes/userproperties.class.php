@@ -25,6 +25,7 @@
     private $havenShipsButtons;
     private $showAdds;
     private $fleetRtnMsg;
+		private $smallResBox;
 		
 		private $changedFields;
 		
@@ -67,6 +68,7 @@
         $this->havenShipsButtons = $arr['havenships_buttons'];
 		    $this->showAdds = $arr['show_adds'];
 		    $this->fleetRtnMsg = $arr['fleet_rtn_msg'];
+		    $this->smallResBox = $arr['small_res_box'];
 
 			}
 			else
@@ -118,6 +120,11 @@
 				{
 					$this->$key = $val;
 					$this->changedFields[$key] = "css_style";
+				}
+				elseif ($key == "smallResBox")
+				{
+					$this->$key = $val;
+					$this->changedFields[$key] = "small_res_box";
 				}
 				elseif ($key == "imageUrl")
 				{

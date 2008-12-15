@@ -141,7 +141,7 @@
 		elseif (isset($_GET['sub']) && $_GET['sub']=="fields")
 		{
 		 	echo "<h1>Felderbelegung des Planeten ".$cp->name."</h1>";
-			$cp->resBox();
+			$cp->resBox($cu->properties->smallResBox);
 
 			echo "<table style=\"width:100%;\"><tr><td style=\"width:50%;vertical-align:top;padding:5px;\">";
 			
@@ -227,23 +227,14 @@
 			}
 	
 		 	echo "<h1>&Uuml;bersicht &uuml;ber den Planeten ".$cp->name."</h1>";
-			$cp->resBox();
+			$cp->resBox($cu->properties->smallResBox);
 
-			$tg = ($cfg->param1('planet_temp')+$cfg->param2('planet_temp'))/2;
-			$tp = ($cp->temp_from+$cp->temp_to)/2;
-			if ($tp<$tg/3)
-				$tw = "Kalter Planet";
-			elseif ($tp<$tg*2/3)
-				$tw = "Gemässigter Planet";
-			else
-				$tw = "Warmer Planet";
-				
 			tableStart("Übersicht");
 			echo "<tr><td colspan=\"2\" style=\"padding:0px;\">";
 			echo "<div style=\"position:relative;height:380px;padding:0px;background:#000 url('images/sunset.jpg');\">";
 			echo "<div class=\"planetOverviewList\">
 			<div class=\"planetOverviewItem\">Grösse</div> ".nf($conf['field_squarekm']['v']*$cp->fields)." km&sup2;<br style=\"clear:left;\"/>
-			<div class=\"planetOverviewItem\">Temperatur</div>	".$cp->temp_from."&deg;C bis ".$cp->temp_to."&deg;C ($tw) <br style=\"clear:left;\"/>
+			<div class=\"planetOverviewItem\">Temperatur</div>	".$cp->temp_from." &deg;C bis ".$cp->temp_to." &deg;C <br style=\"clear:left;\"/>
 			<div class=\"planetOverviewItem\">System</div> <a href=\"?page=cell&amp;id=".$cp->cellId()."&amp;hl=".$cp->id()."\">".$cp->getSectorSolsys()."</a> (Position ".$cp->pos.")<br style=\"clear:left;\"/>
 			<div class=\"planetOverviewItem\">Kennung</div> <a href=\"?page=entity&amp;id=".$cp->id()."\">".$cp->id()."</a><br style=\"clear:left;\"/>
 			<div class=\"planetOverviewItem\">Stern</div> ".$cp->starTypeName." ".helpLink("stars")."<br style=\"clear:left;\"/>

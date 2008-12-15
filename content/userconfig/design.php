@@ -30,6 +30,12 @@
 	    	$cu->properties->cssStyle=$_POST['css_style'];
 	    	$designChange=true;
     	}
+    	
+    	if ($cu->properties->smallResBox != $_POST['small_res_box'])
+    	{
+    		$cu->properties->smallResBox = $_POST['small_res_box'];
+    	}
+    	
       $cu->properties->gameWidth=$_POST['game_width'];
       $cu->properties->planetCircleWidth=$_POST['planet_circle_width'];
       $cu->properties->itemShow=$_POST['item_show'];
@@ -216,7 +222,22 @@
                   if ($cu->properties->showAdds==0) echo " checked=\"checked\"";
         					echo "/> Deaktiviert
         		</td>
-      		</tr>";           		         
+      		</tr>";   
+      		
+      echo "<tr>
+        			<th>Schlanke Resourcenanzeige:</th>
+        			<td>
+                  <input type=\"radio\" name=\"small_res_box\" value=\"1\" ";
+                  if ($cu->properties->smallResBox==1) echo " checked=\"checked\"";
+                  echo "/> Aktiviert
+              </td>
+              <td width=\"48%\" colspan=\"3\">
+                  <input type=\"radio\" name=\"small_res_box\" value=\"0\" ";
+                  if ($cu->properties->smallResBox==0) echo " checked=\"checked\"";
+        					echo "/> Deaktiviert
+        		</td>
+      		</tr>";          		
+      		        		         
         tableEnd();
 
         echo "<input type=\"submit\" name=\"data_submit_design\" value=\"&Uuml;bernehmen\"></form><br/><br/>";

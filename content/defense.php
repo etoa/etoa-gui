@@ -233,7 +233,7 @@
 		echo "<h1>Waffenfabrik (Stufe ".CURRENT_FACTORY_LEVEL.") des Planeten ".$cp->name."</h1>";
 
 		// Ressourcen anzeigen
-		$cp->resBox();
+		$cp->resBox($cu->properties->smallResBox);
 		
 		echo $def_info_string;
 
@@ -1460,7 +1460,7 @@
 		echo "<h1>Waffenfabrik des Planeten ".$cp->name."</h1>";		
 		
 		// Ressourcen anzeigen
-		$cp->resBox();
+		$cp->resBox($cu->properties->smallResBox);
 		echo "<br>Die Waffenfabrik wurde noch nicht gebaut!<br/><br/>";
 		
 		echo $def_info_string;

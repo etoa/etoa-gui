@@ -1,7 +1,7 @@
 <?PHP
 	
 	// Zeigt eigene Rohstoffe an
-	$cp->resBox();
+	$cp->resBox($cu->properties->smallResBox);
 	
 	echo "<h2><a href=\"?page=".$page."&amp;action=".$_GET['action']."\">Allianzbasis</a></h2>";
 		

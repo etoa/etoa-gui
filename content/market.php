@@ -71,7 +71,7 @@
 	$mode = isset($_GET['mode']) ? $_GET['mode'] : "";
 
 	// Zeigt Rohstoffbox an
-	$cp->resBox();
+	$cp->resBox($cu->properties->smallResBox);
 
 	//Überprüfung ob der Marktplatz schon gebaut wurde
 	$mres=dbquery("

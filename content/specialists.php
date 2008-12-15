@@ -7,7 +7,7 @@
 
 
 	echo '<h1>Spezialisten</h1>';    
-	$cp->resBox();
+	$cp->resBox($cu->properties->smallResBox);
 	
 	//
 	// Engage specialist

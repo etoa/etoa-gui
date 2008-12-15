@@ -64,7 +64,7 @@
 			
 			// Überschrift
 			echo "<h1>Forschungslabor (Stufe ".CURRENT_LAB_LEVEL.") des Planeten ".$cp->name."</h1>";
-			$cp->resBox();
+			$cp->resBox($cu->properties->smallResBox);
 
       //level zählen welches das forschungslabor über dem angegeben level ist und faktor berechnen
       $need_bonus_level = CURRENT_LAB_LEVEL - $conf['build_time_boni_forschungslabor']['p1'];
@@ -749,11 +749,11 @@
 									$color = '#999';
 									if($use_img_filter)
 									{
-										$img = "inc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid."_middle.".IMAGE_EXT."&filter=na";
+										$img = "inc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid.".".IMAGE_EXT."&filter=na";
 									}
 									else
 									{
-										$img="".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid."_middle.".IMAGE_EXT."";
+										$img="".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid.".".IMAGE_EXT."";
 									}		
 								}
 								elseif ($bv['show']==1)
@@ -766,11 +766,11 @@
 										$color = '#999';
 										if($use_img_filter)
 										{
-											$img = "inc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid."_middle.".IMAGE_EXT."&filter=na";
+											$img = "inc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid.".".IMAGE_EXT."&filter=na";
 										}
 										else
 										{
-											$img="".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid."_middle.".IMAGE_EXT."";
+											$img="".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid.".".IMAGE_EXT."";
 										}							
 									}
 									// Ist im Bau
@@ -781,11 +781,11 @@
 										$color = '#0f0';
 										if($use_img_filter)
 										{
-											$img = "inc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid."_middle.".IMAGE_EXT."&filter=building";
+											$img = "inc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid.".".IMAGE_EXT."&filter=building";
 										}
 										else
 										{
-											$img="".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid."_middle.".IMAGE_EXT."";
+											$img="".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid.".".IMAGE_EXT."";
 										}
 									}
 									// Untätig
@@ -805,18 +805,18 @@
 											$color = '#f00';
 											if($use_img_filter)
 											{
-												$img = "inc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid."_middle.".IMAGE_EXT."&filter=lowres";
+												$img = "inc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid.".".IMAGE_EXT."&filter=lowres";
 											}
 											else
 											{
-												$img="".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid."_middle.".IMAGE_EXT."";
+												$img="".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid.".".IMAGE_EXT."";
 											}
 										}
 										else
 										{
 											$tmtext = "";
 											$color = '#fff';
-											$img="".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid."_middle.".IMAGE_EXT."";
+											$img="".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid.".".IMAGE_EXT."";
 										}
 										
 										if ($b_level==0)
@@ -829,10 +829,12 @@
 										}
 										else
 										{
-											$subtitle = 'Erforscht';
+											$subtitle = 'Stufe '.$b_level.'';
 										}
 									}
 	              }
+
+								$img="".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid.".".IMAGE_EXT."";
 	              
 								// Display all buildings that are buildable or are already built
 								if (($requirements_passed && $bv['show']==1) || $b_level>0)
@@ -843,13 +845,25 @@
 										echo "<tr>";
 									}
 	
-									echo "<td class=\"tbldata\" style=\"color:".$color.";text-align:center;width:".CELL_WIDTH."px\">
+									echo "<td style=\"background:url('".$img."') no-repeat -10px 0px;width:180px;height:180px ;padding:0px;\">
+									<div style=\"position:relative;height:180px;overflow:hidden\">
+									<div class=\"buildOverviewObjectTitle\">".$bv['name']."</div>";
+									echo "<a href=\"?page=$page&amp;id=".$bid."\" ".tm($bv['name'],"<b>".$subtitle."</b><br/>".$tmtext.$bv['shortcomment'])." style=\"display:block;height:180px;\"></a>";
+									if ($b_level>0) 
+									{
+										echo "<div class=\"buildOverviewObjectLevel\" style=\"color:".$color."\">".$b_level."</div>";
+									}
+									echo "</div></td>\n";
+
+									/*
+										echo "<td class=\"tbldata\" style=\"color:".$color.";text-align:center;width:".CELL_WIDTH."px\">
 													<b>".$bv['name']."";
 													if ($b_level>0) echo ' '.$b_level;
 													echo "</b><br/>".$subtitle."<br/>
 													<input name=\"show_".$bid."\" type=\"image\" value=\"".$bid."\" src=\"".$img."\" ".tm($bv['name'],$tmtext.$bv['shortcomment'])." style=\"width:120px;height:120px;\" />
 									</td>\n";
-	
+									*/
+									
 									$cnt++;
 									$scnt++;
 								}
@@ -901,7 +915,7 @@
 		else
 		{
 			echo "<h1>Forschungslabor des Planeten ".$cp->name."</h1>";
-			$cp->resBox();
+			$cp->resBox($cu->properties->smallResBox);
 			echo "Das Forschungslabor wurde noch nicht gebaut!";
 		}
 	}

@@ -18,23 +18,9 @@
 		<div id="planetimage">
 			<img src="{$currentPlanetImage}" alt="Planet" style="width:100px;height:100px;" />
 		</div>
-		{literal}
-		<div id="planetname" 
-			onmouseover="if (document.getElementById('planetlist').style.display=='none') Effect.Appear('planetlist',{duration:0.1});" 
-			onmouseout="document.getElementById('planetlist').style.display='none'">
-		{/literal}
-			{$currentPlanetName}
-		</div>	
-		{literal}
-		<div id="planetlist" style="display:none;" 
-			onmouseover="this.style.display='block'" 
-			onmouseout="this.style.display='none'" 
-			>	
-		{/literal}
-				<div>
-					{$planetListImages}
-				</div>
-		</div>
+		<div id="planetname">
+			{$selectField}
+		</div>		
 	</div>
 	<div id="hbar">
 		<a href="?page=stats" id="navstats" onmouseover="hideAllHbarMenus();"></a>
@@ -91,8 +77,6 @@
 				if (document.getElementById('hbarmapslide').style.display=='') Effect.SlideUp('hbarmapslide',{duration:0.1}); 
 				return false;"></a>{/literal}
 	</div>
-
-
 	<div id="hbarmap">
 		<div id="hbarmapslide" style="display:none;">
 			<div>

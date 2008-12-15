@@ -64,7 +64,7 @@
 		echo "<h1>Raketensilo (Stufe ".$silo_level.") des Planeten ".$cp->name."</h1>";		
 		
 		// Ressourcen anzeigen
-		$cp->resBox();
+		$cp->resBox($cu->properties->smallResBox);
 
 		if ($cp->prodPower - $cp->usePower >= 0 && $cp->prodPower>0 && $werft_arr['buildlist_prod_percent']==1)
 		{
@@ -1120,7 +1120,7 @@
 		echo "<h1>Raketensilo des Planeten ".$cp->name."</h1>";		
 		
 		// Ressourcen anzeigen
-		$cp->resBox();
+		$cp->resBox($cu->properties->smallResBox);
 		echo "<h2>Fehler!</h2>Das Raketensilo wurde noch nicht gebaut!<br>";
 	}
 
