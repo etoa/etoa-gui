@@ -372,6 +372,10 @@
 				$tpl->assign("urlForum",FORUM_PATH);
 				$tpl->assign("helpcenterUrl",HELPCENTER_URL);
 				$tpl->assign("helpcenterOnclick",HELPCENTER_ONCLICK);
+				$tpl->assign("devcenterOnclick",DEVCENTER_ONCLICK);
+				$tpl->assign("bugreportUrl",BUGREPORT_URL);
+				
+				
 				$tpl->assign("chatUrl",CHAT_URL);
 				$tpl->assign("chatOnclick",CHAT_ONCLICK);
 						

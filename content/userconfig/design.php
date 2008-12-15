@@ -58,7 +58,7 @@
 
 			if ($designChange)
 			{
-				echo "<script type=\"text/javascript\">document.location='?page=userconfig&amp;mode=design'</script>";
+				echo "<script type=\"text/javascript\">document.location='?page=userconfig&mode=design'</script>";
 			}
 			
     }

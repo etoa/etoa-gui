@@ -43,6 +43,7 @@
 				if (document.getElementById('hbarallianceslide').style.display=='') Effect.SlideUp('hbarallianceslide',{duration:0.1}); 
 				if (document.getElementById('hbarsettingsslide').style.display=='') Effect.SlideUp('hbarsettingsslide',{duration:0.1}); 
 				if (document.getElementById('hbarhelpslide').style.display=='') Effect.SlideUp('hbarhelpslide',{duration:0.1}); 
+				if (document.getElementById('hbarlogoutslide').style.display=='') Effect.SlideUp('hbarlogoutslide',{duration:0.1}); 
 				return false;"></a>{/literal}		
 		{if $fleetAttack > 0}
 			<a href="?page=fleets" id="navfleetred" onmouseover="hideAllHbarMenus();"></a>
@@ -63,6 +64,7 @@
 				if (document.getElementById('hbarmapslide').style.display=='') Effect.SlideUp('hbarmapslide',{duration:0.1}); 
 				if (document.getElementById('hbarsettingsslide').style.display=='') Effect.SlideUp('hbarsettingsslide',{duration:0.1}); 
 				if (document.getElementById('hbarhelpslide').style.display=='') Effect.SlideUp('hbarhelpslide',{duration:0.1}); 
+				if (document.getElementById('hbarlogoutslide').style.display=='') Effect.SlideUp('hbarlogoutslide',{duration:0.1}); 
 				return false;"></a>{/literal}		
 		{if $buddyreq>0}<a href="?page=buddylist" id="navbuddylistred" onmouseover="hideAllHbarMenus();"></a>
 		{elseif $buddys > 0}<a href="?page=buddylist" id="navbuddylistgreen" onmouseover="hideAllHbarMenus();"></a>
@@ -72,14 +74,22 @@
 				if (document.getElementById('hbarallianceslide').style.display=='') Effect.SlideUp('hbarallianceslide',{duration:0.1}); 
 				if (document.getElementById('hbarmapslide').style.display=='') Effect.SlideUp('hbarmapslide',{duration:0.1}); 
 				if (document.getElementById('hbarhelpslide').style.display=='') Effect.SlideUp('hbarhelpslide',{duration:0.1}); 
+				if (document.getElementById('hbarlogoutslide').style.display=='') Effect.SlideUp('hbarlogoutslide',{duration:0.1}); 
 				return false;"></a>{/literal}
 		{literal}<a href="?page=help" id="navhelp" onmouseover="		
 				if (document.getElementById('hbarhelpslide').style.display=='none'){  Effect.SlideDown('hbarhelpslide',{duration:0.2}); }
 				if (document.getElementById('hbarsettingsslide').style.display=='') Effect.SlideUp('hbarsettingsslide',{duration:0.1}); 
 				if (document.getElementById('hbarallianceslide').style.display=='') Effect.SlideUp('hbarallianceslide',{duration:0.1}); 
 				if (document.getElementById('hbarmapslide').style.display=='') Effect.SlideUp('hbarmapslide',{duration:0.1}); 
+				if (document.getElementById('hbarlogoutslide').style.display=='') Effect.SlideUp('hbarlogoutslide',{duration:0.1}); 
 				return false;"></a>{/literal}		
-		<a href="?logout=1" id="navlogout" onmouseover="hideAllHbarMenus();"></a>
+		{literal}<a href="?logout=1" id="navlogout" onmouseover="		
+				if (document.getElementById('hbarlogoutslide').style.display=='none'){  Effect.SlideDown('hbarlogoutslide',{duration:0.2}); }
+				if (document.getElementById('hbarhelpslide').style.display==''){  Effect.SlideUp('hbarhelpslide',{duration:0.2}); }
+				if (document.getElementById('hbarsettingsslide').style.display=='') Effect.SlideUp('hbarsettingsslide',{duration:0.1}); 
+				if (document.getElementById('hbarallianceslide').style.display=='') Effect.SlideUp('hbarallianceslide',{duration:0.1}); 
+				if (document.getElementById('hbarmapslide').style.display=='') Effect.SlideUp('hbarmapslide',{duration:0.1}); 
+				return false;"></a>{/literal}
 	</div>
 
 
@@ -118,10 +128,23 @@
 				<a href="?page=help">Hilfe</a>
 				<a href="?page=techtree">Technikbaum</a>
 				<a href="?page=ticket">Ticketsystem</a>
+				<a href="#" onclick="window.open('{$bugreportUrl}');">Fehler melden</a>
+				<a href="#" onclick="{$helpcenterOnclick}">Häufige Fragen</a>
 				<a href="?page=contact">Über EtoA</a>
 			</div>
 		</div>
 	</div>
+	<div id="hbarlogout">
+		<div id="hbarlogoutslide" style="display:none;">
+			<div>
+				<a href="?logout=1">Logout</a>
+				<a href="#" onclick="window.open('{$urlForum}')">Forum</a>
+				<a href="#" onclick="{$chatOnclick}">Chat</a>
+				<a href="#" onclick="{$teamspeakOnclick}">Teamspeak</a>
+				<a href="#" onclick="{$rulesOnclick}">Regeln</a>
+			</div>
+		</div>
+	</div>	
 	
 	<div id="servertime">
 		{$serverTime}
