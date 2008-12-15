@@ -513,7 +513,7 @@
 				echo "<input type=\"hidden\" name=\"archived_msg_cnt\" value=\"".$archived_msg_cnt."\" />";
 				
 				// Nachrichten
-				echo "<table class=\"tbl\">";
+				tableStart("Nachrichten");
 				$res = dbquery("
 				SELECT
 	      	cat_id,
@@ -603,7 +603,7 @@
 					if ($ccnt>0)
 					{
 						echo "<tr>
-							<td class=\"tbltitle\" colspan=\"4\">".text2html($arr['cat_name'])." (".$ccnt." Nachrichten)</td>
+							<th colspan=\"4\">".text2html($arr['cat_name'])." (".$ccnt." Nachrichten)</th>
 							<td class=\"tbltitle\" style=\"text-align:center;\"><input type=\"button\" id=\"selectBtn[".$arr['cat_id']."]\" value=\"X\" onclick=\"xajax_messagesSelectAllInCategory(".$arr['cat_id'].",".$ccnt.",this.value)\"/></td>
 						</tr>";
 					}
