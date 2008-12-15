@@ -176,13 +176,6 @@
 	// Initialize XAJAX and load functions
 	require_once("inc/xajax.inc.php");
 
-	// Show HTML Header
-	Html::header();
-
-	// Show body
-	echo file_exists(CSS_STYLE."/template.php") ? '<body onload="preloadImages();">' : '<body>';
-	
-	initTT();
 	
 
 			// Referers prüfen
@@ -398,25 +391,38 @@
 				else
 					$tpl->assign("noteBox",false);
 					
+				$tpl->assign("gameTitle",$cfg->value('game_name')." ".$cfg->param1('game_name'));
+				
+				ob_start();
+				echo $xajax->printJavascript(XAJAX_DIR);		
+				$tpl->assign("xajaxJS",ob_get_clean());
+
+				ob_start();
+				initTT();
+				$tpl->assign("bodyTopStuff",ob_get_clean());			
+				
 				// Display header		
-				$tpl->display(getcwd()."/".CSS_STYLE."/header.tpl");
+				$tpl->display(getcwd()."/tpl/header.tpl");
 				
 				// Include content
+				ob_start();
 				require("inc/content.inc.php");
+				$tpl->assign("content",ob_get_clean());
 
 				$render_time = explode(' ',microtime());
 				$rtime = $render_time[1]+$render_time[0]-$render_starttime;
 				$tpl->assign("renderTime",round($rtime,3));
 				
-				//echo $query_counter;
+				// Display main template
+				$tpl->display(getcwd()."/".CSS_STYLE."/template.tpl");						
+
 				// Display footer
-				$tpl->display(getcwd()."/".CSS_STYLE."/footer.tpl");						
+				$tpl->display(getcwd()."/tpl/footer.tpl");
+
 			}
 			
 			$_SESSION['lastpage']=$page;
 			$_SESSION[ROUNDID] = $s;
 			dbclose();
 			$firstview = false; 
-
-	Html::footer();
 ?>

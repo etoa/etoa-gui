@@ -104,9 +104,9 @@
 			b.building_order;");
 		if (mysql_num_rows($bres)>0)
 		{
-			tableStart("Produktion pro Stunde und Energieverbrauch",'98%');
+			tableStart("Produktion pro Stunde und Energieverbrauch");
 			echo "<tr>
-						<th style=\"width:\">Geb&auml;ude</th>";
+						<th style=\"width:200px;\">Geb&auml;ude</th>";
 			echo "<th style=\"\">".RES_ICON_METAL."</th>";
 			echo "<th style=\"\">".RES_ICON_CRYSTAL."</th>";
 			echo "<th style=\"\">".RES_ICON_PLASTIC."</th>";
@@ -130,13 +130,13 @@
 				{
 					// Errechnen der Produktion pro Gebäude
           echo "<tr>
-          	<th style=\"width:170px;\">
+          	<td>
           		".$barr['building_name']." (".$barr['buildlist_current_level'].")";
           if ($barr['buildlist_prod_percent']==0)
           {
           	echo "<br/><span style=\"color:red;font-size:8pt;\">Produktion ausgeschaltet!</span>";
           }          		
-          echo "</th>";
+          echo "</td>";
           
           $bpb['metal'] = $bp['metal'] = $barr['building_prod_metal'] * pow($barr['building_production_factor'],$barr['buildlist_current_level']-1);
           $bpb['crystal'] = $bp['crystal'] = $barr['building_prod_crystal'] * pow($barr['building_production_factor'],$barr['buildlist_current_level']-1);

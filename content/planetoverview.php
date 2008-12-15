@@ -238,69 +238,68 @@
 			else
 				$tw = "Warmer Planet";
 				
-			iBoxStart("Übersicht");
+			tableStart("Übersicht");
+			echo "<tr><td colspan=\"2\" style=\"padding:0px;\">";
 			echo "<div style=\"position:relative;height:380px;padding:0px;background:#000 url('images/sunset.jpg');\">";
-			echo "<div style=\"position:absolute;left:20px;top:200px;\">
-			<b>Grösse</b> ".nf($conf['field_squarekm']['v']*$cp->fields)." km&sup2;<br/>
-			<b>Temperatur</b>	".$cp->temp_from."&deg;C bis ".$cp->temp_to."&deg;C ($tw) <br/>
-			<b>System</b> <a href=\"?page=cell&amp;id=".$cp->cellId()."&amp;hl=".$cp->id()."\">".$cp->getSectorSolsys()."</a>
-			<b>Position</b> ".$cp->pos."<br/>
-			<b>Kennung</b> <a href=\"?page=entity&amp;id=".$cp->id()."\">".$cp->id()."</a><br/>
-			<b>Stern</b> ".$cp->starTypeName." ".helpLink("stars")."<br/>
-			<b>Planetentyp</b> ".$cp->type()." ".helpLink("planets")."<br/>
-			<b>Felder</b> ".nf($cp->fields_used)." benutzt (".round($cp->fields_used/$cp->fields*100)."%), ".(nf($cp->fields))." total, ".$cp->fields_extra." extra<br/>";
+			echo "<div style=\"position:absolute;left:20px;bottom:20px;\">
+			<div style=\"float:left;width:110px;\"><b>Grösse</b></div> ".nf($conf['field_squarekm']['v']*$cp->fields)." km&sup2;<br style=\"clear:left;\"/>
+			<div style=\"float:left;width:110px;\"><b>Temperatur</b></div>	".$cp->temp_from."&deg;C bis ".$cp->temp_to."&deg;C ($tw) <br style=\"clear:left;\"/>
+			<div style=\"float:left;width:110px;\"><b>System</b></div> <a href=\"?page=cell&amp;id=".$cp->cellId()."&amp;hl=".$cp->id()."\">".$cp->getSectorSolsys()."</a> (Position ".$cp->pos.")<br style=\"clear:left;\"/>
+			<div style=\"float:left;width:110px;\"><b>Kennung</b></div> <a href=\"?page=entity&amp;id=".$cp->id()."\">".$cp->id()."</a><br style=\"clear:left;\"/>
+			<div style=\"float:left;width:110px;\"><b>Stern</b></div> ".$cp->starTypeName." ".helpLink("stars")."<br style=\"clear:left;\"/>
+			<div style=\"float:left;width:110px;\"><b>Planetentyp</b></div> ".$cp->type()." ".helpLink("planets")."<br style=\"clear:left;\"/>
+			<div style=\"float:left;width:110px;\"><b>Felder</b></div> ".nf($cp->fields_used)." benutzt (".round($cp->fields_used/$cp->fields*100)."%), ".(nf($cp->fields))." total, ".$cp->fields_extra." extra<br style=\"clear:left;\"/>";
 			if ($cp->debrisField)
 			{
-				echo "<b>Trümmerfeld:</b> 
+				echo "<div style=\"float:left;width:110px;\"><b>Trümmerfeld:</b></div> 
 				<span class=\"resmetal\">".nf($cp->debrisMetal,0,1)."</span>
 				<span class=\"rescrystal\">".nf($cp->debrisCrystal,0,1)."</span>
 				<span class=\"resfuel\">".nf($cp->debrisPlastic,0,1)."</span>
-				<br/>";
+				<br style=\"clear:left;\"/>";
 			}			
 			if ($cp->desc!="")			
-				echo "<b>Beschreibung</b> ".stripslashes($cp->desc)."<br/>";
+				echo "<div style=\"float:left;width:110px;\"><b>Beschreibung</b></div> ".stripslashes($cp->desc)."<br style=\"clear:left;\"/>";
 			if ($cp->isMain)				
-				echo "<b>Hauptplanet</b> Hauptplaneten können nicht invasiert oder aufgegeben werden!<br/>";
+				echo "<div style=\"float:left;width:110px;\"><b>Hauptplanet</b></div> Hauptplaneten können nicht invasiert oder aufgegeben werden!<br style=\"clear:left;\"/>";
 			echo "</div>";
 			echo "</div>";
-			iBoxEnd();
-			
-
-			iBoxStart("Details");
-			echo "<b>Produktion:</b> 
-			<span class=\"resmetal\">".nf($cp->prodMetal)." / h</span> 
-			<span class=\"rescrystal\">".nf($cp->prodCrystal)." / h</span>
-			<span class=\"resplastic\">".nf($cp->prodPlastic)." / h</span> 
-			<span class=\"resfuel\">".nf($cp->prodFuel)." / h</span> 
-			<span class=\"resfood\">".nf($cp->prodFood)." / h</span> 
-			<span class=\"respeople\">".nf($cp->prodPeople)." / h</span> 
-			<span class=\"respower\">".nf($cp->prodPower)."</span> 
-			<span class=\"respoweru\">".nf($cp->usePower)."</span>";			
-			echo "<br/><br/>
-			<b>Temperatureffekt:</b> 			
+			echo "</td></tr>";
+			echo "<tr>
+			<th>Produktion:</th><td>
+			<div class=\"resmetal\">".nf($cp->prodMetal,0,1)." ".RES_METAL." / h</div> 
+			<div class=\"rescrystal\">".nf($cp->prodCrystal,0,1)." ".RES_CRYSTAL." / h</div>
+			<div class=\"resplastic\">".nf($cp->prodPlastic,0,1)." ".RES_PLASTIC." / h</div> 
+			<div class=\"resfuel\">".nf($cp->prodFuel,0,1)." ".RES_FUEL." / h</div> 
+			<div class=\"resfood\">".nf($cp->prodFood,0,1)." ".RES_FOOD." / h</div> 
+			<div class=\"respeople\">".nf($cp->prodPeople,0,1)." Einwohner / h</div> 
+			<div class=\"respower\">".nf($cp->prodPower,0,1)." Energieproduktion</div> 
+			<div class=\"respoweru\">".nf($cp->usePower,0,1)." Energieverbrauch</div></td></tr>
+			<tr><th>Temperatureffekt ".helpLink("tempbonus").":</th><td>
 			<span style=\"background:url('images/heat_small.png') no-repeat;padding:1px 2px 5px 20px;\" />Wärmebonus: ";
-				$spw = $cp->solarPowerBonus();
-				if ($spw>=0)
-				{
-					echo "<span style=\"color:#0f0\">+".$spw."</span>";
-				}
-				else
-				{
-					echo "<span style=\"color:#f00\">".$spw."</span>";
-				}
-				echo " MW </span> &nbsp; 
-				<span style=\"background:url('images/ice_small.png') no-repeat;padding:1px 2px 5px 22px;\" />Kältebonus: ";
-				$spw = $cp->fuelProductionBonus();
-				if ($spw>=0)
-				{
-					echo "<span style=\"color:#0f0\">+".$spw."%</span>";
-				}
-				else
-				{
-					echo "<span style=\"color:#f00\">".$spw."%</span>";
-				}				
-				echo "</span> ".helpLink("tempbonus")."";
-			iBoxEnd();
+			$spw = $cp->solarPowerBonus();
+			if ($spw>=0)
+			{
+				echo "<span style=\"color:#0f0\">+".$spw."</span>";
+			}
+			else
+			{
+				echo "<span style=\"color:#f00\">".$spw."</span>";
+			}
+			echo " MW </span> <br/>
+			<span style=\"background:url('images/ice_small.png') no-repeat;padding:1px 2px 5px 22px;\" />Kältebonus: ";
+			$spw = $cp->fuelProductionBonus();
+			if ($spw>=0)
+			{
+				echo "<span style=\"color:#0f0\">+".$spw."%</span>";
+			}
+			else
+			{
+				echo "<span style=\"color:#f00\">".$spw."%</span>";
+			}				
+			echo "</span>
+			</td></tr>
+			";
+			tableEnd();
 			
 			/*
 			

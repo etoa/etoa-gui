@@ -297,25 +297,32 @@ function calcDemolishingWaitTime($dc,$cp)
 ********************/
 
 		//Gebäude ausbauen/abreissen/abbrechen
-		if (count($_POST)>0 && checker_verify())
+		if ((isset($_GET['id']) && $_GET['id'] >0) || (count($_POST)>0 && checker_verify()))
 		{
 			$bid = 0;
-			foreach ($_POST as $k => $v)
+			if (isset($_GET['id']) && $_GET['id'] >0)
 			{
-				if(stristr($k,'_x'))
+				$bid = $_GET['id'];
+			}
+			else
+			{
+				foreach ($_POST as $k => $v)
 				{
-					$bid = eregi_replace('show_([0-9]+)_x', '\1', $k);
-					break;
+					if(stristr($k,'_x'))
+					{
+						$bid = eregi_replace('show_([0-9]+)_x', '\1', $k);
+						break;
+					}
 				}
+				if ($bid==0 && isset($_POST['show']))
+				{
+					$bid = $_POST['show'];
+				}
+				if ($bid==0 && isset($_POST['id']))
+				{
+					$bid = $_POST['id'];
+				}			
 			}
-			if ($bid==0 && isset($_POST['show']))
-			{
-				$bid = $_POST['show'];
-			}
-			if ($bid==0 && isset($_POST['id']))
-			{
-				$bid = $_POST['id'];
-			}			
 			
 			// Gebäudedaten laden
 			$res = dbquery("
@@ -959,7 +966,7 @@ function calcDemolishingWaitTime($dc,$cp)
 			}
 			else
 				echo "<b>Fehler:</b> Geb&auml;ude nicht vorhanden!<br/><br/><a href=\"?page=$page\">&Uuml;bersicht</a>";
-			}
+		}
 
 /********************
 * Übersicht         *
@@ -1032,7 +1039,7 @@ function calcDemolishingWaitTime($dc,$cp)
 
 				while ($tarr = mysql_fetch_array($tres))
 				{
-					tableStart($tarr['type_name']);
+					tableStart($tarr['type_name'],720);
 
 						$cnt = 0; // Counter for current row
 						$scnt = 0; // Counter for shown buildings
@@ -1087,11 +1094,11 @@ function calcDemolishingWaitTime($dc,$cp)
 									$color = '#999';
 									if($use_img_filter)
 									{
-										$img = "inc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid."_middle.".IMAGE_EXT."&filter=na";
+										$img = "inc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid.".".IMAGE_EXT."&filter=na";
 									}
 									else
 									{
-										$img="".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid."_middle.".IMAGE_EXT."";
+										$img="".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid.".".IMAGE_EXT."";
 									}							
 									
 								}
@@ -1099,15 +1106,15 @@ function calcDemolishingWaitTime($dc,$cp)
 								elseif (isset($buildlist[$bid]['buildlist_build_type']) && $buildlist[$bid]['buildlist_build_type']==3)
 								{
 									$subtitle =  "Ausbau auf Stufe ".($b_level+1);
-									$tmtext = "<span style=\"color:#0f0\">Wird ausgebaut!<br/>Dauer: ".tf($end_time-time())."</span><br/>";
+									$tmtext = "<span style=\"color:#0f0\">Wird ausgebaut<br/>Dauer: ".tf($end_time-time())."</span><br/>";
 									$color = '#0f0';
 									if($use_img_filter)
 									{
-										$img = "inc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid."_middle.".IMAGE_EXT."&filter=building";
+										$img = "inc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid.".".IMAGE_EXT."&filter=building";
 									}
 									else
 									{
-										$img="".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid."_middle.".IMAGE_EXT."";
+										$img="".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid.".".IMAGE_EXT."";
 									}
 								}
 								// Wird abgerissen
@@ -1118,11 +1125,11 @@ function calcDemolishingWaitTime($dc,$cp)
 									$color = '#f90';
 									if($use_img_filter)
 									{
-										$img = "inc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid."_middle.".IMAGE_EXT."&filter=destructing";
+										$img = "inc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid.".".IMAGE_EXT."&filter=destructing";
 									}
 									else
 									{
-										$img="".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid."_middle.".IMAGE_EXT."";
+										$img="".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid.".".IMAGE_EXT."";
 									}
 								}
 								// Untätig
@@ -1133,22 +1140,22 @@ function calcDemolishingWaitTime($dc,$cp)
                 	$bc = calcBuildingCosts($bv,$b_level);
 									if($b_level<$bv['last_level'] && $cp->resMetal < $bc['metal'] || $cp->resCrystal < $bc['crystal']  || $cp->resPlastic < $bc['plastic']  || $cp->resFuel < $bc['fuel']  || $cp->resFood < $bc['food'])
 									{
-										$tmtext = "<span style=\"color:#f00\">Zuwenig Ressourcen f&uuml;r<br/>weiteren Ausbau!</span><br/>";
+										$tmtext = "<span style=\"color:#f00\">Zuwenig Ressourcen f&uuml;r weiteren Ausbau!</span><br/>";
 										$color = '#f00';
 										if($use_img_filter)
 										{
-											$img = "inc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid."_middle.".IMAGE_EXT."&filter=lowres";
+											$img = "inc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid.".".IMAGE_EXT."&filter=lowres";
 										}
 										else
 										{
-											$img="".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid."_middle.".IMAGE_EXT."";
+											$img="".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid.".".IMAGE_EXT."";
 										}
 									}
 									else
 									{
 										$tmtext = "";
 										$color = '#fff';
-										$img="".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid."_middle.".IMAGE_EXT."";
+										$img="".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid.".".IMAGE_EXT."";
 									}
 									
 									if ($b_level==0)
@@ -1161,7 +1168,7 @@ function calcDemolishingWaitTime($dc,$cp)
 									}
 									else
 									{
-										$subtitle = 'Gebaut';
+										$subtitle = 'Stufe '.$b_level;
 									}
 								}
 
@@ -1174,13 +1181,15 @@ function calcDemolishingWaitTime($dc,$cp)
 										echo "<tr>";
 									}
 
-									echo "<td class=\"tbldata\" style=\"color:".$color.";text-align:center;width:".CELL_WIDTH."px\">
-													<b>".$bv['name']."";
-													if ($b_level>0) echo ' '.$b_level;
-													echo "</b><br/>".$subtitle."<br/>
-													<input name=\"show_".$bid."\" type=\"image\" value=\"".$bid."\" src=\"".$img."\" ".tm($bv['name'],$tmtext.$bv['shortcomment'])." style=\"width:120px;height:120px;\" />
-									</td>\n";
-
+									echo "<td style=\"background:url('".$img."') no-repeat -10px 0px;width:180px;height:180px ;padding:0px;\">
+									<div style=\"position:relative;height:180px;\">
+									<div style=\"font-weight:bold;position:absolute;background:url('images/transheader1.png') no-repeat;width:130px;padding:3px;\">".$bv['name']."</div>";
+									if ($b_level>0) 
+									{
+										echo "<div style=\"text-align:right;font-size:20pt;font-weight:bold;background:url('images/transfooter1.png') no-repeat;position:absolute;right:0px;bottom:0px;width:60px;padding:3px;\">".$b_level."</div>";
+									}
+									echo "<a href=\"?page=$page&amp;id=".$bid."\" ".tm($bv['name'],"<b>".$subtitle."</b><br/>".$tmtext.$bv['shortcomment'])." style=\"display:block;height:180px;\">asa</a>";
+									echo "</div></td>\n";
 									$cnt++;
 									$scnt++;
 								}

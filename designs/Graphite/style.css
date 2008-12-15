@@ -396,7 +396,7 @@ div.infoboxtitle	{
 .infoboxcontent	{
 	border:1px solid #555;
 	color:#fff;
-	background:#9c9c9c url('images/cellpic3.gif') repeat;
+	background:#4E4E4F;
 	padding:8px;
 }
 
@@ -407,7 +407,7 @@ div.infoboxtitle	{
 }
 
 .tb th	{
-	background:#333 url('images/cellpic4.gif') repeat;
+	background:#242426;
 	border:1px solid #111;
 	text-align:left;
 	vertical-align:top;
@@ -416,7 +416,7 @@ div.infoboxtitle	{
 
 .tb td	{
 	color:#fff;
-	background:#9c9c9c  url('images/cellpic3.gif') repeat;
+	background:#4E4E4F;
 	border:1px solid #111;
 	text-align:left;
 	vertical-align:top;
@@ -434,7 +434,7 @@ div.infoboxtitle	{
 
 #resbox	{
 	margin-bottom:20px;
-	width:600px;
+	width:650px;
 }
 
 #resboxheader	{
@@ -448,5 +448,10 @@ div.infoboxtitle	{
 
 #resboxcontent	{
 	padding:5px;
-	background:#333 url('images/cellpic3.gif') repeat;
+	background:#242426;
 }
+
+.resfull	{
+	color:#f50;	
+}
+

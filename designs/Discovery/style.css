@@ -312,7 +312,7 @@ input,select,textarea	{
 /* Allgemeine Tabellen definition welche gestreckt ist (infobox) */
 .tbl, table.tb	{
 	width:100%;
-	margin:15px auto;
+	margin:15px 0px;
 	border:1px solid #ffffff;
 }
 
@@ -330,7 +330,7 @@ div.infoboxtitle	{
 	text-align:center;
 }
 
-td.infoboxtitle, .tb td.infoboxtitle	{
+td.infoboxtitle, .tb td.infoboxtitle, .tb th.infoboxtitle	{
 	font-size:10pt;
 	font-weight:bold;
 	background:#225 url(images/cellpic.gif);
@@ -1379,6 +1379,7 @@ td.havenTab:hover	{
 	 margin:15px 0px;
 }
 
+/* Resource */
 #resbox	{
 	margin-bottom:20px;
 	width:650px;
@@ -1398,4 +1399,8 @@ td.havenTab:hover	{
 #resboxcontent	{
 	padding:5px;
 	background:#333 url('images/cellpic3.gif') repeat;
+}
+
+.resfull	{
+	color:#f50;	
 }

@@ -2,7 +2,6 @@
 .search	{
 	background: #000 url('../images/search.png') 2px 1px no-repeat;
 	padding-left:20px;
-	padding-right:-20px;
 }
 
 .search:focus	{
@@ -16,7 +15,8 @@
 .bbtable th	{
 	padding:2px;
 }
-                              
+     
+/* Resource display */                         
                               
 img.resIcon	{
 	float:left;

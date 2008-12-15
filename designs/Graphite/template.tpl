@@ -36,33 +36,14 @@
 				</div>
 		</div>
 	</div>
-	
-	{literal}
-	<script type="text/javascript">
-		var scptEffectRunning = 0;
-		function hideAllHbarMenus()
-		{		
-			if (scptEffectRunning==0)
-			{
-				if (document.getElementById('hbarmapslide').style.display=='') Effect.SlideUp('hbarmapslide',{duration:0.1}); 
-				if (document.getElementById('hbarallianceslide').style.display=='') Effect.SlideUp('hbarallianceslide',{duration:0.1}); 
-				if (document.getElementById('hbarsettingsslide').style.display=='') Effect.SlideUp('hbarsettingsslide',{duration:0.1}); 
-				if (document.getElementById('hbarhelpslide').style.display=='') Effect.SlideUp('hbarhelpslide',{duration:0.1}); 
-			}
-		}
-	</script>
-	{/literal}
-		
 	<div id="hbar">
 		<a href="?page=stats" id="navstats" onmouseover="hideAllHbarMenus();"></a>
-		<a href="?page=cell" id="navmap" onmouseover="
-		{literal}
-				if (document.getElementById('hbarmapslide').style.display=='none' && scptEffectRunning==0) { scptEffectRunning=1; Effect.SlideDown('hbarmapslide',{duration:0.2,afterFinish:function(){scptEffectRunning=0;}}); }
+		{literal}<a href="?page=cell" id="navmap" onmouseover="		
+				if (document.getElementById('hbarmapslide').style.display=='none') { Effect.SlideDown('hbarmapslide',{duration:0.2}); }
 				if (document.getElementById('hbarallianceslide').style.display=='') Effect.SlideUp('hbarallianceslide',{duration:0.1}); 
 				if (document.getElementById('hbarsettingsslide').style.display=='') Effect.SlideUp('hbarsettingsslide',{duration:0.1}); 
 				if (document.getElementById('hbarhelpslide').style.display=='') Effect.SlideUp('hbarhelpslide',{duration:0.1}); 
-				return false;"></a>
-		{/literal}
+				return false;"></a>{/literal}		
 		{if $fleetAttack > 0}
 			<a href="?page=fleets" id="navfleetred" onmouseover="hideAllHbarMenus();"></a>
 			<script type="text/javascript">
@@ -77,38 +58,27 @@
 			</script>	
 		{/if}
 		<a href="?page=messages" id="navmessages" onmouseover="hideAllHbarMenus();"></a>
-		<a href="?page=alliance" id="navalliance" onmouseover="
-		{literal}
-				if (document.getElementById('hbarallianceslide').style.display=='none' && scptEffectRunning==0) { scptEffectRunning=1; Effect.SlideDown('hbarallianceslide',{duration:0.2,afterFinish:function(){scptEffectRunning=0;}}); } 
+		{literal}<a href="?page=alliance" id="navalliance" onmouseover="
+				if (document.getElementById('hbarallianceslide').style.display=='none') { Effect.SlideDown('hbarallianceslide',{duration:0.2}); } 
 				if (document.getElementById('hbarmapslide').style.display=='') Effect.SlideUp('hbarmapslide',{duration:0.1}); 
 				if (document.getElementById('hbarsettingsslide').style.display=='') Effect.SlideUp('hbarsettingsslide',{duration:0.1}); 
 				if (document.getElementById('hbarhelpslide').style.display=='') Effect.SlideUp('hbarhelpslide',{duration:0.1}); 
-				return false;"></a>
-		{/literal}
-		
-		{if $buddyreq>0}
-				<a href="?page=buddylist" id="navbuddylistred" onmouseover="hideAllHbarMenus();"></a>
-		{elseif $buddys > 0}
-				<a href="?page=buddylist" id="navbuddylistgreen" onmouseover="hideAllHbarMenus();"></a>
-		{else}
-				<a href="?page=buddylist" id="navbuddylist" onmouseover="hideAllHbarMenus();"></a>
-		{/if}
-		<a href="?page=userconfig" id="navuserconfig" onmouseover="
-		{literal}
-				if (document.getElementById('hbarsettingsslide').style.display=='none' && scptEffectRunning==0) { scptEffectRunning=1; Effect.SlideDown('hbarsettingsslide',{duration:0.2,afterFinish:function(){scptEffectRunning=0;}}); }
+				return false;"></a>{/literal}		
+		{if $buddyreq>0}<a href="?page=buddylist" id="navbuddylistred" onmouseover="hideAllHbarMenus();"></a>
+		{elseif $buddys > 0}<a href="?page=buddylist" id="navbuddylistgreen" onmouseover="hideAllHbarMenus();"></a>
+		{else}<a href="?page=buddylist" id="navbuddylist" onmouseover="hideAllHbarMenus();"></a>{/if}
+		{literal}<a href="?page=userconfig" id="navuserconfig" onmouseover="
+				if (document.getElementById('hbarsettingsslide').style.display=='none') { Effect.SlideDown('hbarsettingsslide',{duration:0.2}); }
 				if (document.getElementById('hbarallianceslide').style.display=='') Effect.SlideUp('hbarallianceslide',{duration:0.1}); 
 				if (document.getElementById('hbarmapslide').style.display=='') Effect.SlideUp('hbarmapslide',{duration:0.1}); 
 				if (document.getElementById('hbarhelpslide').style.display=='') Effect.SlideUp('hbarhelpslide',{duration:0.1}); 
-				return false;"></a>
-		{/literal}
-		<a href="?page=help" id="navhelp" onmouseover="
-		{literal}
-				if (document.getElementById('hbarhelpslide').style.display=='none' && scptEffectRunning==0){ scptEffectRunning=1;  Effect.SlideDown('hbarhelpslide',{duration:0.2,afterFinish:function(){scptEffectRunning=0;}}); }
+				return false;"></a>{/literal}
+		{literal}<a href="?page=help" id="navhelp" onmouseover="		
+				if (document.getElementById('hbarhelpslide').style.display=='none'){  Effect.SlideDown('hbarhelpslide',{duration:0.2}); }
 				if (document.getElementById('hbarsettingsslide').style.display=='') Effect.SlideUp('hbarsettingsslide',{duration:0.1}); 
 				if (document.getElementById('hbarallianceslide').style.display=='') Effect.SlideUp('hbarallianceslide',{duration:0.1}); 
 				if (document.getElementById('hbarmapslide').style.display=='') Effect.SlideUp('hbarmapslide',{duration:0.1}); 
-				return false;"></a>
-		{/literal}
+				return false;"></a>{/literal}		
 		<a href="?logout=1" id="navlogout" onmouseover="hideAllHbarMenus();"></a>
 	</div>
 
@@ -158,3 +128,5 @@
 	</div>
 	
 	<div id="contentcontainer">
+		{$content}
+	</div>

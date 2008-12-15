@@ -35,7 +35,6 @@
       $cu->properties->imageFilter=$_POST['image_filter'];
       $cu->properties->helpBox=$_POST['helpbox'];                          
       $cu->properties->noteBox=$_POST['notebox'];
-      $cu->properties->havenShipsButtons=$_POST['havenships_buttons'];
       $cu->properties->showAdds=$_POST['show_adds'];
 
       if($_POST['image_ext']!="" && $_POST['image_url']!="")
@@ -78,7 +77,7 @@
     
     //Design wählen
     echo "<tr>
-        <th width=\"36%\">Design w&auml;hlen:</th>
+        <th>Design w&auml;hlen:</th>
         <td width=\"64%\" colspan=\"4\">
                 <select name=\"css_style\" id=\"designSelector\" onchange=\"xajax_designInfo(this.options[this.selectedIndex].value);\">";
                 foreach ($designs as $k => $v)
@@ -95,7 +94,7 @@
 
     // Bildpacket wählen
     echo "<tr>
-            <th width=\"36%\">Bildpaket w&auml;hlen:</th>
+            <th>Bildpaket w&auml;hlen:</th>
             <td width=\"64%\" colspan=\"4\">
                 <select id=\"image_select\" name=\"image_select\" onchange=\"xajax_imagePackInfo(this.options[this.selectedIndex].value);\">";
                 echo "<option value=\"\">(Selbstdefiniert oder Standard)</option>";
@@ -113,7 +112,7 @@
 
     //Spielgrösse
     echo "<tr>
-            <th width=\"36%\">Spielgr&ouml;sse: (nur alte Designs)</th>
+            <th>Spielgr&ouml;sse: (nur alte Designs)</th>
             <td width=\"64%\" colspan=\"4\">
                 <select name=\"game_width\">";
                 for ($x=70;$x<=100;$x+=10)
@@ -128,7 +127,7 @@
 
     //Planetkreisgrösse
     echo "<tr>
-            <th width=\"36%\">Planetkreisgr&ouml;sse:</th>
+            <th>Planetkreisgr&ouml;sse:</th>
             <td width=\"64%\" colspan=\"4\">
               <select name=\"planet_circle_width\">";
               for ($x=450;$x<=700;$x+=50)
@@ -143,8 +142,8 @@
 
 		//Schiff/Def Ansicht (Einfach/Voll)
     echo "<tr>
-        		<th width=\"36%\">Schiff/Def Ansicht:</th>";
-      echo "<td width=\"16%\">
+        		<th>Schiff/Def Ansicht:</th>";
+      echo "<td>
       				<input type=\"radio\" name=\"item_show\" value=\"full\"";
       				if($cu->properties->itemShow=='full') echo " checked=\"checked\"";
       				echo " /> Volle Ansicht 
@@ -159,8 +158,8 @@
 
 		//Bildfilter (An/Aus)
     echo "<tr>
-        		<th width=\"36%\">Bildfilter:</th>";
-      echo "<td width=\"16%\">
+        		<th>Bildfilter:</th>";
+      echo "<td>
       				<input type=\"radio\" name=\"image_filter\" value=\"1\"";
       				if($cu->properties->imageFilter==1) echo " checked=\"checked\"";
       				echo "/> An  
@@ -174,8 +173,8 @@
         	
 			//Hilfefenster (Aktiviert/Deaktiviert)
       echo "<tr>
-        			<th width=\"36%\">Separates Hilfefenster:</th>
-        			<td width=\"16%\">
+        			<th>Separates Hilfefenster:</th>
+        			<td>
                   <input type=\"radio\" name=\"helpbox\" value=\"1\" ";
                   if ($cu->properties->helpBox==1) echo " checked=\"checked\"";
                   echo "/> Aktiviert
@@ -189,8 +188,8 @@
         
 			//Notizbox (Aktiviert/Deaktiviert)
       echo "<tr>
-        			<th width=\"36%\">Separater Notizbox:</th>
-        			<td width=\"16%\">
+        			<th>Separater Notizbox:</th>
+        			<td>
                   <input type=\"radio\" name=\"notebox\" value=\"1\" ";
                   if ($cu->properties->noteBox==1) echo " checked=\"checked\"";
                   echo "/> Aktiviert
@@ -202,25 +201,11 @@
         		</td>
       		</tr>";   
       		
-			// Hafen Buttons
-      echo "<tr>
-        			<th width=\"36%\">Vertausche Buttons in Hafen-Schiffauswahl:</th>
-        			<td width=\"16%\">
-                  <input type=\"radio\" name=\"havenships_buttons\" value=\"1\" ";
-                  if ($cu->properties->havenShipsButtons==1) echo " checked=\"checked\"";
-                  echo "/> Aktiviert
-              </td>
-              <td width=\"48%\" colspan=\"3\">
-                  <input type=\"radio\" name=\"havenships_buttons\" value=\"0\" ";
-                  if ($cu->properties->havenShipsButtons==0) echo " checked=\"checked\"";
-        					echo "/> Deaktiviert
-        		</td>
-      		</tr>";     
       		
 			// Werbebanner
       echo "<tr>
-        			<th width=\"36%\">Werbung anzeigen:</th>
-        			<td width=\"16%\">
+        			<th>Werbung anzeigen:</th>
+        			<td>
                   <input type=\"radio\" name=\"show_adds\" value=\"1\" ";
                   if ($cu->properties->showAdds==1) echo " checked=\"checked\"";
                   echo "/> Aktiviert
