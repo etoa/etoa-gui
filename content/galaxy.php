@@ -38,16 +38,16 @@
 	$cx_num = $cfg->param1('num_of_cells');
 	$cy_num = $cfg->param2('num_of_cells');
 	
-	echo "<h2>Galaxie-Grafik</h2>";
-	echo "<input type=\"button\" onclick=\"document.location='?page=map'\" value=\"Raumkarte des aktuellen Sektors\" /><br/><br/>";
+	echo "<h1>Galaxie</h1>";
+	iBoxStart("Karte",GALAXY_MAP_WIDTH."px");
 	echo "Anzeigen: <select onchange=\"document.getElementById('img').src='misc/map.image.php'+this.options[this.selectedIndex].value;\">
 	<option value=\"?t=".time()."\">Normale Galaxieansicht</option>
 	<option value=\"?type=populated&t=".time()."\">Bev&ouml;lkerte Systeme</option>
 	<option value=\"?type=own&t=".time()."\">Systeme mit eigenen Planeten</option>
 	<option value=\"?type=alliance&t=".time()."\">Systeme mit Allianzplaneten</option>
-	
 	</select><br/><br/>";
 	echo "<img src=\"misc/map.image.php\" alt=\"Galaxiekarte\" id=\"img\" alt=\"galaxymap\" usemap=\"#Galaxy\" style=\"border:none;\"/>";
+	iBoxEnd();
 	
 	echo "<map name=\"Galaxy\">\n";
 	$sec_x_size=GALAXY_MAP_WIDTH/$sx_num;
@@ -65,4 +65,6 @@
 	  $xcnt++;
 	}
 	echo "</map>\n";
+	echo "<input type=\"button\" onclick=\"document.location='?page=map'\" value=\"Raumkarte des aktuellen Sektors\" />";
+	
 ?>

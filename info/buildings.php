@@ -180,21 +180,35 @@ if (isset($_GET['id']))
 	    echo "<tr><td>".RES_FOOD."</td><td>".nf($arr['building_prod_food'])."</td><td>".nf($arr['building_store_food'])."</td></tr>";
 	    echo "<tr><td>Energie</td><td>".nf($arr['building_prod_metal'])."</td><td>-</td></tr>";
 	    tableEnd();
+
+	    echo "<b>Bereitgestellter Wohnraum:</b> ".nf($arr['building_people_place'])." Plätze";
+
     }
 
     // Wohnmodul
     elseif ($arr['building_id']==7)
     {
+			$pbarr = mysql_fetch_row(dbquery("SELECT building_people_place FROM buildings WHERE building_id=6;"));
+			echo "Beachte das es einen Grundwohnraum für <b>".nf($conf['user_start_people']['p1'])."</b> Menschen pro Planet gibt. Ebenfalls bietet die
+			<a href=\"?page=help&amp;site=buildings&amp;id=6\">Planetenbasis</a> Platz für <b>".$pbarr[0]."</b> Menschen.<br/>";
+
 	    tableStart("Platz f&uuml;r Bewohner");
-	    echo "<tr><th>Stufe</th><th>Wohnplatz</th></tr>";
-	
+	    echo "<tr>
+	    	<th>Stufe</th>
+	    	<th>Wohnplatz</th>
+	    	<th>Wohnplatz mit Grundbonus und Planetenbasis</th>
+	    	</tr>";
 	    for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
 	    {
 	      $prod_item = round($arr['building_people_place'] * pow($arr['building_store_factor'],$level-1));
 	      if($level==$currentLevel)
-	         echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
+	         echo "<tr><td class=\"tbldata2\">$level</td>
+	         <td class=\"tbldata2\">".nf($prod_item)."</td>
+	         <td class=\"tbldata2\">".nf($prod_item+$pbarr[0]+$conf['user_start_people']['p1'])."</td>
+	         </tr>";
 	      else
-	             echo "<tr><td>$level</td><td>".nf($prod_item)."</td></tr>";
+	      	echo "<tr><td>$level</td><td>".nf($prod_item)."</td>
+	      	<td>".nf($prod_item+$pbarr[0]+$conf['user_start_people']['p1'])."</td></tr>";
 	    }
 	    tableEnd();
     }

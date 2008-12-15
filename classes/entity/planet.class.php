@@ -332,12 +332,12 @@
 		{
 			$cfg = Config::getInstance();
 
-			$style0="class=\"tbldata\"";
-			$style1="class=\"tbldata\"";
-			$style2="class=\"tbldata\"";
-			$style3="class=\"tbldata\"";
-			$style4="class=\"tbldata\"";
-			$style5="class=\"tbldata\"";
+			$style0="";
+			$style1="";
+			$style2="";
+			$style3="";
+			$style4="";
+			$style5="";
 			
 			$store_err=array();
 
@@ -386,34 +386,31 @@
 			}
 			else
 			{
-				$style6="style=\"color:#0f0\"";
+				$style6="";
 				$store_msg[7] = "";
 				$store_err[7] = "";
 				$power_rest = floor($this->prodPower)-floor($this->usePower);
 			}
-			tableStart("Ressourcen");
-			echo "<tr>
-			<th>".RES_ICON_METAL." ".RES_METAL."</th>
-			<th>".RES_ICON_CRYSTAL." ".RES_CRYSTAL."</th>
-			<th>".RES_ICON_PLASTIC." ".RES_PLASTIC."</th>
-			<th>".RES_ICON_FUEL." ".RES_FUEL."</th>
-			<th>".RES_ICON_FOOD." ".RES_FOOD."</th>
-			<th>".RES_ICON_PEOPLE." Bewohner</th>
-			<th>".RES_ICON_POWER." Energie</th>
-			</tr><tr>
-			<td $style0 ".$store_msg[1].">".nf(floor($this->resMetal))." t</td>
-			<td $style1 ".$store_msg[2].">".nf(floor($this->resCrystal))." t</td>
-			<td $style2 ".$store_msg[3].">".nf(floor($this->resPlastic))." t</td>
-			<td $style3 ".$store_msg[4].">".nf(floor($this->resFuel))." t</td>
-			<td $style4 ".$store_msg[5].">".nf(floor($this->resFood))." t</td>
-			<td $style5 ".$store_msg[6].">".nf(floor($this->people))."</td>
-			<td $style6 ".$store_msg[7].">".nf($power_rest)." MW</td>
-			</tr>
-			<td colspan=\"7\" id=\"resprogress\" style=\"height:10px;background:#fff;text-align:center;\"></td>";
-			tableEnd();
-			jsProgressBar("resprogress",$this->updated,($this->updated + $cfg->value("res_update")),650);
+			
+			echo "<div id=\"resbox\">
+			<div id=\"resboxheader\">Resourcen</div>
+			<div id=\"resboxcontent\">			
+			<span class=\"resmetal\" ".mTT(RES_METAL,"<img src=\"images/resources/metal.png\" style=\"float:left;margin-right:5px;\"/> <b>Vorhanden:</b> ".nf($this->resMetal)."<br/><b>Speicher:</b> ".nf($this->storeMetal)."<br style=\"clear:both;\"/>")." $style0>".nf($this->resMetal,0,1)."</span>
+			<span class=\"rescrystal\" ".mTT(RES_CRYSTAL,"<img src=\"images/resources/crystal.png\" style=\"float:left;margin-right:5px;\"/> <b>Vorhanden:</b> ".nf($this->resCrystal)."<br/><b>Speicher:</b> ".nf($this->storeCrystal)."<br style=\"clear:both;\"/>")." $style1>".nf($this->resCrystal,0,1)."</span>
+			<span class=\"resplastic\" ".mTT(RES_PLASTIC,"<img src=\"images/resources/plastic.png\" style=\"float:left;margin-right:5px;\"/> <b>Vorhanden:</b> ".nf($this->resPlastic)."<br/><b>Speicher:</b> ".nf($this->storePlastic)."<br style=\"clear:both;\"/>")." $style2>".nf($this->resPlastic,0,1)."</span>
+			<span class=\"resfuel\" ".mTT(RES_FUEL,"<img src=\"images/resources/fuel.png\" style=\"float:left;margin-right:5px;\"/> <b>Vorhanden:</b> ".nf($this->resFuel)."<br/><b>Speicher:</b> ".nf($this->storeFuel)."<br style=\"clear:both;\"/>")." $style3>".nf($this->resFuel,0,1)."</span>
+			<span class=\"resfood\" ".mTT(RES_FOOD,"<img src=\"images/resources/food.png\" style=\"float:left;margin-right:5px;\"/> <b>Vorhanden:</b> ".nf($this->resFood)."<br/><b>Speicher:</b> ".nf($this->storeFood)."<br style=\"clear:both;\"/>")." $style4>".nf($this->resFood,0,1)."</span>
+			<span class=\"respeople\" ".mTT("Bevölkerung","<img src=\"images/resources/people.png\" style=\"float:left;margin-right:5px;\"/> <b>Vorhanden:</b> ".nf($this->people)."<br/><b>Wohnraum:</b> ".nf($this->people_place)."<br style=\"clear:both;\"/>")." $style5>".nf($this->people,0,1)."</span>
+			<span class=\"respower\" ".mTT(RES_POWER,"<img src=\"images/resources/power.png\" style=\"float:left;margin-right:5px;\"/> <b>Verfügbar:</b> ".nf($power_rest)."<br/><b>Verbrauch:</b> ".nf($this->usePower)."<br style=\"clear:both;\"/>")." $style6>".nf($power_rest,0,1)."</span>
+			</div>
+			</div>";
+			
+			/*
+//			<td colspan=\"7\" id=\"resprogress\" style=\"height:10px;background:#fff;text-align:center;\"></td>";
+//		jsProgressBar("resprogress",$this->updated,($this->updated + $cfg->value("res_update")),650);
+*/
 		}
-
+		
 		/**
 		* Changes resources on a planet
 		*/

@@ -480,16 +480,30 @@
 	/**
 	* Format number
 	*/
-	function nf($number,$colorize=0)	// Number format
+	function nf($number,$colorize=0,$ex=0)	// Number format
 	{
+		if ($ex==1)
+		{
+			if ($number>1000000000)
+				$n = round($number/1000000000,3)." G";
+			elseif ($number>1000000)
+				$n = round($number/1000000,3)." M";
+			elseif ($number>1000)
+				$n = round($number/1000,3)." K";
+			else
+				$n = round($number,0);
+			return $n;
+		}
+		else
+			$n = number_format($number,0,",","`");
 		if ($colorize==1)
 		{
 			if ($number>0)
-				return "<span style=\"color:#0f0\">".number_format($number,0,",","`")."</span>";
+				return "<span style=\"color:#0f0\">".$n."</span>";
 			if ($number<0)
-				return "<span style=\"color:#f00\">".number_format($number,0,",","`")."</span>";
+				return "<span style=\"color:#f00\">".$n."</span>";
 		}
-		return number_format($number,0,",","`");
+		return $n;
 	}
 
 	/**
@@ -1132,7 +1146,7 @@
 		}
 		
 		if ($title!="")
-			echo "<tr><td class=\"infoboxtitle\" colspan=\"20\">$title</td></tr>";
+			echo "<tr><th class=\"infoboxtitle\" colspan=\"20\">$title</th></tr>";
 	}
 
 	function tableEnd()
@@ -1661,9 +1675,9 @@
 	function check_buddys_online($id)
 	{
 		global $conf;
-		return mysql_num_rows(dbquery("
+		$res = dbquery("
 			SELECT
-				user_id
+				COUNT(user_id)
 			FROM
 				buddylist AS bl
 				INNER JOIN users AS u
@@ -1671,7 +1685,23 @@
 				AND bl_user_id='".$id."'
 				AND bl_allow=1
 				AND user_acttime>".(time()-$conf['online_threshold']['v']*60).";
-		"));
+		");
+		$arr = mysql_fetch_row($res);
+		return $arr[0];		
+	}
+
+	function check_buddy_req($id)
+	{
+		$res=dbquery("
+			SELECT
+		    COUNT(bl_id) 
+			FROM
+		    buddylist
+		  WHERE
+		  	bl_buddy_id='".$id."'
+		    AND bl_allow=0");
+		$arr = mysql_fetch_row($res);
+		return $arr[0];
 	}
 
 	/**

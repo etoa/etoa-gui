@@ -23,7 +23,12 @@
     
     if (isset($_POST['data_submit_design']) && $_POST['data_submit_design']!="")
     {
-	    $cu->properties->cssStyle=$_POST['css_style'];
+    	$designChange = false;
+    	if ($cu->properties->cssStyle != $_POST['css_style'])
+    	{
+	    	$cu->properties->cssStyle=$_POST['css_style'];
+	    	$designChange=true;
+    	}
       $cu->properties->gameWidth=$_POST['game_width'];
       $cu->properties->planetCircleWidth=$_POST['planet_circle_width'];
       $cu->properties->itemShow=$_POST['item_show'];
@@ -49,8 +54,12 @@
       }
       
       success_msg("Design-Daten wurden geändert!");
-      $cu->addToUserLog("settings","{nick} ändert das Design.",0);
+      //$cu->addToUserLog("settings","{nick} ändert das Design.",0);
 
+			if ($designChange)
+			{
+				echo "<script type=\"text/javascript\">document.location='?page=userconfig&amp;mode=design'</script>";
+			}
 			
     }
 		if (isset($_GET['changes']) && $_GET['changes']==1)

@@ -50,18 +50,19 @@
 					<!-- Fading blink text-->
 					<script type="text/javascript" src="js/fader.js"></script>
 					
-					<!-- Tooltip -->
-				  <script src="js/jquery-1.2.5.min.js" type="text/javascript"></script>
-				  <script src="js/jquery.hoverIntent.js" type="text/javascript"></script>
-				  <script src="js/jquery.cluetip.js" type="text/javascript"></script>
-				  <script type="text/javascript">
-						$(document).ready(function() {
-					  $('.cluetip').cluetip({width: '300px', showTitle: false,tracking: true,positionBy: 'mouse'});
-						});
-				 	</script>
-  
-  				<link rel="stylesheet" href="css/jquery.cluetip.css" type="text/css" />
+					<!--
+					<script src="js/prototype.lite.js " type="text/javascript"></script>				
+					<script src="js/moofx/moo.fx.js" type="text/javascript"></script>				
+					<script src="js/moofx/moo.fx.pack.js" type="text/javascript"></script>				
+					<script src="js/moofx/moo.fx.utils.js" type="text/javascript"></script>				
+					<script src="js/moofx/moo.fx.accordion.js" type="text/javascript"></script>				
+					<script src="js/moofx/moo.fx.transitions.js" type="text/javascript"></script>				
+					-->
 					
+					<script src="js/prototype.js" type="text/javascript"></script>
+					<script src="js/scriptaculous/scriptaculous.js" type="text/javascript"></script>
+					
+										
 				
 				</head> 		
 			<?PHP	

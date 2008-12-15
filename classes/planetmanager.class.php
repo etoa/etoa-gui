@@ -124,13 +124,15 @@
 			return $str;
 		}		
 
-		function getLinkList()
+		function getLinkList($images=0)
 		{
 			global $s,$page;
 			$this->load();
 			ob_start();			
 			foreach ($this->itemObjects as $i)
 			{
+				if ($images==1)
+					echo "<img src=\"".$i->imagePath()."\" alt=\"thumb\" />";
 				if ($s['cpid']==$i->id())
 					echo "<a href=\"?page=$page&amp;planet_id=".$i->id()."\"><b>".$i."</b></a>\n";
 				else

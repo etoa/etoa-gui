@@ -1,0 +1,452 @@
+body,html	{
+	padding:0px;
+	margin:0px;	
+	height:100%;
+}
+
+body {
+	background:#000 url('images/mainbg.jpg') repeat;
+	color: white;
+	font-family:verdana, sans-serif, arial;
+	font-size: 10pt;
+}
+
+h1,h2,h3	{
+	font-family:verdana;
+}
+
+h1	{
+	font-size:17pt;
+}
+h2	{
+	font-size:15pt;
+}
+
+input[type="button"],input[type="submit"]	{
+	background:url('images/button1.png') repeat-x;
+	color:#fff;
+	border:none;
+	height:30px;
+	font-weight:bold;	
+}
+
+input[type="button"]:hover,input[type="submit"]:hover	{
+	background:url('images/button2.png') repeat-x;
+}
+
+input,select,textarea	{
+	color:#ddd;
+	border:1px solid #777;
+	background:#242426;
+	padding:4px;
+	font-family:verdana, sans-serif, arial;
+	font-size: 10pt;
+}
+
+a	{
+	color:#BF9C77;	
+	font-weight:bold;
+	text-decoration:none;
+}
+
+a:hover	{
+	color:#896846;	
+	font-weight:bold;	
+}
+
+#sidebar	{
+	position:absolute;
+	left:0px;
+	top:0px;
+	width:204px;
+	margin:0px;
+	padding:0px;	
+	height:610px;
+	background:url('images/sidebar.png') no-repeat;
+	z-index:1;
+}
+
+#logo	{
+	display:block;
+	position:absolute;
+	left:0px;
+	top:0px;	
+	width:200px;
+	height:50px;
+}
+
+#logo:hover	{
+	background:url('images/sidebarh.png') 0px 0px no-repeat;
+}
+
+#navcontainer	{
+	position:absolute;
+	left:0px;
+	top:223px;
+	width:196px;
+	margin:0px;
+	padding:0px;	
+}
+
+#planetname	{
+	position:absolute;
+	left:10px;
+	top:186px;	
+	font-family: verdana, sans-serif, arial;
+	font-size: 10pt;	
+	width:190px;
+	cursor:pointer;
+}
+
+#planetimage	{
+	position:absolute;
+	left:40px;
+	top:65px;	
+}
+
+#planetlist	{
+	position:absolute;
+	left:195px;
+	top:182px;	
+	font-family: verdana, sans-serif, arial;
+	font-size: 10pt;	
+	background:#000;
+	padding:0px;
+	width:220px;
+	z-index:500;
+	border:1px solid #999;	
+	border-left:none;
+}
+
+#planetlist img	{
+	background:#000;
+	float:left;	
+	margin-right:10px;
+	height:20px;
+}
+
+#planetlist a	{
+	display:block;
+	padding:1px 1px 0px 1px;
+	font-size:10pt;
+	color:#fff;
+	text-decoration:none;
+	height:19px;
+}
+#planetlist a:after	{
+	clear:both;
+	content:' ';
+}
+
+#planetlist a:hover	{
+	color:#B98A5E;
+	text-decoration:underline;
+}
+
+#contentcontainer	{
+	padding-left:60px;
+	position:absolute;
+	left:201px;
+	top:45px;	
+	padding-bottom:20px;
+	text-align:left;
+}
+
+#navcontainer a	{
+	display:block;
+	width:194px;
+	height:31px;
+}
+
+#navplanetoverview:hover	{
+	background:url('images/sidebarh.png') 0px -223px no-repeat;
+}
+#naveconomy:hover	{
+	background:url('images/sidebarh.png') 0px -254px no-repeat;
+}
+#navpopulation:hover	{
+	background:url('images/sidebarh.png') 0px -285px no-repeat;
+}
+#navhaven:hover	{
+	background:url('images/sidebarh.png') 0px -316px no-repeat;
+}
+#navbuildings:hover	{
+	background:url('images/sidebarh.png') 0px -347px no-repeat;
+}
+#navresearch:hover	{
+	background:url('images/sidebarh.png') 0px -378px no-repeat;
+}
+#navshipyard:hover	{
+	background:url('images/sidebarh.png') 0px -409px no-repeat;
+}
+#navdefense:hover	{
+	background:url('images/sidebarh.png') 0px -440px no-repeat;
+}
+#navmarket:hover	{
+	background:url('images/sidebarh.png') 0px -471px no-repeat;
+}
+#navcrypto:hover	{
+	background:url('images/sidebarh.png') 0px -502px no-repeat;
+}
+#navrecycle:hover	{
+	background:url('images/sidebarh.png') 0px -533px no-repeat;
+}
+
+#hbar	{
+	position:absolute;
+	right:0px;
+	top:0px;
+	text-align:right;
+	background:url('images/hbar.png') top right no-repeat;
+	height:185px;
+	width:476px;
+}
+
+#hbar a	{
+	display:block;
+	position:absolute;
+	height:50px;
+}
+
+#navstats	{
+	left:25px;
+	width:54px;
+}
+#navstats:hover	{
+	background:url('images/hbarh.png') -25px 0px no-repeat;
+}
+#navmap{
+	left:80px;
+	width:52px;
+}
+#navmap:hover	{
+	background:url('images/hbarh.png') -80px 0px no-repeat;
+}
+#navfleet{
+	left:133px;
+	width:50px;
+}
+#navfleet:hover	{
+	background:url('images/hbarh.png') -133px 0px no-repeat;
+}
+#navfleetred {
+	left:133px;
+	width:50px;
+	background:url('images/hbarr.png') -133px 0px no-repeat;
+}
+#navmessages	{
+	left:184px;
+	width:64px;
+}
+#navmessages:hover	{
+	background:url('images/hbarh.png') -184px 0px no-repeat;
+}
+#navmessagesgreen	{
+	left:184px;
+	width:64px;
+	background:url('images/hbarg.png') -184px 0px no-repeat;
+}
+#navalliance{
+	left:249px;
+	width:46px;
+}
+#navalliance:hover	{
+	background:url('images/hbarh.png') -249px 0px no-repeat;
+}
+#navbuddylist	{
+	left:296px;
+	width:50px;
+}
+#navbuddylistgreen	{
+	left:296px;
+	width:50px;
+	background:url('images/hbarg.png') -296px 0px no-repeat;
+}
+#navbuddylistred	{
+	left:296px;
+	width:50px;
+	background:url('images/hbarr.png') -296px 0px no-repeat;
+}
+#navbuddylist:hover,#navbuddylistgreen:hover,#navbuddylistred:hover	{
+	background:url('images/hbarh.png') -296px 0px no-repeat;
+}
+#navuserconfig{
+	left:347px;
+	width:43px;
+}
+#navuserconfig:hover	{
+	background:url('images/hbarh.png') -347px 0px no-repeat;
+}
+#navhelp{
+	left:391px;
+	width:35px;
+}
+#navhelp:hover	{
+	background:url('images/hbarh.png') -391px 0px no-repeat;
+}
+#navlogout{
+	left:427px;
+	width:45px;
+}
+#navlogout:hover	{
+	background:url('images/hbarh.png') -427px 0px no-repeat;
+}
+
+
+
+#hbarmap {
+	position:absolute;
+	right:280px;
+	top:53px;
+	padding:0px;
+	text-align:left;
+	background:#333;
+	border:1px solid #999;
+	border-top:none;
+	z-index:500;
+}
+
+#hbaralliance	{
+	position:absolute;
+	right:140px;
+	top:53px;
+	padding:0px;
+	text-align:left;
+	background:#333;
+	border:1px solid #999;
+	border-top:none;
+	z-index:501;
+}
+
+#hbarsettings	{	
+	position:absolute;
+	right:40px;
+	top:53px;
+	padding:0px;
+	text-align:left;
+	background:#333;
+	border:1px solid #999;
+	border-top:none;
+	z-index:502;
+}
+
+#hbarhelp	{
+	position:absolute;
+	right:1px;
+	top:53px;
+	padding:0px;
+	text-align:left;
+	background:#333;
+	border:1px solid #999;
+	border-top:none;
+	z-index:503;	
+}
+
+#hbaralliance a,#hbarmap a, #hbarsettings	a,#hbarhelp a	{
+	display:block;
+	color:#fff;
+	text-decoration:none;
+	padding:5px;
+}
+#hbaralliance a:hover, #hbarmap a:hover, #hbarsettings	a:hover, #hbarhelp a:hover	{
+	color:#B98A5E;
+}
+
+
+#servertime	{
+	position:absolute;
+	left:125px;
+	top:65px;
+	z-index:300;
+	color:#fff;
+	font-size:8pt;
+}
+
+
+/****************** 
+* Game relevant  *
+******************/
+
+.boxLayout	{
+	 margin:15px 0px;
+}
+
+/* Infoboxes and -tables */
+div.infoboxtitle	{
+	background:url('images/bar.png') no-repeat;
+	height:26px;
+	color:#fff;
+	font-weight:bold;
+	padding-left:20px;
+	padding-top:5px;
+	margin-left:-1px;
+}
+
+.tb th.infoboxtitle	{
+	background:url('images/bar.png') no-repeat;
+	height:31px;
+	color:#fff;
+	font-weight:bold;
+	padding-left:20px;
+	text-align:left;
+	vertical-align:middle;
+	border:none;
+}
+
+.infoboxcontent	{
+	border:1px solid #555;
+	color:#fff;
+	background:#9c9c9c url('images/cellpic3.gif') repeat;
+	padding:8px;
+}
+
+/* Tables */
+ table.tb	{
+ 	border-collapse:collapse;	
+
+}
+
+.tb th	{
+	background:#333 url('images/cellpic4.gif') repeat;
+	border:1px solid #111;
+	text-align:left;
+	vertical-align:top;
+	padding:2px;
+}
+
+.tb td	{
+	color:#fff;
+	background:#9c9c9c  url('images/cellpic3.gif') repeat;
+	border:1px solid #111;
+	text-align:left;
+	vertical-align:top;
+	padding:2px 2px 2px 5px;
+}
+
+/* Map */
+#outerspacetbl	{
+	border-collapse:collapse;
+	background:#000;
+		
+}
+
+/* Resbox */
+
+#resbox	{
+	margin-bottom:20px;
+	width:600px;
+}
+
+#resboxheader	{
+	background:url('images/bar.png') -1px 0px no-repeat;
+	height:26px;
+	color:#fff;
+	font-weight:bold;
+	padding-left:20px;
+	padding-top:5px;
+}
+
+#resboxcontent	{
+	padding:5px;
+	background:#333 url('images/cellpic3.gif') repeat;
+}

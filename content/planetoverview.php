@@ -40,10 +40,11 @@
 			echo '<script type="text/javascript" src="js/planetname.js"></script>';
 			echo "<form action=\"?page=$page\" method=\"POST\" style=\"text-align:center;\">";
 			tableStart("Hier den neuen Namen eingeben:");
-			echo "<tr><th class=\"tbltitle\">Name:</th><td class=\"tbldata\"><input type=\"text\" name=\"planet_name\" id=\"planet_name\" value=\"".$cp->name."\" length=\"16\" maxlength=\"15\"></td></tr>";
-			echo "<tr><th class=\"tbltitle\">Beschreibung:</th><td class=\"tbldata\"><textarea name=\"planet_desc\" rows=\"2\" cols=\"30\">".stripslashes($cp->desc)."</textarea></td></tr>";
+			echo "<tr><th class=\"tbltitle\">Name:</th><td>
+			<input type=\"text\" name=\"planet_name\" id=\"planet_name\" value=\"".$cp->name."\" length=\"16\" maxlength=\"15\" /></td></tr>";
+			echo "<tr><th class=\"tbltitle\">Beschreibung:</th><td><textarea name=\"planet_desc\" rows=\"2\" cols=\"30\">".stripslashes($cp->desc)."</textarea></td></tr>";
 			tableEnd();
-			echo "<input type=\"submit\" name=\"submit_change\" value=\"Speichern\"> &nbsp; ";
+			echo "<input type=\"submit\" name=\"submit_change\" value=\"Speichern\" /> &nbsp; ";
 			echo '<input onclick="GenPlot();" type="button" value="Name generieren" /> &nbsp; ';
 			echo '<input onclick="document.location=\'?page='.$page.'\';" type="button" value="Abbrechen" /> &nbsp; ';
 			echo "</form>";
@@ -164,12 +165,12 @@
 				echo "<tr><th class=\"tbltitle\">Name</th><th class=\"tbltitle\">Stufe</th><th class=\"tbltitle\">Felder</th></tr>";
 				while ($arr=mysql_fetch_array($res))
 				{
-					echo "<tr><th class=\"tbltitle\">".text2html($arr['name'])."</th>";
-					echo "<td class=\"tbldata\">".nf($arr['cnt'])."</td>";
-					echo "<td class=\"tbldata\">".nf($arr['fields'])."</td></tr>";
+					echo "<tr><th>".text2html($arr['name'])."</th>";
+					echo "<td>".nf($arr['cnt'])."</td>";
+					echo "<td>".nf($arr['fields'])."</td></tr>";
 					$fcnt+=$arr['fields'];
 				}
-				echo "<tr><th class=\"tbltitle\" colspan=\"2\">Total</th><td class=\"tbldata\">".nf($fcnt)."</td></tr>";
+				echo "<tr><th colspan=\"2\">Total</th><td>".nf($fcnt)."</td></tr>";
 				tableEnd();
 			}
 			else
@@ -193,15 +194,15 @@
 			{
 				$dfcnt=0;
 				tableStart("Felderbenutzung durch Verteidigungsanlagen",'48%');
-				echo "<tr><th class=\"tbltitle\">Name</th><th class=\"tbltitle\">Anzahl</th><th class=\"tbltitle\">Felder</th></tr>";
+				echo "<tr><th>Name</th><th>Anzahl</th><th>Felder</th></tr>";
 				while ($arr=mysql_fetch_array($res))
 				{
-					echo "<tr><th class=\"tbltitle\">".text2html($arr['name'])."</th>";
-					echo "<td class=\"tbldata\">".nf($arr['cnt'])."</td>";
-					echo "<td class=\"tbldata\">".nf($arr['fields'])."</td></tr>";
+					echo "<tr><th>".text2html($arr['name'])."</th>";
+					echo "<td>".nf($arr['cnt'])."</td>";
+					echo "<td>".nf($arr['fields'])."</td></tr>";
 					$dfcnt+=$arr['fields'];
 				}
-				echo "<tr><th class=\"tbltitle\" colspan=\"2\">Total</th><td class=\"tbldata\">".nf($dfcnt)."</td></tr>";
+				echo "<tr><th colspan=\"2\">Total</th><td>".nf($dfcnt)."</td></tr>";
 				tableEnd();
 			}
 			else
@@ -228,36 +229,119 @@
 		 	echo "<h1>&Uuml;bersicht &uuml;ber den Planeten ".$cp->name."</h1>";
 			$cp->resBox();
 
+			$tg = ($cfg->param1('planet_temp')+$cfg->param2('planet_temp'))/2;
+			$tp = ($cp->temp_from+$cp->temp_to)/2;
+			if ($tp<$tg/3)
+				$tw = "Kalter Planet";
+			elseif ($tp<$tg*2/3)
+				$tw = "Gemässigter Planet";
+			else
+				$tw = "Warmer Planet";
+				
+			iBoxStart("Übersicht");
+			echo "<div style=\"position:relative;height:380px;padding:0px;background:#000 url('images/sunset.jpg');\">";
+			echo "<div style=\"position:absolute;left:20px;top:200px;\">
+			<b>Grösse</b> ".nf($conf['field_squarekm']['v']*$cp->fields)." km&sup2;<br/>
+			<b>Temperatur</b>	".$cp->temp_from."&deg;C bis ".$cp->temp_to."&deg;C ($tw) <br/>
+			<b>System</b> <a href=\"?page=cell&amp;id=".$cp->cellId()."&amp;hl=".$cp->id()."\">".$cp->getSectorSolsys()."</a>
+			<b>Position</b> ".$cp->pos."<br/>
+			<b>Kennung</b> <a href=\"?page=entity&amp;id=".$cp->id()."\">".$cp->id()."</a><br/>
+			<b>Stern</b> ".$cp->starTypeName." ".helpLink("stars")."<br/>
+			<b>Planetentyp</b> ".$cp->type()." ".helpLink("planets")."<br/>
+			<b>Felder</b> ".nf($cp->fields_used)." benutzt (".round($cp->fields_used/$cp->fields*100)."%), ".(nf($cp->fields))." total, ".$cp->fields_extra." extra<br/>";
+			if ($cp->debrisField)
+			{
+				echo "<b>Trümmerfeld:</b> 
+				<span class=\"resmetal\">".nf($cp->debrisMetal,0,1)."</span>
+				<span class=\"rescrystal\">".nf($cp->debrisCrystal,0,1)."</span>
+				<span class=\"resfuel\">".nf($cp->debrisPlastic,0,1)."</span>
+				<br/>";
+			}			
+			if ($cp->desc!="")			
+				echo "<b>Beschreibung</b> ".stripslashes($cp->desc)."<br/>";
+			if ($cp->isMain)				
+				echo "<b>Hauptplanet</b> Hauptplaneten können nicht invasiert oder aufgegeben werden!<br/>";
+			echo "</div>";
+			echo "</div>";
+			iBoxEnd();
+			
+
+			iBoxStart("Details");
+			echo "<b>Produktion:</b> 
+			<span class=\"resmetal\">".nf($cp->prodMetal)." / h</span> 
+			<span class=\"rescrystal\">".nf($cp->prodCrystal)." / h</span>
+			<span class=\"resplastic\">".nf($cp->prodPlastic)." / h</span> 
+			<span class=\"resfuel\">".nf($cp->prodFuel)." / h</span> 
+			<span class=\"resfood\">".nf($cp->prodFood)." / h</span> 
+			<span class=\"respeople\">".nf($cp->prodPeople)." / h</span> 
+			<span class=\"respower\">".nf($cp->prodPower)."</span> 
+			<span class=\"respoweru\">".nf($cp->usePower)."</span>";			
+			echo "<br/><br/>
+			<b>Temperatureffekt:</b> 			
+			<span style=\"background:url('images/heat_small.png') no-repeat;padding:1px 2px 5px 20px;\" />Wärmebonus: ";
+				$spw = $cp->solarPowerBonus();
+				if ($spw>=0)
+				{
+					echo "<span style=\"color:#0f0\">+".$spw."</span>";
+				}
+				else
+				{
+					echo "<span style=\"color:#f00\">".$spw."</span>";
+				}
+				echo " MW </span> &nbsp; 
+				<span style=\"background:url('images/ice_small.png') no-repeat;padding:1px 2px 5px 22px;\" />Kältebonus: ";
+				$spw = $cp->fuelProductionBonus();
+				if ($spw>=0)
+				{
+					echo "<span style=\"color:#0f0\">+".$spw."%</span>";
+				}
+				else
+				{
+					echo "<span style=\"color:#f00\">".$spw."%</span>";
+				}				
+				echo "</span> ".helpLink("tempbonus")."";
+			iBoxEnd();
+			
+			/*
+			
 			tableStart("Details",650);
 			echo "<tr>
-				<td style=\"vertical-align:middle;width:330px;padding:0px;background:#000 url('".IMAGE_PATH."/backgrounds/bg".mt_rand(1,PLANET_BACKGROUND_COUNT).".jpg');\" rowspan=\"".($cp->debrisField ? 11 : 10)."\">
+				<td style=\"vertical-align:middle;width:330px;padding:0px;background:#000 url('".IMAGE_PATH."/backgrounds/bg1.jpg');\" rowspan=\"".($cp->debrisField ? 11 : 10)."\">
 				<img src=\"".IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$cp->image.".".IMAGE_EXT."\" alt=\"Planet\" style=\"width:310px;height:310px\"/>
 			</td>";
-			echo "<td class=\"tbltitle\" style=\"width:110px;\">Kennung:</td>
-			<td class=\"tbldata\" style=\"width:210px;\">
-				".$cp->id()." [<a href=\"?page=entity&id=".$cp->id()."\">Suchen</a>]</td>
-			</tr>";
-			echo "<td class=\"tbltitle\">Koordinaten:</td><td class=\"tbldata\">
-				".$cp->getCoordinates()." [<a href=\"?page=cell&id=".$cp->cellId()."&amp;hl=".$cp->id()."\">Zeigen</a>]</td>
+			echo "<th style=\"width:110px;\">Kennung:</th>
+			<td style=\"width:210px;\">
+				".$cp->id()." [<a href=\"?page=entity&amp;id=".$cp->id()."\">Suchen</a>]</td>
 			</tr>";
 			echo "<tr>
-				<td class=\"tbltitle\">Sonnentyp:</td><td class=\"tbldata\">
+			<th>Koordinaten:</th>
+			<td>
+				".$cp->getCoordinates()." [<a href=\"?page=cell&amp;id=".$cp->cellId()."&amp;hl=".$cp->id()."\">Zeigen</a>]</td>
+			</tr>";
+			echo "<tr>
+				<th>Sonnentyp:</th>
+				<td>
 					".$cp->starTypeName." ".helpLink("stars")."
 					</td></tr>";
 			echo "<tr>
-				<td class=\"tbltitle\">Planettyp:</td><td class=\"tbldata\">
+				<th>Planettyp:</th>
+				<td>
 					".$cp->type()." ".helpLink("planets")."</td></tr>";
 			echo "<tr>
-				<td class=\"tbltitle\">Felder:</td><td class=\"tbldata\">
+				<th>Felder:</th>
+				<td>
 					".nf($cp->fields_used)." benutzt, ".(nf($cp->fields))." total (".round($cp->fields_used/$cp->fields*100)."%)</td></tr>";
 			echo "<tr>
-				<td class=\"tbltitle\">Extra-Felder:</td><td class=\"tbldata\">
+				<th>Extra-Felder:</th>
+				<td>
 					".$cp->fields_extra."</td></tr>";
 			echo "<tr>
-				<td class=\"tbltitle\">Gr&ouml;sse:</td><td class=\"tbldata\">
+				<th>Gr&ouml;sse:</th>
+				<td>
 					".nf($conf['field_squarekm']['v']*$cp->fields)." km&sup2;</td></tr>";
 			echo "<tr>
-				<td class=\"tbltitle\">Temperatur:</td><td class=\"tbldata\">
+				<th>Temperatur:</th>
+				<td>
 					".$cp->temp_from."&deg;C bis ".$cp->temp_to."&deg;C &nbsp; <br/>
 					<img src=\"images/heat_small.png\" alt=\"Heat\" style=\"width:16px;float:left;\" />Wärmebonus: ";
 				$spw = $cp->solarPowerBonus();
@@ -282,45 +366,31 @@
 					echo "<span style=\"color:#f00\">".$spw."%</span>";
 				}				
 			echo " ".helpLink("tempbonus")."</td></tr>";
-			echo "<tr><td class=\"tbltitle\">Produktion:</td><td class=\"tbldata\">
-			".RES_ICON_METAL."".nf($cp->prodMetal)." / h<br style=\"clear:both;\" /> 
-			".RES_ICON_CRYSTAL."".nf($cp->prodCrystal)." / h<br style=\"clear:both;\" /> 
-			".RES_ICON_PLASTIC."".nf($cp->prodPlastic)." / h<br style=\"clear:both;\" /> 
-			".RES_ICON_FUEL."".nf($cp->prodFuel)." / h<br style=\"clear:both;\" /> 
-			".RES_ICON_FOOD."".nf($cp->prodFood)." / h<br style=\"clear:both;\" /> 
-			".RES_ICON_PEOPLE."".nf($cp->prodPeople)." / h<br style=\"clear:both;\" /> 
-			".RES_ICON_POWER."".nf($cp->prodPower)."<br style=\"clear:both;\" /> 
-			".RES_ICON_POWER_USE."".nf($cp->usePower)."</td></tr>";
+
 			echo "<tr>
-				<td class=\"tbltitle\">Beschreibung:</td>
-				<td class=\"tbldata\">
+				<th>Beschreibung:</th>
+				<td>
 					".($cp->desc!='' ? stripslashes($cp->desc) : '-')."
 				</td>
 			</tr>";
 			if ($cp->debrisField)
 			{
 				echo "<tr>
-				<td class=\"tbltitle\">Trümmerfeld:</td><td class=\"tbldata\">
+				<th>Trümmerfeld:</th><td>
 				".RES_ICON_METAL."".nf($cp->debrisMetal)."<br style=\"clear:both;\" /> 
 				".RES_ICON_CRYSTAL."".nf($cp->debrisCrystal)."<br style=\"clear:both;\" /> 
 				".RES_ICON_PLASTIC."".nf($cp->debrisPlastic)."<br style=\"clear:both;\" /> 
 				</td></tr>";
 			}
-			
 			echo "</table><br/>";
-			echo "<input type=\"button\" value=\"Name / Beschreibung des Planeten &auml;ndern\" onClick=\"document.location='?page=$page&action=change_name'\"> ";
-			echo "<input type=\"button\" value=\"Felderbelegung anzeigen\" onClick=\"document.location='?page=$page&amp;sub=fields'\"> ";
+			*/
+			echo "<input type=\"button\" value=\"Name / Beschreibung des Planeten &auml;ndern\" onclick=\"document.location='?page=$page&amp;action=change_name'\" /> ";
+			echo "<input type=\"button\" value=\"Felderbelegung anzeigen\" onclick=\"document.location='?page=$page&amp;sub=fields'\" /> ";
 			if (!$cp->isMain)
 			{
-				echo "&nbsp;<input type=\"button\" value=\"Kolonie aufheben\" onClick=\"document.location='?page=$page&action=remove'\">";
+				echo "&nbsp;<input type=\"button\" value=\"Kolonie aufheben\" onclick=\"document.location='?page=$page&action=remove'\" />";
 			}
-			else
-			{
-				echo "<br/><br/>";
-				iBoxStart("Hauptplanet");
-				echo "<b>Dies ist dein Hauptplanet. Hauptplaneten können nicht invasiert oder aufgegeben werden!</b>";
-				iBoxEnd();
-			}	
+	
 		}
 	}
 	else

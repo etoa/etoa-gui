@@ -312,7 +312,7 @@ input,select,textarea	{
 /* Allgemeine Tabellen definition welche gestreckt ist (infobox) */
 .tbl, table.tb	{
 	width:100%;
-	margin:0px auto;
+	margin:15px auto;
 	border:1px solid #ffffff;
 }
 
@@ -347,6 +347,7 @@ div.infoboxcontent {
 	border-bottom:1px solid #fff;
 	background:#225 url(images/cellpic3.gif);
 	padding:4px;
+	text-align:left;	
 }
 
 a.tabEnabled	{
@@ -743,7 +744,7 @@ div.Left_Panel {
 
 div.Spielbereich_ {
 	position:absolute;
-	left:270px;
+	left:290px;
 	top:64px;
 	width:714px;
 	height:704px;
@@ -1372,4 +1373,29 @@ td.havenTab:hover	{
 .citybox a:hover {
   color:#fff;
   background:#575763;
+}
+
+.boxLayout	{
+	 margin:15px 0px;
+}
+
+#resbox	{
+	margin-bottom:20px;
+	width:650px;
+	border:1px solid #fff;
+}
+
+#resboxheader	{
+	background:url('images/cellpic.gif') no-repeat;
+	height:21px;
+	color:#fff;
+	font-weight:bold;
+	padding-left:20px;
+	padding-top:5px;
+	border-bottom:1px solid #fff;
+}
+
+#resboxcontent	{
+	padding:5px;
+	background:#333 url('images/cellpic3.gif') repeat;
 }

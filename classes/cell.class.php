@@ -74,7 +74,7 @@
 		
 		function __toString()
 		{
-			return $this->sx." / ". $this->sy." : ". $this->cx." / ". $this->cy;
+			return $this->sx."/". $this->sy." : ". $this->cx."/". $this->cy;
 		}
 		
 		function absX()

@@ -29,6 +29,8 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/	
 
+	$tabsEnable = false;
+
 	if ($cp)
 	{
 		//
@@ -58,8 +60,11 @@
 		echo "<h1>Wirtschaft des Planeten ".$cp->name."</h1>";
 		$cp->resBox();
 
-		$tc = new TabControl("ecoTab",array("Produktion","Energie","Lager","Bonus/Malus"));
-		$tc->open();
+		if ($tabsEnable)
+		{
+			$tc = new TabControl("ecoTab",array("Produktion","Energie","Lager","Bonus/Malus"));
+			$tc->open();
+		}		
 
 		//
 		// Produktion pro Stunde und Energieverbrauch
@@ -101,13 +106,13 @@
 		{
 			tableStart("Produktion pro Stunde und Energieverbrauch",'98%');
 			echo "<tr>
-						<th style=\"\">Geb&auml;ude</th>";
-			echo "<th style=\"\">".RES_ICON_METAL." ".RES_METAL."</th>";
-			echo "<th style=\"\">".RES_ICON_CRYSTAL."".RES_CRYSTAL."</th>";
-			echo "<th style=\"\">".RES_ICON_PLASTIC."".RES_PLASTIC."</th>";
-			echo "<th style=\"\">".RES_ICON_FUEL."".RES_FUEL."</th>";
-			echo "<th style=\"\">".RES_ICON_FOOD."".RES_FOOD."</th>";
-			echo "<th style=\"\" colspan=\"2\">".RES_ICON_POWER_USE."Energie</th>";
+						<th style=\"width:\">Geb&auml;ude</th>";
+			echo "<th style=\"\">".RES_ICON_METAL."</th>";
+			echo "<th style=\"\">".RES_ICON_CRYSTAL."</th>";
+			echo "<th style=\"\">".RES_ICON_PLASTIC."</th>";
+			echo "<th style=\"\">".RES_ICON_FUEL."</th>";
+			echo "<th style=\"\">".RES_ICON_FOOD."</th>";
+			echo "<th style=\"\" colspan=\"2\">".RES_ICON_POWER_USE."</th>";
 			echo "</tr>";
 
 			$cnt = array(
@@ -263,15 +268,17 @@
 		}
 		echo "</form>";
 
-		$tc->close();
-		$tc->open();
-
+		if ($tabsEnable)
+		{
+			$tc->close();
+			$tc->open();
+		}
 
 		//
 		// Energie
 		//
-		tableStart("Energieproduktion",'98%');
-		echo "<tr><th style=\"width:250px;\">Gebäude</th>
+		tableStart("Energieproduktion",700);
+		echo "<tr><th style=\"width:230px;\">Gebäude</th>
 		<th colspan=\"2\">".RES_ICON_POWER."Energie</th></tr>";
 
 		$cnt['power']=0;
@@ -368,9 +375,11 @@
 		}
 		echo "</table>";
 	
+		if ($tabsEnable)
+		{
 			$tc->close();
-		$tc->open();
-	
+			$tc->open();
+		}
 
 		//
 		// Lager
@@ -443,9 +452,11 @@
 			tableEnd();
 		}
 
-		$tc->close();
-		$tc->open();
-
+		if ($tabsEnable)
+		{
+			$tc->close();
+			$tc->open();
+		}
 
 		//
 		// Boni
@@ -522,8 +533,11 @@
 
 		tableEnd();
 		
-		$tc->close();
-		$tc->end();
+		if ($tabsEnable)
+		{
+			$tc->close();
+			$tc->end();
+		}
 			
 		echo '<div>
 		<input type="button" onclick="document.location=\'?page=specialists\'" value="Spezialisten" /> &nbsp; ';

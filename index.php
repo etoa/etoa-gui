@@ -338,6 +338,7 @@
 				$tpl->assign("messages",NEW_MESSAGES);
 				$tpl->assign("blinkMessages",$cu->properties->msgBlink);
 				$tpl->assign("buddys",check_buddys_online($cu->id));
+				$tpl->assign("buddyreq",check_buddy_req($cu->id));
 				$tpl->assign("fleetAttack",check_fleet_incomming($cu->id));
 				$tpl->assign("templateDir",CSS_STYLE);
 				$tpl->assign("serverTime",date('H:i:s'));
@@ -346,7 +347,9 @@
 				if (isset($cp))
 				{
 					$tpl->assign("currentPlanetName",$cp);
+					$tpl->assign("currentPlanetImage",$cp->imagePath("m"));
 					$tpl->assign("planetList",$pm->getLinkList());		
+					$tpl->assign("planetListImages",$pm->getLinkList(1));		
 					$tpl->assign("nextPlanetId",$pm->nextId());
 					$tpl->assign("prevPlanetId",$pm->prevId());
 					$tpl->assign("selectField",$pm->getSelectField());

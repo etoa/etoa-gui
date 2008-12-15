@@ -23,6 +23,52 @@ img.resIcon	{
 	margin-right:5px;
 }
 
+#resbox	span	{
+	padding-right:5px;
+}
+
+.resmetal	{
+	background:url('../images/resources/metal_s.png') no-repeat;
+	padding-left:24px;
+	color:#CFC8C2;
+}
+.rescrystal	{
+	background:url('../images/resources/crystal_s.png') no-repeat;
+	padding-left:24px;
+	color:#C2E2EF;
+}
+.resplastic	{
+	background:url('../images/resources/plastic_s.png') no-repeat;
+	padding-left:24px;
+	color:#E5D1EF;
+}
+.resfuel	{
+	background:url('../images/resources/fuel_s.png') no-repeat;
+	padding-left:24px;
+	color:#A4C1EF;
+}
+.resfood	{
+	background:url('../images/resources/food_s.png') no-repeat;
+	padding-left:24px;
+	color:#C2ECC2;
+}
+.respeople	{
+	background:url('../images/resources/people_s.png') no-repeat;
+	padding-left:24px;
+	color:#ECC8B2;
+}
+.respower	{
+	background:url('../images/resources/power_s.png') no-repeat;
+	padding-left:24px;
+	color:#EFECC2;
+}
+.respoweru	{
+	background:url('../images/resources/poweru_s.png') no-repeat;
+	padding-left:24px;
+	color:#ECB2B2;
+}
+
+
 /* Definitionen für die öffentlich zugänglichen Seiten
 -------------------------------------------------------*/
 
@@ -157,13 +203,6 @@ a img	{
 .numbers	{
 	text-align:right;
 }
-
-/* Outer box of every iBox() or table() */
-table.boxLayout, div.boxLayout	{
-	margin:10px auto;
-	padding:0px;
-}
-
 
 
 .tabOuter {

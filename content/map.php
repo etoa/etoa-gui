@@ -30,8 +30,6 @@
 	*/	
 
 
-	echo "<h1>Raumkarte</h1>";
-
 	// Wenn Planet aktiv, Koordinaten aus der DB lesen
 	if ($cp)
 	{
@@ -44,6 +42,8 @@
 		$sx_def = $cfg->param1('map_init_sector');
 		$sy_def = $cfg->param2('map_init_sector');
 	}
+
+	echo "<h1>Sektor ".$sx_def."/".$sy_def."</h1>";
 
 	$sector_pic = "".IMAGE_PATH."/map";
 
@@ -120,8 +120,8 @@
   }
 
 	echo "<form action=\"?page=$page\" method=\"post\">";
-	echo "<div style=\"text-align:center;\">Die Galaxie besteht aus $sx_num x $sy_num Sektoren.<br/><br/><b>Sektor:</b>&nbsp;";
-
+	iBoxStart("Sektor wählen","450px;");
+	echo "<b>Sektor:</b>&nbsp;";
 	echo "<select name=\"sx\">";
 	for ($x=1;$x<=$sx_num;$x++)
 	{
@@ -137,8 +137,11 @@
 		echo ">$y</option>";
 	}
 	echo "</select>";
-	echo "&nbsp;&nbsp;&nbsp;<input type=\"submit\" name=\"submit_sector\" value=\"Anzeigen\" /> &nbsp; <input type=\"button\" onclick=\"document.location='?page=galaxygraph'\" value=\"Galaxiegrafik\" /></div><br/>";
+	echo "&nbsp;&nbsp;&nbsp;<input type=\"submit\" name=\"submit_sector\" value=\"Anzeigen\" /> &nbsp; 
+	<input type=\"button\" onclick=\"document.location='?page=galaxy'\" value=\"Galaxiegrafik\" />";
+	iBoxEnd();
 
+	iBoxStart("Sektorkarte","500px;");
 	echo "<table id=\"outerspacetbl\" cellspacing=\"0\" cellpadding=\"0\">";
 
 	echo "<tr>";
@@ -151,17 +154,18 @@
 	}
 	else
 	{
-		echo "<td width=\"20\" align=\"center\" height=\"20\">&nbsp;</td>";
+		echo "<td>&nbsp;</td>";
 	}
 	if ($sx_tc && $sy_tc!=0 && $sx_tc!=$sx_num+1 && $sy_tc!=$sy_num+1)
 	{
-		echo "<td width=\"$table_width\" align=\"center\" height=\"42\"><a href=\"?page=$page&amp;sx=$sx_tc&amp;sy=$sy_tc\" alt=\"Sektor $sx_tc/$sy_tc\" title=\"Sektor $sx_tc/$sy_tc\" onmouseover=\"sector_topcenter.src='$sector_pic/sector_topcenter_On.gif';\" onmouseout=\"sector_topcenter.src='$sector_pic/sector_topcenter.gif';\"/>
-		<img name=\"sector_topcenter\" src=\"$sector_pic/sector_topcenter.gif\" height=\"42\" width=\"42\" border=\"0\">
+		echo "<td style=\"width:".$table_width."px;text-align:center;height:42px;\">
+			<a href=\"?page=$page&amp;sx=$sx_tc&amp;sy=$sy_tc\" alt=\"Sektor $sx_tc/$sy_tc\" title=\"Sektor $sx_tc/$sy_tc\" onmouseover=\"sector_topcenter.src='$sector_pic/sector_topcenter_On.gif';\" onmouseout=\"sector_topcenter.src='$sector_pic/sector_topcenter.gif';\"/>
+			<img name=\"sector_topcenter\" src=\"$sector_pic/sector_topcenter.gif\" height=\"42\" width=\"42\" border=\"0\">
 		</a></td>";
 	}
 	else
 	{
-		echo "<td width=\"$table_width\" align=\"center\" height=\"20\">&nbsp;</td>";
+		echo "<td style=\"width:".$table_width."px;text-align:center;height:20px;\">&nbsp;</td>";
 	}
 	if ($sx_tr && $sy_tr!=0 && $sx_tr!=$sx_num+1 && $sy_tr!=$sy_num+1)
 	{
@@ -169,7 +173,7 @@
 	}
 	else
 	{
-		echo "<td width=\"20\" align=\"center\" height=\"20\">&nbsp;</td>";
+		echo "<td>&nbsp;</td>";
 	}
 	echo "</tr>";
 
@@ -183,8 +187,8 @@
 		echo "<td width=\"20\" align=\"center\" height=\"$table_height\">&nbsp;</td>";
 	}
 	
-		echo "<td width=\"$table_width\" height=\"$table_height\">";
-		echo "\n<table width=\"$table_width\" align=\"center\" cellspacing=\"0\" cellpadding=\"0\" id=\"innerspacetbl\">\n";
+		echo "<td  style=\"width:".$table_width."px;height:".$table_height."px;\">";
+		echo "\n<table style=\"width:".$table_width."px\" id=\"innerspacetbl\">\n";
 		echo "<colgroup width=\"$cell_width\" span=\"$cx_num\" align=\"center\" valign=\"middle\"></colgroup>\n";
 		$res = dbquery("
 		SELECT 
@@ -297,18 +301,19 @@
 		echo "</tr><tr>";
 
 		if ($sx_bl && $sy_bl!=0 && $sx_bl!=$sx_num+1 && $sy_bl!=$sy_num+1)
-			echo "<td width=\"20\" align=\"center\" height=\"20\"><a href=\"?page=$page&amp;sx=$sx_bl&amp;sy=$sy_bl\" width=\"20\" height=\"20\" border=\"0\" alt=\"Sektor $sx_bl/$sy_bl\" title=\"Sektor $sx_bl/$sy_bl\" onmouseover=\"sector_bottomleft.src='$sector_pic/sector_bottomleft_On.gif';\" onmouseout=\"sector_bottomleft.src='$sector_pic/sector_bottomleft.gif';\"/><img name=\"sector_bottomleft\" src=\"$sector_pic/sector_bottomleft.gif\" height=\"42\" width=\"42\" border=\"0\"></a></td>";
+			echo "<td><a href=\"?page=$page&amp;sx=$sx_bl&amp;sy=$sy_bl\" width=\"20\" height=\"20\" border=\"0\" alt=\"Sektor $sx_bl/$sy_bl\" title=\"Sektor $sx_bl/$sy_bl\" onmouseover=\"sector_bottomleft.src='$sector_pic/sector_bottomleft_On.gif';\" onmouseout=\"sector_bottomleft.src='$sector_pic/sector_bottomleft.gif';\"/><img name=\"sector_bottomleft\" src=\"$sector_pic/sector_bottomleft.gif\" height=\"42\" width=\"42\" border=\"0\"></a></td>";
 		else
-			echo "<td width=\"20\" align=\"center\" height=\"20\">&nbsp;</td>";
+			echo "<td>&nbsp;</td>";
 		if ($sx_bc && $sy_bc!=0 && $sx_bc!=$sx_num+1 && $sy_bc!=$sy_num+1)
 			echo "<td width=\"$table_width\" align=\"center\" height=\"20\"><a href=\"?page=$page&amp;sx=$sx_bc&amp;sy=$sy_bc\" width=\"20\" height=\"20\" border=\"0\" alt=\"Sektor $sx_bc/$sy_bc\" title=\"Sektor $sx_bc/$sy_bc\" onmouseover=\"sector_bottomcenter.src='$sector_pic/sector_bottomcenter_On.gif';\" onmouseout=\"sector_bottomcenter.src='$sector_pic/sector_bottomcenter.gif';\"/><img name=\"sector_bottomcenter\" src=\"$sector_pic/sector_bottomcenter.gif\" height=\"42\" width=\"42\" border=\"0\"></a></td>";
 		else
 			echo "<td width=\"$table_width\" align=\"center\" height=\"20\">&nbsp;</td>";
 		if ($sx_br && $sy_br!=0 && $sx_br!=$sx_num+1 && $sy_br!=$sy_num+1)
-			echo "<td width=\"20\" align=\"center\" height=\"20\"><a href=\"?page=$page&amp;sx=$sx_br&amp;sy=$sy_br\" width=\"20\" height=\"20\" border=\"0\" alt=\"Sektor $sx_br/$sy_br\" title=\"Sektor $sx_br/$sy_br\" onmouseover=\"sector_bottomright.src='$sector_pic/sector_bottomright_On.gif';\" onmouseout=\"sector_bottomright.src='$sector_pic/sector_bottomright.gif';\"/><img name=\"sector_bottomright\" src=\"$sector_pic/sector_bottomright.gif\" height=\"42\" width=\"42\" border=\"0\"></a></td>";
+			echo "<td><a href=\"?page=$page&amp;sx=$sx_br&amp;sy=$sy_br\" width=\"20\" height=\"20\" border=\"0\" alt=\"Sektor $sx_br/$sy_br\" title=\"Sektor $sx_br/$sy_br\" onmouseover=\"sector_bottomright.src='$sector_pic/sector_bottomright_On.gif';\" onmouseout=\"sector_bottomright.src='$sector_pic/sector_bottomright.gif';\"/><img name=\"sector_bottomright\" src=\"$sector_pic/sector_bottomright.gif\" height=\"42\" width=\"42\" border=\"0\"></a></td>";
 		else
-			echo "<td width=\"20\" align=\"center\" height=\"20\">&nbsp;</td>";
+			echo "<td>&nbsp;</td>";
 		echo "</tr></table></form>";
-
+		echo "<br/>Die Galaxie besteht aus $sx_num x $sy_num Sektoren.";
+		iBoxEnd();
 
 ?>
