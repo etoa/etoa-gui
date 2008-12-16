@@ -7,11 +7,12 @@
 			<a href="?page=economy" id="naveconomy"></a>
 			<a href="?page=population" id="navpopulation"></a>
 			<a href="?page=haven" id="navhaven"></a>
+			<a href="?page=market" id="navmarket"></a>
 			<a href="?page=buildings" id="navbuildings"></a>
 			<a href="?page=research" id="navresearch"></a>
 			<a href="?page=shipyard" id="navshipyard"></a>
 			<a href="?page=defense" id="navdefense"></a>
-			<a href="?page=market" id="navmarket"></a>
+			<a href="?page=missiles" id="navmissiles"></a>
 			<a href="?page=crypto" id="navcrypto"></a>
 			<a href="?page=recycle" id="navrecycle"></a>
 		</div>

@@ -166,41 +166,44 @@ img	{
 #navcontainer a	{
 	display:block;
 	width:194px;
-	height:31px;
+	height:26px;
 }
 
 #navplanetoverview:hover	{
 	background:url('images/sidebarh.png') 0px -223px no-repeat;
 }
 #naveconomy:hover	{
-	background:url('images/sidebarh.png') 0px -254px no-repeat;
+	background:url('images/sidebarh.png') 0px -249px no-repeat;
 }
 #navpopulation:hover	{
-	background:url('images/sidebarh.png') 0px -285px no-repeat;
+	background:url('images/sidebarh.png') 0px -275px no-repeat;
 }
 #navhaven:hover	{
-	background:url('images/sidebarh.png') 0px -316px no-repeat;
-}
-#navbuildings:hover	{
-	background:url('images/sidebarh.png') 0px -347px no-repeat;
-}
-#navresearch:hover	{
-	background:url('images/sidebarh.png') 0px -378px no-repeat;
-}
-#navshipyard:hover	{
-	background:url('images/sidebarh.png') 0px -409px no-repeat;
-}
-#navdefense:hover	{
-	background:url('images/sidebarh.png') 0px -440px no-repeat;
+	background:url('images/sidebarh.png') 0px -301px no-repeat;
 }
 #navmarket:hover	{
-	background:url('images/sidebarh.png') 0px -471px no-repeat;
+	background:url('images/sidebarh.png') 0px -327px no-repeat;
+}
+#navbuildings:hover	{
+	background:url('images/sidebarh.png') 0px -353px no-repeat;
+}
+#navresearch:hover	{
+	background:url('images/sidebarh.png') 0px -379px no-repeat;
+}
+#navshipyard:hover	{
+	background:url('images/sidebarh.png') 0px -405px no-repeat;
+}
+#navdefense:hover	{
+	background:url('images/sidebarh.png') 0px -431px no-repeat;
+}navmissiles
+#navmissiles:hover	{
+	background:url('images/sidebarh.png') 0px -457px no-repeat;
 }
 #navcrypto:hover	{
-	background:url('images/sidebarh.png') 0px -502px no-repeat;
+	background:url('images/sidebarh.png') 0px -483px no-repeat;
 }
 #navrecycle:hover	{
-	background:url('images/sidebarh.png') 0px -533px no-repeat;
+	background:url('images/sidebarh.png') 0px -509px no-repeat;
 }
 
 #hbar	{
