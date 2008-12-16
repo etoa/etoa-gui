@@ -5,7 +5,7 @@
 	dbconnect();
 	$s = $_SESSION[ROUNDID];
 	$nick = $s['user_nick'];
-	define(XAJAX_DIR,"../libs/xajax");
+	define('XAJAX_DIR',"../libs/xajax");
 	require_once(XAJAX_DIR."/xajax_core/xajax.inc.php");
 	$xajax = new xajax();
 	require_once("../inc/xajax/chat.xajax.php");
