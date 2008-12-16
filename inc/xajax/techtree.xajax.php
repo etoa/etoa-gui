@@ -110,12 +110,12 @@ function reqInfo($id,$cat='b')
 		echo "<br/>wird benötigt für<br/><br/>";		
 	}
 	
-	echo "<div style=\"border:1px solid black;padding:20px 1px;background:#eee;color:#000;width:150px;margin:10px auto;\">";
 		
 	if ($cat=='b')
 	{	
-		echo "<img src=\"".IMAGE_PATH."/buildings/building".$id."_small.".IMAGE_EXT."\" align=\"middle\"/><br/>
-		 	<b>".$bu_name[$id]."</b>";
+		echo "<div style=\"position:relative;border:1px solid black;padding:0px;background:url('".IMAGE_PATH."/buildings/building".$id."_middle.".IMAGE_EXT."');color:#000;width:110px;height:110px;margin:10px auto;\">";
+		echo "<div style=\"position:absolute;top:0px;background:#000;height:15px;width:100%;color:#fff;\">".$bu_name[$id]."</div>";
+		//echo "<img src=\"".IMAGE_PATH."/buildings/building".$id."_small.".IMAGE_EXT."\" align=\"middle\"/><br/><b>".$bu_name[$id]."</b>";
 		echo "</div><br/>";
 	}
 	elseif($cat=='t')

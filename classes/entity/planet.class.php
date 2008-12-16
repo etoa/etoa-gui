@@ -390,13 +390,13 @@
 				}
 				tableStart("Ressourcen");
 				echo "<tr>
-				<th style=\"vertical-align:middle;\">".RES_ICON_METAL." ".RES_METAL."</th>
-				<th style=\"vertical-align:middle;\">".RES_ICON_CRYSTAL." ".RES_CRYSTAL."</th>
-				<th style=\"vertical-align:middle;\">".RES_ICON_PLASTIC." ".RES_PLASTIC."</th>
-				<th style=\"vertical-align:middle;\">".RES_ICON_FUEL." ".RES_FUEL."</th>
-				<th style=\"vertical-align:middle;\">".RES_ICON_FOOD." ".RES_FOOD."</th>
-				<th style=\"vertical-align:middle;\">".RES_ICON_PEOPLE." Bewohner</th>
-				<th style=\"vertical-align:middle;\">".RES_ICON_POWER." Energie</th>
+				<th class=\"resBoxTitleCell\"><div class=\"resmetal\">".RES_METAL."</div></th>
+				<th class=\"resBoxTitleCell\"><div class=\"rescrystal\">".RES_CRYSTAL."</div></th>
+				<th class=\"resBoxTitleCell\"><div class=\"resplastic\">".RES_PLASTIC."</div></th>
+				<th class=\"resBoxTitleCell\"><div class=\"resfuel\">".RES_FUEL."</div></th>
+				<th class=\"resBoxTitleCell\"><div class=\"resfood\">".RES_FOOD."</div></th>
+				<th class=\"resBoxTitleCell\"><div class=\"respeople\">Bewohner</div></th>
+				<th class=\"resBoxTitleCell\"><div class=\"respower\">Energie</div></th>
 				</tr><tr>
 				<td class=\"$style0\">".nf(floor($this->resMetal))." t</td>
 				<td class=\"$style1\">".nf(floor($this->resCrystal))." t</td>

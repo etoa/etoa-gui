@@ -168,6 +168,7 @@
 
 	else
 	{
+		
 		$ddm = new DropdownMenu(1);
 		$ddm->add('total','Gesamtstatistik','xajax_statsShowBox(\'user\');');
 		$ddm->add('detail','Detailstatistiken','');
@@ -185,7 +186,9 @@
 		$ddm->addChild('trade','Handelspunkte','xajax_statsShowBox(\'trade\');','special');
 		$ddm->addChild('diplomacy','Diplomatiepunkte','xajax_statsShowBox(\'diplomacy\');','special');
 
-		echo $ddm;
+		echo $ddm; 
+		
+		
 
 		echo "<br/>";
 

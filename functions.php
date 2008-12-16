@@ -1411,12 +1411,14 @@
 		global $page,$$varname;
 		
 		echo "<div class=\"tabMenu\">";
+		$cnt=0;
 		foreach ($data as $val => $text)
 		{
+			$cnt++;
 			if ($$varname==$val)
-				echo "<a href=\"?page=$page&amp;".$varname."=$val\" class=\"tabEnabled\">$text</a>";
+				echo "<a href=\"?page=$page&amp;".$varname."=$val\" class=\"tabEnabled".($cnt==count($data)?' tabLast':'')."\">$text</a>";
 			else
-				echo "<a href=\"?page=$page&amp;".$varname."=$val\">$text</a>";
+				echo "<a href=\"?page=$page&amp;".$varname."=$val\"".($cnt==count($data)?' class="tabLast"':'').">$text</a>";
 		}
 		echo "<br style=\"clear:both;\"/>";
 		echo "</div>";
@@ -1427,18 +1429,14 @@
 	*/
 	function show_js_tab_menu($data)
 	{
-		$width = 100/count($data);
-		echo "<table class=\"tbl\"><tr>";
-		$x=0;
+		echo "<div class=\"tabMenu\">";
+		$cnt=0;
 		foreach ($data as $val => $text)
 		{
-			//if ($$varname==$val)
-			//	echo "<td class=\"statsTab\" width=\"$width%\"><a href=\"javascript:;\" onclick=\"$val\" class=\"tabEnabled\">$text</a></td>";
-			//else
-				echo "<td class=\"statsTab\" width=\"$width%\"><a href=\"javascript:;\" id=\"tabMenu$x\" onclick=\"$val\" class=\"tabDefault\">$text</a></td>";
-			$x++;
+			echo "<a href=\"#\" id=\"tabMenu$x\" onclick=\"$val\" ".($cnt==count($data)?' class="tabLast"':'').">$text</a>";
 		}
-		echo "</tr></table>";
+		echo "<br style=\"clear:both;\"/>";
+		echo "</div>";		
 	}
     
   /**

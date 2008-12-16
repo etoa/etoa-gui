@@ -25,7 +25,7 @@
 
 		<!-- CSS Stylesheets -->
 		<link rel="stylesheet" type="text/css" href="css/general.css" />
-		<link rel="stylesheet" type="text/css" href="css/dropdown.css" />
+		
 		
 		<!-- CSS Hacks for stuipd Internet Explorer -->
 		

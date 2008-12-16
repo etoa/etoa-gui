@@ -30,42 +30,76 @@ img.resIcon	{
 	padding-right:5px;
 }
 
-.resmetal	{
+.resBoxTitleCell	{
+	vertical-align:middle;
+	height:20px;
+}
+
+.resBoxTitleCell div	{
+	height:100%;
+}
+
+.resmetalcolor	{
+	color:#CFC8C2;	
+}
+.rescrystalcolor	{
+	color:#C2E2EF;
+}
+.resplasticcolor	{
+	color:#E5D1EF;
+}
+.resfuelcolor	{
+	color:#A4C1EF;
+}
+.resfoodcolor	{
+	color:#C2ECC2;
+}
+.respeoplecolor	{
+	color:#ECC8B2;
+}
+.respowercolor	{
+	color:#EFECC2;
+}
+.respowerucolor	{
+	color:#ECB2B2;
+}
+    
+.resmetal, .tb th.resmetal {
 	background:url('../images/resources/metal_s.png') no-repeat;
 	padding-left:24px;
 	color:#CFC8C2;
 }
-.rescrystal	{
+.rescrystal, .tb th.rescrystal	{
 	background:url('../images/resources/crystal_s.png') no-repeat;
 	padding-left:24px;
 	color:#C2E2EF;
 }
-.resplastic	{
+.resplastic, .tb th.resplastic	{
 	background:url('../images/resources/plastic_s.png') no-repeat;
 	padding-left:24px;
 	color:#E5D1EF;
 }
-.resfuel	{
+.resfuel, .tb th.resfuel	{
 	background:url('../images/resources/fuel_s.png') no-repeat;
 	padding-left:24px;
 	color:#A4C1EF;
 }
-.resfood	{
+.resfood, .tb th.resfood	{
 	background:url('../images/resources/food_s.png') no-repeat;
 	padding-left:24px;
 	color:#C2ECC2;
 }
-.respeople	{
+.respeople, .tb th.respeople	{
 	background:url('../images/resources/people_s.png') no-repeat;
 	padding-left:24px;
 	color:#ECC8B2;
 }
-.respower	{
+.respower, .tb th.respower	{
 	background:url('../images/resources/power_s.png') no-repeat;
 	padding-left:24px;
 	color:#EFECC2;
 }
-.respoweru	{
+.respoweru, .tb th.respoweru	{
 	background:url('../images/resources/poweru_s.png') no-repeat;
 	padding-left:24px;
 	color:#ECB2B2;
@@ -111,50 +145,6 @@ img.resIcon	{
 }
 
 /* Misc */
-
-.tabOuter {
-	margin:10px auto;
-	padding:0px;
-}
-
-.tabOuter .tabTab	{
-	padding-left:5px;
-	padding-right:5px;
-	text-align:center;
-	background:#225;
-	padding-top:5px;
-	border:1px solid #fff;
-	border-bottom:none;
-	height:23px;
-	float:left;
-	margin-top:0px;
-}
-
-.tabOuter .tabTab:hover	{
-	margin-top:0px;
-	height:23px;
-	background:#227;
-	cursor:pointer;
-}
-
-.tabOuter .tabTabActive	{
-	padding-left:5px;
-	padding-right:5px;
-	text-align:center;	
-	background:#227;
-	padding-top:5px;
-	border:1px solid #fff;
-	border-bottom:none;
-	height:23px;
-	float:left;
-	font-weight:bold;
-}
-
-.tabOuter .tabContent {
-	border:1px solid #fff;
-	background:#223;
-	padding:5px;
-}
 
 .numbers	{
 	text-align:right;
