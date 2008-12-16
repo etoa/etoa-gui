@@ -252,7 +252,7 @@ function dw_checkAuth() {
     var msg = 'A license is required for commercial use of this code.\n' + 
         'Please adhere to our Terms of Use if you use dyn-web code.';
     if ( !( loc == '' || loc == '127.0.0.1' || loc.indexOf('localhost') != -1 
-         || loc.indexOf('192.168.') != -1 || loc.indexOf('dyn-web.com') != -1 ) ) {
+         || loc.indexOf('192.168.') != -1 || loc.indexOf('etoa.ch') != -1 ) ) {
         alert(msg);
     }
 }
