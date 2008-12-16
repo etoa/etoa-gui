@@ -135,23 +135,29 @@
 			if (count($_POST)>0	&& checker_verify())
 			{
 				$bid = 0;
-				foreach ($_POST as $k => $v)
+				if (isset($_GET['id']) && $_GET['id'] >0)
 				{
-					if(stristr($k,'_x'))
+					$bid = $_GET['id'];
+				}
+				else
+				{				
+					foreach ($_POST as $k => $v)
 					{
-						$bid = eregi_replace('show_([0-9]+)_x', '\1', $k);
-						break;
+						if(stristr($k,'_x'))
+						{
+							$bid = eregi_replace('show_([0-9]+)_x', '\1', $k);
+							break;
+						}
 					}
+					if ($bid==0 && isset($_POST['show']))
+					{
+						$bid = $_POST['show'];
+					}
+					if ($bid==0 && isset($_POST['id']))
+					{
+						$bid = $_POST['id'];
+					}			
 				}
-				if ($bid==0 && isset($_POST['show']))
-				{
-					$bid = $_POST['show'];
-				}
-				if ($bid==0 && isset($_POST['id']))
-				{
-					$bid = $_POST['id'];
-				}			
-				
 				// Forschungsdaten laden
 				$res = dbquery("
 				SELECT 
