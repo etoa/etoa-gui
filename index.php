@@ -268,7 +268,7 @@
 		
 		if ($firstview && $cu->properties->startUpChat==1)
 		{
-			header("Location: chatframe.php");
+			echo "<script type=\"text/javascript\">parent.top.location='chatframe.php</script>");
 			exit;
 		}			
 		
