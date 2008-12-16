@@ -106,7 +106,7 @@ img	{
 	padding:0px;
 	font-size: 8pt;	
 	width:185px;
-	border:none:
+	border:none;
 }
 
 #planetimage	{
@@ -155,7 +155,7 @@ img	{
 }
 
 #contentcontainer	{
-	padding-left:60px;
+	padding-left:30px;
 	position:absolute;
 	left:201px;
 	top:45px;	
@@ -535,6 +535,11 @@ div.infoboxtitle	{
 	bottom:0px;
 	padding:3px 5px 3px 20px;
 	
+}
+
+.buildOverviewObjectNone, .tb td.buildOverviewObjectNone {
+	border:none;
+	background:none;	
 }
 
 /* Planet Overview */

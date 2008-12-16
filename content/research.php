@@ -887,7 +887,7 @@
 							{
 								for ($x=0;$x < NUM_BUILDINGS_PER_ROW-$cnt;$x++)
 								{
-									echo "<td class=\"tbldata\" style=\"width:".CELL_WIDTH."px;\">&nbsp;</td>";
+									echo "<td class=\"buildOverviewObjectNone\" style=\"width:".CELL_WIDTH."px;\">&nbsp;</td>";
 								}
 								echo '</tr>';
 							}							
