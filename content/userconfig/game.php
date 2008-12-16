@@ -4,6 +4,7 @@
   {
   	$cu->properties->spyShipId = $_POST['spyship_id'];
   	$cu->properties->spyShipCount = $_POST['spyship_count'];
+  	$cu->properties->startUpChat = $_POST['startup_chat'];
     success_msg("Benutzer-Daten wurden ge&auml;ndert!");
   }
 			
@@ -53,6 +54,22 @@
   	echo "Momentan steht kein Schiff zur Auswahl!";
   }
   echo "</td></tr>";
+
+	//Notizbox (Aktiviert/Deaktiviert)
+  echo "<tr>
+    			<th>Chat beim Login öffnen:</th>
+    			<td>
+              <input type=\"radio\" name=\"startup_chat\" value=\"1\" ";
+              if ($cu->properties->startUpChat==1) echo " checked=\"checked\"";
+              echo "/> Aktiviert
+          </td>
+          <td width=\"48%\" colspan=\"3\">
+              <input type=\"radio\" name=\"startup_chat\" value=\"0\" ";
+              if ($cu->properties->startUpChat==0) echo " checked=\"checked\"";
+    					echo "/> Deaktiviert
+    		</td>
+  		</tr>";   
+      		
 
   tableEnd();
   echo "<input type=\"submit\" name=\"data_submit\" value=\"&Uuml;bernehmen\"/>";

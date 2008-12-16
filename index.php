@@ -138,6 +138,12 @@
 		echo "<h1>Session fehlerhaft</h1>Falls die Weiterleitung nicht klappt, <a href=\"".LOGINSERVER_URL."?page=err&err=session2\">hier</a> klicken...";
 		exit;
 	}
+	
+	if ($firstview && $cu->properties->startUpChat==1)
+	{
+		header("Location: chatframe.php");
+		exit;
+	}
 
 	// Set popup identifiert to false
 	$popup = false;

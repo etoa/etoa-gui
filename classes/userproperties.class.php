@@ -26,6 +26,7 @@
     private $showAdds;
     private $fleetRtnMsg;
 		private $smallResBox;
+		private $startUpChat;
 		
 		private $changedFields;
 		
@@ -69,6 +70,7 @@
 		    $this->showAdds = $arr['show_adds'];
 		    $this->fleetRtnMsg = $arr['fleet_rtn_msg'];
 		    $this->smallResBox = $arr['small_res_box'];
+		    $this->startUpChat = $arr['startup_chat'];
 
 			}
 			else
@@ -120,6 +122,11 @@
 				{
 					$this->$key = $val;
 					$this->changedFields[$key] = "css_style";
+				}				
+				elseif ($key == "startUpChat")
+				{
+					$this->$key = $val;
+					$this->changedFields[$key] = "startup_chat";
 				}
 				elseif ($key == "smallResBox")
 				{
