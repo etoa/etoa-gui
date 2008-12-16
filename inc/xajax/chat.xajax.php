@@ -54,6 +54,8 @@ function loadChat($minId)
 				$ajax->append("chatitems","innerHTML",$out);
 				$ajax->assign("lastid","innerHTML",$lastid);
 				//$ajax->script("document.getElementById('chattext').scrollTop = document.getElementById('chattext').scrollHeight;");
+				$ajax->script("dw_scrollObj.scrollToId('chattext', 'chatFooter', 'chatitems', 200);");
+				//
 			}
 			$ajax->script("setTimeout(\"xajax_loadChat(document.getElementById('lastid').innerHTML)\",1000);");
 	}

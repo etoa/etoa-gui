@@ -46,11 +46,26 @@
 				xajax_showChatUsers();
 			}
 		</script>		
+		<script src="../js/dw_event.js" type="text/javascript"></script>
+		<script src="../js/dw_scroll.js" type="text/javascript"></script>
+		<script src="../js/scroll_controls.js" type="text/javascript"></script>
+		<script type="text/javascript">
+		function init_dw_Scroll() {
+		    var wndo = new dw_scrollObj('chattext', 'chatitems');
+		    wndo.setUpScrollControls('scroll_links');
+		}
+		
+		if ( dw_scrollObj.isSupported() ) {
+		    dw_Event.add( window, 'load', init_dw_Scroll);
+		}
+		</script>
+		
 	</head> 		
 	<body>
 		<div id="chattext">
 			<div id="chatitems">
 	
+				<div id="chatFooter">--------------</div>
 			</div>
 		</div>
 		
@@ -64,7 +79,6 @@
 			<div id="chatchannelcontrols">
 				<input type="button" id="userListButton" onclick="showUserList()" value="User anzeigen"/>
 			</div>
-			
 
 			<form action="?" method="post" onsubmit="xajax_sendChat(xajax.getFormValues('cform'));return false;" autocomplete="off" id="cform">
 				Text: <input type="text" id="ctext" name="ctext" value="" size="40" maxlength="255" /> <br/><br/>
