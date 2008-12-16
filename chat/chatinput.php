@@ -21,9 +21,6 @@
 	</head>
 	<body id="chatinput">
 		<div>
-			<?PHP
-
-			?>
 			<form action="?" method="post" onsubmit="xajax_sendChat(xajax.getFormValues('cform'));return false;" autocomplete="off" id="cform">
 				Text: <input type="text" id="ctext" name="ctext" value="" size="40" maxlength="255" /> <br/><br/>
 				<select name="ccolor" onchange="document.getElementById('ctext').focus();">

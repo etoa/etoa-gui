@@ -12,7 +12,6 @@ function loadChat($minId)
 	$s = $_SESSION[ROUNDID];
 	if (isset($s['user_id']))
 	{	
-
 			$res = dbquery("
 			SELECT
 				id,
@@ -44,11 +43,9 @@ function loadChat($minId)
 				}
 				$ajax->append("chatitems","innerHTML",$out);
 				$ajax->assign("lastid","innerHTML",$lastid);
+				$ajax->script("window.scrollBy(0,10000);");
 			}
-
-		$ajax->script("setTimeout(\"xajax_loadChat(document.getElementById('lastid').innerHTML)\",1000);");
-		//$ajax->script("setTimeout(\"window.location.hash = '#bancor';\",50);");
-		$ajax->script("window.scrollBy(0,10000);");
+			$ajax->script("setTimeout(\"xajax_loadChat(document.getElementById('lastid').innerHTML)\",1000);");
 	}
 	else
 	{
