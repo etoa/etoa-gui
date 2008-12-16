@@ -2,33 +2,66 @@ body	{
 	background:#000;
 	color:#fff;
 	font-family:arial;
+	font-size:9pt;
 	margin:0px;
 	padding:0px;
 }
 
+input,select	{
+	border:1px solid #fff;
+	background:#111;
+	color:#fff;
+}
+
+
+
 #chattext	{
-	font-size:9pt;
+	position:absolute;
+	top:0px;
+	left:0px;
+	right:0px;
+	bottom:120px;
+	overflow:auto;
 }
 
 #chatitems	{
 	padding:5px;	
 }
 
-#chattext	{
-	font-size:9pt;
+#userlist	{
+	position:absolute;
+	left:0px;
+	right:0px;
+	bottom:90px;
+	background:#225;	
 	padding:5px;	
 }
 
-#chatinput	{
+#chatchannelcontrols	{
+	position:absolute;
+	left:0px;
+	right:0px;
+	bottom:60px;
 	background:#223;
 	padding:5px;
+	height:30px;
+}
+
+#chatinput	{
+	position:absolute;
+	left:0px;
+	right:0px;
+	bottom:0px;
+	background:#225;
+	padding:5px;
+	height:60px;
 }
 
 #channelbox	{
 	background:#223;
 	padding:4px;
 	color:#fff;
-	margin.top:10px;
+	margin-top:10px;
 }
 
 #channelbox a	{

@@ -31,7 +31,13 @@ function loadChat($minId)
 			{
 				while ($arr=mysql_fetch_assoc($res))
 				{
-					if ($arr['color']!="")
+					if ($arr['user_id']==0)
+					{
+						$out.= "<span style=\"color:#aaa\">";
+						$out.= "&lt;".date("H:i",$arr['timestamp'])."&gt; ".stripslashes($arr['text']);					
+						$out.= "</span><br/>";
+					}
+					elseif ($arr['color']!="")
 					{
 						$out.= "<span style=\"color:".$arr['color']."\">";
 						$out.= "&lt;<a style=\"color:".$arr['color']."\" href=\"../index.php?page=userinfo&id=".$arr['user_id']."\" target=\"main\">".$arr['nick']."</a> | ".date("H:i",$arr['timestamp'])."&gt; ".stripslashes($arr['text']);					
@@ -43,7 +49,7 @@ function loadChat($minId)
 				}
 				$ajax->append("chatitems","innerHTML",$out);
 				$ajax->assign("lastid","innerHTML",$lastid);
-				$ajax->script("window.scrollBy(0,10000);");
+				$ajax->script("document.getElementById('chattext').scrollTop = document.getElementById('chattext').scrollHeight;");
 			}
 			$ajax->script("setTimeout(\"xajax_loadChat(document.getElementById('lastid').innerHTML)\",1000);");
 	}
@@ -88,7 +94,7 @@ function sendChat($form)
   return $ajax;		
 }
 
-function setChatUserOnline()
+function setChatUserOnline($init=0)
 {
 	$ajax = new xajaxResponse();	
 	$s = $_SESSION[ROUNDID];
@@ -107,9 +113,28 @@ function setChatUserOnline()
 			'".$s['user_nick']."',
 			'".$s['user_id']."'
 		)");
+		if ($init == 1)
+		{
+			chatSystemMessage($s['user_nick']." betritt den Chat");
+		}
 		$ajax->script("setTimeout('xajax_setChatUserOnline()',60000);");
 	}
   return $ajax;		
+}
+
+function chatSystemMessage($msg)
+{
+	dbquery("INSERT INTO
+		chat
+	(
+		timestamp,
+		text
+	)
+	VALUES
+	(
+		".time().",
+		'".addslashes($msg)."'
+	)");	
 }
 
 function showChatUsers()
