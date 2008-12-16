@@ -98,7 +98,7 @@
           $cu->profileBoardUrl = $_POST['user_profile_board_url'];
           
           success_msg("Benutzer-Daten wurden ge&auml;ndert!");
-          $cu->addToUserLog("settings","{nick} hat sein Profil aktualisiert.",1);
+          //$cu->addToUserLog("settings","{nick} hat sein Profil aktualisiert.",1);
             
         }
         else

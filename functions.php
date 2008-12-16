@@ -2933,13 +2933,13 @@ Forum: http://www.etoa.ch/forum";
 	
 	function chatUserCleanUp()
 	{
-		$res = dbquery("SELECT nick FROM chat_users WHERE timestamp < ".(time()-120));		
+		$res = dbquery("SELECT nick FROM chat_users WHERE timestamp < ".(time()-180));		
 		if (mysql_num_rows($res)>0)
 		{
 			$arr = mysql_fetch_row($res);
-			chatSystemMessage($arr[0]." verlässt den Chat.");
+			chatSystemMessage($arr[0]." verlässt den Chat (Timeout).");
 		}
-		dbquery("DELETE FROM chat_users WHERE timestamp < ".(time()-120));		
+		dbquery("DELETE FROM chat_users WHERE timestamp < ".(time()-180));		
 	}
 
 

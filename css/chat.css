@@ -24,7 +24,7 @@ input[type='button'],input[type='submit']	{
 	top:0px;
 	left:0px;
 	right:0px;
-	bottom:100px;
+	bottom:120px;
 	overflow:auto;
 }
 
@@ -53,6 +53,7 @@ input[type='button'],input[type='submit']	{
 	bottom:0px;
 	background:#225;
 	padding:5px;
+	height:100px;
 }
 
 #channelbox	{

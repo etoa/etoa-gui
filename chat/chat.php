@@ -43,6 +43,7 @@
 			{
 				document.getElementById('userlist').style.display='none';
 				document.getElementById('userListButton').value='User anzeigen';
+				xajax_showChatUsers();
 			}
 		</script>		
 	</head> 		
@@ -78,7 +79,7 @@
 					<option value="#FF00E5" style="background:#000;color:#FF00E5">Pink</option>
 				</select>
 				<input type="button" onclick="xajax_sendChat(xajax.getFormValues('cform'));document.getElementById('ctext').focus();" value="Senden"/> &nbsp;
-				<input type="button" onclick="parent.top.location = '..'" value="Chat schliessen"/>
+				<input type="button" onclick="xajax_logoutFromChat();parent.top.location = '..'" value="Chat schliessen"/>
 			</form>
 			<script type="text/javascript"></script>		
 		</div>		
