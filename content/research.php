@@ -132,7 +132,7 @@
 			//
 			//Forschung erforschen/abbrechen
 			//
-			if (count($_POST)>0	&& checker_verify())
+			if ((isset($_GET['id']) && $_GET['id'] >0) || (count($_POST)>0	&& checker_verify()))
 			{
 				$bid = 0;
 				if (isset($_GET['id']) && $_GET['id'] >0)
