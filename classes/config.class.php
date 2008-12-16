@@ -198,7 +198,7 @@
 			/**
 			* Wrapper for saving all values in an array (classic-style)
 			*/
-			public function getArray()
+			public function & getArray()
 			{
 				$conf = array();
 				foreach ($this->keys as $key)

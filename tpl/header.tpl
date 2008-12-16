@@ -24,9 +24,8 @@
 		<link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
 
 		<!-- CSS Stylesheets -->
-		<link rel="stylesheet" href="css/general.css" type="text/css" />
-		<link rel="stylesheet" type="text/css" href="{$templateDir}/style.css" />
-		<link rel="stylesheet" href="css/dropdown.css" type="text/css" />
+		<link rel="stylesheet" type="text/css" href="css/general.css" />
+		<link rel="stylesheet" type="text/css" href="css/dropdown.css" />
 		
 		<!-- CSS Hacks for stuipd Internet Explorer -->
 		
@@ -40,9 +39,8 @@
 		<![endif]-->{/literal}
 		
 		<!-- General JavaScript -->
-		<script src="js/main.js" type="text/javascript"></script>
-		<script src="js/tooltip.js" type="text/javascript"></script>
-		<script src="{$templateDir}/scripts.js" type="text/javascript"></script>
+		<script type="text/javascript" src="js/main.js"></script>
+		<script type="text/javascript" src="js/tooltip.js"></script>
 
 		<!-- XAJAX -->
 		{$xajaxJS}
@@ -51,8 +49,13 @@
 		<script type="text/javascript" src="js/fader.js"></script>
 		
 		<!-- Scriptaculous -->					
-		<script src="js/prototype.js" type="text/javascript"></script>
-		<script src="js/scriptaculous/scriptaculous.js" type="text/javascript"></script>
+		<script type="text/javascript" src="js/prototype.js"></script>
+		<script type="text/javascript" src="js/scriptaculous/scriptaculous.js"></script>
+
+		<!-- Design related -->
+		<link rel="stylesheet" type="text/css" href="{$templateDir}/style.css" />
+		<script type="text/javascript" src="{$templateDir}/scripts.js"></script>
+
 	</head> 		
 	<body>
 		{$bodyTopStuff}

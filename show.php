@@ -32,6 +32,8 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/		
 
+	define('USE_HTML',true);
+
 	function showTitle($title)
 	{
 		echo "<br/><a href=\"?\"><img src=\"images/game_logo.gif\" alt=\"EtoA Logo\" /></a>";
@@ -230,7 +232,7 @@
 				}
 				else
 				{
-					showTitle('Übersicht öffentlicher Seiten');
+					showTitle('Öffentliche Seiten');
 					echo '<table id="outgameOverviewTable">';
 					echo '<tr>
 						<td><a href="?index=register"><img src="images/outgame/register.png" alt="Anmelden" /><br/>Anmelden</a></td>

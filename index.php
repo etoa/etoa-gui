@@ -32,6 +32,8 @@
 	// Basic stuff
 	//
 
+	define('USE_HTML',true);
+
 	//Fehler ausgabe definiert (Lamborghini)
   ini_set('display_errors', 1);
 	ini_set('arg_separator.output',  '&amp;');
@@ -51,8 +53,6 @@
 		require("inc/install.inc.php");
 		exit();
 	}
-
-	define('USE_HTML',true);
 
 	// Renderzeit-Start festlegen
 	$render_time = explode(" ",microtime());

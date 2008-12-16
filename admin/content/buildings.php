@@ -771,9 +771,9 @@
 					elseif ($larr['user_id']==$arr['user_id'] && $larr['id']==$arr['id'])
 						echo "<td class=\"tbldatawt\">&nbsp;</td>";
 					elseif ($narr['user_id']==$arr['user_id'] && $narr['id']==$arr['id'])
-						echo "<td class=\"tbldatawb\"><a href=\"?page=galaxy&amp;sub=edit&amp;planet_id=".$arr['buildlist_entity_id']."\" title=\"".$arr['planet_name']."\">".cut_string($arr['planet_name'],11)."</a></td>";
+						echo "<td class=\"tbldatawb\"><a href=\"?page=galaxy&amp;sub=edit&amp;id=".$arr['buildlist_entity_id']."\" title=\"".$arr['planet_name']."\">".cut_string($arr['planet_name'],11)."</a></td>";
 					else
-						echo "<td class=\"tbldata\"><a href=\"?page=galaxy&amp;sub=edit&amp;planet_id=".$arr['buildlist_entity_id']."\" title=\"".$arr['planet_name']."\">".cut_string($arr['planet_name'],11)."</a></td>";
+						echo "<td class=\"tbldata\"><a href=\"?page=galaxy&amp;sub=edit&amp;id=".$arr['buildlist_entity_id']."\" title=\"".$arr['planet_name']."\">".cut_string($arr['planet_name'],11)."</a></td>";
 
 					if ($larr['user_id']==$arr['user_id'] && $narr['user_id']==$arr['user_id'] && $larr['id']==$arr['id'] && $narr['id']==$arr['id'])
 						echo "<td class=\"tbldatawtb\">&nbsp;</td>";
