@@ -85,6 +85,7 @@
 		<script type="text/javascript">
 			xajax_loadChat(0);
 			xajax_setChatUserOnline(1);
+			xajax_showChatUsers();
 			document.forms[0].elements[0].focus()
 		</script>
 	</body>

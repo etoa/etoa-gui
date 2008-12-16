@@ -2916,6 +2916,31 @@ Forum: http://www.etoa.ch/forum";
 		return " onmouseover=\"showTT('".str_replace('"',"\'",$title)."','".str_replace('"',"\'",$content)."',1,event,this);\" onmouseout=\"hideTT()\" ";
 	}
 	
+	function chatSystemMessage($msg)
+	{
+		dbquery("INSERT INTO
+			chat
+		(
+			timestamp,
+			text
+		)
+		VALUES
+		(
+			".time().",
+			'".addslashes($msg)."'
+		)");	
+	}	
+	
+	function chatUserCleanUp()
+	{
+		$res = dbquery("SELECT nick FROM chat_users WHERE timestamp < ".(time()-120));		
+		if (mysql_num_rows($res)>0)
+		{
+			$arr = mysql_fetch_row($res);
+			chatSystemMessage($arr[0]." verlässt den Chat.");
+		}
+		dbquery("DELETE FROM chat_users WHERE timestamp < ".(time()-120));		
+	}
 
 
 

@@ -115,26 +115,11 @@ function setChatUserOnline($init=0)
 		)");
 		if ($init == 1)
 		{
-			//chatSystemMessage($s['user_nick']." betritt den Chat.");
+			chatSystemMessage($s['user_nick']." betritt den Chat.");
 		}
 		$ajax->script("setTimeout('xajax_setChatUserOnline()',60000);");
 	}
   return $ajax;		
-}
-
-function chatSystemMessage($msg)
-{
-	dbquery("INSERT INTO
-		chat
-	(
-		timestamp,
-		text
-	)
-	VALUES
-	(
-		".time().",
-		'".addslashes($msg)."'
-	)");	
 }
 
 function showChatUsers()
@@ -148,7 +133,8 @@ function showChatUsers()
 		chat_users
 	");
 	$out="<b>Chat-User</b><br/><br/>";
-	if (mysql_num_rows($res)>0)
+	$nr = mysql_num_rows($res);
+	if ($nr>0)
 	{
 		while ($arr=mysql_fetch_assoc($res))
 		{
@@ -159,6 +145,7 @@ function showChatUsers()
 		$out.="Keine User online!<br/>";
 	$out.="<br/>";
 	$ajax->assign("userlist","innerHTML",$out);
+	$ajax->append("userListButton","value"," ($nr)");
 
   return $ajax;			
 }

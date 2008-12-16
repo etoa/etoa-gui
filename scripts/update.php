@@ -194,9 +194,8 @@
     }
 		*/
 
-		// Chat-Cleanup
-		dbquery("DELETE FROM chat_users WHERE timestamp < ".(time()-120));		
-	
+		chatUserCleanUp();
+
 		return $log;
 	}
 
