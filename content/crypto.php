@@ -74,11 +74,12 @@
 						$status_text = "Bereit";
 						$cd_enabled=false;
 					}		
+	$cd_enabled = false;
 	
 					// Scan
 					if (isset($_POST['scan']) && checker_verify() && !$cd_enabled)
 					{
-						require_once("inc/fleet_action.inc.php");
+						
 	
 	
 						$sx = intval($_POST['sx']);
@@ -199,22 +200,16 @@
 	                    // >30 Show action
 	                    
 	                    
-										  $out.="[b]Flottenscan vom Planeten ".$target->name()."[/b] (".$sx."/".$sy." : ".$cx."/".$cy." : ".$pp.")\n\n";
+										  $out="[b]Flottenscan vom Planeten ".$target->name()."[/b] (".$sx."/".$sy." : ".$cx."/".$cy." : ".$pp.")\n\n";
 	
 										  $out.="[b]Eintreffende Flotten[/b]\n\n";
 										  $fres = dbquery("
 											SELECT
-												fleet_landtime,
-												fleet_action,
-												fleet_entity_from,
-												user_nick
+												id
 											FROM
 												fleet
-											LEFT JOIN
-												users
-												ON fleet_user_id=user_id
 											WHERE
-												fleet_entity_to=".$target->id()."
+												entity_to=".$target->id()."
 										  ");
 										  if (mysql_num_rows($fres)>0)
 										  {
@@ -228,33 +223,34 @@
 	                      }
 	                      else                      
 	                      {
-											    while ($farr=mysql_fetch_array($fres))
+											    while ($farr=mysql_fetch_row($fres))
 											    {
-														$source = Entity::createFactoryById($farr['fleet_entity_from']);
+											    	$fd = new Fleet($farr[0]);
+														$source = $fd->getSource();
+											    	$owner = new User($fd->ownerId());
 											    	
-											    	
-												    $out.='[b]Herkunft:[/b] '.$source.', [b]Besitzer:[/b] '.$farr['user_nick'];
+												    $out.='[b]Herkunft:[/b] '.$source.', [b]Besitzer:[/b] '.$owner;
 												    $out.= "\n[b]Ankunft:[/b] ";
 	                          
 	                          if ($decryptlevel<=15)
 	                          {
-	                            $out.="Zwischen ".date("d.m.Y H:i",$farr['fleet_landtime']-(30*60))." und ".date("d.m.Y H:i",$farr['fleet_landtime']+(30*60))." Uhr";
+	                            $out.="Zwischen ".date("d.m.Y H:i",$fd->landTime() - (30*60))." und ".date("d.m.Y H:i",$fd->landTime()+(30*60))." Uhr";
 	                          }
 	                          elseif ($decryptlevel<=20)
 	                          {
-	                            $out.="Zwischen ".date("d.m.Y H:i",$farr['fleet_landtime']-(7*60))." und ".date("d.m.Y H:i",$farr['fleet_landtime']+(7*60))." Uhr";                            
+	                            $out.="Zwischen ".date("d.m.Y H:i",$fd->landTime()-(7*60))." und ".date("d.m.Y H:i",$fd->landTime()+(7*60))." Uhr";                            
 	                          }                          
 	                          elseif ($decryptlevel<=25)
 	                          {
-	                            $out.=date("d.m.Y H:i",$farr['fleet_landtime'])." Uhr";                            
+	                            $out.=date("d.m.Y H:i",$fd->landTime())." Uhr";                            
 	                          }   
 	                          else
 	                          {
-	                            $out.=date("d.m.Y H:i:s",$farr['fleet_landtime'])." Uhr";                            
+	                            $out.=date("d.m.Y H:i:s",$fd->landTime())." Uhr";                            
 	                          }                            
 	                          if ($decryptlevel>30)
 	                          {                        
-	                            $out.=", [b]Aktion:[/b] ".fa($farr['fleet_action'])."\n";
+	                            $out.=", [b]Aktion:[/b] ".$fd->getAction()."\n";
 	                          }
 	                          else
 	                            $out.="\n";
@@ -305,17 +301,11 @@
 										  $out.="[b]Wegfliegende Flotten[/b]\n\n";
 										  $fres = dbquery("
 											SELECT
-												fleet_landtime,
-												fleet_action,
-												fleet_entity_from,
-												user_nick
+												id
 											FROM
 												fleet
-											LEFT JOIN
-												users
-												ON fleet_user_id=user_id
 											WHERE
-												fleet_entity_from=".$target->id()."
+												entity_from=".$target->id()."
 										  ");
 										  if (mysql_num_rows($fres)>0)
 										  {
@@ -329,69 +319,61 @@
 	                      }
 	                      else                      
 	                      {
-	                        while ($farr=mysql_fetch_array($fres))
+	                        while ($farr=mysql_fetch_row($fres))
 	                        {
-														$source = Entity::createFactoryById($farr['fleet_entity_from']);
-	                        	
-	                          $out.='[b]Ziel:[/b] '.$source.', [b]Besitzer:[/b] '.$farr['user_nick'];
+											    	$fd = new Fleet($farr[0]);
+														$source = $fd->getTarget();
+											    	$owner = new User($fd->ownerId());
+                        	
+	                          $out.='[b]Ziel:[/b] '.$source.', [b]Besitzer:[/b] '.$owner;
 	                          $out.= "\n[b]Ankunft:[/b] ";
 	                          
 	                          if ($decryptlevel<=15)
 	                          {
-	                            $out.="Zwischen ".date("d.m.Y H:i",$farr['fleet_landtime']-(30*60))." und ".date("d.m.Y H:i",$farr['fleet_landtime']+(30*60))." Uhr";
+	                            $out.="Zwischen ".date("d.m.Y H:i",$fd->landTime()-(30*60))." und ".date("d.m.Y H:i",$fd->landTime()+(30*60))." Uhr";
 	                          }
 	                          elseif ($decryptlevel<=20)
 	                          {
-	                            $out.="Zwischen ".date("d.m.Y H:i",$farr['fleet_landtime']-(7*60))." und ".date("d.m.Y H:i",$farr['fleet_landtime']+(7*60))." Uhr";                            
+	                            $out.="Zwischen ".date("d.m.Y H:i",$fd->landTime()-(7*60))." und ".date("d.m.Y H:i",$fd->landTime()+(7*60))." Uhr";                            
 	                          }                          
 	                          elseif ($decryptlevel<=25)
 	                          {
-	                            $out.=date("d.m.Y H:i",$farr['fleet_landtime'])." Uhr";                            
+	                            $out.=date("d.m.Y H:i",$fd->landTime())." Uhr";                            
 	                          }   
 	                          else
 	                          {
-	                            $out.=date("d.m.Y H:i:s",$farr['fleet_landtime'])." Uhr";                            
+	                            $out.=date("d.m.Y H:i:s",$fd->landTime())." Uhr";                            
 	                          }                            
 	                          if ($decryptlevel>30)
 	                          {                        
-	                            $out.=", [b]Aktion:[/b] ".fa($farr['fleet_action'])."\n";
+	                            $out.=", [b]Aktion:[/b] ".$fd->getAction()."\n";
 	                          }
 	                          else
 	                            $out.="\n";
 	                          
 	                          if ($decryptlevel>=15)
 	                          {                                                
-	                            $sres = dbquery("
-	                            SELECT
-	                              ship_name,
-	                              fs_ship_cnt
-	                            FROM
-	                              fleet_ships
-	                            INNER JOIN
-	                              ships
-	                              ON ship_id=fs_ship_id
-	                              AND fs_fleet_id=".$farr['fleet_id']."
-	                            ;");
-	                            if (mysql_num_rows($sres)>0)
-	                            {
+
 	                              $cntr;
-	                              while ($sarr=mysql_fetch_array($sres))
+	                              foreach ($fd->getShips() as $sid => $sdat)
 	                              {
+																	$sids = $fd->getShipIds();
+																	$cnt = $sids[$sid];
 	                                if ($decryptlevel <=25 )
 	                                {                                    
-	                                  $out.="".$sarr['ship_name']."\n";
+	                                  $out.="".$sdat."\n";
 	                                }
 	                                else
 	                                {
-	                                  $out.=$sarr['fs_ship_cnt']." ".$sarr['ship_name']."\n";
+	                                  $out.=$cnt." ".$sdat."\n";
 	                                }
-	                                $cntr+=$sarr['fs_ship_cnt'];
+	                                $cntr+=$cnt;
 	                              }
 	                              if ($decryptlevel >20)
 	                              {
 	                                $out.=$cntr." Schiffe total\n"; 
 	                              }
-	                            }  
+ 
 	                          }
 	                          $out.="\n";                  
 	                        }

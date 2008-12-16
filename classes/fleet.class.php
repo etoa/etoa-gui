@@ -237,7 +237,7 @@
 		/**
 		* Loads the source entity (if needed) and returns it
 		*/		
-		function getSource()
+		function & getSource()
 		{
 			if (!isset($this->source))
 			{
@@ -249,7 +249,7 @@
 		/**
 		* Loads the target entity (if needed) and returns it
 		*/
-		function getTarget()
+		function & getTarget()
 		{
 			if (!isset($this->target))
 			{
@@ -317,7 +317,7 @@
 				$sres = dbquery("
 				SELECT
 					fs_ship_id,
-			fs_ship_cnt
+					fs_ship_cnt
 				FROM
 			fleet_ships
 				WHERE
