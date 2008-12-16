@@ -38,6 +38,17 @@
 		</style>
 		<![endif]-->{/literal}
 		
+		<!-- PNG Hack for stupid Internet Explorer -->
+		<!--[if IE 6]>
+		<script src="js/DD_belatedPNG.js"></script>
+		<script>
+		    DD_belatedPNG.fix('.png_bg'); /* EXAMPLE */
+		    /* string argument can be any CSS selector */
+		    /* using .png_bg example is unnecessary */
+		    /* change it to what suits you! */
+		</script>
+		<![endif]--> 
+		
 		<!-- General JavaScript -->
 		<script type="text/javascript" src="js/main.js"></script>
 		<script type="text/javascript" src="js/tooltip.js"></script>

@@ -515,10 +515,11 @@ div.infoboxtitle	{
 /* Building/Research */
 
 .buildOverviewObjectTitle	{
-	font-weight:bold;
+	font-weight:normal;
 	position:absolute;
 	background:url('images/transheader1.png') top right no-repeat;
 	padding:3px 15px 3px 3px;	
+	font-size:8pt;
 }
 
 .buildOverviewObjectLevel	{
@@ -529,9 +530,8 @@ div.infoboxtitle	{
 	position:absolute;
 	right:0px;
 	bottom:0px;
-	width:60px;
-	padding:3px;
-	padding-right:5px;	
+	padding:3px 5px 3px 20px;
+	
 }
 
 /* Planet Overview */

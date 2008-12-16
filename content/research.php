@@ -31,8 +31,8 @@
 
    // DEFINITIONEN //
 
-  define('NUM_BUILDINGS_PER_ROW',4);
-  define('CELL_WIDTH',175);
+  define('NUM_BUILDINGS_PER_ROW',5);
+  define('CELL_WIDTH',120);
   
 	// Aktiviert / Deaktiviert Bildfilter
 	if ($cu->properties->imageFilter ==1)
@@ -700,7 +700,7 @@
 					echo $cstr;
 					while ($tarr = mysql_fetch_array($tres))
 					{
-						tableStart($tarr['type_name']);
+						tableStart($tarr['type_name'],NUM_BUILDINGS_PER_ROW*CELL_WIDTH);
 	
 						$cnt = 0; // Counter for current row
 						$scnt = 0; // Counter for shown techs
@@ -783,7 +783,7 @@
 									elseif (isset($techlist[$bid]['techlist_build_type']) && $techlist[$bid]['techlist_build_type']==3)
 									{
 										$subtitle =  "Forschung auf Stufe ".($b_level+1);
-										$tmtext = "<span style=\"color:#0f0\">Wird ausgebaut!<br/>Dauer: ".tf($end_time-time())."</span><br/>";
+										$tmtext = "<span style=\"color:#0f0\">Wird erforscht!<br/>Dauer: ".tf($end_time-time())."</span><br/>";
 										$color = '#0f0';
 										if($use_img_filter)
 										{
@@ -840,7 +840,7 @@
 									}
 	              }
 
-								$img="".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid.".".IMAGE_EXT."";
+								$img="".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid."_middle.".IMAGE_EXT."";
 	              
 								// Display all buildings that are buildable or are already built
 								if (($requirements_passed && $bv['show']==1) || $b_level>0)
@@ -851,11 +851,11 @@
 										echo "<tr>";
 									}
 	
-									echo "<td style=\"background:url('".$img."') no-repeat -10px 0px;width:180px;height:180px ;padding:0px;\">
-									<div style=\"position:relative;height:180px;overflow:hidden\">
+									echo "<td style=\"background:url('".$img."') no-repeat;width:".CELL_WIDTH."px;height:".CELL_WIDTH."px ;padding:0px;\">
+									<div style=\"position:relative;height:".CELL_WIDTH."px;overflow:hidden\">
 									<div class=\"buildOverviewObjectTitle\">".$bv['name']."</div>";
 									echo "<a href=\"?page=$page&amp;id=".$bid."\" ".tm($bv['name'],"<b>".$subtitle."</b><br/>".$tmtext.$bv['shortcomment'])." style=\"display:block;height:180px;\"></a>";
-									if ($b_level>0) 
+									if ($b_level>0 || ($b_level==0 && isset($techlist[$bid]['techlist_build_type']) && $techlist[$bid]['techlist_build_type']==3)) 
 									{
 										echo "<div class=\"buildOverviewObjectLevel\" style=\"color:".$color."\">".$b_level."</div>";
 									}

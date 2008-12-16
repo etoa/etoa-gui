@@ -31,8 +31,8 @@
 
   // DEFINITIONEN //
 
-  define('NUM_BUILDINGS_PER_ROW',4);// Gebäude pro Reihe
-  define('CELL_WIDTH',175);					// Breite der Gebäudezelle in der Übersicht
+  define('NUM_BUILDINGS_PER_ROW',5);// Gebäude pro Reihe
+  define('CELL_WIDTH',120);					// Breite der Gebäudezelle in der Übersicht
 	
 	// Aktiviert / Deaktiviert Bildfilter
 	if ($cu->properties->imageFilter==1)
@@ -1039,7 +1039,7 @@ function calcDemolishingWaitTime($dc,$cp)
 
 				while ($tarr = mysql_fetch_array($tres))
 				{
-					tableStart($tarr['type_name'],720);
+					tableStart($tarr['type_name'],NUM_BUILDINGS_PER_ROW*CELL_WIDTH);
 
 						$cnt = 0; // Counter for current row
 						$scnt = 0; // Counter for shown buildings
@@ -1173,7 +1173,7 @@ function calcDemolishingWaitTime($dc,$cp)
 									}
 								}
 
-								$img="".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid.".".IMAGE_EXT."";
+								$img="".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid."_middle.".IMAGE_EXT."";
 
 
 								// Display all buildings that are buildable or are already built
@@ -1185,11 +1185,11 @@ function calcDemolishingWaitTime($dc,$cp)
 										echo "<tr>";
 									}
 
-									echo "<td style=\"background:url('".$img."') no-repeat -10px 0px;width:180px;height:180px ;padding:0px;\">
-									<div style=\"position:relative;height:180px;overflow:hidden;\">
+									echo "<td style=\"background:url('".$img."') no-repeat;width:".CELL_WIDTH."px;height:".CELL_WIDTH."px ;padding:0px;\">
+									<div style=\"position:relative;height:".CELL_WIDTH."px;overflow:hidden;\">
 									<div class=\"buildOverviewObjectTitle\">".$bv['name']."</div>";
 									echo "<a href=\"?page=$page&amp;id=".$bid."\" ".tm($bv['name'],"<b>".$subtitle."</b><br/>".$tmtext.$bv['shortcomment'])." style=\"display:block;height:180px;\"></a>";
-									if ($b_level>0) 
+									if ($b_level>0 || ($b_level==0 && isset($buildlist[$bid]['buildlist_build_type']) && $buildlist[$bid]['buildlist_build_type']==3)) 
 									{
 										echo "<div class=\"buildOverviewObjectLevel\" style=\"color:".$color."\">".$b_level."</div>";
 									}

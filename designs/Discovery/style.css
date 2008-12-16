@@ -1366,16 +1366,16 @@ td.havenTab:hover	{
 	background:#333 url('images/cellpic3.gif') repeat;
 }
 
-.resfull	{
-	color:#f50;	
+.resfull, .tb td.resfull	{
+	color:#f20;	
 }
 
 .buildOverviewObjectTitle	{
 	font-weight:bold;
 	position:absolute;
-	background:url('images/transheader1.png') no-repeat;
-	width:130px;
-	padding:3px;	
+	background:url('images/transheader1.png') top right no-repeat;
+	padding:3px 15px 3px 3px;	
+	font-size:8pt;
 }
 
 .buildOverviewObjectLevel	{
