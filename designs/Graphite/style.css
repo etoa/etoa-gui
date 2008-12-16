@@ -95,7 +95,7 @@ img	{
 #planetname	{
 	position:absolute;
 	left:5px;
-	top:187px;	
+	top:188px;	
 	height:20px;
 	font-family: verdana, sans-serif, arial;
 	font-size: 8pt;	
@@ -677,4 +677,46 @@ visibility:visible;
 /* make the sixth level visible when you hover over fifth level link */
 #pmenu li a:hover ul a:hover ul a:hover ul a:hover ul a:hover ul { 
 visibility:visible;
+}
+
+/* Techtree */
+
+.techtreeItemContainer	{
+	margin:0px auto 10px auto;
+	display:table;
+	text-align:center;
+	max-width:580px;
+}
+
+.techtreeMainItem	{
+	position:relative;
+	width:120px;
+	height:120px;
+	border:1px solid #fff;	
+	margin:10px auto;
+}
+
+.techtreeItem	{
+	margin:10px; 
+	position:relative;
+	float:left;
+	width:120px;
+	height:120px;
+	border:1px solid black;
+}
+.techtreeItemLevel	{
+	position:absolute;
+	top:0px;
+	background:url('images/transheader1.png') top right;
+	color:#fff;
+	padding:3px 15px 3px 3px ;
+}
+.techtreeItemName	{
+	position:absolute;
+	bottom:0px;
+	font-size:8pt;
+	padding:5px;	
+	background:url('images/trans1.png');
+	color:#fff;
+	width:110px;
 }

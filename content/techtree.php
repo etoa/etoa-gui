@@ -609,7 +609,7 @@
 		}			
 		echo "</select><br/><br/>";
 		
-		iBoxStart("Grafische Darastellung");
+		iBoxStart("Grafische Darstellung");
 		showTechTree("b",$startItem);
 		iBoxEnd();
 		

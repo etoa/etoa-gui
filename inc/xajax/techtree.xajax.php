@@ -31,6 +31,9 @@ function reqInfo($id,$cat='b')
 		$de_name[$tearr['def_id']]=$tearr['def_name'];
 	}		
 	
+	//
+	// Required objects
+	//
 	
 	if ($cat=='b')
 	{	
@@ -60,13 +63,7 @@ function reqInfo($id,$cat='b')
 	{
 		while($arr=mysql_fetch_assoc($res))
 		{
-			$items[] = "<td style=\"padding:4px;border:1px solid #bbb;background:#eef;width:150px;\">
-			<a href=\"javascript:;\" style=\"color:#00f\" onclick=\"xajax_reqInfo(".$arr['req_req_building_id'].",'b')\">
-			<img src=\"".IMAGE_PATH."/buildings/building".$arr['req_req_building_id']."_small.".IMAGE_EXT."\" align=\"middle\"/>
-			</a><br/>
-	 		<b>".$bu_name[$arr['req_req_building_id']]."</b><br/>
-	 		Stufe ".$arr['req_req_building_level']."			
-			</td>";
+			$items[] = array($arr['req_req_building_id'],$bu_name[$arr['req_req_building_id']],$arr['req_req_building_level'],IMAGE_PATH."/buildings/building".$arr['req_req_building_id']."_middle.".IMAGE_EXT,"xajax_reqInfo(".$arr['req_req_building_id'].",'b')");
 		}
 	}
 	$res = dbquery("SELECT * FROM $req_tbl WHERE $req_field=".$id." AND req_req_tech_level>0 ORDER BY req_req_tech_level;");
@@ -75,67 +72,58 @@ function reqInfo($id,$cat='b')
 	{
 		while($arr=mysql_fetch_assoc($res))
 		{
-			$items[] = "<td style=\"padding:4px;border:1px solid #bbb;background:#efe;width:150px;\">
-			<a href=\"javascript:;\" style=\"color:#00f\" onclick=\"xajax_reqInfo(".$arr['req_req_tech_id'].",'t')\">
-			<img src=\"".IMAGE_PATH."/technologies/technology".$arr['req_req_tech_id']."_small.".IMAGE_EXT."\" align=\"middle\"/>
-			</a><br/>
-	 		<b>".$te_name[$arr['req_req_tech_id']]."</b><br/>
-	 		Stufe ".$arr['req_req_tech_level']."			
-			</td>";
+			$items[] = array($arr['req_req_tech_id'],$te_name[$arr['req_req_tech_id']],$arr['req_req_tech_level'],IMAGE_PATH."/technologies/technology".$arr['req_req_tech_id']."_middle.".IMAGE_EXT,"xajax_reqInfo(".$arr['req_req_tech_id'].",'t')");
 		}
 	}
 	
 	if (count($items)>0)
 	{
-		echo "<table style=\"margin:0px auto;color:#000\"><tr>";
-		$cnt=0;
+		echo "<div class=\"techtreeItemContainer\">";
 		foreach ($items as $i)
 		{
-			echo $i;
-			$cnt++;
-			if ($cnt==4)
-			{
-				echo "</tr><tr>";
-				$cnt=0;
-			}
+			echo "<div class=\"techtreeItem\" style=\"background:url('".$i[3]."');\">
+			<div class=\"techtreeItemLevel\">Lvl <b>".$i[2]."</b></div>	
+			<a href=\"javascript:;\" onclick=\"".$i[4]."\" style=\"height:100%;display:block;\"></a>			
+			<div class=\"techtreeItemName\">".$i[1]."</div>				
+			</div>";
 		}
-		if ($cnt<4)
-		{
-			for ($x=$cnt;$x<=4;$x++)
-			{
-				echo "<td></td>";
-			}
-		}
-		echo "</tr></table>";
-		echo "<br/>wird benötigt für<br/><br/>";		
+		echo "<br style=\"clear:both;\"";
+		echo "</div>";		
+		
+		echo "<div style=\"margin:0px auto;\">wird benötigt für</div>";		
 	}
 	
+	//
+	// Current object
+	//
 		
 	if ($cat=='b')
 	{	
-		echo "<div style=\"position:relative;border:1px solid black;padding:0px;background:url('".IMAGE_PATH."/buildings/building".$id."_middle.".IMAGE_EXT."');color:#000;width:110px;height:110px;margin:10px auto;\">";
-		echo "<div style=\"position:absolute;top:0px;background:#000;height:15px;width:100%;color:#fff;\">".$bu_name[$id]."</div>";
-		//echo "<img src=\"".IMAGE_PATH."/buildings/building".$id."_small.".IMAGE_EXT."\" align=\"middle\"/><br/><b>".$bu_name[$id]."</b>";
-		echo "</div><br/>";
+		$img = IMAGE_PATH."/buildings/building".$id."_middle.".IMAGE_EXT;
+		$name = $bu_name[$id];
 	}
 	elseif($cat=='t')
 	{
-		echo "<img src=\"".IMAGE_PATH."/technologies/technology".$id."_small.".IMAGE_EXT."\" align=\"middle\"/><br/>
-		 	<b>".$te_name[$id]."</b>";
-		echo "</div><br/>";
+		$img = IMAGE_PATH."/technologies/technology".$id."_middle.".IMAGE_EXT;
+		$name = $te_name[$id];
 	}
 	elseif($cat=='s')
 	{
-		echo "<img src=\"".IMAGE_PATH."/ships/ship".$id."_small.".IMAGE_EXT."\" align=\"middle\"/><br/>
-		 	<b>".$sh_name[$id]."</b>";
-		echo "</div><br/>";
+		$img = IMAGE_PATH."/ships/ship".$id."_middle.".IMAGE_EXT;
+		$name = $sh_name[$id];
 	}
 	elseif($cat=='d')
 	{
-		echo "<img src=\"".IMAGE_PATH."/defense/def".$id."_small.".IMAGE_EXT."\" align=\"middle\"/><br/>
-		 	<b>".$de_name[$id]."</b>";
-		echo "</div><br/>";
+		$img = IMAGE_PATH."/defense/def".$id."_middle.".IMAGE_EXT;
+		$name = $de_name[$id];
 	}	
+	echo "<div class=\"techtreeMainItem\" style=\"background:url('".$img."');\">";
+	echo "<div class=\"techtreeItemName\">".$name."</div>";
+	echo "</div>";	
+	
+	//
+	// Allowed objects
+	// 
 	
 	if ($cat == 'b' || $cat == 't')
 	{
@@ -160,13 +148,7 @@ function reqInfo($id,$cat='b')
 			{
 				if (isset($bu_name[$arr['req_building_id']]))
 				{
-					$items[] =  "<td style=\"padding:4px;border:1px solid #bbb;background:#eef;width:150px;\">
-					mit Stufe ".$arr[$req_level_field]."<br/><br/>
-					<a href=\"javascript:;\" style=\"color:#00f\" onclick=\"xajax_reqInfo(".$arr['req_building_id'].",'b')\">
-					<img src=\"".IMAGE_PATH."/buildings/building".$arr['req_building_id']."_small.".IMAGE_EXT."\" align=\"middle\"/>
-					</a><br/>
-			 		<b>".$bu_name[$arr['req_building_id']]."</b>			
-					</td>";
+					$items[] = array($arr['req_building_id'],$bu_name[$arr['req_building_id']],$arr[$req_level_field],IMAGE_PATH."/buildings/building".$arr['req_building_id']."_middle.".IMAGE_EXT,"xajax_reqInfo(".$arr['req_building_id'].",'b')");
 				}
 			}
 		}
@@ -178,13 +160,7 @@ function reqInfo($id,$cat='b')
 			{
 				if (isset($te_name[$arr['req_tech_id']]))
 				{
-					$items[] =  "<td style=\"padding:4px;border:1px solid #bbb;background:#efe;width:150px;\">
-					mit Stufe ".$arr[$req_level_field]."<br/><br/>
-					<a href=\"javascript:;\" style=\"color:#00f\" onclick=\"xajax_reqInfo(".$arr['req_tech_id'].",'t')\">
-					<img src=\"".IMAGE_PATH."/technologies/technology".$arr['req_tech_id']."_small.".IMAGE_EXT."\" align=\"middle\"/>
-					</a><br/>
-			 		<b>".$te_name[$arr['req_tech_id']]."</b>			
-					</td>";
+					$items[] = array($arr['req_tech_id'],$te_name[$arr['req_tech_id']],$arr[$req_level_field],IMAGE_PATH."/technologies/technology".$arr['req_tech_id']."_middle.".IMAGE_EXT,"xajax_reqInfo(".$arr['req_tech_id'].",'t')");
 				}
 			}
 		}
@@ -196,13 +172,7 @@ function reqInfo($id,$cat='b')
 			{
 				if (isset($sh_name[$arr['req_ship_id']]))
 				{
-					$items[] =  "<td style=\"padding:4px;border:1px solid #bbb;background:#fee;width:150px;\">
-					mit Stufe ".$arr[$req_level_field]."<br/><br/>
-					<a href=\"javascript:;\" style=\"color:#00f\" onclick=\"xajax_reqInfo(".$arr['req_ship_id'].",'s')\">
-					<img src=\"".IMAGE_PATH."/ships/ship".$arr['req_ship_id']."_small.".IMAGE_EXT."\" align=\"middle\"/>
-					</a><br/>
-			 		<b>".$sh_name[$arr['req_ship_id']]."</b>			
-					</td>";
+					$items[] = array($arr['req_ship_id'],$sh_name[$arr['req_ship_id']],$arr[$req_level_field],IMAGE_PATH."/ships/ship".$arr['req_ship_id']."_middle.".IMAGE_EXT,"xajax_reqInfo(".$arr['req_ship_id'].",'s')");
 				}
 			}
 		}
@@ -214,51 +184,33 @@ function reqInfo($id,$cat='b')
 			{
 				if (isset($de_name[$arr['req_def_id']]))
 				{
-					$items[] =  "<td style=\"padding:4px;border:1px solid #bbb;background:#ffe;width:150px;\">
-					mit Stufe ".$arr[$req_level_field]."<br/><br/>
-					<a href=\"javascript:;\" style=\"color:#00f\" onclick=\"xajax_reqInfo(".$arr['req_def_id'].",'d')\">
-					<img src=\"".IMAGE_PATH."/defense/def".$arr['req_def_id']."_small.".IMAGE_EXT."\" align=\"middle\"/>
-					</a><br/>
-			 		<b>".$de_name[$arr['req_def_id']]."</b>			
-					</td>";
+					$items[] = array($arr['req_def_id'],$de_name[$arr['req_def_id']],$arr[$req_level_field],IMAGE_PATH."/defense/def".$arr['req_def_id']."_middle.".IMAGE_EXT,"xajax_reqInfo(".$arr['req_def_id'].",'d')");
 				}
 			}
 		}	
 		
 		if (count($items)>0)
 		{	
-			echo "ermöglicht<br/><br/>
-			<table style=\"margin:0px auto;color:#000\"><tr>";
-			$cnt=0;
+			echo "<div style=\"margin:10px auto;\">ermöglicht</div>";
+
+			echo "<div class=\"techtreeItemContainer\">";
+			$cnt = 0;
 			foreach ($items as $i)
 			{
-				echo $i;
+				echo "<div class=\"techtreeItem\" style=\"background:url('".$i[3]."');\">
+				<div class=\"techtreeItemLevel\">Ab Lvl <b>".$i[2]."</b></div>	
+				<a href=\"javascript:;\" onclick=\"".$i[4]."\" style=\"height:100%;display:block;\"></a>			
+				<div class=\"techtreeItemName\">".$i[1]."</div>				
+				</div>";
 				$cnt++;
-				if ($cnt==4)
-				{
-					echo "</tr><tr>";
-					$cnt=0;
-				}
+				
 			}
-			if ($cnt<4)
-			{
-				for ($x=$cnt;$x<=4;$x++)
-				{
-					echo "<td></td>";
-				}
-			}
-			echo "</tr></table>";
+			echo "<br style=\"clear:both;\"";
+			echo "</div>";
 		}
 	}
 
 
-	echo "<br/><br/><table style=\"margin:0px auto;\"><tr>";
-	echo "<td style=\"color:#000;padding:4px;border:1px solid #bbb;background:#eef;width:150px;\">Gebäude</td>";
-	echo "<td style=\"color:#000;padding:4px;border:1px solid #bbb;background:#efe;width:150px;\">Technologie</td>";
-	echo "<td style=\"color:#000;padding:4px;border:1px solid #bbb;background:#fee;width:150px;\">Schiff</td>";
-	echo "<td style=\"color:#000;padding:4px;border:1px solid #bbb;background:#ffe;width:150px;\">Verteidigung</td>";
-	echo "</tr></table>";
-	
 	$out=ob_get_clean();
 	$or->assign('reqInfo','innerHTML',$out);	
 	return $or;	
