@@ -13,6 +13,10 @@ input,select	{
 	color:#fff;
 }
 
+input[type='button'],input[type='submit']	{
+	background:#223;	
+	font-weight:bold;
+}
 
 
 #chattext	{
@@ -20,7 +24,7 @@ input,select	{
 	top:0px;
 	left:0px;
 	right:0px;
-	bottom:120px;
+	bottom:100px;
 	overflow:auto;
 }
 
@@ -35,16 +39,11 @@ input,select	{
 	bottom:90px;
 	background:#225;	
 	padding:5px;	
+	border:1px solid #fff;
 }
 
 #chatchannelcontrols	{
-	position:absolute;
-	left:0px;
-	right:0px;
-	bottom:60px;
-	background:#223;
-	padding:5px;
-	height:30px;
+	padding-bottom:5px;
 }
 
 #chatinput	{
@@ -54,7 +53,6 @@ input,select	{
 	bottom:0px;
 	background:#225;
 	padding:5px;
-	height:60px;
 }
 
 #channelbox	{

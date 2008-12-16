@@ -59,10 +59,12 @@
 		
 		<div id="lastid" style="display:none;visibility:hidden"><?PHP echo $lastid;?></div>
 
-		<div id="chatchannelcontrols">
-			<input type="button" id="userListButton" onclick="showUserList()" value="User anzeigen"/>
-		</div>
 		<div id="chatinput">
+			<div id="chatchannelcontrols">
+				<input type="button" id="userListButton" onclick="showUserList()" value="User anzeigen"/>
+			</div>
+			
+
 			<form action="?" method="post" onsubmit="xajax_sendChat(xajax.getFormValues('cform'));return false;" autocomplete="off" id="cform">
 				Text: <input type="text" id="ctext" name="ctext" value="" size="40" maxlength="255" /> <br/><br/>
 				<select name="ccolor" onchange="document.getElementById('ctext').focus();document.getElementById('ctext').style.color=this.value;this.style.color=this.value">

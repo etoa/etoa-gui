@@ -115,7 +115,7 @@ function setChatUserOnline($init=0)
 		)");
 		if ($init == 1)
 		{
-			chatSystemMessage($s['user_nick']." betritt den Chat");
+			//chatSystemMessage($s['user_nick']." betritt den Chat.");
 		}
 		$ajax->script("setTimeout('xajax_setChatUserOnline()',60000);");
 	}
