@@ -61,9 +61,8 @@
     			<td>
               <input type=\"radio\" name=\"startup_chat\" value=\"1\" ";
               if ($cu->properties->startUpChat==1) echo " checked=\"checked\"";
-              echo "/> Aktiviert
-          </td>
-          <td width=\"48%\" colspan=\"3\">
+              echo "/> Aktiviert &mbsp; 
+          
               <input type=\"radio\" name=\"startup_chat\" value=\"0\" ";
               if ($cu->properties->startUpChat==0) echo " checked=\"checked\"";
     					echo "/> Deaktiviert

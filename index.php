@@ -139,12 +139,6 @@
 		exit;
 	}
 	
-	if ($firstview && $cu->properties->startUpChat==1)
-	{
-		header("Location: chatframe.php");
-		exit;
-	}
-
 	// Set popup identifiert to false
 	$popup = false;
 
@@ -195,7 +189,7 @@
 		}
 		unset($rfr);
 	} 				
-
+	
 	// Create template object
 	$tpl = new Smarty;
 	$tpl->template_dir = SMARTY_TEMPLATE_DIR;
@@ -271,6 +265,12 @@
 		// Zeit der letzten User-Aktion speichern
 		dbquery("UPDATE users SET user_acttime='".time()."' WHERE user_id='".$s['user_id']."';");
 		dbquery ("UPDATE user_sessionlog SET log_acttime=".time()." WHERE log_user_id=".$s['user_id']." AND log_session_key='".$s['key']."';");
+		
+		if ($firstview && $cu->properties->startUpChat==1)
+		{
+			header("Location: chatframe.php");
+			exit;
+		}			
 		
 		if ($cu->isSetup())
 		{
