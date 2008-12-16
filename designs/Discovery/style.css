@@ -1371,7 +1371,7 @@ td.havenTab:hover	{
 }
 
 .buildOverviewObjectTitle	{
-	font-weight:bold;
+	font-weight:normal;
 	position:absolute;
 	background:url('images/transheader1.png') top right no-repeat;
 	padding:3px 15px 3px 3px;	

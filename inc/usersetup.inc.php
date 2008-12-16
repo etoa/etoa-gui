@@ -107,8 +107,8 @@
 		$tp = new Planet($pid);
 
 		echo "<input type=\"hidden\" name=\"choosenplanetid\" value=\"".$pid."\" />";
-		echo "Folgender Planet wurde für Euch ausgewählt:<br/><br/>
-		<table class=\"tb\" style=\"width:300px;\">";
+		echo "Folgender Planet wurde für Euch ausgewählt:<br/><br/>";
+		tableStart("Daten",300);
 		echo "<tr><th>Koordinaten:</th><td>".$tp."</td></tr>";
 		echo "<tr>
 			<th>Sonnentyp:</th>
@@ -124,9 +124,81 @@
 			<td>".$tp->temp_from."&deg;C bis ".$tp->temp_to."&deg;C";
 		echo "</td></tr>";		
 		echo "<tr><th>Ansicht:</th><td style=\"background:#000;text-align:center;\"><img src=\"".$tp->imagePath("m")."\" style=\"border:none;\" alt=\"planet\" /></td></tr>
-		</table><br/>
-		<input type=\"submit\" name=\"submit_chooseplanet\" value=\"Auswählen\" />
-		<input type=\"submit\" name=\"redo\" value=\"Einen neuen Planeten auswählen\" />";
+		</table>";
+
+		tableStart("Bonis dieser Zusammenstellung",600);
+		echo "<tr><th>Rohstoff</th>
+		<th>".$tp->typeName."</th>";
+		echo "<th>".$cu->race->name."</th>";
+		echo "<th>".$tp->starTypeName."</th>";
+		echo "<th>TOTAL</th></tr>";		
+		
+		echo "<tr><td class=\"tbldata\">".RES_ICON_METAL."Produktion ".RES_METAL."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($tp->typeMetal,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($cu->race->metal,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($tp->starMetal,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string(array($tp->typeMetal,$cu->race->metal,$tp->starMetal),1)."</td></tr>";
+
+		echo "<tr><td class=\"tbldata\">".RES_ICON_CRYSTAL."Produktion ".RES_CRYSTAL."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($tp->typeCrystal,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($cu->race->crystal,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($tp->starCrystal,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string(array($tp->typeCrystal,$cu->race->crystal,$tp->starCrystal),1)."</td></tr>";
+
+		echo "<tr><td class=\"tbldata\">".RES_ICON_PLASTIC."Produktion ".RES_PLASTIC."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($tp->typePlastic,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($cu->race->plastic,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($tp->starPlastic,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string(array($tp->typePlastic,$cu->race->plastic,$tp->starPlastic),1)."</td></tr>";
+
+		echo "<tr><td class=\"tbldata\">".RES_ICON_FUEL."Produktion ".RES_FUEL."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($tp->typeFuel,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($cu->race->fuel,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($tp->starFuel,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string(array($tp->typeFuel,$cu->race->fuel,$tp->starFuel),1)."</td></tr>";
+
+		echo "<tr><td class=\"tbldata\">".RES_ICON_FOOD."Produktion ".RES_FOOD."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($tp->typeFood,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($cu->race->food,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($tp->starFood,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string(array($tp->typeFood,$cu->race->food,$tp->starFood),1)."</td></tr>";
+
+		echo "<tr><td class=\"tbldata\">".RES_ICON_POWER."Produktion Energie</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($tp->typePower,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($cu->race->power,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($tp->starPower,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string(array($tp->typePower,$cu->race->power,$tp->starPower),1)."</td></tr>";
+
+		echo "<tr><td class=\"tbldata\">".RES_ICON_PEOPLE."Bev&ouml;lkerungswachstum</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($tp->typePopulation,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($cu->race->population,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($tp->starPopulation,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string(array($tp->typePopulation,$cu->race->population,$tp->starPopulation),1)."</td></tr>";
+
+		echo "<tr><td class=\"tbldata\">".RES_ICON_TIME."Forschungszeit</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($tp->typeResearchtime,1,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($cu->race->researchTime,1,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($tp->starResearchtime,1,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string(array($tp->typeResearchtime,$cu->race->researchTime,$tp->starResearchtime),1,1)."</td></tr>";
+
+		echo "<tr><td class=\"tbldata\">".RES_ICON_TIME."Bauzeit (Geb&auml;ude)</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($tp->typeBuildtime,1,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($cu->race->buildTime,1,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($tp->starBuildtime,1,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string(array($tp->typeBuildtime,$cu->race->buildTime,$tp->starBuildtime),1,1)."</td></tr>";
+
+		echo "<tr><td class=\"tbldata\">".RES_ICON_TIME."Flugzeit</td>";
+		echo "<td class=\"tbldata\">-</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($cu->race->fleetTime,1,1)."</td>";
+		echo "<td class=\"tbldata\">-</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($cu->race->fleetTime,1,1)."</td></tr>";
+		tableEnd();
+
+
+
+		echo "<input type=\"submit\" name=\"submit_chooseplanet\" value=\"Auswählen\" />
+		<input type=\"button\" onclick=\"document.location='?setup_sx=2&setup_sy=2'\" value=\"Einen neuen Planeten auswählen\" />
+		<input type=\"submit\" name=\"redo\" value=\"Einen neuen Sektor auswählen\" />";
 		echo "</form>";
 	}	
 	elseif ($mode=="choosesector")
