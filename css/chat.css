@@ -19,31 +19,17 @@ input[type='button'],input[type='submit']	{
 }
 
 
-#chattext	{
-	position:absolute;
-	top:0px;
-	left:0px;
-	right:0px;
-	bottom:120px;
-	overflow:auto;
-}
-
-#chatitems	{
-	padding:5px;	
-}
+#chatitems	{ padding:5px;	}
 
 #userlist	{
-	position:absolute;
-	left:0px;
-	right:0px;
-	bottom:90px;
 	background:#225;	
 	padding:5px;	
 	border:1px solid #fff;
+	margin:5px;
 }
 
 #chatchannelcontrols	{
-	padding-bottom:5px;
+	padding:5px;
 }
 
 #chatinput	{
@@ -52,8 +38,7 @@ input[type='button'],input[type='submit']	{
 	right:0px;
 	bottom:0px;
 	background:#225;
-	padding:5px;
-	height:100px;
+	padding:5px 5px 10px 5px;
 }
 
 #channelbox	{

@@ -4,6 +4,7 @@ $xajax->register(XAJAX_FUNCTION,'sendChat');
 $xajax->register(XAJAX_FUNCTION,'setChatUserOnline');
 $xajax->register(XAJAX_FUNCTION,'showChatUsers');
 $xajax->register(XAJAX_FUNCTION,'logoutFromChat');
+$xajax->register(XAJAX_FUNCTION,'appendToChatBox');
 
 
 function loadChat($minId)
@@ -53,7 +54,7 @@ function loadChat($minId)
 				}
 				$ajax->append("chatitems","innerHTML",$out);
 				$ajax->assign("lastid","innerHTML",$lastid);
-				$ajax->script("document.getElementById('chattext').scrollTop = document.getElementById('chattext').scrollHeight;");
+				$ajax->script("window.scrollBy(0,100000);");
 			}
 			$ajax->script("setTimeout(\"xajax_loadChat(document.getElementById('lastid').innerHTML)\",1000);");
 	}
@@ -65,6 +66,22 @@ function loadChat($minId)
 	
   return $ajax;	
   
+}
+
+function appendToChatBox($string)
+{
+	$ajax = new xajaxResponse();
+	
+	$s = $_SESSION[ROUNDID];
+	if (isset($s['user_id']))
+	{	
+		$out= "<span style=\"color:#aaa\">";
+		$out.= "&lt;".date("H:i")."&gt; ".stripslashes($string);					
+		$out.= "</span><br/>";		
+		$ajax->append("chatitems","innerHTML",$out);
+		$ajax->script("window.scrollBy(0,100000);");
+	}
+  return $ajax;		
 }
 
 function sendChat($form)
@@ -119,6 +136,8 @@ function setChatUserOnline($init=0)
 			if (mysql_num_rows($res)==0)	
 			{
 				chatSystemMessage($s['user_nick']." betritt den Chat.");
+				$str = "Hallo ".$s['user_nick'].",  willkommen im EtoA-Chat. Bitte beachte das wir Spam nicht dulden und eine gepflegte Ausdrucksweise erwarten. Bei Verstössen gegen diese Regeln werden wir mit Banns und/oder Accountsperrungen vorgehen!";				
+				$ajax->script("xajax_appendToChatBox('".$str."');");
 			}
 		}
 		dbquery("REPLACE INTO

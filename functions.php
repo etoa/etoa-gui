@@ -2933,7 +2933,7 @@ Forum: http://www.etoa.ch/forum";
 	
 	function chatUserCleanUp()
 	{
-		$res = dbquery("SELECT nick FROM chat_users WHERE timestamp < ".(time()-180));		
+		$res = dbquery("SELECT nick FROM chat_users WHERE timestamp < ".(time()-120));		
 		if (mysql_num_rows($res)>0)
 		{
 			$arr = mysql_fetch_row($res);
