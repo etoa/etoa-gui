@@ -26,11 +26,11 @@
 	<div id="hbar">
 		<a href="?page=stats" id="navstats" onmouseover="hideAllHbarMenus();"></a>
 		{literal}<a href="?page=cell" id="navmap" onmouseover="		
-				if (document.getElementById('hbarmapslide').style.display=='none') { Effect.SlideDown('hbarmapslide',{duration:0.2}); }
-				if (document.getElementById('hbarallianceslide').style.display=='') Effect.SlideUp('hbarallianceslide',{duration:0.1}); 
-				if (document.getElementById('hbarsettingsslide').style.display=='') Effect.SlideUp('hbarsettingsslide',{duration:0.1}); 
-				if (document.getElementById('hbarhelpslide').style.display=='') Effect.SlideUp('hbarhelpslide',{duration:0.1}); 
-				if (document.getElementById('hbarlogoutslide').style.display=='') Effect.SlideUp('hbarlogoutslide',{duration:0.1}); 
+				if (document.getElementById('hbarmapslide').style.display=='none') { document.getElementById('hbarmapslide').style.display='';	}
+				document.getElementById('hbarallianceslide').style.display='none';
+				document.getElementById('hbarsettingsslide').style.display='none';
+				document.getElementById('hbarhelpslide').style.display='none';
+				document.getElementById('hbarlogoutslide').style.display='none';
 				return false;"></a>{/literal}		
 		{if $fleetAttack > 0}
 			<a href="?page=fleets" id="navfleetred" onmouseover="hideAllHbarMenus();"></a>
@@ -47,35 +47,35 @@
 		{/if}
 		<a href="?page=messages" id="navmessages" onmouseover="hideAllHbarMenus();"></a>
 		{literal}<a href="?page=alliance" id="navalliance" onmouseover="
-				if (document.getElementById('hbarallianceslide').style.display=='none') { Effect.SlideDown('hbarallianceslide',{duration:0.2}); } 
-				if (document.getElementById('hbarmapslide').style.display=='') Effect.SlideUp('hbarmapslide',{duration:0.1}); 
-				if (document.getElementById('hbarsettingsslide').style.display=='') Effect.SlideUp('hbarsettingsslide',{duration:0.1}); 
-				if (document.getElementById('hbarhelpslide').style.display=='') Effect.SlideUp('hbarhelpslide',{duration:0.1}); 
-				if (document.getElementById('hbarlogoutslide').style.display=='') Effect.SlideUp('hbarlogoutslide',{duration:0.1}); 
+				if (document.getElementById('hbarallianceslide').style.display=='none') { document.getElementById('hbarallianceslide').style.display='' } 
+				document.getElementById('hbarmapslide').style.display='none';
+				document.getElementById('hbarsettingsslide').style.display='none';
+				document.getElementById('hbarhelpslide').style.display='none';
+				document.getElementById('hbarlogoutslide').style.display='none';
 				return false;"></a>{/literal}		
 		{if $buddyreq>0}<a href="?page=buddylist" id="navbuddylistred" onmouseover="hideAllHbarMenus();"></a>
 		{elseif $buddys > 0}<a href="?page=buddylist" id="navbuddylistgreen" onmouseover="hideAllHbarMenus();"></a>
 		{else}<a href="?page=buddylist" id="navbuddylist" onmouseover="hideAllHbarMenus();"></a>{/if}
 		{literal}<a href="?page=userconfig" id="navuserconfig" onmouseover="
-				if (document.getElementById('hbarsettingsslide').style.display=='none') { Effect.SlideDown('hbarsettingsslide',{duration:0.2}); }
-				if (document.getElementById('hbarallianceslide').style.display=='') Effect.SlideUp('hbarallianceslide',{duration:0.1}); 
-				if (document.getElementById('hbarmapslide').style.display=='') Effect.SlideUp('hbarmapslide',{duration:0.1}); 
-				if (document.getElementById('hbarhelpslide').style.display=='') Effect.SlideUp('hbarhelpslide',{duration:0.1}); 
-				if (document.getElementById('hbarlogoutslide').style.display=='') Effect.SlideUp('hbarlogoutslide',{duration:0.1}); 
+				if (document.getElementById('hbarsettingsslide').style.display=='none') { document.getElementById('hbarsettingsslide').style.display=''; }
+				document.getElementById('hbarallianceslide').style.display='none';
+				document.getElementById('hbarmapslide').style.display='none';
+				document.getElementById('hbarhelpslide').style.display='none';
+				document.getElementById('hbarlogoutslide').style.display='none';
 				return false;"></a>{/literal}
 		{literal}<a href="?page=help" id="navhelp" onmouseover="		
-				if (document.getElementById('hbarhelpslide').style.display=='none'){  Effect.SlideDown('hbarhelpslide',{duration:0.2}); }
-				if (document.getElementById('hbarsettingsslide').style.display=='') Effect.SlideUp('hbarsettingsslide',{duration:0.1}); 
-				if (document.getElementById('hbarallianceslide').style.display=='') Effect.SlideUp('hbarallianceslide',{duration:0.1}); 
-				if (document.getElementById('hbarmapslide').style.display=='') Effect.SlideUp('hbarmapslide',{duration:0.1}); 
-				if (document.getElementById('hbarlogoutslide').style.display=='') Effect.SlideUp('hbarlogoutslide',{duration:0.1}); 
+				if (document.getElementById('hbarhelpslide').style.display=='none'){ document.getElementById('hbarhelpslide').style.display=''; }
+				document.getElementById('hbarsettingsslide').style.display='none';
+				document.getElementById('hbarallianceslide').style.display='none';
+				document.getElementById('hbarmapslide').style.display='none';
+				document.getElementById('hbarlogoutslide').style.display='none';
 				return false;"></a>{/literal}		
 		{literal}<a href="?logout=1" id="navlogout" onmouseover="		
-				if (document.getElementById('hbarlogoutslide').style.display=='none'){  Effect.SlideDown('hbarlogoutslide',{duration:0.2}); }
-				if (document.getElementById('hbarhelpslide').style.display==''){  Effect.SlideUp('hbarhelpslide',{duration:0.2}); }
-				if (document.getElementById('hbarsettingsslide').style.display=='') Effect.SlideUp('hbarsettingsslide',{duration:0.1}); 
-				if (document.getElementById('hbarallianceslide').style.display=='') Effect.SlideUp('hbarallianceslide',{duration:0.1}); 
-				if (document.getElementById('hbarmapslide').style.display=='') Effect.SlideUp('hbarmapslide',{duration:0.1}); 
+				if (document.getElementById('hbarlogoutslide').style.display=='none'){ document.getElementById('hbarlogoutslide').style.display='' }
+				document.getElementById('hbarhelpslide').style.display='none';
+				document.getElementById('hbarsettingsslide').style.display='none';
+				document.getElementById('hbarallianceslide').style.display='none';
+				document.getElementById('hbarmapslide').style.display=='none'; 
 				return false;"></a>{/literal}
 	</div>
 	<div id="hbarmap">

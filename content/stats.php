@@ -193,7 +193,7 @@
 		echo "<br/>";
 
     echo "<div id=\"statsBox\">
-    <div style=\"padding:20px\"><img src=\"images/loading.gif\" alt=\"Loading\" /> Lade Daten...</div>";
+    <div class=\"loadingMsg\">Lade Daten... <br/>(JavaScript muss aktiviert sein!)</div>";
 		// >> AJAX generated content inserted here
 		echo "</div>";
 		
@@ -217,7 +217,7 @@
 
 		// Legende
 		iBoxStart("Legende zur Statistik");
-		echo "<p align=\"center\">Die Aktualisierung der <span ".tm("Punkteberechnung","F&uuml;r ".STATS_USER_POINTS."t verbaute Rohstoffe bekommt der Spieler 1 Punkt in der Statistik<br>F&uuml;r ".STATS_ALLIANCE_POINTS." Spielerpunkte bekommt die Allianz 1 Punkt in der Statistik")."><u>Punkte</u></span> erfolgt ";
+		echo "Die Aktualisierung der Punkte erfolgt ";
 		$h = $conf['points_update']['v']/3600;
 		if ($h>1)
 			echo "alle $h Stunden!<br>";
@@ -226,11 +226,13 @@
 		else
 		{
 			$m = $conf['points_update']['v']/60;
-			echo "alle $m Minuten!<br>";
+			echo "alle $m Minuten!<br/>";
 		}
 		echo "Neu angemeldete Benutzer erscheinen erst nach der ersten Aktualisierung in der Liste.<br/>";
+		echo "F&uuml;r ".STATS_USER_POINTS." verbaute Rohstoffe bekommt der Spieler 1 Punkt in der Statistik<br/>
+		F&uuml;r ".STATS_ALLIANCE_POINTS." Spielerpunkte bekommt die Allianz 1 Punkt in der Statistik";
 		echo "Letzte Aktualisierung: <b>".df($conf['statsupdate']['v'])." Uhr</b><br/>";
-		echo "<b>Legende:</b> <span style=\"color:".$conf['color_banned']['v'].";\">Gesperrt</span>, ";
+		echo "<b>Farben:</b> <span style=\"color:".$conf['color_banned']['v'].";\">Gesperrt</span>, ";
 		echo "<span style=\"color:".$conf['color_umod']['v'].";\">Urlaubsmodus</span>, ";
 		echo "<span style=\"color:".$conf['color_inactive']['v'].";\">Inaktiv (".USER_INACTIVE_SHOW." Tage)</span>, ";
 		echo "<span style=\"color:".$conf['color_alliance']['v'].";\">";

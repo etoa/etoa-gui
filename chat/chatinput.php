@@ -35,7 +35,7 @@
 					<option value="#f00" style="background:#000;color:#f00">Rot</option>
 					<option value="#f90" style="background:#000;color:#f90">Orange</option>
 					<option value="#ff0" style="background:#000;color:#ff0">Gelb</option>
-					<option value="#0f0" style="background:#000;color:#0f0">Grün</option>
+					<option value="#0f0" style="background:#000;color:#0f0">GrÃ¼n</option>
 					<option value="#0ff" style="background:#000;color:#0ff">Cyan</option>
 					<option value="#00f" style="background:#000;color:#00f">Blau</option>
 					<option value="#FF00E5" style="background:#000;color:#FF00E5">Pink</option>
