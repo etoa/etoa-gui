@@ -217,6 +217,14 @@
 
 		// Legende
 		iBoxStart("Legende zur Statistik");
+		echo "<b>Farben:</b> 
+		<span class=\"userSelfColor\">Eigener Account</span>, 
+		<span class=\"userLockedColor\">Gesperrt</span>, 
+		<span class=\"userHolidayColor\">Urlaubsmodus</span>, 
+		<span class=\"userInactiveColor\">Inaktiv (".USER_INACTIVE_SHOW." Tage)</span>, 
+		<span class=\"userAllianceMemberColor\">Allianz(-mitglied)</span>
+		<br/>";
+		echo "Letzte Aktualisierung: <b>".df($conf['statsupdate']['v'])." Uhr</b><br/>";
 		echo "Die Aktualisierung der Punkte erfolgt ";
 		$h = $conf['points_update']['v']/3600;
 		if ($h>1)
@@ -231,16 +239,6 @@
 		echo "Neu angemeldete Benutzer erscheinen erst nach der ersten Aktualisierung in der Liste.<br/>";
 		echo "F&uuml;r ".STATS_USER_POINTS." verbaute Rohstoffe bekommt der Spieler 1 Punkt in der Statistik<br/>
 		F&uuml;r ".STATS_ALLIANCE_POINTS." Spielerpunkte bekommt die Allianz 1 Punkt in der Statistik";
-		echo "Letzte Aktualisierung: <b>".df($conf['statsupdate']['v'])." Uhr</b><br/>";
-		echo "<b>Farben:</b> <span style=\"color:".$conf['color_banned']['v'].";\">Gesperrt</span>, ";
-		echo "<span style=\"color:".$conf['color_umod']['v'].";\">Urlaubsmodus</span>, ";
-		echo "<span style=\"color:".$conf['color_inactive']['v'].";\">Inaktiv (".USER_INACTIVE_SHOW." Tage)</span>, ";
-		echo "<span style=\"color:".$conf['color_alliance']['v'].";\">";
-		if ($mode=="alliances")
-			echo "Allianz";
-		else
-			echo "Allianzmitglied";
-		echo "</span></p>";
 		iBoxEnd();
 	}
 ?>

@@ -64,46 +64,85 @@ img.resIcon	{
 	color:#ECB2B2;
 }
     
-.resmetal, .tb th.resmetal {
+.resmetal, .tb .resmetal {
 	background:url('../images/resources/metal_s.png') no-repeat;
 	padding-left:24px;
 	color:#CFC8C2;
 }
-.rescrystal, .tb th.rescrystal	{
+.rescrystal, .tb .rescrystal	{
 	background:url('../images/resources/crystal_s.png') no-repeat;
 	padding-left:24px;
 	color:#C2E2EF;
 }
-.resplastic, .tb th.resplastic	{
+.resplastic, .tb .resplastic	{
 	background:url('../images/resources/plastic_s.png') no-repeat;
 	padding-left:24px;
 	color:#E5D1EF;
 }
-.resfuel, .tb th.resfuel	{
+.resfuel, .tb .resfuel	{
 	background:url('../images/resources/fuel_s.png') no-repeat;
 	padding-left:24px;
 	color:#A4C1EF;
 }
-.resfood, .tb th.resfood	{
+.resfood, .tb .resfood	{
 	background:url('../images/resources/food_s.png') no-repeat;
 	padding-left:24px;
 	color:#C2ECC2;
 }
-.respeople, .tb th.respeople	{
+.respeople, .tb .respeople	{
 	background:url('../images/resources/people_s.png') no-repeat;
 	padding-left:24px;
 	color:#ECC8B2;
 }
-.respower, .tb th.respower	{
+.respower, .tb .respower	{
 	background:url('../images/resources/power_s.png') no-repeat;
 	padding-left:24px;
 	color:#EFECC2;
 }
-.respoweru, .tb th.respoweru	{
+.respoweru, .tb .respoweru	{
 	background:url('../images/resources/poweru_s.png') no-repeat;
 	padding-left:24px;
 	color:#ECB2B2;
 }
+
+/* Colors */
+
+.userAllianceMemberColor, .tb .userAllianceMemberColor		{
+	color:#ffff33;
+}
+
+.userSelfColor, .tb .userSelfColor		{
+	color:#99ffff;
+}
+
+.userLockedColor, .tb .userLockedColor	{
+	color:#ffaaaa;
+}
+
+.userInactiveColor, .tb .userInactiveColor		{
+	color:#ccc;
+}
+
+.userLongInactiveColor, .tb .userLongInactiveColor		{
+	color:#aaa;
+}
+
+.userHolydayColor, .tb .userHolydayColor		{
+	color:#aaffaa;
+}
+
+.enemyColor, .tb .enemyColor		{
+	color:#ff6600;
+}
+
+.friendColor, .tb .friendColor		{
+	color:#3366ff;
+}
+
+.noobColor, .tb .noobColor		{
+	color:#aaffff;
+}
+
 
 /* Message-Boxes */
 

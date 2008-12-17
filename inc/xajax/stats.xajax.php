@@ -445,17 +445,17 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 		
 		if ($limit>0)
 		{
-			$limit = $limit.",".NUM_OF_ROWS;
-			$nextlimit = $limit+NUM_OF_ROWS;
-			$prevlimit = $limit-NUM_OF_ROWS;
+			$limit = $limit.",".STATS_NUM_OF_ROWS;
+			$nextlimit = $limit+STATS_NUM_OF_ROWS;
+			$prevlimit = $limit-STATS_NUM_OF_ROWS;
 		}
 		else
 		{
-			$limit = "0,".NUM_OF_ROWS;
-			$nextlimit = NUM_OF_ROWS;
+			$limit = "0,".STATS_NUM_OF_ROWS;
+			$nextlimit = STATS_NUM_OF_ROWS;
 			$prevlimit = -1;
 		}
-		$lastlimit = (ceil($num/NUM_OF_ROWS)*NUM_OF_ROWS)-NUM_OF_ROWS;
+		$lastlimit = (ceil($num/STATS_NUM_OF_ROWS)*STATS_NUM_OF_ROWS)-STATS_NUM_OF_ROWS;
 
 		// Punktetabelle
 		
@@ -539,7 +539,7 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 
 			if ($userstring!="")
 			{
-				$limit="0,".NUM_OF_ROWS;
+				$limit="0,".STATS_NUM_OF_ROWS;
 				$userstring=remove_illegal_signs($userstring);
 				if ($absolute==1)
 				{
@@ -624,18 +624,18 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 				ob_start();
 				if ($userstring=='')
 				{
-					if ($prevlimit>-1 && NUM_OF_ROWS*2<$num)
-						echo "<input type=\"button\" value=\"&lt;&lt;\" onclick=\"loadingMsgPrepend('statsTable','Lade...');xajax_statsShowTable('$mode',0)\">";
+					if ($prevlimit>-1 && STATS_NUM_OF_ROWS*2<$num)
+						echo "<input type=\"button\" value=\"&lt;&lt;\" onclick=\"loadingMsgPrepend('statsTable','Lade...');xajax_statsShowTable('$mode',0,'',0,'$orderBy')\">";
 					if ($prevlimit>-1)
-						echo "<input type=\"button\" value=\"&lt;\" onclick=\"loadingMsgPrepend('statsTable','Lade...');xajax_statsShowTable('$mode',$prevlimit)\">";
+						echo "<input type=\"button\" value=\"&lt;\" onclick=\"loadingMsgPrepend('statsTable','Lade...');xajax_statsShowTable('$mode',$prevlimit,'',0,'$orderBy')\">";
 					if ($nextlimit<$num)
-						echo "<input type=\"button\" value=\"&gt;\" onclick=\"loadingMsgPrepend('statsTable','Lade...');xajax_statsShowTable('$mode',$nextlimit)\">";
-					if ($nextlimit<$num && NUM_OF_ROWS*2<$num)
-						echo "<input type=\"button\" value=\"&gt;&gt;\" onclick=\"loadingMsgPrepend('statsTable','Lade...');xajax_statsShowTable('$mode',$lastlimit)\">";
-					echo "<select onchange=\"loadingMsgPrepend('statsTable','Lade...');xajax_statsShowTable('$mode',this.options[this.selectedIndex].value)\">";
-					for ($x=1;$x<=$num;$x+=NUM_OF_ROWS)
+						echo "<input type=\"button\" value=\"&gt;\" onclick=\"loadingMsgPrepend('statsTable','Lade...');xajax_statsShowTable('$mode',$nextlimit,'',0,'$orderBy')\">";
+					if ($nextlimit<$num && STATS_NUM_OF_ROWS*2<$num)
+						echo "<input type=\"button\" value=\"&gt;&gt;\" onclick=\"loadingMsgPrepend('statsTable','Lade...');xajax_statsShowTable('$mode',$lastlimit,'',0,'$orderBy')\">";
+					echo "<select onchange=\"loadingMsgPrepend('statsTable','Lade...');xajax_statsShowTable('$mode',this.options[this.selectedIndex].value,'',0,'$orderBy')\">";
+					for ($x=1;$x<=$num;$x+=STATS_NUM_OF_ROWS)
 					{
-						$dif = $x+NUM_OF_ROWS-1;
+						$dif = $x+STATS_NUM_OF_ROWS-1;
 						if ($dif>$num) $dif=$num;
 						$oval=$x-1;
 						echo "<option value=\"$oval\"";
@@ -670,17 +670,21 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 				</tr>";
 				while ($arr=mysql_fetch_array($res))
 				{
-					if ($arr['blocked']==1)
+					if ($arr['id']==$_SESSION[ROUNDID]['user_id'])
 					{
-						$addstyle=" style=\"color:".COLOR_BANNED.";\"";
+						$addstyle=" class=\"userSelfColor\"";
+					}
+					elseif ($arr['blocked']==1)
+					{
+						$addstyle=" class=\"userLockedColor\"";
 					}
 					elseif ($arr['hmod']==1)
 					{
-						$addstyle=" style=\"color:".COLOR_UMOD.";\"";
+						$addstyle=" class=\"userHolydayColor\"";
 					}
 					elseif ($arr['inactive']==1)
 					{
-						$addstyle=" style=\"color:".COLOR_INACTIVE.";\"";
+						$addstyle=" class=\"userInactiveColor\"";
 					}
 					else
 					{
