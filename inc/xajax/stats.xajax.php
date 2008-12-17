@@ -680,7 +680,7 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 					}
 					elseif ($arr['hmod']==1)
 					{
-						$addstyle=" class=\"userHolydayColor\"";
+						$addstyle=" class=\"userHolidayColor\"";
 					}
 					elseif ($arr['inactive']==1)
 					{

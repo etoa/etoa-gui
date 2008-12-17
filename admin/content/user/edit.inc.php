@@ -372,7 +372,7 @@
 									}						
 									if ($arr['user_hmode_from']>0)
 									{
-										echo "<div class=\"userHolydayColor\">Dieser Account ist im Urlaubsmodus seit ".df($arr['user_hmode_from'])." bis mindestens ".df($arr['user_hmode_to'])."</div>";
+										echo "<div class=\"userHolidayColor\">Dieser Account ist im Urlaubsmodus seit ".df($arr['user_hmode_from'])." bis mindestens ".df($arr['user_hmode_to'])."</div>";
 									}						
 									if ($arr['user_blocked_from']>0 && $arr['user_blocked_to']>time())
 									{

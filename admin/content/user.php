@@ -386,7 +386,7 @@
 					if ($arr['user_blocked_from']<$time && $arr['user_blocked_to']>$time)
 						$uCol=' class="userLockedColor"';
 					elseif($arr['user_hmode_from']<$time && $arr['user_hmode_to']>$time)
-						$uCol=' class="userHolydayColor"';
+						$uCol=' class="userHolidayColor"';
 					elseif ($arr['user_deleted']!=0)
 						$uCol=' class="userDeletedColor"';
 					else
@@ -410,7 +410,7 @@
 				echo "<input type=\"button\" onclick=\"document.location='?page=$page&amp;action=search'\" value=\"Aktualisieren\" /><br/><br/>
 				<b>Legende:</b> 
 				<span class=\"userLockedColor\">Gesperrt</span>, 
-				<span class=\"userHolydayColor\">Urlaub</span>, 
+				<span class=\"userHolidayColor\">Urlaub</span>, 
 				<span class=\"userDeletedColor\">Löschauftrag</span>
 				";
 			}

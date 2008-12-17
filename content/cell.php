@@ -425,7 +425,7 @@
 				echo "
 				<span class=\"userSelfColor\">Eigener Planet</span>, 
 				<span class=\"userLockedColor\">Gesperrt</span>, 
-				<span class=\"userHolydayColor\">Urlaubsmodus</span>, 
+				<span class=\"userHolidayColor\">Urlaubsmodus</span>, 
 				<span class=\"userInactiveColor\">Inaktiv (".USER_INACTIVE_SHOW." Tage)</span>, 
 				<span class=\"userLongInactiveColor\">Inaktiv (".USER_INACTIVE_LONG." Tage)</span><br/>
 				<span class=\"noobColor\">Anf&auml;ngerschutz</span>,
