@@ -131,6 +131,10 @@ img.resIcon	{
 	color:#aaffaa;
 }
 
+.userDeletedColor, .tb .userDeletedColor, input.userDeletedColor	{
+	color:#09f;
+}
+
 .enemyColor, .tb .enemyColor		{
 	color:#ff6600;
 }
@@ -142,6 +146,7 @@ img.resIcon	{
 .noobColor, .tb .noobColor		{
 	color:#aaffff;
 }
+
 
 
 /* Message-Boxes */

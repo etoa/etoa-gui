@@ -368,15 +368,15 @@
 									}						
 									if ($arr['user_deleted']!=0)
 									{
-										echo "<div style=\"color:".USER_COLOR_DELETED."\">Dieser Account ist zur Löschung am ".df($arr['user_deleted'])." vorgemerkt</div>";
+										echo "<div class=\"userDeletedColor\">Dieser Account ist zur Löschung am ".df($arr['user_deleted'])." vorgemerkt</div>";
 									}						
 									if ($arr['user_hmode_from']>0)
 									{
-										echo "<div style=\"color:".COLOR_UMOD."\">Dieser Account ist im Urlaubsmodus seit ".df($arr['user_hmode_from'])." bis mindestens ".df($arr['user_hmode_to'])."</div>";
+										echo "<div class=\"userHolydayColor\">Dieser Account ist im Urlaubsmodus seit ".df($arr['user_hmode_from'])." bis mindestens ".df($arr['user_hmode_to'])."</div>";
 									}						
 									if ($arr['user_blocked_from']>0 && $arr['user_blocked_to']>time())
 									{
-										echo "<div style=\"color:".COLOR_BANNED."\">Dieser Account ist im gesperrt von ".df($arr['user_blocked_from'])." bis ".df($arr['user_blocked_to']);
+										echo "<div class=\"userLockedColor\">Dieser Account ist im gesperrt von ".df($arr['user_blocked_from'])." bis ".df($arr['user_blocked_to']);
 										if ($arr['user_ban_reason']!="")
 										{
 											echo ". Grund: ".stripslashes($arr['user_ban_reason']);
@@ -1281,11 +1281,11 @@
 				echo "<input type=\"submit\" name=\"save\" value=\"&Auml;nderungen &uuml;bernehmen\" style=\"color:#0f0\" /> &nbsp;";
 				if ($arr['user_deleted']!=0)
 				{
-					echo "<input type=\"submit\" name=\"canceldelete\" value=\"Löschantrag aufheben\" style=\"color:".USER_COLOR_DELETED."\" /> &nbsp;";					
+					echo "<input type=\"submit\" name=\"canceldelete\" value=\"Löschantrag aufheben\" class=\"userDeletedColor\" /> &nbsp;";					
 				}
 				else
 				{
-					echo "<input type=\"submit\" name=\"requestdelete\" value=\"Löschantrag erteilen\" style=\"color:".USER_COLOR_DELETED."\" /> &nbsp;";					
+					echo "<input type=\"submit\" name=\"requestdelete\" value=\"Löschantrag erteilen\" class=\"userDeletedColor\" /> &nbsp;";					
 				}				
 				echo "<input type=\"submit\" name=\"delete_user\" value=\"User l&ouml;schen\" style=\"color:#f00\" onclick=\"return confirm('Soll dieser User entg&uuml;ltig gel&ouml;scht werden?');\"> ";
 				

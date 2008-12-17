@@ -131,15 +131,6 @@
 	define("IMAGE_BUILDING_DIR","buildings");				// Gebäude Ordner
 	define("IMAGE_DEF_DIR","defense");							// Def Ordner
 
-	// Farben (In der Statistik, Raumkarte...)
-	define ("COLOR_BANNED",$conf['color_banned']['v']);			// Gesperrte
-	define ("COLOR_UMOD",$conf['color_umod']['v']);					// Urlaubsmodus
-	define ("COLOR_INACTIVE",$conf['color_inactive']['v']);	// Inaktive
-	define ("COLOR_INACTIVE_LONG",$conf['color_inactive']['p1']);	// Inaktive
-	define ("COLOR_ALLIANCE",$conf['color_alliance']['v']);	// Allianzmitglied
-	define ("COLOR_DEFAULT",$conf['color_default']['v']);		// alle anderen
-
-
 	define('ONLINE_TIME',$conf['online_threshold']['v']);
 
   /*********************/

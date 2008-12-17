@@ -57,15 +57,6 @@
 	define('HTPASSWD_FILE',$conf['htaccess']['p2']);
 	define('HTPASSWD_USER',$conf['admin_htaccess']['p1']);
 
-	// User-Farben
-	define('USER_COLOR_DEFAULT',$conf['color_default']['v']);
-	define('USER_COLOR_BANNED',$conf['color_banned']['v']);
-	define('USER_COLOR_INACTIVE',$conf['color_inactive']['v']);
-	define('USER_COLOR_HOLIDAY',$conf['color_umod']['v']);
-	define('USER_COLOR_FRIEND',$conf['color_friend']['v']);
-	define('USER_COLOR_ENEMY',$conf['color_enemy']['v']);
-	define('USER_COLOR_DELETED','#09f');
-
 	define('USER_BLOCKED_DEFAULT_TIME',3600*24*$conf['user_ban_min_length']['v']);	// Standardsperrzeit
 	define('USER_HMODE_DEFAULT_TIME',3600*24*$conf['user_umod_min_length']['v']);	// Standardurlaubszeit
 

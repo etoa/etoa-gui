@@ -422,13 +422,16 @@
 				echo '</div>';
 				
 				iBoxStart("Legende");
-				echo "<span style=\"color:".COLOR_OWN.";\">Eigener Planet</span>, <span style=\"color:".COLOR_BANNED.";\">Gesperrt</span>, <span style=\"color:".COLOR_UMOD.";\">Urlaubsmodus</span>, 
-				<span style=\"color:".COLOR_INACTIVE.";\">Inaktiv (".USER_INACTIVE_SHOW." Tage)</span>, 
-				<span style=\"color:".COLOR_INACTIVE_LONG.";\">Inaktiv (".USER_INACTIVE_LONG." Tage)</span><br/>
-				<span style=\"color:".COLOR_NOOB_SAFE.";\">Anf&auml;ngerschutz</span>,
-				<span style=\"color:".COLOR_FRIEND.";\">B&uuml;ndnis</span>, 
-				<span style=\"color:".COLOR_ENEMY.";\">Krieg</span>, 
-				<span style=\"color:".COLOR_ALLIANCE.";\">Allianzmitglied</span>";
+				echo "
+				<span class=\"userSelfColor\">Eigener Planet</span>, 
+				<span class=\"userLockedColor\">Gesperrt</span>, 
+				<span class=\"userHolydayColor\">Urlaubsmodus</span>, 
+				<span class=\"userInactiveColor\">Inaktiv (".USER_INACTIVE_SHOW." Tage)</span>, 
+				<span class=\"userLongInactiveColor\">Inaktiv (".USER_INACTIVE_LONG." Tage)</span><br/>
+				<span class=\"noobColor\">Anf&auml;ngerschutz</span>,
+				<span class=\"friendColor\">B&uuml;ndnis</span>, 
+				<span class=\"enemyColor\">Krieg</span>, 
+				<span class=\"userAllianceMemberColor\">Allianzmitglied</span>";
 				iBoxEnd();
 				echo "<input type=\"button\" value=\"Zur Raumkarte\" onclick=\"document.location='?page=map&amp;sx=".$cell->sx."&amp;sy=".$cell->sy."'\" /> &nbsp; ";
 

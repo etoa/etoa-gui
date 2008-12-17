@@ -37,11 +37,11 @@
             AND user_multi_multi_user_id!='0';");
 
 				if ($iparr['user_blocked_from']<time() && $iparr['user_blocked_to']>time())
-					$uCol=USER_COLOR_BANNED;
+					$uCol=' class="userLockedColor"';
 				else
-					$uCol=USER_COLOR_DEFAULT;
+					$uCol='';
 				echo "<tr>";
-				echo "<td class=\"tbldata\" valign=\"top\" style=\"color:$uCol;\">
+				echo "<td $uCol>
 				<a href=\"?page=$page&amp;sub=ipsearch&amp;user=".$iparr['user_id']."\">".$iparr['user_nick']."</a>
 				";
 				if ($iparr['user_alliance_id']>0)
@@ -50,19 +50,19 @@
 					echo "<br/><b>".$aarr['alliance_tag']."</b>";
 				}
 				echo "</td>";
-				echo "<td class=\"tbldata\" valign=\"top\" style=\"color:$uCol;\">".$iparr['user_name']."</td>";
-				echo "<td class=\"tbldata\" valign=\"top\" style=\"color:$uCol;\">".$iparr['user_email_fix']."<br/>".$iparr['user_email']."</td>";
-				echo "<td class=\"tbldata\" valign=\"top\" style=\"color:$uCol;\">";
+				echo "<td $uCol>".$iparr['user_name']."</td>";
+				echo "<td $uCol>".$iparr['user_email_fix']."<br/>".$iparr['user_email']."</td>";
+				echo "<td $uCol>";
 				if ($iparr['user_acttime']+$conf['user_timeout']['v'] > time())
 					echo "<span style=\"color:#0f0\">online</span>";
 				else
 					echo date("Y-m-d H:i:s",$iparr['user_acttime']);
-				echo "</td><td class=\"tbldata\" valign=\"top\" style=\"color:$uCol;\">".nf($iparr['user_points'])."</td>";
+				echo "</td><td $uCol>".nf($iparr['user_points'])."</td>";
         if(mysql_num_rows($multi_res)>0)
         {
             $multi = 1;
 
-            echo "<td class=\"tbldata\" valign=\"top\" style=\"color:$uCol;\">";
+            echo "<td $uCol>";
             while($multi_arr = mysql_fetch_array($multi_res))
             {
                 echo "<span title=\"".$multi_arr['user_multi_connection']."\">".get_user_nick($multi_arr['user_multi_multi_user_id'])."</span>";
@@ -78,9 +78,9 @@
         }
         else
         {
-            echo "<td class=\"tbldata\" valign=\"top\" style=\"color:$uCol;\">-</td>";
+            echo "<td $uCol>-</td>";
         }
-        echo "<td class=\"tbldata\" valign=\"top\" style=\"color:$uCol;\">".nf($iparr['user_multi_delets'])."</td>";
+        echo "<td $uCol>".nf($iparr['user_multi_delets'])."</td>";
 				echo "</tr>";
 			}
 			echo "</table>";
@@ -145,12 +145,12 @@
 
 						if ($cnt!=0) echo "<tr>"; else $cnt=1;
 						if ($iparr['user_blocked_from']<time() && $iparr['user_blocked_to']>time())
-							$uCol=USER_COLOR_BANNED;
+							$uCol=' class="userLockedColor"';
 						else
-							$uCol=USER_COLOR_DEFAULT;
-						echo "<td class=\"tbldata\" style=\"color:$uCol;\">".$iparr['user_nick']."</td>";
-						echo "<td class=\"tbldata\" style=\"color:$uCol;\" title=\"".$iparr['user_email']."\">".$iparr['user_name']."</td>";
-						echo "<td class=\"tbldata\" style=\"color:$uCol;\">";
+							$uCol='';
+						echo "<td $uCol>".$iparr['user_nick']."</td>";
+						echo "<td $uCol title=\"".$iparr['user_email']."\">".$iparr['user_name']."</td>";
+						echo "<td $uCol>";
 						if ($iparr['user_acttime']+$conf['user_timeout']['v'] > time())
 							echo "<span style=\"color:#0f0\">online</span>";
 						else
@@ -161,7 +161,7 @@
 						{
 							$multi = 1;
 
-							echo "<td class=\"tbldata\" style=\"color:$uCol;\">";
+							echo "<td $uCol>";
 							while($multi_arr = mysql_fetch_array($multi_res))
 							{
 								echo "<span title=\"".$multi_arr['user_multi_connection']."\">".get_user_nick($multi_arr['user_multi_multi_user_id'])."</span>";
@@ -177,7 +177,7 @@
 						}
 						else
 						{
-							echo "<td class=\"tbldata\" style=\"color:$uCol;\">-</td></tr>";
+							echo "<td $uCol>-</td></tr>";
 						}
 
 						$multi_total_cnt++;

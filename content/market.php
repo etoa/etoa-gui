@@ -2627,7 +2627,7 @@
 					// Für Allianzmitglied reserveriert
           if($arr['ressource_for_alliance']!=0)
           {
-              $for_alliance="<span style=\"color:".$conf['color_alliance']['v']."\">F&uuml;r Allianzmitglied Reserviert</span>";
+              $for_alliance="<span class=\"userAllianceMemberColor\">F&uuml;r Allianzmitglied Reserviert</span>";
           }
           else
           {
@@ -2805,7 +2805,7 @@
 					// Für Allianzmitglied reserveriert
           if($arr['ship_for_alliance']!=0)
           {
-              $for_alliance="<span style=\"color:".$conf['color_alliance']['v']."\">F&uuml;r Allianzmitglied Reserviert</span>";
+              $for_alliance="<span class=\"userAllianceMemberColor\">F&uuml;r Allianzmitglied Reserviert</span>";
           }
           else
           {
@@ -3884,7 +3884,7 @@
 					while ($row=mysql_fetch_array($res))
 					{
 						if($row['ressource_for_alliance']!=0)
-							$for_alliance="<span style=\"color:".$conf['color_alliance']['v']."\">F&uuml;r Allianzmitglied Reserviert</span>";
+							$for_alliance="<span class=\"userAllianceMemberColor\">F&uuml;r Allianzmitglied Reserviert</span>";
 						else
 							$for_alliance="";
 
@@ -3948,7 +3948,7 @@
 					while ($arr=mysql_fetch_array($res))
 					{
 						if($arr['ship_for_alliance']!=0)
-							$for_alliance="<span style=\"color:".$conf['color_alliance']['v']."\">F&uuml;r Allianzmitglied Reserviert</span>";
+							$for_alliance="<span class=\"userAllianceMemberColor\">F&uuml;r Allianzmitglied Reserviert</span>";
 						else
 							$for_alliance="";
 

@@ -373,33 +373,33 @@
 				
  				echo "<table class=\"tbl\">";
 				echo "<tr>";
-				echo "<td class=\"tbltitle\" valign=\"top\">ID</td>";
-				echo "<td class=\"tbltitle\" valign=\"top\">Nick</td>";
-				echo "<td class=\"tbltitle\" valign=\"top\">Name</td>";
-				echo "<td class=\"tbltitle\" valign=\"top\">E-Mail</td>";
-				echo "<td class=\"tbltitle\" valign=\"top\">Punkte</td>";
-				echo "<td class=\"tbltitle\" valign=\"top\">Allianz</td>";
-				echo "<td class=\"tbltitle\" valign=\"top\">Rasse</td>";
+				echo "<th>ID</th>";
+				echo "<th>Nick</th>";
+				echo "<th>Name</th>";
+				echo "<th>E-Mail</th>";
+				echo "<th>Punkte</th>";
+				echo "<th>Allianz</th>";
+				echo "<th>Rasse</th>";
 				echo "</tr>";
 				while ($arr = mysql_fetch_array($res))
 				{
 					if ($arr['user_blocked_from']<$time && $arr['user_blocked_to']>$time)
-						$uCol=USER_COLOR_BANNED;
+						$uCol=' class="userLockedColor"';
 					elseif($arr['user_hmode_from']<$time && $arr['user_hmode_to']>$time)
-						$uCol=USER_COLOR_HOLIDAY;
+						$uCol=' class="userHolydayColor"';
 					elseif ($arr['user_deleted']!=0)
-						$uCol=USER_COLOR_DELETED;
+						$uCol=' class="userDeletedColor"';
 					else
-						$uCol=USER_COLOR_DEFAULT;
+						$uCol="";
 					echo "<tr>";
-					echo "<td class=\"tbldata\" style=\"color:".$uCol.";\" title=\"".$arr['user_name']."\">".$arr['user_id']."</td>";
-					echo "<td class=\"tbldata\" style=\"color:".$uCol.";\" title=\"".$arr['user_nick']."\">".$arr['user_nick']."</td>";
-					echo "<td class=\"tbldata\" style=\"color:".$uCol.";\" title=\"".$arr['user_name']."\">".cut_string($arr['user_name'],15)."</td>";
-					echo "<td class=\"tbldata\" style=\"color:".$uCol.";\" title=\"".$arr['user_email']."\">".cut_string($arr['user_email'],15)."</td>";
-					echo "<td class=\"tbldata\" style=\"color:".$uCol.";\">".nf($arr['user_points'])."</td>";
-					echo "<td class=\"tbldata\" style=\"color:".$uCol.";\">".($arr['user_alliance_id']>0 ? $allys[$arr['user_alliance_id']]['tag']:'-')."</td>";
-					echo "<td class=\"tbldata\" style=\"color:".$uCol.";\">".($arr['user_race_id']>0 ? $race[$arr['user_race_id']]['race_name'] : '-')."</td>";
-					echo "<td class=\"tbldata\">
+					echo "<td ".$uCol." title=\"".$arr['user_name']."\">".$arr['user_id']."</td>";
+					echo "<td ".$uCol." title=\"".$arr['user_nick']."\">".$arr['user_nick']."</td>";
+					echo "<td ".$uCol." title=\"".$arr['user_name']."\">".cut_string($arr['user_name'],15)."</td>";
+					echo "<td ".$uCol." title=\"".$arr['user_email']."\">".cut_string($arr['user_email'],15)."</td>";
+					echo "<td ".$uCol.">".nf($arr['user_points'])."</td>";
+					echo "<td ".$uCol.">".($arr['user_alliance_id']>0 ? $allys[$arr['user_alliance_id']]['tag']:'-')."</td>";
+					echo "<td ".$uCol.">".($arr['user_race_id']>0 ? $race[$arr['user_race_id']]['race_name'] : '-')."</td>";
+					echo "<td>
 					".edit_button("?page=$page&amp;sub=edit&amp;id=".$arr['user_id'])."
 					".cb_button("add_user=".$arr['user_id']."")."
 					</td>";
@@ -409,10 +409,9 @@
 				echo "<br/><input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" /> ";
 				echo "<input type=\"button\" onclick=\"document.location='?page=$page&amp;action=search'\" value=\"Aktualisieren\" /><br/><br/>
 				<b>Legende:</b> 
-				<span style=\"color:".USER_COLOR_DEFAULT."\">Normal</span>, 
-				<span style=\"color:".USER_COLOR_BANNED."\">Gesperrt</span>, 
-				<span style=\"color:".USER_COLOR_HOLIDAY."\">Urlaub</span>, 
-				<span style=\"color:".USER_COLOR_DELETED."\">Löschauftrag</span>
+				<span class=\"userLockedColor\">Gesperrt</span>, 
+				<span class=\"userHolydayColor\">Urlaub</span>, 
+				<span class=\"userDeletedColor\">Löschauftrag</span>
 				";
 			}
 			else

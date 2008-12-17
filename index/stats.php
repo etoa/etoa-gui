@@ -361,8 +361,10 @@
 		echo "alle $m Minuten!<br/>";
 	}
 	echo "Letzte Aktualisierung: <b>".date("d.m.Y",$conf['statsupdate']['v'])."</b> um <b>".date("H:i",$conf['statsupdate']['v'])." Uhr</b><br/>";
-	echo "<b>Legende:</b> <span style=\"color:".$conf['color_banned']['v'].";\">Gesperrt</span>, ";
-	echo "<span style=\"color:".$conf['color_umod']['v'].";\">Urlaubsmodus</span>, ";
-	echo "<span style=\"color:".$conf['color_inactive']['v'].";\">Inaktiv (".USER_INACTIVE_SHOW." Tage)</span></div>";
+	echo "<b>Legende:</b> 
+		<span class=\"userLockedColor\">Gesperrt</span>, 
+		<span class=\"userHolidayColor\">Urlaubsmodus</span>, 
+		<span class=\"userInactiveColor\">Inaktiv (".USER_INACTIVE_SHOW." Tage)</span>
+	</div>";
 	
 ?>
