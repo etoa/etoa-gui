@@ -73,25 +73,23 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 			$cnt=1;
 			while ($arr=mysql_fetch_array($res))
 			{
-				if($_SESSION[ROUNDID]['user']['alliance_id']==$arr['alliance_id'] && $arr['alliance_id']!='0' && $arr['user_alliance_application']=="" && $_SESSION[ROUNDID]['user']['alliance_application']==0)
-					$style="style=\"color:".COLOR_ALLIANCE.";\"";
-				else
-					$style="";
 				$out.= "<tr>";
-				$out.= "<td align=\"right\" $style>".nf2($cnt)."</td>";
-				$out.=  "<td $addstyle align=\"right\" ".tm("Punkteverlauf","<div><img src=\"misc/alliance_stats.image.php?alliance=".$arr['alliance_id']."\" alt=\"Diagramm\" style=\"width:600px;height:400px;background:#335 url(images/loading335.gif) no-repeat 300px 200px;\" /></div>").">";
+				$out.= "<td >".nf2($cnt)."</td>";
+				$out.=  "<td ".tm("Punkteverlauf","<div><img src=\"misc/alliance_stats.image.php?alliance=".$arr['alliance_id']."\" alt=\"Diagramm\" style=\"width:600px;height:400px;background:#335 url(images/loading335.gif) no-repeat 300px 200px;\" /></div>").">";
 				if ($arr['alliance_rank_current']==$arr['alliance_rank_last'])
 					$out.=  "<img src=\"images/stats/stat_same.gif\" alt=\"same\" width=\"21\" height=\"9\" />";
 				elseif ($arr['alliance_rank_current']<$arr['alliance_rank_last'])
 					$out.=  "<img src=\"images/stats/stat_down.gif\" alt=\"up\" width=\"9\" height=\"12\" />";
 				elseif ($arr['alliance_rank_current']>$arr['alliance_rank_last'])
 					$out.=  "<img src=\"images/stats/stat_up.gif\" alt=\"down\" width=\"9\" height=\"11\" />";
-				$out.= "<td $style>".(text2html($arr['alliance_tag']))."</td>";
-				$out.= "<td $style>".text2html($arr['alliance_name'])."</td>";
-				$out.= "<td $style>".nf2($arr['upoints'])."</td>";
-				$out.= "<td $style>".nf2($arr['uavg'])."</td>";
-				$out.= "<td $style>".nf2($arr['cnt'])."</td>";
-				$out.= "<td><a href=\"?page=alliance&amp;info_id=".$arr['alliance_id']."\">Info</a> <a href=\"?page=$page&amp;mode=$mode&amp;limit=".$_GET['limit']."&amp;alliancedetail=".$arr['alliance_id']."\">Punktedetails</a></td>";
+				$out.= "<td >".(text2html($arr['alliance_tag']))."</td>";
+				$out.= "<td >".text2html($arr['alliance_name'])."</td>";
+				$out.= "<td >".nf2($arr['upoints'])."</td>";
+				$out.= "<td >".nf2($arr['uavg'])."</td>";
+				$out.= "<td >".nf2($arr['cnt'])."</td>";
+				$out.= "<td>
+					<a href=\"?page=alliance&amp;info_id=".$arr['alliance_id']."\">Info</a> 
+					<a href=\"?page=$page&amp;mode=$mode&amp;alliancedetail=".$arr['alliance_id']."\">Punktedetails</a></td>";
 				$out.= "</tr>";
 				$cnt++;
 			}
@@ -127,7 +125,9 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 			AND u.user_blocked_to>".time()." 
 		ORDER BY 
 			u.user_blocked_from DESC;");
-		$out.= "<table class=\"tb\">
+		ob_start();
+		tableStart("Pranger");
+		echo "
 		<tr>
 			<th>Nick</th>
 			<th>Von:</th>
@@ -139,19 +139,19 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 		{
 			while ($arr = mysql_fetch_array($res))
 			{
-				$out.="<tr>
-				<td valign=\"top\" width=\"90\">".$arr['user_nick']."</td>
-				<td valign=\"top\">".df($arr['user_blocked_from'])."</td>
-				<td valign=\"top\">".df($arr['user_blocked_to'])."</td>
+				echo "<tr>
+				<td>".$arr['user_nick']."</td>
+				<td>".df($arr['user_blocked_from'])."</td>
+				<td>".df($arr['user_blocked_to'])."</td>
 				<td><a href=\"mailto:".$arr['admin_email']."\">".$arr['admin_nick']."</a></td>
 				<td>".text2html($arr['user_ban_reason'])."</td>
 				</tr>";
 			}
 		}
 		else
-			$out.= "<tr><td colspan=\"5\"><i>Keine Eintr&auml;ge vorhanden</i></tr>";
-		$out.="</table>";
-	 	$objResponse->assign('statsBox', 'innerHTML', $out);
+			echo "<tr><td colspan=\"5\"><i>Keine Eintr&auml;ge vorhanden</i></tr>";
+		tableEnd();
+	 	$objResponse->assign('statsBox', 'innerHTML', ob_get_clean());
 	}
 
 	//
@@ -397,27 +397,33 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 	//
 	else
 	{
-		$out.= "<table class=\"tbl\">
-			<tr>
-				<td style=\"width:470px;text-align:left;\" class=\"statsNav\">
-					<b>&nbsp;&nbsp;Suche:</b> 
-					<input type=\"text\" class=\"search\" name=\"user_nick\" autocomplete=\"off\" value=\"\" size=\"\" onkeyup=\"statsSearchLoader();xajax_statsShowTable('$mode',0,this.value);\" id=\"searchString\"/>
-					<input type=\"button\" onclick=\"getElementById('searchString').value='';xajax_statsShowTable('$mode');\" value=\"Reset\" />
-					<input type=\"button\" onclick=\"xajax_statsShowTable('$mode',0,'".$_SESSION[ROUNDID]['user_nick']."',1);\" value=\"".$_SESSION[ROUNDID]['user_nick']."\" />
-		</td>";
-		$out.= "<td class=\"statsNav\" id=\"statsNav1\" style=\"text-align:right;\">";
+		ob_start();
+		iBoxStart("Statistik");
+		echo "<div id=\"statsHeaderContainer\">
+		<div id=\"statsSearchContainer\">
+			<b>&nbsp;&nbsp;Suche:</b> 
+			<input type=\"text\" class=\"search\" name=\"user_nick\" autocomplete=\"off\" value=\"\" size=\"\" onclick=\"this.select()\" onkeyup=\"
+			if(window.mytimeout) window.clearTimeout(window.mytimeout);
+ 			window.mytimeout = window.setTimeout('loadingMsg(\'statsTable\',\'Suche Spieler...\');xajax_statsShowTable(\'$mode\',0,document.getElementById(\'searchString\').value);', 500);
+ 			return true;\" id=\"searchString\"/>
+			<input type=\"button\" onclick=\"loadingMsg('statsTable','Lade Statistiktabelle...');getElementById('searchString').value='';xajax_statsShowTable('$mode');\" value=\"Reset\" />
+			<input type=\"button\" onclick=\"loadingMsg('statsTable','Suche Spieler...');getElementById('searchString').value='".$_SESSION[ROUNDID]['user_nick']."';xajax_statsShowTable('$mode',0,'".$_SESSION[ROUNDID]['user_nick']."',1);\" value=\"".$_SESSION[ROUNDID]['user_nick']."\" />
+		</div>";
+		echo "<div id=\"statsNav1\">";
 		// >> AJAX generated content here
-		$out.= "</td></tr>";
-		$out.="<tr><td colspan=\"2\" style=\"margin:0px;padding:0px;\" id=\"statsTable\">" .
-		"<div style=\"padding:20px;background:#335\"><img src=\"images/loading335.gif\" alt=\"Loading\" /> Lade Statistiktabelle...</div>";
+		echo "</div>
+		<br style=\"clear:both;\"/>
+		</div>
+		<div id=\"statsTable\">";
+		echo "<div class=\"loadingMsg\">Lade Statistiktabelle...</div>";
 		// >> AJAX generated content here
-		$out.= "</td></tr>";
-		$out.= "<tr>
-			<td style=\"width:470px;text-align:left;\" class=\"statsNav\"></td>
-			<td id=\"statsNav2\" style=\"text-align:right;\" class=\"statsNav\">";
+		echo "</div>
+		<div id=\"statsNav2\">";
 		// >> AJAX generated content here
-		$out.= "</td></tr></table>";
-	 	$objResponse->assign('statsBox', 'innerHTML', $out);
+		echo "</div>
+		<br style=\"clear:both;\"/>";
+		iBoxEnd();
+	 	$objResponse->assign('statsBox', 'innerHTML', ob_get_clean());
 		$objResponse->script("xajax_statsShowTable('$mode');");
 	}
 
@@ -425,7 +431,7 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 }
 
 
-function statsShowTable($mode, $limit=0, $userstring="", $absolute=0)
+function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='')
 {
 	global $page;
   $objResponse = new xajaxResponse();
@@ -452,40 +458,7 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0)
 		}
 		$lastlimit = (ceil($num/NUM_OF_ROWS)*NUM_OF_ROWS)-NUM_OF_ROWS;
 
-		// Navigationsfeld
-		$out="<table style=\"width:100%\">";
-		if ($prevlimit>-1 && NUM_OF_ROWS*2<$num)
-			$out.= "<td style=\"width:40px;text-align:center;\"><input type=\"button\" value=\"&lt;&lt;\" onclick=\"xajax_statsShowTable('$mode',0)\"></td>";
-		else
-			$out.= "<td style=\"width:40px;\"></td>";
-		if ($prevlimit>-1)
-			$out.= "<td style=\"width:40px;text-align:center;\"><input type=\"button\" value=\"&lt;\" onclick=\"xajax_statsShowTable('$mode',$prevlimit)\"></td>";
-		else
-			$out.= "<td style=\"width:40px;\"></td>";
-		if ($nextlimit<$num)
-			$out.= "<td style=\"width:40px;text-align:center;\"><input type=\"button\" value=\"&gt;\" onclick=\"xajax_statsShowTable('$mode',$nextlimit)\"></td>";
-		else
-			$out.= "<td style=\"width:40px;\"></td>";
-		if ($nextlimit<$num && NUM_OF_ROWS*2<$num)
-			$out.= "<td style=\"width:40px;text-align:center;\"><input type=\"button\" value=\"&gt;&gt;\" onclick=\"xajax_statsShowTable('$mode',$lastlimit)\"></td>";
-		else
-			$out.= "<td style=\"width:40px;\"></td>";
-		$out.= "<td><select onchange=\"xajax_statsShowTable('$mode',this.options[this.selectedIndex].value)\">";
-		for ($x=1;$x<=$num;$x+=NUM_OF_ROWS)
-		{
-			$dif = $x+NUM_OF_ROWS-1;
-			if ($dif>$num) $dif=$num;
-			$oval=$x-1;
-			$out.= "<option value=\"$oval\"";
-			if ($limit==$oval) $out.= " selected=\"selected\"";
-			$out.= ">$x - $dif</option>";
-		}
-		$out.= "</select></td></table>";
- 		$objResponse->assign('statsNav1', 'innerHTML', $out);
- 		$objResponse->assign('statsNav2', 'innerHTML', $out);
-
 		// Punktetabelle
-		$out="<table class=\"tb\">";
 		
 		if ($num > 0)
 		{
@@ -494,6 +467,7 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0)
 			if ($mode=="ships")
 			{
 				$field="points_ships";
+				$rank="rank_ships";
 				$order="rank_ships";
 				$title="Schiffspunkte";
 				$shift="rankshift_ships";
@@ -501,6 +475,7 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0)
 			elseif ($mode=="tech")
 			{
 				$field="points_tech";
+				$rank="rank_tech";
 				$order="rank_tech";
 				$title="Technologiepunkte";
 				$shift="rankshift_tech";
@@ -508,6 +483,7 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0)
 			elseif ($mode=="buildings")
 			{
 				$field="points_buildings";
+				$rank="rank_buildings";
 				$order="rank_buildings";
 				$title="Gebäudepunkte";
 				$shift="rankshift_buildings";
@@ -515,6 +491,7 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0)
 			elseif ($mode=="exp")
 			{
 				$field="points_exp";
+				$rank="rank_exp";
 				$order="rank_exp";
 				$title="Erfahrungspunkte";
 				$shift="rankshift_exp";
@@ -522,10 +499,44 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0)
 			else
 			{
 				$field="points";
+				$rank="rank";
 				$order="rank";
 				$title="Gesamtpunkte";
 				$shift="rankshift";
 			}
+			$orderDir = "ASC";
+			
+			if ($orderBy=='nickUp')
+			{
+				$order = "nick";
+				$orderDir = "DESC";
+			}
+			elseif ($orderBy=='nickDown')
+			{
+				$order = "nick";
+				$orderDir = "ASC";
+			}
+			elseif ($orderBy=='rankUp')
+			{
+				$order = "rank";
+				$orderDir = "DESC";
+			}
+			elseif ($orderBy=='rankDown')
+			{
+				$order = "rank";
+				$orderDir = "ASC";
+			}
+			elseif ($orderBy=='allyUp')
+			{
+				$order = "alliance_tag";
+				$orderDir = "DESC";
+			}
+			elseif ($orderBy=='allyDown')
+			{
+				$order = "alliance_tag";
+				$orderDir = "ASC";
+			}
+			
 
 			if ($userstring!="")
 			{
@@ -540,7 +551,7 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0)
 						blocked,
 						hmod,
 						inactive,
-						".$order." AS rank,
+						".$rank." AS rank,
 						".$field." AS points,
 						".$shift." AS shift,
 						race_name,
@@ -552,9 +563,9 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0)
 					WHERE 
 	         	LCASE(nick) LIKE '".strtolower($userstring)."' 
 					ORDER BY 
-						$order ASC,
-						nick ASC 
-					LIMIT $limit;";
+						$order $orderDir
+					LIMIT 
+						$limit;";
 				}
 				else
 				{
@@ -565,7 +576,7 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0)
 						blocked,
 						hmod,
 						inactive,
-						".$order." AS rank,
+						".$rank." AS rank,
 						".$field." AS points,
 						".$shift." AS shift,
 						race_name,
@@ -577,9 +588,9 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0)
 					WHERE 
 	       		LCASE(nick) LIKE '".strtolower($userstring)."%' 
 					ORDER BY 
-						$order ASC,
-						nick ASC 
-					LIMIT $limit;";
+						$order $orderDir
+					LIMIT 
+						$limit;";
 				}
 			}
 			else
@@ -591,7 +602,7 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0)
 					blocked,
 					hmod,
 					inactive,
-					".$order." AS rank,
+					".$rank." AS rank,
 					".$field." AS points,
 					".$shift." AS shift,
 					race_name,
@@ -601,22 +612,61 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0)
 				FROM 
 					user_stats
 				ORDER BY 
-					$order ASC,
-					nick ASC 
+					$order $orderDir
 				LIMIT 
 					$limit;";
 			}
 			$res=dbquery($sql);
-	
-			if (mysql_num_rows($res)>0)
+			
+			$nr = mysql_num_rows($res);
+			if ($nr>0)
 			{
+				// Navigationsfeld		
+				ob_start();
+				if ($userstring=='')
+				{
+					if ($prevlimit>-1 && NUM_OF_ROWS*2<$num)
+						echo "<input type=\"button\" value=\"&lt;&lt;\" onclick=\"loadingMsgPrepend('statsTable','Lade...');xajax_statsShowTable('$mode',0)\">";
+					if ($prevlimit>-1)
+						echo "<input type=\"button\" value=\"&lt;\" onclick=\"loadingMsgPrepend('statsTable','Lade...');xajax_statsShowTable('$mode',$prevlimit)\">";
+					if ($nextlimit<$num)
+						echo "<input type=\"button\" value=\"&gt;\" onclick=\"loadingMsgPrepend('statsTable','Lade...');xajax_statsShowTable('$mode',$nextlimit)\">";
+					if ($nextlimit<$num && NUM_OF_ROWS*2<$num)
+						echo "<input type=\"button\" value=\"&gt;&gt;\" onclick=\"loadingMsgPrepend('statsTable','Lade...');xajax_statsShowTable('$mode',$lastlimit)\">";
+					echo "<select onchange=\"xajax_statsShowTable('$mode',this.options[this.selectedIndex].value)\">";
+					for ($x=1;$x<=$num;$x+=NUM_OF_ROWS)
+					{
+						$dif = $x+NUM_OF_ROWS-1;
+						if ($dif>$num) $dif=$num;
+						$oval=$x-1;
+						echo "<option value=\"$oval\"";
+						if ($limit==$oval) 
+							echo " selected=\"selected\"";
+						echo ">$x - $dif</option>";
+					}
+					$out.= "</select>";
+				}				
+				$out = ob_get_clean();
+		 		$objResponse->assign('statsNav1', 'innerHTML', $out);
+		 		$objResponse->assign('statsNav2', 'innerHTML', $out);				
+						
+				// Tabelle	
+				$out="<table class=\"tb\" style=\"width:100%\">";
 				$out.= "<tr><th colspan=\"7\" style=\"text-align:center;\">".$title."</th></tr>";
 				$out.= "<tr>
-					<th style=\"width:50px;\">#</th>
-					<th>Nick</th>
+					<th style=\"width:50px;\">#
+						<a href=\"javascript:;\" onclick=\"loadingMsgPrepend('statsTable','Lade...');xajax_statsShowTable('$mode',0,'',0,'rankDown')\"><img src=\"images/s_asc.png\"/></a>
+						<a href=\"javascript:;\" onclick=\"loadingMsgPrepend('statsTable','Lade...');xajax_statsShowTable('$mode',0,'',0,'rankUp')\"><img src=\"images/s_desc.png\"/></a></th>
+					</th>
+					<th>Nick 
+						<a href=\"javascript:;\" onclick=\"loadingMsgPrepend('statsTable','Lade...');xajax_statsShowTable('$mode',0,'',0,'nickDown')\"><img src=\"images/s_asc.png\"/></a>
+						<a href=\"javascript:;\" onclick=\"loadingMsgPrepend('statsTable','Lade...');xajax_statsShowTable('$mode',0,'',0,'nickUp')\"><img src=\"images/s_desc.png\"/></a></th>
 					<th>Rasse</th>
 					<th>Sektor</th>
-					<th>Allianz</th>
+					<th>Allianz
+						<a href=\"javascript:;\" onclick=\"loadingMsgPrepend('statsTable','Lade...');xajax_statsShowTable('$mode',0,'',0,'allyDown')\"><img src=\"images/s_asc.png\"/></a>
+						<a href=\"javascript:;\" onclick=\"loadingMsgPrepend('statsTable','Lade...');xajax_statsShowTable('$mode',0,'',0,'allyUp')\"><img src=\"images/s_desc.png\"/></a></th>
+					</th>
 					<th>Punkte</th>
 				</tr>";
 				while ($arr=mysql_fetch_array($res))
@@ -668,20 +718,21 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0)
 					$out.= "<td $addstyle >".nf($arr['points'])."</td>";
 					$out.= "</tr>";
 				}
-				
+				$out.= "</table>";
 			}
 			else
-				$out.= "<tr><td align=\"center\"><i>Es wurden keine Spieler gefunden!</i></tr>";
+			{
+				$out= "<div><i>Es wurden keine Spieler gefunden!</i></div>";
+		 		$objResponse->assign('statsNav1', 'innerHTML', '');
+		 		$objResponse->assign('statsNav2', 'innerHTML', '');	
+			}
 		}
 		else
 		{
-			$out.= "<tr>
-				<td align=\"center\">
-					<i>Momentan sind keine Statistiken vorhanden, sie werden 
+			$out= "<div><i>Momentan sind keine Statistiken vorhanden, sie werden 
 					zur nächsten vollen Stunde erstellt!
-			</i></tr>";
+			</i></div>";
 		}
-		$out.= "</table>";
 		$objResponse->assign('statsTable', 'innerHTML', $out);
 
 		return $objResponse;

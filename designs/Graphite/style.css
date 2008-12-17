@@ -720,3 +720,35 @@ visibility:visible;
 	color:#fff;
 	width:110px;
 }
+
+/* Statistics */
+
+#statsHeaderContainer	{
+	margin-bottom:10px;
+}
+
+#statsSearchContainer	{
+	text-align:left;
+	float:left;
+}
+
+#statsNav1, #statsNav2	{
+	text-align:right;
+	float:right;	
+}
+
+#statsNav1 input, #statsNav2 input	{
+	margin-right:5px;
+}
+
+#statsTable	{
+	margin:0px;
+	padding:0px;
+	margin-bottom:10px;
+}
+
+.loadingMsg	{
+	padding:20px;
+	background:url('images/loading.gif') top center no-repeat;
+	text-align:center;
+}

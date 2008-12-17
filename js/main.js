@@ -191,6 +191,22 @@
 		return false;
 	}
 
+	function loadMsg(elemId)
+	{
+		document.getElementById(elemId).innerHTML = '<img src=\"images/loading.gif\" alt=\"Loading\" /> Lade Daten...';
+	}
+	
+	function loadingMsg(trg,msg)
+	{
+		document.getElementById(trg).innerHTML='<div class=\"loadingMsg\">'+msg+'</div>';
+	}
+
+	function loadingMsgPrepend(trg,msg)
+	{
+		document.getElementById(trg).innerHTML='<div class=\"loadingMsg\">'+msg+'</div>'+document.getElementById(trg).innerHTML;
+	}
+
+
 	function showLoader(elem)
 	{
 		document.getElementById(elem).innerHTML='<div style=\"text-align:center;padding:10px;\"><img src="images/loading.gif" /></div>';
@@ -217,10 +233,6 @@
 		}		
 	}
 
-function loadMsg(elemId)
-{
-	document.getElementById(elemId).innerHTML = '<img src=\"images/loading.gif\" alt=\"Loading\" /> Lade Daten...';
-}
 
 function changeNav(selIndex,page)
 {
@@ -961,10 +973,6 @@ function check_illegal_signs(str)
 	return result;
 }
 
-function statsSearchLoader()
-{
-	document.getElementById('statsTable').innerHTML='<div style=\"padding:20px;background:#335\"><img src=\"images/loading335.gif\" alt=\"Loading\" /> Suche Spieler...</div>';
-}
 
 function tabActivate(tabName,elemId)
 {

@@ -92,7 +92,7 @@
   // Layout
 	define("TBL_SPACING",$conf['general_table_offset']['v']);		// ???
 	define("TBL_PADDING",$conf['general_table_offset']['p1']);	// ???
-	define ("NUM_OF_ROWS",$conf['stats_num_rows']['v']);				// ??? "Statistik" (komische bezeichnung!)
+	define ("NUM_OF_ROWS",10);				// ??? "Statistik" (komische bezeichnung!) $conf['stats_num_rows']['v']
 
 	// Pfade
 	define("SMILIE_DIR","images/smilies");								// Smilies
