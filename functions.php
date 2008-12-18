@@ -2942,7 +2942,7 @@ Forum: http://www.etoa.ch/forum";
 		dbquery("DELETE FROM chat_users WHERE timestamp < ".(time()-180));		
 	}
 
-
+	// Test
 
 	/**
 	* Textfunktionen einbinden
