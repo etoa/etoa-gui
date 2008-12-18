@@ -125,60 +125,60 @@
 	    			<th class=\"tbltitle\" colspan=\"2\" style=\"text-align:center\">Technische Daten</th></tr>";
 
 	    echo "<tr>
-	    	<td class=\"tbldata\">
-	    	<table style=\"width:100%\">";
+	    	<td style=\"padding:0px;\">
+	    	<table class=\"tb\">";
 			echo "<tr>
-						<td class=\"tbldata\" style=\"width:170px;font-weight:bold;\">".RES_ICON_METAL."".RES_METAL."</td>
-						<td class=\"tbldata\" style=\"width:350px\">".nf($arr['ship_costs_metal'])." t</td>    	
+						<td style=\"width:170px;font-weight:bold;\" class=\"resmetal\">".RES_METAL."</td>
+						<td style=\"width:350px\">".nf($arr['ship_costs_metal'])." t</td>    	
 				</tr>";
 			echo "<tr>
-						<td class=\"tbldata\" style=\"font-weight:bold;\">".RES_ICON_CRYSTAL."".RES_CRYSTAL."</td>
-						<td class=\"tbldata\" style=\"width:350px\">".nf($arr['ship_costs_crystal'])." t</td>
+						<td style=\"font-weight:bold;\" class=\"rescrystal\">".RES_CRYSTAL."</td>
+						<td style=\"width:350px\">".nf($arr['ship_costs_crystal'])." t</td>
 				</tr>";
 			echo "<tr>
-						<td class=\"tbldata\" style=\"font-weight:bold;\">".RES_ICON_PLASTIC."".RES_PLASTIC."</td>
-						<td class=\"tbldata\" style=\"width:350px\">".nf($arr['ship_costs_plastic'])." t</td>
+						<td style=\"font-weight:bold;\" class=\"resplastic\">".RES_PLASTIC."</td>
+						<td style=\"width:350px\">".nf($arr['ship_costs_plastic'])." t</td>
 				</tr>";
 			echo "<tr>
-						<td class=\"tbldata\" style=\"font-weight:bold;\">".RES_ICON_FUEL."".RES_FUEL."</td>
-						<td class=\"tbldata\" style=\"width:350px\">".nf($arr['ship_costs_fuel'])." t</td>
+						<td style=\"font-weight:bold;\" class=\"resfuel\">".RES_FUEL."</td>
+						<td style=\"width:350px\">".nf($arr['ship_costs_fuel'])." t</td>
 				</tr>";
 			echo "<tr>
-						<td class=\"tbldata\" style=\"font-weight:bold;\">".RES_ICON_FOOD."".RES_FOOD."</td>
-						<td class=\"tbldata\" style=\"width:350px\">".nf($arr['ship_costs_food'])." t</td>
+						<td style=\"font-weight:bold;\" class=\"resfood\">".RES_FOOD."</td>
+						<td style=\"width:350px\">".nf($arr['ship_costs_food'])." t</td>
 				</tr>";
 			echo "<tr>
-						<td class=\"tbldata\" style=\"font-weight:bold;\">".RES_ICON_FUEL."/100 AE</td>
-						<td class=\"tbldata\" style=\"width:350px\">".nf($arr['ship_fuel_use'])." t</td>
+						<td style=\"font-weight:bold;\" class=\"resfuel\">/100 AE</td>
+						<td style=\"width:350px\">".nf($arr['ship_fuel_use'])." t</td>
 				</tr>";
 			echo "<tr>
-						<td class=\"tbldata\" style=\"font-weight:bold;\">".RES_ICON_FUEL."Start</td>
-						<td class=\"tbldata\" style=\"width:350px\">".nf($arr['ship_fuel_use_launch'])." t</td>
+						<td style=\"font-weight:bold;\" class=\"resfuel\">Start</td>
+						<td style=\"width:350px\">".nf($arr['ship_fuel_use_launch'])." t</td>
 				</tr>";
 			echo "<tr>
-						<td class=\"tbldata\" style=\"font-weight:bold;\">".RES_ICON_FUEL."Landung</td>
-						<td class=\"tbldata\" style=\"width:350px\">".nf($arr['ship_fuel_use_landing'])." t</td>
+						<td style=\"font-weight:bold;\" class=\"resfuel\">Landung</td>
+						<td style=\"width:350px\">".nf($arr['ship_fuel_use_landing'])." t</td>
 				</tr>";
 	    	
 	    	echo "</table>
 	    	</td>
-	    	<td class=\"tbldata\" colspan=\"3\">
-				<table style=\"width:100%\">";
+	    	<td  colspan=\"3\" style=\"padding:0px;\">
+				<table class=\"tb\" style=\"width:100%\">";
 				echo "<tr>
-						<td class=\"tbldata\" style=\"width:200px;font-weight:bold;\">Struktur</td>
-						<td class=\"tbldata\">".nf($arr['ship_structure'])."</td></tr>";
+						<td style=\"font-weight:bold;\">Struktur</td>
+						<td>".nf($arr['ship_structure'])."</td></tr>";
 				echo "<tr>
-						<td class=\"tbldata\" style=\"width:200px;font-weight:bold;\">Schutzschild</td>
-						<td class=\"tbldata\">".nf($arr['ship_shield'])."</td></tr>";
+						<td style=\"font-weight:bold;\">Schutzschild</td>
+						<td>".nf($arr['ship_shield'])."</td></tr>";
 				echo "<tr>
-						<td class=\"tbldata\" style=\"width:200px;font-weight:bold;\">Waffen</td>
-						<td class=\"tbldata\">".nf($arr['ship_weapon'])."</td></tr>";
+						<td style=\"font-weight:bold;\">Waffen</td>
+						<td>".nf($arr['ship_weapon'])."</td></tr>";
 				echo "<tr>
-						<td class=\"tbldata\" style=\"width:200px;font-weight:bold;\">Heilung</td>
-						<td class=\"tbldata\">".nf($arr['ship_heal'])."</td></tr>";
+						<td style=\"font-weight:bold;\">Heilung</td>
+						<td>".nf($arr['ship_heal'])."</td></tr>";
 				echo "<tr>
-						<td class=\"tbldata\" style=\"width:200px;font-weight:bold;\">Antriebstechnologie</td>
-						<td class=\"tbldata\">";
+						<td style=\"font-weight:bold;\">Antriebstechnologie</td>
+						<td>";
 						if (mysql_num_rows($vres)>0)
 						{
 							while ($varr=mysql_fetch_array($vres))
@@ -188,20 +188,20 @@
 						}
 	    			echo "</td></tr>";
 				echo "<tr>
-						<td class=\"tbldata\" style=\"width:200px;font-weight:bold;\">Laderaum</td>
-						<td class=\"tbldata\">".nf($arr['ship_capacity'])." t</td></tr>";
+						<td style=\"font-weight:bold;\">Laderaum</td>
+						<td>".nf($arr['ship_capacity'])." t</td></tr>";
 				echo "<tr>
-						<td class=\"tbldata\" style=\"width:200px;font-weight:bold;\">Passagierraum</td>
-						<td class=\"tbldata\">".nf($arr['ship_people_capacity'])."</td></tr>";
+						<td style=\"font-weight:bold;\">Passagierraum</td>
+						<td>".nf($arr['ship_people_capacity'])."</td></tr>";
 				echo "<tr>
-						<td class=\"tbldata\" style=\"width:200px;font-weight:bold;\">Geschwindigkeit</td>
-						<td class=\"tbldata\">".nf($arr['ship_speed']/FLEET_FACTOR_F)." AE/h</td></tr>";
+						<td style=\"font-weight:bold;\">Geschwindigkeit</td>
+						<td>".nf($arr['ship_speed']/FLEET_FACTOR_F)." AE/h</td></tr>";
 				echo "<tr>
-						<td class=\"tbldata\" style=\"width:200px;font-weight:bold;\">Startdauer</td>
-						<td class=\"tbldata\">".tf($arr['ship_time2start']/FLEET_FACTOR_S)."</td></tr>";
+						<td style=\"font-weight:bold;\">Startdauer</td>
+						<td>".tf($arr['ship_time2start']/FLEET_FACTOR_S)."</td></tr>";
 				echo "<tr>
-						<td class=\"tbldata\" style=\"width:200px;font-weight:bold;\">Landedauer</td>
-						<td class=\"tbldata\">".tf($arr['ship_time2land']/FLEET_FACTOR_L)."</td></tr>";
+						<td style=\"font-weight:bold;\">Landedauer</td>
+						<td>".tf($arr['ship_time2land']/FLEET_FACTOR_L)."</td></tr>";
 				echo "</table>	    	
 	    	</td></tr>";
 
@@ -216,7 +216,8 @@
 			$accnt=0;
 			if (count($actions)>0)
 			{
-				echo "<tr><td colspan=\"4\"><table style=\"width:100%\">";
+				echo "<tr><td colspan=\"4\" style=\"padding:0px\">
+				<table class=\"tb\" style=\"width:100%\">";
 				foreach ($actions as $i)
 				{
 					if ($ac = FleetAction::createFactory($i))
@@ -239,9 +240,8 @@
 		
 			echo "<tr><th class=\"tbltitle\" colspan=\"4\" style=\"text-align:center\">Voraussetzungen</th></tr>";			
 			echo "<tr><td class=\"tbldata\" colspan=\"4\" style=\"text-align:center\">";
-			echo "<div id=\"reqInfo\" style=\"width:100%;text-align:center;;margin:0px;padding:10px 0px;
-			background:#fff;color:#000;\">
-			Bitte warten...
+			echo "<div id=\"reqInfo\" style=\"width:100%;\">
+			<br/><div class=\"loadingMsg\">Bitte warten...</div>
 			</div>";	
 			echo '<script type="text/javascript">xajax_reqInfo('.$arr['ship_id'].',"s")</script>';
 			echo "</td></tr>";	
@@ -289,61 +289,73 @@
 		}
 		else
 		{
-			$order="ship_name";
+			$order="ship_order";
 			$sort="ASC";
 		}
 
-
-		$res = dbquery("
+		$cres = dbquery("
 		SELECT 
 			* 
 		FROM 
-			ships 
-		LEFT JOIN
 			ship_cat
-		ON ship_cat_id=cat_id
-		WHERE
-			ship_buildable=1 
-			AND special_ship=0 
 		ORDER BY 
-			$order $sort;");
-		if (mysql_num_rows($res)>0)
-		{
-			tableStart("Raumschiff&uuml;bersicht");
-			echo "<tr><th class=\"tbltitle\" colspan=\"2\"><a href=\"?page=$page&amp;site=$site&amp;order=name\">Name</a></th>";
-			echo "<th class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=race_id\">Rasse</a></th>";
-			echo "<th class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=capacity\">Kapazität</a></th>";
-			echo "<th class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=speed\">Speed</a></th>";
-			echo "<th class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=fuel_use\">Treibstoff</a></th>";
-			echo "<th class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=weapon\">Waffen</a></th>";
-			echo "<th class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=structure\">Struktur</a></th>";
-			echo "<th class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=shield\">Schild</a></th>";
-			echo "<th class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=pilots\">Piloten</a></th>
-			</tr>";
-			while ($arr = mysql_fetch_array($res))
+			cat_order;");
+		if (mysql_num_rows($cres)>0)
+		{ 
+			while ($carr = mysql_fetch_assoc($cres))
 			{
-				$s_img = IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$arr['ship_id']."_small.".IMAGE_EXT;
-				echo "<tr><td class=\"tbldata\" style=\"background:#000;width:40px;\">
-				<a href=\"?page=$page&site=$site&id=".$arr['ship_id']."\">
-				<img src=\"$s_img\" alt=\"Schiffbild\" width=\"40\" height=\"40\" border=\"0\"/></a></td>";
-				echo "<td class=\"tbltitle\" ".tm($arr['ship_name'],text2html($arr['ship_shortcomment'])."<br/><br/>".shipRanking($arr)).">
-					".$arr['ship_name']."<br/><span style=\"font-weight:500\">".$arr['cat_name']."</span>
-				</td>";
-				echo "<td class=\"tbldata\">";
-				if ($arr['ship_race_id']>0)
-					echo $race[$arr['ship_race_id']]['race_name'];
-				else
-					echo "-";
-				echo "<td class=\"tbldata\">".nf($arr['ship_capacity'])." t</td>";
-				echo "<td class=\"tbldata\">".nf($arr['ship_speed'])." AE/h</td>";
-				echo "<td class=\"tbldata\">".nf($arr['ship_fuel_use'])." t/100 AE</td>";
-				echo "<td class=\"tbldata\">".nf($arr['ship_weapon'])."</td>";
-				echo "<td class=\"tbldata\">".nf($arr['ship_structure'])."</td>";
-				echo "<td class=\"tbldata\">".nf($arr['ship_shield'])."</td>";
-				echo "<td class=\"tbldata\">".nf($arr['ship_pilots'])."</td>
-				</tr>";
+				$res = dbquery("
+				SELECT 
+					* 
+				FROM 
+					ships 
+				WHERE
+					ship_cat_id=".$carr['cat_id']."
+					AND ship_buildable=1 
+					AND special_ship=0 
+				ORDER BY 
+					$order $sort;");
+				if (mysql_num_rows($res)>0)
+				{
+					tableStart($carr['cat_name'],800);
+					echo "<tr><th colspan=\"2\"><a href=\"?page=$page&amp;site=$site&amp;order=name\">Name</a></th>";
+					echo "<th><a href=\"?page=$page&amp;site=$site&amp;order=race_id\">Rasse</a></th>";
+					echo "<th><a href=\"?page=$page&amp;site=$site&amp;order=capacity\">Kapazität</a></th>";
+					echo "<th><a href=\"?page=$page&amp;site=$site&amp;order=speed\">Speed</a></th>";
+					echo "<th><a href=\"?page=$page&amp;site=$site&amp;order=fuel_use\">Treibstoff</a></th>";
+					echo "<th><a href=\"?page=$page&amp;site=$site&amp;order=weapon\">Waffen</a></th>";
+					echo "<th><a href=\"?page=$page&amp;site=$site&amp;order=structure\">Struktur</a></th>";
+					echo "<th><a href=\"?page=$page&amp;site=$site&amp;order=shield\">Schild</a></th>";
+					echo "<th><a href=\"?page=$page&amp;site=$site&amp;order=pilots\">Piloten</a></th>
+					<th><a href=\"?page=$page&amp;site=$site&amp;order=points\">Wert</a></th>
+					</tr>";
+					while ($arr = mysql_fetch_array($res))
+					{
+						$s_img = IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$arr['ship_id']."_small.".IMAGE_EXT;
+						echo "<tr><td style=\"background:#000;width:40px;\">
+						<a href=\"?page=$page&site=$site&id=".$arr['ship_id']."\">
+						<img src=\"$s_img\" alt=\"Schiffbild\" width=\"40\" height=\"40\" border=\"0\"/></a></td>";
+						echo "<td ".tm($arr['ship_name'],text2html($arr['ship_shortcomment'])."<br/><br/>".shipRanking($arr)).">
+							<a href=\"?page=$page&site=$site&id=".$arr['ship_id']."\">".$arr['ship_name']."</a>
+						</td>";
+						echo "<td>";
+						if ($arr['ship_race_id']>0)
+							echo $race[$arr['ship_race_id']]['race_name'];
+						else
+							echo "-";
+						echo "<td>".nf($arr['ship_capacity'])."</td>";
+						echo "<td>".nf($arr['ship_speed'])."</td>";
+						echo "<td>".nf($arr['ship_fuel_use'])."</td>";
+						echo "<td>".nf($arr['ship_weapon'])."</td>";
+						echo "<td>".nf($arr['ship_structure'])."</td>";
+						echo "<td>".nf($arr['ship_shield'])."</td>";
+						echo "<td>".nf($arr['ship_pilots'])."</td>";
+						echo "<td>".nf($arr['ship_points'])."</td>
+						</tr>";
+					}
+					tableEnd();
+				}
 			}
-			tableEnd();
 		}
 		else
 			echo "<i>Keine Daten vorhanden!</i>";

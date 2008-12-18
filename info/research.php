@@ -111,6 +111,10 @@
       }
       tableEnd();			
 			
+			iBoxStart("Technikbaum");
+	    showTechTree("t",$arr['tech_id']);
+			iBoxEnd();			
+			
 		}
 		else
 		  echo "Technologiedaten nicht gefunden!";
@@ -135,9 +139,15 @@
 					tableStart($tarr['type_name']);
 					while ($arr = mysql_fetch_array($res))
 					{
-						echo "<tr><td class=\"tbldata\" style=\"width:40px;\"><a href=\"?page=$page&site=$site&id=".$arr['tech_id']."\"><img src=\"".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$arr['tech_id']."_small.".IMAGE_EXT."\" width=\"40\" height=\"40\" alt=\"Bild ".$arr['tech_name']."\" border=\"0\"/></a></td>";
-						echo "<td class=\"tbltitle\" style=\"width:160px;\">".$arr['tech_name']."</td>";
-						echo "<td class=\"tbldata\">".$arr['tech_shortcomment']."</td></tr>";
+						echo "<tr>
+							<td style=\"width:40px;padding:0px;background:#000\">
+								<a href=\"?page=$page&site=$site&id=".$arr['tech_id']."\">
+									<img src=\"".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$arr['tech_id']."_small.".IMAGE_EXT."\" width=\"40\" height=\"40\" alt=\"Bild ".$arr['tech_name']."\" border=\"0\"/>
+								</a>
+							</td>";
+						echo "<td style=\"width:160px;\">
+							<a href=\"?page=$page&site=$site&id=".$arr['tech_id']."\">".$arr['tech_name']."</a></td>";
+						echo "<td>".$arr['tech_shortcomment']."</td></tr>";
 					}
 					tableEnd();
 				}

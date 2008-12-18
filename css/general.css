@@ -65,42 +65,42 @@ img.resIcon	{
 }
     
 .resmetal, .tb .resmetal {
-	background:url('../images/resources/metal_s.png') no-repeat;
+	background:url('../images/resources/metal_s.png') 1px 1px no-repeat;
 	padding-left:24px;
 	color:#CFC8C2;
 }
 .rescrystal, .tb .rescrystal	{
-	background:url('../images/resources/crystal_s.png') no-repeat;
+	background:url('../images/resources/crystal_s.png') 1px 1px no-repeat;
 	padding-left:24px;
 	color:#C2E2EF;
 }
 .resplastic, .tb .resplastic	{
-	background:url('../images/resources/plastic_s.png') no-repeat;
+	background:url('../images/resources/plastic_s.png')  1px 1px no-repeat;
 	padding-left:24px;
 	color:#E5D1EF;
 }
 .resfuel, .tb .resfuel	{
-	background:url('../images/resources/fuel_s.png') no-repeat;
+	background:url('../images/resources/fuel_s.png')  1px 1px no-repeat;
 	padding-left:24px;
 	color:#A4C1EF;
 }
 .resfood, .tb .resfood	{
-	background:url('../images/resources/food_s.png') no-repeat;
+	background:url('../images/resources/food_s.png')  1px 1px no-repeat;
 	padding-left:24px;
 	color:#C2ECC2;
 }
 .respeople, .tb .respeople	{
-	background:url('../images/resources/people_s.png') no-repeat;
+	background:url('../images/resources/people_s.png') 1px 1px  no-repeat;
 	padding-left:24px;
 	color:#ECC8B2;
 }
 .respower, .tb .respower	{
-	background:url('../images/resources/power_s.png') no-repeat;
+	background:url('../images/resources/power_s.png') 1px 1px  no-repeat;
 	padding-left:24px;
 	color:#EFECC2;
 }
 .respoweru, .tb .respoweru	{
-	background:url('../images/resources/poweru_s.png') no-repeat;
+	background:url('../images/resources/poweru_s.png')  1px 1px no-repeat;
 	padding-left:24px;
 	color:#ECB2B2;
 }

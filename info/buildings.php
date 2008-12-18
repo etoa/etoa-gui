@@ -549,7 +549,7 @@ else
 				while ($arr = mysql_fetch_array($res))
 				{
 					echo "<tr>
-						<td style=\"width:40px;padding:0px;\">
+						<td style=\"width:40px;padding:0px;background:#000;vertical-align:middle;\">
 							<a href=\"?page=$page&site=$site&id=".$arr['building_id']."\">
 								<img src=\"".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$arr['building_id']."_small.".IMAGE_EXT."\" align=\"top\" style=\"width:40px;height:40px;background:#000;margin:0px;\" alt=\"Bild ".text2html($arr['building_name'])."\" border=\"0\"/></a></td>";
 					echo "<td style=\"width:130px;\">

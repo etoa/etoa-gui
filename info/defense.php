@@ -48,6 +48,11 @@
 	    echo "<tr><td class=\"tbltitle\">Platzverbrauch</td><td class=\"tbldata\">".nf($arr['def_fields'])." Felder</td></tr>";
 	    echo "<tr><td class=\"tbltitle\">Max. Anzahl</td><td class=\"tbldata\">".nf($arr['def_max_count'])."</td></tr>";
 	    tableEnd();
+	    
+	    iBoxStart("Technikbaum");
+    	showTechTree("d",$arr['def_id']);
+			iBoxEnd();
+	    
 		}
 		else
 		  echo "Verteidigungsdaten nicht gefunden!";
@@ -82,42 +87,67 @@
 		}
 		else
 		{
-			$order="def_name";
+			$order="def_order";
 			$sort="ASC";
 		}
 
-		$res = dbquery("SELECT * FROM defense WHERE def_buildable=1 ORDER BY $order $sort;");
-		if (mysql_num_rows($res)>0)
-		{
-			tableStart("&Uuml;bersicht");
-
-			echo "<tr></th><th class=\"tbltitle\" colspan=\"2\"><a href=\"?page=$page&amp;site=$site&amp;order=name\">Name</a></th>";
-			echo "<th class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=race_id\">Rasse</a></th>";
-			echo "<th class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=fields\">Felder</a></th>";
-			echo "<th class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=weapon\">Waffen</a></th>";
-			echo "<th class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=structure\">Struktur</a></th>";
-			echo "<th class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=shield\">Schild</a></th>";
-			echo "<th class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=heal\">Reparatur</a></th>";
-			echo "</tr>";
-			while ($arr = mysql_fetch_array($res))
+		$cres = dbquery("
+		SELECT 
+			* 
+		FROM 
+			def_cat
+		ORDER BY 
+			cat_order;");
+		if (mysql_num_rows($cres)>0)
+		{ 
+			while ($carr = mysql_fetch_assoc($cres))
 			{
-				$s_img = IMAGE_PATH."/".IMAGE_DEF_DIR."/def".$arr['def_id']."_small.".IMAGE_EXT;
-				echo "<tr><td class=\"tbldata\" style=\"width:40px;background:#000;\">
-				<a href=\"?page=$page&site=$site&id=".$arr['def_id']."\"><img src=\"$s_img\" alt=\"Verteidigung\" width=\"40\" height=\"40\" border=\"0\"/></a></td>";
-				echo "<td class=\"tbltitle\">".$arr['def_name']."</td>";
-				echo "<td class=\"tbldata\">";
-				if ($arr['def_race_id']>0)
-					echo $race[$arr['def_race_id']]['race_name'];
-				else
-					echo "-";
-				echo "<td class=\"tbldata\">".nf($arr['def_fields'])."</td>";
-				echo "<td class=\"tbldata\">".nf($arr['def_weapon'])."</td>";
-				echo "<td class=\"tbldata\">".nf($arr['def_structure'])."</td>";
-				echo "<td class=\"tbldata\">".nf($arr['def_shield'])."</td>";
-				echo "<td class=\"tbldata\">".nf($arr['def_heal'])."</td></tr>";
-				//echo "<td class=\"tbldata\"><a href=\"?page=$page&site=$site&id=".$arr['def_id']."\">Details</a></td></tr>";
+				$res = dbquery("
+				SELECT 
+					* 
+				FROM 
+					defense 
+				WHERE 
+					def_cat_id=".$carr['cat_id']."
+					AND def_buildable=1 
+				ORDER BY 
+					$order $sort;");
+				if (mysql_num_rows($res)>0)
+				{
+					tableStart($carr['cat_name'],700);
+		
+					echo "<tr>
+						<th colspan=\"2\"><a href=\"?page=$page&amp;site=$site&amp;order=name\">Name</a></th>
+						<th><a href=\"?page=$page&amp;site=$site&amp;order=race_id\">Rasse</a></th>
+						<th><a href=\"?page=$page&amp;site=$site&amp;order=fields\">Felder</a></th>
+						<th><a href=\"?page=$page&amp;site=$site&amp;order=weapon\">Waffen</a></th>
+						<th><a href=\"?page=$page&amp;site=$site&amp;order=structure\">Struktur</a></th>
+						<th><a href=\"?page=$page&amp;site=$site&amp;order=shield\">Schild</a></th>
+						<th><a href=\"?page=$page&amp;site=$site&amp;order=heal\">Reparatur</a></th>
+						<th><a href=\"?page=$page&amp;site=$site&amp;order=points\">Wert</a></th>
+					</tr>";
+					while ($arr = mysql_fetch_array($res))
+					{
+						$s_img = IMAGE_PATH."/".IMAGE_DEF_DIR."/def".$arr['def_id']."_small.".IMAGE_EXT;
+						echo "<tr><td class=\"tbldata\" style=\"width:40px;background:#000;\">
+						<a href=\"?page=$page&site=$site&id=".$arr['def_id']."\"><img src=\"$s_img\" alt=\"Verteidigung\" width=\"40\" height=\"40\" border=\"0\"/></a></td>";
+						echo "<td>
+							<a href=\"?page=$page&site=$site&id=".$arr['def_id']."\">".$arr['def_name']."</a></td>";
+						echo "<td>";
+						if ($arr['def_race_id']>0)
+							echo $race[$arr['def_race_id']]['race_name'];
+						else
+							echo "-";
+						echo "<td>".nf($arr['def_fields'])."</td>";
+						echo "<td>".nf($arr['def_weapon'])."</td>";
+						echo "<td>".nf($arr['def_structure'])."</td>";
+						echo "<td>".nf($arr['def_shield'])."</td>";
+						echo "<td>".nf($arr['def_heal'])."</td>";
+						echo "<td>".nf($arr['def_points'])."</td></tr>";
+					}
+					tableEnd();
+				}
 			}
-			tableEnd();
 		}
 		else
 			echo "<i>Keine Daten vorhanden!</i>";
