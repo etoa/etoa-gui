@@ -748,7 +748,7 @@ visibility:visible;
 }
 
 .loadingMsg	{
-	padding:20px;
-	background:url('images/loading.gif') top center no-repeat;
+	padding:40px 10px;
+	background:url('images/loading.gif') center 20px  no-repeat;
 	text-align:center;
 }

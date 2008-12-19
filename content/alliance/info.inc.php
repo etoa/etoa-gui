@@ -221,7 +221,7 @@
 			
 			// Diverses
 			echo "<tr>
-							<th>Akzeptiert Bewerbungen:</tdh
+							<th>Akzeptiert Bewerbungen:</th>
 							<td>
 								".($infoAlly->acceptApplications ? "Ja" : "Nein")."
 							</td>

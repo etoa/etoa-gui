@@ -404,7 +404,7 @@
 				<td class=\"$style3\">".nf(floor($this->resFuel))." t</td>
 				<td class=\"$style4\">".nf(floor($this->resFood))." t</td>
 				<td class=\"$style5\">".nf(floor($this->people))."</td>
-				<td class=\"$style6\">".nf($power_rest)."</td>
+				<td class=\"$style6\">".nf($power_rest)." MW</td>
 				</tr>";
 	
 				$text = array();
