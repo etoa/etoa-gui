@@ -33,7 +33,7 @@
 #include <mysql++/mysql++.h>
 
 #include "FleetHandler.h"
-#include "fleetactions/FleetFactory.h"
+#include "fleetActions/FleetFactory.h"
 #include "Fleet.h"
 #include "functions/Functions.h"
 #include "config/ConfigHandler.h"
