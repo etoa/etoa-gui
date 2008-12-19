@@ -1,7 +1,7 @@
 <?php
 
 	echo "<h2>Markt</h2>";
-	Help::navi(array("Markt","market"));
+	HelpUtil::breadCrumbs(array("Markt","market"));
 
 	iBoxStart("Markt");
 	echo "<div align=\"justify\">";

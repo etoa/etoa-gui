@@ -164,8 +164,7 @@ function showChatUsers()
 	$res = dbquery("
 	SELECT
 		nick,
-		user_id,
-		timestamp
+		user_id
 	FROM
 		chat_users
 	");
@@ -176,7 +175,8 @@ function showChatUsers()
 		$t = time();
 		while ($arr=mysql_fetch_assoc($res))
 		{
-			$out.= "<a href=\"../index.php?page=userinfo&id=".$arr['user_id']."\" target=\"main\">".$arr['nick']."</a> (".tf($t-$arr['timestamp']).")<br/>";					
+			// (".tf($t-$arr['timestamp']).")
+			$out.= "<a href=\"../index.php?page=userinfo&id=".$arr['user_id']."\" target=\"main\">".$arr['nick']."</a><br/>";					
 		}
 	}
 	else

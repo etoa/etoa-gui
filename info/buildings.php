@@ -20,7 +20,7 @@ if (isset($_GET['id']))
 	$res = dbquery("SELECT * FROM buildings WHERE building_id='".$_GET['id']."';");
 	if ($arr = @mysql_fetch_array($res))
 	{
-		Help::navi(array("Geb&auml;ude","buildings"),array(text2html($arr['building_name']),$arr['building_id']),1);
+		HelpUtil::breadCrumbs(array("Geb&auml;ude","buildings"),array(text2html($arr['building_name']),$arr['building_id']),1);
 		echo "<select onchange=\"document.location='?page=help&site=buildings&id='+this.options[this.selectedIndex].value\">";
 		$bres=dbquery("SELECT 
 			building_id,
@@ -508,7 +508,7 @@ elseif(isset($_GET['type_id']) && $_GET['type_id']>0)
 //
 else
 {
-	Help::navi(array("Geb&auml;ude","buildings"));
+	HelpUtil::breadCrumbs(array("Geb&auml;ude","buildings"));
 	
 	$tres=dbquery("
 	SELECT 

@@ -1,6 +1,6 @@
 <?PHP
 	echo "<h2>Spionagesystem</h2>";
-	Help::navi(array("Spionagesystem","spy_info"));
+	HelpUtil::breadCrumbs(array("Spionagesystem","spy_info"));
 	
 	iBoxStart("Spionage");
 	echo "Du hast die Möglichkeit Planeten anderer Spieler mit Hilfe von Spionagesonden auszuspionieren.<br>

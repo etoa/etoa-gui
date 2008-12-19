@@ -10,7 +10,7 @@
 		$action = $_GET['action'];
 		if ($site!="" AND $action!="")
 		{
-			Help::navi(array("Schiffsaktionen","action"),array("$action","$action"),1);
+			HelpUtil::breadCrumbs(array("Schiffsaktionen","action"),array("$action","$action"),1);
 			echo "<select onchange=\"document.location='?page=$page&site=action&action='+this.options[this.selectedIndex].value\">";
 			$actions = FleetAction::getAll();
 			foreach($actions as $data)			
@@ -68,7 +68,7 @@
 	}
 	else
 	{
-		Help::navi(array("Schiffsaktionen","action"));
+		HelpUtil::breadCrumbs(array("Schiffsaktionen","action"));
 		echo "Alle Schiffsaktionen in der &Uuml;bersicht:<br/><br/>";
 
 		$attitudes = array(); 

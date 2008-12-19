@@ -1,6 +1,6 @@
 <?php
 	echo "<h2>Temperaturbonus</h2>";
-	Help::navi(array("Temperaturbonus","tempbonus"));
+	HelpUtil::breadCrumbs(array("Temperaturbonus","tempbonus"));
 
 	tableStart("Temperaturbonus");
 	echo "<tr>

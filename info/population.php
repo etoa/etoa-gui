@@ -1,6 +1,6 @@
 <?php
     echo "<h2>Bewohner</h2>";
-		Help::navi(array("Allgemeines"));
+		HelpUtil::breadCrumbs(array("Allgemeines"));
     iBoxStart("Bev&ouml;lkerung");
     echo "<div align=\"justify\">";
     echo "Jeder Planet hat Bewohner, mit welchen man die Bauzeit von Geb&auml;uden, Forschungen, Schiffen und Verteidigungsanlagen senken kann. Pro Arbeiter, die unter \"<a href=\"?page=population\">Bev&ouml;lkerung</a>\" zugeteilt werden, vermindert sich die Zeit um 3 Sekunden. Jedoch brauchen die Arbeiter auch Nahrung. Pro Arbeit die sie erledigen m&uuml;ssen, verlangen sie 12t Nahrung, welche direkt nach dem Baustart vom Planetenkonto abgezogen werden. Wenn ihr den Bau abbrecht, bekommt ihr gerechterweise den prozentualen Anteil an Nahrung wieder zur&uuml;ck.<br>

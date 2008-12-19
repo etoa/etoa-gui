@@ -13,7 +13,7 @@
 		$res = dbquery("SELECT * FROM missiles WHERE missile_id='".$_GET['id']."';");
 		if ($arr = mysql_fetch_array($res))
 		{
-			Help::navi(array("Raketen","missiles"),array(text2html($arr['missile_name']),$arr['missile_id']),1);
+			HelpUtil::breadCrumbs(array("Raketen","missiles"),array(text2html($arr['missile_name']),$arr['missile_id']),1);
 			echo "<select onchange=\"document.location='?page=help&site=missiles&id='+this.options[this.selectedIndex].value\">";
 			$bres=dbquery("SELECT 
 				missile_id,
@@ -100,7 +100,7 @@
 	
 	else
 	{
-		Help::navi(array("Raketen","missiles"));		
+		HelpUtil::breadCrumbs(array("Raketen","missiles"));		
 		
 		if (isset($_GET['order']))
 		{

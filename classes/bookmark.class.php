@@ -11,6 +11,9 @@
 			$this->comment = $comment;
 		}
 		
+		/**
+		* 
+		*/
 		function loadTarget()
 		{
 			$this->target = Entity::createFactoryById($this->entityId);

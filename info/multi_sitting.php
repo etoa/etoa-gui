@@ -1,6 +1,6 @@
 <?php
     echo "<h2>Multierkennung / Sittingmodus</h2>";
-		Help::navi(array("Multis und Sitting","multi_sitting"));
+		HelpUtil::breadCrumbs(array("Multis und Sitting","multi_sitting"));
     iBoxStart("Multierkennung");
     echo "<div align=\"justify\">";
     echo "Die Multierkennung ist ein System welches entwickelt wurde um den Gebrauch von Multiaccounts zu verhindern.<br>Spielen jetzt mehrere User vom gleichen Computer aus oder haben dauerhaft die gleiche IP-Adresse, so m&uuml;ssen sich die betroffenen Spieler in der Multierkennung eintragen! Jeder User muss jeden anderen User eintragen, es reicht nicht, wenn zum Beispiel nur ein Spieler von zwei den anderen eintr&auml;gt!<br>Es ist ebenfalls nicht erlaubt User oft ein- und auszutragen!<br><br>

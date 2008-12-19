@@ -58,6 +58,7 @@
 			$minBuildTimeFactor = (0.1-(GEN_TECH_LEVEL/100));			
 			
 			$peopleWorking = $bl->getPeopleWorking(TECH_BUILDING_ID);	
+			
 			$peopleTimeReduction = $cfg->value('people_work_done');
 			$peopleFoodConsumption = $cfg->value('people_food_require');
 

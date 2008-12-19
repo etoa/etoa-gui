@@ -1,7 +1,7 @@
 <?PHP
 
 	echo "<h2>Planeten</h2>";
-	Help::navi(array("Planeten","planets"));
+	HelpUtil::breadCrumbs(array("Planeten","planets"));
 
 	if (isset($_GET['order']))
 	{

@@ -1,6 +1,6 @@
 <?php
 	echo "<h2>Einstellungen</h2>";
-	Help::navi(array("Einstellungen","settings"));
+	HelpUtil::breadCrumbs(array("Einstellungen","settings"));
 
 	$item['game_name']['p1']="Spielversion";
 	$item['enable_register']['p2']="Max. Spieler";

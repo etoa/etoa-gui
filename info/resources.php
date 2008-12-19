@@ -1,6 +1,6 @@
 <?php
 	echo "<h2>Ressourcen</h2>";
-	Help::navi(array("Ressourcen","resources"));
+	HelpUtil::breadCrumbs(array("Ressourcen","resources"));
 
 	tableStart("Grundeinstellungen");
 	echo "<tr>

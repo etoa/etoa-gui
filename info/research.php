@@ -29,7 +29,7 @@
 		
 		if ($arr = @mysql_fetch_array($res))
 		{
-			Help::navi(array("Technologien","research"),array(text2html($arr['tech_name']),$arr['tech_id']),1);
+			HelpUtil::breadCrumbs(array("Technologien","research"),array(text2html($arr['tech_name']),$arr['tech_id']),1);
 			echo "<select onchange=\"document.location='?page=help&site=research&id='+this.options[this.selectedIndex].value\">";
 			$bres=dbquery("SELECT 
 				tech_id,
@@ -127,7 +127,7 @@
 	
 	else
 	{
-		Help::navi(array("Technologien","research"));
+		HelpUtil::breadCrumbs(array("Technologien","research"));
 		$tres=dbquery("SELECT * FROM tech_types ORDER BY type_order,type_name;");
 		if (mysql_num_rows($tres)>0)
 		{

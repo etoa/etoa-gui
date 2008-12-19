@@ -67,7 +67,7 @@
 		;");
 		if ($arr = @mysql_fetch_array($res))
 		{
-			Help::navi(array("Schiffe","shipyard"),array(text2html($arr['ship_name']),$arr['ship_id']),1);
+			HelpUtil::breadCrumbs(array("Schiffe","shipyard"),array(text2html($arr['ship_name']),$arr['ship_id']),1);
 			echo "<select onchange=\"document.location='?page=help&site=shipyard&id='+this.options[this.selectedIndex].value\">";
 			$bres=dbquery("SELECT 
 				ship_id,
@@ -265,7 +265,7 @@
 	//
 	else
 	{
-		Help::navi(array("Schiffe","shipyard"));
+		HelpUtil::breadCrumbs(array("Schiffe","shipyard"));
 	
 		if (isset($_GET['order']))
 		{

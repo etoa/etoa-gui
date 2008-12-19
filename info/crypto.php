@@ -1,6 +1,6 @@
 <?php
     echo '<h2>Kryptocenter</h2>';
-		Help::navi(array("Kryptocenter","crypto"));
+		HelpUtil::breadCrumbs(array("Kryptocenter","crypto"));
     iBoxStart("Funktion und Bedienung");
     echo '<div align="justify">';
     echo 'Um von einem gegnerischen Planeten die ankommenden Flotten zu scannen, musst du nur das Ziel im Kryptocenter eingeben. Für eine gewisse Menge an Rohstoffen kannst du dann den Scann in Auftrag geben.<br/>

@@ -9,7 +9,7 @@
 		$res = dbquery("SELECT * FROM defense WHERE def_id='".$_GET['id']."';");
 		if ($arr = mysql_fetch_array($res))
 		{
-			Help::navi(array("Verteidigung","defense"),array(text2html($arr['def_name']),$arr['def_id']),1);
+			HelpUtil::breadCrumbs(array("Verteidigung","defense"),array(text2html($arr['def_name']),$arr['def_id']),1);
 			echo "<select onchange=\"document.location='?page=help&site=defense&id='+this.options[this.selectedIndex].value\">";
 			$bres=dbquery("SELECT 
 				def_id,
@@ -63,7 +63,7 @@
 	}
 	else
 	{
-		Help::navi(array("Verteidigung","defense"));		
+		HelpUtil::breadCrumbs(array("Verteidigung","defense"));		
 		
 		if (isset($_GET['order']))
 		{

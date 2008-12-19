@@ -1,6 +1,6 @@
 <?PHP
 	echo "<h2>Spezialisten</h2>";
-	Help::navi(array("Spezialisten","specialists"));
+	HelpUtil::breadCrumbs(array("Spezialisten","specialists"));
 	
 	iBoxStart("Info");
 	echo "Spezialisten können für eine fixe Zeitdauer angestellt werden und verstärken während dieser Zeit

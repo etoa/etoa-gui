@@ -1,6 +1,6 @@
 <?PHP
 	echo "<h2>Rassen</h2>";
-	Help::navi(array("Rassen","races"));
+	HelpUtil::breadCrumbs(array("Rassen","races"));
 
 	if (isset($_GET['order']))
 	{

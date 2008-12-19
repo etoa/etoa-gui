@@ -1,6 +1,6 @@
 <?php
     echo '<h2>Spezialpunkte und Titel</h2>';
-		Help::navi(array("Spezialpunkte","specialpoints"));
+		HelpUtil::breadCrumbs(array("Spezialpunkte","specialpoints"));
     iBoxStart("Kampfpukte");
     echo '<div align="justify">';
     echo 'Jeder Kampf ergibt bei einem Sieg oder Unentschieden eine gewisse Anzahl Kampfpunkte. Ein Angreifer erhält bei

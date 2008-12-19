@@ -55,7 +55,9 @@
 	{
 
 		echo "<h2>&Uuml;bersicht</h2>";
-		Help::navi();
+		
+		HelpUtil::breadCrumbs();
+		
 		echo "Hier findest du Informationen zu verschiedenen Objekten des Spiels:<br/><br/>";
 
 		if (!IS_ADMIN_MODE)

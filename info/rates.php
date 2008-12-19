@@ -1,22 +1,5 @@
 <?PHP
 
-	function clrCell($r)
-	{
-		$b = " style=\"color:#000;background:";
-		
-		$e = "\"";
-		if ($r<0.5)
-			return $b."#0f0".$e;		           
-	  if ($r<1)
-			return $b."#ff0".$e;		           
-	  if ($r>5)
-			return $b."#f40".$e;		           
-	  if ($r>2.5)
-			return $b."#f70".$e;		           
-	  if ($r>1)
-			return $b."#fa0".$e;		           
-	}
-
 	$m_c = round($conf['market_metal_factor']['v']/$conf['market_crystal_factor']['v'],2);
 	$m_p = round($conf['market_metal_factor']['v']/$conf['market_plastic_factor']['v'],2);
 	$m_fu = round($conf['market_metal_factor']['v']/$conf['market_fuel_factor']['v'],2);
@@ -44,7 +27,7 @@
 	
 	echo "<h2>Rohstoffkurse</h2>";
 
-	Help::navi(array("Rohstoffkurse","rates"));
+	HelpUtil::breadCrumbs(array("Rohstoffkurse","rates"));
 	
 	echo "Die Rohstoffkurse sind dynamisch und ändern sich automatisch je nach dem<br/>
 	 wie gross das Angebot und die Nachfrage
@@ -61,41 +44,41 @@
 	echo "<tr>
 		<th>".RES_METAL."</th>
 		<td>-</td>
-		<td".clrCell($m_c).">".$m_c."</td>
-		<td".clrCell($m_p).">".$m_p."</td>
-		<td".clrCell($m_fu).">".$m_fu."</td>
-		<td".clrCell($m_fo).">".$m_fo."</td>
+		<td".HelpUtil::colorizeMarketRate($m_c).">".$m_c."</td>
+		<td".HelpUtil::colorizeMarketRate($m_p).">".$m_p."</td>
+		<td".HelpUtil::colorizeMarketRate($m_fu).">".$m_fu."</td>
+		<td".HelpUtil::colorizeMarketRate($m_fo).">".$m_fo."</td>
 	</tr>";
 	echo "<tr>
 		<th>".RES_CRYSTAL."</th>
-		<td".clrCell($c_m).">".$c_m."</td>
+		<td".HelpUtil::colorizeMarketRate($c_m).">".$c_m."</td>
 		<td>-</td>
-		<td".clrCell($c_p).">".$c_p."</td>
-		<td".clrCell($c_fu).">".$c_fu."</td>
-		<td".clrCell($c_fo).">".$c_fo."</td>
+		<td".HelpUtil::colorizeMarketRate($c_p).">".$c_p."</td>
+		<td".HelpUtil::colorizeMarketRate($c_fu).">".$c_fu."</td>
+		<td".HelpUtil::colorizeMarketRate($c_fo).">".$c_fo."</td>
 	</tr>";
 	echo "<tr>
 		<th>".RES_PLASTIC."</th>
-		<td".clrCell($p_m).">".$p_m."</td>
-		<td".clrCell($p_c).">".$p_c."</td>
+		<td".HelpUtil::colorizeMarketRate($p_m).">".$p_m."</td>
+		<td".HelpUtil::colorizeMarketRate($p_c).">".$p_c."</td>
 		<td>-</td>
-		<td".clrCell($p_fu).">".$p_fu."</td>
-		<td".clrCell($p_fo).">".$p_fo."</td>
+		<td".HelpUtil::colorizeMarketRate($p_fu).">".$p_fu."</td>
+		<td".HelpUtil::colorizeMarketRate($p_fo).">".$p_fo."</td>
 	</tr>";
 	echo "<tr>
 		<th>".RES_FUEL."</th>
-		<td".clrCell($fu_m).">".$fu_m."</td>
-		<td".clrCell($fu_c).">".$fu_c."</td>
-		<td".clrCell($fu_p).">".$fu_p."</td>
+		<td".HelpUtil::colorizeMarketRate($fu_m).">".$fu_m."</td>
+		<td".HelpUtil::colorizeMarketRate($fu_c).">".$fu_c."</td>
+		<td".HelpUtil::colorizeMarketRate($fu_p).">".$fu_p."</td>
 		<td>-</td>
-		<td".clrCell($fu_fo).">".$fu_fo."</td>
+		<td".HelpUtil::colorizeMarketRate($fu_fo).">".$fu_fo."</td>
 	</tr>";
 	echo "<tr>
 		<th>".RES_FOOD."</th>
-		<td".clrCell($fo_m).">".$fo_m."</td>
-		<td".clrCell($fo_c).">".$fo_c."</td>
-		<td".clrCell($fo_p).">".$fo_p."</td>
-		<td".clrCell($fo_fu).">".$fo_fu."</td>
+		<td".HelpUtil::colorizeMarketRate($fo_m).">".$fo_m."</td>
+		<td".HelpUtil::colorizeMarketRate($fo_c).">".$fo_c."</td>
+		<td".HelpUtil::colorizeMarketRate($fo_p).">".$fo_p."</td>
+		<td".HelpUtil::colorizeMarketRate($fo_fu).">".$fo_fu."</td>
 		<td>-</td>
 	</tr>";
 	echo "</table><br/>";

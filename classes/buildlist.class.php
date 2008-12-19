@@ -100,11 +100,6 @@
 		
 		function totalPeopleWorking()
 		{
-			return $this->getPeopleWorking();
-		}
-		
-		function getPeopleWorking()
-		{
 			$res = dbquery("
 			SELECT 
 				SUM(buildlist_people_working) 
@@ -112,6 +107,20 @@
 				buildlist
 			WHERE 
 				buildlist_entity_id='".$this->entityId."';");
+			$pbarr = mysql_fetch_row($res);
+			return $pbarr[0];			
+		}
+		
+		function getPeopleWorking($bid)
+		{
+			$res = dbquery("
+			SELECT 
+				buildlist_people_working
+			FROM 
+				buildlist
+			WHERE 
+				buildlist_entity_id='".$this->entityId."'
+				AND buildlist_building_id=".$bid.";");
 			$pbarr = mysql_fetch_row($res);
 			return $pbarr[0];			
 		}		

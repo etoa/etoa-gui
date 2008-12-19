@@ -1,7 +1,7 @@
 <?PHP
 
 	echo "<h2>Sterne</h2>";
-	Help::navi(array("Sterne","stars"));
+	HelpUtil::breadCrumbs(array("Sterne","stars"));
 
 	if (isset($_GET['order']))
 	{

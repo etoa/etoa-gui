@@ -27,7 +27,7 @@
 	//
 
 	echo "<h2>Texformatierung</h2>";		
-	Help::navi(array("Texformatierung","textformat"));
+	HelpUtil::breadCrumbs(array("Texformatierung","textformat"));
 	
 	// Array BBCode
 	
