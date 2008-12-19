@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
 		query << "FROM ";
 		query << "	fleet ";
 		query << "WHERE ";
-		query << "	landtime<" << time << " ;";
+		query << " landtime<" << time << " ;";
 		mysqlpp::Result res = query.store();	
 		query.reset();
 				
@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
 			}
 		}
 		
-		sleep(5);
+		sleep(1);
 	}		
 
 	return 0;
