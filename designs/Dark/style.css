@@ -11,19 +11,6 @@ body	{
 	font-size: 10pt;
 	background:#000000 url('../../images/background.jpg');
 
-/*
-	scrollbar-arrow-color: white;
-	scrollbar-base-color: black;
-	scrollbar-highlight-color: white;
-	scrollbar-shadow-color: black;
-	scrollbar-track-color: white; */
-}
-
-/*
-Fix für PNG-Files
-img, div { behavior: url(misc/iepngfix.htc) }
-*/
-
 a	{
 	color: #ffffff;
 	text-decoration:underline;

@@ -1,8 +1,35 @@
 <?PHP
+	//////////////////////////////////////////////////
+	//		 	 ____    __           ______       			//
+	//			/\  _`\ /\ \__       /\  _  \      			//
+	//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
+	//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
+	//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
+	//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
+	//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
+	//																					 		//
+	//////////////////////////////////////////////////
+	// The Andromeda-Project-Browsergame				 		//
+	// Ein Massive-Multiplayer-Online-Spiel			 		//
+	// Programmiert von Nicolas Perrenoud				 		//
+	// www.nicu.ch | mail@nicu.ch								 		//
+	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
+	//////////////////////////////////////////////////
+	//
+	// 	File: def.inc.php
+	// 	Created: 07.5.2007
+	// 	Last edited: 06.07.2007
+	// 	Last edited by: MrCage <mrcage@etoa.ch>
+	//	
+	/**
+	* Chat message input field
+	*
+	* @author MrCage mrcage@etoa.ch
+	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
+	*/	
 	session_start();
 	include("../conf.inc.php");
 	include("../functions.php");
-	dbconnect();
 	define('XAJAX_DIR',"../libs/xajax");
 	require_once(XAJAX_DIR."/xajax_core/xajax.inc.php");
 	$xajax = new xajax();

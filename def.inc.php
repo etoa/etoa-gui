@@ -502,7 +502,10 @@
 	define('USERSTATS_OUTFILE',CACHE_ROOT."/out/userstats.png");
 	define('XML_INFO_FILE',CACHE_ROOT."/xml/info.xml");
 
-	
+
+	// Advertising
+	define('ADD_BANNER','');
+
 	// Referers
 	$referers=explode("\n",$conf['referers']['v']);
 	foreach ($referers as $k=>&$v)

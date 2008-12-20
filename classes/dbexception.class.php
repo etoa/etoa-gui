@@ -12,7 +12,7 @@
 				fwrite($f,date("d.m.Y H:i:s").", ".$_SERVER['REMOTE_ADDR'].", ".$cu."\n".$str."\n\n");
 				fclose($f);
 			}
-			if (USE_HTML)
+			if (!defined('USE_HTML') || USE_HTML)
 			{
 				$str = "<div class=\"errorBox\" style=\"text-align:left;\"><h2>Datenbankfehler</h2>
 				<b>Datei:</b> ".parent::getFile().", <b>Zeile:</b> ".parent::getLine()."<br/>

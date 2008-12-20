@@ -1094,7 +1094,7 @@ function calcDemolishingWaitTime($dc,$cp)
 									$color = '#999';
 									if($use_img_filter)
 									{
-										$img = "inc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid.".".IMAGE_EXT."&filter=na";
+										$img = "misc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid.".".IMAGE_EXT."&filter=na";
 									}
 									else
 									{
@@ -1110,7 +1110,7 @@ function calcDemolishingWaitTime($dc,$cp)
 									$color = '#0f0';
 									if($use_img_filter)
 									{
-										$img = "inc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid.".".IMAGE_EXT."&filter=building";
+										$img = "misc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid.".".IMAGE_EXT."&filter=building";
 									}
 									else
 									{
@@ -1125,7 +1125,7 @@ function calcDemolishingWaitTime($dc,$cp)
 									$color = '#f90';
 									if($use_img_filter)
 									{
-										$img = "inc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid.".".IMAGE_EXT."&filter=destructing";
+										$img = "misc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid.".".IMAGE_EXT."&filter=destructing";
 									}
 									else
 									{
@@ -1145,7 +1145,7 @@ function calcDemolishingWaitTime($dc,$cp)
 										/*
 										if($use_img_filter)
 										{
-											$img = "inc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid.".".IMAGE_EXT."&filter=lowres";
+											$img = "misc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid.".".IMAGE_EXT."&filter=lowres";
 										}
 										else
 										{

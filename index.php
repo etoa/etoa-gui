@@ -330,7 +330,6 @@
 
 		// Navigation laden
 		require_once('inc/nav.inc.php');
-		require_once('inc/adds.inc.php');
 
 		// Count Messages
 		define('NEW_MESSAGES',Message::checkNew($cu->id));

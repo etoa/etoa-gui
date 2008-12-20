@@ -756,7 +756,7 @@
 									$color = '#999';
 									if($use_img_filter)
 									{
-										$img = "inc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid.".".IMAGE_EXT."&filter=na";
+										$img = "misc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid.".".IMAGE_EXT."&filter=na";
 									}
 									else
 									{
@@ -773,7 +773,7 @@
 										$color = '#999';
 										if($use_img_filter)
 										{
-											$img = "inc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid.".".IMAGE_EXT."&filter=na";
+											$img = "misc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid.".".IMAGE_EXT."&filter=na";
 										}
 										else
 										{
@@ -788,7 +788,7 @@
 										$color = '#0f0';
 										if($use_img_filter)
 										{
-											$img = "inc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid.".".IMAGE_EXT."&filter=building";
+											$img = "misc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid.".".IMAGE_EXT."&filter=building";
 										}
 										else
 										{
@@ -812,7 +812,7 @@
 											$color = '#f00';
 											if($use_img_filter)
 											{
-												$img = "inc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid.".".IMAGE_EXT."&filter=lowres";
+												$img = "misc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid.".".IMAGE_EXT."&filter=lowres";
 											}
 											else
 											{

@@ -2732,21 +2732,6 @@ Forum: http://www.etoa.ch/forum";
 		return "<script type=\"text/javascript\">time(".$time.", '".$target."', ".$format.", '".$text."');</script>";
 	}
 
-	function fadeBlinker($id,$col1="ffffff",$col2="ff0000")
-	{
-		static $fadecnt = 0;
-
-		
-		echo "<script type=\"text/javascript\">
-		fader[".$fadecnt."] = new fadeObject('".$id."', '".$col1."', '".$col2."', 50, 50);
-		fader[".$fadecnt."].msg[1] = document.getElementById('".$id."').innerHTML;";
-		echo 'setTimeout(function() { throb('.$fadecnt.'); }, 1000);';
-		echo "</script>";
-
-		$fadecnt++;
-
-	}
-	
 	/**
 	* Prints an array
 	* For debug purposes only

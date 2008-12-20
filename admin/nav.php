@@ -466,13 +466,9 @@
 	$navmenu['Tools']['Game-Statistik']['sub']="gamestats";
 	$navmenu['Tools']['Game-Statistik']['level']=3;
 
-
 	$navmenu['Tools']['IP-Resolver']['page']="tools";
 	$navmenu['Tools']['IP-Resolver']['sub']="ipresolver";
 	$navmenu['Tools']['IP-Resolver']['level']=1;
 	
-	$navmenu['Tools']['Kampfsimulator']['page']="tools";
-	$navmenu['Tools']['Kampfsimulator']['sub']="battle_simulation";
-	$navmenu['Tools']['Kampfsimulator']['level']=2;
 
 ?>

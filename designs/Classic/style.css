@@ -12,11 +12,6 @@ body	{
 	background:#000 url('../../images/background.jpg');
 }
 
-/*
-Fix für PNG-Files
-img, div { behavior: url(misc/iepngfix.htc) }
-*/
-
 a	{
 	color: white;
 	text-decoration:underline;

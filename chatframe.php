@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<title>Chat</title>
+		<title>EtoA</title>
 	</head>
 	<frameset cols="*,350" frameborder="0">
 		<frame name="main" src="index.php" />

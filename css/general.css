@@ -265,3 +265,8 @@ img.resIcon	{
 	text-decoration:none;;
 }
 
+/* Fix für PNG-Files in Internet Explorer */
+img, div { 
+	behavior: url('iepngfix.htc') 
+}
+

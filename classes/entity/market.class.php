@@ -1,7 +1,7 @@
 <?PHP
 	
 	/**
-	* Class for unknown space entities
+	* Class for the market / trade planet
 	*/
 	class Market extends Entity
 	{

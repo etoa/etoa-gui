@@ -13,5 +13,6 @@
 	session_destroy();
 	header('Location: '.LOGINSERVER_URL.'?page=logout');
 	echo "<h1>Logout</h1>Falls die Weiterleitung nicht klappt, <a href=\"".LOGINSERVER_URL."?page=logout\">hier</a> klicken...";
+	dbclose();
 	exit;
 ?>
