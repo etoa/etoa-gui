@@ -39,6 +39,7 @@
 #include "config/ConfigHandler.h"
 #include "MysqlHandler.h"
 #include "objectData/ObjectDataHandler.h"
+#include "data/DataHandler.h"
 
 #include "battle/BattleHandler.h"
 
@@ -57,8 +58,9 @@ int main(int argc, char *argv[])
 	//Loading Configdata
 	Config &config = Config::instance();
 	
-	//Loadgin Shipdate
+	//Load Data
 	objectData &objectData = objectData::instance();
+	DataHandler &DataHandler = DataHandler::instance();
 	
 	// Main loop
 	while (true) {	
@@ -66,9 +68,9 @@ int main(int argc, char *argv[])
 		//Timestamp
 		std::time_t time = std::time(0);
 		
-		/** Update the data, everyday once at about 02:17:00 AM **/
+		// Update the data, everyday once at about 02:17:00 AM
 		if ((time-1021)%86400==0) {
-			objectData.reloadData();
+			DataHandler.reloadData();
 		}
 		
 		// Graphical bling-bling
@@ -87,7 +89,6 @@ int main(int argc, char *argv[])
 		query << " landtime<" << time << " ;";
 		mysqlpp::Result res = query.store();	
 		query.reset();
-				
 				
 		cout << "Updating ";
 		//Checking queryresult
@@ -112,9 +113,9 @@ int main(int argc, char *argv[])
 					if ((int)row["landtime"] < time) {
 						// Load action
 						
-						FleetHandler* fleet = FleetFactory::createFleet((short)row["status"], action, row);
-						fleet->update();
-						delete fleet;
+						//FleetHandler* fleet = FleetFactory::createFleet((short)row["status"], action, row);
+						//fleet->update();
+						//delete fleet;
 					}
 		    	}
 			}
@@ -124,7 +125,7 @@ int main(int argc, char *argv[])
 			}
 		}
 		
-		sleep(1);
+		sleep(10);
 	}		
 
 	return 0;

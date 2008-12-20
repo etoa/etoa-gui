@@ -12,7 +12,7 @@
 		return this->coordsString;
 	}
 	
-	int getUserId() {
+	int Entity::getUserId() {
 		if (!this->dataLoaded)
 			this->loadEntityData;
 			

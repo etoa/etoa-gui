@@ -1,4 +1,4 @@
-OBJECTS = etoa.o FleetHandler.o Fleet.o ConfigHandler.o Functions.o AllianceHandler.o AnalyzeHandler.o AntraxHandler.o AsteroidHandler.o AttackHandler.o BombardHandler.o CancelHandler.o ColonializeHandler.o DebrisHandler.o DefaultHandler.o  DeliveryHandler.o EmpHandler.o ExploreHandler.o FetchHandler.o GasHandler.o GattackHandler.o InvadeHandler.o MarketHandler.o NebulaHandler.o PositionHandler.o ReturnHandler.o SpyHandler.o StealHandler.o StealthHandler.o SupportHandler.o TransportHandler.o WreckageHandler.o BattleHandler.o FightObjectHandler.o ShowObjectHandler.o UserHandler.o DivisionHandler.o  ObjectDataHandler.o ObjectHandler.o
+OBJECTS = etoa.o FleetHandler.o Fleet.o ConfigHandler.o Functions.o AllianceHandler.o AnalyzeHandler.o AntraxHandler.o AsteroidHandler.o AttackHandler.o BombardHandler.o CancelHandler.o ColonializeHandler.o DebrisHandler.o DefaultHandler.o  DeliveryHandler.o EmpHandler.o ExploreHandler.o FetchHandler.o GasHandler.o GattackHandler.o InvadeHandler.o MarketHandler.o NebulaHandler.o PositionHandler.o ReturnHandler.o SpyHandler.o StealHandler.o StealthHandler.o SupportHandler.o TransportHandler.o WreckageHandler.o BattleHandler.o FightObjectHandler.o ShowObjectHandler.o UserHandler.o DivisionHandler.o  ObjectDataHandler.o ObjectHandler.o DataHandler.o Data.o ShipData.o DefData.o TechData.o BuildingData.o
 
 OPTS = -lmysqlpp
 
@@ -121,3 +121,21 @@ ObjectDataHandler.o: objectData/ObjectDataHandler.cpp objectData/ObjectDataHandl
 
 ObjectHandler.o: objectData/ObjectHandler.cpp objectData/ObjectHandler.h
 	g++ -c objectData/ObjectHandler.cpp
+
+DataHandler.o: data/DataHandler.cpp data/DataHandler.h
+	g++ -c data/DataHandler.cpp
+
+Data.o: data/Data.cpp data/Data.h
+	g++ -c data/Data.cpp
+
+ShipData.o: data/ShipData.cpp data/ShipData.h
+	g++ -c data/ShipData.cpp
+
+DefData.o: data/DefData.cpp data/DefData.h
+	g++ -c data/DefData.cpp
+
+TechData.o: data/TechData.cpp data/TechData.h
+	g++ -c data/TechData.cpp
+
+BuildingData.o: data/BuildingData.cpp data/BuildingData.h
+	g++ -c data/BuildingData.cpp

@@ -34,6 +34,7 @@ class Fleet
 	double capacity, actionCapacity, peopleCapacity;
 	bool actionAllowed, shipsLoaded, entityLoaded, shipsChanged;
 	int entityToUserId;
+	
 
 public:
 	Fleet(mysqlpp::Row &fleet);

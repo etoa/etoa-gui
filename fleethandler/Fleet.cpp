@@ -159,7 +159,7 @@
 	bool Fleet::actionIsAllowed() {
 		if (!this->shipsLoaded)
 			this->loadShips();
-		else if (!this->shipsChanged)
+		else if (this->shipsChanged)
 			this->recalcShips();
 		return this->actionAllowed;
 	}
@@ -203,5 +203,9 @@
 	}
 	
 	void Fleet::recalcShips() {
+		this->actionCapacity = 0;
+		this->capacity = 0;
+		this->peopleCapacity = 0;
+
 	}
 	
