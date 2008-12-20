@@ -82,7 +82,7 @@
 		<div id="hbarmapslide" style="display:none;">
 			<div>
 				<a href="?page=cell">Sonnensystem</a>		
-				<a href="?page=map">Sektor</a>
+				<a href="?page=sector">Sektor</a>
 				<a href="?page=galaxy">Galaxie</a>
 			</div>
 		</div>

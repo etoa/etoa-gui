@@ -112,11 +112,11 @@ img.resIcon	{
 }
 
 .userSelfColor, .tb .userSelfColor		{
-	color:#99ffff;
+	color:#FF1FFA;
 }
 
 .userLockedColor, .tb .userLockedColor	{
-	color:#ffaaaa;
+	color:#ff9933;
 }
 
 .userInactiveColor, .tb .userInactiveColor		{
@@ -136,7 +136,7 @@ img.resIcon	{
 }
 
 .enemyColor, .tb .enemyColor		{
-	color:#ff6600;
+	color:#ff2200;
 }
 
 .friendColor, .tb .friendColor		{
@@ -265,8 +265,47 @@ img.resIcon	{
 	text-decoration:none;;
 }
 
-/* Fix für PNG-Files in Internet Explorer */
-img, div { 
-	behavior: url('iepngfix.htc') 
+#innerspacetbl	{
+ border-collapse:collapse;
 }
 
+#innerspacetbl td	{
+	border:1px dashed #555;
+	background:#000;
+	padding:0px;
+	width:40px;
+	height:40px;
+}
+
+#innerspacetbl td a	{
+	display:block;
+	margin:0px;
+	border:none;
+	width:38px;
+	height:39px;
+}
+
+#innerspacetbl td a.owncell	{
+	border:1px dashed #FF1FFA;		
+}
+
+
+#innerspacetbl td a:hover	{
+	border:1px dashed #aaa;	
+}
+
+#innerspacetbl td.ycoords	{
+	background:#000;
+	border-left:none;
+	text-align:center;
+}
+
+#innerspacetbl td.nocoords	{
+	border:none;
+}
+
+#innerspacetbl td.xcoords	{
+	background:#000;
+	border-bottom:none;
+	text-align:center;
+}

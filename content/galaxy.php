@@ -39,13 +39,13 @@
 	$cy_num = $cfg->param2('num_of_cells');
 	
 	echo "<h1>Galaxie</h1>";
-	iBoxStart("Karte",GALAXY_MAP_WIDTH."px");
+	iBoxStart("Karte",GALAXY_MAP_WIDTH+20);
 	echo "Anzeigen: <select onchange=\"document.getElementById('img').src='misc/map.image.php'+this.options[this.selectedIndex].value;\">
 	<option value=\"?t=".time()."\">Normale Galaxieansicht</option>
 	<option value=\"?type=populated&t=".time()."\">Bev&ouml;lkerte Systeme</option>
 	<option value=\"?type=own&t=".time()."\">Systeme mit eigenen Planeten</option>
 	<option value=\"?type=alliance&t=".time()."\">Systeme mit Allianzplaneten</option>
-	</select><br/><br/>";
+	</select> &nbsp; <br/><br/>";
 	echo "<img src=\"misc/map.image.php\" alt=\"Galaxiekarte\" id=\"img\" alt=\"galaxymap\" usemap=\"#Galaxy\" style=\"border:none;\"/>";
 	iBoxEnd();
 	
@@ -59,12 +59,11 @@
 	 	$ycnt=1;
 		for ($y=0;$y<GALAXY_MAP_WIDTH;$y+=$sec_y_size)
 		{
-	  	echo "<area shape=\"rect\" coords=\"$x,".(GALAXY_MAP_WIDTH-$y).",".($x+$sec_x_size).",".(GALAXY_MAP_WIDTH-$y-$sec_y_size)."\" href=\"?page=map&sx=$xcnt&sy=$ycnt\" alt=\"Sektor $xcnt / $ycnt\" ".tm("Sektor $xcnt / $ycnt","Klicken um Karte anzuzeigen").">\n";
+	  	echo "<area shape=\"rect\" coords=\"$x,".(GALAXY_MAP_WIDTH-$y).",".($x+$sec_x_size).",".(GALAXY_MAP_WIDTH-$y-$sec_y_size)."\" href=\"?page=sector&sx=$xcnt&sy=$ycnt\" alt=\"Sektor $xcnt / $ycnt\" ".tm("Sektor $xcnt / $ycnt","Klicken um Karte anzuzeigen").">\n";
 	  	$ycnt++;
 	  }
 	  $xcnt++;
 	}
 	echo "</map>\n";
-	echo "<input type=\"button\" onclick=\"document.location='?page=map'\" value=\"Raumkarte des aktuellen Sektors\" />";
 	
 ?>

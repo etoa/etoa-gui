@@ -433,19 +433,19 @@
 				<span class=\"enemyColor\">Krieg</span>, 
 				<span class=\"userAllianceMemberColor\">Allianzmitglied</span>";
 				iBoxEnd();
-				echo "<input type=\"button\" value=\"Zur Raumkarte\" onclick=\"document.location='?page=map&amp;sx=".$cell->sx."&amp;sy=".$cell->sy."'\" /> &nbsp; ";
+				echo "<input type=\"button\" value=\"Zur Raumkarte\" onclick=\"document.location='?page=sector&amp;sx=".$cell->sx."&amp;sy=".$cell->sy."'\" /> &nbsp; ";
 
 			}
 			else
 			{
 			echo "<h1>Fehler!</h1>System noch nicht erkundet. Erforsche das System mit einer Erkundungsflotte um es sichtbar zu machen!<br/><br/>";
-			echo "<input type=\"button\" value=\"Zur&uuml;ck zur Raumkarte\" onclick=\"document.location='?page=map'\" />";
+			echo "<input type=\"button\" value=\"Zur&uuml;ck zur Raumkarte\" onclick=\"document.location='?page=sector'\" />";
 			}
 		}
 		else
 		{
 			echo "<h1>Fehler!</h1>System nicht gefunden!<br/><br/>";
-			echo "<input type=\"button\" value=\"Zur&uuml;ck zur Raumkarte\" onclick=\"document.location='?page=map'\" />";
+			echo "<input type=\"button\" value=\"Zur&uuml;ck zur Raumkarte\" onclick=\"document.location='?page=sector'\" />";
 		}
 
 ?>

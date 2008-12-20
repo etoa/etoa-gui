@@ -26,9 +26,7 @@
 		<!-- CSS Stylesheets -->
 		<link rel="stylesheet" type="text/css" href="css/general.css" />
 		
-		
 		<!-- CSS Hacks for stuipd Internet Explorer -->
-		
 		{literal}<!--[if IE]>
 		<style type="text/css">
 		#dropdown ul {display:inline-block;}
@@ -36,10 +34,12 @@
 		#dropdown ul li {float:left;}
 		#dropdown {text-align:center;}
 		</style>
-		<![endif]-->{/literal}
-		
+		<![endif]-->
 		<!-- PNG Hack for stupid Internet Explorer -->
 		<!--[if IE 6]>
+		img, div { 
+			behavior: url('css/iepngfix.htc') 
+		}
 		<script src="js/DD_belatedPNG.js"></script>
 		<script>
 		    DD_belatedPNG.fix('.png_bg'); /* EXAMPLE */
@@ -47,7 +47,7 @@
 		    /* using .png_bg example is unnecessary */
 		    /* change it to what suits you! */
 		</script>
-		<![endif]--> 
+		<![endif]-->{/literal}
 		
 		<!-- General JavaScript -->
 		<script type="text/javascript" src="js/main.js"></script>
@@ -55,9 +55,6 @@
 
 		<!-- XAJAX -->
 		{$xajaxJS}
-		
-		<!-- Fading blink text-->
-		<script type="text/javascript" src="js/fader.js"></script>
 		
 		<!-- Scriptaculous -->					
 		<script type="text/javascript" src="js/prototype.js"></script>

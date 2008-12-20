@@ -60,18 +60,27 @@
 	$img_width = $cell_width;
 	$img_height = $cell_height;
 
-	if (isset($_POST['sx']) && intval($_POST['sx'])>0)
-		$sx	= $_POST['sx'];
-	elseif (isset($_GET['sx']) && intval($_GET['sx'])>0)
-		$sx	= $_GET['sx'];
+	if (isset($_GET['sector']))
+	{
+		list($sx,$sy) = explode(",",$_GET['sector']);
+	}
 	else
-		$sx = $sx_def;
-	if (isset($_POST['sy']) && intval($_POST['sy'])>0)
-		$sy	= $_POST['sy'];
-	elseif (isset($_GET['sy']) && intval($_GET['sy'])>0)
-		$sy	= $_GET['sy'];
-	else
-		$sy = $sy_def;
+	{
+		if (isset($_POST['sx']) && intval($_POST['sx'])>0)
+			$sx	= $_POST['sx'];
+		elseif (isset($_GET['sx']) && intval($_GET['sx'])>0)
+			$sx	= $_GET['sx'];
+		else
+			$sx = $sx_def;
+		if (isset($_POST['sy']) && intval($_POST['sy'])>0)
+			$sy	= $_POST['sy'];
+		elseif (isset($_GET['sy']) && intval($_GET['sy'])>0)
+			$sy	= $_GET['sy'];
+		else
+			$sy = $sy_def;		
+	}
+
+
 
 	if ($sx>$sx_num) $sx = $sx_num;
 	if ($sy>$sy_num) $sy = $sy_num;
@@ -120,28 +129,22 @@
   }
 
 	echo "<form action=\"?page=$page\" method=\"post\">";
-	iBoxStart("Sektor wählen","450px;");
+	iBoxStart("Sektorkarte");
 	echo "<b>Sektor:</b>&nbsp;";
-	echo "<select name=\"sx\">";
+	echo "<select name=\"sector\" onchange=\"document.location='?page=$page&sector='+this.value\">";
 	for ($x=1;$x<=$sx_num;$x++)
 	{
-		echo "<option value=\"$x\"";
-		if ($x==$sx)echo " selected=\"selected\"";
-		echo ">$x</option>";
+		for ($y=1;$y<=$sy_num;$y++)
+		{		
+			echo "<option value=\"$x,$y\"";
+			if ($x==$sx && $y==$sy)
+				echo " selected=\"selected\"";
+			echo ">$x/$y</option>";
+		}
 	}
-	echo "</select> / <select name=\"sy\">";
-	for ($y=1;$y<=$sy_num;$y++)
-	{
-		echo "<option value=\"$y\"";
-		if ($y==$sy)echo " selected=\"selected\"";
-		echo ">$y</option>";
-	}
-	echo "</select>";
-	echo "&nbsp;&nbsp;&nbsp;<input type=\"submit\" name=\"submit_sector\" value=\"Anzeigen\" /> &nbsp; 
-	<input type=\"button\" onclick=\"document.location='?page=galaxy'\" value=\"Galaxiegrafik\" />";
-	iBoxEnd();
+	echo "</select>	&nbsp;&nbsp;  
+	<input type=\"button\" onclick=\"document.location='?page=galaxy'\" value=\"Galaxie anzeigen\" /><br/><br/>";
 
-	iBoxStart("Sektorkarte","600px;");
 	echo "<div style=\"background:#000;text-align:center;\">";
 	echo "<table id=\"outerspacetbl\">";
 
@@ -188,9 +191,9 @@
 		echo "<td width=\"20\" align=\"center\" height=\"$table_height\">&nbsp;</td>";
 	}
 	
-		echo "<td  style=\"width:".$table_width."px;height:".$table_height."px;\">";
+		echo "<td style=\"width:".$table_width."px;height:".$table_height."px;\">";
+		
 		echo "\n<table style=\"width:".$table_width."px\" id=\"innerspacetbl\">\n";
-		echo "<colgroup width=\"$cell_width\" span=\"$cx_num\" align=\"center\" valign=\"middle\"></colgroup>\n";
 		$res = dbquery("
 		SELECT 
 			cx,
@@ -223,7 +226,10 @@
 			$counter_bottom="".IMAGE_PATH."/map/GalaxyFrameCounterBottom";
 			$counter_bottom_high="".IMAGE_PATH."/map/GalaxyFrameCounterBottomHighlight";
 
-			echo "<td class=\"coordstbl\"> <img name=\"counter_left_$ycoords\" src=\"$counter_left$ycoords.gif\" style=\"height:40px;\"/> </td>";
+			echo "<tr>
+				<td class=\"ycoords\">
+					<img name=\"counter_left_$ycoords\" src=\"$counter_left$ycoords.gif\" style=\"height:40px;\"/>
+				</td>";
 
 			for ($x=0;$x<$cy_num;$x++)
 			{
@@ -232,7 +238,7 @@
 				/** Creating the cell object
 				$cell = new Cell($cells[$xcoords][$ycoords]['cid']);
 				*/
-
+/*
 				if ($cp->id()==$cells[$xcoords][$ycoords]['eid'])
 				{
 					echo "<td class=\"spaceCellSelected\" onmouseover=\"counter_left_$ycoords.src='$counter_left_high$ycoords.gif';counter_bottom_$xcoords.src='$counter_bottom_high$xcoords.gif';\" onmouseout=\"counter_left_$ycoords.src='$counter_left$ycoords.gif';counter_bottom_$xcoords.src='$counter_bottom$xcoords.gif';\">";
@@ -243,33 +249,33 @@
 					{
 						$cu->setDiscovered((($sx - 1) * $cx_num) + $xcoords,(($sy - 1) * $cy_num) + $ycoords);
 					}
-					/* With the cell object
-					if ($cu->discovered($cell->absX(),$cell->absY())==0)
-					{
-						$cu->setDiscovered($cell->absX(),$cell->absY());
-					}*/
 					echo "<td class=\"spaceCellUser\" onmouseover=\"counter_left_$ycoords.src='$counter_left_high$ycoords.gif';counter_bottom_$xcoords.src='$counter_bottom_high$xcoords.gif';\" onmouseout=\"counter_left_$ycoords.src='$counter_left$ycoords.gif';counter_bottom_$xcoords.src='$counter_bottom$xcoords.gif';\">";
 				}
 				else
 				{
 					echo "<td class=\"spaceCell\" onmouseover=\"counter_left_$ycoords.src='$counter_left_high$ycoords.gif';counter_bottom_$xcoords.src='$counter_bottom_high$xcoords.gif';\" onmouseout=\"counter_left_$ycoords.src='$counter_left$ycoords.gif';counter_bottom_$xcoords.src='$counter_bottom$xcoords.gif';\">";
 				}
+				*/
 				
 				// Symbole anzeigen
 				if ($cu->discovered((($sx - 1) * $cx_num) + $xcoords,(($sy - 1) * $cy_num) + $ycoords))
 				{
-				/*With the cell object
-				if ($cu->discovered($cell->absX(),$cell->absY()))
-				{		*/
 					$ent = Entity::createFactory($cells[$xcoords][$ycoords]['code'],$cells[$xcoords][$ycoords]['eid']);
 					
 					$tt = new Tooltip();
 					$tt->addTitle($ent->entityCodeString());
 					$tt->addText("Position: $sx/$sy : $xcoords/$ycoords");
 					$tt->addComment($ent->name());
-					echo "<a href=\"?page=cell&amp;id=".$cells[$xcoords][$ycoords]['cid']."\" ".$tt.">
-						<img src=\"".$ent->imagePath()."\" style=\"border:none;background:#000;width:".$img_width."px;height:".$img_height."px\" />
-					</a>";
+					
+					echo "<td style=\"background:url('".$ent->imagePath()."');\"
+						onmouseover=\"counter_left_$ycoords.src='$counter_left_high$ycoords.gif';counter_bottom_$xcoords.src='$counter_bottom_high$xcoords.gif';\" onmouseout=\"counter_left_$ycoords.src='$counter_left$ycoords.gif';counter_bottom_$xcoords.src='$counter_bottom$xcoords.gif';\">";										
+						
+					if ($cp->sx() == $sx && $cp->sy() == $sy && $cp->cx() == $xcoords && $cp->cy() == $ycoords)
+						$class = " class=\"owncell\"";
+					else
+						$class = "";
+						
+					echo "<a$class href=\"?page=cell&amp;id=".$cells[$xcoords][$ycoords]['cid']."\" ".$tt."></a>";
 					unset($ent);
 				}
 				else
@@ -278,23 +284,25 @@
 					$tt->addTitle("Unerforschte Raumzelle!");
 					$tt->addText("Position: $sx/$sy : $xcoords/$ycoords");
 					$tt->addComment("Expedition senden um Zelle sichtbar zu machen.");
-
-					echo "<a href=\"?page=haven&cellTarget=".$cells[$xcoords][$ycoords]['cid']."\" ".$tt.">
-						<img src=\"".IMAGE_PATH."/unexplored/ue1.png\" style=\"border:none;background:#000;width:".$img_width."px;height:".$img_height."px\" />
-					</a>";
+					echo "<td style=\"background:url('".IMAGE_PATH."/unexplored/fog1.png');\" 
+						onmouseover=\"counter_left_$ycoords.src='$counter_left_high$ycoords.gif';counter_bottom_$xcoords.src='$counter_bottom_high$xcoords.gif';\" onmouseout=\"counter_left_$ycoords.src='$counter_left$ycoords.gif';counter_bottom_$xcoords.src='$counter_bottom$xcoords.gif';\">";					
+					echo "<a href=\"?page=haven&cellTarget=".$cells[$xcoords][$ycoords]['cid']."\" ".$tt."></a>";
 				}
 				echo "</td>\n";
 			}
 			echo "</tr>\n";
 		}
-		echo "<tr><td class=\"coordstbl\">&nbsp;</td>"; // Linke untere ecke
+		echo "<tr><td class=\"nocoords\">&nbsp;</td>"; // Linke untere ecke
 		for ($x=0;$x<$cy_num;$x++)
 		{
 			$xcoords = $x+1;
-		  echo "<td class=\"coordstbl\"><img name=\"counter_bottom_$xcoords\" src=\"$counter_bottom$xcoords.gif\"/></td>";
+		  echo "<td class=\"xcoords\">
+		  	<img name=\"counter_bottom_$xcoords\" src=\"$counter_bottom$xcoords.gif\"/>
+		  </td>";
 		}
 		echo "</tr>";
 		echo "</table></td>";
+		
 		if ($sx_mr && $sy_mr!=0 && $sx_mr!=$sx_num+1 && $sy_mr!=$sy_num+1)
 			echo "<td width=\"20\" align=\"center\" height=\"$table_height\"><a href=\"?page=$page&amp;sx=$sx_mr&amp;sy=$sy_mr\"  width=\"20\" height=\"20\" border=\"0\" alt=\"Sektor $sx_mr/$sy_mr\" title=\"Sektor $sx_mr/$sy_mr\" onmouseover=\"sector_middleright.src='$sector_pic/sector_middleright_On.gif';\" onmouseout=\"sector_middleright.src='$sector_pic/sector_middleright.gif';\"><img name=\"sector_middleright\" src=\"$sector_pic/sector_middleright.gif\" height=\"42\" width=\"42\" border=\"0\"></a></td>";
 		else

@@ -229,6 +229,7 @@
 								stars
 							WHERE
 								id=".$arr['id']."
+							LIMIT 1;
 							");
 							$sarr = mysql_fetch_row($sres);
 							$starImageSrc = imagecreatefrompng(IMG_DIR."/stars/star".$sarr[0]."_small.png");

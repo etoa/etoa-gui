@@ -64,7 +64,7 @@
 	<div class="Menueleiste-26_">
 		<img src="{$templateDir}/images/Menueleiste_26.gif" /></div>
 	<div class="nb-raumkarte_">
-		<a href="?page=map"
+		<a href="?page=sector"
 			onmouseover="changeImages('nb_space', '{$templateDir}/images/nb_raumkarte-over.gif'); return true;"
 			onmouseout="changeImages('nb_space', '{$templateDir}/images/nb_raumkarte.gif'); return true;"
 			onmousedown="changeImages('nb_space', '{$templateDir}/images/nb_raumkarte-down.gif'); return true;"
