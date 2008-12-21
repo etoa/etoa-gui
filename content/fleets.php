@@ -235,8 +235,7 @@
 		{	
 			tableStart("Fremde Flotten");
 			foreach ($fm->getAll() as $fid=>$fd)
-			{
-	
+			{	
 				// Is the attitude visible?
 				if (SPY_TECH_SHOW_ATTITUDE<=$fm->spyTech())
 				{
@@ -325,67 +324,67 @@
 								$shipStr[] = $str;
 						}
 					}
+				}
 	
-					// Show action
-					if (SPY_TECH_SHOW_ACTION<=$fm->spyTech())
-					{
-						$shipAction = $fd->getAction()->displayName();
-					}
-					else
-					{
-						$shipAction = $attitudeString;
-					}
-	
-					if ($header!=1) 
-					{
-						echo "<tr>
-							<td class=\"tbltitle\">Start / Ziel</td>
-							<td class=\"tbltitle\">Startzeit / Landezeit</td>
-							<td class=\"tbltitle\">Gesinnung</td>
-							<td class=\"tbltitle\">Spieler</td>
-							</tr>";
-						$header=1;
-					}
-					
+				// Show action
+				if (SPY_TECH_SHOW_ACTION<=$fm->spyTech())
+				{
+					$shipAction = $fd->getAction()->displayName();
+				}
+				else
+				{
+					$shipAction = $attitudeString;
+				}
+				
+				if ($header!=1) 
+				{
 					echo "<tr>
-						<td class=\"tbldata\"><b>".$fd->getSource()->entityCodeString()."</b> 
-						<a href=\"?page=cell&amp;id=".$fd->getSource()->cellId()."&amp;hl=".$fd->getSource()->id()."\">".$fd->getSource()."</a><br/>";
-					echo "<b>".$fd->getTarget()->entityCodeString()."</b> 
-						<a href=\"?page=cell&amp;id=".$fd->getTarget()->cellId()."&amp;hl=".$fd->getTarget()->id()."\">".$fd->getTarget()."</a></td>";			
-					echo "<td class=\"tbldata\">
-						".date("d.m.y, H:i:s",$fd->launchTime())."<br/>";
-					echo date("d.m.y, H:i:s",$fd->landTime())."</td>";
-					echo "<td class=\"tbldata\">
-						<span style=\"color:".FleetAction::$attitudeColor[$fd->getAction()->attitude()]."\">
-						".$fd->getAction()->name()."
-						</span> [".FleetAction::$statusCode[$fd->status()]."]<br/>";				
-					echo "<td class=\"tbldata\">
-						<a href=\"?page=messages&mode=new&message_user_to=".$fd->ownerId()."\">".get_user_nick($fd->ownerId())."</a>
-						</td>";	
-					echo "</tr>";
-					if ($show_num==1)
+						<td class=\"tbltitle\">Start / Ziel</td>
+						<td class=\"tbltitle\">Startzeit / Landezeit</td>
+						<td class=\"tbltitle\">Gesinnung</td>
+						<td class=\"tbltitle\">Spieler</td>
+						</tr>";
+					$header=1;
+				}
+				
+				echo "<tr>
+					<td class=\"tbldata\"><b>".$fd->getSource()->entityCodeString()."</b> 
+					<a href=\"?page=cell&amp;id=".$fd->getSource()->cellId()."&amp;hl=".$fd->getSource()->id()."\">".$fd->getSource()."</a><br/>";
+				echo "<b>".$fd->getTarget()->entityCodeString()."</b> 
+					<a href=\"?page=cell&amp;id=".$fd->getTarget()->cellId()."&amp;hl=".$fd->getTarget()->id()."\">".$fd->getTarget()."</a></td>";			
+				echo "<td class=\"tbldata\">
+					".date("d.m.y, H:i:s",$fd->launchTime())."<br/>";
+				echo date("d.m.y, H:i:s",$fd->landTime())."</td>";
+				echo "<td class=\"tbldata\">
+					<span style=\"color:".$attitudeColor."\">
+					".$shipAction."
+					</span> [".FleetAction::$statusCode[$fd->status()]."]<br/>";				
+				echo "<td class=\"tbldata\">
+					<a href=\"?page=messages&mode=new&message_user_to=".$fd->ownerId()."\">".get_user_nick($fd->ownerId())."</a>
+					</td>";	
+				echo "</tr>";
+				if ($show_num==1)
+				{
+					echo "<tr><td class=\"tbldata\" colspan=\"4\">";
+					echo "<b>Anzahl:</b> ".$shipsCount."";
+					if ($showShips)
 					{
-						echo "<tr><td class=\"tbldata\" colspan=\"4\">";
-						echo "<b>Anzahl:</b> ".$shipsCount."";
-						if ($showShips)
-						{
-							echo ";<br><b>Schiffe:</b> ";
-							$count = false;
-							foreach ($shipStr as $value) {
-								echo $value;
-								if ($count) { 
-									echo ", "; 
-								} else {
-									$count = true; 
-								}
-							}
-							if ($shipAction)
-							{
-								echo ";<br><b>Vorhaben:</b> ".$shipAction."";
+						echo ";<br><b>Schiffe:</b> ";
+						$count = false;
+						foreach ($shipStr as $value) {
+							echo $value;
+							if ($count) { 
+								echo ", "; 
+							} else {
+								$count = true; 
 							}
 						}
-						echo "</td></tr>";
-					}	
+						/*if ($shipAction)
+						{
+							echo ";<br><b>Vorhaben:</b> ".$shipAction."";
+						}*/
+					}
+					echo "</td></tr>";
 				}
 			}
 			tableEnd();
