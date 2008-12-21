@@ -41,7 +41,7 @@ void BattleHandler::battle()
 	defender->loadSupport((int)fleet_["entity_to"]);
 	defender->loadDefense((int)fleet_["entity_to"]);
 	defender->initValues();
-std::cout << attacker->getAllianceId() << ". ." << defender->getAllianceId((int)fleet_["entity_to"]) << "\n";
+
    	// Kampf abbrechen falls User gleich
     if ((int)fleet_["leader_id"]>0 && (attacker->getAllianceId()==defender->getAllianceId((int)fleet_["entity_to"]) && attacker->getAllianceId()!=0)) {
 	    msg = "[b]KAMPFBERICHT[/b]\nvom Planeten ";

@@ -18,7 +18,7 @@ namespace alliance
 		// if fleet user has won the fight, send fleet home
 		if (bh->returnFleet)
 		{
-			fleetReturn(1,0,0,0,0,0,0);
+			fleetReturn(1);
 		}
 
 		//delete bh;
