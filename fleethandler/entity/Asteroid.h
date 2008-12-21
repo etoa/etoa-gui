@@ -3,8 +3,8 @@
 #define __ASTEROID__
 
 #include <mysql++/mysql++.h>
-#include "MysqlHandler.h"
-#include <string>
+
+#include "Entity.h"
 
 /**
 * Asteroid class
@@ -13,13 +13,17 @@
 */
 
 class Asteroid : public Entity {
-	public: 
-		Asteroid(char code, mysqlpp::Row &eRow=NULL) {
-			this->codeName = "Asteroidenfeld";
-			this->showCoords = true;
-		}
+public: 
+	Asteroid(char code, mysqlpp::Row &eRow) : Entity(code, eRow) {
+		this->codeName = "Asteroidenfeld";
+		this->showCoords = true;
+	}
+	
+	void saveData();
+	
+private:
+	void loadData();
 
 };
-
 
 #endif

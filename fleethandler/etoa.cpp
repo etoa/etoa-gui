@@ -41,6 +41,9 @@
 #include "objectData/ObjectDataHandler.h"
 #include "data/DataHandler.h"
 
+#include "entity/Entity.h"
+#include "entity/EntityFactory.h"
+
 #include "battle/BattleHandler.h"
 
 using namespace std;
@@ -79,7 +82,7 @@ int main(int argc, char *argv[])
 		cout << "----------------------------------------------------------------\n";
 		cout << "- EtoA Fleethandler, (C) 2007 by EtoA Gaming, Time: "<< time <<" -\n";
 		cout << "----------------------------------------------------------------\n\n";
-
+		
 		//Fleetquery
 		query << "SELECT ";
 		query << "	* ";
@@ -113,9 +116,9 @@ int main(int argc, char *argv[])
 					if ((int)row["landtime"] < time) {
 						// Load action
 						
-						//FleetHandler* fleet = FleetFactory::createFleet((short)row["status"], action, row);
-						//fleet->update();
-						//delete fleet;
+						FleetHandler* fleet = FleetFactory::createFleet((short)row["status"], action, row);
+						fleet->update();
+						delete fleet;
 					}
 		    	}
 			}

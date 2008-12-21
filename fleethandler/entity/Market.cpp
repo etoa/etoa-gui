@@ -1,7 +1,7 @@
-
-#include "Empty.h"
 	
-	void Empty::loadData() {
+#include "Market.h"
+	
+	void Market::loadData() {
 		this->resMetal = 0;
 		this->resCrystal = 0;
 		this->resPlastic = 0;
@@ -12,6 +12,6 @@
 		this->dataLoaded = true;
 	}
 	
-	void Empty::saveData() {
+	void Market::saveData() {
 		this->changedData = false;
 	}

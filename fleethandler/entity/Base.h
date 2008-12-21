@@ -3,8 +3,8 @@
 #define __BASE__
 
 #include <mysql++/mysql++.h>
-#include "MysqlHandler.h"
-#include <string>
+
+#include "Entity.h"
 
 /**
 * Base class
@@ -13,13 +13,17 @@
 */
 
 class Base : public Entity {
-	public: 
-		Base(char code, mysqlpp::Row &eRow=NULL) {
-			this->codeName = "Allianzbasis";
-			this->showCoords = false;
-		}
+public: 
+	Base(char code, mysqlpp::Row &eRow) : Entity(code, eRow) {
+		this->codeName = "Allianzbasis";
+		this->showCoords = false;
+	}
+	
+	void saveData();
+	
+private:
+	void loadData();
 
 };
-
 
 #endif

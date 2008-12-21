@@ -2,7 +2,8 @@
 #ifndef __EMPTY__
 #define __EMPTY__
 
-#include <string>
+#include <mysql++/mysql++.h>
+
 #include "Entity.h"
 
 /**
@@ -12,12 +13,17 @@
 */
 
 class Empty : public Entity {
-	public: 
-		Empty(char code, mysqlpp::Row &eRow=NULL) {
-			this->codeName = "Leerer Raum";
-			this->showCoords = true;
-		}
-
+public: 
+	Empty(char code, mysqlpp::Row &eRow) : Entity(code, eRow) {
+		this->codeName = "Leerer Raum";
+		this->showCoords = true;
+	}
+	
+	void saveData();
+	
+private:
+	void loadData();
+	
 };
 
 #endif

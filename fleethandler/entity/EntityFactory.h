@@ -10,10 +10,10 @@
 */
 
 #include <mysql++/mysql++.h>
-#include "MysqlHandler.h"
+#include "../MysqlHandler.h"
 
-#include "Alliance.h"
-#include "Asteroidfield.h"
+#include "Asteroid.h"
+#include "Base.h"
 #include "Empty.h"
 #include "Entity.h"
 #include "Market.h"
@@ -26,40 +26,7 @@
 
 class EntityFactory {
 
-public:
-
-	static Entity* createEntity(char code) {
-		switch (code)
-		{
-			case 'a':
-				return new Asteroidfield;
-				break;
-			case 'e':
-				return new Empty;
-				break;
-			case 'm':
-				return new Market;
-				break;
-			case 'n':
-				return new Nebula;
-				break;
-			case 'p':
-				return new Planet;
-				break;
-			case 's':
-				return new Star;
-				break;
-			case 'w':
-				return new Wormhole;
-				break;
-			case 'x':
-				return new Alliance;
-				break;
-			default:
-				return new Unknown;
-		}
-	}
-	
+public:	
 	static Entity* createEntityById(int id) {
 		
 		My &my = My::instance();
@@ -80,12 +47,13 @@ public:
 			
 			if (eSize>0) {
 				mysqlpp::Row eRow = eRes.at(0);
-				char code = eRow["code"];
+				std::string scode = std::string(eRow["code"]);
+				char code = scode[0];
 				
 				switch (code)
 				{
 					case 'a':
-						return new Asteroidfield(code, eRow);
+						return new Asteroid(code, eRow);
 						break;
 					case 'e':
 						return new Empty(code, eRow);
@@ -106,7 +74,7 @@ public:
 						return new Wormhole(code, eRow);
 						break;
 					case 'x':
-						return new Alliance(code, eRow);
+						return new Base(code, eRow);
 						break;
 					default:
 						return new Unknown('e', eRow);

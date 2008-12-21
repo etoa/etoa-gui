@@ -1,4 +1,4 @@
-OBJECTS = etoa.o FleetHandler.o Fleet.o ConfigHandler.o Functions.o AllianceHandler.o AnalyzeHandler.o AntraxHandler.o AsteroidHandler.o AttackHandler.o BombardHandler.o CancelHandler.o ColonializeHandler.o DebrisHandler.o DefaultHandler.o  DeliveryHandler.o EmpHandler.o ExploreHandler.o FetchHandler.o GasHandler.o GattackHandler.o InvadeHandler.o MarketHandler.o NebulaHandler.o PositionHandler.o ReturnHandler.o SpyHandler.o StealHandler.o StealthHandler.o SupportHandler.o TransportHandler.o WreckageHandler.o BattleHandler.o FightObjectHandler.o ShowObjectHandler.o UserHandler.o DivisionHandler.o  ObjectDataHandler.o ObjectHandler.o DataHandler.o Data.o ShipData.o DefData.o TechData.o BuildingData.o
+OBJECTS = etoa.o FleetHandler.o Fleet.o ConfigHandler.o Functions.o AllianceHandler.o AnalyzeHandler.o AntraxHandler.o AsteroidHandler.o AttackHandler.o BombardHandler.o CancelHandler.o ColonializeHandler.o DebrisHandler.o DefaultHandler.o  DeliveryHandler.o EmpHandler.o ExploreHandler.o FetchHandler.o GasHandler.o GattackHandler.o InvadeHandler.o MarketHandler.o NebulaHandler.o PositionHandler.o ReturnHandler.o SpyHandler.o StealHandler.o StealthHandler.o SupportHandler.o TransportHandler.o WreckageHandler.o BattleHandler.o FightObjectHandler.o ShowObjectHandler.o UserHandler.o DivisionHandler.o  ObjectDataHandler.o ObjectHandler.o DataHandler.o Data.o ShipData.o DefData.o TechData.o BuildingData.o Entity.o Asteroid.o Base.o Empty.o Market.o Nebula.o Planet.o Star.o Unknown.o Wormhole.o
 
 OPTS = -lmysqlpp
 
@@ -139,3 +139,33 @@ TechData.o: data/TechData.cpp data/TechData.h
 
 BuildingData.o: data/BuildingData.cpp data/BuildingData.h
 	g++ -c data/BuildingData.cpp
+
+Entity.o: entity/Entity.cpp entity/Entity.h
+	g++ -c entity/Entity.cpp
+
+Asteroid.o: entity/Asteroid.cpp entity/Asteroid.h
+	g++ -c entity/Asteroid.cpp
+
+Base.o: entity/Base.cpp entity/Base.h
+	g++ -c entity/Base.cpp
+
+Empty.o: entity/Empty.cpp entity/Empty.h
+	g++ -c entity/Empty.cpp
+
+Market.o: entity/Market.cpp entity/Market.h
+	g++ -c entity/Market.cpp
+
+Nebula.o: entity/Nebula.cpp entity/Nebula.h
+	g++ -c entity/Nebula.cpp
+
+Planet.o: entity/Planet.cpp entity/Planet.h
+	g++ -c entity/Planet.cpp
+
+Star.o: entity/Star.cpp entity/Star.h
+	g++ -c entity/Star.cpp
+
+Unknown.o: entity/Unknown.cpp entity/Unknown.h
+	g++ -c entity/Unknown.cpp
+
+Wormhole.o: entity/Wormhole.cpp entity/Wormhole.h
+	g++ -c entity/Wormhole.cpp

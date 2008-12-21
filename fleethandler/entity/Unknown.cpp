@@ -1,7 +1,7 @@
 
-#include "Empty.h"
+#include "Unknown.h"
 	
-	void Empty::loadData() {
+	void Unknown::loadData() {
 		this->resMetal = 0;
 		this->resCrystal = 0;
 		this->resPlastic = 0;
@@ -12,6 +12,6 @@
 		this->dataLoaded = true;
 	}
 	
-	void Empty::saveData() {
+	void Unknown::saveData() {
 		this->changedData = false;
 	}

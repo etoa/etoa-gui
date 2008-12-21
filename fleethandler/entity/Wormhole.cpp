@@ -1,7 +1,7 @@
 
-#include "Empty.h"
+#include "Wormhole.h"
 	
-	void Empty::loadData() {
+	void Wormhole::loadData() {
 		this->resMetal = 0;
 		this->resCrystal = 0;
 		this->resPlastic = 0;
@@ -12,6 +12,6 @@
 		this->dataLoaded = true;
 	}
 	
-	void Empty::saveData() {
+	void Wormhole::saveData() {
 		this->changedData = false;
 	}

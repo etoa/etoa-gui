@@ -3,8 +3,9 @@
 #define __ENTITY__
 
 #include <mysql++/mysql++.h>
-#include "MysqlHandler.h"
-#include <string>
+
+#include "../MysqlHandler.h"
+#include "../functions/Functions.h"
 
 /**
 * Entity class
@@ -15,7 +16,7 @@
 class Entity	
 {
 	public: 
-		Entity(char code, mysqlpp::Row &eRow=NULL) {
+		Entity(char code, mysqlpp::Row &eRow) {
 			if (eRow) {
 				this->id = (int)eRow["id"];
 				this->cellId = (int)eRow["cell_id"];
@@ -32,34 +33,54 @@ class Entity
 			
 			this->coordsLoaded = false;
 			this->dataLoaded = false;
+			this->changedData = false;
 			
 			this->actionName = "";
-			int userId = 0;
+			this->userId = 0;
 		}
 		
 		void setAction(std::string actionName);
 		std::string getCoords();
 		int getUserId();
+		int getId();
 		
+		double getResMetal();
+		double getResCrystal();
+		double getResPlastic();
+		double getResFuel();
+		double getResFood();
+		double getResPower();
+		double getResSum();
 		
+		double removeResMetal(double metal);
+		double removeResCrystal(double crystal);
+		double removeResPlastic(double plastic);
+		double removeResFuel(double fuel);
+		double removeResFood(double food);
+		double removeResPower(double power);		
+		
+		virtual void saveData() = 0;
 		
 	protected:
 		int id;
 		int cellId;
 		int userId;
+		short sx;
+		short sy;
 		short pos;
 		char code;
+		double resMetal, resCrystal, resPlastic, resFuel, resFood, resPower;
 		int lastVisited;
 		std::string codeName;
 		std::string coordsString;
 		std::string actionName;
-		
+				
 		bool showCoords, coordsLoaded;
 		bool dataLoaded;
-	
-	private:
+		bool changedData;
+
 		void loadCoords();
-		virtual void loadEntityData() = 0;
+		virtual void loadData() = 0;
 };
 
 #endif

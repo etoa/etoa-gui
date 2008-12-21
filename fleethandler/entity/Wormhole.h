@@ -3,8 +3,8 @@
 #define __WORMHOLE__
 
 #include <mysql++/mysql++.h>
-#include "MysqlHandler.h"
-#include <string>
+
+#include "Entity.h"
 
 /**
 * Wormhole class
@@ -13,13 +13,17 @@
 */
 
 class Wormhole : public Entity {
-	public: 
-		Wormhole(char code, mysqlpp::Row &eRow=NULL) {
-			this->codeName = "Wurmloch";
-			this->showCoords = true;
-		}
+public: 
+	Wormhole(char code, mysqlpp::Row &eRow) : Entity(code, eRow) {
+		this->codeName = "Wurmloch";
+		this->showCoords = true;
+	}
+	
+	void saveData();
+	
+private:
+	void loadData();
 
 };
-
 
 #endif

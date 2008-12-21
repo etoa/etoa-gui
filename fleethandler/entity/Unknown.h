@@ -1,21 +1,21 @@
 
-#ifndef __STAR__
-#define __STAR__
+#ifndef __UNKNOWN__
+#define __UNKNOWN__
 
 #include <mysql++/mysql++.h>
 
 #include "Entity.h"
 
 /**
-* Star class
+* Unknown Entity class
 * 
 * @author Stephan Vock<glaubinx@etoa.ch>
 */
 
-class Star : public Entity {
+class Unknown : public Entity {
 public: 
-	Star(char code, mysqlpp::Row &eRow) : Entity(code, eRow) {
-		this->codeName = "Stern";
+	Unknown(char code, mysqlpp::Row &eRow) : Entity(code, eRow) {
+		this->codeName = "Unerforschte Raumzelle!";
 		this->showCoords = true;
 	}
 	
@@ -23,9 +23,6 @@ public:
 	
 private:
 	void loadData();
-	
-	std::string name;
-	short typeId;
 
 };
 

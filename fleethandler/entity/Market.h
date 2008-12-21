@@ -3,8 +3,8 @@
 #define __MARKET__
 
 #include <mysql++/mysql++.h>
-#include "MysqlHandler.h"
-#include <string>
+
+#include "Entity.h"
 
 /**
 * Market class
@@ -13,13 +13,16 @@
 */
 
 class Market : public Entity {
-	public: 
-		Market(char code, mysqlpp::Row &eRow=NULL) {
-			this->codeName = "Marktplatz";
-			this->showCoords = false;
-		}
-
+public: 
+	Market(char code, mysqlpp::Row &eRow) : Entity(code, eRow) {
+		this->codeName = "Marktplatz";
+		this->showCoords = false;
+	}
+	
+	void saveData();
+	
+private:
+	void loadData();
 };
-
 
 #endif
