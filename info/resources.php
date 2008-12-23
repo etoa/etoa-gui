@@ -51,7 +51,7 @@
 	echo "<tr>
 		<td class=\"tbltitle\" style=\"width:40px;\"><img src=\"images/resources/food.png\"></td>
 		<td class=\"tbldata\"><b>".RES_FOOD." (Marktwert: ".$conf['market_food_factor']['v'].")</b><br/>
-		Nahrung wächst in Gewächshäuser, und wird gebraucht, um deine arbeitende Bevölkerung und deine
+		Nahrung wächst in Gewächshäusern und wird gebraucht um deine arbeitende Bevölkerung und deine
 		Piloten zu versorgen.
 		</td>
 	</tr>";		

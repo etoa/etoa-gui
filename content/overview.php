@@ -149,7 +149,7 @@
 		//Mehrere Flotten
 		if ($fm->count() > 1)
 		{
-			echo "<td><a href=\"?page=fleets\" style=\"".$fm->attitude()."\"><b>".$fm->count()."</b> fremde Flotten</a></td>";
+			echo "<td><a href=\"?page=fleets\" style=\"".$fm->attitude()."\"><b>".$fm->count()."</b> fremde Flotte</a></td>";
 		}
 		//Eine Flotte
 		elseif ($fm->count()==1)
@@ -211,7 +211,7 @@
 		{
 			
 			echo "<tr>
-							<th class=\"tbltitle\">Allianzgebäde</th>
+							<th class=\"tbltitle\">Allianzgebäude</th>
 							<th class=\"tbltitle\">Supportflotten</th>
 							<th class=\"tbltitle\">Allianzangriffe</th>
 							<th class=\"tbltitle\">Allianzforschungen</th>
@@ -253,7 +253,7 @@
 			}
 			else
 			{
-				echo "<td class=\"tbldata\">Es wird nicht gebaut!</td>";
+				echo "<td class=\"tbldata\">Es wird nichts gebaut!</td>";
 			}	
 			
 		//
@@ -332,7 +332,7 @@
 			}
 			else
 			{
-				echo "<td class=\"tbldata\">Es wird nicht geforscht!</td>";
+				echo "<td class=\"tbldata\">Es wird nichts geforscht!</td>";
 			}
 		}
 		

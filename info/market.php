@@ -45,51 +45,51 @@
 		echo "
 		<ul>
         <i>Auktionen:</i><br>
-        Diese neuartige Form vom Handel erlaubt dir Rohstoffe zu versteigern.
-        Das Ziel einer Auktion ist es, seine Waren zum best m&ouml;glichen Preis zu verkaufen. Im Auktionsformular kannst du wie beim Rohstoffhandel die Mengen Rohstoffe angeben die du versteigern willst.<br>
+        Diese neuartige Form von Handel erlaubt dir, Rohstoffe zu versteigern.
+        Das Ziel einer Auktion ist es, seine Waren zum best m&ouml;glichen Preis zu verkaufen. Im Auktionsformular kannst du, wie beim Rohstoffhandel, die Mengen Rohstoffe angeben die du versteigern willst.<br>
         Unter dem Abschnitt \"Preis\" kannst du angeben, welche Rohstoffe du f&uuml;r dein Angebot haben willst. Mach einen Haken bei den Rohstoffarten mit denen bezahlt werden soll.<br>
         Unter dem Abschnitt \"Dauer\" wird die Dauer der Auktion festgelegt. Anders als beim normalen Verkauf, sind die Auktionen zeitlich begrenzt!<br>
         Die Mindestdauer bei einer Auktion betr&auml;gt ".AUCTION_MIN_DURATION." Tage. Diese Zeit kann nach Wunsch verl&auml;ngert werden.<br>
         Ist alles ausgef&uuml;llt was n&ouml;tig ist, kannst du die Auktion starten und ab diesem Zeitpunkt ist die Auktion im Handel.
-        Die anderen Spieler haben nun die M&ouml;glichkeit bei der Auktion zu bieten. Der Gewinner ist, wer nach Ablauf der Zeit das h&ouml;chste Gebot aufweisst, oder derjenige der als erstes bereit ist den Maximalbetrag zu zahlen!<br>
+        Die anderen Spieler haben nun die M&ouml;glichkeit bei der Auktion zu bieten. Der Gewinner ist, wer nach Ablauf der Zeit das h&ouml;chste Gebot aufweisst, oder derjenige, der als erstes bereit ist, den Maximalbetrag zu zahlen!<br>
         Wie auch beim Schiffs- und Rohstoffhandel gibt es bei den Auktionen einen Mindest- und Maximalbetrag, der f&uuml;r die angebotene Ware zu zahlen ist.
         Das Mindestgebot liegt hier bei ".(AUCTION_PRICE_FACTOR_MIN*100)."% und das H&ouml;chstgebot bei ".(AUCTION_PRICE_FACTOR_MAX*100)."%.<br>
         Wenn ein Spieler diese ".(AUCTION_PRICE_FACTOR_MAX*100)."% bietet, ist er der sofortige Gewinner der Auktion und somit ist die Auktion beendet. Ansonsten ist der H&ouml;chstbietende nach Ablauf der Zeit der Gewinner.<br>
         Hat in der ganzen Zeit kein Spieler bei deiner Auktion geboten so ist die Auktion ebenfalls beendet und du bekommst deine Waren mit dem Restwert zur&uuml;ckerstattet.<br>
         Ist ein Sieger bekannt und die Auktion wird als \"Beendet\" angesehen, so sind die Waren an die betroffenen Spieler gesendet. Das Angebot bleibt aber aus Sicherheitsgr&uuml;nden noch f&uuml;r ".AUCTION_DELAY_TIME." Stunden sichtbar!
-        Nach den abgelaufenen ".AUCTION_DELAY_TIME." Stunden wird das Angebot entg&uuml;ltig gel&ouml;scht.
+        Nach den abgelaufenen ".AUCTION_DELAY_TIME." Stunden wird das Angebot endg&uuml;ltig gel&ouml;scht.
     </ul><br><br>";
 
 		echo "
 		<b>Eigene Angebote</b><br>
-        Hier stehen alle deine Angebote die du momentan am laufen hast und hier kannst du sie auch aufheben, falls sich kein K&auml;ufer blicken l&auml;sst, oder du dich vertippt hast!
-        Aber Achtung, du erh&auml;lst nur noch einen gewissen Prozentsatz vom Angebot zur&uuml;ck. Je h&ouml;her du den Markt ausgebaut hast, desto mehr bekommst du von deinen Waren zur&uuml;ck erstattet.<br>
-        Eine Auktion kann nur zur&uuml;ck genommen werden wenn noch niemand geboten hat.<br>
+        Hier stehen alle deine Angebote, die du momentan am Laufen hast und hier kannst du sie auch aufheben, falls sich kein K&auml;ufer blicken l&auml;sst, oder du dich vertippt hast.
+        Aber Achtung! Du erh&auml;lst nur noch einen gewissen Prozentsatz vom Angebot zur&uuml;ck. Je h&ouml;her du den Markt ausgebaut hast, desto mehr bekommst du von deinen Waren zur&uuml;ck erstattet.<br>
+        Eine Auktion kann nur zur&uuml;ck genommen werden, wenn noch niemand geboten hat.<br>
         Die eingestellten Angebote werden ausserdem nach ".$conf['market_response_time']['v']." Tagen automatisch gelöscht, wenn sie vorher nicht gekauft wurden (Auktionen ausgeschlossen)!<br><br><br>";
 
 		echo "
 		<b>Angebotssuche</b><br><br>
 				<ul>
 					<i>Rohstoffe</i><br>
-	        Auflistung aller Rohstoffangebote die momentan im Handel sind.
+	        Auflistung aller Rohstoffangebote, die momentan im Handel sind.
 	        Die eigenen Angebote werden nicht angezeigt!
-	        Nach einem kauf, werden die Waren \"sofort\" gesendet und das Angebot wird gel&ouml;scht.<br>
+	        Nach einem Kauf, werden die Waren \"sofort\" gesendet und das Angebot wird gel&ouml;scht.<br>
 	        Mit Hilfe vom Filter, lassen sich die angezeigten Angebote sortieren bzw. filtern.
    			</ul><br>";
 
 		echo "
 				<ul>
 					<i>Schiffe</i><br>
-	        Auflistung aller Schiffsangebote die momentan im Handel sind.
+	        Auflistung aller Schiffsangebote, die momentan im Handel sind.
 	        Die eigenen Angebote werden nicht angezeigt!
-	        Nach einem kauf, werden die Waren \"sofort\" gesendet und das Angebot wird gel&ouml;scht.<br>
+	        Nach einem Kauf, werden die Waren \"sofort\" gesendet und das Angebot wird gel&ouml;scht.<br>
 	        Mit Hilfe vom Filter, lassen sich die angezeigten Angebote sortieren bzw. filtern.
         </ul><br>";
 
 		echo "
 				<ul>
 					<i>Auktionen</i><br>
-	        Auflistung aller Auktionen die momentan im Handel sind.
+	        Auflistung aller Auktionen, die momentan im Handel sind.
 	        Die eigenen Auktionen werden nicht angezeigt!<br>
 	        Mit Hilfe vom Filter, lassen sich die angezeigten Auktionen sortieren bzw. filtern.
 	        Um bei einer Auktion mitzubieten, musst du in den Rohstofffeldern einen Betrag angeben, welcher gr&ouml;sser als das momentane H&ouml;chstgebot oder mindestens so gross wie das Mindestgebot ist.<br>

@@ -136,7 +136,7 @@
 	}
 	else
 	{
-		iBoxStart("Die neusten 10 Nachrichten");
+		iBoxStart("Die neuesten 10 Nachrichten");
 		echo "Es sind momentan keine Nachrichten vorhanden!";
 		iBoxEnd();
 	}

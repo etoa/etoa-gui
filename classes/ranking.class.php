@@ -257,8 +257,22 @@
 			{
 				$tech[$arr[0]][$arr[1]]=$arr[2];
 			}
-	
-
+			
+			//Cells laden
+			$res = dbquery("
+				SELECT
+					id,
+					sx,
+					sy
+				FROM
+					cells;
+			");
+			$cells=array();
+			while ($arr = mysql_fetch_row($res))
+			{
+				$cells[$arr[0]][0] = $arr[1];
+				$cells[$arr[0]][1] = $arr[2];
+			}
 
 			// Rassen laden
 			$rres = dbquery("
@@ -335,6 +349,7 @@
 				WHERE
 					user_ghost=0;
 			");
+			
 			$user_stats_query = "";
 			$user_points_query = "";
 			$user_rank_highest=array();
@@ -346,6 +361,28 @@
 				$points_ships = 0;
 				$points_tech = 0;
 				$points_building = 0;
+				$sx = 0;
+				$sy = 0;
+				
+				//
+				// Zelle des Hauptplaneten
+				//
+				$res = dbquery("
+					SELECT
+						cell_id
+					FROM
+						entities
+					INNER JOIN
+						planets
+					ON
+						planets.id=entities.id
+						AND planets.planet_user_main=1
+						AND planets.planet_user_id='".$user_id."';
+				");
+				$arr = mysql_fetch_row($res);
+				$sx = $cells[$arr[0]][0];
+				$sy = $cells[$arr[0]][1];
+						
 	
 				//
 				// Punkte für Schiffe (aus Planeten)
@@ -473,8 +510,8 @@
 						'".($uarr['user_alliance_id']>0 ? $alliance[$uarr['user_alliance_id']] : '')."',
 						'".$uarr['user_alliance_id']."',
 						'".($uarr['user_race_id']>0 ? $race[$uarr['user_race_id']] : '')."',
-						2,
-						2,
+						".$sx.",
+						".$sy.",
 						".($uarr['user_blocked_to'] > $time ? 1 : 0).",
 						".($uarr['user_acttime'] < $time-$inactivetime ? 1 : 0).",
 						".($uarr['user_hmode_from'] > 0 ? 1 : 0)."

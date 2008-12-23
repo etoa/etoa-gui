@@ -3,7 +3,7 @@
 		HelpUtil::breadCrumbs(array("Multis und Sitting","multi_sitting"));
     iBoxStart("Multierkennung");
     echo "<div align=\"justify\">";
-    echo "Die Multierkennung ist ein System welches entwickelt wurde um den Gebrauch von Multiaccounts zu verhindern.<br>Spielen jetzt mehrere User vom gleichen Computer aus oder haben dauerhaft die gleiche IP-Adresse, so m&uuml;ssen sich die betroffenen Spieler in der Multierkennung eintragen! Jeder User muss jeden anderen User eintragen, es reicht nicht, wenn zum Beispiel nur ein Spieler von zwei den anderen eintr&auml;gt!<br>Es ist ebenfalls nicht erlaubt User oft ein- und auszutragen!<br><br>
+    echo "Die Multierkennung ist ein System, welches entwickelt wurde, um den Gebrauch von Multiaccounts zu verhindern.<br>Spielen jetzt mehrere User vom gleichen Computer aus oder haben dauerhaft die gleiche IP-Adresse, so m&uuml;ssen sich die betroffenen Spieler in der Multierkennung eintragen! Jeder User muss jeden anderen User eintragen, es reicht nicht, wenn zum Beispiel nur ein Spieler von zwei den anderen eintr&auml;gt!<br>Es ist ebenfalls nicht erlaubt, User oft ein- und auszutragen!<br><br>
     Angabe eines Users:<br>
     1. \"User hinzuf&uuml;gen\"<br>
     2. User Nick eingeben<br>
@@ -14,7 +14,7 @@
 
     iBoxStart("Sittingmodus");
     echo "<div align=\"justify\">";
-    echo "Mit dem Sittingmodus ist es einem User m&ouml;glich, seinen Account von einem andere User (Sitter) verwalten zu lassen. Der Zeitraum in dem der Sitter aktiv sein soll, ist frei einstellbar!<br>Man kann den Sittingmodus aber nicht beliebig lange verwenden. Jeder Account hat eine Anzahl von \"Sittertagen\" welche er &uuml;ber die ganze Runde verbrauchen kann. Sind diese auf Null so muss man bei Abwesenheiten in den Urlaubsmodus wechseln!<br><br>
+    echo "Mit dem Sittingmodus ist es einem User m&ouml;glich, seinen Account von einem anderen User (Sitter) verwalten zu lassen. Der Zeitraum in dem der Sitter aktiv sein soll, ist frei einstellbar!<br>Man kann den Sittingmodus aber nicht beliebig lange verwenden. Jeder Account hat eine Anzahl von \"Sittertagen\", welche er &uuml;ber die ganze Runde verbrauchen kann. Sind diese auf Null, so muss man bei Abwesenheiten in den Urlaubsmodus wechseln!<br><br>
     Achtung, die folgenden Einstellungen muss der User machen, der in Abwesenheit ist! Er muss einen Sitter bestimmen und er muss auch ein Passwort festlegen, welches er dann dem Auserw&auml;hlten zusenden kann! (nicht das normale Account Passwort!)<br><br>
     Einstellen des Sittingmodus:<br>
     1. Datum hinzuf&uuml;gen<br>
