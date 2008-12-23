@@ -138,7 +138,7 @@
 		//Keine Flotten
 		else
 		{
-			echo "<td>Keine eigenen Flotten</td>";
+			echo "<td>Keinen eigenen Flotten</td>";
 		}
 	
 	
@@ -149,7 +149,7 @@
 		//Mehrere Flotten
 		if ($fm->count() > 1)
 		{
-			echo "<td><a href=\"?page=fleets\" style=\"".$fm->attitude()."\"><b>".$fm->count()."</b> fremde Flotte</a></td>";
+			echo "<td><a href=\"?page=fleets\" style=\"".$fm->attitude()."\"><b>".$fm->count()."</b> fremde Flotten</a></td>";
 		}
 		//Eine Flotte
 		elseif ($fm->count()==1)
