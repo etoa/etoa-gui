@@ -138,7 +138,7 @@
 		//Keine Flotten
 		else
 		{
-			echo "<td>Keinen eigenen Flotten</td>";
+			echo "<td>Keine eigenen Flotten</td>";
 		}
 	
 	
@@ -159,7 +159,7 @@
 		//Keine Flotten
 		else
 		{
-			echo "<td>Keine fremde Flotten</td>";
+			echo "<td>Keine fremden Flotten</td>";
 		}
 
 
