@@ -39,28 +39,28 @@ img.resIcon	{
 	height:100%;
 }
 
-.resmetalcolor	{
+.resmetalcolor, .tb .resmetalcolor	{
 	color:#CFC8C2;	
 }
-.rescrystalcolor	{
+.rescrystalcolor, .tb .rescrystalcolor	{
 	color:#C2E2EF;
 }
-.resplasticcolor	{
+.resplasticcolor, .tb .resplasticcolor	{
 	color:#E5D1EF;
 }
-.resfuelcolor	{
+.resfuelcolor, .tb .resfuelcolor	{
 	color:#A4C1EF;
 }
-.resfoodcolor	{
+.resfoodcolor, .tb .resfoodcolor	{
 	color:#C2ECC2;
 }
-.respeoplecolor	{
+.respeoplecolor, .tb .respeoplecolor	{
 	color:#ECC8B2;
 }
-.respowercolor	{
+.respowercolor, .tb .respowercolor	{
 	color:#EFECC2;
 }
-.respowerucolor	{
+.respowerucolor, .tb .respowerucolor	{
 	color:#ECB2B2;
 }
     

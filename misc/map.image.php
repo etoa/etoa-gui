@@ -1,4 +1,12 @@
 <?PHP
+
+	function MDashedLine($image, $x0, $y0, $x1, $y1, $fg, $bg)
+	{
+	        $st = array($fg, $fg, $fg, $fg, $bg, $bg, $bg, $bg);
+	        ImageSetStyle($image, $st);
+	        ImageLine($image, $x0, $y0, $x1, $y1, IMG_COLOR_STYLED);
+	} 
+
 	session_start();
 	include("../conf.inc.php");
 	include("../functions.php");
@@ -21,6 +29,7 @@
 	$p_num_max=$conf['num_planets']['p2'];
 
 	define('GALAXY_IMAGE_SCALE',GALAXY_MAP_WIDTH/((($sx_num-1)*10)+$cx_num));
+
 
 	
 	$w = GALAXY_MAP_WIDTH;
@@ -259,20 +268,24 @@
 						ImageCopyResampled($im,$unexploredImage,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
 					}
 				}
+				
+				/*
 				imagestring($im,3,10,$h-GALAXY_MAP_LEGEND_HEIGHT+10,"Legende:    Stern    Asteroidenfeld    Nebel    Wurmloch",$colWhite);
 				imagefilledellipse ($im,80,$h-GALAXY_MAP_LEGEND_HEIGHT+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$colWhite);
 				imagefilledellipse ($im,145,$h-GALAXY_MAP_LEGEND_HEIGHT+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$colGrey);
 				imagefilledellipse ($im,270,$h-GALAXY_MAP_LEGEND_HEIGHT+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$colOrange);
 				imagefilledellipse ($im,335,$h-GALAXY_MAP_LEGEND_HEIGHT+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$colViolett);
+				*/
+				imagestring($im,3,10,$h-GALAXY_MAP_LEGEND_HEIGHT+10,"Klicke auf einen Sektor um ihn auszuwählen!",$colWhite);
 			}
 			
 			for ($x=($cx_num*GALAXY_IMAGE_SCALE);$x<$w;$x+=($cx_num*GALAXY_IMAGE_SCALE))
 			{
-				imageline($im,$x,0,$x,$h-GALAXY_MAP_LEGEND_HEIGHT,$colBlue);
+				MDashedLine($im,$x,0,$x,$h-GALAXY_MAP_LEGEND_HEIGHT,$colGrey,$colBlack);
 			}
 			for ($y=($cy_num*GALAXY_IMAGE_SCALE);$y<$h;$y+=($cy_num*GALAXY_IMAGE_SCALE))
 			{
-				imageline($im,0,$y,$w,$y,$colBlue);
+				MDashedLine($im,0,$y,$w,$y,$colGrey,$colBlack);
 			}
 		}
 		else

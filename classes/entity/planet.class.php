@@ -352,31 +352,43 @@
 					$style0="resfull";
 					$store_msg=true;
 				}
+				else
+					$style0="resmetalcolor";
 				if ($this->storeCrystal<=floor($this->resCrystal) && floor($this->resCrystal)>0)
 				{
 					$style1="resfull";
 					$store_msg=true;
 				}
+				else	
+					$style1="rescrystalcolor";
 				if ($this->storePlastic<=floor($this->resPlastic) && floor($this->resPlastic)>0)
 				{
 					$style2="resfull";
 					$store_msg=true;
 				}
+				else
+					$style2="resplasticcolor";
 				if ($this->storeFuel<=floor($this->resFuel) && floor($this->resFuel)>0)
 				{
 					$style3="resfull";
 					$store_msg=true;
 				}
+				else
+					$style3="resfuelcolor";
 				if ($this->storeFood<=floor($this->resFood) && floor($this->resFood)>0)
 				{
 					$style4="resfull";
 					$store_msg=true;
 				}
+				else
+					$style4="resfoodcolor";
 				if ($this->people_place<=floor($this->people) && floor($this->people)>0)
 				{
 					$style5="resfull";
 					$place_msg=true;
 				}
+				else
+					$style5="respeoplecolor";
 				if(floor($this->prodPower)-floor($this->usePower)<0)
 				{
 					$style6="resfull";
@@ -385,7 +397,7 @@
 				}
 				else
 				{
-					$style6="class=\"tbldata3\"";
+					$style6="respowercolor";
 					$power_rest = floor($this->prodPower)-floor($this->usePower);
 				}
 				tableStart("Ressourcen");
@@ -406,7 +418,8 @@
 				<td class=\"$style5\">".nf(floor($this->people))."</td>
 				<td class=\"$style6\">".nf($power_rest)." MW</td>
 				</tr>";
-	
+
+				/*	
 				$text = array();
 				if ($store_msg)
 					array_push($text,"Speicher");
@@ -414,8 +427,6 @@
 					array_push($text,"Wohnmodule");
 				if ($power_msg)
 					array_push($text,"Kraftwerke");
-	
-	
 				if (count($text)>0)
 				{
 					echo "<tr><td class=\"tbldata\" colspan=\"7\" style=\"text-align:center;color:orange;\"><i>Es werden ben&ouml;tigt: ";
@@ -429,10 +440,11 @@
 	                	$cnt++;
 	                }
 					echo "</i></td></tr>";
-					echo "<td colspan=\"7\" id=\"resprogress\" style=\"height:10px;background:#fff;text-align:center;\"></td>";
-					jsProgressBar("resprogress",$this->updated,($this->updated + $cfg->value("res_update")),650);
+				}*/
+				echo "<tr>
+					<td colspan=\"7\" id=\"resprogress\" style=\"height:10px;background:#fff;text-align:center;\"></td>";
+				jsProgressBar("resprogress",$this->updated,($this->updated + $cfg->value("res_update")),650);
 					
-				}
 				tableEnd();
 			}
 			else
