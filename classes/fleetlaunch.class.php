@@ -171,7 +171,7 @@
 			if ($this->havenOk)
 			{
 				if (!$this->shipsFixed)
-				{
+				{	
 					$res = dbquery("
 					SELECT
 						*
@@ -187,12 +187,42 @@
 		        AND shiplist_count>0;");
 					if (mysql_num_rows($res)>0)
 					{
-						$arr = mysql_fetch_array($res);	
+						$arr = mysql_fetch_array($res);
+						$timefactor = 0;
+						$vres=dbquery("
+								SELECT
+									techlist.techlist_current_level,
+									ship_requirements.req_req_tech_level
+								FROM
+									techlist
+								INNER JOIN
+									ship_requirements
+								ON ship_requirements.req_req_tech_id=techlist.techlist_tech_id
+									AND ship_requirements.req_ship_id=".$sid."
+									AND techlist.techlist_user_id=".$this->ownerId()."
+								GROUP BY
+									ship_requirements.req_id;");
+							
+							$timefactor=$this->raceSpeedFactor();
+							if (mysql_num_rows($vres)>0)
+							{
+								while ($varr=mysql_fetch_array($vres))
+								{
+									if($varr['techlist_current_level']-$varr['req_req_tech_level']<=0)
+									{
+										$timefactor+=0;
+									}
+									else
+									{
+										$timefactor+=max(0,($varr['techlist_current_level']-$varr['req_req_tech_level'])*0.1);
+									}
+								}
+							}
 						$cnt = min(nf_back($cnt),$arr['shiplist_count']);
 						
 						$this->ships[$sid] = array(
 						"count" => $cnt,
-						"speed" => $arr['ship_speed'],
+						"speed" => $arr['ship_speed']*$timefactor,
 						"fuel_use" => $arr['ship_fuel_use'] * $cnt,
 						"name" => $arr['ship_name'],
 						"pilots" => $arr['ship_pilots'] * $cnt					
@@ -204,11 +234,11 @@
 						// Set global speed
 						if ($this->speed <= 0)
 						{
-							$this->speed = $arr['ship_speed'];
+							$this->speed = $arr['ship_speed']*$timefactor;
 						}
 						else
 						{
-							$this->speed = min($this->speed, $arr['ship_speed']);
+							$this->speed = min($this->speed, $arr['ship_speed']*$timefactor);
 						}													     
 						
 						$this->timeLaunchLand = max($this->timeLaunchLand, $arr['ship_time2land'] + $arr['ship_time2start']);
@@ -391,7 +421,13 @@
 						res_plastic,
 						res_fuel,
 						res_food,
-						res_people
+						res_people,
+						fetch_metal,
+						fetch_crystal,
+						fetch_plastic,
+						fetch_fuel,
+						fetch_food,
+						fetch_people
 					)
 					VALUES
 					(
@@ -415,7 +451,13 @@
 						".$this->res[3].",
 						".$this->res[4].",
 						".$this->res[5].",
-						".$this->capacityPeopleLoaded."
+						".$this->capacityPeopleLoaded.",
+						".$this->fetch[1].",
+						".$this->fetch[2].",
+						".$this->fetch[3].",
+						".$this->fetch[4].",
+						".$this->fetch[5].",
+						0
 					)
 					";
 					dbquery($sql);
@@ -696,6 +738,19 @@
 			{
 				$this->sourceEntity->chgRes($id,-$loaded);
 			}			
+			return $loaded;
+		}
+		
+			
+		function fetchResource($id,$ammount)
+		{
+			$ammount = max(0,$ammount);
+			$this->fetch[$id] = 0;
+			$this->calcResLoaded();
+			$loaded = floor(min($ammount,$this->getCapacity()));
+			$this->fetch[$id] = $loaded;
+			$this->calcResLoaded();
+			
 			return $loaded;
 		}
 		

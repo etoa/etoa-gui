@@ -859,12 +859,28 @@ ob_start();
 
 			if ($fleet->setAction($form['fleet_action']))
 			{
-				$load1 = $fleet->loadResource(1,$form['res1'],1);
-				$load2 = $fleet->loadResource(2,$form['res2'],1);
-				$load3 = $fleet->loadResource(3,$form['res3'],1);
-				$load4 = $fleet->loadResource(4,$form['res4'],1);
-				$load5 = $fleet->loadResource(5,$form['res5'],1);
-					
+				if ($form['fleet_action']=="fetch")
+				{
+					$fetch1 = $fleet->fetchResource(1,$form['res1']);
+					$fetch2 = $fleet->fetchResource(2,$form['res2']);
+					$fetch3 = $fleet->fetchResource(3,$form['res3']);
+					$fetch4 = $fleet->fetchResource(4,$form['res4']);
+					$fetch5 = $fleet->fetchResource(5,$form['res5']);
+					$load1 = $fleet->loadResource(1,0,1);
+					$load2 = $fleet->loadResource(2,0,1);
+					$load3 = $fleet->loadResource(3,0,1);
+					$load4 = $fleet->loadResource(4,0,1);
+					$load5 = $fleet->loadResource(5,0,1);
+				}
+				else
+				{
+					$load1 = $fleet->loadResource(1,$form['res1'],1);
+					$load2 = $fleet->loadResource(2,$form['res2'],1);
+					$load3 = $fleet->loadResource(3,$form['res3'],1);
+					$load4 = $fleet->loadResource(4,$form['res4'],1);
+					$load5 = $fleet->loadResource(5,$form['res5'],1);
+				}
+				
 				if ($fid = $fleet->launch())
 				{
 
