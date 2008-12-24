@@ -115,7 +115,7 @@ namespace fetch
 					}
 					
 					/** if there are some peoeple the catch up, catch them up **/
-					this->loadPeople = std::min(std::min((double)fleet_["fetch_people"],(double)fleet_["capacity_people"]),(double)pRow["planet_people"]);
+					this->loadPeople = 0; //std::min(std::min((double)fleet_["fetch_people"],(double)fleet_["capacity_people"]),(double)pRow["planet_people"]);
 					
 					/** Calculate the message for the user **/
 					std::string msg = "[B]WAREN ABGEHOLT[/B]\n\nEine Flotte vom Planeten \n[b]";
