@@ -73,6 +73,7 @@
 			$this->shipCount=0;
 			$this->distance=0;
 			$this->res = array(0,0,0,0,0,0);
+			$this->fetch = array(0,0,0,0,0,0);
 			$this->costs = 0;
 			$this->costsFood = 0;
 			$this->costsPower = 0;
