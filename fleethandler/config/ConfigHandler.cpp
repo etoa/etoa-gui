@@ -116,7 +116,7 @@
 		actions["collectdebris"] = 7;
 		actions["collectfuel"] = 8;
 		actions["colonize"] = 9;
-		actions["collectdebris"] = 10;
+		actions["createdebris"] = 10;
 		actions["delivery"] = 11;		
 		actions["emp"] = 12;
 		actions["explore"] = 13;
