@@ -34,17 +34,10 @@
 
 #include "FleetHandler.h"
 #include "fleetActions/FleetFactory.h"
-#include "Fleet.h"
-#include "functions/Functions.h"
 #include "config/ConfigHandler.h"
 #include "MysqlHandler.h"
 #include "objectData/ObjectDataHandler.h"
 #include "data/DataHandler.h"
-
-#include "entity/Entity.h"
-#include "entity/EntityFactory.h"
-
-#include "battle/BattleHandler.h"
 
 using namespace std;
 
@@ -66,8 +59,8 @@ int main(int argc, char *argv[])
 	DataHandler &DataHandler = DataHandler::instance();
 	
 	// Main loop
-	while (true) {	
-	
+	while (true) {
+		
 		//Timestamp
 		std::time_t time = std::time(0);
 		
@@ -89,7 +82,8 @@ int main(int argc, char *argv[])
 		query << "FROM ";
 		query << "	fleet ";
 		query << "WHERE ";
-		query << " landtime<" << time << " ;";
+		query << " landtime<" << time << " ";
+		query << " AND user_id='1';";
 		mysqlpp::Result res = query.store();	
 		query.reset();
 				
@@ -128,7 +122,7 @@ int main(int argc, char *argv[])
 			}
 		}
 		
-		sleep(10);
+		sleep(5);
 	}		
 
 	return 0;

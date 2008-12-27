@@ -2,6 +2,7 @@
 #ifndef __EMPTY__
 #define __EMPTY__
 
+#include <string>
 #include <mysql++/mysql++.h>
 
 #include "Entity.h"
@@ -19,11 +20,14 @@ public:
 		this->showCoords = true;
 	}
 	
+	~Empty() {
+		this->saveData();
+	}
+	
 	void saveData();
 	
-private:
+protected:
 	void loadData();
-	
 };
 
 #endif

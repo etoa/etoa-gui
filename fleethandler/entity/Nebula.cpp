@@ -2,7 +2,7 @@
 #include "Nebula.h"
 
 	void Nebula::loadData() {
-	
+		
 		My &my = My::instance();
 		mysqlpp::Connection *con = my.get();
 		mysqlpp::Query query = con->query();
@@ -29,21 +29,24 @@
 				this->resFood = (double)nRow["res_food"];
 				this->resPower = (double)nRow["res_power"];
 			}
-			else {
-				this->resMetal = 0;
-				this->resCrystal = 0;
-				this->resPlastic = 0;
-				this->resFuel = 0;
-				this->resFood = 0;
-				this->resPower = 0;
-			}
 		}
+		
+		this->initResMetal = this->resMetal;
+		this->initResCrystal = this->resCrystal;
+		this->initResPlastic = this->resPlastic;
+		this->initResFuel = this->resFuel;
+		this->initResFood = this->resFood;
+		this->initResPower = this->resPower;
+		
+		this->initWfMetal = this->resMetal;
+		this->initWfCrystal = this->wfCrystal;
+		this->initWfPlastic = this->wfPlastic;
 		
 		this->dataLoaded = true;
 	}
 	
 	void Nebula::saveData() {
-	
+		
 		Config &config = Config::instance();
 		std::time_t time = std::time(0);
 		srand (time);
@@ -146,12 +149,12 @@
 			query << "UPDATE ";
 			query << "	nebulas ";
 			query << "SET ";
-			query << "	res_metal='" << this->getResMetal() << "', ";
-			query << "	res_crystal='" << this->getResCrystal() << "', ";
-			query << "	res_plastic='" << this->getResPlastic() << "', ";
-			query << "	res_fuel='" << this->getResFuel() << "', ";
-			query << "	res_food='" << this->getResFood() << "', ";
-			query << "	res_power='" << this->getResPower() << "' ";
+			query << "	res_metal=res_metal+'" << (this->getResMetal() - this->initResMetal) << "', ";
+			query << "	res_crystal=res_crystal+'" << (this->getResCrystal() - this->initResCrystal) << "', ";
+			query << "	res_plastic=res_plastic+'" << (this->getResPlastic() - this->initResPlastic) << "', ";
+			query << "	res_fuel=res_fuel+'" << (this->getResFuel() - this->initResFuel) << "', ";
+			query << "	res_food=res_food+'" << (this->getResFood() - this->initResFood) << "', ";
+			query << "	res_power=res_power+'" << (this->getResPower() - this->initResPower) << "' ";
 			query << "WHERE ";
 			query << "	id='" << this->getId() << "' ";
 			query << "LIMIT 1;";

@@ -2,6 +2,7 @@
 #ifndef __MARKET__
 #define __MARKET__
 
+#include <string>
 #include <mysql++/mysql++.h>
 
 #include "Entity.h"
@@ -19,9 +20,13 @@ public:
 		this->showCoords = false;
 	}
 	
+	~Market() {
+		this->saveData();
+	}
+	
 	void saveData();
 	
-private:
+protected:
 	void loadData();
 };
 

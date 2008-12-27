@@ -15,37 +15,28 @@
 		
 		//Flotte wird stationiert und Waren werden ausgeladen
 		if(fleetAction==1) {
-            // Waren entladen
-            double people = this->f->getPilots() + this->f->getResPeople();
-			query << std::setprecision(18);
-            query << "UPDATE ";
-			query << "	planets ";
-			query << "SET ";
-			query << "	planet_res_metal=planet_res_metal+'" << this->f->getResMetal() << "', ";
-			query << "	planet_res_crystal=planet_res_crystal+'" << this->f->getResCrystal() << "', ";
-			query << "	planet_res_plastic=planet_res_plastic+'" << this->f->getResPlastic() << "', ";
-			query << "	planet_res_fuel=planet_res_fuel+'" << this->f->getResFuel() << "', ";
-			query << "	planet_res_food=planet_res_food+'" << this->f->getResFood() << "', ";
-			query << "	planet_people=planet_people+'" << people << "' ";
-			query << "WHERE ";
-			query << "	id='" << this->f->getEntityTo() << "';";
-			query.store();
-			query.reset();
-			
 			//Rohstoffnachricht für den User
 			msgRes= "\n\n[b]WAREN[/b]\n\n[b]Titan:[/b] ";
-			msgRes += functions::nf(std::string(fleet_["res_metal"]));
+			msgRes += functions::nf(functions::d2s(this->f->getResMetal()));
 			msgRes += "\n[b]Silizium:[/b] ";
-			msgRes += functions::nf(std::string(fleet_["res_crystal"]));
+			msgRes += functions::nf(functions::d2s(this->f->getResCrystal()));
 			msgRes += "\n[b]PVC:[/b] ";
-			msgRes += functions::nf(std::string(fleet_["res_plastic"]));
+			msgRes += functions::nf(functions::d2s(this->f->getResPlastic()));
 			msgRes += "\n[b]Tritium:[/b] ";
-			msgRes += functions::nf(std::string(fleet_["res_fuel"]));
+			msgRes += functions::nf(functions::d2s(this->f->getResFuel()));
 			msgRes += "\n[b]Nahrung:[/b] ";
-			msgRes += functions::nf(std::string(fleet_["res_food"]));
+			msgRes += functions::nf(functions::d2s(this->f->getResFood()));
 			msgRes += "\n[b]Bewohner:[/b] ";
-			msgRes += functions::nf(std::string(fleet_["res_people"]));
+			msgRes += functions::nf(functions::d2s(this->f->getResPeople()));
 			msgRes += "\n";
+			
+			this->targetEntity->addResMetal(this->f->unloadResMetal());
+			this->targetEntity->addResCrystal(this->f->unloadResCrystal());
+			this->targetEntity->addResPlastic(this->f->unloadResPlastic());
+			this->targetEntity->addResFuel(this->f->unloadResFuel());
+			this->targetEntity->addResFood(this->f->unloadResFood());
+			this->targetEntity->addResPower(this->f->unloadResPower());
+			this->targetEntity->addResPeople(this->f->unloadResPeople());
 			
 			// Flotte stationieren
             // Laden der Schiffsdaten
@@ -247,37 +238,28 @@
 		
 		//Waren werden ausgeladen
 		else if(fleetAction==2) {
-            // Waren entladen
-            double people = this->f->getPilots() + this->f->getResPeople();
-			query << std::setprecision(18);
-            query << "UPDATE ";
-			query << "	planets ";
-			query << "SET ";
-			query << "	planet_res_metal=planet_res_metal+'" << this->f->getResMetal() << "', ";
-			query << "	planet_res_crystal=planet_res_crystal+'" << this->f->getResCrystal() << "', ";
-			query << "	planet_res_plastic=planet_res_plastic+'" << this->f->getResPlastic() << "', ";
-			query << "	planet_res_fuel=planet_res_fuel+'" << this->f->getResFuel() << "', ";
-			query << "	planet_res_food=planet_res_food+'" << this->f->getResFood() << "', ";
-			query << "	planet_people=planet_people+'" << people << "' ";
-			query << "WHERE ";
-			query << "	id='" << this->f->getEntityTo() << "';";
-			query.store();
-			query.reset();
-
 			//Rohstoffnachricht für den User
 			msgRes= "\n\n[b]WAREN[/b]\n\n[b]Titan:[/b] ";
-			msgRes += functions::nf(std::string(fleet_["res_metal"]));
+			msgRes += functions::nf(functions::d2s(this->f->getResMetal()));
 			msgRes += "\n[b]Silizium:[/b] ";
-			msgRes += functions::nf(std::string(fleet_["res_crystal"]));
+			msgRes += functions::nf(functions::d2s(this->f->getResCrystal()));
 			msgRes += "\n[b]PVC:[/b] ";
-			msgRes += functions::nf(std::string(fleet_["res_plastic"]));
+			msgRes += functions::nf(functions::d2s(this->f->getResPlastic()));
 			msgRes += "\n[b]Tritium:[/b] ";
-			msgRes += functions::nf(std::string(fleet_["res_fuel"]));
+			msgRes += functions::nf(functions::d2s(this->f->getResFuel()));
 			msgRes += "\n[b]Nahrung:[/b] ";
-			msgRes += functions::nf(std::string(fleet_["res_food"]));
+			msgRes += functions::nf(functions::d2s(this->f->getResFood()));
 			msgRes += "\n[b]Bewohner:[/b] ";
-			msgRes += functions::nf(std::string(fleet_["res_people"]));
+			msgRes += functions::nf(functions::d2s(this->f->getResPeople()));
 			msgRes += "\n";
+			
+			this->targetEntity->addResMetal(this->f->unloadResMetal());
+			this->targetEntity->addResCrystal(this->f->unloadResCrystal());
+			this->targetEntity->addResPlastic(this->f->unloadResPlastic());
+			this->targetEntity->addResFuel(this->f->unloadResFuel(false));
+			this->targetEntity->addResFood(this->f->unloadResFood(false));
+			this->targetEntity->addResPower(this->f->unloadResPower());
+			this->targetEntity->addResPeople(this->f->unloadResPeople(false));
 		}
 		//Fehler, die Flotte hat eine ungültige Aktion
 		else {
@@ -290,8 +272,8 @@
 	{
 
         // Flotte zurückschicken
-		int duration = (int)fleet_["landtime"] - (int)fleet_["launchtime"];
-        int launchtime = (int)fleet_["landtime"];
+		int duration = this->f->getLandtime() - this->f->getLaunchtime();
+        int launchtime = this->f->getLandtime();
         int landtime = launchtime + duration;
 		
 		mysqlpp::Query query = con_->query();
@@ -303,24 +285,17 @@
 		query << "	entity_to='" << this->f->getEntityFrom() << "', ";
 		query << "	status='" << status << "', ";
 		query << "	launchtime='" << launchtime << "', ";
-		query << "	landtime='" << landtime << "' ";
-		
-			if (resMetal>-1) 
-				query << ", res_metal='" << resMetal << "'";
-			if (resCrystal>-1) 
-				query << ", res_crystal='" << resCrystal << "'";
-			if (resPlastic>-1) 
-				query << ", res_plastic='" << resPlastic << "'";
-			if (resFuel>-1) 
-				query << ", res_fuel='" << resFuel << "'";
-			if (resFood>-1) 
-				query << ", res_food='" << resFood << "'";
-			if (resPeople>-1) 
-				query << ", res_people='" << resPeople << "'";
-		
+		query << "	landtime='" << landtime << "', ";
+		query << "	res_metal='" << this->f->getResMetal() << "', ";
+		query << "	res_crystal='" << this->f->getResCrystal() << "', ";
+		query << "	res_plastic='" << this->f->getResPlastic() << "', ";
+		query << "	res_fuel='" << this->f->getResFuel() << "', ";
+		query << "	res_food='" << this->f->getResFood() << "', ";
+		query << "	res_power='" << this->f->getResPower() << "', ";
+		query << "	res_people='" << this->f->getResPeople() << "' ";
 		query << " WHERE ";
 		query << "	id='" << this->f->getId() << "' ";
-		query << "	OR leader_id='" << this->f->getId() << "';";
+		query << "LIMT 1;";
 		query.store();
 		query.reset();
 	}

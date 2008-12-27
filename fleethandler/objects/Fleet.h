@@ -2,11 +2,18 @@
 #ifndef __FLEET__
 #define __FLEET__
 
-#include <mysql++/mysql++.h>
-#include "MysqlHandler.h"
-#include "objectData/ObjectHandler.h"
-#include "objectData/ObjectDataHandler.h"
 #include <string>
+#include <vector>
+#include <math.h>
+#include <mysql++/mysql++.h>
+
+#include "../MysqlHandler.h"
+#include "../functions/Functions.h"
+#include "../objectData/ObjectHandler.h"
+#include "../objectData/ObjectDataHandler.h"
+
+#include "Object.h"
+#include "ObjectFactory.h"
 
 /**
 * Fleet class
@@ -15,7 +22,7 @@
 */
 
 class Fleet	
-{
+{	
 	/**
 	* Data from fleet table
 	**/
@@ -29,15 +36,26 @@ class Fleet
 	double pilots;
 	int usageFuel, usageFood, usagePower, supportUsageFuel, supportUsageFood;
 	double resMetal, resCrystal, resPlastic, resFuel, resFood, resPower, resPeople;
+	double initResMetal, initResCrystal, initResPlastic, initResFuel, initResFood, initResPower, initResPeople;
 	double fetchMetal, fetchCrystal, fetchPlastic, fetchFuel, fetchFood, fetchPower, fetchPeople;
 	
 	double capacity, actionCapacity, peopleCapacity;
 	bool actionAllowed, shipsLoaded, entityLoaded, shipsChanged;
 	int entityToUserId;
 	
+	bool changedData;
+	
+	std::vector<Object*> objects;
+	
+	std::string logFleetShipStart;
 
 public:
 	Fleet(mysqlpp::Row &fleet);
+	
+	~Fleet() {
+		this->save();
+	}
+	
 	int getId();
 	int getUserId();
 	int getEntityFrom();
@@ -56,8 +74,29 @@ public:
 	double getResFood();
 	double getResPower();
 	double getResPeople();
-	
 	double getResLoaded();
+	double getCapacity();
+	double getActionCapacity();
+	double getPeopleCapacity();
+	
+	double addMetal(double metal);
+	double addCrystal(double crystal);
+	double addPlastic(double plastic);
+	double addFuel(double fuel);
+	double addFood(double food);
+	double addPower(double power);
+	double addPeople(double people);
+	
+	double unloadResMetal();
+	double unloadResCrystal();
+	double unloadResPlastic();
+	double unloadResFuel(bool land=true);
+	double unloadResFood(bool land=true);
+	double unloadResPower();
+	double unloadResPeople(bool land=true);
+	
+	void setReturn();
+	
 	int getEntityToUserId();
 	std::string getEntityToUserString();
 	
@@ -69,9 +108,16 @@ public:
 	
 	bool actionIsAllowed();
 	
+	std::string getLogResStart();
+	std::string getLogResEnd();
+	std::string getLogShipsStart();
+	std::string getLogShipsEnd();
+	
 private:
 	void loadShips();
 	void recalcShips();
+	
+	void save();
 };
 
 #endif

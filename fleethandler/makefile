@@ -1,4 +1,4 @@
-OBJECTS = etoa.o FleetHandler.o Fleet.o ConfigHandler.o Functions.o AllianceHandler.o AnalyzeHandler.o AntraxHandler.o AsteroidHandler.o AttackHandler.o BombardHandler.o CancelHandler.o ColonializeHandler.o DebrisHandler.o DefaultHandler.o  DeliveryHandler.o EmpHandler.o ExploreHandler.o FetchHandler.o GasHandler.o GattackHandler.o InvadeHandler.o MarketHandler.o NebulaHandler.o PositionHandler.o ReturnHandler.o SpyHandler.o StealHandler.o StealthHandler.o SupportHandler.o TransportHandler.o WreckageHandler.o BattleHandler.o FightObjectHandler.o ShowObjectHandler.o UserHandler.o DivisionHandler.o  ObjectDataHandler.o ObjectHandler.o DataHandler.o Data.o ShipData.o DefData.o TechData.o BuildingData.o Entity.o Asteroid.o Base.o Empty.o Market.o Nebula.o Planet.o Star.o Unknown.o Wormhole.o
+OBJECTS = etoa.o FleetHandler.o Fleet.o ConfigHandler.o Functions.o AllianceHandler.o AnalyzeHandler.o AntraxHandler.o AsteroidHandler.o AttackHandler.o BombardHandler.o CancelHandler.o ColonializeHandler.o DebrisHandler.o DefaultHandler.o  DeliveryHandler.o EmpHandler.o ExploreHandler.o FetchHandler.o GasHandler.o GattackHandler.o InvadeHandler.o MarketHandler.o NebulaHandler.o PositionHandler.o ReturnHandler.o SpyHandler.o StealHandler.o StealthHandler.o SupportHandler.o TransportHandler.o WreckageHandler.o BattleHandler.o FightObjectHandler.o ShowObjectHandler.o UserHandler.o DivisionHandler.o  ObjectDataHandler.o ObjectHandler.o DataHandler.o Data.o ShipData.o DefData.o TechData.o BuildingData.o Entity.o Asteroid.o Base.o Empty.o Market.o Nebula.o Planet.o Star.o Unknown.o Wormhole.o Object.o ListDef.o ListShip.o FleetShip.o Message.o Log.o User.o
 
 OPTS = -lmysqlpp
 
@@ -11,8 +11,8 @@ etoa.o: etoa.cpp
 FleetHandler.o: FleetHandler.cpp FleetHandler.h
 	g++ -c FleetHandler.cpp
 
-Fleet.o: Fleet.cpp Fleet.h
-	g++ -c Fleet.cpp
+Fleet.o: objects/Fleet.cpp objects/Fleet.h
+	g++ -c objects/Fleet.cpp
 
 ConfigHandler.o: config/ConfigHandler.cpp config/ConfigHandler.h
 	g++ -c config/ConfigHandler.cpp
@@ -169,3 +169,24 @@ Unknown.o: entity/Unknown.cpp entity/Unknown.h
 
 Wormhole.o: entity/Wormhole.cpp entity/Wormhole.h
 	g++ -c entity/Wormhole.cpp
+
+Object.o: objects/Object.cpp objects/Object.h
+	g++ -c objects/Object.cpp
+
+ListDef.o: objects/ListDef.cpp objects/ListDef.h
+	g++ -c objects/ListDef.cpp
+
+ListShip.o: objects/ListShip.cpp objects/ListShip.h
+	g++ -c objects/ListShip.cpp
+
+FleetShip.o: objects/FleetShip.cpp objects/FleetShip.h
+	g++ -c objects/FleetShip.cpp
+
+Message.o: objects/Message.cpp objects/Message.h
+	g++ -c objects/Message.cpp
+
+Log.o: objects/Log.cpp objects/Log.h
+	g++ -c objects/Log.cpp
+
+User.o: objects/User.cpp objects/User.h
+	g++ -c objects/User.cpp

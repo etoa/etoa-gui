@@ -2,6 +2,7 @@
 #ifndef __BASE__
 #define __BASE__
 
+#include <string>
 #include <mysql++/mysql++.h>
 
 #include "Entity.h"
@@ -19,9 +20,13 @@ public:
 		this->showCoords = false;
 	}
 	
+	~Base() {
+		this->saveData();
+	}
+	
 	void saveData();
 	
-private:
+protected:
 	void loadData();
 
 };

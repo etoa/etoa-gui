@@ -2,10 +2,9 @@
 #ifndef __WRECKAGEHANDLER__
 #define __WRECKAGEHANDLER__
 
-#include <mysql++/mysql++.h>
-
 #include "../../FleetHandler.h"
-#include "../../MysqlHandler.h"
+#include "../../functions/Functions.h"
+#include "../../config/ConfigHandler.h"
 
 /**
 * Handles Wreackage....
@@ -23,15 +22,15 @@ namespace wreckage
 
 	private:
 		/**
-		* Wreckage resources
+		* Wreckage resources, only for Message
 		**/
 		double metal, crystal, plastic;
 		double sum;
 		
 		/**
-		* Fleet capacity and percentage fleet capacity / resources on the field
+		* Percentage fleet capacity / resources on the field
 		**/
-		double capa, percent;
+		double percent;
 		
 	};
 }

@@ -27,17 +27,16 @@
 		query << "LIMIT 1;";
 		mysqlpp::Result pRes = query.store();
 		query.reset();
-
+		
 		if (pRes) {
 			int pSize = pRes.size();
 			
 			if (pSize>0) {
 				mysqlpp::Row pRow = pRes.at(0);
-				
 				this->userId = (int)pRow["planet_user_id"];
-				this->planetUserMain = (bool)pRow["planet_user_main"];
+				this->userMain = (bool)pRow["planet_user_main"];
 				this->codeName = std::string(pRow["planet_name"]);
-				this->planetType = (short)pRow["planet_type_id"];
+				this->typeId = (short)pRow["planet_type_id"];
 				this->resMetal = (double)pRow["planet_res_metal"];
 				this->resCrystal = (double)pRow["planet_res_crystal"];
 				this->resPlastic = (double)pRow["planet_res_plastic"];
@@ -49,27 +48,24 @@
 				this->wfPlastic = (double)pRow["planet_wf_plastic"];
 				this->resPeople = (double)pRow["planet_people"];
 			}
-			else {
-				this->userId = 0;
-				this->planetUserMain = false;
-				this->planetType = 0;
-				this->resMetal = 0;
-				this->resCrystal = 0;
-				this->resPlastic = 0;
-				this->resFuel = 0;
-				this->resFood = 0;
-				this->resPower = 0;
-				this->wfMetal = 0;
-				this->wfCrystal = 0;
-				this->wfPlastic = 0;
-				this->resPeople = 0;
-			}
 		}
+		
+		this->initResMetal = this->resMetal;
+		this->initResCrystal = this->resCrystal;
+		this->initResPlastic = this->resPlastic;
+		this->initResFuel = this->resFuel;
+		this->initResFood = this->resFood;
+		this->initResPower = this->resPower;
+		
+		this->initWfMetal = this->initWfMetal;
+		this->initWfCrystal = this->wfCrystal;
+		this->initWfPlastic = this->wfPlastic;
 		
 		this->dataLoaded = true;
 	}
 	
 	void Planet::saveData() {
+		
 		if (this->changedData) {
 			My &my = My::instance();
 			mysqlpp::Connection *con = my.get();
@@ -80,15 +76,15 @@
 			query << "SET ";
 			query << "	planet_user_id='" << this->getUserId() << "', ";
 			query << "	planet_name='" << this->codeName << "', ";
-			query << "	planet_res_metal='" << this->getResMetal() << "', ";
-			query << "	planet_res_crystal='" << this->getResCrystal() << "', ";
-			query << "	planet_res_fuel='" << this->getResFuel() << "', ";
-			query << "	planet_res_plastic='" << this->getResPlastic() << "', ";
-			query << "	planet_res_food='" << this->getResFood() << "', ";
-			query << "	planet_wf_metal='" << this->getWfMetal() << "', ";
-			query << "	planet_wf_crystal='" << this->getWfCrystal() << "', ";
-			query << "	planet_wf_plastic='" << this->getWfPlastic() << "', ";
-			query << "	planet_people='" << this->getResPeople() << "' ";
+			query << "	planet_res_metal=planet_res_metal+'" << (this->getResMetal() - this->initResMetal) << "', ";
+			query << "	planet_res_crystal=planet_res_crystal+'" << (this->getResCrystal() - this->initResCrystal) << "', ";
+			query << "	planet_res_fuel=planet_res_fuel+'" << (this->getResFuel() - this->initResFuel) << "', ";
+			query << "	planet_res_plastic=planet_res_plastic+'" << (this->getResPlastic() - this->initResPlastic) << "', ";
+			query << "	planet_res_food=planet_res_food+'" << (this->getResFood() - this->initResFood) << "', ";
+			query << "	planet_wf_metal=planet_wf_metal+'" << (this->getWfMetal() - this->initWfMetal) << "', ";
+			query << "	planet_wf_crystal=planet_wf_crystal+'" << (this->getWfCrystal() - this->initWfCrystal) << "', ";
+			query << "	planet_wf_plastic=planet_wf_plastic+'" << (this->getWfPlastic() - this->initWfPlastic) << "', ";
+			query << "	planet_people=planet_people+'" << (this->getResPeople() - this->initResPeople) << "' ";
 			query << "WHERE ";
 			query << "	id='" << this->getId() << "' ";
 			query << "LIMIT 1;";
@@ -97,117 +93,4 @@
 		}
 		
 		this->changedData = false;
-	}
-	
-	double Planet::getWfMetal() {
-		if (!this->dataLoaded)
-			this->loadData();
-			
-		return this->wfMetal;
-	}
-	
-	double Planet::getWfCrystal() {
-		if (!this->dataLoaded)
-			this->loadData();
-			
-		return this->wfCrystal;
-	}
-	
-	double Planet::getWfPlastic() {
-		if (!this->dataLoaded)
-			this->loadData();
-			
-		return this->wfPlastic;
-	}
-	
-	double Planet::getWfsum() {
-		if (!this->dataLoaded)
-			this->loadData();
-			
-		return this->getWfMetal() + this->getWfCrystal() + this->getWfPlastic();
-	}
-	
-	double Planet::removeWfMetal(double metal) {
-		if (!this->dataLoaded)
-			this->loadData();
-			
-		this->changedData = true;
-		if (metal<=this->wfMetal) {
-			this->wfMetal -= metal;
-			return metal;
-		}
-		else {
-			metal = this->wfMetal;
-			this->wfMetal = 0;
-			return metal;
-		}
-	}
-	
-	double Planet::removeWfCrystal(double crystal) {
-		if (!this->dataLoaded)
-			this->loadData();
-			
-		this->changedData = true;
-		if (crystal<=this->wfCrystal) {
-			this->wfCrystal -= crystal;
-			return crystal;
-		}
-		else {
-			crystal = this->wfCrystal;
-			this->wfCrystal = 0;
-			return crystal;
-		}
-	}
-	
-	double Planet::removeWfPlastic(double plastic) {
-		if (!this->dataLoaded)
-			this->loadData();
-			
-		this->changedData = true;
-		if (plastic<=this->wfPlastic) {
-			this->wfPlastic -= plastic;
-			return plastic;
-		}
-		else {
-			plastic = this->wfPlastic;
-			this->wfPlastic = 0;
-			return plastic;
-		}
-	}
-	
-	double Planet::getResPeople() {
-		if (!this->dataLoaded)
-			this->loadData();
-			
-		return this->resPeople;
-	}
-	
-	double Planet::removeResPeople(double people) {
-		if (!this->dataLoaded)
-			this->loadData();
-			
-		this->changedData = true;
-		if (people<=this->resPeople) {
-			this->resPeople -= people;
-			return people;
-		}
-		else {
-			people = this->resPeople;
-			this->resPeople = 0;
-			return people;
-		}
-	}
-	
-	bool Planet::getPlanetUserMain() {
-		if (!this->dataLoaded)
-			this->loadData();
-			
-		return this->planetUserMain;
-	}
-	
-	short Planet::getPlanetType() {
-		if (!this->dataLoaded)
-			this->loadData();
-			
-		return this->planetType;
 	}

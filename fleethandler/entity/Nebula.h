@@ -3,6 +3,7 @@
 #define __NEBULA__
 
 #include <ctime>
+#include <string>
 #include <mysql++/mysql++.h>
 
 #include "Entity.h"
@@ -22,9 +23,13 @@ public:
 		this->showCoords = true;
 	}
 	
+	~Nebula() {
+		this->saveData();
+	}
+	
 	void saveData();
-		
-private:
+	
+protected:
 	void loadData();
 
 };

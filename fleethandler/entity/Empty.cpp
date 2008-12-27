@@ -1,17 +1,23 @@
 
 #include "Empty.h"
-	
+
 	void Empty::loadData() {
-		this->resMetal = 0;
-		this->resCrystal = 0;
-		this->resPlastic = 0;
-		this->resFuel = 0;
-		this->resFood = 0;
-		this->resPower = 0;
+		
+		this->initResMetal = this->resMetal;
+		this->initResCrystal = this->resCrystal;
+		this->initResPlastic = this->resPlastic;
+		this->initResFuel = this->resFuel;
+		this->initResFood = this->resFood;
+		this->initResPower = this->resPower;
+		
+		this->initWfMetal = this->resMetal;
+		this->initWfCrystal = this->wfCrystal;
+		this->initWfPlastic = this->wfPlastic;
 		
 		this->dataLoaded = true;
 	}
 	
 	void Empty::saveData() {
+		
 		this->changedData = false;
 	}

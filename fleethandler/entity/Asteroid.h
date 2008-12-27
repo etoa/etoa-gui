@@ -2,6 +2,7 @@
 #ifndef __ASTEROID__
 #define __ASTEROID__
 
+#include <string>
 #include <mysql++/mysql++.h>
 
 #include "Entity.h"
@@ -19,9 +20,13 @@ public:
 		this->showCoords = true;
 	}
 	
+	~Asteroid() {
+		this->saveData();
+	}
+	
 	void saveData();
 	
-private:
+protected:
 	void loadData();
 
 };

@@ -2,6 +2,7 @@
 #ifndef __WORMHOLE__
 #define __WORMHOLE__
 
+#include <string>
 #include <mysql++/mysql++.h>
 
 #include "Entity.h"
@@ -19,11 +20,14 @@ public:
 		this->showCoords = true;
 	}
 	
+	~Wormhole() {
+		this->saveData();
+	}
+	
 	void saveData();
 	
-private:
+protected:
 	void loadData();
-
 };
 
 #endif

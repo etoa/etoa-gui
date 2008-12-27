@@ -2,6 +2,7 @@
 #ifndef __PLANET__
 #define __PLANET__
 
+#include <string>
 #include <mysql++/mysql++.h>
 
 #include "Entity.h"
@@ -20,31 +21,14 @@ public:
 		this->showCoords = true;
 	}
 	
+	~Planet() {
+		this->saveData();
+	}
+	
 	void saveData();
 	
-	double getWfMetal();
-	double getWfCrystal();
-	double getWfPlastic();
-	double getWfsum();
-	
-	double removeWfMetal(double metal);
-	double removeWfCrystal(double crystal);
-	double removeWfPlastic(double plastic);
-	
-	double getResPeople();
-	double removeResPeople(double people);
-	
-	bool getPlanetUserMain();
-	
-	short getPlanetType();
-	
-private:
+protected:
 	void loadData();
-	
-	bool planetUserMain;
-	short planetType;
-	double wfMetal, wfCrystal, wfPlastic;
-	double resPeople;
 
 };
 
