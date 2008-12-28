@@ -215,7 +215,6 @@
 								echo "<div style=\"padding-left:10px;\">
 								<b>PHP:</b> ".substr(phpversion(),0,10)."<br/>
 								<b>MySQL:</b> ".mysql_get_client_info()."<br/>
-								<b>Webserver:</b> ".apache_get_version()."
 								</div>";
 							?>
 						</td>
