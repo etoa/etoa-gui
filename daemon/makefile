@@ -2,8 +2,8 @@ OBJECTS = main.o logger.o pidfile.o anyoption.o
 
 OPTS = 
 
-etoadaemon: ${OBJECTS}
-	g++ ${OBJECTS} ${OPTS} -o etoadaemon
+etoad: ${OBJECTS}
+	g++ ${OBJECTS} ${OPTS} -o etoad
 	
 main.o: main.cpp
 	g++ -c main.cpp

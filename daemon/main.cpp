@@ -1,3 +1,26 @@
+//////////////////////////////////////////////////
+//		 	 ____    __           ______       			//
+//			/\  _`\ /\ \__       /\  _  \      			//
+//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
+//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
+//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
+//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
+//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
+//																					 		//
+//////////////////////////////////////////////////
+// The Andromeda-Project-Browsergame				 		//
+// Ein Massive-Multiplayer-Online-Spiel			 		//
+// Programmiert von Nicolas Perrenoud				 		//
+// www.nicu.ch | mail@nicu.ch								 		//
+// als Maturaarbeit '04 am Gymnasium Oberaargau	//
+//////////////////////////////////////////////////
+
+/**
+* Daemon framework
+*
+* @author Nicolas Perrenoud <mrcage@etoa.ch>
+*/
+
 #include <iostream>
 #include <signal.h>
 #include <sys/types.h>
@@ -31,6 +54,9 @@ void lout(std::string msg)
 // Signal handler
 void sighandler(int sig)
 {
+	// Clean up pidfile
+	unlink(pidFile.c_str()); // This is somehow a hack, better find a way to make more use of pidfile class
+	
 	char str[50];
 	if (sig == SIGTERM)
 	{
