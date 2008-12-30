@@ -1,52 +1,6 @@
 <?PHP
 
-	$topnav=array();
 	$navmenu=array();
-	
-	
-	// Links des oberen Menüs
-	$topnav['Login-Admin']['url']="http://www.etoa.ch/admin";
-	$topnav['Login-Admin']['newwindow']=true;
-
-	$topnav['Forum']['url']=FORUM_PATH;
-	$topnav['Forum']['newwindow']=true;
-	
-	$topnav['Hilfecenter']['url']=HELPCENTER_URL;
-	$topnav['Hilfecenter']['newwindow']=true;
-	
-	$topnav['Regeln']['url']=RULES_URL;
-	$topnav['Regeln']['newwindow']=true;
-	
-	$topnav['Fehler melden']['url']=DEVCENTER_PATH;
-	$topnav['Fehler melden']['newwindow']=true;
-	
-	$topnav['Chat']['url']=CHAT_URL;
-	$topnav['Chat']['newwindow']=true;
-	
-	$topnav['TeamSpeak']['url']=TEAMSPEAK_URL;
-	$topnav['TeamSpeak']['newwindow']=true;
-
-	// Links des linken Menüs
-	/*
-	$navmenu = array
-	(
-		"Allgemeines" => array 
-		(
-			'Startseite' => array
-			(
-				'page' => "home",
-				'sub' => ''
-				'level' = 0;
-			),
-			'Ingame-News' => 
-		)
-		
-	);
-	*/
-	
-	
-	
-	
 	
 	$navmenu['Allgemeines']['Startseite']['page']="home";
 	$navmenu['Allgemeines']['Startseite']['sub']="";
@@ -68,14 +22,9 @@
 	$navmenu['Allgemeines']['Rangliste']['sub']="stats";
 	$navmenu['Allgemeines']['Rangliste']['level']=0;
 
-	$navmenu['Allgemeines']['Tipps']['page']="home";
-	$navmenu['Allgemeines']['Tipps']['sub']="tipps";
-	$navmenu['Allgemeines']['Tipps']['level']=0;
-
-	$navmenu['Allgemeines']['Datei-Austausch']['page']="home";
-	$navmenu['Allgemeines']['Datei-Austausch']['sub']="filesharing";
-	$navmenu['Allgemeines']['Datei-Austausch']['level']=1;
-
+	$navmenu['Allgemeines']['Backend-Daemon']['page']="home";
+	$navmenu['Allgemeines']['Backend-Daemon']['sub']="daemon";
+	$navmenu['Allgemeines']['Backend-Daemon']['level']=0;
 
 	$navmenu['Allgemeines']['bar'][0] = true;
 
@@ -333,13 +282,6 @@
 	$navmenu['Ereignisse']['Ereignisse testen']['level']=0;
 	
 	
-	$navmenu['Minimap']['Minimap bearbeiten']['page']="minimap";
-	$navmenu['Minimap']['Minimap bearbeiten']['sub']="";
-	$navmenu['Minimap']['Minimap bearbeiten']['level']=1;
-	
-	$navmenu['Minimap']['Events']['page']="minimap";
-	$navmenu['Minimap']['Events']['sub']="events";
-	$navmenu['Minimap']['Events']['level']=1;
 
 */
 
@@ -347,10 +289,6 @@
 	$navmenu['Galaxie']['Entitäten']['sub']="";
 	$navmenu['Galaxie']['Entitäten']['level']=1;
 
-//	$navmenu['Galaxie']['Zellen']['page']="galaxy";
-//	$navmenu['Galaxie']['Zellen']['sub']="cells";
-//	$navmenu['Galaxie']['Zellen']['level']=1;
-//
 	$navmenu['Galaxie']['Karte']['page']="galaxy";
 	$navmenu['Galaxie']['Karte']['sub']="map";
 	$navmenu['Galaxie']['Karte']['level']=1;
@@ -454,9 +392,17 @@
 	$navmenu['Konfiguration']['Start-Items']['sub']="defaultitems";
 	$navmenu['Konfiguration']['Start-Items']['level']=3;
 
+	$navmenu['Konfiguration']['Tipps']['page']="config";
+	$navmenu['Konfiguration']['Tipps']['sub']="tipps";
+	$navmenu['Konfiguration']['Tipps']['level']=0;
+
 	$navmenu['Konfiguration']['RSS']['page']="config";
 	$navmenu['Konfiguration']['RSS']['sub']="rss";
 	$navmenu['Konfiguration']['RSS']['level']=0;
+
+	$navmenu['Tools']['Datei-Austausch']['page']="tools";
+	$navmenu['Tools']['Datei-Austausch']['sub']="filesharing";
+	$navmenu['Tools']['Datei-Austausch']['level']=1;
 
 	$navmenu['Tools']['PHP-Infos']['page']="tools";
 	$navmenu['Tools']['PHP-Infos']['sub']="php";

@@ -502,6 +502,10 @@
 	define('USERSTATS_OUTFILE',CACHE_ROOT."/out/userstats.png");
 	define('XML_INFO_FILE',CACHE_ROOT."/xml/info.xml");
 
+	// Daemon
+	// Todo: make changeable
+	$daemonLogfile = "/var/log/etoa/test.log";
+	$daemonPidfile = "/var/run/etoa/test.pid";
 
 	// Advertising
 	define('ADD_BANNER','');

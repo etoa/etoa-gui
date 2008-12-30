@@ -890,4 +890,29 @@
 		
 	}
 
+	function tail($file, $num_to_get=10)
+	{
+	  if ($fp = fopen($file, 'r'))
+	  {
+		  $position = filesize($file);
+		  fseek($fp, $position-1);
+		  $chunklen = 4096;
+		  while($position >= 0)
+		  {
+		    $position = $position - $chunklen;
+		    if ($position < 0) { $chunklen = abs($position); $position=0;}
+		    fseek($fp, $position);
+		    $data = fread($fp, $chunklen). $data;
+		    if (substr_count($data, "\n") >= $num_to_get + 1)
+		    {
+		       preg_match("!(.*?\n){".($num_to_get-1)."}$!", $data, $match);
+		       return $match[0];
+		    }
+		  }
+		  fclose($fp);
+		  return $data;
+		}
+		return false;
+	} 
+
 ?>

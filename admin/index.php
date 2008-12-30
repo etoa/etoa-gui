@@ -52,12 +52,6 @@
 					<tr>
 						<td id="topbar" colspan="3">
 							<?PHP
-								foreach ($topnav as $title=> $data)
-								{
-									echo " &nbsp; <a href=\"".$data['url']."\" onclick=\"window.open('".$data['url']."');return false;\">$title</a>";
-								}
-								echo "<br/>";								
-							
 								echo '<a href="?adminlist=1">Adminliste</a> | ';
 								echo '<a href="?myprofile=1">Mein Profil</a> | ';
 								$nres = dbquery("select COUNT(*) from admin_notes where admin_id='".$s['user_id']."'");
@@ -143,6 +137,39 @@
 
 								echo "<br/>";
 
+								// Online
+								echo "<div class=\"menutitle\">Status:</div>";
+								$gres=dbquery("SELECT COUNT(*) FROM users WHERE user_acttime>".(time()-$conf['user_timeout']['v']).";");
+								$garr=mysql_fetch_row($gres);
+								if ($uarr[0]>0)
+									$gp=$garr[0]/$uarr[0]*100;
+								else
+									$gp=0;
+								$a1res=dbquery("SELECT COUNT(*)  FROM admin_users WHERE user_acttime>".(time()-TIMEOUT)." AND user_session_key!='';");
+								$a1arr=mysql_fetch_row($a1res);
+								$a2res=dbquery("SELECT COUNT(*)  FROM admin_users;");
+								$a2arr=mysql_fetch_row($a2res);
+								if ($a2arr[0]>0)
+									$ap=$a1arr[0]/$a2arr[0]*100;
+								else
+									$ap=0;
+									
+								echo "<table class=\"tb\">";
+								if (UNIX)
+								{
+									echo "<tr><th><a href=\"?page=home&amp;sub=daemon\">Backend:</a></th>";
+									if ($pid = checkDaemonRunning($daemonPidfile))
+										echo "<td colspan=\"2\" style=\"color:#0f0;\">Online, PID $pid</td>";
+									else
+										echo "<td colspan=\"2\" style=\"color:red;\">LÄUFT NICHT!</td>";
+									echo "</tr>";							
+								}								
+								echo "<tr><th><a href=\"?page=user&amp;sub=userlog\">User:</a></th><td>".$garr[0]." / ".$uarr[0]."</td><td>".round($gp,1)."%</td></tr>";
+								echo "<tr><th><a href=\"?page=home&amp;sub=adminlog\">Admins:</a></th><td>".$a1arr[0]." / ".$a2arr[0]."</td><td>".round($ap,1)."%</td></tr>";
+								echo "</table>";
+
+
+
 								//
 								// Auslastung
 								//
@@ -170,7 +197,7 @@
 									$sp=$s1arr/$s2arr[0];
 								else
 									$sp=0;
-								echo "<br/><div class=\"menutitle\">Auslastung:</div>";
+								echo "<br/><div class=\"menutitle\">User-Statisik:</div>";
 								echo "<table class=\"tb\">";
 								echo "<tr><th>User:</th>";
 								if ($up<0.5) $tbs=$g_style;
@@ -192,30 +219,16 @@
 								echo "<td $tbs>".$s1arr." / ".$s2arr[0]."</td><td $tbs>".round($sp*100,1)."%</td></tr>";
 								echo "</table>";
 
-								// Online
-								echo "<br/><div class=\"menutitle\">Online:</div>";
-								$gres=dbquery("SELECT COUNT(*) FROM users WHERE user_acttime>".(time()-$conf['user_timeout']['v']).";");
-								$garr=mysql_fetch_row($gres);
-								if ($uarr[0]>0)
-									$gp=$garr[0]/$uarr[0]*100;
-								else
-									$gp=0;
-								$a1res=dbquery("SELECT COUNT(*)  FROM admin_users WHERE user_acttime>".(time()-TIMEOUT)." AND user_session_key!='';");
-								$a1arr=mysql_fetch_row($a1res);
-								$a2res=dbquery("SELECT COUNT(*)  FROM admin_users;");
-								$a2arr=mysql_fetch_row($a2res);
-								if ($a2arr[0]>0)
-									$ap=$a1arr[0]/$a2arr[0]*100;
-								else
-									$ap=0;
+								echo "<br/><div class=\"menutitle\">System:</div>";
 								echo "<table class=\"tb\">";
-								echo "<tr><th><a href=\"?page=user&amp;sub=userlog\">User:</a></th><td>".$garr[0]." / ".$uarr[0]."</td><td>".round($gp,1)."%</td></tr>";
-								echo "<tr><th><a href=\"?page=home&amp;sub=adminlog\">Admins:</a></th><td>".$a1arr[0]." / ".$a2arr[0]."</td><td>".round($ap,1)."%</td></tr>";
-								echo "</table><br/>";
-								echo "<div style=\"padding-left:10px;\">
-								<b>PHP:</b> ".substr(phpversion(),0,10)."<br/>
-								<b>MySQL:</b> ".mysql_get_client_info()."<br/>
-								</div>";
+								if (UNIX)
+								{
+									$un=posix_uname();
+									echo "<tr><th>System:</th><td>".$un['sysname']." ".$un['release']." ".$un['version']."</td></tr>";									
+								}
+								echo "<tr><th>PHP:</th><td>".substr(phpversion(),0,10)."</td></tr>
+								<tr><th>MySQL:</th><td>".mysql_get_client_info()."</td></tr>
+								</table>";
 							?>
 						</td>
 						<td id="content">

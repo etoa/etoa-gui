@@ -35,6 +35,14 @@
 	{
 		include("config/defaultitems.inc.php");
 	}
+	
+	//
+	// Tipps
+	//
+	elseif ($sub=="tipps")
+	{
+		advanced_form("tipps");
+	}	
 
 	//
 	// RSS
