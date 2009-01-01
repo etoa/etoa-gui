@@ -72,6 +72,18 @@ void sighandler(int sig)
 	exit(EXIT_FAILURE);
 }
 
+bool fileExists( std::string fileName )
+{
+    FILE* fp = NULL;
+    fp = fopen( fileName.c_str(), "rb" );
+    if( fp != NULL )
+    {
+        fclose( fp );
+        return true;
+    }
+    return false;
+}
+
 // Create a daemon
 int daemonize()
 {
@@ -136,10 +148,12 @@ int main(int argc, char* argv[])
   opt->addUsage( " -u  --uid userid        Select user id under which it runs (necessary if you are root)");
   opt->addUsage( " -p  --pidfile path      Select path to pidfile");
   opt->addUsage( " -l  --logfile path  	   Select path to logfile");
+  opt->addUsage( " -k  --killexisting  	   Kills an already running instance of this backend");
   opt->addUsage( " -h  --help              Prints this help");
   opt->addUsage( " -v  --version           Prints version information");
   opt->setFlag("help",'h');
   opt->setFlag("version",'v');
+  opt->setFlag("killexisting",'k');
   opt->setOption("userid",'u');
   opt->setOption("round",'r');
   opt->setOption("pidfile",'p');  
@@ -159,6 +173,11 @@ int main(int argc, char* argv[])
   {	
   	cout << "EtoA Backend Daemon, Version "<<versionString<<endl<<"(c) by EtoA Gaming, www.etoa.c"<<endl<<endl;
  		return EXIT_SUCCESS;
+	}
+	bool killExistingInstance = false;
+  if( opt->getFlag( "killexisting" ) || opt->getFlag( 'k' )) 
+  {	
+		killExistingInstance = true;
 	}
 	
 	if( opt->getValue( 'r' ) != NULL)
@@ -205,6 +224,47 @@ int main(int argc, char* argv[])
     exit(EXIT_FAILURE);  	
   }  
 
+	// Check for existing instance
+	if (fileExists(pidFile))
+	{
+   	char mystring[10];
+   	FILE * pFile = fopen (pidFile.c_str(), "r");
+		if (pFile == NULL) 
+		{
+			std::cout << "Strange, the PIDfile exists but I am not allowed to read it!"<<std::endl;
+   		exit(EXIT_FAILURE);
+   	}
+   	else 
+   	{
+     	fgets (mystring , 100 , pFile);
+     	fclose (pFile);
+   	}		
+   	int existingPid = atoi(mystring);
+		if (killExistingInstance)
+		{
+			std::cout << "EtoA Daemon " << gameRound << " seems to run already with PID "<<existingPid<<"! Killing this instance..." << std::endl;
+			int kres = kill(existingPid,SIGTERM);
+			if (kres<0)
+			{
+				if (errno==EPERM)
+				{
+					std::cout << "I am not allowed to kill the instance. Exiting..." << std::endl;
+					exit(EXIT_FAILURE);
+				}
+				else
+				{
+					std::cout << "The process doesn't exist, perhaps the PID file was outdated. Continuing..." << std::endl;
+				}
+			}
+			sleep(1);
+		}
+		else
+		{
+			std::cout << "EtoA Daemon " << gameRound << " is already running with PID "<<existingPid<<"!"<<std::endl<<"Use the -k flag to force killing it. Exiting..." << std::endl;
+			exit(EXIT_FAILURE);
+		}
+	}
+
   /* Open any logs here */        
 	Logger* log = Logger::getInstance();
 	log->setFile(logFile);
@@ -221,8 +281,8 @@ int main(int argc, char* argv[])
 	int i=0;
 	while (true)
 	{
-		lout("foobar");
-		sleep(2);
+		//lout("foobar");
+		sleep(1);
 	}
 	
 	// This point should never be reached
