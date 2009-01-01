@@ -11,6 +11,7 @@ namespace defaul
 		*/ 
 
 		// Send the fleet back home
-		fleetReturn(1);
+		this->actionMessage->dontSend();
+		this->f->setReturn();
 	}
 }

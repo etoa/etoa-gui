@@ -2,6 +2,7 @@
 #include "Planet.h"
 	
 	void Planet::loadData() {
+		Config &config = Config::instance();
 		
 		My &my = My::instance();
 		mysqlpp::Connection *con = my.get();
@@ -19,7 +20,9 @@
 		query << "	planet_wf_metal, ";
 		query << "	planet_wf_crystal, ";
 		query << "	planet_wf_plastic, ";
-		query << "	planet_people ";
+		query << "	planet_people, ";
+		query << "	planet_fields, ";
+		query << "	planet_last_updated ";
 		query << "FROM ";
 		query << "	planets ";
 		query << "WHERE ";
@@ -47,7 +50,15 @@
 				this->wfCrystal = (double)pRow["planet_wf_crystal"];
 				this->wfPlastic = (double)pRow["planet_wf_plastic"];
 				this->resPeople = (double)pRow["planet_people"];
+				
+				this->fields = (int)pRow["planet_fields"];
+				this->lastUpdated = (int)pRow["planet_last_updated"];
 			}
+		}
+		
+		if (this->typeId == config.nget("gasplanet", 0)) {
+			this->codeName = "Gasplanet";
+			this->updateGasPlanet();
 		}
 		
 		this->initResMetal = this->resMetal;
@@ -55,13 +66,32 @@
 		this->initResPlastic = this->resPlastic;
 		this->initResFuel = this->resFuel;
 		this->initResFood = this->resFood;
+		this->initResPeople = this->resPeople;
 		this->initResPower = this->resPower;
 		
-		this->initWfMetal = this->initWfMetal;
+		this->initWfMetal = this->wfMetal;
 		this->initWfCrystal = this->wfCrystal;
 		this->initWfPlastic = this->wfPlastic;
 		
+		this->entityUser = new User(this->userId);
+		
 		this->dataLoaded = true;
+	}
+	
+	void Planet::updateGasPlanet() {
+		Config &config = Config::instance();
+		std::time_t time = std::time(0);
+		
+		int ptime = time;
+		if (this->lastUpdated == 0) this->lastUpdated = ptime;
+		double tlast = ptime - this->lastUpdated;
+		tlast += this->resFuel;
+					
+		double pSize = (int)config.nget("gasplanet", 2)*this->fields;
+		this->resFuel = std::min(tlast,pSize);
+		
+		this->lastUpdated = time;
+		this->changedData = true;
 	}
 	
 	void Planet::saveData() {
@@ -84,7 +114,8 @@
 			query << "	planet_wf_metal=planet_wf_metal+'" << (this->getWfMetal() - this->initWfMetal) << "', ";
 			query << "	planet_wf_crystal=planet_wf_crystal+'" << (this->getWfCrystal() - this->initWfCrystal) << "', ";
 			query << "	planet_wf_plastic=planet_wf_plastic+'" << (this->getWfPlastic() - this->initWfPlastic) << "', ";
-			query << "	planet_people=planet_people+'" << (this->getResPeople() - this->initResPeople) << "' ";
+			query << "	planet_people=planet_people+'" << (this->getResPeople() - this->initResPeople) << "', ";
+			query << "	planet_last_updated='" << this->lastUpdated << "' ";
 			query << "WHERE ";
 			query << "	id='" << this->getId() << "' ";
 			query << "LIMIT 1;";

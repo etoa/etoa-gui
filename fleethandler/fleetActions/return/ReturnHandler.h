@@ -2,10 +2,8 @@
 #ifndef __RETURNHANDLER__
 #define __RETURNHANDLER__
 
-#include <mysql++/mysql++.h>
-
 #include "../../FleetHandler.h"
-#include "../../MysqlHandler.h"
+#include "../../config/ConfigHandler.h"
 
 /**
 * Handles Return....
@@ -20,12 +18,7 @@ namespace retour
 	public:
 		ReturnHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }
 		void update();
-
-	private:
-		/**
-		* User wanna have a return message or not
-		**/
-		bool sendMsg;
+	
 	};
 }
 #endif

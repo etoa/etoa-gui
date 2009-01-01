@@ -12,153 +12,77 @@ namespace support
 	{
 	
 		/**
-		* Fleet-Action: Position
+		* Fleet-Action: Support
 		*/
 		
 		Config &config = Config::instance();
 		
+		this->actionMessage->addType((int)config.idget("SHIP_MISC_MSG_CAT_ID"));
+		
 		//Support beenden und Flotte nach Hause schicken
 		if (this->f->getStatus()==3) {
-			mysqlpp::Query query = con_->query();
-			query << "UPDATE ";
-			query << "	fleet ";
-			query << "SET ";
-			query << "	entity_to=next_id, ";
-			query << "	next_id=0, ";
-			query << "	landtime=launchtime+nextactiontime, ";
-			query << "	launchtime=landtime, ";
-			query << "	nextactiontime='0', ";
-			query << "	res_fuel='0', ";
-			query << "	status='1' ";
-			query << "WHERE ";
-			query << "	id='" << this->f->getId() << "';";
-			query.store();
-			query.reset();
+			this->f->setReturn();
 			
-			//Nachricht senden Flotteninhaber
-			this->msg = "[b]SUPPORT BEENDET[/b]\n\nEine eurer Flotten hat hat ihr Ziel verlassen und macht sich nun auf den Rückweg!\n\n[b]Zielplanet:[/b] ";
-			this->msg += this->f->getEntityToString(0);
-			this->msg += "\n[b]Startplanet:[/b] ";
-			this->msg += this->f->getEntityFromString(0);
-			this->msg += "\n[b]Zeit:[/b] ";
-			this->msg += this->f->getLandtimeString();
-			this->msg += "\n[b]Auftrag:[/b] ";
-			this->msg += this->f->getActionString();
+			this->actionMessage->addText("[b]SUPPORT BEENDET[/b]",2);
+			this->actionMessage->addText("Eine eurer Flotten hat hat ihr Ziel verlassen und macht sich nun auf den Rückweg!",2);
+			this->actionMessage->addText("[b]Zielplanet:[/b]");
+			this->actionMessage->addText(this->targetEntity->getCoords(),1);
+			this->actionMessage->addText("[b]Startplanet:[/b] ");
+			this->actionMessage->addText(this->startEntity->getCoords(),1);
+			this->actionMessage->addText("[b]Zeit:[/b] ");
+			this->actionMessage->addText(this->f->getLandtimeString(),1);
+			this->actionMessage->addText("[b]Auftrag:[/b] ");
+			this->actionMessage->addText(this->f->getActionString(),1);
 			
-			functions::sendMsg(this->f->getUserId(),(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Supportflotte Rückflug",this->msg);
+			this->actionMessage->addSubject("Supportflotte Rückflug");
 							
-			if (this->f->getEntityToUserId() != this->f->getUserId()) {
-				//Nachricht senden Flotteninhaber
-				this->msg = "[b]SUPPORT BEENDET[/b]\n\nEine Flotte hat hat ihr Ziel verlassen und macht isch nun auf den Rückweg!\n\n[b]Zielplanet:[/b] ";
-				this->msg += this->f->getEntityToString(0);
-				this->msg += "\n[b]Startplanet:[/b] ";
-				this->msg += this->f->getEntityFromString(0);
-				this->msg += "\n[b]Zeit:[/b] ";
-				this->msg += this->f->getLandtimeString();
-				this->msg += "\n[b]Auftrag:[/b] ";
-				this->msg += this->f->getActionString();
-				this->msg += "\n[b]User:[/b] ";
-				this->msg += this->f->getEntityToUserId();
-				functions::sendMsg(this->f->getEntityToUserId(),(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Supportflotte Rückflug",this->msg);
+			if (this->startEntity->getUserId() != this->f->getUserId()) {
+				this->actionMessage->addUserId(this->startEntity->getUserId());
 			}
 		}
-		
+		//Support beginnen
 		else {
-			//Support beginnen
-			this->flyingHomeTime = this->f->getLandtime() - this->f->getLaunchtime();;
-		
 			// Precheck action==possible?
-			mysqlpp::Query query = con_->query();
-			query << "SELECT ";
-			query << "	owner.user_alliance_id AS oAId, ";
-			query << "	owner.user_id, ";
-			query << "	owner.user_nick, ";
-			query << "	fleet.user_alliance_id AS fAId ";
-			query << "FROM ";
-			query << "	users AS owner ";
-			query << "INNER JOIN ";
-			query << "	planets ";
-			query << "ON ";
-			query << "	owner.user_id = planets.planet_user_id ";
-			query << "	AND planets.id='" << this->f->getEntityTo() << "' ";
-			query << "LEFT JOIN ";
-			query << "	users AS fleet ";
-			query << "ON ";
-			query << "	fleet.user_id ='" << this->f->getUserId() << "';";
-			mysqlpp::Result checkRes = query.store();
-			query.reset();
-		
-			if (checkRes) {
-				int checkSize = checkRes.size();
+			if (this->fleetUser->getAllianceId() == this->targetEntity->getUser()->getAllianceId()) {
+				this->actionMessage->addText("[b]SUPPORTFLOTTE ANGEKOMMEN[/b]",2);
+				this->actionMessage->addText("Eine Flotte hat ihr Ziel erreicht!",2);
+				this->actionMessage->addText("[b]Zielplanet:[/b] ");
+				this->actionMessage->addText(this->targetEntity->getCoords(),1);
+				this->actionMessage->addText("[b]Startplanet:[/b] ");
+				this->actionMessage->addText(this->startEntity->getCoords(),1);
+				this->actionMessage->addText("[b]Zeit:[/b] ");
+				this->actionMessage->addText(this->f->getLandtimeString(),1);
+				this->actionMessage->addText("[b]Auftrag:[/b] ");
+				this->actionMessage->addText(this->f->getActionString(),1);
+				this->actionMessage->addText("[b]Ende des Auftrages:[/b] ");
+				this->actionMessage->addText(functions::formatTime(this->f->getLandtime() + this->f->getNextactiontime()),1);
+				this->actionMessage->addText("[b]Flottenbesitzer:[/b] ");
+				this->actionMessage->addText(this->fleetUser->getUserNick(),1);
 				
-				if (checkSize > 0) {
-					mysqlpp::Row checkRow = checkRes.at(0);
+				this->actionMessage->addSubject("Supportflotte angekommen");
 				
-					if ((int)checkRow["oAId"] == (int)checkRow["fAId"] && (int)checkRow["fAId"] > 0) {
-
-						this->landtime = this->f->getLandtime() + this->f->getNextactiontime();
-							
-						query << "UPDATE ";
-						query << "	fleet ";
-						query << "SET ";
-						query << "	next_id=entity_from, ";
-						query << "	entity_from=entity_to, ";
-						query << "	nextactiontime='" << this->flyingHomeTime << "', ";
-						query << "	launchtime=landtime, ";
-						query << "	landtime='" << this->landtime << "', ";
-						query << "	status='3' ";
-						query << "WHERE ";
-						query << "	id='" << this->f->getId() << "';";
-						query.store();
-						query.reset();
-
-						//Nachricht senden Flotteninhaber
-						this->msg = "[b]SUPPORTFLOTTE ANGEKOMMEN[/b]\n\nEine eurer Flotten hat hat ihr Ziel erreicht!\n\n[b]Zielplanet:[/b] ";
-						this->msg += this->f->getEntityToString(0);
-						this->msg += "\n[b]Startplanet:[/b] ";
-						this->msg += this->f->getEntityFromString(0);
-						this->msg += "\n[b]Zeit:[/b] ";
-						this->msg += this->f->getLandtimeString();
-						this->msg += "\n[b]Auftrag:[/b] ";
-						this->msg += this->f->getActionString();
-						this->msg += "\n[b]Voraussichtliches Ende:[/b] ";
-						this->msg += functions::formatTime(this->flyingHomeTime);
-						
-						functions::sendMsg(this->f->getUserId(),(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Supportflotte angekommen",this->msg);
-						
-						if ((int)checkRow["user_id"] != this->f->getUserId()) {
-							//Nachricht senden Planeteninhaber
-							this->msg = "[b]SUPPORTFLOTTE ANGEKOMMEN[/b]\n\nEine Flotte hat hat ihr Ziel erreicht!\n\n[b]Zielplanet:[/b] ";
-							this->msg += this->f->getEntityToString(0);
-							this->msg += "\n[b]Startplanet:[/b] ";
-							this->msg += this->f->getEntityFromString(0);
-							this->msg += "\n[b]Zeit:[/b] ";
-							this->msg += this->f->getLandtimeString();
-							this->msg += "\n[b]Auftrag:[/b] ";
-							this->msg += this->f->getActionString();
-							this->msg += "\n[b]Voraussichtliches Ende:[/b] ";
-							this->msg += functions::formatTime(this->flyingHomeTime);
-							this->msg += "\n[b]User:[/b] ";
-							this->msg += std::string(checkRow["user_nick"]);
-							functions::sendMsg((int)checkRow["user_nick"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Supportflotte angekommen",this->msg);
-						}
-					}
-					
-					else {
-						//Nachricht senden Flotteninhaber
-						this->msg = "[b]FLOTTE LANDEN FEHLGESCHLAGEN[/b]\n\nEine eurer Flotten konnte nicht auf ihrem Ziel landen!\n\n[b]Zielplanet:[/b] ";
-							this->msg += this->f->getEntityToString(0);
-							this->msg += "\n[b]Startplanet:[/b] ";
-							this->msg += this->f->getEntityFromString(0);
-							this->msg += "\n[b]Zeit:[/b] ";
-							this->msg += this->f->getLandtimeString();
-							this->msg += "\n[b]Auftrag:[/b] ";
-							this->msg += this->f->getActionString();
-			
-						functions::sendMsg(this->f->getUserId(),(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Supportflug fehlgeschlagen",this->msg);
-					
-					}
-				}
+				if (this->targetEntity->getUserId() != this->f->getUserId())
+					this->actionMessage->addUserId(this->targetEntity->getUserId());
+				
+				this->f->setSupport();
+			}
+			else {
+				this->actionMessage->addText("[b]FLOTTE LANDEN FEHLGESCHLAGEN[/b]",2);
+				this->actionMessage->addText("Eine eurer Flotten konnte nicht auf ihrem Ziel landen!",2);
+				this->actionMessage->addText("[b]Zielplanet:[/b] ");
+				this->actionMessage->addText(this->targetEntity->getCoords(),1);
+				this->actionMessage->addText("[b]Startplanet:[/b] ");
+				this->actionMessage->addText(this->startEntity->getCoords(),1);
+				this->actionMessage->addText("[b]Zeit:[/b] ");
+				this->actionMessage->addText(this->f->getLandtimeString(),1);
+				this->actionMessage->addText("[b]Auftrag:[/b] ");
+				this->actionMessage->addText(this->f->getActionString(),1);
+				
+				this->actionMessage->addSubject("Supportflug fehlgeschlagen");
+				
+				this->actionLog->addText("Action failed: Alliance error");
+				
+				this->f->setReturn();
 			}
 		}
 	}

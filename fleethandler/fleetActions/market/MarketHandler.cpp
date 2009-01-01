@@ -1,10 +1,5 @@
-#include <iostream>
-#include <mysql++/mysql++.h>
 
 #include "MarketHandler.h"
-#include "../../MysqlHandler.h"
-#include "../../functions/Functions.h"
-#include "../../config/ConfigHandler.h"
 
 namespace market
 {
@@ -15,53 +10,27 @@ namespace market
 		* Fleet-Action: Market-delivery
 		*/
 		Config &config = Config::instance();
-
-		this->landAction = 1;
-		mysqlpp::Query query = con_->query();
-		query << "SELECT ";
-		query << "	fs_ship_id ";
-		query << "FROM ";
-		query << "	fleet_ships ";
-		query << "WHERE ";
-		query << "	fs_fleet_id=" << this->f->getId() << ";";
-		mysqlpp::Result sRes = query.store();
-		query.reset();
 		
-		if (sRes) {
-			int sSize = sRes.size();
-			
-			if (sSize > 0) {
-				mysqlpp::Row sRow = sRes.at(0);
-
-				if ((int)sRow["fs_ship_id"]==config.idget("MARKET_SHIP_ID") && sSize==1) {
-					this->landAction = 2;
-				}
-			}
-		}
-
+		this->actionMessage->addType((int)config.idget("SHIP_MISC_MSG_CAT_ID"));
+		
 		// Precheck, watch if the buyer is the same as the planet user
-		if (this->f->getEntityToUserId() == this->f->getUserId()) {
+		if (this->targetEntity->getUserId() == this->f->getUserId()) {
 			// Deliver ships and resources
-			if (this->landAction==1) {
+			if (this->f->getCapacity()>0) {
 				// Land fleet and save the resources and the ships on the planet
-				fleetLand(1);
+				fleetLand(1,1,1);
 
 				// Send a message to the user
-				std::string msg = "Eine Flotte vom Handelsministerium hat folgendes Ziel erreicht:\n[b]Planet:[/b] ";
-				msg += this->f->getEntityToString(0);
-				msg += "\n[b]Zeit:[/b] ";
-				msg += this->f->getLandtimeString();
-				msg += "\n[b]Bericht:[/b] Die gekauften Schiffe sind gelandet.\n";
-				msg += msgAllShips;
-			
-				// If the ship deliver resources add the resource part of the message
-				if(this->f->getResLoaded()) {
-					msg += "\nEs wurden zudem folgende Rohstoffe abgeladen:\n";
-					msg += msgRes;
-				}
-
-				msg += "\n\nUnser Unternehmen dankt ihnen f&uuml;r die Unterst&uuml;tzung und wir hoffen sie sind mit uns zufrieden und w&uuml;nschen ihnen auch in Zukunft viel Erfolg.\nDas Handelsministerium";
-				functions::sendMsg(this->f->getEntityToUserId(),(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Flotte vom Handelsministerium",msg);
+				this->actionMessage->addText("Eine Flotte vom Handelsministerium hat folgendes Ziel erreicht:",1);
+				this->actionMessage->addText("[b]Planet:[/b] ");
+				this->actionMessage->addText(this->targetEntity->getCoords(),1);
+				this->actionMessage->addText("[b]Zeit:[/b] ");
+				this->actionMessage->addText(this->f->getLandtimeString(),1);
+				this->actionMessage->addText("[b]Bericht:[/b] Die gekauften Waren sind angekommen.",1);
+				
+				this->actionMessage->addSignature("Unser Unternehmen dankt ihnen f&uuml;r die Unterst&uuml;tzung und wir hoffen sie sind mit uns zufrieden und w&uuml;nschen ihnen auch in Zukunft viel Erfolg.\nDas Handelsministerium");
+				
+				this->actionMessage->addSubject("Flotte vom Handelsministerium");
 			}
 	
 			// If there were only resources delivered
@@ -70,15 +39,16 @@ namespace market
 				fleetLand(2);
 
 				// Send a message to the planet user
-				std::string msg = "Eine Flotte vom Handelsministerium hat folgendes Ziel erreicht:\n[b]Planet:[/b] ";
-				msg += this->f->getEntityToString(0);
-				msg += "\n[b]Zeit:[/b] ";
-				msg += this->f->getLandtimeString();
-				msg += "\n[b]Bericht:[/b] Folgende Waren wurden ausgeladen:\n";
-				msg += msgRes;
-				msg += "\n\nUnser Unternehmen dankt ihnen f&uuml;r die Unterst&uuml;tzung und wir hoffen sie sind mit uns zufrieden und w&uuml;nschen ihnen auch in Zukunft viel Erfolg.\nDas Handelsministerium";
-			
-				functions::sendMsg(this->f->getEntityToUserId(),(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Transport vom Handelsministerium",msg);
+				this->actionMessage->addText("Eine Flotte vom Handelsministerium hat folgendes Ziel erreicht:",1);
+				this->actionMessage->addText("[b]Planet:[/b] ");
+				this->actionMessage->addText(this->targetEntity->getCoords(),1);
+				this->actionMessage->addText("[b]Zeit:[/b] ");
+				this->actionMessage->addText(this->f->getLandtimeString(),1);
+				this->actionMessage->addText("[b]Bericht:[/b] Die gekauften Waren sind angekommen.",1);
+				
+				this->actionMessage->addSignature("Unser Unternehmen dankt ihnen f&uuml;r die Unterst&uuml;tzung und wir hoffen sie sind mit uns zufrieden und w&uuml;nschen ihnen auch in Zukunft viel Erfolg.\nDas Handelsministerium");
+				
+				this->actionMessage->addSubject("Transport vom Handelsministerium");
 			}
 
 			// Delete the fleet data
@@ -87,18 +57,22 @@ namespace market
 		
 		// If the planet user is not the same as the buyer, send fleet to the main and send a message with the info
 		else {
-			fleetSendMain(this->f->getUserId());
+			fleetSendMain();
 			
-			std::string msg = "[b]FLOTTE LANDEN GESCHEITERT[/b]\n\nEine eurer Flotten hat versucht auf ihrem Ziel zu laden Der Versuch scheiterte jedoch und die Flotte macht sich auf den Weg zu eurem Hauptplaneten!\n\n[b]Ziel:[/b] ";
-			msg += this->f->getEntityToString(0);
-			msg += "\n[b]Startplanet:[/b] ";
-			msg += this->f->getEntityFromString(0);
-			msg += "\n[b]Zeit:[/b] ";
-			msg += this->f->getLandtimeString();
-			msg += "\n[b]Auftrag:[/b] ";
-			msg += this->f->getActionString();
+			this->actionMessage->addText("[b]FLOTTE LANDEN GESCHEITERT[/b]",2);
+			this->actionMessage->addText("Eine eurer Flotten hat versucht auf ihrem Ziel zu laden Der Versuch scheiterte jedoch und die Flotte macht sich auf den Weg zu eurem Hauptplaneten!",2);
+			this->actionMessage->addText("[b]Ziel:[/b] ");
+			this->actionMessage->addText(this->targetEntity->getCoords(),1);
+			this->actionMessage->addText("[b]Start:[/b] ");
+			this->actionMessage->addText(this->startEntity->getCoords(),1);
+			this->actionMessage->addText("[b]Zeit:[/b] ");
+			this->actionMessage->addText(this->f->getLandtimeString(),1);
+			this->actionMessage->addText("[b]Auftrag:[/b] ");
+			this->actionMessage->addText(this->f->getActionString(),1);
 			
-			functions::sendMsg(this->f->getUserId(),5,"Flotte umgelenkt",msg);
+			this->actionMessage->addSubject("Flotte umgelenkt");
+			
+			this->actionLog->addText("Action Failed: Planet error");
 		}
 	}
 }

@@ -9,8 +9,8 @@
 
 #include "../MysqlHandler.h"
 #include "../functions/Functions.h"
-#include "../objectData/ObjectHandler.h"
-#include "../objectData/ObjectDataHandler.h"
+#include "../config/ConfigHandler.h"
+#include "../data/DataHandler.h"
 
 #include "Object.h"
 #include "ObjectFactory.h"
@@ -95,7 +95,14 @@ public:
 	double unloadResPower();
 	double unloadResPeople(bool land=true);
 	
+	double getWfMetal();
+	double getWfCrystal();
+	double getWfPlastic();
+	
+	void setPercentSurvive(double percentage);
+	
 	void setReturn();
+	void setSupport();
 	
 	int getEntityToUserId();
 	std::string getEntityToUserString();
@@ -105,6 +112,9 @@ public:
 	std::string getLaunchtimeString();
 	std::string getEntityToString(short type=0);
 	std::string getEntityFromString(short type=0);
+	
+	std::string getDestroyedShipString(std::string reason);
+	std::string getResCollectedString();
 	
 	bool actionIsAllowed();
 	

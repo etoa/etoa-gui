@@ -12,42 +12,45 @@
 #include "BuildingData.h"
 
 	// Liefert eine Kopie des Datenwertes zurück
-	Data::Data* DataHandler::getShipById(int id) {
-		return this->data[idShipConverter[id] ];
+	ShipData::ShipData* DataHandler::getShipById(int id) {
+		return this->shipData[idShipConverter[id] ];
 	}
 	
-	Data::Data* DataHandler::getDefById(int id) {
-		return this->data[idDefConverter[id] ];
+	DefData::DefData* DataHandler::getDefById(int id) {
+		return this->defData[idDefConverter[id] ];
 	}
 	
-	Data::Data* DataHandler::getTechById(int id) {
-		return this->data[idTechConverter[id] ];
+	TechData::TechData* DataHandler::getTechById(int id) {
+		return this->techData[idTechConverter[id] ];
 	}
 	
-	Data::Data* DataHandler::getBuildingById(int id) {
-		return this->data[idBuildingConverter[id] ];
+	BuildingData::BuildingData* DataHandler::getBuildingById(int id) {
+		return this->buildingData[idBuildingConverter[id] ];
 	}
 	
-	Data::Data* DataHandler::getShipByName(std::string name) {
-		return this->data[nameConverter[name] ];
+	ShipData::ShipData* DataHandler::getShipByName(std::string name) {
+		return this->shipData[nameConverter[name] ];
 	}
 	
-	Data::Data* DataHandler::getDefByName(std::string name) {
-		return this->data[nameConverter[name] ];
+	DefData::DefData* DataHandler::getDefByName(std::string name) {
+		return this->defData[nameConverter[name] ];
 	}
 			
-	Data::Data* DataHandler::getTechByName(std::string name) {
-		return this->data[nameConverter[name] ];
+	TechData::TechData* DataHandler::getTechByName(std::string name) {
+		return this->techData[nameConverter[name] ];
 	}
 			
-	Data::Data* DataHandler::getBuildingByName(std::string name) {
-		return this->data[nameConverter[name] ];
+	BuildingData::BuildingData* DataHandler::getBuildingByName(std::string name) {
+		return this->buildingData[nameConverter[name] ];
 	}
 	
 	// Clear the Data and reload it
 	void DataHandler::reloadData()
 	{
-		this->data.clear();
+		this->defData.clear();
+		this->shipData.clear();
+		this->techData.clear();
+		this->buildingData.clear();
 		this->idDefConverter.clear();
 		this->idShipConverter.clear();
 		this->idTechConverter.clear();
@@ -62,8 +65,6 @@
 	{
 		My &my = My::instance();
 		mysqlpp::Connection *con = my.get();
-		
-		Data* object;
 
 		this->counter = 0;
 		mysqlpp::Query query = con->query();
@@ -99,6 +100,7 @@
 		query.reset();
 		if (dRes) {
 			int dSize = dRes.size();
+			DefData* object;
 
 			if (dSize>0) {
 				mysqlpp::Row dRow;
@@ -108,12 +110,13 @@
 					this->idDefConverter[(int)(dRow["id"]) ] =  this->counter;
 					this->nameConverter[std::string(dRow["name"]) ] = this->counter;
 					object = new DefData(dRow);
-					this->data.push_back(object);
+					this->defData.push_back(object);
 					this->counter++;
 				}
 			}
 		}
-
+		
+		this->counter = 0;
 		query << "SELECT ";
 		query << "	ship_id AS Id, ";
 		query << "	ship_name AS Name, ";
@@ -177,6 +180,7 @@
 		query.reset();
 		if (sRes) {
 			int sSize = sRes.size();
+			ShipData* object;
 
 			if (sSize>0) {
 				mysqlpp::Row sRow;
@@ -186,7 +190,7 @@
 					this->idShipConverter[(int)(sRow["id"]) ] =  this->counter;
 					this->nameConverter[std::string(sRow["name"]) ] = this->counter;
 					object = new ShipData(sRow);
-					this->data.push_back(object);
+					this->shipData.push_back(object);
 					this->counter++;
 					/** Save the id in the action container **/
 					
@@ -195,6 +199,7 @@
 			}
 		}
 		
+		this->counter = 0;
 		query << "SELECT ";
 		query << "	tech_id AS Id, ";
 		query << "	tech_name AS Name, ";
@@ -218,6 +223,7 @@
 		query.reset();
 		if (tRes) {
 			int tSize = tRes.size();
+			TechData* object;
 
 			if (tSize>0) {
 				mysqlpp::Row tRow;
@@ -227,12 +233,13 @@
 					this->idTechConverter[(int)(tRow["id"]) ] =  this->counter;
 					this->nameConverter[std::string(tRow["name"]) ] = this->counter;
 					object = new TechData(tRow);
-					this->data.push_back(object);
+					this->techData.push_back(object);
 					this->counter++;
 				}
 			}
 		}
-	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	
+		
+		this->counter = 0;	 	 	 	 	 	 	 	 	 	 	 	 	 	
 		query << "SELECT ";
 		query << "	building_id AS Id, ";
 		query << "	building_name AS Name, ";
@@ -276,6 +283,7 @@
 		query.reset();
 		if (bRes) {
 			int bSize = bRes.size();
+			BuildingData* object;
 
 			if (bSize>0) {
 				mysqlpp::Row bRow;
@@ -285,7 +293,7 @@
 					this->idBuildingConverter[(int)(bRow["id"]) ] =  this->counter;
 					this->nameConverter[std::string(bRow["name"]) ] = this->counter;
 					object = new BuildingData(bRow);
-					this->data.push_back(object);
+					this->buildingData.push_back(object);
 					this->counter++;
 				}
 			}

@@ -2,10 +2,7 @@
 #ifndef __DEFAULTHANDLER__
 #define __DEFAULTHANDLER_
 
-#include <mysql++/mysql++.h>
-
 #include "../../FleetHandler.h"
-#include "../../MysqlHandler.h"
 
 /**
 * Handles Default....

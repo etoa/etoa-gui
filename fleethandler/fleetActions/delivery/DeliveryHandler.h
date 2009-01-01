@@ -2,10 +2,8 @@
 #ifndef __DELIVERYHANDLER__
 #define __DELIVERYHANDLER__
 
-#include <mysql++/mysql++.h>
-
 #include "../../FleetHandler.h"
-#include "../../MysqlHandler.h"
+#include "../../config/ConfigHandler.h"
 
 /**
 * Handles Delivery....

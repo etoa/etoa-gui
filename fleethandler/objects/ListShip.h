@@ -44,6 +44,14 @@ public:
 		}
 	}
 	
+	~ListShip() {
+		this->save();
+	}
+	
+	double getWfMetal();
+	double getWfCrystal();
+	double getWfPlastic();
+	
 	void save();
 	
 };

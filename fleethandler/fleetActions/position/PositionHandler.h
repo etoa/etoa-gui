@@ -2,10 +2,8 @@
 #ifndef __POSITIONHANDLER__
 #define __POSITIONHANDLER__
 
-#include <mysql++/mysql++.h>
-
 #include "../../FleetHandler.h"
-#include "../../MysqlHandler.h"
+#include "../../config/ConfigHandler.h"
 
 /**
 * Handles Position....

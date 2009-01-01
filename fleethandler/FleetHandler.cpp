@@ -16,19 +16,19 @@
 		//Flotte wird stationiert und Waren werden ausgeladen
 		if(fleetAction==1) {
 			//Rohstoffnachricht für den User
-			msgRes= "\n\n[b]WAREN[/b]\n\n[b]Titan:[/b] ";
-			msgRes += functions::nf(functions::d2s(this->f->getResMetal()));
-			msgRes += "\n[b]Silizium:[/b] ";
-			msgRes += functions::nf(functions::d2s(this->f->getResCrystal()));
-			msgRes += "\n[b]PVC:[/b] ";
-			msgRes += functions::nf(functions::d2s(this->f->getResPlastic()));
-			msgRes += "\n[b]Tritium:[/b] ";
-			msgRes += functions::nf(functions::d2s(this->f->getResFuel()));
-			msgRes += "\n[b]Nahrung:[/b] ";
-			msgRes += functions::nf(functions::d2s(this->f->getResFood()));
-			msgRes += "\n[b]Bewohner:[/b] ";
-			msgRes += functions::nf(functions::d2s(this->f->getResPeople()));
-			msgRes += "\n";
+			msgRes += "\n\n[b]WAREN[/b]\n\n[b]Titan:[/b] "
+				+ functions::nf(functions::d2s(this->f->getResMetal()))
+				+ "\n[b]Silizium:[/b] "
+				+ functions::nf(functions::d2s(this->f->getResCrystal()))
+				+ "\n[b]PVC:[/b] "
+				+ functions::nf(functions::d2s(this->f->getResPlastic()))
+				+ "\n[b]Tritium:[/b] "
+				+ functions::nf(functions::d2s(this->f->getResFuel()))
+				+ "\n[b]Nahrung:[/b] "
+				+ functions::nf(functions::d2s(this->f->getResFood()))
+				+ "\n[b]Bewohner:[/b] "
+				+ functions::nf(functions::d2s(this->f->getResPeople()))
+				+ "\n";
 			
 			this->targetEntity->addResMetal(this->f->unloadResMetal());
 			this->targetEntity->addResCrystal(this->f->unloadResCrystal());
@@ -228,9 +228,10 @@
 						msgShips = "\n\n[b]SCHIFFE[/b]\n[i]Keine weiteren Schiffe in der Flotte![/i]\n";					
 					}
 					else {
-						msgAllShips = "\n\n[b]SCHIFFE[/b]\n";
-						msgAllShips += msgShips;
-						msgAllShips += "\n";
+						std::string msg = "\n\n[b]SCHIFFE[/b]\n";
+						msg += msgShips;
+						msg += "\n";
+						msgShips = msg;
 					}
 				}
 			}
@@ -239,19 +240,19 @@
 		//Waren werden ausgeladen
 		else if(fleetAction==2) {
 			//Rohstoffnachricht für den User
-			msgRes= "\n\n[b]WAREN[/b]\n\n[b]Titan:[/b] ";
-			msgRes += functions::nf(functions::d2s(this->f->getResMetal()));
-			msgRes += "\n[b]Silizium:[/b] ";
-			msgRes += functions::nf(functions::d2s(this->f->getResCrystal()));
-			msgRes += "\n[b]PVC:[/b] ";
-			msgRes += functions::nf(functions::d2s(this->f->getResPlastic()));
-			msgRes += "\n[b]Tritium:[/b] ";
-			msgRes += functions::nf(functions::d2s(this->f->getResFuel()));
-			msgRes += "\n[b]Nahrung:[/b] ";
-			msgRes += functions::nf(functions::d2s(this->f->getResFood()));
-			msgRes += "\n[b]Bewohner:[/b] ";
-			msgRes += functions::nf(functions::d2s(this->f->getResPeople()));
-			msgRes += "\n";
+			msgRes += "\n\n[b]WAREN[/b]\n\n[b]Titan:[/b] "
+				+ functions::nf(functions::d2s(this->f->getResMetal()))
+				+ "\n[b]Silizium:[/b] "
+				+ functions::nf(functions::d2s(this->f->getResCrystal()))
+				+ "\n[b]PVC:[/b] "
+				+ functions::nf(functions::d2s(this->f->getResPlastic()))
+				+ "\n[b]Tritium:[/b] "
+				+ functions::nf(functions::d2s(this->f->getResFuel()))
+				+ "\n[b]Nahrung:[/b] "
+				+ functions::nf(functions::d2s(this->f->getResFood()))
+				+ "\n[b]Bewohner:[/b] "
+				+ functions::nf(functions::d2s(this->f->getResPeople()))
+				+ "\n";
 			
 			this->targetEntity->addResMetal(this->f->unloadResMetal());
 			this->targetEntity->addResCrystal(this->f->unloadResCrystal());

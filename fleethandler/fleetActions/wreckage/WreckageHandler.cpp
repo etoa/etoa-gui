@@ -16,13 +16,13 @@ namespace wreckage
 		// Precheck action==possible?
 		if (this->f->actionIsAllowed()) {
 			
-			this->actionMessage->addText("[b]TR&Uuml;MMERSAMMLER-RAPPORT[/b]\n");
-			this->actionMessage->addText("Eine Flotte vom Planeten [b]");
-			this->actionMessage->addText(this->startEntity->getCoords());
-			this->actionMessage->addText("[/b]hat das Tr&uuml;mmerfeld bei[b]");
-			this->actionMessage->addText(this->targetEntity->getCoords());
+			this->actionMessage->addText("[b]TR&Uuml;MMERSAMMLER-RAPPORT[/b]",2);
+			this->actionMessage->addText("Eine Flotte vom Planeten [b]",1);
+			this->actionMessage->addText(this->startEntity->getCoords(),1);
+			this->actionMessage->addText("[/b]hat das Tr&uuml;mmerfeld bei[b]",1);
+			this->actionMessage->addText(this->targetEntity->getCoords(),1);
 			this->actionMessage->addText("[/b]um [b]");
-			this->actionMessage->addText(f->getLandtimeString());
+			this->actionMessage->addText(this->f->getLandtimeString(),1);
 			
 			this->actionMessage->addSubject("Tr&uuml;mmer gesammelt");
 			
@@ -45,11 +45,11 @@ namespace wreckage
 					this->plastic = this->targetEntity->removeWfPlastic(this->f->addPlastic(this->targetEntity->getWfPlastic()));
 				}
 				
-				this->actionMessage->addText("[/b] erreicht und Tr&uuml;mmer gesammelt.");
-				this->actionMessage->addText("\n[b]ROHSTOFFE:[/b]\n");
-				this->actionMessage->addText("Titan: " + functions::nf(functions::d2s(this->metal)));
-				this->actionMessage->addText("Silitium: " + functions::nf(functions::d2s(this->crystal)));
-				this->actionMessage->addText("PVC: " + functions::nf(functions::d2s(this->plastic)));
+				this->actionMessage->addText("[/b] erreicht und Tr&uuml;mmer gesammelt.",2);
+				this->actionMessage->addText("[b]ROHSTOFFE:[/b]",2);
+				this->actionMessage->addText("Titan: " + functions::nf(functions::d2s(this->metal)),1);
+				this->actionMessage->addText("Silitium: " + functions::nf(functions::d2s(this->crystal)),1);
+				this->actionMessage->addText("PVC: " + functions::nf(functions::d2s(this->plastic)),1);
 				
 				// Update collected resources for the userstatistic
 				this->fleetUser->addCollectedWf(this->sum);
@@ -59,16 +59,16 @@ namespace wreckage
 			else {
 				
 				// Send a message to the user
-				this->actionMessage->addText("[/b] erreicht.");
-				this->actionMessage->addText("\nEs wurden aber leider keine brauchbaren Trümmerteile mehr gefunden so dass die Flotte unverrichteter Dinge zurückkehren musste.");
+				this->actionMessage->addText("[/b] erreicht.",2);
+				this->actionMessage->addText("Es wurden aber leider keine brauchbaren Trümmerteile mehr gefunden so dass die Flotte unverrichteter Dinge zurückkehren musste.");
 			}
 		}
 		
 		// If there is no wreckage collecter in the fleet
 		else {
-			this->actionMessage->addText("Eine Flotte vom Planeten [b]");
-			this->actionMessage->addText(this->startEntity->getCoords());
-			this->actionMessage->addText(" versuchte, Trümmer zu sammeln. Leider war kein Schiff mehr in der Flotte, welches die Aktion ausführen konnte, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!");
+			this->actionMessage->addText("Eine Flotte vom Planeten [b]",1);
+			this->actionMessage->addText(this->startEntity->getCoords(),1);
+			this->actionMessage->addText("versuchte Trümmer zu sammeln. Leider war kein Schiff mehr in der Flotte, welches die Aktion ausführen konnte, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!");
 			
 			this->actionMessage->addSubject("Trümmersammeln gescheitert");
 			

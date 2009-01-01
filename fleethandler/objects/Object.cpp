@@ -95,5 +95,9 @@
 	short Object::getSBonusDeactivade() {
 		return this->sBonusDeactivade;
 	}
+	
+	void Object::setPercentSurvive(double percentage) {
+		this->count = ceil(this->initCount * percentage/100);
+	}
 
 

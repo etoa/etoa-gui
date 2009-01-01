@@ -2,10 +2,7 @@
 #ifndef __CANCELHANDLER__
 #define __CANCELHANDLER__
 
-#include <mysql++/mysql++.h>
-
 #include "../../FleetHandler.h"
-#include "../../MysqlHandler.h"
 
 /**
 * Handles Cancel....

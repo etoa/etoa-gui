@@ -7,6 +7,7 @@
 
 #include "../MysqlHandler.h"
 #include "../functions/Functions.h"
+#include "../objects/User.h"
 
 /**
 * Entity class
@@ -61,7 +62,11 @@ class Entity
 		virtual void saveData() = 0;
 				
 		int getId();
+		char getCode();
 		int getUserId();
+		
+		User* getUser();
+		
 		short getTypeId();
 		bool getIsUserMain();
 		
@@ -107,6 +112,8 @@ class Entity
 		double removeWfCrystal(double crystal);
 		double removeWfPlastic(double plastic);
 		
+		std::string getResString();
+		
 		std::string getLogResStart();
 		std::string getLogResEnd();
 		std::string getLogShipsStart();
@@ -121,6 +128,8 @@ class Entity
 		short pos;
 		char code;
 		short typeId;
+		
+		User *entityUser;
 		
 		double resMetal, resCrystal, resPlastic, resFuel, resFood, resPower, resPeople;
 		double initResMetal, initResCrystal, initResPlastic, initResFuel, initResFood, initResPower, initResPeople;

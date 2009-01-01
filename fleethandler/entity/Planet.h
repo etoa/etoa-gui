@@ -7,6 +7,7 @@
 
 #include "Entity.h"
 #include "../MysqlHandler.h"
+#include "../config/ConfigHandler.h"
 
 /**
 * Planet class
@@ -29,6 +30,10 @@ public:
 	
 protected:
 	void loadData();
+	void updateGasPlanet();
+	
+	int fields;
+	int lastUpdated;
 
 };
 

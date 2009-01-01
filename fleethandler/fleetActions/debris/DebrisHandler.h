@@ -2,10 +2,8 @@
 #ifndef __DEBRISHANDLER__
 #define __DEBRISHANDLER__
 
-#include <mysql++/mysql++.h>
-
 #include "../../FleetHandler.h"
-#include "../../MysqlHandler.h"
+#include "../../config/ConfigHandler.h"
 
 /**
 * Handles Debris....
@@ -20,23 +18,7 @@ namespace debris
 	public:
 		DebrisHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }
 		void update();
-		
-	private:
-		/**
-		* Actionname (lots of problems with the string variable)
-		**/
-		std::string action;
-		
-		/**
-		* Ship count per ship
-		**/
-		double shipCnt;
-		
-		/**
-		* Size of the debris field
-		**/
-		double tfMetal, tfCrystal, tfPlastic;
-		
 	};
+
 }
 #endif

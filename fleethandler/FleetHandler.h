@@ -47,31 +47,11 @@ public:
 		this->fleetUser = new User(f->getUserId());
 		
 		this->startEntity = EntityFactory::createEntityById(this->f->getEntityFrom());
-		this->targetEntity = EntityFactory::createEntityById(this->f->getEntityTo());
-		
-		this->actionMessage = new Message();
-		this->actionMessage->addFleetId(this->f->getId());
-		this->actionMessage->addEntityId(this->f->getEntityTo());
-		this->actionMessage->addUserId(this->f->getUserId());
-		
-		this->actionLog->addFleetId(this->f->getId());
-		this->actionLog->addFleetUserId(this->f->getUserId());
-		this->actionLog->addEntityToId(this->f->getEntityTo());
-		this->actionLog->addEntityFromId(this->f->getEntityFrom());
-		this->actionLog->addLaunchtime(this->f->getLaunchtime());
-		this->actionLog->addLandtime(this->f->getLandtime());
-		this->actionLog->addAction(this->f->getAction());
-		this->actionLog->addStatus(this->f->getStatus());
-	};
-	
-	FleetHandler(Fleet *f) {
-		My &my = My::instance();
-		this->con_ = my.get();
-		
-		this->f=f;
-		
-		this->fleetUser = new User(f->getUserId());
-		
+		if (this->f->getStatus()==3 && this->f->getNextactiontime() > 0)
+			this->targetEntity = EntityFactory::createEntityById(this->f->getNextId());
+		else
+			this->targetEntity = EntityFactory::createEntityById(this->f->getEntityTo());
+			
 		this->actionMessage = new Message();
 		this->actionMessage->addFleetId(this->f->getId());
 		this->actionMessage->addEntityId(this->f->getEntityTo());
@@ -86,6 +66,9 @@ public:
 		this->actionLog->addLandtime(this->f->getLandtime());
 		this->actionLog->addAction(this->f->getAction());
 		this->actionLog->addStatus(this->f->getStatus());
+		
+		this->msgShips = "";
+		this->msgRes = "";
 	}
 	
 	~FleetHandler() {
@@ -100,9 +83,12 @@ public:
 		this->actionLog->addEntityShipsEnd(this->targetEntity->getLogShipsEnd());
 		delete this->actionLog;
 		
+		this->actionMessage->addText(this->msgShips);		
+		this->actionMessage->addText(this->msgRes);
 		delete this->actionMessage;
 		
 		delete this->targetEntity;		
+		
 		delete this->startEntity;
 		
 		delete this->fleetUser;

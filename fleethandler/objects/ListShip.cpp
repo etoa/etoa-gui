@@ -1,6 +1,43 @@
 
 #include "ListShip.h"
 
+	
+	double ListShip::getWfMetal() {
+		Config &config = Config::instance();
+		
+		DataHandler &DataHandler = DataHandler::instance();
+		ShipData::ShipData *data = DataHandler.getShipById(this->getTypeId());
+		int shipCnt = ceil((this->initCount - this->count)*config.nget("ship_wf_percent",0));
+		
+		this->rebuildIsCalced = true;
+		
+		return (shipCnt * data->getCostsMetal());
+	}
+	
+	double ListShip::getWfCrystal() {
+		Config &config = Config::instance();
+		
+		DataHandler &DataHandler = DataHandler::instance();
+		ShipData::ShipData *data = DataHandler.getShipById(this->getTypeId());
+		int shipCnt = ceil((this->initCount - this->count)*config.nget("ship_wf_percent",0));
+		
+		this->rebuildIsCalced = true;
+		
+		return (shipCnt * data->getCostsCrystal());
+	}
+	
+	double ListShip::getWfPlastic() {
+		Config &config = Config::instance();
+		
+		DataHandler &DataHandler = DataHandler::instance();
+		ShipData::ShipData *data = DataHandler.getShipById(this->getTypeId());
+		int shipCnt = ceil((this->initCount - this->count)*config.nget("ship_wf_percent",0));
+		
+		this->rebuildIsCalced = true;
+		
+		return (shipCnt * data->getCostsPlastic());
+	}
+	
 	void ListShip::save() {
 		if (this->isChanged) {
 

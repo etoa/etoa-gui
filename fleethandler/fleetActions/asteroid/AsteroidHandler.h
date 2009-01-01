@@ -2,10 +2,11 @@
 #ifndef __ASTEROIDHANDLER__
 #define __ASTEROIDHANDLER__
 
-#include <mysql++/mysql++.h>
+#include <ctime>
+#include <math.h>
 
 #include "../../FleetHandler.h"
-#include "../../MysqlHandler.h"
+#include "../../config/ConfigHandler.h"
 
 /**
 * Handles Asteroid....
@@ -23,41 +24,16 @@ namespace asteroid
 		
 	private:
 		/**
-		* different capacitys
-		**/
-		double fleetCapa, asteroidCapa, capa;
-		
-		/**
 		*Calculated/collected resources
 		**/
 		double asteroid;
-		double metal, crystal, plastic, sum;
-		
-		/**
-		* Resources from the new asteroid field
-		**/
-		double newMetal, newCrystal, newPlastic;
+		double sum;
 		
 		/**
 		* Possibilitys, if the action succed
 		**/
 		int one, two;
-		
-		/**
-		* Number on percentage ships were destroyed
-		**/
-		double shipDestroy, destroy;
-		
-		/**
-		* Message for the destroyed ships
-		**/
-		std::string destroyedShips, destroyedShipsMsg;
-		
-		/**
-		* Actionname (lots of problems with the string variable)
-		**/
-		std::string action;
-		
 	};
+
 }
 #endif

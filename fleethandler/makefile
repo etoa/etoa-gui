@@ -190,3 +190,6 @@ Log.o: objects/Log.cpp objects/Log.h
 
 User.o: objects/User.cpp objects/User.h
 	g++ -c objects/User.cpp
+
+clean:
+	rm *.o

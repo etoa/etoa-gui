@@ -47,6 +47,8 @@
 		this->initWfCrystal = this->wfCrystal;
 		this->initWfPlastic = this->wfPlastic;
 		
+		this->entityUser = new User(this->userId);
+		
 		this->dataLoaded = true;
 	}
 	
@@ -135,7 +137,7 @@
 					query << "	id, ";
 					query << "	res_metal, ";
 					query << "	res_crystal, ";
-					query << "	res_plastic, ";
+					query << "	res_plastic ";
 					query << ") ";
 					query << "VALUES ";
 					query << "(";

@@ -21,8 +21,16 @@
 		this->subject = subject;
 	}
 	
-	void Message::addText(std::string text) {
-		this->text += text + "\n";
+	void Message::addText(std::string text, short linebreaks) {
+		this->text += text;
+		while (linebreaks > 0) {
+			this->text += "\n";
+			linebreaks--;
+		}
+	}
+	
+	void Message::addSignature(std::string signature) {
+		this->signature = signature;
 	}
 	
 	void Message::dontSend() {
@@ -31,6 +39,7 @@
 	
 	void Message::send() {
 		if (this->toSend) {
+			this->text += "\n\n" + this->signature;
 			My &my = My::instance();
 			mysqlpp::Connection *con_ = my.get();
 			
@@ -69,7 +78,7 @@
 				query << "'" << this->subject << "', ";
 				query << "'" << this->text << "', ";
 				query << "'" << this->entityId << "', ";
-				query << "'" << this->fleetId << "', ";
+				query << "'" << this->fleetId << "' ";
 				query << ");";
 				query.store();
 				query.reset();

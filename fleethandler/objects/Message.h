@@ -20,6 +20,7 @@ class Message
 	public:
 		Message() {	
 			this->toSend = true;
+			this->text = "";
 		}
 		
 		~Message() {
@@ -31,7 +32,8 @@ class Message
 		void addFleetId(int fleetId);
 		void addEntityId(int entityId);
 		void addSubject(std::string subject);
-		void addText(std::string text);
+		void addText(std::string text, short linebreaks=0);
+		void addSignature(std::string signature);
 		void dontSend();
 		
 		
@@ -42,6 +44,7 @@ class Message
 		int entityId;
 		std::string subject;
 		std::string text;
+		std::string signature;
 		
 		bool toSend;
 		

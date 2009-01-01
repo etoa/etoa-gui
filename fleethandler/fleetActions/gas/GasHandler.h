@@ -2,10 +2,11 @@
 #ifndef __GASHANDLER__
 #define __GASHANDLER__
 
-#include <mysql++/mysql++.h>
+#include <ctime>
+#include <math.h>
 
 #include "../../FleetHandler.h"
-#include "../../MysqlHandler.h"
+#include "../../config/ConfigHandler.h"
 
 /**
 * Handles Gas....
@@ -22,34 +23,17 @@ namespace gas
 		void update();
 
 	private:		
-
 		/**
-		* Message part for destroyed ships
+		*Calculated/collected resources
 		**/
-		std::string destroyedShips,destroyedShipsMsg;
-
-		/**
-		* Variables to calculate the destroyed ships
-		**/
-		double shipDestroy, destroy;
+		double fuel;
+		double sum;
 		
 		/**
-		* Variables to calculate if there got any ships destroyed
+		* Possibilitys, if the action succed
 		**/
 		int one, two;
-				
-		/**
-		* Variables to calculate the collected fuel
-		**/
-		double fuel, newFuel, fuelTotal;
-
-		/**
-		* Variables to calculate the capacity
-		**/
-		double gasCapa, fleetCapa, capa;
-
-		
-		
 	};
+
 }
 #endif

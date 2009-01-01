@@ -5,11 +5,22 @@
 		return this->id;
 	}
 	
+	char Entity::getCode() {
+		return this->code;
+	}
+	
 	int Entity::getUserId() {
 		if (!this->dataLoaded)
 			this->loadData();
 			
 		return this->userId;
+	}
+	
+	User* Entity::getUser() {
+		if (!this->dataLoaded)
+			this->loadData();
+		
+		return entityUser;
 	}
 	
 	short Entity::getTypeId() {
@@ -96,41 +107,65 @@
 	}
 	
 	void Entity::addResMetal(double metal) {
+		if (!this->dataLoaded)
+			this->loadData();
+		
 		this->changedData = true;
 		this->resMetal += metal;
 	}
 	
 	void Entity::addResCrystal(double crystal) {
+		if (!this->dataLoaded)
+			this->loadData();
+		
 		this->changedData = true;
 		this->resCrystal += crystal;
 	}
 	
 	void Entity::addResPlastic(double plastic) {
+		if (!this->dataLoaded)
+			this->loadData();
+		
 		this->changedData = true;
 		this->resPlastic += plastic;
 	}
 	
 	void Entity::addResFuel(double fuel) {
+		if (!this->dataLoaded)
+			this->loadData();
+		
 		this->changedData = true;
 		this->resFuel += fuel;
 	}
 	
 	void Entity::addResFood(double food) {
+		if (!this->dataLoaded)
+			this->loadData();
+		
 		this->changedData = true;
 		this->resFood += food;
 	}
 	
 	void Entity::addResPower(double power) {
+		if (!this->dataLoaded)
+			this->loadData();
+		
 		this->changedData = true;
 		this->resPower += power;
 	}
 	
 	void Entity::addResPeople(double people) {
+		if (!this->dataLoaded)
+			this->loadData();
+		
 		this->changedData = true;
 		this->resPeople += people;
 	}
 	
 	double Entity::removeResMetal(double metal) {
+		if (!this->dataLoaded)
+			this->loadData();
+		
 		this->changedData = true;
 		if (metal<=this->resMetal) {
 			this->resMetal -= metal;
@@ -144,6 +179,9 @@
 	}
 
 	double Entity::removeResCrystal(double crystal) {
+		if (!this->dataLoaded)
+			this->loadData();
+		
 		this->changedData = true;
 		if (crystal<=this->resCrystal) {
 			this->resCrystal -= crystal;
@@ -157,6 +195,9 @@
 	}
 
 	double Entity::removeResPlastic(double plastic) {
+		if (!this->dataLoaded)
+			this->loadData();
+		
 		this->changedData = true;
 		if (plastic<=this->resPlastic) {
 			this->resPlastic -= plastic;
@@ -170,6 +211,9 @@
 	}
 
 	double Entity::removeResFuel(double fuel) {
+		if (!this->dataLoaded)
+			this->loadData();
+		
 		this->changedData = true;
 		if (fuel<=this->resFuel) {
 			this->resFuel -= fuel;
@@ -183,6 +227,9 @@
 	}
 
 	double Entity::removeResFood(double food) {
+		if (!this->dataLoaded)
+			this->loadData();
+		
 		this->changedData = true;
 		if (food<=this->resFood) {
 			this->resFood -= food;
@@ -196,6 +243,9 @@
 	}
 	
 	double Entity::removeResPower(double power) {
+		if (!this->dataLoaded)
+			this->loadData();
+		
 		this->changedData = true;
 		if (power<=this->resPower) {
 			this->resPower -= power;
@@ -209,6 +259,9 @@
 	}
 	
 	double Entity::removeResPeople(double people) {
+		if (!this->dataLoaded)
+			this->loadData();
+		
 		this->changedData = true;
 		if (people<=this->resPeople) {
 			this->resPeople -= people;
@@ -252,6 +305,7 @@
 	void Entity::addWfMetal(double metal) {
 		if (!this->dataLoaded)
 			this->loadData();
+		
 		this->changedData = true;
 		this->wfMetal += metal;
 	}
@@ -259,6 +313,7 @@
 	void Entity::addWfCrystal(double crystal) {
 		if (!this->dataLoaded)
 			this->loadData();
+		
 		this->changedData = true;
 		this->wfCrystal += crystal;
 	}
@@ -266,6 +321,7 @@
 	void Entity::addWfPlastic(double plastic) {
 		if (!this->dataLoaded)
 			this->loadData();
+		
 		this->changedData = true;
 		this->wfPlastic += plastic;
 	}
@@ -316,6 +372,33 @@
 			this->wfPlastic = 0;
 			return plastic;
 		}
+	}
+	
+	std::string Entity::getResString() {
+		if (!this->dataLoaded)
+			this->loadData();
+		
+		std::string resString = "";
+		
+		 resString += "[b]Rohstoffe:[/b]\n\nTitan: "
+					+ functions::nf(functions::d2s(this->getResMetal()))
+					+ "\n"
+					+ "Silizium: "
+					+ functions::nf(functions::d2s(this->getResCrystal()))
+					+ "\n"
+					+ "PVC: "
+					+ functions::nf(functions::d2s(this->getResPlastic()))
+					+ "\n"
+					+ "Tritium: "
+					+ functions::nf(functions::d2s(this->getResFuel()))
+					+ "\n"
+					+ "Nahrung: "
+					+ functions::nf(functions::d2s(this->getResFood()))
+					+ "\n"
+					+ "Bewohner: "
+					+ functions::nf(functions::d2s(this->getResMetal()))
+					+ "\n";
+		return resString;
 	}
 	
 	void Entity::loadCoords() {
@@ -399,9 +482,9 @@
 							+ functions::d2s(this->resFood)
 							+ ":"
 							+ functions::d2s(this->resPeople)
-							+ ",w,"
+							+ ":"
 							+ functions::d2s(this->resPower)
-							+ ";"
+							+ ",w,"
 							+ functions::d2s(this->wfMetal)
 							+ ":"
 							+ functions::d2s(this->wfCrystal)

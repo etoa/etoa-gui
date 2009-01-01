@@ -44,7 +44,7 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {	
-
+	
 	//Initialize Mysql Connection
 	My &my = My::instance();
 	mysqlpp::Connection *con_;
@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
 		query << " AND user_id='1';";
 		mysqlpp::Result res = query.store();	
 		query.reset();
-				
+		
 		cout << "Updating ";
 		//Checking queryresult
 		if (res)  {
@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
 			}
 		}
 		
-		sleep(5);
+		sleep(1);
 	}		
 
 	return 0;

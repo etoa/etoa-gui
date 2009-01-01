@@ -143,7 +143,7 @@
 	double Fleet::getActionCapacity() {
 		if (!this->shipsLoaded)
 			this->loadShips();
-		return this->actionCapacity;
+		return std::min(this->actionCapacity,this->getCapacity());
 	}
 	
 	double Fleet::getPeopleCapacity() {
@@ -256,6 +256,7 @@
 			this->usageFood = 0;
 			this->supportUsageFood = 0;
 		}
+		this->resFood = 0;
 		return food;
 	}
 		
@@ -276,7 +277,40 @@
 		this->resPeople = 0;
 		return people;
 	}
-
+	
+	double Fleet::getWfMetal() {
+		double wfMetal = 0;
+		std::vector<Object*>::iterator it;
+		for (it=objects.begin() ; it < objects.end(); it++)
+			wfMetal += (*it)->getWfMetal();
+		
+		return wfMetal;
+	}
+		
+	double Fleet::getWfCrystal() {
+		double wfCrystal = 0;
+		std::vector<Object*>::iterator it;
+		for (it=objects.begin() ; it < objects.end(); it++)
+			wfCrystal += (*it)->getWfCrystal();
+		
+		return wfCrystal;
+	}
+	
+	double Fleet::getWfPlastic() {
+		double wfPlastic = 0;
+		std::vector<Object*>::iterator it;
+		for (it=objects.begin() ; it < objects.end(); it++)
+			wfPlastic += (*it)->getWfPlastic();
+		
+		return wfPlastic;
+	}
+	
+	void Fleet::setPercentSurvive(double percentage) {
+		std::vector<Object*>::iterator it;
+		for (it = this->objects.begin() ; it < this->objects.end(); it++)
+			(*it)->setPercentSurvive(percentage);
+	}
+	
 	int Fleet::getEntityToUserId() {
 		if(!this->entityToUserId)
 			this->entityToUserId = functions::getUserIdByPlanet(this->getEntityTo());
@@ -284,15 +318,32 @@
 	}
 	
 	void Fleet::setReturn() {
-		int duration = this->getLandtime() - this->getLaunchtime();
+		int entity = this->entityFrom;
+		this->entityFrom = this->entityTo;
+		int duration;
+		
+		if (this->getStatus() == 3 && this->getNextactiontime() > 0) {
+			duration = this->getNextactiontime();
+			int entityTo = this->getNextId();
+		}
+		else {
+			duration = this->getLandtime() - this->getLaunchtime();
+			this->entityTo = entity;
+		}
 		this->launchtime = this->getLandtime();
 		this->landtime = this->getLaunchtime() + duration;
 		
-		int entity = this->entityFrom;
-		this->entityFrom = this->entityTo;
-		this->entityTo = this->entityFrom;
-		
 		this->status = 1;
+	}
+	
+	void Fleet::setSupport() {
+		int flyingHomeTime = this->getLandtime() - this->getLaunchtime();
+		this->launchtime = this->getLandtime();
+		this->landtime = this->getLandtime() + this->getNextactiontime();
+		this->status = 3;
+		
+		this->nextId = this->entityFrom;
+		this->entityFrom = this->entityTo;
 	}
 	
 	std::string Fleet::getEntityToUserString() {
@@ -319,6 +370,44 @@
 		return functions::formatCoords(this->getEntityTo(),type);
 	}
 	
+	std::string Fleet::getDestroyedShipString(std::string reason) {
+		std::string destroyedString = "";
+		
+		DataHandler &DataHandler = DataHandler::instance();
+		std::vector<Object*>::iterator it;
+		for (it = this->objects.begin() ; it < this->objects.end(); it++) {
+			if ((*it)->getCount() < (*it)->getInitCount()) {
+				ShipData::ShipData *data = DataHandler.getShipById((*it)->getTypeId());	
+				destroyedString +=  functions::d2s((*it)->getInitCount() - (*it)->getCount())
+								+ " "
+								+ data->getName()
+								+ "\n";
+			}
+		}
+		
+		if (destroyedString.length()>0)
+			destroyedString = reason + destroyedString;
+		
+		return destroyedString;
+	}
+	
+	std::string Fleet::getResCollectedString() {
+		std::string msgRes = "\n\n\n[b]ROHSTOFFE:[/b]\n\nTitan: "
+							+ functions::nf(functions::d2s(this->getResMetal() - this->initResMetal))
+							+ "\nSilizium: "
+							+ functions::nf(functions::d2s(this->getResCrystal() - this->initResCrystal))
+							+ "\nPVC: "
+							+ functions::nf(functions::d2s(this->getResPlastic() - this->initResPlastic))
+							+ "\nTritium: "
+							+ functions::nf(functions::d2s(this->getResFuel() - this->initResFuel))
+							+ "\nNahrung: "
+							+ functions::nf(functions::d2s(this->getResFood() - this->initResFood))
+							+ "\nBewohner: "
+							+ functions::nf(functions::d2s(this->getResPeople() - this->initResPeople))
+							+ "\n";
+		return msgRes;
+	}
+				
 	bool Fleet::actionIsAllowed() {
 		if (!this->shipsLoaded)
 			this->loadShips();
@@ -328,8 +417,11 @@
 	}
 	
 	void Fleet::loadShips() {
+		Config &config = Config::instance();
+		
 		My &my = My::instance();
 		mysqlpp::Connection *con = my.get();
+		
 		mysqlpp::Query query = con->query();
 		query << "SELECT ";
 		query << "	* ";
@@ -348,29 +440,31 @@
 				this->shipsLoaded = true;
 				this->logFleetShipStart = "";
 				
-				objectData &objectData = objectData::instance();
+				DataHandler &DataHandler = DataHandler::instance();
 				mysqlpp::Row fsRow;
 				
 				for (int i=0; i<fsSize; i++) {
 					fsRow = fsRes.at(0);
 					
-					Object* object = ObjectFactory::createObject(fsRow, 'f'); 
-					ObjectHandler::ObjectHandler data = objectData.get(object->getTypeId());
-					
-					this->capacity += object->getCount() * data.capacity();
-					this->peopleCapacity += object->getCount() * data.peopleCapacity();
-					
-					if (data.actions(this->action)) {
-						this->actionAllowed = true;
-						this->actionCapacity += object->getCount() * data.capacity();
+					if (config.idget("MARKET_SHIP_ID")!=(int)fsRow["fs_ship_id"]) {
+						Object* object = ObjectFactory::createObject(fsRow, 'f'); 
+						ShipData::ShipData *data = DataHandler.getShipById(object->getTypeId());
+						
+						this->capacity += object->getCount() * data->getCapacity();
+						this->peopleCapacity += object->getCount() * data->getPeopleCapacity();
+						
+						if (data->getActions(this->action)) {
+							this->actionAllowed = true;
+							this->actionCapacity += object->getCount() * data->getCapacity();
+						}
+						
+						this->logFleetShipStart += functions::d2s(object->getTypeId())
+												+ ":"
+												+ functions::d2s(object->getCount())
+												+ ",";
+						
+						objects.push_back(object);
 					}
-					
-					this->logFleetShipStart += functions::d2s(object->getId())
-											+ ":"
-											+ functions::d2s(object->getCount())
-											+ ",";
-					
-					objects.push_back(object);
 				}
 			}
 		}
@@ -383,60 +477,82 @@
 		
 		this->actionAllowed = false;
 		
-		objectData &objectData = objectData::instance();
+		DataHandler &DataHandler = DataHandler::instance();
 		
 		std::vector<Object*>::iterator it;
 		for (it=objects.begin() ; it < objects.end(); it++) {
-			ObjectHandler::ObjectHandler data = objectData.get((*it)->getTypeId());
+			ShipData::ShipData *data = DataHandler.getShipById((*it)->getTypeId());
 			
-			this->capacity += (*it)->getCount() * data.capacity();
-			this->peopleCapacity += (*it)->getCount() * data.peopleCapacity();
+			this->capacity += (*it)->getCount() * data->getCapacity();
+			this->peopleCapacity += (*it)->getCount() * data->getPeopleCapacity();
 			
-			if (data.actions(this->action)) {
+			if (data->getActions(this->action)) {
 				this->actionAllowed = true;
-				this->actionCapacity += (*it)->getCount() * data.capacity();
+				this->actionCapacity += (*it)->getCount() * data->getCapacity();
 			}
 		}
 	}
 	
 	void Fleet::save() {
+		int sum = 0;
+		while (!objects.empty()) {
+			Object* object = objects.back();
+			sum += object->getCount();
+			std::cout << object->getCount() << "\n";
+			delete object;
+			objects.pop_back();
+		}
+
 		My &my = My::instance();
 		mysqlpp::Connection *con = my.get();
 		mysqlpp::Query query = con->query();
-		query << "UPDATE ";
-		query << "	fleet ";
-		query << " SET ";
-		query << "entity_from='" << this->getEntityFrom() << "', ";
-		query << "entity_to='" << this->getEntityTo() << "', ";
-		query << "launchtime='" << this->getLaunchtime() << "', ";
-		query << "landtime='" << this->getLandtime() << "', ";
-		query << "status='" << this->getStatus() << "', ";
-		query << "pilots='" << this->getPilots() << "', ";
-		query << "usage_fuel='" << this->usageFuel << "', ";
-		query << "usage_food='" << this->usageFood << "', ";
-		query << "usage_power='" << this->usagePower << "', ";
-		query << "support_usage_fuel='" << this->supportUsageFuel << "', ";
-		query << "support_usage_food='" << this->supportUsageFood << "', ";
-		query << "res_metal='" << this->getResMetal() << "', ";
-		query << "res_crystal='" << this->getResCrystal() << "', ";
-		query << "res_plastic='" << this->getResPlastic() << "', ";
-		query << "res_fuel='" << this->getResFuel() << "', ";
-		query << "res_food='" << this->getResFood() << "', ";
-		query << "res_power='" << this->getResPower() << "', ";
-		query << "res_people='" << this->getResPeople() << "', ";
-		query << "fetch_metal='0', ";
-		query << "fetch_crystal='0', ";
-		query << "fetch_plastic='0', ";
-		query << "fetch_fuel='0', ";
-		query << "fetch_food='0', ";
-		query << "fetch_power='0', ";
-		query << "fetch_people='0' ";
-		query << "WHERE ";
-		query << "	id='" << this->getId() << "' ";
-		query << "LIMIT 1;";
-		mysqlpp::Result fsRes = query.store();
-		query.reset();
 		
+		if (sum>0) {
+			query << "UPDATE ";
+			query << "	fleet ";
+			query << "SET ";
+			query << "	entity_from='" << this->getEntityFrom() << "', ";
+			query << "	entity_to='" << this->getEntityTo() << "', ";
+			query << "	next_id='" << this->getNextId() << "', ";
+			query << "	launchtime='" << this->getLaunchtime() << "', ";
+			query << "	landtime='" << this->getLandtime() << "', ";
+			query << "	nextactiontime='" << this->getNextactiontime() << "', ";
+			query << "	status='" << this->getStatus() << "', ";
+			query << "	pilots='" << this->getPilots() << "', ";
+			query << "	usage_fuel='" << this->usageFuel << "', ";
+			query << "	usage_food='" << this->usageFood << "', ";
+			query << "	usage_power='" << this->usagePower << "', ";
+			query << "	support_usage_fuel='" << this->supportUsageFuel << "', ";
+			query << "	support_usage_food='" << this->supportUsageFood << "', ";
+			query << "	res_metal='" << this->getResMetal() << "', ";
+			query << "	res_crystal='" << this->getResCrystal() << "', ";
+			query << "	res_plastic='" << this->getResPlastic() << "', ";
+			query << "	res_fuel='" << this->getResFuel() << "', ";
+			query << "	res_food='" << this->getResFood() << "', ";
+			query << "	res_power='" << this->getResPower() << "', ";
+			query << "	res_people='" << this->getResPeople() << "', ";
+			query << "	fetch_metal='0', ";
+			query << "	fetch_crystal='0', ";
+			query << "	fetch_plastic='0', ";
+			query << "	fetch_fuel='0', ";
+			query << "	fetch_food='0', ";
+			query << "	fetch_power='0', ";
+			query << "	fetch_people='0' ";
+			query << "WHERE ";
+			query << "	id='" << this->getId() << "' ";
+			query << "LIMIT 1;";
+			mysqlpp::Result fsRes = query.store();
+			query.reset();
+		}
+		else {
+			query << "DELETE FROM ";
+			query << "	fleet ";
+			query << "WHERE ";
+			query << "	id='" << this->getId() << "' ";
+			query << "LIMIT 1;";
+			query.store();
+			query.reset();
+		}
 	}
 	
 	std::string Fleet::getLogResStart() {
@@ -499,7 +615,7 @@
 			std::string log = "";
 			std::vector<Object*>::iterator it;
 			for (it=objects.begin() ; it < objects.end(); it++) {
-				log += functions::d2s((*it)->getId())
+				log += functions::d2s((*it)->getTypeId())
 					+ ":"
 					+ functions::d2s((*it)->getCount())
 					+ ",";

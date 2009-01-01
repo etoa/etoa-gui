@@ -1,8 +1,5 @@
-#include <mysql++/mysql++.h>
 
 #include "CancelHandler.h"
-#include "../../MysqlHandler.h"
-#include "../../functions/Functions.h"
 
 namespace cancel
 {
@@ -12,43 +9,53 @@ namespace cancel
 		* Fleet-Action: Cancelled flight
 		*/
 		
-		if (this->f->getEntityToUserId() == this->f->getUserId()) {
-			// Land the fleet and delete it in the database
-			fleetLand(1);
-
+		Config &config = Config::instance();
+		
+		this->actionMessage->addType((int)config.idget("SHIP_MISC_MSG_CAT_ID"));
+		
+		if (this->targetEntity->getUserId() == this->f->getUserId()) {
+			// Land fleet and delete entries in the database
+			fleetLand(1,1,1);
 			fleetDelete();
-	
-			// Send a message to the user
-			std::string msg = "[b]FLOTTE GELANDET[/b]\n\nEine eurer Flotten hat ihr Ziel erreicht!\n\n[b]Zielplanet:[/b] ";
-			msg += this->f->getEntityToString(0);
-			msg += "\n[b]Startplanet:[/b] ";
-			msg += this->f->getEntityFromString(0);
-			msg += "\n[b]Zeit:[/b] ";
-			msg += this->f->getLandtimeString();
-			msg += "\n[b]Auftrag:[/b] ";
-			msg += this->f->getActionString();
-			msg += msgAllShips;
-			msg += msgRes;
-			msg += "";
-			functions::sendMsg(this->f->getUserId(),5,"Flotte angekommen",msg);
+			// Check if the user'd like to have a return message for spy and transport
+		
+			if (this->f->getAction()=="spy" || this->f->getAction()=="transport")
+				if (!this->fleetUser->getPropertiesReturnMsg())
+					this->actionMessage->dontSend();
+			
+			this->actionMessage->addText("[b]FLOTTE GELANDET[/b]",2);
+			this->actionMessage->addText("Eine eurer Flotten hat ihr Ziel erreicht!",2);
+			this->actionMessage->addText("[b]Ziel:[/b] ");
+			this->actionMessage->addText(this->targetEntity->getCoords(),1);
+			this->actionMessage->addText("[b]Start:[/b] ");
+			this->actionMessage->addText(this->startEntity->getCoords(),1);
+			this->actionMessage->addText("[b]Zeit:[/b] ");
+			this->actionMessage->addText(this->f->getLandtimeString(),1);
+			this->actionMessage->addText("[b]Auftrag:[/b] ");
+			this->actionMessage->addText(this->f->getActionString(),1);
+			
+			this->actionMessage->addSubject("Flotte angekommen");
 		}
 		
-		// If the fleet user isnt the same as the planet user
+		// If the planet user is not the same as the fleet user, send fleet to the main and send a message with the info
 		else {
-			// Send the fleet to user's mainplanet
 			fleetSendMain();
 			
-			// Send a message to the user
-			std::string msg = "[b]FLOTTE Landen GESCHEITERT[/b]\n\nEine eurer Flotten hat versucht auf ihrem Ziel zu laden Der Versuch scheiterte jedoch und die Flotte macht sich auf den Weg zu eurem Hauptplaneten!\n\n[b]Ziel:[/b] ";
-			msg += this->f->getEntityToString(0);
-			msg += "\n[b]Startplanet:[/b] ";
-			msg += this->f->getEntityFromString(0);
-			msg += "\n[b]Zeit:[/b] ";
-			msg += this->f->getLandtimeString();
-			msg += "\n[b]Auftrag:[/b] ";
-			msg += this->f->getActionString();
+			this->actionMessage->addText("[b]FLOTTE LANDEN GESCHEITERT[/b]",2);
+			this->actionMessage->addText("Eine eurer Flotten hat versucht auf ihrem Ziel zu laden Der Versuch scheiterte jedoch und die Flotte macht sich auf den Weg zu eurem Hauptplaneten!",2);
+			this->actionMessage->addText("[b]Ziel:[/b] ");
+			this->actionMessage->addText(this->targetEntity->getCoords(),1);
+			this->actionMessage->addText("[b]Start:[/b] ");
+			this->actionMessage->addText(this->startEntity->getCoords(),1);
+			this->actionMessage->addText("[b]Zeit:[/b] ");
+			this->actionMessage->addText(this->f->getLandtimeString(),1);
+			this->actionMessage->addText("[b]Auftrag:[/b] ");
+			this->actionMessage->addText(this->f->getActionString(),1);
 			
-			functions::sendMsg(this->f->getUserId(),5,"Flotte umgelenkt",msg);
+			this->actionMessage->addSubject("Flotte umgelenkt");
+			
+			this->actionLog->addText("Action Failed: Planet error");
 		}
-	}	
+	}
 }
+

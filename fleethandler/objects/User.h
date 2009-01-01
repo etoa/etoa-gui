@@ -17,14 +17,28 @@ class User
 	public:
 		User(int userId) {
 			this->userId = userId;
+			
+			this->dataLoaded = false;
 		}
 		
 		~User() { }
 		
-		void addCollectedWf(int res);
+		int getAllianceId();
+		std::string getUserNick();
+		
+		void addCollectedWf(double res);
+		void addCollectedAsteroid(double res);
+		void addCollectedNebula(double res);
+		
+		bool getPropertiesReturnMsg();
 		
 	private:
 		int userId;
+		int allianceId;
+		std::string userNick;
+		
+		bool dataLoaded;
+		void loadData();
 };
 
 #endif

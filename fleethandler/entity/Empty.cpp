@@ -14,6 +14,8 @@
 		this->initWfCrystal = this->wfCrystal;
 		this->initWfPlastic = this->wfPlastic;
 		
+		this->entityUser = new User(this->userId);
+		
 		this->dataLoaded = true;
 	}
 	

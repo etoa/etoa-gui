@@ -36,14 +36,14 @@
 		* @param int id
 		* @author Glaubinix
 		**/
-		Data::Data* getShipById(int id);
-		Data::Data* getDefById(int id);
-		Data::Data* getTechById(int id);
-		Data::Data* getBuildingById(int id);
-		Data::Data* getShipByName(std::string name);
-		Data::Data* getDefByName(std::string name);
-		Data::Data* getTechByName(std::string name);
-		Data::Data* getBuildingByName(std::string name);
+		ShipData::ShipData* getShipById(int id);
+		DefData::DefData* getDefById(int id);
+		TechData::TechData* getTechById(int id);
+		BuildingData::BuildingData* getBuildingById(int id);
+		ShipData::ShipData* getShipByName(std::string name);
+		DefData::DefData* getDefByName(std::string name);
+		TechData::TechData* getTechByName(std::string name);
+		BuildingData::BuildingData* getBuildingByName(std::string name);
 				
 		/**
 		* Initialisiert die Werte
@@ -74,7 +74,10 @@
 		/**
 		* Container mit den gespeicherten Daten
 		**/
-		std::vector<Data*> data;
+		std::vector<ShipData*> shipData;
+		std::vector<DefData*> defData;
+		std::vector<TechData*> techData;
+		std::vector<BuildingData*> buildingData;
 		
 		/**
 		* counter

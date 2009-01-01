@@ -2,10 +2,8 @@
 #ifndef __ANALYZEHANDLER__
 #define __ANALYZEHANDLER__
 
-#include <mysql++/mysql++.h>
-
 #include "../../FleetHandler.h"
-#include "../../MysqlHandler.h"
+#include "../../config/ConfigHandler.h"
 
 /**
 * Handles Analyze....
@@ -20,17 +18,6 @@ namespace analyze
 	public:
 		AnalyzeHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) {	}
 		void update();
-		
-	private:
-		/**
-		* Destroypossibility and percentage
-		**/
-		double shipDestroy, destroy;
-
-		/**
-		* Actionname (lots of problems with the string variable)
-		**/
-		std::string action;
 
 	};
 }

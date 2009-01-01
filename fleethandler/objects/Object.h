@@ -3,8 +3,11 @@
 #define __OBJECT__
 
 #include <mysql++/mysql++.h>
+#include <math.h>
 
 #include "../MysqlHandler.h"
+#include "../config/ConfigHandler.h"
+#include "../data/DataHandler.h"
 
 /**
 * Object class
@@ -18,9 +21,15 @@ class Object
 		Object(mysqlpp::Row &oRow) {
 			this->entityId = 0;
 			this->fleetId = 0;
+			
+			this->rebuildCount = 0;
+			
 			this->isFaked = false;
 			this->isChanged = false;
+			this->rebuildIsCalced = false;
 		}
+		
+		virtual ~Object() {}
 		
 		int getId();
 		int getUserId();
@@ -49,6 +58,12 @@ class Object
 		short getSBonusAntraxFood();
 		short getSBonusDeactivade();
 		
+		void setPercentSurvive(double percentage);
+		
+		virtual double getWfMetal() = 0;
+		virtual double getWfCrystal() = 0;
+		virtual double getWfPlastic() = 0;
+		
 		
 		virtual void save() = 0;
 		
@@ -56,7 +71,7 @@ class Object
 		int id;
 		short typeId;
 		int userId;
-		int count, initCount;
+		int count, initCount, rebuildCount;
 		int entityId, fleetId;
 		
 		bool isFaked;
@@ -67,6 +82,7 @@ class Object
 		short sBonusWeapon, sBonusStructure, sBonusShield, sBonusHeal, sBonusCapacity,  sBonusSpeed, sBonusPilots, sBonusTarn, sBonusAntrax, sBonusForsteal, sBonusBuildDestroy, sBonusAntraxFood, sBonusDeactivade;
 		
 		bool isChanged;
+		bool rebuildIsCalced;
 };
 
 #endif
