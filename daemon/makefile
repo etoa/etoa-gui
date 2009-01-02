@@ -16,3 +16,6 @@ pidfile.o: pidfile.cpp pidfile.h
 	
 anyoption.o: anyoption.cpp anyoption.h
 	g++ -c anyoption.cpp	
+
+clean:
+	rm *.o
