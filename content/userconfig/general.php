@@ -22,6 +22,8 @@
                 if (file_exists(BOARD_AVATAR_DIR."/".$arr['user_avatar']))
                     @unlink(BOARD_AVATAR_DIR."/".$arr['user_avatar']);
                 move_uploaded_file($source,BOARD_AVATAR_DIR."/".$fname);
+                if (UNIX)
+                	chmod(BOARD_AVATAR_DIR."/".$fname,FILE_UPLOAD_PERMS);
                 
 								$cu->avatar = $fname;
                 echo "Eigenen Avatar gespeichert!<br/>";
@@ -55,6 +57,9 @@
                     if (file_exists(PROFILE_IMG_DIR."/".$arr['user_profile_img']))
                         @unlink(PROFILE_IMG_DIR."/".$arr['user_profile_img']);
                     move_uploaded_file($source,PROFILE_IMG_DIR."/".$fname);
+		                if (UNIX)
+		                	chmod(PROFILE_IMG_DIR."/".$fname,FILE_UPLOAD_PERMS);
+		                	
                     if ($ims[0]>PROFILE_IMG_WIDTH || $ims[1]>PROFILE_IMG_HEIGHT)
 										{
 											if (resizeImage(PROFILE_IMG_DIR."/".$fname,PROFILE_IMG_DIR."/".$fname,PROFILE_IMG_WIDTH,PROFILE_IMG_HEIGHT,$ext))

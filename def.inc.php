@@ -507,6 +507,8 @@
 	$daemonLogfile = "/var/log/etoa/test.log";
 	$daemonPidfile = "/var/run/etoa/test.pid";
 
+	define('FILE_UPLOAD_PERMS',0644); // Permissions for uploaded files
+
 	// Advertising
 	define('ADD_BANNER','');
 
