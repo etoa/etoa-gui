@@ -28,9 +28,11 @@
 #include <sys/errno.h>
 #include <sstream>
 
-#include "logger.h"
-#include "pidfile.h"
-#include "anyoption.h"
+//#include <mysql++/mysql++.h>
+
+#include "lib/logger.h"
+#include "lib/pidfile.h"
+#include "lib/anyoption/anyoption.h"
 
 using namespace std;
 
