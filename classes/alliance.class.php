@@ -187,11 +187,11 @@
 						$this->getMembers();
 					if (isset($this->members[$val]))
 					{
-						$this->$key = $val;
+						$this->$key = intval($val);
 						$this->founder = & $this->members[$val];
 						$this->addHistory("Der Spieler [b]".$this->founder."[/b] wird zum Gründer befördert.");
 						$this->founder->sendMessage(MSG_ALLYMAIL_CAT,"Gründer","Du hast nun die Gründerrechte deiner Allianz!");
-						$this->founder->addHistory("{nick} ist nun Gründer der Allianz ".$this);
+						$this->founder->addToUserLog("alliance","{nick} ist nun Gründer der Allianz ".$this);
 						$this->changedFields[$key] = true;
 						return true;				
 					}
