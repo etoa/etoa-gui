@@ -568,7 +568,7 @@
     	        $cp->resFood-=$bc['food'];
 
 							// Bauzeit pro Schiff berechnen
-							$btime = ($darr['def_costs_metal'] + $darr['def_costs_crystal'] + $darr['def_costs_plastic'] + $darr['def_costs_fuel'] + $darr['def_costs_food']) / 12 * GLOBAL_TIME * DEF_BUILD_TIME * $time_boni_factor;
+							$btime = ($darr['def_costs_metal'] + $darr['def_costs_crystal'] + $darr['def_costs_plastic'] + $darr['def_costs_fuel'] + $darr['def_costs_food']) / GLOBAL_TIME * DEF_BUILD_TIME * $time_boni_factor;
 
 	    				// TODO: Überprüfen
 							//Rechnet zeit wenn arbeiter eingeteilt sind
@@ -1090,7 +1090,7 @@
 
 
     						// Bauzeit berechnen
-								$btime = ($darr['def_costs_metal']+$darr['def_costs_crystal']+$darr['def_costs_plastic']+$darr['def_costs_fuel']+$darr['def_costs_food']) / 12 * GLOBAL_TIME * DEF_BUILD_TIME * $time_boni_factor;
+								$btime = ($darr['def_costs_metal']+$darr['def_costs_crystal']+$darr['def_costs_plastic']+$darr['def_costs_fuel']+$darr['def_costs_food']) / GLOBAL_TIME * DEF_BUILD_TIME * $time_boni_factor;
     			      $btime_min=$btime*(0.1-(GEN_TECH_LEVEL/100));
     			      
     			      //Mindest Bauzeit

@@ -677,8 +677,7 @@
 							+ $ships[$ship_id]['ship_costs_plastic'] 
 							+ $ships[$ship_id]['ship_costs_fuel'] 
 							+ $ships[$ship_id]['ship_costs_food']) 
-							/ 12 
-							* GLOBAL_TIME * SHIP_BUILD_TIME 
+							/ GLOBAL_TIME * SHIP_BUILD_TIME 
 							* $time_boni_factor;
 
 	    				// TODO: Überprüfen
@@ -1067,7 +1066,7 @@
 
 
     						// Bauzeit berechnen
-								$btime = ($data['ship_costs_metal']+$data['ship_costs_crystal']+$data['ship_costs_plastic']+$data['ship_costs_fuel']+$data['ship_costs_food']) / 12 * GLOBAL_TIME * SHIP_BUILD_TIME * $time_boni_factor;
+								$btime = ($data['ship_costs_metal']+$data['ship_costs_crystal']+$data['ship_costs_plastic']+$data['ship_costs_fuel']+$data['ship_costs_food']) / GLOBAL_TIME * SHIP_BUILD_TIME * $time_boni_factor;
     			      $btime_min=$btime*(0.1-($gen_tech_level/100));
     			      
     			      //Mindest Bauzeit
