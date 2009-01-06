@@ -28,7 +28,7 @@
 #include <sys/errno.h>
 #include <sstream>
 
-//#include <mysql++/mysql++.h>
+#include <mysql++/mysql++.h>
 
 #include "lib/logger.h"
 #include "lib/pidfile.h"
@@ -62,8 +62,7 @@ void sighandler(int sig)
 	char str[50];
 	if (sig == SIGTERM)
 	{
-		sprintf(str,"Caught signal SIGTERM, exiting...",sig);
-	  lout(str);
+	  lout("Caught signal SIGTERM, exiting...");
 		lout("EtoA backend "+gameRound+" stopped");
 		exit(EXIT_SUCCESS);
 	}
@@ -150,12 +149,14 @@ int main(int argc, char* argv[])
   opt->addUsage( " -u  --uid userid        Select user id under which it runs (necessary if you are root)");
   opt->addUsage( " -p  --pidfile path      Select path to pidfile");
   opt->addUsage( " -l  --logfile path  	   Select path to logfile");
-  opt->addUsage( " -k  --killexisting  	   Kills an already running instance of this backend");
+  opt->addUsage( " -k  --killexisting      Kills an already running instance of this backend before starting this instance");
+  opt->addUsage( " -s  --stop              Stops a running instance of this backend");
   opt->addUsage( " -h  --help              Prints this help");
   opt->addUsage( " -v  --version           Prints version information");
   opt->setFlag("help",'h');
   opt->setFlag("version",'v');
   opt->setFlag("killexisting",'k');
+  opt->setFlag("stop",'s');
   opt->setOption("userid",'u');
   opt->setOption("round",'r');
   opt->setOption("pidfile",'p');  
@@ -181,6 +182,12 @@ int main(int argc, char* argv[])
   {	
 		killExistingInstance = true;
 	}
+	bool stop = false;
+  if( opt->getFlag( "stop" ) || opt->getFlag( 's' )) 
+  {	
+		stop = true;
+	}
+
 	
 	if( opt->getValue( 'r' ) != NULL)
 		gameRound = opt->getValue( 'r' );
@@ -242,6 +249,14 @@ int main(int argc, char* argv[])
      	fclose (pFile);
    	}		
    	int existingPid = atoi(mystring);
+   	
+   	if (stop)
+   	{
+   		lout("Got manual kill by console");
+   		kill(existingPid,SIGTERM);   
+   		std::cout << "Killing process "<<existingPid<<endl;
+   		return EXIT_SUCCESS;		
+   	}
 		if (killExistingInstance)
 		{
 			std::cout << "EtoA Daemon " << gameRound << " seems to run already with PID "<<existingPid<<"! Killing this instance..." << std::endl;
@@ -262,10 +277,15 @@ int main(int argc, char* argv[])
 		}
 		else
 		{
-			std::cout << "EtoA Daemon " << gameRound << " is already running with PID "<<existingPid<<"!"<<std::endl<<"Use the -k flag to force killing it. Exiting..." << std::endl;
+			std::cout << "EtoA Daemon " << gameRound << " is already running with PID "<<existingPid<<"!"<<std::endl<<"Use the -k flag to force killing it and continue with this instance. Exiting..." << std::endl;
 			exit(EXIT_FAILURE);
 		}
 	}
+ 	else if (stop)
+ 	{
+ 		std::cout << "No running process found, exiting..."<<std::endl;
+ 		return EXIT_FAILURE;		
+ 	}	
 
   /* Open any logs here */        
 	Logger* log = Logger::getInstance();
@@ -279,12 +299,38 @@ int main(int argc, char* argv[])
 		daemonize();
 	}
 
+  // Connect to the sample database.
+  mysqlpp::Connection conn(false);
+  mysqlpp::Query query = conn.query();
+  bool dbOnline = false;
+  if (conn.connect("etoatest", "localhost", "etoatest", "etoatest")) 
+  {
+		dbOnline = true;
+  }
+  else 
+  {
+  	lout("DB connection failed: "+std::string(conn.error()));
+  }
+
+
 	// The very usefull main loop
-	int i=0;
 	while (true)
 	{
-		//lout("foobar");
-		sleep(1);
+		if (dbOnline)
+		{
+
+      query << "select count(*) as cnt from users";
+      if (mysqlpp::Result res = query.store()) 
+      {
+				mysqlpp::Row pRow = res.at(0);
+        lout(std::string(pRow["cnt"])+" Users online");
+      }
+      else 
+      {
+          lout("Failed to get user list: "+std::string(query.error()));
+      }
+		}
+		sleep(900);
 	}
 	
 	// This point should never be reached
