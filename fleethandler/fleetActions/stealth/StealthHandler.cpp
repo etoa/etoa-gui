@@ -1,9 +1,5 @@
-#include <iostream>
-
-#include <mysql++/mysql++.h>
 
 #include "StealthHandler.h"
-#include "../../battle/BattleHandler.h"
 
 namespace stealth
 {
@@ -14,15 +10,15 @@ namespace stealth
 		* Fleet-Action: Stealth Attack
 		*/
 
-		BattleHandler *bh = new BattleHandler(con_, fleet_);
-		bh->battle();
+		BattleHandler *bh = new BattleHandler();
+		bh->battle(this->f,this->targetEntity,this->actionMessage,this->actionLog);
 		
 		// if fleet user has won the fight, send fleet home
 		if (bh->returnFleet)
 		{
-			fleetReturn(1,0,0,0,0,0,0);
+			this->f->setReturn();
 		}
 
-		//delete bh;
+		delete bh;
 	}
 }

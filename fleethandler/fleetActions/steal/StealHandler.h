@@ -2,10 +2,10 @@
 #ifndef __STEALHANDLER__
 #define __STEALHANDLER__
 
-#include <mysql++/mysql++.h>
-
 #include "../../FleetHandler.h"
-#include "../../MysqlHandler.h"
+
+#include "../../battle/BattleHandler.h"
+
 
 /**
 * Handles Steal....

@@ -36,7 +36,6 @@
 #include "fleetActions/FleetFactory.h"
 #include "config/ConfigHandler.h"
 #include "MysqlHandler.h"
-#include "objectData/ObjectDataHandler.h"
 #include "data/DataHandler.h"
 
 using namespace std;
@@ -55,7 +54,6 @@ int main(int argc, char *argv[])
 	Config &config = Config::instance();
 	
 	//Load Data
-	objectData &objectData = objectData::instance();
 	DataHandler &DataHandler = DataHandler::instance();
 	
 	// Main loop
@@ -82,8 +80,7 @@ int main(int argc, char *argv[])
 		query << "FROM ";
 		query << "	fleet ";
 		query << "WHERE ";
-		query << " landtime<" << time << " ";
-		query << " AND user_id='1';";
+		query << " landtime<" << time << "; ";
 		mysqlpp::Result res = query.store();	
 		query.reset();
 		

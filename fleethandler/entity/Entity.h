@@ -7,7 +7,10 @@
 
 #include "../MysqlHandler.h"
 #include "../functions/Functions.h"
+#include "../data/DataHandler.h"
 #include "../objects/User.h"
+#include "../objects/Object.h"
+#include "../objects/Fleet.h"
 
 /**
 * Entity class
@@ -47,12 +50,32 @@ class Entity
 			
 			this->userMain = false;
 			this->typeId = 0;
+			this->userChanged = 0;
+			
+			this->initWeapon = -1;
+			this->initShield = -1;
+			this->initStructure = -1;
+			this->initStructShield = -1;
+			this->initHeal = -1;
+			this->initCount = -1;
+			
+			this->weapon = 0;
+			this->shield = 0;
+			this->structure = 0;
+			this->heal = 0;
+			this->count = 0;
+			this->healCount = 0;
+			this->spyCount = 0;
 			
 			this->coordsLoaded = false;
 			this->dataLoaded = false;
 			this->changedData = false;
 			this->shipsLoaded = false;
+			this->shipsChanged = false;
+			this->techsAdded = false;
+			this->buildingsLoaded = false;
 			
+			this->buildingAtWork = "";
 			this->actionName = "";
 			this->userId = 0;
 		}
@@ -71,6 +94,9 @@ class Entity
 		bool getIsUserMain();
 		
 		std::string getCoords();
+		
+		int getAbsX();
+		int getAbsY();
 		
 		void setAction(std::string actionName);
 		
@@ -108,11 +134,51 @@ class Entity
 		void addWfCrystal(double crystal);
 		void addWfPlastic(double plastic);
 		
+		double getObjectWfMetal(bool total=false);
+		double getObjectWfCrystal(bool total=false);
+		double getObjectWfPlastic(bool total=false);
+		
+		double getAddedWfMetal();
+		double getAddedWfCrystal();
+		double getAddedWfPlastic();
+		
 		double removeWfMetal(double metal);
 		double removeWfCrystal(double crystal);
 		double removeWfPlastic(double plastic);
 		
 		std::string getResString();
+		
+		void invadeEntity(int userId);
+		void resetEntity(int userId=0);
+		
+		double getWeapon(bool total=false);
+		double getShield(bool total=false);
+		double getStructure(bool total=false);
+		double getStructShield(bool total=false);
+		double getHeal(bool total=false);
+		double getCount(bool total=false);
+		double getHealCount(bool total=false);
+		double getSpyCount();
+		
+		void setPercentSurvive(double percentage, bool total=false);
+		
+		double addExp(double exp);
+		double getExp();
+		double getAddedExp();
+		
+		std::string bombBuilding(int Level);
+		std::string empBuilding(int h);
+		
+		std::string getUserNicks();
+		std::string getShieldString(bool small=true);
+		std::string getStructureString(bool small=true);
+		std::string getStructureShieldString();
+		std::string getWeaponString(bool small=true);
+		std::string getCountString(bool small=true);
+		std::string getShipString();
+		std::string getDefString(bool rebuild=false);
+		
+		std::string getBuildingString();
 		
 		std::string getLogResStart();
 		std::string getLogResEnd();
@@ -123,31 +189,61 @@ class Entity
 		int id;
 		int userId;
 		int cellId;
-		short sx;
-		short sy;
+		int sx,sy,cx,cy;
 		short pos;
 		char code;
 		short typeId;
 		
 		User *entityUser;
+		std::vector<Object*> objects;
+		std::vector<Object*> specialObjects;
+		std::vector<Object*> def;
+		std::vector<Fleet*> fleets;
+		std::map<std::string, int> buildings;
 		
 		double resMetal, resCrystal, resPlastic, resFuel, resFood, resPower, resPeople;
 		double initResMetal, initResCrystal, initResPlastic, initResFuel, initResFood, initResPower, initResPeople;
 		double wfMetal, wfCrystal, wfPlastic;
 		double initWfMetal, initWfCrystal, initWfPlastic;
 		
-		int lastVisited;
+		int lastVisited, userChanged;
 		std::string codeName;
 		std::string coordsString;
 		std::string actionName;
+		
+		std::string buildingAtWork;
 		
 		bool userMain;
 		bool showCoords, coordsLoaded;
 		bool dataLoaded;
 		bool changedData;
-		bool shipsLoaded;
+		bool shipsLoaded, defLoaded;
+		bool shipsChanged;
+		bool techsAdded;
+		bool buildingsLoaded;
+		
+		double initWeapon, initShield, initStructure, initStructShield, initHeal, initCount;
+		double weapon, shield, structure, heal, count, healCount, spyCount;
+		
+		double exp;
+		
+		std::string logEntityShipStart, logEntityDefStart;
 
 		void loadCoords();
+		void loadAdditionalFleets();
+		void loadShips();
+		void recalcShips();
+		void loadDef();
+		void recalcDef();
+		
+		void addTechs();
+		double getWeaponBonus();
+		double getShieldBonus();
+		double getStructureBonus();
+		double getHealBonus();
+		
+		void loadBuildings();
+		
 		virtual void loadData() = 0;
 };
 

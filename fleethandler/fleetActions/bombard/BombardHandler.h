@@ -2,10 +2,12 @@
 #ifndef __BOMBARDHANDLER__
 #define __BOMBARDHANDLER__
 
-#include <mysql++/mysql++.h>
+#include <ctime>
+#include <math.h>
 
 #include "../../FleetHandler.h"
-#include "../../MysqlHandler.h"
+#include "../../config/ConfigHandler.h"
+#include "../../battle/BattleHandler.h"
 
 /**
 * Handles Bombard....

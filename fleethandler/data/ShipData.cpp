@@ -69,6 +69,10 @@
 			return false;
 	}
 	
+	double ShipData::getBountyBonus() {
+		return this->bountyBonus;
+	}
+	
 	int ShipData::getHeal() {
 		return this->heal;
 	}

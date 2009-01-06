@@ -1,9 +1,5 @@
-#include <iostream>
-
-#include <mysql++/mysql++.h>
 
 #include "AllianceHandler.h"
-#include "../../battle/BattleHandler.h"
 
 namespace alliance
 {
@@ -12,16 +8,16 @@ namespace alliance
 		/**
 		* Fleet-Action: Attack
 		*/
-		BattleHandler *bh = new BattleHandler(con_, fleet_);
-		bh->battle();
+		BattleHandler *bh = new BattleHandler();
+		bh->battle(this->f,this->targetEntity,this->actionMessage,this->actionLog);
 		
 		// if fleet user has won the fight, send fleet home
 		if (bh->returnFleet)
 		{
-			fleetReturn(1);
+			this->f->setReturn();
 		}
 
-		//delete bh;
+		delete bh;
 	}
 }
 

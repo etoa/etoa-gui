@@ -22,11 +22,6 @@ namespace spy
 
 	private:
 		/**
-		* Actionname (lots of problems with the string variable)
-		**/
-		std::string action;
-
-		/**
 		* Tech level agressor and victim
 		**/
 		short spyLevelAtt, tarnLevelAtt;
@@ -41,17 +36,13 @@ namespace spy
 		* Different spy defense values
 		**/
 		double spyDefense, spyDefense1, spyDefense2, tarnDefense;
-		bool defended;
+		bool defended, info;
 		
 		/**
 		* Something like a go or not variable
 		**/
 		double roll;
-		
-		/**
-		* Entity user id
-		**/
-		int userToId;
+
 		
 	};
 }

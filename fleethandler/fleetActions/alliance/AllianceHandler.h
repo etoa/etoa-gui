@@ -2,10 +2,7 @@
 #ifndef __ALLIANCEHANDLER__
 #define __ALLIANCEHANDLER__
 
-#include <mysql++/mysql++.h>
-
 #include "../../FleetHandler.h"
-#include "../../MysqlHandler.h"
 #include "../../battle/BattleHandler.h"
 
 /**

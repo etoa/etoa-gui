@@ -2,10 +2,14 @@
 #ifndef __ANTRAXHANDLER__
 #define __ANTRAXHANDLER__
 
-#include <mysql++/mysql++.h>
+#include <ctime>
+#include <math.h>
 
 #include "../../FleetHandler.h"
-#include "../../MysqlHandler.h"
+#include "../../functions/Functions.h"
+#include "../../config/ConfigHandler.h"
+
+#include "../../battle/BattleHandler.h"
 
 /**
 * Handles Antrax....
@@ -22,11 +26,6 @@ namespace antrax
 		void update();
 		
 	private:
-		/**
-		* Actionname (lots of problems with the string variable)
-		**/
-		std::string action;
-
 		/**
 		* Ship they are able to antrax a planet
 		**/
@@ -50,14 +49,8 @@ namespace antrax
 		/**
 		* Variables to calculate the damage food an people
 		**/
-		double people, peopleRest;
-		double food, foodRest;
-		
-		/**
-		* Entity user id
-		**/
-		int userToId;
-		
+		double food, people;
 	};
+
 }
 #endif

@@ -2,10 +2,14 @@
 #ifndef __INVADEHANDLER__
 #define __INVADEHANDLER__
 
-#include <mysql++/mysql++.h>
+#include <ctime>
+#include <math.h>
 
 #include "../../FleetHandler.h"
-#include "../../MysqlHandler.h"
+#include "../../functions/Functions.h"
+#include "../../config/ConfigHandler.h"
+
+#include "../../battle/BattleHandler.h"
 
 /**
 * Handles Invade....

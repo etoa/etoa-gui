@@ -2,10 +2,10 @@
 #ifndef __FETCHHANDLER__
 #define __FETCHHANDLER__
 
-#include <mysql++/mysql++.h>
+#include <math.h>
 
 #include "../../FleetHandler.h"
-#include "../../MysqlHandler.h"
+#include "../../config/ConfigHandler.h"
 
 /**
 * Handles Fetch....
@@ -19,17 +19,7 @@ namespace fetch
 	public:
 		FetchHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }
 		void update();
-		
-	private:
-		/**
-		* Actionname (lots of problems with the string variable)
-		**/
-		std::string action;
-		/**
-		* Several Capacity's to calculate the fetched resources
-		**/
-		double capa, capaCnt;
-		double loadPeople;
 	};
+
 }
 #endif

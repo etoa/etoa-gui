@@ -2,10 +2,8 @@
 #ifndef __COLONIALIZEHANDLER__
 #define __COLONIALIZEHANDLER__
 
-#include <mysql++/mysql++.h>
-
 #include "../../FleetHandler.h"
-#include "../../MysqlHandler.h"
+#include "../../config/ConfigHandler.h"
 
 /**
 * Handles Colonialize....
@@ -20,7 +18,7 @@ namespace colonialize
 	public:
 		ColonializeHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }
 		void update();
-		
 	};
+
 }
 #endif

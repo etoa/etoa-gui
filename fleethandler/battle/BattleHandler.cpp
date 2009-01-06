@@ -1,138 +1,98 @@
-#include <mysql++/mysql++.h>
-#include <vector>
-#include <math.h>
-#include <ctime>
-#include <algorithm>
-#include "../config/ConfigHandler.h"
-#include "../functions/Functions.h"
+#include <iomanip>
+#include <iostream>
 
 #include "BattleHandler.h"
-
-#include "DivisionHandler.h"
-#include "FightObjectHandler.h"
-#include "UserHandler.h"
 		 
-void BattleHandler::battle()
+void BattleHandler::battle(Fleet* fleet, Entity* entity, Message* message, Log* log)
 {
 	Config &config = Config::instance();
-	mysqlpp::Query query = con_->query();
-	
 	std::time_t time = std::time(0);
+	
+	message->addType((int)config.idget("SHIP_WAR_MSG_CAT_ID"));
 	
     // BEGIN SKRIPT //
 	alliancesHaveWar = 0;
-	specialShipBonusAntrax = 0;
-	specialShipBonusForsteal = 0;
-	specialShipBonusBuildDestroy = 0;
-	specialShipBonusAntraxFood = 0;
-	specialShipBonusDeactivade = 0;
-
-	//Erzeugen Object für User
-	DivisionHandler *attacker = new DivisionHandler();	
-	DivisionHandler *defender = new DivisionHandler();
-
-	//
-	// Flotten Daten
-	attacker->loadFleet((int)fleet_["id"]);
-	attacker->initValues();
-
-	//Vertidiung Daten
-	defender->loadShips((int)fleet_["entity_to"]);
-	defender->loadSupport((int)fleet_["entity_to"]);
-	defender->loadDefense((int)fleet_["entity_to"]);
-	defender->initValues();
 
    	// Kampf abbrechen falls User gleich
-    if ((int)fleet_["leader_id"]>0 && (attacker->getAllianceId()==defender->getAllianceId((int)fleet_["entity_to"]) && attacker->getAllianceId()!=0)) {
-	    msg = "[b]KAMPFBERICHT[/b]\nvom Planeten ";
-		msg += functions::formatCoords((int)fleet_["entity_to"],0);
-		msg += "\n[b]Zeit:[/b] ";
-		msg += functions::formatTime((int)fleet_["landtime"]);
-		msg += "\n\n";
-	    msg += "[b]Angreifer:[/b] ";
-		msg += attacker->getNicks();
-		msg += "\n";
-	    msg += "[b]Verteidiger:[/b] ";
-		msg += defender->getNicks((int)fleet_["entity_to"]);
-		msg += "\n\n";
-    	msg += "Der Kampf wurde abgebrochen da Angreifer und Verteidiger demselben Imperium angehören!";
+    if (fleet->getLeaderId() > 0 && (fleet->fleetUser->getAllianceId()==entity->getUser()->getAllianceId() &&fleet->fleetUser->getAllianceId()!=0)) {
+		message->addText("[b]KAMPFBERICHT[/b]",1);
+		message->addText("vom Planeten ",0);
+		message->addText(entity->getCoords(),1);
+		message->addText("[b]Zeit:[/b] ");
+		message->addText(fleet->getLandtimeString(),2);
+		message->addText("[b]Angreifer:[/b] ");
+		message->addText(fleet->getUserNicks(),1);
+		message->addText("[b]Verteidiger:[b] ");
+		message->addText(entity->getUserNicks(),2);
+		message->addText("Der Kampf wurde abgebrochen da Angreifer und Verteidiger demselben Imperium angehören!");
 		
-			returnV = 4;
-			bstat = "Unentschieden";
-			returnFleet = true;
-			
-		/** Send fight message to the fighter **/
-		std::string subject = "Kampfbericht (";
-		subject += bstat;
-		subject += ")";
-		functions::sendMsg((int)fleet_["user_id"],config.idget("SHIP_WAR_MSG_CAT_ID"),subject,msg);
+		message->addSubject("Kampfbericht (Unentschieden)");
+		
+		this->returnV = 4;
+		this->bstat = "Unentschieden";
+		this->returnFleet = true;
+		
+		/*functions::sendMsg((int)fleet_["user_id"],config.idget("SHIP_WAR_MSG_CAT_ID"),subject,msg);
 		int userToId = functions::getUserIdByPlanet((int)fleet_["entity_to"]);
 		functions::sendMsg(userToId,config.idget("SHIP_WAR_MSG_CAT_ID"),subject,msg);
+		*/
+		log->addText("Action failed: Opponent error");
 		
-		/** Add log **/
-		functions::addLog(1,msg,(int)fleet_["landtime"]);
   	} 
 	
    	// Kampf abbrechen falls User gleich
-    else if ((int)fleet_["leader_id"]==0 && ((int)fleet_["user_id"]==functions::getUserIdByPlanet((int)fleet_["entity_to"]))) {
-	    msg = "[b]KAMPFBERICHT[/b]\nvom Planeten ";
-		msg += functions::formatCoords((int)fleet_["entity_to"],0);
-		msg += "\n[b]Zeit:[/b] ";
-		msg += functions::formatTime((int)fleet_["landtime"]);
-		msg += "\n\n";
-	    msg += "[b]Angreifer:[/b] ";
-		msg += attacker->getNicks();
-		msg += "\n";
-	    msg += "[b]Verteidiger:[/b] ";
-		msg += defender->getNicks((int)fleet_["entity_to"]);
-		msg += "\n\n";
-    	msg += "Der Kampf wurde abgebrochen da Angreifer und Verteidiger identisch sind!";
+    else if (fleet->getLeaderId() == 0 && fleet->getUserId()==entity->getUserId()) {
+		message->addText("[b]KAMPFBERICHT[/b]",1);
+		message->addText("vom Planeten ",0);
+		message->addText(entity->getCoords(),1);
+		message->addText("[b]Zeit:[/b] ");
+		message->addText(fleet->getLandtimeString(),2);
+		message->addText("[b]Angreifer:[/b] ");
+		message->addText(fleet->fleetUser->getUserNick(),1);
+		message->addText("[b]Verteidiger:[b] ");
+		message->addText(entity->getUser()->getUserNick(),2);
+		message->addText("Der Kampf wurde abgebrochen da Angreifer und Verteidiger demselben Imperium angehören!");
 		
-			returnV = 4;
-			bstat = "Unentschieden";
-			returnFleet = true;
-			
-		/** Send fight message to the fighter **/
-		std::string subject = "Kampfbericht (";
-		subject += bstat;
-		subject += ")";
-		functions::sendMsg((int)fleet_["user_id"],config.idget("SHIP_WAR_MSG_CAT_ID"),subject,msg);
-		int userToId = functions::getUserIdByPlanet((int)fleet_["entity_to"]);
-		functions::sendMsg(userToId,config.idget("SHIP_WAR_MSG_CAT_ID"),subject,msg);
+		message->addSubject("Kampfbericht (Unentschieden)");
+		
+		this->returnV = 4;
+		this->bstat = "Unentschieden";
+		this->returnFleet = true;
+		
+		log->addText("Action failed: Opponent error");
   	} 
   	
   	// Kampf abbrechen und Flotte zum Startplanet schicken wenn Kampfsperre aktiv ist
   	else if ((int)config.nget("battleban",0)!=0 && (int)config.nget("battleban",1)<=time && (int)config.nget("battleban",2)>time) {
-  		msg = "[b]KAMPFBERICHT[/b]\nvom Planeten ";
-		msg += functions::formatCoords((int)fleet_["entity_to"],0);
-		msg += "\n[b]Zeit:[/b] ";
-		msg += functions::formatTime((int)fleet_["landtime"]);
-		msg += "\n\n";
-	    msg += "[b]Angreifer:[/b] ";
-		msg += attacker->getNicks();
-		msg += "\n";
-	    msg += "[b]Verteidiger:[/b] ";
-		msg += defender->getNicks((int)fleet_["entity_to"]);
-		msg += "\n\n";
-    	msg += config.get("battleban_arrival_text",1);
+		message->addText("[b]KAMPFBERICHT[/b]",1);
+		message->addText("vom Planeten ",0);
+		message->addText(entity->getCoords(),1);
+		message->addText("[b]Zeit:[/b] ");
+		message->addText(fleet->getLandtimeString(),2);
+		message->addText("[b]Angreifer:[/b] ");
+		message->addText(fleet->getUserNicks(),1);
+		message->addText("[b]Verteidiger:[b] ");
+		message->addText(entity->getUserNicks(),2);
+		message->addText(config.get("battleban_arrival_text",1));
 		
-			returnV = 4;
-			bstat = "Unentschieden";
-			bstat2 = "Unentschieden";
-			returnFleet =true;
-			
-		/** Send fight message to the fighter **/
-		std::string subject = "Kampfbericht (";
-		subject += bstat;
-		subject += ")";
+		message->addSubject("Kampfbericht (Unentschieden)");
+		
+		returnV = 4;
+		bstat = "Unentschieden";
+		bstat2 = "Unentschieden";
+		returnFleet =true;
+		
+		/*
 		functions::sendMsg((int)fleet_["user_id"],config.idget("SHIP_WAR_MSG_CAT_ID"),subject,msg);
 		int userToId = functions::getUserIdByPlanet((int)fleet_["entity_to"]);
 		functions::sendMsg(userToId,config.idget("SHIP_WAR_MSG_CAT_ID"),subject,msg);
+		*/
+		log->addText("Action failed: Battleban error");
 	}
 	else {
-
+	
 		// Prüft, ob Krieg herrscht
-		if(attacker->getAllianceId()!=0 && defender->getAllianceId()!=0)
+		/*if(attacker->getAllianceId()!=0 && defender->getAllianceId()!=0)
 		{
 			query << "SELECT ";
 			query << "	alliance_bnd_id ";
@@ -157,78 +117,45 @@ void BattleHandler::battle()
 					alliancesHaveWar = 1;
 				}
 			}
-		}
-
-		msg = "[b]KAMPFBERICHT[/b]\nvom Planeten ";
-		msg += functions::formatCoords((int)fleet_["entity_to"],0);
-		msg += "\n[b]Zeit:[/b] ";
-		msg += functions::formatTime((int)fleet_["landtime"]);
-		msg += "\n\n";
-		msg += "[b]Angreifer:[/b] ";
-		msg += attacker->getNicks();
-		msg += "\n";
-		msg += "[b]Verteidiger:[/b] ";
-		msg += defender->getNicks((int)fleet_["entity_to"]);
-		msg += "\n\n";
-		msg += "[b]ANGREIFENDE FLOTTE:[/b]\n";
-		msg += attacker->getObjects(1);
-		msg += "[b]VERTEIDIGENDE FLOTTE:[/b]\n";
-		msg += defender->getObjects(1);
-		msg += "[b]VERTEIDIGUNG:[/b]\n";
-		msg += defender->getObjects(0);
-        msg += "[b]DATEN DES ANGREIFERS[/b]\n[b]Schild (";
-		msg += functions::nf(functions::d2s(std::max(1.0,attacker->initShield/attacker->shield) * 100));
-		msg += "%):[/b] ";
-		msg += functions::nf(functions::d2s(attacker->initShield));
-		msg += "\n[b]Struktur (";
-		msg += functions::nf(functions::d2s(std::max(1.0,attacker->initStructure/attacker->structure) * 100));
-		msg += "%):[/b] ";
-		msg += functions::nf(functions::d2s(attacker->initStructure));
-		msg += "\n[b]Waffen (";
-		msg += functions::nf(functions::d2s(std::max(1.0,attacker->initWeapon/attacker->weapon) * 100));
-		msg += "%):[/b] ";
-		msg += functions::nf(functions::d2s(attacker->initWeapon));
-		msg += "\n[b]Einheiten:[/b] ";
-		msg += functions::nf(functions::d2s(attacker->initCount));
-		msg +="\n\n[b]DATEN DES VERTEIDIGERS[/b]\n[b]Schild (";
-		msg += functions::nf(functions::d2s(std::max(1.0,defender->initShield/defender->shield) * 100));
-		msg += "%):[/b] ";
-		msg += functions::nf(functions::d2s(defender->initShield));
-		msg += "\n[b]Struktur (";
-		msg += functions::nf(functions::d2s(std::max(1.0,defender->initStructure/defender->structure) * 100));
-		msg += "%):[/b] ";
-		msg += functions::nf(functions::d2s(defender->initStructure));
-		msg += "\n[b]Waffen (";
-		msg += functions::nf(functions::d2s(std::max(1.0,defender->initWeapon/defender->weapon) * 100));
-		msg += "%):[/b] ";
-		msg += functions::nf(functions::d2s(defender->initWeapon));
-		msg += "\n[b]Einheiten:[/b] ";
-		msg += functions::nf(functions::d2s(defender->initCount));
-        msg +="\n\n";
-
-
-
-
-
+		}*/
+		message->addText("[b]KAMPFBERICHT[/b]",1);
+		message->addText("vom Planeten ",0);
+		message->addText(entity->getCoords(),1);
+		message->addText("[b]Zeit:[/b] ");
+		message->addText(fleet->getLandtimeString(),2);
+		message->addText("[b]Angreifer:[/b] ");
+		message->addText(fleet->getUserNicks(),1);
+		message->addText("[b]Verteidiger:[/b] ");
+		message->addText(entity->getUserNicks(),2);
+		message->addText("[b]ANGREIFENDE FLOTTE:[/b] ",1);
+		message->addText(fleet->getShipString(),1);
+		message->addText("[b]VERTEIDIGENDE FLOTTE:[/b] ",1);
+		message->addText(entity->getShipString(),1);
+		message->addText("[b]VERTEIDIGUNG:[/b] ",1);
+		message->addText(entity->getDefString(),1);
+		message->addText("[b]DATEN DES ANGREIFERS:[/b] ",1);
+		message->addText(fleet->getShieldString(false),1);
+		message->addText(fleet->getStructureString(false),1);
+		message->addText(fleet->getWeaponString(false),1);
+		message->addText(fleet->getCountString(false),2);
+		message->addText("[b]DATEN DES VERTEIDIGERS:[/b] ",1);
+		message->addText(entity->getShieldString(false),1);
+		message->addText(entity->getStructureString(false),1);
+		message->addText(entity->getWeaponString(false),1);
+		message->addText(entity->getCountString(false),3);
+		
 		//
 		//Kampf Daten errechnen
 		//
 		//init... = wert vor dem kampf (wird nicht verändert) und c... aktueller Wert
 
-		//Anzahl Schiffe
-        attacker->cCount = std::max(attacker->initCount,(double)0);
-        defender->cCount = std::max(defender->initCount,(double)0);
-		
-		attacker->cWeapon = attacker->initWeapon;
-		defender->cWeapon = defender->initWeapon;
-
 		//Schild + Strukturstärke
-        attacker->initStructureShield = std::max((attacker->initShield + attacker->initStructure),(double)0);
-        defender->initStructureShield = std::max((defender->initShield + defender->initStructure),(double)0);
+        double initAttStructureShield = fleet->getStructShield(true);
+        double initDefStructureShield = entity->getStructShield(true);
 		
-		attacker->cStructureShield = attacker->initStructureShield;
-		defender->cStructureShield = defender->initStructureShield;
-
+		double cAttStructureShield = initAttStructureShield;
+		double cDefStructureShield = initDefStructureShield;
+		
 		//
 		//Der Kampf!
 		//
@@ -236,86 +163,79 @@ void BattleHandler::battle()
 
             runde = bx + 1;
 			
+            cAttStructureShield -= entity->getWeapon(true);
+			cDefStructureShield -= fleet->getWeapon(true);
 			
-            attacker->cStructureShield -= defender->cWeapon;
-			attacker->cStructureShield = std::max((double)0,attacker->cStructureShield);
-			defender->cStructureShield -= attacker->cWeapon;
-			defender->cStructureShield = std::max((double)0,defender->cStructureShield);
-			attacker->percentage = attacker->cStructureShield / attacker->initStructureShield;
-			defender->percentage = defender->cStructureShield / defender->initStructureShield;
+			cAttStructureShield = std::max(0.0,cAttStructureShield);
+			cDefStructureShield = std::max(0.0,cDefStructureShield);
 			
+			message->addText(functions::d2s(runde));
+			message->addText(": ");
+			message->addText(fleet->getCountString());
+			message->addText(" Einheiten des Angreifes schiessen mit einer St&auml;rke von ");
+			message->addText(fleet->getWeaponString());
+			message->addText(" auf den Verteidiger. Der Verteidiger hat danach noch ");
+			message->addText(functions::nf(functions::d2s(cDefStructureShield)));
+			message->addText(" Struktur- und Schildpunkte",2);
 			
-            msg += "\n";
-			msg += functions::d2s(runde);
-			msg += ": ";
-			msg += functions::d2s(attacker->cCount);
-			msg += " Einheiten des Angreifes schiessen mit einer St&auml;rke von ";
-			msg += functions::nf(functions::d2s(attacker->cWeapon));
-			msg += " auf den Verteidiger. Der Verteidiger hat danach noch ";
-			msg += functions::nf(functions::d2s(defender->cStructureShield));
-			msg += " Struktur- und Schildpunkte\n" ;
+			message->addText(functions::d2s(runde));
+			message->addText(": ");
+			message->addText(entity->getCountString());
+			message->addText(" Einheiten des Verteidigers schiessen mit einer St&auml;rke von ");
+			message->addText(entity->getWeaponString());
+			message->addText(" auf den Angreifer. Der Angreifer hat danach noch ");
+			message->addText(functions::nf(functions::d2s(cAttStructureShield)));
+			message->addText(" Struktur- und Schildpunkte",2);
 			
-            msg += "\n";
-			msg += functions::d2s(runde);
-			msg += ": ";
-			msg += functions::d2s(defender->cCount);
-			msg += " Einheiten des Verteidigers schiessen mit einer St&auml;rke von ";
-			msg += functions::nf(functions::d2s(defender->cWeapon));
-			msg += " auf den Angreifer. Der Angreifer hat danach noch ";
-			msg += functions::nf(functions::d2s(attacker->cStructureShield));
-			msg += " Struktur- und Schildpunkte\n" ;
+			fleet->setPercentSurvive(cAttStructureShield/initAttStructureShield);
+			entity->setPercentSurvive(cDefStructureShield/initDefStructureShield);
+						
+            if (fleet->getHeal() > 0) {
+                cAttStructureShield += fleet->getHeal();
+                if (cAttStructureShield > initAttStructureShield)
+                    cAttStructureShield = initAttStructureShield;
 
-
-			
-			attacker->updateValues();
-			defender->updateValues();
-			
-			
-            if (attacker->cHealCount > 0 && attacker->cCount > 0) {
-                attacker->cStructureShield += attacker->cHealPoints;
-                if (attacker->cStructureShield > attacker->initStructureShield)
-                    attacker->cStructureShield = attacker->initStructureShield;
-
-                msg += "\n";
-				msg += functions::d2s(runde);
-				msg += ": ";
-				msg += functions::d2s(attacker->cHealCount),
-				msg += " Einheiten des Angreifes heilen ";
-				msg += functions::nf(functions::d2s(attacker->cHealPoints));
-				msg += " Struktur- und Schildpunkte. Der Angreifer hat danach wieder ";
-				msg += functions::nf(functions::d2s(attacker->cStructureShield));
-				msg += " Struktur- und Schildpunkte\n" ;
+				message->addText(functions::d2s(runde));
+				message->addText(": ");
+				message->addText(functions::d2s(fleet->getHealCount()));
+				message->addText(" Einheiten des Angreifes heilen ");
+				message->addText(functions::d2s(fleet->getHeal()));
+				message->addText(" Struktur- und Schildpunkte. Der Angreifer hat danach wieder ");
 				
-				attacker->updateValues();
-            }
-
-            if (defender->cHealCount > 0 && defender->cCount > 0) {
-                defender->cStructureShield += defender->cHealPoints;
-                if (defender->cStructureShield > defender->initStructureShield)
-                    defender->cStructureShield = defender->initStructureShield;
-					
-                msg += "\n";
-				msg += functions::d2s(runde);
-				msg += ": ";
-				msg += functions::d2s(defender->cHealCount);
-				msg += " Einheiten des Verteidigers heilen ";
-				msg += functions::nf(functions::d2s(defender->cHealPoints));
-				msg += " Struktur- und Schildpunkte. Der Verteidiger hat danach wieder ";
-				msg += functions::nf(functions::d2s(defender->cStructureShield));
-				msg += " Struktur- und Schildpunkte\n";
+				fleet->setPercentSurvive(cAttStructureShield/initAttStructureShield*100);
 				
-				defender->updateValues();
+				message->addText(entity->getStructureShieldString());
+				message->addText(" Struktur- und Schildpunkte",1);
             }
-            msg += "\n";
 			
-            if (attacker->cStructureShield <= 0 || defender->cStructureShield <= 0)
+            if (entity->getHeal() > 0) {
+                cDefStructureShield += entity->getHeal();
+                if (cDefStructureShield > initDefStructureShield)
+                    cDefStructureShield = initDefStructureShield;
+
+				message->addText(functions::d2s(runde));
+				message->addText(": ");
+				message->addText(functions::d2s(entity->getHealCount()));
+				message->addText(" Einheiten des Verteidigers heilen ");
+				message->addText(functions::d2s(entity->getHeal()));
+				message->addText(" Struktur- und Schildpunkte. Der Angreifer hat danach wieder ");
+				
+				entity->setPercentSurvive(cDefStructureShield/initDefStructureShield*100);
+				
+				message->addText(entity->getStructureShieldString());
+				message->addText(" Struktur- und Schildpunkte",1);
+            }
+			
+			message->addText("",1);
+            if (cAttStructureShield <= 0 || cDefStructureShield <= 0)
                 break;
         }
-
-        msg += "Der Kampf dauerte ";
-		msg += functions::d2s(runde);
-		msg += " Runden!\n\n";
-
+		
+		message->addText("Der Kampf dauerte ");
+		message->addText(functions::d2s(runde));
+		message->addText(" Runden!",2);
+		
+		
 		//
 		//Daten nach dem Kampf
 		//
@@ -323,188 +243,33 @@ void BattleHandler::battle()
 		//
 		//überlebende Schiffe errechnen
 		//
-		attacker->loseFleet.resize(5);
-		defender->loseFleet.resize(5);
 		
-		wf.resize(3);
-
-		attacker->updateValuesEnd(wf);
-		defender->updateValuesEnd(wf);
-		
-
 		//Erfahrung für die Spezialschiffe errechnen
-        attacker->newExpInit = round((defender->loseFleet[0] + defender->loseFleet[1] + defender->loseFleet[2] + defender->loseFleet[3] + defender->loseFleet[4]) / 100000);
-		defender->newExpInit = round((attacker->loseFleet[0] + attacker->loseFleet[1] + attacker->loseFleet[2] + attacker->loseFleet[3] + attacker->loseFleet[4]) / 100000);
+        fleet->addExp(entity->getExp() / 100000);
+        entity->addExp(fleet->getExp() / 100000);
 
 
 		//Das entstandene Trümmerfeld erstellen/hochladen
-        query << "UPDATE ";
-		query << "	planets ";
-		query << "SET ";
-		query << "	planet_wf_metal=planet_wf_metal+'" << wf[0] << "', ";
-		query << "	planet_wf_crystal=planet_wf_crystal+'" << wf[1] << "', ";
-		query << "	planet_wf_plastic=planet_wf_plastic+'" << wf[2] << "' ";
-		query << "WHERE ";
-		query << "	id='" << fleet_["entity_to"] << "';";
-		query.store();
-		query.reset(),
-
-        //Löscht die flotte und setzt alle schiffe & def zurück (es wird wieder eingetragen!)
-        query << "UPDATE ";
-		query << "	deflist ";
-		query << "SET ";
-		query << "	deflist_count='0' ";
-		query << "WHERE ";
-		query << "	deflist_entity_id='" << fleet_["entity_to"] << "';";
-		query.store();
-		query.reset();
-		
-        query << "UPDATE ";
-		query << "	shiplist ";
-		query << "SET ";
-		query << "	shiplist_count='0' ";
-		query << "WHERE ";
-		query << "	shiplist_entity_id='" << fleet_["entity_to"] << "';";
-		query.store();
-		query.reset();
-		
-        query << "DELETE FROM ";
-		query << "	fleet_ships ";
-		query << "WHERE ";
-		query << "	fs_fleet_id='" << fleet_["id"] << "';";
-		query.store();
-		query.reset();
-		
-		query << "SELECT ";
-		query << "	fleet.id ";
-		query << "FROM ";
-		query << "	fleet_ships ";
-		query << "INNER JOIN ";
-		query << "	fleet ";
-		query << "ON ";
-		query << "	fs_fleet_id=fleet.id ";
-		query << "	AND fleet.leader_id='" << fleet_["id"] << "';";
-		mysqlpp::Result fsRes = query.store();
-		query.reset();
-		
-		if (fsRes) {
-			int fsSize = fsRes.size();
-			
-			if (fsSize > 0) {
-				mysqlpp::Row fsRow;
-				
-				for (mysqlpp::Row::size_type i = 0; i<fsSize; i++) {
-					fsRow = fsRes.at(i);
-						
-					query << "DELETE FROM ";
-					query << "	fleet_ships ";
-					query << "WHERE ";
-					query << "	fs_fleet_id='" << fsRow["id"] << "';";
-					query.store();
-					query.reset();
-				}
-			}
-		}
-
-		//
-		//Auswertung
-		//
-		//Schiffe/Def wiederherstellen
-		//
-		std::vector< FightObjectHandler >::iterator it;
-		
-		std::string attMsg = "[b]Zustand nach dem Kampf:[/b]\n\n";
-		attMsg += "[b]ANGREIFENDE FLOTTE:[/b]\n";
-		attMsg += attacker->getObjects(1);
-		if (attacker->saveObjects()) {
-			attMsg += "Gewonnene EXP: ";
-			attMsg += functions::nf(functions::d2s(attacker->newExpInit));
-			attMsg += "\n\n";
-		}
-		attMsg += "[b]VERTEIDIGENDE FLOTTE:[/b]\n";
-		attMsg += defender->getObjects(1);
-		if (defender->saveObjects()) {
-			attMsg += "\nGewonnene EXP: ";
-			attMsg += functions::nf(functions::d2s(defender->newExpInit));
-			attMsg += "\n\n";
-		}
-		attMsg += "[b]VERTEIDIGUNG:[/b]\n";
-		attMsg += defender->getObjects(0,true);
+		entity->addWfMetal(fleet->getWfMetal(true) + entity->getObjectWfMetal(true));
+		entity->addWfCrystal(fleet->getWfCrystal(true) + entity->getObjectWfCrystal(true));
+		entity->addWfPlastic(fleet->getWfPlastic(true) + entity->getObjectWfPlastic(true));
 
 		//
 		//Der Angreifer hat gewonnen!
 		//
-
-		if (defender->cCount == 0 && attacker->cCount > 0) {
-			returnV = 1;
-			raidR.resize(5);
-			raidRToShip.resize(5);
-
-			msg += "Der Angreifer hat den Kampf gewonnen!\n\n";
-
-            //Kapazität der überlebenden Schiffe rechnen
-
-            resRaidFactor = 0.5;
-          /*  if (dontSteal != 1 && shipSteal!=50)
-                resRaidFactor = shipSteal;*/
-
-			//Rohstoffe vom gegnerischen Planeten abfragen
-			query << "SELECT ";
-			query << "	planet_res_metal, ";
-			query << "	planet_res_crystal, ";
-			query << "	planet_res_plastic, ";
-			query << "	planet_res_fuel, ";
-			query << "	planet_res_food ";
-			query << "FROM ";
-			query << "	planets ";
-			query << "WHERE ";
-			query << "	id='" << fleet_["entity_to"] << "';";
-			mysqlpp::Result rpRes = query.store();
-			query.reset();
+		
+		if (cDefStructureShield == 0 && cAttStructureShield > 0) {
+			this->returnV = 1;
 			
-			if (rpRes) {
-				int rpSize = rpRes.size();
-				
-				if (rpSize > 0) {
-					mysqlpp::Row rpRow = rpRes.at(0);
-					
-					raidR[0] = rpRow["planet_res_metal"]	* resRaidFactor;
-					raidR[1] = rpRow["planet_res_crystal"]	* resRaidFactor;
-					raidR[2] = rpRow["planet_res_plastic"]	* resRaidFactor;
-					raidR[3] = rpRow["planet_res_fuel"]		* resRaidFactor;
-					raidR[4] = rpRow["planet_res_food"]		* resRaidFactor;
-				}
-			}
-
-			double sum = raidR[0] + raidR[1] + raidR[2] + raidR[3] + raidR[4];
+			message->addText("Der Angreifer hat den Kampf gewonnen!");
 			
-            for (int rcnt = 0; rcnt < raidR.size(); rcnt++) {
-                if (attacker->capa <= sum)
-                    raidRToShip[rcnt] += round(raidR[rcnt] * attacker->capa / sum);
-                else
-                    raidRToShip[rcnt] += round(raidR[rcnt]);
-            }
+			entity->removeResMetal(fleet->addMetal(entity->getResMetal()*fleet->getBountyBonus()));
+			entity->removeResCrystal(fleet->addCrystal(entity->getResCrystal()*fleet->getBountyBonus()));
+			entity->removeResPlastic(fleet->addPlastic(entity->getResPlastic()*fleet->getBountyBonus()));
+			entity->removeResFuel(fleet->addFuel(entity->getResFuel()*fleet->getBountyBonus()));
+			entity->removeResFood(fleet->addFood(entity->getResFood()*fleet->getBountyBonus()));
 
-			std::map< int,UserHandler>::iterator at;
-			std::map< int,double >::iterator ft;
-			for ( at = attacker->users.begin() ; at != attacker->users.end(); at++ ) {
-				for (ft = (*at).second.fleetCapa.begin(); ft != (*at).second.fleetCapa.end(); ft++) {
-					double percent = (*ft).second / attacker->capa;
-					query << "UPDATE ";
-					query << "	fleet ";
-					query << "SET ";
-					query << "	res_metal=res_metal+'" << floor(raidRToShip[0] * percent)  << "', ";
-					query << "	res_crystal=res_crystal+'" << floor(raidRToShip[1] * percent) << "', ";
-					query << "	res_plastic=res_plastic+'" << floor(raidRToShip[2] * percent) << "', ";
-					query << "	res_fuel=res_fuel+'" << floor(raidRToShip[3] * percent) << "', ";
-					query << "	res_food=res_food+'" << floor(raidRToShip[4] * percent) << "' ";
-					query << "WHERE ";
-					query << "	id='" <<(*ft).first << "';";	
-					query.store();
-					query.reset();
-				}
-
-				double percent2 = (*at).second.capa / attacker->capa;
+				/*double percent2 = (*at).second.capa / attacker->capa;
 				//Erbeutete Rohstoffsumme speichern
 				query << "UPDATE ";
 				query << "	users ";
@@ -513,54 +278,18 @@ void BattleHandler::battle()
 				query << "WHERE ";
 				query << "	user_id='" << (*at).second.userId << "';";
 				query.store();
-				query.reset();			
-			}
-
-			query << "UPDATE ";
-			query << "	planets ";
-			query << "SET ";
-			query << "	planet_res_metal=planet_res_metal-'" << raidRToShip[0] << "', ";
-			query << "	planet_res_crystal=planet_res_crystal-'" << raidRToShip[1] << "', ";
-			query << "	planet_res_plastic=planet_res_plastic-'" << raidRToShip[2] << "', ";
-			query << "	planet_res_fuel=planet_res_fuel-'" << raidRToShip[3] << "', ";
-			query << "	planet_res_food=planet_res_food-'" << raidRToShip[4] << "' ";
-			query << "WHERE ";
-			query << "	id='" << fleet_["entity_to"] << "';";
-			query.store();
-			query.reset();
-
-            msg += "[b]BEUTE:[/b]\n";
-            msg += "Titan: ";
-			msg += functions::nf(functions::d2s(raidRToShip[0]));
-			msg += "\nSilizium: ";
-			msg += functions::nf(functions::d2s(raidRToShip[1]));
-            msg += "\nPVC: ";
-			msg += functions::nf(functions::d2s(raidRToShip[2]));
-			msg += "\nTritium: ";
-			msg += functions::nf(functions::d2s(raidRToShip[3]));
-            msg += "\nNahrung: ";
-			msg += functions::nf(functions::d2s(raidRToShip[4]));
-            msg += "\n\n\n";
-		}
-	
+				query.reset();*/
 				
-
-
+			message->addText(fleet->getResCollectedString(true,"Beute"),2);
+		}
+		
+		
 		//
 		//Der Verteidiger hat gewonnen
 		//
-		else if (attacker->cCount==0 && defender->cCount>0) {
-			returnV = 2;
-			msg += "Der Verteidiger hat den Kampf gewonnen!\n\n";
-
-			//löscht die angreiffende flotte
-			query << "DELETE FROM ";
-			query << "	fleet ";
-			query << "WHERE ";
-			query << "	id='" << fleet_["id"] << "' ";
-			query << "	OR leader_id='" << fleet_["id"] << "';";
-			query.store();
-			query.reset();
+		else if (cAttStructureShield==0 && cDefStructureShield>0) {
+			this->returnV = 2;
+			message->addText("Der Verteidiger hat den Kampf gewonnen!",1);
 		}
 
 		//
@@ -571,45 +300,54 @@ void BattleHandler::battle()
 			//
 			//	Unentschieden, beide Flotten wurden zerstört
 			//
-			if (attacker->cCount==0 && defender->cCount==0) {
-        		returnV = 3;
-				msg += "Der Kampf endete unentschieden, da sowohl die Einheiten des Angreifes als auch die Einheiten des Verteidigers alle zerstört wurden!\n\n";
-            
-				//löscht die angreiffende flotte
-				query << "DELETE FROM ";
-				query << "	fleet ";
-				query << "WHERE ";
-				query << "	id='" << fleet_["id"] << "' ";
-				query << "	OR leader_id='" << fleet_["id"] << "';";
-				query.store();
-				query.reset();
+			if (cAttStructureShield==0 && cDefStructureShield==0) {
+        		this->returnV = 3;
+				message->addText("Der Kampf endete unentschieden, da sowohl die Einheiten des Angreifes als auch die Einheiten des Verteidigers alle zerstört wurden!",1);
 			}
 
 			//
 			//	Unentschieden, beide Flotten haben überlebt
 			//
 			else {
-				returnV = 4;
+				this->returnV = 4;
 
-				msg += "Der Kampf endete unentschieden und die Flotten zogen sich zurück!\n\n";
+				message->addText("Der Kampf endete unentschieden und die Flotten zogen sich zurück!",1);
 			}
 		}
 
-		msg += "[b]TR&Uuml;MMERFELD:[/b]\n";
-		msg += "Titan: ";
-		msg += functions::nf(functions::d2s(wf[0]));
-		msg += "\nSilizium: ";
-		msg += functions::nf(functions::d2s(wf[1]));
-		msg += "\nPVC: ";
-		msg += functions::nf(functions::d2s(wf[2]));
-		msg += "\n\n\n";
+		message->addText("[b]TR&Uuml;MMERFELD:[/b]",1);
+		message->addText("Titan: ");
+		message->addText(functions::nf(functions::d2s(entity->getAddedWfMetal())),1);
+		message->addText("Silizium: ");
+		message->addText(functions::nf(functions::d2s(entity->getAddedWfCrystal())),1);
+		message->addText("PVC: ");
+		message->addText(functions::nf(functions::d2s(entity->getAddedWfPlastic())),3);
 		
-		msg += attMsg;
+		//
+		//Auswertung
+		//
+		
+		message->addText("[b]Zustand nach dem Kampf:[/b]",2);
+		message->addText("[b]ANGREIFENDE FLOTTE:[/b]",1);
+		message->addText(fleet->getShipString(),1);
+		if (fleet->getAddedExp()>=0) {
+			message->addText("Gewonnene EXP: ");
+			message->addText(functions::nf(functions::d2s(fleet->getAddedExp())),2);
+		}
+		
+		message->addText("",1);
+		message->addText("[b]VERTEIDIGENDE FLOTTE:[/b]",1);
+		message->addText(entity->getShipString(),1);
+		if (entity->getAddedExp()>=0) {
+			message->addText("Gewonnene EXP: ");
+			message->addText(functions::nf(functions::d2s(entity->getAddedExp())),2);
+		}
+		
+		message->addText("[b]VERTEIDIGUNG:[/b]",1);
+		message->addText(entity->getDefString(true),1);
 
-        int perc =  config.nget("def_restore_percent",0)*100;
-        msg += "\n";
-		msg += functions::d2s(perc);
-		msg += "% der Verteidigungsanlagen werden repariert!";
+        message->addText(functions::d2s(config.nget("def_restore_percent",0)*100));
+		message->addText("% der Verteidigungsanlagen werden repariert!");
 /*
         //Log schreiben
         query << "INSERT INTO ";
@@ -733,11 +471,15 @@ void BattleHandler::battle()
 				break;
 		}
 		
-		/** Send fight message to the fighter **/
+		Message *defender = new Message(message);
+		defender->addSubject("Kampfbericht (" + bstat2 + ")");
+		defender->addUserId(entity->getUserId());
+		delete defender;
+		// Send fight message to the fighter
 		std::string subject1 = "Kampfbericht (";
 		subject1 += bstat;
 		subject1 += ")";
-		std::string subject2 = "Kampfbericht (";
+		/*std::string subject2 = "Kampfbericht (";
 		subject2 += bstat2;
 		subject2 += ")";
 		std::map< int,UserHandler>::iterator at;
@@ -752,11 +494,7 @@ void BattleHandler::battle()
 		else {
 			int userToId = functions::getUserIdByPlanet((int)fleet_["entity_to"]);
 			functions::sendMsg(userToId,config.idget("SHIP_WAR_MSG_CAT_ID"),subject2,msg);
-		}
-
-		/** Add log **/
-		functions::addLog(1,msg,(int)fleet_["landtime"]);
-
-		delete attacker, defender;
+		}*/
+		message->addSubject(subject1);
 	}
 }

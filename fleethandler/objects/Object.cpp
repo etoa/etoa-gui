@@ -21,6 +21,10 @@
 		return this->initCount;
 	}
 	
+	int Object::getRebuildCount() {
+		return std::max(0,this->rebuildCount);
+	}
+	
 	int Object::getEntityId() {
 		return this->entityId;
 	}
@@ -41,7 +45,7 @@
 		return this->sLevel;
 	}
 	
-	int Object::getSExp() {
+	double Object::getSExp() {
 		return this->sExp;
 	}
 	
@@ -97,7 +101,22 @@
 	}
 	
 	void Object::setPercentSurvive(double percentage) {
-		this->count = ceil(this->initCount * percentage/100);
+		this->count = ceil(this->initCount * percentage);
+	}
+	
+	int Object::removeObjects(int count) {
+		if (count>this->count) {
+			this->count = 0;
+			return this->count - count;
+		}
+		else
+			this->count -= count;
+		return 0;
+	}
+	
+	void Object::addExp(double exp) {
+		this->sExp += exp;
+		this->isChanged = true;
 	}
 
 

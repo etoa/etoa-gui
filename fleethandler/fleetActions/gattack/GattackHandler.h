@@ -2,10 +2,14 @@
 #ifndef __GATTACKHANDLER__
 #define __GATTACKHANDLER__
 
-#include <mysql++/mysql++.h>
+#include <ctime>
+#include <math.h>
 
 #include "../../FleetHandler.h"
-#include "../../MysqlHandler.h"
+#include "../../functions/Functions.h"
+#include "../../config/ConfigHandler.h"
+
+#include "../../battle/BattleHandler.h"
 
 /**
 * Handles Gas Attack....
@@ -21,11 +25,6 @@ namespace gattack
 		void update();
 
 	private:
-		/**
-		* Actionname (lots of problems with the string variable)
-		**/
-		std::string action;
-
 		/**
 		* Ship they are able to antrax a planet
 		**/
@@ -47,14 +46,10 @@ namespace gattack
 		int temp, fak;
 		
 		/**
-		* Variables to calculate the people lost in the storm, fire or whatever
+		* Variable to calculate the people lost in the storm, fire or whatever
 		**/
-		double people, rest;
-		
-		/**
-		* Entity user id
-		**/
-		int userToId;
+		double people;
 	};
+
 }
 #endif

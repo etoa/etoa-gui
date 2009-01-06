@@ -2,10 +2,9 @@
 #ifndef __EMPHANDLER__
 #define __EMPHANDLER__
 
-#include <mysql++/mysql++.h>
-
 #include "../../FleetHandler.h"
-#include "../../MysqlHandler.h"
+#include "../../config/ConfigHandler.h"
+#include "../../battle/BattleHandler.h"
 
 /**
 * Handles Emp....
@@ -40,7 +39,7 @@ namespace emp
 		/**
 		* Variables to calculate the damage
 		**/
-		int h, time, time2Add;
+		int h;
 	};
 }
 #endif

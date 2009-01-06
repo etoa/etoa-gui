@@ -1,9 +1,5 @@
-#include <iostream>
-
-#include <mysql++/mysql++.h>
 
 #include "AttackHandler.h"
-#include "../../battle/BattleHandler.h"
 
 namespace attack
 {
@@ -12,16 +8,17 @@ namespace attack
 		/**
 		* Fleet-Action: Attack
 		*/
-		BattleHandler *bh = new BattleHandler(con_, fleet_);
-		bh->battle();
-		
+		std::cout << "start\n";
+		BattleHandler *bh = new BattleHandler();
+		bh->battle(this->f,this->targetEntity,this->actionMessage,this->actionLog);
+		std::cout << "end\n";		
 		// if fleet user has won the fight, send fleet home
 		if (bh->returnFleet)
 		{
-			fleetReturn(1);
+			this->f->setReturn();
 		}
 
-		//delete bh;
+		delete bh;
 	}
 }
 

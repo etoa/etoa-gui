@@ -8,9 +8,7 @@
 		Data::Data *data = DataHandler.getDefById(this->getTypeId());
 		
 		this->rebuildCount = floor((this->initCount - this->count)*config.nget("def_restore_percent",0));
-		int defCount = ceil((this->initCount - (this->count+this->rebuildCount)*config.nget("def_wf_percent",0)));
-		
-		this->rebuildIsCalced = true;
+		int defCount = ceil((this->initCount - this->count)*config.nget("def_wf_percent",0));
 		
 		return (defCount * data->getCostsMetal());
 	}
@@ -24,8 +22,6 @@
 		this->rebuildCount = floor((this->initCount - this->count)*config.nget("def_restore_percent",0));
 		int defCount = ceil((this->initCount - (this->count+this->rebuildCount)*config.nget("def_wf_percent",0)));
 		
-		this->rebuildIsCalced = true;
-		
 		return (defCount * data->getCostsCrystal());
 	}
 	
@@ -37,8 +33,6 @@
 		
 		this->rebuildCount = floor((this->initCount - this->count)*config.nget("def_restore_percent",0));
 		int defCount = ceil((this->initCount - (this->count+this->rebuildCount)*config.nget("def_wf_percent",0)));
-		
-		this->rebuildIsCalced = true;
 		
 		return (defCount * data->getCostsPlastic());
 	}
@@ -54,7 +48,7 @@
 				query << "UPDATE ";
 				query << "	deflist ";
 				query << "SET ";
-				query << "	deflist_count='" << this->getCount() << "' ";
+				query << "	deflist_count='" << this->getCount() + this->getRebuildCount() << "' ";
 				query << "WHERE ";
 				query << "	deflist_id='" << this->getId() << "' ";
 				query << "	AND deflist_user_id='" << this->getUserId() << "' ";

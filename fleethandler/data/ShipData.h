@@ -27,6 +27,7 @@ public:
 		this->structure = (int)object["ship_structure"];
 		this->shield = (int)object["ship_shield"];
 		this->weapon = (int)object["ship_weapon"];
+		this->bountyBonus = (double)object["ship_bounty_bonus"];
 		this->raceId = (short)object["ship_race_id"];
 		this->catId = (short)object["ship_cat_id"];
 		this->maxCount = (int)object["ship_max_count"];
@@ -81,6 +82,7 @@ public:
 	bool getBuildable();
 	short getOrder();
 	bool getActions(std::string action);
+	double getBountyBonus();
 	int getHeal();
 	int getStructure();
 	int getShield();
@@ -130,6 +132,7 @@ private:
 	bool buildable;
 	short order;
 	std::string actions;
+	double bountyBonus;
 	int heal;
 	int structure;
 	int shield;

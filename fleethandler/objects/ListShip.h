@@ -16,7 +16,6 @@
 class ListShip : public Object {
 public: 
 	ListShip(mysqlpp::Row &oRow) : Object(oRow) {
-		std::cout << "two\n";
 		this->id = (int)oRow["shiplist_id"];
 		this->typeId = (short)oRow["shiplist_ship_id"];
 		this->userId = (int)oRow["shiplist_user_id"];

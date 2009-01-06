@@ -44,8 +44,6 @@ public:
 		
 		this->f = new Fleet(fleet);
 		
-		this->fleetUser = new User(f->getUserId());
-		
 		this->startEntity = EntityFactory::createEntityById(this->f->getEntityFrom());
 		if (this->f->getStatus()==3 && this->f->getNextactiontime() > 0)
 			this->targetEntity = EntityFactory::createEntityById(this->f->getNextId());
@@ -91,8 +89,6 @@ public:
 		
 		delete this->startEntity;
 		
-		delete this->fleetUser;
-		
 		delete this->f;
 	}
 		
@@ -117,7 +113,6 @@ protected:
 	mysqlpp::Connection* con_;
 	mysqlpp::Row fleet_;
 	Fleet *f;
-	User *fleetUser;
 	Entity* startEntity;
 	Entity* targetEntity;
 	Message *actionMessage;

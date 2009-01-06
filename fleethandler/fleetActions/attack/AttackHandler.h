@@ -2,10 +2,7 @@
 #ifndef __ATTACKHANDLER__
 #define __ATTACKHANDLER__
 
-#include <mysql++/mysql++.h>
-
 #include "../../FleetHandler.h"
-#include "../../MysqlHandler.h"
 #include "../../battle/BattleHandler.h"
 
 /**

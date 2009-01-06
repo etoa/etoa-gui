@@ -20,8 +20,9 @@ public:
 		this->typeId = (short)oRow["deflist_def_id"];
 		this->entityId = (int)oRow["deflist_entity_id"];
 		this->userId = (int)oRow["deflist_user_id"];
-		this->count = (int)oRow["deflsit_count"];
+		this->count = (int)oRow["deflist_count"];
 		this->initCount = this->count;
+		this->rebuildCount = -1;
 	}
 	
 	~ListDef() {

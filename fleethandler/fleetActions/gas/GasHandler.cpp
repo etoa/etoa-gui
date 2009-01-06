@@ -21,16 +21,15 @@ namespace gas
 		
 			// Check if there is a field
 			if (this->targetEntity->getCode()=='p' && this->targetEntity->getTypeId()==config.nget("gasplanet",0)) {
-				
+			
 				this->one = rand() % 101;
 				this->two = (int)(config.nget("gascollect_action",0) * 100);
 				
 				// Ship were destroyed?
 				if (this->one  < this->two)	{
-					int percent = 100 - rand() % (int)(config.nget("gascollect_action",1) * 100);
+					int percent = 100 - rand() % (int)(config.nget("gascollect_action",1));
 					this->f->setPercentSurvive(percent);
 				}
-				
 				
 				if (this->f->actionIsAllowed()) {
 					this->sum = 0;
@@ -52,7 +51,7 @@ namespace gas
 					this->actionMessage->addSubject("Gas gesaugt");
 					
 					// Save the collected resources
-					this->fleetUser->addCollectedNebula(this->sum);
+					this->f->fleetUser->addCollectedNebula(this->sum);
 				
 				}
 				// if there are no nebula collecter in the fleet anymore

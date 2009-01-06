@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 #include <math.h>
+#include <ctime>
+#include <iostream>
 #include <mysql++/mysql++.h>
 
 #include "../MysqlHandler.h"
@@ -14,6 +16,7 @@
 
 #include "Object.h"
 #include "ObjectFactory.h"
+#include "User.h"
 
 /**
 * Fleet class
@@ -39,13 +42,21 @@ class Fleet
 	double initResMetal, initResCrystal, initResPlastic, initResFuel, initResFood, initResPower, initResPeople;
 	double fetchMetal, fetchCrystal, fetchPlastic, fetchFuel, fetchFood, fetchPower, fetchPeople;
 	
-	double capacity, actionCapacity, peopleCapacity;
+	double capacity, actionCapacity, peopleCapacity, bounty;
 	bool actionAllowed, shipsLoaded, entityLoaded, shipsChanged;
-	int entityToUserId;
+	
+	double initWeapon, initShield, initStructure, initStructShield, initHeal, initCount;
+	double weapon, shield, structure, heal, count, healCount, actionCount;
+	
+	double exp;
+	
+	double antraxBonus, antraxFoodBonus, destroyBonus, empBonus, forstealBonus;
+	
+	bool techsAdded;
 	
 	bool changedData;
 	
-	std::vector<Object*> objects;
+	std::vector<Fleet*> fleets;
 	
 	std::string logFleetShipStart;
 
@@ -53,11 +64,14 @@ public:
 	Fleet(mysqlpp::Row &fleet);
 	
 	~Fleet() {
+		delete this->fleetUser;
+		
 		this->save();
 	}
 	
 	int getId();
 	int getUserId();
+	int getLeaderId();
 	int getEntityFrom();
 	int getEntityTo();
 	int getNextId();
@@ -66,26 +80,39 @@ public:
 	int getNextactiontime();
 	std::string getAction();
 	short getStatus();
-	double getPilots();
-	double getResMetal();
-	double getResCrystal();
-	double getResPlastic();
-	double getResFuel();
-	double getResFood();
-	double getResPower();
-	double getResPeople();
-	double getResLoaded();
-	double getCapacity();
-	double getActionCapacity();
-	double getPeopleCapacity();
 	
-	double addMetal(double metal);
-	double addCrystal(double crystal);
-	double addPlastic(double plastic);
-	double addFuel(double fuel);
-	double addFood(double food);
-	double addPower(double power);
-	double addPeople(double people);
+	double getPilots(bool total=false);
+	double getResMetal(bool total=false);
+	double getResCrystal(bool total=false);
+	double getResPlastic(bool total=false);
+	double getResFuel(bool total=false);
+	double getResFood(bool total=false);
+	double getResPower(bool total=false);
+	double getResPeople(bool total=false);
+	double getResLoaded(bool total=false);
+	double getCapacity(bool total=false);
+	double getCapa();
+	double getActionCapacity(bool total=false);
+	double getPeopleCapacity(bool total=false);
+	
+	double getBounty();
+	double getBountyBonus(bool total=false);
+	
+	double getFetchMetal(bool total=false);
+	double getFetchCrystal(bool total=false);
+	double getFetchPlastic(bool total=false);
+	double getFetchFuel(bool total=false);
+	double getFetchFood(bool total=false);
+	double getFetchPeople(bool total=false);
+	double getFetchSum(bool total=false);
+	
+	double addMetal(double metal, bool total=false);
+	double addCrystal(double crystal, bool total=false);
+	double addPlastic(double plastic, bool total=false);
+	double addFuel(double fuel, bool total=false);
+	double addFood(double food, bool total=false);
+	double addPower(double power, bool total=false);
+	double addPeople(double people, bool total=false);
 	
 	double unloadResMetal();
 	double unloadResCrystal();
@@ -95,26 +122,57 @@ public:
 	double unloadResPower();
 	double unloadResPeople(bool land=true);
 	
-	double getWfMetal();
-	double getWfCrystal();
-	double getWfPlastic();
+	double getWfMetal(bool total=false);
+	double getWfCrystal(bool total=false);
+	double getWfPlastic(bool total=false);
 	
-	void setPercentSurvive(double percentage);
+	double getWeapon(bool total=false);
+	double getShield(bool total=false);
+	double getStructure(bool total=false);
+	double getStructShield(bool total=false);
+	double getHeal(bool total=false);
+	double getCount(bool total=false);
+	double getHealCount(bool total=false);
+	double getActionCount(bool total=false);
 	
-	void setReturn();
+	double getWeaponBonus();
+	double getShieldBonus();
+	double getStructureBonus();
+	double getHealBonus();
+	
+	double addExp(double exp);
+	double getExp();
+	double getAddedExp();
+	
+	double getSpecialShipBonusAntrax();
+	double getSpecialShipBonusAntraxFood();
+	double getSpecialShipBonusBuildDestroy();
+	double getSpecialShipBonusEMP();
+	double getSpecialShipBonusForsteal();
+	
+	void deleteActionShip(int count);
+	
+	void loadShips();
+	void recalcShips();
+	void setPercentSurvive(double percentage, bool total=false);
+	
+	void setReturn(bool total=false);
 	void setSupport();
-	
-	int getEntityToUserId();
-	std::string getEntityToUserString();
 	
 	std::string getActionString();
 	std::string getLandtimeString();
 	std::string getLaunchtimeString();
-	std::string getEntityToString(short type=0);
-	std::string getEntityFromString(short type=0);
+	
+	std::string getUserNicks();
+	std::string getShieldString(bool small=true);
+	std::string getStructureString(bool small=true);
+	std::string getStructureShieldString();
+	std::string getWeaponString(bool small=true);
+	std::string getCountString(bool small=true);
 	
 	std::string getDestroyedShipString(std::string reason);
-	std::string getResCollectedString();
+	std::string getResCollectedString(bool total=false, std::string suject="Rohstoffe");
+	std::string getShipString();
 	
 	bool actionIsAllowed();
 	
@@ -123,9 +181,15 @@ public:
 	std::string getLogShipsStart();
 	std::string getLogShipsEnd();
 	
+	User *fleetUser;
+	std::vector<Object*> objects;
+	std::vector<Object*> specialObjects;
+	std::vector<Object*> actionObjects;
+	
 private:
-	void loadShips();
-	void recalcShips();
+	void loadAdditionalFleets();
+	
+	void addTechs();
 	
 	void save();
 };

@@ -1,14 +1,5 @@
-#include <iostream>
-#include <ctime>
-#include <math.h>
-#include <stdlib.h>
-
-#include <mysql++/mysql++.h>
 
 #include "ExploreHandler.h"
-#include "../../MysqlHandler.h"
-#include "../../config/ConfigHandler.h"
-#include "../../functions/Functions.h"
 
 namespace explore
 {
@@ -18,133 +9,45 @@ namespace explore
 		/**
 		* Fleet-Action: Explore the univserse
 		*/
-
-		//Init
+		
 		Config &config = Config::instance();
-		std::time_t time = std::time(0);
-		srand (time);
 		
-		this->action = std::string(fleet_["action"]);
+		this->actionMessage->addType((int)config.idget("SHIP_MISC_MSG_CAT_ID"));
 		
-		std::string coordsFrom = functions::formatCoords(fleet_["entity_from"],0);
-		std::string coordsGas = functions::formatCoords(fleet_["entity_to"],2);
-		
-		/** Precheck action==possible? **/
-		mysqlpp::Query query = con_->query();
-		query << "SELECT ";
-		query << "	ship_id ";
-		query << "FROM ";
-		query << "	fleet_ships ";
-		query << "INNER JOIN ";
-		query << "	ships ON fs_ship_id = ship_id ";
-		query << "	AND fs_fleet_id='" << fleet_["id"] << "' ";
-		query << "	AND fs_ship_faked='0' ";
-		query << "	AND ship_actions LIKE '%" << this->action << "%';";
-		mysqlpp::Result fsRes = query.store();
-		query.reset();
-
-		if (fsRes) {
-			int fsSize = fsRes.size();
-
-			if (fsSize > 0) {
-				query << "SELECT ";
-				query << "	sx, ";
-				query << "	sy, ";
-				query << "	cx, ";
-				query << "	cy, ";
-				query << "	code, ";
-				query << "	lastvisited ";
-				query << "FROM ";
-				query << "	entities ";
-				query << "INNER JOIN ";
-				query << "	cells ";
-				query << "ON entities.cell_id=cells.id ";
-				query << "AND entities.id='" << fleet_["entity_to"] << "';";
-				mysqlpp::Result cellRes = query.store();
-				query.reset();
-
-				/** the mask **/
-				char mask[1000] = "";
-
-				if (cellRes) {
-					int cellSize = cellRes.size();
-
-					if (cellSize > 0) {
-						mysqlpp::Row cellRow = cellRes.at(0);
-
-						query << "SELECT ";
-						query << "	discoverymask ";
-						query << "FROM ";
-						query << "	users ";
-						query << "WHERE ";
-						query << "	user_id='" << fleet_["user_id"] << "';";
-						mysqlpp::Result maskRes = query.store();
-						query.reset();
-						
-						if (maskRes) {
-							int maskSize = maskRes.size();
-							
-							if (maskSize > 0) {
-								mysqlpp::Row maskRow = maskRes.at(0);
-								strcpy( mask, maskRow["discoverymask"]);
-							}
-						}
-						
-						/** Discovere all the entity's **/
-						this->absX = 10 * ((int)cellRow["sx"] - 1) + (int)cellRow["cx"];
-						this->absY = 10 * ((int)cellRow["sy"] - 1) + (int)cellRow["cy"];
-
-						this->sxNum = config.nget("num_of_sectors",1);
-						this->cxNum = config.nget("num_of_cells",1);
-						this->syNum = config.nget("num_of_sectors",2);
-						this->cyNum = config.nget("num_of_cells",2);
-
-						for (int x = this->absX - 1; x <= this->absX + 1; x++) {
-							for (int y = this->absY - 1; y <= this->absY + 1; y++) {
-								this->pos = x + (this->cyNum * this->syNum) * (y - 1) - 1;
-								if (this->pos >= 0 && this->pos <= this->sxNum * this->syNum * this->cxNum * this->cyNum) {
-									mask[this->pos] = '1';				
-								}
-							}
-						}	
-						
-						/** Update the mask **/
-						query << "UPDATE ";
-						query << "	users ";
-						query << "SET ";
-						query << " discoverymask='" << mask << "' ";
-						query << "WHERE ";
-						query << "	user_id='" << fleet_["user_id"] << "';";
-						query.store();
-						query.reset();
-						
-						/** Send a message to the user **/
-						std::string text = "Eine Flotte vom Planeten ";
-						text += functions::formatCoords((int)fleet_["entity_from"],0);
-						text += " hat das Ziel ";
-						text += functions::formatCoords((int)fleet_["entity_to"],2);
-						text += " erkundet.";
-							
-						functions::sendMsg((int)fleet_["user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Erkundung",text);
-					}			
-				}	
-
-			}
-			else {
-				std::string text = "\n\nEine Flotte vom Planeten ";
-				text += functions::formatCoords((int)fleet_["entity_from"],0);
-				text += " versuchte, das Ziel zu erkunden. Leider war kein Schiff mehr in der Flotte, welches die Aktion ausführen konnte, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!";
-							
-				functions::sendMsg((int)fleet_["user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Erkundung gescheitert",text);
-			}
+		// Precheck action==possible?
+		if (this->f->actionIsAllowed()) {
+			
+			this->f->fleetUser->setDiscovered(this->targetEntity->getAbsX(),this->targetEntity->getAbsY());
+			
+			this->actionMessage->addText("Eine Flotte vom Planeten [b]",1);
+			this->actionMessage->addText(this->startEntity->getCoords(),1);
+			this->actionMessage->addText("[/b]hat das Ziel [b]",1);
+			this->actionMessage->addText(this->targetEntity->getCoords(),1);
+			this->actionMessage->addText("[/b]um [b]");
+			this->actionMessage->addText(this->f->getLandtimeString(),1);
+			this->actionMessage->addText("[/b]erkundet.");
+			
+			this->actionMessage->addSubject("Erkundung");
+		}	
+		else {
+			this->actionMessage->addText("Eine Flotte vom Planeten [b]",1);
+			this->actionMessage->addText(this->startEntity->getCoords(),1);
+			this->actionMessage->addText("versuchte das Ziel zu erkunden. Leider war kein Schiff mehr in der Flotte, welches die Aktion ausführen konnte, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!");
+			
+			this->actionMessage->addSubject("Erkundung gescheitert");
+			
+			this->actionLog->addText("Action failed: Ship error");
 		}
-		fleetReturn(1);
+		
+		this->f->setReturn();
 	}
+}
+						
 	
-	std::string ExploreHandler::event()
+	/*std::string ExploreHandler::event()
 	{
 	
-		/*Config &config = Config::instance();
+		Config &config = Config::instance();
 		std::time_t time = std::time(0);
 		srand (time);
 		
@@ -169,6 +72,6 @@ namespace explore
 		else
 		{
 		  
-		} */
+		}
 	}
-}
+}*/

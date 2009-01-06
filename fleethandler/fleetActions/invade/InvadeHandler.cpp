@@ -1,16 +1,5 @@
-#include <iostream>
-#include <ctime>
-#include <math.h>
-#include <stdlib.h>
-
-#include <mysql++/mysql++.h>
 
 #include "InvadeHandler.h"
-#include "../../MysqlHandler.h"
-#include "../../functions/Functions.h"
-#include "../../config/ConfigHandler.h"
-
-#include "../../battle/BattleHandler.h"
 
 namespace invade
 {
@@ -26,319 +15,152 @@ namespace invade
 		srand (this->time);
 		
 		
-		BattleHandler *bh = new BattleHandler(con_,fleet_);
-		bh->battle();
+		BattleHandler *bh = new BattleHandler();
+		bh->battle(this->f,this->targetEntity,this->actionMessage,this->actionLog);
 		
-		// Antrax the planet
-		if (bh->returnV==1) {
-			bh->returnFleet = true;
+		this->actionMessage->addType((int)config.idget("SHIP_WAR_MSG_CAT_ID"));
+		
+		//invade the planet
+		if (bh->returnV) {
 			
 			// Precheck action==possible?
-			mysqlpp::Query query = con_->query();
-			query << "SELECT ";
-			query << "	SUM(fs_ship_cnt) AS cnt ";
-			query << "FROM ";
-			query << "	fleet_ships ";
-			query << "INNER JOIN ";
-			query << "	ships ";
-			query << "ON fs_ship_id = ship_id ";
-			query << "	AND fs_fleet_id='" << f->getId() << "' ";
-			query << "	AND fs_ship_faked='0' ";
-			query << "	AND ship_actions LIKE '%" << f->getAction() << "%';";
-			mysqlpp::Result fsRes = query.store();
-			query.reset();
-		
-			if (fsRes) {
-				int fsSize = fsRes.size();
+			if (this->f->actionIsAllowed()) {
+				this->shipCnt = this->f->getActionCount();
 				
-				if (fsSize > 0) {
-					mysqlpp::Row fsRow = fsRes.at(0);
+				if (this->targetEntity->getUserId()==this->f->getUserId()) {
+					// Send a message to the user
+					this->actionMessage->addText("Eine Flotte hat folgendes Ziel erreicht:[b]",1);
+					this->actionMessage->addText(this->targetEntity->getCoords(),1);
+					this->actionMessage->addText("[b]Zeit:[/b]",1);
+					this->actionMessage->addText(this->f->getLandtimeString(),1);
+					this->actionMessage->addText("[b]Bericht:[/b] Die Flotte ist auf dem Planeten gelandet!",1);
 					
-					this->shipCnt = (int)fsRow["cnt"];
+					this->actionMessage->addSubject("Flotte angekommen");
 					
-					if (this->shipCnt > 0) {
-						// Load current user data
-						query << "SELECT ";
-						query << "	planet_user_id, ";
-						query << "	planet_user_main ";
-						query << "FROM ";
-						query << "	planets ";
-						query << "WHERE ";
-						query << "	id='" << f->getEntityTo() << "'";
-						mysqlpp::Result checkRes = query.store();
-						query.reset();
-		
-						if (checkRes) {
-							int checkSize = checkRes.size();
-			
-							if (checkSize > 0) {
-								mysqlpp::Row checkRow = checkRes.at(0);
-				
-								// Check if the planet user is the same as the fleet user
-								if((int)checkRow["planet_user_id"]==f->getUserId()) {
-									// Land fleet and delete it from the db
-									fleetLand(1,0,1);
-									fleetDelete();
-
-									// Send a message to the user
-									std::string msg = "Die Flotte hat folgendes Ziel erreicht:\n[b]Planet:[/b] ";
-									msg += f->getEntityToString();
-									msg += "\n[b]Zeit:[/b] ";
-									msg += f->getLandtimeString();
-									msg += "\n[b]Bericht:[/b] Die Flotte ist auf dem Planeten gelandet!";
-									msg += msgAllShips;
-									msg += msgRes;
-									functions::sendMsg(f->getUserId(),config.idget("SHIP_WAR_MSG_CAT_ID"),"Flotte angekommen",msg);
-								}
-								// if the planet doesnt belong to the fleet user
-								else {
-									/** Anti-Hack (exploited by Pain & co)
-									* Check again if planet is no a main planet
-									* Also explioted using a fake haven form, such 
-									* that an invasion to an illegal target could be launched **/
-									if ((int)checkRow["planet_user_main"]==0) {
-										this->pointsDef = 0;
-										this->pointsAtt = 0;
-		
-										// Load data of the planet user
-										query << "SELECT ";
-										query << "	user_points ";
-										query << "FROM ";
-										query << "	users ";
-										query << "WHERE ";
-										query << "	user_id='" << f->getEntityToUserId() << "';";
-										mysqlpp::Result pointsDefRes = query.store();
-										query.reset();
+					fleetLand(1);
+				}
+				// if the planet doesnt belong to the fleet user
+				else {
+					/** Anti-Hack (exploited by Pain & co)
+					* Check again if planet is no a main planet
+					* Also explioted using a fake haven form, such 
+					* that an invasion to an illegal target could be launched */
+					if (!this->targetEntity->getIsUserMain()) {
+						this->pointsDef = this->f->fleetUser->getUserPoints();
+						this->pointsAtt = this->targetEntity->getUser()->getUserPoints();
+						
+						// Calculate the Chance
+						this->chance = config.nget("INVADE_POSSIBILITY",0) / this->pointsAtt * this->pointsDef;
+						
+						// Check if the chance is wheter higher then the max not lower then the min
+						if(this->chance > config.nget("INVADE_POSSIBILITY",1))
+							this->chance = config.nget("INVADE_POSSIBILITY",1);
+						else if(this->chance < config.nget("INVADE_POSSIBILITY",1))
+							this->chance = config.nget("INVADE_POSSIBILITY",1);
+						
+						this->one = rand() % 101;
+						this->two = (100 * this->chance);
+						
+						if (this->one<=this->two) {
+						
+							// if the user has already the number of planets
+							if (this->f->fleetUser->getPlanetsCount() <= (int)config.nget("user_max_planets",0)) {
+								// Load the main planet of the victim
 								
-										if (pointsDefRes) {
-											int pointsDefSize = pointsDefRes.size();
-											
-											if (pointsDefSize > 0) {
-												mysqlpp::Row pointsDefRow = pointsDefRes.at(0);
-												this->pointsDef = (int)pointsDefRow["user_points"];
-											}
-										}
+								int entityUser = this->targetEntity->getUserId();
 								
-										// Load data of the fleet user
-										query << "SELECT ";
-										query << "	user_points ";
-										query << "FROM ";
-										query << "	users ";
-										query << "WHERE ";
-										query << "	user_id='" << f->getUserId() << "';";
-										mysqlpp::Result pointsAttRes = query.store();
-										query.reset();
+								// Invade the planet
+								this->targetEntity->invadeEntity(this->f->getUserId());
 								
-										if (pointsAttRes) {
-											int pointsAttSize = pointsAttRes.size();
-									
-											if (pointsAttSize > 0) {
-												mysqlpp::Row pointsAttRow = pointsAttRes.at(0);
-												this->pointsAtt = (int)pointsAttRow["user_points"];
-											}
-										}
-		
-										// Calculate the Chance
-										this->chance = config.nget("INVADE_POSSIBILITY",0) / this->pointsAtt * this->pointsDef;
-		
-										// Check if the chance is wheter higher then the max not lower then the min
-										if(this->chance > config.nget("INVADE_POSSIBILITY",1))
-											this->chance = config.nget("INVADE_POSSIBILITY",1);
-										else if(this->chance < config.nget("INVADE_POSSIBILITY",1))
-											this->chance = config.nget("INVADE_POSSIBILITY",1);
-											
-										this->one = rand() % 101;
-										this->two = (100 * this->chance);
-										
-										if (one<=two) {
-											bh->returnFleet = false;
-											
-											// Load planet user count planets
-											query << "SELECT ";
-											query << "	COUNT(planet_user_id) as cnt ";
-											query << "FROM ";
-											query << "	planets ";
-											query << "WHERE ";
-											query << "	planet_user_id='" << f->getUserId() << "';";
-											mysqlpp::Result maxPlanetRes = query.store();
-											query.reset();
-									
-											if (maxPlanetRes) {
-												int maxPlanetSize = maxPlanetRes.size();
-										
-												if (maxPlanetSize > 0) {
-													mysqlpp::Row maxPlanetRow = maxPlanetRes.at(0);
-													
-													// if the user has already the number of planets
-													if((int)maxPlanetRow["cnt"] < (int)config.nget("user_max_planets",0)) {
-														// Load the main planet of the victim
-														query << "SELECT ";
-														query << "	id ";
-														query << "FROM ";
-														query << "	planets ";
-														query << "WHERE ";
-														query << "	planet_user_id='" << f->getEntityToUserId() << "' ";
-														query << "	AND planet_user_main='1';";
-														mysqlpp::Result mPlanetRes = query.store();
-														query.reset();
-												
-														if (mPlanetRes) {
-															int mPlanetSize = mPlanetRes.size();
-													
-															if (mPlanetSize > 0) {
-																mysqlpp::Row mPlanetRow = mPlanetRes.at(0);
+								this->actionMessage->addText("[b]Planet:[/b]");
+								this->actionMessage->addText(this->targetEntity->getCoords(),1);
+								this->actionMessage->addText("[b]Besitzer:[/b] ");
+								this->actionMessage->addText(this->targetEntity->getUser()->getUserNick(),2);
+								this->actionMessage->addText("Dieser Planet wurde von einer Flotte, welche vom Planeten ",1);
+								this->actionMessage->addText(this->startEntity->getCoords(),1);
+								this->actionMessage->addText(" stammt, übernommen!",1);
+								
+								Message* victimMessage = new Message(this->actionMessage);
+								victimMessage->addSubject("Kolonie wurde invasiert");
+								victimMessage->addUserId(entityUser);
+								delete victimMessage;
+								
+								this->actionMessage->addText("Ein Invasionsschiff wurde bei der Übernahme aufgebraucht!",1);
+								
+								this->actionMessage->addSubject("Planet erfolgreich invasiert");
+								
+								this->f->deleteActionShip(1);
+								
+								// Land fleet
+								fleetLand(1);
+								
+								//Ranking::addBattlePoints($arr['fleet_user_id'],BATTLE_POINTS_SPECIAL,"Spezialaktion"); //ToDo		
+							}
+							// if the user has already reached the max number of planets
+							else {
+								this->actionMessage->addText("[b]Planet:[/b]");
+								this->actionMessage->addText(this->targetEntity->getCoords(),1);
+								this->actionMessage->addText("[b]Besitzer:[/b] ");
+								this->actionMessage->addText(this->targetEntity->getUser()->getUserNick(),2);
+								this->actionMessage->addText("Eine Flotte vom Planeten ",1);
+								this->actionMessage->addText(this->startEntity->getCoords(),1);
+								this->actionMessage->addText(" versuchte, das Ziel zu übernehmen. Dieser Versuch schlug aber fehl und die Flotte machte sich auf den Rückweg!");
 																
-																// Send every fleet from the victim to his main planet
-																query << "SELECT ";
-																query << "	landtime, ";
-																query << "	launchtime, ";
-																query << "	entity_to, ";
-																query << "	status, ";
-																query << "	id ";
-																query << "FROM ";
-																query << "	fleet ";
-																query << "WHERE ";
-																query << "	user_id='" << f->getEntityToUserId() << "' ";
-																query << "	AND entity_to='" << f->getEntityTo() << "';";
-																mysqlpp::Result iflRes = query.store();
-																query.reset();
-														
-																if (iflRes) {
-																	int iflSize = iflRes.size();
-																	mysqlpp::Row iflRow;
-															
-																	if (iflSize > 0) {
-																		for (mysqlpp::Row::size_type i = 0; i<iflSize; i++)  {
-																			iflRow = iflRes.at(i);
-																			
-																			this->duration = std::min((int)this->time,(int)iflRow["landtime"]) - (int)iflRow["fleet_launchtime"];
-																			this->launchtime = this->time;
-																			this->landtime = this->launchtime + this->duration;
-																			
-																			query << "UPDATE ";
-																			query << "	fleet ";
-																			query << "SET ";
-																			query << "	entity_from='" << iflRow["entity_to"] << "', ";
-																			query << "	entity_to='" << mPlanetRow["id"] << "', ";
-																			query << "	status='2', ";
-																			query << "	launchtime='" << this->launchtime << "', ";
-																			query << "	landtime='" << this->landtime << "' ";
-																			query << "WHERE ";
-																			query << "	id='" << iflRow["id"] << "';";
-																			query.store();
-																			query.reset();
-																		}
-																		// Send a message to the victim
-																		std::string text = "Eure Schife, welche zum Planeten [b]";
-																		text += f->getEntityToString();
-																		text += "[/b] unterwegs waren, wurden auf euren Hauptplaneten umgeleitet!\n";
-																		functions::sendMsg(f->getEntityToUserId(),config.idget("SHIP_WAR_MSG_CAT_ID"),"Schiffe umgeleitet",text);
-																	}
-																}
-															}
-														}
-													
-														// Invade the planet
-														functions::invasionPlanet(f->getEntityTo(),f->getUserId());
-																											
-														// Land fleet
-														fleetLand(1);
-													
-														// Create a message for the victim and the agressor
-														std::string msg = msgAllShips;
-														msg += msgRes;
-													
-														std::string text = "[b]Planet:[/b] ";
-														text += f->getEntityToString();
-														text += "\n[b]Besitzer:[/b] ";
-														text += f->getEntityToUserString();
-														text += "\n\nDieser Planet wurde von einer Flotte, welche vom Planeten ";
-														text += f->getEntityFromString();
-														text += " stammt, übernommen!\n";
-														functions::sendMsg(f->getEntityToUserId(),(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Kolonie wurde invasiert",text);
-														text += "Ein Invasionsschiff wurde bei der Übernahme aufgebraucht!\n";
-														text += msg;
-														functions::sendMsg(f->getUserId(),(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Planet erfolgreich invasiert",text);
-														
-														//Ranking::addBattlePoints($arr['fleet_user_id'],BATTLE_POINTS_SPECIAL,"Spezialaktion"); //ToDo		
-													}
-													// if the user has already reached the max number of planets
-													else {
-														bh->returnFleet = true;
-														std::string text = "[b]Planet:[/b] ";
-														text += f->getEntityToString();
-														text += "\n[b]Besitzer:[/b] ";
-														text += f->getEntityToUserString();
-														text += "\n\nEine Flotte vom Planeten ";
-														text += f->getEntityFromString();
-														text += " versuchte, das Ziel zu übernehmen. Dieser Versuch schlug aber fehl und die Flotte machte sich auf den Rückweg!";
-														std::string text1 = "[b]Planet:[/b] ";
-														text1 += f->getEntityToString();
-														text1 += "\n[b]Besitzer:[/b] ";
-														text1 += f->getEntityToUserString();
-														text1 += "\n\nEine Flotte vom Planeten  ";
-														text1 += f->getEntityFromString();
-														text1 += " versuchte, das Ziel zu übernehmen. Dieser Versuch schlug aber fehl und die Flotte machte sich auf den Rückweg! Hinweis: Du hast bereits die maximale Anzahl Planeten erreicht!";
-														
-														functions::sendMsg(f->getUserId(),(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Invasionsversuch gescheitert",text1);
-														functions::sendMsg(f->getEntityToUserId(),(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Invasionsversuch gescheitert",text);
-													}
-												}
-											}
-										
-											// if the invasion failed
-											else
-											{
-												std::string text = "[b]Planet:[/b] ";
-												text += f->getEntityToString();
-												text += "\n[b]Besitzer:[/b] ";
-												text += f->getEntityToUserString();
-												text += "\n\nEine Flotte vom Planeten ";
-												text += f->getEntityFromString();
-												text += " versuchte, das Ziel zu übernehmen. Dieser Versuch schlug aber fehl und die Flotte machte sich auf den Rückweg!";
-		
-												functions::sendMsg(f->getUserId(),(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Invasionsversuch gescheitert",text);
-												functions::sendMsg(f->getEntityToUserId(),(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Invasionsversuch gescheitert",text);
-											}
-										}
-				
-									}
-									
-									// if the planet is a main planet
-									else {
-										std::string text = "[b]Planet:[/b] ";
-										text += f->getEntityToString();
-										text += "\n[b]Besitzer:[/b] ";
-										text += f->getEntityToUserString();
-										text += "\n\nEine Flotte vom Planeten ";
-										text += f->getEntityFromString();
-										text += " versuchte, das Ziel zu übernehmen. Dies ist aber ein Hauptplanet, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!";
+								Message* victimMessage = new Message(this->actionMessage);
+								victimMessage->addSubject("Invasionsversuch gescheitert");
+								victimMessage->addUserId(this->targetEntity->getUserId());
+								delete victimMessage;
 								
-										functions::sendMsg(f->getUserId(),(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Invasionsversuch gescheitert",text);
-										functions::sendMsg(f->getEntityToUserId(),(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Invasionsversuch gescheitert",text);
-									}
-								}
+								this->actionMessage->addText("Hinweis: Du hast bereits die maximale Anzahl Planeten erreicht!",1);
+								
+								this->actionMessage->addSubject("Invasionsversuch gescheitert");
 							}
 						}
-					}
-					// If no ship with the action was in the fleet
-					else {
-						std::string text = "Eine Flotte vom Planeten ";
-						text += f->getEntityFromString();
-						text += " versuchte das Ziel zu übernehmen. Leider war kein Schiff mehr in der Flotte, welches die Aktion ausführen konnte, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!";
+						
+						// if the invasion failed
+						else {
+							this->actionMessage->addText("[b]Planet:[/b]");
+							this->actionMessage->addText(this->targetEntity->getCoords(),1);
+							this->actionMessage->addText("[b]Besitzer:[/b] ");
+							this->actionMessage->addText(this->targetEntity->getUser()->getUserNick(),2);
+							this->actionMessage->addText("Eine Flotte vom Planeten ",1);
+							this->actionMessage->addText(this->startEntity->getCoords(),1);
+							this->actionMessage->addText(" versuchte, das Ziel zu übernehmen. Dieser Versuch schlug aber fehl und die Flotte machte sich auf den Rückweg!");
 							
-						functions::sendMsg(f->getUserId(),(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Invasionsversuch gescheitert",text);
+							this->actionMessage->addSubject("Invasionsversuch gescheitert");
+							
+							this->actionMessage->addUserId(this->targetEntity->getUserId());
+						}
+					}
+					
+					// if the planet is a main planet
+					else {
+						this->actionMessage->addText("[b]Planet:[/b]");
+						this->actionMessage->addText(this->targetEntity->getCoords(),1);
+						this->actionMessage->addText("[b]Besitzer:[/b] ");
+						this->actionMessage->addText(this->targetEntity->getUser()->getUserNick(),2);
+						this->actionMessage->addText("Eine Flotte vom Planeten ",1);
+						this->actionMessage->addText(this->startEntity->getCoords(),1);
+						this->actionMessage->addText(" versuchte, das Ziel zu übernehmen. Dies ist aber ein Hauptplanet, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!");
+						
+						this->actionMessage->addSubject("Invasionsversuch gescheitert");
+						
+						this->actionMessage->addUserId(this->targetEntity->getUserId());
 					}
 				}
 			}
+			// If no ship with the action was in the fleet 
+			else {
+				this->actionMessage->addText("Eine Flotte vom Planeten [b]",1);
+				this->actionMessage->addText(this->startEntity->getCoords(),1);
+				this->actionMessage->addText("versuchte das Ziel zu übernehmen. Leider war kein Schiff mehr in der Flotte, welches die Aktion ausführen konnte, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!");
+				
+				this->actionMessage->addSubject("Antraxangriff gescheitert");
+				
+				this->actionLog->addText("Action failed: Ship error");
+			}
 		}
-		
-		// Send fleet home or delete it
-		if (bh->returnFleet || bh->returnV==4) {
-			fleetReturn(1);
-		}
-		else {
-			fleetDelete();
-		}
+		this->f->setReturn();
+		delete bh;
 	}
 }

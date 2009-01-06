@@ -21,11 +21,29 @@ class Message
 		Message() {	
 			this->toSend = true;
 			this->text = "";
+			this->subject = "";
+			this->type = 0;
+		}
+		
+		Message(Message* message) {	
+			this->toSend = true;
+			this->text = message->getText();
+			this->type = message->getType();
+			this->subject = message->getSubject();
+			this->entityId = message->getEntityId();
+			this->fleetId = message->getFleetId();
+			this->users.clear();;
 		}
 		
 		~Message() {
 			this->send();
 		}
+		
+		std::string getText();
+		std::string getSubject();
+		int getType();
+		int getEntityId();
+		int getFleetId();
 		
 		void addUserId(int userId);
 		void addType(int type);

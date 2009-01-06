@@ -144,6 +144,7 @@
 		query << "	ship_buildable, ";
 		query << "	ship_order, ";
 		query << "	ship_actions, ";
+		query << "	ship_bounty_bonus, ";
 		query << "	ship_heal, ";
 		query << "	ship_structure, ";
 		query << "	ship_shield, ";

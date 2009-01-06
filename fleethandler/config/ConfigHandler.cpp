@@ -88,11 +88,11 @@
 		idConfig["REGENA_TECH_ID"] = 19;
 		
 		//->Gebäude
-		idConfig["FLEET_CONTROL_ID"] = 1;
+		idConfig["FLEET_CONTROL_ID"] = 11;
 		idConfig["FACTORY_ID"] = 10;
 		idConfig["SHIPYARD_ID"] = 9;
-		idConfig["BUILD_MISSILE_ID"] = 24;
-		idConfig["BUILD_CRYPTO_ID"] = 25;		
+		idConfig["BUILD_MISSILE_ID"] = 25;
+		idConfig["BUILD_CRYPTO_ID"] = 24;		
 		
 		//->Spionage
 		idConfig["SPY_DEFENSE_FACTOR_TECH"] = 20;

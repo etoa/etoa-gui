@@ -22,7 +22,8 @@
 		query << "	planet_wf_plastic, ";
 		query << "	planet_people, ";
 		query << "	planet_fields, ";
-		query << "	planet_last_updated ";
+		query << "	planet_last_updated, ";
+		query << "	planet_user_changed ";
 		query << "FROM ";
 		query << "	planets ";
 		query << "WHERE ";
@@ -53,6 +54,7 @@
 				
 				this->fields = (int)pRow["planet_fields"];
 				this->lastUpdated = (int)pRow["planet_last_updated"];
+				this->userChanged = (int)pRow["planet_user_changed"];
 			}
 		}
 		
@@ -115,6 +117,8 @@
 			query << "	planet_wf_crystal=planet_wf_crystal+'" << (this->getWfCrystal() - this->initWfCrystal) << "', ";
 			query << "	planet_wf_plastic=planet_wf_plastic+'" << (this->getWfPlastic() - this->initWfPlastic) << "', ";
 			query << "	planet_people=planet_people+'" << (this->getResPeople() - this->initResPeople) << "', ";
+			if (this->userChanged)
+				query << " planet_user_chaged='" << this->userChanged << "', ";
 			query << "	planet_last_updated='" << this->lastUpdated << "' ";
 			query << "WHERE ";
 			query << "	id='" << this->getId() << "' ";

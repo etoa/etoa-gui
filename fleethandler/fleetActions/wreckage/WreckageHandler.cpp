@@ -45,14 +45,11 @@ namespace wreckage
 					this->plastic = this->targetEntity->removeWfPlastic(this->f->addPlastic(this->targetEntity->getWfPlastic()));
 				}
 				
-				this->actionMessage->addText("[/b] erreicht und Tr&uuml;mmer gesammelt.",2);
-				this->actionMessage->addText("[b]ROHSTOFFE:[/b]",2);
-				this->actionMessage->addText("Titan: " + functions::nf(functions::d2s(this->metal)),1);
-				this->actionMessage->addText("Silitium: " + functions::nf(functions::d2s(this->crystal)),1);
-				this->actionMessage->addText("PVC: " + functions::nf(functions::d2s(this->plastic)),1);
+				this->actionMessage->addText("[/b] erreicht und Tr&uuml;mmer gesammelt.");
+				this->actionMessage->addText(this->f->getResCollectedString());
 				
 				// Update collected resources for the userstatistic
-				this->fleetUser->addCollectedWf(this->sum);
+				this->f->fleetUser->addCollectedWf(this->sum);
 			}
 			
 			// If the field is empty
@@ -61,6 +58,8 @@ namespace wreckage
 				// Send a message to the user
 				this->actionMessage->addText("[/b] erreicht.",2);
 				this->actionMessage->addText("Es wurden aber leider keine brauchbaren Trümmerteile mehr gefunden so dass die Flotte unverrichteter Dinge zurückkehren musste.");
+				
+				this->actionLog->addText("Action failed: Entity error");
 			}
 		}
 		

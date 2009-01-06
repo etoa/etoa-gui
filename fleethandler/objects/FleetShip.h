@@ -27,7 +27,7 @@ public:
 		this->special = (bool)oRow["fs_special_ship"];
 		if (this->special) {
 			this->sLevel = (short)oRow["fs_special_ship_level"];
-			this->sExp = (int)oRow["fs_special_ship_exp"];
+			this->sExp = (double)oRow["fs_special_ship_exp"];
 			this->sBonusWeapon = (short)oRow["fs_special_ship_bonus_weapon"];
 			this->sBonusStructure = (short)oRow["fs_special_ship_bonus_structure"];
 			this->sBonusShield = (short)oRow["fs_special_ship_bonus_shield"];

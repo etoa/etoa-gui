@@ -21,7 +21,7 @@ namespace position
 			// Check if the user'd like to have a return message for spy and transport
 		
 			if (this->f->getAction()=="spy" || this->f->getAction()=="transport")
-				if (!this->fleetUser->getPropertiesReturnMsg())
+				if (!this->f->fleetUser->getPropertiesReturnMsg())
 					this->actionMessage->dontSend();
 			
 			this->actionMessage->addText("[b]FLOTTE GELANDET[/b]",2);

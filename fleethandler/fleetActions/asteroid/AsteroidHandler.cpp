@@ -26,7 +26,7 @@ namespace asteroid
 				
 				// Ship were destroyed?
 				if (this->one  < this->two)	{
-					int percent = 100 - rand() % (int)(config.nget("asteroid_action",1) * 100);
+					int percent = 100 - rand() % (int)(config.nget("asteroid_action",1));
 					this->f->setPercentSurvive(percent);
 				}
 				
@@ -55,7 +55,7 @@ namespace asteroid
 					this->actionMessage->addSubject("Asteroiden gesammelt");
 					
 					// Save the collected resources
-					this->fleetUser->addCollectedAsteroid(this->sum);
+					this->f->fleetUser->addCollectedAsteroid(this->sum);
 				}
 				
 				// If there arent any asteroid collecter anymore

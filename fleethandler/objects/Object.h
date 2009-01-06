@@ -19,6 +19,7 @@ class Object
 {
 	public:
 		Object(mysqlpp::Row &oRow) {
+		
 			this->entityId = 0;
 			this->fleetId = 0;
 			
@@ -36,6 +37,7 @@ class Object
 		short getTypeId();
 		int getCount();
 		int getInitCount();
+		int getRebuildCount();
 		int getEntityId();
 		int getFleetId();
 		
@@ -43,7 +45,7 @@ class Object
 		
 		bool getSpecial();
 		short getSLevel();
-		int getSExp();
+		double getSExp();
 		short getSBonusWeapon();
 		short getSBonusStructure();
 		short getSBonusShield();
@@ -60,10 +62,13 @@ class Object
 		
 		void setPercentSurvive(double percentage);
 		
+		int removeObjects(int count);
+		
+		void addExp(double exp);
+		
 		virtual double getWfMetal() = 0;
 		virtual double getWfCrystal() = 0;
 		virtual double getWfPlastic() = 0;
-		
 		
 		virtual void save() = 0;
 		
@@ -78,7 +83,7 @@ class Object
 		
 		bool special;
 		short sLevel;
-		int sExp;
+		double sExp;
 		short sBonusWeapon, sBonusStructure, sBonusShield, sBonusHeal, sBonusCapacity,  sBonusSpeed, sBonusPilots, sBonusTarn, sBonusAntrax, sBonusForsteal, sBonusBuildDestroy, sBonusAntraxFood, sBonusDeactivade;
 		
 		bool isChanged;

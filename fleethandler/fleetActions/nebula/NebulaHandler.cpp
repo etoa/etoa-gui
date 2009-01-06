@@ -26,7 +26,7 @@ namespace nebula
 				
 				// Ship were destroyed?
 				if (this->one  < this->two)	{
-					int percent = 100 - rand() % (int)(config.nget("nebula_action",1) * 100);
+					int percent = 100 - rand() % (int)(config.nget("nebula_action",1));
 					this->f->setPercentSurvive(percent);
 				}
 				
@@ -50,7 +50,7 @@ namespace nebula
 					this->actionMessage->addSubject("Nebelfeld gesammelt");
 					
 					// Save the collected resources
-					this->fleetUser->addCollectedNebula(this->sum);
+					this->f->fleetUser->addCollectedNebula(this->sum);
 					
 				}
 				// if there are no nebula collecter in the fleet anymore

@@ -43,7 +43,7 @@ namespace support
 		//Support beginnen
 		else {
 			// Precheck action==possible?
-			if (this->fleetUser->getAllianceId() == this->targetEntity->getUser()->getAllianceId()) {
+			if (this->f->fleetUser->getAllianceId() == this->targetEntity->getUser()->getAllianceId()) {
 				this->actionMessage->addText("[b]SUPPORTFLOTTE ANGEKOMMEN[/b]",2);
 				this->actionMessage->addText("Eine Flotte hat ihr Ziel erreicht!",2);
 				this->actionMessage->addText("[b]Zielplanet:[/b] ");
@@ -57,7 +57,7 @@ namespace support
 				this->actionMessage->addText("[b]Ende des Auftrages:[/b] ");
 				this->actionMessage->addText(functions::formatTime(this->f->getLandtime() + this->f->getNextactiontime()),1);
 				this->actionMessage->addText("[b]Flottenbesitzer:[/b] ");
-				this->actionMessage->addText(this->fleetUser->getUserNick(),1);
+				this->actionMessage->addText(this->f->fleetUser->getUserNick(),1);
 				
 				this->actionMessage->addSubject("Supportflotte angekommen");
 				

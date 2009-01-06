@@ -2,10 +2,15 @@
 #ifndef __BATTLEHANDLER__
 #define __BATTLEHANDLER__
 
-#include <mysql++/mysql++.h>
-#include <vector>
+#include <ctime>
 
-#include "../MysqlHandler.h"
+#include "../config/ConfigHandler.h"
+#include "../functions/Functions.h"
+
+#include "../objects/Fleet.h"
+#include "../entity/Entity.h"
+#include "../objects/Message.h"
+#include "../objects/Log.h"
 
 /**
 * Handles battles....
@@ -16,43 +21,16 @@
 class BattleHandler
 {
 	public:
-		BattleHandler(mysqlpp::Connection *con,mysqlpp::Row fleet) {
-			this->fleet_ = fleet;
-			this->con_ = con;
-			this->shipSteal = 50;
-		 }
-		void update();
-		void battle();
-		void loadSpecial();
-		
-		std::string msgFight, msg;
-		
-		double specialShipBonusAntrax;
-        double specialShipBonusForsteal;
-        double specialShipBonusBuildDestroy;
-        double specialShipBonusAntraxFood;
-        double specialShipBonusDeactivade;
-		
-		bool dontSteal;
-		int shipSteal;
-		float resRaidFactor;
-		
+		BattleHandler() { }
+		void battle(Fleet* fleet, Entity* entity, Message* message, Log* log);
+
 		bool alliancesHaveWar;
 		
-		
-		
 		short runde;
-		
-		std::vector<double> wf;
-		std::vector<double> raidRToShip;
-		std::vector<double> raidR;
 		
 		short returnV;
 		std::string bstat, bstat2;
 		bool returnFleet;
-		
-		mysqlpp::Row fleet_;
-		mysqlpp::Connection *con_;
 		
 };
 #endif

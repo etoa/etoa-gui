@@ -2,10 +2,14 @@
 #ifndef __STEALTHHANDLER__
 #define __STEALTHHANDLER__
 
-#include <mysql++/mysql++.h>
+#include <ctime>
+#include <math.h>
 
 #include "../../FleetHandler.h"
-#include "../../MysqlHandler.h"
+#include "../../functions/Functions.h"
+#include "../../config/ConfigHandler.h"
+
+#include "../../battle/BattleHandler.h"
 
 /**
 * Handles Stealth....
@@ -19,7 +23,23 @@ namespace stealth
 	public:
 		StealthHandler(mysqlpp::Row fleet)  : FleetHandler(fleet) { }
 		void update();
+	
+	private:
+		/**
+		* Ship they are able to antrax a planet
+		**/
+		int shipCnt;
 		
+		/**
+		* Spy tech level
+		**/
+		short tLevelAtt, tLevelDef;
+
+		/**
+		* 2 variables to calculate the possibility
+		**/
+		double one, two;
 	};
+
 }
 #endif

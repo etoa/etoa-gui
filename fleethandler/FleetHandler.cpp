@@ -82,34 +82,6 @@
 						
 						double shipCnt = (double)fsRow["fs_ship_cnt"];
 						
-						//Kolonisieren und Invasieren aus den Schiffsaktionen auslesen
-						bool canColonize = 0;
-						bool canInvade = 0;
-						char str[] = "";
-						strcpy( str, fsRow["ship_actions"]);
-						char * pch;
-						pch = strtok (str,",");
-						do
-						{
-							if (!strcmp(pch,"colonize"))
-								canColonize = 1;
-							else if (!strcmp(pch,"invade"))
-								canInvade = 1;
-							pch = strtok (NULL, ",");
-						} while  (pch != NULL);
-						
-						// Ein Koloschiff subtrahieren, falls kolonialisieren gewählt ist (einmalig)
-						if (canColonize==1 && alreadyColonialized==0 && this->f->getAction()=="colonize") {
-							shipCnt = (double)fsRow["fs_ship_cnt"]-1;
-							alreadyColonialized=1;
-						}
-
-						// Ein Invasionsschiff subtrahieren, falls invasieren gewählt ist (einmalig)
-						if (canInvade==1 && alreadyInvaded==0 && this->f->getAction()=="invade") {
-							shipCnt = (double)fsRow["fs_ship_cnt"]-1;
-							alreadyInvaded=1;
-						}
-						
 						//Sucht einen bestehenden Datensatz auf dem Zielplanet aus
 						//Achtung: In dem Query darf NICHT auch noch nach der User-ID gefragt werden, weil Handelsschiffe die User-ID=0 haben!
 						query << "SELECT ";
@@ -163,7 +135,7 @@
 									userId = this->f->getUserId();
 								}
 								else {
-									userId = this->f->getEntityToUserId();
+									userId = this->targetEntity->getUserId();
 								}
 								
 								query << "INSERT INTO ";
@@ -233,6 +205,8 @@
 						msg += "\n";
 						msgShips = msg;
 					}
+					
+					fleetDelete();
 				}
 			}
 		}
