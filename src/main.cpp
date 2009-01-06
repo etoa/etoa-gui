@@ -28,6 +28,12 @@
 #include <sys/errno.h>
 #include <sstream>
 
+#include <boost/thread.hpp>
+
+#include <sys/ipc.h>
+#include <sys/msg.h>
+
+
 #include <mysql++/mysql++.h>
 
 #include "lib/logger.h"
@@ -131,6 +137,77 @@ int daemonize()
 	s << getuid();
 	lout(s.str());	
   return myPid;
+}
+
+void msgQueueThread()
+{
+
+    struct my_msgbuf {
+        long mtype;
+        char mtext[200];
+    };
+
+        struct my_msgbuf buf;
+        int msqid;
+        key_t key = 7543;
+
+        if ((msqid = msgget(key, 0644)) == -1) { /* connect to the queue */
+            lout("msgget");
+            exit(1);
+        }
+        
+        printf("spock: ready to receive messages, captain.\n");
+
+        for(;;) { /* Spock never quits! */
+            if (msgrcv(msqid, (struct msgbuf *)&buf, sizeof(buf), 0, 0) == -1) {
+                lout("msgrcv");
+                exit(1);
+            }
+            lout(buf.mtext);
+        }
+
+
+
+	
+	
+	
+	
+}
+
+void mainThread()
+{
+	lout ("main");
+  // Connect to the sample database.
+  mysqlpp::Connection conn(false);
+  mysqlpp::Query query = conn.query();
+  bool dbOnline = false;
+  if (conn.connect("etoatest", "localhost", "etoatest", "etoatest")) 
+  {
+		dbOnline = true;
+  }
+  else 
+  {
+  	lout("DB connection failed: "+std::string(conn.error()));
+  }
+  	
+	while (true)
+	{
+		if (dbOnline)
+		{
+
+      query << "select count(*) as cnt from users";
+      if (mysqlpp::Result res = query.store()) 
+      {
+				mysqlpp::Row pRow = res.at(0);
+        lout(std::string(pRow["cnt"])+" Users online");
+      }
+      else 
+      {
+          lout("Failed to get user list: "+std::string(query.error()));
+      }
+		}
+		sleep(600);
+	}	
 }
 
 int main(int argc, char* argv[])
@@ -299,39 +376,13 @@ int main(int argc, char* argv[])
 		daemonize();
 	}
 
-  // Connect to the sample database.
-  mysqlpp::Connection conn(false);
-  mysqlpp::Query query = conn.query();
-  bool dbOnline = false;
-  if (conn.connect("etoatest", "localhost", "etoatest", "etoatest")) 
-  {
-		dbOnline = true;
-  }
-  else 
-  {
-  	lout("DB connection failed: "+std::string(conn.error()));
-  }
 
+	boost::thread qThread(&msgQueueThread);
+	boost::thread mThread(&mainThread);
 
-	// The very usefull main loop
-	while (true)
-	{
-		if (dbOnline)
-		{
+	qThread.join();	
+	mThread.join();	
 
-      query << "select count(*) as cnt from users";
-      if (mysqlpp::Result res = query.store()) 
-      {
-				mysqlpp::Row pRow = res.at(0);
-        lout(std::string(pRow["cnt"])+" Users online");
-      }
-      else 
-      {
-          lout("Failed to get user list: "+std::string(query.error()));
-      }
-		}
-		sleep(900);
-	}
 	
 	// This point should never be reached
 	lout("Unexpectedly reached end of main()");
