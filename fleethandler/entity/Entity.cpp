@@ -528,7 +528,7 @@
 		My &my = My::instance();
 		mysqlpp::Connection *con_ = my.get();
 		
-		this->userId = 0;
+		this->userId = userId;
 		this->codeName = "";
 		this->userMain = false;
 		this->resMetal = 0;
@@ -1035,6 +1035,7 @@
 			query << "	shiplist ";
 			query << "WHERE ";
 			query << "	shiplist_entity_id='" << this->getId() << "' ";
+			query << "	AND shiplist_count>'0' ";
 			query << "	AND shiplist_user_id='" << this->getUserId() << "';";
 			mysqlpp::Result slRes = query.store();
 			query.reset();
@@ -1132,6 +1133,7 @@
 			query << "	deflist ";
 			query << "WHERE ";
 			query << "	deflist_entity_id='" << this->getId() << "' ";
+			query << "	AND deflist_count>'0' ";
 			query << "	AND deflist_user_id='" << this->getUserId() << "';";
 			mysqlpp::Result dlRes = query.store();
 			query.reset();
@@ -1279,6 +1281,7 @@
 			query << "	buildlist ";
 			query << "WHERE ";
 			query << "	buildlist_entity_id='" << this->id << "' ";
+			query << "	AND buildlist_current_level>'0 ";
 			query << "	AND buildlist_user_id='" << this->userId << "';";
 			mysqlpp::Result bRes = query.store();
 			query.reset();

@@ -231,7 +231,8 @@
 			query << "FROM ";
 			query << " techlist ";
 			query << "WHERE ";
-			query << "	techlist_user_id='" << this->userId << "';";
+			query << "	techlist_user_id='" << this->userId << "' ";
+			query << "	AND techlist_current_level>'0';";
 			mysqlpp::Result tRes = query.store();
 			query.reset();
 			
