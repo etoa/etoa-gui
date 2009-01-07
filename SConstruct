@@ -1,4 +1,9 @@
-env = Environment(CC = 'g++', CCFLAGS = '-O3 -Wall') 
+import os
+
+env = Environment(ENV = {'PATH' : os.environ['PATH'],
+                         'TERM' : os.environ['TERM'],
+                         'HOME' : os.environ['HOME']},  CCFLAGS = '-O3 -Wall')
+
 conf = Configure(env) 
 
 if not conf.CheckLib('mysqlpp'):
@@ -11,7 +16,7 @@ if not conf.CheckLib('boost_thread'):
 
 env.Library(target="anyoption", source=Split("src/lib/anyoption/anyoption.cpp")) 
 
-mainSrcFiles = Split("src/main.cpp src/lib/logger.cpp src/lib/pidfile.cpp")
+mainSrcFiles = Split("src/main.cpp src/lib/logger.cpp src/lib/pidfile.cpp src/util/IPCMessageQueue.cpp src/util/ExceptionHandler.cpp")
 libs = Split("anyoption mysqlpp boost_thread")
 
 env.Program(target="etoad", LIBS=libs, LIBPATH=".", source=mainSrcFiles)

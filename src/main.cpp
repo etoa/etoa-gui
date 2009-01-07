@@ -29,16 +29,12 @@
 #include <sstream>
 
 #include <boost/thread.hpp>
-
-#include <sys/ipc.h>
-#include <sys/msg.h>
-
-
 #include <mysql++/mysql++.h>
 
 #include "lib/logger.h"
 #include "lib/pidfile.h"
 #include "lib/anyoption/anyoption.h"
+#include "util/IPCMessageQueue.h"
 
 using namespace std;
 
@@ -142,29 +138,8 @@ int daemonize()
 void msgQueueThread()
 {
 
-    struct my_msgbuf {
-        long mtype;
-        char mtext[200];
-    };
 
-        struct my_msgbuf buf;
-        int msqid;
-        key_t key = 7543;
 
-        if ((msqid = msgget(key, 0644)) == -1) { /* connect to the queue */
-            lout("msgget");
-            exit(1);
-        }
-        
-        printf("spock: ready to receive messages, captain.\n");
-
-        for(;;) { /* Spock never quits! */
-            if (msgrcv(msqid, (struct msgbuf *)&buf, sizeof(buf), 0, 0) == -1) {
-                lout("msgrcv");
-                exit(1);
-            }
-            lout(buf.mtext);
-        }
 
 
 
