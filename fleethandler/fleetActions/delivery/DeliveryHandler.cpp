@@ -16,7 +16,7 @@ namespace delivery
 		// Precheck, watch if the buyer is the same as the planet user
 		if (this->targetEntity->getUserId() == this->f->getUserId()) {
 			// Deliver ships
-			fleetLand(1,1,1);
+			fleetLand(1);
 
 			this->actionMessage->addText("Eine Flotte von der Allianzbasis hat folgendes Ziel erreicht:",1);
 			this->actionMessage->addText("[b]Planet:[/b] ");
@@ -26,9 +26,6 @@ namespace delivery
 			this->actionMessage->addText("[b]Bericht:[/b] Die erstellten Schiffe sind gelandet.",1);
 				
 			this->actionMessage->addSubject("Flotte von der Allianzbasis");
-
-			// Delete the fleet data
-			fleetDelete();
 		}
 		
 		// If the planet user is not the same as the buyer, send fleet to the main and send a message with the info

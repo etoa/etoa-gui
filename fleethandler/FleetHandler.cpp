@@ -8,15 +8,14 @@
 #include "functions/Functions.h"
 
 
-	void FleetHandler::fleetLand(int fleetAction,bool alreadyColonialized,bool alreadyInvaded)
+	void FleetHandler::fleetLand(int fleetAction)
 	{
-		
 		mysqlpp::Query query = con_->query();
 		
 		//Flotte wird stationiert und Waren werden ausgeladen
 		if(fleetAction==1) {
 			//Rohstoffnachricht für den User
-			msgRes += "\n\n[b]WAREN[/b]\n\n[b]Titan:[/b] "
+			this->msgRes += "\n\n[b]WAREN[/b]\n\n[b]Titan:[/b] "
 				+ functions::nf(functions::d2s(this->f->getResMetal()))
 				+ "\n[b]Silizium:[/b] "
 				+ functions::nf(functions::d2s(this->f->getResCrystal()))
@@ -39,182 +38,88 @@
 			this->targetEntity->addResPeople(this->f->unloadResPeople());
 			
 			// Flotte stationieren
-            // Laden der Schiffsdaten
-            query << "SELECT ";
-			query << "	fs.fs_ship_cnt, ";
-			query << "	fs.fs_ship_id, ";
-			query << "	fs.fs_special_ship, ";
-			query << "	fs.fs_special_ship_level, ";
-			query << "	fs.fs_special_ship_exp, ";
-			query << "	fs.fs_special_ship_bonus_weapon, ";
-			query << "	fs.fs_special_ship_bonus_structure, ";
-			query << "	fs.fs_special_ship_bonus_shield, ";
-			query << "	fs.fs_special_ship_bonus_heal, ";
-			query << "	fs.fs_special_ship_bonus_capacity, ";
-			query << "	fs.fs_special_ship_bonus_speed, ";
-			query << "	fs.fs_special_ship_bonus_pilots, ";
-			query << "	fs.fs_special_ship_bonus_tarn, ";
-			query << "	fs.fs_special_ship_bonus_antrax, ";
-			query << "	fs.fs_special_ship_bonus_forsteal, ";
-			query << "	fs.fs_special_ship_bonus_build_destroy, ";
-			query << "	fs.fs_special_ship_bonus_antrax_food, ";
-			query << "	fs.fs_special_ship_bonus_deactivade, ";
-			query << "	s.ship_name, ";
-			query << "	s.ship_actions ";
-			query << "FROM ";
-			query << "	fleet_ships AS fs ";
-			query << "INNER JOIN ";
-			query << "	ships AS s ON fs.fs_ship_id = s.ship_id ";
-			query << "	AND fs.fs_fleet_id='" << this->f->getId() << "' ";
-			query << "		AND fs.fs_ship_faked='0'; ";
-			mysqlpp::Result fsRes = query.store();
-			query.reset();
-			
-			if (fsRes) {
-				int fsSize = fsRes.size();
+			if (this->f->getCount()) {
+				DataHandler &DataHandler = DataHandler::instance();
+				query << "INSERT INTO " 
+						<< "	`shiplist` "
+						<< "(`shiplist_user_id` , "
+						<< "	`shiplist_ship_id` , "
+						<< "	`shiplist_entity_id` , "
+						<< "	`shiplist_count` , "
+						<< "	`shiplist_special_ship` , "
+						<< "	`shiplist_special_ship_level` , "
+						<< "	`shiplist_special_ship_exp` , "
+						<< "	`shiplist_special_ship_bonus_weapon` , "
+						<< "	`shiplist_special_ship_bonus_structure` , "
+						<< "	`shiplist_special_ship_bonus_shield` , "
+						<< "	`shiplist_special_ship_bonus_heal` , "
+						<< "	`shiplist_special_ship_bonus_capacity` , "
+						<< "	`shiplist_special_ship_bonus_speed` , "
+						<< "	`shiplist_special_ship_bonus_pilots` , "
+						<< "	`shiplist_special_ship_bonus_tarn` , "
+						<< "	`shiplist_special_ship_bonus_antrax` , "
+						<< "	`shiplist_special_ship_bonus_forsteal` , "
+						<< "	`shiplist_special_ship_bonus_build_destroy` , "
+						<< "	`shiplist_special_ship_bonus_antrax_food` , "
+						<< "	`shiplist_special_ship_bonus_deactivade` "
+						<< ") VALUES ";
 				
-				if (fsSize > 0) {
-					mysqlpp::Row fsRow;
-					msgShips = "";
-					
-					for (mysqlpp::Row::size_type i = 0; i<fsSize; i++)  {
-						fsRow = fsRes.at(i);
+				std::vector<Object*>::iterator ot;
+				int set = false;
+				for (ot = this->f->objects.begin() ; ot < this->f->objects.end(); ot++) {
+					if ((*ot)->getCount()) {
+						if (set) query << ",";
+						set = true;
+						query << "('" << this->f->getUserId() << "', '";
+						query << (*ot)->getTypeId() << "', '";
+						query << this->targetEntity->getId() << "', '";
+						query << (*ot)->getCount() << "', '";
+						query << (*ot)->getSpecial() << "', '";
+						query << (*ot)->getSLevel() << "', '";
+						query << (*ot)->getSExp() << "', '";
+						query << (*ot)->getSBonusWeapon() << "', '";
+						query << (*ot)->getSBonusStructure() << "', '";
+						query << (*ot)->getSBonusShield() << "', '";
+						query << (*ot)->getSBonusHeal() << "', '";
+						query << (*ot)->getSBonusCapacity() << "', '";
+						query << (*ot)->getSBonusSpeed() << "', '";
+						query << (*ot)->getSBonusPilots() << "', '";
+						query << (*ot)->getSBonusTarn() << "', '";
+						query << (*ot)->getSBonusAntrax() << "', '";
+						query << (*ot)->getSBonusForsteal() << "', '";
+						query << (*ot)->getSBonusBuildDestroy() << "', '";
+						query << (*ot)->getSBonusAntraxFood() << "', '";
+						query << (*ot)->getSBonusDeactivade() << "' ";
+						query << ")";
 						
-						double shipCnt = (double)fsRow["fs_ship_cnt"];
-						
-						//Sucht einen bestehenden Datensatz auf dem Zielplanet aus
-						//Achtung: In dem Query darf NICHT auch noch nach der User-ID gefragt werden, weil Handelsschiffe die User-ID=0 haben!
-						query << "SELECT ";
-						query << "	shiplist_id ";
-						query << "FROM ";
-						query << "	shiplist ";							
-						query << "WHERE ";
-						query << "	shiplist_ship_id='" << fsRow["fs_ship_id"] << "' ";
-						query << "	AND shiplist_entity_id='" << this->f->getEntityTo() << "';";
-						mysqlpp::Result slRes = query.store();
-						query.reset();
-						
-						if (slRes) {
-							int slSize = slRes.size();
-							
-							if (slSize > 0) {
-								mysqlpp::Row slRow = slRes.at(0);
-								
-								//Bestehender Datensatz gefunden -> Stationiert die Schiffe mit all ihren Werten (Update)
-								query << "UPDATE ";
-								query << "	shiplist ";
-								query << "SET ";
-								query << "	shiplist_count=shiplist_count+'" << shipCnt << "', ";
-								query << "	shiplist_special_ship='" << fsRow["fs_special_ship"] << "', ";
-								query << "	shiplist_special_ship_level='" << fsRow["fs_special_ship_level"] << "', ";
-								query << "	shiplist_special_ship_exp='" << fsRow["fs_special_ship_exp"] << "', ";
-								query << "	shiplist_special_ship_bonus_weapon='" << fsRow["fs_special_ship_bonus_weapon"] << "', ";
-								query << "	shiplist_special_ship_bonus_structure='" << fsRow["fs_special_ship_bonus_structure"] << "', ";
-								query << "	shiplist_special_ship_bonus_shield='" << fsRow["fs_special_ship_bonus_shield"] << "', ";
-								query << "	shiplist_special_ship_bonus_heal='" << fsRow["fs_special_ship_bonus_heal"] << "', ";
-								query << "	shiplist_special_ship_bonus_capacity='" << fsRow["fs_special_ship_bonus_capacity"] << "', ";
-								query << "	shiplist_special_ship_bonus_speed='" << fsRow["fs_special_ship_bonus_speed"] << "', ";
-								query << "	shiplist_special_ship_bonus_pilots='" << fsRow["fs_special_ship_bonus_pilots"] << "', ";
-								query << "	shiplist_special_ship_bonus_tarn='" << fsRow["fs_special_ship_bonus_tarn"] << "', ";
-								query << "	shiplist_special_ship_bonus_antrax='" << fsRow["fs_special_ship_bonus_antrax"] << "', ";
-								query << "	shiplist_special_ship_bonus_forsteal='" << fsRow["fs_special_ship_bonus_forsteal"] << "', ";
-								query << "	shiplist_special_ship_bonus_build_destroy='" << fsRow["fs_special_ship_bonus_build_destroy"] << "', ";
-								query << "	shiplist_special_ship_bonus_antrax_food='" << fsRow["fs_special_ship_bonus_antrax_food"] << "', ";
-								query << "	shiplist_special_ship_bonus_deactivade='" << fsRow["fs_special_ship_bonus_deactivade"] << "' ";
-								query << "WHERE ";
-								query << "	shiplist_id='" << slRow["shiplist_id"] << "';";
-								query.store();
-								query.reset();
-							}
-							//Keinen bestehenden Datensatz gefunden -> Stationiert die Schiffe mit all ihren Werten (Insert)
-							else {
-								int userId;
-								
-								//überprüft, ob die Flotte eine User ID besitzt, sonst eine generieren durch Planet ID (z.b. für Handelsschiffe)
-								if(this->f->getUserId()!=0) {
-									userId = this->f->getUserId();
-								}
-								else {
-									userId = this->targetEntity->getUserId();
-								}
-								
-								query << "INSERT INTO ";
-								query << "	shiplist ( ";
-								query << "	shiplist_user_id, ";
-								query << "	shiplist_ship_id, ";
-								query << "	shiplist_entity_id, ";
-								query << "	shiplist_count, ";
-								query << "	shiplist_special_ship, ";
-								query << "	shiplist_special_ship_level, ";
-								query << "	shiplist_special_ship_exp, ";
-								query << "	shiplist_special_ship_bonus_weapon, ";
-								query << "	shiplist_special_ship_bonus_structure, ";
-								query << "	shiplist_special_ship_bonus_shield, ";
-								query << "	shiplist_special_ship_bonus_heal, ",
-								query << "	shiplist_special_ship_bonus_capacity, ";
-								query << "	shiplist_special_ship_bonus_speed, ";
-								query << "	shiplist_special_ship_bonus_pilots, ";
-								query << "	shiplist_special_ship_bonus_tarn, ";
-								query << "	shiplist_special_ship_bonus_antrax, ";
-								query << "	shiplist_special_ship_bonus_forsteal, ";
-								query << "	shiplist_special_ship_bonus_build_destroy, ";
-								query << "	shiplist_special_ship_bonus_antrax_food, ";
-								query << "	shiplist_special_ship_bonus_deactivade  ";
-								query << ") ";
-								query << "VALUES ( ";
-								query << "	'" << userId << "', ";
-								query << "	'" << fsRow["fs_ship_id"] << "', ";
-								query << "	'" << this->f->getEntityTo() << "', ";
-								query << "	'" << shipCnt << "', ";
-								query << "	'" << fsRow["fs_special_ship"] << "', ";
-								query << "	'" << fsRow["fs_special_ship_level"] << "', ";
-								query << "	'" << fsRow["fs_special_ship_exp"] << "', ";
-								query << "	'" << fsRow["fs_special_ship_bonus_weapon"] << "', ";
-								query << "	'" << fsRow["fs_special_ship_bonus_structure"] << "', ";
-								query << "	'" << fsRow["fs_special_ship_bonus_shield"] << "', ";
-								query << "	'" << fsRow["fs_special_ship_bonus_heal"] << "', ";
-								query << "	'" << fsRow["fs_special_ship_bonus_capacity"] << "', ";
-								query << "	'" << fsRow["fs_special_ship_bonus_speed"] << "', ";
-								query << "	'" << fsRow["fs_special_ship_bonus_pilots"] << "', ";
-								query << "	'" << fsRow["fs_special_ship_bonus_tarn"] << "', ";
-								query << "	'" << fsRow["fs_special_ship_bonus_antrax"] << "', ";
-								query << "	'" << fsRow["fs_special_ship_bonus_forsteal"] << "', ";
-								query << "	'" << fsRow["fs_special_ship_bonus_build_destroy"] << "', ";
-								query << "	'" << fsRow["fs_special_ship_bonus_antrax_food"] << "', ";
-								query << "	'" << fsRow["fs_special_ship_bonus_deactivade"] << "' ";
-								query << ");";
-								query.store();
-								query.reset();
-							}
-						}
-						
-						//Schreibt alle Schiffe mit deren Anzahl in ein Array (für Nachricht an den User)
-						if (shipCnt>0) {
-							msgShips += "\n[b]";
-							msgShips += std::string(fsRow["ship_name"]);
-							msgShips += ":[/b] ";
-							msgShips += functions::nf(functions::d2s(shipCnt));
-						}
+						ShipData::ShipData *data = DataHandler.getShipById((*ot)->getTypeId());
+						this->msgShips += "\n[b]"
+										+ data->getName()
+										+ ":[/b] "
+										+ functions::nf(functions::d2s((*ot)->getCount()));
 					}
-					if (msgShips=="") {
-						msgShips = "\n\n[b]SCHIFFE[/b]\n[i]Keine weiteren Schiffe in der Flotte![/i]\n";					
-					}
-					else {
-						std::string msg = "\n\n[b]SCHIFFE[/b]\n";
-						msg += msgShips;
-						msg += "\n";
-						msgShips = msg;
-					}
-					
-					fleetDelete();
 				}
+				query << " ON DUPLICATE KEY "
+						<< "	UPDATE shiplist.`shiplist_count` = shiplist.`shiplist_count` + VALUES(shiplist.`shiplist_count`);";
+				query.store();
+				query.reset();
+				
 			}
+			if (this->msgShips=="") {
+				this->msgShips = "\n\n[b]SCHIFFE[/b]\n[i]Keine weiteren Schiffe in der Flotte![/i]\n";					
+			}
+			else {
+				this->msgShips = "\n\n[b]SCHIFFE[/b]\n" + this->msgShips + "\n";
+			}
+			
+			//Delete Fleet
+			this->f->setPercentSurvive(0);
 		}
 		
 		//Waren werden ausgeladen
 		else if(fleetAction==2) {
 			//Rohstoffnachricht für den User
-			msgRes += "\n\n[b]WAREN[/b]\n\n[b]Titan:[/b] "
+			this->msgRes += "\n\n[b]WAREN[/b]\n\n[b]Titan:[/b] "
 				+ functions::nf(functions::d2s(this->f->getResMetal()))
 				+ "\n[b]Silizium:[/b] "
 				+ functions::nf(functions::d2s(this->f->getResCrystal()))
@@ -238,61 +143,8 @@
 		}
 		//Fehler, die Flotte hat eine ungültige Aktion
 		else {
-			msgRes = "Fehler, die Flotte hat eine ungültige Aktion!<br>";
+			this->msgRes = "Fehler, die Flotte hat eine ungültige Aktion!<br>";
 		}
-	}
-
-
-	void FleetHandler::fleetReturn(int status,double resMetal,double resCrystal,double resPlastic,double resFuel,double resFood,double resPeople)
-	{
-
-        // Flotte zurückschicken
-		int duration = this->f->getLandtime() - this->f->getLaunchtime();
-        int launchtime = this->f->getLandtime();
-        int landtime = launchtime + duration;
-		
-		mysqlpp::Query query = con_->query();
-		query << std::setprecision(18);
-		query << "UPDATE ";
-		query << "	fleet ";
-		query << "SET ";
-		query << "	entity_from='" << this->f->getEntityTo() << "', ";
-		query << "	entity_to='" << this->f->getEntityFrom() << "', ";
-		query << "	status='" << status << "', ";
-		query << "	launchtime='" << launchtime << "', ";
-		query << "	landtime='" << landtime << "', ";
-		query << "	res_metal='" << this->f->getResMetal() << "', ";
-		query << "	res_crystal='" << this->f->getResCrystal() << "', ";
-		query << "	res_plastic='" << this->f->getResPlastic() << "', ";
-		query << "	res_fuel='" << this->f->getResFuel() << "', ";
-		query << "	res_food='" << this->f->getResFood() << "', ";
-		query << "	res_power='" << this->f->getResPower() << "', ";
-		query << "	res_people='" << this->f->getResPeople() << "' ";
-		query << " WHERE ";
-		query << "	id='" << this->f->getId() << "' ";
-		query << "LIMT 1;";
-		query.store();
-		query.reset();
-	}
-
-	void FleetHandler::fleetDelete()
-	{
-		// Flotte-Schiffe-Verknüpfungen löschen
-		mysqlpp::Query query = con_->query();
-		query << "DELETE FROM ";
-		query << "	fleet_ships ";
-		query << "WHERE ";
-		query << "	fs_fleet_id='" << this->f->getId() << "';";
-		query.store();
-		query.reset();
-		
-		// Flotte aufheben
-		query << "DELETE FROM ";
-		query << "	fleet ";
-		query << "WHERE ";
-		query << "	id='" << this->f->getId() << "';";
-		query.store();
-		query.reset();			
 	}
 	
 	void FleetHandler::fleetSendMain(int userId)

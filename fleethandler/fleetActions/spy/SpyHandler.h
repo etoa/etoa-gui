@@ -2,10 +2,12 @@
 #ifndef __SPYHANDLER__
 #define __SPYHANDLER__
 
-#include <mysql++/mysql++.h>
+#include <math.h>
+#include <time.h>
 
 #include "../../FleetHandler.h"
-#include "../../MysqlHandler.h"
+#include "../../functions/Functions.h"
+#include "../../config/ConfigHandler.h"
 
 /**
 * Handles Spy....

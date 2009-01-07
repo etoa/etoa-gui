@@ -26,7 +26,7 @@ namespace colonialize
 					this->actionMessage->addText("[b]Bericht:[/b] Die Flotte ist auf dem Planeten gelandet!");
 					
 					this->actionMessage->addSubject("Flotte angekommen");
-					fleetLand(1,1);
+					fleetLand(1);
 				}
 				// If the planet belongs to en other user, return the fleet back home
 				else {

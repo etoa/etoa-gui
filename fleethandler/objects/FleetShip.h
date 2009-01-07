@@ -25,23 +25,21 @@ public:
 		this->isFaked = (bool)oRow["fs_ship_faked"];
 		
 		this->special = (bool)oRow["fs_special_ship"];
-		if (this->special) {
-			this->sLevel = (short)oRow["fs_special_ship_level"];
-			this->sExp = (double)oRow["fs_special_ship_exp"];
-			this->sBonusWeapon = (short)oRow["fs_special_ship_bonus_weapon"];
-			this->sBonusStructure = (short)oRow["fs_special_ship_bonus_structure"];
-			this->sBonusShield = (short)oRow["fs_special_ship_bonus_shield"];
-			this->sBonusHeal = (short)oRow["fs_special_ship_bonus_heal"];
-			this->sBonusCapacity = (short)oRow["fs_special_ship_bonus_capacity"];
-			this->sBonusSpeed = (short)oRow["fs_special_ship_bonus_speed"];
-			this->sBonusPilots = (short)oRow["fs_special_ship_bonus_pilots"];
-			this->sBonusTarn = (short)oRow["fs_special_ship_bonus_tarn"];
-			this->sBonusAntrax = (short)oRow["fs_special_ship_bonus_antrax"];
-			this->sBonusForsteal = (short)oRow["fs_special_ship_bonus_forsteal"];
-			this->sBonusBuildDestroy = (short)oRow["fs_special_ship_bonus_build_destroy"];
-			this->sBonusAntraxFood = (short)oRow["fs_special_ship_bonus_antrax_food"];
-			this->sBonusDeactivade = (short)oRow["fs_special_ship_bonus_deactivade"];
-		}
+		this->sLevel = (short)oRow["fs_special_ship_level"];
+		this->sExp = (double)oRow["fs_special_ship_exp"];
+		this->sBonusWeapon = (short)oRow["fs_special_ship_bonus_weapon"];
+		this->sBonusStructure = (short)oRow["fs_special_ship_bonus_structure"];
+		this->sBonusShield = (short)oRow["fs_special_ship_bonus_shield"];
+		this->sBonusHeal = (short)oRow["fs_special_ship_bonus_heal"];
+		this->sBonusCapacity = (short)oRow["fs_special_ship_bonus_capacity"];
+		this->sBonusSpeed = (short)oRow["fs_special_ship_bonus_speed"];
+		this->sBonusPilots = (short)oRow["fs_special_ship_bonus_pilots"];
+		this->sBonusTarn = (short)oRow["fs_special_ship_bonus_tarn"];
+		this->sBonusAntrax = (short)oRow["fs_special_ship_bonus_antrax"];
+		this->sBonusForsteal = (short)oRow["fs_special_ship_bonus_forsteal"];
+		this->sBonusBuildDestroy = (short)oRow["fs_special_ship_bonus_build_destroy"];
+		this->sBonusAntraxFood = (short)oRow["fs_special_ship_bonus_antrax_food"];
+		this->sBonusDeactivade = (short)oRow["fs_special_ship_bonus_deactivade"];
 	}
 	
 	~FleetShip() {

@@ -1,9 +1,5 @@
-#include <math.h>
-#include <time.h>
 
 #include "SpyHandler.h"
-#include "../../functions/Functions.h"
-#include "../../config/ConfigHandler.h"
 
 namespace spy
 {
@@ -49,7 +45,7 @@ namespace spy
 			if (!this->defended) {
 				// Calculate stealth bonus 
 				this->tarnDefense = std::max(0.0,std::min((this->tarnLevelDef / this->spyLevelAtt * config.idget("SPY_DEFENSE_FACTOR_TARN")),config.idget("SPY_DEFENSE_MAX")));
-					
+				
 				// Prepare the message header 
 				this->actionMessage->addText("[b]Planet:[/b] ");
 				this->actionMessage->addText(this->targetEntity->getCoords(),1);

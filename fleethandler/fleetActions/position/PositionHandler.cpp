@@ -16,8 +16,7 @@ namespace position
 		
 		if (this->targetEntity->getUserId() == this->f->getUserId()) {
 			// Land fleet and delete entries in the database
-			fleetLand(1,1,1);
-			fleetDelete();
+			fleetLand(1);
 			// Check if the user'd like to have a return message for spy and transport
 		
 			if (this->f->getAction()=="spy" || this->f->getAction()=="transport")

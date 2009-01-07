@@ -1027,7 +1027,7 @@
 		DataHandler &DataHandler = DataHandler::instance();
 		std::map<int,int>::iterator st;
 		for ( st=specialShips.begin() ; st != specialShips.end(); st++ ) {
-			ShipData::ShipData *data = DataHandler.getShipById((*st).first);	
+			ShipData::ShipData *data = DataHandler.getShipById((*st).first);
 			shipString += data->getName()
 						+ " "
 						+ functions::d2s((*st).second)
@@ -1319,7 +1319,7 @@
 		mysqlpp::Connection *con = my.get();
 		mysqlpp::Query query = con->query();
 		
-		if (sum>0) {
+		if (sum>0 || !this->shipsLoaded) {
 			query << "UPDATE ";
 			query << "	fleet ";
 			query << "SET ";

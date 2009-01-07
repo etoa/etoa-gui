@@ -918,7 +918,7 @@
 						+ "[/td][/tr]";
 		}
 		if (shipString.length()<1)
-			shipString = "[i]Nichts vorhanden![/i]";
+			shipString = "[i]Nichts vorhanden![/i]\n";
 		else 
 			shipString = "[table]" + shipString + "[/table]";
 		return shipString;
@@ -942,7 +942,7 @@
 			defString += "[/td][/tr]";
 		}
 		if (defString.length()<1)
-			defString = "[i]Nichts vorhanden![/i]";
+			defString = "[i]Nichts vorhanden![/i]\n";
 		else 
 			defString = "[table]" + defString + "[/table]";
 		return defString;
@@ -1281,7 +1281,7 @@
 			query << "	buildlist ";
 			query << "WHERE ";
 			query << "	buildlist_entity_id='" << this->id << "' ";
-			query << "	AND buildlist_current_level>'0 ";
+			query << "	AND buildlist_current_level>'0' ";
 			query << "	AND buildlist_user_id='" << this->userId << "';";
 			mysqlpp::Result bRes = query.store();
 			query.reset();
@@ -1484,7 +1484,7 @@
 	}
 	
 	std::string Entity::getLogShipsStart() {
-		return "0";
+		return this->logEntityShipStart;
 	}
 	
 	std::string Entity::getLogShipsEnd() {

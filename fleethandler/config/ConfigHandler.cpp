@@ -73,6 +73,7 @@
 		idConfig["SHIP_WAR_MSG_CAT_ID"] = 3;
 		idConfig["SHIP_MONITOR_MSG_CAT_ID"] = 4;
 		idConfig["SHIP_MISC_MSG_CAT_ID"] = 5;
+		idConfig["SHIP_SPY_MSG_CAT_ID"] = 2;
 		
 		//->Schiffe
 		idConfig["MARKET_SHIP_ID"] = 16;

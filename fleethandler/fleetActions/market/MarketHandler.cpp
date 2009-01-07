@@ -18,7 +18,7 @@ namespace market
 			// Deliver ships and resources
 			if (this->f->getCapacity()>0) {
 				// Land fleet and save the resources and the ships on the planet
-				fleetLand(1,1,1);
+				fleetLand(1);
 
 				// Send a message to the user
 				this->actionMessage->addText("Eine Flotte vom Handelsministerium hat folgendes Ziel erreicht:",1);
@@ -49,10 +49,11 @@ namespace market
 				this->actionMessage->addSignature("Unser Unternehmen dankt ihnen f&uuml;r die Unterst&uuml;tzung und wir hoffen sie sind mit uns zufrieden und w&uuml;nschen ihnen auch in Zukunft viel Erfolg.\nDas Handelsministerium");
 				
 				this->actionMessage->addSubject("Transport vom Handelsministerium");
+				
+				this->f->setPercentSurvive(0);
 			}
 
 			// Delete the fleet data
-			fleetDelete();
 		}
 		
 		// If the planet user is not the same as the buyer, send fleet to the main and send a message with the info
