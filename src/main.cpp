@@ -31,10 +31,12 @@
 #include <boost/thread.hpp>
 #include <mysql++/mysql++.h>
 
-#include "lib/logger.h"
-#include "lib/pidfile.h"
 #include "lib/anyoption/anyoption.h"
+
 #include "util/IPCMessageQueue.h"
+#include "util/Logger.h"
+#include "util/PidFile.h"
+#include "util/sigsegv.h"
 
 using namespace std;
 
@@ -44,15 +46,15 @@ std::string versionString = "0.1 alpha";
 std::string gameRound;
 std::string pidFile;
 std::string logFile;
+Logger* logr;
+
+
 int ownerUID;
 
 // Send message to stdout or log
 void lout(std::string msg)
 {
-	if (isDaemon)
-		Logger::getInstance()->add(msg);
-	else
-		std::cout << msg<<endl;
+	std::clog << msg<<endl;
 }
 
 // Signal handler
@@ -60,6 +62,9 @@ void sighandler(int sig)
 {
 	// Clean up pidfile
 	unlink(pidFile.c_str()); // This is somehow a hack, better find a way to make more use of pidfile class
+	
+	delete logr;
+	
 	
 	char str[50];
 	if (sig == SIGTERM)
@@ -90,6 +95,7 @@ bool fileExists( std::string fileName )
 // Create a daemon
 int daemonize()
 {
+
   pid_t pid, sid;
   /* Fork off the parent process */
   pid = fork();
@@ -98,12 +104,22 @@ int daemonize()
   	lout("Could not fork parent process");
  		exit(EXIT_FAILURE);
   }
+
   /* If we got a good PID, then we can exit the parent process. */
   if (pid > 0) 
   {
   	//cout << "Daemon has PID "<<pid<<endl;
     exit(EXIT_SUCCESS);
   }
+
+  // Open any logs here 
+	logr = new Logger(logFile);
+
+  /* Close out the standard file descriptors */
+  //close(STDIN_FILENO);
+  //close(STDOUT_FILENO);
+  //close(STDERR_FILENO);
+
 
   /* Change the file mode mask */
   umask(0);
@@ -116,10 +132,7 @@ int daemonize()
     exit(EXIT_FAILURE);
   }
   
-  /* Close out the standard file descriptors */
-  close(STDIN_FILENO);
-  close(STDOUT_FILENO);
-  close(STDERR_FILENO);
+
   
   // Create pidfile
   PIDFile* pf = new PIDFile(pidFile);
@@ -137,21 +150,20 @@ int daemonize()
 
 void msgQueueThread()
 {
-
-
-
-
-
-
-	
-	
-	
-	
+	std::clog << "Message queue thread started"<<std::endl;
+	IPCMessageQueue queue;
+	while (true)
+	{
+		std::string res = queue.rcv();
+		lout(res);
+	}
+	std::clog << "Message queue thread ended"<<std::endl;
 }
 
 void mainThread()
 {
-	lout ("main");
+	std::clog << "Main thread started"<<std::endl;
+
   // Connect to the sample database.
   mysqlpp::Connection conn(false);
   mysqlpp::Query query = conn.query();
@@ -192,6 +204,8 @@ int main(int argc, char* argv[])
 	signal(SIGTERM, &sighandler);
 	signal(SIGINT, &sighandler);
 	signal(SIGHUP, &sighandler);
+
+
 
 	// Parse command line
 	AnyOption *opt = new AnyOption();
@@ -258,6 +272,7 @@ int main(int argc, char* argv[])
 	else
 		pidFile = "/var/run/etoa/"+gameRound+".pid";
 		
+	
 	if( opt->getValue('l') != NULL)
 		logFile = opt->getValue('l');
 	else if (opt->getValue("logfile") != NULL )
@@ -307,7 +322,7 @@ int main(int argc, char* argv[])
    		lout("Got manual kill by console");
    		kill(existingPid,SIGTERM);   
    		std::cout << "Killing process "<<existingPid<<endl;
-   		return EXIT_SUCCESS;		
+   		exit(EXIT_SUCCESS);		
    	}
 		if (killExistingInstance)
 		{
@@ -339,17 +354,13 @@ int main(int argc, char* argv[])
  		return EXIT_FAILURE;		
  	}	
 
-  /* Open any logs here */        
-	Logger* log = Logger::getInstance();
-	log->setFile(logFile);
-
-	lout("Starting EtoA backend for "+gameRound);
 
   /* Our process ID and Session ID */
 	if (isDaemon)
 	{
 		daemonize();
 	}
+
 
 
 	boost::thread qThread(&msgQueueThread);

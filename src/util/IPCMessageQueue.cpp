@@ -25,14 +25,11 @@ std::string IPCMessageQueue::rcv()
 	 		throw ExceptionHandler("Could nod init ipc message queue with key "+toString(key));
 	  }  
 	
-	  for(;;) 
-	  {
-			if (msgrcv(msqid, (struct msgbuf *)&buf, sizeof(buf), 0, 0) == -1) 
-			{
-	 			throw ExceptionHandler("Error getting ipc message from queue");
-	    }
-	    return std::string(buf.mtext);
-	  }	
+		if (msgrcv(msqid, (struct msgbuf *)&buf, sizeof(buf), 0, 0) == -1) 
+		{
+ 			throw ExceptionHandler("Error getting ipc message from queue");
+    }
+    return std::string(buf.mtext);
 	}
 	catch (ExceptionHandler& e)	
 	{

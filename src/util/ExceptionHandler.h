@@ -5,7 +5,7 @@
 #include <iostream>
 #include <string>
 
-class ExceptionHandler: public exception
+class ExceptionHandler: public std::exception
 {
 	public:
 	  ExceptionHandler(std::string msg) {this->s = msg;}

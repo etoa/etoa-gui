@@ -8,8 +8,7 @@
 #include <unistd.h>
 #include <cerrno>
 
-#include "pidfile.h"
-#include "logger.h"
+#include "PidFile.h"
 
 PIDFile::PIDFile(const std::string &filename)
   : pidfile_path(filename), pidfile_fd(-1)
