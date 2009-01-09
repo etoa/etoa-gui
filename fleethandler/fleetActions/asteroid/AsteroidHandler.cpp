@@ -22,24 +22,24 @@ namespace asteroid
 			if (this->targetEntity->getCode()=='a' && this->targetEntity->getResSum()>0) {
 				
 				this->one = rand() % 101;
-				this->two = (int)(config.nget("asteroid_action",0) * 100);
+				this->two = (int)(config.nget("asteroid_action",0));
 				
 				// Ship were destroyed?
 				if (this->one  < this->two)	{
 					int percent = 100 - rand() % (int)(config.nget("asteroid_action",1));
-					this->f->setPercentSurvive(percent);
+					this->f->setPercentSurvive(percent/100.0);
 				}
 				
 				if (this->f->actionIsAllowed()) {
 					this->sum = 0;
 					
-					this->asteroid = config.nget("asteroid_action",2) + (rand() % (int)(this->f->getActionCapacity()/3 - config.nget("asteroid_action",1) + 1));
+					this->asteroid = config.nget("asteroid_action",2) + (rand() % (int)(this->f->getActionCapacity()/3 - config.nget("asteroid_action",2) + 1));
 					this->sum +=this->f->addMetal(this->targetEntity->removeResMetal(std::min(this->asteroid,this->targetEntity->getResMetal())));
 					
-					this->asteroid = config.nget("asteroid_action",2) + (rand() % (int)(this->f->getActionCapacity()/3 - config.nget("asteroid_action",1) + 1));
+					this->asteroid = config.nget("asteroid_action",2) + (rand() % (int)(this->f->getActionCapacity()/3 - config.nget("asteroid_action",2) + 1));
 					this->sum +=this->f->addCrystal(this->targetEntity->removeResCrystal(std::min(this->asteroid,this->targetEntity->getResCrystal())));
 					
-					this->asteroid = config.nget("asteroid_action",2) + (rand() % (int)(this->f->getActionCapacity()/3 - config.nget("asteroid_action",1) + 1));
+					this->asteroid = config.nget("asteroid_action",2) + (rand() % (int)(this->f->getActionCapacity()/3 - config.nget("asteroid_action",2) + 1));
 					this->sum +=this->f->addPlastic(this->targetEntity->removeResPlastic(std::min(this->asteroid,this->targetEntity->getResPlastic())));
 					
 					this->actionMessage->addText("Eine Flotte vom Planeten [b]",1);

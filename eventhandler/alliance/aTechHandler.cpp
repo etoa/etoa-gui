@@ -12,7 +12,6 @@ namespace atech
 	{
 		std::time_t time = std::time(0);
 		
-		// Load planets who needs updating
 		mysqlpp::Query query = con_->query();
    
 		// Perform level update

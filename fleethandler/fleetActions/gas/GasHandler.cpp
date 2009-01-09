@@ -23,18 +23,19 @@ namespace gas
 			if (this->targetEntity->getCode()=='p' && this->targetEntity->getTypeId()==config.nget("gasplanet",0)) {
 			
 				this->one = rand() % 101;
-				this->two = (int)(config.nget("gascollect_action",0) * 100);
+				this->two = (int)config.nget("gascollect_action",0);
 				
 				// Ship were destroyed?
 				if (this->one  < this->two)	{
 					int percent = 100 - rand() % (int)(config.nget("gascollect_action",1));
-					this->f->setPercentSurvive(percent);
+					
+					this->f->setPercentSurvive(percent/100.0);
 				}
 				
 				if (this->f->actionIsAllowed()) {
 					this->sum = 0;
 					
-					this->fuel = 1000 + (rand() % (int)(this->f->getActionCapacity() - 999));
+					this->fuel = (int)config.nget("gascollect_action",2) + (rand() % (int)(this->f->getActionCapacity() - (int)config.nget("gascollect_action",2)));
 					this->sum +=this->f->addFuel(this->targetEntity->removeResFuel(std::min(this->fuel,this->targetEntity->getResFuel())));
 					
 					this->actionMessage->addText("[b]GASSAUGER-RAPPORT[/b]",2);

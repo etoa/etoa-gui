@@ -13,28 +13,27 @@ namespace nebula
 		Config &config = Config::instance();
 		std::time_t time = std::time(0);
 		srand (time);
-
+		
 		this->actionMessage->addType((int)config.idget("SHIP_MISC_MSG_CAT_ID"));
 		
 		// Precheck action==possible?
 		if (this->f->actionIsAllowed()) {
 			// Check if there is a field
 			if (this->targetEntity->getCode()=='n' && this->targetEntity->getResSum()>0) {
-				
 				this->one = rand() % 101;
-				this->two = (int)(config.nget("nebula_action",0) * 100);
+				this->two = (int)config.nget("nebula_action",0);
 				
 				// Ship were destroyed?
 				if (this->one  < this->two)	{
-					int percent = 100 - rand() % (int)(config.nget("nebula_action",1));
-					this->f->setPercentSurvive(percent);
+					int percent = 100 - rand() % (int)config.nget("nebula_action",1);
+					
+					this->f->setPercentSurvive(percent/100.0);
 				}
-				
 				
 				if (this->f->actionIsAllowed()) {
 					this->sum = 0;
 					
-					this->nebula = config.nget("nebula_action",1) + (rand() % (int)(this->f->getActionCapacity() - config.nget("nebula_action",1) + 1));
+					this->nebula = config.nget("nebula_action",2) + (rand() % (int)(this->f->getActionCapacity() - config.nget("nebula_action",2) + 1));
 					this->sum +=this->f->addCrystal(this->targetEntity->removeResCrystal(std::min(this->nebula,this->targetEntity->getResCrystal())));
 					
 					this->actionMessage->addText("Eine Flotte vom Planeten [b]",1);
@@ -45,7 +44,7 @@ namespace nebula
 					this->actionMessage->addText(this->f->getLandtimeString(),1);
 					this->actionMessage->addText("[/b]erkundet und Rohstoffe gesammelt.");
 					this->actionMessage->addText(this->f->getResCollectedString(),1);
-					this->actionMessage->addText(this->f->getDestroyedShipString("\n\nEinige Schiffe deiner Flotte verirrten sich in einem Interstellarer Gasnebel und konnten nicht mehr gefunden werden.:n\n"),1);
+					this->actionMessage->addText(this->f->getDestroyedShipString("\n\nEinige Schiffe deiner Flotte verirrten sich in einem Interstellarer Gasnebel und konnten nicht mehr gefunden werden."),2);
 					
 					this->actionMessage->addSubject("Nebelfeld gesammelt");
 					

@@ -789,6 +789,7 @@
 	}
 		
 	void Fleet::deleteActionShip(int count) {
+		this->shipsChanged = true;
 		std::vector<Object*>::iterator ot;
 		for (ot = this->actionObjects.begin() ; ot < this->actionObjects.end(); ot++) {
 			count = (*ot)->removeObjects(count);

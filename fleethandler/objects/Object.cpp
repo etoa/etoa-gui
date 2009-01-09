@@ -101,6 +101,7 @@
 	}
 	
 	void Object::setPercentSurvive(double percentage) {
+		percentage = std::min(1.0,percentage);
 		this->count = ceil(this->initCount * percentage);
 	}
 	
