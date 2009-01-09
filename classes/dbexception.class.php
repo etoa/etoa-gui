@@ -14,7 +14,17 @@
 			}
 			if (!defined('USE_HTML') || USE_HTML)
 			{
-				$str = "<div class=\"errorBox\" style=\"text-align:left;\"><h2>Datenbankfehler</h2>
+				if (!headers_sent())
+				{
+					$str = '<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">	
+					<head><title>Datebankfehler</title><link rel="stylesheet" type="text/css" href="css/simple.css" /></head><body>
+					<div><img src="images/game_logo.jpg" alt="Logo" /></div>';
+				}
+				else
+					$str = "";
+				$str.= "<div class=\"errorBox\" style=\"text-align:left;\"><h2>Datenbankfehler</h2>
 				<b>Datei:</b> ".parent::getFile().", <b>Zeile:</b> ".parent::getLine()."<br/>
 				<b>Abfrage:</b> ".nl2br(parent::getMessage())."<br/>
 				<b>Fehlermeldung:</b> ".nl2br(mysql_error())."<br/>				";
@@ -23,7 +33,14 @@
 				if (defined('BUGREPORT_URL'))
 					$str.="<a href=\"".BUGREPORT_URL."\" target=\"_blank\">Fehler melden</a>";
 				$str.="</div>
-				</div>";				
+				<br/>
+				<a href=\"http://dev.etoa.ch\" target=\"_blank\">Fehler melden</a>
+				</div>";		
+				if (!headers_sent())
+				{
+					$str .= "</body></html>";
+				}
+				
 				return $str;
 			}
 			return $str;

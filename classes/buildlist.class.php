@@ -4,11 +4,12 @@
 	{
 		private $entityId;
 		private $buildings;
+		private $ownerId;
 		
-		
-		function BuildList($entityId)
+		function BuildList($entityId,$ownerId=0)
 		{
 			$this->entityId = $entityId;
+			$this->ownerId = $ownerId;
 			$this->buildings = array();
 		}
 	
@@ -125,6 +126,59 @@
 			return $pbarr[0];			
 		}		
 		
+		function startConstruction($buildingId,$endTime);
+		{
+			dbquery("
+			REPLACE INTO 
+			buildlist 
+			(
+				buildlist_build_type,
+				buildlist_build_start_time,
+				buildlist_build_end_time,
+				buildlist_building_id,
+				buildlist_user_id,
+				buildlist_entity_id
+			) 
+			VALUES 
+			( 
+				3,
+				'".time()."',
+				'".$endTime."',
+				'".$buildingId."',
+				'".$this->ownerId."',
+				'".$this->entityId."'
+			);");
+			
+			//Log schreiben
+			$log_text = "
+			<b>Gebäude Ausbau</b><br><br>
+			<b>User:</b> [USER_ID=".$cu->id.";USER_NICK=".$cu->nick."]<br>
+			<b>Planeten:</b> [PLANET_ID=".$cp->id().";PLANET_NAME=".$cp->name."]<br>
+			<b>Gebäude:</b> ".$arr['building_name']."<br>
+			<b>Gebäude Level:</b> ".$b_level." (vor Ausbau)<br>
+			<b>Bau dauer:</b> ".tf($btime)."<br>
+			<b>Ende:</b> ".date("Y-m-d H:i:s",$end_time)."<br>
+			<b>Eingesetzte Bewohner:</b> ".nf($peopleWorking)."<br>
+			<b>Gen-Tech Level:</b> ".GEN_TECH_LEVEL."<br><br>
+			<b>Kosten</b><br>
+			<b>".RES_METAL.":</b> ".nf($bc['metal'])."<br>
+			<b>".RES_CRYSTAL.":</b> ".nf($bc['crystal'])."<br>
+			<b>".RES_PLASTIC.":</b> ".nf($bc['plastic'])."<br>
+			<b>".RES_FUEL.":</b> ".nf($bc['fuel'])."<br>
+			<b>".RES_FOOD.":</b> ".nf($bc['food'])."<br><br>
+			<b>Restliche Rohstoffe auf dem Planeten</b><br><br>
+			<b>".RES_METAL.":</b> ".nf($cp->resMetal)."<br>
+			<b>".RES_CRYSTAL.":</b> ".nf($cp->resCrystal)."<br>
+			<b>".RES_PLASTIC.":</b> ".nf($cp->resPlastic)."<br>
+			<b>".RES_FUEL.":</b> ".nf($cp->resFuel)."<br>
+			<b>".RES_FOOD.":</b> ".nf($cp->resFood)."<br><br>
+			";
+			
+			// Log Speichern
+			add_log_game_building($log_text,$cu->id,$cu->allianceId,$cp->id(),$arr['building_id'],$b_status,time());			
+			
+			return true;
+		}
 	}
 
 ?>

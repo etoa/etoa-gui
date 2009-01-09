@@ -349,49 +349,49 @@
 	
 				if ($this->storeMetal<=floor($this->resMetal) && floor($this->resMetal)>0)
 				{
-					$style0="resfull";
+					$style0="resfullcolor";
 					$store_msg=true;
 				}
 				else
 					$style0="resmetalcolor";
 				if ($this->storeCrystal<=floor($this->resCrystal) && floor($this->resCrystal)>0)
 				{
-					$style1="resfull";
+					$style1="resfullcolor";
 					$store_msg=true;
 				}
 				else	
 					$style1="rescrystalcolor";
 				if ($this->storePlastic<=floor($this->resPlastic) && floor($this->resPlastic)>0)
 				{
-					$style2="resfull";
+					$style2="resfullcolor";
 					$store_msg=true;
 				}
 				else
 					$style2="resplasticcolor";
 				if ($this->storeFuel<=floor($this->resFuel) && floor($this->resFuel)>0)
 				{
-					$style3="resfull";
+					$style3="resfullcolor";
 					$store_msg=true;
 				}
 				else
 					$style3="resfuelcolor";
 				if ($this->storeFood<=floor($this->resFood) && floor($this->resFood)>0)
 				{
-					$style4="resfull";
+					$style4="resfullcolor";
 					$store_msg=true;
 				}
 				else
 					$style4="resfoodcolor";
 				if ($this->people_place<=floor($this->people) && floor($this->people)>0)
 				{
-					$style5="resfull";
+					$style5="resfullcolor";
 					$place_msg=true;
 				}
 				else
 					$style5="respeoplecolor";
 				if(floor($this->prodPower)-floor($this->usePower)<0)
 				{
-					$style6="resfull";
+					$style6="resfullcolor";
 					$power_msg=true;
 					$power_rest = floor($this->prodPower)-floor($this->usePower);
 				}
@@ -410,13 +410,13 @@
 				<th class=\"resBoxTitleCell\"><div class=\"respeople\">Bewohner</div></th>
 				<th class=\"resBoxTitleCell\"><div class=\"respower\">Energie</div></th>
 				</tr><tr>
-				<td class=\"$style0\">".nf(floor($this->resMetal))." t</td>
-				<td class=\"$style1\">".nf(floor($this->resCrystal))." t</td>
-				<td class=\"$style2\">".nf(floor($this->resPlastic))." t</td>
-				<td class=\"$style3\">".nf(floor($this->resFuel))." t</td>
-				<td class=\"$style4\">".nf(floor($this->resFood))." t</td>
+				<td class=\"$style0\">".nf(floor($this->resMetal))."</td>
+				<td class=\"$style1\">".nf(floor($this->resCrystal))."</td>
+				<td class=\"$style2\">".nf(floor($this->resPlastic))."</td>
+				<td class=\"$style3\">".nf(floor($this->resFuel))."</td>
+				<td class=\"$style4\">".nf(floor($this->resFood))."</td>
 				<td class=\"$style5\">".nf(floor($this->people))."</td>
-				<td class=\"$style6\">".nf($power_rest)." MW</td>
+				<td class=\"$style6\">".nf($power_rest)."</td>
 				</tr>";
 
 				/*	
@@ -451,43 +451,43 @@
 			{
 				if ($this->storeMetal<=floor($this->resMetal) && floor($this->resMetal)>0)
 				{
-					$style0="resfull";
+					$style0="resfullcolor";
 					$store_msg[1] = tm("Speicher voll","Produktion gestoppt, bitte Speicher ausbauen!");
 					$store_err[1]=true;
 				}
 				if ($this->storeCrystal<=floor($this->resCrystal) && floor($this->resCrystal)>0)
 				{
-					$style1="resfull";
+					$style1="resfullcolor";
 					$store_msg[2] = tm("Speicher voll","Produktion gestoppt, bitte Speicher ausbauen!");
 					$store_err[2]=true;
 				}
 				if ($this->storePlastic<=floor($this->resPlastic) && floor($this->resPlastic)>0)
 				{
-					$style2=" resfull";
+					$style2=" resfullcolor";
 					$store_msg[3] = tm("Speicher voll","Produktion gestoppt, bitte Speicher ausbauen!");
 					$store_err[3]=true;
 				}
 				if ($this->storeFuel<=floor($this->resFuel) && floor($this->resFuel)>0)
 				{
-					$style3=" resfull";
+					$style3=" resfullcolor";
 					$store_msg[4] = tm("Speicher voll","Produktion gestoppt, bitte Speicher ausbauen!");
 					$store_err[4]=true;
 				}
 				if ($this->storeFood<=floor($this->resFood) && floor($this->resFood)>0)
 				{
-					$style4=" resfull";
+					$style4=" resfullcolor";
 					$store_msg[5] = tm("Speicher voll","Produktion gestoppt, bitte Speicher ausbauen!");
 					$store_err[5]=true;
 				}
 				if ($this->people_place<=floor($this->people) && floor($this->people)>0)
 				{
-					$style5=" resfull";
+					$style5=" resfullcolor";
 					$store_msg[6] = tm("Wohnraum voll","Wachstum gestoppt, bitte Wohnraum ausbauen!");
 					$store_err[6]=true;
 				}
 				if(floor($this->prodPower)-floor($this->usePower)<0)
 				{
-					$style6=" resfull";
+					$style6=" resfullcolor";
 					$store_msg[7] = tm("Zuwenig Energie","Produktion verringert, bitte Kraftwerk ausbauen!");
 					$store_err[7] = true;
 					$power_rest = floor($this->prodPower)-floor($this->usePower);
