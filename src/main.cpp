@@ -45,8 +45,9 @@ std::string versionString = "0.1 alpha";
 std::string gameRound;
 std::string pidFile;
 std::string logFile;
-Logger* logr;
 
+Logger* logr;
+PIDFile* pf;
 
 int ownerUID;
 
@@ -54,8 +55,8 @@ int ownerUID;
 void sighandler(int sig)
 {
 	// Clean up pidfile
-	unlink(pidFile.c_str()); // This is somehow a hack, better find a way to make more use of pidfile class
-
+	delete pf;
+	
 	if (sig == SIGTERM)
 	{
 	  std::clog << "Caught signal SIGTERM, exiting..."<<std::endl;
@@ -125,7 +126,7 @@ void daemonize()
   }
 
   // Create pidfile
-  PIDFile* pf = new PIDFile(pidFile);
+  pf = new PIDFile(pidFile);
   pf->write();	
 
 
@@ -170,14 +171,14 @@ void mainThread()
       if (mysqlpp::Result res = query.store()) 
       {
 				mysqlpp::Row pRow = res.at(0);
-        clog << pRow["cnt"] << " user registered";
+        clog << pRow["cnt"] << " user registered"<<endl;
       }
       else 
       {
       	cerr << "Failed to get user list: " << query.error();
       }
 		}
-		sleep(60);
+		sleep(600);
 	}	
 }
 

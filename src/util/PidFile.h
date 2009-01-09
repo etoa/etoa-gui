@@ -10,7 +10,7 @@ class PIDFile
   public:
     PIDFile(const std::string &filename);
    	PIDFile(const char * const filename);
-    virtual ~PIDFile();
+    ~PIDFile();
 
     /** Open and lock pidfile, write current process PID to it. */
     void write();

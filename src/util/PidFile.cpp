@@ -69,10 +69,10 @@ void PIDFile::write()
 PIDFile::~PIDFile()
 {
   if(-1 != pidfile_fd)
-    {
-      // pidfile has been opened and locked
-      lockf(pidfile_fd, F_ULOCK, 0);
-      close(pidfile_fd);
-      unlink(pidfile_path.c_str());
-    }
+  {
+    // pidfile has been opened and locked
+    lockf(pidfile_fd, F_ULOCK, 0);
+    close(pidfile_fd);
+    unlink(pidfile_path.c_str());
+  }
 }
