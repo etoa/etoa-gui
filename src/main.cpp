@@ -10,16 +10,11 @@
 //////////////////////////////////////////////////
 // The Andromeda-Project-Browsergame				 		//
 // Ein Massive-Multiplayer-Online-Spiel			 		//
-// Programmiert von Nicolas Perrenoud				 		//
-// www.nicu.ch | mail@nicu.ch								 		//
-// als Maturaarbeit '04 am Gymnasium Oberaargau	//
+// (C) by EtoA Gaming | www.etoa.ch   			 		//
 //////////////////////////////////////////////////
-
-/**
-* Daemon framework
-*
-* @author Nicolas Perrenoud <mrcage@etoa.ch>
-*/
+//
+// Main loop framework
+//
 
 #include <iostream>
 #include <signal.h>
@@ -126,7 +121,6 @@ void daemonize()
   }
 
   // Create pidfile
-  pf = new PIDFile(pidFile);
   pf->write();	
 
 
@@ -285,6 +279,8 @@ int main(int argc, char* argv[])
     exit(EXIT_FAILURE);  	
   }  
 
+  pf = new PIDFile(pidFile);
+
 	// Check for existing instance
 	if (fileExists(pidFile))
 	{
@@ -338,7 +334,6 @@ int main(int argc, char* argv[])
  		std::cout << "No running process found, exiting..."<<std::endl;
  		return EXIT_FAILURE;		
  	}	
-
 
 	daemonize();
 

@@ -1,8 +1,20 @@
-/**
-* Simple logging interface for EtoA
-* 
-* @author Nicolas Perrenoud <mrcage@etoa.ch>
-*/
+//////////////////////////////////////////////////
+//		 	 ____    __           ______       			//
+//			/\  _`\ /\ \__       /\  _  \      			//
+//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
+//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
+//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
+//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
+//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
+//																					 		//
+//////////////////////////////////////////////////
+// The Andromeda-Project-Browsergame				 		//
+// Ein Massive-Multiplayer-Online-Spiel			 		//
+// (C) by EtoA Gaming | www.etoa.ch   			 		//
+//////////////////////////////////////////////////
+//
+// Logging of notices and errors to a given logfile
+//
 
 #ifndef LOGGER_H
 #define LOGGER_H
