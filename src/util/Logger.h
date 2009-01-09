@@ -15,6 +15,8 @@
 #include <streambuf>
 #include <string>
 
+#include "Mutex.h"
+
 class LogBuf: public std::streambuf
 {
 	private:
@@ -24,6 +26,8 @@ class LogBuf: public std::streambuf
 	  bool		i_newline;	// remember whether we are at a new line
 	  int		i_cache;	// may cache a read character
 	  bool	skip_prefix();
+		
+		Mutex* mtx;
 		
 		std::stringstream ss;
 	  std::string outFilePath;

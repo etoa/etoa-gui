@@ -4,6 +4,7 @@
 #include <sstream>
 
 #include "Logger.h"
+#include "Mutex.h"
 
 using namespace std;
 
@@ -12,7 +13,6 @@ Logger::Logger(std::string logFilePath)
 	origClogBuf = std::clog.rdbuf();
 	LogStream	out(std::clog.rdbuf(), logFilePath);
  	std::clog.rdbuf(out.rdbuf());		
-	std::clog << "Logging started"<<std::endl;
 }
 
 Logger::~Logger()
@@ -30,12 +30,13 @@ Logger::~Logger()
       i_cache(EOF)
     {
     	outFilePath = filePath;
+    	mtx = new Mutex();
       setp(0, 0);
       setg(0, 0, 0);
     }
     LogBuf::~LogBuf()
     {
-      
+      delete mtx;
     }
 
     bool	LogBuf::skip_prefix()
@@ -105,6 +106,8 @@ Logger::~Logger()
 
 		std::streamsize LogBuf::xsputn ( const char* s, std::streamsize n )
 		{
+			mtx->guard();
+			
 			struct tm *current;
 			time_t now;
 			time(&now);
@@ -128,6 +131,8 @@ Logger::~Logger()
 				filestream << ss.str();				
 			}
 			filestream.close();				
+			
+			mtx->release();
 			return std::streambuf::xsputn(s, n);
 		}
 		

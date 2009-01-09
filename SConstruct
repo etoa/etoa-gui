@@ -16,7 +16,7 @@ if not conf.CheckLib('boost_thread'):
 
 env.Library(target="anyoption", source=Split("src/lib/anyoption/anyoption.cpp")) 
 
-mainSrcFiles = Split("src/main.cpp src/util/Logger.cpp src/util/PidFile.cpp src/util/IPCMessageQueue.cpp src/util/ExceptionHandler.cpp src/util/sigsegv.c")
+mainSrcFiles = Split("src/main.cpp src/util/Logger.cpp src/util/Mutex.cpp src/util/PidFile.cpp src/util/IPCMessageQueue.cpp src/util/ExceptionHandler.cpp src/util/sigsegv.c")
 libs = Split("anyoption mysqlpp boost_thread")
 
 env.Program(target="etoad", LIBS=libs, LIBPATH=".", source=mainSrcFiles)
