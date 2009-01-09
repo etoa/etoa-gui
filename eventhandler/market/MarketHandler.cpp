@@ -661,7 +661,7 @@ namespace market
 						query << "res_fuel, ";
 						query << "res_food) ";
 					query << "VALUES ";
-						query << "('" << arr["user_id"] << "', ";
+						query << "('" << arr["ressource_buyer_id"] << "', ";
 						query << "'" << config.get("market_entity", 0) << "', ";
 						query << arr["ressource_buyer_planet_id"] << ", ";
 						query << arr["ressource_buyer_id"] << ", ";
@@ -804,7 +804,7 @@ namespace market
 						query << "res_fuel, ";
 						query << "res_food) ";
 					query << "VALUES ";
-						query << "('" << arr["user_id"] << "', ";
+						query << "('" << arr["ship_buyer_id"] << "', ";
 						query << "'" << config.get("market_entity", 0) << "', ";
 						query << arr["ship_buyer_planet_id"] << ", ";
 						query << arr["ship_buyer_id"] << ", ";
@@ -906,7 +906,7 @@ namespace market
 						query << "res_fuel, ";
 						query << "res_food) ";
 					query << "VALUES ";
-						query << "('" << arr["user_id"] << "', ";
+						query << "('" << arr["auction_user_id"] << "', ";
 						query << "'" << config.get("market_entity", 0) << "', ";
 						query << arr["auction_planet_id"] << ", ";
 						query << arr["auction_user_id"] << ", ";
@@ -949,7 +949,7 @@ namespace market
 						query << "res_fuel, ";
 						query << "res_food) ";
 					query << "VALUES ";
-						query << "('" << arr["user_id"] << "', ";
+						query << "('" << arr["auction_current_buyer_id"] << "', ";
 						query << "'" << config.get("market_entity", 0) << "', ";
 						query << arr["auction_current_buyer_planet_id"] << ", ";
 						query << arr["auction_current_buyer_id"] << ", ";
