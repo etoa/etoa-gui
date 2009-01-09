@@ -54,7 +54,10 @@ class Logger
 		Logger(std::string logFilePath);
 		~Logger();
 
-	private: std::streambuf* origClogBuf; };
+	private: 
+		std::streambuf* origClogBuf; 
+		std::stringstream ls;
+};
 
 
 #endif

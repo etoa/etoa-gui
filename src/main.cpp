@@ -40,7 +40,6 @@
 
 using namespace std;
 
-bool isDaemon = true;
 std::string versionString = "0.1 alpha";
 
 std::string gameRound;
@@ -51,32 +50,24 @@ Logger* logr;
 
 int ownerUID;
 
-// Send message to stdout or log
-void lout(std::string msg)
-{
-	std::clog << msg<<endl;
-}
-
 // Signal handler
 void sighandler(int sig)
 {
 	// Clean up pidfile
 	unlink(pidFile.c_str()); // This is somehow a hack, better find a way to make more use of pidfile class
-	
-	delete logr;
-	
-	
-	char str[50];
+
 	if (sig == SIGTERM)
 	{
-	  lout("Caught signal SIGTERM, exiting...");
-		lout("EtoA backend "+gameRound+" stopped");
+	  std::clog << "Caught signal SIGTERM, exiting..."<<std::endl;
+		std::clog << "EtoA backend "<<gameRound<<" stopped"<<std::endl;
+		delete logr;
 		exit(EXIT_SUCCESS);
 	}
 
-	sprintf(str,"Caught signal %d, exiting...",sig);
-  lout(str);
-	lout("EtoA backend "+gameRound+" unexpectedly stopped");
+	std::cerr << "Caught signal "<<sig<<", exiting..."<<std::endl;
+	std::cerr << "EtoA backend "<<gameRound<<" unexpectedly stopped"<<std::endl;
+
+	delete logr;
 	exit(EXIT_FAILURE);
 }
 
@@ -93,7 +84,7 @@ bool fileExists( std::string fileName )
 }
 
 // Create a daemon
-int daemonize()
+void daemonize()
 {
 
   pid_t pid, sid;
@@ -101,7 +92,7 @@ int daemonize()
   pid = fork();
   if (pid < 0) 
   {
-  	lout("Could not fork parent process");
+  	cerr << "Could not fork parent process";
  		exit(EXIT_FAILURE);
   }
 
@@ -114,8 +105,9 @@ int daemonize()
 
   // Open any logs here 
 	logr = new Logger(logFile);
+	clog << "Loggin started"<<endl;
 
-  /* Close out the standard file descriptors */
+	/* Close out the standard file descriptors */
   //close(STDIN_FILENO);
   //close(STDOUT_FILENO);
   //close(STDERR_FILENO);
@@ -128,24 +120,17 @@ int daemonize()
   sid = setsid();
   if (sid < 0) 
   {
-  	lout("Unable to get SID for child process");
+  	cerr << "Unable to get SID for child process";
     exit(EXIT_FAILURE);
   }
-  
 
-  
   // Create pidfile
   PIDFile* pf = new PIDFile(pidFile);
   pf->write();	
-  
+
+
   int myPid = (int)getpid();
-	stringstream s;
-	s << "Daemon initialized with PID ";
-	s << myPid;
-	s << " and owned by ";
-	s << getuid();
-	lout(s.str());	
-  return myPid;
+	clog <<  "Daemon initialized with PID " << myPid << " and owned by " << getuid()<<std::endl;
 }
 
 void msgQueueThread()
@@ -155,7 +140,7 @@ void msgQueueThread()
 	while (true)
 	{
 		std::string res = queue.rcv();
-		lout(res);
+		clog << "Queue: "<< res<<std::endl;
 	}
 	std::clog << "Message queue thread ended"<<std::endl;
 }
@@ -174,26 +159,25 @@ void mainThread()
   }
   else 
   {
-  	lout("DB connection failed: "+std::string(conn.error()));
+  	cerr << "DB connection failed: " << conn.error()<<std::endl;
   }
   	
 	while (true)
 	{
 		if (dbOnline)
 		{
-
       query << "select count(*) as cnt from users";
       if (mysqlpp::Result res = query.store()) 
       {
 				mysqlpp::Row pRow = res.at(0);
-        lout(std::string(pRow["cnt"])+" Users online");
+        clog << pRow["cnt"] << " user registered";
       }
       else 
       {
-          lout("Failed to get user list: "+std::string(query.error()));
+      	cerr << "Failed to get user list: " << query.error();
       }
 		}
-		sleep(600);
+		sleep(60);
 	}	
 }
 
@@ -319,7 +303,7 @@ int main(int argc, char* argv[])
    	
    	if (stop)
    	{
-   		lout("Got manual kill by console");
+   		clog << "Got manual kill by console" <<endl;
    		kill(existingPid,SIGTERM);   
    		std::cout << "Killing process "<<existingPid<<endl;
    		exit(EXIT_SUCCESS);		
@@ -355,13 +339,7 @@ int main(int argc, char* argv[])
  	}	
 
 
-  /* Our process ID and Session ID */
-	if (isDaemon)
-	{
-		daemonize();
-	}
-
-
+	daemonize();
 
 	boost::thread qThread(&msgQueueThread);
 	boost::thread mThread(&mainThread);
@@ -371,6 +349,6 @@ int main(int argc, char* argv[])
 
 	
 	// This point should never be reached
-	lout("Unexpectedly reached end of main()");
+	cerr << "Unexpectedly reached end of main()";
 	return EXIT_FAILURE;
 }

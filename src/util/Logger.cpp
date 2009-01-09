@@ -8,18 +8,19 @@
 
 using namespace std;
 
-Logger::Logger(std::string logFilePath)
+Logger::Logger(std::string logFilePath): ls()
 {        
 	origClogBuf = std::clog.rdbuf();
-	LogStream	out(std::clog.rdbuf(), logFilePath);
+	LogStream	out(ls.rdbuf(), logFilePath);
  	std::clog.rdbuf(out.rdbuf());		
 }
 
-Logger::~Logger()
+Logger::~Logger() 
 {
 	std::clog << "Logging stopped"<<std::endl;
 	std::clog.rdbuf(origClogBuf);
 }
+
 
 
 

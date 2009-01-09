@@ -2,7 +2,7 @@ import os
 
 env = Environment(ENV = {'PATH' : os.environ['PATH'],
                          'TERM' : os.environ['TERM'],
-                         'HOME' : os.environ['HOME']},  CCFLAGS = '-O3 -Wall')
+                         'HOME' : os.environ['HOME']},  CCFLAGS = '-O3 -Wall -g3 -fno-inline -O0')
 
 conf = Configure(env) 
 
