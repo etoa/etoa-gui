@@ -896,7 +896,7 @@
 							{								
 								echo "<tr>
 												<td class=\"tbldata\" colspan=\"".NUM_BUILDINGS_PER_ROW."\" style=\"text-align:center;border:0;width:100%\">
-													<i>In dieser Kategorie kann momentan noch nichts gebaut werden!</i>
+													<i>In dieser Kategorie kann momentan noch nichts geforscht werden!</i>
 												</td>
 											</tr>";								
 							}	

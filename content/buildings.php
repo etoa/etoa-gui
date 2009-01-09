@@ -50,6 +50,8 @@
 
 function calcBuildingWaitTime($bc,$cp)
 {
+	$notAvStyle=" style=\"color:red;\"";
+	
 	// Wartezeiten auf Ressourcen berechnen
 	if ($cp->prodMetal>0)
 	{ 
@@ -67,43 +69,36 @@ function calcBuildingWaitTime($bc,$cp)
 	$bwmax=max($bwait['metal'],$bwait['crystal'],$bwait['plastic'],$bwait['fuel'],$bwait['food']);
 
 	// Baukosten-String
-	$bcstring ="<td";
+	$bcstring = "<td class=\"tbldata\"";
 	if ($bc['metal']>$cp->resMetal)
-		$bcstring.= " class=\"tbldata2\" ".tm("Fehlender Rohstoff","<b>".nf($bc['metal']-$cp->resMetal)."</b> ".RES_METAL."<br/>Bereit in <b>".tf($bwait['metal'])."</b>");
-	else
-		$bcstring.=" class=\"tbldata\"";
-	$bcstring.= ">".nf($bc['metal'])."</td><td";
-	if ($bc['crystal']>$cp->resCrystal)
-		$bcstring.= " class=\"tbldata2\" ".tm("Fehlender Rohstoff",nf($bc['crystal']-$cp->resCrystal)." ".RES_CRYSTAL."<br/>Bereit in <b>".tf($bwait['crystal'])."</b>");
-	else
-		$bcstring.=" class=\"tbldata\"";
-	$bcstring.= ">".nf($bc['crystal'])."</td><td";
-	if ($bc['plastic']>$cp->resPlastic)
-		$bcstring.= " class=\"tbldata2\" ".tm("Fehlender Rohstoff",nf($bc['plastic']-$cp->resPlastic)." ".RES_PLASTIC."<br/>Bereit in <b>".tf($bwait['plastic'])."</b>");
-	else
-		$bcstring.=" class=\"tbldata\"";
-	$bcstring.= ">".nf($bc['plastic'])."</td><td";
-	if ($bc['fuel']>$cp->resFuel)
-		$bcstring.= " class=\"tbldata2\" ".tm("Fehlender Rohstoff",nf($bc['fuel']-$cp->resFuel)." ".RES_FUEL."<br/>Bereit in <b>".tf($bwait['fuel'])."</b>");
-	else
-		$bcstring.=" class=\"tbldata\"";
-	$bcstring.= ">".nf($bc['fuel'])."</td><td";
-	if ($bc['food']>$cp->resFood)
-		$bcstring.= " class=\"tbldata2\" ".tm("Fehlender Rohstoff",nf($bc['food']-$cp->resFood)." ".RES_FOOD."<br/>Bereit in <b>".tf($bwait['food'])."</b>");
-	else
-		$bcstring.=" class=\"tbldata\"";
-	$bcstring.= ">".nf($bc['food'])."</td><td";
+		$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff","<b>".nf($bc['metal']-$cp->resMetal)."</b> ".RES_METAL."<br/>Bereit in <b>".tf($bwait['metal'])."</b>");
 	
+	$bcstring.= ">".nf($bc['metal'])."</td><td class=\"tbldata\"";
+	if ($bc['crystal']>$cp->resCrystal)
+		$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['crystal']-$cp->resCrystal)." ".RES_CRYSTAL."<br/>Bereit in <b>".tf($bwait['crystal'])."</b>");
+	
+	$bcstring.= ">".nf($bc['crystal'])."</td><td class=\"tbldata\"";
+	if ($bc['plastic']>$cp->resPlastic)
+		$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['plastic']-$cp->resPlastic)." ".RES_PLASTIC."<br/>Bereit in <b>".tf($bwait['plastic'])."</b>");
+	
+	$bcstring.= ">".nf($bc['plastic'])."</td><td class=\"tbldata\"";
+	if ($bc['fuel']>$cp->resFuel)
+		$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['fuel']-$cp->resFuel)." ".RES_FUEL."<br/>Bereit in <b>".tf($bwait['fuel'])."</b>");
+	
+	$bcstring.= ">".nf($bc['fuel'])."</td><td class=\"tbldata\"";
+	if ($bc['food']>$cp->resFood)
+		$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['food']-$cp->resFood)." ".RES_FOOD."<br/>Bereit in <b>".tf($bwait['food'])."</b>");
+	
+	$bcstring.= ">".nf($bc['food'])."</td><td class=\"tbldata\"";
 	if ($bc['power']> $cp->prodPower- $cp->usePower && $bc['power']>0)
-		$bcstring.= " class=\"tbldata2\" ".tm("Fehlender Rohstoff",nf($bc['power']-($cp->prodPower-$cp->usePower))." Energie");
-	else
-		$bcstring.=" class=\"tbldata\"";
+		$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['power']-($cp->prodPower-$cp->usePower))." Energie");
+	
 	$bcstring.= ">".nf($bc['power'])."</td></tr>";
 	return array($bcstring,$bwmax);
 }
 
 function calcDemolishingCosts($buildingArray, $buildingCosts)
-{
+{	
 	$dc=array();
 	// Abrisskostenberechnung				Abrisskosten = Baukosten  * Abrisskostenfaktor
 	$dc['metal'] = $buildingCosts['metal'] * $buildingArray['building_demolish_costs_factor'];
@@ -117,6 +112,8 @@ function calcDemolishingCosts($buildingArray, $buildingCosts)
 
 function calcDemolishingWaitTime($dc,$cp)
 {
+	$notAvStyle=" style=\"color:red;\"";
+	
 	if ($cp->prodMetal>0)
 		$dwait['metal']=ceil(($dc['metal']-$cp->resMetal)/$cp->prodMetal*3600);
 	else
@@ -138,37 +135,31 @@ function calcDemolishingWaitTime($dc,$cp)
 	else
 		$dwait['food']=0;
 	$dwmax=max($dwait['metal'],$dwait['crystal'],$dwait['plastic'],$dwait['fuel'],$dwait['food']);
-
-	$dwstring= "<td";
+	
+	$dwstring = "<td class=\"tbldata\"";
 	if ($dc['metal']>$cp->resMetal)
-		$dwstring.=" class=\"tbldata2\" ".tm("Fehlender Rohstoff","<b>".nf($dc['metal']-$cp->resMetal)."</b> ".RES_METAL."<br/>Bereit in <b>".tf($dwait['metal'])."</b>");
-	else
-		$dwstring.=" class=\"tbldata\"";
-	$dwstring.= ">".nf($dc['metal'])."</td><td";
+		$dwstring.= $notAvStyle." ".tm("Fehlender Rohstoff","<b>".nf($dc['metal']-$cp->resMetal)."</b> ".RES_METAL."<br/>Bereit in <b>".tf($dwait['metal'])."</b>");
+	
+	$dwstring.= ">".nf($dc['metal'])."</td><td class=\"tbldata\"";
 	if ($dc['crystal']>$cp->resCrystal)
-		$dwstring.= " class=\"tbldata2\" ".tm("Fehlender Rohstoff",nf($dc['crystal']-$cp->resCrystal)." ".RES_CRYSTAL."<br/>Bereit in <b>".tf($dwait['crystal'])."</b>");
-	else
-		$dwstring.=" class=\"tbldata\"";
-	$dwstring.= ">".nf($dc['crystal'])."</td><td";
+		$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($dc['crystal']-$cp->resCrystal)." ".RES_CRYSTAL."<br/>Bereit in <b>".tf($dwait['crystal'])."</b>");
+	
+	$dwstring.= ">".nf($dc['crystal'])."</td><td class=\"tbldata\"";
 	if ($dc['plastic']>$cp->resPlastic)
-		$dwstring.= " class=\"tbldata2\" ".tm("Fehlender Rohstoff",nf($dc['plastic']-$cp->resPlastic)." ".RES_PLASTIC."<br/>Bereit in <b>".tf($dwait['plastic'])."</b>");
-	else
-		$dwstring.=" class=\"tbldata\"";
-	$dwstring.= ">".nf($dc['plastic'])."</td><td";
+		$dwstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($dc['plastic']-$cp->resPlastic)." ".RES_PLASTIC."<br/>Bereit in <b>".tf($dwait['plastic'])."</b>");
+	
+	$dwstring.= ">".nf($dc['plastic'])."</td><td class=\"tbldata\"";
 	if ($dc['fuel']>$cp->resFuel)
-		$dwstring.= " class=\"tbldata2\" ".tm("Fehlender Rohstoff",nf($dc['fuel']-$cp->resFuel)." ".RES_FUEL."<br/>Bereit in <b>".tf($dwait['fuel'])."</b>");
-	else
-		$dwstring.=" class=\"tbldata\"";
-	$dwstring.= ">".nf($dc['fuel'])."</td><td";
+		$dwstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($dc['fuel']-$cp->resFuel)." ".RES_FUEL."<br/>Bereit in <b>".tf($dwait['fuel'])."</b>");
+	
+	$dwstring.= ">".nf($dc['fuel'])."</td><td class=\"tbldata\"";
 	if ($dc['food']>$cp->resFood)
-		$dwstring.= " class=\"tbldata2\" ".tm("Fehlender Rohstoff",nf($dc['food']-$cp->resFood)." ".RES_FOOD."<br/>Bereit in <b>".tf($dwait['food'])."</b>");
-	else
-		$dwstring.=" class=\"tbldata\"";
-	$dwstring.= ">".nf($dc['food'])."</td><td";
-	if ($dc['power']> $cp->prodPower - $cp->usePower && $dc['power']>0)
-		$dwstring.= " class=\"tbldata2\" ".tm("Fehlender Rohstoff",nf($dc['power']-($cp->prodPower-$cp->usePower))." Energie");
-	else
-		$dwstring.=" class=\"tbldata\"";
+		$dwstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($dc['food']-$cp->resFood)." ".RES_FOOD."<br/>Bereit in <b>".tf($dwait['food'])."</b>");
+	
+	$dwstring.= ">".nf($dc['food'])."</td><td class=\"tbldata\"";
+	if ($dc['power']> $cp->prodPower- $cp->usePower && $dc['power']>0)
+		$dwstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($dc['power']-($cp->prodPower-$cp->usePower))." Energie");
+	
 	$dwstring.= ">".nf($dc['power'])."</td></tr>";
 	return array($dwstring,$dwmax);
 }
