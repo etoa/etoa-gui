@@ -181,18 +181,18 @@
           $building_power_use = floor($barr['building_power_use'] * pow($barr['building_production_factor'],$barr['buildlist_current_level']-1));
 
           // Werte anzeigen
-          echo "<td class=\"tbldata\" ".tm("Grundproduktion ohne Boni",nf(floor($bpb['metal']))." t/h").">".nf(floor($bp['metal']*$barr['buildlist_prod_percent']),1)."</td>";
-          echo "<td class=\"tbldata\" ".tm("Grundproduktion ohne Boni",nf(floor($bpb['crystal']))." t/h").">".nf(floor($bp['crystal']*$barr['buildlist_prod_percent']),1)."</td>";
-          echo "<td class=\"tbldata\" ".tm("Grundproduktion ohne Boni",nf(floor($bpb['plastic']))." t/h").">".nf(floor($bp['plastic']*$barr['buildlist_prod_percent']),1)."</td>";
-          echo "<td class=\"tbldata\" ".tm("Grundproduktion ohne Boni",nf(floor($bpb['fuel']))." t/h").">".nf(floor($bp['fuel']*$barr['buildlist_prod_percent']),1)."</td>";
-          echo "<td class=\"tbldata\" ".tm("Grundproduktion ohne Boni",nf(floor($bpb['food']))." t/h").">".nf(floor($bp['food']*$barr['buildlist_prod_percent']),1)."</td>";
-          echo "<td class=\"tbldata\"";
+          echo "<td ".tm("Grundproduktion ohne Boni",nf(floor($bpb['metal']))." t/h").">".nf(floor($bp['metal']*$barr['buildlist_prod_percent']),1)."</td>";
+          echo "<td ".tm("Grundproduktion ohne Boni",nf(floor($bpb['crystal']))." t/h").">".nf(floor($bp['crystal']*$barr['buildlist_prod_percent']),1)."</td>";
+          echo "<td".tm("Grundproduktion ohne Boni",nf(floor($bpb['plastic']))." t/h").">".nf(floor($bp['plastic']*$barr['buildlist_prod_percent']),1)."</td>";
+          echo "<td ".tm("Grundproduktion ohne Boni",nf(floor($bpb['fuel']))." t/h").">".nf(floor($bp['fuel']*$barr['buildlist_prod_percent']),1)."</td>";
+          echo "<td ".tm("Grundproduktion ohne Boni",nf(floor($bpb['food']))." t/h").">".nf(floor($bp['food']*$barr['buildlist_prod_percent']),1)."</td>";
+          echo "<td";
           if ($building_power_use>0) 
           {
           	echo " style=\"color:#f00\"";
           }
           echo ">".nf(ceil($building_power_use*$barr['buildlist_prod_percent']))."</td>";
-          echo "<td class=\"tbldata\">";
+          echo "<td>";
           if ($barr['building_type_id']==RES_BUILDING_CAT)
           {
               echo "<select name=\"buildlist_prod_percent[".$barr['building_id']."]\">\n";
@@ -207,6 +207,7 @@
                   echo ">".$perc." %</option>\n";
               }
               echo "</select>";
+							echo "&nbsp; <img src=\"misc/progress.image.php?w=50&p=".($barr['buildlist_prod_percent']*100)."\" alt=\"progress\" />";              
           }
           elseif ($barr['building_id']==BUILD_MISSILE_ID || $barr['building_id']==BUILD_CRYPTO_ID)
           {
@@ -218,6 +219,7 @@
               if ($barr['buildlist_prod_percent']==0) echo " selected=\"selected\"";
               echo ">0 %</option>\n";
               echo "</select>";                    	
+              echo "&nbsp; <img src=\"misc/progress.image.php?w=50&p=".($barr['buildlist_prod_percent']*100)."\" alt=\"progress\" />";
           }
           else
           {
@@ -233,13 +235,13 @@
 			// Anzeigen der Gesamtproduktion
 			echo "<tr><th style=\"height:2px;\" colspan=\"8\"></td></tr>";
 			echo "<tr><th>TOTAL</th>";
-			echo "<td class=\"tbldata\" style=\"color:#0f0\">".nf($cnt['metal'])."</td>";
-			echo "<td class=\"tbldata\" style=\"color:#0f0\">".nf($cnt['crystal'])."</td>";
-			echo "<td class=\"tbldata\" style=\"color:#0f0\">".nf($cnt['plastic'])."</td>";
-			echo "<td class=\"tbldata\" style=\"color:#0f0\">".nf($cnt['fuel'])."</td>";
-			echo "<td class=\"tbldata\" style=\"color:#0f0\">".nf($cnt['food'])."</td>";
-			echo "<td class=\"tbldata\" style=\"color:#f00\">".nf($pwrcnt)."</td>";
-			echo "<td class=\"tbldata\" style=\"color:#f00\"><input type=\"submit\" name=\"submitpercent\" class=\"button\" style=\"font-size:8pt;\" value=\"Speichern\" /></td>";
+			echo "<td style=\"color:#0f0\">".nf($cnt['metal'])."</td>";
+			echo "<td style=\"color:#0f0\">".nf($cnt['crystal'])."</td>";
+			echo "<td style=\"color:#0f0\">".nf($cnt['plastic'])."</td>";
+			echo "<td style=\"color:#0f0\">".nf($cnt['fuel'])."</td>";
+			echo "<td style=\"color:#0f0\">".nf($cnt['food'])."</td>";
+			echo "<td style=\"color:#f00\">".nf($pwrcnt)."</td>";
+			echo "<td style=\"color:#f00\"><input type=\"submit\" name=\"submitpercent\" class=\"button\" style=\"font-size:8pt;\" value=\"Speichern\" /></td>";
 			echo "</tr>";
 
 			$powerUsed = $pwrcnt;
@@ -247,7 +249,7 @@
 			// Bei zuwenig Strom Warnmessage
 			if ($pwrcnt > $cp->prodPower)
 			{
-				echo "<tr><td class=\"tbldata\" colspan=\"8\" style=\"color:#f00; text-align:center;\">Zuwenig Energie! ".nf(floor($pwrcnt))." ben&ouml;tigt, ".nf(floor($cp->prodPower))." verf&uuml;gbar. Gesamtproduktion wird auf ".(round($cp->prodPower / $pwrcnt,3)*100)."% gesenkt!</td></tr>";
+				echo "<tr><td colspan=\"8\" style=\"color:#f00; text-align:center;\">Zuwenig Energie! ".nf(floor($pwrcnt))." ben&ouml;tigt, ".nf(floor($cp->prodPower))." verf&uuml;gbar. Gesamtproduktion wird auf ".(round($cp->prodPower / $pwrcnt,3)*100)."% gesenkt!</td></tr>";
 
 				$cnt['metal'] = floor($cnt['metal'] * $cp->prodPower / $pwrcnt);
 				$cnt['crystal'] = floor($cnt['crystal'] * $cp->prodPower / $pwrcnt);
@@ -256,12 +258,12 @@
 				$cnt['food'] = floor($cnt['food'] * $cp->prodPower / $pwrcnt);
 
 				echo "<tr><th>TOTAL</th>";
-				echo "<td class=\"tbldata\">".nf($cnt['metal'])."</td>";
-				echo "<td class=\"tbldata\">".nf($cnt['crystal'])."</td>";
-				echo "<td class=\"tbldata\">".nf($cnt['plastic'])."</td>";
-				echo "<td class=\"tbldata\">".nf($cnt['fuel'])."</td>";
-				echo "<td class=\"tbldata\">".nf($cnt['food'])."</td>";
-				echo "<td class=\"tbldata\" colspan=\"2\">".nf(floor($cp->prodPower))."</td>";
+				echo "<td>".nf($cnt['metal'])."</td>";
+				echo "<td>".nf($cnt['crystal'])."</td>";
+				echo "<td>".nf($cnt['plastic'])."</td>";
+				echo "<td>".nf($cnt['fuel'])."</td>";
+				echo "<td>".nf($cnt['food'])."</td>";
+				echo "<td colspan=\"2\">".nf(floor($cp->prodPower))."</td>";
 				echo "</tr>";
 			}
 			tableEnd();
@@ -283,7 +285,7 @@
 		//
 		tableStart("Energieproduktion",700);
 		echo "<tr><th style=\"width:230px;\">Gebäude</th>
-		<th colspan=\"2\">".RES_ICON_POWER."Energie</th></tr>";
+		<th colspan=\"3\">".RES_ICON_POWER."Energie</th></tr>";
 
 		$cnt['power']=0;
 		$pres = dbquery("
@@ -317,7 +319,7 @@
 				if ($bp['power']!="") $bp['power'] = $bp['power'] + ($bp['power'] * ($cp->typePower-1)) + ($bp['power'] * ($cu->race->power-1) + ($bp['power'] * ($cp->starPower-1)));
 
 				echo "<tr><th>".$parr['building_name']." (".$parr['buildlist_current_level'].")</th>";
-				echo "<td class=\"tbldata\" colspan=\"2\">".nf(floor($bp['power']))."</td></tr>";
+				echo "<td colspan=\"3\">".nf(floor($bp['power']))."</td></tr>";
 
 				// Zum Total hinzufügen
 				$cnt['power'] += $bp['power'];
@@ -355,7 +357,7 @@
 					$pwr = $pwr * $power_bonus;
 				$pwrt = $pwr * $sarr['shiplist_count'];
 				echo '<tr><th>'.$sarr['ship_name'].' ('.nf($sarr['shiplist_count']).')</th>';
-				echo '<td colspan="2" class="tbldata">'.nf($pwrt).' 
+				echo '<td colspan="3" class="tbldata">'.nf($pwrt).' 
 				(Energie pro Satellit: '.(($pwr)).' = '.$sarr['ship_prod_power'].' Basis, '.$dtempstr.' bedingt durch Entfernung zur Sonne, '.get_percent_string($power_bonus,1).' durch Energiebonus)</td>';
 				echo '</tr>';
 				$cnt['power'] += $pwrt;
@@ -363,19 +365,29 @@
 		}		
 					
 		$powerProduced = $cnt['power']; 
-		echo "<tr><th style=\"height:2px;\" colspan=\"3\"></th></tr>";			
-		echo "<tr><th>TOTAL produziert</td><td class=\"tbldata\" colspan=\"2\">".nf($powerProduced)."</th></tr>";
+		echo "<tr><th style=\"height:2px;\" colspan=\"4\"></th></tr>";			
+		echo "<tr><th>TOTAL produziert</td><td colspan=\"3\">".nf($powerProduced)."</th></tr>";
 		if ($powerProduced!=0)
 		{
 			$powerFree = $powerProduced - $powerUsed;
-			echo "<tr><th>Benutzt</td><td class=\"tbldata\"";
-			echo ">".nf($powerUsed)."</td><td class=\"tbldata\">".round($powerUsed/$powerProduced*100,2)."%</th></tr>";
+			echo "<tr><th>Benutzt</td><td";
+			echo ">".nf($powerUsed)."</td><td>".round($powerUsed/$powerProduced*100,2)."%</th>
+			<td>
+			<img src=\"misc/progress.image.php?r=1&w=100&p=".round($powerUsed/$powerProduced*100,2)."\" alt=\"progress\" />
+			</td>			
+			</tr>";
 			if ($powerFree<0)
 				$style=" style=\"color:#f00\"";
 			else
 				$style=" style=\"color:#0f0\"";
-			echo "<tr><th>Verfügbar</td><td class=\"tbldata\" $style";
-			echo ">".nf($powerFree)."</td><td class=\"tbldata\" $style>".round($powerFree/$powerProduced*100,2)."%</th></tr>";
+			echo "<tr><th>Verfügbar</td><td $style>
+			".nf($powerFree)."
+			</td>
+			<td $style>
+			".round($powerFree/$powerProduced*100,2)."%</td>
+			<td>
+			<img src=\"misc/progress.image.php?w=100&p=".round($powerFree/$powerProduced*100,2)."\" alt=\"progress\" />
+			</td></tr>";
 		}
 		echo "</table>";
 	
@@ -426,7 +438,7 @@
 			echo "<tr><th>Grundkapazit&auml;t</th>";
 			for ($x=0;$x<5;$x++)
 			{
-  			echo "<td class=\"tbldata\">".nf($conf['def_store_capacity']['v'])."</td>";
+  			echo "<td>".nf($conf['def_store_capacity']['v'])."</td>";
   			$storetotal[$x]=$conf['def_store_capacity']['v'];
   		}
   		echo "</tr>";
@@ -442,7 +454,7 @@
 					foreach ($store as $id=>$sd)
 					{
 						$storetotal[$id]+=$sd;
-						echo "<td class=\"tbldata\">".nf($sd)."</td>";
+						echo "<td>".nf($sd)."</td>";
 					}
 					echo "</tr>";
 			}
@@ -450,9 +462,19 @@
 			echo "<tr><th>TOTAL</th>";
 			foreach ($storetotal as $id=>$sd)
 			{
-				echo "<td class=\"tbldata\">".nf($sd,1)."</td>";
+				echo "<td>".nf($sd,1)."</td>";
 			}
 			echo "</tr>";
+			echo "<tr><th>Benuzt</th>";
+			echo "<td><img src=\"misc/progress.image.php?r=1&w=100&p=".round($cp->resMetal/$cp->storeMetal*100)."\" alt=\"progress\" /></td>";
+			echo "<td><img src=\"misc/progress.image.php?r=1&w=100&p=".round($cp->resCrystal/$cp->storeCrystal*100)."\" alt=\"progress\" /></td>";
+			echo "<td><img src=\"misc/progress.image.php?r=1&w=100&p=".round($cp->resPlastic/$cp->storePlastic*100)."\" alt=\"progress\" /></td>";
+			echo "<td><img src=\"misc/progress.image.php?r=1&w=100&p=".round($cp->resFuel/$cp->storeFuel*100)."\" alt=\"progress\" /></td>";
+			echo "<td><img src=\"misc/progress.image.php?r=1&w=100&p=".round($cp->resFood/$cp->storeFood*100)."\" alt=\"progress\" /></td>";
+			echo "</tr>";
+			
+			
+			
 			tableEnd();
 		}
 
@@ -475,65 +497,65 @@
 		echo "<th>".$cp->starTypeName."</th>";
 		echo "<th>TOTAL</th></tr>";
 
-		echo "<tr><td class=\"tbldata\">".RES_ICON_METAL."Produktion ".RES_METAL."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cp->typeMetal,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cu->race->metal,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cp->starMetal,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string(array($cp->typeMetal,$cu->race->metal,$cp->starMetal),1)."</td></tr>";
+		echo "<tr><td>".RES_ICON_METAL."Produktion ".RES_METAL."</td>";
+		echo "<td>".get_percent_string($cp->typeMetal,1)."</td>";
+		echo "<td>".get_percent_string($cu->race->metal,1)."</td>";
+		echo "<td>".get_percent_string($cp->starMetal,1)."</td>";
+		echo "<td>".get_percent_string(array($cp->typeMetal,$cu->race->metal,$cp->starMetal),1)."</td></tr>";
 
-		echo "<tr><td class=\"tbldata\">".RES_ICON_CRYSTAL."Produktion ".RES_CRYSTAL."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cp->typeCrystal,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cu->race->crystal,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cp->starCrystal,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string(array($cp->typeCrystal,$cu->race->crystal,$cp->starCrystal),1)."</td></tr>";
+		echo "<tr><td>".RES_ICON_CRYSTAL."Produktion ".RES_CRYSTAL."</td>";
+		echo "<td>".get_percent_string($cp->typeCrystal,1)."</td>";
+		echo "<td>".get_percent_string($cu->race->crystal,1)."</td>";
+		echo "<td>".get_percent_string($cp->starCrystal,1)."</td>";
+		echo "<td>".get_percent_string(array($cp->typeCrystal,$cu->race->crystal,$cp->starCrystal),1)."</td></tr>";
 
-		echo "<tr><td class=\"tbldata\">".RES_ICON_PLASTIC."Produktion ".RES_PLASTIC."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cp->typePlastic,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cu->race->plastic,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cp->starPlastic,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string(array($cp->typePlastic,$cu->race->plastic,$cp->starPlastic),1)."</td></tr>";
+		echo "<tr><td>".RES_ICON_PLASTIC."Produktion ".RES_PLASTIC."</td>";
+		echo "<td>".get_percent_string($cp->typePlastic,1)."</td>";
+		echo "<td>".get_percent_string($cu->race->plastic,1)."</td>";
+		echo "<td>".get_percent_string($cp->starPlastic,1)."</td>";
+		echo "<td>".get_percent_string(array($cp->typePlastic,$cu->race->plastic,$cp->starPlastic),1)."</td></tr>";
 
-		echo "<tr><td class=\"tbldata\">".RES_ICON_FUEL."Produktion ".RES_FUEL."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cp->typeFuel,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cu->race->fuel,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cp->starFuel,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string(array($cp->typeFuel,$cu->race->fuel,$cp->starFuel),1)."</td></tr>";
+		echo "<tr><td>".RES_ICON_FUEL."Produktion ".RES_FUEL."</td>";
+		echo "<td>".get_percent_string($cp->typeFuel,1)."</td>";
+		echo "<td>".get_percent_string($cu->race->fuel,1)."</td>";
+		echo "<td>".get_percent_string($cp->starFuel,1)."</td>";
+		echo "<td>".get_percent_string(array($cp->typeFuel,$cu->race->fuel,$cp->starFuel),1)."</td></tr>";
 
-		echo "<tr><td class=\"tbldata\">".RES_ICON_FOOD."Produktion ".RES_FOOD."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cp->typeFood,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cu->race->food,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cp->starFood,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string(array($cp->typeFood,$cu->race->food,$cp->starFood),1)."</td></tr>";
+		echo "<tr><td>".RES_ICON_FOOD."Produktion ".RES_FOOD."</td>";
+		echo "<td>".get_percent_string($cp->typeFood,1)."</td>";
+		echo "<td>".get_percent_string($cu->race->food,1)."</td>";
+		echo "<td>".get_percent_string($cp->starFood,1)."</td>";
+		echo "<td>".get_percent_string(array($cp->typeFood,$cu->race->food,$cp->starFood),1)."</td></tr>";
 
-		echo "<tr><td class=\"tbldata\">".RES_ICON_POWER."Produktion Energie</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cp->typePower,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cu->race->power,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cp->starPower,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string(array($cp->typePower,$cu->race->power,$cp->starPower),1)."</td></tr>";
+		echo "<tr><td>".RES_ICON_POWER."Produktion Energie</td>";
+		echo "<td>".get_percent_string($cp->typePower,1)."</td>";
+		echo "<td>".get_percent_string($cu->race->power,1)."</td>";
+		echo "<td>".get_percent_string($cp->starPower,1)."</td>";
+		echo "<td>".get_percent_string(array($cp->typePower,$cu->race->power,$cp->starPower),1)."</td></tr>";
 
-		echo "<tr><td class=\"tbldata\">".RES_ICON_PEOPLE."Bev&ouml;lkerungswachstum</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cp->typePopulation,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cu->race->population,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cp->starPopulation,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string(array($cp->typePopulation,$cu->race->population,$cp->starPopulation),1)."</td></tr>";
+		echo "<tr><td>".RES_ICON_PEOPLE."Bev&ouml;lkerungswachstum</td>";
+		echo "<td>".get_percent_string($cp->typePopulation,1)."</td>";
+		echo "<td>".get_percent_string($cu->race->population,1)."</td>";
+		echo "<td>".get_percent_string($cp->starPopulation,1)."</td>";
+		echo "<td>".get_percent_string(array($cp->typePopulation,$cu->race->population,$cp->starPopulation),1)."</td></tr>";
 
-		echo "<tr><td class=\"tbldata\">".RES_ICON_TIME."Forschungszeit</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cp->typeResearchtime,1,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cu->race->researchTime,1,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cp->starResearchtime,1,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string(array($cp->typeResearchtime,$cu->race->researchTime,$cp->starResearchtime),1,1)."</td></tr>";
+		echo "<tr><td>".RES_ICON_TIME."Forschungszeit</td>";
+		echo "<td>".get_percent_string($cp->typeResearchtime,1,1)."</td>";
+		echo "<td>".get_percent_string($cu->race->researchTime,1,1)."</td>";
+		echo "<td>".get_percent_string($cp->starResearchtime,1,1)."</td>";
+		echo "<td>".get_percent_string(array($cp->typeResearchtime,$cu->race->researchTime,$cp->starResearchtime),1,1)."</td></tr>";
 
-		echo "<tr><td class=\"tbldata\">".RES_ICON_TIME."Bauzeit (Geb&auml;ude)</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cp->typeBuildtime,1,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cu->race->buildTime,1,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cp->starBuildtime,1,1)."</td>";
-		echo "<td class=\"tbldata\">".get_percent_string(array($cp->typeBuildtime,$cu->race->buildTime,$cp->starBuildtime),1,1)."</td></tr>";
+		echo "<tr><td>".RES_ICON_TIME."Bauzeit (Geb&auml;ude)</td>";
+		echo "<td>".get_percent_string($cp->typeBuildtime,1,1)."</td>";
+		echo "<td>".get_percent_string($cu->race->buildTime,1,1)."</td>";
+		echo "<td>".get_percent_string($cp->starBuildtime,1,1)."</td>";
+		echo "<td>".get_percent_string(array($cp->typeBuildtime,$cu->race->buildTime,$cp->starBuildtime),1,1)."</td></tr>";
 
-		echo "<tr><td class=\"tbldata\">".RES_ICON_TIME."Flugzeit</td>";
-		echo "<td class=\"tbldata\">-</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cu->race->fleetTime,1,1)."</td>";
-		echo "<td class=\"tbldata\">-</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cu->race->fleetTime,1,1)."</td></tr>";
+		echo "<tr><td>".RES_ICON_TIME."Flugzeit</td>";
+		echo "<td>-</td>";
+		echo "<td>".get_percent_string($cu->race->fleetTime,1,1)."</td>";
+		echo "<td>-</td>";
+		echo "<td>".get_percent_string($cu->race->fleetTime,1,1)."</td></tr>";
 
 		tableEnd();
 		

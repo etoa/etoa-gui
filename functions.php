@@ -1123,19 +1123,18 @@
 
 	function tableStart($title="",$width=0,$layout="")
 	{
-		if ($width>0)
-		{
-			$w = "width:".$width."px;";
-		}
-		elseif ($width!="")
+		if ($width!="")
 		{
 			$w = "width:".$width."";
+		}
+		elseif ($width>0)
+		{
+			$w = "width:".$width."px;";
 		}
 		else
 		{
 			$w = "width:650px";
 		}
-		
 		if ($layout=="double")
 		{
 			echo "<table style=\"".$w."\"><tr><td style=\"width:50%;vertical-align:top;\">";

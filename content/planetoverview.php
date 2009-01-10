@@ -140,11 +140,18 @@
 		//
 		elseif (isset($_GET['sub']) && $_GET['sub']=="fields")
 		{
-		 	echo "<h1>Felderbelegung des Planeten ".$cp->name."</h1>";
+		 	echo "<h1>&Uuml;bersicht &uuml;ber den Planeten ".$cp->name."</h1>";
 			$cp->resBox($cu->properties->smallResBox);
 
-			echo "<table style=\"width:100%;\"><tr><td style=\"width:50%;vertical-align:top;padding:5px;\">";
+			tableStart("Felderbelegung");
+			echo "<tr>
+			<tr><td colspan=\"2\">
 			
+			<img src=\"misc/progress.image.php?r=1&w=650&p=".round($cp->fields_used/$cp->fields*100)."\" alt=\"progress\" style=\"width:100%;\"/>
+			<br/>Benutzt: ".$cp->fields_used.", Total: ".$cp->fields."<br/></td></tr>
+			<tr><td style=\"width:50%;vertical-align:top;padding:5px;\">";
+			
+			tableStart("Geb&auml;ude",'100%');
 			$res=dbquery("
 			SELECT
 				buildings.building_name as name,
@@ -161,7 +168,6 @@
 			if (mysql_num_rows($res)>0)
 			{
 				$fcnt=0;
-				tableStart("Felderbenutzung durch Geb&auml;ude",'48%');
 				echo "<tr><th class=\"tbltitle\">Name</th><th class=\"tbltitle\">Stufe</th><th class=\"tbltitle\">Felder</th></tr>";
 				while ($arr=mysql_fetch_array($res))
 				{
@@ -171,13 +177,14 @@
 					$fcnt+=$arr['fields'];
 				}
 				echo "<tr><th colspan=\"2\">Total</th><td>".nf($fcnt)."</td></tr>";
-				tableEnd();
 			}
 			else
-				echo "<i>Keine Geb&auml;ude vorhanden!</i><br/>";
-
+				echo "<tr><td><i>Keine Geb&auml;ude vorhanden!</i></td></tr>";
+			tableEnd();
+				
 			echo "</td><td style=\"width:50%;vertical-align:top;padding:5px;\">";
 			
+			tableStart("Verteidigungsanlagen",'100%');
 			$res=dbquery("SELECT
 				defense.def_name as name,
 				defense.def_fields * deflist.deflist_count AS fields,
@@ -193,7 +200,6 @@
 			if (mysql_num_rows($res)>0)
 			{
 				$dfcnt=0;
-				tableStart("Felderbenutzung durch Verteidigungsanlagen",'48%');
 				echo "<tr><th>Name</th><th>Anzahl</th><th>Felder</th></tr>";
 				while ($arr=mysql_fetch_array($res))
 				{
@@ -203,10 +209,10 @@
 					$dfcnt+=$arr['fields'];
 				}
 				echo "<tr><th colspan=\"2\">Total</th><td>".nf($dfcnt)."</td></tr>";
-				tableEnd();
 			}
 			else
-				echo "<i>Keine Verteidigungsanlagen vorhanden!</i><br/><br/>";
+				echo "<tr><td><i>Keine Verteidigungsanlagen vorhanden!</i></td></tr>";
+			tableEnd();
 			
 			echo "</table>";
 			
@@ -231,15 +237,18 @@
 
 			tableStart("Übersicht");
 			echo "<tr><td colspan=\"2\" style=\"padding:0px;\">";
-			echo "<div style=\"position:relative;height:380px;padding:0px;background:#000 url('images/sunset.jpg');\">";
+			echo "<div style=\"position:relative;height:320px;padding:0px;background:#000 url('images/stars_middle.jpg');\">
+			<div style=\"position:absolute;right:30px;top:30px;\">
+			<img src=\"".$cp->imagePath('b')."\" style=\"width:220px;height:220px;\" alt=\"Planet\" /></div>";
 			echo "<div class=\"planetOverviewList\">
+			<div class=\"planetOverviewItem\">Name</div> <a href=\"?page=$page&amp;action=change_name\">".$cp->name."</a><br style=\"clear:left;\"/>
 			<div class=\"planetOverviewItem\">Grösse</div> ".nf($conf['field_squarekm']['v']*$cp->fields)." km&sup2;<br style=\"clear:left;\"/>
 			<div class=\"planetOverviewItem\">Temperatur</div>	".$cp->temp_from." &deg;C bis ".$cp->temp_to." &deg;C <br style=\"clear:left;\"/>
 			<div class=\"planetOverviewItem\">System</div> <a href=\"?page=cell&amp;id=".$cp->cellId()."&amp;hl=".$cp->id()."\">".$cp->getSectorSolsys()."</a> (Position ".$cp->pos.")<br style=\"clear:left;\"/>
 			<div class=\"planetOverviewItem\">Kennung</div> <a href=\"?page=entity&amp;id=".$cp->id()."\">".$cp->id()."</a><br style=\"clear:left;\"/>
-			<div class=\"planetOverviewItem\">Stern</div> ".$cp->starTypeName." ".helpLink("stars")."<br style=\"clear:left;\"/>
-			<div class=\"planetOverviewItem\">Planetentyp</div> ".$cp->type()." ".helpLink("planets")."<br style=\"clear:left;\"/>
-			<div class=\"planetOverviewItem\">Felder</div> ".nf($cp->fields_used)." benutzt (".round($cp->fields_used/$cp->fields*100)."%), ".(nf($cp->fields))." total, ".$cp->fields_extra." extra<br style=\"clear:left;\"/>";
+			<div class=\"planetOverviewItem\">Stern</div> ".helpLink("stars",$cp->starTypeName)."<br style=\"clear:left;\"/>
+			<div class=\"planetOverviewItem\">Planetentyp</div> ".helpLink("planets",$cp->type())."<br style=\"clear:left;\"/>
+			<div class=\"planetOverviewItem\">Felder</div> <a href=\"?page=$page&amp;sub=fields\">".nf($cp->fields_used)." benutzt</a> (".round($cp->fields_used/$cp->fields*100)."%), ".(nf($cp->fields))." total, ".$cp->fields_extra." extra<br style=\"clear:left;\"/>";
 			if ($cp->debrisField)
 			{
 				echo "<div class=\"planetOverviewItem\">Trümmerfeld</div> 
@@ -251,7 +260,7 @@
 			if ($cp->desc!="")			
 				echo "<div class=\"planetOverviewItem\">Beschreibung</div> ".stripslashes($cp->desc)."<br style=\"clear:left;\"/>";
 			if ($cp->isMain)				
-				echo "<div class=\"planetOverviewItem\">Hauptplanet</div> Hauptplaneten können nicht invasiert oder aufgegeben werden!<br style=\"clear:left;\"/>";
+				echo "<div class=\"planetOverviewItem\">Hauptplanet</div> Dies ist dein Hauptplanet. Hauptplaneten können nicht invasiert oder aufgegeben werden!<br style=\"clear:left;\"/>";
 			echo "</div>";
 			echo "</div>";
 			echo "</td></tr>";
@@ -374,8 +383,6 @@
 			}
 			echo "</table><br/>";
 			*/
-			echo "<input type=\"button\" value=\"Name / Beschreibung des Planeten &auml;ndern\" onclick=\"document.location='?page=$page&amp;action=change_name'\" /> ";
-			echo "<input type=\"button\" value=\"Felderbelegung anzeigen\" onclick=\"document.location='?page=$page&amp;sub=fields'\" /> ";
 			if (!$cp->isMain)
 			{
 				echo "&nbsp;<input type=\"button\" value=\"Kolonie aufheben\" onclick=\"document.location='?page=$page&action=remove'\" />";
