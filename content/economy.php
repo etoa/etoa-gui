@@ -54,6 +54,10 @@
 						AND buildlist_building_id='$id'
 					;");
 				}
+				ok_msg("Änderungen gespeichert!");
+				
+				// Send
+				sendBackendMessage("planetupdate:".$cp->id);				
 			}
 		}
 

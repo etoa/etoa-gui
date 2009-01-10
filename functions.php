@@ -2945,6 +2945,16 @@ Forum: http://www.etoa.ch/forum";
 		}
 		return false;
 	}
+	
+	function sendBackendMessage($message)
+	{
+		if (function_exists("msg_get_queue"))
+		{
+			$q = msg_get_queue(IPC_TOKEN,0600);
+			return msg_send($q,1,$message,false,false);
+		}
+		return false;
+	}
 
 	// Test
 

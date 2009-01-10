@@ -87,25 +87,38 @@
 			echo $un['sysname']." ".$un['release']." ".$un['version'];
 
 			echo "<h2>Daemon etoad</h2>";	
+			if ($_GET['action']=="daeomonrestart")
+			{
+				echo "<div><div style=\"background:#000;padding:6px;border:1px solid #fff\">";
+				passthru("$daemonExe -r test -k");
+				echo "</div><br/>";
+			}
+			
 			if ($pid = checkDaemonRunning($daemonPidfile))
 			{
-				echo "<div style=\"color:#0f0;\">Der Backend-Dienst läuft mit PID $pid!</div>";
+				echo "<div style=\"color:#0f0;\">Der Backend-Dienst läuft mit PID $pid!
+				&nbsp; <input type=\"button\" value=\"Neu starten\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;action=daeomonrestart'\" />
+				</div>";
 			}	
 			else
 			{
-				echo "<div style=\"color:red;\">Der Backend-Dienst scheint nicht zu laufen!</div>";
+				echo "<div style=\"color:red;\">Der Backend-Dienst scheint nicht zu laufen!
+				&nbsp; <input type=\"button\" value=\"Neu starten\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;action=daeomonrestart'\" /></div>";
 			}
 			
 			echo "<h2>Log</h2><b>Datei:</b>";
 			$numRows = isset($_POST['numrows']) && $_POST['numrows']>0 ? $_POST['numrows'] : 50;
-			echo "
-			<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">Zeige die letzten 
-			<input type=\"text\" size=\"3\" maxlength=\"4\" value=\"$numRows\" name=\"numrows\" /> Zeilen 
-			<input type=\"submit\" name=\"log_submit\" value=\"Übernehmen\" /></form>";
+//			echo "
+//			<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">Zeige die letzten 
+//			<input type=\"text\" size=\"3\" maxlength=\"4\" value=\"$numRows\" name=\"numrows\" /> Zeilen 
+//			<input type=\"submit\" name=\"log_submit\" value=\"Übernehmen\" /></form>";
 			
-			if ($logData = tail($daemonLogfile,$numRows))
+			//if ($logData = tail($daemonLogfile,$numRows))
+			if (is_file($daemonLogfile))
 			{
-				echo "<textarea style=\"height:400px;width:100%\" id=\"logtextarea\" readonly=\"readonly\">".$logData."</textarea>
+				echo "<textarea style=\"height:400px;width:100%\" id=\"logtextarea\" readonly=\"readonly\">";
+				readfile($daemonLogfile);
+				echo "</textarea>
 				<script type=\"text/javascript\">
 				textareaelem = document.getElementById('logtextarea');
 				textareaelem.scrollTop = textareaelem.scrollHeight;
