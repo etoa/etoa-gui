@@ -118,8 +118,11 @@ void msgQueueThread()
 	IPCMessageQueue queue;
 	while (true)
 	{
-		std::string res = queue.rcv();
-		clog << "Queue: "<< res<<std::endl;
+		std::string cmd = "";
+		int id = 0;
+		queue.rcvCommand(&cmd,&id);
+		
+		clog << "Command received: "<< cmd << ", Id: " << id<<std::endl;
 	}
 	std::clog << "Message queue thread ended"<<std::endl;
 }

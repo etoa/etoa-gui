@@ -16,6 +16,8 @@
 // Interprocess Message queue manager
 //
 
+#include <vector>
+
 #include "ExceptionHandler.h"
 #include "IPCMessageQueue.h"
 #include "functions.h"
@@ -28,6 +30,23 @@ IPCMessageQueue::IPCMessageQueue()
 IPCMessageQueue::~IPCMessageQueue()
 {
 		
+}
+
+void IPCMessageQueue::rcvCommand(std::string* command, int* id)
+{
+	std::string str = rcv();
+	if (str != "")
+	{
+		std::vector<std::string> res;
+		std::string sep = ":";
+		explode(str,sep,res);
+		*command = res[0];
+		*id = toInt(res[1]);
+		return;
+	}
+	(*command) = "";
+	(*id) = 0;
+	return;
 }
 
 std::string IPCMessageQueue::rcv()

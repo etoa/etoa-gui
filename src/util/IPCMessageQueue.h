@@ -34,7 +34,7 @@ class IPCMessageQueue
     IPCMessageQueue();
 		~IPCMessageQueue();
 		std::string rcv();		
-		
+		void rcvCommand(std::string* command, int* id);
 	private:
     struct my_msgbuf {
         long mtype;
