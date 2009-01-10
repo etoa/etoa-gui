@@ -1,0 +1,156 @@
+<?PHP
+
+	include("../conf.inc.php");
+	include("../functions.php");
+	define("CLASS_ROOT","../classes");
+	dbconnect();
+	$conf=get_all_config();
+	include("../def.inc.php");
+
+	define('NUM_LEVELS',25);
+
+	$w = 640;
+	$h = 400;
+	define('P_LEFT',20);
+	define('P_RIGHT',10);
+	define('P_TOP',10);
+	define('P_BOTTOM',20);
+	define('LEGEND_HEIGHT',40);
+
+	$maxRatio = 30;
+
+function MDashedLine($image, $x0, $y0, $x1, $y1, $fg, $bg)
+{
+        $st = array($fg, $fg, $fg, $fg, $bg, $bg, $bg, $bg);
+        ImageSetStyle($image, $st);
+        ImageLine($image, $x0, $y0, $x1, $y1, IMG_COLOR_STYLED);
+} 	
+	
+	
+	$im = imagecreatetruecolor($w,$h);
+	header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1	
+	header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); // Datum in der Vergangenheit	
+	header ("Content-type: image/png");
+	$colWhite = imagecolorallocate($im,255,255,255);
+	$colBlack = imagecolorallocate($im,0,0,0);
+	$colLGrey = imagecolorallocate($im,230,230,230);
+	$colGrey = imagecolorallocate($im,120,120,120);
+	$colYellow = imagecolorallocate($im,255,255,0);
+	$colOrange = imagecolorallocate($im,255,100,0);
+	$colGreen = imagecolorallocate($im,0,255,0);
+	$colBlue = imagecolorallocate($im,150,150,240);
+	$colRed = imagecolorallocate($im,255,0,0);
+	$colViolett = imagecolorallocate($im,200,0,200);
+	$colRe = imagecolorallocate($im,200,0,200);
+
+	$lineCol[0] = imagecolorallocate($im,0,255,0);
+	$lineCol[1] = imagecolorallocate($im,11,9,159);
+	$lineCol[2] = imagecolorallocate($im,150,0,255);
+	$lineCol[3] = imagecolorallocate($im,255,7,255);
+	$lineCol[4] = imagecolorallocate($im,255,150,00);
+	$lineCol[5] = imagecolorallocate($im,255,0,00);
+	$lineCol[6] = imagecolorallocate($im,255,200,00);
+	
+	imagefilledrectangle($im,0,0,$w,$h,$colWhite);
+
+	$areaW = $w - P_LEFT - P_RIGHT;
+	$areaH = $h - P_TOP - P_BOTTOM - LEGEND_HEIGHT;
+	$areaOriginX = P_LEFT;
+	$areaOriginY = $h-LEGEND_HEIGHT-P_BOTTOM;
+	$stepX = floor($areaW /(NUM_LEVELS));
+
+	$cnt=1;
+	for ($i=$areaOriginX+$stepX;$i<=$areaOriginX+$areaW;$i+=$stepX)
+	{
+		imageline($im,$i,10,$i,$h-LEGEND_HEIGHT-10,$colLGrey);
+		imagestring($im,2,$i-imagefontwidth(2)*strlen($cnt)/2,$areaOriginY,$cnt++,$colBlack);
+	}
+
+
+	ob_start();
+
+	
+	for ($i=0;$i<=$maxRatio; $i+=$maxRatio/10)
+	{
+		imagestring($im,2,P_LEFT-imagefontwidth(2)*strlen($i)-2,$areaOriginY-($i/$maxRatio*$areaH),$i,$colBlack);
+	}
+
+	$strx = P_LEFT;
+	$i = 0;		
+	$res = dbquery("
+	SELECT 
+		*
+	FROM
+		buildings
+	WHERE
+		building_type_id=".BUILDING_POWER_CAT."
+	ORDER BY
+		building_order
+	");
+	while ($arr = mysql_fetch_array($res))
+	{
+		$startX = $areaOriginX;
+		$startY = $areaOriginY;
+    for ($level=0;$level<=NUM_LEVELS;$level++)
+    {
+			$costs1 = $arr['building_costs_metal']+$arr['building_costs_crystal']+$arr['building_costs_plastic']+$arr['building_costs_fuel']+$arr['building_costs_food'];
+			$prod1 = $arr['building_prod_power'];
+			$costsLvl = round($costs1 * pow($arr['building_build_costs_factor'],$level-1));
+			$prodLvl = round($prod1 * pow($arr['building_production_factor'],$level-1));
+			$ratio = round($costsLvl / $prodLvl,1);
+			
+			$newX = $areaOriginX+($stepX*$level);
+			$newY = $areaOriginY-(($ratio/$maxRatio)*$areaH);
+      imageline($im,$startX,$startY,$newX,$newY,$lineCol[$i%7]);
+      $startX=$newX;
+      $startY=$newY;
+    }			
+		
+		imagestring($im,2,$strx,$h-LEGEND_HEIGHT,$arr['building_name'],$lineCol[$i%7]);
+		$strx += (imagefontwidth(2)*strlen($arr['building_name']))+10;
+		$i++;
+	}
+	$res = dbquery("
+	SELECT 
+		*
+	FROM
+		ships
+	WHERE
+		ship_prod_power>0
+	ORDER BY
+		ship_order
+	");	
+	$strx = P_LEFT;
+	$cfg = Config::getInstance();
+	while ($arr = mysql_fetch_array($res))
+	{
+		$costs1 = $arr['ship_costs_metal']+$arr['ship_costs_crystal']+$arr['ship_costs_plastic']+$arr['ship_costs_fuel']+$arr['ship_costs_food'];
+		$prod1 = $arr['ship_prod_power'];
+		$ratio = round($costs1 / $prod1,1);	
+    imageline($im,$areaOriginX,$areaOriginY-(($ratio/$maxRatio)*$areaH),$areaOriginX+$areaW,$areaOriginY-(($ratio/$maxRatio)*$areaH),$lineCol[$i%7]);
+
+		$tpb1 = Planet::getSolarPowerBonus($cfg->param1('planet_temp'),$cfg->param1('planet_temp')+$cfg->value('planet_temp'));
+		$ratio = round($costs1 / ($prod1+$tpb1),1);	
+    MDashedLine($im,$areaOriginX,$areaOriginY-(($ratio/$maxRatio)*$areaH),$areaOriginX+$areaW,$areaOriginY-(($ratio/$maxRatio)*$areaH),$lineCol[$i%7],$colWhite);
+
+		$tpb2 = Planet::getSolarPowerBonus($cfg->param2('planet_temp')-$cfg->value('planet_temp'),$cfg->param2('planet_temp'));
+		$ratio = round($costs1 / ($prod1+$tpb2),1);	
+    MDashedLine($im,$areaOriginX,$areaOriginY-(($ratio/$maxRatio)*$areaH),$areaOriginX+$areaW,$areaOriginY-(($ratio/$maxRatio)*$areaH),$lineCol[$i%7],$colWhite);
+		
+		imagestring($im,2,$strx,$h-LEGEND_HEIGHT/2,$arr['ship_name'],$lineCol[$i%7]);
+		$strx += (imagefontwidth(2)*strlen($arr['ship_name']." ("));
+		$i++;
+	}			
+
+
+	$str = ob_get_clean();
+	imagestring($im,2,10,10,$str,$colBlack);
+
+	imageline($im,P_LEFT,$h-LEGEND_HEIGHT-P_BOTTOM,$w-P_RIGHT,$h-LEGEND_HEIGHT-P_BOTTOM,$colBlack);
+	imageline($im,P_LEFT,P_TOP,P_LEFT,$h-LEGEND_HEIGHT-P_BOTTOM,$colBlack);
+
+
+	echo imagepng($im);
+	
+	dbclose();
+?>

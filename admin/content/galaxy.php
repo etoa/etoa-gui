@@ -1258,6 +1258,7 @@
               planet_user_main=".$_POST['planet_user_main'].",
               planet_type_id=".$_POST['planet_type_id'].",
               planet_fields=".$_POST['planet_fields'].",
+              planet_fields_extra=".$_POST['planet_fields_extra'].",
               planet_image='".$_POST['planet_image']."',
               planet_temp_from=".$_POST['planet_temp_from'].",
               planet_temp_to=".$_POST['planet_temp_to'].",

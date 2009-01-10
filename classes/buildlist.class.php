@@ -126,7 +126,7 @@
 			return $pbarr[0];			
 		}		
 		
-		function startConstruction($buildingId,$endTime);
+		function startConstruction($buildingId,$endTime)
 		{
 			dbquery("
 			REPLACE INTO 

@@ -89,13 +89,13 @@
 		$query_counter=0;
 		try
 		{
-			if (!$db_handle = @mysql_connect(DB_SERVER,DB_USER,DB_PASSWORD))
+			if (!$db_handle = mysql_connect(DB_SERVER,DB_USER,DB_PASSWORD))
 			{
-				throw new DBException("Zum Datenbankserver auf [b]".DB_SERVER."[/b] kann keine Verbindung hergestellt werden!");	
+				throw new DBException("Zum Datenbankserver auf <b>".DB_SERVER."</b> kann keine Verbindung hergestellt werden!");	
 			}
 			if (!mysql_select_db(DB_DATABASE))
 			{
-				throw new DBException("Auf die Datenbank [b]".DB_DATABASE."[/b] auf [b]".DB_SERVER."[/b] kann nicht zugegriffen werden!");				
+				throw new DBException("Auf die Datenbank <b>".DB_DATABASE."</b> auf <b>".DB_SERVER."</b> kann nicht zugegriffen werden!");				
 			}
 			$dbopen = true;
 			dbquery("SET NAMES 'utf8';"); 
@@ -2756,11 +2756,11 @@ Forum: http://www.etoa.ch/forum";
 		return "<a href=\"?page=ticket&amp;cat=".$category."\" onclick=\"window.open('show.php?page=ticket&amp;cat=".$category."','popup','status=no,width=".$width.",height=".$height.",scrollbars=yes');return false;\">".$caption."</a>";		
 	}
 
-	function helpLink($site,$caption="Hilfe")
+	function helpLink($site,$caption="Hilfe",$style="")
 	{
 		$width=900;
 		$height=600;
-		return "[<a href=\"?page=help&amp;site=".$site."\" onclick=\"window.open('show.php?page=help&amp;site=".$site."','popup','status=no,width=".$width.",height=".$height.",scrollbars=yes');return false;\">".$caption."</a>]";		
+		return "<a href=\"?page=help&amp;site=".$site."\" style=\"$style\" onclick=\"window.open('show.php?page=help&amp;site=".$site."','popup','status=no,width=".$width.",height=".$height.",scrollbars=yes');return false;\">".$caption."</a>";		
 	}
 
 	function helpImageLink($site,$url,$alt="Item",$style="")

@@ -6,11 +6,6 @@ else
 	define("SHOWLEVELS",5);
 
 
-define("BUILDING_GENERAL_CAT",1);
-define("BUILDING_RES_CAT",2);
-define("BUILDING_POWER_CAT",3);
-define("BUILDING_STORE_CAT",4);
-
 echo "<h2>Geb&auml;ude</h2>";
 
 if (isset($_GET['id']))

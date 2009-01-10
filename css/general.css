@@ -63,46 +63,60 @@ img.resIcon	{
 .respowerucolor, .tb .respowerucolor	{
 	color:#ECB2B2;
 }
-    
+
 .resmetal, .tb .resmetal {
 	background:url('../images/resources/metal_s.png') 1px 1px no-repeat;
-	padding-left:24px;
+	padding:0px 10px 1px 19px;
 	color:#CFC8C2;
 }
 .rescrystal, .tb .rescrystal	{
 	background:url('../images/resources/crystal_s.png') 1px 1px no-repeat;
-	padding-left:24px;
+	padding:0px 10px 1px 19px;
 	color:#C2E2EF;
 }
 .resplastic, .tb .resplastic	{
 	background:url('../images/resources/plastic_s.png')  1px 1px no-repeat;
-	padding-left:24px;
+	padding:0px 10px 1px 19px;
 	color:#E5D1EF;
 }
 .resfuel, .tb .resfuel	{
 	background:url('../images/resources/fuel_s.png')  1px 1px no-repeat;
-	padding-left:24px;
+	padding:0px 10px 1px 19px;
 	color:#A4C1EF;
 }
 .resfood, .tb .resfood	{
 	background:url('../images/resources/food_s.png')  1px 1px no-repeat;
-	padding-left:24px;
+	padding:0px 10px 1px 19px;
 	color:#C2ECC2;
 }
 .respeople, .tb .respeople	{
 	background:url('../images/resources/people_s.png') 1px 1px  no-repeat;
-	padding-left:24px;
+	padding:0px 10px 1px 19px;
 	color:#ECC8B2;
 }
 .respower, .tb .respower	{
 	background:url('../images/resources/power_s.png') 1px 1px  no-repeat;
-	padding-left:24px;
+	padding:0px 10px 1px 19px;
 	color:#EFECC2;
 }
 .respoweru, .tb .respoweru	{
 	background:url('../images/resources/poweru_s.png')  1px 1px no-repeat;
-	padding-left:24px;
+	padding:0px 10px 1px 19px;
 	color:#ECB2B2;
+}
+
+.restime, .tb .restime	{
+	background:url('../images/resources/time_s.png')  1px 1px no-repeat;
+	padding:0px 10px 1px 19px;
+}
+
+.resfield, .tb .resfield	{
+	background:url('../images/resources/field_s.png')  1px 1px no-repeat;
+	padding:0px 10px 1px 19px;
+}
+
+.resfullcolor, .tb .resfullcolor	{
+	color:#f20;	
 }
 
 /* Colors */

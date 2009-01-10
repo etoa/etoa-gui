@@ -34,6 +34,27 @@ input[type="button"]:hover,input[type="submit"]:hover	{
 	background:url('images/button2.png') repeat-x;
 }
 
+input[type="button"].ok,input[type="submit"].ok	{
+	background:url('images/buttonok1.png') repeat-x;
+}
+
+input[type="button"].ok:hover,input[type="submit"].ok:hover	{
+	background:url('images/buttonok2.png') repeat-x;
+}
+
+input[type="button"].warn,input[type="submit"].warn	{
+	background:url('images/buttonwarn1.png') repeat-x;
+}
+
+input[type="button"].warn:hover,input[type="submit"].warn:hover	{
+	background:url('images/buttonwarn2.png') repeat-x;
+}
+
+input[type="button"].disabled,input[type="submit"].disabled,input[type="button"].disabled:hover,input[type="submit"].disabled:hover	{
+	background:url('images/buttondisabled.png') repeat-x;
+	color:#ccc;
+}
+
 input,select,textarea	{
 	color:#ddd;
 	border:1px solid #777;
@@ -478,10 +499,6 @@ div.infoboxtitle	{
 #resboxcontent	{
 	padding:5px;
 	background:#242426;
-}
-
-.resfull, .tb td.resfull	{
-	color:#f20;	
 }
 
 /* Tab Menu */

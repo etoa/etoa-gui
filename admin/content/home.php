@@ -80,12 +80,12 @@
 	elseif ($sub=="daemon")
 	{
 		echo "<h1>Backend-Daemon</h1>";
-		echo "<h2>System</h2>";
-		$un=posix_uname();
-		echo $un['sysname']." ".$un['release']." ".$un['version'];
-
 		if (UNIX)
 		{
+			echo "<h2>System</h2>";
+			$un=posix_uname();
+			echo $un['sysname']." ".$un['release']." ".$un['version'];
+
 			echo "<h2>Daemon etoad</h2>";	
 			if ($pid = checkDaemonRunning($daemonPidfile))
 			{
@@ -618,6 +618,12 @@
 
 
 		tableEnd();		
+		
+		if (UNIX && !checkDaemonRunning($daemonPidfile))
+		{
+			err_msg("Der Backend-Dienst scheint nicht zu laufen!");
+		}
+		
 		
 		Cache::checkPerm();
 		

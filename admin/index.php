@@ -138,6 +138,30 @@
 								echo "<br/>";
 
 								// Online
+
+								$ures=dbquery("SELECT count(*) FROM users;");
+								$uarr=mysql_fetch_row($ures);
+								$up=$uarr[0]/$conf['enable_register']['p2'];
+								$p1res=dbquery("SELECT count(*) FROM planets WHERE planet_user_id>0;");
+								$p1arr=mysql_fetch_row($p1res);
+								$p2res=dbquery("SELECT count(*) FROM planets;");
+								$p2arr=mysql_fetch_row($p2res);
+								if ($p2arr[0]>0)
+									$pp=$p1arr[0]/$p2arr[0];
+								else
+									$pp=0;
+								$s1res=dbquery("SELECT count(entities.cell_id) FROM entities,planets WHERE planets.id=entities.id AND planet_user_id>0 GROUP BY entities.cell_id;");
+								$s1arr=mysql_num_rows($s1res);
+								$s2res=dbquery("SELECT count(*) FROM entities WHERE code='s';");
+								$s2arr=mysql_fetch_row($s2res);
+								if ($s2arr[0]>0)
+									$sp=$s1arr/$s2arr[0];
+								else
+									$sp=0;
+
+
+
+
 								echo "<div class=\"menutitle\">Status:</div>";
 								$gres=dbquery("SELECT COUNT(*) FROM users WHERE user_acttime>".(time()-$conf['user_timeout']['v']).";");
 								$garr=mysql_fetch_row($gres);
@@ -168,8 +192,6 @@
 								echo "<tr><th><a href=\"?page=home&amp;sub=adminlog\">Admins:</a></th><td>".$a1arr[0]." / ".$a2arr[0]."</td><td>".round($ap,1)."%</td></tr>";
 								echo "</table>";
 
-
-
 								//
 								// Auslastung
 								//
@@ -178,25 +200,6 @@
 								$o_style=" style=\"color:#fa0\"";
 								$r_style=" style=\"color:#f55\"";
 
-								$ures=dbquery("SELECT count(*) FROM users;");
-								$uarr=mysql_fetch_row($ures);
-								$up=$uarr[0]/$conf['enable_register']['p2'];
-								$p1res=dbquery("SELECT count(*) FROM planets WHERE planet_user_id>0;");
-								$p1arr=mysql_fetch_row($p1res);
-								$p2res=dbquery("SELECT count(*) FROM planets;");
-								$p2arr=mysql_fetch_row($p2res);
-								if ($p2arr[0]>0)
-									$pp=$p1arr[0]/$p2arr[0];
-								else
-									$pp=0;
-								$s1res=dbquery("SELECT count(entities.cell_id) FROM entities,planets WHERE planets.id=entities.id AND planet_user_id>0 GROUP BY entities.cell_id;");
-								$s1arr=mysql_num_rows($s1res);
-								$s2res=dbquery("SELECT count(*) FROM entities WHERE code='s';");
-								$s2arr=mysql_fetch_row($s2res);
-								if ($s2arr[0]>0)
-									$sp=$s1arr/$s2arr[0];
-								else
-									$sp=0;
 								echo "<br/><div class=\"menutitle\">User-Statisik:</div>";
 								echo "<table class=\"tb\">";
 								echo "<tr><th>User:</th>";

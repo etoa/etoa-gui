@@ -1361,10 +1361,6 @@ td.havenTab:hover	{
 	background:#333 url('images/cellpic3.gif') repeat;
 }
 
-.resfull, .tb td.resfull	{
-	color:#f20;	
-}
-
 .buildOverviewObjectTitle	{
 	font-weight:normal;
 	position:absolute;

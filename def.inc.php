@@ -322,6 +322,11 @@
   /* Gebäude */
   /***********/
 
+	define("BUILDING_GENERAL_CAT",1);
+	define("BUILDING_RES_CAT",2);
+	define("BUILDING_POWER_CAT",3);
+	define("BUILDING_STORE_CAT",4);
+
 	define("RES_BUILDING_CAT",2);
 	define("BUILD_BUILDING_ID",6);								// Gebäude welches den Status des Bauhofes wiedergibt
 	define("TECH_BUILDING_ID",8);									// Gebäude welches den Status des Forschungslabors wiedergibt
