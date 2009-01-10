@@ -3,10 +3,12 @@
 
 #include "BattleHandler.h"
 		 
-void BattleHandler::battle(Fleet* fleet, Entity* entity, Message* message, Log* log)
+void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 {
 	Config &config = Config::instance();
 	std::time_t time = std::time(0);
+	
+	Message* message;
 	
 	message->addType((int)config.idget("SHIP_WAR_MSG_CAT_ID"));
 	
@@ -29,13 +31,11 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Message* message, Log* 
 		message->addSubject("Kampfbericht (Unentschieden)");
 		
 		this->returnV = 4;
-		this->bstat = "Unentschieden";
 		this->returnFleet = true;
 		
-		/*functions::sendMsg((int)fleet_["user_id"],config.idget("SHIP_WAR_MSG_CAT_ID"),subject,msg);
-		int userToId = functions::getUserIdByPlanet((int)fleet_["entity_to"]);
-		functions::sendMsg(userToId,config.idget("SHIP_WAR_MSG_CAT_ID"),subject,msg);
-		*/
+		fleet->addMessageUser(message);
+		entity->addMessageUser(message);
+		
 		log->addText("Action failed: Opponent error");
 		
   	} 
@@ -55,8 +55,9 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Message* message, Log* 
 		
 		message->addSubject("Kampfbericht (Unentschieden)");
 		
+		message->addUserId(fleet->getUserId());
+		
 		this->returnV = 4;
-		this->bstat = "Unentschieden";
 		this->returnFleet = true;
 		
 		log->addText("Action failed: Opponent error");
@@ -77,16 +78,12 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Message* message, Log* 
 		
 		message->addSubject("Kampfbericht (Unentschieden)");
 		
-		returnV = 4;
-		bstat = "Unentschieden";
-		bstat2 = "Unentschieden";
-		returnFleet =true;
+		this->returnV = 4;
+		this->returnFleet =true;
 		
-		/*
-		functions::sendMsg((int)fleet_["user_id"],config.idget("SHIP_WAR_MSG_CAT_ID"),subject,msg);
-		int userToId = functions::getUserIdByPlanet((int)fleet_["entity_to"]);
-		functions::sendMsg(userToId,config.idget("SHIP_WAR_MSG_CAT_ID"),subject,msg);
-		*/
+		fleet->addMessageUser(message);
+		entity->addMessageUser(message);
+		
 		log->addText("Action failed: Battleban error");
 	}
 	else {
@@ -161,7 +158,7 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Message* message, Log* 
 		//
         for (int bx = 0; bx < config.nget("battle_rounds",0); bx++) {
 
-            runde = bx + 1;
+           this->runde = bx + 1;
 			
             cAttStructureShield -= entity->getWeapon(true);
 			cDefStructureShield -= fleet->getWeapon(true);
@@ -178,7 +175,7 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Message* message, Log* 
 			message->addText(functions::nf(functions::d2s(cDefStructureShield)));
 			message->addText(" Struktur- und Schildpunkte",2);
 			
-			message->addText(functions::d2s(runde));
+			message->addText(functions::d2s(this->runde));
 			message->addText(": ");
 			message->addText(entity->getCountString());
 			message->addText(" Einheiten des Verteidigers schiessen mit einer St&auml;rke von ");
@@ -348,21 +345,22 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Message* message, Log* 
 
         message->addText(functions::d2s(config.nget("def_restore_percent",0)*100));
 		message->addText("% der Verteidigungsanlagen werden repariert!");
-/*
-        //Log schreiben
+
+        /*/Log schreiben
+		My &my = My::instance();
+		mysqlpp::Connection *con_ = my.get();
+		
+		mysqlpp::Query query = con_->query();
         query << "INSERT INTO ";
 		query << "	logs_battle ";
 		query << "(";
+		query << "	logs_battle_fleet_id, ";
 		query << "	logs_battle_user1_id, ";
 		query << "	logs_battle_user2_id, ";
 		query << "	logs_battle_user1_alliance_id, ";
-		query << "	logs_battle_user1_alliance_tag, ";
-		query << "	logs_battle_user1_alliance_name, ";
 		query << "	logs_battle_user2_alliance_id, ";
-		query << "	logs_battle_user2_alliance_tag, ";
-		query << "	logs_battle_user2_alliance_name, ";
 		query << "	logs_battle_alliances_have_war, ";
-		query << "	logs_battle_planet_id, ";
+		query << "	logs_battle_entity_id, ";
 		query << "	logs_battle_fleet_action, ";
 		query << "	logs_battle_result, ";
 		query << "	logs_battle_user1_ships_cnt, ";
@@ -390,27 +388,23 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Message* message, Log* 
 		query << "	logs_battle_tf_metal, ";
 		query << "	logs_battle_tf_crystal, ";
 		query << "	logs_battle_tf_pvc, ";
-		query << "	logs_battle_fight, ";
 		query << "	logs_battle_time, ";
 		query << "	logs_battle_fleet_landtime ";
 		query << ")";
 		query << "VALUES";
 		query << "(";
-		query << "	'" << attacker->userId << "', ";
-		query << "	'" << defender->userId << "', ";
-		query << "	'" << attacker->getAllianceId() << "', ";
-		query << "	'" << attacker->allianceTag << "', ";
-		query << "	'" << attacker->allianceName << "', ";
-		query << "	'" << defender->getAllianceId() << "', ";
-		query << "	'" << defender->allianceTag << "', ";
-		query << "	'" << defender->allianceName <<"', ";
+		query << "	'" << fleet->getId() << "', ";
+		query << "	'" << fleet->getUserNicks() << "', ";
+		query << "	'" << entity->getUserNicks() << "', ";
+		query << "	'" << fleet->fleetUser->getAllianceId() << "', ";
+		query << "	'" << entity->getUser->getAllianceId() << "', ";
 		query << "	'" << alliancesHaveWar << "', ";
-		query << "	'" << fleet_["fleet_entity_to"] << "', ";
-		query << "	'" << fleet_["fleet_action"] << "', ";
+		query << "	'" << entity->getId() << "', ";
+		query << "	'" << fleet->getActionString() << "', ";
 		query << "	'" << returnV << "', ";
-		query << "	'" << attacker->count << "', ";
-		query << "	'" << defender->count << "', ";
-		query << "	'" << count_dd << "', ";
+		query << "	'" << fleet->getCount(true) << "', ";
+		query << "	'" << entity->getCount(true) - entity->getDefCount() << "', ";
+		query << "	'" << entity->getDefCount() << "', ";
 		query << "	'" << attacker->initWeapon << "', ";
 		query << "	'" << $shield_a << "', ";
 		query << "	'" << structure_a << "', ";
@@ -433,68 +427,54 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Message* message, Log* 
 		query << "	'" << wf[0] << "', ";
 		query << "	'" << wf[1] << "', ";
 		query << "	'" << wf[2] << "', ";
-		query << "	'" << msg << "', ";
 		query << "	'" << std::time(0) << "', ";
 		query << "	'" << fleet_["fleet_landtime"] << "');";
 		query.store();
-		query.reset();*/
+		query.reset();
+		
+		log->addText("Battle id: " + con_->insert_id())*/
 
 		switch (returnV)
 		{
 			case 1:	//angreifer hat gewonnen
-				bstat = "Gewonnen";
-				bstat2 = "Verloren";
-				returnFleet = true;
+				this->bstat = "Gewonnen";
+				this->bstat2 = "Verloren";
+				this->returnFleet = true;
 				//Ranking::addBattlePoints($user_a_id,BATTLE_POINTS_A_W,"Angriff gegen ".$user_d_id);
 				//Ranking::addBattlePoints($user_d_id,BATTLE_POINTS_D_L,"Verteidigung gegen ".$user_a_id);
 				break;
 			case 2:	//agreifer hat verloren
-				bstat = "Verloren";
-				bstat2 = "Gewonnen";
-				returnFleet = false;
+				this->bstat = "Verloren";
+				this->bstat2 = "Gewonnen";
+				this->returnFleet = false;
 				//Ranking::addBattlePoints($user_a_id,BATTLE_POINTS_A_L,"Angriff gegen ".$user_d_id);
 				//Ranking::addBattlePoints($user_d_id,BATTLE_POINTS_D_W,"Verteidigung gegen ".$user_a_id);
 				break;
 			case 3:	//beide flotten sind kaputt
-				bstat = "Unentschieden";
-				bstat2 = "Unentschieden";
-				returnFleet = false;
+				this->bstat = "Unentschieden";
+				this->bstat2 = "Unentschieden";
+				this->returnFleet = false;
 				//Ranking::addBattlePoints($user_a_id,BATTLE_POINTS_A_D,"Angriff gegen ".$user_d_id);
 				//Ranking::addBattlePoints($user_d_id,BATTLE_POINTS_D_D,"Verteidigung gegen ".$user_a_id);
 				break;
 			case 4: //beide flotten haben überlebt
-				bstat = "Unentschieden";
-				bstat2 = "Unentschieden";
-				returnFleet = true;
+				this->bstat = "Unentschieden";
+				this->bstat2 = "Unentschieden";
+				this->returnFleet = true;
 				//Ranking::addBattlePoints($user_a_id,BATTLE_POINTS_A_D,"Angriff gegen ".$user_d_id);
 				//Ranking::addBattlePoints($user_d_id,BATTLE_POINTS_D_D,"Verteidigung gegen ".$user_a_id);
 				break;
 		}
 		
 		Message *defender = new Message(message);
-		defender->addSubject("Kampfbericht (" + bstat2 + ")");
-		defender->addUserId(entity->getUserId());
+		
+		fleet->addMessageUser(message);
+		entity->addMessageUser(defender);
+		
+		defender->addSubject("Kampfbericht (" + this->bstat2 + ")");
 		delete defender;
-		// Send fight message to the fighter
-		std::string subject1 = "Kampfbericht (";
-		subject1 += bstat;
-		subject1 += ")";
-		/*std::string subject2 = "Kampfbericht (";
-		subject2 += bstat2;
-		subject2 += ")";
-		std::map< int,UserHandler>::iterator at;
-		for ( at = attacker->users.begin() ; at != attacker->users.end(); at++ ) {
-			functions::sendMsg((*at).second.userId,config.idget("SHIP_WAR_MSG_CAT_ID"),subject1,msg);
-		}
-		if (defender->users.size()>0) {
-			for ( at = defender->users.begin() ; at != defender->users.end(); at++ ) {
-				functions::sendMsg((*at).second.userId,config.idget("SHIP_WAR_MSG_CAT_ID"),subject2,msg);
-			}		
-		}
-		else {
-			int userToId = functions::getUserIdByPlanet((int)fleet_["entity_to"]);
-			functions::sendMsg(userToId,config.idget("SHIP_WAR_MSG_CAT_ID"),subject2,msg);
-		}*/
-		message->addSubject(subject1);
+		
+		message->addSubject("Kampfbericht(" + this->bstat + ")");
 	}
+	delete message;
 }

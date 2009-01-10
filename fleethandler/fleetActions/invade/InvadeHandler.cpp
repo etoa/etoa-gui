@@ -12,11 +12,9 @@ namespace invade
 		/** Initialize data **/
 		Config &config = Config::instance();
 		this->time = std::time(0);
-		srand (this->time);
 		
-		
-		BattleHandler *bh = new BattleHandler();
-		bh->battle(this->f,this->targetEntity,this->actionMessage,this->actionLog);
+		BattleHandler *bh = new BattleHandler(this->actionMessage);
+		bh->battle(this->f,this->targetEntity,this->actionLog);
 		
 		this->actionMessage->addType((int)config.idget("SHIP_WAR_MSG_CAT_ID"));
 		

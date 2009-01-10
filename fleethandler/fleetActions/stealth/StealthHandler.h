@@ -2,7 +2,6 @@
 #ifndef __STEALTHHANDLER__
 #define __STEALTHHANDLER__
 
-#include <ctime>
 #include <math.h>
 
 #include "../../FleetHandler.h"

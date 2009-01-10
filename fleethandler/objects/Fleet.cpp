@@ -127,6 +127,16 @@
 		return this->status;
 	}
 	
+	void Fleet::addMessageUser(Message* message) {
+		message->addUserId(this->getUserId());
+		
+		if (fleets.size()) {
+			std::vector<Fleet*>::iterator it;
+			for ( it=fleets.begin() ; it < fleets.end(); it++ )
+				(*it)->addMessageUser(message);
+		}
+	}
+	
 	double Fleet::getPilots(bool total) {
 		double pilots = this->pilots;
 		
@@ -650,6 +660,19 @@
 				heal += (*it)->getHeal(total);
 		}
 		return heal;
+	}
+	
+	double Fleet::getInitCount(bool total) {
+		if (!this->shipsLoaded)
+			this->loadShips();
+		double initCount = this->initCount;
+		
+		if (total && fleets.size()) {
+			std::vector<Fleet*>::iterator it;
+			for ( it=fleets.begin() ; it < fleets.end(); it++ )
+				initCount += (*it)->getInitCount(total);
+		}
+		return count;
 	}
 	
 	double Fleet::getCount(bool total) {
@@ -1314,6 +1337,12 @@
 			sum += object->getCount();
 			delete object;
 			objects.pop_back();
+		}
+		
+		while (!fleets.empty()) {
+			Fleet* fleet = fleets.back();
+			delete fleet;
+			fleets.pop_back();
 		}
 
 		My &my = My::instance();

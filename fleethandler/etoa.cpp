@@ -61,6 +61,7 @@ int main(int argc, char *argv[])
 		
 		//Timestamp
 		std::time_t time = std::time(0);
+		srand(time);
 		
 		// Update the data, everyday once at about 02:17:00 AM
 		if ((time-1021)%86400==0) {

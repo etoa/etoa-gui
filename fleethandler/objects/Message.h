@@ -32,7 +32,7 @@ class Message
 			this->subject = message->getSubject();
 			this->entityId = message->getEntityId();
 			this->fleetId = message->getFleetId();
-			this->users.clear();;
+			this->users.clear();
 		}
 		
 		~Message() {

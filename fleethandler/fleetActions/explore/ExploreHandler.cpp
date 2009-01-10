@@ -48,8 +48,6 @@ namespace explore
 	{
 	
 		Config &config = Config::instance();
-		std::time_t time = std::time(0);
-		srand (time);
 		
 		this->days = (time - lastvisited)/3600;
 		

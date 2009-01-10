@@ -14,6 +14,7 @@
 #include "../config/ConfigHandler.h"
 #include "../data/DataHandler.h"
 
+#include "Message.h"
 #include "Object.h"
 #include "ObjectFactory.h"
 #include "User.h"
@@ -81,6 +82,8 @@ public:
 	std::string getAction();
 	short getStatus();
 	
+	void addMessageUser(Message* message);
+	
 	double getPilots(bool total=false);
 	double getResMetal(bool total=false);
 	double getResCrystal(bool total=false);
@@ -131,6 +134,7 @@ public:
 	double getStructure(bool total=false);
 	double getStructShield(bool total=false);
 	double getHeal(bool total=false);
+	double getInitCount(bool total=false);
 	double getCount(bool total=false);
 	double getHealCount(bool total=false);
 	double getActionCount(bool total=false);

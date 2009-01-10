@@ -37,6 +37,16 @@
 		return this->userMain;
 	}
 	
+	void Entity::addMessageUser(Message* message) {
+		message->addUserId(this->getUserId());
+		
+		if (fleets.size()) {
+			std::vector<Fleet*>::iterator it;
+			for ( it=fleets.begin() ; it < fleets.end(); it++ )
+				(*it)->addMessageUser(message);
+		}
+	}
+	
 	std::string Entity::getCoords() {
 		if (!this->dataLoaded)		
 			this->loadData();
@@ -668,6 +678,19 @@
 		return heal;
 	}
 	
+	double Entity::getInitCount(bool total) {
+		if (!this->shipsLoaded)
+			this->loadShips();
+		double initCount = this->initCount;
+		
+		if (total && fleets.size()) {
+			std::vector<Fleet*>::iterator it;
+			for ( it=fleets.begin() ; it < fleets.end(); it++ )
+				initCount += (*it)->getInitCount(total);
+		}
+		return count;
+	}
+	
 	double Entity::getCount(bool total) {
 		if (!this->shipsLoaded)
 			this->loadShips();
@@ -685,6 +708,15 @@
 				count += (*it)->getCount(total);
 		}
 		return count;
+	}
+	
+	double Entity::getDefCount() {
+		if (this->shipsChanged)
+			this->recalcShips();
+		if (!this->defLoaded)
+			this->loadDef();
+		
+		return this->defCount;
 	}
 	
 	double Entity::getSpyCount() {
@@ -715,6 +747,7 @@
 	}
 	
 	void Entity::setPercentSurvive(double percentage, bool total) {
+		this->shipsChanged = true;
 		percentage = std::max(percentage,0.0);
 		std::vector<Object*>::iterator ot;
 		for (ot = this->objects.begin() ; ot < this->objects.end(); ot++)
@@ -1091,6 +1124,7 @@
 		if (this->shipsChanged) {
 			this->shipsChanged = false;
 			this->count = 0;
+			this->healCount = 0;
 			this->weapon = 0;
 			this->shield = 0;
 			this->structure = 0;
@@ -1109,6 +1143,8 @@
 				this->shield += (*it)->getCount() * data->getShield();
 				this->structure += (*it)->getCount() * data->getStructure();
 				this->heal += (*it)->getCount() * data->getHeal();
+				if (data->getHeal()>0)
+					this->healCount += (*it)->getCount();
 			}
 			if (fleets.size()) {
 				std::vector<Fleet*>::iterator it;
@@ -1155,6 +1191,7 @@
 						DefData::DefData *data = DataHandler.getDefById(object->getTypeId());
 						
 						this->count += object->getCount();
+						this->defCount += object->getCount();
 						this->weapon += object->getCount() * data->getWeapon();
 						this->shield += object->getCount() * data->getShield();
 						this->structure += object->getCount() * data->getStructure();
@@ -1177,15 +1214,20 @@
 	void Entity::recalcDef() {
 		DataHandler &DataHandler = DataHandler::instance();
 		
+		this->defCount = 0;
+		
 		std::vector<Object*>::iterator it;
 		for (it=def.begin() ; it < def.end(); it++) {
 			DefData::DefData *data = DataHandler.getDefById((*it)->getTypeId());
 			
 			this->count += (*it)->getCount();
+			this->defCount += (*it)->getCount();
 			this->weapon += (*it)->getCount() * data->getWeapon();
 			this->shield += (*it)->getCount() * data->getShield();
 			this->structure += (*it)->getCount() * data->getStructure();
 			this->heal += (*it)->getCount() * data->getHeal();
+			if (data->getHeal()>0)
+				this->healCount += (*it)->getCount();
 		}
 	}
 	
@@ -1310,9 +1352,6 @@
 			this->loadBuildings();
 		
 		if (this->buildings.size()) {
-			std::time_t time = std::time(0);
-			srand (time);
-			
 			int building = rand() % this->buildings.size();
 			
 			std::map<std::string,int>::iterator it;

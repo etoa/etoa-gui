@@ -97,7 +97,25 @@
 	}
 	
 	void Planet::saveData() {
-		
+		if (this->shipsChanged) {
+			while (!objects.empty()) {
+				Object* object = objects.back();
+				delete object;
+				objects.pop_back();
+			}
+			
+			while (!def.empty()) {
+				Object* object = def.back();
+				delete object;
+				def.pop_back();
+			}
+			while (!fleets.empty()) {
+				Fleet* fleet = fleets.back();
+				delete fleet;
+				fleets.pop_back();
+			}
+		}
+			
 		if (this->changedData) {
 			My &my = My::instance();
 			mysqlpp::Connection *con = my.get();
@@ -118,7 +136,7 @@
 			query << "	planet_wf_plastic=planet_wf_plastic+'" << (this->getWfPlastic() - this->initWfPlastic) << "', ";
 			query << "	planet_people=planet_people+'" << (this->getResPeople() - this->initResPeople) << "', ";
 			if (this->userChanged)
-				query << " planet_user_chaged='" << this->userChanged << "', ";
+				query << " planet_user_changed='" << this->userChanged << "', ";
 			query << "	planet_last_updated='" << this->lastUpdated << "' ";
 			query << "WHERE ";
 			query << "	id='" << this->getId() << "' ";

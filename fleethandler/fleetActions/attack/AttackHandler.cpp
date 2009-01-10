@@ -8,10 +8,11 @@ namespace attack
 		/**
 		* Fleet-Action: Attack
 		*/
-		std::cout << "start\n";
-		BattleHandler *bh = new BattleHandler();
-		bh->battle(this->f,this->targetEntity,this->actionMessage,this->actionLog);
-		std::cout << "end\n";		
+		BattleHandler *bh = new BattleHandler(this->actionMessage);
+		bh->battle(this->f,this->targetEntity,this->actionLog);
+		
+		this->actionMessage->dontSend();
+			
 		// if fleet user has won the fight, send fleet home
 		if (bh->returnFleet)
 		{

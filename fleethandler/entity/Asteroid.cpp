@@ -55,8 +55,6 @@
 	void Asteroid::saveData() {
 		
 		Config &config = Config::instance();
-		std::time_t time = std::time(0);
-		srand (time);
 		
 		My &my = My::instance();
 		mysqlpp::Connection *con = my.get();

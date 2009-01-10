@@ -257,8 +257,6 @@
 	std::string User::stealTech(User* victim) {
 		if (!this->techsLoaded)
 			this->loadTechs();
-		std::time_t time = std::time(0);
-		srand (time);
 		
 		DataHandler &DataHandler = DataHandler::instance();
 		std::map<std::string,int> avaiableTechs;

@@ -21,9 +21,13 @@
 class BattleHandler
 {
 	public:
-		BattleHandler() { }
-		void battle(Fleet* fleet, Entity* entity, Message* message, Log* log);
-
+		BattleHandler(Message* message) {
+			this->message = new Message(message);
+		}
+		void battle(Fleet* fleet, Entity* entity, Log* log);
+		
+		Message* message;
+		
 		bool alliancesHaveWar;
 		
 		short runde;

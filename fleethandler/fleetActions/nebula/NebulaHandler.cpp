@@ -11,8 +11,6 @@ namespace nebula
 		*/
 
 		Config &config = Config::instance();
-		std::time_t time = std::time(0);
-		srand (time);
 		
 		this->actionMessage->addType((int)config.idget("SHIP_MISC_MSG_CAT_ID"));
 		
@@ -38,13 +36,13 @@ namespace nebula
 					
 					this->actionMessage->addText("Eine Flotte vom Planeten [b]",1);
 					this->actionMessage->addText(this->startEntity->getCoords(),1);
-					this->actionMessage->addText("[/b]hat de[b]",1);
+					this->actionMessage->addText("[/b]hat den[b]",1);
 					this->actionMessage->addText(this->targetEntity->getCoords(),1);
 					this->actionMessage->addText("[/b]um [b]");
 					this->actionMessage->addText(this->f->getLandtimeString(),1);
 					this->actionMessage->addText("[/b]erkundet und Rohstoffe gesammelt.");
 					this->actionMessage->addText(this->f->getResCollectedString(),1);
-					this->actionMessage->addText(this->f->getDestroyedShipString("\n\nEinige Schiffe deiner Flotte verirrten sich in einem Interstellarer Gasnebel und konnten nicht mehr gefunden werden."),2);
+					this->actionMessage->addText(this->f->getDestroyedShipString("\nEinige Schiffe deiner Flotte verirrten sich in einem Interstellarer Gasnebel und konnten nicht mehr gefunden werden.\n\n"));
 					
 					this->actionMessage->addSubject("Nebelfeld gesammelt");
 					

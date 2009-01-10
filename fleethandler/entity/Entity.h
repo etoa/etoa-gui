@@ -64,6 +64,7 @@ class Entity
 			this->structure = 0;
 			this->heal = 0;
 			this->count = 0;
+			this->defCount = 0;
 			this->healCount = 0;
 			this->spyCount = 0;
 			
@@ -92,6 +93,8 @@ class Entity
 		
 		short getTypeId();
 		bool getIsUserMain();
+		
+		void addMessageUser(Message* message);
 		
 		std::string getCoords();
 		
@@ -156,7 +159,9 @@ class Entity
 		double getStructure(bool total=false);
 		double getStructShield(bool total=false);
 		double getHeal(bool total=false);
+		double getInitCount(bool total=false);
 		double getCount(bool total=false);
+		double getDefCount();
 		double getHealCount(bool total=false);
 		double getSpyCount();
 		
@@ -223,7 +228,7 @@ class Entity
 		bool buildingsLoaded;
 		
 		double initWeapon, initShield, initStructure, initStructShield, initHeal, initCount;
-		double weapon, shield, structure, heal, count, healCount, spyCount;
+		double weapon, shield, structure, heal, count, healCount, spyCount, defCount;
 		
 		double exp;
 		
