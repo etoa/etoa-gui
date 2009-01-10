@@ -103,6 +103,7 @@
     $helpNav["Datenbank"]["Technologien"] = array('research','Liste aller Technologien');
     $helpNav["Datenbank"]["Verteidigung"] = array('defense','Liste aller Verteidigungsanlagen');
     $helpNav["Spielmechanismen"]["Bewohner"] = array('population','Wie arbeite ich mit Bewohnern und was muss ich beachten?');
+    $helpNav["Spielmechanismen"]["Energie"] = array('power','Alles über die Energieproduktion');
     $helpNav["Spielmechanismen"]["Kryptocenter"] = array('crypto','Wie man fremde Flottenbewegungen scannt?');
     $helpNav["Spielmechanismen"]["Markt"] = array('market','Wie der Marktplatz funktioniert?');
     $helpNav["Spielmechanismen"]["Multis und Sitting"] = array('multi_sitting','Wie wir Mehrfachaccounts handhaben und wie Sitting funktioniert?');
