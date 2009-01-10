@@ -34,7 +34,7 @@ class IPCMessageQueue
     IPCMessageQueue();
 		~IPCMessageQueue();
 		std::string rcv();		
-
+		
 	private:
     struct my_msgbuf {
         long mtype;

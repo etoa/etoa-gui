@@ -67,22 +67,9 @@ void sighandler(int sig)
 	exit(EXIT_FAILURE);
 }
 
-bool fileExists( std::string fileName )
-{
-    FILE* fp = NULL;
-    fp = fopen( fileName.c_str(), "rb" );
-    if( fp != NULL )
-    {
-        fclose( fp );
-        return true;
-    }
-    return false;
-}
-
 // Create a daemon
 void daemonize()
 {
-
   pid_t pid, sid;
   /* Fork off the parent process */
   pid = fork();
@@ -95,7 +82,6 @@ void daemonize()
   /* If we got a good PID, then we can exit the parent process. */
   if (pid > 0) 
   {
-  	//cout << "Daemon has PID "<<pid<<endl;
     exit(EXIT_SUCCESS);
   }
 
@@ -104,10 +90,9 @@ void daemonize()
 	clog << "Loggin started"<<endl;
 
 	/* Close out the standard file descriptors */
-  //close(STDIN_FILENO);
-  //close(STDOUT_FILENO);
-  //close(STDERR_FILENO);
-
+  close(STDIN_FILENO);
+  close(STDOUT_FILENO);
+  close(STDERR_FILENO);
 
   /* Change the file mode mask */
   umask(0);
@@ -122,7 +107,6 @@ void daemonize()
 
   // Create pidfile
   pf->write();	
-
 
   int myPid = (int)getpid();
 	clog <<  "Daemon initialized with PID " << myPid << " and owned by " << getuid()<<std::endl;
@@ -282,25 +266,13 @@ int main(int argc, char* argv[])
   pf = new PIDFile(pidFile);
 
 	// Check for existing instance
-	if (fileExists(pidFile))
+	if (pf->fileExists())
 	{
-   	char mystring[10];
-   	FILE * pFile = fopen (pidFile.c_str(), "r");
-		if (pFile == NULL) 
-		{
-			std::cout << "Strange, the PIDfile exists but I am not allowed to read it!"<<std::endl;
-   		exit(EXIT_FAILURE);
-   	}
-   	else 
-   	{
-     	fgets (mystring , 100 , pFile);
-     	fclose (pFile);
-   	}		
-   	int existingPid = atoi(mystring);
+		int existingPid = pf->readPid();
    	
    	if (stop)
    	{
-   		clog << "Got manual kill by console" <<endl;
+   		std::clog << "Got manual kill by console" <<endl;
    		kill(existingPid,SIGTERM);   
    		std::cout << "Killing process "<<existingPid<<endl;
    		exit(EXIT_SUCCESS);		

@@ -13,7 +13,7 @@
 // (C) by EtoA Gaming | www.etoa.ch   			 		//
 //////////////////////////////////////////////////
 //
-// Simple mutex implementation using posix seamphore
+// Pidfile manager class
 //
 
 #ifndef __PIDFILE_H
@@ -21,23 +21,37 @@
 
 #include <string>
 
-/** Open and lock a pidfile on construction, 
-    unlock and remove it on destruction. */
+/** 
+* Manages a pidfile containing the pid (posix-style process id) 
+* of this program.
+*
+* @author Nicolas Perrenou <mrcage@etoa.ch>
+*/
 class PIDFile 
 {
   public:
     PIDFile(const std::string &filename);
-   	PIDFile(const char * const filename);
     ~PIDFile();
-
-    /** Open and lock pidfile, write current process PID to it. */
+		/**
+		* Checks if the pidfile already exists
+		*/
+		bool fileExists();
+    /** 
+    * Open and lock pidfile, write current process PID to it. 
+    */
     void write();
-
+		/**
+		* Read pid from file
+		*/
+		int readPid();
   private:
-    /** Pathname to the pidfile. */
+    /** 
+    * Pathname to the pidfile. 
+    */
     std::string pidfile_path;
-
-    /** File descriptor for locking the pidfile. */
+    /** 
+    * File descriptor for locking the pidfile. 
+    */
     int pidfile_fd;
 };
 

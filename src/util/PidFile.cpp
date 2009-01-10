@@ -13,7 +13,7 @@
 // (C) by EtoA Gaming | www.etoa.ch   			 		//
 //////////////////////////////////////////////////
 //
-// Simple mutex implementation using posix seamphore
+// Pidfile manager
 //
 
 #include <fcntl.h>
@@ -31,16 +31,37 @@
 PIDFile::PIDFile(const std::string &filename)
   : pidfile_path(filename), pidfile_fd(-1)
 {
-  // nothing else to do
+
 }
 
-
-PIDFile::PIDFile(const char * const filename)
-  : pidfile_path(filename), pidfile_fd(-1)
+bool PIDFile::fileExists()
 {
-  // nothing else to do
+  FILE* fp = NULL;
+  fp = fopen( pidfile_path.c_str(), "rb" );
+  if( fp != NULL )
+  {
+      fclose( fp );
+      return true;
+  }
+  return false;
 }
 
+int PIDFile::readPid()
+{
+ 	char mystring[10];
+ 	FILE * pFile = fopen (pidfile_path.c_str(), "r");
+	if (pFile == NULL) 
+	{
+		std::cerr << "Strange, the PIDfile exists but I am not allowed to read it!"<<std::endl;
+ 		exit(EXIT_FAILURE);
+ 	}
+ 	else 
+ 	{
+   	fgets (mystring , 100 , pFile);
+   	fclose (pFile);
+ 	}		
+ 	return atoi(mystring);	
+}
 
 void PIDFile::write()
 {
