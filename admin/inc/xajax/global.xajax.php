@@ -10,8 +10,6 @@ $xajax->register(XAJAX_FUNCTION,"editShip");
 $xajax->register(XAJAX_FUNCTION,"submitEditShip");
 $xajax->register(XAJAX_FUNCTION,"calcShipLevel");
 
-
-
 $xajax->register(XAJAX_FUNCTION,"showMissilesOnPlanet");
 $xajax->register(XAJAX_FUNCTION,"addMissileToPlanet");
 $xajax->register(XAJAX_FUNCTION,"removeMissileFromPlanet");
@@ -23,6 +21,12 @@ $xajax->register(XAJAX_FUNCTION,"addDefenseToPlanet");
 $xajax->register(XAJAX_FUNCTION,"removeDefenseFromPlanet");
 $xajax->register(XAJAX_FUNCTION,"editDefense");
 $xajax->register(XAJAX_FUNCTION,"submitEditDefense");
+
+$xajax->register(XAJAX_FUNCTION,"showBuildingsOnPlanet");
+$xajax->register(XAJAX_FUNCTION,"addBuildingToPlanet");
+$xajax->register(XAJAX_FUNCTION,"removeBuildingFromPlanet");
+$xajax->register(XAJAX_FUNCTION,"editBuilding");
+$xajax->register(XAJAX_FUNCTION,"submitEditBuilding");
 
 $xajax->register(XAJAX_FUNCTION,"searchUser");
 $xajax->register(XAJAX_FUNCTION,"searchUserList");
@@ -659,6 +663,141 @@ function submitEditDefense($form,$listId)
 	return $objResponse;		
 }
 
+// Buildings
+
+function showBuildingsOnPlanet($pid)
+{
+	$objResponse = new xajaxResponse();	
+	
+	if ($pid!=0)
+	{
+		$updata=explode(":",$pid);
+		$pid=$updata[0];
+		$res=dbquery("
+		SELECT
+			building_name,
+			buildlist_current_level,
+			buildlist_id
+		FROM
+			buildlist
+		INNER JOIN
+			buildings
+			ON buildlist_building_id=building_id
+			AND buildlist_entity_id='".$pid."'
+		ORDER BY
+			building_name
+		;");
+		if (mysql_num_rows($res)>0)
+		{
+			$out="<table class=\"tb\">";
+			while ($arr=mysql_fetch_array($res))
+			{
+				$out.="<tr><td style=\"width:80px\" id=\"cnt_".$arr['buildlist_id']."\">".$arr['buildlist_current_level']."</td>
+				<th>".$arr['building_name']."</th>
+				<td style=\"width:150px\" id=\"actions_".$arr['buildlist_id']."\"><a href=\"javascript:;\" onclick=\"xajax_editBuilding(xajax.getFormValues('selector'),".$arr['buildlist_id'].")\">Bearbeiten</a>
+				<a href=\"javascript:;\" onclick=\"if (confirm('Soll ".$arr['building_name']." ".$arr['buildlist_current_level']." von diesem Planeten gel&ouml;scht werden?')) {xajax_removeBuildingFromPlanet(xajax.getFormValues('selector'),".$arr['buildlist_id'].")}\">L&ouml;schen</td>
+				</tr>";
+			}
+			$out.="</table>";
+		}
+		else
+		{
+			$out="Keine Gebäude vorhanden!";
+		}
+	}
+	else
+	{
+		$out="Planet w&auml;hlen...";
+	}	
+  $objResponse->assign("shipsOnPlanet","innerHTML", $out);
+	return $objResponse;		
+}
+
+function addBuildingToPlanet($form)
+{
+	$objResponse = new xajaxResponse();	
+	
+	$updata=explode(":",$form['planet_id']);
+	if ($updata[1]>0)
+	{
+		buildlistAdd($updata[0],$updata[1],$form['building_id'],intval($form['buildlist_current_level']));	
+  	$objResponse->script("xajax_showBuildingsOnPlanet(".$updata[0].")");
+  }
+  else
+  {
+  	$out="Planet unbewohnt. Kann keine Gebäude hier bauen!";
+   	$objResponse->assign("BuildingsOnPlanet","innerHTML", $out); 	
+  }
+	return $objResponse;			
+}
+
+function removeBuildingFromPlanet($form,$listId)
+{
+	$objResponse = new xajaxResponse();	
+	
+	$updata=explode(":",$form['planet_id']);
+	dbquery("
+	DELETE FROM
+		buildlist
+	WHERE
+		buildlist_id=".intval($listId)."
+	;");
+  $objResponse->script("xajax_showBuildingsOnPlanet(".$updata[0].");");
+	return $objResponse;		
+}
+
+function editBuilding($form,$listId)
+{
+	$objResponse = new xajaxResponse();	
+	
+	$updata=explode(":",$form['planet_id']);
+	$res=dbquery("
+	SELECT
+		buildlist_current_level,
+		buildlist_id
+	FROM
+		buildlist
+	WHERE
+		buildlist_entity_id=".$updata[0]."
+	;");
+	if (mysql_num_rows($res))
+	{
+		while ($arr=mysql_fetch_array($res))
+		{
+			if ($arr['buildlist_id']==$listId)
+			{
+				$out="<input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editcnt_".$listId."\" value=\"".$arr['buildlist_current_level']."\" />";
+		 		$objResponse->assign("cnt_".$listId,"innerHTML", $out); 	
+		 		$out="<a href=\"javaScript:;\" onclick=\"xajax_submitEditBuilding(xajax.getFormValues('selector'),".$listId.");\">Speichern</a> ";
+		 		$out.="<a href=\"javaScript:;\" onclick=\"xajax_showBuildingsOnPlanet(".$updata[0].");\">Abbrechen</a>";
+		 		$objResponse->assign("actions_".$listId,"innerHTML", $out); 	
+			}
+			else
+			{
+		 		$objResponse->assign("actions_".$arr['buildlist_id'],"innerHTML", ""); 					
+			}
+		}
+	}
+  
+	return $objResponse;		
+}
+
+function submitEditBuilding($form,$listId)
+{
+	$objResponse = new xajaxResponse();	
+	
+	$updata=explode(":",$form['planet_id']);
+	dbquery("
+	UPDATE
+		buildlist
+	SET
+		buildlist_current_level=".intval($form['editcnt_'.$listId])."
+	WHERE
+		buildlist_id=".intval($listId)."
+	;");
+  $objResponse->script("xajax_showBuildingsOnPlanet(".$updata[0].");");
+	return $objResponse;		
+}
 
 
 //Listet gefundene User auf

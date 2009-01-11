@@ -2144,6 +2144,65 @@ Forum: http://www.etoa.ch/forum";
 	}
 	
 	/**
+	* Gebäude zur gebäudeliste hinzufügen
+	*
+	* @param int $planet Planet-ID
+	* @param int $user User-ID
+	* @param int $ship Schiff-ID
+	* @param int $cnt Anzahl
+	* @author MrCage
+	*/
+	function buildlistAdd($planet,$user,$ship,$cnt)
+	{
+		$res=dbquery("
+			SELECT
+				buildlist_current_level
+			FROM
+				buildlist
+			WHERE
+				buildlist_user_id='".$user."'
+				AND buildlist_entity_id='".$planet."'
+				AND buildlist_building_id='".$ship."'
+			LIMIT 1;
+		"); 
+		if (mysql_num_rows($res)>0)
+		{
+			$arr=mysql_fetch_row($res);
+			dbquery("
+				UPDATE
+					buildlist
+				SET
+					buildlist_current_level='".max($cnt,$arr[0])."'
+				WHERE
+					buildlist_user_id='".$user."'
+					AND buildlist_entity_id='".$planet."'
+					AND buildlist_building_id='".$ship."'
+				LIMIT 1;
+			");
+		}
+		else
+		{
+			dbquery("
+				INSERT INTO
+				buildlist
+				(
+					buildlist_user_id,
+					buildlist_entity_id,
+					buildlist_building_id,
+					buildlist_current_level
+				)
+				VALUES
+				(
+					'".$user."',
+					'".$planet."',
+					'".$ship."',
+					'".max($cnt,0)."'
+				);
+			");
+		}
+	}
+	
+	/**
 	* Raketen zur Raketenliste hinzufügen
 	*
 	* @param int $planet Planet-ID

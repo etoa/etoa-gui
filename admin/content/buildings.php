@@ -821,10 +821,66 @@
 			{
 				$bdata[$barr['building_id']]=$barr;
 			}
+			
+			// Hinzufügen
+			echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\" id=\"selector\" name=\"selector\">";
+			tableStart();
+			
+			//Sonnensystem
+			echo "<tr><th class=\"tbltitle\">Sonnensystem</th><td class=\"tbldata\">
+			<select name=\"cell_sx\" onChange=\"xajax_planetSelectorByCell(xajax.getFormValues('selector'),'showBuildingsOnPlanet',1);\">";
+			echo "<option value=\"0\">Sektor X</option>";
+			for ($x=1;$x<=$conf['num_of_sectors']['p1'];$x++)
+				echo "<option value=\"$x\">$x</option>";
+			echo "</select>/<select name=\"cell_sy\"  onChange=\"xajax_planetSelectorByCell(xajax.getFormValues('selector'),'showBuildingsOnPlanet',1);\">";
+			echo "<option value=\"0\">Sektor Y</option>";
+			for ($x=1;$x<=$conf['num_of_sectors']['p2'];$x++)
+				echo "<option value=\"$x\">$x</option>";
+			echo "</select> : <select name=\"cell_cx\" onChange=\"xajax_planetSelectorByCell(xajax.getFormValues('selector'),'showBuildingsOnPlanet',1);\">";
+			echo "<option value=\"0\">Zelle X</option>";
+			for ($x=1;$x<=$conf['num_of_cells']['p1'];$x++)
+				echo "<option value=\"$x\">$x</option>";
+			echo "</select>/<select name=\"cell_cy\" onChange=\"xajax_planetSelectorByCell(xajax.getFormValues('selector'),'showBuildingsOnPlanet',1);\">";
+			echo "<option value=\"0\">Zelle Y</option>";
+			for ($x=1;$x<=$conf['num_of_cells']['p2'];$x++)
+				echo "<option value=\"$x\">$x</option>";
+			echo "</select></td></tr>";
+		
+			
+			//User
+			echo "<tr><th class=\"tbltitle\"><i>oder</i> User</th><td class=\"tbldata\">";
+			echo "<input type=\"text\" name=\"userlist_nick\" id=\"userlist_nick\" value=\"\" autocomplete=\"off\" size=\"30\" maxlength=\"30\" onkeyup=\"xajax_searchUserList(this.value,'showBuildingsOnPlanet');\"><br>
+			<div id=\"userlist\">&nbsp;</div>";
+			echo "</td></tr>";
+			
+			//Planeten
+			echo "<tr><th class=\"tbltitle\">Planeten</th><td class=\"tbldata\" id=\"planetSelector\">Sonnensystem oder User w&auml;hlen...</td></tr>";
+			
+			//Gebäude Hinzufügen
+			echo "<tr><th class=\"tbltitle\">Hinzuf&uuml;gen:</th><td class=\"tbldata\">
+			<input type=\"text\" name=\"buildlist_current_level\" value=\"1\" size=\"7\" maxlength=\"10\" />
+			<select name=\"building_id\">";
+			foreach ($bdata as $barr)
+			{
+				echo "<option value=\"".$barr['building_id']."\">".$barr['building_name']."</option>";
+			}
+			echo "</select> &nbsp; 
+			<input type=\"button\" onclick=\"showLoaderPrepend('shipsOnPlanet');xajax_addBuildingToPlanet(xajax.getFormValues('selector'));\" value=\"Hinzuf&uuml;gen\" /></td></tr>";
+			
+			//Gebäude Schiffe
+			echo "<tr><td class=\"tbldata\" id=\"shipsOnPlanet\" colspan=\"2\">Planet w&auml;hlen...</td></tr>";
+			tableEnd();
+			echo "</form>";
+
+			//Focus
+			echo "<script type=\"text/javascript\">document.getElementById('userlist_nick').focus();</script>";
+			echo "<br /><br />";
+			
+			
 			$_SESSION['search']['buildings']['query']=null;
 			echo "<h2>Suchmaske</h2>";
 			echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\">";
-			echo "<table class=\"tbl\">";
+			tableStart();
 			echo "<tr><th class=\"tbltitle\">Planet ID</th><td class=\"tbldata\"><input type=\"text\" name=\"entity_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td>";
 			echo "<tr><th class=\"tbltitle\">Planetname</th><td class=\"tbldata\"><input type=\"text\" name=\"planet_name\" value=\"\" size=\"20\" maxlength=\"250\" />&nbsp;";
 			fieldqueryselbox('planet_name');
@@ -840,45 +896,14 @@
 			}
 			echo "</select></td>";
 			echo "</table>";
-			echo "<br/><input type=\"submit\" name=\"buildlist_search\" value=\"Suche starten\" /></form>";
-			$tblcnt = mysql_fetch_row(dbquery("SELECT count(buildlist_id) FROM buildlist;"));
-			echo "<br/>Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.<br/><br/>";
-
-
-
-			echo "<h2>Neues Geb&auml;ude hinzuf&uuml;gen</h2>";
-			echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\">";
-			tableStart();
-			echo "<tr><th class=\"tbltitle\">Geb&auml;ude</th><td class=\"tbldata\"><select name=\"building_id\">";
-			foreach ($bdata as $barr)
-			{
-				echo "<option value=\"".$barr['building_id']."\">".$barr['building_name']."</option>";
-			}
-			echo "</select></td></tr>";
-			echo "<tr><th class=\"tbltitle\">mit Stufe</th><td class=\"tbldata\"><input type=\"text\" name=\"building_level\" value=\"1\" size=\"1\" maxlength=\"3\" /></td></tr>";
-			echo "<tr><th class=\"tbltitle\">auf dem Planeten</th><td class=\"tbldata\"> <select name=\"entity_id\"><";
-			$pres=dbquery("
-			SELECT 
-                users.user_id,
-                users.user_nick,
-                planets.id,
-                planets.planet_name
-			FROM 
-                planets
-			INNER JOIN
-                users 
-			ON
-            	planets.planet_user_id=users.user_id 
-			ORDER BY 
-				planets.id;");
-			while ($parr=mysql_fetch_array($pres))
-			{
-				echo "<option value=\"".$parr['id'].":".$parr['user_id']."\">".($parr['planet_name']!="" ? $parr['planet_name']: "Unbenannt")." (".$parr['user_nick'].")</option>";
-			}
-			echo "</select></td></tr>";
+			echo "<br/><input type=\"submit\" name=\"buildlist_search\" value=\"Suche starten\" />";
 			tableEnd();
-			echo "<input type=\"submit\" name=\"new\" value=\"Hinzuf&uuml;gen\" /></form>";
+			echo "</form>";
+			
+			$tblcnt = mysql_fetch_row(dbquery("SELECT count(buildlist_id) FROM buildlist;"));
+			echo "<br/>Es sind <b>".nf($tblcnt[0])."</b> Eintr&auml;ge in der Datenbank vorhanden.";
 		}
+		
 	}
 
 
