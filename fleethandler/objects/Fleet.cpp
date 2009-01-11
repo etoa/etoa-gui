@@ -33,9 +33,9 @@
 		this->fetchPower = (double)fleet["fetch_power"];
 		this->fetchPeople = (double)fleet["fetch_people"];
 		
-		if (this->getLeaderId() > 0)
+		if (this->getLeaderId() == this->getId())
 			this->loadAdditionalFleets();
-		
+				
 		this->initResMetal = this->getResMetal();
 		this->initResCrystal = this->getResCrystal();
 		this->initResPlastic = this->getResPlastic();
@@ -721,7 +721,6 @@
 	}
 	
 	double Fleet::addExp(double exp) {
-		std::cout << exp;
 		int counter = 0;
 		std::vector<Object*>::iterator ot;
 		for (ot = this->specialObjects.begin() ; ot < this->specialObjects.end(); ot++) {
@@ -834,7 +833,7 @@
 		this->shipsChanged = true;
 	}
 	
-	void Fleet::setReturn(bool total) {
+	void Fleet::setReturn() {
 		int entity = this->entityFrom;
 		this->entityFrom = this->entityTo;
 		int duration;
@@ -852,7 +851,7 @@
 		
 		this->status = 1;
 		
-		if (total && fleets.size()) {
+		if (fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
 				(*it)->setReturn();
@@ -889,7 +888,7 @@
 			for ( it=fleets.begin() ; it < fleets.end(); it++ ) {
 				std::string key = (*it)->fleetUser->getUserNick();
 				found=nicks.rfind(key);
-				if (found!=std::string::npos)
+				if (found==std::string::npos)
 					nicks += ", "
 							+ key;
 			}
@@ -1089,7 +1088,8 @@
 		query << " fleet ";
 		query << "WHERE ";
 		query << "	leader_id='" << this->getLeaderId() << "' ";
-		query << "	AND landtime<='" << time << "';";
+		query << "	AND landtime<='" << time << "' ";
+		query << "	AND status=3;";
 		mysqlpp::Result fRes = query.store();
 		query.reset();
 		
@@ -1100,7 +1100,7 @@
 				mysqlpp::Row fRow;
 				Fleet* additionalFleet;
 				for (int i=0; i<fSize; i++) {
-					fRow = fRes.at(0);
+					fRow = fRes.at(i);
 					additionalFleet = new Fleet(fRow);
 					fleets.push_back(additionalFleet);
 				}
@@ -1110,6 +1110,7 @@
 				
 	void Fleet::loadShips() {
 		if (!this->shipsLoaded) {
+			this->shipsLoaded = true;
 			Config &config = Config::instance();
 			My &my = My::instance();
 			mysqlpp::Connection *con = my.get();
@@ -1129,7 +1130,6 @@
 				int fsSize = fsRes.size();
 				
 				if (fsSize>0) {
-					this->shipsLoaded = true;
 					this->logFleetShipStart = "";
 					
 					DataHandler &DataHandler = DataHandler::instance();
@@ -1344,7 +1344,7 @@
 			delete fleet;
 			fleets.pop_back();
 		}
-
+		
 		My &my = My::instance();
 		mysqlpp::Connection *con = my.get();
 		mysqlpp::Query query = con->query();

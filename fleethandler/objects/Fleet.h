@@ -158,9 +158,9 @@ public:
 	
 	void loadShips();
 	void recalcShips();
-	void setPercentSurvive(double percentage, bool total=false);
+	void setPercentSurvive(double percentage, bool total=true);
 	
-	void setReturn(bool total=false);
+	void setReturn();
 	void setSupport();
 	
 	std::string getActionString();

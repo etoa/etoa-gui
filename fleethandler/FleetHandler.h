@@ -49,7 +49,7 @@ public:
 			this->targetEntity = EntityFactory::createEntityById(this->f->getNextId());
 		else
 			this->targetEntity = EntityFactory::createEntityById(this->f->getEntityTo());
-			
+		
 		this->actionMessage = new Message();
 		this->actionMessage->addFleetId(this->f->getId());
 		this->actionMessage->addEntityId(this->f->getEntityTo());
@@ -67,6 +67,7 @@ public:
 		
 		this->msgShips = "";
 		this->msgRes = "";
+		
 	}
 	
 	~FleetHandler() {

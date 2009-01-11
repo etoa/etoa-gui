@@ -5,6 +5,8 @@ namespace alliance
 {
 	void AllianceHandler::update()
 	{
+		this->actionMessage->dontSend();
+		
 		/**
 		* Fleet-Action: Attack
 		*/

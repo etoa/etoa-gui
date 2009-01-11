@@ -15,7 +15,7 @@
 	
 	int Object::getCount() {
 		return this->count;
-		}
+	}
 	
 	int Object::getInitCount() {
 		return this->initCount;
@@ -101,11 +101,13 @@
 	}
 	
 	void Object::setPercentSurvive(double percentage) {
+		this->isChanged = true;
 		percentage = std::min(1.0,percentage);
 		this->count = ceil(this->initCount * percentage);
 	}
 	
 	int Object::removeObjects(int count) {
+		this->isChanged = true;
 		if (count>this->count) {
 			this->count = 0;
 			return this->count - count;

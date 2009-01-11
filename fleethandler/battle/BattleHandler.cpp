@@ -8,10 +8,8 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 	Config &config = Config::instance();
 	std::time_t time = std::time(0);
 	
-	Message* message;
-	
 	message->addType((int)config.idget("SHIP_WAR_MSG_CAT_ID"));
-	
+
     // BEGIN SKRIPT //
 	alliancesHaveWar = 0;
 
@@ -184,8 +182,8 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 			message->addText(functions::nf(functions::d2s(cAttStructureShield)));
 			message->addText(" Struktur- und Schildpunkte",2);
 			
-			fleet->setPercentSurvive(cAttStructureShield/initAttStructureShield);
-			entity->setPercentSurvive(cDefStructureShield/initDefStructureShield);
+			fleet->setPercentSurvive(cAttStructureShield/initAttStructureShield,true);
+			entity->setPercentSurvive(cDefStructureShield/initDefStructureShield,true);
 						
             if (fleet->getHeal() > 0) {
                 cAttStructureShield += fleet->getHeal();
@@ -199,7 +197,7 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 				message->addText(functions::d2s(fleet->getHeal()));
 				message->addText(" Struktur- und Schildpunkte. Der Angreifer hat danach wieder ");
 				
-				fleet->setPercentSurvive(cAttStructureShield/initAttStructureShield*100);
+				fleet->setPercentSurvive(cAttStructureShield/initAttStructureShield,true);
 				
 				message->addText(entity->getStructureShieldString());
 				message->addText(" Struktur- und Schildpunkte",1);
@@ -217,7 +215,7 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 				message->addText(functions::d2s(entity->getHeal()));
 				message->addText(" Struktur- und Schildpunkte. Der Angreifer hat danach wieder ");
 				
-				entity->setPercentSurvive(cDefStructureShield/initDefStructureShield*100);
+				entity->setPercentSurvive(cDefStructureShield/initDefStructureShield,true);
 				
 				message->addText(entity->getStructureShieldString());
 				message->addText(" Struktur- und Schildpunkte",1);
@@ -260,11 +258,11 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 			
 			message->addText("Der Angreifer hat den Kampf gewonnen!");
 			
-			entity->removeResMetal(fleet->addMetal(entity->getResMetal()*fleet->getBountyBonus()));
-			entity->removeResCrystal(fleet->addCrystal(entity->getResCrystal()*fleet->getBountyBonus()));
-			entity->removeResPlastic(fleet->addPlastic(entity->getResPlastic()*fleet->getBountyBonus()));
-			entity->removeResFuel(fleet->addFuel(entity->getResFuel()*fleet->getBountyBonus()));
-			entity->removeResFood(fleet->addFood(entity->getResFood()*fleet->getBountyBonus()));
+			entity->removeResMetal(fleet->addMetal(entity->getResMetal()*fleet->getBountyBonus(),true));
+			entity->removeResCrystal(fleet->addCrystal(entity->getResCrystal()*fleet->getBountyBonus(),true));
+			entity->removeResPlastic(fleet->addPlastic(entity->getResPlastic()*fleet->getBountyBonus(),true));
+			entity->removeResFuel(fleet->addFuel(entity->getResFuel()*fleet->getBountyBonus(),true));
+			entity->removeResFood(fleet->addFood(entity->getResFood()*fleet->getBountyBonus(),true));
 
 				/*double percent2 = (*at).second.capa / attacker->capa;
 				//Erbeutete Rohstoffsumme speichern
@@ -286,7 +284,7 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 		//
 		else if (cAttStructureShield==0 && cDefStructureShield>0) {
 			this->returnV = 2;
-			message->addText("Der Verteidiger hat den Kampf gewonnen!",1);
+			message->addText("Der Verteidiger hat den Kampf gewonnen!",3);
 		}
 
 		//
@@ -299,7 +297,7 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 			//
 			if (cAttStructureShield==0 && cDefStructureShield==0) {
         		this->returnV = 3;
-				message->addText("Der Kampf endete unentschieden, da sowohl die Einheiten des Angreifes als auch die Einheiten des Verteidigers alle zerstört wurden!",1);
+				message->addText("Der Kampf endete unentschieden, da sowohl die Einheiten des Angreifes als auch die Einheiten des Verteidigers alle zerstört wurden!",3);
 			}
 
 			//

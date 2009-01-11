@@ -56,7 +56,7 @@
 		mysqlpp::Query query = con->query();
 		
 		// Check if there are still enough resources in the field, if not delete it and create a new one
-		if (this->getResSum() < config.nget("nebula_action",2)) {
+		if (this->getResSum() < config.nget("nebula_ress",2)) {
 			// Delete the old one and replace it with an empty field
 			query << "UPDATE ";
 			query << "	entities ";

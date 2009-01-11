@@ -759,11 +759,10 @@
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
 				(*it)->setPercentSurvive(percentage);
 		}
-		
-		this->shipsChanged = true;
 	}
 	
 	double Entity::addExp(double exp) {
+		this->shipsSave = true;
 		int counter = 0;
 		std::vector<Object*>::iterator ot;
 		for (ot = this->specialObjects.begin() ; ot < this->specialObjects.end(); ot++) {
@@ -809,13 +808,14 @@
 	
 	std::string Entity::getUserNicks() {
 		std::string nicks = this->entityUser->getUserNick();
+		std::cout << fleets.size() << "\n";
 		if (fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			std::size_t found;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ ) {
 				std::string key = (*it)->fleetUser->getUserNick();
 				found=nicks.rfind(key);
-				if (found!=std::string::npos)
+				if (found==std::string::npos)
 					nicks += ", "
 							+ key;
 			}
@@ -1057,6 +1057,8 @@
 	
 	void Entity::loadShips() {
 		if (!this->shipsLoaded) {
+			this->loadAdditionalFleets();
+			
 			Config &config = Config::instance();
 			My &my = My::instance();
 			mysqlpp::Connection *con = my.get();

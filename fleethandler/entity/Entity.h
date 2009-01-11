@@ -73,6 +73,7 @@ class Entity
 			this->changedData = false;
 			this->shipsLoaded = false;
 			this->shipsChanged = false;
+			this->shipsSave = false;
 			this->techsAdded = false;
 			this->buildingsLoaded = false;
 			
@@ -223,7 +224,7 @@ class Entity
 		bool dataLoaded;
 		bool changedData;
 		bool shipsLoaded, defLoaded;
-		bool shipsChanged;
+		bool shipsChanged, shipsSave;
 		bool techsAdded;
 		bool buildingsLoaded;
 		

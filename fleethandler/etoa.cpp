@@ -81,7 +81,9 @@ int main(int argc, char *argv[])
 		query << "FROM ";
 		query << "	fleet ";
 		query << "WHERE ";
-		query << " landtime<'" << time << "';";
+		query << " landtime<'" << time << "' ";
+		query << "	AND !(action='alliance' AND leader_id!=id) ";
+		query << "ORDER BY landtime ASC;";
 		mysqlpp::Result res = query.store();	
 		query.reset();
 		

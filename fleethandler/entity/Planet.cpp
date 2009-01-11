@@ -97,7 +97,7 @@
 	}
 	
 	void Planet::saveData() {
-		if (this->shipsChanged) {
+		if (this->getCount()!=this->getInitCount() || this->shipsSave) {
 			while (!objects.empty()) {
 				Object* object = objects.back();
 				delete object;

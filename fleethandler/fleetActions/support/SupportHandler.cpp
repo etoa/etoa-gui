@@ -29,7 +29,7 @@ namespace support
 			this->actionMessage->addText(this->targetEntity->getCoords(),1);
 			this->actionMessage->addText("[b]Startplanet:[/b] ");
 			this->actionMessage->addText(this->startEntity->getCoords(),1);
-			this->actionMessage->addText("[b]Zeit:[/b] ");
+			this->actionMessage->addText("[b]Ankunft:[/b] ");
 			this->actionMessage->addText(this->f->getLandtimeString(),1);
 			this->actionMessage->addText("[b]Auftrag:[/b] ");
 			this->actionMessage->addText(this->f->getActionString(),1);

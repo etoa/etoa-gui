@@ -120,7 +120,7 @@ public:
 						return new transport::TransportHandler(fRow);
 						break;
 					case 24:
-						return new alliance::AllianceHandler(fRow);
+						return new alliance::AllianceHandler(fRow);				
 						break;
 					default:
 						return new defaul::DefaultHandler(fRow);
