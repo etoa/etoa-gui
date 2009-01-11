@@ -178,13 +178,18 @@ namespace functions
 
 	std::string nf(std::string  value)
 	{
-		int length = value.length();
+		/** Schneidet den Rest ab, wenn ein Punkt und Nachkommazeichen vorhanden sind **/
+		std:size_t found = value.find(".");
+		if (found!=std::string::npos) {
+			value.erase(value.begin()+(int)found,value.end());
+		}
 		
+		/** Fügt die Tausenderzeichen hinzu **/
+		int length = value.length();
 		int i=3;
-		while (length > i)
-		{
-			int to_do = length-i;
-			value.insert(to_do, "`");
+		while (length > i) {
+			int toDo = length-i;
+			value.insert(toDo, "`");
 			i += 3;
 					
 		}

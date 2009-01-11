@@ -34,6 +34,29 @@ namespace planet
 			std::vector<double> cnt (8);
 			std::vector<double> ressource (7);
 			
+			cnt[0] = 0;
+			cnt[1] = 0;
+			cnt[2] = 0;
+			cnt[3] = 0;
+			cnt[4] = 0;
+			cnt[6] = 0;
+			cnt[7] = 0;
+						
+			store[0] = 0;
+			store[1] = 0;
+			store[2] = 0;
+			store[3] = 0;
+			store[4] = 0;
+			store[5] = 0;
+			
+			ressource[0] = 0;
+			ressource[1] = 0;
+			ressource[2] = 0;
+			ressource[3] = 0;
+			ressource[4] = 0;
+			ressource[5] = 0;
+			ressource[6] = 0;
+			
 			mysqlpp::Query query = con_->query();
 			query << "SELECT ";
 			query << "    planets.*, ";
@@ -105,7 +128,6 @@ namespace planet
 			mysqlpp::Result res = query.store();		
 				query.reset();
 			mysqlpp::Row row = res.at(0);
-	      	
 			updateFields(planetId, fieldsUsed, fieldsExtra);
 			updateStorage(planetId, store);
 			updateProductionRates(planetId, cnt, row);
@@ -120,7 +142,6 @@ namespace planet
 
 	void PlanetManager::updateFields(int planetId, int& fieldsUsed, int& fieldsExtra)
 	{
-		
 		mysqlpp::Query query = con_->query();
 		query << "SELECT ";
 			query << "SUM(buildings.building_fields*buildlist.buildlist_current_level) AS f, ";
@@ -348,7 +369,7 @@ namespace planet
 		cnt[6] += (cnt[6] * (float(row["planet_type_f_power"]) + float(row["race_f_power"]) + float(row["sol_type_f_power"]) - 3));
 
 		// Bei ungenügend Energie Anpassung vornehmen
-		if (cnt[7]>=cnt[6])
+		if (cnt[7]>cnt[6])
 		{
 			cnt[0] = floor(cnt[0] * cnt[6] / cnt[7]);
 			cnt[1] = floor(cnt[1] * cnt[6] / cnt[7]);
@@ -374,34 +395,35 @@ namespace planet
 		std::time_t time = std::time(0);
 		mysqlpp::Query query = con_->query();
 		query << std::setprecision(18);
-		query << "UPDATE ";
-			query << "planets ";
-		query << "SET ";
-			query << "planet_fields_extra=" << fieldsExtra << ", ";
-			query << "planet_fields_used=" << fieldsUsed << ", ";
-			query << "planet_res_metal='" << ressource[0] <<"', ";
-			query << "planet_res_crystal='" << ressource[1] <<"', ";
-			query << "planet_res_plastic='" << ressource[2] <<"', ";
-			query << "planet_res_fuel='" << ressource[3] <<"', ";
-			query << "planet_res_food='" << ressource[4] <<"', ";
-			query << "planet_use_power=" << cnt[7] << ", ";
-			query << "planet_last_updated='" << time << "', ";
-			query << "planet_prod_metal=" << cnt[0] << ", ";
-			query << "planet_prod_crystal=" << cnt[1] << ", ";
-			query << "planet_prod_plastic=" << cnt[2] << ", ";
-			query << "planet_prod_fuel=" << cnt[3] << ", ";
-			query << "planet_prod_food=" << cnt[4] << ", ";
-			query << "planet_prod_power=" << cnt[6] << ", ";
-			query << "planet_prod_people=" << (int)ressource[6] << ", ";
-			query << "planet_store_metal=" << store[0] << ", ";
-			query << "planet_store_crystal=" << store [1] << ", ";
-			query << "planet_store_plastic=" << store[2] << ", ";
-			query << "planet_store_fuel=" << store[3] << ", ";
-			query << "planet_store_food=" << store[4] << ", ";
-			query << "planet_people='" << ressource[5] <<"', ";
-			query << "planet_people_place=" << store[5] << " ";
-     	query << "WHERE ";
-			query << "id='" << planetId << "';";
+		query << "UPDATE "
+				<< "planets "
+			<< "SET "
+				<< "planet_fields_extra=" << fieldsExtra << ", "
+				<< "planet_fields_used=" << fieldsUsed << ", "
+				<< "planet_res_metal='" << ressource[0] <<"', "
+				<< "planet_res_crystal='" << ressource[1] <<"', "
+				<< "planet_res_plastic='" << ressource[2] <<"', "
+				<< "planet_res_fuel='" << ressource[3] <<"', "
+				<< "planet_res_food='" << ressource[4] <<"', "
+				<< "planet_use_power=" << cnt[7] << ", "
+				<< "planet_last_updated='" << time << "', "
+				<< "planet_prod_metal=" << cnt[0] << ", "
+				<< "planet_prod_crystal=" << cnt[1] << ", "
+				<< "planet_prod_plastic=" << cnt[2] << ", "
+				<< "planet_prod_fuel=" << cnt[3] << ", "
+				<< "planet_prod_food=" << cnt[4] << ", "
+				<< "planet_prod_power=" << cnt[6] << ", "
+				<< "planet_prod_people=" << (int)ressource[6] << ", "
+				<< "planet_store_metal=" << store[0] << ", "
+				<< "planet_store_crystal=" << store [1] << ", "
+				<< "planet_store_plastic=" << store[2] << ", "
+				<< "planet_store_fuel=" << store[3] << ", "
+				<< "planet_store_food=" << store[4] << ", "
+				<< "planet_people='" << ressource[5] <<"', "
+				<< "planet_people_place=" << store[5] << " "
+			<< "WHERE "
+				<< "id='" << planetId << "' "
+			<< "LIMIT 1;";
 		query.store();
 		query.reset();
 	}

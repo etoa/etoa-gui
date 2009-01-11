@@ -30,7 +30,7 @@ namespace steal
 				
 				// Calculate the chance
 				this->one = rand() % 101;
-				this->two = 1003 + std::min(0.0,(this->tLevelAtt - this->tLevelDef + ceil(this->shipCnt/10000.0)+ this->f->getSpecialShipBonusForsteal() * 100));
+				this->two = 3 + std::min(0.0,(this->tLevelAtt - this->tLevelDef + ceil(this->shipCnt/10000.0)+ this->f->getSpecialShipBonusForsteal() * 100));
 				
 				if (this->one <= this->two) {
 				
@@ -45,6 +45,8 @@ namespace steal
 						
 						this->actionMessage->addSubject("Spionageangriff");
 						this->actionMessage->addUserId(this->targetEntity->getUserId());
+						
+						this->actionLog->addText("Action succeed: " + functions::d2s(this->one) + " < " + functions::d2s(this->two));
 						
 						//Ranking::addBattlePoints($arr['fleet_user_id'],BATTLE_POINTS_SPECIAL,"Spezialaktion"); //ToDo
 						
@@ -61,6 +63,8 @@ namespace steal
 						
 						this->actionMessage->addSubject("Spionageangriff erfolglos");
 						this->actionMessage->addUserId(this->targetEntity->getUserId());
+						
+						this->actionLog->addText("Action failed: Tech error");
 					}
 				} 
 					// if stealing a tech failed
