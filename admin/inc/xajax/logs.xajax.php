@@ -5,6 +5,7 @@ $xajax->register(XAJAX_FUNCTION,"checkLogFormular");
 $xajax->register(XAJAX_FUNCTION,"logChangeButton");
 $xajax->register(XAJAX_FUNCTION,"showBattle");
 $xajax->register(XAJAX_FUNCTION,"showGameLogs");
+$xajax->register(XAJAX_FUNCTION,"showFleetLogs");
 
 
 function logSelectorCat($cat)
@@ -164,6 +165,98 @@ function logSelectorCat($cat)
 	  					</td>
 	  				</tr>";	
   	$out .= "</table>";	
+  }
+  elseif($cat['log_cat']=="logs_fleet")
+  {
+		// Such Formular
+		$out .= "<table class=\"tbl\">";
+  		
+  		$out .= "<tr>
+	  				<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle\" colspan=\"2\">Suche</td>
+	  			</tr>
+				<tr>
+	  				<td class=\"tbltitle\" style=\"vertical-align:middle;width:30%\">Feld</td>
+	  				<td class=\"tbltitle\" style=\"vertical-align:middle;width:70%\">Kriterium</td>
+	  			</tr>
+	  			<tr>
+	  				<td class=\"tbltitle\">Flotten User</td>
+	  				<td class=\"tbldata\">
+						<input type=\"text\" name=\"user_nick_fleet\" id=\"user_nick_fleet\"  maxlength=\"20\" size=\"20\" autocomplete=\"off\" value=\"\" onkeyup=\"xajax_searchUser(this.value,'user_nick_a','citybox1');\" onchange=\"xajax_logChangeButton();\"><br/>
+		          	  <div class=\"citybox\" id=\"citybox1\">&nbsp;</div>
+	  				</td>
+	  			</tr>
+	  			<tr>
+	  				<td class=\"tbltitle\">Entity User</td>
+	  				<td class=\"tbldata\">
+						<input type=\"text\" name=\"user_nick_entity\" id=\"user_nick_entity\"  maxlength=\"20\" size=\"20\" autocomplete=\"off\" value=\"\" onkeyup=\"xajax_searchUser(this.value,'user_nick_a','citybox1');\" onchange=\"xajax_logChangeButton();\"><br/>
+		          	  <div class=\"citybox\" id=\"citybox1\">&nbsp;</div>
+	  				</td>
+	  			</tr>	
+	  			<tr>
+	  				<td class=\"tbltitle\">Logs nach</td>
+	  				<td class=\"tbldata\">";
+	  					$out .= show_logs_timebox("logs_fleet_time_min",time());
+	 					$out .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type=\"checkbox\" name=\"add_logs_game_time_min\" value=\"1\" onclick=\"xajax_logChangeButton();\"> Aktivieren 
+	 				</td>
+	 			</tr>
+	 			<tr>
+	  				<td class=\"tbltitle\">Logs vor</td>
+	  				<td class=\"tbldata\">";
+	  					$out .= show_logs_timebox("logs_fleet_time_max",time());
+	 					$out .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type=\"checkbox\" name=\"add_logs_game_time_max\" value=\"1\" onclick=\"xajax_logChangeButton();\"> Aktivieren 
+	 				</td>
+	 			</tr>
+				<tr>
+					<td class=\"tbltitle\">Aktion:</td><td class=\"tbldata\"><select name=\"action\">
+						<option value=\"\"></option>";
+						$fas = FleetAction::getAll();
+						foreach ($fas as $fa)
+						{
+							$out .= "<option value=\"".$fa->code()."\" style=\"color:".FleetAction::$attitudeColor[$fa->attitude()]."\"";
+							$out .= ">".$fa->name()."</option>";
+						}
+						$out .= "</select> &nbsp; <select name=\"status\">
+							<option value=\"\"></option>";
+						foreach (FleetAction::$statusCode as $k => $v)
+						{
+							$out .= "<option value=\"".$k."\" ";
+							$out .= ">".$v."</option>";
+						}
+						$out .= "</select></td></tr>
+	  			<tr>
+	  				<td class=\"tbltitle\">Anzahl Datens&auml;tze</td>
+	  				<td class=\"tbldata\">
+	  					<select name=\"limit\">
+	  						".$limit_options."
+	  					</select>
+					</td>
+	  			</tr> 				
+	  				";
+  				
+  	$out .= "</table><br><br>";
+  	
+  	// Check- und Anzeigefelder
+  	$out .= "<table class=\"tbl\">";
+	  $out .= "<tr>
+	  					<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">Ergebnis</td>
+	  				</tr>
+	  				<tr>
+	  					<td class=\"tbldata\" style=\"text-align:center;vertical-align:middle;height:30px;\">
+	  						<input type=\"button\" name=\"check_formular\" id=\"check_formular\" value=\"Eingaben Prüfen\" onclick=\"xajax_checkLogFormular(xajax.getFormValues('log_selector'));\"/>
+	  					</td>
+	  				</tr>
+	  				<tr>
+	  					<td class=\"tbldata\" id=\"check_message\" style=\"text-align:center;vertical-align:middle;height:30px;\">
+	  						<div style=\"color:red;font-weight:bold;\">Eingaben zuerst Prüfen lassen!</div>
+	  					</td>
+	  				</tr> 
+	  				<tr>
+	  					<td class=\"tbldata\" style=\"text-align:center;vertical-align:middle;height:30px;\">
+	  						<input type=\"submit\" name=\"logs_submit\" id=\"logs_submit\" value=\"Ergebnisse anzeigen\" disabled=\"disabled\"/>
+	  					</td>
+	  				</tr>";	
+  	$out .= "</table>";  	
+
   }
   elseif($cat['log_cat']=="logs_battle")
   {  	
@@ -594,7 +687,56 @@ function checkLogFormular($val)
 	
 	ob_start();
 	$objResponse = new xajaxResponse();
-				
+	
+	//Flotten Query erstellen
+	if($val['log_cat']=="logs_fleet")
+	{
+		$sql_select = "logs_fleet_id";
+		$sql_table = 'logs_fleet';
+		$sql_where_start = "logs_fleet_id!=0";
+		$sql_add = "";
+		$sql_order = "ORDER BY logs_fleet_landtime DESC";
+		$sql_limit = $val['limit'];
+		print_r($val);
+	// Kampfzeit min.
+		if($val['add_fleet_time_min']==1)
+		{
+			$sql_add .= " AND logs_fleet_landtime >= '".mktime($val['logs_fleet_time_min_h'],$val['logs_fleet_time_min_i'],0,$val['logs_fleet_time_min_m'],$val['logs_fleet_time_min_d'],$val['logs_fleet_time_min_y'])."'";
+		}
+		
+		// Kampfzeit max.
+		if($val['add_fleet_time_max']==1)
+		{
+			$sql_add .= " AND logs_fleet_landtime <= '".mktime($val['logs_fleet_time_max_h'],$val['logs_fleet_time_max_i'],0,$val['logs_fleet_time_max_m'],$val['logs_fleet_time_max_d'],$val['logs_fleet_time_max_y'])."'";
+		}
+		
+		
+		// Angreiffer
+		if($val['user_nick_entity']!="")
+		{
+			$sql_add .= " AND logs_fleet_fleet_user_id='".get_user_id($val['user_nick_fleet'])."'";
+		}
+		
+		// Verteidiger
+		if($val['user_nick_entity']!="")
+		{
+			$sql_add .= " AND logs_fleet_entity_user_id='".get_user_id($val['user_nick_entity'])."'";
+		}
+		
+		// Aktion
+		if($val['action']!="")
+		{
+			$sql_add .= " AND logs_fleet_action='".$val['action']."'";
+		}
+		
+		// Status
+		if($val['status']!="")
+		{
+			$sql_add .= " AND logs_fleet_status='".$val['status']."'";
+		}
+		echo $sql_select.$sql_add;
+	}
+	
 	// Kampfberichte Query erstellen
 	if($val['log_cat']=="logs_battle")
 	{
@@ -914,9 +1056,6 @@ function showBattle($battle,$id)
 	
 }
 
-
-
-
 function showGameLogs($log_text,$id)
 {	
 	ob_start();
@@ -939,7 +1078,27 @@ function showGameLogs($log_text,$id)
 	
 }
 
+function showFleetLogs($log_text,$id)
+{	
+	ob_start();
+	$objResponse = new xajaxResponse();
+		
+	if($log_text!="")
+	{
+		$objResponse->assign("show_fleet_logs_".$id."","innerHTML", $log_text);	
+	}	
+	else
+	{
+		$objResponse->assign("show_fleet_logs_".$id."","innerHTML", "");
+	}
 
+
+	$objResponse->assign("logsinfo","innerHTML",ob_get_contents());
+	ob_end_clean();
+	
+	return $objResponse;	
+	
+}
 
 
 ?>

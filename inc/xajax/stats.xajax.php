@@ -181,7 +181,7 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 			LEFT JOIN 
 				alliances ON user_alliance_id=alliance_id
 			ORDER BY 
-				battle_rating DESC
+				diplomacy_rating DESC
 			;");
 			tableStart("Diplomatiewertung");
 			$cnt=1;
@@ -318,7 +318,7 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 			LEFT JOIN 
 				alliances ON user_alliance_id=alliance_id
 			ORDER BY 
-				battle_rating DESC
+				trade_rating DESC
 			;");
 			tableStart('Handelswertung');
 			$cnt=1;

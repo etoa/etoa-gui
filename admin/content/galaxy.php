@@ -1473,7 +1473,9 @@
 								<input tabindex=\"26\" type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" class=\"button\" />&nbsp;";
 					echo "<input tabindex=\"27\" type=\"button\" class=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" /> ";
 					echo "<input tabindex=\"28\" type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&action=searchresults'\" /> ";
-					echo "</form>";			
+					echo "</form>";
+					echo "<hr/>";
+					echo "<input type=\"button\" value=\"Gebäude\" onclick=\"document.location='?page=buildings&action=search&query=".searchQuery(array("entity_id"=>$arr['id']))."'\" /> &nbsp;";
 				}
 				elseif ($earr['code']=='s')
 				{		
@@ -1672,7 +1674,7 @@
 								<input tabindex=\"26\" type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" class=\"button\" />&nbsp;";
 					echo "<input tabindex=\"27\" type=\"button\" class=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" /> ";
 					echo "<input tabindex=\"28\" type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&action=searchresults'\" /> ";
-					echo "</form>";			
+					echo "</form>";
 				}	
 				elseif ($earr['code']=='w')
 				{		
@@ -1703,7 +1705,7 @@
 								<input tabindex=\"26\" type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" class=\"button\" />&nbsp;";
 					echo "<input tabindex=\"27\" type=\"button\" class=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" /> ";
 					echo "<input tabindex=\"28\" type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&action=searchresults'\" /> ";
-					echo "</form>";			
+					echo "</form>";	
 				}
 				elseif ($earr['code']=='e')
 				{		
@@ -1732,7 +1734,7 @@
 								<input tabindex=\"26\" type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" class=\"button\" />&nbsp;";
 					echo "<input tabindex=\"27\" type=\"button\" class=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" /> ";
 					echo "<input tabindex=\"28\" type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&action=searchresults'\" /> ";
-					echo "</form>";			
+					echo "</form>";
 				}									
 				else
 				{

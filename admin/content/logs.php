@@ -243,6 +243,78 @@
 			{
 				echo "allgemeine logs anzeigen...";
 			}
+			elseif ($_POST['log_cat']=="logs_fleet")
+			{
+				$res = dbquery($sql_query);
+
+				tableStart("".mysql_num_rows($res)." Ergebnisse");
+				echo "<tr>
+						<td class=\"tbltitle\" >Besitzer</td>
+						<td class=\"tbltitle\" >Aktion</td>
+						<td class=\"tbltitle\" >Start</td>
+						<td class=\"tbltitle\" >Ziel</td>
+						<td class=\"tbltitle\" >Startzeit</td>
+						<td class=\"tbltitle\" >Landezeit</td>
+						<td class=\"tbltitle\" >Bericht</td>
+					</tr>";		
+				while($arr=mysql_fetch_array($res))
+				{	
+					$user_nick = get_user_nick($arr["logs_fleet_fleet_user_id"]);
+					if ($user_nick=="")
+					{
+						$owner = "<span style=\"color:#99f\">System</span>";
+					}
+					else
+					{
+						$owner = $user_nick;
+					}
+
+					if ($fa = FleetAction::createFactory($arr['logs_fleet_action']))
+					{
+						echo "<tr>";
+						echo "<td class=\"tbldata\">".$owner."</td>";
+						echo "<td class=\"tbldata\"><span style=\"color:".FleetAction::$attitudeColor[$fa->attitude()]."\">";
+						echo $fa."</span><br/>";
+						echo FleetAction::$statusCode[$arr['logs_fleet_status']];
+						echo "</td>";
+						echo "<td class=\"tbldata\" >";
+							$startEntity = Entity::createFactoryById($arr['logs_fleet_entity_from']);
+						echo $startEntity."<br/>".$startEntity->entityCodeString().", ".$startEntity->owner()."</td>";
+						echo "<td class=\"tbldata\">";
+							$endEntity = Entity::createFactoryById($arr['logs_fleet_entity_to']);
+						echo $endEntity."<br/>".$endEntity->entityCodeString().", ".$endEntity->owner()."</td>";
+						echo "<td class=\"tbldata\" >".date("d.m.y",$arr['logs_fleet_landtime'])." &nbsp; ".date("H:i:s",$arr['logs_fleet_landtime'])."</td>";
+						echo "<td class=\"tbldata\" >".date("d.m.y",$arr['logs_fleet_landtime'])." &nbsp; ".date("H:i:s",$arr['logs_fleet_landtime'])."</td>";
+					}
+					else
+					{
+						echo "<tr>";
+						echo "<td class=\"tbldata\" >".$owner."</td>";
+						echo "<td class=\"tbldata\"><span style=\"color:red\">";
+						echo "Ungültig (".$arr['logs_fleet_action'].")</span><br/>";
+						echo "</td>";
+						echo "<td class=\"tbldata\" >";
+							$startEntity = Entity::createFactoryById($arr['logs_fleet_entity_from']);
+						echo $startEntity."<br/>".$startEntity->entityCodeString().", ".$startEntity->owner()."</td>";
+						echo "<td class=\"tbldata\" >";
+							$endEntity = Entity::createFactoryById($arr['logs_fleet_entity_to']);
+						echo $endEntity."<br/>".$endEntity->entityCodeString().", ".$endEntity->owner()."</td>";
+						echo "<td class=\"tbldata\" >".date("d.m.y",$arr['logs_fleet_landtime'])." &nbsp; ".date("H:i:s",$arr['logs_fleet_launchtime'])."</td>";
+						echo "<td class=\"tbldata\" >".date("d.m.y",$arr['logs_fleet_landtime'])." &nbsp; ".date("H:i:s",$arr['logs_fleet_landtime'])."</td>";
+					}
+					
+					$log_text = "hamer";
+					echo "<td class=\"tbldata\" onclick=\"xajax_showFleetLogs('".$log_text."',".$arr['logs_fleet_id'].");\" ".mTT("","Klicken für Anzeige des Berichtes!").">
+										<a href=\"javascript:;\">Anzeigen</a>
+									</td>
+								</tr>
+								<tr>
+									<td class=\"tbldata\" id=\"show_fleet_logs_".$arr['logs_fleet_id']."\" style=\"vertical-align:middle;\" colspan=\"7\" ondblclick=\"xajax_showFleetLogs('".$log_text."',".$arr['logs_fleet_id'].");\" ".mTT("","Doppelklick zum deaktivieren des Fensters!").">
+									</td>
+								</tr>";
+				}
+				tableEnd();
+			}
 			elseif ($_POST['log_cat']=="logs_battle")
 			{			
 				echo "Legende:<br/>
@@ -448,6 +520,7 @@
 								<select name=\"log_cat\" onChange=\"xajax_logSelectorCat(xajax.getFormValues('log_selector'),1);\">
 									<option value=\"0\">(nicht zugeordnet)</option>
 									<option value=\"logs\">Allgemeine</option>
+									<option value=\"logs_fleet\">Flotten</option>
 									<option value=\"logs_battle\">Kampfberichte</option>
 									<option value=\"logs_game\">Game</option>
 								</select>

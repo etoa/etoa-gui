@@ -628,12 +628,21 @@
 		//
 		// Suchergebnisse anzeigen
 		//
-		elseif ((isset($_POST['buildlist_search']) || isset($_POST['new']) || isset($_SESSION['admin']['building_query'])) && (isset($_GET['action']) &&$_GET['action']=="search"))
+		elseif ((isset($_POST['buildlist_search']) || isset($_POST['new']) || isset($_SESSION['search']['buildings']['query'])) && (isset($_GET['action']) &&$_GET['action']=="search"))
 		{
+			if ($_GET['query']!="")
+			{
+				$qs = searchQueryDecode($_GET['query']);
+				foreach($qs as $k=>$v)
+				{
+					$_POST[$k]=$v;
+				}
+				$_SESSION['search']['buildings']['query']=null;
+			}
 			$tables = "buildlist,planets,users,buildings";
 			if (isset($_POST['new']))
 			{
-				$updata=explode(":",$_POST['planet_id']);
+				$updata=explode(":",$_POST['entity_id']);
 				if (mysql_num_rows(dbquery("SELECT buildlist_id FROM buildlist WHERE buildlist_entity_id=".$updata[0]." AND buildlist_building_id=".$_POST['building_id'].";"))==0)
 				{
 					dbquery("
@@ -653,7 +662,7 @@
 				else
 					echo "Geb&auml;ude kann nicht hinzugef&uuml;gt werden, es ist bereits vorhanden!<br/>";
 				$sql= "planets.id=".$updata[0]." AND ";
-				$_SESSION['admin']['building_query']="";
+				$_SESSION['search']['buildings']['query']=null;
 
 
 				echo "<h2>Neues Geb&auml;ude hinzuf&uuml;gen</h2>";
@@ -667,7 +676,7 @@
 				}
 				echo "</select></td></tr>";
 				echo "<tr><th class=\"tbltitle\">mit Stufe</th><td class=\"tbldata\"><input type=\"text\" name=\"building_level\" value=\"1\" size=\"1\" maxlength=\"3\" /></td></tr>";
-				echo "<tr><th class=\"tbltitle\">auf dem Planeten</th><td class=\"tbldata\"> <select name=\"planet_id\"><";
+				echo "<tr><th class=\"tbltitle\">auf dem Planeten</th><td class=\"tbldata\"> <select name=\"entity_id\"><";
 				$pres=dbquery("SELECT 
 								users.user_id,
 								planets.id,
@@ -708,9 +717,9 @@
 			}
 			else
 			{
-				if ($_POST['planet_id']!="")
+				if ($_POST['entity_id']!="")
 				{
-					$sql.= "id=".$_POST['planet_id']." AND ";
+					$sql.= "id=".$_POST['entity_id']." AND ";
 				}
 				if ($_POST['planet_name']!="")
 				{
@@ -738,10 +747,10 @@
 			GROUP BY buildlist_id
 			ORDER BY buildlist_user_id,buildlist_entity_id,building_type_id,building_order,building_name;";
 
-  		if ($_SESSION['admin']['building_query']=="")
-  			$_SESSION['admin']['building_query']=$sqlstart.$sql.$sqlend;
+  		if ($_SESSION['search']['buildings']['query']==null)
+  			$_SESSION['search']['buildings']['query']=$sqlstart.$sql.$sqlend;
 
-			$res = dbquery($_SESSION['admin']['building_query']);
+			$res = dbquery($_SESSION['search']['buildings']['query']);
 			if (mysql_num_rows($res)>0)
 			{
 				echo mysql_num_rows($res)." Datens&auml;tze vorhanden<br/><br/>";
@@ -812,11 +821,11 @@
 			{
 				$bdata[$barr['building_id']]=$barr;
 			}
-			$_SESSION['admin']['building_query']="";
+			$_SESSION['search']['buildings']['query']=null;
 			echo "<h2>Suchmaske</h2>";
 			echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\">";
 			echo "<table class=\"tbl\">";
-			echo "<tr><th class=\"tbltitle\">Planet ID</th><td class=\"tbldata\"><input type=\"text\" name=\"planet_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td>";
+			echo "<tr><th class=\"tbltitle\">Planet ID</th><td class=\"tbldata\"><input type=\"text\" name=\"entity_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td>";
 			echo "<tr><th class=\"tbltitle\">Planetname</th><td class=\"tbldata\"><input type=\"text\" name=\"planet_name\" value=\"\" size=\"20\" maxlength=\"250\" />&nbsp;";
 			fieldqueryselbox('planet_name');
 			echo "</td>";;
@@ -847,7 +856,7 @@
 			}
 			echo "</select></td></tr>";
 			echo "<tr><th class=\"tbltitle\">mit Stufe</th><td class=\"tbldata\"><input type=\"text\" name=\"building_level\" value=\"1\" size=\"1\" maxlength=\"3\" /></td></tr>";
-			echo "<tr><th class=\"tbltitle\">auf dem Planeten</th><td class=\"tbldata\"> <select name=\"planet_id\"><";
+			echo "<tr><th class=\"tbltitle\">auf dem Planeten</th><td class=\"tbldata\"> <select name=\"entity_id\"><";
 			$pres=dbquery("
 			SELECT 
                 users.user_id,

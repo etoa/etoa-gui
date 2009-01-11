@@ -343,8 +343,17 @@
 		$build_type[0]="Unt&auml;tig";
 		$build_type[1]="Forschen";
 	
-		if (isset($_POST['techlist_search']) || (isset($_GET['action']) && $_GET['action']=="searchresults") || isset($_POST['new']))
+		if (isset($_POST['techlist_search']) || (isset($_GET['action']) && ($_GET['action']=="search" || $_GET['action']=="searchresults")) || isset($_POST['new']))
 		{
+			if ($_GET['query']!="")
+			{
+				$qs = searchQueryDecode($_GET['query']);
+				foreach($qs as $k=>$v)
+				{
+					$_POST[$k]=$v;
+				}
+				$_SESSION['search']['tech']['query']=null;
+			}
 			$sqlstart = "
 			SELECT 
 					planet_name,
@@ -403,7 +412,7 @@
 					echo "Technologie existiert bereits!<br/>";
 				}
 				$sql= " AND user_id=".$updata[1];
-				$_SESSION['techedit']['query']="";
+				$_SESSION['search']['tech']['query']=null;
 				
 				// Technologien laden
 				$bres = dbquery("SELECT tech_id,tech_name FROM technologies ORDER BY tech_type_id,tech_order,tech_name;");
@@ -440,13 +449,12 @@
 				tableEnd();
 				echo "<input type=\"submit\" name=\"new\" value=\"Hinzuf&uuml;gen\" /></form><br/>";				
 				$sql = $sqlstart.$sql.$sqlend;
-				$_SESSION['techedit']['query']=$sql;
+				$_SESSION['search']['tech']['query']=$sql;
 			}			
 			
 			// Suchquery generieren
-			elseif ($_SESSION['techedit']['query']=="")
-			{ 	
- 			
+			elseif ($_SESSION['search']['tech']['query']==null)
+			{	
 				if ($_POST['planet_id']!='')
 					$sql.= " AND planets.id='".$_POST['planet_id']."'";
 				if ($_POST['planet_name']!='')
@@ -467,10 +475,10 @@
 					$sql.= " AND tech_id='".$_POST['tech_id']."'";
 					
 				$sql = $sqlstart.$sql.$sqlend;
-				$_SESSION['techedit']['query']=$sql;
+				$_SESSION['search']['tech']['query']=$sql;
 			}
 			else
-				$sql = $_SESSION['techedit']['query'];											
+				$sql = $_SESSION['search']['tech']['query'];											
  	
 			$res = dbquery($sql);
 			if (mysql_num_rows($res)>0)
@@ -581,7 +589,7 @@
 		//
 		else
 		{		
-			$_SESSION['techedit']['query']="";
+			$_SESSION['search']['tech']['query']=null;
 			
 			// Technologien laden
 			$bres = dbquery("SELECT tech_id,tech_name FROM technologies ORDER BY tech_type_id,tech_order,tech_name;");
@@ -591,7 +599,7 @@
 			
 			// Suchmaske
 			echo "Suchmaske:<br/><br/>";
-			echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
+			echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\">";
 			echo "<table class=\"tbl\">";
 			echo "<tr><td class=\"tbltitle\">Planet ID</td><td class=\"tbldata\"><input type=\"text\" name=\"planet_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
 			echo "<tr><td class=\"tbltitle\">Planetname</td><td class=\"tbldata\"><input type=\"text\" name=\"planet_name\" value=\"\" size=\"20\" maxlength=\"250\" /> ";fieldqueryselbox('planet_name');echo "</td></tr>";

@@ -1291,8 +1291,8 @@
 				
 				echo "<hr/>";
 				echo "<input type=\"button\" value=\"Planeten\" onclick=\"document.location='?page=galaxy&action=search&query=".searchQuery(array("planet_user_id"=>$arr['user_id']))."'\" /> &nbsp;";
-				echo "<input type=\"button\" value=\"Gebäude\" onclick=\"document.location='?page=messages&sub=sendmsg&user_id=".$arr['user_id']."'\" /> &nbsp;";
-				echo "<input type=\"button\" value=\"Forschungen\" onclick=\"document.location='?page=messages&sub=sendmsg&user_id=".$arr['user_id']."'\" /> &nbsp;";
+				echo "<input type=\"button\" value=\"Gebäude\" onclick=\"document.location='?page=buildings&action=search&query=".searchQuery(array("user_id"=>$arr['user_id']))."'\" /> &nbsp;";
+				echo "<input type=\"button\" value=\"Forschungen\" onclick=\"document.location='?page=techs&action=search&query=".searchQuery(array("user_id"=>$arr['user_id']))."'\" /> &nbsp;";
 				echo "<input type=\"button\" value=\"Schiffe\" onclick=\"document.location='?page=messages&sub=sendmsg&user_id=".$arr['user_id']."'\" /> &nbsp;";
 				echo "<input type=\"button\" value=\"Verteidigung\" onclick=\"document.location='?page=messages&sub=sendmsg&user_id=".$arr['user_id']."'\" /> &nbsp;";
 				echo "<input type=\"button\" value=\"Raketen\" onclick=\"document.location='?page=messages&sub=sendmsg&user_id=".$arr['user_id']."'\" /> ";

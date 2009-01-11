@@ -408,13 +408,17 @@
 				if ($_POST['message_subject']!="")
 				{
 					if (stristr($_POST['qmode']['message_subject'],"%")) $addchars = "%";else $addchars = "";
-					$sql.= " AND message_subject ".stripslashes($_POST['qmode']['message_subject']).$_POST['message_subject']."$addchars'";
+					$sql.= " AND md.subject ".stripslashes($_POST['qmode']['message_subject']).$_POST['message_subject']."$addchars'";
 				}
 				if ($_POST['message_text']!="")
 				{
 					if (stristr($_POST['qmode']['message_text'],"%")) $addchars = "%";else $addchars = "";
-					$sql.= " AND message_text ".stripslashes($_POST['qmode']['message_text']).$_POST['message_text']."$addchars'";
+					$sql.= " AND md.text ".stripslashes($_POST['qmode']['message_text']).$_POST['message_text']."$addchars'";
 				}
+				if ($_POST['message_fleet_id']!="")
+					$sql.= " AND md.fleet_id=".$_POST['message_fleet_id'];
+				if ($_POST['message_entity_id']!="")
+					$sql.= " AND md.entity_id=".$_POST['message_entity_id'];
 				if ($_POST['message_read']<2)
 				{
 					if ($_POST['message_read']==1)
@@ -583,12 +587,14 @@
 			echo "Suchmaske:<br/><br/>";
 			echo "<form action=\"?page=$page\" method=\"post\">";
 			echo "<table class=\"tb\">";
-			echo "<tr><th style=\"width:130px;\">Sender-ID</th><td><input type=\"text\" name=\"message_user_from_id\" value=\"\" size=\"4\" maxlength=\"250\" /></td>";;
-			echo "<tr><th>Sender-Nick</th><td><input type=\"text\" name=\"message_user_from_nick\" value=\"\" size=\"20\" maxlength=\"250\" /></td>";;
-			echo "<tr><th>Empf&auml;nger-ID</th><td><input type=\"text\" name=\"message_user_to_id\" value=\"\" size=\"4\" maxlength=\"250\" /></td>";;
-			echo "<tr><th>Empf&auml;nger-Nick</th><td><input type=\"text\" name=\"message_user_to_nick\" value=\"\" size=\"20\" maxlength=\"250\" autocomplete=\"off\" onkeyup=\"xajax_searchUser(this.value,'message_user_to_nick','citybox1');\" /><br><div class=\"citybox\" id=\"citybox1\">&nbsp;</div></td>";;
+			echo "<tr><th style=\"width:130px;\">Sender-ID</th><td><input type=\"text\" name=\"message_user_from_id\" value=\"\" size=\"4\" maxlength=\"250\" /></td>";
+			echo "<tr><th>Sender-Nick</th><td><input type=\"text\" name=\"message_user_from_nick\" value=\"\" size=\"20\" maxlength=\"250\" /></td>";
+			echo "<tr><th>Empf&auml;nger-ID</th><td><input type=\"text\" name=\"message_user_to_id\" value=\"\" size=\"4\" maxlength=\"250\" /></td>";
+			echo "<tr><th>Empf&auml;nger-Nick</th><td><input type=\"text\" name=\"message_user_to_nick\" value=\"\" size=\"20\" maxlength=\"250\" autocomplete=\"off\" onkeyup=\"xajax_searchUser(this.value,'message_user_to_nick','citybox1');\" /><br><div class=\"citybox\" id=\"citybox1\">&nbsp;</div></td>";
 			echo "<tr><th>Betreff</th><td><input type=\"text\" name=\"message_subject\" value=\"\" size=\"20\" maxlength=\"250\" /> ";fieldqueryselbox('message_subject');echo "</td></tr>";
 			echo "<tr><th>Text</th><td><input type=\"text\" name=\"message_text\" value=\"\" size=\"20\" maxlength=\"250\" /> ";fieldqueryselbox('message_text');echo "</td></tr>";
+			echo "<tr><th style=\"width:130px;\">Flotten-ID</th><td><input type=\"text\" name=\"message_fleet_id\" value=\"\" size=\"4\" maxlength=\"250\" /></td>";
+			echo "<tr><th style=\"width:130px;\">Entitiy-ID</th><td><input type=\"text\" name=\"message_entity_id\" value=\"\" size=\"4\" maxlength=\"250\" /></td>";
 			echo "<tr><th>Gelesen</th><td><input type=\"radio\" name=\"message_read\" value=\"2\" checked=\"checked\" /> Egal
 			<input type=\"radio\" name=\"message_read\" value=\"0\" /> Nein
 			<input type=\"radio\" name=\"message_read\" value=\"1\" /> Ja</td></tr>";

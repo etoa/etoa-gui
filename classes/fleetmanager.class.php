@@ -80,7 +80,8 @@
 				// TODO: This is not good query because it needs to know the planet table structure
 				$fres = dbquery("
 					SELECT
-						f.id
+						f.id,
+						f.leader_id
 					FROM
 						fleet f
 					INNER JOIN
@@ -88,13 +89,14 @@
 					ON p.id=f.entity_to
 						AND p.planet_user_id=".$this->userId."
 						AND f.user_id!='".$this->userId."'
+						AND !(f.action='alliance' AND f.leader_id!=f.id)
 					ORDER BY
 						landtime DESC;");
 				if (mysql_num_rows($fres)>0)
 				{	
 					while ($farr = mysql_fetch_row($fres))
 					{
-						$cFleet = new Fleet($farr[0]);			
+						$cFleet = new Fleet($farr[0],-1,$farr[1]);			
 					
 						if ($cFleet->getAction()->visible()) {
 							if ($cFleet->getAction()->attitude()==3) {

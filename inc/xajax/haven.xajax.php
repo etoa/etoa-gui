@@ -804,11 +804,11 @@ ob_start();
 						tableEnd();                                                                                  
 						
 						echo "<input type=\"button\" onclick=\"xajax_havenShowTarget(null)\" value=\"&lt;&lt; Zurück zur Zielwahl\" /> &nbsp; ";
+						echo "<input type=\"button\" onclick=\"xajax_havenReset()\" value=\"Reset\" />";
 						if ($actionsAvailable>0)
 						{
 							echo "<input type=\"button\" onclick=\"xajax_havenShowLaunch(xajax.getFormValues('actionForm'))\" value=\"Start! &gt;&gt;&gt;\"  /> &nbsp; ";
 						}
-						echo "<input type=\"button\" onclick=\"xajax_havenReset()\" value=\"Reset\" />";
 						echo "</form>";			
 						
 						$response->assign("havenContentAction","innerHTML",ob_get_contents());				
