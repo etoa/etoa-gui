@@ -34,15 +34,8 @@ namespace def
 				<< "WHERE "
 				<< "	deflist_id=" << (int)arr["deflist_id"] <<";";
 		    query.store();		
-				query.reset();				
-
-			std::cout << "Updated Def: Planet: "<<planetId
-				<< " User: " << userId
-				<< " Def: " << defId
-				<< " Count: " << count
-				<< "\n";	
-
-
+				query.reset();
+			
 			}
 			else
 			{
@@ -59,14 +52,6 @@ namespace def
 					<< "	" << count << ");";
 				query.store();		
 					query.reset();
-
-				std::cout << "Added Defense: Planet: "<<planetId
-					<< " User: " << userId
-					<< " Def: " << defId
-					<< " Count: " << count
-					<< "\n";	
-
-
 			}			
 		}
 	}

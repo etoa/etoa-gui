@@ -35,15 +35,8 @@ namespace ship
 				<< "	shiplist_id=" << (int)arr["shiplist_id"] <<" "
 				<< "LIMIT 1;";
 		    query.store();		
-				query.reset();				
-
-		std::cout << "Updated Ship: Planet: "<<planetId
-			<< " User: " << userId
-			<< " Ship: " << shipId
-			<< " Count: " << count
-			<< "\n";	
-
-
+				query.reset();
+			
 			}
 			else
 			{
@@ -65,14 +58,6 @@ namespace ship
 					<< "	" << data->getSpecial() << ");";
 				query.store();
 					query.reset();
-
-		std::cout << "Added Ship: Planet: "<<planetId
-			<< " User: " << userId
-			<< " Ship: " << shipId
-			<< " Count: " << count
-			<< "\n";	
-
-
 			}			
 		}
 	}

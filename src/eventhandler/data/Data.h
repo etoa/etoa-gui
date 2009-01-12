@@ -18,17 +18,19 @@ public:
 	* Object Class
 	* 
 	*/
-	Data(mysqlpp::Row object) {
-		this->id = (int)object["id"];
-		this->name = std::string(object["name"]);
-		this->shortComment = std::string(object["shortcomment"]);
-		this->longComment = std::string(object["longcomment"]);
-		this->costsMetal = (int)object["costs_metal"];
-		this->costsCrystal = (int)object["costs_crystal"];
-		this->costsPlastic = (int)object["costs_plastic"];
-		this->costsFuel  = (int)object["costs_fuel"];
-		this->costsFood  = (int)object["costs_fuel"];
-		this->costsPower  = (int)object["costs_power"];
+	Data(mysqlpp::Row object, bool init=true) {
+		if (init) {
+			this->id = (int)object["id"];
+			this->name = std::string(object["name"]);
+			this->shortComment = std::string(object["shortcomment"]);
+			this->longComment = std::string(object["longcomment"]);
+			this->costsMetal = (int)object["costs_metal"];
+			this->costsCrystal = (int)object["costs_crystal"];
+			this->costsPlastic = (int)object["costs_plastic"];
+			this->costsFuel  = (int)object["costs_fuel"];
+			this->costsFood  = (int)object["costs_fuel"];
+			this->costsPower  = (int)object["costs_power"];
+		}
 	};
 		
 	int getId();

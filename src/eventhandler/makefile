@@ -1,4 +1,4 @@
-OBJECTS = etoa.o FleetHandler.o BuildingHandler.o TechHandler.o ShipHandler.o ShipList.o DefHandler.o DefList.o PlanetManager.o Functions.o ConfigHandler.o MarketHandler.o aTechHandler.o aBuildingHandler.o aPointsHandler.o FleetAction.o Fleet.o AllianceHandler.o AnalyzeHandler.o AntraxHandler.o AsteroidHandler.o AttackHandler.o BombardHandler.o CancelHandler.o ColonializeHandler.o DebrisHandler.o DefaultHandler.o  DeliveryHandler.o EmpHandler.o ExploreHandler.o FetchHandler.o GasHandler.o GattackHandler.o InvadeHandler.o MarketDeliveryHandler.o NebulaHandler.o PositionHandler.o ReturnHandler.o SpyHandler.o StealHandler.o StealthHandler.o SupportHandler.o TransportHandler.o WreckageHandler.o BattleHandler.o DataHandler.o Data.o ShipData.o DefData.o TechData.o BuildingData.o Entity.o Asteroid.o Base.o Empty.o Market.o Nebula.o Planet.o Star.o Unknown.o Wormhole.o Object.o ListDef.o ListShip.o FleetShip.o Message.o Log.o User.o
+OBJECTS = etoa.o FleetHandler.o BuildingHandler.o TechHandler.o ShipHandler.o ShipList.o DefHandler.o DefList.o PlanetManager.o PlanetEntity.o Functions.o ConfigHandler.o MarketHandler.o aTechHandler.o aBuildingHandler.o aPointsHandler.o FleetAction.o Fleet.o AllianceHandler.o AnalyzeHandler.o AntraxHandler.o AsteroidHandler.o AttackHandler.o BombardHandler.o CancelHandler.o ColonializeHandler.o DebrisHandler.o DefaultHandler.o  DeliveryHandler.o EmpHandler.o ExploreHandler.o FetchHandler.o GasHandler.o GattackHandler.o InvadeHandler.o MarketDeliveryHandler.o NebulaHandler.o PositionHandler.o ReturnHandler.o SpyHandler.o StealHandler.o StealthHandler.o SupportHandler.o TransportHandler.o WreckageHandler.o BattleHandler.o DataHandler.o Data.o ShipData.o DefData.o TechData.o BuildingData.o RaceData.o PlanetData.o SolData.o SpecialistData.o Entity.o Asteroid.o Base.o Empty.o Market.o Nebula.o Planet.o Star.o Unknown.o Wormhole.o Object.o ListDef.o ListShip.o FleetShip.o Message.o Log.o User.o
 
 OPTS = -lmysqlpp #-lmysqlclient
 
@@ -25,6 +25,9 @@ DefHandler.o: def/DefHandler.cpp def/DefHandler.h def/DefList.h def/DefList.cpp
 
 PlanetManager.o: planet/PlanetManager.cpp planet/PlanetManager.h
 	g++ -c planet/PlanetManager.cpp	 
+
+PlanetEntity.o: planet/PlanetEntity.cpp planet/PlanetEntity.h
+	g++ -c planet/PlanetEntity.cpp	 
 
 Functions.o: functions/Functions.cpp functions/Functions.h
 	g++ -c functions/Functions.cpp
@@ -155,6 +158,18 @@ TechData.o: data/TechData.cpp data/TechData.h
 BuildingData.o: data/BuildingData.cpp data/BuildingData.h
 	g++ -c data/BuildingData.cpp
 
+RaceData.o: data/RaceData.cpp data/RaceData.h
+	g++ -c data/RaceData.cpp
+
+SolData.o: data/SolData.cpp data/SolData.h
+	g++ -c data/SolData.cpp
+
+PlanetData.o: data/PlanetData.cpp data/PlanetData.h
+	g++ -c data/PlanetData.cpp
+
+SpecialistData.o: data/SpecialistData.cpp data/SpecialistData.h
+	g++ -c data/SpecialistData.cpp
+
 Entity.o: entity/Entity.cpp entity/Entity.h
 	g++ -c entity/Entity.cpp
 
@@ -209,6 +224,6 @@ User.o: objects/User.cpp objects/User.h
 clean:
 	rm *.o
 cleanevent:
-	rm etoa.o BuildingHandler.o TechHandler.o ShipHandler.o ShipList.o DefHandler.o DefList.o PlanetManager.o Functions.o ConfigHandler.o MarketHandler.o aTechHandler.o aBuildingHandler.o 
+	rm etoa.o BuildingHandler.o TechHandler.o ShipHandler.o ShipList.o DefHandler.o DefList.o PlanetManager.o PlanetEntity.o Functions.o ConfigHandler.o MarketHandler.o aTechHandler.o aBuildingHandler.o RaceData.o SolData.o PlanetData.o ShipData.o DefData.o BuildingData.o SpecialistData.o
 cleanfleet:
 	rm etoa. FleetHandler.o FleetAction.o Functions.o ConfigHandler.o Fleet.o AllianceHandler.o AnalyzeHandler.o AntraxHandler.o AsteroidHandler.o AttackHandler.o BombardHandler.o CancelHandler.o ColonializeHandler.o DebrisHandler.o DefaultHandler.o  DeliveryHandler.o EmpHandler.o ExploreHandler.o FetchHandler.o GasHandler.o GattackHandler.o InvadeHandler.o MarketDeliveryHandler.o NebulaHandler.o PositionHandler.o ReturnHandler.o SpyHandler.o StealHandler.o StealthHandler.o SupportHandler.o TransportHandler.o WreckageHandler.o BattleHandler.o DataHandler.o Data.o ShipData.o DefData.o TechData.o BuildingData.o Entity.o Asteroid.o Base.o Empty.o Market.o Nebula.o Planet.o Star.o Unknown.o Wormhole.o Object.o ListDef.o ListShip.o FleetShip.o Message.o Log.o User.o

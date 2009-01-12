@@ -70,21 +70,21 @@ namespace ship
 	  			{
 					int new_queue_cnt = (int)ceil((double)((int)arr["queue_endtime"] - time)/(int)arr["queue_objtime"]);
 					int obj_cnt = (int)arr["queue_cnt"] - new_queue_cnt;
-  					ShipList::add(				(int)arr["queue_entity_id"], 
-  												(int)arr["queue_user_id"],
-  												(int)arr["queue_ship_id"],
-  												(int)obj_cnt);	  				
-				  	query << "UPDATE "
-						<< "	ship_queue "
-						<< "SET "
-						<< "	queue_cnt=" << new_queue_cnt << " "
-						<< "WHERE " 
-						<< "	queue_id=" << arr["queue_id"] <<";";
-				    query.store();		
+					
+					if (obj_cnt>0) {
+						ShipList::add(				(int)arr["queue_entity_id"], 
+													(int)arr["queue_user_id"],
+													(int)arr["queue_ship_id"],
+													(int)obj_cnt);	  				
+						query << "UPDATE "
+							<< "	ship_queue "
+							<< "SET "
+							<< "	queue_cnt=" << new_queue_cnt << " "
+							<< "WHERE " 
+							<< "	queue_id=" << arr["queue_id"] <<";";
+						query.store();		
 						query.reset();	
 						
-					if ((int)obj_cnt > 0)
-					{
 						changes_ = true;
 						updatePlanet = true;
 					}

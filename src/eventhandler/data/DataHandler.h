@@ -11,6 +11,10 @@
 #include "DefData.h"
 #include "TechData.h"
 #include "BuildingData.h"
+#include "RaceData.h"
+#include "SolData.h"
+#include "PlanetData.h"
+#include "SpecialistData.h"
 #include "../MysqlHandler.h"
 
 
@@ -40,6 +44,10 @@
 		DefData::DefData* getDefById(int id);
 		TechData::TechData* getTechById(int id);
 		BuildingData::BuildingData* getBuildingById(int id);
+		RaceData::RaceData* getRaceById(int id);
+		SolData::SolData* getSolById(int id);
+		PlanetData::PlanetData* getPlanetById(int id);		
+		SpecialistData::SpecialistData* getSpecialistById(int id);		
 		ShipData::ShipData* getShipByName(std::string name);
 		DefData::DefData* getDefByName(std::string name);
 		TechData::TechData* getTechByName(std::string name);
@@ -69,7 +77,7 @@
 		/**
 		* id <-> object_id Relationcontainer
 		**/
-		std::map<int, int> idDefConverter, idShipConverter, idTechConverter, idBuildingConverter;
+		std::map<int, int> idDefConverter, idShipConverter, idTechConverter, idBuildingConverter, idRaceConverter, idSolConverter, idPlanetConverter, idSpecialistConverter;
 		
 		/**
 		* Container mit den gespeicherten Daten
@@ -78,6 +86,10 @@
 		std::vector<DefData*> defData;
 		std::vector<TechData*> techData;
 		std::vector<BuildingData*> buildingData;
+		std::vector<RaceData*> raceData;
+		std::vector<SolData*> solData;
+		std::vector<PlanetData*> planetData;
+		std::vector<SpecialistData*> specialistData;
 		
 		/**
 		* counter

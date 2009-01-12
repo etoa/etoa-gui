@@ -28,13 +28,11 @@
 #include <iomanip>
 #include <cstdlib>	// For system commands
 #include <vector>
-#include <map>
 #include <mysql++/mysql++.h>
 
 #include "EventHandler.h"
 
 #include "data/DataHandler.h"
-#include "functions/Functions.h"
 #include "config/ConfigHandler.h"
 
 #include "fleet/FleetHandler.h"
@@ -43,7 +41,6 @@
 #include "ship/ShipHandler.h"
 #include "def/DefHandler.h"
 #include "planet/PlanetManager.h"
-#include "planet/Planet.h"
 #include "market/MarketHandler.h"
 //#include "quest/QuestHandler.h"
 
@@ -154,15 +151,12 @@ main(int argc, char *argv[])
 				}
 			}
 			planet::PlanetManager* pm = new planet::PlanetManager(&v1);
-			pm->updateValues(&v1);		
-			
 			pm->updateUserPlanets();
-			
 			delete pm;
 
 		}
 		sleep(1);
 	}		
 
-	return 1;
+	return 0;
 }

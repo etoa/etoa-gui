@@ -68,22 +68,23 @@ namespace def
 	  			// Bau ist noch im Gang
 	  			else
 	  			{
-	  				int obj_cnt = (int)arr["queue_cnt"] - (int)ceil((double)((int)arr["queue_endtime"] - time)/(int)arr["queue_objtime"]);
-					DefList::add(				(int)arr["queue_entity_id"], 
-  												(int)arr["queue_user_id"],
-  												(int)arr["queue_def_id"],
-  												(int)obj_cnt);	  				
-				  	query << "UPDATE "
-						<< "	def_queue "
-						<< "SET "
-						<< "	queue_cnt=queue_cnt-" << obj_cnt << " "
-						<< "WHERE " 
-						<< "	queue_id=" << arr["queue_id"] <<";";
-				    query.store();		
+					int new_queue_cnt = (int)ceil((double)((int)arr["queue_endtime"] - time)/(int)arr["queue_objtime"]);
+	  				int obj_cnt = (int)arr["queue_cnt"] - new_queue_cnt;
+					
+					if (obj_cnt>0) {
+						DefList::add(				(int)arr["queue_entity_id"], 
+													(int)arr["queue_user_id"],
+													(int)arr["queue_def_id"],
+													(int)obj_cnt);	  				
+						query << "UPDATE "
+							<< "	def_queue "
+							<< "SET "
+							<< "	queue_cnt=queue_cnt-" << obj_cnt << " "
+							<< "WHERE " 
+							<< "	queue_id=" << arr["queue_id"] <<";";
+						query.store();		
 						query.reset();
 
-					if ((int)obj_cnt > 0)
-					{
 						changes_=true;
 						updatePlanet = true;
 					}

@@ -28,6 +28,22 @@
 		return this->buildingData[idBuildingConverter[id] ];
 	}
 	
+	RaceData::RaceData* DataHandler::getRaceById(int id) {
+		return this->raceData[idRaceConverter[id] ];
+	}
+	
+	SolData::SolData* DataHandler::getSolById(int id) {
+		return this->solData[idSolConverter[id] ];
+	}
+	
+	PlanetData::PlanetData* DataHandler::getPlanetById(int id) {
+		return this->planetData[idPlanetConverter[id] ];
+	}
+	
+	SpecialistData::SpecialistData* DataHandler::getSpecialistById(int id) {
+		return this->specialistData[idSpecialistConverter[id] ];
+	}
+		
 	ShipData::ShipData* DataHandler::getShipByName(std::string name) {
 		return this->shipData[nameConverter[name] ];
 	}
@@ -51,10 +67,18 @@
 		this->shipData.clear();
 		this->techData.clear();
 		this->buildingData.clear();
+		this->raceData.clear();
+		this->solData.clear();
+		this->planetData.clear();
+		this->specialistData.clear();		
 		this->idDefConverter.clear();
 		this->idShipConverter.clear();
 		this->idTechConverter.clear();
 		this->idBuildingConverter.clear();
+		this->idRaceConverter.clear();
+		this->idSolConverter.clear();
+		this->idPlanetConverter.clear();
+		this->idSpecialistConverter.clear();
 		
 		loadData();
 	}
@@ -295,6 +319,102 @@
 					this->nameConverter[std::string(bRow["name"]) ] = this->counter;
 					object = new BuildingData(bRow);
 					this->buildingData.push_back(object);
+					this->counter++;
+				}
+			}
+		}
+		
+		this->counter = 0;	 	 	 	 	 	 	 	 	 	 	 	 	 	
+		query << "SELECT ";
+		query << "	* ";
+		query << "FROM ";
+		query << "	races;";
+		mysqlpp::Result rRes = query.store();	
+		query.reset();
+		if (rRes) {
+			int rSize = rRes.size();
+			RaceData* object;
+
+			if (rSize>0) {
+				mysqlpp::Row rRow;
+				
+				for (mysqlpp::Row::size_type i = 0; i<rSize; i++) {
+					rRow = rRes.at(i);
+					this->idRaceConverter[(int)(rRow["race_id"]) ] =  this->counter;
+					object = new RaceData(rRow);
+					this->raceData.push_back(object);
+					this->counter++;
+				}
+			}
+		}
+		
+		this->counter = 0;	 	 	 	 	 	 	 	 	 	 	 	 	 	
+		query << "SELECT ";
+		query << "	* ";
+		query << "FROM ";
+		query << "	sol_types;";
+		mysqlpp::Result slRes = query.store();	
+		query.reset();
+		if (slRes) {
+			int slSize = slRes.size();
+			SolData* object;
+
+			if (slSize>0) {
+				mysqlpp::Row slRow;
+				
+				for (mysqlpp::Row::size_type i = 0; i<slSize; i++) {
+					slRow = slRes.at(i);
+					this->idSolConverter[(int)(slRow["sol_type_id"]) ] =  this->counter;
+					object = new SolData(slRow);
+					this->solData.push_back(object);
+					this->counter++;
+				}
+			}
+		}
+		
+		this->counter = 0;	 	 	 	 	 	 	 	 	 	 	 	 	 	
+		query << "SELECT ";
+		query << "	* ";
+		query << "FROM ";
+		query << "	planet_types;";
+		mysqlpp::Result pRes = query.store();	
+		query.reset();
+		if (pRes) {
+			int pSize = pRes.size();
+			PlanetData* object;
+
+			if (pSize>0) {
+				mysqlpp::Row pRow;
+				
+				for (mysqlpp::Row::size_type i = 0; i<pSize; i++) {
+					pRow = pRes.at(i);
+					this->idPlanetConverter[(int)(pRow["type_id"]) ] =  this->counter;
+					object = new PlanetData(pRow);
+					this->planetData.push_back(object);
+					this->counter++;
+				}
+			}
+		}
+		
+		this->counter = 0;	 	 	 	 	 	 	 	 	 	 	 	 	 	
+		query << "SELECT ";
+		query << "	* ";
+		query << "FROM ";
+		query << "	specialists;";
+		mysqlpp::Result spRes = query.store();	
+		query.reset();
+		if (spRes) {
+			int spSize = spRes.size();
+			SpecialistData* object;
+
+			if (spSize>0) {
+				mysqlpp::Row spRow;
+				
+				for (mysqlpp::Row::size_type i = 0; i<spSize; i++) {
+					spRow = spRes.at(i);
+					this->idSpecialistConverter[(int)(spRow["specialist_id"]) ] =  this->counter;
+					object = new SpecialistData(spRow);
+					this->specialistData.push_back(object);
 					this->counter++;
 				}
 			}

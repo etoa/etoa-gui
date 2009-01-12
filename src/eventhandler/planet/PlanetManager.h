@@ -2,9 +2,13 @@
 #ifndef __PLANETMANAGER__
 #define __PLANETMANAGER__
 
+#include <mysql++/mysql++.h>
+
 #include <vector>
 #include <iostream>
+
 #include "../MysqlHandler.h"
+#include "../planet/PlanetEntity.h"
 
 namespace planet
 {
@@ -14,18 +18,9 @@ namespace planet
 		PlanetManager();
 		PlanetManager(std::vector<int>* planetIds);	
 
-		void updateValues(std::vector<int>* planetIds);
-		void updateEconomy(int planetId, mysqlpp::Row& row, std::vector<double>& ressource);
-		void updateFields(int planetId, int& fieldsUsed, int& fieldsExtra);
-		void updateStorage(int planetId, std::vector<double>& store);
-		void updateProductionRates(int planetId, std::vector<double>& cnt, mysqlpp::Row& row);
-		void save(int planetId, std::vector<double>& store, std::vector<double>& cnt, std::vector<double>& ressource, int fieldsUsed, int fieldsExtra);
 		void updateUserPlanets();
-		void saveRes(int planetId, std::vector<double>& ressource);
-
 	private:
-		mysqlpp::Connection* con_;
-		std::vector<int>* planetIds_;
+		PlanetEntity* planet_;
 	};
 }
 
