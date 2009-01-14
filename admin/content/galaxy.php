@@ -442,12 +442,12 @@
 			");
 		if (mysql_num_rows($res)>0)
 		{
-			echo "<table class=\"tb\"><tr><th>Nick</th><th>Anzahl HP's</th><th>Aktionen</th></tr>";
+			echo "<table class=\"tb\"><tr><th>Nick</th><th>Anzahl Hauptplaneten</th></tr>";
 			while ($arr=mysql_fetch_array($res))
 			{
-				echo "<tr><td>".$arr['nick']." (".$arr['uid'].")</td>
+				echo "<tr><td>".$arr['user_nick']." (".$arr['uid'].")</td>
 				<td>".$arr['s']."</td>
-				<td></td></tr>";
+				</tr>";
 			}
 			echo "</table>";						
 		}
@@ -1223,6 +1223,7 @@
 				echo "<td class=\"tbltitle\" valign=\"top\" style=\"width:40px;\">ID</td>";
 				echo "<td class=\"tbltitle\" valign=\"top\" style=\"width:90px;\">Koordinaten</td>";
 				echo "<td class=\"tbltitle\" valign=\"top\">Entitätstyp</td>";
+				echo "<td class=\"tbltitle\" valign=\"top\">Subtyp</td>";
 				echo "<td class=\"tbltitle\" valign=\"top\">Name</td>";
 				echo "<td class=\"tbltitle\" valign=\"top\">Besitzer</td>";
 				echo "<td class=\"tbltitle\" valign=\"top\" style=\"width:150px;\">Typ</td>";
@@ -1241,8 +1242,9 @@
 					</a>  </td>";
 					echo "<td class=\"tbldata\" style=\"color:".Entity::$entityColors[$arr['code']]."\">";
 					echo $ent->entityCodeString();
-					echo " ".($ent->isMain ? "(Hauptplanet)": '')."";
+					echo " ".($ent->ownerMain() ? "(Hauptplanet)": '')."";
 					echo "</td>";
+					echo "<td class=\"tbldata\">".$ent->type()."</td>";
 					echo "<td class=\"tbldata\">".$ent->name()."</td>";
 					echo "<td class=\"tbldata\">";
 					if ($ent->ownerId()>0)

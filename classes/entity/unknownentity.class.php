@@ -59,6 +59,9 @@
 		* Returns type string
 		*/                        
 		function entityCodeString() { return "Unbekannter Raum"; }      
+
+		function ownerMain() { return false; }
+
 	
 		/**
 		* Returns type

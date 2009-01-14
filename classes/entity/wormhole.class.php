@@ -61,6 +61,9 @@
 		*/                        
 		function ownerId() { return 0; }      
 	
+		function ownerMain() { return false; }
+	
+	
 		/**
 		* Returns type string
 		*/                        
@@ -71,7 +74,7 @@
 		*/
 		function type()
 		{
-			return "Wurmloch";
+			return "";
 		}							
 
 		function imagePath($opt="")

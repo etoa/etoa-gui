@@ -56,6 +56,8 @@
 		* Returns owner
 		*/                        
 		function ownerId() { return 0; }      
+
+		function ownerMain() { return false; }
 	
 		
 		/**
@@ -68,7 +70,7 @@
 		*/
 		function type()
 		{
-			return "Unbekannt";
+			return "";
 		}							
 
 		function imagePath($opt="")

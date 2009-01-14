@@ -32,18 +32,33 @@
 				{		
 					if (isset($_POST['save']))
 					{
+						$pl = new Planet($id);							
+
 						if (isset($_POST['planet_user_main']))
 						{
-							$pl = new Planet($id);							
-							if ($pl->setToMain())
+							if ($pl->setMain())
 								success_msg("Hauptplanet gesetzt!");
 						}			              
+						else
+						{
+							if ($pl->isMain)
+							{
+								$pl->unsetMain();	
+								success_msg("Hauptplanet-Zuordnung entfernt!");
+							}
+						}
 						
 						$addsql = "";
 						if (isset($_POST['rst_user_changed']))
 						{
 							$addsql.= ",planet_user_changed=0";
 						}
+						if ($pl->typeId != $_POST['planet_type_id'])
+						{
+							$addsql.=",planet_image='".$_POST['planet_type_id']."_1'";
+						}
+						else
+							$addsql.=",planet_image='".$_POST['planet_image']."'";
 						
 						//Daten Speichern
 						dbquery("
@@ -54,7 +69,6 @@
               planet_type_id=".$_POST['planet_type_id'].",
               planet_fields=".$_POST['planet_fields'].",
               planet_fields_extra=".$_POST['planet_fields_extra'].",
-              planet_image='".$_POST['planet_image']."',
               planet_temp_from=".$_POST['planet_temp_from'].",
               planet_temp_to=".$_POST['planet_temp_to'].",
               planet_res_metal='".$_POST['planet_res_metal']."',
@@ -73,6 +87,7 @@
               planet_people='".$_POST['planet_people']."',
               planet_people=planet_people+'".$_POST['planet_people_add']."',
               planet_desc='".addslashes($_POST['planet_desc'])."'
+              $addsql
 						WHERE
 							id='".$id."';");
 						if (mysql_affected_rows()>0)
@@ -116,9 +131,9 @@
 					
 				
 					echo "<tr><th>Name</t>
-					<td class=\"tbldata\"><input type=\"text\" name=\"planet_name\" value=\"".$arr['planet_name']."\" size=\"20\" maxlength=\"250\" /></td>";
+					<td><input type=\"text\" name=\"planet_name\" value=\"".$arr['planet_name']."\" size=\"20\" maxlength=\"250\" /></td>";
 					echo "<th>Typ</th>
-					<td class=\"tbldata\">
+					<td>
 					<select name=\"planet_type_id\">";
 					$tres = dbquery("SELECT * FROM planet_types ORDER BY type_name;");
 					while ($tarr = mysql_fetch_array($tres))
@@ -133,11 +148,11 @@
 					}
 					echo "</select></td></tr>";
 
-					echo "<tr><td class=\"tbldata\" style=\"height:2px;\" colspan=\"4\"></td></tr>";
+					echo "<tr><td style=\"height:2px;\" colspan=\"4\"></td></tr>";
 					
 					//Listet alle User der Spiels auf
 					$users = get_user_names();
-					echo "<tr><th>Besitzer</th><td class=\"tbldata\" colspan=\"3\"><select name=\"planet_user_id\">";
+					echo "<tr><th>Besitzer</th><td colspan=\"3\"><select name=\"planet_user_id\">";
 					echo "<option value=\"0\">(niemand)</option>";
 					foreach ($users as $uid=>$udata)
 					{
@@ -159,7 +174,7 @@
 
 					echo "<tr>
 					<th>Hauptplanet</th>
-					<td class=\"tbldata\">";
+					<td>";
 					if ($arr['planet_user_id']>0)
 					{
 						echo "<input type=\"checkbox\" name=\"planet_user_main\" ".($arr['planet_user_main']==1 ? " checked=\"checked\"" : "")." value=\"1\"/> Ist Hauptplanet";
@@ -168,28 +183,28 @@
 						echo "-";
 					echo "</td>
 					<th>Letzer Besitzerwechsel</th>
-					<td class=\"tbldata\">
+					<td>
 					".($arr['planet_user_changed']>0 ? df($arr['planet_user_changed'])." <input type=\"checkbox\" name=\"rst_user_changed\" value=\"1\" /> Reset" : '-')."
 					</td>
 					</tr>";
 					
-					echo "<tr><td class=\"tbldata\" style=\"height:2px;\" colspan=\"4\"></td></tr>";
+					echo "<tr><td style=\"height:2px;\" colspan=\"4\"></td></tr>";
 					
 					echo "<tr><th>Felder / Extra-Felder</th>
-					<td class=\"tbldata\"><input type=\"text\" name=\"planet_fields\" value=\"".$arr['planet_fields']."\" size=\"10\" maxlength=\"250\" />
+					<td><input type=\"text\" name=\"planet_fields\" value=\"".$arr['planet_fields']."\" size=\"10\" maxlength=\"250\" />
 					<input type=\"text\" name=\"planet_fields_extra\" value=\"".$arr['planet_fields_extra']."\" size=\"10\" maxlength=\"250\" /></td>";
 					echo "<th>Felder benutzt</th>
-					<td class=\"tbldata\">".nf($arr['planet_fields_used'])."</td></tr>";
+					<td>".nf($arr['planet_fields_used'])."</td></tr>";
 					
 					echo "<tr><th>Temperatur</th>
-					<td class=\"tbldata\">
+					<td>
 						<input type=\"text\" name=\"planet_temp_from\" value=\"".$arr['planet_temp_from']."\" size=\"4\" maxlength=\"5\" />
 						bis <input type=\"text\" name=\"planet_temp_to\" value=\"".$arr['planet_temp_to']."\" size=\"4\" maxlength=\"5\" /> &deg;C
 					</td>";
 					$imPath = IMAGE_PATH."/planets/planet";
 					$imPathPost = "_small.".IMAGE_EXT;
 					echo "<th>Bild</th>
-					<td class=\"tbldata\">
+					<td>
 					<img id=\"pimg\" src=\"".$imPath.$arr['planet_image'].$imPathPost."\" style=\"float:left;\" />
 					<select name=\"planet_image\" onchange=\"document.getElementById('pimg').src='$imPath'+this.value+'$imPathPost'\">";
 					echo "<option value=\"\">Undefiniert</options";
@@ -207,81 +222,81 @@
 					
 					echo "</tr>";
 					
-					echo "<td class=\"tbldata\" style=\"height:2px;\" colspan=\"4\"></td></tr>";
+					echo "<td style=\"height:2px;\" colspan=\"4\"></td></tr>";
 					
 					echo "<tr><th class=\"resmetalcolor\">Titan</th>
 					<td><input type=\"text\" name=\"planet_res_metal\" value=\"".intval($arr['planet_res_metal'])."\" size=\"12\" maxlength=\"20\" /><br/>
 					+/-: <input type=\"text\" name=\"planet_res_metal_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
 					echo "<th class=\"rescrystalcolor\">Silizium</th>
-					<td class=\"tbldata\"><input type=\"text\" name=\"planet_res_crystal\" value=\"".intval($arr['planet_res_crystal'])."\" size=\"12\" maxlength=\"20\" /><br/>
+					<td><input type=\"text\" name=\"planet_res_crystal\" value=\"".intval($arr['planet_res_crystal'])."\" size=\"12\" maxlength=\"20\" /><br/>
 					+/-: <input type=\"text\" name=\"planet_res_crystal_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
 					
 					echo "<tr><th class=\"resplasticcolor\">PVC</th>
-					<td class=\"tbldata\"><input type=\"text\" name=\"planet_res_plastic\" value=\"".intval($arr['planet_res_plastic'])."\" size=\"12\" maxlength=\"20\" /><br/>
+					<td><input type=\"text\" name=\"planet_res_plastic\" value=\"".intval($arr['planet_res_plastic'])."\" size=\"12\" maxlength=\"20\" /><br/>
 					+/-: <input type=\"text\" name=\"planet_res_plastic_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
 					echo "<th class=\"resfuelcolor\">Tritium</th>
-					<td class=\"tbldata\"><input type=\"text\" name=\"planet_res_fuel\" value=\"".intval($arr['planet_res_fuel'])."\" size=\"12\" maxlength=\"20\" /><br/>
+					<td><input type=\"text\" name=\"planet_res_fuel\" value=\"".intval($arr['planet_res_fuel'])."\" size=\"12\" maxlength=\"20\" /><br/>
 					+/-: <input type=\"text\" name=\"planet_res_fuel_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
 					
 					echo "<tr><th class=\"resfoodcolor\">Nahrung</th>
-					<td class=\"tbldata\"><input type=\"text\" name=\"planet_res_food\" value=\"".intval($arr['planet_res_food'])."\" size=\"12\" maxlength=\"20\" /><br/>
+					<td><input type=\"text\" name=\"planet_res_food\" value=\"".intval($arr['planet_res_food'])."\" size=\"12\" maxlength=\"20\" /><br/>
 					+/-: <input type=\"text\" name=\"planet_res_food_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
 					echo "<th class=\"respeoplecolor\">Bevölkerung</th>
-					<td class=\"tbldata\"><input type=\"text\" name=\"planet_people\" value=\"".intval($arr['planet_people'])."\" size=\"12\" maxlength=\"20\" /><br/>
+					<td><input type=\"text\" name=\"planet_people\" value=\"".intval($arr['planet_people'])."\" size=\"12\" maxlength=\"20\" /><br/>
 					+/-: <input type=\"text\" name=\"planet_people_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
 
-					echo "<td class=\"tbldata\" style=\"height:2px;\" colspan=\"4\"></td></tr>";
+					echo "<td style=\"height:2px;\" colspan=\"4\"></td></tr>";
 
 					echo "<tr><th>Produktion ".RES_METAL."</th>
-					<td class=\"tbldata\">".nf($arr['planet_prod_metal'])."</td>";
+					<td>".nf($arr['planet_prod_metal'])."</td>";
 					echo "<th>Speicher ".RES_METAL.":</th>
-					<td class=\"tbldata\">".nf($arr['planet_store_metal'])."</td></tr>";
+					<td>".nf($arr['planet_store_metal'])."</td></tr>";
 					
 					echo "<tr><th>Produktion ".RES_CRYSTAL."</th>
-					<td class=\"tbldata\">".nf($arr['planet_prod_crystal'])."</td>";
+					<td>".nf($arr['planet_prod_crystal'])."</td>";
 					echo "<th>Speicher ".RES_CRYSTAL.":</th>
-					<td class=\"tbldata\">".nf($arr['planet_store_crystal'])."</td></tr>";
+					<td>".nf($arr['planet_store_crystal'])."</td></tr>";
 					
 					echo "<tr><th>Produktion ".RES_PLASTIC."</th>
-					<td class=\"tbldata\">".nf($arr['planet_prod_plastic'])."</td>";
+					<td>".nf($arr['planet_prod_plastic'])."</td>";
 					echo "<th>Speicher ".RES_PLASTIC.":</th>
-					<td class=\"tbldata\">".nf($arr['planet_store_plastic'])."</td></tr>";
+					<td>".nf($arr['planet_store_plastic'])."</td></tr>";
 					
 					echo "<tr><th>Produktion ".RES_FUEL."</th>
-					<td class=\"tbldata\">".nf($arr['planet_prod_fuel'])."</td>";
+					<td>".nf($arr['planet_prod_fuel'])."</td>";
 					echo "<th>Speicher ".RES_FUEL.":</th>
-					<td class=\"tbldata\">".nf($arr['planet_store_fuel'])."</td></tr>";
+					<td>".nf($arr['planet_store_fuel'])."</td></tr>";
 					
 					echo "<tr><th>Produktion ".RES_FOOD."</th>
-					<td class=\"tbldata\">".nf($arr['planet_prod_food'])."</td>";
+					<td>".nf($arr['planet_prod_food'])."</td>";
 					echo "<th>Speicher ".RES_FOOD.":</th>
-					<td class=\"tbldata\">".nf($arr['planet_store_food'])."</td></tr>";
+					<td>".nf($arr['planet_store_food'])."</td></tr>";
 		
 					echo "<tr><th>Verbrauch Energie:</th>
-					<td class=\"tbldata\">".nf($arr['planet_use_power'])."</td>";
+					<td>".nf($arr['planet_use_power'])."</td>";
 					echo "<th>Produktion Energie:</th>
-					<td class=\"tbldata\">".nf($arr['planet_prod_power'])."</td></tr>";
+					<td>".nf($arr['planet_prod_power'])."</td></tr>";
 					
 					echo "<tr><th>Wohnraum</th>
-					<td class=\"tbldata\">".nf($arr['planet_people_place'])."</td>";
+					<td>".nf($arr['planet_people_place'])."</td>";
 					echo "<th>Bevölkerungswachstum</th>
-					<td class=\"tbldata\">".nf($arr['planet_prod_people'])."</td></tr>";
+					<td>".nf($arr['planet_prod_people'])."</td></tr>";
 		
-					echo "<td class=\"tbldata\" style=\"height:2px;\" colspan=\"4\"></td></tr>";
+					echo "<td style=\"height:2px;\" colspan=\"4\"></td></tr>";
 					
 					echo "<tr><th>Tr&uuml;mmerfeld Titan</th>
-					<td class=\"tbldata\"><input type=\"text\" name=\"planet_wf_metal\" value=\"".$arr['planet_wf_metal']."\" size=\"20\" maxlength=\"250\" /></td>";
+					<td><input type=\"text\" name=\"planet_wf_metal\" value=\"".$arr['planet_wf_metal']."\" size=\"20\" maxlength=\"250\" /></td>";
 					echo "<th>Tr&uuml;mmerfeld Silizium</th>
-					<td class=\"tbldata\"><input type=\"text\" name=\"planet_wf_crystal\" value=\"".$arr['planet_wf_crystal']."\" size=\"20\" maxlength=\"250\" /></td></tr>";
+					<td><input type=\"text\" name=\"planet_wf_crystal\" value=\"".$arr['planet_wf_crystal']."\" size=\"20\" maxlength=\"250\" /></td></tr>";
 					
 					echo "<tr><th>Tr&uuml;mmerfeld PVC</th>
-					<td class=\"tbldata\"><input type=\"text\" name=\"planet_wf_plastic\" value=\"".$arr['planet_wf_plastic']."\" size=\"20\" maxlength=\"250\" /></td>";
+					<td><input type=\"text\" name=\"planet_wf_plastic\" value=\"".$arr['planet_wf_plastic']."\" size=\"20\" maxlength=\"250\" /></td>";
 					echo "<th>Updated</th>
-					<td class=\"tbldata\">".date("d.m.Y H:i",$arr['planet_last_updated'])."</th></tr>";
+					<td>".date("d.m.Y H:i",$arr['planet_last_updated'])."</th></tr>";
 		
 					
 					echo "<tr><th>Beschreibung</td>
-					<td class=\"tbldata\" colspan=\"3\"><textarea name=\"planet_desc\" rows=\"2\" cols=\"50\" >".stripslashes($arr['planet_desc'])."</textarea></td></tr>";
+					<td colspan=\"3\"><textarea name=\"planet_desc\" rows=\"2\" cols=\"50\" >".stripslashes($arr['planet_desc'])."</textarea></td></tr>";
 					echo "</table>";
 					echo "<br/>
 								<input tabindex=\"26\" type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" class=\"button\" />&nbsp;";
@@ -293,9 +308,8 @@
 				}
 				elseif ($earr['code']=='s')
 				{		
-					echo ", Stern) bearbeiten</h2>";
-								
-					if ($_POST['save']!="")
+							
+					if (isset($_POST['save']))
 					{
 						//Daten Speichern
 						dbquery("
@@ -322,21 +336,19 @@
 					$arr = mysql_fetch_array($res);
 					
 					echo "<form action=\"?page=$page&sub=edit&id=".$id."\" method=\"post\" id=\"editform\">";
-					echo "<table class=\"tbl\">";
-					
-				
-					echo "<tr><td class=\"tbltitle\" valign=\"top\">Name</td>
-					<td class=\"tbldata\"><input type=\"text\" name=\"name\" value=\"".$arr['name']."\" size=\"20\" maxlength=\"250\" /></td>";
-					echo "<td class=\"tbltitle\" valign=\"top\">Typ</td>
-					<td class=\"tbldata\">
+					tableStart("<span style=\"color:".Entity::$entityColors[$earr['code']]."\">Stern</span>","auto");
+					echo "<tr><th>Name</th>
+					<td><input type=\"text\" name=\"name\" value=\"".$arr['name']."\" size=\"20\" maxlength=\"250\" /></td>";
+					echo "<th>Typ</th>
+					<td>
 					<img src=\"".IMAGE_PATH."/stars/star".$arr['type_id']."_small.".IMAGE_EXT."\" style=\"float:left;\" />
 					<select name=\"type_id\">";
-					$tres = dbquery("SELECT * FROM sol_types ORDER BY type_name;");
+					$tres = dbquery("SELECT * FROM sol_types ORDER BY sol_type_name;");
 					while ($tarr = mysql_fetch_array($tres))
 					{
-						echo "<option value=\"".$tarr['type_id']."\"";
-						if ($arr['type_id']==$tarr['type_id']) echo " selected=\"selected\"";
-						echo ">".$tarr['type_name']."</option>\n";
+						echo "<option value=\"".$tarr['sol_type_id']."\"";
+						if ($arr['type_id']==$tarr['sol_type_id']) echo " selected=\"selected\"";
+						echo ">".$tarr['sol_type_name']."</option>\n";
 					}
 					echo "</select></td></tr>";
 					echo "</table>";
@@ -348,9 +360,7 @@
 				}
 				elseif ($earr['code']=='a')
 				{		
-					echo ", Asteroidenfeld) bearbeiten</h2>";
-								
-					if ($_POST['save']!="")
+					if (isset($_POST['save']))
 					{
 						//Daten Speichern
 						dbquery("
@@ -387,28 +397,27 @@
 					$arr = mysql_fetch_array($res);
 					
 					echo "<form action=\"?page=$page&sub=edit&id=".$id."\" method=\"post\" id=\"editform\">";
-					echo "<table class=\"tbl\">";
-					
-		
-					echo "<tr><td class=\"tbltitle\" valign=\"top\">".RES_METAL."</td>
-					<td class=\"tbldata\"><input type=\"text\" name=\"res_metal\" value=\"".intval($arr['res_metal'])."\" size=\"12\" maxlength=\"20\" /><br/>
+					tableStart("<span style=\"color:".Entity::$entityColors[$earr['code']]."\">Asteroidenfeld</span>","auto");
+							
+					echo "<tr><th>".RES_METAL."</th>
+					<td><input type=\"text\" name=\"res_metal\" value=\"".intval($arr['res_metal'])."\" size=\"12\" maxlength=\"20\" /><br/>
 					+/-: <input type=\"text\" name=\"res_metal_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
-					echo "<td class=\"tbltitle\" valign=\"top\">".RES_CRYSTAL."</td>
-					<td class=\"tbldata\"><input type=\"text\" name=\"res_crystal\" value=\"".intval($arr['res_crystal'])."\" size=\"12\" maxlength=\"20\" /><br/>
+					echo "<th>".RES_CRYSTAL."</th>
+					<td><input type=\"text\" name=\"res_crystal\" value=\"".intval($arr['res_crystal'])."\" size=\"12\" maxlength=\"20\" /><br/>
 					+/-: <input type=\"text\" name=\"res_crystal_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
 					
-					echo "<tr><td class=\"tbltitle\" valign=\"top\">".RES_PLASTIC."</td>
-					<td class=\"tbldata\"><input type=\"text\" name=\"res_plastic\" value=\"".intval($arr['res_plastic'])."\" size=\"12\" maxlength=\"20\" /><br/>
+					echo "<tr><th>".RES_PLASTIC."</th>
+					<td><input type=\"text\" name=\"res_plastic\" value=\"".intval($arr['res_plastic'])."\" size=\"12\" maxlength=\"20\" /><br/>
 					+/-: <input type=\"text\" name=\"res_plastic_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
-					echo "<td class=\"tbltitle\" valign=\"top\">".RES_FUEL."</td>
-					<td class=\"tbldata\"><input type=\"text\" name=\"res_fuel\" value=\"".intval($arr['res_fuel'])."\" size=\"12\" maxlength=\"20\" /><br/>
+					echo "<th>".RES_FUEL."</th>
+					<td><input type=\"text\" name=\"res_fuel\" value=\"".intval($arr['res_fuel'])."\" size=\"12\" maxlength=\"20\" /><br/>
 					+/-: <input type=\"text\" name=\"res_fuel_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
 					
-					echo "<tr><td class=\"tbltitle\" valign=\"top\">".RES_FOOD."</td>
-					<td class=\"tbldata\"><input type=\"text\" name=\"res_food\" value=\"".intval($arr['res_food'])."\" size=\"12\" maxlength=\"20\" /><br/>
+					echo "<tr><th>".RES_FOOD."</th>
+					<td><input type=\"text\" name=\"res_food\" value=\"".intval($arr['res_food'])."\" size=\"12\" maxlength=\"20\" /><br/>
 					+/-: <input type=\"text\" name=\"res_food_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
-					echo "<td class=\"tbltitle\" valign=\"top\">".RES_POWER."</td>
-					<td class=\"tbldata\"><input type=\"text\" name=\"res_power\" value=\"".intval($arr['res_power'])."\" size=\"12\" maxlength=\"20\" /><br/>
+					echo "<th>".RES_POWER."</th>
+					<td><input type=\"text\" name=\"res_power\" value=\"".intval($arr['res_power'])."\" size=\"12\" maxlength=\"20\" /><br/>
 					+/-: <input type=\"text\" name=\"res_power_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
 					
 					echo "</table>";
@@ -420,9 +429,7 @@
 				}				
 				elseif ($earr['code']=='n')
 				{		
-					echo ", Nebel) bearbeiten</h2>";
-								
-					if ($_POST['save']!="")
+					if (isset($_POST['save']))
 					{
 						//Daten Speichern
 						dbquery("
@@ -459,28 +466,27 @@
 					$arr = mysql_fetch_array($res);
 					
 					echo "<form action=\"?page=$page&sub=edit&id=".$id."\" method=\"post\" id=\"editform\">";
-					echo "<table class=\"tbl\">";
-					
+					tableStart("<span style=\"color:".Entity::$entityColors[$earr['code']]."\">Interstellarer Nebel</span>","auto");
 		
-					echo "<tr><td class=\"tbltitle\" valign=\"top\">".RES_METAL."</td>
-					<td class=\"tbldata\"><input type=\"text\" name=\"res_metal\" value=\"".intval($arr['res_metal'])."\" size=\"12\" maxlength=\"20\" /><br/>
+					echo "<tr><th>".RES_METAL."</th>
+					<td><input type=\"text\" name=\"res_metal\" value=\"".intval($arr['res_metal'])."\" size=\"12\" maxlength=\"20\" /><br/>
 					+/-: <input type=\"text\" name=\"res_metal_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
-					echo "<td class=\"tbltitle\" valign=\"top\">".RES_CRYSTAL."</td>
-					<td class=\"tbldata\"><input type=\"text\" name=\"res_crystal\" value=\"".intval($arr['res_crystal'])."\" size=\"12\" maxlength=\"20\" /><br/>
+					echo "<th>".RES_CRYSTAL."</th>
+					<td><input type=\"text\" name=\"res_crystal\" value=\"".intval($arr['res_crystal'])."\" size=\"12\" maxlength=\"20\" /><br/>
 					+/-: <input type=\"text\" name=\"res_crystal_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
 					
-					echo "<tr><td class=\"tbltitle\" valign=\"top\">".RES_PLASTIC."</td>
-					<td class=\"tbldata\"><input type=\"text\" name=\"res_plastic\" value=\"".intval($arr['res_plastic'])."\" size=\"12\" maxlength=\"20\" /><br/>
+					echo "<tr><th>".RES_PLASTIC."</th>
+					<td><input type=\"text\" name=\"res_plastic\" value=\"".intval($arr['res_plastic'])."\" size=\"12\" maxlength=\"20\" /><br/>
 					+/-: <input type=\"text\" name=\"res_plastic_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
-					echo "<td class=\"tbltitle\" valign=\"top\">".RES_FUEL."</td>
-					<td class=\"tbldata\"><input type=\"text\" name=\"res_fuel\" value=\"".intval($arr['res_fuel'])."\" size=\"12\" maxlength=\"20\" /><br/>
+					echo "<th>".RES_FUEL."</th>
+					<td><input type=\"text\" name=\"res_fuel\" value=\"".intval($arr['res_fuel'])."\" size=\"12\" maxlength=\"20\" /><br/>
 					+/-: <input type=\"text\" name=\"res_fuel_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
 					
-					echo "<tr><td class=\"tbltitle\" valign=\"top\">".RES_FOOD."</td>
-					<td class=\"tbldata\"><input type=\"text\" name=\"res_food\" value=\"".intval($arr['res_food'])."\" size=\"12\" maxlength=\"20\" /><br/>
+					echo "<tr><th>".RES_FOOD."</th>
+					<td><input type=\"text\" name=\"res_food\" value=\"".intval($arr['res_food'])."\" size=\"12\" maxlength=\"20\" /><br/>
 					+/-: <input type=\"text\" name=\"res_food_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
-					echo "<td class=\"tbltitle\" valign=\"top\">".RES_POWER."</td>
-					<td class=\"tbldata\"><input type=\"text\" name=\"res_power\" value=\"".intval($arr['res_power'])."\" size=\"12\" maxlength=\"20\" /><br/>
+					echo "<th>".RES_POWER."</th>
+					<td><input type=\"text\" name=\"res_power\" value=\"".intval($arr['res_power'])."\" size=\"12\" maxlength=\"20\" /><br/>
 					+/-: <input type=\"text\" name=\"res_power_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
 					
 					echo "</table>";
@@ -492,7 +498,6 @@
 				}	
 				elseif ($earr['code']=='w')
 				{		
-					echo ", Wurmloch) bearbeiten</h2>";
 								
 					$res = dbquery("
 					SELECT 
@@ -504,15 +509,15 @@
 					$arr = mysql_fetch_array($res);
 					
 					echo "<form action=\"?page=$page&sub=edit&id=".$id."\" method=\"post\" id=\"editform\">";
-					echo "<table class=\"tbl\">";
-					echo "<tr><td class=\"tbltitle\" valign=\"top\">Entstanden</td>
-					<td class=\"tbldata\">
+					tableStart("<span style=\"color:".Entity::$entityColors[$earr['code']]."\">Wurmloch</span>","auto");
+					echo "<tr><th>Entstanden</th>
+					<td>
 						".df($arr['changed'])."
-					</td>";
-					echo "<td class=\"tbltitle\" valign=\"top\">Ziel</td>
-					<td class=\"tbldata\">";
+					</td><tr/>";
+					echo "<tr><th>Ziel</th>
+					<td>";
 					$ent = Entity::createFactoryById($arr['target_id']);
-					echo $ent;
+					echo "<a href=\"?page=$page&amp;sub=$sub&amp;id=".$ent->id()."\">".$ent."</a>";
 					echo "</td></tr>";
 					echo "</table>";
 					echo "<br/>
@@ -523,8 +528,6 @@
 				}
 				elseif ($earr['code']=='e')
 				{		
-					echo ", Raum) bearbeiten</h2>";
-								
 					$res = dbquery("
 					SELECT 
 						* 
@@ -535,9 +538,9 @@
 					$arr = mysql_fetch_array($res);
 					
 					echo "<form action=\"?page=$page&sub=edit&id=".$id."\" method=\"post\" id=\"editform\">";
-					echo "<table class=\"tbl\">";
-					echo "<tr><td class=\"tbltitle\" valign=\"top\">Zuletzt besucht</td>
-					<td class=\"tbldata\">";
+					tableStart("<span style=\"color:".Entity::$entityColors[$earr['code']]."\">Leerer Raum</span>","auto");
+					echo "<tr><th>Zuletzt besucht</th>
+					<td>";
 					if ($arr['lastvisited']>0)
 						df($arr['lastvisited']);
 					else
@@ -552,8 +555,7 @@
 				}									
 				else
 				{
-					echo ", unbekannt) bearbeiten</h2>";
-					echo "Für diesen Entitätstyp (".$earr['code'].") existiert noch kein Bearbeitungsformular!";
+					error_msg("Für diesen Entitätstyp (".$earr['code'].") existiert noch kein Bearbeitungsformular!");
 					echo "<br/><br/><input type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&action=searchresults'\" /> ";
 				}
 				

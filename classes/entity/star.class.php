@@ -126,6 +126,9 @@
 		* Returns owner
 		*/                        
 		function ownerId() { return 0; }      
+
+		function ownerMain() { return false; }
+
 	
 		/**
 		* Returns type string

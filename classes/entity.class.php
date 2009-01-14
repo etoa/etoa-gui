@@ -15,6 +15,10 @@
 		*/
 		private function Entity() {}
 
+		//
+		// Abstract methods
+		//
+
 		/**
 		* Return entity-id
 		*/
@@ -34,6 +38,11 @@
 		* Return entity-owner id
 		*/
 		public abstract function ownerId();	
+
+		/**
+		* Return true if this is the owner's main entity
+		*/
+		public abstract function ownerMain();	
 		
 		/**
 		* Return entity-code 
@@ -65,6 +74,11 @@
 	  * Return cell id
 	  */
 	  public abstract function cellId();
+	
+	
+		//
+		// General methods
+		//
 	
     /**
     * Return if entity is visible in map
@@ -418,7 +432,16 @@
 			return false;	
 		}		
 		
-		static public $entityColors = array('s'=>'#ff0','p'=>'#0f0','a'=>'#ccc','n'=>'#FF00FF','w'=>'#8000FF','e'=>'#55f');
+		static public $entityColors = array(
+		's'=>'#ff0',
+		'p'=>'#0f0',
+		'a'=>'#ccc',
+		'n'=>'#FF00FF',
+		'w'=>'#8000FF',
+		'e'=>'#55f',
+		'x'=>'#fff',
+		'm'=>'#fff'
+		);
 					
 	}
 

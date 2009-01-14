@@ -59,13 +59,16 @@
 		* Returns type string
 		*/                        
 		function entityCodeString() { return "Marktplatz"; }      
+
+		function ownerMain() { return false; }
+
 	
 		/**
 		* Returns type
 		*/
 		function type()
 		{
-			return "Marktplatz";
+			return "";
 		}							
 
 		function imagePath($opt="")

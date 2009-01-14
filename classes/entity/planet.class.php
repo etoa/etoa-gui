@@ -267,6 +267,9 @@
 			return $this->owner;
 		}
 		
+		function ownerMain() { return $this->isMain; }
+		
+		
 		function type()
 		{
 			return $this->typeName;
@@ -748,7 +751,7 @@
 		* planet and remove main flag from all other 
 		* planets of this user
 		*/
-		function setToMain()
+		function setMain()
 		{
 			if (!$this->isMain)
 			{
@@ -773,7 +776,25 @@
 			}
 			return false;
 		}
-	
+
+		function unsetMain()
+		{
+			if ($this->isMain)
+			{
+				$this->isMain=false;
+				dbquery("
+					UPDATE
+						planets
+					SET
+						planet_user_main=0
+					WHERE
+						id='".$this->id."'
+				");			
+				return true;
+			}
+			return false;
+		}
+		
 		
 		/**
 		* ۢrnimmt einen Planeten (Invasion)
