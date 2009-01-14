@@ -546,7 +546,11 @@
 
 		if ($t>0)
 			return $t."d ".$h."h ".$m."m ".$s."s";
-		return $h."h ".$m."m ".$s."s";
+		if ($h>0)
+			return $h."h ".$m."m ".$s."s";
+		if ($m>0)		
+			return $m."m ".$s."s";
+		return $s."s";
 	}
 
 	/**
@@ -1758,6 +1762,11 @@
 	{
 		global $page;
 		echo "<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Zur&uuml;ck\" />";
+	}
+	
+	function button($label,$target)
+	{
+		return "<input type=\"button\" value=\"$label\" onclick=\"document.location='$target'\" />";
 	}
 
 	/**

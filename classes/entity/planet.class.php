@@ -742,6 +742,38 @@
 	    	id='".$this->id."';";
 	   	dbquery($sql);			
 		}
+
+		/**
+		* Set this planet as the users main
+		* planet and remove main flag from all other 
+		* planets of this user
+		*/
+		function setToMain()
+		{
+			if (!$this->isMain)
+			{
+				$this->isMain=true;
+				dbquery("
+					UPDATE
+						planets
+					SET
+						planet_user_main=0
+					WHERE
+						planet_user_id='".$this->userId."'
+				");				
+				dbquery("
+					UPDATE
+						planets
+					SET
+						planet_user_main=1
+					WHERE
+						id='".$this->id."'
+				");			
+				return true;
+			}
+			return false;
+		}
+	
 		
 		/**
 		* ۢrnimmt einen Planeten (Invasion)
@@ -762,11 +794,12 @@
 				SET
 					planet_user_id='".$this->userId."',
 					planet_name='".$this->name."',
-					planet_user_changed=".$this->changed."
+					planet_user_changed=".$this->changed.",
+					planet_user_main=0
 				WHERE
 					id='".$this->id."';
 			");
-	
+
       // Geb㴤e �hmen
       dbquery("
 			UPDATE

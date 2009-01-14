@@ -339,7 +339,7 @@
 	{
 		echo "<h1>Planeten pr&uuml;fen</h1>";
 
-		echo "Prüfen ob zu allen Planeten mit einer User-Id auch ein User existiert...<br/>";
+		echo "Prüfen ob zu allen Planeten mit einer User-Id auch ein User existiert...<br/><br/>";
 		$user=array();
 		$res=dbquery("SELECT user_id,user_nick FROM users;");
 		if (mysql_num_rows($res)>0)
@@ -360,23 +360,28 @@
 			planet_user_id>0
 		;");
 		$cnt=0;
+		$rowStr = "";
 		if (mysql_num_rows($res)>0)
 		{
-			echo "<table class=\"tb\"><tr><th>Name</th><th>Id</th><th>User-Id</th><th>Id</th><th>Aktionen</th></tr>";
 			while ($arr=mysql_fetch_array($res))
 			{
 				if (count($user[$arr['planet_user_id']])==0)
 				{
 					$cnt++;
-					echo "<tr><td>".$arr['planet_name']."</td><td>".$arr['id']."</td><td>".$arr['planet_user_id']."</td>
+					$rowStr+= "<tr><td>".$arr['planet_name']."</td><td>".$arr['id']."</td><td>".$arr['planet_user_id']."</td>
 					<td><a href=\"?page=$page&sub=edit&amp;id=".$arr['id']."\">Bearbeiten</a></td></tr>";
 				}
 			}
 			if ($cnt==0)
 			{
-				echo "<tr><td colspan=\"5\">Keine Fehler gefunden!</td></th>";
+				ok_msg("Keine Fehler gefunden!");
+			}
+			else
+			{
+				echo "<table class=\"tb\"><tr><th>Name</th><th>Id</th><th>User-Id</th><th>Id</th><th>Aktionen</th></tr>";
+				echo $rowStr;
+				echo "</table>";
 			}			
-			echo "</table>";
 		}
 		else
 		{
@@ -384,7 +389,7 @@
 		}
 
 		
-		echo "<br/><br/>Prüfe auf Hauptplaneten ohne User...<br/>";
+		echo "<br/>Prüfe auf Hauptplaneten ohne User...<br/><br/>";
 		$res=dbquery("
 		SELECT
 			planet_name,
@@ -409,9 +414,47 @@
 		}
 		else
 		{
-			echo "<i>Keine Fehler gefunden!</i>";
+			ok_msg("Keine Fehler gefunden!");
 		}
 		
+		echo "<br/>Prüfe auf User ohne Hauptplanet / mit zuviel Hauptplaneten...<br/><br/>";
+		$res = dbquery("
+		select 
+			p.*,
+			u.user_nick 
+		from 
+		(
+			select 
+				sum(planet_user_main) as s,
+				planet_user_id as uid 
+			from 
+				planets 
+			group by 
+				planet_user_id
+		) as p 
+		inner join 
+			users u 
+		on 
+			u.user_id=p.uid 
+			and uid>0
+			and (s=0 
+			or s>1)
+			");
+		if (mysql_num_rows($res)>0)
+		{
+			echo "<table class=\"tb\"><tr><th>Nick</th><th>Anzahl HP's</th><th>Aktionen</th></tr>";
+			while ($arr=mysql_fetch_array($res))
+			{
+				echo "<tr><td>".$arr['nick']." (".$arr['uid'].")</td>
+				<td>".$arr['s']."</td>
+				<td></td></tr>";
+			}
+			echo "</table>";						
+		}
+		else
+		{
+			ok_msg("Keine Fehler gefunden!");			
+		}
 	}
 
 	elseif ($sub=="planet_types")
@@ -916,15 +959,25 @@
 	}
 	else
 	{
-		echo "<h1>Entitäten</h1>";
-		
 		$order_array=array();		
-		$order_array['id']="Planeten-ID";
-		$order_array['planet_name']="Planetenname";
-		$order_array['type_name']="Planetentyp";
+		$order_array['id']="Objekt-ID";
+		$order_array['planet_name']="Objekt-Name";
+		$order_array['type_name']="Objekt-Subtyp";
 		$order_array['user_nick']="Besitzer-Name";
+
+		echo "<h1>Raumobjekte (Entitäten)</h1>";
 		
-		if ($_POST['search_submit']!="" || $_POST['search_resubmit']!="" || $_GET['action']=="searchresults" || $_GET['query']!="")
+		//
+		// Details bearbeiten
+		//
+
+		if ($sub=="edit")
+		{
+			require("galaxy/edit.php");
+		}
+		
+		
+		else if (isset($_POST['search_submit']) || isset($_POST['search_resubmit']) || $_GET['action']=="searchresults" || $_GET['query']!="")
 		{
 			$search_text = array();
 			$query_save = array();
@@ -936,12 +989,12 @@
 				{
 					$_POST[$k]=$v;
 				}
-				$_SESSION['search']['planets']['query']=null;
+				$_SESSION['search_query']=null;
 			}
 			
 			if (isset($_POST['search_submit']))
 			{
-				$_SESSION['search']['planets']['query']=null;
+				$_SESSION['search_query']=null;
 			}
 				
 			if (isset($_SESSION['search']['planets']['query']) && count($_SESSION['search']['planets']['query'])>0)		
@@ -957,12 +1010,10 @@
 				}	
 			}
 			
-				// Define tables
-				$tables = "entities e";
-				$joins = " INNER JOIN cells c ON c.id=e.cell_id ";
-				
-				$selects = "";
-				//INNER JOIN planet_types ON type_id = planet_type_id ";
+			// Define tables
+			$tables = "entities e";
+			$joins = " INNER JOIN cells c ON c.id=e.cell_id ";
+			$selects = "";
 
 				// Set default order and limit values
 				$_POST['limit'] = ($_POST['limit']=="") ? 100 : $_POST['limit'];
@@ -1187,17 +1238,17 @@
 					echo "<td class=\"tbldata\">
 					<a href=\"?page=$page&sub=edit&id=".$arr['id']."\">
 						".$arr['sx']."/".$arr['sy']." : ".$arr['cx']."/".$arr['cy']." : ".$arr['pos']."
-					</a></td>";
+					</a>  </td>";
 					echo "<td class=\"tbldata\" style=\"color:".Entity::$entityColors[$arr['code']]."\">";
 					echo $ent->entityCodeString();
+					echo " ".($ent->isMain ? "(Hauptplanet)": '')."";
 					echo "</td>";
 					echo "<td class=\"tbldata\">".$ent->name()."</td>";
 					echo "<td class=\"tbldata\">";
 					if ($ent->ownerId()>0)
 					{
 						echo "<a href=\"?page=user&amp;sub=edit&amp;user_id=".$ent->ownerId()."\" title=\"Spieler bearbeiten\">
-							".$ent->owner()."
-						</a>";
+							".$ent->owner()."</a>";
 					}					
 					echo "
 					</td>";
@@ -1218,539 +1269,6 @@
 		}
 
 		//
-		// Details bearbeiten
-		//
-
-		elseif ($_GET['sub']=="edit")
-		{
-			$eres = dbquery("
-			SELECT 
-				code,
-				pos,
-				sx,
-				sy,
-				cx,
-				cy 
-			FROM 
-				entities e
-			INNER JOIN
-				cells c
-			ON
-				e.cell_id=c.id
-				AND e.id=".$_GET['id'].";");
-			if (mysql_num_rows($eres)>0)
-			{
-				$earr = mysql_fetch_array($eres);
-				
-				echo "<h2 style=\"color:".Entity::$entityColors[$earr['code']]."\">Entität ".$earr['id']." (".$earr['sx']."/".$earr['sy']." : ".$earr['cx']."/".$earr['cy']." : ".$earr['pos']."";
-				if ($earr['code']=='p')
-				{		
-					echo ", Planet) bearbeiten</h2>";
-								
-					if ($_POST['save']!="")
-					{
-						//Daten Speichern
-						dbquery("
-						UPDATE
-							planets
-						SET
-              planet_name='".$_POST['planet_name']."',
-              planet_user_main=".$_POST['planet_user_main'].",
-              planet_type_id=".$_POST['planet_type_id'].",
-              planet_fields=".$_POST['planet_fields'].",
-              planet_fields_extra=".$_POST['planet_fields_extra'].",
-              planet_image='".$_POST['planet_image']."',
-              planet_temp_from=".$_POST['planet_temp_from'].",
-              planet_temp_to=".$_POST['planet_temp_to'].",
-              planet_res_metal='".$_POST['planet_res_metal']."',
-              planet_res_crystal='".$_POST['planet_res_crystal']."',
-              planet_res_plastic='".$_POST['planet_res_plastic']."',
-              planet_res_fuel='".$_POST['planet_res_fuel']."',
-              planet_res_food='".$_POST['planet_res_food']."',
-              planet_res_metal=planet_res_metal+'".$_POST['planet_res_metal_add']."',
-              planet_res_crystal=planet_res_crystal+'".$_POST['planet_res_crystal_add']."',
-              planet_res_plastic=planet_res_plastic+'".$_POST['planet_res_plastic_add']."',
-              planet_res_fuel=planet_res_fuel+'".$_POST['planet_res_fuel_add']."',
-              planet_res_food=planet_res_food+'".$_POST['planet_res_food_add']."',
-              planet_wf_metal='".$_POST['planet_wf_metal']."',
-              planet_wf_crystal='".$_POST['planet_wf_crystal']."',
-              planet_wf_plastic='".$_POST['planet_wf_plastic']."',
-              planet_people='".$_POST['planet_people']."',
-              planet_people=planet_people+'".$_POST['planet_people_add']."',
-              planet_desc='".addslashes($_POST['planet_desc'])."'
-						WHERE
-							id='".$_GET['id']."';");
-						if (mysql_affected_rows()>0)
-						{
-							success_msg("Änderungen übernommen");
-						}
-					}
-					
-					if(count($_POST)>0 && !isset($_POST['save']))
-					{
-						//Wenn der Besitzer wechseln soll
-						if($_POST['planet_user_id']!=$_POST['planet_user_id_old'])
-						{
-							//Planet dem neuen User übergeben (Schiffe und Verteidigung werden vom Planeten gelöscht!)
-							$pl = new Planet($_GET['id']);
-							$pl->chown($_POST['planet_user_id']);
-		
-							//Log Schreiben
-							add_log(8,$_SESSION[SESSION_NAME]['user_nick']." wechselt den Besitzer vom Planeten: [URL=?page=galaxy&sub=edit&id=".$_GET['id']."][B]".$_GET['id']."[/B][/URL]\nAlter Besitzer: [URL=?page=user&sub=edit&user_id=".$_POST['planet_user_id_old']."][B]".$_POST['planet_user_id_old']."[/B][/URL]\nNeuer Besitzer: [URL=?page=user&sub=edit&user_id=".$_POST['planet_user_id']."][B]".$_POST['planet_user_id']."[/B][/URL]",time());
-		
-							success_msg("Der Planet wurde dem User mit der ID: [b]".$_POST['planet_user_id']."[/b] &uuml;bergeben!");
-						}
-						else
-						{
-							error_msg("Es wurde kein neuer Besitzer gew&auml;hlt!");
-						}
-					}
-					
-					$res = dbquery("
-					SELECT 
-						* 
-					FROM 
-						planets
-					WHERE 
-						id=".$_GET['id'].";");
-					$arr = mysql_fetch_array($res);
-					
-					echo "<form action=\"?page=$page&sub=edit&id=".$_GET['id']."\" method=\"post\" id=\"editform\">";
-					echo "<table class=\"tbl\">";
-					
-				
-					echo "<tr><td class=\"tbltitle\" valign=\"top\">Name</td>
-					<td class=\"tbldata\"><input type=\"text\" name=\"planet_name\" value=\"".$arr['planet_name']."\" size=\"20\" maxlength=\"250\" /></td>";
-					echo "<td class=\"tbltitle\" valign=\"top\">Typ</td>
-					<td class=\"tbldata\">
-					<select name=\"planet_type_id\">";
-					$tres = dbquery("SELECT * FROM planet_types ORDER BY type_name;");
-					while ($tarr = mysql_fetch_array($tres))
-					{
-						echo "<option value=\"".$tarr['type_id']."\"";
-						if ($arr['planet_type_id']==$tarr['type_id']) echo " selected=\"selected\"";
-						echo ">".$tarr['type_name']."</option>\n";
-					}
-					echo "</select></td></tr>";
-					
-					//Listet alle User der Spiels auf
-					$users = get_user_names();
-					echo "<tr><td class=\"tbltitle\" valign=\"top\">Besitzer</td><td class=\"tbldata\"><select name=\"planet_user_id\">";
-					echo "<option value=\"0\">(niemand)</option>";
-					foreach ($users as $uid=>$udata)
-					{
-						echo "<option value=\"$uid\"";
-						if ($arr['planet_user_id']==$uid) {echo " selected=\"selected\"";$planet_user_id=$uid;}
-						echo ">".$udata['nick']."</option>";
-					}
-					echo "</select> ";
-					echo "<input tabindex=\"29\" type=\"button\" name=\"change_owner\" value=\"Planet &uuml;bergeben\" class=\"button\" onclick=\"if( confirm('Dieser Planet soll einem neuen Besitzer geh&ouml;ren. Alle Schiffs- und Verteidigungsdaten vom alten Besitzer werden komplett gel&ouml;scht.')) document.getElementById('editform').submit()\"/>&nbsp;";
-					
-					echo "</td>";
-					//übergibt den alten besitzer mit
-					echo "<td class=\"tbltitle\" valign=\"top\">Allianz</td><td class=\"tbldata\">";
-					echo "<input type=\"hidden\" name=\"planet_user_id_old\" value=\"".$arr['planet_user_id']."\">";
-					if ($users[$planet_user_id]['alliance_id']>0)
-					{
-						$aarr = mysql_fetch_array(dbquery("SELECT alliance_tag FROM alliances WHERE alliance_id='".$users[$planet_user_id]['alliance_id']."';"));
-						echo $aarr['alliance_tag'];
-					}
-					echo "</td></tr>";
-					
-					echo "<tr><td class=\"tbltitle\" valign=\"top\">Felder / Extra-Felder</td>
-					<td class=\"tbldata\"><input type=\"text\" name=\"planet_fields\" value=\"".$arr['planet_fields']."\" size=\"10\" maxlength=\"250\" />
-					<input type=\"text\" name=\"planet_fields_extra\" value=\"".$arr['planet_fields_extra']."\" size=\"10\" maxlength=\"250\" /></td>";
-					echo "<td class=\"tbltitle\" valign=\"top\">Felder benutzt</td>
-					<td class=\"tbldata\">".nf($arr['planet_fields_used'])."</td></tr>";
-					
-					echo "<tr><td class=\"tbltitle\" valign=\"top\">Temp min</td>
-					<td class=\"tbldata\"><input type=\"text\" name=\"planet_temp_from\" value=\"".$arr['planet_temp_from']."\" size=\"20\" maxlength=\"250\" /></td>";
-					echo "<td class=\"tbltitle\" valign=\"top\">Temp max</td>
-					<td class=\"tbldata\"><input type=\"text\" name=\"planet_temp_to\" value=\"".$arr['planet_temp_to']."\" size=\"20\" maxlength=\"250\" /></td></tr>";
-		
-					echo "<tr><td class=\"tbltitle\" valign=\"top\">Bild</td>
-					<td class=\"tbldata\">
-					<img src=\"".IMAGE_PATH."/planets/planet".$arr['planet_image']."_small.".IMAGE_EXT."\" style=\"float:left;\" />
-					<select name=\"planet_image\">";
-					$tres = dbquery("SELECT * FROM planet_types ORDER BY type_name;");
-					
-					while ($tarr = mysql_fetch_array($tres))
-					{
-						for ($x=1;$x<=$cfg->value('num_planet_images');$x++)
-						{
-							echo "<option value=\"".$tarr['type_id']."_".$x."\"";
-							if ($arr['planet_image']==$tarr['type_id']."_".$x) 
-								echo " selected=\"selected\"";
-							echo ">".$tarr['type_name']." $x</option>\n";
-						}
-					}
-					echo "</select>
-					
-					</td>";
-					echo "<td class=\"tbltitle\" valign=\"top\">Hauptplanet</td>
-					<td class=\"tbldata\">
-					<input type=\"radio\" name=\"planet_user_main\" ".($arr['planet_user_main']==1 ? " checked=\"checked\"" : "")." value=\"1\"/> Ja
-					<input type=\"radio\" name=\"planet_user_main\" ".($arr['planet_user_main']==0 ? " checked=\"checked\"" : "")." value=\"0\"/> Nein
-					 </td></tr>";
-					
-					echo "<td class=\"tbldata\" style=\"height:2px;\" colspan=\"4\"></td></tr>";
-					
-					echo "<tr><td class=\"tbltitle\" valign=\"top\">Produktion ".RES_METAL."</td>
-					<td class=\"tbldata\">".nf($arr['planet_prod_metal'])."</td>";
-					echo "<td class=\"tbltitle\" valign=\"top\">Speicher ".RES_METAL.":</td>
-					<td class=\"tbldata\">".nf($arr['planet_store_metal'])."</td></tr>";
-					
-					echo "<tr><td class=\"tbltitle\" valign=\"top\">Produktion ".RES_CRYSTAL."</td>
-					<td class=\"tbldata\">".nf($arr['planet_prod_crystal'])."</td>";
-					echo "<td class=\"tbltitle\" valign=\"top\">Speicher ".RES_CRYSTAL.":</td>
-					<td class=\"tbldata\">".nf($arr['planet_store_crystal'])."</td></tr>";
-					
-					echo "<tr><td class=\"tbltitle\" valign=\"top\">Produktion ".RES_PLASTIC."</td>
-					<td class=\"tbldata\">".nf($arr['planet_prod_plastic'])."</td>";
-					echo "<td class=\"tbltitle\" valign=\"top\">Speicher ".RES_PLASTIC.":</td>
-					<td class=\"tbldata\">".nf($arr['planet_store_plastic'])."</td></tr>";
-					
-					echo "<tr><td class=\"tbltitle\" valign=\"top\">Produktion ".RES_FUEL."</td>
-					<td class=\"tbldata\">".nf($arr['planet_prod_fuel'])."</td>";
-					echo "<td class=\"tbltitle\" valign=\"top\">Speicher ".RES_FUEL.":</td>
-					<td class=\"tbldata\">".nf($arr['planet_store_fuel'])."</td></tr>";
-					
-					echo "<tr><td class=\"tbltitle\" valign=\"top\">Produktion ".RES_FOOD."</td>
-					<td class=\"tbldata\">".nf($arr['planet_prod_food'])."</td>";
-					echo "<td class=\"tbltitle\" valign=\"top\">Speicher ".RES_FOOD.":</td>
-					<td class=\"tbldata\">".nf($arr['planet_store_food'])."</td></tr>";
-		
-					echo "<tr><td class=\"tbltitle\" valign=\"top\">Verbrauch Energie:</td>
-					<td class=\"tbldata\">".nf($arr['planet_use_power'])."</td>";
-					echo "<td class=\"tbltitle\" valign=\"top\">Produktion Energie:</td>
-					<td class=\"tbldata\">".nf($arr['planet_prod_power'])."</td></tr>";
-		
-					echo "<td class=\"tbldata\" style=\"height:2px;\" colspan=\"4\"></td></tr>";
-		
-					echo "<tr><td class=\"tbltitle\" valign=\"top\">Titan</td>
-					<td class=\"tbldata\"><input type=\"text\" name=\"planet_res_metal\" value=\"".intval($arr['planet_res_metal'])."\" size=\"12\" maxlength=\"20\" /><br/>
-					+/-: <input type=\"text\" name=\"planet_res_metal_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
-					echo "<td class=\"tbltitle\" valign=\"top\">Silizium</td>
-					<td class=\"tbldata\"><input type=\"text\" name=\"planet_res_crystal\" value=\"".intval($arr['planet_res_crystal'])."\" size=\"12\" maxlength=\"20\" /><br/>
-					+/-: <input type=\"text\" name=\"planet_res_crystal_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
-					
-					echo "<tr><td class=\"tbltitle\" valign=\"top\">PVC</td>
-					<td class=\"tbldata\"><input type=\"text\" name=\"planet_res_plastic\" value=\"".intval($arr['planet_res_plastic'])."\" size=\"12\" maxlength=\"20\" /><br/>
-					+/-: <input type=\"text\" name=\"planet_res_plastic_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
-					echo "<td class=\"tbltitle\" valign=\"top\">Tritium</td>
-					<td class=\"tbldata\"><input type=\"text\" name=\"planet_res_fuel\" value=\"".intval($arr['planet_res_fuel'])."\" size=\"12\" maxlength=\"20\" /><br/>
-					+/-: <input type=\"text\" name=\"planet_res_fuel_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
-					
-					echo "<tr><td class=\"tbltitle\" valign=\"top\">Nahrung</td>
-					<td class=\"tbldata\"><input type=\"text\" name=\"planet_res_food\" value=\"".intval($arr['planet_res_food'])."\" size=\"12\" maxlength=\"20\" /><br/>
-					+/-: <input type=\"text\" name=\"planet_res_food_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
-					echo "<td class=\"tbltitle\" valign=\"top\">Bevölkerung</td>
-					<td class=\"tbldata\"><input type=\"text\" name=\"planet_people\" value=\"".intval($arr['planet_people'])."\" size=\"12\" maxlength=\"20\" /><br/>
-					+/-: <input type=\"text\" name=\"planet_people_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
-					
-					echo "<tr><td class=\"tbltitle\" valign=\"top\">Wohnraum</td>
-					<td class=\"tbldata\">".nf($arr['planet_people_place'])."</td>";
-					echo "<td class=\"tbltitle\" valign=\"top\">Bevölkerungswachstum</td>
-					<td class=\"tbldata\">".nf($arr['planet_prod_people'])."</td></tr>";
-		
-					echo "<td class=\"tbldata\" style=\"height:2px;\" colspan=\"4\"></td></tr>";
-					
-					echo "<tr><td class=\"tbltitle\" valign=\"top\">Tr&uuml;mmerfeld Titan</td>
-					<td class=\"tbldata\"><input type=\"text\" name=\"planet_wf_metal\" value=\"".$arr['planet_wf_metal']."\" size=\"20\" maxlength=\"250\" /></td>";
-					echo "<td class=\"tbltitle\" valign=\"top\">Tr&uuml;mmerfeld Silizium</td>
-					<td class=\"tbldata\"><input type=\"text\" name=\"planet_wf_crystal\" value=\"".$arr['planet_wf_crystal']."\" size=\"20\" maxlength=\"250\" /></td></tr>";
-					
-					echo "<tr><td class=\"tbltitle\" valign=\"top\">Tr&uuml;mmerfeld PVC</td>
-					<td class=\"tbldata\"><input type=\"text\" name=\"planet_wf_plastic\" value=\"".$arr['planet_wf_plastic']."\" size=\"20\" maxlength=\"250\" /></td>";
-					echo "<td class=\"tbltitle\" valign=\"top\">Updated</td>
-					<td class=\"tbldata\">".date("d.m.Y H:i",$arr['planet_last_updated'])."</td></tr>";
-		
-					
-					echo "<tr><td class=\"tbltitle\" valign=\"top\">Beschreibung</td>
-					<td class=\"tbldata\" colspan=\"3\"><textarea name=\"planet_desc\" rows=\"2\" cols=\"50\" >".stripslashes($arr['planet_desc'])."</textarea></td></tr>";
-					echo "</table>";
-					echo "<br/>
-								<input tabindex=\"26\" type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" class=\"button\" />&nbsp;";
-					echo "<input tabindex=\"27\" type=\"button\" class=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" /> ";
-					echo "<input tabindex=\"28\" type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&action=searchresults'\" /> ";
-					echo "</form>";
-					echo "<hr/>";
-					echo "<input type=\"button\" value=\"Gebäude\" onclick=\"document.location='?page=buildings&action=search&query=".searchQuery(array("entity_id"=>$arr['id']))."'\" /> &nbsp;";
-				}
-				elseif ($earr['code']=='s')
-				{		
-					echo ", Stern) bearbeiten</h2>";
-								
-					if ($_POST['save']!="")
-					{
-						//Daten Speichern
-						dbquery("
-						UPDATE
-							stars
-						SET
-              name='".$_POST['name']."',
-              type_id=".$_POST['type_id']."
-						WHERE
-							id='".$_GET['id']."';");
-						if (mysql_affected_rows()>0)
-						{
-							success_msg("Änderungen übernommen");
-						}
-					}
-					
-					$res = dbquery("
-					SELECT 
-						* 
-					FROM 
-						stars
-					WHERE 
-						id=".$_GET['id'].";");
-					$arr = mysql_fetch_array($res);
-					
-					echo "<form action=\"?page=$page&sub=edit&id=".$_GET['id']."\" method=\"post\" id=\"editform\">";
-					echo "<table class=\"tbl\">";
-					
-				
-					echo "<tr><td class=\"tbltitle\" valign=\"top\">Name</td>
-					<td class=\"tbldata\"><input type=\"text\" name=\"name\" value=\"".$arr['name']."\" size=\"20\" maxlength=\"250\" /></td>";
-					echo "<td class=\"tbltitle\" valign=\"top\">Typ</td>
-					<td class=\"tbldata\">
-					<img src=\"".IMAGE_PATH."/stars/star".$arr['type_id']."_small.".IMAGE_EXT."\" style=\"float:left;\" />
-					<select name=\"type_id\">";
-					$tres = dbquery("SELECT * FROM sol_types ORDER BY type_name;");
-					while ($tarr = mysql_fetch_array($tres))
-					{
-						echo "<option value=\"".$tarr['type_id']."\"";
-						if ($arr['type_id']==$tarr['type_id']) echo " selected=\"selected\"";
-						echo ">".$tarr['type_name']."</option>\n";
-					}
-					echo "</select></td></tr>";
-					echo "</table>";
-					echo "<br/>
-								<input tabindex=\"26\" type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" class=\"button\" />&nbsp;";
-					echo "<input tabindex=\"27\" type=\"button\" class=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" /> ";
-					echo "<input tabindex=\"28\" type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&action=searchresults'\" /> ";
-					echo "</form>";			
-				}
-				elseif ($earr['code']=='a')
-				{		
-					echo ", Asteroidenfeld) bearbeiten</h2>";
-								
-					if ($_POST['save']!="")
-					{
-						//Daten Speichern
-						dbquery("
-						UPDATE
-							asteroids
-						SET
-              res_metal='".$_POST['res_metal']."',
-              res_crystal='".$_POST['res_crystal']."',
-              res_plastic='".$_POST['res_plastic']."',
-              res_fuel='".$_POST['res_fuel']."',
-              res_food='".$_POST['res_food']."',
-              res_power='".$_POST['res_power']."',
-              res_metal=res_metal+'".$_POST['res_metal_add']."',
-              res_crystal=res_crystal+'".$_POST['res_crystal_add']."',
-              res_plastic=res_plastic+'".$_POST['res_plastic_add']."',
-              res_fuel=res_fuel+'".$_POST['res_fuel_add']."',
-              res_food=res_food+'".$_POST['res_food_add']."',
-              res_power=res_power+'".$_POST['res_power_add']."'
-						WHERE
-							id='".$_GET['id']."';");
-						if (mysql_affected_rows()>0)
-						{
-							success_msg("Änderungen übernommen");
-						}
-					}
-							
-					$res = dbquery("
-					SELECT 
-						* 
-					FROM 
-						asteroids
-					WHERE 
-						id=".$_GET['id'].";");
-					$arr = mysql_fetch_array($res);
-					
-					echo "<form action=\"?page=$page&sub=edit&id=".$_GET['id']."\" method=\"post\" id=\"editform\">";
-					echo "<table class=\"tbl\">";
-					
-		
-					echo "<tr><td class=\"tbltitle\" valign=\"top\">".RES_METAL."</td>
-					<td class=\"tbldata\"><input type=\"text\" name=\"res_metal\" value=\"".intval($arr['res_metal'])."\" size=\"12\" maxlength=\"20\" /><br/>
-					+/-: <input type=\"text\" name=\"res_metal_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
-					echo "<td class=\"tbltitle\" valign=\"top\">".RES_CRYSTAL."</td>
-					<td class=\"tbldata\"><input type=\"text\" name=\"res_crystal\" value=\"".intval($arr['res_crystal'])."\" size=\"12\" maxlength=\"20\" /><br/>
-					+/-: <input type=\"text\" name=\"res_crystal_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
-					
-					echo "<tr><td class=\"tbltitle\" valign=\"top\">".RES_PLASTIC."</td>
-					<td class=\"tbldata\"><input type=\"text\" name=\"res_plastic\" value=\"".intval($arr['res_plastic'])."\" size=\"12\" maxlength=\"20\" /><br/>
-					+/-: <input type=\"text\" name=\"res_plastic_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
-					echo "<td class=\"tbltitle\" valign=\"top\">".RES_FUEL."</td>
-					<td class=\"tbldata\"><input type=\"text\" name=\"res_fuel\" value=\"".intval($arr['res_fuel'])."\" size=\"12\" maxlength=\"20\" /><br/>
-					+/-: <input type=\"text\" name=\"res_fuel_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
-					
-					echo "<tr><td class=\"tbltitle\" valign=\"top\">".RES_FOOD."</td>
-					<td class=\"tbldata\"><input type=\"text\" name=\"res_food\" value=\"".intval($arr['res_food'])."\" size=\"12\" maxlength=\"20\" /><br/>
-					+/-: <input type=\"text\" name=\"res_food_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
-					echo "<td class=\"tbltitle\" valign=\"top\">".RES_POWER."</td>
-					<td class=\"tbldata\"><input type=\"text\" name=\"res_power\" value=\"".intval($arr['res_power'])."\" size=\"12\" maxlength=\"20\" /><br/>
-					+/-: <input type=\"text\" name=\"res_power_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
-					
-					echo "</table>";
-					echo "<br/>
-								<input tabindex=\"26\" type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" class=\"button\" />&nbsp;";
-					echo "<input tabindex=\"27\" type=\"button\" class=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" /> ";
-					echo "<input tabindex=\"28\" type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&action=searchresults'\" /> ";
-					echo "</form>";			
-				}				
-				elseif ($earr['code']=='n')
-				{		
-					echo ", Nebel) bearbeiten</h2>";
-								
-					if ($_POST['save']!="")
-					{
-						//Daten Speichern
-						dbquery("
-						UPDATE
-							nebulas
-						SET
-              res_metal='".$_POST['res_metal']."',
-              res_crystal='".$_POST['res_crystal']."',
-              res_plastic='".$_POST['res_plastic']."',
-              res_fuel='".$_POST['res_fuel']."',
-              res_food='".$_POST['res_food']."',
-              res_power='".$_POST['res_power']."',
-              res_metal=res_metal+'".$_POST['res_metal_add']."',
-              res_crystal=res_crystal+'".$_POST['res_crystal_add']."',
-              res_plastic=res_plastic+'".$_POST['res_plastic_add']."',
-              res_fuel=res_fuel+'".$_POST['res_fuel_add']."',
-              res_food=res_food+'".$_POST['res_food_add']."',
-              res_power=res_power+'".$_POST['res_power_add']."'
-						WHERE
-							id='".$_GET['id']."';");
-						if (mysql_affected_rows()>0)
-						{
-							success_msg("Änderungen übernommen");
-						}
-					}
-							
-					$res = dbquery("
-					SELECT 
-						* 
-					FROM 
-						nebulas
-					WHERE 
-						id=".$_GET['id'].";");
-					$arr = mysql_fetch_array($res);
-					
-					echo "<form action=\"?page=$page&sub=edit&id=".$_GET['id']."\" method=\"post\" id=\"editform\">";
-					echo "<table class=\"tbl\">";
-					
-		
-					echo "<tr><td class=\"tbltitle\" valign=\"top\">".RES_METAL."</td>
-					<td class=\"tbldata\"><input type=\"text\" name=\"res_metal\" value=\"".intval($arr['res_metal'])."\" size=\"12\" maxlength=\"20\" /><br/>
-					+/-: <input type=\"text\" name=\"res_metal_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
-					echo "<td class=\"tbltitle\" valign=\"top\">".RES_CRYSTAL."</td>
-					<td class=\"tbldata\"><input type=\"text\" name=\"res_crystal\" value=\"".intval($arr['res_crystal'])."\" size=\"12\" maxlength=\"20\" /><br/>
-					+/-: <input type=\"text\" name=\"res_crystal_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
-					
-					echo "<tr><td class=\"tbltitle\" valign=\"top\">".RES_PLASTIC."</td>
-					<td class=\"tbldata\"><input type=\"text\" name=\"res_plastic\" value=\"".intval($arr['res_plastic'])."\" size=\"12\" maxlength=\"20\" /><br/>
-					+/-: <input type=\"text\" name=\"res_plastic_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
-					echo "<td class=\"tbltitle\" valign=\"top\">".RES_FUEL."</td>
-					<td class=\"tbldata\"><input type=\"text\" name=\"res_fuel\" value=\"".intval($arr['res_fuel'])."\" size=\"12\" maxlength=\"20\" /><br/>
-					+/-: <input type=\"text\" name=\"res_fuel_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
-					
-					echo "<tr><td class=\"tbltitle\" valign=\"top\">".RES_FOOD."</td>
-					<td class=\"tbldata\"><input type=\"text\" name=\"res_food\" value=\"".intval($arr['res_food'])."\" size=\"12\" maxlength=\"20\" /><br/>
-					+/-: <input type=\"text\" name=\"res_food_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
-					echo "<td class=\"tbltitle\" valign=\"top\">".RES_POWER."</td>
-					<td class=\"tbldata\"><input type=\"text\" name=\"res_power\" value=\"".intval($arr['res_power'])."\" size=\"12\" maxlength=\"20\" /><br/>
-					+/-: <input type=\"text\" name=\"res_power_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
-					
-					echo "</table>";
-					echo "<br/>
-								<input tabindex=\"26\" type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" class=\"button\" />&nbsp;";
-					echo "<input tabindex=\"27\" type=\"button\" class=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" /> ";
-					echo "<input tabindex=\"28\" type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&action=searchresults'\" /> ";
-					echo "</form>";
-				}	
-				elseif ($earr['code']=='w')
-				{		
-					echo ", Wurmloch) bearbeiten</h2>";
-								
-					$res = dbquery("
-					SELECT 
-						* 
-					FROM 
-						wormholes
-					WHERE 
-						id=".$_GET['id'].";");
-					$arr = mysql_fetch_array($res);
-					
-					echo "<form action=\"?page=$page&sub=edit&id=".$_GET['id']."\" method=\"post\" id=\"editform\">";
-					echo "<table class=\"tbl\">";
-					echo "<tr><td class=\"tbltitle\" valign=\"top\">Entstanden</td>
-					<td class=\"tbldata\">
-						".df($arr['changed'])."
-					</td>";
-					echo "<td class=\"tbltitle\" valign=\"top\">Ziel</td>
-					<td class=\"tbldata\">";
-					$ent = Entity::createFactoryById($arr['target_id']);
-					echo $ent;
-					echo "</td></tr>";
-					echo "</table>";
-					echo "<br/>
-								<input tabindex=\"26\" type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" class=\"button\" />&nbsp;";
-					echo "<input tabindex=\"27\" type=\"button\" class=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" /> ";
-					echo "<input tabindex=\"28\" type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&action=searchresults'\" /> ";
-					echo "</form>";	
-				}
-				elseif ($earr['code']=='e')
-				{		
-					echo ", Raum) bearbeiten</h2>";
-								
-					$res = dbquery("
-					SELECT 
-						* 
-					FROM 
-						space
-					WHERE 
-						id=".$_GET['id'].";");
-					$arr = mysql_fetch_array($res);
-					
-					echo "<form action=\"?page=$page&sub=edit&id=".$_GET['id']."\" method=\"post\" id=\"editform\">";
-					echo "<table class=\"tbl\">";
-					echo "<tr><td class=\"tbltitle\" valign=\"top\">Zuletzt besucht</td>
-					<td class=\"tbldata\">";
-					if ($arr['lastvisited']>0)
-						df($arr['lastvisited']);
-					else
-						echo "Nie";
-					echo "</td></tr>";
-					echo "</table>";
-					echo "<br/>
-								<input tabindex=\"26\" type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" class=\"button\" />&nbsp;";
-					echo "<input tabindex=\"27\" type=\"button\" class=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" /> ";
-					echo "<input tabindex=\"28\" type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&action=searchresults'\" /> ";
-					echo "</form>";
-				}									
-				else
-				{
-					echo ", unbekannt) bearbeiten</h2>";
-					echo "Für diesen Entitätstyp (".$earr['code'].") existiert noch kein Bearbeitungsformular!";
-					echo "<br/><br/><input type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&action=searchresults'\" /> ";
-				}
-				
-			}
-			else
-			{
-				echo "Entität nicht vorhanden!";
-			}
-		}
-
-		//
 		// Suchmaske
 		//
 
@@ -1761,7 +1279,10 @@
 			echo "<table class=\"tbl\" style=\"width:550px;margin:0px\">";
 			echo "<tr>
 				<td class=\"tbltitle\">ID:</td>
-				<td class=\"tbldata\"><input type=\"text\" name=\"id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
+				<td class=\"tbldata\"><input type=\"text\" name=\"id\" value=\"\" size=\"5\" maxlength=\"10\" /></td></tr>";
+			echo "<tr>
+				<td class=\"tbltitle\" style=\"width:160px\">Name:</td>
+				<td class=\"tbldata\">".searchFieldTextOptions('planet_name')." <input type=\"text\" name=\"planet_name\" value=\"\" size=\"20\" maxlength=\"250\" /> </td></tr>";
 			echo "<tr>
 				<td class=\"tbltitle\">Koordinaten:</td>
 				<td class=\"tbldata\"><select name=\"cell_sx\">";
@@ -1786,30 +1307,28 @@
 				echo "<option value=\"$x\">$x</option>";
 			echo "</select></td></tr>";
 			echo "<tr>
-				<td class=\"tbltitle\" style=\"width:160px\">Entitätstyp:</td>
+				<td class=\"tbltitle\" style=\"width:160px\">Entitätstyp:<br/><br/>
+				<a href=\"javascript:;\" onclick=\"if (this.innerHTML=='Alles auswählen') { this.innerHTML='Auswahl aufheben';for(i=0;i<=7;i++) {document.getElementById('code_'+i).checked=true} } else {for(i=0;i<=7;i++) {document.getElementById('code_'+i).checked=false};this.innerHTML='Alles auswählen';}\">Alles auswählen</a>
+				</td>
 				<td class=\"tbldata\">
-					<input type=\"checkbox\" name=\"code[]\" value=\"s\" checked=\"checked\" /> Stern
-					<br/><input type=\"checkbox\" name=\"code[]\" value=\"p\" checked=\"checked\" /> Planet
-					<br/><input type=\"checkbox\" name=\"code[]\" value=\"n\" checked=\"checked\" /> Nebel
-					<br/><input type=\"checkbox\" name=\"code[]\" value=\"a\" checked=\"checked\" /> Asteroidenfeld
-					<br/><input type=\"checkbox\" name=\"code[]\" value=\"w\" checked=\"checked\" /> Wurmloch
-					<br/><input type=\"checkbox\" name=\"code[]\" value=\"e\" checked=\"checked\" /> Leerer Raum
+					<input type=\"checkbox\" name=\"code[]\" id=\"code_0\" value=\"p\" checked=\"checked\" /> Planet<br/>
+					<input type=\"checkbox\" name=\"code[]\" id=\"code_1\" value=\"s\" /> Stern<br/>
+					<input type=\"checkbox\" name=\"code[]\" id=\"code_2\" value=\"n\" /> Nebel<br/>
+					<input type=\"checkbox\" name=\"code[]\" id=\"code_3\" value=\"a\" /> Asteroidenfeld<br/>
+					<input type=\"checkbox\" name=\"code[]\" id=\"code_4\" value=\"w\" /> Wurmloch<br/>
+					<input type=\"checkbox\" name=\"code[]\" id=\"code_5\" value=\"m\" /> Marktplanet<br/>
+					<input type=\"checkbox\" name=\"code[]\" id=\"code_6\" value=\"x\" /> Allianzplanet<br/>
+					<input type=\"checkbox\" name=\"code[]\" id=\"code_7\" value=\"e\" /> Leerer Raum
 				</td></tr>";
-
-			echo "<tr>
-				<td class=\"tbltitle\" style=\"height:2px\" colspan=\"2\"></td></tr>";
-
-			echo "<tr>
-				<td class=\"tbltitle\" style=\"width:160px\">Name:</td>
-				<td class=\"tbldata\">".searchFieldTextOptions('planet_name')." <input type=\"text\" name=\"planet_name\" value=\"\" size=\"20\" maxlength=\"250\" /> </td></tr>";
 			echo "<tr>
 				<td class=\"tbltitle\">Besitzer-ID:</td>
-				<td class=\"tbldata\"><input type=\"text\" name=\"planet_user_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td>";
+				<td class=\"tbldata\"><input type=\"text\" name=\"planet_user_id\" value=\"\" size=\"5\" maxlength=\"10\" /></td>";
 			echo "<tr>
 				<td class=\"tbltitle\">Besitzer:</td>
 				<td class=\"tbldata\">".searchFieldTextOptions('user_nick')." <input type=\"text\" name=\"user_nick\" value=\"\" size=\"20\" maxlength=\"250\" autocomplete=\"off\"  />&nbsp;";
 				echo "</td></tr>";
-
+			echo "<tr>
+				<td class=\"tbltitle\" style=\"height:2px\" colspan=\"2\"></td></tr>";
 			echo "<tr>
 				<td class=\"tbltitle\">Hauptplanet:</td>
 				<td class=\"tbldata\"><input type=\"radio\" name=\"planet_user_main\" value=\"2\" checked=\"checked\" /> Egal &nbsp;

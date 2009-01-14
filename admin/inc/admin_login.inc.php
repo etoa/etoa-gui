@@ -99,7 +99,7 @@
 				$clr = 1;
 				break;
 			case "timeout":
-				$str = "Das Timeout von ".TIMEOUT."s wurde erreicht und du wurdest ausgeloggt!";
+				$str = "Das Timeout von ".tf(TIMEOUT)." wurde erreicht und du wurdest ausgeloggt!";
 				$clr = 3;
 				break;
 			case "invalid_user":
