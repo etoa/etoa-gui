@@ -738,7 +738,7 @@
 											$requirements_passed = false;
 										}
 										else
-											$b_req_info[] = array($b,$l,true);
+											$t_req_info[] = array($b,$l,true);
 									}
 								}
 	              if (isset($b_req[$bid]['b']) && count($b_req[$bid]['b'])>0)
@@ -750,7 +750,8 @@
 	              		  $requirements_passed = false;
 											$b_req_info[] = array($id,$level,false);
 										}
-										$t_req_info[] = array($id,$level,true);
+										else
+											$b_req_info[] = array($id,$level,true);
 	              	}
 	              }
 	

@@ -1078,7 +1078,8 @@ function calcDemolishingWaitTime($dc,$cp)
 											$requirements_passed = false;
 											$t_req_info[] = array($id,$level,false);
 										}
-										$t_req_info[] = array($id,$level,true);
+										else
+											$t_req_info[] = array($id,$level,true);
 									}
 								}
 
