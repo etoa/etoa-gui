@@ -27,7 +27,7 @@
 			$this->isValid = false;
 			$this->id = $id;
 			$this->pos = 0;
-			$this->name = "Unbenannt";
+			$this->name = "";
 			$this->coordsLoaded=false;
 			$this->dataLoaded=false;
 			$this->targetId=-1;

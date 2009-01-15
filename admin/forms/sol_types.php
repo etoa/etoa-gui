@@ -33,6 +33,9 @@
 	define("DB_TABLE_ID", "sol_type_id");
 	define("DB_OVERVIEW_ORDER_FIELD","sol_type_name");
 	
+	$form_switches = array("Standardtyp"=>'sol_type_consider');
+	
+	
 	// FIELDS
 	
 	// Description:

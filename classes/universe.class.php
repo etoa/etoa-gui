@@ -39,7 +39,9 @@
 			SELECT
 		      	sol_type_id
 			FROM
-				sol_types;");
+				sol_types
+			WHERE
+				sol_type_consider=1;");
 			while ($arr = mysql_fetch_array($res))
 			{
 				$sol_types[] = $arr['sol_type_id'];
@@ -50,7 +52,9 @@
 			SELECT
 		    type_id
 			FROM
-				planet_types;");
+				planet_types
+			WHERE
+				type_consider=1;");
 			while ($arr = mysql_fetch_array($res))
 			{
 				$planet_types[] = $arr['type_id'];

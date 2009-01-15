@@ -26,7 +26,7 @@
 			$this->pos = 0;
 			$this->name = "Marktplatz";
 			$this->coordsLoaded=false;
-      		$this->isVisible = true;
+      $this->isVisible = true;
 		}
 
     public function allowedFleetActions()

@@ -24,7 +24,7 @@
 			$this->isValid = true;
 			$this->id = $id;
 			$this->pos = 0;
-			$this->name = "Unbenannt";
+			$this->name = "Unbekannt";
 			$this->coordsLoaded=false;
     		$this->isVisible = true;
 			

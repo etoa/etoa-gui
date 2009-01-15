@@ -301,7 +301,7 @@
 					echo "</table>";
 					echo "<br/>
 								<input tabindex=\"26\" type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" class=\"button\" />&nbsp;";
-					echo "<input tabindex=\"27\" type=\"button\" class=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" /> ";
+					echo "<input tabindex=\"27\" type=\"button\" class=\"button\" onclick=\"document.location='?page=$page&amp;newsearch'\" value=\"Neue Suche\" /> ";
 					echo "<input tabindex=\"28\" type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&action=searchresults'\" /> ";
 					echo "</form>";
 					echo "<hr/>";

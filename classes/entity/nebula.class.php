@@ -24,9 +24,9 @@
 			$this->isValid = true;
 			$this->id = $id;
 			$this->pos = 0;
-			$this->name = "Unbenannt";
+			$this->name = "";
 			$this->coordsLoaded=false;			
-      		$this->isVisible = true;
+      $this->isVisible = true;
 		}
 
     public function allowedFleetActions()

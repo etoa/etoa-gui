@@ -24,6 +24,10 @@ h1	{
 	text-align:center;
 }
 
+img	{
+	border:none;
+}
+
 h1:before	{
 	content:":: ";
 }
