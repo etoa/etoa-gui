@@ -185,122 +185,6 @@
 	}
 
 	/**
-	* Displays a select box for choosing the search method 
-	* for varchar/text mysql table fields ('contains', 'part of' 
-	* and negotiations of those two)
-	*
-	* @param string Field name
-	*/
-	function fieldqueryselbox($name)
-	{
-		echo "<select name=\"qmode[$name]\">";
-		echo "<option value=\"LIKE '%\">enth&auml;lt</option>";
-		echo "<option value=\"LIKE '\">ist gleich</option>";
-		echo "<option value=\"NOT LIKE '%\">enth&auml;lt nicht</option>";
-		echo "<option value=\"NOT LIKE '\">ist ungleich</option>";
-		echo "<option value=\"< '\">ist kleiner</option>";
-		echo "<option value=\"> '\">ist gr&ouml;sser</option>";
-		echo "</select>";
-	}
-	/**
-	* Displays a select box for choosing the search method 
-	* for varchar/text mysql table fields ('contains', 'part of' 
-	* and negotiations of those two)
-	*
-	* @param string Field name
-	*/
-	function searchFieldTextOptions($name)
-	{
-		ob_start();
-		echo "<select name=\"qmode[$name]\">";
-		echo "<option value=\"%\">enth&auml;lt</option>";
-		echo "<option value=\"!%\">enth&auml;lt nicht</option>";
-		echo "<option value=\"=\">ist gleich</option>";
-		echo "<option value=\"!=\">ist ungleich</option>";
-		echo "</select>";
-		$res = ob_get_contents();
-		ob_end_clean();
-		return $res;
-	}	
-
-	/**
-	* Displays a select box for choosing the search method 
-	* for varchar/text mysql table fields ('contains', 'part of' 
-	* and negotiations of those two)
-	*
-	* @param string Field name
-	*/
-	function searchFieldNumberOptions($name)
-	{
-		ob_start();
-		echo "<select name=\"qmode[$name]\">";
-		echo "<option value=\"=\">=</option>";
-		echo "<option value=\"!=\">!=</option>";
-		echo "<option value=\"<\">&lt;</option>";
-		echo "<option value=\"<=\">&lt;=</option>";
-		echo "<option value=\">\">&gt;</option>";
-		echo "<option value=\">=\">&gt;=</option>";
-		echo "</select>";
-		$res = ob_get_contents();
-		ob_end_clean();
-		return $res;
-	}	
-	
-	function searchFieldOptionsName($opt='')
-	{
-		switch ($opt)
-		{
-			case "=":
-				return "gleich";			
-			case "!=":
-				return "ungleich";			
-			case "%":
-				return "enthält";			
-			case "!%":
-				return "enthält nicht";			
-			case "<":
-				return "kleiner als";			
-			case "<=":
-				return "kleiner gleich";			
-			case ">":
-				return "grösser als";			
-			case ">=":
-				return "grösser gleich";			
-			default:
-				return "gleich";			
-		
-		}
-	}
-	
-	function searchFielsOptionsSql($value,$opt)
-	{
-		switch ($opt)
-		{
-			case "=":
-				return " LIKE '".$value."' ";			
-			case "!=":
-				return " NOT LIKE '".$value."' ";			
-			case "%":
-				return " LIKE '%".$value."%' ";			
-			case "!%":
-				return " NOT LIKE '%".$value."%' ";			
-			case "<":
-				return " < ".intval($value)." ";			
-			case "<=":
-				return " <= ".intval($value)." ";			
-			case ">":
-				return " > ".intval($value)." ";			
-			case ">=":
-				return " >= ".intval($value)." ";			
-			default:
-				return " ='".$value."'";			
-		}		
-	}
-	
-	
-
-
-	/**
 	* Displays a clickable edit button
 	*
 	* @param string Url of the link
@@ -655,7 +539,27 @@
 		return $string;
 	}
 
-
+	/**
+	* DEPRECATED!
+	* Displays a select box for choosing the search method 
+	* for varchar/text mysql table fields ('contains', 'part of' 
+	* and negotiations of those two)
+	*
+	* @param string Field name
+	*/
+	function fieldqueryselbox($name)
+	{
+		echo "<select name=\"qmode[$name]\">";
+		echo "<option value=\"LIKE '%\">enth&auml;lt</option>";
+		echo "<option value=\"LIKE '\">ist gleich</option>";
+		echo "<option value=\"NOT LIKE '%\">enth&auml;lt nicht</option>";
+		echo "<option value=\"NOT LIKE '\">ist ungleich</option>";
+		echo "<option value=\"< '\">ist kleiner</option>";
+		echo "<option value=\"> '\">ist gr&ouml;sser</option>";
+		echo "</select>";
+	}
+	
+	//DEPRECATED
 	function searchQuery($data)
 	{
 		foreach ($data as $k=>$v)
@@ -672,6 +576,7 @@
 		return base64_encode($str);
 	}
 	
+	// DEPRECATED
 	function searchQueryDecode($query)
 	{
 		$str = explode(";",base64_decode($query));
@@ -683,6 +588,237 @@
 		}
 		return $res;
 	}
+
+	function searchQueryUrl($str)
+	{
+		return "&amp;sq=".base64_encode($str);
+	}
+
+	/**
+	* Builds a search query and sort array
+	* based on GET,POST or SESSION data.
+	*  
+	* @param array Pointer to query array
+	* @param array Pointer to order/limit array
+	* @author Nicolas Perrenoud <mrcage@etoa.ch>
+	* @see http://dev.etoa.ch:8000/game/wiki/AdminSearchQuery
+	*/		
+	function searchQueryArray(&$arr,&$oarr)
+	{
+		$arr = array();
+		$oarr = array();
+		
+		if (isset($_GET['newsearch']))
+		{
+			searchQueryReset();
+			return false;
+		}
+		
+		if (isset($_GET['sq']))
+		{		
+			$sq = base64_decode($_GET['sq']);
+			$ob = explode(";",$sq);
+			foreach ($ob as $o)
+			{
+				$oe = explode(":",$o);
+				$arr[$oe[0]] = array($oe[1],$oe[2]);
+			}
+			if (!isset($oarr['limit']))
+				$oarr['limit'] = 100;
+			return true;
+		}
+		elseif(isset($_POST['search_submit']))
+		{
+			foreach ($_POST as $k => $v)
+			{
+				if (substr($k,0,7) == "search_" && $k!="search_submit" && $v!="")
+				{
+					$fname = substr($k,7);
+					if ($fname == "order")
+					{
+						if (stristr($v,":"))
+						{
+							$chk = spliti(":",$v);
+							if ($chk[1]=="d")
+								$oarr[$chk[0]] = "d"; 
+							else
+								$oarr[$chk[0]] = "a"; 						
+						}
+						else
+							$oarr[$v] = "a"; 						
+						continue;					
+					}
+					if ($fname == "limit")
+					{
+						$oarr['limit'] = min(max(1,intval($v)),5000); 						
+						continue;					
+					}					
+					
+					if (isset($_POST['qmode'][$fname]))
+					{
+						$arr[$fname] = array($_POST['qmode'][$fname],$v);
+					}
+					elseif (isset($_POST['qmode'][$k]))
+					{
+						$arr[$fname] = array($_POST['qmode'][$k],$v);
+					}
+					elseif (is_numeric($v))
+					{
+						$arr[$fname] = array("=",$v);
+					}
+					else
+					{
+						$arr[$fname] = array("%",$v);
+					}
+				}			
+			}
+			if (!isset($oarr['limit']))
+				$oarr['limit'] = 100;
+			return true;
+		}
+		elseif(isset($_SESSION['search']['query']))
+		{
+			$arr = $_SESSION['search']['query'];
+			$oarr = $_SESSION['search']['order'];
+			if (isset($_POST['search_resubmit']))
+			{
+				if (isset($_POST['search_order']))
+				{
+					if (stristr($_POST['search_order'],":"))
+					{
+						$chk = spliti(":",$_POST['search_order']);
+						if ($chk[1]=="d")
+							$oarr[$chk[0]] = "d"; 
+						else
+							$oarr[$chk[0]] = "a"; 						
+					}
+					else
+						$oarr[$_POST['search_order']] = "a"; 					
+				}		
+				if (isset($_POST['search_limit']))
+				{
+					$oarr['limit'] = min(max(1,intval($_POST['search_limit'])),5000); 						
+				}											
+			}
+			return true;
+		}
+		return false;
+	}
+
+	function searchQuerySave(&$sa,&$so)
+	{
+		$_SESSION['search']['query'] = $sa;
+		$_SESSION['search']['order'] = $so;
+	}
+
+	function searchQueryReset()
+	{
+		unset($_SESSION['search']);
+	}
+
+
+	/**
+	* Displays a select box for choosing the search method 
+	* for varchar/text mysql table fields ('contains', 'part of' 
+	* and negotiations of those two)
+	*
+	* @param string Field name
+	*/
+	function searchFieldTextOptions($name)
+	{
+		ob_start();
+		echo "<select name=\"qmode[$name]\">";
+		echo "<option value=\"%\">enth&auml;lt</option>";
+		echo "<option value=\"!%\">enth&auml;lt nicht</option>";
+		echo "<option value=\"=\">ist gleich</option>";
+		echo "<option value=\"!=\">ist ungleich</option>";
+		echo "</select>";
+		$res = ob_get_contents();
+		ob_end_clean();
+		return $res;
+	}	
+
+	/**
+	* Displays a select box for choosing the search method 
+	* for varchar/text mysql table fields ('contains', 'part of' 
+	* and negotiations of those two)
+	*
+	* @param string Field name
+	*/
+	function searchFieldNumberOptions($name)
+	{
+		ob_start();
+		echo "<select name=\"qmode[$name]\">";
+		echo "<option value=\"=\">=</option>";
+		echo "<option value=\"!=\">!=</option>";
+		echo "<option value=\"<\">&lt;</option>";
+		echo "<option value=\"<=\">&lt;=</option>";
+		echo "<option value=\">\">&gt;</option>";
+		echo "<option value=\">=\">&gt;=</option>";
+		echo "</select>";
+		$res = ob_get_contents();
+		ob_end_clean();
+		return $res;
+	}	
+	
+	/**
+	* Resolves the name of a given search operator
+	*
+	* @return string Operator name
+	*/
+	function searchFieldOptionsName($operator='')
+	{
+		switch ($operator)
+		{
+			case "=":
+				return "gleich";			
+			case "!=":
+				return "ungleich";			
+			case "%":
+				return "enthält";			
+			case "!%":
+				return "enthält nicht";			
+			case "<":
+				return "kleiner als";			
+			case "<=":
+				return "kleiner gleich";			
+			case ">":
+				return "grösser als";			
+			case ">=":
+				return "grösser gleich";			
+			default:
+				return "gleich";			
+		
+		}
+	}
+	
+	function searchFieldSql($item)
+	{
+		$operator = $item[0];
+		$value = $item[1];
+		switch ($operator)
+		{
+			case "=":
+				return " LIKE '".$value."' ";			
+			case "!=":
+				return " NOT LIKE '".$value."' ";			
+			case "%":
+				return " LIKE '%".$value."%' ";			
+			case "!%":
+				return " NOT LIKE '%".$value."%' ";			
+			case "<":
+				return " < ".intval($value)." ";			
+			case "<=":
+				return " <= ".intval($value)." ";			
+			case ">":
+				return " > ".intval($value)." ";			
+			case ">=":
+				return " >= ".intval($value)." ";			
+			default:
+				return " ='".$value."'";			
+		}		
+	}
+	
 
 
 	function calcBuildingPoints($id=0)

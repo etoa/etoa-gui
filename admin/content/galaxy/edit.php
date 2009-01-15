@@ -24,8 +24,9 @@
 				echo "<h2>Raumobjekt ".$earr['sx']."/".$earr['sy']." : ".$earr['cx']."/".$earr['cy']." : ".$earr['pos']." bearbeiten</h2>";
 				if ($id>1)
 					echo button("&lt;&lt; Vorheriges Objekt","?page=$page&amp;sub=$sub&id=".($id-1)."");
-				echo " Objekt ".$earr['id']." ";
-				echo button("Nächstes Objekt &gt;&gt;","?page=$page&amp;sub=$sub&id=".($id+1)."");
+				echo " &nbsp; Objekt ".$earr['id']." &nbsp; ";
+				echo button("Nächstes Objekt &gt;&gt;","?page=$page&amp;sub=$sub&id=".($id+1)."")." 
+				".button("Alle Objekte dieser Zelle/dieses Systems anzeigen","?page=$page".searchQueryUrl("cell_s:=:".$earr['sx']."_".$earr['sy'].";cell_c:=:".$earr['cx']."_".$earr['cy']));
 				echo "<br/><br/>";
 				
 				if ($earr['code']=='p')
@@ -37,14 +38,14 @@
 						if (isset($_POST['planet_user_main']))
 						{
 							if ($pl->setMain())
-								success_msg("Hauptplanet gesetzt!");
+								success_msg("Hauptplanet gesetzt; ursprüngliche Hautpplanet-Zuordnung entfernt!");
 						}			              
 						else
 						{
 							if ($pl->isMain)
 							{
 								$pl->unsetMain();	
-								success_msg("Hauptplanet-Zuordnung entfernt!");
+								success_msg("Hauptplanet-Zuordnung entfernt. Denke daran, einen neuen Hautplanet festzulegen!");
 							}
 						}
 						

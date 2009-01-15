@@ -42,7 +42,7 @@
 	}
 
 	//
-	// Beistzerprüfung
+	// Integrity check
 	//
 	elseif ($sub=="galaxycheck")
 	{	
@@ -294,8 +294,7 @@
 		else
 		{
 			echo "Keine leeren Räume vorhanden!<br/>";
-		}
-		
+		}		
 
 		$res=dbquery("SELECT id FROM cells;");
 		if (mysql_num_rows($res)>0)
@@ -326,14 +325,10 @@
 				echo mysql_num_rows($res)." Datensätze geprüft. Keine Fehler gefunden!<br/>";
 			}
 		}
-		
-
 	}
-
-
 	
 	//
-	// Beistzerprüfung
+	// Owner check
 	//
 	elseif ($sub=="planetcheck")
 	{
@@ -465,6 +460,8 @@
 	{
 		advanced_form("sol_types");
 	}
+	
+	/*
 	elseif ($sub=="cells")
 	{
 		echo "<h1>Zellen</h1>";
@@ -577,8 +574,8 @@
 				{
 					echo "<input type=\"hidden\" name=\"cell_asteroid\" value=\"1\" />";
 					echo "<table class=\"tb\">";
-					echo "<tr><th class=\"tbltitle\">Zellentyp</th><td class=\"tbldata\">Asteroidenfeld</td></tr>";
-					echo "<tr><th class=\"tbltitle\">Ressourcen</th><td class=\"tbldata\"><input type=\"text\" name=\"cell_asteroid_ress\" value=\"".$arr['cell_asteroid_ress']."\" /></td></tr>";
+					echo "<tr><th class=\"tbltitle\">Zellentyp</th><td>Asteroidenfeld</td></tr>";
+					echo "<tr><th class=\"tbltitle\">Ressourcen</th><td><input type=\"text\" name=\"cell_asteroid_ress\" value=\"".$arr['cell_asteroid_ress']."\" /></td></tr>";
 					echo "</table><br/><input type=\"submit\" name=\"remove_content\" value=\"Zelle in leeren Raum umwandeln\" /><br/>";
 				}
 
@@ -589,8 +586,8 @@
 				{
 					echo "<input type=\"hidden\" name=\"cell_nebula\" value=\"1\" />";
 					echo "<table class=\"tb\">";
-					echo "<tr><th class=\"tbltitle\">Zellentyp</th><td class=\"tbldata\">Nebelfeld</td></tr>";
-					echo "<tr><th class=\"tbltitle\">Ressourcen</th><td class=\"tbldata\"><input type=\"text\" name=\"cell_nebula_ress\" value=\"".$arr['cell_nebula_ress']."\" /></td></tr>";
+					echo "<tr><th class=\"tbltitle\">Zellentyp</th><td>Nebelfeld</td></tr>";
+					echo "<tr><th class=\"tbltitle\">Ressourcen</th><td><input type=\"text\" name=\"cell_nebula_ress\" value=\"".$arr['cell_nebula_ress']."\" /></td></tr>";
 					echo "</table><br/><input type=\"submit\" name=\"remove_content\" value=\"Zelle in leeren Raum umwandeln\" /><br/>";
 				}
 
@@ -600,7 +597,7 @@
 				elseif ($arr['cell_wormhole_id']>0)
 				{
 					echo "<table class=\"tb\">";
-					echo "<tr><th class=\"tbltitle\">Wurmloch nach</th><td class=\"tbldata\"><select name=\"cell_wormhole_id\">";
+					echo "<tr><th class=\"tbltitle\">Wurmloch nach</th><td><select name=\"cell_wormhole_id\">";
 					foreach ($wormholes as $id=>$val)
 					{
 						if ($id!=$arr['cell_id'])
@@ -611,7 +608,7 @@
 						}
 					}
 					echo "</select> Bei einer &Auml;nderung wird das alte freiwerdende Wurmloch mit <br/>dem nun freigewordenen Partner des neuen Wurmlochs verkn&uuml;pft!</td></tr>";
-					echo "<tr><th class=\"tbltitle\">Letzte &Auml;nderung</th><td class=\"tbldata\">";
+					echo "<tr><th class=\"tbltitle\">Letzte &Auml;nderung</th><td>";
 					if ($arr['cell_wormhole_changed'])
 						echo date("d.m.Y H:i",$arr['cell_wormhole_changed']);
 					else
@@ -687,8 +684,8 @@
 					}
 
 					echo "<table class=\"tb\">";
-					echo "<tr><th class=\"tbltitle\">Zellentyp</th><td class=\"tbldata\">Sonnensystem</td></tr>";
-					echo "<tr><th class=\"tbltitle\">Stern-Typ</th><td class=\"tbldata\"><select name=\"cell_solsys_solsys_sol_type\">";
+					echo "<tr><th class=\"tbltitle\">Zellentyp</th><td>Sonnensystem</td></tr>";
+					echo "<tr><th class=\"tbltitle\">Stern-Typ</th><td><select name=\"cell_solsys_solsys_sol_type\">";
 					foreach ($solsys_types as $id=>$val)
 					{
 						echo "<option value=\"$id\"";
@@ -696,7 +693,7 @@
 						echo ">$val</option>";
 					}
 					echo "</select></td></tr>";
-					echo "<tr><th class=\"tbltitle\">Name des Sterns</th><td class=\"tbldata\"><input type=\"text\" name=\"cell_solsys_name\" value=\"".$arr['cell_solsys_name']."\" /></td></tr>";
+					echo "<tr><th class=\"tbltitle\">Name des Sterns</th><td><input type=\"text\" name=\"cell_solsys_name\" value=\"".$arr['cell_solsys_name']."\" /></td></tr>";
 					echo "<tr><th>Anzahl Planeten</th><td><select name=\"cell_solsys_num_planets\">";
 					for ($x=$conf['num_planets']['p1'];$x<=$conf['num_planets']['p2'];$x++)
 					{
@@ -705,7 +702,7 @@
 						echo ">$x</option>";
 					}
 					echo "</select></td></tr>";
-					echo "<tr><th class=\"tbltitle\">Planeten</th><td class=\"tbldata\">";
+					echo "<tr><th class=\"tbltitle\">Planeten</th><td>";
 					$pres=dbquery("SELECT planet_name,id,planet_solsys_pos,type_name FROM planets,planet_types WHERE planet_type_id=type_id AND planet_solsys_id=".$arr['cell_id']." ORDER BY planet_solsys_pos;");
 					if (mysql_num_rows($res)>0)
 					{
@@ -762,7 +759,7 @@
 							echo "<h3>Zelle in Nebelfeld umwandeln</h3>";
 							echo "<input type=\"hidden\" name=\"cell_nebula\" value=\"1\" />";
 							echo "<table class=\"tb\">";
-							echo "<tr><th class=\"tbltitle\">Ressourcen</th><td class=\"tbldata\"><input type=\"text\" name=\"cell_nebula_ress\" value=\"".$arr['cell_nebula_ress']."\" /></td></tr>";
+							echo "<tr><th class=\"tbltitle\">Ressourcen</th><td><input type=\"text\" name=\"cell_nebula_ress\" value=\"".$arr['cell_nebula_ress']."\" /></td></tr>";
 							echo "</table>";
 							break;
 						case "asteroid":
@@ -957,6 +954,8 @@
 			echo "<br/>Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.<br/><br/>Die Galaxie besteht aus ".$conf['num_of_sectors']['p1']."x".$conf['num_of_sectors']['p2']." Sektoren und jeder Sektor aus ".$conf['num_of_cells']['p1']."x".$conf['num_of_cells']['p2']." Zellen.";
 		}
 	}
+	*/
+	
 	else
 	{
 		$order_array=array();		
@@ -967,17 +966,299 @@
 
 		echo "<h1>Raumobjekte (Entitäten)</h1>";
 		
+		$sa = array();
+		$so = array();
+		
 		//
 		// Details bearbeiten
 		//
-
 		if ($sub=="edit")
 		{
 			require("galaxy/edit.php");
 		}
 		
-		
-		else if (isset($_POST['search_submit']) || isset($_POST['search_resubmit']) || $_GET['action']=="searchresults" || $_GET['query']!="")
+		//
+		// Search query and result
+		//
+		elseif (searchQueryArray($sa,$so))
+		{
+			$table = "entities e";
+			$joins = " INNER JOIN cells c ON c.id=e.cell_id ";
+			$selects = "";			
+			$sql = "";
+
+			if (isset($sa['id']))
+			{
+				$sql.= " AND e.id ".searchFieldSql($sa['id']);
+			}
+			if (isset($sa['code']))
+			{
+				$sql.= " AND (";
+				$i=0;
+				foreach ($sa['code'][1] as $code)
+				{
+					if ($i>0)			
+						$sql.=" OR";
+					$sql .= " 
+					e.code='".$code."'";
+					$i++;
+				}
+				$sql.= ") ";
+			}
+			if (isset($sa['cell_cx']))
+			{
+				$sql.= " AND c.cx ".searchFieldSql($sa['cell_cx']);
+			}
+			if (isset($sa['cell_cy']))
+			{
+				$sql.= " AND c.cy ".searchFieldSql($sa['cell_cy']);
+			}
+			if (isset($sa['cell_c']))
+			{
+				$val = explode("_",$sa['cell_c'][1]);
+				$sql.= " AND c.cx=".$val[0];
+				$sql.= " AND c.cy=".$val[1];
+			}			
+			if (isset($sa['cell_sx']))
+			{
+				$sql.= " AND c.sx ".searchFieldSql($sa['cell_sx']);
+			}
+			if (isset($sa['cell_sy']))
+			{
+				$sql.= " AND c.sy ".searchFieldSql($sa['cell_sy']);
+			}
+			if (isset($sa['cell_s']))
+			{
+				$val = explode("_",$sa['cell_s'][1]);
+				$sql.= " AND c.sx=".$val[0];
+				$sql.= " AND c.sy=".$val[1];
+			}			
+			if (isset($sa['cell_pos']))
+			{
+				$sql.= " AND c.pos ".searchFieldSql($sa['cell_pos']);
+			}
+
+			if (isset($sa['name']))
+			{
+				$joins.= " INNER JOIN planets p ON p.id=e.id ";
+				$selects = ",p.planet_user_id,p.planet_type_id,p.planet_name";
+				
+				$sql.= " AND p.planet_name ".searchFieldSql($sa['name']);
+			}
+			if (isset($sa['user_id']))
+			{
+				if (!stristr($joins,"planets p"))
+				{
+					$joins.= " INNER JOIN planets p ON p.id=e.id ";	
+					$selects = ",p.planet_user_id,p.planet_type_id,p.planet_name";
+				}
+				$sql.= " AND p.planet_user_id ".searchFieldSql($sa['user_id']);
+			}				
+			if (isset($sa['user_main']) && $sa['user_main'][1]<2 )
+			{
+				if (!stristr($joins,"planets p"))
+				{
+					$joins.= " INNER JOIN planets p ON p.id=e.id ";	
+					$selects = ",p.planet_user_id,p.planet_type_id,p.planet_name";
+				}
+				$sql.= " AND p.planet_user_main='".intval($sa['user_main'][1])."'";
+			}			
+			if (isset($sa['debris']) && $sa['debris'][1]<2)
+			{
+				if (!stristr($joins,"planets p"))
+				{
+					$joins.= " INNER JOIN planets p ON p.id=e.id ";	
+					$selects = ",p.planet_user_id,p.planet_type_id,p.planet_name";
+				}
+				if ($sa['debris'][1]==1)
+					$sql.= " AND (p.planet_wf_metal>0 OR p.planet_wf_crystal>0 OR p.planet_wf_plastic>0)";
+				else
+					$sql.= " AND (p.planet_wf_metal=0 AND p.planet_wf_crystal=0 AND p.planet_wf_plastic=0)";
+			}
+			if (isset($sa['user_nick']))
+			{
+				if (!stristr($joins,"planets p"))
+				{
+					$joins.= " INNER JOIN planets p ON p.id=e.id ";	
+					$selects = ",p.planet_user_id,p.planet_type_id,p.planet_name";
+				}
+
+				$sql.= " AND users.user_nick ".searchFieldSql($sa['user_nick']);
+				$joins.= " INNER JOIN users ON p.planet_user_id=user_id ";
+			}	
+			if (isset($sa['desc']) && $sa['desc'][1]<2)
+			{
+				if (!stristr($joins,"planets p"))
+				{
+					$joins.= " INNER JOIN planets p ON p.id=e.id ";	
+					$selects = ",p.planet_user_id,p.planet_type_id,p.planet_name";
+				}
+
+				if ($sa['desc'][1]==1)
+				{
+					$sql.= " AND p.planet_desc!='' ";
+				}
+				else
+				{
+					$sql.= " AND p.planet_desc='' ";
+				}
+			}								
+						
+			// Build ordering
+			if (count($so)>1)
+			{
+				$sql.=" ORDER BY ";
+				foreach ($so as $k=> $v)
+				{
+					if ($k!="limit")
+					{
+						$sql.=" ".$k." ".($v == "d" ? "DESC" : "ASC")." ";
+					}
+				}
+			}
+
+			// Build limit
+			$sql.=" LIMIT ".$so['limit'];
+
+			// Build query
+			$sql = "SELECT   
+				SQL_CALC_FOUND_ROWS
+				e.id,
+				e.code, 
+				e.pos,
+				c.sx,c.sy,c.cx,c.cy ".
+				$selects
+				."
+			FROM ".$table." 
+			".$joins." 
+			WHERE 1 ".$sql;
+			
+			// Execute query
+			$res = dbquery($sql);
+			$nr = mysql_num_rows($res);
+
+			// Save query
+			searchQuerySave($sa,$so);
+
+			// Select total found rows
+			$ares = dbquery("SELECT FOUND_ROWS()");			
+			$aarr = mysql_fetch_row($ares);
+			$enr =$aarr[0];
+			
+			echo "<h2>Suchresultate</h2>";
+			echo "<form acton=\"?page=".$page."\" method=\"post\">";
+
+			echo "<b>Abfrage:</b> ";
+			$cnt=0;
+			$n = count($sa);
+			foreach ($sa as $k => $v)
+			{
+				echo "<i>$k</i> ".searchFieldOptionsName($v[0])." ";
+				if (is_array($v[1]))
+				{
+					$scnt=0;
+					$sn = count($v[1]);
+					foreach ($v[1] as $sv)
+					{
+						echo "'$sv'";
+						$scnt++;
+						if ($scnt< $sn)
+							echo " oder ";
+					}
+				}
+				else
+					echo "'".$v[1]."'";
+				$cnt++;
+				if ($cnt<$n)
+					echo ", ";
+			}
+			echo "<br/><b>Ergebnis:</b> ".$nr." Datens&auml;tze (".$enr." total)<br/>";
+			//, Sortierung: ".$order_array[$_POST['order']]."<br/>";
+			echo "<b>Anzeigen:</b> <select name=\"search_limit\">";
+			for ($x=100;$x<=2000;$x+=100)
+			{
+				echo "<option value=\"$x\"";
+				if ($so['limit']==$x)
+					echo " selected=\"selected\"";
+				echo ">$x</option>";
+			}
+			echo "</select> Datensätze sortiert nach <select name=\"search_order\">";
+			foreach ($order_array as $k=>$v)
+			{
+				echo "<option value=\"".$k."\"";
+				if (isset($so[$k]))
+					echo " selected=\"selected\"";
+				echo ">".$v."</option>";
+			}
+			echo "</select> <input type=\"submit\" value=\"Anzeigen\" name=\"search_resubmit\" /></form><br/>";
+			
+			if ($nr > 0)
+			{  
+				if ($nr > 20)
+				{
+					echo button("Neue Suche","?page=$page&amp;newsearch")."<br/><br/>";
+				}
+				
+				echo "<table class=\"tb\">";
+				echo "<tr>";
+				echo "<th style=\"width:40px;\">ID</th>";
+				echo "<th style=\"width:90px;\">Koordinaten</th>";
+				echo "<th>Entitätstyp</th>";
+				echo "<th>Subtyp</th>";
+				echo "<th>Name</th>";
+				echo "<th>Besitzer</th>";
+				echo "<th style=\"width:150px;\">Typ</th>";
+				echo "<th style=\"width:20px;\">&nbsp;</th>";
+				echo "</tr>";
+				while ($arr = mysql_fetch_array($res))
+				{
+					$ent = Entity::createFactory($arr['code'],$arr['id']);
+					
+					echo "<tr>";
+					echo "<td>
+						<a href=\"?page=$page&sub=edit&id=".$arr['id']."\">
+						".$arr['id']."
+						</a></td>";
+					echo "<td>
+						<a href=\"?page=$page&sub=edit&id=".$arr['id']."\">
+						".$arr['sx']."/".$arr['sy']." : ".$arr['cx']."/".$arr['cy']." : ".$arr['pos']."
+						</a>  </td>";
+					echo "<td style=\"color:".Entity::$entityColors[$arr['code']]."\">";
+					echo $ent->entityCodeString();
+					echo " ".($ent->ownerMain() ? "(Hauptplanet)": '')."";
+					echo "</td>";
+					echo "<td>".$ent->type()."</td>";
+					echo "<td>".$ent->name()."</td>";
+					echo "<td>";
+					if ($ent->ownerId()>0)
+					{
+						echo "<a href=\"?page=user&amp;sub=edit&amp;user_id=".$ent->ownerId()."\" title=\"Spieler bearbeiten\">
+							".$ent->owner()."</a>";
+					}					
+					echo "
+					</td>";
+					echo "<td>";
+					echo $ent->type();
+					echo "</td>";
+  				echo "<td>".edit_button("?page=$page&sub=edit&id=".$arr['id'])."</td>";
+					echo "</tr>";
+				}
+				echo "</table>";
+				echo "<br/>".button("Neue Suche","?page=$page&amp;newsearch");
+			}
+			else
+			{
+				searchQueryReset();
+				echo "Die Suche lieferte keine Resultate!<br/><br/>
+				".button("Neue Suche","?page=$page&amp;newsearch");
+			}
+
+
+		}
+
+	
+		/*
+		else if (false)
 		{
 			$search_text = array();
 			$query_save = array();
@@ -1269,6 +1550,7 @@
 				echo "Die Suche lieferte keine Resultate!<br/><br/><input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Zur&uuml;ck\" />";
 			}
 		}
+		*/
 
 		//
 		// Suchmaske
@@ -1277,90 +1559,92 @@
 		else
 		{
 			echo "<h2>Suchmaske</h2>";
-			echo "<form action=\"?page=$page\" method=\"post\" name=\"advancedsearch\"  autocomplete=\"off\">";
-			echo "<table class=\"tbl\" style=\"width:550px;margin:0px\">";
+			echo "<form action=\"?page=$page\" method=\"post\" name=\"dbsearch\" autocomplete=\"off\">";
+			echo "<table class=\"tb\" style=\"width:auto;margin:0px\">";
 			echo "<tr>
-				<td class=\"tbltitle\">ID:</td>
-				<td class=\"tbldata\"><input type=\"text\" name=\"id\" value=\"\" size=\"5\" maxlength=\"10\" /></td></tr>";
+				<th>ID:</th>
+				<td><input type=\"text\" name=\"search_id\" value=\"\" size=\"5\" maxlength=\"10\" /></td></tr>";
 			echo "<tr>
-				<td class=\"tbltitle\" style=\"width:160px\">Name:</td>
-				<td class=\"tbldata\">".searchFieldTextOptions('planet_name')." <input type=\"text\" name=\"planet_name\" value=\"\" size=\"20\" maxlength=\"250\" /> </td></tr>";
+				<th style=\"width:160px\">Name:</th>
+				<td>".searchFieldTextOptions('name')." <input type=\"text\" name=\"search_name\" value=\"\" size=\"20\" maxlength=\"250\" /> </td></tr>";
 			echo "<tr>
-				<td class=\"tbltitle\">Koordinaten:</td>
-				<td class=\"tbldata\"><select name=\"cell_sx\">";
+				<th>Koordinaten:</th>
+				<td><select name=\"search_cell_s\">";
 			echo "<option value=\"\">(egal)</option>";
 			for ($x=1;$x<=$conf['num_of_sectors']['p1'];$x++)
-				echo "<option value=\"$x\">$x</option>";
-			echo "</select>/<select name=\"cell_sy\">";
-			echo "<option value=\"\">(egal)</option>";
-			for ($x=1;$x<=$conf['num_of_sectors']['p2'];$x++)
-				echo "<option value=\"$x\">$x</option>";
-			echo "</select> : <select name=\"cell_cx\">";
+			{
+				for ($y=1;$y<=$conf['num_of_sectors']['p2'];$y++)
+				{
+					echo "<option value=\"".$x."_".$y."\">$x / $y</option>";
+				}
+			}				
+			echo "</select> : <select name=\"search_cell_c\">";
 			echo "<option value=\"\">(egal)</option>";
 			for ($x=1;$x<=$conf['num_of_cells']['p1'];$x++)
-				echo "<option value=\"$x\">$x</option>";
-			echo "</select>/<select name=\"cell_cy\">";
+			{
+				for ($y=1;$y<=$conf['num_of_cells']['p2'];$y++)
+				{
+					echo "<option value=\"".$x."_".$y."\">$x / $y</option>";
+				}
+			}
+			echo "</select> : <select name=\"search_cell_pos\">";
 			echo "<option value=\"\">(egal)</option>";
-			for ($x=1;$x<=$conf['num_of_cells']['p2'];$x++)
-				echo "<option value=\"$x\">$x</option>";
-			echo "</select> : <select name=\"planet_solsys_pos\">";
-			echo "<option value=\"\">(egal)</option>";
-			for ($x=1;$x<=$conf['num_planets']['p2'];$x++)
+			for ($x=0;$x<=$conf['num_planets']['p2'];$x++)
 				echo "<option value=\"$x\">$x</option>";
 			echo "</select></td></tr>";
 			echo "<tr>
-				<td class=\"tbltitle\" style=\"width:160px\">Entitätstyp:<br/><br/>
+				<th style=\"width:160px\">Entitätstyp:<br/><br/>
 				<a href=\"javascript:;\" onclick=\"if (this.innerHTML=='Alles auswählen') { this.innerHTML='Auswahl aufheben';for(i=0;i<=7;i++) {document.getElementById('code_'+i).checked=true} } else {for(i=0;i<=7;i++) {document.getElementById('code_'+i).checked=false};this.innerHTML='Alles auswählen';}\">Alles auswählen</a>
-				</td>
-				<td class=\"tbldata\">
-					<input type=\"checkbox\" name=\"code[]\" id=\"code_0\" value=\"p\" checked=\"checked\" /> Planet<br/>
-					<input type=\"checkbox\" name=\"code[]\" id=\"code_1\" value=\"s\" /> Stern<br/>
-					<input type=\"checkbox\" name=\"code[]\" id=\"code_2\" value=\"n\" /> Nebel<br/>
-					<input type=\"checkbox\" name=\"code[]\" id=\"code_3\" value=\"a\" /> Asteroidenfeld<br/>
-					<input type=\"checkbox\" name=\"code[]\" id=\"code_4\" value=\"w\" /> Wurmloch<br/>
-					<input type=\"checkbox\" name=\"code[]\" id=\"code_5\" value=\"m\" /> Marktplanet<br/>
-					<input type=\"checkbox\" name=\"code[]\" id=\"code_6\" value=\"x\" /> Allianzplanet<br/>
-					<input type=\"checkbox\" name=\"code[]\" id=\"code_7\" value=\"e\" /> Leerer Raum
+				</tH>
+				<td>
+					<input type=\"checkbox\" name=\"search_code[]\" id=\"code_0\" value=\"p\" checked=\"checked\" /> Planet<br/>
+					<input type=\"checkbox\" name=\"search_code[]\" id=\"code_1\" value=\"s\" /> Stern<br/>
+					<input type=\"checkbox\" name=\"search_code[]\" id=\"code_2\" value=\"n\" /> Nebel<br/>
+					<input type=\"checkbox\" name=\"search_code[]\" id=\"code_3\" value=\"a\" /> Asteroidenfeld<br/>
+					<input type=\"checkbox\" name=\"search_code[]\" id=\"code_4\" value=\"w\" /> Wurmloch<br/>
+					<input type=\"checkbox\" name=\"search_code[]\" id=\"code_5\" value=\"m\" /> Marktplanet<br/>
+					<input type=\"checkbox\" name=\"search_code[]\" id=\"code_6\" value=\"x\" /> Allianzplanet<br/>
+					<input type=\"checkbox\" name=\"search_code[]\" id=\"code_7\" value=\"e\" /> Leerer Raum
 				</td></tr>";
 			echo "<tr>
-				<td class=\"tbltitle\">Besitzer-ID:</td>
-				<td class=\"tbldata\"><input type=\"text\" name=\"planet_user_id\" value=\"\" size=\"5\" maxlength=\"10\" /></td>";
+				<th>Besitzer-ID:</th>
+				<td><input type=\"text\" name=\"search_user_id\" value=\"\" size=\"5\" maxlength=\"10\" /></td>";
 			echo "<tr>
-				<td class=\"tbltitle\">Besitzer:</td>
-				<td class=\"tbldata\">".searchFieldTextOptions('user_nick')." <input type=\"text\" name=\"user_nick\" value=\"\" size=\"20\" maxlength=\"250\" autocomplete=\"off\"  />&nbsp;";
+				<th>Besitzer:</th>
+				<td>".searchFieldTextOptions('user_nick')." <input type=\"text\" name=\"search_user_nick\" value=\"\" size=\"20\" maxlength=\"250\" autocomplete=\"off\"  />&nbsp;";
 				echo "</td></tr>";
 			echo "<tr>
-				<td class=\"tbltitle\" style=\"height:2px\" colspan=\"2\"></td></tr>";
+				<td style=\"height:2px\" colspan=\"2\"></td></tr>";
 			echo "<tr>
-				<td class=\"tbltitle\">Hauptplanet:</td>
-				<td class=\"tbldata\"><input type=\"radio\" name=\"planet_user_main\" value=\"2\" checked=\"checked\" /> Egal &nbsp;
-				<input type=\"radio\" name=\"planet_user_main\" value=\"0\" /> Nein &nbsp;
-				<input type=\"radio\" name=\"planet_user_main\" value=\"1\" /> Ja</td>";
+				<th>Hauptplanet:</th>
+				<td><input type=\"radio\" name=\"search_user_main\" value=\"2\" checked=\"checked\" /> Egal &nbsp;
+				<input type=\"radio\" name=\"search_user_main\" value=\"0\" /> Nein &nbsp;
+				<input type=\"radio\" name=\"search_user_main\" value=\"1\" /> Ja</td>";
 			echo "<tr>
-				<td class=\"tbltitle\">Tr&uuml;mmerfeld:</td>
-				<td class=\"tbldata\"><input type=\"radio\" name=\"planet_wf\" value=\"2\" checked=\"checked\" /> Egal &nbsp;
-				<input type=\"radio\" name=\"planet_wf\" value=\"0\" /> Nein &nbsp;
-				<input type=\"radio\" name=\"planet_wf\" value=\"1\"  /> Ja </td>";
-			echo "<tr><td class=\"tbltitle\">Bemerkungen:</td>
-				<td class=\"tbldata\"><input type=\"radio\" name=\"planet_desc\" value=\"2\" checked=\"checked\" /> Egal &nbsp;
-				<input type=\"radio\" name=\"planet_desc\" value=\"0\" /> Keine &nbsp;
-				<input type=\"radio\" name=\"planet_desc\" value=\"1\"  /> Vorhanden</td></tr>";
+				<th>Tr&uuml;mmerfeld:</th>
+				<td><input type=\"radio\" name=\"search_debris\" value=\"2\" checked=\"checked\" /> Egal &nbsp;
+				<input type=\"radio\" name=\"search_debris\" value=\"0\" /> Nein &nbsp;
+				<input type=\"radio\" name=\"search_debris\" value=\"1\"  /> Ja </td>";
+			echo "<tr><th>Bemerkungen:</th>
+				<td><input type=\"radio\" name=\"search_desc\" value=\"2\" checked=\"checked\" /> Egal &nbsp;
+				<input type=\"radio\" name=\"search_desc\" value=\"0\" /> Keine &nbsp;
+				<input type=\"radio\" name=\"search_desc\" value=\"1\"  /> Vorhanden</td></tr>";
 			echo "</table>";
 			echo "<br/>
-			<select name=\"limit\">";
+			<select name=\"search_limit\">";
 			for ($x=100;$x<=2000;$x+=100)
 				echo "<option value=\"$x\">$x</option>";
-			echo "</select> Datensätze sortiert nach <select name=\"order\">";
+			echo "</select> Datensätze sortiert nach <select name=\"search_order\">";
 				foreach ($order_array as $k=>$v)
 				{
 					echo "<option value=\"".$k."\">".$v."</option>";
 				}
 				echo "
-			</select> <input type=\"submit\" class=\"button\" name=\"search_submit\" value=\"Suchen\" /></form>";
+			</select> <input type=\"submit\" name=\"search_submit\" value=\"Suchen\" /></form>";
 			$tblcnt = mysql_fetch_row(dbquery("SELECT count(id) FROM planets;"));
 			echo "<br/>Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.";
 			
-			echo "<script type=\"text/javascript\">document.forms['advancedsearch'].elements[1].focus();</script>";
+			echo "<script type=\"text/javascript\">document.forms['dbsearch'].elements[2].focus();</script>";
 		}
 	}
 ?>
