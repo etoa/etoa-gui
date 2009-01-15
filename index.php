@@ -371,6 +371,7 @@
 		{
 			$tpl->assign("currentPlanetName","Unbekannt");
 			$tpl->assign("planetList","");						
+			$tpl->assign("planetListImages","");		
 			$tpl->assign("nextPlanetId",0);
 			$tpl->assign("prevPlanetId",0);
 			$tpl->assign("selectField","");		

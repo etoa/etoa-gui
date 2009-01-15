@@ -176,7 +176,7 @@
 		  	INNER JOIN
 		  		entities 
 		  		ON entities.cell_id=cells.id	  	
-		  		AND entities.id=".$this->id."
+		  		AND entities.id='".$this->id."'
 		  	LIMIT 1;
 		  	");
 		  	if (mysql_num_rows($res)>0)
