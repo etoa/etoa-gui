@@ -1382,6 +1382,12 @@ td.havenTab:hover	{
 	padding-right:5px;	
 }
 
+.buildOverviewObjectNone, .tb td.buildOverviewObjectNone {
+	border:none;
+	
+}
+
+
 .planetOverviewList	{
 	position:absolute;
 	left:20px;

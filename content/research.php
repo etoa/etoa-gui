@@ -699,7 +699,7 @@
 					echo $cstr;
 					while ($tarr = mysql_fetch_array($tres))
 					{
-						tableStart($tarr['type_name'],NUM_BUILDINGS_PER_ROW*CELL_WIDTH);
+						tableStart($tarr['type_name'],"auto");
 	
 						$cnt = 0; // Counter for current row
 						$scnt = 0; // Counter for shown techs

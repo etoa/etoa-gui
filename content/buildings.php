@@ -1028,7 +1028,7 @@ function calcDemolishingWaitTime($dc,$cp)
 
 				while ($tarr = mysql_fetch_array($tres))
 				{
-					tableStart($tarr['type_name'],NUM_BUILDINGS_PER_ROW*CELL_WIDTH);
+					tableStart($tarr['type_name'],"auto");
 
 						$cnt = 0; // Counter for current row
 						$scnt = 0; // Counter for shown buildings
@@ -1174,15 +1174,16 @@ function calcDemolishingWaitTime($dc,$cp)
 										echo "<tr>";
 									}
 
-									echo "<td style=\"background:url('".$img."') no-repeat;width:".CELL_WIDTH."px;height:".CELL_WIDTH."px ;padding:0px;\">
-									<div style=\"position:relative;height:".CELL_WIDTH."px;overflow:hidden;\">
+									echo "<td style=\"background:url('".$img."') no-repeat;width:".CELL_WIDTH."px;height:".CELL_WIDTH."px ;padding:0px;\">";
+									echo "<div style=\"position:relative;height:".CELL_WIDTH."px;overflow:hidden;\">
 									<div class=\"buildOverviewObjectTitle\">".$bv['name']."</div>";
 									echo "<a href=\"?page=$page&amp;id=".$bid."\" ".tm($bv['name'],"<b>".$subtitle."</b><br/>".$tmtext.$bv['shortcomment'])." style=\"display:block;height:180px;\"></a>";
 									if ($b_level>0 || ($b_level==0 && isset($buildlist[$bid]['buildlist_build_type']) && $buildlist[$bid]['buildlist_build_type']==3)) 
 									{
 										echo "<div class=\"buildOverviewObjectLevel\" style=\"color:".$color."\">".$b_level."</div>";
 									}
-									echo "</div></td>\n";
+									echo "</div>";
+									echo "</td>\n";
 									$cnt++;
 									$scnt++;
 								}
@@ -1200,7 +1201,7 @@ function calcDemolishingWaitTime($dc,$cp)
 							{
 								for ($x=0;$x < NUM_BUILDINGS_PER_ROW-$cnt;$x++)
 								{
-									echo "<td class=\"buildOverviewObjectNone\" style=\"width:".CELL_WIDTH."px;\">&nbsp;</td>";
+									echo "<td class=\"buildOverviewObjectNone\" style=\"width:".CELL_WIDTH."px\">&nbsp;</td>";
 								}
 								echo '</tr>';
 							}							

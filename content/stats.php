@@ -201,7 +201,7 @@
 		{
 			$mode = $_GET['mode'];
 		}
-		elseif($_SESSION['statsmode']!="")
+		elseif(isset($_SESSION['statsmode']))
 		{
 			$mode=$_SESSION['statsmode'];
 		}				
