@@ -94,7 +94,14 @@
 					break;		
 				case "edgedetect":
 					imagefilter($im, IMG_FILTER_EDGEDETECT);
-					break;																				
+					break;							
+				case "req":
+					imagefilter($im, IMG_FILTER_GRAYSCALE);
+					imagefilter($im, IMG_FILTER_BRIGHTNESS,-100);
+					imagefilter($im, IMG_FILTER_CONTRAST,0);
+					imagefilter($im, IMG_FILTER_GAUSSIAN_BLUR);
+					imagefilter($im, IMG_FILTER_COLORIZE, 0, 0, 10);
+																	
 					
 			}
 		}

@@ -726,14 +726,19 @@
 								
 								// Check requirements for this tech
 								$requirements_passed = true;
+								$b_req_info = array();
+								$t_req_info = array();								
 								if (isset($b_req[$bid]['t']) && count($b_req[$bid]['t'])>0)
 								{
 									foreach ($b_req[$bid]['t'] as $b=>$l)
 									{
 										if (!isset($techlist[$b]['techlist_current_level']) || $techlist[$b]['techlist_current_level']<$l)
 										{
+											$t_req_info[] = array($b,$l,false);
 											$requirements_passed = false;
 										}
+										else
+											$b_req_info[] = array($b,$l,true);
 									}
 								}
 	              if (isset($b_req[$bid]['b']) && count($b_req[$bid]['b'])>0)
@@ -742,8 +747,10 @@
 	              	{
 	              		if (!isset($buildlist[$id]) || $buildlist[$id]<$level)
 	              		{
-	              		    $requirements_passed = false;
-	              		}
+	              		  $requirements_passed = false;
+											$b_req_info[] = array($id,$level,false);
+										}
+										$t_req_info[] = array($id,$level,true);
 	              	}
 	              }
 	
@@ -768,6 +775,21 @@
 									{
 										$subtitle =  'Voraussetzungen fehlen';
 										$tmtext = '<span style="color:#999">Baue zuerst die nötigen Gebäude und erforsche die nötigen Technologien um diese Technologie zu erforschen!</span><br/>';
+										
+										foreach ($b_req_info as $v)
+										{
+											$b = new Building($v[0]);
+											$tmtext .= "<div style=\"color:".($v[2]?'#0f0':'#f30')."\">".$b." Stufe ".$v[1]."</div>";
+											unset($b);
+										}
+										foreach ($t_req_info as $v)
+										{
+											$b = new Technology($v[0]);
+											$tmtext .= "<div style=\"color:".($v[2]?'#0f0':'#f30')."\">".$b." Stufe ".$v[1]."</div>";
+											unset($b);
+										}
+																			
+										
 										$color = '#999';
 										if($use_img_filter)
 										{
@@ -839,11 +861,16 @@
 									}
 	              }
 
-								$img="".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid."_middle.".IMAGE_EXT."";
 	              
 								// Display all buildings that are buildable or are already built
-								if (($requirements_passed && $bv['show']==1) || $b_level>0)
+								if (($bv['show']==1) || $b_level>0)
 								{			
+									$img="".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid."_middle.".IMAGE_EXT."";
+	
+									if (!$requirements_passed)
+										$img = "misc/imagefilter.php?file=$img&filter=req";
+	
+									
 									// Display row starter if needed				
 									if ($cnt==0) 
 									{
@@ -886,7 +913,7 @@
 							{
 								for ($x=0;$x < NUM_BUILDINGS_PER_ROW-$cnt;$x++)
 								{
-									echo "<td class=\"buildOverviewObjectNone\" style=\"width:".CELL_WIDTH."px;\">&nbsp;</td>";
+									echo "<td class=\"buildOverviewObjectNone\" style=\"width:".CELL_WIDTH."px;padding:0px;\">&nbsp;</td>";
 								}
 								echo '</tr>';
 							}							

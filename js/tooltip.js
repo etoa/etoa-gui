@@ -30,8 +30,22 @@ function updateTT(e)
   {
     x = (document.all) ? window.event.x + wmtt.offsetParent.scrollLeft : e.pageX;
     y = (document.all) ? window.event.y + wmtt.offsetParent.scrollTop  : e.pageY;
-    wmtt.style.left = (x + 20) + "px";
-    wmtt.style.top   = (y + 20) + "px";
+
+		var pos = findPos(wmtt);
+		var scr = getScrollXY();
+		var sz = getDocSize();
+		var elemLeft = pos[0] - scr[0];
+		var elemTop = pos[1] - scr[1];
+
+	  wmtt.style.left = (x + 20) + "px";
+
+		if (elemTop+wmtt.offsetHeight >= sz[1]) 
+		{
+	    wmtt.style.top = (sz[1]+scr[1]-wmtt.offsetHeight) + "px";
+		}
+		else
+	    wmtt.style.top = (y + 20) + "px";
+		
   }
 }
 
@@ -97,4 +111,55 @@ function showTT(tTitle, tElement,mode,e,s)
 
 function hideTT() {
   wmtt.style.display = "none";
+}
+
+function findPos(obj) 
+{
+	var curleft = curtop = 0;
+	if (obj.offsetParent) 
+	{
+		do {
+			curleft += obj.offsetLeft;
+			curtop += obj.offsetTop;
+		} while (obj = obj.offsetParent);
+	}
+	return [curleft,curtop];
+}
+
+
+
+function getDocSize() {
+  var myWidth = 0, myHeight = 0;
+  if( typeof( window.innerWidth ) == 'number' ) {
+    //Non-IE
+    myWidth = window.innerWidth;
+    myHeight = window.innerHeight;
+  } else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
+    //IE 6+ in 'standards compliant mode'
+    myWidth = document.documentElement.clientWidth;
+    myHeight = document.documentElement.clientHeight;
+  } else if( document.body && ( document.body.clientWidth || document.body.clientHeight ) ) {
+    //IE 4 compatible
+    myWidth = document.body.clientWidth;
+    myHeight = document.body.clientHeight;
+  }
+  return [myWidth,myHeight];
+}
+
+function getScrollXY() {
+  var scrOfX = 0, scrOfY = 0;
+  if( typeof( window.pageYOffset ) == 'number' ) {
+    //Netscape compliant
+    scrOfY = window.pageYOffset;
+    scrOfX = window.pageXOffset;
+  } else if( document.body && ( document.body.scrollLeft || document.body.scrollTop ) ) {
+    //DOM compliant
+    scrOfY = document.body.scrollTop;
+    scrOfX = document.body.scrollLeft;
+  } else if( document.documentElement && ( document.documentElement.scrollLeft || document.documentElement.scrollTop ) ) {
+    //IE6 standards compliant mode
+    scrOfY = document.documentElement.scrollTop;
+    scrOfX = document.documentElement.scrollLeft;
+  }
+  return [ scrOfX, scrOfY ];
 }
