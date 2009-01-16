@@ -367,7 +367,7 @@
                   @unlink(ALLIANCE_IMG_DIR."/".$arr['alliance_img']);
               }
               $alliance_img_string="alliance_img='',
-              lliance_img_check=0,";
+              alliance_img_check=0,";
             }
             elseif (isset($_FILES['alliance_img_file']['tmp_name']) && $_FILES['alliance_img_file']['tmp_name']!="")
             {
@@ -387,7 +387,9 @@
                       if (file_exists(ALLIANCE_IMG_DIR."/".$arr['user_avatar']))
                           @unlink(ALLIANCE_IMG_DIR."/".$arr['user_avatar']);
                       move_uploaded_file($source,ALLIANCE_IMG_DIR."/".$fname);
-	                    if ($ims[0]>ALLIANCE_IMG_WIDTH || $ims[1]>ALLIANCE_IMG_HEIGHT)
+			                if (UNIX)
+			                	chmod(ALLIANCE_IMG_DIR."/".$fname,FILE_UPLOAD_PERMS);
+                      if ($ims[0]>ALLIANCE_IMG_WIDTH || $ims[1]>ALLIANCE_IMG_HEIGHT)
 											{
 												if (resizeImage(ALLIANCE_IMG_DIR."/".$fname,ALLIANCE_IMG_DIR."/".$fname,ALLIANCE_IMG_WIDTH,ALLIANCE_IMG_HEIGHT,$ext))
 												{
