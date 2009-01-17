@@ -75,61 +75,6 @@
 	<?PHP
 
 
-	// Einstellungs-Schalter oben rechts
-	if (isset($_GET['msgprev']))
-	{
-		if ($_GET['msgprev']=='on')
-		{
-			$msgpreview=true;
-			$cu->properties->msgPreview = 1;
-		}
-		else
-		{
-			$msgpreview=false;
-			$cu->properties->msgPreview = 0;
-		}
-	}
-	if (isset($_GET['msgcreatprev']))
-	{
-		if ($_GET['msgcreatprev']=='on')
-		{
-			$msgcreatpreview=true;
-			$cu->properties->msgCreationPreview = 1;
-		}
-		else
-		{
-			$msgcreatpreview=false;
-			$cu->properties->msgCreationPreview = 0;
-		}
-	}	
-	echo '<div style="float:right;font-size:8pt;text-align:right;">';
-	if ($mode=='archiv' || $mode=='inbox')
-	{
-		if ($msgpreview)
-		{
-			echo '<a href="?page='.$page.'&amp;mode='.$mode.'&amp;msgprev=off">Textvorschau ausschalten</a>';
-		}
-		else
-		{
-			echo '<a href="?page='.$page.'&amp;mode='.$mode.'&amp;msgprev=on">Textvorschau einschalten</a>';
-		}
-	}
-	if ($mode=='new')
-	{
-		if ($msgcreatpreview)
-		{
-			echo '<a href="?page='.$page.'&amp;mode='.$mode.'&amp;msgcreatprev=off">Vorschau ausschalten</a>';
-		}
-		else
-		{
-			echo '<a href="?page='.$page.'&amp;mode='.$mode.'&amp;msgcreatprev=on">Vorschau einschalten</a>';
-		}	
-		echo '<br/><a href="?page=userconfig&mode=messages">Signatur bearbeiten</a>';
-	}
-	echo '</div>';
-
-	
-	
 	echo '<h1>Nachrichten</h1>';
 	echo '<br style="clear:both;" />';
 
@@ -482,7 +427,7 @@
 
 					
 				// Archiv-Grafik
-				echo "<table class=\"tbl\">";
+				tableStart("Nachrichten");
 				echo "<tr>
 					<th class=\"tbltitle\" style=\"text-align:center;width:50%;".$r_color."\">
           	Gelesen: ".$readed_msg_cnt."/".$conf['msg_max_store']['v']." Nachrichten
@@ -505,15 +450,14 @@
   	     					</td>                 
         	</tr>';
         }
-                                                                       
-				echo "</table><br/>";
+        tableEnd();
 
 				echo "<form action=\"?page=$page&amp;mode=".$mode."\" method=\"post\"><div>";
 				$cstr = checker_init();
 				echo "<input type=\"hidden\" name=\"archived_msg_cnt\" value=\"".$archived_msg_cnt."\" />";
 				
 				// Nachrichten
-				tableStart("Nachrichten");
+				tableStart("Kategorien");
 				$res = dbquery("
 				SELECT
 	      	cat_id,
@@ -604,13 +548,13 @@
 					{
 						echo "<tr>
 							<th colspan=\"4\">".text2html($arr['cat_name'])." (".$ccnt." Nachrichten)</th>
-							<td class=\"tbltitle\" style=\"text-align:center;\"><input type=\"button\" id=\"selectBtn[".$arr['cat_id']."]\" value=\"X\" onclick=\"xajax_messagesSelectAllInCategory(".$arr['cat_id'].",".$ccnt.",this.value)\"/></td>
+							<th style=\"text-align:center;\"><input type=\"button\" id=\"selectBtn[".$arr['cat_id']."]\" value=\"X\" onclick=\"xajax_messagesSelectAllInCategory(".$arr['cat_id'].",".$ccnt.",this.value)\"/></td>
 						</tr>";
 					}
 					else
 					{
 						echo "<tr>
-							<td class=\"tbltitle\" colspan=\"5\">".text2html($arr['cat_name'])."</td>
+							<th colspan=\"5\">".text2html($arr['cat_name'])."</th>
 						</tr>";
 					}
 					if ($ccnt>0)
@@ -728,7 +672,7 @@
 				echo "</table><br/>";
 				if ($msgcnt>0)
 				{
-					// Übergibt alle Nachrichten-ID's andie javascript funktion
+					// Übergibt alle Nachrichten-ID's an die javascript funktion
 					echo "<input type=\"hidden\" id=\"msg_cnt\" value=\"".$msgcnt."\" />";
 					
 					echo "<input type=\"submit\" name=\"submitdeleteselection\" value=\"Markierte l&ouml;schen\" />&nbsp;

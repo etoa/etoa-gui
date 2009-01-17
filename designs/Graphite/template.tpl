@@ -17,7 +17,9 @@
 			<a href="?page=recycle" id="navrecycle"></a>
 		</div>
 		<div id="planetimage">
-			<img src="{$currentPlanetImage}" alt="Planet" style="width:100px;height:100px;" />
+			<a href="?page=planetoverview">
+				<img src="{$currentPlanetImage}" alt="Planet" style="width:100px;height:100px;" />
+			</a>
 		</div>
 		<div id="planetname">
 			{$selectField}

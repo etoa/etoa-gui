@@ -1,88 +1,86 @@
 <?PHP
-		if ($_POST['submit']!="" && checker_verify())
+		if (isset($_POST['submit']) && checker_verify())
 		{
 			$time = time();
-			$uid = get_user_id(rawurldecode($_POST['message_user_to']));
-			if ($uid>0)
-			{
-				// Prüfe Flooding
-				$flood_interval = time()-FLOOD_CONTROL;
-				if (!isset($s['messages']['sent'][$uid]) || $s['messages']['sent'][$uid] < $flood_interval)
-				{
-					// Prüfe Ignore
-					$res = dbquery("
-					SELECT 
-						COUNT(ignore_id)
-					FROM
-						message_ignore
-					WHERE
-						ignore_owner_id=".$uid."
-						AND ignore_target_id=".$cu->id."
-					;");
-					$arr=mysql_fetch_row($res);
-					if ($arr[0]==0)
-					{					
-						// Prüfe Titel
-						$check_subject=check_illegal_signs($_POST['message_subject']);
-						if($check_subject=="")
-						{
-								$s['messages']['sent'][$uid]=$time;
-								Message::sendFromUserToUser($cu->id,$uid,$_POST['message_subject'],$_POST['message_text']);
+			$rcpts = rawurldecode($_POST['message_user_to']);
+			$rcptarr = explode(";",$rcpts);
 
-         		    tableStart("Nachrichtenversand");
-         		    echo "Nachricht wurde an <b>".$_POST['message_user_to']."</b> gesendet!";
-         		    iBoxEnd();
-         		    $_POST['message_user_to']=null;
-         		}
-         		else
-         		{
-       		    iBoxStart("Nachrichtenversand");
-         			echo "Du hast ein unerlaubtes Zeichen ( ".$check_subject." ) im Betreff!";
-       		    iBoxEnd();
-         		}
-         	}
+	    iBoxStart("Nachrichtenversand");
+			foreach ($rcptarr as $rcpt)
+			{
+				$uid = get_user_id($rcpt);	
+				if ($uid>0)
+				{
+					// Prüfe Flooding
+					$flood_interval = time()-FLOOD_CONTROL;
+					if (!isset($s['messages']['sent'][$uid]) || $s['messages']['sent'][$uid] < $flood_interval)
+					{
+						// Prüfe Ignore
+						$res = dbquery("
+						SELECT 
+							COUNT(ignore_id)
+						FROM
+							message_ignore
+						WHERE
+							ignore_owner_id=".$uid."
+							AND ignore_target_id=".$cu->id."
+						;");
+						$arr=mysql_fetch_row($res);
+						if ($arr[0]==0)
+						{					
+							// Prüfe Titel
+							$check_subject=check_illegal_signs($_POST['message_subject']);
+							if($check_subject=="")
+							{
+									$s['messages']['sent'][$uid]=$time;
+									Message::sendFromUserToUser($cu->id,$uid,$_POST['message_subject'],$_POST['message_text']);
+	
+	         		    echo "Nachricht wurde an <b>".$rcpt."</b> gesendet!<br/>";
+	         		    $_POST['message_user_to']=null;
+	         		}
+	         		else
+	         		{
+	         			echo "Du hast ein unerlaubtes Zeichen ( ".$check_subject." ) im Betreff!<br/>";
+	         		}
+	         	}
+						else
+						{
+							echo "<b>Fehler:</b> Dieser Benutzer hat dich ignoriert, die Nachricht wurde nicht gesendet!<br/>";
+						}         	
+					}
 					else
 					{
-						iBoxStart("Nachrichtenversand");
-						echo "<b>Fehler:</b> Dieser Benutzer hat dich ignoriert, die Nachricht wurde nicht gesendet!";
-						iBoxEnd();
-					}         	
+						echo "<b>Flood-Kontrolle!</b> Du kannst erst nach ".FLOOD_CONTROL." Sekunden eine neue Nachricht an ".$rcpt." schreiben!<br/>";
+					}
 				}
 				else
 				{
-					iBoxStart("Nachrichtenversand");
-					echo "<b>Flood-Kontrolle!</b> Du kannst erst nach ".FLOOD_CONTROL." Sekunden eine neue Nachricht an ".$_POST['message_user_to']." schreiben!";
-					iBoxEnd();
+					echo "<b>Fehler:</b>: Der Benutzer <b>".$rcpt."</b> existiert nicht!<br/>";
 				}
 			}
-			else
-			{
-				iBoxStart("Nachrichtenversand");
-				echo "<b>Fehler:</b>: Dieser Benutzer existiert nicht!";
-				iBoxEnd();
-			}
+	  	iBoxEnd();			
 		}
 			
-			// User zuweisen
-			// Wenn Username durch Link weitergegeben wird (z.b. Stats -> mail)
-			if(isset($_GET['message_user_to']))
-			{
-				$user = get_user_nick(intval($_GET['message_user_to']));
-			}
-			// Username löschen falls auf "Weiterleiten" geklcikt wurde
-			elseif (isset($_POST['remit']))
-			{
-				$user = '';
-			}
-			//Der Username wird übernommen wenn dieser angegeben ist
-			elseif (isset($_POST['message_user_to']))
-			{
-				$user = get_user_nick(intval($_POST['message_user_to']));
-			}
-			else
-			{
-				$user = ''; 
-			}
+		// User zuweisen
+		// Wenn Username durch Link weitergegeben wird (z.b. Stats -> mail)
+		if(isset($_GET['message_user_to']))
+		{
+			$user = get_user_nick(intval($_GET['message_user_to']));
+		}
+		// Username löschen falls auf "Weiterleiten" geklcikt wurde
+		elseif (isset($_POST['remit']))
+		{
+			$user = '';
+		}
+		//Der Username wird übernommen wenn dieser angegeben ist
+		elseif (isset($_POST['message_user_to']))
+		{
+			$user = rawurldecode($_POST['message_user_to']);
+		}
+		else
+		{
+			$user = ''; 
+		}
 			
 			// Betreff zuweisen
 			if (isset($_GET['message_subject']))
@@ -143,38 +141,36 @@
 	    	$text = '';
 	    }			
 
-			if ($s['user']['msgsignature'])
+			if ($cu->properties->msgSignature)
 	    {
-	    	$text = "\n\n".$s['user']['msgsignature'].$text;
+	    	$text = "\n\n".$cu->properties->msgSignature.$text;
 	    }
 			echo "<form action=\"?page=".$page."&mode=".$mode."\" method=\"POST\" name=\"msgform\">";
 			checker_init();
-			echo "<table width=\"300\" align=\"center\" class=\"tbl\">";
+			tableStart("Nachricht verfassen");
 			echo "<tr>
-			     	<td class=\"tbltitle\" colspan=\"3\">Neue Nachricht</td>
-				</tr>";
-			echo "<tr>
-					<td class=\"tbltitle\" width=\"50\" valign=\"top\">Empf&auml;nger:</td>
+					<th width=\"50\" valign=\"top\">Empf&auml;nger:</th>
 					<td class=\"tbldata\" width=\"250\"  colspan=\"2\">
 						<input type=\"text\" name=\"message_user_to\" id=\"user_nick\" autocomplete=\"off\" value=\"";
 					echo $user;
-					echo "\" size=\"30\" maxlength=\"255\" onkeyup=\"xajax_searchUser(this.value);\"><br/>
-					<div class=\"citybox\" id=\"citybox\">&nbsp;</div>
-
+					echo "\" maxlength=\"255\" style=\"width:330px\"> Mehrere Empfänger mit ; trennen<br/>
 					</td>
 			     </tr>";
 			echo "<tr>
-					<td class=\"tbltitle\" width=\"50\" valign=\"top\">Betreff:</td>
+					<th width=\"50\" valign=\"top\">Betreff:</th>
 					<td class=\"tbldata\" width=\"250\" colspan=\"2\">
-						<input type=\"text\" name=\"message_subject\" value=\"".$subj."\" size=\"30\" maxlength=\"255\">
+						<input type=\"text\" name=\"message_subject\" value=\"".$subj."\"  style=\"width:97%\" maxlength=\"255\">
 					</td>
 			     </tr>";
 				echo "<tr>
-					<td class=\"tbltitle\" width=\"50\" valign=\"top\">Text:</td>
+					<th width=\"50\" valign=\"top\">Text:</th>
 					<td class=\"tbldata\" width=\"250\"><textarea name=\"message_text\" id=\"message\" rows=\"10\" cols=\"60\" ";
 					if ($msgcreatpreview)
 					{
-						echo "onkeyup=\"xajax_messagesNewMessagePreview(this.value)\"";
+						echo "onkeyup=\"
+						if(window.mytimeout) window.clearTimeout(window.mytimeout);
+ 						window.mytimeout = window.setTimeout('xajax_messagesNewMessagePreview(document.getElementById(\'message\').value)', 500);
+ 						return true;\"";
 					}
 					echo ">".$text."</textarea></td>";
 					
@@ -238,7 +234,7 @@
 			if ($msgcreatpreview)
 			{
 			echo "<tr>
-						<td class=\"tbltitle\">Vorschau:</td>
+						<th>Vorschau:</th>
 						<td class=\"tbldata\" colspan=\"2\" id=\"msgPreview\">Vorschau wird geladen...</td>
 					</tr>";
 			}
