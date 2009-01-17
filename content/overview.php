@@ -57,10 +57,11 @@
 	echo "Aktuelle Version: <span style=\"color:#f90;font-weight:bold;\">";
 	passthru("svnversion");
 	echo "</span> <a href=\"http://dev.etoa.ch:8000/game/changeset/";
-	passthru("svnversion");
 	echo "\" target=\"_blank\">Changelog</a><br/>";
 	echo "Fehler melden: <a href=\"http://dev.etoa.ch:8000/game/newticket\" target=\"_blank\">Ticket erstellen</a><br/>";
-	echo "Diskussionen: <a href=\"http://www.etoa.ch/forum/board.php?boardid=8\" target=\"_blank\">Testerforum</a>";
+	echo "Diskussionen: <a href=\"http://www.etoa.ch/forum/board.php?boardid=8\" target=\"_blank\">Testerforum</a><br/>";
+	echo "Letzte Änderungen:<br/>";
+	passthru("svn log -r HEAD");
 	iBoxEnd();
 	
 
