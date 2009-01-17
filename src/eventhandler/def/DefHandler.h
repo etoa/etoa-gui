@@ -6,7 +6,7 @@
 
 #include <vector>
 #include <math.h>
-#include <Ctime>
+#include <ctime>
 
 #include "../EventHandler.h"
 #include "../MysqlHandler.h"
