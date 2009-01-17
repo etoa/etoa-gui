@@ -3023,6 +3023,11 @@ Forum: http://www.etoa.ch/forum";
 		return false;
 	}
 
+	function icon($name)
+	{
+		return "<img src=\"images/icons/".$name.".png\" alt=\"$name\" />";
+	}
+
 	// Test
 
 	/**

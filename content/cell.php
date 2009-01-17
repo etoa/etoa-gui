@@ -87,7 +87,7 @@
 					<th class=\"tbltitle\">Typ</th>
 					<th class=\"tbltitle\">Name</th>
 					<th class=\"tbltitle\">Besitzer</th>
-					<th class=\"tbltitle\">Aktionen</th>
+					<th class=\"tbltitle\" style=\"width:150px;\">Aktionen</th>
 				</tr>"; //<th class=\"tbltitle\">Allianz</th>
 	
 				$hasPlanetInSystem = false;
@@ -135,6 +135,12 @@
 						echo "</td>
 						<td class=\"tbldata\" $addstyle>";
 	
+							// Favorit
+						if ($cu->id!=$ent->ownerId())
+						{
+							echo "<a href=\"?page=bookmarks&amp;add=".$ent->id()."\" title=\"Zu den Favoriten hinzuf&uuml;gen\">".icon("favorite")."</a> ";
+						}		
+	
 						if ($ent->entityCode()=='s')					
 						{
 							if (!$ent->named)
@@ -153,7 +159,7 @@
 							// Nachrichten-Link
 							if ($ent->ownerId()>0 && $cu->id!=$ent->ownerId())
 							{
-								echo "<a href=\"?page=messages&amp;mode=new&amp;message_user_to=".$ent->ownerId()."\" title=\"Nachricht senden\">Mail</a> ";
+								echo "<a href=\"?page=messages&amp;mode=new&amp;message_user_to=".$ent->ownerId()."\" title=\"Nachricht senden\">".icon("mail")."</a> ";
 							}
 								
 							// Diverse Links
@@ -162,9 +168,9 @@
 								// Besiedelte Planete
 								if($ent->ownerId() > 0)
 								{
-									echo "<a href=\"javascript:;\" onclick=\"xajax_launchSypProbe(".$ent->id().");\" title=\"Ausspionieren\">Spionage</a> ";
-									echo "<a href=\"?page=missiles&amp;target=".$ent->id()."\" title=\"Raketenangriff starten\">Rakete</a> ";
-									echo "<a href=\"?page=crypto&amp;target=".$ent->id()."\" title=\"Flottenbewegungen analysieren\">Kryptoscan</a> ";					
+									echo "<a href=\"javascript:;\" onclick=\"xajax_launchSypProbe(".$ent->id().");\" title=\"Ausspionieren\">".icon("spy")."</a> ";
+									echo "<a href=\"?page=missiles&amp;target=".$ent->id()."\" title=\"Raketenangriff starten\">".icon("missile")."</a> ";
+									echo "<a href=\"?page=crypto&amp;target=".$ent->id()."\" title=\"Flottenbewegungen analysieren\">".icon("crypto")."</a> ";					
 								}
 							}
 						}
@@ -172,14 +178,10 @@
 						// Flotte
 						if ($ent->entityCode()=='p' || $ent->entityCode()=='a' || $ent->entityCode()=='w' || $ent->entityCode()=='n' || $ent->entityCode()=='e')
 						{
-							echo "<a href=\"?page=haven&amp;target=".$ent->id()."\" title=\"Flotte hinschicken\">Flotte</a> ";
+							echo "<a href=\"?page=haven&amp;target=".$ent->id()."\" title=\"Flotte hinschicken\">".icon('fleet')."</a> ";
 						}
 	
-						// Favorit
-						if ($cu->id!=$ent->ownerId())
-						{
-							echo "<a href=\"?page=bookmarks&amp;add=".$ent->id()."\" title=\"Zu den Favoriten hinzuf&uuml;gen\">Favorit</a> ";
-						}					
+			
 						echo "</td></tr>";
 						
 	
