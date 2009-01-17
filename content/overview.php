@@ -55,13 +55,19 @@
 	// REMOVE / DISABLE AFTER BETA
 	iBoxStart("BETA");		
 	echo "Aktuelle Version: <span style=\"color:#f90;font-weight:bold;\">";
+	ob_start();
 	passthru("svnversion");
+	$ver=intval(ob_get_contents());
+	ob_end_flush();
 	echo "</span> <a href=\"http://dev.etoa.ch:8000/game/changeset/";
 	echo "\" target=\"_blank\">Changelog</a><br/>";
 	echo "Fehler melden: <a href=\"http://dev.etoa.ch:8000/game/newticket\" target=\"_blank\">Ticket erstellen</a><br/>";
 	echo "Diskussionen: <a href=\"http://www.etoa.ch/forum/board.php?boardid=8\" target=\"_blank\">Testerforum</a><br/>";
-	echo "Letzte Änderungen:<br/>";
-	passthru("svn log -r HEAD");
+	echo "Letzte Änderungen:<br/><span style=\"color:#aa0;font-weight:bold;\">";
+	ob_start();
+	passthru("svn log -r HEAD:".($ver-5));
+	echo nl2br(ob_get_clean());
+	echo "</span>";
 	iBoxEnd();
 	
 
