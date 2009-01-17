@@ -2392,10 +2392,8 @@ Forum: http://www.etoa.ch/forum";
 	}
 
 	/**
-	* Resizes a jpeg image and save it to a given filename
+	* Resizes a image and save it to a given filename
 	*
-	* No return value
-	* @todo Source this out
 	*/
 	function resizeImage($fileFrom, $fileTo, $newMaxWidth = 0, $newMaxHeight = 0, $type="jpeg" ) 
 	{
@@ -2403,6 +2401,7 @@ Forum: http://www.etoa.ch/forum";
 		{
 			$imgfrom = "ImageCreateFromPNG";
 			$imgsave = "ImagePNG";
+			$quality=null;
 		}
 		elseif ($type=='gif')
 		{
@@ -2410,12 +2409,14 @@ Forum: http://www.etoa.ch/forum";
 			$imgsave = "ImageGIF";
 			$quality=0;
 		}
-		else
+		elseif ($type=="jpeg" || $type=="jpg")
 		{
 			$imgfrom = "ImageCreateFromJPEG";
 			$imgsave = "ImageJPEG";
 			$quality=100;
 		}
+		else
+			return false;
 		if ($img = $imgfrom($fileFrom)) 
 		{
 			$width = ImageSX($img);
@@ -2442,6 +2443,12 @@ Forum: http://www.etoa.ch/forum";
 				if (GD_VERSION == 2) 
 				{
 					$imageId =  ImageCreateTrueColor ( $newWidth , $newHeight );
+					
+					imagealphablending($imageId, false);
+					imagesavealpha($imageId,true);
+					$transparent = imagecolorallocatealpha($imageId, 255, 255, 255, 127);
+					imagefilledrectangle($imageId, 0, 0, $newWidth, $newHeight, $transparent);
+					
 					ImageCopyResampled($imageId, $img, 0,0,0,0, $newWidth, $newHeight, $width, $height);
 				}
 				else 

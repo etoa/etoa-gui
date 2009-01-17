@@ -148,7 +148,7 @@
 	
 			// Change avatar function
 			echo "<script type=\"text/javascript\">";
-			echo "function changeAvatar(elem) { document.getElementById('avatar').src='".AVATAR_DIR."/'+elem.options[elem.selectedIndex].value;}";
+			echo "function changeAvatar(elem) { document.getElementById('avatar').src='".BOARD_AVATAR_DIR."/'+elem.options[elem.selectedIndex].value;}";
 			echo "function changeBullet(elem) { document.getElementById('bullet').src='".BOARD_BULLET_DIR."/'+elem.options[elem.selectedIndex].value;}";
 			echo "</script>";		
 		
@@ -274,7 +274,9 @@
 							echo "<h2><a href=\"?page=$page\">&Uuml;bersicht</a> &gt; <a href=\"?page=$page&amp;cat=".$tarr['cat_id']."\">".$tarr['cat_name']."</a> &gt; ".$tarr['topic_subject']."</h2>";
 						}
 						if ($tarr['topic_closed']==1)
-						echo "<img src=\"images/closed.gif\" alt=\"closed\" style=\"width:15px;height:16px;\" /> <i>Dieses Thema ist geschlossen und es können keine weiteren Beiträge erstellt werden!</i><br/><br/>";
+						{
+							echo "<img src=\"images/closed.gif\" alt=\"closed\" style=\"width:15px;height:16px;\" /> <i>Dieses Thema ist geschlossen und es können keine weiteren Beiträge erstellt werden!</i><br/><br/>";
+						}
 			
 						// Save new post
 						if (isset($_POST['submit']) && isset($_POST['post_text']) && $s['user_id']>0 && $tarr['topic_closed']==0)
@@ -313,7 +315,7 @@
 						$res=dbquery("SELECT * FROM ".BOARD_POSTS_TABLE." WHERE post_topic_id=".$_GET['topic']." ORDER BY post_timestamp ASC;");					
 						if (mysql_num_rows($res)>0)
 						{			
-							echo "<table class=\"tb\">";
+							tableStart($tarr['topic_subject']);
 							while ($arr=mysql_fetch_array($res))
 							{
 								echo "<tr><th style=\"width:150px;\"><a name=\"".$arr['post_id']."\"></a><a href=\"?page=userinfo&amp;id=".$arr['post_user_id']."\">".$arr['post_user_nick']."</a><br/>";
@@ -326,8 +328,9 @@
 									echo "<br/><a href=\"?page=$page&amp;bnd=".$_GET['bnd']."&editpost=".$arr['post_id']."\"><img src=\"images/edit.gif\" alt=\"edit\" style=\"border:none\" /></a> <a href=\"?page=$page&amp;bnd=".$_GET['bnd']."&delpost=".$arr['post_id']."\"><img src=\"images/delete.gif\" alt=\"del\" style=\"border:none;\" /></a>";
 								echo "</th>";
 								echo "<td";
-								if (isset($urank) && $user[$arr['post_user_id']]['rank']==count($urank)-1) echo " style=\"color:".ADMIN_COLOR."\"";
-								//echo ">".($arr['post_text']);
+								if (isset($urank) && $user[$arr['post_user_id']]['rank']==count($urank)-1) 
+									echo " style=\"color:".ADMIN_COLOR."\"";
+
 								echo ">".text2html($arr['post_text']);
 								if ($arr['post_changed']>0)
 									echo "<br/><br/><span style=\"font-size:8pt;\">Dieser Beitrag wurde zuletzt geändert am ".date("d.m.Y",$arr['post_changed'])." um ".date("H:i",$arr['post_changed'])." Uhr.</span>";
@@ -489,7 +492,7 @@
 					if (mysql_num_rows($cres)>0)
 					{
 						$carr=mysql_fetch_array($cres);
-						echo "<h2><a href=\"?page=$page\">&Uuml;bersicht</a> &gt; ".$carr['cat_name']."</h2>";
+						echo "<h2><a href=\"?page=$page\">&Uuml;bersicht</a> &gt; ".($carr['cat_name']!="" ? stripslashes($carr['cat_name']) : "Unbenannt")."</h2>";
 						
 						// Save new topic
 						if (isset($_POST['submit']) && isset($_POST['topic_subject']) && isset($_POST['post_text']) && $s['user_id']>0)
@@ -514,8 +517,7 @@
 							dbquery("DELETE FROM ".BOARD_POSTS_TABLE." WHERE post_topic_id=".$_POST['topic_id'].";");
 							dbquery("DELETE FROM ".BOARD_TOPIC_TABLE." WHERE topic_id=".$_POST['topic_id'].";");
 							echo "Thema gelöscht!<br/><br/>";
-						}
-			
+						}			
 						
 						$res=dbquery("SELECT * FROM ".BOARD_TOPIC_TABLE." WHERE topic_cat_id=".$_GET['cat']." ORDER BY topic_top DESC,topic_timestamp DESC, topic_subject ASC;");					
 						if (mysql_num_rows($res)>0)
@@ -534,8 +536,7 @@
 								if ($arr['topic_closed']==1) echo "<img src=\"images/closed.gif\" alt=\"closed\" style=\"width:15px;height:16px;\" ".tm("Geschlossen","Es können keine weiteren Beiträge zu diesem Thema geschrieben werden.")." />";
 								echo "</td>";
 								echo "<td style=\"width:250px;\"><a href=\"?page=$page&amp;topic=".$arr['topic_id']."\"";
-								//if ($s['last_activity']<$arr['topic_timestamp'] && $s)
-								//	echo " style=\"color:#c00;\"";
+
 								echo ">".$arr['topic_subject']."</a></td>";
 								$parr=mysql_fetch_row(dbquery("SELECT COUNT(*) FROM ".BOARD_POSTS_TABLE." WHERE post_topic_id=".$arr['topic_id'].";"));
 								echo "<td>".$parr[0]."</td>";
@@ -545,9 +546,10 @@
 								echo "<td><a href=\"?page=$page&amp;topic=".$arr['topic_id']."#".$parr['post_id']."\">".df($parr['post_timestamp'])."</a><br/>".$parr['post_user_nick']."</td>";				
 								if ($s['admin'] || $s['user_id']==$arr['topic_user_id'])
 								{
-									echo "<td style=\"width:90px;\"><input type=\"button\" value=\"Bearbeiten\" onclick=\"document.location='?page=$page&edittopic=".$arr['topic_id']."'\" />";
+									echo "<td style=\"vertical-align:middle;text-align:center;\">
+									<a href=\"?page=$page&edittopic=".$arr['topic_id']."\" title=\"Thema bearbeiten\">".icon('edit')."</a>";
 									if ($s['admin'])
-										echo " <input type=\"button\" value=\"L&ouml;schen\" onclick=\"document.location='?page=$page&deltopic=".$arr['topic_id']."'\" />";
+										echo " <a href=\"?page=$page&deltopic=".$arr['topic_id']."\" title=\"Thema löschen \">".icon('delete')."</a>";
 									echo "</td>";
 								}
 								echo "</tr>";
@@ -696,7 +698,6 @@
 				foreach ($bullets as $a)
 				{
 						echo "<option value=\"$a\"";
-						if ($a==$arr['cat_bullet'] && $arr['cat_bullet']!="") echo " selected=\"selected\"";
 						echo ">$a</option>";
 				}
 				echo "</select></td></tr>";
@@ -746,7 +747,7 @@
 					echo "<tr><th style=\"width:110px;\">Symbol:</th><td>";	
 					if ($arr['cat_bullet']=="" || !is_file(BOARD_BULLET_DIR."/".$arr['cat_bullet'])) $arr['cat_bullet']=BOARD_DEFAULT_IMAGE;
 					echo "<img src=\"".BOARD_BULLET_DIR."/".$arr['cat_bullet']."\" style=\"width:38px;height:35px;\" id=\"bullet\" />";
-					echo "<br/>Symbol ändern: <select name=\"cat_bullet\" changeBullet=\"changeAvatar(this);\" onmousemove=\"changeBullet(this);\" onkeyup=\"changeBullet(this);\">";
+					echo "<br/>Symbol ändern: <select name=\"cat_bullet\" onmousemove=\"changeBullet(this);\" onkeyup=\"changeBullet(this);\">";
 					echo "<option value=\"".BOARD_DEFAULT_IMAGE."\">Standard-Symbol</option>";
 					foreach ($bullets as $a)
 					{
@@ -936,7 +937,7 @@
 						echo "<tr><th colspan=\"2\">Kategorie</th><th>Posts</th><th>Topics</th><th>Letzer Beitrag</th>";
 						if ($s['admin'])
 						{					
-							echo "<th>Aktionen</th>";
+							echo "<th style=\"width:50px;\">Aktionen</th>";
 						}
 						echo "</tr>";
 						$accessCnt=0;
@@ -955,7 +956,11 @@
 									$ps="-";
 								echo "<tr>";
 								if ($arr['cat_bullet']=="" || !is_file(BOARD_BULLET_DIR."/".$arr['cat_bullet'])) $arr['cat_bullet']=BOARD_DEFAULT_IMAGE;
-								echo "<td style=\"width:40px;\"><img src=\"".BOARD_BULLET_DIR."/".$arr['cat_bullet']."\" style=\"width:40px;height:40px;\" /></td>";
+								echo "<td style=\"width:40px;vertical-align:middle;\">
+									<a href=\"?page=$page&amp;bnd=0&cat=".$arr['cat_id']."\">
+										<img src=\"".BOARD_BULLET_DIR."/".$arr['cat_bullet']."\" style=\"width:40px;height:40px;\" />
+									</a>
+								</td>";
 								echo "<td style=\"width:300px;\"";
 								if ($s['admin'])
 								{
@@ -969,10 +974,9 @@
 									if ($rstr!="") $rstr=substr($rstr,0,strlen($rstr)-2);
 									echo " ".tm("Admin-Info: ".stripslashes($arr['cat_name']),"<b>Position:</b> ".$arr['cat_order']."<br/><b>Zugriff:</b> ".$rstr)."";
 								}
-								echo "><b><a href=\"?page=$page&amp;bnd=0&cat=".$arr['cat_id']."\"";
-								//if ($s['last_activity']<$parr[3] && $s)
-								//	echo " style=\"color:#c00;\"";
-								echo ">".stripslashes($arr['cat_name'])."</a></b><br/>".text2html($arr['cat_desc'])."</td>";
+								echo ">
+								<b><a href=\"?page=$page&amp;bnd=0&cat=".$arr['cat_id']."\">".($arr['cat_name']!="" ? stripslashes($arr['cat_name']) : "Unbenannt")."</a></b>
+								<br/>".text2html($arr['cat_desc'])."</td>";
 								$fres=dbquery("SELECT COUNT(*) FROM ".BOARD_POSTS_TABLE.",".BOARD_TOPIC_TABLE." WHERE post_topic_id=topic_id AND topic_cat_id=".$arr['cat_id'].";");
 								$farr=mysql_fetch_row($fres);
 								echo "<td>".$farr[0]."</td>";
@@ -982,8 +986,10 @@
 								echo "<td>$ps</td>";
 								if ($s['admin'])
 								{
-									echo "<td style=\"width:90px;\"><input type=\"button\" value=\"Bearbeiten\" onclick=\"document.location='?page=$page&editcat=".$arr['cat_id']."'\" /><br/> 
-									<input type=\"button\" value=\"L&ouml;schen\" onclick=\"document.location='?page=$page&delcat=".$arr['cat_id']."'\" /></td>";
+									echo "<td style=\"vertical-align:middle;text-align:center;\">
+										<a href=\"?page=$page&editcat=".$arr['cat_id']."\">".icon('edit')."</a> 
+										<a href=\"?page=$page&delcat=".$arr['cat_id']."\">".icon('delete')."</a>
+									</td>";
 								}
 								echo "</tr>";			
 							}

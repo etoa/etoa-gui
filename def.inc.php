@@ -455,6 +455,10 @@
 	define("BOARD_TOPIC_TABLE","allianceboard_topics");						// Tabelle der Forentopics
 	define("BOARD_POSTS_TABLE","allianceboard_posts");						// Tabelle der Forenposts
 	define("BOARD_CAT_TABLE","allianceboard_cat");								// Tabelle der Kategorien
+
+	define("BOARD_AVATAR_MAX_WIDTH",1024);															// Avatar-Breite
+	define("BOARD_AVATAR_MAX_HEIGHT",1024);															// Avatar-Höhe
+	define("BOARD_AVATAR_MAX_SIZE",2097152);												// Profilbild-Grösse in Byte
 	define("BOARD_AVATAR_WIDTH",64);															// Avatar-Breite
 	define("BOARD_AVATAR_HEIGHT",64);															// Avatar-Höhe
 
@@ -467,7 +471,7 @@
 	define("PROFILE_IMG_HEIGHT",480);															// Profilbild-Höhe
 	define("PROFILE_MAX_IMG_WIDTH",1280);													// Max. Profilbild-Breite
 	define("PROFILE_MAX_IMG_HEIGHT",1024);												// Max. Profilbild-Höhe
-	define("PROFILE_IMG_MAX_SIZE",2000000);												// Profilbild-Grösse in Byte
+	define("PROFILE_IMG_MAX_SIZE",2097152);												// Profilbild-Grösse in Byte
 	
 	// Allianzbild
 	define("ALLIANCE_IMG_DIR",CACHE_ROOT."/allianceprofiles");					// Verzeichnis der Allianz-Bilder

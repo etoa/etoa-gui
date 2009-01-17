@@ -52,9 +52,12 @@
 			if ($user->profileImage != "")
 			{
 				$im = PROFILE_IMG_DIR."/".$user->profileImage;
-				$ims = getimagesize($im);
-				echo "<tr><td class=\"tblblack\" colspan=\"2\" style=\"text-align:center;background:#000;\">
-				<img src=\"".$im."\" style=\"width:".$ims[0]."px;height:".$ims[1]."px;\" alt=\"Profil\" /></td></tr>";
+				if (is_file($im))
+				{
+					$ims = getimagesize($im);
+					echo "<tr><td class=\"tblblack\" colspan=\"2\" style=\"text-align:center;background:#000;\">
+					<img src=\"".$im."\" style=\"width:".$ims[0]."px;height:".$ims[1]."px;\" alt=\"Profil\" /></td></tr>";
+				}
 			}
 			if ($user->profileText!="")
 			{

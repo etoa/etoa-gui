@@ -55,6 +55,10 @@ input[type="button"].disabled,input[type="submit"].disabled,input[type="button"]
 	color:#ccc;
 }
 
+input[type="file"]	{
+	color:#000;
+}
+
 input,select,textarea	{
 	color:#ddd;
 	border:1px solid #777;
