@@ -52,7 +52,7 @@ namespace planet
 				this->speicalistId = (int)pRow["user_specialist_time"] < time(0) ? 0 : (int)pRow["user_specialist_id"];
 				
 				this->solarPowerBonus = functions::getSolarPowerBonus((int)pRow["planet_temp_from"], (int)pRow["planet_temp_to"]);
-				this->solarFuelBonus = 1 - functions::getSolarFuelBonus((int)pRow["planet_temp_from"], (int)pRow["planet_temp_to"]);
+				this->solarFuelBonus = 1 - (functions::getSolarFuelBonus((int)pRow["planet_temp_from"], (int)pRow["planet_temp_to"]));
 				
 				this->t = time(0) - (int)pRow["planet_last_updated"];
 				
@@ -258,7 +258,7 @@ namespace planet
 		this->cnt[3] += (this->cnt[3] * (this->planet_->getTypeFuel() + this->race_->getRaceFuel() + this->sol_->getTypeFuel() + this->specialist_->getSpecialistProdFuel() + this->solarFuelBonus - 5));
 		this->cnt[4] += (this->cnt[4] * (this->planet_->getTypeFood() + this->race_->getRaceFood() + this->sol_->getTypeFood() + this->specialist_->getSpecialistProdFood() - 4));
 		this->cnt[6] += (this->cnt[6] * (this->planet_->getTypePower() + this->race_->getRacePower() + this->sol_->getTypePower() + this->specialist_->getSpecialistPower() - 4));
-
+		
 		// Bei ungenügend Energie Anpassung vornehmen
 		if (this->cnt[7]>this->cnt[6]) {
 			this->cnt[0] = floor(this->cnt[0] * this->cnt[6] / this->cnt[7]);

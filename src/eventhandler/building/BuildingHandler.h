@@ -4,6 +4,9 @@
 
 #include <mysql++/mysql++.h>
 
+#include <ctime>
+#include <vector>
+
 #include "../EventHandler.h"
 #include "../MysqlHandler.h"
 

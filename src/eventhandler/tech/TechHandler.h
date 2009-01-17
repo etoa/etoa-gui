@@ -4,6 +4,8 @@
 
 #include <mysql++/mysql++.h>
 
+#include <time.h>
+
 #include "../EventHandler.h"
 #include "../MysqlHandler.h"
 
@@ -22,7 +24,7 @@ namespace tech
 		inline bool changes() { return this->changes_; }
 	private:
 		bool changes_;
-		std::vector<int> changedPlanets_;		
+		//std::vector<int> changedPlanets_;		
 	};
 }
 #endif

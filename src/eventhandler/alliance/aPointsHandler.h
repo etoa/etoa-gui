@@ -3,9 +3,11 @@
 #define __APOINTSHANDLER__
 
 #include <mysql++/mysql++.h>
+#include <ctime>
 
 #include "../EventHandler.h"
 #include "../MysqlHandler.h"
+#include "../config/ConfigHandler.h"
 
 /**
 * Handles AllianzShippoints updates

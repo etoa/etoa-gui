@@ -4,8 +4,14 @@
 
 #include <mysql++/mysql++.h>
 
+#include <vector>
+#include <math.h>
+#include <Ctime>
+
 #include "../EventHandler.h"
 #include "../MysqlHandler.h"
+
+#include "DefList.h"
 
 /**
 * Handles defense updates

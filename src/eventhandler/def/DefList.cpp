@@ -19,26 +19,24 @@ namespace def
 			<< "	AND deflist_entity_id=" << planetId <<" "
 			<< "	AND deflist_def_id=" << defId <<";";
 		mysqlpp::Result res = query.store();		
-			query.reset();
+		query.reset();
 
-		if (res)
-		{
-			if (res.size()>0)
-			{
+		if (res) {
+			if (res.size()>0) {
 				mysqlpp::Row arr = res.at(0);
-					
-		  	query << "UPDATE "
-				<< "	deflist "
-				<< "SET "
-				<< "	deflist_count = deflist_count+" << count << " "
-				<< "WHERE "
-				<< "	deflist_id=" << (int)arr["deflist_id"] <<";";
-		    query.store();		
+				
+				query << "UPDATE "
+					<< "	deflist "
+					<< "SET "
+					<< "	deflist_count = deflist_count+" << count << " "
+					<< "WHERE "
+					<< "	deflist_id=" << (int)arr["deflist_id"] <<" "
+					<< "LIMIT 1;";
+				query.store();		
 				query.reset();
 			
 			}
-			else
-			{
+			else {
 				query << "INSERT INTO "
 					<< "	deflist ("
 					<< "	deflist_user_id, "
@@ -51,7 +49,7 @@ namespace def
 					<< "	" << defId << ", "
 					<< "	" << count << ");";
 				query.store();		
-					query.reset();
+				query.reset();
 			}			
 		}
 	}

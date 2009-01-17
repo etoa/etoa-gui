@@ -2,7 +2,9 @@
 #define __DEFLIST__
 
 #include <mysql++/mysql++.h>
+
 #include "../MysqlHandler.h"
+
 
 /**
 * Provides functions for defense lists

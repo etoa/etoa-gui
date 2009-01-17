@@ -1,8 +1,3 @@
-#include <iostream>
-#include <vector>
-
-#include <time.h>
-#include <mysql++/mysql++.h>
 
 #include "aBuildingHandler.h"
 
@@ -14,31 +9,17 @@ namespace abuilding
 		
 		mysqlpp::Query query = con_->query();;
 		// Perform level update
-		query << "UPDATE ";
-		query << "	alliance_buildlist ";
-		query << "SET ";
-		query << "	alliance_buildlist_current_level=alliance_buildlist_current_level+1, ";
-		query << "	alliance_buildlist_build_start_time=0, ";
-		query << "	alliance_buildlist_build_end_time=0 ";
-		query << "WHERE ";
-		query << "	alliance_buildlist_build_end_time>0 AND";
-		query << " alliance_buildlist_build_end_time<" << time << ";";
+		query << "UPDATE "
+			<< "	alliance_buildlist "
+			<< "SET "
+			<< "	alliance_buildlist_current_level=alliance_buildlist_current_level+1, "
+			<< "	alliance_buildlist_build_start_time=0, "
+			<< "	alliance_buildlist_build_end_time=0 "
+			<< "WHERE "
+			<< "	alliance_buildlist_build_end_time>0 AND"
+			<< " alliance_buildlist_build_end_time<" << time << ";";
 		query.store();
 		std::cout << "Upgraded "<<con_->affected_rows()<<" Alliance Buildings\n";
 		query.reset();    
- 
-		/*query << "UPDATE ";
-		query << "	alliance_buildlist ";
-		query << "SET ";
-		query << "	alliance_buildlist_current_level=alliance_buildlist_current_level-1,";
-		query << "	alliance_buildlist_build_type=0,";
-		query << "	alliance_buildlist_build_start_time=0, ";
-		query << "	alliance_buildlist_build_end_time=0 ";
-		query << "WHERE ";
-		query << "	alliance_buildlist_build_type=2 ";
-		query << "	AND alliance_buildlist_build_end_time<" << time << ";";
-		query.store();   	
-		std::cout << "Downgraded "<<con_->affected_rows()<<" Alliance Buildings\n";		
-		query.reset();*/
 	}	
 }

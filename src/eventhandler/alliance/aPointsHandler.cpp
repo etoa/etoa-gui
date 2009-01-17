@@ -1,10 +1,4 @@
-#include <iostream>
-#include <vector>
 
-#include <time.h>
-#include <mysql++/mysql++.h>
-
-#include "../config/ConfigHandler.h"
 #include "aPointsHandler.h"
 
 namespace aPoints
@@ -15,13 +9,13 @@ namespace aPoints
 		mysqlpp::Query query = con_->query();
 		Config &config = Config::instance();
 		
-		query << "SELECT ";
-		query << "	alliance_buildlist_alliance_id, ";
-		query << "	alliance_buildlist_current_level ";
-		query << "FROM ";
-		query << "	alliance_buildlist ";
-		query << "WHERE ";
-		query << "	alliance_buildlist_building_id='3';";
+		query << "SELECT "
+			<< "	alliance_buildlist_alliance_id, "
+			<< "	alliance_buildlist_current_level "
+			<< "FROM "
+			<< "	alliance_buildlist "
+			<< "WHERE "
+			<< "	alliance_buildlist_building_id='3';";
 		mysqlpp::Result res = query.store();		
 		query.reset();
 		
@@ -37,12 +31,12 @@ namespace aPoints
 					int shipPointsAdd = (2 + (int)arr["alliance_buildlist_current_level"]) * (int)config.nget("alliance_shippoints_per_hour", 0);
 		
 					// Speichern
-					query << "UPDATE ";
-					query << "	users ";
-					query << "SET ";
-					query << "user_alliace_shippoints=user_alliace_shippoints + '" << shipPointsAdd << "' ";
-					query << "WHERE ";
-					query << "	user_alliance_id='" << arr["alliance_buildlist_alliance_id"] << "';";
+					query << "UPDATE "
+						<< "	users "
+						<< "SET "
+						<< "user_alliace_shippoints=user_alliace_shippoints + '" << shipPointsAdd << "' "
+						<< "WHERE "
+						<< "	user_alliance_id='" << arr["alliance_buildlist_alliance_id"] << "';";
 					query.store();
 					query.reset();
 				}

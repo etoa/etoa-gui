@@ -4,8 +4,14 @@
 
 #include <mysql++/mysql++.h>
 
+#include <vector>
+#include <math.h>
+#include <ctime>
+
 #include "../EventHandler.h"
 #include "../MysqlHandler.h"
+
+#include "ShipList.h"
 
 /**
 * Handles ship building updates

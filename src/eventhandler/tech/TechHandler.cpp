@@ -1,8 +1,3 @@
-#include <iostream>
-#include <vector>
-
-#include <time.h>
-#include <mysql++/mysql++.h>
 
 #include "TechHandler.h"
 
@@ -13,26 +8,25 @@ namespace tech
 		std::time_t time = std::time(0);
 		
 		// Load planets who needs updating
-    mysqlpp::Query query = con_->query();
-   
-    // Perform level update
-    query << "UPDATE ";
-		query << "	techlist ";
-    query << "SET ";
-		query << "	techlist_current_level=techlist_current_level+1, ";
-    query << "	techlist_build_type=0, ";
-		query << "	techlist_build_start_time=0, ";
-		query << "	techlist_build_end_time=0 ";
-		query << "WHERE ";
-		query << "	techlist_build_type=3 ";
-		query << "	AND techlist_build_end_time<" << time << ";";
+		mysqlpp::Query query = con_->query();
+		
+		// Perform level update
+		query << "UPDATE "
+			<< "	techlist "
+			<< "SET "
+			<< "	techlist_current_level=techlist_current_level+1, "
+			<< "	techlist_build_type=0, "
+			<< "	techlist_build_start_time=0, "
+			<< "	techlist_build_end_time=0 "
+			<< "WHERE "
+			<< "	techlist_build_type=3 "
+			<< "	AND techlist_build_end_time<" << time << ";";
 		query.store();
-   	std::cout << "Upgraded "<<con_->affected_rows()<<" Technologies\n";
-    query.reset();    
-    
-    if (con_->affected_rows()>0)
-    {
-    	this->changes_ = true;
-    }
+		std::cout << "Upgraded "<<con_->affected_rows()<<" Technologies\n";
+		query.reset();    
+		
+		if (con_->affected_rows()>0) {
+			this->changes_ = true;
+		}
 	}	
 }

@@ -127,7 +127,8 @@ namespace planet
 	private:
 		bool smallUpdate;
 		int entityId;
-		int fieldsUsed, fieldsExtra, solarPowerBonus, solarFuelBonus;
+		int fieldsUsed, fieldsExtra, solarPowerBonus;
+		double solarFuelBonus;
 		int raceId, userId, planetType, solType, speicalistId;
 		int t;
 		double birthRate;

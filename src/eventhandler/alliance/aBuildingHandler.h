@@ -4,13 +4,15 @@
 
 #include <mysql++/mysql++.h>
 
+#include <ctime>
+
 #include "../EventHandler.h"
 #include "../MysqlHandler.h"
 
 /**
 * Handles building updates
 * 
-* \author Nicolas Perrenoud <mrcage@etoa.ch>
+* \author Stephan Vock <glaubinix@etoa.ch>
 */
 namespace abuilding
 {

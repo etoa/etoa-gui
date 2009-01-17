@@ -200,6 +200,7 @@
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
 				resFood += (*it)->getResFood(total);
 		}
+		
 		return resFood;
 	}
 	
@@ -514,9 +515,9 @@
 		
 	double Fleet::unloadResFood(bool land) {
 		this->changedData = true;
-		double food = this->resFood;
+		double food = this->getResFood();
 		if (land) {
-			food = this->usageFood + this->supportUsageFood;
+			food += this->usageFood + this->supportUsageFood;
 			this->usageFood = 0;
 			this->supportUsageFood = 0;
 		}

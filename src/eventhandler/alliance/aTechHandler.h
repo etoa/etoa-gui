@@ -3,6 +3,7 @@
 #define __ATECHHANDLER__
 
 #include <mysql++/mysql++.h>
+#include <ctime>
 
 #include "../EventHandler.h"
 #include "../MysqlHandler.h"
@@ -10,7 +11,7 @@
 /**
 * Handles technology research updates
 * 
-* \author Nicolas Perrenoud <mrcage@etoa.ch>
+* \author Stephan Vock <glaubinix@etoa.ch>
 */
 namespace atech
 {

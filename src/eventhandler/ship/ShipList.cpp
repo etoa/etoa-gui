@@ -9,37 +9,34 @@ namespace ship
 		mysqlpp::Connection *con_ = my.get();
 		count = count < 0 ? 0 : count;
 		
-    mysqlpp::Query query = con_->query();
-  	query << "SELECT "
-		<< "	shiplist_id "
-		<< "FROM "
-		<< "	shiplist "
-		<< "WHERE "
-		<< "	shiplist_user_id=" << userId <<" "
-		<< "	AND shiplist_entity_id=" << planetId <<" "
-		<< "	AND shiplist_ship_id=" << shipId <<";";
-    mysqlpp::Result res = query.store();		
+		mysqlpp::Query query = con_->query();
+		query << "SELECT "
+			<< "	shiplist_id "
+			<< "FROM "
+			<< "	shiplist "
+			<< "WHERE "
+			<< "	shiplist_user_id=" << userId <<" "
+			<< "	AND shiplist_entity_id=" << planetId <<" "
+			<< "	AND shiplist_ship_id=" << shipId <<";";
+		mysqlpp::Result res = query.store();		
 		query.reset();
 
-		if (res)
-		{
-			if (res.size()>0)
-			{
+		if (res) {
+			if (res.size()>0) {
 				mysqlpp::Row arr = res.at(0);
 					
-		  	query << "UPDATE "
-				<< "	shiplist "
-				<< "SET "
-				<< "	shiplist_count = shiplist_count+" << count << " "
-				<< "WHERE "
-				<< "	shiplist_id=" << (int)arr["shiplist_id"] <<" "
-				<< "LIMIT 1;";
-		    query.store();		
+				query << "UPDATE "
+					<< "	shiplist "
+					<< "SET "
+					<< "	shiplist_count = shiplist_count+" << count << " "
+					<< "WHERE "
+					<< "	shiplist_id=" << (int)arr["shiplist_id"] <<" "
+					<< "LIMIT 1;";
+				query.store();		
 				query.reset();
 			
 			}
-			else
-			{
+			else {
 				DataHandler &DataHandler = DataHandler::instance();
 				ShipData::ShipData *data = DataHandler.getShipById(shipId);
 				
@@ -57,7 +54,7 @@ namespace ship
 					<< "	" << count << ", "
 					<< "	" << data->getSpecial() << ");";
 				query.store();
-					query.reset();
+				query.reset();
 			}			
 		}
 	}
