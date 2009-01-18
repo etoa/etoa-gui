@@ -227,7 +227,7 @@
 			
 			echo ">\n<th class=\"tbltitle\" width=\"200\">".$a['text'].":</th>\n";
 			echo "<td class=\"tbldata\" width=\"200\">\n";
-			$stl = ($arr[$a['name']]!=$a['def_val'] ? ' style="color:yellow"' : '');
+			$stl = (isset($a['def_val']) && $arr[$a['name']]!=$a['def_val'] ? ' style="color:yellow"' : '');
 			switch ($a['type'])
 			{
 				case "readonly":

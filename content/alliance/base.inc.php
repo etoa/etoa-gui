@@ -808,17 +808,28 @@
 	}
 	
 	// Stellt standart Links dar
-	echo "<a href=\"javascript:;\" onclick=\"showTab('tabBuildings')\">Gebäude</a> | <a href=\"javascript:;\" onclick=\"showTab('tabResearch')\">Technologien</a> | <a href=\"javascript:;\" onclick=\"showTab('tabStorage')\">Speicher</a>";
+	/*
+	echo "<a href=\"javascript:;\" onclick=\"showTab('tabBuildings')\">Gebäude</a> | 
+	<a href=\"javascript:;\" onclick=\"showTab('tabResearch')\">Technologien</a> | 
+	<a href=\"javascript:;\" onclick=\"showTab('tabStorage')\">Speicher</a>";
+	*/
 	
+	$ddm = new DropdownMenu(1);
+	$ddm->add('b','Gebäude',"showTab('tabBuildings');");
+	$ddm->add('r','Technologien',"showTab('tabResearch');");
+	$ddm->add('s','Speicher',"showTab('tabStorage');");
+
 	// Stellt Objektbezogene Links dar
 	
 	// Schiffswerft
 	if($shipyard)
 	{
-		echo " | <a href=\"javascript:;\" onclick=\"showTab('tabShipyard')\">Schiffswerft</a>";
+		$ddm->add('sw','Schiffswerft',"showTab('tabShipyard');");
 	}
+
+	echo $ddm; 
 	
-	echo "<br><br><br>";
+	echo "<br>";
 	
 	//
 	// ResBox

@@ -249,11 +249,22 @@
 				if (defined('DB_IMAGE_PATH'))
 				{
 					$path = ereg_replace('<DB_TABLE_ID>',$arr[DB_TABLE_ID],DB_IMAGE_PATH);
-					$imsize = getimagesize($path);
-					echo "<td class=\"tbldata\" style=\"background:#000;width:".$imsize[0]."px;\">
-					<a href=\"?".URL_SEARCH_STRING."&amp;action=edit&amp;id=".$arr[DB_TABLE_ID]."\">
-					<img src=\"".$path."\" align=\"top\"/>
-					</a></td>";
+					if (is_file($path))
+					{
+						$imsize = getimagesize($path);
+						echo "<td class=\"tbldata\" style=\"background:#000;width:".$imsize[0]."px;\">
+						<a href=\"?".URL_SEARCH_STRING."&amp;action=edit&amp;id=".$arr[DB_TABLE_ID]."\">
+						<img src=\"".$path."\" align=\"top\"/>
+						</a></td>";						
+					}
+					else
+					{
+						echo "<td class=\"tbldata\" style=\"background:#000;width:40px;\">
+						<a href=\"?".URL_SEARCH_STRING."&amp;action=edit&amp;id=".$arr[DB_TABLE_ID]."\">
+						<img src=\"../images/blank.gif\" style=\"width:40px;height:40px;\" align=\"top\"/>
+						</a></td>";						
+					}
+
 				}
 				
 				admin_show_overview($db_fields,$arr);

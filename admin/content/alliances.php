@@ -181,6 +181,23 @@
 		}
 	}
 
+
+	//
+	// Gebäude bearbeiten
+	//
+	elseif ($sub=="buildingsdata")
+	{
+		advanced_form("alliancebuildings");
+	}
+	
+	//
+	// Tech bearbeiten
+	//
+	elseif ($sub=="techdata")
+	{
+		advanced_form("alliancetechnologies");
+	}	
+
 	//
 	// Erstellen
 	//

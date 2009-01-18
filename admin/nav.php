@@ -138,31 +138,43 @@
 	$navmenu['Allianzen']['Bilder pr&uuml;fen']['sub']="imagecheck";
 	$navmenu['Allianzen']['Bilder pr&uuml;fen']['level']=0;
 
-	$navmenu['Geb&auml;ude']['Liste']['page']="buildings";
-	$navmenu['Geb&auml;ude']['Liste']['sub']="";
-	$navmenu['Geb&auml;ude']['Liste']['level']=1;
+	$navmenu['Allianzen']['bar'][0] = true;
 
-	$navmenu['Geb&auml;ude']['Preisrechner']['page']="buildings";
-	$navmenu['Geb&auml;ude']['Preisrechner']['sub']="prices";
-	$navmenu['Geb&auml;ude']['Preisrechner']['level']=0;
+	$navmenu['Allianzen']['Gebäude bearbeiten']['page']="alliances";
+	$navmenu['Allianzen']['Gebäude bearbeiten']['sub']="buildingsdata";
+	$navmenu['Allianzen']['Gebäude bearbeiten']['level']=2;
 
-	$navmenu['Geb&auml;ude']['bar'][0] = true;
+	$navmenu['Allianzen']['Technologien bearbeiten']['page']="alliances";
+	$navmenu['Allianzen']['Technologien bearbeiten']['sub']="techdata";
+	$navmenu['Allianzen']['Technologien bearbeiten']['level']=2;
 
-	$navmenu['Geb&auml;ude']['Geb&auml;ude bearbeiten']['page']="buildings";
-	$navmenu['Geb&auml;ude']['Geb&auml;ude bearbeiten']['sub']="data";
-	$navmenu['Geb&auml;ude']['Geb&auml;ude bearbeiten']['level']=2;
 
-	$navmenu['Geb&auml;ude']['Kategorien']['page']="buildings";
-	$navmenu['Geb&auml;ude']['Kategorien']['sub']="type";
-	$navmenu['Geb&auml;ude']['Kategorien']['level']=2;
 
-	$navmenu['Geb&auml;ude']['Voraussetzungen']['page']="buildings";
-	$navmenu['Geb&auml;ude']['Voraussetzungen']['sub']="req";
-	$navmenu['Geb&auml;ude']['Voraussetzungen']['level']=2;
+	$navmenu['Gebäude']['Liste']['page']="buildings";
+	$navmenu['Gebäude']['Liste']['sub']="";
+	$navmenu['Gebäude']['Liste']['level']=1;
 
-	$navmenu['Geb&auml;ude']['Geb&auml;udepunkte']['page']="buildings";
-	$navmenu['Geb&auml;ude']['Geb&auml;udepunkte']['sub']="points";
-	$navmenu['Geb&auml;ude']['Geb&auml;udepunkte']['level']=2;
+	$navmenu['Gebäude']['Preisrechner']['page']="buildings";
+	$navmenu['Gebäude']['Preisrechner']['sub']="prices";
+	$navmenu['Gebäude']['Preisrechner']['level']=0;
+
+	$navmenu['Gebäude']['bar'][0] = true;
+
+	$navmenu['Gebäude']['Gebäude bearbeiten']['page']="buildings";
+	$navmenu['Gebäude']['Gebäude bearbeiten']['sub']="data";
+	$navmenu['Gebäude']['Gebäude bearbeiten']['level']=2;
+
+	$navmenu['Gebäude']['Kategorien']['page']="buildings";
+	$navmenu['Gebäude']['Kategorien']['sub']="type";
+	$navmenu['Gebäude']['Kategorien']['level']=2;
+
+	$navmenu['Gebäude']['Voraussetzungen']['page']="buildings";
+	$navmenu['Gebäude']['Voraussetzungen']['sub']="req";
+	$navmenu['Gebäude']['Voraussetzungen']['level']=2;
+
+	$navmenu['Gebäude']['Gebäudepunkte']['page']="buildings";
+	$navmenu['Gebäude']['Gebäudepunkte']['sub']="points";
+	$navmenu['Gebäude']['Gebäudepunkte']['level']=2;
 
 	$navmenu['Forschung']['Liste']['page']="techs";
 	$navmenu['Forschung']['Liste']['sub']="";
