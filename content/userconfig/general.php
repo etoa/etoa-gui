@@ -110,10 +110,16 @@
       	<td>";
         if ($cu->avatar!="" && $cu->avatar!=BOARD_DEFAULT_IMAGE)
         {
-          show_avatar($cu->avatar);
-          echo "<input type=\"checkbox\" value=\"1\" name=\"avatar_del\"> Avatar l&ouml;schen<br/>";
+        	if (is_file(BOARD_AVATAR_DIR."/".$cu->avatar))
+        	{
+	          show_avatar($cu->avatar);
+  	        echo "<input type=\"checkbox\" value=\"1\" name=\"avatar_del\"> Avatar l&ouml;schen<br/>";
+  	      }
         }
-      	echo "Eigener Avatar heraufladen/&auml;ndern (".BOARD_AVATAR_WIDTH."*".BOARD_AVATAR_HEIGHT." Pixel, GIF): <input type=\"file\" name=\"user_avatar_file\" /></td>
+      	echo "Avatar heraufladen/&auml;ndern: <input type=\"file\" name=\"user_avatar_file\" /><br/>
+      	<b>Regeln:</b> Max ".BOARD_AVATAR_MAX_WIDTH."*".BOARD_AVATAR_MAX_HEIGHT." Pixel, Bilder grösser als 
+      	".BOARD_AVATAR_WIDTH."*".BOARD_AVATAR_HEIGHT." werden automatisch verkleinert.<br/>
+      	Format: GIF, JPG oder PNG. Grösse: Max ".byte_format(BOARD_AVATAR_MAX_SIZE)." </td>
       </tr>";
       echo "<tr>
       	<th width=\"35%\">Öffentliches Foren-Profil:</th>

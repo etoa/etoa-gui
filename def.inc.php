@@ -346,6 +346,8 @@
 	define("ALLIANCE_MARKET_ID",2);								// ID des Allianzmarktplatzes
 	define("ALLIANCE_SHIPYARD_ID",3);								// ID des Allianzschiffwerftes
 
+	define("IMAGE_ALLIANCE_BUILDING_DIR","abuildings");
+
 	// Schiffswerft
 	define("SHIPYARD_MIN_BUILD_TIME",20);					// Absolute minimal Bauzeit in Sekunden
 	define("SHIPQUEUE_CANCEL_MIN_LEVEL",5);				// Ben. Level für Autragsabbruch

@@ -7,14 +7,6 @@
 		
 		
 	//
-	// Definitionen
-	//	
-		
-	define('ALLIANCE_SHIPYARD_ID',3);
-		
-		
-		
-	//
 	// Funktionen				
 	//
 	
@@ -234,13 +226,13 @@
 			
 			$out = "";
 			$out .= "<tr>
-							<td class=\"tbltitle\" width=\"7%\">Stufe</th>
-			        <td class=\"tbltitle\" width=\"18%\">Zeit</th>
-			        <td class=\"tbltitle\" width=\"15%\">".RES_METAL."</td>
-			        <td class=\"tbltitle\" width=\"15%\">".RES_CRYSTAL."</td>
-			        <td class=\"tbltitle\" width=\"15%\">".RES_PLASTIC."</td>
-			        <td class=\"tbltitle\" width=\"15%\">".RES_FUEL."</td>
-			        <td class=\"tbltitle\" width=\"15%\">".RES_FOOD."</td>
+							<th width=\"7%\">Stufe</th>
+			        <th width=\"18%\">Zeit</th>
+			        <th width=\"15%\">".RES_METAL."</th>
+			        <th width=\"15%\">".RES_CRYSTAL."</th>
+			        <th width=\"15%\">".RES_PLASTIC."</th>
+			        <th width=\"15%\">".RES_FUEL."</th>
+			        <th width=\"15%\">".RES_FOOD."</th>
 						</tr>
 						<tr>
 							<td class=\"tbldata\" width=\"7%\">".($level+1)."</th>
@@ -271,7 +263,7 @@
 		// Maximallevel erreicht, es werden keine Berechnungen mehr durchgeführt
 		else
 		{
-			$return['optionsbox'] = "<tr><td class=\"tbldata\" style=\"text-align:center;\">Maximallevel erreicht!</td></tr>";
+			$return['optionsbox'] = "<tr><td colspan=\"7\" class=\"tbldata\" style=\"text-align:center;\">Maximallevel erreicht!</td></tr>";
 			return $return;
 		}
 	}			
@@ -863,11 +855,11 @@
 	
 	tableStart("Allianz Ressourcen");
 	echo "<tr>
-					<td class=\"tbltitle\" style=\"width:20%;vertical-align:middle;\">".RES_ICON_METAL." ".RES_METAL."</td>
-					<td class=\"tbltitle\" style=\"width:20%;vertical-align:middle;\">".RES_ICON_CRYSTAL." ".RES_CRYSTAL."</td>
-					<td class=\"tbltitle\" style=\"width:20%;vertical-align:middle;\">".RES_ICON_PLASTIC." ".RES_PLASTIC."</td>
-					<td class=\"tbltitle\" style=\"width:20%;vertical-align:middle;\">".RES_ICON_FUEL." ".RES_FUEL."</td>
-					<td class=\"tbltitle\" style=\"width:20%;vertical-align:middle;\">".RES_ICON_FOOD." ".RES_FOOD."</td>
+					<th style=\"width:20%;vertical-align:middle;\">".RES_ICON_METAL." ".RES_METAL."</th>
+					<th style=\"width:20%;vertical-align:middle;\">".RES_ICON_CRYSTAL." ".RES_CRYSTAL."</th>
+					<th style=\"width:20%;vertical-align:middle;\">".RES_ICON_PLASTIC." ".RES_PLASTIC."</th>
+					<th style=\"width:20%;vertical-align:middle;\">".RES_ICON_FUEL." ".RES_FUEL."</th>
+					<th style=\"width:20%;vertical-align:middle;\">".RES_ICON_FOOD." ".RES_FOOD."</th>
 				</tr>
 				<tr>
 					<td ".$style0." id=\"resBoxMetal\">".nf($aarr['alliance_res_metal'])." t</td>
@@ -1195,6 +1187,10 @@
 					$b_level = 0;
 					$end_time = 0;
 				}
+
+        // Generiert Bauoptionen mit allen Überprüfungen
+  			$options_arr = show_buildoptions("building", $data['alliance_building_id'], $aarr['alliance_res_metal'], $aarr['alliance_res_crystal'], $aarr['alliance_res_plastic'], $aarr['alliance_res_fuel'], $aarr['alliance_res_food'], $data['alliance_building_costs_metal'], $data['alliance_building_costs_crystal'], $data['alliance_building_costs_plastic'], $data['alliance_building_costs_fuel'], $data['alliance_building_costs_food'], $data['alliance_building_build_time'], $data['alliance_building_costs_factor'], $b_level, $data['alliance_building_last_level'], $buildsomething, $alliance_member_cnt, $end_time);
+
 				
 				$path = IMAGE_PATH."/".IMAGE_ALLIANCE_BUILDING_DIR."/building".$data['alliance_building_id']."_middle.".IMAGE_EXT;
 				$title = $data['alliance_building_name'].' <span id="buildlevel">';
@@ -1202,24 +1198,17 @@
 				$title.= '</span>';
 				tableStart($title);
 				echo "<tr>
-                  <td class=\"tbldata\" style=\"width:120px;background:#000;vertical-align:middle;\">
-                  	<img src=\"".$path."\" style=\"width:120px;height:120px;border:none;\" alt=\"".$data['alliance_building_name']."\"/>
+                  <td class=\"tbldata\" style=\"width:120px;background:#000;vertical-align:middle;padding:0px;\">
+                  	<img src=\"".$path."\" style=\"width:120px;height:120px;border:none;margin:0px;\" alt=\"".$data['alliance_building_name']."\"/>
                   </td>
-                  <td class=\"tbldata\" style=\"vertical-align:top;height:100px;\">
+                  <td class=\"tbldata\" style=\"vertical-align:top;height:100px;\" colspan=\"6\">
                   	".$data['alliance_building_comment']."
                  	</td>
 				     </tr>";
-				tableEnd();
-				
 				//
 				// Baumenü
 				//
-        
-        // Generiert Bauoptionen mit allen Überprüfungen
-  			$options_arr = show_buildoptions("building", $data['alliance_building_id'], $aarr['alliance_res_metal'], $aarr['alliance_res_crystal'], $aarr['alliance_res_plastic'], $aarr['alliance_res_fuel'], $aarr['alliance_res_food'], $data['alliance_building_costs_metal'], $data['alliance_building_costs_crystal'], $data['alliance_building_costs_plastic'], $data['alliance_building_costs_fuel'], $data['alliance_building_costs_food'], $data['alliance_building_build_time'], $data['alliance_building_costs_factor'], $b_level, $data['alliance_building_last_level'], $buildsomething, $alliance_member_cnt, $end_time);
-  			
-  			// Stellt Optionsbox dar
-  			tableStart();
+  
   			echo $options_arr['optionsbox'];
   			tableEnd();
 			}
