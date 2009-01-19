@@ -161,6 +161,7 @@ public:
 	void setPercentSurvive(double percentage, bool total=true);
 	
 	void setReturn();
+	void setMain();
 	void setSupport();
 	
 	std::string getActionString();

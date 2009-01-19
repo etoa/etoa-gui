@@ -13,31 +13,32 @@ namespace spy
 		Config &config = Config::instance();
 		
 		this->actionMessage->addType((int)config.idget("SHIP_SPY_MSG_CAT_ID"));
-
+		
 		// Load tech levels first agressor, needs a value higher then 0 for one of them, cause /0 
 		this->spyLevelAtt = this->f->fleetUser->getTechLevel("Spionagetechnik") + 1e-2;
 		this->tarnLevelAtt = this->f->fleetUser->getTechLevel("Tarntechnik");
-
+		
 		// Then load the tech levels of the victim 
 		this->spyLevelDef = this->targetEntity->getUser()->getTechLevel("Spionagetechnik");
 		this->tarnLevelDef = this->targetEntity->getUser()->getTechLevel("Tarntechnik");
 		
 		// Load spy ships agressor 
 		this->spyShipsAtt = this->f->getActionCount();
-
+		
 		// Load spy ships defender or sometimes victim 
 		this->spyShipsDef = this->targetEntity->getSpyCount();
 		
 		// If there are some spy ships in the fleet 
 		if (spyShipsAtt) {
 			// Calculate the defense 
-			this->spyDefense1 = std::max(0.0,(this->spyLevelDef*1.0 / (this->spyLevelAtt + this->tarnLevelAtt) * config.idget("SPY_DEFENSE_FACTOR_TECH")));
-			this->spyDefense2 = std::max(0.0,((this->spyShipsDef*1.0 / this->spyShipsAtt) * config.idget("SPY_DEFENSE_FACTOR_SHIPS")));
+			this->spyDefense1 = std::max(0.0,(this->spyLevelDef / (this->spyLevelAtt + this->tarnLevelAtt) * config.idget("SPY_DEFENSE_FACTOR_TECH")));
+			this->spyDefense2 = std::max(0.0,((this->spyShipsDef / this->spyShipsAtt) * config.idget("SPY_DEFENSE_FACTOR_SHIPS")));
 			this->spyDefense = std::min(this->spyDefense1 + this->spyDefense2,config.idget("SPY_DEFENSE_MAX"));
 			
 			this->defended = false;
 			this->roll = rand() % 101;
-		
+			
+			this->actionLog->addText(functions::d2s(this->roll) + " <= " + functions::d2s(this->spyDefense));
 			if (this->roll <= this->spyDefense) {
 				this->defended = true;
 			}
@@ -66,10 +67,16 @@ namespace spy
 					this->info = true;
 				}
 				
+				// Next to go flag for support ships
+				if (this->spyLevelAtt >= config.idget("SPY_ATTACK_SHOW_SUPPORT") && (rand() % 101) > this->tarnDefense)
+					this->support = true;
+				else
+					this->support = false;
+				
 				// Next to go are the ships 
 				if (this->spyLevelAtt >= config.idget("SPY_ATTACK_SHOW_SHIPS") && (rand() % 101) > this->tarnDefense) {
 					this->actionMessage->addText("[b]SCHIFFE[/b]:",1);
-					this->actionMessage->addText(this->targetEntity->getShipString(),1);
+					this->actionMessage->addText(this->targetEntity->getShipString(this->support),1);
 					this->info = true;
 				}
 		
@@ -108,7 +115,6 @@ namespace spy
 					this->actionMessage->addText("[tr][td]Bewohner[/td][td]");
 					this->actionMessage->addText(functions::nf(functions::d2s(this->targetEntity->getResPeople())));
 					this->actionMessage->addText("[/td][/tr]");
-					
 					this->actionMessage->addText("[/table]");
 					this->info = true;
 				}

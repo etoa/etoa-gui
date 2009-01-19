@@ -87,11 +87,11 @@ public:
 		this->actionMessage->addText(this->msgRes);
 		delete this->actionMessage;
 		
-		delete this->targetEntity;		
+		//delete this->targetEntity;		
 		
-		delete this->startEntity;
+		//delete this->startEntity;
 		
-		delete this->f;
+		//delete this->f;
 	}
 		
 	/**
@@ -103,7 +103,6 @@ public:
 	/**
 	* Standartflottenaktionen
 	*/
-	void fleetSendMain(int userId=0);
 	void fleetLand(int fleetAction=0);
 
 protected:

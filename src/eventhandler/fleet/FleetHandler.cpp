@@ -14,6 +14,7 @@ namespace fleet
 		query << "WHERE ";
 		query << " landtime<'" << time(0) << "' ";
 		query << "	AND !(action='alliance' AND leader_id!=id) ";
+		query << "	AND user_id='1' ";
 		query << "ORDER BY landtime ASC;";
 		mysqlpp::Result res = query.store();	
 		query.reset();

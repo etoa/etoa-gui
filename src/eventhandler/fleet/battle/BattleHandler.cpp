@@ -208,9 +208,9 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 
 				message->addText(functions::d2s(runde));
 				message->addText(": ");
-				message->addText(functions::d2s(entity->getHealCount()));
+				message->addText(functions::nf(functions::d2s(entity->getHealCount())));
 				message->addText(" Einheiten des Verteidigers heilen ");
-				message->addText(functions::d2s(entity->getHeal()));
+				message->addText(functions::nf(functions::d2s(entity->getHeal())));
 				message->addText(" Struktur- und Schildpunkte. Der Angreifer hat danach wieder ");
 				
 				entity->setPercentSurvive(cDefStructureShield/initDefStructureShield,true);
@@ -256,11 +256,12 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 			
 			message->addText("Der Angreifer hat den Kampf gewonnen!");
 			
-			entity->removeResMetal(fleet->addMetal(entity->getResMetal()*fleet->getBountyBonus(),true));
-			entity->removeResCrystal(fleet->addCrystal(entity->getResCrystal()*fleet->getBountyBonus(),true));
-			entity->removeResPlastic(fleet->addPlastic(entity->getResPlastic()*fleet->getBountyBonus(),true));
-			entity->removeResFuel(fleet->addFuel(entity->getResFuel()*fleet->getBountyBonus(),true));
-			entity->removeResFood(fleet->addFood(entity->getResFood()*fleet->getBountyBonus(),true));
+			double percent = std::min(fleet->getBountyBonus(),(fleet->getCapacity(true) / entity->getResSum()));
+			entity->removeResMetal(fleet->addMetal(entity->getResMetal()*percent,true));
+			entity->removeResCrystal(fleet->addCrystal(entity->getResCrystal()*percent,true));
+			entity->removeResPlastic(fleet->addPlastic(entity->getResPlastic()*percent,true));
+			entity->removeResFuel(fleet->addFuel(entity->getResFuel()*percent,true));
+			entity->removeResFood(fleet->addFood(entity->getResFood()*percent,true));
 
 				/*double percent2 = (*at).second.capa / attacker->capa;
 				//Erbeutete Rohstoffsumme speichern

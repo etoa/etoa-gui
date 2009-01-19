@@ -81,6 +81,21 @@
 		this->fleetUser = new User(this->getUserId());
 		
 		this->logFleetShipStart = "0";
+		
+		if (this->status==0) {
+			this->usageFuel /= 2;
+			this->usageFood /= 2;
+			this->usagePower /= 2;
+		}
+		else if (this->status=3) {
+			this->supportUsageFuel = 0;
+			this->supportUsageFood = 0;
+		}
+		else {
+			this->usageFuel = 0;
+			this->usageFood = 0;
+			this->usagePower = 0;
+		}
 	}
 	
 	int Fleet::getId() {
@@ -859,6 +874,37 @@
 		}
 	}
 	
+	void Fleet::setMain() {
+		My &my = My::instance();
+		mysqlpp::Connection *con = my.get();
+		mysqlpp::Query query = con->query();
+		query << "SELECT ";
+		query << "	planets.id ";
+		query << "FROM ";
+		query << "	planets ";
+		query << "WHERE ";
+		query << "	planets.planet_user_id='" << this->getUserId() << "' ";
+		query << "	AND planets.planet_user_main='1' ";
+		query << "LIMIT 1;";
+		mysqlpp::Result mainRes = query.store();
+		query.reset();
+					
+		if (mainRes) {
+			int mainSize = mainRes.size();
+			
+			if (mainSize > 0) {
+				mysqlpp::Row mainRow = mainRes.at(0);
+				
+				int duration = this->getLandtime() - this->getLaunchtime();
+				this->launchtime = this->getLandtime();
+				this->landtime += duration;
+				this->status = 2;
+				this->entityFrom = this->entityTo;
+				this->entityTo = (int)mainRow["id"];
+			}
+		}
+	}
+	
 	void Fleet::setSupport() {
 		int flyingHomeTime = this->getLandtime() - this->getLaunchtime();
 		this->launchtime = this->getLandtime();
@@ -1051,20 +1097,27 @@
 		DataHandler &DataHandler = DataHandler::instance();
 		std::map<int,int>::iterator st;
 		for ( st=specialShips.begin() ; st != specialShips.end(); st++ ) {
-			ShipData::ShipData *data = DataHandler.getShipById((*st).first);
-			shipString += data->getName()
-						+ " "
-						+ functions::d2s((*st).second)
-						+ "\n";
+			ShipData::ShipData *data = DataHandler.getShipById((*st).first);	
+			shipString += "[tr][td]"
+						+ data->getName()
+						+ "[/td][td]"
+						+ functions::nf(functions::d2s((*st).second))
+						+ "[/td][/tr]";
 		}
 		for ( st=ships.begin() ; st != ships.end(); st++ ) {
 			ShipData::ShipData *data = DataHandler.getShipById((*st).first);	
-			shipString += data->getName()
-						+ " "
-						+ functions::d2s((*st).second)
-						+ "\n";
+			shipString += "[tr][td]"
+						+ data->getName()
+						+ "[/td][td]"
+						+ functions::nf(functions::d2s((*st).second))
+						+ "[/td][/tr]";
 		}
+		if (shipString.length()<1)
+			shipString = "[i]Nichts vorhanden![/i]\n";
+		else 
+			shipString = "[table]" + shipString + "[/table]";
 		return shipString;
+
 	}
 		
 	

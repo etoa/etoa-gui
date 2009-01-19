@@ -808,7 +808,6 @@
 	
 	std::string Entity::getUserNicks() {
 		std::string nicks = this->entityUser->getUserNick();
-		std::cout << fleets.size() << "\n";
 		if (fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			std::size_t found;
@@ -904,7 +903,7 @@
 		return countString;
 	}
 	
-	std::string Entity::getShipString() {
+	std::string Entity::getShipString(bool total) {
 		if (!this->shipsLoaded)
 			this->loadShips();
 		std::map<int,int> ships;
@@ -918,7 +917,7 @@
 				ships[(*ot)->getTypeId()] += (*ot)->getCount();
 		}
 		
-		if (fleets.size()) {
+		if (fleets.size() && total) {
 			std::vector<Fleet*>::iterator it;
 			std::size_t found;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ ) {
@@ -939,7 +938,7 @@
 			shipString += "[tr][td]"
 						+ data->getName()
 						+ "[/td][td]"
-						+ functions::d2s((*st).second)
+						+ functions::nf(functions::d2s((*st).second))
 						+ "[/td][/tr]";
 		}
 		for ( st=ships.begin() ; st != ships.end(); st++ ) {
@@ -947,7 +946,7 @@
 			shipString += "[tr][td]"
 						+ data->getName()
 						+ "[/td][td]"
-						+ functions::d2s((*st).second)
+						+ functions::nf(functions::d2s((*st).second))
 						+ "[/td][/tr]";
 		}
 		if (shipString.length()<1)
@@ -966,10 +965,10 @@
 			defString += "[tr][td]"
 						+ data->getName()
 						+ "[/td][td] "
-						+ functions::d2s((*ot)->getCount());
+						+ functions::nf(functions::d2s((*ot)->getCount()));
 			if (rebuild)
 				defString += " (+"
-							+ functions::d2s((*ot)->getRebuildCount())
+							+ functions::nf(functions::d2s((*ot)->getRebuildCount()))
 							+ ")";
 							
 			defString += "[/td][/tr]";

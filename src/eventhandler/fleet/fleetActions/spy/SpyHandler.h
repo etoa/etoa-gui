@@ -26,19 +26,19 @@ namespace spy
 		/**
 		* Tech level agressor and victim
 		**/
-		short spyLevelAtt, tarnLevelAtt;
-		short spyLevelDef, tarnLevelDef;
+		double spyLevelAtt, tarnLevelAtt;
+		double spyLevelDef, tarnLevelDef;
 		
 		/**
 		* Spy ships
 		**/
-		int spyShipsDef, spyShipsAtt;
+		double spyShipsDef, spyShipsAtt;
 
 		/**
 		* Different spy defense values
 		**/
 		double spyDefense, spyDefense1, spyDefense2, tarnDefense;
-		bool defended, info;
+		bool defended, info, support;
 		
 		/**
 		* Something like a go or not variable

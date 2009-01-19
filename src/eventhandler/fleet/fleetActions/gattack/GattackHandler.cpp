@@ -77,6 +77,9 @@ namespace gattack
 				this->actionLog->addText("Action failed: Ship error");
 			}
 		}
+		else
+			this->actionMessage->dontSend();
+		
 		this->f->setReturn();
 		delete bh;
 	}

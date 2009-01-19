@@ -181,7 +181,7 @@ class Entity
 		std::string getStructureShieldString();
 		std::string getWeaponString(bool small=true);
 		std::string getCountString(bool small=true);
-		std::string getShipString();
+		std::string getShipString(bool total=true);
 		std::string getDefString(bool rebuild=false);
 		
 		std::string getBuildingString();

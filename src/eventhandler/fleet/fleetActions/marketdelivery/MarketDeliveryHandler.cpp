@@ -58,8 +58,6 @@ namespace marketdelivery
 		
 		// If the planet user is not the same as the buyer, send fleet to the main and send a message with the info
 		else {
-			fleetSendMain();
-			
 			this->actionMessage->addText("[b]FLOTTE LANDEN GESCHEITERT[/b]",2);
 			this->actionMessage->addText("Eine eurer Flotten hat versucht auf ihrem Ziel zu laden Der Versuch scheiterte jedoch und die Flotte macht sich auf den Weg zu eurem Hauptplaneten!",2);
 			this->actionMessage->addText("[b]Ziel:[/b] ");
@@ -72,6 +70,8 @@ namespace marketdelivery
 			this->actionMessage->addText(this->f->getActionString(),1);
 			
 			this->actionMessage->addSubject("Flotte umgelenkt");
+			
+			this->f->setMain();
 			
 			this->actionLog->addText("Action Failed: Planet error");
 		}

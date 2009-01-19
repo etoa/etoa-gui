@@ -28,7 +28,7 @@ public:
 			this->costsCrystal = (int)object["costs_crystal"];
 			this->costsPlastic = (int)object["costs_plastic"];
 			this->costsFuel  = (int)object["costs_fuel"];
-			this->costsFood  = (int)object["costs_fuel"];
+			this->costsFood  = (int)object["costs_food"];
 			this->costsPower  = (int)object["costs_power"];
 		}
 	};
