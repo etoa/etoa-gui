@@ -141,6 +141,12 @@
 							echo "<a href=\"?page=bookmarks&amp;add=".$ent->id()."\" title=\"Zu den Favoriten hinzuf&uuml;gen\">".icon("favorite")."</a> ";
 						}		
 	
+						// Flotte
+						if ($ent->entityCode()=='p' || $ent->entityCode()=='a' || $ent->entityCode()=='w' || $ent->entityCode()=='n' || $ent->entityCode()=='e')
+						{
+							echo "<a href=\"?page=haven&amp;target=".$ent->id()."\" title=\"Flotte hinschicken\">".icon('fleet')."</a> ";
+						}
+	
 						if ($ent->entityCode()=='s')					
 						{
 							if (!$ent->named)
@@ -175,12 +181,7 @@
 							}
 						}
 						
-						// Flotte
-						if ($ent->entityCode()=='p' || $ent->entityCode()=='a' || $ent->entityCode()=='w' || $ent->entityCode()=='n' || $ent->entityCode()=='e')
-						{
-							echo "<a href=\"?page=haven&amp;target=".$ent->id()."\" title=\"Flotte hinschicken\">".icon('fleet')."</a> ";
-						}
-	
+
 			
 						echo "</td></tr>";
 						

@@ -264,6 +264,11 @@
 	$navmenu['Verteidigung']['Punkte']['sub']="battlepoints";
 	$navmenu['Verteidigung']['Punkte']['level']=2;
 
+	$navmenu['Verteidigung']['Transformationen']['page']="def";
+	$navmenu['Verteidigung']['Transformationen']['sub']="transforms";
+	$navmenu['Verteidigung']['Transformationen']['level']=2;
+
+
 	$navmenu['Raketen']['Liste']['page']="missiles";
 	$navmenu['Raketen']['Liste']['sub']="";
 	$navmenu['Raketen']['Liste']['level']=2;

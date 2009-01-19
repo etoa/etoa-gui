@@ -158,6 +158,12 @@
 			}
 		}
 
+		if (isset($_GET['action']) && $_GET['action']=="copy" && isset($_GET['id']))
+		{
+			DuplicateMySQLRecord(DB_TABLE,DB_TABLE_ID,$_GET['id']);
+   		ok_msg("Datensatz kopiert!");
+   	}
+
 
 		if (isset($_GET['sortup']) && isset($_GET['parentid']))
 		{
@@ -241,7 +247,7 @@
 				echo "</th>";					
 			}
 			
-			echo "<th valign=\"top\" width=\"50\" colspan=\"2\">&nbsp;</td></tr>";
+			echo "<th valign=\"top\" width=\"70\" colspan=\"2\">&nbsp;</td></tr>";
 			$cnt=0;
 			while ($arr=mysql_fetch_array($res))
 			{
@@ -303,8 +309,10 @@
 				}
 				
 				echo "<td valign=\"top\" class=\"tbldata\" style=\"width:50px\">
-				".edit_button("?".URL_SEARCH_STRING."&amp;action=edit&amp;id=".$arr[DB_TABLE_ID])." ";
-				echo del_button("?".URL_SEARCH_STRING."&amp;action=del&amp;id=".$arr[DB_TABLE_ID])."</td>";
+				".edit_button("?".URL_SEARCH_STRING."&amp;action=edit&amp;id=".$arr[DB_TABLE_ID])." 
+				".copy_button("?".URL_SEARCH_STRING."&amp;action=copy&amp;id=".$arr[DB_TABLE_ID])." 
+				".del_button("?".URL_SEARCH_STRING."&amp;action=del&amp;id=".$arr[DB_TABLE_ID])." 
+				</td>";
 				echo "</tr>\n";
 				$cnt++;
 			}

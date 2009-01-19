@@ -109,7 +109,7 @@
 					defense 
 				WHERE 
 					def_cat_id=".$carr['cat_id']."
-					AND def_buildable=1 
+					AND def_show=1 
 				ORDER BY 
 					$order $sort;");
 				if (mysql_num_rows($res)>0)

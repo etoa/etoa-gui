@@ -66,6 +66,170 @@
     $log_ships="";
     $log_def="";
 
+
+		echo "<h2>Mobile Anlagen</h2>";		
+		
+		if (isset($_POST['dtransform_submit']))
+		{
+			$sl = new ShipList($cp->id,$cu->id);
+			$dl = new DefList($cp->id,$cu->id);
+			
+			$cnt=0;
+			if (isset($_POST['dtransform']) && count($_POST['dtransform']) >0)
+			{
+				foreach ($_POST['dtransform'] as $k => $v)
+				{
+					$res = dbquery("
+					SELECT
+						l.deflist_count as cnt,			
+						t.ship_id as id,
+						t.num_def
+					FROM
+						deflist l
+					INNER JOIN
+						obj_transforms t
+						ON t.def_id=l.deflist_def_id
+						AND l.deflist_user_id=".$cu->id."
+						AND l.deflist_entity_id=".$cp->id."
+						AND l.deflist_count > 0
+						AND l.deflist_def_id=".$k."
+					");					
+					if (mysql_num_rows($res))
+					{
+						$arr = mysql_fetch_assoc($res);
+						$packcount = min(max(0,$v),$arr['cnt']);
+						
+						if ($packcount>0)
+						{
+							$sl->add($arr['id'],$dl->remove($k,$packcount));
+							$cnt += $packcount;
+						}
+					}
+				}
+			}
+			if ($cnt>0)
+			{
+				ok_msg("$packcount Verteidigungsanlagen wurden verladen!");
+			}			
+		}
+
+		if (isset($_POST['stransform_submit']))
+		{
+			$sl = new ShipList($cp->id,$cu->id);
+			$dl = new DefList($cp->id,$cu->id);
+			
+			$cnt=0;
+			if (isset($_POST['stransform']) && count($_POST['stransform']) >0)
+			{
+				foreach ($_POST['stransform'] as $k => $v)
+				{
+					$res = dbquery("
+					SELECT
+						l.shiplist_count as cnt,			
+						t.def_id as id,
+						t.num_def
+					FROM
+						shiplist l
+					INNER JOIN
+						obj_transforms t
+						ON t.ship_id=l.shiplist_ship_id
+						AND l.shiplist_user_id=".$cu->id."
+						AND l.shiplist_entity_id=".$cp->id."
+						AND l.shiplist_count > 0
+						AND l.shiplist_ship_id=".$k."
+					");					
+					if (mysql_num_rows($res))
+					{
+						$arr = mysql_fetch_assoc($res);
+						$packcount = min(max(0,$v),$arr['cnt']);
+						if ($packcount>0)
+						{
+							$dl->add($arr['id'],$sl->remove($k,$packcount));
+							$cnt += $packcount;
+						}
+					}
+				}
+			}
+			if ($cnt>0)
+			{
+				ok_msg("$packcount Verteidigungsanlagen wurden installiert!");
+			}			
+		}
+
+
+		$mob = false;
+		$otres = dbquery("
+		SELECT
+			d.def_id as id,
+			d.def_name as name,
+			l.deflist_count as cnt			
+		FROM
+			defense d
+		INNER JOIN
+			obj_transforms t
+			ON t.def_id=d.def_id
+		INNER JOIN
+			deflist l
+			ON l.deflist_def_id=d.def_id
+			AND l.deflist_user_id=".$cu->id."
+			AND l.deflist_entity_id=".$cp->id."
+			AND l.deflist_count > 0
+		");
+		if (mysql_num_rows($otres) > 0)
+		{
+			$mob = true;
+			echo "<form action=\"?page=$page\" method=\"post\">";
+			tableStart("Verteidigungsanlagen auf Träger verladen");
+			echo "<tr><th>Typ</th><th>Anzahl</th></tr>";
+			while ($otarr = mysql_fetch_assoc($otres))
+			{
+				echo "<tr><td>".$otarr['name']."</td>
+				<td><input type=\"text\" name=\"dtransform[".$otarr['id']."]\" value=\"".$otarr['cnt']."\" size=\"7\" /></td></tr>";
+			}
+			tableEnd();
+			echo "<input type=\"submit\" name=\"dtransform_submit\" value=\"Verladen\" /></form><br/>";
+		}
+
+		$otres = dbquery("
+		SELECT
+			d.ship_id as id,
+			d.ship_name as name,
+			l.shiplist_count as cnt			
+		FROM
+			ships d
+		INNER JOIN
+			obj_transforms t
+			ON t.ship_id=d.ship_id
+		INNER JOIN
+			shiplist l
+			ON l.shiplist_ship_id=d.ship_id
+			AND l.shiplist_user_id=".$cu->id."
+			AND l.shiplist_entity_id=".$cp->id."
+			AND l.shiplist_count > 0
+		");
+		if (mysql_num_rows($otres) > 0)
+		{
+			$mob = true;
+			echo "<form action=\"?page=$page\" method=\"post\">";
+			tableStart("Mobile Verteidigung installieren");
+			echo "<tr><th>Typ</th><th>Anzahl</th></tr>";
+			while ($otarr = mysql_fetch_assoc($otres))
+			{
+				echo "<tr><td>".$otarr['name']."</td>
+				<td><input type=\"text\" name=\"stransform[".$otarr['id']."]\" value=\"".$otarr['cnt']."\" size=\"7\" /></td></tr>";
+			}
+			tableEnd();
+			echo "<input type=\"submit\" name=\"stransform_submit\" value=\"Ausladen und installieren\" /></form><br/>";
+		}
+
+		if (!$mob)
+			echo "Keine mobilen Anlagen vorhanden!<br/>";
+
+
+
+
+		echo "<h2>Recycling</h2>";
+
  		echo "Deine Recyclingtechnologie ist auf Stufe ".$tech_level." entwickelt. Es werden ".$pb_percent." % der Kosten zur&uuml;ckerstattet.<br/>Der Recyclingvorgang kann nicht r&uuml;ckgangig gemacht werden, die Objekte werden sofort verschrottet!<br>";	
 
 		//Schiffe recyceln
@@ -309,7 +473,7 @@
 		}
 		else
 		{
-			echo "Es sind keine Schiffe auf diesem Planeten vorhanden!<br/><br/>";
+			echo "<br/><br/>Es sind keine Schiffe auf diesem Planeten vorhanden!<br/><br/>";
 		}
 
 

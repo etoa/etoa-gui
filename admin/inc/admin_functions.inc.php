@@ -193,10 +193,25 @@
 	function edit_button($url, $ocl="")
 	{
 		if ($ocl!="")
-			return "<a href=\"$url\" onclick=\"$ocl\"><img src=\"../images/edit.gif\" alt=\"Bearbeiten\" style=\"width:16px;height:18px;border:none;\" title=\"Bearbeiten\" /></a>";
+			return "<a href=\"$url\" onclick=\"$ocl\"><img src=\"../images/icons/edit.png\" alt=\"Bearbeiten\" style=\"width:16px;height:18px;border:none;\" title=\"Bearbeiten\" /></a>";
 		else
-			return "<a href=\"$url\"><img src=\"../images/edit.gif\" alt=\"Bearbeiten\" style=\"width:16px;height:18px;border:none;\" title=\"Bearbeiten\" /></a>";
+			return "<a href=\"$url\"><img src=\"../images/icons/edit.png\" alt=\"Bearbeiten\" style=\"width:16px;height:18px;border:none;\" title=\"Bearbeiten\" /></a>";
 	}
+
+	/**
+	* Displays a clickable copy button
+	*
+	* @param string Url of the link
+	* @param string Optional onclick value
+	*/
+	function copy_button($url, $ocl="")
+	{
+		if ($ocl!="")
+			return "<a href=\"$url\" onclick=\"$ocl\"><img src=\"../images/icons/copy.png\" alt=\"Kopieren\" style=\"width:16px;height:18px;border:none;\" title=\"Kopieren\" /></a>";
+		else
+			return "<a href=\"$url\"><img src=\"../images/icons/copy.png\" alt=\"Kopieren\" style=\"width:16px;height:18px;border:none;\" title=\"Kopieren\" /></a>";
+	}
+
 	
 	/**
 	* Displays a clickable edit button
@@ -238,9 +253,9 @@
 	function del_button($url, $ocl="")
 	{
 		if ($ocl!="")
-			return "<a href=\"$url\" onclick=\"$ocl\"><img src=\"../images/delete.gif\" alt=\"Löschen\" style=\"width:16px;height:15px;border:none;\" title=\"Löschen\" /></a>";
+			return "<a href=\"$url\" onclick=\"$ocl\"><img src=\"../images/icons/delete.png\" alt=\"Löschen\" style=\"width:16px;height:15px;border:none;\" title=\"Löschen\" /></a>";
 		else
-			return "<a href=\"$url\"><img src=\"../images/delete.gif\" alt=\"Löschen\" style=\"width:18px;height:15px;border:none;\" title=\"Löschen\" /></a>";
+			return "<a href=\"$url\"><img src=\"../images/icons/delete.png\" alt=\"Löschen\" style=\"width:18px;height:15px;border:none;\" title=\"Löschen\" /></a>";
 	}
 
 
@@ -1050,5 +1065,29 @@
 		}
 		return false;
 	} 
+
+function DuplicateMySQLRecord ($table, $id_field, $id) {
+    // load the original record into an array
+    $result = dbquery("SELECT * FROM {$table} WHERE {$id_field}={$id}");
+    $original_record = mysql_fetch_assoc($result);
+    
+    // insert the new record and get the new auto_increment id
+    mysql_query("INSERT INTO {$table} (`{$id_field}`) VALUES (NULL)");
+    $newid = mysql_insert_id();
+    
+    // generate the query to update the new record with the previous values
+    $query = "UPDATE {$table} SET ";
+    foreach ($original_record as $key => $value) {
+        if ($key != $id_field) {
+            $query .= '`'.$key.'` = "'.str_replace('"','\"',$value).'", ';
+        }
+    }
+    $query = substr($query,0,strlen($query)-2); # lop off the extra trailing comma
+    $query .= " WHERE {$id_field}={$newid}";
+    dbquery($query);
+    
+    // return the new id
+    return $newid;
+}
 
 ?>

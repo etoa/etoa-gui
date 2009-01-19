@@ -75,7 +75,7 @@
 			FROM 
 				ships
 			WHERE
-				ship_buildable=1 
+				ship_show=1 
 				AND special_ship=0
 			ORDER BY 
 				ship_name;");
@@ -311,7 +311,7 @@
 					ships 
 				WHERE
 					ship_cat_id=".$carr['cat_id']."
-					AND ship_buildable=1 
+					AND ship_show=1 
 					AND special_ship=0 
 				ORDER BY 
 					$order $sort;");

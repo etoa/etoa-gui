@@ -59,6 +59,14 @@
 	}
 	
 	//
+	// 
+	//
+	elseif ($sub=="transforms")
+	{
+		advanced_form("obj_transforms");		
+	}
+	
+	//
 	// Bauliste
 	//
 	elseif ($sub=="queue")
