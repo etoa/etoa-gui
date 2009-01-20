@@ -1,4 +1,4 @@
-<?PHP
+	<?PHP
 
 	//////////////////////////////////////////////////
 	//		 	 ____    __           ______       			//
@@ -21,8 +21,8 @@
 	// 	Topic: Formular-Definitionen für Rassen 
 	// 	Autor: Nicolas Perrenoud alias MrCage							
 	// 	Erstellt: 01.12.2004
-	// 	Bearbeitet von: Nicolas Perrenoud alias MrCage
-	// 	Bearbeitet am: 31.03.2006
+	// 	Bearbeitet von: Selina Tanner aka Demora
+	// 	Bearbeitet am: 20.01.2009
 	// 	Kommentar: 	
 	//
 	
@@ -53,7 +53,7 @@
 	// select_elem_checked				// Value of default checked Select Element (desc=>value)
 	// show_overview							// Set 1 to show on overview page
   
-	$db_fields = array ( 0	=> 	array	(	"name" => "race_name",
+	$db_fields = array (	array	(	"name" => "race_name",
 																		"text" => "Rasse",
 																		"type" => "text",
 																		"def_val" => "",
@@ -67,7 +67,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
 																	),
-											1	=> 	array	(	"name" => "race_comment",
+														array	(	"name" => "race_comment",
 																		"text" => "Kommentar",
 																		"type" => "textarea",
 																		"def_val" => "",
@@ -81,8 +81,24 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 1,
 																		"overview_length" => 400
+																	),
+														array	(	"name" => "race_short_comment",
+																		"text" => "Kurzer Kommentar",
+																		"type" => "textarea",
+																		"def_val" => "",
+																		"size" => "",
+																		"maxlen" => "",
+																		"rows" => "3",
+																		"cols" => "40",
+																		"rcb_elem" => "",
+																		"rcb_elem_chekced" => "",
+																		"select_elem" => "",
+																		"select_elem_checked" => "",
+																		"show_overview" => 1,
+																		"overview_length" => 400
+																		
 																	),		
-											2	=> 	array	(	"name" => "race_leadertitle",
+														array	(	"name" => "race_leadertitle",
 																		"text" => "Leader-Titel",
 																		"type" => "text",
 																		"def_val" => "",
@@ -97,7 +113,7 @@
 																		"show_overview" => 1,
 																		"overview_length" => 200
 																	),															
-												3	=> 	array	(	"name" => "race_f_metal",
+														array	(	"name" => "race_f_metal",
 																		"text" => "Metallfaktor",
 																		"type" => "text",
 																		"def_val" => "1",
@@ -111,7 +127,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-												4	=> 	array	(	"name" => "race_f_crystal",
+														array	(	"name" => "race_f_crystal",
 																		"text" => "Kristallfaktor",
 																		"type" => "text",
 																		"def_val" => "1",
@@ -125,7 +141,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-												5	=> 	array	(	"name" => "race_f_plastic",
+														array	(	"name" => "race_f_plastic",
 																		"text" => "Plastikfaktor",
 																		"type" => "text",
 																		"def_val" => "1",
@@ -139,7 +155,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-												6	=> 	array	(	"name" => "race_f_fuel",
+														array	(	"name" => "race_f_fuel",
 																		"text" => "Treibstofffaktor",
 																		"type" => "text",
 																		"def_val" => "1",
@@ -153,7 +169,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-												7	=> 	array	(	"name" => "race_f_food",
+														array	(	"name" => "race_f_food",
 																		"text" => "Nahrungsfaktor",
 																		"type" => "text",
 																		"def_val" => "1",
@@ -167,7 +183,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-												8	=> 	array	(	"name" => "race_f_power",
+														array	(	"name" => "race_f_power",
 																		"text" => "Stromfaktor",
 																		"type" => "text",
 																		"def_val" => "1",
@@ -181,7 +197,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-												9	=> 	array	(	"name" => "race_f_population",
+														array	(	"name" => "race_f_population",
 																		"text" => "Bevölkerungsfaktor",
 																		"type" => "text",
 																		"def_val" => "1",
@@ -195,7 +211,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
-												10	=> 	array	(	"name" => "race_f_researchtime",
+														array	(	"name" => "race_f_researchtime",
 																		"text" => "Forschungszeitfaktor",
 																		"type" => "text",
 																		"def_val" => "1",
@@ -209,7 +225,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),																	
-												11	=> 	array	(	"name" => "race_f_buildtime",
+														array	(	"name" => "race_f_buildtime",
 																		"text" => "Bauzeitfaktor",
 																		"type" => "text",
 																		"def_val" => "1",
@@ -223,7 +239,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),																														
-												12	=> 	array	(	"name" => "race_f_fleettime",
+														array	(	"name" => "race_f_fleettime",
 																		"text" => "Flugzeitfaktor",
 																		"type" => "text",
 																		"def_val" => "1",

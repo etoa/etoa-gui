@@ -6,13 +6,13 @@
 	//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
 	//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
 	//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
-	//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
-	//																					 		//
+	//			    \/___/  \/__/\/___/  \/_/\/_/  			//
+	//																							//
 	//////////////////////////////////////////////////
-	// The Andromeda-Project-Browsergame				 		//
-	// Ein Massive-Multiplayer-Online-Spiel			 		//
-	// Programmiert von Nicolas Perrenoud				 		//
-	// www.nicu.ch | mail@nicu.ch								 		//
+	// The Andromeda-Project-Browsergame						//
+	// Ein Massive-Multiplayer-Online-Spiel					//
+	// Programmiert von Nicolas Perrenoud						//
+	// www.nicu.ch | mail@nicu.ch			 							//
 	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
 	//////////////////////////////////////////////////
 	//
@@ -56,7 +56,7 @@
 
 		echo "<h2>&Uuml;bersicht</h2>";
 		
-		HelpUtil::breadCrumbs();
+		//HelpUtil::breadCrumbs();
 		
 		echo "Hier findest du Informationen zu verschiedenen Objekten des Spiels:<br/><br/>";
 

@@ -53,6 +53,7 @@
 		require("inc/install.inc.php");
 		exit();
 	}
+	
 
 	// Renderzeit-Start festlegen
 	$render_time = explode(" ",microtime());
