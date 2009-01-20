@@ -2410,6 +2410,42 @@ Forum: http://www.etoa.ch/forum";
 		return round($rtime,3);
 	}
 
+function imagecreatefromfile($path, $user_functions = false)
+{
+    $info = @getimagesize($path);
+   
+    if(!$info)
+    {
+        return false;
+    }
+   
+    $functions = array(
+        IMAGETYPE_GIF => 'imagecreatefromgif',
+        IMAGETYPE_JPEG => 'imagecreatefromjpeg',
+        IMAGETYPE_PNG => 'imagecreatefrompng',
+        IMAGETYPE_WBMP => 'imagecreatefromwbmp',
+        IMAGETYPE_XBM => 'imagecreatefromwxbm',
+        );
+   
+    if($user_functions)
+    {
+        $functions[IMAGETYPE_BMP] = 'imagecreatefrombmp';
+    }
+   
+    if(!$functions[$info[2]])
+    {
+        return false;
+    }
+   
+    if(!function_exists($functions[$info[2]]))
+    {
+        return false;
+    }
+   
+    return $functions[$info[2]]($path);
+}
+
+
 	/**
 	* Resizes a image and save it to a given filename
 	*
@@ -2436,7 +2472,8 @@ Forum: http://www.etoa.ch/forum";
 		}
 		else
 			return false;
-		if ($img = $imgfrom($fileFrom)) 
+			
+		if ($img = imagecreatefromfile($fileFrom)) 
 		{
 			$width = ImageSX($img);
 			$height = ImageSY($img);

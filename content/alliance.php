@@ -369,63 +369,21 @@
               $alliance_img_string="alliance_img='',
               alliance_img_check=0,";
             }
-            elseif (isset($_FILES['alliance_img_file']['tmp_name']) && $_FILES['alliance_img_file']['tmp_name']!="")
-            {
-            	if ($_FILES['alliance_img_file']['size']<=ALLIANCE_IMG_MAX_SIZE)
-            	{
-            		
-                $source=$_FILES['alliance_img_file']['tmp_name'];
-                $ims = getimagesize($source);
-                
-               	$ext = substr($ims['mime'],strrpos($ims['mime'],"/")+1);
-               	if ($ext=="jpg" || $ext=="jpeg" || $ext=="gif" || $ext=="png")
-               	{                  
-                  //überprüft Bildgrösse
-                  if ($ims[0]<=ALLIANCE_IMG_MAX_WIDTH && $ims[1]<=ALLIANCE_IMG_MAX_HEIGHT)
-                  {
-                      $fname = "alliance_".$cu->allianceId."_".time().".".$ext;
-                      if (file_exists(ALLIANCE_IMG_DIR."/".$arr['user_avatar']))
-                          @unlink(ALLIANCE_IMG_DIR."/".$arr['user_avatar']);
-                      move_uploaded_file($source,ALLIANCE_IMG_DIR."/".$fname);
-			                if (UNIX)
-			                	chmod(ALLIANCE_IMG_DIR."/".$fname,FILE_UPLOAD_PERMS);
-                      if ($ims[0]>ALLIANCE_IMG_WIDTH || $ims[1]>ALLIANCE_IMG_HEIGHT)
-											{
-												if (resizeImage(ALLIANCE_IMG_DIR."/".$fname,ALLIANCE_IMG_DIR."/".$fname,ALLIANCE_IMG_WIDTH,ALLIANCE_IMG_HEIGHT,$ext))
-												{
-													echo "Bildgrösse wurde angepasst! ";
-                        	echo "Allianzbild gespeichert!<br/>";
-                        	$alliance_img_string="alliance_img='".$fname."',
-                        	alliance_img_check=1,";
-												}
-												else
-												{
-													Echo "Bildgrösse konnte nicht angepasst werden!";
-                          @unlink(ALLIANCE_IMG_DIR."/".$arr['user_avatar']);
-												}
-											}
-											else
-											{
-                      	echo "Allianzbild gespeichert!<br/>";
-                      	$alliance_img_string="alliance_img='".$fname."',
-                      	alliance_img_check=1,";
-                      }
-                  }
-                  else
-                  {
-                      echo "Fehler! Das Allianzbild hat die falsche Gr&ouml;sse (".$ims[0]."*".$ims[1].")!<br/>";
-                  }
-               	}
-               	else
-               	{
-                  echo "Fehler! Das Allianzbild muss vom Typ jpeg, png oder gif sein.!<br/>";
-								}
-							}	                 	
-             	else
-             	{
-                echo "Fehler! Das Allianzbild ist zu gross (Max ".nf(ALLIANCE_IMG_MAX_SIZE)." Byte)!<br/>";
-							}
-            }
+	          elseif ($_FILES['alliance_img_file']['tmp_name']!="")
+	          {
+	          	$imup = new ImageUpload('alliance_img_file',ALLIANCE_IMG_DIR,"alliance_".$cu->allianceId."_".time());
+	          	$imup->setMaxSize(ALLIANCE_IMG_MAX_SIZE);
+	          	$imup->setMaxDim(ALLIANCE_IMG_MAX_WIDTH,ALLIANCE_IMG_MAX_HEIGHT);
+	          	$imup->enableResizing(ALLIANCE_IMG_WIDTH,ALLIANCE_IMG_HEIGHT);
+	          	
+							if ($imup->process())
+							{
+								$alliance_img_string="alliance_img='".$imup->getResultName()."',
+                alliance_img_check=1,";
+								ok_msg("Allianzbild hochgeladen!");
+							}          	
+	          }                     
+
 
 						if(!isset($message))
 						{

@@ -76,6 +76,7 @@
 		echo "<h2>Bildpakete verwalten</h2>";
 
 		$imPackDir = "../images/imagepacks";
+		$baseType = "png";
 
 		if (isset($_GET['manage']))
 		{
@@ -86,7 +87,17 @@
 				{
 					echo "<h3>".$xml->name."</h3>";
 					echo "Autor: ".$xml->author." (".$xml->email.")<br/><br/>";
-					$exts = explode(",",$xml->extensions);
+
+					$tmpexts = explode(",",$xml->extensions);
+					$exts = array();
+					foreach ($tmpexts as $tmpext)
+					{
+						if ($tmpext=="png") $exts[] = "png";
+						if ($tmpext=="jpeg") $exts[] = "jpg";
+						if ($tmpext=="jpg") $exts[] = "jpg";
+						if ($tmpext=="gif") $exts[] = "gif";
+					}
+					if (count($exts) == 0) $exts[] = $baseType;
 
 					$sizes = array("" => $cfg->value('imagesize'),"_middle" => $cfg->p1('imagesize'),"_small" => $cfg->p2('imagesize'));
 
@@ -112,6 +123,14 @@
 						{
 							foreach ($sd[1] as $idx)
 							{
+								$baseFileStr = $sdir."/".$sprefix.$idx.".".$baseType;
+								$baseFile = $cdir."/".$baseFileStr;
+								if (!is_file($baseFile))
+								{
+									echo "<i>Basisbild fehlt: $baseFile</i><br/>";
+								}
+								else
+								{
 									foreach ($exts as $ext)
 									{
 										foreach ($sizes as $sizep => $sizew)
@@ -123,21 +142,23 @@
 												$sa = getimagesize($file);
 												if ($sa[0] != $sizew)
 												{
-													echo "Falsche Grösse: <i>$filestr</i> (".$sa[0]." statt $sizew)<br/>";
+													resizeImage($file, $file, $sizew,$sizew, $ext); 
+													echo "Falsche Grösse: <i>$filestr</i> (".$sa[0]." statt $sizew). KORRIGIERT!<br/>";
 												}
 											}
 											else
 											{
+												resizeImage($baseFile, $file, $sizew,$sizew, $ext); 
 												echo "<i>Fehlt: $filestr</i><br/>";
 											}
 										}
 									}
+								}
 							}
 						}						
 					}
 
 
-					echo button("Fehlende Bilder erzeugen","?page=$page&amp;sub=$sub&amp;manage=".$_GET['manage']."&rebuild")." ";
 					echo button("Zurück","?page=$page&amp;sub=$sub");
 					
 				}
