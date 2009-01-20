@@ -1,7 +1,13 @@
 <?PHP
 	echo "<h2>Rassen</h2>";
+	
+	//Commentet ou for the time being, because this function needs rewriting.
 	//HelpUtil::breadCrumbs(array("Rassen","races"));
 
+
+	//
+	//Order
+	//
 	if (isset($_GET['order']))
 	{
 		$order="race_".$_GET['order'];
@@ -28,11 +34,37 @@
 		$sort="ASC";
 	}
 
-	$res = dbquery("SELECT * FROM races WHERE race_active=1 ORDER BY $order $sort;");
+	//
+	//Table with a list of all races
+	//
+	$res = dbquery("SELECT * FROM races ORDER BY $order $sort;");
 	if (mysql_num_rows($res)>0)
 	{
 
-		tableStart("Rassenboni");
+		tableStart("Kurzinformation");
+		echo "<tr>,<td class=\"tbltitle\">Logo</td>";
+		echo "<td class=\"tbltitle\">Name</td>";
+		echo "<td class=\"tbltitle\">Kurzbeschreibug</td></tr>";
+
+		while ($arr = mysql_fetch_array($res))
+		{
+			echo "<tr><td class=\"tbldata\">
+						<img src=\"".IMAGE_PATH."/races/race_".$arr['race_id']."_small.".IMAGE_EXT."\"></td>";
+			echo "<td class=\"tbldata\"><a href=\"?page=help&site=races_detail\">".$arr['race_name']."</a></td>";
+			echo "<td class=\"tbldata\">".text2html($arr['race_short_comment'])."</td></tr>";
+
+		}
+		tableEnd();
+	}
+	
+	//
+	//Bonus-Malus table to compare all the races
+	//
+$res = dbquery("SELECT * FROM races WHERE race_active=1 ORDER BY $order $sort;");
+	if (mysql_num_rows($res)>0)
+	{
+
+		tableStart("Bonus-Malus Vergleichstabelle");
 		echo "<tr><td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=name\">Name</a></td>";
 		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_metal\">".RES_METAL."</a></td>";
 		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_crystal\">".RES_CRYSTAL."</a></td>";
@@ -47,7 +79,6 @@
 
 		while ($arr = mysql_fetch_array($res))
 		{
-			$x=mt_rand(1,5);
 			echo "<tr><td class=\"tbltitle\">".$arr['race_name']."</td>";
 			echo "<td class=\"tbldata\">".get_percent_string($arr['race_f_metal'],1)."</td>";
 			echo "<td class=\"tbldata\">".get_percent_string($arr['race_f_crystal'],1)."</td>";
@@ -59,28 +90,8 @@
 			echo "<td class=\"tbldata\">".get_percent_string($arr['race_f_researchtime'],1,1)."</td>";
 			echo "<td class=\"tbldata\">".get_percent_string($arr['race_f_buildtime'],1,1)."</td>";
 			echo "<td class=\"tbldata\">".get_percent_string($arr['race_f_fleettime'],1,1)."</td></tr>";
-
 		}
 		tableEnd();
 	}
-
-	$res = dbquery("SELECT * FROM races ORDER BY $order $sort;");
-	if (mysql_num_rows($res)>0)
-	{
-
-		tableStart("Rasseninfos");
-		echo "<tr><td class=\"tbltitle\">Name</td>";
-		echo "<td class=\"tbltitle\">Beschreibung</td></tr>";
-
-		while ($arr = mysql_fetch_array($res))
-		{
-			$x=mt_rand(1,5);
-			echo "<tr><td class=\"tbltitle\">".$arr['race_name']."</td>";
-			echo "<td class=\"tbldata\">".text2html($arr['race_comment'])."</td></tr>";
-
-		}
-		tableEnd();
-	}
-
 
 ?>

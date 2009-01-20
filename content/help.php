@@ -56,6 +56,7 @@
 
 		echo "<h2>&Uuml;bersicht</h2>";
 		
+		//Commentet ou, because function will be rewritten as soon as i find the time to do it...
 		//HelpUtil::breadCrumbs();
 		
 		echo "Hier findest du Informationen zu verschiedenen Objekten des Spiels:<br/><br/>";

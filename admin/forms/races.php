@@ -112,6 +112,11 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 1,
 																		"overview_length" => 200
+																	),
+														array ( "name" => "race_id",
+																		"text" => "ID",
+																		"type" => "readonly",
+																		"show_overview" => 1
 																	),															
 														array	(	"name" => "race_f_metal",
 																		"text" => "Metallfaktor",
