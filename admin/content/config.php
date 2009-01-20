@@ -69,103 +69,139 @@
 	}
 
 	//
-	// Htaccess-Schutz
-	//
-	elseif ($sub=="htaccess")
-	{
-		echo "<h2>Passwort-Schutz für das Admin-Verzeichnis</h2>";
-		
-		if (isset($_POST['auth_submit']))
-		{
-			if ($_POST['auth_name']!="" && $_POST['auth_user']!="" && $_POST['auth_pw']!="")
-			{
-				$cfg->set('admin_htaccess_auth_name',$_POST['auth_name']);
-				$cfg->set('admin_htaccess_auth_user',$_POST['auth_user']);
-				$cfg->set('admin_htaccess_auth_pw',$_POST['auth_pw']);
-				ok_msg("Das Passwort wurde gesetzt!");
-			}
-			else
-			{
-				err_msg("Es wurden nicht alle Felder ausgefüllt!");
-			}
-		}
-	
-		if (isset($_POST['auth_submit_clear']))
-		{
-			$cfg->set('admin_htaccess_auth_name','');
-			$cfg->set('admin_htaccess_auth_user','');
-			$cfg->set('admin_htaccess_auth_pw','');
-			ok_msg("Das Passwort wurde entfernt!");
-		}		
-		
-		
-		if ($cfg->get("admin_htaccess_auth_user") != "" && $cfg->get("admin_htaccess_auth_pw")!="")
-		{
-			echo "<div style=\"color:#0f0\">Der Passwort-Schutz ist zurzeit aktiv!</div><br/>";
-		}
-		else
-		{
-			echo "<div style=\"color:#f90\">Der Passwort-Schutz ist nicht aktiv!</div><br/>";
-		}
-		echo "Diese Daten schützen das Admin-Tool zusätzlich und müssen vor dem eigentlichen Login eingegeben werden. Bei 
-		einer Änderung dieser Daten müssen alle anderen Admins informiert werden, da sie sonst nicht mehr in diese Tool einloggen können!<br/><br/>";
-		echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\" autocomplete=\"off\">";
-		echo "<table class=\"tb\">";
-		echo "<tr>
-			<th style=\"width:100px;\">Titel:</th>
-			<td><input type=\"text\" name=\"auth_name\" value=\"".$cfg->get("admin_htaccess_auth_name")."\" /></td>
-		</tr>";
-		echo "<tr>
-			<th style=\"width:100px;\">User:</th>
-			<td><input type=\"text\" name=\"auth_user\" value=\"".$cfg->get("admin_htaccess_auth_user")."\" /></td>
-		</tr>";
-		echo "<tr>
-			<th style=\"width:100px;\">Passwort:</th>
-			<td><input type=\"text\" name=\"auth_pw\" value=\"".$cfg->get("admin_htaccess_auth_pw")."\" /></td>
-		</tr>";
-		echo "</table><br/><input type=\"submit\" name=\"auth_submit\" value=\"Speichern\" /> &nbsp; ";
-		if ($cfg->get("admin_htaccess_auth_user") != "" && $cfg->get("admin_htaccess_auth_pw")!="")
-		{		
-			echo "<input type=\"submit\" name=\"auth_submit_clear\" value=\"Schutz deaktivieren (nicht empfohlen)\" />";
-		}
-		echo "</form>";
-		
-	}
-
-	//
 	// Bildpakete
 	//
 	elseif ($sub=="imagepacks")
 	{
-		echo "<h2>Downloadbare Bildpakete erzeugen</h2>";
+		echo "<h2>Bildpakete verwalten</h2>";
 
-		$pkg = new ImagePacker("../images/imagepacks","../cache/imagepacks");
+		$imPackDir = "../images/imagepacks";
 
-		if (isset($_GET['gen']))
+		if (isset($_GET['manage']))
 		{
-			echo "Erstelle Pakate...<br/><div style=\"border:1px solid #fff;\">";
-			$pkg->pack();
-			echo "</div><br/>";
-		}
+			if (is_dir($imPackDir."/".$_GET['manage']))
+			{
+				$cdir = $imPackDir."/".$_GET['manage'];
+				if ($xml = simplexml_load_file($cdir."/imagepack.xml"))
+				{
+					echo "<h3>".$xml->name."</h3>";
+					echo "Autor: ".$xml->author." (".$xml->email.")<br/><br/>";
+					$exts = explode(",",$xml->extensions);
 
-		if ($pkg->check())
-		{
-		 echo "<div style=\"color:#0f0\">Bildpakete sind vorhanden!</div>";
+					$sizes = array("" => $cfg->value('imagesize'),"_middle" => $cfg->p1('imagesize'),"_small" => $cfg->p2('imagesize'));
+
+					$dira = array(
+						"abuildings" => array("building",getArrayFromTable("alliance_buildings","alliance_building_id")),
+						"atechnologies" => array("technology",getArrayFromTable("alliance_technologies","alliance_tech_id")),
+						"buildings" => array("building",getArrayFromTable("buildings","building_id")),
+						"defense" => array("def",getArrayFromTable("defense","def_id")),
+						"missiles" => array("missile",getArrayFromTable("missiles","missile_id")),
+						"ships" => array("ship",getArrayFromTable("ships","ship_id")),
+						"stars" => array("star",getArrayFromTable("sol_types","sol_type_id")),
+						"technologies" => array("technology",getArrayFromTable("technologies","tech_id")),
+						"nebulas" => array("nebula",range(1,$cfg->value('num_nebula_images'))),
+						"asteroids" => array("asteroids",range(1,$cfg->value('num_asteroid_images'))),
+						"space" => array("space",range(1,$cfg->value('num_space_images'))),
+						"wormholes" => array("wormhole",range(1,$cfg->value('num_wormhole_images'))),
+					);
+
+					foreach ($dira as $sdir => $sd)
+					{
+						$sprefix = $sd[0];
+						if (is_dir($cdir."/".$sdir))
+						{
+							foreach ($sd[1] as $idx)
+							{
+									foreach ($exts as $ext)
+									{
+										foreach ($sizes as $sizep => $sizew)
+										{
+											$filestr = $sdir."/".$sprefix.$idx.$sizep.".".$ext;
+											$file = $cdir."/".$filestr;
+											if (is_file($file))
+											{
+												$sa = getimagesize($file);
+												if ($sa[0] != $sizew)
+												{
+													echo "Falsche Grösse: <i>$filestr</i> (".$sa[0]." statt $sizew)<br/>";
+												}
+											}
+											else
+											{
+												echo "<i>Fehlt: $filestr</i><br/>";
+											}
+										}
+									}
+							}
+						}						
+					}
+
+
+					echo button("Fehlende Bilder erzeugen","?page=$page&amp;sub=$sub&amp;manage=".$_GET['manage']."&rebuild")." ";
+					echo button("Zurück","?page=$page&amp;sub=$sub");
+					
+				}
+			}
+			
 		}
 		else
 		{
-		 echo "<br/><div style=\"color:#f00\">Bildpakete sind NICHT vollständig vorhanden!</div>";
-		}
-		echo "<br/><br/>";
+	
 
-		if (UNIX)
-		{
-			echo "<a href=\"?page=$page&amp;sub=$sub&amp;gen=1\">Neu erstellen</a>";
-		}
-		else
-		{
-			error_msg("Bildpakete können nur auf einem Unix System erstellt werden!");
-		}			
+			if ($d = opendir($imPackDir))
+			{
+				tableStart("Vorhandene Bildpakete");
+				while ($f = readdir($d))
+				{
+					if (substr($f,0,1)!="." && is_dir($imPackDir."/".$f))
+					{
+						$cdir = $imPackDir."/".$f;
+						if ($xml = simplexml_load_file($cdir."/imagepack.xml"))
+						{
+							echo "<tr>
+							<td><a href=\"?page=$page&amp;sub=$sub&amp;manage=".$f."\">".$xml->name."</a></td>
+							<td>".$xml->author."</td>
+							<td>".$xml->email."</td>
+							<td>".$xml->extensions."</td>
+							</tr>";
+						}					
+					}
+				}			
+				tableEnd();
+				closedir($d);
+			}
+	
+	
+			echo "<h2>Downloadbare Bildpakete erzeugen</h2>";
+	
+			$pkg = new ImagePacker("../images/imagepacks","../cache/imagepacks");
+	
+			if (isset($_GET['gen']))
+			{
+				echo "Erstelle Pakate...<br/><div style=\"border:1px solid #fff;\">";
+				$pkg->pack();
+				echo "</div><br/>";
+			}
+	
+			if ($pkg->checkPacked())
+			{
+			 echo "<div style=\"color:#0f0\">Bildpakete sind vorhanden!</div>";
+			}
+			else
+			{
+			 echo "<br/><div style=\"color:#f00\">Bildpakete sind NICHT vollständig vorhanden!</div>";
+			}
+			echo "<br/><br/>";
+	
+			if (UNIX)
+			{
+				echo "<a href=\"?page=$page&amp;sub=$sub&amp;gen=1\">Neu erstellen</a>";
+			}
+			else
+			{
+				error_msg("Bildpakete können nur auf einem Unix System erstellt werden!");
+			}		
+		}	
 	}
 
 	//

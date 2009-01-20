@@ -257,7 +257,7 @@
 																		"rcb_elem_chekced" => "",
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
-																		"show_overview" => 0
+																		"show_overview" => 1
 																	),
 											array	(	"name" => "def_max_count",
 																		"text" => "Max Anzahl",

@@ -205,6 +205,25 @@
 		}
 	}
 
+	function getArrayFromTable($table,$field)
+	{
+		$r = array();
+		$res = dbquery("
+		SELECT
+			`".$field."`
+		FROM
+			`".$table."`
+		");
+		if (mysql_num_rows($res)>0)
+		{
+			while ($arr=mysql_fetch_row($res))
+			{
+				$r[] = $arr[0];
+			}
+		}
+		return $r;
+	}
+
 	/**
 	* Gesamte Config-Tabelle lesen und Werte in Array speichern
 	* DEPRECATED! This is only a wrapper!

@@ -401,9 +401,9 @@
 	$navmenu['Konfiguration']['Runde & Universum']['sub']="uni";
 	$navmenu['Konfiguration']['Runde & Universum']['level']=3;
 
-	$navmenu['Konfiguration']['Bildpaket-Downloads']['page']="config";
-	$navmenu['Konfiguration']['Bildpaket-Downloads']['sub']="imagepacks";
-	$navmenu['Konfiguration']['Bildpaket-Downloads']['level']=3;
+	$navmenu['Konfiguration']['Bildpakete']['page']="config";
+	$navmenu['Konfiguration']['Bildpakete']['sub']="imagepacks";
+	$navmenu['Konfiguration']['Bildpakete']['level']=3;
 
 	$navmenu['Konfiguration']['Start-Items']['page']="config";
 	$navmenu['Konfiguration']['Start-Items']['sub']="defaultitems";

@@ -99,7 +99,6 @@
 	define("IMAGEPACK_DIRECTORY","images/imagepacks");				// Bilder
 	define("IMAGEPACK_DOWNLOAD_DIRECTORY",CACHE_ROOT."/imagepacks");				// Bilder
 
-	define("PLANET_BACKGROUND_COUNT",7);
 
 	// Externe Pfade
 	define("HELPCENTER_URL","http://www.etoa.ch/help/?page=faq");	// Helpcenter Link

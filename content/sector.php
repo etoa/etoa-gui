@@ -45,7 +45,7 @@
 
 	echo "<h1>Sektor ".$sx_def."/".$sy_def."</h1>";
 
-	$sector_pic = "".IMAGE_PATH."/map";
+	$sector_pic = "images/map";
 
 	$sx_num=$cfg->param1('num_of_sectors');
 	$sy_num=$cfg->param2('num_of_sectors');
@@ -220,11 +220,11 @@
 		{
 			$ycoords = $cy_num-$y;
 			
-			$counter_left="".IMAGE_PATH."/map/GalaxyFrameCounterLeft";
-			$counter_left_high="".IMAGE_PATH."/map/GalaxyFrameCounterLeftHighlight";
+			$counter_left="images/map/GalaxyFrameCounterLeft";
+			$counter_left_high="images/map/GalaxyFrameCounterLeftHighlight";
 
-			$counter_bottom="".IMAGE_PATH."/map/GalaxyFrameCounterBottom";
-			$counter_bottom_high="".IMAGE_PATH."/map/GalaxyFrameCounterBottomHighlight";
+			$counter_bottom="images/map/GalaxyFrameCounterBottom";
+			$counter_bottom_high="images/map/GalaxyFrameCounterBottomHighlight";
 
 			echo "<tr>
 				<td class=\"ycoords\">

@@ -65,7 +65,7 @@
 			{
 				tableStart("Planetendaten");
 				echo "<tr>
-					<td width=\"320\" class=\"tbldata\" style=\"background:#000 url('".IMAGE_PATH."/backgrounds/bg".mt_rand(1,PLANET_BACKGROUND_COUNT).".jpg');;vertical-align:middle\" rowspan=\"".($ent->debrisField ? 8 : 7)."\">
+					<td width=\"320\" class=\"tbldata\" style=\"background:#000;;vertical-align:middle\" rowspan=\"".($ent->debrisField ? 8 : 7)."\">
 						<img src=\"".$ent->imagePath("b")."\" alt=\"planet\" width=\"310\" height=\"310\"/>
 					</td>";
 				echo "<td width=\"100\" class=\"tbltitle\">Besitzer:</td>

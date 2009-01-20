@@ -8,7 +8,7 @@ class ImagePacker
 		$this->trg = $trg;
 	}
 	
-	function check()
+	function checkPacked()
 	{
 		$check=true;
 		$rdir = getcwd();
