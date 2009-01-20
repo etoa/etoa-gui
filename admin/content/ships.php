@@ -144,9 +144,10 @@
 		define("REQ_ITEM_FLD","req_ship_id");
 		define("ITEM_ID_FLD","ship_id");
 		define("ITEM_NAME_FLD","ship_name");
-		define("ITEM_SHOW_FLD","ship_show");
-		define("ITEM_ORDER_FLD","special_ship DESC,ship_name");
-		define("NO_ITEMS_MSG","In dieser Kategorie gibt es keine Schiffe!");
+		define("ITEM_ENABLE_FLD","ship_buildable");
+		define("ITEM_ORDER_FLD","ship_cat_id,ship_order");
+
+		define("ITEM_IMAGE_PATH",IMAGE_PATH."/ships/ship<DB_TABLE_ID>_small.".IMAGE_EXT);
 
 		include("inc/requirements.inc.php");
 

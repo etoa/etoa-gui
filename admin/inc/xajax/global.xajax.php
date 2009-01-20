@@ -1155,7 +1155,7 @@ function reqInfo($id,$cat='b')
 	elseif($cat=='d')
 	{
 		$req_tbl = "def_requirements";
-		$req_field = "req_def_id";
+		$req_field = "obj_id";
 	}		
 	
 	$items = array();
@@ -1317,14 +1317,14 @@ function reqInfo($id,$cat='b')
 		{
 			while($arr=mysql_fetch_assoc($res))
 			{
-				if (isset($de_name[$arr['req_def_id']]))
+				if (isset($de_name[$arr['obj_id']]))
 				{
 					$items[] =  "<td style=\"padding:4px;border:1px solid #bbb;background:#ffe;width:150px;\">
 					mit Stufe ".$arr[$req_level_field]."<br/><br/>
-					<a href=\"javascript:;\" style=\"color:#00f\" onclick=\"xajax_reqInfo(".$arr['req_def_id'].",'d')\">
-					<img src=\"".IMAGE_PATH."/defense/def".$arr['req_def_id']."_small.".IMAGE_EXT."\" align=\"middle\"/>
+					<a href=\"javascript:;\" style=\"color:#00f\" onclick=\"xajax_reqInfo(".$arr['obj_id'].",'d')\">
+					<img src=\"".IMAGE_PATH."/defense/def".$arr['obj_id']."_small.".IMAGE_EXT."\" align=\"middle\"/>
 					</a><br/>
-			 		<b>".$de_name[$arr['req_def_id']]."</b>			
+			 		<b>".$de_name[$arr['obj_id']]."</b>			
 					</td>";
 				}
 			}

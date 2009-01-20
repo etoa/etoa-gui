@@ -78,7 +78,7 @@
 		define('ITEMS_TBL',"defense");
 		define('TYPES_TBL',"def_cat");
 		define('REQ_TBL',"def_requirements");
-		define('REQ_ITEM_FLD',"req_def_id");
+		define('REQ_ITEM_FLD',"obj_id");
 		define('ITEM_ID_FLD',"def_id");
 		define('ITEM_NAME_FLD',"def_name");
 		define('ITEM_RACE_FLD',"def_race_id");

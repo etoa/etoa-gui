@@ -445,12 +445,14 @@
 		define("ITEMS_TBL","defense");
 		define("TYPES_TBL","def_types");
 		define("REQ_TBL","def_requirements");
-		define("REQ_ITEM_FLD","req_def_id");
+		define("REQ_ITEM_FLD","obj_id");
 		define("ITEM_ID_FLD","def_id");
 		define("ITEM_NAME_FLD","def_name");
-		define("ITEM_SHOW_FLD","def_show");
-		define("ITEM_ORDER_FLD","def_order,def_name");
-		define("NO_ITEMS_MSG","In dieser Kategorie gibt es keine Verteidigunsanlagen!");
+		define("ITEM_ENABLE_FLD","def_buildable");
+		define("ITEM_ORDER_FLD","def_cat_id,def_order,def_name");
+
+		define("ITEM_IMAGE_PATH",IMAGE_PATH."/defense/def<DB_TABLE_ID>_small.".IMAGE_EXT);
+
 
 		include("inc/requirements.inc.php");
 

@@ -32,7 +32,7 @@
 	//info-link Definitionen
 	define("ITEMS_TBL","defense");
 	define("REQ_TBL","def_requirements");
-	define("REQ_ITEM_FLD","req_def_id");
+	define("REQ_ITEM_FLD","obj_id");
 	define("ITEM_ID_FLD","def_id");
 	define("ITEM_NAME_FLD","def_name");
 	define("RACE_TO_ADD"," AND (def_race_id=0 OR def_race_id='".$cu->raceId."')");
@@ -921,13 +921,13 @@
 				//Gebäude Vorausetzungen
 				if ($arr['req_req_building_id']>0) 
 				{
-					$req[$arr['req_def_id']]['b'][$arr['req_req_building_id']]=$arr['req_req_building_level'];
+					$req[$arr['obj_id']]['b'][$arr['req_req_building_id']]=$arr['req_req_building_level'];
 				}
 				
 				//Technologie Voraussetzungen
 				if ($arr['req_req_tech_id']>0) 
 				{
-					$req[$arr['req_def_id']]['t'][$arr['req_req_tech_id']]=$arr['req_req_tech_level'];
+					$req[$arr['obj_id']]['t'][$arr['req_req_tech_id']]=$arr['req_req_tech_level'];
 				}
 			}
 

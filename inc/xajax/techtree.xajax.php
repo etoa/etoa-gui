@@ -53,7 +53,7 @@ function reqInfo($id,$cat='b')
 	elseif($cat=='d')
 	{
 		$req_tbl = "def_requirements";
-		$req_field = "req_def_id";
+		$req_field = "obj_id";
 	}		
 	
 	$items = array();
@@ -182,9 +182,9 @@ function reqInfo($id,$cat='b')
 		{
 			while($arr=mysql_fetch_assoc($res))
 			{
-				if (isset($de_name[$arr['req_def_id']]))
+				if (isset($de_name[$arr['obj_id']]))
 				{
-					$items[] = array($arr['req_def_id'],$de_name[$arr['req_def_id']],$arr[$req_level_field],IMAGE_PATH."/defense/def".$arr['req_def_id']."_middle.".IMAGE_EXT,"xajax_reqInfo(".$arr['req_def_id'].",'d')");
+					$items[] = array($arr['obj_id'],$de_name[$arr['obj_id']],$arr[$req_level_field],IMAGE_PATH."/defense/def".$arr['obj_id']."_middle.".IMAGE_EXT,"xajax_reqInfo(".$arr['obj_id'].",'d')");
 				}
 			}
 		}	

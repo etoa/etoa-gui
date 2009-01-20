@@ -3088,7 +3088,7 @@ function imagecreatefromfile($path, $user_functions = false)
 
 	function icon($name)
 	{
-		return "<img src=\"images/icons/".$name.".png\" alt=\"$name\" />";
+		return "<img src=\"".(defined('IMAGE_DIR')? IMAGE_DIR : 'images')."/icons/".$name.".png\" alt=\"$name\" />";
 	}
 
 	// Test
