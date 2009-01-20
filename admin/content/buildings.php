@@ -233,6 +233,7 @@
 	//
 	elseif ($sub=="reqmap")
 	{
+		
 		echo "<h1>Gebäude Techtree</h1>";
 		$starItem = 6;
 		
@@ -305,18 +306,21 @@
 	//
 	elseif ($sub=="req")
 	{
+		define('TITLE',"Geb&auml;udeanforderungen");
+		define('ITEMS_TBL',"buildings");
+		define('TYPES_TBL',"building_types");
+		define('REQ_TBL',"building_requirements");
+		define('ITEM_ID_FLD',"building_id");
+		define('ITEM_NAME_FLD',"building_name");
+		define('ITEM_ENABLE_FLD',"1");
+		define('ITEM_ORDER_FLD',"building_type_id,building_order,building_name");
 
-		define(TITLE,"Geb&auml;udeanforderungen");
-		define(ITEMS_TBL,"buildings");
-		define(TYPES_TBL,"building_types");
-		define(REQ_TBL,"building_requirements");
-		define(REQ_ITEM_FLD,"req_building_id");
-		define(ITEM_ID_FLD,"building_id");
-		define(ITEM_NAME_FLD,"building_name");
-		define(ITEM_SHOW_FLD,"1");
-		define(ITEM_ORDER_FLD,"building_type_id,building_order,building_name");
-		define(NO_ITEMS_MSG,"In dieser Kategorie gibt es keine Geb&auml;ude!");
+		define("ITEM_IMAGE_PATH",IMAGE_PATH."/buildings/building<DB_TABLE_ID>_small.".IMAGE_EXT);
 
+		include("inc/requirements.inc.php");
+
+
+/*
 		echo "<h1>".TITLE."</h1>";
 		if ($_POST['submit_changes']!="")
 		{
@@ -524,6 +528,8 @@
 		}
 		else
 			echo "<p class=\"infomsg\">".NO_ITEMS_MSG."</p>";
+			
+			*/
 	}
 
 	//

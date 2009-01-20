@@ -138,10 +138,8 @@
 	{
 		//Definistion für die normalen Schiffe
 		define("TITLE","Schiffanforderungen");
-		define("ITEMS_TBL","ships");
-		define("TYPES_TBL","ship_types");
 		define("REQ_TBL","ship_requirements");
-		define("REQ_ITEM_FLD","req_ship_id");
+		define("ITEMS_TBL","ships");
 		define("ITEM_ID_FLD","ship_id");
 		define("ITEM_NAME_FLD","ship_name");
 		define("ITEM_ENABLE_FLD","ship_buildable");

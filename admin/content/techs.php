@@ -111,19 +111,20 @@
 	{
 
 		define("TITLE","Forschungsanforderungen");
-		define("ITEMS_TBL","technologies");
-		define("TYPES_TBL","tech_types");
 		define("REQ_TBL","tech_requirements");
-		define("REQ_ITEM_FLD","req_tech_id");
+		define("ITEMS_TBL","technologies");
 		define("ITEM_ID_FLD","tech_id");
 		define("ITEM_NAME_FLD","tech_name");
-		define("ITEM_SHOW_FLD","tech_show");
+		define("ITEM_ENABLE_FLD","tech_show");
 		define("ITEM_ORDER_FLD","tech_type_id,tech_order,tech_name");
-		define("NO_ITEMS_MSG","In dieser Kategorie gibt es keine Forschungen!");
 		
+		define("ITEM_IMAGE_PATH",IMAGE_PATH."/technologies/technology<DB_TABLE_ID>_small.".IMAGE_EXT);
+
+		include("inc/requirements.inc.php");
+
 
 	
-		echo "<h1>".TITLE."</h1>";
+		echo "<h1>".TITEM_ENABLE_FLDITLE."</h1>";
 
 		if ($_POST['submit_changes']!="")
 		{

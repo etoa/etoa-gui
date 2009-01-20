@@ -1128,7 +1128,7 @@ function drawTechTreeForSingleItem($type,$id)
 				$name= "INVALID";
 			echo "<a href=\"javascript:;\" onclick=\"var nlvl = prompt('Level für ".$name." ändern:','".$rarr['req_level']."'); if (nlvl != '' && nlvl != null) xajax_addToTechTree('".$type."',".$id.",'".$pn."',nlvl);\">";
 			echo $name." <b>".$rarr['req_level']."</b></a>";
-			echo " &nbsp; <a href=\"javascript:;\" onclick=\"xajax_removeFromTechTree('".$type."',".$id.",".$rarr['id'].")\">".icon("delete")."</a>";
+			echo " &nbsp; <a href=\"javascript:;\" onclick=\"if (confirm('Anforderung löschen?')) xajax_removeFromTechTree('".$type."',".$id.",".$rarr['id'].")\">".icon("delete")."</a>";
 			echo "<br/>";
 		}
 	}
