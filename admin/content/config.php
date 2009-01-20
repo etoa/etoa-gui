@@ -142,20 +142,28 @@
 												$sa = getimagesize($file);
 												if ($sa[0] != $sizew)
 												{
-													resizeImage($file, $file, $sizew,$sizew, $ext); 
-													echo "Falsche Grösse: <i>$filestr</i> (".$sa[0]." statt $sizew). KORRIGIERT!<br/>";
+													echo "Falsche Grösse: <i>$filestr</i> (".$sa[0]." statt $sizew).";
+													if (resizeImage($file, $file, $sizew,$sizew, $ext))
+														echo "<span style=\"color:#0f0;\">KORRIGIERT!</span>";
+													echo "<br/>";
 												}
 											}
 											else
 											{
-												resizeImage($baseFile, $file, $sizew,$sizew, $ext); 
-												echo "<i>Fehlt: $filestr</i><br/>";
+												echo "<i>Fehlt: $filestr</i>";
+												if (resizeImage($baseFile, $file, $sizew,$sizew, $ext))
+													echo "<span style=\"color:#0f0;\">KORRIGIERT!</span>";
+												echo "<br/>";
 											}
 										}
 									}
 								}
 							}
-						}						
+						}		
+						else
+						{
+							echo "Verzeichnis fehlt: $sdir<br/>";
+						}				
 					}
 
 
