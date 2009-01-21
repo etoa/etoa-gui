@@ -31,6 +31,12 @@ function reqInfo($id,$cat='b')
 		$de_name[$tearr['def_id']]=$tearr['def_name'];
 	}		
 	
+	$teres = dbquery("SELECT missile_id,missile_name FROM missiles WHERE missile_show=1;");
+	while ($tearr = mysql_fetch_array($teres))
+	{
+		$m_name[$tearr['missile_id']]=$tearr['missile_name'];
+	}		
+	
 	//
 	// Required objects
 	//
@@ -53,6 +59,11 @@ function reqInfo($id,$cat='b')
 	elseif($cat=='d')
 	{
 		$req_tbl = "def_requirements";
+		$req_field = "obj_id";
+	}		
+	elseif($cat=='m')
+	{
+		$req_tbl = "missile_requirements";
 		$req_field = "obj_id";
 	}		
 	
@@ -117,6 +128,11 @@ function reqInfo($id,$cat='b')
 		$img = IMAGE_PATH."/defense/def".$id."_middle.".IMAGE_EXT;
 		$name = $de_name[$id];
 	}	
+	elseif($cat=='m')
+	{
+		$img = IMAGE_PATH."/missiles/missile".$id."_middle.".IMAGE_EXT;
+		$name = $m_name[$id];
+	}		
 	echo "<div class=\"techtreeMainItem\" style=\"background:url('".$img."');\">";
 	echo "<div class=\"techtreeItemName\">".$name."</div>";
 	echo "</div>";	
@@ -188,6 +204,18 @@ function reqInfo($id,$cat='b')
 				}
 			}
 		}	
+		$res = dbquery("SELECT * FROM missile_requirements WHERE ".$req_field."=".$id." ORDER BY ".$req_level_field.";");
+		$nr = mysql_num_rows($res);
+		if ($nr>0)
+		{
+			while($arr=mysql_fetch_assoc($res))
+			{
+				if (isset($m_name[$arr['obj_id']]))
+				{
+					$items[] = array($arr['obj_id'],$m_name[$arr['obj_id']],$arr[$req_level_field],IMAGE_PATH."/missiles/missile".$arr['obj_id']."_middle.".IMAGE_EXT,"xajax_reqInfo(".$arr['obj_id'].",'m')");
+				}
+			}
+		}			
 		
 		if (count($items)>0)
 		{	
