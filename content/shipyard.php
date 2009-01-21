@@ -259,15 +259,15 @@
 			while ($arr = mysql_fetch_assoc($res))
 			{
 				//Gebäude Vorausetzungen
-				if ($arr['req_req_building_id']>0) 
+				if ($arr['req_building_id']>0) 
 				{
-					$req[$arr['req_ship_id']]['b'][$arr['req_req_building_id']]=$arr['req_req_building_level'];
+					$req[$arr['obj_id']]['b'][$arr['req_building_id']]=$arr['req_level'];
 				}
 				
 				//Technologie Voraussetzungen
-				if ($arr['req_req_tech_id']>0) 
+				if ($arr['req_tech_id']>0) 
 				{
-					$req[$arr['req_ship_id']]['t'][$arr['req_req_tech_id']]=$arr['req_req_tech_level'];
+					$req[$arr['obj_id']]['t'][$arr['req_tech_id']]=$arr['req_level'];
 				}
 			}
 

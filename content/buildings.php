@@ -231,14 +231,14 @@ function calcDemolishingWaitTime($dc,$cp)
 		;");
 		while ($rarr = mysql_fetch_array($rres))
 		{
-			if ($rarr['req_req_building_id']>0) 
+			if ($rarr['req_building_id']>0) 
 			{
-				$b_req[$rarr['req_building_id']]['b'][$rarr['req_req_building_id']]=$rarr['req_req_building_level'];
+				$b_req[$rarr['obj_id']]['b'][$rarr['req_building_id']]=$rarr['req_level'];
 			}
 			
-			if ($rarr['req_req_tech_id']>0) 
+			if ($rarr['req_tech_id']>0) 
 			{
-				$b_req[$rarr['req_building_id']]['t'][$rarr['req_req_tech_id']]=$rarr['req_req_tech_level'];
+				$b_req[$rarr['obj_id']]['t'][$rarr['req_tech_id']]=$rarr['req_level'];
 			}
 		}
 

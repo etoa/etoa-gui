@@ -138,9 +138,9 @@
 
 		iBoxStart('Powered by');
 		echo '<img style="border:1px solid #000;margin:5px 10px;" src="images/powered/php.png" alt="PHP" />';
-		echo '<img style="border:1px solid #000;margin:5px 10px;" src="images/powered/mysql.png" alt="PHP" />';
-		echo '<img style="border:1px solid #000;margin:5px 10px;" src="images/powered/apache.png" alt="PHP" />';
-		echo '<img style="border:1px solid #000;margin:5px 10px;" src="images/powered/gentoo.png" alt="PHP" />';
+		echo '<img style="border:1px solid #000;margin:5px 10px;" src="images/powered/mysql.png" alt="MySQL" />';
+		echo '<img style="border:1px solid #000;margin:5px 10px;" src="images/powered/apache.png" alt="Apache" />';
+		echo '<img style="border:1px solid #000;margin:5px 10px;" src="images/powered/xajax.png" alt="XAJAX" />';
 		echo '<img style="border:1px solid #000;margin:5px 10px;" src="images/powered/smarty.png" alt="Smarty" />';
 		iBoxEnd();
 	}

@@ -123,10 +123,10 @@
 					tech_requirements;");
 			while ($rarr = mysql_fetch_array($rres))
 			{
-				if ($rarr['req_req_building_id']>0) 
-					$b_req[$rarr['req_tech_id']]['b'][$rarr['req_req_building_id']]=$rarr['req_req_building_level'];
-				if ($rarr['req_req_tech_id']>0) 
-					$b_req[$rarr['req_tech_id']]['t'][$rarr['req_req_tech_id']]=$rarr['req_req_tech_level'];
+				if ($rarr['req_building_id']>0) 
+					$b_req[$rarr['obj_id']]['b'][$rarr['req_building_id']]=$rarr['req_level'];
+				if ($rarr['req_tech_id']>0) 
+					$b_req[$rarr['obj_id']]['t'][$rarr['req_tech_id']]=$rarr['req_level'];
 			}
 
 

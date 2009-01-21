@@ -12,6 +12,22 @@
 			$this->entityId = $entityId;
 		}
 		
+		function count($item=null)
+		{
+			$res = dbquery("
+			SELECT
+				COUNT(shiplist_id)
+			FROM
+				shiplist
+			WHERE
+				shiplist_user_id=".$this->userId ."
+				AND shiplist_entity_id=".$this->entityId."
+				".($item>0 ? " AND shiplist_ship_id=".$item."" : "")."
+			;");
+			$arr = mysql_fetch_row($res);
+			return $arr[0];
+		}
+		
 		function add($shipId,$cnt)
 		{
 			dbquery("

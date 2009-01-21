@@ -42,7 +42,6 @@
 		define('ITEMS_TBL',"technologies");
 		define('TYPES_TBL',"tech_types");
 		define('REQ_TBL',"tech_requirements");
-		define('REQ_ITEM_FLD',"req_tech_id");
 		define('ITEM_ID_FLD',"tech_id");
 		define('ITEM_NAME_FLD',"tech_name");
 		define('ITEM_RACE_FLD',"");
@@ -60,11 +59,10 @@
 		define('ITEMS_TBL',"ships");
 		define('TYPES_TBL',"ship_cat");
 		define('REQ_TBL',"ship_requirements");
-		define('REQ_ITEM_FLD',"req_ship_id");
 		define('ITEM_ID_FLD',"ship_id");
 		define('ITEM_NAME_FLD',"ship_name");
 		define('ITEM_RACE_FLD',"ship_race_id");
-		define('ITEM_SHOW_FLD',"ship_show");
+		define('ITEM_SHOW_FLD',"ship_buildable");
 		define('ITEM_TYPE_FLD',"ship_cat_id");
 		define('ITEM_ORDER_FLD',"ship_name");
 		define('TYPE_ORDER_FLD',"cat_order");
@@ -78,11 +76,10 @@
 		define('ITEMS_TBL',"defense");
 		define('TYPES_TBL',"def_cat");
 		define('REQ_TBL',"def_requirements");
-		define('REQ_ITEM_FLD',"obj_id");
 		define('ITEM_ID_FLD',"def_id");
 		define('ITEM_NAME_FLD',"def_name");
 		define('ITEM_RACE_FLD',"def_race_id");
-		define('ITEM_SHOW_FLD',"def_show");
+		define('ITEM_SHOW_FLD',"def_buildable");
 		define('ITEM_TYPE_FLD',"def_cat_id");
 		define('ITEM_ORDER_FLD',"def_order,def_name");
 		define('TYPE_ORDER_FLD',"cat_order");
@@ -95,7 +92,6 @@
 	{
 		define('ITEMS_TBL',"missiles");
 		define('REQ_TBL',"missile_requirements");
-		define('REQ_ITEM_FLD',"req_missile_id");
 		define('ITEM_ID_FLD',"missile_id");
 		define('ITEM_NAME_FLD',"missile_name");
 		define('ITEM_RACE_FLD',"");
@@ -109,7 +105,6 @@
 		define('ITEMS_TBL',"buildings");
 		define('TYPES_TBL',"building_types");
 		define('REQ_TBL',"building_requirements");
-		define('REQ_ITEM_FLD',"req_building_id");
 		define('ITEM_ID_FLD',"building_id");
 		define('ITEM_NAME_FLD',"building_name");
 		define('ITEM_RACE_FLD',"");
@@ -201,8 +196,6 @@
 			building_name 
 		FROM 
 			buildings 
-		WHERE 
-			building_show='1'
 		;");
 		while ($buarr = mysql_fetch_array($bures))
 		{
@@ -217,8 +210,7 @@
 			tech_name 
 		FROM 
 			technologies 
-		WHERE 
-			tech_show='1';");
+		");
 		while ($tearr = mysql_fetch_array($teres))
 		{
 			$te_name[$tearr['tech_id']]=$tearr['tech_name'];
@@ -234,9 +226,12 @@
 		");
 		while ($rarr = mysql_fetch_array($rres))
 		{
-			if ($rarr['req_req_building_id']>0) $b_req[$rarr[REQ_ITEM_FLD]]['b'][$rarr['req_req_building_id']]=$rarr['req_req_building_level'];
-			if ($rarr['req_req_tech_id']>0) $b_req[$rarr[REQ_ITEM_FLD]]['t'][$rarr['req_req_tech_id']]=$rarr['req_req_tech_level'];
+			if ($rarr['req_building_id']>0) $b_req[$rarr['obj_id']]['b'][$rarr['req_building_id']]=$rarr['req_level'];
+			if ($rarr['req_tech_id']>0) $b_req[$rarr['obj_id']]['t'][$rarr['req_tech_id']]=$rarr['req_level'];
 		}
+
+		if ($mode=="ships")
+			$sl = new ShipList($cp->id,$cu->id);
 
 		// Wenn Kategorien vorhanden sind (Gebäude, Forschungen)
 		if (defined("TYPES_TBL") && defined("ITEM_TYPE_FLD") && defined("TYPE_ORDER_FLD"))
@@ -291,7 +286,15 @@
 				{
 					while ($arr=mysql_fetch_array($res))
 					{
-						if ($mode!="ships" || $arr['special_ship']==0)
+						// Make sure epic special ships are only shown when already built
+						$show = true;
+						if ($mode=="ships" && $arr['special_ship']==1)
+						{
+							if ($sl->count($arr[ITEM_ID_FLD])==0)
+								$show = false;
+						}
+						
+						if ($show)
 						{
 							if(isset($b_req[$arr[ITEM_ID_FLD]]['b']))
 							{
@@ -322,7 +325,7 @@
 							
 							if (ITEM_RACE_FLD!="" && $arr[ITEM_RACE_FLD]>0)
 							{
-								echo "<br/>Spezialobjekt der ".$race[$arr[ITEM_RACE_FLD]]."</td>";
+								echo "<br/>".$race[$arr[ITEM_RACE_FLD]]."</td>";
 							}
 							else
 							{
