@@ -1,4 +1,4 @@
-<?PHP
+ 	<?PHP
 
 	define("RANKING_SHIP_STRUCTURE",20000);
 	define("RANKING_SHIP_SHIELD",25000);
@@ -87,11 +87,21 @@
 			}
 			echo "</select><br/><br/>";		
 			
-			$vres=dbquery("Select tech_id,tech_name,req_req_tech_level FROM ship_requirements,technologies WHERE
-			req_ship_id=".$arr['ship_id']."
-			AND tech_type_id='".TECH_SPEED_CAT."'
-			AND req_req_tech_id=tech_id
-			GROUP BY req_id;");
+			// Load propulsion data
+			$vres=dbquery("
+			Select 
+				tech_id,
+				tech_name,
+				req_level 
+			FROM 
+				ship_requirements,
+				technologies 
+			WHERE
+				obj_id=".$arr['ship_id']."
+				AND tech_type_id='".TECH_SPEED_CAT."'
+				AND req_tech_id=tech_id
+				GROUP BY id;
+			");
 
 			tableStart($arr['ship_name']);
 
@@ -183,7 +193,7 @@
 						{
 							while ($varr=mysql_fetch_array($vres))
 							{
-								echo "<a href=\"?page=help&amp;site=research&amp;id=".$varr['tech_id']."\">".$varr['tech_name']."</a> (Stufe ".$varr['req_req_tech_level'].")<br/>";
+								echo "<a href=\"?page=help&amp;site=research&amp;id=".$varr['tech_id']."\">".$varr['tech_name']."</a> (Stufe ".$varr['req_level'].")<br/>";
 							}
 						}
 	    			echo "</td></tr>";

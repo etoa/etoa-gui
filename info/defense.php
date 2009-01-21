@@ -5,7 +5,6 @@
 
 	if (isset($_GET['id']))
 	{
-		if ($_GET['level']==0) $_GET['level']=1;
 		$res = dbquery("SELECT * FROM defense WHERE def_id='".$_GET['id']."';");
 		if ($arr = mysql_fetch_array($res))
 		{
@@ -48,6 +47,27 @@
 	    echo "<tr><td class=\"tbltitle\">Platzverbrauch</td><td class=\"tbldata\">".nf($arr['def_fields'])." Felder</td></tr>";
 	    echo "<tr><td class=\"tbltitle\">Max. Anzahl</td><td class=\"tbldata\">".nf($arr['def_max_count'])."</td></tr>";
 	    tableEnd();
+	    
+			$otres = dbquery("
+			SELECT
+				d.ship_id as id,
+				d.ship_name as name
+			FROM
+				ships d
+			INNER JOIN
+				obj_transforms t
+				ON t.ship_id=d.ship_id
+				AND t.def_id=".$arr['def_id']."
+			");
+			if (mysql_num_rows($otres) > 0)
+			{	    
+	    	$otarr = mysql_fetch_assoc($otres);
+		    iBoxStart("Transformation");
+	    	echo "Diese Verteidigungsanlage lässt sich auf ein Schiff verladen:<br/><br/>";
+	    	echo "<a href=\"?page=help&amp;site=shipyard&amp;id=".$otarr['id']."\">".$otarr['name']."</a>";
+				iBoxEnd();
+	    	
+	  	}
 	    
 	    iBoxStart("Technikbaum");
     	showTechTree("d",$arr['def_id']);
