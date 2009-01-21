@@ -50,7 +50,7 @@
 			$this->owner = $ownerEnt;
 			$this->ownerId = $ownerEnt->id;
 			$this->ownerRaceName = $ownerEnt->race->name;
-			$this->raceSpeedFactor = $ownerEnt->race->speedFactor;
+			$this->raceSpeedFactor = $ownerEnt->race->fleetSpeedFactor;
 			$this->possibleFleetStarts = 0;
 			$this->fleetSlotsUsed = 0;
 			$this->fleetControlLevel =0;

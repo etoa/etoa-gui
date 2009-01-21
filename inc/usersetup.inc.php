@@ -187,11 +187,11 @@
 		echo "<td class=\"tbldata\">".get_percent_string($tp->starBuildtime,1,1)."</td>";
 		echo "<td class=\"tbldata\">".get_percent_string(array($tp->typeBuildtime,$cu->race->buildTime,$tp->starBuildtime),1,1)."</td></tr>";
 
-		echo "<tr><td class=\"tbldata\">".RES_ICON_TIME."Flugzeit</td>";
+		echo "<tr><td class=\"tbldata\">".RES_ICON_TIME."Fluggeschwindigkeit</td>";
 		echo "<td class=\"tbldata\">-</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cu->race->fleetTime,1,1)."</td>";
+		echo "<td class=\"tbldata\">".get_percent_string($cu->race->fleetSpeedFactor,1)."</td>";
 		echo "<td class=\"tbldata\">-</td>";
-		echo "<td class=\"tbldata\">".get_percent_string($cu->race->fleetTime,1,1)."</td></tr>";
+		echo "<td class=\"tbldata\">".get_percent_string($cu->race->fleetSpeedFactor,1)."</td></tr>";
 		tableEnd();
 
 

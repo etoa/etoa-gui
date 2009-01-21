@@ -18,7 +18,7 @@
 	//////////////////////////////////////////////////	
 	//
 	// 	Dateiname: races.php	
-	// 	Topic: Formular-Definitionen f�r Rassen 
+	// 	Topic: Formular-Definitionen für Rassen 
 	// 	Autor: Nicolas Perrenoud alias MrCage							
 	// 	Erstellt: 01.12.2004
 	// 	Bearbeitet von: Selina Tanner aka Demora
@@ -53,7 +53,13 @@
 	// select_elem_checked				// Value of default checked Select Element (desc=>value)
 	// show_overview							// Set 1 to show on overview page
   
-	$db_fields = array (	array	(	"name" => "race_name",
+	$db_fields = array (		
+														array ( "name" => "race_id",
+																		"text" => "ID",
+																		"type" => "readonly",
+																		"show_overview" => 1
+																	),		
+														array	(	"name" => "race_name",
 																		"text" => "Rasse",
 																		"type" => "text",
 																		"def_val" => "",
@@ -65,22 +71,8 @@
 																		"rcb_elem_chekced" => "",
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
-																		"show_overview" => 1
-																	),
-														array	(	"name" => "race_comment",
-																		"text" => "Kommentar",
-																		"type" => "textarea",
-																		"def_val" => "",
-																		"size" => "",
-																		"maxlen" => "",
-																		"rows" => "10",
-																		"cols" => "40",
-																		"rcb_elem" => "",
-																		"rcb_elem_chekced" => "",
-																		"select_elem" => "",
-																		"select_elem_checked" => "",
 																		"show_overview" => 1,
-																		"overview_length" => 400
+																		"link_in_overview" => 1
 																	),
 														array	(	"name" => "race_short_comment",
 																		"text" => "Kurzer Kommentar",
@@ -98,6 +90,45 @@
 																		"overview_length" => 400
 																		
 																	),		
+														array	(	"name" => "race_comment",
+																		"text" => "Kommentar",
+																		"type" => "textarea",
+																		"def_val" => "",
+																		"size" => "",
+																		"maxlen" => "",
+																		"rows" => "10",
+																		"cols" => "40",
+																		"rcb_elem" => "",
+																		"rcb_elem_chekced" => "",
+																		"select_elem" => "",
+																		"select_elem_checked" => "",
+																		"show_overview" => 0,
+																	),
+														array	(	"name" => "race_adj1",
+																		"text" => "Adjektiv männlich",
+																		"type" => "text",
+																		"def_val" => "",
+																		"size" => "30",
+																		"maxlen" => "50",
+																		"show_overview" => 0
+																	),																	
+														array	(	"name" => "race_adj3",
+																		"text" => "Adjektiv weiblich",
+																		"type" => "text",
+																		"def_val" => "",
+																		"size" => "30",
+																		"maxlen" => "50",
+																		"show_overview" => 0
+																	),																	
+														array	(	"name" => "race_adj3",
+																		"text" => "Adjektiv plural",
+																		"type" => "text",
+																		"def_val" => "",
+																		"size" => "30",
+																		"maxlen" => "50",
+																		"show_overview" => 0
+																	),																	
+																	
 														array	(	"name" => "race_leadertitle",
 																		"text" => "Leader-Titel",
 																		"type" => "text",
@@ -113,11 +144,7 @@
 																		"show_overview" => 1,
 																		"overview_length" => 200
 																	),
-														array ( "name" => "race_id",
-																		"text" => "ID",
-																		"type" => "readonly",
-																		"show_overview" => 1
-																	),															
+														
 														array	(	"name" => "race_f_metal",
 																		"text" => "Metallfaktor",
 																		"type" => "text",
@@ -203,7 +230,7 @@
 																		"show_overview" => 0
 																	),
 														array	(	"name" => "race_f_population",
-																		"text" => "Bev�lkerungsfaktor",
+																		"text" => "Bevölkerungsfaktor",
 																		"type" => "text",
 																		"def_val" => "1",
 																		"size" => "5",
@@ -245,7 +272,7 @@
 																		"show_overview" => 0
 																	),																														
 														array	(	"name" => "race_f_fleettime",
-																		"text" => "Flugzeitfaktor",
+																		"text" => "Bonus Fluggeschwindigkeit (grösser ist besser)",
 																		"type" => "text",
 																		"def_val" => "1",
 																		"size" => "5",

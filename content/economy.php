@@ -551,11 +551,11 @@
 		echo "<td>".get_percent_string($cp->starBuildtime,1,1)."</td>";
 		echo "<td>".get_percent_string(array($cp->typeBuildtime,$cu->race->buildTime,$cp->starBuildtime),1,1)."</td></tr>";
 
-		echo "<tr><td>".RES_ICON_TIME."Flugzeit</td>";
+		echo "<tr><td>".RES_ICON_TIME."Fluggeschwindigkeit</td>";
 		echo "<td>-</td>";
-		echo "<td>".get_percent_string($cu->race->fleetTime,1,1)."</td>";
+		echo "<td>".get_percent_string($cu->race->fleetSpeedFactor,1)."</td>";
 		echo "<td>-</td>";
-		echo "<td>".get_percent_string($cu->race->fleetTime,1,1)."</td></tr>";
+		echo "<td>".get_percent_string($cu->race->fleetSpeedFactor,1)."</td></tr>";
 
 		tableEnd();
 		

@@ -385,7 +385,7 @@ function setupShowRace($val)
 	}
 	if ($arr['race_f_fleettime']!=1)
 	{
-		echo "<tr><th>".RES_ICON_TIME."Fluggeschwindigkeit:</td><td>".get_percent_string($arr['race_f_fleettime'],1,1)."</td></tr>";
+		echo "<tr><th>".RES_ICON_TIME."Fluggeschwindigkeit:</td><td>".get_percent_string($arr['race_f_fleettime'],1)."</td></tr>";
 	}
 	echo "</table><br/><table class=\"tb\" style=\"width:500px;\">";
 	

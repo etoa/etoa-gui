@@ -256,18 +256,6 @@
 				if (!property_exists($this,$key))
 					throw new EException("Property $key existiert nicht in ".__CLASS__);
 					
-				if ($key == "speedFactor")
-				{
-					if ($this->fleetTime!=1)
-					{
-						return 2-$this->fleetTime;
-					}
-					else
-					{
-						return 1;
-					}		
-				}
-					
 				return $this->$key;
 			}
 			catch (EException $e)

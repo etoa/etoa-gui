@@ -142,7 +142,7 @@
 		define("ITEMS_TBL","ships");
 		define("ITEM_ID_FLD","ship_id");
 		define("ITEM_NAME_FLD","ship_name");
-		define("ITEM_ENABLE_FLD","ship_buildable");
+		define("ITEM_ENABLE_FLD","1");
 		define("ITEM_ORDER_FLD","ship_cat_id,ship_order");
 
 		define("ITEM_IMAGE_PATH",IMAGE_PATH."/ships/ship<DB_TABLE_ID>_small.".IMAGE_EXT);

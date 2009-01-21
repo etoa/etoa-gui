@@ -188,22 +188,23 @@
         //Geschwindigkeitsbohni der entsprechenden Antriebstechnologien laden und zusammenrechnen
         $vres=dbquery("
         SELECT
-            techlist.techlist_current_level,
-            technologies.tech_name,
-            ship_requirements.req_req_tech_level
+            l.techlist_current_level,
+            t.tech_name,
+            r.req_level
         FROM
-            techlist,
-            ship_requirements,
-            technologies
+            ship_requirements r
+        INNER JOIN
+        	techlist l
+        	ON r.req_tech_id = l.techlist_tech_id
+          AND l.techlist_user_id=".$fleet->ownerId()."
+       	INNER JOIN
+        	technologies t
+	      	ON r.req_tech_id = t.tech_id
+          AND t.tech_type_id = '".TECH_SPEED_CAT."'
         WHERE
-            ship_requirements.req_ship_id=".$arr['ship_id']."
-            AND technologies.tech_type_id='".TECH_SPEED_CAT."'
-            AND ship_requirements.req_req_tech_id=technologies.tech_id
-            AND technologies.tech_id=techlist.techlist_tech_id
-            AND techlist.techlist_tech_id=ship_requirements.req_req_tech_id
-            AND techlist.techlist_user_id=".$fleet->ownerId()."
+					r.obj_id=".$arr['ship_id']."
         GROUP BY
-            ship_requirements.req_id;");
+            r.id;");
         if ($fleet->raceSpeedFactor()!=1)
             $speedtechstring="Rasse: ".get_percent_string($fleet->raceSpeedFactor(),1)."<br>";
         else
@@ -214,14 +215,14 @@
         {
             while ($varr=mysql_fetch_array($vres))
             {
-                if($varr['techlist_current_level']-$varr['req_req_tech_level']<=0)
+                if($varr['techlist_current_level']-$varr['req_level']<=0)
                 {
                     $timefactor+=0;
                 }
                 else
                 {
-                    $timefactor+=($varr['techlist_current_level']-$varr['req_req_tech_level'])*0.1;
-                    $speedtechstring.=$varr['tech_name']." ".$varr['techlist_current_level'].": ".get_percent_string((($varr['techlist_current_level']-$varr['req_req_tech_level'])/10)+1,1)."<br>";
+                    $timefactor+=($varr['techlist_current_level']-$varr['req_level'])*0.1;
+                    $speedtechstring.=$varr['tech_name']." ".$varr['techlist_current_level'].": ".get_percent_string((($varr['techlist_current_level']-$varr['req_level'])/10)+1,1)."<br>";
                 }
             }
         }
