@@ -34,7 +34,7 @@
 	echo "<form action=\"?page=$page\" method=\"post\">";
 	
 	// Gebäude Level und Arbeiter laden
- 	$bl = new BuildList($cp->id());
+ 	$bl = new BuildList($cp->id,$cu->id);
 	$cryptoCenterLevel = $bl->getLevel(BUILD_CRYPTO_ID);
 
 	// Allg. deaktivierung

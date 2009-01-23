@@ -64,6 +64,9 @@
 		echo "<h1>Wirtschaft des Planeten ".$cp->name."</h1>";
 		$cp->resBox($cu->properties->smallResBox);
 
+		$bl = new BuildList($cp->id,$cp->id);
+
+
 		if ($tabsEnable)
 		{
 			$tc = new TabControl("ecoTab",array("Produktion","Energie","Lager","Bonus/Malus"));
@@ -108,15 +111,15 @@
 			b.building_order;");
 		if (mysql_num_rows($bres)>0)
 		{
-			tableStart("Produktion pro Stunde und Energieverbrauch");
+			tableStart("Rohstoffproduktion und Energieverbrauch",700);
 			echo "<tr>
 						<th style=\"width:200px;\">Geb&auml;ude</th>";
-			echo "<th style=\"\">".RES_ICON_METAL."</th>";
-			echo "<th style=\"\">".RES_ICON_CRYSTAL."</th>";
-			echo "<th style=\"\">".RES_ICON_PLASTIC."</th>";
-			echo "<th style=\"\">".RES_ICON_FUEL."</th>";
-			echo "<th style=\"\">".RES_ICON_FOOD."</th>";
-			echo "<th style=\"\" colspan=\"2\">".RES_ICON_POWER_USE."</th>";
+			echo "<th class=\"resmetalcolor\">".RES_METAL."</th>";
+			echo "<th class=\"rescrystalcolor\">".RES_CRYSTAL."</th>";
+			echo "<th class=\"resplasticcolor\">".RES_PLASTIC."</th>";
+			echo "<th class=\"resfuelcolor\">".RES_FUEL."</th>";
+			echo "<th class=\"resfoodcolor\">".RES_FOOD."</th>";
+			echo "<th class=\"respowercolor\" colspan=\"2\">".RES_POWER."</th>";
 			echo "</tr>";
 
 			$cnt = array(
@@ -234,15 +237,40 @@
 
 			// Anzeigen der Gesamtproduktion
 			echo "<tr><th style=\"height:2px;\" colspan=\"8\"></td></tr>";
-			echo "<tr><th>TOTAL</th>";
+			
+			echo "<tr><th>TOTAL pro Stunde</th>";
 			echo "<td style=\"color:#0f0\">".nf($cnt['metal'])."</td>";
 			echo "<td style=\"color:#0f0\">".nf($cnt['crystal'])."</td>";
 			echo "<td style=\"color:#0f0\">".nf($cnt['plastic'])."</td>";
 			echo "<td style=\"color:#0f0\">".nf($cnt['fuel'])."</td>";
 			echo "<td style=\"color:#0f0\">".nf($cnt['food'])."</td>";
 			echo "<td style=\"color:#f00\">".nf($pwrcnt)."</td>";
-			echo "<td style=\"color:#f00\"><input type=\"submit\" name=\"submitpercent\" class=\"button\" style=\"font-size:8pt;\" value=\"Speichern\" /></td>";
+			echo "<td rowspan=\"3\" style=\"color:#f00;vertical-align:middle;\">
+				<input type=\"submit\" name=\"submitpercent\" class=\"button\" style=\"font-size:8pt;\" value=\"Speichern\" />
+			</td>";
 			echo "</tr>";
+
+			echo "<tr><th>TOTAL pro Tag</th>";
+			$fact = 24;
+			echo "<td style=\"color:#0f0\">".nf($fact * $cnt['metal'])."</td>";
+			echo "<td style=\"color:#0f0\">".nf($fact * $cnt['crystal'])."</td>";
+			echo "<td style=\"color:#0f0\">".nf($fact * $cnt['plastic'])."</td>";
+			echo "<td style=\"color:#0f0\">".nf($fact * $cnt['fuel'])."</td>";
+			echo "<td style=\"color:#0f0\">".nf($fact * $cnt['food'])."</td>";
+			echo "<td style=\"color:#f00\">-</td>";
+			echo "</tr>";
+
+			$fact = 168;
+			echo "<tr><th>TOTAL pro Woche</th>";
+			echo "<td style=\"color:#0f0\">".nf($fact * $cnt['metal'])."</td>";
+			echo "<td style=\"color:#0f0\">".nf($fact * $cnt['crystal'])."</td>";
+			echo "<td style=\"color:#0f0\">".nf($fact * $cnt['plastic'])."</td>";
+			echo "<td style=\"color:#0f0\">".nf($fact * $cnt['fuel'])."</td>";
+			echo "<td style=\"color:#0f0\">".nf($fact * $cnt['food'])."</td>";
+			echo "<td style=\"color:#f00\">-</td>";
+			echo "</tr>";
+
+
 
 			$powerUsed = $pwrcnt;
 
@@ -283,12 +311,11 @@
 		//
 		// Resource Bunker
 		//
-		$bl = new BuildList($cp->id);
 		$blvl = $bl->getLevel(RES_BUNKER_ID);
 		if ($blvl>0)
 		{
 			iBoxStart("Rohstoffbunker");
-			echo "In deinem <b>Rohstoffbunker</b> der Stufe <b>$blvl</b> werden bei einem 
+			echo "In deinem <b>".$bl->item(RES_BUNKER_ID)."</b> der Stufe <b>$blvl</b> werden bei einem 
 			Angriff <b>".nf(RES_BUNKER_SPACE*intpow(RES_BUNKER_FACTOR,$blvl-1))."</b> Resourcen gesichert!";
 			iBoxEnd();
 		}

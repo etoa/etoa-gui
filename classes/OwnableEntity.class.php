@@ -1,0 +1,9 @@
+<?PHP
+
+	interface OwnableEntity
+	{
+		
+	}
+
+
+?>

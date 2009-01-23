@@ -34,7 +34,7 @@
 			$this->shield = $arr['def_shield'];
 			$this->weapon = $arr['def_weapon'];
 			$this->heal = $arr['def_heal'];
-			$this->fields = $arr['def_fields'];
+			$this->fieldsUsed = $arr['def_fields'];
 
 			$this->isValid = true;
 		}

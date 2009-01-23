@@ -5,7 +5,7 @@
   *
   * @author Nicolas Perrenoud <mrcage@etoa.ch>
   */
-	class Planet extends Entity
+	class Planet extends Entity implements OwnableEntity
 	{
 		protected $isValid;
 		protected $coordsLoaded;
@@ -168,9 +168,15 @@
 				else
 					$this->debrisField = false;
 
-				$this->fields=$arr['planet_fields'];
+				$this->fieldsBase = $arr['planet_fields'];
+				$this->fieldsExtra = $arr['planet_fields_extra'];
+				$this->fieldsUsed=$arr['planet_fields_used'];
+				
 				$this->fields_extra=$arr['planet_fields_extra'];
 				$this->fields_used=$arr['planet_fields_used'];
+				
+				$this->fields = $this->fieldsBase + $this->fieldsExtra;
+								
 				$this->temp_from=$arr['planet_temp_from'];
 				$this->temp_to=$arr['planet_temp_to'];
 				$this->people=zeroPlus($arr['planet_people']);

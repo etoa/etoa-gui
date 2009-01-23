@@ -154,12 +154,22 @@
 		 	echo "<h1>&Uuml;bersicht &uuml;ber den Planeten ".$cp->name."</h1>";
 			$cp->resBox($cu->properties->smallResBox);
 
+			if (isset($_GET['sub']) && $_GET['sub']=="ships")
+				$sub="ships";
+			elseif (isset($_GET['sub']) && $_GET['sub']=="defense")
+				$sub="defense";
+			elseif (isset($_GET['sub']) && $_GET['sub']=="fields")
+				$sub="fields";
+			elseif (isset($_GET['sub']) && $_GET['sub']=="name")
+				$sub="name";
+			else
+				$sub="";
 			echo "<script type=\"text/javascript\">
-			
 			// Wechselt zwischen den Verschiedenen Tabs
 			function showTab(idx)
 			{
 				document.getElementById('tabOverview').style.display='none';
+				document.getElementById('tabName').style.display='none';
 				document.getElementById('tabFields').style.display='none';
 				document.getElementById('tabShips').style.display='none';
 				document.getElementById('tabDefense').style.display='none';
@@ -167,21 +177,12 @@
 					document.getElementById(idx).style.display='';
 			}
 			</script>";
-
-
-			if (isset($_GET['sub']) && $_GET['sub']=="ships")
-				$sub="ships";
-			elseif (isset($_GET['sub']) && $_GET['sub']=="defense")
-				$sub="defense";
-			else
-				$sub="";
-
 			$ddm = new DropdownMenu(1);
 			$ddm->add('b','Übersicht',"showTab('tabOverview');");
+			$ddm->add('n','Name &amp; Beschreibung',"showTab('tabName');");
 			$ddm->add('r','Felder',"showTab('tabFields');");
 			$ddm->add('f','Schiffe',"showTab('tabShips');");
 			$ddm->add('d','Verteidigung',"showTab('tabDefense');");
-
 			echo $ddm;
 
 			echo "<div id=\"tabOverview\" style=\"".($sub=="" ? '' : 'display:none')."\">";
@@ -192,14 +193,14 @@
 			<div style=\"position:absolute;right:30px;top:30px;\">
 			<img src=\"".$cp->imagePath('b')."\" style=\"width:220px;height:220px;\" alt=\"Planet\" /></div>";
 			echo "<div class=\"planetOverviewList\">
-			<div class=\"planetOverviewItem\">Name</div> <a href=\"?page=$page&amp;action=change_name\">".$cp->name."</a><br style=\"clear:left;\"/>
+			<div class=\"planetOverviewItem\">Name</div> <a href=\"javascript:;\" onclick=\"showTab('tabName')\">".$cp->name."</a><br style=\"clear:left;\"/>
 			<div class=\"planetOverviewItem\">Grösse</div> ".nf($conf['field_squarekm']['v']*$cp->fields)." km&sup2;<br style=\"clear:left;\"/>
 			<div class=\"planetOverviewItem\">Temperatur</div>	".$cp->temp_from." &deg;C bis ".$cp->temp_to." &deg;C <br style=\"clear:left;\"/>
 			<div class=\"planetOverviewItem\">System</div> <a href=\"?page=cell&amp;id=".$cp->cellId()."&amp;hl=".$cp->id()."\">".$cp->getSectorSolsys()."</a> (Position ".$cp->pos.")<br style=\"clear:left;\"/>
 			<div class=\"planetOverviewItem\">Kennung</div> <a href=\"?page=entity&amp;id=".$cp->id()."\">".$cp->id()."</a><br style=\"clear:left;\"/>
 			<div class=\"planetOverviewItem\">Stern</div> ".helpLink("stars",$cp->starTypeName)."<br style=\"clear:left;\"/>
 			<div class=\"planetOverviewItem\">Planetentyp</div> ".helpLink("planets",$cp->type())."<br style=\"clear:left;\"/>
-			<div class=\"planetOverviewItem\">Felder</div> <a href=\"?page=$page&amp;sub=fields\">".nf($cp->fields_used)." benutzt</a> (".round($cp->fields_used/$cp->fields*100)."%), ".(nf($cp->fields))." total, ".$cp->fields_extra." extra<br style=\"clear:left;\"/>";
+			<div class=\"planetOverviewItem\">Felder</div> <a href=\"javascript:;\" onclick=\"showTab('tabFields')\">".nf($cp->fieldsUsed)." benutzt</a> (".round($cp->fieldsUsed/$cp->fields*100)."%), ".(nf($cp->fields))." total<br style=\"clear:left;\"/>";
 			if ($cp->debrisField)
 			{
 				echo "<div class=\"planetOverviewItem\">Trümmerfeld</div> 
@@ -215,6 +216,7 @@
 			echo "</div>";
 			echo "</div>";
 			echo "</td></tr>";
+			/*
 			echo "<tr>
 			<th>Produktion:</th><td>
 			<div class=\"resmetal\">".nf($cp->prodMetal,0,1)." ".RES_METAL." / h</div> 
@@ -249,53 +251,59 @@
 			}				
 			echo "</span>
 			</td></tr>
-			";
+			";*/
 			tableEnd();
 			echo "</div>";
 	
 	
-			echo "<div id=\"tabFields\" style=\"display:".(false ? '' : 'none')."\">";
+			echo "<div id=\"tabName\" style=\"".($sub=="name" ? '' : 'display:none;')."\">";
+			echo '<script type="text/javascript" src="js/planetname.js"></script>';
+			echo "<form action=\"?page=$page\" method=\"POST\" style=\"text-align:center;\">";
+			tableStart("Name und Beschreibung ändern:");
+			echo "<tr><th class=\"tbltitle\">Name:</th><td>
+			<input type=\"text\" name=\"planet_name\" id=\"planet_name\" value=\"".$cp->name."\" length=\"25\" maxlength=\"15\" />
+			&nbsp; <a href=\"javascript:;\" onclick=\"GenPlot();\">Name generieren</a></td></tr>";
+			echo "<tr><th class=\"tbltitle\">Beschreibung:</th><td><textarea name=\"planet_desc\" rows=\"2\" cols=\"30\">".stripslashes($cp->desc)."</textarea></td></tr>";
+			tableEnd();
+			echo "<input type=\"submit\" name=\"submit_change\" value=\"Speichern\" /> &nbsp; ";
+			echo "</form>";
+			echo "</div>";
+	
+	
+			//
+			// Felder
+			//
+	
+			echo "<div id=\"tabFields\" style=\"".($sub=="fields" ? '' : 'display:none;')."\">";
 			tableStart("Felderbelegung");
 			echo "<tr>
-			<tr><td colspan=\"2\">
-			
+			<tr><td colspan=\"2\">			
 			<img src=\"misc/progress.image.php?r=1&w=650&p=".round($cp->fields_used/$cp->fields*100)."\" alt=\"progress\" style=\"width:100%;\"/>
-			<br/>Benutzt: ".$cp->fields_used.", Total: ".$cp->fields."<br/></td></tr>
+			<br/>Benutzt: ".$cp->fieldsUsed.", Total: ".nf($cp->fields)." = ".nf($cp->fieldsBase)." Basisfelder + ".nf($cp->fieldsExtra)." zusätzliche Felder<br/></td></tr>
 			<tr><td style=\"width:50%;vertical-align:top;padding:5px;\">";
-			
 			tableStart("Geb&auml;ude",'100%');
-			$res=dbquery("
-			SELECT
-				buildings.building_name as name,
-				buildings.building_fields * buildlist.buildlist_current_level AS fields,
-				buildlist.buildlist_current_level as cnt
-			FROM
-				buildings,
-				buildlist
-			WHERE
-				buildlist.buildlist_building_id=buildings.building_id
-				AND buildlist.buildlist_entity_id=".$cp->id."
-			ORDER BY 
-				fields DESC;");
-			if (mysql_num_rows($res)>0)
+			$bl = new BuildList($cp->id,$cu->id,1);
+			if ($bl->count() > 0)
 			{
 				$fcnt=0;
-				echo "<tr><th class=\"tbltitle\">Name</th><th class=\"tbltitle\">Stufe</th><th class=\"tbltitle\">Felder</th></tr>";
-				while ($arr=mysql_fetch_array($res))
+				echo "<tr>
+					<th class=\"tbltitle\">Name</th>
+					<th class=\"tbltitle\">Stufe</th>
+					<th class=\"tbltitle\">Felder</th></tr>";
+				foreach ($bl as $k => &$v)
 				{
-					echo "<tr><th>".text2html($arr['name'])."</th>";
-					echo "<td>".nf($arr['cnt'])."</td>";
-					echo "<td>".nf($arr['fields'])."</td></tr>";
-					$fcnt+=$arr['fields'];
+					echo "<tr><th>".$v."</th>";
+					echo "<td>".$bl->getLevel($k)."</td>";
+					echo "<td>".nf($bl->getLevel($k) * $v->fieldsUsed)."</td></tr>";
+					$fcnt += $bl->getLevel($k) * $v->fieldsUsed;
 				}
+				unset($v);
 				echo "<tr><th colspan=\"2\">Total</th><td>".nf($fcnt)."</td></tr>";
 			}
 			else
 				echo "<tr><td><i>Keine Geb&auml;ude vorhanden!</i></td></tr>";
-			tableEnd();
-				
+			tableEnd();				
 			echo "</td><td style=\"width:50%;vertical-align:top;padding:5px;\">";
-			
 			tableStart("Verteidigungsanlagen",'100%');
 			if ($dl->count() > 0)
 			{
@@ -305,8 +313,8 @@
 				{
 					echo "<tr><th>".$v."</th>";
 					echo "<td>".$dl->count($k)."</td>";
-					echo "<td>".nf($dl->count($k)*$v->fields)."</td></tr>";
-					$dfcnt+=$dl->count($k)*$v->fields;
+					echo "<td>".nf($dl->count($k)*$v->fieldsUsed)."</td></tr>";
+					$dfcnt+=$dl->count($k)*$v->fieldsUsed;
 				}
 				unset($v);
 				echo "<tr><th colspan=\"2\">Total</th><td>".nf($dfcnt)."</td></tr>";
@@ -554,7 +562,7 @@
 				echo "<tr>
 					<td>".$v."</td>
 					<td>".nf($dl->count($k))."</td>
-					<td>".nf($dl->count($k)*$v->fields)."</td>
+					<td>".nf($dl->count($k)*$v->fieldsUsed)."</td>
 					</tr>";
 			}
 			unset($v);
