@@ -1511,9 +1511,14 @@
     $return_factor = 1 - (1/(MARKET_LEVEL+1));
 
 		// Navigation
-		echo "[ <a href=\"?page=".$page."&amp;mode=user_home\">Angebote aufgeben</a> | 
-		<a href=\"?page=".$page."&amp;mode=user_sell\">Eigene Angebote</a> | 
-		<a href=\"?page=".$page."&amp;mode=search\">Angebotssuche</a> ]<br/><br/>";
+		$tabitems = array(
+			"user_home"=>"Angebote aufgeben",
+	 		"user_sell"=>"Eigene Angebote",
+	 		"search"=>"Angebotssuche",
+		);
+	 	show_tab_menu("mode",$tabitems);		 
+		
+		echo "<br/><br/>";
 
 		//
     // Alle Abgelaufenen Auktionen löschen und ev. waren versenden

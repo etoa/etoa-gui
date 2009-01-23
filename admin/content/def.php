@@ -480,8 +480,7 @@
 		  	def_id,
 		  	def_name,
 		  	deflist_id,
-		  	deflist_count,
-		  	deflist_build_count			
+		  	deflist_count
 			FROM 
 				deflist,
 				entities,
@@ -600,10 +599,7 @@
 				}
 				if ($_POST['def_id']!="")
 					$sql.= " AND def_id='".$_POST['def_id']."'";
-				if ($_POST['building']==1)
-					$sql.= " AND deflist_build_count!=0";
-				if ($_POST['building']==0)
-					$sql.= " AND deflist_build_count=0";					
+			
 
 				$sql = $sqlstart.$sql.$sqlend;
 				$_SESSION['defedit']['query']=$sql;

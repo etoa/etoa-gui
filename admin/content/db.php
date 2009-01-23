@@ -283,7 +283,6 @@
 					deflist
 				WHERE 
 					deflist_count =0
-					AND deflist_build_count =0
 				;");
 				echo mysql_affected_rows()." leere Verteidigungsdaten wurden gelöscht!<br/>";
 				dbquery("
@@ -472,7 +471,6 @@
 			deflist
 		WHERE 
 			deflist_count =0
-			AND deflist_build_count =0;
 		;");		
 		$dcnt = mysql_fetch_row($res);
 		$res =	dbquery("

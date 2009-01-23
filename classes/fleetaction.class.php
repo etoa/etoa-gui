@@ -38,7 +38,8 @@
 		"flight",
 		"support",
 		"alliance",
-		"delivery"
+		"delivery",
+		"hijack"
 		);
 
 		// Colors for different attitudes

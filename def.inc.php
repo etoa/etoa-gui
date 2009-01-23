@@ -374,8 +374,13 @@
 	define("CRYPTO_RANGE_PER_LEVEL",500);				// Reichweite in AE für Kryptoanalyse pro Ausbaustufe
 	define("CRYPTO_FUEL_COSTS_PER_SCAN",10000);		// Kosten an Tritium pro Kryptoanalyse
 
+	define("RES_BUNKER_ID",26);
+	define("RES_BUNKER_SPACE",5000);
+	define("RES_BUNKER_FACTOR",2);
 
-
+	define("FLEET_BUNKER_ID",27);
+	define("FLEET_BUNKER_SPACE",100000);
+	define("FLEET_BUNKER_FACTOR",2);
 
 
 

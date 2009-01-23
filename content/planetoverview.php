@@ -136,90 +136,6 @@
 		}
 
 		//
-		// Felderbelegung anzeigen
-		//
-		elseif (isset($_GET['sub']) && $_GET['sub']=="fields")
-		{
-		 	echo "<h1>&Uuml;bersicht &uuml;ber den Planeten ".$cp->name."</h1>";
-			$cp->resBox($cu->properties->smallResBox);
-
-			tableStart("Felderbelegung");
-			echo "<tr>
-			<tr><td colspan=\"2\">
-			
-			<img src=\"misc/progress.image.php?r=1&w=650&p=".round($cp->fields_used/$cp->fields*100)."\" alt=\"progress\" style=\"width:100%;\"/>
-			<br/>Benutzt: ".$cp->fields_used.", Total: ".$cp->fields."<br/></td></tr>
-			<tr><td style=\"width:50%;vertical-align:top;padding:5px;\">";
-			
-			tableStart("Geb&auml;ude",'100%');
-			$res=dbquery("
-			SELECT
-				buildings.building_name as name,
-				buildings.building_fields * buildlist.buildlist_current_level AS fields,
-				buildlist.buildlist_current_level as cnt
-			FROM
-				buildings,
-				buildlist
-			WHERE
-				buildlist.buildlist_building_id=buildings.building_id
-				AND buildlist.buildlist_entity_id=".$cp->id."
-			ORDER BY 
-				fields DESC;");
-			if (mysql_num_rows($res)>0)
-			{
-				$fcnt=0;
-				echo "<tr><th class=\"tbltitle\">Name</th><th class=\"tbltitle\">Stufe</th><th class=\"tbltitle\">Felder</th></tr>";
-				while ($arr=mysql_fetch_array($res))
-				{
-					echo "<tr><th>".text2html($arr['name'])."</th>";
-					echo "<td>".nf($arr['cnt'])."</td>";
-					echo "<td>".nf($arr['fields'])."</td></tr>";
-					$fcnt+=$arr['fields'];
-				}
-				echo "<tr><th colspan=\"2\">Total</th><td>".nf($fcnt)."</td></tr>";
-			}
-			else
-				echo "<tr><td><i>Keine Geb&auml;ude vorhanden!</i></td></tr>";
-			tableEnd();
-				
-			echo "</td><td style=\"width:50%;vertical-align:top;padding:5px;\">";
-			
-			tableStart("Verteidigungsanlagen",'100%');
-			$res=dbquery("SELECT
-				defense.def_name as name,
-				defense.def_fields * deflist.deflist_count AS fields,
-				deflist.deflist_count as cnt
-			FROM
-				defense,
-				deflist
-			WHERE
-				deflist.deflist_def_id=defense.def_id
-				AND deflist.deflist_entity_id=".$cp->id."
-			ORDER BY 
-				fields DESC;");
-			if (mysql_num_rows($res)>0)
-			{
-				$dfcnt=0;
-				echo "<tr><th>Name</th><th>Anzahl</th><th>Felder</th></tr>";
-				while ($arr=mysql_fetch_array($res))
-				{
-					echo "<tr><th>".text2html($arr['name'])."</th>";
-					echo "<td>".nf($arr['cnt'])."</td>";
-					echo "<td>".nf($arr['fields'])."</td></tr>";
-					$dfcnt+=$arr['fields'];
-				}
-				echo "<tr><th colspan=\"2\">Total</th><td>".nf($dfcnt)."</td></tr>";
-			}
-			else
-				echo "<tr><td><i>Keine Verteidigungsanlagen vorhanden!</i></td></tr>";
-			tableEnd();
-			
-			echo "</table>";
-			
-			echo "<input type=\"button\" value=\"Planeteninfos anzeigen\" onclick=\"document.location='?page=$page'\" />";
-		}
-
-		//
 		// Planeteninfo anzeigen
 		//
 		else
@@ -231,10 +147,45 @@
 					$cp->setNameAndComment($_POST['planet_name'],$_POST['planet_desc']);
 				}
 			}
+			
+			$sl = new ShipList($cp->id,$cu->id,1);
+			$dl = new DefList($cp->id,$cu->id,1);			
 	
 		 	echo "<h1>&Uuml;bersicht &uuml;ber den Planeten ".$cp->name."</h1>";
 			$cp->resBox($cu->properties->smallResBox);
 
+			echo "<script type=\"text/javascript\">
+			
+			// Wechselt zwischen den Verschiedenen Tabs
+			function showTab(idx)
+			{
+				document.getElementById('tabOverview').style.display='none';
+				document.getElementById('tabFields').style.display='none';
+				document.getElementById('tabShips').style.display='none';
+				document.getElementById('tabDefense').style.display='none';
+				if (document.getElementById(idx))
+					document.getElementById(idx).style.display='';
+			}
+			</script>";
+
+
+			if (isset($_GET['sub']) && $_GET['sub']=="ships")
+				$sub="ships";
+			elseif (isset($_GET['sub']) && $_GET['sub']=="defense")
+				$sub="defense";
+			else
+				$sub="";
+
+			$ddm = new DropdownMenu(1);
+			$ddm->add('b','Übersicht',"showTab('tabOverview');");
+			$ddm->add('r','Felder',"showTab('tabFields');");
+			$ddm->add('f','Schiffe',"showTab('tabShips');");
+			$ddm->add('d','Verteidigung',"showTab('tabDefense');");
+
+			echo $ddm;
+
+			echo "<div id=\"tabOverview\" style=\"".($sub=="" ? '' : 'display:none')."\">";
+			
 			tableStart("Übersicht");
 			echo "<tr><td colspan=\"2\" style=\"padding:0px;\">";
 			echo "<div style=\"position:relative;height:320px;padding:0px;background:#000 url('images/stars_middle.jpg');\">
@@ -300,89 +251,319 @@
 			</td></tr>
 			";
 			tableEnd();
+			echo "</div>";
+	
+	
+			echo "<div id=\"tabFields\" style=\"display:".(false ? '' : 'none')."\">";
+			tableStart("Felderbelegung");
+			echo "<tr>
+			<tr><td colspan=\"2\">
 			
-			/*
+			<img src=\"misc/progress.image.php?r=1&w=650&p=".round($cp->fields_used/$cp->fields*100)."\" alt=\"progress\" style=\"width:100%;\"/>
+			<br/>Benutzt: ".$cp->fields_used.", Total: ".$cp->fields."<br/></td></tr>
+			<tr><td style=\"width:50%;vertical-align:top;padding:5px;\">";
 			
-			tableStart("Details",650);
-			echo "<tr>
-				<td style=\"vertical-align:middle;width:330px;padding:0px;background:#000 url('".IMAGE_PATH."/backgrounds/bg1.jpg');\" rowspan=\"".($cp->debrisField ? 11 : 10)."\">
-				<img src=\"".IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$cp->image.".".IMAGE_EXT."\" alt=\"Planet\" style=\"width:310px;height:310px\"/>
-			</td>";
-			echo "<th style=\"width:110px;\">Kennung:</th>
-			<td style=\"width:210px;\">
-				".$cp->id()." [<a href=\"?page=entity&amp;id=".$cp->id()."\">Suchen</a>]</td>
-			</tr>";
-			echo "<tr>
-			<th>Koordinaten:</th>
-			<td>
-				".$cp->getCoordinates()." [<a href=\"?page=cell&amp;id=".$cp->cellId()."&amp;hl=".$cp->id()."\">Zeigen</a>]</td>
-			</tr>";
-			echo "<tr>
-				<th>Sonnentyp:</th>
-				<td>
-					".$cp->starTypeName." ".helpLink("stars")."
-					</td></tr>";
-			echo "<tr>
-				<th>Planettyp:</th>
-				<td>
-					".$cp->type()." ".helpLink("planets")."</td></tr>";
-			echo "<tr>
-				<th>Felder:</th>
-				<td>
-					".nf($cp->fields_used)." benutzt, ".(nf($cp->fields))." total (".round($cp->fields_used/$cp->fields*100)."%)</td></tr>";
-			echo "<tr>
-				<th>Extra-Felder:</th>
-				<td>
-					".$cp->fields_extra."</td></tr>";
-			echo "<tr>
-				<th>Gr&ouml;sse:</th>
-				<td>
-					".nf($conf['field_squarekm']['v']*$cp->fields)." km&sup2;</td></tr>";
-			echo "<tr>
-				<th>Temperatur:</th>
-				<td>
-					".$cp->temp_from."&deg;C bis ".$cp->temp_to."&deg;C &nbsp; <br/>
-					<img src=\"images/heat_small.png\" alt=\"Heat\" style=\"width:16px;float:left;\" />Wärmebonus: ";
-				$spw = $cp->solarPowerBonus();
-				if ($spw>=0)
+			tableStart("Geb&auml;ude",'100%');
+			$res=dbquery("
+			SELECT
+				buildings.building_name as name,
+				buildings.building_fields * buildlist.buildlist_current_level AS fields,
+				buildlist.buildlist_current_level as cnt
+			FROM
+				buildings,
+				buildlist
+			WHERE
+				buildlist.buildlist_building_id=buildings.building_id
+				AND buildlist.buildlist_entity_id=".$cp->id."
+			ORDER BY 
+				fields DESC;");
+			if (mysql_num_rows($res)>0)
+			{
+				$fcnt=0;
+				echo "<tr><th class=\"tbltitle\">Name</th><th class=\"tbltitle\">Stufe</th><th class=\"tbltitle\">Felder</th></tr>";
+				while ($arr=mysql_fetch_array($res))
 				{
-					echo "<span style=\"color:#0f0\">+".$spw."</span>";
+					echo "<tr><th>".text2html($arr['name'])."</th>";
+					echo "<td>".nf($arr['cnt'])."</td>";
+					echo "<td>".nf($arr['fields'])."</td></tr>";
+					$fcnt+=$arr['fields'];
 				}
-				else
+				echo "<tr><th colspan=\"2\">Total</th><td>".nf($fcnt)."</td></tr>";
+			}
+			else
+				echo "<tr><td><i>Keine Geb&auml;ude vorhanden!</i></td></tr>";
+			tableEnd();
+				
+			echo "</td><td style=\"width:50%;vertical-align:top;padding:5px;\">";
+			
+			tableStart("Verteidigungsanlagen",'100%');
+			if ($dl->count() > 0)
+			{
+				$dfcnt=0;
+				echo "<tr><th>Name</th><th>Anzahl</th><th>Felder</th></tr>";
+				foreach ($dl as $k => &$v)
 				{
-					echo "<span style=\"color:#f00\">".$spw."</span>";
+					echo "<tr><th>".$v."</th>";
+					echo "<td>".$dl->count($k)."</td>";
+					echo "<td>".nf($dl->count($k)*$v->fields)."</td></tr>";
+					$dfcnt+=$dl->count($k)*$v->fields;
 				}
-				echo " MW ".helpLink("tempbonus")."<br style=\"clear:both;\"/>
-				<img src=\"images/ice_small.png\" alt=\"Cold\" style=\"width:16px;float:left;\" />
-				Kältebonus: ";
-				$spw = $cp->fuelProductionBonus();
-				if ($spw>=0)
-				{
-					echo "<span style=\"color:#0f0\">+".$spw."%</span>";
-				}
-				else
-				{
-					echo "<span style=\"color:#f00\">".$spw."%</span>";
-				}				
-			echo " ".helpLink("tempbonus")."</td></tr>";
-
-			echo "<tr>
-				<th>Beschreibung:</th>
-				<td>
-					".($cp->desc!='' ? stripslashes($cp->desc) : '-')."
-				</td>
-			</tr>";
-			if ($cp->debrisField)
+				unset($v);
+				echo "<tr><th colspan=\"2\">Total</th><td>".nf($dfcnt)."</td></tr>";
+			}
+			else
+				echo "<tr><td><i>Keine Verteidigungsanlagen vorhanden!</i></td></tr>";
+			tableEnd();
+			echo "</table>";
+			echo "</div>";
+	
+			//
+			// Schiffe
+			//
+	
+			echo "<div id=\"tabShips\" style=\"".($sub=="ships" ? '' : 'display:none;')."\">";
+			tableStart("Kampfstärke");
+		  if ($sl->count() > 0)
+		  {
+				// Forschung laden und bonus dazu rechnen 
+		    // Liest Level der Waffen-,Schild-,Panzerungs-,Regena Tech aus Datenbank (att)
+				$weapon_tech_a=1;
+				$structure_tech_a=1;
+		    $shield_tech_a=1;
+		    $heal_tech_a=1;
+		
+		    $techres_a = dbquery("
+				SELECT
+					techlist_tech_id,
+					techlist_current_level,
+					tech_name
+				FROM
+					techlist
+				INNER JOIN
+					technologies
+				ON 
+					techlist_tech_id=tech_id
+				AND
+					techlist_user_id='".$cu->id."'
+					AND
+					(
+						techlist_tech_id='".STRUCTURE_TECH_ID."'
+						OR techlist_tech_id='".SHIELD_TECH_ID."'
+						OR techlist_tech_id='".WEAPON_TECH_ID."'
+						OR techlist_tech_id='".REGENA_TECH_ID."'
+					)
+		  		;");
+		
+		      while ($techarr_a = mysql_fetch_array($techres_a))
+		      {
+		          if ($techarr_a['techlist_tech_id']==SHIELD_TECH_ID)
+							{
+		              $shield_tech_a+=($techarr_a['techlist_current_level']/10);
+									$shield_tech_name = $techarr_a["tech_name"];
+									$shield_tech_level = $techarr_a["techlist_current_level"];
+							}
+		          if ($techarr_a['techlist_tech_id']==STRUCTURE_TECH_ID)
+							{
+		              $structure_tech_a+=($techarr_a['techlist_current_level']/10);
+									$structure_tech_name = $techarr_a["tech_name"];
+									$structure_tech_level = $techarr_a["techlist_current_level"];
+							}
+		          if ($techarr_a['techlist_tech_id']==WEAPON_TECH_ID)
+							{
+		              $weapon_tech_a+=($techarr_a['techlist_current_level']/10);
+									$weapon_tech_name = $techarr_a["tech_name"];
+									$weapon_tech_level = $techarr_a["techlist_current_level"];
+							}
+		          if ($techarr_a['techlist_tech_id']==REGENA_TECH_ID)
+							{
+		              $heal_tech_a+=($techarr_a['techlist_current_level']/10);
+									$heal_tech_name = $techarr_a["tech_name"];
+									$heal_tech_level = $techarr_a["techlist_current_level"];
+							}
+		      }
+		
+				echo "<tr><th><b>Einheit</b></th><th>Grundwerte</th><th>Aktuelle Werte</th></tr>";
+		  	echo "<tr>
+					<td class=\"tbldata\"><b>Struktur:</b></td>
+					<td class=\"tbldata\">".nf($sl->getTotalStrucure())."</td>
+					<td class=\"tbldata\">".nf($sl->getTotalStrucure()*$structure_tech_a);
+					if ($structure_tech_a>1)
+					{
+						echo " (".get_percent_string($structure_tech_a,1)." durch ".$structure_tech_name." ".$structure_tech_level.")";
+					}
+					echo "</td></tr>";
+		  	echo "<tr><td class=\"tbldata\"><b>Schilder:</b></td>
+					<td class=\"tbldata\">".nf($sl->getTotalShield())."</td>
+					<td class=\"tbldata\">".nf($sl->getTotalShield()*$shield_tech_a);
+					if ($shield_tech_a>1)
+					{
+						echo " (".get_percent_string($shield_tech_a,1)." durch ".$shield_tech_name." ".$shield_tech_level.")";
+					}
+					echo "</td></tr>";
+		  	echo "<tr><td class=\"tbldata\"><b>Waffen:</b></td>
+					<td class=\"tbldata\">".nf($sl->getTotalWeapon())."</td>
+					<td class=\"tbldata\">".nf($sl->getTotalWeapon()*$weapon_tech_a);
+					if ($weapon_tech_a>1)
+					{
+						echo " (".get_percent_string($weapon_tech_a,1)." durch ".$weapon_tech_name." ".$weapon_tech_level.")";
+					}
+					echo "</td></tr>";
+		  	echo "<tr><td class=\"tbldata\"><b>Reparatur:</b></td>
+					<td class=\"tbldata\">".nf($sl->getTotalHeal())."</td>
+					<td class=\"tbldata\">".nf($sl->getTotalHeal()*$heal_tech_a);
+					if ($heal_tech_a>1)
+					{
+						echo " (".get_percent_string($heal_tech_a,1)." durch ".$heal_tech_name." ".$heal_tech_level.")";
+					}
+					echo "</td></tr>";
+		  	echo "<tr><td class=\"tbldata\"><b>Anzahl Schiffe:</b></td>
+		  	<td class=\"tbldata\" colspan=\"2\">".nf($sl->count())."</td></tr>";
+		  }
+		  else
+		  {
+		  	echo "<tr><td class=\"tbldata\"><i>Keine Schiffe vorhanden!</i></td></tr>";
+		  }
+		  tableEnd();
+			
+			tableStart("Details");
+			echo "<tr><th>Typ</th><th>Anzahl</th><th>Eingebunkert</th></tr>";
+			foreach ($sl as $k => &$v)
 			{
 				echo "<tr>
-				<th>Trümmerfeld:</th><td>
-				".RES_ICON_METAL."".nf($cp->debrisMetal)."<br style=\"clear:both;\" /> 
-				".RES_ICON_CRYSTAL."".nf($cp->debrisCrystal)."<br style=\"clear:both;\" /> 
-				".RES_ICON_PLASTIC."".nf($cp->debrisPlastic)."<br style=\"clear:both;\" /> 
-				</td></tr>";
+					<td>".$v."</td>
+					<td>".nf($sl->count($k))."</td>
+					<td>".nf($sl->countBunkered($k))."</td>
+					</tr>";
 			}
-			echo "</table><br/>";
-			*/
+			unset($v);
+			tableEnd();
+			echo "</div>";
+	
+			//
+			// Defense overview
+			//
+				
+			echo "<div id=\"tabDefense\" style=\"".($sub=="defense" ? '' : 'display:none;')."\">";
+			tableStart("Kampfstärke");
+		  if (mysql_num_rows($res)>0)
+		  {
+				// Forschung laden und bonus dazu rechnen 
+		    // Liest Level der Waffen-,Schild-,Panzerungs-,Regena Tech aus Datenbank (att)
+				$weapon_tech_a=1;
+				$structure_tech_a=1;
+		    $shield_tech_a=1;
+		    $heal_tech_a=1;
+		
+		    $techres_a = dbquery("
+				SELECT
+					techlist_tech_id,
+					techlist_current_level,
+					tech_name
+				FROM
+					techlist
+				INNER JOIN
+					technologies
+				ON 
+					techlist_tech_id=tech_id
+				AND
+					techlist_user_id='".$cu->id."'
+					AND
+					(
+						techlist_tech_id='".STRUCTURE_TECH_ID."'
+						OR techlist_tech_id='".SHIELD_TECH_ID."'
+						OR techlist_tech_id='".WEAPON_TECH_ID."'
+						OR techlist_tech_id='".REGENA_TECH_ID."'
+					)
+		  		;");
+		
+		      while ($techarr_a = mysql_fetch_array($techres_a))
+		      {
+		          if ($techarr_a['techlist_tech_id']==SHIELD_TECH_ID)
+							{
+		              $shield_tech_a+=($techarr_a['techlist_current_level']/10);
+									$shield_tech_name = $techarr_a["tech_name"];
+									$shield_tech_level = $techarr_a["techlist_current_level"];
+							}
+		          if ($techarr_a['techlist_tech_id']==STRUCTURE_TECH_ID)
+							{
+		              $structure_tech_a+=($techarr_a['techlist_current_level']/10);
+									$structure_tech_name = $techarr_a["tech_name"];
+									$structure_tech_level = $techarr_a["techlist_current_level"];
+							}
+		          if ($techarr_a['techlist_tech_id']==WEAPON_TECH_ID)
+							{
+		              $weapon_tech_a+=($techarr_a['techlist_current_level']/10);
+									$weapon_tech_name = $techarr_a["tech_name"];
+									$weapon_tech_level = $techarr_a["techlist_current_level"];
+							}
+		          if ($techarr_a['techlist_tech_id']==REGENA_TECH_ID)
+							{
+		              $heal_tech_a+=($techarr_a['techlist_current_level']/10);
+									$heal_tech_name = $techarr_a["tech_name"];
+									$heal_tech_level = $techarr_a["techlist_current_level"];
+							}
+		      }
+		
+				echo "<tr><th><b>Einheit</b></th><th>Grundwerte</th><th>Aktuelle Werte</th></tr>";
+		  	echo "<tr>
+					<td class=\"tbldata\"><b>Struktur:</b></td>
+					<td class=\"tbldata\">".nf($dl->getTotalStrucure())."</td>
+					<td class=\"tbldata\">".nf($dl->getTotalStrucure()*$structure_tech_a);
+					if ($structure_tech_a>1)
+					{
+						echo " (".get_percent_string($structure_tech_a,1)." durch ".$structure_tech_name." ".$structure_tech_level.")";
+					}
+					echo "</td></tr>";
+		  	echo "<tr><td class=\"tbldata\"><b>Schilder:</b></td>
+					<td class=\"tbldata\">".nf($dl->getTotalShield())."</td>
+					<td class=\"tbldata\">".nf($dl->getTotalShield()*$shield_tech_a);
+					if ($shield_tech_a>1)
+					{
+						echo " (".get_percent_string($shield_tech_a,1)." durch ".$shield_tech_name." ".$shield_tech_level.")";
+					}
+					echo "</td></tr>";
+		  	echo "<tr><td class=\"tbldata\"><b>Waffen:</b></td>
+					<td class=\"tbldata\">".nf($dl->getTotalWeapon())."</td>
+					<td class=\"tbldata\">".nf($dl->getTotalWeapon()*$weapon_tech_a);
+					if ($weapon_tech_a>1)
+					{
+						echo " (".get_percent_string($weapon_tech_a,1)." durch ".$weapon_tech_name." ".$weapon_tech_level.")";
+					}
+					echo "</td></tr>";
+		  	echo "<tr><td class=\"tbldata\"><b>Reparatur:</b></td>
+					<td class=\"tbldata\">".nf($dl->getTotalHeal())."</td>
+					<td class=\"tbldata\">".nf($dl->getTotalHeal()*$heal_tech_a);
+					if ($heal_tech_a>1)
+					{
+						echo " (".get_percent_string($heal_tech_a,1)." durch ".$heal_tech_name." ".$heal_tech_level.")";
+					}
+					echo "</td></tr>";
+		  	echo "<tr><td class=\"tbldata\"><b>Anzahl Anlagen:</b></td>
+		  	<td class=\"tbldata\" colspan=\"2\">".nf($dl->count())."</td></tr>";
+		  }
+		  else
+		  {
+		  	echo "<tr><td class=\"tbldata\"><i>Keine Verteidigung vorhanden!</i></td></tr>";
+		  }
+		  tableEnd();
+
+			tableStart("Details");
+			echo "<tr><th>Typ</th><th>Anzahl</th><th>Felder</th></tr>";
+			foreach ($dl as $k => &$v)
+			{
+				echo "<tr>
+					<td>".$v."</td>
+					<td>".nf($dl->count($k))."</td>
+					<td>".nf($dl->count($k)*$v->fields)."</td>
+					</tr>";
+			}
+			unset($v);
+			tableEnd();
+			
+			echo "</div>";
+
+	
+			
 			if (!$cp->isMain)
 			{
 				echo "&nbsp;<input type=\"button\" value=\"Kolonie aufheben\" onclick=\"document.location='?page=$page&action=remove'\" />";

@@ -114,7 +114,7 @@
 						"asteroids" => array("asteroids",range(1,$cfg->value('num_asteroid_images'))),
 						"space" => array("space",range(1,$cfg->value('num_space_images'))),
 						"wormholes" => array("wormhole",range(1,$cfg->value('num_wormhole_images'))),
-						"races" => array("race",getArrayFromTable("races_id","race_id")),
+						"races" => array("race",getArrayFromTable("races","race_id")),
 					);
 
 					foreach ($dira as $sdir => $sd)

@@ -227,6 +227,7 @@
 				$arr[] = "createdebris";
 				$arr[] = "alliance";
 				$arr[] = "support";
+				$arr[] = "hijack";
 			}
     	if ($this->ownerId()==0 && $this->habitable)
     		$arr[] = "colonize";

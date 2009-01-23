@@ -6,24 +6,38 @@
 		{
 			$this->isValid = false;
 			
-			$res = dbquery("
-			SELECT
-				*
-			FROM	
-				ships
-			WHERE
-				ship_id=".$sid."			
-			");			
-			if ($arr = mysql_fetch_assoc($res))
+			if (is_array($sid))
 			{
-				$this->name = $arr['ship_name'];
-				$this->shortComment = $arr['ship_shortcomment'];
-				$this->capacity = $arr['ship_capacity'];
-				$this->peopleCapacity = $arr['ship_people_capacity'];
+				$arr = $sid;
+			}
+			else
+			{
+				$res = dbquery("
+				SELECT
+					*
+				FROM	
+					ships
+				WHERE
+					ship_id=".$sid."			
+				");			
+				if (!$arr = mysql_fetch_assoc($res))
+				{
+					throw new EException("Ungültige Schiff-ID: $sid");
+					return false;
+				}
+			}			
+			
+			$this->id = $arr['ship_id'];
+			$this->name = $arr['ship_name'];
+			$this->shortComment = $arr['ship_shortcomment'];
+			$this->structure = $arr['ship_structure'];
+			$this->shield = $arr['ship_shield'];
+			$this->weapon = $arr['ship_weapon'];
+			$this->heal = $arr['ship_heal'];
+			$this->capacity = $arr['ship_capacity'];
+			$this->peopleCapacity = $arr['ship_people_capacity'];
 
-				$this->id = $sid;
-				$this->isValid = true;
-			}		
+			$this->isValid = true;
 		}
 		
 		
@@ -33,6 +47,10 @@
 		function capacity() { return $this->capacity; }
 		function peopleCapacity() { return $this->peopleCapacity; }
 		
+		function __toString()
+		{
+			return $this->name;
+		}
 		
 		
 		function imgPathSmall() 

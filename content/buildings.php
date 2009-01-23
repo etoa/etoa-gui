@@ -242,7 +242,8 @@ function calcDemolishingWaitTime($dc,$cp)
 			}
 		}
 
-
+		// TODO: Use def queue
+		/*
 		// Felder von bauender Def laden
 		$res_def =	dbquery("
 		SELECT 
@@ -270,7 +271,8 @@ function calcDemolishingWaitTime($dc,$cp)
     else
     {
     	$def_field_needed = 0;
-    }
+    }*/
+    $def_field_needed = 0;
 
   	iBoxStart("Bauhof-Infos");
   	echo "<div style=\"text-align:left;\">
