@@ -356,6 +356,7 @@
 		$tpl->assign("buddyreq",check_buddy_req($cu->id));
 		$tpl->assign("fleetAttack",check_fleet_incomming($cu->id));
 		$tpl->assign("serverTime",date('H:i:s'));
+		$tpl->assign("serverTimeUnix",time());
 		$tpl->assign("currentPlanetName","Planet");
 		
 		if (isset($cp))

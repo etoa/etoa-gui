@@ -8,19 +8,22 @@
 			<a href="?page=population" id="navpopulation"></a>
 			<a href="?page=haven" id="navhaven"></a>
 			<a href="?page=market" id="navmarket"></a>
+			<a href="?page=crypto" id="navcrypto"></a>
+			<a href="?page=recycle" id="navrecycle"></a>
+			<a></a>
 			<a href="?page=buildings" id="navbuildings"></a>
 			<a href="?page=research" id="navresearch"></a>
 			<a href="?page=shipyard" id="navshipyard"></a>
 			<a href="?page=defense" id="navdefense"></a>
 			<a href="?page=missiles" id="navmissiles"></a>
-			<a href="?page=crypto" id="navcrypto"></a>
-			<a href="?page=recycle" id="navrecycle"></a>
 		</div>
 		<div id="planetimage">
 			<a href="?page=planetoverview">
 				<img src="{$currentPlanetImage}" alt="Planet" style="width:100px;height:100px;" />
 			</a>
 		</div>
+		<a id="prevEntity" href="?page={$page}&planet_id={$prevPlanetId}"></a>
+		<a id="nextEntity" href="?page={$page}&planet_id={$nextPlanetId}"></a>
 		<div id="planetname">
 			{$selectField}
 		</div>		
@@ -136,6 +139,10 @@
 	<div id="servertime">
 		{$serverTime}
 	</div>
+	<script type="text/javascript">
+		document.onload = time({$serverTimeUnix},'servertime',1);
+		
+	</script>
 	
 	<div id="contentcontainer">
 		{$content}

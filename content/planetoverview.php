@@ -200,7 +200,7 @@
 			<div class=\"planetOverviewItem\">Kennung</div> <a href=\"?page=entity&amp;id=".$cp->id()."\">".$cp->id()."</a><br style=\"clear:left;\"/>
 			<div class=\"planetOverviewItem\">Stern</div> ".helpLink("stars",$cp->starTypeName)."<br style=\"clear:left;\"/>
 			<div class=\"planetOverviewItem\">Planetentyp</div> ".helpLink("planets",$cp->type())."<br style=\"clear:left;\"/>
-			<div class=\"planetOverviewItem\">Felder</div> <a href=\"javascript:;\" onclick=\"showTab('tabFields')\">".nf($cp->fieldsUsed)." benutzt</a> (".round($cp->fieldsUsed/$cp->fields*100)."%), ".(nf($cp->fields))." total<br style=\"clear:left;\"/>";
+			<div class=\"planetOverviewItem\">Felder</div> <a href=\"javascript:;\" onclick=\"showTab('tabFields')\">".nf($cp->fieldsUsed)." von ".(nf($cp->fields))." benutzt</a> (".round($cp->fieldsUsed/$cp->fields*100)."%)<br style=\"clear:left;\"/>";
 			if ($cp->debrisField)
 			{
 				echo "<div class=\"planetOverviewItem\">Trümmerfeld</div> 

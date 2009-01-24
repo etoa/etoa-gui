@@ -558,11 +558,15 @@
 	*/
 	function tf($ts)	// Time format
 	{
+		$w = floor($ts / 3600 / 24 / 7);
+		$ts -= $w*3600*24*7;
 		$t = floor($ts / 3600 / 24);
 		$h = floor(($ts-($t*3600*24)) / 3600);
 		$m = floor(($ts-($t*3600*24)-($h*3600))/60);
 		$s = floor(($ts-($t*3600*24)-($h*3600)-($m*60)));
 
+		if ($w>0)
+			return $w."w ".$t."d ".$h."h ".$m."m ".$s."s";
 		if ($t>0)
 			return $t."d ".$h."h ".$m."m ".$s."s";
 		if ($h>0)
@@ -1146,13 +1150,13 @@
 
 	function tableStart($title="",$width=0,$layout="")
 	{
-		if ($width!="")
-		{
-			$w = "width:".$width."";
-		}
-		elseif ($width>0)
+		if ($width>0)
 		{
 			$w = "width:".$width."px;";
+		}		
+		elseif ($width!="")
+		{
+			$w = "width:".$width."";
 		}
 		else
 		{

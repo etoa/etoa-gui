@@ -167,6 +167,14 @@
 	define("RES_FOOD","Nahrung");
 	define("RES_POWER","Energiezellen");
 
+	define("RES_1",RES_METAL);
+	define("RES_2",RES_CRYSTAL);
+	define("RES_3",RES_PLASTIC);
+	define("RES_4",RES_FUEL);
+	define("RES_5",RES_FOOD);
+	define("RES_6",RES_POWER);
+
+
 	// Universum
 	define("CELL_NUM_X",$conf['num_of_cells']['p1']);		// Anzahl Zellen x
 	define("CELL_NUM_Y",$conf['num_of_cells']['p2']);		// Anzahl Zellen y

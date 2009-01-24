@@ -11,6 +11,8 @@
 		
 		private $totalPeopleWorking = null;
 		
+		private $errorMsg;
+		
 		function BuildList($entityId,$ownerId,$load=0)
 		{
 			$this->entityId = $entityId;
@@ -184,7 +186,94 @@
 			return $this->totalPeopleWorking;			
 		}
 		
+		function getBuildTime($itemId)
+		{
+			global $cu,$cp;
+			if ($cu->id != $this->ownerId)
+				$u = new User($this->ownerId);
+			else
+				$u = &$cu;
+			if ($cp->id != $this->entityId)
+				$e = Entity::createFactoryById($this->entityId);
+			else
+				$e = &$cp;
 
+			// Calc bonus			
+			$bonus = $u->race->buildTime + $e->typeBuildtime + $e->starBuildtime - 2;
+			
+			if (isset($this->items[$itemId]))
+			{
+				$itm = &$this->items[$itemId];
+				$cst = $itm->getCosts($this->itemStatus[$itemId]['level']+1);
+			}
+			else
+			{
+				$itm = new Building($itemId);
+				$cst = $itm->getCosts(1);
+			}
+			$btime = ($cst[1]+$cst[2]+$cst[3]+$cst[4]+$cst[5]) / GLOBAL_TIME * BUILD_BUILD_TIME;
+			$btime *= $bonus;		
+			
+			unset($itm);
+			unset($cst);
+			unset($e);
+			unset($u);
+			return $btime;
+		}
+		
+		function checkBuildable($itemId)
+		{
+			global $cu,$cp;
+			if ($cp->id != $this->entityId)
+				$e = Entity::createFactoryById($this->entityId);
+			else
+				$e = &$cp;
+			if (isset($this->items[$itemId]))
+			{
+				$itm = &$this->items[$itemId];
+				$cst = $itm->getCosts($this->itemStatus[$itemId]['level']+1);
+				$lvl = $this->itemStatus[$itemId]['level'];
+			}
+			else
+			{
+				$itm = new Building($itemId);
+				$cst = $itm->getCosts(1);
+				$lvl = 0;
+			}
+			
+			// Check level
+			if ($lvl < $itm->maxLevel)
+			{
+				// Check costs
+				if ($cst[1] <= $e->getRes(1) 
+				&& $cst[2] <= $e->getRes(2) 
+				&& $cst[3] <= $e->getRes(3) 
+				&& $cst[4] <= $e->getRes(4) 
+				&& $cst[5] <= $e->getRes(5))
+				{
+					$req = $itm->getBuildingRequirements();
+					foreach ($req as $rk=>$rv)
+					{
+						if ($rv > $this->getLevel($rk))
+						{
+							$this->errorMsg = "Voraussetzungen nicht erfüllt!";
+							return false;
+						}
+					}
+					return true;					
+				}
+				else
+					$this->errorMsg = "Zuwenig Rohstoffe vorhanden!";
+			}				
+			else
+				$this->errorMsg = "Maximalstufe erreicht!";
+			return false;				
+		}
+
+		function getLastError()
+		{
+			return $this->errorMsg;
+		}
 		
 
 	}

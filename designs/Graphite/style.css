@@ -111,7 +111,7 @@ img	{
 #navcontainer	{
 	position:absolute;
 	left:0px;
-	top:223px;
+	top:249px;
 	width:196px;
 	margin:0px;
 	padding:0px;	
@@ -195,41 +195,69 @@ img	{
 }
 
 #navplanetoverview:hover	{
-	background:url('images/sidebarh.png') 0px -223px no-repeat;
-}
-#naveconomy:hover	{
 	background:url('images/sidebarh.png') 0px -249px no-repeat;
 }
-#navpopulation:hover	{
+#naveconomy:hover	{
 	background:url('images/sidebarh.png') 0px -275px no-repeat;
 }
-#navhaven:hover	{
+#navpopulation:hover	{
 	background:url('images/sidebarh.png') 0px -301px no-repeat;
 }
-#navmarket:hover	{
+#navhaven:hover	{
 	background:url('images/sidebarh.png') 0px -327px no-repeat;
 }
-#navbuildings:hover	{
+#navmarket:hover	{
 	background:url('images/sidebarh.png') 0px -353px no-repeat;
 }
-#navresearch:hover	{
+#navcrypto:hover	{
 	background:url('images/sidebarh.png') 0px -379px no-repeat;
 }
-#navshipyard:hover	{
+#navrecycle:hover	{
 	background:url('images/sidebarh.png') 0px -405px no-repeat;
 }
-#navdefense:hover	{
-	background:url('images/sidebarh.png') 0px -431px no-repeat;
-}
-#navmissiles:hover	{
+#navbuildings:hover	{
 	background:url('images/sidebarh.png') 0px -457px no-repeat;
 }
-#navcrypto:hover	{
+#navresearch:hover	{
 	background:url('images/sidebarh.png') 0px -483px no-repeat;
 }
-#navrecycle:hover	{
+#navshipyard:hover	{
 	background:url('images/sidebarh.png') 0px -509px no-repeat;
 }
+#navdefense:hover	{
+	background:url('images/sidebarh.png') 0px -535px no-repeat;
+}
+#navmissiles:hover	{
+	background:url('images/sidebarh.png') 0px -561px no-repeat;
+}
+
+#nextEntity	{
+	position:absolute;
+	display:block;
+	top:150px;
+	left:160px;	
+	width:20px;
+	height:20px;
+}
+
+#nextEntity:hover	{
+	background:url('images/sidebarh.png') -160px -150px no-repeat;
+}
+
+
+#prevEntity	{
+	position:absolute;
+	display:block;
+	top:150px;
+	left:10px;	
+	width:20px;
+	height:20px;
+}
+
+#prevEntity:hover	{
+	background:url('images/sidebarh.png') -10px -150px no-repeat;
+}
+
 
 #hbar	{
 	position:absolute;
@@ -408,9 +436,9 @@ img	{
 	position:absolute;
 	left:125px;
 	top:65px;
-	z-index:300;
-	color:#fff;
-	font-size:8pt;
+	z-index:10;
+	color:#999;
+	font-size:7pt;
 }
 
 
@@ -450,6 +478,8 @@ div.infoboxtitle	{
 	background:#4E4E4F;
 	padding:8px;
 }
+
+
 
 /* Tables */
 
@@ -548,7 +578,7 @@ div.infoboxtitle	{
 
 .buildOverviewObjectLevel	{
 	text-align:right;
-	font-size:20pt;
+	font-size:16pt;
 	font-weight:bold;
 	background:url('images/transfooter1.png') no-repeat;
 	position:absolute;
@@ -556,6 +586,13 @@ div.infoboxtitle	{
 	bottom:0px;
 	padding:3px 5px 3px 20px;
 	
+}
+
+.buildOverviewObject	{
+	position:relative;
+	margin:0px;
+	padding:0px;
+	display:block;
 }
 
 .buildOverviewObjectNone, .tb td.buildOverviewObjectNone {
@@ -569,13 +606,13 @@ div.infoboxtitle	{
 	position:absolute;
 	left:20px;
 	bottom:20px;
-	font-size:10pt;
+	font-size:9pt;
 }
 
 .planetOverviewItem	{
 	float:left;
 	width:120px;	
-	font-size:10pt;
+	font-size:9pt;
 	font-weight:bold;
 	height:17px;
 }
@@ -773,3 +810,37 @@ visibility:visible;
 	background:url('images/loading.gif') center 20px  no-repeat;
 	text-align:center;
 }
+
+.bigBoxTitle	{
+	background:#4a4a4b url('images/bar2.png') repeat-x;
+	height:25px;
+	color:#fff;
+	font-size:12pt;
+	font-weight:bold;
+	text-align:center;
+	padding-top:10px;
+	width:100%;
+}
+
+.bigBoxContent	{
+	
+	color:#fff;
+	background:#4E4E4F;
+	padding:8px;
+}
+
+.closeButton	{
+	background:url('images/close.png') no-repeat;
+	width:25px;
+	height:25px;
+}
+
+.closeButton:hover	{
+	background:url('images/close2.png') no-repeat;
+	width:25px;
+	height:25px;
+	cursor:pointer;
+}		
+
+
+	

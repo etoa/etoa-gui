@@ -79,6 +79,9 @@
 	*/
 	function time(time, target, format, text)
 	{
+		if (!text)
+			var text = "";
+		
 		// Countdown
 		if(format==0)
 		{
@@ -126,6 +129,9 @@
 		{
 			// Wandelt Timestamp in Javascript Timestamp um (Milliskunden)
 			var timestamp = time * 1000;
+
+				
+
 			
 			// Setzt Datum
 			clock = new Date(timestamp);
@@ -151,7 +157,7 @@
 			
 			// Gibt Zeitstring an
 			var time_string = h+":"+m+":"+s;
-	
+
 			// Text wird eingebunden
 			if(text!="")
 			{
@@ -162,7 +168,7 @@
 			{
 				var out = time_string;
 			}
-	
+
 	
 			document.getElementById(target).innerHTML = out;	
 			time = time + 1;

@@ -1,3 +1,23 @@
+img	{
+	border:none;
+}
+
+.imgcell, .tb .imgcell	{
+	padding:0px;
+}
+
+.imgcell img, .tb .imgcell	img {
+	display:block;
+}
+
+.goodcolor, .tb .goodcolor	{
+	color:#0f0;
+}
+
+.badcolor, .tb .badcolor	{
+	color:#f50;
+}
+
 /* Search-Box */
 
 .search	{
@@ -118,6 +138,7 @@ img.resIcon	{
 .resfullcolor, .tb .resfullcolor	{
 	color:#f20;	
 }
+
 
 /* Colors */
 

@@ -111,7 +111,7 @@
 			b.building_order;");
 		if (mysql_num_rows($bres)>0)
 		{
-			tableStart("Rohstoffproduktion und Energieverbrauch",700);
+			tableStart("Rohstoffproduktion und Energieverbrauch","auto");
 			echo "<tr>
 						<th style=\"width:200px;\">Geb&auml;ude</th>";
 			echo "<th class=\"resmetalcolor\">".RES_METAL."</th>";
