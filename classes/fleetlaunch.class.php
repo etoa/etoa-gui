@@ -124,7 +124,7 @@
 			|| $cfg->p2('flightban_time')<time() )
 			{			
 
-				$bl = new BuildList($this->sourceEntity->id());
+				$bl = new BuildList($this->sourceEntity->id(),$this->ownerId);
 
 				// Check if haven is out of order
 				if ($dt = $bl->getDeactivated(FLEET_CONTROL_ID))

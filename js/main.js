@@ -19,12 +19,17 @@
 			s = Math.floor((ts-(h*3600)-(m*60)));
 			if (t>0)
 				nv = t + "d " + h+"h "+m+"m "+s+"s";
-			else
+			else if (h>0)
 				nv = h+"h "+m+"m "+s+"s";
+			else
+				nv = m+"m "+s+"s";
 
 			perc = Math.ceil(cnt[elem] / d * 100);
 		
-			document.getElementById(elem).innerHTML=nv;
+			if (document.getElementById(elem))
+			{
+				document.getElementById(elem).innerHTML=nv;
+			}
 			cnt[elem] = cnt[elem] + 1;
 			setTimeout("setCountdown('"+elem+"',"+time+","+diff+",'"+elemToSetEmpty+"')",1000);
 		}

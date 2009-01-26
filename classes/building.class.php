@@ -11,53 +11,60 @@
 		private $bRequirements = null;
 		private $tRequirements = null;
 		
+		private $isValid = false;
+		
 		function Building($id)
 		{
-			if (is_array($id))
-			{
-				$arr = $id;
-			}
-			else
-			{
-				$res = dbquery("
-				SELECT 
-					*
-				FROM
-					buildings
-				WHERE
-					building_id='".intval($id)."'
-				LIMIT 1");
-				if (mysql_num_rows($res)>0)
-					$arr = mysql_fetch_assoc($res);
+			try	
+			{				
+				if (is_array($id))
+				{
+					$arr = $id;
+				}
 				else
 				{
-					throw new EException("Gebäude $id existiert nicht!");
-					return;
+					$res = dbquery("
+					SELECT 
+						*
+					FROM
+						buildings
+					WHERE
+						building_id='".intval($id)."'
+					LIMIT 1");
+					if (mysql_num_rows($res)>0)
+						$arr = mysql_fetch_assoc($res);
+					else
+					{
+						throw new EException("Gebäude $id existiert nicht!");
+					}
 				}
-				echo "*";
+
+				$this->id = $arr['building_id'];
+				$this->name = $arr['building_name'];
+				$this->shortDesc = $arr['building_shortcomment'];
+				$this->longDesc = $arr['building_longcomment'];
+				$this->fieldsUsed = $arr['building_fields'];
+				$this->maxLevel = $arr['building_last_level'];
+				
+				$this->costs = array();
+				$this->costs[1] = $arr['building_costs_metal'];
+				$this->costs[2] = $arr['building_costs_crystal'];
+				$this->costs[3] = $arr['building_costs_plastic'];
+				$this->costs[4] = $arr['building_costs_fuel'];
+				$this->costs[5] = $arr['building_costs_food'];
+				$this->costs[6] = $arr['building_costs_power'];
+				$this->costsFactor = $arr['building_build_costs_factor'];
+				$this->isValid = true;
+			
 			}
-			
-			$this->id = $arr['building_id'];
-			$this->name = $arr['building_name'];
-			$this->shortDesc = $arr['building_shortcomment'];
-			$this->longDesc = $arr['building_longcomment'];
-			$this->fieldsUsed = $arr['building_fields'];
-			$this->maxLevel = $arr['building_last_level'];
-			
-			echo "i".$this->id." ";
-			
-			
-			
-			$this->costs = array();
-			$this->costs[1] = $arr['building_costs_metal'];
-			$this->costs[2] = $arr['building_costs_crystal'];
-			$this->costs[3] = $arr['building_costs_plastic'];
-			$this->costs[4] = $arr['building_costs_fuel'];
-			$this->costs[5] = $arr['building_costs_food'];
-			$this->costs[6] = $arr['building_costs_power'];
-			$this->costsFactor = $arr['building_build_costs_factor'];
-			
+			catch (Exception $e)
+			{
+				echo $e;
+				return;
+			}
 		}
+		
+		function isValid() {return $this->isValid;}			
 		
 		function __toString()
 		{

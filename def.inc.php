@@ -279,7 +279,7 @@
 	define("FLEET_FACTOR_F",$conf['flight_flight_time']['v']);			// ??? doppelt
 	define("FLEET_FACTOR_S",$conf['flight_start_time']['v']);				// ??? doppelt
 	define("FLEET_FACTOR_L",$conf['flight_land_time']['v']);				// ??? doppelt
-
+	define("BUILDING_QUEUE_DELAY",60);															// Zeitverzögerung zwischen zwei Bauaufträgen in der Warteschlange
 
 
 

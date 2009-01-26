@@ -451,10 +451,11 @@
 	                }
 					echo "</i></td></tr>";
 				}*/
+				/*
 				echo "<tr>
 					<td colspan=\"7\" id=\"resprogress\" style=\"height:10px;background:#fff;text-align:center;\"></td>";
 				jsProgressBar("resprogress",$this->updated,($this->updated + $cfg->value("res_update")),650);
-					
+					*/
 				tableEnd();
 			}
 			else

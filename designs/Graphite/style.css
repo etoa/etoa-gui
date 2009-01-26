@@ -62,10 +62,14 @@ input[type="file"]	{
 input,select,textarea	{
 	color:#ddd;
 	border:1px solid #777;
-	background:#242426;
+	background:#242426 ;
 	padding:4px;
 	font-family:verdana, sans-serif, arial;
 	font-size: 10pt;
+}
+
+input[type="text"],input[type="password"]	{
+	background:url('images/input.png') repeat-x;
 }
 
 a	{
@@ -576,6 +580,15 @@ div.infoboxtitle	{
 	font-size:8pt;
 }
 
+.buildOverviewObjectCountdown	{
+	padding:3px;
+	background:url('images/trans.png');
+	position:absolute;
+	top:50px;
+	width:100%;
+	text-align:center;
+}
+
 .buildOverviewObjectLevel	{
 	text-align:right;
 	font-size:16pt;
@@ -825,7 +838,7 @@ visibility:visible;
 .bigBoxContent	{
 	
 	color:#fff;
-	background:#4E4E4F;
+	background:#666;
 	padding:8px;
 }
 
