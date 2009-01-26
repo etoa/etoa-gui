@@ -193,16 +193,16 @@
 						$vres=dbquery("
 								SELECT
 									techlist.techlist_current_level,
-									ship_requirements.req_req_tech_level
+									ship_requirements.req_level
 								FROM
 									techlist
 								INNER JOIN
 									ship_requirements
-								ON ship_requirements.req_req_tech_id=techlist.techlist_tech_id
-									AND ship_requirements.req_ship_id=".$sid."
+								ON ship_requirements.req_tech_id=techlist.techlist_tech_id
+									AND ship_requirements.obj_id=".$sid."
 									AND techlist.techlist_user_id=".$this->ownerId()."
 								GROUP BY
-									ship_requirements.req_id;");
+									ship_requirements.id;");
 							
 							$timefactor=$this->raceSpeedFactor();
 							if (mysql_num_rows($vres)>0)
