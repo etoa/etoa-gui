@@ -33,6 +33,8 @@
 #include "util/PidFile.h"
 #include "util/sigsegv.h"
 
+#include "eventhandler/etoa.h"
+
 using namespace std;
 
 std::string versionString = "0.1 alpha";
@@ -131,6 +133,9 @@ void mainThread()
 {
 	std::clog << "Main thread started"<<std::endl;
 
+	etoamain();
+
+	/*
   // Connect to the sample database.
   mysqlpp::Connection conn(false);
   mysqlpp::Query query = conn.query();
@@ -159,8 +164,9 @@ void mainThread()
       	cerr << "Failed to get user list: " << query.error();
       }
 		}
-		sleep(600);
-	}	
+		sleep(3600);
+	}
+	*/	
 }
 
 int main(int argc, char* argv[])

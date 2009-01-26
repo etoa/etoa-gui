@@ -23,37 +23,11 @@
 * @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 */
 
-#include <ctime>
-#include <iostream>
-#include <iomanip>
-#include <cstdlib>	// For system commands
-#include <vector>
-#include <mysql++/mysql++.h>
+#include "etoa.h"
 
-#include "EventHandler.h"
-
-#include "data/DataHandler.h"
-#include "config/ConfigHandler.h"
-
-#include "fleet/FleetHandler.h"
-#include "building/BuildingHandler.h"
-#include "tech/TechHandler.h"
-#include "ship/ShipHandler.h"
-#include "def/DefHandler.h"
-#include "planet/PlanetManager.h"
-#include "market/MarketHandler.h"
-//#include "quest/QuestHandler.h"
-
-#include "alliance/aTechHandler.h"
-#include "alliance/aBuildingHandler.h"
-#include "alliance/aPointsHandler.h"
-
-using namespace std;
-
-float minLoopDuration = 1;	// Minimal loop duration
-
-main(int argc, char *argv[])
+void etoamain()
 {
+	int minLoopDuration = 1;	// Minimal loop duration
 
 	// TODO: Error handling
 	std::time_t mtime=0;
@@ -64,6 +38,9 @@ main(int argc, char *argv[])
 	
 	//Load Data
 	DataHandler &DataHandler = DataHandler::instance();
+
+	std::clog << "Entering etoa main loop"<<std::endl;
+	
 	// Main loop
 	while (true)
 	{
@@ -74,9 +51,9 @@ main(int argc, char *argv[])
 		
 		// Graphical bling-bling
 		system("clear");
-		cout << "----------------------------------------------------------------\n";
-		cout << "- EtoA Eventhandler, (C) 2007 by EtoA Gaming, Time: "<< std::time(0) <<" -\n";
-		cout << "----------------------------------------------------------------\n\n";
+		std::cout << "----------------------------------------------------------------\n";
+		std::cout << "- EtoA Eventhandler, (C) 2007 by EtoA Gaming, Time: "<< std::time(0) <<" -\n";
+		std::cout << "----------------------------------------------------------------\n\n";
 		
 		//quest::QuestHandler* qh = new quest::QuestHandler();
 		//qh->update();
@@ -124,17 +101,17 @@ main(int argc, char *argv[])
 
 		if (bh->changes() || dh->changes() || sh->changes() || true)
 		{			
-			cout << "Changing planet data...\n";
+			std::cout << "Changing planet data...\n";
 			// Load id's of changed planets
-			vector<int> v1 = bh->getChangedPlanets();
-			vector<int> v2 = sh->getChangedPlanets();
-			vector<int> v3 = dh->getChangedPlanets();
+			std::vector<int> v1 = bh->getChangedPlanets();
+			std::vector<int> v2 = sh->getChangedPlanets();
+			std::vector<int> v3 = dh->getChangedPlanets();
 			delete bh, sh, dh, fh;
 			
 			// Merge all changed planet id's together
 			for (int x=0; x<v2.size(); x++)
 			{
-				vector<int>::iterator result;
+				std::vector<int>::iterator result;
  				result = find(v1.begin(), v1.end(), v2[x]);
  				if (result == v1.end())
  				{ 
@@ -143,7 +120,7 @@ main(int argc, char *argv[])
 			}
 			for (int x=0;x<v3.size();x++)
 			{
-				vector<int>::iterator result;
+				std::vector<int>::iterator result;
  				result = find( v1.begin(), v1.end(), v3[x]);
  				if (result == v1.end())
  				{
@@ -155,8 +132,7 @@ main(int argc, char *argv[])
 			delete pm;
 
 		}
-		sleep(1);
+		sleep(minLoopDuration);
 	}		
-
-	return 0;
 }
+

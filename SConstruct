@@ -2,7 +2,7 @@ import os
 
 env = Environment(ENV = {'PATH' : os.environ['PATH'],
                          'TERM' : os.environ['TERM'],
-                         'HOME' : os.environ['HOME']},  CCFLAGS = '-O3 -Wall -g3 -fno-inline -O0')
+                         'HOME' : os.environ['HOME']},  CCFLAGS = '-O3 -g3 -fno-inline -O0')
 
 conf = Configure(env) 
 
@@ -14,10 +14,10 @@ if not conf.CheckLib('boost_thread'):
   print "Couldn't find Boost Threads library!"
   Exit(1) 
 
-env.Library(target="anyoption", source=Split("src/lib/anyoption/anyoption.cpp")) 
 
-mainSrcFiles = Split("src/main.cpp src/util/Logger.cpp src/util/Mutex.cpp src/util/PidFile.cpp src/util/IPCMessageQueue.cpp src/util/ExceptionHandler.cpp src/util/sigsegv.c")
-libs = Split("anyoption mysqlpp boost_thread")
+mainSrcFiles = [Glob('src/util/*.c*'), Glob('src/lib/anyoption/*.cpp'), Glob('src/eventhandler/*.cpp'),Glob('src/eventhandler/*/*.cpp'),Glob('src/eventhandler/*/*/*.cpp'),Glob('src/eventhandler/*/*/*/*.cpp'), Glob('src/*.cpp') ]
+
+libs = ["mysqlpp", "boost_thread"]
 
 env.Program(target="etoad", LIBS=libs, LIBPATH=".", source=mainSrcFiles)
 
