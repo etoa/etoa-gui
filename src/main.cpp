@@ -134,39 +134,9 @@ void mainThread()
 	std::clog << "Main thread started"<<std::endl;
 
 	etoamain();
-
-	/*
-  // Connect to the sample database.
-  mysqlpp::Connection conn(false);
-  mysqlpp::Query query = conn.query();
-  bool dbOnline = false;
-  if (conn.connect("etoatest", "localhost", "etoatest", "etoatest")) 
-  {
-		dbOnline = true;
-  }
-  else 
-  {
-  	cerr << "DB connection failed: " << conn.error()<<std::endl;
-  }
-  	
-	while (true)
-	{
-		if (dbOnline)
-		{
-      query << "select count(*) as cnt from users";
-      if (mysqlpp::Result res = query.store()) 
-      {
-				mysqlpp::Row pRow = res.at(0);
-        clog << pRow["cnt"] << " user registered"<<endl;
-      }
-      else 
-      {
-      	cerr << "Failed to get user list: " << query.error();
-      }
-		}
-		sleep(3600);
-	}
-	*/	
+	
+	std::clog << "Unexpectedly reached end of main thread!"<<std::endl;
+	exit(EXIT_FAILURE);
 }
 
 int main(int argc, char* argv[])

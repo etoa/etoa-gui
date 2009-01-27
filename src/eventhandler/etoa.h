@@ -23,4 +23,9 @@
 #include "alliance/aBuildingHandler.h"
 #include "alliance/aPointsHandler.h"
 
+#ifndef __ETOAMAIN__
+#define __ETOAMAIN__
+
 void etoamain();
+
+#endif       

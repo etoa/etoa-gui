@@ -50,10 +50,10 @@ void etoamain()
 		}
 		
 		// Graphical bling-bling
-		system("clear");
-		std::cout << "----------------------------------------------------------------\n";
-		std::cout << "- EtoA Eventhandler, (C) 2007 by EtoA Gaming, Time: "<< std::time(0) <<" -\n";
-		std::cout << "----------------------------------------------------------------\n\n";
+		//system("clear");
+		//std::cout << "----------------------------------------------------------------\n";
+		//std::cout << "- EtoA Eventhandler, (C) 2007 by EtoA Gaming, Time: "<< std::time(0) <<" -\n";
+		//std::cout << "----------------------------------------------------------------\n\n";
 		
 		//quest::QuestHandler* qh = new quest::QuestHandler();
 		//qh->update();
@@ -101,7 +101,7 @@ void etoamain()
 
 		if (bh->changes() || dh->changes() || sh->changes() || true)
 		{			
-			std::cout << "Changing planet data...\n";
+			//std::cout << "Changing planet data...\n";
 			// Load id's of changed planets
 			std::vector<int> v1 = bh->getChangedPlanets();
 			std::vector<int> v2 = sh->getChangedPlanets();
