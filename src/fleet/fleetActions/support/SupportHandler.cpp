@@ -50,7 +50,7 @@ namespace support
 				this->actionMessage->addText("[b]Auftrag:[/b] ");
 				this->actionMessage->addText(this->f->getActionString(),1);
 				this->actionMessage->addText("[b]Ende des Auftrages:[/b] ");
-				this->actionMessage->addText(functions::formatTime(this->f->getLandtime() + this->f->getNextactiontime()),1);
+				this->actionMessage->addText(etoa::formatTime(this->f->getLandtime() + this->f->getNextactiontime()),1);
 				this->actionMessage->addText("[b]Flottenbesitzer:[/b] ");
 				this->actionMessage->addText(this->f->fleetUser->getUserNick(),1);
 				

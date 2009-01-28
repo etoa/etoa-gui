@@ -46,7 +46,7 @@ namespace steal
 						this->actionMessage->addSubject("Spionageangriff");
 						this->actionMessage->addUserId(this->targetEntity->getUserId());
 						
-						this->actionLog->addText("Action succeed: " + functions::d2s(this->one) + " < " + functions::d2s(this->two));
+						this->actionLog->addText("Action succeed: " + etoa::d2s(this->one) + " < " + etoa::d2s(this->two));
 						
 						//Ranking::addBattlePoints($arr['fleet_user_id'],BATTLE_POINTS_SPECIAL,"Spezialaktion"); //ToDo
 						

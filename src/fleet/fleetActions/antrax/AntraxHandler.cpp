@@ -46,9 +46,9 @@ namespace antrax
 					this->actionMessage->addText("[/b]einen Antraxangriff auf den Planeten[b]",1);
 					this->actionMessage->addText(this->targetEntity->getCoords(),1);
 					this->actionMessage->addText("[/b]verübt es starben dabei ");
-					this->actionMessage->addText(functions::nf(functions::d2s(this->people)));
+					this->actionMessage->addText(etoa::nf(etoa::d2s(this->people)));
 					this->actionMessage->addText(" Bewohner und ");
-					this->actionMessage->addText(functions::nf(functions::d2s(this->food)));
+					this->actionMessage->addText(etoa::nf(etoa::d2s(this->food)));
 					this->actionMessage->addText(" t Nahrung wurden verbrann.");
 					
 					this->actionMessage->addSubject("Antraxangriff");

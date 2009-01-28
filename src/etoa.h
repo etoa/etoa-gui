@@ -11,7 +11,7 @@
 
 #include <mysql++/mysql++.h>
 #include <boost/thread.hpp>
-/*
+
 #include "EventHandler.h"
 
 #include "data/DataHandler.h"
@@ -29,7 +29,7 @@
 #include "alliance/aTechHandler.h"
 #include "alliance/aBuildingHandler.h"
 #include "alliance/aPointsHandler.h"
-*/
+
 #include "lib/anyoption/anyoption.h"
 #include "util/IPCMessageQueue.h"
 #include "util/Logger.h"

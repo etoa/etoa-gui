@@ -9,17 +9,17 @@
 		if(fleetAction==1) {
 			//Rohstoffnachricht für den User
 			this->msgRes += "\n\n[b]WAREN[/b]\n\n[b]Titan:[/b] "
-				+ functions::nf(functions::d2s(this->f->getResMetal()))
+				+ etoa::nf(etoa::d2s(this->f->getResMetal()))
 				+ "\n[b]Silizium:[/b] "
-				+ functions::nf(functions::d2s(this->f->getResCrystal()))
+				+ etoa::nf(etoa::d2s(this->f->getResCrystal()))
 				+ "\n[b]PVC:[/b] "
-				+ functions::nf(functions::d2s(this->f->getResPlastic()))
+				+ etoa::nf(etoa::d2s(this->f->getResPlastic()))
 				+ "\n[b]Tritium:[/b] "
-				+ functions::nf(functions::d2s(this->f->getResFuel()))
+				+ etoa::nf(etoa::d2s(this->f->getResFuel()))
 				+ "\n[b]Nahrung:[/b] "
-				+ functions::nf(functions::d2s(this->f->getResFood()))
+				+ etoa::nf(etoa::d2s(this->f->getResFood()))
 				+ "\n[b]Bewohner:[/b] "
-				+ functions::nf(functions::d2s(this->f->getResPeople()))
+				+ etoa::nf(etoa::d2s(this->f->getResPeople()))
 				+ "\n";
 			
 			this->targetEntity->addResMetal(this->f->unloadResMetal());
@@ -89,7 +89,7 @@
 						this->msgShips += "\n[b]"
 										+ data->getName()
 										+ ":[/b] "
-										+ functions::nf(functions::d2s((*ot)->getCount()));
+										+ etoa::nf(etoa::d2s((*ot)->getCount()));
 					}
 				}
 				query << " ON DUPLICATE KEY "
@@ -113,17 +113,17 @@
 		else if(fleetAction==2) {
 			//Rohstoffnachricht für den User
 			this->msgRes += "\n\n[b]WAREN[/b]\n\n[b]Titan:[/b] "
-				+ functions::nf(functions::d2s(this->f->getResMetal()))
+				+ etoa::nf(etoa::d2s(this->f->getResMetal()))
 				+ "\n[b]Silizium:[/b] "
-				+ functions::nf(functions::d2s(this->f->getResCrystal()))
+				+ etoa::nf(etoa::d2s(this->f->getResCrystal()))
 				+ "\n[b]PVC:[/b] "
-				+ functions::nf(functions::d2s(this->f->getResPlastic()))
+				+ etoa::nf(etoa::d2s(this->f->getResPlastic()))
 				+ "\n[b]Tritium:[/b] "
-				+ functions::nf(functions::d2s(this->f->getResFuel()))
+				+ etoa::nf(etoa::d2s(this->f->getResFuel()))
 				+ "\n[b]Nahrung:[/b] "
-				+ functions::nf(functions::d2s(this->f->getResFood()))
+				+ etoa::nf(etoa::d2s(this->f->getResFood()))
 				+ "\n[b]Bewohner:[/b] "
-				+ functions::nf(functions::d2s(this->f->getResPeople()))
+				+ etoa::nf(etoa::d2s(this->f->getResPeople()))
 				+ "\n";
 			
 			this->targetEntity->addResMetal(this->f->unloadResMetal());

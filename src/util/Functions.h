@@ -155,6 +155,7 @@ namespace etoa
 	* @param int log_cat Log Kategorie
 	* @param string log_text Log text
 	* @param time_t log_timestamp Zeit
+	* @todo Perpahps define another overloaded function with only two arguments and automatic time choosing
 	* @author Glaubinix
 	*/
 	void add_log(int log_cat, std::string log_text, std::time_t log_timestamp);

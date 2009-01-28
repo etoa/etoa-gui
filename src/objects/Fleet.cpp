@@ -920,11 +920,11 @@
 	}
 	
 	std::string Fleet::getLandtimeString() {
-		return functions::formatTime(this->getLandtime());
+		return etoa::formatTime(this->getLandtime());
 	}
 	
 	std::string Fleet::getLaunchtimeString() {
-		return  functions::formatTime(this->getLaunchtime());
+		return  etoa::formatTime(this->getLaunchtime());
 	}
 	
 	std::string Fleet::getUserNicks() {
@@ -958,10 +958,10 @@
 				}
 			}
 		
-			shieldString += functions::d2s(round(shieldTech*100/counter));
+			shieldString += etoa::d2s(round(shieldTech*100/counter));
 			shieldString += "%):[/b] ";
 		}
-		shieldString += functions::nf(functions::d2s(this->getShield(true)));
+		shieldString += etoa::nf(etoa::d2s(this->getShield(true)));
 		
 		return shieldString;
 	}
@@ -981,16 +981,16 @@
 				}
 			}
 			
-			structureString += functions::d2s(round(structureTech*100/counter));
+			structureString += etoa::d2s(round(structureTech*100/counter));
 			structureString += "%):[/b] ";
 		}
-		structureString += functions::nf(functions::d2s(this->getStructure(true)));
+		structureString += etoa::nf(etoa::d2s(this->getStructure(true)));
 		
 		return structureString;
 	}
 	
 	std::string Fleet::getStructureShieldString() {
-		return functions::nf(functions::d2s(getStructShield(true)));
+		return etoa::nf(etoa::d2s(getStructShield(true)));
 	}
 	
 	std::string Fleet::getWeaponString(bool small) {
@@ -1008,10 +1008,10 @@
 				}
 			}
 			
-			weaponString += functions::d2s(round(weaponTech*100/counter));
+			weaponString += etoa::d2s(round(weaponTech*100/counter));
 			weaponString += "%):[/b] ";
 		}
-		weaponString += functions::nf(functions::d2s(this->getWeapon(true)));
+		weaponString += etoa::nf(etoa::d2s(this->getWeapon(true)));
 		
 		return weaponString;
 	}
@@ -1022,7 +1022,7 @@
 			double count = this->getWeaponBonus();
 			countString += "[b]Einheiten:[/b] ";
 		}
-		countString += functions::nf(functions::d2s(this->getCount(true)));
+		countString += etoa::nf(etoa::d2s(this->getCount(true)));
 		return countString;
 	}
 	
@@ -1034,7 +1034,7 @@
 		for (it = this->objects.begin() ; it < this->objects.end(); it++) {
 			if ((*it)->getCount() < (*it)->getInitCount()) {
 				ShipData::ShipData *data = DataHandler.getShipById((*it)->getTypeId());	
-				destroyedString +=  functions::d2s((*it)->getInitCount() - (*it)->getCount())
+				destroyedString +=  etoa::d2s((*it)->getInitCount() - (*it)->getCount())
 								+ " "
 								+ data->getName()
 								+ "\n";
@@ -1051,17 +1051,17 @@
 		std::string msgRes = "\n\n\n[b]"
 							+ subject
 							+ ":[/b]\n\nTitan: "
-							+ functions::nf(functions::d2s(this->getResMetal(total) - this->initResMetal))
+							+ etoa::nf(etoa::d2s(this->getResMetal(total) - this->initResMetal))
 							+ "\nSilizium: "
-							+ functions::nf(functions::d2s(this->getResCrystal(total) - this->initResCrystal))
+							+ etoa::nf(etoa::d2s(this->getResCrystal(total) - this->initResCrystal))
 							+ "\nPVC: "
-							+ functions::nf(functions::d2s(this->getResPlastic(total) - this->initResPlastic))
+							+ etoa::nf(etoa::d2s(this->getResPlastic(total) - this->initResPlastic))
 							+ "\nTritium: "
-							+ functions::nf(functions::d2s(this->getResFuel(total) - this->initResFuel))
+							+ etoa::nf(etoa::d2s(this->getResFuel(total) - this->initResFuel))
 							+ "\nNahrung: "
-							+ functions::nf(functions::d2s(this->getResFood(total) - this->initResFood))
+							+ etoa::nf(etoa::d2s(this->getResFood(total) - this->initResFood))
 							+ "\nBewohner: "
-							+ functions::nf(functions::d2s(this->getResPeople(total) - this->initResPeople))
+							+ etoa::nf(etoa::d2s(this->getResPeople(total) - this->initResPeople))
 							+ "\n";
 		return msgRes;
 	}
@@ -1101,7 +1101,7 @@
 			shipString += "[tr][td]"
 						+ data->getName()
 						+ "[/td][td]"
-						+ functions::nf(functions::d2s((*st).second))
+						+ etoa::nf(etoa::d2s((*st).second))
 						+ "[/td][/tr]";
 		}
 		for ( st=ships.begin() ; st != ships.end(); st++ ) {
@@ -1109,7 +1109,7 @@
 			shipString += "[tr][td]"
 						+ data->getName()
 						+ "[/td][td]"
-						+ functions::nf(functions::d2s((*st).second))
+						+ etoa::nf(etoa::d2s((*st).second))
 						+ "[/td][/tr]";
 		}
 		if (shipString.length()<1)
@@ -1215,9 +1215,9 @@
 							if (data->getHeal()>0)
 								this->healCount += object->getCount();
 							
-							this->logFleetShipStart += functions::d2s(object->getTypeId())
+							this->logFleetShipStart += etoa::d2s(object->getTypeId())
 													+ ":"
-													+ functions::d2s(object->getCount())
+													+ etoa::d2s(object->getCount())
 													+ ",";
 							
 							this->objects.push_back(object);
@@ -1453,51 +1453,51 @@
 	
 	std::string Fleet::getLogResStart() {
 		std::string log = ""
-						+ functions::d2s(this->initResMetal)
+						+ etoa::d2s(this->initResMetal)
 						+ ":"
-						+ functions::d2s(this->initResCrystal)
+						+ etoa::d2s(this->initResCrystal)
 						+ ":"
-						+ functions::d2s(this->initResPlastic)
+						+ etoa::d2s(this->initResPlastic)
 						+ ":"
-						+ functions::d2s(this->initResFuel)
+						+ etoa::d2s(this->initResFuel)
 						+ ":"
-						+ functions::d2s(this->initResFood)
+						+ etoa::d2s(this->initResFood)
 						+ ":"
-						+ functions::d2s(this->initResPeople)
+						+ etoa::d2s(this->initResPeople)
 						+ ":"
-						+ functions::d2s(this->initResPower)
+						+ etoa::d2s(this->initResPower)
 						+ ",f,"
-						+ functions::d2s(this->fetchMetal)
+						+ etoa::d2s(this->fetchMetal)
 						+ ":"
-						+ functions::d2s(this->fetchCrystal)
+						+ etoa::d2s(this->fetchCrystal)
 						+ ":"
-						+ functions::d2s(this->fetchPlastic)
+						+ etoa::d2s(this->fetchPlastic)
 						+ ":"
-						+ functions::d2s(this->fetchFuel)
+						+ etoa::d2s(this->fetchFuel)
 						+ ":"
-						+ functions::d2s(this->fetchFood)
+						+ etoa::d2s(this->fetchFood)
 						+ ":"
-						+ functions::d2s(this->fetchPower)
+						+ etoa::d2s(this->fetchPower)
 						+ ":"
-						+ functions::d2s(this->fetchPeople);
+						+ etoa::d2s(this->fetchPeople);
 		return log;
 	}
 	
 	std::string Fleet::getLogResEnd() {
 		std::string log = ""
-						+ functions::d2s(this->resMetal)
+						+ etoa::d2s(this->resMetal)
 						+ ":"
-						+ functions::d2s(this->resCrystal)
+						+ etoa::d2s(this->resCrystal)
 						+ ":"
-						+ functions::d2s(this->resPlastic)
+						+ etoa::d2s(this->resPlastic)
 						+ ":"
-						+ functions::d2s(this->resFuel)
+						+ etoa::d2s(this->resFuel)
 						+ ":"
-						+ functions::d2s(this->resFood)
+						+ etoa::d2s(this->resFood)
 						+ ":"
-						+ functions::d2s(this->resPeople)
+						+ etoa::d2s(this->resPeople)
 						+ ":"
-						+ functions::d2s(this->resPower)
+						+ etoa::d2s(this->resPower)
 						+ ",f,0:0:0:0:0:0:0";
 		return log;
 	}
@@ -1511,9 +1511,9 @@
 			std::string log = "";
 			std::vector<Object*>::iterator it;
 			for (it=objects.begin() ; it < objects.end(); it++) {
-				log += functions::d2s((*it)->getTypeId())
+				log += etoa::d2s((*it)->getTypeId())
 					+ ":"
-					+ functions::d2s((*it)->getCount())
+					+ etoa::d2s((*it)->getCount())
 					+ ",";
 			}
 			return log;

@@ -38,7 +38,7 @@ namespace spy
 			this->defended = false;
 			this->roll = rand() % 101;
 			
-			this->actionLog->addText(functions::d2s(this->roll) + " <= " + functions::d2s(this->spyDefense));
+			this->actionLog->addText(etoa::d2s(this->roll) + " <= " + etoa::d2s(this->spyDefense));
 			if (this->roll <= this->spyDefense) {
 				this->defended = true;
 			}
@@ -93,27 +93,27 @@ namespace spy
 					this->actionMessage->addText("[table]");
 					
 					this->actionMessage->addText("[tr][td]Titan[/td][td]");
-					this->actionMessage->addText(functions::nf(functions::d2s(this->targetEntity->getResMetal())));
+					this->actionMessage->addText(etoa::nf(etoa::d2s(this->targetEntity->getResMetal())));
 					this->actionMessage->addText("[/td][/tr]");
 					
 					this->actionMessage->addText("[tr][td]Silizium[/td][td]");
-					this->actionMessage->addText(functions::nf(functions::d2s(this->targetEntity->getResCrystal())));
+					this->actionMessage->addText(etoa::nf(etoa::d2s(this->targetEntity->getResCrystal())));
 					this->actionMessage->addText("[/td][/tr]");
 					
 					this->actionMessage->addText("[tr][td]PVC[/td][td]");
-					this->actionMessage->addText(functions::nf(functions::d2s(this->targetEntity->getResPlastic())));
+					this->actionMessage->addText(etoa::nf(etoa::d2s(this->targetEntity->getResPlastic())));
 					this->actionMessage->addText("[/td][/tr]");
 					
 					this->actionMessage->addText("[tr][td]Tritium[/td][td]");
-					this->actionMessage->addText(functions::nf(functions::d2s(this->targetEntity->getResFuel())));
+					this->actionMessage->addText(etoa::nf(etoa::d2s(this->targetEntity->getResFuel())));
 					this->actionMessage->addText("[/td][/tr]");
 					
 					this->actionMessage->addText("[tr][td]Nahrung[/td][td]");
-					this->actionMessage->addText(functions::nf(functions::d2s(this->targetEntity->getResFood())));
+					this->actionMessage->addText(etoa::nf(etoa::d2s(this->targetEntity->getResFood())));
 					this->actionMessage->addText("[/td][/tr]");
 					
 					this->actionMessage->addText("[tr][td]Bewohner[/td][td]");
-					this->actionMessage->addText(functions::nf(functions::d2s(this->targetEntity->getResPeople())));
+					this->actionMessage->addText(etoa::nf(etoa::d2s(this->targetEntity->getResPeople())));
 					this->actionMessage->addText("[/td][/tr]");
 					this->actionMessage->addText("[/table]");
 					this->info = true;
@@ -123,16 +123,16 @@ namespace spy
 				if (info) {
 					this->actionMessage->addText("",2);
 					this->actionMessage->addText("[b]Spionageabwehr:[/b] ");;
-					this->actionMessage->addText(functions::d2s(round(this->spyDefense)));
+					this->actionMessage->addText(etoa::d2s(round(this->spyDefense)));
 					this->actionMessage->addText("%\n[b]Tarnung:[/b] ");
-					this->actionMessage->addText(functions::d2s(round(this->tarnDefense)));
+					this->actionMessage->addText(etoa::d2s(round(this->tarnDefense)));
 					this->actionMessage->addText("%");
 				}
 				else {
 					this->actionMessage->addText("Du konntest leider nichts über den Planeten herausfinden da deine Spionagetechnologie zu wenig weit entwickelt oder der Gegner zu gut getarnt ist!\n\n[b]Spionageabwehr:[/b] ");
-					this->actionMessage->addText(functions::d2s(round(this->spyDefense)));
+					this->actionMessage->addText(etoa::d2s(round(this->spyDefense)));
 					this->actionMessage->addText("%\n[b]Tarnung:[/b] ");
-					this->actionMessage->addText(functions::d2s(this->tarnDefense));
+					this->actionMessage->addText(etoa::d2s(this->tarnDefense));
 					this->actionMessage->addText("%");
 				}
 		
@@ -149,7 +149,7 @@ namespace spy
 				victimMessage->addText(" wurde in der Nähe deines Planeten ");
 				victimMessage->addText(this->targetEntity->getCoords(),1);
 				victimMessage->addText(" gesichtet!\n\n[b]Spionageabwehr:[/b] ");
-				victimMessage->addText(functions::d2s(round(this->spyDefense)));
+				victimMessage->addText(etoa::d2s(round(this->spyDefense)));
 				victimMessage->addText("%");
 				
 				victimMessage->addSubject("Raumüberwachung");
@@ -167,7 +167,7 @@ namespace spy
 				this->actionMessage->addText("Dein Versuch, den Planeten ");
 				this->actionMessage->addText(this->targetEntity->getCoords(),1);
 				this->actionMessage->addText(" auszuspionieren schlug fehl, da du entdeckt wurdest. Deine Sonden kehren ohne Ergebniss zurück!\n\n[b]Spionageabwehr:[/b] ");
-				this->actionMessage->addText(functions::d2s(round(this->spyDefense)));
+				this->actionMessage->addText(etoa::d2s(round(this->spyDefense)));
 				this->actionMessage->addText("%");
 				
 				std::string subject = "Spionage fehlgeschlagen auf ";
@@ -182,7 +182,7 @@ namespace spy
 				victimMessage->addText(" wurde ein Spionageversuch vom Planeten  ");
 				victimMessage->addText(this->startEntity->getCoords(),1);
 				victimMessage->addText(" erfolgreich verhindert!\n\n[b]Spionageabwehr:[/b] ");
-				victimMessage->addText(functions::d2s(round(this->spyDefense)));
+				victimMessage->addText(etoa::d2s(round(this->spyDefense)));
 				victimMessage->addText("%");
 				
 				victimMessage->addSubject("Raumüberwachung");

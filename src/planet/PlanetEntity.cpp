@@ -51,8 +51,8 @@ namespace planet
 				this->planetType = (int)pRow["planet_type_id"];
 				this->speicalistId = (int)pRow["user_specialist_time"] < time(0) ? 0 : (int)pRow["user_specialist_id"];
 				
-				this->solarPowerBonus = functions::getSolarPowerBonus((int)pRow["planet_temp_from"], (int)pRow["planet_temp_to"]);
-				this->solarFuelBonus = 1 - (functions::getSolarFuelBonus((int)pRow["planet_temp_from"], (int)pRow["planet_temp_to"]));
+				this->solarPowerBonus = etoa::getSolarPowerBonus((int)pRow["planet_temp_from"], (int)pRow["planet_temp_to"]);
+				this->solarFuelBonus = 1 - (etoa::getSolarFuelBonus((int)pRow["planet_temp_from"], (int)pRow["planet_temp_to"]));
 				
 				this->t = time(0) - (int)pRow["planet_last_updated"];
 				

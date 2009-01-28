@@ -44,7 +44,7 @@ namespace gattack
 					this->actionMessage->addText("[/b]einen Giftgasangriff auf den Planeten[b]",1);
 					this->actionMessage->addText(this->targetEntity->getCoords(),1);
 					this->actionMessage->addText("[/b]verübt es starben dabei ");
-					this->actionMessage->addText(functions::nf(functions::d2s(this->people)));
+					this->actionMessage->addText(etoa::nf(etoa::d2s(this->people)));
 					this->actionMessage->addText(" Bewohner.");
 					
 					this->actionMessage->addSubject("Giftgasangriff");

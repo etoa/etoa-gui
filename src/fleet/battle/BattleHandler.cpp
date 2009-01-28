@@ -162,22 +162,22 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 			cAttStructureShield = std::max(0.0,cAttStructureShield);
 			cDefStructureShield = std::max(0.0,cDefStructureShield);
 			
-			message->addText(functions::d2s(runde));
+			message->addText(etoa::d2s(runde));
 			message->addText(": ");
 			message->addText(fleet->getCountString());
 			message->addText(" Einheiten des Angreifes schiessen mit einer St&auml;rke von ");
 			message->addText(fleet->getWeaponString());
 			message->addText(" auf den Verteidiger. Der Verteidiger hat danach noch ");
-			message->addText(functions::nf(functions::d2s(cDefStructureShield)));
+			message->addText(etoa::nf(etoa::d2s(cDefStructureShield)));
 			message->addText(" Struktur- und Schildpunkte",2);
 			
-			message->addText(functions::d2s(this->runde));
+			message->addText(etoa::d2s(this->runde));
 			message->addText(": ");
 			message->addText(entity->getCountString());
 			message->addText(" Einheiten des Verteidigers schiessen mit einer St&auml;rke von ");
 			message->addText(entity->getWeaponString());
 			message->addText(" auf den Angreifer. Der Angreifer hat danach noch ");
-			message->addText(functions::nf(functions::d2s(cAttStructureShield)));
+			message->addText(etoa::nf(etoa::d2s(cAttStructureShield)));
 			message->addText(" Struktur- und Schildpunkte",2);
 			
 			fleet->setPercentSurvive(cAttStructureShield/initAttStructureShield,true);
@@ -188,11 +188,11 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
                 if (cAttStructureShield > initAttStructureShield)
                     cAttStructureShield = initAttStructureShield;
 
-				message->addText(functions::d2s(runde));
+				message->addText(etoa::d2s(runde));
 				message->addText(": ");
-				message->addText(functions::d2s(fleet->getHealCount()));
+				message->addText(etoa::d2s(fleet->getHealCount()));
 				message->addText(" Einheiten des Angreifes heilen ");
-				message->addText(functions::d2s(fleet->getHeal()));
+				message->addText(etoa::d2s(fleet->getHeal()));
 				message->addText(" Struktur- und Schildpunkte. Der Angreifer hat danach wieder ");
 				
 				fleet->setPercentSurvive(cAttStructureShield/initAttStructureShield,true);
@@ -206,11 +206,11 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
                 if (cDefStructureShield > initDefStructureShield)
                     cDefStructureShield = initDefStructureShield;
 
-				message->addText(functions::d2s(runde));
+				message->addText(etoa::d2s(runde));
 				message->addText(": ");
-				message->addText(functions::nf(functions::d2s(entity->getHealCount())));
+				message->addText(etoa::nf(etoa::d2s(entity->getHealCount())));
 				message->addText(" Einheiten des Verteidigers heilen ");
-				message->addText(functions::nf(functions::d2s(entity->getHeal())));
+				message->addText(etoa::nf(etoa::d2s(entity->getHeal())));
 				message->addText(" Struktur- und Schildpunkte. Der Angreifer hat danach wieder ");
 				
 				entity->setPercentSurvive(cDefStructureShield/initDefStructureShield,true);
@@ -225,7 +225,7 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
         }
 		
 		message->addText("Der Kampf dauerte ");
-		message->addText(functions::d2s(runde));
+		message->addText(etoa::d2s(runde));
 		message->addText(" Runden!",2);
 		
 		
@@ -311,11 +311,11 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 
 		message->addText("[b]TR&Uuml;MMERFELD:[/b]",1);
 		message->addText("Titan: ");
-		message->addText(functions::nf(functions::d2s(entity->getAddedWfMetal())),1);
+		message->addText(etoa::nf(etoa::d2s(entity->getAddedWfMetal())),1);
 		message->addText("Silizium: ");
-		message->addText(functions::nf(functions::d2s(entity->getAddedWfCrystal())),1);
+		message->addText(etoa::nf(etoa::d2s(entity->getAddedWfCrystal())),1);
 		message->addText("PVC: ");
-		message->addText(functions::nf(functions::d2s(entity->getAddedWfPlastic())),3);
+		message->addText(etoa::nf(etoa::d2s(entity->getAddedWfPlastic())),3);
 		
 		//
 		//Auswertung
@@ -326,7 +326,7 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 		message->addText(fleet->getShipString(),1);
 		if (fleet->getAddedExp()>=0) {
 			message->addText("Gewonnene EXP: ");
-			message->addText(functions::nf(functions::d2s(fleet->getAddedExp())),2);
+			message->addText(etoa::nf(etoa::d2s(fleet->getAddedExp())),2);
 		}
 		
 		message->addText("",1);
@@ -334,13 +334,13 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 		message->addText(entity->getShipString(),1);
 		if (entity->getAddedExp()>=0) {
 			message->addText("Gewonnene EXP: ");
-			message->addText(functions::nf(functions::d2s(entity->getAddedExp())),2);
+			message->addText(etoa::nf(etoa::d2s(entity->getAddedExp())),2);
 		}
 		
 		message->addText("[b]VERTEIDIGUNG:[/b]",1);
 		message->addText(entity->getDefString(true),1);
 
-        message->addText(functions::d2s(config.nget("def_restore_percent",0)*100));
+        message->addText(etoa::d2s(config.nget("def_restore_percent",0)*100));
 		message->addText("% der Verteidigungsanlagen werden repariert!");
 
         /*/Log schreiben

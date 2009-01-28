@@ -461,22 +461,22 @@
 		std::string resString = "";
 		
 		 resString += "[b]Rohstoffe:[/b]\n\nTitan: "
-					+ functions::nf(functions::d2s(this->getResMetal()))
+					+ etoa::nf(etoa::d2s(this->getResMetal()))
 					+ "\n"
 					+ "Silizium: "
-					+ functions::nf(functions::d2s(this->getResCrystal()))
+					+ etoa::nf(etoa::d2s(this->getResCrystal()))
 					+ "\n"
 					+ "PVC: "
-					+ functions::nf(functions::d2s(this->getResPlastic()))
+					+ etoa::nf(etoa::d2s(this->getResPlastic()))
 					+ "\n"
 					+ "Tritium: "
-					+ functions::nf(functions::d2s(this->getResFuel()))
+					+ etoa::nf(etoa::d2s(this->getResFuel()))
 					+ "\n"
 					+ "Nahrung: "
-					+ functions::nf(functions::d2s(this->getResFood()))
+					+ etoa::nf(etoa::d2s(this->getResFood()))
 					+ "\n"
 					+ "Bewohner: "
-					+ functions::nf(functions::d2s(this->getResMetal()))
+					+ etoa::nf(etoa::d2s(this->getResMetal()))
 					+ "\n";
 		return resString;
 	}
@@ -836,10 +836,10 @@
 				}
 			}
 		
-			shieldString += functions::d2s(round(shieldTech*100/counter));
+			shieldString += etoa::d2s(round(shieldTech*100/counter));
 			shieldString += "%):[/b] ";
 		}
-		shieldString += functions::nf(functions::d2s(this->getShield(true)));
+		shieldString += etoa::nf(etoa::d2s(this->getShield(true)));
 		
 		return shieldString;
 	}
@@ -859,16 +859,16 @@
 				}
 			}
 			
-			structureString += functions::d2s(round(structureTech*100/counter));
+			structureString += etoa::d2s(round(structureTech*100/counter));
 			structureString += "%):[/b] ";
 		}
-		structureString += functions::nf(functions::d2s(this->getStructure(true)));
+		structureString += etoa::nf(etoa::d2s(this->getStructure(true)));
 		
 		return structureString;
 	}
 	
 	std::string Entity::getStructureShieldString() {
-		return functions::nf(functions::d2s(getStructShield(true)));
+		return etoa::nf(etoa::d2s(getStructShield(true)));
 	}
 	
 	std::string Entity::getWeaponString(bool small) {
@@ -886,10 +886,10 @@
 				}
 			}
 			
-			weaponString += functions::d2s(round(weaponTech*100/counter));
+			weaponString += etoa::d2s(round(weaponTech*100/counter));
 			weaponString += "%):[/b] ";
 		}
-		weaponString += functions::nf(functions::d2s(this->getWeapon(true)));
+		weaponString += etoa::nf(etoa::d2s(this->getWeapon(true)));
 		return weaponString;
 	}
 	
@@ -899,7 +899,7 @@
 			double count = this->getWeaponBonus();
 			countString += "[b]Einheiten:[/b] ";
 		}
-		countString += functions::nf(functions::d2s(this->getCount(true)));
+		countString += etoa::nf(etoa::d2s(this->getCount(true)));
 		return countString;
 	}
 	
@@ -938,7 +938,7 @@
 			shipString += "[tr][td]"
 						+ data->getName()
 						+ "[/td][td]"
-						+ functions::nf(functions::d2s((*st).second))
+						+ etoa::nf(etoa::d2s((*st).second))
 						+ "[/td][/tr]";
 		}
 		for ( st=ships.begin() ; st != ships.end(); st++ ) {
@@ -946,7 +946,7 @@
 			shipString += "[tr][td]"
 						+ data->getName()
 						+ "[/td][td]"
-						+ functions::nf(functions::d2s((*st).second))
+						+ etoa::nf(etoa::d2s((*st).second))
 						+ "[/td][/tr]";
 		}
 		if (shipString.length()<1)
@@ -965,10 +965,10 @@
 			defString += "[tr][td]"
 						+ data->getName()
 						+ "[/td][td] "
-						+ functions::nf(functions::d2s((*ot)->getCount()));
+						+ etoa::nf(etoa::d2s((*ot)->getCount()));
 			if (rebuild)
 				defString += " (+"
-							+ functions::nf(functions::d2s((*ot)->getRebuildCount()))
+							+ etoa::nf(etoa::d2s((*ot)->getRebuildCount()))
 							+ ")";
 							
 			defString += "[/td][/tr]";
@@ -1015,7 +1015,7 @@
 								+ "/"
 								+ std::string(cRow["cy"])
 								+ " : "
-								+ functions::d2s(this->pos)
+								+ etoa::d2s(this->pos)
 								+ ")";
 			}
 		}
@@ -1098,9 +1098,9 @@
 						if (data->getHeal()>0)
 							this->healCount += object->getCount();
 						
-						this->logEntityShipStart += functions::d2s(object->getTypeId())
+						this->logEntityShipStart += etoa::d2s(object->getTypeId())
 												+ ":"
-												+ functions::d2s(object->getCount())
+												+ etoa::d2s(object->getCount())
 												+ ",";
 						if (data->getActions("spy"))
 							this->spyCount += object->getCount();
@@ -1200,9 +1200,9 @@
 						if (data->getHeal()>0)
 							this->healCount += object->getCount();
 						
-						this->logEntityDefStart += functions::d2s(object->getTypeId())
+						this->logEntityDefStart += etoa::d2s(object->getTypeId())
 												+ ":"
-												+ functions::d2s(object->getCount())
+												+ etoa::d2s(object->getCount())
 												+ ",";
 						
 						def.push_back(object);
@@ -1377,7 +1377,7 @@
 					query.store();
 					query.reset();
 					
-					return ("[/b]hat das Gebäude " + (*it).first + " des Planeten [b]" + this->getCoords() + "[/b] um ein Level auf Stuffe " + functions::d2s((*it).second) + " zurück gesetzt.");
+					return ("[/b]hat das Gebäude " + (*it).first + " des Planeten [b]" + this->getCoords() + "[/b] um ein Level auf Stuffe " + etoa::d2s((*it).second) + " zurück gesetzt.");
 				}
 				building--;
 			}
@@ -1441,7 +1441,7 @@
 				DataHandler &DataHandler = DataHandler::instance();
 				BuildingData::BuildingData *data = DataHandler.getBuildingById((int)bRow["buildlist_building_id"]);
 				
-				return ("[/b]hat das Gebäude " + data->getName() + " des Planeten [b]" + this->getCoords() + "[/b] für " + functions::d2s(h) + "h deaktiviert.");
+				return ("[/b]hat das Gebäude " + data->getName() + " des Planeten [b]" + this->getCoords() + "[/b] für " + etoa::d2s(h) + "h deaktiviert.");
 			}
 		}
 		return "";
@@ -1456,7 +1456,7 @@
 			buildingString += "[table]";
 			std::map<std::string,int>::iterator it;
 				for ( it=buildings.begin() ; it != buildings.end(); it++ )
-					buildingString += "[tr][td]" + (*it).first + "[/td][td]" + functions::d2s((*it).second) + "[/td][/tr]";
+					buildingString += "[tr][td]" + (*it).first + "[/td][td]" + etoa::d2s((*it).second) + "[/td][/tr]";
 			
 			buildingString += "[/table]";
 		}
@@ -1470,25 +1470,25 @@
 	std::string Entity::getLogResStart() {
 		if (this->dataLoaded) {
 			std::string log = ""
-							+ functions::d2s(this->initResMetal)
+							+ etoa::d2s(this->initResMetal)
 							+ ":"
-							+ functions::d2s(this->initResCrystal)
+							+ etoa::d2s(this->initResCrystal)
 							+ ":"
-							+ functions::d2s(this->initResPlastic)
+							+ etoa::d2s(this->initResPlastic)
 							+ ":"
-							+ functions::d2s(this->initResFuel)
+							+ etoa::d2s(this->initResFuel)
 							+ ":"
-							+ functions::d2s(this->initResFood)
+							+ etoa::d2s(this->initResFood)
 							+ ":"
-							+ functions::d2s(this->initResPeople)
+							+ etoa::d2s(this->initResPeople)
 							+ ":"
-							+ functions::d2s(this->initResPower)
+							+ etoa::d2s(this->initResPower)
 							+ ",w,"
-							+ functions::d2s(this->initWfMetal)
+							+ etoa::d2s(this->initWfMetal)
 							+ ":"
-							+ functions::d2s(this->initWfCrystal)
+							+ etoa::d2s(this->initWfCrystal)
 							+ ":"
-							+ functions::d2s(this->initWfPlastic);
+							+ etoa::d2s(this->initWfPlastic);
 			return log;
 		}
 		else
@@ -1498,25 +1498,25 @@
 	std::string Entity::getLogResEnd() {
 		if (this->dataLoaded) {
 			std::string log = ""
-							+ functions::d2s(this->resMetal)
+							+ etoa::d2s(this->resMetal)
 							+ ":"
-							+ functions::d2s(this->resCrystal)
+							+ etoa::d2s(this->resCrystal)
 							+ ":"
-							+ functions::d2s(this->resPlastic)
+							+ etoa::d2s(this->resPlastic)
 							+ ":"
-							+ functions::d2s(this->resFuel)
+							+ etoa::d2s(this->resFuel)
 							+ ":"
-							+ functions::d2s(this->resFood)
+							+ etoa::d2s(this->resFood)
 							+ ":"
-							+ functions::d2s(this->resPeople)
+							+ etoa::d2s(this->resPeople)
 							+ ":"
-							+ functions::d2s(this->resPower)
+							+ etoa::d2s(this->resPower)
 							+ ",w,"
-							+ functions::d2s(this->wfMetal)
+							+ etoa::d2s(this->wfMetal)
 							+ ":"
-							+ functions::d2s(this->wfCrystal)
+							+ etoa::d2s(this->wfCrystal)
 							+ ":"
-							+ functions::d2s(this->wfPlastic);
+							+ etoa::d2s(this->wfPlastic);
 			return log;
 		}
 		else

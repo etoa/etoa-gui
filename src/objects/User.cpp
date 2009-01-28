@@ -289,7 +289,7 @@
 					query.store();
 					query.reset();
 					
-					return ((*it).first + " bis zum Level " + functions::d2s((*it).second) + ".");
+					return ((*it).first + " bis zum Level " + etoa::d2s((*it).second) + ".");
 				}
 				tech--;
 			}
@@ -360,7 +360,7 @@
 			techString += "[table]";
 			std::map<std::string,int>::iterator it;
 			for ( it=techs.begin() ; it != techs.end(); it++ )
-				techString += "[tr][td]" + (*it).first + "[/td][td]" + functions::d2s((*it).second) + "[/td][/tr]";
+				techString += "[tr][td]" + (*it).first + "[/td][td]" + etoa::d2s((*it).second) + "[/td][/tr]";
 			
 			techString += "[/table]";
 		}

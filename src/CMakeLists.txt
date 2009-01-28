@@ -19,6 +19,9 @@ ADD_SUBDIRECTORY(tech)
 
 
 SET( ETOAD_SRC_FILES
+	EventHandler.h
+	MysqlHandler.h
+	etoa.cpp
 	main.cpp
 )
 
