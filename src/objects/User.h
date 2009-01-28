@@ -7,7 +7,7 @@
 
 #include "../MysqlHandler.h"
 #include "../config/ConfigHandler.h"
-#include "../functions/Functions.h"
+#include "../util/Functions.h"
 #include "../data/DataHandler.h"
 
 /**

@@ -6,7 +6,7 @@
 #include <mysql++/mysql++.h>
 
 #include "../MysqlHandler.h"
-#include "../functions/Functions.h"
+#include "../util/Functions.h"
 #include "../data/DataHandler.h"
 #include "../objects/User.h"
 #include "../objects/Object.h"

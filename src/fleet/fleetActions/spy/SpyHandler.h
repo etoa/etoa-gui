@@ -6,7 +6,7 @@
 #include <time.h>
 
 #include "../FleetAction.h"
-#include "../../../functions/Functions.h"
+#include "../../../util/Functions.h"
 #include "../../../config/ConfigHandler.h"
 
 /**

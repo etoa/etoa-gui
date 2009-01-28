@@ -5,7 +5,7 @@
 #include <math.h>
 #include <string.h>
 #include <mysql++/mysql++.h>
-#include "../functions/Functions.h"
+#include "../util/Functions.h"
 #include "../MysqlHandler.h"
 #include "../config/ConfigHandler.h"
 

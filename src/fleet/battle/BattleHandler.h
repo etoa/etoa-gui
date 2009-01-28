@@ -5,7 +5,7 @@
 #include <ctime>
 
 #include "../../config/ConfigHandler.h"
-#include "../../functions/Functions.h"
+#include "../../util/Functions.h"
 
 #include "../../objects/Fleet.h"
 #include "../../entity/Entity.h"

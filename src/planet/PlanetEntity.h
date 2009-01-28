@@ -10,7 +10,7 @@
 
 #include "../data/DataHandler.h"
 #include "../config/ConfigHandler.h"
-#include "../functions/Functions.h"
+#include "../util/Functions.h"
 
 namespace planet
 {
