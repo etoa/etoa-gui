@@ -1,0 +1,7 @@
+find . -name "CMakeCache.txt" -exec rm -f {} \;
+find . -name "cmake_install.cmake" -exec rm -f {} \;
+find . -name "CMakeFiles" -exec rm -fr {} \;
+find . -name "Makefile" -exec rm -fr {} \;
+
+echo "Cmake Cache cleared!"
+
