@@ -116,7 +116,7 @@ void mainThread()
 {
 	std::clog << "Main thread started"<<std::endl;
 
-	//etoamain();
+	etoamain();
 	
 	std::clog << "Unexpectedly reached end of main thread!"<<std::endl;
 	exit(EXIT_FAILURE);
