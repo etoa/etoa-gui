@@ -16,24 +16,7 @@
 // Main loop framework
 //
 
-#include <iostream>
-#include <signal.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/errno.h>
-#include <sstream>
-
-#include <boost/thread.hpp>
-#include <mysql++/mysql++.h>
-
-#include "lib/anyoption/anyoption.h"
-
-#include "daemon/IPCMessageQueue.h"
-#include "daemon/Logger.h"
-#include "daemon/PidFile.h"
-#include "daemon/sigsegv.h"
-
-//#include "etoa.h"
+#include "etoa.h"
 
 using namespace std;
 

@@ -22,6 +22,10 @@
 #include <exception>
 #include <iostream>
 #include <string>
+#include <execinfo.h>
+#include <signal.h>
+#include <iostream>
+#include <sstream>
 
 /**
 * Provides a simple exception handling

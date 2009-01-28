@@ -19,7 +19,16 @@
 #ifndef __PIDFILE_H
 #define __PIDFILE_H
 
+#include <fcntl.h>
 #include <string>
+#include <fstream>
+#include <iostream>
+#include <sstream>
+#include <stdexcept>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <cerrno>
 
 /** 
 * Manages a pidfile containing the pid (posix-style process id) 

@@ -16,16 +16,6 @@
 // Pidfile manager
 //
 
-#include <fcntl.h>
-#include <fstream>
-#include <iostream>
-#include <sstream>
-#include <stdexcept>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <cerrno>
-
 #include "PidFile.h"
 
 PIDFile::PIDFile(const std::string &filename)

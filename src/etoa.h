@@ -3,8 +3,15 @@
 #include <iomanip>
 #include <cstdlib>	// For system commands
 #include <vector>
-#include <mysql++/mysql++.h>
+#include <signal.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/errno.h>
+#include <sstream>
 
+#include <mysql++/mysql++.h>
+#include <boost/thread.hpp>
+/*
 #include "EventHandler.h"
 
 #include "data/DataHandler.h"
@@ -22,6 +29,12 @@
 #include "alliance/aTechHandler.h"
 #include "alliance/aBuildingHandler.h"
 #include "alliance/aPointsHandler.h"
+*/
+#include "lib/anyoption/anyoption.h"
+#include "util/IPCMessageQueue.h"
+#include "util/Logger.h"
+#include "util/PidFile.h"
+#include "util/sigsegv.h"
 
 #ifndef __ETOAMAIN__
 #define __ETOAMAIN__

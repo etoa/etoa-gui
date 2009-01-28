@@ -16,12 +16,16 @@
 // Interprocess Message queue manager class
 //
 
+#ifndef IPCMESSAGEQUEUE_H
+#define IPCMESSAGEQUEUE_H
+
 #include <string>
 #include <sys/ipc.h>
 #include <sys/msg.h>
+#include <vector>
 
-#ifndef IPCMESSAGEQUEUE_H
-#define IPCMESSAGEQUEUE_H
+#include "ExceptionHandler.h"
+#include "Functions.h"
 
 /**
 * Simple logging interface for EtoA

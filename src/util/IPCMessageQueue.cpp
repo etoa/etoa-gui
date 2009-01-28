@@ -16,11 +16,7 @@
 // Interprocess Message queue manager
 //
 
-#include <vector>
-
-#include "ExceptionHandler.h"
 #include "IPCMessageQueue.h"
-#include "functions.h"
 
 IPCMessageQueue::IPCMessageQueue()
 {
@@ -39,9 +35,9 @@ void IPCMessageQueue::rcvCommand(std::string* command, int* id)
 	{
 		std::vector<std::string> res;
 		std::string sep = ":";
-		explode(str,sep,res);
+		etoa::explode(str,sep,res);
 		*command = res[0];
-		*id = toInt(res[1]);
+		*id = etoa::toInt(res[1]);
 		return;
 	}
 	(*command) = "";
@@ -59,7 +55,7 @@ std::string IPCMessageQueue::rcv()
 	{
 	  if ((msqid = msgget(key, 0644)) == -1) 
 	  {
-	 		throw ExceptionHandler("Could nod init ipc message queue with key "+toString(key));
+	 		throw ExceptionHandler("Could nod init ipc message queue with key "+etoa::toString(key));
 	  }  
 	
 		if (msgrcv(msqid, (struct msgbuf *)&buf, sizeof(buf), 0, 0) == -1) 

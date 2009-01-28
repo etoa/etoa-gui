@@ -18,11 +18,6 @@
 
 #include "ExceptionHandler.h"
 
-#include <execinfo.h>
-#include <signal.h>
-#include <iostream>
-#include <sstream>
-
 const char * ExceptionHandler::what() const throw()
 {
   std::stringstream sout;

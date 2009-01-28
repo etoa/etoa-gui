@@ -47,7 +47,7 @@
 			std::string datei = "/var/www/test.etoa.ch/htdocs/trunk/conf.inc.php";
 			std::string zeichen;
 			std::string value, key;
-			std:size_t defineFound, middleFound, endFound;
+			std::size_t defineFound, middleFound, endFound;
 			datein.open(datei.c_str());
 	
 			if (datein == false) 

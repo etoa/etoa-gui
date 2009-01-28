@@ -16,8 +16,6 @@
 // Simple mutex implementation using posix seamphore
 //
 
-#include <semaphore.h>
-
 #include "Mutex.h"
 
 Mutex::Mutex() 

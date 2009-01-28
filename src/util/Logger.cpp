@@ -16,13 +16,7 @@
 // Logging of notices and errors to a given logfile
 //
 
-#include <time.h>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-
 #include "Logger.h"
-#include "Mutex.h"
 
 using namespace std;
 

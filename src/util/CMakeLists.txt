@@ -1,10 +1,10 @@
 SET(UTIL_SRC_FILES
 	ExceptionHandler.cpp
+	Functions.cpp
 	IPCMessageQueue.cpp
 	Logger.cpp
 	Mutex.cpp
 	PidFile.cpp
-	functions.h
 	sigsegv.c
 )
 
