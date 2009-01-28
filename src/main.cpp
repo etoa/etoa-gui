@@ -28,12 +28,12 @@
 
 #include "lib/anyoption/anyoption.h"
 
-#include "util/IPCMessageQueue.h"
-#include "util/Logger.h"
-#include "util/PidFile.h"
-#include "util/sigsegv.h"
+#include "daemon/IPCMessageQueue.h"
+#include "daemon/Logger.h"
+#include "daemon/PidFile.h"
+#include "daemon/sigsegv.h"
 
-#include "eventhandler/etoa.h"
+//#include "etoa.h"
 
 using namespace std;
 
