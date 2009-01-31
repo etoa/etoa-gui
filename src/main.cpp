@@ -98,7 +98,8 @@ void daemonize()
 }
 
 void msgQueueThread()
-{
+{                                   
+	/*
 	std::clog << "Message queue thread started"<<std::endl;
 	IPCMessageQueue queue;
 	while (true)
@@ -110,6 +111,7 @@ void msgQueueThread()
 		clog << "Command received: "<< cmd << ", Id: " << id<<std::endl;
 	}
 	std::clog << "Message queue thread ended"<<std::endl;
+	*/
 }
 
 void mainThread()
@@ -271,8 +273,8 @@ int main(int argc, char* argv[])
 
 	daemonize();
 
-	boost::thread qThread(&msgQueueThread);
 	boost::thread mThread(&mainThread);
+	boost::thread qThread(&msgQueueThread);
 
 	qThread.join();	
 	mThread.join();	

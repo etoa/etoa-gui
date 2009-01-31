@@ -26,8 +26,10 @@
 #include "etoa.h"
 
 void etoamain()
-{
+{         
 	int minLoopDuration = 1;	// Minimal loop duration
+
+	std::clog << "Entering etoa main loop"<<std::endl;
 
 	// TODO: Error handling
 	std::time_t mtime=0;
@@ -41,7 +43,6 @@ void etoamain()
 	//Load Data
 	DataHandler &DataHandler = DataHandler::instance();
 
-	std::clog << "Entering etoa main loop"<<std::endl;
 	
 	// Main loop
 	while (true)
