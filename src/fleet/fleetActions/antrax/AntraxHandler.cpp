@@ -34,7 +34,7 @@ namespace antrax
 					// Calculate the damage percentage (Max. 90%) 
 					this->temp = (int)std::min((10 + this->tLevel * 3),(int)config.nget("antrax_action",1));
 					this->fak = rand() % temp;
-					this->fak += ceil(this->shipCnt/10000.0);
+					this->fak += (int)ceil(this->shipCnt/10000.0);
 					
 					// Calculate the real damage 
 					this->people = this->targetEntity->removeResPeople(round(this->targetEntity->getResPeople() * this->fak / 100));

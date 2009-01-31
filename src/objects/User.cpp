@@ -166,7 +166,7 @@
 		return techs[tech]/10.0;
 	}
 	
-	double User::getTechLevel(std::string tech) {
+	unsigned int User::getTechLevel(std::string tech) {
 		if (!this->techsLoaded)
 			this->loadTechs();
 		return techs[tech];

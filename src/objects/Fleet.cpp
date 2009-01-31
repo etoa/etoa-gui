@@ -87,7 +87,7 @@
 			this->usageFood /= 2;
 			this->usagePower /= 2;
 		}
-		else if (this->status=3) {
+		else if (this->status==3) {
 			this->supportUsageFuel = 0;
 			this->supportUsageFood = 0;
 		}
@@ -721,12 +721,12 @@
 		return healCount;
 	}
 	
-	double Fleet::getActionCount(bool total) {
+	unsigned int Fleet::getActionCount(bool total) {
 		if (!this->shipsLoaded)
 			this->loadShips();
 		if (this->shipsChanged)
 			this->recalcShips();
-		double actionCount = this->actionCount;
+		unsigned int actionCount = this->actionCount;
 		
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
@@ -752,6 +752,8 @@
 			this->exp += exp;
 		else
 			this->exp = -1;
+			// TODO added this to overcome error, but which value should it be?
+		return exp;
 	}
 	
 	double Fleet::getExp() {
@@ -772,7 +774,8 @@
 		return exp;
 	}
 	
-	double Fleet::getAddedExp() {
+	double Fleet::getAddedExp() 
+	{
 		return this->exp;
 	}
 	

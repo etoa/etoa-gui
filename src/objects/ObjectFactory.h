@@ -19,7 +19,8 @@
 class ObjectFactory {
 
 public:	
-	static Object* createObject(mysqlpp::Row oRow, char type) {
+	static Object* createObject(mysqlpp::Row oRow, char type) 
+	{
 		switch (type)
 		{
 			case 's':
@@ -32,6 +33,8 @@ public:
 				return new ListDef(oRow);
 				break;
 		}
+		// TODO: What happens if none of the above is true? This method must 
+		// return something or throw an error
 	}
 };
 

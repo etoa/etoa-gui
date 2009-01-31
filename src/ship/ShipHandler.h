@@ -24,6 +24,7 @@ namespace ship
 	{
 	public:
 		ShipHandler()  : EventHandler() { this->changes_ = false; }
+		~ShipHandler() {}
 		void update();
 		inline bool changes() { return this->changes_; }
 		inline std::vector<int> getChangedPlanets() { return this->changedPlanets_; }

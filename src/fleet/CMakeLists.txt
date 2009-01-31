@@ -35,3 +35,8 @@ SET(FLEET_SRC_FILES
 
 ADD_LIBRARY(fleet ${FLEET_SRC_FILES})
 
+TARGET_LINK_LIBRARIES( fleet
+  entity
+  util
+  data
+)

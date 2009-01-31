@@ -38,7 +38,7 @@ namespace market
 		
 		if (uRes)
 		{
-			int uSize = uRes.size();
+			unsigned int uSize = uRes.size();
 			
 			if (uSize > 0)
 			{
@@ -146,7 +146,7 @@ namespace market
 
 		if (res) 
 		{
-			int resSize = res.size();
+			unsigned int resSize = res.size();
 			std::cout << "Updating "<< resSize << " passed market auctions\n";
 			if (resSize>0)
 			{
@@ -155,7 +155,7 @@ namespace market
 				std::vector<int> sell_res (5);
 			
 				mysqlpp::Row arr;
-				int lastId = 0;
+				//int lastId = 0;
 				for (mysqlpp::Row::size_type i = 0; i<resSize; i++) 
 				{
 					arr = res.at(i);
@@ -175,7 +175,7 @@ namespace market
 					
 					if (mres) 
 					{
-						int mresSize = mres.size();
+						unsigned int mresSize = mres.size();
 						mysqlpp::Row marr;
 						
 						if (mresSize>0)
@@ -232,7 +232,7 @@ namespace market
             
 								msg += "Du erhälst ";
 								double tmp = etoa::s_round(return_factor,2)*100;
-								msg += tmp;
+								msg += etoa::toString(tmp);
 								msg += "% deiner Rohstoffe wieder zurück (abgerundet)!\n\n";
             
 								msg += "Das Handelsministerium";
@@ -352,8 +352,8 @@ namespace market
 							
 								if (multi_res and multi_res2) 
 								{
-									int multi_resSize = multi_res.size();
-									int multi_res2Size = multi_res2.size();
+									unsigned int multi_resSize = multi_res.size();
+									unsigned int multi_res2Size = multi_res2.size();
     	
 									if (multi_resSize>0 or multi_res2Size>0)
 									{
@@ -521,7 +521,7 @@ namespace market
 
 		std::string msg;
 		std::time_t time = std::time(0);
-		int ship_speed, ship_starttime, ship_landtime;
+		int ship_speed=0, ship_starttime=0, ship_landtime=0;
 		
 		// Ermittelt die Geschwindigkeit des Handelsschiffes
 		mysqlpp::Query query = con_->query();
@@ -538,7 +538,7 @@ namespace market
 		
 		if (res) 
 		{
-			int resSize = res.size();
+			unsigned int resSize = res.size();
 			mysqlpp::Row arr;
 			
 			if (resSize>0)
@@ -570,12 +570,12 @@ namespace market
 			
 		if (res) 
 		{
-			int resSize = res.size();
+			unsigned int resSize = res.size();
 			std::cout << "updating " << resSize << " market_ress...\n";
 			if (resSize>0)
 			{
 				mysqlpp::Row arr;
-				int lastId = 0;
+				//int lastId = 0;
 				
 				for (mysqlpp::Row::size_type i = 0; i<resSize; i++) 
 				{
@@ -602,7 +602,9 @@ namespace market
 					//Flotte zum Verkäufer schicken
 					int launchtime = std::time(0); // Startzeit
 					double distance = etoa::calcDistanceByPlanetId(arr["planet_id"],arr["ressource_buyer_planet_id"]);
-					int duration = distance / ship_speed * 3600 + ship_starttime + ship_landtime;
+					
+					// TODO I've added some typecasts and (). Please check if it's calculating correctly
+					int duration = ((int) (distance / (double)ship_speed * 3600) + ship_starttime + ship_landtime);
 					int landtime = launchtime + duration; // Landezeit
 
 					
@@ -714,12 +716,12 @@ namespace market
 		
 		if (res) 
 		{
-			int resSize = res.size();
+			unsigned int resSize = res.size();
 			std::cout << "updating " << resSize << " market_ship\n";
 			if (resSize>0)
 			{
 				mysqlpp::Row arr;
-				int lastId = 0;
+				//int lastId = 0;
 				
 				for (mysqlpp::Row::size_type i = 0; i<resSize; i++) 
 				{
@@ -746,7 +748,7 @@ namespace market
 					//Flotte zum Verkäufer schicken
 					int launchtime = time; // Startzeit
 					double distance = etoa::calcDistanceByPlanetId(arr["planet_id"],arr["ship_buyer_planet_id"]);
-					int duration = distance / ship_speed * 3600 + ship_starttime + ship_landtime;
+					int duration = (int)(distance / (double)ship_speed * 3600) + ship_starttime + ship_landtime;
 					int landtime = launchtime + duration; // Landezeit
 
 					query << "INSERT INTO fleet ";
@@ -859,12 +861,12 @@ namespace market
 		
 			if (res) 
 			{
-				int resSize = res.size();
+				unsigned int resSize = res.size();
 				std::cout << "updating " << resSize << " market_auction...\n";
 				if (resSize>0)
 				{
 					mysqlpp::Row arr;
-					int lastId = 0;
+					//int lastId = 0;
 				
 					for (mysqlpp::Row::size_type i = 0; i<resSize; i++) 
 					{
@@ -890,7 +892,7 @@ namespace market
 					//Flotte zum verkäufer der auktion schicken
 					int launchtime = time; // Startzeit
 					double distance = etoa::calcDistanceByPlanetId(arr["auction_planet_id"],arr["auction_current_buyer_planet_id"]);
-					int duration = distance / ship_speed * 3600 + ship_starttime + ship_landtime;
+					int duration = (int)(distance / (double)ship_speed * 3600) + ship_starttime + ship_landtime;
 					int landtime = launchtime + duration; // Landezeit
 
 					query << "INSERT INTO fleet ";
@@ -1089,12 +1091,12 @@ namespace market
 		
 		if (res) 
 		{
-			int resSize = res.size();
+			unsigned int resSize = res.size();
 
 			if (resSize>0)
 			{
 				mysqlpp::Row arr;
-				int lastId = 0;
+				//int lastId = 0;
 
 				for (mysqlpp::Row::size_type i = 0; i<resSize; i++) 
 				{
@@ -1115,7 +1117,7 @@ namespace market
 					
 					if (mres) 
 					{
-						int mresSize = mres.size();
+						unsigned int mresSize = mres.size();
 
 						if (mresSize>0);
 						{
@@ -1173,7 +1175,7 @@ namespace market
 							msg += "\n\n";
           
 							msg += "Du erhälst ";
-							msg += etoa::s_round(return_factor,2)*100;
+							msg += etoa::toString(etoa::s_round(return_factor,2)*100);
 							msg += "% deiner Rohstoffe wieder zurück (abgerundet)!\n\n";
 							
 							msg += "Das Handelsministerium";
@@ -1205,12 +1207,12 @@ namespace market
 		
 		if (res) 
 		{
-			int resSize = res.size();
+			unsigned int resSize = res.size();
 
 			if (resSize>0)
 			{
 				mysqlpp::Row arr;
-				int lastId = 0;
+				//int lastId = 0;
 
 				for (mysqlpp::Row::size_type i = 0; i<resSize; i++) 
 				{
@@ -1272,7 +1274,7 @@ namespace market
 					msg += "\n\n";
           
 					msg += "Du erhälst ";
-					msg += etoa::s_round(return_factor,2)*100;
+					msg += etoa::toString(etoa::s_round(return_factor,2)*100);
 					msg += "% deiner Schiffe wieder zurück (abgerundet)!\n\n";
           
 					msg += "Das Handelsministerium";

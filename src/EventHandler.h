@@ -22,6 +22,8 @@ public:
 		con_ = my.get();
 		
 	}
+	
+	virtual ~EventHandler() {};
 		
 	/**
 	* Abstract class for handling the events

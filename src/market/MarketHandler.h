@@ -18,6 +18,7 @@ namespace market
 	{
 	public:
 		MarketHandler()  : EventHandler() { this->changes_ = false; };
+		~MarketHandler() {};
 		void update();
 		void MarketAuctionUpdate();
 		static void update_config(std::vector<int> buy_res, std::vector<int> sell_res);

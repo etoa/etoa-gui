@@ -22,7 +22,7 @@ namespace fleet
 		std::cout << "Updating ";
 		//Checking queryresult
 		if (res)  {
-	    	int resSize = res.size();
+	    	unsigned int resSize = res.size();
 			//Checking if there are some results
 	    	if (resSize>0) {
 				std::cout << resSize << " Fleet(s)\n";

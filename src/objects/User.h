@@ -43,7 +43,7 @@ class User
 		bool getPropertiesReturnMsg();
 		
 		double getTechBonus(std::string tech);
-		double getTechLevel(std::string tech);
+		unsigned int getTechLevel(std::string tech);
 		
 		std::string stealTech(User* victim);
 		

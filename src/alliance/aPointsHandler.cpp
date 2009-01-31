@@ -5,7 +5,8 @@ namespace aPoints
 {
 	void aPointsHandler::update()
 	{
-		std::time_t time = std::time(0);
+		
+		//std::time_t time = std::time(0);  Unused
 		mysqlpp::Query query = con_->query();
 		Config &config = Config::instance();
 		
@@ -19,8 +20,9 @@ namespace aPoints
 		mysqlpp::Result res = query.store();		
 		query.reset();
 		
-		if (res)  {
-			int resSize = res.size();
+		if (res)  
+		{
+			unsigned int resSize = res.size();
 			
 			if (resSize>0) {
 				mysqlpp::Row arr;

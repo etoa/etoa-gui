@@ -20,6 +20,7 @@ namespace aPoints
 	{
 	public:
 		aPointsHandler()  : EventHandler() { }
+		~aPointsHandler() {};
 		void update();
 	};
 }

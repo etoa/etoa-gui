@@ -30,9 +30,9 @@ ADD_EXECUTABLE( etoad ${ETOAD_SRC_FILES} )
 TARGET_LINK_LIBRARIES( etoad
   util
   anyoption
-	config
 	alliance
 	building
+	config
 	data
 	def
 	entity
@@ -41,7 +41,7 @@ TARGET_LINK_LIBRARIES( etoad
 	objects
 	planet
 	ship
-	tech	
+	tech
   ${Boost_LIBRARIES}
   ${MYSQLPP_LIBRARY}
 )

@@ -41,7 +41,7 @@
 		My &my = My::instance();
 		mysqlpp::Connection *con = my.get();
 		
-		int counter;
+		int counter = 0;
 		mysqlpp::Query query = con->query();
 		query << "SELECT ";
 		query << "	config_name, ";
@@ -52,8 +52,9 @@
 		query << "	config;";
 		mysqlpp::Result res = query.store();	
 		query.reset();
-		if (res) {
-			int resSize = res.size();
+		if (res) 
+		{
+			unsigned int resSize = res.size();
 			if (resSize>0) {
 				mysqlpp::Row row;
 				cConfig.reserve(resSize);

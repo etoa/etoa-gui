@@ -47,7 +47,9 @@ class Fleet
 	bool actionAllowed, shipsLoaded, entityLoaded, shipsChanged;
 	
 	double initWeapon, initShield, initStructure, initStructShield, initHeal, initCount;
-	double weapon, shield, structure, heal, count, healCount, actionCount;
+	// TODO: Why are theese doubles? better use unsigned int
+	double weapon, shield, structure, heal, count, healCount;
+	unsigned int actionCount;
 	
 	double exp;
 	
@@ -137,7 +139,7 @@ public:
 	double getInitCount(bool total=false);
 	double getCount(bool total=false);
 	double getHealCount(bool total=false);
-	double getActionCount(bool total=false);
+	unsigned int getActionCount(bool total=false);
 	
 	double getWeaponBonus();
 	double getShieldBonus();

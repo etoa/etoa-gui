@@ -30,7 +30,7 @@ namespace def
 
 		// Add changed planets to vector
 		if (res)  {
-			int resSize = res.size();
+			unsigned int resSize = res.size();
 			bool empty=false;
 			
 			if (resSize>0) {

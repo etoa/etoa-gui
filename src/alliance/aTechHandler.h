@@ -19,6 +19,7 @@ namespace atech
 	{
 	public:
 		aTechHandler()  : EventHandler() { }
+		~aTechHandler() {}
 		void update();
 	};
 }

@@ -761,7 +761,9 @@
 		}
 	}
 	
-	double Entity::addExp(double exp) {
+	// TODO: Is double reasonable? Added conversion to int in line 777
+	void Entity::addExp(double exp) 
+	{
 		this->shipsSave = true;
 		int counter = 0;
 		std::vector<Object*>::iterator ot;
@@ -772,7 +774,7 @@
 		if (fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
-				counter += (*it)->addExp(exp);
+				counter += (int)(*it)->addExp(exp);
 		}
 		if (counter)
 			this->exp = exp;
@@ -780,7 +782,8 @@
 			this->exp = -1;
 	}
 	
-	double Entity::getExp() {
+	double Entity::getExp() 
+	{
 		double exp = 0;
 		
 		DataHandler &DataHandler = DataHandler::instance();
@@ -893,9 +896,12 @@
 		return weaponString;
 	}
 	
-	std::string Entity::getCountString(bool small) {
+	// TODO: What is this good for? Unused variable count!
+	std::string Entity::getCountString(bool small) 
+	{
 		std::string countString = "";
-		if (!small) {
+		if (!small) 
+		{
 			double count = this->getWeaponBonus();
 			countString += "[b]Einheiten:[/b] ";
 		}
@@ -903,7 +909,8 @@
 		return countString;
 	}
 	
-	std::string Entity::getShipString(bool total) {
+	std::string Entity::getShipString(bool total) 
+	{
 		if (!this->shipsLoaded)
 			this->loadShips();
 		std::map<int,int> ships;

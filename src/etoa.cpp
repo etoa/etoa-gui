@@ -34,7 +34,9 @@ void etoamain()
 	srand(time(0));
 	
 	//Loading Configdata
-	Config &config = Config::instance();
+	//Config &config = Config::instance();
+	// TODO: Check if we need the config variable
+	Config::instance();
 	
 	//Load Data
 	DataHandler &DataHandler = DataHandler::instance();
@@ -106,10 +108,13 @@ void etoamain()
 			std::vector<int> v1 = bh->getChangedPlanets();
 			std::vector<int> v2 = sh->getChangedPlanets();
 			std::vector<int> v3 = dh->getChangedPlanets();
-			delete bh, sh, dh, fh;
+			delete bh;
+			delete sh;
+			delete dh;
+			delete fh;
 			
 			// Merge all changed planet id's together
-			for (int x=0; x<v2.size(); x++)
+			for (unsigned int x=0; x<v2.size(); x++)
 			{
 				std::vector<int>::iterator result;
  				result = find(v1.begin(), v1.end(), v2[x]);
@@ -118,7 +123,7 @@ void etoamain()
  					 v1.push_back(v2[x]);
  				}				
 			}
-			for (int x=0;x<v3.size();x++)
+			for (unsigned int x=0;x<v3.size();x++)
 			{
 				std::vector<int>::iterator result;
  				result = find( v1.begin(), v1.end(), v3[x]);

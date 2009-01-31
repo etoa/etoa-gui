@@ -20,6 +20,7 @@ namespace tech
 	{
 	public:
 		TechHandler()  : EventHandler() { this->changes_ = false; }
+		~TechHandler() {};
 		void update();
 		inline bool changes() { return this->changes_; }
 	private:

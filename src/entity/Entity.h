@@ -168,7 +168,7 @@ class Entity
 		
 		void setPercentSurvive(double percentage, bool total=false);
 		
-		double addExp(double exp);
+		void addExp(double exp);
 		double getExp();
 		double getAddedExp();
 		

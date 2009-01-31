@@ -123,7 +123,7 @@
 		mysqlpp::Result dRes = query.store();	
 		query.reset();
 		if (dRes) {
-			int dSize = dRes.size();
+			unsigned int dSize = dRes.size();
 			DefData* object;
 
 			if (dSize>0) {
@@ -204,7 +204,7 @@
 		mysqlpp::Result sRes = query.store();	
 		query.reset();
 		if (sRes) {
-			int sSize = sRes.size();
+			unsigned int sSize = sRes.size();
 			ShipData* object;
 
 			if (sSize>0) {
@@ -247,7 +247,7 @@
 		mysqlpp::Result tRes = query.store();	
 		query.reset();
 		if (tRes) {
-			int tSize = tRes.size();
+			unsigned int tSize = tRes.size();
 			TechData* object;
 
 			if (tSize>0) {
@@ -307,7 +307,7 @@
 		mysqlpp::Result bRes = query.store();	
 		query.reset();
 		if (bRes) {
-			int bSize = bRes.size();
+			unsigned int bSize = bRes.size();
 			BuildingData* object;
 
 			if (bSize>0) {
@@ -332,7 +332,7 @@
 		mysqlpp::Result rRes = query.store();	
 		query.reset();
 		if (rRes) {
-			int rSize = rRes.size();
+			unsigned int rSize = rRes.size();
 			RaceData* object;
 
 			if (rSize>0) {
@@ -356,7 +356,7 @@
 		mysqlpp::Result slRes = query.store();	
 		query.reset();
 		if (slRes) {
-			int slSize = slRes.size();
+			unsigned int slSize = slRes.size();
 			SolData* object;
 
 			if (slSize>0) {
@@ -380,7 +380,7 @@
 		mysqlpp::Result pRes = query.store();	
 		query.reset();
 		if (pRes) {
-			int pSize = pRes.size();
+			unsigned int pSize = pRes.size();
 			PlanetData* object;
 
 			if (pSize>0) {
@@ -404,7 +404,7 @@
 		mysqlpp::Result spRes = query.store();	
 		query.reset();
 		if (spRes) {
-			int spSize = spRes.size();
+			unsigned int spSize = spRes.size();
 			SpecialistData* object;
 
 			if (spSize>0) {

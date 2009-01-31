@@ -14,6 +14,7 @@ namespace fleet
 	{
 	public:
 		FleetHandler() : EventHandler() { }		
+		~FleetHandler() {};
 		void update();
 		
 		

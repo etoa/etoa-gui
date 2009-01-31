@@ -20,6 +20,7 @@ namespace abuilding
 	{
 	public:
 		aBuildingHandler()  : EventHandler() { }
+		~aBuildingHandler() {};
 		void update();
 	};
 }

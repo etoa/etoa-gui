@@ -71,7 +71,7 @@ public:
 		
 	}
 	
-	~FleetAction() {
+	virtual ~FleetAction() {
 		this->actionLog->addEntityUserId(this->targetEntity->getUserId());
 		this->actionLog->addFleetResStart(this->f->getLogResStart());
 		this->actionLog->addFleetResEnd(this->f->getLogResEnd());

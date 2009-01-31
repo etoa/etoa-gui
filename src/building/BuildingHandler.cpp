@@ -21,7 +21,7 @@ namespace building
 		
 		// Add changed planets to vector
 		if (res) {
-			int resSize = res.size();
+			unsigned int resSize = res.size();
 			if (resSize>0) {
 				this->changes_ = true;
 				mysqlpp::Row row;
