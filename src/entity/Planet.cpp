@@ -58,11 +58,6 @@
 			}
 		}
 		
-		if (this->typeId == config.nget("gasplanet", 0)) {
-			this->codeName = "Gasplanet";
-			this->updateGasPlanet();
-		}
-		
 		this->initResMetal = this->resMetal;
 		this->initResCrystal = this->resCrystal;
 		this->initResPlastic = this->resPlastic;
@@ -76,6 +71,11 @@
 		this->initWfPlastic = this->wfPlastic;
 		
 		this->entityUser = new User(this->userId);
+		
+		if (this->typeId == config.nget("gasplanet", 0)) {
+			this->codeName = "Gasplanet";
+			this->updateGasPlanet();
+		}
 		
 		this->dataLoaded = true;
 	}
@@ -115,12 +115,16 @@
 				fleets.pop_back();
 			}
 		}
-			
+		
 		if (this->changedData) {
+			Config &config = Config::instance();
 			My &my = My::instance();
 			mysqlpp::Connection *con = my.get();
 			mysqlpp::Query query = con->query();
-		
+			
+			if (this->typeId == config.nget("gasplanet", 0))
+				this->codeName = "";
+			
 			query << "UPDATE ";
 			query << "	planets ";
 			query << "SET ";
