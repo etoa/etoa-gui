@@ -2,6 +2,7 @@
 	echo "<h2>Einstellungen</h2>";
 	HelpUtil::breadCrumbs(array("Einstellungen","settings"));
 
+	$item = array();
 	$item['game_name']['p1']="Spielversion";
 	$item['enable_register']['p2']="Max. Spieler";
 	$item['hmode_days']['v']="Urlaubsmodus Mindestdauer";
@@ -38,12 +39,12 @@
 	$item['people_multiply']['v']="Bevölkerungswachstum";
 
 		tableStart("Grundeinstellungen");
-		echo "<tr><td class=\"tbltitle\">Name</td>";
-		echo "<td class=\"tbltitle\">Wert</td></tr>";
+		echo "<tr><th>Name</th>";
+		echo "<th>Wert</th></tr>";
 		if (UNIX)
 		{
-			echo "<tr><td class=\"tbldata\">Revision</td>";
-			echo "<td class=\"tbldata\">";
+			echo "<tr><td>Revision</td>";
+			echo "<td>";
 			passthru("svnversion");
 			echo "</td></tr>";
 			
@@ -52,8 +53,8 @@
 		{
 			foreach ($a as $par => $val)
 			{
-			echo "<tr><td class=\"tbldata\">".$val."</td>";
-			echo "<td class=\"tbldata\">".$conf[$conf_name][$par]."</td></tr>";
+			echo "<tr><td>".$val."</td>";
+			echo "<td>".$conf[$conf_name][$par]."</td></tr>";
 			}
 		}
 		tableEnd();

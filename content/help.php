@@ -35,13 +35,9 @@
 		$site = $_GET['site'];
 		if ($site!="")
 		{
-			if (IS_ADMIN_MODE && file_exists("../info/$site.php"))
+			if (file_exists(RELATIVE_ROOT."info/$site.php"))
 			{
-				include ("../info/$site.php");
-			}
-			elseif (file_exists("info/$site.php"))
-			{
-				include ("info/$site.php");
+				include (RELATIVE_ROOT."info/$site.php");
 			}
 			else
 			{
@@ -61,7 +57,7 @@
 		
 		echo "Hier findest du Informationen zu verschiedenen Objekten des Spiels:<br/><br/>";
 
-		if (!IS_ADMIN_MODE)
+		if (!ADMIN_MODE)
 		{
 			tableStart("Tools");
 			echo "<tr>

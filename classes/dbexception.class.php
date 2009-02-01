@@ -4,7 +4,7 @@
 		public function __toString()
 		{
 			global $cu;
-
+			
 			$str = "Datenbankfehler\nDatei: ".parent::getFile().", Zeile: ".parent::getLine()."\nAbfrage:".parent::getMessage()."\nFehlermeldung: ".mysql_error()."\nStack-Trace: ".parent::getTraceAsString()."";
 			if (defined('ERROR_LOGFILE'))
 			{
@@ -19,8 +19,8 @@
 					$str = '<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">	
-					<head><title>Datebankfehler</title><link rel="stylesheet" type="text/css" href="css/simple.css" /></head><body>
-					<div><img src="images/game_logo.jpg" alt="Logo" /></div>';
+					<head><title>Datebankfehler</title><link rel="stylesheet" type="text/css" href="'.RELATIVE_ROOT.'css/simple.css" /></head><body>
+					<div><img src="'.RELATIVE_ROOT.'images/game_logo.jpg" alt="Logo" /></div>';
 				}
 				else
 					$str = "";

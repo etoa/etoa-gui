@@ -320,6 +320,7 @@ a.menu1Item:hover {
 table.tb	{
 	width:100%;
 	border-collapse:collapse;
+	margin:10px 0px;
 }
 
 .tblc	{

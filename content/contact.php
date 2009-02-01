@@ -59,7 +59,7 @@
 	{	
 		if (isset($_POST['submit']))
 		{
-			$text = "InGame-Anfrage ".GAMEROUND_NAME."\n----------------------\n\n";
+			$text = "InGame-Anfrage ".ROUNDID."\n----------------------\n\n";
 			$text.= "Nick: ".$cu->nick."\n";
 			$text.= "ID: ".$s['user_id']."\n";
 			$text.= "IP/Host: ".$_SERVER['REMOTE_ADDR']." (".resolveIp($_SERVER['REMOTE_ADDR']).")\n";
@@ -72,7 +72,7 @@
       $email_header .= "X-Sender-IP: ".$_SERVER['REMOTE_ADDR']."\n";
       //$email_header .= "Content-type: text/html\n";
       $email_header .= "Content-Style-Type: text/css\n";					
-			mail($_POST['mail_rcpt'],"EtoA InGame-Anfrage (".GAMEROUND_NAME."): ".$_POST['mail_subject'],$text,$email_header);
+			mail($_POST['mail_rcpt'],"EtoA InGame-Anfrage (".ROUNDID."): ".$_POST['mail_subject'],$text,$email_header);
 			echo '<div style="color:#0f0"><b>Vielen Dank!</b> Deine Nachricht wurde gesendet!</div><br/>';
 		}
 		

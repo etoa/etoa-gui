@@ -1,10 +1,13 @@
 <?PHP
+
+	define('RELATIVE_ROOT','../');
+	define('ADMIN_MODE',true);
+
+	require_once("../global.inc.php");
+
 	// Seitenwahl zuweisen
 	$page = isset($_GET['page']) ? $_GET['page'] : 'home';
 	$sub = isset($_GET['sub']) ? $_GET['sub'] : '';
-
-	define('USE_HTML',true);
-
 
 	// Renderzeit-Start festlegen
 	$render_time = explode(" ",microtime());
@@ -26,13 +29,7 @@
 	// Mit der DB verbinden
 	dbconnect();
 	
-	// Admin defs
-	
-	define('CACHE_ROOT','../cache');
-	define('CLASS_ROOT','../classes');
-	define('DATA_DIR',"../data");
-	define('IMAGE_DIR',"../images");
-	
+
 	// Config-Werte laden
 	$cfg = Config::getInstance();
 	$conf = $cfg->getArray();
@@ -42,7 +39,6 @@
 	require_once('nav.php');
 
 	// Feste Konstanten
-	define('IS_ADMIN_MODE',true);
 
 	define('SESSION_NAME',"adminsession");
 	define('USER_TABLE_NAME','admin_users');
@@ -66,9 +62,6 @@
 	// XAJAX
 	include("inc/xajax_admin.inc.php");
 
-	// Zufallsgenerator initialisieren
-	mt_srand(time());
-	
 	// Check Login
 	require("inc/admin_login.inc.php");	
 	

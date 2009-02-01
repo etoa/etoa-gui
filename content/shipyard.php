@@ -332,7 +332,7 @@
 			//Legt Sortierwerte in einem Array fest
 			$values = array(
 											"name"=>"Name",
-											"battlepoints"=>"Kosten",
+											"points"=>"Kosten",
 											"weapon"=>"Waffen",
 											"structure"=>"Struktur",
 											"shield"=>"Schild",

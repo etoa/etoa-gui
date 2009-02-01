@@ -140,7 +140,8 @@ function planetSelectorByUser($userNick,$function,$show_user_id=1)
 		$nr=mysql_num_rows($pres);
 		if ($nr>0)
 		{
-			$out="<select name=\"planet_id\" size=\"$nr\" onchange=\"showLoader('shipsOnPlanet');xajax_".$function."(this.options[this.selectedIndex].value);\">\n";
+			$out="<select name=\"planet_id\" size=\"".($nr+1)."\" onchange=\"showLoader('shipsOnPlanet');xajax_".$function."(this.options[this.selectedIndex].value);\">\n";
+			$out.="<option>Alle</option>";
 			while ($parr=mysql_fetch_row($pres))
 			{
 				$p = new Planet($parr[0]);
@@ -175,10 +176,11 @@ function planetSelectorByUser($userNick,$function,$show_user_id=1)
 	return $objResponse;	
 }
 
-function showShipsOnPlanet($pid)
+function showShipsOnPlanet($pid,$uid)
 {
 	$objResponse = new xajaxResponse();	
 	
+	ob_start();
 
 	if ($pid!=0)
 	{
@@ -186,6 +188,7 @@ function showShipsOnPlanet($pid)
 		$pid=$updata[0];
 		$res=dbquery("
 		SELECT
+			ship_points,
 			ship_name,
 			shiplist_count,
 			shiplist_id,
@@ -198,19 +201,25 @@ function showShipsOnPlanet($pid)
 			ships
 			ON shiplist_ship_id=ship_id
 			AND shiplist_entity_id='".$pid."'
-		WHERE
-			shiplist_count>0
+			AND shiplist_count>0
 		ORDER BY
 			ship_name
 		;");
 		if (mysql_num_rows($res)>0)
 		{
 			$out="<table class=\"tb\">
-			<tr><th>Anzahl</th><th>Typ</th><th>Spezielles</th><th>Aktionen</th></tr>";
+			<tr><th>Anzahl</th>
+			<th>Typ</th>
+			<th>Punkte</th>
+			<th>Spezielles</th>
+			<th>Aktionen</th></tr>";
+			$points = 0;
 			while ($arr=mysql_fetch_array($res))
 			{
+				$points += $arr['ship_points']*$arr['shiplist_count'];
 				$out.="<tr><td style=\"width:80px\" id=\"cnt_".$arr['shiplist_id']."\">".$arr['shiplist_count']."</td>
 				<td>".$arr['ship_name']."</td>
+				<td>".($arr['ship_points']*$arr['shiplist_count'])."</td>
 				<td id=\"special_".$arr['shiplist_id']."\">";
 				if ($arr['ship_xp_base']>0)
 				{
@@ -219,22 +228,25 @@ function showShipsOnPlanet($pid)
 				$out.= "
 				<td style=\"width:180px\" id=\"actions_".$arr['shiplist_id']."\" id=\"actions_".$arr['shiplist_id']."\">
 				<input type=\"button\" value=\"Bearbeiten\" onclick=\"xajax_editShip(xajax.getFormValues('selector'),".$arr['shiplist_id'].")\" />
-				<input type=\"button\" value=\"Löschen\" onclick=\"if (confirm('Sollen ".$arr['shiplist_count']." ".$arr['ship_name']." von diesem Planeten gel&ouml;scht werden?')) {showLoaderPrepend('shipsOnPlanet');xajax_removeShipFromPlanet(xajax.getFormValues('selector'),".$arr['shiplist_id'].")}\" /><br/><br/>
+				<input type=\"button\" value=\"Löschen\" onclick=\"if (confirm('Sollen ".$arr['shiplist_count']." ".$arr['ship_name']." von diesem Planeten gel&ouml;scht werden?')) {showLoaderPrepend('shipsOnPlanet');xajax_removeShipFromPlanet(xajax.getFormValues('selector'),".$arr['shiplist_id'].")}\" />
 				</td>
 				</tr>";
 			}
+			$out.="<tr><td colspan=\"2\"></td><td><b>".nf($points)."</b></td><td colspan=\"2\"></td></tr>";
 			$out.="</table>";
 		}
 		else
 		{
-			$out="Keine Schiffe vorhanden!";
+			$out="Keine Schiffe vorhanden!<br/>";
 		}
-		$out.="<br/><br/><input type=\"Button\" value=\"Neu laden\" onclick=\"showLoader('shipsOnPlanet');xajax_showShipsOnPlanet('".$pid."');\">";
+		$out.="<br/><input type=\"Button\" value=\"Neu laden\" onclick=\"showLoader('shipsOnPlanet');xajax_showShipsOnPlanet('".$pid."','".$uid."');\">";
 	}
 	else
 	{
 		$out="Planet w&auml;hlen...";
 	}	
+	echo $out;
+	$out = ob_get_clean();
   $objResponse->assign("shipsOnPlanet","innerHTML", $out);
 	return $objResponse;		
 }
@@ -247,7 +259,7 @@ function addShipToPlanet($form)
 	if ($updata[1]>0)
 	{
 		shiplistAdd($updata[0],$updata[1],$form['ship_id'],intval($form['shiplist_count']));	
-  	$objResponse->script("xajax_showShipsOnPlanet(".$updata[0].")");
+  	$objResponse->script("xajax_showShipsOnPlanet(".$updata[0].",".$updata[1].")");
   }
   else
   {
@@ -268,7 +280,7 @@ function removeShipFromPlanet($form,$listId)
 	WHERE
 		shiplist_id=".intval($listId)."
 	;");
-  $objResponse->script("xajax_showShipsOnPlanet(".$updata[0].");");
+  $objResponse->script("xajax_showShipsOnPlanet(".$updata[0].",".$updata[1].");");
 	return $objResponse;		
 }
 
@@ -338,7 +350,7 @@ function editShip($form,$listId)
 					$out="";	
 		 		$objResponse->assign("special_".$listId,"innerHTML", $out); 	
 		 		$out="<input type=\"button\" value=\"Speichern\" onclick=\"showLoader('actions_".$listId."');xajax_submitEditShip(xajax.getFormValues('selector'),".$listId.");\" /> ";
-		 		$out.="<input type=\"button\" value=\"Abbrechen\" onclick=\"showLoader('shipsOnPlanet');xajax_showShipsOnPlanet(".$updata[0].");\" />";
+		 		$out.="<input type=\"button\" value=\"Abbrechen\" onclick=\"showLoader('shipsOnPlanet');xajax_showShipsOnPlanet(".$updata[0].",".$updata[1].");\" />";
 		 		$objResponse->assign("actions_".$listId,"innerHTML", $out); 	
 			}
 			else
@@ -386,7 +398,7 @@ function submitEditShip($form,$listId)
 	WHERE
 		shiplist_id=".intval($listId)."
 	;");
-  $objResponse->script("xajax_showShipsOnPlanet(".$updata[0].");");
+  $objResponse->script("xajax_showShipsOnPlanet(".$updata[0].",".$updata[0].");");
 	return $objResponse;		
 }
 
@@ -1136,123 +1148,127 @@ function reqInfo($id,$cat='b')
 		$de_name[$tearr['def_id']]=$tearr['def_name'];
 	}		
 	
+	$teres = dbquery("SELECT missile_id,missile_name FROM missiles WHERE missile_show=1;");
+	while ($tearr = mysql_fetch_array($teres))
+	{
+		$m_name[$tearr['missile_id']]=$tearr['missile_name'];
+	}		
+	
+	//
+	// Required objects
+	//
 	
 	if ($cat=='b')
 	{	
 		$req_tbl = "building_requirements";
-		$req_field = "req_building_id";
+		$req_field = "obj_id";
 	}
 	elseif($cat=='t')
 	{
 		$req_tbl = "tech_requirements";
-		$req_field = "req_tech_id";
+		$req_field = "obj_id";
 	}
 	elseif($cat=='s')
 	{
 		$req_tbl = "ship_requirements";
-		$req_field = "req_ship_id";
+		$req_field = "obj_id";
 	}
 	elseif($cat=='d')
 	{
 		$req_tbl = "def_requirements";
 		$req_field = "obj_id";
 	}		
+	elseif($cat=='m')
+	{
+		$req_tbl = "missile_requirements";
+		$req_field = "obj_id";
+	}		
 	
 	$items = array();
-	$res = dbquery("SELECT * FROM $req_tbl WHERE $req_field=".$id." AND req_req_building_level>0 ORDER BY req_req_building_level;");
+	$res = dbquery("SELECT * FROM $req_tbl WHERE obj_id=".$id." AND req_building_id>0 AND req_level>0 ORDER BY req_level;");
 	$nr = mysql_num_rows($res);
 	if ($nr>0)
 	{
 		while($arr=mysql_fetch_assoc($res))
 		{
-			$items[] = "<td style=\"padding:4px;border:1px solid #bbb;background:#eef;width:150px;\">
-			<a href=\"javascript:;\" style=\"color:#00f\" onclick=\"xajax_reqInfo(".$arr['req_req_building_id'].",'b')\">
-			<img src=\"".IMAGE_PATH."/buildings/building".$arr['req_req_building_id']."_small.".IMAGE_EXT."\" align=\"middle\"/>
-			</a><br/>
-	 		<b>".$bu_name[$arr['req_req_building_id']]."</b><br/>
-	 		Stufe ".$arr['req_req_building_level']."			
-			</td>";
+			$items[] = array($arr['req_building_id'],$bu_name[$arr['req_building_id']],$arr['req_level'],IMAGE_PATH."/buildings/building".$arr['req_building_id']."_middle.".IMAGE_EXT,"xajax_reqInfo(".$arr['req_building_id'].",'b')");
 		}
 	}
-	$res = dbquery("SELECT * FROM $req_tbl WHERE $req_field=".$id." AND req_req_tech_level>0 ORDER BY req_req_tech_level;");
+	$res = dbquery("SELECT * FROM $req_tbl WHERE $req_field=".$id." AND req_tech_id>0 AND req_level>0 ORDER BY req_level;");
 	$nr2 = mysql_num_rows($res);
 	if ($nr2>0)
 	{
 		while($arr=mysql_fetch_assoc($res))
 		{
-			$items[] = "<td style=\"padding:4px;border:1px solid #bbb;background:#efe;width:150px;\">
-			<a href=\"javascript:;\" style=\"color:#00f\" onclick=\"xajax_reqInfo(".$arr['req_req_tech_id'].",'t')\">
-			<img src=\"".IMAGE_PATH."/technologies/technology".$arr['req_req_tech_id']."_small.".IMAGE_EXT."\" align=\"middle\"/>
-			</a><br/>
-	 		<b>".$te_name[$arr['req_req_tech_id']]."</b><br/>
-	 		Stufe ".$arr['req_req_tech_level']."			
-			</td>";
+			$items[] = array($arr['req_tech_id'],$te_name[$arr['req_tech_id']],$arr['req_level'],IMAGE_PATH."/technologies/technology".$arr['req_tech_id']."_middle.".IMAGE_EXT,"xajax_reqInfo(".$arr['req_tech_id'].",'t')");
 		}
 	}
 	
 	if (count($items)>0)
 	{
-		echo "<table style=\"margin:0px auto;\"><tr>";
-		$cnt=0;
+		echo "<div class=\"techtreeItemContainer\">";
 		foreach ($items as $i)
 		{
-			echo $i;
-			$cnt++;
-			if ($cnt==4)
-			{
-				echo "</tr><tr>";
-				$cnt=0;
-			}
+			echo "<div class=\"techtreeItem\" style=\"background:url('".$i[3]."');\">
+			<div class=\"techtreeItemLevel\">Lvl <b>".$i[2]."</b></div>	
+			<a href=\"javascript:;\" onclick=\"".$i[4]."\" style=\"height:100%;display:block;\"></a>			
+			<div class=\"techtreeItemName\">".$i[1]."</div>				
+			</div>";
 		}
-		if ($cnt<4)
-		{
-			for ($x=$cnt;$x<=4;$x++)
-			{
-				echo "<td></td>";
-			}
-		}
-		echo "</tr></table>";
-		echo "<br/>wird benötigt für<br/><br/>";		
+		echo "<br style=\"clear:both;\"";
+		echo "</div>";		
+		
+		echo "<div style=\"margin:0px auto;\">wird benötigt für</div>";		
 	}
 	
-	echo "<div style=\"border:1px solid black;padding:20px 1px;background:#eee;width:150px;margin:10px auto;\">";
+	//
+	// Current object
+	//
 		
 	if ($cat=='b')
 	{	
-		echo "<img src=\"".IMAGE_PATH."/buildings/building".$id."_small.".IMAGE_EXT."\" align=\"middle\"/><br/>
-		 	<b>".$bu_name[$id]."</b>";
-		echo "</div><br/>";
+		$img = IMAGE_PATH."/buildings/building".$id."_middle.".IMAGE_EXT;
+		$name = $bu_name[$id];
 	}
 	elseif($cat=='t')
 	{
-		echo "<img src=\"".IMAGE_PATH."/technologies/technology".$id."_small.".IMAGE_EXT."\" align=\"middle\"/><br/>
-		 	<b>".$te_name[$id]."</b>";
-		echo "</div><br/>";
+		$img = IMAGE_PATH."/technologies/technology".$id."_middle.".IMAGE_EXT;
+		$name = $te_name[$id];
 	}
 	elseif($cat=='s')
 	{
-		echo "<img src=\"".IMAGE_PATH."/ships/ship".$id."_small.".IMAGE_EXT."\" align=\"middle\"/><br/>
-		 	<b>".$sh_name[$id]."</b>";
-		echo "</div><br/>";
+		$img = IMAGE_PATH."/ships/ship".$id."_middle.".IMAGE_EXT;
+		$name = $sh_name[$id];
 	}
 	elseif($cat=='d')
 	{
-		echo "<img src=\"".IMAGE_PATH."/defense/def".$id."_small.".IMAGE_EXT."\" align=\"middle\"/><br/>
-		 	<b>".$de_name[$id]."</b>";
-		echo "</div><br/>";
+		$img = IMAGE_PATH."/defense/def".$id."_middle.".IMAGE_EXT;
+		$name = $de_name[$id];
 	}	
+	elseif($cat=='m')
+	{
+		$img = IMAGE_PATH."/missiles/missile".$id."_middle.".IMAGE_EXT;
+		$name = $m_name[$id];
+	}		
+	echo "<div class=\"techtreeMainItem\" style=\"background:url('".$img."');\">";
+	echo "<div class=\"techtreeItemName\">".$name."</div>";
+	echo "</div>";	
+	
+	//
+	// Allowed objects
+	// 
 	
 	if ($cat == 'b' || $cat == 't')
 	{
 		if ($cat=='b')
 		{
-			$req_field = "req_req_building_id";
-			$req_level_field = "req_req_building_level";
+			$req_field = "req_building_id";
+			$req_level_field = "req_level";
 		}
 		elseif($cat=='t')
 		{
-			$req_field = "req_req_tech_id";
-			$req_level_field = "req_req_tech_level";
+			$req_field = "req_tech_id";
+			$req_level_field = "req_level";
 		}
 
 
@@ -1263,15 +1279,9 @@ function reqInfo($id,$cat='b')
 		{
 			while($arr=mysql_fetch_assoc($res))
 			{
-				if (isset($bu_name[$arr['req_building_id']]))
+				if (isset($bu_name[$arr['obj_id']]))
 				{
-					$items[] =  "<td style=\"padding:4px;border:1px solid #bbb;background:#eef;width:150px;\">
-					mit Stufe ".$arr[$req_level_field]."<br/><br/>
-					<a href=\"javascript:;\" style=\"color:#00f\" onclick=\"xajax_reqInfo(".$arr['req_building_id'].",'b')\">
-					<img src=\"".IMAGE_PATH."/buildings/building".$arr['req_building_id']."_small.".IMAGE_EXT."\" align=\"middle\"/>
-					</a><br/>
-			 		<b>".$bu_name[$arr['req_building_id']]."</b>			
-					</td>";
+					$items[] = array($arr['obj_id'],$bu_name[$arr['obj_id']],$arr[$req_level_field],IMAGE_PATH."/buildings/building".$arr['obj_id']."_middle.".IMAGE_EXT,"xajax_reqInfo(".$arr['obj_id'].",'b')");
 				}
 			}
 		}
@@ -1281,15 +1291,9 @@ function reqInfo($id,$cat='b')
 		{
 			while($arr=mysql_fetch_assoc($res))
 			{
-				if (isset($te_name[$arr['req_tech_id']]))
+				if (isset($te_name[$arr['obj_id']]))
 				{
-					$items[] =  "<td style=\"padding:4px;border:1px solid #bbb;background:#efe;width:150px;\">
-					mit Stufe ".$arr[$req_level_field]."<br/><br/>
-					<a href=\"javascript:;\" style=\"color:#00f\" onclick=\"xajax_reqInfo(".$arr['req_tech_id'].",'t')\">
-					<img src=\"".IMAGE_PATH."/technologies/technology".$arr['req_tech_id']."_small.".IMAGE_EXT."\" align=\"middle\"/>
-					</a><br/>
-			 		<b>".$te_name[$arr['req_tech_id']]."</b>			
-					</td>";
+					$items[] = array($arr['obj_id'],$te_name[$arr['obj_id']],$arr[$req_level_field],IMAGE_PATH."/technologies/technology".$arr['obj_id']."_middle.".IMAGE_EXT,"xajax_reqInfo(".$arr['obj_id'].",'t')");
 				}
 			}
 		}
@@ -1299,15 +1303,9 @@ function reqInfo($id,$cat='b')
 		{
 			while($arr=mysql_fetch_assoc($res))
 			{
-				if (isset($sh_name[$arr['req_ship_id']]))
+				if (isset($sh_name[$arr['obj_id']]))
 				{
-					$items[] =  "<td style=\"padding:4px;border:1px solid #bbb;background:#fee;width:150px;\">
-					mit Stufe ".$arr[$req_level_field]."<br/><br/>
-					<a href=\"javascript:;\" style=\"color:#00f\" onclick=\"xajax_reqInfo(".$arr['req_ship_id'].",'s')\">
-					<img src=\"".IMAGE_PATH."/ships/ship".$arr['req_ship_id']."_small.".IMAGE_EXT."\" align=\"middle\"/>
-					</a><br/>
-			 		<b>".$sh_name[$arr['req_ship_id']]."</b>			
-					</td>";
+					$items[] = array($arr['obj_id'],$sh_name[$arr['obj_id']],$arr[$req_level_field],IMAGE_PATH."/ships/ship".$arr['obj_id']."_middle.".IMAGE_EXT,"xajax_reqInfo(".$arr['obj_id'].",'s')");
 				}
 			}
 		}
@@ -1319,47 +1317,49 @@ function reqInfo($id,$cat='b')
 			{
 				if (isset($de_name[$arr['obj_id']]))
 				{
-					$items[] =  "<td style=\"padding:4px;border:1px solid #bbb;background:#ffe;width:150px;\">
-					mit Stufe ".$arr[$req_level_field]."<br/><br/>
-					<a href=\"javascript:;\" style=\"color:#00f\" onclick=\"xajax_reqInfo(".$arr['obj_id'].",'d')\">
-					<img src=\"".IMAGE_PATH."/defense/def".$arr['obj_id']."_small.".IMAGE_EXT."\" align=\"middle\"/>
-					</a><br/>
-			 		<b>".$de_name[$arr['obj_id']]."</b>			
-					</td>";
+					$items[] = array($arr['obj_id'],$de_name[$arr['obj_id']],$arr[$req_level_field],IMAGE_PATH."/defense/def".$arr['obj_id']."_middle.".IMAGE_EXT,"xajax_reqInfo(".$arr['obj_id'].",'d')");
 				}
 			}
 		}	
+		$res = dbquery("SELECT * FROM missile_requirements WHERE ".$req_field."=".$id." ORDER BY ".$req_level_field.";");
+		$nr = mysql_num_rows($res);
+		if ($nr>0)
+		{
+			while($arr=mysql_fetch_assoc($res))
+			{
+				if (isset($m_name[$arr['obj_id']]))
+				{
+					$items[] = array($arr['obj_id'],$m_name[$arr['obj_id']],$arr[$req_level_field],IMAGE_PATH."/missiles/missile".$arr['obj_id']."_middle.".IMAGE_EXT,"xajax_reqInfo(".$arr['obj_id'].",'m')");
+				}
+			}
+		}			
 		
 		if (count($items)>0)
 		{	
-			echo "ermöglicht<br/><br/>
-			<table style=\"margin:0px auto;\"><tr>";
-			$cnt=0;
+			echo "<div style=\"margin:10px auto;\">ermöglicht</div>";
+
+			echo "<div class=\"techtreeItemContainer\">";
+			$cnt = 0;
 			foreach ($items as $i)
 			{
-				echo $i;
+				echo "<div class=\"techtreeItem\" style=\"background:url('".$i[3]."');\">
+				<div class=\"techtreeItemLevel\">Ab Lvl <b>".$i[2]."</b></div>	
+				<a href=\"javascript:;\" onclick=\"".$i[4]."\" style=\"height:100%;display:block;\"></a>			
+				<div class=\"techtreeItemName\">".$i[1]."</div>				
+				</div>";
 				$cnt++;
-				if ($cnt==4)
-				{
-					echo "</tr><tr>";
-					$cnt=0;
-				}
+				
 			}
-			if ($cnt<4)
-			{
-				for ($x=$cnt;$x<=4;$x++)
-				{
-					echo "<td></td>";
-				}
-			}
-			echo "</tr></table>";
+			echo "<br style=\"clear:both;\"";
+			echo "</div>";
 		}
 	}
 
-	
+
 	$out=ob_get_clean();
 	$or->assign('reqInfo','innerHTML',$out);	
 	return $or;	
 }
+
 
 ?>

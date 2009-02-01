@@ -66,7 +66,7 @@
 						$tech[$parr['point_timestamp']]=$parr['point_tech_points'];
 						$buildings[$parr['point_timestamp']]=$parr['point_building_points'];
 					}
-					echo "<table width=\"400\" cellspacing=\"".TBL_SPACING."\" cellpadding=\"".TBL_PADDING."\" class=\"tbl\">";
+					echo "<table width=\"400\" class=\"tbl\">";
 					echo "<tr><th class=\"tbltitle\">Datum</th><th class=\"tbltitle\">Zeit</th><th class=\"tbltitle\">Punkte</th><th class=\"tbltitle\">Flotte</th><th class=\"tbltitle\">Forschung</th><th class=\"tbltitle\">Geb&auml;ude</th></tr>";
 					foreach ($points as $time=>$val)
 					{

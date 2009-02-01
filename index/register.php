@@ -58,7 +58,7 @@
 			$userEmail = isset($_SESSION['REGISTER']['register_user_email']) ? $_SESSION['REGISTER']['register_user_email'] : '';
 			
 			
-			echo 'Melde dich hier für die '.GAMEROUND_NAME.' von '.$conf['game_name']['v'].' an. Es sind noch <b>'.max($conf['enable_register']['p2']-$ucnt[0],0).'</b> von <b>'.$conf['enable_register']['p2'].'</b> Plätzen frei!<br/><br/>';
+			echo 'Melde dich hier für die '.ROUNDID.' von '.$conf['game_name']['v'].' an. Es sind noch <b>'.max($conf['enable_register']['p2']-$ucnt[0],0).'</b> von <b>'.$conf['enable_register']['p2'].'</b> Plätzen frei!<br/><br/>';
 			echo "<form action=\"?index=register\" method=\"post\"><div>";
 			echo "<table style=\"margin:5px auto;width:700px;\">";
 			

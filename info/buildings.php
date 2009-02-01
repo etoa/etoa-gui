@@ -284,11 +284,11 @@ if (isset($_GET['id']))
     elseif ($arr['building_id']==16)
     {
     	$pbarr = mysql_fetch_row(dbquery("SELECT building_store_metal FROM buildings WHERE building_id=6;"));
-      tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf(STD_FIELDS).") des Planeten)");
+      tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf($conf["def_store_capacity"]["v"]).") des Planeten)");
 	    echo "<tr><th>Stufe</th><th>Kapazit&auml;t</th></tr>";
 	    for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
 	    {
-	      $prod_item = STD_FIELDS + $pbarr[0] + round($arr['building_store_metal'] * pow($arr['building_store_factor'],$level-1));
+	      $prod_item = $conf["def_store_capacity"]["v"] + $pbarr[0] + round($arr['building_store_metal'] * pow($arr['building_store_factor'],$level-1));
 	      if($level==$currentLevel)
 	         echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
 	      else
@@ -301,11 +301,11 @@ if (isset($_GET['id']))
     elseif ($arr['building_id']==17)
     {
     	$pbarr = mysql_fetch_row(dbquery("SELECT building_store_crystal FROM buildings WHERE building_id=6;"));
-      tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf(STD_FIELDS).") des Planeten)");
+      tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf($conf["def_store_capacity"]["v"]).") des Planeten)");
 	    echo "<tr><th>Stufe</th><th>Kapazit&auml;t</th></tr>";
 	    for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
 	    {
-	      $prod_item = STD_FIELDS + $pbarr[0] + round($arr['building_store_crystal'] * pow($arr['building_store_factor'],$level-1));
+	      $prod_item = $conf["def_store_capacity"]["v"] + $pbarr[0] + round($arr['building_store_crystal'] * pow($arr['building_store_factor'],$level-1));
 	      if($level==$currentLevel)
 	         echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
 	      else
@@ -318,11 +318,11 @@ if (isset($_GET['id']))
     elseif ($arr['building_id']==18)
     {
 	    $pbarr = mysql_fetch_row(dbquery("SELECT building_store_plastic FROM buildings WHERE building_id=6;"));
-	    tableStart("Kapazit&auml;t inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf(STD_FIELDS).")");
+	    tableStart("Kapazit&auml;t inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf($conf["def_store_capacity"]["v"]).")");
 	    echo "<tr><th>Stufe</th><th>Kapazit&auml;t</th></tr>";
 	    for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
 	    {
-	      $prod_item = STD_FIELDS + $pbarr[0] + round($arr['building_store_plastic'] * pow($arr['building_store_factor'],$level-1));
+	      $prod_item = $conf["def_store_capacity"]["v"] + $pbarr[0] + round($arr['building_store_plastic'] * pow($arr['building_store_factor'],$level-1));
 	      if($level==$currentLevel)
 	         echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
 	      else
@@ -335,11 +335,11 @@ if (isset($_GET['id']))
     elseif ($arr['building_id']==19)
     {
 	    $pbarr = mysql_fetch_row(dbquery("SELECT building_store_food FROM buildings WHERE building_id=6;"));
-      tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf(STD_FIELDS).") des Planeten)");
+      tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf($conf["def_store_capacity"]["v"]).") des Planeten)");
 	    echo "<tr><th>Stufe</th><th>Kapazit&auml;t</th></tr>";
 	    for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
 	    {
-	      $prod_item = STD_FIELDS + $pbarr[0] + round($arr['building_store_food'] * pow($arr['building_store_factor'],$level-1));
+	      $prod_item = $conf["def_store_capacity"]["v"] + $pbarr[0] + round($arr['building_store_food'] * pow($arr['building_store_factor'],$level-1));
 	      if($level==$currentLevel)
 	         echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
 	      else
@@ -352,11 +352,11 @@ if (isset($_GET['id']))
     elseif ($arr['building_id']==20)
     {
 	    $pbarr = mysql_fetch_row(dbquery("SELECT building_store_fuel FROM buildings WHERE building_id=6;"));
-	    tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf(STD_FIELDS).") des Planeten)");
+	    tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf($conf["def_store_capacity"]["v"]).") des Planeten)");
 	    echo "<tr><th>Stufe</th><th>Kapazit&auml;t</th></tr>";
 	    for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
 	    {
-	      $prod_item = STD_FIELDS + $pbarr[0] + round($arr['building_store_fuel'] * pow($arr['building_store_factor'],$level-1));
+	      $prod_item = $conf["def_store_capacity"]["v"] + $pbarr[0] + round($arr['building_store_fuel'] * pow($arr['building_store_factor'],$level-1));
 	      if($level==$currentLevel)
 	         echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
 	      else

@@ -32,19 +32,11 @@
 	// Basic stuff
 	//
 
-	define('USE_HTML',true);
-
-	//Fehler ausgabe definiert (Lamborghini)
-  ini_set('display_errors', 1);
-	ini_set('arg_separator.output',  '&amp;');
+	require_once("global.inc.php");
 
 	// Session-Cookie setzen
 	session_start();
 
-	// Zufallsgenerator initialisieren
-	mt_srand(time());
-
-	define('IS_ADMIN_MODE',false);
 
 	// Funktionen und Config einlesen
 	require_once("functions.php");
@@ -181,6 +173,13 @@
 	$referer_allow=false;
 	if (isset($_SERVER["HTTP_REFERER"]))
 	{
+	// Referers
+		$referers=explode("\n",$conf['referers']['v']);
+		foreach ($referers as $k=>&$v)
+		{
+			$referers[$k] = trim($v);
+		}
+		unset($v);
 		foreach ($referers as &$rfr)
 		{
 			if (substr($_SERVER["HTTP_REFERER"],0,strlen($rfr))==$rfr)

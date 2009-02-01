@@ -80,7 +80,7 @@
 					</tr>
 					<tr>
 						<td id="logo">&nbsp;</td>
-						<td id="banner" colspan="2"><?PHP echo GAMEROUND_NAME;?></td>
+						<td id="banner" colspan="2"><?PHP echo ROUNDID;?></td>
 					</tr>
 					<tr>
 						<td id="menu1">
@@ -135,8 +135,6 @@
 									}
 								}
 
-								echo "<br/>";
-
 								// Online
 
 								$ures=dbquery("SELECT count(*) FROM users;");
@@ -162,7 +160,6 @@
 
 
 
-								echo "<div class=\"menutitle\">Status:</div>";
 								$gres=dbquery("SELECT COUNT(*) FROM users WHERE user_acttime>".(time()-$conf['user_timeout']['v']).";");
 								$garr=mysql_fetch_row($gres);
 								if ($uarr[0]>0)
@@ -179,6 +176,7 @@
 									$ap=0;
 									
 								echo "<table class=\"tb\">";
+								echo "<tr><th colspan=\"3\">Online</th></tr>";
 								if (UNIX)
 								{
 									echo "<tr><th><a href=\"?page=home&amp;sub=daemon\">Backend:</a></th>";
@@ -200,8 +198,8 @@
 								$o_style=" style=\"color:#fa0\"";
 								$r_style=" style=\"color:#f55\"";
 
-								echo "<br/><div class=\"menutitle\">User-Statisik:</div>";
 								echo "<table class=\"tb\">";
+								echo "<tr><th colspan=\"3\">User-Statisik</th></tr>";
 								echo "<tr><th>User:</th>";
 								if ($up<0.5) $tbs=$g_style;
 								elseif ($up<0.8) $tbs=$y_style;
@@ -222,8 +220,8 @@
 								echo "<td $tbs>".$s1arr." / ".$s2arr[0]."</td><td $tbs>".round($sp*100,1)."%</td></tr>";
 								echo "</table>";
 
-								echo "<br/><div class=\"menutitle\">System:</div>";
 								echo "<table class=\"tb\">";
+								echo "<tr><th colspan=\"3\">System</th></tr>";
 								if (UNIX)
 								{
 									$un=posix_uname();

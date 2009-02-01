@@ -35,7 +35,7 @@
 		if ($logo==1)
 		{
 			echo "<div  style=\"text-align:center\"><br/><a href=\"..\"><img src=\"../images/game_logo.jpg\" alt=\"Logo\" width=\"450\" height=\"150\" border=\"0\" /></a>";
-			echo "<h1 style=\"text-align:center\">Administration - ".GAMEROUND_NAME."</h1><br/>";
+			echo "<h1 style=\"text-align:center\">Administration - ".ROUNDID."</h1><br/>";
 		}
 		if ($str!="")
 		{
@@ -142,7 +142,7 @@
 	
 	if (isset($_SESSION[SESSION_NAME]['key']) && $_SESSION[SESSION_NAME]['key']!="")
 	{
-		if (substr($_SESSION[SESSION_NAME]['key'],64,32)==md5(GAMEROUND_NAME) && substr($_SESSION[SESSION_NAME]['key'],96,32)==md5($_SERVER['REMOTE_ADDR']) && substr($_SESSION[SESSION_NAME]['key'],128,32)==md5($_SERVER['HTTP_USER_AGENT']) && substr($_SESSION[SESSION_NAME]['key'],160)==session_id())
+		if (substr($_SESSION[SESSION_NAME]['key'],64,32)==md5(ROUNDID) && substr($_SESSION[SESSION_NAME]['key'],96,32)==md5($_SERVER['REMOTE_ADDR']) && substr($_SESSION[SESSION_NAME]['key'],128,32)==md5($_SERVER['HTTP_USER_AGENT']) && substr($_SESSION[SESSION_NAME]['key'],160)==session_id())
 		{
 			$res = dbquery("SELECT * FROM ".USER_TABLE_NAME.",admin_groups WHERE MD5(user_id)='".substr($_SESSION[SESSION_NAME]['key'],32,32)."' AND MD5(user_last_login)='".substr($_SESSION[SESSION_NAME]['key'],0,32)."' AND user_admin_rank=group_id AND user_locked=0;");
 			if (mysql_num_rows($res)>0)
@@ -190,7 +190,7 @@
 							// Session-Array mit Userdaten generieren
 							create_sess_array($arr);
 			  			// Eindeutige ID für diese Session generieren
-			  			$_SESSION[SESSION_NAME]['key']=md5($login_time).md5($arr['user_id']).md5(GAMEROUND_NAME).md5($_SERVER['REMOTE_ADDR']).md5($_SERVER['HTTP_USER_AGENT']).session_id();
+			  			$_SESSION[SESSION_NAME]['key']=md5($login_time).md5($arr['user_id']).md5(ROUNDID).md5($_SERVER['REMOTE_ADDR']).md5($_SERVER['HTTP_USER_AGENT']).session_id();
 			  			// Loginzeit in DB speichern
 			  			dbquery ("UPDATE ".USER_TABLE_NAME." SET user_last_login=".$login_time.",user_acttime=".time().",user_session_key='".$_SESSION[SESSION_NAME]['key']."',user_ip='".$_SERVER['REMOTE_ADDR']."',user_hostname='".$_SERVER['REMOTE_ADDR']."' WHERE user_id=".$arr['user_id'].";");
 				  		dbquery ("INSERT INTO  admin_user_log (log_user_id,log_logintime,log_ip,log_hostname,log_session_key) VALUES (".$arr['user_id'].",".time().",'".$_SERVER['REMOTE_ADDR']."','".$_SERVER['REMOTE_ADDR']."','".$_SESSION[SESSION_NAME]['key']."');");
@@ -226,7 +226,7 @@
 		adminHtmlHeader();
 		echo "<div style=\"width:500px;margin:10px auto;text-align:center;\">" .
 		"<br/><a href=\"..\"><img src=\"../images/game_logo.jpg\" alt=\"Logo\" width=\"450\" height=\"150\" border=\"0\" /></a>";
-		echo "<h1 style=\"text-align:center;\">Administration - ".GAMEROUND_NAME."</h1>
+		echo "<h1 style=\"text-align:center;\">Administration - ".ROUNDID."</h1>
 		<h2 style=\"text-align:center;\">Passwort senden</h2>";
 		if (isset($_POST['sendpass_submit']))
 		{
@@ -235,10 +235,10 @@
 			{
 				$arr = mysql_fetch_row($res);			
 				$pw = mt_rand(1000000,9999999);
-				$msg = "Hallo ".$arr[1].".\n\nDu hast für die Administration der ".GAMEROUND_NAME." von EtoA ein neues Passwort angefordert.\n\n";
+				$msg = "Hallo ".$arr[1].".\n\nDu hast für die Administration der ".ROUNDID." von EtoA ein neues Passwort angefordert.\n\n";
 				$msg.= "Das neue Passwort lautet: $pw\n\n";
 				$msg.= "Diese Anfrage wurde am ".date("d.m.Y")." um ".date("H:i")." Uhr vom Computer ".resolveIp($_SERVER['REMOTE_ADDR'])." aus in Auftrag gegeben.\nBitte denke daran, das Passwort nach dem ersten Login zu ändern!";
-				send_mail(0,$arr[2],"Neues Administrationspasswort ".GAMEROUND_NAME."",$msg,'','');
+				send_mail(0,$arr[2],"Neues Administrationspasswort ".ROUNDID."",$msg,'','');
 				echo "Das Passwort wurde geändert und dir per Mail zugestellt!<br/><br/>";
 				echo "<input type=\"button\" value=\"Zum Login\" onclick=\"document.location='?'\" />";
 				dbquery("
@@ -287,7 +287,7 @@
 			{
 				echo "<div style=\"width:500px;margin:10px auto;text-align:center;\">" .
 				"<br/><a href=\"..\"><img src=\"../images/game_logo.jpg\" alt=\"Logo\" width=\"450\" height=\"150\" border=\"0\" /></a>";
-				echo "<h1 style=\"text-align:center;\">Administration - ".GAMEROUND_NAME."</h1>";
+				echo "<h1 style=\"text-align:center;\">Administration - ".ROUNDID."</h1>";
 				echo "<form action=\"?\" method=\"post\">";			
 				echo "<h2 style=\"text-align:center;\">Admin-User erstellen</h2>";
 				echo '<table class="tb" style="width:400px;margin:10px auto;">';

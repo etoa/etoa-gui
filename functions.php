@@ -89,7 +89,7 @@
 		$query_counter=0;
 		try
 		{
-			if (!$db_handle = mysql_connect(DB_SERVER,DB_USER,DB_PASSWORD))
+			if (!$db_handle = @mysql_connect(DB_SERVER,DB_USER,DB_PASSWORD))
 			{
 				throw new DBException("Zum Datenbankserver auf <b>".DB_SERVER."</b> kann keine Verbindung hergestellt werden!");	
 			}

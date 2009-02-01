@@ -321,7 +321,7 @@
 		<input type=\"radio\" name=\"enable\" value=\"0\" ".($cfg->param1("info")!=1 ? ' checked="checked"' :'')." /> Verstecken<br/><br/>";
 
 		echo "<textarea name=\"config_value\" cols=\"120\" rows=\"20\">".$cfg->value('info')."</textarea><br/><br/>";
-		echo "<input type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" class=\"button\" />";
+		echo "<input type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" />";
 		echo "</form>";	
 	}	
 	
@@ -337,12 +337,18 @@
 			$cfg->set("system_message",$_POST['config_value']);
 			success_msg("Nachricht geändert!");
 		}		
+		if (isset($_POST['saveclear']))
+		{
+			$cfg->set("system_message","");
+			success_msg("Nachricht gelöscht!");
+		}		
+		
     echo "<form action=\"?page=$page&sub=$sub\" method=\"post\">";
 		$res = dbquery("SELECT * FROM config WHERE config_name='system_message';");
 		if (mysql_num_rows($res)>0)
 		{
 			$arr = mysql_fetch_array($res);
-			echo "Erscheint sofort auf jeder Seite im Spiel:<br/><br/>";
+			echo "Diese Nachricht erscheint sofort auf jeder Seite im Spiel:<br/><br/>";
 			if ($arr['config_value']!="")
 			{
 				iBoxStart("Vorschau");
@@ -350,7 +356,8 @@
 				iBoxEnd();
 			}
 			echo "<textarea name=\"config_value\" cols=\"100\" rows=\"15\">".$arr['config_value']."</textarea><br/><br/>";
-			echo "<input type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" class=\"button\" />";
+			echo "<input type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" /> &nbsp; 
+			<input type=\"submit\" name=\"saveclear\" value=\"Löschen\" />";
 		}
 		else
 		{
@@ -383,7 +390,7 @@
 				iBoxEnd();
 			}
 			echo "<textarea name=\"config_value\" cols=\"100\" rows=\"15\">".$arr['config_value']."</textarea><br/><br/>";
-			echo "<input type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" class=\"button\" />";
+			echo "<input type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" />";
 		}
 		else
 			echo "Es ist kein Datensatz vorhanden!";

@@ -28,178 +28,7 @@
 	// 	Die Datei wird auf einer Shell aufgerufen (via Cron-Job realisiert)
 	//	Sie wird jede Stunde aufgerufen
 
-	function update_day()
-	{
-		global $conf;
-
-	 	// Inaktive User löschen
-		$tmr = timerStart();
-		$ui = Users::removeInactive();
-		$ud = Users::removeDeleted();
-		$log = "Inaktive und als gelöscht markierte User gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
-
-		// Alte Benuterpunkte-Logs löschen
-		$tmr = timerStart();
-		$nr = Users::cleanUpPoints();
-		$log.= "$nr alte Userpunkte-Logs gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
-
-		// Alte Session-Logs
-		$tmr = timerStart();
-		$nr = Users::cleanUpSessionLogs();
-		$log.= "$nr alte Session-Logs gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
-		
-		// Alte Logs löschen
-		$tmr = timerStart();
-		$nr = Log::removeOld();
-		$log.= "$nr alte Logs gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
-
-		// Alte Nachrichten löschen
-		$tmr = timerStart();
-		Message::removeOld();
-		$log.= "Alte Nachrichten gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
-
-		// Abgelaufene Sperren löschen
-		$tmr = timerStart();
-		Users::removeOldBanns();
-		$log.= "Abgelaufene Sperren gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
-
-		// Tabellen optimieren
-		$tmr = timerStart();
-		optimize_tables();
-		$log.= "Tabellen optimiert.\nDauer: ".timerStop($tmr)." sec\n\n";
-
-		// Remove old ip-hostname combos from cache
-		$res = dbquery("
-		DELETE FROM
-			hostname_cache
-		WHERE
-			timestamp<".(time()-86400)."
-		");
-
-		return $log;
-	}
-
-
-	function update_hour()
-	{
-		global $conf;
-
-		// Punkteberechnung
-		$tmr = timerStart();
-		Ranking::calc();
-		if (ENABLE_USERTITLES==1)
-		{
-			Ranking::calcTitles();
-		}
-		$log = "\nPunkte aktualisiert.\nDauer: ".timerStop($tmr)." sec\n\n";
-
-		// Wurmlöcher vertauschen
-		//$tmr = timerStart();
-		//Wormhole::randomize();
-		//$log.= "Wurml&ouml;cher vertauscht.\nDauer: ".timerStop($tmr)." sec\n\n";
-
-		// Closes all open tables, forces all tables in use to be closed, and flushes the query cache.
-		dbquery("FLUSH TABLES");
-
-		return $log;
-	}
-
-
-	function update_30minute()
-	{
-		global $conf;
-
-		// Objekt updaten
-		//$tmr = timerStart();
-		//$obu = updateAllObjects();
-		//$log = "Objekte auf ".$obu." Planeten aktualisiert.\nDauer: ".timerStop($tmr)." sec\n\n";
-
-		return $log;
-	}
-
-
-	function update_5minute()
-	{
-		global $conf;
-
-		// User Statistik speichern
-		$rres=dbquery("SELECT COUNT(user_id) FROM users;");
-		$rarr=mysql_fetch_row($rres);
-		$gres=dbquery("SELECT COUNT(user_id) FROM users WHERE user_acttime>".(time()-$conf['user_timeout']['v']).";");
-		$garr=mysql_fetch_row($gres);
-		dbquery("INSERT INTO user_onlinestats (stats_timestamp,stats_count,stats_regcount) VALUES (".time().",".$garr[0].",".$rarr[0].");");
-		$log = "\nUser-Statistik: ".$garr[0]." User online, ".$rarr[0]." User registriert\n\n";
-
-		// Ressourcen updaten
-		//$tmr = timerStart();
-		//$ecu = updateAllEconomy();
-		//$log.= "Wirtschaft auf ".$ecu." Planeten aktualisiert.\nDauer: ".timerStop($tmr)." sec\n\n";
-
-		// Gasplaneten updaten
-		//$tmr = timerStart();
-		//$gu = updateGasPlanets();
-		$log.= "Gasvorkommen auf ".$gu." Gasplaneten aktualisiert.\nDauer: ".timerStop($tmr)." sec\n\n";
-		
-		//Marktupdate
-		//$tmr = timerStart();
-		//market_update();
-		//$log.= "Markt aktualisiert.\nDauer: ".timerStop($tmr)." sec\n\n";		
-		
-		// Krieg-Frieden-Update
-		$tmr = timerStart();
-		$nr = warpeace_update();
-		$log.= "$nr Krieg und Frieden aktualisiert.\nDauer: ".timerStop($tmr)." sec\n\n";		
-		
-		// Chat-Cleanup
-		$res = dbquery("SELECT id FROM chat ORDER BY id DESC LIMIT 200,1");
-		if (mysql_num_rows($res)>0)
-		{
-			$arr=mysql_fetch_row($res);
-			dbquery("DELETE FROM chat WHERE id < ".$arr[0]);		
-		}
-
-		// Userstats
-		UserStats::generateImage(GAME_ROOT_DIR."/".USERSTATS_OUTFILE);
-		UserStats::generateXml(GAME_ROOT_DIR."/".XML_INFO_FILE);
-
-		return $log;
-	}
-
-	function update_minute()
-	{
-		global $conf;
-
-		// Zufalls-Event auslösen
-		//PlanetEventHandler::doEvent(RANDOM_EVENTS_PER_UPDATE);
-
-		$nr = warpeace_update();
-		
-		// Mailqueue abarbeiten
-		$tmr = timerStart();
-		$cnt = mail_queue_send($conf['mailqueue']['v']);
-		$log = "Die E-Mail-Warteschlange wurde abgearbeitet, [b]".$cnt."[/b] Mails versendet!\nDauer: ".timerStop($tmr)." sec\n\n";
-
-		// Flotten updaten
-		$tmr = timerStart();
-
-		check_missiles();
-      
-     /*  
-    $fa = updateAllFleet();
-    $log .= "Es wurden [b]".$fa[0]."[/b] Flotten aktualisiert!\n";
-    $log .= "Dauer: ".timerStop($tmr)." sec\n";
-    for ($i=0;$i<$fa[0];$i++)
-    {
-        $log .= "Flotte [b]".$fa[1][$i]."[/b]\n";
-    }
-		*/
-
-		chatUserCleanUp();
-
-		return $log;
-	}
-
-
+	define(USE_HTML,false);
 
 	// Gamepfad feststellen
 	if ($_SERVER['argv'][1]!="")
@@ -216,131 +45,101 @@
 		else
 			$grd = substr($_SERVER["SCRIPT_FILENAME"],0,$c-1);
 	}
-
+	
 	define("GAME_ROOT_DIR",$grd);
+	chdir($grd);
 
 	// Initialisieren
-	if (include(GAME_ROOT_DIR."/functions.php"))
+	if (include("conf.inc.php"))
 	{
-		include(GAME_ROOT_DIR."/conf.inc.php");
+		include("global.inc.php");
+		include("functions.php")
+
 		dbconnect();
-		if (!defined('CLASS_ROOT'))	
-			define('CLASS_ROOT',GAME_ROOT_DIR.'/classes');
 		$conf = get_all_config();
-		include(GAME_ROOT_DIR."/def.inc.php");
-
-		define(USE_HTML,false);
-	
-		chdir(GAME_ROOT_DIR);
-
+		include("def.inc.php");
 
 		// Prüfen ob Updates eingeschaltet sind
 		if ($conf['update_enabled']['v']==1)
 		{
+			// Mutex holen
+			$log = " Warte auf Mutex...";
+			$mtx = new Mutex();
+			$mtx->acquire();
+			$log .= " Mutex erhalten in ".timerStop($tmr)."s, beginne Update...\n\n";
+			
+			// Starte Zeitmessung
+			$tmr = timerStart();
 
-      // Löst die Updates, falls diese +5 Minuten gesperrt sind
-      //Allgemeinte Updates
-      if ($conf['updating']['v']!=0 && ($conf['updating']['p2']=="" || $conf['updating']['p2']<time()-300))
-      {
-          dbquery("UPDATE config SET config_value=0 WHERE config_name='updating';");
-      }
-
-			// Prüfen ob nicht bereits ein Update läuft
-			if ($conf['updating']['v']==0)
+			// Tages-Update (03:13)
+			if (date("H")=="03" && date("i")=="13")
 			{
-				// Update-Flag setzen
-				dbquery("UPDATE config SET config_value=1,config_param2=".time()." WHERE config_name='updating';");
-
-				// Messung starten
-				$tmr = timerStart();
-
-				//
-				// Tages-Update (03:13)
-				//
-				if (date("H")=="03" && date("i")=="13")
-				{
-					$logt = "[b]Tages-Update ".date("d.m.Y, H:i")."[/b]\n";
-					$log = update_minute();
-					$log .= update_day();
-				}
-
-				//
-				// Stunden-Update
-				//
-				elseif (date("i")=="00")
-				{
-					$logt = "[b]Stunden-Update ".date("H:i")."[/b]\n";
-					$log = update_minute();
-					$log .= update_5minute();
-					//$log .= update_minute();
-					$log .= update_30minute();
-					//$log .= update_minute();
-					$log .= update_hour();
-				}
-
-				//
-				// 30-Minuten-Update
-				//
-				elseif (date("i")=="30")
-				{
-					$logt = "[b]30-Minuten-Update ".date("H:i")."[/b]\n";
-					$log = update_minute();
-					$log .= update_5minute();
-					//$log .= update_minute();
-					$log .= update_30minute();
-				}
-				//
-				// 5-Minuten-Update
-				//
-				elseif (date("i")%5==0 && date("i")!=30)
-				{
-					$logt = "[b]5-Minuten-Update ".date("H:i")."[/b]\n";
-					
-					$log = update_minute();
-					$log .= update_5minute();
-				}
-
-				//
-				// Minuten-Update
-				//
-				else
-				{
-					$logt = "[b]Minuten-Update ".date("H:i")."[/b]\n";
-					$log = update_minute();
-				}
-
-				//
-				// 3-nach Update
-				//
-				if (date("i")=="3") 
-				{
-					// Statistiken generieren und speichern
-					Gamestats::generateAndSave(GAME_ROOT_DIR."/".GAMESTATS_FILE);					
-				}
-
-
-
-				// Log schreiben
-				if (LOG_UPDATES)
-					add_log (15,$logt."Gesamtdauer: ".timerStop($tmr)."\n\n".$log,time());
-
-				//Löscht Arrays (gibt Speicher wieder frei)
-				unset($log);
-
-				// Update-Flag löschen
-				dbquery("UPDATE config SET config_value=0 WHERE config_name='updating';");
+				$logt = "[b]Tages-Update ".date("d.m.Y, H:i")."[/b]\n";
+				$log .= update_minute();
+				$log .= update_day();
 			}
+
+			// Stunden-Update
+			elseif (date("i")=="00")
+			{
+				$logt = "[b]Stunden-Update ".date("H:i")."[/b]\n";
+				$log .= update_minute();
+				$log .= update_5minute();
+				$log .= update_30minute();
+				$log .= update_hour();
+			}
+
+			// 30-Minuten-Update
+			elseif (date("i")=="30")
+			{
+				$logt = "[b]30-Minuten-Update ".date("H:i")."[/b]\n";
+				$log .= update_minute();
+				$log .= update_5minute();
+				$log .= update_30minute();
+			}
+
+			// 5-Minuten-Update
+			elseif (date("i")%5==0 && date("i")!=30)
+			{
+				$logt = "[b]5-Minuten-Update ".date("H:i")."[/b]\n";
+				$log .= update_minute();
+				$log .= update_5minute();
+			}
+
+			// Minuten-Update
 			else
 			{
-				$str= "Update-Überschneidung. Das Update vom ".date("d.m.Y, H:i")." wird nicht ausgeführt!";
-				add_log (15,$str,time());
+				$logt = "[b]Minuten-Update ".date("H:i")."[/b]\n";
+				$log .= update_minute();
 			}
+
+			// 3-nach Update
+			if (date("i")=="3") 
+			{
+				// Statistiken generieren und speichern
+				Gamestats::generateAndSave(GAME_ROOT_DIR."/".GAMESTATS_FILE);					
+			}
+
+			// Log schreiben
+			$t = timerStop($tmr);
+			if (LOG_UPDATES || $t > LOG_UPDATES_THRESHOLD)
+			{
+				add_log (15,$logt."Gesamtdauer: ".$t."\n\n".$log);
+			}
+			//Löscht Arrays (gibt Speicher wieder frei)
+			unset($log);
+
+			// Mutex freigeben
+			$mtx->release();
 		}
 
 		// DB schliessen
 		dbclose();
 	}
 	else
-		echo "Error: Could not include function file ".GAME_ROOT_DIR."/functions.php\n";
+	{
+		throw new EException("Could not include config file ".$grd."/conf.inc.php\n");
+	}
+		
 
 ?>

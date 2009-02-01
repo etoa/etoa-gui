@@ -1,5 +1,4 @@
 <?PHP
-
 	//////////////////////////////////////////////////
 	//		 	 ____    __           ______       			//
 	//			/\  _`\ /\ \__       /\  _  \      			//
@@ -29,53 +28,25 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/	
 
-	define('GAMEROUND_NAME',ROUNDID);
-
 	// Fehlermeldungs-Level feststellen
 	if (ETOA_DEBUG==1)
 		error_reporting(E_ALL);
 	else
 		error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
-	// OS-Version feststellen
-	if (defined('POSIX_F_OK'))
-	{
-		define('UNIX',true);
-		define('WINDOWS',false);
-		define('UNIX_USER',"etoa");
-		define('UNIX_GROUP',"apache");
-	}
-	else
-	{
-		define('UNIX',false);
-		define('WINDOWS',true);
-	}
 
-	///////////////////////////////////////////////////////////////
-	//////////////            Definitions			            /////////
-	///////////////////////////////////////////////////////////////
+  /***********************************/
+  /* Directory- and file paths       */
+  /***********************************/
 
-	define('REGEXP_NAME','^.[^0-9\'\"\?\<\>\$\!\=\;\&]*$');
-	define('REGEXP_NICK','^.[^\'\"\?\<\>\$\!\=\;\&]*$');
-
-
-	// Homepage
-	define('DEFAULT_PAGE',"overview");
-	
 	// Backup-Dir
 	define('BACKUP_DIR',$conf['backup']['v']);	
-	if (!defined('CACHE_ROOT')) define('CACHE_ROOT','cache');
-	if (!defined('CLASS_ROOT'))	define('CLASS_ROOT','classes');
+
+	// RSS Dir
 	define('RSS_DIR',CACHE_ROOT."/rss");
-	if (!defined('DATA_DIR'))
-		define('DATA_DIR',"data");
 
 	// Townhall-RSS-File
 	define('RSS_TOWNHALL_FILE',RSS_DIR."/townhall.rss");
-	
-  /***********************************/
-  /* Libraries                       */
-  /***********************************/
 	
 	// Smarty Path
 	define('SMARTY_DIR', "libs/smarty/");
@@ -85,20 +56,29 @@
 	// xAjax
 	define('XAJAX_DIR',"libs/xajax");
 
+	// Pfade
+	define("SMILIE_DIR",IMAGE_DIR.DIRECTORY_SEPARATOR."smilies");								// Smilies
+	define("IMAGEPACK_DIRECTORY",IMAGE_DIR.DIRECTORY_SEPARATOR."imagepacks");				// Bilder
+	define("IMAGEPACK_DOWNLOAD_DIRECTORY",CACHE_ROOT."/imagepacks");				// Bilder
+
+  /***********************************/
+  /* Directory names                 */
+  /***********************************/
+
+	define("DESIGN_DIRECTORY","designs");						// CSS Style
+	define("IMAGE_TECHNOLOGY_DIR","technologies");	// Tech Ordner
+	define("IMAGE_SHIP_DIR","ships");								// Schiffe Ordner
+	define("IMAGE_PLANET_DIR","planets");						// Planeten Ordner
+	define("IMAGE_BUILDING_DIR","buildings");				// Gebäude Ordner
+	define("IMAGE_DEF_DIR","defense");							// Def Ordner
+	define("IMAGE_ALLIANCE_BUILDING_DIR","abuildings");	// Allianzgebäude
+
   /***********************************/
   /* Design, Layout, Allgmeine Pfade */
   /***********************************/
   
   // Layout
-	define("TBL_SPACING",$conf['general_table_offset']['v']);		// ???
-	define("TBL_PADDING",$conf['general_table_offset']['p1']);	// ???
 	define ("STATS_NUM_OF_ROWS", $conf['stats_num_rows']['v']); // Statistik Anzahl Zeilen
-
-	// Pfade
-	define("SMILIE_DIR","images/smilies");								// Smilies
-	define("IMAGEPACK_DIRECTORY","images/imagepacks");				// Bilder
-	define("IMAGEPACK_DOWNLOAD_DIRECTORY",CACHE_ROOT."/imagepacks");				// Bilder
-
 
 	// Externe Pfade
 	define("HELPCENTER_URL","http://www.etoa.ch/help/?page=faq");	// Helpcenter Link
@@ -110,8 +90,6 @@
 	define("DEVCENTER_ONCLICK","window.open('".DEVCENTER_PATH."','dev','width=1024,height=768,scrollbars=yes');");	// Entwickler Link
 	define("BUGREPORT_URL","http://dev.etoa.ch:8000/game/wiki/TicketTutorial");
 
-	//define('CHAT_URL',"http://chat.etoa.ch");	// Chat
-	//define('CHAT_ONCLICK',"window.open('".CHAT_URL."','chat','width=900,height=700,scrollbars=yes');");
 	define('CHAT_URL',"chatframe.php");	// Chat
 	define('CHAT_ONCLICK',"parent.top.location='chatframe.php';");
 
@@ -121,27 +99,21 @@
 	define('RULES_URL','http://www.etoa.ch/rules'); // Game-Rules
 	define('RULES_ONCLICK',"window.open('".RULES_URL."','rules','width=600,height=500,scrollbars=yes');");
 
-
-	// Ordner
-	define("DESIGN_DIRECTORY","designs");					// CSS Style
-	define("IMAGE_TECHNOLOGY_DIR","technologies");	// Tech Ordner
-	define("IMAGE_SHIP_DIR","ships");								// Schiffe Ordner
-	define("IMAGE_PLANET_DIR","planets");						// Planeten Ordner
-	define("IMAGE_BUILDING_DIR","buildings");				// Gebäude Ordner
-	define("IMAGE_DEF_DIR","defense");							// Def Ordner
-
-	define('ONLINE_TIME',$conf['online_threshold']['v']);
-
   /*********************/
   /* Zufallsereignisse */
   /*********************/
+
 	define("RANDOM_EVENTS_PER_UPDATE",1);
-
-
 
   /****************************/
   /* Allgemeine Einstellungen */
   /****************************/
+
+	// Homepage
+	define('DEFAULT_PAGE',"overview");
+
+	// Onlinetime-Threshold
+	define('ONLINE_TIME',$conf['online_threshold']['v']);
 
 	//Paswort und Nicklänge
 	define("PASSWORD_MINLENGHT",$conf['password_minlength']['v']); 		// Minimale Passwortlänge
@@ -174,6 +146,20 @@
 	define("RES_5",RES_FOOD);
 	define("RES_6",RES_POWER);
 
+	define('RES_ICON_METAL','<img class="resIcon" src="images/resources/metal_s.png" alt="'.RES_METAL.'" />');
+	define('RES_ICON_CRYSTAL','<img class="resIcon" src="images/resources/crystal_s.png" alt="'.RES_CRYSTAL.'" />');
+	define('RES_ICON_PLASTIC','<img class="resIcon" src="images/resources/plastic_s.png" alt="'.RES_PLASTIC.'" />');
+	define('RES_ICON_FUEL','<img class="resIcon" src="images/resources/fuel_s.png" alt="'.RES_FUEL.'" />');
+	define('RES_ICON_FOOD','<img class="resIcon" src="images/resources/food_s.png" alt="Nahrung" />');
+	define('RES_ICON_POWER','<img class="resIcon" src="images/resources/power_s.png" alt="Energie" />');
+	define('RES_ICON_POWER_USE','<img class="resIcon" src="images/resources/poweru_s.png" alt="Energieverbrauch" />');
+	define('RES_ICON_PEOPLE','<img class="resIcon" src="images/resources/people_s.png" alt="Bevölkerung" />');
+	define('RES_ICON_TIME','<img class="resIcon" src="images/resources/time_s.png" alt="Zeit" />');
+
+
+	// Regular expressions
+	define('REGEXP_NAME','^.[^0-9\'\"\?\<\>\$\!\=\;\&]*$');
+	define('REGEXP_NICK','^.[^\'\"\?\<\>\$\!\=\;\&]*$');
 
 	// Universum
 	define("CELL_NUM_X",$conf['num_of_cells']['p1']);		// Anzahl Zellen x
@@ -185,9 +171,6 @@
 	define("WH_UPDATE_AFFECT_TIME",$conf["wh_update"]["v"]);	// ???
 	define("WH_UPDATE_AFFECT_CNT",$conf["wh_update"]["p1"]);	// ???
 	
-	// Planetenkennungs-Länge
-	define("PLANET_ID_LENGTH",5);	// Länge der Planetenkennung
-
 	// Minimale Sperrzeit für Kolonielöschung
 	define("COLONY_DELETE_THRESHOLD",24*3600*5);
 
@@ -228,21 +211,13 @@
 
 	// Sonstiges
 	define("RECYC_MAX_PAYBACK",0.9);																	// Maxmimale Recyclingtech effizient
-	define("STD_FIELDS",intval($conf["def_store_capacity"]["v"]));		// ???
 	define("PEOPLE_FOOD_USE",$conf["people_food_require"]["v"]);			// Anzahl Nahrung, welche Arbeiter benötigen
-	define("COLLECT_FUEL_MAX_AMOUNT",10000);													// ???
 	define("USER_MAX_PLANETS",$conf["user_max_planets"]["v"]);				// Maximale Anzahl Planeten
 	
 	// Spezialiasten
 	define("SPECIALIST_MIN_POINTS_REQ",100000);												// Minimal Punkte für Spezialist (VERALTET)
 	define('SPECIALIST_MAX_COSTS_FACTOR',5);													// Maximale Kostensteigerung
 	define('SPECIALIST_AVAILABILITY_FACTOR',0.5);											// Verfügbare Spezialisten pro Typ basierend auf Faktor * Anzahl User
-	
-	
-
-	// User Planetwechsel
-	define("MAX_MAINPLANET_CHANGES",20);
-	
 	
 	// Kriegsdauer
 	define("WAR_DURATION",3600*48);
@@ -251,6 +226,8 @@
 	// Tipps beim Start aktivieren
 	define("ENABLE_TIPS",1);
 
+	// Permissions for uploaded files
+	define('FILE_UPLOAD_PERMS',0644); 
 
   /****************************************************/
   /* Startwerte (bei erstellung eines neuen Accounts) */
@@ -273,17 +250,10 @@
 	define("RES_BUILD_TIME",$conf['res_build_time']['v']);					// Forschungsbau Faktor
 	define("SHIP_BUILD_TIME",$conf['ship_build_time']['v']);				// Schiffsbau Faktor
 	define("DEF_BUILD_TIME",$conf['def_build_time']['v']);					// Verteidigungsbau Faktor
-	define("FLIGHT_FLIGHT_TIME",$conf['flight_flight_time']['v']);	// Flugzeit Faktor (wirkt nicht auf Start/Landezeit)
-	define("FLIGHT_START_TIME",$conf['flight_start_time']['v']);		// Startzeit Faktor
-	define("FLIGHT_LAND_TIME",$conf['flight_land_time']['v']);			// Landezeit Faktor
-	define("FLEET_FACTOR_F",$conf['flight_flight_time']['v']);			// ??? doppelt
-	define("FLEET_FACTOR_S",$conf['flight_start_time']['v']);				// ??? doppelt
-	define("FLEET_FACTOR_L",$conf['flight_land_time']['v']);				// ??? doppelt
+	define("FLEET_FACTOR_F",$conf['flight_flight_time']['v']);			// Flugzeit Faktor (wirkt nicht auf Start/Landezeit)
+	define("FLEET_FACTOR_S",$conf['flight_start_time']['v']);				// Startzeit Faktor
+	define("FLEET_FACTOR_L",$conf['flight_land_time']['v']);				// Landezeit Faktor
 	define("BUILDING_QUEUE_DELAY",60);															// Zeitverzögerung zwischen zwei Bauaufträgen in der Warteschlange
-
-
-
-
 
   /****************/
   /* Technologien */
@@ -294,7 +264,7 @@
 	define("WEAPON_TECH_ID",8);								// ID der Waffentechnik
 	define("REGENA_TECH_ID",19);							// ID der Regenatechnik	
 	define("TARN_TECH_ID",11);								// ID der Tarntechnik	
-  define("COMPUTER_TECH_ID",25);                // ID der Tarntechnik  
+  define("COMPUTER_TECH_ID",25);            // ID der Tarntechnik  
 	define("RECYC_TECH_ID",12);								// ID der Recyclingtechnologie	
 	define("BOMB_TECH_ID",15); 								// ID der Bombentechnik
 	define('GEN_TECH_ID',23);									// ID der Gentechnologie
@@ -321,10 +291,7 @@
 	define('SPY_DEFENSE_FACTOR_TECH',20);			// Spionageabwehr: Gewichtung der Technologien
 	define('SPY_DEFENSE_FACTOR_SHIPS',0.5);		// Spionageabwehr: Gewichtung der Sonden
 	define('SPY_DEFENSE_FACTOR_TARN',10);			// Spionageabwehr/Tarnabwehr: Gewichtung der Tarntechnik	
-	
-	
-	
-	
+		
 	
   /***********/
   /* Gebäude */
@@ -348,13 +315,9 @@
 	define("BUILD_CRYPTO_ID",24);									// ID des Kryptocenters
 	define("BUILD_MISSILE_ID",25);								// ID des Raketensilos
 
-	define("BUILD_TECH_ID",14);										// ???
-	
 	// Allianzgebäude
 	define("ALLIANCE_MARKET_ID",2);								// ID des Allianzmarktplatzes
 	define("ALLIANCE_SHIPYARD_ID",3);								// ID des Allianzschiffwerftes
-
-	define("IMAGE_ALLIANCE_BUILDING_DIR","abuildings");
 
 	// Schiffswerft
 	define("SHIPYARD_MIN_BUILD_TIME",20);					// Absolute minimal Bauzeit in Sekunden
@@ -370,10 +333,6 @@
 	define("DEFQUEUE_CANCEL_FACTOR",0.03);				// ???
 	define("DEFQUEUE_CANCEL_END",0.8);						// ???
 
-	// ??? war unter "sonstiges" auch wieder doppel eintrag
-	// DEPRECATED!
-	define("SHIPDEFBUILD_CANCEL_TIME",$conf['shipdefbuild_cancel_time']['v']);	// Abbruchszeit bei einem bauauftrag im Schiffswerft/Waffenfabrik
-
 	// Raketensilo
 	define("MISSILE_SILO_MISSILES_PER_LEVEL",5); 	// Raketen, die pro Stufe im Silo gelagert werden können
 	define("MISSILE_SILO_FLIGHTS_PER_LEVEL",1);		// Anzahl gleichzeitiger Flüge pro Silostufe
@@ -383,15 +342,15 @@
 	define("CRYPTO_RANGE_PER_LEVEL",500);				// Reichweite in AE für Kryptoanalyse pro Ausbaustufe
 	define("CRYPTO_FUEL_COSTS_PER_SCAN",10000);		// Kosten an Tritium pro Kryptoanalyse
 
+	// Resourcenbunker
 	define("RES_BUNKER_ID",26);
 	define("RES_BUNKER_SPACE",5000);
 	define("RES_BUNKER_FACTOR",2);
 
+	// Flottenbunker
 	define("FLEET_BUNKER_ID",27);
 	define("FLEET_BUNKER_SPACE",100000);
 	define("FLEET_BUNKER_FACTOR",2);
-
-
 
   /*************************/
   /* Flotten & Kampfsystem */
@@ -406,7 +365,7 @@
 	// Sonstige Flottendefinitionen
 	define("FLEET_ACTION_LOG_CAT",13);	// Flotten Log ID (Kategorie)
 	define("FLEET_NOCONTROL_NUM",1);		// Anzahl Flotten die OHNE Flottenkontrolle fliegen können
-	define("TECH_SPEED_CAT",1);					// ???
+	define("TECH_SPEED_CAT",1);					// Kategorie der Antriebstechniken
 	define("DEFAULT_ACTION","to");			// Standartflug "Transport hinflug" ??? (wieso das?)
 
 	// Kampfsystem
@@ -419,10 +378,6 @@
 	// Anfängerschutz
 	define("USER_ATTACK_MIN_POINTS",$conf['user_attack_min_points']['v']);		// Absolute Puntktegrenze (momentan ausgeschaltet)
 	define("USER_ATTACK_PERCENTAGE",$conf['user_attack_percentage']['v']); 		// Prozentualer Punkteunterschied
-
-
-
-
 
 
   /*********/
@@ -497,32 +452,21 @@
 	define("ALLIANCE_IMG_MAX_SIZE",2000000);											// Max. Allianzbild-Grösse in Byte
 
 
-	// Icons
-	define('RES_ICON_METAL','<img class="resIcon" src="images/resources/metal_s.png" alt="'.RES_METAL.'" />');
-	define('RES_ICON_CRYSTAL','<img class="resIcon" src="images/resources/crystal_s.png" alt="'.RES_CRYSTAL.'" />');
-	define('RES_ICON_PLASTIC','<img class="resIcon" src="images/resources/plastic_s.png" alt="'.RES_PLASTIC.'" />');
-	define('RES_ICON_FUEL','<img class="resIcon" src="images/resources/fuel_s.png" alt="'.RES_FUEL.'" />');
-	define('RES_ICON_FOOD','<img class="resIcon" src="images/resources/food_s.png" alt="Nahrung" />');
-	define('RES_ICON_POWER','<img class="resIcon" src="images/resources/power_s.png" alt="Energie" />');
-	define('RES_ICON_POWER_USE','<img class="resIcon" src="images/resources/poweru_s.png" alt="Energieverbrauch" />');
-	define('RES_ICON_PEOPLE','<img class="resIcon" src="images/resources/people_s.png" alt="Bevölkerung" />');
-	define('RES_ICON_TIME','<img class="resIcon" src="images/resources/time_s.png" alt="Zeit" />');
-	
   /****************/
   /* Sonstiges */
   /****************/	
 	
+	define('ADD_BANNER','');		// Advertising banner code
 	define('FORCE_ADDS',0); // Banner immer anzeigen
-	
-	define('ERROR_LOGFILE',CACHE_ROOT."/errors.txt");
-	define('DBERROR_LOGFILE',CACHE_ROOT."/dberrors.txt");
 	
 	/***********
 	* Updates *
 	***********/
+	
+	define('LOG_UPDATES',false);
+	define('LOG_UPDATES_THRESHOLD',10);	
 	define('GAMESTATS_FILE',CACHE_ROOT."/out/gamestats.html");
 	define('GAMESTATS_ROW_LIMIT',15);
-	define('LOG_UPDATES',false);
 	define('USERSTATS_OUTFILE',CACHE_ROOT."/out/userstats.png");
 	define('XML_INFO_FILE',CACHE_ROOT."/xml/info.xml");
 
@@ -532,17 +476,7 @@
 	$daemonPidfile = "/var/run/etoa/test.pid";
 	$daemonExe = "/home/etoa/backend/trunk/etoad";
 
-	define('FILE_UPLOAD_PERMS',0644); // Permissions for uploaded files
 
-	// Advertising
-	define('ADD_BANNER','');
 
-	// Referers
-	$referers=explode("\n",$conf['referers']['v']);
-	foreach ($referers as $k=>&$v)
-	{
-		$referers[$k] = trim($v);
-	}
-	unset($v);
 
 ?>

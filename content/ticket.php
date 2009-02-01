@@ -76,19 +76,19 @@
 		{
 			while ($arr = mysql_fetch_array($res))
 			{
-				$text = "Ticket #".$tid." ".GAMEROUND_NAME."\n----------------------\n\n";
+				$text = "Ticket #".$tid." ".ROUNDID."\n----------------------\n\n";
 				$text.= "Nick: ".$cu->nick."\n";
 				$text.= "ID: ".$cu->id."\n";
 				$text.= "IP/Host: ".$_SERVER['REMOTE_ADDR']." (".resolveIp($_SERVER['REMOTE_ADDR']).")\n";
 				$text.= "\n\n".$tarr[0]."\n\n";
 				$text.= $_POST['abuse_text'];
 				
-	      $email_header = "From: Escape to Andromeda Ticketsystem ".GAMEROUND_NAME."<etoa@dev.etoa.ch>\n";
+	      $email_header = "From: Escape to Andromeda Ticketsystem ".ROUNDID."<etoa@dev.etoa.ch>\n";
 	      $email_header .= "Reply-To: ".$cu->nick."<".$cu->email.">\n";
 	      $email_header .= "X-Mailer: PHP/" . phpversion(). "\n";
 	      $email_header .= "X-Sender-IP: ".$_SERVER['REMOTE_ADDR']."\n";
 	      $email_header .= "Content-Style-Type: text/css\n";					
-				mail($arr['user_email'],"Neues Nicket #".$tid." (".GAMEROUND_NAME."): ".$tarr[0],$text,$email_header);
+				mail($arr['user_email'],"Neues Nicket #".$tid." (".ROUNDID."): ".$tarr[0],$text,$email_header);
 				
 			}	
 		}

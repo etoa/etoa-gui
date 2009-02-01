@@ -822,7 +822,7 @@
 				if ($welcomeMail == 1)
 				{
 		      $email_text = "Hallo ".$data['nick']."\n\nDu hast dich erfolgreich beim Sci-Fi Browsergame Escape to Andromeda registriert.\nHier nochmals deine Daten:\n\n";
-		      $email_text.= "Universum: ".GAMEROUND_NAME."\n";
+		      $email_text.= "Universum: ".ROUNDID."\n";
 		      $email_text.= "Name: ".$data['name']."\n";
 		      $email_text.= "E-Mail: ".$data['email']."\n\n";
 		      $email_text.= "Nick: ".$data['nick']."\n";

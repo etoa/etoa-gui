@@ -32,22 +32,15 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/		
 
-	define('USE_HTML',true);
-
 	function showTitle($title)
 	{
 		echo "<br/><a href=\"?\"><img src=\"images/game_logo.gif\" alt=\"EtoA Logo\" /></a>";
-		echo "<h1>$title - ".GAMEROUND_NAME."</h1>";
+		echo "<h1>$title - ".ROUNDID."</h1>";
 	}
 
 	ini_set('arg_separator.output',  '&amp;');
 	session_start();
-	mt_srand();
 	
-	define(USE_HTML,true);
-
-	define('IS_ADMIN_MODE',false);
-
 	require_once("conf.inc.php");
 	require_once("functions.php");
 
@@ -117,7 +110,7 @@
 	<head>
 		<title>
 			<?PHP 
-				echo $conf['game_name']['v']." ".$conf['game_name']['p1'].' | '.GAMEROUND_NAME;
+				echo $conf['game_name']['v']." ".$conf['game_name']['p1'].' | '.ROUNDID;
 				if ($index!="")
 				{			
 					echo " | ".$indexpage[$index];
@@ -168,7 +161,7 @@
 			if ($index!="" || ($page=="help" && !isset($s['user_id'])))
 			{
 	    	echo '<div id="outGameTop">';
-	    	echo '<div><a href="'.LOGINSERVER_URL.'">Startseite</a><a href="?">Übersicht</a></div><b>'.GAMEROUND_NAME.'</b> &nbsp; ';
+	    	echo '<div><a href="'.LOGINSERVER_URL.'">Startseite</a><a href="?">Übersicht</a></div><b>'.ROUNDID.'</b> &nbsp; ';
 	    	foreach ($indexpage as $k => $v)
 	    	{
 	    		echo '<a href="?index='.$k.'">'.$v.'</a>';

@@ -51,7 +51,7 @@
 	
 				// Email schreiben
 				//$email_text="Hallo ".$_POST['user_nick']."<br/><br/>Du hast ein neues Passwort für deinen Account angefordert.<br>Hier sind die neuen Daten:<br><br><b>Nick:</b> ".$_POST['user_nick']."<br><b>Passwort:</b> ".$pw."<br><br>Weiterhin viel Spass wünscht...<br>Das EtoA-Team";
-				$email_text="Hallo ".$_POST['user_nick']."\n\nDu hast ein neues Passwort angefordert.\nHier sind die neuen Daten:\n\nUniversum: ".GAMEROUND_NAME."\n\nNick: ".$_POST['user_nick']."\nPasswort: ".$pw."\n\nWeiterhin viel Spass...\nDas EtoA-Team";
+				$email_text="Hallo ".$_POST['user_nick']."\n\nDu hast ein neues Passwort angefordert.\nHier sind die neuen Daten:\n\nUniversum: ".ROUNDID."\n\nNick: ".$_POST['user_nick']."\nPasswort: ".$pw."\n\nWeiterhin viel Spass...\nDas EtoA-Team";
 				send_mail(0,$_POST['user_email_fix'],"Passwort-Anforderung",$email_text,"","left");
 	
 				// Passwort updaten
