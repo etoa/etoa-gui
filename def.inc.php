@@ -314,6 +314,7 @@
 	define("SPY_ATTACK_SHOW_SHIPS",7);				// ...die Schiffe des Gegners
 	define("SPY_ATTACK_SHOW_DEFENSE",5);			// ...die Defense des Gegners
 	define("SPY_ATTACK_SHOW_RESSOURCEN",9);		// ...die Ressourcen des Gegners
+	define("SPY_ATTACK_SHOW_SUPPORT",11);		// ...die Supportflotten auf dem Planeten
 
 	// Spionageabwehr
 	define('SPY_DEFENSE_MAX',90);							// Maximale Spionageabwehr in Prozent

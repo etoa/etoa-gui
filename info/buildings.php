@@ -425,7 +425,7 @@ if (isset($_GET['id']))
     				<td style="text-align:right;">'.nf($bc['fuel']).'</td>
     				<td style="text-align:right;">'.nf($bc['food']).'</td>
     				<td style="text-align:right;">'.nf($bc['power']).'</td>
-    				<td style="text-align:right;">'.nf($arr['building_fields']*$x).'</td></tr>';
+    				<td style="text-align:right;">'.nf($arr['building_fields']*($x+1)).'</td></tr>';
     }
     tableEnd();
     

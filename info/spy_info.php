@@ -19,6 +19,7 @@
 	echo "<tr><td class=\"tbldata\" valign=\"top\" ><b>".SPY_ATTACK_SHOW_DEFENSE."</b></td><td class=\"tbldata\" width=\"90%\">... die Verteidigung</td></tr>";
 	echo "<tr><td class=\"tbldata\" valign=\"top\" ><b>".SPY_ATTACK_SHOW_SHIPS."</b></td><td class=\"tbldata\" width=\"90%\">... die Schiffe</td></tr>";
 	echo "<tr><td class=\"tbldata\" valign=\"top\" ><b>".SPY_ATTACK_SHOW_RESSOURCEN."</b></td><td class=\"tbldata\" width=\"90%\">... die Ressourcen</td></tr>";
+	echo "<tr><td class=\"tbldata\" valign=\"top\" ><b>".SPY_ATTACK_SHOW_SUPPORT."</b></td><td class=\"tbldata\" width=\"90%\">... die unterstüzenden Schiffe</td></tr>";
 	tableEnd();
 
 	tableStart("Infos &uuml;ber gegnerische Flotten");

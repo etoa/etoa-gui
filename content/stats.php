@@ -33,7 +33,7 @@
 	*/	
 
 	// BEGIN SKRIPT //
-
+	
 	echo "<h1>Statistiken</h1>";
 
 	//
@@ -168,6 +168,7 @@
 
 	else
 	{
+		$_SESSION['alliance_tag'] = $cu->allianceTag();
 		
 		$ddm = new DropdownMenu(1);
 		$ddm->add('total','Gesamtstatistik','xajax_statsShowBox(\'user\');');

@@ -299,7 +299,6 @@
 			ORDER BY
 				alliance_name;
 		");
-		echo $_SESSION[ROUNDID]['user']['alliance_id'];
 		while ($arr = mysql_fetch_assoc($res))
 		{
 			$names[$arr['alliance_id']]['tag'] = $arr['alliance_tag'];
