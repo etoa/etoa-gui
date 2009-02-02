@@ -271,6 +271,8 @@
 						onmouseover=\"counter_left_$ycoords.src='$counter_left_high$ycoords.gif';counter_bottom_$xcoords.src='$counter_bottom_high$xcoords.gif';\" onmouseout=\"counter_left_$ycoords.src='$counter_left$ycoords.gif';counter_bottom_$xcoords.src='$counter_bottom$xcoords.gif';\">";										
 						
 					if ($cp->sx() == $sx && $cp->sy() == $sy && $cp->cx() == $xcoords && $cp->cy() == $ycoords)
+						$class = " class=\"selectedcell\"";
+					elseif (in_array($cells[$xcoords][$ycoords]['cid'],$user_solsys_ids))
 						$class = " class=\"owncell\"";
 					else
 						$class = "";

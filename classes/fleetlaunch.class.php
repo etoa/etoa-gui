@@ -58,6 +58,7 @@
 			$this->ships = array();
 			$this->speedPercent=100;
 			$this->speed = 0;
+			$this->sBonusSpeed=1;
 			$this->duration=0;
 			$this->action='';
 			$this->costsPerHundredAE=0;
@@ -65,11 +66,13 @@
 			$this->costsLaunchLand=0;
 			$this->pilots=0;
 			$this->pilotsAvailable = 0;
+			$this->sBonusPilots=1;
 			$this->capacityTotal=0;
 			$this->capacityResLoaded=0;
 			$this->capacityFuelUsed=0;
 			$this->capacityPeopleTotal=0;
-			$this->capacityPeopleLoaded=0;		
+			$this->capacityPeopleLoaded=0;
+			$this->sBonusCapacity=1;
 			$this->shipCount=0;
 			$this->distance=0;
 			$this->res = array(0,0,0,0,0,0);
@@ -143,7 +146,7 @@
 					if ($this->possibleFleetStarts > 0)
 					{					
 						// Piloten
-						$this->pilotsAvailable = floor($this->sourceEntity->people() - $bl->totalPeopleWorking());			
+						$this->pilotsAvailable = floor($this->sourceEntity->people() - $bl->totalPeopleWorking());
 					
 						$this->havenOk = true;
 					}
@@ -189,33 +192,37 @@
 					if (mysql_num_rows($res)>0)
 					{
 						$arr = mysql_fetch_array($res);
-						$timefactor = 0;
 						$vres=dbquery("
-								SELECT
-									techlist.techlist_current_level,
-									ship_requirements.req_level
-								FROM
-									techlist
-								INNER JOIN
-									ship_requirements
-								ON ship_requirements.req_tech_id=techlist.techlist_tech_id
-									AND ship_requirements.obj_id=".$sid."
-									AND techlist.techlist_user_id=".$this->ownerId()."
-								GROUP BY
-									ship_requirements.id;");
+	     					SELECT
+								l.techlist_current_level,
+								r.req_level
+							FROM
+								ship_requirements r
+							INNER JOIN
+								techlist l
+							ON r.req_tech_id = l.techlist_tech_id
+								AND l.techlist_user_id=".$this->ownerId()."
+							INNER JOIN
+								technologies t
+							ON r.req_tech_id = t.tech_id
+								AND t.tech_type_id = '1'
+							WHERE
+								r.obj_id=".$sid."
+							GROUP BY
+								r.id");
 							
 							$timefactor=$this->raceSpeedFactor();
 							if (mysql_num_rows($vres)>0)
 							{
 								while ($varr=mysql_fetch_array($vres))
 								{
-									if($varr['techlist_current_level']-$varr['req_req_tech_level']<=0)
+									if($varr['techlist_current_level']-$varr['req_level']<=0)
 									{
 										$timefactor+=0;
 									}
 									else
 									{
-										$timefactor+=max(0,($varr['techlist_current_level']-$varr['req_req_tech_level'])*0.1);
+										$timefactor+=max(0,($varr['techlist_current_level']-$varr['req_level'])*0.1);
 									}
 								}
 							}
@@ -226,12 +233,34 @@
 						"speed" => $arr['ship_speed']*$timefactor,
 						"fuel_use" => $arr['ship_fuel_use'] * $cnt,
 						"name" => $arr['ship_name'],
-						"pilots" => $arr['ship_pilots'] * $cnt					
+						"pilots" => $arr['ship_pilots'] * $cnt,
+						"special" => $arr['special_ship'],
+						"sLevel" => $arr['shiplist_special_ship_level'],
+						"sExp" => $arr['shiplist_special_ship_exp'],
+						"sBonusWeapon" => $arr['shiplist_special_ship_bonus_weapon'],
+						"sBonusStructure" => $arr['shiplist_special_ship_bonus_structure'],
+						"sBonusShield" => $arr['shiplist_special_ship_bonus_shield'],
+						"sBonusHeal" => $arr['shiplist_special_ship_bonus_heal'],
+						"sBonusCapacity" => $arr['shiplist_special_ship_bonus_capacity'],
+						"sBonusSpeed" => $arr['shiplist_special_ship_bonus_speed'],
+						"sBonusPilots" => $arr['shiplist_special_ship_bonus_pilots'],
+						"sBonusTarn" => $arr['shiplist_special_ship_bonus_tarn'],
+						"sBonusAntrax" => $arr['shiplist_special_ship_bonus_antrax'],
+						"sBonusForsteal" => $arr['shiplist_special_ship_bonus_forsteal'],
+						"sBonusBuildDestroy" => $arr['shiplist_special_ship_bonus_build_destroy'],
+						"sBonusAntraxFood" => $arr['shiplist_special_ship_bonus_antrax_food'],
+						"sBonusDeactivade" => $arr['shiplist_special_ship_bonus_deactivade']
 						);
+						
+						if ($arr['special_ship']) {
+							$this->sBonusSpeed += $arr['shiplist_special_ship_bonus_speed']*$arr['special_ship_bonus_speed'];
+							$this->sBonusPilots -= $arr['shiplist_special_ship_bonus_pilots']*$arr['special_ship_bonus_pilots'];
+							$this->sBonusCapacity += $arr['shiplist_special_ship_bonus_capacity']*$arr['special_ship_bonus_capacity'];
+						}
 			
 						$this->shipActions = array_merge($this->shipActions,explode(",",$arr['ship_actions']));
 						$this->shipActions = array_unique($this->shipActions);
-			
+						
 						// Set global speed
 						if ($this->speed <= 0)
 						{
@@ -341,7 +370,7 @@
 						return $this->targetOk;
 					}
 					else
-					$this->error = "Zu wenig Laderaum für soviel Treibstoff und Nahrung (".nf(abs($this->getCapacity()))." zuviel)!";
+						$this->error = "Zu wenig Laderaum für soviel Treibstoff und Nahrung (".nf(abs($this->getCapacity()))." zuviel)!";
 				}
 				else
 					$this->error = "Zuwenig Nahrung! ".nf($this->sourceEntity->resFood())." t ".RES_FOOD." vorhanden, ".nf($this->getCostsFood())." t benötigt.";
@@ -392,7 +421,7 @@
 				{
 					// Subtract flight costs from source
 					$this->sourceEntity->chgRes(4,-$this->getCosts());
-					$this->sourceEntity->chgPeople(-($this->pilots+$this->capacityPeopleLoaded));
+					$this->sourceEntity->chgPeople(-($this->getPilots()+$this->capacityPeopleLoaded));
 					
 					if ($this->action=="alliance" && $this->leaderId!=0) $status=3;
 					else $status = 0;
@@ -441,7 +470,7 @@
 						".$this->supportTime.",
 						'".$this->action."',
 						'".$status."',
-						".$this->pilots.",
+						".$this->getPilots().",
 						".$this->getCosts().",
 						".$this->getCostsFood().",
 						".$this->getCostsPower().",
@@ -465,21 +494,73 @@
 					$fid = mysql_insert_id();
 					
 					foreach ($this->ships as $sid => $sda)
-					{				
-						dbquery("INSERT INTO
-						fleet_ships
-						(
-							fs_fleet_id,
-							fs_ship_id,
-							fs_ship_cnt
-						)
-						VALUES
-						(
-							".$fid.",
-							".$sid.",
-							".$sda['count']."
-						);");
+					{
+						if ($sda['special'])
+						{
+							dbquery("INSERT INTO
+							fleet_ships
+							(
+								fs_fleet_id,
+								fs_ship_id,
+								fs_ship_cnt,
+								fs_special_ship,
+								fs_special_ship_level,
+								fs_special_ship_exp,
+								fs_special_ship_bonus_weapon,
+								fs_special_ship_bonus_structure,
+								fs_special_ship_bonus_shield,
+								fs_special_ship_bonus_heal,
+								fs_special_ship_bonus_capacity,
+								fs_special_ship_bonus_speed,
+								fs_special_ship_bonus_pilots,
+								fs_special_ship_bonus_tarn,
+								fs_special_ship_bonus_antrax,
+								fs_special_ship_bonus_forsteal,
+								fs_special_ship_bonus_build_destroy,
+								fs_special_ship_bonus_antrax_food,
+								fs_special_ship_bonus_deactivade
+							)
+							VALUES
+							(
+								".$fid.",
+								".$sid.",
+								".$sda['count'].",
+								'1',
+								".$sda['sLevel'].",
+								".$sda['sExp'].",
+								".$sda['sBonusWeapon'].",
+								".$sda['sBonusStructure'].",
+								".$sda['sBonusShield'].",
+								".$sda['sBonusHeal'].",
+								".$sda['sBonusCapacity'].",
+								".$sda['sBonusSpeed'].",
+								".$sda['sBonusPilots'].",
+								".$sda['sBonusTarn'].",
+								".$sda['sBonusAntrax'].",
+								".$sda['sBonusForsteal'].",
+								".$sda['sBonusBuildDestroy'].",
+								".$sda['sBonusAntraxFood'].",
+								".$sda['sBonusDeactivade']."
+							);");
+						}
+						else
+						{
+							dbquery("INSERT INTO
+							fleet_ships
+							(
+								fs_fleet_id,
+								fs_ship_id,
+								fs_ship_cnt
+							)
+							VALUES
+							(
+								".$fid.",
+								".$sid.",
+								".$sda['count']."
+							);");
+						}
 					}
+						
 					
 					if ($this->action=="alliance" && $this->leaderId==0) {
 						dbquery("
@@ -627,7 +708,7 @@
 		
 		function getSpeed()
 		{
-			return $this->speed * $this->speedPercent / 100 ;
+			return $this->speed * $this->sBonusSpeed * $this->speedPercent / 100 ;
 		}
 		
 		function getShips()
@@ -646,7 +727,7 @@
 		function getCostsFood()
 		{
 			$cfg = Config::getInstance();
-			$this->costsFood = ceil($this->pilots * $cfg->value('people_food_require')/3600 * $this->getDuration());
+			$this->costsFood = ceil($this->getPilots() * $cfg->value('people_food_require')/3600 * $this->getDuration());
 			return $this->costsFood;
 		}
 
@@ -691,12 +772,12 @@
 		       
 		function getCapacity()
 		{
-			return $this->capacityTotal - $this->capacityResLoaded - $this->capacityFuelUsed - $this->costsFood - $this->supportCostsFood - $this->supportCostsFuel;
+			return $this->getTotalCapacity() - $this->capacityResLoaded - $this->capacityFuelUsed - $this->costsFood - $this->supportCostsFood - $this->supportCostsFuel;
 		}
 
 		function getTotalCapacity()
 		{
-			return $this->capacityTotal;
+			return $this->capacityTotal * $this->sBonusCapacity;
 		}
 		
 		function getPeopleCapacity()
@@ -841,7 +922,7 @@
 		
 		function getPilots()
 		{
-			return $this->pilots;	
+			return $this->pilots * $this->sBonusPilots;	
 		}
 		
 		function getLeader() { return $this->leaderId; }

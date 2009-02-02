@@ -324,6 +324,9 @@ img.resIcon	{
 	border:1px dashed #FF1FFA;		
 }
 
+#innerspacetbl td a.selectedcell	{
+	border:1px dashed #00FF00;		
+}
 
 #innerspacetbl td a:hover	{
 	border:1px dashed #aaa;	

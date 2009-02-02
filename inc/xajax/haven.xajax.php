@@ -389,7 +389,7 @@ ob_start();
 						<td>".nf($sd['count'])."</td>
 						<td>".$sd['name']."</td>
 						<td>".nf($sd['pilots'])."</td>
-						<td>".round($fleet->getSpeed() / $sd['speed']*100)."%</td>
+						<td>".round($fleet->getSpeed() / $sd['speed']*100 / $fleet->sBonusSpeed)."%</td>
 						<td>".nf($sd['costs_per_ae'])." ".RES_FUEL."</td></tr>";
 						$shipCount++;
 					}								
@@ -610,7 +610,10 @@ ob_start();
 					echo "<tr><td  width=\"25%\">Kosten/100 AE:</td>
 						<td class=\"tbldata\" id=\"costae\">".nf($fleet->getCostsPerHundredAE())." t ".RES_FUEL."</td></tr>";
 					echo "<tr><td>Geschwindigkeit:</td>
-						<td id=\"speed\">".nf($fleet->getSpeed())." AE/h</td></tr>";
+						<td id=\"speed\">".nf($fleet->getSpeed())." AE/h";
+					If ($fleet->sBonusSpeed>1)
+							echo " (inkl. ".get_percent_string($fleet->sBonusSpeed,1)." Mysticum-Bonus)";
+					echo "</td></tr>";
 					echo "<tr><td>Dauer:</td>
 						<td><span id=\"duration\" style=\"font-weight:bold;\">-</span> (inkl. Start- und Landezeit von ".tf($fleet->getTimeLaunchLand()).")</td></tr>";
 					echo "<tr><td>Treibstoff:</td>
@@ -618,7 +621,10 @@ ob_start();
 					echo "<tr><td>Nahrung:</td>
 						<td><span id=\"food\"  style=\"font-weight:bold;\">-</span></td></tr>";
 					echo "<tr><td>Piloten:</td>
-						<td>".nf($fleet->getPilots())."</td></tr>";
+						<td>".nf($fleet->getPilots());
+						If ($fleet->sBonusPilots!=1)
+							echo " (inkl. ".get_percent_string(1-$fleet->sBonusPilots,1,1)." Mysticum-Bonus)";
+					echo "</td></tr>";
 					echo "<tr><td>Bemerkungen:</td>
 						<td id=\"comment\">-</td></tr>";
 					echo "<tr id=\"allianceAttacks\" style=\"display: none;\"><td class=\"tbldata\">Allianzangriffe</td><td class=\"tbldata\" id=\"alliance\">-</td></tr>";
@@ -665,6 +671,7 @@ ob_start();
 	function havenShowAction($form)
 	{
 		$response = new xajaxResponse();
+		$response->assign("comment","innerHTML","home");
 
 		// Do some checks
 		if (count($form)>0)
@@ -708,7 +715,7 @@ ob_start();
 					if ($fleet->checkTarget())
 					{							
 	
-						//
+						
 						// Target infos
 						//	
 						ob_start();
@@ -820,7 +827,7 @@ ob_start();
 					else
 					{
 						$response->alert($fleet->error());				
-					}	
+					}
 				}
 				else
 				{
@@ -1010,12 +1017,16 @@ ob_start();
 				$fleet->setLeader(0);
 				$allianceAttack = "";
 				
+				$speedString = nf($fleet->getSpeed())." AE/h";
+				If ($fleet->sBonusSpeed>1)
+					$speedString .= " (inkl. ".get_percent_string($fleet->sBonusSpeed,1)." Mysticum-Bonus)";
+				
 				echo "<img src=\"".$ent->imagePath()."\" style=\"float:left;\" >";
 				
 				echo "<br/>&nbsp;&nbsp; ".$ent." (".$ent->entityCodeString().", Besitzer: ".$ent->owner().")";
 				$response->assign('distance','innerHTML',nf($fleet->getDistance())." AE");
 				$response->assign('duration','innerHTML',tf($fleet->getDuration())."");
-				$response->assign('speed','innerHTML',nf($fleet->getSpeed())." AE/h");
+				$response->assign('speed','innerHTML',$speedString);
 				$response->assign('costae','innerHTML',nf($fleet->getCostsPerHundredAE())." t ".RES_FUEL."");
 				$response->assign('costs','innerHTML',nf($fleet->getCosts())." t ".RES_FUEL."");
 				$response->assign('food','innerHTML',nf($fleet->getCostsFood())." t ".RES_FOOD."");
@@ -1126,13 +1137,17 @@ ob_start();
 		$fleet->setSpeedPercent($form['speed_percent']);
 		$fleet->setLeader(0);
 		$allianceAttack = "";
+		
+		$speedString = nf($fleet->getSpeed())." AE/h";
+		If ($fleet->sBonusSpeed>1)
+			$speedString .= " (inkl. ".get_percent_string($fleet->sBonusSpeed,1)." Mysticum-Bonus)";
 				
 		echo "<img src=\"".$ent->imagePath()."\" style=\"float:left;\" >";
 				
 		echo "<br/>&nbsp;&nbsp; ".$ent." (".$ent->entityCodeString().", Besitzer: ".$ent->owner().")";
 		$response->assign('distance','innerHTML',nf($fleet->getDistance())." AE");
 		$response->assign('duration','innerHTML',tf($fleet->getDuration())."");
-		$response->assign('speed','innerHTML',nf($fleet->getSpeed())." AE/h");
+		$response->assign('speed','innerHTML',$speedString);
 		$response->assign('costae','innerHTML',nf($fleet->getCostsPerHundredAE())." t ".RES_FUEL."");
 		$response->assign('costs','innerHTML',nf($fleet->getCosts())." t ".RES_FUEL."");
 		$response->assign('food','innerHTML',nf($fleet->getCostsFood())." t ".RES_FOOD."");
