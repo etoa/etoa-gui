@@ -44,16 +44,19 @@
 	//
 	// Flottendaten laden und überprüfen ob die Flotte existiert
 	//
-	$fd = new Fleet($fleet_id,$cu->id);
+	$fd = new Fleet($fleet_id);
 	if ($fd->valid())
 	{
-		if ($fd->getAction()->code()=="support") {
+		if ($fd->getAction()->code()=="support" && $fd->ownerAllianceId()==$cu->allianceId() && $cu->allianceId()>0)
+		{
 			include("fleetinfo/support.php");
 		}
-		elseif ($fd->getAction()->code()=="alliance") {
+		elseif ($fd->getAction()->code()=="alliance" && $fd->nextId==$cu->allianceId())
+		{
 			include("fleetinfo/alliance.php");
 		}
-		else {
+		elseif ($fd->ownerId()==$cu->id)
+		{
 			// Flugabbruch auslösen
 			if (isset($_POST['cancel'])!="" && checker_verify())
 			{
@@ -167,6 +170,10 @@
 			echo "</form>";
 	
 			countDown('flighttime',$fd->landTime());
+		}
+		else {
+			echo "Diese Flotte existiert nicht mehr! Wahrscheinlich sind die Schiffe schon <br/>auf dem Zielplaneten gelandet oder der Flug wurde abgebrochen.<br/><br/>";
+			echo "<input type=\"button\" onclick=\"document.location='?page=fleets'\" value=\"Zur&uuml;ck zur Flotten&uuml;bersicht\">";
 		}
 	}
 	else

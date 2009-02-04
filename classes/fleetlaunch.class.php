@@ -423,8 +423,14 @@
 					$this->sourceEntity->chgRes(4,-$this->getCosts());
 					$this->sourceEntity->chgPeople(-($this->getPilots()+$this->capacityPeopleLoaded));
 					
-					if ($this->action=="alliance" && $this->leaderId!=0) $status=3;
-					else $status = 0;
+					if ($this->action=="alliance" && $this->leaderId!=0) {
+						$status=3;
+						$nextId = $this->sourceEntity->ownerAlliance();
+					}
+					else {
+						$status = 0;
+						$nextId = 0;
+					}
 					
 					// Create fleet record
 					$sql = "
@@ -435,6 +441,7 @@
 						leader_id,
 						entity_from,
 						entity_to,
+						next_id,
 						launchtime,
 						landtime,
 						nextactiontime,
@@ -465,6 +472,7 @@
 						".$this->leaderId.",
 						".$this->sourceEntity->id().",
 						".$this->targetEntity->id().",
+						".$nextId.",
 						".$time.",
 						".($time+$this->duration).",
 						".$this->supportTime.",

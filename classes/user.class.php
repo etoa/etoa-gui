@@ -338,7 +338,12 @@
 		
 
 	
-		final public function isSetup() 	{	return $this->setup; }		
+		final public function isSetup() 	{	return $this->setup; }
+		
+		final public function allianceId()
+		{
+			return $this->allianceId;
+		}
 
 		final public function allianceName() 
 		{ 

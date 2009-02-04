@@ -62,6 +62,9 @@
 		protected $valid;
 		protected $changedFields;
 		
+		protected $buildings = null;
+		protected $technologies = null;
+		
 		/**
 		* Constructor
 		*/
@@ -710,7 +713,85 @@
 			else
 				add_log("5","Die Allianz [b]".$this."[/b] wurde gelöscht!");
 			return true;
-		}	
+		}
+		
+		/**
+		* Load Alliance Buildings
+		*/
+		
+		function loadBuildings()
+		{
+			if ($this->buildings==null)
+			{
+				$this->buildings = array();
+				$res = dbquery("
+							SELECT
+								alliance_buildlist_current_level,
+								alliance_building_name
+							FROM
+								alliance_buildlist
+							INNER JOIN
+								alliance_buildings
+							ON
+								alliance_buildlist_building_id=alliance_building_id
+								AND alliance_buildlist_alliance_id='".$this->id."';");
+				while ($arr = mysql_fetch_row($res))
+				{
+					$this->buildings[$arr[1] ] = $arr[0];
+				}
+			}
+		}
+		
+		/**
+		* Return Building Level
+		*/
+		
+		function getBuildingLevel($building)
+		{
+			if ($this->buildings==null)
+				$this->loadBuildings();
+			
+			return $this->buildings[$building];
+		}
+		
+		/**
+		* Load Alliance Technologies
+		*/
+		
+		function loadTechnologies()
+		{
+			if ($this->technologies==null)
+			{
+				$this->buildings = array();
+				$res = dbquery("
+							SELECT
+								alliance_techlist_current_level,
+								alliance_tech_name
+							FROM
+								alliance_techlist
+							INNER JOIN
+								alliance_technologies
+							ON
+								alliance_techlist_tech_id=alliance_tech_id
+								AND alliance_techlist_alliance_id='".$this->id."';");
+				while ($arr = mysql_fetch_row($res))
+				{
+					$this->technologies[$arr[1] ] = $arr[0];
+				}
+			}
+		}
+		
+		/**
+		* Return Technologie Level
+		*/
+		
+		function getTechLevel($technologie)
+		{
+			if ($this->technologies==null)
+				$this->loadTechnologies();
+			
+			return $this->technologies[$technologie];
+		}
 		
 		//
 		// Statics
@@ -792,9 +873,42 @@
 			{
 				return true;
 			}
+			
 			error_msg("Keine Berechtigung!");
 			echo "<input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"Zur&uuml;ck\" />";
 			return false;    	
+	  }
+	  
+	  /**
+	  * Check rights for an action
+	  * use this function if you're not on the alliance page
+	  */
+	  
+	  function checkActionRightsNA($action)
+	  {
+		  global $cu;
+		  
+		  if ($this->founderId == $cu->id) return true;
+		  
+		  $res = dbquery("
+						SELECT
+							alliance_rankrights.rr_id
+            			FROM
+							alliance_ranks
+						INNER JOIN
+							alliance_rankrights
+						ON
+							alliance_ranks.rank_id=alliance_rankrights.rr_rank_id
+						INNER JOIN
+							alliance_rights
+						ON
+							alliance_rankrights.rr_right_id=alliance_rights.right_id
+							AND alliance_ranks.rank_alliance_id='".$this->id."'
+							AND alliance_rights.right_key='".$action."'
+							AND alliance_rankrights.rr_rank_id=".$cu->allianceRankId.";");
+			if (mysql_num_rows($res)) return true;
+			
+			return false;
 	  }
 	  
 	  /**

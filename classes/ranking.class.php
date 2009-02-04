@@ -776,13 +776,55 @@
 				alliance_stats
 			");
 			
+			// Technologien laden
+			$res = dbquery("
+				SELECT
+					alliance_tech_id,
+					alliance_tech_costs_factor,
+					alliance_tech_last_level,
+					(alliance_tech_costs_metal+alliance_tech_costs_crystal+alliance_tech_costs_plastic+alliance_tech_costs_fuel+alliance_tech_costs_food) as costs
+				FROM
+					alliance_technologies;
+			");
+			$techs=array();
+			$level=1;
+			while ($arr = mysql_fetch_row($res)) {
+				$level=1;
+				while ($level<=$arr[2])
+				{
+					$techs[$arr[0]][$level]=$arr[3]*pow($arr[1],$level-1)/STATS_USER_POINTS;
+					$level++;
+				}
+			}
+			
+			// Gebäude laden
+			$res = dbquery("
+				SELECT
+					alliance_building_id,
+					alliance_building_costs_factor,
+					alliance_building_last_level,
+					(alliance_building_costs_metal+alliance_building_costs_crystal+alliance_building_costs_plastic+alliance_building_costs_fuel+alliance_building_costs_food) as costs
+				FROM
+					alliance_buildings;
+			");
+			$buildings=array();
+			while ($arr = mysql_fetch_row($res)) {
+				$level=1;
+				while ($level<=$arr[2])
+				{
+					$buildings[$arr[0]][$level]=$arr[3]*pow($arr[1],$level-1)/STATS_USER_POINTS;
+					$level++;
+				}
+			}
+			
 			$res=dbquery("SELECT 
 				a.alliance_tag,
 				a.alliance_name,
 				a.alliance_id,
 				a.alliance_rank_current,
 				COUNT(*) AS cnt, 
-				SUM(u.points) AS upoints, 
+				SUM(u.points) AS upoints,
+				SUM(u.points_exp) AS epoints,
 				AVG(u.points) AS uavg 
 			FROM 
 				alliances as a
@@ -797,15 +839,61 @@
 			;");
 			if (mysql_num_rows($res)>0)
 			{
-				$rank=1;
 				while ($arr=mysql_fetch_assoc($res))
 				{
 					$apoints=0;
+					$upoints=0;
+					$bpoints=0;
+					$tpoints=0;
 					if ($arr['upoints']>0 && $cfg->param2('points_update')>0)
 					{
-						$apoints = floor($arr['upoints'] / $cfg->param2('points_update')
+						$upoints = floor($arr['upoints'] / $cfg->param2('points_update')
 );
 					}
+					
+					$bres=dbquery("SELECT
+								 	alliance_buildlist_building_id,
+									alliance_buildlist_current_level
+								FROM
+									alliance_buildlist
+								WHERE
+									alliance_buildlist_alliance_id='".$arr['alliance_id']."';");
+					if (mysql_num_rows($bres)>0)
+					{
+						while ($barr=mysql_fetch_row($bres))
+						{
+							$bpoints += $buildings[$barr[0]][$barr[1]];
+						}
+					}
+					
+					$tres=dbquery("SELECT
+								 	alliance_techlist_tech_id,
+									alliance_techlist_current_level
+								FROM
+									alliance_techlist
+								WHERE
+									alliance_techlist_alliance_id='".$arr['alliance_id']."';");
+					if (mysql_num_rows($tres)>0)
+					{
+						while ($tarr=mysql_fetch_row($tres))
+						{
+							$tpoints += $techs[$tarr[0]][$tarr[1]];
+						}
+					}
+					
+					$sres=dbquery("SELECT
+								  	SUM(`user_alliace_shippoints`)
+								FROM
+									users
+								WHERE
+									user_alliance_id='".$arr['alliance_id']."'
+								GROUP BY
+									user_alliance_id
+								LIMIT 1;");
+					$sarr=mysql_fetch_row($sres);
+					
+					$apoints = $tpoints + $bpoints + $sarr[0] + $upoints + $arr['epoints'];
+					
 					dbquery("
 					INSERT INTO
 						alliance_stats
@@ -813,10 +901,14 @@
 						alliance_id,
 						alliance_tag,
 						alliance_name,
+						points,
 						upoints,
+						epoints,
+						spoints,
+						tpoints,
+						bpoints,
 						uavg,
 						cnt,
-						alliance_rank_current,
 						alliance_rank_last
 					) 
 					VALUES 
@@ -825,22 +917,15 @@
 						'".$arr['alliance_tag']."',
 						'".$arr['alliance_name']."',
 						'".$apoints."',
+						'".$upoints."',
+						'".$arr['epoints']."',
+						'".$sarr[0]."',
+						'".$tpoints."',
+						'".$bpoints."',
 						'".$arr['uavg']."',
 						'".$arr['cnt']."',
-						'".$rank."',
 						'".$arr['alliance_rank_current']."'
 					);");
-					
-					dbquery("
-					UPDATE 
-						alliances
-					SET
-						alliance_points='".$apoints."',
-						alliance_rank_current='".$rank."',
-						alliance_rank_last='".$arr['alliance_rank_current']."'
-					WHERE
-						alliance_id='".$arr['alliance_id']."'
-					;");
 					
 					dbquery("
 					INSERT INTO
@@ -862,10 +947,42 @@
 					);");
 
 				}
-			}		
+			}
+			$res=dbquery("SELECT 
+				alliance_id,
+				points,
+				alliance_rank_last
+			FROM 
+				alliance_stats
+			ORDER BY
+				points DESC
+			;");
+			if (mysql_num_rows($res)>0)
+			{
+				$rank=1;
+				while ($arr=mysql_fetch_assoc($res))
+				{
+					dbquery("UPDATE
+								alliance_stats
+							SET
+								alliance_rank_current='".$rank."'
+							WHERE
+								alliance_id='".$arr['alliance_id']."';");
+					dbquery("UPDATE 
+								alliances
+							SET
+								alliance_points='".$arr['points']."',
+								alliance_rank_current='".$rank."',
+								alliance_rank_last='".$arr['alliance_rank_last']."'
+							WHERE
+								alliance_id='".$arr['alliance_id']."';");
+					$rank++;
+				}
+			}
 			
-	
-	
+			unset($buildings);
+			unset($techs);
+			
 			// Zeit in Config speichern
 			$cfg->set('statsupdate',time());
 			$num = mysql_num_rows($ures);

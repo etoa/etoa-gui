@@ -61,7 +61,7 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 			FROM 
 				alliance_stats
 			ORDER BY 
-				upoints DESC,
+				points DESC,
 				alliance_name ASC
 			;";
 		}
@@ -77,9 +77,9 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 				".nf2($cnt)." ";
 				if ($arr['alliance_rank_current']==$arr['alliance_rank_last'])
 					echo  "<img src=\"images/stats/stat_same.gif\" alt=\"same\" width=\"21\" height=\"9\" />";
-				elseif ($arr['alliance_rank_current']<$arr['alliance_rank_last'])
-					echo  "<img src=\"images/stats/stat_down.gif\" alt=\"up\" width=\"9\" height=\"12\" />";
 				elseif ($arr['alliance_rank_current']>$arr['alliance_rank_last'])
+					echo  "<img src=\"images/stats/stat_down.gif\" alt=\"up\" width=\"9\" height=\"12\" />";
+				elseif ($arr['alliance_rank_current']<$arr['alliance_rank_last'])
 					echo  "<img src=\"images/stats/stat_up.gif\" alt=\"down\" width=\"9\" height=\"11\" />";
 				echo "<td >".($arr['alliance_tag'])."</td>";
 				echo "<td >
@@ -88,9 +88,99 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 					".popUp("Punkteverlauf","page=$page&amp;mode=$mode&amp;alliancedetail=".$arr['alliance_id'])."<br/>";
 				echo "</div><a href=\"#\" ".cTT($arr['alliance_name'],"ttuser".$arr['alliance_id']).">
 				".$arr['alliance_name']."</td>";
-				echo "<td >".nf($arr['upoints'])."</td>";
+				echo "<td >".nf($arr['points'])."</td>";
 				echo "<td >".nf($arr['uavg'])."</td>";
 				echo "<td >".nf($arr['cnt'])."</td>";
+				echo "</tr>";
+				$cnt++;
+			}
+		}
+		else
+		{
+			echo "<tr><td colspan=\"8\" align=\"center\"><i>Keine Allianzen in der Statistik</i></tr>";
+		}
+		tableEnd();
+	 	$objResponse->assign('statsBox', 'innerHTML', ob_get_clean());
+		
+	}
+	
+	//
+	// Allianzbasis
+	//
+	elseif ($mode=="base")
+	{
+		ob_start();
+		tableStart("Allianzbasis");
+		echo "<tr>";
+		echo "<th style=\"width:50px;\">Rang</th>";
+		echo "<th>Tag</th>";
+		if ($sort=="bpoints")
+			echo "<th><i>Gebäude</i> ";
+		else
+			echo "<th>Gebäude ";
+		echo "<a href=\"javascript:;\" onclick=\"xajax_statsShowBox('$mode','bpoints','DESC')\" title=\"Absteigend sortieren\"><img src=\"images/s_desc.png\" alt=\"Absteigend sortieren\" border=\"0\" /></a>";
+		echo "<a href=\"javascript:;\" onclick=\"xajax_statsShowBox('$mode','bpoints','ASC')\" title=\"Absteigend sortieren\"><img src=\"images/s_asc.png\" alt=\"Aufsteigend sortieren\" border=\"0\" /></a></th>";
+	if ($sort=="tpoints")
+			echo "<th><i>Forschung</i> ";
+		else
+			echo "<th>Forschung ";
+		echo "<a href=\"javascript:;\" onclick=\"xajax_statsShowBox('$mode','tpoints','DESC')\" title=\"Absteigend sortieren\"><img src=\"images/s_desc.png\" alt=\"Absteigend sortieren\" border=\"0\" /></a>";
+		echo "<a href=\"javascript:;\" onclick=\"xajax_statsShowBox('$mode','tpoints','ASC')\" title=\"Absteigend sortieren\"><img src=\"images/s_asc.png\" alt=\"Aufsteigend sortieren\" border=\"0\" /></a></th>";
+	if ($sort=="spoints")
+			echo "<th><i>Schiffe</i> ";
+		else
+			echo "<th>Schiffe ";
+		echo "<a href=\"javascript:;\" onclick=\"xajax_statsShowBox('$mode','spoints','DESC')\" title=\"Absteigend sortieren\"><img src=\"images/s_desc.png\" alt=\"Absteigend sortieren\" border=\"0\" /></a>";
+		echo "<a href=\"javascript:;\" onclick=\"xajax_statsShowBox('$mode','spoints','ASC')\" title=\"Absteigend sortieren\"><img src=\"images/s_asc.png\" alt=\"Aufsteigend sortieren\" border=\"0\" /></a></th>";
+	if ($sort=="epoints")
+			echo "<th><i>Erfahrung</i> ";
+		else
+			echo "<th>Erfahrung ";
+		echo "<a href=\"javascript:;\" onclick=\"xajax_statsShowBox('$mode','epoints','DESC')\" title=\"Absteigend sortieren\"><img src=\"images/s_desc.png\" alt=\"Absteigend sortieren\" border=\"0\" /></a>";
+		echo "<a href=\"javascript:;\" onclick=\"xajax_statsShowBox('$mode','epoints','ASC')\" title=\"Absteigend sortieren\"><img src=\"images/s_asc.png\" alt=\"Aufsteigend sortieren\" border=\"0\" /></a></th>";
+		echo "</tr>";
+		if ($sort!="" && $sortOrder!="")
+			$sql="
+			SELECT
+				*
+			FROM
+       			alliance_stats
+			ORDER BY
+				".$sort." ".$sortOrder.",
+				alliance_name ASC;";
+		else
+		{
+			$sql="
+			SELECT 
+				*
+			FROM 
+				alliance_stats
+			ORDER BY 
+				upoints DESC,
+				alliance_name ASC
+			;";
+		}
+		
+		$res=dbquery($sql);
+		if (mysql_num_rows($res)>0)
+		{
+			$cnt=1;
+			while ($arr=mysql_fetch_array($res))
+			{
+				echo "<tr>
+						<td>
+							".nf2($cnt)."
+						</td>";
+				echo "<td >
+				<div id=\"ttuser".$arr['alliance_id']."\" style=\"display:none;\">
+					".popUp("Allianzseite","page=alliance&id=".$arr['alliance_id'])."<br/>
+					".popUp("Punkteverlauf","page=$page&amp;mode=$mode&amp;alliancedetail=".$arr['alliance_id'])."<br/>";
+				echo "</div><a href=\"#\" ".cTT($arr['alliance_name'],"ttuser".$arr['alliance_id']).">
+				".$arr['alliance_tag']."</td>";
+				echo "<td >".nf($arr['bpoints'])."</td>";
+				echo "<td >".nf($arr['tpoints'])."</td>";
+				echo "<td >".nf($arr['spoints'])."</td>";
+				echo "<td >".nf($arr['epoints'])."</td>";
 				echo "</tr>";
 				$cnt++;
 			}

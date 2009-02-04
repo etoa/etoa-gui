@@ -174,7 +174,7 @@
 		$ddm->add('total','Gesamtstatistik','xajax_statsShowBox(\'user\');');
 		$ddm->add('detail','Detailstatistiken','');
 		$ddm->add('special','Spezialstatistiken','');
-		$ddm->add('alliance','Allianzen','xajax_statsShowBox(\'alliances\')');
+		$ddm->add('alliances','Allianzen','xajax_statsShowBox(\'alliances\')');
 		$ddm->add('pillory','Pranger','xajax_statsShowBox(\'pillory\')');
 		$ddm->add('titles','Titel','xajax_statsShowBox(\'titles\');');
 
@@ -186,6 +186,8 @@
 		$ddm->addChild('battle','Kampfpunkte','xajax_statsShowBox(\'battle\');','special');
 		$ddm->addChild('trade','Handelspunkte','xajax_statsShowBox(\'trade\');','special');
 		$ddm->addChild('diplomacy','Diplomatiepunkte','xajax_statsShowBox(\'diplomacy\');','special');
+		
+		$ddm->addChild('base','Allianzbasis','xajax_statsShowBox(\'base\');','alliances');
 
 		echo $ddm; 
 		

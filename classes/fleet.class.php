@@ -96,6 +96,20 @@
 		function leaderId() { return $this->leaderId; }
 		function launchTime() {	return $this->launchTime; }
 		function landTime() {	return $this->landTime;	}
+		
+		function ownerAllianceId()
+		{
+			$res = dbquery("
+						   	SELECT
+								user_alliance_id
+							FROM
+								users
+							WHERE
+								user_id='".$this->ownerId()."'
+							LIMIT 1;");
+			$arr = mysql_fetch_row($res);
+			return $arr[0];
+		}
 
 		function remainingTime() {	return max(0,$this->landTime-time()); }
 
@@ -434,12 +448,54 @@
 		* return course with the cancelled status flag enabled.
 		* This is only possible if the fleet hasn't reached it's destination
 		*/
-		function cancelFlight()
+		function cancelFlight($alliance=false)
 		{
-			if ($this->stauts == 0)
+			if ($this->status == 0)
 			{
 				if ($this->landTime() > time())
 				{
+					if ($this->id == $this->leaderId)
+					{
+						if ($alliance)
+						{
+						  if (count($this->fleets) && $fleet<0)
+						  {
+							  foreach($this->fleets as $id=>$f)
+							  {
+								  $f->cancelFlight();
+							  }
+						  }
+						}
+						
+						$res = dbquery("SELECT
+									   		id
+										FROM
+											fleet
+										WHERE
+											leader_id='".$this->id."'
+											AND next_id='".$this->nextId."'
+											AND status='3'
+										LIMIT 1;");
+						if (mysql_num_rows($res)>0)
+						{
+							$arr = mysql_fetch_row($res);
+							dbquery("UPDATE
+										fleet
+									SET
+										status='0',
+										landtime='".$this->landTime."'
+									WHERE
+										id='".$arr[0]."'
+									LIMIT 1;");
+							dbquery("UPDATE
+										fleet
+									SET
+										leader_id='".$arr[0]."'
+									WHERE
+										leader_id='".$this->id."';");
+						}
+					}
+					
 					$tottime = $this->landTime() - $this->launchTime;
 					$difftime = time() - $this->launchTime;
 					$this->launchTime = time();
@@ -524,10 +580,10 @@
 				res_metal='".$this->resMetal."',
 				res_crystal='".$this->resCrystal."',
 				res_plastic='".$this->resPlastic."',
-				res_fuel='".$this->res_fuel."',
-				res_food='".$this->res_food."',
-				res_power='".$this->res_power."',
-				res_people='".$this->res_people."'
+				res_fuel='".$this->resFuel."',
+				res_food='".$this->resFood."',
+				res_power='".$this->resPower."',
+				res_people='".$this->resPeople."'
 			WHERE 
 				id='".$this->id."';");			
 			if (mysql_affected_rows()>0)
