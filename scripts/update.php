@@ -53,7 +53,8 @@
 	if (include("conf.inc.php"))
 	{
 		include("global.inc.php");
-		include("functions.php")
+		include("functions.php");
+		include("inc/update.inc.php");
 
 		dbconnect();
 		$conf = get_all_config();

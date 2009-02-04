@@ -216,7 +216,7 @@ function calcDemolishingWaitTime($dc,$cp)
 		$minBuildTimeFactor = (0.1-(GEN_TECH_LEVEL/100));
 	
 		// Load working people data
-		$bl = new BuildList($cp->id());
+		$bl = new BuildList($cp->id(),$cu->id);
 		$peopleWorking = $bl->getPeopleWorking(BUILD_BUILDING_ID);	
 		$peopleTimeReduction = $cfg->value('people_work_done');
 		$peopleFoodConsumption = $cfg->value('people_food_require');
