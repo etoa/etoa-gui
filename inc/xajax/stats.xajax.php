@@ -156,7 +156,7 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 			FROM 
 				alliance_stats
 			ORDER BY 
-				upoints DESC,
+				points DESC,
 				alliance_name ASC
 			;";
 		}

@@ -790,9 +790,11 @@
 			$level=1;
 			while ($arr = mysql_fetch_row($res)) {
 				$level=1;
+				$points=0;
 				while ($level<=$arr[2])
 				{
-					$techs[$arr[0]][$level]=$arr[3]*pow($arr[1],$level-1)/STATS_USER_POINTS;
+					$points += $arr[3]*pow($arr[1],$level-1)/STATS_USER_POINTS;
+					$techs[$arr[0]][$level] = $points;
 					$level++;
 				}
 			}
@@ -810,9 +812,11 @@
 			$buildings=array();
 			while ($arr = mysql_fetch_row($res)) {
 				$level=1;
+				$points=0;
 				while ($level<=$arr[2])
 				{
-					$buildings[$arr[0]][$level]=$arr[3]*pow($arr[1],$level-1)/STATS_USER_POINTS;
+					$points += $arr[3]*pow($arr[1],$level-1)/STATS_USER_POINTS;
+					$buildings[$arr[0]][$level] = $points;
 					$level++;
 				}
 			}
@@ -882,7 +886,7 @@
 					}
 					
 					$sres=dbquery("SELECT
-								  	SUM(`user_alliace_shippoints`)
+								  	SUM(`user_alliace_shippoints_used`)
 								FROM
 									users
 								WHERE
