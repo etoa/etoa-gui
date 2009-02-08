@@ -155,23 +155,23 @@
           // Addieren der Planeten- und Rassenboni
           if ($bp['metal']!="")
           { 
-          	$bp['metal']  = $bp['metal'] + ($bp['metal'] * ($cp->typeMetal-1)) + ($bp['metal'] * ($cu->race->metal-1) + ($bp['metal'] * ($cp->starMetal-1)));
+          	$bp['metal']  = $bp['metal'] + ($bp['metal'] * ($cp->typeMetal-1)) + ($bp['metal'] * ($cu->race->metal-1) + ($bp['metal'] * ($cp->starMetal-1) + ($bp['metal'] * ($cu->specialist->prodMetal-1))));
           }
           if ($bp['crystal']!="")
           { 
-          	$bp['crystal']= $bp['crystal'] + ($bp['crystal'] * ($cp->typeCrystal-1)) +  ($bp['crystal'] * ($cu->race->crystal-1) + ($bp['crystal'] * ($cp->starCrystal-1)));
+          	$bp['crystal']= $bp['crystal'] + ($bp['crystal'] * ($cp->typeCrystal-1)) +  ($bp['crystal'] * ($cu->race->crystal-1) + ($bp['crystal'] * ($cp->starCrystal-1) + ($bp['crystal'] * ($cu->specialist->prodCrystal-1))));
           }
           if ($bp['plastic']!="")
           { 
-          	$bp['plastic']= $bp['plastic'] + ($bp['plastic'] * ($cp->typePlastic-1)) + ($bp['plastic'] * ($cu->race->plastic-1) + ($bp['plastic'] * ($cp->starPlastic-1)));
+          	$bp['plastic']= $bp['plastic'] + ($bp['plastic'] * ($cp->typePlastic-1)) + ($bp['plastic'] * ($cu->race->plastic-1) + ($bp['plastic'] * ($cp->starPlastic-1) + ($bp['plastic'] * ($cu->specialist->prodPlastic-1))));
           }
           if ($bp['fuel']!="")
           {
-          	$bp['fuel'] = $bp['fuel'] + ($bp['fuel'] * ($cp->typeFuel-1)) + ($bp['fuel'] * ($cu->race->fuel-1) + ($bp['fuel'] * ($cp->starFuel-1))) + ($bp['fuel'] * $cp->getFuelProductionBonus());
+          	$bp['fuel'] = $bp['fuel'] + ($bp['fuel'] * ($cp->typeFuel-1)) + ($bp['fuel'] * ($cu->race->fuel-1) + ($bp['fuel'] * ($cp->starFuel-1)) + ($bp['fuel'] * ($cu->specialist->prodFuel-1))) + ($bp['fuel'] * $cp->getFuelProductionBonus());
           }
           if ($bp['food']!="")
           {
-          	$bp['food'] = $bp['food'] + ($bp['food'] * ($cp->typeFood-1)) + ($bp['food'] * ($cu->race->food-1) + ($bp['food'] * ($cp->starFood-1)));
+          	$bp['food'] = $bp['food'] + ($bp['food'] * ($cp->typeFood-1)) + ($bp['food'] * ($cu->race->food-1) + ($bp['food'] * ($cp->starFood-1) + ($bp['food'] * ($cu->specialist->prodFood-1))));
           }
 		  
           // Zum Total hinzufügen
@@ -357,7 +357,7 @@
 			{
 				$bp['power'] 	= round($parr['building_prod_power'] * pow($parr['building_production_factor'],$parr['buildlist_current_level']-1));
 				// Addieren der Planeten- und Rassenboni
-				if ($bp['power']!="") $bp['power'] = $bp['power'] + ($bp['power'] * ($cp->typePower-1)) + ($bp['power'] * ($cu->race->power-1) + ($bp['power'] * ($cp->starPower-1)));
+				if ($bp['power']!="") $bp['power'] = $bp['power'] + ($bp['power'] * ($cp->typePower-1)) + ($bp['power'] * ($cu->race->power-1) + ($bp['power'] * ($cp->starPower-1) + ($bp['power'] * ($cu->specialist->power-1))));
 
 				echo "<tr><th>".$parr['building_name']." (".$parr['buildlist_current_level'].")</th>";
 				echo "<td colspan=\"3\">".nf(floor($bp['power']))."</td></tr>";
@@ -531,72 +531,96 @@
 
 		tableStart("Boni",'98%');
 
-
 		echo "<tr><th>Rohstoff</th>
 		<th>".$cp->typeName."</th>";
 		echo "<th>".$cu->race->name."</th>";
 		echo "<th>".$cp->starTypeName."</th>";
+		echo "<th>".$cu->specialist->name."</th>";
 		echo "<th>TOTAL</th></tr>";
 
 		echo "<tr><td>".RES_ICON_METAL."Produktion ".RES_METAL."</td>";
 		echo "<td>".get_percent_string($cp->typeMetal,1)."</td>";
 		echo "<td>".get_percent_string($cu->race->metal,1)."</td>";
 		echo "<td>".get_percent_string($cp->starMetal,1)."</td>";
-		echo "<td>".get_percent_string(array($cp->typeMetal,$cu->race->metal,$cp->starMetal),1)."</td></tr>";
+		echo "<td>".get_percent_string($cu->specialist->prodMetal,1)."</td>";
+		echo "<td>".get_percent_string(array($cp->typeMetal,$cu->race->metal,$cp->starMetal,$cu->specialist->prodMetal),1)."</td></tr>";
 
 		echo "<tr><td>".RES_ICON_CRYSTAL."Produktion ".RES_CRYSTAL."</td>";
 		echo "<td>".get_percent_string($cp->typeCrystal,1)."</td>";
 		echo "<td>".get_percent_string($cu->race->crystal,1)."</td>";
 		echo "<td>".get_percent_string($cp->starCrystal,1)."</td>";
-		echo "<td>".get_percent_string(array($cp->typeCrystal,$cu->race->crystal,$cp->starCrystal),1)."</td></tr>";
+		echo "<td>".get_percent_string($cu->specialist->prodCrystal,1)."</td>";
+		echo "<td>".get_percent_string(array($cp->typeCrystal,$cu->race->crystal,$cp->starCrystal,$cu->specialist->prodCrystal),1)."</td></tr>";
 
 		echo "<tr><td>".RES_ICON_PLASTIC."Produktion ".RES_PLASTIC."</td>";
 		echo "<td>".get_percent_string($cp->typePlastic,1)."</td>";
 		echo "<td>".get_percent_string($cu->race->plastic,1)."</td>";
 		echo "<td>".get_percent_string($cp->starPlastic,1)."</td>";
-		echo "<td>".get_percent_string(array($cp->typePlastic,$cu->race->plastic,$cp->starPlastic),1)."</td></tr>";
+		echo "<td>".get_percent_string($cu->specialist->prodPlastic,1)."</td>";
+		echo "<td>".get_percent_string(array($cp->typePlastic,$cu->race->plastic,$cp->starPlastic,$cu->specialist->prodPlastic),1)."</td></tr>";
 
 		echo "<tr><td>".RES_ICON_FUEL."Produktion ".RES_FUEL."</td>";
 		echo "<td>".get_percent_string($cp->typeFuel,1)."</td>";
 		echo "<td>".get_percent_string($cu->race->fuel,1)."</td>";
 		echo "<td>".get_percent_string($cp->starFuel,1)."</td>";
-		echo "<td>".get_percent_string(array($cp->typeFuel,$cu->race->fuel,$cp->starFuel),1)."</td></tr>";
+		echo "<td>".get_percent_string($cu->specialist->prodFuel,1)."</td>";
+		echo "<td>".get_percent_string(array($cp->typeFuel,$cu->race->fuel,$cp->starFuel,$cu->specialist->prodFuel),1)."</td></tr>";
 
 		echo "<tr><td>".RES_ICON_FOOD."Produktion ".RES_FOOD."</td>";
 		echo "<td>".get_percent_string($cp->typeFood,1)."</td>";
 		echo "<td>".get_percent_string($cu->race->food,1)."</td>";
 		echo "<td>".get_percent_string($cp->starFood,1)."</td>";
-		echo "<td>".get_percent_string(array($cp->typeFood,$cu->race->food,$cp->starFood),1)."</td></tr>";
+		echo "<td>".get_percent_string($cu->specialist->prodFood,1)."</td>";
+		echo "<td>".get_percent_string(array($cp->typeFood,$cu->race->food,$cp->starFood,$cu->specialist->prodFood),1)."</td></tr>";
 
 		echo "<tr><td>".RES_ICON_POWER."Produktion Energie</td>";
 		echo "<td>".get_percent_string($cp->typePower,1)."</td>";
 		echo "<td>".get_percent_string($cu->race->power,1)."</td>";
 		echo "<td>".get_percent_string($cp->starPower,1)."</td>";
-		echo "<td>".get_percent_string(array($cp->typePower,$cu->race->power,$cp->starPower),1)."</td></tr>";
+		echo "<td>".get_percent_string($cu->specialist->power,1)."</td>";
+		echo "<td>".get_percent_string(array($cp->typePower,$cu->race->power,$cp->starPower,$cu->specialist->power),1)."</td></tr>";
 
 		echo "<tr><td>".RES_ICON_PEOPLE."Bev&ouml;lkerungswachstum</td>";
 		echo "<td>".get_percent_string($cp->typePopulation,1)."</td>";
 		echo "<td>".get_percent_string($cu->race->population,1)."</td>";
 		echo "<td>".get_percent_string($cp->starPopulation,1)."</td>";
-		echo "<td>".get_percent_string(array($cp->typePopulation,$cu->race->population,$cp->starPopulation),1)."</td></tr>";
+		echo "<td>".get_percent_string($cu->specialist->population,1)."</td>";
+		echo "<td>".get_percent_string(array($cp->typePopulation,$cu->race->population,$cp->starPopulation,$cu->specialist->population),1)."</td></tr>";
 
 		echo "<tr><td>".RES_ICON_TIME."Forschungszeit</td>";
 		echo "<td>".get_percent_string($cp->typeResearchtime,1,1)."</td>";
 		echo "<td>".get_percent_string($cu->race->researchTime,1,1)."</td>";
 		echo "<td>".get_percent_string($cp->starResearchtime,1,1)."</td>";
-		echo "<td>".get_percent_string(array($cp->typeResearchtime,$cu->race->researchTime,$cp->starResearchtime),1,1)."</td></tr>";
+		echo "<td>".get_percent_string($cu->specialist->researchTime,1,1)."</td>";
+		echo "<td>".get_percent_string(array($cp->typeResearchtime,$cu->race->researchTime,$cp->starResearchtime,$cu->specialist->researchTime),1,1)."</td></tr>";
 
 		echo "<tr><td>".RES_ICON_TIME."Bauzeit (Geb&auml;ude)</td>";
 		echo "<td>".get_percent_string($cp->typeBuildtime,1,1)."</td>";
 		echo "<td>".get_percent_string($cu->race->buildTime,1,1)."</td>";
 		echo "<td>".get_percent_string($cp->starBuildtime,1,1)."</td>";
-		echo "<td>".get_percent_string(array($cp->typeBuildtime,$cu->race->buildTime,$cp->starBuildtime),1,1)."</td></tr>";
+		echo "<td>".get_percent_string($cu->specialist->buildTime,1,1)."</td>";
+		echo "<td>".get_percent_string(array($cp->typeBuildtime,$cu->race->buildTime,$cp->starBuildtime,$cu->specialist->buildTime),1,1)."</td></tr>";
+		
+		echo "<tr><td>".RES_ICON_TIME."Bauzeit (Schiffe)</td>";
+		echo "<td>-</td>";
+		echo "<td>-</td>";
+		echo "<td>-</td>";
+		echo "<td>".get_percent_string($cu->specialist->shipTime,1,1)."</td>";
+		echo "<td>".get_percent_string($cu->specialist->shipTime,1,1)."</td></tr>";
+		
+		echo "<tr><td>".RES_ICON_TIME."Bauzeit (Verteidigung)</td>";
+		echo "<td>-</td>";
+		echo "<td>-</td>";
+		echo "<td>-</td>";
+		echo "<td>".get_percent_string($cu->specialist->defenseTime,1,1)."</td>";
+		echo "<td>".get_percent_string($cu->specialist->defenseTime,1,1)."</td></tr>";
 
 		echo "<tr><td>".RES_ICON_TIME."Fluggeschwindigkeit</td>";
 		echo "<td>-</td>";
 		echo "<td>".get_percent_string($cu->race->fleetSpeedFactor,1)."</td>";
 		echo "<td>-</td>";
-		echo "<td>".get_percent_string($cu->race->fleetSpeedFactor,1)."</td></tr>";
+		echo "<td>".get_percent_string($cu->specialist->fleetSpeedFactor,1)."</td>";
+		echo "<td>".get_percent_string(array($cu->race->fleetSpeedFactor,$cu->specialist->fleetSpeedFactor),1)."</td></tr>";
 
 		tableEnd();
 		

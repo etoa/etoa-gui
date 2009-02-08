@@ -33,8 +33,6 @@
     protected $registered;
 		protected $chatadmin;
 		protected $ip;
-		protected $specialist_time;
-		protected $specialist_id;
 		protected $visits;
 		protected $profileImage;
 		protected $profileText;
@@ -49,6 +47,7 @@
 		protected $rankHighest;
     protected $specialistId;
     protected $specialistTime;
+	protected $specialist = null;
 
 		// Sub-objects and their id's		
 		protected $raceId;
@@ -115,8 +114,6 @@
 				
 				$this->ip=$_SERVER['REMOTE_ADDR'];
 				
-				$this->specialist_time=$arr['user_specialist_time'];
-				$this->specialist_id=$arr['user_specialist_id'];
 				$this->visits = $arr['user_visits'];
 				
 				$this->profileImage = $arr['user_profile_img'];
@@ -320,7 +317,11 @@
 				if ($key == "properties" && $this->properties==null)
 				{
  					$this->properties = new UserProperties($this->id);
-				}				
+				}
+				if ($key == "specialist" && $this->specialist==null)
+				{
+ 					$this->specialist = new Specialist($this->specialistId);
+				}
 
 				return $this->$key;
 			}

@@ -314,7 +314,8 @@
 			echo "<tr><th>Wachstumsbonus ".$cp->typeName."</th><td class=\"tbldata\">".get_percent_string($cp->typePopulation,1)."</td></tr>";
 			echo "<tr><th>Wachstumsbonus ".$cu->race->name."</th><td class=\"tbldata\">".get_percent_string($cu->race->population,1)."</td></tr>";
 			echo "<tr><th>Wachstumsbonus ".$cp->starTypeName."</th><td class=\"tbldata\">".get_percent_string($cp->starPopulation,1)."</td></tr>";
-			echo "<tr><th>Wachstumsbonus total</th><td class=\"tbldata\">".get_percent_string(array($cp->typePopulation,$cu->race->population,$cp->starPopulation),1)."</td></tr>";
+			echo "<tr><th>Wachstumsbonus ".$cu->specialist->name."</th><td class=\"tbldata\">".get_percent_string($cu->specialist->population,1)."</td></tr>";
+			echo "<tr><th>Wachstumsbonus total</th><td class=\"tbldata\">".get_percent_string(array($cp->typePopulation,$cu->race->population,$cp->starPopulation,$cu->specialist->population),1)."</td></tr>";
 			echo "<tr><th>Bev&ouml;lkerungszuwachs pro Stunde</th><td class=\"tbldata\">".nf($people_div)."</td></tr>";
 			tableEnd();
 		}

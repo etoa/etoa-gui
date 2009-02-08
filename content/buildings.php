@@ -53,15 +53,7 @@ function calcBuildingWaitTime($bc,$cp)
 	$notAvStyle=" style=\"color:red;\"";
 	
 	// Wartezeiten auf Ressourcen berechnen
-	if ($cp->prodMetal>0)
-	{ 
-		$bwait['metal']=ceil(($bc['metal']-$cp->resMetal)/$cp->prodMetal*3600);
-	}
-	else
-	{
-		$bwait['metal']=0;
-	}
-	
+	if ($cp->prodMetal>0) $bwait['metal']=ceil(($bc['metal']-$cp->resMetal)/$cp->prodMetal*3600);else $bwait['metal']=0;
 	if ($cp->prodCrystal>0) $bwait['crystal']=ceil(($bc['crystal']-$cp->resCrystal)/$cp->prodCrystal*3600);else $bwait['crystal']=0;
 	if ($cp->prodPlastic>0) $bwait['plastic']=ceil(($bc['plastic']-$cp->resPlastic)/$cp->prodPlastic*3600);else $bwait['plastic']=0;
 	if ($cp->prodFuel>0) $bwait['fuel']=ceil(($bc['fuel']-$cp->resFuel)/$cp->prodFuel*3600);else $bwait['fuel']=0;
@@ -97,16 +89,16 @@ function calcBuildingWaitTime($bc,$cp)
 	return array($bcstring,$bwmax);
 }
 
-function calcDemolishingCosts($buildingArray, $buildingCosts)
+function calcDemolishingCosts($buildingArray, $buildingCosts, $fac)
 {	
 	$dc=array();
 	// Abrisskostenberechnung				Abrisskosten = Baukosten  * Abrisskostenfaktor
-	$dc['metal'] = $buildingCosts['metal'] * $buildingArray['building_demolish_costs_factor'];
-	$dc['crystal'] = $buildingCosts['crystal'] * $buildingArray['building_demolish_costs_factor'];
-	$dc['plastic'] = $buildingCosts['plastic'] * $buildingArray['building_demolish_costs_factor'];
-	$dc['fuel'] = $buildingCosts['fuel'] * $buildingArray['building_demolish_costs_factor'];
-	$dc['food'] = $buildingCosts['food'] * $buildingArray['building_demolish_costs_factor'];
-	$dc['power'] = $buildingCosts['power'] * $buildingArray['building_demolish_costs_factor'];
+	$dc['metal'] = $fac * $buildingCosts['metal'] * $buildingArray['building_demolish_costs_factor'];
+	$dc['crystal'] = $fac * $buildingCosts['crystal'] * $buildingArray['building_demolish_costs_factor'];
+	$dc['plastic'] = $fac * $buildingCosts['plastic'] * $buildingArray['building_demolish_costs_factor'];
+	$dc['fuel'] = $fac * $buildingCosts['fuel'] * $buildingArray['building_demolish_costs_factor'];
+	$dc['food'] = $fac * $buildingCosts['food'] * $buildingArray['building_demolish_costs_factor'];
+	$dc['power'] = $fac * $buildingCosts['power'] * $buildingArray['building_demolish_costs_factor'];
 	return $dc;
 }
 
@@ -275,13 +267,20 @@ function calcDemolishingWaitTime($dc,$cp)
     $def_field_needed = 0;
 
   	iBoxStart("Bauhof-Infos");
-  	echo "<div style=\"text-align:left;\">
-  	<b>Eingestellte Arbeiter:</b> ".nf($peopleWorking)."<br/>
+  	echo "<div style=\"text-align:left;\">";
+	if ($cu->specialist->buildTime!=1) {
+		echo "<b>Bauzeitverringerung durch ".$cu->specialist->name.":</b> ".get_percent_string($cu->specialist->buildTime)."<br>";
+	}
+  	echo "<b>Eingestellte Arbeiter:</b> ".nf($peopleWorking)."<br/>
   	<b>Zeitreduktion durch Arbeiter pro Auftrag:</b> ".tf($peopleTimeReduction*$peopleWorking)."<br/>
   	<b>Nahrungsverbrauch durch Arbeiter pro Auftrag:</b> ".nf($peopleFoodConsumption*$peopleWorking)."<br/>
   	<b>Gentechnologie:</b> ".GEN_TECH_LEVEL."<br/>
-  	<b>Minimale Bauzeit (mit Arbeiter):</b> Bauzeit * ".$minBuildTimeFactor."
-  	</div>";   	
+  	<b>Minimale Bauzeit (mit Arbeiter):</b> Bauzeit * ".$minBuildTimeFactor;
+	if ($cu->specialist->costsBuilding!=1)
+	{
+		echo "<br/><br/><b>Kostenreduktion durch ".$cu->specialist->name.":</b> ".get_percent_string($cu->specialist->costsBuilding);
+	}
+  	echo "</div>";   	
   	iBoxEnd();
 
 
@@ -352,12 +351,12 @@ function calcDemolishingWaitTime($dc,$cp)
 				}
 					
 
-        $bc = calcBuildingCosts($arr,$b_level);
-        $bcn = calcBuildingCosts($arr,$b_level+1);
-				$dc = calcDemolishingCosts($arr, $bc);
+        $bc = calcBuildingCosts($arr,$b_level,$cu->specialist->costsBuilding);
+        $bcn = calcBuildingCosts($arr,$b_level+1,$cu->specialist->costsBuilding);
+				$dc = calcDemolishingCosts($arr, $bc,$cu->specialist->costsBuilding);
 
 				// Bauzeit
-				$bonus = $cu->race->buildTime + $cp->typeBuildtime + $cp->starBuildtime -2;
+				$bonus = $cu->race->buildTime + $cp->typeBuildtime + $cp->starBuildtime + $cu->specialist->buildTime - 3;
 
 				$btime = ($bc['metal']+$bc['crystal']+$bc['plastic']+$bc['fuel']+$bc['food']) / GLOBAL_TIME * BUILD_BUILD_TIME;
 				$btime *= $bonus;
@@ -450,7 +449,8 @@ function calcDemolishingWaitTime($dc,$cp)
 								<b>Bau dauer:</b> ".tf($btime)."<br>
 								<b>Ende:</b> ".date("Y-m-d H:i:s",$end_time)."<br>
 								<b>Eingesetzte Bewohner:</b> ".nf($peopleWorking)."<br>
-								<b>Gen-Tech Level:</b> ".GEN_TECH_LEVEL."<br><br>
+								<b>Gen-Tech Level:</b> ".GEN_TECH_LEVEL."<br>
+								<b>Eingesetzter Spezialist:</b> ".$cu->specialist->name."<br><br>
 								<b>Kosten</b><br>
 								<b>".RES_METAL.":</b> ".nf($bc['metal'])."<br>
 								<b>".RES_CRYSTAL.":</b> ".nf($bc['crystal'])."<br>
@@ -1149,7 +1149,7 @@ function calcDemolishingWaitTime($dc,$cp)
 								{
 									// Zuwenig Ressourcen
 									
-                	$bc = calcBuildingCosts($bv,$b_level);
+                	$bc = calcBuildingCosts($bv,$b_level,$cu->specialist->costsBuilding);
 									if($b_level<$bv['last_level'] && $cp->resMetal < $bc['metal'] || $cp->resCrystal < $bc['crystal']  || $cp->resPlastic < $bc['plastic']  || $cp->resFuel < $bc['fuel']  || $cp->resFood < $bc['food'])
 									{
 										$tmtext = "<span style=\"color:#f00\">Zuwenig Ressourcen f&uuml;r weiteren Ausbau!</span><br/>";

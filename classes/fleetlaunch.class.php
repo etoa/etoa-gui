@@ -51,6 +51,7 @@
 			$this->ownerId = $ownerEnt->id;
 			$this->ownerRaceName = $ownerEnt->race->name;
 			$this->raceSpeedFactor = $ownerEnt->race->fleetSpeedFactor;
+			$this->specialist = $ownerEnt->specialist;
 			$this->possibleFleetStarts = 0;
 			$this->fleetSlotsUsed = 0;
 			$this->fleetControlLevel =0;
@@ -141,7 +142,7 @@
 					unset($fm);
 			
 					$this->fleetControlLevel = $bl->getLevel(FLEET_CONTROL_ID);
-					$this->possibleFleetStarts = FLEET_NOCONTROL_NUM + $this->fleetControlLevel - $this->fleetSlotsUsed;
+					$this->possibleFleetStarts = FLEET_NOCONTROL_NUM + $this->fleetControlLevel - $this->fleetSlotsUsed + $this->specialist->fleetMax;
 					
 					if ($this->possibleFleetStarts > 0)
 					{					
@@ -211,7 +212,7 @@
 							GROUP BY
 								r.id");
 							
-							$timefactor=$this->raceSpeedFactor();
+							$timefactor=$this->raceSpeedFactor() + $this->specialist->fleetSpeedFactor-1;
 							if (mysql_num_rows($vres)>0)
 							{
 								while ($varr=mysql_fetch_array($vres))

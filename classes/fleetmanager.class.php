@@ -75,6 +75,9 @@
 			$tl = new TechList($this->userId);
 			$this->userSpyTechLevel = $tl->getLevel(SPY_TECH_ID);
 			
+			$specialist = new Specialist(0,0,$this->userId);
+			$this->userSpyTechLevel += $specialist->spyLevel;
+			
 			if (SPY_TECH_SHOW_ATTITUDE<=$this->userSpyTechLevel) {
 				//Lädt Flottendaten
 				// TODO: This is not good query because it needs to know the planet table structure
@@ -102,6 +105,8 @@
 							if ($cFleet->getAction()->attitude()==3) {
 								$otl = new TechList($cFleet->ownerId());
 								$opTarnTech = $otl->getLevel(TARN_TECH_ID);
+								$specialist = new Specialist(0,0,$cFleet->ownerId());
+								$opTarnTech += $specialist->tarnLevel;
 							
 								$diffTimeFactor = max($opTarnTech-$this->userSpyTechLevel,0);
 							

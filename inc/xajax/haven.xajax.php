@@ -77,7 +77,10 @@
 			echo "<b>Eine</b> Flotte kann von diesem Planeten starten!";
 		else
 			echo "Es k&ouml;nnen <b>keine</b> Flotten von diesem Planeten starten!";
-		echo " (Flottenkontrolle Stufe ".$fleet->fleetControlLevel().")</td></tr>";
+		echo " (Flottenkontrolle Stufe ".$fleet->fleetControlLevel();
+		if ($fleet->specialist->fleetMax>0)
+			echo " +3 Flotten durch ".$fleet->specialist->name;
+		echo ")</td></tr>";
 	
 		// Piloten		
   	echo "<tr><th class=\"tbltitle\">Piloten:</th><td class=\"tbldata\">";
@@ -94,6 +97,14 @@
 		{
 			echo "<tr><th class=\"tbltitle\">Rassenbonus:</th><td class=\"tbldata\">";
 			echo "Die Schiffe fliegen aufgrund deiner Rasse <b>".$fleet->ownerRaceName."</b> mit ".get_percent_string($fleet->raceSpeedFactor,1)." Geschwindigkeit!";
+			echo "</td></tr>";
+		}
+		
+		// Specialist		
+		if ($fleet->specialist->fleetSpeedFactor != 1)
+		{
+			echo "<tr><th class=\"tbltitle\">Spezialistenbonus:</th><td class=\"tbldata\">";
+			echo "Die Schiffe fliegen aufgrund des <b>".$fleet->specialist->name."</b> mit ".get_percent_string($fleet->specialist->fleetSpeedFactor,1)." Geschwindigkeit!";
 			echo "</td></tr>";
 		}
 		tableEnd();
@@ -209,8 +220,13 @@
             $speedtechstring="Rasse: ".get_percent_string($fleet->raceSpeedFactor(),1)."<br>";
         else
             $speedtechstring="";
+			
+        if ($fleet->specialist->fleetSpeedFactor!=1)
+            $speedtechstring.="Spezialist: ".get_percent_string($fleet->specialist->fleetSpeedFactor,1)."<br>";
+        else
+            $speedtechstring.="";
 
-        $timefactor=$fleet->raceSpeedFactor();
+        $timefactor=$fleet->raceSpeedFactor()+$fleet->specialist->fleetSpeedFactor-1;
         if (mysql_num_rows($vres)>0)
         {
             while ($varr=mysql_fetch_array($vres))
@@ -671,7 +687,6 @@ ob_start();
 	function havenShowAction($form)
 	{
 		$response = new xajaxResponse();
-		$response->assign("comment","innerHTML","home");
 
 		// Do some checks
 		if (count($form)>0)

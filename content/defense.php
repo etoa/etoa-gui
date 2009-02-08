@@ -194,6 +194,9 @@
     	{
     		echo "Stufe ".$conf['build_time_boni_waffenfabrik']['p1']." erforderlich!<br/>";
     	}
+		if ($cu->specialist->defenseTime!=1) {
+			echo "<b>Bauzeitverringerung durch ".$cu->specialist->name.":</b> ".get_percent_string($cu->specialist->defenseTime)."<br/>";
+		}
     	if ($cancel_res_factor>0)
     	{
     		echo "<b>Ressourcenrückgabe bei Abbruch:</b> ".($cancel_res_factor*100)."% (ohne ".RES_FOOD.", ".(DEFQUEUE_CANCEL_END*100)."% maximal)";
@@ -203,7 +206,11 @@
     	{
     		echo "<b>Abbruchmöglichkeit:</b> Stufe ".DEFQUEUE_CANCEL_MIN_LEVEL." erforderlich!";
     		$cancelable = false;
-    	}    	
+    	}
+		if ($cu->specialist->costsDefense!=1)
+		{
+			echo "<br/><br/><b>Kostenreduktion durch ".$cu->specialist->name.":</b> ".get_percent_string($cu->specialist->costsDefense);
+		}
     	echo "</td></tr>";
     	//iBoxEnd();
     	//echo '</div>';
@@ -416,11 +423,11 @@
 						if ($build_cnt>0)
 						{
 							//Errechne Kosten pro auftrag schiffe
-							$bc['metal']=$darr['def_costs_metal']*$build_cnt;
-							$bc['crystal']=$darr['def_costs_crystal']*$build_cnt;
-							$bc['plastic']=$darr['def_costs_plastic']*$build_cnt;
-							$bc['fuel']=$darr['def_costs_fuel']*$build_cnt;
-							$bc['food']=($_POST['additional_food_costs']+$darr['def_costs_food'])*$build_cnt;
+							$bc['metal']=$darr['def_costs_metal']*$build_cnt*$cu->specialist->costsDefense;
+							$bc['crystal']=$darr['def_costs_crystal']*$build_cnt*$cu->specialist->costsDefense;
+							$bc['plastic']=$darr['def_costs_plastic']*$build_cnt*$cu->specialist->costsDefense;
+							$bc['fuel']=$darr['def_costs_fuel']*$build_cnt*$cu->specialist->costsDefense;
+							$bc['food']=($_POST['additional_food_costs']+$darr['def_costs_food'])*$build_cnt*$cu->specialist->costsDefense;
 
     	        //Berechnete Ress provisorisch abziehen
     	        $cp->resMetal-=$bc['metal'];
@@ -430,7 +437,7 @@
     	        $cp->resFood-=$bc['food'];
 
 							// Bauzeit pro Schiff berechnen
-							$btime = ($darr['def_costs_metal'] + $darr['def_costs_crystal'] + $darr['def_costs_plastic'] + $darr['def_costs_fuel'] + $darr['def_costs_food']) / GLOBAL_TIME * DEF_BUILD_TIME * $time_boni_factor;
+							$btime = ($darr['def_costs_metal'] + $darr['def_costs_crystal'] + $darr['def_costs_plastic'] + $darr['def_costs_fuel'] + $darr['def_costs_food']) / GLOBAL_TIME * DEF_BUILD_TIME * $time_boni_factor * $cu->specialist->defenseTime;
 
 	    				// TODO: Überprüfen
 							//Rechnet zeit wenn arbeiter eingeteilt sind
@@ -511,7 +518,8 @@
 				<b>Ende des gesamten Auftrages:</b> ".date("Y-m-d H:i:s",$end_time)."<br>
 				<b>Waffenfabrik Level:</b> ".CURRENT_FACTORY_LEVEL."<br>
 				<b>Eingesetzte Bewohner:</b> ".nf($people_working)."<br>
-				<b>Gen-Tech Level:</b> ".GEN_TECH_LEVEL."<br><br>
+				<b>Gen-Tech Level:</b> ".GEN_TECH_LEVEL."<br>
+				<b>Eingesetzter Spezialist:</b> ".$cu->specialist->name."<br><br>
 				<b>Kosten</b><br>
 				<b>".RES_METAL.":</b> ".nf($total_metal)."<br>
 				<b>".RES_CRYSTAL.":</b> ".nf($total_crystal)."<br>
@@ -949,10 +957,15 @@
     			      {
     			      	$def_count+=$queue_cnt[$darr['def_id']];
     			      }
-
+					  
+					  $darr['def_costs_metal'] *= $cu->specialist->costsDefense;
+					  $darr['def_costs_crystal'] *= $cu->specialist->costsDefense;
+					  $darr['def_costs_plastic'] *= $cu->specialist->costsDefense;
+					  $darr['def_costs_fuel'] *= $cu->specialist->costsDefense;
+					  $darr['def_costs_food'] *= $cu->specialist->costsDefense;
 
     						// Bauzeit berechnen
-								$btime = ($darr['def_costs_metal']+$darr['def_costs_crystal']+$darr['def_costs_plastic']+$darr['def_costs_fuel']+$darr['def_costs_food']) / GLOBAL_TIME * DEF_BUILD_TIME * $time_boni_factor;
+								$btime = ($darr['def_costs_metal']+$darr['def_costs_crystal']+$darr['def_costs_plastic']+$darr['def_costs_fuel']+$darr['def_costs_food']) / GLOBAL_TIME * DEF_BUILD_TIME * $time_boni_factor * $cu->specialist->defenseTime;
     			      $btime_min=$btime*(0.1-(GEN_TECH_LEVEL/100));
     			      
     			      //Mindest Bauzeit

@@ -271,6 +271,11 @@
 			while ($arr = mysql_fetch_assoc($res))
 			{
 				$cat[$arr['cat_id']] = $arr['cat_name'];
+				$arr['ship_costs_metal'] *= $cu->specialist->costsShip;
+				$arr['ship_costs_crystal'] *= $cu->specialist->costsShip;
+				$arr['ship_costs_plastic'] *= $cu->specialist->costsShip;
+				$arr['ship_costs_fuel'] *= $cu->specialist->costsShip;
+				$arr['ship_costs_food'] *= $cu->specialist->costsShip;
 				$ships[$arr['ship_id']] = $arr;
 			}
 			
@@ -311,6 +316,9 @@
     	{
     		echo "Stufe ".$conf['build_time_boni_schiffswerft']['p1']." erforderlich!<br/>";
     	}
+		if ($cu->specialist->shipTime!=1) {
+			echo "<b>Bauzeitverringerung durch ".$cu->specialist->name.":</b> ".get_percent_string($cu->specialist->shipTime)."<br/>";
+		}
     	if ($cancel_res_factor>0)
     	{
     		echo "<b>Ressourcenrückgabe bei Abbruch:</b> ".($cancel_res_factor*100)."% (ohne ".RES_FOOD.", ".(SHIPQUEUE_CANCEL_END*100)."% maximal)";
@@ -321,6 +329,10 @@
     		echo "<b>Abbruchmöglichkeit:</b> Stufe ".SHIPQUEUE_CANCEL_MIN_LEVEL." erforderlich!";
     		$cancelable = false;
     	} 
+		if ($cu->specialist->costsShip!=1)
+		{
+			echo "<br/><br/><b>Kostenreduktion durch ".$cu->specialist->name.":</b> ".get_percent_string($cu->specialist->costsShip);
+		}
     	echo "</td></tr>";   	
 
 			
@@ -528,7 +540,8 @@
 							+ $ships[$ship_id]['ship_costs_fuel'] 
 							+ $ships[$ship_id]['ship_costs_food']) 
 							/ GLOBAL_TIME * SHIP_BUILD_TIME 
-							* $time_boni_factor;
+							* $time_boni_factor
+							* $cu->specialist->shipTime;
 
 	    				// TODO: Überprüfen
 							//Rechnet zeit wenn arbeiter eingeteilt sind
@@ -617,7 +630,8 @@
 				<b>Ende des gesamten Auftrages:</b> ".date("Y-m-d H:i:s",$end_time)."<br>
 				<b>Schiffswerft Level:</b> ".CURRENT_SHIPYARD_LEVEL."<br>
 				<b>Eingesetzte Bewohner:</b> ".nf($people_working)."<br>
-				<b>Gen-Tech Level:</b> ".$gen_tech_level."<br><br>
+				<b>Gen-Tech Level:</b> ".$gen_tech_level."<br>
+				<b>Eingesetzter Spezialist:</b> ".$cu->specialist->name."<br><br>
 				<b>Kosten</b><br>
 				<b>".RES_METAL.":</b> ".nf($total_metal)."<br>
 				<b>".RES_CRYSTAL.":</b> ".nf($total_crystal)."<br>
@@ -916,7 +930,7 @@
 
 
     						// Bauzeit berechnen
-								$btime = ($data['ship_costs_metal']+$data['ship_costs_crystal']+$data['ship_costs_plastic']+$data['ship_costs_fuel']+$data['ship_costs_food']) / GLOBAL_TIME * SHIP_BUILD_TIME * $time_boni_factor;
+								$btime = ($data['ship_costs_metal']+$data['ship_costs_crystal']+$data['ship_costs_plastic']+$data['ship_costs_fuel']+$data['ship_costs_food']) / GLOBAL_TIME * SHIP_BUILD_TIME * $time_boni_factor * $cu->specialist->shipTime;
     			      $btime_min=$btime*(0.1-($gen_tech_level/100));
     			      
     			      //Mindest Bauzeit

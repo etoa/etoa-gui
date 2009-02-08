@@ -2561,18 +2561,19 @@ function imagecreatefromfile($path, $user_functions = false)
 	*
 	* @param array Array of db cost values
 	* @param int Level
+	* @param float costFactor (like specialist)
 	* @return array Array of calculated costs
 	*
 	*/	
-	function calcBuildingCosts($buildingArray, $level)
+	function calcBuildingCosts($buildingArray, $level, $fac)
 	{
 		$bc=array();
-		$bc['metal'] = $buildingArray['building_costs_metal'] * pow($buildingArray['building_build_costs_factor'],$level);
-		$bc['crystal'] = $buildingArray['building_costs_crystal'] * pow($buildingArray['building_build_costs_factor'],$level);
-		$bc['plastic'] = $buildingArray['building_costs_plastic'] * pow($buildingArray['building_build_costs_factor'],$level);
-		$bc['fuel'] = $buildingArray['building_costs_fuel'] * pow($buildingArray['building_build_costs_factor'],$level);
-		$bc['food'] = $buildingArray['building_costs_food'] * pow($buildingArray['building_build_costs_factor'],$level);
-		$bc['power'] = $buildingArray['building_costs_power'] * pow($buildingArray['building_build_costs_factor'],$level);
+		$bc['metal'] = $fac * $buildingArray['building_costs_metal'] * pow($buildingArray['building_build_costs_factor'],$level);
+		$bc['crystal'] = $fac * $buildingArray['building_costs_crystal'] * pow($buildingArray['building_build_costs_factor'],$level);
+		$bc['plastic'] = $fac * $buildingArray['building_costs_plastic'] * pow($buildingArray['building_build_costs_factor'],$level);
+		$bc['fuel'] = $fac * $buildingArray['building_costs_fuel'] * pow($buildingArray['building_build_costs_factor'],$level);
+		$bc['food'] = $fac * $buildingArray['building_costs_food'] * pow($buildingArray['building_build_costs_factor'],$level);
+		$bc['power'] = $fac * $buildingArray['building_costs_power'] * pow($buildingArray['building_build_costs_factor'],$level);
 		return $bc;
 	}
 	
@@ -2581,19 +2582,20 @@ function imagecreatefromfile($path, $user_functions = false)
 	*
 	* @param array Array of db cost values
 	* @param int Level
+	* @param float costFactor (like specialist)
 	* @return array Array of calculated costs
 	*
 	*/
-	function calcTechCosts($arr,$l)
+	function calcTechCosts($arr,$l,$fac)
 	{
 
 		// Baukostenberechnung          Baukosten = Grundkosten * (Kostenfaktor ^ Ausbaustufe)
 		$bc = array();
-		$bc['metal'] = $arr['tech_costs_metal'] * pow($arr['tech_build_costs_factor'],$l);
-		$bc['crystal'] = $arr['tech_costs_crystal'] * pow($arr['tech_build_costs_factor'],$l);
-		$bc['plastic'] = $arr['tech_costs_plastic'] * pow($arr['tech_build_costs_factor'],$l);
-		$bc['fuel'] = $arr['tech_costs_fuel'] * pow($arr['tech_build_costs_factor'],$l);
-		$bc['food'] = $arr['tech_costs_food'] * pow($arr['tech_build_costs_factor'],$l);
+		$bc['metal'] = $fac * $arr['tech_costs_metal'] * pow($arr['tech_build_costs_factor'],$l);
+		$bc['crystal'] = $fac * $arr['tech_costs_crystal'] * pow($arr['tech_build_costs_factor'],$l);
+		$bc['plastic'] = $fac * $arr['tech_costs_plastic'] * pow($arr['tech_build_costs_factor'],$l);
+		$bc['fuel'] = $fac * $arr['tech_costs_fuel'] * pow($arr['tech_build_costs_factor'],$l);
+		$bc['food'] = $fac * $arr['tech_costs_food'] * pow($arr['tech_build_costs_factor'],$l);
 		return $bc;
 	}
 

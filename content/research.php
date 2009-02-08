@@ -66,17 +66,16 @@
 			// Überschrift
 			echo "<h1>Forschungslabor (Stufe ".CURRENT_LAB_LEVEL.") des Planeten ".$cp->name."</h1>";
 			$cp->resBox($cu->properties->smallResBox);
-
-      //level zählen welches das forschungslabor über dem angegeben level ist und faktor berechnen
-      $need_bonus_level = CURRENT_LAB_LEVEL - $conf['build_time_boni_forschungslabor']['p1'];
-      if($need_bonus_level<=0)
-      {
-          $time_boni_factor=1;
-      }
-      else
-      {
-          $time_boni_factor=max($conf['build_time_boni_forschungslabor']['p2'] , 1-($need_bonus_level*($conf['build_time_boni_forschungslabor']['v']/100)));
-      }
+			//level zählen welches das forschungslabor über dem angegeben level ist und faktor berechnen
+			$need_bonus_level = CURRENT_LAB_LEVEL - $conf['build_time_boni_forschungslabor']['p1'];
+			if ($need_bonus_level<=0)
+			{
+				$time_boni_factor=1;
+			}
+			else
+			{
+				$time_boni_factor=max($conf['build_time_boni_forschungslabor']['p2'] , 1-($need_bonus_level*($conf['build_time_boni_forschungslabor']['v']/100)));
+			}
 	
 	
 			//
@@ -196,17 +195,17 @@
 					}
 					
 	
-					$bc = calcTechCosts($arr,$b_level);
+					$bc = calcTechCosts($arr,$b_level,$cu->specialist->costsResearch);
 	
-					$bcn['metal'] = $arr['tech_costs_metal'] * pow($arr['tech_build_costs_factor'],$b_level+1);
-					$bcn['crystal'] = $arr['tech_costs_crystal'] * pow($arr['tech_build_costs_factor'],$b_level+1);
-					$bcn['plastic'] = $arr['tech_costs_plastic'] * pow($arr['tech_build_costs_factor'],$b_level+1);
-					$bcn['fuel'] = $arr['tech_costs_fuel'] * pow($arr['tech_build_costs_factor'],$b_level+1);
-					$bcn['food'] = $arr['tech_costs_food'] * pow($arr['tech_build_costs_factor'],$b_level+1);
+					$bcn['metal'] = $cu->specialist->costsResearch * $arr['tech_costs_metal'] * pow($arr['tech_build_costs_factor'],$b_level+1);
+					$bcn['crystal'] = $cu->specialist->costsResearch * $arr['tech_costs_crystal'] * pow($arr['tech_build_costs_factor'],$b_level+1);
+					$bcn['plastic'] = $cu->specialist->costsResearch * $arr['tech_costs_plastic'] * pow($arr['tech_build_costs_factor'],$b_level+1);
+					$bcn['fuel'] = $cu->specialist->costsResearch * $arr['tech_costs_fuel'] * pow($arr['tech_build_costs_factor'],$b_level+1);
+					$bcn['food'] = $cu->specialist->costsResearch * $arr['tech_costs_food'] * pow($arr['tech_build_costs_factor'],$b_level+1);
 	
 	
 					// Bauzeit
-					$bonus = $cu->race->researchTime + $cp->typeResearchtime + $cp->starResearchtime-2;
+					$bonus = $cu->race->researchTime + $cp->typeResearchtime + $cp->starResearchtime + $cu->race->researchTime -3;
 	
 					$btime = ($bc['metal']+$bc['crystal']+$bc['plastic']+$bc['fuel']+$bc['food']) / GLOBAL_TIME * RES_BUILD_TIME * $time_boni_factor;
 					$btime *= $bonus;
@@ -216,13 +215,13 @@
 	
 	
 					// Berechnet mindest Bauzeit in beachtung von Gentechlevel
-          $btime_min=$btime*$minBuildTimeFactor;
-          $btime=$btime-$peopleWorking*$peopleTimeReduction;
-          if ($btime < $btime_min) 
-          {
-          	$btime=$btime_min;
-          }
-	        $bc['food']+=$peopleWorking*$peopleFoodConsumption;
+					$btime_min=$btime*$minBuildTimeFactor;
+					$btime=$btime-$peopleWorking*$peopleTimeReduction;
+					if ($btime < $btime_min) 
+					{
+						$btime=$btime_min;
+					}
+					$bc['food']+=$peopleWorking*$peopleFoodConsumption;
 					
 	
 					//
@@ -292,7 +291,8 @@
 									<b>Ende:</b> ".date("Y-m-d H:i:s",$end_time)."<br>
 									<b>Forschungslabor Level:</b> ".CURRENT_LAB_LEVEL."<br>
 									<b>Eingesetzte Bewohner:</b> ".nf($peopleWorking)."<br>
-									<b>Gen-Tech Level:</b> ".GEN_TECH_LEVEL."<br><br>
+									<b>Gen-Tech Level:</b> ".GEN_TECH_LEVEL."<br>
+									<b>Eingesetzter Spezialist:</b> ".$cu->specialist->name."<br><br>
 									<b>Kosten</b><br>
 									<b>".RES_METAL.":</b> ".nf($bc['metal'])."<br>
 									<b>".RES_CRYSTAL.":</b> ".nf($bc['crystal'])."<br>
@@ -620,7 +620,6 @@
 				
 	    	iBoxStart("Labor-Infos");
 	    	echo "<div style=\"text-align:left;\">
-	    	<b>Eingestellte Arbeiter:</b> ".nf($peopleWorking)."<br/>
 	    	<b>Forschungszeitverringerung:</b> ";
 	    	if ($need_bonus_level>=0)
 	    	{
@@ -630,12 +629,20 @@
 	    	{
 	    		echo "Stufe ".$conf['build_time_boni_forschungslabor']['p1']." erforderlich!<br/>";
 	    	}
+			if ($cu->specialist->researchTime!=1) {
+				echo "<b>Forschungszeitverringerung durch ".$cu->specialist->name.":</b> ".get_percent_string($cu->specialist->researchTime)."<br>";
+			}
 		  	echo"
+			<b>Eingestellte Arbeiter:</b> ".nf($peopleWorking)."<br/>
 		  	<b>Zeitreduktion durch Arbeiter pro Auftrag:</b> ".tf($peopleTimeReduction*$peopleWorking)."<br/>
 		  	<b>Nahrungsverbrauch durch Arbeiter pro Auftrag:</b> ".nf($peopleFoodConsumption*$peopleWorking)."<br/>
 		  	<b>Gentechnologie:</b> ".GEN_TECH_LEVEL."<br/>
-		  	<b>Minimale Forschungszeit (mit Arbeiter):</b> Forschungszeit * ".$minBuildTimeFactor."
-		  	</div>";   		    	
+		  	<b>Minimale Forschungszeit (mit Arbeiter):</b> Forschungszeit * ".$minBuildTimeFactor;
+			if ($cu->specialist->costsResearch!=1)
+			{
+				echo "<br/><br/><b>Kostenreduktion durch ".$cu->specialist->name.":</b> ".get_percent_string($cu->specialist->costsResearch);
+			}
+		  	echo "</div>";   		    	
 	    	iBoxEnd();			
 				
 				

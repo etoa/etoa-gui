@@ -60,6 +60,7 @@
 	********/
 
 	//Alle Definitionen befinden sich in der def.inc.php!
+	define("MARKET_TAX", max(1,MARKET_SELL_TAX * $cu->specialist->tradeBonus));
 
 
 	// BEGIN SKRIPT //
@@ -72,7 +73,7 @@
 
 	// Zeigt Rohstoffbox an
 	$cp->resBox($cu->properties->smallResBox);
-
+	
 	//Überprüfung ob der Marktplatz schon gebaut wurde
 	$mres=dbquery("
 	SELECT 
@@ -152,7 +153,7 @@
 					MARKET_FOOD_FACTOR = <?php echo MARKET_FOOD_FACTOR; ?>;
 					RESS_PRICE_FACTOR_MAX = <?php echo RESS_PRICE_FACTOR_MAX; ?>;
 					RESS_PRICE_FACTOR_MIN = <?php echo RESS_PRICE_FACTOR_MIN; ?>;
-					MARKET_SELL_TAX = <?php echo MARKET_SELL_TAX; ?>;
+					MARKET_TAX = <?php echo MARKET_TAX; ?>;
 
 
 
@@ -465,11 +466,11 @@
 						document.getElementById('ressource_sell_submit').style.color='#f00'; 
 			  	}
 			  	// Zu wenig Rohstoffe auf dem Planeten
-			  	else if(ress_sell_metal * MARKET_SELL_TAX > res_metal
-			  		|| ress_sell_crystal * MARKET_SELL_TAX > res_crystal 
-			  		|| ress_sell_plastic * MARKET_SELL_TAX > res_plastic 
-			  		|| ress_sell_fuel * MARKET_SELL_TAX > res_fuel
-			  		|| ress_sell_food * MARKET_SELL_TAX > res_food)
+			  	else if(ress_sell_metal * MARKET_TAX > res_metal
+			  		|| ress_sell_crystal * MARKET_TAX > res_crystal 
+			  		|| ress_sell_plastic * MARKET_TAX > res_plastic 
+			  		|| ress_sell_fuel * MARKET_TAX > res_fuel
+			  		|| ress_sell_food * MARKET_TAX > res_food)
 			  	{
 			  		var check_message = "<div style=\"color:red;font-weight:bold;\">Es sind zu wenig Rohstoffe vorhanden! (Beachte Verkaufsgebühr)</div>";
 			  		
@@ -491,11 +492,11 @@
 			  	{		
 			  		// Rechnet gesamt Verkaufsgebühren
 			  		var sell_tax = Math.ceil(
-			  								ress_sell_metal * (MARKET_SELL_TAX - 1)
-			  							+ ress_sell_crystal * (MARKET_SELL_TAX - 1)
-			  							+ ress_sell_plastic * (MARKET_SELL_TAX - 1)
-			  							+ ress_sell_fuel * (MARKET_SELL_TAX - 1)
-			  							+ ress_sell_food * (MARKET_SELL_TAX - 1)); 
+			  								ress_sell_metal * (MARKET_TAX - 1)
+			  							+ ress_sell_crystal * (MARKET_TAX - 1)
+			  							+ ress_sell_plastic * (MARKET_TAX - 1)
+			  							+ ress_sell_fuel * (MARKET_TAX - 1)
+			  							+ ress_sell_food * (MARKET_TAX - 1)); 
 			  			
 			  		// Formatiert Verkaufsgebühren				 		
 			  		var sell_tax = FormatNumber('return',sell_tax,'','','');
@@ -553,7 +554,7 @@
 					MARKET_FOOD_FACTOR = <?php echo MARKET_FOOD_FACTOR; ?>;
 					SHIP_PRICE_FACTOR_MAX = <?php echo SHIP_PRICE_FACTOR_MAX; ?>;
 					SHIP_PRICE_FACTOR_MIN = <?php echo SHIP_PRICE_FACTOR_MIN; ?>;
-					MARKET_SELL_TAX = <?php echo MARKET_SELL_TAX; ?>;
+					MARKET_TAX = <?php echo MARKET_TAX; ?>;
 					
 			
 					
@@ -900,7 +901,7 @@
 					// Definitionen
 					//
 					
-					MARKET_SELL_TAX = <?php echo MARKET_SELL_TAX; ?>;
+					MARKET_TAX = <?php echo MARKET_TAX; ?>;
 					
 					
 					
@@ -1100,11 +1101,11 @@
 						document.getElementById('auction_sell_submit').style.color='#f00';
 			  	}
 			  	// Zu wenig Rohstoffe auf dem Planeten
-			  	else if(Math.floor(auction_sell_metal * MARKET_SELL_TAX) > res_metal
-			  		|| Math.floor(auction_sell_crystal * MARKET_SELL_TAX) > res_crystal 
-			  		|| Math.floor(auction_sell_plastic * MARKET_SELL_TAX) > res_plastic 
-			  		|| Math.floor(auction_sell_fuel * MARKET_SELL_TAX) > res_fuel
-			  		|| Math.floor(auction_sell_food * MARKET_SELL_TAX) > res_food)
+			  	else if(Math.floor(auction_sell_metal * MARKET_TAX) > res_metal
+			  		|| Math.floor(auction_sell_crystal * MARKET_TAX) > res_crystal 
+			  		|| Math.floor(auction_sell_plastic * MARKET_TAX) > res_plastic 
+			  		|| Math.floor(auction_sell_fuel * MARKET_TAX) > res_fuel
+			  		|| Math.floor(auction_sell_food * MARKET_TAX) > res_food)
 			  	{
 			  		var auction_check_message = "<div style=\"color:red;font-weight:bold;\">Es sind zu wenig Rohstoffe vorhanden! (Beachte Verkaufsgebühr)</div>";
 			  		
@@ -1126,11 +1127,11 @@
 			  	{		
 			  		// Rechnet gesamt Verkaufsgebühren
 			  		var sell_tax = Math.ceil(
-			  								auction_sell_metal * (MARKET_SELL_TAX - 1)
-			  							+ auction_sell_crystal * (MARKET_SELL_TAX - 1)
-			  							+ auction_sell_plastic * (MARKET_SELL_TAX - 1)
-			  							+ auction_sell_fuel * (MARKET_SELL_TAX - 1)
-			  							+ auction_sell_food * (MARKET_SELL_TAX - 1)); 
+			  								auction_sell_metal * (MARKET_TAX - 1)
+			  							+ auction_sell_crystal * (MARKET_TAX - 1)
+			  							+ auction_sell_plastic * (MARKET_TAX - 1)
+			  							+ auction_sell_fuel * (MARKET_TAX - 1)
+			  							+ auction_sell_food * (MARKET_TAX - 1)); 
 			  			
 			  		// Formatiert Verkaufsgebühren				 		
 			  		var sell_tax = FormatNumber('return',sell_tax,'','','');
@@ -1181,7 +1182,7 @@
 					MARKET_FOOD_FACTOR = <?php echo MARKET_FOOD_FACTOR; ?>;
 					AUCTION_PRICE_FACTOR_MAX = <?php echo AUCTION_PRICE_FACTOR_MAX; ?>;
 					AUCTION_PRICE_FACTOR_MIN = <?php echo AUCTION_PRICE_FACTOR_MIN; ?>;
-					MARKET_SELL_TAX = <?php echo MARKET_SELL_TAX; ?>;
+					MARKET_TAX = <?php echo MARKET_TAX; ?>;
 
 					//321
 					//
@@ -1423,11 +1424,11 @@
 						document.getElementById('auction_submit').style.color='#f00'; 
 			  	}
 			  	// Zu wenig Rohstoffe auf dem Planeten
-			  	else if(auction_new_buy_metal * MARKET_SELL_TAX > res_metal
-			  		|| auction_new_buy_crystal * MARKET_SELL_TAX > res_crystal 
-			  		|| auction_new_buy_plastic * MARKET_SELL_TAX > res_plastic 
-			  		|| auction_new_buy_fuel * MARKET_SELL_TAX > res_fuel
-			  		|| auction_new_buy_food * MARKET_SELL_TAX > res_food)
+			  	else if(auction_new_buy_metal * MARKET_TAX > res_metal
+			  		|| auction_new_buy_crystal * MARKET_TAX > res_crystal 
+			  		|| auction_new_buy_plastic * MARKET_TAX > res_plastic 
+			  		|| auction_new_buy_fuel * MARKET_TAX > res_fuel
+			  		|| auction_new_buy_food * MARKET_TAX > res_food)
 			  	{
 			  		var auction_check_message = "<div style=\"color:red;font-weight:bold;\">Es sind zu wenig Rohstoffe vorhanden! (Beachte Verkaufsgebühr)</div>";
 			  		
@@ -1506,6 +1507,81 @@
 		
     $marr = mysql_fetch_array($mres);
     define("MARKET_LEVEL",$marr['buildlist_current_level']);
+	
+	// Läd die Anzahl aller eingestellter Angebote auf dem aktuellen Planeten
+	$cnt_res=dbquery("
+			SELECT
+				(
+					SELECT 
+						COUNT(*)
+					FROM 
+						market_ressource
+					WHERE
+						user_id='".$cu->id."' 
+						AND planet_id='".$cp->id()."'
+				) AS ress_cnt,
+				(
+					SELECT 
+						COUNT(*)
+					FROM 
+						market_ship
+					WHERE
+						user_id='".$cu->id."' 
+						AND planet_id='".$cp->id()."'
+				) AS ship_cnt,
+				(
+					SELECT 
+						COUNT(*)
+					FROM 
+						market_auction
+					WHERE
+						auction_user_id='".$cu->id."' 
+						AND auction_planet_id='".$cp->id()."'
+				) AS auction_cnt
+				;");
+	
+	$cnt_arr=mysql_fetch_assoc($cnt_res);
+	
+	// Summiert die eingestellten Angebote und berechnet die Anzahl der noch einstellbaren Angebote
+	$anzahl = $cnt_arr['ress_cnt'] + $cnt_arr['ship_cnt'] + $cnt_arr['auction_cnt'];
+	$possible=MARKET_LEVEL-$anzahl;
+			
+	// Lädt Stufe des Allianzmarktplatzes
+	$alliance_market_res=dbquery("
+			SELECT 
+				alliance_buildlist_current_level
+			FROM 
+				alliance_buildlist
+			WHERE
+				alliance_buildlist_alliance_id='".$cu->allianceId."' 
+				AND alliance_buildlist_building_id='".ALLIANCE_MARKET_ID."'
+			;");
+	if(mysql_num_rows($alliance_market_res)>0)
+	{
+		$alliance_market_row=mysql_fetch_row($alliance_market_res);
+		$alliance_market_level = $alliance_market_row[0];
+	}
+	else
+	{
+		$alliance_market_level = 0;
+	}
+	
+	//Marktinof Bof
+	iBoxStart("Marktplatz-Infos");
+	echo "<div style=\"text-align:left;\">";
+	echo "Im Moment hast du ".$anzahl." Angebote von diesem Planet auf dem Markt<br/>";
+	echo "Du kannst noch ".$possible." Angebote einstellen<br/>";
+	echo "Der Verkaufsgeb&uuml;hr des Marktplatzes betr&auml;gt ".get_percent_string(MARKET_TAX,1)."";
+	if ($cu->specialist->tradeBonus!=1)
+	{
+		echo " (inkl ".get_percent_string($cu->specialist->tradeBonus,1,1)." Kostenverringerung durch ".$cu->specialist->name."!";
+	}
+	if ($cu->specialist->tradeTime!=1)
+	{
+		echo "<br/>Die Handelsflotten fliegen durch ".$cu->specialist->name." mit ".get_percent_string($cu->specialist->tradeTime,1)." Geschwindigkeit!";
+	}
+	echo "</div>";
+	iBoxEnd();
     
     // Definiert den Rückgabefaktor beim zurückziehen eines Angebots
     $return_factor = 1 - (1/(MARKET_LEVEL+1));
@@ -1518,7 +1594,7 @@
 		);
 	 	show_tab_menu("mode",$tabitems);		 
 		
-		echo "<br/><br/>";
+		echo "<br/>";
 
 		//
     // Alle Abgelaufenen Auktionen löschen und ev. waren versenden
@@ -2266,11 +2342,11 @@
 			}
 
 			// Prüft ob noch immer genug Rohstoffe auf dem Planeten sind (eventueller verlust durch Kampf?)
-  		if($_POST['ress_sell_metal'] * MARKET_SELL_TAX <= $cp->resMetal
-  		&& $_POST['ress_sell_crystal'] * MARKET_SELL_TAX <= $cp->resCrystal 
-  		&& $_POST['ress_sell_plastic'] * MARKET_SELL_TAX <= $cp->resPlastic  
-  		&& $_POST['ress_sell_fuel'] * MARKET_SELL_TAX <= $cp->resFuel
-  		&& $_POST['ress_sell_food'] * MARKET_SELL_TAX <= $cp->resFood)
+  		if($_POST['ress_sell_metal'] * MARKET_TAX <= $cp->resMetal
+  		&& $_POST['ress_sell_crystal'] * MARKET_TAX <= $cp->resCrystal 
+  		&& $_POST['ress_sell_plastic'] * MARKET_TAX <= $cp->resPlastic  
+  		&& $_POST['ress_sell_fuel'] * MARKET_TAX <= $cp->resFuel
+  		&& $_POST['ress_sell_food'] * MARKET_TAX <= $cp->resFood)
   		{
 	      //Nachricht versenden
 	      $msg = "Du hast folgende Rohstoffe ".$for_alliance."angeboten:\n\n";
@@ -2301,11 +2377,11 @@
 	      UPDATE
 	      	planets
 	      SET
-	        planet_res_metal=planet_res_metal-".($_POST['ress_sell_metal']*MARKET_SELL_TAX).",
-	        planet_res_crystal=planet_res_crystal-".($_POST['ress_sell_crystal']*MARKET_SELL_TAX).",
-	        planet_res_plastic=planet_res_plastic-".($_POST['ress_sell_plastic']*MARKET_SELL_TAX).",
-	        planet_res_fuel=planet_res_fuel-".($_POST['ress_sell_fuel']*MARKET_SELL_TAX).",
-	        planet_res_food=planet_res_food-".($_POST['ress_sell_food']*MARKET_SELL_TAX)."
+	        planet_res_metal=planet_res_metal-".($_POST['ress_sell_metal']*MARKET_TAX).",
+	        planet_res_crystal=planet_res_crystal-".($_POST['ress_sell_crystal']*MARKET_TAX).",
+	        planet_res_plastic=planet_res_plastic-".($_POST['ress_sell_plastic']*MARKET_TAX).",
+	        planet_res_fuel=planet_res_fuel-".($_POST['ress_sell_fuel']*MARKET_TAX).",
+	        planet_res_food=planet_res_food-".($_POST['ress_sell_food']*MARKET_TAX)."
 	      WHERE
 	      	id='".$cp->id()."'
 	      	AND planet_user_id='".$cu->id."';");
@@ -2504,11 +2580,11 @@
 			$_POST['auction_sell_food'] = nf_back($_POST['auction_sell_food']);
 
 			// Prüft ob Rohstoffe noch vorhanden sind (eventueller verlust durch Kampf?)
-      if (($_POST['auction_sell_metal']*MARKET_SELL_TAX)<=$cp->resMetal
-          && ($_POST['auction_sell_crystal']*MARKET_SELL_TAX)<=$cp->resCrystal
-          && ($_POST['auction_sell_plastic']*MARKET_SELL_TAX)<=$cp->resPlastic
-          && ($_POST['auction_sell_fuel']*MARKET_SELL_TAX)<=$cp->resFuel
-          && ($_POST['auction_sell_food']*MARKET_SELL_TAX)<=$cp->resFood)
+      if (($_POST['auction_sell_metal']*MARKET_TAX)<=$cp->resMetal
+          && ($_POST['auction_sell_crystal']*MARKET_TAX)<=$cp->resCrystal
+          && ($_POST['auction_sell_plastic']*MARKET_TAX)<=$cp->resPlastic
+          && ($_POST['auction_sell_fuel']*MARKET_TAX)<=$cp->resFuel
+          && ($_POST['auction_sell_food']*MARKET_TAX)<=$cp->resFood)
       {
 
         // Rohstoffe + Taxe vom Planetenkonto abziehen
@@ -2517,11 +2593,11 @@
         UPDATE
             planets
         SET
-            planet_res_metal=planet_res_metal-".($_POST['auction_sell_metal']*MARKET_SELL_TAX).",
-            planet_res_crystal=planet_res_crystal-".($_POST['auction_sell_crystal']*MARKET_SELL_TAX).",
-            planet_res_plastic=planet_res_plastic-".($_POST['auction_sell_plastic']*MARKET_SELL_TAX).",
-            planet_res_fuel=planet_res_fuel-".($_POST['auction_sell_fuel']*MARKET_SELL_TAX).",
-            planet_res_food=planet_res_food-".($_POST['auction_sell_food']*MARKET_SELL_TAX)."
+            planet_res_metal=planet_res_metal-".($_POST['auction_sell_metal']*MARKET_TAX).",
+            planet_res_crystal=planet_res_crystal-".($_POST['auction_sell_crystal']*MARKET_TAX).",
+            planet_res_plastic=planet_res_plastic-".($_POST['auction_sell_plastic']*MARKET_TAX).",
+            planet_res_fuel=planet_res_fuel-".($_POST['auction_sell_fuel']*MARKET_TAX).",
+            planet_res_food=planet_res_food-".($_POST['auction_sell_food']*MARKET_TAX)."
         WHERE
             id=".$cp->id()."
             AND planet_user_id=".$cu->id."");
@@ -3875,7 +3951,7 @@
 					AND ressource_buyable='1' 
 				ORDER BY 
 					datum ASC");
-				if (mysql_num_rows($res)>0)
+				if (!mysql_num_rows($res)>0)
 				{
 					echo "<form action=\"?page=$page&amp;mode=user_sell\" method=\"post\">\n";
 					echo $cstr;
@@ -3921,9 +3997,8 @@
 					echo "Keine Angebote vorhanden!";
 					iBoxEnd();
 				}
-
-
-
+				
+				
 				//
 				// Schiffe
 				//
@@ -3977,7 +4052,7 @@
 				}
 				else
 				{
-					iBoxEnd("Schiffe");
+					iBoxStart("Schiffe");
 					echo "Keine Angebote vorhanden!";
 					iBoxEnd();
 				}
@@ -4213,71 +4288,7 @@
 		// Angebote aufgeben
 		//
 		else
-		{			
-			// Läd die Anzahl aller eingestellter Angebote auf dem aktuellen Planeten
-			$cnt_res=dbquery("
-			SELECT
-				(
-					SELECT 
-						COUNT(*)
-					FROM 
-						market_ressource
-					WHERE
-						user_id='".$cu->id."' 
-						AND planet_id='".$cp->id()."'
-				) AS ress_cnt,
-				(
-					SELECT 
-						COUNT(*)
-					FROM 
-						market_ship
-					WHERE
-						user_id='".$cu->id."' 
-						AND planet_id='".$cp->id()."'
-				) AS ship_cnt,
-				(
-					SELECT 
-						COUNT(*)
-					FROM 
-						market_auction
-					WHERE
-						auction_user_id='".$cu->id."' 
-						AND auction_planet_id='".$cp->id()."'
-				) AS auction_cnt
-				;");
-	
-			$cnt_arr=mysql_fetch_assoc($cnt_res);
-			
-			// Summiert die eingestellten Angebote und berechnet die Anzahl der noch einstellbaren Angebote
-			$anzahl = $cnt_arr['ress_cnt'] + $cnt_arr['ship_cnt'] + $cnt_arr['auction_cnt'];
-			$possible=MARKET_LEVEL-$anzahl;
-			
-			
-			// Lädt Stufe des Allianzmarktplatzes
-			$alliance_market_res=dbquery("
-			SELECT 
-				alliance_buildlist_current_level
-			FROM 
-				alliance_buildlist
-			WHERE
-				alliance_buildlist_alliance_id='".$cu->allianceId."' 
-				AND alliance_buildlist_building_id='".ALLIANCE_MARKET_ID."'
-			;");
-			if(mysql_num_rows($alliance_market_res)>0)
-			{
-				$alliance_market_row=mysql_fetch_row($alliance_market_res);
-				$alliance_market_level = $alliance_market_row[0];
-			}
-			else
-			{
-				$alliance_market_level = 0;
-			}
-			
-			
-			echo "Im Moment hast du ".$anzahl." Angebote von diesem Planet auf dem Markt<br/>";
-			echo "Du kannst noch ".$possible." Angebote einstellen<br/>";
-			echo "Der Verkaufsgeb&uuml;hr des Marktplatzes betr&auml;gt ".round(((MARKET_SELL_TAX-1)*100),3)."%<br/><br/>";
-			
+		{	
 
 			// Angebotsmaske Darstellen falls noch Angebote aufgegeben werden können
 			if ($possible>0)
