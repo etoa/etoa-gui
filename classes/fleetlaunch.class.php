@@ -77,7 +77,7 @@
 			$this->shipCount=0;
 			$this->distance=0;
 			$this->res = array(0,0,0,0,0,0);
-			$this->fetch = array(0,0,0,0,0,0);
+			$this->fetch = array(0,0,0,0,0,0,0);
 			$this->costs = 0;
 			$this->costsFood = 0;
 			$this->costsPower = 0;
@@ -391,7 +391,7 @@
 			if ($this->targetOk)
 			{
 				$actions = $this->getAllowedActions();
-				if (isset($actions[$actionCode]));
+				if (isset($actions[$actionCode]))
 				{
 					$this->action = $actionCode;
 					
@@ -399,6 +399,7 @@
 					return true;
 				}
 			}
+			$this->error = "Es befindet sich kein Schiff in der Flotte, welches die Aktion ausführen kann.";
 			return false;
 		}
 
@@ -422,6 +423,7 @@
 				{
 					// Subtract flight costs from source
 					$this->sourceEntity->chgRes(4,-$this->getCosts());
+					$this->sourceEntity->chgRes(5,-$this->getCostsFood());
 					$this->sourceEntity->chgPeople(-($this->getPilots()+$this->capacityPeopleLoaded));
 					
 					if ($this->action=="alliance" && $this->leaderId!=0) {
@@ -496,7 +498,7 @@
 						".$this->fetch[3].",
 						".$this->fetch[4].",
 						".$this->fetch[5].",
-						0
+						".$this->fetch[6]."
 					)
 					";
 					dbquery($sql);
@@ -581,7 +583,6 @@
 								WHERE
 									id='".$fid."';");
 					}
-					$this->sourceEntity->chgRes(5,-$this->getCostsFood());
 					return $fid;
 				}
 				else
@@ -832,13 +833,21 @@
 			return $loaded;
 		}
 		
+		function loadPeople($ammount)
+		{
+			$ammount = max(0,$ammount);
+			$this->capacityPeopleLoaded = floor(min($ammount,$this->capacityPeopleTotal,($this->pilotsAvailable()-$this->getPilots())));
+			
+			return $this->capacityPeopleLoaded;
+		}
+		
 			
 		function fetchResource($id,$ammount)
 		{
 			$ammount = max(0,$ammount);
 			$this->fetch[$id] = 0;
 			$this->calcResLoaded();
-			$loaded = floor(min($ammount,$this->getCapacity()));
+			$loaded = floor($ammount);
 			$this->fetch[$id] = $loaded;
 			$this->calcResLoaded();
 			

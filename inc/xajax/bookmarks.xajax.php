@@ -1,6 +1,7 @@
 <?PHP
 
 $xajax->register(XAJAX_FUNCTION,'launchBookmarkProbe');
+$xajax->register(XAJAX_FUNCTION,'addBookmarkShip');
 
 	function launchBookmarkProbe($bid)
 	{
@@ -31,7 +32,7 @@ $xajax->register(XAJAX_FUNCTION,'launchBookmarkProbe');
 			$fleet = new FleetLaunch($cp,$cu);
 			if ($fleet->checkHaven())
 			{
-				$shipOutput;
+				$shipOutput = "";
 				$probeCount = true;
 				$sidarr = explode(",",$barr['ships']);
 				$sres = dbquery("SELECT ship_id,ship_name FROM ships WHERE ship_show=1 ORDER BY ship_type_id,ship_order;");
@@ -43,8 +44,8 @@ $xajax->register(XAJAX_FUNCTION,'launchBookmarkProbe');
 				{
 					$sdi = explode(":",$sd);
 					$probeCount = min($probeCount,$fleet->addShip($sdi[0],$sdi[1]));
+					if ($shipOutput!="") $shipOutput .= ", ";
 					$shipOutput .= $sdi[1]." ".$ships[$sdi[0]];
-					$shipOutput .= ", ";
 				}
 				
 				if ($probeCount)
@@ -65,12 +66,18 @@ $xajax->register(XAJAX_FUNCTION,'launchBookmarkProbe');
 											$id++;
 											if ($id==6)
 											{
-												//ToDO $fleet->
+												$fleet->loadPeople($res);
 											}
 											else
 											{
-												$fleet->loadResource($id,$res);
+												$fleet->loadResource($id,$res,1);
 											}
+										}
+										$fetcharr = explode(",",$barr['resfetch']);
+										foreach ($fetcharr as $id=>$fetch)
+										{
+											$id++;
+											$fleet->fetchResource($id,$fetch);
 										}
 										
 										if ($fid = $fleet->launch())
@@ -163,4 +170,51 @@ $xajax->register(XAJAX_FUNCTION,'launchBookmarkProbe');
 				{
 					echo "Ungültiges Ziel!<br/>";
 				}*/
+	function addBookmarkShip($form,$delete=-1) {
+		$objResponse = new xajaxResponse();
+		
+		ob_start();
+		$res = dbquery("SELECT ship_id,ship_name FROM ships WHERE ship_show=1 ORDER BY ship_type_id,ship_order;");
+		while ($arr = mysql_fetch_row($res))
+		{
+			$ships[$arr[0]] = $arr[1];
+		}
+		
+		$cnt = 0;
+		foreach ($form['scount'] as $k => $v)
+		{
+			if ($delete!=$k)
+			{
+				echo "Schiffe hinzufügen: <input type=\"text\" name=\"scount[]\" id=\"ship_".$cnt."\" value=\"".$v."\" size=\"6\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/>&nbsp;
+					<select name=\"sid[]\">";
+				foreach ($ships as $k1 => $v1)
+				{
+					echo "<option ";
+					if ($k1==$form['sid'][$k]) 
+						echo "selected ";
+					echo "value=\"".$k1."\">".$v1."</option>";
+				}
+				echo "</select>";
+				echo "&nbsp;<a onclick=\"xajax_addBookmarkShip(xajax.getFormValues('shipboxadd'),$cnt);\"><img src=\"images/icons/delete.png\" alt=\"Löschen\" style=\"width:16px;height:15px;border:none;\" title=\"Löschen\" /></a>";
+				echo "<br />";
+				$cnt++;
+			}
+		}
+		
+		if ($delete<0 || $cnt==1 && $delete==0)
+		{
+			echo "Schiffe hinzufügen: <input type=\"text\" name=\"scount[]\" id=\"ship_".$cnt."\" value=\"1\" size=\"6\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/>&nbsp;
+				<select name=\"sid[]\">";
+			foreach ($ships as $k => $v)
+			{
+				echo "<option value=\"".$k."\">".$v."</option>";
+			}
+			echo "</select>";
+			echo "&nbsp;<a onclick=\"xajax_addBookmarkShip(xajax.getFormValues('shipboxadd'),$cnt);\"><img src=\"images/icons/delete.png\" alt=\"Löschen\" style=\"width:16px;height:15px;border:none;\" title=\"Löschen\" /></a>";
+		}
+		
+		$objResponse->assign("shipboxadd","innerHTML",ob_get_contents());				
+		ob_end_clean();
+		return $objResponse;
+	}
 ?>

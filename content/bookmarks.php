@@ -47,7 +47,7 @@
 		}
 	
 			// Favorit speichern ok
-			if (isset($_POST['submit_new']))
+			if (isset($_POST['submit_new']) || isset($_POST['submit_edit']))
 			{
 				$res=dbquery("
 				SELECT
@@ -69,50 +69,70 @@
 					foreach ($_POST['sid'] as $k => $sid)
 					{
 						if ($addships=="")
-							$addships.= $sid.":".$_POST['scount'][$k];
+							$addships.= $sid.":".nf_back($_POST['scount'][$k]);
 						else
-							$addships.= ",".$sid.":".$_POST['scount'][$k];
+							$addships.= ",".$sid.":".nf_back($_POST['scount'][$k]);
 					}
-					$freight = max(0,intval($_POST['res1'])).",".
-					max(0,intval($_POST['res2'])).",".
-					max(0,intval($_POST['res3'])).",".
-					max(0,intval($_POST['res4'])).",".
-					max(0,intval($_POST['res5'])).",".
-					"0,".
-					max(0,intval($_POST['resp']))."";
+					$freight = max(0,intval(nf_back($_POST['res1']))).",".
+					max(0,intval(nf_back($_POST['res2']))).",".
+					max(0,intval(nf_back($_POST['res3']))).",".
+					max(0,intval(nf_back($_POST['res4']))).",".
+					max(0,intval(nf_back($_POST['res5']))).",".
+					max(0,intval(nf_back($_POST['resp'])))."";
 					
-					$fetch = max(0,intval($_POST['fetch1'])).",".
-					max(0,intval($_POST['fetch2'])).",".
-					max(0,intval($_POST['fetch3'])).",".
-					max(0,intval($_POST['fetch4'])).",".
-					max(0,intval($_POST['fetch5'])).",".
-					"0,".
-					max(0,intval($_POST['fetchp']))."";
+					$fetch = max(0,intval(nf_back($_POST['fetch1']))).",".
+					max(0,intval(nf_back($_POST['fetch2']))).",".
+					max(0,intval(nf_back($_POST['fetch3']))).",".
+					max(0,intval(nf_back($_POST['fetch4']))).",".
+					max(0,intval(nf_back($_POST['fetch5']))).",".
+					max(0,intval(nf_back($_POST['fetchp'])))."";
 					
-					dbquery("
-					INSERT INTO 
-						fleet_bookmarks
-					(
-						user_id,
-						name,
-						target_id,
-						ships,
-						res,
-						resfetch,
-						action
-					) 
-					VALUES 
-					(
-						'".$cu->id."',
-						'".addslashes($_POST['name'])."',
-						'".$arr[0]."',
-						'".$addships."',
-						'".$freight."',
-						'".$fetch."',
-						'".$_POST['action']."'
-					);");
-							
-					ok_msg("Der Favorit wurde hinzugef&uuml;gt!");
+					if (isset($_POST['submit_new']))
+					{
+						dbquery("
+						INSERT INTO 
+							fleet_bookmarks
+						(
+							user_id,
+							name,
+							target_id,
+							ships,
+							res,
+							resfetch,
+							action
+						) 
+						VALUES 
+						(
+							'".$cu->id."',
+							'".addslashes($_POST['name'])."',
+							'".$arr[0]."',
+							'".$addships."',
+							'".$freight."',
+							'".$fetch."',
+							'".$_POST['action']."'
+						);");
+								
+						ok_msg("Der Favorit wurde hinzugef&uuml;gt!");
+					}
+					elseif (isset($_POST['submit_edit']))
+					{
+						dbquery("
+							UPDATE
+								fleet_bookmarks
+							SET
+								name='".addslashes($_POST['name'])."',
+								target_id='".$arr[0]."',
+								ships='".$addships."',
+								res='".$freight."',
+								resfetch='".$fetch."',
+								action='".$_POST['action']."'
+							WHERE
+								user_id='".$cu->id."'
+								AND id='".$_POST['id']."'
+							LIMIT 1;");
+						
+						ok_msg("Der Favorit wurde gespeichert!");
+					}
 				}
 				else
 				{
@@ -140,96 +160,243 @@
 				echo "<option value=\"".$k."\">".$v."</option>";
 			}
 			echo "</select></div>";
-		
-			echo "<form action=\"?page=$page&amp;mode=$mode\" method=\"post\">";
-			iBoxStart("Favorit hinzuf&uuml;gen");
-			checker_init();
-			echo "Name: <input type=\"text\" name=\"name\" size=\"20\" maxlen=\"200\" value=\"Name\" onfocus=\"if (this.value=='Name') this.value=''\" /> &nbsp; ";
-			echo "Ziel: <select name=\"sx\">";
-			for ($x=1;$x<=$conf['num_of_sectors']['p1'];$x++)
-			{
-				echo "<option value=\"$x\">$x</option>";
-			}
-			echo "</select> / <select name=\"sy\">";
-			for ($y=1;$y<=$conf['num_of_sectors']['p2'];$y++)
-			{
-				echo "<option value=\"$y\">$y</option>";
-			}
-			echo "</select> : <select name=\"cx\">";
-			for ($x=1;$x<=$conf['num_of_cells']['p1'];$x++)
-			{
-				echo "<option value=\"$x\">$x</option>";
-			}
-			echo "</select> / <select name=\"cy\">";
-			for ($y=1;$y<=$conf['num_of_cells']['p2'];$y++)
-			{
-				echo "<option value=\"$y\">$y</option>";
-			}
-			echo "</select> : <select name=\"pos\">";
-			for ($y=0;$y<=$conf['num_planets']['p2'];$y++)
-			{
-				echo "<option value=\"$y\">$y</option>";
-			}
-			echo "</select> &nbsp; ";
-			echo " <select name=\"action\">";
-			foreach (FleetAction::getAll() as $ai)
-			{
-				echo "<option value=\"".$ai->code()."\" style=\"color:".$ai->color()."\">".$ai->name()."</option>";
-			}
-			echo "</select><br/><br/>";
-			echo "<div id=\"shipboxadd\" style=\"float:left;\">
-			Schiffe hinzufügen: <input type=\"text\" name=\"scount[]\" value=\"1\" size=\"4\" />&nbsp;
-			<select name=\"sid[]\">";
-			foreach ($ships as $k => $v)
-			{
-				echo "<option value=\"".$k."\">".$v."</option>";
-			}
-			echo "</select></div>
-			<input type=\"button\" value=\"Mehr Schiffe hinzufügen\" onclick=\"document.getElementById('shipboxadd').innerHTML += '<br/>'+document.getElementById('shipTempl').innerHTML\" />
-			<br style=\"clear:both;\" />";
 			
-			echo "<table style=\"margin:10px;width:320px;float:left;\" class=\"tb\">
-			<tr><th colspan=\"2\">Fracht</th></tr>
-			<tr><th>".RES_ICON_METAL."".RES_METAL."</th>
-			<td><input type=\"text\" name=\"res1\" id=\"res1\" value=\"0\" size=\"8\" tabindex=\"".($tabindex++)."\" /></td></tr>
-			<tr><th>".RES_ICON_CRYSTAL."".RES_CRYSTAL."</th>
-			<td><input type=\"text\" name=\"res2\" id=\"res2\" value=\"0\" size=\"8\" tabindex=\"".($tabindex++)."\" /></td></tr>
-			<tr><th>".RES_ICON_PLASTIC."".RES_PLASTIC."</th>
-			<td><input type=\"text\" name=\"res3\" id=\"res3\" value=\"0\" size=\"8\" tabindex=\"".($tabindex++)."\" /></td></tr>
-			<tr><th>".RES_ICON_FUEL."".RES_FUEL."</th>
-			<td><input type=\"text\" name=\"res4\" id=\"res4\" value=\"0\" size=\"8\" tabindex=\"".($tabindex++)."\"/></td></tr>
-			<tr><th>".RES_ICON_FOOD."".RES_FOOD."</th>
-			<td><input type=\"text\" name=\"res5\" id=\"res5\" value=\"0\" size=\"8\" tabindex=\"".($tabindex++)."\"  /></td></tr>
-			<tr><th>".RES_ICON_PEOPLE."Passagiere</th>
-			<td><input type=\"text\" name=\"resp\" id=\"resp\" value=\"0\" size=\"8\" tabindex=\"".($tabindex++)."\"/></td></tr>					
-			</table>
-
-			<table style=\"margin:10px;width:320px;float:left;\" class=\"tb\">
-			<tr><th colspan=\"2\">Abholauftrag</th></tr>
-			<tr><th>".RES_ICON_METAL."".RES_METAL."</th>
-			<td><input type=\"text\" name=\"fetch1\" id=\"res1\" value=\"0\" size=\"8\" tabindex=\"".($tabindex++)."\" /></td></tr>
-			<tr><th>".RES_ICON_CRYSTAL."".RES_CRYSTAL."</th>
-			<td><input type=\"text\" name=\"fetch2\" id=\"res2\" value=\"0\" size=\"8\" tabindex=\"".($tabindex++)."\" /></td></tr>
-			<tr><th>".RES_ICON_PLASTIC."".RES_PLASTIC."</th>
-			<td><input type=\"text\" name=\"fetch3\" id=\"res3\" value=\"0\" size=\"8\" tabindex=\"".($tabindex++)."\" /></td></tr>
-			<tr><th>".RES_ICON_FUEL."".RES_FUEL."</th>
-			<td><input type=\"text\" name=\"fetch4\" id=\"res4\" value=\"0\" size=\"8\" tabindex=\"".($tabindex++)."\"/></td></tr>
-			<tr><th>".RES_ICON_FOOD."".RES_FOOD."</th>
-			<td><input type=\"text\" name=\"fetch5\" id=\"res5\" value=\"0\" size=\"8\" tabindex=\"".($tabindex++)."\"  /></td></tr>
-			<tr><th>".RES_ICON_PEOPLE."Passagiere</th>
-			<td><input type=\"text\" name=\"fetchp\" id=\"resp\" value=\"0\" size=\"8\" tabindex=\"".($tabindex++)."\"/></td></tr>					
-			</table>
-			<br style=\"clear:both\" />";                                                                                   
-			echo "<br/>Wichtug: Die Flotte wird nur starten, falls die Schiffe und das Ziel die gewählte Aktion unterstützen.
-			<br/><br/><input type=\"submit\" value=\"Speichern\" name=\"submit_new\" />";
-			iBoxEnd();
-			echo "</form>";
+			if (isset($_GET['edit']) && $_GET['edit']>0)
+			{
+				$bres = dbquery("
+								SELECT
+									*
+								FROM
+									fleet_bookmarks
+								WHERE
+									id='".$_GET['edit']."' 
+									AND user_id='".$cu->id."';");
+				if (mysql_num_rows($bres)>0)
+				{
+					$barr=mysql_fetch_assoc($bres);
+					$eres = dbquery("
+									SELECT
+										cells.sx,
+										cells.cx,
+										cells.sy,
+										cells.cy,
+										entities.pos
+									FROM
+										entities
+									INNER JOIN
+										cells
+									ON entities.cell_id=cells.id
+										AND entities.id='".$barr['target_id']."'
+									LIMIT 1");
+					if (mysql_num_rows($eres))
+					{
+						$earr=mysql_fetch_assoc($eres);
+						
+						echo "<form action=\"?page=$page&amp;mode=$mode\" method=\"post\">";
+						iBoxStart("Favorit bearbeiten");
+						checker_init();
+						echo "<div id=\"checker\" style=\"display:none\"><input type=\"text\" name=\"id\" value=\"".$barr['id']."\" size=\"4\" /></div>";
+						echo "Name: <input type=\"text\" name=\"name\" size=\"20\" maxlen=\"200\" value=\"".$barr['name']."\" onfocus=\"if (this.value=='Name') this.value=''\" /> &nbsp; ";
+						echo "Ziel: <select name=\"sx\">";
+						for ($x=1;$x<=$conf['num_of_sectors']['p1'];$x++)
+						{
+							echo "<option ";
+							if ($x==$earr['sx']) echo "selected ";
+							echo "value=\"$x\">$x</option>";
+						}
+						echo "</select> / <select name=\"sy\">";
+						for ($y=1;$y<=$conf['num_of_sectors']['p2'];$y++)
+						{
+							echo "<option ";
+							if ($y==$earr['sy']) echo "selected ";
+							echo "value=\"$y\">$y</option>";
+						}
+						echo "</select> : <select name=\"cx\">";
+						for ($x=1;$x<=$conf['num_of_cells']['p1'];$x++)
+						{
+							echo "<option ";
+							if ($x==$earr['cx']) echo "selected ";
+							echo "value=\"$x\">$x</option>";
+						}
+						echo "</select> / <select name=\"cy\">";
+						for ($y=1;$y<=$conf['num_of_cells']['p2'];$y++)
+						{
+							echo "<option ";
+							if ($y==$earr['cy']) echo "selected ";
+							echo "value=\"$y\">$y</option>";
+						}
+						echo "</select> : <select name=\"pos\">";
+						for ($y=0;$y<=$conf['num_planets']['p2'];$y++)
+						{
+							echo "<option ";
+							if ($y==$earr['pos']) echo "selected ";
+							echo "value=\"$y\">$y</option>";
+						}
+						echo "</select> &nbsp; ";
+						echo " <select name=\"action\">";
+						foreach (FleetAction::getAll() as $ai)
+						{
+							echo "<option ";
+							if ($ai->code()==$barr['action']) echo "selected ";
+							echo "value=\"".$ai->code()."\" style=\"color:".$ai->color()."\">".$ai->name()."</option>";
+						}
+						echo "</select><br/><br/>";
+						
+						$cnt=0;
+						echo "<div id=\"shipboxadd\" style=\"float:left;\">";
+						$sidarr = explode(",",$barr['ships']);
+						foreach ($sidarr as $sd)
+						{
+							$sdi = explode(":",$sd);
+							echo "Schiffe hinzufügen: <input type=\"text\" name=\"scount[]\" id=\"ship_".$cnt."\" value=\"".$sdi[1]."\" size=\"6\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/>&nbsp;
+								<select name=\"sid[]\">";
+							foreach ($ships as $k => $v)
+							{
+								echo "<option ";
+								if ($k==$sdi[0]) echo "selected ";
+								echo "value=\"".$k."\">".$v."</option>";
+							}
+							echo "</select>&nbsp;<a onclick=\"xajax_addBookmarkShip(xajax.getFormValues('shipboxadd'),$cnt);\"><img src=\"images/icons/delete.png\" alt=\"Löschen\" style=\"width:16px;height:15px;border:none;\" title=\"Löschen\" /></a><br />";
+							$cnt++;
+						}
+						echo "</div><input type=\"button\" value=\"Mehr Schiffe hinzufügen\" onclick=\"xajax_addBookmarkShip(xajax.getFormValues('shipboxadd'));\" />
+							<br style=\"clear:both;\" />";
+						
+						$res = explode(",",$barr['res']);
+						echo "<table style=\"margin:10px;width:275px;float:left;\" class=\"tb\">
+						<tr><th colspan=\"2\">Fracht</th></tr>
+						<tr><th>".RES_ICON_METAL."".RES_METAL."</th>
+						<td><input type=\"text\" name=\"res1\" id=\"res1\" value=\"".$res[0]."\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
+						<tr><th>".RES_ICON_CRYSTAL."".RES_CRYSTAL."</th>
+						<td><input type=\"text\" name=\"res2\" id=\"res2\" value=\"".$res[1]."\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
+						<tr><th>".RES_ICON_PLASTIC."".RES_PLASTIC."</th>
+						<td><input type=\"text\" name=\"res3\" id=\"res3\" value=\"".$res[2]."\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
+						<tr><th>".RES_ICON_FUEL."".RES_FUEL."</th>
+						<td><input type=\"text\" name=\"res4\" id=\"res4\" value=\"".$res[3]."\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
+						<tr><th>".RES_ICON_FOOD."".RES_FOOD."</th>
+						<td><input type=\"text\" name=\"res5\" id=\"res5\" value=\"".$res[4]."\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
+						<tr><th>".RES_ICON_PEOPLE."Passagiere</th>
+						<td><input type=\"text\" name=\"resp\" id=\"resp\" value=\"".$res[5]."\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>					
+						</table>";
+						
+						$resfetch = explode(",",$barr['resfetch']);
+						echo "<table style=\"margin:10px;width:275px;float:left;\" class=\"tb\">
+						<tr><th colspan=\"2\">Abholauftrag</th></tr>
+						<tr><th>".RES_ICON_METAL."".RES_METAL."</th>
+						<td><input type=\"text\" name=\"fetch1\" id=\"fres1\" value=\"".$resfetch[0]."\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
+						<tr><th>".RES_ICON_CRYSTAL."".RES_CRYSTAL."</th>
+						<td><input type=\"text\" name=\"fetch2\" id=\"fres2\" value=\"".$resfetch[1]."\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
+						<tr><th>".RES_ICON_PLASTIC."".RES_PLASTIC."</th>
+						<td><input type=\"text\" name=\"fetch3\" id=\"fres3\" value=\"".$resfetch[2]."\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
+						<tr><th>".RES_ICON_FUEL."".RES_FUEL."</th>
+						<td><input type=\"text\" name=\"fetch4\" id=\"fres4\" value=\"".$resfetch[3]."\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
+						<tr><th>".RES_ICON_FOOD."".RES_FOOD."</th>
+						<td><input type=\"text\" name=\"fetch5\" id=\"fres5\" value=\"".$resfetch[4]."\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
+						<tr><th>".RES_ICON_PEOPLE."Passagiere</th>
+						<td><input type=\"text\" name=\"fetchp\" id=\"fresp\" value=\"".$resfetch[5]."\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>					
+						</table>
+						<br style=\"clear:both\" />";                                                                                   
+						echo "<br/>Wichtig: Die Flotte wird nur starten, falls die Schiffe und das Ziel die gewählte Aktion unterstützen. Es muss pro Schiffstyp mindestens ein Schiff vorhanden sein, damit die Flotte startet. Bei den Rohstoffen wird Rohstoff für Rohstoff jeweils das Maximum eingeladen.
+						<br/><br/><input type=\"submit\" value=\"Speichern\" name=\"submit_edit\" />";
+						iBoxEnd();
+						echo "</form>";
+					}
+				}
+			}
+			else
+			{
+				echo "<form action=\"?page=$page&amp;mode=$mode\" method=\"post\">";
+				iBoxStart("Favorit hinzuf&uuml;gen");
+				checker_init();
+				echo "Name: <input type=\"text\" name=\"name\" size=\"20\" maxlen=\"200\" value=\"Name\" onfocus=\"if (this.value=='Name') this.value=''\" /> &nbsp; ";
+				echo "Ziel: <select name=\"sx\">";
+				for ($x=1;$x<=$conf['num_of_sectors']['p1'];$x++)
+				{
+					echo "<option value=\"$x\">$x</option>";
+				}
+				echo "</select> / <select name=\"sy\">";
+				for ($y=1;$y<=$conf['num_of_sectors']['p2'];$y++)
+				{
+					echo "<option value=\"$y\">$y</option>";
+				}
+				echo "</select> : <select name=\"cx\">";
+				for ($x=1;$x<=$conf['num_of_cells']['p1'];$x++)
+				{
+					echo "<option value=\"$x\">$x</option>";
+				}
+				echo "</select> / <select name=\"cy\">";
+				for ($y=1;$y<=$conf['num_of_cells']['p2'];$y++)
+				{
+					echo "<option value=\"$y\">$y</option>";
+				}
+				echo "</select> : <select name=\"pos\">";
+				for ($y=0;$y<=$conf['num_planets']['p2'];$y++)
+				{
+					echo "<option value=\"$y\">$y</option>";
+				}
+				echo "</select> &nbsp; ";
+				echo " <select name=\"action\">";
+				foreach (FleetAction::getAll() as $ai)
+				{
+					echo "<option value=\"".$ai->code()."\" style=\"color:".$ai->color()."\">".$ai->name()."</option>";
+				}
+				echo "</select><br/><br/>";
+				echo "<div id=\"shipboxadd\" style=\"float:left;\">
+				Schiffe hinzufügen: <input type=\"text\" name=\"scount[]\" id=\"ship0\" value=\"1\" size=\"6\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/>&nbsp;
+				<select name=\"sid[]\">";
+				foreach ($ships as $k => $v)
+				{
+					echo "<option value=\"".$k."\">".$v."</option>";
+				}
+				echo "</select>&nbsp;<a onclick=\"xajax_addBookmarkShip(xajax.getFormValues('shipboxadd'),0);\"><img src=\"images/icons/delete.png\" alt=\"Löschen\" style=\"width:16px;height:15px;border:none;\" title=\"Löschen\" /></a></div>
+				<input type=\"button\" value=\"Mehr Schiffe hinzufügen\" onclick=\"xajax_addBookmarkShip(xajax.getFormValues('shipboxadd'));\" />
+				<br style=\"clear:both;\" />";
+				
+				echo "<table style=\"margin:10px;width:275px;float:left;\" class=\"tb\">
+				<tr><th colspan=\"2\">Fracht</th></tr>
+				<tr><th>".RES_ICON_METAL."".RES_METAL."</th>
+				<td><input type=\"text\" name=\"res1\" id=\"res1\" value=\"0\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
+				<tr><th>".RES_ICON_CRYSTAL."".RES_CRYSTAL."</th>
+				<td><input type=\"text\" name=\"res2\" id=\"res2\" value=\"0\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
+				<tr><th>".RES_ICON_PLASTIC."".RES_PLASTIC."</th>
+				<td><input type=\"text\" name=\"res3\" id=\"res3\" value=\"0\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
+				<tr><th>".RES_ICON_FUEL."".RES_FUEL."</th>
+				<td><input type=\"text\" name=\"res4\" id=\"res4\" value=\"0\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
+				<tr><th>".RES_ICON_FOOD."".RES_FOOD."</th>
+				<td><input type=\"text\" name=\"res5\" id=\"res5\" value=\"0\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
+				<tr><th>".RES_ICON_PEOPLE."Passagiere</th>
+				<td><input type=\"text\" name=\"resp\" id=\"resp\" value=\"0\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>					
+				</table>
+	
+				<table style=\"margin:10px;width:275px;float:left;\" class=\"tb\">
+				<tr><th colspan=\"2\">Abholauftrag</th></tr>
+				<tr><th>".RES_ICON_METAL."".RES_METAL."</th>
+				<td><input type=\"text\" name=\"fetch1\" id=\"fres1\" value=\"0\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
+				<tr><th>".RES_ICON_CRYSTAL."".RES_CRYSTAL."</th>
+				<td><input type=\"text\" name=\"fetch2\" id=\"fres2\" value=\"0\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
+				<tr><th>".RES_ICON_PLASTIC."".RES_PLASTIC."</th>
+				<td><input type=\"text\" name=\"fetch3\" id=\"fres3\" value=\"0\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
+				<tr><th>".RES_ICON_FUEL."".RES_FUEL."</th>
+				<td><input type=\"text\" name=\"fetch4\" id=\"fres4\" value=\"0\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
+				<tr><th>".RES_ICON_FOOD."".RES_FOOD."</th>
+				<td><input type=\"text\" name=\"fetch5\" id=\"fres5\" value=\"0\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
+				<tr><th>".RES_ICON_PEOPLE."Passagiere</th>
+				<td><input type=\"text\" name=\"fetchp\" id=\"fresp\" value=\"0\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>					
+				</table>
+				<br style=\"clear:both\" />";                                                                                   
+				echo "<br/>Wichtig: Die Flotte wird nur starten, falls die Schiffe und das Ziel die gewählte Aktion unterstützen. Es muss pro Schiffstyp mindestens ein Schiff vorhanden sein, damit die Flotte startet. Bei den Rohstoffen wird Rohstoff für Rohstoff jeweils das Maximum eingeladen.
+				<br/><br/><input type=\"submit\" value=\"Speichern\" name=\"submit_new\" />";
+				iBoxEnd();
+				echo "</form>";
+			}
 
 			$res = dbquery("
 			SELECT
 	      *
 			FROM
 				fleet_bookmarks
+			WHERE
+				user_id='".$cu->id."'
 			ORDER BY
 			 name;");
 			if (mysql_num_rows($res)>0)
@@ -255,11 +422,13 @@
 						<td class=\"tbldata\">".$ent."<br/>(".$ent->entityCodeString().")</td>
 						<td class=\"tbldata\">".$ac."</td>
 						<td class=\"tbldata\">";
+						$cnt = 0;
 						foreach ($sidarr as $sd)
 						{
 							$sdi = explode(":",$sd);
+							if ($cnt) echo ", ";
 							echo $sdi[1]." ".$ships[$sdi[0]];
-							echo ", ";
+							$cnt++;
 						}
 						echo "</td>
 						<td class=\"tbldata\">
