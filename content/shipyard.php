@@ -43,8 +43,6 @@
 
 	// BEGIN SKRIPT //
 
-
-
 	echo "<form action=\"?page=$page\" method=\"post\">";
 
 	//Tabulator var setzten (für das fortbewegen des cursors im forumular)
@@ -456,11 +454,11 @@
 			      	$ship_count += $fleet[$ship_id];
 			      }
 			      
-						//Anzahl überprüfen, ob diese die maximalzahl übersteigt, gegebenenfalls ändern
-    	      if($build_cnt + $ship_count > $ships[$ship_id]['ship_max_count'] && $ships[$ship_id]['ship_max_count']!=0)
-    	    	{
-    	      	$build_cnt=max(0,$ships[$ship_id]['ship_max_count']-$ship_count);
-    	      }
+				  //Anzahl überprüfen, ob diese die maximalzahl übersteigt, gegebenenfalls ändern
+				  if ($build_cnt + $ship_count > $ships[$ship_id]['ship_max_count'] && $ships[$ship_id]['ship_max_count']!=0)
+				  {
+					  $build_cnt=max(0,$ships[$ship_id]['ship_max_count']-$ship_count);
+				  }
 
     				// TODO: Überprüfen
 						//Wenn der User nicht genug Ress hat, die Anzahl Schiffe drosseln
@@ -946,10 +944,11 @@
     			      }
 
 								//Nahrungskosten berechnen
-								$food_costs = $people_working*$cfg->value('people_food_require') + $data['ship_costs_food'];
+								$food_costs = $people_working*$cfg->value('people_food_require');
 								
 								//Nahrungskosten versteckt übermitteln
 								echo "<input type=\"hidden\" name=\"additional_food_costs\" value=\"".$food_costs."\" />";
+								$food_costs += $data['ship_costs_food'];
 								
 								
 								

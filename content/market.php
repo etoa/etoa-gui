@@ -1571,7 +1571,7 @@
 	echo "<div style=\"text-align:left;\">";
 	echo "Im Moment hast du ".$anzahl." Angebote von diesem Planet auf dem Markt<br/>";
 	echo "Du kannst noch ".$possible." Angebote einstellen<br/>";
-	echo "Der Verkaufsgeb&uuml;hr des Marktplatzes betr&auml;gt ".get_percent_string(MARKET_TAX,1)."";
+	echo "Der Verkaufsgeb&uuml;hr des Marktplatzes betr&auml;gt ".get_percent_string(MARKET_TAX,1,1)."";
 	if ($cu->specialist->tradeBonus!=1)
 	{
 		echo " (inkl ".get_percent_string($cu->specialist->tradeBonus,1,1)." Kostenverringerung durch ".$cu->specialist->name."!";

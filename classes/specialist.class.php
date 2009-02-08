@@ -35,7 +35,7 @@
 		private $tradeTime = 1;
 		private $tradeBonus = 1;
 		
-		public function Specialist($id=0,$startTime=0,$userId=-1)
+		public function Specialist($id=0,$endTime=0,$userId=-1)
 		{
 			if ($userId>0)
 			{
@@ -52,7 +52,7 @@
 				{
 					$uarr = mysql_fetch_row($ures);
 					$id = $uarr[0];
-					$startTime = $uarr[1];
+					$endTime = $uarr[1];
 				}
 			}
 			
@@ -70,7 +70,7 @@
 				{
 					$sarr = mysql_fetch_assoc($sres);
 					
-					if (time() < $sarr['specialist_days'] * 60*60*24 + $startTime)
+					if (time() < $endTime)
 					{
 						$this->id = $id;
 						$this->name = $sarr['specialist_name'];

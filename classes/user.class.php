@@ -320,7 +320,7 @@
 				}
 				if ($key == "specialist" && $this->specialist==null)
 				{
- 					$this->specialist = new Specialist($this->specialistId);
+ 					$this->specialist = new Specialist($this->specialistId,$this->specialistTime);
 				}
 
 				return $this->$key;

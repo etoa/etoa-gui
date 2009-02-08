@@ -682,7 +682,7 @@
 										}
 										echo '>'.$sarr[0].'</option>';
 									}
-									echo "</select> &nbsp; Ab:&nbsp; <span id=\"spt\">-</span>
+									echo "</select> &nbsp; Bis:&nbsp; <span id=\"spt\">-</span>
 								</td>
 							</tr>
 							<tr>

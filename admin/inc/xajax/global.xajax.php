@@ -134,21 +134,24 @@ function planetSelectorByUser($userNick,$function,$show_user_id=1)
 		INNER JOIN
 			users
 		ON planet_user_id=user_id
-			AND user_nick='$userNick'				
+			AND user_nick='$userNick'
+		ORDER BY
+			planets.planet_user_main DESC,
+			planets.id ASC
 			;
 		");
 		$nr=mysql_num_rows($pres);
 		if ($nr>0)
 		{
 			$out="<select name=\"planet_id\" size=\"".($nr+1)."\" onchange=\"showLoader('shipsOnPlanet');xajax_".$function."(this.options[this.selectedIndex].value);\">\n";
-			$out.="<option>Alle</option>";
+			//$out.="<option>Alle</option>";
 			while ($parr=mysql_fetch_row($pres))
 			{
 				$p = new Planet($parr[0]);
 				
 				if ($show_user_id==1)
 				{
-					$val=$parr[0].":".$parr[1];;
+					$val=$parr[0].":".$parr[1];
 				}
 				else
 				{
@@ -176,16 +179,17 @@ function planetSelectorByUser($userNick,$function,$show_user_id=1)
 	return $objResponse;	
 }
 
-function showShipsOnPlanet($pid,$uid)
+function showShipsOnPlanet($form)
 {
+	$updata=explode(":",$form);
+	$pid=$updata[0];
+	$uid=$updata[1];
 	$objResponse = new xajaxResponse();	
 	
 	ob_start();
 
 	if ($pid!=0)
 	{
-		$updata=explode(":",$pid);
-		$pid=$updata[0];
 		$res=dbquery("
 		SELECT
 			ship_points,
@@ -239,15 +243,15 @@ function showShipsOnPlanet($pid,$uid)
 		{
 			$out="Keine Schiffe vorhanden!<br/>";
 		}
-		$out.="<br/><input type=\"Button\" value=\"Neu laden\" onclick=\"showLoader('shipsOnPlanet');xajax_showShipsOnPlanet('".$pid."','".$uid."');\">";
+		$out.="<br/><input type=\"Button\" value=\"Neu laden\" onclick=\"showLoader('shipsOnPlanet');xajax_showShipsOnPlanet('".$pid.":".$uid."');\">";
 	}
 	else
 	{
 		$out="Planet w&auml;hlen...";
-	}	
+	}
 	echo $out;
 	$out = ob_get_clean();
-  $objResponse->assign("shipsOnPlanet","innerHTML", $out);
+	$objResponse->assign("shipsOnPlanet","innerHTML", $out);
 	return $objResponse;		
 }
 
