@@ -812,7 +812,7 @@ ob_start();
 						<tr id=\"resbox1\" style=\"display:;\"><th>".RES_ICON_METAL."".RES_METAL."</th>
 						<td><input type=\"text\" name=\"res1\" id=\"res1\" value=\"".$fleet->getLoadedRes(1)."\" size=\"8\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckRes(1,this.value)\" /> 
 						<a href=\"javascript:;\" onclick=\"xajax_havenCheckRes(1,".floor($fleet->sourceEntity->getRes(1)).");\">max</a></td></tr>
-						<tr id=\"resbox2\" style=\"display:none;\"><th>".RES_ICON_CRYSTAL."".RES_CRYSTAL."</th>
+						<tr id=\"resbox2\" style=\"display:;\"><th>".RES_ICON_CRYSTAL."".RES_CRYSTAL."</th>
 						<td><input type=\"text\" name=\"res2\" id=\"res2\" value=\"".$fleet->getLoadedRes(2)."\" size=\"8\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckRes(2,this.value)\" /> 
 						<a href=\"javascript:;\" onclick=\"xajax_havenCheckRes(2,".floor($fleet->sourceEntity->getRes(2)).");\">max</a></td></tr>
 						<tr id=\"resbox3\" style=\"display:;\"><th>".RES_ICON_PLASTIC."".RES_PLASTIC."</th>

@@ -62,8 +62,15 @@
 		protected $valid;
 		protected $changedFields;
 		
+		protected $resMetal;
+		protected $resCrystal;
+		protected $resPlastic;
+		protected $resFuel;
+		protected $resFood;
+		
 		protected $buildings = null;
 		protected $technologies = null;
+		protected $cooldown;
 		
 		/**
 		* Constructor
@@ -106,6 +113,12 @@
 				$this->acceptPact = (bool)$arr['alliance_accept_bnd'];
 				$this->publicMemberList = (bool)$arr['alliance_public_memberlist'];
 				$this->foundationDate = $arr['alliance_foundation_date'];
+				
+				$this->resMetal = $arr['alliance_res_metal'];
+				$this->resCrystal = $arr['alliance_res_crystal'];
+				$this->resPlastic = $arr['alliance_res_plastic'];
+				$this->resFuel = $arr['alliance_res_fuel'];
+				$this->resFood = $arr['alliance_res_food'];
 				
 				$this->changedFields = array();
 	  		$this->valid = true;
@@ -714,6 +727,30 @@
 				add_log("5","Die Allianz [b]".$this."[/b] wurde gelöscht!");
 			return true;
 		}
+			
+		/**
+		* Changes allianceresources
+		*/
+		function changeRes($m,$c,$p,$fu,$fo,$pw=0)
+		{
+		    $sql = "
+		    UPDATE
+		    	alliances
+		    SET
+                alliance_res_metal=alliance_res_metal+".$m.",
+                alliance_res_crystal=alliance_res_crystal+".$c.",
+                alliance_res_plastic=alliance_res_plastic+".$p.",
+                alliance_res_fuel=alliance_res_fuel+".$fu.",
+                alliance_res_food=alliance_res_food+".$fo."
+		    WHERE
+		    	alliance_id='".$this->id."';";
+		    dbquery($sql);
+		    $this->resMetal+=$m;
+		    $this->resCrystal+=$c;
+		    $this->resPlastic+=$p;
+		    $this->resFuel+=$fu;
+		    $this->resFood+=$fo;
+		}
 		
 		/**
 		* Load Alliance Buildings
@@ -727,7 +764,8 @@
 				$res = dbquery("
 							SELECT
 								alliance_buildlist_current_level,
-								alliance_building_name
+								alliance_building_name,
+								alliance_buildlist_cooldown
 							FROM
 								alliance_buildlist
 							INNER JOIN
@@ -737,6 +775,8 @@
 								AND alliance_buildlist_alliance_id='".$this->id."';");
 				while ($arr = mysql_fetch_row($res))
 				{
+					if ($arr[1]=="Kryptocenter")
+						$this->cooldown=$arr[2];
 					$this->buildings[$arr[1] ] = $arr[0];
 				}
 			}
@@ -751,7 +791,26 @@
 			if ($this->buildings==null)
 				$this->loadBuildings();
 			
-			return $this->buildings[$building];
+			if (isset($this->buildings[$building]))
+				return $this->buildings[$building];
+			return 0;
+		}
+		
+		/**
+		* Return Crypto Cooldown
+		*/
+		
+		function getCryptoCooldown()
+		{
+			if ($this->buildings==null)
+				$this->loadBuildings();
+			
+			return $this->cooldown;
+		}
+		
+		function setCryptoCooldown($cd)
+		{	
+			$this->cooldown=$cd;
 		}
 		
 		/**
@@ -790,7 +849,9 @@
 			if ($this->technologies==null)
 				$this->loadTechnologies();
 			
-			return $this->technologies[$technologie];
+			if (isset($this->technologies[$technologie]))
+				return $this->technologies[$technologie];
+			return 0;
 		}
 		
 		//

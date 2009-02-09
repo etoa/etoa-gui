@@ -447,7 +447,15 @@
 	}
 	else
 	{
-	
+		/****************************
+		*  Sortiereingaben speichern *
+		****************************/
+		if(count($_POST)>0 && isset($_POST['sort_submit']))
+		{
+			$cu->properties->itemOrderBookmark = $_POST['sort_value'];
+    		$cu->properties->itemOrderWay = $_POST['sort_way'];
+		}
+		
 		// Bearbeiten
 		if (isset($_GET['edit']) && $_GET['edit']>0)
 		{
@@ -568,21 +576,21 @@
 									'".$arr[0]."',
 									'".addslashes($_POST['bookmark_comment'])."');");
 								
-							echo "Der Favorit wurde hinzugef&uuml;gt!<br/><br/>";
+							ok_msg("Der Favorit wurde hinzugef&uuml;gt!");
 						}
 						else
 						{
-							echo "<b>Fehler:</b> Dieser Favorit existiert schon!<br/><br/>";
+							error_msg("Dieser Favorit existiert schon!");
 						}
 					}
 					else
 					{
-						echo "<b>Fehler:</b> Es existiert kein Objekt an den angegebenen Koordinaten!!<br/><br/>";
+						error_msg("Es existiert kein Objekt an den angegebenen Koordinaten!!");
 					}
 				}
 				else
 				{
-					echo "<b>Fehler:</b> Das Gebiet ist noch nicht erkundet!!<br/><br/>";
+					error_msg("Das Gebiet ist noch nicht erkundet!!");
 				}
 			}
 	
@@ -621,16 +629,16 @@
 							'".$arr[0]."',
 							'-');");
 								
-						echo "Der Favorit wurde hinzugef&uuml;gt!<br/><br/>";
+						ok("Der Favorit wurde hinzugef&uuml;gt!");
 					}
 					else
 					{
-						echo "<b>Fehler:</b> Dieser Favorit existiert schon!<br/><br/>";
+						error_msg("Dieser Favorit existiert schon!");
 					}
 				}
 				else
 				{
-					echo "<b>Fehler:</b> Es existiert kein Objekt an den angegebenen Koordinaten!!<br/><br/>";
+					error_msg("Es existiert kein Objekt an den angegebenen Koordinaten!!");
 				}
 			}
 			
@@ -666,7 +674,20 @@
 			echo "</select> &nbsp; ";
 			echo "<input type=\"text\" name=\"bookmark_comment\" size=\"20\" maxlen=\"200\" value=\"Kommentar\" onfocus=\"if (this.value=='Kommentar') this.value=''\" /> &nbsp;";
 			echo "<input type=\"submit\" value=\"Speichern\" name=\"submit_target\" />";
+			
 			iBoxEnd();
+			
+			$order = "";
+			if ($cu->properties->itemOrderBookmark=="users.user_nick")
+				$order=" LEFT JOIN
+							planets
+						ON
+							bookmarks.entity_id=planets.id
+						LEFT JOIN
+							users
+						ON
+							planets.planet_user_id=users.user_id ";
+			$order.=" ORDER BY ".$cu->properties->itemOrderBookmark." ".$cu->properties->itemOrderWay."";
 	
 			// List bookmarks
 			$res = dbquery("
@@ -681,11 +702,53 @@
 				entities	
 				ON bookmarks.user_id=".$cu->id."
 				AND bookmarks.entity_id=entities.id
-			ORDER BY
-			 	bookmarks.comment;");
+			".$order.";");
 			if (mysql_num_rows($res)>0)
 			{
 				tableStart("Gespeicherte Favoriten");
+/*************
+	* Sortierbox *
+	*************/
+				//Legt Sortierwerte in einem Array fest
+				$values = array(
+								"bookmarks.id"=>"Erstelldatum",
+								"bookmarks.entity_id"=>"Koordianten",
+								"bookmarks.comment"=>"Kommentar",
+								"entities.code"=>"Typ",
+								"users.user_nick"=>"Besitzer"
+								);
+											
+				echo "<tr>
+						<td class=\"tbldata\" colspan=\"6\" style=\"text-align:center;\">
+							<select name=\"sort_value\">";
+				foreach ($values as $value => $name)
+				{		
+					echo "<option value=\"".$value."\"";
+					if($cu->properties->itemOrderBookmark==$value)
+					{
+						echo " selected=\"selected\"";
+					}
+					echo ">".$name."</option>";							
+				}																																																							
+				echo "</select>
+				
+					<select name=\"sort_way\">";
+					
+				//Aufsteigend
+				echo "<option value=\"ASC\"";
+				if($cu->properties->itemOrderWay=='ASC') echo " selected=\"selected\"";
+					echo ">Aufsteigend</option>";
+					
+				//Absteigend
+				echo "<option value=\"DESC\"";
+				if($cu->properties->itemOrderWay=='DESC') echo " selected=\"selected\"";
+					echo ">Absteigend</option>";	
+				
+				echo "</select>						
+				
+							<input type=\"submit\" class=\"button\" name=\"sort_submit\" value=\"Sortieren\"/>
+						</td>
+					</tr>";
 				echo "<tr>
 								<th class=\"tbltitle\" colspan=\"2\">Typ</th>
 								<th class=\"tbltitle\">Koordinaten</th>

@@ -9,6 +9,7 @@
 	{
 		protected $isValid;
 		protected $coordsLoaded;
+		protected $ownerObject = NULL;
 	
 		
 		/**
@@ -212,6 +213,26 @@
 
 			}
 		}
+		
+		
+		/**
+		* Gets planet properties
+		*/	
+		public function __get($key)
+		{
+			try
+			{
+				if ($key == "ownerObject" && $this->ownerObject == null)
+					$this->ownerObject = new User($this->userId);
+					
+				return $this->$key;
+			}
+			catch (EException $e)
+			{
+				echo $e;
+				return null;
+			}
+		}	
 
     public function allowedFleetActions()
     {

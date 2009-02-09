@@ -11,6 +11,7 @@
 		private $itemShow;
 		private $itemOrderShip;
 		private $itemOrderDef;
+		private $itemOrderBookmark;
 		private $itemOrderWay;
 		private $imageFilter;
 		private $msgSignature;
@@ -55,6 +56,7 @@
 				$this->itemShow = $arr['item_show'];
 				$this->itemOrderShip = $arr['item_order_ship'];
 				$this->itemOrderDef = $arr['item_order_def'];
+				$this->itemOrderBookmark = $arr['item_order_bookmark'];
 				$this->itemOrderWay = $arr['item_order_way'];
 				$this->imageFilter = $arr['image_filter'];
 				$this->msgSignature = $arr['msgsignature'];
@@ -167,6 +169,11 @@
 				{
 					$this->$key = $val;
 					$this->changedFields[$key] = "item_order_def";
+				}
+				elseif ($key == "itemOrderBookmark")
+				{
+					$this->$key = $val;
+					$this->changedFields[$key] = "item_order_bookmark";
 				}
 				elseif ($key == "itemOrderWay")
 				{
