@@ -153,12 +153,6 @@
 					ok_msg("Gelöscht");
 			}
 			
-			foreach ($ships as $k => $v)
-			{
-				echo "<option value=\"".$k."\">".$v."</option>";
-			}
-			echo "</select></div>";
-			
 			if (isset($_GET['edit']) && $_GET['edit']>0)
 			{
 				$bres = dbquery("

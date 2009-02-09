@@ -773,7 +773,7 @@ ob_start();
 							<th>Aktionswahl</th>
 							<th colspan=\"2\">Ladung</th>
 						</tr>";
-						echo "<tr><td rowspan=\"8\">";
+						echo "<tr><td rowspan=\"9\">";
 						$actionsAvailable = 0;
 						foreach ($fleet->getAllowedActions() as $ac)
 						{
@@ -783,6 +783,7 @@ ob_start();
 
 									echo " checked=\"checked\"";
 									echo " /><span ".tm($ac->name(),$ac->desc())."> ".$ac." (unterstützen)</span><br/>";
+									$actionsAvailable++;
 								}
 							} else {									
 								echo "<input type=\"radio\" onchange=\"xajax_havenCheckAction('".$ac->code()."');\" name=\"fleet_action\" value=\"".$ac->code()."\"";
@@ -790,8 +791,8 @@ ob_start();
 								if ($actionsAvailable == 0)
 									echo " checked=\"checked\"";
 								echo " /><span ".tm($ac->name(),$ac->desc())."> ".$ac."</span><br/>";
+								$actionsAvailable++;
 							}
-							$actionsAvailable++;
 						}
 						if ($actionsAvailable==0)
 						{
@@ -808,24 +809,44 @@ ob_start();
 						<tr><th>Freie Passagierplätze:</th>
 						<td style=\"width:150px;\" id=\"peoplefree\">".nf($fleet->getPeopleCapacity())."</td>
 						</td></tr>
-						<tr><th>".RES_ICON_METAL."".RES_METAL."</th>
+						<tr id=\"resbox1\" style=\"display:;\"><th>".RES_ICON_METAL."".RES_METAL."</th>
 						<td><input type=\"text\" name=\"res1\" id=\"res1\" value=\"".$fleet->getLoadedRes(1)."\" size=\"8\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckRes(1,this.value)\" /> 
 						<a href=\"javascript:;\" onclick=\"xajax_havenCheckRes(1,".floor($fleet->sourceEntity->getRes(1)).");\">max</a></td></tr>
-						<tr><th>".RES_ICON_CRYSTAL."".RES_CRYSTAL."</th>
+						<tr id=\"resbox2\" style=\"display:none;\"><th>".RES_ICON_CRYSTAL."".RES_CRYSTAL."</th>
 						<td><input type=\"text\" name=\"res2\" id=\"res2\" value=\"".$fleet->getLoadedRes(2)."\" size=\"8\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckRes(2,this.value)\" /> 
 						<a href=\"javascript:;\" onclick=\"xajax_havenCheckRes(2,".floor($fleet->sourceEntity->getRes(2)).");\">max</a></td></tr>
-						<tr><th>".RES_ICON_PLASTIC."".RES_PLASTIC."</th>
+						<tr id=\"resbox3\" style=\"display:;\"><th>".RES_ICON_PLASTIC."".RES_PLASTIC."</th>
 						<td><input type=\"text\" name=\"res3\" id=\"res3\" value=\"".$fleet->getLoadedRes(3)."\" size=\"8\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckRes(3,this.value)\" /> 
 						<a href=\"javascript:;\" onclick=\"xajax_havenCheckRes(3,".floor($fleet->sourceEntity->getRes(3)).");\">max</a></td></tr>
-						<tr><th>".RES_ICON_FUEL."".RES_FUEL."</th>
+						<tr id=\"resbox4\" style=\"display:;\"><th>".RES_ICON_FUEL."".RES_FUEL."</th>
 						<td><input type=\"text\" name=\"res4\" id=\"res4\" value=\"".$fleet->getLoadedRes(4)."\" size=\"8\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckRes(4,this.value)\" /> 
 						<a href=\"javascript:;\" onclick=\"xajax_havenCheckRes(4,".floor($fleet->sourceEntity->getRes(4)).");\">max</a></td></tr>
-						<tr><th>".RES_ICON_FOOD."".RES_FOOD."</th>
+						<tr id=\"resbox5\" style=\"display:;\"><th>".RES_ICON_FOOD."".RES_FOOD."</th>
 						<td><input type=\"text\" name=\"res5\" id=\"res5\" value=\"".$fleet->getLoadedRes(5)."\" size=\"8\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckRes(5,this.value)\" /> 
 						<a href=\"javascript:;\" onclick=\"xajax_havenCheckRes(5,".floor($fleet->sourceEntity->getRes(5)).");\">max</a></td></tr>
-						<tr><th>".RES_ICON_PEOPLE."Passagiere</th>
+						<tr id=\"resbox6\" style=\"display:;\"><th>".RES_ICON_PEOPLE."Passagiere</th>
 						<td><input type=\"text\" name=\"resp\" id=\"resp\" value=\"".$fleet->capacityPeopleLoaded."\" size=\"8\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckPeople(this.value)\" /> 
-						<a href=\"javascript:;\" onclick=\"xajax_havenCheckPeople(".floor($fleet->sourceEntity->people()).");\">max</a></td></tr>";
+						<a href=\"javascript:;\" onclick=\"xajax_havenCheckPeople(".floor($fleet->sourceEntity->people()).");\">max</a></td></tr>
+						
+						<tr id=\"fetchbox1\" style=\"display:none;\"><th>".RES_ICON_METAL."".RES_METAL."</th>
+						<td><input type=\"text\" name=\"fetch1\" id=\"fres1\" value=\"0\" size=\"8\" onkeyup=\"FormatNumber(this.id,this.value, '".$fleet->getTotalCapacity()."', '', '');\"/> 
+						<a href=\"javascript:;\" onclick=\"document.getElementById('fres1').value=".$fleet->getTotalCapacity()."\">max</a></td></tr>
+						<tr id=\"fetchbox2\" style=\"display:none;\"><th>".RES_ICON_CRYSTAL."".RES_CRYSTAL."</th>
+						<td><input type=\"text\" name=\"fetch2\" id=\"fres2\" value=\"0\" size=\"8\" onkeyup=\"FormatNumber(this.id,this.value, '".$fleet->getTotalCapacity()."', '', '');\"/> 
+						<a href=\"javascript:;\" onclick=\"document.getElementById('fres2').value=".$fleet->getTotalCapacity()."\">max</a></td></tr>
+						<tr id=\"fetchbox3\" style=\"display:none;\"><th>".RES_ICON_PLASTIC."".RES_PLASTIC."</th>
+						<td><input type=\"text\" name=\"fetch3\" id=\"fres3\" value=\"0\" size=\"8\" onkeyup=\"FormatNumber(this.id,this.value, '".$fleet->getTotalCapacity()."', '', '');\"/> 
+						<a href=\"javascript:;\" onclick=\"document.getElementById('fres3').value=".$fleet->getTotalCapacity()."\">max</a></td></tr>
+						<tr id=\"fetchbox4\" style=\"display:none;\"><th>".RES_ICON_FUEL."".RES_FUEL."</th>
+						<td><input type=\"text\" name=\"fetch4\" id=\"fres4\" value=\"0\" size=\"8\" onkeyup=\"FormatNumber(this.id,this.value, '".$fleet->getTotalCapacity()."', '', '');\"/> 
+						<a href=\"javascript:;\" onclick=\"document.getElementById('fres4').value=".$fleet->getTotalCapacity()."\">max</a></td></tr>
+						<tr id=\"fetchbox5\" style=\"display:none;\"><th>".RES_ICON_FOOD."".RES_FOOD."</th>
+						<td><input type=\"text\" name=\"fetch5\" id=\"fres5\" value=\"0\" size=\"8\" onkeyup=\"FormatNumber(this.id,this.value, '".$fleet->getTotalCapacity()."', '', '');\"/> 
+						<a href=\"javascript:;\" onclick=\"document.getElementById('fres5').value=".$fleet->getTotalCapacity()."\">max</a></td></tr>
+						<tr id=\"fetchbox6\" style=\"display:none;\"><th>".RES_ICON_PEOPLE."Passagiere</th>
+						<td><input type=\"text\" name=\"fetchp\" id=\"fresp\" value=\"0\" size=\"8\" onkeyup=\"FormatNumber(this.id,this.value, '".$fleet->getTotalPeopleCapacity()."', '', '');\"/> 
+						<a href=\"javascript:;\" onclick=\"document.getElementById('fresp').value=".$fleet->getTotalPeopleCapacity()."\">max</a></td></tr>";
+						
 						tableEnd();                                                                                  
 						
 						echo "<input type=\"button\" onclick=\"xajax_havenShowTarget(null)\" value=\"&lt;&lt; Zurück zur Zielwahl\" /> &nbsp; ";
@@ -886,12 +907,12 @@ ob_start();
 			{
 				if ($form['fleet_action']=="fetch")
 				{
-					$fetch1 = $fleet->fetchResource(1,$form['res1']);
-					$fetch2 = $fleet->fetchResource(2,$form['res2']);
-					$fetch3 = $fleet->fetchResource(3,$form['res3']);
-					$fetch4 = $fleet->fetchResource(4,$form['res4']);
-					$fetch5 = $fleet->fetchResource(5,$form['res5']);
-					$fetch6 = $fleet->fetchResource(6,$form['resp']);
+					$fetch1 = $fleet->fetchResource(1,$form['fetch1']);
+					$fetch2 = $fleet->fetchResource(2,$form['fetch2']);
+					$fetch3 = $fleet->fetchResource(3,$form['fetch3']);
+					$fetch4 = $fleet->fetchResource(4,$form['fetch4']);
+					$fetch5 = $fleet->fetchResource(5,$form['fetch5']);
+					$fetch6 = $fleet->fetchResource(6,$form['fetchp']);
 					$load1 = $fleet->loadResource(1,0,1);
 					$load2 = $fleet->loadResource(2,0,1);
 					$load3 = $fleet->loadResource(3,0,1);
@@ -901,11 +922,11 @@ ob_start();
 				}
 				else
 				{
-					$load1 = $fleet->loadResource(1,$form['res1'],1);
-					$load2 = $fleet->loadResource(2,$form['res2'],1);
-					$load3 = $fleet->loadResource(3,$form['res3'],1);
-					$load4 = $fleet->loadResource(4,$form['res4'],1);
-					$load5 = $fleet->loadResource(5,$form['res5'],1);
+					$load1 = $fleet->loadResource(1,nf_back($form['res1']),1);
+					$load2 = $fleet->loadResource(2,nf_back($form['res2']),1);
+					$load3 = $fleet->loadResource(3,nf_back($form['res3']),1);
+					$load4 = $fleet->loadResource(4,nf_back($form['res4']),1);
+					$load5 = $fleet->loadResource(5,nf_back($form['res5']),1);
 				}
 				
 				if ($fid = $fleet->launch())
@@ -1213,13 +1234,13 @@ ob_start();
 	function havenCheckRes($id,$val)
 	{
 		$response = new xajaxResponse();
-		$val = max(0,intval($val));
+		$val = max(0,intval(nf_back($val)));
 	
 		$fleet = unserialize($_SESSION['haven']['fleetObj']);	
 		
 		$erg = $fleet->loadResource($id,$val);
 		
-		$response->assign('res'.$id,'value',$erg);
+		$response->assign('res'.$id,'value',nf($erg));
 	  
 		$response->assign('resfree','innerHTML',nf($fleet->getCapacity())." / ".nf($fleet->getTotalCapacity())	);
 		$response->assign('resfree','style.color',"#0f0");
@@ -1232,13 +1253,13 @@ ob_start();
 	function havenCheckPeople($val)
 	{
 		$response = new xajaxResponse();
-		$val = max(0,intval($val));
+		$val = max(0,intval(nf_back($val)));
 		
 		$fleet = unserialize($_SESSION['haven']['fleetObj']);	
 		
 		$erg = $fleet->loadPeople($val);
 		
-		$response->assign('resp','value',$erg);
+		$response->assign('resp','value',nf($erg));
 		
 		$response->assign('peoplefree','innerHTML',nf($fleet->getPeopleCapacity())." / ".nf($fleet->getTotalPeopleCapacity())	);
 		$response->assign('peoplefree','style.color',"#0f0");
@@ -1317,6 +1338,43 @@ ob_start();
 			$response->assign('resfree','innerHTML',nf($fleet->getCapacity())." / ".nf($fleet->getTotalCapacity()));
 			$response->assign('resfree','style.color',"#0f0");
 		}
+			$response->assign("peoplefree","innerHTML",$code);
+		if ($code=="fetch")
+		{
+			$response->assign("fetchbox1","style.display",'');
+			$response->assign("fetchbox2","style.display",'');
+			$response->assign("fetchbox3","style.display",'');
+			$response->assign("fetchbox4","style.display",'');
+			$response->assign("fetchbox5","style.display",'');
+			$response->assign("fetchbox6","style.display",'');
+			$response->assign("resbox1","style.display",'none');
+			$response->assign("resbox2","style.display",'none');
+			$response->assign("resbox3","style.display",'none');
+			$response->assign("resbox4","style.display",'none');
+			$response->assign("resbox5","style.display",'none');
+			$response->assign("resbox6","style.display",'none');
+			$response->assign("peoplefree","innerHTML",nf($fleet->getTotalPeopleCapacity()));
+			$response->assign("resfree","innerHTML",nf($fleet->getTotalCapacity()));
+		}
+		else
+		{
+			$response->assign("fetchbox1","style.display",'none');
+			$response->assign("fetchbox2","style.display",'none');
+			$response->assign("fetchbox3","style.display",'none');
+			$response->assign("fetchbox4","style.display",'none');
+			$response->assign("fetchbox5","style.display",'none');
+			$response->assign("fetchbox6","style.display",'none');
+			$response->assign("resbox1","style.display",'');
+			$response->assign("resbox2","style.display",'');
+			$response->assign("resbox3","style.display",'');
+			$response->assign("resbox4","style.display",'');
+			$response->assign("resbox5","style.display",'');
+			$response->assign("resbox6","style.display",'');
+			$response->assign('peoplefree','innerHTML',nf($fleet->getPeopleCapacity())." / ".nf($fleet->getTotalPeopleCapacity()));
+			$response->assign('resfree','innerHTML',nf($fleet->getCapacity())." / ".nf($fleet->getTotalCapacity()));
+		}
+		$response->assign('resfree','style.color',"#0f0");
+		$response->assign('peoplefree','style.color',"#0f0");
 		$_SESSION['haven']['fleetObj']=serialize($fleet);
 		
 		return $response;
