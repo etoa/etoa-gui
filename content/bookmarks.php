@@ -152,9 +152,7 @@
 				if (mysql_affected_rows()>0)
 					ok_msg("Gelöscht");
 			}
-		
-			echo "<div id=\"shipTempl\" style=\"display:none\">Schiffe hinzufügen: <input type=\"text\" name=\"scount[]\" value=\"1\" size=\"4\" />&nbsp;
-			<select name=\"sid[]\">";
+			
 			foreach ($ships as $k => $v)
 			{
 				echo "<option value=\"".$k."\">".$v."</option>";

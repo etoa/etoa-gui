@@ -795,6 +795,11 @@
 			return $this->capacityPeopleTotal - $this->capacityPeopleLoaded;		
 		}
 		
+		function getTotalPeopleCapacity()
+		{
+			return $this->capacityPeopleTotal;		
+		}
+		
 		private function calcResLoaded()
 		{
 			$this->capacityResLoaded = 0;

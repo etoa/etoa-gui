@@ -11,6 +11,7 @@
 	$xajax->register(XAJAX_FUNCTION,"havenTargetInfo");
 	$xajax->register(XAJAX_FUNCTION,"havenBookmark");
 	$xajax->register(XAJAX_FUNCTION,"havenCheckRes");
+	$xajax->register(XAJAX_FUNCTION,"havenCheckPeople");
 	$xajax->register(XAJAX_FUNCTION,"havenCheckAction");
 	$xajax->register(XAJAX_FUNCTION,"havenAllianceAttack");
 	$xajax->register(XAJAX_FUNCTION,"havenCheckSupport");
@@ -805,7 +806,7 @@ ob_start();
 						Freie Kapazität:</th>
 						<td style=\"width:150px;\" id=\"resfree\">".nf($fleet->getCapacity())."</td></tr>
 						<tr><th>Freie Passagierplätze:</th>
-						<td>".nf($fleet->getPeopleCapacity())."</td>
+						<td style=\"width:150px;\" id=\"peoplefree\">".nf($fleet->getPeopleCapacity())."</td>
 						</td></tr>
 						<tr><th>".RES_ICON_METAL."".RES_METAL."</th>
 						<td><input type=\"text\" name=\"res1\" id=\"res1\" value=\"".$fleet->getLoadedRes(1)."\" size=\"8\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckRes(1,this.value)\" /> 
@@ -823,7 +824,8 @@ ob_start();
 						<td><input type=\"text\" name=\"res5\" id=\"res5\" value=\"".$fleet->getLoadedRes(5)."\" size=\"8\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckRes(5,this.value)\" /> 
 						<a href=\"javascript:;\" onclick=\"xajax_havenCheckRes(5,".floor($fleet->sourceEntity->getRes(5)).");\">max</a></td></tr>
 						<tr><th>".RES_ICON_PEOPLE."Passagiere</th>
-						<td><input type=\"text\" name=\"resp\" id=\"resp\" value=\"0\" size=\"8\" tabindex=\"".($tabindex++)."\"/></td></tr>";
+						<td><input type=\"text\" name=\"resp\" id=\"resp\" value=\"".$fleet->capacityPeopleLoaded."\" size=\"8\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckPeople(this.value)\" /> 
+						<a href=\"javascript:;\" onclick=\"xajax_havenCheckPeople(".floor($fleet->sourceEntity->people()).");\">max</a></td></tr>";
 						tableEnd();                                                                                  
 						
 						echo "<input type=\"button\" onclick=\"xajax_havenShowTarget(null)\" value=\"&lt;&lt; Zurück zur Zielwahl\" /> &nbsp; ";
@@ -889,11 +891,13 @@ ob_start();
 					$fetch3 = $fleet->fetchResource(3,$form['res3']);
 					$fetch4 = $fleet->fetchResource(4,$form['res4']);
 					$fetch5 = $fleet->fetchResource(5,$form['res5']);
+					$fetch6 = $fleet->fetchResource(6,$form['resp']);
 					$load1 = $fleet->loadResource(1,0,1);
 					$load2 = $fleet->loadResource(2,0,1);
 					$load3 = $fleet->loadResource(3,0,1);
 					$load4 = $fleet->loadResource(4,0,1);
 					$load5 = $fleet->loadResource(5,0,1);
+					$load6 = $fleet->loadPeople(0);
 				}
 				else
 				{
@@ -1221,6 +1225,25 @@ ob_start();
 		$response->assign('resfree','style.color',"#0f0");
 	  
 	  $_SESSION['haven']['fleetObj']=serialize($fleet);
+	  
+	  return $response;					
+	}
+	
+	function havenCheckPeople($val)
+	{
+		$response = new xajaxResponse();
+		$val = max(0,intval($val));
+		
+		$fleet = unserialize($_SESSION['haven']['fleetObj']);	
+		
+		$erg = $fleet->loadPeople($val);
+		
+		$response->assign('resp','value',$erg);
+		
+		$response->assign('peoplefree','innerHTML',nf($fleet->getPeopleCapacity())." / ".nf($fleet->getTotalPeopleCapacity())	);
+		$response->assign('peoplefree','style.color',"#0f0");
+	  
+	  	$_SESSION['haven']['fleetObj']=serialize($fleet);
 	  
 	  return $response;					
 	}
