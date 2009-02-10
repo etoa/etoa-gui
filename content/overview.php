@@ -393,95 +393,80 @@
 
             document.getElementById("planet_info_defense_name").firstChild.nodeValue=defense_name;
             document.getElementById("planet_info_defense_time").firstChild.nodeValue=defense_time;
-            
+			
+			//Überprüfen ob Speicher voll ist
+			var check_metal = store_metal-res_metal;
+			var check_crystal = store_crystal-res_crystal;
+			var check_plastic = store_plastic-res_plastic;
+			var check_fuel = store_fuel-res_fuel;
+			var check_food = store_food-res_food;
+			var check_people = people_place-people;
+	
+			var rest_power = prod_power-use_power;
 
-						//Alle Beschriftungen anzeigen
-						document.getElementById("planet_info_text_building").innerHTML ='<a href=\"?page=buildings&planet_id='+planet_id+'\">Bauhof:</a>';
-        		document.getElementById("planet_info_text_shipyard").innerHTML ='<a href=\"?page=shipyard&planet_id='+planet_id+'\">Schiffswerft:</a>';
-        		document.getElementById("planet_info_text_defense").innerHTML ='<a href=\"?page=defense&planet_id='+planet_id+'\">Waffenfabrik:</a>';
-						document.getElementById("planet_info_text_res").firstChild.nodeValue='Ressourcen';
-						document.getElementById("planet_info_text_res_metal").firstChild.nodeValue='<?php echo RES_METAL.":";?>';
-						document.getElementById("planet_info_text_res_crystal").firstChild.nodeValue='<?php echo RES_CRYSTAL.":";?>';
-						document.getElementById("planet_info_text_res_plastic").firstChild.nodeValue='<?php echo RES_PLASTIC.":";?>';
-						document.getElementById("planet_info_text_res_fuel").firstChild.nodeValue='<?php echo RES_FUEL.":";?>';
-						document.getElementById("planet_info_text_res_food").firstChild.nodeValue='<?php echo RES_FOOD.":";?>';
-						document.getElementById("planet_info_text_people").firstChild.nodeValue='Bewohner:';
-						document.getElementById("planet_info_text_power").firstChild.nodeValue='Energie:';
+			//Wenn Speicher voll, anders darstellen als normal
+			if (check_metal<=0)
+			{
+				document.getElementById("planet_info_res_metal").className='resfullcolor';
+			}
+			else
+			{
+				document.getElementById("planet_info_res_metal").className='resmetalcolor';
+			}
 
+			if (check_crystal<=0)
+			{
+				document.getElementById("planet_info_res_crystal").className='resfullcolor';
+			}
+			else
+			{
+				document.getElementById("planet_info_res_crystal").className='rescrystalcolor';
+			}
 
-						//Überprüfen ob Speicher voll ist
-						var check_metal = store_metal-res_metal;
-						var check_crystal = store_crystal-res_crystal;
-						var check_plastic = store_plastic-res_plastic;
-						var check_fuel = store_fuel-res_fuel;
-						var check_food = store_food-res_food;
-						var check_people = people_place-people;
-				
-						var rest_power = prod_power-use_power;
+			if (check_plastic<=0)
+			{
+				document.getElementById("planet_info_res_plastic").className='resfullcolor';
+			}
+			else
+			{
+				document.getElementById("planet_info_res_plastic").className='resplasticcolor';
+			}
 
-						//Wenn Speicher voll, anders darstellen als normal
-	        	if (check_metal<=0)
-	        	{
-	        		document.getElementById("planet_info_res_metal").className='PlaniTextCenterStore';
-	        	}
-	        	else
-	        	{
-	        		document.getElementById("planet_info_res_metal").className='PlaniTextCenter';
-	        	}
-	
-	        	if (check_crystal<=0)
-	        	{
-	        		document.getElementById("planet_info_res_crystal").className='PlaniTextCenterStore';
-	        	}
-	        	else
-	        	{
-	        		document.getElementById("planet_info_res_crystal").className='PlaniTextCenter';
-	        	}
-	
-	        	if (check_plastic<=0)
-	        	{
-	        		document.getElementById("planet_info_res_plastic").className='PlaniTextCenterStore';
-	        	}
-	        	else
-	        	{
-	        		document.getElementById("planet_info_res_plastic").className='PlaniTextCenter';
-	        	}
-	
-	        	if (check_fuel<=0)
-	        	{
-	        		document.getElementById("planet_info_res_fuel").className='PlaniTextCenterStore';
-	        	}
-	        	else
-	        	{
-	        		document.getElementById("planet_info_res_fuel").className='PlaniTextCenter';
-	        	}
-	
-	        	if (check_food<=0)
-	        	{
-	        		document.getElementById("planet_info_res_food").className='PlaniTextCenterStore';
-	        	}
-	        	else
-	        	{
-	        		document.getElementById("planet_info_res_food").className='PlaniTextCenter';
-	        	}
-	
-	        	if (check_people<=0)
-	        	{
-	        		document.getElementById("planet_info_people").className='PlaniTextCenterStore';
-	        	}
-	        	else
-	        	{
-	        		document.getElementById("planet_info_people").className='PlaniTextCenter';
-	        	}
-	
-	        	if (rest_power<=0)
-	        	{
-	        		document.getElementById("planet_info_power").className='PlaniTextCenterStore';
-	        	}
-	        	else
-	        	{
-	        		document.getElementById("planet_info_power").className='PlaniTextCenterPower';
-	        	}
+			if (check_fuel<=0)
+			{
+				document.getElementById("planet_info_res_fuel").className='resfullcolor';
+			}
+			else
+			{
+				document.getElementById("planet_info_res_fuel").className='resfuelcolor';
+			}
+
+			if (check_food<=0)
+			{
+				document.getElementById("planet_info_res_food").className='resfullcolor';
+			}
+			else
+			{
+				document.getElementById("planet_info_res_food").className='resfoodcolor';
+			}
+
+			if (check_people<=0)
+			{
+				document.getElementById("planet_info_people").className='resfullcolor';
+			}
+			else
+			{
+				document.getElementById("planet_info_people").className='respeoplecolor';
+			}
+
+			if (rest_power<=0)
+			{
+				document.getElementById("planet_info_power").className='resfullcolor';
+			}
+			else
+			{
+				document.getElementById("planet_info_power").className='respowercolor';
+			}
 
 
             var res_metal = format(res_metal);
@@ -518,7 +503,28 @@
             document.getElementById("planet_info_res_food").firstChild.nodeValue=''+res_food+' t';
             document.getElementById("planet_info_power").firstChild.nodeValue=rest_power;
             document.getElementById("planet_info_people").firstChild.nodeValue=people;
+			
 
+			//Alle Beschriftungen anzeigen
+			document.getElementById("planet_info_text_building").innerHTML ='<a href=\"?page=buildings&planet_id='+planet_id+'\">Bauhof:</a>';
+			document.getElementById("planet_info_text_shipyard").innerHTML ='<a href=\"?page=shipyard&planet_id='+planet_id+'\">Schiffswerft:</a>';
+			document.getElementById("planet_info_text_defense").innerHTML ='<a href=\"?page=defense&planet_id='+planet_id+'\">Waffenfabrik:</a>';
+			document.getElementById("planet_info_text_res").firstChild.nodeValue='Ressourcen';
+			document.getElementById("planet_info_text_res_metal").className='resmetalcolor';
+			document.getElementById("planet_info_text_res_crystal").className='rescrystalcolor';
+			document.getElementById("planet_info_text_res_plastic").className='resplasticcolor';
+			document.getElementById("planet_info_text_res_fuel").className='resfuelcolor';
+			document.getElementById("planet_info_text_res_food").className='resfoodcolor';
+			document.getElementById("planet_info_text_people").className='respeoplecolor';
+			document.getElementById("planet_info_text_power").className='respowercolor';
+			document.getElementById("planet_info_text_res_metal").firstChild.nodeValue='<?php echo RES_METAL.":";?>';
+			document.getElementById("planet_info_text_res_crystal").firstChild.nodeValue='<?php echo RES_CRYSTAL.":";?>';
+			document.getElementById("planet_info_text_res_plastic").firstChild.nodeValue='<?php echo RES_PLASTIC.":";?>';
+			document.getElementById("planet_info_text_res_fuel").firstChild.nodeValue='<?php echo RES_FUEL.":";?>';
+			document.getElementById("planet_info_text_res_food").firstChild.nodeValue='<?php echo RES_FOOD.":";?>';
+			document.getElementById("planet_info_text_people").firstChild.nodeValue='Bewohner:';
+			document.getElementById("planet_info_text_power").firstChild.nodeValue='Energie:';
+			
             show_links();
 
         }
@@ -864,7 +870,7 @@
 
 
 	$top_table=$middle_top+(($d_planets/2)*sin(deg2rad(55+270)));
-	echo "<center><table border=\"0\" width=\"75%\" style=\"text-align:center; vertical-align:middle;\">";
+	echo "<center><table border=\"0\" width=\"65%\" style=\"text-align:center; vertical-align:middle;\">";
 	echo "
 			<tr height=\"".$top_table."\">
 				<td colspan=\"3\">&nbsp;</td>
@@ -916,38 +922,38 @@
 				<td colspan=\"3\" class=\"PlaniTextCenterRessourcen\" id=\"planet_info_text_res\">&nbsp;</td>
 			</tr>
 			<tr>
-				<td width=\"38%\" class=\"PlaniTextCenterBeschreibung\" id=\"planet_info_text_res_metal\">&nbsp;</td>
+				<td width=\"28%\" id=\"planet_info_text_res_metal\" >&nbsp;</td>
 				<td width=\"2%\">&nbsp;</td>
 				<td width=\"60%\" class=\"PlaniTextCenter\" id=\"planet_info_res_metal\">&nbsp;</td>
 			</tr>
 			<tr>
-				<td width=\"38%\" class=\"PlaniTextCenterBeschreibung\" id=\"planet_info_text_res_crystal\">&nbsp;</td>
+				<td width=\"38%\" id=\"planet_info_text_res_crystal\" >&nbsp;</td>
 				<td width=\"2%\">&nbsp;</td>
 				<td width=\"60%\" class=\"PlaniTextCenter\" id=\"planet_info_res_crystal\">&nbsp;</td>
 			</tr>
 			<tr>
-				<td width=\"38%\" class=\"PlaniTextCenterBeschreibung\" id=\"planet_info_text_res_plastic\">&nbsp;</td>
+				<td width=\"38%\" id=\"planet_info_text_res_plastic\" >&nbsp;</td>
 				<td width=\"2%\">&nbsp;</td>
 				<td width=\"60%\" class=\"PlaniTextCenter\" id=\"planet_info_res_plastic\">&nbsp;</td>
 			</tr>
 			<tr>
-				<td width=\"38%\" class=\"PlaniTextCenterBeschreibung\" id=\"planet_info_text_res_fuel\">&nbsp;</td>
+				<td width=\"38%\" id=\"planet_info_text_res_fuel\" >&nbsp;</td>
 				<td width=\"2%\">&nbsp;</td>
 				<td width=\"60%\" class=\"PlaniTextCenter\" id=\"planet_info_res_fuel\">&nbsp;</td>
 			</tr>
-			<tr>
-				<td width=\"38%\" class=\"PlaniTextCenterBeschreibung\" id=\"planet_info_text_res_food\">&nbsp;</td>
+			<tr> 
+				<td width=\"38%\" id=\"planet_info_text_res_food\" >&nbsp;</td>
 				<td width=\"2%\">&nbsp;</td>
 				<td width=\"60%\" class=\"PlaniTextCenter\" id=\"planet_info_res_food\">&nbsp;</td>
 			</tr>
 
 			<tr>
-				<td width=\"38%\" class=\"PlaniTextCenterBeschreibung\" id=\"planet_info_text_people\">&nbsp;</td>
+				<td width=\"38%\" id=\"planet_info_text_people\" >&nbsp;</td>
 				<td width=\"2%\">&nbsp;</td>
 				<td width=\"60%\" class=\"PlaniTextCenter\" id=\"planet_info_people\">&nbsp;</td>
 			</tr>
 			<tr>
-				<td width=\"38%\" class=\"PlaniTextCenterBeschreibung\" id=\"planet_info_text_power\">&nbsp;</td>
+				<td width=\"38%\" id=\"planet_info_text_power\" >&nbsp;</td>
 				<td width=\"2%\">&nbsp;</td>
 				<td width=\"60%\" class=\"PlaniTextCenter\" id=\"planet_info_power\">&nbsp;</td>
 			</tr>

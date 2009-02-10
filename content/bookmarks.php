@@ -629,7 +629,7 @@
 							'".$arr[0]."',
 							'-');");
 								
-						ok("Der Favorit wurde hinzugef&uuml;gt!");
+						ok_msg("Der Favorit wurde hinzugef&uuml;gt!");
 					}
 					else
 					{

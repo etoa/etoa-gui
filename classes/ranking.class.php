@@ -379,9 +379,12 @@
 						AND planets.planet_user_main=1
 						AND planets.planet_user_id='".$user_id."';
 				");
-				$arr = mysql_fetch_row($res);
-				$sx = $cells[$arr[0]][0];
-				$sy = $cells[$arr[0]][1];
+				if (mysql_num_rows($res))
+				{
+					$arr = mysql_fetch_row($res);
+					$sx = $cells[$arr[0]][0];
+					$sy = $cells[$arr[0]][1];
+				}
 						
 	
 				//
@@ -510,11 +513,11 @@
 						'".($uarr['user_alliance_id']>0 ? $alliance[$uarr['user_alliance_id']] : '')."',
 						'".$uarr['user_alliance_id']."',
 						'".($uarr['user_race_id']>0 ? $race[$uarr['user_race_id']] : '')."',
-						".$sx.",
-						".$sy.",
-						".($uarr['user_blocked_to'] > $time ? 1 : 0).",
-						".($uarr['user_acttime'] < $time-$inactivetime ? 1 : 0).",
-						".($uarr['user_hmode_from'] > 0 ? 1 : 0)."
+						'".$sx."',
+						'".$sy."',
+						'".($uarr['user_blocked_to'] > $time ? 1 : 0)."',
+						'".($uarr['user_acttime'] < $time-$inactivetime ? 1 : 0)."',
+						'".($uarr['user_hmode_from'] > 0 ? 1 : 0)."'
 					)";
 				$user_points_query.=",(
 						'".$user_id."',
@@ -828,7 +831,6 @@
 				a.alliance_rank_current,
 				COUNT(*) AS cnt, 
 				SUM(u.points) AS upoints,
-				SUM(u.points_exp) AS epoints,
 				AVG(u.points) AS uavg 
 			FROM 
 				alliances as a
@@ -896,7 +898,8 @@
 								LIMIT 1;");
 					$sarr=mysql_fetch_row($sres);
 					
-					$apoints = $tpoints + $bpoints + $sarr[0] + $upoints + $arr['epoints'];
+					$apoints = $tpoints + $bpoints + $sarr[0];
+					$points = $points + $upoints;
 					
 					dbquery("
 					INSERT INTO
@@ -907,7 +910,7 @@
 						alliance_name,
 						points,
 						upoints,
-						epoints,
+						apoints,
 						spoints,
 						tpoints,
 						bpoints,
@@ -920,9 +923,9 @@
 						'".$arr['alliance_id']."',
 						'".$arr['alliance_tag']."',
 						'".$arr['alliance_name']."',
-						'".$apoints."',
+						'".$points."',
 						'".$upoints."',
-						'".$arr['epoints']."',
+						'".$apoints."',
 						'".$sarr[0]."',
 						'".$tpoints."',
 						'".$bpoints."',

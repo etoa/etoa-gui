@@ -24,12 +24,12 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 		echo "<th style=\"width:50px;\">Rang</th>";
 		echo "<th>Tag</th>";
 		echo "<th>Name</th>";
-		if ($sort=="upoints")
+		if ($sort=="points")
 			echo "<th><i>Punkte</i> ";
 		else
 			echo "<th>Punkte ";
-		echo "<a href=\"javascript:;\" onclick=\"xajax_statsShowBox('$mode','upoints','DESC')\" title=\"Absteigend sortieren\"><img src=\"images/s_desc.png\" alt=\"Absteigend sortieren\" border=\"0\" /></a>";
-		echo "<a href=\"javascript:;\" onclick=\"xajax_statsShowBox('$mode','upoints','ASC')\" title=\"Absteigend sortieren\"><img src=\"images/s_asc.png\" alt=\"Aufsteigend sortieren\" border=\"0\" /></a>";
+		echo "<a href=\"javascript:;\" onclick=\"xajax_statsShowBox('$mode','points','DESC')\" title=\"Absteigend sortieren\"><img src=\"images/s_desc.png\" alt=\"Absteigend sortieren\" border=\"0\" /></a>";
+		echo "<a href=\"javascript:;\" onclick=\"xajax_statsShowBox('$mode','points','ASC')\" title=\"Absteigend sortieren\"><img src=\"images/s_asc.png\" alt=\"Aufsteigend sortieren\" border=\"0\" /></a>";
 		if ($sort=="uavg")
 			echo "<th><i>User-Schnitt</i> ";
 		else
@@ -135,9 +135,9 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 	if ($sort=="epoints")
 			echo "<th><i>Erfahrung</i> ";
 		else
-			echo "<th>Erfahrung ";
-		echo "<a href=\"javascript:;\" onclick=\"xajax_statsShowBox('$mode','epoints','DESC')\" title=\"Absteigend sortieren\"><img src=\"images/s_desc.png\" alt=\"Absteigend sortieren\" border=\"0\" /></a>";
-		echo "<a href=\"javascript:;\" onclick=\"xajax_statsShowBox('$mode','epoints','ASC')\" title=\"Absteigend sortieren\"><img src=\"images/s_asc.png\" alt=\"Aufsteigend sortieren\" border=\"0\" /></a></th>";
+			echo "<th>Allianzbasis ";
+		echo "<a href=\"javascript:;\" onclick=\"xajax_statsShowBox('$mode','apoints','DESC')\" title=\"Absteigend sortieren\"><img src=\"images/s_desc.png\" alt=\"Absteigend sortieren\" border=\"0\" /></a>";
+		echo "<a href=\"javascript:;\" onclick=\"xajax_statsShowBox('$mode','apoints','ASC')\" title=\"Absteigend sortieren\"><img src=\"images/s_asc.png\" alt=\"Aufsteigend sortieren\" border=\"0\" /></a></th>";
 		echo "</tr>";
 		if ($sort!="" && $sortOrder!="")
 			$sql="
@@ -156,7 +156,7 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 			FROM 
 				alliance_stats
 			ORDER BY 
-				points DESC,
+				apoints DESC,
 				alliance_name ASC
 			;";
 		}
@@ -180,7 +180,7 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 				echo "<td >".nf($arr['bpoints'])."</td>";
 				echo "<td >".nf($arr['tpoints'])."</td>";
 				echo "<td >".nf($arr['spoints'])."</td>";
-				echo "<td >".nf($arr['epoints'])."</td>";
+				echo "<td >".nf($arr['apoints'])."</td>";
 				echo "</tr>";
 				$cnt++;
 			}

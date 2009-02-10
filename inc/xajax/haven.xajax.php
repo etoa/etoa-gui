@@ -574,6 +574,7 @@ ob_start();
 					$bRes=dbquery("
 								SELECT
 									bookmarks.entity_id,
+									bookmarks.comment,
 									entities.code      
 								FROM
 									bookmarks
@@ -591,7 +592,7 @@ ob_start();
 						{
 							$ent = Entity::createFactory($bArr['code'],$bArr['entity_id']);
 							echo "<option value=\"".$ent->id()."\"";
-							echo ">".$ent->entityCodeString()." - ".$ent."</option>\n";
+							echo ">".$ent->entityCodeString()." - ".$ent." (".$bArr['comment'].")</option>\n";
 						}
 					}
 					echo "</select>";
