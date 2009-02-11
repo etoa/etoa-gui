@@ -238,7 +238,7 @@
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
 				resPeople += (*it)->getResPeople(total);
 		}
-		return resPower;
+		return resPeople;
 	}
 	
 	double Fleet::getResLoaded(bool total) {

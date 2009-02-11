@@ -54,7 +54,7 @@ namespace bombard
 						this->actionMessage->addText(this->startEntity->getCoords(),1);
 						this->actionMessage->addText("[/b]hat erfolglos versucht ein Gebäude des Planeten [b]",1);
 						this->actionMessage->addText(this->targetEntity->getCoords(),1);
-						this->actionMessage->addText("[/b]zu bombadieren.");
+						this->actionMessage->addText("[/b]zu bombardieren.");
 						
 						this->actionMessage->addSubject("Bombardierung erfolglos");
 						this->actionMessage->addUserId(this->targetEntity->getUserId());
@@ -66,7 +66,7 @@ namespace bombard
 					this->actionMessage->addText(this->startEntity->getCoords(),1);
 					this->actionMessage->addText("[/b]hat erfolglos versucht ein Gebäude des Planeten[b]",1);
 					this->actionMessage->addText(this->targetEntity->getCoords(),1);
-					this->actionMessage->addText("[/b]zu bombadieren.");
+					this->actionMessage->addText("[/b]zu bombardieren.");
 					
 					this->actionMessage->addSubject("Bombardierung erfolglos");
 					this->actionMessage->addUserId(this->targetEntity->getUserId());
@@ -76,7 +76,7 @@ namespace bombard
 			else {
 				this->actionMessage->addText("Eine Flotte vom Planeten [b]",1);
 				this->actionMessage->addText(this->startEntity->getCoords(),1);
-				this->actionMessage->addText("[/b]versuchte eine Bombadierung auszuführen. Leider war kein Schiff mehr in der Flotte, welches die Aktion ausführen konnte, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!");
+				this->actionMessage->addText("[/b]versuchte eine Bombardierung auszuführen. Leider war kein Schiff mehr in der Flotte, welches die Aktion ausführen konnte, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!");
 				
 				this->actionMessage->addSubject("Bombardierung gescheitert");
 				

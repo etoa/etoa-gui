@@ -62,7 +62,7 @@ namespace invade
 						if (this->one<=this->two) {
 						
 							// if the user has already the number of planets
-							if (this->f->fleetUser->getPlanetsCount() <= (int)config.nget("user_max_planets",0)) {
+							if (this->f->fleetUser->getPlanetsCount() < (int)config.nget("user_max_planets",0)) {
 								// Load the main planet of the victim
 								
 								int entityUser = this->targetEntity->getUserId();

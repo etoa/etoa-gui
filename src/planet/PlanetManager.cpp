@@ -5,7 +5,7 @@ namespace planet
 {
 	PlanetManager::PlanetManager(std::vector<int>* planetIds)
 	{
-		std::cout << "Updating " << planetIds->size() << " Planet(s)...\n";
+		//std::cout << "Updating " << planetIds->size() << " Planet(s)...\n";
 		while (!planetIds->empty()) {
 			this->planet_ = new PlanetEntity(planetIds->back());
 			planetIds->pop_back();
@@ -81,8 +81,7 @@ namespace planet
 					delete this->planet_;
 				}
 			}
-			
-			std::cout << "Updated " << resSize << " Userplanets\n";
+			//std::cout << "Updated " << resSize << " Userplanets\n";
 		}
 	}
 }

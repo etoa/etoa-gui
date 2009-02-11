@@ -34,7 +34,6 @@
 #include "util/IPCMessageQueue.h"
 #include "util/Logger.h"
 #include "util/PidFile.h"
-#include "util/sigsegv.h"
 
 #ifndef __ETOAMAIN__
 #define __ETOAMAIN__

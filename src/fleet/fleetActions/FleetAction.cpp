@@ -25,10 +25,10 @@
 			this->targetEntity->addResMetal(this->f->unloadResMetal());
 			this->targetEntity->addResCrystal(this->f->unloadResCrystal());
 			this->targetEntity->addResPlastic(this->f->unloadResPlastic());
-			this->targetEntity->addResFuel(this->f->unloadResFuel());
-			this->targetEntity->addResFood(this->f->unloadResFood());
+			this->targetEntity->addResFuel(this->f->unloadResFuel(true));
+			this->targetEntity->addResFood(this->f->unloadResFood(true));
 			this->targetEntity->addResPower(this->f->unloadResPower());
-			this->targetEntity->addResPeople(this->f->unloadResPeople());
+			this->targetEntity->addResPeople(this->f->unloadResPeople(true));
 			
 			// Flotte stationieren
 			if (this->f->getCount()) {
@@ -93,7 +93,23 @@
 					}
 				}
 				query << " ON DUPLICATE KEY "
-						<< "	UPDATE shiplist.`shiplist_count` = shiplist.`shiplist_count` + VALUES(shiplist.`shiplist_count`);";
+						<< "	UPDATE "
+						<< "		shiplist.`shiplist_count` = shiplist.`shiplist_count` + VALUES(shiplist.`shiplist_count`),"
+						<< "		shiplist.`shiplist_special_ship_level` = VALUES(shiplist.`shiplist_special_ship_level`) , "
+						<< "		shiplist.`shiplist_special_ship_exp` = VALUES(shiplist.`shiplist_special_ship_exp`) , "
+						<< "		shiplist.`shiplist_special_ship_bonus_weapon` = VALUES(shiplist.`shiplist_special_ship_bonus_weapon`) , "
+						<< "		shiplist.`shiplist_special_ship_bonus_structure` = VALUES(shiplist.`shiplist_special_ship_bonus_structure`) , "
+						<< "		shiplist.`shiplist_special_ship_bonus_shield` = VALUES(shiplist.`shiplist_special_ship_bonus_shield`) , "
+						<< "		shiplist.`shiplist_special_ship_bonus_heal` = VALUES(shiplist.`shiplist_special_ship_bonus_heal`) , "
+						<< "		shiplist.`shiplist_special_ship_bonus_capacity` = VALUES(shiplist.`shiplist_special_ship_bonus_capacity`) , "
+						<< "		shiplist.`shiplist_special_ship_bonus_speed` = VALUES(shiplist.`shiplist_special_ship_bonus_speed`) , "
+						<< "		shiplist.`shiplist_special_ship_bonus_pilots` = VALUES(shiplist.`shiplist_special_ship_bonus_pilots`) , "
+						<< "		shiplist.`shiplist_special_ship_bonus_tarn` = VALUES(shiplist.`shiplist_special_ship_bonus_tarn`) , "
+						<< "		shiplist.`shiplist_special_ship_bonus_antrax` = VALUES(shiplist.`shiplist_special_ship_bonus_antrax`) , "
+						<< "		shiplist.`shiplist_special_ship_bonus_forsteal` = VALUES(shiplist.`shiplist_special_ship_bonus_forsteal`) , "
+						<< "		shiplist.`shiplist_special_ship_bonus_build_destroy` = VALUES(shiplist.`shiplist_special_ship_bonus_build_destroy`) , "
+						<< "		shiplist.`shiplist_special_ship_bonus_antrax_food` = VALUES(shiplist.`shiplist_special_ship_bonus_antrax_food`) , "
+						<< "		shiplist.`shiplist_special_ship_bonus_deactivade` = VALUES(shiplist.`shiplist_special_ship_bonus_deactivade`);";
 				query.store();
 				query.reset();
 				

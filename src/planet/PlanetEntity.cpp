@@ -100,7 +100,7 @@ namespace planet
 		
 		if(this->ressource[6] <= 3)
 		{
-			this->ressource[6] = 3 - this->ressource[5];
+			this->ressource[6] = 3;
 		}
 		if (!this->ressource[5] && this->isMain)
 		{

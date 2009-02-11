@@ -49,7 +49,7 @@ namespace antrax
 					this->actionMessage->addText(etoa::nf(etoa::d2s(this->people)));
 					this->actionMessage->addText(" Bewohner und ");
 					this->actionMessage->addText(etoa::nf(etoa::d2s(this->food)));
-					this->actionMessage->addText(" t Nahrung wurden verbrann.");
+					this->actionMessage->addText(" t Nahrung wurden verbrannt.");
 					
 					this->actionMessage->addSubject("Antraxangriff");
 					this->actionMessage->addUserId(this->targetEntity->getUserId());

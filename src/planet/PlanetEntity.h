@@ -105,6 +105,8 @@ namespace planet
 			this->solType = (int)planet["type_id"];
 			this->planetType = (int)planet["planet_type_id"];
 			
+			this->isMain = (bool)planet["planet_user_main"];
+			
 			this->speicalistId = (int)planet["user_specialist_time"] < time(0) ? 0 : (int)planet["user_specialist_id"];
 			
 			DataHandler &DataHandler = DataHandler::instance();

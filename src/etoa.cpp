@@ -138,6 +138,7 @@ void etoamain()
 			delete pm;
 
 		}
+		
 		sleep(minLoopDuration);
 	}		
 }
