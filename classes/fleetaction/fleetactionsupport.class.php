@@ -8,7 +8,7 @@
 			$this->code = "support";
 			$this->name = "Unterstützen";
 			$this->desc = "Fliegt zum Ziel, um dort ein Allianzmitglied zu unterstützen.";
-			$this->longDesc = "Die Flotte fliegt zu einem eigenen Ziel und die Schiffe verweilen dort im Orbit und stehen dem dortigen Planetenbesitzer im Kampfe bei.";
+			$this->longDesc = "Die Flotte fliegt zu einem eigenen Ziel oder einem Ziel eines Allianzmitgliedes und die Schiffe verweilen dort im Orbit und stehen dem dortigen Planetenbesitzer im Kampfe bei. Du kannst die Dauer der Unterstützung selbst bestimmen und du kannst die Flotte auch jederzeit wieder zurückziehen.";
 			$this->visible = true;
 			$this->exclusive = false;					
 			$this->attitude = 1;

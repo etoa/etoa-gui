@@ -899,7 +899,7 @@
 					$sarr=mysql_fetch_row($sres);
 					
 					$apoints = $tpoints + $bpoints + $sarr[0];
-					$points = $points + $upoints;
+					$points = $apoints + $upoints;
 					
 					dbquery("
 					INSERT INTO

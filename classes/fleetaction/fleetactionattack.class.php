@@ -6,9 +6,9 @@
 		function FleetActionAttack()
 		{
 			$this->code = "attack";
-			$this->name = "Angreifen";
-			$this->desc = "Greift das Ziel an und klaut Rohstoffe";
-			$this->longDesc = "Der Standard-Angriff auf ein bewohntes Ziel. Falls der Kampf gewonnen wird, wird (meistens) die Hälfte der Rohstoffe geklaut.";
+			$this->name = "Angriff";
+			$this->desc = "Greift das Ziel an und raubt dort Rohstoffe.";
+			$this->longDesc = "Der Standard-Angriff auf ein bewohntes Ziel. Falls der Kampf gewonnen wird, wird (meistens) die Hälfte der Rohstoffe geraubt.";
 			$this->visible = true;
 			$this->exclusive = false;
 			$this->attitude = 3;

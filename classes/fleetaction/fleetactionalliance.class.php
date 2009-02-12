@@ -7,8 +7,8 @@
 		{
 			$this->code = "alliance";
 			$this->name = "Allianzangriff";
-			$this->desc = "Greift das Ziel an und klaut Rohstoffe";
-			$this->longDesc = "Der Allianz-Angriff auf ein bewohntes Ziel, ermöglicht es Allianzmitgliedern zusammen ein Ziel anzugreiffen. Falls der Kampf gewonnen wird, wird (meistens) die Hälfte der Rohstoffe geklaut.";
+			$this->desc = "Greift das Ziel an und raubt Rohstoffe.";
+			$this->longDesc = "Wie beim normalen Angriff kannst du mit dem Allianzangriff einen fremden Planeten angreifen. Jedoch kannst du deine Allianzmitglieder einladen sich an dem Angriff zu beteiligen und somit mit einer grösseren Flotte angreifen. Aber es können nur Flotten am Angriff teilnehmen, welche spätestens zur gleichen Zeit beim Zielplaneten ankommen, wie die erste Flotte des Angriffs. Falls der Kampf gewonnen wird, wird (meistens) die Hälfte der Rohstoffe geraubt und brüderlich unter den einzelnen Angreifer aufgeteilt.";
 			$this->visible = true;
 			$this->exclusive = false;
 			$this->attitude = 3;

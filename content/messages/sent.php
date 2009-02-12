@@ -19,31 +19,27 @@
 			if (mysql_num_rows($mres)>0)
 			{
 				$marr = mysql_fetch_array($mres);
-				$sender = get_user_nick($marr['message_user_to']);
-				echo "<table width=\"300\" align=\"center\" class=\"tbl\" style=\"border:none;\">";
-				echo "<tr><td width=\"50\" valign=\"top\" style=\"border:none;\">&nbsp;</td><td class=\"tbltitle\">";
-				if ($marr['subject']!="")
-					echo stripslashes($marr['subject']);
-				else
-					echo "<i>Kein Titel</i>";
-				echo "</td></tr>";
-					echo "<tr><td class=\"tbltitle\" width=\"50\" valign=\"top\">Datum:</td><td class=\"tbldata\" width=\"250\">".date("d.m.Y H:i",$marr['message_timestamp'])."</td></tr>";
-					echo "<tr><td class=\"tbltitle\" width=\"50\" valign=\"top\">Empf&auml;nger:</td><td class=\"tbldata\" width=\"250\">".$sender."</td></tr>";
-					echo "<tr><td class=\"tbltitle\" width=\"50\" valign=\"top\">Text:</td><td class=\"tbldata\" width=\"250\">".text2html($marr['text'])."</td></tr>";
-					echo "</table>";
-					echo "<p align=\"center\">";
-					echo "<input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=messages&mode=sent'\"></p>";
+				$sender = $marr['message_user_from']>0 ? ($marr['user_nick']!='' ? $marr['user_nick'] : '<i>Unbekannt</i>') : '<i>System</i>';
+				$subj = $marr['subject']!="" ? stripslashes($marr['subject']) : "<i>Kein Titel</i>";
+				
+				tableStart();
+				echo "<tr><th colspan=\"2\">".$subj."</th></tr>";
+				echo "<tr><th style=\"width:100px;\">Datum:</td><td>".date("d.m.Y H:i",$marr['message_timestamp'])."</td></tr>";
+				echo "<tr><th>Sender:</td><td>".$sender."</td></tr>";
+				echo "<tr><th>Text:</td><td>".text2html($marr['text'])."</td></tr>";
+				tableEnd();
+				echo "<input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=messages&mode=sent'\" /> &nbsp; ";
 				}
 				else
 				{
-					echo "<p align=\"center\" class=\"infomsg\">Diese Nachricht existiert nicht!</p>";
-					echo "<p align=\"center\"><input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=messages&mode=sent'\"></p>";
+					error_msg("Diese Nachricht existiert nicht!");
+					echo "<input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=messages&mode=sent'\" />";
 				}
 		}
 		else
 		{
-			echo "<table width=\"400\" align=\"center\" class=\"tbl\">";
-			echo "<tr><td class=\"tbltitle\" colspan=\"4\">Gesendete Nachrichten</td></tr>";
+			echo "<table class=\"tb\">";
+			echo "<tr><th colspan=\"5\">Gesendete Nachrichten</th></tr>";
 
 			$mres = dbquery("
 			SELECT

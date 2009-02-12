@@ -29,18 +29,18 @@
 				$sender = $marr['message_user_from']>0 ? ($marr['user_nick']!='' ? $marr['user_nick'] : '<i>Unbekannt</i>') : '<i>System</i>';
 				$subj = $marr['subject']!="" ? stripslashes($marr['subject']) : "<i>Kein Titel</i>";
 
-				echo "<table class=\"tb\">";
+				tableStart();
 				echo "<tr><th colspan=\"2\">".$subj."</th></tr>";
 				echo "<tr><th style=\"width:100px;\">Datum:</td><td>".date("d.m.Y H:i",$marr['message_timestamp'])."</td></tr>";
 				echo "<tr><th>Sender:</td><td>".$sender."</td></tr>";
 				echo "<tr><th>Text:</td><td>".text2html($marr['text'])."</td></tr>";
-				echo "</table><br/>";
+				tableEnd();
 				echo "<input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=messages&mode=deleted'\" /> &nbsp; ";
 				echo "<input type=\"button\" value=\"Wiederherstellen\" onclick=\"document.location='?page=messages&mode=deleted&restore=".$marr['message_id']."'\" />";
 			}
 			else
 			{
-				echo "Diese Nachricht existiert nicht!<br/><br/>";
+				error_msg("Diese Nachricht existiert nicht!");
 				echo "<input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=messages&mode=deleted'\" />";
 			}
 		}

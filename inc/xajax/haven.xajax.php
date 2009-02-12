@@ -908,12 +908,12 @@ ob_start();
 			{
 				if ($form['fleet_action']=="fetch")
 				{
-					$fetch1 = $fleet->fetchResource(1,$form['fetch1']);
-					$fetch2 = $fleet->fetchResource(2,$form['fetch2']);
-					$fetch3 = $fleet->fetchResource(3,$form['fetch3']);
-					$fetch4 = $fleet->fetchResource(4,$form['fetch4']);
-					$fetch5 = $fleet->fetchResource(5,$form['fetch5']);
-					$fetch6 = $fleet->fetchResource(6,$form['fetchp']);
+					$fetch1 = $fleet->fetchResource(1,nf_back($form['fetch1']));
+					$fetch2 = $fleet->fetchResource(2,nf_back($form['fetch2']));
+					$fetch3 = $fleet->fetchResource(3,nf_back($form['fetch3']));
+					$fetch4 = $fleet->fetchResource(4,nf_back($form['fetch4']));
+					$fetch5 = $fleet->fetchResource(5,nf_back($form['fetch5']));
+					$fetch6 = $fleet->fetchResource(6,nf_back($form['fetchp']));
 					$load1 = $fleet->loadResource(1,0,1);
 					$load2 = $fleet->loadResource(2,0,1);
 					$load3 = $fleet->loadResource(3,0,1);
