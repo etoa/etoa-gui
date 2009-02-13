@@ -196,6 +196,7 @@ if (Alliance::checkActionRights('editmembers'))
 					<th>Punkte:</th>
 					<th>Online:</th>
 					<th>Umteilen:</th>
+					<th>Aktionen:</th>
 				</tr>";
 				foreach ($wdata->members as $uid => $udata)
 				{
@@ -224,7 +225,9 @@ if (Alliance::checkActionRights('editmembers'))
 						{
 							echo "Gründer";
 						}
-						echo "</td></tr>";
+						echo "</td><td>
+						<a href=\"?page=messages&amp;mode=new&amp;message_user_to=".$mk."\">Nachricht</a><br/>
+						<a href=\"?page=userinfo&amp;id=".$mk."\">Profil</a></td></tr>";
 				}
 				tableEnd();
 			}

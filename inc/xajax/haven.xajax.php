@@ -30,32 +30,6 @@
 		
 		//Schiffsinfo
 		echo "<div id=\"ship_info\"></div>";
-			
-		$structure = 0;	
-		$shield = 0;
-		$weapon = 0;
-		$heal = 0;
-		$count = 0;
-		
-		$weapon_tech_a = 1;
-		$structure_tech_a = 1;
-    	$shield_tech_a = 1;
-    	$heal_tech_a = 1;
-		
-		$struct_tech_special=0;
-		$shield_tech_special=0;
-		$weaopn_tech_special=0;
-		$heal_tech_special=0;
-		
-		$structure_tech_name = "";
-		$shield_tech_name = "";
-		$weapon_tech_name = "";
-		$heal_tech_name = "";
-		$structure_tech_level = 0;
-		$shield_tech_level = 0;
-		$weapon_tech_level = 0;
-		$heal_tech_level = 0;
-		
 
 		// Infobox
   	tableStart("Hafen-Infos");
@@ -154,12 +128,6 @@
 			$launchable = 0;	// Counter for launchable ships
 	    while ($arr = mysql_fetch_array($res))
 	    {
-				//Schiff-info calculation
- 				$structure += $arr['ship_structure'] * $arr['shiplist_count'];
-  				$shield += $arr['ship_shield'] * $arr['shiplist_count'];
-  				$weapon += $arr['ship_weapon'] * $arr['shiplist_count'];
-  				$heal += $arr['ship_heal'] * $arr['shiplist_count'];
-  				$count += $arr['shiplist_count'];
 				
 				if (isset($ships[$arr['ship_id']]))
 				{
@@ -179,12 +147,6 @@
 			    			<img src=\"".IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$arr['ship_id']."_small.".IMAGE_EXT."\" align=\"top\" width=\"40\" height=\"40\" alt=\"Ship\" border=\"0\"/>
 			    		</a>
 			    	</td>";
-					
-					//Schiff-Info calculation
-			  		$struct_tech_special += $arr['shiplist_special_ship_bonus_structure'] * $arr['special_ship_bonus_structure'];
-			  		$shield_tech_special += $arr['shiplist_special_ship_bonus_shield'] * $arr['special_ship_bonus_shield'];
-			  		$weaopn_tech_special += $arr['shiplist_special_ship_bonus_weapon'] * $arr['special_ship_bonus_weapon'];
-			  		$heal_tech_special += $arr['shiplist_special_ship_bonus_heal'] * $arr['special_ship_bonus_heal'];
 				}
 				else
 				{
@@ -774,7 +736,7 @@ ob_start();
 							<th>Aktionswahl</th>
 							<th colspan=\"2\">Ladung</th>
 						</tr>";
-						echo "<tr><td rowspan=\"9\">";
+						echo "<tr><td rowspan=\"8\">";
 						$actionsAvailable = 0;
 						foreach ($fleet->getAllowedActions() as $ac)
 						{
@@ -846,7 +808,10 @@ ob_start();
 						<a href=\"javascript:;\" onclick=\"document.getElementById('fres5').value=".$fleet->getTotalCapacity()."\">max</a></td></tr>
 						<tr id=\"fetchbox6\" style=\"display:none;\"><th>".RES_ICON_PEOPLE."Passagiere</th>
 						<td><input type=\"text\" name=\"fetchp\" id=\"fresp\" value=\"0\" size=\"8\" onkeyup=\"FormatNumber(this.id,this.value, '".$fleet->getTotalPeopleCapacity()."', '', '');\"/> 
-						<a href=\"javascript:;\" onclick=\"document.getElementById('fresp').value=".$fleet->getTotalPeopleCapacity()."\">max</a></td></tr>";
+						<a href=\"javascript:;\" onclick=\"document.getElementById('fresp').value=".$fleet->getTotalPeopleCapacity()."\">max</a></td></tr>
+						
+						<tr id=\"msgHeader\" style=\"display:none;\"><th colspan=\"2\">Nachricht</th><th>Empfänger</th></tr>
+						<tr id=\"msg\" style=\"display:none;\"></tr>";
 						
 						tableEnd();                                                                                  
 						
@@ -901,9 +866,7 @@ ob_start();
 		{
 			// Get fleet object
 			$fleet = unserialize($_SESSION['haven']['fleetObj']);
-
-			ob_start();
-
+			
 			if ($fleet->setAction($form['fleet_action']))
 			{
 				if ($form['fleet_action']=="fetch")
@@ -932,8 +895,19 @@ ob_start();
 				
 				if ($fid = $fleet->launch())
 				{
-
+					ob_start();
 					$ac = FleetAction::createFactory($form['fleet_action']);
+					
+					if ($form['fleet_action']=="alliance" && $fleet->getLeader()==0 && count($form['msgUser'])>0)
+					{
+						$subject = "Allianzangriff (".$fleet->targetEntity.")";
+						$text = "[b]Angriffsdaten:[/b][table][tr][td]Flottenkennzeichen:[/td][td]".$fleet->owner->alliance->tag."-".$fid."[/td][/tr][tr][td]Flottenleader:[/td][td]".$fleet->owner->nick."[/td][/tr][tr][td]Zielplanet:[/td][td]".$fleet->targetEntity."[/td][/tr][tr][td]Ankunftszeit:[/td][td]".date("d.m.y, H:i:s",$fleet->landTime)."[/td][/tr][/table]".$form['message_text'];
+						foreach ($form['msgUser'] as $uid)
+						{
+							Message::sendFromUserToUser($fleet->ownerId(),$uid,$subject,$text,6,$fid);
+						}
+					}
+					
 					tableStart();
 					echo "<tr>
 						<th colspan=\"2\" style=\"color:#0f0\">Flotte gestartet!</th>
@@ -976,7 +950,7 @@ ob_start();
 				else
 				{
 					$response->alert("Fehler! Kann Flotte nicht starten! ".$fleet->error());
-				}				
+				}		
 			}
 			else
 			{
@@ -987,8 +961,7 @@ ob_start();
 		{
 			$response->alert("Fehler! Es wurde keine Aktion gewählt!");
 		}
-		
-	  return $response;			
+		return $response;			
 	}
 
 
@@ -1087,13 +1060,14 @@ ob_start();
 							leader_id>'0'
 							AND next_id='".$fleet->sourceEntity->ownerAlliance()."'
 							AND entity_to='".$ent->id()."'
+							AND status='0'
 						ORDER BY
 							landtime ASC;");
 
 					if (mysql_num_rows($res)>0) {
 						$alliance .= "<table style=\"width:100%;\">";
 						while($arr=mysql_fetch_assoc($res)) {
-							$alliance .= "<tr><input type=\"button\" style=\"width:100%;\" onclick=\"xajax_havenAllianceAttack(".$arr["id"].")\" name=\"".$arr["id"]."\" value=\"Flottenleader: ".get_user_nick($arr["user_id"])." Ankunftszeit: ".date("d.m.y, H:i:s",$arr["landtime"])."\"/></tr>";
+							$alliance .= "<tr><input type=\"button\" style=\"width:100%;\" onclick=\"xajax_havenAllianceAttack(".$arr["id"].")\" name=\"".$fleet->owner->alliance->tag."-".$arr["id"]."\" value=\"Flottenleader: ".get_user_nick($arr["user_id"])." Ankunftszeit: ".date("d.m.y, H:i:s",$arr["landtime"])."\"/></tr>";
 						}
 						$alliance .= "</table>";
 						$allianceStyle = '';
@@ -1339,7 +1313,7 @@ ob_start();
 			$response->assign('resfree','innerHTML',nf($fleet->getCapacity())." / ".nf($fleet->getTotalCapacity()));
 			$response->assign('resfree','style.color',"#0f0");
 		}
-			$response->assign("peoplefree","innerHTML",$code);
+		
 		if ($code=="fetch")
 		{
 			$response->assign("fetchbox1","style.display",'');
@@ -1374,6 +1348,28 @@ ob_start();
 			$response->assign('peoplefree','innerHTML',nf($fleet->getPeopleCapacity())." / ".nf($fleet->getTotalPeopleCapacity()));
 			$response->assign('resfree','innerHTML',nf($fleet->getCapacity())." / ".nf($fleet->getTotalCapacity()));
 		}
+		
+		if ($code=="alliance" && $fleet->getLeader()==0)
+		{
+			ob_start();
+			echo "<td class=\"tbldata\" colspan=\"2\"><textarea name=\"message_text\" id=\"message\" rows=\"10\" cols=\"55\"></textarea></td>
+			<td class=\"tbldata\">";
+			foreach ($fleet->owner->alliance->members as $mk => $mv)
+			{
+				echo "<input type=\"checkbox\" name=\"msgUser[]\" name=\"msgUser[]\" value=\"$mk\" checked=\"checked\">&nbsp;$mv<br>";
+			}
+			echo "</td>";
+			$response->assign('msg','innerHTML',ob_get_contents() );
+			ob_end_clean();
+			$response->assign("msgHeader","style.display",'');
+			$response->assign("msg","style.display",'');
+		}
+		else
+		{
+			$response->assign("msgHeader","style.display",'none');
+			$response->assign("msg","style.display",'none');
+		}
+		
 		$response->assign('resfree','style.color',"#0f0");
 		$response->assign('peoplefree','style.color',"#0f0");
 		$_SESSION['haven']['fleetObj']=serialize($fleet);

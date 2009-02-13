@@ -117,7 +117,7 @@
 														WHERE
 															techlist_tech_id=".TARN_TECH_ID."
 															AND techlist_user_id=".$target->ownerId()."");
-										$op_stealth = $target->ownerObject->alliance->getTechLevel("Tarntechnik")+$target->ownerObject->specialist->tarnLevel;
+										$op_stealth = $target->owner->alliance->getTechLevel("Tarntechnik")+$target->owner->specialist->tarnLevel;
 										
 										if (mysql_num_rows($tres)>0)
 										{

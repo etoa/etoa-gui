@@ -29,6 +29,8 @@
     protected $ban_admin_id;
     protected $hmode_from;
     protected $hmode_to;
+	protected $holiday=null;
+	protected $locked=null;
     protected $deleted;
     protected $registered;
 		protected $chatadmin;
@@ -99,17 +101,17 @@
 				$this->acttime = $arr['user_acttime'];
 				$this->points=$arr['user_points'];
 				
-		    $this->blocked_from = $arr['user_blocked_from'];
-		    $this->blocked_to = $arr['user_blocked_to'];
-		    $this->ban_reason = $arr['user_ban_reason'];
-		    $this->ban_admin_id = $arr['user_ban_admin_id'];
-		    
-		    $this->hmode_from = $arr['user_hmode_from'];
-		    $this->hmode_to = $arr['user_hmode_to'];
-		    
-		    $this->deleted = $arr['user_deleted'];
-		    $this->registered = $arr['user_registered'];
-		    $this->setup = $arr['user_setup']==1 ? true : false;
+		    	$this->blocked_from = $arr['user_blocked_from'];
+		    	$this->blocked_to = $arr['user_blocked_to'];
+		    	$this->ban_reason = $arr['user_ban_reason'];
+		    	$this->ban_admin_id = $arr['user_ban_admin_id'];
+		    	
+		    	$this->hmode_from = $arr['user_hmode_from'];
+		    	$this->hmode_to = $arr['user_hmode_to'];
+		    	
+		    	$this->deleted = $arr['user_deleted'];
+		    	$this->registered = $arr['user_registered'];
+		    	$this->setup = $arr['user_setup']==1 ? true : false;
 				$this->chatadmin=$arr['user_chatadmin']==1 ? true : false;
 				
 				$this->ip=$_SERVER['REMOTE_ADDR'];
@@ -133,16 +135,42 @@
 
 				$this->rank = $arr['user_rank'];
 				$this->rankHighest = $arr['user_rank_highest'];
-
-
-		    $this->specialistId = $arr['user_specialist_id'];
-		    $this->specialistTime = $arr['user_specialist_time'];
-
+				
+		    	$this->specialistId = $arr['user_specialist_id'];
+		    	$this->specialistTime = $arr['user_specialist_time'];
+				
 				$this->raceId = $arr['user_race_id'];
 
 				$this->changedFields = array();
 				
 				$this->isValid=true;
+			}
+			else
+			{
+				$this->nick = "Niemand";
+				
+				$this->points = 0;
+				$this->acttime = time();
+		    	$this->blocked_from = 0;
+		    	$this->blocked_to = 0;
+		    	$this->hmode_from = 0;
+		    	$this->hmode_to = 0;
+		    	$this->deleted = 0;
+				$this->allianceId = 0;
+				
+				$this->allianceName = "";
+				$this->allianceTag = "";
+				$this->allianceRankName = "";				
+				
+				$this->rank = 0;
+				$this->rankHighest = 0;
+				
+		    	$this->specialistId = 0;
+		    	$this->specialistTime = 0;
+				
+				$this->raceId = 0;
+				
+				$this->isValid=false;
 			}
 		}
 
@@ -321,6 +349,14 @@
 				if ($key == "specialist" && $this->specialist==null)
 				{
  					$this->specialist = new Specialist($this->specialistId,$this->specialistTime);
+				}
+				if ($key=="holiday" && $this->holiday==null)
+				{
+					$this->holiday = ($this->hmode_from!=0 && $this->hmode_to!=0) ? true : false;
+				}
+				if ($key=="locked" && $this->locked==null)
+				{
+					$this->locked = ($this->blocked_from< time() && $this->blocked_to > time()) ? true : false;
 				}
 
 				return $this->$key;

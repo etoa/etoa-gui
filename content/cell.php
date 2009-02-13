@@ -29,13 +29,6 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/	
 
-	// DATEN LADEN
-
-	define('COLOR_ENEMY',$conf['color_enemy']['v']);
-	define('COLOR_FRIEND',$conf['color_friend']['v']);
-	define('COLOR_NOOB_SAFE',$conf['color_noob_safe']['v']);
-	define('COLOR_OWN',"#0f0");
-
 	// BEGIN SKRIPT //
 
 	if (isset($_GET['id']) && $_GET['id']>0)
@@ -88,7 +81,7 @@
 					<th class=\"tbltitle\">Name</th>
 					<th class=\"tbltitle\">Besitzer</th>
 					<th class=\"tbltitle\" style=\"width:150px;\">Aktionen</th>
-				</tr>"; //<th class=\"tbltitle\">Allianz</th>
+				</tr>";
 	
 				$hasPlanetInSystem = false;
 				$starNameEmpty = false;
@@ -107,14 +100,86 @@
 					}
 					$addstyle.="\" ";
 					
+					$class = " class=\"";
+					if ($ent->ownerId()>0)
+					{
+					  // Krieg
+					  if ($cu->alliance->checkWar($ent->owner->allianceId))
+					  {
+						  $class .= "enemyColor";
+						  $tm_info = "Krieg";
+					  }
+					  // Bündniss
+					  elseif ($cu->alliance->checkBnd($ent->owner->allianceId))
+					  {
+						  $class .= "friendColor";
+						  $tm_info = "B&uuml;ndnis";
+					  }
+					  // Gesperrt
+					  elseif ($ent->ownerLocked())
+					  {
+						  $class .= "userLockedColor";
+						  $tm_info = "Gesperrt";
+					  }
+					  // Urlaub
+					  elseif ($ent->ownerHoliday())
+					  {
+						  $class .= "userHolidayColor";
+						  $tm_info = "Urlaubsmodus";
+					  }
+					  // Lange Inaktiv
+					  elseif ($ent->owner->acttime<time()-USER_INACTIVE_LONG*86400)
+					  {
+						  $class .= "userLongInactiveColor";
+						  $tm_info = "Inaktiv";
+					  }		
+					  // Inaktiv
+					  elseif ($ent->owner->acttime<time()-USER_INACTIVE_SHOW*86400)
+					  {
+						  $class .= "userInactiveColor";
+						  $tm_info = "Inaktiv";
+					  }
+					  // Eigener Planet
+					  elseif($cu->id==$ent->ownerId())
+					  {
+						  $class .= "userSelfColor";
+						  $tm_info = "";
+					  }
+					  // Allianzmitglied
+					  elseif($cu->allianceId()==$ent->owner->allianceId() && $cu->allianceId())
+					  {
+						  $class .= "userAllianceMemberColor";
+						  $tm_info = "Allianzmitglied";
+					  }
+					  // Noob
+					  elseif (
+						  ($cu->points*USER_ATTACK_PERCENTAGE>$ent->ownerPoints() || $cu->points/USER_ATTACK_PERCENTAGE<$ent->ownerPoints())
+						  && $ent->ownerId()!=$cu->id)
+					  {
+						  $class .= "noobColor";
+						  $tm_info = "Anf&auml;ngerschutz";
+					  }
+					  else
+					  {
+						  $class .= "tbldata";
+						  $tm_info="";
+					  }
+					}
+					else
+					{
+					  $class .= "tbldata";
+					  $tm_info="";
+					}
+					$class .="\" ";
+					
 					echo "<tr>
-						<td class=\"tbldata\" style=\"width:40px;background:#000;\">
+						<td $class style=\"width:40px;background:#000;\">
 							<a href=\"?page=entity&amp;id=".$ent->id()."\">
 								<img src=\"".$ent->imagePath()."\" alt=\"icon\" />
 							</a>
 						</td>
-						<td class=\"tbldata\" style=\"text-align:center;vertical-align:middle;background:#000\"><b>".$ent->pos()."</b></td>
-						<td class=\"tbldata\" $addstyle>".$ent->type();
+						<td $class style=\"text-align:center;vertical-align:middle;background:#000\"><b>".$ent->pos()."</b></td>
+						<td $class $addstyle>".$ent->type();
 						
 						if ($ent->entityCode()=='w')
 						{
@@ -126,14 +191,22 @@
 							echo "<br/><span style=\"color:#817339;font-weight:bold\" ".tm("Trümmerfeld",RES_ICON_METAL.nf($ent->debrisMetal)." ".RES_METAL."<br style=\"clear:both\" />".RES_ICON_CRYSTAL.nf($ent->debrisCrystal)." ".RES_CRYSTAL."<br style=\"clear:both\" />".RES_ICON_PLASTIC.nf($ent->debrisPlastic)." ".RES_PLASTIC."<br style=\"clear:both\" />").">Trümmerfeld</span> ";
 						}	
 						echo "</td>
-						<td class=\"tbldata\" $addstyle><a href=\"?page=entity&amp;id=".$ent->id()."\">".$ent->name()."</a></td>
-						<td class=\"tbldata\" $addstyle>";
+						<td $class $addstyle><a href=\"?page=entity&amp;id=".$ent->id()."\">".$ent->name()."</a></td>
+						<td $class $addstyle>";
 						if ($ent->ownerId()>0)
-							echo "<a href=\"?page=userinfo&amp;id=".$ent->ownerId()."\">".$ent->owner()."</a>";
+						{
+							$header = $ent->owner();
+							$tm = "Punkte: ".nf($ent->owner->points)."<br style=\"clear:both\" />";
+							if ($ent->ownerAlliance()>0)
+								$tm .= "Allianz: ".$ent->owner->alliance."<br style=\"clear:both\" />";
+							if ($tm_info!="")
+								$header .= " (<span $class>".$tm_info."</span>)";
+							echo "<span style=\"color:#817339;font-weight:bold\" ".tm($header,$tm)."><a href=\"?page=userinfo&amp;id=".$ent->ownerId()."\">".$ent->owner()."</a></span> ";
+						}
 						else
-							echo $ent->owner();					
+							echo $ent->owner();
 						echo "</td>
-						<td class=\"tbldata\" $addstyle>";
+						<td $class $addstyle>";
 	
 							// Favorit
 						if ($cu->id!=$ent->ownerId())
@@ -186,120 +259,7 @@
 						echo "</td></tr>";
 						
 	
-					
 					/*
-						if ($arr['user_id']>0)
-						{
-							// Bündnisse laden
-							$bnd=dbquery("
-							SELECT 
-								COUNT(alliance_bnd_id)
-							FROM 
-								alliance_bnd 
-							WHERE 
-								(
-									(
-										alliance_bnd_alliance_id1=".$s['user']['alliance_id']." 
-										AND alliance_bnd_alliance_id2=".$arr['user_alliance_id']."
-									) 
-									OR 
-									(
-										alliance_bnd_alliance_id2=".$s['user']['alliance_id']." 
-										AND alliance_bnd_alliance_id1=".$arr['user_alliance_id']."
-									)
-								) 
-								AND alliance_bnd_level=2
-							");
-							$bndarr=mysql_fetch_row($bnd);
-							// Kriege laden
-							$war=dbquery("
-							SELECT 
-								COUNT(alliance_bnd_id) 
-							FROM 
-								alliance_bnd 
-							WHERE 
-								(
-									(
-										alliance_bnd_alliance_id1=".$s['user']['alliance_id']." 
-										AND alliance_bnd_alliance_id2=".$arr['user_alliance_id']."
-									) 
-									OR 
-									(
-										alliance_bnd_alliance_id2=".$s['user']['alliance_id']." 
-										AND alliance_bnd_alliance_id1=".$arr['user_alliance_id']."
-									)
-								) 
-								AND alliance_bnd_level=3
-							");
-							$wararr=mysql_fetch_row($war);
-							// Krieg
-							if ($wararr[0]>0)
-							{
-								$addstyle="color:".COLOR_ENEMY.";";
-								$tm_info="(<span style=\'color:".COLOR_ENEMY."\'>Krieg</span>)";
-							}
-							// Bündniss
-							elseif ($bndarr[0]>0)
-							{
-								$addstyle="color:".COLOR_FRIEND.";";
-								$tm_info="(<span style=\'color:".COLOR_FRIEND."\'>B&uuml;ndnis</span>)";
-							}
-							// Gesperrt
-							elseif ($arr['user_blocked_from']>0 && $arr['user_blocked_from']<time() && $arr['user_blocked_to']>time())
-							{
-								$addstyle="color:".COLOR_BANNED.";";
-								$tm_info="(<span style=\'color:".COLOR_BANNED."\'>Gesperrt</span>)";
-							}
-							// Urlaub
-							elseif ($arr['user_hmode_from']>0 && $arr['user_hmode_from']<time())
-							{
-								$addstyle="color:".COLOR_UMOD.";";
-								$tm_info="(<span style=\'color:".COLOR_UMOD."\'>Urlaubsmodus</span>)";
-							}
-							// Lange Inaktiv
-							elseif ($arr['user_acttime']<USER_INACTIVE_TIME_LONG)
-							{
-								$addstyle="color:".COLOR_INACTIVE_LONG.";";
-								$tm_info="(<span style=\'color:".COLOR_INACTIVE_LONG."\'>Inaktiv</span>)";
-							}						
-							// Inaktiv
-							elseif ($arr['user_acttime']<USER_INACTIVE_TIME)
-							{
-								$addstyle="color:".COLOR_INACTIVE.";";
-								$tm_info="(<span style=\'color:".COLOR_INACTIVE."\'>Inaktiv</span>)";
-							}
-							// Eigener Planet
-							elseif($s['user']['id']==$arr['user_id'])
-							{
-								$addstyle="color:".COLOR_OWN.";";
-								$tm_info="";
-							}					
-							// Allianzmitglied
-							elseif($s['user']['alliance_id']==$arr['user_alliance_id'] && $arr['user_alliance_id']!=0 && $_SESSION[ROUNDID]['user']['alliance_application']==0)
-							{
-								$addstyle="color:".COLOR_ALLIANCE.";";
-								$tm_info="(<span style=\'color:".COLOR_ALLIANCE."\'>Allianzmitglied</span>)";
-							}
-							// Noob
-							elseif (
-							($s['user']['points']*USER_ATTACK_PERCENTAGE>$arr['user_points'] || $s['user']['points']/USER_ATTACK_PERCENTAGE<$arr['user_points'])
-							&& $arr['planet_user_id']!=$s['user']['id'])
-							{
-								$addstyle="color:".COLOR_NOOB_SAFE.";";
-								$tm_info="(<span style=\'color:".COLOR_NOOB_SAFE."\'>Anf&auml;ngerschutz</span>)";
-							}
-							else
-							{
-								$addstyle="";
-								$tm_info="";
-							}
-						}
-						else
-						{
-							$addstyle="";
-						}
-						$addstyle="";
-						$class="tbldata";
 	      	
 						echo "<tr>";
 						$p_img = IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$arr['planet_image']."_small.gif";

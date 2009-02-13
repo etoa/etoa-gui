@@ -31,7 +31,7 @@ class Message
 	/**
 	* Sends a message from an user to another user
 	*/
-	static function sendFromUserToUser($fuid,$tuid,$subject,$text,$cat=0)
+	static function sendFromUserToUser($fuid,$tuid,$subject,$text,$cat=0,$fleetId=0)
 	{
 		if ($cat==0) 
 			$cat = USER_MSG_CAT_ID;
@@ -57,13 +57,15 @@ class Message
 			(
 				id,
 				subject,
-				text
+				text,
+				fleet_id
 			)
 			VALUES
 			(
 				".mysql_insert_id().",
 	   		'".addslashes($subject)."',
-	   		'".addslashes($text)."'
+	   		'".addslashes($text)."',
+			'".$fleetId."'
 			);
 		");		
 	}

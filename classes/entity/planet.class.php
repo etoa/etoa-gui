@@ -9,7 +9,6 @@
 	{
 		protected $isValid;
 		protected $coordsLoaded;
-		protected $ownerObject = NULL;
 	
 		
 		/**
@@ -88,43 +87,7 @@
 				$this->updated=$arr['planet_last_updated'];
 				$this->userChanged=$arr['planet_user_changed'];
 				
-				if ($arr['planet_user_id']>0)
-				{
-					$ures = dbquery("
-					SELECT
-						user_nick,
-						user_race_id,
-						user_points,
-						user_hmode_from,
-						user_hmode_to,
-            user_blocked_from,
-            user_blocked_to,
-            user_alliance_id
-					FROM
-						users
-					WHERE
-						user_id=".$arr['planet_user_id']."
-					LIMIT 1;
-					");
-					$uarr = mysql_Fetch_row($ures);
-					$this->owner = $uarr[0];
-					$this->ownerRaceId = $uarr[1];
-					$this->ownerPoints = $uarr[2];
-					$this->ownerHoliday = ($uarr[3]!=0 && $uarr[4]!=0) ? true : false;
-					$this->ownerLocked = ($uarr[5]< time() && $uarr[6] > time()) ? true : false;
-					$this->ownerAlliance = $uarr[7];
-				}
-				else
-				{
-					$this->owner = "Niemand";	
-					$this->ownerRaceId = 0;
-					$this->ownerPoints = 0;
-					$this->ownerHoliday = false;
-					$this->ownerLocked = false;
-					$this->ownerAlliance = false;
-				}
-				
-				
+				$this->owner = new User($arr['planet_user_id']);
 				
 				$this->sx = $arr['sx'];
 				$this->sy = $arr['sy'];
@@ -214,25 +177,6 @@
 			}
 		}
 		
-		
-		/**
-		* Gets planet properties
-		*/	
-		public function __get($key)
-		{
-			try
-			{
-				if ($key == "ownerObject" && $this->ownerObject == null)
-					$this->ownerObject = new User($this->userId);
-					
-				return $this->$key;
-			}
-			catch (EException $e)
-			{
-				echo $e;
-				return null;
-			}
-		}	
 
     public function allowedFleetActions()
     {
@@ -706,10 +650,10 @@
 		function usePower() { return $this->usePower; }
 		function people() { return $this->people; }
 
-		function ownerPoints() { return $this->ownerPoints; }
-		function ownerHoliday() { return $this->ownerHoliday; }
-		function ownerLocked() { return $this->ownerLocked; }
-		function ownerAlliance() { return $this->ownerAlliance; }
+		function ownerPoints() { return $this->owner->points; }
+		function ownerHoliday() { return $this->owner->holiday; }
+		function ownerLocked() { return $this->owner->locked; }
+		function ownerAlliance() { return $this->owner->allianceId; }
 					
 		function chgPeople($diff)
 		{

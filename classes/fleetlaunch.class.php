@@ -409,6 +409,7 @@
 			if ($this->actionOk)
 			{
 				$time = time();
+				$this->landTime = ($time+$this->duration);
 				
 				// Subtract ships from source
 				$sl = new ShipList($this->sourceEntity->id(),$this->ownerId);
@@ -477,7 +478,7 @@
 						".$this->targetEntity->id().",
 						".$nextId.",
 						".$time.",
-						".($time+$this->duration).",
+						".$this->landTime.",
 						".$this->supportTime.",
 						'".$this->action."',
 						'".$status."',

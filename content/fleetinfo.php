@@ -47,11 +47,11 @@
 	$fd = new Fleet($fleet_id);
 	if ($fd->valid())
 	{
-		if ($fd->getAction()->code()=="support" && $fd->ownerAllianceId()==$cu->allianceId() && $cu->allianceId()>0)
+		if ($fd->getAction()->code()=="support" && $fd->ownerAllianceId()==$cu->allianceId() && $cu->allianceId()>0 && ($fd->status()==0 || $fd->status->status()==3))
 		{
 			include("fleetinfo/support.php");
 		}
-		elseif ($fd->getAction()->code()=="alliance" && $fd->nextId==$cu->allianceId())
+		elseif ($fd->getAction()->code()=="alliance" && $fd->nextId==$cu->allianceId() && ($fd->status()==0 || $fd->status->status()==3))
 		{
 			include("fleetinfo/alliance.php");
 		}

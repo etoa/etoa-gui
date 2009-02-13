@@ -402,12 +402,12 @@
 						echo ";<br><b>Schiffe:</b> ";
 						$count = false;
 						foreach ($shipStr as $value) {
-							echo $value;
 							if ($count) { 
 								echo ", "; 
 							} else {
 								$count = true; 
 							}
+							echo $value;
 						}
 						/*if ($shipAction)
 						{
