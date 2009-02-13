@@ -75,6 +75,8 @@
 	  */
 	  public abstract function cellId();
 	
+		public abstract function getFleetTargetForwarder();
+		
 	
 		//
 		// General methods

@@ -199,5 +199,9 @@
 			}
 			return false;
 		}
+		public function getFleetTargetForwarder()
+		{
+			return null;
+		}		
 	}
 ?>

@@ -74,7 +74,8 @@
 
 		function imagePath($opt="")
 		{
-			$r = mt_rand(1,5);
+			$numImages = 5;
+			$r = $this->id % $numImages;
 			return IMAGE_PATH."/asteroids/asteroids".$r."_small.".IMAGE_EXT;
 		}
 
@@ -106,6 +107,10 @@
 			}
 			return $this->cellId;
 		}
+		public function getFleetTargetForwarder()
+		{
+			return null;
+		}		
 		
 	}
 ?>

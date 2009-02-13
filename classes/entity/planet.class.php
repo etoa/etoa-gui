@@ -837,6 +837,10 @@
 	
 		}		
 		
+		public function getFleetTargetForwarder()
+		{
+			return null;
+		}
 			
 	}
 ?>

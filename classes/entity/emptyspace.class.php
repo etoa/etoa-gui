@@ -75,7 +75,8 @@
 
 		function imagePath($opt="")
 		{
-			$r = mt_rand(1,10);
+			$numImages = 10;
+			$r = $this->id % $numImages;
 			return IMAGE_PATH."/space/space".$r."_small.".IMAGE_EXT;
 		}
 
@@ -110,6 +111,10 @@
 			}
 			return $this->cellId;
 		}
+		public function getFleetTargetForwarder()
+		{
+			return null;
+		}		
 		
 	}
 ?>

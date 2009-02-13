@@ -74,7 +74,8 @@
 
 		function imagePath($opt="")
 		{
-			$r = mt_rand(1,9);
+			$numImages = 9;
+			$r = $this->id % $numImages;
 			return IMAGE_PATH."/nebulas/nebula".$r."_small.".IMAGE_EXT;
 		}
 
@@ -108,5 +109,9 @@
 			return $this->cellId;
 		}
 		
+		public function getFleetTargetForwarder()
+		{
+			return null;
+		}		
 	}
 ?>

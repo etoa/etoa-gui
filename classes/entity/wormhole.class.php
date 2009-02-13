@@ -256,6 +256,12 @@
 					'".$time."'
 				);");
 			}
+		}	
+			
+		public function getFleetTargetForwarder()
+		{
+			// Forward in 0 secs to the other end of the wormhole and allow selection of new target
+			return array($this->targetId,0,true);
 		}		
 			
 	}

@@ -112,5 +112,9 @@
 			return $this->cellId;
 		}
 		
+		public function getFleetTargetForwarder()
+		{
+			return null;
+		}		
 	}
 ?>
