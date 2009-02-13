@@ -24,8 +24,8 @@ namespace steal
 			
 			// Precheck action==possible?
 			if (this->f->actionIsAllowed()) {
-				this->tLevelAtt = this->f->fleetUser->getTechLevel("Spionagetechnik");
-				this->tLevelDef = this->targetEntity->getUser()->getTechLevel("Spionagetechnik");
+				this->tLevelAtt = this->f->fleetUser->getTechLevel("Spionagetechnik") + this->f->fleetUser->getSpecialist()->getSpecialistSpyLevel();;
+				this->tLevelDef = this->targetEntity->getUser()->getTechLevel("Spionagetechnik") + this->f->fleetUser->getSpecialist()->getSpecialistTarnLevel();
 				this->shipCnt = this->f->getActionCount();
 				
 				// Calculate the chance
@@ -48,7 +48,7 @@ namespace steal
 						
 						this->actionLog->addText("Action succeed: " + etoa::d2s(this->one) + " < " + etoa::d2s(this->two));
 						
-						//Ranking::addBattlePoints($arr['fleet_user_id'],BATTLE_POINTS_SPECIAL,"Spezialaktion"); //ToDo
+						etoa::addSpecialiBattle(this->f->getUserId(),"Spezialaktion");
 						
 						this->f->deleteActionShip(1);
 					}

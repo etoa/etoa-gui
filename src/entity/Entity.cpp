@@ -39,7 +39,20 @@
 	
 	void Entity::addMessageUser(Message* message) {
 		message->addUserId(this->getUserId());
-		
+		std::string done = this->entityUser->getUserNick();
+		if (fleets.size()) {
+			std::vector<Fleet*>::iterator it;
+			std::size_t found;
+			for ( it=fleets.begin() ; it < fleets.end(); it++ ) {
+				std::string key = (*it)->fleetUser->getUserNick();
+				found=done.rfind(key);
+				if (found==std::string::npos) {
+					(*it)->addMessageUser(message);
+					done += ", "
+							+ key;
+				}
+			}
+		}
 		if (fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -688,7 +701,7 @@
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
 				initCount += (*it)->getInitCount(total);
 		}
-		return count;
+		return initCount;
 	}
 	
 	double Entity::getCount(bool total) {
@@ -710,6 +723,13 @@
 		return count;
 	}
 	
+	double Entity::getInitDefCount() {
+		if (!this->defLoaded)
+			this->loadDef();
+		
+		return this->initDefCount;
+	}
+		
 	double Entity::getDefCount() {
 		if (this->shipsChanged)
 			this->recalcShips();
@@ -824,6 +844,23 @@
 		}
 		return nicks;
 	}
+	
+	std::string Entity::getUserIds() {
+		std::string ids = "," + etoa::d2s(this->getUserId()) + ",";
+		if (fleets.size()) {
+			std::vector<Fleet*>::iterator it;
+			std::size_t found;
+			for ( it=fleets.begin() ; it < fleets.end(); it++ ) {
+				std::string key = "," + etoa::d2s((*it)->getUserId()) + ",";
+				found=ids.rfind(key);
+				if (found==std::string::npos)
+					ids += ","
+							+ key;
+			}
+		}
+		return ids;
+	}
+	
 	std::string Entity::getShieldString(bool small) {
 		std::string shieldString = "";
 		if (!small) {
@@ -896,13 +933,11 @@
 		return weaponString;
 	}
 	
-	// TODO: What is this good for? Unused variable count!
 	std::string Entity::getCountString(bool small) 
 	{
 		std::string countString = "";
 		if (!small) 
 		{
-			double count = this->getWeaponBonus();
 			countString += "[b]Einheiten:[/b] ";
 		}
 		countString += etoa::nf(etoa::d2s(this->getCount(true)));
@@ -926,7 +961,7 @@
 		
 		if (fleets.size() && total) {
 			std::vector<Fleet*>::iterator it;
-			std::size_t found;
+			
 			for ( it=fleets.begin() ; it < fleets.end(); it++ ) {
 				for (ot = (*it)->objects.begin() ; ot < (*it)->objects.end(); ot++) {
 					if ((*ot)->getSpecial())
@@ -964,6 +999,7 @@
 	}
 	
 	std::string Entity::getDefString(bool rebuild) {
+		this->loadDef();
 		std::string defString = "";
 		DataHandler &DataHandler = DataHandler::instance();
 		std::vector<Object*>::iterator ot;
@@ -1032,8 +1068,6 @@
 		My &my = My::instance();
 		mysqlpp::Connection *con = my.get();
 		
-		std::time_t time = std::time(0);
-		
 		mysqlpp::Query query = con->query();
 		query << "SELECT ";
 		query << " * ";
@@ -1065,7 +1099,6 @@
 		if (!this->shipsLoaded) {
 			this->loadAdditionalFleets();
 			
-			Config &config = Config::instance();
 			My &my = My::instance();
 			mysqlpp::Connection *con = my.get();
 			
@@ -1165,8 +1198,6 @@
 	
 	void Entity::loadDef() {
 		if (!this->defLoaded) {
-			Config &config = Config::instance();
-			
 			My &my = My::instance();
 			mysqlpp::Connection *con = my.get();
 			
@@ -1185,9 +1216,11 @@
 			if (dlRes) {
 				int dlSize = dlRes.size();
 				this->defLoaded = true;
+				this->initDefCount = 0;
 				
 				if (dlSize>0) {
 					this->logEntityDefStart = "";
+					
 					
 					DataHandler &DataHandler = DataHandler::instance();
 					mysqlpp::Row dlRow;
@@ -1195,7 +1228,7 @@
 					for (int i=0; i<dlSize; i++) {
 						dlRow = dlRes.at(i);
 						
-						Object* object = ObjectFactory::createObject(dlRow, 'd'); 
+						Object* object = ObjectFactory::createObject(dlRow, 'd', this->getUser()->getSpecialist()->getSpecialistDefRepair()); 
 						DefData::DefData *data = DataHandler.getDefById(object->getTypeId());
 						
 						this->count += object->getCount();
@@ -1214,6 +1247,7 @@
 						
 						def.push_back(object);
 					}
+					this->initDefCount = this->defCount;
 				}
 			}
 		}

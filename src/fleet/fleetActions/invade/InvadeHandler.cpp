@@ -92,7 +92,7 @@ namespace invade
 								// Land fleet
 								fleetLand(1);
 								
-								//Ranking::addBattlePoints($arr['fleet_user_id'],BATTLE_POINTS_SPECIAL,"Spezialaktion"); //ToDo		
+								etoa::addSpecialiBattle(this->f->getUserId(),"Spezialaktion");
 							}
 							// if the user has already reached the max number of planets
 							else {

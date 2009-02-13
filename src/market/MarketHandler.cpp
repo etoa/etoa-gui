@@ -523,6 +523,9 @@ namespace market
 		std::time_t time = std::time(0);
 		int ship_speed=0, ship_starttime=0, ship_landtime=0;
 		
+		User *buyer;
+		User *seller;
+		
 		// Ermittelt die Geschwindigkeit des Handelsschiffes
 		mysqlpp::Query query = con_->query();
 		query << "SELECT ";
@@ -581,6 +584,9 @@ namespace market
 				{
 					arr = res.at(i);
 					
+					buyer = new User((int)arr["ressource_buyer_id"]);
+					seller = new User((int)arr["user_id"]);
+					
 					// Add trade points
 					int tradepointsBuyer = 1;
 					int tradepointsSeller = 1;
@@ -605,7 +611,8 @@ namespace market
 					
 					// TODO I've added some typecasts and (). Please check if it's calculating correctly
 					int duration = ((int) (distance / (double)ship_speed * 3600) + ship_starttime + ship_landtime);
-					int landtime = launchtime + duration; // Landezeit
+					int sellerLandtime = launchtime + duration / seller->getSpecialist()->getSpecialistTradeBonus(); // Landezeit
+					int buyerLandtime = launchtime + duration / buyer->getSpecialist()->getSpecialistTradeBonus(); // Landezeit
 
 					
 					query << "INSERT INTO fleet ";
@@ -627,7 +634,7 @@ namespace market
 						query << arr["planet_id"] << ", ";
 						query << arr["user_id"] << ", ";
 						query << launchtime << ", ";
-						query << landtime << ", ";
+						query << sellerLandtime << ", ";
 						query << "'" << FLEET_ACTION_RESS << "', ";
 						query << arr["buy_metal"] << ", ";
 						query << arr["buy_crystal"] << ", ";
@@ -669,7 +676,7 @@ namespace market
 						query << arr["ressource_buyer_planet_id"] << ", ";
 						query << arr["ressource_buyer_id"] << ", ";
 						query << launchtime << ", ";
-						query << landtime << ", ";
+						query << buyerLandtime << ", ";
 						query << "'" << FLEET_ACTION_RESS << "', ";
 						query << arr["sell_metal"] << ", ";
 						query << arr["sell_crystal"] << ", ";
@@ -725,8 +732,10 @@ namespace market
 				
 				for (mysqlpp::Row::size_type i = 0; i<resSize; i++) 
 				{
-
 					arr = res.at(i);
+					
+					buyer = new User((int)arr["ship_buyer_id"]);
+					seller = new User((int)arr["user_id"]);
 					
 					// Add trade points
 					int tradepointsBuyer = 1;
@@ -749,7 +758,8 @@ namespace market
 					int launchtime = time; // Startzeit
 					double distance = etoa::calcDistanceByPlanetId(arr["planet_id"],arr["ship_buyer_planet_id"]);
 					int duration = (int)(distance / (double)ship_speed * 3600) + ship_starttime + ship_landtime;
-					int landtime = launchtime + duration; // Landezeit
+					int sellerLandtime = launchtime + duration / seller->getSpecialist()->getSpecialistTradeBonus(); // Landezeit
+					int buyerLandtime = launchtime + duration / buyer->getSpecialist()->getSpecialistTradeBonus(); // Landezeit
 
 					query << "INSERT INTO fleet ";
 						query << "(user_id, ";
@@ -770,7 +780,7 @@ namespace market
 						query << arr["planet_id"] << ", ";
 						query << arr["user_id"] << ", ";
 						query << launchtime << ", ";
-						query << landtime << ", ";
+						query << sellerLandtime << ", ";
 						query << "'" << FLEET_ACTION_RESS << "', ";
 						query << arr["ship_costs_metal"] << ", ";
 						query << arr["ship_costs_crystal"] << ", ";
@@ -812,7 +822,7 @@ namespace market
 						query << arr["ship_buyer_planet_id"] << ", ";
 						query << arr["ship_buyer_id"] << ", ";
 						query << launchtime << ", ";
-						query << landtime << ", ";
+						query << buyerLandtime << ", ";
 						query << "'" << FLEET_ACTION_RESS << "', ";
 						query << "'0', ";
 						query << "'0', ";
@@ -849,28 +859,31 @@ namespace market
 		// Auktionen
 		//
 		query << "SELECT ";
-			query << "* ";
+		query << "	* ";
 		query << "FROM ";
-			query << "market_auction ";
+		query << "	market_auction ";
 		query << "WHERE ";
-			query << "auction_buyable='0' ";
-			query << "AND auction_sent='0' ";
-			query << "AND auction_delete_date>" << time << ";";
-			res = query.store();		
-			query.reset();	
+		query << "	auction_buyable='0' ";
+		query << "	AND auction_sent='0' ";
+		query << "	AND auction_delete_date>" << time << ";";
+		res = query.store();		
+		query.reset();	
 		
-			if (res) 
+		if (res) 
+		{
+			unsigned int resSize = res.size();
+			std::cout << "updating " << resSize << " market_auction...\n";
+			if (resSize>0)
 			{
-				unsigned int resSize = res.size();
-				std::cout << "updating " << resSize << " market_auction...\n";
-				if (resSize>0)
-				{
-					mysqlpp::Row arr;
-					//int lastId = 0;
+				mysqlpp::Row arr;
+				//int lastId = 0;
 				
-					for (mysqlpp::Row::size_type i = 0; i<resSize; i++) 
-					{
-						arr = res.at(i);
+				for (mysqlpp::Row::size_type i = 0; i<resSize; i++) 
+				{
+					arr = res.at(i);
+						
+					buyer = new User((int)arr["auction_current_buyer_id"]);
+					seller = new User((int)arr["auction_user_id"]);
 						
 					// Add trade points
 					int tradepointsBuyer = 1;
@@ -893,7 +906,8 @@ namespace market
 					int launchtime = time; // Startzeit
 					double distance = etoa::calcDistanceByPlanetId(arr["auction_planet_id"],arr["auction_current_buyer_planet_id"]);
 					int duration = (int)(distance / (double)ship_speed * 3600) + ship_starttime + ship_landtime;
-					int landtime = launchtime + duration; // Landezeit
+					int sellerLandtime = launchtime + duration / seller->getSpecialist()->getSpecialistTradeBonus(); // Landezeit
+					int buyerLandtime = launchtime + duration / buyer->getSpecialist()->getSpecialistTradeBonus(); // Landezeit
 
 					query << "INSERT INTO fleet ";
 						query << "(user_id, ";
@@ -914,7 +928,7 @@ namespace market
 						query << arr["auction_planet_id"] << ", ";
 						query << arr["auction_user_id"] << ", ";
 						query << launchtime << ", ";
-						query << landtime << ", ";
+						query << sellerLandtime << ", ";
 						query << "'" << FLEET_ACTION_RESS << "', ";
 						query << arr["auction_buy_metal"] << ", ";
 						query << arr["auction_buy_crystal"] << ", ";
@@ -957,7 +971,7 @@ namespace market
 						query << arr["auction_current_buyer_planet_id"] << ", ";
 						query << arr["auction_current_buyer_id"] << ", ";
 						query << launchtime << ", ";
-						query << landtime << ", ";
+						query << buyerLandtime << ", ";
 						query << "'" << FLEET_ACTION_RESS << "', ";
 						query << arr["auction_sell_metal"] << ", ";
 						query << arr["auction_sell_crystal"] << ", ";

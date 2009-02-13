@@ -3,7 +3,10 @@
 #define __BATTLEHANDLER__
 
 #include <ctime>
+#include <cstdio>
+#include <mysql++/mysql++.h>
 
+#include "../../MysqlHandler.h"
 #include "../../config/ConfigHandler.h"
 #include "../../util/Functions.h"
 
@@ -26,11 +29,15 @@ class BattleHandler
 		}
 		void battle(Fleet* fleet, Entity* entity, Log* log);
 		
+		~BattleHandler() {	}
+		
 		Message* message;
 		
 		bool alliancesHaveWar;
 		
 		short runde;
+		
+		int attPoints,defPoints;
 		
 		short returnV;
 		std::string bstat, bstat2;

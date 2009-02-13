@@ -15,12 +15,12 @@ namespace spy
 		this->actionMessage->addType((int)config.idget("SHIP_SPY_MSG_CAT_ID"));
 		
 		// Load tech levels first agressor, needs a value higher then 0 for one of them, cause /0 
-		this->spyLevelAtt = this->f->fleetUser->getTechLevel("Spionagetechnik") + 1e-2;
-		this->tarnLevelAtt = this->f->fleetUser->getTechLevel("Tarntechnik");
+		this->spyLevelAtt = this->f->fleetUser->getTechLevel("Spionagetechnik") + 1e-2 + this->f->fleetUser->getSpecialist()->getSpecialistSpyLevel();
+		this->tarnLevelAtt = this->f->fleetUser->getTechLevel("Tarntechnik") + this->f->fleetUser->getSpecialist()->getSpecialistTarnLevel();
 		
 		// Then load the tech levels of the victim 
-		this->spyLevelDef = this->targetEntity->getUser()->getTechLevel("Spionagetechnik");
-		this->tarnLevelDef = this->targetEntity->getUser()->getTechLevel("Tarntechnik");
+		this->spyLevelDef = this->targetEntity->getUser()->getTechLevel("Spionagetechnik") + this->targetEntity->getUser()->getSpecialist()->getSpecialistSpyLevel();
+		this->tarnLevelDef = this->targetEntity->getUser()->getTechLevel("Tarntechnik") + this->targetEntity->getUser()->getSpecialist()->getSpecialistTarnLevel();
 		
 		// Load spy ships agressor 
 		this->spyShipsAtt = this->f->getActionCount();

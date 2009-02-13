@@ -69,6 +69,14 @@ namespace etoa
 		return zAs;
 	}
 	
+	double s2d(std::string number)
+	{
+		std::istringstream i(number);
+		double x;
+		i >> x;
+		return x;
+	}
+	
 	std::string formatTime(int time)
 	{
 		time_t Zeitstempel;
@@ -360,5 +368,45 @@ namespace etoa
 		double distance = calcDistance(rowPlanet1, rowPlanet2);
 		return distance;
 	}
-
+	
+	void addBattlePoints(int userId, int points, bool won, std::string reason) {
+		if (points!=0) {
+			My &my = My::instance();
+			mysqlpp::Connection *con_ = my.get();
+			
+			mysqlpp::Query query = con_->query();
+			query << "UPDATE "
+				<< "	user_ratings "
+				<< "SET "
+				<< "	battles_fought=battles_fought+1, ";
+			if (won)
+				query << "	battles_won=battles_won+1, ";
+			else
+				query << "	battles_lost=battles_lost+1, ";
+			query << "	battle_rating=battle_rating+" << points << " "
+				<< "WHERE "
+				<< "	id=" << userId << ";";
+			query.store();
+			query.reset();
+			std::string text = "Der Spieler " + etoa::d2s(userId) +" erhŠlt " + etoa::d2s(points) + " Kampfpunkt(e). Grund: " + reason;
+			add_log(17,text,0);
+		}
+	}
+	
+	void addSpecialiBattle(int userId, std::string reason="") {
+		My &my = My::instance();
+		mysqlpp::Connection *con_ = my.get();
+		
+		mysqlpp::Query query = con_->query();
+		query << "UPDATE "
+			<< "	user_ratings "
+			<< "SET "
+			<< "	battle_rating=battle_rating+1 "
+			<< "WHERE "
+			<< "	id=" << userId << ";";
+		query.store();
+		query.reset();
+		std::string text = "Der Spieler " + etoa::d2s(userId) +" erhŠlt 1 Kampfpunkte. Grund: " + reason;
+		add_log(17,text,0);
+	}
 }

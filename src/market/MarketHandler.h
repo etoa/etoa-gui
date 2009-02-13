@@ -6,6 +6,7 @@
 
 #include "../EventHandler.h"
 #include "../MysqlHandler.h"
+#include "../objects/User.h"
 
 /**
 * Handles market updates

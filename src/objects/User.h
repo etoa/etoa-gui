@@ -9,6 +9,8 @@
 #include "../config/ConfigHandler.h"
 #include "../util/Functions.h"
 #include "../data/DataHandler.h"
+#include "../data/Data.h"
+#include "../data/SpecialistData.h"
 
 /**
 * User class
@@ -25,6 +27,8 @@ class User
 			this->dataLoaded = false;
 			this->techsLoaded = false;
 			
+			this->specialist= NULL;
+			
 			this->techAtWork = "";
 		}
 		
@@ -34,11 +38,14 @@ class User
 		std::string getUserNick();
 		double getUserPoints();
 		
+		SpecialistData* getSpecialist();
+		
 		void setDiscovered(short absX, short absY);
 		
 		void addCollectedWf(double res);
 		void addCollectedAsteroid(double res);
 		void addCollectedNebula(double res);
+		void addRaidedRes(double res);
 		
 		bool getPropertiesReturnMsg();
 		
@@ -57,6 +64,8 @@ class User
 		int allianceId;
 		std::string userNick;
 		double points;
+		
+		SpecialistData* specialist;
 		
 		std::map<std::string, int> techs;
 		std::string techAtWork;

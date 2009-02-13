@@ -44,7 +44,7 @@ namespace bombard
 						this->actionMessage->addSubject("Gebäude bombardiert");
 						this->actionMessage->addUserId(this->targetEntity->getUserId());
 						
-						//Ranking::addBattlePoints($arr['fleet_user_id'],BATTLE_POINTS_SPECIAL,"Spezialaktion"); //ToDo
+						etoa::addSpecialiBattle(this->f->getUserId(),"Spezialaktion");
 						
 						this->f->deleteActionShip(1);
 					}

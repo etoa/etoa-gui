@@ -58,6 +58,7 @@ class Entity
 			this->initStructShield = -1;
 			this->initHeal = -1;
 			this->initCount = -1;
+			this->initDefCount = -1;
 			
 			this->weapon = 0;
 			this->shield = 0;
@@ -72,6 +73,7 @@ class Entity
 			this->dataLoaded = false;
 			this->changedData = false;
 			this->shipsLoaded = false;
+			this->defLoaded = false;
 			this->shipsChanged = false;
 			this->shipsSave = false;
 			this->techsAdded = false;
@@ -162,6 +164,7 @@ class Entity
 		double getHeal(bool total=false);
 		double getInitCount(bool total=false);
 		double getCount(bool total=false);
+		double getInitDefCount();
 		double getDefCount();
 		double getHealCount(bool total=false);
 		double getSpyCount();
@@ -172,10 +175,16 @@ class Entity
 		double getExp();
 		double getAddedExp();
 		
+		double getWeaponBonus();
+		double getShieldBonus();
+		double getStructureBonus();
+		double getHealBonus();
+		
 		std::string bombBuilding(int Level);
 		std::string empBuilding(int h);
 		
 		std::string getUserNicks();
+		std::string getUserIds();
 		std::string getShieldString(bool small=true);
 		std::string getStructureString(bool small=true);
 		std::string getStructureShieldString();
@@ -228,7 +237,7 @@ class Entity
 		bool techsAdded;
 		bool buildingsLoaded;
 		
-		double initWeapon, initShield, initStructure, initStructShield, initHeal, initCount;
+		double initWeapon, initShield, initStructure, initStructShield, initHeal, initCount, initDefCount;
 		double weapon, shield, structure, heal, count, healCount, spyCount, defCount;
 		
 		double exp;
@@ -243,10 +252,6 @@ class Entity
 		void recalcDef();
 		
 		void addTechs();
-		double getWeaponBonus();
-		double getShieldBonus();
-		double getStructureBonus();
-		double getHealBonus();
 		
 		void loadBuildings();
 		

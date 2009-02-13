@@ -19,7 +19,7 @@
 class ObjectFactory {
 
 public:	
-	static Object* createObject(mysqlpp::Row oRow, char type) 
+	static Object* createObject(mysqlpp::Row oRow, char type, double rebuild=1.0) 
 	{
 		switch (type)
 		{
@@ -30,7 +30,7 @@ public:
 				return new FleetShip(oRow);
 				break;
 			case 'd':
-				return new ListDef(oRow);
+				return new ListDef(oRow,rebuild);
 				break;
 		}
 		// TODO: What happens if none of the above is true? This method must 

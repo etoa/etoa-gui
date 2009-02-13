@@ -29,7 +29,6 @@ namespace fleet
 				
 	    		//Put res into row
 	    		mysqlpp::Row row;
-	    		int lastId = 0;
 	    		for (mysqlpp::Row::size_type i = 0; i<resSize; i++) {
 	    			row = res.at(i);
 	    			

@@ -95,10 +95,13 @@ public:
 	double getResPower(bool total=false);
 	double getResPeople(bool total=false);
 	double getResLoaded(bool total=false);
+	double getInitResLoaded();
 	double getCapacity(bool total=false);
 	double getCapa();
 	double getActionCapacity(bool total=false);
 	double getPeopleCapacity(bool total=false);
+	
+	void addRaidedRes();
 	
 	double getBounty();
 	double getBountyBonus(bool total=false);
@@ -171,6 +174,7 @@ public:
 	std::string getLaunchtimeString();
 	
 	std::string getUserNicks();
+	std::string getUserIds();
 	std::string getShieldString(bool small=true);
 	std::string getStructureString(bool small=true);
 	std::string getStructureShieldString();

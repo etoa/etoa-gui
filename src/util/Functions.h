@@ -113,6 +113,7 @@ namespace etoa
 	* @author Glaubinix
 	*/		
 	std::string d2s(double number);
+	double s2d(std::string number);
 		
 	/**
 	* Formatiert einen Timestamp
@@ -186,6 +187,17 @@ namespace etoa
 	* @author Glaubinix
 	*/
 	double calcDistanceByPlanetId(int pid1, int pid2);
+	
+	/**
+	* FŸgt die Kampfpunkte zur Statistik hinzu
+	*
+	* @param int userId Benutzer
+	* @param int points Anzahlpunkte
+	* @param bool won Kampf gewonnen?
+	* @param std::string reason Grund der Punkte
+	*/
+	void addBattlePoints(int userId, int points, bool won, std::string reason="");
+	void addSpecialiBattle(int userId, std::string reason);
 		
 }
 

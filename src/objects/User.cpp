@@ -22,6 +22,13 @@
 		return this->points;
 	}		
 	
+	SpecialistData* User::getSpecialist() {
+		if (!this->dataLoaded)
+			this->loadData();
+		
+		return this->specialist;
+	}
+	
 	void User::setDiscovered(short absX, short absY) {
 		
 		Config &config = Config::instance();
@@ -160,6 +167,24 @@
 		}
 	}
 	
+	void User::addRaidedRes(double res) {
+		if (res>0) {
+			My &my = My::instance();
+			mysqlpp::Connection *con_ = my.get();
+			
+			mysqlpp::Query query = con_->query();
+			query << "UPDATE ";
+			query << "	users ";
+			query << "SET ";
+			query << "	user_res_from_raid=user_res_from_raid+'" << res << "' ";
+			query << "WHERE ";
+			query << "	user_id='" << this->userId << "' ";
+			query << "LIMIT 1;";
+			query.store();
+			query.reset();
+		}
+	}
+	
 	double User::getTechBonus(std::string tech) {
 		if (!this->techsLoaded)
 			this->loadTechs();
@@ -187,7 +212,9 @@
 				query << "SELECT ";
 				query << "	user_nick, ";
 				query << "	user_alliance_id, ";
-				query << "	user_points ";
+				query << "	user_points, ";
+				query << "	user_specialist_id, ";
+				query << "	user_specialist_time ";
 				query << "FROM ";
 				query << " users ";
 				query << "WHERE ";
@@ -205,6 +232,14 @@
 						this->allianceId = (int)uRow["user_alliance_id"];
 						this->userNick = std::string(uRow["user_nick"]);
 						this->points = (double)uRow["user_points"];
+						
+						DataHandler &DataHandler = DataHandler::instance();
+						if ((int)uRow["user_specialist_id"]>0 && (int)uRow["user_specialist_time"]>time(0)) {
+							this->specialist = DataHandler.getSpecialistById((int)uRow["user_specialist_id"]);
+						}
+						else {
+							this->specialist = DataHandler.getSpecialistById(0);
+						}
 						
 						this->dataLoaded = true;
 					}
@@ -271,7 +306,6 @@
 		if (avaiableTechs.size()) {
 			int tech = rand() % avaiableTechs.size();
 			for ( it=avaiableTechs.begin() ; it != avaiableTechs.end(); it++ ) {
-				TechData::TechData *data = DataHandler.getTechByName((*it).first);
 				if (!tech) {
 					TechData::TechData *data = DataHandler.getTechByName((*it).first);
 					My &my = My::instance();

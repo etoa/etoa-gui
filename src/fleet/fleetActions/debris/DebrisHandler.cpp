@@ -15,7 +15,6 @@ namespace debris
 		Config &config = Config::instance();
 		
 		this->actionMessage->addType((int)config.idget("SHIP_MISC_MSG_CAT_ID"));
-		std::time_t time = std::time(0);
 		
 		// Precheck action==possible?
 		if (this->f->actionIsAllowed()) {

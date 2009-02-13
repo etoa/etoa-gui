@@ -144,7 +144,20 @@
 	
 	void Fleet::addMessageUser(Message* message) {
 		message->addUserId(this->getUserId());
-		
+		std::string nicks = this->fleetUser->getUserNick();
+		if (fleets.size()) {
+			std::vector<Fleet*>::iterator it;
+			std::size_t found;
+			for ( it=fleets.begin() ; it < fleets.end(); it++ ) {
+				std::string key = (*it)->fleetUser->getUserNick();
+				found=nicks.rfind(key);
+				if (found==std::string::npos) {
+					(*it)->addMessageUser(message);
+					nicks += ", "
+							+ key;
+				}
+			}
+		}
 		if (fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -249,6 +262,14 @@
 				+ this->getResFood(total);
 	}
 	
+	double Fleet::getInitResLoaded() {
+		return this->initResMetal
+				+ this->initResCrystal
+				+ this->initResPlastic
+				+ this->initResFuel
+				+ this->initResFood;
+	}
+	
 	double Fleet::getCapacity(bool total) {
 		if (!this->shipsLoaded)
 			this->loadShips();
@@ -318,6 +339,16 @@
 			}
 		}
 		return bounty/capacity;
+	}
+	
+	void Fleet::addRaidedRes() {
+		this->fleetUser->addRaidedRes(this->getResLoaded()-this->getInitResLoaded());
+		
+		if (this->fleets.size()) {
+			std::vector<Fleet*>::iterator it;
+			for ( it=this->fleets.begin() ; it < this->fleets.end(); it++ )
+				(*it)->fleetUser->addRaidedRes((*it)->getResLoaded()-(*it)->getInitResLoaded());
+		}
 	}
 	
 	double Fleet::getFetchMetal(bool total) {
@@ -688,7 +719,7 @@
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
 				initCount += (*it)->getInitCount(total);
 		}
-		return count;
+		return initCount;
 	}
 	
 	double Fleet::getCount(bool total) {
@@ -859,7 +890,7 @@
 		
 		if (this->getStatus() == 3 && this->getNextactiontime() > 0) {
 			duration = this->getNextactiontime();
-			int entityTo = this->getNextId();
+			this->entityTo = this->getNextId();
 		}
 		else {
 			duration = this->getLandtime() - this->getLaunchtime();
@@ -909,7 +940,6 @@
 	}
 	
 	void Fleet::setSupport() {
-		int flyingHomeTime = this->getLandtime() - this->getLaunchtime();
 		this->launchtime = this->getLandtime();
 		this->landtime = this->getLandtime() + this->getNextactiontime();
 		this->status = 3;
@@ -944,6 +974,22 @@
 			}
 		}
 		return nicks;
+	}
+	
+	std::string Fleet::getUserIds() {
+		std::string ids = "," + etoa::d2s(this->getUserId()) + ",";
+		if (fleets.size()) {
+			std::vector<Fleet*>::iterator it;
+			std::size_t found;
+			for ( it=fleets.begin() ; it < fleets.end(); it++ ) {
+				std::string key = "," + etoa::d2s((*it)->getUserId()) + ",";
+				found=ids.rfind(key);
+				if (found==std::string::npos)
+					ids += ","
+							+ key;
+			}
+		}
+		return ids;
 	}
 	
 	std::string Fleet::getShieldString(bool small) {
@@ -1022,7 +1068,6 @@
 	std::string Fleet::getCountString(bool small) {
 		std::string countString = "";
 		if (!small) {
-			double count = this->getWeaponBonus();
 			countString += "[b]Einheiten:[/b] ";
 		}
 		countString += etoa::nf(etoa::d2s(this->getCount(true)));
@@ -1085,7 +1130,6 @@
 		
 		if (fleets.size()) {
 			std::vector<Fleet*>::iterator it;
-			std::size_t found;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ ) {
 				for (ot = (*it)->objects.begin() ; ot < (*it)->objects.end(); ot++) {
 					if ((*ot)->getSpecial())
