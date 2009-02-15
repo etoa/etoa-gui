@@ -735,32 +735,8 @@
 			$dlist=array();
 			while ($barr=mysql_fetch_array($bres))
 				$dlist[$barr['def_id']]=$barr['def_name'];	
-				
-			// Suchmaske
-			echo "<h2>Suchmaske</h2>";
-
-			echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
-			echo "<table class=\"tbl\">";
-			echo "<tr><td class=\"tbltitle\">Planet ID</td><td class=\"tbldata\"><input type=\"text\" name=\"planet_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
-			echo "<tr><td class=\"tbltitle\">Planetname</td><td class=\"tbldata\"><input type=\"text\" name=\"planet_name\" value=\"\" size=\"20\" maxlength=\"250\" /> ";fieldqueryselbox('planet_name');echo "</td></tr>";
-			echo "<tr><td class=\"tbltitle\">Spieler ID</td><td class=\"tbldata\"><input type=\"text\" name=\"user_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
-			echo "<tr><td class=\"tbltitle\">Spieler Nick</td><td class=\"tbldata\"><input type=\"text\" name=\"user_nick\" value=\"\" size=\"20\" maxlength=\"250\" autocomplete=\"off\" onkeyup=\"xajax_searchUser(this.value,'user_nick','citybox1');\"/> ";fieldqueryselbox('user_nick');echo "<br><div class=\"citybox\" id=\"citybox1\">&nbsp;</div></tr>";
-			echo "<tr><td class=\"tbltitle\">Verteidigung</td><td class=\"tbldata\"><select name=\"def_id\"><option value=\"\"><i>---</i></option>";
-			foreach ($dlist as $k=>$v)
-				echo "<option value=\"".$k."\">".$v."</option>";
-			echo "</select></td></tr>";
-			echo "</table>";
-			echo "<br/><input type=\"submit\" class=\"button\" name=\"deflist_search\" value=\"Suche starten\" /></form><br/>";
 	
-			
-
-			// Objekte laden
-			$bres = dbquery("SELECT def_id,def_name FROM defense ORDER BY def_name;");
-			$slist=array();
-			while ($barr=mysql_fetch_array($bres))
-			{
-				$slist[$barr['def_id']]=$barr['def_name'];
-			}
+	
 			echo "<h2>Schnellsuche</h2>";
 			// Hinzufügen
 			echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\" id=\"selector\">";
@@ -768,19 +744,19 @@
 			
 			//Sonnensystem
 			echo "<tr><th class=\"tbltitle\">Sonnensystem</th><td class=\"tbldata\">
-			<select name=\"cell_sx\" onChange=\"xajax_planetSelectorByCell(xajax.getFormValues('selector'),'showDefenseOnPlanet',1);\">";
+			<select name=\"cell_sx\" onChange=\"xajax_planetSelectorByCell(xajax.getFormValues('selector'),'showDefenseOnPlanet');\">";
 			echo "<option value=\"0\">Sektor X</option>";
 			for ($x=1;$x<=$conf['num_of_sectors']['p1'];$x++)
 				echo "<option value=\"$x\">$x</option>";
-			echo "</select>/<select name=\"cell_sy\"  onChange=\"xajax_planetSelectorByCell(xajax.getFormValues('selector'),'showDefenseOnPlanet',1);\">";
+			echo "</select>/<select name=\"cell_sy\"  onChange=\"xajax_planetSelectorByCell(xajax.getFormValues('selector'),'showDefenseOnPlanet');\">";
 			echo "<option value=\"0\">Sektor Y</option>";
 			for ($x=1;$x<=$conf['num_of_sectors']['p2'];$x++)
 				echo "<option value=\"$x\">$x</option>";
-			echo "</select> : <select name=\"cell_cx\" onChange=\"xajax_planetSelectorByCell(xajax.getFormValues('selector'),'showDefenseOnPlanet',1);\">";
+			echo "</select> : <select name=\"cell_cx\" onChange=\"xajax_planetSelectorByCell(xajax.getFormValues('selector'),'showDefenseOnPlanet');\">";
 			echo "<option value=\"0\">Zelle X</option>";
 			for ($x=1;$x<=$conf['num_of_cells']['p1'];$x++)
 				echo "<option value=\"$x\">$x</option>";
-			echo "</select>/<select name=\"cell_cy\" onChange=\"xajax_planetSelectorByCell(xajax.getFormValues('selector'),'showDefensesOnPlanet',1);\">";
+			echo "</select>/<select name=\"cell_cy\" onChange=\"xajax_planetSelectorByCell(xajax.getFormValues('selector'),'showDefenseOnPlanet');\">";
 			echo "<option value=\"0\">Zelle Y</option>";
 			for ($x=1;$x<=$conf['num_of_cells']['p2'];$x++)
 				echo "<option value=\"$x\">$x</option>";
@@ -795,24 +771,50 @@
 			//Planeten
 			echo "<tr><th class=\"tbltitle\">Planeten</th><td class=\"tbldata\" id=\"planetSelector\">Sonnensystem oder User w&auml;hlen...</td></tr>";
 			
-			//Schiffe Hinzufügen
+			//Def Hinzufügen
 			echo "<tr><th class=\"tbltitle\">Hinzuf&uuml;gen:</th><td class=\"tbldata\">
 			<input type=\"text\" name=\"deflist_count\" value=\"1\" size=\"1\" maxlength=\"3\" />
 			<select name=\"def_id\">";
-			foreach ($slist as $k=>$v)
+			foreach ($dlist as $k=>$v)
 			{
 				echo "<option value=\"".$k."\">".$v."</option>";
 			}
 			echo "</select> &nbsp; <input type=\"button\" onclick=\"xajax_addDefenseToPlanet(xajax.getFormValues('selector'));\" value=\"Hinzuf&uuml;gen\" /></td></tr>";
 			
-			//Vorhandene Schiffe
+			//Vorhandene Def
 			echo "<tr><th class=\"tbltitle\">Vorhandene Verteidigung:</th><td class=\"tbldata\" id=\"shipsOnPlanet\">Planet w&auml;hlen...</td></tr>";
 			tableEnd();
 			echo "</form>";
 			echo '<script type="text/javascript">document.forms[0].user_nick.focus();</script>';
-
+			
+			//Add User
+			if (searchQueryArray($sa,$so))
+			{
+				if (isset($sa['user_nick']))
+				{
+					echo "<script type=\"text/javascript\">document.getElementById('userlist_nick').value=\"".$sa['user_nick'][1]."\";xajax_searchUserList('".$sa['user_nick'][1]."','showDefenseOnPlanet');</script>";
+				}
+			}
+			
 			$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM deflist;"));
-			echo "Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.<br/>";	
+			echo "Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.<br/><br />";	
+			
+			
+			// Suchmaske
+			echo "<h2>Suchmaske</h2>";
+
+			echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
+			tableStart();
+			echo "<tr><th class=\"tbltitle\">Planet ID</td><td class=\"tbldata\"><input type=\"text\" name=\"planet_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
+			echo "<tr><th class=\"tbltitle\">Planetname</td><td class=\"tbldata\"><input type=\"text\" name=\"planet_name\" value=\"\" size=\"20\" maxlength=\"250\" /> ";fieldqueryselbox('planet_name');echo "</td></tr>";
+			echo "<tr><th class=\"tbltitle\">Spieler ID</td><td class=\"tbldata\"><input type=\"text\" name=\"user_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
+			echo "<tr><th class=\"tbltitle\">Spieler Nick</td><td class=\"tbldata\"><input type=\"text\" name=\"user_nick\" value=\"\" size=\"20\" maxlength=\"250\" autocomplete=\"off\" onkeyup=\"xajax_searchUser(this.value,'user_nick','citybox1');\"/> ";fieldqueryselbox('user_nick');echo "<br><div class=\"citybox\" id=\"citybox1\">&nbsp;</div></tr>";
+			echo "<tr><th class=\"tbltitle\">Verteidigung</td><td class=\"tbldata\"><select name=\"def_id\"><option value=\"\"><i>---</i></option>";
+			foreach ($dlist as $k=>$v)
+				echo "<option value=\"".$k."\">".$v."</option>";
+			echo "</select></td></tr>";
+			tableEnd();
+			echo "<br/><input type=\"submit\" class=\"button\" name=\"deflist_search\" value=\"Suche starten\" /></form>";
 	
 			
 		}		

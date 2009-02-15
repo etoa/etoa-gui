@@ -527,7 +527,7 @@
 			tableStart();
 			
 			//Sonnensystem
-/*
+
 			echo "<tr><th class=\"tbltitle\">Sonnensystem</th><td class=\"tbldata\">
 			<select name=\"cell_sx\" onChange=\"xajax_planetSelectorByCell(xajax.getFormValues('selector'),'showShipsOnPlanet',1);\">";
 			echo "<option value=\"0\">Sektor X</option>";
@@ -545,7 +545,7 @@
 			echo "<option value=\"0\">Zelle Y</option>";
 			for ($x=1;$x<=$conf['num_of_cells']['p2'];$x++)
 				echo "<option value=\"$x\">$x</option>";
-			echo "</select></td></tr>";*/
+			echo "</select></td></tr>";
 		
 			
 			//User
@@ -558,7 +558,7 @@
 			echo "<tr><th class=\"tbltitle\">Kolonien:</th><td class=\"tbldata\" id=\"planetSelector\">Sonnensystem oder User w&auml;hlen...</td></tr>";
 			
 			//Schiffe Hinzufügen
-			echo "<tr><th class=\"tbltitle\">Hinzuf&uuml;gen:</th><td class=\"tbldata\">
+			echo "<tr name=\"addObject\" id=\"addObject\" style=\"display:none;\"><th class=\"tbltitle\">Hinzuf&uuml;gen:</th><td class=\"tbldata\">
 			<input type=\"text\" name=\"shiplist_count\" value=\"1\" size=\"7\" maxlength=\"10\" />
 			<select name=\"ship_id\">";
 			foreach ($slist as $k=>$v)
@@ -570,15 +570,25 @@
 			
 			//Vorhandene Schiffe
 			tableEnd();
-			echo "</form>";
-
+			
 			echo "<div id=\"shipsOnPlanet\" style=\"width:700px\"></div>";
+			
+			echo "</form>";
 
 
 
 			//Focus
 			echo "<script type=\"text/javascript\">document.getElementById('userlist_nick').focus();</script>";
-
+			
+			//Add User
+			if (searchQueryArray($sa,$so))
+			{
+				if (isset($sa['user_nick']))
+				{
+					echo "<script type=\"text/javascript\">document.getElementById('userlist_nick').value=\"".$sa['user_nick'][1]."\";xajax_searchUserList('".$sa['user_nick'][1]."','showShipsOnPlanet');</script>";
+				}
+			}
+			
 			echo "<br/>Es sind <b>".nf($tblcnt[0])."</b> Eintr&auml;ge in der Datenbank vorhanden.";
 
 	}

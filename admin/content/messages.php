@@ -116,23 +116,39 @@
 			$res = dbquery("SELECT user_id FROM users;");
 			while ($arr=mysql_fetch_array($res))
 			{
-				dbquery("INSERT INTO messages (
-				message_user_from,
-				message_user_to,
-				message_timestamp,
-				message_cat_id,
-				message_subject,
-				message_text,
-				message_massmail
-				) VALUES (
-				0,
-				'".$arr['user_id']."',
-				".time().",
-				".SYS_MESSAGE_CAT_ID.",
-				'".addslashes($_POST['message_subject'])."',
-				'".addslashes($_POST['message_text'])."',
-				1
-				);");
+   				 dbquery("
+					INSERT INTO 
+						messages
+					(
+						message_user_from,
+						message_user_to,
+						message_timestamp,
+						message_cat_id,
+						message_massmail
+					) 
+					VALUES 
+					(
+						'0',
+						'".$arr['user_id']."',
+						'".time()."',
+						'".SYS_MESSAGE_CAT_ID."',
+						'1'
+					);");
+						dbquery("
+							INSERT INTO
+								message_data
+							(
+								id,
+								subject,
+								text
+							)
+							VALUES
+							(
+								'".mysql_insert_id()."',
+								'".addslashes($_POST['message_subject'])."',
+							'".addslashes($_POST['message_text'])."'
+							);
+						");	
 			}
 			cms_ok_msg("Nachricht wurde an ".mysql_num_rows($res)." Spieler gesendet!");
 			echo "<p align=\"center\"><input type=\"button\" class=\"button\" value=\"Neue Nachricht schreiben\" onClick=\"document.location='?page=$page&sub=$sub'\"></p>";

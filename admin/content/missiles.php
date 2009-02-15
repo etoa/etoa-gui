@@ -94,6 +94,15 @@
 			tableEnd();
 			echo "</form>";
 			echo '<script type="text/javascript">document.forms[0].user_nick.focus();</script>';
+			
+			//Add User
+			if (searchQueryArray($sa,$so))
+			{
+				if (isset($sa['user_nick']))
+				{
+					echo "<script type=\"text/javascript\">document.getElementById('userlist_nick').value=\"".$sa['user_nick'][1]."\";xajax_searchUserList('".$sa['user_nick'][1]."','showMissilesOnPlanet');</script>";
+				}
+			}
 
 			$tblcnt = mysql_fetch_row(dbquery("SELECT count(missilelist_id) FROM missilelist;"));
 			echo "Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.<br/>";	

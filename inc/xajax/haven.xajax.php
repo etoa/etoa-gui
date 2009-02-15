@@ -298,7 +298,7 @@
 		$response->assign("havenContentShips","innerHTML",ob_get_contents());		
 		
 		$response->assign("havenContentTarget","innerHTML","");				
-		$response->assign("havenContentTarget","style.display",'none');				
+		$response->assign("havenContentTarget","style.display",'none');		
 
 		$response->assign("havenContentAction","innerHTML","");				
 		$response->assign("havenContentAction","style.display",'none');				

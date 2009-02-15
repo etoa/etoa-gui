@@ -6,7 +6,8 @@ $xajax->register(XAJAX_FUNCTION,"planetSelectorByUser");
 $xajax->register(XAJAX_FUNCTION,"showShipsOnPlanet");
 $xajax->register(XAJAX_FUNCTION,"addShipToPlanet");
 $xajax->register(XAJAX_FUNCTION,"removeShipFromPlanet");
-$xajax->register(XAJAX_FUNCTION,"editShip");
+$xajax->register(XAJAX_FUNCTION,"editShipByListId");
+$xajax->register(XAJAX_FUNCTION,"editShipByShipId");
 $xajax->register(XAJAX_FUNCTION,"submitEditShip");
 $xajax->register(XAJAX_FUNCTION,"calcShipLevel");
 
@@ -48,28 +49,53 @@ function planetSelectorByCell($form,$function,$show_user_id=0)
 	{
 		$res=dbquery("
 		SELECT
-			cell_id,
-			cell_solsys_num_planets,
-			cell_solsys_solsys_sol_type
+			entities.id,
+			cells.sx,
+			cells.sy,
+			cells.cx,
+			cells.cy,
+			entities.pos,
+			entities.code
 		FROM
-			space_cells
-		WHERE
-			cell_sx='".$form['cell_sx']."'
-			AND cell_sy='".$form['cell_sy']."'
-			AND cell_cx='".$form['cell_cx']."'
-			AND cell_cy='".$form['cell_cy']."'
+			entities
+		INNER JOIN
+			cells
+		ON
+			entities.cell_id=cells.id
+		AND
+			cells.sx='".$form['cell_sx']."'
+		AND
+			cells.sy='".$form['cell_sy']."'
+		AND
+			cells.cx='".$form['cell_cx']."'
+		AND
+			cells.cy='".$form['cell_cy']."'
 		;");
-		if (mysql_num_rows($res)>0)
-		{
-			$arr=mysql_fetch_array($res);
-			if($arr['cell_solsys_num_planets']>0 && $arr['cell_solsys_solsys_sol_type']>0)
+		
+		$nr = mysql_num_rows($res);
+		if ($nr>0)
+		{	
+			if ($nr>1)
 			{
+				$cnt=0;
+				$entities = array();
+				$ids="";
+				while ($arr=mysql_fetch_row($res))
+				{
+					if ($arr[6]=='p')
+					{
+						if ($cnt!=0) $ids.=",";
+						$ids.= $arr[0];
+						$cnt ++;
+						$entities[$arr[0] ] = $arr[5];
+					}
+				}
+				
 				$pres=dbquery("
 				SELECT
 					id,
 					planet_name,
 					planet_user_id,
-					planet_solsys_pos,
 					user_nick
 				FROM
 					planets
@@ -77,26 +103,28 @@ function planetSelectorByCell($form,$function,$show_user_id=0)
 					users
 					ON planet_user_id=user_id
 				WHERE
-					planet_solsys_id=".$arr['cell_id'].";
+					planets.id IN (".$ids.");
 				");
 				$nr=mysql_num_rows($pres);
 				if ($nr>0)
 				{
-					$out="<select name=\"planet_id\" size=\"$nr\" onchange=\"xajax_".$function."(this.options[this.selectedIndex].value);\">";
+					$out="<select name=\"entity_id\" size=\"".($nr)."\" onchange=\"showLoader('shipsOnPlanet');xajax_".$function."(this.options[this.selectedIndex].value);\">\n";
 					while ($parr=mysql_fetch_array($pres))
 					{
+						$name = ($parr['planet_name']=="") ? "Unbennant": $parr['planet_name'];
 						if ($show_user_id==1)
 						{
-							$val=$parr['id'].":".$parr['planet_user_id'];;
+							$val=$parr['id'].":".$parr['planet_user_id'];
 						}
 						else
 						{
 							$val=$parr['id'];
 						}
 						if ($parr['planet_user_id']>0)
-							$out.="<option value=\"$val\">".$parr['planet_solsys_pos']." ".$parr['planet_name']." (".$parr['user_nick'].")</option>";
+							$out.="<option value=\"$val\">".$entities[$parr['id'] ]." ".$name." (".$parr['user_nick'].")</option>";
 						else
-							$out.="<option value=\"$val\" style=\"font-style:italic\">".$parr['planet_solsys_pos']." Unbewohnt</option>";
+							$out.="<option value=\"$val\" style=\"font-style:italic\">".$entities[$parr['id'] ]." ".$name." Unbewohnt</option>";
+							
 					}
 					$out.="</select>";
 				}
@@ -110,13 +138,13 @@ function planetSelectorByCell($form,$function,$show_user_id=0)
 		{
 			$out="Zelle nicht gefunden!";
 		}
-  }
+  	}
 	else
 	{
 		$out="Sonnensystem w&auml;hlen...";
 	}
-  $objResponse->assign("planetSelector","innerHTML", $out);
-  $objResponse->assign("user_nick","value", "");
+  	$objResponse->assign("planetSelector","innerHTML", $out);
+  	$objResponse->assign("user_nick","value", "");
 	return $objResponse;
 }
 
@@ -143,10 +171,15 @@ function planetSelectorByUser($userNick,$function,$show_user_id=1)
 		$nr=mysql_num_rows($pres);
 		if ($nr>0)
 		{
-			$out="<select name=\"planet_id\" size=\"".($nr+1)."\" onchange=\"showLoader('shipsOnPlanet');xajax_".$function."(this.options[this.selectedIndex].value);\">\n";
-			//$out.="<option>Alle</option>";
+			$out="<select name=\"entity_id\" size=\"".($nr+1)."\" onchange=\"showLoader('shipsOnPlanet');xajax_".$function."(this.options[this.selectedIndex].value);\">\n";
+			$cnt=0;
 			while ($parr=mysql_fetch_row($pres))
 			{
+				if (!$cnt)
+				{
+					$out.="<option value=\"0:".$parr[1]."\">Alle</option>";
+					$cnt++;
+				}
 				$p = new Planet($parr[0]);
 				
 				if ($show_user_id==1)
@@ -155,7 +188,7 @@ function planetSelectorByUser($userNick,$function,$show_user_id=1)
 				}
 				else
 				{
-					$val=$parr[0];
+					$val=$parr[0].":"."0";
 				}
 				$out.="<option value=\"$val\">".$p."</option>\n";
 			}
@@ -182,13 +215,15 @@ function planetSelectorByUser($userNick,$function,$show_user_id=1)
 function showShipsOnPlanet($form)
 {
 	$updata=explode(":",$form);
-	$pid=$updata[0];
+	$eid=$updata[0];
 	$uid=$updata[1];
+	
+	$style='none';
 	$objResponse = new xajaxResponse();	
 	
 	ob_start();
 
-	if ($pid!=0)
+	if ($eid!=0)
 	{
 		$res=dbquery("
 		SELECT
@@ -204,11 +239,12 @@ function showShipsOnPlanet($form)
 		INNER JOIN
 			ships
 			ON shiplist_ship_id=ship_id
-			AND shiplist_entity_id='".$pid."'
+			AND shiplist_entity_id='".$eid."'
 			AND shiplist_count>0
 		ORDER BY
 			ship_name
 		;");
+		
 		if (mysql_num_rows($res)>0)
 		{
 			$out="<table class=\"tb\">
@@ -231,7 +267,7 @@ function showShipsOnPlanet($form)
 				}
 				$out.= "
 				<td style=\"width:180px\" id=\"actions_".$arr['shiplist_id']."\" id=\"actions_".$arr['shiplist_id']."\">
-				<input type=\"button\" value=\"Bearbeiten\" onclick=\"xajax_editShip(xajax.getFormValues('selector'),".$arr['shiplist_id'].")\" />
+				<input type=\"button\" value=\"Bearbeiten\" onclick=\"xajax_editShipByListId(xajax.getFormValues('selector'),".$arr['shiplist_id'].")\" />
 				<input type=\"button\" value=\"Löschen\" onclick=\"if (confirm('Sollen ".$arr['shiplist_count']." ".$arr['ship_name']." von diesem Planeten gel&ouml;scht werden?')) {showLoaderPrepend('shipsOnPlanet');xajax_removeShipFromPlanet(xajax.getFormValues('selector'),".$arr['shiplist_id'].")}\" />
 				</td>
 				</tr>";
@@ -243,7 +279,69 @@ function showShipsOnPlanet($form)
 		{
 			$out="Keine Schiffe vorhanden!<br/>";
 		}
-		$out.="<br/><input type=\"Button\" value=\"Neu laden\" onclick=\"showLoader('shipsOnPlanet');xajax_showShipsOnPlanet('".$pid.":".$uid."');\">";
+		
+		$out.="<br/><input type=\"Button\" value=\"Neu laden\" onclick=\"showLoader('shipsOnPlanet');xajax_showShipsOnPlanet('".$form['entity_id']."');\">";
+		$style='';
+	}
+	elseif ($uid!=0)
+	{
+		$res=dbquery("
+		SELECT
+			ship_points,
+			ship_name,
+			SUM(shiplist_count) AS cnt,
+			ship_id,
+			special_ship_need_exp as ship_xp_base, 
+			special_ship_exp_factor as ship_xp_factor,
+			shiplist_special_ship_exp as shiplist_xp
+		FROM
+			shiplist
+		INNER JOIN
+			ships
+			ON shiplist_ship_id=ship_id
+			AND shiplist_user_id='".$uid."'
+			AND shiplist_count>0
+		GROUP BY
+			ship_id
+		ORDER BY
+			ship_name
+		;");
+		
+		if (mysql_num_rows($res)>0)
+		{
+			$out="<table class=\"tb\">
+			<tr><th>Anzahl</th>
+			<th>Typ</th>
+			<th>Punkte</th>
+			<th>Spezielles</th>
+			<th>Aktionen</th></tr>";
+			$points = 0;
+			while ($arr=mysql_fetch_array($res))
+			{
+				$points += $arr['ship_points']*$arr['cnt'];
+				$out.="<tr id=\"data_".$arr['ship_id']."\"><td style=\"width:80px\" id=\"cnt_".$arr['ship_id']."\">".$arr['cnt']."</td>
+				<td>".$arr['ship_name']."</td>
+				<td>".($arr['ship_points']*$arr['cnt'])."</td>
+				<td id=\"special_".$arr['ship_id']."\">";
+				if ($arr['ship_xp_base']>0)
+				{
+					$out.= nf($arr['shiplist_xp'])." XP, Level ".Ship::levelByXp($arr['ship_xp_base'], $arr['ship_xp_factor'],$arr['shiplist_xp']);
+				}
+				$out.= "
+				<td style=\"width:180px\" id=\"actions_".$arr['ship_id']."\" id=\"actions_".$arr['ship_id']."\">
+				<input type=\"button\" value=\"Bearbeiten\" onclick=\"xajax_editShipByShipId(xajax.getFormValues('selector'),".$arr['ship_id'].")\" />
+				</td></tr>
+				<tr><td colspan=\"5\" id=\"edit_".$arr['ship_id']."\" style=\"display:none;\"></td></tr>";
+			}
+			$out.="<tr><td colspan=\"2\"></td><td><b>".nf($points)."</b></td><td colspan=\"2\"></td></tr>";
+			$out.="</table>";
+		}
+		else
+		{
+			$out="Keine Schiffe vorhanden!<br/>";
+		}
+	
+		$out.="<br/><input type=\"Button\" value=\"Neu laden\" onclick=\"showLoader('shipsOnPlanet');xajax_showShipsOnPlanet('".$form['entity_id']."');\">";
 	}
 	else
 	{
@@ -251,6 +349,7 @@ function showShipsOnPlanet($form)
 	}
 	echo $out;
 	$out = ob_get_clean();
+	$objResponse->assign("addObject","style.display",$style);
 	$objResponse->assign("shipsOnPlanet","innerHTML", $out);
 	return $objResponse;		
 }
@@ -259,17 +358,18 @@ function addShipToPlanet($form)
 {
 	$objResponse = new xajaxResponse();	
 	
-	$updata=explode(":",$form['planet_id']);
+	$updata=explode(":",$form['entity_id']);
+	
 	if ($updata[1]>0)
 	{
 		shiplistAdd($updata[0],$updata[1],$form['ship_id'],intval($form['shiplist_count']));	
-  	$objResponse->script("xajax_showShipsOnPlanet(".$updata[0].",".$updata[1].")");
-  }
-  else
-  {
-  	$out="Planet unbewohnt. Kann keine Schiffe hier bauen!";
-   	$objResponse->assign("shipsOnPlanet","innerHTML", $out); 	
-  }
+  		$objResponse->script("xajax_showShipsOnPlanet('".$form['entity_id']."')");
+  	}
+  	else
+  	{
+  		$out="Planet unbewohnt. Kann keine Schiffe hier bauen!";
+   		$objResponse->assign("shipsOnPlanet","innerHTML", $out);
+  	}
 	return $objResponse;			
 }
 
@@ -277,50 +377,51 @@ function removeShipFromPlanet($form,$listId)
 {
 	$objResponse = new xajaxResponse();	
 	
-	$updata=explode(":",$form['planet_id']);
 	dbquery("
 	DELETE FROM
 		shiplist
 	WHERE
 		shiplist_id=".intval($listId)."
 	;");
-  $objResponse->script("xajax_showShipsOnPlanet(".$updata[0].",".$updata[1].");");
+  $objResponse->script("xajax_showShipsOnPlanet('".$form['entity_id']."');");
 	return $objResponse;		
 }
 
-function editShip($form,$listId)
+function editShipByListId($form,$listId)
 {
 	$objResponse = new xajaxResponse();	
 	
-	$updata=explode(":",$form['planet_id']);
+	$updata=explode(":",$form['entity_id']);
+	
 	$res=dbquery("
-	SELECT
-		shiplist_count,
-		shiplist_id,
-		special_ship_need_exp as ship_xp_base, 
-		special_ship_exp_factor as ship_xp_factor,
-		shiplist_special_ship_exp as shiplist_xp,
-				shiplist_special_ship_bonus_weapon,
-				shiplist_special_ship_bonus_structure,
-				shiplist_special_ship_bonus_shield,
-				shiplist_special_ship_bonus_heal,
-				shiplist_special_ship_bonus_capacity,
-				shiplist_special_ship_bonus_speed,
-				shiplist_special_ship_bonus_pilots,
-				shiplist_special_ship_bonus_tarn,
-				shiplist_special_ship_bonus_antrax,
-				shiplist_special_ship_bonus_forsteal,
-				shiplist_special_ship_bonus_build_destroy,
-				shiplist_special_ship_bonus_antrax_food,
-				shiplist_special_ship_bonus_deactivade		
-	FROM
-		shiplist
-	INNER JOIN
-		ships
-		ON shiplist_ship_id=ship_id		
-	AND
-		shiplist_entity_id=".$updata[0]."
-	;");
+		SELECT
+			shiplist_count,
+			shiplist_id,
+			special_ship_need_exp as ship_xp_base, 
+			special_ship_exp_factor as ship_xp_factor,
+			shiplist_special_ship_exp as shiplist_xp,
+			shiplist_special_ship_bonus_weapon,
+			shiplist_special_ship_bonus_structure,
+			shiplist_special_ship_bonus_shield,
+			shiplist_special_ship_bonus_heal,
+			shiplist_special_ship_bonus_capacity,
+			shiplist_special_ship_bonus_speed,
+			shiplist_special_ship_bonus_pilots,
+			shiplist_special_ship_bonus_tarn,
+			shiplist_special_ship_bonus_antrax,
+			shiplist_special_ship_bonus_forsteal,
+			shiplist_special_ship_bonus_build_destroy,
+			shiplist_special_ship_bonus_antrax_food,
+			shiplist_special_ship_bonus_deactivade		
+		FROM
+			shiplist
+		INNER JOIN
+			ships
+			ON shiplist_ship_id=ship_id		
+		AND
+			shiplist_entity_id=".$updata[0]."
+		;");
+		
 	if (mysql_num_rows($res))
 	{
 		while ($arr=mysql_fetch_array($res))
@@ -331,7 +432,7 @@ function editShip($form,$listId)
 		 		$objResponse->assign("cnt_".$listId,"innerHTML", $out); 	
 				if ($arr['ship_xp_base']>0)
 				{
-					$out= "<input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editxp_".$listId."\" value=\"".$arr['shiplist_xp']."\" onkeyup=\"xajax_calcShipLevel(".$listId.",".$arr['ship_xp_base'].",".$arr['ship_xp_factor'].",this.value);\" /> XP, 
+					$out= "<input type=\"hidden\" name=\"ship_special_".$listId."\" value=\"1\"><input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editxp_".$listId."\" value=\"".$arr['shiplist_xp']."\" onkeyup=\"xajax_calcShipLevel(".$listId.",".$arr['ship_xp_base'].",".$arr['ship_xp_factor'].",this.value);\" /> XP, 
 					Level <b><span id=\"editlevel_".$listId."\">".Ship::levelByXp($arr['ship_xp_base'], $arr['ship_xp_factor'],$arr['shiplist_xp'])."</span></b><br/>
 					
 					<b>Waffenlevel:</b> <input type=\"text\" name=\"edit_bonus_weapon_".$listId."\" value=\"".$arr['shiplist_special_ship_bonus_weapon']."\" size=\"5\" maxlength=\"20\" /><br/>
@@ -354,7 +455,7 @@ function editShip($form,$listId)
 					$out="";	
 		 		$objResponse->assign("special_".$listId,"innerHTML", $out); 	
 		 		$out="<input type=\"button\" value=\"Speichern\" onclick=\"showLoader('actions_".$listId."');xajax_submitEditShip(xajax.getFormValues('selector'),".$listId.");\" /> ";
-		 		$out.="<input type=\"button\" value=\"Abbrechen\" onclick=\"showLoader('shipsOnPlanet');xajax_showShipsOnPlanet(".$updata[0].",".$updata[1].");\" />";
+		 		$out.="<input type=\"button\" value=\"Abbrechen\" onclick=\"showLoader('shipsOnPlanet');xajax_showShipsOnPlanet('".$form['entity_id']."');\" />";
 		 		$objResponse->assign("actions_".$listId,"innerHTML", $out); 	
 			}
 			else
@@ -362,6 +463,103 @@ function editShip($form,$listId)
 		 		$objResponse->assign("actions_".$arr['shiplist_id'],"innerHTML", ""); 					
 			}
 		}
+	}
+  
+	return $objResponse;		
+}
+
+function editShipByShipId($form,$shipId)
+{
+	$objResponse = new xajaxResponse();	
+	
+	$updata=explode(":",$form['entity_id']);
+	
+	$res=dbquery("
+		SELECT
+			shiplist_count,
+			shiplist_id,
+			ship_id,
+			ship_name,
+			ship_points,
+			shiplist_entity_id,
+			special_ship_need_exp as ship_xp_base, 
+			special_ship_exp_factor as ship_xp_factor,
+			shiplist_special_ship_exp as shiplist_xp,
+			shiplist_special_ship_bonus_weapon,
+			shiplist_special_ship_bonus_structure,
+			shiplist_special_ship_bonus_shield,
+			shiplist_special_ship_bonus_heal,
+			shiplist_special_ship_bonus_capacity,
+			shiplist_special_ship_bonus_speed,
+			shiplist_special_ship_bonus_pilots,
+			shiplist_special_ship_bonus_tarn,
+			shiplist_special_ship_bonus_antrax,
+			shiplist_special_ship_bonus_forsteal,
+			shiplist_special_ship_bonus_build_destroy,
+			shiplist_special_ship_bonus_antrax_food,
+			shiplist_special_ship_bonus_deactivade		
+		FROM
+			shiplist
+		INNER JOIN
+			ships
+			ON shiplist_ship_id=ship_id		
+		AND
+			shiplist_user_id=".$updata[1]."
+		AND
+			shiplist_count!=0
+		;");
+		
+	if (mysql_num_rows($res))
+	{
+		ob_start();
+		tableStart();
+		while ($arr=mysql_fetch_array($res))
+		{
+			if ($arr['ship_id']==$shipId)
+			{
+		 		//$objResponse->assign("data_".$shipId,"style.display", 'none');
+		 		$objResponse->assign("edit_".$shipId,"style.display", '');
+				
+				$p = new Planet($arr['shiplist_entity_id']);
+				$listId = $arr['shiplist_id'];
+				
+				echo "<tr><th colspan=\"5\">".$p."</th></tr><tr>
+				<td style=\"width:80px\" id=\"cnt".$arr['shiplist_id']."\"><input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editcnt_".$listId."\" value=\"".$arr['shiplist_count']."\" /></td>
+				<td>".$arr['ship_name']."</td>
+				<td>".($arr['ship_points']*$arr['shiplist_count'])."</td>
+				<td id=\"special_".$listId."\">";
+				if ($arr['ship_xp_base']>0)
+				{
+					echo "<input type=\"hidden\" name=\"ship_special_".$listId."\" value=\"1\"><input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editxp_".$listId."\" value=\"".$arr['shiplist_xp']."\" onkeyup=\"xajax_calcShipLevel(".$listId.",".$arr['ship_xp_base'].",".$arr['ship_xp_factor'].",this.value);\" /> XP, 
+					Level <b><span id=\"editlevel_".$listId."\">".Ship::levelByXp($arr['ship_xp_base'], $arr['ship_xp_factor'],$arr['shiplist_xp'])."</span></b><br/>
+					
+					<b>Waffenlevel:</b> <input type=\"text\" name=\"edit_bonus_weapon_".$listId."\" value=\"".$arr['shiplist_special_ship_bonus_weapon']."\" size=\"5\" maxlength=\"20\" /><br/>
+					<b>Strukturlevel:</b> <input type=\"text\" name=\"edit_bonus_structure_".$listId."\" value=\"".$arr['shiplist_special_ship_bonus_structure']."\" size=\"5\" maxlength=\"20\" /><br/>
+					<b>Schildlevel:</b> <input type=\"text\" name=\"edit_bonus_shield_".$listId."\" value=\"".$arr['shiplist_special_ship_bonus_shield']."\" size=\"5\" maxlength=\"20\" /><br/>
+					<b>Heallevel:</b> <input type=\"text\" name=\"edit_bonus_heal_".$listId."\" value=\"".$arr['shiplist_special_ship_bonus_heal']."\" size=\"5\" maxlength=\"20\" /><br/>
+					<b>Kapazit&auml;tlevel:</b> <input type=\"text\" name=\"edit_bonus_capacity_".$listId."\" value=\"".$arr['shiplist_special_ship_bonus_capacity']."\" size=\"5\" maxlength=\"20\" /><br/>
+					<b>Speedlevel:</b> <input type=\"text\" name=\"edit_bonus_speed_".$listId."\" value=\"".$arr['shiplist_special_ship_bonus_speed']."\" size=\"5\" maxlength=\"20\" /><br/>
+					<b>Besatzungslevel:</b> <input type=\"text\" name=\"edit_bonus_pilots_".$listId."\" value=\"".$arr['shiplist_special_ship_bonus_pilots']."\" size=\"5\" maxlength=\"20\" /><br/>
+					<b>Tarnungslevel:</b> <input type=\"text\" name=\"edit_bonus_tarn_".$listId."\" value=\"".$arr['shiplist_special_ship_bonus_tarn']."\" size=\"5\" maxlength=\"20\" /><br/>
+					<b>Giftgaslevel:</b> <input type=\"text\" name=\"edit_bonus_antrax_".$listId."\" value=\"".$arr['shiplist_special_ship_bonus_antrax']."\" size=\"5\" maxlength=\"20\" /><br/>
+					<b>Techklaulevel:</b> <input type=\"text\" name=\"edit_bonus_forsteal_".$listId."\" value=\"".$arr['shiplist_special_ship_bonus_forsteal']."\" size=\"5\" maxlength=\"20\" /><br/>
+					<b>Bombardierlevel:</b> <input type=\"text\" name=\"edit_bonus_build_destroy_".$listId."\" value=\"".$arr['shiplist_special_ship_bonus_build_destroy']."\" size=\"5\" maxlength=\"20\" /><br/>
+					<b>Antraxlevel:</b> <input type=\"text\" name=\"edit_bonus_antrax_food_".$listId."\" value=\"".$arr['shiplist_special_ship_bonus_antrax_food']."\" size=\"5\" maxlength=\"20\" /><br/>
+					<b>Deaktivierlevel:</b> <input type=\"text\" name=\"edit_bonus_deactivade_".$listId."\" value=\"".$arr['shiplist_special_ship_bonus_deactivade']."\" size=\"5\" maxlength=\"20\" />";
+				}
+				echo "</td><td style=\"width:180px\" id=\"actions_".$arr['shiplist_id']."\" id=\"actions_".$arr['shiplist_id']."\"><input type=\"button\" value=\"Speichern\" onclick=\"showLoader('actions_".$shipId."');xajax_submitEditShip(xajax.getFormValues('selector'),".$listId.");\" /><input type=\"button\" value=\"Löschen\" onclick=\"if (confirm('Sollen ".$arr['shiplist_count']." ".$arr['ship_name']." von diesem Planeten gel&ouml;scht werden?')) {showLoaderPrepend('shipsOnPlanet');xajax_removeShipFromPlanet(xajax.getFormValues('selector'),".$listId.")}\" /></td></tr>";
+				
+		 		$out="<input type=\"button\" value=\"Abbrechen\" onclick=\"showLoader('shipsOnPlanet');xajax_showShipsOnPlanet('".$form['entity_id']."');\" />";
+			}
+			else
+			{
+		 		$objResponse->assign("actions_".$arr['ship_id'],"innerHTML", "");	
+			}
+		}
+		tableEnd();
+		$objResponse->assign("actions_".$shipId,"innerHTML", $out); 
+		$objResponse->assign("edit_".$shipId,"innerHTML", ob_get_contents());
+		ob_clean();
 	}
   
 	return $objResponse;		
@@ -379,30 +577,44 @@ function submitEditShip($form,$listId)
 {
 	$objResponse = new xajaxResponse();	
 	
-	$updata=explode(":",$form['planet_id']);
-	dbquery("
-	UPDATE
-		shiplist
-	SET
-		shiplist_count=".intval($form['editcnt_'.$listId]).",
-		shiplist_special_ship_exp=".intval($form['editxp_'.$listId]).",
-		shiplist_special_ship_bonus_weapon='".intval($form['edit_bonus_weapon_'.$listId])."',
-		shiplist_special_ship_bonus_structure='".intval($form['edit_bonus_structure_'.$listId])."',
-		shiplist_special_ship_bonus_shield='".intval($form['edit_bonus_shield_'.$listId])."',
-		shiplist_special_ship_bonus_heal='".intval($form['edit_bonus_heal_'.$listId])."',
-		shiplist_special_ship_bonus_capacity='".intval($form['edit_bonus_capacity_'.$listId])."',
-		shiplist_special_ship_bonus_speed='".intval($form['edit_bonus_speed_'.$listId])."',
-		shiplist_special_ship_bonus_pilots='".intval($form['edit_bonus_pilots_'.$listId])."',
-		shiplist_special_ship_bonus_tarn='".intval($form['edit_bonus_tarn_'.$listId])."',
-		shiplist_special_ship_bonus_antrax='".intval($form['edit_bonus_antrax_'.$listId])."',
-		shiplist_special_ship_bonus_forsteal='".intval($form['edit_bonus_forsteal_'.$listId])."',
-		shiplist_special_ship_bonus_build_destroy='".intval($form['edit_bonus_build_destroy_'.$listId])."',
-		shiplist_special_ship_bonus_antrax_food='".intval($form['edit_bonus_antrax_food_'.$listId])."',
-		shiplist_special_ship_bonus_deactivade='".intval($form['edit_bonus_deactivade_'.$listId])."'		
-	WHERE
-		shiplist_id=".intval($listId)."
-	;");
-  $objResponse->script("xajax_showShipsOnPlanet(".$updata[0].",".$updata[0].");");
+	if (isset($form['ship_special_'.$listId]))
+	{
+		dbquery("
+		UPDATE
+			shiplist
+		SET
+			shiplist_count=".intval($form['editcnt_'.$listId]).",
+			shiplist_special_ship_exp=".intval($form['editxp_'.$listId]).",
+			shiplist_special_ship_bonus_weapon='".intval($form['edit_bonus_weapon_'.$listId])."',
+			shiplist_special_ship_bonus_structure='".intval($form['edit_bonus_structure_'.$listId])."',
+			shiplist_special_ship_bonus_shield='".intval($form['edit_bonus_shield_'.$listId])."',
+			shiplist_special_ship_bonus_heal='".intval($form['edit_bonus_heal_'.$listId])."',
+			shiplist_special_ship_bonus_capacity='".intval($form['edit_bonus_capacity_'.$listId])."',
+			shiplist_special_ship_bonus_speed='".intval($form['edit_bonus_speed_'.$listId])."',
+			shiplist_special_ship_bonus_pilots='".intval($form['edit_bonus_pilots_'.$listId])."',
+			shiplist_special_ship_bonus_tarn='".intval($form['edit_bonus_tarn_'.$listId])."',
+			shiplist_special_ship_bonus_antrax='".intval($form['edit_bonus_antrax_'.$listId])."',
+			shiplist_special_ship_bonus_forsteal='".intval($form['edit_bonus_forsteal_'.$listId])."',
+			shiplist_special_ship_bonus_build_destroy='".intval($form['edit_bonus_build_destroy_'.$listId])."',
+			shiplist_special_ship_bonus_antrax_food='".intval($form['edit_bonus_antrax_food_'.$listId])."',
+			shiplist_special_ship_bonus_deactivade='".intval($form['edit_bonus_deactivade_'.$listId])."'		
+		WHERE
+			shiplist_id=".intval($listId)."
+		;");
+	}
+	else
+	{
+		dbquery("
+		UPDATE
+			shiplist
+		SET
+			shiplist_count=".intval($form['editcnt_'.$listId])."		
+		WHERE
+			shiplist_id=".intval($listId)."
+		;");
+	}
+	
+ 	$objResponse->script("xajax_showShipsOnPlanet('".$form['entity_id']."');");
 	return $objResponse;		
 }
 
@@ -460,7 +672,7 @@ function addMissileToPlanet($form)
 {
 	$objResponse = new xajaxResponse();	
 	
-	$updata=explode(":",$form['planet_id']);
+	$updata=explode(":",$form['entity_id']);
 	if ($updata[1]>0)
 	{
 		missilelistAdd($updata[0],$updata[1],$form['ship_id'],intval($form['shiplist_count']));	
@@ -478,7 +690,7 @@ function removeMissileFromPlanet($form,$listId)
 {
 	$objResponse = new xajaxResponse();	
 	
-	$updata=explode(":",$form['planet_id']);
+	$updata=explode(":",$form['entity_id']);
 	dbquery("
 	DELETE FROM
 		missilelist
@@ -493,7 +705,7 @@ function editMissile($form,$listId)
 {
 	$objResponse = new xajaxResponse();	
 	
-	$updata=explode(":",$form['planet_id']);
+	$updata=explode(":",$form['entity_id']);
 	$res=dbquery("
 	SELECT
 		missilelist_count,
@@ -529,7 +741,7 @@ function submitEditMissile($form,$listId)
 {
 	$objResponse = new xajaxResponse();	
 	
-	$updata=explode(":",$form['planet_id']);
+	$updata=explode(":",$form['entity_id']);
 	dbquery("
 	UPDATE
 		missilelist
@@ -545,14 +757,16 @@ function submitEditMissile($form,$listId)
 
 // Defense
 
-function showDefenseOnPlanet($pid)
+function showDefenseOnPlanet($form)
 {
 	$objResponse = new xajaxResponse();	
 	
-	if ($pid!=0)
+	$updata=explode(":",$form);
+	$eid=$updata[0];
+	
+	
+	if ($eid!=0)
 	{
-		$updata=explode(":",$pid);
-		$pid=$updata[0];
 		$res=dbquery("
 		SELECT
 			def_name,
@@ -563,7 +777,7 @@ function showDefenseOnPlanet($pid)
 		INNER JOIN
 			defense
 			ON deflist_def_id=def_id
-			AND deflist_entity_id='".$pid."'
+			AND deflist_entity_id='".$eid."'
 		ORDER BY
 			def_name
 		;");
@@ -588,7 +802,7 @@ function showDefenseOnPlanet($pid)
 	else
 	{
 		$out="Planet w&auml;hlen...";
-	}	
+	}
   $objResponse->assign("shipsOnPlanet","innerHTML", $out);
 	return $objResponse;		
 }
@@ -597,11 +811,11 @@ function addDefenseToPlanet($form)
 {
 	$objResponse = new xajaxResponse();	
 	
-	$updata=explode(":",$form['planet_id']);
+	$updata=explode(":",$form['entity_id']);
 	if ($updata[1]>0)
 	{
 		deflistAdd($updata[0],$updata[1],$form['def_id'],intval($form['deflist_count']));	
-  	$objResponse->script("xajax_showDefenseOnPlanet(".$updata[0].")");
+  		$objResponse->script("xajax_showDefenseOnPlanet('".$form['entity_id']."')");
   }
   else
   {
@@ -615,7 +829,7 @@ function removeDefenseFromPlanet($form,$listId)
 {
 	$objResponse = new xajaxResponse();	
 	
-	$updata=explode(":",$form['planet_id']);
+	$updata=explode(":",$form['entity_id']);
 	dbquery("
 	DELETE FROM
 		deflist
@@ -630,7 +844,7 @@ function editDefense($form,$listId)
 {
 	$objResponse = new xajaxResponse();	
 	
-	$updata=explode(":",$form['planet_id']);
+	$updata=explode(":",$form['entity_id']);
 	$res=dbquery("
 	SELECT
 		deflist_count,
@@ -666,7 +880,7 @@ function submitEditDefense($form,$listId)
 {
 	$objResponse = new xajaxResponse();	
 	
-	$updata=explode(":",$form['planet_id']);
+	$updata=explode(":",$form['entity_id']);
 	dbquery("
 	UPDATE
 		deflist
@@ -681,14 +895,16 @@ function submitEditDefense($form,$listId)
 
 // Buildings
 
-function showBuildingsOnPlanet($pid)
+function showBuildingsOnPlanet($form)
 {
 	$objResponse = new xajaxResponse();	
+
+	$updata=explode(":",$form);
+	$eid=$updata[0];
+	$out = 	"<script type=\"text/javascript\">document.getElementById('entity_id').selectedindex=".$eid.";</script>";
 	
-	if ($pid!=0)
+	if ($eid!=0)
 	{
-		$updata=explode(":",$pid);
-		$pid=$updata[0];
 		$res=dbquery("
 		SELECT
 			building_name,
@@ -699,13 +915,13 @@ function showBuildingsOnPlanet($pid)
 		INNER JOIN
 			buildings
 			ON buildlist_building_id=building_id
-			AND buildlist_entity_id='".$pid."'
+			AND buildlist_entity_id='".$eid."'
 		ORDER BY
 			building_name
 		;");
 		if (mysql_num_rows($res)>0)
 		{
-			$out="<table class=\"tb\">";
+			$out.="<table class=\"tb\">";
 			while ($arr=mysql_fetch_array($res))
 			{
 				$out.="<tr><td style=\"width:80px\" id=\"cnt_".$arr['buildlist_id']."\">".$arr['buildlist_current_level']."</td>
@@ -723,9 +939,9 @@ function showBuildingsOnPlanet($pid)
 	}
 	else
 	{
-		$out="Planet w&auml;hlen...";
-	}	
-  $objResponse->assign("shipsOnPlanet","innerHTML", $out);
+		$out="Planet w&auml;hlen...".$form."hammer";
+	}
+  	$objResponse->assign("shipsOnPlanet","innerHTML", $out);
 	return $objResponse;		
 }
 
@@ -733,16 +949,16 @@ function addBuildingToPlanet($form)
 {
 	$objResponse = new xajaxResponse();	
 	
-	$updata=explode(":",$form['planet_id']);
+	$updata=explode(":",$form['entity_id']);
 	if ($updata[1]>0)
 	{
 		buildlistAdd($updata[0],$updata[1],$form['building_id'],intval($form['buildlist_current_level']));	
-  	$objResponse->script("xajax_showBuildingsOnPlanet(".$updata[0].")");
+  	$objResponse->script("xajax_showBuildingsOnPlanet('".$form['entity_id']."')");
   }
   else
   {
   	$out="Planet unbewohnt. Kann keine Gebäude hier bauen!";
-   	$objResponse->assign("BuildingsOnPlanet","innerHTML", $out); 	
+   	$objResponse->assign("shipsOnPlanet","innerHTML", $out); 	
   }
 	return $objResponse;			
 }
@@ -750,15 +966,16 @@ function addBuildingToPlanet($form)
 function removeBuildingFromPlanet($form,$listId)
 {
 	$objResponse = new xajaxResponse();	
+	$updata=explode(":",$form['entity_id']);
 	
-	$updata=explode(":",$form['planet_id']);
 	dbquery("
 	DELETE FROM
 		buildlist
 	WHERE
 		buildlist_id=".intval($listId)."
 	;");
-  $objResponse->script("xajax_showBuildingsOnPlanet(".$updata[0].");");
+ 	 $objResponse->script("xajax_showBuildingsOnPlanet('".$updata[0]."');");
+
 	return $objResponse;		
 }
 
@@ -766,7 +983,7 @@ function editBuilding($form,$listId)
 {
 	$objResponse = new xajaxResponse();	
 	
-	$updata=explode(":",$form['planet_id']);
+	$updata=explode(":",$form['entity_id']);
 	$res=dbquery("
 	SELECT
 		buildlist_current_level,
@@ -785,7 +1002,7 @@ function editBuilding($form,$listId)
 				$out="<input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editcnt_".$listId."\" value=\"".$arr['buildlist_current_level']."\" />";
 		 		$objResponse->assign("cnt_".$listId,"innerHTML", $out); 	
 		 		$out="<a href=\"javaScript:;\" onclick=\"xajax_submitEditBuilding(xajax.getFormValues('selector'),".$listId.");\">Speichern</a> ";
-		 		$out.="<a href=\"javaScript:;\" onclick=\"xajax_showBuildingsOnPlanet(".$updata[0].");\">Abbrechen</a>";
+		 		$out.="<a href=\"javaScript:;\" onclick=\"xajax_showBuildingsOnPlanet('".$form['entity_id']."');\">Abbrechen</a>";
 		 		$objResponse->assign("actions_".$listId,"innerHTML", $out); 	
 			}
 			else
@@ -802,7 +1019,7 @@ function submitEditBuilding($form,$listId)
 {
 	$objResponse = new xajaxResponse();	
 	
-	$updata=explode(":",$form['planet_id']);
+	$updata=explode(":",$form['entity_id']);
 	dbquery("
 	UPDATE
 		buildlist
@@ -811,7 +1028,7 @@ function submitEditBuilding($form,$listId)
 	WHERE
 		buildlist_id=".intval($listId)."
 	;");
-  $objResponse->script("xajax_showBuildingsOnPlanet(".$updata[0].");");
+  	$objResponse->script("xajax_showBuildingsOnPlanet('".$form['entity_id']."');");
 	return $objResponse;		
 }
 

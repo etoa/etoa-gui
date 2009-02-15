@@ -2070,34 +2070,9 @@ Forum: http://www.etoa.ch/forum";
 	* @param int $cnt Anzahl
 	* @author MrCage
 	*/
-	function shiplistAdd($planet,$user,$ship,$cnt)
+	function shiplistAdd($entity,$user,$ship,$cnt)
 	{
-		$res=dbquery("
-			SELECT
-				shiplist_id
-			FROM
-				shiplist
-			WHERE
-				shiplist_user_id='".$user."'
-				AND shiplist_entity_id='".$planet."'
-				AND shiplist_ship_id='".$ship."';
-		");
-		if (mysql_num_rows($res)>0)
-		{
-			dbquery("
-				UPDATE
-					shiplist
-				SET
-					shiplist_count=shiplist_count+".max($cnt,0)."
-				WHERE
-					shiplist_user_id='".$user."'
-					AND shiplist_entity_id='".$planet."'
-					AND shiplist_ship_id='".$ship."';
-			");
-		}
-		else
-		{
-			dbquery("
+		dbquery("
 				INSERT INTO
 				shiplist
 				(
@@ -2109,12 +2084,14 @@ Forum: http://www.etoa.ch/forum";
 				VALUES
 				(
 					'".$user."',
-					'".$planet."',
+					'".$entity."',
 					'".$ship."',
 					'".max($cnt,0)."'
-				);
+				)
+				ON DUPLICATE KEY
+				UPDATE
+					shiplist_count = shiplist_count + VALUES(shiplist_count);
 			");
-		}
 	}
 	
 	
@@ -2127,33 +2104,8 @@ Forum: http://www.etoa.ch/forum";
 	* @param int $cnt Anzahl
 	* @author MrCage
 	*/
-	function deflistAdd($planet,$user,$def,$cnt)
+	function deflistAdd($entity,$user,$def,$cnt)
 	{
-		$res=dbquery("
-			SELECT
-				deflist_id
-			FROM
-				deflist
-			WHERE
-				deflist_user_id='".$user."'
-				AND deflist_entity_id='".$planet."'
-				AND deflist_def_id='".$def."';
-		");
-		if (mysql_num_rows($res)>0)
-		{
-			dbquery("
-				UPDATE
-					deflist
-				SET
-					deflist_count=deflist_count+".max($cnt,0)."
-				WHERE
-					deflist_user_id='".$user."'
-					AND deflist_entity_id='".$planet."'
-					AND deflist_def_id='".$def."';
-			");
-		}
-		else
-		{
 			dbquery("
 				INSERT INTO
 				deflist
@@ -2166,12 +2118,14 @@ Forum: http://www.etoa.ch/forum";
 				VALUES
 				(
 					'".$user."',
-					'".$planet."',
+					'".$entity."',
 					'".$def."',
 					'".max($cnt,0)."'
-				);
+				)
+				ON DUPLICATE KEY
+				UPDATE
+					deflist_count = deflist_count + VALUES(deflist_count);
 			");
-		}
 	}
 	
 	/**
@@ -2183,36 +2137,8 @@ Forum: http://www.etoa.ch/forum";
 	* @param int $cnt Anzahl
 	* @author MrCage
 	*/
-	function buildlistAdd($planet,$user,$ship,$cnt)
+	function buildlistAdd($entity,$user,$building,$level)
 	{
-		$res=dbquery("
-			SELECT
-				buildlist_current_level
-			FROM
-				buildlist
-			WHERE
-				buildlist_user_id='".$user."'
-				AND buildlist_entity_id='".$planet."'
-				AND buildlist_building_id='".$ship."'
-			LIMIT 1;
-		"); 
-		if (mysql_num_rows($res)>0)
-		{
-			$arr=mysql_fetch_row($res);
-			dbquery("
-				UPDATE
-					buildlist
-				SET
-					buildlist_current_level='".max($cnt,$arr[0])."'
-				WHERE
-					buildlist_user_id='".$user."'
-					AND buildlist_entity_id='".$planet."'
-					AND buildlist_building_id='".$ship."'
-				LIMIT 1;
-			");
-		}
-		else
-		{
 			dbquery("
 				INSERT INTO
 				buildlist
@@ -2225,12 +2151,14 @@ Forum: http://www.etoa.ch/forum";
 				VALUES
 				(
 					'".$user."',
-					'".$planet."',
-					'".$ship."',
-					'".max($cnt,0)."'
-				);
+					'".$entity."',
+					'".$building."',
+					'".max($level,0)."'
+				)
+				ON DUPLICATE KEY
+				UPDATE
+					buildlist_current_level = '".max($level,0)."';
 			");
-		}
 	}
 	
 	/**

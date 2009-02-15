@@ -855,7 +855,7 @@
 			
 			//User
 			echo "<tr><th class=\"tbltitle\"><i>oder</i> User</th><td class=\"tbldata\">";
-			echo "<input type=\"text\" name=\"userlist_nick\" id=\"userlist_nick\" value=\"\" autocomplete=\"off\" size=\"30\" maxlength=\"30\" onkeyup=\"xajax_searchUserList(this.value,'showBuildingsOnPlanet');\"><br>
+			echo "<input type=\"text\" name=\"userlist_nick\" id=\"userlist_nick\" value=\"\" autocomplete=\"off\" size=\"30\" maxlength=\"30\" onchange=\"xajax_searchUserList(this.value,'showBuildingsOnPlanet');\" onkeyup=\"xajax_searchUserList(this.value,'showBuildingsOnPlanet');\"><br>
 			<div id=\"userlist\">&nbsp;</div>";
 			echo "</td></tr>";
 			
@@ -873,41 +873,50 @@
 			echo "</select> &nbsp; 
 			<input type=\"button\" onclick=\"showLoaderPrepend('shipsOnPlanet');xajax_addBuildingToPlanet(xajax.getFormValues('selector'));\" value=\"Hinzuf&uuml;gen\" /></td></tr>";
 			
-			//Gebäude Schiffe
+			//Gebäude wählen
 			echo "<tr><td class=\"tbldata\" id=\"shipsOnPlanet\" colspan=\"2\">Planet w&auml;hlen...</td></tr>";
 			tableEnd();
 			echo "</form>";
 
 			//Focus
 			echo "<script type=\"text/javascript\">document.getElementById('userlist_nick').focus();</script>";
+			
+			
+			$tblcnt = mysql_fetch_row(dbquery("SELECT count(buildlist_id) FROM buildlist;"));
+			echo "<br/>Es sind <b>".nf($tblcnt[0])."</b> Eintr&auml;ge in der Datenbank vorhanden.";
 			echo "<br /><br />";
+			
+			//Add User
+			if (searchQueryArray($sa,$so))
+			{
+				if (isset($sa['user_nick']))
+				{
+					echo "<script type=\"text/javascript\">document.getElementById('userlist_nick').value=\"".$sa['user_nick'][1]."\";xajax_searchUserList('".$sa['user_nick'][1]."','showBuildingsOnPlanet');</script>";
+				}
+			}
 			
 			
 			$_SESSION['search']['buildings']['query']=null;
 			echo "<h2>Suchmaske</h2>";
 			echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\">";
 			tableStart();
-			echo "<tr><th class=\"tbltitle\">Planet ID</th><td class=\"tbldata\"><input type=\"text\" name=\"entity_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td>";
+			echo "<tr><th class=\"tbltitle\">Planet ID</th><td class=\"tbldata\"><input type=\"text\" name=\"entity_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
 			echo "<tr><th class=\"tbltitle\">Planetname</th><td class=\"tbldata\"><input type=\"text\" name=\"planet_name\" value=\"\" size=\"20\" maxlength=\"250\" />&nbsp;";
 			fieldqueryselbox('planet_name');
-			echo "</td>";;
-			echo "<tr><th class=\"tbltitle\">Spieler ID</th><td class=\"tbldata\"><input type=\"text\" name=\"user_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td>";
+			echo "</td></tr>";
+			echo "<tr><th class=\"tbltitle\">Spieler ID</th><td class=\"tbldata\"><input type=\"text\" name=\"user_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
 			echo "<tr><th class=\"tbltitle\">Spieler Nick</th><td class=\"tbldata\"><input type=\"text\" name=\"user_nick\" value=\"\" size=\"20\" maxlength=\"250\" autocomplete=\"off\" onkeyup=\"xajax_searchUser(this.value,'user_nick','citybox1');\" />&nbsp;";
 			fieldqueryselbox('user_nick');
-			echo "<br><div class=\"citybox\" id=\"citybox1\">&nbsp;</div></td>";
+			echo "<br><div class=\"citybox\" id=\"citybox1\">&nbsp;</div></td></tr>";
 			echo "<tr><th class=\"tbltitle\">Geb&auml;ude</th><td class=\"tbldata\"><select name=\"building_id\"><option value=\"\"><i>---</i></option>";
 			foreach ($bdata as $barr)
 			{
 				echo "<option value=\"".$barr['building_id']."\">".$barr['building_name']."</option>";
 			}
-			echo "</select></td>";
-			echo "</table>";
-			echo "<br/><input type=\"submit\" name=\"buildlist_search\" value=\"Suche starten\" />";
+			echo "</select></td></tr>";
 			tableEnd();
+			echo "<br/><input type=\"submit\" name=\"buildlist_search\" value=\"Suche starten\" />";
 			echo "</form>";
-			
-			$tblcnt = mysql_fetch_row(dbquery("SELECT count(buildlist_id) FROM buildlist;"));
-			echo "<br/>Es sind <b>".nf($tblcnt[0])."</b> Eintr&auml;ge in der Datenbank vorhanden.";
 		}
 		
 	}
