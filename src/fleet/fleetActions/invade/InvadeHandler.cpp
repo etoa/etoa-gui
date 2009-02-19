@@ -59,7 +59,7 @@ namespace invade
 						this->one = rand() % 101;
 						this->two = (100 * this->chance);
 						
-						if (this->one<=this->two) {
+						if (this->one < this->two) {
 						
 							// if the user has already the number of planets
 							if (this->f->fleetUser->getPlanetsCount() < (int)config.nget("user_max_planets",0)) {
@@ -91,6 +91,8 @@ namespace invade
 								
 								// Land fleet
 								fleetLand(1);
+								
+								this->actionLog->addText("Action succeed: " + etoa::d2s(this->one) + " < " + etoa::d2s(this->two));
 								
 								etoa::addSpecialiBattle(this->f->getUserId(),"Spezialaktion");
 							}

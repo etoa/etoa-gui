@@ -29,7 +29,7 @@ namespace bombard
 				this->one = rand() % 101;
 				this->two = config.nget("ship_bomb_factor",1) + (config.nget("ship_bomb_factor",0) * this->tLevel + ceil(this->shipCnt / 10000) + this->f->getSpecialShipBonusBuildDestroy() * 100);
 				
-				if (this->one <= this->two) {
+				if (this->one < this->two) {
 					// level the building down, at least one level 
 					this->bLevel = ceil(this->shipCnt/2500.0);
 					
@@ -43,6 +43,8 @@ namespace bombard
 						
 						this->actionMessage->addSubject("Gebäude bombardiert");
 						this->actionMessage->addUserId(this->targetEntity->getUserId());
+						
+						this->actionLog->addText("Action succeed: " + etoa::d2s(this->one) + " < " + etoa::d2s(this->two));
 						
 						etoa::addSpecialiBattle(this->f->getUserId(),"Spezialaktion");
 						

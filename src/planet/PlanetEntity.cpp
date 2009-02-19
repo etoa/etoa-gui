@@ -53,7 +53,6 @@ namespace planet
 				
 				this->solarPowerBonus = etoa::getSolarPowerBonus((int)pRow["planet_temp_from"], (int)pRow["planet_temp_to"]);
 				this->solarFuelBonus = 1 - (etoa::getSolarFuelBonus((int)pRow["planet_temp_from"], (int)pRow["planet_temp_to"]));
-				
 				this->t = time(0) - (int)pRow["planet_last_updated"];
 				
 				this->isMain = (bool)pRow["planet_user_main"];
@@ -168,13 +167,13 @@ namespace planet
 					this->store[4] += round(this->building_->getStoreFood() * pow(this->building_->getStoreFactor() , level));
 					this->store[5] += round(this->building_->getPeoplePlace() * pow(this->building_->getStoreFactor() , level));
 					
-					this->cnt[0] += ceil(this->building_->getProdMetal() * prodPercent * pow(this->building_->getProductionFactor() , level));
-					this->cnt[1] += ceil(this->building_->getProdCrystal() * prodPercent * pow(this->building_->getProductionFactor() , level));
-					this->cnt[2] += ceil(this->building_->getProdPlastic() * prodPercent * pow(this->building_->getProductionFactor() , level));
-					this->cnt[3] += ceil(this->building_->getProdFuel() * prodPercent * pow(this->building_->getProductionFactor() , level));
-					this->cnt[4] += ceil(this->building_->getProdFood() * prodPercent * pow(this->building_->getProductionFactor() , level));
-					this->cnt[6] += ceil(this->building_->getProdPower() * prodPercent * pow(this->building_->getProductionFactor() , level));
-					this->cnt[7] += floor(this->building_->getPowerUse() * prodPercent * pow(this->building_->getProductionFactor() , level));
+					this->cnt[0] += (this->building_->getProdMetal() * prodPercent * pow(this->building_->getProductionFactor() , level));
+					this->cnt[1] += (this->building_->getProdCrystal() * prodPercent * pow(this->building_->getProductionFactor() , level));
+					this->cnt[2] += (this->building_->getProdPlastic() * prodPercent * pow(this->building_->getProductionFactor() , level));
+					this->cnt[3] += (this->building_->getProdFuel() * prodPercent * pow(this->building_->getProductionFactor() , level));
+					this->cnt[4] += (this->building_->getProdFood() * prodPercent * pow(this->building_->getProductionFactor() , level));
+					this->cnt[6] += (this->building_->getProdPower() * prodPercent * pow(this->building_->getProductionFactor() , level));
+					this->cnt[7] += (this->building_->getPowerUse() * prodPercent * pow(this->building_->getProductionFactor() , level));
 				}
 			}
 		}
@@ -258,6 +257,7 @@ namespace planet
 		this->cnt[3] += (this->cnt[3] * (this->planet_->getTypeFuel() + this->race_->getRaceFuel() + this->sol_->getTypeFuel() + this->specialist_->getSpecialistProdFuel() + this->solarFuelBonus - 5));
 		this->cnt[4] += (this->cnt[4] * (this->planet_->getTypeFood() + this->race_->getRaceFood() + this->sol_->getTypeFood() + this->specialist_->getSpecialistProdFood() - 4));
 		this->cnt[6] += (this->cnt[6] * (this->planet_->getTypePower() + this->race_->getRacePower() + this->sol_->getTypePower() + this->specialist_->getSpecialistPower() - 4));
+		
 		
 		// Bei ungenügend Energie Anpassung vornehmen
 		if (this->cnt[7]>this->cnt[6]) {

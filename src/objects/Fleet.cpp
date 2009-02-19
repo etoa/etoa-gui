@@ -517,7 +517,7 @@
 		if (people>=this->getCapacity()) 
 			people = this->getCapacity();
 		
-		this->resPower += people*this->getCapacity()/this->getCapacity(total);
+		this->resPeople += people*this->getCapacity()/this->getCapacity(total);
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )

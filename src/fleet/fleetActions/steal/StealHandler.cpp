@@ -24,15 +24,15 @@ namespace steal
 			
 			// Precheck action==possible?
 			if (this->f->actionIsAllowed()) {
-				this->tLevelAtt = this->f->fleetUser->getTechLevel("Spionagetechnik") + this->f->fleetUser->getSpecialist()->getSpecialistSpyLevel();;
+				this->tLevelAtt = this->f->fleetUser->getTechLevel("Spionagetechnik") + this->f->fleetUser->getSpecialist()->getSpecialistSpyLevel();
 				this->tLevelDef = this->targetEntity->getUser()->getTechLevel("Spionagetechnik") + this->f->fleetUser->getSpecialist()->getSpecialistTarnLevel();
 				this->shipCnt = this->f->getActionCount();
 				
 				// Calculate the chance
 				this->one = rand() % 101;
-				this->two = 3 + std::min(0.0,(this->tLevelAtt - this->tLevelDef + ceil(this->shipCnt/10000.0)+ this->f->getSpecialShipBonusForsteal() * 100));
+				this->two = std::min(config.nget("spyattack_action",2),std::max(config.nget("spyattack_action",1),(config.nget("spyattack_action",0) +this->tLevelAtt - this->tLevelDef + ceil(this->shipCnt/10000.0)+ this->f->getSpecialShipBonusForsteal() * 100)));
 				
-				if (this->one <= this->two) {
+				if (this->one < this->two) {
 				
 					std::string actionString = this->f->fleetUser->stealTech(this->targetEntity->getUser());
 					

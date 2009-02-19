@@ -30,7 +30,7 @@ namespace antrax
 				this->one = rand() % 101;
 				this->two = config.nget("antrax_action",0) + ceil(this->shipCnt/10000.0) + this->tLevel * 5 + this->f->getSpecialShipBonusAntrax() * 100;
 				
-				if (this->one <= this->two) {
+				if (this->one < this->two) {
 					// Calculate the damage percentage (Max. 90%) 
 					this->temp = (int)std::min((10 + this->tLevel * 3),(int)config.nget("antrax_action",1));
 					this->fak = rand() % temp;
@@ -53,6 +53,8 @@ namespace antrax
 					
 					this->actionMessage->addSubject("Antraxangriff");
 					this->actionMessage->addUserId(this->targetEntity->getUserId());
+					
+					this->actionLog->addText("Action succeed: " + etoa::d2s(this->one) + " < " + etoa::d2s(this->two));
 					
 					etoa::addSpecialiBattle(this->f->getUserId(),"Spezialaktion");
 					

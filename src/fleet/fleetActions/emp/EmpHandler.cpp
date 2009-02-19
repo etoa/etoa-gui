@@ -30,7 +30,7 @@ namespace emp
 				this->one = rand() % 101;
 				this->two = 10 + ceil(this->shipCnt/10000.0) + this->tLevel * 5 + this->f->getSpecialShipBonusEMP() * 100;
 				
-				if (this->one <= this->two) {
+				if (this->one < this->two) {
 					// Calculate the damage
 					this->h = rand() % (10 + this->tLevel + 1);
 					if (this->tLevel==0) {
@@ -46,6 +46,8 @@ namespace emp
 						
 						this->actionMessage->addSubject("Deaktivierung");
 						this->actionMessage->addUserId(this->targetEntity->getUserId());
+						
+						this->actionLog->addText("Action succeed: " + etoa::d2s(this->one) + " < " + etoa::d2s(this->two));
 						
 						etoa::addSpecialiBattle(this->f->getUserId(),"Spezialaktion");
 						

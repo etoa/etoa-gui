@@ -41,13 +41,13 @@ namespace etoa
     
 	float getSolarFuelBonus(int t_min, int t_max)
 	{
-		float v = (int)floor((t_min + t_max)/25);
+		float v = (int)floor((t_min + t_max)/25.0);
 		return v/100;
 	}
 	
 	int getSolarPowerBonus(int t_min, int t_max)
 	{
-		int v = (int)floor((t_max + t_min)/4);
+		int v = (int)floor((t_max + t_min)/4.0);
 		if (v <= -100)
 		{
 			v = -99;
@@ -370,27 +370,25 @@ namespace etoa
 	}
 	
 	void addBattlePoints(int userId, int points, bool won, std::string reason) {
-		if (points!=0) {
-			My &my = My::instance();
-			mysqlpp::Connection *con_ = my.get();
-			
-			mysqlpp::Query query = con_->query();
-			query << "UPDATE "
-				<< "	user_ratings "
-				<< "SET "
-				<< "	battles_fought=battles_fought+1, ";
-			if (won)
-				query << "	battles_won=battles_won+1, ";
-			else
-				query << "	battles_lost=battles_lost+1, ";
-			query << "	battle_rating=battle_rating+" << points << " "
-				<< "WHERE "
-				<< "	id=" << userId << ";";
-			query.store();
-			query.reset();
-			std::string text = "Der Spieler " + etoa::d2s(userId) +" erhŠlt " + etoa::d2s(points) + " Kampfpunkt(e). Grund: " + reason;
-			add_log(17,text,0);
-		}
+		My &my = My::instance();
+		mysqlpp::Connection *con_ = my.get();
+		
+		mysqlpp::Query query = con_->query();
+		query << "UPDATE "
+			<< "	user_ratings "
+			<< "SET "
+			<< "	battles_fought=battles_fought+1, ";
+		if (won)
+			query << "	battles_won=battles_won+1, ";
+		else
+			query << "	battles_lost=battles_lost+1, ";
+		query << "	battle_rating=battle_rating+" << points << " "
+			<< "WHERE "
+			<< "	id=" << userId << ";";
+		query.store();
+		query.reset();
+		std::string text = "Der Spieler " + etoa::d2s(userId) +" erhŠlt " + etoa::d2s(points) + " Kampfpunkt(e). Grund: " + reason;
+		add_log(17,text,0);
 	}
 	
 	void addSpecialiBattle(int userId, std::string reason="") {
