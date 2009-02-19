@@ -70,7 +70,8 @@
 			user_email='".$_POST['user_email']."',
 			user_board_url='".$_POST['user_board_url']."',
 			user_theme='".$_POST['user_theme']."',
-			ticketmail=".$_POST['ticketmail']."
+			ticketmail=".$_POST['ticketmail'].",
+			player_id=".$_POST['player_id']."			
 		WHERE 
 			user_id='".$s['user_id']."';");
 		cms_ok_msg("Die Daten wurden ge&auml;ndert!");
@@ -105,6 +106,32 @@
 			<input type=\"radio\" name=\"ticketmail\" value=\"1\" ".($darr['ticketmail']==1 ? " checked=\"checked\"" : "")." /> Ja 
 			<input type=\"radio\" name=\"ticketmail\" value=\"0\" ".($darr['ticketmail']==0 ? " checked=\"checked\"" : "")." /> Nein
 		</td></tr>";
+	echo "<tr>
+		<th class=\"tbltitle\">Spieler-Account:</th>
+		<td class=\"tbldata\"><select name=\"player_id\">";
+		echo "<option value=\"0\">(Keiner)</option>";
+		$ures = dbquery("
+		SELECT
+			user_id,
+			user_nick
+		FROM
+			users
+		ORDER BY
+			user_nick
+		");
+		if (mysql_num_rows($ures)>0)
+		{
+			while ($uarr = mysql_fetch_row($ures))
+			{
+					echo "<option value=\"".$uarr[0]."\"";
+					if ($uarr[0] == $darr['player_id'])
+					{
+						echo " selected=\"selected\"";
+					}
+					echo ">".$uarr[1]."</option>";
+			}
+		}
+		echo "</select></td></tr>";		
 	echo "<tr>
 		<th class=\"tbltitle\">Design-Theme:</th>
 		<td class=\"tbldata\"><select name=\"user_theme\">";
