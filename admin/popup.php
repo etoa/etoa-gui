@@ -26,8 +26,6 @@
 	// 	Kommentar: 	Notepad für den Admin Modus
 	//
 	
-	session_start();
-
 	require("inc/includer.inc.php");
 	
 	adminHtmlHeader($s['theme']);

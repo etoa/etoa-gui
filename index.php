@@ -214,9 +214,8 @@
 	$allowed_ips = explode("\n",$cfg->value('offline'));
 	if ($cfg->value('offline')==1 && !in_array($_SERVER['REMOTE_ADDR'],$allowed_ips))
 	{
-		echo "<h1 style=\"text-align:center;\">Spiel offline</h1>
-		<div style=\"width:900px;margin:10px auto;text-align:center;background:black;border:1px solid #ddd;\">
-		<img src=\"images/maintenance.jpg\" alt=\"maintenance\" /><br/><br/>";
+		iBoxStart("Spiel offline",750,"margin:50px auto;text-align:center");
+		echo "<img src=\"images/maintenance.jpg\" alt=\"maintenance\" /><br/><br/>";
 		if ($cfg->p2('offline')!="")
 		{
 			echo text2html($cfg->p2('offline'))."<br/><br/>";
@@ -225,27 +224,27 @@
 		{
 			echo "Das Spiel ist aufgrund von Wartungsarbeiten momentan offline! Schaue sp&auml;ter nochmals vorbei!<br/><br/>";
 		}
-		echo "<a href=\"".LOGINSERVER_URL."\">Zur Startseite</a><br/><br/></div>";
-		session_destroy();
-		$s=Null;
+		echo button("Zur Startseite",LOGINSERVER_URL);
+		iBoxEnd();
 	}
 	// Login ist gesperrt
 	elseif ($cfg->value('enable_login')==0)
 	{
-		echo "<div style=\"text-align:center;\">
-		<h1>Login deaktiviert</h1>
-		Der Login nocht nicht aktiviert!<br/><br/>
-		<a href=\"".LOGINSERVER_URL."\">Hauptseite</a></div>";
-		session_destroy();
+		iBoxStart("Login geschlossen",750,"margin:50px auto;text-align:center");
+		echo "<img src=\"images/keychain.png\" alt=\"maintenance\" /><br/><br/>";
+		echo "Der Login momentan geschlossen!<br/><br/>";
+		echo button("Zur Startseite",LOGINSERVER_URL);
+		iBoxEnd();
 		$s=Null;
 	}
 	// Login ist erlaubt aber noch zeitlich zu früh
 	elseif ($cfg->value('enable_login')==1 && $cfg->value('enable_login')!="" && $cfg->param1('enable_login') > time())
 	{
-		echo "<div style=\"text-align:center;\">
-		<h1>Login noch nicht offen</h1>
-		Das Spiel startet am ".date("d.m.Y",$cfg->param1('enable_login'))." ab ".date("H:i",$cfg->param1('enable_login'))."!<br/><br/>
-		<a href=\"".LOGINSERVER_URL."\">Hauptseite</a></div>";
+		iBoxStart("Login noch geschlossen",750,"margin:50px auto;text-align:center");
+		echo "<img src=\"images/keychain.png\" alt=\"maintenance\" /><br/><br/>";
+		echo "Das Spiel startet am ".date("d.m.Y",$cfg->param1('enable_login'))." ab ".date("H:i",$cfg->param1('enable_login'))."!<br/><br/>";
+		echo button("Zur Startseite",LOGINSERVER_URL);
+		iBoxEnd();
 		session_destroy();
 		$s=Null;
 	}

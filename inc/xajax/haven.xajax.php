@@ -111,7 +111,7 @@
 						
 	    $tabulator=1;
 			echo "<form id=\"shipForm\" onsubmit=\"xajax_havenShowTarget(xajax.getFormValues('shipForm')); return false;\">";
-			tableStart();
+			tableStart("Vorhandene Raumschiffe");
 			//echo "<table class=\"tb\">";
 			echo "<tr>
 				<th colspan=\"6\">Schiffe wählen</th>

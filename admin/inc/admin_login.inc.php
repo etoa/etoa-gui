@@ -49,7 +49,7 @@
 		}
 		echo "Gib dein Benutzername und dein Passwort ein um dich anzumelden.<br/>
 		Klicke auf das Logo um zur Startseite zurückzukehren.<br/><br/>";
-		echo "<form action=\"?page=$page\" method=\"post\">";
+		echo "<form action=\"?".$_SERVER['QUERY_STRING']."\" method=\"post\">";
 		echo "<table style=\"margin:0px auto;\">";
 		echo "<tr><th class=\"tbltitle\">Benutzername:</th><td class=\"tbldata\"><input type=\"text\" name=\"login_nick\" maxlength=\"255\" size=\"25\" /></td></tr>";
 		echo "<tr><th class=\"tbltitle\">Passwort:</th><td class=\"tbldata\"><input type=\"password\" name=\"login_password\" maxlength=\"255\" size=\"25\" /></td></tr>";

@@ -69,7 +69,8 @@
 			user_name='".$_POST['user_name']."',
 			user_email='".$_POST['user_email']."',
 			user_board_url='".$_POST['user_board_url']."',
-			user_theme='".$_POST['user_theme']."'
+			user_theme='".$_POST['user_theme']."',
+			ticketmail=".$_POST['ticketmail']."
 		WHERE 
 			user_id='".$s['user_id']."';");
 		cms_ok_msg("Die Daten wurden ge&auml;ndert!");
@@ -81,10 +82,7 @@
 	
 	$dres = dbquery("
 	SELECT
-		user_name,
-		user_email,
-		user_board_url,
-		user_theme
+		*
 	FROM
 		admin_users
 	WHERE
@@ -101,6 +99,12 @@
 	echo "<tr>
 		<th class=\"tbltitle\">Forum-Profil:</th>
 		<td class=\"tbldata\"><input type=\"text\" name=\"user_board_url\" size=\"80\" value=\"".$darr['user_board_url']."\" /></td></tr>";
+	echo "<tr>
+		<th class=\"tbltitle\">Mail bei Ticket:</th>
+		<td class=\"tbldata\">
+			<input type=\"radio\" name=\"ticketmail\" value=\"1\" ".($darr['ticketmail']==1 ? " checked=\"checked\"" : "")." /> Ja 
+			<input type=\"radio\" name=\"ticketmail\" value=\"0\" ".($darr['ticketmail']==0 ? " checked=\"checked\"" : "")." /> Nein
+		</td></tr>";
 	echo "<tr>
 		<th class=\"tbltitle\">Design-Theme:</th>
 		<td class=\"tbldata\"><select name=\"user_theme\">";
