@@ -500,6 +500,24 @@
 				");
 				$arr = mysql_fetch_row($res);
 				$points_exp = max(0,$arr[0]);
+				
+				
+				$res = dbquery("
+					SELECT
+						SUM(fs_special_ship_exp)
+					FROM
+						fleet_ships
+					INNER JOIN
+						fleet
+					ON
+						fleet.id=fleet_ships.fs_fleet_id
+					AND 
+						fleet.user_id='".$user_id."'
+					AND
+						fleet_ships.fs_ship_cnt='1'
+				");
+				$arr = mysql_fetch_row($res);
+				$points_exp += max(0,$arr[0]);
 
 				// Save part of insert query
 				$user_stats_query .= ",(

@@ -8,6 +8,7 @@
 		private $countArr = null;
 		private $bunkeredArr = null;
 		private $count = null;
+		private $special = null;
 		
 		function ShipList($entityId,$userId,$load = 0)
 		{
@@ -27,6 +28,9 @@
 				l.shiplist_ship_id as lid,
 				l.shiplist_count as lcnt,
 				l.shiplist_bunkered as lbcnt,
+				l.shiplist_special_ship_bonus_weapon as bweapon,
+				l.shiplist_special_ship_bonus_structure as bstructure,
+				l.shiplist_special_ship_bonus_shield as bshield,
 				s.*
 			FROM
 				shiplist l
@@ -44,6 +48,14 @@
 				$this->countArr[$arr['lid']] = $arr['lcnt'];
 				$this->bunkeredArr[$arr['lid']] = $arr['lbcnt'];
 				$this->count += $arr['lcnt'];
+				if ($arr['special_ship'])
+				{
+					$this->special[$arr['lid']] = array($arr['bstructure'],$arr['bshield'],$arr['bweapon']);
+				}
+				else
+				{
+					$this->special[$arr['lid']] = array(0,0,0);
+				}
 			}
 		}
 
@@ -190,6 +202,42 @@
 				AND shiplist_id='".$arr[0]."';");
 
 			return $delable;
+		}
+		
+		function getBStructure()
+		{
+  			if ($this->items == null)
+  				$this->load();			
+				$i = 0;
+				foreach ($this->items as $k=>&$v)
+				{
+					$i+= $this->special[$k][0] * $v->bStructure;
+				}
+				return $i;
+		}
+		
+		function getBShield()
+		{
+  			if ($this->items == null)
+  				$this->load();			
+				$i = 0;
+				foreach ($this->items as $k=>&$v)
+				{
+					$i+= $this->special[$k][1] * $v->bShield;
+				}
+				return $i;
+		}
+		
+		function getBWeapon()
+		{
+  			if ($this->items == null)
+  				$this->load();			
+				$i = 0;
+				foreach ($this->items as $k=>&$v)
+				{
+					$i+= $this->special[$k][2] * $v->bWeapon;
+				}
+				return $i;
 		}
 		
 		

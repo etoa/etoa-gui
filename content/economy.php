@@ -167,7 +167,7 @@
           }
           if ($bp['fuel']!="")
           {
-          	$bp['fuel'] = $bp['fuel'] + ($bp['fuel'] * ($cp->typeFuel-1)) + ($bp['fuel'] * ($cu->race->fuel-1) + ($bp['fuel'] * ($cp->starFuel-1)) + ($bp['fuel'] * ($cu->specialist->prodFuel-1))) + ($bp['fuel'] * $cp->getFuelProductionBonus());
+          	$bp['fuel'] = $bp['fuel'] + ($bp['fuel'] * ($cp->typeFuel-1)) + ($bp['fuel'] * ($cu->race->fuel-1) + ($bp['fuel'] * ($cp->starFuel-1)) + ($bp['fuel'] * ($cu->specialist->prodFuel-1))) + ($bp['fuel'] * $cp->getFuelProductionBonus() * -1);
           }
           if ($bp['food']!="")
           {
@@ -182,12 +182,25 @@
           $cnt['food'] += floor($bp['food']*$barr['buildlist_prod_percent']);
 
           $building_power_use = floor($barr['building_power_use'] * pow($barr['building_production_factor'],$barr['buildlist_current_level']-1));
-
+		  
+		  //KälteBonusString
+		  $fuelBonus = "Kältebonus: ";
+		  $spw = $cp->fuelProductionBonus();
+		  if ($spw>=0)
+		  {
+			  $fuelBonus .= "<span style=\"color:#0f0\">+".$spw."%</span>";
+		  }
+		  else
+		  {
+			  $fuelBonus .= "<span style=\"color:#f00\">".$spw."%</span>";
+		  }				
+		  $fuelBonus .=" ".RES_FUEL."-Produktion";
+		  
           // Werte anzeigen
           echo "<td ".tm("Grundproduktion ohne Boni",nf(floor($bpb['metal']))." t/h").">".nf(floor($bp['metal']*$barr['buildlist_prod_percent']),1)."</td>";
           echo "<td ".tm("Grundproduktion ohne Boni",nf(floor($bpb['crystal']))." t/h").">".nf(floor($bp['crystal']*$barr['buildlist_prod_percent']),1)."</td>";
           echo "<td".tm("Grundproduktion ohne Boni",nf(floor($bpb['plastic']))." t/h").">".nf(floor($bp['plastic']*$barr['buildlist_prod_percent']),1)."</td>";
-          echo "<td ".tm("Grundproduktion ohne Boni",nf(floor($bpb['fuel']))." t/h").">".nf(floor($bp['fuel']*$barr['buildlist_prod_percent']),1)."</td>";
+          echo "<td ".tm("Grundproduktion ohne Boni",nf(floor($bpb['fuel']))." t/h<br />".$fuelBonus).">".nf(floor($bp['fuel']*$barr['buildlist_prod_percent']),1)."</td>";
           echo "<td ".tm("Grundproduktion ohne Boni",nf(floor($bpb['food']))." t/h").">".nf(floor($bp['food']*$barr['buildlist_prod_percent']),1)."</td>";
           echo "<td";
           if ($building_power_use>0) 

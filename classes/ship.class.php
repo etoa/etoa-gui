@@ -36,6 +36,10 @@
 			$this->heal = $arr['ship_heal'];
 			$this->capacity = $arr['ship_capacity'];
 			$this->peopleCapacity = $arr['ship_people_capacity'];
+			
+			$this->bStructure = $arr['special_ship_bonus_structure'];
+			$this->bShield = $arr['special_ship_bonus_shield'];
+			$this->bWeapon = $arr['special_ship_bonus_weapon'];
 
 			$this->isValid = true;
 		}

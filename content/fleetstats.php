@@ -150,9 +150,6 @@
 	    special_ship
 	  FROM
 	  	ships
-	  WHERE
-	  	ship_buildable='1'
-	  	AND ship_show='1'
 	  ORDER BY
 	  	special_ship DESC,
 	  	ship_name;");
