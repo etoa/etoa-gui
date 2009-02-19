@@ -63,8 +63,6 @@
 				user_id,
 				user_nick,
 				user_email,
-				group_name,
-				user_board_url
 			FROM 
 				admin_users
 			WHERE
@@ -74,6 +72,7 @@
 		{
 			while ($arr = mysql_fetch_array($res))
 			{
+				$text = "Hallo ".$arr['user_nick']."\n\n";
 				$text = "Ticket #".$tid." ".ROUNDID."\n----------------------\n\n";
 				$text.= "Nick: ".$cu->nick."\n";
 				$text.= "ID: ".$cu->id."\n";
