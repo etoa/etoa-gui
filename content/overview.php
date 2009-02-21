@@ -52,6 +52,7 @@
 		}
 	}
 
+
 	// REMOVE / DISABLE AFTER BETA
 	iBoxStart("BETA");		
 	echo "Aktuelle Version: <span style=\"color:#f90;font-weight:bold;\">";
@@ -65,7 +66,7 @@
 	echo "Diskussionen: <a href=\"http://www.etoa.ch/forum/board.php?boardid=8\" target=\"_blank\">Testerforum</a><br/>";
 	echo "Letzte Änderungen:<br/><span style=\"color:#ff0;\">";
 	ob_start();
-	passthru("svn log -r HEAD:".($ver-3));
+	//passthru("svn log -r HEAD:".($ver-3));
 	echo nl2br(ob_get_clean());
 	echo "</span>";
 	iBoxEnd();
@@ -93,9 +94,9 @@
 
 
 
-	/*************
-	* Ratshaus   *
-	*************/
+	//
+	// Ratshaus   
+	//
 	
 		$anres=dbquery("
 		SELECT
@@ -122,9 +123,9 @@
 
 
 
-	/***********
-	* Flotten  *
-	************/
+	//
+	// Flotten  
+	//
 
 		//
 		// Eigene Flotten
@@ -171,9 +172,9 @@
 
 
 
-	/*****************
-	* Technologien   *
-	******************/
+	//
+	// Technologien   
+	//
 	
 		//Lädt forschende Tech
 	  $bres = dbquery("
@@ -210,9 +211,9 @@
 			echo "<td class=\"tbldata\">Es wird nirgendwo geforscht!</td></tr>";
 		}
 		
-		/*****************
-		* Allianzegebäude *
-		******************/
+		//
+		// Allianzegebäude 
+		//
 		
 		if($cu->allianceId!=0)
 		{
@@ -350,9 +351,9 @@
 
 
 
-	/*******************************************
-	* Javascript für dynamischen Planetkreis   *
-	********************************************/
+	//
+	// Javascript für dynamischen Planetkreis   
+	//
 
 
     ?>
@@ -550,9 +551,9 @@
     <?PHP
 
 
-	/*****************
-	* Planetkreis    *
-	******************/
+	//
+	// Planetkreis   
+	//
 
 	//Kreis Definitionen
 	$division=15;			//Kreis Teilung: So hoch wie die maximale Anzahl Planeten
@@ -961,5 +962,6 @@
 	</table></center>";
 
 echo "</div></div></center>";
+
 
 ?>

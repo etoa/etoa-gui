@@ -1,6 +1,5 @@
 <?PHP	
-	// Start PHP output stack
-	ob_start();											
+	
 	$time = time();
 
 	// Go to user setup page if user wasn't set up correctly
@@ -139,10 +138,9 @@
 				$s=Null;
 			}
 			else
-			{			
+			{
 				if (eregi('^[a-z\_]+$',$page)  && strlen($page)<=50)
 				{
-					
 					// DEBUG
 					$query_counter=0; 
 					$queries=array();
@@ -164,6 +162,5 @@
 			}
 		}
 	}	
-	// End PHP output stack and send content to browser
-	ob_end_flush();												
+	
 ?>

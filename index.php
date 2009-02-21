@@ -261,6 +261,7 @@
 	// Zugriff erlauben und Inhalt anzeigen
 	else
 	{
+		
 		// Zeit der letzten User-Aktion speichern
 		dbquery("UPDATE users SET user_acttime='".time()."' WHERE user_id='".$s['user_id']."';");
 		dbquery ("UPDATE user_sessionlog SET log_acttime=".time()." WHERE log_user_id=".$s['user_id']." AND log_session_key='".$s['key']."';");
@@ -328,6 +329,7 @@
 			}
 		}
 
+
 		// Navigation laden
 		require_once('inc/nav.inc.php');
 
@@ -346,6 +348,7 @@
 		$np = new Notepad($cu->id);
 		$numNotes = $np->numNotes();
 		unset($np);
+
 
 		// Assign template variables
 		$tpl->assign("messages",NEW_MESSAGES);
@@ -377,6 +380,7 @@
 			$tpl->assign("selectField","");		
 			
 		}
+		
 		$tpl->assign("usersOnline",$garr[0]);
 		$tpl->assign("usersTotal",$ucarr[0]);
 		$tpl->assign("notes",$numNotes);
@@ -415,20 +419,21 @@
 			$tpl->assign("noteBox",true);
 		else
 			$tpl->assign("noteBox",false);
-			
+
 		// Include content
 		ob_start();
 		require("inc/content.inc.php");
 		$tpl->assign("content",ob_get_clean());
-
+		
 		$render_time = explode(' ',microtime());
 		$rtime = $render_time[1]+$render_time[0]-$render_starttime;
 		$tpl->assign("renderTime",round($rtime,3));
-		
+	
+					
 		// Display main template
 		$tpl->display(getcwd()."/".CSS_STYLE."/template.tpl");						
 
-
+	
 
 	}
 	
