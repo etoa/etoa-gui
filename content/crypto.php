@@ -19,14 +19,14 @@
 	//
 	// 	File: crypto.php
 	// 	Created: 14.12.2007
-	// 	Last edited: 15.07.2007
-	// 	Last edited by: MrCage <mrcage@etoa.ch>
+	// 	Last edited: 22.09.2009
+	// 	Last edited by: glaubinix <glaubinix@etoa.ch>
 	//	
 	/**
 	* Manages the cryptocenter
 	*
 	* @author MrCage <mrcage@etoa.ch>
-	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
+	* @copyright Copyright (c) 2004-2009 by EtoA Gaming, www.etoa.net
 	*/	
 
 	// BEGIN SKRIPT //
@@ -36,7 +36,14 @@
 	// Gebäude Level und Arbeiter laden
  	//$bl = new BuildList($cp->id,$cu->id);
 	//$cryptoCenterLevel = $bl->getLevel(BUILD_CRYPTO_ID);
-	$cryptoCenterLevel = $cu->alliance->getBuildingLevel("Kryptocenter");
+	if ($cu->allianceId!=0)
+	{
+		$cryptoCenterLevel = $cu->alliance->getBuildingLevel("Kryptocenter");
+	}
+	else
+	{
+		$cryptoCenterLevel = 0;
+	}
 
 	// Allg. deaktivierung
   if ($cfg->get('crypto_enable') == 1)

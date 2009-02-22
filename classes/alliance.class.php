@@ -17,10 +17,10 @@
 	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
 	//////////////////////////////////////////////////
 	//
-	// 	File: alliance.php
+	// 	File: alliance.class.php
 	// 	Created: 01.12.2004
-	// 	Last edited: 07.07.2007
-	// 	Last edited by: MrCage <mrcage@etoa.ch>
+	// 	Last edited: 22.09.2009
+	// 	Last edited by: glaubinix <glaubinix@etoa.ch>
 	//	
 
 	/**
@@ -71,7 +71,7 @@
 		protected $allianceObjectsForMembers;
 		protected $buildings = null;
 		protected $technologies = null;
-		protected $cooldown;
+		protected $cryptoCooldown,$marketCooldown;
 		
 		/**
 		* Constructor
@@ -780,7 +780,10 @@
 				while ($arr = mysql_fetch_row($res))
 				{
 					if ($arr[1]=="Kryptocenter")
-						$this->cooldown=$arr[2];
+						$this->cryptoCooldown=$arr[2];
+					elseif ($arr[1]=="Handelszentrum")
+						$this->marketCooldown=$arr[2];
+					
 					$this->buildings[$arr[1] ] = $arr[0];
 				}
 			}
@@ -809,12 +812,29 @@
 			if ($this->buildings==null)
 				$this->loadBuildings();
 			
-			return $this->cooldown;
+			return $this->cryptoCooldown;
 		}
 		
 		function setCryptoCooldown($cd)
 		{	
-			$this->cooldown=$cd;
+			$this->cryptoCooldown=$cd;
+		}
+		
+		/**
+		* Return Market Cooldown
+		*/
+		
+		function getMarketCooldown()
+		{
+			if ($this->buildings==null)
+				$this->loadBuildings();
+			
+			return $this->marketCooldown;
+		}
+		
+		function setMarketCooldown($cd)
+		{	
+			$this->marketCooldown=$cd;
 		}
 		
 		/**

@@ -19,15 +19,15 @@
 	//
 	// 	File: market.php
 	// 	Created: 01.12.2004
-	// 	Last edited: 05.08.2007
-	// 	Last edited by: Lamborghini <lamborghini@etoa.ch>
+	// 	Last edited: 22.09.2009
+	// 	Last edited by: glaubinix <glaubinix@etoa.ch>
 	//
 		
 	/**
 	* Ship- and Resource-Market
 	*
 	* @author Lamborghini <lamborghini@etoa.ch>
-	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
+	* @copyright Copyright (c) 2004-2009 by EtoA Gaming, www.etoa.net
 	*/
 
 	/********
@@ -1547,44 +1547,73 @@
 	$possible=MARKET_LEVEL-$anzahl;
 			
 	// Lädt Stufe des Allianzmarktplatzes
-	$alliance_market_res=dbquery("
-			SELECT 
-				alliance_buildlist_current_level
-			FROM 
-				alliance_buildlist
-			WHERE
-				alliance_buildlist_alliance_id='".$cu->allianceId."' 
-				AND alliance_buildlist_building_id='".ALLIANCE_MARKET_ID."'
-			;");
-	if(mysql_num_rows($alliance_market_res)>0)
+	if ($cu->allianceId()>0)
+		$alliance_market_level = $cu->alliance->getBuildingLevel("Handelszentrum");
+	else
+		$alliance_market_level = 0;
+	
+	// Calculate cooldown
+	if ($alliance_market_level<5)
 	{
-		$alliance_market_row=mysql_fetch_row($alliance_market_res);
-		$alliance_market_level = $alliance_market_row[0];
+		$factor = 0.2 * $alliance_market_level;
 	}
 	else
 	{
-		$alliance_market_level = 0;
+		$factor = $alliance_market_level-4;
+	}
+	$cooldown = 3600/$factor;
+	if ($alliance_market_level>0)
+	{
+		if ($cu->alliance->getMarketCooldown()>time())
+		{
+			$status_text = "Bereit in <span id=\"cdcd\">".tf($cu->alliance->getMarketCooldown()-time()."</span>");
+			$cd_enabled=true;
+		}
+		else
+		{
+			$status_text = "Bereit";
+			$cd_enabled=false;
+		}
+	}
+	else
+	{
+		$status_text = "Es wurde noch kein Handelszentrum gebaut!";
+		$cd_enabled=false;
 	}
 	
-	//Marktinof Bof
-	iBoxStart("Marktplatz-Infos");
-	echo "<div style=\"text-align:left;\">";
-	echo "Im Moment hast du ".$anzahl." Angebote von diesem Planet auf dem Markt<br/>";
-	echo "Du kannst noch ".$possible." Angebote einstellen<br/>";
-	echo "Der Verkaufsgeb&uuml;hr des Marktplatzes betr&auml;gt ".get_percent_string(MARKET_TAX,1,1)."";
-	if ($cu->specialist->tradeBonus!=1)
-	{
-		echo " (inkl ".get_percent_string($cu->specialist->tradeBonus,1,1)." Kostenverringerung durch ".$cu->specialist->name."!";
-	}
-	if ($cu->specialist->tradeTime!=1)
-	{
-		echo "<br/>Die Handelsflotten fliegen durch ".$cu->specialist->name." mit ".get_percent_string($cu->specialist->tradeTime,1)." Geschwindigkeit!";
-	}
-	echo "</div>";
-	iBoxEnd();
-    
     // Definiert den Rückgabefaktor beim zurückziehen eines Angebots
     $return_factor = 1 - (1/(MARKET_LEVEL+1));
+	
+	
+	//Marktinof Bof
+	tableStart("Marktplatz-Infos");
+		echo "<tr><th class=\"tbltitle\">Angebote:</th>
+				<td class=\"tbldata\">Im Moment hast du ".$anzahl." Angebote von diesem Planet auf dem Markt</td></tr>";
+		echo "<tr><th class=\"tbltitle\">Mögliche Angebote:</th>
+				<td class=\"tbldata\">Du kannst noch ".$possible." Angebote einstellen</td></tr>";
+		echo "<tr><th class=\"tbltitle\">Rückzugsgebühren:</th>
+				<td class=\"tbldata\">Wenn du ein Angebot zur&uuml;ckziehst erh&auml;lst du ".(round($return_factor,2)*100)."% des Angebotes zur&uuml;ck (abgerundet).</td></tr>";
+		echo "<tr><th class=\"tbltitle\">Verkaufsgebühren:</th>
+				<td class=\"tbldata\">Der Verkaufsgeb&uuml;hr des Marktplatzes betr&auml;gt ".get_percent_string(MARKET_TAX,1,1)."";
+		if ($cu->specialist->tradeBonus!=1)
+		{
+			echo " (inkl ".get_percent_string($cu->specialist->tradeBonus,1,1)." Kostenverringerung durch ".$cu->specialist->name."!";
+		}
+		echo "	</td></tr>";
+		if ($cu->specialist->tradeTime!=1)
+		{
+			echo "<tr><th class=\"tbltitle\">Handelsflottengeschwindigkeit:</th>
+					<td class=\"tbldata\">Die Handelsflotten fliegen durch ".$cu->specialist->name." mit ".get_percent_string($cu->specialist->tradeTime,1)." Geschwindigkeit!
+					</td></tr>";
+		}
+		if ($cu->allianceId()>0)
+		{
+			echo "<tr><th class=\"tbltitle\">Allianzmarktstatus:</th>
+					<td class=\"tbldata\">".$status_text."</td></tr>";
+		}
+
+	tableEnd();
+ 
 
 		// Navigation
 		$tabitems = array(
@@ -1772,11 +1801,11 @@
 			
 			if($cnt > 0)
 			{
-				echo "".$cnt." Angebot(e) erfolgreich gekauft!<br/>";
+				ok_msg("".$cnt." Angebot(e) erfolgreich gekauft!");
 			}
 			if($cnt_error > 0)
 			{
-				echo "".$cnt_error." Angebot(e) sind nicht mehr vorhanden, oder die benötigten Rohstoffe sind nicht mehr verfügbar!<br/>";
+				error_msg("".$cnt_error." Angebot(e) sind nicht mehr vorhanden, oder die benötigten Rohstoffe sind nicht mehr verfügbar!");
 			}
 			
 			
@@ -1965,11 +1994,11 @@
 			
 			if($cnt > 0)
 			{
-				echo "".$cnt." Angebot(e) erfolgreich gekauft!<br/>";
+				ok_msg("".$cnt." Angebot(e) erfolgreich gekauft!");
 			}
 			if($cnt_error > 0)
 			{
-				echo "".$cnt_error." Angebot(e) sind nicht mehr vorhanden, oder die benötigten Rohstoffe sind nicht mehr verfügbar!<br/>";
+				error_msg("".$cnt_error." Angebot(e) sind nicht mehr vorhanden, oder die benötigten Rohstoffe sind nicht mehr verfügbar!");
 			}			
 
 		}
@@ -2330,17 +2359,35 @@
 			$_POST['ress_buy_food'] = nf_back($_POST['ress_buy_food']);
 
 			
-			if($_POST['ressource_for_alliance']=="")
+			if(!isset($_POST['ressource_for_alliance']))
 			{
 				$_POST['ressource_for_alliance']=0;
 				$for_alliance="";
 			}
-			else
+			elseif ($alliance_market_level>0 && !$cd_enabled)
 			{
 				$_POST['ressource_for_alliance']=$cu->allianceId;
 				$for_alliance="f&uuml;r ein Allianzmitglied ";
+				
+				// Set cooldown
+				$cd = time()+$cooldown;
+				dbquery("
+						UPDATE
+							alliance_buildlist
+						SET
+							alliance_buildlist_cooldown=".$cd."
+						WHERE
+							alliance_buildlist_alliance_id='".$cu->allianceId."'
+							AND alliance_buildlist_building_id='".ALLIANCE_MARKET_ID."';");
+				
+				$cu->alliance->setMarketCooldown($cd);
 			}
-
+			else
+			{
+				$_POST['ressource_for_alliance']=0;
+				$for_alliance="";
+			}
+			
 			// Prüft ob noch immer genug Rohstoffe auf dem Planeten sind (eventueller verlust durch Kampf?)
   		if($_POST['ress_sell_metal'] * MARKET_TAX <= $cp->resMetal
   		&& $_POST['ress_sell_crystal'] * MARKET_TAX <= $cp->resCrystal 
@@ -2424,12 +2471,12 @@
 	          '".addslashes($_POST['ressource_text'])."',
 	          '".time()."');");
 	          
-	      echo "Angebot erfolgreich aufgegeben<br/><br/>";
+	      ok_msg("Angebot erfolgreich aufgegeben");
 	      return_btn();
     	}
     	else
     	{
- 	      echo "Es sind nicht mehr genügend Rohstoffe vorhanden!<br/><br/>";
+ 	      error_msg("Es sind nicht mehr genügend Rohstoffe vorhanden!");
 	      return_btn();   		
     	}
     }
@@ -2441,15 +2488,33 @@
 		//
 		elseif (isset($_POST['ship_last_update']) && $_POST['ship_last_update']==1 && checker_verify())
 		{
-			if($_POST['ship_for_alliance']=="")
+			if(!isset($_POST['ship_for_alliance']))
 			{
 				$_POST['ship_for_alliance']=0;
 				$for_alliance="";
 			}
-			else
+			elseif ($alliance_market_level>0 && !$cd_enabled)
 			{
 				$_POST['ship_for_alliance']=$cu->allianceId;
-				$for_alliance="für ein Allianzmitglied ";
+				$for_alliance="f&uuml;r ein Allianzmitglied ";
+				
+				// Set cooldown
+				$cd = time()+$cooldown;
+				dbquery("
+						UPDATE
+							alliance_buildlist
+						SET
+							alliance_buildlist_cooldown=".$cd."
+						WHERE
+							alliance_buildlist_alliance_id='".$cu->allianceId."'
+							AND alliance_buildlist_building_id='".ALLIANCE_MARKET_ID."';");
+				
+				$cu->alliance->setMarketCooldown($cd);
+			}
+			else
+			{
+				$_POST['ship_for_alliance']=0;
+				$for_alliance="";
 			}
 
 			$ship_id = $_POST['ship_list'];
@@ -2540,18 +2605,18 @@
           //Log schreiben
           add_log(LOG_CAT,"Der Spieler ".$cu->nick." hat folgende Schiffe zum Verkauf ".$for_alliance."angeboten:\n\n".nf($ship_count)." ".$ship_name."\n\nPreis:\n ".RES_METAL.": ".nf($_POST['ship_buy_metal'])."\n".RES_CRYSTAL.": ".nf($_POST['ship_buy_crystal'])."\n".RES_PLASTIC.": ".nf($_POST['ship_buy_plastic'])."\n".RES_FUEL.": ".nf($_POST['ship_buy_fuel'])."\n".RES_FOOD.": ".nf($_POST['ship_buy_food'])."\n\n",time());
 
-        	echo "Angebot erfolgreich abgesendet<br/><br/>";
+        	ok_msg("Angebot erfolgreich abgesendet!");
           return_btn();
         }
         else
         {
-       		echo "Die angegebene Anzahl Schiffe ist nicht mehr verfügbar!<br/><br/>";
+       		error_msg("Die angegebene Anzahl Schiffe ist nicht mehr verfügbar!");
           return_btn();       	
         }
       }
       else
       {
-      	echo "Die angegebenen Schiffe sind nicht mehr vorhanden!<br/><br/>";
+      	error_msg("Die angegebenen Schiffe sind nicht mehr vorhanden!");
      		return_btn();
       }
 
@@ -2658,13 +2723,13 @@
 
         add_log(LOG_CAT,"Der Spieler ".$cu->nick." hat folgende Rohstoffe zur versteigerung angeboten:\n\n".RES_METAL.": ".nf($_POST['auction_sell_metal'])."\n".RES_CRYSTAL.": ".nf($_POST['auction_sell_crystal'])."\n".RES_PLASTIC.": ".nf($_POST['auction_sell_plastic'])."\n".RES_FUEL.": ".nf($_POST['auction_sell_fuel'])."\n".RES_FOOD.": ".nf($_POST['auction_sell_food'])."\n\nAuktionsende: ".date("d.m.Y H:i",$auction_end_time)."",time());
 
-        echo "Auktion erfolgreich lanciert<br/><br/>";
+        ok_msg("Auktion erfolgreich lanciert");
         return_btn();
 
       }
       else
       {
-          echo "Die angegebenen Rohstoffe sind nicht mehr verfügbar!<br/><br/>";
+          error_msg("Die angegebenen Rohstoffe sind nicht mehr verfügbar!");
           return_btn();
       }
     
@@ -3654,7 +3719,7 @@
 			}
 			else
 			{
-				echo "Angebot nicht mehr vorhanden!<br/>";
+				error_msg("Angebot nicht mehr vorhanden!");
 			}
 			
 		}
@@ -3831,11 +3896,11 @@
 						market_ship 
 					WHERE 
 						ship_market_id='".$_POST['ship_market_id']."'");
-					echo "Angebot wurde gel&ouml;scht und du hast ".(round($return_factor,2)*100)."% der angebotenen Schiffe zur&uuml;ck erhalten (es wird abgerundet)";
+					ok_msg("Angebot wurde gel&ouml;scht und du hast ".(round($return_factor,2)*100)."% der angebotenen Schiffe zur&uuml;ck erhalten (es wird abgerundet)");
 				}
 				else
 				{
-					echo "Es wurde kein entsprechendes Angebot ausgew&auml;hlt!<br/><br/>";
+					error_msg("Es wurde kein entsprechendes Angebot ausgew&auml;hlt!");
 					return_btn(array("mode"=>"user_sell"));
 				}
 			}
@@ -3876,11 +3941,11 @@
 						ressource_market_id='".$_POST['ressource_market_id']."'");
 						
 					add_log(7,"Der Spieler ".$cu->nick." zieht folgendes Rohstoffangebot zur&uuml;ck: \n\n".RES_METAL.": ".$rcrow['sell_metal']."\n".RES_CRYSTAL.": ".$rcrow['sell_crystal']."\n".RES_PLASTIC.": ".$rcrow['sell_plastic']."\n".RES_FUEL.": ".$rcrow['sell_fuel']."\n".RES_FOOD.": ".$rcrow['sell_food']."\n\nEr erh&auml;lt ".(round($return_factor,2)*100)."% der Waren erstattet!",time());
-					echo "Angebot wurde gel&ouml;scht und du hast ".(round($return_factor,2)*100)."% der angebotenen Rohstoffe zur&uuml;ck erhalten!";
+					ok_msg("Angebot wurde gel&ouml;scht und du hast ".(round($return_factor,2)*100)."% der angebotenen Rohstoffe zur&uuml;ck erhalten!");
 				}
 				else
 				{
-					echo "Es wurde kein entsprechendes Angebot ausgew&auml;hlt!<br/><br/>";
+					error_msg("Es wurde kein entsprechendes Angebot ausgew&auml;hlt!");
 					return_btn(array("mode"=>"user_sell"));
 				}
 			}
@@ -3919,11 +3984,11 @@
 
 					add_log(7,"Der Spieler ".$cu->nick." zieht folgende Auktion zur&uuml;ck:\nRohstoffe:\n".RES_METAL.": ".$acrow['sell_metal']."\n".RES_CRYSTAL.": ".$acrow['sell_crystal']."\n".RES_PLASTIC.": ".$acrow['sell_plastic']."\n".RES_FUEL.": ".$acrow['sell_fuel']."\n".RES_FOOD.": ".$acrow['sell_food']."\n\nEr erh&auml;lt ".(round($return_factor,2)*100)."% der Waren erstattet!",time());
 
-					echo "Auktion wurde gel&ouml;scht und du hast ".(round($return_factor,2)*100)."% der angebotenen Waren zur&uuml;ck erhalten (es wird abgerundet)!";
+					ok_msg("Auktion wurde gel&ouml;scht und du hast ".(round($return_factor,2)*100)."% der angebotenen Waren zur&uuml;ck erhalten (es wird abgerundet)!");
 				}
 				else
 				{
-					echo "Es wurde kein entsprechendes Angebot ausgew&auml;hlt!<br/><br/>";
+					error_msg("Es wurde kein entsprechendes Angebot ausgew&auml;hlt!");
 					return_btn(array("mode"=>"user_sell"));
 				}
 
@@ -3933,10 +3998,6 @@
 			else
 			{
 				$cstr=checker_init();
-
-				echo "Wenn du ein Angebot zur&uuml;ckziehst erh&auml;lst du ".(round($return_factor,2)*100)."% des Angebotes zur&uuml;ck (abgerundet).<br/><br/>";
-
-
 
 				//
 				// Rohstoffe
@@ -3951,7 +4012,7 @@
 					AND ressource_buyable='1' 
 				ORDER BY 
 					datum ASC");
-				if (!mysql_num_rows($res)>0)
+				if (mysql_num_rows($res)>0)
 				{
 					echo "<form action=\"?page=$page&amp;mode=user_sell\" method=\"post\">\n";
 					echo $cstr;
@@ -4398,7 +4459,7 @@
           					<input type=\"text\" value=\"\" name=\"ressource_text\" id=\"ressource_text\" size=\"55\" maxlength=\"60\" ".tm("Text","Schreib einen kleinen Werbetext f&uuml;r deine Waren.")." onkeyup=\"calcMarketRessPrice('0');\"/>	
           				</td>";
           //Für Allianzmitglied reservieren wenn in einer Allianz und diese den Allianzmarktplatz auf Stufe 1 oder höher hat
-          if($cu->allianceId!=0 && $alliance_market_level>=1)
+          if($cu->allianceId!=0 && $alliance_market_level>=1 && !$cd_enabled)
           {
             echo "<td class=\"tbldata\" colspan=\"1\" style=\"vertical-align:middle;\" ".tm("Reservation","Fall dieses Angebot nur Spieler aus deiner Allianz kaufen sollen, mach hier ein H&auml;kchen").">
             				<input type=\"checkbox\" name=\"ressource_for_alliance\" value=\"1\" /> F&uuml;r Allianzmitglieder Reservieren
@@ -4461,6 +4522,7 @@
             		shiplist.shiplist_entity_id='".$cp->id()."'
                 AND shiplist.shiplist_count>'0'
                 AND ships.special_ship='0'
+				AND ships.ship_alliance_costs='0'
             ORDER BY
                 ships.ship_name;");
                 
@@ -4587,7 +4649,7 @@
 	          					<input type=\"text\" value=\"\" name=\"ship_text\" id=\"ship_text\" size=\"55\" maxlength=\"60\" ".tm("Text","Schreib einen kleinen Werbetext f&uuml;r deine Waren.")." onkeyup=\"calcMarketShipPrice(0, 0);\"/>	
 	          				</td>";
 	          //Für Allianzmitglied reservieren wenn in einer Allianz und diese den Allianzmarktplatz auf Stufe 2 oder höher hat
-          	if($cu->allianceId!=0 && $alliance_market_level>=2)
+          	if($cu->allianceId!=0 && $alliance_market_level>=2 && !$cd_enabled)
           	{
 	            echo "<td class=\"tbldata\" colspan=\"1\" style=\"vertical-align:middle;\" ".tm("Reservation","Fall dieses Angebot nur Spieler aus deiner Allianz kaufen sollen, mach hier ein H&auml;kchen").">
 	            				<input type=\"checkbox\" name=\"ship_for_alliance\" value=\"1\"/> F&uuml;r Allianzmitglieder Reservieren
@@ -4753,8 +4815,16 @@
 												
 				}
 			}
+			else
+			{
+				error_msg("Auf diesem Planeten können keine weiteren Angebote erstellt werden!");
+			}
 		}
-
+		
+		if ($cd_enabled)
+		{
+			countDown("cdcd",$cu->alliance->getMarketCooldown());
+		}
 
 	//
 	// Meldung dass noch kein Marktplatz gebaut wurde
@@ -4762,7 +4832,7 @@
 	}
 	else
 	{
-		echo "Der Marktplatz wurde noch nicht gebaut.";
+		error_msg("Der Marktplatz wurde noch nicht gebaut.");
 	}
 		
 

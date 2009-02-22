@@ -320,6 +320,11 @@
 			$tc->close();
 			$tc->open();
 		}
+		
+		echo '<div>
+		<input type="button" onclick="document.location=\'?page=specialists\'" value="Spezialisten" /> &nbsp; ';
+		echo "<input type=\"button\" onclick=\"document.location='?page=planetstats'\" value=\"Ressourcen aller Planeten anzeigen\" />
+		</div>";
 
 		//
 		// Resource Bunker
@@ -642,14 +647,6 @@
 			$tc->close();
 			$tc->end();
 		}
-			
-		echo '<div>
-		<input type="button" onclick="document.location=\'?page=specialists\'" value="Spezialisten" /> &nbsp; ';
-		echo "<input type=\"button\" onclick=\"document.location='?page=planetstats'\" value=\"Ressourcen aller Planeten anzeigen\" />
-		</div>";
-
-
-
 	}
 	else
 		echo "<h2>Fehler</h2> Dieser Planet existiert nicht oder er geh&ouml;rt nicht dir!";
