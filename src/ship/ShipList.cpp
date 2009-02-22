@@ -10,52 +10,61 @@ namespace ship
 		count = count < 0 ? 0 : count;
 		
 		mysqlpp::Query query = con_->query();
-		query << "SELECT "
-			<< "	shiplist_id "
-			<< "FROM "
-			<< "	shiplist "
-			<< "WHERE "
-			<< "	shiplist_user_id=" << userId <<" "
-			<< "	AND shiplist_entity_id=" << planetId <<" "
-			<< "	AND shiplist_ship_id=" << shipId <<";";
-		mysqlpp::Result res = query.store();		
-		query.reset();
-
-		if (res) {
-			if (res.size()>0) {
-				mysqlpp::Row arr = res.at(0);
-					
-				query << "UPDATE "
-					<< "	shiplist "
-					<< "SET "
-					<< "	shiplist_count = shiplist_count+" << count << " "
-					<< "WHERE "
-					<< "	shiplist_id=" << (int)arr["shiplist_id"] <<" "
-					<< "LIMIT 1;";
-				query.store();		
-				query.reset();
-			
-			}
-			else {
-				DataHandler &DataHandler = DataHandler::instance();
-				ShipData::ShipData *data = DataHandler.getShipById(shipId);
-				
-				query << "INSERT INTO "
-					<< "	shiplist ("
-					<< "	shiplist_user_id, "
-					<< "	shiplist_entity_id, "
-					<< "	shiplist_ship_id, "
-					<< "	shiplist_count, "
-					<< "	shiplist_special_ship "
-					<< ") VALUES ( "
-					<< "	" << userId << ", "
-					<< "	" << planetId << ", "
-					<< "	" << shipId << ", "
-					<< "	" << count << ", "
-					<< "	" << data->getSpecial() << ");";
-				query.store();
-				query.reset();
-			}			
+		
+		DataHandler &DataHandler = DataHandler::instance();
+		ShipData::ShipData *data = DataHandler.getShipById(shipId);
+		
+		if (data->getSpecial()) {
+			query << "INSERT INTO "
+				<< "	shiplist ("
+				<< "	shiplist_user_id, "
+				<< "	shiplist_entity_id, "
+				<< "	shiplist_ship_id, "
+				<< "	shiplist_count, "
+				<< "	shiplist_special_ship "
+				<< ") VALUES ( "
+				<< "	" << userId << ", "
+				<< "	" << planetId << ", "
+				<< "	" << shipId << ", "
+				<< "	" << count << ", "
+				<< "	" << data->getSpecial() << ") "
+				<< "ON DUPLICATE KEY "
+				<< "	UPDATE "
+				<< "		shiplist.`shiplist_count` = shiplist.`shiplist_count` + VALUES(shiplist.`shiplist_count`),"
+				<< "		shiplist.`shiplist_special_ship_level` = '0' , "
+				<< "		shiplist.`shiplist_special_ship_exp` = '0' , "
+				<< "		shiplist.`shiplist_special_ship_bonus_weapon` = '0' , "
+				<< "		shiplist.`shiplist_special_ship_bonus_structure` = '0' , "
+				<< "		shiplist.`shiplist_special_ship_bonus_shield` = '0' , "
+				<< "		shiplist.`shiplist_special_ship_bonus_heal` = '0' , "
+				<< "		shiplist.`shiplist_special_ship_bonus_capacity` = '0' , "
+				<< "		shiplist.`shiplist_special_ship_bonus_speed` = '0' , "
+				<< "		shiplist.`shiplist_special_ship_bonus_pilots` = '0' , "
+				<< "		shiplist.`shiplist_special_ship_bonus_tarn` = '0' , "
+				<< "		shiplist.`shiplist_special_ship_bonus_antrax` = '0' , "
+				<< "		shiplist.`shiplist_special_ship_bonus_forsteal` = '0' , "
+				<< "		shiplist.`shiplist_special_ship_bonus_build_destroy` = '0' , "
+				<< "		shiplist.`shiplist_special_ship_bonus_antrax_food` = '0' , "
+				<< "		shiplist.`shiplist_special_ship_bonus_deactivade` = '0';";
 		}
+		else
+		{
+			query << "INSERT INTO "
+				<< "	shiplist ("
+				<< "	shiplist_user_id, "
+				<< "	shiplist_entity_id, "
+				<< "	shiplist_ship_id, "
+				<< "	shiplist_count "
+				<< ") VALUES ( "
+				<< "	" << userId << ", "
+				<< "	" << planetId << ", "
+				<< "	" << shipId << ", "
+				<< "	" << count << ") "
+				<< "ON DUPLICATE KEY "
+				<< "	UPDATE "
+				<< "		shiplist.`shiplist_count` = shiplist.`shiplist_count` + VALUES(shiplist.`shiplist_count`);";
+		}
+		query.store();
+		query.reset();
 	}
 }

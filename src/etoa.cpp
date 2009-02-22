@@ -25,24 +25,21 @@
 
 #include "etoa.h"
 
-void etoamain()
-{         
+void etoamain(std::string gameRound)
+{
 	int minLoopDuration = 1;	// Minimal loop duration
-
+	
 	std::clog << "Entering etoa main loop"<<std::endl;
-
+	
 	// TODO: Error handling
 	std::time_t mtime=0;
 	srand(time(0));
 	
-	//Loading Configdata
-	//Config &config = Config::instance();
-	// TODO: Check if we need the config variable
-	Config::instance();
+	Config &config = Config::instance();
+	config.setRoundName(gameRound);
 	
 	//Load Data
 	DataHandler &DataHandler = DataHandler::instance();
-
 	
 	// Main loop
 	while (true)

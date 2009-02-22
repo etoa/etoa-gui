@@ -75,9 +75,9 @@ void daemonize()
 	clog << "Loggin started"<<endl;
 
 	/* Close out the standard file descriptors */
-  close(STDIN_FILENO);
-  close(STDOUT_FILENO);
-  close(STDERR_FILENO);
+	close(STDIN_FILENO);
+	close(STDOUT_FILENO);
+	close(STDERR_FILENO);
 
   /* Change the file mode mask */
   umask(0);
@@ -118,7 +118,7 @@ void mainThread()
 {
 	std::clog << "Main thread started"<<std::endl;
 
-	etoamain();
+	etoamain(gameRound);
 	
 	std::clog << "Unexpectedly reached end of main thread!"<<std::endl;
 	exit(EXIT_FAILURE);

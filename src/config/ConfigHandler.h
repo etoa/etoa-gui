@@ -5,7 +5,6 @@
 #include <mysql++/mysql++.h>
 #include <map>
 #include <vector>
-#include "../MysqlHandler.h"
 
 /**
 * Config Singleton, very usefull!!!!! So use it .D
@@ -13,6 +12,8 @@
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
 
+	class My;
+	
 	class Config
 	{
 	public:
@@ -57,6 +58,18 @@
 		**/
 		short getAction(std::string action);
 		
+		/**
+		* Setzt den Rundenname
+		*
+		* @param string name, Rundenname
+		**/
+		void setRoundName(std::string name);
+		
+		/**
+		* Liefert den Frontendpfad zurück
+		**/
+		std::string getFrontendPath();
+		
 	private:
 	
 		/**
@@ -86,6 +99,8 @@
 		**/
 		std::map<std::string, short> actions;
 		
+		std::string gameRound;
+		
 		static Config* _instance;
 		
 		/**
@@ -93,9 +108,7 @@
 		*
 		* @author Glaubinix
 		**/
-		Config () {
-			loadConfig();
-		 };
+		Config () {	};
 		Config ( const Config& );
 		Config & operator = (const Config &);
 	};

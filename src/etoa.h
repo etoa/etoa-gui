@@ -38,6 +38,6 @@
 #ifndef __ETOAMAIN__
 #define __ETOAMAIN__
 
-void etoamain();
+void etoamain(std::string gameRound);
 
 #endif       

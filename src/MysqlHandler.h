@@ -8,7 +8,7 @@
 #include <string>
 #include <fstream>
 
-
+#include "config/ConfigHandler.h"
 /**
 * Mysql Singleton for the Connection Objects
 * 
@@ -16,6 +16,8 @@
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
 
+	class Config;
+	
 	class My
 	{
 	public:
@@ -43,8 +45,9 @@
 			
 		}; 
 		void loadData () {
+			Config &config = Config::instance();
 			std::ifstream datein;
-			std::string datei = "/var/www/test.etoa.ch/htdocs/trunk/conf.inc.php";
+			std::string datei = config.getFrontendPath() + "conf.inc.php";
 			std::string zeichen;
 			std::string value, key;
 			std::size_t defineFound, middleFound, endFound;

@@ -1,9 +1,5 @@
-#include <iostream>
-#include <set>
-#include <vector>
-#include "../MysqlHandler.h"
 
-#include <mysql++/mysql++.h>
+#include "../MysqlHandler.h"
 
 #include "ConfigHandler.h"
 
@@ -33,6 +29,19 @@
 	short Config::getAction(std::string action)
 	{
 		return(actions[action]);
+	}
+	
+	// Setzt den Rundenname
+	void Config::setRoundName(std::string name)
+	{
+		this->gameRound = name;
+		loadConfig();
+	}
+	
+	// Liefert den Frontendpfad zurück
+	std::string Config::getFrontendPath()
+	{
+		return "/var/www/" + this->gameRound + ".etoa.ch/htdocs/";
 	}
 	
 	/**	Initialisiert die Configwerte **/
