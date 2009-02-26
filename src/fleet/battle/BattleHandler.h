@@ -17,7 +17,7 @@
 
 /**
 * Handles battles....
-* 
+*
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
 
@@ -28,20 +28,21 @@ class BattleHandler
 			this->message = new Message(message);
 		}
 		void battle(Fleet* fleet, Entity* entity, Log* log);
-		
+
 		~BattleHandler() {	}
-		
+
 		Message* message;
-		
+
 		bool alliancesHaveWar;
-		
+
 		short runde;
-		
+
+		double attPercent, defPercent;
 		int attPoints,defPoints;
-		
+
 		short returnV;
 		std::string bstat, bstat2;
 		bool returnFleet;
-		
+
 };
 #endif

@@ -4,39 +4,39 @@
 	int Entity::getId() {
 		return this->id;
 	}
-	
+
 	char Entity::getCode() {
 		return this->code;
 	}
-	
+
 	int Entity::getUserId() {
 		if (!this->dataLoaded)
 			this->loadData();
-			
+
 		return this->userId;
 	}
-	
+
 	User* Entity::getUser() {
 		if (!this->dataLoaded)
 			this->loadData();
-		
+
 		return entityUser;
 	}
-	
+
 	short Entity::getTypeId() {
 		if (!this->dataLoaded)
 			this->loadData();
-			
+
 		return this->typeId;
 	}
-	
+
 	bool Entity::getIsUserMain() {
 		if (!this->dataLoaded)
 			this->loadData();
-			
+
 		return this->userMain;
 	}
-	
+
 	void Entity::addMessageUser(Message* message) {
 		message->addUserId(this->getUserId());
 		std::string done = this->entityUser->getUserNick();
@@ -53,154 +53,149 @@
 				}
 			}
 		}
-		if (fleets.size()) {
-			std::vector<Fleet*>::iterator it;
-			for ( it=fleets.begin() ; it < fleets.end(); it++ )
-				(*it)->addMessageUser(message);
-		}
 	}
-	
+
 	std::string Entity::getCoords() {
-		if (!this->dataLoaded)		
+		if (!this->dataLoaded)
 			this->loadData();
 		if (!this->coordsLoaded)
 			this->loadCoords();
-		
+
 		return this->coordsString;
 	}
-	
+
 	int Entity::getAbsX() {
 		if (!this->coordsLoaded)
 			this->loadCoords();
 		return (10 * (this->sx - 1) + this->cx);
 	}
-	
+
 	int Entity::getAbsY() {
 		if (!this->coordsLoaded)
 			this->loadCoords();
 		return (10 * (this->sy - 1) + this->cy);
-	}		
-	
+	}
+
 	void Entity::setAction(std::string actionName) {
 		this->actionName = actionName;
 	}
-	
+
 	double Entity::getResMetal() {
 		if (!this->dataLoaded)
 			this->loadData();
-		
+
 		return this->resMetal;
 	}
-	
+
 	double Entity::getResCrystal() {
 		if (!this->dataLoaded)
 			this->loadData();
-		
+
 		return this->resCrystal;
 	}
-	
+
 	double Entity::getResPlastic() {
 		if (!this->dataLoaded)
 			this->loadData();
-		
+
 		return this->resPlastic;
 	}
-	
+
 	double Entity::getResFuel() {
 		if (!this->dataLoaded)
 			this->loadData();
-		
+
 		return this->resFuel;
 	}
-	
+
 	double Entity::getResFood() {
 		if (!this->dataLoaded)
 			this->loadData();
-		
+
 		return this->resFood;
 	}
-	
+
 	double Entity::getResPower() {
 		if (!this->dataLoaded)
 			this->loadData();
-		
+
 		return this->resPower;
 	}
-	
+
 	double Entity::getResPeople() {
 		if (!this->dataLoaded)
 			this->loadData();
-		
+
 		return this->resPeople;
 	}
-	
+
 	double Entity::getResSum() {
 		if (!this->dataLoaded)
 			this->loadData();
-		
+
 		return this->resMetal + this->resCrystal + this->resPlastic + this->resFuel + this->resFood;
 	}
-	
+
 	void Entity::addResMetal(double metal) {
 		if (!this->dataLoaded)
 			this->loadData();
-		
+
 		this->changedData = true;
 		this->resMetal += metal;
 	}
-	
+
 	void Entity::addResCrystal(double crystal) {
 		if (!this->dataLoaded)
 			this->loadData();
-		
+
 		this->changedData = true;
 		this->resCrystal += crystal;
 	}
-	
+
 	void Entity::addResPlastic(double plastic) {
 		if (!this->dataLoaded)
 			this->loadData();
-		
+
 		this->changedData = true;
 		this->resPlastic += plastic;
 	}
-	
+
 	void Entity::addResFuel(double fuel) {
 		if (!this->dataLoaded)
 			this->loadData();
-		
+
 		this->changedData = true;
 		this->resFuel += fuel;
 	}
-	
+
 	void Entity::addResFood(double food) {
 		if (!this->dataLoaded)
 			this->loadData();
-		
+
 		this->changedData = true;
 		this->resFood += food;
 	}
-	
+
 	void Entity::addResPower(double power) {
 		if (!this->dataLoaded)
 			this->loadData();
-		
+
 		this->changedData = true;
 		this->resPower += power;
 	}
-	
+
 	void Entity::addResPeople(double people) {
 		if (!this->dataLoaded)
 			this->loadData();
-		
+
 		this->changedData = true;
 		this->resPeople += people;
 	}
-	
+
 	double Entity::removeResMetal(double metal) {
 		if (!this->dataLoaded)
 			this->loadData();
-		
+
 		this->changedData = true;
 		if (metal<=this->resMetal) {
 			this->resMetal -= metal;
@@ -216,7 +211,7 @@
 	double Entity::removeResCrystal(double crystal) {
 		if (!this->dataLoaded)
 			this->loadData();
-		
+
 		this->changedData = true;
 		if (crystal<=this->resCrystal) {
 			this->resCrystal -= crystal;
@@ -232,7 +227,7 @@
 	double Entity::removeResPlastic(double plastic) {
 		if (!this->dataLoaded)
 			this->loadData();
-		
+
 		this->changedData = true;
 		if (plastic<=this->resPlastic) {
 			this->resPlastic -= plastic;
@@ -248,7 +243,7 @@
 	double Entity::removeResFuel(double fuel) {
 		if (!this->dataLoaded)
 			this->loadData();
-		
+
 		this->changedData = true;
 		if (fuel<=this->resFuel) {
 			this->resFuel -= fuel;
@@ -264,7 +259,7 @@
 	double Entity::removeResFood(double food) {
 		if (!this->dataLoaded)
 			this->loadData();
-		
+
 		this->changedData = true;
 		if (food<=this->resFood) {
 			this->resFood -= food;
@@ -276,11 +271,11 @@
 			return food;
 		}
 	}
-	
+
 	double Entity::removeResPower(double power) {
 		if (!this->dataLoaded)
 			this->loadData();
-		
+
 		this->changedData = true;
 		if (power<=this->resPower) {
 			this->resPower -= power;
@@ -292,11 +287,11 @@
 			return power;
 		}
 	}
-	
+
 	double Entity::removeResPeople(double people) {
 		if (!this->dataLoaded)
 			this->loadData();
-		
+
 		this->changedData = true;
 		if (people<=this->resPeople) {
 			this->resPeople -= people;
@@ -308,35 +303,35 @@
 			return people;
 		}
 	}
-	
+
 	double Entity::getWfMetal() {
 		if (!this->dataLoaded)
 			this->loadData();
-			
+
 		return this->wfMetal;
 	}
-	
+
 	double Entity::getWfCrystal() {
 		if (!this->dataLoaded)
 			this->loadData();
-			
+
 		return this->wfCrystal;
 	}
-	
+
 	double Entity::getWfPlastic() {
 		if (!this->dataLoaded)
 			this->loadData();
-			
+
 		return this->wfPlastic;
 	}
-	
+
 	double Entity::getWfSum() {
 		if (!this->dataLoaded)
 			this->loadData();
-		
+
 		return this->getWfMetal() + this->getWfCrystal() + this->getWfPlastic();
 	}
-	
+
 	double Entity::getObjectWfMetal(bool total) {
 		double wfMetal = 0;
 		std::vector<Object*>::iterator ot;
@@ -349,7 +344,7 @@
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
 				wfMetal += (*it)->getWfMetal();
 		}
-		
+
 		return wfMetal;
 	}
 	double Entity::getObjectWfCrystal(bool total) {
@@ -364,7 +359,7 @@
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
 				wfCrystal += (*it)->getWfCrystal();
 		}
-		
+
 		return wfCrystal;
 	}
 	double Entity::getObjectWfPlastic(bool total) {
@@ -379,50 +374,50 @@
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
 				wfPlastic += (*it)->getWfPlastic();
 		}
-		
+
 		return wfPlastic;
 	}
-	
+
 	double Entity::getAddedWfMetal() {
 		return (this->wfMetal - this->initWfMetal);
 	}
-	
+
 	double Entity::getAddedWfCrystal() {
 		return (this->wfCrystal - this->initWfCrystal);
 	}
-	
+
 	double Entity::getAddedWfPlastic() {
 		return (this->wfPlastic - this->initWfPlastic);
 	}
-	
+
 	void Entity::addWfMetal(double metal) {
 		if (!this->dataLoaded)
 			this->loadData();
-		
+
 		this->changedData = true;
 		this->wfMetal += metal;
 	}
-	
+
 	void Entity::addWfCrystal(double crystal) {
 		if (!this->dataLoaded)
 			this->loadData();
-		
+
 		this->changedData = true;
 		this->wfCrystal += crystal;
 	}
-	
+
 	void Entity::addWfPlastic(double plastic) {
 		if (!this->dataLoaded)
 			this->loadData();
-		
+
 		this->changedData = true;
 		this->wfPlastic += plastic;
 	}
-	
+
 	double Entity::removeWfMetal(double metal) {
 		if (!this->dataLoaded)
 			this->loadData();
-			
+
 		this->changedData = true;
 		if (metal<=this->wfMetal) {
 			this->wfMetal -= metal;
@@ -434,11 +429,11 @@
 			return metal;
 		}
 	}
-	
+
 	double Entity::removeWfCrystal(double crystal) {
 		if (!this->dataLoaded)
 			this->loadData();
-			
+
 		this->changedData = true;
 		if (crystal<=this->wfCrystal) {
 			this->wfCrystal -= crystal;
@@ -450,11 +445,11 @@
 			return crystal;
 		}
 	}
-	
+
 	double Entity::removeWfPlastic(double plastic) {
 		if (!this->dataLoaded)
 			this->loadData();
-			
+
 		this->changedData = true;
 		if (plastic<=this->wfPlastic) {
 			this->wfPlastic -= plastic;
@@ -466,13 +461,13 @@
 			return plastic;
 		}
 	}
-	
+
 	std::string Entity::getResString() {
 		if (!this->dataLoaded)
 			this->loadData();
-		
+
 		std::string resString = "";
-		
+
 		 resString += "[b]Rohstoffe:[/b]\n\nTitan: "
 					+ etoa::nf(etoa::d2s(this->getResMetal()))
 					+ "\n"
@@ -493,7 +488,7 @@
 					+ "\n";
 		return resString;
 	}
-	
+
 	void Entity::invadeEntity(int userId) {
 		this->changedData = true;
 		std::time_t time = std::time(0);
@@ -505,7 +500,7 @@
 		this->userId = userId;
 		this->codeName = "Unbenannt";
 		this->userChanged = time;
-		
+
         // Gebäude übernehmen
         query << "UPDATE ";
 		query << "	buildlist ";
@@ -515,7 +510,7 @@
 		query << "	buildlist_entity_id='" << this->id << "'; ";
 		query.store();
 		query.reset();
-		
+
 		// Bestehende Schiffs-Einträge löschen
 		query << "DELETE FROM ";
 		query << "	shiplist ";
@@ -523,14 +518,14 @@
 		query << "	shiplist_entity_id='" << this->id << "';";
 		query.store();
 		query.reset();
-		
+
 		query << "DELETE FROM ";
 		query << "	ship_queue ";
 		query << "WHERE ";
 		query << "	queue_entity_id='" << this->id << "';";
 		query.store();
 		query.reset();
-		
+
 		// Bestehende Verteidigungs-Einträge löschen
 		query << "DELETE FROM ";
 		query << "	deflist ";
@@ -538,7 +533,7 @@
 		query << "	deflist_entity_id='" << this->id << "';";
 		query.store(),
 		query.reset();
-		
+
 		query << "DELETE FROM ";
 		query << "	def_queue ";
 		query << "WHERE ";
@@ -546,11 +541,11 @@
 		query.store();
 		query.reset();
 	}
-	
+
 	void Entity::resetEntity(int userId) {
 		My &my = My::instance();
 		mysqlpp::Connection *con_ = my.get();
-		
+
 		this->userId = userId;
 		this->codeName = "";
 		this->userMain = false;
@@ -561,7 +556,7 @@
 		this->resFood = 0;
 		this->resPower = 0;
 		this->resPeople = 0;
-		
+
 		mysqlpp::Query query = con_->query();
 		query << "DELETE FROM ";
 		query << "	shiplist ";
@@ -569,28 +564,28 @@
 		query << "	shiplist_entity_id='" << this->id << "';";
 		query.store();
 		query.reset();
-		
+
 		query << "DELETE FROM ";
 		query << "	ship_queue ";
 		query << "WHERE ";
 		query << "	queue_entity_id='" << this->id << "';";
 		query.store();
 		query.reset();
-		
+
 		query << "DELETE FROM ";
 		query << "	buildlist ";
 		query << "WHERE ";
 		query << "	buildlist_entity_id='" << this->id << "';";
 		query.store();
 		query.reset();
-		
+
 		query << "DELETE FROM ";
 		query << "	deflist ";
 		query << "WHERE ";
 		query << "	deflist_entity_id='" << this->id << "';";
 		query.store();
 		query.reset();
-		
+
 		query << "DELETE FROM ";
 		query << "	def_queue ";
 		query << "WHERE ";
@@ -598,7 +593,7 @@
 		query.store();
 		query.reset();
 	}
-	
+
 	double Entity::getWeapon(bool total) {
 		if (!this->shipsLoaded)
 			this->loadShips();
@@ -608,7 +603,7 @@
 			this->loadDef();
 		if (!this->techsAdded)
 			this->addTechs();
-		double weapon = this->weapon; 
+		double weapon = this->weapon;
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -616,7 +611,7 @@
 		}
 		return weapon;
 	}
-	
+
 	double Entity::getShield(bool total) {
 		if (!this->shipsLoaded)
 			this->loadShips();
@@ -626,8 +621,8 @@
 			this->loadDef();
 		if (!this->techsAdded)
 			this->addTechs();
-		double shield = this->shield; 
-		
+		double shield = this->shield;
+
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -635,7 +630,7 @@
 		}
 		return shield;
 	}
-	
+
 	double Entity::getStructure(bool total) {
 		if (!this->shipsLoaded)
 			this->loadShips();
@@ -645,8 +640,8 @@
 			this->loadDef();
 		if (!this->techsAdded)
 			this->addTechs();
-		double structure = this->structure; 
-		
+		double structure = this->structure;
+
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -654,7 +649,7 @@
 		}
 		return structure;
 	}
-	
+
 	double Entity::getStructShield(bool total) {
 		if (!this->shipsLoaded)
 			this->loadShips();
@@ -664,8 +659,8 @@
 			this->loadDef();
 		if (!this->techsAdded)
 			this->addTechs();
-		double structShield = this->getStructure() + this->getShield(); 
-		
+		double structShield = this->getStructure() + this->getShield();
+
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -673,7 +668,7 @@
 		}
 		return structShield;
 	}
-	
+
 	double Entity::getHeal(bool total) {
 		if (!this->shipsLoaded)
 			this->loadShips();
@@ -690,12 +685,12 @@
 		}
 		return heal;
 	}
-	
+
 	double Entity::getInitCount(bool total) {
 		if (!this->shipsLoaded)
 			this->loadShips();
 		double initCount = this->initCount;
-		
+
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -703,7 +698,7 @@
 		}
 		return initCount;
 	}
-	
+
 	double Entity::getCount(bool total) {
 		if (!this->shipsLoaded)
 			this->loadShips();
@@ -714,7 +709,7 @@
 		if (!this->techsAdded)
 			this->addTechs();
 		double count = this->count;
-		
+
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -722,23 +717,23 @@
 		}
 		return count;
 	}
-	
+
 	double Entity::getInitDefCount() {
 		if (!this->defLoaded)
 			this->loadDef();
-		
+
 		return this->initDefCount;
 	}
-		
+
 	double Entity::getDefCount() {
 		if (this->shipsChanged)
 			this->recalcShips();
 		if (!this->defLoaded)
 			this->loadDef();
-		
+
 		return this->defCount;
 	}
-	
+
 	double Entity::getSpyCount() {
 		if (!this->shipsLoaded)
 			this->loadShips();
@@ -746,7 +741,7 @@
 			this->recalcShips();
 		return this->spyCount;
 	}
-		
+
 	double Entity::getHealCount(bool total) {
 		if (!this->shipsLoaded)
 			this->loadShips();
@@ -757,7 +752,7 @@
 		if (!this->techsAdded)
 			this->addTechs();
 		double healCount = this->healCount;
-		
+
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -765,7 +760,7 @@
 		}
 		return healCount;
 	}
-	
+
 	void Entity::setPercentSurvive(double percentage, bool total) {
 		this->shipsChanged = true;
 		percentage = std::max(percentage,0.0);
@@ -780,9 +775,9 @@
 				(*it)->setPercentSurvive(percentage);
 		}
 	}
-	
+
 	// TODO: Is double reasonable? Added conversion to int in line 777
-	void Entity::addExp(double exp) 
+	void Entity::addExp(double exp)
 	{
 		this->shipsSave = true;
 		int counter = 0;
@@ -801,13 +796,13 @@
 		else
 			this->exp = -1;
 	}
-	
-	double Entity::getExp() 
+
+	double Entity::getExp()
 	{
 		double exp = 0;
-		
+
 		DataHandler &DataHandler = DataHandler::instance();
-		
+
 		std::vector<Object*>::iterator ot;
 		for (ot = this->objects.begin() ; ot < this->objects.end(); ot++) {
 			ShipData::ShipData *data = DataHandler.getShipById((*ot)->getTypeId());
@@ -824,11 +819,11 @@
 		}
 		return exp;
 	}
-	
+
 	double Entity::getAddedExp() {
 		return this->exp;
 	}
-	
+
 	std::string Entity::getUserNicks() {
 		std::string nicks = this->entityUser->getUserNick();
 		if (fleets.size()) {
@@ -844,7 +839,7 @@
 		}
 		return nicks;
 	}
-	
+
 	std::string Entity::getUserIds() {
 		std::string ids = "," + etoa::d2s(this->getUserId()) + ",";
 		if (fleets.size()) {
@@ -860,7 +855,7 @@
 		}
 		return ids;
 	}
-	
+
 	std::string Entity::getShieldString(bool small) {
 		std::string shieldString = "";
 		if (!small) {
@@ -875,15 +870,15 @@
 					shieldTech += (*it)->getShieldBonus();
 				}
 			}
-		
+
 			shieldString += etoa::d2s(round(shieldTech*100/counter));
 			shieldString += "%):[/b] ";
 		}
 		shieldString += etoa::nf(etoa::d2s(this->getShield(true)));
-		
+
 		return shieldString;
 	}
-	
+
 	std::string Entity::getStructureString(bool small) {
 		std::string structureString = "";
 		if (!small) {
@@ -898,19 +893,19 @@
 					structureTech += (*it)->getStructureBonus();
 				}
 			}
-			
+
 			structureString += etoa::d2s(round(structureTech*100/counter));
 			structureString += "%):[/b] ";
 		}
 		structureString += etoa::nf(etoa::d2s(this->getStructure(true)));
-		
+
 		return structureString;
 	}
-	
+
 	std::string Entity::getStructureShieldString() {
 		return etoa::nf(etoa::d2s(getStructShield(true)));
 	}
-	
+
 	std::string Entity::getWeaponString(bool small) {
 		std::string weaponString = "";
 		if (!small) {
@@ -925,32 +920,32 @@
 					weaponTech += (*it)->getWeaponBonus();
 				}
 			}
-			
+
 			weaponString += etoa::d2s(round(weaponTech*100/counter));
 			weaponString += "%):[/b] ";
 		}
 		weaponString += etoa::nf(etoa::d2s(this->getWeapon(true)));
 		return weaponString;
 	}
-	
-	std::string Entity::getCountString(bool small) 
+
+	std::string Entity::getCountString(bool small)
 	{
 		std::string countString = "";
-		if (!small) 
+		if (!small)
 		{
 			countString += "[b]Einheiten:[/b] ";
 		}
 		countString += etoa::nf(etoa::d2s(this->getCount(true)));
 		return countString;
 	}
-	
-	std::string Entity::getShipString(bool total) 
+
+	std::string Entity::getShipString(bool total)
 	{
 		if (!this->shipsLoaded)
 			this->loadShips();
 		std::map<int,int> ships;
 		std::map<int,int> specialShips;
-		
+
 		std::vector<Object*>::iterator ot;
 		for (ot = this->objects.begin() ; ot < this->objects.end(); ot++) {
 			if ((*ot)->getSpecial())
@@ -958,10 +953,10 @@
 			else
 				ships[(*ot)->getTypeId()] += (*ot)->getCount();
 		}
-		
+
 		if (fleets.size() && total) {
 			std::vector<Fleet*>::iterator it;
-			
+
 			for ( it=fleets.begin() ; it < fleets.end(); it++ ) {
 				for (ot = (*it)->objects.begin() ; ot < (*it)->objects.end(); ot++) {
 					if ((*ot)->getSpecial())
@@ -972,11 +967,11 @@
 			}
 		}
 		std::string shipString = "";
-		
+
 		DataHandler &DataHandler = DataHandler::instance();
 		std::map<int,int>::iterator st;
 		for ( st=specialShips.begin() ; st != specialShips.end(); st++ ) {
-			ShipData::ShipData *data = DataHandler.getShipById((*st).first);	
+			ShipData::ShipData *data = DataHandler.getShipById((*st).first);
 			shipString += "[tr][td]"
 						+ data->getName()
 						+ "[/td][td]"
@@ -984,7 +979,7 @@
 						+ "[/td][/tr]";
 		}
 		for ( st=ships.begin() ; st != ships.end(); st++ ) {
-			ShipData::ShipData *data = DataHandler.getShipById((*st).first);	
+			ShipData::ShipData *data = DataHandler.getShipById((*st).first);
 			shipString += "[tr][td]"
 						+ data->getName()
 						+ "[/td][td]"
@@ -993,18 +988,18 @@
 		}
 		if (shipString.length()<1)
 			shipString = "[i]Nichts vorhanden![/i]\n";
-		else 
+		else
 			shipString = "[table]" + shipString + "[/table]";
 		return shipString;
 	}
-	
+
 	std::string Entity::getDefString(bool rebuild) {
 		this->loadDef();
 		std::string defString = "";
 		DataHandler &DataHandler = DataHandler::instance();
 		std::vector<Object*>::iterator ot;
 		for (ot = this->def.begin() ; ot < this->def.end(); ot++) {
-			DefData::DefData *data = DataHandler.getDefById((*ot)->getTypeId());	
+			DefData::DefData *data = DataHandler.getDefById((*ot)->getTypeId());
 			defString += "[tr][td]"
 						+ data->getName()
 						+ "[/td][td] "
@@ -1013,16 +1008,16 @@
 				defString += " (+"
 							+ etoa::nf(etoa::d2s((*ot)->getRebuildCount()))
 							+ ")";
-							
+
 			defString += "[/td][/tr]";
 		}
 		if (defString.length()<1)
 			defString = "[i]Nichts vorhanden![/i]\n";
-		else 
+		else
 			defString = "[table]" + defString + "[/table]";
 		return defString;
 	}
-	
+
 	void Entity::loadCoords() {
 		My &my = My::instance();
 		mysqlpp::Connection *con = my.get();
@@ -1036,18 +1031,18 @@
 		query << "LIMIT 1;";
 		mysqlpp::Result cRes = query.store();
 		query.reset();
-			
+
 		if (cRes) {
 			int cSize = cRes.size();
-			
+
 			if (cSize>0) {
 				mysqlpp::Row cRow = cRes.at(0);
-				
+
 				this->sx = (int)cRow["sx"];
 				this->sy = (int)cRow["sy"];
 				this->cx = (int)cRow["cx"];
 				this->cy = (int)cRow["cy"];
-				
+
 				this->coordsString = this->codeName
 								+ " ("
 								+ std::string(cRow["sx"])
@@ -1063,11 +1058,11 @@
 			}
 		}
 	}
-	
+
 	void Entity::loadAdditionalFleets() {
 		My &my = My::instance();
 		mysqlpp::Connection *con = my.get();
-		
+
 		mysqlpp::Query query = con->query();
 		query << "SELECT ";
 		query << " * ";
@@ -1079,10 +1074,10 @@
 		query << "	AND status='3';";
 		mysqlpp::Result fRes = query.store();
 		query.reset();
-		
+
 		if (fRes) {
 			int fSize = fRes.size();
-			
+
 			if (fSize>0) {
 				mysqlpp::Row fRow;
 				Fleet* additionalFleet;
@@ -1094,14 +1089,14 @@
 			}
 		}
 	}
-	
+
 	void Entity::loadShips() {
 		if (!this->shipsLoaded) {
 			this->loadAdditionalFleets();
-			
+
 			My &my = My::instance();
 			mysqlpp::Connection *con = my.get();
-			
+
 			mysqlpp::Query query = con->query();
 			query << "SELECT ";
 			query << "	* ";
@@ -1113,23 +1108,23 @@
 			query << "	AND shiplist_user_id='" << this->getUserId() << "';";
 			mysqlpp::Result slRes = query.store();
 			query.reset();
-			
+
 			if (slRes) {
 				int slSize = slRes.size();
 				this->shipsLoaded = true;
-				
+
 				if (slSize>0) {
 					this->logEntityShipStart = "";
-					
+
 					DataHandler &DataHandler = DataHandler::instance();
 					mysqlpp::Row slRow;
-					
+
 					for (int i=0; i<slSize; i++) {
 						slRow = slRes.at(i);
-						
-						Object* object = ObjectFactory::createObject(slRow, 's'); 
+
+						Object* object = ObjectFactory::createObject(slRow, 's');
 						ShipData::ShipData *data = DataHandler.getShipById(object->getTypeId());
-						
+
 						this->count += object->getCount();
 						this->weapon += object->getCount() * data->getWeapon();
 						this->shield += object->getCount() * data->getShield();
@@ -1137,16 +1132,16 @@
 						this->heal += object->getCount() * data->getHeal();
 						if (data->getHeal()>0)
 							this->healCount += object->getCount();
-						
+
 						this->logEntityShipStart += etoa::d2s(object->getTypeId())
 												+ ":"
 												+ etoa::d2s(object->getCount())
 												+ ",";
 						if (data->getActions("spy"))
 							this->spyCount += object->getCount();
-							
+
 						objects.push_back(object);
-						
+
 						if (object->getSpecial())
 							specialObjects.push_back(object);
 					}
@@ -1160,7 +1155,7 @@
 		}
 		this->loadDef();
 	}
-	
+
 	void Entity::recalcShips() {
 		if (this->shipsChanged) {
 			this->shipsChanged = false;
@@ -1170,15 +1165,15 @@
 			this->shield = 0;
 			this->structure = 0;
 			this->heal = 0;
-			
+
 			this->techsAdded = false;
-			
+
 			DataHandler &DataHandler = DataHandler::instance();
-			
+
 			std::vector<Object*>::iterator it;
 			for (it=objects.begin() ; it < objects.end(); it++) {
 				ShipData::ShipData *data = DataHandler.getShipById((*it)->getTypeId());
-				
+
 				this->count += (*it)->getCount();
 				this->weapon += (*it)->getCount() * data->getWeapon();
 				this->shield += (*it)->getCount() * data->getShield();
@@ -1195,12 +1190,12 @@
 			this->recalcDef();
 		}
 	}
-	
+
 	void Entity::loadDef() {
 		if (!this->defLoaded) {
 			My &my = My::instance();
 			mysqlpp::Connection *con = my.get();
-			
+
 			mysqlpp::Query query = con->query();
 			query << "SELECT ";
 			query << "	* ";
@@ -1212,25 +1207,25 @@
 			query << "	AND deflist_user_id='" << this->getUserId() << "';";
 			mysqlpp::Result dlRes = query.store();
 			query.reset();
-			
+
 			if (dlRes) {
 				int dlSize = dlRes.size();
 				this->defLoaded = true;
 				this->initDefCount = 0;
-				
+
 				if (dlSize>0) {
 					this->logEntityDefStart = "";
-					
-					
+
+
 					DataHandler &DataHandler = DataHandler::instance();
 					mysqlpp::Row dlRow;
-					
+
 					for (int i=0; i<dlSize; i++) {
 						dlRow = dlRes.at(i);
-						
-						Object* object = ObjectFactory::createObject(dlRow, 'd', this->getUser()->getSpecialist()->getSpecialistDefRepair()); 
+
+						Object* object = ObjectFactory::createObject(dlRow, 'd', this->getUser()->getSpecialist()->getSpecialistDefRepair());
 						DefData::DefData *data = DataHandler.getDefById(object->getTypeId());
-						
+
 						this->count += object->getCount();
 						this->defCount += object->getCount();
 						this->weapon += object->getCount() * data->getWeapon();
@@ -1239,12 +1234,12 @@
 						this->heal += object->getCount() * data->getHeal();
 						if (data->getHeal()>0)
 							this->healCount += object->getCount();
-						
+
 						this->logEntityDefStart += etoa::d2s(object->getTypeId())
 												+ ":"
 												+ etoa::d2s(object->getCount())
 												+ ",";
-						
+
 						def.push_back(object);
 					}
 					this->initDefCount = this->defCount;
@@ -1252,16 +1247,16 @@
 			}
 		}
 	}
-	
+
 	void Entity::recalcDef() {
 		DataHandler &DataHandler = DataHandler::instance();
-		
+
 		this->defCount = 0;
-		
+
 		std::vector<Object*>::iterator it;
 		for (it=def.begin() ; it < def.end(); it++) {
 			DefData::DefData *data = DataHandler.getDefById((*it)->getTypeId());
-			
+
 			this->count += (*it)->getCount();
 			this->defCount += (*it)->getCount();
 			this->weapon += (*it)->getCount() * data->getWeapon();
@@ -1272,7 +1267,7 @@
 				this->healCount += (*it)->getCount();
 		}
 	}
-	
+
 	void Entity::addTechs() {
 		if (!this->techsAdded) {
 			this->techsAdded = true;
@@ -1294,7 +1289,7 @@
 		if (this->initCount<0)
 			this->initCount = this->count;
 	}
-	
+
 	double Entity::getWeaponBonus() {
 		double bonus = 1;
 		if (specialObjects.size()) {
@@ -1308,7 +1303,7 @@
 		bonus += this->entityUser->getTechBonus("Waffentechnik");
 		return bonus;
 	}
-	
+
 	double Entity::getShieldBonus() {
 		double bonus = 1;
 		if (specialObjects.size()) {
@@ -1322,7 +1317,7 @@
 		bonus += this->entityUser->getTechBonus("Schutzschilder");
 		return bonus;
 	}
-	
+
 	double Entity::getStructureBonus() {
 		double bonus = 1;
 		if (specialObjects.size()) {
@@ -1336,7 +1331,7 @@
 		bonus += this->entityUser->getTechBonus("Panzerung");
 		return bonus;
 	}
-	
+
 	double Entity::getHealBonus() {
 		double bonus = 1;
 		if (specialObjects.size()) {
@@ -1350,12 +1345,12 @@
 		bonus += this->entityUser->getTechBonus("Regenatechnik");
 		return bonus;
 	}
-	
+
 	void Entity::loadBuildings() {
 		if (!this->buildingsLoaded) {
 			My &my = My::instance();
 			mysqlpp::Connection *con = my.get();
-			
+
 			mysqlpp::Query query = con->query();
 			query << "SELECT ";
 			query << "	buildlist_building_id, ";
@@ -1369,11 +1364,11 @@
 			query << "	AND buildlist_user_id='" << this->userId << "';";
 			mysqlpp::Result bRes = query.store();
 			query.reset();
-			
+
 			if (bRes) {
 				int bSize = bRes.size();
 				this->buildingsLoaded = true;
-				
+
 				if (bSize > 0) {
 					mysqlpp::Row bRow;
 					DataHandler &DataHandler = DataHandler::instance();
@@ -1388,14 +1383,14 @@
 			}
 		}
 	}
-	
+
 	std::string	Entity::bombBuilding(int level) {
 		if (!this->buildingsLoaded)
 			this->loadBuildings();
-		
+
 		if (this->buildings.size()) {
 			int building = rand() % this->buildings.size();
-			
+
 			std::map<std::string,int>::iterator it;
 			for ( it=buildings.begin() ; it != buildings.end(); it++ ) {
 				if (!building) {
@@ -1403,9 +1398,9 @@
 					BuildingData::BuildingData *data = DataHandler.getBuildingByName((*it).first);
 					My &my = My::instance();
 					mysqlpp::Connection *con_ = my.get();
-					
+
 					level = std::max(0,(*it).second-level);
-					
+
 					mysqlpp::Query query = con_->query();
 					query << "UPDATE ";
 					query << "	buildlist ";
@@ -1417,21 +1412,21 @@
 					query << "LIMIT 1;";
 					query.store();
 					query.reset();
-					
+
 					return ("[/b]hat das Gebäude " + (*it).first + " des Planeten [b]" + this->getCoords() + "[/b] um ein Level auf Stuffe " + etoa::d2s((*it).second) + " zurück gesetzt.");
 				}
 				building--;
 			}
 		}
-		
+
 		return "";
 	}
-	
+
 	std::string Entity::empBuilding(int h) {
 		std::time_t time = std::time(0);
-		
+
 		Config &config = Config::instance();
-		
+
 		My &my = My::instance();
 		mysqlpp::Connection *con_ = my.get();
 		mysqlpp::Query query = con_->query();
@@ -1455,18 +1450,18 @@
 		query << "LIMIT 1;";
 		mysqlpp::Result bRes = query.store();
 		query.reset();
-		
+
 		if (bRes) {
 			int bSize = bRes.size();
-			
+
 			if (bSize > 0) {
 				mysqlpp::Row bRow = bRes.at(0);
 				// Calculate the time, while the building is deactivated
-				
+
 				int ctime = std::max((int)time,(int)bRow["buildlist_deactivated"]);
-				
+
 				ctime += h*3600;
-				
+
 				// Update the deactivated building
 				query << "UPDATE ";
 				query << "	buildlist ";
@@ -1478,36 +1473,36 @@
 				query << "LIMIT 1";
 				query.store();
 				query.reset();
-				
+
 				DataHandler &DataHandler = DataHandler::instance();
 				BuildingData::BuildingData *data = DataHandler.getBuildingById((int)bRow["buildlist_building_id"]);
-				
+
 				return ("[/b]hat das Gebäude " + data->getName() + " des Planeten [b]" + this->getCoords() + "[/b] für " + etoa::d2s(h) + "h deaktiviert.");
 			}
 		}
 		return "";
 	}
-	
+
 	std::string Entity::getBuildingString() {
 		if (!this->buildingsLoaded)
 			this->loadBuildings();
 		std::string buildingString = "[b]GEBÄUDE:[/B]\n";
-		
+
 		if (buildings.size()) {
 			buildingString += "[table]";
 			std::map<std::string,int>::iterator it;
 				for ( it=buildings.begin() ; it != buildings.end(); it++ )
 					buildingString += "[tr][td]" + (*it).first + "[/td][td]" + etoa::d2s((*it).second) + "[/td][/tr]";
-			
+
 			buildingString += "[/table]";
 		}
 		else
 			buildingString += "[i]Nichts vorhanden[/i]\n";
-		
+
 		return buildingString;
 	}
-		
-	
+
+
 	std::string Entity::getLogResStart() {
 		if (this->dataLoaded) {
 			std::string log = ""
@@ -1535,7 +1530,7 @@
 		else
 			return "0";
 	}
-	
+
 	std::string Entity::getLogResEnd() {
 		if (this->dataLoaded) {
 			std::string log = ""
@@ -1563,11 +1558,11 @@
 		else
 			return "0";
 	}
-	
+
 	std::string Entity::getLogShipsStart() {
 		return this->logEntityShipStart;
 	}
-	
+
 	std::string Entity::getLogShipsEnd() {
 		return "0";
 	}

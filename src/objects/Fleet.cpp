@@ -32,10 +32,10 @@
 		this->fetchFood = (double)fleet["fetch_food"];
 		this->fetchPower = (double)fleet["fetch_power"];
 		this->fetchPeople = (double)fleet["fetch_people"];
-		
+
 		if (this->getLeaderId() == this->getId())
 			this->loadAdditionalFleets();
-				
+
 		this->initResMetal = this->getResMetal();
 		this->initResCrystal = this->getResCrystal();
 		this->initResPlastic = this->getResPlastic();
@@ -43,7 +43,7 @@
 		this->initResFood = this->getResFood();
 		this->initResPower = this->getResPower();
 		this->initResPeople = this->getResPeople();
-		
+
 		this->count = 0;
 		this->weapon = 0;
 		this->shield = 0;
@@ -51,37 +51,37 @@
 		this->heal = 0;
 		this->healCount = 0;
 		this->actionCount = 0;
-		
+
 		this->initWeapon = -1;
 		this->initShield = -1;
 		this->initStructure = -1;
 		this->initStructShield = -1;
 		this->initHeal = -1;
-		this->initCount = -1;		
-		
+		this->initCount = -1;
+
 		this->exp = 0;
-		
+
 		this->antraxBonus = 0;
 		this->antraxFoodBonus = 0;
 		this->destroyBonus = 0;
 		this->empBonus = 0;
 		this->forstealBonus = 0;
-		
+
 		this->capacity = 0;
 		this->peopleCapacity = 0;
 		this->actionCapacity = 0;
-		
+
 		this->actionAllowed = false;
 		this->shipsLoaded = false;
 		this->entityLoaded = false;
 		this->shipsChanged = false;
-		
+
 		this->techsAdded = false;
-		
+
 		this->fleetUser = new User(this->getUserId());
-		
+
 		this->logFleetShipStart = "0";
-		
+
 		if (this->status==0) {
 			this->usageFuel /= 2;
 			this->usageFood /= 2;
@@ -97,51 +97,51 @@
 			this->usagePower = 0;
 		}
 	}
-	
+
 	int Fleet::getId() {
 		return this->fId;
 	}
-	
+
 	int Fleet::getUserId() {
 		return this->userId;
 	}
-	
+
 	int Fleet::getLeaderId() {
 		return this->leaderId;
 	}
-	
+
 	int Fleet::getEntityFrom() {
 		return this->entityFrom;
 	}
-	
+
 	int Fleet::getEntityTo() {
 		return this->entityTo;
 	}
-	
+
 	int Fleet::getNextId() {
 		return this->nextId;
 	}
-	
+
 	int Fleet::getLandtime() {
 		return this->landtime;
 	}
-	
+
 	int Fleet::getLaunchtime() {
 		return this->launchtime;
 	}
-	
+
 	int Fleet::getNextactiontime() {
 		return this->nextactiontime;
 	}
-	
+
 	std::string Fleet::getAction() {
 		return this->action;
 	}
-	
+
 	short Fleet::getStatus() {
 		return this->status;
 	}
-	
+
 	void Fleet::addMessageUser(Message* message) {
 		message->addUserId(this->getUserId());
 		std::string nicks = this->fleetUser->getUserNick();
@@ -158,16 +158,11 @@
 				}
 			}
 		}
-		if (fleets.size()) {
-			std::vector<Fleet*>::iterator it;
-			for ( it=fleets.begin() ; it < fleets.end(); it++ )
-				(*it)->addMessageUser(message);
-		}
 	}
-	
+
 	double Fleet::getPilots(bool total) {
 		double pilots = this->pilots;
-		
+
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -175,10 +170,10 @@
 		}
 		return pilots;
 	}
-	
+
 	double Fleet::getResMetal(bool total) {
 		double resMetal = this->resMetal;
-		
+
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -186,10 +181,10 @@
 		}
 		return resMetal;
 	}
-	
+
 	double Fleet::getResCrystal(bool total) {
 		double resCrystal = this->resCrystal;
-		
+
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -197,10 +192,10 @@
 		}
 		return resCrystal;
 	}
-	
+
 	double Fleet::getResPlastic(bool total) {
 		double resPlastic = this->resPlastic;
-		
+
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -208,10 +203,10 @@
 		}
 		return resPlastic;
 	}
-	
+
 	double Fleet::getResFuel(bool total) {
 		double resFuel = this->resFuel;
-		
+
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -219,22 +214,22 @@
 		}
 		return resFuel;
 	}
-	
+
 	double Fleet::getResFood(bool total) {
 		double resFood = this->resFood;
-		
+
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
 				resFood += (*it)->getResFood(total);
 		}
-		
+
 		return resFood;
 	}
-	
+
 	double Fleet::getResPower(bool total) {
 		double resPower = this->resPower;
-		
+
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -242,10 +237,10 @@
 		}
 		return resPower;
 	}
-	
+
 	double Fleet::getResPeople(bool total) {
 		double resPeople = this->resPeople;
-		
+
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -253,7 +248,7 @@
 		}
 		return resPeople;
 	}
-	
+
 	double Fleet::getResLoaded(bool total) {
 		return this->getResMetal(total)
 				+ this->getResCrystal(total)
@@ -261,7 +256,7 @@
 				+ this->getResFuel(total)
 				+ this->getResFood(total);
 	}
-	
+
 	double Fleet::getInitResLoaded() {
 		return this->initResMetal
 				+ this->initResCrystal
@@ -269,14 +264,14 @@
 				+ this->initResFuel
 				+ this->initResFood;
 	}
-	
+
 	double Fleet::getCapacity(bool total) {
 		if (!this->shipsLoaded)
 			this->loadShips();
 		if (this->shipsChanged)
 			this->recalcShips();
 		double capacity = this->capacity - this->getResLoaded() - this->usageFuel - this->usageFood - this->supportUsageFuel - this->supportUsageFood;
-		
+
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -284,18 +279,18 @@
 		}
 		return capacity;
 	}
-	
+
 	double Fleet::getCapa() {
 		return this->capacity;
 	}
-	
+
 	double Fleet::getActionCapacity(bool total) {
 		if (!this->shipsLoaded)
 			this->loadShips();
 		if (this->shipsChanged)
 			this->recalcShips();
 		double actionCapacity = std::min(this->actionCapacity,this->getCapacity());
-		
+
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -303,14 +298,14 @@
 		}
 		return actionCapacity;
 	}
-	
+
 	double Fleet::getPeopleCapacity(bool total) {
 		if (!this->shipsLoaded)
 			this->loadShips();
 		if (this->shipsChanged)
 			this->recalcShips();
 		double peopleCapacity = this->peopleCapacity;
-		
+
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -318,11 +313,11 @@
 		}
 		return peopleCapacity;
 	}
-	
+
 	double Fleet::getBounty() {
 		return this->bounty;
 	}
-	
+
 	double Fleet::getBountyBonus(bool total) {
 		if (!this->shipsLoaded)
 			this->loadShips();
@@ -330,7 +325,7 @@
 			this->recalcShips();
 		double bounty = getBounty();
 		double capacity = getCapa();
-		
+
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ ) {
@@ -340,20 +335,20 @@
 		}
 		return bounty/capacity;
 	}
-	
+
 	void Fleet::addRaidedRes() {
 		this->fleetUser->addRaidedRes(this->getResLoaded()-this->getInitResLoaded());
-		
+
 		if (this->fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=this->fleets.begin() ; it < this->fleets.end(); it++ )
 				(*it)->fleetUser->addRaidedRes((*it)->getResLoaded()-(*it)->getInitResLoaded());
 		}
 	}
-	
+
 	double Fleet::getFetchMetal(bool total) {
 		double fetchMetal = this->fetchMetal;
-		
+
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -361,10 +356,10 @@
 		}
 		return fetchMetal;
 	}
-	
+
 	double Fleet::getFetchCrystal(bool total) {
 		double fetchCrystal = this->fetchCrystal;
-		
+
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -372,10 +367,10 @@
 		}
 		return fetchCrystal;
 	}
-	
+
 	double Fleet::getFetchPlastic(bool total) {
 		double fetchPlastic = this->fetchPlastic;
-		
+
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -383,10 +378,10 @@
 		}
 		return fetchPlastic;
 	}
-	
+
 	double Fleet::getFetchFuel(bool total) {
 		double fetchFuel = this->fetchFuel;
-		
+
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -394,10 +389,10 @@
 		}
 		return fetchFuel;
 	}
-	
+
 	double Fleet::getFetchFood(bool total) {
 		double fetchFood = this->fetchFood;
-		
+
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -405,10 +400,10 @@
 		}
 		return fetchFood;
 	}
-	
+
 	double Fleet::getFetchPeople(bool total) {
 		double fetchPeople = this->fetchPeople;
-		
+
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -416,17 +411,17 @@
 		}
 		return fetchPeople;
 	}
-	
+
 	double Fleet::getFetchSum(bool total) {
 		return(this->getFetchMetal(total) + this->getFetchCrystal(total) + this->getFetchPlastic(total) + this->getFetchFuel(total) + this->getFetchFood(total));
 	}
-	
+
 	double Fleet::addMetal(double metal, bool total) {
 		this->changedData = true;
 		metal = round(metal);
-		if (metal>=this->getCapacity(total)) 
+		if (metal>=this->getCapacity(total))
 			metal = this->getCapacity(total);
-		
+
 		this->resMetal += metal*this->getCapacity()/this->getCapacity(total);
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
@@ -435,13 +430,13 @@
 		}
 		return metal;
 	}
-	
+
 	double Fleet::addCrystal(double crystal, bool total) {
 		crystal = round(crystal);
 		this->changedData = true;
-		if (crystal>=this->getCapacity()) 
+		if (crystal>=this->getCapacity())
 			crystal = this->getCapacity();
-		
+
 		this->resCrystal += crystal*this->getCapacity()/this->getCapacity(total);
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
@@ -450,13 +445,13 @@
 		}
 		return crystal;
 	}
-	
+
 	double Fleet::addPlastic(double plastic, bool total) {
 		plastic = round(plastic);
 		this->changedData = true;
-		if (plastic>=this->getCapacity()) 
+		if (plastic>=this->getCapacity())
 			plastic = this->getCapacity();
-		
+
 		this->resPlastic += plastic*this->getCapacity()/this->getCapacity(total);
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
@@ -465,13 +460,13 @@
 		}
 		return plastic;
 	}
-	
+
 	double Fleet::addFuel(double fuel, bool total) {
 		fuel = round(fuel);
 		this->changedData = true;
-		if (fuel>=this->getCapacity()) 
+		if (fuel>=this->getCapacity())
 			fuel = this->getCapacity();
-		
+
 		this->resFuel += fuel*this->getCapacity()/this->getCapacity(total);
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
@@ -480,13 +475,13 @@
 		}
 		return fuel;
 	}
-	
+
 	double Fleet::addFood(double food, bool total) {
 		food = round(food);
 		this->changedData = true;
-		if (food>=this->getCapacity()) 
+		if (food>=this->getCapacity())
 			food = this->getCapacity();
-		
+
 		this->resFood += food*this->getCapacity()/this->getCapacity(total);
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
@@ -495,13 +490,13 @@
 		}
 		return food;
 	}
-	
+
 	double Fleet::addPower(double power, bool total) {
 		power = round(power);
 		this->changedData = true;
-		if (power>=this->getCapacity()) 
+		if (power>=this->getCapacity())
 			power = this->getCapacity();
-		
+
 		this->resPower += power*this->getCapacity()/this->getCapacity(total);
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
@@ -510,13 +505,13 @@
 		}
 		return power;
 	}
-	
+
 	double Fleet::addPeople(double people, bool total) {
 		people = round(people);
 		this->changedData = true;
-		if (people>=this->getCapacity()) 
+		if (people>=this->getCapacity())
 			people = this->getCapacity();
-		
+
 		this->resPeople += people*this->getCapacity()/this->getCapacity(total);
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
@@ -525,28 +520,28 @@
 		}
 		return people;
 	}
-	
+
 	double Fleet::unloadResMetal() {
 		this->changedData = true;
 		double metal = this->resMetal;
 		this->resMetal = 0;
 		return metal;
 	}
-	
+
 	double Fleet::unloadResCrystal() {
 		this->changedData = true;
 		double crystal = this->resCrystal;
 		this->resCrystal = 0;
 		return crystal;
 	}
-	
+
 	double Fleet::unloadResPlastic() {
 		this->changedData = true;
 		double plastic = this->resPlastic;
 		this->resPlastic = 0;
 		return plastic;
 	}
-	
+
 	double Fleet::unloadResFuel(bool land) {
 		this->changedData = true;
 		double fuel = this->resFuel;
@@ -558,7 +553,7 @@
 		this->resFuel = 0;
 		return fuel;
 	}
-		
+
 	double Fleet::unloadResFood(bool land) {
 		this->changedData = true;
 		double food = this->getResFood();
@@ -570,14 +565,14 @@
 		this->resFood = 0;
 		return food;
 	}
-		
+
 	double Fleet::unloadResPower() {
 		this->changedData = true;
 		double power = this->resPower;
 		this->resPower = 0;
 		return power;
 	}
-	
+
 	double Fleet::unloadResPeople(bool land) {
 		this->changedData = true;
 		double people = this->resPeople;
@@ -588,7 +583,7 @@
 		this->resPeople = 0;
 		return people;
 	}
-	
+
 	double Fleet::getWfMetal(bool total) {
 		double wfMetal = 0;
 		std::vector<Object*>::iterator ot;
@@ -599,10 +594,10 @@
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
 				wfMetal += (*it)->getWfMetal();
 		}
-		
+
 		return wfMetal;
 	}
-		
+
 	double Fleet::getWfCrystal(bool total) {
 		double wfCrystal = 0;
 		std::vector<Object*>::iterator ot;
@@ -613,10 +608,10 @@
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
 				wfCrystal += (*it)->getWfCrystal();
 		}
-		
+
 		return wfCrystal;
 	}
-	
+
 	double Fleet::getWfPlastic(bool total) {
 		double wfPlastic = 0;
 		std::vector<Object*>::iterator ot;
@@ -627,10 +622,10 @@
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
 				wfPlastic += (*it)->getWfPlastic();
 		}
-		
+
 		return wfPlastic;
 	}
-	
+
 	double Fleet::getWeapon(bool total) {
 		if (!this->shipsLoaded)
 			this->loadShips();
@@ -638,7 +633,7 @@
 			this->recalcShips();
 		if (!this->techsAdded)
 			this->addTechs();
-		double weapon = this->weapon; 
+		double weapon = this->weapon;
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -646,7 +641,7 @@
 		}
 		return weapon;
 	}
-	
+
 	double Fleet::getShield(bool total) {
 		if (!this->shipsLoaded)
 			this->loadShips();
@@ -654,8 +649,8 @@
 			this->recalcShips();
 		if (!this->techsAdded)
 			this->addTechs();
-		double shield = this->shield; 
-		
+		double shield = this->shield;
+
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -663,7 +658,7 @@
 		}
 		return shield;
 	}
-	
+
 	double Fleet::getStructure(bool total) {
 		if (!this->shipsLoaded)
 			this->loadShips();
@@ -671,8 +666,8 @@
 			this->recalcShips();
 		if (!this->techsAdded)
 			this->addTechs();
-		double structure = this->structure; 
-		
+		double structure = this->structure;
+
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -680,10 +675,10 @@
 		}
 		return structure;
 	}
-	
+
 	double Fleet::getStructShield(bool total) {
-		double structShield = this->getStructure() + this->getShield(); 
-		
+		double structShield = this->getStructure() + this->getShield();
+
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -691,7 +686,7 @@
 		}
 		return structShield;
 	}
-	
+
 	double Fleet::getHeal(bool total) {
 		if (!this->shipsLoaded)
 			this->loadShips();
@@ -700,7 +695,7 @@
 		if (!this->techsAdded)
 			this->addTechs();
 		double heal = this->heal;
-		
+
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -708,12 +703,12 @@
 		}
 		return heal;
 	}
-	
+
 	double Fleet::getInitCount(bool total) {
 		if (!this->shipsLoaded)
 			this->loadShips();
 		double initCount = this->initCount;
-		
+
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -721,14 +716,14 @@
 		}
 		return initCount;
 	}
-	
+
 	double Fleet::getCount(bool total) {
 		if (!this->shipsLoaded)
 			this->loadShips();
 		if (this->shipsChanged)
 			this->recalcShips();
 		double count = this->count;
-		
+
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -736,14 +731,14 @@
 		}
 		return count;
 	}
-	
+
 	double Fleet::getHealCount(bool total) {
 		if (!this->shipsLoaded)
 			this->loadShips();
 		if (this->shipsChanged)
 			this->recalcShips();
 		double healCount = this->healCount;
-		
+
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -751,14 +746,14 @@
 		}
 		return healCount;
 	}
-	
+
 	unsigned int Fleet::getActionCount(bool total) {
 		if (!this->shipsLoaded)
 			this->loadShips();
 		if (this->shipsChanged)
 			this->recalcShips();
 		unsigned int actionCount = this->actionCount;
-		
+
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -766,7 +761,7 @@
 		}
 		return actionCount;
 	}
-	
+
 	double Fleet::addExp(double exp) {
 		int counter = 0;
 		std::vector<Object*>::iterator ot;
@@ -786,12 +781,12 @@
 			// TODO added this to overcome error, but which value should it be?
 		return exp;
 	}
-	
+
 	double Fleet::getExp() {
 		double exp = 0;
-		
+
 		DataHandler &DataHandler = DataHandler::instance();
-		
+
 		std::vector<Object*>::iterator ot;
 		for (ot = this->objects.begin() ; ot < this->objects.end(); ot++) {
 			ShipData::ShipData *data = DataHandler.getShipById((*ot)->getTypeId());
@@ -804,12 +799,12 @@
 		}
 		return exp;
 	}
-	
-	double Fleet::getAddedExp() 
+
+	double Fleet::getAddedExp()
 	{
 		return this->exp;
 	}
-	
+
 	double Fleet::getSpecialShipBonusAntrax() {
 		double antraxBonus = this->antraxBonus;
 		if (fleets.size()) {
@@ -819,7 +814,7 @@
 		}
 		return antraxBonus;
 	}
-	
+
 	double Fleet::getSpecialShipBonusAntraxFood() {
 		double antraxFoodBonus = this->antraxFoodBonus;
 		if (fleets.size()) {
@@ -829,7 +824,7 @@
 		}
 		return antraxFoodBonus;
 	}
-	
+
 	double Fleet::getSpecialShipBonusBuildDestroy() {
 		double destroyBonus = this->destroyBonus;
 		if (fleets.size()) {
@@ -839,7 +834,7 @@
 		}
 		return destroyBonus;
 	}
-	
+
 	double Fleet::getSpecialShipBonusEMP() {
 		double empBonus = this->empBonus;
 		if (fleets.size()) {
@@ -849,7 +844,7 @@
 		}
 		return empBonus;
 	}
-	
+
 	double Fleet::getSpecialShipBonusForsteal() {
 		double forstealBonus = this->forstealBonus;
 		if (fleets.size()) {
@@ -859,7 +854,7 @@
 		}
 		return forstealBonus;
 	}
-		
+
 	void Fleet::deleteActionShip(int count) {
 		this->shipsChanged = true;
 		std::vector<Object*>::iterator ot;
@@ -868,7 +863,7 @@
 			if (!count) break;
 		}
 	}
-	
+
 	void Fleet::setPercentSurvive(double percentage, bool total) {
 		percentage = std::max(percentage,0.0);
 		std::vector<Object*>::iterator ot;
@@ -879,15 +874,15 @@
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
 				(*it)->setPercentSurvive(percentage);
 		}
-		
+
 		this->shipsChanged = true;
 	}
-	
+
 	void Fleet::setReturn() {
 		int entity = this->entityFrom;
 		this->entityFrom = this->entityTo;
 		int duration;
-		
+
 		if (this->getStatus() == 3 && this->getNextactiontime() > 0) {
 			duration = this->getNextactiontime();
 			this->entityTo = this->getNextId();
@@ -898,16 +893,16 @@
 		}
 		this->launchtime = this->getLandtime();
 		this->landtime = this->getLaunchtime() + duration;
-		
+
 		this->status = 1;
-		
+
 		if (fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
 				(*it)->setReturn();
 		}
 	}
-	
+
 	void Fleet::setMain() {
 		My &my = My::instance();
 		mysqlpp::Connection *con = my.get();
@@ -922,13 +917,13 @@
 		query << "LIMIT 1;";
 		mysqlpp::Result mainRes = query.store();
 		query.reset();
-					
+
 		if (mainRes) {
 			int mainSize = mainRes.size();
-			
+
 			if (mainSize > 0) {
 				mysqlpp::Row mainRow = mainRes.at(0);
-				
+
 				int duration = this->getLandtime() - this->getLaunchtime();
 				this->launchtime = this->getLandtime();
 				this->landtime += duration;
@@ -938,28 +933,28 @@
 			}
 		}
 	}
-	
+
 	void Fleet::setSupport() {
 		this->launchtime = this->getLandtime();
 		this->landtime = this->getLandtime() + this->getNextactiontime();
 		this->status = 3;
-		
+
 		this->nextId = this->entityFrom;
 		this->entityFrom = this->entityTo;
 	}
-	
+
 	std::string Fleet::getActionString() {
 		return this->getAction();
 	}
-	
+
 	std::string Fleet::getLandtimeString() {
 		return etoa::formatTime(this->getLandtime());
 	}
-	
+
 	std::string Fleet::getLaunchtimeString() {
 		return  etoa::formatTime(this->getLaunchtime());
 	}
-	
+
 	std::string Fleet::getUserNicks() {
 		std::string nicks = this->fleetUser->getUserNick();
 		if (fleets.size()) {
@@ -975,7 +970,7 @@
 		}
 		return nicks;
 	}
-	
+
 	std::string Fleet::getUserIds() {
 		std::string ids = "," + etoa::d2s(this->getUserId()) + ",";
 		if (fleets.size()) {
@@ -991,7 +986,7 @@
 		}
 		return ids;
 	}
-	
+
 	std::string Fleet::getShieldString(bool small) {
 		std::string shieldString = "";
 		if (!small) {
@@ -1006,15 +1001,15 @@
 					shieldTech += (*it)->getShieldBonus();
 				}
 			}
-		
+
 			shieldString += etoa::d2s(round(shieldTech*100/counter));
 			shieldString += "%):[/b] ";
 		}
 		shieldString += etoa::nf(etoa::d2s(this->getShield(true)));
-		
+
 		return shieldString;
 	}
-	
+
 	std::string Fleet::getStructureString(bool small) {
 		std::string structureString = "";
 		if (!small) {
@@ -1029,19 +1024,19 @@
 					structureTech += (*it)->getStructureBonus();
 				}
 			}
-			
+
 			structureString += etoa::d2s(round(structureTech*100/counter));
 			structureString += "%):[/b] ";
 		}
 		structureString += etoa::nf(etoa::d2s(this->getStructure(true)));
-		
+
 		return structureString;
 	}
-	
+
 	std::string Fleet::getStructureShieldString() {
 		return etoa::nf(etoa::d2s(getStructShield(true)));
 	}
-	
+
 	std::string Fleet::getWeaponString(bool small) {
 		std::string weaponString = "";
 		if (!small) {
@@ -1056,15 +1051,15 @@
 					weaponTech += (*it)->getWeaponBonus();
 				}
 			}
-			
+
 			weaponString += etoa::d2s(round(weaponTech*100/counter));
 			weaponString += "%):[/b] ";
 		}
 		weaponString += etoa::nf(etoa::d2s(this->getWeapon(true)));
-		
+
 		return weaponString;
 	}
-	
+
 	std::string Fleet::getCountString(bool small) {
 		std::string countString = "";
 		if (!small) {
@@ -1073,28 +1068,28 @@
 		countString += etoa::nf(etoa::d2s(this->getCount(true)));
 		return countString;
 	}
-	
+
 	std::string Fleet::getDestroyedShipString(std::string reason) {
 		std::string destroyedString = "";
-		
+
 		DataHandler &DataHandler = DataHandler::instance();
 		std::vector<Object*>::iterator it;
 		for (it = this->objects.begin() ; it < this->objects.end(); it++) {
 			if ((*it)->getCount() < (*it)->getInitCount()) {
-				ShipData::ShipData *data = DataHandler.getShipById((*it)->getTypeId());	
+				ShipData::ShipData *data = DataHandler.getShipById((*it)->getTypeId());
 				destroyedString +=  etoa::d2s((*it)->getInitCount() - (*it)->getCount())
 								+ " "
 								+ data->getName()
 								+ "\n";
 			}
 		}
-		
+
 		if (destroyedString.length()>0)
 			destroyedString = reason + destroyedString;
-		
+
 		return destroyedString;
 	}
-	
+
 	std::string Fleet::getResCollectedString(bool total, std::string subject) {
 		std::string msgRes = "\n\n\n[b]"
 							+ subject
@@ -1113,13 +1108,13 @@
 							+ "\n";
 		return msgRes;
 	}
-	
+
 	std::string Fleet::getShipString() {
 		if (!this->shipsLoaded)
 			this->loadShips();
 		std::map<int,int> ships;
 		std::map<int,int> specialShips;
-		
+
 		std::vector<Object*>::iterator ot;
 		for (ot = this->objects.begin() ; ot < this->objects.end(); ot++) {
 			if ((*ot)->getSpecial())
@@ -1127,7 +1122,7 @@
 			else
 				ships[(*ot)->getTypeId()] += (*ot)->getCount();
 		}
-		
+
 		if (fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ ) {
@@ -1140,11 +1135,11 @@
 			}
 		}
 		std::string shipString = "";
-		
+
 		DataHandler &DataHandler = DataHandler::instance();
 		std::map<int,int>::iterator st;
 		for ( st=specialShips.begin() ; st != specialShips.end(); st++ ) {
-			ShipData::ShipData *data = DataHandler.getShipById((*st).first);	
+			ShipData::ShipData *data = DataHandler.getShipById((*st).first);
 			shipString += "[tr][td]"
 						+ data->getName()
 						+ "[/td][td]"
@@ -1152,7 +1147,7 @@
 						+ "[/td][/tr]";
 		}
 		for ( st=ships.begin() ; st != ships.end(); st++ ) {
-			ShipData::ShipData *data = DataHandler.getShipById((*st).first);	
+			ShipData::ShipData *data = DataHandler.getShipById((*st).first);
 			shipString += "[tr][td]"
 						+ data->getName()
 						+ "[/td][td]"
@@ -1161,13 +1156,13 @@
 		}
 		if (shipString.length()<1)
 			shipString = "[i]Nichts vorhanden![/i]\n";
-		else 
+		else
 			shipString = "[table]" + shipString + "[/table]";
 		return shipString;
 
 	}
-		
-	
+
+
 	bool Fleet::actionIsAllowed() {
 		if (!this->shipsLoaded)
 			this->loadShips();
@@ -1175,13 +1170,13 @@
 			this->recalcShips();
 		return this->actionAllowed;
 	}
-	
+
 	void Fleet::loadAdditionalFleets() {
 		My &my = My::instance();
 		mysqlpp::Connection *con = my.get();
-		
+
 		std::time_t time = std::time(0);
-		
+
 		mysqlpp::Query query = con->query();
 		query << "SELECT ";
 		query << " * ";
@@ -1193,10 +1188,10 @@
 		query << "	AND status=3;";
 		mysqlpp::Result fRes = query.store();
 		query.reset();
-		
+
 		if (fRes) {
 			int fSize = fRes.size();
-			
+
 			if (fSize>0) {
 				mysqlpp::Row fRow;
 				Fleet* additionalFleet;
@@ -1208,44 +1203,43 @@
 			}
 		}
 	}
-				
+
 	void Fleet::loadShips() {
 		if (!this->shipsLoaded) {
 			this->shipsLoaded = true;
 			Config &config = Config::instance();
 			My &my = My::instance();
 			mysqlpp::Connection *con = my.get();
-			
+
 			mysqlpp::Query query = con->query();
 			query << "SELECT ";
 			query << "	* ";
 			query << "FROM ";
 			query << "	fleet_ships ";
 			query << "WHERE ";
-			query << "	fs_fleet_id='" << this->getId() << "' ";
-			query << "	AND fs_ship_faked='0';";
+			query << "	fs_fleet_id='" << this->getId() << "';";
 			mysqlpp::Result fsRes = query.store();
 			query.reset();
-			
+
 			if (fsRes) {
 				int fsSize = fsRes.size();
-				
+
 				if (fsSize>0) {
 					this->logFleetShipStart = "";
-					
+
 					DataHandler &DataHandler = DataHandler::instance();
 					mysqlpp::Row fsRow;
-					
+
 					for (int i=0; i<fsSize; i++) {
 						fsRow = fsRes.at(i);
-						
+
 						if (config.idget("MARKET_SHIP_ID")!=(int)fsRow["fs_ship_id"]) {
-							Object* object = ObjectFactory::createObject(fsRow, 'f'); 
+							Object* object = ObjectFactory::createObject(fsRow, 'f');
 							ShipData::ShipData *data = DataHandler.getShipById(object->getTypeId());
-							
+
 							this->capacity += object->getCount() * data->getCapacity();
 							this->peopleCapacity += object->getCount() * data->getPeopleCapacity();
-							
+
 							this->bounty += object->getCount() * data->getCapacity() * data->getBountyBonus();
 							if (data->getActions(this->action)) {
 								this->actionAllowed = true;
@@ -1253,7 +1247,7 @@
 								this->actionCount += object->getCount();
 								this->actionObjects.push_back(object);
 							}
-						
+
 							this->count += object->getCount();
 							this->weapon += object->getCount() * data->getWeapon();
 							this->shield += object->getCount() * data->getShield();
@@ -1261,14 +1255,14 @@
 							this->heal += object->getCount() * data->getHeal();
 							if (data->getHeal()>0)
 								this->healCount += object->getCount();
-							
+
 							this->logFleetShipStart += etoa::d2s(object->getTypeId())
 													+ ":"
 													+ etoa::d2s(object->getCount())
 													+ ",";
-							
+
 							this->objects.push_back(object);
-							
+
 							if (object->getSpecial()) {
 								this->antraxBonus += object->getCount() * object->getSBonusAntrax() * data->getBonusAntrax();
 								this->antraxFoodBonus += object->getCount() * object->getSBonusAntraxFood() * data->getBonusAntraxFood();
@@ -1288,14 +1282,14 @@
 			}
 		}
 	}
-	
+
 	void Fleet::recalcShips() {
 		if (this->shipsChanged) {
 			this->shipsChanged = false;
 			this->actionCapacity = 0;
 			this->capacity = 0;
 			this->peopleCapacity = 0;
-			
+
 			this->count = 0;
 			this->weapon = 0;
 			this->shield = 0;
@@ -1303,40 +1297,40 @@
 			this->heal = 0;
 			this->bounty = 0;
 			this->actionCount = 0;
-			
+
 				this->antraxBonus = 0;
 				this->antraxFoodBonus = 0;
 				this->destroyBonus = 0;
 				this->empBonus = 0;
 				this->forstealBonus = 0;
-			
+
 			this->techsAdded = false;
-			
+
 			this->actionAllowed = false;
-			
+
 			DataHandler &DataHandler = DataHandler::instance();
-			
+
 			std::vector<Object*>::iterator it;
 			for (it=objects.begin() ; it < objects.end(); it++) {
 				ShipData::ShipData *data = DataHandler.getShipById((*it)->getTypeId());
-				
+
 				this->capacity += (*it)->getCount() * data->getCapacity();
 				this->peopleCapacity += (*it)->getCount() * data->getPeopleCapacity();
-				
+
 				this->bounty += (*it)->getCount() * data->getCapacity() * data->getBountyBonus();
-				
+
 				if (data->getActions(this->action)) {
 					this->actionAllowed = true;
 					this->actionCapacity += (*it)->getCount() * data->getCapacity();
 					this->actionCount += (*it)->getCount();
 				}
-				
+
 				this->count += (*it)->getCount();
 				this->weapon += (*it)->getCount() * data->getWeapon();
 				this->shield += (*it)->getCount() * data->getShield();
 				this->structure += (*it)->getCount() * data->getStructure();
 				this->heal += (*it)->getCount() * data->getHeal();
-				
+
 				if ((*it)->getSpecial())
 					this->antraxBonus += (*it)->getCount() * (*it)->getSBonusAntrax() * data->getBonusAntrax();
 					this->antraxFoodBonus += (*it)->getCount() * (*it)->getSBonusAntraxFood() * data->getBonusAntraxFood();
@@ -1344,7 +1338,7 @@
 					this->empBonus += (*it)->getCount() * (*it)->getSBonusDeactivade() * data->getBonusDeactivade();
 					this->forstealBonus += (*it)->getCount() * (*it)->getSBonusForsteal() * data->getBonusForsteal();
 			}
-			
+
 			if (fleets.size()) {
 				std::vector<Fleet*>::iterator it;
 				for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -1352,7 +1346,7 @@
 			}
 		}
 	}
-	
+
 	void Fleet::addTechs() {
 		if (!this->techsAdded) {
 			this->techsAdded = true;
@@ -1374,7 +1368,7 @@
 		if (this->initCount<0)
 			this->initCount = this->count;
 	}
-	
+
 	double Fleet::getWeaponBonus() {
 		double bonus = 1;
 		if (specialObjects.size()) {
@@ -1388,7 +1382,7 @@
 		bonus += this->fleetUser->getTechBonus("Waffentechnik");
 		return bonus;
 	}
-	
+
 	double Fleet::getShieldBonus() {
 		double bonus = 1;
 		if (specialObjects.size()) {
@@ -1402,7 +1396,7 @@
 		bonus += this->fleetUser->getTechBonus("Schutzschilder");
 		return bonus;
 	}
-	
+
 	double Fleet::getStructureBonus() {
 		double bonus = 1;
 		if (specialObjects.size()) {
@@ -1416,7 +1410,7 @@
 		bonus += this->fleetUser->getTechBonus("Panzerung");
 		return bonus;
 	}
-	
+
 	double Fleet::getHealBonus() {
 		double bonus = 1;
 		if (specialObjects.size()) {
@@ -1430,7 +1424,7 @@
 		bonus += this->fleetUser->getTechBonus("Regenatechnik");
 		return bonus;
 	}
-	
+
 	void Fleet::save() {
 		int sum = 0;
 		while (!objects.empty()) {
@@ -1439,17 +1433,17 @@
 			delete object;
 			objects.pop_back();
 		}
-		
+
 		while (!fleets.empty()) {
 			Fleet* fleet = fleets.back();
 			delete fleet;
 			fleets.pop_back();
 		}
-		
+
 		My &my = My::instance();
 		mysqlpp::Connection *con = my.get();
 		mysqlpp::Query query = con->query();
-		
+
 		if (sum>0 || !this->shipsLoaded) {
 			query << "UPDATE ";
 			query << "	fleet ";
@@ -1497,7 +1491,7 @@
 			query.reset();
 		}
 	}
-	
+
 	std::string Fleet::getLogResStart() {
 		std::string log = ""
 						+ etoa::d2s(this->initResMetal)
@@ -1529,7 +1523,7 @@
 						+ etoa::d2s(this->fetchPeople);
 		return log;
 	}
-	
+
 	std::string Fleet::getLogResEnd() {
 		std::string log = ""
 						+ etoa::d2s(this->resMetal)
@@ -1548,11 +1542,11 @@
 						+ ",f,0:0:0:0:0:0:0";
 		return log;
 	}
-	
+
 	std::string Fleet::getLogShipsStart() {
 		return this->logFleetShipStart;
 	}
-	
+
 	std::string Fleet::getLogShipsEnd() {
 		if (this->shipsLoaded) {
 			std::string log = "";
