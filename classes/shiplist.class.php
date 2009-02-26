@@ -193,13 +193,26 @@
 
 			$delable = min($cnt,$arr[1]);
 			
-			dbquery("UPDATE
-				shiplist
-			SET
-				shiplist_count = shiplist_count - ".$delable."
-			WHERE 
-				shiplist_ship_id=".$shipId."
-				AND shiplist_id='".$arr[0]."';");
+			if (($arr[1] - $delable) == 0)
+			{
+				dbquery("DELETE FROM
+							shiplist
+						WHERE
+							shiplist_ship_id=".$shipId."
+							AND shiplist_id='".$arr[0]."'
+						LIMIT 1;");
+			}
+			else
+			{
+				dbquery("UPDATE
+							shiplist
+						SET
+							shiplist_count = shiplist_count - ".$delable."
+						WHERE 
+							shiplist_ship_id=".$shipId."
+							AND shiplist_id='".$arr[0]."'
+						LIMIT 1;");
+			}
 
 			return $delable;
 		}

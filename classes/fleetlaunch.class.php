@@ -87,6 +87,7 @@
 			$this->supportCostsFuelPerSec = 0;
 			$this->supportCostsFoodPerSec = 0;
 			$this->leaderId = 0;
+			$this->fakeId = 0;
 
 			$this->shipActions = array();
 
@@ -233,6 +234,7 @@
 						"count" => $cnt,
 						"speed" => $arr['ship_speed']*$timefactor,
 						"fuel_use" => $arr['ship_fuel_use'] * $cnt,
+						"fake" => strpos($arr['ship_actions'],"fakeattack"),
 						"name" => $arr['ship_name'],
 						"pilots" => $arr['ship_pilots'] * $cnt,
 						"special" => $arr['special_ship'],
@@ -314,6 +316,7 @@
 							$this->costsPerHundredAE += $cpae;				
 						}
 						$this->shipsFixed=true;
+						$this->error == "";
 						return $this->shipsFixed;
 					}
 					else
@@ -555,21 +558,39 @@
 								".$sda['sBonusDeactivade']."
 							);");
 						}
+						elseif ($sda['fake']!==false)
+						{
+							dbquery("INSERT INTO
+								fleet_ships
+								(
+									fs_fleet_id,
+									fs_ship_id,
+									fs_ship_cnt,
+									fs_ship_faked
+								)
+								VALUES
+								(
+									".$fid.",
+									".$sid.",
+									".$sda['count'].",
+									".$this->fakeId."
+								);");
+						}
 						else
 						{
 							dbquery("INSERT INTO
-							fleet_ships
-							(
-								fs_fleet_id,
-								fs_ship_id,
-								fs_ship_cnt
-							)
-							VALUES
-							(
-								".$fid.",
-								".$sid.",
-								".$sda['count']."
-							);");
+								fleet_ships
+								(
+									fs_fleet_id,
+									fs_ship_id,
+									fs_ship_cnt
+								)
+								VALUES
+								(
+									".$fid.",
+									".$sid.",
+									".$sda['count']."
+								);");
 						}
 					}
 						
@@ -919,6 +940,10 @@
 		
 		function setLeader($id) {
 			$this->leaderId = $id;
+		}
+		
+		function setFakeId($id) {
+			$this->fakeId = $id;
 		}
 		
 		

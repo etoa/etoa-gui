@@ -292,8 +292,8 @@
 							FROM 
 								fleet_ships
 							WHERE 
-								fs_fleet_id='".$farr['id']." '
-								AND fs_ship_faked='1' 
+								fs_fleet_id='".$fid." '
+								AND fs_ship_faked>'0' 
 							GROUP BY 
 								fs_fleet_id;");
 						 $fsarr= mysql_fetch_row($fsres);
@@ -322,9 +322,10 @@
 							  fleet_ships AS fs
 							INNER JOIN
 								ships AS s
-							ON fs.fs_ship_id=s.ship_id
-								AND fs.fs_fleet_id='".$farr['id']."'
-								AND fs.fs_ship_faked='1';");
+							ON fs.fs_ship_faked=s.ship_id
+								AND fs.fs_fleet_id='".$fid."'
+								AND fs.fs_ship_faked>'0';");
+						
 						while ($fshiparr = mysql_fetch_assoc($fshipres))
 						{
 							$str = "";

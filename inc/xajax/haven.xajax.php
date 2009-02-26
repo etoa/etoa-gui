@@ -811,7 +811,9 @@ ob_start();
 						<a href=\"javascript:;\" onclick=\"document.getElementById('fresp').value=".$fleet->getTotalPeopleCapacity()."\">max</a></td></tr>
 						
 						<tr id=\"msgHeader\" style=\"display:none;\"><th colspan=\"2\">Nachricht</th><th>Empfänger</th></tr>
-						<tr id=\"msg\" style=\"display:none;\"></tr>";
+						<tr id=\"msg\" style=\"display:none;\"></tr>
+						<tr id=\"fakeheader\" style=\"display:none;\"><th colspan=\"3\">Die Schiffe sollen als welche Schiffe getarnt werden?</th></tr>
+						<tr id=\"fakebox\" style=\"display:none;\"></tr>";
 						
 						tableEnd();                                                                                  
 						
@@ -891,6 +893,11 @@ ob_start();
 					$load3 = $fleet->loadResource(3,nf_back($form['res3']),1);
 					$load4 = $fleet->loadResource(4,nf_back($form['res4']),1);
 					$load5 = $fleet->loadResource(5,nf_back($form['res5']),1);
+				}
+				
+				if ($form['fleet_action']=="fakeattack")
+				{
+					$fleet->setFakeId($form['fakeShip']);
 				}
 				
 				if ($fid = $fleet->launch())
@@ -1349,6 +1356,34 @@ ob_start();
 			$response->assign('resfree','innerHTML',nf($fleet->getCapacity())." / ".nf($fleet->getTotalCapacity()));
 		}
 		
+		if ($code=="fakeattack")
+		{
+			ob_start();
+			$res = dbquery("SELECT
+							ship_id,
+							ship_name
+						FROM
+							ships
+						WHERE
+							ships.ship_fakeable='1'
+						ORDER BY
+							ships.ship_name;");
+			echo "<td colspan=\"3\">";
+			while ($arr = mysql_fetch_row($res))
+			{
+				echo "<input type=\"radio\" name=\"fakeShip\" name=\"fakeShip\" value=\"".$arr[0]."\">&nbsp;".$arr[1]."<br>";
+			}
+			echo "</td>";
+			$response->assign("fakebox","innerHTML",ob_get_contents());
+			$response->assign("fakebox","style.display",'');
+			$response->assign("fakeheader","style.display",'');
+			ob_end_clean();
+		}
+		else
+		{
+			$response->assign("fakeheader","style.display",'none');
+			$response->assign("fakebox","style.display",'none');
+		}
 		if ($code=="alliance" && $fleet->getLeader()==0)
 		{
 			ob_start();
