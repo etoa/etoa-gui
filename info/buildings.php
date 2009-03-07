@@ -177,10 +177,9 @@ if (isset($_GET['id']))
 	    echo "<tr><td>".RES_PLASTIC."</td><td>".nf($arr['building_prod_plastic'])."</td><td>".nf($arr['building_store_plastic'])."</td></tr>";
 	    echo "<tr><td>".RES_FUEL."</td><td>".nf($arr['building_prod_fuel'])."</td><td>".nf($arr['building_store_fuel'])."</td></tr>";
 	    echo "<tr><td>".RES_FOOD."</td><td>".nf($arr['building_prod_food'])."</td><td>".nf($arr['building_store_food'])."</td></tr>";
+	    echo "<tr><td>Bewohner</td><td>-</td><td> ".nf($arr['building_people_place'])." Plätze</td></tr>";
 	    echo "<tr><td>Energie</td><td>".nf($arr['building_prod_metal'])."</td><td>-</td></tr>";
 	    tableEnd();
-
-	    echo "<b>Bereitgestellter Wohnraum:</b> ".nf($arr['building_people_place'])." Plätze";
 
     }
 
@@ -463,6 +462,134 @@ if (isset($_GET['id']))
 }
 
 //
+// Allianzgebäude
+//
+elseif (isset($_GET['aid']))
+{
+	$b_level = 1;
+
+	$res = dbquery("SELECT * FROM alliance_buildings WHERE alliance_building_id='".$_GET['aid']."' LIMIT 1;");
+	if ($arr = @mysql_fetch_array($res))
+	{
+		HelpUtil::breadCrumbs(array("Allianzgeb&auml;ude","buildings"),array(text2html($arr['alliance_building_name']),$arr['alliance_building_id']),1);
+		echo "<select onchange=\"document.location='?page=help&site=buildings&aid='+this.options[this.selectedIndex].value\">";
+		$bres=dbquery("SELECT 
+			alliance_building_id,
+			alliance_building_name 
+		FROM 
+			alliance_buildings 		
+		WHERE 
+			alliance_building_show=1
+		ORDER BY 
+			alliance_building_name;");
+		while ($barr=mysql_fetch_array($bres))		
+		{
+			echo "<option value=\"".$barr['alliance_building_id']."\"";
+			if ($barr['alliance_building_id']==$_GET['aid']) 
+				echo " selected=\"selected\"";
+			echo ">".$barr['alliance_building_name']."</option>";
+		}
+		echo "</select><br/><br/>";		
+
+		$currentLevel = 0;
+		if (isset($cu) && $cu->allianceId()>0)
+		{
+			$res_level = dbquery("
+			SELECT 
+				alliance_buildlist_current_level 
+			FROM 
+				alliance_buildlist 
+			WHERE 
+				alliance_buildlist_building_id ='".$_GET['aid']."' 
+				AND alliance_buildlist_alliance_id='".$cu->allianceId()."'
+			LIMIT 1;");
+			if(mysql_num_rows($res_level)>0)
+			{
+				$arr_level = mysql_fetch_row($res_level);
+				$currentLevel = $arr_level[0];
+			}
+		}
+
+		tableStart(text2html($arr['alliance_building_name']));
+		echo "<tr>
+			<th style=\"width:220px;background:#000;padding:0px;\" rowspan=\"2\">
+				<img src=\"".IMAGE_PATH."/".IMAGE_ALLIANCE_BUILDING_DIR."/building".$arr['alliance_building_id'].".".IMAGE_EXT."\" style=\"width:220px;height:220px;background:#000;margin:0px;\" align=\"top\" alt=\"Bild ".$arr['alliance_building_name']."\" />
+			</th>
+			<td colspan=\"2\">
+				<div align=\"justify\">".text2html($arr['alliance_building_longcomment'])."</div>
+			</td>
+		</tr>
+		<tr>
+			<th style=\"height:20px;width:120px;\">Maximale Stufe:</th>
+			<td style=\"height:20px;\">".$arr['alliance_building_last_level']."</td>
+		</tr>";
+		tableEnd();
+	
+		$useTabs = false;
+		if ($useTabs)
+		{
+			$tc = new TabControl("help",array("Spezielles","Kosten","Technikbaum"));
+			$tc->open();
+		}
+	
+	if ($useTabs)
+		{
+    	$tc->close();
+    	$tc->open();
+		}    
+    tableStart ("Kostenentwicklung (Faktor: ".$arr['alliance_building_costs_factor'].")");
+    echo "<tr><th style=\"text-align:center;\">Level</th>
+    			<th>".RES_ICON_METAL."".RES_METAL."</th>
+    			<th>".RES_ICON_CRYSTAL."".RES_CRYSTAL."</th>
+    			<th>".RES_ICON_PLASTIC."".RES_PLASTIC."</th>
+    			<th>".RES_ICON_FUEL."".RES_FUEL."</th>
+    			<th>".RES_ICON_FOOD."".RES_FOOD."</th></tr>";
+    for ($x=0;$x<min(30,$arr['alliance_building_last_level']);$x++)
+    {
+    	$bc = calcAllianceBuildingCosts($arr,$x);
+    	echo '<tr><td>'.($x+1).'</td>
+    				<td style="text-align:right;">'.nf($bc['metal']).'</td>
+    				<td style="text-align:right;">'.nf($bc['crystal']).'</td>
+    				<td style="text-align:right;">'.nf($bc['plastic']).'</td>
+    				<td style="text-align:right;">'.nf($bc['fuel']).'</td>
+    				<td style="text-align:right;">'.nf($bc['food']).'</td></tr>';
+    }
+    tableEnd();
+    
+		if ($useTabs)
+		{
+	    $tc->close();
+  	  $tc->open();    
+    }
+        
+		/*iBoxStart("Technikbaum");
+			showTechTree("b",$arr['building_id']);
+		iBoxEnd();*/
+		
+		if ($useTabs)
+		{
+			$tc->close();
+	    $tc->end();
+	  }
+	}
+  else
+  {
+  	err_msg("Geb&auml;udeinfodaten nicht gefunden!");
+  }
+
+	echo "<input type=\"button\" value=\"Geb&auml;ude&uuml;bersicht\" onclick=\"document.location='?page=$page&site=$site'\" /> &nbsp; ";
+	if (!$popup)
+	{
+		echo "<input type=\"button\" value=\"Technikbaum\" onclick=\"document.location='?page=techtree&mode=buildings'\" /> &nbsp; ";
+	}
+	if (isset($_SESSION['lastpage']) && $_SESSION['lastpage']=="buildings" && !$popup)
+	{
+	   echo "<input type=\"button\" value=\"Zur&uuml;ck zum Bauhof\" onclick=\"document.location='?page=buildings'\" /> &nbsp; ";
+	}
+
+}
+
+//
 // Kategorieinfos
 //
 elseif(isset($_GET['type_id']) && $_GET['type_id']>0)
@@ -564,6 +691,37 @@ else
 				tableEnd();
 			}
 		}
+	}
+	$res = dbquery("
+		SELECT 
+			alliance_building_name,
+			alliance_building_shortcomment,
+			alliance_building_longcomment,
+			alliance_building_id
+		FROM 
+			alliance_buildings
+		WHERE 
+			alliance_building_show=1  
+		ORDER BY 
+			alliance_building_name;");
+	if (mysql_num_rows($res)>0)
+	{
+		// class=\"cluetip\" rel=\"tooltip.php?a=buildingcat&id=".$tarr['type_id']."\"
+		tableStart("<span>Allianzgebäude</span>");
+		while ($arr = mysql_fetch_array($res))
+		{
+			echo "<tr>
+				<td style=\"width:40px;padding:0px;background:#000;vertical-align:middle;\">
+					<a href=\"?page=$page&site=$site&aid=".$arr['alliance_building_id']."\">
+						<img src=\"".IMAGE_PATH."/".IMAGE_ALLIANCE_BUILDING_DIR."/building".$arr['alliance_building_id']."_small.".IMAGE_EXT."\" align=\"top\" style=\"width:40px;height:40px;background:#000;margin:0px;\" alt=\"Bild ".text2html($arr['alliance_building_name'])."\" border=\"0\"/></a></td>";
+			echo "<td style=\"width:130px;\">
+				<a href=\"?page=$page&site=$site&aid=".$arr['alliance_building_id']."\"><b>".text2html($arr['alliance_building_name'])."</a></a>
+			</td>";
+			//class=\"cluetip\" rel=\"tooltip.php?a=buildingdesc&id=".$arr['building_id']."\"
+			echo "<td>".text2html($arr['alliance_building_shortcomment'])."</td>";
+			echo "</tr>";
+		}
+		tableEnd();
 	}
 }
 

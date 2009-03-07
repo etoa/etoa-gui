@@ -2493,7 +2493,7 @@ function imagecreatefromfile($path, $user_functions = false)
 	* @return array Array of calculated costs
 	*
 	*/	
-	function calcBuildingCosts($buildingArray, $level, $fac)
+	function calcBuildingCosts($buildingArray, $level, $fac=1)
 	{
 		$bc=array();
 		$bc['metal'] = $fac * $buildingArray['building_costs_metal'] * pow($buildingArray['building_build_costs_factor'],$level);
@@ -2502,6 +2502,17 @@ function imagecreatefromfile($path, $user_functions = false)
 		$bc['fuel'] = $fac * $buildingArray['building_costs_fuel'] * pow($buildingArray['building_build_costs_factor'],$level);
 		$bc['food'] = $fac * $buildingArray['building_costs_food'] * pow($buildingArray['building_build_costs_factor'],$level);
 		$bc['power'] = $fac * $buildingArray['building_costs_power'] * pow($buildingArray['building_build_costs_factor'],$level);
+		return $bc;
+	}
+	
+	function calcAllianceBuildingCosts($buildingArray, $level, $fac=1)
+	{
+		$bc=array();
+		$bc['metal'] = $fac * $buildingArray['alliance_building_costs_metal'] * pow($buildingArray['alliance_building_costs_factor'],$level);
+		$bc['crystal'] = $fac * $buildingArray['alliance_building_costs_crystal'] * pow($buildingArray['alliance_building_costs_factor'],$level);
+		$bc['plastic'] = $fac * $buildingArray['alliance_building_costs_plastic'] * pow($buildingArray['alliance_building_costs_factor'],$level);
+		$bc['fuel'] = $fac * $buildingArray['alliance_building_costs_fuel'] * pow($buildingArray['alliance_building_costs_factor'],$level);
+		$bc['food'] = $fac * $buildingArray['alliance_building_costs_food'] * pow($buildingArray['alliance_building_costs_factor'],$level);
 		return $bc;
 	}
 	
@@ -2514,7 +2525,7 @@ function imagecreatefromfile($path, $user_functions = false)
 	* @return array Array of calculated costs
 	*
 	*/
-	function calcTechCosts($arr,$l,$fac)
+	function calcTechCosts($arr,$l,$fac=1)
 	{
 
 		// Baukostenberechnung          Baukosten = Grundkosten * (Kostenfaktor ^ Ausbaustufe)

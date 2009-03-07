@@ -70,7 +70,18 @@
 				$entities = $cell->getEntities();
 				
 				echo "<h1>System ".$cell."</h1>";
-						
+				
+				$ares = dbquery("SELECT
+									player_id
+								FROM
+									admin_users
+								WHERE
+									player_id<>0;");
+				$admins = array();
+				while ($arow = mysql_fetch_row($ares)) {
+					array_push($admins,$arow[0]);
+				}
+				
 				//
 				// Systamkarte
 				//
@@ -103,8 +114,13 @@
 					$class = " class=\"";
 					if ($ent->ownerId()>0)
 					{
+					  //Admin
+					  if (in_array($ent->ownerId(),$admins)) {
+						  $class .= "adminColor";
+						  $tm_info = "Admin/Entwickler";						  
+					  }
 					  // Krieg
-					  if ($ent->owner->allianceId>0 && $cu->alliance->checkWar($ent->owner->allianceId))
+					  elseif ($ent->owner->allianceId>0 && $cu->alliance->checkWar($ent->owner->allianceId))
 					  {
 						  $class .= "enemyColor";
 						  $tm_info = "Krieg";
@@ -394,7 +410,8 @@
 				<span class=\"noobColor\">Anf&auml;ngerschutz</span>,
 				<span class=\"friendColor\">B&uuml;ndnis</span>, 
 				<span class=\"enemyColor\">Krieg</span>, 
-				<span class=\"userAllianceMemberColor\">Allianzmitglied</span>";
+				<span class=\"userAllianceMemberColor\">Allianzmitglied</span>,
+				<span class=\"adminColor\" ".tm("Admin/Entwickler","Gemäss §14.2 ist es strengstens untersagt einen Adminaccount anzugreifen oder auszuspionieren. Wer dies tut ist selber schuld und kann mit einer Sperre von 24h bestraft werden!<br style=\"clear:both\" />").">Admin/Entwickler</span>";
 				iBoxEnd();
 				echo "<input type=\"button\" value=\"Zur Raumkarte\" onclick=\"document.location='?page=sector&amp;sx=".$cell->sx."&amp;sy=".$cell->sy."'\" /> &nbsp; ";
 

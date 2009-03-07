@@ -317,19 +317,20 @@
 				echo "<form action=\"?page=$page&amp;mode=misc\" method=\"post\">";		
 	    	checker_init();
 	    	tableStart("Sonstige Accountoptionen");
-	  		 
+			
 	    	// Urlaubsmodus
 	    	echo "<tr><th class=\"tbltitle\" style=\"width:150px;\">Urlaubsmodus</th>
 	    	<td class=\"tbldata\">Im Urlaubsmodus kannst du nicht angegriffen werden, aber deine Produktion steht auch still. Du darfst nichts im Bau haben
 	    	um den Urlaubsmodus aktivieren zu können.<br/><b>Dauer:</b> mindestens ".MIN_UMOD_TIME." Tage</td>
 	    	<td class=\"tbldata\">";
-	    	if ($arr['user_hmode_from']>0 && $arr['user_hmode_from']<time() && $arr['user_hmode_to']<time())
+			
+	    	if ($cu->hmode_from>0 && $cu->hmode_from<time() && $cu->hmode_to<time())
 	    	{
 	    		echo "<input type=\"submit\" style=\"color:#0f0\" name=\"hmod_off\" value=\"Urlaubsmodus deaktivieren\" />";
 	    	}
-	    	elseif ($arr['user_hmode_from']>0 && $arr['user_hmode_from']<time() && $arr['user_hmode_to']>=time() || $umod)
+	    	elseif ($arr['user_hmode_from']>0 && $cu->hmode_from<time() && $cu->hmode_to>=time() || $umod)
 	    	{
-	    	  echo "<span style=\"color:#f90\">Urlaubsmodus ist aktiv bis mindestens <b>".df($arr['user_hmode_to'])."</b>!</span>";
+	    	  echo "<span style=\"color:#f90\">Urlaubsmodus ist aktiv bis mindestens <b>".df($cu->hmode_to)."</b>!</span>";
 	    	}
 	    	else
 	    	{

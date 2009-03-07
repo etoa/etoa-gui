@@ -386,7 +386,7 @@
 			$conf_type['timedate']="Zeit/Datum-Feld";
 			$conf_type['onoff']="Ein/Aus-Schalter";
 
-			if ($_GET['configcat']=="manual")
+			if (isset($_GET['configcat']) && $_GET['configcat']=="manual")
 			{
 				echo "<h2>Konfigurationstabelle manuell bearbeiten</h2>";
 				if ($_POST['new']!="")
@@ -440,7 +440,7 @@
 					echo "<h2>".$carr['cat_name']."</h2>";
 
 
-					if ($_POST['submit']!="")
+					if (isset($_POST['submit']))
 					{
 						$res=dbquery("SELECT * FROM config WHERE config_cat_id=".$_GET['cid']." ORDER BY config_name;");
 						while ($arr=mysql_fetch_array($res))

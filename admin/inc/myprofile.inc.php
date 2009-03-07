@@ -30,7 +30,7 @@
 	
 	if (isset($_POST['submitpw']))
 	{
-		$res=dbquery("SELECT user_password FROM admin_users WHERE user_id='".$s['user_id']."';");
+		$res=dbquery("SELECT user_password,player_id FROM admin_users WHERE user_id='".$s['user_id']."';");
 		$arr=mysql_fetch_array($res);
 
 		if (pw_salt($_POST['user_password_old'],$s['user_id'])==$arr['user_password'])
@@ -74,6 +74,20 @@
 			player_id=".$_POST['player_id']."			
 		WHERE 
 			user_id='".$s['user_id']."';");
+		
+		dbquery("UPDATE
+					users
+				SET
+					user_ghost='1'
+				WHERE
+					user_id='".$_POST['player_id']."';");
+		dbquery("UPDATE
+					users
+				SET
+					user_ghost='0'
+				WHERE
+					user_id='".$arr['player_id']."';");
+		
 		cms_ok_msg("Die Daten wurden ge&auml;ndert!");
 		add_log(8,$s['user_nick']." ändert seine Daten",time());
 	}		

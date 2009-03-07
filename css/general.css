@@ -170,6 +170,10 @@ img.resIcon	{
 	color:#09f;
 }
 
+.adminColor, .tb .adminColor		{
+	color:#000000;
+}
+
 .enemyColor, .tb .enemyColor		{
 	color:#ff2200;
 }

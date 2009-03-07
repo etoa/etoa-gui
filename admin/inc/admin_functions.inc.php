@@ -527,6 +527,7 @@
 	function create_sql_value($type,$confname,$field,$postarray)
 	{
 		global $conf;
+		$sql_value = "";
 		switch ($type)
 		{
 			case "text":

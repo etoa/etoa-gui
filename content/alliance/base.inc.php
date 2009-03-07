@@ -62,8 +62,8 @@
 		
 	// Stellt die ganzen Bauoptionen dar, und errechnet und formatiert die Preise und gibt die Infos in einem Array zurück
 	function show_buildoptions($typ="building", $id=0, $res_metal=0, $res_crystal=0, $res_plastic=0, $res_fuel=0, $res_food=0, $costs_metal=0, $costs_crystal=0, $costs_plastic=0, $costs_fuel=0, $costs_food=0, $build_time=0, $costs_factor=0, $level=0, $max_level=0, $buildsomething=false, $members=1, $end_time=0)
-	{		
-		global $conf;
+	{
+		$cfg = Config::getInstance();
 		
 		// Prüft Max. Level
 		if($level<$max_level)
@@ -73,7 +73,7 @@
 
 			// Errechnet die Effektiven Kosten für die Allianz in Abgängigkeit von der Mitgliederanzahl
 			$factor = pow($costs_factor,$level);
-			$member_factor = pow($members,$conf['alliance_membercosts_factor']['v']);
+			$member_factor = 1 + $members * $cfg->get('alliance_membercosts_factor');
 			if($factor<1)
 			{
 				$factor = 1;
@@ -798,6 +798,59 @@
 		}
 	}
 	
+	// Userschiffe laden (wenn Schiffswerft gebaut=
+	// Gebaute Schiffe laden
+	$res = dbquery("
+	SELECT
+		shiplist_ship_id,
+		shiplist_entity_id,
+		shiplist_count
+	FROM
+		shiplist
+	WHERE
+		shiplist_user_id='".$cu->id."';");
+	while ($arr = mysql_fetch_assoc($res))
+	{
+		$shiplist[$arr['shiplist_ship_id']][$arr['shiplist_entity_id']]=$arr['shiplist_count'];
+	}
+	
+	// Bauliste von allen Planeten laden und nach Schiffe zusammenfassen
+	$res = dbquery("
+	SELECT
+		queue_id,
+		queue_ship_id,
+		SUM(queue_cnt) AS cnt
+	FROM
+		ship_queue
+	WHERE
+		queue_user_id='".$cu->id."'
+		AND queue_endtime>'".$time."'
+	GROUP BY
+		queue_ship_id;");
+	while ($arr = mysql_fetch_assoc($res))
+	{
+		$queue_total[$arr['queue_ship_id']] = $arr['cnt'];
+	}
+	
+	// Flotten laden und nach Schiffe zusammenfassen
+	$res = dbquery("
+		SELECT
+			fs_ship_id,
+			SUM(fs.fs_ship_cnt) AS cnt
+		FROM
+			fleet AS f
+		INNER JOIN
+			fleet_ships AS fs
+		ON f.id=fs.fs_fleet_id
+		WHERE
+			f.user_id='".$cu->id."'
+		GROUP BY
+			fs.fs_ship_id;");
+	while ($arr = mysql_fetch_assoc($res))
+	{
+		$fleet[$arr['fs_ship_id']] = $arr['cnt'];
+	}
+	
 	
 	
 	
@@ -1239,7 +1292,7 @@
                   	<img src=\"".$path."\" style=\"width:120px;height:120px;border:none;margin:0px;\" alt=\"".$data['alliance_building_name']."\"/>
                   </td>
                   <td class=\"tbldata\" style=\"vertical-align:top;height:100px;\" colspan=\"6\">
-                  	".$data['alliance_building_comment']."
+                  	".$data['alliance_building_longcomment']."
                  	</td>
 				     </tr>";
 				//
@@ -1325,7 +1378,7 @@
                   	<img src=\"".$path."\" style=\"width:120px;height:120px;border:none;margin:0px;\" alt=\"".$data['alliance_tech_name']."\"/>
                   </td>
                   <td class=\"tbldata\" style=\"vertical-align:top;height:100px;\" colspan=\"6\">
-                  	".$data['alliance_tech_comment']."
+                  	".$data['alliance_tech_longcomment']."
                  	</td>
 				     </tr>";
 				//
@@ -1635,9 +1688,12 @@
 		
 		tableStart("Guthaben Übersicht");
 		
-		echo "<tr>
-						<td class=\"tbldata\" style=\"text-align:center;\">Schiffsteile pro Stunde: ".(2*$conf['alliance_shippoints_per_hour']['v'] + $conf['alliance_shippoints_per_hour']['v']*$buildlist[ALLIANCE_SHIPYARD_ID]['alliance_buildlist_current_level'])."</td>
-					</tr>
+		echo "<tr>";
+		if ($aarr['alliance_res_metal']<0 || $aarr['alliance_res_crystal']<0 || $aarr['alliance_res_plastic']<0 || $aarr['alliance_res_fuel']<0 || $aarr['alliance_res_food']<0)
+			echo "<td class=\"tbldata\" style=\"text-align:center;\"><span ".tm("Produktionsstop","Die Produktion wurde unterbrochen, da negative Rohstoffe vorhanden sind.").">Schiffsteile pro Stunde: 0</span></td>";
+		else
+			echo "<td class=\"tbldata\" style=\"text-align:center;\">Schiffsteile pro Stunde: ".($cfg->get('alliance_shippoints_per_hour')*$buildlist[ALLIANCE_SHIPYARD_ID]['alliance_buildlist_current_level'])."</td>";
+					echo "</tr>
 					<tr>
 						<td class=\"tbldata\" style=\"text-align:center;\">Vorhandene Teile: ".$alliance_members[$cu->id]['user_alliace_shippoints']."</td>
 					</tr>";
@@ -1649,7 +1705,29 @@
 		if(isset($ships))
 		{
 			foreach($ships as $id => $data)
-			{						
+			{
+				// Zählt die Anzahl Schiffe dieses Typs im ganzen Account...
+		    	$ship_count = 0;
+		      	// ... auf den Planeten
+		      	if(isset($shiplist[$data['ship_id']]))
+		      	{
+		      		$ship_count += array_sum($shiplist[$data['ship_id']]);
+		      	}
+		      	// ... in der Bauliste
+		      	if(isset($queue_total[$data['ship_id']]))
+		      	{
+		      		$ship_count += $queue_total[$data['ship_id']];
+		      	}
+				// ... in der Luft
+		      	if(isset($fleet[$data['ship_id']]))
+		      	{
+		      		$ship_count += $fleet[$data['ship_id']];
+		      	}
+				
+				
+				//Kostenfaktor Schiffe
+				$cost_factor = pow($cfg->get("alliance_shipcosts_factor"),$ship_count);
+				
 				$path = IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$data['ship_id']."_middle.".IMAGE_EXT;
 				tableStart($data['ship_name']);
 				echo "<tr>
@@ -1677,12 +1755,16 @@
 								<td class=\"tbldata\">".nf($data['ship_shield'])."</td>
 								<td class=\"tbldata\">".nf($data['ship_speed'])." AE/h</td>
 								<td class=\"tbldata\">".tf($data['ship_time2start']/FLEET_FACTOR_S)."</td>
-								<td class=\"tbldata\">".tf($data['ship_time2land']/FLEET_FACTOR_S)."</td>
-								<td class=\"tbldata\">".nf($data['ship_alliance_costs'])." <input type=\"hidden\" value=\"".$data['ship_alliance_costs']."\" id=\"ship_costs_".$data['ship_id']."\" name=\"ship_costs_".$data['ship_id']."\" /></td>
+								<td class=\"tbldata\">".tf($data['ship_time2land']/FLEET_FACTOR_S)."</td>";
+								if ($data['ship_max_count']!=0 && $data['ship_max_count']<=$ship_count) {
+									echo "<td class=\"tbldata\" colspan=\"2\"><i>Maximalanzahl erreicht</i></td>";
+								} else {
+									echo "<td class=\"tbldata\">".nf($data['ship_alliance_costs']*$cost_factor)." <input type=\"hidden\" value=\"".$data['ship_alliance_costs']*$cost_factor."\" id=\"ship_costs_".$data['ship_id']."\" name=\"ship_costs_".$data['ship_id']."\" /></td>
 								<td class=\"tbldata\">
-									<input type=\"text\" value=\"0\" name=\"buy_ship[".$data['ship_id']."]\" id=\"buy_ship_".$data['ship_id']."\" size=\"4\" maxlength=\"6\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/>
-									<input type=\"hidden\" value=\"".$data['ship_max_count']."\" id=\"ship_max_count_".$data['ship_id']."\" name=\"ship_max_count_".$data['ship_id']."\" />
-								</td>
+									<input type=\"text\" value=\"0\" name=\"buy_ship[".$data['ship_id']."]\" id=\"buy_ship_".$data['ship_id']."\" size=\"4\" maxlength=\"6\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/>";
+								}
+									echo "<input type=\"hidden\" value=\"".$data['ship_max_count']."\" id=\"ship_max_count_".$data['ship_id']."\" name=\"ship_max_count_".$data['ship_id']."\" />
+									</td>
 							</tr>";
 				
 				
@@ -1702,12 +1784,12 @@
 		
 		echo "<tr>
 						<td class=\"tbldata\" style=\"text-align:center;\">
-							<input type=\"hidden\" value=\"".$max_ship_id."\" id=\"max_ship_id\" name=\"max_ship_id\" />
-							<select id=\"user_buy_ship\" name=\"user_buy_ship\">
-							<option value=\"0\">User wählen...</option>";
+							<select id=\"user_buy_ship\" name=\"user_buy_ship\">";
+//							<option value=\"0\">User wählen...</option>";
 					  	// Allianzuser
 							foreach($alliance_members as $id => $data)
 							{
+								if ($cu==$data['user_nick'])
 					  		echo "<option value=\"".$id."\">".$data['user_nick']." (".nf($data['user_alliace_shippoints']).")</option>";
 					  	}
   			echo "</select><br><br>
