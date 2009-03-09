@@ -30,7 +30,9 @@
 	*
 	* @author MrCage mrcage@etoa.ch
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
-	*/		
+	*/
+	
+	require_once("global.inc.php");
 
 	function showTitle($title)
 	{

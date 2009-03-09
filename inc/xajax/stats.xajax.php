@@ -355,7 +355,7 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 				</tr>";
 				while ($arr=mysql_fetch_array($res))
 				{
-					if ($arr['battle_rating']>0)
+					if ($arr['battles_fought']>0)
 					{
 						echo "<tr>";
 						echo "<td>".$cnt."</td>";

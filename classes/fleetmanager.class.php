@@ -180,7 +180,6 @@
 			$this->count = 0;
 			$this->fleet = array();
 			//Lädt Flottendaten
-			// TODO: This is not good query because it needs to know the planet table structure
 			$fres = dbquery("
 			SELECT
 				id
@@ -190,6 +189,7 @@
 				next_id='".$this->allianceId."'
 				AND leader_id=id
 				AND action='alliance'
+				AND status='0'
 			ORDER BY
 				landtime DESC;");
 			if (mysql_num_rows($fres)>0)
