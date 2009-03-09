@@ -246,8 +246,18 @@
 				echo "</td>";
 				echo "<td class=\"tbldata\"><b>".$fd->getSource()->entityCodeString()."</b> 
 				<a href=\"?page=cell&amp;id=".$fd->getSource()->cellId()."&amp;hl=".$fd->getSource()->id()."\">".$fd->getSource()."</a><br/>";
-				echo "<b>".$fd->getTarget()->entityCodeString()."</b> 
-				<a href=\"?page=cell&amp;id=".$fd->getTarget()->cellId()."&amp;hl=".$fd->getTarget()->id()."\">".$fd->getTarget()."</a></td>";			
+				
+				if ($cu->discovered($fd->getTarget()->getCell()->absX(),$fd->getTarget()->getCell()->absY()))
+				{
+					echo "<b>".$fd->getTarget()->entityCodeString()."</b> 
+					<a href=\"?page=cell&amp;id=".$fd->getTarget()->cellId()."&amp;hl=".$fd->getTarget()->id()."\">".$fd->getTarget()."</a></td>";			
+				}
+				else
+				{
+					$ent = Entity::createFactory('u',$fd->getTarget()->id());
+					echo "<b>".$ent->entityCodeString()."</b> 
+					<a href=\"?page=cell&amp;id=".$ent->cellId()."&amp;hl=".$ent->id()."\">".$ent."</a></td>";			
+				}
 				echo "<td class=\"tbldata\">
 				".date("d.m.y, H:i:s",$fd->launchTime())."<br/>";
 				echo date("d.m.y, H:i:s",$fd->landTime())."</td>";

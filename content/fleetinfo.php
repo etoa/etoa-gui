@@ -77,12 +77,6 @@
 
 			tableStart("Flugdaten");
 			
-			/*
-			echo "<tr>
-				<th>Auftrag:</th>
-				<td class=\"tbldata\" ".tm($fd->getAction()->name(),$fd->getAction()->desc())." style=\"color:".FleetAction::$attitudeColor[$fd->getAction()->attitude()]."\">
-				".$fd->getAction()->name()." [".FleetAction::$statusCode[$fd->status()]."]</td></tr>";*/
-				
 			$progrssWidth = 590;
 				
 			$perc = (time()-$fd->launchTime()) / ($fd->landTime()-$fd->launchTime());
@@ -97,16 +91,27 @@
 						<a href=\"?page=cell&amp;id=".$fd->getSource()->cellId()."&amp;hl=".$fd->getSource()->id()."\">".$fd->getSource()."</a><br/>
 						<b>Start:</b> ".date("d.m.Y H:i:s",$fd->launchTime())."
 						</div>
-						<div style=\"position:absolute;right:0px;top:5px;text-align:right;\">
-						".$fd->getTarget()->smallImage()."<br/>
-						<a href=\"?page=cell&amp;id=".$fd->getTarget()->cellId()."&amp;hl=".$fd->getTarget()->id()."\">".$fd->getTarget()."</a><br/>
-						<b>Landung:</b> ".date("d.m.Y H:i:s",$fd->landTime())."
+						<div style=\"position:absolute;right:0px;top:5px;text-align:right;\">";
+						if ($cu->discovered($fd->getTarget()->getCell()->absX(),$fd->getTarget()->getCell()->absY()))
+						{
+							echo $fd->getTarget()->smallImage()."<br/>
+							<a href=\"?page=cell&amp;id=".$fd->getTarget()->cellId()."&amp;hl=".$fd->getTarget()->id()."\">".$fd->getTarget()."</a><br/>";
+						}
+						else
+						{
+							$ent = Entity::createFactory('u',$fd->getTarget()->id());
+							echo $ent->smallImage()."<br/>
+							<a href=\"?page=cell&amp;id=".$ent->cellId()."&amp;hl=".$ent->id()."\">".$ent."</a><br/>";
+						}
+						echo "<b>Landung:</b> ".date("d.m.Y H:i:s",$fd->landTime())."
 						</div>						
 						<div style=\"position:absolute;left:".$pxl."px;top:17px;\" id=\"fleetProgress\">
 							<img src=\"images/fleetmove.png\" alt=\"Fleet\" />
 						</div>
-						<div id=\"flighttime\" style=\"color:#ff0;position:absolute;left:300px;top:60px;\">
-						
+						<div style=\"position:absolute;left:270px;top:46px;text-align:center;\">
+							<div style=\"color:".FleetAction::$attitudeColor[$fd->getAction()->attitude()]."\">
+				".$fd->getAction()->name()." [".FleetAction::$statusCode[$fd->status()]."]</div>
+							<div id=\"flighttime\"></div>
 						</div>
 					</div>
 				</td>
@@ -194,6 +199,20 @@
 			echo "</form>";
 	
 			countDown('flighttime',$fd->landTime());
+			
+			echo "<script type=\"text/javascript;\">
+			function moveFleet(t)
+			{
+				perc = (t-".$fd->launchTime().") / (".($fd->landTime()-$fd->launchTime()).");
+				perc = Math.min(1,perc);
+				pxl = 25 + Math.round(perc * ".$progrssWidth.");
+				document.getElementById('fleetProgress').style.left = pxl+'px';
+				
+				setTimeout(\"moveFleet(\"+(t+1)+\")\",1000);
+			}
+			moveFleet(".time().");
+			</script>";
+			
 		}
 		else {
 			echo "Diese Flotte existiert nicht mehr! Wahrscheinlich sind die Schiffe schon <br/>auf dem Zielplaneten gelandet oder der Flug wurde abgebrochen.<br/><br/>";

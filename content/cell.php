@@ -418,8 +418,10 @@
 			}
 			else
 			{
-			echo "<h1>Fehler!</h1>System noch nicht erkundet. Erforsche das System mit einer Erkundungsflotte um es sichtbar zu machen!<br/><br/>";
-			echo "<input type=\"button\" value=\"Zur&uuml;ck zur Raumkarte\" onclick=\"document.location='?page=sector'\" />";
+				echo "<h1>Fehler!</h1>System noch nicht erkundet. Erforsche das System mit einer Erkundungsflotte um es sichtbar zu machen!<br/><br/>";
+				echo button("Erkundungsflotte senden","?page=haven&cellTarget=".$cellId)." &nbsp; ";
+								
+				echo "<input type=\"button\" value=\"Zur&uuml;ck zur Raumkarte\" onclick=\"document.location='?page=sector'\" />";
 			}
 		}
 		else
