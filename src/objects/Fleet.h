@@ -47,15 +47,16 @@ class Fleet
 	bool actionAllowed, shipsLoaded, entityLoaded, shipsChanged;
 	
 	double initWeapon, initShield, initStructure, initStructShield, initHeal, initCount;
-	// TODO: Why are theese doubles? better use unsigned int
-	double weapon, shield, structure, heal, count, healCount;
-	unsigned int actionCount;
+	double weapon, shield, structure, heal;
+	unsigned int actionCount, healCount, count;
+	
+	int allianceWeapon, allianceStructure, allianceShield;
 	
 	double exp;
 	
 	double antraxBonus, antraxFoodBonus, destroyBonus, empBonus, forstealBonus;
 	
-	bool techsAdded;
+	bool techsAdded, allianceTechsLoaded;
 	
 	bool changedData;
 	
@@ -149,6 +150,10 @@ public:
 	double getStructureBonus();
 	double getHealBonus();
 	
+	void setAllianceWeapon(int weapon);
+	void setAllianceStructure(int structure);
+	void setAllianceShield(int shield);
+	
 	double addExp(double exp);
 	double getExp();
 	double getAddedExp();
@@ -201,6 +206,7 @@ private:
 	void loadAdditionalFleets();
 	
 	void addTechs();
+	void loadAllianceTechs();
 	
 	void save();
 };

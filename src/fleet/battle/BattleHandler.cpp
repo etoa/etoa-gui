@@ -484,7 +484,7 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 			user = etoa::s2d(users.substr(0,found));
 			etoa::addBattlePoints(user,this->attPoints,(this->attPoints-1),attReason);
 		}
-
+		
 		users = entity->getUserIds();
 		found=users.find_first_of(",");
 		while (found!=std::string::npos) {

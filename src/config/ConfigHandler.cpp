@@ -31,6 +31,11 @@
 		return(actions[action]);
 	}
 	
+	std::string Config::getActionName(std::string action)
+	{
+		return(actionName[action]);
+	}
+	
 	// Setzt den Rundenname
 	void Config::setRoundName(std::string name)
 	{
@@ -170,4 +175,31 @@
 		actions["support"] = 22;
 		actions["transport"] = 23;
 		actions["alliance"] = 24;
+		
+		actionName["analyze"] = "Analysieren";
+		actionName["antrax"] = "Antraxangriff";
+		actionName["attack"] = "Angriff";
+		actionName["bombard"] = "Bombardierung";
+		actionName["collectmetal"] = "Asteroiden sammeln";
+		actionName["collectcrystal"] = "Sternennebel sammeln";
+		actionName["collectdebris"] = "Trümmer sammeln";
+		actionName["collectfuel"] = "Gas saugen";
+		actionName["colonize"] = "Kolonialisieren";
+		actionName["createdebris"] = "Trümmerfeld erstellen";
+		actionName["delivery"] = "Allianzlieferung";
+		actionName["flight"] = "Flug";
+		actionName["emp"] = "EMP-Attacke";
+		actionName["explore"] = "Erkunden";
+		actionName["fakeattack"] = "Täuschungsangriff";
+		actionName["fetch"] = "Waren abholen";
+		actionName["gasattack"] = "Gasangriff";
+		actionName["invade"] = "Invasion";
+		actionName["market"] = "Marktlieferung";
+		actionName["position"] = "Stationieren";
+		actionName["spy"] = "Ausspionieren";
+		actionName["spyattack"] = "Spionageangriff";
+		actionName["stealthattack"] = "Tarnangriff";
+		actionName["support"] = "Unterstützen";
+		actionName["transport"] = "Waren transportieren";
+		actionName["alliance"] = "Allianzangriff";
 	}

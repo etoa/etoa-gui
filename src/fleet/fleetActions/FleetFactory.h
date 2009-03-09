@@ -136,6 +136,8 @@ public:
 				if (action=="support")
 					return new support::SupportHandler(fRow);
 				break;
+			default:
+				return new defaul::DefaultHandler(fRow);
 		}	
 	}
 };

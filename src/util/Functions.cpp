@@ -378,7 +378,7 @@ namespace etoa
 			<< "	user_ratings "
 			<< "SET "
 			<< "	battles_fought=battles_fought+1, ";
-		if (won)
+		if (won>0)
 			query << "	battles_won=battles_won+1, ";
 		else
 			query << "	battles_lost=battles_lost+1, ";
@@ -392,19 +392,21 @@ namespace etoa
 	}
 	
 	void addSpecialiBattle(int userId, std::string reason="") {
-		My &my = My::instance();
-		mysqlpp::Connection *con_ = my.get();
-		
-		mysqlpp::Query query = con_->query();
-		query << "UPDATE "
-			<< "	user_ratings "
-			<< "SET "
-			<< "	battle_rating=battle_rating+1 "
-			<< "WHERE "
-			<< "	id=" << userId << ";";
-		query.store();
-		query.reset();
-		std::string text = "Der Spieler " + etoa::d2s(userId) +" erhŠlt 1 Kampfpunkte. Grund: " + reason;
-		add_log(17,text,0);
+		if (userId>0) {
+			My &my = My::instance();
+			mysqlpp::Connection *con_ = my.get();
+			
+			mysqlpp::Query query = con_->query();
+			query << "UPDATE "
+				<< "	user_ratings "
+				<< "SET "
+				<< "	battle_rating=battle_rating+1 "
+				<< "WHERE "
+				<< "	id=" << userId << ";";
+			query.store();
+			query.reset();
+			std::string text = "Der Spieler " + etoa::d2s(userId) +" erhŠlt 1 Kampfpunkte. Grund: " + reason;
+			add_log(17,text,0);
+		}
 	}
 }

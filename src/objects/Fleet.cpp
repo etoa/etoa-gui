@@ -58,6 +58,10 @@
 		this->initStructShield = -1;
 		this->initHeal = -1;
 		this->initCount = -1;
+		
+		this->allianceWeapon = 0;
+		this->allianceStructure = 0;
+		this->allianceShield = 0;
 
 		this->exp = 0;
 
@@ -77,6 +81,7 @@
 		this->shipsChanged = false;
 
 		this->techsAdded = false;
+		this->allianceTechsLoaded = false;
 
 		this->fleetUser = new User(this->getUserId());
 
@@ -135,7 +140,13 @@
 	}
 
 	std::string Fleet::getAction() {
-		return this->action;
+		Config &config = Config::instance();
+		std::string action = config.getActionName(this->action);
+		if (this->status==1)
+			action += " (Rückflug)";
+		else if (this->status==2)
+			action += " (Abgebrochen)";
+		return action;
 	}
 
 	short Fleet::getStatus() {
@@ -988,6 +999,8 @@
 	}
 
 	std::string Fleet::getShieldString(bool small) {
+		if (!this->allianceTechsLoaded)
+			this->loadAllianceTechs();
 		std::string shieldString = "";
 		if (!small) {
 			int counter = 1;
@@ -1011,6 +1024,8 @@
 	}
 
 	std::string Fleet::getStructureString(bool small) {
+		if (!this->allianceTechsLoaded)
+			this->loadAllianceTechs();
 		std::string structureString = "";
 		if (!small) {
 			int counter = 1;
@@ -1038,6 +1053,8 @@
 	}
 
 	std::string Fleet::getWeaponString(bool small) {
+		if (!this->allianceTechsLoaded)
+			this->loadAllianceTechs();
 		std::string weaponString = "";
 		if (!small) {
 			int counter = 1;
@@ -1349,6 +1366,8 @@
 
 	void Fleet::addTechs() {
 		if (!this->techsAdded) {
+			if (!this->allianceTechsLoaded)
+				this->loadAllianceTechs();
 			this->techsAdded = true;
 			this->weapon *= this->getWeaponBonus();
 			this->shield *= this->getShieldBonus();
@@ -1368,6 +1387,64 @@
 		if (this->initCount<0)
 			this->initCount = this->count;
 	}
+	
+	void Fleet::loadAllianceTechs() {
+		if (this->fleetUser->getAllianceId()!=0) {
+			My &my = My::instance();
+			mysqlpp::Connection *con = my.get();
+			mysqlpp::Query query = con->query();
+			query << "SELECT "
+				<< "	alliance_techlist_tech_id, "
+				<< "	alliance_techlist_current_level "
+				<< "FROM "
+				<< "	alliance_techlist "
+				<< "WHERE "
+				<< "	alliance_techlist_alliance_id='" << this->fleetUser->getAllianceId() << "';";
+			mysqlpp::Result aRes = query.store();
+			query.reset();
+			
+			if (aRes) {
+				Config &config = Config::instance();
+				int aSize = aRes.size();
+				
+				std::string users = this->getUserNicks();
+				size_t found;
+				int userCount = 0;
+				found=users.find_first_of(",");
+				while (found!=std::string::npos)
+				{
+					userCount++;
+					found=users.find_first_of(",",found+1);
+				}
+				
+				if (aSize>0) {
+					mysqlpp::Row aRow;
+					for (int i=0; i<aSize; i++) {
+						aRow = aRes.at(i);
+						if ((int)aRow["alliance_techlist_tech_id"]==5)
+							this->allianceWeapon = config.nget("alliance_tech_bonus",0) * (int)aRow["alliance_techlist_current_level"]
+							+ config.nget("alliance_tech_bonus",1) * userCount;
+						if ((int)aRow["alliance_techlist_tech_id"]==6)
+							this->allianceShield = config.nget("alliance_tech_bonus",0) * (int)aRow["alliance_techlist_current_level"]
+							+ config.nget("alliance_tech_bonus",1) * userCount;
+						if ((int)aRow["alliance_techlist_tech_id"]==7)
+							this->allianceStructure = config.nget("alliance_tech_bonus",0) * (int)aRow["alliance_techlist_current_level"]
+							+ config.nget("alliance_tech_bonus",1) * userCount;
+					}
+					if (fleets.size()) {
+						std::vector<Fleet*>::iterator it;
+						for ( it=fleets.begin() ; it < fleets.end(); it++ ) {
+							(*it)->setAllianceWeapon(this->allianceWeapon);
+							(*it)->setAllianceShield(this->allianceShield);
+							(*it)->setAllianceStructure(this->allianceStructure);
+						}
+					}
+				}
+			}
+		}
+		this->allianceTechsLoaded = true;
+	}
+			
 
 	double Fleet::getWeaponBonus() {
 		double bonus = 1;
@@ -1379,8 +1456,9 @@
 				bonus += (*it)->getSBonusWeapon() * data->getBonusWeapon();
 			}
 		}
-		bonus += this->fleetUser->getTechBonus("Waffentechnik");
+		bonus += this->fleetUser->getTechBonus("Waffentechnik") + this->allianceWeapon/100.0;
 		return bonus;
+
 	}
 
 	double Fleet::getShieldBonus() {
@@ -1393,7 +1471,7 @@
 				bonus += (*it)->getSBonusShield() * data->getBonusShield();
 			}
 		}
-		bonus += this->fleetUser->getTechBonus("Schutzschilder");
+		bonus += this->fleetUser->getTechBonus("Schutzschilder") + this->allianceShield/100.0;
 		return bonus;
 	}
 
@@ -1407,7 +1485,7 @@
 				bonus += (*it)->getSBonusStructure() * data->getBonusStructure();
 			}
 		}
-		bonus += this->fleetUser->getTechBonus("Panzerung");
+		bonus += this->fleetUser->getTechBonus("Panzerung") + this->allianceStructure/100.0;
 		return bonus;
 	}
 
@@ -1423,6 +1501,21 @@
 		}
 		bonus += this->fleetUser->getTechBonus("Regenatechnik");
 		return bonus;
+	}
+
+	void Fleet::setAllianceWeapon(int weapon) {
+		this->allianceWeapon = weapon;
+		this->allianceTechsLoaded = true;
+	}
+
+	void Fleet::setAllianceStructure(int structure) {
+		this->allianceStructure = structure;
+		this->allianceTechsLoaded = true;
+	}
+
+	void Fleet::setAllianceShield(int shield) {
+		this->allianceShield = shield;
+		this->allianceTechsLoaded = true;
 	}
 
 	void Fleet::save() {

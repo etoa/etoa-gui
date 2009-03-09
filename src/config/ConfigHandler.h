@@ -57,6 +57,7 @@
 		* @author Glaubinix
 		**/
 		short getAction(std::string action);
+		std::string getActionName(std::string action);
 		
 		/**
 		* Setzt den Rundenname
@@ -98,6 +99,7 @@
 		* Mapcontainer mit fleetactions
 		**/
 		std::map<std::string, short> actions;
+		std::map<std::string, std::string> actionName;
 		
 		std::string gameRound;
 		

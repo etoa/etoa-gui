@@ -60,6 +60,10 @@ class Entity
 			this->initCount = -1;
 			this->initDefCount = -1;
 			
+			this->allianceWeapon = 0;
+			this->allianceStructure = 0;
+			this->allianceShield = 0;
+			
 			this->weapon = 0;
 			this->shield = 0;
 			this->structure = 0;
@@ -77,6 +81,7 @@ class Entity
 			this->shipsChanged = false;
 			this->shipsSave = false;
 			this->techsAdded = false;
+			this->allianceTechsLoaded = false;
 			this->buildingsLoaded = false;
 			
 			this->buildingAtWork = "";
@@ -234,11 +239,13 @@ class Entity
 		bool changedData;
 		bool shipsLoaded, defLoaded;
 		bool shipsChanged, shipsSave;
-		bool techsAdded;
+		bool techsAdded, allianceTechsLoaded;
 		bool buildingsLoaded;
 		
 		double initWeapon, initShield, initStructure, initStructShield, initHeal, initCount, initDefCount;
 		double weapon, shield, structure, heal, count, healCount, spyCount, defCount;
+		
+		int allianceWeapon, allianceStructure, allianceShield;
 		
 		double exp;
 		
@@ -252,7 +259,8 @@ class Entity
 		void recalcDef();
 		
 		void addTechs();
-		
+		void loadAllianceTechs();
+	
 		void loadBuildings();
 		
 		virtual void loadData() = 0;
