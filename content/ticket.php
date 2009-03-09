@@ -62,7 +62,7 @@
 			SELECT 
 				user_id,
 				user_nick,
-				user_email,
+				user_email
 			FROM 
 				admin_users
 			WHERE
@@ -77,9 +77,9 @@
 				$text.= "Nick: ".$cu->nick."\n";
 				$text.= "ID: ".$cu->id."\n";
 				$text.= "IP/Host: ".$_SERVER['REMOTE_ADDR']." (".resolveIp($_SERVER['REMOTE_ADDR']).")\n";
-				$text.= "\n\n".$tarr[0]."\n\n";
+				$text.= "\n".$tarr[0]."\n\n";
 				$text.= $_POST['abuse_text'];
-				$text.= "\n\n Ticket bearbeiten: ".$cfg->val("roundurl")."/admin/?page=tickets&amp;view=".$tid."";
+				$text.= "\n\nTicket bearbeiten: ".$cfg->val("roundurl")."/admin/?page=tickets&amp;view=".$tid."";
 				
 	      $email_header = "From: Escape to Andromeda Ticketsystem ".ROUNDID."<etoa@dev.etoa.ch>\n";
 	      $email_header .= "Reply-To: ".$cu->nick."<".$cu->email.">\n";
@@ -94,7 +94,7 @@
 
 	
 	
-		echo "Vielen Dank, dein Text wurde gespeichert.<br/>Ein Game-Administrator wird sich dem Problem annehmen.<br/><br/>";
+		echo "<br/>Vielen Dank, dein Text wurde gespeichert.<br/>Ein Game-Administrator wird sich dem Problem annehmen.<br/><br/>";
 		if (!$ext)
 			echo "<input type=\"button\" onclick=\"document.location='?page=help'\" value=\"Weiter\" />";
 	}

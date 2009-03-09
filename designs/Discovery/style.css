@@ -29,6 +29,8 @@ a:hover	{
 h1	{
 	font-size:11pt;
 	text-align:center;
+	margin-top:7px;
+	margin-bottom:8px;
 }
 
 h1:before	{
@@ -42,6 +44,8 @@ h1:after	{
 h2	{
 	font-size:10pt;
 	text-align:center;
+	margin-top:7px;
+	margin-bottom:5px;
 }
 
 h2:before	{

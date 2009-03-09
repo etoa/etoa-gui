@@ -187,8 +187,7 @@
 
 			echo "<div id=\"tabOverview\" style=\"".($sub=="" ? '' : 'display:none')."\">";
 			
-			tableStart("Übersicht");
-			echo "<tr><td colspan=\"2\" style=\"padding:0px;\">";
+			iBoxStart("Übersicht");
 			echo "<div style=\"position:relative;height:320px;padding:0px;background:#000 url('images/stars_middle.jpg');\">
 			<div style=\"position:absolute;right:30px;top:30px;\">
 			<img src=\"".$cp->imagePath('b')."\" style=\"width:220px;height:220px;\" alt=\"Planet\" /></div>";
@@ -215,44 +214,7 @@
 				echo "<div class=\"planetOverviewItem\">Hauptplanet</div> Dies ist dein Hauptplanet. Hauptplaneten können nicht invasiert oder aufgegeben werden!<br style=\"clear:left;\"/>";
 			echo "</div>";
 			echo "</div>";
-			echo "</td></tr>";
-			/*
-			echo "<tr>
-			<th>Produktion:</th><td>
-			<div class=\"resmetal\">".nf($cp->prodMetal,0,1)." ".RES_METAL." / h</div> 
-			<div class=\"rescrystal\">".nf($cp->prodCrystal,0,1)." ".RES_CRYSTAL." / h</div>
-			<div class=\"resplastic\">".nf($cp->prodPlastic,0,1)." ".RES_PLASTIC." / h</div> 
-			<div class=\"resfuel\">".nf($cp->prodFuel,0,1)." ".RES_FUEL." / h</div> 
-			<div class=\"resfood\">".nf($cp->prodFood,0,1)." ".RES_FOOD." / h</div> 
-			<div class=\"respeople\">".nf($cp->prodPeople,0,1)." Einwohner / h</div> 
-			<div class=\"respower\">".nf($cp->prodPower,0,1)." Energieproduktion</div> 
-			<div class=\"respoweru\">".nf($cp->usePower,0,1)." Energieverbrauch</div></td></tr>
-			<tr><th>Temperatureffekt ".helpLink("tempbonus").":</th><td>
-			<span style=\"background:url('images/heat_small.png') no-repeat;padding:1px 2px 5px 20px;\" />Wärmebonus: ";
-			$spw = $cp->solarPowerBonus();
-			if ($spw>=0)
-			{
-				echo "<span style=\"color:#0f0\">+".$spw."</span>";
-			}
-			else
-			{
-				echo "<span style=\"color:#f00\">".$spw."</span>";
-			}
-			echo " MW </span> <br/>
-			<span style=\"background:url('images/ice_small.png') no-repeat;padding:1px 2px 5px 22px;\" />Kältebonus: ";
-			$spw = $cp->fuelProductionBonus();
-			if ($spw>=0)
-			{
-				echo "<span style=\"color:#0f0\">+".$spw."%</span>";
-			}
-			else
-			{
-				echo "<span style=\"color:#f00\">".$spw."%</span>";
-			}				
-			echo "</span>
-			</td></tr>
-			";*/
-			tableEnd();
+			iBoxEnd();
 			echo "</div>";
 	
 	

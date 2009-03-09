@@ -236,7 +236,7 @@
 			$values = array(
 											"order"=>"Vorgabe",
 											"name"=>"Name",
-											"battlepoints"=>"Kosten",
+											"points"=>"Kosten",
 											"fields"=>"Felder",
 											"weapon"=>"Waffen",
 											"structure"=>"Struktur",

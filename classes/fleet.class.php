@@ -10,15 +10,21 @@
 		//
 		// Variables
 		//
-		private $id,$valid, $ownerId;
-		private $sourceId, $targetId;
-		private $actionCode, $status;
-		private $launchTime, $landTime;
+		private $id;
+		private $valid;
+		private $ownerId;
+		private $sourceId;
+		private $targetId;
+		private $actionCode;
+		private $status;
+		private $launchTime;
+		private $landTime;
+		private $ships;
 		
 		/**
 		* Constructor
 		*
-		* Creates a new fleet objects and loads
+		* Creates a new fleet object and loads
 		* it's data from the table
 		*/
 		function Fleet($fid,$uid=-1,$leadid=-1)
@@ -76,6 +82,7 @@
 			
 				$this->valid = true;
 				
+				// TODO: Needs some improvement / redesign
 				if (mysql_num_rows($res) > 1)
 				{
 					$this->fleets = array();
@@ -83,7 +90,9 @@
 					{
 						$this->fleets[$arr['id']] = new Fleet($arr['id']);
 					}
-				}	
+				}	  
+				else
+					$this->fleets = array(); // Hack to avoid notice error!
 			}
 		}
 		
@@ -111,12 +120,15 @@
 			return $arr[0];
 		}
 
-		function remainingTime() {	return max(0,$this->landTime-time()); }
+		function remainingTime() 
+		{	
+			return max(0,$this->landTime-time()); 
+		}
 
 		function pilots($fleet=-1)
 		{
 			$cnt = 0;
-			if (count($this->fleets) && $fleet<0)
+			if ($fleet<0 && count($this->fleets))
 			{
 				foreach($this->fleets as $id=>$f)
 				{
@@ -126,11 +138,14 @@
 			return $this->pilots + $cnt;
 		
 		}		
-		function status() { return $this->status; }
+		function status() 
+		{ 
+			return $this->status; 
+		}
 
 		function usageFuel($fleet=-1) {
 			$cnt = 0;
-			if (count($this->fleets) && $fleet<0)
+			if ($fleet<0 && count($this->fleets) )
 			{
 				foreach($this->fleets as $id=>$f)
 				{
@@ -142,7 +157,7 @@
 		
 		function usageFood($fleet=-1) {
 			$cnt = 0;
-			if (count($this->fleets) && $fleet<0)
+			if ($fleet<0 && count($this->fleets))
 			{
 				foreach($this->fleets as $id=>$f)
 				{
@@ -154,7 +169,7 @@
 		
 		function usagePower($fleet=-1) {
 			$cnt = 0;
-			if (count($this->fleets) && $fleet<0)
+			if ($fleet<0 && count($this->fleets))
 			{
 				foreach($this->fleets as $id=>$f)
 				{
@@ -166,7 +181,7 @@
 	
 		function resMetal($fleet=-1) {
 			$cnt = 0;
-			if (count($this->fleets) && $fleet<0)
+			if ($fleet<0 && count($this->fleets))
 			{
 				foreach($this->fleets as $id=>$f)
 				{

@@ -35,8 +35,11 @@
 	
 	echo "<h1>Flotten</h1>";
 	
-	echo "<input type=\"button\" onclick=\"document.location='?page=fleetstats'\" value=\"Schiffs&uuml;bersicht anzeigen\" /> &nbsp; ";
+	echo "<br/><input type=\"button\" onclick=\"document.location='?page=fleetstats'\" value=\"Schiffs&uuml;bersicht anzeigen\" /> &nbsp; ";
 	
+	//
+	// Alliance fleets
+	// 
 	if (isset($_GET['mode']) && $_GET['mode']=="alliance" && $cu->allianceId>0) 
 	{
 		echo "<input type=\"button\" onclick=\"document.location='?page=fleets'\" value=\"Flotten anzeigen\" /><br/><br/>";
@@ -56,29 +59,20 @@
 					
 					tableStart("Allianz Supportflotten");
 					echo "<tr>
-							<td class=\"tbltitle\">Start / Ziel</td>
-							<td class=\"tbltitle\">Start / Landung</td>
-							<td class=\"tbltitle\">Auftrag / Status</td>
+							<th>Auftrag</th>
+							<th>Start / Ziel</th>
+							<th>Start / Landung</th>
 						</tr>";
 					foreach ($fm->getAll() as $fid=>$fd)
 					{
 						$cdarr["cd".$fid] = $fd->landTime();
 						
 						echo "<tr>";
-						echo "<td class=\"tbldata\"><b>".$fd->getSource()->entityCodeString()."</b> 
-								<a href=\"?page=cell&amp;id=".$fd->getSource()->cellId()."&amp;hl=".$fd->getSource()->id()."\">".$fd->getSource()."</a><br/>
-								<b>".$fd->getTarget()->entityCodeString()."</b> 
-								<a href=\"?page=cell&amp;id=".$fd->getTarget()->cellId()."&amp;hl=".$fd->getTarget()->id()."\">".$fd->getTarget()."</a>
-							</td>
-							<td class=\"tbldata\">".
-								date("d.m.y, H:i:s",$fd->launchTime())."<br/>".
-								date("d.m.y, H:i:s",$fd->landTime())."
-							</td>
-							<td class=\"tbldata\">";
+						echo "<td class=\"tbldata\">";
 						if ($cu->alliance->checkActionRightsNA('fleetminister'))
 							echo "<a href=\"?page=fleetinfo&id=".$fid."\">";
 							
-						echo "<span style=\"color:".FleetAction::$attitudeColor[$fd->getAction()->attitude()]."\">
+						echo "<span style=\"font-weight:bold;color:".FleetAction::$attitudeColor[$fd->getAction()->attitude()]."\">
 										".$fd->getAction()->name()."
 									</span> [".FleetAction::$statusCode[$fd->status()]."]
 								</a><br/>";
@@ -97,7 +91,18 @@
 						{
 							echo "Ankunft in <b><span id=\"cd".$fid."\">-</span></b>";
 						}
-						echo "</td></tr>";
+						echo "</td>";						
+						echo "<td class=\"tbldata\"><b>".$fd->getSource()->entityCodeString()."</b> 
+								<a href=\"?page=cell&amp;id=".$fd->getSource()->cellId()."&amp;hl=".$fd->getSource()->id()."\">".$fd->getSource()."</a><br/>
+								<b>".$fd->getTarget()->entityCodeString()."</b> 
+								<a href=\"?page=cell&amp;id=".$fd->getTarget()->cellId()."&amp;hl=".$fd->getTarget()->id()."\">".$fd->getTarget()."</a>
+							</td>
+							<td class=\"tbldata\">".
+								date("d.m.y, H:i:s",$fd->launchTime())."<br/>".
+								date("d.m.y, H:i:s",$fd->landTime())."
+							</td>";
+
+						echo "</tr>";
 					}
 					tableEnd();
 						
@@ -189,10 +194,13 @@
 		{
 			err_msg("Du gehörst noch keiner Allianz an.");
 		}
-	}
+	}	
 	
-	
-	else {	
+	//
+	// Personal fleets
+	//
+	else 
+	{	
 		echo "<input type=\"button\" onclick=\"document.location='?page=fleets&mode=alliance'\" value=\"Allianzflotten anzeigen\" /><br/><br/>";
 		
 		$fm = new FleetManager($cu->id,$cu->allianceId);
@@ -204,24 +212,20 @@
 			
 			echo "Klicke auf den Auftrag um die Details einer Flotte anzuzeigen<br/><br/>";
 			tableStart("Eigene Flotten");
-			echo "<tr><td class=\"tbltitle\">Start / Ziel</td>
-			<td class=\"tbltitle\">Start / Landung</td>
-			<td class=\"tbltitle\">Auftrag / Status</td></tr>";
+			echo "
+			<tr>
+				<th>Auftrag</th>
+				<th>Start / Ziel</th>
+				<th>Start / Landung</th>
+			</tr>";
 			foreach ($fm->getAll() as $fid=>$fd)
 			{
 				$cdarr["cd".$fid] = $fd->landTime();
 	
-				echo "<tr>";
-				echo "<td class=\"tbldata\"><b>".$fd->getSource()->entityCodeString()."</b> 
-				<a href=\"?page=cell&amp;id=".$fd->getSource()->cellId()."&amp;hl=".$fd->getSource()->id()."\">".$fd->getSource()."</a><br/>";
-				echo "<b>".$fd->getTarget()->entityCodeString()."</b> 
-				<a href=\"?page=cell&amp;id=".$fd->getTarget()->cellId()."&amp;hl=".$fd->getTarget()->id()."\">".$fd->getTarget()."</a></td>";			
-				echo "<td class=\"tbldata\">
-				".date("d.m.y, H:i:s",$fd->launchTime())."<br/>";
-				echo date("d.m.y, H:i:s",$fd->landTime())."</td>";
-				echo "<td class=\"tbldata\">
+				echo "<tr>
+				<td class=\"tbldata\">
 					<a href=\"?page=fleetinfo&id=".$fid."\">
-					<span style=\"color:".FleetAction::$attitudeColor[$fd->getAction()->attitude()]."\">
+					<span style=\"font-weight:bold;color:".FleetAction::$attitudeColor[$fd->getAction()->attitude()]."\">
 					".$fd->getAction()->name()."
 					</span> [".FleetAction::$statusCode[$fd->status()]."]</a><br/>";
 				if ($fd->landTime() < time())
@@ -239,7 +243,15 @@
 				{
 					echo "Ankunft in <b><span id=\"cd".$fid."\">-</span></b>";
 				}
-				echo "</td></tr>";
+				echo "</td>";
+				echo "<td class=\"tbldata\"><b>".$fd->getSource()->entityCodeString()."</b> 
+				<a href=\"?page=cell&amp;id=".$fd->getSource()->cellId()."&amp;hl=".$fd->getSource()->id()."\">".$fd->getSource()."</a><br/>";
+				echo "<b>".$fd->getTarget()->entityCodeString()."</b> 
+				<a href=\"?page=cell&amp;id=".$fd->getTarget()->cellId()."&amp;hl=".$fd->getTarget()->id()."\">".$fd->getTarget()."</a></td>";			
+				echo "<td class=\"tbldata\">
+				".date("d.m.y, H:i:s",$fd->launchTime())."<br/>";
+				echo date("d.m.y, H:i:s",$fd->landTime())."</td>";
+				echo "</tr>";
 			}
 			tableEnd();
 				

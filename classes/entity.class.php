@@ -81,6 +81,11 @@
 		//
 		// General methods
 		//
+		
+		public function smallImage()
+		{
+			return "<img src=\"".$this->imagePath()."\" style=\"width:40px;height:40px;\" alt=\"".$this->name()."\" />";
+		}
 	
     /**
     * Return if entity is visible in map

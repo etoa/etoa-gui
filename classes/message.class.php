@@ -31,7 +31,7 @@ class Message
 	/**
 	* Sends a message from an user to another user
 	*/
-	static function sendFromUserToUser($fuid,$tuid,$subject,$text,$cat=0,$fleetId=0)
+	static function sendFromUserToUser($senderId,$receiverId,$subject,$text,$cat=0,$fleetId=0)
 	{
 		if ($cat==0) 
 			$cat = USER_MSG_CAT_ID;
@@ -46,8 +46,8 @@ class Message
     ) 
    	VALUES 
    	(
-   		'".$fuid."',
-   		'".$tuid."',
+   		'".$senderId."',
+   		'".$receiverId."',
    		".time().",
    		".$cat."
    	);");

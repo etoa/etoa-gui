@@ -131,6 +131,7 @@
 		$_SESSION[SESSION_NAME]['group_name']=$arr['group_name'];
 		$_SESSION[SESSION_NAME]['group_level']=$arr['group_level'];
 		$_SESSION[SESSION_NAME]['theme']=$arr['user_theme'];
+		$_SESSION[SESSION_NAME]['player_id']=$arr['player_id'];
 	}
 	
 	if (isset($_GET['logout']) && $_SESSION[SESSION_NAME]['user_id']!="")

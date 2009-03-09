@@ -66,44 +66,84 @@
 	elseif ($sub=="delmsgs")
 	{
 
-}
+	}
 	elseif ($sub=="sendmsg")
 	{
-		if ($_POST['submit']!="")
+		$subj = isset($_GET['message_subject']) ? $_POST['message_subject'] : "";
+		$text = "";
+		if (isset($_POST['submit']))
 		{
 			if ($_POST['message_subject']!="" && $_POST['message_text']!="")
 			{
-				//SYS_MESSAGE_CAT_ID
-				Message::sendFromUserToUser(0,$_POST['message_user_to'],$_POST['message_subject'],$_POST['message_text']);
-				cms_ok_msg("Nachricht wurde gesendet!");
-				echo "<input type=\"button\" class=\"button\" value=\"Neue Nachricht schreiben\" onclick=\"document.location='?page=$page&sub=$sub'\">";
+				if ($msg_type==0 || $msg_type==2)
+				{
+					Message::sendFromUserToUser($_POST['from_id'],$_POST['message_user_to'],$_POST['message_subject'],$_POST['message_text']);
+					cms_ok_msg("Nachricht wurde gesendet!");
+				}
+				if ($msg_type==1 || $msg_type==2)
+				{
+					
+					cms_ok_msg("E-Mail wurde gesendet!");
+				}
 			}
 			else
 			{
 				cms_err_msg("Nachricht konnte nicht gesendet werden! Text oder Titel fehlt!");
-				echo "<input type=\"button\" class=\"button\" value=\"Zur&uuml;ck\" onclick=\"history.back();\">";
 			}
+			$subj = $_POST['message_subject'];
+			$text = $_POST['message_text'];
 		}
-		else
-		{
+
 			echo "Nachricht an einen Spieler senden:<br/><br/>";
 			echo "<form action=\"?page=$page&sub=$sub\" method=\"POST\">";
-			echo "<table width=\"300\" class=\"tbl\">";
-			echo "<tr><td width=\"50\" valign=\"top\">&nbsp;</td><td class=\"tbltitle\">Neue Nachricht</td></tr>";
-			echo "<tr><td class=\"tbltitle\" width=\"50\" valign=\"top\">Empf&auml;nger:</td><td class=\"tbldata\" width=\"250\"><select name=\"message_user_to\">";
-			$res=dbquery("SELECT user_id,user_nick FROM users ORDER BY user_nick;");
-			while ($arr=mysql_fetch_array($res))
+			echo "<table width=\"300\" class=\"tb\">";
+			echo "<tr>
+				<th width=\"50\">Sender:</th>
+				<td>";
+			$fres = dbquery("
+			SELECT
+				user_nick,
+				user_id,
+				user_email,
+				user_name
+			FROM
+				users
+			WHERE 
+				user_id=".intval($s['player_id'])."
+			");
+			if (mysql_num_rows($fres)>0)
 			{
-				echo "<option value=\"".$arr['user_id']."\"";
-				echo ">".$arr['user_nick']."</option>";
+				$farr = mysql_fetch_assoc($fres);
+				echo "<input type=\"radio\" name=\"from_id\" value=\"".$s['player_id']."\" checked=\"checked\" /> ".$farr['user_nick']." (InGame-Account #".$farr['user_id'].")<br/>";
+				echo "<input type=\"radio\" name=\"from_id\" value=\"0\" /> System<br/>";
 			}
-			echo "</select></td></tr>";
-			echo "<tr><td class=\"tbltitle\" width=\"50\" valign=\"top\">Betreff:</td><td class=\"tbldata\" width=\"250\"><input type=\"text\" name=\"message_subject\" value=\"".$_GET['message_subject']."\" size=\"30\" maxlength=\"255\"></td></tr>";
-			echo "<tr><td class=\"tbltitle\" width=\"50\" valign=\"top\">Text:</td><td class=\"tbldata\" width=\"250\"><textarea name=\"message_text\" rows=\"10\" cols=\"40\"></textarea></td></tr>";
+			else
+				echo "System <input type=\"hidden\" name=\"from_id\" value=\"0\" />";
+			echo "</td></tr>";
+			echo "<tr>
+				<th>Empf&auml;nger:</th>
+				<td class=\"tbldata\" width=\"250\"><select name=\"message_user_to\">";
+				$res=dbquery("SELECT user_id,user_nick FROM users ORDER BY user_nick;");
+				while ($arr=mysql_fetch_array($res))
+				{
+					echo "<option value=\"".$arr['user_id']."\"";
+					echo ">".$arr['user_nick']."</option>";
+				}
+			echo "</select><br/>
+			<input type=\"radio\" name=\"msg_type\" value=\"0\"  checked=\"checked\" /> InGame-Nachricht
+			<input type=\"radio\" name=\"msg_type\" value=\"1\" /> E-Mail
+			<input type=\"radio\" name=\"msg_type\" value=\"2\" /> InGame-Nachricht &amp; E-Mail
+			</td></tr>";
+			echo "<tr>
+				<th>Betreff:</th>
+				<td><input type=\"text\" name=\"message_subject\" value=\"".$subj."\" size=\"60\" maxlength=\"255\"></td></tr>";
+			echo "<tr>
+				<th>Text:</th>
+				<td><textarea name=\"message_text\" rows=\"10\" cols=\"60\">".$text."</textarea></td></tr>";
 			echo "</table>";
 			echo "<p align=\"center\"><input type=\"submit\" class=\"button\" name=\"submit\" value=\"Senden\"></p>";
 			echo "</form>";
-		}
+		
 	}
 
 	//

@@ -332,7 +332,7 @@
 		$blvl = $bl->getLevel(RES_BUNKER_ID);
 		if ($blvl>0)
 		{
-			iBoxStart("Rohstoffbunker");
+			iBoxStart("Rohstoffbunker",700);
 			echo "In deinem <b>".$bl->item(RES_BUNKER_ID)."</b> der Stufe <b>$blvl</b> werden bei einem 
 			Angriff <b>".nf(RES_BUNKER_SPACE*intpow(RES_BUNKER_FACTOR,$blvl-1))."</b> Resourcen gesichert!";
 			iBoxEnd();

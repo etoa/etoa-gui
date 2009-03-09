@@ -72,69 +72,91 @@
 			}
 	
 	
-			tableStart("","","double");
+			echo "<table>
+			<tr><td colspan=\"3\">";			
+
+			tableStart("Flugdaten");
+			
+			/*
+			echo "<tr>
+				<th>Auftrag:</th>
+				<td class=\"tbldata\" ".tm($fd->getAction()->name(),$fd->getAction()->desc())." style=\"color:".FleetAction::$attitudeColor[$fd->getAction()->attitude()]."\">
+				".$fd->getAction()->name()." [".FleetAction::$statusCode[$fd->status()]."]</td></tr>";*/
+				
+			$progrssWidth = 590;
+				
+			$perc = (time()-$fd->launchTime()) / ($fd->landTime()-$fd->launchTime());
+			$perc = min(1,$perc);
+			$pxl = 25 + round($perc * $progrssWidth);
+				
+			echo "<tr>
+				<td style=\"background:#000 url('images/main_bg.jpg');\">
+					<div style=\"position:relative;height:80px;\">
+						<div style=\"position:absolute;left:0px;top:5px;\">
+						".$fd->getSource()->smallImage()."<br/>
+						<a href=\"?page=cell&amp;id=".$fd->getSource()->cellId()."&amp;hl=".$fd->getSource()->id()."\">".$fd->getSource()."</a><br/>
+						<b>Start:</b> ".date("d.m.Y H:i:s",$fd->launchTime())."
+						</div>
+						<div style=\"position:absolute;right:0px;top:5px;text-align:right;\">
+						".$fd->getTarget()->smallImage()."<br/>
+						<a href=\"?page=cell&amp;id=".$fd->getTarget()->cellId()."&amp;hl=".$fd->getTarget()->id()."\">".$fd->getTarget()."</a><br/>
+						<b>Landung:</b> ".date("d.m.Y H:i:s",$fd->landTime())."
+						</div>						
+						<div style=\"position:absolute;left:".$pxl."px;top:17px;\" id=\"fleetProgress\">
+							<img src=\"images/fleetmove.gif\" alt=\"Fleet\" />
+						</div>
+						<div id=\"flighttime\" style=\"color:#ff0;position:absolute;left:300px;top:60px;\">
+						
+						</div>
+					</div>
+				</td>
+			</tr>";
+			tableEnd();
+			
+			echo "</td></tr><tr><td style=\"50%\">";
 			
 			// Flugdaten
-			tableStart("Flugdaten","50%");
-			
-			echo "<tr>
-				<td class=\"tbltitle\">Auftrag:</td>
-				<td class=\"tbldata\" ".tm($fd->getAction()->name(),$fd->getAction()->desc())." style=\"color:".FleetAction::$attitudeColor[$fd->getAction()->attitude()]."\">
-				".$fd->getAction()->name()." [".FleetAction::$statusCode[$fd->status()]."]</td></tr>";
-			echo "<tr>
-				<td class=\"tbltitle\">Startkoordinaten:</td>
-				<td class=\"tbldata\">
-					<a href=\"?page=cell&amp;id=".$fd->getSource()->cellId()."&amp;hl=".$fd->getSource()->id()."\">".$fd->getSource()."</a>
-					 (".$fd->getSource()->entityCodeString().")</td></tr>";
-			echo "<tr>
-				<td class=\"tbltitle\">Zielkoordinaten:</td>
-				<td class=\"tbldata\">
-					<a href=\"?page=cell&amp;id=".$fd->getTarget()->cellId()."&amp;hl=".$fd->getTarget()->id()."\">".$fd->getTarget()."</a>
-					 (".$fd->getTarget()->entityCodeString().")</td></tr>";
-			echo "<tr>
-				<td class=\"tbltitle\">Startzeit:</td>
-				<td class=\"tbldata\">".date("d.m.Y H:i:s",$fd->launchTime())."</td></tr>";
-			echo "<tr>
-				<td class=\"tbltitle\">Ende des Fluges:</td>
-				<td class=\"tbldata\">".date("d.m.Y H:i:s",$fd->landTime())."</td></tr>";
-			echo "<tr>
-				<td class=\"tbltitle\">Verbleibend:</td>
-				<td class=\"tbldata\" id=\"flighttime\" style=\"color:#ff0\">-</td></tr>";
-			tableEnd();
+
 	
 			tableStart("Piloten &amp; Verbrauch","50%");
-			echo "<tr><td class=\"tbltitle\" style=\"width:150px;\">".RES_ICON_PEOPLE."Piloten:</td>
+			echo "<tr>
+				<th style=\"width:150px;\">".RES_ICON_PEOPLE."Piloten:</th>
 				<td class=\"tbldata\">".nf($fd->pilots())."</td></tr>";
-			echo "<tr><td class=\"tbltitle\">".RES_ICON_FUEL."".RES_FUEL.":</td>
+			echo "<tr>
+				<th>".RES_ICON_FUEL."".RES_FUEL.":</th>
 				<td class=\"tbldata\">".nf($fd->usageFuel())."</td></tr>";
-			echo "<tr><td class=\"tbltitle\">".RES_ICON_FOOD."".RES_FOOD.":</td>
+			echo "<tr>
+				<th>".RES_ICON_FOOD."".RES_FOOD.":</th>
 				<td class=\"tbldata\">".nf($fd->usageFood())."</td></tr>";
-			echo "<tr><td class=\"tbltitle\">".RES_ICON_POWER." ".RES_POWER.":</td>
+			echo "<tr>
+				<th>".RES_ICON_POWER." ".RES_POWER.":</th>
 				<td class=\"tbldata\">".nf($fd->usagePower())."</td></tr>";
+			tableEnd();
+	
+				tableStart("Passagierraum","50%");
+			echo "<tr><th>".RES_ICON_PEOPLE."Passagiere</th><td class=\"tbldata\">".nf($fd->resPeople())."</td></tr>";
+			echo "<tr><th style=\"width:150px;\">Freier Platz:</th><td class=\"tbldata\">".nf($fd->getFreePeopleCapacity())."</td></tr>";
+			echo "<tr><th style=\"width:150px;\">Totaler Platz:</th><td class=\"tbldata\">".nf($fd->getPeopleCapacity())."</td></tr>";
 			tableEnd();
 	
 			echo "</td><td style=\"width:5%;vertical-align:top;\"></td><td style=\"width:45%;vertical-align:top;\">";
 	
 			// Frachtraum
 			tableStart("Frachtraum","50%");
-			echo "<tr><td class=\"tbltitle\">".RES_ICON_METAL."".RES_METAL."</td><td class=\"tbldata\">".nf($fd->resMetal())." t</td></tr>";
-			echo "<tr><td class=\"tbltitle\">".RES_ICON_CRYSTAL."".RES_CRYSTAL."</td><td class=\"tbldata\" >".nf($fd->resCrystal())." t</td></tr>";
-			echo "<tr><td class=\"tbltitle\">".RES_ICON_PLASTIC."".RES_PLASTIC."</td><td class=\"tbldata\">".nf($fd->resPlastic())." t</td></tr>";
-			echo "<tr><td class=\"tbltitle\">".RES_ICON_FUEL."".RES_FUEL."</td><td class=\"tbldata\">".nf($fd->resFuel())." t</td></tr>";
-			echo "<tr><td class=\"tbltitle\">".RES_ICON_FOOD."".RES_FOOD."</td><td class=\"tbldata\">".nf($fd->resFood())." t</td></tr>";
-			echo "<tr><td class=\"tbltitle\">".RES_ICON_POWER."".RES_POWER."</td><td class=\"tbldata\">".nf($fd->resPower())." t</td></tr>";
-			echo "<tr><td class=\"tbltitle\" style=\"width:150px;\">Freier Frachtraum:</td><td class=\"tbldata\">".nf($fd->getFreeCapacity())." t</td></tr>";
-			echo "<tr><td class=\"tbltitle\" style=\"width:150px;\">Totaler Frachtraum:</td><td class=\"tbldata\">".nf($fd->getCapacity())." t</td></tr>";
+			echo "<tr><th>".RES_ICON_METAL."".RES_METAL."</th><td class=\"tbldata\">".nf($fd->resMetal())." t</td></tr>";
+			echo "<tr><th>".RES_ICON_CRYSTAL."".RES_CRYSTAL."</th><td class=\"tbldata\" >".nf($fd->resCrystal())." t</td></tr>";
+			echo "<tr><th>".RES_ICON_PLASTIC."".RES_PLASTIC."</th><td class=\"tbldata\">".nf($fd->resPlastic())." t</td></tr>";
+			echo "<tr><th>".RES_ICON_FUEL."".RES_FUEL."</th><td class=\"tbldata\">".nf($fd->resFuel())." t</td></tr>";
+			echo "<tr><th>".RES_ICON_FOOD."".RES_FOOD."</th><td class=\"tbldata\">".nf($fd->resFood())." t</td></tr>";
+			echo "<tr><th>".RES_ICON_POWER."".RES_POWER."</th><td class=\"tbldata\">".nf($fd->resPower())." t</td></tr>";
+			echo "<tr><th style=\"width:150px;\">Freier Frachtraum:</th><td class=\"tbldata\">".nf($fd->getFreeCapacity())." t</td></tr>";
+			echo "<tr><th style=\"width:150px;\">Totaler Frachtraum:</th><td class=\"tbldata\">".nf($fd->getCapacity())." t</td></tr>";
 			tableEnd();
 			
-			tableStart("Passagierraum","50%");
-			echo "<tr><td class=\"tbltitle\">".RES_ICON_PEOPLE."Passagiere</td><td class=\"tbldata\">".nf($fd->resPeople())."</td></tr>";
-			echo "<tr><td class=\"tbltitle\" style=\"width:150px;\">Freier Platz:</td><td class=\"tbldata\">".nf($fd->getFreePeopleCapacity())."</td></tr>";
-			echo "<tr><td class=\"tbltitle\" style=\"width:150px;\">Totaler Platz:</td><td class=\"tbldata\">".nf($fd->getPeopleCapacity())."</td></tr>";
-			tableEnd();
+
 	
-			echo "</td></tr>";
-			tableEnd();
+			echo "</td></tr><tr><td colspan=\"3\">";
+		
 	
 			// Schiffe laden
 			if ($fd->countShips() > 0)
@@ -142,8 +164,8 @@
 				// Schiffe anzeigen
 				tableStart("Schiffe");
 				echo "<tr>
-					<td class=\"tbltitle\" colspan=\"2\">Schifftyp</td>
-					<td class=\"tbltitle\" width=\"50\">Anzahl</td></tr>";
+					<th colspan=\"2\">Schifftyp</th>
+					<th width=\"50\">Anzahl</th></tr>";
 				foreach ($fd->getShipIds() as $sid=> $scnt)
 				{
 					$ship = new Ship($sid);
@@ -157,6 +179,8 @@
 				}
 				tableEnd();
 			}
+	
+			echo "</td></tr></table>";
 	
 			echo "<form action=\"?page=$page&amp;id=$fleet_id\" method=\"post\">";
 			echo "<input type=\"button\" onClick=\"document.location='?page=fleets'\" value=\"Zur&uuml;ck zur Flotten&uuml;bersicht\"> &nbsp;";
