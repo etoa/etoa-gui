@@ -90,7 +90,7 @@
 			$pxl = 25 + round($perc * $progrssWidth);
 				
 			echo "<tr>
-				<td style=\"background:#000 url('images/main_bg.jpg');\">
+				<td style=\"background:#000 url('images/fleetbg.png');\">
 					<div style=\"position:relative;height:80px;\">
 						<div style=\"position:absolute;left:0px;top:5px;\">
 						".$fd->getSource()->smallImage()."<br/>
@@ -103,7 +103,7 @@
 						<b>Landung:</b> ".date("d.m.Y H:i:s",$fd->landTime())."
 						</div>						
 						<div style=\"position:absolute;left:".$pxl."px;top:17px;\" id=\"fleetProgress\">
-							<img src=\"images/fleetmove.gif\" alt=\"Fleet\" />
+							<img src=\"images/fleetmove.png\" alt=\"Fleet\" />
 						</div>
 						<div id=\"flighttime\" style=\"color:#ff0;position:absolute;left:300px;top:60px;\">
 						
