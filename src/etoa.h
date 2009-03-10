@@ -26,6 +26,8 @@
 #include "market/MarketHandler.h"
 //#include "quest/QuestHandler.h"
 
+#include "objects/EntityUpdateQueue.h"
+
 #include "alliance/aTechHandler.h"
 #include "alliance/aBuildingHandler.h"
 #include "alliance/aPointsHandler.h"

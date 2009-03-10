@@ -126,7 +126,16 @@ void etoamain()
  				{
  					v1.push_back(v3[x]);
 				}
+				
 			}
+			
+			while(!EntityUpdateQueue::instance().empty()) 
+			{
+      	std::clog << "Now serving: " << EntityUpdateQueue::instance().front() << std::endl;
+      	v1.push_back(EntityUpdateQueue::instance().front());
+      	EntityUpdateQueue::instance().pop();
+    	}
+						
 			planet::PlanetManager* pm = new planet::PlanetManager(&v1);
 			pm->updateUserPlanets();
 			delete pm;

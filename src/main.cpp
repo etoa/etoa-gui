@@ -110,7 +110,11 @@ void msgQueueThread()
 			int id = 0;
 			queue.rcvCommand(&cmd,&id);
 			
-			clog << "Command received: "<< cmd << ", Id: " << id<<std::endl;
+			clog << "Message queue command received: "<< cmd << ", Id: " << id<<std::endl;
+			if (cmd == "planetupdate")
+			{
+				EntityUpdateQueue::instance().push(id);
+			}
 		}
 	}
 	std::clog << "Message queue thread ended"<<std::endl;
