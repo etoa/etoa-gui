@@ -467,7 +467,7 @@
 	
 	define('ADD_BANNER','');		// Advertising banner code
 	define('FORCE_ADDS',0); // Banner immer anzeigen
-	define('IPC_ID',1234);
+	define('IPC_ID',1);
 	
 	/***********
 	* Updates *
