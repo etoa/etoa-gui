@@ -25,4 +25,7 @@ INCLUDE_DIRECTORIES(
 
 ADD_SUBDIRECTORY(src)
 
+EXEC_PROGRAM(svn 
+	ARGS log > ChangeLog
+)
 
