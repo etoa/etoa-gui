@@ -21,14 +21,17 @@
 IPCMessageQueue::IPCMessageQueue(std::string token)
 {
 	_valid = false;
-  key = ftok(token.c_str(),1234);
-  msgqid=msgget(key,0644|IPC_CREAT);
+	char proj_id = 'A';
+  key = ftok(token.c_str(),proj_id);
+  std::clog << "Creating IPC key " << key << " from token " << token << " with project id " << proj_id << std::endl;
+  msgqid=msgget(key,0600|IPC_CREAT);
   if (msgqid < 0) 
   {
     std::clog << strerror(errno) << std::endl;
     std::clog << "Error getting message queue, msgget() failed, msgqid = " << msgqid << std::endl;
     return;
   }
+  std::clog << "Message queue gets id " << msgqid << std::endl;
    _valid = true;  
 }
 
