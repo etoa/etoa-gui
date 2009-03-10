@@ -130,7 +130,8 @@
 
 	echo "<form action=\"?page=$page\" method=\"post\">";
 	iBoxStart("Sektorkarte");
-	echo "<b>Sektor:</b>&nbsp;";
+	echo "<div style=\"text-align:center;\">
+	<a href=\"?page=galaxy\">Galaxie</a> &gt; &nbsp;";
 	echo "<select name=\"sector\" onchange=\"document.location='?page=$page&sector='+this.value\">";
 	for ($x=1;$x<=$sx_num;$x++)
 	{
@@ -139,11 +140,11 @@
 			echo "<option value=\"$x,$y\"";
 			if ($x==$sx && $y==$sy)
 				echo " selected=\"selected\"";
-			echo ">$x/$y</option>";
+			echo ">Sektor $x/$y &nbsp;</option>";
 		}
 	}
 	echo "</select>	&nbsp;&nbsp;  
-	<input type=\"button\" onclick=\"document.location='?page=galaxy'\" value=\"Galaxie anzeigen\" /><br/><br/>";
+	</div><br/>";
 
 	echo "<div style=\"background:#000;text-align:center;\">";
 	echo "<table id=\"outerspacetbl\">";

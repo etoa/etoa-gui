@@ -64,28 +64,67 @@
 		if ($cell->isValid())
 		{
 
+
+			$entities = $cell->getEntities();
+			
+			echo "<h1>System ".$cell."</h1>";
+
+			$sx_num=$cfg->param1('num_of_sectors');
+			$sy_num=$cfg->param2('num_of_sectors');
+			$cx_num=$cfg->param1('num_of_cells');
+			$cy_num=$cfg->param2('num_of_cells');
+
+			
 			if ($cu->discovered($cell->absX(),$cell->absY()))
 			{
+			$ares = dbquery("SELECT
+								player_id
+							FROM
+								admin_users
+							WHERE
+								player_id<>0;");
+			$admins = array();
+			while ($arow = mysql_fetch_row($ares)) {
+				array_push($admins,$arow[0]);
+			}
+			
+			//
+			// Systamkarte
+			//
+			tableStart("Systemkarte");
 
-				$entities = $cell->getEntities();
-				
-				echo "<h1>System ".$cell."</h1>";
-				
-				$ares = dbquery("SELECT
-									player_id
-								FROM
-									admin_users
-								WHERE
-									player_id<>0;");
-				$admins = array();
-				while ($arow = mysql_fetch_row($ares)) {
-					array_push($admins,$arow[0]);
+			echo "<tr><td colspan=\"6\" style=\"text-align:center;\">
+			<a href=\"?page=galaxy\">Galaxie</a> &gt;&nbsp;
+			<a href=\"?page=sector&sector=".$cell->sx.",".$cell->sy."\">Sektor ".$cell->sx."/".$cell->sy."</a> &gt; &nbsp;";
+			$cres = dbquery("
+			SELECT
+				id
+			FROM
+				cells
+			WHERE
+				sx=".$cell->sx."
+				AND sy=".$cell->sy."
+				AND cx=1
+				AND cy=1;
+			");
+			$carr = mysql_fetch_row($cres);
+			$cid = $carr[0];
+			echo "<select name=\"cell\" onchange=\"document.location='?page=$page&id='+this.value\">";
+			for ($x=1;$x<=$cx_num;$x++)
+			{
+				for ($y=1;$y<=$cy_num;$y++)
+				{		
+					echo "<option value=\"".$cid."\"";
+					if ($cell->cx==$x && $cell->cy==$y)
+						echo " selected=\"selected\"";
+					echo ">System $x/$y &nbsp;</option>";
+					$cid++;
 				}
-				
-				//
-				// Systamkarte
-				//
-				tableStart("Karte");
+			}
+			echo "</select>";
+			echo "</td></tr>";				
+
+			
 				echo "<tr>
 					<th colspan=\"2\" class=\"tbltitle\" style=\"width:60px;\">Position</th>
 					<th class=\"tbltitle\">Typ</th>
@@ -413,16 +452,46 @@
 				<span class=\"userAllianceMemberColor\">Allianzmitglied</span>,
 				<span class=\"adminColor\" ".tm("Admin/Entwickler","Gemäss §14.2 ist es strengstens untersagt einen Adminaccount anzugreifen oder auszuspionieren. Wer dies tut ist selber schuld und kann mit einer Sperre von 24h bestraft werden!<br style=\"clear:both\" />").">Admin/Entwickler</span>";
 				iBoxEnd();
-				echo "<input type=\"button\" value=\"Zur Raumkarte\" onclick=\"document.location='?page=sector&amp;sx=".$cell->sx."&amp;sy=".$cell->sy."'\" /> &nbsp; ";
-
 			}
 			else
 			{
-				echo "<h1>Fehler!</h1>System noch nicht erkundet. Erforsche das System mit einer Erkundungsflotte um es sichtbar zu machen!<br/><br/>";
+				iBoxStart("Fehler");
+				echo "<div style=\"text-align:center;\">
+				<a href=\"?page=galaxy\">Galaxie</a> &gt;&nbsp;
+				<a href=\"?page=sector&sector=".$cell->sx.",".$cell->sy."\">Sektor ".$cell->sx."/".$cell->sy."</a> &gt; &nbsp;";
+				$cres = dbquery("
+				SELECT
+					id
+				FROM
+					cells
+				WHERE
+					sx=".$cell->sx."
+					AND sy=".$cell->sy."
+					AND cx=1
+					AND cy=1;
+				");
+				$carr = mysql_fetch_row($cres);
+				$cid = $carr[0];
+				echo "<select name=\"cell\" onchange=\"document.location='?page=$page&id='+this.value\">";
+				for ($x=1;$x<=$cx_num;$x++)
+				{
+					for ($y=1;$y<=$cy_num;$y++)
+					{		
+						echo "<option value=\"".$cid."\"";
+						if ($cell->cx==$x && $cell->cy==$y)
+							echo " selected=\"selected\"";
+						echo ">System $x/$y &nbsp;</option>";
+						$cid++;
+					}
+				}
+				echo "</select></div><br/>";				
+				echo "System noch nicht erkundet. Erforsche das System mit einer Erkundungsflotte um es sichtbar zu machen!<br/><br/>";
+				iBoxEnd();
 				echo button("Erkundungsflotte senden","?page=haven&cellTarget=".$cellId)." &nbsp; ";
-								
-				echo "<input type=\"button\" value=\"Zur&uuml;ck zur Raumkarte\" onclick=\"document.location='?page=sector'\" />";
 			}
+			
+			echo "<input type=\"button\" value=\"Zur Raumkarte\" onclick=\"document.location='?page=sector&amp;sx=".$cell->sx."&amp;sy=".$cell->sy."'\" /> &nbsp; ";
+
 		}
 		else
 		{
