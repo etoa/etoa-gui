@@ -25,7 +25,7 @@
 
 #include "etoa.h"
 
-void etoamain(std::string gameRound)
+void etoamain()
 {
 	int minLoopDuration = 1;	// Minimal loop duration
 	
@@ -34,9 +34,6 @@ void etoamain(std::string gameRound)
 	// TODO: Error handling
 	std::time_t mtime=0;
 	srand(time(0));
-	
-	Config &config = Config::instance();
-	config.setRoundName(gameRound);
 	
 	//Load Data
 	DataHandler &DataHandler = DataHandler::instance();
@@ -134,6 +131,7 @@ void etoamain(std::string gameRound)
 			pm->updateUserPlanets();
 			delete pm;
 
+			//std::clog << "Updated "<<v1.size() << " entities."<<std::endl;
 		}
 		
 		sleep(minLoopDuration);

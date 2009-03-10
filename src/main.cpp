@@ -101,7 +101,7 @@ void msgQueueThread()
 {                                   
 	std::clog << "Message queue thread started"<<std::endl;
 	
-	IPCMessageQueue queue;
+	IPCMessageQueue queue(Config::instance().getFrontendPath());
 	if (queue.valid())
 	{
 		while (true)
@@ -120,7 +120,7 @@ void mainThread()
 {
 	std::clog << "Main thread started"<<std::endl;
 
-	etoamain(gameRound);
+	etoamain();
 	
 	std::clog << "Unexpectedly reached end of main thread!"<<std::endl;
 	exit(EXIT_FAILURE);
@@ -275,12 +275,14 @@ int main(int argc, char* argv[])
 
 	daemonize();
 
+	Config &config = Config::instance();
+	config.setRoundName(gameRound);
+
 	boost::thread mThread(&mainThread);
 	boost::thread qThread(&msgQueueThread);
 
-	qThread.join();	
 	mThread.join();	
-
+	qThread.join();
 	
 	// This point should never be reached
 	cerr << "Unexpectedly reached end of main()";

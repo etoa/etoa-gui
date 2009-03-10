@@ -36,7 +36,7 @@
 class IPCMessageQueue	
 {
 	public:
-    IPCMessageQueue();
+    IPCMessageQueue(std::string token);
 		~IPCMessageQueue();
 		bool valid();
 		std::string rcv();		

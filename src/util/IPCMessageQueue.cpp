@@ -18,10 +18,10 @@
 
 #include "IPCMessageQueue.h"
 
-IPCMessageQueue::IPCMessageQueue()
+IPCMessageQueue::IPCMessageQueue(std::string token)
 {
 	_valid = false;
-  key = 1234;
+  key = ftok(token.c_str(),1234);
   msgqid=msgget(key,0644|IPC_CREAT);
   if (msgqid < 0) 
   {
