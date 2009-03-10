@@ -20,7 +20,16 @@
 
 IPCMessageQueue::IPCMessageQueue()
 {
-	
+	_valid = false;
+  key = 1234;
+  msgqid=msgget(key,0644|IPC_CREAT);
+  if (msgqid < 0) 
+  {
+    std::clog << strerror(errno) << std::endl;
+    std::clog << "Error getting message queue, msgget() failed, msgqid = " << msgqid << std::endl;
+    return;
+  }
+   _valid = true;  
 }
 
 IPCMessageQueue::~IPCMessageQueue()
@@ -45,28 +54,20 @@ void IPCMessageQueue::rcvCommand(std::string* command, int* id)
 	return;
 }
 
+bool IPCMessageQueue::valid()
+{
+	return _valid;		
+}
+
 std::string IPCMessageQueue::rcv()
 {
   struct my_msgbuf buf;
-  int msqid;
-  key_t key = 7543;
 
-	try
+	if (msgrcv(msgqid, (struct msgbuf *)&buf, sizeof(buf), 0, 0) < 0) 
 	{
-	  if ((msqid = msgget(key, 0644)) == -1) 
-	  {
-	 		throw ExceptionHandler("Could nod init ipc message queue with key "+etoa::toString(key));
-	  }  
-	
-		if (msgrcv(msqid, (struct msgbuf *)&buf, sizeof(buf), 0, 0) == -1) 
-		{
- 			throw ExceptionHandler("Error getting ipc message from queue");
-    }
-    return std::string(buf.mtext);
-	}
-	catch (ExceptionHandler& e)	
-	{
-		std::cout << e.what();
-	}
-  return NULL;
+		std::clog << strerror(errno) << std::endl;
+		std::clog << "Error getting ipc message from queue " << std::endl;
+		return NULL;
+  }
+	return std::string(buf.mtext);
 }

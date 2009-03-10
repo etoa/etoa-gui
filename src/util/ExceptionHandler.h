@@ -46,7 +46,7 @@ class ExceptionHandler: public std::exception
 		/**
 		* Returns error message
 		*/
-	  virtual const char * what() const throw();
+	  //virtual const char * what() const throw();
 	private:
 		std::string s;
 };

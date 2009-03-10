@@ -23,6 +23,7 @@
 #include <sys/ipc.h>
 #include <sys/msg.h>
 #include <vector>
+#include<sys/errno.h>
 
 #include "ExceptionHandler.h"
 #include "Functions.h"
@@ -37,9 +38,13 @@ class IPCMessageQueue
 	public:
     IPCMessageQueue();
 		~IPCMessageQueue();
+		bool valid();
 		std::string rcv();		
 		void rcvCommand(std::string* command, int* id);
 	private:
+		bool _valid;
+		int msgqid;
+  	key_t key;
     struct my_msgbuf {
         long mtype;
         char mtext[200];

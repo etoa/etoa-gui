@@ -18,10 +18,12 @@
 
 #include "ExceptionHandler.h"
 
+/*
 const char * ExceptionHandler::what() const throw()
 {
   std::stringstream sout;
   sout << s;
+  	
   	
 	void * array[25];
 	int nSize = backtrace(array, 25);
@@ -35,3 +37,4 @@ const char * ExceptionHandler::what() const throw()
 
   return sout.str().c_str();
 }
+*/

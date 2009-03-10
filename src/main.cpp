@@ -99,19 +99,21 @@ void daemonize()
 
 void msgQueueThread()
 {                                   
-	/*
 	std::clog << "Message queue thread started"<<std::endl;
+	
 	IPCMessageQueue queue;
-	while (true)
+	if (queue.valid())
 	{
-		std::string cmd = "";
-		int id = 0;
-		queue.rcvCommand(&cmd,&id);
-		
-		clog << "Command received: "<< cmd << ", Id: " << id<<std::endl;
+		while (true)
+		{
+			std::string cmd = "";
+			int id = 0;
+			queue.rcvCommand(&cmd,&id);
+			
+			clog << "Command received: "<< cmd << ", Id: " << id<<std::endl;
+		}
 	}
 	std::clog << "Message queue thread ended"<<std::endl;
-	*/
 }
 
 void mainThread()
