@@ -121,12 +121,6 @@
 				Gamestats::generateAndSave(GAME_ROOT_DIR."/".GAMESTATS_FILE);					
 			}
 			
-			// Backup
-			if ((date("h")-$cfg->p1("backup_time"))%$cfg->get("backup_time")==0 && date("i")==$cfg->p2("backup_time")) 
-			{
-				Backup::create();				
-			}			
-
 			// Log schreiben
 			$t = timerStop($tmr);
 			if (LOG_UPDATES || $t > LOG_UPDATES_THRESHOLD)
@@ -138,6 +132,14 @@
 
 			// Mutex freigeben
 			$mtx->release();
+			
+			// Backup erstellen
+			// ACHTUNG: Die create()-Funktion aquiriert selbst wieder das Mutes-Token. 
+			// Deshalb muss diese Funktion nach mtx->release() stehen
+			if ((date("h")-$cfg->p1("backup_time"))%$cfg->get("backup_time")==0 && date("i")==$cfg->p2("backup_time")) 
+			{
+				Backup::create();				
+			}			
 		}
 
 		// DB schliessen

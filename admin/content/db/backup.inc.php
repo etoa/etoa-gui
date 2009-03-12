@@ -34,7 +34,6 @@
 			}
 		}
 
-
 		if (Form::validate("bustn") && isset($_POST['submit_changes']))
 		{
 			$cfg->set("backup",$_POST['backup_v'],$_POST['backup_p1'],$_POST['backup_p2']);
@@ -102,10 +101,13 @@
 				</td></tr>";
 				$cnt++;
 			}
+			if ($cnt==0)
+			{
+				echo "<tr><td><i>Es sind noch keine Dateien vorhanden!</i></td></tr>";
+			}
+
 			echo "</table>";
 			closedir($d);
-			if ($cnt==0)
-				cms_err_msg("Es sind noch keine Dateien vorhanden!");
 		}
 		else
 			cms_err_msg("Das Verzeichnis ".BACKUP_DIR." wurde nicht gefunden!");

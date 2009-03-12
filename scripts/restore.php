@@ -52,28 +52,7 @@
 	
 		if ($_SERVER['argv'][1]!="")
 		{
-			$file = BACKUP_DIR."/".DB_DATABASE."-".$_SERVER['argv'][1];
-			if (file_exists($file.".sql.gz"))
-			{
-				$result = shell_exec("gunzip ".$file.".sql.gz");
-				if ($result=="")
-				{
-					$result = shell_exec("mysql -u".DB_USER." -p".DB_PASSWORD." -h".DB_SERVER." ".DB_DATABASE." < ".$file.".sql");
-					if ($result!="")
-						echo "Error while restoring backup: $result\n";
-					shell_exec("gzip ".$file.".sql");
-				}
-				else
-					echo "Error while unzipping Backup-Dump $file: $result\n";
-			}
-			elseif (file_exists($file.".sql"))
-			{
-				$result = shell_exec("mysql -u".DB_USER." -p".DB_PASSWORD." -h".DB_SERVER." ".DB_DATABASE." < ".$file.".sql");
-				if ($result!="")
-					echo "Error while restoring backup: $result\n";
-			}
-			else
-				echo "Error: File $file not found!\n";	
+			Backup::restore($_SERVER['argv'][1]);
 		}
 		else
 			echo "Usage: ".$_SERVER['argv'][0]." date\n";	
