@@ -8,11 +8,13 @@
 	} 
 
 	session_start();
+	define("CLASS_ROOT","../classes");
+	require_once("bootstrap.inc.php");
 	include("../conf.inc.php");
 	include("../functions.php");
-	define("CLASS_ROOT","../classes");
 	dbconnect();
-	$conf=get_all_config();
+	$cfg = Config::getInstance();
+	$conf = $cfg->getArray();
 	include("../def.inc.php");
 
 	define('GALAXY_MAP_DOT_RADIUS',3);

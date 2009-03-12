@@ -32,13 +32,11 @@
 	// Basic stuff
 	//
 
-	require_once("bootstrap.inc.php");
-
 	// Session-Cookie setzen
 	session_start();
 
-
 	// Funktionen und Config einlesen
+	require_once("bootstrap.inc.php");
 	require_once("functions.php");
 	if (!@include_once("conf.inc.php"))
 	{

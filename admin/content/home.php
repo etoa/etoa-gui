@@ -428,7 +428,7 @@
 		{
 			echo "<h2>Universum existiert noch nicht!</h2>";
 			echo "<div style=\"color:orange;font-weight:bold;\">Das Universum wurde noch nicht erschaffen!<br/><br/>
-			<input type=\"button\" value=\"Weiter zum Urknall\" onclick=\"document.location='?page=config&sub=uni'\" /></div><br/><br/>";
+			<input type=\"button\" value=\"Weiter zum Urknall\" onclick=\"document.location='?page=setup&sub=uni'\" /></div><br/><br/>";
 		}
 		else
 		{				
