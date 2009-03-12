@@ -9,7 +9,7 @@
 
 	session_start();
 	define("CLASS_ROOT","../classes");
-	require_once("bootstrap.inc.php");
+	require_once("../bootstrap.inc.php");
 	include("../conf.inc.php");
 	include("../functions.php");
 	dbconnect();
