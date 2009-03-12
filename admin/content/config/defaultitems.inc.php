@@ -2,7 +2,7 @@
 Hier definierte Objekte werden einem Spieler beim ersten Login auf dem Hauptplanet erstellt.
 Existieren mehrere aktive Sets, erhält der Spieler eine Auswahl. Existiert kein Set oder sind alle 
 Sets inaktiv, erhält der Spieler keine Objekte. Klicke auf einen Objektnamen um die Anzahl zu ändern.<br/><br/>
-<?
+<?PHP
 
 // Switch set status (active or inactive)
 // Trick: Modulo operation reduces code

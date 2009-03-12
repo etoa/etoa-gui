@@ -51,20 +51,19 @@
 		Intervall: <select name=\"backup_time_v\">";
 		for ($i=1;$i<=24;$i++)
 		{
-			echo "<option value=\"".$i."\" ".($cfg->get("backup_time")==$i ? ' selected="selected"':'').">".$i."</option>";
+			echo "<option value=\"".$i."\" ".($cfg->backup_time->v==$i ? ' selected="selected"':'').">".$i."</option>";
 		}
 		echo "</select/> Stunden &nbsp;&nbsp; Startzeit: <select name=\"backup_time_p1\">";
 		for ($i=0;$i<24;$i++)
 		{
-			echo "<option value=\"".$i."\" ".($cfg->p1("backup_time")==$i ? ' selected="selected"':'').">".$i."</option>";
+			echo "<option value=\"".$i."\" ".($cfg->backup_time->p1==$i ? ' selected="selected"':'').">".$i."</option>";
 		}
 		echo "</select/>:<select name=\"backup_time_p2\">";
 		for ($i=0;$i<60;$i++)
 		{
-			echo "<option value=\"".$i."\" ".($cfg->p2("backup_time")==$i ? ' selected="selected"':'').">".$i."</option>";
+			echo "<option value=\"".$i."\" ".($cfg->backup_time->p2==$i ? ' selected="selected"':'').">".$i."</option>";
 		}
 		echo "</select/>";
-		
 		
 		echo "&nbsp;&nbsp;  <input type=\"submit\" value=\"Speichern\" name=\"submit_changes\"  />";
 		iBoxEnd();

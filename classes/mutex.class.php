@@ -36,8 +36,11 @@
 		*/
 		function Mutex()
 		{
-			$this->key = ftok(dirname(__FILE__),"e");
-			$this->sem =  sem_get($this->key,1);
+			if (UNIX)
+			{
+				$this->key = ftok(dirname(__FILE__),"e");
+				$this->sem =  sem_get($this->key,1);
+			}
 		}
 
 		/**
@@ -45,7 +48,10 @@
 		*/
 		function acquire()
 		{
-			sem_acquire($this->sem);
+			if (UNIX)
+			{
+				sem_acquire($this->sem);
+			}
 		}
 		
 		/**
@@ -53,7 +59,10 @@
 		*/
 		function release()
 		{
-			sem_release($this->sem);		
+			if (UNIX)
+			{
+				sem_release($this->sem);		
+			}
 		}
 	}
 

@@ -381,6 +381,7 @@
 	$navmenu['Marktplatz']['Auktionen']['sub']="auction";
 	$navmenu['Marktplatz']['Auktionen']['level']=1;
 
+
 	$navmenu['Datenbank']['Backups']['page']="db";
 	$navmenu['Datenbank']['Backups']['sub']="backup";
 	$navmenu['Datenbank']['Backups']['level']=2;
@@ -393,35 +394,46 @@
 	$navmenu['Datenbank']['Updates']['sub']="updates";
 	$navmenu['Datenbank']['Updates']['level']=2;
 
-	$navmenu['Konfiguration']['Konfiguration']['page']="config";
-	$navmenu['Konfiguration']['Konfiguration']['sub']="";
-	$navmenu['Konfiguration']['Konfiguration']['level']=3;
 
-	$navmenu['Konfiguration']['Runde & Universum']['page']="config";
-	$navmenu['Konfiguration']['Runde & Universum']['sub']="uni";
-	$navmenu['Konfiguration']['Runde & Universum']['level']=3;
 
-	$navmenu['Konfiguration']['Bildpakete']['page']="config";
-	$navmenu['Konfiguration']['Bildpakete']['sub']="imagepacks";
-	$navmenu['Konfiguration']['Bildpakete']['level']=3;
+	$res=dbquery("SELECT cat_name,cat_id,COUNT(*) as cnt FROM config_cat,config WHERE cat_id=config_cat_id GROUP BY cat_id ORDER BY cat_order,cat_name;");
+	if (mysql_num_rows($res)>0)
+	{
+		while ($arr=mysql_fetch_array($res))
+		{
+			$navmenu['Konfiguration'][$arr['cat_name']]['page']="config";
+			$navmenu['Konfiguration'][$arr['cat_name']]['sub']=$arr['cat_id'];
+			$navmenu['Konfiguration'][$arr['cat_name']]['level']=3;			
+		}
+	}
 
-	$navmenu['Konfiguration']['Cronjob']['page']="config";
-	$navmenu['Konfiguration']['Cronjob']['sub']="cronjob";
-	$navmenu['Konfiguration']['Cronjob']['level']=2;
+	$navmenu['Konfiguration']['Variable erstellen']['page']="config";
+	$navmenu['Konfiguration']['Variable erstellen']['sub']="createvar";
+	$navmenu['Konfiguration']['Variable erstellen']['level']=3;
 
-	$navmenu['Konfiguration']['Start-Items']['page']="config";
-	$navmenu['Konfiguration']['Start-Items']['sub']="defaultitems";
-	$navmenu['Konfiguration']['Start-Items']['level']=3;
+	$navmenu['Konfiguration']['bar'][0] = true;
 
 	$navmenu['Konfiguration']['Tipps']['page']="config";
 	$navmenu['Konfiguration']['Tipps']['sub']="tipps";
 	$navmenu['Konfiguration']['Tipps']['level']=0;
 
-	/*
-	$navmenu['Konfiguration']['RSS']['page']="config";
-	$navmenu['Konfiguration']['RSS']['sub']="rss";
-	$navmenu['Konfiguration']['RSS']['level']=0;
-	*/
+
+	$navmenu['Setup']['Universum']['page']="setup";
+	$navmenu['Setup']['Universum']['sub']="uni";
+	$navmenu['Setup']['Universum']['level']=3;
+
+	$navmenu['Setup']['Bildpakete']['page']="setup";
+	$navmenu['Setup']['Bildpakete']['sub']="imagepacks";
+	$navmenu['Setup']['Bildpakete']['level']=3;
+
+	$navmenu['Setup']['Cronjob']['page']="setup";
+	$navmenu['Setup']['Cronjob']['sub']="cronjob";
+	$navmenu['Setup']['Cronjob']['level']=2;
+
+	$navmenu['Setup']['Start-Items']['page']="setup";
+	$navmenu['Setup']['Start-Items']['sub']="defaultitems";
+	$navmenu['Setup']['Start-Items']['level']=3;
+	
 
 	$navmenu['Tools']['Datei-Austausch']['page']="tools";
 	$navmenu['Tools']['Datei-Austausch']['sub']="filesharing";

@@ -644,9 +644,7 @@
 			err_msg("Der Backend-Dienst scheint nicht zu laufen!");
 		}
 		
-		
-		Cache::checkPerm();
-		
+	
 		}
 }
 ?>

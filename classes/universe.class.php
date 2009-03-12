@@ -624,8 +624,11 @@
 		* Resets the universe and all user data
 		* The Anti-Big-Bang
 		*/
-		static function reset()
+		static function reset($all = true)
 		{
+			$mtx = new Mutex();
+			$mtx->acquire();
+			
 			$tbl[]="cells";
 			$tbl[]="entities";
 			$tbl[]="stars";
@@ -635,78 +638,81 @@
 			$tbl[]="wormholes";
 			$tbl[]="space";
 			
-			$tbl[]="buildlist";
-			$tbl[]="deflist";
-			$tbl[]="def_queue";
-			$tbl[]="fleet";
-			$tbl[]="fleet_ships";
-			$tbl[]="market_auction";
-			$tbl[]="market_ship";
-			$tbl[]="market_ressource";
-			$tbl[]="missilelist";
-			$tbl[]="missile_flights";
-			$tbl[]="missile_flights_obj";
-			$tbl[]="shiplist";
-			$tbl[]="ship_queue";
-			$tbl[]="techlist";
-
-			$tbl[]="alliances";
-			$tbl[]="alliance_bnd";
-			$tbl[]="alliance_applications";
-			$tbl[]="alliance_history";
-			$tbl[]="alliance_news";
-			$tbl[]="alliance_ranks";
-			$tbl[]="alliance_poll_votes";
-			$tbl[]="alliance_rankrights";
-			$tbl[]="allianceboard_cat";
-			$tbl[]="allianceboard_posts";
-			$tbl[]="allianceboard_catranks";
-			$tbl[]="allianceboard_topics";
-			$tbl[]="alliance_stats";
-			$tbl[]="alliance_polls";
-			$tbl[]="alliance_points";
-			$tbl[]="alliance_buildlist";
-			$tbl[]="alliance_spends";
-			$tbl[]="alliance_techlist";
-
-			$tbl[]="users";
-			$tbl[]="user_multi";
-			$tbl[]="user_log";
-			$tbl[]="user_sessionlog";
-			$tbl[]="user_points";
-			$tbl[]="user_sitting";
-			$tbl[]="user_sitting_date";
-			$tbl[]="user_stats";
-			$tbl[]="user_ratings";
-			$tbl[]="user_onlinestats";
-			$tbl[]="user_comments";
-			$tbl[]="user_warnings";
-			$tbl[]="user_properties";
-			$tbl[]="user_minimap";
-			
-			$tbl[]="buddylist";
-			$tbl[]="messages";
-			$tbl[]="message_data";
-			$tbl[]="message_ignore";
-			$tbl[]="notepad";
-			$tbl[]="notepad_data";
-			$tbl[]="bookmarks";
-			$tbl[]="fleet_bookmarks";
-
-			$tbl[]="logs";
-			$tbl[]="logs_alliance";
-			$tbl[]="logs_battle";
-			$tbl[]="logs_fleet";
-			$tbl[]="logs_game";
-			
-			$tbl[]="login_failures";
-			$tbl[]="admin_user_log";
-			$tbl[]="logs_game";
-			$tbl[]="logs_battle";
-			$tbl[]="tickets";
-			$tbl[]="chat";
-			$tbl[]="chat_users";
-			$tbl[]="attack_ban";
+			if ($all)
+			{
+				$tbl[]="buildlist";
+				$tbl[]="deflist";
+				$tbl[]="def_queue";
+				$tbl[]="fleet";
+				$tbl[]="fleet_ships";
+				$tbl[]="market_auction";
+				$tbl[]="market_ship";
+				$tbl[]="market_ressource";
+				$tbl[]="missilelist";
+				$tbl[]="missile_flights";
+				$tbl[]="missile_flights_obj";
+				$tbl[]="shiplist";
+				$tbl[]="ship_queue";
+				$tbl[]="techlist";
+	
+				$tbl[]="alliances";
+				$tbl[]="alliance_bnd";
+				$tbl[]="alliance_applications";
+				$tbl[]="alliance_history";
+				$tbl[]="alliance_news";
+				$tbl[]="alliance_ranks";
+				$tbl[]="alliance_poll_votes";
+				$tbl[]="alliance_rankrights";
+				$tbl[]="allianceboard_cat";
+				$tbl[]="allianceboard_posts";
+				$tbl[]="allianceboard_catranks";
+				$tbl[]="allianceboard_topics";
+				$tbl[]="alliance_stats";
+				$tbl[]="alliance_polls";
+				$tbl[]="alliance_points";
+				$tbl[]="alliance_buildlist";
+				$tbl[]="alliance_spends";
+				$tbl[]="alliance_techlist";
+	
+				$tbl[]="users";
+				$tbl[]="user_multi";
+				$tbl[]="user_log";
+				$tbl[]="user_sessionlog";
+				$tbl[]="user_points";
+				$tbl[]="user_sitting";
+				$tbl[]="user_sitting_date";
+				$tbl[]="user_stats";
+				$tbl[]="user_ratings";
+				$tbl[]="user_onlinestats";
+				$tbl[]="user_comments";
+				$tbl[]="user_warnings";
+				$tbl[]="user_properties";
+				$tbl[]="user_minimap";
+				
+				$tbl[]="buddylist";
+				$tbl[]="messages";
+				$tbl[]="message_data";
+				$tbl[]="message_ignore";
+				$tbl[]="notepad";
+				$tbl[]="notepad_data";
+				$tbl[]="bookmarks";
+				$tbl[]="fleet_bookmarks";
+	
+				$tbl[]="logs";
+				$tbl[]="logs_alliance";
+				$tbl[]="logs_battle";
+				$tbl[]="logs_fleet";
+				$tbl[]="logs_game";
+				
+				$tbl[]="login_failures";
+				$tbl[]="admin_user_log";
+				$tbl[]="logs_game";
+				$tbl[]="logs_battle";
+				$tbl[]="tickets";
+				$tbl[]="chat";
+				$tbl[]="chat_users";
+				$tbl[]="attack_ban";
+			}
 			
 			foreach ($tbl as $t)
 			{
@@ -729,7 +735,8 @@
 						config_value='1'
 					WHERE
 						config_name IN ('market_metal_factor','market_crystal_factor','market_plastic_factor','market_fuel_factor','market_food_factor');");
-						
+			
+			$mtx->release();		
 			return true;
 		}
 		
