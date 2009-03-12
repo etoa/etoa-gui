@@ -162,7 +162,7 @@
 	{
 		echo '<h2>Optimierungsbericht</h2>';
 		echo '<input type="button" value="Zur Übersicht" onclick="document.location=\'?page='.$page.'\'" /><br/><br/>';
-		$ores = optimize_tables(true);
+		$ores = DbMaintenance::optimizeTables(true);
 		db_show_result($ores);
 		echo '<br/><input type="button" value="Zur Übersicht" onclick="document.location=\'?page='.$page.'\'" />';
 	}
@@ -174,7 +174,7 @@
 	{
 		echo '<h2>Reparaturbericht</h2>';
 		echo '<input type="button" value="Zur Übersicht" onclick="document.location=\'?page='.$page.'\'" /><br/><br/>';
-		$ores = repair_tables(true);
+		$ores = DbMaintenance::repairTables(true);
 		db_show_result($ores);
 		echo '<br/><input type="button" value="Zur Übersicht" onclick="document.location=\'?page='.$page.'\'" />';
 	}
@@ -186,7 +186,7 @@
 	{
 		echo '<h2>Analysebericht</h2>';
 		echo '<input type="button" value="Zur Übersicht" onclick="document.location=\'?page='.$page.'\'" /><br/><br/>';
-		$ores = analyze_tables(true);
+		$ores = DbMaintenance::analyzeTables(true);
 		db_show_result($ores);
 		echo '<br/><input type="button" value="Zur Übersicht" onclick="document.location=\'?page='.$page.'\'" />';
 	}
@@ -198,7 +198,7 @@
 	{
 		echo '<h2>Überprüfungsbericht</h2>';
 		echo '<input type="button" value="Zur Übersicht" onclick="document.location=\'?page='.$page.'\'" /><br/><br/>';
-		$ores = check_tables(true);
+		$ores = DbMaintenance::checkTables(true);
 		db_show_result($ores);
 		echo '<br/><input type="button" value="Zur Übersicht" onclick="document.location=\'?page='.$page.'\'" />';
 	}			
@@ -597,6 +597,7 @@
 		$ts = array();
 		$tn = array();
 		$res=dbquery("SHOW TABLE STATUS FROM ". DB_DATABASE.";");
+		$rows=$datal=0;
 		while ($arr=mysql_fetch_array($res))
 		{
 			$rows+=$arr['Rows'];

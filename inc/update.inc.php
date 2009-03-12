@@ -36,8 +36,11 @@
 
 		// Tabellen optimieren
 		$tmr = timerStart();
-		optimize_tables();
+		DbMaintenance::optimizeTables();
 		$log.= "Tabellen optimiert.\nDauer: ".timerStop($tmr)." sec\n\n";
+		$tmr = timerStart();
+		DbMaintenance::analyzeTables();
+		$log.= "Tabellen analysiert.\nDauer: ".timerStop($tmr)." sec\n\n";
 
 		// Remove old ip-hostname combos from cache
 		$res = dbquery("

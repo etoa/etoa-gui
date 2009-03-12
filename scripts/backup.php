@@ -56,26 +56,7 @@
 	
 		chdir(GAME_ROOT_DIR);
 
-	 	// Alte Backups l�schen
-	 	$cmd = "find ".BACKUP_DIR." -name *.sql.gz -mtime +".$conf['backup']['p1']." -exec rm {} \;";
-		passthru($cmd);
-	 	$cmd = "find ".BACKUP_DIR." -name *.sql -mtime +".$conf['backup']['p1']." -exec rm {} \;";
-		passthru($cmd);
-
-		$file = BACKUP_DIR."/".DB_DATABASE."-".date("Y-m-d-H-i");
-		$file_wo_path = DB_DATABASE."-".date("Y-m-d-H-i");
-		$result = shell_exec("mysqldump -u".DB_USER." -h".DB_SERVER." -p".DB_PASSWORD." ".DB_DATABASE." > ".$file.".sql");
-		if ($result=="")
-		{
-			if ($conf['backup']['p2']==1)
-			{
-				$result = shell_exec("gzip -9 --best ".$file.".sql");
-				if ($result!="")
-					echo "Error while zipping Backup-Dump $file: $result\n";
-			}
-		}
-		else
-			echo "Error while creating Backup-Dump $file: $result\n";
+		Backup::create();
 	}
 	else
 		echo "Error: Could not include function file ".GAME_ROOT_DIR."/functions.php\n";	

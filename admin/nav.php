@@ -405,6 +405,10 @@
 	$navmenu['Konfiguration']['Bildpakete']['sub']="imagepacks";
 	$navmenu['Konfiguration']['Bildpakete']['level']=3;
 
+	$navmenu['Konfiguration']['Cronjob']['page']="config";
+	$navmenu['Konfiguration']['Cronjob']['sub']="cronjob";
+	$navmenu['Konfiguration']['Cronjob']['level']=2;
+
 	$navmenu['Konfiguration']['Start-Items']['page']="config";
 	$navmenu['Konfiguration']['Start-Items']['sub']="defaultitems";
 	$navmenu['Konfiguration']['Start-Items']['level']=3;
@@ -413,9 +417,11 @@
 	$navmenu['Konfiguration']['Tipps']['sub']="tipps";
 	$navmenu['Konfiguration']['Tipps']['level']=0;
 
+	/*
 	$navmenu['Konfiguration']['RSS']['page']="config";
 	$navmenu['Konfiguration']['RSS']['sub']="rss";
 	$navmenu['Konfiguration']['RSS']['level']=0;
+	*/
 
 	$navmenu['Tools']['Datei-Austausch']['page']="tools";
 	$navmenu['Tools']['Datei-Austausch']['sub']="filesharing";

@@ -5,20 +5,14 @@
 		if (isset($_POST['create']))
 		{
 			echo "Erstelle Backup...<br/>";
-			ob_start();
-			passthru("../scripts/backup.php");
-			$result = ob_get_contents();
-			ob_end_clean();
-			if ($result=="")
+
+			if (Backup::create())
 			{
-				echo "Das Backup wurde erstellt!<br/><br/>";
+				ok_msg("Das Backup wurde erstellt!");
 			}
 			else
 			{
-				echo "Beim Ausf&uuml;hren des Backup-Befehls trat ein Fehler auf!<br/>
-				<div style=\"border:1px solid #fff;background:#335;padding:5px;\">
-				$result
-				</div><br/>";
+				error_msg("Beim Ausf&uuml;hren des Backup-Befehls trat ein Fehler auf!");
 			}
 		}
 
@@ -43,7 +37,8 @@
 
 		if (Form::validate("bustn") && isset($_POST['submit_changes']))
 		{
-			$cfg->set("backup",$_POST['backup_v'],$_POST['backup_p1']);
+			$cfg->set("backup",$_POST['backup_v'],$_POST['backup_p1'],$_POST['backup_p2']);
+			$cfg->set("backup_time",$_POST['backup_time_v'],$_POST['backup_time_p1'],$_POST['backup_time_p2']);
 			ok_msg("Gespeichert");
 		}
 
@@ -51,12 +46,32 @@
 		echo $frm->begin();
 		iBoxStart("Backup-Einstellungen");
 		echo "Speicherpfad: <input type=\"text\" value=\"".$cfg->get("backup")."\" name=\"backup_v\" size=\"50\" /><br/>
-		Aufbewahrungsdauer: <input type=\"text\" value=\"".$cfg->p1("backup")."\" name=\"backup_p1\" size=\"2\" /> Tage 
-		&nbsp; <input type=\"submit\" value=\"Speichern\" name=\"submit_changes\"  />";
+		Aufbewahrungsdauer: <input type=\"text\" value=\"".$cfg->p1("backup")."\" name=\"backup_p1\" size=\"2\" /> Tage &nbsp; &nbsp;
+		GZIP benutzen: <input type=\"radio\" name=\"backup_p2\" value=\"1\" ".($cfg->p2("backup")==1 ? ' checked="checked"' : '')."/> Ja  
+		<input type=\"radio\" name=\"backup_p2\" value=\"0\" ".($cfg->p2("backup")==0 ? ' checked="checked"' : '')."/> Nein<br/>
+		Intervall: <select name=\"backup_time_v\">";
+		for ($i=1;$i<=24;$i++)
+		{
+			echo "<option value=\"".$i."\" ".($cfg->get("backup_time")==$i ? ' selected="selected"':'').">".$i."</option>";
+		}
+		echo "</select/> Stunden &nbsp;&nbsp; Startzeit: <select name=\"backup_time_p1\">";
+		for ($i=0;$i<24;$i++)
+		{
+			echo "<option value=\"".$i."\" ".($cfg->p1("backup_time")==$i ? ' selected="selected"':'').">".$i."</option>";
+		}
+		echo "</select/>:<select name=\"backup_time_p2\">";
+		for ($i=0;$i<60;$i++)
+		{
+			echo "<option value=\"".$i."\" ".($cfg->p2("backup_time")==$i ? ' selected="selected"':'').">".$i."</option>";
+		}
+		echo "</select/>";
+		
+		
+		echo "&nbsp;&nbsp;  <input type=\"submit\" value=\"Speichern\" name=\"submit_changes\"  />";
 		iBoxEnd();
 		echo $frm->close();
 
-		echo "Im Folgenden sind alle verfügbaren Backups aufgelistet. Backups werden durch ein Skript erstellt dass per Cronjob aufgerufen wird.<br/><br/>";
+		echo "<br/>Im Folgenden sind alle verfügbaren Backups aufgelistet. Backups werden durch ein Skript erstellt dass per Cronjob aufgerufen wird.<br/><br/>";
 
 		echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
 		echo "<input type=\"submit\" value=\"Neues Backup erstellen\" name=\"create\" /> &nbsp;

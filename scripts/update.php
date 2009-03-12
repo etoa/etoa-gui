@@ -120,6 +120,12 @@
 				// Statistiken generieren und speichern
 				Gamestats::generateAndSave(GAME_ROOT_DIR."/".GAMESTATS_FILE);					
 			}
+			
+			// Backup
+			if ((date("h")-$cfg->p1("backup_time"))%$cfg->get("backup_time")==0 && date("i")==$cfg->p2("backup_time")) 
+			{
+				Backup::create();				
+			}			
 
 			// Log schreiben
 			$t = timerStop($tmr);

@@ -974,117 +974,7 @@
 		);");
 	}
 
-
-	/**
-	* Tabellen optimieren
-	*/
-	function optimize_tables($manual=false)
-	{
-		$res = dbquery("SHOW TABLES;");
-		$n = mysql_num_rows($res);
-		$cnt=0;
-		$tbls = '';
-		while ($arr=mysql_fetch_row($res))
-		{
-			$tbls.=$arr[0];
-			$cnt++;
-			if ($cnt<$n)
-			{
-				$tbls.=',';
-			}
-		}
-		$ores = dbquery("OPTIMIZE TABLE ".$tbls.";");
-		if ($manual)
-		{
-			add_log("4",$n." Tabellen wurden manuell optimiert!",time());
-			return $ores;
-		}
-		else
-		{
-			add_log("4",$n." Tabellen wurden optimiert!",time());
-			return $n;
-		}
-	}
-
-	/**
-	* Tabellen reparieren
-	*
-	*@Todo: outsource, is only for >admins
-	*/
-	function repair_tables($manual=false)
-	{
-		$res = dbquery("SHOW TABLES;");
-		$n = mysql_num_rows($res);
-		$cnt=0;
-		$tbls = '';
-		while ($arr=mysql_fetch_row($res))
-		{
-			$tbls.=$arr[0];
-			$cnt++;
-			if ($cnt<$n)
-			{
-				$tbls.=',';
-			}
-		}
-		$ores = dbquery("REPAIR TABLE ".$tbls.";");
-		if ($manual)
-		{
-			add_log("4",$n." Tabellen wurden manuell repariert!",time());
-			return $ores;
-		}
-		else
-		{
-			add_log("4",$n." Tabellen wurden repariert!",time());
-			return $n;
-		}	
-	}
-
-	/**
-	* Tabellen prüfen
-	*@Todo: outsource, is only for >admins
-	*/
-	function check_tables()
-	{
-		$res = dbquery("SHOW TABLES;");
-		$n = mysql_num_rows($res);
-		$cnt=0;
-		$tbls = '';
-		while ($arr=mysql_fetch_row($res))
-		{
-			$tbls.=$arr[0];
-			$cnt++;
-			if ($cnt<$n)
-			{
-				$tbls.=',';
-			}
-		}
-		$ores = dbquery("CHECK TABLE ".$tbls.";");
-		return $ores;
-	}
 	
-	/**
-	* Tabellen analysieren
-	*@Todo: outsource, is only for >admins
-	*/
-	function analyze_tables()
-	{
-		$res = dbquery("SHOW TABLES;");
-		$n = mysql_num_rows($res);
-		$cnt=0;
-		$tbls = '';
-		while ($arr=mysql_fetch_row($res))
-		{
-			$tbls.=$arr[0];
-			$cnt++;
-			if ($cnt<$n)
-			{
-				$tbls.=',';
-			}
-		}
-		$ores = dbquery("ANALYZE TABLE ".$tbls.";");
-		return $ores;
-	}
-		
 	/**
 	* Cuts a string by a given length
 	*/
@@ -2581,6 +2471,155 @@ function imagecreatefromfile($path, $user_functions = false)
 	{
 		return md5($pw.$seed.PASSWORD_SALT).md5(PASSWORD_SALT.$seed.$pw);
 	}
+	
+	function pw_salt2($pw,$seed=0)
+	{
+		$gseed = PASSWORD_SALT;	// Take the general seed
+		$seedlen = strlen($gseed); // Measure it's length
+		$pwlen = strlen($pw);	// Measure the password length		
+		$mlen = max($pwlen,$seedlen); // Get the maximum lenght
+		$saltedHash = "";	// Create an empty hash
+		$pw = (string)$pw;
+		$last = 0;
+		for ($i=0; $i < $mlen; $i++)
+		{
+			// Now salt the password with the general and the individual seed ...
+			$val = (ord($gseed[$i%$seedlen]) + ord($pw[$i % $pwlen]) + $seed + $last)%255;
+			$saltedHash .= chr($val);
+			$last = $val;
+		}
+		// ... and return it's SHA1 hash
+		return sha1($saltedHash);
+	}	
+	
+	function passwordStrength($password, $username = null)
+	{
+	    if (!empty($username))
+	    {
+	        $password = str_replace($username, '', $password);
+	    }
+	
+	    $strength = 0;
+	    $password_length = strlen($password);
+	
+	    if ($password_length < 4)
+	    {
+	        return $strength;
+	    }
+	
+	    else
+	    {
+	        $strength = $password_length * 4;
+	    }
+	
+	    for ($i = 2; $i <= 4; $i++)
+	    {
+	        $temp = str_split($password, $i);
+	
+	        $strength -= (ceil($password_length / $i) - count(array_unique($temp)));
+	    }
+	
+	    preg_match_all('/[0-9]/', $password, $numbers);
+	
+	    if (!empty($numbers))
+	    {
+	        $numbers = count($numbers[0]);
+	
+	        if ($numbers >= 3)
+	        {
+	            $strength += 5;
+	        }
+	    }
+	
+	    else
+	    {
+	        $numbers = 0;
+	    }
+	
+	    preg_match_all('/[|!@#$%&*\/=?,;.:\-_+~^¨\\\]/', $password, $symbols);
+	
+	    if (!empty($symbols))
+	    {
+	        $symbols = count($symbols[0]);
+	
+	        if ($symbols >= 2)
+	        {
+	            $strength += 5;
+	        }
+	    }
+	
+	    else
+	    {
+	        $symbols = 0;
+	    }
+	
+	    preg_match_all('/[a-z]/', $password, $lowercase_characters);
+	    preg_match_all('/[A-Z]/', $password, $uppercase_characters);
+	
+	    if (!empty($lowercase_characters))
+	    {
+	        $lowercase_characters = count($lowercase_characters[0]);
+	    }
+	
+	    else
+	    {
+	        $lowercase_characters = 0;
+	    }
+	
+	    if (!empty($uppercase_characters))
+	    {
+	        $uppercase_characters = count($uppercase_characters[0]);
+	    }
+	
+	    else
+	    {
+	        $uppercase_characters = 0;
+	    }
+	
+	    if (($lowercase_characters > 0) && ($uppercase_characters > 0))
+	    {
+	        $strength += 10;
+	    }
+	
+	    $characters = $lowercase_characters + $uppercase_characters;
+	
+	    if (($numbers > 0) && ($symbols > 0))
+	    {
+	        $strength += 15;
+	    }
+	
+	    if (($numbers > 0) && ($characters > 0))
+	    {
+	        $strength += 15;
+	    }
+	
+	    if (($symbols > 0) && ($characters > 0))
+	    {
+	        $strength += 15;
+	    }
+	
+	    if (($numbers == 0) && ($symbols == 0))
+	    {
+	        $strength -= 10;
+	    }
+	
+	    if (($symbols == 0) && ($characters == 0))
+	    {
+	        $strength -= 10;
+	    }
+	
+	    if ($strength < 0)
+	    {
+	        $strength = 0;
+	    }
+	
+	    if ($strength > 100)
+	    {
+	        $strength = 100;
+	    }
+	    return $strength;
+	}
+	
 	
 	/**
 	* Displays a button which opens an abuse report dialog when clicked
