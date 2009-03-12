@@ -58,12 +58,14 @@
 
 		dbconnect();
 		$conf = get_all_config();
+		$cfg = Config::getInstance();
 		include("def.inc.php");
 
 		// Prüfen ob Updates eingeschaltet sind
 		if ($conf['update_enabled']['v']==1)
 		{
 			// Mutex holen
+			$tmr = timerStart();
 			$log = " Warte auf Mutex...";
 			$mtx = new Mutex();
 			$mtx->acquire();
