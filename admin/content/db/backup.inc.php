@@ -44,10 +44,10 @@
 		$frm = new Form("bustn","?page=$page&amp;sub=$sub");
 		echo $frm->begin();
 		iBoxStart("Backup-Einstellungen");
-		echo "Speicherpfad: <input type=\"text\" value=\"".$cfg->get("backup")."\" name=\"backup_v\" size=\"50\" /><br/>
-		Aufbewahrungsdauer: <input type=\"text\" value=\"".$cfg->p1("backup")."\" name=\"backup_p1\" size=\"2\" /> Tage &nbsp; &nbsp;
-		GZIP benutzen: <input type=\"radio\" name=\"backup_p2\" value=\"1\" ".($cfg->p2("backup")==1 ? ' checked="checked"' : '')."/> Ja  
-		<input type=\"radio\" name=\"backup_p2\" value=\"0\" ".($cfg->p2("backup")==0 ? ' checked="checked"' : '')."/> Nein<br/>
+		echo "Speicherpfad: <input type=\"text\" value=\"".$cfg->backup."\" name=\"backup_v\" size=\"50\" /><br/>
+		Aufbewahrungsdauer: <input type=\"text\" value=\"".$cfg->backup->p1."\" name=\"backup_p1\" size=\"2\" /> Tage &nbsp; &nbsp;
+		GZIP benutzen: <input type=\"radio\" name=\"backup_p2\" value=\"1\" ".($cfg->backup->p2==1 ? ' checked="checked"' : '')."/> Ja  
+		<input type=\"radio\" name=\"backup_p2\" value=\"0\" ".($cfg->backup->p2==0 ? ' checked="checked"' : '')."/> Nein<br/>
 		Intervall: <select name=\"backup_time_v\">";
 		for ($i=1;$i<=24;$i++)
 		{

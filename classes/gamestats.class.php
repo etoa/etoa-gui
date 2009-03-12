@@ -1068,8 +1068,9 @@
 		return $out;
 	}
 	
-	static function generateAndSave($file)
+	static function generateAndSave()
 	{
+		$file = GAMESTATS_FILE;
 			if ($f=fopen($file,"w+"))
 			{
 				$str = self::generate();

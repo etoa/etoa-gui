@@ -494,8 +494,6 @@
 							dbquery("UPDATE config SET config_param2='".create_sql_value($arr['config_type_p2'],$arr['config_name'],"p2",$_POST)."' WHERE config_id='".$arr['config_id']."'");
 						}
 						echo "&Auml;nderungen wurden &uuml;bernommen!<br/><br/>";
-						$cfg->reload();
-						$conf = get_all_config();
 					}
 
 					echo "<form action=\"?page=config&amp;cid=".$_GET['cid']."\" method=\"post\">";

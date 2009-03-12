@@ -16,7 +16,7 @@
 	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
 	//////////////////////////////////////////////////
 	//
-	// 	File: global.inc.php
+	// 	File: bootstrap.inc.php
 	// 	Created: 07.5.2007
 	// 	Last edited: 06.07.2007
 	// 	Last edited by: MrCage <mrcage@etoa.ch>

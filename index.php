@@ -32,7 +32,7 @@
 	// Basic stuff
 	//
 
-	require_once("global.inc.php");
+	require_once("bootstrap.inc.php");
 
 	// Session-Cookie setzen
 	session_start();

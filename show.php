@@ -32,7 +32,7 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/
 	
-	require_once("global.inc.php");
+	require_once("bootstrap.inc.php");
 
 	function showTitle($title)
 	{

@@ -40,7 +40,7 @@
   /***********************************/
 
 	// Backup-Dir
-	define('BACKUP_DIR',$conf['backup']['v']);	
+	define('BACKUP_DIR',$cfg->get('backup'));	
 
 	// RSS Dir
 	define('RSS_DIR',CACHE_ROOT."/rss");
@@ -78,7 +78,7 @@
   /***********************************/
   
   // Layout
-	define ("STATS_NUM_OF_ROWS", $conf['stats_num_rows']['v']); // Statistik Anzahl Zeilen
+	define ("STATS_NUM_OF_ROWS", $cfg->get('stats_num_rows')); // Statistik Anzahl Zeilen
 
 	// Externe Pfade
 	define("HELPCENTER_URL","http://www.etoa.ch/help/?page=faq");	// Helpcenter Link
@@ -113,12 +113,12 @@
 	define('DEFAULT_PAGE',"overview");
 
 	// Onlinetime-Threshold
-	define('ONLINE_TIME',$conf['online_threshold']['v']);
+	define('ONLINE_TIME',$cfg->get('online_threshold'));
 
 	//Paswort und Nicklänge
-	define("PASSWORD_MINLENGHT",$conf['password_minlength']['v']); 		// Minimale Passwortlänge
-	define("PASSWORD_MAXLENGHT",$conf['password_minlength']['p1']); 	// Minimale Passwortlänge
-	define("NICK_MINLENGHT",$conf['nick_length']['p1']);							// Minimale Nicklänge
+	define("PASSWORD_MINLENGHT",$cfg->get('password_minlength')); 		// Minimale Passwortlänge
+	define("PASSWORD_MAXLENGHT",$cfg->get('password_minlength')); 	// Minimale Passwortlänge
+	define("NICK_MINLENGHT",$cfg->get('nick_length'));							// Minimale Nicklänge
 	define("NICK_MAXLENGHT",$conf['nick_length']['p2']);							// Maximale Nicklänge
 	define("NAME_MAXLENGTH",$conf['name_length']['v']);								// Minimale Nicklänge
 	

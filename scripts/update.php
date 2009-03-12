@@ -31,38 +31,21 @@
 	define(USE_HTML,false);
 
 	// Gamepfad feststellen
-	if ($_SERVER['argv'][1]!="")
-	{
-		$grd = $_SERVER['argv'][1];
-	}
-	else
-	{
-		$c=strrpos($_SERVER["SCRIPT_FILENAME"],"scripts/");
-		if (stristr($_SERVER["SCRIPT_FILENAME"],"./")&&$c==0)
-			$grd = "../";
-		elseif ($c==0)
-			$grd = ".";
-		else
-			$grd = substr($_SERVER["SCRIPT_FILENAME"],0,$c-1);
-	}
-	
-	define("GAME_ROOT_DIR",$grd);
-	chdir($grd);
+	$grd = chdir(realpath(dirname(__FILE__)."/../"));
 
 	// Initialisieren
 	if (include("conf.inc.php"))
 	{
-		include("global.inc.php");
+		include("bootstrap.inc.php");
 		include("functions.php");
 		include("inc/update.inc.php");
-
 		dbconnect();
-		$conf = get_all_config();
 		$cfg = Config::getInstance();
+		$conf = $cfg->getArray();	// For compatibility reasons
 		include("def.inc.php");
 
 		// Prüfen ob Updates eingeschaltet sind
-		if ($conf['update_enabled']['v']==1)
+		if ($cfg->get('update_enabled')==1)
 		{
 			// Mutex holen
 			$tmr = timerStart();
@@ -120,7 +103,7 @@
 			if (date("i")=="3") 
 			{
 				// Statistiken generieren und speichern
-				Gamestats::generateAndSave(GAME_ROOT_DIR."/".GAMESTATS_FILE);					
+				Gamestats::generateAndSave();					
 			}
 			
 			// Log schreiben
@@ -149,7 +132,7 @@
 	}
 	else
 	{
-		throw new EException("Could not include config file ".$grd."/conf.inc.php\n");
+		throw new EException("Could not include config file ".getcwd()."/conf.inc.php\n");
 	}
 		
 

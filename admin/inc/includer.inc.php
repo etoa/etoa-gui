@@ -3,7 +3,7 @@
 	define('RELATIVE_ROOT','../');
 	define('ADMIN_MODE',true);
 
-	require_once("../global.inc.php");
+	require_once("../bootstrap.inc.php");
 
 	// Seitenwahl zuweisen
 	$page = isset($_GET['page']) ? $_GET['page'] : 'home';

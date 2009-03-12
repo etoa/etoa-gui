@@ -41,23 +41,20 @@
 		else
 			$grd = substr($_SERVER["SCRIPT_FILENAME"],0,$c-1);
 	}
-	define("GAME_ROOT_DIR",$grd);
+	chdir($grd);
 
 	// Initialisieren
-	if (require(GAME_ROOT_DIR."/functions.php"))
+	require("bootstrap.inc.php");
+	if (require("functions.php"))
 	{	
-		require(GAME_ROOT_DIR."/conf.inc.php");               
+		require("conf.inc.php");               
 		dbconnect(); 	
-		if (!defined('CLASS_ROOT'))	
-			define('CLASS_ROOT',GAME_ROOT_DIR.'/classes');
 		
 		$conf = get_all_config();
-		require(GAME_ROOT_DIR."/def.inc.php");
-	
-		chdir(GAME_ROOT_DIR);
+		require("def.inc.php");
 
 		Backup::create();
 	}
 	else
-		echo "Error: Could not include function file ".GAME_ROOT_DIR."/functions.php\n";	
+		echo "Error: Could not include function file ".$grd."/functions.php\n";	
 ?>

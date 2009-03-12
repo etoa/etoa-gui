@@ -9,34 +9,34 @@
 	*
 	* @author Nicolas Perrenoud <mrcage@etoa.ch>
 	*/
-	class Config
+	class Config implements ISingleton
 	{
 	    static private $instance;
-	    private $values;
-	    private $params1;
-	    private $params2;
-	    private $keys;
+	    private $_items;
 	
 			/**
 			* Get instance with this very nice singleton design pattern
 			*/
 	    static public function getInstance()
 	    {
-	        if (!self::$instance)
-	        {
-	            self::$instance = new Config();
-	        }
-	        return self::$instance;
+        if (!self::$instance)
+        {
+            self::$instance = new Config();
+        }
+        return self::$instance;
 	    }
+	
+			public function __clone()
+			{
+				throw new EException("Config ist nicht klonbar!");
+			}
 	
 			/**
 			* The constructor (is private so getInstance() must be used)
 			*/
-	    private function Config()
+	    private function __construct()
 	    {
-	    	$this->values = array();
-	    	$this->params1 = array();
-	    	$this->params2 = array();
+	    	$this->_items = array();
 	    	
 	    	$res = dbquery("
 	    	SELECT 
@@ -46,35 +46,10 @@
 	    		config_param2 	 
 	    	FROM 
 	    		config;");
-	    	while ($arr = mysql_fetch_array($res))
+	    	while ($arr = mysql_fetch_assoc($res))
 	    	{
-	    		$this->keys[] = $arr['config_name'];
-	    		$this->values[$arr['config_name']] = $arr['config_value'];
-	    		$this->params1[$arr['config_name']] = $arr['config_param1'];
-	    		$this->params2[$arr['config_name']] = $arr['config_param2'];
+	    		$this->_items[$arr['config_name']] = new ConfigItem($arr['config_value'],$arr['config_param1'],$arr['config_param2']);
 	    	}
-	    }
-	    
-	    /**
-	    * Reloads the whole config from the database
-	    */
-	    public function reload()
-	    {
-	    	$res = dbquery("
-	    	SELECT 
-	    		config_name,
-	    		config_value,
-	    		config_param1,
-	    		config_param2 	 
-	    	FROM 
-	    		config;");
-	    	while ($arr = mysql_fetch_array($res))
-	    	{
-	    		$this->keys[] = $arr['config_name'];
-	    		$this->values[$arr['config_name']] = $arr['config_value'];
-	    		$this->params1[$arr['config_name']] = $arr['config_param1'];
-	    		$this->params2[$arr['config_name']] = $arr['config_param2'];
-	    	}	    	
 	    }
 	    
 	    /**
@@ -82,14 +57,7 @@
 	    */
 	    public function add($name,$val,$param1="",$param2="")
 	    {
-	    	if (in_array($name,$this->keys))
-	    	{
-	    		return false;
-	    	}
-	    	
-	    	$this->values[$name]=$val;
-	    	$this->params1[$name]=$param1;
-	    	$this->params2[$name]=$param2;
+    		$this->_items[$name] = new ConfigItem($val,$param1,$param2);
 	    	dbquery("
 	    	INSERT INTO
 	    		config
@@ -105,9 +73,12 @@
 	    		'".$val."',
 	    		'".$param1."',
 	    		'".$param2."'
-	    	);
-	    	");
-	    	echo "Debug: Zur $name = $val config hinzugefügt!<br/>";
+	    	)
+	    	ON DUPLICATE KEY UPDATE 
+	    		config_value='".$val."',
+	    		config_param1='".$param1."',
+	    		config_param2='".$param2."'
+	    	;");
 	    	return true;
 	    }
 	    
@@ -116,23 +87,7 @@
 	    */
 	    public function set($name,$val,$param1="",$param2="")
 	    {
-	    	$this->values[$name]=$val;
-	    	$this->params1[$name]=$param1;
-	    	$this->params2[$name]=$param2;
-	    	dbquery("
-	    	UPDATE
-	    		config
-	    	SET
-	    		config_value='".$val."',
-	    		config_param1='".$param1."',
-	    		config_param2='".$param2."'    	
-				WHERE
-	 	    	config_name='".$name."'
-	    	");
-	    	if (mysql_affected_rows()==0)
-	    	{
-	    		$this->add($name,$val,$param1,$param2);
-	    	}
+    		$this->add($name,$val,$param1,$param2);
 	    }
 	    	    
 	    /**
@@ -140,11 +95,7 @@
 	    */
 	    public function get($key)
 	    {
-	    	if (isset($this->values[$key]))
-	    	{
-	    		return $this->values[$key];
-	    	}
-	    	return false;
+    		return $this->_items[$key]->v;
 	    }
 	    
 	    /**
@@ -152,7 +103,7 @@
 	    */
 	    public function value($key)
 	    {
-    		return $this->get($key);
+    		return $this->_items[$key]->v;
 	    }
 	
 	    /**
@@ -160,11 +111,7 @@
 	    */
 	    public function param1($key)
 	    {
-	    	if (isset($this->params1[$key]))
-	    	{
-	    		return $this->params1[$key];
-	    	}
-	    	return false;
+				return $this->_items[$key]->p1;
 	    }
 	    
 	    /**
@@ -172,7 +119,7 @@
 	    */
 	    public function p1($key)
 	    {
-    		return $this->param1($key);
+				return $this->_items[$key]->p1;
 	    }	    
 	    
 	    /**
@@ -180,11 +127,8 @@
 	    */
 	    public function param2($key)
 	    {
-	    	if (isset($this->params2[$key]))
-	    	{
-	    		return $this->params2[$key];
-	    	}
-	    	return false;
+				return $this->_items[$key]->p2;
+
 	    }	 
 
 	    /**
@@ -192,7 +136,7 @@
 	    */
 	    public function p2($key)
 	    {
-    		return $this->param2($key);
+				return $this->_items[$key]->p2;
 	    }	    	    
 	    
 			/**
@@ -201,14 +145,71 @@
 			public function & getArray()
 			{
 				$conf = array();
-				foreach ($this->keys as $key)
+				foreach ($this->_items as $key => &$i)
 				{
-					$conf[$key]['v'] = $this->values[$key];
-					$conf[$key]['p1'] = $this->params1[$key];
-					$conf[$key]['p2'] = $this->params2[$key];
+					$conf[$key]['v'] = $i->v;
+					$conf[$key]['p1'] = $i->p1;
+					$conf[$key]['p2'] = $i->p2;
 				}
+				unset($i);
 				return $conf;
 			}	       	    	    
-	    
+	   
+	  public function __get($name)
+  	{
+  		try
+  		{
+				if (isset($this->_items[$name]))
+				{
+					return $this->_items[$name];
+				}
+				else
+				{
+					throw new EException("Konfigurationsvariable $name existiert nicht!");
+					return null;
+				}
+			}
+			catch (EException $e)
+			{
+				echo $e;
+	    	return null;
+			}			   		
+    }	    
+	}
+	
+	class ConfigItem
+	{
+		private $_v,$_p1,$_p2;
+		function __construct($v,$p1,$p2)
+		{
+			$this->_v = $v;
+			$this->_p1 = $p1;
+			$this->_p2 = $p2;
+		}
+		
+		function __toString()
+		{
+			return $this->_v;
+		}
+		
+	  public function __get($name)
+  	{
+  		try
+  		{
+	    	if ($name=="p1")		
+	    		return $this->_p1;
+	    	if ($name=="p2")		
+	    		return $this->_p2;
+	    	if ($name=="v")		
+	    		return $this->_v;
+				throw new EException("Property $name der Klasse  ".__CLASS__." existiert nicht!");
+				return null;
+			}
+			catch (EException $e)
+			{
+				echo $e;
+	    	return null;
+			}			   		
+    }
 	}
 ?>
