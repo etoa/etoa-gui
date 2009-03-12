@@ -52,7 +52,7 @@
 
 
 
-	if (isset($_SESSION[ROUNDID]))
+	if (isset($_SESSION[ROUNDID]) || isset($_SESSION['adminsession']))
 	{
 		$s = $_SESSION[ROUNDID];
 		if ($s['user_id'] > 0)
