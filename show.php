@@ -47,15 +47,16 @@
 	require_once("functions.php");
 
 	dbconnect();
-
-	$conf = get_all_config();
+	
+	$cfg = Config::getInstance();
+	
 	include("def.inc.php");
 
 	$indexpage = array();
 	$contentpage = array();
 	$indexpage['register']='Anmelden';
 	$indexpage['pwforgot']='Passwort vergessen';
-	$indexpage['stats']='Rangliste';
+	$indexpage['ladder']='Rangliste';
 	$indexpage['gamestats']='Serverstatistiken';
 	$indexpage['pillory']='Pranger';
 	$indexpage['feeds']='Feeds';
@@ -84,7 +85,7 @@
 	}
 	else
 	{
-		define("CSS_STYLE",$conf['default_css_style']['v']);
+		define("CSS_STYLE",$cfg->get('default_css_style'));
 	}
 
 	if (isset($cu->image_url) && $cu->image_url!='' && $cu->image_ext!='')
@@ -94,7 +95,7 @@
 	}
 	else
 	{
-		define("IMAGE_PATH",$conf['default_image_path']['v']);
+		define("IMAGE_PATH",$cfg->get('default_image_path'));
 		define("IMAGE_EXT","gif");
 	}	
 	
@@ -112,7 +113,7 @@
 	<head>
 		<title>
 			<?PHP 
-				echo $conf['game_name']['v']." ".$conf['game_name']['p1'].' | '.ROUNDID;
+				echo $cfg->get('game_name')." ".$cfg->p1('game_name').' | '.ROUNDID;
 				if ($index!="")
 				{			
 					echo " | ".$indexpage[$index];
@@ -183,14 +184,14 @@
 		
 			
 			$show = true;
-			if ($conf['register_key']['v']!="" && !isset($s['user_id']))
+			if ($cfg->get('register_key')!="" && !isset($s['user_id']))
 			{
 				if (isset($_POST['reg_key_auth_submit']))
 				{
 				
-					if ($_POST['reg_key_auth_value']==$conf['register_key']['v'])
+					if ($_POST['reg_key_auth_value']==$cfg->get('register_key'))
 					{
-						$_SESSION['reg_key_auth']=$conf['register_key']['v'];
+						$_SESSION['reg_key_auth']=$cfg->get('register_key');
 					}
 					else
 					{
@@ -198,7 +199,7 @@
 					}
 				}
 				
-				if ($_SESSION['reg_key_auth']!=$conf['register_key']['v'])
+				if ($_SESSION['reg_key_auth']!=$cfg->get('register_key'))
 				{
 					$show = false;
 				}
@@ -232,7 +233,7 @@
 					echo '<tr>
 						<td><a href="?index=register"><img src="images/outgame/register.png" alt="Anmelden" /><br/>Anmelden</a></td>
 						<td><a href="?index=pwforgot"><img src="images/outgame/pwforgot.png" alt="Passwort anfordern" /><br/>Passwort vergessen?</a></td>
-						<td><a href="?index=stats"><img src="images/outgame/stats.png" alt="Rangliste" /><br/>Rangliste</a></td>
+						<td><a href="?index=ladder"><img src="images/outgame/stats.png" alt="Rangliste" /><br/>Rangliste</a></td>
 					</tr>';
 					echo '<tr>
 						<td><a href="?index=gamestats"><img src="images/outgame/gamestats.png" alt="Serverstatistiken" /><br/>Serverstatistiken</a></td>

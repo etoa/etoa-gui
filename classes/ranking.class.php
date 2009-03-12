@@ -11,7 +11,7 @@
 		/**
 		* Shows player tytles
 		*/
-		static function getTitles($admin=0)
+		static function getTitles($admin=0,$extern=0)
 		{
 			$cfg = Config::getInstance();
 			ob_start();
@@ -58,9 +58,12 @@
 						</td>
 						<td class=\"tbldata\" style=\"vertical-align:middle;padding-top:0px;padding-left:15px;\">
 							<span style=\"font-size:13pt;color:#ff0;\">".$arr[0]."</span><br/><br/>
-							".nf($arr[1])." Punkte<br/><br/>
-							[<a href=\"".$profile."\">Profil</a>]
-						</td>
+							".nf($arr[1])." Punkte<br/><br/>";
+							if (!$extern)
+							{
+								echo "[<a href=\"".$profile."\">Profil</a>]";
+							}
+						echo "</td>
 					</tr>";
 				}
 				$cnt++;
@@ -95,9 +98,12 @@
 						</td>
 						<td class=\"tbldata\" style=\"vertical-align:middle;padding-top:0px;padding-left:15px;\">
 							<span style=\"font-size:13pt;color:#ff0;\">".$arr[0]."</span><br/><br/>
-							".nf($arr[1])." Punkte<br/><br/>
-							[<a href=\"".$profile."\">Profil</a>]
-						</td>
+							".nf($arr[1])." Punkte<br/><br/>";
+							if (!$extern)
+							{
+								echo "[<a href=\"".$profile."\">Profil</a>]";
+							}
+						echo "</td>
 					</tr>";
 				}
 				$cnt++;
@@ -151,9 +157,12 @@
 						</td>	
 						<td class=\"tbldata\" style=\"vertical-align:middle;padding-top:0px;padding-left:15px;\">
 							<span style=\"font-size:13pt;color:#ff0;\">".$arr[0]."</span><br/><br/>
-							".nf($arr[1])." Punkte &nbsp;&nbsp;&nbsp;
-							[<a href=\"".$profile."\">Profil</a>]
-						</td>							
+							".nf($arr[1])." Punkte &nbsp;&nbsp;&nbsp;";
+							if (!$extern)
+							{
+								echo "[<a href=\"".$profile."\">Profil</a>]";
+							}
+						echo "</td>							
 					</tr>";
 				}
 			}
@@ -172,8 +181,10 @@
 		{
 			$file_u = CACHE_ROOT."/out/usertitles.gen";
 			$file_a = CACHE_ROOT."/out/usertitles_a.gen";
+			$file_ex = CACHE_ROOT."/out/usertitles_ex.gen";
 			$titles_u = Ranking::getTitles();
 			$titles_a = Ranking::getTitles(1);
+			$titles_ex = Ranking::getTitles(0,1);
 			if ($d = fopen ($file_u,"w+"))
 			{
 				fwrite($d,$titles_u);
@@ -182,6 +193,11 @@
 			if ($d = fopen ($file_a,"w+"))
 			{
 				fwrite($d,$titles_a);
+				fclose($d);
+			}
+			if ($d = fopen ($file_ex,"w+"))
+			{
+				fwrite($d,$titles_ex);
 				fclose($d);
 			}
 			

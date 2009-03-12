@@ -11,7 +11,7 @@
 	$xajax->setFlag('debug',false);
 
 	require_once("inc/xajax/global.xajax.php");
-
+	
 	if (isset($page))
 	{
 		if ($page=="haven")
@@ -57,6 +57,10 @@
 		if ($index=="register")
 		{
 			require_once("inc/xajax/register.xajax.php");
+		}
+		elseif ($index=="ladder")
+		{
+			require_once("inc/xajax/ladder.xajax.php");
 		}
 	}	
 	

@@ -224,13 +224,11 @@
 
 		if (!$mob)
 			echo "Keine mobilen Anlagen vorhanden!<br/>";
-
-
-
-
-		echo "<h2>Recycling</h2>";
-
- 		echo "Deine Recyclingtechnologie ist auf Stufe ".$tech_level." entwickelt. Es werden ".$pb_percent." % der Kosten zur&uuml;ckerstattet.<br/>Der Recyclingvorgang kann nicht r&uuml;ckgangig gemacht werden, die Objekte werden sofort verschrottet!<br>";	
+		
+		
+		tableStart("Recycling");
+ 		echo "<tr><td>Deine Recyclingtechnologie ist auf Stufe ".$tech_level." entwickelt. Es werden ".$pb_percent." % der Kosten zur&uuml;ckerstattet.<br/>Der Recyclingvorgang kann nicht r&uuml;ckgangig gemacht werden, die Objekte werden sofort verschrottet!</td></tr>";
+		tableEnd();
 
 		//Schiffe recyceln
 		if (isset($_POST['submit_recycle_ships']) && $_POST['submit_recycle_ships']!="")
@@ -319,12 +317,12 @@
 
 
 				//Log schreiben
-				$log="Der User [URL=?page=user&sub=edit&user_id=".$cu->id."] [B]".$_SESSION[ROUNDID]['user']['nick']."[/B] [/URL] hat auf dem Planeten [URL=?page=galaxy&sub=edit&planet_id=".$cp->id()."][B]".$cp->name."[/B][/URL] folgende Schiffe mit dem r&uuml;ckgabewert von ".($payback*100)."% recycelt:\n\n".$log_ships."\nDies hat ihm folgende Rohstoffe gegeben:\n".RES_METAL.": ".nf($pb[0])."\n".RES_CRYSTAL.": ".nf($pb[1])."\n".RES_PLASTIC.": ".nf($pb[2])."\n".RES_FUEL.": ".nf($pb[3])."\n".RES_FOOD.": ".nf($pb[4])."\n";
+				$log="Der User [URL=?page=user&sub=edit&user_id=".$cu->id."] [B]".$cu."[/B] [/URL] hat auf dem Planeten [URL=?page=galaxy&sub=edit&planet_id=".$cp->id()."][B]".$cp->name."[/B][/URL] folgende Schiffe mit dem r&uuml;ckgabewert von ".($payback*100)."% recycelt:\n\n".$log_ships."\nDies hat ihm folgende Rohstoffe gegeben:\n".RES_METAL.": ".nf($pb[0])."\n".RES_CRYSTAL.": ".nf($pb[1])."\n".RES_PLASTIC.": ".nf($pb[2])."\n".RES_FUEL.": ".nf($pb[3])."\n".RES_FOOD.": ".nf($pb[4])."\n";
 
 				add_log(12,$log,time());
 
 			}
-			echo "<br>".nf($cnt)." Schiffe erfolgreich recycelt!<br>";
+			ok_msg(nf($cnt)." Schiffe erfolgreich recycelt!");
 		}
 
 
@@ -334,6 +332,7 @@
 			//Anzahl muss grösser als 0 sein
 			if (count($_POST['def_count'])>0)
 			{
+				$fields = 0;
 				foreach ($_POST['def_count'] as $id=>$num)
 				{
 					$num=abs($num);
@@ -415,11 +414,11 @@
 		    $cp->resFood+=$pb[4];
 
 				//Log schreiben
-				$log="Der User [URL=?page=user&sub=edit&user_id=".$cu->id."] [B]".$_SESSION[ROUNDID]['user']['nick']."[/B] [/URL] hat auf dem Planeten [URL=?page=galaxy&sub=edit&planet_id=".$cp->id()."][B]".$cp->name."[/B][/URL] folgende Verteidigungsanlagen mit dem r&uuml;ckgabewert von ".($payback*100)."% recycelt:\n\n".$log_def."\nDies hat ihm folgende Rohstoffe gegeben:\n".RES_METAL.": ".nf($pb[0])."\n".RES_CRYSTAL.": ".nf($pb[1])."\n".RES_PLASTIC.": ".nf($pb[2])."\n".RES_FUEL.": ".nf($pb[3])."\n".RES_FOOD.": ".nf($pb[4])."\n";
+				$log="Der User [URL=?page=user&sub=edit&user_id=".$cu->id."] [B]".$cu."[/B] [/URL] hat auf dem Planeten [URL=?page=galaxy&sub=edit&planet_id=".$cp->id()."][B]".$cp->name."[/B][/URL] folgende Verteidigungsanlagen mit dem r&uuml;ckgabewert von ".($payback*100)."% recycelt:\n\n".$log_def."\nDies hat ihm folgende Rohstoffe gegeben:\n".RES_METAL.": ".nf($pb[0])."\n".RES_CRYSTAL.": ".nf($pb[1])."\n".RES_PLASTIC.": ".nf($pb[2])."\n".RES_FUEL.": ".nf($pb[3])."\n".RES_FOOD.": ".nf($pb[4])."\n";
 
 				add_log(12,$log,time());
 			}
-			echo "<br>".nf($cnt)." Verteidigungsanlagen erfolgreich recycelt!<br>";
+			ok_msg("".nf($cnt)." Verteidigungsanlagen erfolgreich recycelt!");
 		}
 
 

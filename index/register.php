@@ -28,24 +28,24 @@
 
 	function drawRegForm()
 	{
-		global $page,$conf;
+		$cfg = Config::getInstance();
 		
 		// Load user count
 		$ucnt=mysql_fetch_row(dbquery("SELECT COUNT(user_id) FROM users;"));
 		
 		// Check if registration is switched off
-		if ($conf['enable_register']['v']==0)
+		if ($cfg->get('enable_register')==0)
 		{
 			echo "Die Registration ist momentan ausgeschaltet! Schau bitte ein anderes Mal vorbei!<br/><br/>";
 		}
 		// Check if current time is lower tjhan registration opening time
-		elseif ($conf['enable_register']['v']==1 && $conf['enable_register']['p1']!="" && $conf['enable_register']['p1']>time())
+		elseif ($cfg->get('enable_register')==1 && $cfg->p1('enable_register')!="" && $cfg->p1('enable_register')>time())
 		{
-			echo "Du kannst duch erst am ".date("d.m.Y",$conf['enable_register']['p1'])." ab ".date("H:i",$conf['enable_register']['p1'])." registrieren.<br/>
+			echo "Du kannst duch erst am ".date("d.m.Y",$cfg->p1('enable_register'))." ab ".date("H:i",$$cfg->p1('enable_register'))." registrieren.<br/>
 			 Schau doch dann nochmal vorbei oder registriere dich in einer anderen Runde!<br/><br/>";
 		}
 		// Check if there are too much users
-		elseif ($conf['enable_register']['p2']<= $ucnt[0])
+		elseif ($cfg->p2('enable_register')<= $ucnt[0])
 		{
 			echo "Das Spiel ist mit ".$ucnt[0]." registrierten Mitspielern momentan ausgelastet.<br/> 
 			Schau bitte ein anderes Mal vorbei oder registriere dich in einer anderen Runde!<br/><br/>";
@@ -58,7 +58,7 @@
 			$userEmail = isset($_SESSION['REGISTER']['register_user_email']) ? $_SESSION['REGISTER']['register_user_email'] : '';
 			
 			
-			echo 'Melde dich hier für die '.ROUNDID.' von '.$conf['game_name']['v'].' an. Es sind noch <b>'.max($conf['enable_register']['p2']-$ucnt[0],0).'</b> von <b>'.$conf['enable_register']['p2'].'</b> Plätzen frei!<br/><br/>';
+			echo 'Melde dich hier für die '.ROUNDID.' von '.$cfg->get('game_name').' an. Es sind noch <b>'.max($cfg->p2('enable_register')-$ucnt[0],0).'</b> von <b>'.$cfg->p2('enable_register').'</b> Plätzen frei!<br/><br/>';
 			echo "<form action=\"?index=register\" method=\"post\"><div>";
 			echo "<table style=\"margin:5px auto;width:700px;\">";
 			

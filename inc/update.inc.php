@@ -83,7 +83,7 @@
 	{
 		global $conf;
 		//Admins über einkommende Nachrichten Informieren
-		$ares = dbquery("SELECT user_nick,user_email, player_id FROM admin_users WHERE player_id>0");
+		$ares = dbquery("SELECT user_nick, user_email, player_id FROM admin_users WHERE player_id>0");
 		if (mysql_num_rows($ares)>0)
 		{
 			while ($arow = mysql_fetch_row($ares))
@@ -109,7 +109,7 @@
 					}
 					send_mail(0,$arow[2],"Neue private Nachricht in EtoA - Admin",$email_text,"","left",1);
 					dbquery("UPDATE messages SET messages.message_mailed=1 WHERE messages.message_user_to='".$arow[2]."';");
-					$log = "Admin-Mailqueue wurde abgearbeitet.";
+					$log = "\nAdmin-Mailqueue wurde abgearbeitet.";
 				}
 			}
 		}
