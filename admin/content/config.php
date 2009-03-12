@@ -46,7 +46,7 @@
 		if (UNIX)
 		{
 			echo "
-			<h3>Unix-Cronjob</h3>
+			<h3>Unix-Cronjob einrichten</h3>
 			<ol>
 			<li>Auf den Server einloggen (z.B. via SSH) resp. eine Shell/Kommandozeile öffnen</li>
 			<li>Folgenden Befehl eingeben: <i>crontab -e</i>
@@ -61,8 +61,15 @@
 			</li>
 			<li>Resultat mit <i>crontab -l</i> prüfen</li>
 			</ol>";
-			echo "<br/>";
+			echo "<h3>Aktuelle Crontab</h3>
+			<p><div style=\"border:1px solid #fff;background:#000;padding:5px;\">";
+			ob_start();
+			echo "Crontab-User: ";
+			passthru("id");
+			echo "\n\n";
 			passthru("crontab -l");
+			echo nl2br(ob_get_clean());
+			echo "</div></p>";
 		}
 		else
 		{

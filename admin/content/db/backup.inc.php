@@ -19,8 +19,8 @@
 		// Backup wiederherstellen
 		elseif (isset($_GET['action']) && $_GET['action']=="backuprestore" && $_GET['date']!="")
 		{
-			$result = shell_exec("../scripts/backup.php"); // Sicherungskopie anlegen
-			if ($result=="")
+			// Sicherungskopie anlegen
+			if (Backup::create())
 			{
 				$result = shell_exec("../scripts/restore.php ".$_GET['date']);
 				if ($result=="")
@@ -83,7 +83,7 @@
 			$bfiles=array();
 			while ($f = readdir($d))
 			{
-				if (is_file(BACKUP_DIR."/".$f) && stristr($f,".sql.gz"))
+				if (is_file(BACKUP_DIR."/".$f) && stristr($f,".sql"))
 				{
 					array_push($bfiles,$f);
 				}
