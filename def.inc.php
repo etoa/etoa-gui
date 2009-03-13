@@ -118,8 +118,8 @@
 	//Paswort und Nicklänge
 	define("PASSWORD_MINLENGHT",$cfg->get('password_minlength')); 		// Minimale Passwortlänge
 	define("PASSWORD_MAXLENGHT",$cfg->get('password_minlength')); 	// Minimale Passwortlänge
-	define("NICK_MINLENGHT",$cfg->get('nick_length'));							// Minimale Nicklänge
-	define("NICK_MAXLENGHT",$conf['nick_length']['p2']);							// Maximale Nicklänge
+	define("NICK_MINLENGHT",$cfg->p1('nick_length'));							// Minimale Nicklänge
+	define("NICK_MAXLENGHT",$cfg->p2('nick_length'));							// Maximale Nicklänge
 	define("NAME_MAXLENGTH",$conf['name_length']['v']);								// Minimale Nicklänge
 	
 	// Inaktive & Urlaubsmodus

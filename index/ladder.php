@@ -26,7 +26,7 @@
 	* Displays user statistics
 	*
 	* @author MrCage <mrcage@etoa.ch>
-	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
+	* @copyright Copyright (c) 2004-2009 by EtoA Gaming, www.etoa.net
 	*/	
 
 	// BEGIN SKRIPT //
@@ -93,7 +93,7 @@
 		<span class=\"userHolidayColor\">Urlaubsmodus</span>, 
 		<span class=\"userInactiveColor\">Inaktiv (".USER_INACTIVE_SHOW." Tage)</span>, 
 		<br/>";
-		echo "Letzte Aktualisierung: <b>".df($conf['statsupdate']['v'])." Uhr</b><br/>";
+		echo "Letzte Aktualisierung: <b>".df($cfg->get('statsupdate'))." Uhr</b><br/>";
 		echo "Die Aktualisierung der Punkte erfolgt ";
 		$h = $conf['points_update']['v']/3600;
 		if ($h>1)
@@ -102,7 +102,7 @@
 			echo " jede Stunde!<br>";
 		else
 		{
-			$m = $conf['points_update']['v']/60;
+			$m = $cfg->get('points_update')/60;
 			echo "alle $m Minuten!<br/>";
 		}
 		echo "Neu angemeldete Benutzer erscheinen erst nach der ersten Aktualisierung in der Liste.<br/>";
