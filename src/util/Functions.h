@@ -196,7 +196,7 @@ namespace etoa
 	* @param bool won Kampf gewonnen?
 	* @param std::string reason Grund der Punkte
 	*/
-	void addBattlePoints(int userId, int points, bool won, std::string reason="");
+	void addBattlePoints(int userId, int points, short result, std::string reason="");
 	void addSpecialiBattle(int userId, std::string reason);
 		
 }

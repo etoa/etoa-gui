@@ -39,6 +39,7 @@ class BattleHandler
 
 		double attPercent, defPercent;
 		int attPoints,defPoints;
+		short attResult, defResult;
 
 		short returnV;
 		std::string bstat, bstat2;

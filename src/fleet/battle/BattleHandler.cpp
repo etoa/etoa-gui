@@ -227,7 +227,7 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 				message->addText(etoa::nf(etoa::d2s(entity->getHealCount())));
 				message->addText(" Einheiten des Verteidigers heilen ");
 				message->addText(etoa::nf(etoa::d2s(entity->getHeal())));
-				message->addText(" Struktur- und Schildpunkte. Der Angreifer hat danach wieder ");
+				message->addText(" Struktur- und Schildpunkte. Der Verteidiger hat danach wieder ");
 
 				entity->setPercentSurvive(cDefStructureShield/initDefStructureShield,true);
 
@@ -447,6 +447,8 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 				this->returnFleet = true;
 				this->attPoints = 3;
 				this->defPoints = 0;
+				this->attResult = 2;
+				this->defResult = 0;
 				break;
 			case 2:	//agreifer hat verloren
 				this->bstat = "Verloren";
@@ -454,6 +456,8 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 				this->returnFleet = false;
 				this->attPoints = 1;
 				this->defPoints = 2;
+				this->attResult = 0;
+				this->defResult = 2;
 				break;
 			case 3:	//beide flotten sind kaputt
 				this->bstat = "Unentschieden";
@@ -461,6 +465,8 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 				this->returnFleet = false;
 				this->attPoints = 1;
 				this->defPoints = 1;
+				this->attResult = 1;
+				this->defResult = 1;
 				break;
 			case 4: //beide flotten haben überlebt
 				this->bstat = "Unentschieden";
@@ -468,6 +474,8 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 				this->returnFleet = true;
 				this->attPoints = 1;
 				this->defPoints = 1;
+				this->attResult = 1;
+				this->defResult = 1;
 				break;
 		}
 
@@ -482,7 +490,7 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 			users = users.substr(found+1);
 			found=users.find_first_of(",");
 			user = etoa::s2d(users.substr(0,found));
-			etoa::addBattlePoints(user,this->attPoints,(this->attPoints-1),attReason);
+			etoa::addBattlePoints(user,this->attPoints,this->attResult,attReason);
 		}
 		
 		users = entity->getUserIds();
@@ -491,7 +499,7 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 			users = users.substr(found+1);
 			found=users.find_first_of(",");
 			user = etoa::s2d(users.substr(0,found));
-			etoa::addBattlePoints(user,this->defPoints,(this->defPoints-1),attReason);
+			etoa::addBattlePoints(user,this->defPoints,this->defResult,attReason);
 		}
 
 

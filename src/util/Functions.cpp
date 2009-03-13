@@ -369,7 +369,7 @@ namespace etoa
 		return distance;
 	}
 	
-	void addBattlePoints(int userId, int points, bool won, std::string reason) {
+	void addBattlePoints(int userId, int points, short result, std::string reason) {
 		My &my = My::instance();
 		mysqlpp::Connection *con_ = my.get();
 		
@@ -378,9 +378,9 @@ namespace etoa
 			<< "	user_ratings "
 			<< "SET "
 			<< "	battles_fought=battles_fought+1, ";
-		if (won>0)
+		if (result==2)
 			query << "	battles_won=battles_won+1, ";
-		else
+		else if (result==0)
 			query << "	battles_lost=battles_lost+1, ";
 		query << "	battle_rating=battle_rating+" << points << " "
 			<< "WHERE "
