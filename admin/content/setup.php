@@ -229,36 +229,52 @@
 		//
 		if (isset($_POST['submit_create_universe']))
 		{
-  		echo "<h2>Urknall</h2>";
-			echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
-			echo "Neues Universum erstellen? (Alle Einstellungen werden von der <a href=\"?page=config&cid=3\">Konfiguration</a> &uuml;bernommen!)<br/><br/>";
-			
-			echo "<table class=\"tb\" style=\"width:400px;\">";
-			echo "<tr><th>Anzahl Sektoren X:</th><td>".$cfg->param1('num_of_sectors')."</td></tr>";
-			echo "<tr><th>Anzahl Sektoren Y:</th><td>".$cfg->param2('num_of_sectors')."</td></tr>";
-			echo "<tr><th>Anzahl Zellen X:</th><td>".$cfg->param1('num_of_cells')."</td></tr>";
-			echo "<tr><th>Anzahl Zellen Y:</th><td>".$cfg->param2('num_of_cells')."</td></tr>";
-			echo "<tr><th>Minimale Felder pro Planet:</th><td>".$cfg->param1('planet_fields')."</td></tr>";
-			echo "<tr><th>Maximale Felder pro Planet:</th><td>".$cfg->param2('planet_fields')."</td></tr>";
-			echo "<tr><th>Minimale Planetentemparatur:</th><td>".$cfg->param1('planet_temp')."</td></tr>";
-			echo "<tr><th>Maximale Planetentemparatur:</th><td>".$cfg->param2('planet_temp')."</td></tr>";
-			echo "<tr><th>Planetentemperaturdifferent:</th><td>".$cfg->value('planet_temp')."</td></tr>";
-			echo "<tr><th>Anzahl Sternensysteme %:</th><td>".$cfg->value('space_percent_solsys')."</td></tr>";
-			echo "<tr><th>Anzahl Asteroidenfelder %:</th><td>".$cfg->value('space_percent_asteroids')."</td></tr>";
-			echo "<tr><th>Anzahl Nebelwolken %:</th><td>".$cfg->value('space_percent_nebulas')."</td></tr>";
-			echo "<tr><th>Anzahl Wurmlöcher %:</th><td>".$cfg->value('space_percent_wormholes')."</td></tr>";
-			echo "<tr><th>Maximale Anzahl Planeten/Sternensystem:</th><td>".$cfg->param1('num_planets')."</td></tr>";
-			echo "<tr><th>Minimale Anzahl Planeten/Sternensystem:</th><td>".$cfg->param2('num_planets')."</td></tr>";
-			echo "<tr><th>Anzahl verschiedener Planetenbilder / Typ:</th><td>".$cfg->value('num_planet_images')."</td></tr>";
-			echo "</table><br/>";
+			echo "<h2>Urknall - Schritt 2/3</h2>";
+			$cfg->set("num_of_sectors","",$_POST['num_of_sectors_p1'],$_POST['num_of_sectors_p2']);
+			$cfg->set("num_of_cells","",$_POST['num_of_cells_p1'],$_POST['num_of_cells_p2']);
+			$cfg->set("space_percent_solsys",intval($_POST['space_percent_solsys']));
+			$cfg->set("space_percent_asteroids",intval($_POST['space_percent_asteroids']));
+			$cfg->set("space_percent_nebulas",intval($_POST['space_percent_nebulas']));
+			$cfg->set("space_percent_wormholes",intval($_POST['space_percent_wormholes']));
+			$cfg->set("num_planets","",$_POST['num_planets_p1'],$_POST['num_planets_p2']);
+			$cfg->set("solsys_percent_planet",intval($_POST['solsys_percent_planet']));
+			$cfg->set("solsys_percent_asteroids",intval($_POST['solsys_percent_asteroids']));
+			$cfg->set("planet_fields","",$_POST['planet_fields_p1'],$_POST['planet_fields_p2']);
 
-			$imgpath = "../images/galaxylayouts/".($cfg->param1('num_of_sectors')*$cfg->param1('num_of_cells'))."_".($cfg->param2('num_of_sectors')*$cfg->param2('num_of_cells')).".png";
-			if (is_file($imgpath))	
-			{
-				echo "Bildvorlage gefunden, verwende diese: <img src=\"".$imgpath."\" /><br/><br/>";
-			}
+			echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
+			tableStart("Systfemanordnung",400);
+			$xdim = ($cfg->num_of_sectors->p1*$cfg->num_of_cells->p1);
+			$ydim = ($cfg->num_of_sectors->p2*$cfg->num_of_cells->p2);
 			
-			echo "<input onclick=\"return confirm('Universum wirklich erstellen?')\" type=\"submit\" name=\"submit_create_universe2\" value=\"Ja, ein neues Universum erstellen\" >";
+			echo "<tr>
+				<th>Dimension:</th>
+				<td>".$xdim."x".$ydim." Zellen</td>
+			</tr>";
+			echo "<tr>
+				<th>Karte:</th>
+				<td>";
+				echo "<input type=\"radio\" name=\"map_image\" value=\"\" checked=\"checked\" /> <img style=\"width:".$xdim."px;height:".$ydim."px;\" src=\"../images/galaxylayout_random.png\" /> Zufällig";
+				$dir = "../images/galaxylayouts";
+				$d = opendir($dir);
+				while ($f = readdir($d))
+				{
+					if (is_file($dir.DIRECTORY_SEPARATOR.$f) && substr($f,strrpos($f,".png"))==".png" && $ims = getimagesize($dir.DIRECTORY_SEPARATOR.$f))
+					{
+						if ($ims[0]==$xdim && $ims[1]==$ydim)
+						{
+							echo "<div><input type=\"radio\" name=\"map_image\" value=\"$f\" /> <img src=\"".$dir."/".$f."\" alt=\"".$dir."/".$f."\" /> ".basename($f,".png")."	</div>";							
+						}
+					}
+				}			
+				echo "</td>
+			</tr>";
+			echo "<tr>
+				<th>Genauigkeit:</th>
+				<td><input type=\"text\" name=\"map_precision\" value=\"85\" size=\"2\" maxlength=\"3\"/>%</td>
+			</tr>";
+			tableEnd();
+			
+			echo button("Zurück","?page=$page&amp;sub=$sub")." &nbsp; <input onclick=\"return confirm('Universum wirklich erstellen?')\" type=\"submit\" name=\"submit_create_universe2\" value=\"Weiter\" >";
 			echo "</form>";
 		}
 		// Erweitern
@@ -325,10 +341,11 @@
 		{
 			if(isset($_POST['submit_create_universe2']))
 			{
-				Universe::create();
+				echo "<h2>Urknall - Schritt 3/3</h2>";
+				Universe::create($_POST['map_image'],$_POST['map_precision']);
 				echo "<br/><br/>
 				<img src=\"../misc/map.image.php\" alt=\"Galaxiekarte\" id=\"img\" usemap=\"#Galaxy\" style=\"border:none;\"/><br/><br/>
-				<input type=\"button\" value=\"Weiter\" onclick=\"document.location='?page=config&sub=uni'\" />";
+				<input type=\"button\" value=\"Weiter\" onclick=\"document.location='?page=$page&sub=uni'\" />";
 			}
 			else
 			{
@@ -338,10 +355,116 @@
 				$arr = mysql_fetch_row($res);
 				if ($arr[0]==0)
 				{
-	        echo "<h2>Urknall</h2>";
-	        echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
-	        echo "Neues Universum erstellen<br/><br/>";
-	        echo "<input type=\"submit\" name=\"submit_create_universe\" value=\"Start\" >";
+	        echo "<h2>Urknall - Schritt 1/3</h2>";
+ 	        echo "Das Universum existiert noch nicht, bitte prüfe die Einstellungen und klicke auf 'Weiter':<br/><br/>";
+
+					?>
+					<script type="text/javascript">
+						function alignSystemPercentage()
+						{
+							sum = parseInt(document.getElementById('space_percent_solsys').value)+
+							parseInt(document.getElementById('space_percent_asteroids').value)+
+							parseInt(document.getElementById('space_percent_nebulas').value)+
+							parseInt(document.getElementById('space_percent_wormholes').value);
+							res = 100 - sum
+							document.getElementById('space_percent_empty').value = res.toString();
+							if (res < 0 || res > 100)
+								document.getElementById('space_percent_empty').style.color = "red";
+							else
+								document.getElementById('space_percent_empty').style.color = "";
+						}
+						function alignObjectsInSystemPercentage()
+						{
+							sum = parseInt(document.getElementById('solsys_percent_planet').value)+
+							parseInt(document.getElementById('solsys_percent_asteroids').value);
+							res = 100 - sum
+							document.getElementById('solsys_percent_empty').value = res.toString();
+							if (res < 0 || res > 100)
+								document.getElementById('solsys_percent_empty').style.color = "red";
+							else
+								document.getElementById('solsys_percent_empty').style.color = "";
+						}				
+					</script>						
+					<?PHP
+					
+					echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
+					echo "Alle Einstellungen werden von der <a href=\"?page=config&cid=3\">Konfiguration</a> &uuml;bernommen!<br/><br/>";
+					
+					tableStart("Galaxie",400);			
+					echo "<tr>
+						<th>Sektoren:</th>
+						<td>
+							<input type=\"text\" name=\"num_of_sectors_p1\" value=\"".$cfg->num_of_sectors->p1."\" size=\"2\" maxlength=\"2\" />x
+							<input type=\"text\" name=\"num_of_sectors_p2\" value=\"".$cfg->num_of_sectors->p2."\" size=\"2\" maxlength=\"2\" />
+						</td></tr>";
+					echo "<tr>
+						<th>Anzahl Zellen pro Sektor:</th>
+						<td>
+							<input type=\"text\" name=\"num_of_cells_p1\" value=\"".$cfg->num_of_cells->p1."\" size=\"2\" maxlength=\"2\" />x
+							<input type=\"text\" name=\"num_of_cells_p2\" value=\"".$cfg->num_of_cells->p2."\" size=\"2\" maxlength=\"2\" />
+						</td></tr>";
+					echo "</table>";
+					
+					tableStart("Verteilung der Systeme",300);				
+					echo "<tr>
+						<th>Sternensysteme:</th>
+						<td><input type=\"text\" name=\"space_percent_solsys\" id=\"space_percent_solsys\" value=\"".$cfg->space_percent_solsys."\" size=\"2\" maxlength=\"2\" onkeyup=\"alignSystemPercentage()\" />%</td>
+					</tr>";
+					echo "<tr>
+						<th>Asteroidenfelder:</th>
+						<td><input type=\"text\" name=\"space_percent_asteroids\" id=\"space_percent_asteroids\" value=\"".$cfg->space_percent_asteroids."\" size=\"2\" maxlength=\"2\" onkeyup=\"alignSystemPercentage()\" />%</td>
+					</tr>";
+					echo "<tr>
+						<th>Nebelwolken:</th>
+						<td><input type=\"text\" name=\"space_percent_nebulas\" id=\"space_percent_nebulas\" value=\"".$cfg->space_percent_nebulas."\" size=\"2\" maxlength=\"2\" onkeyup=\"alignSystemPercentage()\" />%</td>
+					</tr>";
+					echo "<tr>
+						<th>Wurmlöcher:</th>
+						<td><input type=\"text\" name=\"space_percent_wormholes\" id=\"space_percent_wormholes\" value=\"".$cfg->space_percent_wormholes."\" size=\"2\" maxlength=\"2\" onkeyup=\"alignSystemPercentage()\" />%</td>
+					</tr>";
+					echo "<tr>
+						<th>Leerer Raum:</th>
+						<td><input type=\"text\" id=\"space_percent_empty\" value=\"\" size=\"2\" maxlength=\"2\" readonly=\"readonly\"/>%</td>
+					</tr>";
+					echo "</table>";			
+					
+					tableStart("Sternensystem",400);				
+					echo "<tr>
+						<th>Objekte pro Sternensystem:</th>
+						<td><input type=\"text\" name=\"num_planets_p1\" value=\"".$cfg->num_planets->p1."\" size=\"2\" maxlength=\"2\" /> min, 
+						    <input type=\"text\" name=\"num_planets_p2\" value=\"".$cfg->num_planets->p2."\" size=\"2\" maxlength=\"2\" /> max
+						</td></tr>";
+					echo "<tr>
+						<th>Planeten:</th>
+						<td><input type=\"text\" name=\"solsys_percent_planet\" id=\"solsys_percent_planet\" value=\"".$cfg->solsys_percent_planet."\" size=\"2\" maxlength=\"2\" onkeyup=\"alignObjectsInSystemPercentage()\" />%</td>
+					</tr>";
+					echo "<tr>
+						<th>Asteroidenfelder:</th>
+						<td><input type=\"text\" name=\"solsys_percent_asteroids\" id=\"solsys_percent_asteroids\" value=\"".$cfg->solsys_percent_asteroids."\" size=\"2\" maxlength=\"2\" onkeyup=\"alignObjectsInSystemPercentage()\" />%</td>
+					</tr>";
+					echo "<tr>
+						<th>Leerer Raum:</th>
+						<td><input type=\"text\" id=\"solsys_percent_empty\" value=\"\" size=\"2\" maxlength=\"2\" readonly=\"readonly\" />%</td>
+					</tr>";				
+						
+					echo "</table>";
+		
+					tableStart("Planeten",400);				
+					echo "<tr>
+						<th>Felder pro Planet:</th>
+						<td>
+							<input type=\"text\" name=\"planet_fields_p1\" value=\"".$cfg->planet_fields->p1."\" size=\"2\" maxlength=\"2\" /> min, 
+							<input type=\"text\" name=\"planet_fields_p2\" value=\"".$cfg->planet_fields->p2."\" size=\"2\" maxlength=\"2\" /> max
+						</td>
+					</tr>";
+					echo "</table>";
+		
+					echo "<script type=\"text/javascript\">
+						alignSystemPercentage();
+						alignObjectsInSystemPercentage();
+					</script>";	        
+	        
+	        echo "<br/><input type=\"submit\" name=\"submit_create_universe\" value=\"Weiter\" >";
 	        echo "</form><br/>";
 		  	}
 				else

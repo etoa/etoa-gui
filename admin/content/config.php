@@ -28,7 +28,10 @@
 
 	echo "<h1>Konfiguration</h1>";
 
-
+			$conf_type['text']="Textfeld";
+			$conf_type['textarea']="Textblock";
+			$conf_type['timedate']="Zeit/Datum-Feld";
+			$conf_type['onoff']="Ein/Aus-Schalter";
 	
 	//
 	// Tipps
@@ -65,7 +68,7 @@
 		}
 
 		echo "<h2>Neue Konfigurationsvariable anlegen</h2>";
-		echo "<form action=\"?page=$page\" method=\"post\"><table class=\"tb\">";
+		echo "<form action=\"?page=$page&sub=$sub\" method=\"post\"><table class=\"tb\">";
 		echo "<tr><th>Schl&uuml;sselwort, Kategorie:</th><td><input type=\"text\" name=\"config_name\" value=\"\" size=\"20\" /> <select name=\"config_cat_id\">";
 		$res=dbquery("SELECT cat_name,cat_id FROM config_cat ORDER BY cat_order,cat_name;");
 		while ($arr=mysql_fetch_array($res))
@@ -73,19 +76,19 @@
 		echo "</select></td></tr>";
 		echo "<tr><th>Wert-Beschreibung:</th><td><textarea name=\"config_comment_v\" rows=\"2\" cols=\"40\"></textarea></td></tr>";
 		echo "<tr><th>Wert-Typ:</th><td><select name=\"config_type_v\">";
-		echo "<option value=\"\" style=\"font-style:italic;\">Nichts</option>";
+		//echo "<option value=\"\" style=\"font-style:italic;\">Nichts</option>";
 		foreach ($conf_type as $k=>$v)
 			echo "<option value=\"$k\">$v</option>";
 		echo "</select></td></tr>";
 		echo "<tr><th>Parameter 1-Beschreibung:</th><td><textarea name=\"config_comment_p1\" rows=\"2\" cols=\"40\"></textarea></td></tr>";
 		echo "<tr><th>Parameter 1-Typ:</th><td><select name=\"config_type_p1\">";
-		echo "<option value=\"\" style=\"font-style:italic;\">Nichts</option>";
+		//echo "<option value=\"\" style=\"font-style:italic;\">Nichts</option>";
 		foreach ($conf_type as $k=>$v)
 			echo "<option value=\"$k\">$v</option>";
 		echo "</select></td></tr>";
 		echo "<tr><th>Parameter 2-Beschreibung:</th><td><textarea name=\"config_comment_p2\" rows=\"2\" cols=\"40\"></textarea></td></tr>";
 		echo "<tr><th>Parameter 2-Typ:</th><td><select name=\"config_type_p2\">";
-		echo "<option value=\"\" style=\"font-style:italic;\">Nichts</option>";
+		//echo "<option value=\"\" style=\"font-style:italic;\">Nichts</option>";
 		foreach ($conf_type as $k=>$v)
 			echo "<option value=\"$k\">$v</option>";
 		echo "</select></td></tr>";
@@ -98,10 +101,7 @@
 	//
 	else
 	{
-			$conf_type['text']="Textfeld";
-			$conf_type['textarea']="Textblock";
-			$conf_type['timedate']="Zeit/Datum-Feld";
-			$conf_type['onoff']="Ein/Aus-Schalter";
+
 
 			if (isset($sub) && intval($sub)>0)
 				$_GET['cid'] = $sub;

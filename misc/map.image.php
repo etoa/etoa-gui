@@ -50,14 +50,16 @@
 	$colViolett = imagecolorallocate($im,200,0,200);
 	$colRe = imagecolorallocate($im,200,0,200);
 
+	$admin = isset($_SESSION['adminsession']) ? true : false;
 
-
-	if (isset($_SESSION[ROUNDID]) || isset($_SESSION['adminsession']))
+	if (isset($_SESSION[ROUNDID]) || $admin)
 	{
-		$s = $_SESSION[ROUNDID];
-		if ($s['user_id'] > 0)
+		if (isset($_SESSION[ROUNDID]))
+			$s = $_SESSION[ROUNDID];
+		if ($admin || $s['user_id'] > 0)
 		{
-			$cu = new CurrentUser($s['user_id']);
+			if (isset($s))
+				$cu = new CurrentUser($s['user_id']);
 		
 			$starImageSrc = imagecreatefrompng(IMG_DIR."/stars/star4_small.png");
 			$starImage = imagecreatetruecolor(GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
@@ -222,14 +224,16 @@
 					ON entities.cell_id = cells.id
 					AND entities.pos=0
 				");
-				while ($arr=mysql_fetch_array($res))
+				if (mysql_num_rows($res)>0)
 				{
+					while ($arr=mysql_fetch_array($res))
+					{
 					$x = ((($arr['sx']-1)*$cx_num + $arr['cx']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
 					$y = $h-GALAXY_MAP_LEGEND_HEIGHT+GALAXY_IMAGE_SCALE-((($arr['sy']-1)*$cy_num + $arr['cy']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
 					$xe = $x-(GALAXY_IMAGE_SCALE/2);
 					$ye = $y-(GALAXY_IMAGE_SCALE/2);
 		
-					if ($cu->discovered((($arr['sx'] - 1) * $cx_num) + $arr['cx'],(($arr['sy'] - 1) * $cy_num) + $arr['cy']))
+					if ($admin || $cu->discovered((($arr['sx'] - 1) * $cx_num) + $arr['cx'],(($arr['sy'] - 1) * $cy_num) + $arr['cy']))
 					{
 						if ($arr['code']=='s')
 						{
@@ -269,8 +273,12 @@
 					{
 						ImageCopyResampled($im,$unexploredImage,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
 					}
+					}
 				}
-				
+				else
+				{
+					imagestring($im,3,20,20,"Universum existiert noch nicht!",$colWhite);
+				}
 				/*
 				imagestring($im,3,10,$h-GALAXY_MAP_LEGEND_HEIGHT+10,"Legende:    Stern    Asteroidenfeld    Nebel    Wurmloch",$colWhite);
 				imagefilledellipse ($im,80,$h-GALAXY_MAP_LEGEND_HEIGHT+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$colWhite);

@@ -74,14 +74,14 @@
 		echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
 		echo "<input type=\"submit\" value=\"Neues Backup erstellen\" name=\"create\" /> &nbsp;
 		 </form><br/>";
-		if ($d = @opendir(BACKUP_DIR))
+		if ($d = @opendir($cfg->backup))
 		{
 			$cnt=0;
 			echo "<table class=\"tb\"><tr><th>Name</th><th>Grösse</th><th>Optionen</th></tr>";
 			$bfiles=array();
 			while ($f = readdir($d))
 			{
-				if (is_file(BACKUP_DIR."/".$f) && stristr($f,".sql"))
+				if (is_file($cfg->backup."/".$f) && stristr($f,".sql"))
 				{
 					array_push($bfiles,$f);
 				}
@@ -90,25 +90,25 @@
 
 			foreach ($bfiles as $f)
 			{
-				$sr = round(filesize(BACKUP_DIR."/".$f)/1024/1024,2);
+				$sr = round(filesize($cfg->backup."/".$f)/1024/1024,2);
 				$date=substr($f,strpos($f,"-")+1,16);
 				echo "<tr><td>".$f."</td>";
 				echo "<td>".$sr." MB</td>";
 				echo "<td>
 					<a href=\"?page=$page&amp;sub=backup&amp;action=backuprestore&amp;date=$date\" onclick=\"return confirm('Soll die Datenbank mit den im Backup $date gespeicherten Daten &uuml;berschrieben werden?');\">Wiederherstellen</a> &nbsp; 
-					<a href=\"dl.php?path=".base64_encode(BACKUP_DIR."/".$f)."&amp;hash=".md5(BACKUP_DIR."/".$f)."\">Download</a>
+					<a href=\"dl.php?path=".base64_encode($cfg->backup."/".$f)."&amp;hash=".md5($cfg->backup."/".$f)."\">Download</a>
 				</td></tr>";
 				$cnt++;
 			}
 			if ($cnt==0)
 			{
-				echo "<tr><td><i>Es sind noch keine Dateien vorhanden!</i></td></tr>";
+				echo "<tr><td colspan=\"3\"><i>Es sind noch keine Dateien vorhanden!</i></td></tr>";
 			}
 
 			echo "</table>";
 			closedir($d);
 		}
 		else
-			cms_err_msg("Das Verzeichnis ".BACKUP_DIR." wurde nicht gefunden!");
+			cms_err_msg("Das Verzeichnis ".$cfg->backup." wurde nicht gefunden!");
 
 ?>

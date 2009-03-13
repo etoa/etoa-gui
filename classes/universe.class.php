@@ -11,8 +11,14 @@
 		* Create the universe.
 		* And there was light!
 		*/	
-		static function create()
+		static function create($mapImage="",$mapPrecision=85)
 		{
+			$mtx = new Mutex();
+			$mtx->acquire();
+			
+			$mapPrecision = max(0,$mapPrecision);
+			$mapPrecision = min($mapPrecision,100);
+			
 			$cfg = Config::getInstance();
 			
 			echo "Lade Schöpfungs-Einstellungen...!<br>";
@@ -75,8 +81,8 @@
 			//
 			
 			// by image
-			$imgpath = "../images/galaxylayout_".($sx_num*$cx_num)."_".($sy_num*$cy_num).".png";
-			if (is_file($imgpath))	
+			$imgpath = "../images/galaxylayouts/".$mapImage;
+			if ($mapImage!="" && is_file($imgpath))	
 			{
 				$im = imagecreatefrompng($imgpath);
 				$w = imagesx($im);
@@ -88,44 +94,28 @@
 				{
 					for($y=1;$y<=$h;$y++)
 					{
-						$o = imagecolorat($im,$x,$y);
-						
-						if ($o>0)
+						$o = imagecolorat($im,$x-1,$y-1);
+						$pr = mt_rand(0,100);
+
+						if (($o>0 && $pr <= $mapPrecision) || ($o==0 && $pr >= $mapPrecision))
 						{
-							$type[$x][$y]='s';
-						}
-						else
-						{
-							$ct = mt_rand(1,100);
-							if ($ct<= $perc_asteroids)
+							$ct = mt_rand(1,$perc_solsys+$perc_asteroids+$perc_nebulas+$perc_wormholes);
+							
+							if ($ct <= $perc_solsys)
+								$type[$x][$y]='s';							
+							elseif ($ct <= $perc_solsys + $perc_asteroids)
 								$type[$x][$y]='a';
-							elseif ($ct<= $perc_asteroids + $perc_nebulas)
+							elseif ($ct<= $perc_solsys + $perc_asteroids + $perc_nebulas)
 								$type[$x][$y]='n';
-							elseif ($ct<= $perc_asteroids + $perc_nebulas + $perc_wormholes)
+							elseif ($ct<= $perc_solsys + $perc_asteroids + $perc_nebulas + $perc_wormholes)
 								$type[$x][$y]='w';
 							else
-								$type[$x][$y]='e';
-						}						
-						
-						/*
-						if ($o>0)
-						{
-							$ct = mt_rand(1,100);
-							if ($ct<=$perc_solsys)
-								$type[$x][$y]='s';
-							elseif ($ct<=$perc_solsys + $perc_asteroids)
-								$type[$x][$y]='a';
-							elseif ($ct<=$perc_solsys + $perc_asteroids + $perc_nebulas)
-								$type[$x][$y]='n';
-							elseif ($ct<=$perc_solsys + $perc_asteroids + $perc_nebulas + $perc_wormholes)
-								$type[$x][$y]='w';
-							else
-								$type[$x][$y]='s';
+								$type[$x][$y]='e';							
 						}
 						else
 						{
 							$type[$x][$y]='e';
-						}*/
+						}						
 					}
 				}
 			}
@@ -326,9 +316,9 @@
 					dbquery($sql);
 					$eid = mysql_insert_id();
 
-					$asteroid_metal = mt_rand($cfg->param1('asteroid_ress'),$conf['asteroid_ress']['p2']);
-					$asteroid_crystal = mt_rand($cfg->param1('asteroid_ress'),$conf['asteroid_ress']['p2']);
-					$asteroid_plastic = mt_rand($cfg->param1('asteroid_ress'),$conf['asteroid_ress']['p2']);
+					$asteroid_metal = mt_rand($cfg->asteroid_ress->p1,$cfg->asteroid_ress->p2);
+					$asteroid_crystal = mt_rand($cfg->asteroid_ress->p1,$cfg->asteroid_ress->p2);
+					$asteroid_plastic = mt_rand($cfg->asteroid_ress->p1,$cfg->asteroid_ress->p2);
 					$sql = "
 						INSERT INTO
 							asteroids
@@ -612,12 +602,8 @@
 				LIMIT
 					1;");
 			
-			
-			
-			
-					
+			$mtx->release();					
 			echo "Universum erstellt!<br> $sol_count Sonnensysteme mit $planet_count Planeten, $asteroids_count Asteroidenfelder, $nebula_count Nebel und $wormhole_count Wurmlöcher!";
-	
 		}	
 		
 		/**
@@ -747,6 +733,7 @@
 		* @author Lamborghini
 		* @todo This method has to be rewritten due to the database changes with the new entity table
 		*/
+		/*
 		function expansion_universe($sx_num_new,$sy_num_new)
 		{
 			global $conf;
@@ -1064,7 +1051,7 @@
 			echo "Universum erweitert:<br>$sol_count Sonnensysteme mit $planet_count Planeten, $asteroids_count Asteroidenfelder, $nebula_count Nebel und $wormhole_count Wurmlöcher!";
 	
 		}
-
+		*/
 
 	
 	}
