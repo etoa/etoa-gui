@@ -73,6 +73,12 @@
 
 		function loadDiscoveryMask()
 		{
+			$cfg = Config::getInstance();
+			$sx_num=$cfg->param1('num_of_sectors');
+			$cx_num=$cfg->param1('num_of_cells');
+			$sy_num=$cfg->param2('num_of_sectors');
+			$cy_num=$cfg->param2('num_of_cells');
+			
 			$res = dbquery("
 			SELECT
 				discoverymask
@@ -83,20 +89,28 @@
 			");
 			$this->dmask = '';
 			$arr = mysql_fetch_row($res);
-			if ($arr[0]=='')
+			if (strlen($arr[0])<3)
 			{
-				for ($x=1;$x<=30;$x++)
+				for ($x=1;$x<=$sx_num*$cx_num;$x++)
 				{
-					for ($y=1;$y<=30;$y++)
+					for ($y=1;$y<=$sy_num*$cy_num;$y++)
 					{
 						$this->dmask.= '0';
 					}
 				}
+				dbquery("
+						UPDATE
+							users
+						SET
+							discoverymask='".$this->dmask."'
+						WHERE
+							user_id='".$this->id."'
+						LIMIT 1;");
 			}
 			else
 			{
 				$this->dmask=$arr[0];
-			}			
+			}
 		}
 
 		function discovered($absX,$absY)
