@@ -670,7 +670,7 @@
 					
 					//Zu erhaltende Rohstoffe errechnen
 					$obj_cnt = min(ceil(($queue[$id]['queue_endtime']-max($time,$queue[$id]['queue_starttime']))/$queue[$id]['queue_objtime']),$queue[$id]['queue_cnt']);
-					echo "Breche den Bau von ".$obj_cnt." ".$qarr['def_name']." ab...<br/>";
+					echo "Breche den Bau von ".$obj_cnt." ".$ships[$queue[$id]['queue_ship_id']]['ship_name']." ab...<br/>";
 									
 					$ret['metal']=$ships[$queue[$id]['queue_ship_id']]['ship_costs_metal']*$obj_cnt*$cancel_res_factor;
 					$ret['crystal']=$ships[$queue[$id]['queue_ship_id']]['ship_costs_crystal']*$obj_cnt*$cancel_res_factor;

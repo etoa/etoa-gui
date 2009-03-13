@@ -209,7 +209,8 @@
 
 
 	// Spiel ist generell gesperrt (ausser für erlaubte IP's)
-	$allowed_ips = explode("\n",$cfg->value('offline'));
+	$allowed_ips = explode("\n",$cfg->p1('offline'));
+	
 	if ($cfg->value('offline')==1 && !in_array($_SERVER['REMOTE_ADDR'],$allowed_ips))
 	{
 		iBoxStart("Spiel offline",750,"margin:50px auto;text-align:center");
@@ -226,7 +227,7 @@
 		iBoxEnd();
 	}
 	// Login ist gesperrt
-	elseif ($cfg->value('enable_login')==0)
+	elseif ($cfg->value('enable_login')==0 && !in_array($_SERVER['REMOTE_ADDR'],$allowed_ips))
 	{
 		iBoxStart("Login geschlossen",750,"margin:50px auto;text-align:center");
 		echo "<img src=\"images/keychain.png\" alt=\"maintenance\" /><br/><br/>";
@@ -236,7 +237,7 @@
 		$s=Null;
 	}
 	// Login ist erlaubt aber noch zeitlich zu früh
-	elseif ($cfg->value('enable_login')==1 && $cfg->value('enable_login')!="" && $cfg->param1('enable_login') > time())
+	elseif ($cfg->value('enable_login')==1 && $cfg->value('enable_login')!="" && $cfg->param1('enable_login') > time() && !in_array($_SERVER['REMOTE_ADDR'],$allowed_ips))
 	{
 		iBoxStart("Login noch geschlossen",750,"margin:50px auto;text-align:center");
 		echo "<img src=\"images/keychain.png\" alt=\"maintenance\" /><br/><br/>";
