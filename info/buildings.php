@@ -460,7 +460,7 @@ if (isset($_GET['id']))
 	}
 
 }
-
+/*
 //
 // Allianzgebäude
 //
@@ -564,7 +564,7 @@ elseif (isset($_GET['aid']))
         
 		/*iBoxStart("Technikbaum");
 			showTechTree("b",$arr['building_id']);
-		iBoxEnd();*/
+		iBoxEnd();
 		
 		if ($useTabs)
 		{
@@ -587,7 +587,7 @@ elseif (isset($_GET['aid']))
 	   echo "<input type=\"button\" value=\"Zur&uuml;ck zum Bauhof\" onclick=\"document.location='?page=buildings'\" /> &nbsp; ";
 	}
 
-}
+}*/
 
 //
 // Kategorieinfos
@@ -692,7 +692,7 @@ else
 			}
 		}
 	}
-	$res = dbquery("
+	/*$res = dbquery("
 		SELECT 
 			alliance_building_name,
 			alliance_building_shortcomment,
@@ -722,7 +722,7 @@ else
 			echo "</tr>";
 		}
 		tableEnd();
-	}
+	}*/
 }
 
 

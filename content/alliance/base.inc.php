@@ -73,7 +73,7 @@
 
 			// Errechnet die Effektiven Kosten für die Allianz in Abgängigkeit von der Mitgliederanzahl
 			$factor = pow($costs_factor,$level);
-			$member_factor = 1 + $members * $cfg->get('alliance_membercosts_factor');
+			$member_factor = 1 + ($members-1) * $cfg->get('alliance_membercosts_factor');
 			if($factor<1)
 			{
 				$factor = 1;

@@ -75,18 +75,22 @@
 		WHERE 
 			user_id='".$s['user_id']."';");
 		
-		dbquery("UPDATE
-					users
-				SET
-					user_ghost='1'
-				WHERE
-					user_id='".$_POST['player_id']."';");
-		dbquery("UPDATE
-					users
-				SET
-					user_ghost='0'
-				WHERE
-					user_id='".$arr['player_id']."';");
+		if ($arr['player_id']!=$_POST['player_id'])
+		{
+			dbquery("UPDATE
+						users
+					SET
+						user_ghost='0'
+					WHERE
+						user_id='".$arr['player_id']."';");
+			
+			dbquery("UPDATE
+						users
+					SET
+						user_ghost='1'
+					WHERE
+						user_id='".$_POST['player_id']."';");
+		}
 		
 		cms_ok_msg("Die Daten wurden ge&auml;ndert!");
 		add_log(8,$s['user_nick']." ändert seine Daten",time());
