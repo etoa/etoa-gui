@@ -11,7 +11,6 @@
 
 	echo "<h1>Willkommen in Andromeda</h1>";
 
-
 		// Apply choosen itemset
 	if (isset($s['itemset_key']) && isset($_POST[md5($s['itemset_key'])]) && isset($_POST['itemset_id']))
 	{
@@ -197,7 +196,7 @@
 
 
 		echo "<input type=\"submit\" name=\"submit_chooseplanet\" value=\"Auswählen\" />
-		<input type=\"button\" onclick=\"document.location='?setup_sx=2&setup_sy=2'\" value=\"Einen neuen Planeten auswählen\" />
+		<input type=\"button\" onclick=\"document.location='?setup_sx=".$_GET['setup_sx']."&setup_sy=".$_GET['setup_sy']."'\" value=\"Einen neuen Planeten auswählen\" />
 		<input type=\"submit\" name=\"redo\" value=\"Einen neuen Sektor auswählen\" />";
 		echo "</form>";
 	}	
