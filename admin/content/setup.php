@@ -270,7 +270,7 @@
 			</tr>";
 			echo "<tr>
 				<th>Genauigkeit:</th>
-				<td><input type=\"text\" name=\"map_precision\" value=\"85\" size=\"2\" maxlength=\"3\"/>%</td>
+				<td><input type=\"text\" name=\"map_precision\" value=\"95\" size=\"2\" maxlength=\"3\"/>%</td>
 			</tr>";
 			tableEnd();
 			
@@ -469,19 +469,58 @@
 		  	}
 				else
 				{
+					echo "<h2>Universum</h2>";
+					echo "<div style=\"float:right;width:500px\"><img src=\"../misc/map.image.php\" alt=\"Galaxiekarte\" id=\"img\" usemap=\"#Galaxy\" style=\"border:none;\"/></div>";
+
+					tableStart("Informationen");
+					$res = dbquery("SELECT MAX(sx),MAX(sy) FROM cells;");
+					$arr = mysql_fetch_row($res);
+					echo "<tr><th>Sektoren</th><td>".$arr[0]." x ".$arr[1]."</td></tr>";
+					$res = dbquery("SELECT MAX(cx),MAX(cy) FROM cells;");
+					$arr = mysql_fetch_row($res);
+					echo "<tr><th>Zellen pro Sektor</th><td>".$arr[0]." x ".$arr[1]."</td></tr>";
+
+					$res = dbquery("SELECT COUNT(*) FROM stars;");
+					$arr = mysql_fetch_row($res);
+					echo "<tr><th>Sterne</th><td>".nf($arr[0])."</td></tr>";
+					$res = dbquery("SELECT COUNT(*) FROM planets;");
+					$arr = mysql_fetch_row($res);
+					echo "<tr><th>Planeten</th><td>".nf($arr[0])."</td></tr>";
+					$res = dbquery("SELECT COUNT(*) FROM asteroids;");
+					$arr = mysql_fetch_row($res);
+					echo "<tr><th>Asteroidenfelder</th><td>".nf($arr[0])."</td></tr>";
+					$res = dbquery("SELECT COUNT(*) FROM nebulas;");
+					$arr = mysql_fetch_row($res);
+					echo "<tr><th>Nebel</th><td>".nf($arr[0])."</td></tr>";
+					$res = dbquery("SELECT COUNT(*) FROM wormholes;");
+					$arr = mysql_fetch_row($res);
+					echo "<tr><th>Wurmlöcher</th><td>".nf($arr[0])."</td></tr>";
+					$res = dbquery("SELECT COUNT(*) FROM space;");
+					$arr = mysql_fetch_row($res);
+					echo "<tr><th>Leerer Raum</th><td>".nf($arr[0])."</td></tr>";
+					
+					tableEnd();
+					
           echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
 
 					$res = dbquery("SELECT COUNT(id) FROM planets WHERE planet_user_id>0;");
 					$arr = mysql_fetch_row($res);					
-					if ($arr[0]==0)
+					if ($arr[0]!=0)
 					{
-						echo "<h2>Universum löschen</h2>";
+						echo "<h3>Universum löschen</h3>";
 	          echo "Es sind noch keine Planeten im Besitz von Spielern. Das Universum kann ohne Probleme gelöscht werden.<br/><br/>
 	          <input type=\"submit\" name=\"submit_galaxy_reset\" value=\"Universum zurücksetzen\" ><br/>";
 					}
+					else
+					{
+						echo "<h3>Universum löschen</h3>";
+	          echo "Es sind bereits Planeten im Besitz von Spielern. Du kannst das Universum zurücksetzen, jedoch werden 
+	          sämtliche Gebäude, Schiffe, Forschungen etc von den Spielern gelöscht.<br/><br/>
+	          <input type=\"submit\" name=\"submit_galaxy_reset\" value=\"Universum zurücksetzen\" onclick=\"return confirm('Universum wirklich zurücksetzen? ALLE Einheiten der Spieler werden gelöscht, jedoch keine Spieleraccounts!')\"><br/>";
+					}
 	
 	        // Reset
-	        echo "<h2>Runde zur&uuml;cksetzen</h2>";
+	        echo "<h3>Runde komplett zur&uuml;cksetzen</h3>";
           echo "Hiermit kann die gesamte Runde zurückgesetzt werden (User, Allianzen, Planeten).<br/><br/>";
           echo "<input type=\"submit\" name=\"submit_reset\" value=\"Ja, die gesamte Runde zur&uuml;cksetzen\" ><br><br>";
 

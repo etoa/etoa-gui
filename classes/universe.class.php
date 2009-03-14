@@ -6,12 +6,14 @@
 	*/
 	class Universe
 	{
+		private static $sol_types;
+		private static $planet_types;
 
 		/**
 		* Create the universe.
 		* And there was light!
 		*/	
-		static function create($mapImage="",$mapPrecision=85)
+		static function create($mapImage="",$mapPrecision=95)
 		{
 			$mtx = new Mutex();
 			$mtx->acquire();
@@ -40,7 +42,7 @@
 			$num_planets_max = $cfg->param2('num_planets');
 			$num_planet_images = $cfg->value('num_planet_images');
 			
-			$sol_types = array();
+			self::$sol_types = array();
 			$res = dbquery("
 			SELECT
 		      	sol_type_id
@@ -50,10 +52,10 @@
 				sol_type_consider=1;");
 			while ($arr = mysql_fetch_array($res))
 			{
-				$sol_types[] = $arr['sol_type_id'];
+				self::$sol_types[] = $arr['sol_type_id'];
 			}
 			
-			$planet_types = array();
+			self::$planet_types = array();
 			$res = dbquery("
 			SELECT
 		    type_id
@@ -63,7 +65,7 @@
 				type_consider=1;");
 			while ($arr = mysql_fetch_array($res))
 			{
-				$planet_types[] = $arr['type_id'];
+				self::$planet_types[] = $arr['type_id'];
 			}
 
 			$planet_count = 0;
@@ -94,12 +96,12 @@
 				{
 					for($y=1;$y<=$h;$y++)
 					{
-						$o = imagecolorat($im,$x-1,$y-1);
+						$o = imagecolorat($im,$x-1,$h-$y);
 						$pr = mt_rand(0,100);
 
 						if (($o>0 && $pr <= $mapPrecision) || ($o==0 && $pr >= $mapPrecision))
 						{
-							$ct = mt_rand(1,$perc_solsys+$perc_asteroids+$perc_nebulas+$perc_wormholes);
+							$ct = mt_rand(1,100);
 							
 							if ($ct <= $perc_solsys)
 								$type[$x][$y]='s';							
@@ -205,253 +207,35 @@
 				// Star system
 				if ($type[$x][$y]=='s')
 				{
-					// The Star
-					$st = $sol_types[array_rand($sol_types)];
-					$sql = "
-						INSERT INTO
-							entities
-						(
-							cell_id,
-							code,
-							pos
-						)
-						VALUES
-						(
-							".$cell_id.",
-							's',
-							0
-						);
-					";
-					dbquery($sql);
-					$eid = mysql_insert_id();
-
-					$sql = "
-						INSERT INTO
-							stars
-						(
-							id,
-							type_id
-						)
-						VALUES
-						(
-							".$eid.",
-							".$st."
-						);
-					";
-					dbquery($sql);
-
-					// The planets
-					$np = mt_rand($num_planets_min,$num_planets_max);
-					for ($cnp=1;$cnp<=$np;$cnp++)
-					{
-						$sql = "
-							INSERT INTO
-								entities
-							(
-								cell_id,
-								code,
-								pos
-							)
-							VALUES
-							(
-								".$cell_id.",
-								'p',
-								".$cnp."
-							);
-						";
-						dbquery($sql);
-						$eid = mysql_insert_id();
-
-						$pt = $planet_types[array_rand($planet_types)];
-						$img_nr = $pt."_".mt_rand(1,$num_planet_images);
-						$fields = mt_rand($planet_fields_min,$planet_fields_max);
-						$tblock =  round($planet_temp_totaldiff / $np);
-						$temp = mt_rand($planet_temp_max-($tblock*$cnp),($planet_temp_max-($tblock*$cnp)+$tblock));
-						$tmin = $temp - $planet_temp_diff;
-						$tmax = $temp + $planet_temp_diff;
-						$sql = "
-							INSERT INTO
-								planets
-							(
-								id,
-								planet_type_id,
-								planet_fields,
-								planet_image,
-								planet_temp_from,
-								planet_temp_to
-							)
-							VALUES
-							(
-								'".$eid."',
-								'".$pt."',
-								'".$fields."',
-								'".$img_nr."',
-								'".$tmin."',
-								'".$tmax."'
-							)";
-						dbquery($sql);	// Planet speichern
-						$planet_count++;
-					}
+					self::createStarSystem($cell_id);
 					$sol_count++;
 				}
 				
 				// Asteroid Fields
 				elseif ($type[$x][$y]=='a')
 				{
-					$sql = "
-						INSERT INTO
-							entities
-						(
-							cell_id,
-							code,
-							pos
-						)
-						VALUES
-						(
-							".$cell_id.",
-							'a',
-							0
-						);
-					";
-					dbquery($sql);
-					$eid = mysql_insert_id();
-
-					$asteroid_metal = mt_rand($cfg->asteroid_ress->p1,$cfg->asteroid_ress->p2);
-					$asteroid_crystal = mt_rand($cfg->asteroid_ress->p1,$cfg->asteroid_ress->p2);
-					$asteroid_plastic = mt_rand($cfg->asteroid_ress->p1,$cfg->asteroid_ress->p2);
-					$sql = "
-						INSERT INTO
-							asteroids
-						(
-							id,
-							res_metal,
-							res_crystal,
-							res_plastic
-						)
-						VALUES
-						(
-							".$eid.",
-							".$asteroid_metal.",
-							".$asteroid_crystal.",
-							".$asteroid_plastic."
-						);
-					";
-					dbquery($sql);				
-					
+					self::createAsteroids($cell_id);
 					$asteroids_count++;
 				}
 				
 				// Nebulas
 				elseif ($type[$x][$y]=='n')
 				{
-					$sql = "
-						INSERT INTO
-							entities
-						(
-							cell_id,
-							code,
-							pos
-						)
-						VALUES
-						(
-							".$cell_id.",
-							'n',
-							0
-						);
-					";
-					dbquery($sql);
-					$eid = mysql_insert_id();
-
-					$nebula_ress = mt_rand($cfg->param1('nebula_ress'),$cfg->param2('nebula_ress'));
-					$sql = "
-						INSERT INTO
-							nebulas
-						(
-							id,
-							res_crystal
-						)
-						VALUES
-						(
-							".$eid.",
-							".$nebula_ress."
-						);
-					";
-					dbquery($sql);				
-					
+					self::createNebula($cell_id);				
 					$nebula_count++;
 				}
 				
 				// Wormholes
 				elseif ($type[$x][$y]=='w')
 				{
-					$sql = "
-						INSERT INTO
-							entities
-						(
-							cell_id,
-							code,
-							pos
-						)
-						VALUES
-						(
-							".$cell_id.",
-							'w',
-							0
-						);
-					";
-					dbquery($sql);
-					$eid = mysql_insert_id();								
-
-					$sql = "
-						INSERT INTO
-							wormholes
-						(
-							id,
-							changed
-						)
-						VALUES
-						(
-							".$eid.",
-							".time()."
-						);
-					";
-					dbquery($sql);			
+					self::createWormhole($cell_id);	
 					$wormhole_count++;
 				}
 							
 				// Empty space
 				else
 				{
-					$sql = "
-						INSERT INTO
-							entities
-						(
-							cell_id,
-							code,
-							pos
-						)
-						VALUES
-						(
-							".$cell_id.",
-							'e',
-							0
-						);
-					";
-					dbquery($sql);
-					$eid = mysql_insert_id();
-
-					$sql = "
-						INSERT INTO
-							space
-						(
-							id
-						)
-						VALUES
-						(
-							".$eid."
-						);
-					";
-					dbquery($sql);	
+					self::createEmptySpace($cell_id);	
 				}
 			}
 			echo "Universum erstellt, prüfe Wurmlöcher...<br/>";
@@ -603,8 +387,281 @@
 					1;");
 			
 			$mtx->release();					
-			echo "Universum erstellt!<br> $sol_count Sonnensysteme mit $planet_count Planeten, $asteroids_count Asteroidenfelder, $nebula_count Nebel und $wormhole_count Wurmlöcher!";
+			echo "Universum erstellt!<br> $sol_count Sonnensysteme, $asteroids_count Asteroidenfelder, $nebula_count Nebel und $wormhole_count Wurmlöcher!";
 		}	
+		
+		private static function createStarSystem($cell_id)
+		{
+			$cfg = Config::getInstance();
+
+			// The Star
+			$st = self::$sol_types[array_rand(self::$sol_types)];
+			$sql = "
+				INSERT INTO
+					entities
+				(
+					cell_id,
+					code,
+					pos
+				)
+				VALUES
+				(
+					".$cell_id.",
+					's',
+					0
+				);
+			";
+			dbquery($sql);
+			$eid = mysql_insert_id();
+	
+			$sql = "
+				INSERT INTO
+					stars
+				(
+					id,
+					type_id
+				)
+				VALUES
+				(
+					".$eid.",
+					".$st."
+				);
+			";
+			dbquery($sql);
+	
+			// The planets
+			$np = mt_rand(Config::getInstance()->num_planets->p1,Config::getInstance()->num_planets->p2);
+			for ($cnp=1;$cnp<=$np;$cnp++)
+			{
+				$r = mt_rand(0,100);
+				if ($r <= $cfg->solsys_percent_planet->v)
+				{
+					self::createPlanet($cell_id,$cnp,$np);
+				}
+				elseif ($r <= $cfg->solsys_percent_planet->v + $cfg->solsys_percent_asteroids->v)
+				{
+					self::createAsteroids($cell_id,$cnp);
+				}
+				else
+				{
+					self::createEmptySpace($cell_id,$cnp);
+				}				
+			}
+		}
+		
+		private static function createPlanet($cell_id,$pos,$np)
+		{
+			$cfg = Config::getInstance();
+			
+			$planet_fields_min = $cfg->param1('planet_fields');
+			$planet_fields_max = $cfg->param2('planet_fields');
+			$planet_temp_min = $cfg->param1('planet_temp');
+			$planet_temp_max = $cfg->param2('planet_temp');
+			$planet_temp_diff = $cfg->value('planet_temp');
+			$planet_temp_totaldiff = abs($planet_temp_min) + abs($planet_temp_max);
+			
+			$sql = "
+				INSERT INTO
+					entities
+				(
+					cell_id,
+					code,
+					pos
+				)
+				VALUES
+				(
+					".$cell_id.",
+					'p',
+					".$pos."
+				);
+			";
+			dbquery($sql);
+			$eid = mysql_insert_id();
+
+			$pt = self::$planet_types[array_rand(self::$planet_types)];
+			$img_nr = $pt."_".mt_rand(1,Config::getInstance()->num_planet_images->v);
+			$fields = mt_rand(Config::getInstance()->planet_fields->p1,Config::getInstance()->planet_fields->p2);
+			$tblock =  round($planet_temp_totaldiff / $np);
+			$temp = mt_rand($planet_temp_max-($tblock*$pos),($planet_temp_max-($tblock*$pos)+$tblock));
+			$tmin = $temp - $planet_temp_diff;
+			$tmax = $temp + $planet_temp_diff;
+			$sql = "
+				INSERT INTO
+					planets
+				(
+					id,
+					planet_type_id,
+					planet_fields,
+					planet_image,
+					planet_temp_from,
+					planet_temp_to
+				)
+				VALUES
+				(
+					'".$eid."',
+					'".$pt."',
+					'".$fields."',
+					'".$img_nr."',
+					'".$tmin."',
+					'".$tmax."'
+				)";
+			dbquery($sql);	// Planet speichern			
+		}
+		
+		private static function createAsteroids($cell_id,$pos=0)
+		{
+			$cfg = Config::getInstance();
+			$sql = "
+				INSERT INTO
+					entities
+				(
+					cell_id,
+					code,
+					pos
+				)
+				VALUES
+				(
+					".$cell_id.",
+					'a',
+					".$pos."
+				);
+			";
+			dbquery($sql);
+			$eid = mysql_insert_id();
+
+			$asteroid_metal = mt_rand($cfg->asteroid_ress->p1,$cfg->asteroid_ress->p2);
+			$asteroid_crystal = mt_rand($cfg->asteroid_ress->p1,$cfg->asteroid_ress->p2);
+			$asteroid_plastic = mt_rand($cfg->asteroid_ress->p1,$cfg->asteroid_ress->p2);
+			$sql = "
+				INSERT INTO
+					asteroids
+				(
+					id,
+					res_metal,
+					res_crystal,
+					res_plastic
+				)
+				VALUES
+				(
+					".$eid.",
+					".$asteroid_metal.",
+					".$asteroid_crystal.",
+					".$asteroid_plastic."
+				);
+			";
+			dbquery($sql);					
+			
+		}
+		
+		private static function createNebula($cell_id,$pos=0)
+		{
+			$cfg = Config::getInstance();
+			$sql = "
+				INSERT INTO
+					entities
+				(
+					cell_id,
+					code,
+					pos
+				)
+				VALUES
+				(
+					".$cell_id.",
+					'n',
+					".$pos."
+				);
+			";
+			dbquery($sql);
+			$eid = mysql_insert_id();
+
+			$nebula_ress = mt_rand($cfg->param1('nebula_ress'),$cfg->param2('nebula_ress'));
+			$sql = "
+				INSERT INTO
+					nebulas
+				(
+					id,
+					res_crystal
+				)
+				VALUES
+				(
+					".$eid.",
+					".$nebula_ress."
+				);
+			";
+			dbquery($sql);				
+		}
+		
+		private static function createWormhole($cell_id,$pos=0)
+		{
+			$cfg = Config::getInstance();
+			$sql = "
+				INSERT INTO
+					entities
+				(
+					cell_id,
+					code,
+					pos
+				)
+				VALUES
+				(
+					".$cell_id.",
+					'w',
+					".$pos."
+				);
+			";
+			dbquery($sql);
+			$eid = mysql_insert_id();								
+
+			$sql = "
+				INSERT INTO
+					wormholes
+				(
+					id,
+					changed
+				)
+				VALUES
+				(
+					".$eid.",
+					".time()."
+				);
+			";
+			dbquery($sql);					
+		}
+	
+		private static function createEmptySpace($cell_id,$pos=0)
+		{
+			$cfg = Config::getInstance();		
+			$sql = "
+				INSERT INTO
+					entities
+				(
+					cell_id,
+					code,
+					pos
+				)
+				VALUES
+				(
+					".$cell_id.",
+					'e',
+					".$pos."
+				);
+			";
+			dbquery($sql);
+			$eid = mysql_insert_id();
+	
+			$sql = "
+				INSERT INTO
+					space
+				(
+					id
+				)
+				VALUES
+				(
+					".$eid."
+				);
+			";
+			dbquery($sql);
+		}
 		
 		/**
 		* Resets the universe and all user data
@@ -624,8 +681,10 @@
 			$tbl[]="wormholes";
 			$tbl[]="space";
 			
-			if ($all)
-			{
+			$res = dbquery("SELECT COUNT(id) FROM planets WHERE planet_user_id>0;");
+			$arr = mysql_fetch_row($res);					
+			if ($arr[0]>0)
+			{			
 				$tbl[]="buildlist";
 				$tbl[]="deflist";
 				$tbl[]="def_queue";
@@ -639,8 +698,11 @@
 				$tbl[]="missile_flights_obj";
 				$tbl[]="shiplist";
 				$tbl[]="ship_queue";
-				$tbl[]="techlist";
-	
+				$tbl[]="techlist";				
+			}
+			
+			if ($all)
+			{	
 				$tbl[]="alliances";
 				$tbl[]="alliance_bnd";
 				$tbl[]="alliance_applications";
@@ -726,334 +788,7 @@
 			return true;
 		}
 		
-		/**
-		* Erweitert Universum
-		*
-		* @param string $sx_num_new,$sy_num_new
-		* @author Lamborghini
-		* @todo This method has to be rewritten due to the database changes with the new entity table
-		*/
-		/*
-		function expansion_universe($sx_num_new,$sy_num_new)
-		{
-			global $conf;
-	
-			$sx_num=$conf['num_of_sectors']['p1'];
-			$sy_num=$conf['num_of_sectors']['p2'];
-			$cx_num=$conf['num_of_cells']['p1'];
-			$cy_num=$conf['num_of_cells']['p2'];
-			$planet_fields_min=$conf['planet_fields']['p1'];
-			$planet_fields_max=$conf['planet_fields']['p2'];
-			$planet_temp_min=$conf['planet_temp']['p1'];
-			$planet_temp_max=$conf['planet_temp']['p2'];
-			$planet_temp_diff=$conf['planet_temp']['v'];
-			$planet_temp_totaldiff=abs($planet_temp_min)+abs($planet_temp_max);
-			$perc_solsys=$conf['space_percent_solsys']['v'];
-			$perc_asteroids=$conf['space_percent_asteroids']['v'];
-			$perc_nebulas=$conf['space_percent_nebulas']['v'];
-			$perc_wormholes=$conf['space_percent_wormholes']['v'];
-			$num_planets_min=$conf['num_planets']['p1'];
-			$num_planets_max=$conf['num_planets']['p2'];
-			$num_sol_types=mysql_num_rows(dbquery("SELECT * FROM sol_types;"));
-			$sol_types = get_sol_types_array();
-			$num_planet_types=mysql_num_rows(dbquery("SELECT * FROM planet_types;"));
-			$planet_types = get_planet_types_array();
-			$num_planet_images = $conf['num_planet_images']['v'];
-			$planet_count = 0;
-			$sol_count = 0;
-			$nebula_count = 0;
-			$asteroids_count = 0;
-			$wormhole_count = 0;
-	
-			echo "Erweitere Universum von $sx_num x $sy_num Sektoren auf $sx_num_new x $sy_num_new Sektoren. Es werden ".$cx_num*$cy_num." Zellen pro Sektor und ".($sx_num_new*$sy_num_new-$sx_num*$sy_num)*$cx_num*$cy_num." Zellen total hinzugefügt<br>";
-	
-			for ($sx=1;$sx<=$sx_num_new;$sx++)
-			{
-				for ($sy=1;$sy<=$sy_num_new;$sy++)
-				{
-					//überprüft ob dieser sektor schon vorhanden ist
-	                $res = dbquery("
-						SELECT
-							cell_id
-						FROM
-							space_cells
-						WHERE
-							cell_sx='".$sx."'
-							AND cell_sy='".$sy."';
-					");
-	                if (mysql_num_rows($res)==0)
-	                {
-	                    for ($cx=1;$cx<=$cx_num;$cx++)
-	                    {
-	                        for ($cy=1;$cy<=$cy_num;$cy++)
-	                        {
-	                            $ct = mt_rand(1,100);
-	                            //Sonnensystem
-	                            if ($ct<=$perc_solsys)
-	                            {
-	                                $st = mt_rand(1,$num_sol_types);
-	                                $np = mt_rand($num_planets_min,$num_planets_max);
-	                                $sql = "
-										INSERT INTO
-										space_cells
-										(
-											cell_sx,
-											cell_sy,
-											cell_cx,
-											cell_cy,
-											cell_type,
-											cell_solsys_num_planets,
-											cell_solsys_solsys_sol_type
-										)
-										VALUES
-										(
-											'".$sx."',
-											'".$sy."',
-											'".$cx."',
-											'".$cy."',
-											'1',
-											'".$np."',
-											'".$st."'
-										);
-									";
-	                                dbquery($sql);  // Zelle speichern
-	                                $solsys_id = mysql_insert_id();
-	                                for ($cnp=1;$cnp<=$np;$cnp++)
-	                                {
-	                                    $pt = mt_rand(1,$num_planet_types);
-	                                    $img_nr = $pt."_".mt_rand(1,$num_planet_images);
-	                                    $fields = mt_rand($planet_fields_min,$planet_fields_max);
-	                                    $tblock =  round($planet_temp_totaldiff / $np);
-	                                    $temp = mt_rand($planet_temp_max-($tblock*$cnp),($planet_temp_max-($tblock*$cnp)+$tblock));
-	                                    $tmin = $temp - $planet_temp_diff;
-	                                    $tmax = $temp + $planet_temp_diff;
-	                                    $sql = "
-											INSERT INTO
-											planets
-											(
-												planet_solsys_id,
-												planet_solsys_pos,
-												planet_type_id,
-												planet_fields,
-												planet_image,
-												planet_temp_from,
-												planet_temp_to
-											)
-											VALUES
-											(
-												'".$solsys_id."',
-												'".$cnp."',
-												'".$pt."',
-												'".$fields."',
-												'".$img_nr."',
-												'".$tmin."',
-												'".$tmax."'
-											)
-										";
-	                                    dbquery($sql);  // Planet speichern
-	                                    $planet_count++;
-	                                }
-	                                $sol_count++;
-	                            }
-	                            //Asteroidenfeld
-	                            elseif ($ct<=$perc_solsys + $perc_asteroids)
-	                            {
-	                                $asteroid_ress = mt_rand($conf['asteroid_ress']['p1'],$conf['asteroid_ress']['p2']);
-	                                $sql = "
-										INSERT INTO
-										space_cells
-										(
-											cell_sx,
-											cell_sy,
-											cell_cx,
-											cell_cy,
-											cell_type,
-											cell_asteroid,
-											cell_asteroid_ress
-										)
-										VALUES
-										(
-											'".$sx."',
-											'".$sy."',
-											'".$cx."',
-											'".$cy."',
-											'1',
-											'1',
-											'".$asteroid_ress."'
-										);
-									";
-	                                dbquery($sql);  // Zelle speichern
-	                                $asteroids_count++;
-	                            }
-	                            //Intergalaktischer Nebel
-	                            elseif ($ct<=$perc_solsys + $perc_asteroids + $perc_nebulas)
-	                            {
-	                                $nebula_ress = mt_rand($conf['nebula_ress']['p1'],$conf['nebula_ress']['p2']);
-	
-	                                $sql = "
-										INSERT INTO
-										space_cells
-										(
-											cell_sx,
-											cell_sy,
-											cell_cx,
-											cell_cy,
-											cell_type,
-											cell_nebula,
-											cell_nebula_ress
-										)
-										VALUES
-										(
-											'".$sx."',
-											'".$sy."',
-											'".$cx."',
-											'".$cy."',
-											'1',
-											'1',
-											'".$nebula_ress."'
-										);
-									";
-	                                dbquery($sql);  // Zelle speichern
-	                                $nebula_count++;
-	                            }
-	                            //Wurmlöcher
-	                            elseif ($ct<=$perc_solsys + $perc_asteroids + $perc_nebulas + $perc_wormholes)
-	                            {
-	                                // echo "$sx/$sy : $cx/$cy &nbsp;-&nbsp; Wurmloch<br>";
-	                                $sql = "
-										INSERT INTO
-										space_cells
-										(
-											cell_sx,
-											cell_sy,
-											cell_cx,
-											cell_cy,
-											cell_type,
-											cell_wormhole_id
-										)
-										VALUES
-										(
-											'".$sx."',
-											'".$sy."',
-											'".$cx."',
-											'".$cy."',
-											'1',
-											'1'
-										);
-									";
-	                                dbquery($sql);  // Zelle speichern
-	                                $wormhole_count++;
-	                            }
-	                            //Leere Zellen
-	                            else
-	                            {
-	                                $sql = "
-										INSERT INTO
-										space_cells
-										(
-											cell_sx,
-											cell_sy,
-											cell_cx,
-											cell_cy,
-											cell_type
-										)
-										VALUES
-										(
-											'".$sx."',
-											'".$sy."',
-											'".$cx."',
-											'".$cy."',
-											'0'
-										);
-									";
-	                                dbquery($sql);  // Zelle speichern
-	                            }
-	                        }
-	                    }
-					}
-				}
-			}
-	
-			$wh = array();
-			$wh_new = array();
-			$res = dbquery("
-	        SELECT
-	            *
-	        FROM
-	            space_cells
-	        WHERE
-	            cell_wormhole_id!='0';
-			");
-			if (fmod(mysql_num_rows($res),2)!=0) //wenn Zahl ungerade ist
-			{
-				echo "<br>Eins ist zuviel!<br>";
-				dbquery("
-	            UPDATE
-	            	space_cells
-	            SET
-	            	cell_wormhole_id='0'
-	            WHERE
-	            	cell_wormhole_id!='0'
-	            LIMIT 1;
-				");
-				echo mysql_error();
-				$res = dbquery("
-	            SELECT
-	            	*
-	            FROM
-	            	space_cells
-	            WHERE
-	            	cell_wormhole_id!='0';
-				");
-			}
-			while ($arr=mysql_fetch_assoc($res))
-			{
-				array_push($wh,$arr['cell_id']);
-			}
-			shuffle($wh);
-			while (sizeof($wh)>0)
-			{
-				$wh_new[array_shift($wh)]=array_pop($wh);
-			}
-			$wormhole_count = mysql_num_rows($res);
-			foreach ($wh_new as $k=>$v)
-			{
-				dbquery("
-	            UPDATE
-	            	space_cells
-	            SET
-	            	cell_wormhole_id='".$k."'
-	            WHERE
-	            	cell_id='".$v."';
-				");
-				echo mysql_error();
-				dbquery("
-	            UPDATE
-	            	space_cells
-	            SET
-	            	cell_wormhole_id='".$v."'
-	            WHERE
-	            	cell_id='".$k."';
-				");
-							echo mysql_error();
-			}
-	
-			//Neue Sektorenanzahl in der Config speichern
-			dbquery("
-			UPDATE
-				config
-			SET
-	            config_param1='".$sx_num_new."',
-	            config_param2='".$sy_num_new."'
-			WHERE
-				config_name='num_of_sectors';");
-	
-			echo "Universum erweitert:<br>$sol_count Sonnensysteme mit $planet_count Planeten, $asteroids_count Asteroidenfelder, $nebula_count Nebel und $wormhole_count Wurmlöcher!";
-	
-		}
-		*/
 
-	
 	}
 
 
