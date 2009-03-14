@@ -3066,7 +3066,7 @@ function imagecreatefromfile($path, $user_functions = false)
 			$dname = dirname(realpath("conf.inc.php"));
 			echo $dname;
 			$ipckey = ftok($dname,IPC_ID);
-			$q = msg_get_queue($ipckey,0600);
+			$q = msg_get_queue($ipckey,0666);
 			add_log(4,"Sende IPC Message mit Key $ipckey vom Token $dname und Projekt-Id ".IPC_ID.". Die Queue hat die ID ".$q);
 			return msg_send($q,1,$message,false,false);
 		}
