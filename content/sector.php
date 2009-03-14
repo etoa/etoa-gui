@@ -289,7 +289,12 @@
 					$tt->addComment("Expedition senden um Zelle sichtbar zu machen.");
 					echo "<td style=\"background:url('".IMAGE_PATH."/unexplored/fog1.png');\" 
 						onmouseover=\"counter_left_$ycoords.src='$counter_left_high$ycoords.gif';counter_bottom_$xcoords.src='$counter_bottom_high$xcoords.gif';\" onmouseout=\"counter_left_$ycoords.src='$counter_left$ycoords.gif';counter_bottom_$xcoords.src='$counter_bottom$xcoords.gif';\">";					
-					echo "<a href=\"?page=haven&cellTarget=".$cells[$xcoords][$ycoords]['cid']."\" ".$tt."></a>";
+
+					if (in_array($cells[$xcoords][$ycoords]['cid'],$user_solsys_ids))
+						$class = " class=\"owncell\"";
+					else
+						$class = "";
+					echo "<a $class href=\"?page=haven&cellTarget=".$cells[$xcoords][$ycoords]['cid']."\" ".$tt."></a>";
 				}
 				echo "</td>\n";
 			}

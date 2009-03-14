@@ -375,6 +375,7 @@
 					<th style=\"width:50px;\">ID</th>
 					<th style=\"width:150px;\">Spieler</th>
 					<th>Kategorie</th>
+					<th>Admin</th>
 					<th style=\"width:130px;\">Zeit</th>
 				</tr>";
 				while($arr=mysql_fetch_array($res))
@@ -388,6 +389,7 @@
 					<td><a href=\"?page=$page&amp;sub=$sub&amp;view=".$arr['id']."\">".$arr['id']."</a></td>
 					<td><a href=\"#\" ".cTT($arr['unick'],"tt".$arr['id']).">".$arr['unick']."</a></td>
 					<td>".$arr['cname']."</td>
+					<td>".$arr['anick']."</td>
 					<td>".df($arr['timestamp'])."</td>
 					</tr>";			
 					$cnt++;

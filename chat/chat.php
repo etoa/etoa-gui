@@ -102,6 +102,6 @@
 		</script>
 	</body>
 </html>
-<?PHP
+<?PHP      
 	dbclose();
 ?>

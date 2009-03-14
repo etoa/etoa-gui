@@ -5,7 +5,6 @@
 	$uCnt = User::count();
 	$totAvail = ceil($uCnt*SPECIALIST_AVAILABILITY_FACTOR);
 
-
 	echo '<h1>Spezialisten</h1>';    
 	$cp->resBox($cu->properties->smallResBox);
 	
@@ -226,7 +225,10 @@
 		$tarr = mysql_fetch_row($tres);
 		$used = min($tarr[0],$totAvail);
 		$avail = $totAvail - $used;
-		$factor = 1 + (SPECIALIST_MAX_COSTS_FACTOR / $totAvail * $used);
+		if ($totAvail!=0)
+			$factor = 1 + (SPECIALIST_MAX_COSTS_FACTOR / $totAvail * $used);
+		else
+			$factor = 1;
 
 		echo '<tr>';
 		echo '<th style="width:140px;">'.$arr['specialist_name'].'</th>';

@@ -28,6 +28,7 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/	
 	session_start();
+	include("../bootstrap.inc.php");
 	include("../conf.inc.php");
 	include("../functions.php");
 	define('XAJAX_DIR',"../libs/xajax");
@@ -75,4 +76,4 @@
 			</script>
 		</div>
 	</body>
-</html>		
+</html>

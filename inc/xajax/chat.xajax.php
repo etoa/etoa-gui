@@ -23,7 +23,8 @@ function loadChat($minId)
 				text,
 				color,
 				user_id,
-				private
+				private,
+				admin
 			FROM
 				chat
 			WHERE
@@ -35,6 +36,10 @@ function loadChat($minId)
 			{
 				while ($arr=mysql_fetch_assoc($res))
 				{
+					if ($arr['admin']==1)
+						$adminstr = "<img src=\"../images/star_y.gif\" />";
+					else
+						$adminstr = "";
 					if ($arr['private']==0 || $s['user_id']==$arr['user_id'])
 					if ($arr['user_id']==0)
 					{
@@ -45,11 +50,11 @@ function loadChat($minId)
 					elseif ($arr['color']!="")
 					{
 						$out.= "<span style=\"color:".$arr['color']."\">";
-						$out.= "&lt;<a style=\"color:".$arr['color']."\" href=\"../index.php?page=userinfo&id=".$arr['user_id']."\" target=\"main\">".$arr['nick']."</a> | ".date("H:i",$arr['timestamp'])."&gt; ".stripslashes($arr['text']);					
+						$out.= "$adminstr&lt;<a style=\"color:".$arr['color']."\" href=\"../index.php?page=userinfo&id=".$arr['user_id']."\" target=\"main\">".$arr['nick']."</a> | ".date("H:i",$arr['timestamp'])."&gt; ".stripslashes($arr['text']);					
 						$out.= "</span><br/>";
 					}
 					else
-						$out.= "&lt;<a style=\"color:#fff\" href=\"../index.php?page=userinfo&id=".$arr['user_id']."\" target=\"main\">".$arr['nick']."</a> | ".date("H:i",$arr['timestamp'])."&gt; ".stripslashes($arr['text'])."<br/>";					
+						$out.= "$adminstr&lt;<a style=\"color:#fff\" href=\"../index.php?page=userinfo&id=".$arr['user_id']."\" target=\"main\">".$arr['nick']."</a> | ".date("H:i",$arr['timestamp'])."&gt; ".stripslashes($arr['text'])."<br/>";					
 					$lastid=$arr['id'];
 				}
 				$ajax->append("chatitems","innerHTML",$out);
@@ -91,6 +96,21 @@ function sendChat($form)
 	$ajax->assign("ctext","value","");
 	if (isset($s['user_id']))
 	{		
+		$admin = 0;
+		$res = dbquery("
+		SELECT
+			user_chatadmin
+		FROM
+			users
+		WHERE
+			user_id=".$s['user_id']."
+		");
+		if (mysql_num_rows($res)>0)
+		{
+			$arr = mysql_fetch_row($res);
+			if ($arr[0] == 1)
+				$admin = 1;
+		}
 		if ($form['ctext']!="" && $_SESSION[ROUNDID]['lastchatmsg']!=md5($form['ctext']))
 		{
 			dbquery("INSERT INTO
@@ -100,7 +120,8 @@ function sendChat($form)
 				nick,
 				text,
 				color,
-				user_id
+				user_id,
+				admin
 			)
 			VALUES
 			(
@@ -108,7 +129,8 @@ function sendChat($form)
 				'".$s['user_nick']."',
 				'".addslashes($form['ctext'])."',
 				'".$form['ccolor']."',
-				'".$s['user_id']."'
+				'".$s['user_id']."',
+				'".$admin."'
 			)");
 			$_SESSION[ROUNDID]['lastchatmsg']=md5($form['ctext']);
 			$ajax->script("xajax_setChatUserOnline()");
