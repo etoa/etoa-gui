@@ -53,7 +53,7 @@
 	}
 
 
-	// REMOVE / DISABLE AFTER BETA
+/*	// REMOVE / DISABLE AFTER BETA
 	iBoxStart("BETA");		
 	echo "Aktuelle Version: <span style=\"color:#f90;font-weight:bold;\">";
 	ob_start();
@@ -71,7 +71,7 @@
 	echo "</span>";
 	iBoxEnd();
 	
-
+*/
 	//
 	// Admin-Infos
 	//
