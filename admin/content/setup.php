@@ -505,7 +505,7 @@
 
 					$res = dbquery("SELECT COUNT(id) FROM planets WHERE planet_user_id>0;");
 					$arr = mysql_fetch_row($res);					
-					if ($arr[0]!=0)
+					if ($arr[0]==0)
 					{
 						echo "<h3>Universum löschen</h3>";
 	          echo "Es sind noch keine Planeten im Besitz von Spielern. Das Universum kann ohne Probleme gelöscht werden.<br/><br/>
