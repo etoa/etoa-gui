@@ -317,17 +317,8 @@
 		
 		elseif (isset($_POST['submit_galaxy_reset']))
 		{
-			$res = dbquery("SELECT COUNT(id) FROM planets WHERE planet_user_id>0;");
-			$arr = mysql_fetch_row($res);					
-			if ($arr[0]==0)
-			{			
-				Universe::reset(false);
-				echo "Das Universum wurde zurückgesetzt!<br/><br/>".button("Weiter","?page=$page&amp;sub=$sub");
-			}
-			else
-			{
-				error_msg("Es sind bereits Planetenbesitzer vorhanden!");
-			}
+			Universe::reset(false);
+			echo "Das Universum wurde zurückgesetzt!<br/><br/>".button("Weiter","?page=$page&amp;sub=$sub");
 		}
 		
 		elseif(isset($_POST['submit_reset2']))
