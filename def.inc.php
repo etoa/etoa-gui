@@ -215,9 +215,9 @@
 	define("USER_MAX_PLANETS",$conf["user_max_planets"]["v"]);				// Maximale Anzahl Planeten
 	
 	// Spezialiasten
-	define("SPECIALIST_MIN_POINTS_REQ",100000);												// Minimal Punkte für Spezialist (VERALTET)
-	define('SPECIALIST_MAX_COSTS_FACTOR',5);													// Maximale Kostensteigerung
-	define('SPECIALIST_AVAILABILITY_FACTOR',0.5);											// Verfügbare Spezialisten pro Typ basierend auf Faktor * Anzahl User
+	define("SPECIALIST_MIN_POINTS_REQ",$cfg->p2('specialistconfig'));												// Minimal Punkte für Spezialist (VERALTET)
+	define('SPECIALIST_MAX_COSTS_FACTOR',$cfg->p1('specialistconfig'));													// Maximale Kostensteigerung
+	define('SPECIALIST_AVAILABILITY_FACTOR',$cfg->get('specialistconfig'));											// Verfügbare Spezialisten pro Typ basierend auf Faktor * Anzahl User
 	
 	// Kriegsdauer
 	define("WAR_DURATION",3600*48);

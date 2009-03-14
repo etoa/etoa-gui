@@ -472,7 +472,7 @@
 		}
 		else
 		{
-			echo "<br/><br/>Es sind keine Schiffe auf diesem Planeten vorhanden!<br/><br/>";
+			error_msg("Es sind keine Schiffe auf diesem Planeten vorhanden!");
 		}
 
 
@@ -522,11 +522,11 @@
 			echo "<input type=\"submit\" class=\"button\" name=\"submit_recycle_def\" value=\"Ausgew&auml;hlte Anlagen recyceln\"></form>";
 		}
 		else
-			echo "Es sind keine Verteidigungsanlagen auf diesem Planeten vorhanden!<br/><br/>";
+			error_msg("Es sind keine Verteidigungsanlagen auf diesem Planeten vorhanden!");
 	}
 	else
 	{
-		echo "Die Recyclingtechnologie wurde noch nicht entwickelt!";
+		error_msg("Die Recyclingtechnologie wurde noch nicht entwickelt!");
 	}
 
 

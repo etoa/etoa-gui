@@ -60,6 +60,7 @@
 				sendBackendMessage("planetupdate:".$cp->id);				
 			}
 		}
+		
 
 		echo "<h1>Wirtschaft des Planeten ".$cp->name."</h1>";
 		$cp->resBox($cu->properties->smallResBox);
@@ -71,7 +72,15 @@
 		{
 			$tc = new TabControl("ecoTab",array("Produktion","Energie","Lager","Bonus/Malus"));
 			$tc->open();
-		}		
+		}
+		
+		if (isset($_GET['action']) && $_GET['action']=="update")
+		{
+			ok_msg("Planet wird neu berechnet!");
+				
+			// Send
+			sendBackendMessage("planetupdate:".$cp->id);
+		}
 
 		//
 		// Produktion pro Stunde und Energieverbrauch
@@ -311,7 +320,7 @@
 		}
 		else
 		{
-			echo "Es wurden noch keine Produktionsgeb&auml;ude gebaut!<br/><br/>";
+			error_msg("Es wurden noch keine Produktionsgeb&auml;ude gebaut!");
 		}
 		echo "</form>";
 
@@ -323,7 +332,8 @@
 		
 		echo '<div>
 		<input type="button" onclick="document.location=\'?page=specialists\'" value="Spezialisten" /> &nbsp; ';
-		echo "<input type=\"button\" onclick=\"document.location='?page=planetstats'\" value=\"Ressourcen aller Planeten anzeigen\" />
+		echo "<input type=\"button\" onclick=\"document.location='?page=planetstats'\" value=\"Ressourcen aller Planeten anzeigen\" /> &nbsp; 
+		<input type=\"button\" onclick=\"document.location='?page=economy&action=update'\" value=\"Neu Berechnen\" />
 		</div>";
 
 		//

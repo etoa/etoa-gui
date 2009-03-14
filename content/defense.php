@@ -1291,7 +1291,7 @@
 		
 		// Ressourcen anzeigen
 		$cp->resBox($cu->properties->smallResBox);
-		echo "<br>Die Waffenfabrik wurde noch nicht gebaut!<br>";
+		error_msg("Die Waffenfabrik wurde noch nicht gebaut!");
 
 
 	}

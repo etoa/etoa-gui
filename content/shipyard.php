@@ -1313,7 +1313,7 @@
 		
 		// Ressourcen anzeigen
 		$cp->resBox($cu->properties->smallResBox);
-		echo "<br>Die Schiffswerft wurde noch nicht gebaut!<br>";
+		error_msg("Die Raumschiffswerft wurde noch nicht gebaut!");
 
 
 	}

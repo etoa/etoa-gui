@@ -956,7 +956,7 @@
 		{
 			echo "<h1>Forschungslabor des Planeten ".$cp->name."</h1>";
 			$cp->resBox($cu->properties->smallResBox);
-			echo "Das Forschungslabor wurde noch nicht gebaut!";
+			error_msg("Das Forschungslabor wurde noch nicht gebaut!");
 		}
 	}
 	// ENDE SKRIPT //

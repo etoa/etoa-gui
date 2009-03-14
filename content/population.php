@@ -320,7 +320,7 @@
 			tableEnd();
 		}
 		else
-			echo "Es sind noch keine Geb&auml;ude gebaut, in denen deine Bev&ouml;lkerung wohnen oder arbeiten kann!";
+			error_msg("Es sind noch keine Geb&auml;ude gebaut, in denen deine Bev&ouml;lkerung wohnen oder arbeiten kann!");
 
 	}
 ?>
