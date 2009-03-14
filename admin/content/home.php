@@ -82,18 +82,27 @@
 		echo "<h1>Backend-Daemon</h1>";
 		if (UNIX)
 		{
-			echo "<h2>System</h2>";
-			$un=posix_uname();
-			echo $un['sysname']." ".$un['release']." ".$un['version'];
-
-			echo "<h2>Daemon etoad</h2>";	
-			if ($_GET['action']=="daeomonrestart")
+			if (isset($_GET['action']) && $_GET['action']=="daeomonrestart")
 			{
 				echo "<div><div style=\"background:#000;padding:6px;border:1px solid #fff\">";
-				passthru("$daemonExe -r test -k");
+				$cmd = $daemonExe." -r ".$cfg->daemonIdentifier->v." -k";
+				echo $cmd."<br/>";
+				passthru($cmd);
 				echo "</div><br/>";
 			}
+
+
+			$frm = new Form("bustn","?page=$page&amp;sub=$sub");
+			echo $frm->begin();
 			
+			tableStart("Daemon-Infos");
+			$un=posix_uname();
+			echo "<tr><th>System</th><td>".$un['sysname']." ".$un['release']." ".$un['version']."</td></tr>";
+			echo "<tr><th>Daemon-ID</th><td>".$daemonId."</td></tr>";
+			echo "<tr><th>Pfad</th><td>".$daemonExe."</td></tr>";
+			echo "<tr><th>Logfile</th><td>".$daemonLogfile."</td></tr>";
+			echo "<tr><th>Pidfile</th><td>".$daemonPidfile."</td></tr>";
+			echo "<tr><th>Status</th><td>";			
 			if ($pid = checkDaemonRunning($daemonPidfile))
 			{
 				echo "<div style=\"color:#0f0;\">Der Backend-Dienst läuft mit PID $pid!
@@ -105,15 +114,12 @@
 				echo "<div style=\"color:red;\">Der Backend-Dienst scheint nicht zu laufen!
 				&nbsp; <input type=\"button\" value=\"Neu starten\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;action=daeomonrestart'\" /></div>";
 			}
-			
-			echo "<h2>Log</h2><b>Datei:</b>";
-			$numRows = isset($_POST['numrows']) && $_POST['numrows']>0 ? $_POST['numrows'] : 50;
-//			echo "
-//			<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">Zeige die letzten 
-//			<input type=\"text\" size=\"3\" maxlength=\"4\" value=\"$numRows\" name=\"numrows\" /> Zeilen 
-//			<input type=\"submit\" name=\"log_submit\" value=\"Übernehmen\" /></form>";
-			
-			//if ($logData = tail($daemonLogfile,$numRows))
+			echo "</td></tr>";			
+			tableEnd();
+			echo $frm->close();		
+		
+		
+			echo "<h2>Log</h2>";
 			if (is_file($daemonLogfile))
 			{
 				echo "<textarea style=\"height:400px;width:100%\" id=\"logtextarea\" readonly=\"readonly\">";

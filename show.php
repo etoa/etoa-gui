@@ -49,7 +49,7 @@
 	dbconnect();
 	
 	$cfg = Config::getInstance();
-	
+	$conf = $cfg->getArray();
 	include("def.inc.php");
 
 	$indexpage = array();
