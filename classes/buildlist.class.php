@@ -91,7 +91,7 @@
 			FROM
 				buildlist
 			WHERE
-				buildlist_user_id=".$this->userId ."
+				buildlist_user_id=".$this->ownerId ."
 				AND buildlist_entity_id=".$this->entityId."
 			;");
 			$arr = mysql_fetch_row($res);

@@ -761,6 +761,15 @@
 				$tbl[]="chat_users";
 				$tbl[]="attack_ban";
 			}
+			else
+			{
+				dbquery("
+				UPDATE
+					users
+				SET
+					discoverymask=''
+				");
+			}
 			
 			foreach ($tbl as $t)
 			{
