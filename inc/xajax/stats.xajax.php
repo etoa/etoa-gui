@@ -776,7 +776,7 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 					{
 						$addstyle=" class=\"userInactiveColor\"";
 					}
-					elseif ($arr['alliance_tag']==$_SESSION['alliance_tag'])
+					elseif ($arr['alliance_tag']!='' && $arr['alliance_tag']==$_SESSION['alliance_tag'])
 					{
 						$addstyle=" class=\"userAllianceMemberColor\"";
 					}
