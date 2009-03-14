@@ -787,7 +787,7 @@
 				return false;
 			}
 
-			$nick=str_replace(' ','',trim($data['nick']));
+			$nick=trim($data['nick']);
 			
 			if (!checkValidNick($nick) || !checkValidName($data['name']))
 			{			
@@ -863,11 +863,11 @@
 				
 				if ($welcomeMail == 1)
 				{
-		      $email_text = "Hallo ".$data['nick']."\n\nDu hast dich erfolgreich beim Sci-Fi Browsergame Escape to Andromeda registriert.\nHier nochmals deine Daten:\n\n";
+		      $email_text = "Hallo ".$nick."\n\nDu hast dich erfolgreich beim Sci-Fi Browsergame Escape to Andromeda registriert.\nHier nochmals deine Daten:\n\n";
 		      $email_text.= "Universum: ".ROUNDID."\n";
 		      $email_text.= "Name: ".$data['name']."\n";
 		      $email_text.= "E-Mail: ".$data['email']."\n\n";
-		      $email_text.= "Nick: ".$data['nick']."\n";
+		      $email_text.= "Nick: ".$nick."\n";
 		      $email_text.= "Passwort: ".$pw."\n\n";
 		      $email_text.= "WICHTIG: Gib das Passwort an niemanden weiter. Gib dein Passwort auch auf keiner Seite ausser der Login- und der Einstellungs-Seite ein. Ein Game-Admin oder Entwickler wird dich auch nie nach dem Passwort fragen!\n";
 		      $email_text.= "Desweiteren solltest du dich mit den Regeln (".LOGINSERVER_URL."?page=regeln) bekannt machen, da ein Regelverstoss eine (zeitweilige) Sperrung deines Accounts zur Folge haben kann!\n\n";

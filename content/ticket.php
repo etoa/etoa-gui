@@ -79,7 +79,7 @@
 				$text.= "IP/Host: ".$_SERVER['REMOTE_ADDR']." (".resolveIp($_SERVER['REMOTE_ADDR']).")\n";
 				$text.= "\n".$tarr[0]."\n\n";
 				$text.= $_POST['abuse_text'];
-				$text.= "\n\nTicket bearbeiten: ".$cfg->val("roundurl")."/admin/?page=tickets&amp;view=".$tid."";
+				$text.= "\n\nTicket bearbeiten: ".$cfg->roundurl->v."/admin/?page=tickets&amp;view=".$tid."";
 				
 	      $email_header = "From: Escape to Andromeda Ticketsystem ".ROUNDID."<etoa@dev.etoa.ch>\n";
 	      $email_header .= "Reply-To: ".$cu->nick."<".$cu->email.">\n";
