@@ -114,7 +114,7 @@
 		{
 			// Cheating-Schutz für externe Formulare
 			// Todo: I this works properly, ban user immediately
-			if ($page!=DEFAULT_PAGE && !isset($_SERVER["HTTP_REFERER"]) && count($_POST)>0)
+			/*if ($page!=DEFAULT_PAGE && !isset($_SERVER["HTTP_REFERER"]) && count($_POST)>0)
 			{
 				echo "<h1>Cheat-Schutz</h1> Du hast anscheinend versucht, über ein externes Formular eine Aktion durchzuführen. 
 				Dies ist nicht erlaubt!<br/><br/>";
@@ -136,8 +136,8 @@
 				$str.="\nBrowser: ".$_SERVER["HTTP_USER_AGENT"];	
 				add_log(3,$str);
 				$s=Null;
-			}
-			else
+			}*/
+			if (true)
 			{
 				if (eregi('^[a-z\_]+$',$page)  && strlen($page)<=50)
 				{

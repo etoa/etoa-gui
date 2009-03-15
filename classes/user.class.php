@@ -34,6 +34,7 @@
     protected $deleted;
     protected $registered;
 		protected $chatadmin;
+		protected $admin;
 		protected $ip;
 		protected $visits;
 		protected $profileImage;
@@ -50,6 +51,7 @@
     protected $specialistId;
     protected $specialistTime;
 	protected $specialist = null;
+	protected $ghost;
 
 		// Sub-objects and their id's		
 		protected $raceId;
@@ -113,6 +115,8 @@
 		    	$this->registered = $arr['user_registered'];
 		    	$this->setup = $arr['user_setup']==1 ? true : false;
 				$this->chatadmin=$arr['user_chatadmin']==1 ? true : false;
+				$this->admin=$arr['admin']==1 ? true : false;
+				$this->ghost=$arr['user_ghost']==1 ? true : false;
 				
 				$this->ip=$_SERVER['REMOTE_ADDR'];
 				

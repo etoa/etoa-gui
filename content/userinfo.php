@@ -109,6 +109,19 @@
 			{
 				echo "<tr><th style=\"width:120px;\">Registriert:</th><td>".df($user->registered)." (dabei seit ".tf(time()-$user->registered).")</td></tr>";
 			}			
+			if ($user->admin)
+			{
+				echo "<tr><th style=\"width:120px;\">Game-Admin:</th><td class=\"adminColor\">Dies ist ein Account eines Game-Admins. Er darf gemäss Regeln nicht angegriffen werden.</td></tr>";
+			}			
+			if ($user->chatadmin)
+			{
+				echo "<tr><th style=\"width:120px;\">Chat-Admin:</th><td>Dies ist ein Account eines Chat-Admins. Er hat das Recht, Spieler im Chat zu kicken oder zu bannen.</td></tr>";
+			}			
+			if ($user->ghost)
+			{
+				echo "<tr><th style=\"width:120px;\">Geist:</th><td>Dies ist ein Geist-Account. Er wird nicht in der Statistik angezeigt.</td></tr>";
+			}
+
 			tableEnd();
 
 			//
