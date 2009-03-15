@@ -371,7 +371,7 @@
 				$allys=get_alliance_names();
 				$time = time();
 				
- 				echo "<table class=\"tbl\">";
+ 				tableStart();
 				echo "<tr>";
 				echo "<th>ID</th>";
 				echo "<th>Nick</th>";
@@ -381,7 +381,7 @@
 				echo "<th>Allianz</th>";
 				echo "<th>Rasse</th>";
 				echo "</tr>";
-				while ($arr = mysql_fetch_array($res))
+				while ($arr = mysql_fetch_assoc($res))
 				{
 					if ($arr['user_blocked_from']<$time && $arr['user_blocked_to']>$time)
 						$uCol=' class="userLockedColor"';
@@ -389,6 +389,10 @@
 						$uCol=' class="userHolidayColor"';
 					elseif ($arr['user_deleted']!=0)
 						$uCol=' class="userDeletedColor"';
+					elseif ($arr['admin']!=0)
+						$uCol=' class="adminColor"';
+					elseif ($arr['user_ghost']!=0)
+						$uCol=' class="userGhostColor"';
 					else
 						$uCol="";
 					echo "<tr>";
@@ -412,6 +416,8 @@
 				<span class=\"userLockedColor\">Gesperrt</span>, 
 				<span class=\"userHolidayColor\">Urlaub</span>, 
 				<span class=\"userDeletedColor\">Löschauftrag</span>
+				<span class=\"adminColor\">Admin</span>
+				<span class=\"userGhostColor\">Geist</span>
 				";
 			}
 			else

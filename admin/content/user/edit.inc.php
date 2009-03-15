@@ -25,6 +25,7 @@
 				user_multi_delets=".$_POST['user_multi_delets'].",
 				user_sitting_days=".$_POST['user_sitting_days'].",
 				user_chatadmin=".$_POST['user_chatadmin'].",
+				admin=".$_POST['admin'].",
 				user_ghost=".$_POST['user_ghost'].",
 				user_profile_board_url='".$_POST['user_profile_board_url']."'";	
 
@@ -383,6 +384,18 @@
 										}
 										echo "</div>";
 									}
+									if ($arr['admin']!=0)
+									{
+										echo "<div class=\"adminColor\">Dies ist ein Admin-Account!</div>";
+									}										
+									if ($arr['user_ghost']!=0)
+									{
+										echo "<div class=\"userGhostColor\">Dies ist ein Geist-Account. Er wird nicht in der Statistik angezeigt!</div>";
+									}										
+									if ($arr['user_chatadmin']!=0)
+									{
+										echo "<div>Dieser User ist ein Chat-Admin.</div>";
+									}										
 									
 									// Kommentare
 									$cres=dbquery("
@@ -402,7 +415,7 @@
 										</div>";
 									}	
 									
-									// Kommentare
+									// Tickets
 									$cres=dbquery("
 									SELECT 
 										COUNT(id),
@@ -517,6 +530,18 @@
 									echo "/> (Der Spieler hat Adminrechte im Chat)
 								</td>
 							</tr>
+							<tr>
+								<td class=\"tbltitle\">Admin:</td>
+								<td class=\"tbldata\">Ja: <input type=\"radio\" name=\"admin\" value=\"1\"";
+									if ($arr['admin']==1)
+										echo " checked=\"checked\" ";
+									echo " /> Nein: <input type=\"radio\" name=\"admin\" value=\"0\" ";
+									if ($arr['admin']==0)
+										echo " checked=\"checked\" ";
+									echo "/> (Der Spieler wird in der Raumkarte als Game-Admin markiert)
+								</td>
+							</tr>
+							
 							";
 							
 				

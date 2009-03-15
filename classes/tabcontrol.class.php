@@ -15,6 +15,7 @@
 			}
 			else
 				$tWidthStyle = "";
+			echo "<div class=\"tabNav\">";
 			foreach ($elements as $e)
 			{
 				if ($cnt==$default)
@@ -29,7 +30,7 @@
 					echo "<div $tWidthStyle onclick=\"tabActivate('".$name."',".$cnt.")\" id=\"".$name."Nav".$cnt."\" class=\"".$class."\">".$e."</div>";
 				$cnt++;
 			}
-			echo "<br style=\"clear:both;\" />";
+			echo "<br style=\"clear:both;\" /></div>";
 			
 			$this->name = $name;
 			$this->count = count($elements);

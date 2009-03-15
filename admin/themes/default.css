@@ -622,3 +622,36 @@ h1,h2,h3,h4	{
 	margin:5px auto;
 	margin-bottom:15px;
 }
+
+.tabOuter	{
+	margin:5px;
+}
+
+.tabNav	{
+	margin-left:5px;
+}
+
+.tabTab	{
+	float:left;
+	border:1px solid #fff;
+	background:#223;
+	padding:5px;
+	margin-bottom:10px;
+}
+
+.tabTab:hover	{
+	cursor:pointer;	
+}
+
+.tabTabActive	{
+	float:left;
+	border:1px solid #ddd;
+	background:#225;
+	padding:5px;
+	margin-bottom:10px;	
+	font-weight:bold;
+}
+
+.tabTabActive:hover	{
+	cursor:pointer;	
+}

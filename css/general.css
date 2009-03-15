@@ -156,7 +156,7 @@ img.resIcon	{
 }
 
 .userLockedColor, .tb .userLockedColor	{
-	color:#ff9933;
+	color:#FF6522;
 }
 
 .userInactiveColor, .tb .userInactiveColor		{
@@ -165,6 +165,10 @@ img.resIcon	{
 
 .userLongInactiveColor, .tb .userLongInactiveColor		{
 	color:#aaa;
+}
+
+.userGhostColor, .tb .userGhostColor		{
+	color:#779;
 }
 
 .userHolidayColor, .tb .userHolidayColor		{
@@ -176,7 +180,7 @@ img.resIcon	{
 }
 
 .adminColor, .tb .adminColor		{
-	color:#000000;
+	color:#DAA520;
 }
 
 .enemyColor, .tb .enemyColor		{
