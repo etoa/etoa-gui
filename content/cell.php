@@ -159,13 +159,13 @@
 						  $tm_info = "Admin/Entwickler";						  
 					  }
 					  // Krieg
-					  elseif ($ent->owner->allianceId>0 && $cu->alliance->checkWar($ent->owner->allianceId))
+					  elseif ($ent->owner->allianceId>0 && $cu->allianceId>0 && $cu->alliance->checkWar($ent->owner->allianceId))
 					  {
 						  $class .= "enemyColor";
 						  $tm_info = "Krieg";
 					  }
 					  // Bündniss
-					  elseif ($ent->owner->allianceId>0 && $cu->alliance->checkBnd($ent->owner->allianceId))
+					  elseif ($ent->owner->allianceId>0 && $cu->allianceId>0 && $cu->alliance->checkBnd($ent->owner->allianceId))
 					  {
 						  $class .= "friendColor";
 						  $tm_info = "B&uuml;ndnis";
