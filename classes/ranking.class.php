@@ -805,8 +805,7 @@
 			}				
 			unset($oldranks);
 			
-			self::createUserBanner();
-			
+	
 			
 			
 			// Allianz Statistik generieren
@@ -1035,13 +1034,15 @@
 	 			add_log("4","Statistiken wurden manuell vom User ".$_SESSION[SESSION_NAME]['user_nick']." aktualisiert!",time());
 	 		else
 	 			add_log("4","Statistiken wurden aktualisiert!",time());
-	
-			return array($num,$allpoints);
-	
+
 			//Arrays löschen (Speicher freigeben)
 			mysql_free_result($res);
 	    unset($arr);
-		}		
+
+			self::createUserBanner();
+	
+			return array($num,$allpoints);
+		}
 
 		static function createUserBanner()
 		{
@@ -1056,7 +1057,10 @@
 				a.alliance_tag,
 				r.race_name,
 				u.user_points,
-				u.user_id
+				u.user_id,
+				u.admin,
+				u.user_ghost,
+				u.user_rank
 			FROM
 				users u
 			LEFT JOIN
@@ -1093,10 +1097,23 @@
 						ImageTTFText ($im, 9, 0, 9, 39, $colBlack, $font,"<".$arr[2]."> ".$arr[1]);
 						ImageTTFText ($im, 9, 0, 8, 38, $colWhite, $font,"<".$arr[2]."> ".$arr[1]);
 					}
-					ImageTTFText ($im, 9, 0, 9, 54, $colBlack, $font,ROUNDID."  -  ".nf($arr[4])." Punkte");
-					ImageTTFText ($im, 9, 0, 8, 53, $colWhite, $font,ROUNDID."  -  ".nf($arr[4])." Punkte");
+					
+					if ($arr[6]==1)
+						$pt = "  -  Game-Admin";
+					elseif ($arr[7]==1)
+						$pt = "";
+					else
+						$pt = "  -  ".nf($arr[4])." Punkte, Platz ".$arr[8]."";
+					
+					ImageTTFText ($im, 9, 0, 9, 54, $colBlack, $font,ROUNDID.$pt);
+					ImageTTFText ($im, 9, 0, 8, 53, $colWhite, $font,ROUNDID.$pt);
 			
-					imagepng($im,"../cache/userbanner/".md5("user".$arr[5]).".png");
+					$file = "../cache/userbanner/".md5("user".$arr[5]).".png";
+					if (file_exists($file))
+					{
+						unlink($file);
+					}
+					imagepng($im,$file);
 					imagedestroy($im);			
 				}
 			}

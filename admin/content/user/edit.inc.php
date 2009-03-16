@@ -852,15 +852,15 @@
 				*/
 				$tc->open();			
 				
-				echo "<table class=\"tbl\">";
+				echo "<table class=\"tb\">";
 				echo "<tr>
-								<td class=\"tbltitle\">Profil-Text:</td>
+								<th>Profil-Text:</th>
 								<td class=\"tbldata\">
 									<textarea name=\"user_profile_text\" cols=\"60\" rows=\"8\">".stripslashes($arr['user_profile_text'])."</textarea>
 								</td>
 							</tr>
 							<tr>
-								<td class=\"tbltitle\">Profil-Bild:</td>
+								<th>Profil-Bild:</th>
 								<td class=\"tbldata\">";
 					      if ($arr['user_profile_img']!="")
 					      {
@@ -876,13 +876,13 @@
 					echo "</td>
 							</tr>
 							<tr>
-								<td class=\"tbltitle\">Board-Signatur:</td>
+								<th>Board-Signatur:</th>
 								<td class=\"tbldata\">
 									<textarea name=\"user_signature\" cols=\"60\" rows=\"8\">".stripslashes($arr['user_signature'])."</textarea>
 								</td>
 							</tr>
 							<tr>
-								<td class=\"tbltitle\">Avatarpfad:</td>
+								<th>Avatarpfad:</th>
 								<td class=\"tbldata\">";
 						      if ($arr['user_avatar']!="")
 						      {
@@ -896,11 +896,23 @@
 					echo "</td>
 							</tr>
 							<tr>
-				      	<td class=\"tbltitle\">Öffentliches Foren-Profil:</td>
+				      	<th>Öffentliches Foren-Profil:</th>
 				      	<td class=\"tbldata\">
 				      		<input type=\"text\" name=\"user_profile_board_url\" maxlength=\"200\" size=\"50\" value=\"".$arr['user_profile_board_url']."\">
 				      	</td>
 				      </tr>";
+				      
+						echo '<tr><th>Banner:</th><td>';
+						$name = CACHE_ROOT.'/userbanner/'.md5('user'.$id).'.png';
+						if (file_exists($name))
+						{
+							echo '
+							<img src="'.$name.'" alt="Banner"><br>
+							Generiert: '.df(filemtime($name)).'<br/>
+							<textarea readonly="readonly" rows="2" cols="65">&lt;a href="http://www.etoa.ch"&gt;&lt;img src="'.$cfg->roundurl.'/'.$name.'" width="468" height="60" alt="EtoA Online-Game" border="0" /&gt;&lt;/a&gt;</textarea>
+							<textarea readonly="readonly" rows="2" cols="65">[url=http://www.etoa.ch][img]'.$cfg->roundurl.'/'.$name.'[/img][/url]</textarea>';				
+						}				
+						echo '</td></tr>';					      
 				echo "</table>";
 				
 				$tc->close();
@@ -911,7 +923,7 @@
 				*/								
 				$tc->open();			
 				
-				$imagepacks = get_imagepacks("../");
+				$imagepacks = get_imagepacks();
 				$designs = get_designs("../");
 				
 				echo "<table class=\"tbl\">";
