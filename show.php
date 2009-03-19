@@ -211,7 +211,8 @@
 				
 				if ($index!="")
 				{
-					$index = ($index=="show") ? "ladder" : $index;
+					$index = ($index=="stats") ? "ladder" : $index;
+					echo $index;
 					$page=$index;
 					$sub="index/";
 				}
