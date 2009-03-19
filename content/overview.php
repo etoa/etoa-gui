@@ -763,7 +763,7 @@
         $defense_name[$arr_planet['id']] = "";
       }
 	
-			$planet_info = "<b>".$planet_name."</b><br>".$building_name." ".$building_level."";
+			$planet_info = "<b>".stripcslashes($planet_name)."</b><br>".$building_name." ".$building_level."";
 			$planet_image_path = "".IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$arr_planet['planet_image']."_middle.gif";
 	
 			// Planet bild mit link zum bauhof und der informationen übergabe beim mouseover

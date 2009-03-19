@@ -373,8 +373,8 @@
 			{
 				$user_id = $uarr['user_id'];
 				$user_rank_highest[$user_id] = $uarr['user_rank_highest']>0 ? $uarr['user_rank_highest'] : 9999;
-				$points = 0;
-				$points_ships = 0;
+				$points = 0.0;
+				$points_ships = 0.0;
 				$points_tech = 0;
 				$points_building = 0;
 				$sx = 0;
@@ -417,7 +417,7 @@
 				");
 				while ($arr = mysql_fetch_assoc($res))
 				{
-					$p = round($arr['shiplist_count']*$ship[$arr['shiplist_ship_id']]);
+					$p = $arr['shiplist_count']*$ship[$arr['shiplist_ship_id']];
 					$points+=$p;
 					$points_ships+=$p;
 				}
@@ -440,7 +440,7 @@
 				");
 				while ($arr = mysql_fetch_assoc($res))
 				{
-					$p = round($arr['fs_ship_cnt']*$ship[$arr['fs_ship_id']]);
+					$p = $arr['fs_ship_cnt']*$ship[$arr['fs_ship_id']];
 					$points+=$p;
 					$points_ships+=$p;
 				}

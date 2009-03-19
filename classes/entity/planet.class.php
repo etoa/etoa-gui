@@ -577,7 +577,7 @@
 			UPDATE 
 				planets 
 			SET 
-				planet_name='".$name."',
+				planet_name='".addslashes($name)."',
 				planet_desc='".addslashes($comment)."' 
 			WHERE 
 				id='".$this->id."';");

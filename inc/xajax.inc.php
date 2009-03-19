@@ -58,7 +58,7 @@
 		{
 			require_once("inc/xajax/register.xajax.php");
 		}
-		elseif ($index=="ladder")
+		elseif ($index=="ladder" || $index=="show")
 		{
 			require_once("inc/xajax/ladder.xajax.php");
 		}

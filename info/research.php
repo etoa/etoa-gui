@@ -69,23 +69,23 @@
 				SELECT 
 					ship_name,
 					ship_id,
-					req_req_tech_level 
+					req_level 
 				FROM 
 					ship_requirements,
 					ships 
 				WHERE
-					req_req_tech_id=".$arr['tech_id']."
-				AND req_ship_id=ship_id
+					req_tech_id=".$arr['tech_id']."
+				AND obj_id=ship_id
 				AND special_ship='0'
 				GROUP BY 
-					ship_name,req_id;");
+					ship_name,id;");
 					
 				if (mysql_num_rows($vres)>0)
 				{
 					tableStart("Folgende Schiffe verwenden diesen Antrieb");
 					while ($varr=mysql_fetch_array($vres))
 					{
-						echo "<tr><td class=\"tbldata\"><a href=\"?page=help&amp;site=shipyard&amp;id=".$varr['ship_id']."\">".$varr['ship_name']."</a></td><td class=\"tbldata\">ben&ouml;tigt Stufe ".$varr['req_req_tech_level']."</td></tr>";
+						echo "<tr><td class=\"tbldata\"><a href=\"?page=help&amp;site=shipyard&amp;id=".$varr['ship_id']."\">".$varr['ship_name']."</a></td><td class=\"tbldata\">ben&ouml;tigt Stufe ".$varr['req_level']."</td></tr>";
 					}
 					tableEnd();
 				}
