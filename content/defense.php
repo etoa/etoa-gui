@@ -1143,7 +1143,7 @@
 								}
 								else
 								{
-									$shiplist_count = 0;
+									$deflist_count = 0;
 								}
 								
 								// Volle Ansicht
