@@ -129,7 +129,6 @@
 			query << "	planets ";
 			query << "SET ";
 			query << "	planet_user_id='" << this->getUserId() << "', ";
-			query << "	planet_name='" << this->codeName << "', ";
 			query << "	planet_res_metal=planet_res_metal+'" << (this->getResMetal() - this->initResMetal) << "', ";
 			query << "	planet_res_crystal=planet_res_crystal+'" << (this->getResCrystal() - this->initResCrystal) << "', ";
 			query << "	planet_res_fuel=planet_res_fuel+'" << (this->getResFuel() - this->initResFuel) << "', ";
@@ -139,8 +138,10 @@
 			query << "	planet_wf_crystal=planet_wf_crystal+'" << (this->getWfCrystal() - this->initWfCrystal) << "', ";
 			query << "	planet_wf_plastic=planet_wf_plastic+'" << (this->getWfPlastic() - this->initWfPlastic) << "', ";
 			query << "	planet_people=planet_people+'" << (this->getResPeople() - this->initResPeople) << "', ";
-			if (this->userChanged)
+			if (this->userChanged) {
 				query << " planet_user_changed='" << this->userChanged << "', ";
+				query << "	planet_name='" << this->codeName << "', ";
+			}
 			query << "	planet_last_updated='" << this->lastUpdated << "' ";
 			query << "WHERE ";
 			query << "	id='" << this->getId() << "' ";
