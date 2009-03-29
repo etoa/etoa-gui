@@ -1114,6 +1114,7 @@
 						unlink($file);
 					}
 					imagepng($im,$file);
+					chmod($file,0777);
 					imagedestroy($im);			
 				}
 			}

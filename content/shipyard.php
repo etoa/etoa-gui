@@ -514,6 +514,12 @@
 							$build_cnt=floor(min($bf));
 						}
 						
+						//Check for Rene-Bug
+						$additional_food_costs = $people_working*$cfg->value('people_food_require');
+						if ($additional_food_costs!=$_POST['additional_food_costs'] || $_POST['additional_food_costs']<0) {
+							$build_cnt=0;
+						}
+						
 						//Anzahl muss grösser als 0 sein
 						if ($build_cnt>0)
 						{
