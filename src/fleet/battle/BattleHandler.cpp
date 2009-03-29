@@ -11,8 +11,29 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
     // BEGIN SKRIPT //
 	alliancesHaveWar = 0;
 
-   	// Kampf abbrechen falls User gleich
-    if (fleet->getLeaderId() > 0 && (fleet->fleetUser->getAllianceId()==entity->getUser()->getAllianceId() &&fleet->fleetUser->getAllianceId()!=0)) {
+   	// Kampf abbrechen falls User gleich 0
+	if (entity->getUserId()==0) {
+		message->addText("[b]KAMPFBERICHT[/b]",1);
+		message->addText("vom Planeten ",0);
+		message->addText(entity->getCoords(),1);
+		message->addText("[b]Zeit:[/b] ");
+		message->addText(fleet->getLandtimeString(),2);
+		message->addText("[b]Angreifer:[/b] ");
+		message->addText(fleet->getUserNicks(),1);
+		message->addText("[b]Verteidiger:[b] ");
+		message->addText("Niemand");
+		message->addText("Der Kampf wurde abgebrochen da der Verteidiger nicht mehr existiert!");
+		
+		message->addSubject("Kampfbericht (Unentschieden)");
+		
+		this->returnV = 4;
+		this->returnFleet = true;
+		
+		fleet->addMessageUser(message);
+		
+		log->addText("Action failed: Opponent error");
+	}
+    else if (fleet->getLeaderId() > 0 && (fleet->fleetUser->getAllianceId()==entity->getUser()->getAllianceId() &&fleet->fleetUser->getAllianceId()!=0)) {
 		message->addText("[b]KAMPFBERICHT[/b]",1);
 		message->addText("vom Planeten ",0);
 		message->addText(entity->getCoords(),1);

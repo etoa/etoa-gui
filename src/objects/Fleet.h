@@ -82,7 +82,7 @@ public:
 	int getLandtime();
 	int getLaunchtime();
 	int getNextactiontime();
-	std::string getAction();
+	std::string getAction(bool blank=false);
 	short getStatus();
 	
 	void addMessageUser(Message* message);

@@ -139,14 +139,18 @@
 		return this->nextactiontime;
 	}
 
-	std::string Fleet::getAction() {
-		Config &config = Config::instance();
-		std::string action = config.getActionName(this->action);
-		if (this->status==1)
-			action += " (Rückflug)";
-		else if (this->status==2)
-			action += " (Abgebrochen)";
-		return action;
+	std::string Fleet::getAction(bool blank) {
+		if (blank)
+			return this->action;
+		else {
+			Config &config = Config::instance();
+			std::string action = config.getActionName(this->action);
+			if (this->status==1)
+				action += " (Rückflug)";
+			else if (this->status==2)
+				action += " (Abgebrochen)";
+			return action;
+		}
 	}
 
 	short Fleet::getStatus() {

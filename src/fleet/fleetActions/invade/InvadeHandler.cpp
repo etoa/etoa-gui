@@ -19,7 +19,7 @@ namespace invade
 		this->actionMessage->addType((int)config.idget("SHIP_WAR_MSG_CAT_ID"));
 		
 		//invade the planet
-		if (bh->returnV) {
+		if (bh->returnV==1) {
 			
 			// Precheck action==possible?
 			if (this->f->actionIsAllowed()) {

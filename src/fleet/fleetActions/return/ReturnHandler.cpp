@@ -18,7 +18,7 @@ namespace retour
 			fleetLand(1);
 			// Check if the user'd like to have a return message for spy and transport
 		
-			if (this->f->getAction()=="spy" || this->f->getAction()=="transport")
+			if (this->f->getAction(true)=="spy" || this->f->getAction(true)=="transport")
 				if (!this->f->fleetUser->getPropertiesReturnMsg())
 					this->actionMessage->dontSend();
 			

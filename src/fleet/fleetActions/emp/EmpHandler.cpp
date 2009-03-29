@@ -20,7 +20,7 @@ namespace emp
 		this->actionMessage->addType((int)config.idget("SHIP_WAR_MSG_CAT_ID"));
 		
 		// If the attacker is the winner, deactivade a building
-		if (returnV) {
+		if (returnV==1) {
 			// Precheck action==possible?
 			if (this->f->actionIsAllowed()) {
 				this->shipCnt = this->f->getActionCount();
