@@ -1108,7 +1108,7 @@
 					ImageTTFText ($im, 9, 0, 9, 54, $colBlack, $font,ROUNDID.$pt);
 					ImageTTFText ($im, 9, 0, 8, 53, $colWhite, $font,ROUNDID.$pt);
 			
-					$file = "../cache/userbanner/".md5("user".$arr[5]).".png";
+					$file = CACHE_ROOT."/userbanner/".md5("user".$arr[5]).".png";
 					if (file_exists($file))
 					{
 						unlink($file);
