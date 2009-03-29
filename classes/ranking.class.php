@@ -983,7 +983,7 @@
 					(
 						'".$arr['alliance_id']."',
 						'".time()."',
-						'".$apoints."',
+						'".$points."',
 						'".$arr['uavg']."',
 						'".$arr['cnt']."'
 					);");

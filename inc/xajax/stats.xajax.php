@@ -72,8 +72,11 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 			$cnt=1;
 			while ($arr=mysql_fetch_array($res))
 			{
+				$addstyle="";
+				if ($arr['alliance_tag']==$_SESSION['alliance_tag'])
+					$addstyle=" class=\"userAllianceMemberColor\"";
 				echo "<tr>";
-				echo  "<td ".tm("Punkteverlauf","<div><img src=\"misc/alliance_stats.image.php?alliance=".$arr['alliance_id']."\" alt=\"Diagramm\" style=\"width:600px;height:400px;background:#335 url(images/loading335.gif) no-repeat 300px 200px;\" /></div>").">
+				echo  "<td $addstyle ".tm("Punkteverlauf","<div><img src=\"misc/alliance_stats.image.php?alliance=".$arr['alliance_id']."\" alt=\"Diagramm\" style=\"width:600px;height:400px;background:#335 url(images/loading335.gif) no-repeat 300px 200px;\" /></div>").">
 				".nf2($cnt)." ";
 				if ($arr['alliance_rank_current']==$arr['alliance_rank_last'])
 					echo  "<img src=\"images/stats/stat_same.gif\" alt=\"same\" width=\"21\" height=\"9\" />";
@@ -81,16 +84,16 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 					echo  "<img src=\"images/stats/stat_down.gif\" alt=\"up\" width=\"9\" height=\"12\" />";
 				elseif ($arr['alliance_rank_current']<$arr['alliance_rank_last'])
 					echo  "<img src=\"images/stats/stat_up.gif\" alt=\"down\" width=\"9\" height=\"11\" />";
-				echo "<td >".($arr['alliance_tag'])."</td>";
+				echo "<td $addstyle>".($arr['alliance_tag'])."</td>";
 				echo "<td >
 				<div id=\"ttuser".$arr['alliance_id']."\" style=\"display:none;\">
 					".popUp("Allianzseite","page=alliance&id=".$arr['alliance_id'])."<br/>
 					".popUp("Punkteverlauf","page=$page&amp;mode=$mode&amp;alliancedetail=".$arr['alliance_id'])."<br/>";
-				echo "</div><a href=\"#\" ".cTT($arr['alliance_name'],"ttuser".$arr['alliance_id']).">
+				echo "</div><a $addstyle href=\"#\" ".cTT($arr['alliance_name'],"ttuser".$arr['alliance_id']).">
 				".$arr['alliance_name']."</td>";
-				echo "<td >".nf($arr['points'])."</td>";
-				echo "<td >".nf($arr['uavg'])."</td>";
-				echo "<td >".nf($arr['cnt'])."</td>";
+				echo "<td $addstyle>".nf($arr['points'])."</td>";
+				echo "<td $addstyle >".nf($arr['uavg'])."</td>";
+				echo "<td $addstyle>".nf($arr['cnt'])."</td>";
 				echo "</tr>";
 				$cnt++;
 			}
@@ -167,20 +170,23 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 			$cnt=1;
 			while ($arr=mysql_fetch_array($res))
 			{
+				$addstyle="";
+				if ($arr['alliance_tag']==$_SESSION['alliance_tag'])
+					$addstyle=" class=\"userAllianceMemberColor\"";
 				echo "<tr>
-						<td>
+						<td $addstyle>
 							".nf2($cnt)."
 						</td>";
-				echo "<td >
+				echo "<td $addstyle>
 				<div id=\"ttuser".$arr['alliance_id']."\" style=\"display:none;\">
 					".popUp("Allianzseite","page=alliance&id=".$arr['alliance_id'])."<br/>
 					".popUp("Punkteverlauf","page=$page&amp;mode=$mode&amp;alliancedetail=".$arr['alliance_id'])."<br/>";
-				echo "</div><a href=\"#\" ".cTT($arr['alliance_name'],"ttuser".$arr['alliance_id']).">
+				echo "</div><a $addstyle href=\"#\" ".cTT($arr['alliance_name'],"ttuser".$arr['alliance_id']).">
 				".$arr['alliance_tag']."</td>";
-				echo "<td >".nf($arr['bpoints'])."</td>";
-				echo "<td >".nf($arr['tpoints'])."</td>";
-				echo "<td >".nf($arr['spoints'])."</td>";
-				echo "<td >".nf($arr['apoints'])."</td>";
+				echo "<td $addstyle>".nf($arr['bpoints'])."</td>";
+				echo "<td $addstyle>".nf($arr['tpoints'])."</td>";
+				echo "<td $addstyle>".nf($arr['spoints'])."</td>";
+				echo "<td $addstyle>".nf($arr['apoints'])."</td>";
 				echo "</tr>";
 				$cnt++;
 			}

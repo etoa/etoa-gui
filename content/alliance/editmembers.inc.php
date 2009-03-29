@@ -226,8 +226,8 @@ if (Alliance::checkActionRights('editmembers'))
 							echo "Gründer";
 						}
 						echo "</td><td>
-						<a href=\"?page=messages&amp;mode=new&amp;message_user_to=".$mk."\">Nachricht</a><br/>
-						<a href=\"?page=userinfo&amp;id=".$mk."\">Profil</a></td></tr>";
+						<a href=\"?page=messages&amp;mode=new&amp;message_user_to=".$uid."\">Nachricht</a><br/>
+						<a href=\"?page=userinfo&amp;id=".$uid."\">Profil</a></td></tr>";
 				}
 				tableEnd();
 			}

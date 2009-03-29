@@ -235,6 +235,7 @@
 	
 								if ($cp->resMetal >= $bc['metal'] && $cp->resCrystal >= $bc['crystal'] && $cp->resPlastic >= $bc['plastic']  && $cp->resFuel >= $bc['fuel']  && $cp->resFood >= $bc['food'])
 								{
+									$start_time = time();
 									$end_time = time()+$btime;
 									if (sizeof($techlist[$arr['tech_id']])>0)
 									{
@@ -527,7 +528,8 @@
 						if ($planet_id==$cp->id())
 						{
 	              echo "<tr><td class=\"tbldata\"><input type=\"submit\" class=\"button\" id=\"buildcancel\" name=\"command_cbuild\" value=\"Abbrechen\"  onclick=\"if (this.value=='Abbrechen'){return confirm('Wirklich abbrechen?');}\" />";
-	              echo "</td><td class=\"tbldata\" id=\"buildtime\">-</td><td colspan=\"5\" class=\"tbldata\">&nbsp;</td></tr>";
+	              echo "</td><td class=\"tbldata\" id=\"buildtime\">-</td>
+		      					<td colspan=\"6\" class=\"tbldata\" id=\"buildprogress\" style=\"height:25px;background:#fff;text-align:center;\"></td></tr>";
 	              if ($b_level<$arr['tech_last_level']-1)
 		         		echo "<tr><td class=\"tbldata\" width=\"90\">N&auml;chste Stufe:</td><td class=\"tbldata\">".tf($btimen)."</td><td class=\"tbldata\">".nf($bcn['metal'])."</td><td class=\"tbldata\">".nf($bcn['crystal'])."</td><td class=\"tbldata\">".nf($bcn['plastic'])."</td><td class=\"tbldata\">".nf($bcn['fuel'])."</td><td class=\"tbldata\">".nf($bcn['food'])."</td></tr>";
 		         }
@@ -545,7 +547,7 @@
 	
 	
 	
-						if ($b_status==3 || $b_status==4)
+						/*if ($b_status==3 || $b_status==4)
 						{
 							?>
 								<script type="text/javascript">
@@ -595,7 +597,9 @@
 									}
 								</script>
 							<?PHP
-						}
+						}*/
+						countDown("buildtime",$end_time,"buildcancel");
+						jsProgressBar("buildprogress",$start_time,$end_time);
 					}
 					else
 					{
@@ -723,6 +727,7 @@
 								if(isset($techlist[$bid]))
 								{
 									$b_level = intval($techlist[$bid]['techlist_current_level']);
+									$start_time = intval($techlist[$bid]['techlist_build_start_time']);
 									$end_time = intval($techlist[$bid]['techlist_build_end_time']);
 								}
 								else

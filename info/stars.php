@@ -52,11 +52,11 @@
 			echo "<tr><td style=\"width:40px;background:#000;vertical-align:middle;\">
 				<img src=\"".IMAGE_PATH."/stars/star".$arr['sol_type_id']."_small.".IMAGE_EXT."\" width=\"40\" height=\"40\" alt=\"Stern\"/></a></td>";
 				
-			$tt = new ToolTip();
+			/*$tt = new ToolTip();
 			$tt->addIcon(IMAGE_PATH."/stars/star".$arr['sol_type_id']."_small.".IMAGE_EXT."");
 			$tt->addTitle($arr['sol_type_name']);
-			$tt->addComment($arr['sol_type_comment']);
-			echo "<td ".$tt."><b>".$arr['sol_type_name']."</b><br/>".$arr['sol_type_comment']."</td>";
+			$tt->addComment($arr['sol_type_comment']);"*/
+			echo "<td ".tm($arr['sol_type_name'],$arr['sol_type_comment'])."><b>".$arr['sol_type_name']."</b></td>";
 			echo "<td>".get_percent_string($arr['sol_type_f_metal'],1)."</td>";
 			echo "<td>".get_percent_string($arr['sol_type_f_crystal'],1)."</td>";
 			echo "<td>".get_percent_string($arr['sol_type_f_plastic'],1)."</td>";
@@ -70,6 +70,6 @@
 		}
 	}
 	tableEnd();
-
+sol_type_comment
 
 ?>
