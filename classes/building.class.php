@@ -6,7 +6,9 @@
 		public $fields;
 		public $id;
 		
-		public $costs;
+		public $costs, $costsFactor, $storeFactor;
+		
+		public $bunkerRes, $bunkerFleetCount, $bunkerFleetSpace;
 		
 		private $bRequirements = null;
 		private $tRequirements = null;
@@ -54,6 +56,11 @@
 				$this->costs[5] = $arr['building_costs_food'];
 				$this->costs[6] = $arr['building_costs_power'];
 				$this->costsFactor = $arr['building_build_costs_factor'];
+				$this->storeFactor = $arr['building_store_factor'];
+				
+				$this->bunkerRes = $arr['building_bunker_res'];
+				$this->bunkerFleetCount = $arr['building_bunker_fleet_count'];
+				$this->bunkerFleetSpace = $arr['building_bunker_fleet_space'];
 				$this->isValid = true;
 			
 			}

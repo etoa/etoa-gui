@@ -69,7 +69,7 @@
 						'deactivated' => $arr['buildlist_deactivated'],
 						'cooldown' => $arr['buildlist_cooldown'],
 						'people_working' => $arr['buildlist_people_working'],
-						'prod_percent' => $arr['buildlist_prod_percent']						
+						'prod_percent' => $arr['buildlist_prod_percent']
 					);
 					$this->count++;
 				}
@@ -193,6 +193,18 @@
 			$pbarr = mysql_fetch_row($res);
 			$this->totalPeopleWorking = $pbarr[0];
 			return $this->totalPeopleWorking;			
+		}
+		
+		function getBunkerRes()
+		{
+			if ($this->items==null)
+				$this->load();
+			$this->bunkerRes= 0;
+			foreach ($this->itemStatus as $k=>&$v)
+			{
+				$this->bunkerRes+= $this->item($k)->bunkerRes*intpow($this->item($k)->storeFactor,$v['level']-1);
+			}
+			return $this->bunkerRes;
 		}
 		
 		function getBuildTime($itemId,$targetLevel)
