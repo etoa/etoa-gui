@@ -28,6 +28,11 @@ namespace planet
 			<< "	planets.planet_res_plastic, "
 			<< "	planets.planet_res_fuel, "
 			<< "	planets.planet_res_food, "
+			<< "	planets.planet_bunker_metal, "
+			<< "	planets.planet_bunker_crystal, "
+			<< "	planets.planet_bunker_plastic, "
+			<< "	planets.planet_bunker_fuel, "
+			<< "	planets.planet_bunker_food, "
 			<< "	planets.planet_prod_metal, "
 			<< "	planets.planet_prod_crystal, "
 			<< "	planets.planet_prod_plastic, "
@@ -71,7 +76,7 @@ namespace planet
 		query.reset();
 		
 		if (res) {
-			int resSize = res.size();
+			unsigned int resSize = res.size();
 			
 			if (resSize) {
 				mysqlpp::Row row;

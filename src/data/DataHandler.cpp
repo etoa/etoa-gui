@@ -265,45 +265,48 @@
 		}
 		
 		this->counter = 0;	 	 	 	 	 	 	 	 	 	 	 	 	 	
-		query << "SELECT ";
-		query << "	building_id AS Id, ";
-		query << "	building_name AS Name, ";
-		query << "	building_type_id, ";
-		query << "	building_shortcomment AS shortcomment, ";
-		query << "	building_longcomment AS longcomment, ";
-		query << "	building_costs_metal AS costs_metal, ";
-		query << "	building_costs_crystal AS costs_crystal, ";
-		query << "	building_costs_plastic AS costs_plastic, ";
-		query << "	building_costs_fuel AS costs_fuel, ";
-		query << "	building_costs_food AS costs_food, ";
-		query << "	building_costs_power AS costs_power, ";
-		query << "	building_build_costs_factor, ";
-		query << "	building_demolish_costs_factor, ";
-		query << "	building_power_use, ";
-		query << "	building_power_req, ";
-		query << "	building_fuel_use, ";
-		query << "	building_prod_metal, ";
-		query << "	building_prod_crystal, ";
-		query << "	building_prod_plastic, ";
-		query << "	building_prod_fuel, ";
-		query << "	building_prod_food, ";
-		query << "	building_prod_power, ";
-		query << "	building_production_factor, ";
-		query << "	building_store_metal, ";
-		query << "	building_store_crystal, ";
-		query << "	building_store_plastic, ";
-		query << "	building_store_fuel, ";
-		query << "	building_store_food, ";
-		query << "	building_store_factor, ";
-		query << "	building_people_place, ";
-		query << "	building_last_level, ";
-		query << "	building_fields, ";
-		query << "	building_show, ";
-		query << "	building_order, ";
-		query << "	building_fieldsprovide, ";
-		query << "	building_workplace ";
-		query << "FROM ";
-		query << "	buildings;";
+		query << "SELECT "
+			<< "	building_id AS Id, "
+			<< "	building_name AS Name, "
+			<< "	building_type_id, "
+			<< "	building_shortcomment AS shortcomment, "
+			<< "	building_longcomment AS longcomment, "
+			<< "	building_costs_metal AS costs_metal, "
+			<< "	building_costs_crystal AS costs_crystal, "
+			<< "	building_costs_plastic AS costs_plastic, "
+			<< "	building_costs_fuel AS costs_fuel, "
+			<< "	building_costs_food AS costs_food, "
+			<< "	building_costs_power AS costs_power, "
+			<< "	building_build_costs_factor, "
+			<< "	building_demolish_costs_factor, "
+			<< "	building_power_use, "
+			<< "	building_power_req, "
+			<< "	building_fuel_use, "
+			<< "	building_prod_metal, "
+			<< "	building_prod_crystal, "
+			<< "	building_prod_plastic, "
+			<< "	building_prod_fuel, "
+			<< "	building_prod_food, "
+			<< "	building_prod_power, "
+			<< "	building_production_factor, "
+			<< "	building_store_metal, "
+			<< "	building_store_crystal, "
+			<< "	building_store_plastic, "
+			<< "	building_store_fuel, "
+			<< "	building_store_food, "
+			<< "	building_store_factor, "
+			<< "	building_people_place, "
+			<< "	building_last_level, "
+			<< "	building_fields, "
+			<< "	building_show, "
+			<< "	building_order, "
+			<< "	building_fieldsprovide, "
+			<< "	building_workplace, "
+			<< "	building_bunker_res, "
+			<< "	building_bunker_fleet_count, "
+			<< "	building_bunker_fleet_space "
+			<< "FROM "
+			<< "	buildings;";
 		mysqlpp::Result bRes = query.store();	
 		query.reset();
 		if (bRes) {

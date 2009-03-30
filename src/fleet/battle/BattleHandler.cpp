@@ -300,11 +300,11 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 			message->addText("Der Angreifer hat den Kampf gewonnen!");
 
 			double percent = std::min(fleet->getBountyBonus(),(fleet->getCapacity(true) / entity->getResSum()));
-			raid[0] = entity->removeResMetal(fleet->addMetal(entity->getResMetal()*percent,true));
-			raid[1] = entity->removeResCrystal(fleet->addCrystal(entity->getResCrystal()*percent,true));
-			raid[2] = entity->removeResPlastic(fleet->addPlastic(entity->getResPlastic()*percent,true));
-			raid[3] = entity->removeResFuel(fleet->addFuel(entity->getResFuel()*percent,true));
-			raid[4] = entity->removeResFood(fleet->addFood(entity->getResFood()*percent,true));
+			raid[0] = entity->removeResMetal(fleet->addMetal(entity->getResMetal(percent),true));
+			raid[1] = entity->removeResCrystal(fleet->addCrystal(entity->getResCrystal(percent),true));
+			raid[2] = entity->removeResPlastic(fleet->addPlastic(entity->getResPlastic(percent),true));
+			raid[3] = entity->removeResFuel(fleet->addFuel(entity->getResFuel(percent),true));
+			raid[4] = entity->removeResFood(fleet->addFood(entity->getResFood(percent),true));
 
 			message->addText(fleet->getResCollectedString(true,"Beute"),2);
 		}

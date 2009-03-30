@@ -42,6 +42,9 @@ public:
 		this->order = (short)object["building_order"];
 		this->fieldsprovide = (short)object["building_fieldsprovide"];
 		this->workplace = (bool)object["building_workplace"];
+		this->bunkerRes = (unsigned int)object["building_bunker_res"];
+		this->bunkerFleetCount = (unsigned int)object["building_bunker_fleet_count"];
+		this->bunkerFleetSpace = (unsigned int)object["building_bunker_fleet_space"];
 	}
 	
 	short getTypeId();
@@ -70,6 +73,9 @@ public:
 	short getOrder();
 	short getFieldsprovide();
 	bool getWorkplace();
+	unsigned int getBunkerRes();
+	unsigned int getBunkerFleetCount();
+	unsigned int getBunkerFleetSpace();
 			
 private:
 	short typeId;
@@ -88,6 +94,9 @@ private:
 	short order;
 	short fieldsprovide;
 	bool workplace;
+	unsigned int bunkerRes;
+	unsigned int bunkerFleetCount;
+	unsigned int bunkerFleetSpace;
 };
 
 #endif

@@ -7,28 +7,33 @@
 		My &my = My::instance();
 		mysqlpp::Connection *con = my.get();
 		mysqlpp::Query query = con->query();
-		query << "SELECT ";
-		query << "	planet_user_id, ";
-		query << "	planet_user_main, ";
-		query << "	planet_name, ";
-		query << "	planet_type_id, ";
-		query << "	planet_res_metal, ";
-		query << "	planet_res_crystal, ";
-		query << "	planet_res_fuel, ";
-		query << "	planet_res_plastic, ";
-		query << "	planet_res_food, ";
-		query << "	planet_wf_metal, ";
-		query << "	planet_wf_crystal, ";
-		query << "	planet_wf_plastic, ";
-		query << "	planet_people, ";
-		query << "	planet_fields, ";
-		query << "	planet_last_updated, ";
-		query << "	planet_user_changed ";
-		query << "FROM ";
-		query << "	planets ";
-		query << "WHERE ";
-		query << "	id='" << this->getId() << "' ";
-		query << "LIMIT 1;";
+		query << "SELECT "
+			<< "	planet_user_id, "
+			<< "	planet_user_main, "
+			<< "	planet_name, "
+			<< "	planet_type_id, "
+			<< "	planet_res_metal, "
+			<< "	planet_res_crystal, "
+			<< "	planet_res_fuel, "
+			<< "	planet_res_plastic, "
+			<< "	planet_res_food, "
+			<< "	planet_bunker_metal, "
+			<< "	planet_bunker_crystal, "
+			<< "	planet_bunker_plastic, "
+			<< "	planet_bunker_fuel, "
+			<< "	planet_bunker_food, "
+			<< "	planet_wf_metal, "
+			<< "	planet_wf_crystal, "
+			<< "	planet_wf_plastic, "
+			<< "	planet_people, "
+			<< "	planet_fields, "
+			<< "	planet_last_updated, "
+			<< "	planet_user_changed "
+			<< "FROM "
+			<< "	planets "
+			<< "WHERE "
+			<< "	id='" << this->getId() << "' "
+			<< "LIMIT 1;";
 		mysqlpp::Result pRes = query.store();
 		query.reset();
 		
@@ -47,6 +52,11 @@
 				this->resFuel = (double)pRow["planet_res_fuel"];
 				this->resFood = (double)pRow["planet_res_food"];
 				this->resPower = 0;
+				this->bunkerMetal = (unsigned int)pRow["planet_bunker_metal"];
+				this->bunkerCrystal = (unsigned int)pRow["planet_bunker_crystal"];
+				this->bunkerPlastic = (unsigned int)pRow["planet_bunker_plastic"];
+				this->bunkerFuel = (unsigned int)pRow["planet_bunker_fuel"];
+				this->bunkerFood = (unsigned int)pRow["planet_bunker_food"];
 				this->wfMetal = (double)pRow["planet_wf_metal"];
 				this->wfCrystal = (double)pRow["planet_wf_crystal"];
 				this->wfPlastic = (double)pRow["planet_wf_plastic"];

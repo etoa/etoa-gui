@@ -100,3 +100,17 @@
 	bool BuildingData::getWorkplace() {
 		return this->workplace;
 	}
+
+	unsigned int BuildingData::getBunkerRes() {
+		return this->bunkerRes;
+	}
+	
+	unsigned int BuildingData::getBunkerFleetCount() {
+		return this->bunkerFleetCount;
+	}
+	
+	unsigned int BuildingData::getBunkerFleetSpace() {
+		return this->bunkerFleetSpace;
+	}
+
+	

@@ -18,6 +18,9 @@
 * @author Stephan Vock<glaubinx@etoa.ch>
 */
 
+using std::max;
+using std::min;
+
 class Entity	
 {
 	public: 
@@ -43,6 +46,12 @@ class Entity
 			this->resFood = 0;
 			this->resPower = 0;
 			this->resPeople = 0;
+			
+			this->bunkerMetal = 0;
+			this->bunkerCrystal = 0;
+			this->bunkerPlastic = 0;
+			this->bunkerFuel = 0;
+			this->bunkerFood = 0;
 			
 			this->wfMetal = 0;
 			this->wfCrystal = 0;
@@ -111,11 +120,11 @@ class Entity
 		
 		void setAction(std::string actionName);
 		
-		double getResMetal();
-		double getResCrystal();
-		double getResPlastic();
-		double getResFuel();
-		double getResFood();
+		double getResMetal(double percent=1);
+		double getResCrystal(double percent=1);
+		double getResPlastic(double percent=1);
+		double getResFuel(double percent=1);
+		double getResFood(double percent=1);
 		double getResPower();
 		double getResPeople();
 		double getResSum();
@@ -128,11 +137,11 @@ class Entity
 		void addResPower(double power);
 		void addResPeople(double people);
 		
-		double removeResMetal(double metal);
-		double removeResCrystal(double crystal);
-		double removeResPlastic(double plastic);
-		double removeResFuel(double fuel);
-		double removeResFood(double food);
+		double removeResMetal(double metal, bool steal = true);
+		double removeResCrystal(double crystal, bool steal = true);
+		double removeResPlastic(double plastic, bool steal = true);
+		double removeResFuel(double fuel, bool steal = true);
+		double removeResFood(double food, bool steal = true);
 		double removeResPower(double power);
 		double removeResPeople(double people);
 		
@@ -225,6 +234,7 @@ class Entity
 		double initResMetal, initResCrystal, initResPlastic, initResFuel, initResFood, initResPower, initResPeople;
 		double wfMetal, wfCrystal, wfPlastic;
 		double initWfMetal, initWfCrystal, initWfPlastic;
+		unsigned int bunkerMetal, bunkerCrystal, bunkerPlastic, bunkerFuel, bunkerFood;
 		
 		int lastVisited, userChanged;
 		std::string codeName;

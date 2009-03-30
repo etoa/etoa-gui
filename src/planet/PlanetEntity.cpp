@@ -80,6 +80,12 @@ namespace planet
 				this->cnt[5] = 0;
 				this->cnt[6] = 0;
 				this->cnt[7] = 0;
+				
+				this->bunker[0] = (int)pRow["planet_bunker_metal"];
+				this->bunker[1] = (int)pRow["planet_bunker_crystal"];
+				this->bunker[2] = (int)pRow["planet_bunker_plastic"];
+				this->bunker[3] = (int)pRow["planet_bunker_fuel"];
+				this->bunker[4] = (int)pRow["planet_bunker_food"];
 			}
 		}
 	}
@@ -141,7 +147,7 @@ namespace planet
 		query.reset();
 		
 		if (bRes) {
-			int bSize = bRes.size();
+			unsigned int bSize = bRes.size();
 			
 			if (bSize) {
 				mysqlpp::Row bRow;
@@ -159,6 +165,8 @@ namespace planet
 					this->fieldsUsed += level * this->building_->getFields();
 					level--;
 					this->fieldsExtra += this->building_->getFieldsprovide() * pow(this->building_->getProductionFactor() , level);
+					
+					this->bunkerRes += this->building_->getBunkerRes() * pow(this->building_->getStoreFactor() , level);
 					
 					this->store[0] += round(this->building_->getStoreMetal() * pow(this->building_->getStoreFactor() , level));
 					this->store[1] += round(this->building_->getStoreCrystal() * pow(this->building_->getStoreFactor() , level));
@@ -196,7 +204,7 @@ namespace planet
 		query.reset();
 		
 		if (sRes) {
-			int sSize = sRes.size();
+			unsigned int sSize = sRes.size();
 			
 			if (sSize) {
 				mysqlpp::Row sRow;
@@ -232,7 +240,7 @@ namespace planet
 		query.reset();
 		
 		if (dRes) {
-			int dSize = dRes.size();
+			unsigned int dSize = dRes.size();
 			
 			if (dSize) {
 				mysqlpp::Row dRow;
@@ -275,6 +283,15 @@ namespace planet
 			this->cnt[4] = floor(this->cnt[4]);
 			this->cnt[6] = floor(this->cnt[6]);
 		}
+		
+		this->bunkered = this->bunker[0] + this->bunker[1] + this->bunker[2] + this->bunker[3] + this->bunker[4];
+		this->bunkerRes -= this->bunkered;
+		
+		this->bunker[0] += this->bunkerRes/5;
+		this->bunker[1] += this->bunkerRes/5;
+		this->bunker[2] += this->bunkerRes/5;
+		this->bunker[3] += this->bunkerRes/5;
+		this->bunker[4] += this->bunkerRes/5;
 	}
 	
 	void PlanetEntity::save() {
@@ -294,6 +311,11 @@ namespace planet
 			<< "	planet_res_food=planet_res_food+'" << this->ressource[4] << "', "
 			<< "	planet_use_power=" << this->cnt[7] << ", "
 			<< "	planet_last_updated='" << time(0) << "', "
+			<< "	planet_bunker_metal='" << this->bunker[0] << "', "
+			<< "	planet_bunker_crystal='" << this->bunker[1] << "', "
+			<< "	planet_bunker_plastic='" << this->bunker[2] << "', "
+			<< "	planet_bunker_fuel='" << this->bunker[3] << "', "
+			<< "	planet_bunker_food='" << this->bunker[4] << "', "
 			<< "	planet_prod_metal=" << this->cnt[0] << ", "
 			<< "	planet_prod_crystal=" << this->cnt[1] << ", "
 			<< "	planet_prod_plastic=" << this->cnt[2] << ", "

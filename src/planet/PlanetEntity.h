@@ -28,6 +28,7 @@ namespace planet
 			this->store.resize(6);
 			this->cnt.resize(8);
 			this->ressource.resize(7);
+			this->bunker.resize(5);
 			
 			this->loadData();
 			
@@ -42,6 +43,8 @@ namespace planet
 			
 			this->fieldsUsed = 0;
 			this->fieldsExtra = 0;
+			
+			this->bunkerRes = 0;
 			
 			this->store[0] = config.nget("def_store_capacity", 0);
 			this->store[1] = config.nget("def_store_capacity", 0);
@@ -75,6 +78,7 @@ namespace planet
 			this->store.resize(6);
 			this->cnt.resize(8);
 			this->ressource.resize(7);
+			this->bunker.resize(5);
 			
 			this->ressource[0] = (double)planet["planet_res_metal"];
 			this->ressource[1] = (double)planet["planet_res_crystal"];
@@ -99,6 +103,12 @@ namespace planet
 			this->cnt[5] = 0;
 			this->cnt[6] = 0;
 			this->cnt[7] = 0;
+			
+			this->bunker[0] = (unsigned int)planet["planet_bunker_metal"];
+			this->bunker[1] = (unsigned int)planet["planet_bunker_crystal"];
+			this->bunker[2] = (unsigned int)planet["planet_bunker_plastic"];
+			this->bunker[3] = (unsigned int)planet["planet_bunker_fuel"];
+			this->bunker[4] = (unsigned int)planet["planet_bunker_food"];
 			
 			this->raceId = (int)planet["user_race_id"];
 			this->userId = (int)planet["user_id"];
@@ -130,6 +140,7 @@ namespace planet
 		bool smallUpdate;
 		int entityId;
 		int fieldsUsed, fieldsExtra, solarPowerBonus;
+		int bunkerRes, bunkered;
 		double solarFuelBonus;
 		int raceId, userId, planetType, solType, speicalistId;
 		int t;
@@ -139,6 +150,7 @@ namespace planet
 		std::vector<double> store;
 		std::vector<double> cnt;
 		std::vector<double> ressource;
+		std::vector<unsigned int> bunker;
 		
 		RaceData* race_;
 		SolData* sol_;

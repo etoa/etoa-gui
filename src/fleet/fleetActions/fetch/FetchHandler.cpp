@@ -20,11 +20,11 @@ namespace fetch
 			// Function is only allowed if the fleet user is the same as the planet user
 			if (this->f->getUserId() == this->targetEntity->getUserId()) {
 				
-				this->f->addMetal(this->targetEntity->removeResMetal(std::min(this->f->getFetchMetal(), this->f->getCapacity())));
-				this->f->addCrystal(this->targetEntity->removeResCrystal(std::min(this->f->getFetchCrystal(), this->f->getCapacity())));
-				this->f->addPlastic(this->targetEntity->removeResPlastic(std::min(this->f->getFetchPlastic(), this->f->getCapacity())));
-				this->f->addFuel(this->targetEntity->removeResFuel(std::min(this->f->getFetchFuel(), this->f->getCapacity())));
-				this->f->addFood(this->targetEntity->removeResFood(std::min(this->f->getFetchFood(), this->f->getCapacity())));
+				this->f->addMetal(this->targetEntity->removeResMetal(std::min(this->f->getFetchMetal(), this->f->getCapacity()),false));
+				this->f->addCrystal(this->targetEntity->removeResCrystal(std::min(this->f->getFetchCrystal(), this->f->getCapacity()),false));
+				this->f->addPlastic(this->targetEntity->removeResPlastic(std::min(this->f->getFetchPlastic(), this->f->getCapacity()),false));
+				this->f->addFuel(this->targetEntity->removeResFuel(std::min(this->f->getFetchFuel(), this->f->getCapacity()),false));
+				this->f->addFood(this->targetEntity->removeResFood(std::min(this->f->getFetchFood(), this->f->getCapacity()),false));
 				this->f->addPeople(this->targetEntity->removeResPeople(std::min(this->f->getFetchPeople(),this->f->getPeopleCapacity())));
 					
 				this->actionMessage->addText("[B]WAREN ABGEHOLT[/B]",2);

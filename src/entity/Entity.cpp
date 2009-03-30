@@ -80,38 +80,48 @@
 		this->actionName = actionName;
 	}
 
-	double Entity::getResMetal() {
+	double Entity::getResMetal(double percent) {
 		if (!this->dataLoaded)
 			this->loadData();
-
+		
+		if (percent!=1)
+			return min(this->resMetal-this->bunkerMetal,this->resMetal*percent);
 		return this->resMetal;
 	}
 
-	double Entity::getResCrystal() {
+	double Entity::getResCrystal(double percent) {
 		if (!this->dataLoaded)
 			this->loadData();
-
+		
+		if (percent!=1)
+			return min(this->resCrystal-this->bunkerCrystal,this->resCrystal*percent);
 		return this->resCrystal;
 	}
 
-	double Entity::getResPlastic() {
+	double Entity::getResPlastic(double percent) {
 		if (!this->dataLoaded)
 			this->loadData();
-
+		
+		if (percent!=1)
+			return min(this->resPlastic-this->bunkerPlastic,this->resPlastic*percent);
 		return this->resPlastic;
 	}
 
-	double Entity::getResFuel() {
+	double Entity::getResFuel(double percent) {
 		if (!this->dataLoaded)
 			this->loadData();
-
+		
+		if (percent!=1)
+			return min(this->resFuel-this->bunkerFuel,this->resFuel*percent);
 		return this->resFuel;
 	}
 
-	double Entity::getResFood() {
+	double Entity::getResFood(double percent) {
 		if (!this->dataLoaded)
 			this->loadData();
-
+		
+		if (percent!=1)
+			return min(this->resFood-this->bunkerFood,this->resFood*percent);
 		return this->resFood;
 	}
 
@@ -132,8 +142,8 @@
 	double Entity::getResSum() {
 		if (!this->dataLoaded)
 			this->loadData();
-
-		return this->resMetal + this->resCrystal + this->resPlastic + this->resFuel + this->resFood;
+		
+		return this->getResMetal() + this->getResCrystal() + this->getResPlastic() + this->getResFuel() + this->getResFood();
 	}
 
 	void Entity::addResMetal(double metal) {
@@ -192,84 +202,69 @@
 		this->resPeople += people;
 	}
 
-	double Entity::removeResMetal(double metal) {
+	double Entity::removeResMetal(double metal, bool steal) {
 		if (!this->dataLoaded)
 			this->loadData();
 
 		this->changedData = true;
-		if (metal<=this->resMetal) {
-			this->resMetal -= metal;
-			return metal;
-		}
-		else {
-			metal = this->resMetal;
-			this->resMetal = 0;
-			return metal;
-		}
+		if (steal)
+			metal = min(metal,this->resMetal-this->bunkerMetal);
+		else
+			metal = min(metal,this->resMetal);
+		this->resMetal -= metal;
+		return metal;
 	}
 
-	double Entity::removeResCrystal(double crystal) {
+	double Entity::removeResCrystal(double crystal, bool steal) {
 		if (!this->dataLoaded)
 			this->loadData();
 
 		this->changedData = true;
-		if (crystal<=this->resCrystal) {
-			this->resCrystal -= crystal;
-			return crystal;
-		}
-		else {
-			crystal = this->resCrystal;
-			this->resCrystal = 0;
-			return crystal;
-		}
+		if (steal)
+			crystal = min(crystal,this->resCrystal-this->bunkerCrystal);
+		else
+			crystal = min(crystal,this->resCrystal);
+		this->resCrystal -= crystal;
+		return crystal;
 	}
 
-	double Entity::removeResPlastic(double plastic) {
+	double Entity::removeResPlastic(double plastic, bool steal) {
 		if (!this->dataLoaded)
 			this->loadData();
 
 		this->changedData = true;
-		if (plastic<=this->resPlastic) {
-			this->resPlastic -= plastic;
-			return plastic;
-		}
-		else {
-			plastic = this->resPlastic;
-			this->resPlastic = 0;
-			return plastic;
-		}
+		if (steal)
+			plastic = min(plastic,this->resPlastic-this->bunkerPlastic);
+		else
+			plastic = min(plastic,this->resPlastic);
+		this->resPlastic -= plastic;
+		return plastic;
 	}
 
-	double Entity::removeResFuel(double fuel) {
+	double Entity::removeResFuel(double fuel, bool steal) {
 		if (!this->dataLoaded)
 			this->loadData();
 
 		this->changedData = true;
-		if (fuel<=this->resFuel) {
-			this->resFuel -= fuel;
-			return fuel;
-		}
-		else {
-			fuel = this->resFuel;
-			this->resFuel = 0;
-			return fuel;
-		}
+		if (steal)
+			fuel = min(fuel,this->resFuel-this->bunkerFuel);
+		else
+			fuel = min(fuel,this->resFuel);
+		this->resFuel -= fuel;
+		return fuel;
 	}
 
-	double Entity::removeResFood(double food) {
+	double Entity::removeResFood(double food, bool steal) {
 		if (!this->dataLoaded)
 			this->loadData();
 
 		this->changedData = true;
-		if (food<=this->resFood) {
-			this->resFood -= food;
-			return food;
-		}
-		else {
-			food = this->resFood;
-			this->resFood = 0;
-			return food;
-		}
+		if (steal)
+			food = min(food,this->resFood-this->bunkerFood);
+		else
+			food = min(food,this->resFood);
+		this->resFood -= food;
+		return food;
 	}
 
 	double Entity::removeResPower(double power) {
