@@ -136,7 +136,7 @@
 								</a>
 							</td>";
 						}
-						echo "<td ".tm($ships[$arr['shiplist_ship_id']]['ship_name'],"<img src=\"".IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$arr['shiplist_ship_id']."_middle.".IMAGE_EXT."\" style=\"float:left;margin-right:5px;\">".text2html($ships[$arr['shiplist_ship_id']]['ship_shortcomment']."<br/>".$acstr."<br style=\"clear:both;\"/>")).">".$ships[$arr['shiplist_ship_id']]['ship_name']."</td>";
+						echo "<td ".tm($ships[$arr['shiplist_ship_id']]['ship_name'],"<img src=\"".IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$arr['shiplist_ship_id']."_middle.".IMAGE_EXT."\" style=\"float:left;margin-right:5px;\">".text2html($ships[$arr['shiplist_ship_id']]['ship_shortcomment']."<br/><br style=\"clear:both;\"/>")).">".$ships[$arr['shiplist_ship_id']]['ship_name']."</td>";
 						echo "<td width=\"150\">".nf($ships[$arr['shiplist_ship_id']]['ship_structure'])."</td>";
 						echo "<td width=\"110\">".nf($arr['shiplist_bunkered'])."<br/>";
 				  
@@ -146,7 +146,7 @@
 						name=\"ship_bunker_count[".$arr['shiplist_ship_id']."]\" 
 						size=\"10\" value=\"$val\"  
 						title=\"Anzahl Schiffe eingeben, die mitfliegen sollen\" 
-						onclick=\"this.select();\" tabindex=\"".$tabulator."\" 
+						onclick=\"this.select();\"
 						onkeyup=\"FormatNumber(this.id,this.value,".$arr['shiplist_bunkered'].",'','');\"/>
 					<br/>
 					<a href=\"javascript:;\" onclick=\"document.getElementById('ship_bunker_count_".$arr['shiplist_ship_id']."').value=".$arr['shiplist_bunkered'].";document.getElementById('ship_bunker_count_".$arr['shiplist_ship_id']."').select()\">Alle</a> &nbsp; 
@@ -278,7 +278,7 @@
 								</a>
 							</td>";
 						}
-						echo "<td ".tm($ships[$arr['shiplist_ship_id']]['ship_name'],"<img src=\"".IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$arr['shiplist_ship_id']."_middle.".IMAGE_EXT."\" style=\"float:left;margin-right:5px;\">".text2html($ships[$arr['shiplist_ship_id']]['ship_shortcomment']."<br/>".$acstr."<br style=\"clear:both;\"/>")).">".$ships[$arr['shiplist_ship_id']]['ship_name']."</td>";
+						echo "<td ".tm($ships[$arr['shiplist_ship_id']]['ship_name'],"<img src=\"".IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$arr['shiplist_ship_id']."_middle.".IMAGE_EXT."\" style=\"float:left;margin-right:5px;\">".text2html($ships[$arr['shiplist_ship_id']]['ship_shortcomment']."<br/><br style=\"clear:both;\"/>")).">".$ships[$arr['shiplist_ship_id']]['ship_name']."</td>";
 						echo "<td width=\"150\">".nf($ships[$arr['shiplist_ship_id']]['ship_structure'])."</td>";
 						echo "<td width=\"110\">".nf($arr['shiplist_count'])."<br/>";
 				  
@@ -288,7 +288,7 @@
 						name=\"ship_bunker_count[".$arr['shiplist_ship_id']."]\" 
 						size=\"10\" value=\"$val\"  
 						title=\"Anzahl Schiffe eingeben, die mitfliegen sollen\" 
-						onclick=\"this.select();\" tabindex=\"".$tabulator."\" 
+						onclick=\"this.select();\" 
 						onkeyup=\"FormatNumber(this.id,this.value,".$arr['shiplist_count'].",'','');\"/>
 					<br/>
 					<a href=\"javascript:;\" onclick=\"document.getElementById('ship_bunker_count_".$arr['shiplist_ship_id']."').value=".$arr['shiplist_count'].";document.getElementById('ship_bunker_count_".$arr['shiplist_ship_id']."').select()\">Alle</a> &nbsp; 

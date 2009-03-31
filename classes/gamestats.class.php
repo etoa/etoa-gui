@@ -577,8 +577,8 @@
         $res=dbquery("
         SELECT
             ships.ship_name,
-            SUM(shiplist.shiplist_count) as cnt,
-            MAX(shiplist.shiplist_count) as max
+            SUM(shiplist.shiplist_count+shiplist.shiplist_bunkered) as cnt,
+            MAX(shiplist.shiplist_count+shiplist.shiplist_bunkered) as max
         FROM
             ships
         INNER JOIN

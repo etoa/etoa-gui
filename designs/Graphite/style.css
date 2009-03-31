@@ -95,7 +95,7 @@ img	{
 	width:204px;
 	margin:0px;
 	padding:0px;	
-	height:610px;
+	height:636px;
 	background:url('images/sidebar.png') no-repeat;
 	z-index:1;
 }
@@ -224,19 +224,19 @@ img	{
 	background:url('images/sidebarh.png') 0px -431px no-repeat;
 }
 #navbuildings:hover	{
-	background:url('images/sidebarh.png') 0px -457px no-repeat;
-}
-#navresearch:hover	{
 	background:url('images/sidebarh.png') 0px -483px no-repeat;
 }
-#navshipyard:hover	{
+#navresearch:hover	{
 	background:url('images/sidebarh.png') 0px -509px no-repeat;
 }
-#navdefense:hover	{
+#navshipyard:hover	{
 	background:url('images/sidebarh.png') 0px -535px no-repeat;
 }
-#navmissiles:hover	{
+#navdefense:hover	{
 	background:url('images/sidebarh.png') 0px -561px no-repeat;
+}
+#navmissiles:hover	{
+	background:url('images/sidebarh.png') 0px -587px no-repeat;
 }
 
 #nextEntity	{

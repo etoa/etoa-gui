@@ -426,14 +426,15 @@
 				SELECT
 					shiplist_ship_id,
 					shiplist_entity_id,
-    				shiplist_count
+    				shiplist_count,
+					shiplist_bunkered
 				FROM
     				shiplist
 				WHERE
   					shiplist_user_id='".$_POST['user_buy_ship']."';");
 				while ($arr = mysql_fetch_assoc($res))
 				{
-					$shiplist[$arr['shiplist_ship_id']][$arr['shiplist_entity_id']]=$arr['shiplist_count'];
+					$shiplist[$arr['shiplist_ship_id']][$arr['shiplist_entity_id']]=$arr['shiplist_count']+$arr['shiplist_bunkered'];
 				}
 				
 				// Bauliste von allen Planeten laden und nach Schiffe zusammenfassen

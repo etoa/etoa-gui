@@ -409,7 +409,8 @@
 				$res = dbquery("
 					SELECT
 						shiplist_ship_id,
-						shiplist_count
+						shiplist_count,
+						shiplist_bunkered
 					FROM
 						shiplist
 					WHERE
@@ -417,7 +418,7 @@
 				");
 				while ($arr = mysql_fetch_assoc($res))
 				{
-					$p = $arr['shiplist_count']*$ship[$arr['shiplist_ship_id']];
+					$p = ($arr['shiplist_bunkered']+$arr['shiplist_count'])*$ship[$arr['shiplist_ship_id']];
 					$points+=$p;
 					$points_ships+=$p;
 				}
