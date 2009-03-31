@@ -207,6 +207,30 @@
 			return $this->bunkerRes;
 		}
 		
+		function getBunkerFleetCount()
+		{
+			if ($this->items==null)
+				$this->load();
+			$this->bunkerFleetCount= 0;
+			foreach ($this->itemStatus as $k=>&$v)
+			{
+				$this->bunkerFleetCount+= $this->item($k)->bunkerFleetCount*intpow($this->item($k)->storeFactor,$v['level']-1);
+			}
+			return $this->bunkerFleetCount;
+		}
+		
+		function getBunkerFleetSpace()
+		{
+			if ($this->items==null)
+				$this->load();
+			$this->bunkerFleetSpace= 0;
+			foreach ($this->itemStatus as $k=>&$v)
+			{
+				$this->bunkerFleetSpace+= $this->item($k)->bunkerFleetSpace*intpow($this->item($k)->storeFactor,$v['level']-1);
+			}
+			return $this->bunkerFleetSpace;
+		}
+		
 		function getBuildTime($itemId,$targetLevel)
 		{
 			global $cu,$cp;

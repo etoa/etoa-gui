@@ -142,6 +142,13 @@
 			onmousedown="changeImages('nb_kryptocenter', '{$templateDir}/images/nb_kryptocenter-down.gif'); return true;"
 			onmouseup="changeImages('nb_kryptocenter', '{$templateDir}/images/nb_kryptocenter-over.gif'); return true;">
 			<img name="nb_kryptocenter" src="{$templateDir}/images/nb_kryptocenter.gif" alt="Kryptocenter" /></a></div>
+	<div class="nb-bunker_">
+		<a href="?page=bunker"
+			onmouseover="changeImages('nb_bunker', '{$templateDir}/images/nb_bunker-over.gif'); return true;"
+			onmouseout="changeImages('nb_bunker', '{$templateDir}/images/nb_bunker.gif'); return true;"
+			onmousedown="changeImages('nb_bunker', '{$templateDir}/images/nb_bunker-down.gif'); return true;"
+			onmouseup="changeImages('nb_bunker', '{$templateDir}/images/nb_bunker-over.gif'); return true;">
+			<img name="nb_bunker" src="{$templateDir}/images/nb_bunker.gif" alt="Bunker" /></a></div>
 
 	<div class="Menueleiste-47_">
 		<img img name="Menueleiste-47_" src="{$templateDir}/images/Menueleiste_47.gif" /></div>

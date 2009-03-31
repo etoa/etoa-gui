@@ -10,6 +10,7 @@
 			<a href="?page=market" id="navmarket"></a>
 			<a href="?page=crypto" id="navcrypto"></a>
 			<a href="?page=recycle" id="navrecycle"></a>
+            <a href="?page=bunker" id="navbunker"></a>
 			<a></a>
 			<a href="?page=buildings" id="navbuildings"></a>
 			<a href="?page=research" id="navresearch"></a>

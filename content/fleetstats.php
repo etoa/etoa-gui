@@ -66,6 +66,7 @@
 		SELECT
 			shiplist_ship_id,
 			shiplist_count,
+			shiplist_bunkered,
 			shiplist_entity_id
 		FROM
 			shiplist
@@ -80,6 +81,7 @@
   	while ($arr=mysql_fetch_array($res))
   	{
   		$shiplist_data[$arr['shiplist_ship_id']][$arr['shiplist_entity_id']] = $arr['shiplist_count'];
+		$shiplist_bunkered[$arr['shiplist_ship_id']][$arr['shiplist_entity_id']] = $arr['shiplist_bunkered'];
   	}	
   		
   	
@@ -138,6 +140,7 @@
 		echo "<tr>
 						<th colspan=\"2\">Schiff</th>
 						<th width=\"100\">Im Orbit</th>
+						<th width=\"100\">Eingebunkert</th>
 						<th width=\"100\">Im Bau</th>
 						<th width=\"100\">Im All</th>
 					</tr>";
@@ -185,6 +188,32 @@
 		  						// Listet die Anzahl Schiffe von jedem einzelen Planeten auf
 		  						$tm = "";
 		  						foreach ($shiplist_data[$sarr['ship_id']] as $planet_id => $count)
+							  	{
+							  		$tm .= "<b>".$planet_data[$planet_id]."</b>: ".nf($count)."<br>";
+							  	}
+		  						
+		  						echo "
+			  					<td ".tm("Anzahl",$tm).">
+			  						".nf($total)."
+			  					</td>";
+			  				}
+			  				else
+			  				{
+			  					echo "
+			  					<td>
+			  						&nbsp;
+			  					</td>";		  					
+			  				}
+							
+			  				//Spalte eingebunkerter Schiffe
+		  					if(isset($shiplist_bunkered[$sarr['ship_id']]))
+		  					{
+		  						// Summiert die Anzahl Schiffe von allen Planeten
+		  						$total = array_sum($shiplist_bunkered[$sarr['ship_id']]);
+		  						
+		  						// Listet die Anzahl Schiffe von jedem einzelen Planeten auf
+		  						$tm = "";
+		  						foreach ($shiplist_bunkered[$sarr['ship_id']] as $planet_id => $count)
 							  	{
 							  		$tm .= "<b>".$planet_data[$planet_id]."</b>: ".nf($count)."<br>";
 							  	}

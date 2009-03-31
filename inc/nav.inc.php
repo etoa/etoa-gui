@@ -33,6 +33,7 @@
 	$navmenu[2]['items'][] = array ("name"=>"Marktplatz","url"=>"?page=market");
 	$navmenu[2]['items'][] = array ("name"=>"Raketensilo","url"=>"?page=missiles");
 	$navmenu[2]['items'][] = array ("name"=>"Kryptocenter","url"=>"?page=crypto");
+	$navmenu[2]['items'][] = array ("name"=>"Bunker","url"=>"?page=bunker");
 
 	$navmenu[3]['cat'] = "Produktion";
 	$navmenu[3]['items'][] = array ("name"=>"Bauhof","url"=>"?page=buildings");

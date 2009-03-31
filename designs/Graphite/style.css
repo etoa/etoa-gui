@@ -220,6 +220,9 @@ img	{
 #navrecycle:hover	{
 	background:url('images/sidebarh.png') 0px -405px no-repeat;
 }
+#navbunker:hover	{
+	background:url('images/sidebarh.png') 0px -431px no-repeat;
+}
 #navbuildings:hover	{
 	background:url('images/sidebarh.png') 0px -457px no-repeat;
 }

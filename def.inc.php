@@ -314,6 +314,8 @@
 	define("FLEET_CONTROL_ID",11);								// ID der Flottenkontrolle
 	define("BUILD_CRYPTO_ID",24);									// ID des Kryptocenters
 	define("BUILD_MISSILE_ID",25);								// ID des Raketensilos
+	define("RES_BUNKER_ID",26);									// ID des Rohstoffbunkers
+	define("FLEET_BUNKER_ID",27);								// ID des Flottenbunkers
 
 	// Allianzgebäude
 	define("ALLIANCE_MARKET_ID",2);								// ID des Allianzmarktplatzes
@@ -342,16 +344,6 @@
 	// Kryptocenter
 	define("CRYPTO_RANGE_PER_LEVEL",500);				// Reichweite in AE für Kryptoanalyse pro Ausbaustufe
 	define("CRYPTO_FUEL_COSTS_PER_SCAN",10000);		// Kosten an Tritium pro Kryptoanalyse
-
-	// Resourcenbunker
-	define("RES_BUNKER_ID",26);
-	define("RES_BUNKER_SPACE",5000);
-	define("RES_BUNKER_FACTOR",2);
-
-	// Flottenbunker
-	define("FLEET_BUNKER_ID",27);
-	define("FLEET_BUNKER_SPACE",100000);
-	define("FLEET_BUNKER_FACTOR",2);
 
   /*************************/
   /* Flotten & Kampfsystem */

@@ -552,7 +552,7 @@
 			echo "<h1>Kryptocenter des Planeten ".$cp->name."</h1>";		
 			$cp->resBox($cu->properties->smallResBox);
 
-			echo "<h2>Fehler!</h2>Das Kryptocenter wurde noch nicht gebaut!<br>";
+			error_msg("Das Kryptocenter wurde noch nicht gebaut!");
 		}
 
 
@@ -1086,8 +1086,8 @@
     echo "<h1>Kryptocenter des Planeten ".$cp->name."</h1>";    
     $cp->resBox($cu->properties->smallResBox);
 
-    echo "<h2>Fehler!</h2>Aufgrund eines intergalaktischen Moratoriums der Völkerföderation der Galaxie Andromeda 
-    sind sämtliche elektronischen Spionagetätigkeiten zurzeit nicht erlaubt!<br>";
+    error_msg("Aufgrund eines intergalaktischen Moratoriums der Völkerföderation der Galaxie Andromeda 
+    sind sämtliche elektronischen Spionagetätigkeiten zurzeit nicht erlaubt!");
   }  
   
 ?>

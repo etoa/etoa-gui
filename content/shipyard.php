@@ -159,7 +159,8 @@
 			SELECT
 				shiplist_ship_id,
 				shiplist_entity_id,
-    		shiplist_count
+    			shiplist_count,
+				shiplist_bunkered
 			FROM
     		shiplist
 			WHERE
@@ -167,6 +168,7 @@
 			while ($arr = mysql_fetch_assoc($res))
 			{
 				$shiplist[$arr['shiplist_ship_id']][$arr['shiplist_entity_id']]=$arr['shiplist_count'];
+				$bunkered[$arr['shiplist_ship_id']][$arr['shiplist_entity_id']]=$arr['shiplist_bunkered'];
 			}
 
 			// Bauliste vom aktuellen Planeten laden (wird nach "Abbrechen" nochmals geladen)
@@ -442,6 +444,11 @@
 			      if(isset($shiplist[$ship_id]))
 			      {
 			      	$ship_count += array_sum($shiplist[$ship_id]);
+			      }
+			      // ... im Bunker
+			      if(isset($bunkered[$ship_id]))
+			      {
+			      	$ship_count += array_sum($bunkered[$ship_id]);
 			      }
 			      // ... in der Bauliste
 			      if(isset($queue_total[$ship_id]))
@@ -920,6 +927,11 @@
     			      if(isset($shiplist[$data['ship_id']]))
     			      {
     			      	$ship_count += array_sum($shiplist[$data['ship_id']]);
+    			      }
+    			      // ... im Bunker
+    			      if(isset($bunkered[$data['ship_id']]))
+    			      {
+    			      	$ship_count += array_sum($bunkered[$data['ship_id']]);
     			      }
     			      // ... in der Bauliste
     			      if(isset($queue_total[$data['ship_id']]))

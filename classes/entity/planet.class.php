@@ -152,6 +152,12 @@
 				$this->resFuel=zeroPlus($arr['planet_res_fuel']);
 				$this->resFood=zeroPlus($arr['planet_res_food']);
 				$this->usePower=zeroPlus($arr['planet_use_power']);
+				
+				$this->bunkerMetal = zeroPlus($arr['planet_bunker_metal']);
+				$this->bunkerCrystal = zeroPlus($arr['planet_bunker_crystal']);
+				$this->bunkerPlastic = zeroPlus($arr['planet_bunker_plastic']);
+				$this->bunkerFuel = zeroPlus($arr['planet_bunker_fuel']);
+				$this->bunkerFood = zeroPlus($arr['planet_bunker_food']);
 
 				$this->storeMetal=$arr['planet_store_metal'];
 				$this->storeCrystal=$arr['planet_store_crystal'];
@@ -717,6 +723,43 @@
 	    WHERE
 	    	id='".$this->id."';";
 	   	dbquery($sql);			
+		}
+		
+		function chgBunker($i,$amount)
+		{
+			switch ($i)
+			{
+				case 1:
+					$str = "planet_bunker_metal=".$amount."";
+		    	$this->bunkerMetal=$amount;
+					break;
+				case 2:
+					$str = "planet_bunker_crystal=".$amount."";
+		    	$this->bunkerCrystal=$amount;
+					break;
+				case 3:
+					$str = "planet_bunker_plastic=".$amount."";
+		   	 	$this->bunkerPlastic=$amount;
+					break;
+				case 4:
+					$str = "planet_bunker_fuel=".$amount."";
+		    	$this->bunkerFuel=$amount;
+					break;
+				case 5:
+					$str = "planet_bunker_food=".$amount."";
+		    $this->bunkerFood=$amount;
+					break;
+				default:
+					return;
+			}
+			$sql = "
+	   			UPDATE
+	    			planets
+	    		SET
+		        	".$str."      
+	    		WHERE
+	    			id='".$this->id."';";
+	   		dbquery($sql);			
 		}
 
 		/**

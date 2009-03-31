@@ -404,13 +404,33 @@ if (isset($_GET['id']))
     {
       tableStart("Bunkern von Rohstoffen");
 	    echo "<tr><th>Stufe</th><th>Kapazität</th></tr>";
-	    for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
+	    for ($level=$b_level;$level<$arr['building_last_level']+$b_level;$level++)
 	    {
 	      $prod_item = round($arr['building_bunker_res'] * pow($arr['building_store_factor'],$level-1));
 	        if($level==$currentLevel)
 	            echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
 	        else
 	            echo "<tr><td>$level</td><td>".nf($prod_item)."</td></tr>";
+	    }
+	    tableEnd();
+    }
+    // Flottenbunker
+    elseif ($arr['building_id']==27)
+    {
+      tableStart("Bunkern von Schiffen");
+	    echo "<tr><th>Stufe</th><th>Kapazität Stuktur</th><th>Kapazität Anzahl</th></tr>";
+	    for ($level=$b_level;$level<$arr['building_last_level']+$b_level;$level++)
+	    {
+	      $prod_item = round($arr['building_bunker_fleet_space'] * pow($arr['building_store_factor'],$level-1));
+	        if($level==$currentLevel)
+	            echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td>";
+	        else
+	            echo "<tr><td>$level</td><td>".nf($prod_item)."</td>";
+	      $prod_item = round($arr['building_bunker_fleet_count'] * pow($arr['building_store_factor'],$level-1));
+	        if($level==$currentLevel)
+	            echo "<td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
+	        else
+	            echo "<td>".nf($prod_item)."</td></tr>";
 	    }
 	    tableEnd();
     }

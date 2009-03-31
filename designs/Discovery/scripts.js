@@ -162,6 +162,9 @@ function preloadImages()
 		nb_wirtschaft_down = newImage("designs/Discovery/images/nb_wirtschaft-down.gif");
 		nb_wirtschaft_over = newImage("designs/Discovery/images/nb_wirtschaft-over.gif");
 		nb_wirtschaft_sel_item_ressources = newImage("designs/Discovery/images/nb_wirtschaft-sel_item_ress.gif");
+		nb_bunker_down = newImage("designs/Discovery/images/nb_bunker-down.gif");
+		nb_bunker_over = newImage("designs/Discovery/images/nb_bunker-over.gif");
+		nb_bunkersel_item_ressources = newImage("designs/Discovery/images/nb_bunker-sel_item_ress.gif");
 		nb_bauhof_over = newImage("designs/Discovery/images/nb_bauhof-over.gif");
 		nb_bauhof_down = newImage("designs/Discovery/images/nb_bauhof-down.gif");
 		nb_bauhof_sel_item_buildings = newImage("designs/Discovery/images/nb_bauhof-sel_item_building.gif");
@@ -233,6 +236,10 @@ function ShowState_sel_item_techtree() {
 
 function ShowState_sel_item_ressources() {
 	changeImages('nb_wirtschaft', 'nb_wirtschaft_sel_item_ressources');
+}
+
+function ShowState_sel_item_bunker() {
+	changeImages('nb_wirtschaft', 'nb_bunker_sel_item_ressources');
 }
 
 function ShowState_sel_item_buildings() {
