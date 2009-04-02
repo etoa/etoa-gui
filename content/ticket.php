@@ -1,102 +1,78 @@
-	<script type="text/javascript">
-	function toggleText(elemId,switchId)
-	{
-		if (document.getElementById(switchId).innerHTML=="Anzeigen")
-		{
-			document.getElementById(elemId).style.display='';	
-			document.getElementById(switchId).innerHTML="Verbergen";
-		}
-		else
-		{
-			document.getElementById(elemId).style.display='none';					
-			document.getElementById(switchId).innerHTML="Anzeigen";
-		}		
-	}	
-	</script>
-	
-
 <?PHP
-	$status = array("Neu","Zugeteilt","Abgeschlossen","Gelöscht");
-	$abuse_colors = array("#f90","#ff0","#0f0","#bbb");
 	$ext = true;
-	if (isset($_GET['ext']) && $_GET['ext']==1)
-		$ext = false;
-	
+
 	echo "<h1>Ticketsystem</h1>";
-	
+
+if (isset($_GET['id']) && $_GET['id']>0)
+{
+	echo "<h2>Ticket-Details</h2>";
+	$ti = new Ticket($_GET['id']);
+
+	if (isset($_POST['submit_new_post']))
+	{
+		if ($ti->addMessage(array("user_id"=>$s['user_id'],"message"=>$_POST['message'])))
+		{
+			ok_msg("Nachricht hinzugefügt!");
+		}
+	}
+
+	tableStart("Ticket ".$ti->idString);
+	echo '<tr><th>Kategorie:</th><td colspan="3">';
+	echo $ti->catName;
+	echo '</td></tr>';
+	echo '<tr><th>User:</th><td>';
+	echo ''.$ti->userNick.'';
+	echo '</td>';
+	echo '<th>Zugeteilter Admin:</th><td>';
+	echo $ti->adminNick;
+	echo '</td></tr>';
+	echo '<tr><th>Status:</th><td colspan="3">';
+	echo $ti->statusName;
+	echo '</td></tr>';
+	tableEnd();
+
+	tableStart("Nachrichten");
+	echo "<tr><th>Datum</th><th>Autor</th><th>Nachricht</th></tr>";
+	foreach ($ti->getMessages() as $mi)
+	{
+		echo "<tr>
+		<td>".df($mi->timestamp)."</td>
+		<td>".$mi->authorNick."</td>
+		<td>".text2html($mi->message)."</td>
+		</tr>";
+	}
+	tableEnd();
+
+	if ($ti->status!="closed")
+	{
+		echo '<form action="?page='.$page.'&amp;id='.$_GET['id'].'" method="post">';
+		tableStart("Neue Nachricht");
+		echo '<tr><th>Absender:</th><td>';
+		echo $s['user_nick']."";
+		echo '</td></tr>';
+		echo '<tr><th>Nachricht:</th><td>';
+		echo '<textarea name="message" rows="8" cols="60"></textarea>';
+		echo '</td></tr>';
+		tableEnd();
+		echo '<input type="submit" name="submit_new_post" value="Senden" /> &nbsp;
+		'.button("Zur Übersicht","?page=$page").' &nbsp;	';
+
+		echo "</form><br/>";
+	}
+	else
+		echo '<p>'.button("Zur Übersicht","?page=$page").' &nbsp;	</p>';
+
+}
+else
+{
+
+
 	if (isset($_POST['abuse_submit']) && checker_verify())
 	{
-		dbquery("
-		INSERT INTO
-			tickets
-		(
-			cat_id,
-			user_id,
-			c_user_id,
-			c_alliance_id,
-			timestamp,
-			text		
-		)
-		VALUES
-		(
-			'".$_POST['abuse_cat']."',
-			'".$cu->id."',
-			'".$_POST['abuse_c_user_id']."',
-			'".$_POST['abuse_c_alliance_id']."',
-			UNIX_TIMESTAMP(),
-			'".addslashes($_POST['abuse_text'])."'	
-		);");
-		$tid = mysql_insert_id();
-	
-		$tres = dbquery("
-		SELECT
-			name
-		FROM
-			ticket_cat
-		WHERE
-			id=".$_POST['abuse_cat']."
-		");
-		$tarr = mysql_fetch_row($tres);
-		
-		$res = dbquery("
-			SELECT 
-				user_id,
-				user_nick,
-				user_email
-			FROM 
-				admin_users
-			WHERE
-				ticketmail = 1
-		;");
-		if (mysql_num_rows($res)>0)
-		{
-			while ($arr = mysql_fetch_array($res))
-			{
-				$text = "Hallo ".$arr['user_nick']."\n\n";
-				$text = "Ticket #".$tid." ".ROUNDID."\n----------------------\n\n";
-				$text.= "Nick: ".$cu->nick."\n";
-				$text.= "ID: ".$cu->id."\n";
-				$text.= "IP/Host: ".$_SERVER['REMOTE_ADDR']." (".resolveIp($_SERVER['REMOTE_ADDR']).")\n";
-				$text.= "\n".$tarr[0]."\n\n";
-				$text.= $_POST['abuse_text'];
-				$text.= "\n\nTicket bearbeiten: ".$cfg->roundurl->v."/admin/?page=tickets&amp;view=".$tid."";
-				
-	      $email_header = "From: Escape to Andromeda Ticketsystem ".ROUNDID."<etoa@dev.etoa.ch>\n";
-	      $email_header .= "Reply-To: ".$cu->nick."<".$cu->email.">\n";
-	      $email_header .= "X-Mailer: PHP/" . phpversion(). "\n";
-	      $email_header .= "X-Sender-IP: ".$_SERVER['REMOTE_ADDR']."\n";
-	      $email_header .= "Content-Style-Type: text/css\n";					
-				mail($arr['user_email'],"Neues Nicket #".$tid." (".ROUNDID."): ".$tarr[0],$text,$email_header);
-				
-			}	
-		}
-	
-
-	
-	
+		Ticket::create(array_merge($_POST,array("user_id"=>$s['user_id'])));
 		echo "<br/>Vielen Dank, dein Text wurde gespeichert.<br/>Ein Game-Administrator wird sich dem Problem annehmen.<br/><br/>";
-		if (!$ext)
-			echo "<input type=\"button\" onclick=\"document.location='?page=help'\" value=\"Weiter\" />";
+		if ($ext)
+			echo "<input type=\"button\" onclick=\"document.location='?page=ticket'\" value=\"Weiter\" />";
 	}
 	else
 	{
@@ -108,7 +84,7 @@
 		tableStart("Neues Ticket",700);
 		echo "<tr>
 			<th>Kategorie:</th>
-			<td><select name=\"abuse_cat\">";
+			<td><select name=\"cat_id\">";
 			$cres = dbquery("
 			SELECT
 				id,
@@ -128,8 +104,9 @@
 		</tr>
 		<tr>
 			<th>Beschreibung:</th>
-			<td><textarea name=\"abuse_text\" id=\"abuse_text\" rows=\"10\" cols=\"60\"></textarea></td>
-		</tr>
+			<td><textarea name=\"message\" id=\"abuse_text\" rows=\"10\" cols=\"60\"></textarea></td>
+		</tr>";
+	/*
 		<tr>
 			<th>Betreffenden Spieler * </th>
 			<td><select name=\"abuse_c_user_id\">
@@ -170,8 +147,8 @@
 				echo ">[".$arr[1]."] ".$arr[0]."</option>";			
 			}
 			echo "</select> (* z.B. bei Regelverstössen angeben)</td>
-		</tr>
-		</table><br/>
+		</tr>*/
+		echo "</table><br/>
 		
 		<input type=\"submit\" name=\"abuse_submit\" value=\"Einsenden\" /><br/><br/>";
 		echo "</form>";
@@ -180,78 +157,37 @@
 		if ($ext)
 		{
 		
-		$res = dbquery("
-		SELECT		
-			a.user_nick as anick,
-			a.user_id as aid,
-			t.timestamp,
-			c.name as cname,
-			t.id,
-			t.admin_timestamp,
-			t.text,
-			t.notice,
-			t.status		
-		FROM
-			tickets as t
-		INNER JOIN
-			ticket_cat as c
-			ON t.cat_id=c.id
-		LEFT JOIN
-			admin_users as a
-		ON
-			t.admin_id=a.user_id
-		WHERE
-			t.user_id=".$cu->id."	
-		ORDER BY
-			t.timestamp DESC
-		;");
-		if (mysql_num_rows($res)>0)
+		$tickets = Ticket::find(array('user_id'=>$s['user_id']));
+		
+		if (count($tickets)>0)
 		{
 			tableStart("Vorhandene Tickets",700);
 			echo "<tr>
 				<th>ID</th>
 				<th>Kategorie</th>
-				<th>Eingesendet</th>
 				<th>Status</th>				
 				<th>Admin</th>
-				<th>Bearbeitet</th>
+				<th>Aktualisiert</th>
 				<th>Optionen</th>
 			</tr>";
-			while($arr=mysql_fetch_array($res))
+			foreach($tickets as $tid => &$ti)
 			{
 				echo "<tr>
-				<td>".$arr['id']."</td>
-				<td>".$arr['cname']."</td>
-				<td>".df($arr['timestamp'])."</td>
-				<td style=\"color:".$abuse_colors[$arr['status']]."\">".$status[$arr['status']]."</td>
-				<td><a href=\"?page=contact&rcpt=".$arr['aid']."\">".$arr['anick']."</a></td>
-				<td>".($arr['admin_timestamp'] > 0 ? df($arr['admin_timestamp']) : "-")."</td>
+				<td>".$ti->idString."</td>
+				<td>".$ti->catName."</td>
+				<td>".$ti->statusName."</td>
+				<td><a href=\"?page=contact&rcpt=".$ti->adminId."\">".$ti->adminNick."</a></td>
+				<td>".df($ti->time)."</td>
 				<td>
-					[<a href=\"javascript:;\" onclick=\"toggleText('tx_".$arr['id']."','sw_".$arr['id']."')\" id=\"sw_".$arr['id']."\">Anzeigen</a>]
+					<a href=\"?page=$page&amp;id=".$tid."\">Anzeigen</a>
 				</td>
-				</tr>
-				<tr id=\"tx_".$arr['id']."\" ";
-				if (!isset($_GET['id']) || (isset($_GET['id']) && $_GET['id']!=$arr['id']))
-				{
-					echo "style=\"display:none;\"";
-				}
-				echo ">
-					<td colspan=\"7\">
-					<b>Meldung:</b><br/>
-					".text2html($arr['text'])."<br/><br/>
-					<b>Antwort:</b><br/>";
-					if ($arr['notice']!="")
-						echo text2html($arr['notice']);
-					else
-						echo "<i>Noch keine vorhanden</i>";
-					echo "</td>
-				</tr>";			
+				</tr>";
 			}
 			echo "</table>";
 		}
 		}		
 	}
 	
-	
+}
 	
 ?>

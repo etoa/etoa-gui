@@ -645,6 +645,8 @@
 	*/
 	function send_msg($user_id,$msg_type,$subject,$text)
 	{
+		if ($user_id>0)
+		{
 		dbquery("
 			INSERT INTO
 				messages
@@ -677,6 +679,9 @@
 				'".addslashes($text)."'
 			);
 		");		
+			return true;
+		}
+		return false;
 	}
 
 	/**

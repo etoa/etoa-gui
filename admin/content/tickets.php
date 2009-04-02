@@ -1,410 +1,268 @@
-<?PHP
-	$abuse_status = array("Neu","Zugeteilt","Abgeschlossen","Gelöscht");
-	$abuse_colors = array("#f90","#ff0","#0f0","#bbb");
+<?php
 
-	echo "<h1>Tickets</h1>";
-	
-	
-	if (isset($_GET['view'])>0)
+echo "<h1>Support-Tickets</h1>";
+
+echo '<div>[ <a href="?page='.$page.'">Aktive Tickets</a> |
+<a href="?page='.$page.'&amp;action=new">Neues Ticket erstellen</a> |
+<a href="?page='.$page.'&amp;action=closed">Bearbeitete Tickets</a> ]</div>' ;
+
+
+if (isset($_GET['id']) && $_GET['id']>0)
+{
+	echo "<h2>Ticket-Details</h2>";
+	$ti = new Ticket($_GET['id']);
+
+	if (isset($_POST['submit']))
 	{
-		$res = dbquery("
-		SELECT
-			u.user_nick as unick,
-			u.user_id as uid,
-			t.timestamp,
-			c.name as cname,
-			c.id as cid,
-			t.id,
-			t.text,
-			t.status,
-			t.admin_id,
-			cu.user_nick as cunick,
-			cu.user_id as cuid,
-			alliance_tag,
-			alliance_name,
-			alliance_id,
-			t.solution,
-			t.notice								
-		FROM
-			tickets as t
-		INNER JOIN
-			ticket_cat as c
-			ON c.id=t.cat_id			
-		LEFT JOIN
-			users as u
-		ON
-			t.user_id=u.user_id
-		LEFT JOIN
-			users as cu
-		ON
-			c_user_id=cu.user_id
-		LEFT JOIN
-			alliances
-		ON
-			c_alliance_id=alliance_id
-		WHERE
-			t.id=".$_GET['view']."
-		;");
-		if (mysql_num_rows($res)>0)
-		{
-			$arr=mysql_fetch_array($res);
-	
-			echo "<div id=\"ttuser\" style=\"display:none;\">
-			".openerLink("page=user&sub=edit&id=".$arr['uid'],"Daten anzeigen")."<br/>
-			".popupLink("sendmessage","Nachricht senden","","id=".$arr['uid'])."<br/>
-			</div>";			
-			
-			echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
-			echo "<input type=\"hidden\" name=\"user_id\" value=\"".$arr['uid']."\" />";
-			tableStart("Details Ticket #".$arr['id']."",'95%');
-			echo "
-			<tr>
-				<th>Spieler</th>
-				<td><a href=\"#\" ".cTT($arr['unick'],"ttuser").">".$arr['unick']."</a></td>
-			</tr>
-			<tr>
-				<th>Kategorie</th>
-				<td><select name=\"abuse_cat\">";
-				$cres = dbquery("
-				SELECT
-					id,
-					name
-				FROM
-					ticket_cat
-				ORDER By
-					sort			
-				");			
-				while ($carr = mysql_fetch_row($cres))
-				{
-					echo "<option value=\"".$carr[0]."\"";
-					if (isset($arr['cid']) && $arr['cid']==$carr[0]) echo " selected=\"selected\"";
-					echo ">".$carr[1]."</option>";			
-				}				
-				echo "</select></td>
-			</tr>
-			<tr>
-				<th>Zeit</th>
-				<td>".df($arr['timestamp'])."</td>
-			</tr>
-			<tr>
-				<th>Text</th>
-				<td>".text2html($arr['text'])."</td>
-			</tr>";
-			if ($arr['cunick']!="")
-			{
-				echo "<div id=\"ttcuser\" style=\"display:none;\">
-				".openerLink("page=user&sub=edit&id=".$arr['cuid'],"Daten anzeigen")."<br/>
-				".popupLink("sendmessage","Nachricht senden","","id=".$arr['cuid'])."<br/>
-				</div>";							
-				echo "<tr>
-				<th>Betreffenden Spieler</th>
-				<td><a href=\"#\" ".cTT($arr['cunick'],"ttcuser").">".$arr['cunick']."</a>
-				</td>
-				</tr>";				
-			}
-			if ($arr['alliance_id']>0)
-			{
-				echo "<tr>
-				<th>Betreffende Allianz</th>
-				<td>".openerLink("page=alliances&sub=edit&amp;alliance_id=".$arr['alliance_id'],"[".$arr['alliance_tag']."] ".$arr['alliance_name'])."
-				</td>
-				</tr>";				
-			}			
-			echo "<tr>
-				<th>Status</th>
-				<td><select name=\"abuse_status\">";
-				foreach ($abuse_status as $k => $v)
-				{
-					echo "<option value=\"".$k."\"";
-					if ($arr['status']==$k) echo " selected=\"selected\"";
-					echo ">".$v."</option>";
-				}
-				echo "</select></td>
-			</tr>		
-			<tr>
-				<th>Zugewiesener Admin</th>
-				<td><select name=\"abuse_admin_id\">
-				<option value=\"0\">(keiner)</option>";
-				$ares = dbquery("
-				SELECT
-					user_nick,
-					user_id
-				FROM
-					admin_users
-				ORDER BY
-					user_nick				
-				;");
-				while ($aarr=mysql_fetch_row($ares))
-				{
-					echo "<option value=\"".$aarr[1]."\"";
-					if ($arr['admin_id']==$aarr[1]) echo " selected=\"selected\"";
-					echo ">".$aarr[0]."</option>";
-				}
-				echo "</select></td>
-			</tr>
-			<tr>
-				<th>Lösung:<br/><span style=\"font-size:8pt\">Admin-Interne Notiz</span></th>
-				<td><textarea name=\"abuse_solution\" rows=\"5\" cols=\"70\">".stripslashes($arr['solution'])."</textarea></td>
-			</tr>";
-			if ($arr['status']==1 || $arr['status']==2)
-			echo "<tr>
-				<th>Nachricht an Spieler:<br/><span style=\"font-size:8pt\">Dies wird beim Spieler angezeigt</span></th>
-				<td><textarea name=\"abuse_notice\" rows=\"5\" cols=\"70\">".stripslashes($arr['notice'])."</textarea></td>
-			</tr>";			
-			echo "</table><br/>";
-			echo "<input type=\"hidden\" name=\"abuse_id\" value=\"".$arr['id']."\" />";
-			if ($arr['status']==0)
-			{
-				echo "<input type=\"submit\" name=\"submit_chown\" value=\"Ticket mir zuweisen und User informieren\" /> &nbsp; ";
-				echo "<input type=\"submit\" name=\"submit_delete\" value=\"Ticket löschen\" /> &nbsp; ";
-			}
-			if ($arr['status']==1)
-			{
-				echo "<input type=\"submit\" name=\"submit_finished\" value=\"Ticket als Bearbeitet kennzeichnen und User informieren\" /> &nbsp; ";
-			}
+		$ti->status = $_POST['status'];
+		$ti->solution = $_POST['solution'];
+		$ti->catId = $_POST['cat_id'];
+		$ti->adminId = $_POST['admin_id'];
+		
+		if ($ti->changed)
+			ok_msg("Ticket aktualisiert!");
+	}
+	if (isset($_POST['submit_assign']))
+	{
+		$ti->assign($s['user_id']);
+		if ($ti->changed)
+			ok_msg("Ticket aktualisiert!");
+	}
+	if (isset($_POST['submit_reopen']))
+	{
+		$ti->reopen();
+		if ($ti->changed)
+			ok_msg("Ticket aktualisiert!");
+	}
 
-			echo "<input type=\"submit\" name=\"submit_changes\" value=\"Übernehmen\" /> &nbsp; ";
-			echo "<input type=\"button\" value=\"Übersicht\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" />";
-			echo "</form>";
-		}	
-		else
+	if (isset($_POST['submit_new_post']))
+	{
+		if ($ti->addMessage(array("admin_id"=>$s['user_id'],"message"=>$_POST['message'])))
 		{
-			echo "Fehler! Ticket nicht vorhanden!";
-		}	
-	}
-	else
-	{	
-		if (isset($_POST['submit_changes']))
-		{
-			dbquery("
-			UPDATE
-				tickets
-			SET
-				admin_id=".$_POST['abuse_admin_id'].",
-				status='".$_POST['abuse_status']."',
-					cat_id 	='".$_POST['abuse_cat']."',
-				admin_timestamp=UNIX_TIMESTAMP(),
-				solution='".addslashes($_POST['abuse_solution'])."'
-				".(isset($_POST['abuse_notice']) ? ",notice='".addslashes($_POST['abuse_notice'])."'" : "")."
-			WHERE
-				id=".$_POST['abuse_id']."
-			;");	
-			echo ok_msg("Ticket geändert!");
-		}
-		if (isset($_POST['submit_chown']))
-		{
-			dbquery("
-			UPDATE
-				tickets
-			SET
-				admin_id=".$s['user_id'].",
-				status=1,
-					cat_id 	='".$_POST['abuse_cat']."',
-				admin_timestamp=UNIX_TIMESTAMP(),
-				solution='".addslashes($_POST['abuse_solution'])."'
-			WHERE
-				id=".$_POST['abuse_id']."
-			;");	
-			echo ok_msg("Ticket geändert!");
-			$text = "Hallo!\n\nEin Administrator hat dein Ticket erhalten und wird sich um das Problem kümmern ! Klicke [url ?page=ticket&id=".$_POST['abuse_id']."]hier[/url] um Informationen dazu anzuzeigen.";
-			send_msg($_POST['user_id'],USER_MSG_CAT_ID,"Dein Ticket ".$_POST['abuse_id']."",$text);
-		}	
-		if (isset($_POST['submit_finished']))
-		{
-			dbquery("
-			UPDATE
-				tickets
-			SET
-				status=2,
-					cat_id 	='".$_POST['abuse_cat']."',
-				admin_timestamp=UNIX_TIMESTAMP(),
-				solution='".addslashes($_POST['abuse_solution'])."'
-				".(isset($_POST['abuse_notice']) ? ",notice='".addslashes($_POST['abuse_notice'])."'" : "")."
-			WHERE
-				id=".$_POST['abuse_id']."
-			;");	
-			$text = "Hallo!\n\nDein Ticket wurde bearbeitet! Klicke [url ?page=ticket&id=".$_POST['abuse_id']."]hier[/url] um Informationen dazu anzuzeigen.";
-			send_msg($_POST['user_id'],USER_MSG_CAT_ID,"Dein Ticket #".$_POST['abuse_id']."",$text);
-			
-			echo ok_msg("Ticket geändert!");
-		}				
-		if (isset($_POST['submit_delete']))
-		{
-			dbquery("
-			UPDATE
-				tickets
-			SET
-				admin_id=".$s['user_id'].",
-				status=3,
-					cat_id 	='".$_POST['abuse_cat']."',
-				admin_timestamp=UNIX_TIMESTAMP(),
-				solution='".addslashes($_POST['abuse_solution'])."'
-				".(isset($_POST['abuse_notice']) ? ",notice='".addslashes($_POST['abuse_notice'])."'" : "")."
-			WHERE
-				id=".$_POST['abuse_id']."
-			;");	
-			echo ok_msg("Ticket geändert!");
-		}	
-		if (isset($_GET['action']) && $_GET['action']=="delall")
-		{
-			dbquery("
-			DELETE FROM
-				tickets
-			WHERE
-				status=3
-			;");	
-			echo "Tickets gelöscht!<br/>";
-		}	
-		
-		$types = array(
-		"Unbearbeitete Tickets" => 
-		"SELECT		
-			u.user_nick as unick,
-			u.user_id as uid,  
-			c.name as cname,
-			t.timestamp,
-			t.id		
-		FROM
-			tickets as t
-		INNER JOIN
-			ticket_cat as c
-			ON c.id=t.cat_id
-		LEFT JOIN
-			users as u
-		ON
-			t.user_id=u.user_id
-		WHERE
-			t.status=0	
-		ORDER BY
-			t.timestamp
-		;",
-		
-		"Zugewiesene Tickets" =>
-		"SELECT		
-			u.user_nick as unick,
-			u.user_id as uid,
-			a.user_nick as anick,
-			t.timestamp,
-			c.name as cname,
-			t.id,
-			t.admin_timestamp		
-		FROM
-			tickets t
-		INNER JOIN
-			ticket_cat as c
-			ON c.id=t.cat_id			
-		LEFT JOIN
-			users as u
-		ON
-			t.user_id=u.user_id
-		LEFT JOIN
-			admin_users as a
-		ON
-			t.admin_id=a.user_id
-		WHERE
-			t.status=1	
-		ORDER BY
-			t.timestamp DESC
-		;",
-		
-		"Bearbeitete Tickets" =>
-		"SELECT		
-			u.user_nick as unick,
-			u.user_id as uid,
-			a.user_nick as anick,
-			t.timestamp,
-			c.name as cname,
-			t.id,
-			t.admin_timestamp		
-		FROM
-			tickets as t
-		INNER JOIN
-			ticket_cat as c
-			ON c.id=t.cat_id						
-		LEFT JOIN
-			users as u
-		ON
-			t.user_id=u.user_id
-		LEFT JOIN
-			admin_users as a
-		ON
-			t.admin_id=a.user_id
-		WHERE
-			t.status=2	
-		ORDER BY
-			t.timestamp DESC
-		;",
-		
-		"Gelöschte Tickets" =>
-		"SELECT		
-			u.user_nick as unick,
-			u.user_id as uid,
-			a.user_nick as anick,
-			t.timestamp,
-			c.name as cname,
-			t.id,
-			t.admin_timestamp		
-		FROM
-			tickets as t
-		INNER JOIN
-			ticket_cat as c
-			ON c.id=t.cat_id				
-		LEFT JOIN
-			users as u
-		ON
-			t.user_id=u.user_id
-		LEFT JOIN
-			admin_users as a
-		ON
-			t.admin_id=a.user_id
-		WHERE
-			t.status=3	
-		ORDER BY
-			t.timestamp DESC
-		;"
-		);
-		
-		$cnt=0;
-		foreach ($types as $k => $v)
-		{
-			$res = dbquery($v);
-			if (mysql_num_rows($res)>0)
+			ok_msg("Nachricht hinzugefügt!");
+			if (isset($_POST['checkclose']))
 			{
-				tableStart($k,'95%');
-				echo "<tr>
-					<th style=\"width:50px;\">ID</th>
-					<th style=\"width:150px;\">Spieler</th>
-					<th>Kategorie</th>
-					<th>Admin</th>
-					<th style=\"width:130px;\">Zeit</th>
-				</tr>";
-				while($arr=mysql_fetch_array($res))
-				{
-					echo "<div id=\"tt".$arr['id']."\" style=\"display:none;\">
-					".openerLink("page=user&sub=edit&id=".$arr['uid'],"Daten anzeigen")."<br/>
-					".popupLink("sendmessage","Nachricht senden","","id=".$arr['uid'])."<br/>
-					</div>";
-					
-					echo "<tr>
-					<td><a href=\"?page=$page&amp;sub=$sub&amp;view=".$arr['id']."\">".$arr['id']."</a></td>
-					<td><a href=\"#\" ".cTT($arr['unick'],"tt".$arr['id']).">".$arr['unick']."</a></td>
-					<td>".$arr['cname']."</td>
-					<td>".$arr['anick']."</td>
-					<td>".df($arr['timestamp'])."</td>
-					</tr>";			
-					$cnt++;
-				}
-				tableEnd();
-				if ($k == "Gelöschte Tickets")
-				echo "<br/><a href=\"?page=$page&amp;sub=$sub&amp;action=delall\" onclick=\"return confirm('Wirklich löschen?')\">Gelöschte endgültig löschen</a>";
+				$ti->close($_POST['solutionclose']);
 			}
 		}
-		
-		if ($cnt==0)
-		{
-			echo "<i>Keine Tickets vorhanden!</i>";
-		}
-		
 	}
+
+	echo "<div id=\"ttuser\" style=\"display:none;\">
+	".openerLink("page=user&sub=edit&id=".$ti->userId,"Daten anzeigen")."<br/>
+	".popupLink("sendmessage","Nachricht senden","","id=".$ti->userId)."<br/>
+	</div>";
+
+
+	echo '<form action="?page='.$page.'&amp;id='.$_GET['id'].'" method="post">';
+	tableStart("Ticket ".$ti->idString);
+	echo '<tr><th>Kategorie:</th><td colspan="3">';
+	htmlSelect("cat_id",Ticket::getCategories(),$ti->catId);
+	echo '</td></tr>';
+	echo '<tr><th>User:</th><td>';
+	echo '<a href=\"javascript:;\" '.cTT($ti->userNick,"ttuser").'>'.$ti->userNick.'</a>';
+	echo '</td>';
+	echo '<th>Zugeteilter Admin:</th><td>';
+	$sdata = AdminUser::getArray();
+	$sdata[0] = "(Niemand)";
+	htmlSelect("admin_id",$sdata,$ti->adminId);
+	echo '</td></tr>';
+	echo '<tr><th>Status:</th><td>';
+	htmlSelect("status",Ticket::$statusItems,$ti->status);
+	echo '</td>';
+	echo '<th>Lösung:</th><td>';
+	htmlSelect("solution",Ticket::$solutionItems,$ti->solution);
+	echo '</td></tr>';
+	tableEnd();
+	echo '<p>
+	';
+	if ($ti->status=="new")
+		echo '<input type="submit" name="submit_assign" value="Ticket mir zuweisen" /> &nbsp; ';
+	if ($ti->status=="closed")
+		echo '<input type="submit" name="submit_reopen" value="Ticket wieder eröffnen" /> &nbsp; ';
+
+	echo ''.button("Zur Übersicht","?page=$page").' &nbsp;
+	<input type="submit" name="submit" value="Änderungen übernehmen" /> &nbsp;
+	</p>';
+	echo "</form>";
+
+	tableStart("Nachrichten");
+	echo "<tr><th>Datum</th><th>Autor</th><th>Nachricht</th></tr>";
+	foreach ($ti->getMessages() as $mi)
+	{
+		echo "<tr>
+		<td>".df($mi->timestamp)."</td>
+		<td>".$mi->authorNick."</td>
+		<td>".text2html($mi->message)."</td>
+		</tr>";
+	}
+	tableEnd();
+
+	if ($ti->status=="assigned")
+	{
+		echo '<form action="?page='.$page.'&amp;id='.$_GET['id'].'" method="post">';
+		tableStart("Neue Nachricht");
+		echo '<tr><th>Absender:</th><td>';
+		echo $s['user_nick']." (Admin)";
+		echo '</td></tr>';
+		echo '<tr><th>Nachricht:</th><td>';
+		echo '<textarea name="message" rows="8" cols="60"></textarea>';
+		echo '</td></tr>';
+		tableEnd();
+		echo '<input type="submit" name="submit_new_post" value="Senden" /> &nbsp; ';
+
+		echo ' <input type="checkbox" name="checkclose" value="1" /> Ticket abschliessen als ';
+		htmlSelect("solutionclose",Ticket::$solutionItems,"solved");
+
+		echo "</form><br/>";
+	}
+
+}
+
+//
+// Create new ticket
+//
+elseif (isset($_GET['action']) && $_GET['action']=="new")
+{
+	//
+	// Create ticket form
+	//
+	echo "<h2>Ticket erstellen</h2>";
+	echo '<form action="?page='.$page.'" method="post">';
+	tableStart();
+	echo '<tr><th>User:</th><td>';
+	htmlSelect("user_id",Users::getArray());
+	echo '</td></tr>';
+	/*
+	echo '<tr><th>Zugeteilter Admin:</th><td>';
+	$sdata = AdminUser::getArray();
+	$sdata[0] = "(Niemand)";
+	htmlSelect("admin_id",$sdata);
+	echo '</td></tr>'; */
+	echo '<tr><th>Kategorie:</th><td>';
+	htmlSelect("cat_id",Ticket::getCategories());
+	echo '</td></tr>';
+	echo '<tr><th>Problembeschreibung:</th><td>';
+	echo '<textarea name="message" rows="8" cols="60"></textarea>';
+	echo '</td></tr>';
+	tableEnd();
+	echo '<input type="submit" name="submit_new" value="Speichern" />
+	</form>';
+}
+
+//
+// Closed tickets
+//
+elseif (isset($_GET['action']) && $_GET['action']=="closed")
+{
+
+	echo '<h2>Bearbeitete Tickets</h2>';
+
+	$cnt=0;
+	$tlist = Ticket::find(array('status'=>'closed'));
+	if (count($tlist)>0)
+	{
+		tableStart('Abgeschlossen','100%');
+		echo "<tr><th>ID</th>
+<th>Status</th>
+<th>Kategorie</th>
+<th>User</th>
+<th>Admin</th>
+<th>Nachrichten</th>
+<th>Letzte Änderung</th></tr>";
+		foreach ($tlist as $tid => &$ti)
+		{
+			echo "<tr>
+			<td><a href=\"?page=$page&amp;id=".$tid."\">".$ti->idString."</a></td>
+			<td>".$ti->statusName."</td>
+			<td>".$ti->catName."</td>
+			<td>".$ti->userNick."</td>
+			<td>".$ti->adminNick."</td>
+			<td>".$ti->countMessages()."</td>
+			<td>".df($ti->time)."</td>
+			</tr>";
+			$cnt++;
+		}
+		tableEnd();
+	}
+
+	if ($cnt==0)
+	{
+		echo '<i>Keine aktiven Tickets vorhanden!</i>';
+	}
+}
+
+//
+// Active tickets
+//
+else
+{
+	echo '<h2>Aktive Tickets</h2>';
+
+	if (isset($_POST['submit_new']))
+	{
+		if (Ticket::create($_POST))
+		{
+			ok_msg("Das Ticket wurde erstellt!");
+		}
+	}
+
+
+	$cnt=0;
+
+	$tlist = Ticket::find(array('status'=>'new'));
+	if (count($tlist)>0)
+	{
+		tableStart('Neu','100%');
+		echo "<tr><th>ID</th><th>Status</th><th>Kategorie</th><th>User</th><th>Letzte Änderung</th></tr>";
+		foreach ($tlist as $tid => &$ti)
+		{
+			echo "<div id=\"tt".$ti->id."\" style=\"display:none;\">
+			".openerLink("page=user&sub=edit&id=".$ti->userId,"Daten anzeigen")."<br/>
+			".popupLink("sendmessage","Nachricht senden","","id=".$ti->userId)."<br/>
+			</div>";
+
+			echo "<tr>
+			<td><a href=\"?page=$page&amp;id=".$tid."\">".$ti->idString."</a></td>
+			<td>".$ti->statusName."</td>
+			<td>".$ti->catName."</td>
+			<td><a href=\"javascript:;\" ".cTT($ti->userNick,"tt".$ti->id).">".$ti->userNick."</a></td>
+			<td>".df($ti->time)."</td>
+			</tr>";
+			$cnt++;
+		}
+		tableEnd();
+	}
+	$tlist = Ticket::find(array('status'=>'assigned'));
+	if (count($tlist)>0)
+	{
+		tableStart('Zugeteilt','100%');
+		echo "<tr><th>ID</th>
+<th>Status</th>
+<th>Kategorie</th>
+<th>User</th>
+<th>Nachrichten</th>
+<th>Letzte Änderung</th></tr>";
+		foreach ($tlist as $tid => &$ti)
+		{
+			echo "<tr>
+			<td><a href=\"?page=$page&amp;id=".$tid."\">".$ti->idString."</a></td>
+			<td>".$ti->statusName.": <b>".$ti->adminNick."</b></td>
+			<td>".$ti->catName."</td>
+			<td>".$ti->userNick."</td>
+			<td>".$ti->countMessages()."</td>
+			<td>".df($ti->time)."</td>
+			</tr>";
+			$cnt++;
+		}
+		tableEnd();
+	}
+
+	if ($cnt==0)
+	{
+		echo '<i>Keine aktiven Tickets vorhanden!</i>';
+	}
+}
+
+
 
 ?>

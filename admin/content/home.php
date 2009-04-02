@@ -564,34 +564,17 @@
 		tableStart("Spieler-Tools");
 		
 
-		// Tickets		
-		$res = dbquery("
-		SELECT		
-			COUNT(id)
-		FROM
-			tickets
-		WHERE
-			status=0	
-		;");
-		$arr=mysql_fetch_row($res);
-		$res2 = dbquery("
-		SELECT		
-			COUNT(id)
-		FROM
-			tickets
-		WHERE
-			status=1
-			AND admin_id=".$s['user_id']."	
-		;");
-		$arr2=mysql_fetch_row($res2);		
-		echo "<tr><th class=\"tbltitle\">Ticket-System:</th>";
+		// Tickets
+		$tnew = Ticket::countNew();
+		$tass = Ticket::countAssigned($s['user_id']);
+
+echo "<tr><th class=\"tbltitle\">Ticket-System:</th>";
 		echo "<td class=\"tbldata\">
-		".popupLink("tickets",$arr[0]." neue Tickets",($arr[0]>0) ? "font-weight:bold;color:#f90;":"")." 
+		".popupLink("tickets",$tnew." neue Tickets",($tnew>0) ? "font-weight:bold;color:#f90;":"")."
 		vorhanden";
-		
-		if ($arr2[0]>0) 
+		if ($tass>0)
 		{
-			echo ", ".popupLink("tickets",$arr2[0]." offene Tickets",($arr2[0]>0) ? "font-weight:bold;color:#f90;":"")." vorhanden";
+			echo ", ".popupLink("tickets",$tass." offene Tickets",($tass>0) ? "font-weight:bold;color:#f90;":"")." vorhanden";
 		}
 		echo "</td></tr>";
 		
