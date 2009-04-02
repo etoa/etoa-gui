@@ -3077,6 +3077,16 @@ function imagecreatefromfile($path, $user_functions = false)
 		return "<img src=\"".(defined('IMAGE_DIR')? IMAGE_DIR : 'images')."/icons/".$name.".png\" alt=\"$name\" />";
 	}
 
+	function htmlSelect($name,&$data,$default=null)
+	{
+		echo '<select name="'.$name.'">';
+		foreach ($data as $k=>$v)
+		{
+			echo '<option value="'.$k.'" '.($default==$k ? ' selected="selected"': '').'>'.$v.'</option>';
+		}
+		echo "</select>";
+	}
+
 	// Test
 
 	/**
