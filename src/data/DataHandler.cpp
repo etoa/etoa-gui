@@ -413,7 +413,8 @@
 			if (spSize>0) {
 				mysqlpp::Row spRow;
 				
-				for (mysqlpp::Row::size_type i = 0; i<spSize; i++) {
+				for (mysqlpp::Row::size_type i = 0; i<spSize; i++) 
+				{
 					spRow = spRes.at(i);
 					this->idSpecialistConverter[(int)(spRow["specialist_id"]) ] =  this->counter;
 					object = new SpecialistData(spRow);

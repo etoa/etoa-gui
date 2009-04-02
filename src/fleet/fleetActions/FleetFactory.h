@@ -40,10 +40,11 @@
 #include "delivery/DeliveryHandler.h"
 #include "alliance/AllianceHandler.h"
 
-class FleetFactory {
-public:
-
-	static FleetAction* createFleet(short status, std::string action, mysqlpp::Row fRow) {
+class FleetFactory 
+{
+	public:
+	static FleetAction* createFleet(short status, std::string action, mysqlpp::Row fRow) 
+	{
 		Config &config = Config::instance();
 		switch (status)
 		{
@@ -139,6 +140,8 @@ public:
 			default:
 				return new defaul::DefaultHandler(fRow);
 		}	
+		std::cerr << "Problem mit Flottenaktion! Keine passende Aktion gefunden!" <<std::endl;
+		return new defaul::DefaultHandler(fRow);
 	}
 };
 #endif

@@ -22,7 +22,8 @@
 		return this->points;
 	}		
 	
-	SpecialistData* User::getSpecialist() {
+	SpecialistData* User::getSpecialist() 
+	{
 		if (!this->dataLoaded)
 			this->loadData();
 		

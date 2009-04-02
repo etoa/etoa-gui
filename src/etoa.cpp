@@ -29,6 +29,8 @@ void etoamain()
 {
 	int minLoopDuration = 1;	// Minimal loop duration
 	
+	bool verbose = false;
+	
 	std::clog << "Entering etoa main loop"<<std::endl;
 	
 	// TODO: Error handling
@@ -47,10 +49,13 @@ void etoamain()
 		}
 		
 		// Graphical bling-bling
-		//system("clear");
-		//std::cout << "----------------------------------------------------------------\n";
-		//std::cout << "- EtoA Eventhandler, (C) 2007 by EtoA Gaming, Time: "<< std::time(0) <<" -\n";
-		//std::cout << "----------------------------------------------------------------\n\n";
+		if (verbose)
+		{
+			system("clear");
+			std::cout << "----------------------------------------------------------------\n";
+			std::cout << "- EtoA Eventhandler, (C) 2007 by EtoA Gaming, Time: "<< std::time(0) <<" -\n";
+			std::cout << "----------------------------------------------------------------\n\n";
+		}
 		
 		//quest::QuestHandler* qh = new quest::QuestHandler();
 		//qh->update();
@@ -89,7 +94,7 @@ void etoamain()
 		
 		fleet::FleetHandler* fh = new fleet::FleetHandler();
 		fh->update(); 
-
+		
 		ship::ShipHandler* sh = new ship::ShipHandler();
 		sh->update();  
 
@@ -98,7 +103,8 @@ void etoamain()
 
 		if (bh->changes() || dh->changes() || sh->changes() || true)
 		{			
-			//std::cout << "Changing planet data...\n";
+			if (verbose)
+				std::cout << "Changing planet data...\n";
 			// Load id's of changed planets
 			std::vector<int> v1 = bh->getChangedPlanets();
 			std::vector<int> v2 = sh->getChangedPlanets();
@@ -131,7 +137,8 @@ void etoamain()
 			
 			while(!EntityUpdateQueue::instance().empty()) 
 			{
-      	std::clog << "Now serving: " << EntityUpdateQueue::instance().front() << std::endl;
+      	if (verbose)
+      		std::cout << "Now serving: " << EntityUpdateQueue::instance().front() << std::endl;
       	v1.push_back(EntityUpdateQueue::instance().front());
       	EntityUpdateQueue::instance().pop();
     	}
@@ -140,10 +147,15 @@ void etoamain()
 			pm->updateUserPlanets();
 			delete pm;
 
-			//std::clog << "Updated "<<v1.size() << " entities."<<std::endl;
+     	if (verbose)
+				std::cout << "Updated "<<v1.size() << " entities."<<std::endl;
 		}
 		
 		sleep(minLoopDuration);
-	}		
+	}
+	
+	std::clog << "Unexpectedly reached end of main thread!"<<std::endl;
+	exit(EXIT_FAILURE);
+			
 }
 

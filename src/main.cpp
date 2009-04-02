@@ -20,7 +20,7 @@
 
 using namespace std;
 
-std::string versionString = "0.1 alpha";
+std::string versionString = "1.0";
 
 std::string gameRound;
 std::string pidFile;
@@ -28,6 +28,9 @@ std::string logFile;
 
 Logger* logr;
 PIDFile* pf;
+
+bool verbose = false;
+bool detach = false;
 
 int ownerUID;
 
@@ -47,8 +50,11 @@ void sighandler(int sig)
 
 	std::cerr << "Caught signal "<<sig<<", exiting..."<<std::endl;
 	std::cerr << "EtoA backend "<<gameRound<<" unexpectedly stopped"<<std::endl;
+	std::clog << "Caught signal "<<sig<<", exiting..."<<std::endl;
+	std::clog << "EtoA backend "<<gameRound<<" unexpectedly stopped"<<std::endl;
 
 	delete logr;
+	
 	exit(EXIT_FAILURE);
 }
 
@@ -69,10 +75,6 @@ void daemonize()
   {
     exit(EXIT_SUCCESS);
   }
-
-  // Open any logs here 
-	logr = new Logger(logFile);
-	clog << "Loggin started"<<endl;
 
 	/* Close out the standard file descriptors */
 	close(STDIN_FILENO);
@@ -97,6 +99,10 @@ void daemonize()
 	clog <<  "Daemon initialized with PID " << myPid << " and owned by " << getuid()<<std::endl;
 }
 
+/**
+* Runs the message queue listener for receiving
+* command from the frontend
+*/
 void msgQueueThread()
 {                                   
 	std::clog << "Message queue thread started"<<std::endl;
@@ -110,7 +116,6 @@ void msgQueueThread()
 			int id = 0;
 			queue.rcvCommand(&cmd,&id);
 			
-			clog << "Message queue command received: "<< cmd << ", Id: " << id<<std::endl;
 			if (cmd == "planetupdate")
 			{
 				EntityUpdateQueue::instance().push(id);
@@ -120,16 +125,6 @@ void msgQueueThread()
 	std::clog << "Message queue thread ended"<<std::endl;
 }
 
-void mainThread()
-{
-	std::clog << "Main thread started"<<std::endl;
-
-	etoamain();
-	
-	std::clog << "Unexpectedly reached end of main thread!"<<std::endl;
-	exit(EXIT_FAILURE);
-}
-
 int main(int argc, char* argv[])
 {
 	// Register signal handlers
@@ -137,6 +132,9 @@ int main(int argc, char* argv[])
 	signal(SIGTERM, &sighandler);
 	signal(SIGINT, &sighandler);
 	signal(SIGHUP, &sighandler);
+	signal(SIGSEGV, &sighandler);
+	signal(SIGQUIT, &sighandler);
+	signal(SIGFPE, &sighandler);
 
 
 
@@ -150,12 +148,16 @@ int main(int argc, char* argv[])
   opt->addUsage( " -l  --logfile path  	   Select path to logfile");
   opt->addUsage( " -k  --killexisting      Kills an already running instance of this backend before starting this instance");
   opt->addUsage( " -s  --stop              Stops a running instance of this backend");
+  opt->addUsage( " -d  --daemon            Detach from console and run as daemon in background");
+  opt->addUsage( " -v  --verbose           Detailed output");
   opt->addUsage( " -h  --help              Prints this help");
-  opt->addUsage( " -v  --version           Prints version information");
+  opt->addUsage( " --version           Prints version information");
   opt->setFlag("help",'h');
-  opt->setFlag("version",'v');
+  opt->setFlag("version");
   opt->setFlag("killexisting",'k');
   opt->setFlag("stop",'s');
+  opt->setFlag("daemon",'d');
+  opt->setFlag("verbose",'v');
   opt->setOption("userid",'u');
   opt->setOption("round",'r');
   opt->setOption("pidfile",'p');  
@@ -186,6 +188,11 @@ int main(int argc, char* argv[])
   {	
 		stop = true;
 	}
+  if( opt->getFlag( "daemon" ) || opt->getFlag( 'd' )) 
+  {	
+		detach = true;
+	}
+	
 
 	
 	if( opt->getValue( 'r' ) != NULL)
@@ -277,12 +284,17 @@ int main(int argc, char* argv[])
  		return EXIT_FAILURE;		
  	}	
 
-	daemonize();
+  // Open any logs here 
+	logr = new Logger(logFile);
+	clog << "Loggin started"<<endl;
+
+	if (detach)
+		daemonize();
 
 	Config &config = Config::instance();
 	config.setRoundName(gameRound);
 
-	boost::thread mThread(&mainThread);
+	boost::thread mThread(&etoamain);
 	boost::thread qThread(&msgQueueThread);
 
 	mThread.join();	

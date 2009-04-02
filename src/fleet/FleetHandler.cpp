@@ -19,7 +19,7 @@ namespace fleet
 		mysqlpp::Result res = query.store();
 		query.reset();
 
-		//std::cout << "Updating ";
+	//	std::cout << "Updating ";
 		//Checking queryresult
 		if (res)  {
 	    	unsigned int resSize = res.size();
@@ -33,13 +33,13 @@ namespace fleet
 
 					std::string action = (std::string)row["action"];
 
-					//std::cout << "User: " << row["user_id"] << " Zeit: " << row["landtime"] << " Aktion: " << action << " Status:" << row["status"] << "\n";
+			//		std::cout << "User: " << row["user_id"] << " Zeit: " << row["landtime"] << " Aktion: " << action << " Status:" << row["status"] << "\n";
 
 
 					// Nachprüfen ob Landezeit wirklich kleider ist als aktuelle Zeit
 					if ((int)row["landtime"] < time(0)) {
 						// Load action
-
+						// TODO
 						FleetAction* fleet = FleetFactory::createFleet((short)row["status"], action, row);
 						fleet->update();
 						delete fleet;
@@ -48,7 +48,7 @@ namespace fleet
 			}
 
 			else {
-				//std::cout << "0 Fleets\n";
+			//	std::cout << "0 Fleets\n";
 			}
 		}
 	}

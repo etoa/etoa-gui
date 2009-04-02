@@ -14,7 +14,8 @@
 
 class SpecialistData : public Data {
 public:
-	SpecialistData(mysqlpp::Row object) : Data(object, false) {
+	SpecialistData(mysqlpp::Row object) : Data(object, false) 
+	{
 		this->specialistId = (short)object["specialist_id"];
 		this->specialistName = std::string(object["specialist_name"]);
 		this->specialistDesc = std::string(object["specialist_desc"]);

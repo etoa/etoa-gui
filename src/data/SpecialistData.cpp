@@ -117,7 +117,9 @@
 		return this->specialistDefRepair;
 	}
 	
-	double SpecialistData::getSpecialistSpyLevel() {
+	double SpecialistData::getSpecialistSpyLevel() 
+	{
+		std::cout << "spezi2" << this->specialistSpyLevel << std::endl;
 		return this->specialistSpyLevel;
 	}
 	
