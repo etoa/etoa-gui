@@ -34,6 +34,8 @@ bool detach = false;
 
 int ownerUID;
 
+std::string appPath;
+
 // Signal handler
 void sighandler(int sig)
 {
@@ -45,6 +47,7 @@ void sighandler(int sig)
 	  std::clog << "Caught signal SIGTERM, exiting..."<<std::endl;
 		std::clog << "EtoA backend "<<gameRound<<" stopped"<<std::endl;
 		delete logr;
+		
 		exit(EXIT_SUCCESS);
 	}
 
@@ -54,6 +57,13 @@ void sighandler(int sig)
 	std::clog << "EtoA backend "<<gameRound<<" unexpectedly stopped"<<std::endl;
 
 	delete logr;
+
+	// Restart after segfault
+	if (sig==SIGSEGV)
+	{
+		std::string cmd = appPath + " "+(detach ? "-d" : "")+" -k -r "+gameRound;
+		system(cmd.c_str());
+	}
 	
 	exit(EXIT_FAILURE);
 }
@@ -136,7 +146,8 @@ int main(int argc, char* argv[])
 	signal(SIGQUIT, &sighandler);
 	signal(SIGFPE, &sighandler);
 
-
+	sleep(1);
+	appPath = std::string(argv[0]);
 
 	// Parse command line
 	AnyOption *opt = new AnyOption();
@@ -192,7 +203,10 @@ int main(int argc, char* argv[])
   {	
 		detach = true;
 	}
-	
+  if( opt->getFlag( "verbose" ) || opt->getFlag( 'v' )) 
+  {	
+		verbose = true;
+	}	
 
 	
 	if( opt->getValue( 'r' ) != NULL)
