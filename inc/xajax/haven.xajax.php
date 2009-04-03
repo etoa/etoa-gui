@@ -33,8 +33,6 @@
 
 		// Infobox
   		tableStart("Hafen-Infos");
-		
-		$fleet->checkHaven();
   		
 		// Flotten unterwegs
   		echo "<tr><th class=\"tbltitle\">Aktive Flotten:</th><td class=\"tbldata\">";
