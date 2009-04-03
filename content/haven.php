@@ -60,25 +60,18 @@
 			// Fleet object
 			$fleet = new FleetLaunch($cp,$cu);
 
-			if ($fleet->checkHaven())
-			{
 
-				// Set vars for xajax
-				$_SESSION['haven'] = Null;
-				$_SESSION['haven']['fleetObj']=serialize($fleet);
-				
-				echo "<div id=\"havenContent\">
-				<div id=\"havenContentShips\" style=\"\">
-				<div style=\"padding:20px\"><img src=\"images/loading.gif\" alt=\"Loading\" /> Lade Daten...</div>
-				</div>
-				<div id=\"havenContentTarget\" style=\"display:none;\"></div>
-				<div id=\"havenContentAction\" style=\"display:none;\"></div>
-				</div>";
-				echo "<script type=\"text/javascript\">xajax_havenShowShips();</script>";	
-			}
-			else
-			{
-				echo err_msg($fleet->error());
-			}
+			// Set vars for xajax
+			$_SESSION['haven'] = Null;
+			$_SESSION['haven']['fleetObj']=serialize($fleet);
+			
+			echo "<div id=\"havenContent\">
+			<div id=\"havenContentShips\" style=\"\">
+			<div style=\"padding:20px\"><img src=\"images/loading.gif\" alt=\"Loading\" /> Lade Daten...</div>
+			</div>
+			<div id=\"havenContentTarget\" style=\"display:none;\"></div>
+			<div id=\"havenContentAction\" style=\"display:none;\"></div>
+			</div>";
+			echo "<script type=\"text/javascript\">xajax_havenShowShips();</script>";	
 	}
 ?>

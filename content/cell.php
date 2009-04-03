@@ -216,7 +216,7 @@
 					  }
 					  else
 					  {
-						  $class .= "tbldata";
+						  $class .= "";
 						  $tm_info="";
 					  }
 					}
@@ -298,8 +298,8 @@
 							echo "<br/><span style=\"color:#817339;font-weight:bold\" ".tm("Trümmerfeld",RES_ICON_METAL.nf($ent->debrisMetal)." ".RES_METAL."<br style=\"clear:both\" />".RES_ICON_CRYSTAL.nf($ent->debrisCrystal)." ".RES_CRYSTAL."<br style=\"clear:both\" />".RES_ICON_PLASTIC.nf($ent->debrisPlastic)." ".RES_PLASTIC."<br style=\"clear:both\" />").">Trümmerfeld</span> ";
 						}	
 						echo "</td>
-						<td><a $class href=\"?page=entity&amp;id=".$ent->id()."\">".$ent->name()."</a></td>
-						<td>";
+						<td $addstyle><a $class href=\"?page=entity&amp;id=".$ent->id()."\">".$ent->name()."</a></td>
+						<td $addstyle>";
 						if ($ent->ownerId()>0)
 						{
 							$header = $ent->owner();
@@ -313,7 +313,7 @@
 						else
 							echo $ent->owner();
 						echo "</td>
-						<td $class>";
+						<td $addstyle>";
 	
 							// Favorit
 						if ($cu->id!=$ent->ownerId())

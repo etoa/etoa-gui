@@ -77,7 +77,7 @@
 		{
 			if ($this->countArr != null)
 				return $item>0 ? $this->countArr[$item] : $this->count;
-
+			
 			if ($this->count != null)
 				return $this->count;
 
@@ -92,8 +92,7 @@
 				".($item>0 ? " AND shiplist_ship_id=".$item."" : "")."
 			;");
 			$arr = mysql_fetch_row($res);
-			$this->count = $arr[0];
-			return $this->count;
+			return $arr[0];
 		}
 		
 		function getTotalStrucure()

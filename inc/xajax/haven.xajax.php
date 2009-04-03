@@ -32,10 +32,12 @@
 		echo "<div id=\"ship_info\"></div>";
 
 		// Infobox
-  	tableStart("Hafen-Infos");
+  		tableStart("Hafen-Infos");
+		
+		$fleet->checkHaven();
   		
 		// Flotten unterwegs
-  	echo "<tr><th class=\"tbltitle\">Aktive Flotten:</th><td class=\"tbldata\">";
+  		echo "<tr><th class=\"tbltitle\">Aktive Flotten:</th><td class=\"tbldata\">";
 		if ($fleet->fleetSlotsUsed() > 1)
 			echo "<b>".$fleet->fleetSlotsUsed()."</b> Flotten dieses Planeten sind <a href=\"?page=fleets\">unterwegs</a>.";
 		elseif ($fleet->fleetSlotsUsed()==1)
@@ -45,7 +47,7 @@
 		echo "</td></tr>";
 	
 		// Flotten startbar?
-  	echo "<tr><th class=\"tbltitle\">Flottenstart:</th><td class=\"tbldata\">";
+  		echo "<tr><th class=\"tbltitle\">Flottenstart:</th><td class=\"tbldata\">";
 		if ($fleet->possibleFleetStarts() > 1 )
 			echo "<b>".$fleet->possibleFleetStarts()."</b> Flotten k&ouml;nnen von diesem Planeten starten!";
 		elseif ($fleet->possibleFleetStarts()==1 )
@@ -58,7 +60,7 @@
 		echo ")</td></tr>";
 	
 		// Piloten		
-  	echo "<tr><th class=\"tbltitle\">Piloten:</th><td class=\"tbldata\">";
+  		echo "<tr><th class=\"tbltitle\">Piloten:</th><td class=\"tbldata\">";
 		if ($fleet->pilotsAvailable() >1)
 			echo "<b>".nf($fleet->pilotsAvailable())."</b> Piloten k&ouml;nnen eingesetzt werden.";
 		elseif ($fleet->pilotsAvailable()==1)
@@ -83,9 +85,6 @@
 			echo "</td></tr>";
 		}
 		tableEnd();
-	
-	
-	
 						
 		// Schiffe auflisten
 		$res = dbquery("
@@ -272,7 +271,7 @@
 			tableEnd();
 		
 			// Show buttons if possible
-			if ($fleet->possibleFleetStarts() > 0)
+			if ($fleet->error()=='')
 			{
 				if ($launchable>0)
 				{
@@ -285,7 +284,7 @@
 			}
 			else
 			{
-				error_msg("Es k&ouml;nnen nicht noch mehr Flotten starten! Bau zuerst deine Flottenkontrolle aus!",1);
+				echo err_msg($fleet->error());
 			} 
 			echo "</form>";
 		}
