@@ -201,6 +201,19 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 	}
 	
 	//
+	// Gamestats
+	//
+	elseif ($mode=="gamestats")
+	{
+		ob_start();
+		if (!@include(CACHE_ROOT."/out/gamestats.html"))
+		{
+			echo "<tr><td><i>Run scripts/gamestats.php periodically to update gamestats!</i></tr>";		
+		}
+	 	$objResponse->assign('statsBox', 'innerHTML', ob_get_clean());
+	}
+	
+	//
 	// Pranger
 	//
 	elseif ($mode=="pillory")
@@ -815,7 +828,7 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 					$out.="</div>
 					<a $addstyle href=\"#\" ".cTT($arr['nick'],"ttuser".$arr['id']).">".$arr['nick']."</a></td>";
 					$out.= "<td $addstyle >".$arr['race_name']."</td>";
-					$out.= "<td $addstyle >".$arr['sx']."/".$arr['sy']."</td>";
+					$out.= "<td $addstyle ><a $addstyle href=\"?page=sector&sector=".$arr['sx'].",".$arr['sy']."\">".$arr['sx']."/".$arr['sy']."</a></td>";
 					$out.= "<td $addstyle >".$arr['alliance_tag']."</td>";
 					$out.= "<td $addstyle >".nf($arr['points'])."</td>";
 					$out.= "</tr>";

@@ -145,8 +145,8 @@
 		}
 
 		// Userstats
-		UserStats::generateImage(GAME_ROOT_DIR."/".USERSTATS_OUTFILE);
-		UserStats::generateXml(GAME_ROOT_DIR."/".XML_INFO_FILE);
+		UserStats::generateImage(USERSTATS_OUTFILE);
+		UserStats::generateXml(XML_INFO_FILE);
 
 		return $log;
 	}

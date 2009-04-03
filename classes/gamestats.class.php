@@ -29,8 +29,8 @@
         /* Anzahl bewohnter Planeten pro Typ    */
         /****************************************/
 
-            $out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\">";
-            $out.="<tr><th class=\"tbltitle\" colspan=\"3\">Bewohnte Planetentypen</th></tr>";
+            $out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
+            $out.="<tr><th  colspan=\"3\">Bewohnte Planetentypen</th></tr>";
             $res=dbquery("
             SELECT
                 planet_types.type_name,
@@ -56,11 +56,11 @@
             $total=0;
             while ($arr=mysql_fetch_array($res))
             {
-                $out.="<tr><td class=\"tbldata\">".$rank."</td><td class=\"tbldata\">".$arr['type_name']."</td><td class=\"tbldata\">".$arr['cnt']."</td></tr>";
+                $out.="<tr><td >".$rank."</td><td >".$arr['type_name']."</td><td >".$arr['cnt']."</td></tr>";
                 $rank++;
                 $total+=$arr['cnt'];
             }
-            $out.="<tr><td class=\"tbldata\" colspan=\"2\"><b>Total</b></td><td class=\"tbldata\"><b>".$total."</b></td></tr>";
+            $out.="<tr><td  colspan=\"2\"><b>Total</b></td><td ><b>".$total."</b></td></tr>";
             $out.="</table></td>";
 
 
@@ -70,8 +70,8 @@
         /* Anzahl benannter Systeme pro Typ     */
         /****************************************/
 
-            $out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\">";
-            $out.="<tr><th class=\"tbltitle\" colspan=\"3\">Benannte Systeme</th></tr>";
+            $out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
+            $out.="<tr><th  colspan=\"3\">Benannte Systeme</th></tr>";
             $res=dbquery("
             SELECT
                 t.sol_type_name,
@@ -91,11 +91,11 @@
             $total=0;
             while ($arr=mysql_fetch_array($res))
             {
-                $out.="<tr><td class=\"tbldata\">".$rank."</td><td class=\"tbldata\">".$arr['sol_type_name']."</td><td class=\"tbldata\">".$arr['cnt']."</td></tr>";
+                $out.="<tr><td >".$rank."</td><td >".$arr['sol_type_name']."</td><td >".$arr['cnt']."</td></tr>";
                 $rank++;
                 $total+=$arr['cnt'];
             }
-            $out.="<tr><td class=\"tbldata\" colspan=\"2\"><b>Total</b></td><td class=\"tbldata\"><b>".$total."</b></td></tr>";
+            $out.="<tr><td  colspan=\"2\"><b>Total</b></td><td ><b>".$total."</b></td></tr>";
             $out.="</table></td>";
 
 
@@ -105,8 +105,8 @@
         /* Anzahl Rassen pro Typ    */
         /*********************** ****/
 
-            $out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\">";
-            $out.="<tr><th class=\"tbltitle\" colspan=\"3\">Rassen</th></tr>";
+            $out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
+            $out.="<tr><th  colspan=\"3\">Rassen</th></tr>";
             $res=dbquery("
             SELECT
                 races.race_name,
@@ -126,11 +126,11 @@
             $total=0;
             while ($arr=mysql_fetch_array($res))
             {
-                $out.="<tr><td class=\"tbldata\">".$rank."</td><td class=\"tbldata\">".$arr['race_name']."</td><td class=\"tbldata\">".$arr['cnt']."</td></tr>";
+                $out.="<tr><td >".$rank."</td><td >".$arr['race_name']."</td><td >".$arr['cnt']."</td></tr>";
                 $rank++;
                 $total+=$arr['cnt'];
             }
-            $out.="<tr><td class=\"tbldata\" colspan=\"2\"><b>Total</b></td><td class=\"tbldata\"><b>".$total."</b></td></tr>";
+            $out.="<tr><td  colspan=\"2\"><b>Total</b></td><td ><b>".$total."</b></td></tr>";
             $out.="</table></td>";
             
 	$out.="</tr>";
@@ -152,8 +152,8 @@
         /*                                      */
         /****************************************/
 
-            $out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\">";
-            $out.="<tr><th class=\"tbltitle\" colspan=\"3\">Max Ressourcen auf einem Planeten</th></tr>";
+            $out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
+            $out.="<tr><th  colspan=\"3\">Max Ressourcen auf einem Planeten</th></tr>";
             
             //Anzahl Titan
             $res=dbquery("
@@ -179,9 +179,9 @@
                 "); 
             $arr=mysql_fetch_array($res);
             $out.="<tr>
-                <td class=\"tbldata\">".RES_METAL."</td>
-                <td class=\"tbldata\">".nf($arr['res'])."</td>
-                <td class=\"tbldata\">".$arr['type']."</td>
+                <td >".RES_METAL."</td>
+                <td >".nf($arr['res'])."</td>
+                <td >".$arr['type']."</td>
             </tr>";
             
             //Anzahl Silizium
@@ -208,9 +208,9 @@
                 ");
             $arr=mysql_fetch_array($res);
             $out.="<tr>
-                <td class=\"tbldata\">".RES_CRYSTAL."</td>
-                <td class=\"tbldata\">".nf($arr['res'])."</td>
-                <td class=\"tbldata\">".$arr['type']."</td>
+                <td >".RES_CRYSTAL."</td>
+                <td >".nf($arr['res'])."</td>
+                <td >".$arr['type']."</td>
             </tr>";
             
             //Anzahl PVC
@@ -237,9 +237,9 @@
                 ");
             $arr=mysql_fetch_array($res);
             $out.="<tr>
-                <td class=\"tbldata\">".RES_PLASTIC."</td>
-                <td class=\"tbldata\">".nf($arr['res'])."</td>
-                <td class=\"tbldata\">".$arr['type']."</td>
+                <td >".RES_PLASTIC."</td>
+                <td >".nf($arr['res'])."</td>
+                <td >".$arr['type']."</td>
             </tr>";
             
             //Anzahl Tritium
@@ -266,9 +266,9 @@
                 ");
             $arr=mysql_fetch_array($res);
             $out.="<tr>
-                <td class=\"tbldata\">".RES_FUEL."</td>
-                <td class=\"tbldata\">".nf($arr['res'])."</td>
-                <td class=\"tbldata\">".$arr['type']."</td>
+                <td >".RES_FUEL."</td>
+                <td >".nf($arr['res'])."</td>
+                <td >".$arr['type']."</td>
             </tr>";
             
             //Anzahl Nahrung
@@ -295,9 +295,9 @@
                 ");
             $arr=mysql_fetch_array($res);
             $out.="<tr>
-                <td class=\"tbldata\">".RES_FOOD."</td>
-                <td class=\"tbldata\">".nf($arr['res'])."</td>
-                <td class=\"tbldata\">".$arr['type']."</td>
+                <td >".RES_FOOD."</td>
+                <td >".nf($arr['res'])."</td>
+                <td >".$arr['type']."</td>
             </tr>";
             $out.="</table></td>";
 
@@ -308,9 +308,9 @@
         /*                                      */
         /****************************************/
 
-            $out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\">";
-            $out.="<tr><th class=\"tbltitle\" colspan=\"4\">Total Ressourcen im Universum</th></tr>";
-            $out.="<tr><th class=\"tbltitle\">Ressource</th><th class=\"tbltitle\">Total</th><th class=\"tbltitle\">Durchschnitt</th><th class=\"tbltitle\">Planeten</th></tr>";
+            $out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
+            $out.="<tr><th  colspan=\"4\">Total Ressourcen im Universum</th></tr>";
+            $out.="<tr><th >Ressource</th><th >Total</th><th >Durchschnitt</th><th >Planeten</th></tr>";
             
             //Anzahl Titan
             $res=dbquery("
@@ -328,10 +328,10 @@
                 AND planet_res_metal>0");
             $arr=mysql_fetch_array($res);
             $out.="<tr>
-                <td class=\"tbldata\">".RES_METAL."</td>
-                <td class=\"tbldata\">".nf($arr['sum'])."</td>
-                <td class=\"tbldata\">".nf($arr['avg'])."</td>
-                <td class=\"tbldata\">".nf($arr['cnt'])."</td>
+                <td >".RES_METAL."</td>
+                <td >".nf($arr['sum'])."</td>
+                <td >".nf($arr['avg'])."</td>
+                <td >".nf($arr['cnt'])."</td>
             </tr>";
             
             //Anzahl Silizium
@@ -350,10 +350,10 @@
                 AND planet_res_crystal>0");
             $arr=mysql_fetch_array($res);
             $out.="<tr>
-                <td class=\"tbldata\">".RES_CRYSTAL."</td>
-                <td class=\"tbldata\">".nf($arr['sum'])."</td>
-                <td class=\"tbldata\">".nf($arr['avg'])."</td>
-                <td class=\"tbldata\">".nf($arr['cnt'])."</td>
+                <td >".RES_CRYSTAL."</td>
+                <td >".nf($arr['sum'])."</td>
+                <td >".nf($arr['avg'])."</td>
+                <td >".nf($arr['cnt'])."</td>
             </tr>";
             
             //Anzahl PVC
@@ -372,10 +372,10 @@
                 AND planet_res_plastic>0");
             $arr=mysql_fetch_array($res);
             $out.="<tr>
-                <td class=\"tbldata\">".RES_PLASTIC."</td>
-                <td class=\"tbldata\">".nf($arr['sum'])."</td>
-                <td class=\"tbldata\">".nf($arr['avg'])."</td>
-                <td class=\"tbldata\">".nf($arr['cnt'])."</td>
+                <td >".RES_PLASTIC."</td>
+                <td >".nf($arr['sum'])."</td>
+                <td >".nf($arr['avg'])."</td>
+                <td >".nf($arr['cnt'])."</td>
             </tr>";
             
             //Anzahl Tritium
@@ -394,10 +394,10 @@
                 AND planet_res_fuel>0");
             $arr=mysql_fetch_array($res);
             $out.="<tr>
-                <td class=\"tbldata\">".RES_FUEL."</td>
-                <td class=\"tbldata\">".nf($arr['sum'])."</td>
-                <td class=\"tbldata\">".nf($arr['avg'])."</td>
-                <td class=\"tbldata\">".nf($arr['cnt'])."</td>
+                <td >".RES_FUEL."</td>
+                <td >".nf($arr['sum'])."</td>
+                <td >".nf($arr['avg'])."</td>
+                <td >".nf($arr['cnt'])."</td>
             </tr>";
             
             //Anzahl Nahrung
@@ -416,10 +416,10 @@
                 AND planet_res_food>0");
             $arr=mysql_fetch_array($res);
             $out.="<tr>
-                <td class=\"tbldata\">".RES_FOOD."</td>
-                <td class=\"tbldata\">".nf($arr['sum'])."</td>
-                <td class=\"tbldata\">".nf($arr['avg'])."</td>
-                <td class=\"tbldata\">".nf($arr['cnt'])."</td>
+                <td >".RES_FOOD."</td>
+                <td >".nf($arr['sum'])."</td>
+                <td >".nf($arr['avg'])."</td>
+                <td >".nf($arr['cnt'])."</td>
             </tr>";
             $out.="</table></td>";
 
@@ -430,8 +430,8 @@
         /* Total Rohstoffe in einem Account     */
         /****************************************/
 
-            $out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\">";
-            $out.="<tr><th class=\"tbltitle\" colspan=\"3\">Max Ressourcen eines Spielers</th></tr>";
+            $out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
+            $out.="<tr><th  colspan=\"3\">Max Ressourcen eines Spielers</th></tr>";
             
             //Anzahl Titan
             $res=dbquery("
@@ -452,8 +452,8 @@
                 ");
             $arr=mysql_fetch_array($res);
             $out.="<tr>
-                <td class=\"tbldata\">".RES_METAL."</td>
-                <td class=\"tbldata\">".nf($arr['sum'])."</td>
+                <td >".RES_METAL."</td>
+                <td >".nf($arr['sum'])."</td>
             </tr>";
             
             //Anzahl Silizium
@@ -475,8 +475,8 @@
                 ");
             $arr=mysql_fetch_array($res);
             $out.="<tr>
-                <td class=\"tbldata\">".RES_CRYSTAL."</td>
-                <td class=\"tbldata\">".nf($arr['sum'])."</td>
+                <td >".RES_CRYSTAL."</td>
+                <td >".nf($arr['sum'])."</td>
             </tr>";
             
             //Anzahl PVC
@@ -498,8 +498,8 @@
                 ");
             $arr=mysql_fetch_array($res);
             $out.="<tr>
-                <td class=\"tbldata\">".RES_PLASTIC."</td>
-                <td class=\"tbldata\">".nf($arr['sum'])."</td>
+                <td >".RES_PLASTIC."</td>
+                <td >".nf($arr['sum'])."</td>
             </tr>";
             
             //Anzahl Tritium
@@ -521,8 +521,8 @@
                 ");
             $arr=mysql_fetch_array($res);
             $out.="<tr>
-                <td class=\"tbldata\">".RES_FUEL."</td>
-                <td class=\"tbldata\">".nf($arr['sum'])."</td>
+                <td >".RES_FUEL."</td>
+                <td >".nf($arr['sum'])."</td>
             </tr>";
             
             //Anzahl Nahrung
@@ -544,8 +544,8 @@
                 ");
             $arr=mysql_fetch_array($res);
             $out.="<tr>
-                <td class=\"tbldata\">".RES_FOOD."</td>
-                <td class=\"tbldata\">".nf($arr['sum'])."</td>
+                <td >".RES_FOOD."</td>
+                <td >".nf($arr['sum'])."</td>
             </tr>";
 
             $out.="</table></td>";
@@ -572,8 +572,8 @@
         /* Gesamt Anzahl im Universum + Beste Leistung     */
         /***************************************************/
         
-        $out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\">";
-        $out.="<tr><th class=\"tbltitle\" colspan=\"4\">Schiffe ohne Flotten (Beste Leistung, Gesamt)</th></tr>";
+        $out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
+        $out.="<tr><th  colspan=\"4\">Schiffe ohne Flotten (Beste Leistung, Gesamt)</th></tr>";
         $res=dbquery("
         SELECT
             ships.ship_name,
@@ -601,11 +601,11 @@
         $total=0;
         while ($arr=mysql_fetch_array($res))
         {
-            $out.="<tr><td class=\"tbldata\">".$rank."</td><td class=\"tbldata\">".$arr['ship_name']."</td><td class=\"tbldata\">".nf($arr['max'])."</td><td class=\"tbldata\">".nf($arr['cnt'])."</td></tr>";
+            $out.="<tr><td >".$rank."</td><td >".$arr['ship_name']."</td><td >".nf($arr['max'])."</td><td >".nf($arr['cnt'])."</td></tr>";
             $rank++;
             $total+=$arr['cnt'];
         }
-        $out.="<tr><td class=\"tbldata\" colspan=\"2\"><b>Total</b></td><td class=\"tbldata\">&nbsp;</td><td class=\"tbldata\"><b>".nf($total)."</b></td></tr>";
+        $out.="<tr><td  colspan=\"2\"><b>Total</b></td><td >&nbsp;</td><td ><b>".nf($total)."</b></td></tr>";
         $out.="</table></td>";
 
 
@@ -615,8 +615,8 @@
         /* Gesamt Anzahl im Universum + Beste Leistung     */
         /***************************************************/
         
-        $out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\">";
-        $out.="<tr><th class=\"tbltitle\" colspan=\"4\">Verteidigung</th></tr>";
+        $out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
+        $out.="<tr><th  colspan=\"4\">Verteidigung</th></tr>";
         $res=dbquery("
         SELECT
             defense.def_name,
@@ -643,11 +643,11 @@
         $total=0;
         while ($arr=mysql_fetch_array($res))
         {
-            $out.="<tr><td class=\"tbldata\">".$rank."</td><td class=\"tbldata\">".$arr['def_name']."</td><td class=\"tbldata\">".nf($arr['max'])."</td><td class=\"tbldata\">".nf($arr['cnt'])."</td></tr>";
+            $out.="<tr><td >".$rank."</td><td >".$arr['def_name']."</td><td >".nf($arr['max'])."</td><td >".nf($arr['cnt'])."</td></tr>";
             $rank++;
             $total+=$arr['cnt'];
         }
-        $out.="<tr><td class=\"tbldata\" colspan=\"2\"><b>Total</b></td><td class=\"tbldata\">&nbsp;</td><td class=\"tbldata\"><b>".nf($total)."</b></td></tr>";
+        $out.="<tr><td  colspan=\"2\"><b>Total</b></td><td >&nbsp;</td><td ><b>".nf($total)."</b></td></tr>";
         $out.="</table></td>";
 
 
@@ -657,8 +657,8 @@
         /* Gesamt Anzahl Level im Universum     */
         /****************************************/
         
-        $out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\">";
-        $out.="<tr><th class=\"tbltitle\" colspan=\"3\">Geb&auml;ude</th></tr>";
+        $out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
+        $out.="<tr><th  colspan=\"3\">Geb&auml;ude</th></tr>";
         $res=dbquery("
         SELECT
             buildings.building_name,
@@ -685,11 +685,11 @@
         $total=0;
         while ($arr=mysql_fetch_array($res))
         {
-            $out.="<tr><td class=\"tbldata\">".$rank."</td><td class=\"tbldata\">".$arr['building_name']."</td><td class=\"tbldata\">".nf($arr['cnt'])."</td></tr>";
+            $out.="<tr><td >".$rank."</td><td >".$arr['building_name']."</td><td >".nf($arr['cnt'])."</td></tr>";
             $rank++;
             $total+=$arr['cnt'];
         }
-        $out.="<tr><td class=\"tbldata\" colspan=\"2\"><b>Total</b></td><td class=\"tbldata\"><b>".nf($total)."</b></td></tr>";
+        $out.="<tr><td  colspan=\"2\"><b>Total</b></td><td ><b>".nf($total)."</b></td></tr>";
         $out.="</table></td>";
     $out.="</tr>";
     $out.="</table>";
@@ -709,8 +709,8 @@
 	/* Forschungen			*/
 	/*					    */
 	/************************/
-	$out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\">";
-	$out.="<tr><th class=\"tbltitle\" colspan=\"3\">Forschungen</th></tr>";
+	$out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
+	$out.="<tr><th  colspan=\"3\">Forschungen</th></tr>";
 	$res=dbquery("
 	SELECT
 	    technologies.tech_name,
@@ -736,7 +736,7 @@
 	$total=0;
 	while ($arr=mysql_fetch_array($res))
 	{
-	    $out.="<tr><td class=\"tbldata\">".$rank."</td><td class=\"tbldata\">".$arr['tech_name']."</td><td class=\"tbldata\">".nf($arr['max'])."</td></tr>";
+	    $out.="<tr><td >".$rank."</td><td >".$arr['tech_name']."</td><td >".nf($arr['max'])."</td></tr>";
 	    $rank++;
 	}
 	$out.="</table></td>";
@@ -748,8 +748,8 @@
 	/*					    */
 	/************************/
 	
-	$out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\">";
-	$out.="<tr><th class=\"tbltitle\" colspan=\"3\">Geb&auml;ude</th></tr>";
+	$out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
+	$out.="<tr><th  colspan=\"3\">Geb&auml;ude</th></tr>";
 	$res=dbquery("
 	SELECT
 	    buildings.building_name,
@@ -775,7 +775,7 @@
 	$total=0;
 	while ($arr=mysql_fetch_array($res))
 	{
-	    $out.="<tr><td class=\"tbldata\">".$rank."</td><td class=\"tbldata\">".$arr['building_name']."</td><td class=\"tbldata\">".nf($arr['max'])."</td></tr>";
+	    $out.="<tr><td >".$rank."</td><td >".$arr['building_name']."</td><td >".nf($arr['max'])."</td></tr>";
 	    $rank++;
 	}
 	$out.="</table></td>";
@@ -787,8 +787,8 @@
 	/* Level + EXP			*/
 	/************************/  
 	
-	$out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\">";
-	$out.="<tr><th class=\"tbltitle\" colspan=\"4\">Spezialschiffe (Level, EXP)</th></tr>";
+	$out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
+	$out.="<tr><th  colspan=\"4\">Spezialschiffe (Level, EXP)</th></tr>";
 	$res=dbquery("
 	SELECT
 	    ships.ship_name,
@@ -816,7 +816,7 @@
 	$total=0;
 	while ($arr=mysql_fetch_array($res))
 	{
-	    $out.="<tr><td class=\"tbldata\">".$rank."</td><td class=\"tbldata\">".$arr['ship_name']."</td><td class=\"tbldata\">".nf($arr['level'])."</td><td class=\"tbldata\">".nf($arr['exp'])."</td></tr>";
+	    $out.="<tr><td >".$rank."</td><td >".$arr['ship_name']."</td><td >".nf($arr['level'])."</td><td >".nf($arr['exp'])."</td></tr>";
 	    $rank++;
 	}
 	$out.="</table></td>";
@@ -840,8 +840,8 @@
 		/****************/
 		
 		$rplc=array("css_style/"=>"");
-		$out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\">";
-		$out.="<tr><th class=\"tbltitle\" colspan=\"4\">Design</th></tr>";
+		$out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
+		$out.="<tr><th  colspan=\"4\">Design</th></tr>";
 		$res=dbquery("
 		SELECT 
 		    css_style,
@@ -864,13 +864,13 @@
 		}
 		foreach ($i as $arr)
 		{
-		    $out.="<tr><td class=\"tbldata\">".$rank."</td>";
-		    if ($arr['user_css_style']!="")
-		        $out.="<td class=\"tbldata\">".strtr($arr['css_style'],$rplc)."</td>";
+		    $out.="<tr><td >".$rank."</td>";
+		    if ($arr['css_style']!="")
+		        $out.="<td >".strtr($arr['css_style'],$rplc)."</td>";
 		    else
-		        $out.="<td class=\"tbldata\"><i>Standard</i></td>";
-		    $out.="<td class=\"tbldata\">".nf($arr['cnt'])."</td>";
-		    $out.="<td class=\"tbldata\">".round(100/$total*$arr['cnt'],2)."%</td></tr>";
+		        $out.="<td ><i>Standard</i></td>";
+		    $out.="<td >".nf($arr['cnt'])."</td>";
+		    $out.="<td >".round(100/$total*$arr['cnt'],2)."%</td></tr>";
 		    $rank++;
 		}
 		$out.="</table></td>";
@@ -882,8 +882,8 @@
 		/******************/
 		
 		$rplc=array("images/themes/"=>"");
-		$out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\">";
-		$out.="<tr><th class=\"tbltitle\" colspan=\"4\">Bildpaket</th></tr>";
+		$out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
+		$out.="<tr><th  colspan=\"4\">Bildpaket</th></tr>";
 		$res=dbquery("
 		SELECT 
 		    image_url,
@@ -906,13 +906,13 @@
 		}
 		foreach ($i as $arr)
 		{
-		    $out.="<tr><td class=\"tbldata\">".$rank."</td>";
-		    if ($arr['user_image_url']!="")
-		        $out.="<td class=\"tbldata\">".strtr($arr['image_url'],$rplc)."</td>";
+		    $out.="<tr><td >".$rank."</td>";
+		    if ($arr['image_url']!="")
+		        $out.="<td >".strtr($arr['image_url'],$rplc)."</td>";
 		    else
-		        $out.="<td class=\"tbldata\"><i>Standard</i></td>";
-		    $out.="<td class=\"tbldata\">".nf($arr['cnt'])."</td>";
-		    $out.="<td class=\"tbldata\">".round(100/$total*$arr['cnt'],2)."%</td></tr>";
+		        $out.="<td ><i>Standard</i></td>";
+		    $out.="<td >".nf($arr['cnt'])."</td>";
+		    $out.="<td >".round(100/$total*$arr['cnt'],2)."%</td></tr>";
 		    $rank++;
 		}
 		$out.="</table></td>";
@@ -923,8 +923,8 @@
     /* Bilderweiterung		*/
     /**********************/
     
-    $out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\">";
-    $out.="<tr><th class=\"tbltitle\" colspan=\"4\">Bild-Erweiterung</th></tr>";
+    $out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
+    $out.="<tr><th  colspan=\"4\">Bild-Erweiterung</th></tr>";
     $res=dbquery("
     SELECT 
         image_ext,
@@ -947,13 +947,13 @@
     }
     foreach ($i as $arr)
     {
-        $out.="<tr><td class=\"tbldata\">".$rank."</td>";
-        if ($arr['user_image_ext']!="")
-            $out.="<td class=\"tbldata\">".$arr['image_ext']."</td>";
+        $out.="<tr><td >".$rank."</td>";
+        if ($arr['image_ext']!="")
+            $out.="<td >".$arr['image_ext']."</td>";
         else
-            $out.="<td class=\"tbldata\"><i>Standard</i></td>";
-        $out.="<td class=\"tbldata\">".nf($arr['cnt'])."</td>";
-        $out.="<td class=\"tbldata\">".round(100/$total*$arr['cnt'],2)."%</td></tr>";
+            $out.="<td ><i>Standard</i></td>";
+        $out.="<td >".nf($arr['cnt'])."</td>";
+        $out.="<td >".round(100/$total*$arr['cnt'],2)."%</td></tr>";
         $rank++;
     }
     $out.="</table></td>";

@@ -2866,6 +2866,34 @@ function imagecreatefromfile($path, $user_functions = false)
 	{
 		return "<a href=\"?".$args."\" onclick=\"window.open('show.php?".$args."','popup','status=no,width=".$width.",height=".$height.",scrollbars=yes');return false;\">".$caption."</a> ";		
 	}
+	
+	function userPopUp($userId, $userNick, $msg=1, $strong=0)
+	{
+		$showNick = $userId>0 ? ($userNick!='' ? $userNick : '<i>Unbekannt</i>') : '<i>System</i>';
+		if ($strong)
+			$showNick = '<strong>'.$showNick.'</strong>';
+		
+		$out = "";
+		if ($userId>0 && $userNick!='')
+		{
+			$out .= "<div id=\"ttuser".$userId."\" style=\"display:none;\">
+			".popUp("Profil anzeigen","page=userinfo&id=".$userId)."<br/>
+			".popUp("Punkteverlauf","page=stats&mode=user&userdetail=".$userId)."<br/>";
+			if ($userId!=$_SESSION[ROUNDID]['user_id'])
+			{
+				if ($msg==1)
+					$out.=  "<a href=\"?page=messages&mode=new&message_user_to=".$userId."\">Nachricht senden</a><br/>";
+				$out .= "<a href=\"?page=buddylist&add_id=".$userId."\">Als Freund hinzufügen</a>";
+			}
+			$out .= "</div>
+				<a href=\"#\" ".cTT($showNick,"ttuser".$userId).">".$showNick."</a>";
+		}
+		else
+		{
+			$out .= $showNick;
+		}
+		return $out;
+	}
 
 	function ticketLink($caption,$category)
 	{

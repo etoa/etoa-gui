@@ -31,19 +31,33 @@
 
 
 	// Wenn Planet aktiv, Koordinaten aus der DB lesen
-	if ($cp)
+	if (isset($_GET['sector']))
 	{
-		$sx_def = $cp->sx;
-		$sy_def = $cp->sy;
+		list($sx,$sy) = explode(",",$_GET['sector']);
+	}
+	elseif (isset($_POST['sx']) && intval($_POST['sx'])>0 && isset($_POST['sy']) && intval($_POST['sy'])>0)
+	{
+		$sx	= $_POST['sx'];
+		$sy	= $_POST['sy'];		
+	}
+	elseif (isset($_GET['sx']) && intval($_GET['sx'])>0 && isset($_GET['sy']) && intval($_GET['sy'])>0)
+	{
+		$sx	= $_GET['sx'];
+		$sy	= $_GET['sy'];
+	}
+	elseif ($cp)
+	{
+		$sx = $cp->sx;
+		$sy = $cp->sy;
 	}
 	// Sonst Standardkoordinaten (Zentrum der Galaxie)
 	else
 	{
-		$sx_def = $cfg->param1('map_init_sector');
-		$sy_def = $cfg->param2('map_init_sector');
+		$sx = $cfg->param1('map_init_sector');
+		$sy = $cfg->param2('map_init_sector');
 	}
 
-	echo "<h1>Sektor ".$sx_def."/".$sy_def."</h1>";
+	echo "<h1>Sektor ".$sx."/".$sy."</h1>";
 
 	$sector_pic = "images/map";
 
@@ -59,27 +73,6 @@
 	$table_height = $cx_num * $cell_height;
 	$img_width = $cell_width;
 	$img_height = $cell_height;
-
-	if (isset($_GET['sector']))
-	{
-		list($sx,$sy) = explode(",",$_GET['sector']);
-	}
-	else
-	{
-		if (isset($_POST['sx']) && intval($_POST['sx'])>0)
-			$sx	= $_POST['sx'];
-		elseif (isset($_GET['sx']) && intval($_GET['sx'])>0)
-			$sx	= $_GET['sx'];
-		else
-			$sx = $sx_def;
-		if (isset($_POST['sy']) && intval($_POST['sy'])>0)
-			$sy	= $_POST['sy'];
-		elseif (isset($_GET['sy']) && intval($_GET['sy'])>0)
-			$sy	= $_GET['sy'];
-		else
-			$sy = $sy_def;		
-	}
-
 
 
 	if ($sx>$sx_num) $sx = $sx_num;

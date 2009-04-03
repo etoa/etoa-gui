@@ -26,13 +26,12 @@
 			if (mysql_num_rows($mres)>0)
 			{
 				$marr = mysql_fetch_array($mres);
-				$sender = $marr['message_user_from']>0 ? ($marr['user_nick']!='' ? $marr['user_nick'] : '<i>Unbekannt</i>') : '<i>System</i>';
 				$subj = $marr['subject']!="" ? stripslashes($marr['subject']) : "<i>Kein Titel</i>";
 
 				tableStart();
 				echo "<tr><th colspan=\"2\">".$subj."</th></tr>";
 				echo "<tr><th style=\"width:100px;\">Datum:</td><td>".date("d.m.Y H:i",$marr['message_timestamp'])."</td></tr>";
-				echo "<tr><th>Sender:</td><td>".$sender."</td></tr>";
+				echo "<tr><th>Sender:</td><td>".userPopUp($marr['message_user_from'],$marr['user_nick'],0)."</td></tr>";
 				echo "<tr><th>Text:</td><td>".text2html($marr['text'])."</td></tr>";
 				tableEnd();
 				echo "<input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=messages&mode=deleted'\" /> &nbsp; ";
@@ -95,7 +94,6 @@
 			{
 				while ($marr = mysql_fetch_array($mres))
 				{
-					$nick = $marr['message_user_from']>0 ? ($marr['user_nick']!='' ? $marr['user_nick'] : '<i>Unbekannt</i>') : '<i>System</i>';
 					$subj = $marr['subject']!="" ? stripslashes($marr['subject']) : "<i>Kein Titel</i>";
 					
 					echo "<tr><td style=\"width:16px;\">
@@ -104,7 +102,7 @@
 					echo "<td><a href=\"?page=$page&msg_id=".$marr['message_id']."&mode=".$mode."\">".$subj;
 					echo "</a></td>";
 					echo "<td style=\"width:120px;\">".$marr['cat_name']."</td>";
-					echo "<td style=\"width:120px;\">".$nick."</td>";
+					echo "<td style=\"width:120px;\">".userPopUP($marr['message_user_from'],$marr['user_nick'],0)."</td>";
 					echo "<td style=\"width:120px;\">".date("d.m.Y H:i",$marr['message_timestamp'])."</td>";
 				}
 			}

@@ -222,11 +222,59 @@
 					}
 					else
 					{
-					  $class .= "tbldata";
+					  $class .= "";
 					  $tm_info="";
 					}
 					$class .="\" ";
 					
+					if ($ent->entityCode()=='p')
+					{
+						$tm="";
+						$tm.= "<b>Felder</b>: ".nf($ent->fields);
+						$tm.= "<br/><b>Bewohnbar</b>: ";
+						if ($ent->habitable==1) $tm.= "Ja"; else $tm.= "Nein	";
+						if ($ent->typeMetal!=1)
+							$tm.="<br/><b>".RES_METAL.":</b> ".get_percent_string($ent->typeMetal,1);
+						if ($ent->typeCrystal!=1)
+							$tm.="<br/><b>".RES_CRYSTAL.":</b> ".get_percent_string($ent->typeCrystal,1);
+						if ($ent->typePlastic!=1)
+							$tm.="<br/><b>".RES_PLASTIC.":</b> ".get_percent_string($ent->typePlastic,1);
+						if ($ent->typeFuel!=1)
+							$tm.="<br/><b>".RES_FUEL.":</b> ".get_percent_string($ent->typeFuel,1);
+						if ($ent->typeFood!=1)
+							$tm.="<br/><b>".RES_FOOD.":</b> ".get_percent_string($ent->typeFood,1);
+						if ($ent->typePower!=1)
+							$tm.="<br/><b>Energie:</b> ".get_percent_string($ent->typePower,1);
+						if ($ent->typePopulation!=1)
+							$tm.="<br/><b>Bewohner:</b> ".get_percent_string($ent->typePopulation,1);
+						if ($ent->typeResearchtime!=1)
+							$tm.="<br/><b>Foschungszeit:</b> ".get_percent_string($ent->typeResearchtime,1,1);
+						if ($ent->typeBuildtime!=1)
+							$tm.="<br/><b>Bauzeit:</b> ".get_percent_string($ent->typeBuildtime,1,1);
+						$tm.= "<br /><br/><b>Wärmebonus</b>: ";
+						$spw = $ent->solarPowerBonus();
+						if ($spw>=0)
+						{
+							$tm.= "<span style=\"color:#0f0\">+".$spw."</span>";
+						}
+						else
+						{
+							$tm.= "<span style=\"color:#f00\">".$spw."</span>";
+						}
+						$tm.= " Energie pro Solarsatellit";
+						$tm.= "<br /><b>Kältebonus</b>: ";
+						$spw = $ent->fuelProductionBonus();
+						if ($spw>=0)
+						{
+							$tm.= "<span style=\"color:#0f0\">+".$spw."%</span>";
+						}
+						else
+						{
+							$tm.= "<span style=\"color:#f00\">".$spw."%</span>";
+						}				
+						$tm.= " ".RES_FUEL."-Produktion";
+					}
+						
 					echo "<tr>
 						<td $class style=\"width:40px;background:#000;\">
 							<a href=\"?page=entity&amp;id=".$ent->id()."\">
@@ -234,7 +282,11 @@
 							</a>
 						</td>
 						<td $class style=\"text-align:center;vertical-align:middle;background:#000\"><b>".$ent->pos()."</b></td>
-						<td $class $addstyle>".$ent->type();
+						<td $class $addstyle >";
+						if ($ent->entityCode()=='p')
+							echo "<span ".tm($ent->type(),$tm).">".$ent->type()."</span>";
+						else
+							echo $ent->type();
 						
 						if ($ent->entityCode()=='w')
 						{
@@ -246,8 +298,8 @@
 							echo "<br/><span style=\"color:#817339;font-weight:bold\" ".tm("Trümmerfeld",RES_ICON_METAL.nf($ent->debrisMetal)." ".RES_METAL."<br style=\"clear:both\" />".RES_ICON_CRYSTAL.nf($ent->debrisCrystal)." ".RES_CRYSTAL."<br style=\"clear:both\" />".RES_ICON_PLASTIC.nf($ent->debrisPlastic)." ".RES_PLASTIC."<br style=\"clear:both\" />").">Trümmerfeld</span> ";
 						}	
 						echo "</td>
-						<td $class $addstyle><a href=\"?page=entity&amp;id=".$ent->id()."\">".$ent->name()."</a></td>
-						<td $class $addstyle>";
+						<td><a $class href=\"?page=entity&amp;id=".$ent->id()."\">".$ent->name()."</a></td>
+						<td>";
 						if ($ent->ownerId()>0)
 						{
 							$header = $ent->owner();
@@ -256,12 +308,12 @@
 								$tm .= "Allianz: ".$ent->owner->alliance."<br style=\"clear:both\" />";
 							if ($tm_info!="")
 								$header .= " (<span $class>".$tm_info."</span>)";
-							echo "<span style=\"color:#817339;font-weight:bold\" ".tm($header,$tm)."><a href=\"?page=userinfo&amp;id=".$ent->ownerId()."\">".$ent->owner()."</a></span> ";
+							echo "<span style=\"color:#817339;font-weight:bold\" ".tm($header,$tm)."><a $class href=\"?page=userinfo&amp;id=".$ent->ownerId()."\">".$ent->owner()."</a></span> ";
 						}
 						else
 							echo $ent->owner();
 						echo "</td>
-						<td $class $addstyle>";
+						<td $class>";
 	
 							// Favorit
 						if ($cu->id!=$ent->ownerId())
@@ -312,108 +364,6 @@
 
 			
 						echo "</td></tr>";
-						
-	
-					/*
-	      	
-						echo "<tr>";
-						$p_img = IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$arr['planet_image']."_small.gif";
-						//$p_img_full = IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$arr['planet_image'].".gif";
-						//$tm_text = "<img src=\"".$p_img_full."\" alt=\"Planet\" style=\"background:#000;\" />";
-						echo "<td style=\"background:#000;width:20px;height:20px\">
-							<img src=\"$p_img\" style=\"width:20px;height:20px;border:none;\" alt=\"".$arr['type_name']."\" />
-						</td>";
-						echo "<td class=\"$class\" style=\"width:30px;height:20px;".$addstyle."\">".$arr['planet_solsys_pos']."";
-						if ($arr['planet_wf_metal']>0 || $arr['planet_wf_crystal']>0 || $arr['planet_wf_plastic']>0)
-						{
-							echo "&nbsp;<img src=\"images/wreckage.png\" ".tm("Tr&uuml;mmerfeld","".RES_METAL.": ".nf($arr['planet_wf_metal'])."<br/>".RES_CRYSTAL.": ".nf($arr['planet_wf_crystal'])."<br/>".RES_PLASTIC.": ".nf($arr['planet_wf_plastic'])."")." style=\"width:12px;border:none\" />";
-						}
-						echo "</td>";
-						$tm="";
-						$tm.= "<b>Felder:</b>: ".$arr['planet_fields']."<br/>";
-						$tm.= "<b>Bewohnbar</b>: ";
-						if ($arr['type_habitable']==1) $tm.= "Ja"; else $tm.= "Nein	";
-						if ($arr['type_f_metal']>1)
-							$tm.="<br/><b>".RES_METAL.":</b> <span style=\'color:#0f0\'>+".get_percent_string($arr['type_f_metal'])."</span>";
-						elseif ($arr['type_f_metal']<1)
-							$tm.="<br/><b>".RES_METAL.":</b> <span style=\'color:#f00\'>".get_percent_string($arr['type_f_metal'])."</span>";
-						if ($arr['type_f_crystal']>1)
-							$tm.="<br/><b>".RES_CRYSTAL.":</b> <span style=\'color:#0f0\'>+".get_percent_string($arr['type_f_crystal'])."</span>";
-						elseif ($arr['type_f_crystal']<1)
-							$tm.="<br/><b>".RES_CRYSTAL.":</b> <span style=\'color:#f00\'>".get_percent_string($arr['type_f_crystal'])."</span>";
-						if ($arr['type_f_plastic']>1)
-							$tm.="<br/><b>".RES_PLASTIC.":</b> <span style=\'color:#0f0\'>+".get_percent_string($arr['type_f_plastic'])."</span>";
-						elseif ($arr['type_f_plastic']<1)
-							$tm.="<br/><b>".RES_PLASTIC.":</b> <span style=\'color:#f00\'>".get_percent_string($arr['type_f_plastic'])."</span>";
-						if ($arr['type_f_fuel']>1)
-							$tm.="<br/><b>".RES_FUEL.":</b> <span style=\'color:#0f0\'>+".get_percent_string($arr['type_f_fuel'])."</span>";
-						elseif ($arr['type_f_fuel']<1)
-							$tm.="<br/><b>".RES_FUEL.":</b> <span style=\'color:#f00\'>".get_percent_string($arr['type_f_fuel'])."</span>";
-						if ($arr['type_f_food']>1)
-							$tm.="<br/><b>".RES_FOOD.":</b> <span style=\'color:#0f0\'>+".get_percent_string($arr['type_f_food'])."</span>";
-						elseif ($arr['type_f_food']<1)
-							$tm.="<br/><b>".RES_FOOD.":</b> <span style=\'color:#f00\'>".get_percent_string($arr['type_f_food'])."</span>";
-	      	
-						if ($arr['type_f_power']>1)
-							$tm.="<br/><b>Energie:</b> <span style=\'color:#0f0\'>+".get_percent_string($arr['type_f_power'])."</span>";
-						elseif ($arr['type_f_power']<1)
-							$tm.="<br/><b>Energie:</b> <span style=\'color:#f00\'>".get_percent_string($arr['type_f_power'])."</span>";
-						if ($arr['type_f_population']>1)
-							$tm.="<br/><b>Wachstum:</b> <span style=\'color:#0f0\'>+".get_percent_string($arr['type_f_population'])."</span>";
-						elseif ($arr['type_f_population']<1)
-							$tm.="<br/><b>Wachstum:</b> <span style=\'color:#f00\'>".get_percent_string($arr['type_f_population'])."</span>";
-						if ($arr['type_f_researchtime']<1)
-							$tm.="<br/><b>Forschungszeit:</b> <span style=\'color:#0f0\'>".get_percent_string($arr['type_f_researchtime'])."</span>";
-						elseif ($arr['type_f_researchtime']>1)
-							$tm.="<br/><b>Forschungszeit:</b> <span style=\'color:#f00\'>+".get_percent_string($arr['type_f_researchtime'])."</span>";
-						if ($arr['type_f_buildtime']<1)
-							$tm.="<br/><b>Bauzeit:</b> <span style=\'color:#0f0\'>".get_percent_string($arr['type_f_buildtime'])."</span>";
-						elseif ($arr['type_f_buildtime']>1)
-							$tm.="<br/><b>Bauzeit:</b> <span style=\'color:#f00\'>+".get_percent_string($arr['type_f_buildtime'])."</span>";
-	      	
-						echo "<td class=\"$class\" style=\"".$addstyle."\" ".tm($arr['type_name'],$tm).">".$arr['type_name']."</td>";
-						if ($arr['planet_name']!="")
-						{
-							if ($arr['planet_desc']!="")$pdesc=text2html($arr['planet_desc']);else $pdesc="<i>Keine Beschreibung vorhanden</i>";
-							echo "<td class=\"$class\"  style=\"".$addstyle."\" ".tm($arr['planet_name'],$pdesc).">";
-							if ($c->id==$arr['id'])
-							{
-								echo "<b>".$arr['planet_name']."</b>";
-							}
-							else
-							{
-								echo $arr['planet_name'];
-							}						
-							echo "</td>";
-						}
-						else
-						{
-							echo "<td class=\"$class\"><i>Kein Name</i></td>";
-						}
-						if ($arr['planet_user_id']!=0)
-						{
-							if ($arr['user_alliance_id']>0)
-							{
-								$tm_alliance="<br/>Allianz: ".$arr['alliance_tag']."";
-								$link_alliance = "<a href=\"?page=alliance&amp;info_id=".$arr['user_alliance_id']."\">".$arr['alliance_tag']."</a>";
-							}
-							else
-							{
-								$tm_alliance="";
-								$link_alliance="";
-							}
-							echo "<td class=\"$class\"  style=\"".$addstyle."\" ".tm("".$arr['user_nick']." $tm_info","Punkte: ".nf($arr['user_points'])."".$tm_alliance."").">".$arr['user_nick']."</td>";
-							echo "<td class=\"$class\">";
-	      	
-							echo "".$link_alliance."&nbsp;</td>";
-						}
-						else
-							echo "<td class=\"$class\" colspan=\"2\" align=\"center\"><i>Unbewohnter Planet</i></td>";
-						echo "<td class=\"$class\" style=\"width:100px;\">
-							}
-						}*/
-						
-						echo "</td></tr>"; 
 					
 				}
 				

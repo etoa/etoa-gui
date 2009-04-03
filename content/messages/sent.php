@@ -19,13 +19,13 @@
 			if (mysql_num_rows($mres)>0)
 			{
 				$marr = mysql_fetch_array($mres);
-				$sender = $marr['message_user_from']>0 ? ($marr['user_nick']!='' ? $marr['user_nick'] : '<i>Unbekannt</i>') : '<i>System</i>';
 				$subj = $marr['subject']!="" ? stripslashes($marr['subject']) : "<i>Kein Titel</i>";
 				
 				tableStart();
 				echo "<tr><th colspan=\"2\">".$subj."</th></tr>";
 				echo "<tr><th style=\"width:100px;\">Datum:</td><td>".date("d.m.Y H:i",$marr['message_timestamp'])."</td></tr>";
-				echo "<tr><th>Sender:</td><td>".$sender."</td></tr>";
+				
+				echo "<tr><th>Sender:</th><td>".userPopUp($marr['message_user_from'],$marr['user_nick'],0)."</td></tr>";
 				echo "<tr><th>Text:</td><td>".text2html($marr['text'])."</td></tr>";
 				tableEnd();
 				echo "<input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=messages&mode=sent'\" /> &nbsp; ";
@@ -66,7 +66,6 @@
 			{
 				while ($marr = mysql_fetch_array($mres))
 				{
-					$sender = $marr['message_user_to']>0 ? ($marr['user_nick']!='' ? $marr['user_nick'] : '<i>Unbekannt</i>') : '<i>System</i>';
 					if ($marr['message_read']==0)
 					{
 						$im_path = "images/pm_new.gif";
@@ -87,7 +86,7 @@
 					{
 						echo "<i>Kein Titel</i>";
 					}
-					echo "</a></td><td class=\"tbldata\" style=\"width:120px;\">".$sender."</td>";
+					echo "</a></td><td class=\"tbldata\" style=\"width:120px;\">".userPopUp($marr['message_user_to'],$marr['user_nick'],0)."</td>";
 					echo "<td class=\"tbldata\" style=\"width:120px;\">".date("d.m.Y H:i",$marr['message_timestamp'])."</td>";
 				}
 			}

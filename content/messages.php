@@ -171,7 +171,7 @@
 					echo "<tr><td class=\"tbltitle\" width=\"50\" valign=\"top\">Datum:</td>
 					<td class=\"tbldata\" width=\"250\">".df($marr['message_timestamp'])."</td></tr>";
 					echo "<tr><td class=\"tbltitle\" width=\"50\" valign=\"top\">Sender:</td>
-					<td class=\"tbldata\" width=\"250\">".$sender."</td></tr>";
+					<td class=\"tbldata\" width=\"250\">".userPopUp($marr['message_user_from'],$marr['user_nick'],0)."</td></tr>";
 					echo "<tr><td class=\"tbltitle\" width=\"50\" valign=\"top\">Text:<br/>";
 					if (isset($_GET['src']))
 					{
@@ -573,12 +573,12 @@
 							{
 								$im_path = "images/pm_new.gif";
 								$subj = '<strong>'.$subj.'</strong>';
-								$sender_f = '<strong>'.$sender.'</strong>';
+								$strong = 1;
 							}
 							else
 							{
 								$im_path = "images/pm_normal.gif";
-								$sender_f = $sender;
+								$strong = 0;
 							}
 
 							if ($marr['message_read']==1)
@@ -622,7 +622,7 @@
                 }
               }
 							echo "</td>";
-							echo "<td class=\"tbldata\" style=\"width:15%;\">".$sender_f."</td>";
+							echo "<td class=\"tbldata\" style=\"width:15%;\">".userPopUp($marr['message_user_from'],$marr['user_nick'],0,$strong)."</td>";
 							echo "<td class=\"tbldata\" style=\"width:15%;\">".date("d.m.Y H:i",$marr['message_timestamp'])."</td>";
 							echo "<td class=\"tbldata\" style=\"width:2%;text-align:center;padding:0px;vertical-align:middle;\">
 							<input id=\"delcb_".$arr['cat_id']."_".$dcnt."\" type=\"checkbox\" name=\"delmsg[".$marr['message_id']."]\" value=\"1\" title=\"Nachricht zum L&ouml;schen markieren\" /></td>";
