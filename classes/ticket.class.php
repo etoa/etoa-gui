@@ -1,28 +1,48 @@
 <?php
 /**
- * Support ticket class
+ * Support tickets provide easy communication between
+ * users and admins in case of problems. This class handles
+ * the ticket records and messages
  *
- * @author Nicolas Perrenoud
+ * @author Nicolas Perrenoud <mrcage@etoa.ch>
  */
 class Ticket
 {
-	private $solution,$status,$id,$catId,$userId,$adminId,$timestamp;
+	private $id,$solution,$status,$catId,$userId,$adminId,$timestamp,$adminComment;
 	private $userNick,$adminNick;
 	private $messages = array();
 	private $changed = false;
 
+	/**
+	 * Workflow status of ticket
+	 * @var array
+	 */
 	static $statusItems = array(
 		"new"=>"Neu",
 		"assigned"=>"Zugeteilt",
 		"closed"=>"Abgeschlossen");
+
+	/**
+	 * Solution type
+	 * @var array
+	 */
 	static $solutionItems = array(
 		"open"=>"Offen",
 		"solved"=>"Behoben",
 		"duplicate"=>"Duplikat",
 		"invalid"=>"Ungültig");
 
+	/**
+	 * Ticket categories
+	 * 
+	 * @var array
+	 */
 	static $categories = array();
 
+	/**
+	 * Initializes the class and loads data from database
+	 * @param int $id Ticket-ID
+	 */
 	function __construct($id)
 	{
 		try
@@ -44,6 +64,7 @@ class Ticket
 				$this->userId = $arr['user_id'];
 				$this->adminId = $arr['admin_id'];
 				$this->timestamp = $arr['timestamp'];
+				$this->adminComment = $arr['admin_comment'];
 			}
 			else
 			{
@@ -56,6 +77,9 @@ class Ticket
 		}
 	}
 
+	/**
+	 * Writes ticket changes back to database
+	 */
 	function __destruct()
 	{
 		if ($this->changed)
@@ -68,13 +92,20 @@ class Ticket
 				solution='".$this->solution."',
 				cat_id=".$this->catId.",
 				admin_id=".$this->adminId.",
-				timestamp=".time()."
+				timestamp=".time().",
+				admin_comment='".addslashes($this->adminComment)."'
 			WHERE
 				id=".$this->id."
 			");
 		}
 	}
 
+	/**
+	 * Reads and returns value of internal variable
+	 *
+	 * @param string $field Variable name
+	 * @return mixed Value of requestet variable
+	 */
 	function __get($field)
 	{
 		if ($field=="idString")
@@ -135,7 +166,7 @@ class Ticket
 		{
 			if ($this->status=="closed" && isset(self::$solutionItems[$this->solution]))
 			{
-				return self::$statusItems[$this->status].":".self::$solutionItems[$this->solution];
+				return self::$statusItems[$this->status].": ".self::$solutionItems[$this->solution];
 			}
 			return self::$statusItems[$this->status];
 		}
@@ -147,10 +178,21 @@ class Ticket
 		{
 			return $this->changed;
 		}
+		if ($field=="adminComment")
+		{
+			return stripslashes($this->adminComment);
+		}
 		err_msg(__CLASS__.".get(): Feld $field nicht vorhanden!");
 		return null;
 	}
 
+	/**
+	 * Writes internal variable
+	 *
+	 * @param string $field Variable name
+	 * @param mixed $value Value
+	 * @return boolean True if writing succeeded, else false
+	 */
 	function __set($field,$value)
 	{
 		if ($field=="status" && isset(self::$statusItems[$value]))
@@ -194,20 +236,25 @@ class Ticket
 			}
 			return false;
 		}
-		/*
-		if ($field=="adminNick")
+		if ($field=="adminComment")
 		{
-			if ($this->adminNick != $value)
+			if ($this->adminComment != $value)
 			{
-				$this->adminNick = $value;
+				$this->adminComment = $value;
+				$this->changed = true;
 				return true;
 			}
 			return false;
-		}*/
+		}
 		err_msg(__CLASS__.".set(): Feld $field nicht vorhanden!");
 		return false;
 	}
 
+	/**
+	 * Assigns the ticket to an admin
+	 *
+	 * @param int $adminId ID 
+	 */
 	function assign($adminId)
 	{
 		$this->__set("adminId",$adminId);
@@ -216,22 +263,40 @@ class Ticket
 		$this->addMessage($mdata);
 	}
 
+	/**
+	 * Closes the ticket and adds a message to the ticket
+	 * @param <type> $solution 
+	 */
 	function close($solution)
 	{
-		$this->__set("status","closed");
-		$this->__set("solution","$solution");
-		$mdata['message'] = "Das Ticket wurde geschlossen und als ".self::$solutionItems[$this->solution]." gekennzeichnet.";
-		$this->addMessage($mdata);
+		if ($this->status=="assigned")
+		{
+			$this->__set("status","closed");
+			$this->__set("solution","$solution");
+			$mdata['message'] = "Das Ticket wurde geschlossen und als ".self::$solutionItems[$this->solution]." gekennzeichnet.";
+			$this->addMessage($mdata);
+		}
 	}
 
+	/**
+	 * Reopens an already closed ticket
+	 */
 	function reopen()
 	{
-		$this->__set("adminId",0);
-		$this->__set("status","new");
-		$mdata['message'] = "Das Ticket wurde wieder eröffnet.";
-		$this->addMessage($mdata);
+		if ($this->status == "closed")
+		{
+			$this->__set("adminId",0);
+			$this->__set("status","new");
+			$mdata['message'] = "Das Ticket wurde wieder eröffnet.";
+			$this->addMessage($mdata);
+		}
 	}
 
+	/**
+	 * Loads and returns all messages which were appended to this ticket
+	 *
+	 * @return array List of all messages
+	 */
 	function & getMessages()
 	{
 		if (count($this->messages)==0)
@@ -241,12 +306,24 @@ class Ticket
 		return $this->messages;
 	}
 
+	/**
+	 * Counts all messages of the ticket
+	 *
+	 * @return int Number of messages
+	 */
 	function countMessages()
 	{
 		return count ($this->getMessages());
 	}
 
-	function addMessage($data)
+	/**
+	 * Appends a message to the ticket
+	 *
+	 * @param array $data Contains the sender and message body
+	 * @param <type> $informUser Sends a pm to the owner if set to 1 (default)
+	 * @return boolean Returns true if success
+	 */
+	function addMessage($data,$informUser=1)
 	{
 		if (count($this->messages)==0)
 		{
@@ -257,7 +334,7 @@ class Ticket
 		{
 			$this->messages[$tmi] = new TicketMessage($tmi);
 
-			if ($this->messages[$tmi]->userId == 0)
+			if ($informUser==1 && $this->messages[$tmi]->userId == 0)
 			{
 				$text = "Hallo!\n\nDein [url ?page=ticket&id=".$this->id."]Ticket ".$this->idString."[/url] wurde aktualisiert!";
 				send_msg($this->userId,USER_MSG_CAT_ID,"Dein Ticket ".$this->id."",$text);
@@ -268,6 +345,16 @@ class Ticket
 		return false;
 	}
 
+	//
+	// Statics
+	//
+
+	/**
+	 * Creates a new ticket
+	 *
+	 * @param array $data An array containing all data to create the ticket (user_id, cat_id, message, admin_id(optional))
+	 * @return int The id of the created ticket
+	 */
 	static function create(&$data)
 	{
 		dbquery("
@@ -295,6 +382,11 @@ class Ticket
 		return $tid;
 	}
 
+	/**
+	 * Loads and returns all ticket categories
+	 *
+	 * @return array Ticket categories as id => name
+	 */
 	static function & getCategories()
 	{
 		if (count(self::$categories)==0)
@@ -308,6 +400,14 @@ class Ticket
 		return self::$categories;
 	}
 
+	/**
+	 * Searches a set of tickets accoring to the given conditions
+	 * and returns it back as an array
+	 *
+	 * @param array $args Where conditions
+	 * @param array $sort Sorting order
+	 * @return array List of search results
+	 */
 	static function & find($args=null,$sort=null)
 	{
 		$where = "";
@@ -356,6 +456,11 @@ class Ticket
 		return $rtn;
 	}
 
+	/**
+	 * Counts all new tickets
+	 * 
+	 * @return int Number of new tickets
+	 */
 	static function countNew()
 	{
 		$res = dbquery("SELECT COUNT(id) FROM tickets WHERE status='new'");
@@ -363,6 +468,12 @@ class Ticket
 		return $arr[0];
 	}
 
+	/**
+	 * Counts all assigned tickets
+	 *
+	 * @param int $adminId Admin-ID to which the tickets belong
+	 * @return int Number of assigned ticker
+	 */
 	static function countAssigned($adminId)
 	{
 		$res = dbquery("SELECT COUNT(id) FROM tickets WHERE status='assigned' AND admin_id=".$adminId.";");
@@ -372,11 +483,21 @@ class Ticket
 
 }
 
+/**
+ * Encapsulates a single ticket message
+ *
+ * @author Nicolas Perrenoud <mrcage@etoa.ch>
+ */
 class TicketMessage
 {
 	private $id;
 	var $message,$timestamp,$userId,$adminId;
 
+	/**
+	 * Loads the message data from database
+	 *
+	 * @param int $id Message-ID
+	 */
 	function __construct($id)
 	{
 		try
@@ -408,6 +529,11 @@ class TicketMessage
 		}
 	}
 
+	/**
+	 * Reads the desired variable value
+	 * @param string $field Variable name
+	 * @return mixed Variable value
+	 */
 	function __get($field)
 	{
 		if ($field=="authorNick")
@@ -440,6 +566,12 @@ class TicketMessage
 		}
 	}
 
+	/**
+	 * Creates a new message
+	 *
+	 * @param array $data Array containing the required data to create the message
+	 * @return int Returns the id of the just created message
+	 */
 	static function create($data)
 	{
 		dbquery("
@@ -464,6 +596,13 @@ class TicketMessage
 		return $tid;
 	}
 
+	/**
+	 * Finds and returns a set of messages
+	 *
+	 * @param array $args WHERE conditions
+	 * @param array $sort Sorting order
+	 * @return array Set of messages
+	 */
 	static function & find($args=null,$sort=null)
 	{
 		$where = "";

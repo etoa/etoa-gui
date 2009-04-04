@@ -177,32 +177,13 @@ function userPointsTable($uid,$target,$length=100,$start=-1,$end=-1)
 
 function userTickets($uid,$target)
 {
-	$abuse_status = array("Neu","Zugeteilt","Abgeschlossen","Gelöscht");
-	$abuse_colors = array("#f90","#ff0","#0f0","#bbb");
-		
 	$or = new xajaxResponse();
 	ob_start();
 	echo "<table class=\"tb\">";	
-	$lres=dbquery("
-	SELECT 
-		t.* ,
-		c.name as cname,
-		u.user_nick
-	FROM 
-		tickets as t
-	INNER JOIN
-		ticket_cat as c
-		ON t.cat_id = c.id
-	LEFT JOIN
-		admin_users as u
-	ON
-		t.admin_id=u.user_id
-	WHERE
-		t.user_id=".$uid."
-	ORDER BY 
-		timestamp DESC
-	;");
-	if (mysql_num_rows($lres)>0)
+
+	$tset = Ticket::find(array("user_id"=>$uid));
+
+	if (count($tset) > 0)
 	{
 		echo "<tr>
 			<th>ID</th>
@@ -210,19 +191,15 @@ function userTickets($uid,$target)
 			<th>Kategorie</th>
 			<th>Status</th>
 			<th>Admin</th>
-			<th>Bearbeitet</th>
-			<th>Optionen</th>
 		</tr>";
-		while ($larr=mysql_fetch_array($lres))
+		foreach ($tset as $tid => &$ti)
 		{
 			echo "<tr>
-				<td class=\"tbldata\">".$larr['id']."</td>
-				<td class=\"tbldata\">".df($larr['timestamp'])."</td>
-				<td class=\"tbldata\">".$larr['cname']."</td>
-				<td class=\"tbldata\" style=\"color:".$abuse_colors[$larr['status']]."\">".$abuse_status[$larr['status']]."</td>
-				<td class=\"tbldata\">".$larr['user_nick']."</td>
-				<td class=\"tbldata\">".df($larr['admin_timestamp'])."</td>
-				<td class=\"tbldata\">".popupLink("tickets","Details","","&view=".$larr['id'])."</td>
+				<td class=\"tbldata\">".popupLink("tickets",$ti->idString,"","&id=".$ti->id)."</td>
+				<td class=\"tbldata\">".df($ti->time)."</td>
+				<td class=\"tbldata\">".$ti->catName."</td>
+				<td class=\"tbldata\">".$ti->statusName."</td>
+				<td class=\"tbldata\">".$ti->adminNick."</td>
 			</tr>";   
 		}           
 	}             

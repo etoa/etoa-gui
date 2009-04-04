@@ -7,7 +7,46 @@ echo '<div>[ <a href="?page='.$page.'">Aktive Tickets</a> |
 <a href="?page='.$page.'&amp;action=closed">Bearbeitete Tickets</a> ]</div>' ;
 
 
-if (isset($_GET['id']) && $_GET['id']>0)
+
+if (isset($_GET['edit']) && $_GET['edit']>0)
+{
+	echo "<h2>Ticket bearbeiten</h2>";
+	$ti = new Ticket($_GET['edit']);
+
+	echo '<form action="?page='.$page.'&amp;id='.$ti->id.'" method="post">';
+	tableStart("Ticket ".$ti->idString);
+	echo '<tr><th>Kategorie:</th><td colspan="3">';
+	htmlSelect("cat_id",Ticket::getCategories(),$ti->catId);
+	echo '</td></tr>';
+	echo '<tr><th>User:</th><td>';
+	echo '<a href=\"javascript:;\" '.cTT($ti->userNick,"ttuser").'>'.$ti->userNick.'</a>';
+	echo '</td>';
+	echo '<th>Zugeteilter Admin:</th><td>';
+	$sdata = AdminUser::getArray();
+	$sdata[0] = "(Niemand)";
+	htmlSelect("admin_id",$sdata,$ti->adminId);
+	echo '</td></tr>';
+	echo '<tr><th>Status:</th><td>';
+	htmlSelect("status",Ticket::$statusItems,$ti->status);
+	echo '</td>';
+	echo '<th>Lösung:</th><td>';
+	htmlSelect("solution",Ticket::$solutionItems,$ti->solution);
+	echo '</td></tr>';
+	echo '<tr><th>Admin-Kommentar:</th><td colspan="3">';
+	echo '<textarea name="admin_comment" rows="5" cols="60">'.$ti->adminComment.'</textarea>';
+	echo '</td></tr>';
+	tableEnd();
+	echo '<input type="submit" name="submit" value="Änderungen übernehmen" /> &nbsp;
+	'.button("Abbrechen","?page=$page&amp;id=".$ti->id."").' &nbsp;';
+	echo "</form>";
+
+
+}
+
+//
+// Display ticket details
+//
+elseif (isset($_GET['id']) && $_GET['id']>0)
 {
 	echo "<h2>Ticket-Details</h2>";
 	$ti = new Ticket($_GET['id']);
@@ -18,6 +57,7 @@ if (isset($_GET['id']) && $_GET['id']>0)
 		$ti->solution = $_POST['solution'];
 		$ti->catId = $_POST['cat_id'];
 		$ti->adminId = $_POST['admin_id'];
+		$ti->adminComment = $_POST['admin_comment'];
 		
 		if ($ti->changed)
 			ok_msg("Ticket aktualisiert!");
@@ -37,7 +77,8 @@ if (isset($_GET['id']) && $_GET['id']>0)
 
 	if (isset($_POST['submit_new_post']))
 	{
-		if ($ti->addMessage(array("admin_id"=>$s['user_id'],"message"=>$_POST['message'])))
+		// Do not inform the user with pm, because the close function does this already
+		if ($ti->addMessage(array("admin_id"=>$s['user_id'],"message"=>$_POST['message']),0))
 		{
 			ok_msg("Nachricht hinzugefügt!");
 			if (isset($_POST['checkclose']))
@@ -53,40 +94,39 @@ if (isset($_GET['id']) && $_GET['id']>0)
 	</div>";
 
 
-	echo '<form action="?page='.$page.'&amp;id='.$_GET['id'].'" method="post">';
 	tableStart("Ticket ".$ti->idString);
-	echo '<tr><th>Kategorie:</th><td colspan="3">';
-	htmlSelect("cat_id",Ticket::getCategories(),$ti->catId);
+	echo '<tr><th style="width:150px">Kategorie:</th><td>';
+	echo $ti->catName;
+	echo '</td></tr>';
+	echo '<th>Status:</th><td>';
+	echo $ti->statusName;
 	echo '</td></tr>';
 	echo '<tr><th>User:</th><td>';
 	echo '<a href=\"javascript:;\" '.cTT($ti->userNick,"ttuser").'>'.$ti->userNick.'</a>';
-	echo '</td>';
-	echo '<th>Zugeteilter Admin:</th><td>';
-	$sdata = AdminUser::getArray();
-	$sdata[0] = "(Niemand)";
-	htmlSelect("admin_id",$sdata,$ti->adminId);
 	echo '</td></tr>';
-	echo '<tr><th>Status:</th><td>';
-	htmlSelect("status",Ticket::$statusItems,$ti->status);
-	echo '</td>';
-	echo '<th>Lösung:</th><td>';
-	htmlSelect("solution",Ticket::$solutionItems,$ti->solution);
+	if ($ti->adminId > 0)
+	{
+		echo '<th>Zugeteilter Admin:</th><td>';
+		echo $ti->adminNick;
+		echo '</td></tr>';
+	}
+	echo '<tr><th>Letzte Änderung:</th><td>';
+	echo df($ti->time);
 	echo '</td></tr>';
+	if ($ti->adminComment != "")
+	{
+		echo '<tr><th>Admin-Kommentar:</th><td colspan="3" style="color:yellow">';
+		echo text2html($ti->adminComment);
+		echo '</td></tr>';
+	}
 	tableEnd();
-	echo '<p>
-	';
-	if ($ti->status=="new")
-		echo '<input type="submit" name="submit_assign" value="Ticket mir zuweisen" /> &nbsp; ';
-	if ($ti->status=="closed")
-		echo '<input type="submit" name="submit_reopen" value="Ticket wieder eröffnen" /> &nbsp; ';
 
-	echo ''.button("Zur Übersicht","?page=$page").' &nbsp;
-	<input type="submit" name="submit" value="Änderungen übernehmen" /> &nbsp;
-	</p>';
-	echo "</form>";
 
 	tableStart("Nachrichten");
-	echo "<tr><th>Datum</th><th>Autor</th><th>Nachricht</th></tr>";
+	echo "<tr>
+	<th style=\"width:120px\">Datum</th>
+	<th style=\"width:130px\">Autor</th>
+	<th>Nachricht</th></tr>";
 	foreach ($ti->getMessages() as $mi)
 	{
 		echo "<tr>
@@ -97,9 +137,9 @@ if (isset($_GET['id']) && $_GET['id']>0)
 	}
 	tableEnd();
 
+	echo '<form action="?page='.$page.'&amp;id='.$_GET['id'].'" method="post">';
 	if ($ti->status=="assigned")
 	{
-		echo '<form action="?page='.$page.'&amp;id='.$_GET['id'].'" method="post">';
 		tableStart("Neue Nachricht");
 		echo '<tr><th>Absender:</th><td>';
 		echo $s['user_nick']." (Admin)";
@@ -113,8 +153,19 @@ if (isset($_GET['id']) && $_GET['id']>0)
 		echo ' <input type="checkbox" name="checkclose" value="1" /> Ticket abschliessen als ';
 		htmlSelect("solutionclose",Ticket::$solutionItems,"solved");
 
-		echo "</form><br/>";
 	}
+
+	echo '<p>';
+	echo button("Zur Übersicht","?page=$page").' &nbsp; ';
+	if ($ti->status=="new")
+		echo '<input type="submit" name="submit_assign" value="Ticket mir zuweisen" /> &nbsp; ';
+	if ($ti->status=="closed")
+		echo '<input type="submit" name="submit_reopen" value="Ticket wieder eröffnen" /> &nbsp; ';
+	echo button("Ticketdetails bearbeiten","?page=$page&amp;edit=".$ti->id."").' &nbsp;
+	</p>';
+	echo "</form><br/>";
+
+
 
 }
 

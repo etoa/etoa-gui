@@ -6,61 +6,80 @@
 if (isset($_GET['id']) && $_GET['id']>0)
 {
 	echo "<h2>Ticket-Details</h2>";
-	$ti = new Ticket($_GET['id']);
-
-	if (isset($_POST['submit_new_post']))
+	$tarr = Ticket::find(array("user_id"=>$s['user_id'],"id"=>intval($_GET['id'])));
+	if (count($tarr) > 0)
 	{
-		if ($ti->addMessage(array("user_id"=>$s['user_id'],"message"=>$_POST['message'])))
+		$ti = array_shift($tarr);
+		if (isset($_POST['submit_new_post']))
 		{
-			ok_msg("Nachricht hinzugefügt!");
+			if ($ti->addMessage(array("user_id"=>$s['user_id'],"message"=>$_POST['message'])))
+			{
+				ok_msg("Nachricht hinzugefügt!");
+			}
 		}
-	}
+		if (isset($_GET['reopen']))
+		{
+			$ti->reopen();
+		}
 
-	tableStart("Ticket ".$ti->idString);
-	echo '<tr><th>Kategorie:</th><td colspan="3">';
-	echo $ti->catName;
-	echo '</td></tr>';
-	echo '<tr><th>User:</th><td>';
-	echo ''.$ti->userNick.'';
-	echo '</td>';
-	echo '<th>Zugeteilter Admin:</th><td>';
-	echo $ti->adminNick;
-	echo '</td></tr>';
-	echo '<tr><th>Status:</th><td colspan="3">';
-	echo $ti->statusName;
-	echo '</td></tr>';
-	tableEnd();
-
-	tableStart("Nachrichten");
-	echo "<tr><th>Datum</th><th>Autor</th><th>Nachricht</th></tr>";
-	foreach ($ti->getMessages() as $mi)
-	{
-		echo "<tr>
-		<td>".df($mi->timestamp)."</td>
-		<td>".$mi->authorNick."</td>
-		<td>".text2html($mi->message)."</td>
-		</tr>";
-	}
-	tableEnd();
-
-	if ($ti->status!="closed")
-	{
-		echo '<form action="?page='.$page.'&amp;id='.$_GET['id'].'" method="post">';
-		tableStart("Neue Nachricht");
-		echo '<tr><th>Absender:</th><td>';
-		echo $s['user_nick']."";
+		tableStart("Ticket ".$ti->idString);
+		echo '<tr><th>Kategorie:</th><td colspan="3">';
+		echo $ti->catName;
 		echo '</td></tr>';
-		echo '<tr><th>Nachricht:</th><td>';
-		echo '<textarea name="message" rows="8" cols="60"></textarea>';
+		echo '<tr><th>User:</th><td>';
+		echo ''.$ti->userNick.'';
+		echo '</td></tr>';
+		if ($ti->adminId > 0)
+		{
+			echo '<tr><th>Zugeteilter Admin:</th><td>';
+			echo $ti->adminNick;
+			echo '</td></tr>';
+		}
+		echo '<tr><th>Status:</th><td colspan="3">';
+		echo $ti->statusName;
 		echo '</td></tr>';
 		tableEnd();
-		echo '<input type="submit" name="submit_new_post" value="Senden" /> &nbsp;
-		'.button("Zur Übersicht","?page=$page").' &nbsp;	';
 
-		echo "</form><br/>";
+		tableStart("Nachrichten");
+		echo "<tr><th style=\"width:120px;\">Datum</th><th style=\"width:150px;\">Autor</th><th>Nachricht</th></tr>";
+		foreach ($ti->getMessages() as $mi)
+		{
+			echo "<tr>
+			<td>".df($mi->timestamp)."</td>
+			<td>".$mi->authorNick."</td>
+			<td>".text2html($mi->message)."</td>
+			</tr>";
+		}
+		tableEnd();
+
+		if ($ti->status!="closed")
+		{
+			echo '<form action="?page='.$page.'&amp;id='.$_GET['id'].'" method="post">';
+			tableStart("Neue Nachricht");
+			echo '<tr><th>Absender:</th><td>';
+			echo $s['user_nick']."";
+			echo '</td></tr>';
+			echo '<tr><th>Nachricht:</th><td>';
+			echo '<textarea name="message" rows="8" cols="60"></textarea>';
+			echo '</td></tr>';
+			tableEnd();
+			echo '<input type="submit" name="submit_new_post" value="Senden" /> &nbsp;
+			'.button("Zur Übersicht","?page=$page").' &nbsp;	';
+
+			echo "</form><br/>";
+		}
+		else
+		{
+			echo '<p>'.button("Zur Übersicht","?page=$page").' &nbsp;
+			'.button("Ticket wiedereröffnen","?page=$page&amp;id=".$ti->id."&amp;reopen=1").'
+			</p>';
+		}
 	}
 	else
-		echo '<p>'.button("Zur Übersicht","?page=$page").' &nbsp;	</p>';
+	{
+		err_msg("Ticket nicht vorhanden!");
+	}
+
 
 }
 else

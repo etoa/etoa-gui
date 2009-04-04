@@ -416,20 +416,14 @@
 									}	
 									
 									// Tickets
-									$cres=dbquery("
-									SELECT 
-										COUNT(id),
-										MAX(timestamp) 
-									FROM 
-										tickets
-									WHERE
-										user_id=".$arr['user_id']."
-										AND (status=0 OR status=1)
-									;");	
-									$carr = mysql_fetch_row($cres);
-									if ($carr[0] > 0)
+									$nTickets = Ticket::find(array("user_id"=>$arr['user_id'],"status"=>"new"));
+									$nt = count($nTickets);
+									$aTickets = Ticket::find(array("user_id"=>$arr['user_id'],"status"=>"assigned"));
+									$at = count($aTickets);
+
+									if ($nt+$at > 0)
 									{
-										echo "<div><b>".$carr[0]." neue/offene Tickets</b> vorhanden, neustes von ".df($carr[1])."
+										echo "<div><b>".$nt." neue Tickets</b> und <b>".$at." zugewiesene Tickets</b> vorhanden
 										[<a href=\"javascript:;\" onclick=\"tabActivate('userTab',8);\">Zeigen</a>]
 										</div>";
 									}										

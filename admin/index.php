@@ -45,8 +45,7 @@
 		$admingroup[$garr['group_id']] =$garr['group_name'];
 		$adminlevel[$garr['group_level']] =$garr['group_name'];
 	}
-
-				?>
+	?>
 
 	 			<table id="layoutbox">
 					<tr>
@@ -61,13 +60,11 @@
 								else
 									echo popupLink("notepad","Notizblock");
 								echo " | ";
-								$nres = dbquery("select COUNT(*) from tickets where status=0");
-								$narr = mysql_fetch_row($nres);
-								if ($narr[0]>0)
-									echo popupLink("tickets","Tickets (".$narr[0].")","color:#f90;");
+								$nt = Ticket::countAssigned($s['user_id']) + Ticket::countNew();
+								if ($nt>0)
+									echo popupLink("tickets","Tickets (".$nt.")","color:#f90;");
 								else
 									echo popupLink("tickets","Tickets");
-
 
 								echo " | ";
 								if (!$cb)
