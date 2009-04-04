@@ -1087,7 +1087,7 @@
 					
 					// Berechnungen nur durchführen, wenn die Stufe >0 ist oder sich das Objekt in Bau befindet
 					// Dies ist eine Sicherheit für den Fall, dass die Stufe manuel zurückgesetzt wird. Es würden falsche Kosten entstehen
-					if($arr['alliance_buildlist_current_level']>0 || $arr['alliance_buildlist_build_end_time']>0)
+					if($level>0 || $arr['alliance_buildlist_build_end_time']>0)
 					{									
 						// Kosten von jedem Level des Gebäudes wird berechnet
 						for ($x=1;$x<=$level;$x++)
@@ -1156,7 +1156,7 @@
 					
 					// Berechnungen nur durchführen, wenn die Stufe >0 ist oder sich das Objekt in Bau befindet
 					// Dies ist eine Sicherheit für den Fall, dass die Stufe manuel zurückgesetzt wird. Es würden falsche Kosten entstehen
-					if($arr['alliance_techlist_current_level']>0 || $arr['alliance_techlist_build_end_time']>0)
+					if($level>0 || $arr['alliance_techlist_build_end_time']>0)
 					{
 						// Kosten von jedem Level der Forschung wird berechnet
 						for ($x=1;$x<=$level;$x++)
