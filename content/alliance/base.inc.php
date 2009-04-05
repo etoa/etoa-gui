@@ -1043,7 +1043,8 @@
 					  alliance_buildlist
 					SET
 					  alliance_buildlist_build_start_time='".time()."',
-					  alliance_buildlist_build_end_time='".$end_time."'
+					  alliance_buildlist_build_end_time='".$end_time."',
+					  alliance_buildlist_member_for='".$alliance_member_cnt."'
 					WHERE
 					  alliance_buildlist_alliance_id='".$cu->allianceId."'
 					  AND alliance_buildlist_building_id='".$id."';");
@@ -1163,7 +1164,8 @@
 						alliance_techlist
 					  SET
 						alliance_techlist_build_start_time='".time()."',
-						alliance_techlist_build_end_time='".$end_time."'
+						alliance_techlist_build_end_time='".$end_time."',
+						alliance_techlist_member_for='".$alliance_member_cnt."'
 					  WHERE
 						alliance_techlist_alliance_id='".$cu->allianceId."'
 						AND alliance_techlist_tech_id='".$id."';");
