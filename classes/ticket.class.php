@@ -290,6 +290,13 @@ class Ticket
 			$mdata['message'] = "Das Ticket wurde wieder eröffnet.";
 			$this->addMessage($mdata);
 		}
+		elseif ($this->status == "assigned")
+		{
+			$this->__set("adminId",0);
+			$this->__set("status","new");
+			$mdata['message'] = "Der Ticketadministrator hat das Ticket wieder als Neu markiert.";
+			$this->addMessage($mdata);
+		}
 	}
 
 	/**

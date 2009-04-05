@@ -86,7 +86,17 @@ elseif (isset($_GET['id']) && $_GET['id']>0)
 				$ti->close($_POST['solutionclose']);
 			}
 		}
+
+		if (isset($_POST['admin_comment']))
+		{
+			$ti->adminComment = $_POST['admin_comment'];
+		}
 	}
+	if (isset($_POST['submit_admin_comment']))
+	{
+		$ti->adminComment = $_POST['admin_comment'];
+	}
+
 
 	echo "<div id=\"ttuser\" style=\"display:none;\">
 	".openerLink("page=user&sub=edit&id=".$ti->userId,"Daten anzeigen")."<br/>
@@ -94,6 +104,7 @@ elseif (isset($_GET['id']) && $_GET['id']>0)
 	</div>";
 
 
+	echo '<form action="?page='.$page.'&amp;id='.$_GET['id'].'" method="post">';
 	tableStart("Ticket ".$ti->idString);
 	echo '<tr><th style="width:150px">Kategorie:</th><td>';
 	echo $ti->catName;
@@ -113,12 +124,10 @@ elseif (isset($_GET['id']) && $_GET['id']>0)
 	echo '<tr><th>Letzte Änderung:</th><td>';
 	echo df($ti->time);
 	echo '</td></tr>';
-	if ($ti->adminComment != "")
-	{
-		echo '<tr><th>Admin-Kommentar:</th><td colspan="3" style="color:yellow">';
-		echo text2html($ti->adminComment);
-		echo '</td></tr>';
-	}
+	echo '<tr><th>Admin-Kommentar:</th><td colspan="3">';
+	echo '<textarea name="admin_comment" style="color:yellow" rows="4" cols="60">'.$ti->adminComment.'</textarea>
+	<input type="submit" name="submit_admin_comment" value="Speichern" /> (wird auch beim Senden einer neuen Nachricht gespeichert)';
+	echo '</td></tr>';
 	tableEnd();
 
 
@@ -137,7 +146,6 @@ elseif (isset($_GET['id']) && $_GET['id']>0)
 	}
 	tableEnd();
 
-	echo '<form action="?page='.$page.'&amp;id='.$_GET['id'].'" method="post">';
 	if ($ti->status=="assigned")
 	{
 		tableStart("Neue Nachricht");
@@ -161,6 +169,9 @@ elseif (isset($_GET['id']) && $_GET['id']>0)
 		echo '<input type="submit" name="submit_assign" value="Ticket mir zuweisen" /> &nbsp; ';
 	if ($ti->status=="closed")
 		echo '<input type="submit" name="submit_reopen" value="Ticket wieder eröffnen" /> &nbsp; ';
+	if ($ti->status=="assigned")
+		echo '<input type="submit" name="submit_reopen" value="Zuweisung widerrufen" /> &nbsp; ';
+
 	echo button("Ticketdetails bearbeiten","?page=$page&amp;edit=".$ti->id."").' &nbsp;
 	</p>';
 	echo "</form><br/>";
