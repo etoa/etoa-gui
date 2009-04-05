@@ -1,6 +1,7 @@
 <?PHP
 
 $xajax->register(XAJAX_FUNCTION,'showAllianceMembers');
+$xajax->register(XAJAX_FUNCTION,'showAllianceMemberAddCosts');
 
 //Listet User einer Allianz auf
 function showAllianceMembers($alliance_id=0,$field_id)
@@ -105,6 +106,38 @@ function showAllianceMembers($alliance_id=0,$field_id)
 	ob_end_clean();
 	
 	return $objResponse;
+}
+
+function showAllianceMemberAddCosts($allianceId=0,$form)
+{
+	ob_start();
+	$objResponse = new xajaxResponse();
+	$cnt = 0;
+	
+	foreach ($form['application_answer'] as $answear)
+	{
+		if ($answear==2) $cnt++;
+	}
+	if($allianceId!=0)
+	{
+		$alliance = new Alliance($allianceId);
+		
+		echo $alliance->calcMemberCosts(false,$cnt);
+	}
+	
+	$objResponse->assign("memberCostsTD","innerHTML",ob_get_contents());
+	if ($cnt>0)
+	{
+		$objResponse->assign("memberCosts","style.display",'');
+	}
+	else
+	{
+		$objResponse->assign("memberCosts","style.display",'none');
+	}
+	ob_end_clean();
+	
+	return $objResponse;
+	
 }
 
 
