@@ -217,7 +217,7 @@
 								AND shiplist_entity_id='".$this->entityId."';");
 			$arr = mysql_fetch_row($res);
 			
-			$delable = min($cnt,$arr[1]);
+			$delable = max(0,min($cnt,$arr[1]));
 			
 			dbquery("UPDATE
 						shiplist
@@ -245,7 +245,7 @@
 								AND shiplist_entity_id='".$this->entityId."';");
 			$arr = mysql_fetch_row($res);
 
-			$delable = min($cnt,$arr[1]);
+			$delable = max(0,min($cnt,$arr[1]));
 			
 			dbquery("UPDATE
 						shiplist
