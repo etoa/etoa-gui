@@ -136,7 +136,8 @@
 			user_nick,
 			user_points,
 			user_id,
-			user_observe
+			user_observe,
+			user_acttime
 		FROM 
 			users
 		WHERE 
@@ -151,6 +152,8 @@
 				<th style=\"width:150px;\">Nick</th>
 				<th style=\"width:100px;\">Punkte</th>
 				<th>Text</th>
+				<th>Online</th>
+				<th>Details</th>
 				<th style=\"width:300px;\">Optionen</th>
 			</tr>";
 			while ($arr=mysql_fetch_array($res))
@@ -159,9 +162,13 @@
 					<td><a href=\"?page=$page&amp;sub=edit&amp;id=".$arr['user_id']."\">".$arr['user_nick']."</a></td>
 					<td ".tm("Punkteverlauf","<img src=\"../misc/stats.image.php?user=".$arr['user_id']."\" alt=\"Diagramm\" style=\"width:600px;height:400px;\" />").">".nf($arr['user_points'])."</td>
 					<td>".stripslashes($arr['user_observe'])."</td>
+					<td>".df($arr['user_acttime'])."</td>";
+					$dres = dbquery("SELECT COUNT(id) FROM user_surveillance WHERE user_id=".$_GET['surveillance'].";");
+					$dnum = mysql_fetch_row($dres);
+					echo "<td>".nf($dnum[0])."</td>
 					<td>
 						<a href=\"?page=$page&amp;sub=$sub&amp;text=".$arr['user_id']."\">Text ändern</a>
-						<a href=\"?page=$page&amp;sub=$sub&amp;surveillance=".$arr['user_id']."\">Erweiterte Beobachtung</a>
+						<a href=\"?page=$page&amp;sub=$sub&amp;surveillance=".$arr['user_id']."\">Details</a>
 						<a href=\"?page=$page&amp;sub=$sub&amp;del=".$arr['user_id']."\">Entfernen</a>
 					</td>
 				</tr>";
