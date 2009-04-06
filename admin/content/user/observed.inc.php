@@ -33,15 +33,16 @@
 			echo "<p>".button("Neu laden","?page=$page&amp;sub=$sub&amp;surveillance=".$_GET['surveillance'])." &nbsp; ".button("Zurück","?page=$page&amp;sub=$sub")."</p>";
 			$tu = new User($_GET['surveillance']);
 			tableStart("Aufgezeichnete Aktionen von ".$tu,"100%");
-			echo "<tr><th>Zeit</th><th>Seite</th><th>Request (GET)</th><th>Formular (POST)</th><th>Quelle</th></tr>";
+			echo "<tr><th>Zeit</th><th>Seite</th><th>Request (GET)</th><th>Formular (POST)</th></tr>";
 			while ($arr=mysql_fetch_assoc($res))
 			{
+				$req = wordwrap($arr['request'], 100, "\n", true);
+				$post = wordwrap($arr['post'], 100, "\n", true);
 				echo "<tr>
 					<td>".df($arr['timestamp'],1)."</td>
 					<td>".$arr['page']."</td>
-					<td>".text2html($arr['request'])."</td>
-					<td>".text2html($arr['post'])."</td>
-					<td>".text2html($arr['source'])."</td>
+					<td>".text2html($req)."</td>
+					<td>".text2html($post)."</td>
 				</tr>";
 			}
 			tableEnd();
@@ -167,8 +168,8 @@
 					$dnum = mysql_fetch_row($dres);
 					echo "<td>".nf($dnum[0])."</td>
 					<td>
-						<a href=\"?page=$page&amp;sub=$sub&amp;text=".$arr['user_id']."\">Text ändern</a>
 						<a href=\"?page=$page&amp;sub=$sub&amp;surveillance=".$arr['user_id']."\">Details</a>
+						<a href=\"?page=$page&amp;sub=$sub&amp;text=".$arr['user_id']."\">Text ändern</a>
 						<a href=\"?page=$page&amp;sub=$sub&amp;del=".$arr['user_id']."\">Entfernen</a>
 					</td>
 				</tr>";

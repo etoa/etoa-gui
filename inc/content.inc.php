@@ -119,16 +119,20 @@
 				foreach ($_GET as $k=>$v)
 				{
 					if ($k!="page")
-					$req.="[b]".$k.":[/b] ".$v."\n";
+					{
+						$req.="[b]".$k.":[/b] ".$v."\n";
+					}
 				}
 				$post = "";
 				foreach ($_POST as $k=>$v)
 				{
-					$post.="[b]".$k.":[/b] ".$v."\n";
+					if (is_array($v))
+					{
+						$post.="[b]".$k.":[/b] ".dump($v,1);
+					}
+					else
+						$post.="[b]".$k.":[/b] ".$v."\n";
 				}
-				$source = "[b]IP:[/b] ".$_SERVER['REMOTE_ADDR']."\n";
-				$source.= "[b]Host:[/b] ".resolveIp($_SERVER['REMOTE_ADDR'])."\n";
-				$source.= "[b]Agent:[/b] ".$_SERVER['HTTP_USER_AGENT']."\n";
 				
 				dbquery("INSERT INTO
 					user_surveillance
@@ -138,7 +142,7 @@
 					page,
 					request,
 					post,
-					source
+					session
 				)
 				VALUES
 				(
@@ -147,7 +151,7 @@
 					'".$page."',
 					'".$req."',
 					'".$post."',
-					'".$source."'
+					'".$s['key']."'
 				)");
 			}
 

@@ -2854,11 +2854,13 @@ function imagecreatefromfile($path, $user_functions = false)
 	* Prints an array
 	* For debug purposes only
 	*/
-	function dump($val)
+	function dump($val,$return=0)
 	{	
 		ob_start();
 		print_r($val);
 		$tmp = ob_get_clean();
+		if ($return==1)
+			return $tmp;
 		echo nl2br($tmp);
 	}
 
