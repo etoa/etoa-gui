@@ -6,6 +6,8 @@
 		
 		DataHandler &DataHandler = DataHandler::instance();
 		ShipData::ShipData *data = DataHandler.getShipById(this->getTypeId());
+		double structure = data->getStructure() + data->getShield();
+		if (!structure) this->count = 0;
 		int shipCnt = ceil((this->initCount - this->count)*config.nget("ship_wf_percent",0));
 		
 		this->rebuildIsCalced = true;
@@ -18,6 +20,8 @@
 		
 		DataHandler &DataHandler = DataHandler::instance();
 		ShipData::ShipData *data = DataHandler.getShipById(this->getTypeId());
+		double structure = data->getStructure() + data->getShield();
+		if (!structure) this->count = 0;
 		int shipCnt = ceil((this->initCount - this->count)*config.nget("ship_wf_percent",0));
 		
 		this->rebuildIsCalced = true;
@@ -30,6 +34,8 @@
 		
 		DataHandler &DataHandler = DataHandler::instance();
 		ShipData::ShipData *data = DataHandler.getShipById(this->getTypeId());
+		double structure = data->getStructure() + data->getShield();
+		if (!structure) this->count = 0;
 		int shipCnt = ceil((this->initCount - this->count)*config.nget("ship_wf_percent",0));
 		
 		this->rebuildIsCalced = true;
