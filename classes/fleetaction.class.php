@@ -27,7 +27,7 @@
 		"emp",
 		"antrax",
 		"gasattack",
-		"createdebris",
+	/*	"createdebris",*/
 		"colonize",
 		"collectmetal",
 		"collectcrystal",
