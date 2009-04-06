@@ -1346,8 +1346,8 @@
 		{
 			// Prüft Voraussetzungen
 			if($data['alliance_tech_needed_level']==0 
-				|| (isset($techlist[$data['alliance_tech_needed_id']]) 
-						&& $data['alliance_tech_needed_level']<=$techlist[$data['alliance_tech_needed_id']]['alliance_techlist_current_level']
+				|| (isset($buildlist[$data['alliance_tech_needed_id']]) 
+						&& $data['alliance_tech_needed_level']<=$buildlist[$data['alliance_tech_needed_id']]['alliance_buildlist_current_level']
 						)
 				)
 			{
