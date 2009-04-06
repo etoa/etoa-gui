@@ -407,16 +407,12 @@
 		}
 	}
 
-	$navmenu['Konfiguration']['Variable erstellen']['page']="config";
-	$navmenu['Konfiguration']['Variable erstellen']['sub']="createvar";
-	$navmenu['Konfiguration']['Variable erstellen']['level']=3;
+	$navmenu['Konfiguration']['Variable erstellen'] = array('page'=>"config",'sub'=>"createvar",'level'=>3);
 
 	$navmenu['Konfiguration']['bar'][0] = true;
 
-	$navmenu['Konfiguration']['Tipps']['page']="config";
-	$navmenu['Konfiguration']['Tipps']['sub']="tipps";
-	$navmenu['Konfiguration']['Tipps']['level']=0;
-
+	$navmenu['Konfiguration']['Tipps'] = array('page'=>"config",'sub'=>"tipps",'level'=>0);
+	$navmenu['Konfiguration']['Ticket-Kategorien'] = array('page'=>"config",'sub'=>"ticketcat",'level'=>3);
 
 	$navmenu['Setup']['Universum']['page']="setup";
 	$navmenu['Setup']['Universum']['sub']="uni";

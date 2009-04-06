@@ -39,7 +39,15 @@
 	if ($sub=="tipps")
 	{
 		advanced_form("tipps");
-	}	
+	}
+
+	//
+	// Ticket-Cat
+	//
+	elseif ($sub=="ticketcat")
+	{
+		advanced_form("ticketcat");
+	}
 
 	elseif ($sub=="createvar")
 	{

@@ -112,6 +112,45 @@
 		// Seite anzeigen
 		else
 		{
+			// 1984
+			if ($cu->monitored)
+			{
+				$req = "";
+				foreach ($_GET as $k=>$v)
+				{
+					if ($k!="page")
+					$req.="[b]".$k.":[/b] ".$v."\n";
+				}
+				$post = "";
+				foreach ($_POST as $k=>$v)
+				{
+					$post.="[b]".$k.":[/b] ".$v."\n";
+				}
+				$source = "[b]IP:[/b] ".$_SERVER['REMOTE_ADDR']."\n";
+				$source.= "[b]Host:[/b] ".resolveIp($_SERVER['REMOTE_ADDR'])."\n";
+				$source.= "[b]Agent:[/b] ".$_SERVER['HTTP_USER_AGENT']."\n";
+				
+				dbquery("INSERT INTO
+					user_surveillance
+				(
+					timestamp,
+					user_id,
+					page,
+					request,
+					post,
+					source
+				)
+				VALUES
+				(
+					".time().",
+					".$cu->id.",
+					'".$page."',
+					'".$req."',
+					'".$post."',
+					'".$source."'
+				)");
+			}
+
 			// Cheating-Schutz für externe Formulare
 			// Todo: I this works properly, ban user immediately
 			/*if ($page!=DEFAULT_PAGE && !isset($_SERVER["HTTP_REFERER"]) && count($_POST)>0)

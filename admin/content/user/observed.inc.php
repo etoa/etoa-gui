@@ -23,6 +23,35 @@
 		<input type=\"submit\" name=\"del_text\" value=\"Löschen\" /> &nbsp; 
 		<input type=\"submit\" name=\"cancel\" value=\"Abbrechen\" />";
 	}
+	elseif (isset($_GET['surveillance']) && $_GET['surveillance']>0)
+	{
+		echo "<h2>Erweiterte Beobachtung</h2>";
+		$res = dbquery("SELECT * FROM user_surveillance WHERE user_id=".$_GET['surveillance']." ORDER BY timestamp DESC LIMIT 1000;");
+		if (mysql_num_rows($res)>0)
+		{
+			echo "<p>Die erweiterte Beobachtung ist automatisch für User unter Beobachtung aktiv!</p>";
+			echo "<p>".button("Neu laden","?page=$page&amp;sub=$sub&amp;surveillance=".$_GET['surveillance'])." &nbsp; ".button("Zurück","?page=$page&amp;sub=$sub")."</p>";
+			$tu = new User($_GET['surveillance']);
+			tableStart("Aufgezeichnete Aktionen von ".$tu,"100%");
+			echo "<tr><th>Zeit</th><th>Seite</th><th>Request (GET)</th><th>Formular (POST)</th><th>Quelle</th></tr>";
+			while ($arr=mysql_fetch_assoc($res))
+			{
+				echo "<tr>
+					<td>".df($arr['timestamp'],1)."</td>
+					<td>".$arr['page']."</td>
+					<td>".text2html($arr['request'])."</td>
+					<td>".text2html($arr['post'])."</td>
+					<td>".text2html($arr['source'])."</td>
+				</tr>";
+			}
+			tableEnd();
+		}
+		else
+		{
+			echo "<p>Keine Einträge vorhanden!</p>";
+		}
+		echo "<p>".button("Zurück","?page=$page&amp;sub=$sub")."</p>";
+	}
 	else
 	{	
 		if (isset($_POST['observe_add']))
@@ -122,7 +151,7 @@
 				<th style=\"width:150px;\">Nick</th>
 				<th style=\"width:100px;\">Punkte</th>
 				<th>Text</th>
-				<th style=\"width:250px;\">Optionen</th>
+				<th style=\"width:300px;\">Optionen</th>
 			</tr>";
 			while ($arr=mysql_fetch_array($res))
 			{
@@ -132,6 +161,7 @@
 					<td>".stripslashes($arr['user_observe'])."</td>
 					<td>
 						<a href=\"?page=$page&amp;sub=$sub&amp;text=".$arr['user_id']."\">Text ändern</a>
+						<a href=\"?page=$page&amp;sub=$sub&amp;surveillance=".$arr['user_id']."\">Erweiterte Beobachtung</a>
 						<a href=\"?page=$page&amp;sub=$sub&amp;del=".$arr['user_id']."\">Entfernen</a>
 					</td>
 				</tr>";

@@ -1,13 +1,13 @@
 <?PHP
-	   
+
 	/**
 	* Provides methods for accessing user information
 	* and changing it.
-	*  
+	*
 	* @author Nicolas Perrenoud<mrcage@etoa.ch>
-	*/ 
+	*/
 	class User
-	{  
+	{
 		// Fields
 		protected $id;	// Database record id
 		protected $nick; // Unicke nickname
@@ -32,6 +32,7 @@
 	protected $holiday=null;
 	protected $locked=null;
     protected $deleted;
+		protected $monitored;
     protected $registered;
 		protected $chatadmin;
 		protected $admin;
@@ -45,7 +46,7 @@
 		protected $allianceRankId;
 		protected $allianceName;
 		protected $allianceTag;
-		protected $allianceRankName;				
+		protected $allianceRankName;
 		protected $rank;
 		protected $rankHighest;
     protected $specialistId;
@@ -53,7 +54,7 @@
 	protected $specialist = null;
 	protected $ghost;
 
-		// Sub-objects and their id's		
+		// Sub-objects and their id's
 		protected $raceId;
 		protected $race = null;
 		protected $allianceId;
@@ -62,9 +63,9 @@
 		protected $properties = null;
 
 		protected $changedFields;
-		
+
 		/**
-		* The constructor initializes and loads 
+		* The constructor initializes and loads
 		* all importand data about this user
 		*/
 		function User($id)
@@ -73,27 +74,27 @@
 			$this->id = $id;
 
 			$res = dbquery("
-			SELECT 
+			SELECT
 				users.*,
 				MD5(user_id) AS uid,
 				MD5(user_logintime) AS lt,
 				user_session_key AS sk
-			FROM 
-				users 
-			WHERE 
-				user_id='".$id."' 
+			FROM
+				users
+			WHERE
+				user_id='".$id."'
 			LIMIT 1
-			;");			
-			if (mysql_num_rows($res)>0)		
+			;");
+			if (mysql_num_rows($res)>0)
 			{
 				$arr = mysql_fetch_assoc($res);
 
-				// Those are for session controll				
+				// Those are for session controll
 				$this->uid = $arr['uid'];
 				$this->lt = $arr['lt'];
 				$this->sk = $arr['sk'];
 
-			
+
 				$this->nick=$arr['user_nick'];
 				$this->realName=$arr['user_name'];
 				$this->email=$arr['user_email'];
@@ -102,57 +103,61 @@
 				$this->lastOnline=$arr['user_last_online'];
 				$this->acttime = $arr['user_acttime'];
 				$this->points=$arr['user_points'];
-				
+
 		    	$this->blocked_from = $arr['user_blocked_from'];
 		    	$this->blocked_to = $arr['user_blocked_to'];
 		    	$this->ban_reason = $arr['user_ban_reason'];
 		    	$this->ban_admin_id = $arr['user_ban_admin_id'];
-		    	
+
 		    	$this->hmode_from = $arr['user_hmode_from'];
 		    	$this->hmode_to = $arr['user_hmode_to'];
-		    	
+
 		    	$this->deleted = $arr['user_deleted'];
+
+					//$this->monitored = ($arr['user_observe']!="" && stristr($arr['user_observe'],"bug")) ? true : false;
+					$this->monitored = ($arr['user_observe']!="") ? true : false;
+
 		    	$this->registered = $arr['user_registered'];
 		    	$this->setup = $arr['user_setup']==1 ? true : false;
 				$this->chatadmin=$arr['user_chatadmin']==1 ? true : false;
 				$this->admin=$arr['admin']==1 ? true : false;
 				$this->ghost=$arr['user_ghost']==1 ? true : false;
-				
+
 				$this->ip=$_SERVER['REMOTE_ADDR'];
-				
+
 				$this->visits = $arr['user_visits'];
-				
+
 				$this->profileImage = $arr['user_profile_img'];
 				$this->profileText = $arr['user_profile_text'];
 				$this->profileBoardUrl = $arr['user_profile_board_url'];
 				$this->signature = $arr['user_signature'];
 				$this->avatar = $arr['user_avatar'];
-				
+
 
 				$this->allianceId = $arr['user_alliance_id'];
 				$this->allianceRankId = $arr['user_alliance_rank_id'];
-				
-				
+
+
 				$this->allianceName = "";
 				$this->allianceTag = "";
-				$this->allianceRankName = "";				
+				$this->allianceRankName = "";
 
 				$this->rank = $arr['user_rank'];
 				$this->rankHighest = $arr['user_rank_highest'];
-				
+
 		    	$this->specialistId = $arr['user_specialist_id'];
 		    	$this->specialistTime = $arr['user_specialist_time'];
-				
+
 				$this->raceId = $arr['user_race_id'];
 
 				$this->changedFields = array();
-				
+
 				$this->isValid=true;
 			}
 			else
 			{
 				$this->nick = "Niemand";
-				
+
 				$this->points = 0;
 				$this->acttime = time();
 		    	$this->blocked_from = 0;
@@ -161,19 +166,19 @@
 		    	$this->hmode_to = 0;
 		    	$this->deleted = 0;
 				$this->allianceId = 0;
-				
+
 				$this->allianceName = "";
 				$this->allianceTag = "";
-				$this->allianceRankName = "";				
-				
+				$this->allianceRankName = "";
+
 				$this->rank = 0;
 				$this->rankHighest = 0;
-				
+
 		    	$this->specialistId = 0;
 		    	$this->specialistTime = 0;
-				
+
 				$this->raceId = 0;
-				
+
 				$this->isValid=false;
 			}
 		}
@@ -183,26 +188,26 @@
 			$cnt = count($this->changedFields);
 			if ($cnt > 0)
 			{
-				$sql = "UPDATE 
+				$sql = "UPDATE
 					users
 				SET ";
 				foreach ($this->changedFields as $k=>$v)
 				{
-					if ($k=="race")	
+					if ($k=="race")
 				    $sql.= " user_race_id=".$this->raceId.",";
-					elseif ($k=="alliance")	
+					elseif ($k=="alliance")
 				    $sql.= " user_alliance_id=".$this->allianceId.",";
-					elseif ($k=="allianceRankId")	
+					elseif ($k=="allianceRankId")
 				    $sql.= " user_alliance_rank_id=".$this->allianceRankId.",";
-					elseif ($k=="visits")	
+					elseif ($k=="visits")
 				    $sql.= " user_visits=".$this->visits.",";
-					elseif ($k=="email")	
+					elseif ($k=="email")
 				    $sql.= " user_email='".$this->email."',";
-					elseif ($k=="profileText")	
+					elseif ($k=="profileText")
 				    $sql.= " user_profile_text='".$this->profileText."',";
-					elseif ($k=="signature")	
+					elseif ($k=="signature")
 				    $sql.= " user_signature='".$this->signature."',";
-					elseif ($k=="profileBoardUrl")	
+					elseif ($k=="profileBoardUrl")
 				    $sql.= " user_profile_board_url='".$this->profileBoardUrl."',";
 					elseif ($k == "profileImage")
 					{
@@ -223,7 +228,7 @@
 				dbquery($sql);
 			}
 			unset($this->changedFields);
-			
+
 		}
 
 		public function __set($key, $val)
@@ -232,7 +237,7 @@
 			{
 				if (!property_exists($this,$key))
 					throw new EException("Property $key existiert nicht in der Klasse ".__CLASS__);
-				
+
 				if ($key == "race")
 				{
 					$this->$key = $val;
@@ -258,20 +263,20 @@
 						$this->allianceId = $this->alliance->id;
 					}
  					unset($tmpAlly);
- 					
- 					
+
+
  					$this->allianceRankId = 0;
 					$this->changedFields[$key] = true;
 					$this->changedFields["allianceRankId"] = 0;
  					return true;
-				}				
+				}
 				if ($key == "race")
 				{
 					$this->$key = $val;
  					$this->raceId = $this->race->id;
 					$this->changedFields[$key] = true;
  					return true;
-				}				
+				}
 				elseif ($key == "visits")
 				{
 					$this->$key = intval($val);
@@ -283,7 +288,7 @@
 					if (is_file(PROFILE_IMG_DIR."/".$this->profileImage))
           {
           	unlink(PROFILE_IMG_DIR."/".$this->profileImage);
-					}					
+					}
 					$this->$key = $val;
 					$this->changedFields[$key] = true;
  					return true;
@@ -293,47 +298,47 @@
 					if (is_file(BOARD_AVATAR_DIR."/".$this->avatar))
           {
           	unlink(BOARD_AVATAR_DIR."/".$this->avatar);
-					}					
+					}
 					$this->$key = $val;
 					$this->changedFields[$key] = true;
  					return true;
-				}				
+				}
 				elseif ($key == "rating")
 				{
 					throw new EException("Property $key der Klasse  ".__CLASS__." ist nicht änderbar!");
 					return false;
-				}	
+				}
 				elseif ($key == "raceId")
 				{
 					throw new EException("Property $key der Klasse  ".__CLASS__." ist nicht änderbar!");
 					return false;
-				}					
+				}
 				elseif ($key == "allianceId")
 				{
 					throw new EException("Property $key der Klasse  ".__CLASS__." ist nicht änderbar!");
 					return false;
-				}					
+				}
 				else
 				{
 					$this->$key = $val;
 					$this->changedFields[$key] = true;
 					return true;
-				}			
-				
+				}
+
 			}
 			catch (EException $e)
 			{
 				echo $e;
 			}
 		}
-		
+
 		public function __get($key)
 		{
 			try
 			{
 				if (!property_exists($this,$key))
 					throw new EException("Property $key existiert nicht in ".__CLASS__);
-				
+
 				if ($key == "race" && $this->race==null && $this->raceId > 0)
 				{
  					$this->race = new Race($this->raceId);
@@ -341,7 +346,7 @@
 				if ($key == "alliance" && $this->alliance==null && $this->allianceId > 0)
 				{
  					$this->alliance = new Alliance($this->allianceId);
-				}				
+				}
 				if ($key == "rating" && $this->rating==null)
 				{
  					$this->rating = new UserRating($this->id);
@@ -362,7 +367,6 @@
 				{
 					$this->locked = ($this->blocked_from< time() && $this->blocked_to > time()) ? true : false;
 				}
-
 				return $this->$key;
 			}
 			catch (EException $e)
@@ -371,48 +375,48 @@
 				return null;
 			}
 		}
-		
+
 		function __toString()
 		{
 			return $this->nick;
 		}
-		
 
-	
+
+
 		final public function isSetup() 	{	return $this->setup; }
-		
+
 		final public function allianceId()
 		{
 			return $this->allianceId;
 		}
 
-		final public function allianceName() 
-		{ 
+		final public function allianceName()
+		{
 			if ($this->allianceName == "") 	{ $this->loadAllianceData(); }
 			return $this->allianceName;
 		}
-		
-		final public function allianceTag() 
-		{ 
+
+		final public function allianceTag()
+		{
 			if ($this->allianceTag == "") 	{ $this->loadAllianceData(); }
 			return $this->allianceTag;
 		}
-		
-		final public function allianceRankName() 
-		{ 
+
+		final public function allianceRankName()
+		{
 			if ($this->allianceRankName == "") 	{ $this->loadAllianceData(); }
 			return $this->allianceRankName;
 		}
 
-		public function setAllianceId($id) 
-		{ 
-			$this->allianceId = $id; 
+		public function setAllianceId($id)
+		{
+			$this->allianceId = $id;
 			dbquery("
-			UPDATE 
-				users 
-			SET 
+			UPDATE
+				users
+			SET
 				user_alliance_rank_id=0,
-				user_alliance_id=".$id." 
+				user_alliance_id=".$id."
 			WHERE user_id='".$this->id."';");
 		}
 
@@ -427,9 +431,9 @@
 		final public function isTimeout()
 		{
 			$cfg = Config::getInstance();
-			return $this->acttime + $cfg->value('user_timeout') < time();			
+			return $this->acttime + $cfg->value('user_timeout') < time();
 		}
-		
+
 		/**
 		* Load alliance data
 		*/
@@ -446,13 +450,13 @@
 					alliances
 				WHERE
 					alliance_id=".$this->allianceId.";
-				");	
-				if (mysql_num_rows($ares)>0)				
+				");
+				if (mysql_num_rows($ares)>0)
 				{
 					$aarr = mysql_fetch_row($ares);
 					$this->allianceName = "[".$aarr[0]."] ".$aarr[1];
 					$this->allianceTag = $aarr[0];
-					
+
 					if ($aarr[2] == $this->id)
 					{
 						$this->allianceRankName = "Gründer";
@@ -467,19 +471,19 @@
 						WHERE
 							rank_alliance_id=".$this->allianceId."
 							AND rank_id=".$this->allianceRankId.";
-						");	
-						if (mysql_num_rows($ares)>0)				
+						");
+						if (mysql_num_rows($ares)>0)
 						{
 							$aarr = mysql_fetch_row($ares);
 							$this->allianceRankName = $aarr[0];
-						}					
-					}					
-				}					
-			}				
+						}
+					}
+				}
+			}
 		}
-		
-		
-	
+
+
+
 		/**
      * Adds a message to this users personal log
      * The message string is parsed for the users nickname
@@ -518,7 +522,7 @@
       ");
 			return true;
     }
-    
+
 		/**
 		* Sends a system message to the user
 		*/
@@ -555,10 +559,10 @@
 					'".addslashes($subject)."',
 					'".addslashes($text)."'
 				);
-			");		
+			");
 		}
-    
-    
+
+
 		/**
 		* Benutzer löschen
 		*
@@ -568,11 +572,11 @@
 	  	global $conf;
 	   	define(FLEET_ACTION_RESS,$conf['market_ship_action_ress']['v']); // Ressourcen
 	   	define(FLEET_ACTION_SHIP,$conf['market_ship_action_ship']['v']); // Schiffe
-	
+
 			$utx = new userToXml($this->id);
 			if ($xmlfile = $utx->toCacheFile())
 			{
-	
+
 				//
 				//Flotten und deren Schiffe löschen
 				//
@@ -605,8 +609,8 @@
 					WHERE
 						user_id=".$this->id.";
 				");
-	
-	
+
+
 				//
 				//Planeten Reseten und Handelschiffe die auf dem Weg zu einem Planeten sind löschen
 				//
@@ -655,8 +659,8 @@
 						reset_planet($parr['id']);
 					}
 				}
-	
-	
+
+
 				//
 				// Allianz löschen (falls alleine) oder einen Nachfolger bestimmen
 				//
@@ -681,7 +685,7 @@
 					if (mysql_num_rows($ares)>0)
 					{
 						$aarr=mysql_fetch_assoc($ares);
-	
+
 						 // Wenn der User der Gründer der Allianz ist wird der User mit den höchsten Punkten zum neuen Allianzgründer
 						if ($this->id==$aarr['alliance_founder_id'])
 						{
@@ -701,39 +705,39 @@
 						$this->__get('alliance')->delete($this);
 					}
 				}
-	
-	
-	
+
+
+
 				//
 				//Rest löschen
 				//
-	
+
 				dbquery("DELETE FROM alliance_applications WHERE user_id='".$this->id."';");
-	
-	
+
+
 				//Baulisten löschen
 				dbquery("DELETE FROM shiplist WHERE shiplist_user_id='".$this->id."';");		// Schiffe löschen
 				dbquery("DELETE FROM deflist WHERE deflist_user_id='".$this->id."';");			// Verteidigung löschen
 				dbquery("DELETE FROM techlist WHERE techlist_user_id='".$this->id."';");		// Forschung löschen
 				dbquery("DELETE FROM buildlist WHERE buildlist_user_id='".$this->id."';");		// Gebäude löschen
-	
+
 				//Buddyliste löschen
 				dbquery("DELETE FROM buddylist WHERE bl_user_id='".$this->id."' OR bl_buddy_id='".$this->id."';");
-	
+
 				//Markt Angebote löschen
 				dbquery("DELETE FROM market_ressource WHERE user_id='".$this->id."' AND ressource_buyable='1';"); 	// Rohstoff Angebot
 				dbquery("DELETE FROM market_ship WHERE user_id='".$this->id."' AND ship_buyable='1';"); 				// Schiff Angebot
 				dbquery("DELETE FROM market_auction WHERE auction_user_id='".$this->id."' AND auction_buyable='1';"); // Auktionen
-	
+
 				//Notitzen löschen
 				$np = new Notepad($this->id);
 				$numNotes = $np->deleteAll();
 				unset($np);
-	
+
 				//Gespeicherte Koordinaten löschen
 				dbquery("DELETE FROM bookmarks WHERE user_id='".$this->id."';");
 				dbquery("DELETE FROM fleet_bookmarks WHERE user_id='".$this->id."';");
-	
+
 				//'user' Info löschen
 				//dbquery("DELETE FROM user_log WHERE log_user_id='".$this->id."';"); 			//Log löschen
 				dbquery("DELETE FROM user_multi WHERE user_multi_user_id='".$this->id."' OR user_multi_multi_user_id='".$this->id."';"); //Multiliste löschen
@@ -742,15 +746,15 @@
 				dbquery("DELETE FROM user_sitting WHERE user_sitting_user_id='".$this->id."';"); 			//Sitting löschen
 				dbquery("DELETE FROM user_sitting_date WHERE user_sitting_date_user_id='".$this->id."';"); //Sitting Daten löschen
 				// Todo: clean tickets
-	
+
 				//
 				//Benutzer löschen
 				//
 				dbquery("DELETE FROM users WHERE user_id='".$this->id."';");
-	
-	
-	
-	
+
+
+
+
 				//Log schreiben
 				if($self)
 					add_log("3","Der Benutzer ".$this->nick." hat sich selbst gelöscht!\nDie Daten des Benutzers wurden nach ".$xmlfile." exportiert.",time());
@@ -758,33 +762,33 @@
 					add_log("3","Der Benutzer ".$this->nick." wurde von ".$from." gelöscht!\nDie Daten des Benutzers wurden nach ".$xmlfile." exportiert.",time());
 				else
 					add_log("3","Der Benutzer ".$this->nick." wurde gelöscht!\nDie Daten des Benutzers wurden nach ".$xmlfile." exportiert.",time());
-	
+
 				$text ="Hallo ".$this->nick."
-				
-	Dein Accouont bei EtoA: Escape to Andromeda ( http://www.etoa.ch ) wurde auf Grund von Inaktivität 
+
+	Dein Accouont bei EtoA: Escape to Andromeda ( http://www.etoa.ch ) wurde auf Grund von Inaktivität
 	oder auf eigenem Wunsch nun gelöscht.
-	
+
 	Mit freundlichen Grüßen,
 	die Spielleitung";
 				send_mail('',$this->email,'Accountlöschung bei Escape to Andromeda',$text,'','');
-				
+
 				return true;
-	
+
 			}
 			else
 			{
 				error_msg("Konnte UserXML für ".$this->id." nicht exportieren, User nicht gelöscht!");
-			}		
+			}
 		}
 
-	
+
 		/**
 		* Registers a new user
 		*/
 		static public function register($data, &$errorCode, $welcomeMail=1)
 		{
 			$time = time();
-			
+
 			if ($data['name']=="" || $data['nick']=="" || $data['email']=="")
 			{
 				$errorCode = "Nicht alle Felder sind ausgef&uuml;llt!";
@@ -792,13 +796,13 @@
 			}
 
 			$nick=trim($data['nick']);
-			
+
 			if (!checkValidNick($nick) || !checkValidName($data['name']))
-			{			
+			{
       	$errorCode = "Du hast ein unerlaubtes Zeichen im Benutzernamen oder im vollst&auml;ndigen Namen!";
-				return false;			
+				return false;
 			}
-			
+
 			$nick_length=strlen(utf8_decode($nick));
 			if($nick=='')
 			{
@@ -807,10 +811,10 @@
 			}
 
 			if($nick_length<NICK_MINLENGHT || $nick_length>NICK_MAXLENGHT)
-			{						
+			{
 				$errorCode = "Dein Nickname muss mindestens ".NICK_MINLENGHT." Zeichen und maximum ".NICK_MAXLENGHT." Zeichen haben!";
 				return false;
-			}			
+			}
 
     	if (!checkEmail($data['email']))
     	{
@@ -819,20 +823,20 @@
     	}
 
   	  $res = mysql_query("
-  	  SELECT 
-  	  	user_id 
-  	  FROM 
-  	  	users 
-  	  WHERE 
-  	  	user_nick='".$nick."' 
+  	  SELECT
+  	  	user_id
+  	  FROM
+  	  	users
+  	  WHERE
+  	  	user_nick='".$nick."'
   	  	OR user_email_fix='".$data['email']."'
   	  LIMIT 1;");
   	  if (mysql_num_rows($res)>0)
   	  {
       	$errorCode = "Der Benutzer mit diesem Nicknamen oder dieser E-Mail-Adresse existiert bereits!";
       	return false;
-      }  	  	  
-  	  
+      }
+
   	  $pw = (isset($data['password']) && $data['password']!="") ? $data['password'] : mt_rand(100000000,9999999999);
       if (dbquery("
       INSERT INTO
@@ -859,12 +863,12 @@
       	$errorCode = mysql_insert_id();
 				$rating = new UserRating($errorCode);
 				$properties = new UserProperties($errorCode);
-				
+
 				if (!isset($data['password']))
         	add_log(3,"Der Benutzer ".$nick." (".$data['name'].", ".$data['email'].") hat sich registriert!");
         else
         	add_log(3,"Der Benutzer ".$nick." (".$data['name'].", ".$data['email'].") wurde registriert!");
-				
+
 				if ($welcomeMail == 1)
 				{
 		      $email_text = "Hallo ".$nick."\n\nDu hast dich erfolgreich beim Sci-Fi Browsergame Escape to Andromeda registriert.\nHier nochmals deine Daten:\n\n";
@@ -876,17 +880,16 @@
 		      $email_text.= "WICHTIG: Gib das Passwort an niemanden weiter. Gib dein Passwort auch auf keiner Seite ausser der Login- und der Einstellungs-Seite ein. Ein Game-Admin oder Entwickler wird dich auch nie nach dem Passwort fragen!\n";
 		      $email_text.= "Desweiteren solltest du dich mit den Regeln (".LOGINSERVER_URL."?page=regeln) bekannt machen, da ein Regelverstoss eine (zeitweilige) Sperrung deines Accounts zur Folge haben kann!\n\n";
 		      $email_text.= "Viel Spass beim Spielen!\nDas EtoA-Team";
-		
-		      send_mail(0,$data['email'],"EtoA Registrierung",$email_text,"","left",1);			
+
+		      send_mail(0,$data['email'],"EtoA Registrierung",$email_text,"","left",1);
 				}
-					  	
+
 	      	return true;
-	    }	
-	
+	    }
+
 			$errorCode = "Ein unbekannter Fehler trat auf!";
       return false;
 		}
-		
 
 
 		/**
@@ -896,9 +899,11 @@
 		{
 			$ures = dbquery("SELECT COUNT(user_id) FROM users;");
 			$uarr = mysql_fetch_row($ures);
-			return $uarr[0];			
+			return $uarr[0];
 		}
-    
+
+
+
 	}
 
 ?>
