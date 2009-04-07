@@ -23,9 +23,115 @@
 		<input type=\"submit\" name=\"del_text\" value=\"Löschen\" /> &nbsp; 
 		<input type=\"submit\" name=\"cancel\" value=\"Abbrechen\" />";
 	}
+	
+	//
+	// Extended observation
+	//
 	elseif (isset($_GET['surveillance']) && $_GET['surveillance']>0)
 	{
-		echo "<h2>Erweiterte Beobachtung</h2>";
+		$tu = new User($_GET['surveillance']);
+
+		echo "<h2>Erweiterte Beobachtung von ".$tu."</h2>";
+		$sessions = array();
+		$sres = dbquery("
+		SELECT 
+			session,COUNT(id) 
+		FROM 
+			user_surveillance 
+		WHERE 
+			user_id=".$_GET['surveillance']." 
+		GROUP BY 
+			session
+		ORDER BY
+			timestamp DESC;");
+		if (mysql_num_rows($sres)>0)
+		{
+			while ($sarr=mysql_fetch_row($sres))
+			{
+				$sessions[] = array($sarr[0],$sarr[1]);		
+			}			
+		}
+
+		echo "<p>Die erweiterte Beobachtung ist automatisch für User unter Beobachtung aktiv!</p>";
+		echo "<p>".button("Neu laden","?page=$page&amp;sub=$sub&amp;surveillance=".$_GET['surveillance'])." &nbsp; ".button("Zurück","?page=$page&amp;sub=$sub")."</p>";
+
+		echo "<table class=\"tb\"><tr>";
+		echo "<th>Login</th>
+		<th>Letzte Aktivit&auml;t</th>";
+		echo "<th>Session-Dauer</th>
+		<th>Aktionen</th>
+		<th>Aktionen/Minute</th>
+		<th>Optionen</th>
+		</tr>";
+		foreach ($sessions as $si)
+		{
+			if ($si[1]>0)
+			{
+				$res = dbquery("
+				SELECT 
+					*
+				FROM 
+					user_sessionlog
+				WHERE
+					log_session_key='".$si[0]."'
+				LIMIT 1;");
+				if (mysql_num_rows($res)>0)
+				{
+					$arr=mysql_fetch_array($res);
+					echo "<tr>";
+					echo "<td>".date("d.m.Y H:i",$arr['log_logintime'])."</td>";
+					echo "<td>";
+					if ($arr['log_acttime']>0)
+						echo date("d.m.Y H:i",$arr['log_acttime']);
+					else
+						echo "-";
+					echo "</td>";
+					echo "<td>";
+					$dur = max($arr['log_logouttime'],$arr['log_acttime'])-$arr['log_logintime'];
+					if ($dur>0)
+						echo tf($dur);
+					else
+						echo "-";
+					echo "</td>
+					<td>".$si[1]."</td>
+					<td>".($dur>0 ? round($si[1] / $dur * 60,1) : '-')."</td>
+					<td><a href=\"javascript:;\" onclick=\"toggleBox('details".$arr['log_id']."')\">Details</a></td>
+					</tr>";
+				}
+				echo "<tr>
+				<td colspan=\"6\" id=\"details".$arr['log_id']."\" style=\"display:none;\">";
+				echo "<b>IP:</b> ".$arr['log_ip'].", &nbsp; 
+				<b>Host:</b> ".$arr['log_hostname'].", &nbsp; ";
+				echo "<b>Client:</b> ".$arr['log_client']."<br/>";
+				
+				$res = dbquery("SELECT * FROM user_surveillance WHERE session='".$si[0]."' ORDER BY timestamp DESC;");
+				if (mysql_num_rows($res)>0)
+				{
+					tableStart("","100%");
+					echo "<tr><th>Zeit</th><th>Seite</th><th>Request (GET)</th><th>Formular (POST)</th></tr>";
+					while ($arr=mysql_fetch_assoc($res))
+					{
+						$req = wordwrap($arr['request'], 60, "\n", true);
+						$post = wordwrap($arr['post'], 60, "\n", true);
+						echo "<tr>
+							<td>".df($arr['timestamp'],1)."</td>
+							<td>".$arr['page']."</td>
+							<td>".text2html($req)."</td>
+							<td>".text2html($post)."</td>
+						</tr>";
+					}
+					tableEnd();
+				}
+				
+				echo "</td>
+				</tr>";				
+			}
+		}
+		echo "</table>";
+
+		
+		
+		/*
 		$res = dbquery("SELECT * FROM user_surveillance WHERE user_id=".$_GET['surveillance']." ORDER BY timestamp DESC LIMIT 1000;");
 		if (mysql_num_rows($res)>0)
 		{
@@ -36,8 +142,8 @@
 			echo "<tr><th>Zeit</th><th>Seite</th><th>Request (GET)</th><th>Formular (POST)</th></tr>";
 			while ($arr=mysql_fetch_assoc($res))
 			{
-				$req = wordwrap($arr['request'], 100, "\n", true);
-				$post = wordwrap($arr['post'], 100, "\n", true);
+				$req = wordwrap($arr['request'], 60, "\n", true);
+				$post = wordwrap($arr['post'], 60, "\n", true);
 				echo "<tr>
 					<td>".df($arr['timestamp'],1)."</td>
 					<td>".$arr['page']."</td>
@@ -50,9 +156,13 @@
 		else
 		{
 			echo "<p>Keine Einträge vorhanden!</p>";
-		}
+		}*/
 		echo "<p>".button("Zurück","?page=$page&amp;sub=$sub")."</p>";
 	}
+	
+	//
+	// List observed users
+	//
 	else
 	{	
 		if (isset($_POST['observe_add']))
@@ -138,7 +248,8 @@
 			user_points,
 			user_id,
 			user_observe,
-			user_acttime
+			user_acttime,
+			user_session_key
 		FROM 
 			users
 		WHERE 
@@ -162,8 +273,13 @@
 				echo "<tr>
 					<td><a href=\"?page=$page&amp;sub=edit&amp;id=".$arr['user_id']."\">".$arr['user_nick']."</a></td>
 					<td ".tm("Punkteverlauf","<img src=\"../misc/stats.image.php?user=".$arr['user_id']."\" alt=\"Diagramm\" style=\"width:600px;height:400px;\" />").">".nf($arr['user_points'])."</td>
-					<td>".stripslashes($arr['user_observe'])."</td>
-					<td>".df($arr['user_acttime'])."</td>";
+					<td>".stripslashes($arr['user_observe'])."</td>";
+					if (time()-$conf['user_timeout']['v']< $arr['user_acttime'] && $arr['user_session_key']!='' )
+					{
+						echo "<td style=\"color:#0f0\">Online</td>";
+					}
+					else
+						echo "<td>".df($arr['user_acttime'])."</td>";
 					$dres = dbquery("SELECT COUNT(id) FROM user_surveillance WHERE user_id=".$arr['user_id'].";");
 					$dnum = mysql_fetch_row($dres);
 					echo "<td>".nf($dnum[0])."</td>

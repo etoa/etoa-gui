@@ -131,7 +131,12 @@
 						$post.="[b]".$k.":[/b] ".dump($v,1);
 					}
 					else
-						$post.="[b]".$k.":[/b] ".$v."\n";
+					{
+						if ($k=="login_pw")
+							$post.="[b]".$k.":[/b] ******* (hidden by system)\n";
+						else
+							$post.="[b]".$k.":[/b] ".$v."\n";
+					}
 				}
 				
 				dbquery("INSERT INTO
