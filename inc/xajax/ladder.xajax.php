@@ -293,7 +293,7 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 			{
 				echo "<tr><td align=\"center\" colspan=\"8\"><i>Es wurde keine User gefunden!</i></tr>";
 			}
-			echo "</table><br/>";											
+			tableEnd();
 		}
 		elseif ($mode=="battle")
 		{
@@ -354,7 +354,7 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 			{
 				echo "<tr><td align=\"center\"  colspan=\"9\"><i>Es wurde keine User gefunden!</i></tr>";
 			}
-			echo "</table><br/>";											
+			tableEnd();
 		}
 		elseif ($mode=="trade")
 		{
@@ -412,7 +412,7 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 			{
 				echo "<tr><td align=\"center\" colspan=\"8\"><i>Es wurde keine User gefunden!</i></tr>";
 			}
-			echo "</table><br/>";											
+			tableEnd();
 		}
 	
 		$out.= ob_get_contents();

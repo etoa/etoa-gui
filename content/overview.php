@@ -192,7 +192,7 @@
 		if (mysql_num_rows($bres)>0)
 		{
 			$barr = mysql_fetch_array($bres);
-			echo "<td class=\"tbldata\"><a href=\"?page=research&amp;planet_id=".$barr['techlist_entity_id']."\" id=\"tech_counter\">";
+			echo "<td><a href=\"?page=research&amp;planet_id=".$barr['techlist_entity_id']."\" id=\"tech_counter\">";
 			//Forschung ist fertig
 			if($barr['techlist_build_end_time']-time()<=0)
 			{
@@ -208,7 +208,7 @@
 		}
 		else
 		{
-			echo "<td class=\"tbldata\">Es wird nirgendwo geforscht!</td></tr>";
+			echo "<td>Es wird nirgendwo geforscht!</td></tr>";
 		}
 		
 		//
@@ -219,10 +219,10 @@
 		{
 			
 			echo "<tr>
-							<th class=\"tbltitle\">Allianzgebäude</th>
-							<th class=\"tbltitle\">Supportflotten</th>
-							<th class=\"tbltitle\">Allianzangriffe</th>
-							<th class=\"tbltitle\">Allianzforschungen</th>
+							<th>Allianzgebäude</th>
+							<th>Supportflotten</th>
+							<th>Allianzangriffe</th>
+							<th>Allianzforschungen</th>
 						</tr>
 						<tr>";
 						
@@ -242,7 +242,7 @@
 			if (mysql_num_rows($res)>0)
 			{
 				$arr = mysql_fetch_array($res);
-				echo "<td class=\"tbldata\">
+				echo "<td>
 								<a href=\"?page=alliance&amp;action=base&amp;action2=buildings\" id=\"alliance_building_counter\">";
 								
 								//Forschung ist fertig
@@ -261,7 +261,7 @@
 			}
 			else
 			{
-				echo "<td class=\"tbldata\">Es wird nichts gebaut!</td>";
+				echo "<td>Es wird nichts gebaut!</td>";
 			}	
 			
 		//
@@ -321,7 +321,7 @@
 			if (mysql_num_rows($res)>0)
 			{
 				$arr = mysql_fetch_array($res);
-				echo "<td class=\"tbldata\">
+				echo "<td>
 								<a href=\"?page=alliance&amp;action=base&amp;action2=research\" id=\"alliance_tech_counter\">";
 								
 								//Forschung ist fertig
@@ -340,7 +340,7 @@
 			}
 			else
 			{
-				echo "<td class=\"tbldata\">Es wird nichts geforscht!</td>";
+				echo "<td>Es wird nichts geforscht!</td>";
 			}
 		}
 		

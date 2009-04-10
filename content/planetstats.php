@@ -194,63 +194,64 @@
 	//
 
 	tableStart("Rohstoffe und Bewohner");
-	echo "<tr><th>Name:</th>
-	<th>".RES_METAL."</th>
-	<th>".RES_CRYSTAL."</th>
-	<th>".RES_PLASTIC."</th>
-	<th>".RES_FUEL."</th>
-	<th>".RES_FOOD."</th>
-	<th>Bewohner</th></tr>";
+	echo '<tr><th>Name:</th>
+	<th>'.RES_METAL.'</th>
+	<th>'.RES_CRYSTAL.'</th>
+	<th>'.RES_PLASTIC.'</th>
+	<th>'.RES_FUEL.'</th>
+	<th>'.RES_FOOD.'</th>
+	<th>Bewohner</th></tr>';
 	foreach ($planets as $p)
 	{
-		echo "<tr><td><a href=\"?page=economy&amp;planet_id=".$p->id."\">".$p->name."</a></td>";
+		echo '<tr><td><a href="?page=economy&amp;planet_id='.$p->id.'">'.$p->name.'</a></td>';
 		for ($x=0;$x<6;$x++)
 		{
-			echo "<td";
+			echo '<td';
 			if ($max_res[$x]==$val_res[$p->id][$x])
 			{
-				echo " style=\"color:#0f0\"";
+				echo ' style="color:#0f0"';
 			}
 			elseif ($min_res[$x]==$val_res[$p->id][$x])
 			{
-				 echo " style=\"color:#f00\"";
+				 echo ' style="color:#f00"';
 			}
 			else
 			{
-				 echo " ";
+				 echo ' ';
 			}
 
 
 			//Der Speicher ist noch nicht gefüllt
 			if($val_res[$p->id][$x]<$val_store[$p->id][$x] && $val_time[$p->id][$x]!=0)
 			{
-				echo " ".tm("Speicher","Speicher voll in ".tf($val_time[$p->id][$x])."")." ";
+				echo ' '.tm("Speicher","Speicher voll in ".tf($val_time[$p->id][$x])."").' ';
 				if ($val_time[$p->id][$x]<43200)
 				{
-					echo " style=\"font-style:italic;\" ";
+					echo ' style="font-style:italic;" ';
 				}
-				echo ">".nf($val_res[$p->id][$x])."</td>";
+				echo '>'.nf($val_res[$p->id][$x]).'</td>';
 			}
 			//Speicher Gefüllt
 			else
 			{
-				echo " ".tm("Speicher","Speicher voll!")."";
-				echo " style=\"\" ";
-				echo "><b>".nf($val_res[$p->id][$x])."</b></td>";
+				echo ' '.tm("Speicher","Speicher voll!").'';
+				echo ' style="" ';
+				echo '><b>'.nf($val_res[$p->id][$x]).'</b></td>';
 			}
 
 		}
-		echo "</tr>";
+		echo '</tr>';
 		$cnt_res++;
 	}
-	echo "<tr><td colspan=\"7\"></td></tr>";
-	echo "<tr><th>Total</th>";
+	echo '<tr><td colspan="7"></td></tr>';
+	echo '<tr><th>Total</th>';
 	for ($x=0;$x<6;$x++)
-		echo "<td>".nf($tot_res[$x])."</td>";
-	echo "</tr><tr><th>Durchschnitt</th>";
+		echo '<td>'.nf($tot_res[$x]).'</td>';
+	echo '</tr><tr><th>Durchschnitt</th>';
 	for ($x=0;$x<6;$x++)
-		echo "<th>".nf($tot_res[$x]/$cnt_res)."</th>";
-	echo "</tr></table>";
+		echo '<th>'.nf($tot_res[$x]/$cnt_res).'</th>';
+	echo '</tr>';
+	tableEnd();
 
 
 
@@ -277,57 +278,56 @@
 
 
 	tableStart("Produktion");
-	echo "<tr><th>Name:</th>
-	<th>".RES_METAL."</th>
-	<th>".RES_CRYSTAL."</th>
-	<th>".RES_PLASTIC."</th>
-	<th>".RES_FUEL."</th>
-	<th>".RES_FOOD."</th>
-	<th>Energie</th></tr>";
+	echo '<tr><th>Name:</th>
+	<th>'.RES_METAL.'</th>
+	<th>'.RES_CRYSTAL.'</th>
+	<th>'.RES_PLASTIC.'</th>
+	<th>'.RES_FUEL.'</th>
+	<th>'.RES_FOOD.'</th>
+	<th>Energie</th></tr>';
 	foreach ($planets as $p)
 	{
-		echo "<tr><td><a href=\"?page=economy&amp;planet_id=".$p->id."\">".$p->name."</a></td>";
+		echo '<tr><td><a href="?page=economy&amp;planet_id='.$p->id.'">'.$p->name.'</a></td>';
 		for ($x=0;$x<6;$x++)
 		{
-			echo "<td";
+			echo '<td';
 			if ($max_prod[$x]==$val_prod[$p->id][$x])
 			{
-				echo "  style=\"color:#0f0\"";
+				echo '  style="color:#0f0"';
 			}
 			elseif ($min_prod[$x]==$val_prod[$p->id][$x])
 			{
-				 echo "  style=\"color:#f00\"";
+				 echo '  style="color:#f00"';
 			}
 			else
 			{
-				 echo "";
+				 echo ' ';
 			}
-			echo ">".nf($val_prod[$p->id][$x])."</td>";
+			echo '>'.nf($val_prod[$p->id][$x]).'</td>';
 		}
-		echo "</tr>";
+		echo '</tr>';
 		$cnt_prod++;
 	}
-	echo "<tr><td colspan=\"7\"></td></tr>";
-	echo "<tr><th>Total</th>";
+	echo '<tr><td colspan="7"></td></tr>';
+	echo '<tr><th>Total</th>';
 	for ($x=0;$x<6;$x++)
-		echo "<td>".nf($tot_prod[$x])."</td>";
-	echo "</tr><tr><th>Durchschnitt</th>";
+		echo '<td>'.nf($tot_prod[$x]).'</td>';
+	echo '</tr><tr><th>Durchschnitt</th>';
 	for ($x=0;$x<6;$x++)
-		echo "<th>".nf($tot_prod[$x]/$cnt_prod)."</th>";
-	echo "</tr></table>";
+		echo '<th>'.nf($tot_prod[$x]/$cnt_prod).'</th>';
+	echo '</tr>';
+	tableEnd();
 	
 	tableStart("Legende");
-	echo "<tr>
-	<td style=\"color:#f00\">Minimum</td>
-	<td style=\"color:#0f0\">Maximum</td>
-	<td style=\"font-style:italic\">Speicher bald voll</td>
-	<td style=\"font-weight:bold\">Speicher voll</td>
-	</tr>";
-	echo "</table>";
+	echo '<tr>
+	<td style="color:#f00">Minimum</td>
+	<td style="color:#0f0">Maximum</td>
+	<td style="font-style:italic">Speicher bald voll</td>
+	<td style="font-weight:bold">Speicher voll</td>
+	</tr>';
+	tableEnd();
 
-	echo "<div><br/>
-	<input type=\"button\" onclick=\"document.location='?page=economy'\" value=\"Wirtschaft des aktuellen Planeten anzeigen\" />
-	</div>";
-
-
+	echo '<div><br/>
+	<input type="button" onclick="document.location=\'?page=economy\'" value="Wirtschaft des aktuellen Planeten anzeigen" />
+	</div>';
 ?>

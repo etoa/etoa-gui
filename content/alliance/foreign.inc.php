@@ -54,15 +54,15 @@
 				if (mysql_num_rows($appres)>0)
 				{
 					$apparr = mysql_fetch_array($appres);
-         	echo "Du hast dich am ".df($application_timestamp)." bei der Allianz <b>[".$apparr['alliance_tag']."] ".$apparr['alliance_name']."</b> beworben<br/> 
-         	und musst nun darauf warten, dass deine Bewerbung akzeptiert wird!<br/><br/>
-         	<input type=\"button\" onclick=\"document.location='?page=$page&action=cancelapplication';\" value=\"Bewerbung zurückziehen\" />";
+         	ok_msg("Du hast dich am ".df($application_timestamp)." bei der Allianz <b>[".$apparr['alliance_tag']."] ".$apparr['alliance_name']."</b> beworben 
+         	und musst nun darauf warten, dass deine Bewerbung akzeptiert wird!");
+         	echo "<input type=\"button\" onclick=\"document.location='?page=$page&action=cancelapplication';\" value=\"Bewerbung zurückziehen\" />";
 				}
 				else
 				{
-         	echo "Du hast dich am ".df($application_timestamp)." bei einer Allianz beworben, diese Allianz existiert aber leider nicht mehr.
-         	Deine Bewerbung wurde deshalb gelöscht! 
-         	<input type=\"button\" onclick=\"document.location='?page=$page&amp;action=join';\" value=\"Bei einer anderen Allianz bewerben\" />";
+         	error_msg("Du hast dich am ".df($application_timestamp)." bei einer Allianz beworben, diese Allianz existiert aber leider nicht mehr.
+         	Deine Bewerbung wurde deshalb gelöscht!");
+         	echo "<input type=\"button\" onclick=\"document.location='?page=$page&amp;action=join';\" value=\"Bei einer anderen Allianz bewerben\" />";
 				}
 			}
 		}
@@ -142,19 +142,19 @@
 						echo "<form action=\"?page=$page&amp;action=join\" method=\"post\">";
 						checker_init();
 						tableStart("Bewerbungstext");
-						echo "<tr><td class=\"tbltitle\">Nachricht:</td><td class=\"tbldata\"><textarea rows=\"15\" cols=\"80\" name=\"user_alliance_application\">".$arr['alliance_application_template']."</textarea></td>";
+						echo "<tr><th>Nachricht:</th><td><textarea rows=\"15\" cols=\"80\" name=\"user_alliance_application\">".$arr['alliance_application_template']."</textarea></td>";
 						tableEnd();
 						echo "<input type=\"hidden\" name=\"user_alliance_id\" value=\"".intval($arr['alliance_id'])."\" />";
 						echo "<input type=\"submit\" name=\"submitapplication\" value=\"Senden\" />&nbsp;<input type=\"button\" onclick=\"document.location='?page=alliance&action=join'\" value=\"Zur&uuml;ck\" /></form>";
 					}
 					else
 					{
-						echo "Die Allianz nimmt keine Bewerbungen an!<br>";
+						error_msg("Die Allianz nimmt keine Bewerbungen an!");
 					}
 				}
 				else
 				{
-					echo "Fehler! Allianzdatensatz nicht gefunden!";
+					error_msg("Allianzdatensatz nicht gefunden!");
 				}
 			}
 			// Bewerbungstext senden
@@ -185,14 +185,13 @@
 					);
 					");
 					
-					echo "Deine Bewerbung bei der Allianz <b>[".$alliances[$_POST['user_alliance_id']]['tag']."] ".$alliances[$_POST['user_alliance_id']]['name']."</b> wurde gespeichert!<br/>
-					 Die Allianzleitung wurde informiert und wird deine Bewerbung ansehen.";
-					echo "<br/><br/><input value=\"&Uuml;bersicht\" type=\"button\" onclick=\"document.location='?page=$page'\" />";
+					ok_msg("Deine Bewerbung bei der Allianz <b>[".$alliances[$_POST['user_alliance_id']]['tag']."] ".$alliances[$_POST['user_alliance_id']]['name']."</b> wurde gespeichert! Die Allianzleitung wurde informiert und wird deine Bewerbung ansehen.");
+					echo "<input value=\"&Uuml;bersicht\" type=\"button\" onclick=\"document.location='?page=$page'\" />";
 				}
 				else
 				{
-					echo "<b>Fehler:</b> Du musst einen Bewerbungstext eingeben! <br/><br/>
-					<input value=\"Zur&uuml;ck\" type=\"button\" onclick=\"document.location='?page=$page&action=join&alliance_id=".$_POST['user_alliance_id']."'\" />";
+					error_msg("Du musst einen Bewerbungstext eingeben!");
+					echo "<input value=\"Zur&uuml;ck\" type=\"button\" onclick=\"document.location='?page=$page&action=join&alliance_id=".$_POST['user_alliance_id']."'\" />";
 				}
 			}
 			// Allianzauswahl anzeigen
@@ -216,26 +215,28 @@
 					alliance_tag;");
 				if (mysql_num_rows($res)>0)
 				{
-					echo "<table width=\"300\" align=\"center\" class=\"tbl\">";
+					tableStart("","400"," align=\"center\"");
+//					echo "<table width=\"300\" align=\"center\" class=\"tbl\">";
 					echo "<tr>
-									<td class=\"tbltitle\">Tag</td>
-									<td class=\"tbltitle\">Name</td>
-									<td class=\"tbltitle\" style=\"width:100px;\">Aktionen</td>
+									<th>Tag</th>
+									<th>Name</th>
+									<th style=\"width:100px;\">Aktionen</th>
 							</tr>";
 					while ($arr=mysql_fetch_array($res))
 					{
-						echo "<tr><td class=\"tbldata\">".$arr['alliance_tag']."</td>
-						<td class=\"tbldata\">".$arr['alliance_name']."</td>
-						<td class=\"tbldata\"><a href=\"?page=alliance&amp;info_id=".$arr['alliance_id']."\">Info</a>";
+						echo "<tr><td>".$arr['alliance_tag']."</td>
+						<td>".$arr['alliance_name']."</td>
+						<td><a href=\"?page=alliance&amp;info_id=".$arr['alliance_id']."\">Info</a>";
 						echo "&nbsp;<a href=\"?page=$page&action=join&alliance_id=".$arr['alliance_id']."\">Bewerben</a>";
 						echo "</td></tr>";
 					}
-					echo "</table><br/><a href=\"?page=$page&amp;action=create\">Gründe</a> eine eigene Allianz.</a>";
+					tableEnd();
+					echo "<a href=\"?page=$page&amp;action=create\">Gründe</a> eine eigene Allianz.</a>";
 				}
 				else
 				{
-					echo "Es gibt im Moment keine Allianzen denen man beitreten k&ouml;nnte! 
-					<a href=\"?page=$page&amp;action=create\">Gründe</a> eine eigene Allianz.</a>";
+					error_msg("Es gibt im Moment keine Allianzen denen man beitreten k&ouml;nnte!");
+					echo "<a href=\"?page=$page&amp;action=create\">Gründe</a> eine eigene Allianz.</a>";
 				}
 			}			
 		}

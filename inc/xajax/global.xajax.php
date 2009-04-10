@@ -344,8 +344,8 @@ function setupShowRace($val)
 	
 	ob_start();
 	
-	echo text2html($arr['race_comment'])."<br/><br/>
-	<table class=\"tb\" style=\"width:300px;\">";
+	echo text2html($arr['race_comment'])."<br/><br/>";
+	tableStart('',300);
 	echo "<tr><th colspan=\"2\">St&auml;rken / Schw&auml;chen:</th></tr>";
 	if ($arr['race_f_metal']!=1)
 	{
@@ -387,7 +387,8 @@ function setupShowRace($val)
 	{
 		echo "<tr><th>".RES_ICON_TIME."Fluggeschwindigkeit:</td><td>".get_percent_string($arr['race_f_fleettime'],1)."</td></tr>";
 	}
-	echo "</table><br/><table class=\"tb\" style=\"width:500px;\">";
+	tableEnd();
+	tableStart('',500);
 	
 	echo  "<tr><th colspan=\"3\">Spezielle Schiffe:</th></tr>";
 	$res=dbquery("
@@ -414,7 +415,8 @@ function setupShowRace($val)
 	else
 		echo "<tr><td colspan=\"3\">Keine Rassenschiffe vorhanden</td></tr>";
 	
-	echo "</table><br/><table class=\"tb\" style=\"width:500px;\">";
+	tableEnd();
+	tableStart('',500);
 	echo  "<tr><th colspan=\"3\">Spezielle Verteidigung:</th></tr>";
 	$res=dbquery("
 	SELECT 
@@ -440,7 +442,7 @@ function setupShowRace($val)
 		echo "<tr><td colspan=\"3\">Keine Rassenverteidigung vorhanden</td></tr>";
 	
 		
-	echo "</table>";
+	tableEnd();
 
 	echo "<br/><br/><input type=\"submit\" name=\"submit_setup1\" id=\"submit_setup1\" value=\"Weiter\" />";
 	

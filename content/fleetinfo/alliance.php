@@ -86,14 +86,14 @@
 				tableStart("Flugdaten","50%");
 				
 				echo "<tr>
-						<td class=\"tbltitle\">Auftrag:</td>
-						<td class=\"tbldata\" ".tm($fd->getAction()->name(),$fd->getAction()->desc())." style=\"color:".FleetAction::$attitudeColor[$fd->getAction()->attitude()]."\">
+						<th>Auftrag:</th>
+						<td ".tm($fd->getAction()->name(),$fd->getAction()->desc())." style=\"color:".FleetAction::$attitudeColor[$fd->getAction()->attitude()]."\">
 							".$fd->getAction()->name()." [".FleetAction::$statusCode[$fd->status()]."]
 						</td>
 					</tr>
 					<tr>
-						<td class=\"tbltitle\">Leaderflotte:</td>
-						<td class=\"tbldata\">";
+						<th>Leaderflotte:</th>
+						<td>";
 				
 				if ($fd->id() == $fd->leaderId() && $lead_id)
 					echo "Das ist der Gesammte Angriff!</td></tr>";
@@ -105,35 +105,35 @@
 				else
 					echo "<a href=\"?page=fleetinfo&amp;id=".$fd->leaderId()."&lead_id=".$fd->leaderId()."\">Gesammter Angriff anzeigen</a></td></tr>";
 				echo "<tr>
-						<td class=\"tbltitle\">Startkoordinaten:</td>
-						<td class=\"tbldata\">
+						<th>Startkoordinaten:</th>
+						<td>
 							<a href=\"?page=cell&amp;id=".$fd->getSource()->cellId()."&amp;hl=".$fd->getSource()->id()."\">".$fd->getSource()."</a> 
 							(".$fd->getSource()->entityCodeString().")
 						</td>
 					</tr>
 					<tr>
-						<td class=\"tbltitle\">Zielkoordinaten:</td>
-						<td class=\"tbldata\">
+						<th>Zielkoordinaten:</th>
+						<td>
 							<a href=\"?page=cell&amp;id=".$fd->getTarget()->cellId()."&amp;hl=".$fd->getTarget()->id()."\">".$fd->getTarget()."</a> 
 							(".$fd->getTarget()->entityCodeString().")
 						</td>
 					</tr>
 					<tr>
-						<td class=\"tbltitle\">Startzeit:</td>
-						<td class=\"tbldata\">".date("d.m.Y H:i:s",$fd->launchTime())."</td>
+						<th>Startzeit:</th>
+						<td>".date("d.m.Y H:i:s",$fd->launchTime())."</td>
 					</tr>
 					<tr>
-						<td class=\"tbltitle\">Ende des Fluges:</td>
-						<td class=\"tbldata\">".date("d.m.Y H:i:s",$fd->landTime())."</td>
+						<th>Ende des Fluges:</th>
+						<td>".date("d.m.Y H:i:s",$fd->landTime())."</td>
 					</tr>
 					<tr>
-						<td class=\"tbltitle\">Verbleibend:</td>
-						<td class=\"tbldata\" id=\"flighttime\" style=\"color:#ff0\">-</td>
+						<th>Verbleibend:</th>
+						<td id=\"flighttime\" style=\"color:#ff0\">-</td>
 					</tr>";
 				if ($fd->id() == $fd->leaderId() && $lead_id && $cu->alliance->getBuildingLevel("Flottenkontrolle")>=ALLIANCE_FLEET_SHOW_PART)
 				{
-					echo "<td class=\"tbltitle\">Teilflotten:</td>
-						<td class=\"tbldata\">
+					echo "<th>Teilflotten:</th>
+						<td>
 							<a href=\"?page=fleetinfo&amp;id=".$fd->Id()."\">".$cu->allianceTag()."-".$fd->Id()."<br />Besitzer: ".get_user_nick($fd->ownerId())."</a><br />";
 					foreach ($fd->fleets as $f)
 					{
@@ -145,20 +145,20 @@
 				
 				tableStart("Piloten &amp; Verbrauch","50%");
 				echo "<tr>
-						<td class=\"tbltitle\" style=\"width:150px;\">".RES_ICON_PEOPLE."Piloten:</td>
-						<td class=\"tbldata\">".nf($fd->pilots())."</td>
+						<th style=\"width:150px;\">".RES_ICON_PEOPLE."Piloten:</th>
+						<td>".nf($fd->pilots())."</td>
 					</tr>
 					<tr>
-						<td class=\"tbltitle\">".RES_ICON_FUEL."".RES_FUEL.":</td>
-						<td class=\"tbldata\">".nf($fd->usageFuel())."</td>
+						<th>".RES_ICON_FUEL."".RES_FUEL.":</th>
+						<td>".nf($fd->usageFuel())."</td>
 					</tr>
 					<tr>
-						<td class=\"tbltitle\">".RES_ICON_FOOD."".RES_FOOD.":</td>
-						<td class=\"tbldata\">".nf($fd->usageFood())."</td>
+						<th>".RES_ICON_FOOD."".RES_FOOD.":</th>
+						<td>".nf($fd->usageFood())."</td>
 					</tr>
 					<tr>
-						<td class=\"tbltitle\">".RES_ICON_POWER." ".RES_POWER.":</td>
-						<td class=\"tbldata\">".nf($fd->usagePower())."</td>
+						<th>".RES_ICON_POWER." ".RES_POWER.":</th>
+						<td>".nf($fd->usagePower())."</td>
 					</tr>";
 				tableEnd();
 				
@@ -167,51 +167,51 @@
 				// Frachtraum
 				tableStart("Frachtraum","50%");
 				echo "<tr>
-						<td class=\"tbltitle\">".RES_ICON_METAL."".RES_METAL."</td>
-						<td class=\"tbldata\">".nf($fd->resMetal())." t</td>
+						<th>".RES_ICON_METAL."".RES_METAL."</th>
+						<td>".nf($fd->resMetal())." t</td>
 					</tr>
 					<tr>
-						<td class=\"tbltitle\">".RES_ICON_CRYSTAL."".RES_CRYSTAL."</td>
-						<td class=\"tbldata\" >".nf($fd->resCrystal())." t</td>
+						<th>".RES_ICON_CRYSTAL."".RES_CRYSTAL."</th>
+						<td>".nf($fd->resCrystal())." t</td>
 					</tr>
 					<tr>
-						<td class=\"tbltitle\">".RES_ICON_PLASTIC."".RES_PLASTIC."</td>
-						<td class=\"tbldata\">".nf($fd->resPlastic())." t</td>
+						<td>".RES_ICON_PLASTIC."".RES_PLASTIC."</th>
+						<td>".nf($fd->resPlastic())." t</td>
 					</tr>
 					<tr>
-						<td class=\"tbltitle\">".RES_ICON_FUEL."".RES_FUEL."</td>
-						<td class=\"tbldata\">".nf($fd->resFuel())." t</td>
+						<th>".RES_ICON_FUEL."".RES_FUEL."</th>
+						<td>".nf($fd->resFuel())." t</td>
 					</tr>
 					<tr>
-						<td class=\"tbltitle\">".RES_ICON_FOOD."".RES_FOOD."</td>
-						<td class=\"tbldata\">".nf($fd->resFood())." t</td>
+						<th>".RES_ICON_FOOD."".RES_FOOD."</th>
+						<td>".nf($fd->resFood())." t</td>
 					</tr>
 					<tr>
-						<td class=\"tbltitle\">".RES_ICON_POWER."".RES_POWER."</td>
-						<td class=\"tbldata\">".nf($fd->resPower())." t</td>
+						<th>".RES_ICON_POWER."".RES_POWER."</th>
+						<td>".nf($fd->resPower())." t</td>
 					</tr>
 					<tr>
-						<td class=\"tbltitle\" style=\"width:150px;\">Freier Frachtraum:</td>
-						<td class=\"tbldata\">".nf($fd->getFreeCapacity())." t</td>
+						<th style=\"width:150px;\">Freier Frachtraum:</th>
+						<td>".nf($fd->getFreeCapacity())." t</td>
 					</tr>
 					<tr>
-						<td class=\"tbltitle\" style=\"width:150px;\">Totaler Frachtraum:</td>
-						<td class=\"tbldata\">".nf($fd->getCapacity())." t</td>
+						<th style=\"width:150px;\">Totaler Frachtraum:</th>
+						<td>".nf($fd->getCapacity())." t</td>
 					</tr>";
 				tableEnd();
 				
 				tableStart("Passagierraum","50%");
 				echo "<tr>
-						<td class=\"tbltitle\">".RES_ICON_PEOPLE."Passagiere</td>
-						<td class=\"tbldata\">".nf($fd->resPeople())."</td>
+						<th>".RES_ICON_PEOPLE."Passagiere</th>
+						<td>".nf($fd->resPeople())."</td>
 					</tr>
 					<tr>
-						<td class=\"tbltitle\" style=\"width:150px;\">Freier Platz:</td>
-						<td class=\"tbldata\">".nf($fd->getFreePeopleCapacity())."</td>
+						<th style=\"width:150px;\">Freier Platz:</th>
+						<td>".nf($fd->getFreePeopleCapacity())."</td>
 					</tr>
 					<tr>
-						<td class=\"tbltitle\" style=\"width:150px;\">Totaler Platz:</td>
-						<td class=\"tbldata\">".nf($fd->getPeopleCapacity())."</td>
+						<th style=\"width:150px;\">Totaler Platz:</th>
+						<td>".nf($fd->getPeopleCapacity())."</td>
 					</tr>";
 				tableEnd();
 				
@@ -224,21 +224,21 @@
 					// Schiffe anzeigen
 					tableStart("Schiffe");
 					echo "<tr>
-							<td class=\"tbltitle\" colspan=\"2\">Schifftyp</td>
-							<td class=\"tbltitle\" width=\"50\">Anzahl</td>
+							<th colspan=\"2\">Schifftyp</td>
+							<td width=\"50\">Anzahl</td>
 						</tr>";
 					foreach ($fd->getShipIds() as $sid=> $scnt)
 					{
 						$ship = new Ship($sid);
 						echo "<tr>
-								<td class=\"tbldata\" style=\"width:40px;background:#000\">
+								<td style=\"width:40px;background:#000\">
 									".$ship->imgSmall()."
 								</td>
-								<td class=\"tbldata\">
+								<td>
 									<b>".$ship->name()."</b><br/>
 									".text2html($ship->shortComment())."
 								</td>
-								<td class=\"tbldata\" style=\"width:50px;\">".nf($scnt)."</td>
+								<td style=\"width:50px;\">".nf($scnt)."</td>
 							</tr>";
 					}
 					tableEnd();

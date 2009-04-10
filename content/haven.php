@@ -34,7 +34,7 @@
 	if ($cp)
 	{
 
-		echo "<h1>Raumschiffhafen des Planeten ".$cp->name."</h1>";
+		echo '<h1>Raumschiffhafen des Planeten '.$cp->name.'</h1>';
 		$cp->resBox($cu->properties->smallResBox);
 	
 		//
@@ -43,7 +43,7 @@
 		if ($cfg->get("battleban")!=0 && $cfg->param1("battleban_time")<=time() && $cfg->param2("battleban_time")>time())
 		{
 			iBoxStart("Kampfsperre");
-			echo "Es ist momentan nicht m&ouml;glich andere Spieler anzugreifen. Grund: ".text2html($cfg->param1("battleban"))."<br>Die Sperre dauert vom ".date("d.m.Y",$cfg->param1("battleban_time"))." um ".date("H:i",$cfg->param1("battleban_time"))." Uhr bis am ".date("d.m.Y",$cfg->param2("battleban_time"))." um ".date("H:i",$cfg->param2("battleban_time"))." Uhr!";
+			echo 'Es ist momentan nicht m&ouml;glich andere Spieler anzugreifen. Grund: '.text2html($cfg->param1("battleban")).'<br />Die Sperre dauert vom '.date("d.m.Y",$cfg->param1("battleban_time")).' um '.date("H:i",$cfg->param1("battleban_time")).' Uhr bis am '.date("d.m.Y",$cfg->param2("battleban_time"))." um ".date("H:i",$cfg->param2("battleban_time")).' Uhr!';
 			iBoxEnd();
 		}
 		
@@ -66,13 +66,13 @@
 				$_SESSION['haven'] = Null;
 				$_SESSION['haven']['fleetObj']=serialize($fleet);
 				
-				echo "<div id=\"havenContent\">
-				<div id=\"havenContentShips\" style=\"\">
-				<div style=\"padding:20px\"><img src=\"images/loading.gif\" alt=\"Loading\" /> Lade Daten...</div>
+				echo '<div id="havenContent">
+				<div id="havenContentShips" style="">
+				<div style="padding:20px"><img src="images/loading.gif" alt="Loading" /> Lade Daten...</div>
 				</div>
-				<div id=\"havenContentTarget\" style=\"display:none;\"></div>
-				<div id=\"havenContentAction\" style=\"display:none;\"></div>
-				</div>";
-				echo "<script type=\"text/javascript\">xajax_havenShowShips();</script>";	
+				<div id="havenContentTarget" style="display:none;"></div>
+				<div id="havenContentAction" style="display:none;"></div>
+				</div>';
+				echo '<script type="text/javascript">xajax_havenShowShips();</script>';	
 	}
 ?>

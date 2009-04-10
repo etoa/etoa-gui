@@ -29,7 +29,7 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/	
 
-	echo "<h1>Kontakt</h1>";
+	echo '<h1>Kontakt</h1>';
 
 	if (isset($_GET['rcpt']) && $_GET['rcpt']>0)	
 	{
@@ -46,12 +46,13 @@
 		");
 		$arr = mysql_fetch_row($res);
 		echo '<input type="hidden" name="mail_rcpt" value="'.$arr[0].'<'.$arr[1].'>" />';
-		echo '<table class="tb">';
+		tableStart();
 		echo '<tr><th>Sender:</th><td>'.$cu->nick.'&lt;'.$cu->email.'&gt;</td></tr>';
 		echo '<tr><th>Empfänger:</th><td>'.$arr[0].'&lt;'.$arr[1].'&gt;</td></tr>';
 		echo '<tr><th>Titel:</th><td><input type="text" name="mail_subject" value="" size="50" /></td></tr>';
 		echo '<tr><th>Text:</th><td><textarea name="mail_text" rows="6" cols="80"></textarea></td></tr>';
-		echo '</table><br/><input type="submit" name="submit" value="Senden" /> &nbsp; 
+		tableEnd();
+		echo '<input type="submit" name="submit" value="Senden" /> &nbsp; 
 		<input type="button" onclick="document.location=\'?page='.$page.'\'" value="Abbrechen" />
 		</div></form>';		
 	}
@@ -99,38 +100,38 @@
 			tableStart('Kontaktpersonen für diese Runde');
 			while ($arr = mysql_fetch_array($res))
 			{
-				echo '<tr><td class="tbldata">'.$arr['user_nick'].'</td>';
-				echo '<td class="tbldata">'.$arr['group_name'].'</td>';
+				echo '<tr><td>'.$arr['user_nick'].'</td>';
+				echo '<td>'.$arr['group_name'].'</td>';
 				if (stristr($arr['user_email'],"@etoa.ch"))
 				{
-					echo '<td class="tbldata"><a href="mailto:'.$arr['user_email'].'">'.$arr['user_email'].'</a></td>';
+					echo '<td><a href="mailto:'.$arr['user_email'].'">'.$arr['user_email'].'</a></td>';
 				}
 	      else
 	      {
-	      	echo '<td class="tbldata">-</td>';
+	      	echo '<td>-</td>';
 	      }
 				if ($arr['user_email']!='')
 				{
-	      	echo '<td class="tbldata"><a href="?page='.$page.'&amp;rcpt='.$arr['user_id'].'">Mailformular</a></td>';
+	      	echo '<td><a href="?page='.$page.'&amp;rcpt='.$arr['user_id'].'">Mailformular</a></td>';
 	      }
 	      else
 	      {
-	      	echo '<td class="tbldata">-</td>';
+	      	echo '<td>-</td>';
 	      }
 				if ($arr['user_board_url']!='')
 				{
-					echo '<td class="tbldata"><a href="'.$arr['user_board_url'].'" onclick="window.open(\''.$arr['user_board_url'].'\');return false;">Foren-Profil</a></td>';
+					echo '<td><a href="'.$arr['user_board_url'].'" onclick="window.open(\''.$arr['user_board_url'].'\');return false;">Foren-Profil</a></td>';
 				}
 	      else
 	      {
-	      	echo '<td class="tbldata">-</td>';
+	      	echo '<td>-</td>';
 	      }	      
 				echo '</tr>';
 			}
 			tableEnd();
 		}
 		else
-			echo "<i>Keine Kontaktpersonen vorhanden!</i>";
+			error_msg("Keine Kontaktpersonen vorhanden!");
 
 		iBoxStart('Impressum');
 		echo 'EtoA Gaming<br/>Grenzweg 4<br/>3377 Walliswil-Wangen<br/>Schweiz<br/><a href="mailto:mail@etoa.ch">mail@etoa.ch</a>';     

@@ -35,8 +35,8 @@
 	define('HELP_URL',"?page=help&site=shipyard");
 
 	//Button "Zurück zum Raumschiffshafen"
-	echo "<input type=\"button\" onclick=\"document.location='?page=fleets'\" value=\"Flotten anzeigen\" /> &nbsp; ";
-	echo "<input type=\"button\" onclick=\"document.location='?page=haven'\" value=\"Raumschiffshafen des aktuellen Planeten anzeigen\" /><br/><br/>";	
+	echo '<input type="button" onclick="document.location=\'?page=fleets\'" value="Flotten anzeigen" /> &nbsp; ';
+	echo '<input type="button" onclick="document.location=\'?page=haven\'" value="Raumschiffshafen des aktuellen Planeten anzeigen" /><br/><br/>';
 
 	//Prüft ob Schiffe vorhanden sind
   $res = dbquery("
@@ -137,13 +137,13 @@
   	
   	
 		tableStart("Schiffe");
-		echo "<tr>
+		echo '<tr>
 						<th colspan=\"2\">Schiff</th>
 						<th width=\"100\">Im Orbit</th>
 						<th width=\"100\">Eingebunkert</th>
 						<th width=\"100\">Im Bau</th>
 						<th width=\"100\">Im All</th>
-					</tr>";
+					</tr>';
 		
 		//Listet alle Schiffe auf, die allgemein gebaut werden können (auch die, die der User nach dem Technikbaum noch nicht bauen könnte oder nicht seiner Rasse entsprechen)
 	  $sres = dbquery("
@@ -164,21 +164,21 @@
 			  if(isset($shiplist_data[$sarr['ship_id']]) || isset($queue_data[$sarr['ship_id']])  || isset($fleet_data[$sarr['ship_id']]) )
 			  {
 			  	$s_img = IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$sarr['ship_id']."_small.".IMAGE_EXT;
-			  	echo "<tr>
-			  					<td style=\"background:#000\">";
+			  	echo '<tr>
+			  					<td style="background:#000">';
 			  					
 			  					if($sarr['special_ship']==1)
 			  					{
-			  						echo "<a href=\"?page=ship_upgrade&amp;id=".$sarr['ship_id']."\" title=\"Zum Upgrademenu\"><img src=\"".$s_img."\" style=\"width:40px;height:40px;\"/></a>";
+			  						echo '<a href="?page=ship_upgrade&amp;id='.$sarr['ship_id'].'" title="Zum Upgrademenu"><img src="'.$s_img.'" style="width:40px;height:40px;"/></a>';
 			  					}
 			  					else
 			  					{
-			  						echo "<a href=\"".HELP_URL."\" title=\"Info zu diesem Schiff anzeigen\"><img src=\"".$s_img."\" style=\"width:40px;height:40px;\"/></a>";
+			  						echo '<a href="'.HELP_URL.'" title="Info zu diesem Schiff anzeigen"><img src="'.$s_img.'" style="width:40px;height:40px;"/></a>';
 			  					}
-			  		echo "</td>
-			  					<td class=\"tbltitle\">
-			  						".$sarr['ship_name']."
-			  					</td>";
+			  		echo '</td>
+			  					<th>
+			  						'.$sarr['ship_name'].'
+			  					</td>';
 			  				//Spalte gebauter Schiffe
 		  					if(isset($shiplist_data[$sarr['ship_id']]))
 		  					{
@@ -192,17 +192,17 @@
 							  		$tm .= "<b>".$planet_data[$planet_id]."</b>: ".nf($count)."<br>";
 							  	}
 		  						
-		  						echo "
-			  					<td ".tm("Anzahl",$tm).">
-			  						".nf($total)."
-			  					</td>";
+		  						echo '
+			  					<td '.tm("Anzahl",$tm).'>
+			  						'.nf($total).'
+			  					</td>';
 			  				}
 			  				else
 			  				{
-			  					echo "
+			  					echo '
 			  					<td>
 			  						&nbsp;
-			  					</td>";		  					
+			  					</td>';		  					
 			  				}
 							
 			  				//Spalte eingebunkerter Schiffe
@@ -218,17 +218,17 @@
 							  		$tm .= "<b>".$planet_data[$planet_id]."</b>: ".nf($count)."<br>";
 							  	}
 		  						
-		  						echo "
-			  					<td ".tm("Anzahl",$tm).">
-			  						".nf($total)."
-			  					</td>";
+		  						echo '
+			  					<td '.tm("Anzahl",$tm).'>
+			  						'.nf($total).'
+			  					</td>';
 			  				}
 			  				else
 			  				{
-			  					echo "
+			  					echo '
 			  					<td>
 			  						&nbsp;
-			  					</td>";		  					
+			  					</td>';		  					
 			  				}
 			  				
 			  				//Spalte bauender Schiffe
@@ -244,17 +244,17 @@
 							  		$tm .= "<b>".$planet_data[$planet_id]."</b>: ".nf($count)."<br>";
 							  	}
 							  	
-		  						echo "
-			  					<td ".tm("Anzahl",$tm).">
-			  						".nf($total)."
-			  					</td>";
+		  						echo '
+			  					<td '.tm("Anzahl",$tm).'>
+			  						'.nf($total).'
+			  					</td>';
 			  				}
 			  				else
 			  				{
-			  					echo "
+			  					echo '
 			  					<td>
 			  						&nbsp;
-			  					</td>";		  					
+			  					</td>';		  					
 			  				}
 			  				
 			  				
@@ -263,19 +263,19 @@
 		  					{
 		  						// Summiert die Anzahl Schiffe von allen Planeten
 		  						$total = $fleet_data[$sarr['ship_id']];
-		  						echo "
+		  						echo '
 			  					<td>
-			  						".nf($total)."
-			  					</td>";
+			  						'.nf($total).'
+			  					</td>';
 			  				}
 			  				else
 			  				{
-			  					echo "
+			  					echo '
 			  					<td>
 			  						&nbsp;
-			  					</td>";		  					
+			  					</td>';		  					
 			  				}			  				
-			  	echo "</tr>";
+			  	echo '</tr>';
 			  }
 	  	}    	
 	  }		
@@ -294,6 +294,6 @@
 	}
 	else
 	{
-		echo "Es sind noch keine Schiffe vorhanden!<br>";
+		error_msg("Es sind noch keine Schiffe vorhanden!");
 	}
 ?>

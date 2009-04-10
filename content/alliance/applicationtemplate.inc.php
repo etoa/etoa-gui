@@ -7,9 +7,9 @@ if (Alliance::checkActionRights('applicationtemplate'))
 	echo "<form action=\"?page=$page\" method=\"post\">";
 	checker_init();
 	tableStart("Bewerbungsvorlage");
-	echo "<tr><td class=\"tbltitle\">Text:</td>
-	<td class=\"tbldata\"><textarea rows=\"15\" cols=\"60\" name=\"alliance_application_template\">".stripslashes($arr['alliance_application_template'])."</textarea></td></tr>";
-	echo "<tr><td class=\"tbltitle\">Beispiel:</td><td class=\"tbldata\">";
+	echo "<tr><th>Text:</td>
+	<td><textarea rows=\"15\" cols=\"60\" name=\"alliance_application_template\">".stripslashes($arr['alliance_application_template'])."</textarea></td></tr>";
+	echo "<tr><th>Beispiel:</td><td>";
 	echo nl2br('Dein Name:
 Dein Alter:
 Dein Sektor:

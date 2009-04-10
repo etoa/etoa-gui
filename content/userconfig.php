@@ -127,7 +127,7 @@
 							</tr>";
 						}			
 				
-				echo "</table>";      	
+				tableEnd();
       	
       	
       }
@@ -161,7 +161,7 @@
         
         // Aktive Sittingdaten Anzeigen
         tableStart("Sitter Einstellungen");
-        echo "<tr><td class=\"tbldata\"><div align=\"center\"><b>Modus aktiv!</b></div></td></tr>";
+        echo "<tr><td><div align=\"center\"><b>Modus aktiv!</b></div></td></tr>";
 
         $date_res = dbquery("
         SELECT
@@ -175,7 +175,7 @@
         ORDER BY
             user_sitting_date_from;");
 
-        echo "<tr><td class=\"tbldata\"><div align=\"center\">";
+        echo "<tr><td><div align=\"center\">";
         while ($date_arr=mysql_fetch_array($date_res))
         {
             if($date_arr['user_sitting_date_to']<time())

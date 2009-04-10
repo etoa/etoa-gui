@@ -251,12 +251,13 @@
 							echo "</select>&nbsp;<a onclick=\"xajax_addBookmarkShip(xajax.getFormValues('shipboxadd'),$cnt);\"><img src=\"images/icons/delete.png\" alt=\"Löschen\" style=\"width:16px;height:15px;border:none;\" title=\"Löschen\" /></a><br />";
 							$cnt++;
 						}
-						echo "</div><input type=\"button\" value=\"Mehr Schiffe hinzufügen\" onclick=\"xajax_addBookmarkShip(xajax.getFormValues('shipboxadd'));\" />
+						echo "</div>&nbsp; <input type=\"button\" value=\"Mehr Schiffe hinzufügen\" onclick=\"xajax_addBookmarkShip(xajax.getFormValues('shipboxadd'));\" />
 							<br style=\"clear:both;\" />";
 						
 						$res = explode(",",$barr['res']);
-						echo "<table style=\"margin:10px;width:275px;float:left;\" class=\"tb\">
-						<tr><th colspan=\"2\">Fracht</th></tr>
+						tableStart('','','double');
+						tableStart("","275","margin:10px;float:left;");
+						echo "<tr><th colspan=\"2\">Fracht</th></tr>
 						<tr><th>".RES_ICON_METAL."".RES_METAL."</th>
 						<td><input type=\"text\" name=\"res1\" id=\"res1\" value=\"".$res[0]."\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
 						<tr><th>".RES_ICON_CRYSTAL."".RES_CRYSTAL."</th>
@@ -268,12 +269,15 @@
 						<tr><th>".RES_ICON_FOOD."".RES_FOOD."</th>
 						<td><input type=\"text\" name=\"res5\" id=\"res5\" value=\"".$res[4]."\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
 						<tr><th>".RES_ICON_PEOPLE."Passagiere</th>
-						<td><input type=\"text\" name=\"resp\" id=\"resp\" value=\"".$res[5]."\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>					
-						</table>";
+						<td><input type=\"text\" name=\"resp\" id=\"resp\" value=\"".$res[5]."\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>";
+						tableEnd();
+						
+						echo "</td><td>";
 						
 						$resfetch = explode(",",$barr['resfetch']);
-						echo "<table style=\"margin:10px;width:275px;float:left;\" class=\"tb\">
-						<tr><th colspan=\"2\">Abholauftrag</th></tr>
+						
+						tableStart("","275","margin:10px;float:left;");
+						echo "<tr><th colspan=\"2\">Abholauftrag</th></tr>
 						<tr><th>".RES_ICON_METAL."".RES_METAL."</th>
 						<td><input type=\"text\" name=\"fetch1\" id=\"fres1\" value=\"".$resfetch[0]."\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
 						<tr><th>".RES_ICON_CRYSTAL."".RES_CRYSTAL."</th>
@@ -285,9 +289,12 @@
 						<tr><th>".RES_ICON_FOOD."".RES_FOOD."</th>
 						<td><input type=\"text\" name=\"fetch5\" id=\"fres5\" value=\"".$resfetch[4]."\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
 						<tr><th>".RES_ICON_PEOPLE."Passagiere</th>
-						<td><input type=\"text\" name=\"fetchp\" id=\"fresp\" value=\"".$resfetch[5]."\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>					
-						</table>
-						<br style=\"clear:both\" />";                                                                                   
+						<td><input type=\"text\" name=\"fetchp\" id=\"fresp\" value=\"".$resfetch[5]."\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>";
+						tableEnd();
+						echo "</td></tr>";
+						tableEnd();
+						
+						echo "<br style=\"clear:both\" />";                                                                                   
 						echo "<br/>Wichtig: Die Flotte wird nur starten, falls die Schiffe und das Ziel die gewählte Aktion unterstützen. Es muss pro Schiffstyp mindestens ein Schiff vorhanden sein, damit die Flotte startet. Bei den Rohstoffen wird Rohstoff für Rohstoff jeweils das Maximum eingeladen.
 						<br/><br/><input type=\"submit\" value=\"Speichern\" name=\"submit_edit\" />";
 						iBoxEnd();
@@ -334,18 +341,19 @@
 				}
 				echo "</select><br/><br/>";
 				echo "<div id=\"shipboxadd\" style=\"float:left;\">
-				Schiffe hinzufügen: <input type=\"text\" name=\"scount[]\" id=\"ship0\" value=\"1\" size=\"6\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/>&nbsp;
+				Schiffe hinzufügen <input type=\"text\" name=\"scount[]\" id=\"ship0\" value=\"1\" size=\"6\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/>&nbsp;
 				<select name=\"sid[]\">";
 				foreach ($ships as $k => $v)
 				{
 					echo "<option value=\"".$k."\">".$v."</option>";
 				}
-				echo "</select>&nbsp;<a onclick=\"xajax_addBookmarkShip(xajax.getFormValues('shipboxadd'),0);\"><img src=\"images/icons/delete.png\" alt=\"Löschen\" style=\"width:16px;height:15px;border:none;\" title=\"Löschen\" /></a></div>
+				echo "</select>&nbsp;<a onclick=\"xajax_addBookmarkShip(xajax.getFormValues('shipboxadd'),0);\"><img src=\"images/icons/delete.png\" alt=\"Löschen\" style=\"width:16px;height:15px;border:none;\" title=\"Löschen\" /></a></div>&nbsp;
 				<input type=\"button\" value=\"Mehr Schiffe hinzufügen\" onclick=\"xajax_addBookmarkShip(xajax.getFormValues('shipboxadd'));\" />
 				<br style=\"clear:both;\" />";
 				
-				echo "<table style=\"margin:10px;width:275px;float:left;\" class=\"tb\">
-				<tr><th colspan=\"2\">Fracht</th></tr>
+				tableStart('','','double');
+				tableStart("","275","margin:10px;float:left;");
+				echo "<tr><th colspan=\"2\">Fracht</th></tr>
 				<tr><th>".RES_ICON_METAL."".RES_METAL."</th>
 				<td><input type=\"text\" name=\"res1\" id=\"res1\" value=\"0\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
 				<tr><th>".RES_ICON_CRYSTAL."".RES_CRYSTAL."</th>
@@ -357,11 +365,13 @@
 				<tr><th>".RES_ICON_FOOD."".RES_FOOD."</th>
 				<td><input type=\"text\" name=\"res5\" id=\"res5\" value=\"0\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
 				<tr><th>".RES_ICON_PEOPLE."Passagiere</th>
-				<td><input type=\"text\" name=\"resp\" id=\"resp\" value=\"0\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>					
-				</table>
-	
-				<table style=\"margin:10px;width:275px;float:left;\" class=\"tb\">
-				<tr><th colspan=\"2\">Abholauftrag</th></tr>
+				<td><input type=\"text\" name=\"resp\" id=\"resp\" value=\"0\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>";
+				tableEnd();
+				
+				echo "</td><td>";
+				
+				tableStart("","275","margin:10px;float:left;");
+				echo "<tr><th colspan=\"2\">Abholauftrag</th></tr>
 				<tr><th>".RES_ICON_METAL."".RES_METAL."</th>
 				<td><input type=\"text\" name=\"fetch1\" id=\"fres1\" value=\"0\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
 				<tr><th>".RES_ICON_CRYSTAL."".RES_CRYSTAL."</th>
@@ -373,9 +383,12 @@
 				<tr><th>".RES_ICON_FOOD."".RES_FOOD."</th>
 				<td><input type=\"text\" name=\"fetch5\" id=\"fres5\" value=\"0\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
 				<tr><th>".RES_ICON_PEOPLE."Passagiere</th>
-				<td><input type=\"text\" name=\"fetchp\" id=\"fresp\" value=\"0\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>					
-				</table>
-				<br style=\"clear:both\" />";                                                                                   
+				<td><input type=\"text\" name=\"fetchp\" id=\"fresp\" value=\"0\" size=\"9\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>";
+				tableEnd();
+				echo "</td></tr>";
+				tableEnd();
+				
+				echo "<br style=\"clear:both\" />";                                                                                   
 				echo "<br/>Wichtig: Die Flotte wird nur starten, falls die Schiffe und das Ziel die gewählte Aktion unterstützen. Es muss pro Schiffstyp mindestens ein Schiff vorhanden sein, damit die Flotte startet. Bei den Rohstoffen wird Rohstoff für Rohstoff jeweils das Maximum eingeladen.
 				<br/><br/><input type=\"submit\" value=\"Speichern\" name=\"submit_new\" />";
 				iBoxEnd();
@@ -395,11 +408,11 @@
 			{
 				tableStart("Gespeicherte Favoriten");
 				echo "<tr>
-								<th class=\"tbltitle\">Name</th>
-								<th class=\"tbltitle\" colspan=\"2\">Ziel</th>
-								<th class=\"tbltitle\">Aktion</th>
-								<th class=\"tbltitle\">Schiffe</th>
-								<th class=\"tbltitle\">Aktionen</th>
+								<th>Name</th>
+								<th colspan=\"2\">Ziel</th>
+								<th>Aktion</th>
+								<th>Schiffe</th>
+								<th>Aktionen</th>
 							</tr>";
 				while ($arr=mysql_fetch_assoc($res))
 				{
@@ -409,11 +422,11 @@
 					$sidarr = explode(",",$arr['ships']);
 					
 					echo "<tr>
-						<td class=\"tbldata\">".text2html($arr['name'])."</td>
-						<td class=\"tbldata\" style=\"width:40px;background:#000\"><img src=\"".$ent->imagePath()."\" /></td>
-						<td class=\"tbldata\">".$ent."<br/>(".$ent->entityCodeString().")</td>
-						<td class=\"tbldata\">".$ac."</td>
-						<td class=\"tbldata\">";
+						<td>".text2html($arr['name'])."</td>
+						<td style=\"width:40px;background:#000\"><img src=\"".$ent->imagePath()."\" /></td>
+						<td>".$ent."<br/>(".$ent->entityCodeString().")</td>
+						<td>".$ac."</td>
+						<td>";
 						$cnt = 0;
 						foreach ($sidarr as $sd)
 						{
@@ -480,12 +493,12 @@
 				
 				tableStart("Favorit bearbeiten");
 				echo "<tr>
-								<th class=\"tbltitle\">Koordinaten</th>
-								<td class=\"tbldata\">".$ent->entityCodeString()." - ".$ent."</td>
+								<th>Koordinaten</th>
+								<td>".$ent->entityCodeString()." - ".$ent."</td>
 							</tr>
 							<tr>
-								<th class=\"tbltitle\">Kommentar</th>
-								<td class=\"tbldata\">
+								<th>Kommentar</th>
+								<td>
 									<textarea name=\"bookmark_comment\" rows=\"3\" cols=\"60\">".stripslashes($arr['comment'])."</textarea>
 								</td>
 							</tr>";
@@ -496,7 +509,7 @@
 			}
 			else
 			{
-				echo "<b>Fehler:</b> Datensatz nicht gefunden!<br/><br/>";
+				error_msg("Datensatz nicht gefunden!");
 			}
 			echo " <input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=$page'\" />";
 			echo "</form>";
@@ -719,7 +732,7 @@
 								);
 											
 				echo "<tr>
-						<td class=\"tbldata\" colspan=\"6\" style=\"text-align:center;\">
+						<td colspan=\"6\" style=\"text-align:center;\">
 							<select name=\"sort_value\">";
 				foreach ($values as $value => $name)
 				{		
@@ -750,23 +763,23 @@
 						</td>
 					</tr>";
 				echo "<tr>
-								<th class=\"tbltitle\" colspan=\"2\">Typ</th>
-								<th class=\"tbltitle\">Koordinaten</th>
-								<th class=\"tbltitle\">Besitzer</th>
-								<th class=\"tbltitle\">Kommentar</th>
-								<th class=\"tbltitle\">Aktionen</th>
+								<th colspan=\"2\">Typ</th>
+								<th>Koordinaten</th>
+								<th>Besitzer</th>
+								<th>Kommentar</th>
+								<th>Aktionen</th>
 							</tr>";
 				while ($arr=mysql_fetch_assoc($res))
 				{
 					$ent = Entity::createFactory($arr['code'],$arr['entity_id']);
 				
 					echo "<tr>
-										<td class=\"tbldata\" style=\"width:40px;background:#000\"><img src=\"".$ent->imagePath()."\" /></td>
-										<td class=\"tbldata\">".$ent->entityCodeString()."</td>
-										<td class=\"tbldata\">".$ent."</td>
-										<td class=\"tbldata\">".$ent->owner()."</td>
-										<td class=\"tbldata\">".text2html($arr['comment'])."</td>
-										<td class=\"tbldata\">
+										<td style=\"width:40px;background:#000\"><img src=\"".$ent->imagePath()."\" /></td>
+										<td>".$ent->entityCodeString()."</td>
+										<td>".$ent."</td>
+										<td>".$ent->owner()."</td>
+										<td>".text2html($arr['comment'])."</td>
+										<td>
 											<a href=\"?page=haven&amp;target=".$ent->id()."\">Flotte</a> 
 											<a href=\"?page=entity&amp;id=".$ent->id()."&amp;hl=".$ent->id()."\">Infos</a> 
 											<a href=\"?page=cell&amp;id=".$ent->cellId()."&amp;hl=".$ent->id()."\">System</a> 
@@ -779,7 +792,7 @@
 			}
 			else
 			{
-				echo "<i>Noch keine Bookmarks vorhanden!</i>";
+				error_msg("Noch keine Bookmarks vorhanden!",1);
 			}
 		}
 	}

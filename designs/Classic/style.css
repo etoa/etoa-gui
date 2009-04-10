@@ -12,6 +12,10 @@ body	{
 	background:#000 url('../../images/background.jpg');
 }
 
+img	{
+	border:none;
+}
+
 a	{
 	color: white;
 	text-decoration:underline;
@@ -27,7 +31,8 @@ a:hover	{
 h1	{
 	font-size:11pt;
 	text-align:center;
-	margin:5px 0px 8px 0px;
+	margin-top:5px;
+	margin-bottom:8px;
 }
 
 h1:before	{
@@ -56,11 +61,12 @@ table	{
 	border-collapse:collapse;
 }
 
-/* wenn man den cursor in einem textfeld setzt wird diese feld so*/
-/* Funktioniert NICHT mit dem Internet Explorer! */
+/* Wenn sich der cursor in einem text feld befindet... */
+/* Internet Explorer unterstützt diese funktion nicht!!!*/
 input:focus,textarea:focus, select:focus {
-  border: 1px #ddd solid;
+ 	border:1px solid #ddd;
   background:#222;
+  color:#fff;
 }
 
 /*Definiert die Buttons bei "bauhof" oder "forschung", hintergrund sollte der selbe wie tbldata sein*/
@@ -71,14 +77,22 @@ button	{
 }
 
 /* Definiert die verschieden button typen im normal zustand */
+/* Internet Explorer unterstützt diese funktion nicht!!!*/
 input[type="submit"],input[type="reset"],input[type="button"]	{
 	background:#222255 url('images/button1.jpg');
 	color:#fff;
 	font-weight:bold;
 }
 
+input[type="submit"]:focus,input[type="reset"]:focus,input[type="button"]:focus	{
+	background:#222255 url('images/button1.jpg');
+	color:#fff;
+	font-weight:bold;
+	border:1px solid #ff0;
+}
+
 /* Definiert die verschieden button typen im hover zustand */
-/* Funktioniert NICHT mit dem Internet Explorer! */
+/* Internet Explorer unterstützt diese funktion nicht!!!*/
 input:hover[type="submit"],input:hover[type="reset"],input:hover[type="button"]	{
 	background:#222255 url('images/button2.jpg');
 	color:#fff;
@@ -93,19 +107,6 @@ input,select,textarea	{
 	color:#fff
 }
 
-input[type="checkbox"],input[type="radio"] {
-	border:none;
-	padding:0px;
-	margin:0px;
-	background:none;
-}
-
-input[type="file"]	{
-	color:#000;
-	background:#fff;
-}
-
-/* Absolutes Grundgerüst  */
 #layoutbox	{
 	margin:0px auto;
 	background:#6e7591;
@@ -114,11 +115,6 @@ input[type="file"]	{
 	border:1px solid #fff;
 }
 
-#minibar	{
- 	background:#424962;
-}
-
-/* Forum, Wiki, Regenl... */
 #topbar	{
  	text-align:right;
  	padding-right:10px;
@@ -127,13 +123,11 @@ input[type="file"]	{
 	border:1px solid #fff;
 }
 
-/* Forum, Wiki, Regenl -> link  */
 #topbar a {
 	text-decoration:none;
 	font-weight:bold;
 }
 
-/* Forum, Wiki, Regenl -> hover effekt  */
 #topbar a:hover {
 	text-decoration:none;
 	color:#aaa;
@@ -154,14 +148,36 @@ input[type="file"]	{
 	border:1px solid #fff;
 }
 
-/* Planetenliste hintergrund des hintergrundes ^^  */
-select#nav_mode_select	{
+#selectbar	{
+	background:#222;
+	width:185px;
+}
+
+#selectbar select {
 	width:185px;
 	background:#222;
 	color:#fff;
 }
 
-/* Alle Content links der hinterste background   */
+
+#middlebar	{
+	background:#6e7591;
+	height:21px;
+	border:1px solid #fff;
+	border-right:none;
+	padding-left:15px;
+}
+
+#clockbar	{
+	background:#6e7591;
+	width:350px;
+	padding-left:8px;
+	border:1px solid #fff;
+	height:21px;
+	border-left:none;
+	text-align:right;
+}
+
 #content	{
 	background:#9198ab;
 	background:#606578;
@@ -172,18 +188,6 @@ select#nav_mode_select	{
 	text-align:center;
 }
 
-#vertbanner	{
-	vertical-align:top;
-	border:1px solid #fff;
-	background:#000;
-	width:120px;
-}
-
-#helpbox	{
-	border: 1px solid #fff;
-}
-
-/* by EtoA.ch (unten links)   */
 #copy	{
 	background:#646b84;
 	border:1px solid #fff;
@@ -191,7 +195,6 @@ select#nav_mode_select	{
 	width:175px;
 }
 
-/* Renderzeit, User...  */
 #bottombar	{
 	padding-top:4px;
 	padding-right:4px;
@@ -201,7 +204,6 @@ select#nav_mode_select	{
 	vertical-align:top;
 }
 
-/* Menu: Restlicher Rand unter dem Menu */
 #menu1	{
 	padding:0px 0px 40px 0px;
 	background:#6e7591;
@@ -210,7 +212,6 @@ select#nav_mode_select	{
 	border:1px solid #fff;
 }
 
-/* Allgemeines, Planet.... */
 #menu1 div {
 	font-weight:bold;
 	background:#225;
@@ -224,7 +225,6 @@ select#nav_mode_select	{
 	height:16px;
 }
 
-/* übersicht, allianz, ratshaus.... */
 #menu1 a {
 	display: block;
 	background:#626b84;
@@ -236,7 +236,6 @@ select#nav_mode_select	{
 	border-bottom:solid 1px #e6e6e6;
 }
 
-/* übersicht, allianz, ratshaus -> hover */
 #menu1 a:hover {
 	background-color:silver;
 	color: #445543;
@@ -244,8 +243,8 @@ select#nav_mode_select	{
 	border-bottom:solid 1px #e6e6e6;
 }
 
-/* Tabellen Header wie z.B. Titan/Silizium etc. */
-.tbltitle, .tb th {
+
+.tbltitle, table.tb th {
 	font-size:10pt;
 	font-weight:bold;
 	border:1px solid #fff;
@@ -255,8 +254,7 @@ select#nav_mode_select	{
 	text-align:left;
 }
 
-/* die meisten tabellen hintergründe */
-.tbldata, .tb td {
+.tbldata, table.tb td {
 	font-size:8pt;
 	color:#fff;
 	border:1px solid #fff;
@@ -267,10 +265,11 @@ select#nav_mode_select	{
 }
 
 /* Ressourcen Speicher voll / Bewohner -> farbe wenn gebäude baut */
+/* rest muss gleich wie .tbldata sein! */
 .tbldata2 {
 	font-size:8pt;
 	color:red;
-	border:1px solid #fff;
+	border:1px solid #ffffff;
 	background:#223;
 	padding:3px;
 	vertical-align:top;
@@ -278,10 +277,11 @@ select#nav_mode_select	{
 }
 
 /* Energie wenn sie Positiv ist (standart ist hellgrün) */
+/* rest muss gleich wie .tbldata sein! */
 .tbldata3 {
 	font-size:8pt;
 	color:#0f0;
-	border:1px solid #fff;
+	border:1px solid #ffffff;
 	background:#223;
 	padding:3px;
 	vertical-align:top;
@@ -293,14 +293,14 @@ select#nav_mode_select	{
 .tbldata4 {
 	font-size:8pt;
 	color:#f90;
-	border:1px solid #fff;
+	border:1px solid #ffffff;
 	background:#223;
 	padding:3px;
 	vertical-align:top;
 	text-align:left;
 }
 
-/* Allianz Seite */
+
 .tblblack, .tb td.tblblack, .tb th.tblblack {
 	font-size:8pt;
 	color:#fff;
@@ -311,37 +311,32 @@ select#nav_mode_select	{
 /* Allgemeine Tabellen definition welche gestreckt ist (infobox) */
 .tbl, table.tb	{
 	width:100%;
-	margin:0px auto;
+	margin:15px auto;
 	border:1px solid #ffffff;
 }
 
-/* Allgemeine Tabellen definition für "gestauchte" tabellen (infobox) */
 .tblc	{
 	margin:0px auto;
 	border:1px solid #ffffff;
 }
 
-/* übersicht -> wichtige infos, fremde flotten */
 div.infoboxtitle	{
 	font-size:10pt;
 	font-weight:bold;
 	border:1px solid #fff;
-	background:#225 url('images/cellbg.png') repeat-x;
-	padding:6px;
+	background:#225;
+	padding:4px;
 	text-align:center;
 }
 
-/* allgemeine gebäude, wohnfläche, boni, ratshaus-news, fremde flotten... */
-td.infoboxtitle, .tb td.infoboxtitle	{
+td.infoboxtitle, .tb td.infoboxtitle, .tb th.infoboxtitle	{
 	font-size:10pt;
 	font-weight:bold;
-	border:1px solid #fff;
-	background:#225 url('images/cellbg.png') repeat-x;
-	padding:6px;
+	background:#225;
+	padding:4px;
 	text-align:center;
 }
 
-/* übersicht -> wichtige infos, fremde flotten die dazugehörende unterspalte */
 div.infoboxcontent {
 	font-size:8pt;
 	color:#fff;
@@ -351,48 +346,9 @@ div.infoboxcontent {
 	border-bottom:1px solid #fff;
 	background:#223;
 	padding:4px;
+	text-align:left;	
 }
 
-/* Nachrichten -> Neu, Archiv, Erstellen, Gesendet -> geklickt */
-a.tabEnabled	{
-	padding-top:3px;
-	padding-bottom:3px;
-	display:block;
-	width:100%;
-	height:100%;
-	background:#225;
-	color:#fff;
-	text-align:center;
-	text-decoration:none;
-}
-
-/* Nachrichten -> Neu, Archiv, Erstellen, Gesendet -> geklickt hover effekt */
-a.tabEnabled:hover	{
-	text-decoration:none;
-	background:#226;
-}
-
-/* Nachrichten -> Neu, Archiv, Erstellen, Gesendet -> ungeklickt */
-a.tabDefault	{
-	padding-top:3px;
-	padding-bottom:3px;
-	display:block;
-	width:100%;
-	height:100%;
-	background:#223;
-	color:#ddd;
-	text-align:center;
-	text-decoration:none;
-}
-
-/* Nachrichten -> Neu, Archiv, Erstellen, Gesendet -> "ungelickt" hover effekt */
-a.tabDefault:hover	{
-	background:#889;
-	color:#000;
-	text-decoration:none;
-}
-
-/* Nachrichten -> Neu, Archiv, Erstellen, Gesendet -> border um die buttons */
 .statsTab	{
 	/*width:120px;*/
 	height:20px;
@@ -409,10 +365,9 @@ table.statsNav	{
 }
 
 td.statsNav	{
-	background:#223;
+	background:#000000 url(images/tabulator.gif);
 }
 
-/* Raumkarte */
 .spaceCell {
 	border: solid 1px #111;
 	padding:0px;
@@ -422,8 +377,8 @@ td.statsNav	{
 
 .spaceCellUser	{
 	border: solid 2px #4f4;
-	vertical-align:middle;
-	text-align:center;
+	vertical-align:middle
+	;text-align:center;
 }
 
 .spaceCellSelected	{
@@ -448,7 +403,7 @@ table#outerspacetbl {
 }
 
 table#innerspacetbl {
-	border:2px solid #fff;
+	border:0px solid #fff;
 	background:#000;
 }
 
@@ -456,6 +411,7 @@ table#innerspacetbl {
 
 
 /* übersicht -> planetenliste */
+/* \"Courier New\", Courier, mono; */
 
 .PlaniTextLinks {
 	color: #FFFFFF;
@@ -499,7 +455,7 @@ table#innerspacetbl {
 	color: #FFFFFF;
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 14px;
-	text-align: left;
+	text-align: right;
 	vertical-align: baseline;
 	font-weight: lighter;
 }
@@ -528,31 +484,21 @@ table#innerspacetbl {
 	font-weight: lighter;
 }
 
-hr	{
-	height:1px;
-	border:1px solid #111;
-}
-
-
-
-
-
 table.tab	{
 	margin:0px auto;
-	border:1px solid #fff;
+	border:1px solid #000;
 	border-collapse:collapse;
-	width:600px;
 }
 
 
 td.havenTab	{
-	width:25%;
+	width:200px;
 	height:30px;
-	border:1px solid #fff;
+	border:1px solid #000;
 	margin:0px;
 	padding:0px;
-	background:#335;
-	color:#fff;
+	background:#ddf;
+	color:#222;
 	font-weight:bold;
 	text-align:center;
 	text-decoration:none;
@@ -605,23 +551,310 @@ td.havenTab:hover	{
   background:#575763;
 }
 
-.buildOverviewObjectTitle	{
+.boxLayout	{
+	 margin:15px auto;
+}
+
+/* Resource */
+#resbox	{
+	margin-bottom:20px;
+	width:650px;
+	border:1px solid #fff;
+}
+
+#resboxheader	{
+	background:url('images/cellpic.gif') no-repeat;
+	height:21px;
+	color:#fff;
 	font-weight:bold;
+	padding-left:20px;
+	padding-top:5px;
+	border-bottom:1px solid #fff;
+}
+
+#resboxcontent	{
+	padding:5px;
+	background:#333 url('images/cellpic3.gif') repeat;
+}
+
+.buildOverviewObjectTitle	{
+	font-weight:normal;
 	position:absolute;
-	background:#223;
-	padding:3px;	
-	width:172px;
-	text-align:center;
+	background:url('images/transheader1.png') top right no-repeat;
+	padding:3px 15px 3px 3px;	
+	font-size:8pt;
 }
 
 .buildOverviewObjectLevel	{
-	text-align:center;
+	text-align:right;
+	font-size:20pt;
 	font-weight:bold;
-	background:#223;
+	background:url('images/transfooter1.png') no-repeat;
 	position:absolute;
-	left:0px;
+	right:0px;
 	bottom:0px;
-	width:172px;
+	width:60px;
 	padding:3px;
-		
+	padding-right:5px;	
+}
+
+.buildOverviewObjectNone, .tb td.buildOverviewObjectNone {
+	border:none;
+	
+}
+
+
+.planetOverviewList	{
+	position:absolute;
+	left:20px;
+	bottom:20px;
+	font-size:9pt;
+}
+
+.planetOverviewItem	{
+	float:left;
+	width:120px;	
+	font-size:9pt;
+	font-weight:bold;
+	height:17px;
+}
+
+/* Tab Menu */
+.tabMenu	{
+	display:table;
+	height:20px;
+	margin:10px auto 0px auto;
+	border:1px solid #fff;
+}
+
+.tabMenu	a	{
+	display:block;
+	float:left;
+	height:20px;
+	color:#ddd;
+	text-decoration:none;
+	padding:7px 10px 3px 10px;	
+	background:#223;
+	border-right:1px solid #fff;
+}
+
+.tabMenu	a:hover	{
+	display:block;
+	float:left;
+	height:20px;
+	color:#000;
+	padding:7px 10px 3px 10px;	
+	background:#889;
+}
+
+.tabMenu	a.tabEnabled	{
+	display:block;
+	float:left;
+	color:#fff;
+	height:20px;
+	padding:7px 10px 3px 10px;	
+	background:#225;
+}
+
+/* Nachrichten -> Neu, Archiv, Erstellen, Gesendet -> geklickt hover effekt */
+.tabMenu    a.tabEnabled:hover	{
+	text-decoration:none;
+	background:#226;
+}
+
+.tabMenu a.tabLast	{
+	border-right:0px solid #fff;
+}
+/* Pulldown Menu */
+
+/* Get rid of the margin, padding and bullets in the unordered lists */
+#pmenu {
+	padding:0; 
+	margin:10px auto 0px auto; 
+	list-style-type: none; 
+	display:table;
+}
+
+#pmenu ul {
+	padding:0; 
+	margin:0; 
+	list-style-type: none; 
+	display:block;
+}
+
+/* Hide the sub levels */
+#pmenu li ul {
+	display:none;
+}
+
+/* Set up the link size, color and borders */
+#pmenu li a, #pmenu li a:visited {
+	display:block;
+	color:#fff; 
+	padding:3px 10px 0px 10px;
+	height:28px; 
+	line-height:24px; 
+	text-decoration:none; 
+	text-indent:5px; 
+	border:none;
+	text-align:center;
+}
+
+/* Set up the sub level borders */
+#pmenu li ul li a, #pmenu li ul li a:visited {
+	border:1px solid #fff;
+	width:110px;
+	text-align:left;
+	border-top:none;
+}
+#pmenu li a.enclose, #pmenu li a.enclose:visited {border-width:1px;}
+
+/* Set up the list items */
+#pmenu li {
+	float:left; 
+	background:#223;
+	border:1px solid #fff;
+}
+#pmenu li.tc {display:table-cell;}
+
+/* For Non-IE browsers and IE7 */
+#pmenu li:hover {position:relative;}
+/* Make the hovered list color persist */
+#pmenu li:hover > a {background:#889; color:#000;}
+/* For Non-IE and IE7 make the sublevels visible on list hover. This is all it needs */
+#pmenu li:hover > ul {display:block; position:absolute; top:-11px; left:80px; padding:10px 30px 30px 30px; background:transparent url(transparent.gif); width:120px;}
+/* Position the first sub level beneath the top level liinks */
+#pmenu > li:hover > ul {left:-30px; top:22px;}
+
+/* get rid of the table */
+#pmenu table {position:absolute; border-collapse:collapse; top:0; left:0; z-index:100; font-size:1em;}
+
+/* For IE5.5 and IE6 give the hovered links a position relative and a change of background and foreground color. This is needed to trigger IE to show the sub levels */
+* html #pmenu li a:hover {position:relative; background:#889; color:#000;}
+
+/* For accessibility of the top level menu when tabbing */
+#pmenu li a:active, #pmenu li a:focus {background:#225; color:#fff;}
+
+/* Set up the pointers for the sub level indication */
+#pmenu li.fly {}
+#pmenu li.drop {}
+
+
+/* This lot is for IE5.5 and IE6 ONLY and is necessary to make the sublevels appear */
+
+/* change the drop down levels from display:none; to visibility:hidden; */
+* html #pmenu li ul {visibility:hidden; display:block; position:absolute; top:-11px; left:80px; padding:10px 30px 30px 30px; background:transparent url(transparent.gif);}
+
+/* keep the third level+ hidden when you hover on first level link */
+#pmenu li a:hover ul ul{
+visibility:hidden;
+}
+/* keep the fourth level+ hidden when you hover on second level link */
+#pmenu li a:hover ul a:hover ul ul{
+visibility:hidden;
+}
+/* keep the fifth level hidden when you hover on third level link */
+#pmenu li a:hover ul a:hover ul a:hover ul ul{
+visibility:hidden;
+}
+/* keep the sixth level hidden when you hover on fourth level link */
+#pmenu li a:hover ul a:hover ul a:hover ul a:hover ul ul {
+visibility:hidden;
+}
+
+/* make the second level visible when hover on first level link and position it */
+#pmenu li a:hover ul {
+visibility:visible; left:-30px; top:14px; lef\t:-31px; to\p:15px;
+}
+
+/* make the third level visible when you hover over second level link and position it and all further levels */
+#pmenu li a:hover ul a:hover ul{ 
+visibility:visible; top:-11px; left:80px;
+}
+/* make the fourth level visible when you hover over third level link */
+#pmenu li a:hover ul a:hover ul a:hover ul { 
+visibility:visible;
+}
+/* make the fifth level visible when you hover over fourth level link */
+#pmenu li a:hover ul a:hover ul a:hover ul a:hover ul { 
+visibility:visible;
+}
+/* make the sixth level visible when you hover over fifth level link */
+#pmenu li a:hover ul a:hover ul a:hover ul a:hover ul a:hover ul { 
+visibility:visible;
+}
+
+
+/* Techtree */
+
+.techtreeItemContainer	{
+	margin:0px auto 10px auto;
+	display:table;
+	text-align:center;
+	max-width:580px;
+}
+
+.techtreeMainItem	{
+	position:relative;
+	width:120px;
+	height:120px;
+	border:1px solid #fff;	
+	margin:10px auto;
+}
+
+.techtreeItem	{
+	margin:10px; 
+	position:relative;
+	float:left;
+	width:120px;
+	height:120px;
+	border:1px solid black;
+}
+.techtreeItemLevel	{
+	position:absolute;
+	top:0px;
+	background:url('images/transheader1.png') top right;
+	color:#fff;
+	padding:3px 15px 3px 3px ;
+}
+.techtreeItemName	{
+	position:absolute;
+	bottom:0px;
+	font-size:8pt;
+	padding:5px;	
+	background:url('images/trans1.png');
+	color:#fff;
+	width:110px;
+}
+
+/* Statistics */
+
+#statsHeaderContainer	{
+	margin-bottom:10px;
+}
+
+#statsSearchContainer	{
+	text-align:left;
+	float:left;
+}
+
+#statsNav1, #statsNav2	{
+	text-align:right;
+	float:right;	
+}
+
+#statsNav1 input, #statsNav2 input	{
+	margin-right:5px;
+}
+
+#statsTable	{
+	margin:0px;
+	padding:0px;
+	margin-bottom:10px;
+}
+
+.loadingMsg	{
+	padding:20px;
+	background:url('images/loading.gif') top center no-repeat;
+	text-align:center;
 }

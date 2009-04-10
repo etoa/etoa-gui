@@ -292,7 +292,7 @@
 			echo "<div>";
 			//echo '<div><div style="float:left;width:450px;text-align:left;font-size:9pt;">';											
 			tableStart("Fabrik-Infos");
-			echo "<tr><td class=\"tbldata\">";
+			echo "<tr><td>";
 			echo "<b>Eingestellte Arbeiter:</b> ".nf($people_working)."<br/>
 			<b>Bauzeitverringerung:</b> ";
 			if ($need_bonus_level>=0)
@@ -344,7 +344,7 @@
 							);
 			
 			echo "<tr>
-					<td class=\"tbldata\" style=\"text-align:center;\">
+					<td style=\"text-align:center;\">
 						<select name=\"sort_value\">";
 						foreach ($values as $value => $name)
 						{		
@@ -376,7 +376,7 @@
 				</tr>";
 			tableEnd();
 			
-			echo '<br style="clear:both;" /></div>';
+			echo "<br style=\"clear:both;\" /></div>";
 			echo "</form>";
 			
 			echo "<form action=\"?page=".$page."\" method=\"post\">";
@@ -805,10 +805,10 @@
 									<th style=\"width:80px;\" colspan=\"2\">Verbleibend</th>
 								</tr>";
 							echo "<tr>";
-							echo "<td class=\"tbldata\" colspan=\"2\">".$ships[$data['queue_def_id']]['def_name']."</td>";
-							echo "<td class=\"tbldata\">".df(time()-$obj_t_passed,1)."</td>";
-							echo "<td class=\"tbldata\">".df(time()+$obj_t_remaining,1)."</td>";
-							echo "<td class=\"tbldata\" colspan=\"2\">".tf($obj_t_remaining)."</td>
+							echo "<td colspan=\"2\">".$ships[$data['queue_def_id']]['def_name']."</td>";
+							echo "<td>".df(time()-$obj_t_passed,1)."</td>";
+							echo "<td>".df(time()+$obj_t_remaining,1)."</td>";
+							echo "<td colspan=\"2\">".tf($obj_t_remaining)."</td>
 							</tr>";
 							echo "<tr>
 									<th style=\"width:40px;\">Anzahl</th>
@@ -822,12 +822,12 @@
 						}
 	
 						echo "<tr>";
-						echo "<td class=\"tbldata\" id=\"objcount\">".$data['queue_cnt']."</td>";
-						echo "<td class=\"tbldata\">".$defs[$data['queue_def_id']]['def_name']."</td>";
-						echo "<td class=\"tbldata\">".df($absolute_starttime,1)."</td>";
-						echo "<td class=\"tbldata\">".df($absolute_starttime+$data['queue_endtime']-$data['queue_starttime'],1)."</td>";
-						echo "<td class=\"tbldata\">".tf($data['queue_endtime']-time(),1)."</td>";
-						echo "<td class=\"tbldata\" id=\"cancel\">";
+						echo "<td id=\"objcount\">".$data['queue_cnt']."</td>";
+						echo "<td>".$defs[$data['queue_def_id']]['def_name']."</td>";
+						echo "<td>".df($absolute_starttime,1)."</td>";
+						echo "<td>".df($absolute_starttime+$data['queue_endtime']-$data['queue_starttime'],1)."</td>";
+						echo "<td>".tf($data['queue_endtime']-time(),1)."</td>";
+						echo "<td id=\"cancel\">";
 						if ($cancelable)
 						{
 							echo "<a href=\"?page=$page&amp;cancel=".$data['queue_id']."\" onclick=\"return confirm('Soll dieser Auftrag wirklich abgebrochen werden?');\">Abbrechen</a>";
@@ -868,16 +868,16 @@
 						//Einfache Ansicht
 						if ($cu->properties->itemShow!='full')
 						{
-							echo '<tr>
-											<th colspan="2" class="tbltitle">Anlage</th>
-											<th class="tbltitle">Zeit</th>
-											<th class="tbltitle">'.RES_METAL.'</th>
-											<th class="tbltitle">'.RES_CRYSTAL.'</th>
-											<th class="tbltitle">'.RES_PLASTIC.'</th>
-											<th class="tbltitle">'.RES_FUEL.'</th>
-											<th class="tbltitle">'.RES_FOOD.'</th>
-											<th class="tbltitle">Anzahl</th>
-										</tr>';
+							echo "<tr>
+											<th colspan=\"2\">Anlage</th>
+											<th>Zeit</th>
+											<th>".RES_METAL."</th>
+											<th>".RES_CRYSTAL."</th>
+											<th>".RES_PLASTIC."</th>
+											<th>".RES_FUEL."</th>
+											<th>".RES_FOOD."</th>
+											<th>Anzahl</th>
+										</tr>";
 						}
 						
 						foreach ($defs as $data)
@@ -1167,31 +1167,31 @@
     			      	  					<th colspan=\"5\" height=\"20\">".$data['def_name']."</th>
     			      	  				</tr>
     			      	  				<tr>
-    			      	  					<td class=\"tbldata\" width=\"120\" height=\"120\" rowspan=\"3\">
+    			      	  					<td width=\"120\" height=\"120\" rowspan=\"3\">
 												<a href=\"".HELP_URL."&amp;id=".$data[ITEM_ID_FLD]."\" title=\"Info zu dieser Anlage anzeigen\">
 				    			      	  		<img src=\"".$s_img."\" width=\"120\" height=\"120\" border=\"0\" /></a>
     			      	  					</td>
-    			      	  					<td class=\"tbldata\" colspan=\"4\" valign=\"top\">".$data['def_shortcomment']."</td>
+    			      	  					<td colspan=\"4\" valign=\"top\">".$data['def_shortcomment']."</td>
     			      	  				</tr>
     			      	  				<tr>
-    			      	  					<th class=\"tbltitle\"  height=\"30\">Vorhanden:</th>
-				    			      		<td class=\"tbldata\">".nf($deflist_count)."</td>
-											<th class=\"tbltitle\">Felder pro Einheit:</th>
-			    			      	  		<td class=\"tbldata\">".nf($data['def_fields'])."</td>
+    			      	  					<th  height=\"30\">Vorhanden:</th>
+				    			      		<td>".nf($deflist_count)."</td>
+											<th>Felder pro Einheit:</th>
+			    			      	  		<td>".nf($data['def_fields'])."</td>
 				    			      	</tr>
 				    			      	<tr>
-				    			      		<th class=\"tbltitle\" height=\"30\">Bauzeit</th>
-    			      	  					<td class=\"tbldata\">".tf($btime)."</td>";
+				    			      		<th height=\"30\">Bauzeit</th>
+    			      	  					<td>".tf($btime)."</td>";
 									
 									//Maximale Anzahl erreicht
 									if ($def_count>=$data['def_max_count'] && $data['def_max_count']!=0)
 									{
-										echo "<th class=\"tbltitle\" height=\"30\" colspan=\"2\"><i>Maximalanzahl erreicht</i></th>";
+										echo "<th height=\"30\" colspan=\"2\"><i>Maximalanzahl erreicht</i></th>";
 									}
 									else
 									{
-										echo "<th class=\"tbltitle\" height=\"30\">In Aufrag geben:</th>
-				    			      	      <td class=\"tbldata\"><input type=\"text\" value=\"0\" name=\"build_count[".$data['def_id']."]\" id=\"build_count_".$data['def_id']."\" size=\"4\" maxlength=\"9\" ".tm("",$tm_cnt)." tabindex=\"".$tabulator."\" onkeyup=\"FormatNumber(this.id,this.value, ".$def_max_build.", '', '');\"/> St&uuml;ck<br><a href=\"javascript:;\" onclick=\"document.getElementById('build_count_".$data['def_id']."').value=".$def_max_build.";\">max</a></td>";
+										echo "<th height=\"30\">In Aufrag geben:</th>
+				    			      	      <td><input type=\"text\" value=\"0\" name=\"build_count[".$data['def_id']."]\" id=\"build_count_".$data['def_id']."\" size=\"4\" maxlength=\"9\" ".tm("",$tm_cnt)." tabindex=\"".$tabulator."\" onkeyup=\"FormatNumber(this.id,this.value, ".$def_max_build.", '', '');\"/> St&uuml;ck<br><a href=\"javascript:;\" onclick=\"document.getElementById('build_count_".$data['def_id']."').value=".$def_max_build.";\">max</a></td>";
 									}
 									
 									echo "</tr>";
@@ -1202,19 +1202,19 @@
 				    			    	  	  <th height=\"20\" width=\"97\">".RES_FUEL.":</th>
 				    			    	  	  <th height=\"20\" width=\"98\">".RES_FOOD."</th></tr>";
 									echo "<tr>
-    			      	  					<td class=\"tbldata\" height=\"20\" width=\"110\" ".$ress_style_metal.">
+    			      	  					<td height=\"20\" width=\"110\" ".$ress_style_metal.">
     			      	  						".nf($data['def_costs_metal'])."
     			      	  					</td>
-											<td class=\"tbldata\" height=\"20\" width=\"25%\" ".$ress_style_crystal.">
+											<td height=\"20\" width=\"25%\" ".$ress_style_crystal.">
 												".nf($data['def_costs_crystal'])."
 											</td>
-											<td class=\"tbldata\" height=\"20\" width=\"25%\" ".$ress_style_plastic.">
+											<td height=\"20\" width=\"25%\" ".$ress_style_plastic.">
 												".nf($data['def_costs_plastic'])."
 											</td>
-											<td class=\"tbldata\" height=\"20\" width=\"25%\" ".$ress_style_fuel.">
+											<td height=\"20\" width=\"25%\" ".$ress_style_fuel.">
 												".nf($data['def_costs_fuel'])."
 											</td>
-											<td class=\"tbldata\" height=\"20\" width=\"25%\" ".$ress_style_food.">
+											<td height=\"20\" width=\"25%\" ".$ress_style_food.">
 												".nf($food_costs)."
 											</td>
 										</tr>";
@@ -1225,28 +1225,28 @@
 									$s_img = IMAGE_PATH."/".IMAGE_DEF_DIR."/def".$data['def_id']."_small.".IMAGE_EXT;
   			      					
   			      					echo "<tr>
-  			      							<td class=\"tbldata\">
+  			      							<td>
 				  			      				<a href=\"".HELP_URL."&amp;id=".$data[ITEM_ID_FLD]."\"><img src=\"".$s_img."\" width=\"40\" height=\"40\" border=\"0\" /></a>
 											</td>
 											<th width=\"30%\">
 	  			      							<span style=\"font-weight:500\">".$data['def_name']."<br/>
 	  			      							Gebaut:</span> ".nf($deflist_count)."
 	  			      						</th>
-	  			      						<td class=\"tbldata\" width=\"13%\">".tf($btime)."</td>
-	  			      						<td class=\"tbldata\" width=\"10%\" ".$ress_style_metal.">".nf($data['def_costs_metal'])."</td>
-	  			      						<td class=\"tbldata\" width=\"10%\" ".$ress_style_crystal.">".nf($data['def_costs_crystal'])."</td>
-	  			      						<td class=\"tbldata\" width=\"10%\" ".$ress_style_plastic.">".nf($data['def_costs_plastic'])."</td>
-	  			      						<td class=\"tbldata\" width=\"10%\" ".$ress_style_fuel.">".nf($data['def_costs_fuel'])."</td>
-	  			      						<td class=\"tbldata\" width=\"10%\" ".$ress_style_food.">".nf($food_costs)."</td>";
+	  			      						<td width=\"13%\">".tf($btime)."</td>
+	  			      						<td width=\"10%\" ".$ress_style_metal.">".nf($data['def_costs_metal'])."</td>
+	  			      						<td width=\"10%\" ".$ress_style_crystal.">".nf($data['def_costs_crystal'])."</td>
+	  			      						<td width=\"10%\" ".$ress_style_plastic.">".nf($data['def_costs_plastic'])."</td>
+	  			      						<td width=\"10%\" ".$ress_style_fuel.">".nf($data['def_costs_fuel'])."</td>
+	  			      						<td width=\"10%\" ".$ress_style_food.">".nf($food_costs)."</td>";
 											
 									//Maximale Anzahl erreicht
 				  			      	if ($def_count>=$data['def_max_count'] && $data['def_max_count']!=0)
 				  			      	{
-				  			      	    echo "<td class=\"tbldata\">Max</td></tr>";
+				  			      	    echo "<td>Max</td></tr>";
 				  			      	}
 				  			      	else
 				  			      	{
-				  			      	    echo "<td class=\"tbldata\"><input type=\"text\" value=\"0\" id=\"build_count_".$data['def_id']."\" name=\"build_count[".$data['def_id']."]\" size=\"5\" maxlength=\"9\" ".tm("",$tm_cnt)." tabindex=\"".$tabulator."\" onkeyup=\"FormatNumber(this.id,this.value, ".$def_max_build.", '', '');\"/><br><a href=\"javascript:;\" onclick=\"document.getElementById('build_count_".$data['def_id']."').value=".$def_max_build.";\">max</a></td></tr>";
+				  			      	    echo "<td><input type=\"text\" value=\"0\" id=\"build_count_".$data['def_id']."\" name=\"build_count[".$data['def_id']."]\" size=\"5\" maxlength=\"9\" ".tm("",$tm_cnt)." tabindex=\"".$tabulator."\" onkeyup=\"FormatNumber(this.id,this.value, ".$def_max_build.", '', '');\"/><br><a href=\"javascript:;\" onclick=\"document.getElementById('build_count_".$data['def_id']."').value=".$def_max_build.";\">max</a></td></tr>";
 				  			      	}
 								}
 								
@@ -1260,7 +1260,7 @@
 						if ($ccnt==0)
 						{
 							echo "<tr>
-										<td colspan=\"9\" height=\"30\" align=\"center\" class=\"tbldata\">
+										<td colspan=\"9\" height=\"30\" align=\"center\">
 											Es k&ouml;nnen noch keine Anlagen gebaut werden!<br>
 											Baue zuerst die ben&ouml;tigten Geb&auml;ude und erforsche die erforderlichen Technologien!
 										</td>
@@ -1270,7 +1270,7 @@
 					// Es gibt noch keine Schiffe
 					else
 					{
-						echo "<tr><td align=\"center\" colspan=\"3\" class=\"tbldata\">Es gibt noch keine Schiffe!</td></tr>";
+						echo "<tr><td align=\"center\" colspan=\"3\">Es gibt noch keine Schiffe!</td></tr>";
 					}
 				
    					tableEnd();

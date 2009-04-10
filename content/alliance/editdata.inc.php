@@ -34,7 +34,7 @@ if (Alliance::checkActionRights('editdata'))
 		</td>
 	</tr>
 	<tr>
-		<th class=\"tbltitle\">Allianz-Bild:</th>
+		<th>Allianz-Bild:</th>
 		<td>";
     if ($ally->image != "")
     {

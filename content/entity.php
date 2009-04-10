@@ -41,8 +41,8 @@
 	}	
 	elseif(isset($_POST['search_submit']))
 	{
-		echo "<h1>Planeten-Datenbank</h1>
-		Ungültige Kennung!<br/><br/>";
+		echo "<h1>Planeten-Datenbank</h1>";
+		error_msg("Ungültige Kennung!");
 	}
 
 	if ($id>0)
@@ -65,11 +65,11 @@
 			{
 				tableStart("Planetendaten");
 				echo "<tr>
-					<td width=\"320\" class=\"tbldata\" style=\"background:#000;;vertical-align:middle\" rowspan=\"".($ent->debrisField ? 8 : 7)."\">
+					<td width=\"320\" style=\"background:#000;;vertical-align:middle\" rowspan=\"".($ent->debrisField ? 8 : 7)."\">
 						<img src=\"".$ent->imagePath("b")."\" alt=\"planet\" width=\"310\" height=\"310\"/>
 					</td>";
-				echo "<td width=\"100\" class=\"tbltitle\">Besitzer:</td>
-				<td class=\"tbldata\">";
+				echo "<th width=\"100\">Besitzer:</th>
+				<td>";
 				if ($ent->ownerId()>0)
 					echo "<a href=\"?page=userinfo&amp;id=".$ent->ownerId()."\">".$ent->owner()."</a>";
 				else
@@ -77,20 +77,20 @@
 				echo "</td>
 				</tr>";
 				echo "<tr>
-					<td width=\"100\" class=\"tbltitle\">Sonnentyp:</td>
-					<td class=\"tbldata\">".$ent->starTypeName."</td></tr>";
+					<th width=\"100\">Sonnentyp:</th>
+					<td>".$ent->starTypeName."</td></tr>";
 				echo "<tr>
-					<td width=\"100\" class=\"tbltitle\">Planettyp:</td>
-					<td class=\"tbldata\">".$ent->typeName."</td></tr>";
+					<th width=\"100\">Planettyp:</th>
+					<td>".$ent->typeName."</td></tr>";
 				echo "<tr>
-					<td width=\"100\" class=\"tbltitle\">Felder:</td>
-					<td class=\"tbldata\">".$ent->fields." total</td></tr>";
+					<th width=\"100\">Felder:</th>
+					<td>".$ent->fields." total</td></tr>";
 				echo "<tr>
-					<td width=\"100\" class=\"tbltitle\">Gr&ouml;sse:</td>
-					<td class=\"tbldata\">".nf($conf['field_squarekm']['v']*$ent->fields)." km&sup2;</td></tr>";
+					<th width=\"100\">Gr&ouml;sse:</th>
+					<td>".nf($conf['field_squarekm']['v']*$ent->fields)." km&sup2;</td></tr>";
 				echo "<tr>
-					<td width=\"100\" class=\"tbltitle\">Temperatur:</td>
-					<td class=\"tbldata\">".$ent->temp_from."&deg;C bis ".$ent->temp_to."&deg;C <br/><br/>";
+					<th width=\"100\">Temperatur:</th>
+					<td>".$ent->temp_from."&deg;C bis ".$ent->temp_to."&deg;C <br/><br/>";
 					echo "<img src=\"images/heat_small.png\" alt=\"Heat\" style=\"width:16px;float:left;\" />
 					Wärmebonus: ".helpLink("tempbonus")."<br/> ";
 					$spw = $ent->solarPowerBonus();
@@ -116,12 +116,12 @@
 					}				
 				echo " ".RES_FUEL."-Produktion </td></tr>";
 				echo "<tr>
-					<td width=\"100\" class=\"tbltitle\">Beschreibung:</td>
-					<td class=\"tbldata\">".($ent->desc!="" ? $ent->desc : '-')."</td></tr>";
+					<th width=\"100\">Beschreibung:</th>
+					<td>".($ent->desc!="" ? $ent->desc : '-')."</td></tr>";
 				if ($ent->debrisField)
 				{
 					echo '<tr>
-					<th class="tbltitle">Trümmerfeld:</th><td class="tbldata">
+					<th class="tbltitle">Trümmerfeld:</th><td>
 					'.RES_ICON_METAL."".nf($ent->debrisMetal).'<br style="clear:both;" /> 
 					'.RES_ICON_CRYSTAL."".nf($ent->debrisCrystal).'<br style="clear:both;" /> 
 					'.RES_ICON_PLASTIC."".nf($ent->debrisPlastic).'<br style="clear:both;" /> 
@@ -134,7 +134,7 @@
 			{
 				tableStart("Sterndaten");
 				echo "<tr>
-					<td width=\"220\" class=\"tbldata\" style=\"background:#000;vertical-align:middle\" rowspan=\"2\">
+					<td width=\"220\" style=\"background:#000;vertical-align:middle\" rowspan=\"2\">
 						<img src=\"".$ent->imagePath("b")."\" alt=\"star\" width=\"220\" height=\"220\"/>
 					</td>";
 				echo "<th style=\"height:20px;\">Typ:</th>
@@ -166,35 +166,35 @@
 				$pmarr=mysql_fetch_row($pmres);		
 				if ($idprev>0)
 				{	
-					$str_prev =	"<td class=\"tbldata\"><input type=\"button\" value=\"&lt;\" onclick=\"document.location='?page=$page&amp;id=".$idprev."'\" /></td>";
+					$str_prev =	"<td><input type=\"button\" value=\"&lt;\" onclick=\"document.location='?page=$page&amp;id=".$idprev."'\" /></td>";
 				}
 				if ($idnext <= $pmarr[0])
 				{
-					$str_next = "<td class=\"tbldata\"><input type=\"button\" value=\"&gt;\" onclick=\"document.location='?page=$page&amp;id=".$idnext."'\" /></td>";
+					$str_next = "<td><input type=\"button\" value=\"&gt;\" onclick=\"document.location='?page=$page&amp;id=".$idnext."'\" /></td>";
 				} 
 			}
 			else
 			{
-				echo "<h1>Raumobjekt-Datenbank</h1>
-				Das Objekt mit der Kennung <b>".$id."</b> existiert nicht!<br/><br/>";
+				echo "<h1>Raumobjekt-Datenbank</h1>";
+				error_msg("Das Objekt mit der Kennung [b]".$id."[/b] existiert nicht!");
 			}
 		}
 		else
 		{
-			echo "<h1>Raumobjekt-Datenbank</h1>
-			Das Objekt mit der Kennung <b>".$id."</b> wurde noch nicht entdeckt!<br/><br/>";
+			echo "<h1>Raumobjekt-Datenbank</h1>";
+			error_msg("Das Objekt mit der Kennung [b]".$id."[/b] wurde noch nicht entdeckt!");
 		}
 		}
 		else
 		{
-			echo "<h1>Raumobjekt-Datenbank</h1>
-			Das Objekt mit der Kennung <b>".$id."</b> existiert nicht!<br/><br/>";
+			echo "<h1>Raumobjekt-Datenbank</h1>";
+			error_msg("Das Objekt mit der Kennung [b]".$id."[/b] existiert nicht!");
 		}
 	}
 	else
 	{
-		echo "<h1>Raumobjekt-Datenbank</h1>
-		Das Objekt mit der Kennung <b>".$id."</b> existiert nicht!<br/><br/>";
+		echo "<h1>Raumobjekt-Datenbank</h1>";
+		error_msg("Das Objekt mit der Kennung [b]".$id."[/b] existiert nicht!");
 	}
 	
 	
@@ -202,8 +202,8 @@
 	tableStart("Objektsuche");
 	echo "<tr>";
 		if (isset($str_prev)) echo $str_prev;
-		echo "<th class=\"tbltitle\">Kennung:</th>
-		<td class=\"tbldata\">
+		echo "<th>Kennung:</th>
+		<td>
 			<input type=\"text\" name=\"id\" size=\"5\" maxlength=\"7\" value=\"".$id."\" /> &nbsp; 
 			<input type=\"submit\" name=\"search_submit\" value=\"Objekt anzeigen\" />
 		</td>";

@@ -123,7 +123,7 @@
 		}
 	
 	
-		echo "<table>
+		echo "<table style=\"width:98%\">
 		<tr><td colspan=\"3\">";			
 
 		tableStart("Flugdaten");

@@ -39,10 +39,10 @@
 	{
 		echo "<form action=\"?page=$page\" method=\"post\">";
 		tableStart("Neue Notiz");
-		echo "<tr><th class=\"tbltitle\">Titel:</th>
-		<td class=\"tbldata\"><input type=\"text\" name=\"note_subject\" value=\"\" size=\"40\" /></td></tr>";
-		echo "<tr><th class=\"tbltitle\">Text:</th>
-		<td class=\"tbldata\"><textarea name=\"note_text\" cols=\"50\" rows=\"10\"></textarea></td></tr>";
+		echo "<tr><th>Titel:</th>
+		<td><input type=\"text\" name=\"note_subject\" value=\"\" size=\"40\" /></td></tr>";
+		echo "<tr><th>Text:</th>
+		<td><textarea name=\"note_text\" cols=\"50\" rows=\"10\"></textarea></td></tr>";
 		tableEnd();
 		echo "<input type=\"submit\" value=\"Speichern\" name=\"submit_new\" > &nbsp; ";
 		echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?page=$page'\" /> &nbsp; ";			
@@ -59,8 +59,8 @@
 			echo "<form action=\"?page=$page\" method=\"post\">";
 			echo "<input type=\"hidden\" name=\"note_id\" value=\"".$n->id()."\" />";
 			tableStart("Notiz bearbeiten");
-			echo "<tr><th class=\"tbltitle\">Titel:</th><td class=\"tbldata\"><input type=\"text\" name=\"note_subject\" value=\"".stripslashes($n->subject())."\" size=\"40\" /></td></tr>";
-			echo "<tr><th class=\"tbltitle\">Text:</th><td class=\"tbldata\"><textarea name=\"note_text\" cols=\"50\" rows=\"10\">".stripslashes($n->text())."</textarea></td></tr>";
+			echo "<tr><th>Titel:</th><td><input type=\"text\" name=\"note_subject\" value=\"".stripslashes($n->subject())."\" size=\"40\" /></td></tr>";
+			echo "<tr><th>Text:</th><td><textarea name=\"note_text\" cols=\"50\" rows=\"10\">".stripslashes($n->text())."</textarea></td></tr>";
 			tableEnd();
 			echo "<input type=\"submit\" value=\"Speichern\" name=\"submit_edit\" > &nbsp; ";
 			echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?page=$page'\" /> &nbsp; ";			
@@ -68,7 +68,7 @@
 		}
 		else
 		{
-			echo "Notiz nicht vorhanden!";
+			error_msg("Notiz nicht vorhanden!");
 		}
 	}
 
@@ -101,17 +101,17 @@
 			tableStart("Meine Notizen");			
 			foreach ($np->getArray() as $id=>$n)
 			{
-				echo "<tr><td class=\"tbldata\" width=\"120px\"><b>".$n->subject()."</b>
+				echo "<tr><td width=\"120px\"><b>".$n->subject()."</b>
 				<br/>".df($n->timestamp())."</td>";
-				echo "<td class=\"tbldata\">".text2html($n->text())."</td>";
-				echo "<td class=\"tbldata\" style=\"width:130px;\"><a href=\"?page=$page&amp;action=edit&amp;id=".$id."\">Bearbeiten</a> &nbsp; ";
+				echo "<td>".text2html($n->text())."</td>";
+				echo "<td style=\"width:130px;\"><a href=\"?page=$page&amp;action=edit&amp;id=".$id."\">Bearbeiten</a> &nbsp; ";
 				echo "<a href=\"?page=$page&amp;action=delete&amp;id=".$id."\" onclick=\"return confirm('Soll die Notiz ".$n->subject()." wirklich gel&ouml;scht werden?');\">L&ouml;schen</a></td></tr>";
 			}
 			tableEnd();
 		}
 		else
 		{
-			echo "Keine Notizen vorhanden!<br/><br/>";
+			error_msg("Keine Notizen vorhanden!",1);
 		}
 		
 		

@@ -62,7 +62,7 @@
       	}
 			}
 			
-			echo "<table class=\"tb\">";
+			tableStart();
 			echo "<tr><th colspan=\"5\">Papierkorb</th></tr>";
 			$mres = dbquery("
 			SELECT
@@ -108,9 +108,9 @@
 			}
 			else
 			{
-				echo "<tr><td class=\"tbldata\" width=\"400\" colspan=\"4\"><i>Keine Nachrichten vorhanden</i></td>";
+				echo "<tr><td width=\"400\" colspan=\"4\"><i>Keine Nachrichten vorhanden</i></td>";
 			}
-			echo "</table>";
+			tableEnd();
 			echo "<br/>Es werden nur die 30 neusten Nachrichten angezeigt.";
 		}
 ?>

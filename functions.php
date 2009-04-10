@@ -1054,7 +1054,7 @@
 		}
 		else
 		{
-			$w = "width:650px";
+			$w = "width:98%";
 		}
 		if ($layout=="double")
 		{
@@ -1089,7 +1089,7 @@
 		}
 		else
 		{
-			$w = "width:650px";
+			$w = "width:98%";
 		}
 		
 		echo "<div class=\"boxLayout\" style=\"".$w."\">";
@@ -2871,9 +2871,7 @@ function imagecreatefromfile($path, $user_functions = false)
 	
 	function userPopUp($userId, $userNick, $msg=1, $strong=0)
 	{
-		$showNick = $userId>0 ? ($userNick!='' ? $userNick : '<i>Unbekannt</i>') : '<i>System</i>';
-		if ($strong)
-			$showNick = '<strong>'.$showNick.'</strong>';
+		$userNick = $userId>0 ? ($userNick!='' ? $userNick : '<i>Unbekannt</i>') : '<i>System</i>';
 		
 		$out = "";
 		if ($userId>0 && $userNick!='')
@@ -2887,12 +2885,14 @@ function imagecreatefromfile($path, $user_functions = false)
 					$out.=  "<a href=\"?page=messages&mode=new&message_user_to=".$userId."\">Nachricht senden</a><br/>";
 				$out .= "<a href=\"?page=buddylist&add_id=".$userId."\">Als Freund hinzufügen</a>";
 			}
-			$out .= "</div>
-				<a href=\"#\" ".cTT($showNick,"ttuser".$userId).">".$showNick."</a>";
+			$out .= "</div>";
+			if ($strong) $out .= '<strong>';
+			$out .= '<a href="#" '.cTT($userNick,"ttuser".$userId).'>'.$userNick.'</a>';
+			if ($strong) $out .= '</strong>';
 		}
 		else
 		{
-			$out .= $showNick;
+			$out .= $userNick;
 		}
 		return $out;
 	}

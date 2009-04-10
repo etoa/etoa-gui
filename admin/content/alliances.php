@@ -321,7 +321,7 @@
 		
 		if ($id>0)
 		{
-			echo "<h2>Geschichte der Allianz [".$alliances[$_POST['alliance_id']]['tag']."] ".$alliances[$_POST['alliance_id']]['name']."</h2>";
+			echo "<h2>Geschichte der Allianz [".$alliances[$id]['tag']."] ".$alliances[$id]['name']."</h2>";
 			echo "<table>";
 			echo "<tr><th class=\"tbltitle\" style=\"width:120px;\">Datum / Zeit</th><th class=\"tbltitle\">Ereignis</th></tr>";
 			$hres=dbquery("
@@ -330,7 +330,7 @@
 			FROM 
 				alliance_history 
 			WHERE 
-				history_alliance_id=".$_POST['alliance_id']." 
+				history_alliance_id=".$id." 
 			ORDER BY 
 				history_timestamp DESC;");
 			if (mysql_num_rows($hres)>0)
@@ -1050,7 +1050,7 @@
 			echo "Suchmaske (wenn nichts eingegeben wird werden alle Datens&auml;tze angezeigt):<br/><br/>";
 			echo "<form action=\"?page=$page&amp;action=search\" method=\"post\">";
 			echo "<table class=\"tbl\">";
-			echo "<tr><td class=\"tbltitle\">ID</td><td class=\"tbldata\"><input type=\"text\" name=\"alliance_id\" value=\"\" size=\"5\" maxlength=\"250\" /></td></tr>";
+			echo "<tr><td class=\"tbltitle\">ID</td><td class=\"tbldata\"><input type=\"text\" name=\"alliance_id\" value=\"\" size=\"20\" maxlength=\"250\" /> ";fieldqueryselbox('alliance_id');echo"</td></tr>";
 			echo "<tr><td class=\"tbltitle\">Tag</td><td class=\"tbldata\"><input type=\"text\" name=\"alliance_tag\" value=\"\" size=\"20\" maxlength=\"250\" /> ";fieldqueryselbox('alliance_tag');echo "</td></tr>";
 			echo "<tr><td class=\"tbltitle\">Name</td><td class=\"tbldata\"><input type=\"text\" name=\"alliance_name\" value=\"\" size=\"20\" maxlength=\"250\" autocomplete=\"off\" onkeyup=\"xajax_searchAlliance(this.value,'alliance_name','citybox2');\"/> ";fieldqueryselbox('alliance_name');echo "<br><div class=\"citybox\" id=\"citybox2\">&nbsp;</div></td></tr>";
 			echo "<tr><td class=\"tbltitle\">Text</td><td class=\"tbldata\"><input type=\"text\" name=\"alliance_text\" value=\"\" size=\"20\" maxlength=\"250\" /> ";fieldqueryselbox('alliance_text');echo "</td></tr>";

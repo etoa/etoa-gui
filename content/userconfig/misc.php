@@ -341,10 +341,10 @@
 	    	tableStart("Sonstige Accountoptionen");
 			
 	    	// Urlaubsmodus
-	    	echo "<tr><th class=\"tbltitle\" style=\"width:150px;\">Urlaubsmodus</th>
-	    	<td class=\"tbldata\">Im Urlaubsmodus kannst du nicht angegriffen werden, aber deine Produktion steht auch still. Du darfst nichts im Bau haben
+	    	echo "<tr><th style=\"width:150px;\">Urlaubsmodus</th>
+	    	<td>Im Urlaubsmodus kannst du nicht angegriffen werden, aber deine Produktion steht auch still. Du darfst nichts im Bau haben
 	    	um den Urlaubsmodus aktivieren zu können.<br/><b>Dauer:</b> mindestens ".MIN_UMOD_TIME." Tage</td>
-	    	<td class=\"tbldata\">";
+	    	<td>";
 			
 	    	if ($cu->hmode_from>0 && $cu->hmode_from<time() && $cu->hmode_to<time())
 	    	{
@@ -361,9 +361,9 @@
 	    	echo "</td></tr>";
 	
 				// Account löschen
-	    	echo "<tr><th class=\"tbltitle\">Account l&ouml;schen</th>
-	    	<td class=\"tbldata\">Hier kannst du deinen Account mitsamt aller Daten löschen.</td>
-	    	<td class=\"tbldata\">";
+	    	echo "<tr><th>Account l&ouml;schen</th>
+	    	<td>Hier kannst du deinen Account mitsamt aller Daten löschen.</td>
+	    	<td>";
 	    	if ($arr['user_deleted']>0)
 	    	{
 	    		echo "<input type=\"submit\" name=\"remove_cancel\" value=\"Löschantrag aufheben\"  style=\"color:#0f0\" />";

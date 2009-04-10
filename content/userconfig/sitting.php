@@ -369,9 +369,9 @@
             tableStart("Multierkennung [<a href=\"?page=help&site=multi_sitting\">Info</a>]");
 
             echo "<tr>
-                    <th class=\"tbltitle\" width=\"35%\">User</th>
-                    <th class=\"tbltitle\" width=\"55%\">Beziehung</th>
-                    <th class=\"tbltitle\" width=\"10%\">L&ouml;schen</th>
+                    <th width=\"35%\">User</th>
+                    <th width=\"55%\">Beziehung</th>
+                    <th width=\"10%\">L&ouml;schen</th>
                     ";
 
                     $unused_multi=0;
@@ -379,7 +379,7 @@
                     {
 
 
-                        echo "<tr><td class=\"tbldata\">";
+                        echo "<tr><td>";
 
                         if($arr['user_multi_multi_user_id']!=0)
                         {
@@ -393,7 +393,7 @@
                         }
 
                         echo "</td>";
-                        echo "<td class=\"tbldata\">";
+                        echo "<td>";
 
                         if($arr['user_multi_connection']!='0')
                         {
@@ -405,14 +405,14 @@
                         }
 
                         echo "</td>";
-                        echo "<td class=\"tbldata\" style=\"text-align:center;\">";
+                        echo "<td style=\"text-align:center;\">";
                         echo "<input type=\"checkbox\" name=\"del_multi[".$arr['user_multi_id']."]\" value=\"1\" />";
                         echo "</td></tr>";
 
                     }
                     if($unused_multi<1 && $s['sitter_active']==0)
                     {
-                        echo "<tr><td class=\"tbldata\" style=\"text-align:center;\" colspan=\"3\"><input type=\"submit\" name=\"new_multi\" value=\"User hinzuf&uuml;gen\"/></td></tr>";
+                        echo "<tr><td style=\"text-align:center;\" colspan=\"3\"><input type=\"submit\" name=\"new_multi\" value=\"User hinzuf&uuml;gen\"/></td></tr>";
                     }
 
             tableEnd();
@@ -492,7 +492,7 @@
                       //Zeichnet "Sitting Daten" farbig und dahinter eine leere Zeile
                         echo "<tr>
                             <td class=\"tbldata2\" width=\"35%\">Sitting Daten</td>
-                            <td class=\"tbldata\" width=\"65%\" colspan=\"2\"></td>
+                            <td width=\"65%\" colspan=\"2\"></td>
                              </tr>";
                     }
                     //Min. 1 Datum ist festgelegt -> Anzeigen der übrigen Formularfelder
@@ -501,7 +501,7 @@
                         //Sitter Nick
                         echo "<tr>
                                 <td class=\"$nick_class\" width=\"35%\">Sitter Nick</td>
-                                <td class=\"tbldata\" width=\"65%\" colspan=\"2\" ".tm("Sitter Nick","Gib hier den Nick des Users an, welcher dein Account Sitten soll.").">";
+                                <td width=\"65%\" colspan=\"2\" ".tm("Sitter Nick","Gib hier den Nick des Users an, welcher dein Account Sitten soll.").">";
 
                                 if($arr['user_sitting_sitter_user_id']!=0)
                                 {
@@ -519,7 +519,7 @@
                         //Sitter Passwort
                         echo "<tr>
                                 <td class=\"$pw_class\" width=\"35%\">Sitter Passwort</td>
-                                <td class=\"tbldata\" width=\"65%\" colspan=\"2\" ".tm("Sitter Passwort","Definiere hier das Passwort, mit dem sich dein Sitter einlogen kann.").">
+                                <td width=\"65%\" colspan=\"2\" ".tm("Sitter Passwort","Definiere hier das Passwort, mit dem sich dein Sitter einlogen kann.").">
                                     <input type=\"password\" name=\"user_sitting_sitter_password1\" maxlength=\"20\" size=\"20\" value=\"\">
                                 </td>
                              </tr>";
@@ -527,13 +527,13 @@
                         //Sitter Passwort (wiederholen)
                         echo "<tr>
                                 <td class=\"$pw_class\" width=\"35%\">Sitter Passwort (wiederholen)</td>
-                                <td class=\"tbldata\" width=\"65%\" colspan=\"2\" ".tm("Sitter Passwort (wiederholen)","Zur SIcherheit, musst du hier das Passwort noch einmal hinschreiben.").">
+                                <td width=\"65%\" colspan=\"2\" ".tm("Sitter Passwort (wiederholen)","Zur SIcherheit, musst du hier das Passwort noch einmal hinschreiben.").">
                                     <input type=\"password\" name=\"user_sitting_sitter_password2\" maxlength=\"20\" size=\"20\" value=\"\">
                                 </td>
                              </tr>";
 
 
-                        echo "<td class=\"tbldata\" width=\"35%\" rowspan=\"$date_cnt\">Sitting Daten</td>";
+                        echo "<td width=\"35%\" rowspan=\"$date_cnt\">Sitting Daten</td>";
 
                         //Listet alle festgelegten daten auf
                         while ($date_arr=mysql_fetch_array($date_res))
@@ -542,11 +542,11 @@
                             if(mysql_num_rows($date_res)!=$date_cnt)
                             {
                                 echo "<tr>";
-                                echo "<td class=\"tbldata\" width=\"35%\" rowspan=\"$date_cnt\">&nbsp;</td>";
+                                echo "<td width=\"35%\" rowspan=\"$date_cnt\">&nbsp;</td>";
                             }
 
-                            echo "<td class=\"tbldata\" width=\"60%\">Von ".date("d.m.Y H:i",$date_arr['user_sitting_date_from'])." bis ".date("d.m.Y H:i",$date_arr['user_sitting_date_to'])."</td>";
-                            echo "<td class=\"tbldata\" width=\"5%\" style=\"text-align:center;\" ".tm("Datum löschen","Setz ein Häckchen, wenn du dieses Datum löschen willst.")."><input type=\"checkbox\" name=\"del_sitting_date[".$date_arr['user_sitting_date_id']."]\" value=\"1\"/></td></tr>";
+                            echo "<td width=\"60%\">Von ".date("d.m.Y H:i",$date_arr['user_sitting_date_from'])." bis ".date("d.m.Y H:i",$date_arr['user_sitting_date_to'])."</td>";
+                            echo "<td width=\"5%\" style=\"text-align:center;\" ".tm("Datum löschen","Setz ein Häckchen, wenn du dieses Datum löschen willst.")."><input type=\"checkbox\" name=\"del_sitting_date[".$date_arr['user_sitting_date_id']."]\" value=\"1\"/></td></tr>";
 
                             $sitting_from+=$date_arr['user_sitting_date_from'];
                             $sitting_to+=$date_arr['user_sitting_date_to'];
@@ -556,7 +556,7 @@
 
                			}
 
-                  	echo "<tr><td class=\"tbldata\" colspan=\"3\"><div align=\"center\">";
+                  	echo "<tr><td colspan=\"3\"><div align=\"center\">";
 
                     $date_field_res = dbquery("
                     SELECT
@@ -606,7 +606,7 @@
                         	</td>
                         </tr>
                         <tr>
-                        	<td class=\"tbldata\" colspan=\"3\">Alle Sittingdaten sind nun korrekt eingestellt. Der Sittingmodus kann nun mit einem Klick auf \"Sittingmodus aktivieren\" gestartet werden oder es können noch Änderungen angebracht werden!";
+                        	<td colspan=\"3\">Alle Sittingdaten sind nun korrekt eingestellt. Der Sittingmodus kann nun mit einem Klick auf \"Sittingmodus aktivieren\" gestartet werden oder es können noch Änderungen angebracht werden!";
                     }
                     else
                     {
@@ -625,7 +625,7 @@
                 else
                 {
                     tableStart("Sitter Einstellungen");
-                    echo "<tr><td class=\"tbldata\"><div align=\"center\"><b>Modus aktiv!</b></div></td></tr>";
+                    echo "<tr><td><div align=\"center\"><b>Modus aktiv!</b></div></td></tr>";
 
                     $date_res = dbquery("
                     SELECT
@@ -639,7 +639,7 @@
                     ORDER BY
                         user_sitting_date_from;");
 
-                    echo "<tr><td class=\"tbldata\"><div align=\"center\">";
+                    echo "<tr><td><div align=\"center\">";
                     while ($date_arr=mysql_fetch_array($date_res))
                     {
                         if($date_arr['user_sitting_date_to']<time())

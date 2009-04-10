@@ -55,7 +55,7 @@
 		if (mysql_num_rows($res)>0)
 		{
 			$arr=mysql_fetch_array($res);
-			tableStart("Statistiken f&uuml;r ".text2html($arr['user_nick'])."","100%");
+			tableStart("Statistiken f&uuml;r ".text2html($arr['user_nick'])."");
 
 			echo "<tr><td colspan=\"6\" style=\"text-align:center;\">
 				<b>Punkte aktuell:</b> ".nf($arr['user_points']).", <b>Rang aktuell:</b> ".$arr['user_rank']."
@@ -83,11 +83,11 @@
 					$tech[$parr['point_timestamp']]=$parr['point_tech_points'];
 					$buildings[$parr['point_timestamp']]=$parr['point_building_points'];
 				}
-				echo "<tr><th class=\"tbltitle\">Datum</th><th class=\"tbltitle\">Zeit</th><th class=\"tbltitle\">Punkte</th><th class=\"tbltitle\">Flotte</th><th class=\"tbltitle\">Forschung</th><th class=\"tbltitle\">Geb&auml;ude</th></tr>";
+				echo "<tr><th>Datum</th><th>Zeit</th><th>Punkte</th><th>Flotte</th><th>Forschung</th><th>Geb&auml;ude</th></tr>";
 				foreach ($points as $time=>$val)
 				{
-					echo "<tr><td class=\"tbldata\">".date("d.m.Y",$time)."</td><td class=\"tbldata\">".date("H:i",$time)."</td>";
-					echo "<td class=\"tbldata\">".nf($val)."</td><td class=\"tbldata\">".nf($fleet[$time])."</td><td class=\"tbldata\">".nf($tech[$time])."</td><td class=\"tbldata\">".nf($buildings[$time])."</td></tr>";
+					echo "<tr><td>".date("d.m.Y",$time)."</td><td>".date("H:i",$time)."</td>";
+					echo "<td>".nf($val)."</td><td>".nf($fleet[$time])."</td><td>".nf($tech[$time])."</td><td>".nf($buildings[$time])."</td></tr>";
 				}
 			}
 			else
@@ -102,7 +102,7 @@
 
 		}
 		else
-			echo "<i>Datensatz wurde nicht gefunden!</i>";
+			error_msg("Datensatz wurde nicht gefunden!");
 	}
 	
 	elseif (isset($_GET['alliancedetail']) && $_GET['alliancedetail']>0)
@@ -143,21 +143,21 @@
 					$avg[$parr['point_timestamp']]=$parr['point_avg'];
 					$user[$parr['point_timestamp']]=$parr['point_cnt'];
 				}
-				echo "<table width=\"400\" class=\"tbl\">";
-				echo "<tr><th class=\"tbltitle\">Datum</th><th class=\"tbltitle\">Zeit</th><th class=\"tbltitle\">Punkte</th><th class=\"tbltitle\">User-Schnitt</th><th class=\"tbltitle\">User</th></tr>";
+				tableStart('','400');
+				echo "<tr><th>Datum</th><th>Zeit</th><th>Punkte</th><th>User-Schnitt</th><th>User</th></tr>";
 				foreach ($points as $time=>$val)
 				{
-					echo "<tr><td class=\"tbldata\">".date("d.m.Y",$time)."</td><td class=\"tbldata\">".date("H:i",$time)."</td>";
-					echo "<td class=\"tbldata\">".nf($points[$time])."</td><td class=\"tbldata\">".nf($avg[$time])."</td><td class=\"tbldata\">".nf($user[$time])."</td></tr>";
+					echo "<tr><td>".date("d.m.Y",$time)."</td><td>".date("H:i",$time)."</td>";
+					echo "<td>".nf($points[$time])."</td><td>".nf($avg[$time])."</td><td>".nf($user[$time])."</td></tr>";
 				}
-				echo "</table><br/>";
+				tableEnd();
 				echo "<input type=\"button\" value=\"Allianzdetails anzeigen\" onclick=\"document.location='?page=alliance&info_id=".$arr['alliance_id']."'\" /> &nbsp; ";
 			}
 			else
-				echo "<i>Keine Punktedaten vorhanden!</i>";
+				error_msg("Keine Punktedaten vorhanden!");
 		}
 		else
-			echo "<i>Datensatz wurde nicht gefunden!</i>";
+			error_msg("Datensatz wurde nicht gefunden!");
 		if ($_GET['limit']>0) $limit=$_GET['limit']; else $limit=0;
 		echo "<input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=$page&mode=$mode&limit=".$limit."'\" /> &nbsp; ";
 	}
@@ -183,9 +183,9 @@
 		$ddm->addChild('ships','Schiffe','xajax_statsShowBox(\'ships\');','detail');
 		$ddm->addChild('exp','Erfahrung','xajax_statsShowBox(\'exp\');','detail');
 
-		$ddm->addChild('battle','Kampfpunkte','xajax_statsShowBox(\'battle\');','special');
-		$ddm->addChild('trade','Handelspunkte','xajax_statsShowBox(\'trade\');','special');
-		$ddm->addChild('diplomacy','Diplomatiepunkte','xajax_statsShowBox(\'diplomacy\');','special');
+		$ddm->addChild('battle','Kampf','xajax_statsShowBox(\'battle\');','special');
+		$ddm->addChild('trade','Handel','xajax_statsShowBox(\'trade\');','special');
+		$ddm->addChild('diplomacy','Diplomatie','xajax_statsShowBox(\'diplomacy\');','special');
 		
 		$ddm->addChild('base','Allianzbasis','xajax_statsShowBox(\'base\');','alliances');
 		

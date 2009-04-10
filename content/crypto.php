@@ -472,14 +472,14 @@
 			
 			
 			tableStart("Kryptocenter-Infos");
-			echo "<tr><th class=\"tbltitle\">Aktuelle Reichweite:</th>
-					<td class=\"tbldata\">".(CRYPTO_RANGE_PER_LEVEL*$cryptoCenterLevel)." AE ~".floor(CRYPTO_RANGE_PER_LEVEL*$cryptoCenterLevel/$cfg->value('cell_length'))." Systeme (+".CRYPTO_RANGE_PER_LEVEL." pro Stufe) </td></tr>";
-			echo "<tr><th class=\"tbltitle\">Kosten pro Scan:</th>
-					<td class=\"tbldata\">".nf(CRYPTO_FUEL_COSTS_PER_SCAN)." ".RES_FUEL." und ".nf(CRYPTO_FUEL_COSTS_PER_SCAN)." ".RES_FUEL." Allianzrohstoffe</td></tr>";
-			echo "<tr><th class=\"tbltitle\">Abklingzeit:</th>
-					<td class=\"tbldata\">".tf($cooldown)." (-".tf($cfg->param1("cryptocenter"))." pro Stufe, minimal ".tf($cfg->param2("cryptocenter")).")</td></tr>";
-			echo "<tr><th class=\"tbltitle\">Status:</th>
-					<td class=\"tbldata\">".$status_text."</td></tr>";
+			echo "<tr><th>Aktuelle Reichweite:</th>
+					<td>".(CRYPTO_RANGE_PER_LEVEL*$cryptoCenterLevel)." AE ~".floor(CRYPTO_RANGE_PER_LEVEL*$cryptoCenterLevel/$cfg->value('cell_length'))." Systeme (+".CRYPTO_RANGE_PER_LEVEL." pro Stufe) </td></tr>";
+			echo "<tr><th>Kosten pro Scan:</th>
+					<td>".nf(CRYPTO_FUEL_COSTS_PER_SCAN)." ".RES_FUEL." und ".nf(CRYPTO_FUEL_COSTS_PER_SCAN)." ".RES_FUEL." Allianzrohstoffe</td></tr>";
+			echo "<tr><th>Abklingzeit:</th>
+					<td>".tf($cooldown)." (-".tf($cfg->param1("cryptocenter"))." pro Stufe, minimal ".tf($cfg->param2("cryptocenter")).")</td></tr>";
+			echo "<tr><th>Status:</th>
+					<td>".$status_text."</td></tr>";
 			tableEnd();
 			
 			if (!$cd_enabled)

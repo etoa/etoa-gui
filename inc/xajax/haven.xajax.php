@@ -35,7 +35,7 @@
   		tableStart("Hafen-Infos");
   		
 		// Flotten unterwegs
-  		echo "<tr><th class=\"tbltitle\">Aktive Flotten:</th><td class=\"tbldata\">";
+  		echo "<tr><th>Aktive Flotten:</th><td>";
 		if ($fleet->fleetSlotsUsed() > 1)
 			echo "<b>".$fleet->fleetSlotsUsed()."</b> Flotten dieses Planeten sind <a href=\"?page=fleets\">unterwegs</a>.";
 		elseif ($fleet->fleetSlotsUsed()==1)
@@ -45,7 +45,7 @@
 		echo "</td></tr>";
 	
 		// Flotten startbar?
-  		echo "<tr><th class=\"tbltitle\">Flottenstart:</th><td class=\"tbldata\">";
+  		echo "<tr><th>Flottenstart:</th><td>";
 		if ($fleet->possibleFleetStarts() > 1 )
 			echo "<b>".$fleet->possibleFleetStarts()."</b> Flotten k&ouml;nnen von diesem Planeten starten!";
 		elseif ($fleet->possibleFleetStarts()==1 )
@@ -58,7 +58,7 @@
 		echo ")</td></tr>";
 	
 		// Piloten		
-  		echo "<tr><th class=\"tbltitle\">Piloten:</th><td class=\"tbldata\">";
+  		echo "<tr><th>Piloten:</th><td>";
 		if ($fleet->pilotsAvailable() >1)
 			echo "<b>".nf($fleet->pilotsAvailable())."</b> Piloten k&ouml;nnen eingesetzt werden.";
 		elseif ($fleet->pilotsAvailable()==1)
@@ -70,7 +70,7 @@
 		// Rasse		
 		if ($fleet->raceSpeedFactor() != 1)
 		{
-			echo "<tr><th class=\"tbltitle\">Rassenbonus:</th><td class=\"tbldata\">";
+			echo "<tr><th>Rassenbonus:</th><td>";
 			echo "Die Schiffe fliegen aufgrund deiner Rasse <b>".$fleet->ownerRaceName."</b> mit ".get_percent_string($fleet->raceSpeedFactor,1)." Geschwindigkeit!";
 			echo "</td></tr>";
 		}
@@ -78,7 +78,7 @@
 		// Specialist		
 		if ($fleet->specialist->fleetSpeedFactor != 1)
 		{
-			echo "<tr><th class=\"tbltitle\">Spezialistenbonus:</th><td class=\"tbldata\">";
+			echo "<tr><th>Spezialistenbonus:</th><td>";
 			echo "Die Schiffe fliegen aufgrund des <b>".$fleet->specialist->name."</b> mit ".get_percent_string($fleet->specialist->fleetSpeedFactor,1)." Geschwindigkeit!";
 			echo "</td></tr>";
 		}
@@ -256,7 +256,7 @@
 	      $tabulator++;
 			}
 			echo "<tr><td colspan=\"5\"></td>
-			<td class=\"tbldata\">";
+			<td>";
 			
 			// Select all ships button			
 			echo "<a href=\"javascript:;\" onclick=\"";
@@ -346,11 +346,7 @@ ob_start();
 					//
 					//ob_start();							
 					
-					tableStart();
-					//echo "<table class=\"tb\">";
-					echo "<tr>
-						<th colspan=\"5\">Schiffe</th>
-					</tr>";
+					tableStart("Schiffe");
 					echo "<tr>
 						<th>Anzahl</th>
 						<th>Typ</th>
@@ -399,11 +395,7 @@ ob_start();
 					ob_start();
 					echo "<form id=\"targetForm\" onsubmit=\"xajax_havenShowAction(xajax.getFormValues('targetForm'));return false;\" >";
 					
-					tableStart();
-					//echo "<table class=\"tb\">";
-					echo "<tr>
-						<th colspan=\"2\">Zielwahl</th>
-					</tr>";
+					tableStart("Zielwahl");
 
 					if (isset($fleet->targetEntity))
 					{
@@ -423,8 +415,7 @@ ob_start();
 					}
 					
 					// Manuelle Auswahl
-					echo "<tr><td class=\"tbltitle\" width=\"25%\" rowspan=\"2\">Zielwahl:</td><td class=\"tbldata\" width=\"75%\">
-					Manuelle Eingabe: ";
+					echo "<tr><th width=\"25%\">Manuelle Eingabe:</th><td width=\"75%\">";
 					echo "<input type=\"text\" 
 												id=\"man_sx\"
 												name=\"man_sx\" 
@@ -500,7 +491,7 @@ ob_start();
 												onkeypress=\"return nurZahlen(event)\"
 					/></td></tr>";
 					
-					echo "<tr><td class=\"tbldata\" width=\"75%\" align=\"left\">Zielfavoriten: ";
+					echo "<tr><th width=\"25%\">Zielfavoriten:</th><td width=\"75%\" align=\"left\">";
 							echo "<select name=\"bookmarks\" 
 											id=\"bookmarks\" 
 											onchange=\"xajax_havenBookmark(xajax.getFormValues('targetForm'));\"
@@ -560,8 +551,8 @@ ob_start();
 					
 					// Speedfaktor
 					echo "<tr>
-						<td class=\"tbltitle\" width=\"25%\">Speedfaktor:</td>
-						<td class=\"tbldata\" width=\"75%\" align=\"left\">";
+						<th width=\"25%\">Speedfaktor:</th>
+						<td width=\"75%\" align=\"left\">";
 							echo "<select name=\"speed_percent\" 
 											id=\"duration_percent\" 
 											onchange=\"showLoader('duration');xajax_havenTargetInfo(xajax.getFormValues('targetForm'))\"
@@ -578,33 +569,33 @@ ob_start();
 					echo "</td></tr>";
 					
 					// Daten anzeigen
-					echo "<tr><td width=\"25%\"><b>Ziel-Informationen:</b></td>
-						<td class=\"tbldata\" id=\"targetinfo\" style=\"padding:2px 2px 3px 6px;background:#000;color:#fff;height:47px;\">
+					echo "<tr><th width=\"25%\"><b>Ziel-Informationen:</b></th>
+						<td id=\"targetinfo\" style=\"padding:2px 2px 3px 6px;background:#000;color:#fff;height:47px;\">
 							<img src=\"images/loading.gif\" alt=\"Loading\" /> Lade Daten...
 						</td></tr>";
-					echo "<tr><td>Entfernung:</td>
+					echo "<tr><th>Entfernung:</th>
 						<td id=\"distance\">-</td></tr>";
-					echo "<tr><td  width=\"25%\">Kosten/100 AE:</td>
-						<td class=\"tbldata\" id=\"costae\">".nf($fleet->getCostsPerHundredAE())." t ".RES_FUEL."</td></tr>";
-					echo "<tr><td>Geschwindigkeit:</td>
+					echo "<tr><th width=\"25%\">Kosten/100 AE:</th>
+						<td id=\"costae\">".nf($fleet->getCostsPerHundredAE())." t ".RES_FUEL."</td></tr>";
+					echo "<tr><th>Geschwindigkeit:</th>
 						<td id=\"speed\">".nf($fleet->getSpeed())." AE/h";
 					If ($fleet->sBonusSpeed>1)
 							echo " (inkl. ".get_percent_string($fleet->sBonusSpeed,1)." Mysticum-Bonus)";
 					echo "</td></tr>";
-					echo "<tr><td>Dauer:</td>
+					echo "<tr><th>Dauer:</th>
 						<td><span id=\"duration\" style=\"font-weight:bold;\">-</span> (inkl. Start- und Landezeit von ".tf($fleet->getTimeLaunchLand()).")</td></tr>";
-					echo "<tr><td>Treibstoff:</td>
+					echo "<tr><th>Treibstoff:</th>
 						<td><span id=\"costs\" style=\"font-weight:bold;\">-</span> (inkl. Start- und Landeverbrauch von ".nf($fleet->getCostsLaunchLand())." ".RES_FUEL.")</td></tr>";
-					echo "<tr><td>Nahrung:</td>
+					echo "<tr><th>Nahrung:</th>
 						<td><span id=\"food\"  style=\"font-weight:bold;\">-</span></td></tr>";
-					echo "<tr><td>Piloten:</td>
+					echo "<tr><th>Piloten:</th>
 						<td>".nf($fleet->getPilots());
 						If ($fleet->sBonusPilots!=1)
 							echo " (inkl. ".get_percent_string(1-$fleet->sBonusPilots,1,1)." Mysticum-Bonus)";
 					echo "</td></tr>";
-					echo "<tr><td>Bemerkungen:</td>
+					echo "<tr><th>Bemerkungen:</th>
 						<td id=\"comment\">-</td></tr>";
-					echo "<tr id=\"allianceAttacks\" style=\"display: none;\"><td class=\"tbldata\">Allianzangriffe</td><td class=\"tbldata\" id=\"alliance\">-</td></tr>";
+					echo "<tr id=\"allianceAttacks\" style=\"display: none;\"><td>Allianzangriffe</td><td id=\"alliance\">-</td></tr>";
 					tableEnd();
 					
 					echo "&nbsp;<input tabindex=\"7\" type=\"button\" onclick=\"xajax_havenShowShips()\" value=\"&lt;&lt; Zurück zur Schiffauswahl\" />&nbsp;";
@@ -695,28 +686,25 @@ ob_start();
 						// Target infos
 						//	
 						ob_start();
-						tableStart();
-						echo "<tr>
-							<th colspan=\"2\">Zielinfos</th>
-						</tr>";
-						echo "<tr><td width=\"25%\"><b>Ziel-Informationen:</b></td>
-							<td class=\"tbldata\" id=\"targetinfo\" style=\"padding:16px 2px 2px 60px;color:#fff;height:47px;background:#000 url('".$ent->imagePath()."') no-repeat 3px 3px;\">
+						tableStart("Zielinfos");
+						echo "<tr><th width=\"25%\"><b>Ziel-Informationen:</b></th>
+							<td id=\"targetinfo\" style=\"padding:16px 2px 2px 60px;color:#fff;height:47px;background:#000 url('".$ent->imagePath()."') no-repeat 3px 3px;\">
 								".$ent." (".$ent->entityCodeString().", Besitzer: ".$ent->owner().")
 							</td></tr>";
 						echo "<tr>
-							<td class=\"tbltitle\" width=\"25%\">Speedfaktor:</td>
-							<td class=\"tbldata\" width=\"75%\" align=\"left\">";
+							<th width=\"25%\">Speedfaktor:</th>
+							<td width=\"75%\" align=\"left\">";
 						echo $fleet->getSpeedPercent();
 						echo "%</td></tr>";
-						echo "<tr><td class=\"tbltitle\">Entfernung:</td>
+						echo "<tr><th>Entfernung:</th>
 							<td id=\"distance\">".nf($fleet->getDistance())." AE</td></tr>";
-						echo "<tr><td class=\"tbltitle\">Dauer:</td>
+						echo "<tr><th>Dauer:</th>
 							<td><span id=\"duration\" style=\"font-weight:bold;\">".tf($fleet->getDuration())."</span></td></tr>";
-						echo "<tr><td class=\"tbltitle\">Treibstoff:</td>
+						echo "<tr><th>Treibstoff:</th>
 							<td><span id=\"costs\" style=\"font-weight:bold;\">".nf($fleet->getCosts())." t ".RES_FUEL."</span></td></tr>";
-						echo "<tr><td class=\"tbltitle\">Nahrung:</td>
+						echo "<tr><th>Nahrung:</th>
 							<td><span id=\"costsFood\" style=\"font-weight:bold;\">".nf($fleet->getCostsFood())." t ".RES_FOOD."</span></td></tr>";
-						echo "<tr id=\"supportTime\" style=\"display: none;\"><td class=\"tbltitle\">Supportzeit:</td><td id=\"support\"></td></tr>";
+						echo "<tr id=\"supportTime\" style=\"display: none;\"><th>Supportzeit:</th><td id=\"support\"></td></tr>";
 						tableEnd();		
 						
 						$response->assign("havenContentTarget","innerHTML",ob_get_contents());				
@@ -1384,8 +1372,8 @@ ob_start();
 		if ($code=="alliance" && $fleet->getLeader()==0)
 		{
 			ob_start();
-			echo "<td class=\"tbldata\" colspan=\"2\"><textarea name=\"message_text\" id=\"message\" rows=\"10\" cols=\"55\"></textarea></td>
-			<td class=\"tbldata\">";
+			echo "<td colspan=\"2\"><textarea name=\"message_text\" id=\"message\" rows=\"10\" cols=\"55\"></textarea></td>
+			<td>";
 			foreach ($fleet->owner->alliance->members as $mk => $mv)
 			{
 				echo "<input type=\"checkbox\" name=\"msgUser[]\" name=\"msgUser[]\" value=\"$mk\" checked=\"checked\">&nbsp;$mv<br>";

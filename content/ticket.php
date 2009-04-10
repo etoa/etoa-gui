@@ -100,7 +100,7 @@ else
 		um dein Anliegen zu beschrieben; je mehr Infos du uns gibts, desto besser können wir dir helfen:<br/><br/>";
 		echo "<form action=\"?page=$page\" method=\"post\">";
 		checker_init();
-		tableStart("Neues Ticket",700);
+		tableStart("Neues Ticket");
 		echo "<tr>
 			<th>Kategorie:</th>
 			<td><select name=\"cat_id\">";
@@ -167,7 +167,7 @@ else
 			}
 			echo "</select> (* z.B. bei Regelverstössen angeben)</td>
 		</tr>*/
-		echo "</table><br/>
+		tableEnd();
 		
 		<input type=\"submit\" name=\"abuse_submit\" value=\"Einsenden\" /><br/><br/>";
 		echo "</form>";
@@ -180,7 +180,7 @@ else
 		
 		if (count($tickets)>0)
 		{
-			tableStart("Vorhandene Tickets",700);
+			tableStart("Vorhandene Tickets");
 			echo "<tr>
 				<th>ID</th>
 				<th>Kategorie</th>
@@ -202,7 +202,7 @@ else
 				</td>
 				</tr>";
 			}
-			echo "</table>";
+			tableEnd();
 		}
 		}		
 	}

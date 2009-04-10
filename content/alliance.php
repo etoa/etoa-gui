@@ -323,7 +323,7 @@
 									// Name / Tag sind bereits vergeben
 									if(mysql_result($check_res,0)>0)
 									{										
-										echo "Fehler! Der gewünschte Tag oder Name ist bereits vergeben!<br>";
+										error_msg("Der gewünschte Tag oder Name ist bereits vergeben!");
 									}
 									// Name / Tag sind noch nicht vergeben
 									else
@@ -333,12 +333,12 @@
 								}
 								else
 								{
-									echo "Fehler! Unerlaubte Zeichen (".$signs.") im Allianztag oder im Allianznamen!<br>";
+									error_msg("Unerlaubte Zeichen (".$signs.") im Allianztag oder im Allianznamen!");
 								}
 							}
 							else
 							{
-								echo "Fehler! Der Allianzname und Allianztag dürfen nicht nur aus Leerzeichen besttehen!<br>";
+								error_msg("Der Allianzname und Allianztag dürfen nicht nur aus Leerzeichen besttehen!");
 							}
 						}
 						
@@ -865,7 +865,7 @@
 						user_alliance_rank_id=0 
 					WHERE 
 						user_id=".$cu->id.";");
-					echo "Die fehlerhafte Verkn&uuml;pfung wurde gel&ouml;st!";
+					ok_msg("Die fehlerhafte Verkn&uuml;pfung wurde gel&ouml;st!");
 				}
 				else
 					echo "<form action=\"?page=$page\" method=\"post\">Diese Allianz existiert nicht!<br/><br/>

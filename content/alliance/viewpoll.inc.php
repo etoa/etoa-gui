@@ -49,13 +49,13 @@
 			if (mysql_num_rows($upres)>0 || $parr['poll_active']==0)
 			{
 				tableStart(stripslashes($parr['poll_title']));
-				echo "<tr><th colspan=\"2\" class=\"tbltitle\">".stripslashes($parr['poll_question'])."</th></tr>";
+				echo "<tr><th colspan=\"2\">".stripslashes($parr['poll_question'])."</th></tr>";
 				$num_votes = $parr['poll_a1_count']+$parr['poll_a2_count']+$parr['poll_a3_count']+$parr['poll_a4_count']+$parr['poll_a5_count']+$parr['poll_a6_count']+$parr['poll_a7_count']+$parr['poll_a8_count'];
 				for ($x=1;$x<=8;$x++)
 				{
 					if ($parr['poll_a'.$x.'_text']!="")
 					{
-						echo "<tr><td class=\"tbldata\">".stripslashes($parr['poll_a'.$x.'_text'])."</td>";
+						echo "<tr><td>".stripslashes($parr['poll_a'.$x.'_text'])."</td>";
 						if ($parr['poll_a'.$x.'_count']>0)
 						{
 							$p = 100/$num_votes*$parr['poll_a'.$x.'_count'];
@@ -68,7 +68,7 @@
 						}
 						$iiw = POLL_BAR_WIDTH-$iw;
 						$img = "poll".$x;
-						echo "<td class=\"tbldata\" style=\"width:250px;\"><img src=\"images/".$img.".jpg\" width=\"$iw\" height=\"10\" alt=\"Poll\" /><img src=\"images/blank.gif\" width=\"$iiw\" height=\"10\"> ".round($p,2)." % (".$parr['poll_a'.$x.'_count']." Stimmen)</td></tr>";
+						echo "<td style=\"width:250px;\"><img src=\"images/".$img.".jpg\" width=\"$iw\" height=\"10\" alt=\"Poll\" /><img src=\"images/blank.gif\" width=\"$iiw\" height=\"10\"> ".round($p,2)." % (".$parr['poll_a'.$x.'_count']." Stimmen)</td></tr>";
 					}
 				}
 				tableEnd();
@@ -90,7 +90,7 @@
 		}
 	}
 	else
-		echo "<i>Keine Umfragen vorhanden</i><br/><br/>";
+		error_msg("Keine Umfragen vorhanden");
 	echo "<input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"Zur&uuml;ck\" />";
 	
 

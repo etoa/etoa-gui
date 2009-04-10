@@ -120,7 +120,7 @@
 			b.building_order;");
 		if (mysql_num_rows($bres)>0)
 		{
-			tableStart("Rohstoffproduktion und Energieverbrauch","auto");
+			tableStart("Rohstoffproduktion und Energieverbrauch");
 			echo "<tr>
 						<th style=\"width:200px;\">Geb&auml;ude</th>";
 			echo "<th class=\"resmetalcolor\">".RES_METAL."</th>";
@@ -330,8 +330,8 @@
 			$tc->open();
 		}
 		
-		echo '<div>
-		<input type="button" onclick="document.location=\'?page=specialists\'" value="Spezialisten" /> &nbsp; ';
+		echo "<div>
+		<input type=\"button\" onclick=\"document.location='?page=specialists'\" value=\"Spezialisten\" /> &nbsp; ";
 		echo "<input type=\"button\" onclick=\"document.location='?page=planetstats'\" value=\"Ressourcen aller Planeten anzeigen\" /> &nbsp; 
 		<input type=\"button\" onclick=\"document.location='?page=economy&action=update'\" value=\"Neu Berechnen\" />
 		</div>";
@@ -342,7 +342,7 @@
 		$blvl = $bl->getLevel(RES_BUNKER_ID);
 		if ($blvl>0)
 		{
-			iBoxStart("Rohstoffbunker",700);
+			iBoxStart("Rohstoffbunker");
 			echo "In deinem <b>".$bl->item(RES_BUNKER_ID)."</b> der Stufe <b>$blvl</b> werden bei einem 
 			Angriff <b>".nf($bl->getBunkerRes())."</b> Resourcen gesichert!";
 			iBoxEnd();
@@ -352,7 +352,7 @@
 		//
 		// Energie
 		//
-		tableStart("Energieproduktion",700);
+		tableStart("Energieproduktion");
 		echo "<tr><th style=\"width:230px;\">Gebäude</th>
 		<th colspan=\"3\">".RES_ICON_POWER."Energie</th></tr>";
 
@@ -425,10 +425,10 @@
 				if ($pwr!="") 
 					$pwr = $pwr * $power_bonus;
 				$pwrt = $pwr * $sarr['shiplist_count'];
-				echo '<tr><th>'.$sarr['ship_name'].' ('.nf($sarr['shiplist_count']).')</th>';
-				echo '<td colspan="3" class="tbldata">'.nf($pwrt).' 
-				(Energie pro Satellit: '.(($pwr)).' = '.$sarr['ship_prod_power'].' Basis, '.$dtempstr.' bedingt durch Entfernung zur Sonne, '.get_percent_string($power_bonus,1).' durch Energiebonus)</td>';
-				echo '</tr>';
+				echo "<tr><th>".$sarr['ship_name']." (".nf($sarr['shiplist_count']).")</th>";
+				echo "<td colspan=\"3\">".nf($pwrt)." 
+				(Energie pro Satellit: ".(($pwr))." = ".$sarr['ship_prod_power']." Basis, ".$dtempstr." bedingt durch Entfernung zur Sonne, ".get_percent_string($power_bonus,1)." durch Energiebonus)</td>";
+				echo "</tr>";
 				$cnt['power'] += $pwrt;
 			}
 		}		
@@ -458,7 +458,7 @@
 			<img src=\"misc/progress.image.php?w=100&p=".round($powerFree/$powerProduced*100,2)."\" alt=\"progress\" />
 			</td></tr>";
 		}
-		echo "</table>";
+		tableEnd();
 	
 		if ($tabsEnable)
 		{
@@ -495,7 +495,7 @@
                 OR b.building_store_food>0);");
 		if (mysql_num_rows($bres)>0)
 		{
-			tableStart("Lagerkapazit&auml;t",'98%');
+			tableStart("Lagerkapazit&auml;t");
 			echo "<tr><th style=\"width:160px\">Geb&auml;ude</th>";
 			echo "<th>".RES_ICON_METAL."".RES_METAL."</th>";
 			echo "<th>".RES_ICON_CRYSTAL."".RES_CRYSTAL."</th>";
@@ -557,7 +557,7 @@
 		// Boni
 		//
 
-		tableStart("Boni",'98%');
+		tableStart("Boni");
 
 		echo "<tr><th>Rohstoff</th>
 		<th>".$cp->typeName."</th>";
@@ -659,7 +659,7 @@
 		}
 	}
 	else
-		echo "<h2>Fehler</h2> Dieser Planet existiert nicht oder er geh&ouml;rt nicht dir!";
+		error_msg("Dieser Planet existiert nicht oder er geh&ouml;rt nicht dir!");
 
 ?>
 

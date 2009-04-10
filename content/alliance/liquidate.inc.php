@@ -6,8 +6,8 @@ if (Alliance::checkActionRights('liquidate'))
 		// Prüft, ob noch Mitglieder vorhanden sind (keine Bewerbungen!)
 		if (count($ally->members) > 1)
 		{
-			echo "Allianz kann nicht aufgel&ouml;st werden, da sie noch Mitglieder hat. L&ouml;sche zuerst die Mitglieder!
-			<br/><br/><input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"Zur&uuml;ck\" />";
+			error_msg("Allianz kann nicht aufgel&ouml;st werden, da sie noch Mitglieder hat. L&ouml;sche zuerst die Mitglieder!");
+			echo "<input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"Zur&uuml;ck\" />";
 		}
 		else
 		{

@@ -457,17 +457,17 @@
 			{
 				$s_img = IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$arr['ship_id']."_small.".IMAGE_EXT;
 				echo "<tr>
-								<td class=\"tbldata\" width=\"40\">
+								<td width=\"40\">
 									<a href=\"".HELP_URL_SHIP."&amp;id=".$arr['ship_id']."\"><img src=\"$s_img\" width=\"40\"  height=\"40\" border=\"0\"/></a>
 								</td>";
-					echo "<td class=\"tbldata\" width=\"66%\" valign=\"middle\">".$arr['ship_name']."</td>";
-					echo "<td class=\"tbldata\" width=\"22%\" valign=\"middle\">".nf($arr['shiplist_count'])."</td>";
-					echo "<td class=\"tbldata\" width=\"12%\" valign=\"middle\"><input type=\"text\" name=\"ship_count[".$arr['ship_id']."]\" size=\"8\" maxlength=\"".strlen($arr['shiplist_count'])."\" value=\"0\" title=\"Anzahl welche recyclet werden sollen\" tabindex=\"".$tabulator."\" onKeyPress=\"return nurZahlen(event)\">
+					echo "<td width=\"66%\" valign=\"middle\">".$arr['ship_name']."</td>";
+					echo "<td width=\"22%\" valign=\"middle\">".nf($arr['shiplist_count'])."</td>";
+					echo "<td width=\"12%\" valign=\"middle\"><input type=\"text\" name=\"ship_count[".$arr['ship_id']."]\" size=\"8\" maxlength=\"".strlen($arr['shiplist_count'])."\" value=\"0\" title=\"Anzahl welche recyclet werden sollen\" tabindex=\"".$tabulator."\" onKeyPress=\"return nurZahlen(event)\">
 								</td>
 						</tr>\n";
 			}
 			
-			echo "</table><br/>\n";
+			tableEnd();
 			echo "<input type=\"submit\" class=\"button\" name=\"submit_recycle_ships\" value=\"Ausgew&auml;hlte Schiffe recyceln\"><br/></form>";
 		}
 		else
@@ -509,16 +509,16 @@
 			{
 				$s_img = IMAGE_PATH."/".IMAGE_DEF_DIR."/def".$arr['def_id']."_small.".IMAGE_EXT; //image angepasst by Lamborghini
 				echo "<tr>
-								<td class=\"tbldata\" width=\"40\">
+								<td width=\"40\">
 									<a href=\"".HELP_URL_DEF."&amp;id=".$arr['def_id']."\"><img src=\"$s_img\" width=\"40\"  height=\"40\" border=\"0\"/></a>
 								</td>";
-					echo "<td class=\"tbldata\" width=\"66%\" valign=\"middle\">".$arr['def_name']."</td>";
-					echo "<td class=\"tbldata\" width=\"22%\" valign=\"middle\">".nf($arr['deflist_count'])."</td>";
-					echo "<td class=\"tbldata\" width=\"12%\" valign=\"middle\"><input type=\"text\" name=\"def_count[".$arr['def_id']."]\" size=\"8\" maxlength=\"".strlen($arr['deflist_count'])."\" value=\"0\" tabindex=\"".$tabulator."\" onKeyPress=\"return nurZahlen(event)\"></td>
+					echo "<td width=\"66%\" valign=\"middle\">".$arr['def_name']."</td>";
+					echo "<td width=\"22%\" valign=\"middle\">".nf($arr['deflist_count'])."</td>";
+					echo "<td width=\"12%\" valign=\"middle\"><input type=\"text\" name=\"def_count[".$arr['def_id']."]\" size=\"8\" maxlength=\"".strlen($arr['deflist_count'])."\" value=\"0\" tabindex=\"".$tabulator."\" onKeyPress=\"return nurZahlen(event)\"></td>
 						</tr>\n";
 				$tabulator++;
 			}
-			echo "</table><br/>\n";
+			tableEnd();
 			echo "<input type=\"submit\" class=\"button\" name=\"submit_recycle_def\" value=\"Ausgew&auml;hlte Anlagen recyceln\"></form>";
 		}
 		else

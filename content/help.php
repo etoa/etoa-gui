@@ -28,7 +28,7 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/
 
-	echo "<h1>Hilfe</h1>"; 
+	echo '<h1>Hilfe</h1>';
 	
 	if (isset($_GET['site']) && $_GET['site']!="")
 	{
@@ -44,44 +44,44 @@
 				err_msg("Hilfedatei nicht gefunden!");
 			}
 		}
-		echo "&nbsp;&nbsp;<input type=\"button\" value=\"Hilfe&uuml;bersicht\" onclick=\"document.location='?page=$page'\" /><br/><br/>";
+		return_btn();
 
 	}
 	else
 	{
 
-		echo "<h2>&Uuml;bersicht</h2>";
+		echo '<h2>&Uuml;bersicht</h2>';
 		
 		//Commentet ou, because function will be rewritten as soon as i find the time to do it...
 		//HelpUtil::breadCrumbs();
 		
-		echo "Hier findest du Informationen zu verschiedenen Objekten des Spiels:<br/><br/>";
+		echo 'Hier findest du Informationen zu verschiedenen Objekten des Spiels:<br/><br/>';
 
 		if (!ADMIN_MODE)
 		{
 			tableStart("Tools");
-			echo "<tr>
-			<td style=\"text-align:center;width:20%\">
-				<a href=\"?page=ticket\"><img src=\"images/abuse.png\" border=\"0\" alt=\"Missbrauch\" style=\"width:40px;height:40px;\" title=\"Ticket erstellen\"></a><br/>
+			echo '<tr>
+			<td style="text-align:center;width:20%">
+				<a href="?page=ticket"><img src="images/abuse.png" border="0" alt="Missbrauch" style="width:40px;height:40px;" title="Ticket erstellen"></a><br/>
 				Ticket an einen Admin schreiben
 			</td>
-			<td style=\"text-align:center;width:20%\">
-				<a href=\"?page=contact\"><img src=\"images/mail.png\" border=\"0\" alt=\"Kontakt\" style=\"width:40px;height:40px;\" title=\"Kontakt\"></a><br/>
+			<td style="text-align:center;width:20%">
+				<a href="?page=contact"><img src="images/mail.png" border="0" alt="Kontakt" style="width:40px;height:40px;" title="Kontakt"></a><br/>
 				Admin per E-Mail kontaktieren
 			</td>
-			<td style=\"text-align:center;width:20%\">
-				<a href=\"javascript:;\" onclick=\"".HELPCENTER_ONCLICK."\"><img src=\"images/help.png\" border=\"0\" alt=\"FAQ\" style=\"width:40px;height:40px;\" title=\"Hilfecenter und FAQ\"></a><br/>
+			<td style="text-align:center;width:20%">
+				<a href="javascript:;" onclick="'.HELPCENTER_ONCLICK.'"><img src="images/help.png" border="0" alt="FAQ" style="width:40px;height:40px;" title="Hilfecenter und FAQ"></a><br/>
 				Häufig gestellte Fragen (FAQ)
 			</td>
-			<td style=\"text-align:center;width:20%\">
-				<a href=\"".FORUM_PATH."\" target=\"_Blank\"><img src=\"images/users.png\" border=\"0\" alt=\"Forum\" title=\"Forum\" style=\"width:40px;height:40px;\"></a><br/>
+			<td style="text-align:center;width:20%">
+				<a href="'.FORUM_PATH.'" target="_Blank"><img src="images/users.png" border="0" alt="Forum" title="Forum" style="width:40px;height:40px;"></a><br/>
 				Forum
 			</td>
-			<td style=\"text-align:center;width:20%\">
-				<a href=\"".DEVCENTER_PATH."\" target=\"_Blank\"><img src=\"images/bug.png\" border=\"0\" alt=\"FAQ\" style=\"width:40px;height:40px;\" title=\"FAQ\"></a><br/>
+			<td style="text-align:center;width:20%">
+				<a href="'.DEVCENTER_PATH.'" target="_Blank"><img src="images/bug.png" border="0" alt="FAQ" style="width:40px;height:40px;" title="FAQ"></a><br/>
 				Fehler melden
 			</td>
-			</td></tr>";
+			</td></tr>';
 			tableEnd();
 		}
 				
@@ -119,7 +119,7 @@
 			tableStart($cat);
 			foreach ($data as $title=>$item)
 			{
-				echo "<tr><td width=\"35%\"><b><a href=\"?page=$page&site=".$item[0]."\">".$title."</b></td><td>".$item[1]."</td></tr>";
+				echo '<tr><td width="35%"><b><a href="?page='.$page.'&site='.$item[0].'">'.$title.'</b></td><td>'.$item[1].'</td></tr>';
 			}
 			tableEnd();
 		}    

@@ -393,21 +393,21 @@
 					// Forschungsdaten anzeigen
 					//
 					tableStart(text2html($arr['tech_name']." ".$b_level));
-					echo "<tr><td width=\"220\" rowspan=\"3\" class=\"tbldata\" style=\"background:#000;;vertical-align:middle;\">
+					echo "<tr><td width=\"220\" rowspan=\"3\" style=\"background:#000;;vertical-align:middle;\">
 					".helpImageLink("research&amp;id=".$arr['tech_id'],IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$arr['tech_id'].".".IMAGE_EXT,$arr['tech_name'],"width:220px;height:220px")."
 					</td>";
-					echo "<td valign=\"top\" class=\"tbldata\" colspan=\"2\">".text2html($arr['tech_shortcomment'])."</td></tr>";
+					echo "<td valign=\"top\" colspan=\"2\">".text2html($arr['tech_shortcomment'])."</td></tr>";
 					echo "<tr><th height=\"20\" width=\"50%\">Status:</th>";
-					echo "<td id=\"buildstatus\" class=\"tbldata\" width=\"50%\" style=\"".$color."\">$status_text</td></tr>";
+					echo "<td id=\"buildstatus\" width=\"50%\" style=\"".$color."\">$status_text</td></tr>";
 					echo "<tr><th height=\"20\" width=\"50%\">Stufe:</th>";
 	
 					if ($b_level>0)
 					{
-						echo "<td id=\"buildlevel\" class=\"tbldata\" width=\"50%\">".$b_level."</td></tr>";
+						echo "<td id=\"buildlevel\" width=\"50%\">".$b_level."</td></tr>";
 					}
 					else
 					{
-						echo "<td id=\"buildlevel\" class=\"tbldata\" width=\"50%\">Noch nicht erforscht</td></tr>";
+						echo "<td id=\"buildlevel\" width=\"50%\">Noch nicht erforscht</td></tr>";
 					}
 					tableEnd();
 	
@@ -470,19 +470,19 @@
 							$bwmax=max($bwait['metal'],$bwait['crystal'],$bwait['plastic'],$bwait['fuel'],$bwait['food']);
 		
 							// Baukosten-String
-							$bcstring = "<td class=\"tbldata\"";
+							$bcstring = "<td";
 							if ($bc['metal']>$cp->resMetal)
 								$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff","<b>".nf($bc['metal']-$cp->resMetal)."</b> ".RES_METAL."<br/>Bereit in <b>".tf($bwait['metal'])."</b>");
-							$bcstring.= ">".nf($bc['metal'])."</td><td class=\"tbldata\"";
+							$bcstring.= ">".nf($bc['metal'])."</td><td";
 							if ($bc['crystal']>$cp->resCrystal)
 								$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['crystal']-$cp->resCrystal)." ".RES_CRYSTAL."<br/>Bereit in <b>".tf($bwait['crystal'])."</b>");
-							$bcstring.= ">".nf($bc['crystal'])."</td><td class=\"tbldata\"";
+							$bcstring.= ">".nf($bc['crystal'])."</td><td";
 							if ($bc['plastic']>$cp->resPlastic)
 								$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['plastic']-$cp->resPlastic)." ".RES_PLASTIC."<br/>Bereit in <b>".tf($bwait['plastic'])."</b>");
-							$bcstring.= ">".nf($bc['plastic'])."</td><td class=\"tbldata\"";
+							$bcstring.= ">".nf($bc['plastic'])."</td><td";
 							if ($bc['fuel']>$cp->resFuel)
 								$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['fuel']-$cp->resFuel)." ".RES_FUEL."<br/>Bereit in <b>".tf($bwait['fuel'])."</b>");
-							$bcstring.= ">".nf($bc['fuel'])."</td><td class=\"tbldata\"";
+							$bcstring.= ">".nf($bc['fuel'])."</td><td";
 							if ($bc['food']>$cp->resFood)
 								$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['food']-$cp->resFood)." ".RES_FOOD."<br/>Bereit in <b>".tf($bwait['food'])."</b>");
 							$bcstring.= ">".nf($bc['food'])."</td></tr>";
@@ -490,34 +490,34 @@
 							// Maximale Stufe erreicht
 							if ($b_level>=$arr['tech_last_level'])
 							{
-								echo "<tr><td colspan=\"7\" class=\"tbldata\"><i>Keine Weiterentwicklung m&ouml;glich.</i></td></tr>";
+								echo "<tr><td colspan=\"7\"><i>Keine Weiterentwicklung m&ouml;glich.</i></td></tr>";
 							}
 							// Es wird bereits geforscht
 							elseif ($builing_something)
 							{
-								echo "<tr><td class=\"tbldata\" style=\"color:red;\">Erforschen</td><td class=\"tbldata\">".tf($btime)."</td>";
+								echo "<tr><td style=\"color:red;\">Erforschen</td><td>".tf($btime)."</td>";
 								echo $bcstring;
-								//echo "<td class=\"tbldata\">".nf($bc['metal'])."</td><td class=\"tbldata\">".nf($bc['crystal'])."</td><td class=\"tbldata\">".nf($bc['plastic'])."</td><td class=\"tbldata\">".nf($bc['fuel'])."</td><td class=\"tbldata\">".nf($bc['food'])."</td></tr>";
-								echo "<tr><td class=\"tbldata\" colspan=\"7\"><i>Es kann nichts erforscht werden da gerade an einer anderen Technik geforscht wird!</i></td></tr>";
+								//echo "<td>".nf($bc['metal'])."</td><td>".nf($bc['crystal'])."</td><td>".nf($bc['plastic'])."</td><td>".nf($bc['fuel'])."</td><td>".nf($bc['food'])."</td></tr>";
+								echo "<tr><td colspan=\"7\"><i>Es kann nichts erforscht werden da gerade an einer anderen Technik geforscht wird!</i></td></tr>";
 							}
 							// Zuwenig Rohstoffe vorhanden
 							elseif ($cp->resMetal<$bc['metal'] || $cp->resCrystal<$bc['crystal']  || $cp->resPlastic<$bc['plastic']  || $cp->resFuel<$bc['fuel']  || $cp->resFood<$bc['food'])
 							{
-								echo "<tr><td class=\"tbldata\" style=\"color:red;\">Erforschen</td><td class=\"tbldata\">".tf($btime)."</td>";
+								echo "<tr><td style=\"color:red;\">Erforschen</td><td>".tf($btime)."</td>";
 								echo $bcstring;
-								echo "<tr><td class=\"tbldata\" colspan=\"7\"><i>Keine Weiterentwicklung m&ouml;glich, zuwenig Rohstoffe!</i></td></tr>";
+								echo "<tr><td colspan=\"7\"><i>Keine Weiterentwicklung m&ouml;glich, zuwenig Rohstoffe!</i></td></tr>";
 							}
 							// Forschen
 							elseif ($b_level==0)
 							{
-								echo "<tr><td class=\"tbldata\"><input type=\"submit\" class=\"button\" name=\"command_build\" value=\"Erforschen\"></td><td class=\"tbldata\">".tf($btime)."</td>";
-								echo "<td class=\"tbldata\">".nf($bc['metal'])."</td><td class=\"tbldata\">".nf($bc['crystal'])."</td><td class=\"tbldata\">".nf($bc['plastic'])."</td><td class=\"tbldata\">".nf($bc['fuel'])."</td><td class=\"tbldata\">".nf($bc['food'])."</td></tr>";
+								echo "<tr><td><input type=\"submit\" class=\"button\" name=\"command_build\" value=\"Erforschen\"></td><td>".tf($btime)."</td>";
+								echo "<td>".nf($bc['metal'])."</td><td>".nf($bc['crystal'])."</td><td>".nf($bc['plastic'])."</td><td>".nf($bc['fuel'])."</td><td>".nf($bc['food'])."</td></tr>";
 							}
 							// Ausbauen
 							else
 							{
-								echo "<tr><td class=\"tbldata\"><input type=\"submit\" class=\"button\" name=\"command_build\" value=\"Erforschen\"></td><td class=\"tbldata\">".tf($btime)."</td>";
-								echo "<td class=\"tbldata\">".nf($bc['metal'])."</td><td class=\"tbldata\">".nf($bc['crystal'])."</td><td class=\"tbldata\">".nf($bc['plastic'])."</td><td class=\"tbldata\">".nf($bc['fuel'])."</td><td class=\"tbldata\">".nf($bc['food'])."</td></tr>";
+								echo "<tr><td><input type=\"submit\" class=\"button\" name=\"command_build\" value=\"Erforschen\"></td><td>".tf($btime)."</td>";
+								echo "<td>".nf($bc['metal'])."</td><td>".nf($bc['crystal'])."</td><td>".nf($bc['plastic'])."</td><td>".nf($bc['fuel'])."</td><td>".nf($bc['food'])."</td></tr>";
 							}
 					}
 	
@@ -527,15 +527,15 @@
 					{
 						if ($planet_id==$cp->id())
 						{
-	              echo "<tr><td class=\"tbldata\"><input type=\"submit\" class=\"button\" id=\"buildcancel\" name=\"command_cbuild\" value=\"Abbrechen\"  onclick=\"if (this.value=='Abbrechen'){return confirm('Wirklich abbrechen?');}\" />";
-	              echo "</td><td class=\"tbldata\" id=\"buildtime\">-</td>
-		      					<td colspan=\"6\" class=\"tbldata\" id=\"buildprogress\" style=\"height:25px;background:#fff;text-align:center;\"></td></tr>";
+	              echo "<tr><td><input type=\"submit\" class=\"button\" id=\"buildcancel\" name=\"command_cbuild\" value=\"Abbrechen\"  onclick=\"if (this.value=='Abbrechen'){return confirm('Wirklich abbrechen?');}\" />";
+	              echo "</td><td id=\"buildtime\">-</td>
+		      					<td colspan=\"6\" id=\"buildprogress\" style=\"height:25px;background:#fff;text-align:center;\"></td></tr>";
 	              if ($b_level<$arr['tech_last_level']-1)
-		         		echo "<tr><td class=\"tbldata\" width=\"90\">N&auml;chste Stufe:</td><td class=\"tbldata\">".tf($btimen)."</td><td class=\"tbldata\">".nf($bcn['metal'])."</td><td class=\"tbldata\">".nf($bcn['crystal'])."</td><td class=\"tbldata\">".nf($bcn['plastic'])."</td><td class=\"tbldata\">".nf($bcn['fuel'])."</td><td class=\"tbldata\">".nf($bcn['food'])."</td></tr>";
+		         		echo "<tr><td width=\"90\">N&auml;chste Stufe:</td><td>".tf($btimen)."</td><td>".nf($bcn['metal'])."</td><td>".nf($bcn['crystal'])."</td><td>".nf($bcn['plastic'])."</td><td>".nf($bcn['fuel'])."</td><td>".nf($bcn['food'])."</td></tr>";
 		         }
 						else
 						{
-							echo "<tr><td class=\"tbldata\" colspan=\"7\">Technologie wird auf einem anderen Planeten bereits erforscht!</td></tr>";					
+							echo "<tr><td colspan=\"7\">Technologie wird auf einem anderen Planeten bereits erforscht!</td></tr>";					
 						}
 					}
 	
@@ -612,7 +612,8 @@
 				}
 				else
 				{
-					echo "<b>Fehler:</b> Technik nich vorhanden!<br/><br/><a href=\"?page=$page\">&Uuml;bersicht</a>";
+					error_msg("Technik nich vorhanden!");
+					return_btn();
 				}
 			}
 	
@@ -901,7 +902,7 @@
 									echo "</div></td>\n";
 
 									/*
-										echo "<td class=\"tbldata\" style=\"color:".$color.";text-align:center;width:".CELL_WIDTH."px\">
+										echo "<td style=\"color:".$color.";text-align:center;width:".CELL_WIDTH."px\">
 													<b>".$bv['name']."";
 													if ($b_level>0) echo ' '.$b_level;
 													echo "</b><br/>".$subtitle."<br/>
@@ -935,7 +936,7 @@
 							if ($scnt==0)
 							{								
 								echo "<tr>
-												<td class=\"tbldata\" colspan=\"".NUM_BUILDINGS_PER_ROW."\" style=\"text-align:center;border:0;width:100%\">
+												<td colspan=\"".NUM_BUILDINGS_PER_ROW."\" style=\"text-align:center;border:0;width:100%\">
 													<i>In dieser Kategorie kann momentan noch nichts geforscht werden!</i>
 												</td>
 											</tr>";								
@@ -944,7 +945,7 @@
 						}
 						else
 						{
-							echo "<tr><td class=\"tbldata\" colspan=\"4\" style=\"text-align:center;border:0;width:100%\"><i>In dieser Kategorie kann momentan noch nichts erforscht werden!</i></td></tr>";
+							echo "<tr><td colspan=\"4\" style=\"text-align:center;border:0;width:100%\"><i>In dieser Kategorie kann momentan noch nichts erforscht werden!</i></td></tr>";
 						}
 						tableEnd();
 					}

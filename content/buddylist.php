@@ -248,32 +248,32 @@
 		users.user_nick ASC;");
 	if (mysql_num_rows($res)>0)
 	{
-		tableStart("Meine Freunde","100%");
+		tableStart("Meine Freunde");
 		echo "<tr>
-			<th class=\"tbltitle\">Nick</th>
-			<th class=\"tbltitle\">Punkte</th>
-			<th class=\"tbltitle\">Hauptplanet</th>
-			<th class=\"tbltitle\">Online</th>
-			<th class=\"tbltitle\">Kommentar</th>
-			<th class=\"tbltitle\">Aktion</th>
+			<th>Nick</th>
+			<th>Punkte</th>
+			<th>Hauptplanet</th>
+			<th>Online</th>
+			<th>Kommentar</th>
+			<th>Aktion</th>
 		</tr>";
 		while($arr=mysql_fetch_array($res))
 		{
 			echo "<tr>
-			<td class=\"tbldata\">".$arr['user_nick']."</td>";
+			<td>".$arr['user_nick']."</td>";
 			if ($arr['bl_allow']==1)
 			{
 				$tp = new Planet($arr['pid']);
-				echo "<td class=\"tbldata\">".nf($arr['user_points'])."</td>";
-				echo "<td class=\"tbldata\"><a href=\"?page=cell&amp;id=".$tp->cellId()."&amp;hl=".$tp->id()."\">".$tp."</a></td>";
+				echo "<td>".nf($arr['user_points'])."</td>";
+				echo "<td><a href=\"?page=cell&amp;id=".$tp->cellId()."&amp;hl=".$tp->id()."\">".$tp."</a></td>";
 				if ((time()-$conf['online_threshold']['v']*60) < $arr['user_acttime'])
-					echo "<td class=\"tbldata\" style=\"color:#0f0;\">online</td>";
+					echo "<td style=\"color:#0f0;\">online</td>";
 				else
-					echo "<td class=\"tbldata\">".date("d.m.Y H:i",$arr['user_acttime'])."</td>";
+					echo "<td>".date("d.m.Y H:i",$arr['user_acttime'])."</td>";
 			}
 			else
-				echo "<td class=\"tbldata\" colspan=\"3\"><i>Noch keine Erlaubnis</i></td>";
-			echo "<td class=\"tbldata\">";
+				echo "<td colspan=\"3\"><i>Noch keine Erlaubnis</i></td>";
+			echo "<td>";
 			if ($arr['bl_comment']!="" && $arr['bl_user_id']==$cu->id)
 			{
 				echo text2html($arr['bl_comment']);
@@ -283,7 +283,7 @@
 				echo text2html($arr['bl_comment_buddy']);
 			}
 			echo "</td>";
-			echo "<td class=\"tbldata\">
+			echo "<td>
 				<a href=\"?page=messages&mode=new&message_user_to=".$arr['user_id']."\" title=\"Nachricht\">Nachricht</a>  
 				<a href=\"?page=userinfo&amp;id=".$arr['user_id']."\" title=\"Info\">Profil</a><br/>
 				<a href=\"?page=$page&comment=".$arr['bl_id']."\" title=\"Kommentar bearbeiten\">Kommentar</a> ";
@@ -295,7 +295,7 @@
 	}
 	else
 	{
-		echo "Es sind noch keine Freunde in deiner Buddyliste eingetragen!<br/><br/>";
+		error_msg("Es sind noch keine Freunde in deiner Buddyliste eingetragen!",1);
 	}
 
 $res=dbquery("
@@ -322,7 +322,7 @@ $res=dbquery("
 		users.user_nick ASC;");
 	if (mysql_num_rows($res)>0)
 	{
-		tableStart("Offene Anfragen","100%");
+		tableStart("Offene Anfragen");
 		echo "<tr>
 			<th class=\"tbltitle\">Nick</th>
 			<th class=\"tbltitle\">Punkte</th>
@@ -342,8 +342,8 @@ $res=dbquery("
 			}
 
 			echo "</td>";
-			echo "<td class=\"tbldata\">".nf($arr['user_points'])."</td>";
-			echo "<td class=\"tbldata\" style=\"width:280px;\">
+			echo "<td>".nf($arr['user_points'])."</td>";
+			echo "<td style=\"width:280px;\">
 				<a href=\"?page=messages&mode=new&message_user_to=".$arr['user_id']."\" title=\"Nachricht\">Nachricht</a>  
 				<a href=\"?page=userinfo&amp;id=".$arr['user_id']."\" title=\"Info\">Profil</a> 
 				<a href=\"?page=$page&amp;allow=".$arr['user_id']."\" style=\"color:#0f0\">Annehmen</a> 

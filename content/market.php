@@ -65,9 +65,9 @@
 
 	// BEGIN SKRIPT //
 
-	echo "<h1>Marktplatz des Planeten ".$cp->name()."</h1>";
+	echo '<h1>Marktplatz des Planeten '.$cp->name().'</h1>';
 	//echo "<br/><div style=\"color:red;font-size:20pt;\">In bearbeitung!</div><br/><br/>";
-	echo "<div id=\"marketinfo\"></div>"; //nur zu entwicklungszwecken!
+	echo '<div id="marketinfo"></div>'; //nur zu entwicklungszwecken!
 
 	$mode = isset($_GET['mode']) ? $_GET['mode'] : "";
 
@@ -1561,7 +1561,7 @@
 	{
 		$factor = $alliance_market_level-4;
 	}
-	$cooldown = 3600/$factor;
+	$cooldown = ($factor==0) ? 0 : 3600/$factor;
 	if ($alliance_market_level>0)
 	{
 		if ($cu->alliance->getMarketCooldown()>time())
@@ -1587,14 +1587,14 @@
 	
 	//Marktinof Bof
 	tableStart("Marktplatz-Infos");
-		echo "<tr><th class=\"tbltitle\">Angebote:</th>
-				<td class=\"tbldata\">Im Moment hast du ".$anzahl." Angebote von diesem Planet auf dem Markt</td></tr>";
-		echo "<tr><th class=\"tbltitle\">Mögliche Angebote:</th>
-				<td class=\"tbldata\">Du kannst noch ".$possible." Angebote einstellen</td></tr>";
-		echo "<tr><th class=\"tbltitle\">Rückzugsgebühren:</th>
-				<td class=\"tbldata\">Wenn du ein Angebot zur&uuml;ckziehst erh&auml;lst du ".(round($return_factor,2)*100)."% des Angebotes zur&uuml;ck (abgerundet).</td></tr>";
-		echo "<tr><th class=\"tbltitle\">Verkaufsgebühren:</th>
-				<td class=\"tbldata\">Der Verkaufsgeb&uuml;hr des Marktplatzes betr&auml;gt ".get_percent_string(MARKET_TAX,1,1)."";
+		echo "<tr><th>Angebote:</th>
+				<td>Im Moment hast du ".$anzahl." Angebote von diesem Planet auf dem Markt</td></tr>";
+		echo "<tr><th>Mögliche Angebote:</th>
+				<td>Du kannst noch ".$possible." Angebote einstellen</td></tr>";
+		echo "<tr><th>Rückzugsgebühren:</th>
+				<td>Wenn du ein Angebot zur&uuml;ckziehst erh&auml;lst du ".(round($return_factor,2)*100)."% des Angebotes zur&uuml;ck (abgerundet).</td></tr>";
+		echo "<tr><th>Verkaufsgebühren:</th>
+				<td>Der Verkaufsgeb&uuml;hr des Marktplatzes betr&auml;gt ".get_percent_string(MARKET_TAX,1,1)."";
 		if ($cu->specialist->tradeBonus!=1)
 		{
 			echo " (inkl ".get_percent_string($cu->specialist->tradeBonus,1,1)." Kostenverringerung durch ".$cu->specialist->name."!";
@@ -1602,14 +1602,14 @@
 		echo "	</td></tr>";
 		if ($cu->specialist->tradeTime!=1)
 		{
-			echo "<tr><th class=\"tbltitle\">Handelsflottengeschwindigkeit:</th>
-					<td class=\"tbldata\">Die Handelsflotten fliegen durch ".$cu->specialist->name." mit ".get_percent_string($cu->specialist->tradeTime,1)." Geschwindigkeit!
+			echo "<tr><th>Handelsflottengeschwindigkeit:</th>
+					<td>Die Handelsflotten fliegen durch ".$cu->specialist->name." mit ".get_percent_string($cu->specialist->tradeTime,1)." Geschwindigkeit!
 					</td></tr>";
 		}
 		if ($cu->allianceId()>0)
 		{
-			echo "<tr><th class=\"tbltitle\">Allianzmarktstatus:</th>
-					<td class=\"tbldata\">".$status_text."</td></tr>";
+			echo "<tr><th>Allianzmarktstatus:</th>
+					<td>".$status_text."</td></tr>";
 		}
 
 	tableEnd();
@@ -2761,11 +2761,11 @@
 				checker_init();				
 				tableStart("Angebots&uuml;bersicht");
 					echo "<tr>
-								<td class=\"tbltitle\" colspan=\"2\" width=\"25%\">Angebot:</td>
-								<td class=\"tbltitle\" width=\"15%\">Anbieter:</td>
-								<td class=\"tbltitle\" width=\"25%\">Datum:</td>
-								<td class=\"tbltitle\" colspan=\"2\" width=\"25%\">Preis:</td>
-								<td class=\"tbltitle\" width=\"10%\">Kaufen:</td>
+								<th colspan=\"2\" width=\"25%\">Angebot:</th>
+								<th width=\"15%\">Anbieter:</th>
+								<th width=\"25%\">Datum:</th>
+								<th colspan=\"2\" width=\"25%\">Preis:</th>
+								<th width=\"10%\">Kaufen:</th>
 							</tr>";
 				$cnt=0;
 				while ($arr=mysql_fetch_array($res))
@@ -2808,7 +2808,7 @@
 					}
 					
 					echo "<tr>
-									<td class=\"tbldata\"><b>".RES_METAL."</b>:";
+									<td><b>".RES_METAL."</b>:";
 
 
 					// Übergibt Daten an XAJAX
@@ -2830,40 +2830,40 @@
 									
 									
 									echo "</td>
-									<td class=\"tbldata\">".nf($arr['sell_metal'])."</td>
-									<td class=\"tbldata\" rowspan=\"5\">
+									<td>".nf($arr['sell_metal'])."</td>
+									<td rowspan=\"5\">
 										<a href=\"?page=userinfo&amp;id=".$arr['user_id']."\">".get_user_nick($arr['user_id'])."</a>
 									</td>
-									<td class=\"tbldata\" rowspan=\"5\">
+									<td rowspan=\"5\">
 										".date("d.m.Y  G:i:s", $arr['datum'])."<br/><br/>".stripslashes($arr['ressource_text'])."
 									</td>
-									<td class=\"tbldata\"><b>".RES_METAL."</b>:</td>
+									<td><b>".RES_METAL."</b>:</td>
 									<td class=\"".$metal_class."\">".nf($arr['buy_metal'])."</td>
-									<td class=\"tbldata\" rowspan=\"5\">
+									<td rowspan=\"5\">
 										<input type=\"checkbox\" name=\"ressource_market_id[]\" id=\"ressource_market_id\" value=\"".$arr['ressource_market_id']."\" onclick=\"xajax_calcMarketRessBuy(xajax.getFormValues('ress_buy_selector'));\" /><br/><br/>".$for_alliance."
 									</td>
 								</tr>
 								<tr>
-									<td class=\"tbldata\"><b>".RES_CRYSTAL."</b>:</td>
-									<td class=\"tbldata\">".nf($arr['sell_crystal'])."</td>
-									<td class=\"tbldata\"><b>".RES_CRYSTAL."</b>:</td>
+									<td><b>".RES_CRYSTAL."</b>:</td>
+									<td>".nf($arr['sell_crystal'])."</td>
+									<td><b>".RES_CRYSTAL."</b>:</td>
 									<td class=\"".$crystal_class."\">".nf($arr['buy_crystal'])."</td>
 								</tr>
 								<tr>
-									<td class=\"tbldata\"><b>".RES_PLASTIC."</b>:</td>
-									<td class=\"tbldata\">".nf($arr['sell_plastic'])."</td>
-									<td class=\"tbldata\"><b>".RES_PLASTIC."</b>:</td>
+									<td><b>".RES_PLASTIC."</b>:</td>
+									<td>".nf($arr['sell_plastic'])."</td>
+									<td><b>".RES_PLASTIC."</b>:</td>
 									<td class=\"".$plastic_class."\">".nf($arr['buy_plastic'])."</td></tr>
 								<tr>
-									<td class=\"tbldata\"><b>".RES_FUEL."</b>:</td>
-									<td class=\"tbldata\">".nf($arr['sell_fuel'])."</td>
-									<td class=\"tbldata\"><b>".RES_FUEL."</b>:</td>
+									<td><b>".RES_FUEL."</b>:</td>
+									<td>".nf($arr['sell_fuel'])."</td>
+									<td><b>".RES_FUEL."</b>:</td>
 									<td class=\"".$fuel_class."\">".nf($arr['buy_fuel'])."</td>
 								</tr>
 								<tr>
-									<td class=\"tbldata\"><b>".RES_FOOD."</b>:</td>
-									<td class=\"tbldata\">".nf($arr['sell_food'])."</td>
-									<td class=\"tbldata\"><b>".RES_FOOD."</b>:</td>
+									<td><b>".RES_FOOD."</b>:</td>
+									<td>".nf($arr['sell_food'])."</td>
+									<td><b>".RES_FOOD."</b>:</td>
 									<td class=\"".$food_class."\">".nf($arr['buy_food'])."</td>
 								</tr>";
 					$cnt++;
@@ -2871,7 +2871,7 @@
 					if ($cnt<mysql_num_rows($res))
 					{
 						echo "<tr>
-										<td class=\"tbldata\" colspan=\"7\" style=\"height:10px;background:#000\">&nbsp;</td>
+										<td colspan=\"7\" style=\"height:10px;background:#000\">&nbsp;</td>
 									</tr>";
 					}
 
@@ -2880,10 +2880,10 @@
 				
 				tableStart();
 				echo "<tr>
-								<td class=\"tbldata\" colspan=\"7\" id=\"ressource_check_message\" style=\"text-align:center;vertical-align:middle;height:30px;\">&nbsp;</td>
+								<td colspan=\"7\" id=\"ressource_check_message\" style=\"text-align:center;vertical-align:middle;height:30px;\">&nbsp;</td>
 							</tr>
 							<tr>
-								<td class=\"tbldata\" colspan=\"7\" id=\"ressource_check_button\" style=\"text-align:center;vertical-align:middle;\">
+								<td colspan=\"7\" id=\"ressource_check_button\" style=\"text-align:center;vertical-align:middle;\">
 									<input type=\"submit\" class=\"button\" name=\"ressource_submit\" id=\"ressource_submit\" value=\"Angebot annehmen\" disabled=\"disabled\"/>
 								</td>
 							</tr>";
@@ -2908,11 +2908,11 @@
 				
 			tableStart("Angebots&uuml;bersicht");
 			echo "<tr>
-						<td class=\"tbltitle\" width=\"25%\">Angebot:</td>
-						<td class=\"tbltitle\" width=\"15%\">Anbieter:</td>
-						<td class=\"tbltitle\" width=\"25%\">Datum:</td>
-						<td class=\"tbltitle\" colspan=\"2\" width=\"25%\">Preis:</td>
-						<td class=\"tbltitle\" width=\"10%\">Kaufen:</td>
+						<th width=\"25%\">Angebot:</th>
+						<th width=\"15%\">Anbieter:</th>
+						<th width=\"25%\">Datum:</th>
+						<th colspan=\"2\" width=\"25%\">Preis:</th>
+						<th width=\"10%\">Kaufen:</th>
 					</tr>";	
 				
 			$res = dbquery("	
@@ -2959,61 +2959,61 @@
           }
               
           // Prüft, ob die Rohstoffe ausreichen für das Angebot und färbt dementsprechend Preis
-          $metal_class = "tbldata";
-          $crystal_class = "tbldata";
-          $plastic_class = "tbldata";
-          $fuel_class = "tbldata";
-          $food_class = "tbldata";
+          $metal_class = "";
+          $crystal_class = "";
+          $plastic_class = "";
+          $fuel_class = "";
+          $food_class = "";
 					if ($cp->resMetal < $arr['ship_costs_metal'])
 					{ 
-						$metal_class = "tbldata2";
+						$metal_class = "resfullcolor";
 					}
 					if ($cp->resCrystal < $arr['ship_costs_crystal'])
 					{ 
-						$crystal_class = "tbldata2";
+						$crystal_class = "resfullcolor";
 					}					
 					if ($cp->resPlastic < $arr['ship_costs_plastic'])
 					{ 
-						$plastic_class = "tbldata2";
+						$plastic_class = "resfullcolor";
 					}
 					if ($cp->resFuel < $arr['ship_costs_fuel'])
 					{ 
-						$fuel_class = "tbldata2";
+						$fuel_class = "resfullcolor";
 					}
 					if ($cp->resFood < $arr['ship_costs_food'])
 					{ 
-						$food_class = "tbldata2";
+						$food_class = "resfullcolor";
 					}
 					
 					echo "<tr>
-									<td class=\"tbldata\" rowspan=\"5\">".$hiddenFields."
+									<td rowspan=\"5\">".$hiddenFields."
 										".nf($arr['ship_count'])." <a href=\"?page=help&amp;site=shipyard&amp;id=".$arr['ship_id']."\">".$arr['ship_name']."</a>
 									</td>
-									<td class=\"tbldata\" rowspan=\"5\">
+									<td rowspan=\"5\">
 										<a href=\"?page=userinfo&amp;id=".$arr['user_id']."\">".get_user_nick($arr['user_id'])."</a>
 									</td>
-									<td class=\"tbldata\" rowspan=\"5\">
+									<td rowspan=\"5\">
 										".date("d.m.Y  G:i:s", $arr['datum'])."<br/><br/>".stripslashes($arr['ship_text'])."
 									</td>
-									<td class=\"tbldata\"><b>".RES_METAL."</b>:</td>
+									<td><b>".RES_METAL."</b>:</td>
 									<td class=\"".$metal_class."\">".nf($arr['ship_costs_metal'])."</td>
-									<td class=\"tbldata\" rowspan=\"5\">
+									<td rowspan=\"5\">
 										<input type=\"checkbox\" name=\"ship_market_id[]\" id=\"ship_market_id_".$arr['ship_market_id']."\" value=\"".$arr['ship_market_id']."\" onclick=\"xajax_calcMarketShipBuy(xajax.getFormValues('ship_buy_selector'));\" /><br/><br/>".$for_alliance."
 									</td>
 								</tr>
 								<tr>
-									<td class=\"tbldata\"><b>".RES_CRYSTAL."</b>:</td>
+									<td><b>".RES_CRYSTAL."</b>:</td>
 									<td class=\"".$crystal_class."\">".nf($arr['ship_costs_crystal'])."</td>
 								</tr>
 								<tr>
-									<td class=\"tbldata\"><b>".RES_PLASTIC."</b>:</td>
+									<td><b>".RES_PLASTIC."</b>:</td>
 									<td class=\"".$plastic_class."\">".nf($arr['ship_costs_plastic'])."</td></tr>
 								<tr>
-									<td class=\"tbldata\"><b>".RES_FUEL."</b>:</td>
+									<td><b>".RES_FUEL."</b>:</td>
 									<td class=\"".$fuel_class."\">".nf($arr['ship_costs_fuel'])."</td>
 								</tr>
 								<tr>
-									<td class=\"tbldata\"><b>".RES_FOOD."</b>:</td>
+									<td><b>".RES_FOOD."</b>:</td>
 									<td class=\"".$food_class."\">".nf($arr['ship_costs_food'])."</td>
 								</tr>";
 					$cnt++;
@@ -3021,7 +3021,7 @@
 					if ($cnt<mysql_num_rows($res))
 					{
 						echo "<tr>
-										<td class=\"tbldata\" colspan=\"7\" style=\"height:10px;background:#000\">&nbsp;</td>
+										<td colspan=\"7\" style=\"height:10px;background:#000\">&nbsp;</td>
 									</tr>";
 					}
 
@@ -3030,10 +3030,10 @@
 				
 				tableStart();
 				echo "<tr>
-								<td class=\"tbldata\" colspan=\"7\" id=\"ship_buy_check_message\" style=\"text-align:center;vertical-align:middle;height:30px;\">&nbsp;</td>
+								<td colspan=\"7\" id=\"ship_buy_check_message\" style=\"text-align:center;vertical-align:middle;height:30px;\">&nbsp;</td>
 							</tr>
 							<tr>
-								<td class=\"tbldata\" colspan=\"7\" style=\"text-align:center;vertical-align:middle;\">
+								<td colspan=\"7\" style=\"text-align:center;vertical-align:middle;\">
 									<input type=\"submit\" name=\"ship_submit\" id=\"ship_submit\" value=\"Angebot annehmen\" disabled=\"disabled\"/>
 								</td>
 							</tr>";
@@ -3214,19 +3214,19 @@
 						
 						// Header
 						echo "<tr>
-		                <td class=\"tbltitle\" colspan=\"2\">Info</td>
-		                <td class=\"tbltitle\">Rohstoff</td>
-		                <td class=\"tbltitle\">Angebot</td>
-		                <td class=\"tbltitle\">Höchstgebot</td>
+		                <th colspan=\"2\">Info</th>
+		                <th>Rohstoff</th>
+		                <th>Angebot</th>
+		                <th>Höchstgebot</th>
 		              </tr>";
 			             
 						echo "<tr>
-										<td class=\"tbltitle\" style=\"width:20%;vertical-align:middle;\">Anbieter</td>
-										<td class=\"tbldata\" style=\"width:25%;vertical-align:middle;\">
+										<th style=\"width:20%;vertical-align:middle;\">Anbieter</th>
+										<td style=\"width:25%;vertical-align:middle;\">
 											<a href=\"?page=userinfo&amp;id=".$arr['auction_user_id']."\">".get_user_nick($arr['auction_user_id'])."</a>
 										</td>
-										<td class=\"tbltitle\" style=\"width:15%;vertical-align:middle;\">".RES_METAL.":</td>
-										<td class=\"tbldata\" id=\"auction_sell_metal_field\" style=\"width:20%;vertical-align:middle;\">
+										<th style=\"width:15%;vertical-align:middle;\">".RES_METAL.":</th>
+										<td id=\"auction_sell_metal_field\" style=\"width:20%;vertical-align:middle;\">
 											".nf($arr['auction_sell_metal'])."
 										</td>										
 											<td class=\"".$auction_buy_metal_class."\" id=\"auction_buy_metal_field\" style=\"width:20%;vertical-align:middle;\">
@@ -3234,12 +3234,12 @@
 										</td>			
 									</tr>
 									<tr>
-										<td class=\"tbltitle\">Start</td>
-										<td class=\"tbldata\">
+										<th>Start</th>
+										<td>
 											".date("d.m.Y  G:i:s", $arr['auction_start'])."
 										</td>
-										<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_CRYSTAL.":</td>
-										<td class=\"tbldata\" id=\"auction_sell_crystal_field\" style=\"vertical-align:middle;\">
+										<th style=\"vertical-align:middle;\">".RES_CRYSTAL.":</th>
+										<td id=\"auction_sell_crystal_field\" style=\"vertical-align:middle;\">
 											".nf($arr['auction_sell_crystal'])."
 										</td>										
 											<td class=\"".$auction_buy_crystal_class."\" id=\"auction_buy_crystal_field\" style=\"vertical-align:middle;\">
@@ -3247,12 +3247,12 @@
 										</td>
 									</tr>	
 									<tr>									
-										<td class=\"tbltitle\">Ende</td>
-										<td class=\"tbldata\">
+										<th>Ende</th>
+										<td>
 											".date("d.m.Y  G:i:s", $arr['auction_end'])."
 										</td>
-										<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_PLASTIC.":</td>
-										<td class=\"tbldata\" id=\"auction_sell_plastic_field\" style=\"vertical-align:middle;\">
+										<th style=\"vertical-align:middle;\">".RES_PLASTIC.":</th>
+										<td id=\"auction_sell_plastic_field\" style=\"vertical-align:middle;\">
 											".nf($arr['auction_sell_plastic'])."
 										</td>										
 											<td class=\"".$auction_buy_plastic_class."\" id=\"auction_buy_plastic_field\" style=\"vertical-align:middle;\">
@@ -3260,12 +3260,12 @@
 										</td>	
 									</tr>
 									<tr>									
-										<td class=\"tbltitle\">Dauer</td>
-										<td class=\"tbldata\" ".$class.">
+										<th>Dauer</th>
+										<td ".$class.">
 											".$rest_time."
 										</td>
-										<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_FUEL.":</td>
-										<td class=\"tbldata\" id=\"auction_sell_fuel_field\" style=\"vertical-align:middle;\">
+										<th style=\"vertical-align:middle;\">".RES_FUEL.":</th>
+										<td id=\"auction_sell_fuel_field\" style=\"vertical-align:middle;\">
 											".nf($arr['auction_sell_fuel'])."
 										</td>										
 											<td class=\"".$auction_buy_fuel_class."\" id=\"auction_buy_fuel_field\" style=\"vertical-align:middle;\">
@@ -3273,12 +3273,12 @@
 										</td>	
 									</tr>
 									<tr>									
-										<td class=\"tbltitle\">Höchstbietender</td>
-										<td class=\"tbldata\">
+										<th>Höchstbietender</th>
+										<td>
 											".$buyer."
 										</td>
-										<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_FOOD.":</td>
-										<td class=\"tbldata\" id=\"auction_sell_food_field\" style=\"vertical-align:middle;\">
+										<th style=\"vertical-align:middle;\">".RES_FOOD.":</th>
+										<td id=\"auction_sell_food_field\" style=\"vertical-align:middle;\">
 											".nf($arr['auction_sell_food'])."
 										</td>										
 											<td class=\"".$auction_buy_food_class."\" id=\"auction_buy_food_field\" style=\"vertical-align:middle;\">
@@ -3289,13 +3289,13 @@
 									if($arr['auction_text']!="")
 									{
 										echo "<tr>
-														<td class=\"tbldata\" colspan=\"5\" style=\"text-align:center;vertical-align:middle;\">
+														<td colspan=\"5\" style=\"text-align:center;vertical-align:middle;\">
 															".stripslashes($arr['auction_text'])."
 														</td>
 													</tr>";
 									}
 									echo "<tr>
-										<td class=\"tbldata\" colspan=\"5\" style=\"text-align:center;vertical-align:middle;\">";
+										<td colspan=\"5\" style=\"text-align:center;vertical-align:middle;\">";
 										// Bietbutton anzeigen wenn das Angebot noch steht
 										if($arr['auction_buyable']==1)
 										{
@@ -3503,25 +3503,25 @@
 				// Allgemeine Angebotsinfo
 				tableStart("Angebotsinfo");
 				echo "<tr>
-                <td class=\"tbltitle\">Anbieter</td>
-								<td class=\"tbldata\">
+                <th>Anbieter</th>
+								<td>
 									<a href=\"?page=userinfo&amp;id=".$arr['auction_user_id']."\">".get_user_nick($arr['auction_user_id'])."</a>
 								</td>
 							</tr>
 							<tr>
-                <td class=\"tbltitle\">Start</td>
-								<td class=\"tbldata\">
+                <th>Start</th>
+								<td>
 									".date("d.m.Y  G:i:s", $arr['auction_start'])."
 								</td>
 							</tr>
 							<tr>
-                <td class=\"tbltitle\">Ende</td>
-								<td class=\"tbldata\">
+                <th>Ende</th>
+								<td>
 									".date("d.m.Y  G:i:s", $arr['auction_end'])."
 								</td>
 							</tr>
 							<tr>
-                <td class=\"tbltitle\">Dauer</td>";
+                <th>Dauer</th>";
 							// Löschdatum anzeigen wenn dieses schon festgelegt ist und "Auktion beendet"
 							if($arr['auction_delete_date']!=0)
 							{
@@ -3544,11 +3544,11 @@
 				      	}
 				        
 				        
-				        echo "<td class=\"tbldata\">AUKTION BEENDET</td>
+				        echo "<td>AUKTION BEENDET</td>
 				        		</tr>
 				        		<tr>
-				        			<td class=\"tbltitle\">Löschung</td>
-				        			<td class=\"tbldata\">".$delete_time."</td>
+				        			<th>Löschung</th>
+				        			<td>".$delete_time."</td>
 				        		</tr>";
 							}
 							else
@@ -3563,14 +3563,14 @@
 							if($arr['auction_current_buyer_id']!=0)
 							{
 								echo "<tr>
-				                <td class=\"tbltitle\">Höchstbietender</td>
-												<td class=\"tbldata\">
+				                <th>Höchstbietender</th>
+												<td>
 													".$buyer."
 												</td>
 											</tr>
 											<tr>
-				                <td class=\"tbltitle\">Geboten am</td>
-												<td class=\"tbldata\">
+				                <th>Geboten am</th>
+												<td>
 													".date("d.m.Y  G:i:s", $arr['auction_current_buyer_date'])."
 												</td>
 											</tr>";
@@ -3589,24 +3589,24 @@
 				//Header
 				tableStart();
 				echo "<tr>
-								<td class=\"tbltitle\" style=\"width:15%;vertical-align:middle;\">Rohstoff</td>
-								<td class=\"tbltitle\" style=\"width:15%;vertical-align:middle;\">Angebot</td>
-								<td class=\"tbltitle\" style=\"width:5%;text-align:center;vertical-align:middle;\">Kurs</td>
-								<td class=\"tbltitle\" style=\"width:15%;vertical-align:middle;\">Höchstgebot</td>
-								<td class=\"tbltitle\" style=\"width:15%;vertical-align:middle;\">Bieten</td>
-								<td class=\"tbltitle\" style=\"width:35%;vertical-align:middle;\">Min./Max.</td>
+								<th style=\"width:15%;vertical-align:middle;\">Rohstoff</th>
+								<th style=\"width:15%;vertical-align:middle;\">Angebot</th>
+								<th style=\"width:5%;text-align:center;vertical-align:middle;\">Kurs</th>
+								<th style=\"width:15%;vertical-align:middle;\">Höchstgebot</th>
+								<th style=\"width:15%;vertical-align:middle;\">Bieten</th>
+								<th style=\"width:35%;vertical-align:middle;\">Min./Max.</th>
 							</tr>";
 				// Titan
 				echo "<tr>
-								<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_METAL.":</td>
-								<td class=\"tbldata\" id=\"auction_sell_metal_field\" style=\"vertical-align:middle;\">
+								<th style=\"vertical-align:middle;\">".RES_METAL.":</th>
+								<td id=\"auction_sell_metal_field\" style=\"vertical-align:middle;\">
 									".nf($arr['auction_sell_metal'])."
 								</td>		
-								<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_METAL_FACTOR."</td>	
-								<td class=\"tbldata\" id=\"auction_buy_metal_field\" style=\"vertical-align:middle;\">
+								<th style=\"text-align:center;vertical-align:middle;\">".MARKET_METAL_FACTOR."</th>
+								<td id=\"auction_buy_metal_field\" style=\"vertical-align:middle;\">
 									".nf($arr['auction_buy_metal'])."
 								</td>
-								<td class=\"tbldata\" style=\"vertical-align:middle;\">";
+								<td style=\"vertical-align:middle;\">";
 								if($arr['auction_currency_metal']==1 && $arr['auction_buyable']==1)
 								{
 									echo "<input type=\"text\" value=\"".nf($arr['auction_buy_metal'])."\" name=\"auction_new_buy_metal\" id=\"auction_new_buy_metal\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resMetal.",'','');calcMarketAuctionPrice(0);\"/>";
@@ -3617,18 +3617,19 @@
 									echo " - ";
 								}										
 					echo "</td>
-								<td class=\"tbltitle\" id=\"auction_min_max_metal\" style=\"vertical-align:middle;\"> - </td>
+								<th id=\"auction_min_max_metal\" style=\"vertical-align:middle;\"> - </th>
 							</tr>";
 				// Silizium
 				echo "<tr>
-								<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_CRYSTAL.":</td>
-								<td class=\"tbldata\" id=\"auction_sell_crystal_field\" style=\"vertical-align:middle;\">
+								<th style=\"vertical-align:middle;\">".RES_CRYSTAL.":</th>
+								<td id=\"auction_sell_crystal_field\" style=\"vertical-align:middle;\">
 									".nf($arr['auction_sell_crystal'])."
 								</td>		
-								<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_CRYSTAL_FACTOR."</td>	<td class=\"tbldata\" id=\"auction_buy_crystal_field\" style=\"vertical-align:middle;\">
+								<th style=\"text-align:center;vertical-align:middle;\">".MARKET_CRYSTAL_FACTOR."</th>
+								<td id=\"auction_buy_crystal_field\" style=\"vertical-align:middle;\">
 									".nf($arr['auction_buy_crystal'])."
 								</td>
-								<td class=\"tbldata\" style=\"vertical-align:middle;\">";
+								<td style=\"vertical-align:middle;\">";
 								if($arr['auction_currency_crystal']==1 && $arr['auction_buyable']==1)
 								{
 									echo "<input type=\"text\" value=\"".nf($arr['auction_buy_crystal'])."\" name=\"auction_new_buy_crystal\" id=\"auction_new_buy_crystal\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resCrystal.",'','');calcMarketAuctionPrice(0);\"/>";
@@ -3639,18 +3640,19 @@
 									echo " - ";
 								}										
 					echo "</td>
-								<td class=\"tbltitle\" id=\"auction_min_max_crystal\" style=\"vertical-align:middle;\"> - </td>
+								<th id=\"auction_min_max_crystal\" style=\"vertical-align:middle;\"> - </th>
 							</tr>";	
 				// PVC
 				echo "<tr>
-								<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_PLASTIC.":</td>
-								<td class=\"tbldata\" id=\"auction_sell_plastic_field\" style=\"vertical-align:middle;\">
+								<th style=\"vertical-align:middle;\">".RES_PLASTIC.":</th>
+								<td id=\"auction_sell_plastic_field\" style=\"vertical-align:middle;\">
 									".nf($arr['auction_sell_plastic'])."
 								</td>		
-								<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_PLASTIC_FACTOR."</td>	<td class=\"tbldata\" id=\"auction_buy_plastic_field\" style=\"vertical-align:middle;\">
+								<th style=\"text-align:center;vertical-align:middle;\">".MARKET_PLASTIC_FACTOR."</th>
+								<td id=\"auction_buy_plastic_field\" style=\"vertical-align:middle;\">
 									".nf($arr['auction_buy_plastic'])."
 								</td>
-								<td class=\"tbldata\" style=\"vertical-align:middle;\">";
+								<td style=\"vertical-align:middle;\">";
 								if($arr['auction_currency_plastic']==1 && $arr['auction_buyable']==1)
 								{
 									echo "<input type=\"text\" value=\"".nf($arr['auction_buy_plastic'])."\" name=\"auction_new_buy_plastic\" id=\"auction_new_buy_plastic\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resPlastic.",'','');calcMarketAuctionPrice(0);\"/>";
@@ -3661,18 +3663,19 @@
 									echo " - ";
 								}										
 					echo "</td>
-								<td class=\"tbltitle\" id=\"auction_min_max_plastic\" style=\"vertical-align:middle;\"> - </td>
+								<th id=\"auction_min_max_plastic\" style=\"vertical-align:middle;\"> - </th>
 							</tr>";		
 				// Tritium
 				echo "<tr>
-								<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_FUEL.":</td>
-								<td class=\"tbldata\" id=\"auction_sell_fuel_field\" style=\"vertical-align:middle;\">
+								<th style=\"vertical-align:middle;\">".RES_FUEL.":</th>
+								<td id=\"auction_sell_fuel_field\" style=\"vertical-align:middle;\">
 									".nf($arr['auction_sell_fuel'])."
 								</td>		
-								<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_FUEL_FACTOR."</td>	<td class=\"tbldata\" id=\"auction_buy_fuel_field\" style=\"vertical-align:middle;\">
+								<th style=\"text-align:center;vertical-align:middle;\">".MARKET_FUEL_FACTOR."</th>
+								<td id=\"auction_buy_fuel_field\" style=\"vertical-align:middle;\">
 									".nf($arr['auction_buy_fuel'])."
 								</td>
-								<td class=\"tbldata\" style=\"vertical-align:middle;\">";
+								<td style=\"vertical-align:middle;\">";
 								if($arr['auction_currency_fuel']==1 && $arr['auction_buyable']==1)
 								{
 									echo "<input type=\"text\" value=\"".nf($arr['auction_buy_fuel'])."\" name=\"auction_new_buy_fuel\" id=\"auction_new_buy_fuel\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resFuel.",'','');calcMarketAuctionPrice(0);\"/>";
@@ -3683,18 +3686,19 @@
 									echo " - ";
 								}										
 					echo "</td>
-								<td class=\"tbltitle\" id=\"auction_min_max_fuel\" style=\"vertical-align:middle;\"> - </td>
+								<th id=\"auction_min_max_fuel\" style=\"vertical-align:middle;\"> - </th>
 							</tr>";	
 				// Nahrung
 				echo "<tr>
-								<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_FOOD.":</td>
-								<td class=\"tbldata\" id=\"auction_sell_food_field\" style=\"vertical-align:middle;\">
+								<th style=\"vertical-align:middle;\">".RES_FOOD.":</th>
+								<td id=\"auction_sell_food_field\" style=\"vertical-align:middle;\">
 									".nf($arr['auction_sell_food'])."
 								</td>		
-								<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_FOOD_FACTOR."</td>	<td class=\"tbldata\" id=\"auction_buy_food_field\" style=\"vertical-align:middle;\">
+								<th style=\"text-align:center;vertical-align:middle;\">".MARKET_FOOD_FACTOR."</th>
+								<td id=\"auction_buy_food_field\" style=\"vertical-align:middle;\">
 									".nf($arr['auction_buy_food'])."
 								</td>
-								<td class=\"tbldata\" style=\"vertical-align:middle;\">";
+								<td style=\"vertical-align:middle;\">";
 								if($arr['auction_currency_food']==1 && $arr['auction_buyable']==1)
 								{
 									echo "<input type=\"text\" value=\"".nf($arr['auction_buy_food'])."\" name=\"auction_new_buy_food\" id=\"auction_new_buy_food\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resFood.",'','');calcMarketAuctionPrice(0);\"/>";
@@ -3705,12 +3709,12 @@
 									echo " - ";
 								}										
 					echo "</td>
-								<td class=\"tbltitle\" id=\"auction_min_max_food\" style=\"vertical-align:middle;\"> - </td>
+								<th id=\"auction_min_max_food\" style=\"vertical-align:middle;\"> - </th>
 							</tr>";	
 							
 				// Status Nachricht (Ajax Überprüfungstext)
 				echo "<tr>
-								<td class=\"tbldata\" colspan=\"6\" id=\"auction_check_message\" style=\"text-align:center;vertical-align:middle;height:30px;\">&nbsp;</td>
+								<td colspan=\"6\" id=\"auction_check_message\" style=\"text-align:center;vertical-align:middle;height:30px;\">&nbsp;</td>
 							</tr>";		
 				tableEnd();
 				
@@ -3811,9 +3815,10 @@
 			echo "<input type=\"hidden\" value=\"\" id=\"ship_sql_add\" name=\"ship_sql_add\"/>";	
 			echo "<input type=\"hidden\" value=\"\" id=\"auction_sql_add\" name=\"auction_sql_add\"/>";
 			
-			iBoxStart("Suche");
+			tableStart("Suche");
 			
 			// Kategorie
+			echo "<tr><td>";
 			echo "<div id=\"search_cat_field\" style=\"text-align:center;vertical-align:middle;height:30px;\">
 							Kategorie:
 							<select id=\"search_cat\" name=\"search_cat\" onchange=\"xajax_MarketSearchFormularShow(xajax.getFormValues('search_selector'));\">
@@ -3832,26 +3837,21 @@
 								}
 					echo "</select>
 						</div>";
-			iBoxEnd();
-			
+			echo "</td></tr><tr><td>";
 			// Content
-			iBoxStart("");
 			echo "<div id=\"search_content\">
 							&nbsp;
 						</div>";
-			iBoxEnd();	
 			
 			// Check Message
-			iBoxStart("");
 			echo "<div id=\"search_check_message\" style=\"text-align:center;vertical-align:middle;height:30px;\">
 							<div style=\"color:red;font-weight:bold;\">Wähle eine Kategorie!</div>
 						</div>";
-			iBoxEnd();
-			
+			echo "</td></tr><tr><td style=\"text-align:center\">";
 			// Sumbit
-			iBoxStart("");
 			echo "<input type=\"submit\" class=\"button\" name=\"search_submit\" id=\"search_submit\" value=\"Angebote anzeigen\" disabled=\"disabled\"/>";
-			iBoxEnd();
+			echo "</td></tr>";
+			tableEnd();
 														
 
 			echo "</form>";
@@ -4017,11 +4017,11 @@
 					echo "<form action=\"?page=$page&amp;mode=user_sell\" method=\"post\">\n";
 					echo $cstr;
 					tableStart("Rohstoffe");
-						echo "<tr><td class=\"tbltitle\" colspan=\"2\" width=\"25%\">Angebot:</td>
-						<td class=\"tbltitle\" width=\"15%\">Anbieter:</td>
-						<td class=\"tbltitle\" width=\"25%\">Datum/Text:</td>
-						<td class=\"tbltitle\" colspan=\"2\" width=\"25%\">Preis:</td>
-						<td class=\"tbltitle\" width=\"10%\">Zur&uuml;ckziehen:</td></tr>";
+						echo "<tr><th colspan=\"2\" width=\"25%\">Angebot:</th>
+						<th width=\"15%\">Anbieter:</th>
+						<th width=\"25%\">Datum/Text:</th>
+						<th colspan=\"2\" width=\"25%\">Preis:</th>
+						<th width=\"10%\">Zur&uuml;ckziehen:</th></tr>";
 					$cnt=0;
 					while ($row=mysql_fetch_array($res))
 					{
@@ -4030,23 +4030,23 @@
 						else
 							$for_alliance="";
 
-						echo "<tr><td class=\"tbldata\"><b>".RES_METAL."</b>:</td><td class=\"tbldata\">".nf($row['sell_metal'])."</td>";
-						echo "<td class=\"tbldata\" rowspan=\"5\"><a href=\"?page=userinfo&amp;id=".$row['user_id']."\">".get_user_nick($row['user_id'])."</a></td>";
-						echo "<td class=\"tbldata\" rowspan=\"5\">".date("d.m.Y  G:i:s", $row['datum'])."<br/><br/>".stripslashes($row['ressource_text'])."</td>";
-						echo "<td class=\"tbldata\"><b>".RES_METAL."</b>:</td><td class=\"tbldata\">".nf($row['buy_metal'])."</td>";
-						echo "<td class=\"tbldata\" rowspan=\"5\"><input type=\"radio\" name=\"ressource_market_id\" value=\"".$row['ressource_market_id']."\"><br/><br/>".$for_alliance."</td></tr>";
+						echo "<tr><td><b>".RES_METAL."</b>:</td><td>".nf($row['sell_metal'])."</td>";
+						echo "<td rowspan=\"5\"><a href=\"?page=userinfo&amp;id=".$row['user_id']."\">".get_user_nick($row['user_id'])."</a></td>";
+						echo "<td rowspan=\"5\">".date("d.m.Y  G:i:s", $row['datum'])."<br/><br/>".stripslashes($row['ressource_text'])."</td>";
+						echo "<td><b>".RES_METAL."</b>:</td><td>".nf($row['buy_metal'])."</td>";
+						echo "<td rowspan=\"5\"><input type=\"radio\" name=\"ressource_market_id\" value=\"".$row['ressource_market_id']."\"><br/><br/>".$for_alliance."</td></tr>";
 
-						echo "<tr><td class=\"tbldata\"><b>".RES_CRYSTAL."</b>:</td><td class=\"tbldata\">".nf($row['sell_crystal'])."</td>";
-						echo "<td class=\"tbldata\"><b>".RES_CRYSTAL."</b>:</td><td class=\"tbldata\">".nf($row['buy_crystal'])."</td></tr>";
-						echo "<tr><td class=\"tbldata\"><b>".RES_PLASTIC."</b>:</td><td class=\"tbldata\">".nf($row['sell_plastic'])."</td>";
-						echo "<td class=\"tbldata\"><b>".RES_PLASTIC."</b>:</td><td class=\"tbldata\">".nf($row['buy_plastic'])."</td></tr>";
-						echo "<tr><td class=\"tbldata\"><b>".RES_FUEL."</b>:</td><td class=\"tbldata\">".nf($row['sell_fuel'])."</td>";
-						echo "<td class=\"tbldata\"><b>".RES_FUEL."</b>:</td><td class=\"tbldata\">".nf($row['buy_fuel'])."</td></tr>";
-						echo "<tr><td class=\"tbldata\"><b>".RES_FOOD."</b>:</td><td class=\"tbldata\">".nf($row['sell_food'])."</td>";
-						echo "<td class=\"tbldata\"><b>".RES_FOOD."</b>:</td><td class=\"tbldata\">".nf($row['buy_food'])."</td></tr>";
+						echo "<tr><td><b>".RES_CRYSTAL."</b>:</td><td>".nf($row['sell_crystal'])."</td>";
+						echo "<td><b>".RES_CRYSTAL."</b>:</td><td>".nf($row['buy_crystal'])."</td></tr>";
+						echo "<tr><td><b>".RES_PLASTIC."</b>:</td><td>".nf($row['sell_plastic'])."</td>";
+						echo "<td><b>".RES_PLASTIC."</b>:</td><td>".nf($row['buy_plastic'])."</td></tr>";
+						echo "<tr><td><b>".RES_FUEL."</b>:</td><td>".nf($row['sell_fuel'])."</td>";
+						echo "<td><b>".RES_FUEL."</b>:</td><td>".nf($row['buy_fuel'])."</td></tr>";
+						echo "<tr><td><b>".RES_FOOD."</b>:</td><td>".nf($row['sell_food'])."</td>";
+						echo "<td><b>".RES_FOOD."</b>:</td><td>".nf($row['buy_food'])."</td></tr>";
 						$cnt++;
 						if ($cnt<mysql_num_rows($res))
-							echo "<tr><td class=\"tbldata\" colspan=\"7\" style=\"height:10px;background:#000\"></td></tr>";
+							echo "<tr><td colspan=\"7\" style=\"height:10px;background:#000\"></td></tr>";
 					}
 					tableEnd();
 					echo "<input type=\"submit\" class=\"button\" name=\"ressource_cancel\" value=\"Angebot zur&uuml;ckziehen\"/>";
@@ -4079,11 +4079,11 @@
 					echo $cstr;
 					tableStart("Schiffe");
 
-                    echo "<tr><td class=\"tbltitle\" width=\"25%\">Angebot:</td>
-                    <td class=\"tbltitle\" width=\"15%\">Anbieter:</td>
-                    <td class=\"tbltitle\" width=\"25%\">Datum/Text:</td>
-                    <td class=\"tbltitle\" colspan=\"2\" width=\"25%\">Preis:</td>
-                    <td class=\"tbltitle\" width=\"10%\">Zur&uuml;ckziehen:</td></tr>";
+                    echo "<tr><th width=\"25%\">Angebot:</th>
+                    <th width=\"15%\">Anbieter:</th>
+                    <th width=\"25%\">Datum/Text:</th>
+                    <th colspan=\"2\" width=\"25%\">Preis:</th>
+                    <th width=\"10%\">Zur&uuml;ckziehen:</th></tr>";
 
 					$cnt=0;
 					while ($arr=mysql_fetch_array($res))
@@ -4093,19 +4093,19 @@
 						else
 							$for_alliance="";
 
-						echo "<tr><td class=\"tbldata\" rowspan=\"5\">".$arr['ship_count']." <a href=\"?page=help&site=shipyard&id=".$arr['ship_id']."\">".$arr['ship_name']."</a></td>";
-						echo "<td class=\"tbldata\" rowspan=\"5\"><a href=\"?page=userinfo&amp;id=".$arr['user_id']."\">".get_user_nick($arr['user_id'])."</a></td>";
-						echo "<td class=\"tbldata\" rowspan=\"5\">".date("d.m.Y  G:i:s", $arr['datum'])."<br/><br/>".stripslashes($arr['ship_text'])."</td>";
-						echo "<td class=\"tbldata\"><b>".RES_METAL."</b>:</td><td class=\"tbldata\">".nf($arr['ship_costs_metal'])."</td>";
-						echo "<td class=\"tbldata\" rowspan=\"5\"><input type=\"radio\" name=\"ship_market_id\" value=\"".$arr['ship_market_id']."\"><br/><br/>".$for_alliance."</td></tr>";
+						echo "<tr><td rowspan=\"5\">".$arr['ship_count']." <a href=\"?page=help&site=shipyard&id=".$arr['ship_id']."\">".$arr['ship_name']."</a></td>";
+						echo "<td rowspan=\"5\"><a href=\"?page=userinfo&amp;id=".$arr['user_id']."\">".get_user_nick($arr['user_id'])."</a></td>";
+						echo "<td rowspan=\"5\">".date("d.m.Y  G:i:s", $arr['datum'])."<br/><br/>".stripslashes($arr['ship_text'])."</td>";
+						echo "<td><b>".RES_METAL."</b>:</td><td>".nf($arr['ship_costs_metal'])."</td>";
+						echo "<td rowspan=\"5\"><input type=\"radio\" name=\"ship_market_id\" value=\"".$arr['ship_market_id']."\"><br/><br/>".$for_alliance."</td></tr>";
 
-						echo "<tr><td class=\"tbldata\"><b>".RES_CRYSTAL."</b>:</td><td class=\"tbldata\">".nf($arr['ship_costs_crystal'])."</td></tr>";
-						echo "<tr><td class=\"tbldata\"><b>".RES_PLASTIC."</b>:</td><td class=\"tbldata\">".nf($arr['ship_costs_plastic'])."</td></tr>";
-						echo "<tr><td class=\"tbldata\"><b>".RES_FUEL."</b>:</td><td class=\"tbldata\">".nf($arr['ship_costs_fuel'])."</td></tr>";
-						echo "<tr><td class=\"tbldata\"><b>".RES_FOOD."</b>:</td><td class=\"tbldata\">".nf($arr['ship_costs_food'])."</td></tr>";
+						echo "<tr><td><b>".RES_CRYSTAL."</b>:</td><td>".nf($arr['ship_costs_crystal'])."</td></tr>";
+						echo "<tr><td><b>".RES_PLASTIC."</b>:</td><td>".nf($arr['ship_costs_plastic'])."</td></tr>";
+						echo "<tr><td><b>".RES_FUEL."</b>:</td><td>".nf($arr['ship_costs_fuel'])."</td></tr>";
+						echo "<tr><td><b>".RES_FOOD."</b>:</td><td>".nf($arr['ship_costs_food'])."</td></tr>";
 						$cnt++;
 						if ($cnt<mysql_num_rows($res))
-							echo "<tr><td class=\"tbldata\" colspan=\"6\" style=\"height:10px;background:#000\"></td></tr>";
+							echo "<tr><td colspan=\"6\" style=\"height:10px;background:#000\"></td></tr>";
 					}
 					tableEnd();
 					echo "<input type=\"submit\" class=\"button\" name=\"ship_cancel\" value=\"Angebot zur&uuml;ckziehen\"/>";
@@ -4184,10 +4184,10 @@
 						$acnt++;
 						tableStart();
 						echo "<tr>
-						<td class=\"tbltitle\">Anbieter</td>
-						<td class=\"tbltitle\">Auktion Start/Ende</td>
-						<td class=\"tbltitle\" colspan=\"2\">Angebot</td>
-						<td class=\"tbltitle\">Zur&uuml;ckziehen</td></tr>";
+						<th>Anbieter</th>
+						<th>Auktion Start/Ende</th>
+						<th colspan=\"2\">Angebot</th>
+						<th>Zur&uuml;ckziehen</th></tr>";
 
 						//restliche zeit bis zum ende
 						$rest_time=$arr['auction_end']-time();
@@ -4217,31 +4217,31 @@
 
 
 						echo "<tr>
-										<td class=\"tbldata\" rowspan=\"5\">
+										<td rowspan=\"5\">
 											<a href=\"?page=userinfo&amp;id=".$arr['auction_user_id']."\">".get_user_nick($arr['auction_user_id'])."</a>
 										</td>
-										<td class=\"tbldata\">
+										<td>
 											Start ".date("d.m.Y  G:i:s", $arr['auction_start'])."
 										</td>
-										<td class=\"tbldata\"><b>".RES_METAL."</b>:</td>
-										<td class=\"tbldata\">".nf($arr['auction_sell_metal'])."</td>";
+										<td><b>".RES_METAL."</b>:</td>
+										<td>".nf($arr['auction_sell_metal'])."</td>";
 
 						 // Zurückzieh button wenn noch niemand geboten hat
 						if($arr['auction_current_buyer_id']==0)
 						{
-               echo "<td class=\"tbldata\" rowspan=\"5\">
+               echo "<td rowspan=\"5\">
                				<input type=\"radio\" name=\"auction_market_id\" value=\"".$arr['auction_market_id']."\">
                			</td>
                		</tr>";
             }
             elseif($arr['auction_buyable']==0)
             {
-            	echo "<td class=\"tbldata2\" rowspan=\"5\">Verkauft!</td>
+            	echo "<td class=\"resfullcolor\" rowspan=\"5\">Verkauft!</td>
             		</tr>";
             }
             else
             {
-            	 echo "<td class=\"tbldata\" rowspan=\"5\">Es wurde bereits geboten</td>
+            	 echo "<td rowspan=\"5\">Es wurde bereits geboten</td>
             	 </tr>";
             }
 
@@ -4250,8 +4250,8 @@
 						if($arr['auction_delete_date']==0)
 						{
 							$acnts['countdown'.$acnt]=$arr['auction_end']-time();
-							echo "<tr><td class=\"tbldata\">Ende ".date("d.m.Y  G:i:s", $arr['auction_end'])."</td><td class=\"tbldata\"><b>".RES_CRYSTAL."</b>:</td><td class=\"tbldata\">".nf($arr['auction_sell_crystal'])."</td></tr>";
-							echo "<tr><td $class rowspan=\"3\" id=\"countdown".$acnt."\">".$rest_time."</td><td class=\"tbldata\"><b>".RES_PLASTIC."</b>:</td><td class=\"tbldata\">".nf($arr['auction_sell_plastic'])."</td></tr>";
+							echo "<tr><td>Ende ".date("d.m.Y  G:i:s", $arr['auction_end'])."</td><td><b>".RES_CRYSTAL."</b>:</td><td>".nf($arr['auction_sell_crystal'])."</td></tr>";
+							echo "<tr><td $class rowspan=\"3\" id=\"countdown".$acnt."\">".$rest_time."</td><td><b>".RES_PLASTIC."</b>:</td><td>".nf($arr['auction_sell_plastic'])."</td></tr>";
 						}
 						// sonst das löschdatum anzeigen
 						else
@@ -4273,52 +4273,52 @@
 							{
 								$delete_time = "Gebot wird nach ".$h." Stunden und ".$m." Minuten gel&ouml;scht";
 							}
-							echo "<tr><td class=\"tbldata\">Auktion beendet</td><td class=\"tbldata\"><b>".RES_CRYSTAL."</b>:</td><td class=\"tbldata\">".nf($arr['auction_sell_crystal'])."</td></tr>";
-							echo "<tr><td class=\"tbldata\" rowspan=\"3\">".$delete_time."</td><td class=\"tbldata\"><b>".RES_PLASTIC."</b>:</td><td class=\"tbldata\">".nf($arr['auction_sell_plastic'])."</td></tr>";
+							echo "<tr><td>Auktion beendet</td><td><b>".RES_CRYSTAL."</b>:</td><td>".nf($arr['auction_sell_crystal'])."</td></tr>";
+							echo "<tr><td rowspan=\"3\">".$delete_time."</td><td><b>".RES_PLASTIC."</b>:</td><td>".nf($arr['auction_sell_plastic'])."</td></tr>";
 						}
 
 
-						echo "<tr><td class=\"tbldata\"><b>".RES_FUEL."</b>:</td><td class=\"tbldata\">".nf($arr['auction_sell_fuel'])."</td></tr>";
-						echo "<tr><td class=\"tbldata\"><b>".RES_FOOD."</b>:</td><td class=\"tbldata\">".nf($arr['auction_sell_food'])."</td></tr>";
+						echo "<tr><td><b>".RES_FUEL."</b>:</td><td>".nf($arr['auction_sell_fuel'])."</td></tr>";
+						echo "<tr><td><b>".RES_FOOD."</b>:</td><td>".nf($arr['auction_sell_food'])."</td></tr>";
 
 						//Hochstgebot Anzeigen wenn schon geboten worden ist
 						if($arr['auction_current_buyer_id']!=0)
 						{
               echo "<tr>
-              				<td class=\"tbltitle\" colspan=\"5\">H&ouml;chstgebot</td>
+              				<th colspan=\"5\">H&ouml;chstgebot</th>
               			</tr>
               			<tr>
-              				<td class=\"tbldata\" rowspan=\"5\">
+              				<td rowspan=\"5\">
               					<a href=\"?page=userinfo&amp;id=".$arr['auction_current_buyer_id']."\">".get_user_nick($arr['auction_current_buyer_id'])."</a>
               				</td>
-              				<td class=\"tbldata\" rowspan=\"5\">Geboten ".date("d.m.Y  G:i:s", $arr['auction_current_buyer_date'])."</td>
-              				<td class=\"tbldata\"><b>".RES_METAL."</b>:</td><td class=\"tbldata\">".nf($arr['auction_buy_metal'])."</td>";
+              				<td rowspan=\"5\">Geboten ".date("d.m.Y  G:i:s", $arr['auction_current_buyer_date'])."</td>
+              				<td><b>".RES_METAL."</b>:</td><td>".nf($arr['auction_buy_metal'])."</td>";
 
 							// meldung geben, falls der bietende, das maximum erreicht hat
               if($arr['auction_buyable']==1)
               {
-                  echo "<td class=\"tbldata2\" rowspan=\"5\">&nbsp;</td></tr>";
+                  echo "<td class=\"resfullcolor\" rowspan=\"5\">&nbsp;</td></tr>";
               }
               else
               {
-                   echo "<td class=\"tbldata2\" rowspan=\"5\">&nbsp;</td></tr>";
+                   echo "<td class=\"resfullcolor\" rowspan=\"5\">&nbsp;</td></tr>";
               }
 
               echo "<tr>
-              				<td class=\"tbldata\"><b>".RES_CRYSTAL."</b>:</td>
-              				<td class=\"tbldata\">".nf($arr['auction_buy_crystal'])."</td>
+              				<td><b>".RES_CRYSTAL."</b>:</td>
+              				<td>".nf($arr['auction_buy_crystal'])."</td>
               			</tr>
               			<tr>
-              				<td class=\"tbldata\"><b>".RES_PLASTIC."</b>:</td>
-              				<td class=\"tbldata\">".nf($arr['auction_buy_plastic'])."</td>
+              				<td><b>".RES_PLASTIC."</b>:</td>
+              				<td>".nf($arr['auction_buy_plastic'])."</td>
               			</tr>
               			<tr>
-              				<td class=\"tbldata\"><b>".RES_FUEL."</b>:</td>
-              				<td class=\"tbldata\">".nf($arr['auction_buy_fuel'])."</td>
+              				<td><b>".RES_FUEL."</b>:</td>
+              				<td>".nf($arr['auction_buy_fuel'])."</td>
               			</tr>
               			<tr>
-              				<td class=\"tbldata\"><b>".RES_FOOD."</b>:</td>
-              				<td class=\"tbldata\">".nf($arr['auction_buy_food'])."</td>
+              				<td><b>".RES_FOOD."</b>:</td>
+              				<td>".nf($arr['auction_buy_food'])."</td>
               			</tr>";
             }
             tableEnd();
@@ -4369,7 +4369,7 @@
 
 					//Header
 					echo "<tr>
-									<td class=\"tbltitle\" style=\"width:15%;vertical-align:middle;\">Rohstoff";
+									<th style=\"width:15%;vertical-align:middle;\">Rohstoff";
 									
 				
 				          //Roshtoff übergabe an xajax (da die $c-variabeln nicht abgerufen werden könnne)
@@ -4382,98 +4382,98 @@
 				          // Vor dem Absenden des Formulars, wird die Überprüfung noch einmal gestartet. Bevor diese nicht das "OK" gibt, kann nicht gesendet werden
 				          echo "<input type=\"hidden\" value=\"0\" name=\"ress_last_update\" id=\"ress_last_update\"/>";
 
-									echo "</td>
-									<td class=\"tbltitle\" style=\"width:10%;vertical-align:middle;\">Angebot</td>
-									<td class=\"tbltitle\" style=\"width:5%;text-align:center;vertical-align:middle;\">Kurs</td>
-									<td class=\"tbltitle\" style=\"width:10%;vertical-align:middle;\">Preis</td>
-									<td class=\"tbltitle\" style=\"width:40%;vertical-align:middle;\">Min./Max.</td>
+									echo "</th>
+									<th style=\"width:10%;vertical-align:middle;\">Angebot</th>
+									<th style=\"width:5%;text-align:center;vertical-align:middle;\">Kurs</th>
+									<th style=\"width:10%;vertical-align:middle;\">Preis</th>
+									<th style=\"width:40%;vertical-align:middle;\">Min./Max.</th>
 								</tr>";
 					// Titan
 					echo "<tr>
-									<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_METAL.":</td>
-									<td class=\"tbldata\" style=\"vertical-align:middle;\">
+									<th style=\"vertical-align:middle;\">".RES_METAL.":</th>
+									<td style=\"vertical-align:middle;\">
 										<input type=\"text\" value=\"0\" name=\"ress_sell_metal\" id=\"ress_sell_metal\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resMetal.",'','');calcMarketRessPrice('0');\"/>
 									</td>
-									<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_METAL_FACTOR."</td>
-									<td class=\"tbldata\" id=\"ress_buy_metal_field\" style=\"vertical-align:middle;\">
+									<th style=\"text-align:center;vertical-align:middle;\">".MARKET_METAL_FACTOR."</th>
+									<td id=\"ress_buy_metal_field\" style=\"vertical-align:middle;\">
 										<input type=\"text\" value=\"0\" name=\"ress_buy_metal\" id=\"ress_buy_metal\" size=\"7\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,'','','');calcMarketRessPrice('0');\" disabled=\"disabled\"/>
 									</td>
-									<td class=\"tbltitle\" id=\"ress_min_max_metal\" style=\"vertical-align:middle;\"> - </td>
+									<th id=\"ress_min_max_metal\" style=\"vertical-align:middle;\"> - </th>
 								</tr>";
 								
 					// Silizium
 					echo "<tr>
-									<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_CRYSTAL.":</td>
-									<td class=\"tbldata\" style=\"vertical-align:middle;\">
+									<th style=\"vertical-align:middle;\">".RES_CRYSTAL.":</th>
+									<td style=\"vertical-align:middle;\">
 										<input type=\"text\" value=\"0\" name=\"ress_sell_crystal\" id=\"ress_sell_crystal\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resCrystal.",'','');calcMarketRessPrice('0');\"/>
 									</td>
-									<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_CRYSTAL_FACTOR."</td>
-									<td class=\"tbldata\" id=\"ress_buy_crystal_field\" style=\"vertical-align:middle;\">
+									<th style=\"text-align:center;vertical-align:middle;\">".MARKET_CRYSTAL_FACTOR."</th>
+									<td id=\"ress_buy_crystal_field\" style=\"vertical-align:middle;\">
 										<input type=\"text\" value=\"0\" name=\"ress_buy_crystal\" id=\"ress_buy_crystal\" size=\"7\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,'','','');calcMarketRessPrice('0');\"  disabled=\"disabled\"/>
 									</td>
-									<td class=\"tbltitle\" id=\"ress_min_max_crystal\" style=\"vertical-align:middle;\"> - </td>
+									<th id=\"ress_min_max_crystal\" style=\"vertical-align:middle;\"> - </th>
 								</tr>";		
 					// PVC
 					echo "<tr>
-									<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_PLASTIC.":</td>
-									<td class=\"tbldata\" style=\"vertical-align:middle;\">
+									<th style=\"vertical-align:middle;\">".RES_PLASTIC.":</th>
+									<td style=\"vertical-align:middle;\">
 										<input type=\"text\" value=\"0\" name=\"ress_sell_plastic\" id=\"ress_sell_plastic\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resPlastic.",'','');calcMarketRessPrice('0');\"/>
 									</td>
-									<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_PLASTIC_FACTOR."</td>
-									<td class=\"tbldata\" id=\"ress_buy_plastic_field\" style=\"vertical-align:middle;\">
+									<th style=\"text-align:center;vertical-align:middle;\">".MARKET_PLASTIC_FACTOR."</th>
+									<td id=\"ress_buy_plastic_field\" style=\"vertical-align:middle;\">
 										<input type=\"text\" value=\"0\" name=\"ress_buy_plastic\" id=\"ress_buy_plastic\" size=\"7\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,'','','');calcMarketRessPrice('0');\" disabled=\"disabled\"/>
 									</td>
-									<td class=\"tbltitle\" id=\"ress_min_max_plastic\" style=\"vertical-align:middle;\"> - </td>
+									<th id=\"ress_min_max_plastic\" style=\"vertical-align:middle;\"> - </th>
 								</tr>";	
 					// Tritium
 					echo "<tr>
-									<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_FUEL.":</td>
-									<td class=\"tbldata\" style=\"vertical-align:middle;\">
+									<th style=\"vertical-align:middle;\">".RES_FUEL.":</th>
+									<td style=\"vertical-align:middle;\">
 										<input type=\"text\" value=\"0\" name=\"ress_sell_fuel\" id=\"ress_sell_fuel\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resFuel.",'','');calcMarketRessPrice('0');\"/>
 									</td>
-									<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_FUEL_FACTOR."</td>
-									<td class=\"tbldata\" id=\"ress_buy_fuel_field\" style=\"vertical-align:middle;\">
+									<th style=\"text-align:center;vertical-align:middle;\">".MARKET_FUEL_FACTOR."</th>
+									<td id=\"ress_buy_fuel_field\" style=\"vertical-align:middle;\">
 										<input type=\"text\" value=\"0\" name=\"ress_buy_fuel\" id=\"ress_buy_fuel\" size=\"7\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,'','','');calcMarketRessPrice('0');\" disabled=\"disabled\"/>
 									</td>
-									<td class=\"tbltitle\" id=\"ress_min_max_fuel\" style=\"vertical-align:middle;\"> - </td>
+									<th id=\"ress_min_max_fuel\" style=\"vertical-align:middle;\"> - </th>
 								</tr>";
 					// Nahrung
 					echo "<tr>
-									<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_FOOD.":</td>
-									<td class=\"tbldata\" style=\"vertical-align:middle;\">
+									<th style=\"vertical-align:middle;\">".RES_FOOD.":</th>
+									<td style=\"vertical-align:middle;\">
 										<input type=\"text\" value=\"0\" name=\"ress_sell_food\" id=\"ress_sell_food\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resFood.",'','');calcMarketRessPrice('0');\"/>
 									</td>
-									<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_FOOD_FACTOR."</td>
-									<td class=\"tbldata\" id=\"ress_buy_food_field\" style=\"vertical-align:middle;\">
+									<th style=\"text-align:center;vertical-align:middle;\">".MARKET_FOOD_FACTOR."</th>
+									<td id=\"ress_buy_food_field\" style=\"vertical-align:middle;\">
 										<input type=\"text\" value=\"0\" name=\"ress_buy_food\" id=\"ress_buy_food\" size=\"7\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,'','','');calcMarketRessPrice('0');\" disabled=\"disabled\"/>
 									</td>
-									<td class=\"tbltitle\" id=\"ress_min_max_food\" style=\"vertical-align:middle;\"> - </td>
+									<th id=\"ress_min_max_food\" style=\"vertical-align:middle;\"> - </th>
 								</tr>";		
 								
           //Verkaufstext und für Allianzmitglied reservieren
           echo "<tr>
-          				<td class=\"tbltitle\" colspan=\"5\" style=\"text-align:center;vertical-align:middle;\">Beschreibung und Reservation</td>
+          				<th colspan=\"5\" style=\"text-align:center;vertical-align:middle;\">Beschreibung und Reservation</th>
           			</tr>
           			<tr>
-          				<td class=\"tbldata\" colspan=\"4\" style=\"vertical-align:middle;\">
+          				<td colspan=\"4\" style=\"vertical-align:middle;\">
           					<input type=\"text\" value=\"\" name=\"ressource_text\" id=\"ressource_text\" size=\"55\" maxlength=\"60\" ".tm("Text","Schreib einen kleinen Werbetext f&uuml;r deine Waren.")." onkeyup=\"calcMarketRessPrice('0');\"/>	
           				</td>";
           //Für Allianzmitglied reservieren wenn in einer Allianz und diese den Allianzmarktplatz auf Stufe 1 oder höher hat
           if($cu->allianceId!=0 && $alliance_market_level>=1 && !$cd_enabled)
           {
-            echo "<td class=\"tbldata\" colspan=\"1\" style=\"vertical-align:middle;\" ".tm("Reservation","Fall dieses Angebot nur Spieler aus deiner Allianz kaufen sollen, mach hier ein H&auml;kchen").">
+            echo "<td colspan=\"1\" style=\"vertical-align:middle;\" ".tm("Reservation","Fall dieses Angebot nur Spieler aus deiner Allianz kaufen sollen, mach hier ein H&auml;kchen").">
             				<input type=\"checkbox\" name=\"ressource_for_alliance\" value=\"1\" /> F&uuml;r Allianzmitglieder Reservieren
             			</td>
             		</tr>";
           }
           else
           {
-            echo "<td class=\"tbldata\" colspan=\"1\" style=\"vertical-align:middle;\">&nbsp;</td></tr>";
+            echo "<td colspan=\"1\" style=\"vertical-align:middle;\">&nbsp;</td></tr>";
           }			
           					
 					// Status Nachricht (Ajax Überprüfungstext)
 					echo "<tr>
-									<td class=\"tbldata\" colspan=\"5\" id=\"check_message\" style=\"text-align:center;vertical-align:middle;height:30px;\">&nbsp;</td>
+									<td colspan=\"5\" id=\"check_message\" style=\"text-align:center;vertical-align:middle;height:30px;\">&nbsp;</td>
 								</tr>";								
 
           tableEnd();
@@ -4559,7 +4559,7 @@
 		
 						// Header Angebot
 						echo "<tr>
-										<td class=\"tbldata\" height=\"30\" colspan=\"3\" style=\"vertical-align:middle;\">
+										<td height=\"30\" colspan=\"3\" style=\"vertical-align:middle;\">
 											<select name=\"ship_list\" id=\"ship_list\" onchange=\"calcMarketShipPrice(1, 0);\">";
 											// Listet alle vorhandenen Schiffe auf
 				              foreach ($ships as $sarr)
@@ -4568,7 +4568,7 @@
 				              }
             		echo "</select>
             				</td>
-            				<td class=\"tbldata\" height=\"30\" colspan=\"2\" style=\"vertical-align:middle;\">
+            				<td height=\"30\" colspan=\"2\" style=\"vertical-align:middle;\">
             					<input type=\"text\" value=\"0\" name=\"ship_count\" id=\"ship_count\" size=\"5\" maxlength=\"7\" onkeyup=\"calcMarketShipPrice(1, 0);\" /> St&uuml;ck
             				</td>
             			</tr>";										
@@ -4576,94 +4576,97 @@
 						
 						//Header Preis
 						echo "<tr>
-										<td class=\"tbltitle\" style=\"width:15%;vertical-align:middle;\">Rohstoff</td>
-										<td class=\"tbltitle\" style=\"width:10%;vertical-align:middle;\">Angebot</td>
-										<td class=\"tbltitle\" style=\"width:5%;text-align:center;vertical-align:middle;\">Kurs</td>
-										<td class=\"tbltitle\" style=\"width:10%;vertical-align:middle;\">Preis</td>
-										<td class=\"tbltitle\" style=\"width:40%;vertical-align:middle;\">Min./Max.</td>
+										<th style=\"width:15%;vertical-align:middle;\">Rohstoff</th>
+										<th style=\"width:10%;vertical-align:middle;\">Angebot</th>
+										<th style=\"width:5%;text-align:center;vertical-align:middle;\">Kurs</th>
+										<th style=\"width:10%;vertical-align:middle;\">Preis</th>
+										<th style=\"width:40%;vertical-align:middle;\">Min./Max.</th>
 									</tr>";
 						// Titan
 						echo "<tr>
-										<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_METAL.":</td>
-										<td class=\"tbldata\" id=\"ship_sell_metal_field\" style=\"vertical-align:middle;\">
+										<th style=\"vertical-align:middle;\">".RES_METAL.":</th>
+										<td id=\"ship_sell_metal_field\" style=\"vertical-align:middle;\">
 											<input type=\"text\" value=\"0\" name=\"ship_sell_metal\" id=\"ship_sell_metal\" size=\"7\" maxlength=\"15\" disabled=\"disabled\"/>
 										</td>		
-										<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_METAL_FACTOR."</td>	<td class=\"tbldata\" id=\"ship_buy_metal_field\" style=\"vertical-align:middle;\">
+										<th style=\"text-align:center;vertical-align:middle;\">".MARKET_METAL_FACTOR."</th>
+										<td id=\"ship_buy_metal_field\" style=\"vertical-align:middle;\">
 											<input type=\"text\" value=\"0\" name=\"ship_buy_metal\" id=\"ship_buy_metal\" size=\"7\" maxlength=\"15\" onkeyup=\"calcMarketShipPrice(0, 0);\"/>
 										</td>
-										<td class=\"tbltitle\" id=\"ship_min_max_metal\" style=\"vertical-align:middle;\"> - </td>
+										<th id=\"ship_min_max_metal\" style=\"vertical-align:middle;\"> - </th>
 									</tr>";
 						// Silizium
 						echo "<tr>
-										<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_CRYSTAL.":</td>
-										<td class=\"tbldata\" id=\"ship_sell_crystal_field\" style=\"vertical-align:middle;\">
+										<th style=\"vertical-align:middle;\">".RES_CRYSTAL.":</th>
+										<td id=\"ship_sell_crystal_field\" style=\"vertical-align:middle;\">
 											<input type=\"text\" value=\"0\" name=\"ship_sell_crystal\" id=\"ship_sell_crystal\" size=\"7\" maxlength=\"15\" disabled=\"disabled\"/>
 										</td>	
-										<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_CRYSTAL_FACTOR."</td>									
-										<td class=\"tbldata\" id=\"ship_buy_crystal_field\" style=\"vertical-align:middle;\">
+										<th style=\"text-align:center;vertical-align:middle;\">".MARKET_CRYSTAL_FACTOR."</th>
+										<td id=\"ship_buy_crystal_field\" style=\"vertical-align:middle;\">
 											<input type=\"text\" value=\"0\" name=\"ship_buy_crystal\" id=\"ship_buy_crystal\" size=\"7\" maxlength=\"15\" onkeyup=\"calcMarketShipPrice(0, 0);\"/>
 										</td>
-										<td class=\"tbltitle\" id=\"ship_min_max_crystal\" style=\"vertical-align:middle;\"> - </td>
+										<th id=\"ship_min_max_crystal\" style=\"vertical-align:middle;\"> - </th>
 									</tr>";		
 						// PVC
 						echo "<tr>
-										<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_PLASTIC.":</td>
-										<td class=\"tbldata\" id=\"ship_sell_plastic_field\" style=\"vertical-align:middle;\">
+										<th style=\"vertical-align:middle;\">".RES_PLASTIC.":</th>
+										<td id=\"ship_sell_plastic_field\" style=\"vertical-align:middle;\">
 											<input type=\"text\" value=\"0\" name=\"ship_sell_plastic\" id=\"ship_sell_plastic\" size=\"7\" maxlength=\"15\" disabled=\"disabled\"/>
 										</td>	
-										<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_PLASTIC_FACTOR."</td>										
-										<td class=\"tbldata\" id=\"ship_buy_plastic_field\" style=\"vertical-align:middle;\">
+										<th style=\"text-align:center;vertical-align:middle;\">".MARKET_PLASTIC_FACTOR."</th>
+										<td id=\"ship_buy_plastic_field\" style=\"vertical-align:middle;\">
 											<input type=\"text\" value=\"0\" name=\"ship_buy_plastic\" id=\"ship_buy_plastic\" size=\"7\" maxlength=\"15\" onkeyup=\"calcMarketShipPrice(0, 0);\"/>
 										</td>
-										<td class=\"tbltitle\" id=\"ship_min_max_plastic\" style=\"vertical-align:middle;\"> - </td>
+										<th id=\"ship_min_max_plastic\" style=\"vertical-align:middle;\"> - </th>
 									</tr>";	
 						// Tritium
 						echo "<tr>
-										<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_FUEL.":</td>
-										<td class=\"tbldata\" id=\"ship_sell_fuel_field\" style=\"vertical-align:middle;\">
+										<th style=\"vertical-align:middle;\">".RES_FUEL.":</th>
+										<td id=\"ship_sell_fuel_field\" style=\"vertical-align:middle;\">
 											<input type=\"text\" value=\"0\" name=\"ship_sell_fuel\" id=\"ship_sell_fuel\" size=\"7\" maxlength=\"15\" disabled=\"disabled\"/>
 										</td>	
-										<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_FUEL_FACTOR."</td>		<td class=\"tbldata\" id=\"ship_buy_fuel_field\" style=\"vertical-align:middle;\">
+										<th style=\"text-align:center;vertical-align:middle;\">".MARKET_FUEL_FACTOR."</th>
+										<td id=\"ship_buy_fuel_field\" style=\"vertical-align:middle;\">
 											<input type=\"text\" value=\"0\" name=\"ship_buy_fuel\" id=\"ship_buy_fuel\" size=\"7\" maxlength=\"15\" onkeyup=\"calcMarketShipPrice(0, 0);\"/>
 										</td>
-										<td class=\"tbltitle\" id=\"ship_min_max_fuel\" style=\"vertical-align:middle;\"> - </td>
+										<th id=\"ship_min_max_fuel\" style=\"vertical-align:middle;\"> - </th>
 									</tr>";
 						// Nahrung
 						echo "<tr>
-										<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_FOOD.":</td>
-										<td class=\"tbldata\" id=\"ship_sell_food_field\" style=\"vertical-align:middle;\">
+										<th style=\"vertical-align:middle;\">".RES_FOOD.":</th>
+										<td id=\"ship_sell_food_field\" style=\"vertical-align:middle;\">
 											<input type=\"text\" value=\"0\" name=\"ship_sell_food\" id=\"ship_sell_food\" size=\"7\" maxlength=\"15\" disabled=\"disabled\"/>
 										</td>		
-										<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_FOOD_FACTOR."</td>		<td class=\"tbldata\" id=\"ship_buy_food_field\" style=\"vertical-align:middle;\">
+										<th style=\"text-align:center;vertical-align:middle;\">".MARKET_FOOD_FACTOR."</th>
+										<td id=\"ship_buy_food_field\" style=\"vertical-align:middle;\">
 											<input type=\"text\" value=\"0\" name=\"ship_buy_food\" id=\"ship_buy_food\" size=\"7\" maxlength=\"15\" onkeyup=\"calcMarketShipPrice(0, 0);\"/>
 										</td>
-										<td class=\"tbltitle\" id=\"ship_min_max_food\" style=\"vertical-align:middle;\"> - </td>
+										<th id=\"ship_min_max_food\" style=\"vertical-align:middle;\"> - </th>
 									</tr>";		
 									
 	          //Verkaufstext und für Allianzmitglied reservieren
 	          echo "<tr>
-	          				<td class=\"tbltitle\" colspan=\"5\" style=\"text-align:center;vertical-align:middle;\">Beschreibung und Reservation</td>
+	          				<th colspan=\"5\" style=\"text-align:center;vertical-align:middle;\">Beschreibung und Reservation</td>
 	          			</tr>
 	          			<tr>
-	          				<td class=\"tbldata\" colspan=\"4\" style=\"vertical-align:middle;\">
+	          				<td colspan=\"4\" style=\"vertical-align:middle;\">
 	          					<input type=\"text\" value=\"\" name=\"ship_text\" id=\"ship_text\" size=\"55\" maxlength=\"60\" ".tm("Text","Schreib einen kleinen Werbetext f&uuml;r deine Waren.")." onkeyup=\"calcMarketShipPrice(0, 0);\"/>	
 	          				</td>";
 	          //Für Allianzmitglied reservieren wenn in einer Allianz und diese den Allianzmarktplatz auf Stufe 2 oder höher hat
           	if($cu->allianceId!=0 && $alliance_market_level>=2 && !$cd_enabled)
           	{
-	            echo "<td class=\"tbldata\" colspan=\"1\" style=\"vertical-align:middle;\" ".tm("Reservation","Fall dieses Angebot nur Spieler aus deiner Allianz kaufen sollen, mach hier ein H&auml;kchen").">
+	            echo "<td colspan=\"1\" style=\"vertical-align:middle;\" ".tm("Reservation","Fall dieses Angebot nur Spieler aus deiner Allianz kaufen sollen, mach hier ein H&auml;kchen").">
 	            				<input type=\"checkbox\" name=\"ship_for_alliance\" value=\"1\"/> F&uuml;r Allianzmitglieder Reservieren
 	            			</td>
 	            		</tr>";
 	          }
 	          else
 	          {
-	            echo "<td class=\"tbldata\" colspan=\"1\" style=\"vertical-align:middle;\">&nbsp;</td></tr>";
+	            echo "<td colspan=\"1\" style=\"vertical-align:middle;\">&nbsp;</td></tr>";
 	          }			
 	          					
 						// Status Nachricht (Ajax Überprüfungstext)
 						echo "<tr>
-										<td class=\"tbldata\" colspan=\"5\" id=\"ship_check_message\" style=\"text-align:center;vertical-align:middle;height:30px;\">&nbsp;</td>
+										<td colspan=\"5\" id=\"ship_check_message\" style=\"text-align:center;vertical-align:middle;height:30px;\">&nbsp;</td>
 									</tr>";								
 	
 	          tableEnd();
@@ -4691,7 +4694,7 @@
 
 					//Header
 					echo "<tr>
-									<td class=\"tbltitle\" style=\"width:15%;vertical-align:middle;\">Rohstoff";
+									<th style=\"width:15%;vertical-align:middle;\">Rohstoff";
 									
 					          // Min. Auktionsende an XAJAX weitergeben
 					          echo "<input type=\"hidden\" value=\"".$auction_time."\" name=\"auction_time_min\" id=\"auction_time_min\"/>";
@@ -4707,36 +4710,36 @@
 					          echo "<input type=\"hidden\" value=\"0\" name=\"auction_last_update\" id=\"auction_last_update\"/>";
 									
 									
-						echo "</td>
-									<td class=\"tbltitle\" style=\"width:10%;vertical-align:middle;\">Angebot</td>
-									<td class=\"tbltitle\" style=\"width:5%;text-align:center;vertical-align:middle;\">Kurs</td>
-									<td class=\"tbltitle\" style=\"width:5%;vertical-align:middle;\">Preis</td>
-									<td class=\"tbltitle\" colspan=\"2\" style=\"width:45%;text-align:center;vertical-align:middle;\">Zeit</td>
+						echo "</th>
+									<th style=\"width:10%;vertical-align:middle;\">Angebot</t>
+									<th style=\"width:5%;text-align:center;vertical-align:middle;\">Kurs</th>
+									<th style=\"width:5%;vertical-align:middle;\">Preis</th>
+									<th colspan=\"2\" style=\"width:45%;text-align:center;vertical-align:middle;\">Zeit</th>
 								</tr>";
 					// Titan
 					echo "<tr>
-									<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_METAL.":</td>
-									<td class=\"tbldata\" style=\"vertical-align:middle;\">
+									<th style=\"vertical-align:middle;\">".RES_METAL.":</th>
+									<td style=\"vertical-align:middle;\">
 										<input type=\"text\" value=\"0\" name=\"auction_sell_metal\" id=\"auction_sell_metal\" size=\"7\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resMetal.",'','');checkMarketAuctionFormular(0);\"/>
 									</td>
-									<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_METAL_FACTOR."</td>
-									<td class=\"tbldata\" id=\"auction_buy_metal_field\" style=\"text-align:center;vertical-align:middle;\">
+									<th style=\"text-align:center;vertical-align:middle;\">".MARKET_METAL_FACTOR."</th>
+									<td id=\"auction_buy_metal_field\" style=\"text-align:center;vertical-align:middle;\">
 										<input type=\"checkbox\" name=\"auction_buy_metal\" id=\"auction_buy_metal\" value=\"1\" onclick=\"checkMarketAuctionFormular(0);\" checked=\"checked\"/>
 									</td>
-									<td class=\"tbltitle\" colspan=\"2\" style=\"vertical-align:middle;\">&nbsp;</td>
+									<th colspan=\"2\" style=\"vertical-align:middle;\">&nbsp;</th>
 								</tr>";												
 					// Silizium und "Dauer" Feld
 					echo "<tr>
-									<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_CRYSTAL.":</td>
-									<td class=\"tbldata\" style=\"vertical-align:middle;\">
+									<th style=\"vertical-align:middle;\">".RES_CRYSTAL.":</th>
+									<td style=\"vertical-align:middle;\">
 										<input type=\"text\" value=\"0\" name=\"auction_sell_crystal\" id=\"auction_sell_crystal\" size=\"7\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resCrystal.",'','');checkMarketAuctionFormular(0);\"/>
 									</td>
-									<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_CRYSTAL_FACTOR."</td>
-									<td class=\"tbldata\" id=\"auction_buy_crystal_field\" style=\"text-align:center;vertical-align:middle;\">
+									<th style=\"text-align:center;vertical-align:middle;\">".MARKET_CRYSTAL_FACTOR."</th>
+									<td id=\"auction_buy_crystal_field\" style=\"text-align:center;vertical-align:middle;\">
 										<input type=\"checkbox\" name=\"auction_buy_crystal\" id=\"auction_buy_crystal\" value=\"1\" onclick=\"checkMarketAuctionFormular(0);\" checked=\"checked\"/>
 									</td>
-									<td class=\"tbltitle\" style=\"vertical-align:middle;\">Dauer:</td>
-									<td class=\"tbldata\" name=\"auction_time_field\" id=\"auction_time_field\" style=\"vertical-align:middle;\">
+									<th style=\"vertical-align:middle;\">Dauer:</th>
+									<td name=\"auction_time_field\" id=\"auction_time_field\" style=\"vertical-align:middle;\">
 										".AUCTION_MIN_DURATION." Tage + ";
 				
 					          //... in Tagen ...
@@ -4759,53 +4762,53 @@
 								</tr>";										
 					// PVC
 					echo "<tr>
-									<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_PLASTIC.":</td>
-									<td class=\"tbldata\" style=\"vertical-align:middle;\">
+									<th style=\"vertical-align:middle;\">".RES_PLASTIC.":</th>
+									<td style=\"vertical-align:middle;\">
 										<input type=\"text\" value=\"0\" name=\"auction_sell_plastic\" id=\"auction_sell_plastic\" size=\"7\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resPlastic.",'','');checkMarketAuctionFormular(0);\"/>
 									</td>
-									<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_PLASTIC_FACTOR."</td>
-									<td class=\"tbldata\" id=\"auction_buy_plastic_field\" style=\"text-align:center;vertical-align:middle;\">
+									<th style=\"text-align:center;vertical-align:middle;\">".MARKET_PLASTIC_FACTOR."</th>
+									<td id=\"auction_buy_plastic_field\" style=\"text-align:center;vertical-align:middle;\">
 										<input type=\"checkbox\" name=\"auction_buy_plastic\" id=\"auction_buy_plastic\" value=\"1\" onclick=\"checkMarketAuctionFormular(0);\" checked=\"checked\"/>
 									</td>
-									<td class=\"tbltitle\" colspan=\"2\" style=\"vertical-align:middle;\">&nbsp;</td>
+									<th colspan=\"2\" style=\"vertical-align:middle;\">&nbsp;</th>
 								</tr>";	
 					// Tritium und "Ende" Feld
 					echo "<tr>
-									<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_FUEL.":</td>
-									<td class=\"tbldata\" style=\"vertical-align:middle;\">
+									<th style=\"vertical-align:middle;\">".RES_FUEL.":</th>
+									<td style=\"vertical-align:middle;\">
 										<input type=\"text\" value=\"0\" name=\"auction_sell_fuel\" id=\"auction_sell_fuel\" size=\"7\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resFuel.",'','');checkMarketAuctionFormular(0);\"/>
 									</td>
-									<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_FUEL_FACTOR."</td>
-									<td class=\"tbldata\" id=\"auction_buy_fuel_field\" style=\"text-align:center;vertical-align:middle;\">
+									<th style=\"text-align:center;vertical-align:middle;\">".MARKET_FUEL_FACTOR."</th>
+									<td id=\"auction_buy_fuel_field\" style=\"text-align:center;vertical-align:middle;\">
 										<input type=\"checkbox\" name=\"auction_buy_fuel\" id=\"auction_buy_fuel\" value=\"1\" onclick=\"checkMarketAuctionFormular(0);\" checked=\"checked\"/>
 									</td>
-									<td class=\"tbltitle\" style=\"vertical-align:middle;\">Ende:</td>
-									<td class=\"tbldata\" id=\"auction_end_time\" style=\"vertical-align:middle;\">".date("d.m.Y H:i",$auction_time)."</td>										
+									<th style=\"vertical-align:middle;\">Ende:</th>
+									<td id=\"auction_end_time\" style=\"vertical-align:middle;\">".date("d.m.Y H:i",$auction_time)."</td>										
 								</tr>";
 					// Nahrung
 					echo "<tr>
-									<td class=\"tbltitle\" style=\"vertical-align:middle;\">".RES_FOOD.":</td>
-									<td class=\"tbldata\" style=\"vertical-align:middle;\">
+									<th style=\"vertical-align:middle;\">".RES_FOOD.":</th>
+									<td style=\"vertical-align:middle;\">
 										<input type=\"text\" value=\"0\" name=\"auction_sell_food\" id=\"auction_sell_food\" size=\"7\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resFood.",'','');checkMarketAuctionFormular(0);\"/>
 									</td>
-									<td class=\"tbltitle\" style=\"text-align:center;vertical-align:middle;\">".MARKET_FOOD_FACTOR."</td>
-									<td class=\"tbldata\" id=\"auction_buy_food_field\" style=\"text-align:center;vertical-align:middle;\">
+									<th style=\"text-align:center;vertical-align:middle;\">".MARKET_FOOD_FACTOR."</th>
+									<td id=\"auction_buy_food_field\" style=\"text-align:center;vertical-align:middle;\">
 										<input type=\"checkbox\" name=\"auction_buy_food\" id=\"auction_buy_food\" value=\"1\" onclick=\"checkMarketAuctionFormular(0);\" checked=\"checked\"/>
 									</td>
-									<td class=\"tbltitle\" colspan=\"2\" style=\"vertical-align:middle;\">&nbsp;</td>
+									<th colspan=\"2\" style=\"vertical-align:middle;\">&nbsp;</th>
 								</tr>";	
           //Verkaufstext und für Allianzmitglied reservieren
           echo "<tr>
-          				<td class=\"tbltitle\" colspan=\"6\" style=\"text-align:center;vertical-align:middle;\">Beschreibung</td>
+          				<th colspan=\"6\" style=\"text-align:center;vertical-align:middle;\">Beschreibung</th>
           			</tr>
           			<tr>
-          				<td class=\"tbldata\" colspan=\"6\" style=\"text-align:center;vertical-align:middle;\">
+          				<td colspan=\"6\" style=\"text-align:center;vertical-align:middle;\">
           					<input type=\"text\" value=\"\" name=\"auction_text\" id=\"auction_text\" size=\"100\" maxlength=\"60\" ".tm("Text","Schreib einen kleinen Werbetext f&uuml;r deine Waren.")." onkeyup=\"checkMarketAuctionFormular(0);\"/>	
           				</td>
           			</tr>";												
 					// Status Nachricht (Ajax Überprüfungstext)
 					echo "<tr>
-									<td class=\"tbldata\" colspan=\"6\" name=\"auction_check_message\" id=\"auction_check_message\" style=\"text-align:center;vertical-align:middle;height:30px;\">&nbsp;</td>
+									<td colspan=\"6\" name=\"auction_check_message\" id=\"auction_check_message\" style=\"text-align:center;vertical-align:middle;height:30px;\">&nbsp;</td>
 								</tr>";		
 														
           tableEnd();

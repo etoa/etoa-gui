@@ -93,33 +93,33 @@
 	{
 		tableStart("Die neusten 10 Nachrichten");
 		echo "<tr>
-						<th class=\"tbltitle\" style=\"width:50%;\">Titel</th>
-						<th class=\"tbltitle\" style=\"width:20%;\">Datum</th>
-						<th class=\"tbltitle\" style=\"width:20%;\">Absender</th>
-						<th class=\"tbltitle\" style=\"width:10%;\">Text</th>
+						<th style=\"width:50%;\">Titel</th>
+						<th style=\"width:20%;\">Datum</th>
+						<th style=\"width:20%;\">Absender</th>
+						<th style=\"width:10%;\">Text</th>
 				</tr>";
 		while ($anarr=mysql_fetch_array($anres))
 		{
 			$id = "th".$anarr['alliance_news_id'];
 			$sid = "sth".$anarr['alliance_news_id'];				
 
-			echo "<tr><td class=\"tbldata\">".text2html($anarr['alliance_news_title'])."</td>";
-			echo "<td class=\"tbldata\">".df($anarr['alliance_news_date'])."</td>";
+			echo "<tr><td>".text2html($anarr['alliance_news_title'])."</td>";
+			echo "<td>".df($anarr['alliance_news_date'])."</td>";
 			if($anarr['afname']!="" && $anarr['aftag']!="")
 			{
-				echo "<td class=\"tbldata\" ".tm($anarr['aftag'],text2html($anarr['afname'])).">
+				echo "<td ".tm($anarr['aftag'],text2html($anarr['afname'])).">
 								<a href=\"?page=alliance&amp;info_id=".$anarr['alliance_news_alliance_id']."\">".$anarr['aftag']."</a>
 							</td>";
 			}
 			else
 			{
-				echo "<td class=\"tbldata\">(gel&ouml;scht)</td>";
+				echo "<td>(gel&ouml;scht)</td>";
 			}
-			echo "<td class=\"tbldata\">
+			echo "<td>
 			[<a href=\"javascript:;\" onclick=\"toggleText('".$id."','".$sid."');\" id=\"".$sid."\">Anzeigen</a>]
 			</td></tr>";
 			echo "<tr id=\"".$id."\" style=\"display:none;\">
-				<td class=\"tbldata\" colspan=\"5\">".text2html(stripslashes($anarr['alliance_news_text']))."
+				<td colspan=\"5\">".text2html(stripslashes($anarr['alliance_news_text']))."
 				<br/><br/>-------------------------------------<br/>";
 				if ($anarr['user_id']>0)
 				{
@@ -177,34 +177,34 @@
 	{
 		tableStart("Allianzinterne Nachrichten");
 		echo "<tr>
-						<th class=\"tbltitle\" style=\"width:50%;\">Titel</th>
-						<th class=\"tbltitle\" style=\"width:20%;\">Datum</th>
-						<th class=\"tbltitle\" style=\"width:20%;\">Absender</th>
-						<th class=\"tbltitle\" style=\"width:10%;\">Text</th>
+						<th style=\"width:50%;\">Titel</th>
+						<th style=\"width:20%;\">Datum</th>
+						<th style=\"width:20%;\">Absender</th>
+						<th style=\"width:10%;\">Text</th>
 				</tr>";
 		while ($anarr=mysql_fetch_array($anres))
 		{
 			$id = "th".$anarr['alliance_news_id'];
 			$sid = "sth".$anarr['alliance_news_id'];				
 
-			echo "<tr><td class=\"tbldata\">".text2html($anarr['alliance_news_title'])."</td>";
-			echo "<td class=\"tbldata\">".df($anarr['alliance_news_date'])."</td>";
+			echo "<tr><td>".text2html($anarr['alliance_news_title'])."</td>";
+			echo "<td>".df($anarr['alliance_news_date'])."</td>";
 			if($anarr['afname']!="" && $anarr['aftag']!="")
 			{
-				echo "<td class=\"tbldata\" ".tm($anarr['aftag'],text2html($anarr['afname'])).">
+				echo "<td ".tm($anarr['aftag'],text2html($anarr['afname'])).">
 					<a href=\"?page=alliance&amp;info_id=".$anarr['alliance_news_alliance_id']."\">".$anarr['aftag']."</a>
 					
 				</td>";
 			}
 			else
 			{
-				echo "<td class=\"tbldata\">(gel&ouml;scht)</td>";
+				echo "<td>(gel&ouml;scht)</td>";
 			}
-			echo "<td class=\"tbldata\">
+			echo "<td>
 			[<a href=\"javascript:;\" onclick=\"toggleText('".$id."','".$sid."');\" id=\"".$sid."\">Anzeigen</a>]
 			</td></tr>";
 			echo "<tr id=\"".$id."\" style=\"display:none;\">
-				<td class=\"tbldata\" colspan=\"5\">".text2html(stripslashes($anarr['alliance_news_text']))."
+				<td colspan=\"5\">".text2html(stripslashes($anarr['alliance_news_text']))."
 				<br/><br/>-------------------------------------<br/>";
 				if ($anarr['user_id']>0)
 				{
@@ -261,22 +261,22 @@
 		tableStart("Neuste Bündnisse");
 		echo "
 		<tr>
-			<td class=\"tbltitle\" style=\"width:25%;\">Allianz 1</th>
-			<td class=\"tbltitle\" style=\"width:25%;\">Allianz 2</th>
-			<td class=\"tbltitle\" style=\"width:20%;\">Bündnisname</th>
-			<td class=\"tbltitle\" style=\"width:20%;\">Datum</th>
-			<td class=\"tbltitle\" style=\"width:10%;\">Erklärung</th>
+			<th style=\"width:25%;\">Allianz 1</th>
+			<th style=\"width:25%;\">Allianz 2</th>
+			<th style=\"width:20%;\">Bündnisname</th>
+			<th style=\"width:20%;\">Datum</th>
+			<th style=\"width:10%;\">Erklärung</th>
 		</tr>";
 		while ($arr=mysql_fetch_array($res))
 		{
 			$id = "bnd".$arr['alliance_bnd_id'];
 			$sid = "sbnd".$arr['alliance_bnd_id'];			
 			echo "<tr>
-				<td class=\"tbldata\"><a href=\"?page=alliance&amp;info_id=".$arr['aid1']."\" ".tm($arr['at1'],text2html($arr['an1'])).">".text2html($arr['an1'])."</td>
-				<td class=\"tbldata\"><a href=\"?page=alliance&amp;info_id=".$arr['aid2']."\" ".tm($arr['at2'],text2html($arr['an2'])).">".text2html($arr['an2'])."</td>
-				<td class=\"tbldata\">".stripslashes($arr['alliance_bnd_name'])."</td>				
-				<td class=\"tbldata\">".df($arr['alliance_bnd_date'])."</td>
-				<td class=\"tbldata\">";
+				<td><a href=\"?page=alliance&amp;info_id=".$arr['aid1']."\" ".tm($arr['at1'],text2html($arr['an1'])).">".text2html($arr['an1'])."</td>
+				<td><a href=\"?page=alliance&amp;info_id=".$arr['aid2']."\" ".tm($arr['at2'],text2html($arr['an2'])).">".text2html($arr['an2'])."</td>
+				<td>".stripslashes($arr['alliance_bnd_name'])."</td>				
+				<td>".df($arr['alliance_bnd_date'])."</td>
+				<td>";
 				if ($arr['alliance_bnd_text_pub']!="")
 				{
 					echo "[<a href=\"javascript:;\" onclick=\"toggleText('".$id."','".$sid."');\" id=\"".$sid."\">Anzeigen</a>]";
@@ -288,7 +288,7 @@
 				echo "</td>
 			</tr>";			
 			echo "<tr id=\"".$id."\" style=\"display:none;\">
-				<td class=\"tbldata\" colspan=\"5\">".text2html(stripslashes($arr['alliance_bnd_text_pub']))."</td>
+				<td colspan=\"5\">".text2html(stripslashes($arr['alliance_bnd_text_pub']))."</td>
 			</tr>";
 		}		
 		tableEnd();
@@ -332,22 +332,22 @@
 	{
 		tableStart("Aktuelle Kriege (Dauer ".round(WAR_DURATION/3600)."h)");
 		echo "<tr>
-						<td class=\"tbltitle\" width=\"25%\">Allianz 1</th>
-						<td class=\"tbltitle\" width=\"25%\">Allianz 2</th>
-						<td class=\"tbltitle\" width=\"20%\">Start</th>
-						<td class=\"tbltitle\" width=\"20%\">Ende</th>
-						<td class=\"tbltitle\" width=\"10%\">Erklärung</th>
+						<th width=\"25%\">Allianz 1</th>
+						<th width=\"25%\">Allianz 2</th>
+						<th width=\"20%\">Start</th>
+						<th width=\"20%\">Ende</th>
+						<th width=\"10%\">Erklärung</th>
 					</tr>";
 		while ($arr=mysql_fetch_array($res))
 		{
 			$id = "war".$arr['alliance_bnd_id'];
 			$sid = "swar".$arr['alliance_bnd_id'];
 			echo "<tr>
-				<td class=\"tbldata\"><a href=\"?page=alliance&amp;info_id=".$arr['aid1']."\" ".tm($arr['at1'],text2html($arr['an1'])).">".text2html($arr['an1'])."</td>
-				<td class=\"tbldata\"><a href=\"?page=alliance&amp;info_id=".$arr['aid2']."\" ".tm($arr['at2'],text2html($arr['an2'])).">".text2html($arr['an2'])."</td>
-				<td class=\"tbldata\">".df($arr['alliance_bnd_date'])."</td>
-				<td class=\"tbldata\">".df($arr['alliance_bnd_date']+WAR_DURATION)."</td>
-				<td class=\"tbldata\">";
+				<td><a href=\"?page=alliance&amp;info_id=".$arr['aid1']."\" ".tm($arr['at1'],text2html($arr['an1'])).">".text2html($arr['an1'])."</td>
+				<td><a href=\"?page=alliance&amp;info_id=".$arr['aid2']."\" ".tm($arr['at2'],text2html($arr['an2'])).">".text2html($arr['an2'])."</td>
+				<td>".df($arr['alliance_bnd_date'])."</td>
+				<td>".df($arr['alliance_bnd_date']+WAR_DURATION)."</td>
+				<td>";
 				if ($arr['alliance_bnd_text_pub']!="")
 				{
 					echo "[<a href=\"javascript:;\" onclick=\"toggleText('".$id."','".$sid."');\" id=\"".$sid."\">Anzeigen</a>]";
@@ -359,7 +359,7 @@
 				echo "</td>
 			</tr>";			
 			echo "<tr id=\"".$id."\" style=\"display:none;\">
-				<td class=\"tbldata\" colspan=\"5\">".text2html(stripslashes($arr['alliance_bnd_text_pub']))."</td>
+				<td colspan=\"5\">".text2html(stripslashes($arr['alliance_bnd_text_pub']))."</td>
 			</tr>";
 		}		
 		tableEnd();
@@ -401,18 +401,18 @@
 	{
 		tableStart("Aktuelle Friedensabkommen (Dauer ".round(PEACE_DURATION/3600)."h)");
 		echo "<tr>
-			<td class=\"tbltitle\" width=\"30%\">Allianz 1</th>
-			<td class=\"tbltitle\" width=\"30%\">Allianz 2</th>
-			<td class=\"tbltitle\" width=\"20%\">Start</th>
-			<td class=\"tbltitle\" width=\"20%\">Ende</th>
+			<th width=\"30%\">Allianz 1</th>
+			<th width=\"30%\">Allianz 2</th>
+			<th width=\"20%\">Start</th>
+			<th width=\"20%\">Ende</th>
 		</tr>";
 		while ($arr=mysql_fetch_array($res))
 		{
 			echo "<tr>
-				<td class=\"tbldata\"><a href=\"?page=alliance&amp;info_id=".$arr['aid1']."\" ".tm($arr['at1'],text2html($arr['an1'])).">".text2html($arr['an1'])."</td>
-				<td class=\"tbldata\"><a href=\"?page=alliance&amp;info_id=".$arr['aid2']."\" ".tm($arr['at2'],text2html($arr['an2'])).">".text2html($arr['an2'])."</td>
-				<td class=\"tbldata\">".df($arr['alliance_bnd_date'])."</td>
-				<td class=\"tbldata\">".df($arr['alliance_bnd_date']+PEACE_DURATION)."</td>
+				<td><a href=\"?page=alliance&amp;info_id=".$arr['aid1']."\" ".tm($arr['at1'],text2html($arr['an1'])).">".text2html($arr['an1'])."</td>
+				<td><a href=\"?page=alliance&amp;info_id=".$arr['aid2']."\" ".tm($arr['at2'],text2html($arr['an2'])).">".text2html($arr['an2'])."</td>
+				<td>".df($arr['alliance_bnd_date'])."</td>
+				<td>".df($arr['alliance_bnd_date']+PEACE_DURATION)."</td>
 			</tr>";			
 		}		
 		tableEnd();

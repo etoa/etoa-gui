@@ -51,7 +51,7 @@
         	shiplist_ship_id='".$_POST['id']."'
         	AND shiplist_user_id='".$cu->id."';");
 
-        echo "Upgrade erfolgreich duchgeführt!<br>";
+        ok_msg("Upgrade erfolgreich duchgeführt!");
     }
 
 
@@ -128,44 +128,44 @@
 			tableStart($arr['ship_name']);
 			echo "
 			     <tr>
-			     	<td class=\"tbltitle\" width=\"25%\">Level</td>";
+			     	<th width=\"25%\">Level</th>";
 
 						if($arr['special_ship_max_level']<=$init_level && $arr['special_ship_max_level']!=0)
 						{
-							echo "<td class=\"tbldata\" width=\"10%\">".$init_level." (max.)</td>";
+							echo "<td width=\"10%\">".$init_level." (max.)</td>";
 						}
 						else
 						{
 	            if($level-$init_level<=0)
 	            {
-	              echo "<td class=\"tbldata\" width=\"10%\">$init_level (+".($level-$init_level).")</td>";
+	              echo "<td width=\"10%\">$init_level (+".($level-$init_level).")</td>";
 	            }
 	            else
 	            {
-	              echo "<td class=\"tbldata3\" width=\"10%\">$init_level (+".($level-$init_level).")</td>";
+	              echo "<td style=\"color:green;\" width=\"10%\">$init_level (+".($level-$init_level).")</td>";
 	            }
 	          }
 			echo "
-			     	<td class=\"tbldata\"  width=\"65%\">Level des Schiffes</td>
+			     	<td  width=\"65%\">Level des Schiffes</td>
 			     </tr>
 			     <tr>
-			     	<td class=\"tbltitle\" width=\"25%\">Erfahrung</td>
-			     	<td class=\"tbldata\" width=\"10%\">".nf($arr['shiplist_special_ship_exp'])."</td>
-			     	<td class=\"tbldata\" width=\"65%\">Erfahrung des Schiffes</td>
+			     	<th width=\"25%\">Erfahrung</th>
+			     	<td width=\"10%\">".nf($arr['shiplist_special_ship_exp'])."</td>
+			     	<td width=\"65%\">Erfahrung des Schiffes</td>
 			     </tr>
 			     <tr>
-			     	<td class=\"tbltitle\" width=\"25%\">Ben. Erfahrung</td>";
+			     	<th width=\"25%\">Ben. Erfahrung</th>";
 
 			     	if($arr['special_ship_max_level']<=$init_level && $arr['special_ship_max_level']!=0)
 			     	{
-			     		echo "<td class=\"tbldata\" width=\"10%\"> - </td>";
+			     		echo "<td width=\"10%\"> - </td>";
 			     	}
 			     	else
 			     	{
-			     		echo "<td class=\"tbldata\" width=\"10%\">".nf($exp_for_next_level)."</td>";
+			     		echo "<td width=\"10%\">".nf($exp_for_next_level)."</td>";
 			     	}
 
-			     	echo "<td class=\"tbldata\" width=\"65%\">Benötigte Erfahrung bis zum nächsten LevelUp</td>
+			     	echo "<td width=\"65%\">Benötigte Erfahrung bis zum nächsten LevelUp</td>
 			     </tr>
 
 			     ";
@@ -175,10 +175,10 @@
 			tableStart("Bonis");
 			echo "
 			     <tr>
-			     	<td class=\"tbltitle\" width=\"25%\">Skill</td>
-			     	<td class=\"tbltitle\" width=\"10%\">Bonus</td>
-			     	<td class=\"tbltitle\" width=\"63%\">Info</td>
-			     	<td class=\"tbltitle\" width=\"2%\">LvL</td>
+			     	<th width=\"25%\">Skill</th>
+			     	<th width=\"10%\">Bonus</th>
+			     	<th width=\"63%\">Info</th>
+			     	<th width=\"2%\">LvL</th>
 			     </tr>
 			     ";
 
@@ -187,130 +187,130 @@
 			if($arr['special_ship_bonus_weapon']>0)
 			{
 				echo "<tr>
-				     	<td class=\"tbltitle\">Waffen (".$arr['shiplist_special_ship_bonus_weapon'].")</td>
-				     	<td class=\"tbldata\">".(round($arr['shiplist_special_ship_bonus_weapon']*$arr['special_ship_bonus_weapon']*100,1))."%</td>
-				     	<td class=\"tbldata\">Waffenbonus im Kampf (".($arr['special_ship_bonus_weapon']*100)."% pro Level)</td>
-				     	<td class=\"tbldata\" style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"weapon\" border=\"0\"></td>
+				     	<th>Waffen (".$arr['shiplist_special_ship_bonus_weapon'].")</th>
+				     	<td>".(round($arr['shiplist_special_ship_bonus_weapon']*$arr['special_ship_bonus_weapon']*100,1))."%</td>
+				     	<td>Waffenbonus im Kampf (".($arr['special_ship_bonus_weapon']*100)."% pro Level)</td>
+				     	<td style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"weapon\" border=\"0\"></td>
 				     </tr>";
 			}
 			// Struktur Bonus
 			if($arr['special_ship_bonus_structure']>0)
 			{
 				echo "<tr>
-				     	<td class=\"tbltitle\">Panzerung (".$arr['shiplist_special_ship_bonus_structure'].")</td>
-				     	<td class=\"tbldata\">".(round($arr['shiplist_special_ship_bonus_structure']*$arr['special_ship_bonus_structure']*100,1))."%</td>
-				     	<td class=\"tbldata\">Struktur im Kampf (".($arr['special_ship_bonus_structure']*100)."% pro Level)</td>
-				     	<td class=\"tbldata\" style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"structure\" border=\"0\"></td>
+				     	<th>Panzerung (".$arr['shiplist_special_ship_bonus_structure'].")</th>
+				     	<td>".(round($arr['shiplist_special_ship_bonus_structure']*$arr['special_ship_bonus_structure']*100,1))."%</td>
+				     	<td>Struktur im Kampf (".($arr['special_ship_bonus_structure']*100)."% pro Level)</td>
+				     	<td style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"structure\" border=\"0\"></td>
 				     </tr>";
 			}
 			// Schild Bonus
 			if($arr['special_ship_bonus_shield']>0)
 			{
 				echo "<tr>
-				     	<td class=\"tbltitle\">Schild (".$arr['shiplist_special_ship_bonus_shield'].")</td>
-				     	<td class=\"tbldata\">".(round($arr['shiplist_special_ship_bonus_shield']*$arr['special_ship_bonus_shield']*100,1))."%</td>
-				     	<td class=\"tbldata\">Schildbonus im Kampf (".($arr['special_ship_bonus_shield']*100)."% pro Level)</td>
-				     	<td class=\"tbldata\" style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"shield\" border=\"0\"></td>
+				     	<th>Schild (".$arr['shiplist_special_ship_bonus_shield'].")</th>
+				     	<td>".(round($arr['shiplist_special_ship_bonus_shield']*$arr['special_ship_bonus_shield']*100,1))."%</td>
+				     	<td>Schildbonus im Kampf (".($arr['special_ship_bonus_shield']*100)."% pro Level)</td>
+				     	<td style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"shield\" border=\"0\"></td>
 				     </tr>";
 			}
 			// kapazitäts Bonus
 			if($arr['special_ship_bonus_capacity']>0)
 			{
 				echo "<tr>
-				     	<td class=\"tbltitle\">Kapazität (".$arr['shiplist_special_ship_bonus_capacity'].")</td>
-				     	<td class=\"tbldata\">".(round($arr['shiplist_special_ship_bonus_capacity']*$arr['special_ship_bonus_capacity']*100,1))."%</td>
-				     	<td class=\"tbldata\">Erhöht die Kapazität der ganzen Flotte (".($arr['special_ship_bonus_capacity']*100)."% pro Level)</td>
-				     	<td class=\"tbldata\" style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"capacity\" border=\"0\"></td>
+				     	<th>Kapazität (".$arr['shiplist_special_ship_bonus_capacity'].")</th>
+				     	<td>".(round($arr['shiplist_special_ship_bonus_capacity']*$arr['special_ship_bonus_capacity']*100,1))."%</td>
+				     	<td>Erhöht die Kapazität der ganzen Flotte (".($arr['special_ship_bonus_capacity']*100)."% pro Level)</td>
+				     	<td style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"capacity\" border=\"0\"></td>
 				     </tr>";
 			}
 			// Speed Bonus
 			if($arr['special_ship_bonus_speed']>0)
 			{
 				echo "<tr>
-				     	<td class=\"tbltitle\">Speed (".$arr['shiplist_special_ship_bonus_speed'].")</td>
-				     	<td class=\"tbldata\">".(round($arr['shiplist_special_ship_bonus_speed']*$arr['special_ship_bonus_speed']*100,1))."%</td>
-				     	<td class=\"tbldata\">Erhöht den Speed der ganzen Flotte (".($arr['special_ship_bonus_speed']*100)."% pro Level)</td>
-				     	<td class=\"tbldata\" style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"speed\" border=\"0\"></td>
+				     	<th>Speed (".$arr['shiplist_special_ship_bonus_speed'].")</th>
+				     	<td>".(round($arr['shiplist_special_ship_bonus_speed']*$arr['special_ship_bonus_speed']*100,1))."%</td>
+				     	<td>Erhöht den Speed der ganzen Flotte (".($arr['special_ship_bonus_speed']*100)."% pro Level)</td>
+				     	<td style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"speed\" border=\"0\"></td>
 				     </tr>";
 			}
 			// Tarn Bonus
 			if($arr['special_ship_bonus_tarn']>0)
 			{
 				echo "<tr>
-				     	<td class=\"tbltitle\">Tarnung (".$arr['shiplist_special_ship_bonus_tarn'].")</td>
-				     	<td class=\"tbldata\">".(round($arr['shiplist_special_ship_bonus_tarn']*$arr['special_ship_bonus_tarn']*100,1))."%</td>
-				     	<td class=\"tbldata\">Ermöglicht eine absolute Tarnung der Flotte (".($arr['special_ship_bonus_tarn']*100)."% pro Level)</td>
-				     	<td class=\"tbldata\" style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"tarn\" border=\"0\"></td>
+				     	<th>Tarnung (".$arr['shiplist_special_ship_bonus_tarn'].")</th>
+				     	<td>".(round($arr['shiplist_special_ship_bonus_tarn']*$arr['special_ship_bonus_tarn']*100,1))."%</td>
+				     	<td>Ermöglicht eine absolute Tarnung der Flotte (".($arr['special_ship_bonus_tarn']*100)."% pro Level)</td>
+				     	<td style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"tarn\" border=\"0\"></td>
 				     </tr>";
 			}
 			// Piloten Bonus
 			if($arr['special_ship_bonus_pilots']>0)
 			{
 				echo "<tr>
-				     	<td class=\"tbltitle\">Besatzung (".$arr['shiplist_special_ship_bonus_pilots'].")</td>
-				     	<td class=\"tbldata\">".(round($arr['shiplist_special_ship_bonus_pilots']*$arr['special_ship_bonus_pilots']*100,1))."%</td>
-				     	<td class=\"tbldata\">Verringert die benötigten Piloten der Flotte (".($arr['special_ship_bonus_pilots']*100)."% pro Level)</td>
-				     	<td class=\"tbldata\" style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"pilots\" border=\"0\"></td>
+				     	<th>Besatzung (".$arr['shiplist_special_ship_bonus_pilots'].")</th>
+				     	<td>".(round($arr['shiplist_special_ship_bonus_pilots']*$arr['special_ship_bonus_pilots']*100,1))."%</td>
+				     	<td>Verringert die benötigten Piloten der Flotte (".($arr['special_ship_bonus_pilots']*100)."% pro Level)</td>
+				     	<td style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"pilots\" border=\"0\"></td>
 				     </tr>";
 			}
 			// Heal Bonus
 			if($arr['special_ship_bonus_heal']>0)
 			{
 				echo "<tr>
-				     	<td class=\"tbltitle\">Heilung (".$arr['shiplist_special_ship_bonus_heal'].")</td>
-				     	<td class=\"tbldata\">".(round($arr['shiplist_special_ship_bonus_heal']*$arr['special_ship_bonus_heal']*100,1))."%</td>
-				     	<td class=\"tbldata\">Heilbonus im Kampf (".($arr['special_ship_bonus_heal']*100)."% pro Level)</td>
-				     	<td class=\"tbldata\" style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"heal\" border=\"0\"></td>
+				     	<th>Heilung (".$arr['shiplist_special_ship_bonus_heal'].")</th>
+				     	<td>".(round($arr['shiplist_special_ship_bonus_heal']*$arr['special_ship_bonus_heal']*100,1))."%</td>
+				     	<td>Heilbonus im Kampf (".($arr['special_ship_bonus_heal']*100)."% pro Level)</td>
+				     	<td style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"heal\" border=\"0\"></td>
 				     </tr>";
 			}
 			// Giftgas Bonus
 			if($arr['special_ship_bonus_antrax']>0)
 			{
 				echo "<tr>
-				     	<td class=\"tbltitle\">Giftgas (".$arr['shiplist_special_ship_bonus_antrax'].")</td>
-				     	<td class=\"tbldata\">".(round($arr['shiplist_special_ship_bonus_antrax']*$arr['special_ship_bonus_antrax']*100,1))."%</td>
-				     	<td class=\"tbldata\">Erhöht Giftgaseffekt (".($arr['special_ship_bonus_antrax']*100)."% pro Level)</td>
-				     	<td class=\"tbldata\" style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"heal\" border=\"0\"></td>
+				     	<th>Giftgas (".$arr['shiplist_special_ship_bonus_antrax'].")</th>
+				     	<td>".(round($arr['shiplist_special_ship_bonus_antrax']*$arr['special_ship_bonus_antrax']*100,1))."%</td>
+				     	<td>Erhöht Giftgaseffekt (".($arr['special_ship_bonus_antrax']*100)."% pro Level)</td>
+				     	<td style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"heal\" border=\"0\"></td>
 				     </tr>";
 			}
 			// Techklau Bonus
 			if($arr['special_ship_bonus_forsteal']>0)
 			{
 				echo "<tr>
-				     	<td class=\"tbltitle\">Spionageangriff (".$arr['shiplist_special_ship_bonus_forsteal'].")</td>
-				     	<td class=\"tbldata\">".(round($arr['shiplist_special_ship_bonus_forsteal']*$arr['special_ship_bonus_forsteal']*100,1))."%</td>
-				     	<td class=\"tbldata\">Erhöht die Erfolgschancen beim Spionageangriff (".($arr['special_ship_bonus_forsteal']*100)."% pro Level)</td>
-				     	<td class=\"tbldata\" style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"forsteal\" border=\"0\"></td>
+				     	<th>Spionageangriff (".$arr['shiplist_special_ship_bonus_forsteal'].")</th>
+				     	<td>".(round($arr['shiplist_special_ship_bonus_forsteal']*$arr['special_ship_bonus_forsteal']*100,1))."%</td>
+				     	<td>Erhöht die Erfolgschancen beim Spionageangriff (".($arr['special_ship_bonus_forsteal']*100)."% pro Level)</td>
+				     	<td style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"forsteal\" border=\"0\"></td>
 				     </tr>";
 			}
 			// Bombardieren Bonus
 			if($arr['special_ship_bonus_build_destroy']>0)
 			{
 				echo "<tr>
-				     	<td class=\"tbltitle\">Bombardieren (".$arr['shiplist_special_ship_bonus_build_destroy'].")</td>
-				     	<td class=\"tbldata\">".(round($arr['shiplist_special_ship_bonus_build_destroy']*$arr['special_ship_bonus_build_destroy']*100,1))."%</td>
-				     	<td class=\"tbldata\">Erhöht Bombardierungschancen (".($arr['special_ship_bonus_build_destroy']*100)."% pro Level)</td>
-				     	<td class=\"tbldata\" style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"build_destroy\" border=\"0\"></td>
+				     	<th>Bombardieren (".$arr['shiplist_special_ship_bonus_build_destroy'].")</th>
+				     	<td>".(round($arr['shiplist_special_ship_bonus_build_destroy']*$arr['special_ship_bonus_build_destroy']*100,1))."%</td>
+				     	<td>Erhöht Bombardierungschancen (".($arr['special_ship_bonus_build_destroy']*100)."% pro Level)</td>
+				     	<td style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"build_destroy\" border=\"0\"></td>
 				     </tr>";
 			}
 			// Antrax Bonus
 			if($arr['special_ship_bonus_antrax_food']>0)
 			{
 				echo "<tr>
-				     	<td class=\"tbltitle\">Antrax (".$arr['shiplist_special_ship_bonus_antrax_food'].")</td>
-				     	<td class=\"tbldata\">".(round($arr['shiplist_special_ship_bonus_antrax_food']*$arr['special_ship_bonus_antrax_food']*100,1))."%</td>
-				     	<td class=\"tbldata\">Erhöht Antraxeffekt (".($arr['special_ship_bonus_antrax_food']*100)."% pro Level)</td>
-				     	<td class=\"tbldata\" style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"antrax_food\" border=\"0\"></td>
+				     	<th>Antrax (".$arr['shiplist_special_ship_bonus_antrax_food'].")</th>
+				     	<td>".(round($arr['shiplist_special_ship_bonus_antrax_food']*$arr['special_ship_bonus_antrax_food']*100,1))."%</td>
+				     	<td>Erhöht Antraxeffekt (".($arr['special_ship_bonus_antrax_food']*100)."% pro Level)</td>
+				     	<td style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"antrax_food\" border=\"0\"></td>
 				     </tr>";
 			}
 			// Deaktivieren Bonus
 			if($arr['special_ship_bonus_deactivade']>0)
 			{
 				echo "<tr>
-				     	<td class=\"tbltitle\">Deaktivieren (".$arr['shiplist_special_ship_bonus_deactivade'].")</td>
-				     	<td class=\"tbldata\">".(round($arr['shiplist_special_ship_bonus_deactivade']*$arr['special_ship_bonus_deactivade']*100,1))."%</td>
-				     	<td class=\"tbldata\">Erhöht Deaktivierungschancen (".($arr['special_ship_bonus_deactivade']*100)."% pro Level)</td>
-				     	<td class=\"tbldata\" style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"deactivade\" border=\"0\"></td>
+				     	<th>Deaktivieren (".$arr['shiplist_special_ship_bonus_deactivade'].")</th>
+				     	<td>".(round($arr['shiplist_special_ship_bonus_deactivade']*$arr['special_ship_bonus_deactivade']*100,1))."%</td>
+				     	<td>Erhöht Deaktivierungschancen (".($arr['special_ship_bonus_deactivade']*100)."% pro Level)</td>
+				     	<td style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"deactivade\" border=\"0\"></td>
 				     </tr>";
 			}
 
@@ -334,7 +334,7 @@
 		}
 		else
 		{
-			echo "Du musst dieses Schiff zuerst bauen, oder auf den Planeten wechseln, auf dem sich das Schiff befindet!<br>";
+			error_msg("Du musst dieses Schiff zuerst bauen, oder auf den Planeten wechseln, auf dem sich das Schiff befindet!",1);
 		}
 
 
@@ -399,46 +399,46 @@
 
     				echo "
     					<tr>
-    						<td class=\"tbltitle\" style=\"width:220px;\">
-    							<a href=\"?page=ship_upgrade&amp;id=".$arr['ship_id']."\"><img src=\"".IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$arr['ship_id'].".".IMAGE_EXT."\" width=\"220\" height=\"220\" alt=\"Klicke hier um ins Upgrade Menu zu gelangen\" title=\"Klicke hier um ins Upgrade Menu zu gelangen\" border=\"0\"/></a></td>
-    						<td class=\"tbldata\" colspan=\"3\">".text2html($arr['ship_longcomment'])."</td>
+    						<th style=\"width:220px;\">
+    							<a href=\"?page=ship_upgrade&amp;id=".$arr['ship_id']."\"><img src=\"".IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$arr['ship_id'].".".IMAGE_EXT."\" width=\"220\" height=\"220\" alt=\"Klicke hier um ins Upgrade Menu zu gelangen\" title=\"Klicke hier um ins Upgrade Menu zu gelangen\" border=\"0\"/></a></th>
+    						<td colspan=\"3\">".text2html($arr['ship_longcomment'])."</td>
     					</tr>";
                     echo "
                          <tr>
-                            <td class=\"tbltitle\">Level</td>";
+                            <th class=\"tbltitle\">Level</th>";
 
                             if($arr['special_ship_max_level']<=$init_level && $arr['special_ship_max_level']!=0)
                             {
-                                 echo "<td class=\"tbldata\">$init_level (max.)</td>";
+                                 echo "<td>$init_level (max.)</td>";
                             }
                             else
                             {
                               if($level-$init_level<=0)
                               {
-                                echo "<td class=\"tbldata\">$init_level (+".($level-$init_level).")</td>";
+                                echo "<td>$init_level (+".($level-$init_level).")</td>";
                               }
                               else
                               {
-                                echo "<td class=\"tbldata3\">$init_level (+".($level-$init_level).")</td>";
+                                echo "<td style=\"color:green;\">$init_level (+".($level-$init_level).")</td>";
                               }
                             }
                     echo "
-                            <td class=\"tbldata\">Level des Schiffes</td>
+                            <td>Level des Schiffes</td>
                          </tr>
                          <tr>
-                            <td class=\"tbltitle\">Erfahrung</td>
-                            <td class=\"tbldata\">".nf($arr['shiplist_special_ship_exp'])."</td>
-                            <td class=\"tbldata\">Erfahrung des Schiffes</td>
+                            <th class=\"tbltitle\">Erfahrung</th>
+                            <td>".nf($arr['shiplist_special_ship_exp'])."</td>
+                            <td>Erfahrung des Schiffes</td>
                          </tr>
                          <tr>
-                            <td class=\"tbltitle\">Ben. Erfahrung</td>";
+                            <th class=\"tbltitle\">Ben. Erfahrung</th>";
 
                             if($arr['special_ship_max_level']<=$init_level && $arr['special_ship_max_level']!=0)
-                                echo "<td class=\"tbldata\"> - </td>";
+                                echo "<td> - </td>";
                             else
-                                echo "<td class=\"tbldata\">".nf($exp_for_next_level)."</td>";
+                                echo "<td>".nf($exp_for_next_level)."</td>";
 
-                            echo "<td class=\"tbldata\">Benötigte Erfahrung bis zum nächsten LevelUp</td>
+                            echo "<td>Benötigte Erfahrung bis zum nächsten LevelUp</td>
                          </tr>
 
                          ";

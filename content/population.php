@@ -34,8 +34,8 @@
 	if ($cp)
 	{
 
-		echo "<h1>Bev&ouml;lkerungs&uuml;bersicht des Planeten ".$cp->name."</h1>";
-		echo "<div id=\"population_info\"></div>"; // Nur zu testzwecken
+		echo '<h1>Bev&ouml;lkerungs&uuml;bersicht des Planeten '.$cp->name.'</h1>';
+		echo '<div id="population_info"></div>'; // Nur zu testzwecken
 		$cp->resBox($cu->properties->smallResBox);
 
 		$res = dbquery("
@@ -59,19 +59,19 @@
 			// Wohnfläche
 			//
 			tableStart("Wohnfl&auml;che",400);
-			echo "<tr>
-			<th style=\"width:150px\">Grundwohnfl&auml;che</th>
-			<td>".nf($conf['user_start_people']['p1'])."</td>
-			</tr>";
-			$pcnt=$conf['user_start_people']['p1'];
+			echo '<tr>
+			<th style="width:150px">Grundwohnfl&auml;che</th>
+			<td>'.nf($cfg->p1('user_start_people')).'</td>
+			</tr>';
+			$pcnt=$cfg->p1('user_start_people');
 			while ($arr=mysql_fetch_array($res))
 			{
 				$place = floor($arr['building_people_place'] * pow($arr['building_store_factor'],$arr['buildlist_current_level']-1));
-				echo "<tr><th>".$arr['building_name']."</th>
-				<td>".nf($place)."</td></tr>";
+				echo '<tr><th>'.$arr['building_name'].'</th>
+				<td>'.nf($place).'</td></tr>';
 				$pcnt+=$place;
 			}
-			echo "<tr><th>TOTAL</b></th><td><b>".nf($pcnt)."</b></td></tr>";
+			echo '<tr><th>TOTAL</b></th><td><b>'.nf($pcnt).'</b></td></tr>';
 			tableEnd();
 
 
@@ -202,10 +202,10 @@
 	  			}
 			}
 
-			echo "<form action=\"?page=$page\" method=\"post\">";
+			echo '<form action="?page=$page" method="post">';
 			checker_init();
 			tableStart("Arbeiter zuteilen");
-			echo "<tr><th class=\"tbltitle\">Geb&auml;ude</th><th class=\"tbltitle\">Arbeiter</th><th class=\"tbltitle\">Zus&auml;tzliche Nahrung</th></tr>";
+			echo '<tr><th>Geb&auml;ude</th><th>Arbeiter</th><th>Zus&auml;tzliche Nahrung</th></tr>';
 
 			// Gebäudede mit Arbeitsplätzen auswählen
 			$sp_res = dbquery("
@@ -229,12 +229,12 @@
 				$work_available=true;
 				while ($sp_arr=mysql_fetch_array($sp_res))
 				{
-                    echo "<tr><td style=\"width:150px\">";
+                    echo '<tr><td style="width:150px">';
                     if (BUILD_BUILDING_ID==$sp_arr['building_id'])
-                        echo "Bauhof";
+                        echo 'Bauhof';
                     else
                         echo $sp_arr['building_name'];
-                    echo "</td><td class=\"tbldata\">";
+                    echo '</td><td>';
 
                     if ($w[$sp_arr['building_id']]>0)
                     {
@@ -253,7 +253,7 @@
                     }
                     else
                     {
-                        echo "<input type=\"text\" id=\"".$sp_arr['building_id']."\" name=\"people_work[".$sp_arr['building_id']."]\" value=\"".$sp_arr['buildlist_people_working']."\" size=\"8\" maxlength=\"20\" onKeyUp=\"FormatNumber(this.id,this.value, ".$cp->people.", '', '');\"/>";
+                        echo '<input type="text" id="'.$sp_arr['building_id'].'" name="people_work['.$sp_arr['building_id'].']" value="'.$sp_arr['buildlist_people_working'].'" size="8" maxlength="20" onKeyUp="FormatNumber(this.id,this.value, '.$cp->people.', "", "");"/>';
                         
                         //onKeyPress=\"return nurZahlen(event)\"
 												//FormatNumber
@@ -270,23 +270,23 @@
 	  						AND buildlist_user_id='".$s['user_id']."'
 	  						AND buildlist_entity_id='".$cp->id."'");
                     }
-                    echo "</td><td class=\"tbldata\">".(nf($sp_arr['buildlist_people_working']*$conf['people_food_require']['v']))." t</td></tr>";
+                    echo '</td><td>'.(nf($sp_arr['buildlist_people_working']*$cfg->get('people_food_require'))).' t</td></tr>';
 				}
 			}
 
 			if ($work_available)
 			{
-				echo "<tr><td class=\"tbldata\"&nbsp;</td>
-				<td class=\"tbldata\"><input type=\"submit\" name=\"submit_people_work\" value=\"Speichern\" /></td>
-				<td class=\"tbldata\"><input type=\"submit\" name=\"submit_people_free\" value=\"Alle Arbeiter freigeben\" /></td></tr>";
+				echo '<tr><td>&nbsp;</td>
+				<td><input type="submit" name="submit_people_work" value="Speichern" /></td>
+				<td><input type="submit" name="submit_people_free" value="Alle Arbeiter freigeben" /></td></tr>';
 			}
-			echo "<tr><td colspan=\"3\">
-			Wenn einem Geb&auml;ude Arbeiter zugeteilt werden, wird es entsprechend schneller gebaut. Die Arbeiter ben&ouml;tigen jedoch Nahrung. ";
-			echo "Die Zuteilung der Arbeiter kann erst ge&auml;ndert werden, wenn entsprechende Bauauftr&auml;ge abgeschlossen sind. ";
-			echo "Die gesamte Nahrung f&uuml;r die Arbeiter wird beim Start eines Bauvorgangs sofort vom Planetenkonto abgezogen.
-			</td></tr>";
+			echo '<tr><td colspan="3">
+			Wenn einem Geb&auml;ude Arbeiter zugeteilt werden, wird es entsprechend schneller gebaut. Die Arbeiter ben&ouml;tigen jedoch Nahrung. ';
+			echo 'Die Zuteilung der Arbeiter kann erst ge&auml;ndert werden, wenn entsprechende Bauauftr&auml;ge abgeschlossen sind. ';
+			echo 'Die gesamte Nahrung f&uuml;r die Arbeiter wird beim Start eines Bauvorgangs sofort vom Planetenkonto abgezogen.
+			</td></tr>';
 			tableEnd();
-			echo "</form>";
+			echo '</form>';
 
 
   		// Zählt alle arbeiter die eingetragen snid (besetzt oder nicht) für die anszeige!
@@ -302,21 +302,21 @@
 
   		// Infodaten
 			$people_free = floor($cp->people)-$people_working;
-			$people_div = $cp->people/50 * ($conf['people_multiply']['v'] + $cp->typePopulation + $cu->race->population + $cp->starPopulation -3);
+			$people_div = $cp->people/50 * ($cfg->get('people_multiply') + $cp->typePopulation + $cu->race->population + $cp->starPopulation -3);
 			if($people_div<=3) $people_div=3;
 			tableStart("Daten",500);
-			echo "<tr><th style=\"width:300px\">Bev&ouml;lkerung total</th><td class=\"tbldata\">".nf(floor($cp->people))."</td></tr>";
-			echo "<tr><th>Arbeiter</th><td class=\"tbldata\">".nf($people_working)."</td></tr>";
-			echo "<tr><th>Freie Leute</th><td class=\"tbldata\">".nf($people_free)."</td></tr>";
-			echo "<tr><th>Zeitreduktion pro Arbeiter und Auftrag</th><td class=\"tbldata\">".tf($conf['people_work_done']['v'])."</td></tr>";
-			echo "<tr><th>Nahrung pro Arbeiter und Auftrag</th><td class=\"tbldata\">".nf($conf['people_food_require']['v'])." t</td></tr>";
-			echo "<tr><th>Grundwachstumsrate</th><td class=\"tbldata\">".get_percent_string($conf['people_multiply']['v'])."</td></tr>";
-			echo "<tr><th>Wachstumsbonus ".$cp->typeName."</th><td class=\"tbldata\">".get_percent_string($cp->typePopulation,1)."</td></tr>";
-			echo "<tr><th>Wachstumsbonus ".$cu->race->name."</th><td class=\"tbldata\">".get_percent_string($cu->race->population,1)."</td></tr>";
-			echo "<tr><th>Wachstumsbonus ".$cp->starTypeName."</th><td class=\"tbldata\">".get_percent_string($cp->starPopulation,1)."</td></tr>";
-			echo "<tr><th>Wachstumsbonus ".$cu->specialist->name."</th><td class=\"tbldata\">".get_percent_string($cu->specialist->population,1)."</td></tr>";
-			echo "<tr><th>Wachstumsbonus total</th><td class=\"tbldata\">".get_percent_string(array($cp->typePopulation,$cu->race->population,$cp->starPopulation,$cu->specialist->population),1)."</td></tr>";
-			echo "<tr><th>Bev&ouml;lkerungszuwachs pro Stunde</th><td class=\"tbldata\">".nf($people_div)."</td></tr>";
+			echo '<tr><th style="width:300px">Bev&ouml;lkerung total</th><td>'.nf(floor($cp->people)).'</td></tr>';
+			echo '<tr><th>Arbeiter</th><td>'.nf($people_working).'</td></tr>';
+			echo '<tr><th>Freie Leute</th><td>'.nf($people_free).'</td></tr>';
+			echo '<tr><th>Zeitreduktion pro Arbeiter und Auftrag</th><td>'.tf($cfg->get('people_work_done')).'</td></tr>';
+			echo '<tr><th>Nahrung pro Arbeiter und Auftrag</th><td>'.nf($cfg->get('people_food_require')).' t</td></tr>';
+			echo '<tr><th>Grundwachstumsrate</th><td>'.get_percent_string($cfg->get('people_multiply'))."</td></tr>";
+			echo '<tr><th>Wachstumsbonus '.$cp->typeName.'</th><td>'.get_percent_string($cp->typePopulation,1)."</td></tr>";
+			echo '<tr><th>Wachstumsbonus '.$cu->race->name.'</th><td>'.get_percent_string($cu->race->population,1)."</td></tr>";
+			echo '<tr><th>Wachstumsbonus '.$cp->starTypeName.'</th><td>'.get_percent_string($cp->starPopulation,1).'</td></tr>';
+			echo '<tr><th>Wachstumsbonus '.$cu->specialist->name.'</th><td>'.get_percent_string($cu->specialist->population,1).'</td></tr>';
+			echo '<tr><th>Wachstumsbonus total</th><td>'.get_percent_string(array($cp->typePopulation,$cu->race->population,$cp->starPopulation,$cu->specialist->population),1).'</td></tr>';
+			echo '<tr><th>Bev&ouml;lkerungszuwachs pro Stunde</th><td>'.nf($people_div).'</td></tr>';
 			tableEnd();
 		}
 		else

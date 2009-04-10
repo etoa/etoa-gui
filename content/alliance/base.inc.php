@@ -97,7 +97,7 @@
 			if($need_metal>=0)
 			{
 				$need_metal = 0;
-				$style_metal = "class=\"tbldata\"";
+				$style_metal = "";
 			}
 			else
 			{
@@ -105,14 +105,14 @@
 				
 				// Erstellt absolut Wert der Zahl
 				$need_metal = abs($need_metal);
-				$style_metal = "class=\"tbldata2\" ".tm("Fehlender Rohstoff","".nf($need_metal)." ".RES_METAL."")."";
+				$style_metal = "style=\"color:red;\" ".tm("Fehlender Rohstoff","".nf($need_metal)." ".RES_METAL."")."";
 			}
 			
 			// Silizium
 			if($need_crystal>=0)
 			{
 				$need_crystal = 0;
-				$style_crystal = "class=\"tbldata\"";
+				$style_crystal = "";
 			}
 			else
 			{
@@ -120,14 +120,14 @@
 				
 				// Erstellt absolut Wert der Zahl
 				$need_crystal = abs($need_crystal);
-				$style_crystal = "class=\"tbldata2\" ".tm("Fehlender Rohstoff","".nf($need_crystal)." ".RES_CRYSTAL."")."";
+				$style_crystal = "style=\"color:red;\" ".tm("Fehlender Rohstoff","".nf($need_crystal)." ".RES_CRYSTAL."")."";
 			}
 			
 			// PVC
 			if($need_plastic>=0)
 			{
 				$need_plastic = 0;
-				$style_plastic = "class=\"tbldata\"";
+				$style_plastic = "";
 			}
 			else
 			{
@@ -135,14 +135,14 @@
 				
 				// Erstellt absolut Wert der Zahl
 				$need_plastic = abs($need_plastic);
-				$style_plastic = "class=\"tbldata2\" ".tm("Fehlender Rohstoff","".nf($need_plastic)." ".RES_PLASTIC."")."";
+				$style_plastic = "style=\"color:red;\" ".tm("Fehlender Rohstoff","".nf($need_plastic)." ".RES_PLASTIC."")."";
 			}
 			
 			// Tritium
 			if($need_fuel>=0)
 			{
 				$need_fuel = 0;
-				$style_fuel = "class=\"tbldata\"";
+				$style_fuel = "";
 			}
 			else
 			{
@@ -150,14 +150,14 @@
 				
 				// Erstellt absolut Wert der Zahl
 				$need_fuel = abs($need_fuel);
-				$style_fuel = "class=\"tbldata2\" ".tm("Fehlender Rohstoff","".nf($need_fuel)." ".RES_FUEL."")."";
+				$style_fuel = "style=\"color:red;\" ".tm("Fehlender Rohstoff","".nf($need_fuel)." ".RES_FUEL."")."";
 			}
 			
 			// Nahrung
 			if($need_food>=0)
 			{
 				$need_food = 0;
-				$style_food = "class=\"tbldata\"";
+				$style_food = "";
 			}
 			else
 			{
@@ -165,12 +165,12 @@
 				
 				// Erstellt absolut Wert der Zahl
 				$need_food = abs($need_food);
-				$style_food = "class=\"tbldata2\" ".tm("Fehlender Rohstoff","".nf($need_food)." ".RES_FOOD."")."";
+				$style_food = "style=\"color:red;\" ".tm("Fehlender Rohstoff","".nf($need_food)." ".RES_FOOD."")."";
 			}
 			
 			
 			// Gibt Nachrichten aus. Unterschiedliche Ausgabe von Gebäuden und Technologien
-			$style_message = "class=\"tbldata\"";
+			$style_message = "";
 			
 			if($typ=="building")
 			{
@@ -203,13 +203,13 @@
 				// Wenn dieses Objekt im Bau ist
 				if($end_time>0)
 				{
-					$style_message = "class=\"tbldata3\"";
+					$style_message = "style=\"color:green;\"";
 					$build_message = $status_message;
 				}
 				// Ein anderes Objekt ist in Bau
 				else
 				{
-					$style_message = "class=\"tbldata2\"";
+					$style_message = "style=\"color:red;\"";
 					$build_message = $status_message2;
 				}
 			}
@@ -236,8 +236,8 @@
 			        <th width=\"15%\">".RES_FOOD."</th>
 						</tr>
 						<tr>
-							<td class=\"tbldata\" width=\"7%\">".($level+1)."</th>
-							<td class=\"tbldata\" width=\"18%\">".tf($btime)."</th>
+							<td width=\"7%\">".($level+1)."</th>
+							<td width=\"18%\">".tf($btime)."</th>
 			        <td ".$style_metal." width=\"15%\">".nf($costs_metal)."</td>
 			        <td ".$style_crystal." width=\"15%\">".nf($costs_crystal)."</td>
 			        <td ".$style_plastic." width=\"15%\">".nf($costs_plastic)."</td>
@@ -264,7 +264,7 @@
 		// Maximallevel erreicht, es werden keine Berechnungen mehr durchgeführt
 		else
 		{
-			$return['optionsbox'] = "<tr><td colspan=\"7\" class=\"tbldata\" style=\"text-align:center;\">Maximallevel erreicht!</td></tr>";
+			$return['optionsbox'] = "<tr><td colspan=\"7\" style=\"text-align:center;\">Maximallevel erreicht!</td></tr>";
 			return $return;
 		}
 	}			
@@ -897,32 +897,32 @@
 	// ResBox
 	//	
 	
-	$style0 = "class=\"tbldata\"";
-	$style1 = "class=\"tbldata\"";
-	$style2 = "class=\"tbldata\"";
-	$style3 = "class=\"tbldata\"";
-	$style4 = "class=\"tbldata\"";
+	$style0 = "";
+	$style1 = "";
+	$style2 = "";
+	$style3 = "";
+	$style4 = "";
 
 	// Negative Rohstoffe farblich hervorben
 	if ($aarr['alliance_res_metal'] < 0)
 	{
-		$style0 = "class=\"tbldata2\"";
+		$style0 = "style=\"color:red;\"";
 	}
 	if ($aarr['alliance_res_crystal'] < 0)
 	{
-		$style1 = "class=\"tbldata2\"";
+		$style1 = "style=\"color:red;\"";
 	}
 	if ($aarr['alliance_res_plastic'] < 0)
 	{
-		$style2 = "class=\"tbldata2\"";
+		$style2 = "style=\"color:red;\"";
 	}
 	if ($aarr['alliance_res_fuel'] < 0)
 	{
-		$style3 = "class=\"tbldata2\"";
+		$style3 = "style=\"color:red;\"";
 	}
 	if ($aarr['alliance_res_food'] < 0)
 	{
-		$style4 = "class=\"tbldata2\"";
+		$style4 = "style=\"color:red;\"";
 	}
 	
 	
@@ -1291,10 +1291,10 @@
 				$title.= '</span>';
 				tableStart($title);
 				echo "<tr>
-                  <td class=\"tbldata\" style=\"width:120px;background:#000;vertical-align:middle;padding:0px;\">
+                  <td style=\"width:120px;background:#000;vertical-align:middle;padding:0px;\">
                   	<img src=\"".$path."\" style=\"width:120px;height:120px;border:none;margin:0px;\" alt=\"".$data['alliance_building_name']."\"/>
                   </td>
-                  <td class=\"tbldata\" style=\"vertical-align:top;height:100px;\" colspan=\"6\">
+                  <td style=\"vertical-align:top;height:100px;\" colspan=\"6\">
                   	".$data['alliance_building_longcomment']."
                  	</td>
 				     </tr>";
@@ -1310,7 +1310,7 @@
 	// Es sind noch keine Gebäude vorhanden
 	else
 	{
-		echo "Es sind noch keine Gebäude definiert!<br>";
+		error_msg("Es sind noch keine Gebäude definiert!");
 	}
 	
 	echo "</form>";
@@ -1377,10 +1377,10 @@
 				$title.= '</span>';
 				tableStart($title);
 				echo "<tr>
-                  <td class=\"tbldata\" style=\"width:120px;background:#000;vertical-align:middle;padding:0px;\">
+                  <td style=\"width:120px;background:#000;vertical-align:middle;padding:0px;\">
                   	<img src=\"".$path."\" style=\"width:120px;height:120px;border:none;margin:0px;\" alt=\"".$data['alliance_tech_name']."\"/>
                   </td>
-                  <td class=\"tbldata\" style=\"vertical-align:top;height:100px;\" colspan=\"6\">
+                  <td style=\"vertical-align:top;height:100px;\" colspan=\"6\">
                   	".$data['alliance_tech_longcomment']."
                  	</td>
 				     </tr>";
@@ -1396,7 +1396,7 @@
 	// Es sind noch keine Gebäude vorhanden
 	else
 	{
-		echo "Es sind noch keine Technologien definiert!<br>";
+		error_msg("Es sind noch keine Technologien definiert!");
 	}
 	
 	echo "</form>";
@@ -1425,36 +1425,36 @@
 	
 	// Titan
 	echo "<tr>
-					<td class=\"tbltitle\" style=\"width:100px;\">".RES_METAL."</td>
-					<td class=\"tbldata\" style=\"width:150px;\">
+					<th style=\"width:100px;\">".RES_METAL."</th>
+					<td style=\"width:150px;\">
 						<input type=\"text\" value=\"0\" name=\"spend_metal\" id=\"spend_metal\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resMetal.",'','');\"> <a href=\"javascript:;\" onclick=\"document.getElementById('spend_metal').value='".nf($cp->resMetal)."';\">alles</a>
 					</td>
 				</tr>";
 	// Silizium
 	echo "<tr>
-					<td class=\"tbltitle\">".RES_CRYSTAL."</td>
-					<td class=\"tbldata\">
+					<th>".RES_CRYSTAL."</th>
+					<td>
 						<input type=\"text\" value=\"0\" name=\"spend_crystal\" id=\"spend_crystal\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resCrystal.",'','');\"> <a href=\"javascript:;\" onclick=\"document.getElementById('spend_crystal').value='".nf($cp->resCrystal)."';\">alles</a>
 					</td>
 				</tr>";		
 	// PVC
 	echo "<tr>
-					<td class=\"tbltitle\">".RES_PLASTIC."</td>
-					<td class=\"tbldata\">
+					<th>".RES_PLASTIC."</th>
+					<td>
 						<input type=\"text\" value=\"0\" name=\"spend_plastic\" id=\"spend_plastic\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resPlastic.",'','');\"> <a href=\"javascript:;\" onclick=\"document.getElementById('spend_plastic').value='".nf($cp->resPlastic)."';\">alles</a>
 					</td>
 				</tr>";	
 	// Tritium
 	echo "<tr>
-					<td class=\"tbltitle\">".RES_FUEL."</td>
-					<td class=\"tbldata\">
+					<th>".RES_FUEL."</th>
+					<td>
 						<input type=\"text\" value=\"0\" name=\"spend_fuel\" id=\"spend_fuel\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resFuel.",'','');\"> <a href=\"javascript:;\" onclick=\"document.getElementById('spend_fuel').value='".nf($cp->resFuel)."';\">alles</a>
 					</td>
 				</tr>";	
 	// Nahrung
 	echo "<tr>
-					<td class=\"tbltitle\">".RES_FOOD."</td>
-					<td class=\"tbldata\">
+					<th>".RES_FOOD."</th>
+					<td>
 						<input type=\"text\" value=\"0\" name=\"spend_food\" id=\"spend_food\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resFood.",'','');\"> <a href=\"javascript:;\" onclick=\"document.getElementById('spend_food').value='".nf($cp->resFood)."';\">alles</a>
 					</td>
 				</tr>";			
@@ -1482,16 +1482,16 @@
   
   // Ausgabe
   echo "<tr>
-  				<td class=\"tbltitle\">Ausgabe:</td>
-  				<td class=\"tbldata\">
+  				<th>Ausgabe:</th>
+  				<td>
   					<input type=\"radio\" name=\"output\" id=\"output\" value=\"0\" checked=\"checked\"/> Einzeln / <input type=\"radio\" name=\"output\" id=\"output\" value=\"1\"/> Summiert
   				</td>
   			</tr>";
   
   // Limit
 	echo "<tr>
-  				<td class=\"tbltitle\">Einzahlungen:</td>
-  				<td class=\"tbldata\"> 
+  				<th>Einzahlungen:</th>
+  				<td> 
 		  			<select id=\"limit\" name=\"limit\">
 							<option value=\"0\" checked=\"checked\">alle</option>
 							<option value=\"1\">die letzte</option>
@@ -1503,8 +1503,8 @@
 	
 	// Von User
 	echo "<tr>
-  				<td class=\"tbltitle\">Von User:</td>
-  				<td class=\"tbldata\">
+  				<th>Von User:</th>
+  				<td>
   					<select id=\"user_spends\" name=\"user_spends\">
 							<option value=\"0\">alle</option>";
 					  	// Allianzuser
@@ -1516,7 +1516,7 @@
   				</td>
   			</tr>";
   echo "<tr>
-  				<td class=\"tbldata\" style=\"text-align:center;\" colspan=\"2\">
+  				<td style=\"text-align:center;\" colspan=\"2\">
   					<input type=\"submit\" class=\"button\" name=\"filter_submit\" id=\"filter_submit\" value=\"Anzeigen\"\"/>
   				</td>
   			</tr>";
@@ -1563,18 +1563,18 @@
 			
 			tableStart("Total eingezahlte Rohstoffe ".$user_message."");
 			echo "<tr>
-							<td class=\"tbltitle\" style=\"width:20%\">".RES_METAL."</td>
-							<td class=\"tbltitle\" style=\"width:20%\">".RES_CRYSTAL."</td>
-							<td class=\"tbltitle\" style=\"width:20%\">".RES_PLASTIC."</td>
-							<td class=\"tbltitle\" style=\"width:20%\">".RES_FUEL."</td>
-							<td class=\"tbltitle\" style=\"width:20%\">".RES_FOOD."</td>
+							<th style=\"width:20%\">".RES_METAL."</th>
+							<th style=\"width:20%\">".RES_CRYSTAL."</th>
+							<th style=\"width:20%\">".RES_PLASTIC."</th>
+							<th style=\"width:20%\">".RES_FUEL."</th>
+							<th style=\"width:20%\">".RES_FOOD."</th>
 						</tr>";
 			echo "<tr>
-							<td class=\"tbldata\">".nf($arr['metal'])."</td>
-							<td class=\"tbldata\">".nf($arr['crystal'])."</td>
-							<td class=\"tbldata\">".nf($arr['plastic'])."</td>
-							<td class=\"tbldata\">".nf($arr['fuel'])."</td>
-							<td class=\"tbldata\">".nf($arr['food'])."</td>
+							<td>".nf($arr['metal'])."</td>
+							<td>".nf($arr['crystal'])."</td>
+							<td>".nf($arr['plastic'])."</td>
+							<td>".nf($arr['fuel'])."</td>
+							<td>".nf($arr['food'])."</td>
 						</tr>";
 			tableEnd();
 		}
@@ -1639,18 +1639,18 @@
 			{
 				tableStart("".$alliance_members[$arr['alliance_spend_user_id']]['user_nick']." - ".df($arr['alliance_spend_time'])."");
 				echo "<tr>
-								<td class=\"tbltitle\" style=\"width:20%\">".RES_METAL."</td>
-								<td class=\"tbltitle\" style=\"width:20%\">".RES_CRYSTAL."</td>
-								<td class=\"tbltitle\" style=\"width:20%\">".RES_PLASTIC."</td>
-								<td class=\"tbltitle\" style=\"width:20%\">".RES_FUEL."</td>
-								<td class=\"tbltitle\" style=\"width:20%\">".RES_FOOD."</td>
+								<th style=\"width:20%\">".RES_METAL."</th>
+								<th style=\"width:20%\">".RES_CRYSTAL."</th>
+								<th style=\"width:20%\">".RES_PLASTIC."</th>
+								<th style=\"width:20%\">".RES_FUEL."</th>
+								<th style=\"width:20%\">".RES_FOOD."</th>
 							</tr>";
 				echo "<tr>
-								<td class=\"tbldata\">".nf($arr['alliance_spend_metal'])."</td>
-								<td class=\"tbldata\">".nf($arr['alliance_spend_crystal'])."</td>
-								<td class=\"tbldata\">".nf($arr['alliance_spend_plastic'])."</td>
-								<td class=\"tbldata\">".nf($arr['alliance_spend_fuel'])."</td>
-								<td class=\"tbldata\">".nf($arr['alliance_spend_food'])."</td>
+								<td>".nf($arr['alliance_spend_metal'])."</td>
+								<td>".nf($arr['alliance_spend_crystal'])."</td>
+								<td>".nf($arr['alliance_spend_plastic'])."</td>
+								<td>".nf($arr['alliance_spend_fuel'])."</td>
+								<td>".nf($arr['alliance_spend_food'])."</td>
 							</tr>";
 				tableEnd();
 			}
@@ -1693,12 +1693,12 @@
 		
 		echo "<tr>";
 		if ($aarr['alliance_res_metal']<0 || $aarr['alliance_res_crystal']<0 || $aarr['alliance_res_plastic']<0 || $aarr['alliance_res_fuel']<0 || $aarr['alliance_res_food']<0)
-			echo "<td class=\"tbldata\" style=\"text-align:center;\"><span ".tm("Produktionsstop","Die Produktion wurde unterbrochen, da negative Rohstoffe vorhanden sind.").">Schiffsteile pro Stunde: 0</span></td>";
+			echo "<td style=\"text-align:center;\"><span ".tm("Produktionsstop","Die Produktion wurde unterbrochen, da negative Rohstoffe vorhanden sind.").">Schiffsteile pro Stunde: 0</span></td>";
 		else
-			echo "<td class=\"tbldata\" style=\"text-align:center;\">Schiffsteile pro Stunde: ".($cfg->get('alliance_shippoints_per_hour')*$buildlist[ALLIANCE_SHIPYARD_ID]['alliance_buildlist_current_level'])."</td>";
+			echo "<td style=\"text-align:center;\">Schiffsteile pro Stunde: ".($cfg->get('alliance_shippoints_per_hour')*$buildlist[ALLIANCE_SHIPYARD_ID]['alliance_buildlist_current_level'])."</td>";
 					echo "</tr>
 					<tr>
-						<td class=\"tbldata\" style=\"text-align:center;\">Vorhandene Teile: ".$alliance_members[$cu->id]['user_alliace_shippoints']."</td>
+						<td style=\"text-align:center;\">Vorhandene Teile: ".$alliance_members[$cu->id]['user_alliace_shippoints']."</td>
 					</tr>";
 		
 		tableEnd();
@@ -1734,36 +1734,36 @@
 				$path = IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$data['ship_id']."_middle.".IMAGE_EXT;
 				tableStart($data['ship_name']);
 				echo "<tr>
-	                <td class=\"tbldata\" style=\"width:120px;background:#000;vertical-align:middle;\">
+	                <td style=\"width:120px;background:#000;vertical-align:middle;\">
 	                	<img src=\"".$path."\" style=\"width:120px;height:120px;border:none;\" alt=\"".$data['ship_name']."\"/>
 	                	<input type=\"hidden\" value=\"".$data['ship_name']."\" id=\"ship_name_".$data['ship_id']."\" name=\"ship_name_".$data['ship_id']."\" />
 	                </td>
-	                <td class=\"tbldata\" style=\"vertical-align:top;height:100px;\" colspan=\"7\">
+	                <td style=\"vertical-align:top;height:100px;\" colspan=\"7\">
 	                	".$data['ship_longcomment']."
 	               	</td>
 				     </tr>
 					 <tr>
-								<td class=\"tbltitle\" style=\"width:13%\">Waffen</td>
-								<td class=\"tbltitle\" style=\"width:13%\">Struktur</td>
-								<td class=\"tbltitle\" style=\"width:13%\">Schild</td>
-								<td class=\"tbltitle\" style=\"width:13%\">Speed</td>
-								<td class=\"tbltitle\" style=\"width:13%\">Startzeit</td>
-								<td class=\"tbltitle\" style=\"width:13%\">Landezeit</td>
-								<td class=\"tbltitle\" style=\"width:12%\">Kosten</td>
-								<td class=\"tbltitle\" style=\"width:10%\">Anzahl</td>
+								<th style=\"width:13%\">Waffen</th>
+								<th style=\"width:13%\">Struktur</th>
+								<th style=\"width:13%\">Schild</th>
+								<th style=\"width:13%\">Speed</th>
+								<th style=\"width:13%\">Startzeit</th>
+								<th style=\"width:13%\">Landezeit</th>
+								<th style=\"width:12%\">Kosten</th>
+								<th style=\"width:10%\">Anzahl</th>
 							</tr>
 							<tr>
-								<td class=\"tbldata\">".nf($data['ship_weapon'])."</td>
-								<td class=\"tbldata\">".nf($data['ship_structure'])."</td>
-								<td class=\"tbldata\">".nf($data['ship_shield'])."</td>
-								<td class=\"tbldata\">".nf($data['ship_speed'])." AE/h</td>
-								<td class=\"tbldata\">".tf($data['ship_time2start']/FLEET_FACTOR_S)."</td>
-								<td class=\"tbldata\">".tf($data['ship_time2land']/FLEET_FACTOR_S)."</td>";
+								<td>".nf($data['ship_weapon'])."</td>
+								<td>".nf($data['ship_structure'])."</td>
+								<td>".nf($data['ship_shield'])."</td>
+								<td>".nf($data['ship_speed'])." AE/h</td>
+								<td>".tf($data['ship_time2start']/FLEET_FACTOR_S)."</td>
+								<td>".tf($data['ship_time2land']/FLEET_FACTOR_S)."</td>";
 								if ($data['ship_max_count']!=0 && $data['ship_max_count']<=$ship_count) {
-									echo "<td class=\"tbldata\" colspan=\"2\"><i>Maximalanzahl erreicht</i></td>";
+									echo "<td colspan=\"2\"><i>Maximalanzahl erreicht</i></td>";
 								} else {
-									echo "<td class=\"tbldata\">".nf($data['ship_alliance_costs']*$cost_factor)." <input type=\"hidden\" value=\"".$data['ship_alliance_costs']*$cost_factor."\" id=\"ship_costs_".$data['ship_id']."\" name=\"ship_costs_".$data['ship_id']."\" /></td>
-								<td class=\"tbldata\">
+									echo "<td>".nf($data['ship_alliance_costs']*$cost_factor)." <input type=\"hidden\" value=\"".$data['ship_alliance_costs']*$cost_factor."\" id=\"ship_costs_".$data['ship_id']."\" name=\"ship_costs_".$data['ship_id']."\" /></td>
+								<td>
 									<input type=\"text\" value=\"0\" name=\"buy_ship[".$data['ship_id']."]\" id=\"buy_ship_".$data['ship_id']."\" size=\"4\" maxlength=\"6\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/>";
 								}
 									echo "<input type=\"hidden\" value=\"".$data['ship_max_count']."\" id=\"ship_max_count_".$data['ship_id']."\" name=\"ship_max_count_".$data['ship_id']."\" />
@@ -1786,7 +1786,7 @@
 		tableStart("Fertigung");
 		
 		echo "<tr>
-						<td class=\"tbldata\" style=\"text-align:center;\">
+						<td style=\"text-align:center;\">
 							<select id=\"user_buy_ship\" name=\"user_buy_ship\">";
 //							<option value=\"0\">User wählen...</option>";
 					  	// Allianzuser

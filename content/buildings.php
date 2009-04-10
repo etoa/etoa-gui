@@ -61,27 +61,27 @@ function calcBuildingWaitTime($bc,$cp)
 	$bwmax=max($bwait['metal'],$bwait['crystal'],$bwait['plastic'],$bwait['fuel'],$bwait['food']);
 
 	// Baukosten-String
-	$bcstring = "<td class=\"tbldata\"";
+	$bcstring = "<td ";
 	if ($bc['metal']>$cp->resMetal)
 		$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff","<b>".nf($bc['metal']-$cp->resMetal)."</b> ".RES_METAL."<br/>Bereit in <b>".tf($bwait['metal'])."</b>");
 	
-	$bcstring.= ">".nf($bc['metal'])."</td><td class=\"tbldata\"";
+	$bcstring.= ">".nf($bc['metal'])."</td><td";
 	if ($bc['crystal']>$cp->resCrystal)
 		$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['crystal']-$cp->resCrystal)." ".RES_CRYSTAL."<br/>Bereit in <b>".tf($bwait['crystal'])."</b>");
 	
-	$bcstring.= ">".nf($bc['crystal'])."</td><td class=\"tbldata\"";
+	$bcstring.= ">".nf($bc['crystal'])."</td><td";
 	if ($bc['plastic']>$cp->resPlastic)
 		$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['plastic']-$cp->resPlastic)." ".RES_PLASTIC."<br/>Bereit in <b>".tf($bwait['plastic'])."</b>");
 	
-	$bcstring.= ">".nf($bc['plastic'])."</td><td class=\"tbldata\"";
+	$bcstring.= ">".nf($bc['plastic'])."</td><td";
 	if ($bc['fuel']>$cp->resFuel)
 		$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['fuel']-$cp->resFuel)." ".RES_FUEL."<br/>Bereit in <b>".tf($bwait['fuel'])."</b>");
 	
-	$bcstring.= ">".nf($bc['fuel'])."</td><td class=\"tbldata\"";
+	$bcstring.= ">".nf($bc['fuel'])."</td><td";
 	if ($bc['food']>$cp->resFood)
 		$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['food']-$cp->resFood)." ".RES_FOOD."<br/>Bereit in <b>".tf($bwait['food'])."</b>");
 	
-	$bcstring.= ">".nf($bc['food'])."</td><td class=\"tbldata\"";
+	$bcstring.= ">".nf($bc['food'])."</td><td";
 	if ($bc['power']> $cp->prodPower- $cp->usePower && $bc['power']>0)
 		$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['power']-($cp->prodPower-$cp->usePower))." Energie");
 	
@@ -128,27 +128,27 @@ function calcDemolishingWaitTime($dc,$cp)
 		$dwait['food']=0;
 	$dwmax=max($dwait['metal'],$dwait['crystal'],$dwait['plastic'],$dwait['fuel'],$dwait['food']);
 	
-	$dwstring = "<td class=\"tbldata\"";
+	$dwstring = "<td";
 	if ($dc['metal']>$cp->resMetal)
 		$dwstring.= $notAvStyle." ".tm("Fehlender Rohstoff","<b>".nf($dc['metal']-$cp->resMetal)."</b> ".RES_METAL."<br/>Bereit in <b>".tf($dwait['metal'])."</b>");
 	
-	$dwstring.= ">".nf($dc['metal'])."</td><td class=\"tbldata\"";
+	$dwstring.= ">".nf($dc['metal'])."</td><td";
 	if ($dc['crystal']>$cp->resCrystal)
 		$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($dc['crystal']-$cp->resCrystal)." ".RES_CRYSTAL."<br/>Bereit in <b>".tf($dwait['crystal'])."</b>");
 	
-	$dwstring.= ">".nf($dc['crystal'])."</td><td class=\"tbldata\"";
+	$dwstring.= ">".nf($dc['crystal'])."</td><td";
 	if ($dc['plastic']>$cp->resPlastic)
 		$dwstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($dc['plastic']-$cp->resPlastic)." ".RES_PLASTIC."<br/>Bereit in <b>".tf($dwait['plastic'])."</b>");
 	
-	$dwstring.= ">".nf($dc['plastic'])."</td><td class=\"tbldata\"";
+	$dwstring.= ">".nf($dc['plastic'])."</td><td";
 	if ($dc['fuel']>$cp->resFuel)
 		$dwstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($dc['fuel']-$cp->resFuel)." ".RES_FUEL."<br/>Bereit in <b>".tf($dwait['fuel'])."</b>");
 	
-	$dwstring.= ">".nf($dc['fuel'])."</td><td class=\"tbldata\"";
+	$dwstring.= ">".nf($dc['fuel'])."</td><td";
 	if ($dc['food']>$cp->resFood)
 		$dwstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($dc['food']-$cp->resFood)." ".RES_FOOD."<br/>Bereit in <b>".tf($dwait['food'])."</b>");
 	
-	$dwstring.= ">".nf($dc['food'])."</td><td class=\"tbldata\"";
+	$dwstring.= ">".nf($dc['food'])."</td><td";
 	if ($dc['power']> $cp->prodPower- $cp->usePower && $dc['power']>0)
 		$dwstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($dc['power']-($cp->prodPower-$cp->usePower))." Energie");
 	
@@ -532,10 +532,10 @@ function calcDemolishingWaitTime($dc,$cp)
 							
 						}
 						else
-							echo "<i>Abbruchauftrag kann nicht gestartet werden, zuwenig Rohstoffe vorhanden!</i><br/><br/>";
+							error_msg("Abbruchauftrag kann nicht gestartet werden, zuwenig Rohstoffe vorhanden!");;
 					}
 					else
-						echo "<i>Abbruchauftrag kann nicht gestartet werden, es wird bereits an einem Geb&auml;ude gearbeitet!</i><br/><br/>";
+						error_msg("Abbruchauftrag kann nicht gestartet werden, es wird bereits an einem Geb&auml;ude gearbeitet!");
 				}
 
 				//Bauauftrag abbrechen
@@ -641,7 +641,7 @@ function calcDemolishingWaitTime($dc,$cp)
 						add_log_game_building($log_text,$cu->id,$cu->allianceId,$cp->id(),$arr['building_id'],$b_status,time());							
 					}
 					else
-						echo "<i>Abbruchauftrag kann nicht mehr abgebrochen werden, die Arbeit ist bereits fertiggestellt!</i><br/><br/>";
+						error_msg("Abbruchauftrag kann nicht mehr abgebrochen werden, die Arbeit ist bereits fertiggestellt!");
 				}
 
 
@@ -755,7 +755,7 @@ function calcDemolishingWaitTime($dc,$cp)
 						if ($b_level>=$arr['building_last_level'])
 						{
 							echo "<tr>
-											<td colspan=\"8\" class=\"tbldata\">
+											<td colspan=\"8\">
 												<i>Kein weiterer Ausbau m&ouml;glich.</i>
 											</td>
 										</tr>";
@@ -764,11 +764,11 @@ function calcDemolishingWaitTime($dc,$cp)
 						elseif ($builing_something)
 						{
 							echo "<tr>
-											<td class=\"tbldata\" style=\"color:red;\">Bauen</td>
-											<td class=\"tbldata\">".tf($btime)."</td>";
+											<td style=\"color:red;\">Bauen</td>
+											<td>".tf($btime)."</td>";
 							echo $bWaitArray[0];
 							echo "<tr>
-											<td class=\"tbldata\" colspan=\"8\">
+											<td colspan=\"8\">
 												<i>Es kann nichts gebaut werden da gerade an einem anderen Geb&auml;ude gearbeitet wird!</i>
 											</td>
 										</tr>";
@@ -777,11 +777,11 @@ function calcDemolishingWaitTime($dc,$cp)
 						elseif ($arr['building_fields']>0 && ($cp->fields_used+$arr['building_fields']+$def_field_needed > $cp->fields+$cp->fields_extra))
 						{
 							echo "<tr>
-											<td class=\"tbldata\" style=\"color:red;\">Bauen</td>
-											<td class=\"tbldata\">".tf($btime)."</td>";
+											<td style=\"color:red;\">Bauen</td>
+											<td>".tf($btime)."</td>";
 							echo $bWaitArray[0];
 							echo "<tr>
-											<td class=\"tbldata\" colspan=\"8\">
+											<td colspan=\"8\">
 												<i>Kein Ausbau m&ouml;glich, da es zuwenig Platz (Total: ".($cp->fields+$cp->fields_extra).", reserviert: ".($cp->fields_used+$def_field_needed).", benötigt: ".$arr['building_fields'].") f&uuml;r dieses Geb&auml;ude hat!</i>
 											</td>
 										</tr>";
@@ -796,11 +796,11 @@ function calcDemolishingWaitTime($dc,$cp)
 						)
 						{
 							echo "<tr>
-											<td class=\"tbldata\" style=\"color:red;\">Bauen</td>
-											<td class=\"tbldata\">".tf($btime)."</td>";
+											<td style=\"color:red;\">Bauen</td>
+											<td>".tf($btime)."</td>";
 							echo $bWaitArray[0];
 							echo "<tr>
-											<td class=\"tbldata\" colspan=\"8\">
+											<td colspan=\"8\">
 												<i>Kein Ausbau m&ouml;glich, zuwenig Rohstoffe!</i>
 											</td>
 										</tr>";
@@ -811,27 +811,27 @@ function calcDemolishingWaitTime($dc,$cp)
 							if ($b_level==0)
 							{
 								echo "<tr>
-												<td class=\"tbldata\">
+												<td>
 													<input type=\"submit\" class=\"button\" name=\"command_build\" value=\"Bauen\"
 												</td>
-												<td class=\"tbldata\">".tf($btime)."</td>";
+												<td>".tf($btime)."</td>";
 							}
 							// Ausbauen
 							else
 							{
 								echo "<tr>
-												<td class=\"tbldata\">
+												<td>
 													<input type=\"submit\" class=\"button\" name=\"command_build\" value=\"Ausbauen\">
 												</td>
-												<td class=\"tbldata\">".tf($btime)."</td>";
+												<td>".tf($btime)."</td>";
 							}
 							
-									echo "<td class=\"tbldata\">".nf($bc['metal'])."</td>
-												<td class=\"tbldata\">".nf($bc['crystal'])."</td>
-												<td class=\"tbldata\">".nf($bc['plastic'])."</td>
-												<td class=\"tbldata\">".nf($bc['fuel'])."</td>
-												<td class=\"tbldata\">".nf($bc['food'])."</td>
-												<td class=\"tbldata\">".nf($bc['power'])."</td>
+									echo "<td>".nf($bc['metal'])."</td>
+												<td>".nf($bc['crystal'])."</td>
+												<td>".nf($bc['plastic'])."</td>
+												<td>".nf($bc['fuel'])."</td>
+												<td>".nf($bc['food'])."</td>
+												<td>".nf($bc['power'])."</td>
 											</tr>";
 						}
 					}
@@ -844,11 +844,11 @@ function calcDemolishingWaitTime($dc,$cp)
 						if ($builing_something)
 						{
 							echo "<tr>
-											<td class=\"tbldata\" style=\"color:red;\">Abreissen</td>
-											<td class=\"tbldata\">".tf($dtime)."</td>";
+											<td style=\"color:red;\">Abreissen</td>
+											<td>".tf($dtime)."</td>";
 							echo $dWaitArray[0];
 							echo "<tr>
-											<td class=\"tbldata\" colspan=\"8\">
+											<td colspan=\"8\">
 													<i>Kein Abriss m&ouml;glich, es wird gerade an einem anderen Geb&auml;ude gearbeitet!</i>
 											</td>
 										</tr>";
@@ -863,11 +863,11 @@ function calcDemolishingWaitTime($dc,$cp)
 						)
 						{
 							echo "<tr>
-											<td class=\"tbldata\" style=\"color:red;\">Abreissen</td>
-											<td class=\"tbldata\">".tf($dtime)."</td>";
+											<td style=\"color:red;\">Abreissen</td>
+											<td>".tf($dtime)."</td>";
 							echo $dWaitArray[0];
 							echo "<tr>
-											<td class=\"tbldata\" colspan=\"8\">
+											<td colspan=\"8\">
 												<i>Kein Abriss m&ouml;glich, zuwenig Rohstoffe!</i>
 											</td>
 										</tr>";
@@ -875,16 +875,16 @@ function calcDemolishingWaitTime($dc,$cp)
 						else
 						{
 							echo "<tr>
-											<td class=\"tbldata\">
+											<td>
 												<input type=\"submit\" class=\"button\" name=\"command_demolish\" value=\"Abreissen\">
 											</td>
-											<td class=\"tbldata\">".tf($dtime)."</td>
-											<td class=\"tbldata\">".nf($dc['metal'])."</td>
-											<td class=\"tbldata\">".nf($dc['crystal'])."</td>
-											<td class=\"tbldata\">".nf($dc['plastic'])."</td>
-											<td class=\"tbldata\">".nf($dc['fuel'])."</td>
-											<td class=\"tbldata\">".nf($dc['food'])."</td>
-											<td class=\"tbldata\">".nf($dc['power'])."</td>
+											<td>".tf($dtime)."</td>
+											<td>".nf($dc['metal'])."</td>
+											<td>".nf($dc['crystal'])."</td>
+											<td>".nf($dc['plastic'])."</td>
+											<td>".nf($dc['fuel'])."</td>
+											<td>".nf($dc['food'])."</td>
+											<td>".nf($dc['power'])."</td>
 										</tr>";
 						}
 					}
@@ -893,23 +893,23 @@ function calcDemolishingWaitTime($dc,$cp)
 					if ($b_status==3)
 					{
 		      	echo "<tr>
-		      					<td class=\"tbldata\" id=\"buildcancel\">
+		      					<td id=\"buildcancel\">
 		      						<input type=\"submit\" class=\"button\" name=\"command_cbuild\" value=\"Bau abbrechen\" onclick=\"if (this.value=='Bau abbrechen'){return confirm('Wirklich abbrechen?');}\" />
 		      					</td>
-		      					<td class=\"tbldata\" id=\"buildtime\">-</td>
-		      					<td colspan=\"6\" class=\"tbldata\" id=\"buildprogress\" style=\"height:25px;background:#fff;text-align:center;\"></td>
+		      					<td id=\"buildtime\">-</td>
+		      					<td colspan=\"6\" id=\"buildprogress\" style=\"height:25px;background:#fff;text-align:center;\"></td>
 		      				</tr>";
 		      	if ($b_level < $arr['building_last_level']-1)
 		      	{
 		         	echo "<tr>
-		         					<td class=\"tbldata\" width=\"90\">N&auml;chste Stufe:</td>
-		         					<td class=\"tbldata\">".tf($btimen)."</td>
-		         					<td class=\"tbldata\">".nf($bcn['metal'])."</td>
-		         					<td class=\"tbldata\">".nf($bcn['crystal'])."</td>
-		         					<td class=\"tbldata\">".nf($bcn['plastic'])."</td>
-		         					<td class=\"tbldata\">".nf($bcn['fuel'])."</td>
-		         					<td class=\"tbldata\">".nf($bcn['food'])."</td>
-		         					<td class=\"tbldata\">".nf($bcn['power'])."</td>
+		         					<td width=\"90\">N&auml;chste Stufe:</td>
+		         					<td>".tf($btimen)."</td>
+		         					<td>".nf($bcn['metal'])."</td>
+		         					<td>".nf($bcn['crystal'])."</td>
+		         					<td>".nf($bcn['plastic'])."</td>
+		         					<td>".nf($bcn['fuel'])."</td>
+		         					<td>".nf($bcn['food'])."</td>
+		         					<td>".nf($bcn['power'])."</td>
 		         				</tr>";
 		         }
 					}
@@ -918,11 +918,11 @@ function calcDemolishingWaitTime($dc,$cp)
 					if ($b_status==4)
 					{
 		      	echo "<tr>
-		      					<td class=\"tbldata\" id=\"buildcancel\">
+		      					<td id=\"buildcancel\">
 		      						<input type=\"submit\" class=\"button\" name=\"command_cdemolish\" value=\"Abriss abbrechen\" onclick=\"if (this.value=='Abriss abbrechen'){return confirm('Wirklich abbrechen?');}\" />
 		      					</td>
-		      					<td class=\"tbldata\" id=\"buildtime\">-</td>
-		      					<td class=\"tbldata\" colspan=\"6\"  id=\"buildprogress\" style=\"height:25px;background:#fff;text-align:center;\"></td>
+		      					<td id=\"buildtime\">-</td>
+		      					<td colspan=\"6\"  id=\"buildprogress\" style=\"height:25px;background:#fff;text-align:center;\"></td>
 		      				</tr>";
 					}
 					tableEnd();
@@ -955,8 +955,10 @@ function calcDemolishingWaitTime($dc,$cp)
 				echo "<input type=\"button\" value=\"Zur&uuml;ck zur &Uuml;bersicht\" onclick=\"document.location='?page=$page'\" />";
 				echo "</form>";
 			}
-			else
-				echo "<b>Fehler:</b> Geb&auml;ude nicht vorhanden!<br/><br/><a href=\"?page=$page\">&Uuml;bersicht</a>";
+			else {
+				error_msg("Geb&auml;ude nicht vorhanden!");
+				return_btn();
+			}
 		}
 
 /********************
@@ -1254,7 +1256,7 @@ function calcDemolishingWaitTime($dc,$cp)
 			}
 			else
 			{
-				echo "<i>Es k&ouml;nnen noch keine Geb&auml;ude gebaut werden!</i>";
+				error_msg("Es k&ouml;nnen noch keine Geb&auml;ude gebaut werden!");
 			}
 		}
 

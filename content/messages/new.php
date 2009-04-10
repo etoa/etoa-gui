@@ -35,7 +35,7 @@
 									$s['messages']['sent'][$uid]=$time;
 									Message::sendFromUserToUser($cu->id,$uid,$_POST['message_subject'],$_POST['message_text']);
 	
-	         		    echo "Nachricht wurde an <b>".$rcpt."</b> gesendet!<br/>";
+	         		    echo "Nachricht wurde an <b>".$rcpt."</b> gesendet!";
 	         		    $_POST['message_user_to']=null;
 	         		}
 	         		else
@@ -55,7 +55,7 @@
 				}
 				else
 				{
-					echo "<b>Fehler:</b>: Der Benutzer <b>".$rcpt."</b> existiert nicht!<br/>";
+					echo "<b>Fehler:</b> Der Benutzer <b>".$rcpt."</b> existiert nicht!<br/>";
 				}
 			}
 	  	iBoxEnd();			
@@ -150,7 +150,7 @@
 			tableStart("Nachricht verfassen");
 			echo "<tr>
 					<th width=\"50\" valign=\"top\">Empf&auml;nger:</th>
-					<td class=\"tbldata\" width=\"250\"  colspan=\"2\">
+					<td width=\"250\"  colspan=\"2\">
 						<input type=\"text\" name=\"message_user_to\" id=\"user_nick\" autocomplete=\"off\" value=\"";
 					echo $user;
 					echo "\" maxlength=\"255\" style=\"width:330px\"> Mehrere Empfänger mit ; trennen<br/>
@@ -158,13 +158,13 @@
 			     </tr>";
 			echo "<tr>
 					<th width=\"50\" valign=\"top\">Betreff:</th>
-					<td class=\"tbldata\" width=\"250\" colspan=\"2\">
+					<td width=\"250\" colspan=\"2\">
 						<input type=\"text\" name=\"message_subject\" value=\"".$subj."\"  style=\"width:97%\" maxlength=\"255\">
 					</td>
 			     </tr>";
 				echo "<tr>
 					<th width=\"50\" valign=\"top\">Text:</th>
-					<td class=\"tbldata\" width=\"250\"><textarea name=\"message_text\" id=\"message\" rows=\"10\" cols=\"60\" ";
+					<td width=\"250\"><textarea name=\"message_text\" id=\"message\" rows=\"10\" cols=\"60\" ";
 					if ($msgcreatpreview)
 					{
 						echo "onkeyup=\"
@@ -182,7 +182,7 @@
 					{
 						$prevstr="";
 					}
-					echo "<td class=\"tbldata\">
+					echo "<td>
 					<input type=\"button\" onclick=\"bbcode(this.form,'b','');".$prevstr."\" value=\"B\" style=\"font-weight:bold;\">
 					<input type=\"button\" onclick=\"bbcode(this.form,'i','');".$prevstr."\" value=\"I\" style=\"font-style:italic;\">
 					<input type=\"button\" onclick=\"bbcode(this.form,'u','');".$prevstr."\" value=\"U\" style=\"text-decoration:underline\">
@@ -235,10 +235,10 @@
 			{
 			echo "<tr>
 						<th>Vorschau:</th>
-						<td class=\"tbldata\" colspan=\"2\" id=\"msgPreview\">Vorschau wird geladen...</td>
+						<td colspan=\"2\" id=\"msgPreview\">Vorschau wird geladen...</td>
 					</tr>";
 			}
-			echo "</table><br/>";
+			tableEnd();
 			echo "<script type=\"text/javascript\">";
 			if ($msgcreatpreview)
 			{

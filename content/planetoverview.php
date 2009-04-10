@@ -40,9 +40,9 @@
 			echo '<script type="text/javascript" src="js/planetname.js"></script>';
 			echo "<form action=\"?page=$page\" method=\"POST\" style=\"text-align:center;\">";
 			tableStart("Hier den neuen Namen eingeben:");
-			echo "<tr><th class=\"tbltitle\">Name:</th><td>
+			echo "<tr><th>Name:</th><td>
 			<input type=\"text\" name=\"planet_name\" id=\"planet_name\" value=\"".$cp->name."\" length=\"16\" maxlength=\"15\" /></td></tr>";
-			echo "<tr><th class=\"tbltitle\">Beschreibung:</th><td><textarea name=\"planet_desc\" rows=\"2\" cols=\"30\">".stripslashes($cp->desc)."</textarea></td></tr>";
+			echo "<tr><th>Beschreibung:</th><td><textarea name=\"planet_desc\" rows=\"2\" cols=\"30\">".stripslashes($cp->desc)."</textarea></td></tr>";
 			tableEnd();
 			echo "<input type=\"submit\" name=\"submit_change\" value=\"Speichern\" /> &nbsp; ";
 			echo '<input onclick="GenPlot();" type="button" value="Name generieren" /> &nbsp; ';
@@ -222,10 +222,10 @@
 			echo '<script type="text/javascript" src="js/planetname.js"></script>';
 			echo "<form action=\"?page=$page\" method=\"POST\" style=\"text-align:center;\">";
 			tableStart("Name und Beschreibung ändern:");
-			echo "<tr><th class=\"tbltitle\">Name:</th><td>
+			echo "<tr><th>Name:</th><td>
 			<input type=\"text\" name=\"planet_name\" id=\"planet_name\" value=\"".$cp->name."\" length=\"25\" maxlength=\"15\" />
 			&nbsp; <a href=\"javascript:;\" onclick=\"GenPlot();\">Name generieren</a></td></tr>";
-			echo "<tr><th class=\"tbltitle\">Beschreibung:</th><td><textarea name=\"planet_desc\" rows=\"2\" cols=\"30\">".stripslashes($cp->desc)."</textarea></td></tr>";
+			echo "<tr><th>Beschreibung:</th><td><textarea name=\"planet_desc\" rows=\"2\" cols=\"30\">".stripslashes($cp->desc)."</textarea></td></tr>";
 			tableEnd();
 			echo "<input type=\"submit\" name=\"submit_change\" value=\"Speichern\" /> &nbsp; ";
 			echo "</form>";
@@ -249,9 +249,9 @@
 			{
 				$fcnt=0;
 				echo "<tr>
-					<th class=\"tbltitle\">Name</th>
-					<th class=\"tbltitle\">Stufe</th>
-					<th class=\"tbltitle\">Felder</th></tr>";
+					<th>Name</th>
+					<th>Stufe</th>
+					<th>Felder</th></tr>";
 				foreach ($bl as $k => &$v)
 				{
 					echo "<tr><th>".$v."</th>";
@@ -354,9 +354,9 @@
 		
 				echo "<tr><th><b>Einheit</b></th><th>Grundwerte</th><th>Aktuelle Werte</th></tr>";
 		  	echo "<tr>
-					<td class=\"tbldata\"><b>Struktur:</b></td>
-					<td class=\"tbldata\">".nf($sl->getTotalStrucure())."</td>
-					<td class=\"tbldata\">".nf($sl->getTotalStrucure()*($structure_tech_a+$sl->getBStructure()));
+					<td><b>Struktur:</b></td>
+					<td>".nf($sl->getTotalStrucure())."</td>
+					<td>".nf($sl->getTotalStrucure()*($structure_tech_a+$sl->getBStructure()));
 					if ($structure_tech_a>1)
 					{
 						echo " (".get_percent_string($structure_tech_a,1)." durch ".$structure_tech_name." ".$structure_tech_level;
@@ -365,9 +365,9 @@
 						echo ")";
 					}
 					echo "</td></tr>";
-		  	echo "<tr><td class=\"tbldata\"><b>Schilder:</b></td>
-					<td class=\"tbldata\">".nf($sl->getTotalShield())."</td>
-					<td class=\"tbldata\">".nf($sl->getTotalShield()*($shield_tech_a+$sl->getBShield()));
+		  	echo "<tr><td><b>Schilder:</b></td>
+					<td>".nf($sl->getTotalShield())."</td>
+					<td>".nf($sl->getTotalShield()*($shield_tech_a+$sl->getBShield()));
 					if ($shield_tech_a>1)
 					{
 						echo " (".get_percent_string($shield_tech_a,1)." durch ".$shield_tech_name." ".$shield_tech_level;
@@ -376,9 +376,9 @@
 						echo ")";
 					}
 					echo "</td></tr>";
-		  	echo "<tr><td class=\"tbldata\"><b>Waffen:</b></td>
-					<td class=\"tbldata\">".nf($sl->getTotalWeapon())."</td>
-					<td class=\"tbldata\">".nf($sl->getTotalWeapon()*($weapon_tech_a+$sl->getBWeapon()));
+		  	echo "<tr><td><b>Waffen:</b></td>
+					<td>".nf($sl->getTotalWeapon())."</td>
+					<td>".nf($sl->getTotalWeapon()*($weapon_tech_a+$sl->getBWeapon()));
 					if ($weapon_tech_a>1)
 					{
 						echo " (".get_percent_string($weapon_tech_a,1)." durch ".$weapon_tech_name." ".$weapon_tech_level;
@@ -387,20 +387,20 @@
 						echo ")";
 					}
 					echo "</td></tr>";
-		  	echo "<tr><td class=\"tbldata\"><b>Reparatur:</b></td>
-					<td class=\"tbldata\">".nf($sl->getTotalHeal())."</td>
-					<td class=\"tbldata\">".nf($sl->getTotalHeal()*$heal_tech_a);
+		  	echo "<tr><td><b>Reparatur:</b></td>
+					<td>".nf($sl->getTotalHeal())."</td>
+					<td>".nf($sl->getTotalHeal()*$heal_tech_a);
 					if ($heal_tech_a>1)
 					{
 						echo " (".get_percent_string($heal_tech_a,1)." durch ".$heal_tech_name." ".$heal_tech_level.")";
 					}
 					echo "</td></tr>";
-		  	echo "<tr><td class=\"tbldata\"><b>Anzahl Schiffe:</b></td>
-		  	<td class=\"tbldata\" colspan=\"2\">".nf($sl->count())."</td></tr>";
+		  	echo "<tr><td><b>Anzahl Schiffe:</b></td>
+		  	<td colspan=\"2\">".nf($sl->count())."</td></tr>";
 		  }
 		  else
 		  {
-		  	echo "<tr><td class=\"tbldata\"><i>Keine Schiffe vorhanden!</i></td></tr>";
+		  	echo "<tr><td><i>Keine Schiffe vorhanden!</i></td></tr>";
 		  }
 		  tableEnd();
 			
@@ -485,44 +485,44 @@
 		
 				echo "<tr><th><b>Einheit</b></th><th>Grundwerte</th><th>Aktuelle Werte</th></tr>";
 		  	echo "<tr>
-					<td class=\"tbldata\"><b>Struktur:</b></td>
-					<td class=\"tbldata\">".nf($dl->getTotalStrucure())."</td>
-					<td class=\"tbldata\">".nf($dl->getTotalStrucure()*$structure_tech_a);
+					<td><b>Struktur:</b></td>
+					<td>".nf($dl->getTotalStrucure())."</td>
+					<td>".nf($dl->getTotalStrucure()*$structure_tech_a);
 					if ($structure_tech_a>1)
 					{
 						echo " (".get_percent_string($structure_tech_a,1)." durch ".$structure_tech_name." ".$structure_tech_level.")";
 					}
 					echo "</td></tr>";
-		  	echo "<tr><td class=\"tbldata\"><b>Schilder:</b></td>
-					<td class=\"tbldata\">".nf($dl->getTotalShield())."</td>
-					<td class=\"tbldata\">".nf($dl->getTotalShield()*$shield_tech_a);
+		  	echo "<tr><td><b>Schilder:</b></td>
+					<td>".nf($dl->getTotalShield())."</td>
+					<td>".nf($dl->getTotalShield()*$shield_tech_a);
 					if ($shield_tech_a>1)
 					{
 						echo " (".get_percent_string($shield_tech_a,1)." durch ".$shield_tech_name." ".$shield_tech_level.")";
 					}
 					echo "</td></tr>";
-		  	echo "<tr><td class=\"tbldata\"><b>Waffen:</b></td>
-					<td class=\"tbldata\">".nf($dl->getTotalWeapon())."</td>
-					<td class=\"tbldata\">".nf($dl->getTotalWeapon()*$weapon_tech_a);
+		  	echo "<tr><td><b>Waffen:</b></td>
+					<td>".nf($dl->getTotalWeapon())."</td>
+					<td>".nf($dl->getTotalWeapon()*$weapon_tech_a);
 					if ($weapon_tech_a>1)
 					{
 						echo " (".get_percent_string($weapon_tech_a,1)." durch ".$weapon_tech_name." ".$weapon_tech_level.")";
 					}
 					echo "</td></tr>";
-		  	echo "<tr><td class=\"tbldata\"><b>Reparatur:</b></td>
-					<td class=\"tbldata\">".nf($dl->getTotalHeal())."</td>
-					<td class=\"tbldata\">".nf($dl->getTotalHeal()*$heal_tech_a);
+		  	echo "<tr><td><b>Reparatur:</b></td>
+					<td>".nf($dl->getTotalHeal())."</td>
+					<td>".nf($dl->getTotalHeal()*$heal_tech_a);
 					if ($heal_tech_a>1)
 					{
 						echo " (".get_percent_string($heal_tech_a,1)." durch ".$heal_tech_name." ".$heal_tech_level.")";
 					}
 					echo "</td></tr>";
-		  	echo "<tr><td class=\"tbldata\"><b>Anzahl Anlagen:</b></td>
-		  	<td class=\"tbldata\" colspan=\"2\">".nf($dl->count())."</td></tr>";
+		  	echo "<tr><td><b>Anzahl Anlagen:</b></td>
+		  	<td colspan=\"2\">".nf($dl->count())."</td></tr>";
 		  }
 		  else
 		  {
-		  	echo "<tr><td class=\"tbldata\"><i>Keine Verteidigung vorhanden!</i></td></tr>";
+		  	echo "<tr><td><i>Keine Verteidigung vorhanden!</i></td></tr>";
 		  }
 		  tableEnd();
 
@@ -551,7 +551,7 @@
 		}
 	}
 	else
-		echo "<h2>: Fehler :</h2> Dieser Planet existiert nicht oder er gehl&ouml;rt nicht dir!";
+		error_msg("Dieser Planet existiert nicht oder er gehl&ouml;rt nicht dir!");
 
 ?>
 

@@ -166,12 +166,12 @@
 					// Title
 					$subj = $marr['subject']!="" ? stripslashes($marr['subject']) : "<i>Kein Titel</i>";
 					
-					echo "<table class=\"tbl\">";
-					echo "<tr><td class=\"tbltitle\" colspan=\"2\">".$subj."</td></tr>";
-					echo "<tr><td class=\"tbltitle\" width=\"50\" valign=\"top\">Datum:</td>
-					<td class=\"tbldata\" width=\"250\">".df($marr['message_timestamp'])."</td></tr>";
-					echo "<tr><td class=\"tbltitle\" width=\"50\" valign=\"top\">Sender:</td>
-					<td class=\"tbldata\" width=\"250\">".userPopUp($marr['message_user_from'],$marr['user_nick'],0)."</td></tr>";
+					tableStart();
+					echo "<tr><th colspan=\"2\">".$subj."</th></tr>";
+					echo "<tr><th width=\"50\" valign=\"top\">Datum:</th>
+					<td width=\"250\">".df($marr['message_timestamp'])."</td></tr>";
+					echo "<tr><th width=\"50\" valign=\"top\">Sender:</th>
+					<td width=\"250\">".userPopUp($marr['message_user_from'],$marr['user_nick'],0)."</td></tr>";
 					echo "<tr><td class=\"tbltitle\" width=\"50\" valign=\"top\">Text:<br/>";
 					if (isset($_GET['src']))
 					{
@@ -181,7 +181,7 @@
 					{
 						echo '[<a href="?page='.$page.'&mode='.$mode.'&amp;msg_id='.$_GET['msg_id'].'&amp;src=1">Quelltext</a>]';
 					}					
-					echo "</td><td class=\"tbldata\" width=\"250\">";
+					echo "</td><td width=\"250\">";
 					if ($marr['text']!="")
 					{
 						if (isset($_GET['src']))
@@ -198,7 +198,7 @@
 						echo "<i>Kein Text</i>";
 					}
 					echo "</td></tr>";
-					echo "</table><br/>";
+					tableEnd();
 					
 					if ($marr['message_read']==0)
 					{
@@ -383,7 +383,7 @@
             }
             else
             {
-            	echo "Zu wenig Platz im Archiv!<br/><br/>";
+            	error_msg("Zu wenig Platz im Archiv!");
             }
 					}
 				}
@@ -429,23 +429,23 @@
 				// Archiv-Grafik
 				tableStart("Nachrichten");
 				echo "<tr>
-					<th class=\"tbltitle\" style=\"text-align:center;width:50%;".$r_color."\">
+					<th style=\"text-align:center;width:50%;".$r_color."\">
           	Gelesen: ".$readed_msg_cnt."/".$conf['msg_max_store']['v']." Nachrichten
           </th>
-        	<th class=\"tbltitle\" style=\"text-align:center;width:50%;".$a_color."\">
+        	<th style=\"text-align:center;width:50%;".$a_color."\">
           	Archiviert: ".$archived_msg_cnt."/".$conf['msg_max_store']['p1']." Nachrichten
         	</th>
         </tr>";
 				echo '<tr>
-  	     	<td class="tbldata" style="padding:0px;height:10px;"><img src="images/poll3.jpg" style="height:10px;width:'.$readed_table.'%;" alt="poll" /></td>
-	        <td class="tbldata" style="padding:0px;height:10px;"><img src="images/poll2.jpg" style="height:10px;width:'.$archived_table.'%;" alt="poll" /></td>                  
+  	     	<td style="padding:0px;height:10px;"><img src="images/poll3.jpg" style="height:10px;width:'.$readed_table.'%;" alt="poll" /></td>
+	        <td style="padding:0px;height:10px;"><img src="images/poll2.jpg" style="height:10px;width:'.$archived_table.'%;" alt="poll" /></td>                  
         </tr>';    
         
         // Wenn es neue Nachrichten hat, Button zum Selektieren anzeigen
         if(NEW_MESSAGES>0)
         {
         	echo '<tr>
-  	     					<td class="tbldata" style="text-align:center;" colspan="2">
+  	     					<td style="text-align:center;" colspan="2">
   	     					<a href="javascript:;" onclick="selectNewMessages();" id="select_new_messages" name="select_new_messages">Nur neue Nachrichten anzeigen</a>
   	     					</td>                 
         	</tr>';
@@ -592,10 +592,10 @@
 	            }
 	            
 	            
-	            echo "				<td class=\"tbldata\" style=\"width:2%;\">
+	            echo "				<td style=\"width:2%;\">
 	            					<img src=\"".$im_path."\" alt=\"Mail\" id=\"msgimg".$marr['message_id']."\" />
 	            				</td>
-	            			<td class=\"tbldata\" style=\"width:66%;\">";
+	            			<td style=\"width:66%;\">";
 							if ($marr['message_massmail']==1)
 							{
 								echo "<b>[Rundmail]</b> ";
@@ -622,9 +622,9 @@
                 }
               }
 							echo "</td>";
-							echo "<td class=\"tbldata\" style=\"width:15%;\">".userPopUp($marr['message_user_from'],$marr['user_nick'],0,$strong)."</td>";
-							echo "<td class=\"tbldata\" style=\"width:15%;\">".date("d.m.Y H:i",$marr['message_timestamp'])."</td>";
-							echo "<td class=\"tbldata\" style=\"width:2%;text-align:center;padding:0px;vertical-align:middle;\">
+							echo "<td style=\"width:15%;\">".userPopUp($marr['message_user_from'],$marr['user_nick'],0,$strong)."</td>";
+							echo "<td style=\"width:15%;\">".date("d.m.Y H:i",$marr['message_timestamp'])."</td>";
+							echo "<td style=\"width:2%;text-align:center;padding:0px;vertical-align:middle;\">
 							<input id=\"delcb_".$arr['cat_id']."_".$dcnt."\" type=\"checkbox\" name=\"delmsg[".$marr['message_id']."]\" value=\"1\" title=\"Nachricht zum L&ouml;schen markieren\" /></td>";
 							echo "</tr>\n";
               if ($msgpreview)
@@ -665,11 +665,11 @@
 					else
 					{
 						echo "<tr>
-							<td class=\"tbldata\" colspan=\"5\"><i>Keine Nachrichten vorhanden</i></td>
+							<td colspan=\"5\"><i>Keine Nachrichten vorhanden</i></td>
 						</tr>";
 					}
 				}
-				echo "</table><br/>";
+				tableEnd();
 				if ($msgcnt>0)
 				{
 					// Übergibt alle Nachrichten-ID's an die javascript funktion

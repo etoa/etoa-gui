@@ -316,11 +316,11 @@
 							
 							if ($b_cnt + $t_cnt>0)
 							{
-								echo "<tr><td width=\"200\" class=\"tbldata\" rowspan=\"".($b_cnt + $t_cnt)."\"><b>".$arr[ITEM_NAME_FLD]."</b> ".helpLink(HELP_URL."&amp;id=".$arr[ITEM_ID_FLD])."";
+								echo "<tr><td width=\"200\" rowspan=\"".($b_cnt + $t_cnt)."\"><b>".$arr[ITEM_NAME_FLD]."</b> ".helpLink(HELP_URL."&amp;id=".$arr[ITEM_ID_FLD])."";
 							}
 							else
 							{
-								echo "<tr><td width=\"200\" class=\"tbldata\"><b>".$arr[ITEM_NAME_FLD]."</b> ".helpLink(HELP_URL."&amp;id=".$arr[ITEM_ID_FLD])."";
+								echo "<tr><td width=\"200\"><b>".$arr[ITEM_NAME_FLD]."</b> ".helpLink(HELP_URL."&amp;id=".$arr[ITEM_ID_FLD])."";
 							}
 							
 							if (ITEM_RACE_FLD!="" && $arr[ITEM_RACE_FLD]>0)
@@ -362,11 +362,11 @@
 	
 									if (!isset($buildlist[$b]) || $buildlist[$b]<$l)
 									{
-										echo "<td class=\"tbldata\" style=\"color:#f00;border-right:none;".$bstyle."\" width=\"130\">".$bu_name[$b]."</td><td class=\"tbldata\" style=\"color:#f00;border-left:none;".$bstyle."\" width=\"70\">Stufe ".$l."</td></tr>";
+										echo "<td style=\"color:#f00;border-right:none;".$bstyle."\" width=\"130\">".$bu_name[$b]."</td><td style=\"color:#f00;border-left:none;".$bstyle."\" width=\"70\">Stufe ".$l."</td></tr>";
 									}
 									else
 									{
-										echo "<td class=\"tbldata\" style=\"color:#0f0;border-right:none;".$bstyle."\" width=\"130\">".$bu_name[$b]."</td><td class=\"tbldata\" style=\"color:#0f0;border-left:none;".$bstyle."\" width=\"70\">Stufe $l</td></tr>";
+										echo "<td style=\"color:#0f0;border-right:none;".$bstyle."\" width=\"130\">".$bu_name[$b]."</td><td style=\"color:#0f0;border-left:none;".$bstyle."\" width=\"70\">Stufe $l</td></tr>";
 									}
 									$cnt++;
 								}
@@ -406,11 +406,11 @@
 	
 									if (!isset($techlist[$b]) || $techlist[$b]<$l)
 									{
-										echo "<td class=\"tbldata\" style=\"color:#f00;border-right:none;".$bstyle."\" width=\"130\">".$te_name[$b]."</td><td class=\"tbldata\" style=\"color:#f00;border-left:none;".$bstyle."\" width=\"70\">Stufe ".$l."</td></tr>";
+										echo "<td style=\"color:#f00;border-right:none;".$bstyle."\" width=\"130\">".$te_name[$b]."</td><td style=\"color:#f00;border-left:none;".$bstyle."\" width=\"70\">Stufe ".$l."</td></tr>";
 									}
 									else
 									{
-										echo "<td class=\"tbldata\" style=\"color:#0f0;border-right:none;".$bstyle."\" width=\"130\">".$te_name[$b]."</td><td class=\"tbldata\" style=\"color:#0f0;border-left:none;".$bstyle."\" width=\"70\">Stufe ".$l."</td></tr>";
+										echo "<td style=\"color:#0f0;border-right:none;".$bstyle."\" width=\"130\">".$te_name[$b]."</td><td style=\"color:#0f0;border-left:none;".$bstyle."\" width=\"70\">Stufe ".$l."</td></tr>";
 									}
 									$cnt++;
 								}
@@ -419,18 +419,18 @@
 							
 							if ($using_something==0)
 							{
-								echo "<td colspan=\"2\" class=\"tbldata\"><i>Keine Voraussetzungen n&ouml;tig</i></td></tr>";
+								echo "<td colspan=\"2\"><i>Keine Voraussetzungen n&ouml;tig</i></td></tr>";
 							}
 							$cntr++;
 						}
 					}
 					if ($cntr==0)
 					{
-						echo "<tr><td colspan=\"2\" class=\"tbldata\">Keine Infos vorhanden!</td></tr>";
+						echo "<tr><td colspan=\"2\">Keine Infos vorhanden!</td></tr>";
 					}
 				}
 				else
-					echo "<tr><td align=\"center\" colspan=\"3\" class=\"tbldata\">".NO_ITEMS_MSG."</td></tr>";
+					echo "<tr><td align=\"center\" colspan=\"3\">".NO_ITEMS_MSG."</td></tr>";
 				
 				tableEnd();
 			}
@@ -475,11 +475,11 @@
 				{
 					if (count($b_req[$arr[ITEM_ID_FLD]]['b'])+count($b_req[$arr[ITEM_ID_FLD]]['t'])>0)
 					{
-						echo "<tr><td width=\"200\" class=\"tbldata\" rowspan=\"".(count($b_req[$arr[ITEM_ID_FLD]]['b'])+count($b_req[$arr[ITEM_ID_FLD]]['t']))."\"><b>".$arr[ITEM_NAME_FLD]."</b> ".helpLink(HELP_URL."&amp;id=".$arr[ITEM_ID_FLD])."</td>";
+						echo "<tr><td width=\"200\" rowspan=\"".(count($b_req[$arr[ITEM_ID_FLD]]['b'])+count($b_req[$arr[ITEM_ID_FLD]]['t']))."\"><b>".$arr[ITEM_NAME_FLD]."</b> ".helpLink(HELP_URL."&amp;id=".$arr[ITEM_ID_FLD])."</td>";
 					}
 					else
 					{
-						echo "<tr><td width=\"200\" class=\"tbldata\"><b>".$arr[ITEM_NAME_FLD]."</b> ".helpLink(HELP_URL."&amp;id=".$arr[ITEM_ID_FLD])."</td>";
+						echo "<tr><td width=\"200\"><b>".$arr[ITEM_NAME_FLD]."</b> ".helpLink(HELP_URL."&amp;id=".$arr[ITEM_ID_FLD])."</td>";
 					}
 					$using_something=0;
 					
@@ -507,11 +507,11 @@
 
 							if (!isset($buildlist[$b]) || $buildlist[$b]<$l)
 							{
-								echo "<td class=\"tbldata\" style=\"color:#f00;border-right:none;$bstyle\" width=\"130\">".$bu_name[$b]."</td><td class=\"tbldata\" style=\"color:#f00;border-left:none;$bstyle\" width=\"70\">Stufe $l</td></tr>";
+								echo "<td style=\"color:#f00;border-right:none;$bstyle\" width=\"130\">".$bu_name[$b]."</td><td style=\"color:#f00;border-left:none;$bstyle\" width=\"70\">Stufe $l</td></tr>";
 							}
 							else
 							{
-								echo "<td class=\"tbldata\" style=\"color:#0f0;border-right:none;$bstyle\" width=\"130\">".$bu_name[$b]."</td><td class=\"tbldata\" style=\"color:#0f0;border-left:none;$bstyle\" width=\"70\">Stufe $l</td></tr>";
+								echo "<td style=\"color:#0f0;border-right:none;$bstyle\" width=\"130\">".$bu_name[$b]."</td><td style=\"color:#0f0;border-left:none;$bstyle\" width=\"70\">Stufe $l</td></tr>";
 							}
 							$cnt++;
 						}
@@ -551,22 +551,22 @@
 
 							if (!isset($techlist[$b]) || $techlist[$b]<$l)
 							{
-								echo "<td class=\"tbldata\" style=\"color:#f00;border-right:none;$bstyle\" width=\"130\">".$te_name[$b]."</td><td class=\"tbldata\" style=\"color:#f00;border-left:none;$bstyle\" width=\"70\">Stufe $l</td></tr>";
+								echo "<td style=\"color:#f00;border-right:none;$bstyle\" width=\"130\">".$te_name[$b]."</td><td style=\"color:#f00;border-left:none;$bstyle\" width=\"70\">Stufe $l</td></tr>";
 							}
 							else
 							{
-								echo "<td class=\"tbldata\" style=\"color:#0f0;border-right:none;$bstyle\" width=\"130\">".$te_name[$b]."</td><td class=\"tbldata\" style=\"color:#0f0;border-left:none;$bstyle\" width=\"70\">Stufe $l</td></tr>";
+								echo "<td style=\"color:#0f0;border-right:none;$bstyle\" width=\"130\">".$te_name[$b]."</td><td style=\"color:#0f0;border-left:none;$bstyle\" width=\"70\">Stufe $l</td></tr>";
 							}
 							$cnt++;
 						}
 						$using_something=1;
 					}
 					if ($using_something==0)
-						echo "<td colspan=\"2\" class=\"tbldata\"><i>Keine Voraussetzungen n&ouml;tig</i></td></tr>";
+						echo "<td colspan=\"2\"><i>Keine Voraussetzungen n&ouml;tig</i></td></tr>";
 				}
 			}
 			else
-				echo "<tr><td align=\"center\" colspan=\"3\" class=\"tbldata\">".NO_ITEMS_MSG."</td></tr>";
+				echo "<tr><td align=\"center\" colspan=\"3\">".NO_ITEMS_MSG."</td></tr>";
 			tableEnd();
 	}
 	

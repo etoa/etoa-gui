@@ -79,8 +79,8 @@
 					checker_init();
 					
 					tableStart("Kriegserkl&auml;rung an die Allianz [".$aarr['alliance_tag']."] ".$aarr['alliance_name']);
-					echo "<tr><th class=\"tbltitle\">Nachricht:</th><td class=\"tbldata\"><textarea rows=\"10\" cols=\"50\" name=\"alliance_bnd_text\"></textarea></td></tr>";
-					echo "<tr><th class=\"tbltitle\">Öffentlicher Text:</th><td class=\"tbldata\"><textarea rows=\"10\" cols=\"50\" name=\"alliance_bnd_text_pub\"></textarea></td></tr>";
+					echo "<tr><th>Nachricht:</th><td><textarea rows=\"10\" cols=\"50\" name=\"alliance_bnd_text\"></textarea></td></tr>";
+					echo "<tr><th>Öffentlicher Text:</th><td><textarea rows=\"10\" cols=\"50\" name=\"alliance_bnd_text_pub\"></textarea></td></tr>";
 					tableEnd();
 					
 					echo "<input type=\"hidden\" name=\"alliance_bnd_alliance_id\" value=\"".$aarr['alliance_id']."\" />";
@@ -90,7 +90,7 @@
 				}
 				else
 				{
-					echo "<b>Fehler:</b> Diese Allianz existiert nicht!<br/><br/>";
+					error_msg("Diese Allianz existiert nicht!");
 				}
 			}
 
@@ -120,14 +120,14 @@
 						
 						tableStart("B&uuml;ndnisanfrage an die Allianz [".$aarr['alliance_tag']."] ".$aarr['alliance_name']);
 						echo "<tr>
-							<th class=\"tbltitle\">Name des Bündnisses:</th>
-							<td class=\"tbldata\">
+							<th>Name des Bündnisses:</th>
+							<td>
 								<input type=\"text\" size=\"30\" maxlength=\"30\" name=\"alliance_bnd_name\" />
 							</td>
 						</tr>";
 						echo "<tr>
-							<th class=\"tbltitle\">Bündnisanfrage:</th>
-							<td class=\"tbldata\">
+							<th>Bündnisanfrage:</th>
+							<td>
 								<textarea rows=\"10\" cols=\"50\" name=\"alliance_bnd_text\"></textarea>
 							</td>
 						</tr>";
@@ -140,12 +140,12 @@
 					}
 					else
 					{
-						echo "Die Allianz nimmt keine Bündnisanfragen an!<br>";
+						error_msg("Die Allianz nimmt keine Bündnisanfragen an!",1);
 					}
 				}
 				else
 				{
-					echo "<b>Fehler:</b> Diese Allianz existiert nicht!<br/><br/>";
+					error_msg("Diese Allianz existiert nicht!");
 				}
 			}
 
@@ -199,29 +199,29 @@
 						case 0:
 							tableStart("Status der Bündnissanfrage");
 							echo "<tr>
-								<th class=\"tbltitle\" style=\"width:200px;\">Allianz</th>
-								<td class=\"tbldata\">".$opName."</td>
+								<th style=\"width:200px;\">Allianz</th>
+								<td>".$opName."</td>
 							</tr>";
 							echo "<tr>
-								<th class=\"tbltitle\" style=\"width:200px;\">Bündnissname</th>
-								<td class=\"tbldata\">".text2html($arr['alliance_bnd_name'])."</td>
+								<th style=\"width:200px;\">Bündnissname</th>
+								<td>".text2html($arr['alliance_bnd_name'])."</td>
 							</tr>";
 							echo "<tr>
-								<th class=\"tbltitle\" style=\"width:200px;\">Text</th>
-								<td class=\"tbldata\">".text2html($arr['alliance_bnd_text'])."</td>
+								<th style=\"width:200px;\">Text</th>
+								<td>".text2html($arr['alliance_bnd_text'])."</td>
 							</tr>";
 							if ($arr['a1id']==$cu->allianceId)
 							{					
 								echo "<tr>
-									<th class=\"tbltitle\" style=\"width:200px;\">Status</th>
-									<td class=\"tbldata\">Die Anfrage wurde noch nicht angenommen.</td>
+									<th style=\"width:200px;\">Status</th>
+									<td>Die Anfrage wurde noch nicht angenommen.</td>
 								</tr>";
 							}
 							else
 							{
 								echo "<tr>
-									<th class=\"tbltitle\" style=\"width:200px;\">Antwort</th>
-									<td class=\"tbldata\"><textarea name=\"pact_answer\" rows=\"6\" cols=\"70\"></textarea></td>
+									<th style=\"width:200px;\">Antwort</th>
+									<td><textarea name=\"pact_answer\" rows=\"6\" cols=\"70\"></textarea></td>
 								</tr>";
 							}
 							tableEnd();				
@@ -239,16 +239,16 @@
 						case 2:
 							tableStart("Bündnis \"".$arr['alliance_bnd_name']."\"");
 							echo "<tr>
-								<th class=\"tbltitle\" style=\"width:200px;\">Allianz</th>
-								<td class=\"tbldata\">".$opName."</td>
+								<th style=\"width:200px;\">Allianz</th>
+								<td>".$opName."</td>
 							</tr>";
 							echo "<tr>
-								<th class=\"tbltitle\" style=\"width:200px;\">Anfragetext</th>
-								<td class=\"tbldata\">".text2html($arr['alliance_bnd_text'])."</td>
+								<th style=\"width:200px;\">Anfragetext</th>
+								<td>".text2html($arr['alliance_bnd_text'])."</td>
 							</tr>";
 							echo "<tr>
-								<th class=\"tbltitle\" style=\"width:200px;\">Öffentlicher Text</th>
-								<td class=\"tbldata\"><textarea name=\"alliance_bnd_text_pub\" rows=\"6\" cols=\"70\">".stripslashes($arr['alliance_bnd_text_pub'])."</textarea></td>
+								<th style=\"width:200px;\">Öffentlicher Text</th>
+								<td><textarea name=\"alliance_bnd_text_pub\" rows=\"6\" cols=\"70\">".stripslashes($arr['alliance_bnd_text_pub'])."</textarea></td>
 							</tr>";
 							tableEnd();				
 							echo "<input type=\"hidden\" name=\"id\" value=\"".$id."\" />";					
@@ -257,25 +257,25 @@
 						case 3:
 							tableStart("Krieg");
 							echo "<tr>
-								<th class=\"tbltitle\" style=\"width:200px;\">Allianz</th>
-								<td class=\"tbldata\">".$opName."</td>
+								<th style=\"width:200px;\">Allianz</th>
+								<td>".$opName."</td>
 							</tr>";
 							echo "<tr>
-								<th class=\"tbltitle\" style=\"width:200px;\">Kriegserklärung</th>
-								<td class=\"tbldata\">".text2html($arr['alliance_bnd_text'])."</td>
+								<th style=\"width:200px;\">Kriegserklärung</th>
+								<td>".text2html($arr['alliance_bnd_text'])."</td>
 							</tr>";
 							if ($arr['a1id']==$cu->allianceId)
 							{
 								echo "<tr>
-									<th class=\"tbltitle\" style=\"width:200px;\">Öffentlicher Text</th>
-									<td class=\"tbldata\"><textarea name=\"alliance_bnd_text_pub\" rows=\"6\" cols=\"70\">".stripslashes($arr['alliance_bnd_text_pub'])."</textarea></td>
+									<th style=\"width:200px;\">Öffentlicher Text</th>
+									<td><textarea name=\"alliance_bnd_text_pub\" rows=\"6\" cols=\"70\">".stripslashes($arr['alliance_bnd_text_pub'])."</textarea></td>
 								</tr>";
 							}
 							else
 							{
 								echo "<tr>
-									<th class=\"tbltitle\" style=\"width:200px;\">Öffentlicher Text</th>
-									<td class=\"tbldata\">".text2html($arr['alliance_bnd_text_pub'])."</td>
+									<th style=\"width:200px;\">Öffentlicher Text</th>
+									<td>".text2html($arr['alliance_bnd_text_pub'])."</td>
 								</tr>";
 							}
 							tableEnd();				
@@ -293,7 +293,7 @@
 				}
 				else
 				{
-					echo "Datensatz nicht vorhanden!";
+					error_msg("Datensatz nicht vorhanden!");
 				}
 			}
 
@@ -345,12 +345,12 @@
 
 					tableStart("Bündnis \"".stripslashes($arr['alliance_bnd_name'])."\" beenden");
 					echo "<tr>
-						<th class=\"tbltitle\" style=\"width:200px;\">Allianz</th>
-						<td class=\"tbldata\">".$opName."</td>
+						<th style=\"width:200px;\">Allianz</th>
+						<td>".$opName."</td>
 					</tr>";
 					echo "<tr>
-						<th class=\"tbltitle\" style=\"width:200px;\">Begründung</th>
-						<td class=\"tbldata\"><textarea name=\"pact_end_text\" rows=\"6\" cols=\"70\"></textarea></td>
+						<th style=\"width:200px;\">Begründung</th>
+						<td><textarea name=\"pact_end_text\" rows=\"6\" cols=\"70\"></textarea></td>
 					</tr>";
 					tableEnd();				
 					echo "<input type=\"hidden\" name=\"id\" value=\"".$id."\" />";					
@@ -386,7 +386,7 @@
 					
 					if (mysql_num_rows($bnd_res)>0)
 					{
-						echo "Deine Allianz steht schon in einer Beziehung (B&uuml;ndnis/Krieg) mit der ausgew&auml;hlten Allianz oder es ist bereits eine Bewerbung um ein B&uuml;ndnis vorhanden!<br/><br/>";
+						error_msg("Deine Allianz steht schon in einer Beziehung (B&uuml;ndnis/Krieg) mit der ausgew&auml;hlten Allianz oder es ist bereits eine Bewerbung um ein B&uuml;ndnis vorhanden!");
 					}
 					else
 					{
@@ -412,7 +412,7 @@
 							".time().",
 							'".$cu->id."'
 						);");
-						echo "Du hast einer Allianz erfolgreich ein B&uuml;ndnis angeboten!<br/><br/>";
+						ok_msg("Du hast einer Allianz erfolgreich ein B&uuml;ndnis angeboten!");
 
 						//Nachricht an den Leader der gegnerischen Allianz schreiben
 						$res=dbquery("SELECT alliance_founder_id FROM alliances WHERE alliance_id='".$_POST['alliance_bnd_alliance_id']."'");
@@ -446,7 +446,7 @@
 					
 					if (mysql_num_rows($war_res)>0)
 					{
-						echo "Deine Allianz steht schon in einer Beziehung (B&uuml;ndnis/Krieg) mit der ausgew&auml;hlten Allianz oder es ist bereits eine Bewerbung um ein B&uuml;ndnis vorhanden!<br/><br/>";
+						error_msg("Deine Allianz steht schon in einer Beziehung (B&uuml;ndnis/Krieg) mit der ausgew&auml;hlten Allianz oder es ist bereits eine Bewerbung um ein B&uuml;ndnis vorhanden!");
 					}
 					else
 					{
@@ -475,7 +475,7 @@
 							'".$cu->id."'
 						)");
 						
-						echo "Du hast einer Allianz den Krieg erkl&auml;rt!<br/><br/>";
+						ok_msg("Du hast einer Allianz den Krieg erkl&auml;rt!");
 						
 						add_alliance_history($cu->allianceId,"Der Allianz [b][".$alliances[$_POST['alliance_bnd_alliance_id']]['tag']."] ".$alliances[$_POST['alliance_bnd_alliance_id']]['name']."[/b] wird der Krieg erkl&auml;rt!");
 						add_alliance_history($_POST['alliance_bnd_alliance_id'],"Die Allianz [b][".$alliances[$cu->allianceId]['tag']."] ".$alliances[$cu->allianceId]['name']."[/b] erkl&auml;rt den Krieg!");
@@ -663,7 +663,7 @@
 						WHERE 
 							alliance_bnd_id=".$id." 
 						;");
-						echo "Bündniss angenommen! Bitte denke daran, einen öffentlichen Text zum Bündnis hinzuzufügen!<br/><br/>";
+						ok_msg("Bündniss angenommen! Bitte denke daran, einen öffentlichen Text zum Bündnis hinzuzufügen!");
 					}
 				}
 
@@ -716,7 +716,7 @@
 						add_alliance_history($cu->allianceId,"Die Bündnisanfrage [b]".$arr['alliance_bnd_name']."[/b] der Allianz [b][".$arr['a2tag']."] ".$arr['a2name']."[/b] wird abgelehnt!");
 						add_alliance_history($arr['a2id'],"Die Bündnisanfrage [b]".$arr['alliance_bnd_name']."[/b] wird von der Allianz [b][".$arr['a1tag']."] ".$arr['a1name']."[/b] abgelehnt!");
 
-						echo "Bündniss abgelehnt!<br/><br/>";
+						ok_msg("Bündniss abgelehnt!");
 					}
 				}
 
@@ -737,7 +737,7 @@
 						AND alliance_bnd_id='".$id."' 
 						AND alliance_bnd_level=2
 					");
-					echo "Text gespeichert!<br/><br/>";
+					ok_msg("Text gespeichert!");
 				}
 
 				// Save public war text
@@ -757,7 +757,7 @@
 						AND alliance_bnd_id='".$id."' 
 						AND alliance_bnd_level=3
 					");
-					echo "Text gespeichert!<br/><br/>";
+					ok_msg("Text gespeichert!");
 				}
 
 
@@ -811,21 +811,21 @@
 				if (mysql_num_rows($ares)>0)
 				{
 					tableStart("&Uuml;bersicht");
-					echo "<tr><td class=\"tbltitle\" colspan=\"2\">Allianz</td>
-					<td class=\"tbltitle\">Status</td>
-					<td class=\"tbltitle\">Start</td>
-					<td class=\"tbltitle\">Ende / Name</td>
-					<td class=\"tbltitle\">Aktionen</td>
+					echo "<tr><th colspan=\"2\">Allianz</td>
+					<th>Status</td>
+					<th>Start</td>
+					<th>Ende / Name</td>
+					<th>Aktionen</td>
 					</tr>";
 					while ($aarr=mysql_fetch_array($ares))
 					{
 						echo "<tr>
-							<td class=\"tbldata\">
+							<td>
 								<a href=\"?page=alliance&amp;info_id=".$aarr['alliance_id']."\">
 								[".$aarr['alliance_tag']."]
 								</a>
 							</td>
-							<td class=\"tbldata\">
+							<td>
 							 ".text2html($aarr['alliance_name'])."
 							</td>";
 							
@@ -833,50 +833,50 @@
 						{	
 							if ($relations[$aarr['alliance_id']]['level']==2)
 							{
-								echo "<td class=\"tbldata\" style=\"color:#0f0;\">B&uuml;ndnis</td>";
-								echo "<td class=\"tbldata\">".df($relations[$aarr['alliance_id']]['date'])."</td>";
-								echo "<td class=\"tbldata\">".$relations[$aarr['alliance_id']]['name']."</td>";
+								echo "<td style=\"color:#0f0;\">B&uuml;ndnis</td>";
+								echo "<td>".df($relations[$aarr['alliance_id']]['date'])."</td>";
+								echo "<td>".$relations[$aarr['alliance_id']]['name']."</td>";
 							}
 							elseif ($relations[$aarr['alliance_id']]['level']==3)
 							{
-								echo "<td class=\"tbldata\" style=\"color:#f00;\">Krieg</td>";
-								echo "<td class=\"tbldata\">".df($relations[$aarr['alliance_id']]['date'])."</td>";
-								echo "<td class=\"tbldata\">".df($relations[$aarr['alliance_id']]['date']+WAR_DURATION)."</td>";
+								echo "<td style=\"color:#f00;\">Krieg</td>";
+								echo "<td>".df($relations[$aarr['alliance_id']]['date'])."</td>";
+								echo "<td>".df($relations[$aarr['alliance_id']]['date']+WAR_DURATION)."</td>";
 							}
 							elseif ($relations[$aarr['alliance_id']]['level']==4)
 							{
-								echo "<td class=\"tbldata\" style=\"color:#3f9;\">Frieden</td>";
-								echo "<td class=\"tbldata\">".df($relations[$aarr['alliance_id']]['date'])."</td>";
-								echo "<td class=\"tbldata\">".df($relations[$aarr['alliance_id']]['date']+PEACE_DURATION)."</td>";
+								echo "<td style=\"color:#3f9;\">Frieden</td>";
+								echo "<td>".df($relations[$aarr['alliance_id']]['date'])."</td>";
+								echo "<td>".df($relations[$aarr['alliance_id']]['date']+PEACE_DURATION)."</td>";
 							}									
 							elseif ($relations[$aarr['alliance_id']]['level']==0 && count($relations[$aarr['alliance_id']])>0)
 							{
 								if ($relations[$aarr['alliance_id']]['master'])
 								{
-									echo "<td class=\"tbldata\" style=\"color:#ff0;\">Anfrage</td>";
+									echo "<td style=\"color:#ff0;\">Anfrage</td>";
 								}
 								else
 								{
-									echo "<td class=\"tbldata\" style=\"color:#f90;\">Anfrage an uns</td>";
+									echo "<td style=\"color:#f90;\">Anfrage an uns</td>";
 								}
-								echo "<td class=\"tbldata\">".df($relations[$aarr['alliance_id']]['date'])."</td>";
-								echo "<td class=\"tbldata\">-</td>";
+								echo "<td>".df($relations[$aarr['alliance_id']]['date'])."</td>";
+								echo "<td>-</td>";
 							}
 							else
 							{
-								echo "<td class=\"tbldata\">-</td>";
-								echo "<td class=\"tbldata\">-</td>";
-								echo "<td class=\"tbldata\">-</td>";
+								echo "<td>-</td>";
+								echo "<td>-</td>";
+								echo "<td>-</td>";
 							}
 						}
 						else
 						{
-							echo "<td class=\"tbldata\">-</td>";
-							echo "<td class=\"tbldata\">-</td>";
-							echo "<td class=\"tbldata\">-</td>";
+							echo "<td>-</td>";
+							echo "<td>-</td>";
+							echo "<td>-</td>";
 						}
 												
-						echo "<td class=\"tbldata\">";
+						echo "<td>";
 						
 						if(isset($relations[$aarr['alliance_id']]))
 						{
@@ -926,11 +926,10 @@
 					tableEnd();
 				}
 				else
-					echo "Es gibt noch keine Allianzen, welcher du den Krieg erkl&auml;ren kannst.<br/><br/>";
+					error_msg("Es gibt noch keine Allianzen, welcher du den Krieg erkl&auml;ren kannst.");
 				echo "<input type=\"button\" value=\"Zur&uuml;ck zur Hauptseite\" onclick=\"document.location='?page=$page'\" />";
 
 			}
-
 	}
 
 ?>

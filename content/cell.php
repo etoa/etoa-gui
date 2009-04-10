@@ -50,11 +50,11 @@
 		{
 			if ($star->setNewName($_POST['starname']))
 			{
-				echo "Der Stern wurde benannt!<br/><br/>";
+				ok_msg("Der Stern wurde benannt!");
 			}
 			else
 			{
-				echo "Es gab ein Problem beim Setzen des Namens!<br/><br/>";
+				error_msg("Es gab ein Problem beim Setzen des Namens!");
 			}
 		}
 		unset($star);
@@ -126,11 +126,11 @@
 
 			
 				echo "<tr>
-					<th colspan=\"2\" class=\"tbltitle\" style=\"width:60px;\">Position</th>
-					<th class=\"tbltitle\">Typ</th>
-					<th class=\"tbltitle\">Name</th>
-					<th class=\"tbltitle\">Besitzer</th>
-					<th class=\"tbltitle\" style=\"width:150px;\">Aktionen</th>
+					<th colspan=\"2\" style=\"width:60px;\">Position</th>
+					<th>Typ</th>
+					<th>Name</th>
+					<th>Besitzer</th>
+					<th style=\"width:150px;\">Aktionen</th>
 				</tr>";
 	
 				$hasPlanetInSystem = false;
@@ -140,7 +140,7 @@
 					if ($ent->pos()==1)
 					{
 						echo "<tr>
-							<td class=\"tbldata\" style=\"height:3px;background:#000;\" colspan=\"6\"></td>
+							<td style=\"height:3px;background:#000;\" colspan=\"6\"></td>
 						</tr>";			
 					}
 					$addstyle=" style=\"vertical-align:middle;";
@@ -367,7 +367,7 @@
 					
 				}
 				
-				echo "</table><br/><br/>";
+				tableEnd();
 				
 				
 				// System benennen
@@ -383,11 +383,11 @@
 							
 				
 				
-				echo '<div id="spy_info_box" style="display:none;">';
+				echo "<div id=\"spy_info_box\" style=\"display:none;\">";
 				iBoxStart("Spionage");
-				echo '<div id="spy_info"></div>';
+				echo "<div id=\"spy_info\"></div>";
 				iBoxEnd();
-				echo '</div>';
+				echo "</div>";
 				
 				iBoxStart("Legende");
 				echo "
@@ -445,7 +445,7 @@
 		}
 		else
 		{
-			echo "<h1>Fehler!</h1>System nicht gefunden!<br/><br/>";
+			error_msg("System nicht gefunden!");
 			echo "<input type=\"button\" value=\"Zur&uuml;ck zur Raumkarte\" onclick=\"document.location='?page=sector'\" />";
 		}
 

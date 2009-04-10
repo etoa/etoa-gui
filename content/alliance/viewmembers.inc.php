@@ -16,7 +16,7 @@ if (Alliance::checkActionRights('viewmembers'))
 			$rank[$rarr['rank_id']]=$rarr['rank_name'];
 		}
 		echo "<form action=\"?page=$page\" method=\"post\">";
-		echo "<table class=\"tb\">";
+		tableStart();
 		echo "<tr>
 		<th>Nick</th>
 		<th>Heimatplanet</th>
@@ -59,32 +59,32 @@ if (Alliance::checkActionRights('viewmembers'))
 				echo " style=\"color:#0f0;\";";
 			}
 			echo ">";
-			echo "<td class=\"tbldata\">".$uarr['user_nick']."</td>
-			<td class=\"tbldata\">".$tp."</td>
-			<td class=\"tbldata\">".nf($uarr['user_points'])."</td>
-			<td class=\"tbldata\">".$uarr['race_name']."</td>";
+			echo "<td>".$uarr['user_nick']."</td>
+			<td>".$tp."</td>
+			<td>".nf($uarr['user_points'])."</td>
+			<td>".$uarr['race_name']."</td>";
 			if ($arr['alliance_founder_id']==$uarr['user_id'])
 			{
-				echo "<td class=\"tbldata\">Gr&uuml;nder</td>";
+				echo "<td>Gr&uuml;nder</td>";
 			}
 			elseif (isset($rank[$uarr['user_alliance_rank_id']]))
 			{
-				echo "<td class=\"tbldata\">".$rank[$uarr['user_alliance_rank_id']]."</td>";
+				echo "<td>".$rank[$uarr['user_alliance_rank_id']]."</td>";
 			}
 			else
 			{
-				echo "<td class=\"tbldata\">-</td>";
+				echo "<td>-</td>";
 			}
 			$num=check_fleet_incomming($uarr['user_id']);
 			if ($num>0)
 				echo "<td BGCOLOR=\"#FF0000\" align=\"center\">".$num."</td>";
 			else
-				echo "<td class=\"tbldata\">-</td>";
+				echo "<td>-</td>";
 
 			if (($time-$conf['online_threshold']['v']*60) < $uarr['user_acttime'])
-				echo "<td class=\"tbldata\" style=\"color:#0f0;\">online</td>";
+				echo "<td style=\"color:#0f0;\">online</td>";
 			else
-				echo "<td class=\"tbldata\">".date("d.m.Y H.i",$uarr['user_acttime'])."</td>";
+				echo "<td>".date("d.m.Y H.i",$uarr['user_acttime'])."</td>";
 
 			echo"<td class=\"tbldata\">";
 			if ($cu->id!=$uarr['user_id'])
@@ -93,7 +93,7 @@ if (Alliance::checkActionRights('viewmembers'))
 			echo "<a href=\"?page=userinfo&amp;id=".$uarr['user_id']."\">Profil</a>";	
 			echo "</td></tr>";
 		}
-		echo "</table><br>";
+		tableEnd();
 		echo "<input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"Zur&uuml;ck\" />";
 						
 	}

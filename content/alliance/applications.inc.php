@@ -3,7 +3,7 @@
 if (Alliance::checkActionRights('applications'))
 {
 
-		echo "<h2>Bewerbungen</h2><br>";
+		echo "<h2>Bewerbungen</h2>";
 		if(isset($_POST['applicationsubmit']) && checker_verify())
 		{
 			if (count($_POST['application_answer'])>0)
@@ -118,25 +118,25 @@ if (Alliance::checkActionRights('applications'))
 		{
 			tableStart("Bewerbungen prüfen");
 			echo "<tr>
-							<td class=\"tbltitle\" width=\"10%\">User</td>
-							<td class=\"tbltitle\" width=\"35%\">Datum / Text</td>
-							<td class=\"tbltitle\" width=\"35%\">Nachricht</td>
-							<td class=\"tbltitle\" width=\"20%\">Aktion</td>
+							<th width=\"10%\">User</td>
+							<th width=\"35%\">Datum / Text</td>
+							<th width=\"35%\">Nachricht</td>
+							<th width=\"20%\">Aktion</td>
 						</tr>";
 			while ($arr = mysql_fetch_array($res))
 			{
 				echo "<tr>
-				<td class=\"tbldata\" ".tm("Info","Rang: ".$arr['user_rank']."<br>Punkte: ".nf($arr['user_points'])."<br>Registriert: ".date("d.m.Y H:i",$arr['user_registered'])."").">
+				<td ".tm("Info","Rang: ".$arr['user_rank']."<br>Punkte: ".nf($arr['user_points'])."<br>Registriert: ".date("d.m.Y H:i",$arr['user_registered'])."").">
 					<a href=\"?page=userinfo&id=".$arr['user_id']."\">".$arr['user_nick']."</a>";
 					
 					// Übergibt Usernick dem Formular, damit beim Submit nicht nochmals eine DB Abfrage gestartet werden muss
 					echo "<input type=\"hidden\" name=\"application_user_nick_".$arr['user_id']."\" value=\"".$arr['user_nick']."\" />
 				</td>
-				<td class=\"tbldata\">".df($arr['timestamp'])."<br/><br/>".text2html($arr['text'])."</td>
-				<td class=\"tbldata\">
+				<td>".df($arr['timestamp'])."<br/><br/>".text2html($arr['text'])."</td>
+				<td>
 					<textarea rows=\"6\" cols=\"40\" name=\"application_answer_text[".$arr['user_id']."]\" /></textarea>
 				</td>
-				<td class=\"tbldata\">
+				<td>
 					<input type=\"radio\" name=\"application_answer[".$arr['user_id']."]\" value=\"2\" onchange=\"xajax_showAllianceMemberAddCosts('".$cu->allianceId()."',xajax.getFormValues('applicationsForm'));\"/> <span ".tm("Anfrage annehmen","".$arr['user_nick']." wird in die Allianz aufgenommen.<br>Eine Nachricht wird versendet.").">Annehmen</span><br><br>
 					<input type=\"radio\" name=\"application_answer[".$arr['user_id']."]\" value=\"1\" onchange=\"xajax_showAllianceMemberAddCosts('".$cu->allianceId()."',xajax.getFormValues('applicationsForm'));\"/> <span ".tm("Anfrage ablehnen","".$arr['user_nick']." wird der Zutritt zu der Allianz verweigert.<br>Eine Nachricht wird versendet.").">Ablehnen</span><br><br>
 					<input type=\"radio\" name=\"application_answer[".$arr['user_id']."]\" value=\"0\" checked=\"checked\" onchange=\"xajax_showAllianceMemberAddCosts('".$cu->allianceId()."',xajax.getFormValues('applicationsForm'));\"/> <span ".tm("Anfrage nicht bearbeiten","Sofern vorhanden, wird eine Nachricht an ".$arr['user_nick']." geschickt.").">Nicht bearbeiten</span>

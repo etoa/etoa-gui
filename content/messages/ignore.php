@@ -26,7 +26,7 @@
 			  ".$_POST['target_id']."
 			)
 			");		
-			echo "Spieler wurde ignoriert!<br/><br/>";
+			ok_msg("Spieler wurde ignoriert!");
 		}
 		
 		
@@ -40,10 +40,11 @@
 				ignore_owner_id=".$cu->id."
 				AND ignore_target_id=".intval($_GET['remove'])."
 			;");		
-			echo "Spieler wurde von der Liste entfernt!<br/><br/>";
+			ok_msg("Spieler wurde von der Liste entfernt!");
 		}		
 		
-		echo 'Falls du von einem Benutzer belästigt wirst kannst du ihn hier ignorieren:<br/><br/>';
+		tableStart('Ignorierliste');
+		echo '<tr><th style="text-align:center;">Falls du von einem Benutzer belästigt wirst kannst du ihn hier ignorieren:</th></tr>';
 		$res=dbquery("SELECT
 			user_id,
 			user_nick
@@ -55,14 +56,16 @@
 			user_nick");
 		if (mysql_num_rows($res)>0)
 		{
-			echo '<form action="?page='.$page.'&amp;mode='.$mode.'" method="post"><div>
+			echo '<tr><td style="text-align:center;"><form action="?page='.$page.'&amp;mode='.$mode.'" method="post"><div>
 			<select name="target_id"><option value="0">Spieler wählen...</option>';
 			while ($arr=mysql_fetch_array($res))
 			{
 				echo '<option value="'.$arr['user_id'].'">'.$arr['user_nick'].'</option>';
 			}
-			echo '</select> <input type="submit" name="submit_ignore" value="Nachrichten dieses Spielers ignorieren" /></div></form><br/>';
+			echo '</select> <input type="submit" name="submit_ignore" value="Nachrichten dieses Spielers ignorieren" /></div></form></td>';
 		}
+		echo '</tr>';
+		tableEnd();
 		
 		// Spieler die man ignoriert
 		$res=dbquery("SELECT
@@ -78,7 +81,8 @@
 			user_nick");		
 		if (mysql_num_rows($res)>0)
 		{
-			echo '<table class="tb"><tr><th>Spieler</th><th>Aktionen</th></tr>';
+			tableStart();
+			echo '<tr><th>Spieler</th><th>Aktionen</th></tr>';
 			while ($arr=mysql_fetch_array($res))
 			{
 				echo '<tr><td>'.$arr['user_nick'].'</td>
@@ -87,11 +91,11 @@
 				<a href="?page='.$page.'&amp;mode='.$mode.'&amp;remove='.$arr['user_id'].'">Entfernen</a>
 				</td></tr>';
 			}
-			echo '</table>';
+			tableEnd();
 		}				
 		else
 		{
-			echo '<i>Keine ignorierten Spieler vorhanden!</i>';
+			error_msg('Keine ignorierten Spieler vorhanden!',1);
 		}
 		
 		// Spieler bei denen man ignoriert ist
@@ -108,7 +112,9 @@
 			user_nick");			
 		if (mysql_num_rows($res)>0)
 		{
-			echo '<br/><br/>Du wirst von folgenden Spielern ignoriert:<br/><br/><table class="tb"><tr><th>Spieler</th><th>Aktionen</th></tr>';
+			echo '<br/><br/>Du wirst von folgenden Spielern ignoriert:<br/><br/>';
+			tableStart();
+			echo '<tr><th>Spieler</th><th>Aktionen</th></tr>';
 			while ($arr=mysql_fetch_array($res))
 			{
 				echo '<tr><td>'.$arr['user_nick'].'</td>
@@ -116,6 +122,6 @@
 				<a href="?page='.$page.'&amp;mode='.$mode.'&amp;add='.$arr['user_id'].'">Ebenfalls ignorieren</a>
 				</td></tr>';
 			}
-			echo '</table>';
+			tableEnd();
 		}	
 ?>

@@ -38,7 +38,7 @@
 		}
 		else
 		{
-			echo "<table class=\"tb\">";
+			tableStart();
 			echo "<tr><th colspan=\"5\">Gesendete Nachrichten</th></tr>";
 
 			$mres = dbquery("
@@ -74,10 +74,10 @@
 					{
 						$im_path = "images/pm_normal.gif";
 					}
-					echo "<tr><td class=\"tbldata\" style=\"width:16px;\">
+					echo "<tr><td style=\"width:16px;\">
 					<a href=\"?page=$page&msg_id=".$marr['message_id']."&mode=".$mode."\">
 					<img src=\"".$im_path."\" style=\"border:none;width:16px;height:18px;\"></a></td>";
-					echo "<td class=\"tbldata\"><a href=\"?page=$page&msg_id=".$marr['message_id']."&mode=".$mode."\">";
+					echo "<td ><a href=\"?page=$page&msg_id=".$marr['message_id']."&mode=".$mode."\">";
 					if ($marr['subject']!="")
 					{
 						echo stripslashes($marr['subject']);
@@ -86,15 +86,15 @@
 					{
 						echo "<i>Kein Titel</i>";
 					}
-					echo "</a></td><td class=\"tbldata\" style=\"width:120px;\">".userPopUp($marr['message_user_to'],$marr['user_nick'],0)."</td>";
-					echo "<td class=\"tbldata\" style=\"width:120px;\">".date("d.m.Y H:i",$marr['message_timestamp'])."</td>";
+					echo "</a></td><td style=\"width:120px;\">".userPopUp($marr['message_user_to'],$marr['user_nick'],0)."</td>";
+					echo "<td style=\"width:120px;\">".date("d.m.Y H:i",$marr['message_timestamp'])."</td>";
 				}
 			}
 			else
 			{
-				echo "<tr><td class=\"tbldata\" width=\"400\" colspan=\"4\"><i>Keine Nachrichten vorhanden</i></td>";
+				echo "<tr><td width=\"400\" colspan=\"4\"><i>Keine Nachrichten vorhanden</i></td>";
 			}
-			echo "</table>";
+			tableEnd();
 			echo "<br/>Es werden nur die 30 neusten Nachrichten angezeigt.";
 		}
 ?>

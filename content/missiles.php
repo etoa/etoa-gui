@@ -141,7 +141,7 @@
 						WHERE
 							obj_flight_id=".intval($_GET['selfdestruct'])."
 						;");
-						echo "Die Raketen haben sich selbst zerstört!<br/><br/>";
+						ok_msg("Die Raketen haben sich selbst zerstört!");
 					}			
 				}
 		
@@ -511,10 +511,10 @@
 					
 					tableStart("Silobelegung");
 					echo '<tr>
-									<td class="tbldata" style="padding:0px;height:10px;"><img src="images/poll3.jpg" style="height:10px;width:'.$store_width.'%;" alt="poll" />
+									<tdstyle="padding:0px;height:10px;"><img src="images/poll3.jpg" style="height:10px;width:'.$store_width.'%;" alt="poll" />
 								</tr>
 								<tr>
-									<td class="tbldata" style="text-align:center;">
+									<td style="text-align:center;">
 										'.nf($cnt).' von '.nf($max_space).', '.round($cnt/$max_space*100,0).'% ('.MISSILE_SILO_MISSILES_PER_LEVEL.' pro Gebäudestufe)
 								</tr>';
 					tableEnd();
@@ -748,19 +748,19 @@
   			      					      		
 			      	  $d_img = IMAGE_PATH.'/missiles/missile'.$mid.'_middle.'.IMAGE_EXT;
 			      	  echo "<tr>
-			      	  				<td class=\"tbltitle\" colspan=\"5\">".$arr['missile_name']."</td>
+			      	  				<th colspan=\"5\">".$arr['missile_name']."</th>
 			      	  			</tr>
 			      	  			<tr>
-			      	  				<td class=\"tbldata\" width=\"120\" height=\"120\" rowspan=\"5\">";
+			      	  				<td width=\"120\" height=\"120\" rowspan=\"5\">";
 			    			      	  //Bild mit Link zur Hilfe darstellen
 													echo "<a href=\"".HELP_URL."&amp;id=".$mid."\" title=\"Info zu dieser Rakete anzeigen\">
 		    			      	  	<img src=\"".$d_img."\" width=\"120\" height=\"120\" border=\"0\" /></a>";
 			      	  	echo "</td>
-			      	  				<td class=\"tbldata\" colspan=\"4\" valign=\"top\">".$arr['missile_sdesc']."</td>
+			      	  				<td colspan=\"4\" valign=\"top\">".$arr['missile_sdesc']."</td>
 			      	  			</tr>
 			      	  			<tr>
-		    			      		<th class=\"tbltitle\">Geschwindigkeit:</th>
-		    			      	  <td class=\"tbldata\">";
+		    			      		<th>Geschwindigkeit:</th>
+		    			      	  <td>";
 		    			      	  if($arr['missile_speed']>0)
 		    			      	  {
 		    			      	  	echo "".nf($arr['missile_speed'])."";
@@ -770,12 +770,12 @@
 		    			      	  	echo "-";
 		    			      	  }
 		    			    echo "</td>
-		    			      	  <th class=\"tbltitle\" rowspan=\"2\">Vorhanden:</th>
-		    			      	  <td class=\"tbldata\" rowspan=\"2\">".nf($missilelist[$mid])."</td>
+		    			      	  <th rowspan=\"2\">Vorhanden:</th>
+		    			      	  <td rowspan=\"2\">".nf($missilelist[$mid])."</td>
 		    			      	</tr>
 		    			      	<tr>
-		    			      		<th class=\"tbltitle\">Reichweite:</th>
-		    			      	  <td class=\"tbldata\">";
+		    			      		<th>Reichweite:</th>
+		    			      	  <td>";
 		    			      	  if($arr['missile_range']>0)
 		    			      	  {
 		    			      	  	echo "".nf($arr['missile_range'])." AE";
@@ -787,7 +787,7 @@
 		    			    echo "</td>
 		    			      	</tr>
 		    			      	<tr>
-		    			      		<th class=\"tbltitle\">";
+		    			      		<th>";
 		    			      	
 			    			      	if ($arr['missile_def']>0)
 												{
@@ -803,7 +803,7 @@
 												}
 												
 		    			    echo "</th>
-			      	  				<td class=\"tbldata\">"; 
+			      	  				<td>"; 
 			      	  				
 			      	  				if ($arr['missile_def']>0)
 												{
@@ -819,13 +819,13 @@
 												}
 												
 			      	  	echo "</td>
-			      	  				<th class=\"tbltitle\" rowspan=\"2\">Kaufen:</th>
-    			      	      <td class=\"tbldata\" rowspan=\"2\">
+			      	  				<th rowspan=\"2\">Kaufen:</th>
+    			      	      <td rowspan=\"2\">
 			      							<input type=\"text\" value=\"0\" id=\"missile_count_".$mid."\" name=\"missile_count[".$mid."]\" size=\"5\" maxlength=\"9\" ".tm("",$tm_cnt)." onkeyup=\"FormatNumber(this.id,this.value, ".$missile_max_number.", '', '');\"/><br><a href=\"javascript:;\" onclick=\"document.getElementById('missile_count_".$mid."').value=".$missile_max_build.";\">max</a>
     			      	      </td>";
 	      	      echo "<tr>
-	      	      				<th class=\"tbltitle\">EMP:</th>
-	      	      				<td class=\"tbldata\">";
+	      	      				<th>EMP:</th>
+	      	      				<td>";
 	      	      				if($arr['missile_deactivate']>0)	
 												{
 													echo tf($arr['missile_deactivate']);
@@ -839,25 +839,25 @@
 		    			      	
 			      	  echo "</tr>";
 			      	  echo "<tr>
-		    			      	  <td class=\"tbltitle\" height=\"20\" width=\"110\">".RES_METAL.":</td>
-		    			      	  <td class=\"tbltitle\" height=\"20\" width=\"97\">".RES_CRYSTAL.":</td>
-		    			      	  <td class=\"tbltitle\" height=\"20\" width=\"98\">".RES_PLASTIC.":</td>
-		    			      	  <td class=\"tbltitle\" height=\"20\" width=\"97\">".RES_FUEL.":</td>
-		    			      	  <td class=\"tbltitle\" height=\"20\" width=\"98\">".RES_FOOD."</td></tr>";
+		    			      	  <th height=\"20\" width=\"110\">".RES_METAL.":</th>
+		    			      	  <th height=\"20\" width=\"97\">".RES_CRYSTAL.":</th>
+		    			      	  <th height=\"20\" width=\"98\">".RES_PLASTIC.":</th>
+		    			      	  <th height=\"20\" width=\"97\">".RES_FUEL.":</th>
+		    			      	  <th height=\"20\" width=\"98\">".RES_FOOD."</th></tr>";
 			      	  echo "<tr>
-			      	  				<td class=\"tbldata\" height=\"20\" width=\"110\" ".$ress_style_metal.">
+			      	  				<td height=\"20\" width=\"110\" ".$ress_style_metal.">
 			      	  					".nf($arr['missile_costs_metal'])."
 			      	  				</td>
-			      	  				<td class=\"tbldata\" height=\"20\" width=\"25%\" ".$ress_style_crystal.">
+			      	  				<td height=\"20\" width=\"25%\" ".$ress_style_crystal.">
 			      	  					".nf($arr['missile_costs_crystal'])."
 			      	  				</td>
-			      	  				<td class=\"tbldata\" height=\"20\" width=\"25%\" ".$ress_style_plastic.">
+			      	  				<td height=\"20\" width=\"25%\" ".$ress_style_plastic.">
 			      	  					".nf($arr['missile_costs_plastic'])."
 			      	  				</td>
-			      	  				<td class=\"tbldata\" height=\"20\" width=\"25%\" ".$ress_style_fuel.">
+			      	  				<td height=\"20\" width=\"25%\" ".$ress_style_fuel.">
 			      	  					".nf($arr['missile_costs_fuel'])."
 			      	  				</td>
-			      	  				<td class=\"tbldata\" height=\"20\" width=\"25%\" ".$ress_style_food.">
+			      	  				<td height=\"20\" width=\"25%\" ".$ress_style_food.">
 			      	  					".nf($arr['missile_costs_food'])."
 			      	  				</td>
 			      	  			</tr>";
@@ -868,19 +868,19 @@
 			      	{
 		      			$d_img = IMAGE_PATH.'/missiles/missile'.$mid.'_middle.'.IMAGE_EXT;
 		      			echo "<tr>
-		      							<td class=\"tbldata\">";
+		      							<td>";
 			      							//Bild mit Link zur Hilfe darstellen
 		  			      				echo "<a href=\"".HELP_URL."&amp;id=".$mid."\"><img src=\"".$d_img."\" width=\"40\" height=\"40\" border=\"0\" /></a></td>";
-			      			echo "<td class=\"tbltitle\" width=\"40%\">
+			      			echo "<th width=\"40%\">
 			      							".$arr['missile_name']."<br/>
 			      							<span style=\"font-weight:500;font-size:8pt;\">
-			      							<b>Vorhanden:</b> ".nf($missilelist[$mid])."</span></td>
-			      						<td class=\"tbldata\" width=\"10%\" ".$ress_style_metal.">".nf($arr['missile_costs_metal'])."</td>
-			      						<td class=\"tbldata\" width=\"10%\" ".$ress_style_crystal.">".nf($arr['missile_costs_crystal'])."</td>
-			      						<td class=\"tbldata\" width=\"10%\" ".$ress_style_plastic.">".nf($arr['missile_costs_plastic'])."</td>
-			      						<td class=\"tbldata\" width=\"10%\" ".$ress_style_fuel.">".nf($arr['missile_costs_fuel'])."</td>
-			      						<td class=\"tbldata\" width=\"10%\" ".$ress_style_food.">".nf($arr['missile_costs_food'])."</td>
-			      						<td class=\"tbldata\">
+			      							<b>Vorhanden:</b> ".nf($missilelist[$mid])."</span></th>
+			      						<td width=\"10%\" ".$ress_style_metal.">".nf($arr['missile_costs_metal'])."</td>
+			      						<td width=\"10%\" ".$ress_style_crystal.">".nf($arr['missile_costs_crystal'])."</td>
+			      						<td width=\"10%\" ".$ress_style_plastic.">".nf($arr['missile_costs_plastic'])."</td>
+			      						<td width=\"10%\" ".$ress_style_fuel.">".nf($arr['missile_costs_fuel'])."</td>
+			      						<td width=\"10%\" ".$ress_style_food.">".nf($arr['missile_costs_food'])."</td>
+			      						<td>
 			      							<input type=\"text\" value=\"0\" id=\"missile_count_".$mid."\" name=\"missile_count[".$mid."]\" size=\"5\" maxlength=\"9\" ".tm("",$tm_cnt)." tabindex=\"".$tabulator."\" onkeyup=\"FormatNumber(this.id,this.value, ".$missile_max_number.", '', '');\"/><br><a href=\"javascript:;\" onclick=\"document.getElementById('missile_count_".$mid."').value=".$missile_max_build.";\">max</a>
 			      						</td>
 			      					</tr>";

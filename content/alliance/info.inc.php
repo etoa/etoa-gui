@@ -237,7 +237,7 @@
 		}
 		else
 		{
-			echo "Diese Allianz existiert nicht!";
+			error_msg("Diese Allianz existiert nicht!");
 		}
 		
 		echo "<br/><br/><input type=\"button\" onclick=\"history.back();;\" value=\"Zur&uuml;ck\" />";

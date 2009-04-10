@@ -83,10 +83,10 @@ if (Alliance::checkActionRights('editmembers'))
 			{
 				$ally->founderId = $_GET['setfounder'];
 				add_log(5,"Der Spieler [b]".$ally->founder."[/b] wird vom Spieler [b]".$cu."[/b] zum Gründer befördert.");
-				echo "Gründer ge&auml;ndert!<br/><br/>";
+				ok_msg("Gründer ge&auml;ndert!");
 			}
 			else
-				echo "<b>Fehler!</b> User nicht gefunden!<br/><br/>";
+				error_msg("User nicht gefunden!");
 		}
 
 		// Mitglied kicken
@@ -98,7 +98,7 @@ if (Alliance::checkActionRights('editmembers'))
 				$ally->kickMember($_GET['kickuser']);
 
 				add_log(5,"Der Spieler [b]".$tmpUser."[/b] wurde von [b]".$cu."[/b] aus der Allianz [b]".$ally."[/b] ausgeschlossen!",time());
-				success_msg("Der Spieler [b]".$tmpUser."[/b] wurde aus der Allianz ausgeschlossen!");
+				ok_msg("Der Spieler [b]".$tmpUser."[/b] wurde aus der Allianz ausgeschlossen!");
 				unset($tmpUser);
 			}
 			else
@@ -110,7 +110,7 @@ if (Alliance::checkActionRights('editmembers'))
 
 
 		checker_init();
-		echo "<table class=\"tb\">";
+		tableStart();
 		echo "<tr>
 			<th>Nick:</th>
 			<th>Punkte:</th>
@@ -128,16 +128,16 @@ if (Alliance::checkActionRights('editmembers'))
 			<td>".nf($mv->points)."</td>";
 			// Zuletzt online
 			if ((time()-$conf['online_threshold']['v']*60) < $mv->acttime)
-				echo "<td class=\"tbldata\" style=\"color:#0f0;\">online</td>";
+				echo "<td style=\"color:#0f0;\">online</td>";
 			else
-				echo "<td class=\"tbldata\">".date("d.m.Y H:i",$mv->acttime)."</td>";
+				echo "<td>".date("d.m.Y H:i",$mv->acttime)."</td>";
 			
 			// Rang
 			if ($mk == $ally->founderId)
 				echo "<td>Gründer</td>";
 			else
 			{
-				echo "<td class=\"tbldata\"><select name=\"user_alliance_rank_id[".$mk."]\">";
+				echo "<td><select name=\"user_alliance_rank_id[".$mk."]\">";
 				echo "<option value=\"0\">Rang w&auml;hlen...</option>";
 				foreach ($rank as $id=>$name)
 				{
@@ -169,7 +169,7 @@ if (Alliance::checkActionRights('editmembers'))
     	}
     	
 			// Aktionen
-			echo "<td class=\"tbldata\">";
+			echo "<td>";
 			if ($cu->id != $mk)
 				echo "<a href=\"?page=messages&amp;mode=new&amp;message_user_to=".$mk."\">Nachricht</a><br/>";
 			echo "<a href=\"?page=userinfo&amp;id=".$mk."\">Profil</a><br/>";
@@ -182,7 +182,7 @@ if (Alliance::checkActionRights('editmembers'))
 			}
 			echo "</td></tr>";
 		}
-		echo "</table><br/>";
+		tableEnd();
 		
 		
 

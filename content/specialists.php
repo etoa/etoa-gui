@@ -110,7 +110,7 @@
 	//
 	if (isset($_POST['discharge']))
 	{
-		echo "<br/>";
+		echo '<br/>';
 		if ($cu->specialistId > 0 && $cu->specialistTime > $t)
 		{
 			dbquery("
@@ -198,7 +198,7 @@
 	{
 		echo "<form action=\"?page=".$page."\" method=\"post\">";
 	}
-	tableStart("Galaktisches Arbeitsamt ".helpLink('specialists')."",'95%');
+	tableStart("Galaktisches Arbeitsamt ".helpLink('specialists')."");
 	echo "<tr>
 	<th>Name</th>
 	<th>Benötigte Punkte</th>

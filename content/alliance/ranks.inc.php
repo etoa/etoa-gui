@@ -42,7 +42,7 @@ if (Alliance::checkActionRights('ranks'))
 										}
 									}
 								}
-								echo 'Änderungen wurden übernommen!<br/><br/>';
+								ok_msg("Änderungen wurden übernommen!");
 							}
 						}
 						echo "<form action=\"?page=$page&action=ranks\" method=\"post\">";
@@ -69,7 +69,7 @@ if (Alliance::checkActionRights('ranks'))
 							while ($rarr = mysql_fetch_array($rankres))
 							{
 								echo "<tr>
-									<td class=\"tbldata\">
+									<td>
 										<input type=\"text\" name=\"rank_name[".$rarr['rank_id']."]\" value=\"".$rarr['rank_name']."\" /><br/>
 										Level: <input type=\"text\" name=\"rank_level[".$rarr['rank_id']."]\" value=\"".$rarr['rank_level']."\" maxlength=\"1\" size=\"2\" />
 									</td>
@@ -85,14 +85,14 @@ if (Alliance::checkActionRights('ranks'))
 								}
 								echo "</td>";
 
-								echo "<td class=\"tbldata\"><input type=\"checkbox\" name=\"rank_del[".$rarr['rank_id']."]\" value=\"1\" /></td></tr>";
+								echo "<td><input type=\"checkbox\" name=\"rank_del[".$rarr['rank_id']."]\" value=\"1\" /></td></tr>";
 							}
 							tableEnd();
 							echo "<input type=\"submit\" name=\"ranksubmit\" value=\"&Uuml;bernehmen\" />&nbsp;&nbsp;&nbsp;";
 						}
 						else
 						{
-							echo "<i>Keine R&auml;nge vorhanden!</i><br/><br/>";
+							error_msg("Keine R&auml;nge vorhanden!");
 						}
 						echo "<input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"Zur&uuml;ck\" />&nbsp;&nbsp;&nbsp;
 						<input type=\"submit\" name=\"ranknew\" value=\"Neuer Rang\" /></form>";

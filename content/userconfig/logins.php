@@ -18,14 +18,14 @@
 				log_logintime DESC
 			LIMIT 
 				10;");
-			echo "<tr><th class=\"tbltitle\">Zeit</th>
-			<th class=\"tbltitle\">IP-Adresse</th>
-			<th class=\"tbltitle\">Hostname</th></tr>";
+			echo "<tr><th>Zeit</th>
+			<th>IP-Adresse</th>
+			<th>Hostname</th></tr>";
 			while ($arr=mysql_fetch_array($res))
 			{
-				echo "<tr><td class=\"tbldata\">".df($arr['log_logintime'])."</td>";
-				echo "<td class=\"tbldata\">".$arr['log_ip']."</td>";
-				echo "<td class=\"tbldata\">".$arr['log_hostname']."</td></tr>";
+				echo "<tr><td>".df($arr['log_logintime'])."</td>";
+				echo "<td>".$arr['log_ip']."</td>";
+				echo "<td>".$arr['log_hostname']."</td></tr>";
 			}
     	tableEnd();
     	tableStart("Letzte 10 fehlgeschlagene Logins");
@@ -42,21 +42,21 @@
 				10;");
 			if (mysql_num_rows($res)>0)
 			{
-				echo "<tr><th class=\"tbltitle\">Zeit</th>";
-				//echo "<th class=\"tbltitle\">Passwort</th>";
-				echo "<th class=\"tbltitle\">IP-Adresse</th>
-				<th class=\"tbltitle\">Hostname</th></tr>";
+				echo "<tr><th>Zeit</th>";
+				//echo "<th>Passwort</th>";
+				echo "<th>IP-Adresse</th>
+				<th>Hostname</th></tr>";
 				while ($arr=mysql_fetch_array($res))
 				{
-					echo "<tr><td class=\"tbldata\">".df($arr['failure_time'])."</td>";
-					//echo "<td class=\"tbldata\">".$arr['failure_pw']."</td>";
-					echo "<td class=\"tbldata\">".$arr['failure_ip']."</td>";
-					echo "<td class=\"tbldata\">".$arr['failure_host']."</td></tr>";
+					echo "<tr><td>".df($arr['failure_time'])."</td>";
+					//echo "<td>".$arr['failure_pw']."</td>";
+					echo "<td>".$arr['failure_ip']."</td>";
+					echo "<td>".$arr['failure_host']."</td></tr>";
 				}
 			}
 			else
 			{
-				echo "<tr><td class=\"tbldata\">Keine fehlgeschlagenen Logins</td></tr>";
+				echo "<tr><td>Keine fehlgeschlagenen Logins</td></tr>";
 			}
     	tableEnd();
 ?>
