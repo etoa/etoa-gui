@@ -504,23 +504,25 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 		int user;
 		std::string attReason = "Angriff gegen" + entity->getUserNicks();
 		std::string defReason = "Verteidigung gegen" + fleet->getUserNicks();
-
-		std::string users = fleet->getUserIds();
-		found=users.find_first_of(",");
-		while (found!=std::string::npos) {
-			users = users.substr(found+1);
-			found=users.find_first_of(",");
-			user = etoa::s2d(users.substr(0,found));
-			etoa::addBattlePoints(user,this->attPoints,this->attResult,attReason);
-		}
 		
-		users = entity->getUserIds();
-		found=users.find_first_of(",");
-		while (found!=std::string::npos) {
-			users = users.substr(found+1);
+		if (initAttWeapon>0) {
+			std::string users = fleet->getUserIds();
 			found=users.find_first_of(",");
-			user = etoa::s2d(users.substr(0,found));
-			etoa::addBattlePoints(user,this->defPoints,this->defResult,attReason);
+			while (found!=std::string::npos) {
+				users = users.substr(found+1);
+				found=users.find_first_of(",");
+				user = etoa::s2d(users.substr(0,found));
+				etoa::addBattlePoints(user,this->attPoints,this->attResult,attReason);
+			}
+			
+			users = entity->getUserIds();
+			found=users.find_first_of(",");
+			while (found!=std::string::npos) {
+				users = users.substr(found+1);
+				found=users.find_first_of(",");
+				user = etoa::s2d(users.substr(0,found));
+				etoa::addBattlePoints(user,this->defPoints,this->defResult,attReason);
+			}
 		}
 
 
