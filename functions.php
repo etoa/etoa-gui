@@ -3032,21 +3032,21 @@ function imagecreatefromfile($path, $user_functions = false)
 	
 	function initTT()
 	{
-		echo '<div class="tooltip" id="tooltip" style="display:none;">
+		echo '<div class="tooltip" id="tooltip" style="display:none;" onmouseup="hideTT();">
   	<div class="tttitle" id="tttitle"></div>
   	<div class="ttcontent" id="ttcontent"></div>
- </div> ';		
+ 		</div> ';		
 	}
 
 	function cTT($title,$content)
 	{
-		return " onclick=\"showTT('".str_replace('"',"\'",$title)."','".str_replace('"',"\'",$content)."',0,event,this);return false;\" ";
+		return " onclick=\"showTT('".str_replace('"',"\'",$title)."','".str_replace('"',"\'",$content)."',0,event,this);return false;\"  ";
 	}
 
 	function mTT($title,$content)
 	{
 		
-		return " onmouseover=\"showTT('".str_replace('"',"\'",$title)."','".str_replace('"',"\'",$content)."',1,event,this);\" onmouseout=\"hideTT()\" ";
+		return " onmouseover=\"showTT('".str_replace('"',"\'",$title)."','".str_replace('"',"\'",$content)."',1,event,this);\" onmouseout=\"hideTT();\" ";
 	}
 	
 	function chatSystemMessage($msg)
