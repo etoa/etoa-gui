@@ -155,7 +155,8 @@
 				WHERE                    
        		message_id='".intval($_GET['msg_id'])."'
        		AND m.message_user_to='".$cu->id."'
-       		AND m.message_deleted=0");
+       		AND m.message_deleted='0'
+		LIMIT 1;");
 				if (mysql_num_rows($mres)>0)
 				{
 					//echo "<form action=\"?page=$page&mode=".$mode."\" method=\"post\">";
@@ -260,7 +261,8 @@
 						message_deleted=1 
 					WHERE 
 						message_id='".$_POST['message_id']."' 
-						AND message_user_to='".$cu->id."';");
+						AND message_user_to='".$cu->id."'
+					LIMIT 1;");
 					success_msg("Nachricht wurde gel&ouml;scht!");
 				}
 				if (isset($_GET['del']) && $_GET['del']>0)
@@ -272,7 +274,8 @@
 						message_deleted=1 
 					WHERE 
 						message_id='".$_GET['del']."' 
-						AND message_user_to='".$cu->id."';");
+						AND message_user_to='".$cu->id."'
+					LIMIT 1;");
 					if (mysql_affected_rows()>0)
 					{
 						success_msg("Nachricht wurde gel&ouml;scht!");
@@ -595,7 +598,12 @@
 	            echo "				<td style=\"width:2%;\">
 	            					<img src=\"".$im_path."\" alt=\"Mail\" id=\"msgimg".$marr['message_id']."\" />
 	            				</td>
-	            			<td style=\"width:66%;\">";
+	            			<td style=\"width:66%;\" ";
+							if ($msgpreview)
+							{
+								echo tm($subj,text2html(substr($marr['text'], 0, 500)));
+							}
+							echo ">";
 							if ($marr['message_massmail']==1)
 							{
 								echo "<b>[Rundmail]</b> ";
@@ -603,12 +611,7 @@
 							//Wenn Speicher voll ist Nachrichten Markieren
 							if($mode!="archiv" && $readed_msg_cnt>=$conf['msg_max_store']['v'])
 							{
-								echo "<span style=\"color:red;\" ";
-                if ($msgpreview)
-                {
-                    echo tm($subj,text2html(substr($marr['text'], 0, 500)));
-                }
-                echo ">".$subj."</span>";
+								echo "<span style=\"color:red;\">".$subj."</span>";
 							}
 							else
 							{

@@ -35,14 +35,14 @@
 									$s['messages']['sent'][$uid]=$time;
 									Message::sendFromUserToUser($cu->id,$uid,$_POST['message_subject'],$_POST['message_text']);
 	
-	         		    echo "Nachricht wurde an <b>".$rcpt."</b> gesendet!";
-	         		    $_POST['message_user_to']=null;
-	         		}
-	         		else
-	         		{
-	         			echo "Du hast ein unerlaubtes Zeichen ( ".$check_subject." ) im Betreff!<br/>";
-	         		}
-	         	}
+	         					    echo "Nachricht wurde an <b>".$rcpt."</b> gesendet! ";
+	         		    			$_POST['message_user_to']=null;
+	         				}
+	         				else
+	         				{
+	         					echo "Du hast ein unerlaubtes Zeichen ( ".$check_subject." ) im Betreff!<br/>";
+	         				}
+	         			}
 						else
 						{
 							echo "<b>Fehler:</b> Dieser Benutzer hat dich ignoriert, die Nachricht wurde nicht gesendet!<br/>";
@@ -153,7 +153,7 @@
 					<td width=\"250\"  colspan=\"2\">
 						<input type=\"text\" name=\"message_user_to\" id=\"user_nick\" autocomplete=\"off\" value=\"";
 					echo $user;
-					echo "\" maxlength=\"255\" style=\"width:330px\"> Mehrere Empfänger mit ; trennen<br/>
+					echo "\" maxlength=\"255\" style=\"width:330px\" onkeyup=\"xajax_searchUser(this.value);\"> Mehrere Empfänger mit ; trennen<br />
 					</td>
 			     </tr>";
 			echo "<tr>

@@ -44,7 +44,8 @@ function messagesSetRead($mid)
   SET
   	message_read=1
   WHERE
-  	message_id=".$mid.";");
+  	message_id=".$mid."
+  LIMIT 1;");
   $or->assign("msgimg".$mid,"src","images/pm_normal.gif");
 	return $or;
 }

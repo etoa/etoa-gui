@@ -7,8 +7,17 @@ $xajax->register(XAJAX_FUNCTION,'formatNumbers');
 $xajax->register(XAJAX_FUNCTION,'setupShowRace');
 
 //Listet gefundene User auf
-function searchUser($val,$field_id='user_nick',$box_id='citybox')
+function searchUser($val,$field_id='user_nick',$box_id='citybox',$separator=";")
 {
+	$outNick = "";
+	$temp = "";
+	$nicks = explode($separator,$val);
+	foreach ($nicks as $nick)
+	{
+		if (strlen($temp)>0) $outNick.=$temp.=";";
+		$val=$nick;
+		$temp=$val;
+	}
 	$sOut = "";
 	$nCount = 0;
 	
@@ -44,9 +53,8 @@ function searchUser($val,$field_id='user_nick',$box_id='citybox')
 	if($nCount == 1)
 	{
 		$objResponse->script("document.getElementById('".$box_id."').style.display = \"none\"");
-		$objResponse->script("document.getElementById('".$field_id."').value = \"".$sLastHit."\"");
+		$objResponse->script("document.getElementById('".$field_id."').value = \"".$outNick.$sLastHit."\"");
 	}
-	
 	$objResponse->assign($box_id, "innerHTML", $sOut);
 	
 	return $objResponse;
