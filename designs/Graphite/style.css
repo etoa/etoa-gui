@@ -590,47 +590,67 @@ img	{
 
 /* Building/Research */
 
+.buildOverviewObjectContainer {
+    width:120px;
+    height:120px;
+    text-align:center;
+    padding:0px;
+    margin-bottom:-1px;
+    border-right:1px solid;
+    border-bottom:1px solid;
+    float:left;
+    background-repeat:no-repeat;
+    position:relative;
+    overflow:hidden;
+}
+
 .buildOverviewObjectTitle	{
 	font-weight:normal;
 	position:absolute;
 	background:url('images/transheader1.png') top right no-repeat;
+    margin:0px;
 	padding:3px 15px 3px 3px;	
 	font-size:8pt;
+    float:left;
 }
 
-.buildOverviewObjectCountdown	{
-	padding:3px;
-	background:url('images/trans.png');
-	position:absolute;
-	top:50px;
-	width:100%;
-	text-align:center;
+.buildOverviewObjectSubTitle {
+    display:none;
+    float:left;
+}
+
+.buildOverviewLink {
+    display:block;
+    width:120px;
+    height:120px;
+    padding:0px;
+    margin:0px;
+    border:none;
 }
 
 .buildOverviewObjectLevel	{
 	text-align:right;
-	font-size:16pt;
+	font-size:20pt;
 	font-weight:bold;
 	background:url('images/transfooter1.png') no-repeat;
 	position:absolute;
 	right:0px;
 	bottom:0px;
-	padding:3px 5px 3px 20px;
-	
+	width:60px;
+	padding:3px;
+	padding-right:5px;
+    float:left;
 }
 
-.buildOverviewObject	{
-	position:relative;
-	margin:0px;
-	padding:0px;
-	display:block;
+.buildOverviewObjectImage {
+    display:none;
+    float:left;
 }
 
 .buildOverviewObjectNone, .tb td.buildOverviewObjectNone {
 	border:none;
-	background:none;	
+	
 }
-
 /* Planet Overview */
 
 .planetOverviewList	{

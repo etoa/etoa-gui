@@ -1032,7 +1032,8 @@ function calcDemolishingWaitTime($dc,$cp)
 
 				while ($tarr = mysql_fetch_array($tres))
 				{
-					tableStart($tarr['type_name'],"auto");
+					tableStart($tarr['type_name'],'','padding:0px;');
+					echo "<tr style=\"padding:0px;\"><td style=\"padding:0px;\">";
 
 						$cnt = 0; // Counter for current row
 						$scnt = 0; // Counter for shown buildings
@@ -1156,7 +1157,7 @@ function calcDemolishingWaitTime($dc,$cp)
 									{
 										$tmtext = "<span style=\"color:#f00\">Zuwenig Ressourcen f&uuml;r weiteren Ausbau!</span><br/>";
 										$color = '#f00';
-										/*
+										
 										if($use_img_filter)
 										{
 											$img = "misc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid.".".IMAGE_EXT."&filter=lowres";
@@ -1164,7 +1165,7 @@ function calcDemolishingWaitTime($dc,$cp)
 										else
 										{
 											$img="".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid.".".IMAGE_EXT."";
-										}*/
+										}
 									}
 									else
 									{
@@ -1195,61 +1196,37 @@ function calcDemolishingWaitTime($dc,$cp)
 									if (!$requirements_passed)
 										$img = "misc/imagefilter.php?file=$img&filter=req";
 
-									// Display row starter if needed				
-									if ($cnt==0) 
-									{
-										echo "<tr>";
-									}
-
-									echo "<td style=\"background:url('".$img."') no-repeat;width:".CELL_WIDTH."px;height:".CELL_WIDTH."px ;padding:0px;\">";
-									echo "<div style=\"position:relative;height:".CELL_WIDTH."px;overflow:hidden;\">
+									echo "<div style=\"background:url('".$img."') no-repeat;background-position:center\" class=\"buildOverviewObjectContainer\"   ".tm($bv['name'],"<b>".$subtitle."</b><br/>".$tmtext.$bv['shortcomment']).">
+									<div class=\"buildOverviewBGImage\">
+									<a class=\"buildOverviewLink\" href=\"?page=$page&amp;id=".$bid."\">
 									<div class=\"buildOverviewObjectTitle\">".$bv['name']."</div>";
-									echo "<a href=\"?page=$page&amp;id=".$bid."\" ".tm($bv['name'],"<b>".$subtitle."</b><br/>".$tmtext.$bv['shortcomment'])." style=\"display:block;height:180px;\"></a>";
 									if ($b_level>0 || ($b_level==0 && isset($buildlist[$bid]['buildlist_build_type']) && $buildlist[$bid]['buildlist_build_type']==3)) 
 									{
 										echo "<div class=\"buildOverviewObjectLevel\" style=\"color:".$color."\">".$b_level."</div>";
 									}
-									echo "</div>";
-									echo "</td>\n";
+									echo "<div class=\"buildOverviewObjectSubTitle\">".$subtitle."</div>";
+									echo "<div class=\"buildOverviewObjectImage\"><input type=\"image\" value=\"".$bid."\" src=\"".$img."\" /></div>";
+									echo "</a>";
+									echo "</div></div>";
 									$cnt++;
 									$scnt++;
 								}
-									
-								// Display row finisher if needed			
-								if ($cnt==NUM_BUILDINGS_PER_ROW)
-								{
-									echo "</tr>";
-									$cnt = 0;
-								}								
-							}
-							
-							// Fill up missing cols and end row
-							if ($cnt<NUM_BUILDINGS_PER_ROW && $cnt>0)
-							{
-								for ($x=0;$x < NUM_BUILDINGS_PER_ROW-$cnt;$x++)
-								{
-									echo "<td class=\"buildOverviewObjectNone\" style=\"width:".CELL_WIDTH."px;padding:0px;\">&nbsp;</td>";
-								}
-								echo '</tr>';
 							}							
 							
 							if ($scnt==0)
 							{								
-								echo "<tr>
-												<td colspan=\"".NUM_BUILDINGS_PER_ROW."\" style=\"text-align:center;border:0;width:100%\">
-													<i>In dieser Kategorie kann momentan noch nichts gebaut werden!</i>
-												</td>
-											</tr>";								
+								echo "<div style=\"text-align:center;border:0;width:100%\">
+										<i>In dieser Kategorie kann momentan noch nichts gebaut werden!</i>
+									</div>";							
 							}						
 						}
 						else
 						{
-							echo "<tr>
-											<td colspan=\"".NUM_BUILDINGS_PER_ROW."\" style=\"text-align:center;border:0;width:100%\">
-												<i>In dieser Kategorie kann momentan noch nichts gebaut werden!</i>
-											</td>
-										</tr>";
+							echo "<div style=\"text-align:center;border:0;width:100%\">
+									<i>In dieser Kategorie kann momentan noch nichts gebaut werden!</i>
+								</div>";
 						}
+					echo "</td></tr>";
 					tableEnd();
 				}				
 				echo '</div></form>';
