@@ -636,16 +636,33 @@
 								echo text2html($marr['text']);
 								echo "<br/><br/>";
 								$msgadd = "&amp;message_text=".base64_encode($marr['text'])."&amp;message_sender=".base64_encode($sender);
-								echo "<input type=\"button\" value=\"Weiterleiten\" onclick=\"document.location='?page=$page&mode=new&amp;message_subject=".base64_encode("Fw: ".$marr['subject'])."".$msgadd."'\" name=\"remit\" />&nbsp;";
+								if(substr($marr['subject'],0,3) == "Fw:")
+								{
+									$subject = base64_encode($marr['subject']);
+								}
+								else
+								{
+									$subject = base64_encode("Fw: ".$marr['subject']);
+								}
+								echo "<input type=\"button\" value=\"Weiterleiten\" onclick=\"document.location='?page=$page&mode=new&amp;message_subject=".$subject."".$msgadd."'\" name=\"remit\" />&nbsp;";
 								if ($marr['message_user_from']>0)
 								{				
+									if(substr($marr['subject'],0,3) == "Re:")
+									{
+										$subject = base64_encode($marr['subject']);
+									}
+									else
+									{
+										$subject = base64_encode("Re: ".$marr['subject']);
+									}
+								
 									if ($cu->properties->msgCopy)
 									{
-										echo "<input type=\"button\" value=\"Antworten\" name=\"answer\" onclick=\"document.location='?page=$page&mode=new&message_user_to=".$marr['message_user_from']."&amp;message_subject=".base64_encode("Re: ".$marr['subject'])."".$msgadd."'\" />&nbsp;";
+										echo "<input type=\"button\" value=\"Antworten\" name=\"answer\" onclick=\"document.location='?page=$page&mode=new&message_user_to=".$marr['message_user_from']."&amp;message_subject=".$subject."".$msgadd."'\" />&nbsp;";
 									}
 									else
 									{								
-										echo "<input type=\"button\" value=\"Antworten\" name=\"answer\" onclick=\"document.location='?page=$page&mode=new&message_user_to=".$marr['message_user_from']."&amp;message_subject=".base64_encode("Re: ".$marr['subject'])."'\" />&nbsp;";
+										echo "<input type=\"button\" value=\"Antworten\" name=\"answer\" onclick=\"document.location='?page=$page&mode=new&message_user_to=".$marr['message_user_from']."&amp;message_subject=".$subject."'\" />&nbsp;";
 									}
 									echo "<input type=\"button\" value=\"Absender ignorieren\" onclick=\"document.location='?page=".$page."&amp;mode=ignore&amp;add=".$marr['message_user_from']."'\" />&nbsp;";
 								}						

@@ -1013,3 +1013,87 @@ function tabActivate(tabName,elemId)
 	}
 	
 }
+
+
+	/**
+	*	BB-Code Wrapper
+	*
+	* @param $string Text to wrap BB-Codes into HTML
+	* @return Wrapped text
+	*
+	* @author MrCage | Nicolas Perrenoud
+	*
+	* @last editing: Demora | Selina Tanner 04.06.2007
+	*/
+
+	function text2html(text, target)
+	{
+		text = text.replace(/\n/g, "<br/>");
+
+		text = text.replace(/\[b\]/gi, "<b>");
+		text = text.replace(/\[\/b\]/gi, "</b>");
+		text = text.replace(/\[i\]/gi, "<i>");
+		text = text.replace(/\[\/i\]/gi, "</i>");
+		text = text.replace(/\[u\]/gi, "<u>");
+		text = text.replace(/\[\/u\]/gi, "</u>");
+		text = text.replace(/\[c\]/gi, "<div style='text-align:center;'>");
+		text = text.replace(/\[\/c\]/gi, "</div>");
+		text = text.replace(/\[bc\]/gi, "<blockquote class='blockquotecode'><code>");
+		text = text.replace(/\[\/bc\]/gi, "</code></blockquote>");
+		
+		text = text.replace(/\[h1\]/gi, "<h1>");
+		text = text.replace(/\[\/h1\]/gi, "</h1>");
+		text = text.replace(/\[h2\]/gi, "<h2>");
+		text = text.replace(/\[\/h2\]/gi, "</h2>");
+		text = text.replace(/\[h3\]/gi, "<h3>");
+		text = text.replace(/\[\/h3\]/gi, "</h3>");
+		
+		text = text.replace(/\[center\]/gi, "<div style='text-align:center'>");
+		text = text.replace(/\[\/center\]/gi, "</div>");
+		text = text.replace(/\[right\]/gi, "<div style='text-align:right'>");
+		text = text.replace(/\[\/right\]/gi, "</div>");
+		text = text.replace(/\[headline\]/gi, "<div style='text-align:center'><b>");
+		text = text.replace(/\[\/headline\]/gi, "</b></div>");
+		
+		text = text.replace(/\[\*\]/gi, "<li>");
+		text = text.replace(/\[\/\*\]/gi, "</li>");
+		text = text.replace(/\[list\]/gi, "<ul>");
+		text = text.replace(/\[\/list\]/gi, "</ul>");
+		text = text.replace(/\[line\]/gi, "<hr class='line' />");
+
+		// Links
+		text = text.replace(/\[page=(.*?)\](.*?)\[\/page\]/gi, "<a href='?page=$1'>$2</a>");
+		text = text.replace(/\[url=(.*?)\](.*?)\[\/URL\]/gi, "<a href='$1' target='_blank'>$2</a>");
+		text = text.replace(/\[URL\](.*?)\[\/URL\]/gi, "<a href='$1' target='_blank'>$1</a>");
+		text = text.replace(/^http:\/\/www\.(\S+)/gi, "<a href='http://www.$1' target='_blank'>http://www.$1</a>");
+		text = text.replace(/^www\.(\S+)/gi, "<a href='http://www.$1' target='_blank'>www.$1</a>");
+		text = text.replace(/\[email=(.*?)\](.*?)\[\/email\]/gi, "<a href='mailto:$1'>$2</a>");
+		text = text.replace(/\[email\](.*?)\[\/email\]/gi, "<a href='mailto:$1'>$1</a>");
+		
+		// Bild
+		text = text.replace(/\[img\](.*?)\[\/img\]/gi, "<img src=\"$1\" alt=\"Bild: $1\">");
+		
+		// Farben
+		text = text.replace(/\[font=(.*?)\]/gi, "<font style='font-family:$1'>");
+		text = text.replace(/\[color=(.*?)\]/gi, "<font style='color:$1'>");
+		text = text.replace(/\[size=(.*?)\]/gi, "<font style='font-size:$1pt'>");
+		text = text.replace(/\[\/font\]/gi, "</font>");
+		text = text.replace(/\[\/color\]/gi, "</font>");
+		text = text.replace(/\[\/size\]/gi, "</font>");
+		
+		// Tabelle
+		text = text.replace(/\[table\]/gi, "<table class='bbtable'>");
+		text = text.replace(/\[\/table\]/gi, "</table>");
+		text = text.replace(/\[th\]/gi, "<th>");
+		text = text.replace(/\[\/th\]/gi, "</th>");
+		text = text.replace(/\[tr\]/gi, "<tr>");
+		text = text.replace(/\[\/tr\]/gi, "</tr>");
+		text = text.replace(/\[td\]/gi, "<th>");
+		text = text.replace(/\[\/td\]/gi, "</td>");
+		
+		// Smilies
+		//var SMILIE_DIR = <?php echo 'hallo'; ?>;
+		//text = text.replace(/:\)/gi, "<img src='/images/smilies/smile.gif' style='border:none;' alt='Smilie' title='Smilie' />");
+
+		document.getElementById(target).innerHTML=text;
+	}

@@ -92,12 +92,12 @@
 				// Weiterleiten
 				if (isset($_POST['remit']))
 				{
-					$subj = 'Fw: '.stripslashes($_POST['message_subject']);
+					$subj = 'Fpw: '.stripslashes($_POST['message_subject']);
 				}
-				// Antworten
+				// Antworten und "Re: " voran fügen, wenn dies nicht schon steht
 				elseif (isset($_POST['answer']))
 				{
-					$subj = 'Re: '.stripslashes($_POST['message_subject']);
+					$subj = '() Ree: '.stripslashes($_POST['message_subject']);
 				}
 				else
 				{
@@ -167,16 +167,20 @@
 					<td width=\"250\"><textarea name=\"message_text\" id=\"message\" rows=\"10\" cols=\"60\" ";
 					if ($msgcreatpreview)
 					{
+						/*
 						echo "onkeyup=\"
 						if(window.mytimeout) window.clearTimeout(window.mytimeout);
  						window.mytimeout = window.setTimeout('xajax_messagesNewMessagePreview(document.getElementById(\'message\').value)', 500);
  						return true;\"";
+ 						*/
+ 						echo "onkeyup=\"text2html(this.value,'msgPreview');\"";
 					}
 					echo ">".$text."</textarea></td>";
 					
 					if ($msgcreatpreview)
 					{
-						$prevstr="xajax_messagesNewMessagePreview(document.getElementById('message').value)";
+						//$prevstr="xajax_messagesNewMessagePreview(document.getElementById('message').value)";
+						$prevstr="text2html(document.getElementById('message').value,'msgPreview');";
 					}
 					else
 					{
@@ -191,7 +195,7 @@
 					<input type=\"button\" onclick=\"namedlink(this.form,'email');".$prevstr."\" value=\"E-Mail\">
 					<input type=\"button\" onclick=\"bbcode(this.form,'img','http://');".$prevstr."\" value=\"Bild\"> <br/><br/>";
 					?>
-					<select id="sizeselect" onchange="fontformat(this.form,this.options[this.selectedIndex].value,'size');<?PHP echo $prevstr;?>">
+					<select id="sizeselect" onchange="fontformat(this.form,this.options[this.selectedIndex].value,'size');" onclick="<?PHP echo $prevstr;?>">
 					  <option value="0">Gr&ouml;sse</option>
 					  <option value="7">winzig</option>
 						<option value="10">klein</option>
@@ -199,7 +203,7 @@
 						<option value="16">groß</option>
 						<option value="20">riesig</option>
 					</select>
-					<select id="colorselect" onchange="fontformat(this.form,this.options[this.selectedIndex].value,'color');<?PHP echo $prevstr;?>">
+					<select id="colorselect" onchange="fontformat(this.form,this.options[this.selectedIndex].value,'color');" onclick="<?PHP echo $prevstr;?>">
 					  <option value="0">Farbe</option>
 					  <option value="skyblue" style="color: skyblue;">sky blue</option>
 						<option value="royalblue" style="color: royalblue;">royal blue</option>
@@ -242,7 +246,8 @@
 			echo "<script type=\"text/javascript\">";
 			if ($msgcreatpreview)
 			{
-				echo "xajax_messagesNewMessagePreview(document.getElementById('message').value);";
+				//echo "xajax_messagesNewMessagePreview(document.getElementById('message').value);";
+				echo "text2html(document.getElementById('message').value,'msgPreview');";
 			}
 			echo "document.getElementById('user_nick').focus()";
 			echo "</script>";
