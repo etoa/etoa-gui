@@ -77,7 +77,7 @@
 			 shiplist_user_id='".$cu->id."'
 		ORDER BY
 			planet_user_main DESC,
-			planet_name DESC;");
+			planet_name ASC;");
   	while ($arr=mysql_fetch_array($res))
   	{
   		$shiplist_data[$arr['shiplist_ship_id']][$arr['shiplist_entity_id']] = $arr['shiplist_count'];
@@ -100,10 +100,11 @@
 	  WHERE
 	  	queue_user_id='".$cu->id."'
 	  GROUP BY
-	  	queue_entity_id
+	  	queue_entity_id,
+	  	queue_ship_id
 	  ORDER BY
 			planet_user_main DESC,
-			planet_name DESC;");
+			planet_name ASC;");
 		if(mysql_num_rows($res)>0)
 		{
 		 	while ($arr=mysql_fetch_array($res))
@@ -138,11 +139,11 @@
   	
 		tableStart("Schiffe");
 		echo '<tr>
-						<th colspan=\"2\">Schiff</th>
-						<th width=\"100\">Im Orbit</th>
-						<th width=\"100\">Eingebunkert</th>
-						<th width=\"100\">Im Bau</th>
-						<th width=\"100\">Im All</th>
+						<th colspan=\'2\'>Schiff</th>
+						<th width=\'100\'>Im Orbit</th>
+						<th width=\'100\'>Eingebunkert</th>
+						<th width=\'100\'>Im Bau</th>
+						<th width=\'100\'>Im All</th>
 					</tr>';
 		
 		//Listet alle Schiffe auf, die allgemein gebaut werden können (auch die, die der User nach dem Technikbaum noch nicht bauen könnte oder nicht seiner Rasse entsprechen)
@@ -165,7 +166,7 @@
 			  {
 			  	$s_img = IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$sarr['ship_id']."_small.".IMAGE_EXT;
 			  	echo '<tr>
-			  					<td style="background:#000">';
+			  					<td style="background:#000" style="width:40px;height:40px;">';
 			  					
 			  					if($sarr['special_ship']==1)
 			  					{
@@ -176,7 +177,7 @@
 			  						echo '<a href="'.HELP_URL.'" title="Info zu diesem Schiff anzeigen"><img src="'.$s_img.'" style="width:40px;height:40px;"/></a>';
 			  					}
 			  		echo '</td>
-			  					<th>
+			  					<td>
 			  						'.$sarr['ship_name'].'
 			  					</td>';
 			  				//Spalte gebauter Schiffe
