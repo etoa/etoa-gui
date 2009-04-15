@@ -1071,8 +1071,16 @@ function tabActivate(tabName,elemId)
 		text = text.replace(/\[email=(.*?)\](.*?)\[\/email\]/gi, "<a href='mailto:$1'>$2</a>");
 		text = text.replace(/\[email\](.*?)\[\/email\]/gi, "<a href='mailto:$1'>$1</a>");
 		
-		// Bild
+		// Zitate
+		text = text.replace(/\[quote\](.*?)\[\/quote\]/gi, "<fieldset class='quote'><legend class='quote'><b>Zitat</b></legend>$1</fieldset>");
+		text = text.replace(/\[quote=(.*?)\](.*?)\[\/quote\]/gi, "<fieldset class='quote'><legend class='quote'><b>Zitat von:</b> $1</legend>$2</fieldset>");
+		text = text.replace(/\[quote (.*?)\](.*?)\[\/quote\]/gi, "<fieldset class='quote'><legend class='quote'><b>Zitat von:</b> $1</legend>$2</fieldset>");
+		
+		
+		// Bilder
 		text = text.replace(/\[img\](.*?)\[\/img\]/gi, "<img src=\"$1\" alt=\"Bild: $1\">");
+		text = text.replace(/\[flag (.*?)\]/gi, "<img src='images/flags/$1.gif' border='0' alt='Flagge $1' class='flag' />");
+		text = text.replace(/\[thumb (.*?)\](.*?)\[\/thumb\]/gi, "<a href='$2'><img src='$2' alt='$2' width='$1' border='0' /></a>");
 		
 		// Farben
 		text = text.replace(/\[font=(.*?)\]/gi, "<font style='font-family:$1'>");
@@ -1093,8 +1101,27 @@ function tabActivate(tabName,elemId)
 		text = text.replace(/\[\/td\]/gi, "</td>");
 		
 		// Smilies
-		//var SMILIE_DIR = <?php echo 'hallo'; ?>;
-		//text = text.replace(/:\)/gi, "<img src='/images/smilies/smile.gif' style='border:none;' alt='Smilie' title='Smilie' />");
+		text = text.replace(/:angry:/gi, "<img src='images/smilies/angry.gif' style='border:none;' alt='Smilie' title='Smilie' />");
+		text = text.replace(/:sad:/gi, "<img src='images/smilies/sad.gif' style='border:none;' alt='Smilie' title='Smilie' />");
+		text = text.replace(/:anger:/gi, "<img src='images/smilies/anger.gif' style='border:none;' alt='Smilie' title='Smilie' />");
+		text = text.replace(/:pst:/gi, "<img src='images/smilies/pst.gif' style='border:none;' alt='Smilie' title='Smilie' />");
+		text = text.replace(/:holy:/gi, "<img src='images/smilies/holy.gif' style='border:none;' alt='Smilie' title='Smilie' />");
+		text = text.replace(/:cool:/gi, "<img src='images/smilies/cool.gif' style='border:none;' alt='Smilie' title='Smilie' />");
+		text = text.replace(/:rolleyes:/gi, "<img src='images/smilies/rolleyes.gif' style='border:none;' alt='Smilie' title='Smilie' />");
+
+		text = text.replace(/:\)/gi, "<img src='images/smilies/smile.gif' style='border:none;' alt='Smilie' title='Smilie' />");
+		text = text.replace(/:-\)/gi, "<img src='images/smilies/smile.gif' style='border:none;' alt='Smilie' title='Smilie' />");
+		text = text.replace(/;\)/gi, "<img src='images/smilies/wink.gif' style='border:none;' alt='Smilie' title='Smilie' />");
+		text = text.replace(/;-\)/gi, "<img src='images/smilies/wink.gif' style='border:none;' alt='Smilie' title='Smilie' />");
+		text = text.replace(/:P/gi, "<img src='images/smilies/tongue.gif' style='border:none;' alt='Smilie' title='Smilie' />");
+		text = text.replace(/:-P/gi, "<img src='images/smilies/tongue.gif' style='border:none;' alt='Smilie' title='Smilie' />");
+		text = text.replace(/:0/gi, "<img src='images/smilies/laugh.gif' style='border:none;' alt='Smilie' title='Smilie' />");
+		text = text.replace(/:D/gi, "<img src='images/smilies/biggrin.gif' style='border:none;' alt='Smilie' title='Smilie' />");
+		text = text.replace(/:-D/gi, "<img src='images/smilies/biggrin.gif' style='border:none;' alt='Smilie' title='Smilie' />");
+		text = text.replace(/:\(/gi, "<img src='images/smilies/frown.gif' style='border:none;' alt='Smilie' title='Smilie' />");
+		text = text.replace(/:-\(/gi, "<img src='images/smilies/frown.gif' style='border:none;' alt='Smilie' title='Smilie' />");
+		text = text.replace(/8\)/gi, "<img src='images/smilies/cool.gif' style='border:none;' alt='Smilie' title='Smilie' />");
+		text = text.replace(/8-\)/gi, "<img src='images/smilies/cool.gif' style='border:none;' alt='Smilie' title='Smilie' />");
 
 		document.getElementById(target).innerHTML=text;
 	}

@@ -8,7 +8,8 @@
 	*
 	* @author MrCage | Nicolas Perrenoud
 	*
-	* @last editing: Demora | Selina Tanner 04.06.2007
+	* @last editing: Lamborghini 14.04.2009
+	* Die gleiche Funktion gibt es in Javscript, diese immer mit anpassen bei Änderungen!
 	*/
 
 	function text2html($string)
@@ -154,12 +155,44 @@
     $string = str_replace('[/TH]', '</th>', $string);
     $string = str_replace('[TR]', '<tr>', $string);
     $string = str_replace('[/TR]', '</tr>', $string);
-
-		foreach ($smilielist as $smilie_id=>$smilie_img)
-		{
+    
+    
+    		
+		/*          
+		Lamborghini:
+		Hab das Ganze nun auscodiert, da es 1. Gleich ist wie alles andere und es 2. einfacher in die JS-Funktion zu übernehmen
+		
+		foreach ($smilielist as $smilie_id => $smilie_img)
+		{            
 			$string = str_replace('['.$smilie_id.']', '<img src="'.SMILIE_DIR.'/'.$smilie_img.'" style="border:none;" alt="Smilie" title="'.$smilie_img.'" />', $string);
-		}
+		}            
+		             
+		*/           
+    
+    $string = str_replace(':)', '<img src="'.SMILIE_DIR.'/smile.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+		$string = str_replace(':-)', '<img src="'.SMILIE_DIR.'/smile.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+		$string = str_replace(';)', '<img src="'.SMILIE_DIR.'/wink.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+		$string = str_replace(';-)', '<img src="'.SMILIE_DIR.'/wink.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+		$string = str_replace(':p', '<img src="'.SMILIE_DIR.'/tongue.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+		$string = str_replace(':-p', '<img src="'.SMILIE_DIR.'/tongue.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+		$string = str_replace(':P', '<img src="'.SMILIE_DIR.'/tongue.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+		$string = str_replace(':-P', '<img src="'.SMILIE_DIR.'/tongue.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+		$string = str_replace(':0', '<img src="'.SMILIE_DIR.'/laugh.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+		$string = str_replace(':D', '<img src="'.SMILIE_DIR.'/biggrin.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+		$string = str_replace(':-D', '<img src="'.SMILIE_DIR.'/biggrin.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+		$string = str_replace(':(', '<img src="'.SMILIE_DIR.'/frown.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+		$string = str_replace(':-(', '<img src="'.SMILIE_DIR.'/frown.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+		$string = str_replace('8)', '<img src="'.SMILIE_DIR.'/cool.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+		$string = str_replace('8-)', '<img src="'.SMILIE_DIR.'/cool.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+		$string = str_replace(':angry:', '<img src="'.SMILIE_DIR.'/angry.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+		$string = str_replace(':sad:', '<img src="'.SMILIE_DIR.'/sad.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+		$string = str_replace(':anger:', '<img src="'.SMILIE_DIR.'/anger.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+		$string = str_replace(':pst:', '<img src="'.SMILIE_DIR.'/pst.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+		$string = str_replace(':holy:', '<img src="'.SMILIE_DIR.'/holy.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+		$string = str_replace(':cool:', '<img src="'.SMILIE_DIR.'/cool.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+		$string = str_replace(':rolleyes:', '<img src="'.SMILIE_DIR.'/rolleyes.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
 
+		
 		$string = eregi_replace('\[font ([^\[]*)\]', '<font style=\"font-family:\1">', $string);
 		$string = eregi_replace('\[color ([^\[]*)\]', '<font style=\"color:\1">', $string);
 		$string = eregi_replace('\[size ([^\[]*)\]', '<font style=\"font-size:\1pt">', $string);

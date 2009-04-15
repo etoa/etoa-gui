@@ -92,12 +92,12 @@
 				// Weiterleiten
 				if (isset($_POST['remit']))
 				{
-					$subj = 'Fpw: '.stripslashes($_POST['message_subject']);
+					$subj = 'Fw: '.stripslashes($_POST['message_subject']);
 				}
 				// Antworten und "Re: " voran fügen, wenn dies nicht schon steht
 				elseif (isset($_POST['answer']))
 				{
-					$subj = '() Ree: '.stripslashes($_POST['message_subject']);
+					$subj = 'Re: '.stripslashes($_POST['message_subject']);
 				}
 				else
 				{
@@ -233,6 +233,22 @@
 						<option value="silver" style="color: silver;">silver</option>
 					</select>
 				<?php
+					echo "<br><br>";
+					// Smilies
+					echo "<a href=\"javascript:;\" onclick=\"addText(':-)', '', false, document.msgform);".$prevstr."\"><img src=\"".SMILIE_DIR."/smile.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;
+					<a href=\"javascript:;\" onclick=\"addText(';-)', '', false, document.msgform);".$prevstr."\"><img src=\"".SMILIE_DIR."/wink.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;
+					<a href=\"javascript:;\" onclick=\"addText(':-P', '', false, document.msgform);".$prevstr."\"><img src=\"".SMILIE_DIR."/tongue.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;
+					<a href=\"javascript:;\" onclick=\"addText(':0', '', false, document.msgform);".$prevstr."\"><img src=\"".SMILIE_DIR."/laugh.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;
+					<a href=\"javascript:;\" onclick=\"addText(':-D', '', false, document.msgform);".$prevstr."\"><img src=\"".SMILIE_DIR."/biggrin.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;<br>
+					<a href=\"javascript:;\" onclick=\"addText(':-(', '', false, document.msgform);".$prevstr."\"><img src=\"".SMILIE_DIR."/frown.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;
+					<a href=\"javascript:;\" onclick=\"addText('8-)', '', false, document.msgform);".$prevstr."\"><img src=\"".SMILIE_DIR."/cool.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;
+					<a href=\"javascript:;\" onclick=\"addText(':angry:', '', false, document.msgform);".$prevstr."\"><img src=\"".SMILIE_DIR."/angry.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;
+					<a href=\"javascript:;\" onclick=\"addText(':sad:', '', false, document.msgform);".$prevstr."\"><img src=\"".SMILIE_DIR."/sad.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;
+					<a href=\"javascript:;\" onclick=\"addText(':pst:', '', false, document.msgform);".$prevstr."\"><img src=\"".SMILIE_DIR."/pst.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;<br>
+					<a href=\"javascript:;\" onclick=\"addText(':holy:', '', false, document.msgform);".$prevstr."\"><img src=\"".SMILIE_DIR."/holy.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;
+					<a href=\"javascript:;\" onclick=\"addText(':rolleyes:', '', false, document.msgform);".$prevstr."\"><img src=\"".SMILIE_DIR."/rolleyes.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;
+					<a href=\"javascript:;\" onclick=\"addText(':anger:', '', false, document.msgform);".$prevstr."\"><img src=\"".SMILIE_DIR."/anger.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;";
+
 					echo "</td>";
 			echo "</tr>";
 			if ($msgcreatpreview)
