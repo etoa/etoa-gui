@@ -12,7 +12,7 @@ function loadChat($minId)
 	$minId = intval($minId);
 	$ajax = new xajaxResponse();
 	
-	$s = $_SESSION[ROUNDID];
+	$s = $_SESSION;
 	if (isset($s['user_id']))
 	{	
 			$res = dbquery("
@@ -77,7 +77,7 @@ function appendToChatBox($string)
 {
 	$ajax = new xajaxResponse();
 	
-	$s = $_SESSION[ROUNDID];
+	$s = $_SESSION;
 	if (isset($s['user_id']))
 	{	
 		$out= "<span style=\"color:#aaa\">";
@@ -92,7 +92,7 @@ function appendToChatBox($string)
 function sendChat($form)
 {
 	$ajax = new xajaxResponse();	
-	$s = $_SESSION[ROUNDID];
+	$s = $_SESSION;
 	$ajax->assign("ctext","value","");
 	if (isset($s['user_id']))
 	{		
@@ -111,7 +111,7 @@ function sendChat($form)
 			if ($arr[0] == 1)
 				$admin = 1;
 		}
-		if ($form['ctext']!="" && $_SESSION[ROUNDID]['lastchatmsg']!=md5($form['ctext']))
+		if ($form['ctext']!="" && $_SESSION['lastchatmsg']!=md5($form['ctext']))
 		{
 			dbquery("INSERT INTO
 				chat
@@ -132,7 +132,7 @@ function sendChat($form)
 				'".$s['user_id']."',
 				'".$admin."'
 			)");
-			$_SESSION[ROUNDID]['lastchatmsg']=md5($form['ctext']);
+			$_SESSION['lastchatmsg']=md5($form['ctext']);
 			$ajax->script("xajax_setChatUserOnline()");
 		}	
 	}
@@ -142,7 +142,7 @@ function sendChat($form)
 function setChatUserOnline($init=0)
 {
 	$ajax = new xajaxResponse();	
-	$s = $_SESSION[ROUNDID];
+	$s = $_SESSION;
 	if (isset($s['user_id']))
 	{		
 		if ($init == 1)
@@ -212,7 +212,7 @@ function showChatUsers()
 function logoutFromChat()
 {
 	$ajax = new xajaxResponse();	
-	$s = $_SESSION[ROUNDID];
+	$s = $_SESSION;
 	if (isset($s['user_id']))
 	{		
 		dbquery("

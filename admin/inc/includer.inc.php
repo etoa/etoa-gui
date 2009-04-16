@@ -3,11 +3,7 @@
 	define('RELATIVE_ROOT','../');
 	define('ADMIN_MODE',true);
 
-	require_once("../bootstrap.inc.php");
-
-	// Seitenwahl zuweisen
-	$page = isset($_GET['page']) ? $_GET['page'] : 'home';
-	$sub = isset($_GET['sub']) ? $_GET['sub'] : '';
+	require_once("../inc/bootstrap.inc.php");
 
 	// Renderzeit-Start festlegen
 	$render_time = explode(" ",microtime());
@@ -16,24 +12,8 @@
 	define('IMAGE_PATH',"../images/imagepacks/Discovery");
 	define('IMAGE_EXT',"png");
 
-	// Session-Cookie setzen
-	ini_set('arg_separator.output',  '&amp;');
-	session_start();
-
-	// Funktionen und Config einlesen
-	if (!@include_once("../conf.inc.php")) die("conf.inc.php does not exist, please read INSTALL for how to create this file or <a href=\"..\">click here</a> for the setup wizard!!");
-	require("../functions.php");
-	
+	// Load specific admin functions
 	require("inc/admin_functions.inc.php");
-
-	// Mit der DB verbinden
-	dbconnect();
-	
-
-	// Config-Werte laden
-	$cfg = Config::getInstance();
-	$conf = $cfg->getArray();
-	include("../def.inc.php");
 
 	// Navigation laden
 	require_once('nav.php');
@@ -58,15 +38,5 @@
 	define('USER_HMODE_DEFAULT_TIME',3600*24*$conf['user_umod_min_length']['v']);	// Standardurlaubszeit
 
 	define('ADMIN_FILESHARING_DIR',CACHE_ROOT."/admin");
-
-	// XAJAX
-	include("inc/xajax_admin.inc.php");
-
-	// Check Login
-	require("inc/admin_login.inc.php");	
-	
-	// Define s as the current session variable
-	$s = $_SESSION[SESSION_NAME];
-	
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP
-	// Sitterzeit prüfen
+	// Sitterzeit prï¿½fen
   $date_res = dbquery("
   SELECT
    	COUNT(*) AS cnt
@@ -17,10 +17,8 @@
 	// Wenn der Sittingmodus aktiv ist, aber zur Zeit kein keine Loginzeit definitert ist -> Logout
 	if($s['sitter_active']==1 && $date_arr[0]==0)
 	{
-		//if($_SESSION[ROUNDID]['user']['sitter_active']==NULL && $_SESSION[ROUNDID]['user']['sitter_active']!='0')
     session_destroy();
     unset($s);
-    $_SESSION[ROUNDID]=Null;
     header("Location: ".LOGINSERVER_URL."?page=err&err=sitting");
     echo "<h1>Sittingzeit abgelaufen!</h1>Falls die Weiterleitung nicht klappt, <a href=\"".LOGINSERVER_URL."?page=err&err=sitting\">hier</a> klicken...";
     exit;

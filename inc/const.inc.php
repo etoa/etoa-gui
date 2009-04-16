@@ -14,10 +14,6 @@
 		define('WINDOWS',true);
 	}
 
-	// Path to the relative root of the game
-	if (!defined('RELATIVE_ROOT'))
-		define('RELATIVE_ROOT','');
-
 	// Cache directory
 	if (!defined('CACHE_ROOT'))
 		define('CACHE_ROOT',RELATIVE_ROOT.'cache');
@@ -33,6 +29,14 @@
 	// Image directory
 	if (!defined('IMAGE_DIR'))
 		define('IMAGE_DIR',RELATIVE_ROOT."images");
+
+	// Smarty Path
+	define('SMARTY_DIR', RELATIVE_ROOT."libs/smarty/");
+	define('SMARTY_TEMPLATE_DIR', CACHE_ROOT."/smarty_templates");
+	define('SMARTY_COMPILE_DIR', CACHE_ROOT."/smarty_compile");
+
+	// xAjax
+	define('XAJAX_DIR',RELATIVE_ROOT."libs/xajax");
 
 
 	if (!defined('ADMIN_MODE'))

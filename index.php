@@ -45,17 +45,24 @@
 	// Login if requested
 	if (isset($_POST['login_submit']))
 	{
-		$s->login($_POST);
+		if (! $s->login($_POST))
+		{
+			forward(LOGINSERVER_URL."?page=err&err=pass","Loginfehler",$s->lastError);
+		}
 	}
 
 	// Perform logout if requested
 	if (isset($_GET['logout']) && $_GET['logout']!=null)
 	{
 		$s->logout();
+		forward(LOGINSERVER_URL.'?page=logout',"Logout");
 	}
 
 	// Validate session
-	$s->validate();
+	if (!$s->validate())
+	{
+		forward(LOGINSERVER_URL."?page=err&err=nosession","Ungültige Session",$this->lastError);
+	}
 
 	// Load user data
 	$cu = new CurrentUser($s->user_id);
@@ -191,7 +198,7 @@
 	{
 		if ($s->firstView && $cu->properties->startUpChat==1)
 		{
-			echo "<script type=\"text/javascript\">parent.top.location='chatframe.php'</script>";
+			echo "<script type=\"text/javascript\">".CHAT_ONCLICK."</script>";
 		}			
 		
 		if ($cu->isSetup())

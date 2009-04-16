@@ -10,13 +10,13 @@ class Session implements ISingleton
 	//
 	// Singleton code
 	//
-	private static $instance;
-	final public static function getInstance()
+	protected static $instance;
+	public static function getInstance()
 	{
 		if (empty(self::$instance))
 		{
-			$cname = __CLASS__;
-			self::$instance = new $cname(func_get_args());
+			$className = __CLASS__;
+			self::$instance = new $className(func_get_args());
 		}
 		return self::$instance;
 	}
@@ -25,9 +25,13 @@ class Session implements ISingleton
 	//
 	// Class variables and constants
 	//
-	const namePrefix = "etoa";
-	private $lastError;
-	private $firstView=false;
+	protected $namePrefix = "etoauser";
+	protected $lastError;
+	protected $firstView = false;
+
+	protected $tableUser = "users";
+	protected $tableSession = "user_sessions";
+	protected $tableLog = "user_sessionlog";
 
 	/**
 	 * The constructor defines the session hash function to be used
@@ -36,7 +40,7 @@ class Session implements ISingleton
 	protected function __construct()
 	{
 		ini_set('session.hash_function', 1); // Use SHA1 hash
-		session_name(self::namePrefix.ROUNDID); // Set session name based on round name
+		session_name($this->namePrefix.ROUNDID); // Set session name based on round name
 		session_start();	// Start the session
 	}
 
@@ -81,18 +85,21 @@ class Session implements ISingleton
 	{
 		if ($data['login_nick']!="" && $data['login_pw']!="" && !stristr($data['login_nick'],"'") && !stristr($data['login_pw'],"'"))
 		{
-			$ures = dbquery("
+			$sql = "
 			SELECT
 				user_id,
+				user_nick,
 				user_registered,
 				user_password,
 				user_password_temp
 			FROM
-				users
+				".$this->tableUser."
 			WHERE
 				LCASE(user_nick)='".strtolower($data['login_nick'])."'
 			LIMIT 1;
-			;");
+			;";
+
+			$ures = dbquery($sql);
 			if (mysql_num_rows($ures)>0)
 			{
 				$uarr = mysql_fetch_assoc($ures);
@@ -100,6 +107,7 @@ class Session implements ISingleton
 					|| ($uarr['user_password_temp']!="" && $uarr['user_password_temp']==$data['login_pw']))
 				{
 					$this->user_id = $uarr['user_id'];
+					$this->user_nick = $uarr['user_nick'];
 					$t = time();
 					$this->time_login = $t;
 					$this->time_action = $t;
@@ -111,19 +119,16 @@ class Session implements ISingleton
 				else
 				{
 					$this->lastError = "Benutzer nicht vorhanden oder Passwort falsch!";
-					forward(LOGINSERVER_URL."?page=err&err=pass","Passwort-Fehler",$this->lastError);
 				}
 			}
 			else
 			{
 				$this->lastError = "Der Benutzername ist in dieser Runde nicht registriert!";
-				forward(LOGINSERVER_URL."?page=err&err=pass","Benutzer nicht vorhanden",$this->lastError);
 			}
 		}
 		else
 		{
 			$this->lastError = "Kein Benutzername oder Passwort eingegeben oder ungültige Zeichen verwendet!";
-			forward(LOGINSERVER_URL."?page=err&err=name","Nickname oder Password fehlerhaft",$this->lastError);
 		}
 		
 		return false;
@@ -131,71 +136,74 @@ class Session implements ISingleton
 
 	function validate()
 	{
-		$res = dbquery("
-		SELECT
-			id
-		FROM
-			`user_sessions`
-		WHERE
-			id='".session_id()."'
-			AND `user_id`=".intval($this->user_id)."
-			AND `ip_addr`='".$_SERVER['REMOTE_ADDR']."'
-			AND `user_agent`='".$_SERVER['HTTP_USER_AGENT']."'
-			AND `time_login`=".intval($this->time_login)."
-		LIMIT 1
-		;");
-		if (mysql_num_rows($res)>0)
+		if (isset($this->time_login))
 		{
-			$t = time();
-			$cfg = Config::getInstance();
-			if ($this->time_action + $cfg->user_timeout->v > $t)
+			$res = dbquery("
+			SELECT
+				id
+			FROM
+				`".$this->tableSession."`
+			WHERE
+				id='".session_id()."'
+				AND `user_id`=".intval($this->user_id)."
+				AND `ip_addr`='".$_SERVER['REMOTE_ADDR']."'
+				AND `user_agent`='".$_SERVER['HTTP_USER_AGENT']."'
+				AND `time_login`=".intval($this->time_login)."
+			LIMIT 1
+			;");
+			if (mysql_num_rows($res)>0)
 			{
-				dbquery("
-				UPDATE
-					`user_sessions`
-				SET
-					time_action=".$t."
-				WHERE
-					id='".session_id()."'
-				;");
-				$this->time_action = $t;
-				return true;
+				$t = time();
+				$cfg = Config::getInstance();
+				if ($this->time_action + $cfg->user_timeout->v > $t)
+				{
+					dbquery("
+					UPDATE
+						`".$this->tableSession."`
+					SET
+						time_action=".$t."
+					WHERE
+						id='".session_id()."'
+					;");
+					$this->time_action = $t;
+					return true;
 
+				}
+				else
+				{
+					$this->lastError = "Das Timeout von ".tf($cfg->user_timeout->v)." wurde überschritten!";
+				}
 			}
 			else
 			{
-				$this->lastError = "Das Timeout von ".tf($cfg->user_timeout->v)." wurde überschritten!";
+				$this->lastError = "Session nicht mehr vorhanden!";
 			}
 		}
 		else
 		{
-			$this->lastError = "Session nicht mehr vorhanden!";
+			$this->lastError = "";
 		}
-		self::unregisterSession(session_id());
-
-		forward(LOGINSERVER_URL."?page=err&err=nosession","Ungültige Session",$this->lastError);
-
+		$this->unregisterSession();
 		return false;
 	}
 
 	function logout()
 	{
-		self::unregisterSession(session_id());
-		forward(LOGINSERVER_URL.'?page=logout',"Lgout");
+		$this->unregisterSession();
 	}
 
 	function registerSession()
 	{
 		dbquery("
 		DELETE FROM
-			`user_sessions`
+			`".$this->tableSession."`
 		WHERE
 			user_id=".intval($this->user_id)."
 			OR id='".session_id()."'
 		;");
 		dbquery("
 		INSERT INTO
-			`user_sessions`
+			`".$this->tableSession."`
 		(
 			`id` ,
 			`user_id`,
@@ -214,13 +222,16 @@ class Session implements ISingleton
 		");
 	}
 
-	static function unregisterSession($sid,$logoutPressed=1)
+	function unregisterSession($sid=null,$logoutPressed=1)
 	{
+		if ($sid == null)
+			$sid = session_id();
+
 		$res = dbquery("
 		SELECT
 			*
 		FROM
-			`user_sessions`
+			`".$this->tableSession."`
 		WHERE
 			id='".$sid."'
 		;");
@@ -229,7 +240,7 @@ class Session implements ISingleton
 			$arr = mysql_fetch_assoc($res);
 			dbquery("
 			INSERT INTO
-				`user_sessionlog`
+				`".$this->tableLog."`
 			(
 				`session_id` ,
 				`user_id`,
@@ -252,7 +263,7 @@ class Session implements ISingleton
 			");
 			dbquery("
 			DELETE FROM
-				`user_sessions`
+				`".$this->tableSession."`
 			WHERE
 				id='".$sid."'
 			;");
@@ -261,7 +272,13 @@ class Session implements ISingleton
 		session_regenerate_id();
 	}
 
-	static function cleanup()
+
+	static function kick($sid)
+	{
+		$this->unregisterSession($sid);
+	}
+
+	function cleanup()
 	{
 		$cfg = Config::getInstance();
 		$this->time_action +
@@ -269,7 +286,7 @@ class Session implements ISingleton
 		SELECT
 			id
 		FROM
-			`user_sessions`
+			`".$this->tableSession."`
 		WHERE
 			time_action+".($cfg->user_timeout->v)." < '".time()."'
 		;");
@@ -277,7 +294,7 @@ class Session implements ISingleton
 		{
 			while ($arr = mysql_fetch_row($res))
 			{
-				self::unregisterSession($arr[0],0);
+				$this->unregisterSession($arr[0],0);
 			}
 		}
 	}

@@ -6,7 +6,7 @@
  * @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
  */		
 
-	require_once("../".XAJAX_DIR."/xajax_core/xajax.inc.php");
+	require_once(XAJAX_DIR."/xajax_core/xajax.inc.php");
 	$xajax = new xajax();
 	$xajax->setFlag('debug',false);
 

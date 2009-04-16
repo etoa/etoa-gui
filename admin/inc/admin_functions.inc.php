@@ -52,7 +52,7 @@
 		<script src="../js/admin.js" type="text/javascript"></script>
 		<script src="../js/tooltip.js" type="text/javascript" ></script>
 		';
-		$xajax->printJavascript("../".XAJAX_DIR); 
+		$xajax->printJavascript(XAJAX_DIR); 
 
 	echo '	</head>
 	<body class="index">';

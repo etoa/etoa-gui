@@ -46,9 +46,9 @@
 						{$gameNav[id].items[iid].name}
 						
 						{if $notes > 0 && $gameNav[id].items[iid].name == "Notizen"}
-							&nbsp;({$notes} vorhanden)</a>
+							&nbsp;({$notes} vorhanden)
 						{elseif $gameNav[id].items[iid].name == "Flotten" && $fleetAttack > 0}
-							&nbsp;({$fleetAttack} fremde)</a>														
+							&nbsp;({$fleetAttack} fremde)														
 						{elseif $buddys > 0 && $gameNav[id].items[iid].name == "Buddylist"}
 							({$buddys} online)
 						{elseif $gameNav[id].items[iid].name == "Nachrichten" && $messages > 0}		

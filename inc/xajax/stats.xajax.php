@@ -313,7 +313,7 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 							<div id=\"ttuser".$arr['id']."\" style=\"display:none;\">
 							".popUp("Profil anzeigen","page=userinfo&id=".$arr['id'])."<br/>
 							".popUp("Punkteverlauf","page=$page&amp;mode=$mode&amp;userdetail=".$arr['id'])."<br/>";
-							if ($arr['id']!=$_SESSION[ROUNDID]['user_id'])
+							if ($arr['id']!=$_SESSION['user_id'])
 							{
 								echo "<a href=\"?page=messages&mode=new&message_user_to=".$arr['id']."\">Nachricht senden</a><br/>";
 								echo "<a href=\"?page=buddylist&add_id=".$arr['id']."\">Als Freund hinzufügen</a>";
@@ -382,7 +382,7 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 							<div id=\"ttuser".$arr['id']."\" style=\"display:none;\">
 							".popUp("Profil anzeigen","page=userinfo&id=".$arr['id'])."<br/>
 							".popUp("Punkteverlauf","page=$page&amp;mode=$mode&amp;userdetail=".$arr['id'])."<br/>";
-							if ($arr['id']!=$_SESSION[ROUNDID]['user_id'])
+							if ($arr['id']!=$_SESSION['user_id'])
 							{
 								echo "<a href=\"?page=messages&mode=new&message_user_to=".$arr['id']."\">Nachricht senden</a><br/>";
 								echo "<a href=\"?page=buddylist&add_id=".$arr['id']."\">Als Freund hinzufügen</a>";
@@ -452,7 +452,7 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 							<div id=\"ttuser".$arr['id']."\" style=\"display:none;\">
 							".popUp("Profil anzeigen","page=userinfo&id=".$arr['id'])."<br/>
 							".popUp("Punkteverlauf","page=$page&amp;mode=$mode&amp;userdetail=".$arr['id'])."<br/>";
-							if ($arr['id']!=$_SESSION[ROUNDID]['user_id'])
+							if ($arr['id']!=$_SESSION['user_id'])
 							{
 								echo "<a href=\"?page=messages&mode=new&message_user_to=".$arr['id']."\">Nachricht senden</a><br/>";
 								echo "<a href=\"?page=buddylist&add_id=".$arr['id']."\">Als Freund hinzufügen</a>";
@@ -515,7 +515,7 @@ function statsShowBox($mode, $sort="", $sortOrder="")
  			window.mytimeout = window.setTimeout('loadingMsg(\'statsTable\',\'Suche Spieler...\');xajax_statsShowTable(\'$mode\',0,document.getElementById(\'searchString\').value);', 500);
  			return true;\" id=\"searchString\"/>
 			<input type=\"button\" onclick=\"loadingMsg('statsTable','Lade Statistiktabelle...');getElementById('searchString').value='';xajax_statsShowTable('$mode');\" value=\"Reset\" />
-			<input type=\"button\" onclick=\"loadingMsg('statsTable','Suche Spieler...');getElementById('searchString').value='".$_SESSION[ROUNDID]['user_nick']."';xajax_statsShowTable('$mode',0,'".$_SESSION[ROUNDID]['user_nick']."',1);\" value=\"".$_SESSION[ROUNDID]['user_nick']."\" />
+			<input type=\"button\" onclick=\"loadingMsg('statsTable','Suche Spieler...');getElementById('searchString').value='".$_SESSION['user_nick']."';xajax_statsShowTable('$mode',0,'".$_SESSION['user_nick']."',1);\" value=\"".$_SESSION['user_nick']."\" />
 		</div>";
 		echo "<div id=\"statsNav1\">";
 		// >> AJAX generated content here
@@ -779,7 +779,7 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 				</tr>";
 				while ($arr=mysql_fetch_array($res))
 				{
-					if ($arr['id']==$_SESSION[ROUNDID]['user_id'])
+					if ($arr['id']==$_SESSION['user_id'])
 					{
 						$addstyle=" class=\"userSelfColor\"";
 					}
@@ -820,7 +820,7 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 					<div id=\"ttuser".$arr['id']."\" style=\"display:none;\">
 					".popUp("Profil anzeigen","page=userinfo&id=".$arr['id'])."<br/>
 					".popUp("Punkteverlauf","page=$page&amp;mode=$mode&amp;userdetail=".$arr['id'])."<br/>";
-						if ($arr['id']!=$_SESSION[ROUNDID]['user_id'])
+						if ($arr['id']!=$_SESSION['user_id'])
 						{
 							$out.=  "<a href=\"?page=messages&mode=new&message_user_to=".$arr['id']."\">Nachricht senden</a><br/>";
 							$out.=  "<a href=\"?page=buddylist&add_id=".$arr['id']."\">Als Freund hinzufügen</a>";

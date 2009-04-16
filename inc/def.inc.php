@@ -41,14 +41,6 @@
 	// Townhall-RSS-File
 	define('RSS_TOWNHALL_FILE',RSS_DIR."/townhall.rss");
 	
-	// Smarty Path
-	define('SMARTY_DIR', "libs/smarty/");
-	define('SMARTY_TEMPLATE_DIR', CACHE_ROOT."/smarty_templates");
-	define('SMARTY_COMPILE_DIR', CACHE_ROOT."/smarty_compile");
-
-	// xAjax
-	define('XAJAX_DIR',"libs/xajax");
-
 	// Pfade
 	define("SMILIE_DIR",IMAGE_DIR."/smilies");								// Smilies
 	define("IMAGEPACK_DIRECTORY",IMAGE_DIR.DIRECTORY_SEPARATOR."imagepacks");				// Bilder

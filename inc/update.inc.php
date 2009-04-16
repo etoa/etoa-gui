@@ -149,7 +149,8 @@
 		UserStats::generateXml(XML_INFO_FILE);
 
 		// Cleanup session
-		Session::cleanup();
+		Session::getInstance()->cleanup();
+		AdminSession::getInstance()->cleanup();
 
 		return $log;
 	}

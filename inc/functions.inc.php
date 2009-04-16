@@ -2879,7 +2879,7 @@ function imagecreatefromfile($path, $user_functions = false)
 			$out .= "<div id=\"ttuser".$userId."\" style=\"display:none;\">
 			".popUp("Profil anzeigen","page=userinfo&id=".$userId)."<br/>
 			".popUp("Punkteverlauf","page=stats&mode=user&userdetail=".$userId)."<br/>";
-			if ($userId!=$_SESSION[ROUNDID]['user_id'])
+			if ($userId!=$_SESSION['user_id'])
 			{
 				if ($msg==1)
 					$out.=  "<a href=\"?page=messages&mode=new&message_user_to=".$userId."\">Nachricht senden</a><br/>";
@@ -3152,6 +3152,6 @@ function imagecreatefromfile($path, $user_functions = false)
 	/**
 	* Textfunktionen einbinden
 	*/
-	include('inc/text.inc.php');
+	include_once(RELATIVE_ROOT.'inc/text.inc.php');
 
 ?>

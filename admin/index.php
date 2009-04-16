@@ -28,15 +28,37 @@
 
 	require("inc/includer.inc.php");
 
+	// Login if requested
+	if (isset($_POST['login_submit']))
+	{
+		if (! $s->login($_POST))
+		{
+			include("inc/admin_login.inc.php");
+		}
+	}
+
+	// Perform logout if requested
+	if (isset($_GET['logout']) && $_GET['logout']!=null)
+	{
+		$s->logout();
+		forward('.',"Logout");
+	}
+
+	// Validate session
+	if (!$s->validate())
+	{
+		include("inc/admin_login.inc.php");
+	}
+
+	adminHtmlHeader();
+
 	// Zwischenablage
 	if (isset($_GET['cbclose']))
 	{
-		$_SESSION['clipboard'] = null;
+		$s->clipboard = null;
 	}
-	$cb = isset ($_SESSION['clipboard']) && $_SESSION['clipboard']==1 ? true : false;
+	$cb = isset ($s->clipboard) && $s->clipboard==1 ? true : false;
 
-	adminHtmlHeader($s['theme']);
-			
 	// Admin-Gruppen laden				
 	$admingroup=array();
 	$gres=dbquery("SELECT * FROM admin_groups ORDER BY group_level DESC;");
@@ -53,14 +75,14 @@
 							<?PHP
 								echo '<a href="?adminlist=1">Adminliste</a> | ';
 								echo '<a href="?myprofile=1">Mein Profil</a> | ';
-								$nres = dbquery("select COUNT(*) from admin_notes where admin_id='".$s['user_id']."'");
+								$nres = dbquery("select COUNT(*) from admin_notes where admin_id='".$s->user_id."'");
 								$narr = mysql_fetch_row($nres);
 								if ($narr[0]>0)
 									echo popupLink("notepad","Notizblock (".$narr[0].")","color:#f90;");
 								else
 									echo popupLink("notepad","Notizblock");
 								echo " | ";
-								$nt = Ticket::countAssigned($s['user_id']) + Ticket::countNew();
+								$nt = Ticket::countAssigned($s->user_id) + Ticket::countNew();
 								if ($nt>0)
 									echo popupLink("tickets","Tickets (".$nt.")","color:#f90;");
 								else

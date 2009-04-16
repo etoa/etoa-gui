@@ -701,7 +701,6 @@ else
                 building_name;");
 			if (mysql_num_rows($res)>0)
 			{
-				// class=\"cluetip\" rel=\"tooltip.php?a=buildingcat&id=".$tarr['type_id']."\"
 				tableStart("<span>".text2html($tarr['type_name'])."</span>");
 				while ($arr = mysql_fetch_array($res))
 				{
@@ -712,7 +711,6 @@ else
 					echo "<td style=\"width:130px;\">
 						<a href=\"?page=$page&site=$site&id=".$arr['building_id']."\"><b>".text2html($arr['building_name'])."</a></a>
 					</td>";
-					//class=\"cluetip\" rel=\"tooltip.php?a=buildingdesc&id=".$arr['building_id']."\"
 					echo "<td>".text2html($arr['building_shortcomment'])."</td>";
 					echo "<td style=\"width:90px\">";
 					if($arr['building_fields']=='0')
@@ -741,7 +739,6 @@ else
 			alliance_building_name;");
 	if (mysql_num_rows($res)>0)
 	{
-		// class=\"cluetip\" rel=\"tooltip.php?a=buildingcat&id=".$tarr['type_id']."\"
 		tableStart("<span>Allianzgebäude</span>");
 		while ($arr = mysql_fetch_array($res))
 		{
@@ -752,7 +749,6 @@ else
 			echo "<td style=\"width:130px;\">
 				<a href=\"?page=$page&site=$site&aid=".$arr['alliance_building_id']."\"><b>".text2html($arr['alliance_building_name'])."</a></a>
 			</td>";
-			//class=\"cluetip\" rel=\"tooltip.php?a=buildingdesc&id=".$arr['building_id']."\"
 			echo "<td>".text2html($arr['alliance_building_shortcomment'])."</td>";
 			echo "</tr>";
 		}

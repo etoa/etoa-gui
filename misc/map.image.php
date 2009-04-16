@@ -52,10 +52,10 @@
 
 	$admin = isset($_SESSION['adminsession']) ? true : false;
 
-	if (isset($_SESSION[ROUNDID]) || $admin)
+	if (isset($_SESSION) || $admin)
 	{
-		if (isset($_SESSION[ROUNDID]))
-			$s = $_SESSION[ROUNDID];
+		if (isset($_SESSION))
+			$s = $_SESSION;
 		if ($admin || $s['user_id'] > 0)
 		{
 			if (isset($s))
@@ -88,7 +88,7 @@
 		
 			if (isset($_GET['type']) && $_GET['type']=="alliance")
 			{                        
-				$uid=$_SESSION[ROUNDID]['user_id'];
+				$uid=$_SESSION['user_id'];
 				$res=dbquery("
 							SELECT 
 								cells.sx,
@@ -135,7 +135,7 @@
 			}
 			elseif (isset($_GET['type']) && $_GET['type']=="own")
 			{
-				$uid=$_SESSION[ROUNDID]['user_id'];
+				$uid=$_SESSION['user_id'];
 				$res=dbquery("
 							SELECT 
 								cells.sx, 
@@ -286,7 +286,7 @@
 				imagefilledellipse ($im,270,$h-GALAXY_MAP_LEGEND_HEIGHT+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$colOrange);
 				imagefilledellipse ($im,335,$h-GALAXY_MAP_LEGEND_HEIGHT+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$colViolett);
 				*/
-				imagestring($im,3,10,$h-GALAXY_MAP_LEGEND_HEIGHT+10,"Klicke auf einen Sektor um ihn auszuwählen!",$colWhite);
+				imagestring($im,3,10,$h-GALAXY_MAP_LEGEND_HEIGHT+10,"Klicke auf einen Sektor um ihn auszuwï¿½hlen!",$colWhite);
 			}
 			
 			for ($x=($cx_num*GALAXY_IMAGE_SCALE);$x<$w;$x+=($cx_num*GALAXY_IMAGE_SCALE))

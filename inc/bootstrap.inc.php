@@ -32,16 +32,20 @@
   ini_set('display_errors', 1);
 	ini_set('arg_separator.output',  '&amp;');
 
+	// Path to the relative root of the game
+	if (!defined('RELATIVE_ROOT'))
+		define('RELATIVE_ROOT','');
+
 	// Load constants
-	require_once("inc/const.inc.php");
+	require_once(RELATIVE_ROOT."inc/const.inc.php");
 
 	// Load functions
-	require_once("functions.php");
+	require_once(RELATIVE_ROOT."inc/functions.inc.php");
 
 	// Include db config
-	if (!@include_once("conf.inc.php"))
+	if (!@include_once(RELATIVE_ROOT."config/db.config.php"))
 	{
-		require("inc/install.inc.php");
+		require(RELATIVE_ROOT."inc/install.inc.php");
 		exit();
 	}
 
@@ -52,7 +56,10 @@
 		error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
 	// Init session
-	$s = Session::getInstance();
+	if (ADMIN_MODE)
+		$s = AdminSession::getInstance();
+	else
+		$s = Session::getInstance();
 
 	// Connect to database
 	dbconnect();
@@ -62,7 +69,7 @@
 	$conf = $cfg->getArray();
 
 	// Load default values
-	require_once("inc/def.inc.php");
+	require_once(RELATIVE_ROOT."inc/def.inc.php");
 
 	// Set default page / action variables
 	$page = (isset($_GET['page']) && $_GET['page']!="") ? $_GET['page'] : DEFAULT_PAGE;
@@ -72,10 +79,13 @@
 	$mode = isset($_GET['mode']) ? $_GET['mode'] : null;
 
 	// Load template engine
-	require_once("inc/template.inc.php");
+	require_once(RELATIVE_ROOT."inc/template.inc.php");
 
 	// Initialize XAJAX and load functions
-	require_once("inc/xajax.inc.php");
+	if (ADMIN_MODE)
+		require_once(RELATIVE_ROOT."/admin/inc/xajax_admin.inc.php");
+	else
+		require_once(RELATIVE_ROOT."inc/xajax.inc.php");
 
 	// Set popup identifiert to false
 	$popup = false;
