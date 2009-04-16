@@ -92,7 +92,7 @@
 
 	// BEGIN SCRIPT //
 	
-	showTitle('Registrieren');
+	echo '<h1>Account registrieren</h1>';
 	
 	//
 	// Handle registration submit

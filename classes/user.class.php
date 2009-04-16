@@ -430,6 +430,7 @@
 		*/
 		final public function isTimeout()
 		{
+			err_msg("DEPRECATED!");
 			$cfg = Config::getInstance();
 			return $this->acttime + $cfg->value('user_timeout') < time();
 		}

@@ -25,7 +25,7 @@
 	// 	Kommentar: 	
 	//
 
-	showTitle('Pranger');
+	echo '<h1>Pranger</h1>';
 	echo "Hier ist eine Liste aller gesperrten Spieler:<br/><br/>";
 
 	$res = dbquery("SELECT 

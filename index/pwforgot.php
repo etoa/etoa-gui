@@ -26,9 +26,9 @@
 	// 	Kommentar:
 	//
 
-	showTitle('Passwort vergessen?');
+	echo '<h1>Passwort vergessen?</h1>';
 
-	if (count($_POST)>0 && $_POST['submit_pwforgot']!="" && checker_verify())
+	if (isset($_POST['submit_pwforgot']) && checker_verify())
 	{
 		if ($_POST['user_nick']!="" && !stristr($_POST['user_nick'],"'") && $_POST['user_email_fix']!="" && !stristr($_POST['user_email_fix'],"'"))
 		{

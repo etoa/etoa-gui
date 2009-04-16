@@ -5,9 +5,10 @@
 
 	dbconnect();
 
+	/* TODO
 	$conf = get_all_config();
 	include("def.inc.php");
-	
+	*/
 	if (isset($_SESSION[ROUNDID]))
 	{
 		$s = $_SESSION[ROUNDID];

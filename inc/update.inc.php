@@ -3,36 +3,36 @@
 	{
 		global $conf;
 
-	 	// Inaktive User löschen
+	 	// Inaktive User lï¿½schen
 		$tmr = timerStart();
 		$ui = Users::removeInactive();
 		$ud = Users::removeDeleted();
-		$log = "Inaktive und als gelöscht markierte User gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
+		$log = "Inaktive und als gelï¿½scht markierte User gelï¿½scht.\nDauer: ".timerStop($tmr)." sec\n\n";
 
-		// Alte Benuterpunkte-Logs löschen
+		// Alte Benuterpunkte-Logs lï¿½schen
 		$tmr = timerStart();
 		$nr = Users::cleanUpPoints();
-		$log.= "$nr alte Userpunkte-Logs gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
+		$log.= "$nr alte Userpunkte-Logs gelï¿½scht.\nDauer: ".timerStop($tmr)." sec\n\n";
 
 		// Alte Session-Logs
 		$tmr = timerStart();
 		$nr = Users::cleanUpSessionLogs();
-		$log.= "$nr alte Session-Logs gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
+		$log.= "$nr alte Session-Logs gelï¿½scht.\nDauer: ".timerStop($tmr)." sec\n\n";
 		
-		// Alte Logs löschen
+		// Alte Logs lï¿½schen
 		$tmr = timerStart();
 		$nr = Log::removeOld();
-		$log.= "$nr alte Logs gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
+		$log.= "$nr alte Logs gelï¿½scht.\nDauer: ".timerStop($tmr)." sec\n\n";
 
-		// Alte Nachrichten löschen
+		// Alte Nachrichten lï¿½schen
 		$tmr = timerStart();
 		Message::removeOld();
-		$log.= "Alte Nachrichten gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
+		$log.= "Alte Nachrichten gelï¿½scht.\nDauer: ".timerStop($tmr)." sec\n\n";
 
-		// Abgelaufene Sperren löschen
+		// Abgelaufene Sperren lï¿½schen
 		$tmr = timerStart();
 		Users::removeOldBanns();
-		$log.= "Abgelaufene Sperren gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
+		$log.= "Abgelaufene Sperren gelï¿½scht.\nDauer: ".timerStop($tmr)." sec\n\n";
 
 		// Tabellen optimieren
 		$tmr = timerStart();
@@ -67,7 +67,7 @@
 		}
 		$log = "\nPunkte aktualisiert.\nDauer: ".timerStop($tmr)." sec\n\n";
 
-		// Wurmlöcher vertauschen
+		// Wurmlï¿½cher vertauschen
 		//$tmr = timerStart();
 		//Wormhole::randomize();
 		//$log.= "Wurml&ouml;cher vertauscht.\nDauer: ".timerStop($tmr)." sec\n\n";
@@ -82,7 +82,7 @@
 	function update_30minute()
 	{
 		global $conf;
-		//Admins über einkommende Nachrichten Informieren
+		//Admins ï¿½ber einkommende Nachrichten Informieren
 		$ares = dbquery("SELECT user_nick, user_email, player_id FROM admin_users WHERE player_id>0");
 		if (mysql_num_rows($ares)>0)
 		{
@@ -148,6 +148,9 @@
 		UserStats::generateImage(USERSTATS_OUTFILE);
 		UserStats::generateXml(XML_INFO_FILE);
 
+		// Cleanup session
+		Session::cleanup();
+
 		return $log;
 	}
 
@@ -155,7 +158,7 @@
 	{
 		global $conf;
 
-		// Zufalls-Event auslösen
+		// Zufalls-Event auslï¿½sen
 		//PlanetEventHandler::doEvent(RANDOM_EVENTS_PER_UPDATE);
 
 		$nr = warpeace_update();

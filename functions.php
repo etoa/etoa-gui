@@ -2861,7 +2861,7 @@ function imagecreatefromfile($path, $user_functions = false)
 		$tmp = ob_get_clean();
 		if ($return==1)
 			return $tmp;
-		echo nl2br($tmp);
+		echo "<pre>".($tmp)."</pre>";
 	}
 
 	function popUp($caption, $args,$width=800,$height=600)
@@ -3122,7 +3122,32 @@ function imagecreatefromfile($path, $user_functions = false)
 		echo "</select>";
 	}
 
-	// Test
+	// TODO: Implement this
+	function encrypt($str,$salt)
+	{
+		return $str;
+	}
+
+	// TODO: Implement this
+	function decrypt($str,$salt)
+	{
+		return $str;
+	}
+
+	
+	function forward($url,$msgTitle=null,$msgText=null)
+	{
+		header("Location: ".$url);
+		echo "<h1>".$msgTitle."</h1><p>".$msgText."</p><p>Falls die Weiterleitung nicht klappt, <a href=\"".$url."l\">hier</a> klicken...</p>";
+		exit;
+	}
+
+	function showTitle($title)
+	{
+		echo "<br/><a href=\"?\"><img src=\"images/game_logo.gif\" alt=\"EtoA Logo\" /></a>";
+		echo "<h1>$title - ".ROUNDID."</h1>";
+	}
+
 
 	/**
 	* Textfunktionen einbinden

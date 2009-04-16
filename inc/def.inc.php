@@ -28,13 +28,6 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/	
 
-	// Fehlermeldungs-Level feststellen
-	if (ETOA_DEBUG==1)
-		error_reporting(E_ALL);
-	else
-		error_reporting(E_ERROR | E_WARNING | E_PARSE);
-
-
   /***********************************/
   /* Directory- and file paths       */
   /***********************************/
@@ -120,14 +113,14 @@
 	define("PASSWORD_MAXLENGHT",$cfg->get('password_minlength')); 	// Minimale Passwortlänge
 	define("NICK_MINLENGHT",$cfg->p1('nick_length'));							// Minimale Nicklänge
 	define("NICK_MAXLENGHT",$cfg->p2('nick_length'));							// Maximale Nicklänge
-	define("NAME_MAXLENGTH",$conf['name_length']['v']);								// Minimale Nicklänge
+	define("NAME_MAXLENGTH",$cfg->name_length->v);								// Minimale Nicklänge
 	
 	// Inaktive & Urlaubsmodus
-  define("MIN_UMOD_TIME",$conf['hmode_days']['v']);									// Minimale Umode-Dauer
-  define("USER_INACTIVE_DELETE",$conf['user_inactive_days']['p1']);	// Vergangene Zeit bis Löschung eines Users
-  define("USER_NOTLOGIN_DELETE",$conf['user_inactive_days']['p2']);	// Vergangene Zeit bis Löschung falls nie eingeloggt
-  define("USER_INACTIVE_SHOW",$conf['user_inactive_days']['v']);		// Zeit bis "Inaktiv" Status
-	define("USER_INACTIVE_TIME",time()-(24*3600*$conf['user_inactive_days']['v']));
+  define("MIN_UMOD_TIME",$cfg->hmode_days->v);									// Minimale Umode-Dauer
+  define("USER_INACTIVE_DELETE",$cfg->user_inactive_days->p1);	// Vergangene Zeit bis Löschung eines Users
+  define("USER_NOTLOGIN_DELETE",$cfg->user_inactive_days->p2);	// Vergangene Zeit bis Löschung falls nie eingeloggt
+  define("USER_INACTIVE_SHOW",$cfg->user_inactive_days->v);		// Zeit bis "Inaktiv" Status
+	define("USER_INACTIVE_TIME",time()-(24 * 3600 * $cfg->user_inactive_days->v));
   define("USER_INACTIVE_LONG",14);		// Zeit bis "Inaktiv" Status
 	define("USER_INACTIVE_TIME_LONG",time()-(24*3600*14));
 	
@@ -162,14 +155,14 @@
 	define('REGEXP_NICK','^.[^\'\"\?\<\>\$\!\=\;\&]*$');
 
 	// Universum
-	define("CELL_NUM_X",$conf['num_of_cells']['p1']);		// Anzahl Zellen x
-	define("CELL_NUM_Y",$conf['num_of_cells']['p2']);		// Anzahl Zellen y
-	define("CELL_LENGTH",$ae=$conf['cell_length']['v']);			// Länge vom Solsys in AE
-	define("PLANETS_MAX",$np=$conf['num_planets']['p2']);			// Max. Planeten im Solsys		
+	define("CELL_NUM_X",$cfg->num_of_cells->p1);		// Anzahl Zellen x
+	define("CELL_NUM_Y",$cfg->num_of_cells->p2);		// Anzahl Zellen y
+	define("CELL_LENGTH",$ae=$cfg->cell_length->v);			// Länge vom Solsys in AE
+	define("PLANETS_MAX",$np=$cfg->num_planets->p2);			// Max. Planeten im Solsys
 
 	// Wurmlöcher
-	define("WH_UPDATE_AFFECT_TIME",$conf["wh_update"]["v"]);	// ???
-	define("WH_UPDATE_AFFECT_CNT",$conf["wh_update"]["p1"]);	// ???
+	define("WH_UPDATE_AFFECT_TIME",$cfg->wh_update->v);	// ???
+	define("WH_UPDATE_AFFECT_CNT",$cfg->wh_update->p1);	// ???
 	
 	// Minimale Sperrzeit für Kolonielöschung
 	define("COLONY_DELETE_THRESHOLD",24*3600*5);
@@ -182,11 +175,11 @@
 	define("SHIP_MONITOR_MSG_CAT_ID",4);											// Cat-ID Überwachungsberichte
 	define("SHIP_MISC_MSG_CAT_ID",5);													// Cat-ID Sonstige Nachrichten
 	define("MSG_ALLYMAIL_CAT",6);															// Cat-ID Allianz
-	define("FLOOD_CONTROL",$conf["msg_flood_control"]["v"]);	// Wartezeit bis zur nächsten Nachricht
+	define("FLOOD_CONTROL",$cfg->msg_flood_control->v);	// Wartezeit bis zur nächsten Nachricht
 	
 	// Punkteberechnung
-	define("STATS_USER_POINTS",$conf["points_update"]["p1"]);					// 1 Punkt für X (STATS_USER_POINTS) verbaute Rohstoffe
-	define("STATS_ALLIANCE_POINTS",$conf["points_update"]["p2"]);			// 1 Punkt für X (STATS_ALLIANCE_POINTS) User Punkte
+	define("STATS_USER_POINTS",$cfg->points_update->p1);					// 1 Punkt für X (STATS_USER_POINTS) verbaute Rohstoffe
+	define("STATS_ALLIANCE_POINTS",$cfg->points_update->p2);			// 1 Punkt für X (STATS_ALLIANCE_POINTS) User Punkte
 
 	define("ENABLE_USERTITLES",1);
 	define("USERTITLES_MIN_POINTS",10000)	;
@@ -211,8 +204,8 @@
 
 	// Sonstiges
 	define("RECYC_MAX_PAYBACK",0.9);																	// Maxmimale Recyclingtech effizient
-	define("PEOPLE_FOOD_USE",$conf["people_food_require"]["v"]);			// Anzahl Nahrung, welche Arbeiter benötigen
-	define("USER_MAX_PLANETS",$conf["user_max_planets"]["v"]);				// Maximale Anzahl Planeten
+	define("PEOPLE_FOOD_USE",$cfg->people_food_require->v);			// Anzahl Nahrung, welche Arbeiter benötigen
+	define("USER_MAX_PLANETS",$cfg->user_max_planets->v);				// Maximale Anzahl Planeten
 	
 	// Spezialiasten
 	define("SPECIALIST_MIN_POINTS_REQ",$cfg->p2('specialistconfig'));												// Minimal Punkte für Spezialist (VERALTET)
@@ -233,26 +226,26 @@
   /* Startwerte (bei erstellung eines neuen Accounts) */
   /****************************************************/
 
-	define("USR_START_METAL",$conf['user_start_metal']['v']);				// Anzahl Titan
-	define("USR_START_CRYSTAL",$conf['user_start_crystal']['v']);		// Anzahl Silizium
-	define("USR_START_PLASTIC",$conf['user_start_plastic']['v']);		// Anzahl PVC
-	define("USR_START_FUEL",$conf['user_start_fuel']['v']);					// Anzahl Tritium
-	define("USR_START_FOOD",$conf['user_start_food']['v']);					// Anzahl Nahrung
-	define("USR_START_PEOPLE",$conf['user_start_people']['v']);			// Anzahl Bewohner
-	define("USR_PLANET_NAME",$conf['user_planet_name']['v']);				// "Startplanet" Name
+	define("USR_START_METAL",$cfg->user_start_metal->v);				// Anzahl Titan
+	define("USR_START_CRYSTAL",$cfg->user_start_crystal->v);		// Anzahl Silizium
+	define("USR_START_PLASTIC",$cfg->user_start_plastic->v);		// Anzahl PVC
+	define("USR_START_FUEL",$cfg->user_start_fuel->v);					// Anzahl Tritium
+	define("USR_START_FOOD",$cfg->user_start_food->v);					// Anzahl Nahrung
+	define("USR_START_PEOPLE",$cfg->user_start_people->v);			// Anzahl Bewohner
+	define("USR_PLANET_NAME",$cfg->user_planet_name->v);				// "Startplanet" Name
 
   /*********/
   /* Zeit  */
   /*********/
   
-	define("GLOBAL_TIME",$conf['global_time']['v']);								// Allgegenwertiger Faktor in allen build_times
-	define("BUILD_BUILD_TIME",$conf['build_build_time']['v']);			// Gebäudebau Faktor
-	define("RES_BUILD_TIME",$conf['res_build_time']['v']);					// Forschungsbau Faktor
-	define("SHIP_BUILD_TIME",$conf['ship_build_time']['v']);				// Schiffsbau Faktor
-	define("DEF_BUILD_TIME",$conf['def_build_time']['v']);					// Verteidigungsbau Faktor
-	define("FLEET_FACTOR_F",$conf['flight_flight_time']['v']);			// Flugzeit Faktor (wirkt nicht auf Start/Landezeit)
-	define("FLEET_FACTOR_S",$conf['flight_start_time']['v']);				// Startzeit Faktor
-	define("FLEET_FACTOR_L",$conf['flight_land_time']['v']);				// Landezeit Faktor
+	define("GLOBAL_TIME",$cfg->global_time->v);								// Allgegenwertiger Faktor in allen build_times
+	define("BUILD_BUILD_TIME",$cfg->build_build_time->v);			// Gebäudebau Faktor
+	define("RES_BUILD_TIME",$cfg->res_build_time->v);					// Forschungsbau Faktor
+	define("SHIP_BUILD_TIME",$cfg->ship_build_time->v);				// Schiffsbau Faktor
+	define("DEF_BUILD_TIME",$cfg->def_build_time->v);					// Verteidigungsbau Faktor
+	define("FLEET_FACTOR_F",$cfg->flight_flight_time->v);			// Flugzeit Faktor (wirkt nicht auf Start/Landezeit)
+	define("FLEET_FACTOR_S",$cfg->flight_start_time->v);				// Startzeit Faktor
+	define("FLEET_FACTOR_L",$cfg->flight_land_time->v);				// Landezeit Faktor
 	define("BUILDING_QUEUE_DELAY",60);															// Zeitverzögerung zwischen zwei Bauaufträgen in der Warteschlange
 
   /****************/
@@ -350,10 +343,10 @@
   /*************************/
 
 	//Invasion
-	define("INVADE_POSSIBILITY",$conf['invade_possibility']['v']);				// Grundinvasionschance
-	define("INVADE_MAX_POSSIBILITY",$conf['invade_possibility']['p1']);		// MAX. Invasionschance
-	define("INVADE_MIN_POSSIBILITY",$conf['invade_possibility']['p2']);		// Min. Invasionschance
-	define("INVADE_SHIP_DESTROY",$conf['invade_ship_destroy']['v']);			// wird nicht benötigt!
+	define("INVADE_POSSIBILITY",$cfg->invade_possibility->v);				// Grundinvasionschance
+	define("INVADE_MAX_POSSIBILITY",$cfg->invade_possibility->p1);		// MAX. Invasionschance
+	define("INVADE_MIN_POSSIBILITY",$cfg->invade_possibility->p2);		// Min. Invasionschance
+	define("INVADE_SHIP_DESTROY",$cfg->invade_ship_destroy->v);			// wird nicht benötigt!
 
 	// Sonstige Flottendefinitionen
 	define("FLEET_ACTION_LOG_CAT",13);	// Flotten Log ID (Kategorie)
@@ -363,14 +356,14 @@
 
 	// Kampfsystem
 	define("BATTLE_ROUNDS",5); 																				// Anzahl Runden
-	define("DEF_RESTORE_PERCENT",$conf['def_restore_percent']['v']);	// Prozentualer Wiederaufbau der Def
-	define("DEF_WF_PERCENT",$conf['def_wf_percent']['v']);						// Def ins Trümmerfeld
-	define("SHIP_WF_PERCENT",$conf['ship_wf_percent']['v']);					// Ship ins Trümmerfeld
-	define("SHIP_BOMB_FACTOR",$conf['ship_bomb_factor']['v']); 				// Chance-Faktor beim Bombardieren + Deaktivieren
+	define("DEF_RESTORE_PERCENT",$cfg->def_restore_percent->v);	// Prozentualer Wiederaufbau der Def
+	define("DEF_WF_PERCENT",$cfg->def_wf_percent->v);						// Def ins Trümmerfeld
+	define("SHIP_WF_PERCENT",$cfg->ship_wf_percent->v);					// Ship ins Trümmerfeld
+	define("SHIP_BOMB_FACTOR",$cfg->ship_bomb_factor->v); 				// Chance-Faktor beim Bombardieren + Deaktivieren
 
 	// Anfängerschutz
-	define("USER_ATTACK_MIN_POINTS",$conf['user_attack_min_points']['v']);		// Absolute Puntktegrenze (momentan ausgeschaltet)
-	define("USER_ATTACK_PERCENTAGE",$conf['user_attack_percentage']['v']); 		// Prozentualer Punkteunterschied
+	define("USER_ATTACK_MIN_POINTS",$cfg->user_attack_min_points->v);		// Absolute Puntktegrenze (momentan ausgeschaltet)
+	define("USER_ATTACK_PERCENTAGE",$cfg->user_attack_percentage->v); 		// Prozentualer Punkteunterschied
 
 
   /*********/
@@ -379,12 +372,12 @@
 
 	define("MARKET_SHIP_ID",16);				// Handelsschiff ID
 	define("LOG_CAT",7);								// Log-Cat ID
-	define("FLEET_ACTION_RESS",$conf["market_ship_action_ress"]["v"]); // Aktion beim versenden von Rohstoffen
-	define("FLEET_ACTION_SHIP",$conf["market_ship_action_ship"]["v"]); // Aktion beim versenden von Schiffen oder Schiffe&Rohstoffe
+	define("FLEET_ACTION_RESS",$cfg->market_ship_action_ress->v); // Aktion beim versenden von Rohstoffen
+	define("FLEET_ACTION_SHIP",$cfg->market_ship_action_ship->v); // Aktion beim versenden von Schiffen oder Schiffe&Rohstoffe
 	define("CANCEL_TIME",1);						// ??? :P
 	define("HANDELSMINISTER",1);				// ??? luegi de no säuber noche ^^
-	define("FLIGHT_TIME_MIN",$conf["market_ship_flight_time"]["p1"]);	// Minimal Flugzeit
-	define("FLIGHT_TIME_MAX",$conf["market_ship_flight_time"]["p2"]);	// Maximal Flugzeit
+	define("FLIGHT_TIME_MIN",$cfg->market_ship_flight_time->p1);	// Minimal Flugzeit
+	define("FLIGHT_TIME_MAX",$cfg->market_ship_flight_time->p2);	// Maximal Flugzeit
 	define("SHIP_PRICE_FACTOR_MIN",1);		//Mindestpreisgrenze der Schiffe 1=100%
 	define("SHIP_PRICE_FACTOR_MAX",2);		//Höchstpreisgrenze der Schiffe
 	define("RESS_PRICE_FACTOR_MIN",0.7);		//Mindestpreisgrenze der Rohstoffe
@@ -392,16 +385,16 @@
 	define("AUCTION_PRICE_FACTOR_MIN",0.333);	//Mindestpreisgrenze der Autkionen (summiert aus Roshtoffen und Schiffen)
 	define("AUCTION_PRICE_FACTOR_MAX",3);		//Höchstpreisgrenze der Autkionen (summiert aus Roshtoffen und Schiffen)
 	define("MARKET_SELL_TAX",1.005);				//Zuschlagsfaktor auf die Preise
-	define("AUCTION_DELAY_TIME",$conf["market_auction_delay_time"]["v"]);		// Zeit in stunden, wie lange die auktion nach ablauf noch zu sehen ist
+	define("AUCTION_DELAY_TIME",$cfg->market_auction_delay_time->v);		// Zeit in stunden, wie lange die auktion nach ablauf noch zu sehen ist
 	define("AUCTION_MIN_DURATION",2);				//Mindestdauer einer Autkion (in Tagen)
 	define("MIN_MARKET_LEVEL_RESS",1);			//Mindest Marktlevel um Rohstoffe zu kaufen und verkaufen
 	define("MIN_MARKET_LEVEL_SHIP",3);			//Mindest Marktlevel um Schiffe zu kaufen und verkaufen
 	define("MIN_MARKET_LEVEL_AUCTION",5);		//Mindest Marktlevel um Auktionen anzubieten und selber zu bieten
-	define("MARKET_METAL_FACTOR",$conf["market_metal_factor"]["v"]);			// Titan Taxe
-	define("MARKET_CRYSTAL_FACTOR",$conf["market_crystal_factor"]["v"]);	// Silizium Taxe
-	define("MARKET_PLASTIC_FACTOR",$conf["market_plastic_factor"]["v"]);	// PVC Taxe
-	define("MARKET_FUEL_FACTOR",$conf["market_fuel_factor"]["v"]);				// Tritium Taxe
-	define("MARKET_FOOD_FACTOR",$conf["market_food_factor"]["v"]);				// Nahrung Taxe
+	define("MARKET_METAL_FACTOR",$cfg->market_metal_factor->v);			// Titan Taxe
+	define("MARKET_CRYSTAL_FACTOR",$cfg->market_crystal_factor->v);	// Silizium Taxe
+	define("MARKET_PLASTIC_FACTOR",$cfg->market_plastic_factor->v);	// PVC Taxe
+	define("MARKET_FUEL_FACTOR",$cfg->market_fuel_factor->v);				// Tritium Taxe
+	define("MARKET_FOOD_FACTOR",$cfg->market_food_factor->v);				// Nahrung Taxe
 
 
 

@@ -369,5 +369,5 @@ Freundliche Grüsse\nDas EtoA-Team\n\n
 		exit;
 	}
 	
-	$firstview = true;
+
 ?>

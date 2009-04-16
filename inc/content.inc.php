@@ -10,30 +10,26 @@
 	else
 	{
 		// Show tipps
-		if (ENABLE_TIPS==1)
+		if (ENABLE_TIPS==1 && $s->firstView)
 		{
-			if (!isset($s['tipp_shown']))
+			$res = dbquery("
+			SELECT
+				tip_text
+			FROM
+				tips
+			WHERE
+				tip_active=1
+			ORDER BY
+				RAND()
+			LIMIT 1;
+			");
+			if (mysql_num_rows($res)>0)
 			{
-				$res = dbquery("
-				SELECT
-					tip_text
-				FROM
-					tips
-				WHERE
-					tip_active=1
-				ORDER BY 
-					RAND()
-				LIMIT 1;
-				");
-				if (mysql_num_rows($res)>0)
-				{
-					$arr = mysql_fetch_array($res);
-					echo "<br/>";
-					iBoxStart("<span style=\"color:#0f0;\">TIPP</span>");
-					echo text2html($arr[0]);
-					iBoxEnd();			
-				}
-				$s['tipp_shown'] = true;
+				$arr = mysql_fetch_array($res);
+				echo "<br/>";
+				iBoxStart("<span style=\"color:#0f0;\">TIPP</span>");
+				echo text2html($arr[0]);
+				iBoxEnd();
 			}
 		}
 		
@@ -156,7 +152,7 @@
 					'".$page."',
 					'".$req."',
 					'".$post."',
-					'".$s['key']."'
+					'".$s->id."'
 				)");
 			}
 

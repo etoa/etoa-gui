@@ -1,4 +1,4 @@
-/* Definitionen für die öffentlich zugänglichen Seiten
+/* Definitionen fï¿½r die ï¿½ffentlich zugï¿½nglichen Seiten
 -------------------------------------------------------*/
 
 #outGameBody	{
@@ -7,35 +7,64 @@
 }
 
 #outGameTop	{
-	border-bottom:1px solid #fff;
+	
 	text-align:right;
-	background:#225;
-	height:21px;
+	background: url('../images/outgame/topbg.png') repeat-x;
+	height:80px;
+	position:relative;
+	margin-bottom:30px;
 }
 
-#outGameTop a	{
-	padding:5px;
-	background:#223;
-	border-left:1px solid #fff;
-	border-bottom:1px solid #fff;
-	text-decoration:none;
+#outGameTopmenu {
+	list-style-type:none;
+	clear:both;
+	position:absolute;
+	top:0px;
+	right:0px;
+	height:80px;
 }
 
-#outGameTop a:hover	{
-	padding:5px;
-	color:#000;
-	background:#ddf;
-	border-bottom:1px solid #fff;
-	text-decoration:none;
-}
-
-#outGameTop div	{
+#outGameTopmenu li {
 	float:left;
+	display:block;
+	margin:0px 0px;
+	padding:10px;
+	text-align:center;
+	width:auto;
+	border-left:1px solid #222;
+	border-right:1px solid #444;
 }
 
-#outGameTop div	a {
-	border-right:1px solid #fff;
-	border-left:none;
+#outGameTopmenu li a {
+	text-decoration:none;
+	color:#999;
+}
+
+#outGameTopmenu li a:hover {
+	color:#ddd;
+}
+
+#outGameTopmenu li a img {
+	border:none;
+	width:40px;
+	height:40px;
+}
+
+#outGameTopLogo	{
+	position:absolute;
+	top:0px;
+	left:0px;
+}
+
+#outGameTopName	{
+	position:absolute;
+	top:27px;
+	left:250px;
+	font-size:16pt;
+}
+
+h1	{
+	padding-bottom:20px;
 }
 
 #outGameContent	{

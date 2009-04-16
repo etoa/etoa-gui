@@ -68,12 +68,11 @@
 			return $tarr[0];
 		}
 
-		public function prevId()
+		public function prevId($currendId)
 		{
-			global $s;
 			for ($x=0;$x<$this->num;$x++)
 			{
-				if ($this->items[$x]==$s['cpid'])
+				if ($this->items[$x]==$currendId)
 				{
 					return $this->items[($x+$this->num-1)%$this->num];
 				}
@@ -81,12 +80,11 @@
 			echo ($x-1)%$this->num;
 		}
 
-		public function nextId()
+		public function nextId($currendId)
 		{
-			global $s;
 			for ($x=0;$x<$this->num;$x++)
 			{
-				if ($this->items[$x]==$s['cpid'])
+				if ($this->items[$x]==$currendId)
 				{
 					return $this->items[($x+1)%$this->num];
 				}
@@ -105,16 +103,18 @@
 			}
 		}
 
-		function getSelectField()
+		function getSelectField($currendId)
 		{
-			global $s,$page;
+			global $page;
+			$req = "&amp;change_entity=";
+
 			$this->load();
 			ob_start();
-			echo "<select name=\"nav_mode_select\" id=\"nav_mode_select\" onchange=\"changeNav(this.selectedIndex,'".$page."')\">";
+			echo "<select name=\"nav_mode_select\" id=\"nav_mode_select\" onchange=\"document.location='?page=".$page.$req."'+this.options[this.selectedIndex].value;\">";
 			foreach ($this->itemObjects as $i)
 			{
 				echo "<option value=\"".$i->id()."\"";
-				if ($s['cpid']==$i->id())
+				if ($currendId==$i->id())
 					echo " selected=\"selected\"";
 				echo ">".$i."</option>\n";
 			}
@@ -124,19 +124,21 @@
 			return $str;
 		}		
 
-		function getLinkList($images=0)
+		function getLinkList($currendId,$images=0)
 		{
-			global $s,$page;
+			global $page;
+			$req = "&amp;change_entity=";
+
 			$this->load();
 			ob_start();			
 			foreach ($this->itemObjects as $i)
 			{
 				if ($images==1)
 					echo "<img src=\"".$i->imagePath()."\" alt=\"thumb\" />";
-				if ($s['cpid']==$i->id())
-					echo "<a href=\"?page=$page&amp;planet_id=".$i->id()."\"><b>".$i."</b></a>\n";
+				if ($currendId==$i->id())
+					echo "<a href=\"?page=$page".$req.$i->id()."\"><b>".$i."</b></a>\n";
 				else
-					echo "<a href=\"?page=$page&amp;planet_id=".$i->id()."\">".$i."</a>\n";
+					echo "<a href=\"?page=$page".$req.$i->id()."\">".$i."</a>\n";
 			}
 			$str = ob_get_contents();
 			ob_end_clean();			

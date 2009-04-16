@@ -248,7 +248,7 @@
 function changeNav(selIndex,page)
 {
 	obj = document.getElementById('nav_mode_select');
-	document.location='?page='+page+'&planet_id='+obj.options[obj.selectedIndex].value;
+	document.location='?page='+page+'&change_entity='+obj.options[obj.selectedIndex].value;
 }
 
 function servertimeclock()

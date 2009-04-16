@@ -32,7 +32,7 @@
 	// BEGIN SKRIPT //
 	echo "<h1>&Uuml;bersicht</h1>";
 
-	if ($firstview)
+	if ($s->firstView)
 	{
 		$res = dbquery("
 		SELECT

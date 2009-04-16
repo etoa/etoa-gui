@@ -32,50 +32,53 @@
   ini_set('display_errors', 1);
 	ini_set('arg_separator.output',  '&amp;');
 
-	// OS-Version feststellen
-	if (defined('POSIX_F_OK'))
+	// Load constants
+	require_once("inc/const.inc.php");
+
+	// Load functions
+	require_once("functions.php");
+
+	// Include db config
+	if (!@include_once("conf.inc.php"))
 	{
-		define('UNIX',true);
-		define('WINDOWS',false);
-		define('UNIX_USER',"etoa");
-		define('UNIX_GROUP',"apache");
+		require("inc/install.inc.php");
+		exit();
 	}
+
+	// Fehlermeldungs-Level feststellen
+	if (ETOA_DEBUG==1)
+		error_reporting(E_ALL);
 	else
-	{
-		define('UNIX',false);
-		define('WINDOWS',true);
-	}
+		error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
-	// Path to the relative root of the game
-	if (!defined('RELATIVE_ROOT'))										
-		define('RELATIVE_ROOT','');	
+	// Init session
+	$s = Session::getInstance();
 
-	// Cache directory
-	if (!defined('CACHE_ROOT')) 											
-		define('CACHE_ROOT',RELATIVE_ROOT.'cache');
+	// Connect to database
+	dbconnect();
 
-	// Class directory
-	if (!defined('CLASS_ROOT'))												
-		define('CLASS_ROOT',RELATIVE_ROOT.'classes');		
+	// Load config
+	$cfg = Config::getInstance();
+	$conf = $cfg->getArray();
 
-	// Data file directory
-	if (!defined('DATA_DIR'))													
-		define('DATA_DIR',RELATIVE_ROOT."data");
+	// Load default values
+	require_once("inc/def.inc.php");
 
-	// Image directory
-	if (!defined('IMAGE_DIR'))												
-		define('IMAGE_DIR',RELATIVE_ROOT."images");
+	// Set default page / action variables
+	$page = (isset($_GET['page']) && $_GET['page']!="") ? $_GET['page'] : DEFAULT_PAGE;
+	$sub = isset($_GET['sub']) ? $_GET['sub'] : null;
+	$index = isset($_GET['index']) ? $_GET['index'] : null;
+	$info = isset($_GET['info']) ? $_GET['info'] : null;
+	$mode = isset($_GET['mode']) ? $_GET['mode'] : null;
 
-	
-	if (!defined('ADMIN_MODE'))												
-		define('ADMIN_MODE',false);	
+	// Load template engine
+	require_once("inc/template.inc.php");
 
-	if (!defined('USE_HTML'));
-		define('USE_HTML',true);
+	// Initialize XAJAX and load functions
+	require_once("inc/xajax.inc.php");
 
-	
-	define('ERROR_LOGFILE',CACHE_ROOT."/errors.txt");
-	define('DBERROR_LOGFILE',CACHE_ROOT."/dberrors.txt");
+	// Set popup identifiert to false
+	$popup = false;
 
 
 ?>

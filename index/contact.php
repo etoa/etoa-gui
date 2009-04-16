@@ -26,11 +26,11 @@
 	// 	Kommentar:
 	//
 
-	showTitle('Kontakt');
+	echo "<h1>Kontakt</h1>";
 	
 	echo "<div style=\"margin:0px auto;width:600px;\">";
 
-		echo text2html($cfg->get('contact_message')."<br/><br/>";
+		echo text2html($cfg->get('contact_message'))."<br/><br/>";
 		$res = dbquery("
 			SELECT 
 				user_id,

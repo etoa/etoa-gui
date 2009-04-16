@@ -29,115 +29,51 @@
 	*/	
 
 	//
-	// Basic stuff
+	// Basics
 	//
-
-	// Session-Cookie setzen
-	session_start();
 
 	// Funktionen und Config einlesen
-	require_once("bootstrap.inc.php");
-	require_once("functions.php");
-	if (!@include_once("conf.inc.php"))
-	{
-		require("inc/install.inc.php");
-		exit();
-	}
-	
+	require_once("inc/bootstrap.inc.php");
 
-	// Renderzeit-Start festlegen
-	$render_time = explode(" ",microtime());
-	$render_starttime=$render_time[1]+$render_time[0];
+	// Render time measurement
+	$tmr = new Timer();
 
-
-	// Mit der DB verbinden und Config-Werte laden
-	dbconnect();
-
-	$cfg = Config::getInstance();
-	$conf = $cfg->getArray();
-
-	require_once("def.inc.php");
-	
-	// Load smarty template engine
-	require(SMARTY_DIR.'/Smarty.class.php');
-	
-	// Firstview
-	$firstview = false;
-	
-	// Session-Array
-	if (isset($_SESSION[ROUNDID]))
-	{
-		$s = $_SESSION[ROUNDID];
-	}
-	else
-	{
-		$s = array();
-	}
-	
 	//
-	// Session- & Login - Checks
+	// User and session checks
 	//
 
-	// User einloggen falls nötig
+	// Login if requested
 	if (isset($_POST['login_submit']))
 	{
-		require_once("inc/login.inc.php");
+		$s->login($_POST);
 	}
 
-	// Falls Logout zum Loginserver wechseln
+	// Perform logout if requested
 	if (isset($_GET['logout']) && $_GET['logout']!=null)
 	{
-		require_once("inc/logout.inc.php");
+		$s->logout();
 	}
 
-	// Session prüfen
-	if (!isset($s['user_id']) || $s['user_id']==0 || $s['user_id']=='')
-	{
-		session_destroy();
-		header("Location: ".LOGINSERVER_URL."?page=err&err=nosession");
-		echo "<h1>Session nicht mehr vorhanden!</h1>Falls die Weiterleitung nicht klappt, <a href=\"".LOGINSERVER_URL."?page=err&err=nosession\">hier</a> klicken...";
-		exit;
-	}
-	
-	// Benutzerdaten laden
-	$cu = new CurrentUser($s['user_id']);
+	// Validate session
+	$s->validate();
 
-	// Check if is valid user
+	// Load user data
+	$cu = new CurrentUser($s->user_id);
+
+	// Check if it is valid user
 	if (!$cu->isValid)
 	{
-		session_destroy();
-		header("Location: ".LOGINSERVER_URL."?page=err&err=usernotfound");
-		echo "<h1>Benutzer nicht mehr vorhanden!</h1>Falls die Weiterleitung nicht klappt, <a href=\"".LOGINSERVER_URL."?page=err&err=usernotfound\">hier</a> klicken...";
-		exit;
-	}
-	
-	// Check timeout	
-	if ($cu->isTimeout())
-	{
-		session_destroy();
-		header("Location: ".LOGINSERVER_URL."?page=err&err=timeout");
-		echo "<h1>Timeout ".$cfg->value("user_timeout")."s</h1>Falls die Weiterleitung nicht klappt, <a href=\"".LOGINSERVER_URL."?page=err&err=timeout\">hier</a> klicken...";
-		exit;
+		forward(LOGINSERVER_URL."?page=err&err=usernotfound","Benutzer nicht mehr vorhanden");
 	}
 
-	// Session prüfen
-	if (!$cu->validateSession($s['key']))
-	{
-		// Zum Loginserver wechseln falls das Session-Cookie noch nicht gesetzt oder fehlerhaft ist
-		session_destroy();
-		header("Location: ".LOGINSERVER_URL."?page=err&err=session2");
-		echo "<h1>Session fehlerhaft</h1>Falls die Weiterleitung nicht klappt, <a href=\"".LOGINSERVER_URL."?page=err&err=session2\">hier</a> klicken...";
-		exit;
-	}
-	
-	// Set popup identifiert to false
-	$popup = false;
+	// Check sitting
+	//require_once('inc/sitting.inc.php');
 
 	//
-	// Misc settings
+	// Design / layout properties
 	//
 
-	// Layout-/Grafikdefinitionen
+	// Design
 	if ($cu->properties->cssStyle !='')
 	{
 		define('CSS_STYLE',DESIGN_DIRECTORY."/".$cu->properties->cssStyle);
@@ -147,6 +83,8 @@
 		define('CSS_STYLE',DESIGN_DIRECTORY."/".$cfg->value('default_css_style'));
 	}
 	define('GAME_WIDTH',$cu->properties->gameWidth);
+
+	// Image paths
 	if ($cu->properties->imageUrl != '' && $cu->properties->imageExt != '')
 	{
 		define('IMAGE_PATH',$cu->properties->imageUrl);
@@ -154,52 +92,23 @@
 	}
 	else
 	{
-		define("IMAGE_PATH",$cfg->value('default_image_path'));
+		define("IMAGE_PATH",$cfg->default_image_path->v);
 		define("IMAGE_EXT","png");
-	}
+	}	
+
+	//
+	// Page header
+	//
 	
-	// Check sitting
-	require_once('inc/sitting.inc.php');
-
-	// Set default content page
-	$page = (isset($_GET['page']) && $_GET['page']!="") ? $_GET['page'] : DEFAULT_PAGE;
-
-	// Initialize XAJAX and load functions
-	require_once("inc/xajax.inc.php");
-
-	// Referers prüfen
-	$referer_allow=false;
-	if (isset($_SERVER["HTTP_REFERER"]))
-	{
-	// Referers
-		$referers=explode("\n",$conf['referers']['v']);
-		foreach ($referers as $k=>&$v)
-		{
-			$referers[$k] = trim($v);
-		}
-		unset($v);
-		foreach ($referers as &$rfr)
-		{
-			if (substr($_SERVER["HTTP_REFERER"],0,strlen($rfr))==$rfr)
-			{
-				$referer_allow=true;
-			}
-		}
-		unset($rfr);
-	} 				
-	
-	// Create template object
-	$tpl = new Smarty;
-	$tpl->template_dir = SMARTY_TEMPLATE_DIR;
-	$tpl->compile_dir = SMARTY_COMPILE_DIR;
-
-	$tpl->assign("gameTitle",$cfg->value('game_name')." ".$cfg->param1('game_name'));
+	$tpl->assign("gameTitle",$cfg->game_name->v." ".$cfg->game_name->p1);
 	$tpl->assign("templateDir",CSS_STYLE);
-	
+
+	// Xajax header
 	ob_start();
 	echo $xajax->printJavascript(XAJAX_DIR);		
 	$tpl->assign("xajaxJS",ob_get_clean());
 
+	// Tooltip init
 	ob_start();
 	initTT();
 	$tpl->assign("bodyTopStuff",ob_get_clean());			
@@ -207,6 +116,31 @@
 	// Display header		
 	$tpl->display(getcwd()."/tpl/header.tpl");
 
+	//
+	// Page content
+	//
+
+	// Referers prüfen
+	$referer_allow=false;
+	if (isset($_SERVER["HTTP_REFERER"]))
+	{
+		// Referers
+		$referers=explode("\n",$cfg->referers->v);
+		foreach ($referers as $k=>&$v)
+		{
+			$referers[$k] = trim($v);
+		}
+		unset($v);
+		foreach ($referers as &$rfr)
+		{
+			//echo "RefCheck: ".$_SERVER["HTTP_REFERER"]." vs ".$rfr."<br/>";
+			if (substr($_SERVER["HTTP_REFERER"],0,strlen($rfr))==$rfr)
+			{
+				$referer_allow=true;
+			}
+		}
+		unset($rfr);
+	}
 
 	// Spiel ist generell gesperrt (ausser für erlaubte IP's)
 	$allowed_ips = explode("\n",$cfg->p1('offline'));
@@ -234,7 +168,6 @@
 		echo "Der Login momentan geschlossen!<br/><br/>";
 		echo button("Zur Startseite",LOGINSERVER_URL);
 		iBoxEnd();
-		$s=Null;
 	}
 	// Login ist erlaubt aber noch zeitlich zu früh
 	elseif ($cfg->value('enable_login')==1 && $cfg->value('enable_login')!="" && $cfg->param1('enable_login') > time() && !in_array($_SERVER['REMOTE_ADDR'],$allowed_ips))
@@ -244,8 +177,6 @@
 		echo "Das Spiel startet am ".date("d.m.Y",$cfg->param1('enable_login'))." ab ".date("H:i",$cfg->param1('enable_login'))."!<br/><br/>";
 		echo button("Zur Startseite",LOGINSERVER_URL);
 		iBoxEnd();
-		session_destroy();
-		$s=Null;
 	}
 	// Zugriff von anderen als eigenem Server bzw Login-Server sperren
 	elseif (!$referer_allow && isset($_SERVER["HTTP_REFERER"]))
@@ -254,18 +185,11 @@
 		<h1>Falscher Referer</h1>
 		Der Zugriff auf das Spiel ist nur anderen internen Seiten aus m&ouml;glich! Ein externes Verlinken direkt in das Game hinein ist nicht gestattet! Dein Referer: ".$_SERVER["HTTP_REFERER"]."<br/><br/>
 		<a href=\"".LOGINSERVER_URL."\">Hauptseite</a></div>";
-		session_destroy();
-		$s=Null;
 	}
 	// Zugriff erlauben und Inhalt anzeigen
 	else
 	{
-		
-		// Zeit der letzten User-Aktion speichern
-		dbquery("UPDATE users SET user_acttime='".time()."' WHERE user_id='".$s['user_id']."';");
-		dbquery ("UPDATE user_sessionlog SET log_acttime=".time()." WHERE log_user_id=".$s['user_id']." AND log_session_key='".$s['key']."';");
-		
-		if ($firstview && $cu->properties->startUpChat==1)
+		if ($s->firstView && $cu->properties->startUpChat==1)
 		{
 			echo "<script type=\"text/javascript\">parent.top.location='chatframe.php'</script>";
 		}			
@@ -302,21 +226,29 @@
 				// Todo: check if mainplanet is still 0
 				
 				// Wenn eine ID angegeben wurde (Wechsel des Planeten) wird diese überprüft
-				if (isset($_GET['planet_id']) && $_GET['planet_id']>0 && in_array($_GET['planet_id'],$planets))
+				//if (!isset($s->echng_key))
+				//	$s->echng_key = mt_rand(100,9999999);
+				
+				$eid=0;
+				if (isset($_GET['change_entity']))
 				{
-					$cpid = $_GET['planet_id'];
-					$s['cpid'] = $cpid;
+					$eid = $_GET['change_entity'];
+				}
+				if ($eid>0 && in_array($eid,$planets))
+				{
+						$cpid = $eid;
+						$s->cpid = $cpid;
 				}	
-				elseif (isset($s['cpid']) && in_array($s['cpid'],$planets))
+				elseif (isset($s->cpid) && in_array($s->cpid,$planets))
 				{
-					$cpid = $s['cpid'];
+					$cpid = $s->cpid;
 				}
 				else					
 				{
 					$cpid = $mainplanet;
-					$s['cpid'] = $cpid;
-				}						
-				
+					$s->cpid = $cpid;
+				}										
+
 				$cp = new Planet($cpid);
 				
 				$pm = new PlanetManager($planets);
@@ -363,11 +295,11 @@
 		{
 			$tpl->assign("currentPlanetName",$cp);
 			$tpl->assign("currentPlanetImage",$cp->imagePath("m"));
-			$tpl->assign("planetList",$pm->getLinkList());		
-			$tpl->assign("planetListImages",$pm->getLinkList(1));		
-			$tpl->assign("nextPlanetId",$pm->nextId());
-			$tpl->assign("prevPlanetId",$pm->prevId());
-			$tpl->assign("selectField",$pm->getSelectField());
+			$tpl->assign("planetList",$pm->getLinkList($s->cpid));
+			$tpl->assign("planetListImages",$pm->getLinkList($s->cpid,1));
+			$tpl->assign("nextPlanetId",$pm->nextId($s->cpid));
+			$tpl->assign("prevPlanetId",$pm->prevId($s->cpid));
+			$tpl->assign("selectField",$pm->getSelectField($s->cpid));
 		}
 		else
 		{
@@ -424,23 +356,20 @@
 		require("inc/content.inc.php");
 		$tpl->assign("content",ob_get_clean());
 		
-		$render_time = explode(' ',microtime());
-		$rtime = $render_time[1]+$render_time[0]-$render_starttime;
-		$tpl->assign("renderTime",round($rtime,3));
-	
-					
+		$tpl->assign("renderTime",$tmr->getRoundedTime());
+						
 		// Display main template
 		$tpl->display(getcwd()."/".CSS_STYLE."/template.tpl");						
 
-	
-
 	}
+
+	//
+	// Page footer
+	//
 	
-	// Display footer
 	$tpl->display(getcwd()."/tpl/footer.tpl");			
 	
 	$_SESSION['lastpage']=$page;
-	$_SESSION[ROUNDID] = $s;
+
 	dbclose();
-	$firstview = false; 
 ?>
