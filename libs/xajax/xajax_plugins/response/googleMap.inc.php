@@ -96,20 +96,20 @@ class clsGoogleMap extends xajaxResponsePlugin
 
 		echo "maps = {};\n";
 		
-		echo "xajax.commands['gm:cr'] = function(args) {\n";
+		echo "xajax.command.handler.register('gm:cr', function(args) {\n";
 		echo "\tmaps[args.data] = new GMap2(args.objElement);\n";
 		echo "\tvar ptCenter = new GLatLng(0, 10);\n";
 		echo "\tmaps[args.data].setCenter(ptCenter, 10);\n";
 		echo "\tmaps[args.data].addControl(new GSmallMapControl());\n";
 		echo "\tmaps[args.data].addControl(new GMapTypeControl());\n";
 		echo "\tmaps[args.data].setMapType(maps[args.data].getMapTypes()[2]);\n";
-		echo "}\n";
+		echo "});\n";
 		
-		echo "xajax.commands['gm:zm'] = function(args) {\n";
+		echo "xajax.command.handler.register('gm:zm', function(args) {\n";
 		echo "\tmaps[args.id].setZoom(parseInt(args.data));\n";
-		echo "}\n";
+		echo "});\n";
 		
-		echo "xajax.commands['gm:sm'] = function(args) {\n";
+		echo "xajax.command.handler.register('gm:sm', function(args) {\n";
 		echo "\tvar ptCenter = new GLatLng(args.data[0], args.data[1]);\n";
 		echo "\tvar markerNew = new GMarker(ptCenter);\n";
 		echo "\tmarkerNew.text = args.data[2];\n";
@@ -119,7 +119,7 @@ class clsGoogleMap extends xajaxResponsePlugin
 		echo "\t\t\tmarker.openInfoWindowHtml(marker.text);\n";
 		echo "\t\t}\n";
 		echo "\t} );\n";
-		echo "}\n";
+		echo "});\n";
 
 		echo "/* ]]> */\n";
 		echo "</script>\n";

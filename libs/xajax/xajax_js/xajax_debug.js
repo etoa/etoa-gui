@@ -1,7 +1,8 @@
 
-try{if('undefined'==typeof xajax.debug)
+try{if('undefined'==typeof xajax)
+throw{name:'SequenceError',message:'Error: xajax core was not detected, debug module disabled.'}
+if('undefined'==typeof xajax.debug)
 xajax.debug={}
-}catch(e){alert('An internal error has occurred: the xajax_core has not been loaded prior to xajax_debug.');}
 xajax.debug.workId='xajaxWork'+new Date().getTime();xajax.debug.windowSource='about:blank';xajax.debug.windowID='xajax_debug_'+xajax.debug.workId;if('undefined'==typeof xajax.debug.windowStyle)
 xajax.debug.windowStyle=
 'width=800,'+
@@ -47,15 +48,14 @@ xajax.debug.prepareDebugText=function(text){text=xajax.debug.stringReplace(text,
 xajax.debug.prepareDebugText(text);}
 }
 xajax.debug.executeCommand=xajax.executeCommand;xajax.executeCommand=function(args){try{if('undefined'==typeof args.cmd)
-throw{code:10006};if('undefined'==typeof xajax.commands[args.cmd])
+throw{code:10006};if(false==xajax.command.handler.isRegistered(args))
 throw{code:10007,data:args.cmd};return xajax.debug.executeCommand(args);}catch(e){var msg='ExecuteCommand (';if('undefined'!=typeof args.sequence){msg+='#';msg+=args.sequence;msg+=', ';}
 if('undefined'!=typeof args.cmdFullName){msg+='"';msg+=args.cmdFullName;msg+='"';}
 msg+='):\n';msg+=xajax.debug.getExceptionText(e);msg+='\n';xajax.debug.writeMessage(msg,xajax.debug.text[101],'errorText');}
 return true;}
 xajax.debug.parseAttributes=xajax.parseAttributes;xajax.parseAttributes=function(child,obj){try{xajax.debug.parseAttributes(child,obj);}catch(e){var msg='ParseAttributes:\n';msg+=xajax.debug.getExceptionText(e);msg+='\n';xajax.debug.writeMessage(msg,xajax.debug.text[101],'errorText');}
 }
-xajax.debug.commands={};xajax.debug.commands['dbg']=xajax.commands['dbg'];xajax.commands['dbg']=function(args){args.cmdFullName='debug message';xajax.debug.writeMessage(args.data,xajax.debug.text[100],'warningText');return xajax.debug.commands['dbg'];}
-xajax.debug.$=xajax.tools.$;xajax.tools.$=function(sId){try{var returnValue=xajax.debug.$(sId);if('object'!=typeof returnValue)
+xajax.debug.commandHandler=xajax.command.handler.unregister('dbg');xajax.command.handler.register('dbg',function(args){args.cmdFullName='debug message';xajax.debug.writeMessage(args.data,xajax.debug.text[100],'warningText');return xajax.debug.commandHandler(args);});xajax.debug.$=xajax.tools.$;xajax.tools.$=function(sId){try{var returnValue=xajax.debug.$(sId);if('object'!=typeof returnValue)
 throw{code:10008};}
 catch(e){var msg='$:';msg+=xajax.debug.getExceptionText(e);msg+='\n';xajax.debug.writeMessage(msg,xajax.debug.text[100],'warningText');}
 return returnValue;}
@@ -102,7 +102,7 @@ xajax.debug.completeResponse=xajax.completeResponse;xajax.completeResponse=funct
 }
 xajax.debug.getRequestObject=xajax.tools.getRequestObject;xajax.tools.getRequestObject=function(){try{xajax.debug.writeMessage(xajax.debug.text[127]);return xajax.debug.getRequestObject();}catch(e){var msg='GetRequestObject: ';msg+=xajax.debug.getExceptionText(e);msg+='\n';xajax.debug.writeMessage(msg,xajax.debug.text[101],'errorText');throw e;}
 }
-if(xajax.dom.assign){xajax.debug.assign=xajax.dom.assign;xajax.dom.assign=function(element,id,property,data){try{return xajax.debug.assign(element,id,property,data);}catch(e){var msg='xajax.dom.assign: ';msg+=xajax.debug.getExceptionText(e);msg+='\n';msg+='Eval: element.';msg+=property;msg+=' = data;\n';xajax.debug.writeMessage(msg,xajax.debug.text[101],'errorText');}
+if(xajax.dom.assign){xajax.debug.assign=xajax.dom.assign;xajax.dom.assign=function(element,property,data){try{return xajax.debug.assign(element,property,data);}catch(e){var msg='xajax.dom.assign: ';msg+=xajax.debug.getExceptionText(e);msg+='\n';msg+='Eval: element.';msg+=property;msg+=' = data;\n';xajax.debug.writeMessage(msg,xajax.debug.text[101],'errorText');}
 return true;}
 }
 if(xajax.tools){if(xajax.tools.queue){if(xajax.tools.queue.retry){if('undefined'==typeof xajax.debug.tools)
@@ -114,4 +114,4 @@ return false;xajax.debug.writeMessage('Retry count exceeded.');return false;}
 }
 }
 xajax.debug.isLoaded=true;xjx={}
-xjx.$=xajax.tools.$;xjx.getFormValues=xajax.tools.getFormValues;xjx.call=xajax.call;xjx.request=xajax.request;xajax.$=xajax.tools.$;xajax.getFormValues=xajax.tools.getFormValues;
+xjx.$=xajax.tools.$;xjx.getFormValues=xajax.tools.getFormValues;xjx.call=xajax.call;xjx.request=xajax.request;xajax.$=xajax.tools.$;xajax.getFormValues=xajax.tools.getFormValues;}catch(e){alert(e.name+': '+e.message);}

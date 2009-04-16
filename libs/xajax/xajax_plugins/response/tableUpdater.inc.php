@@ -15,7 +15,7 @@ if (false == class_exists('xajaxPlugin') || false == class_exists('xajaxPluginMa
 {
 	$sBaseFolder = dirname(dirname(dirname(__FILE__)));
 	$sXajaxCore = $sBaseFolder . '/xajax_core';
-
+	
 	if (false == class_exists('xajaxPlugin'))
 		require $sXajaxCore . '/xajaxPlugin.inc.php';
 	if (false == class_exists('xajaxPluginManager'))
@@ -87,9 +87,9 @@ class clsTableUpdater extends xajaxResponsePlugin
 		} else if ('javascript URI' == $sName) {
 			$this->sJavascriptURI = $mValue;
 		} else if ('inlineScript' == $sName) {
-			if (true === $mValue || false === $mValue)
-				$this->bInlineScript = $mValue;
-		}
+				if (true === $mValue || false === $mValue)
+					$this->bInlineScript = $mValue;
+			}
 	}
 	
 	/*
@@ -106,9 +106,9 @@ class clsTableUpdater extends xajaxResponsePlugin
 		{
 			echo "\n<script type='text/javascript' " . $this->sDefer . "charset='UTF-8'>\n";
 			echo "/* <![CDATA[ */\n";
-
+			
 			include(dirname(__FILE__) . '/tableUpdater.js');
-
+			
 			echo "/* ]]> */\n";
 			echo "</script>\n";
 		} else {
@@ -123,103 +123,168 @@ class clsTableUpdater extends xajaxResponsePlugin
 	
 	// tables
 	function appendTable($table, $parent) {
-		$command = array('n'=>'et_at', 't'=>$parent);
+		$command = array(
+				'cmd'=>'et_at', 
+				'id'=>$parent
+				);
 		$this->addCommand($command, $table);	
 	}
 	function insertTable($table, $parent, $position) {
-		$command = array('n'=>'et_it', 't'=>$parent, 'p'=>$position);
+		$command = array(
+				'cmd'=>'et_it', 
+				'id'=>$parent, 
+				'pos'=>$position
+				);
 		$this->addCommand($command, $table);
 	}
 	function deleteTable($table) {
-		$this->addCommand(array('n'=>'et_dt'), $table);
+		$this->addCommand(
+				array(
+					'cmd'=>'et_dt'
+					), 
+				$table
+				);
 	}
 	// rows
 	function appendRow($row, $parent, $position = null) {
-		$command = array('n'=>'et_ar', 't'=>$parent);
+		$command = array(
+				'cmd'=>'et_ar', 
+				'id'=>$parent
+				);
 		if (null != $position)
-			$command['p'] = $position;
+			$command['pos'] = $position;
 		$this->addCommand($command, $row);
 	}
 	function insertRow($row, $parent, $position = null, $before = null) {
-		$command = array('n'=>'et_ir', 't'=>$parent);
+		$command = array(
+				'cmd'=>'et_ir', 
+				'id'=>$parent
+				);
 		if (null != $position)
-			$command['p'] = $position;
+			$command['pos'] = $position;
 		if (null != $before)
-			$command['c'] = $before;
+			$command['type'] = $before;
 		$this->addCommand($command, $row);
 	}
 	function replaceRow($row, $parent, $position = null, $before = null) {
-		$command = array('n'=>'et_rr', 't'=>$parent);
+		$command = array(
+				'cmd'=>'et_rr', 
+				'id'=>$parent
+				);
 		if (null != $position)
-			$command['p'] = $position;
+			$command['pos'] = $position;
 		if (null != $before)
-			$command['c'] = $before;
+			$command['type'] = $before;
 		$this->addCommand($command, $row);
 	}
 	function deleteRow($parent, $position = null) {
-		$command = array('n'=>'et_dr', 't'=>$parent);
+		$command = array(
+				'cmd'=>'et_dr', 
+				'id'=>$parent
+				);
 		if (null != $position)
-			$command['p'] = $position;
+			$command['pos'] = $position;
 		$this->addCommand($command, null);
 	}
 	function assignRow($values, $parent, $position = null, $start_column = null) {
-		$command = array('n'=>'et_asr', 't'=>$parent);
+		$command = array(
+				'cmd'=>'et_asr', 
+				'id'=>$parent
+				);
 		if (null != $position)
-			$command['p'] = $position;
+			$command['pos'] = $position;
 		if (null != $start_column)
-			$command['c'] = $start_column;
+			$command['type'] = $start_column;
 		$this->addCommand($command, $values);
 	}
 	function assignRowProperty($property, $value, $parent, $position = null) {
-		$command = array('n'=>'et_asr', 't'=>$parent);
+		$command = array(
+				'cmd'=>'et_asrp', 
+				'id'=>$parent,
+				'prop'=>$property
+				);
 		if (null != $position)
-			$command['p'] = $position;
-		$this->addCommand($command, array('p'=>$property, 'v'=>$value));
+			$command['pos'] = $position;
+		$this->addCommand($command, $value);
 	}
 	// columns
 	function appendColumn($column, $parent, $position = null) {
-		$command = array('n'=>'et_acol', 't'=>$parent);
+		$command = array(
+				'cmd'=>'et_acol', 
+				'id'=>$parent
+				);
 		if (null != $position)
-			$command['p'] = $position;
+			$command['pos'] = $position;
 		$this->addCommand($command, $column);
 	}
 	function insertColumn($column, $parent, $position = null) {
-		$command = array('n'=>'et_icol', 't'=>$parent);
+		$command = array(
+				'cmd'=>'et_icol', 
+				'id'=>$parent
+				);
 		if (null != $position)
-			$command['p'] = $position;
+			$command['pos'] = $position;
 		$this->addCommand($command, $column);
 	}
 	function replaceColumn($column, $parent, $position = null) {
-		$command = array('n'=>'et_rcol', 't'=>$parent);
+		$command = array(
+				'cmd'=>'et_rcol', 
+				'id'=>$parent
+				);
 		if (null != $position)
-			$command['p'] = $position;
+			$command['pos'] = $position;
 		$this->addCommand($command, $column);
 	}
 	function deleteColumn($parent, $position = null) {
-		$command = array('n'=>'et_dcol', 't'=>$parent);
+		$command = array(
+				'cmd'=>'et_dcol', 
+				'id'=>$parent
+				);
 		if (null != $position)
-			$command['p'] = $position;
+			$command['pos'] = $position;
 		$this->addCommand($command, null);
 	}
 	function assignColumn($values, $parent, $position = null, $start_row = null) {
-		$command = array('n'=>'et_ascol', 't'=>$parent);
+		$command = array(
+				'cmd'=>'et_ascol', 
+				'id'=>$parent
+				);
 		if (null != $position)
-			$command['p'] = $position;
+			$command['pos'] = $position;
 		if (null != $start_row)
-			$command['c'] = $start_row;
+			$command['type'] = $start_row;
 		$this->addCommand($command, $values);
 	}
 	function assignColumnProperty($property, $value, $parent, $position = null) {
-		$command = array('n'=>'et_ascol', 't'=>$parent);
+		$command = array(
+				'cmd'=>'et_ascolp', 
+				'id'=>$parent,
+				'prop'=>$property
+				);
 		if (null != $position)
-			$command['p'] = $position;
-		$this->addCommand($command, array('p'=>$property, 'v'=>$value));
+			$command['pos'] = $position;
+		$this->addCommand($command, $value);
 	}
 	function assignCell($row, $column, $value) {
-		$this->addCommand(array('n'=>'et_asc', 't'=>$row, 'p'=>$column), $value);
+		$this->addCommand(
+				array(
+					'cmd'=>'et_asc', 
+					'id'=>$row, 
+					'pos'=>$column
+					), 
+				$value
+				);
 	}
 	function assignCellProperty($row, $column, $property, $value) {
-		$this->addCommand(array('n'=>'et_asc', 't'=>$row, 'p'=>$column), array('p'=>$property, 'v'=>$value));
+		$this->addCommand(
+				array(
+					'cmd'=>'et_ascp', 
+					'id'=>$row, 
+					'pos'=>$column,
+					'prop'=>$property
+					), 
+				$value
+				);
 	}
 }
 
