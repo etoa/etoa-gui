@@ -2,15 +2,15 @@
 
 	// Make this configurable
 	$allow = false;
-	
+
+	if ($allow)
+	{
 ?>
 
 <h1>Game-Login</h1>
 	<form action="." method="post">
 		<div style="width:300px;margin:0px auto;">
 		<?PHP
-			if ($allow)
-			{
 			tableStart("Bitte Logindaten eingeben:");
 		?>
 			<tr>
@@ -22,12 +22,12 @@
 			</td></tr>
 		</table>
 		<br/><input id="loginsubmit" type="submit" name="login_submit" value="Login" class="button" />
-		<?PHP
-			}
-			else
-			{
-				echo "Ein Login ist zurzeit nur über unsere offizielle <a href=\"".LOGINSERVER_URL."\">Startseite</a> möglich!";
-			}
-		?>
 		</div>
-	</form>     	
+	</form> 
+	<?PHP
+	}
+	else
+	{
+		forward(LOGINSERVER_URL);
+	}
+?>

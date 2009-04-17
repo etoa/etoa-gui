@@ -52,7 +52,7 @@
 	// Page header
 	//
 
-	$tpl->assign("gameTitle",$cfg->game_name->v." ".$cfg->game_name->p1.(isset($indexpage[$index])?' - '.$indexpage[$index]:''));
+	$tpl->assign("gameTitle",$cfg->game_name->v." ".$cfg->game_name->p1.(isset($indexpage[$index])?' - '.$indexpage[$index]['label']:''));
 	$tpl->assign("templateDir",CSS_STYLE);
 
 	// Xajax header
@@ -69,12 +69,11 @@
 	$tpl->assign("loginurl",LOGINSERVER_URL);
 	$tpl->assign("roundname",ROUNDID);
 
-	// Display header
-	$tpl->display(getcwd()."/tpl/headerext.html");
-
 	//
 	// Page content
 	//
+
+	ob_start();
 
 	echo '<div id="outGameContent">';
 			
@@ -166,11 +165,16 @@
 	}
 		
 	echo '</div>';
+	
+	$content = ob_get_clean();
 
-	//
+
+	// Display header
+	$tpl->display(getcwd()."/tpl/headerext.html");
+
+	echo $content;
+
 	// Page footer
-	//
-
 	$tpl->display(getcwd()."/tpl/footer.tpl");
 
 ?>

@@ -62,7 +62,7 @@ table	{
 }
 
 /* Wenn sich der cursor in einem text feld befindet... */
-/* Internet Explorer unterstützt diese funktion nicht!!!*/
+/* Internet Explorer unterstï¿½tzt diese funktion nicht!!!*/
 input:focus,textarea:focus, select:focus {
  	border:1px solid #ff0;
   background:#002;
@@ -77,7 +77,7 @@ button	{
 }
 
 /* Definiert die verschieden button typen im normal zustand */
-/* Internet Explorer unterstützt diese funktion nicht!!!*/
+/* Internet Explorer unterstï¿½tzt diese funktion nicht!!!*/
 input[type="submit"],input[type="reset"],input[type="button"]	{
 	background:#222255 url('images/button1.jpg');
 	color:#fff;
@@ -92,12 +92,27 @@ input[type="submit"]:focus,input[type="reset"]:focus,input[type="button"]:focus	
 }
 
 /* Definiert die verschieden button typen im hover zustand */
-/* Internet Explorer unterstützt diese funktion nicht!!!*/
+/* Internet Explorer unterstï¿½tzt diese funktion nicht!!!*/
 input:hover[type="submit"],input:hover[type="reset"],input:hover[type="button"]	{
 	background:#222255 url('images/button2.jpg');
 	color:#fff;
 	font-weight:bold;
 }
+
+/* Definiert die verschieden button typen im normal zustand */
+/* Internet Explorer unterstï¿½tzt diese funktion nicht!!!*/
+input[type="submit"][disabled="disabled"],
+input[type="reset"][disabled="disabled"],
+input[type="button"][disabled="disabled"],
+input[type="submit"][disabled="disabled"]:hover,
+input[type="reset"][disabled="disabled"]:hover,
+input[type="button"][disabled="disabled"]:hover
+{
+	background:#444;
+	color:#fff;
+	font-weight:bold;
+}
+
 
 input,select,textarea	{
 	border:solid #fff 1px;
@@ -264,7 +279,7 @@ input,select,textarea	{
 	text-align:left;
 }
 
-/* Ressourcen Speicher voll / Bewohner -> farbe wenn gebäude baut */
+/* Ressourcen Speicher voll / Bewohner -> farbe wenn gebï¿½ude baut */
 /* rest muss gleich wie .tbldata sein! */
 .tbldata2 {
 	font-size:8pt;
@@ -276,7 +291,7 @@ input,select,textarea	{
 	text-align:left;
 }
 
-/* Energie wenn sie Positiv ist (standart ist hellgrün) */
+/* Energie wenn sie Positiv ist (standart ist hellgrï¿½n) */
 /* rest muss gleich wie .tbldata sein! */
 .tbldata3 {
 	font-size:8pt;
@@ -410,7 +425,7 @@ table#innerspacetbl {
 
 
 
-/* übersicht -> planetenliste */
+/* ï¿½bersicht -> planetenliste */
 /* \"Courier New\", Courier, mono; */
 
 .PlaniTextLinks {

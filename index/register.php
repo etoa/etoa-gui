@@ -59,9 +59,11 @@
 			
 			
 			echo 'Melde dich hier für die '.ROUNDID.' von '.$cfg->get('game_name').' an. Es sind noch <b>'.max($cfg->p2('enable_register')-$ucnt[0],0).'</b> von <b>'.$cfg->p2('enable_register').'</b> Plätzen frei!<br/><br/>';
-			echo "<form action=\"?index=register\" method=\"post\"><div>";
-			echo "<table style=\"margin:5px auto;width:700px;\">";
-			
+			echo "<form action=\"?index=register\" method=\"post\">
+			<div style=\"width:700px;margin:5px auto;\">";
+
+			tableStart("Anmeldeformular");
+		
 			echo "<tr><th class=\"tbltitle\" style=\"width:150px;\">Vollst&auml;ndiger Name:</th>";
 			echo "<td class=\"tbldata\" style=\"width:170px;\">
 				<input type=\"text\" id=\"register_user_name\" name=\"register_user_name\" maxlength=\"".NAME_MAXLENGTH."\" size=\"".NAME_MAXLENGTH."\" value=\"".$userName."\" onkeyup=\"xajax_registerCheckName(this.value)\" onblur=\"xajax_registerCheckName(this.value)\" /></td>";
@@ -76,15 +78,22 @@
 			echo "<td class=\"tbldata\">
 				<input type=\"text\" name=\"register_user_email\" maxlength=\"50\" size=\"30\" value=\"".$userEmail."\" onkeyup=\"xajax_registerCheckEmail(this.value)\" onblur=\"xajax_registerCheckEmail(this.value)\" /></td>";
 			echo "<td class=\"tbldata\" id=\"emailStatus\">Du musst eine g&uuml;ltige E-Mail-Adresse eingeben. Auf diese wird dir ein Passwort zugeschickt mit dem du dich einloggen kannst.</td></tr>";
-			
-			echo "<tr><td colspan=\"3\">&nbsp;</td></tr>";
-			echo "<tr><td colspan=\"3\" class=\"tbldata\"><ul>
-			<li>Mit der Anmeldung akzeptierst du unsere <a href=\"javascript:;\" onclick=\"window.open('".LOGINSERVER_URL."?page=regeln');\" >Regeln</a>!</li>
+			echo "<tr><td colspan=\"3\">
+			<input type=\"checkbox\" name=\"agbread\" value=\"1\" onclick=\"if (this.checked) document.getElementById('register_submit').disabled=false; else document.getElementById('register_submit').disabled='disabled';\" />
+			Ich akzeptiere die <a href=\"javascript:;\" onclick=\"window.open('".LOGINSERVER_URL."?page=regeln');\" >Regeln / AGB's</a>
+			sowie die <a href=\"javascript:;\" onclick=\"window.open('".LOGINSERVER_URL."?page=privacy');\" >Datenschutzerklärung</a>
+
+			<br/><ul style=\"text-align:left;margin-left:30px\">
 			<li>Pro Person darf nur 1 Account verwendet werden. Multis werden rigoros <a href=\"javascript:;\" onclick=\"window.open('?index=pillory');\">gesperrt</a>!</li>
 			<li>Nach der Registration wird ein automatisch generiertes Passwort an die angegebene E-Mail-Adresse gesendet.</li>
 			<li>Der Name und die E-Mail-Adresse können nur von den Game-Administratoren eingesehen werden und werden nicht weitergegeben.</li>
-			</ul></td></tr>";
-			echo "</table><br/><input type=\"submit\" name=\"register_submit\" value=\"Anmelden!\" /></div></form><br/>
+			</ul>
+
+			</td></tr>";
+			echo "</table><br/>";
+			
+
+			echo "<input type=\"submit\" id=\"register_submit\" disabled=\"disabled\" name=\"register_submit\" value=\"Anmelden!\" /></div></form><br/>
 			<script type=\"text/javascript\">document.getElementById('register_user_name').focus()</script>";
 		}		
 		
@@ -115,7 +124,9 @@
         Solltest du innerhalb der n&auml;chsten 5 Minuten keine E-Mail erhalten, pr&uuml;fe zun&auml;chst dein Spam-Verzeichnis.<br/><br/>
         Melde dich bei einem <a href=\"?index=contact\">Admin</a>, falls du keine E-Mail erh&auml;ltst oder andere Anmeldeprobleme auftreten.";
         iBoxEnd();
-        
+
+				echo button("Zum Login",LOGINSERVER_URL);
+
         echo "</div><br style=\"clear:both;\" /></div>";
     		$_SESSION['REGISTER']=Null;
     }
