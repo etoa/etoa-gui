@@ -20,9 +20,11 @@ class AdminUser
 		SELECT
 			*
 		FROM
-			admin_users
-		WHERE
-			user_id=".$id."
+			admin_users u
+		INNER JOIN
+			admin_groups g
+			ON u.user_admin_rank=g.group_id
+			AND u.user_id=".$id."
 		");
 		if (mysql_num_rows($res)>0)
 		{
@@ -30,6 +32,8 @@ class AdminUser
 			$this->id = $id;
 			$this->nick = $arr['user_nick'];
 			$this->valid = true;
+			$this->level = $arr['group_level'];
+			$this->groupName = $arr['group_name'];
 		}
 	}
 
@@ -44,6 +48,10 @@ class AdminUser
 			return $this->id;
 		if ($field == "nick")
 			return $this->nick;
+		if ($field == "level")
+			return $this->level;
+		if ($field == "groupName")
+			return $this->groupName;
 	}
 
 	//put your code here

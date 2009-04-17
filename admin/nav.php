@@ -2,41 +2,36 @@
 
 	$navmenu=array();
 	
-	$navmenu['Allgemeines']['Startseite']['page']="home";
-	$navmenu['Allgemeines']['Startseite']['sub']="";
-	$navmenu['Allgemeines']['Startseite']['level']=0;
+	$navmenu['Allgemeines'] = array(
+		'Startseite' => array('page'=>"overview",'sub'=>"",'level'=>0),
+		'Ingame-News' => array('page'=>"overview",'sub'=>"ingamenews",'level'=>0),
+		'Systemnachricht' => array('page'=>"overview",'sub'=>"systemmessage",'level'=>0),
+	);
 
-	$navmenu['Allgemeines']['Ingame-News']['page']="home";
-	$navmenu['Allgemeines']['Ingame-News']['sub']="ingamenews";
-	$navmenu['Allgemeines']['Ingame-News']['level']=0;
 
-	$navmenu['Allgemeines']['Systemnachricht']['page']="home";
-	$navmenu['Allgemeines']['Systemnachricht']['sub']="systemmessage";
-	$navmenu['Allgemeines']['Systemnachricht']['level']=0;
-
-	$navmenu['Allgemeines']['Offline nehmen']['page']="home";
+	$navmenu['Allgemeines']['Offline nehmen']['page']="overview";
 	$navmenu['Allgemeines']['Offline nehmen']['sub']="offline";
 	$navmenu['Allgemeines']['Offline nehmen']['level']=1;
 
-	$navmenu['Allgemeines']['Rangliste']['page']="home";
+	$navmenu['Allgemeines']['Rangliste']['page']="overview";
 	$navmenu['Allgemeines']['Rangliste']['sub']="stats";
 	$navmenu['Allgemeines']['Rangliste']['level']=0;
 
-	$navmenu['Allgemeines']['Backend-Daemon']['page']="home";
+	$navmenu['Allgemeines']['Backend-Daemon']['page']="overview";
 	$navmenu['Allgemeines']['Backend-Daemon']['sub']="daemon";
 	$navmenu['Allgemeines']['Backend-Daemon']['level']=0;
 
 	$navmenu['Allgemeines']['bar'][0] = true;
 
-	$navmenu['Allgemeines']['Admin-News']['page']="home";
+	$navmenu['Allgemeines']['Admin-News']['page']="overview";
 	$navmenu['Allgemeines']['Admin-News']['sub']="adminnews";
 	$navmenu['Allgemeines']['Admin-News']['level']=2;
 
-	$navmenu['Allgemeines']['Admin-Management']['page']="home";
+	$navmenu['Allgemeines']['Admin-Management']['page']="overview";
 	$navmenu['Allgemeines']['Admin-Management']['sub']="adminusers";
 	$navmenu['Allgemeines']['Admin-Management']['level']=2;
 
-	$navmenu['Allgemeines']['Admin-Sessionlog']['page']="home";
+	$navmenu['Allgemeines']['Admin-Sessionlog']['page']="overview";
 	$navmenu['Allgemeines']['Admin-Sessionlog']['sub']="adminlog";
 	$navmenu['Allgemeines']['Admin-Sessionlog']['level']=2;
 

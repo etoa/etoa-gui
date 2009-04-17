@@ -151,7 +151,7 @@
 				");
 				$id = mysql_insert_id();
 				echo "Gespeichert!<br/><br/>";
-				add_log(8,"Der Administrator ".$s['user_nick']." erstellt einen neuen Administrator: ".$_POST['user_nick']." (ID: ".$id.").",time());					
+				add_log(8,"Der Administrator ".$cu->nick." erstellt einen neuen Administrator: ".$_POST['user_nick']." (ID: ".$id.").",time());
 
 				if ($_POST['user_password']!="")
 				{
@@ -178,7 +178,7 @@
 				if ($_POST['user_password']!="")
 				{
 					$pw = ", user_password='".pw_salt($_POST['user_password'],$_POST['user_id'])."'";
-					add_log(8,"Der Administrator ".$s['user_nick']." ändert das Passwort des Administrators ".$_POST['user_nick']." (ID: ".$_POST['user_id'].").",time());					
+					add_log(8,"Der Administrator ".$cu->nick." ändert das Passwort des Administrators ".$_POST['user_nick']." (ID: ".$_POST['user_id'].").",time());
 				}				
 				dbquery("
 				UPDATE
@@ -194,7 +194,7 @@
 					user_id=".$_POST['user_id']."				
 				");
 				echo "Gespeichert!<br/><br/>";
-				add_log(8,"Der Administrator ".$s['user_nick']." ändert die Daten des Administrators ".$_POST['user_nick']." (ID: ".$_POST['user_id'].").",time());					
+				add_log(8,"Der Administrator ".$cu->nick." ändert die Daten des Administrators ".$_POST['user_nick']." (ID: ".$_POST['user_id'].").",time());
 			}
 			else
 			{
@@ -202,7 +202,7 @@
 			}			
 		}
 		
-		if (isset($_GET['del']) && $_GET['del']>0 && $_GET['del']!=$s['user_id'])
+		if (isset($_GET['del']) && $_GET['del']>0 && $_GET['del']!=$cu->id)
 		{
 			$res = dbquery("
 			SELECT
@@ -216,7 +216,7 @@
 			{
 				$arr = mysql_fetch_array($res);
 				dbquery("DELETE FROM admin_users WHERE user_id=".$_GET['del']."");
-				add_log(8,"Der Administrator ".$s['user_nick']." löscht den Administrator ".$arr['user_nick']." (ID: ".$_GET['del'].").",time());					
+				add_log(8,"Der Administrator ".$cu->nick." löscht den Administrator ".$arr['user_nick']." (ID: ".$_GET['del'].").",time());
 				echo "Benutzer gel&ouml;scht!<br/><br/>";
 			}
 		}
@@ -255,7 +255,7 @@
 				<td>".$arr['group_name']."</td>
 				<td>".($arr['user_locked']==1 ? "<span style=\"color:red\">Ja</span>" : "Nein")."</td>
 				<td style=\"width:40px;\">".edit_button("?page=$page&amp;sub=$sub&amp;edit=".$arr['user_id']."")." ";
-				if ($arr['user_id']!=$s['user_id'])
+				if ($arr['user_id']!=$cu->id)
 				 	echo del_button("?page=$page&amp;sub=$sub&amp;del=".$arr['user_id'],"return confirm('Soll der Benutzer wirklich gelöscht werden?')");
 				echo "</td>
 			</tr>";

@@ -52,6 +52,8 @@
 
 	adminHtmlHeader();
 
+	$cu = new AdminUser($s->user_id);
+
 	// Zwischenablage
 	if (isset($_GET['cbclose']))
 	{
@@ -59,6 +61,7 @@
 	}
 	$cb = isset ($s->clipboard) && $s->clipboard==1 ? true : false;
 
+/*
 	// Admin-Gruppen laden				
 	$admingroup=array();
 	$gres=dbquery("SELECT * FROM admin_groups ORDER BY group_level DESC;");
@@ -67,6 +70,8 @@
 		$admingroup[$garr['group_id']] =$garr['group_name'];
 		$adminlevel[$garr['group_level']] =$garr['group_name'];
 	}
+	*/
+
 	?>
 
 	 			<table id="layoutbox">
@@ -129,7 +134,7 @@
 											}
 											else
 											{
-												if ($data['level']<=$_SESSION[SESSION_NAME]['group_level'])
+												if ($data['level'] <= $cu->level )
 												{
 													if ($data['sub']!="")
 													{
@@ -179,7 +184,7 @@
 
 
 
-								$gres=dbquery("SELECT COUNT(*) FROM users WHERE user_acttime>".(time()-$conf['user_timeout']['v']).";");
+								$gres=dbquery("SELECT COUNT(*) FROM users WHERE user_acttime>".(time()-$cfg->user_timeout->v).";");
 								$garr=mysql_fetch_row($gres);
 								if ($uarr[0]>0)
 									$gp=$garr[0]/$uarr[0]*100;
@@ -321,7 +326,7 @@
 											if ($title != "bar" && $data['page']==$page && $data['sub']==$sub)
 											{
 												$rank=$data['level'];
-												if ($data['level']<=$_SESSION[SESSION_NAME]['group_level'])
+												if ($data['level'] <= $cu->level)
 													$allow_inc=true;
 											}
 										}

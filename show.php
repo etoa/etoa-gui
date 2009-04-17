@@ -101,6 +101,7 @@
 			
 	if ($show)
 	{
+		$ov = false;
 		if ($page!="" && $page=="help")
 		{
 			$index = "help";
@@ -126,31 +127,37 @@
 		}
 		else
 		{
+			$ov = true;
+		}
+
+		if ($ov)
+		{
 			echo '<h1>Öffentliche Seiten</h1>';
 			echo '<p>Bitte wähle eine Seite aus:</p><br/><ul>';
 			foreach ($indexpage as $k => $v)
 			{
 				echo '<li><a href="'.$v['url'].'">'.$v['label'].'</a></li>';
 			}
-			echo '</ul>';
-			exit;
-		}
-
-
-		if (!eregi("^[a-z\_]+$",$page) || strlen($page)>50)
-		{
-			die("<h1>Fehler</h1>Der Seitenname <b>".$page."</b> enth&auml;lt unerlaubte Zeichen!<br/><br/>
-			<a href=\"javascript:window.close();\">Schliessen</a><br/><br/>");
-		}
-		if (file_exists($sub.$page.".php"))
-		{
-			$popup = true;
-			include ($sub.$page.".php");
-			echo "<br/><br/>";
+			echo '</ul>';			
 		}
 		else
 		{
-			echo "<h1>Fehler:</h1> Die Seite <b>".$page."</b> existiert nicht!<br/><br/>";
+			if (!eregi("^[a-z\_]+$",$page) || strlen($page)>50)
+			{
+				die("<h1>Fehler</h1>Der Seitenname <b>".$page."</b> enth&auml;lt unerlaubte Zeichen!<br/><br/>
+				<a href=\"javascript:window.close();\">Schliessen</a><br/><br/>");
+			}
+			if (file_exists($sub.$page.".php"))
+			{
+				$popup = true;
+				include ($sub.$page.".php");
+				echo "<br/><br/>";
+			}
+			else
+			{
+				echo "<h1>Fehler:</h1> Die Seite <b>".$page."</b> existiert nicht!<br/><br/>";
+			}
+			
 		}
 
 		dbclose();

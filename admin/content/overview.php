@@ -201,7 +201,7 @@
 							echo tf(max($arr['log_logouttime'],$arr['log_acttime'])-$arr['log_logintime']);
 						else
 							echo "-";
-						if ($arr['log_session_key']==$s['key'])
+						if ($arr['log_session_key']==$s->id)
 							echo " <span style=\"color:#0f0\">aktiv</span>";
 						echo "</td></tr>";
 					}
@@ -220,10 +220,10 @@
 		else
 		{
 		
-			if (isset($_GET['kick']) && $_GET['kick']>0 && $_GET['kick']!=$s['user_id'])
+			if (isset($_GET['kick']) && $_GET['kick']>0 && $_GET['kick']!=$cu->id)
 			{
 				dbquery("UPDATE admin_users SET user_session_key='' WHERE user_id=".$_GET['kick'].";");	
-				add_log(8,$s['user_nick']." l&ouml;scht die Session des Administrators mit der ID ".$_GET['kick'],time());
+				add_log(8,$cu->nick." l&ouml;scht die Session des Administrators mit der ID ".$_GET['kick'],time());
 			}
 			
 			if (isset($_POST['delentrys']) && $_POST['delentrys']!="")
@@ -231,7 +231,7 @@
 				$tstamp = time()-$_POST['log_timestamp'];
 				dbquery("DELETE FROM admin_user_log WHERE log_logintime<$tstamp;");
 				echo mysql_affected_rows()." Eintr&auml;ge wurden gel&ouml;scht!<br/><br/>";
-				add_log(8,$s['user_nick']." l&ouml;scht ".mysql_affected_rows()." Eintr&auml;ge des Admin-Session-Logs",time());
+				add_log(8,$cu->nick." l&ouml;scht ".mysql_affected_rows()." Eintr&auml;ge des Admin-Session-Logs",time());
 			}			
 			
 			echo "<h2>Aktive Sessions / Zuletzt aktiv</h2>";
@@ -253,7 +253,7 @@
 					if (time()-TIMEOUT< $arr['user_acttime'] && $arr['user_session_key']!="")
 					{
 						echo "<td class=\"tbldata\" style=\"color:#0f0\">Online";
-						if ($arr['user_id']!=$s['user_id'])
+						if ($arr['user_id']!=$cu->id)
 							echo " [<a href=\"?page=$page&amp;sub=$sub&amp;kick=".$arr['user_id']."\">kick</a>]</td>";
 					}
 					else
@@ -417,12 +417,13 @@
 	else
 	{
 		echo "<h1>&Uuml;bersicht</h1>";
-		
-		if (!isset($s['home_visited']))
+
+
+		if (!isset($s->home_visited))
 		{
-			echo "Hallo <b>".$s['user_nick']."</b>, willkommen im Administrationsmodus! Dein Rang ist <b>".$s['group_name']."</b><br/>";
-			echo "<span style=\"color:#0f0;\">Dein letzter Login war <b>".df($s['user_last_login'])."</b>, Host: <b>".resolveIp($s['user_last_host'])."</b> (aktuell: ".gethostbyaddr($_SERVER['REMOTE_ADDR'])."), IP: <b>".$s['user_last_ip']."</b> (aktuell: ".$_SERVER['REMOTE_ADDR'].")</span><br/><br/>";
-			$s['home_visited']=true;
+			echo "Hallo <b>".$cu->nick."</b>, willkommen im Administrationsmodus! Dein Rang ist <b>".$cu->groupName.".</b><br/>";
+			//echo "<span style=\"color:#0f0;\">Dein letzter Login war <b>".df($s['user_last_login'])."</b>, Host: <b>".resolveIp($s['user_last_host'])."</b> (aktuell: ".gethostbyaddr($_SERVER['REMOTE_ADDR'])."), IP: <b>".$s['user_last_ip']."</b> (aktuell: ".$_SERVER['REMOTE_ADDR'].")</span><br/><br/>";
+			$s->home_visited=true;
 		}
 		
 		//
@@ -446,7 +447,7 @@
 		FROM 
 			admin_users
 		WHERE
-			user_id=".$s['user_id'].";");
+			user_id=".$cu->id.";");
 		$arr = mysql_fetch_row($res);
 		if ($arr[0]==1)
 		{
@@ -566,9 +567,9 @@
 
 		// Tickets
 		$tnew = Ticket::countNew();
-		$tass = Ticket::countAssigned($s['user_id']);
+		$tass = Ticket::countAssigned($cu->id);
 
-echo "<tr><th class=\"tbltitle\">Ticket-System:</th>";
+		echo "<tr><th class=\"tbltitle\">Ticket-System:</th>";
 		echo "<td class=\"tbldata\">
 		".popupLink("tickets",$tnew." neue Tickets",($tnew>0) ? "font-weight:bold;color:#f90;":"")."
 		vorhanden";
