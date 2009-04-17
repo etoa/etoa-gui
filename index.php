@@ -61,7 +61,7 @@
 	// Validate session
 	if (!$s->validate())
 	{
-		forward(LOGINSERVER_URL."?page=err&err=nosession","Ungültige Session",$this->lastError);
+		forward(LOGINSERVER_URL."?page=err&err=nosession","Ungültige Session",$s->lastError);
 	}
 
 	// Load user data
