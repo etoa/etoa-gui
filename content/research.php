@@ -205,7 +205,7 @@
 	
 	
 					// Bauzeit
-					$bonus = $cu->race->researchTime + $cp->typeResearchtime + $cp->starResearchtime + $cu->race->researchTime -3;
+					$bonus = $cu->race->researchTime + $cp->typeResearchtime + $cp->starResearchtime + $cu->specialist->researchTime - 3;
 	
 					$btime = ($bc['metal']+$bc['crystal']+$bc['plastic']+$bc['fuel']+$bc['food']) / GLOBAL_TIME * RES_BUILD_TIME * $time_boni_factor;
 					$btime *= $bonus;
@@ -884,7 +884,7 @@
 									if (!$requirements_passed)
 										$img = "misc/imagefilter.php?file=$img&filter=req";
 	
-									echo "<div style=\"background:url('".$img."') no-repeat;background-position:center\" class=\"buildOverviewObjectContainer\"   ".tm($bv['name'],"<b>".$subtitle."</b><br/>".$tmtext.$bv['shortcomment']).">
+									echo "<div style=\"background:url('".$img."') no-repeat;background-position:center;\" class=\"buildOverviewObjectContainer\"  ".tm($bv['name'],"<b>".$subtitle."</b><br style=\"clear:both\" />".$tmtext.$bv['shortcomment']).">
 									<div class=\"buildOverviewBGImage\">
 									<a class=\"buildOverviewLink\" href=\"?page=$page&amp;id=".$bid."\">
 									<div class=\"buildOverviewObjectTitle\">".$bv['name']."</div>";
