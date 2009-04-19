@@ -82,7 +82,7 @@ class UserSession extends Session
 		return false;
 	}
 
-	function validate()
+	function validate($destroy=1)
 	{
 		if (isset($this->time_login))
 		{
@@ -131,7 +131,8 @@ class UserSession extends Session
 		{
 			$this->lastError = "";
 		}
-		self::unregisterSession();
+		if ($destroy==1)
+			self::unregisterSession();
 		return false;
 	}
 

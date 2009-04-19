@@ -121,10 +121,10 @@
 	$tpl->assign("bodyTopStuff",ob_get_clean());			
 
 	// Display header		
-	$tpl->display(getcwd()."/tpl/header.tpl");
+	$tpl->display(getcwd()."/tpl/header.html");
 
-	dump($s);
-	dump($_SESSION);
+	//dump($s);
+	//dump($_SESSION);
 
 	//
 	// Page content
@@ -377,7 +377,7 @@
 	// Page footer
 	//
 	
-	$tpl->display(getcwd()."/tpl/footer.tpl");			
+	$tpl->display(getcwd()."/tpl/footer.html");
 	
 	$_SESSION['lastpage']=$page;
 

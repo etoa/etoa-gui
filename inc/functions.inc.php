@@ -527,21 +527,9 @@
 	/**
 	* Convert formated number back to integer
 	*/
-	function nf_back($number)	// Number format
+	function nf_back($number,$colorize=0)
 	{
 		$number = str_replace('`', '', $number);
-		$number = abs(intval($number));
-		return $number;
-		
-	}
-
-	/**
-	* An alternative number formatter
-	*
-	* @todo Merge this with nf()
-	*/	
-	function nf2($number,$colorize=0)	// Number format
-	{
 		if ($colorize==1)
 		{
 			if ($number>0)
@@ -549,7 +537,9 @@
 			if ($number<0)
 				return "<span style=\"color:#f00\">".number_format($number,0,",",".")."</span>";
 		}
-		return number_format($number,0,",",".");
+		$number = abs(intval($number));
+		return $number;
+		
 	}
 
 	/**

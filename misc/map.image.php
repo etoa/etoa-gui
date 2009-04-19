@@ -7,17 +7,12 @@
 	        ImageLine($image, $x0, $y0, $x1, $y1, IMG_COLOR_STYLED);
 	} 
 
-	// TODO:
+	header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
+	header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); // Datum in der Vergangenheit
+	header ("Content-type: image/png");
 
-	session_start();
-	define("CLASS_ROOT","../classes");
-	require_once("../bootstrap.inc.php");
-	include("../conf.inc.php");
-	include("../functions.php");
-	dbconnect();
-	$cfg = Config::getInstance();
-	$conf = $cfg->getArray();
-	include("../def.inc.php");
+	define("RELATIVE_ROOT","../");
+	include("../inc/bootstrap.inc.php");
 
 	define('GALAXY_MAP_DOT_RADIUS',3);
 	define('GALAXY_MAP_WIDTH',500);
@@ -39,9 +34,7 @@
 	$w = GALAXY_MAP_WIDTH;
 	$h = $sy_num*$cy_num*GALAXY_IMAGE_SCALE+GALAXY_MAP_LEGEND_HEIGHT;
 	$im = imagecreatetruecolor($w,$h);
-	header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1	
-	header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); // Datum in der Vergangenheit	
-	header ("Content-type: image/png");
+
 	$colBlack = imagecolorallocate($im,0,0,0);
 	$colGrey = imagecolorallocate($im,120,120,120);
 	$colYellow = imagecolorallocate($im,255,255,0);

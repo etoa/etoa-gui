@@ -44,9 +44,36 @@
 
 	require_once("inc/bootstrap.inc.php");
 
-	define("IMAGE_PATH",$cfg->get('default_image_path'));
-	define("IMAGE_EXT","png");
-	define('CSS_STYLE',DESIGN_DIRECTORY."/".$cfg->value('default_css_style'));
+
+
+	$loggedIn = false;
+	if ($s->validate(0))
+	{
+		$cu = new CurrentUser($s->user_id);
+		if ($cu->isValid)
+		{
+			$loggedIn = true;
+		}
+	}
+
+	if (isset($cu) && $cu->properties->cssStyle !='')
+	{
+		define('CSS_STYLE',DESIGN_DIRECTORY."/".$cu->properties->cssStyle);
+	}
+	else
+	{
+		define('CSS_STYLE',DESIGN_DIRECTORY."/".$cfg->value('default_css_style'));
+	}
+	if (isset($cu) && $cu->properties->imageUrl != '' && $cu->properties->imageExt != '')
+	{
+		define('IMAGE_PATH',$cu->properties->imageUrl);
+		define('IMAGE_EXT',$cu->properties->imageExt);
+	}
+	else
+	{
+		define("IMAGE_PATH",$cfg->default_image_path->v);
+		define("IMAGE_EXT","png");
+	}
 
 	//
 	// Page header
@@ -97,51 +124,36 @@
 		{
 			$show = false;
 		}
-	}		
+	}
+	if ($loggedIn)
+		$show = true;
 			
 	if ($show)
 	{
-		$ov = false;
-		if ($page!="" && $page=="help")
-		{
-			$index = "help";
-			$page = $index;
-			$sub="content/";
-		}
-		elseif ($page!="" && $page=="contact")
-		{
-			$index = "contact";
-			$page = $index;
-			$sub="index/";
-		}
-		elseif ($index!="")
+
+		if ($index!="")
 		{
 			$index = ($index=="stats") ? "ladder" : $index;
-			$page = $index;
 			$sub="index/";
-		}
-		elseif ($info!="")
-		{
-			$page=$info;
-			$sub="info/";
-		}
-		else
-		{
-			$ov = true;
-		}
-
-		if ($ov)
-		{
-			echo '<h1>Öffentliche Seiten</h1>';
-			echo '<p>Bitte wähle eine Seite aus:</p><br/><ul>';
-			foreach ($indexpage as $k => $v)
+			if (!eregi("^[a-z\_]+$",$index) || strlen($index)>50)
 			{
-				echo '<li><a href="'.$v['url'].'">'.$v['label'].'</a></li>';
+				die("<h1>Fehler</h1>Der Seitenname <b>".$index."</b> enth&auml;lt unerlaubte Zeichen!<br/><br/>
+				<a href=\"javascript:window.close();\">Schliessen</a><br/><br/>");
 			}
-			echo '</ul>';			
+			if (file_exists($sub.$index.".php"))
+			{
+				$popup = true;
+				include ($sub.$index.".php");
+				echo "<br/><br/>";
+			}
+			else
+			{
+				echo "<h1>Fehler:</h1> Die Seite <b>".$index."</b> existiert nicht!<br/><br/>";
+			}
 		}
-		else
+		elseif ($page!="" && $loggedIn  && $page!=DEFAULT_PAGE)
 		{
+			$sub="content/";
 			if (!eregi("^[a-z\_]+$",$page) || strlen($page)>50)
 			{
 				die("<h1>Fehler</h1>Der Seitenname <b>".$page."</b> enth&auml;lt unerlaubte Zeichen!<br/><br/>
@@ -157,7 +169,16 @@
 			{
 				echo "<h1>Fehler:</h1> Die Seite <b>".$page."</b> existiert nicht!<br/><br/>";
 			}
-			
+		}
+		else
+		{
+			echo '<h1>Öffentliche Seiten</h1>';
+			echo '<p>Bitte wähle eine Seite aus:</p><br/><ul>';
+			foreach ($indexpage as $k => $v)
+			{
+				echo '<li><a href="'.$v['url'].'">'.$v['label'].'</a></li>';
+			}
+			echo '</ul>';
 		}
 
 		dbclose();
@@ -169,19 +190,20 @@
 		Bitte Schlüssel eingeben: <input type=\"text\" value=\"\" name=\"reg_key_auth_value\" /> &nbsp;
 		<input type=\"submit\" value=\"Prüfen\" name=\"reg_key_auth_submit\" />
 		</form>";
-	}
-		
+	}		
 	echo '</div>';
-	
+
 	$content = ob_get_clean();
 
-
 	// Display header
-	$tpl->display(getcwd()."/tpl/headerext.html");
+	if ($loggedIn && $page!=DEFAULT_PAGE)
+		$tpl->display(getcwd()."/tpl/header.html");
+	else
+		$tpl->display(getcwd()."/tpl/headerext.html");
 
 	echo $content;
 
 	// Page footer
-	$tpl->display(getcwd()."/tpl/footer.tpl");
+	$tpl->display(getcwd()."/tpl/footer.html");
 
 ?>

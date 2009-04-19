@@ -230,7 +230,7 @@
 			{
 				echo "<tr>
 						<td>
-							".nf2($cnt)."
+							".nf($cnt,1)."
 						</td>";
 				echo "<td >
 				<div id=\"ttuser".$arr['alliance_id']."\" style=\"display:none;\">
