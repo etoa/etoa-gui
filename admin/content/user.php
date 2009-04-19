@@ -44,6 +44,14 @@
 	}
 
 	//
+	// Sessions
+	//
+	elseif ($sub=="sessions")
+	{
+		require("user/sessions.inc.php");
+	}
+
+	//
 	// Erstellen
 	//
 	elseif ($sub=="create")

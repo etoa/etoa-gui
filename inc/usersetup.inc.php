@@ -12,11 +12,11 @@
 	echo "<h1>Willkommen in Andromeda</h1>";
 
 		// Apply choosen itemset
-	if (isset($s['itemset_key']) && isset($_POST[md5($s['itemset_key'])]) && isset($_POST['itemset_id']))
+	if (isset($s->itemset_key) && isset($_POST[md5($s->itemset_key)]) && isset($_POST['itemset_id']))
 	{
-		Usersetup::addItemSetListToPlanet($s['itemset_planet'],$cu->id,$_POST['itemset_id']);
-		$s['itemset_key']=null;
-		$s['itemset_planet']=null;
+		Usersetup::addItemSetListToPlanet($s->itemset_planet,$cu->id,$_POST['itemset_id']);
+		$s->itemset_key=null;
+		$s->itemset_planet=null;
 		$cu->setSetupFinished();
 		$mode = "finished";		
 	}
@@ -83,8 +83,8 @@
 	if ($mode=="itemsets")	
 	{
 		$k = mt_rand(10000,99999);
-		$s['itemset_key']=$k;
-		$s['itemset_planet']=$tp->id();
+		$s->temset_key=$k;
+		$s->itemset_planet=$tp->id();
 		iBoxStart("Start-Objekte");
 		echo "<form action=\"?\" method=\"post\">";
 		checker_init();
@@ -331,10 +331,7 @@
 		echo text2html($conf['welcome_message']['v']);
 		iBoxEnd();
 		echo '<input type="button" value="Zum Heimatplaneten" onclick="document.location=\'?page=planetoverview\'" />';
-		if (!isset($s['allow_planet_change_counter']) || $s['allow_planet_change_counter']==0)
-		{
-			send_msg($cu->id,USER_MSG_CAT_ID,'Willkommen',$conf['welcome_message']['v']);
-		}
+		send_msg($cu->id,USER_MSG_CAT_ID,'Willkommen',$conf['welcome_message']['v']);
 	}
 	else
 	{

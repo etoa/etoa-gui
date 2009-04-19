@@ -564,15 +564,19 @@
 		$m = floor(($ts-($t*3600*24)-($h*3600))/60);
 		$s = floor(($ts-($t*3600*24)-($h*3600)-($m*60)));
 
+		$str = "";
 		if ($w>0)
-			return $w."w ".$t."d ".$h."h ".$m."m ".$s."s";
+			$str.= $w."w ";
 		if ($t>0)
-			return $t."d ".$h."h ".$m."m ".$s."s";
+			$str.=  $t."d ";
 		if ($h>0)
-			return $h."h ".$m."m ".$s."s";
+			$str.=  $h."h ";
 		if ($m>0)		
-			return $m."m ".$s."s";
-		return $s."s";
+			$str.=  $m."m ";
+		if ($s>0)
+			$str.=  $s."s ";
+
+		return $str;
 	}
 
 	/**

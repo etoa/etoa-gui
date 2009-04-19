@@ -130,7 +130,7 @@
 				ship_queue
 			WHERE
             	queue_entity_id='".$cp->id."'
-                AND queue_user_id='".$s['user_id']."'
+                AND queue_user_id='".$cu->id."'
                 AND queue_starttime>'0'
                 AND queue_endtime>'0';";
 			$tres = dbquery($sql);
@@ -145,7 +145,7 @@
 				def_queue
 			WHERE
 				queue_entity_id='".$cp->id."'
-				AND queue_user_id='".$s['user_id']."'
+				AND queue_user_id='".$cu->id."'
 				AND queue_starttime>'0'
 	            AND queue_endtime>'0';";
 			$tres = dbquery($sql);
@@ -160,7 +160,7 @@
             	techlist
 			WHERE
             	techlist_entity_id='".$cp->id."'
-                AND techlist_user_id='".$s['user_id']."'
+                AND techlist_user_id='".$cu->id."'
                 AND techlist_build_start_time>'0'
                 AND techlist_build_end_time>'0';";
 			$tres = dbquery($sql);
@@ -175,7 +175,7 @@
 	        	buildlist
 			WHERE
 	        	buildlist_entity_id='".$cp->id."'
-	            AND buildlist_user_id='".$s['user_id']."'
+	            AND buildlist_user_id='".$cu->id."'
 	            AND buildlist_build_start_time>'0'
 	            AND buildlist_build_end_time>'0';";
 			$tres = dbquery($sql);
@@ -196,7 +196,7 @@
 	  						buildlist_people_working='0'
 	  					WHERE
 	  						buildlist_building_id='".$id."'
-	  						AND buildlist_user_id='".$s['user_id']."'
+	  						AND buildlist_user_id='".$cu->id."'
 	  						AND buildlist_entity_id='".$cp->id."'");
 	  				}
 	  			}
@@ -248,7 +248,7 @@
 	  						buildlist_people_working_status='1'
 	  					WHERE
 	  						buildlist_building_id='".$sp_arr['building_id']."'
-	  						AND buildlist_user_id='".$s['user_id']."'
+	  						AND buildlist_user_id='".$cu->id."'
 	  						AND buildlist_entity_id='".$cp->id."'");
                     }
                     else
@@ -267,7 +267,7 @@
 	  						buildlist_people_working_status='0'
 	  					WHERE
 	  						buildlist_building_id='".$sp_arr['building_id']."'
-	  						AND buildlist_user_id='".$s['user_id']."'
+	  						AND buildlist_user_id='".$cu->id."'
 	  						AND buildlist_entity_id='".$cp->id."'");
                     }
                     echo '</td><td>'.(nf($sp_arr['buildlist_people_working']*$cfg->get('people_food_require'))).' t</td></tr>';

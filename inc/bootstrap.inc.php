@@ -59,7 +59,7 @@
 	if (ADMIN_MODE)
 		$s = AdminSession::getInstance();
 	else
-		$s = Session::getInstance();
+		$s = UserSession::getInstance();
 
 	// Connect to database
 	dbconnect();

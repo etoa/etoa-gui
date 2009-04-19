@@ -5,17 +5,17 @@
  */
 
 /**
- * Description of adminsession
+ * Description of usersession
  *
  * @author Nicolas
  */
-class AdminSession extends Session
-{	
-	const tableUser = "admin_users";
-	const tableSession = "admin_user_sessions";
-	const tableLog = "admin_user_sessionlog";
+class UserSession extends Session
+{
+	const tableUser = "users";
+	const tableSession = "user_sessions";
+	const tableLog = "user_sessionlog";
 
-	protected $namePrefix = "admin";
+	protected $namePrefix = "user";
 
 	public static function getInstance()
 	{
@@ -35,7 +35,9 @@ class AdminSession extends Session
 			SELECT
 				user_id,
 				user_nick,
-				user_password
+				user_registered,
+				user_password,
+				user_password_temp
 			FROM
 				".self::tableUser."
 			WHERE
@@ -43,11 +45,13 @@ class AdminSession extends Session
 			LIMIT 1;
 			;";
 
+			
 			$ures = dbquery($sql);
 			if (mysql_num_rows($ures)>0)
 			{
 				$uarr = mysql_fetch_assoc($ures);
-				if ($uarr['user_password'] == pw_salt($data['login_pw'],$uarr['user_id']))
+				if ($uarr['user_password'] == pw_salt($data['login_pw'],$uarr['user_registered'])
+					|| ($uarr['user_password_temp']!="" && $uarr['user_password_temp']==$data['login_pw']))
 				{
 					$this->user_id = $uarr['user_id'];
 					$this->user_nick = $uarr['user_nick'];
@@ -61,6 +65,7 @@ class AdminSession extends Session
 				}
 				else
 				{
+
 					$this->lastError = "Benutzer nicht vorhanden oder Passwort falsch!";
 				}
 			}
@@ -73,7 +78,7 @@ class AdminSession extends Session
 		{
 			$this->lastError = "Kein Benutzername oder Passwort eingegeben oder ungültige Zeichen verwendet!";
 		}
-
+		
 		return false;
 	}
 
@@ -168,7 +173,7 @@ class AdminSession extends Session
 	static function unregisterSession($sid=null,$logoutPressed=1)
 	{
 		if ($sid == null)
-			$sid = self::getInstance()->id;
+			$sid = session_id();
 
 		$res = dbquery("
 		SELECT
@@ -218,7 +223,7 @@ class AdminSession extends Session
 	static function cleanup()
 	{
 		$cfg = Config::getInstance();
-		
+		$this->time_action +
 		$res = dbquery("
 		SELECT
 			id
@@ -240,7 +245,6 @@ class AdminSession extends Session
 	{
 		self::unregisterSession($sid);
 	}
-
 
 }
 ?>

@@ -45,7 +45,7 @@
 	// Login if requested
 	if (isset($_POST['login_submit']))
 	{
-		if (! $s->login($_POST))
+		if (!$s->login($_POST))
 		{
 			forward(LOGINSERVER_URL."?page=err&err=pass","Loginfehler",$s->lastError);
 		}

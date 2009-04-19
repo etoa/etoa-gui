@@ -138,38 +138,6 @@ $xajax->register(XAJAX_FUNCTION,'addBookmarkShip');
 	  return $objResponse;	
 	}
 
-
-/*
-				$fl = new Fleet($s['user']['id'],"so");
-				$fl->setSourceByPlanetId($cid);
-				if ($fl->setTargetByPlanetId(intval($tid)))
-				{
-					if ($fl->target->user_id>0 && $fl->target->user_id!=$s['user']['id'])
-					{
-						$fl->addShip($s['user']['spyship_id'],$s['user']['spyship_count']);
-						$fl->calcDist();
-						$fl->calcFlight();
-						if ($fl->fuel <= $cif)
-						{
-							echo "<span style=\"color:#0f0\">Sonde gestartet!</span> 
-							Ziel: ".$fl->target->sx."/".$fl->target->sy." : ".$fl->target->cx."/".$fl->target->cy." : ".$fl->target->pp."
-							Entfernung: ".nf($fl->distance)." AE, Zeit: ".tf($fl->duration).", Kosten: ".nf($fl->fuel)." ".RES_FUEL."<br/>";
-							$fl->launch();
-						}
-						else
-						{
-							echo "Zuwenig ".RES_FUEL." für diesen Flug (".$fl->fuel." benötigt)<br/>";
-						}							
-					}
-					else
-					{
-						echo "Ungültiger Planet!<br/>";
-					}
-				}
-				else
-				{
-					echo "Ungültiges Ziel!<br/>";
-				}*/
 	function addBookmarkShip($form,$delete=-1) {
 		$objResponse = new xajaxResponse();
 		

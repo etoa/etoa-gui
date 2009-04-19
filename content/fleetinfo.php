@@ -42,7 +42,7 @@
 	$lead_id = (isset($_GET['lead_id']) && intval($_GET['lead_id'])>0) ? intval($_GET['lead_id']) : -1;
 
 	//
-	// Flottendaten laden und überprüfen ob die Flotte existiert
+	// Flottendaten laden und ï¿½berprï¿½fen ob die Flotte existiert
 	//
 	$valid = 0;
 	
@@ -81,7 +81,7 @@
 	
 	if ($valid>0)
 	{
-		// Flugabbruch auslösen
+		// Flugabbruch auslï¿½sen
 		if (isset($_POST['cancel'])!="" && checker_verify())
 		{
 			if ($valid>=ALLIANCE_FLEET_SEND_HOME_PART)
@@ -89,7 +89,7 @@
 				if ($fd->cancelFlight())
 				{
 					ok_msg("Flug erfolgreich abgebrochen!");
-					add_log(13,"Der Spieler [b]".$s['user']['nick']."[/b] bricht den Flug seiner Flotte [b]".$fleet_id."[/b] ab",time());
+					add_log(13,"Der Spieler [b]".$cu->nick."[/b] bricht den Flug seiner Flotte [b]".$fleet_id."[/b] ab",time());
 				}
 				else
 				{
@@ -109,7 +109,7 @@
 				if ($fd->cancelFlight(true))
 				{
 					ok_msg("Flug erfolgreich abgebrochen!");
-					add_log(13,"Der Spieler [b]".$s['user']['nick']."[/b] bricht den ganzen Allianzflug seiner Flotte [b]".$fleet_id."[/b] ab",time());
+					add_log(13,"Der Spieler [b]".$cu->nick."[/b] bricht den ganzen Allianzflug seiner Flotte [b]".$fleet_id."[/b] ab",time());
 				}
 				else
 				{

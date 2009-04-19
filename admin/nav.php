@@ -4,36 +4,16 @@
 	
 	$navmenu['Allgemeines'] = array(
 		'Startseite' => array('page'=>"overview",'sub'=>"",'level'=>0),
+		'Rangliste' => array('page'=>"overview",'sub'=>"stats",'level'=>0),
 		'Ingame-News' => array('page'=>"overview",'sub'=>"ingamenews",'level'=>0),
 		'Systemnachricht' => array('page'=>"overview",'sub'=>"systemmessage",'level'=>0),
+		'Offline nehmen' => array('page'=>"overview",'sub'=>"offline",'level'=>1),
+		'Backend-Daemon' => array('page'=>"overview",'sub'=>"daemon",'level'=>1),
+		'bar' => array(0 => true),
+		'Admin-News' => array('page'=>"overview",'sub'=>"adminnews",'level'=>2),
+		'Admin-Management' => array('page'=>"overview",'sub'=>"adminusers",'level'=>2),
+		'Admin-Sessionlog' => array('page'=>"overview",'sub'=>"adminlog",'level'=>2),
 	);
-
-
-	$navmenu['Allgemeines']['Offline nehmen']['page']="overview";
-	$navmenu['Allgemeines']['Offline nehmen']['sub']="offline";
-	$navmenu['Allgemeines']['Offline nehmen']['level']=1;
-
-	$navmenu['Allgemeines']['Rangliste']['page']="overview";
-	$navmenu['Allgemeines']['Rangliste']['sub']="stats";
-	$navmenu['Allgemeines']['Rangliste']['level']=0;
-
-	$navmenu['Allgemeines']['Backend-Daemon']['page']="overview";
-	$navmenu['Allgemeines']['Backend-Daemon']['sub']="daemon";
-	$navmenu['Allgemeines']['Backend-Daemon']['level']=0;
-
-	$navmenu['Allgemeines']['bar'][0] = true;
-
-	$navmenu['Allgemeines']['Admin-News']['page']="overview";
-	$navmenu['Allgemeines']['Admin-News']['sub']="adminnews";
-	$navmenu['Allgemeines']['Admin-News']['level']=2;
-
-	$navmenu['Allgemeines']['Admin-Management']['page']="overview";
-	$navmenu['Allgemeines']['Admin-Management']['sub']="adminusers";
-	$navmenu['Allgemeines']['Admin-Management']['level']=2;
-
-	$navmenu['Allgemeines']['Admin-Sessionlog']['page']="overview";
-	$navmenu['Allgemeines']['Admin-Sessionlog']['sub']="adminlog";
-	$navmenu['Allgemeines']['Admin-Sessionlog']['level']=2;
 
 
 	$navmenu['In-Game Hilfe']['Übersicht']['page']="help";
@@ -43,15 +23,13 @@
 	$navmenu['In-Game Hilfe']['Technikbaum']['page']="help";
 	$navmenu['In-Game Hilfe']['Technikbaum']['sub']="techtree";
 	$navmenu['In-Game Hilfe']['Technikbaum']['level']=1;
-	
 
-	$navmenu['Spieler']['Spieler bearbeiten']['page']="user";
-	$navmenu['Spieler']['Spieler bearbeiten']['sub']="";
-	$navmenu['Spieler']['Spieler bearbeiten']['level']=0;
+	$navmenu['Spieler'] = array(
+		'Spieler bearbeiten' => array('page'=>"user", 'sub'=>'', 'level'=>0),
+		'Spieler erstellen' => array('page'=>"user", 'sub'=>'create', 'level'=>0),
+		'Sessions' => array('page'=>"user", 'sub'=>'sessions', 'level'=>0),
+	);
 
-	$navmenu['Spieler']['Spieler erstellen']['page']="user";
-	$navmenu['Spieler']['Spieler erstellen']['sub']="create";
-	$navmenu['Spieler']['Spieler erstellen']['level']=0;
 
 	$navmenu['Spieler']['Multi-Kontrolle']['page']="user";
 	$navmenu['Spieler']['Multi-Kontrolle']['sub']="multi";

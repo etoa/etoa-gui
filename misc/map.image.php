@@ -7,6 +7,8 @@
 	        ImageLine($image, $x0, $y0, $x1, $y1, IMG_COLOR_STYLED);
 	} 
 
+	// TODO:
+
 	session_start();
 	define("CLASS_ROOT","../classes");
 	require_once("../bootstrap.inc.php");

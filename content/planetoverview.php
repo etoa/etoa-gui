@@ -107,9 +107,9 @@
 		
 									echo "<br>Die Kolonie wurde aufgehoben!<br>";
 									echo "<a href=\"?page=overview&planet_id=".$main_arr['id']."\">Zur &Uuml;bersicht</a>";
-		
+
+									// Todo: see what happens with $cp, perhaps forward
 									$cp->id=NULL;
-									$s['currentPlanetId'] = $main_arr['id'];
 									$cpid = $main_arr['id'];
 								}
 								else

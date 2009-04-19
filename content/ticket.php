@@ -6,13 +6,13 @@
 if (isset($_GET['id']) && $_GET['id']>0)
 {
 	echo "<h2>Ticket-Details</h2>";
-	$tarr = Ticket::find(array("user_id"=>$s['user_id'],"id"=>intval($_GET['id'])));
+	$tarr = Ticket::find(array("user_id"=>$cu->id,"id"=>intval($_GET['id'])));
 	if (count($tarr) > 0)
 	{
 		$ti = array_shift($tarr);
 		if (isset($_POST['submit_new_post']))
 		{
-			if ($ti->addMessage(array("user_id"=>$s['user_id'],"message"=>$_POST['message'])))
+			if ($ti->addMessage(array("user_id"=>$cu->id,"message"=>$_POST['message'])))
 			{
 				ok_msg("Nachricht hinzugefügt!");
 			}
@@ -57,7 +57,7 @@ if (isset($_GET['id']) && $_GET['id']>0)
 			echo '<form action="?page='.$page.'&amp;id='.$_GET['id'].'" method="post">';
 			tableStart("Neue Nachricht");
 			echo '<tr><th>Absender:</th><td>';
-			echo $s['user_nick']."";
+			echo $cu->nick."";
 			echo '</td></tr>';
 			echo '<tr><th>Nachricht:</th><td>';
 			echo '<textarea name="message" rows="8" cols="60"></textarea>';
@@ -88,7 +88,7 @@ else
 
 	if (isset($_POST['abuse_submit']) && checker_verify())
 	{
-		Ticket::create(array_merge($_POST,array("user_id"=>$s['user_id'])));
+		Ticket::create(array_merge($_POST,array("user_id"=>$cu->id)));
 		echo "<br/>Vielen Dank, dein Text wurde gespeichert.<br/>Ein Game-Administrator wird sich dem Problem annehmen.<br/><br/>";
 		if ($ext)
 			echo "<input type=\"button\" onclick=\"document.location='?page=ticket'\" value=\"Weiter\" />";
@@ -169,14 +169,14 @@ else
 		</tr>*/
 		tableEnd();
 		
-		<input type=\"submit\" name=\"abuse_submit\" value=\"Einsenden\" /><br/><br/>";
+		echo "<input type=\"submit\" name=\"abuse_submit\" value=\"Einsenden\" /><br/><br/>";
 		echo "</form>";
 		echo "<script type=\"text/javascript\">document.getElementById('abuse_text').focus()</script>";
 		
 		if ($ext)
 		{
 		
-		$tickets = Ticket::find(array('user_id'=>$s['user_id']));
+		$tickets = Ticket::find(array('user_id'=>$cu->id));
 		
 		if (count($tickets)>0)
 		{

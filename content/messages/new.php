@@ -13,6 +13,7 @@
 				{
 					// Prüfe Flooding
 					$flood_interval = time()-FLOOD_CONTROL;
+					// TODO: Fix $s
 					if (!isset($s['messages']['sent'][$uid]) || $s['messages']['sent'][$uid] < $flood_interval)
 					{
 						// Prüfe Ignore

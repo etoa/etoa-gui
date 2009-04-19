@@ -75,6 +75,7 @@
     /****************/
 		elseif($mode=='messages')
 		{
+			// todo: sitter
       if($s['sitter_active']==0)
       {
       	require("content/userconfig/messages.php");
