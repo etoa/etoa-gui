@@ -15,12 +15,17 @@
 		?>
 			<tr>
 				<th>Name:</th>
-				<td><input id="loginname" type="text" name="login_nick" value="" size="20" maxlength="250" /></td></tr>
+				<td>
+					<input id="loginname" type="text" name="login_nick" value="" size="20" maxlength="250" />
+				</td>
+			</tr>
 			<tr>
 				<th>Passwort:</th>
-				<td><input id="loginpw" type="password" name="login_pw" value="" size="20" maxlength="250" /></td></tr>
-			</td></tr>
-		</table>
+				<td><input id="loginpw" type="password" name="login_pw" value="" size="20" maxlength="250" /></td>
+			</tr>
+		<?PHP
+			tableEnd();
+		?>
 		<br/><input id="loginsubmit" type="submit" name="login_submit" value="Login" class="button" />
 		</div>
 	</form> 

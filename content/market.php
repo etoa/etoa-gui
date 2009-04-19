@@ -3365,7 +3365,7 @@
 						{
 							nv = '3,2,1... Meins';
 						}
-            else if(cnt>=3600 && cnt<(3600*24))
+            else if( cnt>=3600 && cnt < (3600*24) )
             {
             	nv = 'Noch '+h+'h '+m+'m '+s+'s';
             }
@@ -4150,12 +4150,12 @@
 	                {
 	                    nv = 'Noch '+t+'t '+h+'h '+m+'m '+s+'s';
 	                }
-	                else if(cnt>=3600 && cnt<(3600*24))
+	                else if( cnt >= 3600 && cnt < (3600*24) )
 	                {
 	
 	                	nv = 'Noch '+h+'h '+m+'m '+s+'s';
 	                }
-	                else if(cnt<3600 && cnt>0)
+	                else if( cnt < 3600 && cnt > 0)
 	                {
 	                	nv = 'Noch '+m+'m '+s+'s';
 	                }

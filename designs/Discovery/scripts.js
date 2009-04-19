@@ -6,12 +6,15 @@ tooltipstyle=["#000","#BBBBBB","","","",,"white","#111111","","","",,,,2,"#BBBBB
 
 userAgent = window.navigator.userAgent;
 browserVers = parseInt(userAgent.charAt(userAgent.indexOf("/")+1),10);
-function newImage(arg) {
-	if (document.images) {
+function newImage(arg)
+{
+	if (document.images)
+	{
 		rslt = new Image();
 		rslt.src = arg;
 		return rslt;
 	}
+	return null;
 }
 
 function findElement(n,ly) {

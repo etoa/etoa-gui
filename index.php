@@ -123,6 +123,9 @@
 	// Display header		
 	$tpl->display(getcwd()."/tpl/header.tpl");
 
+	dump($s);
+	dump($_SESSION);
+
 	//
 	// Page content
 	//

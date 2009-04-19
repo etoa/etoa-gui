@@ -425,7 +425,6 @@
 	
 				//
 				// Punkte für Schiffe (in Flotten)
-				// TODO: Check this query (EXPLAIN)
 				$res = dbquery("
 					SELECT
 						fs.fs_ship_id,
@@ -437,8 +436,7 @@
 						ON f.id = fs.fs_fleet_id
 						AND fs.fs_ship_faked='0'
 						AND f.user_id='".$user_id."'
-						;
-				");
+				;");
 				while ($arr = mysql_fetch_assoc($res))
 				{
 					$p = $arr['fs_ship_cnt']*$ship[$arr['fs_ship_id']];

@@ -1220,7 +1220,7 @@
 				}
 				else
 				{
-					error("Es wird bereits geforscht!");
+					error_msg("Es wird bereits geforscht!");
 				}
 			}
 			else

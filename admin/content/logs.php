@@ -400,7 +400,7 @@
 									</td>
 									<td class=\"tbldata\">".$war."</td>
 									<td class=\"tbldata\">".$attack."</td>
-									<td class=\"tbldata\">".fa($arr['logs_battle_fleet_action'])."</td>
+									<td class=\"tbldata\">".$arr['logs_battle_fleet_action']."</td>
 									<td class=\"tbldata\" onclick=\"xajax_showBattle('".$battle."',".$arr['logs_battle_id'].");\" ".mTT("","Klicken für Anzeige des Berichtes!").">
 										<a href=\"javascript:;\">Anzeigen</a>
 									</td>

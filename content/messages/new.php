@@ -1,4 +1,8 @@
 <?PHP
+
+	if (!isset($s->messagesSent))
+		$s->messagesSent = array();
+
 		if (isset($_POST['submit']) && checker_verify())
 		{
 			$time = time();
@@ -14,7 +18,7 @@
 					// Prüfe Flooding
 					$flood_interval = time()-FLOOD_CONTROL;
 					// TODO: Fix $s
-					if (!isset($s['messages']['sent'][$uid]) || $s['messages']['sent'][$uid] < $flood_interval)
+					if (!isset($s->messagesSent[$uid]) || $s->messagesSent[$uid] < $flood_interval)
 					{
 						// Prüfe Ignore
 						$res = dbquery("
@@ -33,7 +37,7 @@
 							$check_subject=check_illegal_signs($_POST['message_subject']);
 							if($check_subject=="")
 							{
-									$s['messages']['sent'][$uid]=$time;
+									$s->messagesSent[$uid]=$time;
 									Message::sendFromUserToUser($cu->id,$uid,$_POST['message_subject'],$_POST['message_text']);
 	
 	         					    echo "Nachricht wurde an <b>".$rcpt."</b> gesendet! ";
@@ -214,7 +218,7 @@
 						<option value="orangered" style="color: orangered;">orange-red</option>
 
 						<option value="crimson" style="color: crimson;">crimson</option>
-						<option value="red" style="color: red;">red</option>
+						<option value="red" style="color:red;">red</option>
 						<option value="firebrick" style="color: firebrick;">firebrick</option>
 						<option value="darkred" style="color: darkred;">dark red</option>
 						<option value="green" style="color: green;">green</option>

@@ -27,7 +27,7 @@ abstract class Session implements ISingleton
 	//
 	protected $lastError;
 	protected $firstView = false;
-	protected $namePrefix = "etoa";
+	protected $namePrefix = "";
 
 	/**
 	 * The constructor defines the session hash function to be used
@@ -48,8 +48,11 @@ abstract class Session implements ISingleton
 			return session_id();
 		if ($field=="firstView")
 			return $this->firstView;
+
 		if (isset($_SESSION[$field]))
+		{
 			return $_SESSION[$field];
+		}
 		return null;
 	}
 

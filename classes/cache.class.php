@@ -17,7 +17,7 @@ class Cache
     	}
     	else
     	{
-    		error_message("Fehlerhafter Pfad $path",1);
+    		err_msg("Fehlerhafter Pfad $path",1);
     	}
     }
     

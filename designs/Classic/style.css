@@ -807,7 +807,9 @@ visibility:hidden;
 
 /* make the second level visible when hover on first level link and position it */
 #pmenu li a:hover ul {
-visibility:visible; left:-30px; top:14px; lef\t:-31px; to\p:15px;
+	visibility:visible;
+	left:-30px;
+	top:14px;
 }
 
 /* make the third level visible when you hover over second level link and position it and all further levels */
