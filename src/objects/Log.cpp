@@ -81,12 +81,14 @@
 			this->entityShipsEnd = ships;
 	}
 	
-	void Log::save() {
+	void Log::save() 
+	{
 		My &my = My::instance();
 		mysqlpp::Connection *con_ = my.get();
 		
 		mysqlpp::Query query = con_->query();
-		
+
+	
 		query << "INSERT INTO ";
 		query << "	logs_fleet ";
 		query << "(";
@@ -131,8 +133,11 @@
 		query << this->entityShipsStart << "', '";
 		query << this->entityShipsEnd << "' ";
 		query << ");";
-		query.store();
-		query.reset();
+
+
+			query.store();
+			query.reset();			
+
 	}
 
 

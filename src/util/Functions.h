@@ -74,6 +74,21 @@ namespace etoa
 		}
 	}
 	
+	std::string inline addslashes(std::string str)
+	{
+		std::string rtn;
+		for (unsigned int i=0; i<str.size(); i++)
+		{
+			const char tmp = str[i];
+			if (tmp == '\'')
+				rtn += "\\'";
+			else			
+				rtn+= tmp;
+		}
+		return rtn;
+	}	
+
+	
 	/**
 	* Liefet den Usernamen  
 	*

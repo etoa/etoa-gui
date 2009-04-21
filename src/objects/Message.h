@@ -67,6 +67,7 @@ class Message
 		bool toSend;
 		
 		void send();
+		
 };
 
 #endif

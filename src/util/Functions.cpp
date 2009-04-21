@@ -4,6 +4,7 @@
 namespace etoa
 {
 	
+
 	std::string get_user_nick(int pid)
 	{
 		My &my = My::instance();

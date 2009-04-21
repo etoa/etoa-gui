@@ -184,7 +184,7 @@ int main(int argc, char* argv[])
   	opt->printUsage();
  		return EXIT_SUCCESS;
 	}
-  if( opt->getFlag( "version" ) || opt->getFlag( 'v' )) 
+  if( opt->getFlag( "version" )) 
   {	
   	cout << "EtoA Backend Daemon, Version "<<versionString<<endl<<"(c) by EtoA Gaming, www.etoa.c"<<endl<<endl;
  		return EXIT_SUCCESS;

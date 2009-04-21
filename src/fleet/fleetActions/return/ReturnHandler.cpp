@@ -1,6 +1,7 @@
 
 #include "ReturnHandler.h"
 
+
 namespace retour
 {
 	void ReturnHandler::update()
@@ -12,6 +13,8 @@ namespace retour
 		Config &config = Config::instance();
 		
 		this->actionMessage->addType((int)config.idget("SHIP_MISC_MSG_CAT_ID"));
+		
+					std::cout << 1111111111111 << std::endl;
 		
 		if (this->targetEntity->getUserId() == this->f->getUserId()) {
 			// Land fleet and delete entries in the database
@@ -37,7 +40,9 @@ namespace retour
 		}
 		
 		// If the planet user is not the same as the fleet user, send fleet to the main and send a message with the info
-		else {
+		else 
+		{
+
 			this->actionMessage->addText("[b]FLOTTE LANDEN GESCHEITERT[/b]",2);
 			this->actionMessage->addText("Eine eurer Flotten hat versucht auf ihrem Ziel zu laden Der Versuch scheiterte jedoch und die Flotte macht sich auf den Weg zu eurem Hauptplaneten!",2);
 			this->actionMessage->addText("[b]Ziel:[/b] ");

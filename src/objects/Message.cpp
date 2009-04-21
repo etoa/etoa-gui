@@ -1,5 +1,6 @@
 
 #include "Message.h"
+#include "../util/Functions.h"
 
 	std::string Message::getText() {
 		return this->text;
@@ -57,6 +58,8 @@
 		this->toSend = false;
 	}
 	
+	
+	
 	void Message::send() {
 		if (this->toSend) {
 			My &my = My::instance();
@@ -66,7 +69,9 @@
 			
 			std::vector<int>::iterator it;
 			for ( it=this->users.begin() ; it < this->users.end(); it++ ) {
-				if ((*it)) {
+				if ((*it)) 
+				{
+					try	{
 					query << "INSERT INTO ";
 					query << "	messages ";
 					query << "(";
@@ -81,6 +86,7 @@
 					query << time(0) << "', '";
 					query << this->type << "' ";
 					query << ");";
+					std::cout << query.str() << std::endl;
 					query.store();
 					query.reset();
 				
@@ -96,12 +102,25 @@
 					query << "VALUES ";
 					query << "('" << con_->insert_id() << "', ";
 					query << "'" << this->subject << "', ";
-					query << "'" << this->text << "', ";
+					
+					std::string buff = this->text;
+					// TODO: Dirty!! Hack. fix it
+					if (buff.find("'") && !buff.find("\\'"))
+						buff = etoa::addslashes(buff);
+							
+					query << "'" << buff << "', ";
 					query << "'" << this->entityId << "', ";
 					query << "'" << this->fleetId << "' ";
 					query << ");";
+					std::cout << query.str() << std::endl;
 					query.store();
 					query.reset();
+					}
+					catch (mysqlpp::Exception* e)
+					{
+						std::cout << e->what() << std::endl;
+						std::cout << query.str() << std::endl;
+					}
 				}
 			}
 		}
