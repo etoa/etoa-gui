@@ -524,14 +524,14 @@
 	double Fleet::addPeople(double people, bool total) {
 		people = round(people);
 		this->changedData = true;
-		if (people>=this->getCapacity())
-			people = this->getCapacity();
+		if (people>=this->getPeopleCapacity())
+			people = this->getPeopleCapacity();
 
-		this->resPeople += people*this->getCapacity()/this->getCapacity(total);
+		this->resPeople += people*this->getPeopleCapacity()/this->getPeopleCapacity(total);
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
-				people += (*it)->addPeople(people*(*it)->getCapacity()/this->getCapacity(total));
+				people += (*it)->addPeople(people*(*it)->getPeopleCapacity()/this->getPeopleCapacity(total));
 		}
 		return people;
 	}
