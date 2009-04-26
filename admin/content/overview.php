@@ -82,14 +82,14 @@
 		echo "<h1>Backend-Daemon</h1>";
 		if (UNIX)
 		{
-			if (isset($_GET['action']) && $_GET['action']=="daeomonrestart")
+			/*if (isset($_GET['action']) && $_GET['action']=="daeomonrestart")
 			{
 				echo "<div><div style=\"background:#000;padding:6px;border:1px solid #fff\">";
 				$cmd = $daemonExe." -r ".$cfg->daemonIdentifier->v." -k";
 				echo $cmd."<br/>";
 				passthru($cmd);
 				echo "</div><br/>";
-			}
+			}*/
 
 
 			$frm = new Form("bustn","?page=$page&amp;sub=$sub");
@@ -103,7 +103,7 @@
 			echo "<tr><th>Logfile</th><td>".$daemonLogfile."</td></tr>";
 			echo "<tr><th>Pidfile</th><td>".$daemonPidfile."</td></tr>";
 			echo "<tr><th>Status</th><td>";			
-			if ($pid = checkDaemonRunning($daemonPidfile))
+			/*if ($pid = checkDaemonRunning($daemonPidfile))
 			{
 				echo "<div style=\"color:#0f0;\">Der Backend-Dienst läuft mit PID $pid!
 				&nbsp; <input type=\"button\" value=\"Neu starten\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;action=daeomonrestart'\" />
@@ -113,7 +113,7 @@
 			{
 				echo "<div style=\"color:red;\">Der Backend-Dienst scheint nicht zu laufen!
 				&nbsp; <input type=\"button\" value=\"Neu starten\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;action=daeomonrestart'\" /></div>";
-			}
+			}*/
 			echo "</td></tr>";			
 			tableEnd();
 			echo $frm->close();		
