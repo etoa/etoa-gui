@@ -44,8 +44,6 @@
 
 	require_once("inc/bootstrap.inc.php");
 
-
-
 	$loggedIn = false;
 	if ($s->validate(0))
 	{

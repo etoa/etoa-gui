@@ -63,8 +63,11 @@
 			require_once(RELATIVE_ROOT."inc/xajax/ladder.xajax.php");
 		}
 	}	
-	
 
+	if (stristr($_SERVER['SCRIPT_NAME'],'chat/chat'))
+	{
+		require_once(RELATIVE_ROOT."inc/xajax/chat.xajax.php");
+	}
 		
 	$xajax->processRequest();
 ?>

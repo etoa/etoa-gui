@@ -27,16 +27,10 @@
 	* @author MrCage mrcage@etoa.ch
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/	
-	session_start();
-	include("../bootstrap.inc.php");
-	include("../conf.inc.php");
-	include("../functions.php");
-	define('XAJAX_DIR',"../libs/xajax");
-	require_once(XAJAX_DIR."/xajax_core/xajax.inc.php");
-	$xajax = new xajax();
-	require_once("../inc/xajax/chat.xajax.php");
-	$xajax->setFlag('debug',false);
-	$xajax->processRequest();
+
+	define('RELATIVE_ROOT','../');
+	include("../inc/bootstrap.inc.php");
+
 	echo '<?xml version="1.0" encoding="UTF-8"?>';
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
