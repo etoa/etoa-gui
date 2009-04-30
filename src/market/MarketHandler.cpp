@@ -611,8 +611,8 @@ namespace market
 					
 					// TODO I've added some typecasts and (). Please check if it's calculating correctly
 					int duration = ((int) (distance / (double)ship_speed * 3600) + ship_starttime + ship_landtime);
-					int sellerLandtime = launchtime + duration / seller->getSpecialist()->getSpecialistTradeBonus(); // Landezeit
-					int buyerLandtime = launchtime + duration / buyer->getSpecialist()->getSpecialistTradeBonus(); // Landezeit
+					int sellerLandtime = launchtime + (int)(duration / seller->getSpecialist()->getSpecialistTradeBonus()); // Landezeit
+					int buyerLandtime = launchtime + (int)(duration / buyer->getSpecialist()->getSpecialistTradeBonus()); // Landezeit
 
 					
 					query << "INSERT INTO fleet ";
@@ -758,8 +758,8 @@ namespace market
 					int launchtime = time; // Startzeit
 					double distance = etoa::calcDistanceByPlanetId(arr["planet_id"],arr["ship_buyer_planet_id"]);
 					int duration = (int)(distance / (double)ship_speed * 3600) + ship_starttime + ship_landtime;
-					int sellerLandtime = launchtime + duration / seller->getSpecialist()->getSpecialistTradeBonus(); // Landezeit
-					int buyerLandtime = launchtime + duration / buyer->getSpecialist()->getSpecialistTradeBonus(); // Landezeit
+					int sellerLandtime = (int)launchtime + (int)(duration / seller->getSpecialist()->getSpecialistTradeBonus()); // Landezeit
+					int buyerLandtime = (int)launchtime + (int)(duration / buyer->getSpecialist()->getSpecialistTradeBonus()); // Landezeit
 
 					query << "INSERT INTO fleet ";
 						query << "(user_id, ";
@@ -906,8 +906,8 @@ namespace market
 					int launchtime = time; // Startzeit
 					double distance = etoa::calcDistanceByPlanetId(arr["auction_planet_id"],arr["auction_current_buyer_planet_id"]);
 					int duration = (int)(distance / (double)ship_speed * 3600) + ship_starttime + ship_landtime;
-					int sellerLandtime = launchtime + duration / seller->getSpecialist()->getSpecialistTradeBonus(); // Landezeit
-					int buyerLandtime = launchtime + duration / buyer->getSpecialist()->getSpecialistTradeBonus(); // Landezeit
+					int sellerLandtime = launchtime + (int)(duration / seller->getSpecialist()->getSpecialistTradeBonus()); // Landezeit
+					int buyerLandtime = launchtime + (int)(duration / buyer->getSpecialist()->getSpecialistTradeBonus()); // Landezeit
 
 					query << "INSERT INTO fleet ";
 						query << "(user_id, ";

@@ -15,6 +15,10 @@
 //
 // Main loop framework
 //
+// Revision:    $Rev$
+// Author:      $Author$
+// Last commig: $Date$
+//
 
 #include "etoa.h"
 

@@ -33,7 +33,7 @@ namespace gattack
 					// Calculate the damage percentage (Max. 95%) 
 					this->temp = std::min((10 + this->tLevel * 3),(int)config.nget("gasattack_action",1));
 					this->fak = rand() % temp;
-					this->fak += ceil(this->shipCnt/10000.0);
+					this->fak += (int)ceil(this->shipCnt/10000.0);
 					
 					// Calculate dead planet people 
 					this->people = this->targetEntity->removeResPeople(round(this->targetEntity->getResPeople() * this->fak / 100));

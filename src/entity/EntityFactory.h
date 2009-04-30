@@ -42,7 +42,8 @@ public:
 		mysqlpp::Result eRes = query.store();
 		query.reset();
 			
-		if (eRes) {
+		if (eRes) 
+		{
 			int eSize = eRes.size();
 			
 			if (eSize>0) {
@@ -81,6 +82,7 @@ public:
 				}
 			}
 		}
+		return NULL;
 	}
 };
 

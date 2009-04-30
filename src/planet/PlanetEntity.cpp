@@ -164,9 +164,9 @@ namespace planet
 					prodPercent = (double)bRow["buildlist_prod_percent"];
 					this->fieldsUsed += level * this->building_->getFields();
 					level--;
-					this->fieldsExtra += this->building_->getFieldsprovide() * pow(this->building_->getProductionFactor() , level);
+					this->fieldsExtra += (int)((int)this->building_->getFieldsprovide() * pow(this->building_->getProductionFactor() , level));
 					
-					this->bunkerRes += this->building_->getBunkerRes() * pow(this->building_->getStoreFactor() , level);
+					this->bunkerRes += (int)((int)this->building_->getBunkerRes() * pow(this->building_->getStoreFactor() , level));
 					
 					this->store[0] += round(this->building_->getStoreMetal() * pow(this->building_->getStoreFactor() , level));
 					this->store[1] += round(this->building_->getStoreCrystal() * pow(this->building_->getStoreFactor() , level));

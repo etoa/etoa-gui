@@ -103,7 +103,7 @@
 	void Object::setPercentSurvive(double percentage) {
 		this->isChanged = true;
 		percentage = std::min(1.0,percentage);
-		this->count = ceil(this->initCount * percentage);
+		this->count = (int)ceil(this->initCount * percentage);
 	}
 	
 	int Object::removeObjects(int count) {

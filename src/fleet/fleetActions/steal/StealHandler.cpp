@@ -24,8 +24,8 @@ namespace steal
 			
 			// Precheck action==possible?
 			if (this->f->actionIsAllowed()) {
-				this->tLevelAtt = this->f->fleetUser->getTechLevel("Spionagetechnik") + this->f->fleetUser->getSpecialist()->getSpecialistSpyLevel();
-				this->tLevelDef = this->targetEntity->getUser()->getTechLevel("Spionagetechnik") + this->f->fleetUser->getSpecialist()->getSpecialistTarnLevel();
+				this->tLevelAtt = (int)this->f->fleetUser->getTechLevel("Spionagetechnik") + (int)this->f->fleetUser->getSpecialist()->getSpecialistSpyLevel();
+				this->tLevelDef = (int)this->targetEntity->getUser()->getTechLevel("Spionagetechnik") + (int)this->f->fleetUser->getSpecialist()->getSpecialistTarnLevel();
 				this->shipCnt = this->f->getActionCount();
 				
 				// Calculate the chance

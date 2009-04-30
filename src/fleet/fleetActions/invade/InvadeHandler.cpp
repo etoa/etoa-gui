@@ -25,7 +25,8 @@ namespace invade
 			if (this->f->actionIsAllowed()) {
 				this->shipCnt = this->f->getActionCount();
 				
-				if (this->targetEntity->getUserId()==this->f->getUserId()) {
+				if (this->targetEntity->getUserId()==this->f->getUserId()) 
+				{
 					// Send a message to the user
 					this->actionMessage->addText("Eine Flotte hat folgendes Ziel erreicht:[b]",1);
 					this->actionMessage->addText(this->targetEntity->getCoords(),1);
@@ -38,14 +39,16 @@ namespace invade
 					fleetLand(1);
 				}
 				// if the planet doesnt belong to the fleet user
-				else {
+				else 
+				{
 					/** Anti-Hack (exploited by Pain & co)
 					* Check again if planet is no a main planet
 					* Also explioted using a fake haven form, such 
 					* that an invasion to an illegal target could be launched */
-					if (!this->targetEntity->getIsUserMain()) {
-						this->pointsDef = this->f->fleetUser->getUserPoints();
-						this->pointsAtt = this->targetEntity->getUser()->getUserPoints();
+					if (!this->targetEntity->getIsUserMain()) 
+					{
+						this->pointsDef = (int)this->f->fleetUser->getUserPoints();
+						this->pointsAtt = (int)this->targetEntity->getUser()->getUserPoints();
 						
 						// Calculate the Chance
 						this->chance = config.nget("INVADE_POSSIBILITY",0) / this->pointsAtt * this->pointsDef;

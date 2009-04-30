@@ -38,10 +38,10 @@ namespace building
 			unsigned int resSize = res.size();
 			if (resSize>0) {
 				
-				int sxNum = config.nget("num_of_sectors",1);
-				int cxNum = config.nget("num_of_cells",1);
-				int syNum = config.nget("num_of_sectors",2);
-				int cyNum = config.nget("num_of_cells",2);
+				int sxNum = (int)config.nget("num_of_sectors",1);
+				int cxNum = (int)config.nget("num_of_cells",1);
+				int syNum = (int)config.nget("num_of_sectors",2);
+				int cyNum = (int)config.nget("num_of_cells",2);
 				
 				// the mask
 				char mask[10000] = "";
@@ -70,7 +70,7 @@ namespace building
 						}
 					}
 					
-					int radius = 1 + (int)row["buildlist_current_level"] * config.nget("discoverymask",0);
+					int radius = 1 + (int)((int)row["buildlist_current_level"] * config.nget("discoverymask",0));
 					int absX = (10 * ((int)row["sx"] - 1) + (int)row["cx"]);
 					int absY = (10 * ((int)row["sy"] - 1) + (int)row["cy"]);
 					

@@ -511,7 +511,7 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 			while (found!=std::string::npos) {
 				users = users.substr(found+1);
 				found=users.find_first_of(",");
-				user = etoa::s2d(users.substr(0,found));
+				user = (int)etoa::s2d(users.substr(0,found));
 				etoa::addBattlePoints(user,this->attPoints,this->attResult,attReason);
 			}
 			
@@ -520,7 +520,7 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 			while (found!=std::string::npos) {
 				users = users.substr(found+1);
 				found=users.find_first_of(",");
-				user = etoa::s2d(users.substr(0,found));
+				user = (int)etoa::s2d(users.substr(0,found));
 				etoa::addBattlePoints(user,this->defPoints,this->defResult,attReason);
 			}
 		}

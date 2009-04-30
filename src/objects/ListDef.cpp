@@ -7,8 +7,8 @@
 		DataHandler &DataHandler = DataHandler::instance();
 		Data::Data *data = DataHandler.getDefById(this->getTypeId());
 		
-		this->rebuildCount = floor((this->initCount - this->count)*this->rebuild);
-		int defCount = ceil((this->initCount - (this->count+this->rebuildCount))*config.nget("def_wf_percent",0));
+		this->rebuildCount = (int)floor((this->initCount - this->count)*this->rebuild);
+		int defCount = (int)ceil((this->initCount - (this->count+this->rebuildCount))*config.nget("def_wf_percent",0));
 		return (defCount * data->getCostsMetal());
 	}
 	
@@ -18,8 +18,8 @@
 		DataHandler &DataHandler = DataHandler::instance();
 		Data::Data *data = DataHandler.getDefById(this->getTypeId());
 		
-		this->rebuildCount = floor((this->initCount - this->count)*this->rebuild);
-		int defCount = ceil((this->initCount - (this->count+this->rebuildCount))*config.nget("def_wf_percent",0));
+		this->rebuildCount = (int)floor((this->initCount - this->count)*this->rebuild);
+		int defCount = (int)ceil((this->initCount - (this->count+this->rebuildCount))*config.nget("def_wf_percent",0));
 		return (defCount * data->getCostsCrystal());
 	}
 	
@@ -29,8 +29,8 @@
 		DataHandler &DataHandler = DataHandler::instance();
 		Data::Data *data = DataHandler.getDefById(this->getTypeId());
 		
-		this->rebuildCount = floor((this->initCount - this->count)*this->rebuild);
-		int defCount = ceil((this->initCount - (this->count+this->rebuildCount))*config.nget("def_wf_percent",0));
+		this->rebuildCount = (int)floor((this->initCount - this->count)*this->rebuild);
+		int defCount = (int)ceil((this->initCount - (this->count+this->rebuildCount))*config.nget("def_wf_percent",0));
 		return (defCount * data->getCostsPlastic());
 	}
 	

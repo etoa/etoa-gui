@@ -33,10 +33,10 @@
 	void User::setDiscovered(short absX, short absY) {
 		
 		Config &config = Config::instance();
-		int sxNum = config.nget("num_of_sectors",1);
-		int cxNum = config.nget("num_of_cells",1);
-		int syNum = config.nget("num_of_sectors",2);
-		int cyNum = config.nget("num_of_cells",2);
+		int sxNum = (int)config.nget("num_of_sectors",1);
+		int cxNum = (int)config.nget("num_of_cells",1);
+		int syNum = (int)config.nget("num_of_sectors",2);
+		int cyNum = (int)config.nget("num_of_cells",2);
 		
 		// the mask
 		char mask[10000] = "";
@@ -254,8 +254,10 @@
 		}
 	}
 	
-	void User::loadTechs() {
-		if (!this->techsLoaded) {
+	void User::loadTechs() 
+	{
+		if (!this->techsLoaded) 
+		{
 			My &my = My::instance();
 			mysqlpp::Connection *con_ = my.get();
 			
@@ -272,25 +274,32 @@
 			mysqlpp::Result tRes = query.store();
 			query.reset();
 			
-			if (tRes) {
+			if (tRes) 
+			{
 				int tSize = tRes.size();
 				this->techsLoaded = true;
 				
-				if (tSize > 0) {
+				if (tSize > 0) 
+				{
 					mysqlpp::Row tRow;
 					DataHandler &DataHandler = DataHandler::instance();
-					for (int i=0; i<tSize; i++) {
+					for (int i=0; i<tSize; i++) 
+					{
 						tRow = tRes.at(i);
 						TechData::TechData *data = DataHandler.getTechById((int)tRow["techlist_tech_id"]);
 						techs[data->getName()] = (int)tRow["techlist_current_level"];
-						if ((int)tRow["techlist_build_type"]==3) techAtWork = data->getName();
+						if ((int)tRow["techlist_build_type"]==3) 
+						{
+							techAtWork = data->getName();
+						}
 					}
 				}
 			}
 		}
 	}
 	
-	std::string User::stealTech(User* victim) {
+	std::string User::stealTech(User* victim) 
+	{
 		if (!this->techsLoaded)
 			this->loadTechs();
 		
@@ -298,10 +307,13 @@
 		std::map<std::string,int> avaiableTechs;
 		
 		std::map<std::string,int>::iterator it;
-		for ( it=techs.begin() ; it != techs.end(); it++ ) {
+		for ( it=techs.begin() ; it != techs.end(); it++ ) 
+		{
 			TechData::TechData *data = DataHandler.getTechByName((*it).first);
-			if ((*it).second < victim->getTechLevel((*it).first) && data->getStealable() && (*it).first!=techAtWork)
+			if ((unsigned int)(*it).second < victim->getTechLevel((*it).first) && data->getStealable() && (*it).first!=techAtWork)
+			{
 				avaiableTechs[(*it).first] = victim->getTechLevel((*it).first);
+			}
 		}
 		
 		if (avaiableTechs.size()) {

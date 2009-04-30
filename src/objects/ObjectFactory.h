@@ -33,8 +33,7 @@ public:
 				return new ListDef(oRow,rebuild);
 				break;
 		}
-		// TODO: What happens if none of the above is true? This method must 
-		// return something or throw an error
+		return NULL;
 	}
 };
 

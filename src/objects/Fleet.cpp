@@ -787,7 +787,7 @@
 		if (fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
-				counter += (*it)->addExp(exp);
+				counter += (int)(*it)->addExp(exp);
 		}
 		if (counter)
 			this->exp += exp;
@@ -1426,14 +1426,14 @@
 					for (int i=0; i<aSize; i++) {
 						aRow = aRes.at(i);
 						if ((int)aRow["alliance_techlist_tech_id"]==5)
-							this->allianceWeapon = config.nget("alliance_tech_bonus",0) * (int)aRow["alliance_techlist_current_level"]
-							+ config.nget("alliance_tech_bonus",1) * userCount;
+							this->allianceWeapon = ((int)config.nget("alliance_tech_bonus",0) * (int)aRow["alliance_techlist_current_level"])
+							+ (int)((int)config.nget("alliance_tech_bonus",1) * userCount);
 						if ((int)aRow["alliance_techlist_tech_id"]==6)
-							this->allianceShield = config.nget("alliance_tech_bonus",0) * (int)aRow["alliance_techlist_current_level"]
-							+ config.nget("alliance_tech_bonus",1) * userCount;
+							this->allianceShield = ((int)config.nget("alliance_tech_bonus",0) * (int)aRow["alliance_techlist_current_level"])
+							+ (int)((int)config.nget("alliance_tech_bonus",1) * userCount);
 						if ((int)aRow["alliance_techlist_tech_id"]==7)
-							this->allianceStructure = config.nget("alliance_tech_bonus",0) * (int)aRow["alliance_techlist_current_level"]
-							+ config.nget("alliance_tech_bonus",1) * userCount;
+							this->allianceStructure = ((int)config.nget("alliance_tech_bonus",0) * (int)aRow["alliance_techlist_current_level"])
+							+ (int)((int)config.nget("alliance_tech_bonus",1) * userCount);
 					}
 					if (fleets.size()) {
 						std::vector<Fleet*>::iterator it;
