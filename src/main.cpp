@@ -15,16 +15,16 @@
 //
 // Main loop framework
 //
-// Revision:    $Rev$
-// Author:      $Author$
-// Last commig: $Date$
+// $Rev$
+// $Author$
+// $Date$
 //
 
 #include "etoa.h"
 
-using namespace std;
+#include "version.h"
 
-std::string versionString = "1.0";
+using namespace std;
 
 std::string gameRound;
 std::string pidFile;
@@ -190,7 +190,7 @@ int main(int argc, char* argv[])
 	}
   if( opt->getFlag( "version" )) 
   {	
-  	cout << "EtoA Backend Daemon, Version "<<versionString<<endl<<"(c) by EtoA Gaming, www.etoa.c"<<endl<<endl;
+  	cout << getVersion()<<endl;
  		return EXIT_SUCCESS;
 	}
 	bool killExistingInstance = false;
