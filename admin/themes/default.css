@@ -172,9 +172,8 @@ input,select,textarea	{
 }
 
 #content	{
-	background:#9198ab;
 	background:#606578;
-	height:450px;
+	height:100%;
 	vertical-align:top;
 	padding:4px 10px 10px 10px;
 	border:1px solid #fff;
@@ -283,7 +282,7 @@ a.menu1Item:hover {
 	text-align:left;
 }
 
-/* Ressourcen Speicher voll / Bewohner -> farbe wenn gebäude baut */
+/* Ressourcen Speicher voll / Bewohner -> farbe wenn gebï¿½ude baut */
 .tbldata2 {
 	font-size:8pt;
 	color:red;
@@ -294,7 +293,7 @@ a.menu1Item:hover {
 	text-align:left;
 }
 
-/* Energie wenn sie Positiv ist (standart ist hellgrün) */
+/* Energie wenn sie Positiv ist (standart ist hellgrï¿½n) */
 .tbldata3 {
 	font-size:8pt;
 	color:#0f0;

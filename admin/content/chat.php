@@ -1,56 +1,21 @@
 <h1>InGame-Chat</h1>
-<h2>Userliste</h2>
-<?PHP
-	$res = dbquery("
-	SELECT DISTINCT
-		nick,
-		user_id
-	FROM
-		chat_users
-	");
-	$out="";
-	if (mysql_num_rows($res)>0)
-	{
-		while ($arr=mysql_fetch_assoc($res))
-		{
-			$out.= "<a href=\"?page=user&sub=edit&user_id=".$arr['user_id']."\" target=\"main\">".$arr['nick']."</a><br/>";					
-		}
-	}
-	else
-		$out.="Keine User online!<br/>";
-	echo $out;
-?>
-<h2>Protokoll</h2>
-<?PHP
-	$out="";
-	$res = dbquery("
-	SELECT
-		id,
-		nick,
-		timestamp,
-		text,
-		color,
-		user_id
-	FROM
-		chat
-	ORDER BY
-		timestamp ASC
-	");
-	if (mysql_num_rows($res)>0)
-	{
-		while ($arr=mysql_fetch_assoc($res))
-		{
-			if ($arr['color']!="")
-			{
-				$out.= "<span style=\"color:".$arr['color']."\">";
-				$out.= "&lt;<a style=\"color:".$arr['color']."\" href=\"?page=user&sub=edit&user_id=".$arr['user_id']."\">".$arr['nick']."</a> | ".date("H:i",$arr['timestamp'])."&gt; ".stripslashes($arr['text']);					
-				$out.= "</span><br/>";
-			}
-			else
-				$out.= "&lt;<a style=\"color:#fff\" href=\"?page=user&sub=edit&user_id=".$arr['user_id']."\">".$arr['nick']."</a> | ".date("H:i",$arr['timestamp'])."&gt; ".stripslashes($arr['text'])."<br/>";					
-			$lastid=$arr['id'];
-		}
-		echo $out;	
-	}
+<fieldset style="width:70%;float:left;height:500px;">
+	<legend>Live-Chat</legend>
+		<div id="chatitems" style="height:100%;overflow:auto">
 
-?>
+		</div>
+		<div id="lastid" style="display:none;visibility:hidden"><?PHP echo $lastid;?></div>
+		<script type="text/javascript">
+			xajax_loadChat(0);
+		</script>
+</fieldset>
+<fieldset style="width:25%;float:right;height:500px;">
+	<legend>Users online</legend>
+	<div id="userlist" style="display:none;">
+
+	</div>
+		<script type="text/javascript">
+			xajax_showChatUsers();
+			xajax_setChatUserOnline(1);
+		</script>
+</fieldset>

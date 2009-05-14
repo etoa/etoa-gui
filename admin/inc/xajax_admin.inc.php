@@ -17,6 +17,12 @@
 
 	//require_once("inc/xajax/misc.xajax.php");
 
+
+	if (isset($page) && $page=="chat")
+	{
+		require_once("inc/xajax/chat.xajax.php");
+	}
+
 	if (isset($page) && $page=="alliances")
 	{
 		require_once("inc/xajax/alliances.xajax.php");
