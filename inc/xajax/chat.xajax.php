@@ -124,7 +124,8 @@ function appendToChatBox($string)
 function sendChat($form)
 {
 	$ajax = new xajaxResponse();
-	
+
+	$ajax->script('xajax_checkChatLoggedIn()');
 
 	$s = $_SESSION;
 	$ajax->assign("ctext","value","");
