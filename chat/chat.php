@@ -83,7 +83,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 
 		</div>
 		
-		<div id="lastid" style="display:none;visibility:hidden"><?PHP echo $lastid;?></div>
+		<div id="lastid" style="display:none;visibility:hidden"><?PHP echo isset($lastid) ? $lastid : 0;?></div>
 		
 			<div id="chatchannelcontrols">
 				<input type="button" id="userListButton" onclick="showUserList()" value="User anzeigen"/>
@@ -93,6 +93,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 			xajax_loadChat(0);
 			xajax_showChatUsers();
 			xajax_setChatUserOnline(1);
+
 		</script>
 	</body>
 </html>

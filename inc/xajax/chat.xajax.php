@@ -5,13 +5,12 @@ $xajax->register(XAJAX_FUNCTION,'setChatUserOnline');
 $xajax->register(XAJAX_FUNCTION,'showChatUsers');
 $xajax->register(XAJAX_FUNCTION,'logoutFromChat');
 $xajax->register(XAJAX_FUNCTION,'appendToChatBox');
-
+$xajax->register(XAJAX_FUNCTION,'checkChatLoggedIn');
 
 function loadChat($minId)
 {
 	$minId = intval($minId);
 	$ajax = new xajaxResponse();
-	
 	$s = $_SESSION;
 	if (isset($s['user_id']))
 	{	
@@ -34,13 +33,13 @@ function loadChat($minId)
 			");
 			if (mysql_num_rows($res)>0)
 			{
+				$out = "";
 				while ($arr=mysql_fetch_assoc($res))
 				{
+					$adminstr = "";
 					if ($arr['admin']==1)
 						$adminstr = "<img src=\"../images/star_y.gif\" />";
-					else
-						$adminstr = "";
-					if ($arr['private']==0 || $s['user_id']==$arr['user_id'])
+
 					if ($arr['user_id']==0)
 					{
 						$out.= "<span style=\"color:#aaa\">";
@@ -54,14 +53,17 @@ function loadChat($minId)
 						$out.= "</span><br/>";
 					}
 					else
-						$out.= "$adminstr&lt;<a style=\"color:#fff\" href=\"../index.php?page=userinfo&id=".$arr['user_id']."\" target=\"main\">".$arr['nick']."</a> | ".date("H:i",$arr['timestamp'])."&gt; ".stripslashes($arr['text'])."<br/>";					
-					$lastid=$arr['id'];
+						$out.= "$adminstr&lt;<a style=\"color:#fff\" href=\"../index.php?page=userinfo&id=".$arr['user_id']."\" target=\"main\">".$arr['nick']."</a> | ".date("H:i",$arr['timestamp'])."&gt; ".stripslashes($arr['text'])."<br/>";
+
+					$lastid = $arr['id'];
 				}
+				
 				$ajax->append("chatitems","innerHTML",$out);
 				$ajax->assign("lastid","innerHTML",$lastid);
 				$ajax->script("window.scrollBy(0,100000);");
 			}
-			$ajax->script("setTimeout(\"xajax_loadChat(document.getElementById('lastid').innerHTML)\",1000);");
+			$ajax->script('xajax_checkChatLoggedIn()');
+			$ajax->script('setTimeout("xajax_loadChat(document.getElementById(\'lastid\').innerHTML)",1000);');
 	}
 	else
 	{
@@ -71,6 +73,36 @@ function loadChat($minId)
 	
   return $ajax;	
   
+}
+
+function checkChatLoggedIn()
+{
+	$ajax = new xajaxResponse();
+	$s = $_SESSION;
+	$res = dbquery("
+	SELECT
+		kick
+	FROM
+		chat_users
+	WHERE
+		user_id=".$s['user_id']."
+		AND kick!=''
+	");
+	if (mysql_num_rows($res)>0)
+	{
+		$arr = mysql_fetch_array($res);
+		$ajax->alert("Du wurdest gekickt! Grund: ".$arr['kick']);
+		dbquery("
+		DELETE FROM
+			chat_users
+		WHERE
+			user_id=".$s['user_id']."
+		");
+		chatSystemMessage($s['user_nick']." wurde gekickt! Grund: ".$arr['kick'].".");
+		$ajax->script("parent.top.location = '..'");
+
+	}
+  return $ajax;
 }
 
 function appendToChatBox($string)
@@ -91,7 +123,9 @@ function appendToChatBox($string)
 
 function sendChat($form)
 {
-	$ajax = new xajaxResponse();	
+	$ajax = new xajaxResponse();
+	
+
 	$s = $_SESSION;
 	$ajax->assign("ctext","value","");
 	if (isset($s['user_id']))
@@ -111,7 +145,24 @@ function sendChat($form)
 			if ($arr[0] == 1)
 				$admin = 1;
 		}
-		if ($form['ctext']!="" && $_SESSION['lastchatmsg']!=md5($form['ctext']))
+
+		$ct = $form['ctext'];
+		$m = array();
+		if ($admin==1 && preg_match('#^/kick (.[^\'\"\?\<\>\$\!\=\;\&\s]+)\s([A-Za-z0-9\s]+)$#',$ct,$m)>0)
+		{
+			$nick = $m[1];
+			$text = "";
+			if (isset($m[2]))
+				$text = $m[2];
+			dbquery("
+			UPDATE
+				chat_users
+			SET
+				kick='".$text."'
+			WHERE
+				nick='".$nick."'");
+		}
+		elseif ($ct!="" && $_SESSION['lastchatmsg']!=md5($form['ctext']))
 		{
 			dbquery("INSERT INTO
 				chat
@@ -127,7 +178,7 @@ function sendChat($form)
 			(
 				".time().",
 				'".$s['user_nick']."',
-				'".addslashes($form['ctext'])."',
+				'".addslashes($ct)."',
 				'".$form['ccolor']."',
 				'".$s['user_id']."',
 				'".$admin."'
