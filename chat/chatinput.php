@@ -51,6 +51,19 @@
 	<body>
 		<div id="chatinput">
 			<form action="?" method="post" onsubmit="xajax_sendChat(xajax.getFormValues('cform'));return false;" autocomplete="off" id="cform">
+			<?PHP
+			$res = dbquery("
+			SELECT * FROM
+				chat_banns
+			WHERE
+				user_id=".$_SESSION['user_id'].";");
+			if (mysql_num_rows($res)>0)
+			{
+
+			}
+			else
+			{
+			?>
 				Text: <input type="text" id="ctext" name="ctext" value="" size="40" maxlength="255" /> <br/><br/>
 				<select name="ccolor" onchange="document.getElementById('ctext').focus();document.getElementById('ctext').style.color=this.value;this.style.color=this.value">
 					<option value="" style="background:#000;color:#fff">Standard</option>
@@ -63,6 +76,10 @@
 					<option value="#FF00E5" style="background:#000;color:#FF00E5">Pink</option>
 				</select>
 				<input type="button" onclick="xajax_sendChat(xajax.getFormValues('cform'));document.getElementById('ctext').focus();" value="Senden"/> &nbsp;
+		<?PHP
+			}
+			?>
+
 				<input type="button" onclick="xajax_logoutFromChat();parent.top.location = '..'" value="Chat schliessen"/>
 			</form>
 			<script type="text/javascript">

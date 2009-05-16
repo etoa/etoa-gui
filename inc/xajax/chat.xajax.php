@@ -13,7 +13,7 @@ function loadChat($minId)
 	$ajax = new xajaxResponse();
 	$s = $_SESSION;
 	if (isset($s['user_id']))
-	{	
+	{
 			$res = dbquery("
 			SELECT
 				id,
@@ -43,13 +43,13 @@ function loadChat($minId)
 					if ($arr['user_id']==0)
 					{
 						$out.= "<span style=\"color:#aaa\">";
-						$out.= "&lt;".date("H:i",$arr['timestamp'])."&gt; ".stripslashes($arr['text']);					
+						$out.= "&lt;".date("H:i",$arr['timestamp'])."&gt; ".stripslashes($arr['text']);
 						$out.= "</span><br/>";
 					}
 					elseif ($arr['color']!="")
 					{
 						$out.= "<span style=\"color:".$arr['color']."\">";
-						$out.= "$adminstr&lt;<a style=\"color:".$arr['color']."\" href=\"../index.php?page=userinfo&id=".$arr['user_id']."\" target=\"main\">".$arr['nick']."</a> | ".date("H:i",$arr['timestamp'])."&gt; ".stripslashes($arr['text']);					
+						$out.= "$adminstr&lt;<a style=\"color:".$arr['color']."\" href=\"../index.php?page=userinfo&id=".$arr['user_id']."\" target=\"main\">".$arr['nick']."</a> | ".date("H:i",$arr['timestamp'])."&gt; ".stripslashes($arr['text']);
 						$out.= "</span><br/>";
 					}
 					else
@@ -57,7 +57,7 @@ function loadChat($minId)
 
 					$lastid = $arr['id'];
 				}
-				
+
 				$ajax->append("chatitems","innerHTML",$out);
 				$ajax->assign("lastid","innerHTML",$lastid);
 				$ajax->script("window.scrollBy(0,100000);");
@@ -70,9 +70,9 @@ function loadChat($minId)
 		$ajax->assign("chatitems","innerHTML","Sie sind ausgeloggt!");
 		$ajax->script("parent.top.location=parent.main.location");
 	}
-	
-  return $ajax;	
-  
+
+  return $ajax;
+
 }
 
 function checkChatLoggedIn()
@@ -98,7 +98,6 @@ function checkChatLoggedIn()
 		WHERE
 			user_id=".$s['user_id']."
 		");
-		chatSystemMessage($s['user_nick']." wurde gekickt! Grund: ".$arr['kick'].".");
 		$ajax->script("parent.top.location = '..'");
 
 	}
@@ -107,30 +106,51 @@ function checkChatLoggedIn()
 
 function appendToChatBox($string)
 {
+	ob_start();
 	$ajax = new xajaxResponse();
-	
 	$s = $_SESSION;
 	if (isset($s['user_id']))
-	{	
+	{
 		$out= "<span style=\"color:#aaa\">";
-		$out.= "&lt;".date("H:i")."&gt; ".stripslashes($string);					
-		$out.= "</span><br/>";		
+		$out.= "&lt;".date("H:i")."&gt; ".stripslashes($string);
+		$out.= "</span><br/>";
 		$ajax->append("chatitems","innerHTML",$out);
 		$ajax->script("window.scrollBy(0,100000);");
 	}
-  return $ajax;		
+	$out = ob_get_clean();
+	if ($out!="")
+		$ajax->alert($out);
+  return $ajax;
+}
+
+function kickChatUser($uid,$msg="Kicked by Chat-Admin")
+{
+	dbquery("
+	UPDATE
+		chat_users
+	SET
+		kick='".$msg."'
+	WHERE
+		user_id='".$uid."'");
+	if (mysql_affected_rows()>0)
+	{
+		return true;
+	}
+	return false;
 }
 
 function sendChat($form)
 {
 	$ajax = new xajaxResponse();
 
+	ob_start();
+
 	$ajax->script('xajax_checkChatLoggedIn()');
 
 	$s = $_SESSION;
 	$ajax->assign("ctext","value","");
 	if (isset($s['user_id']))
-	{		
+	{
 		$admin = 0;
 		$res = dbquery("
 		SELECT
@@ -149,20 +169,115 @@ function sendChat($form)
 
 		$ct = $form['ctext'];
 		$m = array();
-		if ($admin==1 && preg_match('#^/kick (.[^\'\"\?\<\>\$\!\=\;\&\s]+)\s([A-Za-z0-9\s]+)$#',$ct,$m)>0)
+		if ($admin==1 && preg_match('#^/kick (.[^\'\"\?\<\>\$\!\=\;\&\s]+)$#',$ct,$m)>0)
 		{
-			$nick = $m[1];
+			$uid = User::findIdByNick($m[1]);
+			if ($uid>0)
+			{
+				if (kickChatUser($uid))
+				{
+					chatSystemMessage($m[1]." wurde gekickt!");
+				}
+				else
+				{
+					$ajax->alert("User is not online in chat!");
+				}
+			}
+			else
+			{
+				$ajax->alert("A user with this nick does not exist!");
+			}
+		}
+		elseif ($admin==1 && preg_match('#^/kick (.[^\'\"\?\<\>\$\!\=\;\&\s]+)\s([A-Za-z0-9\s]+)$#',$ct,$m)>0)
+		{
 			$text = "";
 			if (isset($m[2]))
 				$text = $m[2];
-			dbquery("
-			UPDATE
-				chat_users
-			SET
-				kick='".$text."'
-			WHERE
-				nick='".$nick."'");
+			$uid = User::findIdByNick($m[1]);
+			if ($uid>0)
+			{
+				if (kickChatUser($uid,$text))
+				{
+					chatSystemMessage($m[1]." wurde gekickt! Grund: ".$text.".");
+				}
+				else
+				{
+					$ajax->alert("User is not online in chat!");
+				}
+			}
+			else
+			{
+				$ajax->alert("A user with this nick does not exist!");
+			}
 		}
+		elseif ($admin==1 && preg_match('#^/ban (.[^\'\"\?\<\>\$\!\=\;\&\s]+)\s([A-Za-z0-9\s]+)$#',$ct,$m)>0)
+		{
+			$text = isset($m[2]) ? $m[2] : "";
+			$uid = User::findIdByNick($m[1]);
+			if ($uid>0)
+			{
+				dbquery("INSERT INTO
+					chat_banns
+				(user_id,reason,timestamp)
+				VALUES (".$uid.",'".$text."',".time().")
+				ON DUPLICATE KEY UPDATE timestamp=".time().",reason='".$text."'");
+				kickChatUser($uid,$text);
+				chatSystemMessage($m[1]." wurde gebannt! Grund: ".$text);
+			}
+			else
+			{
+				$ajax->alert("A user with this nick does not exist!");
+			}
+		}
+		elseif ($admin==1 && preg_match('#^/unban (.[^\'\"\?\<\>\$\!\=\;\&\s]+)$#',$ct,$m)>0)
+		{
+			$uid = User::findIdByNick($m[1]);
+			if ($uid>0)
+			{
+				dbquery("DELETE FROM
+					chat_banns
+				WHERE
+					user_id=".$uid.";");
+				if (mysql_affected_rows()>0)
+				{
+					$ajax->alert("Unbanned ".$m[1]."!");
+				}
+				else
+				{
+					$ajax->alert("A user with that nick is not banned!");
+				}
+			}
+			else
+			{
+				$ajax->alert("A user with this nick does not exist!");
+			}			
+		}
+		elseif ($admin==1 && preg_match('#^/banlist$#',$ct,$m)>0)
+		{
+			$res = dbquery("SELECT
+				*
+			FROM
+				chat_banns
+			;");
+			if (mysql_num_rows($res)>0)
+			{
+				$out="";
+				while ($arr=mysql_fetch_assoc($res))
+				{
+					$tu = new User($arr['user_id']);
+					if ($tu->isValid)
+					{
+						$out.= $tu->nick.": ".$arr['reason']." (".df($arr['timestamp']).")\n";
+					}
+				}
+				$ajax->alert($out);
+			}
+			else
+			{
+				$ajax->alert("Bannliste leer!");
+			}
+		}
+
 		elseif ($ct!="" && $_SESSION['lastchatmsg']!=md5($form['ctext']))
 		{
 			dbquery("INSERT INTO
@@ -186,31 +301,35 @@ function sendChat($form)
 			)");
 			$_SESSION['lastchatmsg']=md5($form['ctext']);
 			$ajax->script("xajax_setChatUserOnline()");
-		}	
+		}
 	}
-  return $ajax;		
+	$out = ob_get_clean();
+	if ($out!="")
+		$ajax->alert($out);
+
+  return $ajax;
 }
 
 function setChatUserOnline($init=0)
 {
-	$ajax = new xajaxResponse();	
+	$ajax = new xajaxResponse();
 	$s = $_SESSION;
 	if (isset($s['user_id']))
-	{		
+	{
 		if ($init == 1)
 		{
 			$res = dbquery("
 			SELECT
-				user_id 
+				user_id
 			FROM
 				chat_users
 			WHERE
 				user_id=".$s['user_id']."
-			");				
-			if (mysql_num_rows($res)==0)	
+			");
+			if (mysql_num_rows($res)==0)
 			{
 				chatSystemMessage($s['user_nick']." betritt den Chat.");
-				$str = "Hallo ".$s['user_nick'].",  willkommen im EtoA-Chat. Bitte beachte das wir Spam nicht dulden und eine gepflegte Ausdrucksweise erwarten. Bei Verstössen gegen diese Regeln werden wir mit Banns und/oder Accountsperrungen vorgehen!";				
+				$str = "Hallo ".$s['user_nick'].",  willkommen im EtoA-Chat. Bitte beachte das wir Spam nicht dulden und eine gepflegte Ausdrucksweise erwarten. Bei Verstössen gegen diese Regeln werden wir mit Banns und/oder Accountsperrungen vorgehen!";
 				$ajax->script("xajax_appendToChatBox('".$str."');");
 			}
 		}
@@ -229,12 +348,12 @@ function setChatUserOnline($init=0)
 		)");
 		$ajax->script("setTimeout('xajax_setChatUserOnline()',60000);");
 	}
-  return $ajax;		
+  return $ajax;
 }
 
 function showChatUsers()
 {
-	$ajax = new xajaxResponse();	
+	$ajax = new xajaxResponse();
 	$res = dbquery("
 	SELECT
 		nick,
@@ -250,7 +369,7 @@ function showChatUsers()
 		while ($arr=mysql_fetch_assoc($res))
 		{
 			// (".tf($t-$arr['timestamp']).")
-			$out.= "<a href=\"../index.php?page=userinfo&id=".$arr['user_id']."\" target=\"main\">".$arr['nick']."</a><br/>";					
+			$out.= "<a href=\"../index.php?page=userinfo&id=".$arr['user_id']."\" target=\"main\">".$arr['nick']."</a><br/>";
 		}
 	}
 	else
@@ -258,24 +377,24 @@ function showChatUsers()
 	$ajax->assign("userlist","innerHTML",$out);
 	$ajax->append("userListButton","value"," ($nr)");
 
-  return $ajax;			
+  return $ajax;
 }
 
 function logoutFromChat()
 {
-	$ajax = new xajaxResponse();	
+	$ajax = new xajaxResponse();
 	$s = $_SESSION;
 	if (isset($s['user_id']))
-	{		
+	{
 		dbquery("
 		DELETE FROM
 			chat_users
 		WHERE
 			user_id=".$s['user_id']."
-		");		
+		");
 		chatSystemMessage($s['user_nick']." verlässt den Chat.");
 	}
-  return $ajax;		
+  return $ajax;
 }
 
 ?>

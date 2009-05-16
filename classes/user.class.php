@@ -903,7 +903,24 @@
 			return $uarr[0];
 		}
 
-
+		static function findIdByNick($nick)
+		{
+			$res = dbquery("
+			SELECT
+				user_id
+			FROM
+				users
+			WHERE
+				user_nick='".$nick."'
+			LIMIT 1;
+			");
+			if (mysql_num_rows($res)>0)
+			{
+				$arr = mysql_fetch_row($res);
+				return $arr[0];
+			}
+			return 0;
+		}
 
 	}
 

@@ -73,7 +73,22 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 		</script>			
 	</head> 		
 	<body>
-		
+		<?PHP
+			$res = dbquery("
+			SELECT * FROM
+				chat_banns
+			WHERE
+				user_id=".$_SESSION['user_id'].";");
+			if (mysql_num_rows($res)>0)
+			{
+				$arr = mysql_fetch_assoc($res);
+				echo "<p>Du wurdest vom Chat gebannt!<br/><br/>
+				<b>Grund:</b> ".$arr['reason']."<br/>
+				<b>Zeit:</b> ".df($arr['timestamp'])."</p>";
+			}
+			else
+			{
+		?>
 		<div id="chatitems">
 
 		</div>
@@ -95,6 +110,10 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 			xajax_setChatUserOnline(1);
 
 		</script>
+		<?PHP
+			}
+			?>
+
 	</body>
 </html>
 <?PHP      
