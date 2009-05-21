@@ -47,10 +47,10 @@
 	$graphh = $graphby - $graphty;
 
 	imagefilledrectangle($im,0,0,$w,$h,$colBg);
-//	$imh = imagecreatefromjpeg("../images/logo_trans.jpg");
-//	$bgfh = 0.5;
-//	$bgfw = 0.8;
-//	ImageCopyresized($im,$imh,($w-($w*$bgfw))/2,($h-($h*$bgfh))/2,0,0,$w*$bgfw,$h*$bgfh,imagesx($imh),imagesy($imh));
+	$imh = imagecreatefromjpeg("../images/logo_trans.jpg");
+	$bgfh = 0.5;
+	$bgfw = 0.8;
+	ImageCopyresized($im,$imh,($w-($w*$bgfw))/2,($h-($h*$bgfh))/2,0,0,$w*$bgfw,$h*$bgfh,imagesx($imh),imagesy($imh));
 
 
 
@@ -89,14 +89,14 @@
 		// X-Axis
 		for($i=0;$i<$nr;$i++)
 		{
-			imageline($im,$graphtx+($graphw/$nr*$i),$graphty,$graphtx+($graphw/$nr*$i),$graphby,$colLLGrey);
+			//imageline($im,$graphtx+($graphw/$nr*$i),$graphty,$graphtx+($graphw/$nr*$i),$graphby,$colLLGrey);
 		}
 
 		// Y-Axis
 		for($i=0;$i<=$drate;$i++)
 		{
 			imagestring($im,1,$graphtx-15,$graphby-($graphh/$drate*$i)-3,$i,$colBlack);
-			imageline($im,$graphtx,$graphby-($graphh/$drate*$i),$graphbx,$graphby-($graphh/$drate*$i),$colLLGrey);
+			//imageline($im,$graphtx,$graphby-($graphh/$drate*$i),$graphbx,$graphby-($graphh/$drate*$i),$colLLGrey);
 		}
 
 		$j=0;
@@ -131,8 +131,7 @@
 		{
 			imagestring($im,1,$lastx[$i]+5,$lasty[$i]-3,round($rates[$i],2),$rCol[$i]);
 
-			imagestring($im,3,$graphtx+20+($graphw/NUM_RESOURCES*$i)+1,$graphby+25+1,$resNames[$i],$colGrey);
-			imagestring($im,3,$graphtx+20+($graphw/NUM_RESOURCES*$i),$graphby+25,$resNames[$i],$rCol[$i]);
+			imagestring($im,5,$graphtx+20+($graphw/NUM_RESOURCES*$i),$graphby+25,$resNames[$i],$rCol[$i]);
 		}
 
 		// Timestampss

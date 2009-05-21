@@ -1611,6 +1611,14 @@
 			echo "<tr><th>Allianzmarktstatus:</th>
 					<td>".$status_text."</td></tr>";
 		}
+		$ratestext = "";
+		foreach($resNames as $i=>$rn)
+		{
+			$ratestext.="$rn: ".$cfg->{'market_rate_'.$i}.", ";
+		}
+		$ratestext = substr($ratestext,0,strlen($ratestext)-2);
+		echo "<tr><th>Rohstoffkurse:</th><td>".popUp($ratestext,"page=help&amp;site=rates")."</td></tr>";
+
 
 	tableEnd();
  
