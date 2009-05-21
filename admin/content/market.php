@@ -198,11 +198,41 @@
 	}
 	else
 	{
-		echo "Willkommen bei der Marktplatzverwaltung. Bitte w&auml;hle einen Bereich aus dem Men&uuml; rechts aus!<br/><br/>";
+		echo '<div style="float:left;">';
+		echo "Willkommen bei der Marktplatzverwaltung. <br/><br/>";
 		
 		echo '<input type="button" value="Schiffe" onclick="document.location=\'?page='.$page.'&amp;sub=ships\'" /><br/><br/>';
 		echo '<input type="button" value="Rohstoffe" onclick="document.location=\'?page='.$page.'&amp;sub=ress\'" /><br/><br/>';
 		echo '<input type="button" value="Auktionen" onclick="document.location=\'?page='.$page.'&amp;sub=auction\'" /><br/><br/>';
+
+		echo "<h2>Rohstoffkurse</h2>";
+		if (isset($_GET['action']) && $_GET['action']=="updaterates")
+		{
+			MarketHandler::updateRates();
+			ok_msg("Rohstoffraten wurden neu berechnet.");
+		}
+		if (isset($_GET['action']) && $_GET['action']=="randomrates")
+		{
+			MarketHandler::randomRates();
+			ok_msg("Rohstoffraten wurden generiert.");
+		}
+
+		echo "<table class=\"tb\" style=\"width:200px;\">";
+		for ($i=0;$i<NUM_RESOURCES;$i++)
+		{
+			$vname = "market_rate_".$i;
+			echo "<tr><th>".$resNames[$i]."</th><td>".$cfg->$vname->v."</td></tr>";
+		}
+		echo "</table>";
+
+		echo 'Marktkurse werden alle 30 Minuten berechnet. <br/><br/>';
+		echo '<input type="button" value="Kurse manuell aktualisieren" onclick="document.location=\'?page='.$page.'&amp;action=updaterates\'" /><br/><br/>';
+		echo '<input type="button" value="Zufällige Kurse erzeugen" onclick="document.location=\'?page='.$page.'&amp;action=randomrates\'" /><br/><br/>';
+			
+		echo '</div>';
+
+		echo '<img src="../misc/market.image.php" alt="Kursverlauf" style="float:right;" />';
+
 	}
 
 ?>

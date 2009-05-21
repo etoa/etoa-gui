@@ -131,6 +131,9 @@
 	define("RES_5",RES_FOOD);
 	define("RES_6",RES_POWER);
 
+	$resNames = array(RES_METAL,RES_CRYSTAL,RES_PLASTIC,RES_FUEL,RES_FOOD);
+
+
 	define('RES_ICON_METAL','<img class="resIcon" src="images/resources/metal_s.png" alt="'.RES_METAL.'" />');
 	define('RES_ICON_CRYSTAL','<img class="resIcon" src="images/resources/crystal_s.png" alt="'.RES_CRYSTAL.'" />');
 	define('RES_ICON_PLASTIC','<img class="resIcon" src="images/resources/plastic_s.png" alt="'.RES_PLASTIC.'" />');
@@ -389,8 +392,10 @@
 	define("MARKET_FOOD_FACTOR",$cfg->market_food_factor->v);				// Nahrung Taxe
 
 
-
-
+	define('MARKET_RATES_COUNT',96);
+	define('MARKET_RATE_MIN',0.1);
+	define('MARKET_RATE_MAX',10);
+	define('NUM_RESOURCES',5);
 
   /****************/
   /* Allianzboard */

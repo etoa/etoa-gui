@@ -7,32 +7,32 @@
 		$tmr = timerStart();
 		$ui = Users::removeInactive();
 		$ud = Users::removeDeleted();
-		$log = "Inaktive und als gel�scht markierte User gel�scht.\nDauer: ".timerStop($tmr)." sec\n\n";
+		$log = "Inaktive und als gelöscht markierte User gel�scht.\nDauer: ".timerStop($tmr)." sec\n\n";
 
 		// Alte Benuterpunkte-Logs l�schen
 		$tmr = timerStart();
 		$nr = Users::cleanUpPoints();
-		$log.= "$nr alte Userpunkte-Logs gel�scht.\nDauer: ".timerStop($tmr)." sec\n\n";
+		$log.= "$nr alte Userpunkte-Logs gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
 
 		// Alte Session-Logs
 		$tmr = timerStart();
 		$nr = Users::cleanUpSessionLogs();
-		$log.= "$nr alte Session-Logs gel�scht.\nDauer: ".timerStop($tmr)." sec\n\n";
+		$log.= "$nr alte Session-Logs gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
 		
 		// Alte Logs l�schen
 		$tmr = timerStart();
 		$nr = Log::removeOld();
-		$log.= "$nr alte Logs gel�scht.\nDauer: ".timerStop($tmr)." sec\n\n";
+		$log.= "$nr alte Logs gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
 
 		// Alte Nachrichten l�schen
 		$tmr = timerStart();
 		Message::removeOld();
-		$log.= "Alte Nachrichten gel�scht.\nDauer: ".timerStop($tmr)." sec\n\n";
+		$log.= "Alte Nachrichten gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
 
 		// Abgelaufene Sperren l�schen
 		$tmr = timerStart();
 		Users::removeOldBanns();
-		$log.= "Abgelaufene Sperren gel�scht.\nDauer: ".timerStop($tmr)." sec\n\n";
+		$log.= "Abgelaufene Sperren gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
 
 		// Tabellen optimieren
 		$tmr = timerStart();
@@ -113,6 +113,9 @@
 				}
 			}
 		}
+
+		// Update market resource rates
+		MarketHandler::updateRates();
 
 		return $log;
 	}
