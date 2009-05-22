@@ -42,7 +42,7 @@
 	if (!defined('ADMIN_MODE'))
 		define('ADMIN_MODE',false);
 
-	if (!defined('USE_HTML'));
+	if (!defined('USE_HTML'))
 		define('USE_HTML',true);
 
 

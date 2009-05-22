@@ -5,24 +5,22 @@
 	// Created 28.10.2006
 	//
 
-	session_start();
-	include("../functions.php");
-	include("../conf.inc.php");
-	dbconnect();
+	include("image.inc.php");
 
-	define(DETAIL_LIMIT,48);	// Maximale Anzahl Datensätze
-	define(STEP,6);
-	define(IM_W,600);	// Breite des Bildes
-	define(IM_H,IM_W/3*2);	// Höhe des Bildes
-	define(B_B,25);		// Randabstand
-	define(SHADOW_L,5);	// Grösse des Schattens
-	define(FONT_SIZE,1);	// Schriftgrösse
-	define(BG_FAC_W,5/6);	// Schriftgrösse
-	define(BG_FAC_H,0.41);	// Schriftgrösse
+	define('DETAIL_LIMIT',48);	// Maximale Anzahl Datensätze
+	define('STEP',6);
+	define('IM_W',600);	// Breite des Bildes
+	define('IM_H',IM_W/3*2);	// Höhe des Bildes
+	define('B_B',25);		// Randabstand
+	define('SHADOW_L',5);	// Grösse des Schattens
+	define('FONT_SIZE',1);	// Schriftgrösse
+	define('BG_FAC_W',5/6);	// Schriftgrösse
+	define('BG_FAC_H',0.41);	// Schriftgrösse
+	define('B_H',IM_H-(2*B_B));
 	
-	Header("Content-Type: image/png");
-
-	define(B_H,IM_H-(2*B_B));
+	header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
+	header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); // Datum in der Vergangenheit
+	header("Content-type: image/png");
 
 	$im = ImageCreate(IM_W,IM_H);
 
@@ -38,11 +36,11 @@
 	$lblue = ImageColorAllocate($im,34,34,200);
 
 	ImageFill($im,0,0, $white);
-	$imh = imagecreatefromjpeg("../images/logo_trans.jpg");
+	$imh = imagecreatefromjpeg("images/logo_trans.jpg");
 	ImageCopyresized($im,$imh,(IM_W-(IM_W*BG_FAC_W))/2,(IM_H-(IM_H*BG_FAC_H))/2,0,0,IM_W*BG_FAC_W,IM_H*BG_FAC_H,imagesx($imh),imagesy($imh));
 	ImageRectangle($im, 0, 0, IM_W-1, IM_H-1, $black);
 	
-	if ($_GET['user']>0 && count($_SESSION)>0)
+	if (isset($_GET['user']) && $_GET['user']>0 && count($_SESSION)>0)
 	{
 		$res=dbquery("
 			SELECT 
@@ -56,10 +54,15 @@
 		if (mysql_num_rows($res)>0)
 		{
 			$arr=mysql_fetch_array($res);
-			if ($_GET['start']>0)
+			if (isset($_GET['start']) && $_GET['start']>0)
 				$sql1 = " AND point_timestamp > ".$_GET['start']." ";
-			if ($_GET['end']>0)
-				$sql2 = " AND point_timestamp < ".$_GET['end']." ";			
+			else
+				$sql1 = "";
+			if (isset($_GET['end']) && $_GET['end']>0)
+				$sql2 = " AND point_timestamp < ".$_GET['end']." ";
+			else
+				$sql2 = "";
+
 			$pres=dbquery("
 				SELECT 
 					* 
@@ -75,7 +78,7 @@
 			");
 			if (mysql_num_rows($pres)>0)
 			{
-				define(B_W, (IM_W-B_B)/floor(mysql_num_rows($pres)/STEP)/2);
+				define('B_W', (IM_W-B_B)/floor(mysql_num_rows($pres)/STEP)/2);
 				// Bar colors
 				for ($x=0;$x<B_W;$x++)
 				{

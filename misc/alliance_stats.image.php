@@ -5,23 +5,19 @@
 	// Created 28.10.2006
 	//
 
-	session_start();
-	include("../functions.php");
-	include("../conf.inc.php");
-	dbconnect();
-	define(DETAIL_LIMIT,48);	// Maximale Anzahl Datensätze
-	define(STEP,6);
-	define(IM_W,600);	// Breite des Bildes
-	define(IM_H,IM_W/3*2);	// Höhe des Bildes
-	define(B_B,25);		// Randabstand
-	define(SHADOW_L,5);	// Grösse des Schattens
-	define(FONT_SIZE,1);	// Schriftgrösse
-	define(BG_FAC_W,5/6);	// Schriftgrösse
-	define(BG_FAC_H,0.41);	// Schriftgrösse
-	
-	Header("Content-Type: image/png");
+	include("image.inc.php");
 
-	define(B_H,IM_H-(2*B_B));
+	define('DETAIL_LIMIT',48);	// Maximale Anzahl Datensätze
+	define('STEP',6);
+	define('IM_W',600);	// Breite des Bildes
+	define('IM_H',IM_W/3*2);	// Höhe des Bildes
+	define('B_B',25);		// Randabstand
+	define('SHADOW_L',5);	// Grösse des Schattens
+	define('FONT_SIZE',1);	// Schriftgrösse
+	define('BG_FAC_W',5/6);	// Schriftgrösse
+	define('BG_FAC_H',0.41);	// Schriftgrösse
+	
+	define('B_H',IM_H-(2*B_B));
 
 	$im = ImageCreate(IM_W,IM_H);
 
@@ -37,11 +33,11 @@
 	$lblue = ImageColorAllocate($im,34,34,200);
 
 	ImageFill($im,0,0, $white);
-	$imh = imagecreatefromjpeg("../images/logo_trans.jpg");
+	$imh = imagecreatefromjpeg("images/logo_trans.jpg");
 	ImageCopyresized($im,$imh,(IM_W-(IM_W*BG_FAC_W))/2,(IM_H-(IM_H*BG_FAC_H))/2,0,0,IM_W*BG_FAC_W,IM_H*BG_FAC_H,imagesx($imh),imagesy($imh));
 	ImageRectangle($im, 0, 0, IM_W-1, IM_H-1, $black);
 	
-	if ($_GET['alliance']>0 && count($_SESSION)>0)
+	if (isset($_GET['alliance']) && $_GET['alliance']>0 && count($_SESSION)>0)
 	{
 		$res=dbquery("
 			SELECT 

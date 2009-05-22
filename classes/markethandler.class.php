@@ -101,6 +101,7 @@ class MarketHandler
 		)
 		");
 
+		// Remove old values
 		$res = dbquery("SELECT id FROM market_rates ORDER BY id DESC LIMIT ".(MARKET_RATES_COUNT*2).", 1");
 		if (mysql_num_rows($res)>0)
 		{

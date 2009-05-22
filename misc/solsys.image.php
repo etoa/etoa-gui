@@ -1,8 +1,6 @@
 <?PHP
-	session_start();
-	//header("Content-type: image/jpeg");
-	//header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1	
-	//header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); // Datum in der Vergangenheit		
+
+	include("image.inc.php");
 
 	$im_size=400;
 	define('PI',3.141592654);
@@ -16,7 +14,7 @@
 	define('MOON_RADIUS',3);
 
 	$im = imagecreate($im_size,$im_size);
-	$imb = imagecreatefromjpeg("../images/background.jpg");
+	$imb = imagecreatefromjpeg("images/background.jpg");
 	imagecopy($im,$imb,0,0,0,0,$im_size,$im_size);
 	$col_black=imagecolorallocate($im,0,0,0);
 	$col_white=imagecolorallocate($im,255,255,255);
@@ -120,6 +118,6 @@
 		imagestring($im,8,5,5,"Keine Planetendaten vorhanden!",$col_white);
 	}
 		
-	imagejpeg($im);
+	imagepng($im);
 	imagedestroy($im);
 ?>

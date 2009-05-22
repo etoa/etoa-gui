@@ -1,24 +1,12 @@
 <?PHP
 
-	function MDashedLine($image, $x0, $y0, $x1, $y1, $fg, $bg)
-	{
-	        $st = array($fg, $fg, $fg, $fg, $bg, $bg, $bg, $bg);
-	        ImageSetStyle($image, $st);
-	        ImageLine($image, $x0, $y0, $x1, $y1, IMG_COLOR_STYLED);
-	} 
-
-	header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
-	header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); // Datum in der Vergangenheit
-	header ("Content-type: image/png");
-
-	define("RELATIVE_ROOT","../");
-	include("../inc/bootstrap.inc.php");
+	include("image.inc.php");
 
 	define('GALAXY_MAP_DOT_RADIUS',3);
 	define('GALAXY_MAP_WIDTH',500);
 	define('GALAXY_MAP_LEGEND_HEIGHT',40);
 
-	define('IMG_DIR',"../images/imagepacks/Discovery");
+	define('IMG_DIR',"images/imagepacks/Discovery");
 
 	$sx_num=$conf['num_of_sectors']['p1'];
 	$sy_num=$conf['num_of_sectors']['p2'];
@@ -28,8 +16,6 @@
 	$p_num_max=$conf['num_planets']['p2'];
 
 	define('GALAXY_IMAGE_SCALE',GALAXY_MAP_WIDTH/((($sx_num-1)*10)+$cx_num));
-
-
 	
 	$w = GALAXY_MAP_WIDTH;
 	$h = $sy_num*$cy_num*GALAXY_IMAGE_SCALE+GALAXY_MAP_LEGEND_HEIGHT;
@@ -281,7 +267,7 @@
 				imagefilledellipse ($im,270,$h-GALAXY_MAP_LEGEND_HEIGHT+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$colOrange);
 				imagefilledellipse ($im,335,$h-GALAXY_MAP_LEGEND_HEIGHT+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$colViolett);
 				*/
-				imagestring($im,3,10,$h-GALAXY_MAP_LEGEND_HEIGHT+10,"Klicke auf einen Sektor um ihn auszuw�hlen!",$colWhite);
+				imagestring($im,3,10,$h-GALAXY_MAP_LEGEND_HEIGHT+10,"Galaxiekarte",$colWhite);
 			}
 			
 			for ($x=($cx_num*GALAXY_IMAGE_SCALE);$x<$w;$x+=($cx_num*GALAXY_IMAGE_SCALE))

@@ -1,16 +1,11 @@
 <?PHP
-	define("CLASS_ROOT","../classes");
-	require_once("../bootstrap.inc.php");
-	include("../conf.inc.php");
-	include("../functions.php");
-	dbconnect();
-	$cfg = Config::getInstance();
-	include("../def.inc.php");
+
+	include("image.inc.php");
 	
 	$w = 468;
 	$h = 60;
 	$im = imagecreatetruecolor($w,$h);
-	$im = imagecreatefrompng("../images/userbanner/userbanner1.png");
+	$im = imagecreatefrompng("images/userbanner/userbanner1.png");
 	
 	if (!isset($_GET['save']))
 	{
@@ -53,7 +48,7 @@
 		{
 			$arr = mysql_fetch_row($res);
 			
-			$font = "../images/userbanner/calibri.ttf";
+			$font = "images/userbanner/calibri.ttf";
 			
 			$nsize = imagettfbbox(16,0,$font,$arr[0]);
 			

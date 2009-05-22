@@ -1,11 +1,6 @@
 <?PHP
 
-	include("../conf.inc.php");
-	include("../functions.php");
-	define("CLASS_ROOT","../classes");
-	dbconnect();
-	$conf=get_all_config();
-	include("../def.inc.php");
+	include("image.inc.php");
 
 	define('NUM_LEVELS',25);
 
@@ -19,18 +14,8 @@
 
 	$maxRatio = 30;
 
-function MDashedLine($image, $x0, $y0, $x1, $y1, $fg, $bg)
-{
-        $st = array($fg, $fg, $fg, $fg, $bg, $bg, $bg, $bg);
-        ImageSetStyle($image, $st);
-        ImageLine($image, $x0, $y0, $x1, $y1, IMG_COLOR_STYLED);
-} 	
-	
-	
 	$im = imagecreatetruecolor($w,$h);
-	header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1	
-	header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); // Datum in der Vergangenheit	
-	header ("Content-type: image/png");
+
 	$colWhite = imagecolorallocate($im,255,255,255);
 	$colBlack = imagecolorallocate($im,0,0,0);
 	$colLGrey = imagecolorallocate($im,230,230,230);

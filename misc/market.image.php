@@ -1,22 +1,11 @@
 <?PHP
-	define('RELATIVE_ROOT','../');
-	require_once("../inc/bootstrap.inc.php");
 
-	dbconnect();
-	$cfg = Config::getInstance();
-	require_once("../inc/def.inc.php");
+	include("image.inc.php");
 
 	$w = 600;
 	$h = 400;
 	$im = imagecreatetruecolor($w,$h);
 		
-	if (1)
-	{
-		header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1	
-		header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); // Datum in der Vergangenheit	
-		header ("Content-type: image/png");
-	}
-	
 	$colWhite = imagecolorallocate($im,255,255,255);
 	$colBlack = imagecolorallocate($im,0,0,0);
 	$colLLGrey = imagecolorallocate($im,230,230,230);
@@ -30,7 +19,6 @@
 	$colRed = imagecolorallocate($im,255,0,0);
 
 	$colBg = imagecolorallocate($im,255,255,255);
-
 
 	$rCol[0] = imagecolorallocate($im,157,100,094);
 	$rCol[1] = imagecolorallocate($im,094,126,139);
@@ -47,7 +35,7 @@
 	$graphh = $graphby - $graphty;
 
 	imagefilledrectangle($im,0,0,$w,$h,$colBg);
-	$imh = imagecreatefromjpeg("../images/logo_trans.jpg");
+	$imh = imagecreatefromjpeg("images/logo_trans.jpg");
 	$bgfh = 0.5;
 	$bgfw = 0.8;
 	ImageCopyresized($im,$imh,($w-($w*$bgfw))/2,($h-($h*$bgfh))/2,0,0,$w*$bgfw,$h*$bgfh,imagesx($imh),imagesy($imh));
@@ -137,18 +125,18 @@
 		// Timestampss
 		imagestring($im,1,$graphtx+10,$graphby+10,date("d.m.Y, H:i",$ts2),$colBlack);
 		imagestring($im,1,$graphbx-80,$graphby+10,date("d.m.Y, H:i",$ts1),$colBlack);
-
-
 	}
 	else
 	{
 		imagestring($im,3,$graphtx+10,$graphby-20,"Kein Kursdaten vorhanden!",$colBlack);
 	}
 
-	imageline($im,$graphtx,$graphty,$graphtx,$graphby,$colBlack);
-	imageline($im,$graphtx,$graphby,$graphbx,$graphby,$colBlack);
-	ImageFilledPolygon($im, array($graphbx,$graphby,$graphbx-10,$graphby-5,$graphbx-10,$graphby+5), 3, $colBlack);
-	ImageFilledPolygon($im, array($graphtx,$graphty,$graphtx-5,$graphty+10,$graphtx+5,$graphty+10), 3, $colBlack);
+	imagearrow($im,$graphtx,$graphby,$graphtx,$graphty,$colBlack);
+	//ImageFilledPolygon($im, array($graphtx,$graphty,$graphtx-5,$graphty+10,$graphtx+5,$graphty+10), 3, $colBlack);
+
+	imagearrow($im,$graphtx,$graphby,$graphbx,$graphby,$colBlack);
+	//ImageFilledPolygon($im, array($graphbx,$graphby,$graphbx-10,$graphby-5,$graphbx-10,$graphby+5), 3, $colBlack);
+
 	imagestring($im,3,$graphbx+10,$graphby-6,"t",$colBlack);
 	imagestring($im,3,$graphtx-10,$graphty-15,"Kurs",$colBlack);
 

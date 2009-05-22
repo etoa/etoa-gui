@@ -82,13 +82,14 @@
 	require_once(RELATIVE_ROOT."inc/template.inc.php");
 
 	// Initialize XAJAX and load functions
-	if (ADMIN_MODE)
-		require_once(RELATIVE_ROOT."/admin/inc/xajax_admin.inc.php");
-	else
-		require_once(RELATIVE_ROOT."inc/xajax.inc.php");
+	if (USE_HTML) // todo: shell check
+	{
+		if (ADMIN_MODE)
+			require_once(RELATIVE_ROOT."/admin/inc/xajax_admin.inc.php");
+		else
+			require_once(RELATIVE_ROOT."inc/xajax.inc.php");
+	}
 
 	// Set popup identifiert to false
 	$popup = false;
-
-
 ?>

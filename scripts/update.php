@@ -1,6 +1,5 @@
 #! /usr/bin/php -q
 <?PHP
-
 	//////////////////////////////////////////////////
 	//		 	 ____    __           ______       			//
 	//			/\  _`\ /\ \__       /\  _  \      			//
@@ -28,24 +27,18 @@
 	// 	Die Datei wird auf einer Shell aufgerufen (via Cron-Job realisiert)
 	//	Sie wird jede Stunde aufgerufen
 
-	define(USE_HTML,false);
+	define('USE_HTML',false);
 
 	// Gamepfad feststellen
 	$grd = chdir(realpath(dirname(__FILE__)."/../"));
 
 	// Initialisieren
-	if (include("conf.inc.php"))
+	if (include("inc/bootstrap.inc.php"))
 	{
-		include("bootstrap.inc.php");
-		include("functions.php");
 		include("inc/update.inc.php");
-		dbconnect();
-		$cfg = Config::getInstance();
-		$conf = $cfg->getArray();	// For compatibility reasons
-		include("def.inc.php");
 
 		// Prüfen ob Updates eingeschaltet sind
-		if ($cfg->get('update_enabled')==1)
+		if ($cfg->get('update_enabled')==1 && false)
 		{
 			// Mutex holen
 			$tmr = timerStart();

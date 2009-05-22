@@ -1,5 +1,8 @@
 <?PHP
-	header("content-type:image/png");
+
+	header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
+	header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); // Datum in der Vergangenheit
+	header("Content-type: image/png");
 
 	if (isset($_GET['p']))
 		$p = intval($_GET['p']);
