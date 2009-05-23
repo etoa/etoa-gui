@@ -112,7 +112,7 @@
 								echo "							
 								<form action=\"?page=search\" method=\"post\">
 								<div style=\"margin-top:3px;margin-bottom:5px;\">
-										 &nbsp;<input class=\"search\" type=\"text\" value=\"".(isset($_POST['search_query']) ? $_POST['search_query']:'' )."\" name=\"search_query\" size=\"9\" autocomplete=\"off\" />
+										 &nbsp;<input class=\"search\" type=\"text\" value=\"".(isset($_POST['search_query']) ? $_POST['search_query'] : '' )."\" name=\"search_query\" size=\"9\" autocomplete=\"off\" />
 										<input type=\"submit\" name=\"search_submit\" value=\"Suchen\" />
 									</div></form>";
 							
@@ -359,7 +359,7 @@
 								$rtime = $render_time[1]+$render_time[0]-$render_starttime;
 								echo "<b>Renderzeit:</b> ".round($rtime,3)." sec &nbsp; ";
 								// Nickname
-								echo "<b>Eingeloggt als: </b>".$_SESSION[SESSION_NAME]['user_nick']." &nbsp; ";
+								echo "<b>Eingeloggt als: </b>".$cu->nick." &nbsp; ";
 							?>
 						</td>
 					</tr>

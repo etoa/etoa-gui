@@ -390,7 +390,6 @@ function setDefVal(obj,defVal)
  * nicht gedacht fuer zeihenketten, sondern fuer   *
  * zahlen um jeden tausender abzugrenzen.          *
  *                                                 *
- * TODO ::                                         *
  * <input type="text" onkeyup="setTick(this); " /> *
  *                                                 *
  ***************************************************/

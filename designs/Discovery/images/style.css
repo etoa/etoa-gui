@@ -420,8 +420,8 @@ table#innerspacetbl {
 
 
 
-//�bersicht -> planetenliste
-// \"Courier New\", Courier, mono;
+/** Übersicht -> planetenliste
+ \"Courier New\", Courier, mono; */
 
 .PlaniTextLinks {
 	color: #FFFFFF;
@@ -497,7 +497,7 @@ table#innerspacetbl {
 
 
 
-// Definition des ganzen Layouts
+/** Definition des ganzen Layouts */
 
 div.Menueleiste-09_ {
 	position:absolute;
@@ -614,15 +614,19 @@ div.Menueleiste-70_ {
 	height:19px;
 }
 .Stil1 {color: #FFFFFF}
+
 body {
 	background-color: #000000;
+	background-attachment: fixed;
 }
+
 .Stil2 {font-family:verdana, sans-serif, arial;}
+
 .Stil3 {font-size: 36px}
 
 
-BODY {background-attachment: fixed;}
-//.Stil4 {font-size: 9px}
+/* .Stil4 {font-size: 9px} */
+
 .Stil6 {
 	font-size: 13px;
 	font-family:verdana, sans-serif, arial;

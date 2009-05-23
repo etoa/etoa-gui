@@ -199,7 +199,7 @@
 			if (isset($_POST['delete_user']))
 			{
 				$user = new User($id);
-				if ($user->delete(false,$_SESSION[SESSION_NAME]['user_nick']))				
+				if ($user->delete(false,$cu->nick))
 					success_msg("L&ouml;schung erfolgreich!");
 			}
 			

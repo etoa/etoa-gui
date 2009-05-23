@@ -1,5 +1,5 @@
 body	{
-	margin:20px;
+	margin:0px;
 	color: white;
 	font-family:verdana, sans-serif, ARIAL;
 	font-size: 10pt;
@@ -97,7 +97,7 @@ input,select,textarea	{
 
 #layoutbox	{
 	width:95%;
-	margin:0px auto;
+	margin:20px auto;
 	background:#6e7591;
 	font-size:10pt;
 	vertical-align:top;

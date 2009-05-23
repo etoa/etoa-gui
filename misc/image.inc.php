@@ -28,10 +28,14 @@
 		$sin = $dy / $r;
 		$cos = $dx / $r;
 
-		imagestring($im,3,10,10,$cos,$color);
-
-
-		$poly = array($x2,$y2, $x2-10*$cos,$y2-10*$sin - 5*$cos, $x2-10*$cos,$y2-10*$sin + 5*$cos);
+		if ($x1==$x2 && $y2>$y1)
+			$poly = array($x2,$y2, $x2-5,$y2-10, $x2+5,$y2-10);
+		elseif ($x1==$x2)
+			$poly = array($x2,$y2, $x2-5,$y2+10, $x2+5,$y2+10);
+		elseif ($y1==$y2 && $x1 > $x2)
+			$poly = array($x2,$y2, $x2+10,$y2-5, $x2+10,$y2+5);
+		else
+			$poly = array($x2,$y2, $x2-10,$y2-5, $x2-10,$y2+5);
 
 		ImageFilledPolygon($im, $poly, 3, $color);
 	}

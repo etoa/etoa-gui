@@ -571,8 +571,6 @@
 		function delete($self=false,$from="")
 		{
 	  	global $conf;
-	   	define(FLEET_ACTION_RESS,$conf['market_ship_action_ress']['v']); // Ressourcen
-	   	define(FLEET_ACTION_SHIP,$conf['market_ship_action_ship']['v']); // Schiffe
 
 			$utx = new userToXml($this->id);
 			if ($xmlfile = $utx->toCacheFile())

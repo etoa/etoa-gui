@@ -385,11 +385,11 @@
 	define("MIN_MARKET_LEVEL_RESS",1);			//Mindest Marktlevel um Rohstoffe zu kaufen und verkaufen
 	define("MIN_MARKET_LEVEL_SHIP",3);			//Mindest Marktlevel um Schiffe zu kaufen und verkaufen
 	define("MIN_MARKET_LEVEL_AUCTION",5);		//Mindest Marktlevel um Auktionen anzubieten und selber zu bieten
-	define("MARKET_METAL_FACTOR",$cfg->market_metal_factor->v);			// Titan Taxe
-	define("MARKET_CRYSTAL_FACTOR",$cfg->market_crystal_factor->v);	// Silizium Taxe
-	define("MARKET_PLASTIC_FACTOR",$cfg->market_plastic_factor->v);	// PVC Taxe
-	define("MARKET_FUEL_FACTOR",$cfg->market_fuel_factor->v);				// Tritium Taxe
-	define("MARKET_FOOD_FACTOR",$cfg->market_food_factor->v);				// Nahrung Taxe
+	define("MARKET_METAL_FACTOR",$cfg->market_rate_0->v);			// Titan Taxe
+	define("MARKET_CRYSTAL_FACTOR",$cfg->market_rate_1->v);	// Silizium Taxe
+	define("MARKET_PLASTIC_FACTOR",$cfg->market_rate_2->v);	// PVC Taxe
+	define("MARKET_FUEL_FACTOR",$cfg->market_rate_3->v);				// Tritium Taxe
+	define("MARKET_FOOD_FACTOR",$cfg->market_rate_4->v);				// Nahrung Taxe
 
 
 	define('MARKET_RATES_COUNT',96);
