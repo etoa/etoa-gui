@@ -14,6 +14,162 @@ $xajax->register(XAJAX_FUNCTION,'calcMarketAuctionTime');
 $xajax->register(XAJAX_FUNCTION,'calcMarketAuctionPrice');
 $xajax->register(XAJAX_FUNCTION,'MarketSearchFormularShow');
 $xajax->register(XAJAX_FUNCTION,'checkMarketSearchFormular');
+$xajax->register(XAJAX_FUNCTION,'marketSearch');
+
+
+function marketSearch($form)
+{
+	global $resNames;
+	ob_start();
+ 	$ajax = new xajaxResponse();
+
+	if ($form['search_cat']=="resources")
+	{
+		// Build resource type filter query
+		$sfilter = "";
+		$dfilter = "";
+		foreach ($resNames as $rk=>$rv)
+		{
+			if (isset($form['market_search_filter_supply_'.$rk]) && $form['market_search_filter_supply_'.$rk]==1)
+			{
+				if ($sfilter!="")
+					$sfilter.=" OR ";
+				$sfilter.= " sell_".$rk.">0 ";
+			}
+			if (isset($form['market_search_filter_demand_'.$rk]) && $form['market_search_filter_demand_'.$rk]==1)
+			{
+				if ($dfilter!="")
+					$dfilter.=" OR ";
+				$dfilter.= " buy_".$rk.">0 ";
+			}
+		}
+
+		// Load current entity if payable check active
+		if (isset($form['market_search_filter_payable']) && $form['market_search_filter_payable']==1)
+		{
+			$te = Entity::createFactoryById($_SESSION['cpid']);
+		}
+
+		$res = dbquery("
+		SELECT
+			*
+		FROM
+			market_ressource
+		WHERE
+			ressource_buyable='1'
+			AND (
+			".($sfilter!="" ? $sfilter : 0)."
+			)
+			AND (
+			".($dfilter!="" ? $dfilter : 0)."
+			)
+		ORDER BY
+			datum ASC;");
+
+		$cres = dbquery("SELECT COUNT(ressource_market_id) FROM market_ressource WHERE ressource_buyable=1");
+		$carr = mysql_fetch_row($cres);
+		//AND user_id!='".$_SESSION['user_id']."'
+			$nr = mysql_num_rows($res);
+			if ($nr > 0)
+			{
+				echo "<form action=\"?page=market&amp;mode=ressource\" method=\"post\" id=\"ress_buy_selector\">\n";
+				checker_init();
+				tableStart("Rohstoffangebote ($nr von ".$carr[0].")  <span id=\"market_search_loading\"><img src=\"images/loading.gif\" alt=\"loading\" /></span>");
+					echo "<tr>
+								<th>Rohstoffe:</th>
+								<th>Angebot:</th>
+								<th>Preis:</th>
+								<th>Anbieter:</th>
+								<th>Datum:</th>
+								<th style=\"width:50px;\">Kaufen:</th>
+							</tr>";
+				$cnt=0;
+				while ($arr=mysql_fetch_array($res))
+				{
+					/*
+					 *
+					$for_alliance="";
+					// Für Allianzmitglied reserveriert
+          if($arr['ressource_for_alliance']!=0)
+          {
+              $for_alliance="<span class=\"userAllianceMemberColor\">F&uuml;r Allianzmitglied Reserviert</span>";
+          }
+          else
+          {
+              $for_alliance="";
+          }*/
+
+				$show=true;
+				if (isset($te))
+				{
+					foreach ($resNames as $rk=>$rn)
+					{
+						if ($te->resources[$rk]< $arr['buy_'.$rk])
+						{
+							$show = false;
+							break;
+						}
+					}
+				}
+
+				if ($show)
+				{
+					$i=0;
+					$cres = count($resNames);
+					foreach ($resNames as $rk=>$rn)
+					{
+						echo "<tr>
+										<td class=\"rescolor".$rk."\"><b>".$rn."</b>:</td>
+										<td class=\"rescolor".$rk."\">".($arr['sell_'.$rk]>0 ? nf($arr['sell_'.$rk]) : '-')."</td>
+										<td class=\"rescolor".$rk."\">".($arr['buy_'.$rk]>0 ? nf($arr['buy_'.$rk]) : '-')."</td>";
+										if ($i==0)
+										{
+											echo "<td rowspan=\"".$cres."\">
+												<a href=\"?page=userinfo&amp;id=".$arr['user_id']."\">".get_user_nick($arr['user_id'])."</a>
+												</td>
+												<td rowspan=\"".$cres."\">
+													".date("d.m.Y  G:i:s", $arr['datum'])."<br/><br/>".stripslashes($arr['ressource_text'])."
+												</td>
+												<td rowspan=\"".$cres."\">
+													<input type=\"checkbox\" name=\"ressource_market_id[]\" id=\"ressource_market_id\" value=\"".$arr['ressource_market_id']."\" /><br/><br/>
+												</td>";
+										}
+							echo "</tr>";
+							$i++;
+					}
+					$cnt++;
+					// Setzt Lücke zwischen den Angeboten
+					if ($cnt<mysql_num_rows($res))
+					{
+						echo "<tr>
+							<td colspan=\"7\" style=\"height:10px;background:#000\">&nbsp;</td>
+						</tr>";
+					}
+				}
+			}
+			if ($i==0)
+			{
+				echo "<tr>
+					<td colspan=\"7\"><i>Keine bezahlbaren Angebote vorhanden!</td>
+				</tr>";
+			}
+			tableEnd();
+			echo "<p><input type=\"submit\" class=\"button\" name=\"ressource_submit\" id=\"ressource_submit\" value=\"Angebot annehmen\"/></p>";
+			echo "</form>";
+
+		}
+		else
+		{
+			echo "<i>Keine Angebote vorhanden!</i>";
+		}
+	}
+
+	$ajax->assign("market_search_results","innerHTML",ob_get_clean());
+	$ajax->assign("market_search_loading","style.display","none");
+
+
+	return $ajax;
+}
 
 
 function calcMarketRessPrice($val, $last_update=0)

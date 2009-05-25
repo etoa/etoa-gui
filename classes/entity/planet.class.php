@@ -9,7 +9,9 @@
 	{
 		protected $isValid;
 		protected $coordsLoaded;
-	
+
+		// TODO: Make protected and ad getter
+		public $resources;
 		
 		/**
 		* Constructor
@@ -152,7 +154,9 @@
 				$this->resFuel=zeroPlus($arr['planet_res_fuel']);
 				$this->resFood=zeroPlus($arr['planet_res_food']);
 				$this->usePower=zeroPlus($arr['planet_use_power']);
-				
+
+				$this->resources = array($this->resMetal,$this->resCrystal,$this->resPlastic,$this->resFuel,$this->resFood);
+
 				$this->bunkerMetal = zeroPlus($arr['planet_bunker_metal']);
 				$this->bunkerCrystal = zeroPlus($arr['planet_bunker_crystal']);
 				$this->bunkerPlastic = zeroPlus($arr['planet_bunker_plastic']);
@@ -689,7 +693,12 @@
 					return $this->resFood;
 			}
 		}
-		
+
+		/**
+		 * Change resource on planet
+		 * 
+		 * @deprecated See new function below
+		 */
 		function chgRes($i,$diff)
 		{
 			switch ($i)
@@ -724,7 +733,126 @@
 	    	id='".$this->id."';";
 	   	dbquery($sql);			
 		}
-		
+
+		/**
+		 *
+		 * @global <type> $resNames
+		 * @param <type> $data
+		 */
+		function addRes($data)
+		{
+			global $resNames;
+
+			$str = "";
+			foreach ($resNames as $rk => $rn)
+			{
+				if (isset($data[$rk]) && $data[$rk]>0)
+				{
+					$diff = $data[$rk];
+					// compatilility...
+					// todo: one day, planet table resourcse shold also be enumerated
+					if ($str!="")
+						$str.=",";
+					switch ($rk)
+					{
+						case 0:
+							$str.= "planet_res_metal=planet_res_metal+".$diff."";
+							$this->resMetal+=$diff;
+							break;
+						case 1:
+							$str.= "planet_res_crystal=planet_res_crystal+".$diff."";
+							$this->resCrystal+=$diff;
+							break;
+						case 2:
+							$str.= "planet_res_plastic=planet_res_plastic+".$diff."";
+							$this->resPlastic+=$diff;
+							break;
+						case 3:
+							$str.= "planet_res_fuel=planet_res_fuel+".$diff."";
+							$this->resFuel+=$diff;
+							break;
+						case 4:
+							$str.= "planet_res_food=planet_res_food+".$diff."";
+							$this->resFood+=$diff;
+							break;
+					}
+		    	$this->resources[$rk] += $diff;
+				}
+			}
+			if ($str!="")
+			{
+				$sql = "
+				UPDATE
+					planets
+				SET
+					".$str."
+				WHERE
+					id='".$this->id."';";
+				dbquery($sql);
+				return true;
+			}
+			return false;
+		}
+
+		function subRes($data)
+		{
+			global $resNames;
+
+			$str = "";
+			foreach ($resNames as $rk => $rn)
+			{
+				if (isset($data[$rk]) && $data[$rk]>0)
+				{
+					$diff = $data[$rk];
+
+					if ($this->resources[$rk] - $diff < 0)
+						return false;
+
+					// todo: one day, planet table resourcse shold also be enumerated
+					if ($str!="")
+						$str.=",";
+					switch ($rk)
+					{
+						case 0:
+							$str.= "planet_res_metal=planet_res_metal-".$diff."";
+							$this->resMetal-=$diff;
+							break;
+						case 1:
+							$str.= "planet_res_crystal=planet_res_crystal-".$diff."";
+							$this->resCrystal-=$diff;
+							break;
+						case 2:
+							$str.= "planet_res_plastic=planet_res_plastic-".$diff."";
+							$this->resPlastic-=$diff;
+							break;
+						case 3:
+							$str.= "planet_res_fuel=planet_res_fuel-".$diff."";
+							$this->resFuel-=$diff;
+							break;
+						case 4:
+							$str.= "planet_res_food=planet_res_food-".$diff."";
+							$this->resFood-=$diff;
+							break;
+					}
+		    	$this->resources[$rk] -= $diff;
+				}
+			}
+			if ($str!="")
+			{
+				$sql = "
+				UPDATE
+					planets
+				SET
+					".$str."
+				WHERE
+					id='".$this->id."';";
+				dbquery($sql);
+				return true;
+			}
+			return false;
+		}
+
+
 		function chgBunker($i,$amount)
 		{
 			switch ($i)

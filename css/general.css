@@ -63,25 +63,25 @@ img.resIcon	{
 	height:100%;
 }
 
-.resmetalcolor, .tb .resmetalcolor	{
+.resmetalcolor, .tb .resmetalcolor, .rescolor0, .tb .rescolor0	{
 	color:#CFC8C2;	
 }
-.rescrystalcolor, .tb .rescrystalcolor	{
+.rescrystalcolor, .tb .rescrystalcolor, .rescolor1, .tb .rescolor1	{
 	color:#C2E2EF;
 }
-.resplasticcolor, .tb .resplasticcolor	{
+.resplasticcolor, .tb .resplasticcolor, .rescolor2, .tb .rescolor2	{
 	color:#E5D1EF;
 }
-.resfuelcolor, .tb .resfuelcolor	{
+.resfuelcolor, .tb .resfuelcolor, .rescolor3, .tb .rescolor3	{
 	color:#A4C1EF;
 }
-.resfoodcolor, .tb .resfoodcolor	{
+.resfoodcolor, .tb .resfoodcolor, .rescolor4, .tb .rescolor4	{
 	color:#C2ECC2;
 }
 .respeoplecolor, .tb .respeoplecolor	{
 	color:#ECC8B2;
 }
-.respowercolor, .tb .respowercolor	{
+.respowercolor, .tb .respowercolor, .rescolor5, .tb .rescolor5	{
 	color:#EFECC2;
 }
 .respowerucolor, .tb .respowerucolor	{
@@ -360,3 +360,45 @@ img.resIcon	{
 	border-bottom:none;
 	text-align:center;
 }
+
+
+
+
+
+/* todo */
+
+#market_search_filter_category_selector	{
+	float:left;
+	margin-right:20px;
+}
+
+#market_search_filter_container_res	{
+	float:left;
+}
+
+#market_search_filter_container_res	span {
+	float:left;
+	padding-top:3px;
+	padding-right:3px;
+	font-weight:bold;
+	width:100px;
+}
+
+#market_search_filter_container_res	br {
+	clear:both;
+}
+
+#market_search_filter_container_res input[type="checkbox"]	{
+	display:block;
+	float:left;
+}
+
+#market_search_filter_container_res label	 {
+	display:block;
+	float:left;
+	width:50px;
+	padding-top:3px;
+	padding-left:3px;
+	cursor:pointer;
+}
+
