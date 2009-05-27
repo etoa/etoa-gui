@@ -3142,6 +3142,39 @@ function imagecreatefromfile($path, $user_functions = false)
 		echo "<h1>$title - ".ROUNDID."</h1>";
 	}
 
+	function defineImagePaths()
+	{
+		global $cu;
+
+		if (!defined('IMAGE_PATH'))
+		{
+			if (!isset($cu))
+				$cu = new CurrentUser($_SESSION['user_id']);
+
+
+			if ($cu->properties->cssStyle !='')
+			{
+				define('CSS_STYLE',DESIGN_DIRECTORY."/".$cu->properties->cssStyle);
+			}
+			else
+			{
+				define('CSS_STYLE',DESIGN_DIRECTORY."/".$cfg->value('default_css_style'));
+			}
+			define('GAME_WIDTH',$cu->properties->gameWidth);
+
+			// Image paths
+			if ($cu->properties->imageUrl != '' && $cu->properties->imageExt != '')
+			{
+				define('IMAGE_PATH',$cu->properties->imageUrl);
+				define('IMAGE_EXT',$cu->properties->imageExt);
+			}
+			else
+			{
+				define("IMAGE_PATH",$cfg->default_image_path->v);
+				define("IMAGE_EXT","png");
+			}
+		}
+	}
 
 	/**
 	* Textfunktionen einbinden

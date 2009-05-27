@@ -81,28 +81,8 @@
 	//
 
 	// Design
-	if ($cu->properties->cssStyle !='')
-	{
-		define('CSS_STYLE',DESIGN_DIRECTORY."/".$cu->properties->cssStyle);
-	}
-	else
-	{
-		define('CSS_STYLE',DESIGN_DIRECTORY."/".$cfg->value('default_css_style'));
-	}
-	define('GAME_WIDTH',$cu->properties->gameWidth);
-
-	// Image paths
-	if ($cu->properties->imageUrl != '' && $cu->properties->imageExt != '')
-	{
-		define('IMAGE_PATH',$cu->properties->imageUrl);
-		define('IMAGE_EXT',$cu->properties->imageExt);
-	}
-	else
-	{
-		define("IMAGE_PATH",$cfg->default_image_path->v);
-		define("IMAGE_EXT","png");
-	}	
-
+	defineImagePaths();
+	
 	//
 	// Page header
 	//
@@ -276,7 +256,10 @@
 
 		// Count Messages
 		define('NEW_MESSAGES',Message::checkNew($cu->id));
-		
+
+		// Check new reports
+		$newReports = Report::countNew($cu->id);
+
 		// Count users
 		$ucres=dbquery('SELECT COUNT(user_id) FROM users;');
 		$ucarr=mysql_fetch_row($ucres);
@@ -293,6 +276,7 @@
 
 		// Assign template variables
 		$tpl->assign("messages",NEW_MESSAGES);
+		$tpl->assign("newreports",$newReports);
 		$tpl->assign("blinkMessages",$cu->properties->msgBlink);
 		$tpl->assign("buddys",check_buddys_online($cu->id));
 		$tpl->assign("buddyreq",check_buddy_req($cu->id));

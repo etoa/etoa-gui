@@ -920,6 +920,11 @@
 			return 0;
 		}
 
+		public function detailLink()
+		{
+			return "<a href=\"?page=userinfo&amp;id=".$this->id."\">".$this->__toString()."</a>";
+		}
+
 	}
 
 ?>

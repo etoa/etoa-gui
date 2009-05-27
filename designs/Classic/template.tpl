@@ -35,6 +35,8 @@
 							<a href="{$gameNav[id].items[iid].url}" style="color:#f00">
 						{elseif $gameNav[id].items[iid].name == "Nachrichten" && $messages > 0}
 							<a href="{$gameNav[id].items[iid].url}" style="color:#0f0">
+						{elseif $gameNav[id].items[iid].name == "Berichte" && $newreports > 0}
+							<a href="{$gameNav[id].items[iid].url}" style="color:#0f0">
 						{elseif $gameNav[id].items[iid].name == "Notizen" && $noteBox == true}
 							<a href="javascript:;" onclick="window.open('show.php?page=notepad','notes','status=no,width=800,height=600,scrollbars=yes,resizable=yes');">
 						{elseif $gameNav[id].items[iid].name == "Hilfe" && $helpBox == true}
@@ -56,7 +58,13 @@
 								&nbsp;<blink>({$messages} neu)</blink>
 							{else}
 								&nbsp;({$messages} neu)
-							{/if}							
+							{/if}
+						{elseif $gameNav[id].items[iid].name == "Berichte" && $newreports > 0}
+							{if $blinkMessages == true}
+								&nbsp;<blink>({$newreports} neu)</blink>
+							{else}
+								&nbsp;({$newreports} neu)
+							{/if}
 						{/if}
 						</a>							
 					{/strip}

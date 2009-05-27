@@ -33,6 +33,10 @@
 		{
 			require_once(RELATIVE_ROOT."inc/xajax/messages.xajax.php");
 		}
+		elseif ($page=="reports")
+		{
+			require_once(RELATIVE_ROOT."inc/xajax/reports.xajax.php");
+		}
 		elseif ($page=="userconfig")
 		{
 			require_once(RELATIVE_ROOT."inc/xajax/userconfig.xajax.php");

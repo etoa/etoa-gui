@@ -1529,7 +1529,8 @@
 						market_ressource
 					WHERE
 						user_id='".$cu->id."' 
-						AND planet_id='".$cp->id()."'
+						AND entity_id='".$cp->id()."'
+						AND buyer_entity_id=0
 				) AS ress_cnt,
 				(
 					SELECT 
@@ -1647,16 +1648,9 @@
 		{
 			$cnt = 0;
 			$cnt_error = 0;
-			$buy_metal_total = 0;
-			$buy_crystal_total = 0;
-			$buy_plastic_total = 0;
-			$buy_fuel_total = 0;
-			$buy_food_total = 0;
-			$sell_metal_total = 0;
-			$sell_crystal_total = 0;
-			$sell_plastic_total = 0;
-			$sell_fuel_total = 0;
-			$sell_food_total = 0;
+
+			$supplyTotal = array_fill(0,count($resNames),0);
+			$demandTotal = array_fill(0,count($resNames),0);
 
 			if(isset($_POST['ressource_market_id']))
 			{
@@ -1669,139 +1663,233 @@
 					FROM
 						market_ressource
 					WHERE
-						ressource_market_id='".$id."'
-						AND ressource_buyable='1';");
+						id='".$id."'
+						AND buyable='1'
+						AND user_id!=".$cu->id."
+						;");
+
 					// Prüft, ob Angebot noch vorhanden ist
 					if (mysql_num_rows($res)!=0)
 					{
-						$arr = mysql_fetch_array($res);
+						$arr = mysql_fetch_assoc($res);
 
 						// Prüft, ob genug Rohstoffe vorhanden sind
 						$ok = true;
+						$buyarr = array();
+						$sellarr = array();
 						foreach ($resNames as $rk => $rn)
 						{
-							if ($cp->resources[$rk] < $arr['buy_metal'])
+							if ($cp->resources[$rk] < $arr['buy_'.$rk])
 							{
 								$ok = false;
 								break;
 							}
+							$buyarr[$rk] = $arr['buy_'.$rk];
+							$sellarr[$rk] = $arr['sell_'.$rk];
 						}
 
 						if ($ok)
 						{
 							$seller = new User($arr['user_id']);
+							$sellerEntity = Entity::createFactoryById($arr['entity_id']);
+
+							// Fleet Seller -> Buyer
+							$sellerShipList = new ShipList($sellerEntity->id,$seller->id);
+							$tradeShip = new Ship(MARKET_SHIP_ID);
+							$numSellerShip = ($tradeShip->capacity>0) ? ceil(array_sum($sellarr) / $tradeShip->capacity) : 1;
 							
-							//Angebot reservieren (wird zu einem späteren Zeitpunkt verschickt)
-							dbquery("
-							UPDATE
-								market_ressource
-							SET
-								ressource_buyable='0',
-								ressource_buyer_id='".$cu->id."',
-								ressource_buyer_planet_id='".$cp->id()."',
-								ressource_buyer_cell_id='".$cp->cellId()."'
-							WHERE
-								ressource_market_id='".$arr['ressource_market_id']."'");
-
-							// Rohstoffe vom Käuferplanet abziehen und $c-variabeln anpassen
-							$cp->changeRes(-$arr['buy_metal'],-$arr['buy_crystal'],-$arr['buy_plastic'],-$arr['buy_fuel'],-$arr['buy_food']);
-
-							// Nachricht an Verkäufer
-							$msg = "Ein Handel ist zustande gekommen\n";
-							$msg .= "Der Spieler ".$cu->nick." hat von dir folgende Rohstoffe gekauft:\n\n";
-
-							$msg .= "".RES_METAL.": ".nf($arr['sell_metal'])."\n";
-							$msg .= "".RES_CRYSTAL.": ".nf($arr['sell_crystal'])."\n";
-							$msg .= "".RES_PLASTIC.": ".nf($arr['sell_plastic'])."\n";
-							$msg .= "".RES_FUEL.": ".nf($arr['sell_fuel'])."\n";
-							$msg .= "".RES_FOOD.": ".nf($arr['sell_food'])."\n\n";
-
-							$msg .= "Dies macht dich um folgende Rohstoffe reicher:\n\n";
-
-							$msg .= "".RES_METAL.": ".nf($arr['buy_metal'])."\n";
-							$msg .= "".RES_CRYSTAL.": ".nf($arr['buy_crystal'])."\n";
-							$msg .= "".RES_PLASTIC.": ".nf($arr['buy_plastic'])."\n";
-							$msg .= "".RES_FUEL.": ".nf($arr['buy_fuel'])."\n";
-							$msg .= "".RES_FOOD.": ".nf($arr['buy_food'])."\n\n";
-
-							$msg .= "Die Rohstoffe werden in wenigen Minuten versendet.\n\n";
-
-							$msg .= "Das Handelsministerium";
-							send_msg($arr['user_id'],SHIP_MISC_MSG_CAT_ID,"Handel vollzogen",$msg);
-
-							// Nachricht an Käufer
-							$msg="Ein Handel ist zustande gekommen
-							Du hast vom Spieler ".$seller_user_nick." folgende Rohstoffe gekauft:\n\n";
-
-							$msg .= "".RES_METAL.": ".nf($arr['sell_metal'])."\n";
-							$msg .= "".RES_CRYSTAL.": ".nf($arr['sell_crystal'])."\n";
-							$msg .= "".RES_PLASTIC.": ".nf($arr['sell_plastic'])."\n";
-							$msg .= "".RES_FUEL.": ".nf($arr['sell_fuel'])."\n";
-							$msg .= "".RES_FOOD.": ".nf($arr['sell_food'])."\n";
-
-							$msg .= "Dies hat dich folgende Rohstoffe gekostet:\n\n";
-
-							$msg .= "".RES_METAL.": ".nf($arr['buy_metal'])."\n";
-							$msg .= "".RES_CRYSTAL.": ".nf($arr['buy_crystal'])."\n";
-							$msg .= "".RES_PLASTIC.": ".nf($arr['buy_plastic'])."\n";
-							$msg .= "".RES_FUEL.": ".nf($arr['buy_fuel'])."\n";
-							$msg .= "".RES_FOOD.": ".nf($arr['buy_food'])."\n\n";
-
-							$msg .= "Die Rohstoffe werden in wenigen Minuten versendet.\n\n";
-
-							$msg .= "Das Handelsministerium";
-							send_msg($cu->id,SHIP_MISC_MSG_CAT_ID,"Handel vollzogen",$msg);
-
-							//Log schreiben, falls dieser Handel regelwidrig ist
-							$multi_res1=dbquery("
-							SELECT
-								user_multi_multi_user_id
-							FROM
-								user_multi
-							WHERE
-								user_multi_user_id='".$cu->id."'
-								AND user_multi_multi_user_id='".$arr['user_id']."';");
-
-							$multi_res2=dbquery("
-							SELECT
-								user_multi_multi_user_id
-							FROM
-								user_multi
-							WHERE
-								user_multi_user_id='".$arr['user_id']."'
-								AND user_multi_multi_user_id='".$cu->id."';");
-
-							if(mysql_num_rows($multi_res1)!=0 && mysql_num_rows($multi_res2)!=0)
+							$sellerShipList->add(MARKET_SHIP_ID, $numSellerShip);
+							
+							$launched = false;
+							$fleet = new FleetLaunch($sellerEntity,$seller);
+							if ($fleet->checkHaven())
 							{
-								add_log(10,"[URL=?page=user&sub=edit&user_id=".$cu->id."][B]".$cu->nick."[/B][/URL] hat von [URL=?page=user&sub=edit&user_id=".$arr['user_id']."][B]".$seller_user_nick."[/B][/URL] Rohstoffe gekauft:\n\n".RES_METAL.": ".nf($arr['sell_metal'])."\n".RES_CRYSTAL.": ".nf($arr['sell_crystal'])."\n".RES_PLASTIC.": ".nf($arr['sell_plastic'])."\n".RES_FUEL.": ".nf($arr['sell_fuel'])."\n".RES_FOOD.": ".nf($arr['sell_food'])."\n\nDies hat ihn folgende Rohstoffe gekostet:\n".RES_METAL.": ".nf($arr['buy_metal'])."\n".RES_CRYSTAL.": ".nf($arr['buy_crystal'])."\n".RES_PLASTIC.": ".nf($arr['buy_plastic'])."\n".RES_FUEL.": ".nf($arr['buy_fuel'])."\n".RES_FOOD.": ".nf($arr['buy_food']),time());
+								if ($probeCount = $fleet->addShip(MARKET_SHIP_ID,$numSellerShip))
+								{
+									if ($fleet->fixShips())
+									{
+											if ($fleet->setTarget($cp))
+											{
+												if ($fleet->checkTarget())
+												{
+													if ($fleet->setAction("market"))
+													{
+														if ($sellerFid = $fleet->launch())
+														{
+															$flObj = new Fleet($sellerFid);
+															$str = "Handelssschiffe unterwegs. Ankunft in ".tf($flObj->remainingTime());
+															$launched = true;
+														}
+														else
+															$str= $fleet->error();
+													}
+													else
+														$str= $fleet->error();
+												}
+												else
+													$str= $fleet->error();
+											}
+											else
+												$str= $fleet->error();
+									}
+									else
+									{
+										$str= $fleet->error();
+									}
+								}
+								else
+								{
+									$str= "Auf dem Verkäuferplaneten befinden sich keine Handelsschiffe! ".$fleet->error();
+								}
+							}
+							else
+							{
+								$str= $fleet->error();
 							}
 
-							// Log schreiben
-							add_log(7,"Ein Handel ist zustande gekommen\nDer Spieler ".$cu->nick." hat vom Spieler ".$seller_user_nick."  folgende Rohstoffe gekauft:\n\n".RES_METAL.": ".nf($arr['sell_metal'])."\n".RES_CRYSTAL.": ".nf($arr['sell_crystal'])."\n".RES_PLASTIC.": ".nf($arr['sell_plastic'])."\n".RES_FUEL.": ".nf($arr['sell_fuel'])."\n".RES_FOOD.": ".nf($arr['sell_food'])."\n\nDies hat ihn folgende Rohstoffe gekostet:\n".RES_METAL.": ".nf($arr['buy_metal'])."\n".RES_CRYSTAL.": ".nf($arr['buy_crystal'])."\n".RES_PLASTIC.": ".nf($arr['buy_plastic'])."\n".RES_FUEL.": ".nf($arr['buy_fuel'])."\n".RES_FOOD.": ".nf($arr['buy_food'])."\n\n",time());
+							//$cp->subRes($subarr)
+							//
+							// Rohstoffe vom Käuferplanet abziehen und $c-variabeln anpassen
+							if ($launched)
+							{
+								$myShipList = new ShipList($cp->id,$cu->id);
+								$numBuyerShip = ($tradeShip->capacity>0) ? ceil(array_sum($buyarr) / $tradeShip->capacity) : 1;
+								$myShipList->add(MARKET_SHIP_ID, $numBuyerShip);
 
+								$launched = false;
+								$fleet = new FleetLaunch($cp,$cu);
+								if ($fleet->checkHaven())
+								{
+									if ($probeCount = $fleet->addShip(MARKET_SHIP_ID,$numBuyerShip))
+									{
+										if ($fleet->fixShips())
+										{
+												if ($fleet->setTarget($sellerEntity))
+												{
+													if ($fleet->checkTarget())
+													{
+														if ($fleet->setAction("market"))
+														{
+															if ($buyerFid = $fleet->launch())
+															{
+																$flObj = new Fleet($buyerFid);
+																$str = "Handel #".$arr['id'].": Handelssschiffe unterwegs. Ankunft in ".tf($flObj->remainingTime());
+																$launched = true;
+															}
+															else
+																$str= $fleet->error();
+														}
+														else
+															$str= $fleet->error();
+													}
+													else
+														$str= $fleet->error();
+												}
+												else
+													$str= $fleet->error();
+										}
+										else
+										{
+											$str= $fleet->error();
+										}
+									}
+									else
+									{
+										$str= "Auf dem Käuferplaneten befinden sich keine Handelsschiffe! ".$fleet->error();
+									}
+								}
+								else
+								{
+									$str= $fleet->error();
+								}
 
+								if ($launched)
+								{
+									// Angebot als gekauft markieren (wird zu einem späteren Zeitpunkt gelöscht)
+									// todo: delete
+									dbquery("
+									UPDATE
+										market_ressource
+									SET
+										buyable='0',
+										buyer_id='".$cu->id."',
+										buyer_entity_id='".$cp->id."'
+									WHERE
+										id='".$arr['id']."'");
 
-							// Faktor = Kaufzeit - Verkaufzeit (in ganzen Tagen, mit einem Max. von 7)
-							// Total = Mengen / Faktor
-							$factor = min( ceil( (time() - $arr['datum']) / 3600 / 24 ) ,7);
+									// Add values for market rate calculation and
+									// fill array for the market report ($mr)
+									$mr = array();
+									foreach ($resNames as $rk => $rn)
+									{
+										// Faktor = Kaufzeit - Verkaufzeit (in ganzen Tagen, mit einem Max. von 7)
+										// Total = Mengen / Faktor
+										// deprecated: New market race calculation is checked every half hour,
+										// so no daily average value us needed
+										//$factor = min( ceil( (time() - $arr['datum']) / 3600 / 24 ) ,7);
 
-							// Summiert gekaufte Rohstoffe für Config
-							$buy_metal_total += $arr['buy_metal'] / $factor;
-							$buy_crystal_total += $arr['buy_crystal'] / $factor;
-							$buy_plastic_total += $arr['buy_plastic'] / $factor;
-							$buy_fuel_total += $arr['buy_fuel'] / $factor;
-							$buy_food_total += $arr['buy_food'] / $factor;
+										$supplyTotal[$rk] += $arr['sell_'.$rk];
+										$demandTotal[$rk] += $arr['buy_'.$rk];
 
-							// Summiert verkaufte Rohstoffe für Config
-							$sell_metal_total += $arr['sell_metal'] / $factor;
-							$sell_crystal_total += $arr['sell_crystal'] / $factor;
-							$sell_plastic_total += $arr['sell_plastic'] / $factor;
-							$sell_fuel_total += $arr['sell_fuel'] / $factor;
-							$sell_food_total += $arr['sell_food'] / $factor;
+										$mr['sell_'.$rk] = $arr['sell_'.$rk];
+										$mr['buy_'.$rk] = $arr['buy_'.$rk];
+									}
 
+									// Send report to seller
+									MarketReport::add(array(
+										'user_id'=>$arr['user_id'],
+										'entity1_id'=>$arr['entity_id'],
+										'entity2_id'=>$cp->id,
+										'opponent1_id'=>$cu->id,
+										'subject'=>"Rohstoffe verkauft",
+										), "ressold", $arr['id'], array_merge($mr,array("fleet1_id"=>$sellerFid,"fleet2_id"=>$buyerFid)));
 
-							// Zählt die erfolgreich abgewickelten Angebote
-							$cnt++;
+									// Send report to buyer (the current user)
+									MarketReport::add(array(
+										'user_id'=>$cu->id,
+										'entity1_id'=>$cp->id,
+										'entity2_id'=>$arr['entity_id'],
+										'opponent1_id'=>$arr['user_id'],
+										'subject'=>"Rohstoffe gekauft",
+										), "resbought", $arr['id'], array_merge($mr,array("fleet1_id"=>$buyerFid,"fleet2_id"=>$sellerFid)));
+
+									// Log schreiben, falls dieser Handel regelwidrig ist
+									// TODO: Think of an implementation using the user class...
+									$multi_res1=dbquery("
+									SELECT
+										user_multi_multi_user_id
+									FROM
+										user_multi
+									WHERE
+										user_multi_user_id='".$cu->id."'
+										AND user_multi_multi_user_id='".$arr['user_id']."';");
+
+									$multi_res2=dbquery("
+									SELECT
+										user_multi_multi_user_id
+									FROM
+										user_multi
+									WHERE
+										user_multi_user_id='".$arr['user_id']."'
+										AND user_multi_multi_user_id='".$cu->id."';");
+
+									if(mysql_num_rows($multi_res1)!=0 && mysql_num_rows($multi_res2)!=0)
+									{
+										add_log(10,"[URL=?page=user&sub=edit&user_id=".$cu->id."][B]".$cu->nick."[/B][/URL] hat von [URL=?page=user&sub=edit&user_id=".$arr['user_id']."][B]".$seller_user_nick."[/B][/URL] Rohstoffe gekauft:\n\n".RES_METAL.": ".nf($arr['sell_metal'])."\n".RES_CRYSTAL.": ".nf($arr['sell_crystal'])."\n".RES_PLASTIC.": ".nf($arr['sell_plastic'])."\n".RES_FUEL.": ".nf($arr['sell_fuel'])."\n".RES_FOOD.": ".nf($arr['sell_food'])."\n\nDies hat ihn folgende Rohstoffe gekostet:\n".RES_METAL.": ".nf($arr['buy_metal'])."\n".RES_CRYSTAL.": ".nf($arr['buy_crystal'])."\n".RES_PLASTIC.": ".nf($arr['buy_plastic'])."\n".RES_FUEL.": ".nf($arr['buy_fuel'])."\n".RES_FOOD.": ".nf($arr['buy_food']),time());
+									}
+
+									// Zählt die erfolgreich abgewickelten Angebote
+									$cnt++;
+								}
+								else
+								{
+									err_msg($str);
+								}
+							}
+							else
+							{
+								err_msg($str);
+							}
 						}
 						else
 						{
@@ -1829,58 +1917,9 @@
 			{
 				error_msg("".$cnt_error." Angebot(e) sind nicht mehr vorhanden, oder die benötigten Rohstoffe sind nicht mehr verfügbar!");
 			}
-			
-			
+				
 			// Gekaufte/Verkaufte Rohstoffe in Config-DB speichern für Kursberechnung
-			// Titan
-			dbquery("
-			UPDATE
-				config
-			SET
-				config_value=config_value+".(round($buy_metal_total)).",
-				config_param1=config_param1+".(round($sell_metal_total))."
-			WHERE
-				config_name='market_metal_logger'");		
-				
-			// Silizium
-			dbquery("
-			UPDATE
-				config
-			SET
-				config_value=config_value+".(round($buy_crystal_total)).",
-				config_param1=config_param1+".(round($sell_crystal_total))."
-			WHERE
-				config_name='market_crystal_logger'");	
-				
-			// PVC
-			dbquery("
-			UPDATE
-				config
-			SET
-				config_value=config_value+".(round($buy_plastic_total)).",
-				config_param1=config_param1+".(round($sell_plastic_total))."
-			WHERE
-				config_name='market_plastic_logger'");		
-				
-			// Tritium
-			dbquery("
-			UPDATE
-				config
-			SET
-				config_value=config_value+".(round($buy_fuel_total)).",
-				config_param1=config_param1+".(round($sell_fuel_total))."
-			WHERE
-				config_name='market_fuel_logger'");	
-				
-			// Food
-			dbquery("
-			UPDATE
-				config
-			SET
-				config_value=config_value+".(round($buy_food_total)).",
-				config_param1=config_param1+".(round($sell_food_total))."
-			WHERE
-				config_name='market_food_logger'");
+			MarketHandler::addResToRate($supplyTotal,$demandTotal);
 		}
 
 
@@ -2447,10 +2486,10 @@
 					INSERT INTO
 					market_ressource
 							(user_id,
-							planet_id
+							entity_id
 							".$sf.",
-							ressource_for_alliance,
-							ressource_text,
+							for_alliance,
+							`text`,
 							datum)
 					VALUES
 							('".$cu->id."',
@@ -2745,6 +2784,8 @@
 		//
 		// Rohstoff Angebote anzeigen
 		//
+		// @todo: check, this is deprecated!
+		//
 		elseif (isset($_POST['search_submit']) && $_POST['search_cat']=="ressource" && checker_verify())
 		{
 			echo "<h2>Rohstoffe</h2>";
@@ -2755,7 +2796,7 @@
 			FROM
 				market_ressource
 			WHERE
-				ressource_buyable='1'
+				buyable='1'
         AND user_id!='".$cu->id."'
         ".stripslashes($_POST['ressource_sql_add'])."
       ORDER BY
@@ -2776,7 +2817,7 @@
 				while ($arr=mysql_fetch_array($res))
 				{
 					// Für Allianzmitglied reserveriert
-          if($arr['ressource_for_alliance']!=0)
+          if($arr['for_alliance']!=0)
           {
               $for_alliance="<span class=\"userAllianceMemberColor\">F&uuml;r Allianzmitglied Reserviert</span>";
           }
@@ -2825,11 +2866,11 @@
           echo "<input type=\"hidden\" value=\"".$cp->resFood."\" name=\"res_food\" />";								
 					
 					// Preis
-          echo "<input type=\"hidden\" value=\"".$arr['buy_metal']."\" name=\"ress_buy_metal[".$arr['ressource_market_id']."]\" />";
-          echo "<input type=\"hidden\" value=\"".$arr['buy_crystal']."\" name=\"ress_buy_crystal[".$arr['ressource_market_id']."]\" />";
-          echo "<input type=\"hidden\" value=\"".$arr['buy_plastic']."\" name=\"ress_buy_plastic[".$arr['ressource_market_id']."]\" />";
-          echo "<input type=\"hidden\" value=\"".$arr['buy_fuel']."\" name=\"ress_buy_fuel[".$arr['ressource_market_id']."]\" />";
-          echo "<input type=\"hidden\" value=\"".$arr['buy_food']."\" name=\"ress_buy_food[".$arr['ressource_market_id']."]\" />";						
+          echo "<input type=\"hidden\" value=\"".$arr['buy_metal']."\" name=\"ress_buy_metal[".$arr['id']."]\" />";
+          echo "<input type=\"hidden\" value=\"".$arr['buy_crystal']."\" name=\"ress_buy_crystal[".$arr['id']."]\" />";
+          echo "<input type=\"hidden\" value=\"".$arr['buy_plastic']."\" name=\"ress_buy_plastic[".$arr['id']."]\" />";
+          echo "<input type=\"hidden\" value=\"".$arr['buy_fuel']."\" name=\"ress_buy_fuel[".$arr['id']."]\" />";
+          echo "<input type=\"hidden\" value=\"".$arr['buy_food']."\" name=\"ress_buy_food[".$arr['id']."]\" />";
 
 									
 									
@@ -2840,12 +2881,12 @@
 										<a href=\"?page=userinfo&amp;id=".$arr['user_id']."\">".get_user_nick($arr['user_id'])."</a>
 									</td>
 									<td rowspan=\"5\">
-										".date("d.m.Y  G:i:s", $arr['datum'])."<br/><br/>".stripslashes($arr['ressource_text'])."
+										".date("d.m.Y  G:i:s", $arr['datum'])."<br/><br/>".stripslashes($arr['text'])."
 									</td>
 									<td><b>".RES_METAL."</b>:</td>
 									<td class=\"".$metal_class."\">".nf($arr['buy_metal'])."</td>
 									<td rowspan=\"5\">
-										<input type=\"checkbox\" name=\"ressource_market_id[]\" id=\"ressource_market_id\" value=\"".$arr['ressource_market_id']."\" onclick=\"xajax_calcMarketRessBuy(xajax.getFormValues('ress_buy_selector'));\" /><br/><br/>".$for_alliance."
+										<input type=\"checkbox\" name=\"ressource_market_id[]\" id=\"ressource_market_id\" value=\"".$arr['id']."\" onclick=\"xajax_calcMarketRessBuy(xajax.getFormValues('ress_buy_selector'));\" /><br/><br/>".$for_alliance."
 									</td>
 								</tr>
 								<tr>
@@ -3966,7 +4007,7 @@
 				FROM 
 					market_ressource 
 				WHERE 
-					ressource_market_id='".$_POST['ressource_market_id']."' 
+					id='".$_POST['ressource_market_id']."' 
 					AND user_id='".$cu->id."'");
 					
 				if (mysql_num_rows($rcres)>0)
@@ -3979,18 +4020,21 @@
 					{
 						if ($rcrow['sell_'.$rk]>0)
 						{
+							// todo: when non on the planet where the deal belongs to, the return_factor
+							// is based on the local marketplace, for better or worse... change that so that the
+							// origin marketplace return factor will be taken
 							$rarr[$rk] = $rcrow['sell_'.$rk] * $return_factor;
 							$marr['sell_'.$rk] = $rcrow['sell_'.$rk];
 						}
 					}
 
-					$tp = Entity::createFactoryById($rcrow['planet_id']);
+					$tp = Entity::createFactoryById($rcrow['entity_id']);
 					$tp->addRes($rarr);
 					unset($tp);
 					
 					MarketReport::add(array(
 						'user_id'=>$cu->id,
-						'entity1_id'=>$cp->id,
+						'entity1_id'=>$rcrow['entity_id'],
 						'subject'=>"Rohstoffangebot zurückgezogen",
 						), "rescancel", $_POST['ressource_market_id'], $marr);
 
@@ -3998,7 +4042,7 @@
 					DELETE FROM
 						market_ressource
 					WHERE
-						ressource_market_id='".$_POST['ressource_market_id']."'");
+						id='".$_POST['ressource_market_id']."'");
 
 					ok_msg("Angebot wurde gel&ouml;scht und du hast ".(round($return_factor,2)*100)."% der angebotenen Rohstoffe zur&uuml;ck erhalten!");
 				}
@@ -4068,7 +4112,7 @@
 					market_ressource 
 				WHERE 
 					user_id='".$cu->id."' 
-					AND ressource_buyable='1' 
+					AND buyable='1' 
 				ORDER BY 
 					datum ASC");
 				if (mysql_num_rows($res)>0)
@@ -4080,12 +4124,12 @@
 						<th>Rohstoffe:</th>
 						<th>Angebot:</th>
 						<th>Preis:</th>
-						<th>Datum/Text:</th>
+						<th>Datum/Raumobjekt/Text:</th>
 						<th>Zur&uuml;ckziehen:</th></tr>";
 					$cnt=0;
 					while ($row=mysql_fetch_array($res))
 					{
-						if($row['ressource_for_alliance']!=0)
+						if($row['for_alliance']!=0)
 							$for_alliance="<span class=\"userAllianceMemberColor\">F&uuml;r Allianzmitglied Reserviert</span>";
 						else
 							$for_alliance="";
@@ -4099,8 +4143,9 @@
 							<td class=\"rescolor".$rk."\">".($row['buy_'.$rk]>0 ? nf($row['buy_'.$rk]) : '-')."</td>";
 							if ($i++==0)
 							{
-								echo "<td rowspan=\"5\">".date("d.m.Y  G:i:s", $row['datum'])."<br/><br/>".stripslashes($row['ressource_text'])."</td>";
-								echo "<td rowspan=\"5\"><input type=\"radio\" name=\"ressource_market_id\" value=\"".$row['ressource_market_id']."\"><br/><br/>".$for_alliance."</td></tr>";
+								$te = Entity::createFactoryById($row['entity_id']);
+								echo "<td rowspan=\"5\">".date("d.m.Y  G:i:s", $row['datum'])."<br/>".$te->detailLink()."<br/><br/>".stripslashes($row['text'])."</td>";
+								echo "<td rowspan=\"5\"><input type=\"radio\" name=\"ressource_market_id\" value=\"".$row['id']."\"><br/><br/>".$for_alliance."</td></tr>";
 							}
 							echo "</tr>";
 						}

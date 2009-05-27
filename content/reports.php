@@ -2,7 +2,7 @@
 	echo "<h1>Berichte</h1>";
 
 	echo "<ul class=\"horizMenu\">
-	<li>Typ: ";
+	<li>Typ: <a href=\"?page=$page\">Neuste</a>";
 	foreach (Report::$types as $k=>$v)
 	{
 		echo "<li><a href=\"?page=$page&amp;type=$k\">$v</a></li>";
@@ -17,61 +17,52 @@
 
 		tableStart("Marktberichte");
 		echo "<tr>
+		<th colspan=\"2\">Nachricht:</th>
 		<th>Datum:</th>
-		<th>Raumobjekt:</th>
-		<th>Aktivität:</th>
-		<th>Waren:</th>
 		</tr>";
 
 		foreach ($reports as $rid => $r)
 		{
-			$ent = Entity::createFactoryById($r->entity1Id);
+			if (!$r->read)
+			{
+				$im_path = "images/pm_new.gif";
+			}
+			else
+			{
+				$im_path = "images/pm_normal.gif";
+			}
 			echo "<tr>";
-			echo "<td>".df($r->timestamp)."</td>";
-			echo "<td>".$ent."</td>";
-			echo "<td>".$r->subject."<br/>Handel #".$r->recordId."<br/>";
-			if ($r->subType == "resadd")
-			{
-				echo "Gebühr: ".round(($r->factor-1)*100,2)."%";
-			}
-			if ($r->subType == "rescancel")
-			{
-				echo "Zurückerstattet: ".round($r->factor*100)."%";
-			}
-			if ($r->content !="")
-				echo "<br/><br/>".$r->content;
-			echo "</td>";
-			echo "<td style=\"padding:0px;\">";
-			echo "<table class=\"tb\" style=\"margin:0px;\">";
-
-			if ($r->subType == "resadd")
-			{
-				echo "<tr><th>Rohstoff:</th><th>Angebot:</th><th>Preis:</th></tr>";
-				foreach ($resNames as $k=>$v)
-				{
-					echo "<tr>
-					<td>".$v."</td>
-					<td>".nf($r->resSell[$k])."</td>
-					<td>".nf($r->resBuy[$k])."</td>
-					</tr>";
-				}
-			}
-			if ($r->subType == "rescancel")
-			{
-				echo "<tr><th>Rohstoff:</th><th>Angeboten:</th><th>Retour:</th></tr>";
-				foreach ($resNames as $k=>$v)
-				{
-					echo "<tr>
-					<td>".$v."</td>
-					<td>".nf($r->resSell[$k])."</td>
-					<td>".nf($r->resSell[$k]*$r->factor)."</td>
-					</tr>";
-				}
-			}
-
-			echo "</table>";
+			echo "<td style=\"width:16px\"><img src=\"".$im_path."\" alt=\"Mail\" id=\"repimg".$rid."\" /></td>";
+			echo "<td>";
+			echo "<a href=\"javascript:;\" onclick=\"toggleBox('report".$rid."');xajax_reportSetRead(".$rid.")\" >".$r->subject."</a>";
+			echo "</td>
+			<td>".df($r->timestamp)."</td>
+			</tr>";
+			echo "<tr><td colspan=\"3\" style=\"padding:10px;display:none;\" id=\"report".$rid."\">";
+			echo $r;
 			echo "</td>";
 			echo "</tr>";
+		}
+		tableEnd();
+	}
+	else
+	{
+		$reports = Report::find(array("user_id"=>$cu->id),"timestamp DESC","10");
+
+		tableStart("Neueste Berichte");
+		echo "<tr>
+		<th style=\"width:100px;\">Kategorie:</th>
+		<th>Betreff:</th>
+		<th style=\"width:150px\">Datum:</th>
+		</tr>";
+
+		foreach ($reports as $rid => $r)
+		{
+			echo "<tr>
+			<td><b>".$r->typeName()."</b></td>
+			<td>".$r->subject."</td>
+			<td>".df($r->timestamp)."</td></tr>";
+
 		}
 		tableEnd();
 	}

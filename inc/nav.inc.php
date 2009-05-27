@@ -23,6 +23,7 @@
 	$navmenu[1]['items'][] = array ("name"=>"Allianzforum","url"=>"?page=allianceboard");
 	$navmenu[1]['items'][] = array ("name"=>"Ratshaus","url"=>"?page=townhall");
 	$navmenu[1]['items'][] = array ("name"=>"Nachrichten","url"=>"?page=messages");
+	$navmenu[1]['items'][] = array ("name"=>"Berichte","url"=>"?page=reports");
 
 	$navmenu[2]['cat'] = "Planet";
 	$navmenu[2]['items'][] = array ("name"=>"Informationen","url"=>"?page=planetoverview");

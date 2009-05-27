@@ -368,7 +368,7 @@
 			{
 				if ($this->sourceEntity->resFood() >= $this->getCostsFood())
 				{
-					if ($this->getCapacity()>0)
+					if ($this->getCapacity()>=0)
 					{
 						$this->targetOk = true;
 						return $this->targetOk;
@@ -657,7 +657,7 @@
 		function getAllowedActions()
 		{
 			$cfg = Config::getInstance();
-			
+
 			// Get possible actions by intersecting ship actions and allowed target actions
 			$actions = array_intersect($this->shipActions,$this->targetEntity->allowedFleetActions());
 			$actionObjs = array();

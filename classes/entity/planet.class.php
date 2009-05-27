@@ -209,6 +209,7 @@
 				$arr[] = "alliance";
 				$arr[] = "support";
 				$arr[] = "hijack";
+				$arr[] = "market";
 			}
     	if ($this->ownerId()==0 && $this->habitable)
     		$arr[] = "colonize";
@@ -258,6 +259,7 @@
 		}		
 		function imagePath($opt="")
 		{
+			defineImagePaths();
 			if ($opt=="b")
 			{
 				return IMAGE_PATH."/planets/planet".$this->image.".".IMAGE_EXT;

@@ -257,7 +257,9 @@
 			checker_init();
 			echo "<input type=\"submit\" name=\"cancel_alliance\" value=\"Allianzangriff abbrechen und zum Heimatplanet zur&uuml;ckkehren\"  onclick=\"return confirm('Willst du diesen Allianzangriff wirklich abbrechen? Merke du brichst damit den ganzen Allianzangriff ab!');\">";
 		}
-		elseif ($valid>=ALLIANCE_FLEET_SEND_HOME_PART && (($fd->status() == 0 && $lead_id<0) || $fd->status() == 3) && $fd->landTime() > time())
+		elseif ($valid>=ALLIANCE_FLEET_SEND_HOME_PART
+			&& (($fd->status() == 0
+			&& $lead_id<0) || $fd->status() == 3) && $fd->landTime() > time() && $fd->getAction()->cancelable())
 		{
 			checker_init();
 			echo "<input type=\"submit\" name=\"cancel\" value=\"Flug abbrechen und zum Heimatplanet zur&uuml;ckkehren\"  onclick=\"return confirm('Willst du diesen Flug wirklich abbrechen?');\">";

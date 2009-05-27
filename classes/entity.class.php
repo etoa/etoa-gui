@@ -449,7 +449,12 @@
 		'x'=>'#fff',
 		'm'=>'#fff'
 		);
-					
+
+		public function detailLink()
+		{
+			return "<a href=\"?page=entity&amp;id=".$this->id."\">".$this->__toString()."</a>";
+		}
+
 	}
 
 ?>

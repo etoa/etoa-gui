@@ -56,19 +56,20 @@ function marketSearch($form)
 		FROM
 			market_ressource
 		WHERE
-			ressource_buyable='1'
+			buyable='1'
 			AND (
 			".($sfilter!="" ? $sfilter : 0)."
 			)
 			AND (
 			".($dfilter!="" ? $dfilter : 0)."
 			)
+			AND user_id!='".$_SESSION['user_id']."'
 		ORDER BY
 			datum ASC;");
 
-		$cres = dbquery("SELECT COUNT(ressource_market_id) FROM market_ressource WHERE ressource_buyable=1");
+		$cres = dbquery("SELECT COUNT(id) FROM market_ressource WHERE buyable=1");
 		$carr = mysql_fetch_row($cres);
-		//AND user_id!='".$_SESSION['user_id']."'
+
 			$nr = mysql_num_rows($res);
 			if ($nr > 0)
 			{
@@ -128,10 +129,10 @@ function marketSearch($form)
 												<a href=\"?page=userinfo&amp;id=".$arr['user_id']."\">".get_user_nick($arr['user_id'])."</a>
 												</td>
 												<td rowspan=\"".$cres."\">
-													".date("d.m.Y  G:i:s", $arr['datum'])."<br/><br/>".stripslashes($arr['ressource_text'])."
+													".date("d.m.Y  G:i:s", $arr['datum'])."<br/><br/>".stripslashes($arr['text'])."
 												</td>
 												<td rowspan=\"".$cres."\">
-													<input type=\"checkbox\" name=\"ressource_market_id[]\" id=\"ressource_market_id\" value=\"".$arr['ressource_market_id']."\" /><br/><br/>
+													<input type=\"checkbox\" name=\"ressource_market_id[]\" id=\"ressource_market_id\" value=\"".$arr['id']."\" /><br/><br/>
 												</td>";
 										}
 							echo "</tr>";

@@ -469,79 +469,87 @@
 			{
 				if ($this->landTime() > time())
 				{
-					if ($this->id == $this->leaderId)
+					if ($this->getAction()->cancelable())
 					{
-						if ($alliance)
+						if ($this->id == $this->leaderId)
 						{
-						  if (count($this->fleets) && $fleet<0)
-						  {
-							  foreach($this->fleets as $id=>$f)
-							  {
-								  $f->cancelFlight();
-							  }
-						  }
-						}
-						
-						$res = dbquery("SELECT
-									   		id
-										FROM
+							if ($alliance)
+							{
+								if (count($this->fleets) && $fleet<0)
+								{
+									foreach($this->fleets as $id=>$f)
+									{
+										$f->cancelFlight();
+									}
+								}
+							}
+
+							$res = dbquery("SELECT
+													id
+											FROM
+												fleet
+											WHERE
+												leader_id='".$this->id."'
+												AND next_id='".$this->nextId."'
+												AND status='3'
+											LIMIT 1;");
+							if (mysql_num_rows($res)>0)
+							{
+								$arr = mysql_fetch_row($res);
+								dbquery("UPDATE
 											fleet
+										SET
+											status='0',
+											landtime='".$this->landTime."'
 										WHERE
-											leader_id='".$this->id."'
-											AND next_id='".$this->nextId."'
-											AND status='3'
+											id='".$arr[0]."'
 										LIMIT 1;");
-						if (mysql_num_rows($res)>0)
-						{
-							$arr = mysql_fetch_row($res);
-							dbquery("UPDATE
-										fleet
-									SET
-										status='0',
-										landtime='".$this->landTime."'
-									WHERE
-										id='".$arr[0]."'
-									LIMIT 1;");
-							dbquery("UPDATE
-										fleet
-									SET
-										leader_id='".$arr[0]."'
-									WHERE
-										leader_id='".$this->id."';");
+								dbquery("UPDATE
+											fleet
+										SET
+											leader_id='".$arr[0]."'
+										WHERE
+											leader_id='".$this->id."';");
+							}
 						}
+
+						$tottime = $this->landTime() - $this->launchTime;
+						$difftime = time() - $this->launchTime;
+						$this->launchTime = time();
+						$this->landTime = $this->launchTime + $difftime ;
+
+						$tmp = $this->targetId;
+						$this->targetId = $this->sourceId;
+						$this->sourceId = $tmp;
+
+						$this->status = 2;
+
+						$passed = $difftime / $tottime;
+						$returnFactor = 1 - $passed;
+
+						// Fleet gets unused costs back
+						$this->resFuel += ceil($this->usageFuel * $returnFactor);
+						$this->resFood += ceil($this->usageFood * $returnFactor);
+						$this->resPower += ceil($this->usagePower * $returnFactor);
+
+						$this->usageFuel = floor($this->usageFuel * $passed);
+						$this->usageFood = floor($this->usageFood * $passed);
+						$this->usagePower = floor($this->usagePower * $passed);
+
+						if ($this->update())
+							return true;
+
 					}
-					
-					$tottime = $this->landTime() - $this->launchTime;
-					$difftime = time() - $this->launchTime;
-					$this->launchTime = time();
-					$this->landTime = $this->launchTime + $difftime ;
-					
-					$tmp = $this->targetId;
-					$this->targetId = $this->sourceId;
-					$this->sourceId = $tmp;
-					
-					$this->status = 2;
-	
-					$passed = $difftime / $tottime;
-					$returnFactor = 1 - $passed;
-					
-					// Fleet gets unused costs back
-					$this->resFuel += ceil($this->usageFuel * $returnFactor);
-					$this->resFood += ceil($this->usageFood * $returnFactor);
-					$this->resPower += ceil($this->usagePower * $returnFactor);
-					
-					$this->usageFuel = floor($this->usageFuel * $passed);
-					$this->usageFood = floor($this->usageFood * $passed);
-					$this->usagePower = floor($this->usagePower * $passed);
-					
-					if ($this->update())
-						return true;			
+					else
+					{
+						$this->error = "Abbruch nicht erlaubt!";
+					}
 				}
 				else
 					$this->error = "Flotte ist bereits beim Ziel angekommen!";
 			}
 			else
-				$this->error = "Flotte ist bereits auf dem Rückflug!";
+				$this->error = "Flotte ist bereits auf dem Rï¿½ckflug!";
 			return false;
 		}
 
@@ -571,7 +579,7 @@
 				return true;			
 			}
 			else
-				$this->error = "Flotte ist bereits auf dem Rückflug!";
+				$this->error = "Flotte ist bereits auf dem Rï¿½ckflug!";
 			return false;
 		}
 		

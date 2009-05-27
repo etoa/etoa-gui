@@ -23,6 +23,8 @@
 	*/
 	function havenShowShips()
 	{
+		defineImagePaths();
+
 		$response = new xajaxResponse();
 		ob_start();
 
@@ -316,10 +318,11 @@
 	function havenShowTarget($form)
 	{
 		$response = new xajaxResponse();
+		defineImagePaths();
 
 		// Get fleet object
 		$fleet = unserialize($_SESSION['haven']['fleetObj']);
-ob_start();
+		ob_start();
 
 		// Do some checks
 		if (count($form)>0 || $fleet->getShipCount() > 0)
@@ -639,6 +642,7 @@ ob_start();
 	function havenShowAction($form)
 	{
 		$response = new xajaxResponse();
+		defineImagePaths();
 
 		// Do some checks
 		if (count($form)>0)

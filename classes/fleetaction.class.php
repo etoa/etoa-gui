@@ -66,7 +66,9 @@
 		protected $allowOwnEntities;
 		protected $allowNpcEntities;
 		protected $allowSourceEntity;
-		
+
+		protected $cancelable = true;
+
 		//
 		// Abstract methods
 		//
@@ -89,6 +91,7 @@
 		function attitude() { return $this->attitude; }
 		function visible() { return $this->visible; }
 		function exclusive() { return $this->exclusive; }
+		function cancelable() { return $this->cancelable; }
 
 		// Overwritable functions
 		function displayName() { return $this->name; }

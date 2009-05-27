@@ -1,22 +1,37 @@
 <?php
 /**
- * Description of report
+ * Implements a report management system, replacing some of the
+ * automatically generated ingame messages. This is an abstract basic class  based
+ * on the table 'reports'. Every report type must implement it's own class inherited
+ * from this class (and possibly have own table on an 1:1 relation with 'reports').
  *
- * @author Nicolas
+ * @author Nicolas Perrenoud <mrcage@etoa.ch>
  */
 abstract class Report
 {
-	static $types = array('battle'=>'Kampf','spy'=>'Spionage','explore'=>'Erkundung','market'=>'Markt','crypto'=>'Krypto');
+	/**
+	 * @var array Available report types
+	 */
+	static $types = array('battle'=>'Kampf','spy'=>'Spionage','explore'=>'Erkundung','market'=>'Markt','crypto'=>'Krypto','other'=>'Sonstige');
 
 	protected $valid = false;
 	protected $type = 'other';
-	protected $id, $timestamp, $subject, $content;
+	protected $id;
+	protected $timestamp;
+	protected $subject;
+	protected $content;
 	protected $read = false;
 	protected $userId=0;
 	protected $allianceId=0;
 	protected $entity1Id=0;
 	protected $entity2Id=0;
+	protected $opponent1Id=0;
 
+	/**
+	 * Class constructor. To be called from the derived class.
+	 *
+	 * @param mixed $id Accepts a record id or an array of already fetched record data
+	 */
 	function __construct($id)
 	{
 		if (is_integer($id))
@@ -52,16 +67,25 @@ abstract class Report
 			$this->content = $arr['content'];
 			$this->entity1Id = $arr['entity1_id'];
 			$this->entity2Id = $arr['entity2_id'];
-
+			$this->opponent1Id = $arr['opponent1_id'];
+			
 			$this->valid = true;
 		}
 	}
 
+	/**
+	 * Class property getter
+	 *
+	 * @param string $field Property name
+	 * @return mixed Requested property value
+	 */
 	function __get($field)
 	{
 		try
 		{
-			return $this->$field;
+			if (isset($this->$field))
+				return $this->$field;
+			throw new Eexception("Property $field does not exists!");
 		}
 		catch (Eexception $e)
 		{
@@ -70,6 +94,36 @@ abstract class Report
 		return null;
 	}
 
+	function __set($field,$value)
+	{
+		try
+		{
+			if (isset($this->$field))
+			{
+				if ($field == "read")
+				{
+					$this->$field = $value;
+					dbquery("UPDATE reports SET `".$field."`=".($value ? 1:0)." WHERE id=$this->id;");
+					return true;
+				}
+				throw new Eexception("Property $field is write protected!");
+			}
+			throw new Eexception("Property $field does not exists!");
+		}
+		catch (Eexception $e)
+		{
+			echo $e;
+			return false;
+		}
+		return false;
+	}
+
+	/**
+	 * Adds a new report. To be called from the derived class.
+	 *
+	 * @param array $data Associative array containing various fields
+	 * @return boolean True if adding was successfull, false otherwise
+	 */
 	static function add($data)
 	{
 		if (isset($data['user_id']) || isset($data['alliance_id']))
@@ -107,6 +161,11 @@ abstract class Report
 				$fs.= ",entity2_id";
 				$vs.= ",'".addslashes($data['entity2_id'])."'";
 			}
+			if (isset($data['opponent1_id']))
+			{
+				$fs.= ",opponent1_id";
+				$vs.= ",'".addslashes($data['opponent1_id'])."'";
+			}
 
 			$sql = "INSERT INTO
 				reports
@@ -129,10 +188,18 @@ abstract class Report
 		return null;
 	}
 
-	static function & find($where=null,$order=null)
+	/**
+	 * Gets a list of reports
+	 *
+	 * @param array $where WHERE conditions where $arrayKey is database field name
+	 * and $arrayValue is database field value
+	 * @param string $order ORDER query string
+	 * @return array Array containing a list of reports
+	 */
+	static function & find($where=null,$order=null,$limit="")
 	{
 		if ($order==null)
-			$order = " timestamp DESC ";
+		$order = " timestamp DESC ";
 
 		if (is_array($where))
 		{
@@ -143,9 +210,11 @@ abstract class Report
 			}
 		}
 		else
-			$wheres = "";
+		$wheres = "";
 
 		$sql = "SELECT * FROM reports $wheres ORDER BY $order";
+		if ($limit != "")
+			$sql.=" LIMIT $limit";
 		$res = dbquery($sql);
 		$rtn = array();
 		if (mysql_num_rows($res) > 0)
@@ -158,13 +227,19 @@ abstract class Report
 		return $rtn;
 	}
 
+	/**
+	 * Factory design pattern for getting instances depending on funcion argument
+	 *
+	 * @param mixed $args Array containing fetched database record or a record id
+	 * @return Report New report object instance
+	 */
 	static function createFactory($args)
 	{
 		if (is_array($args) && isset($args['type']))
 		{
 			$type = $args['type'];
 		}
-		elseif (is_integer($args))
+		elseif (intval($args)>0)
 		{
 			$sql = "SELECT * FROM reports WHERE id=".$args." LIMIT 1;";
 			$res = dbquery($sql);
@@ -183,17 +258,35 @@ abstract class Report
 				{
 					case 'market':
 						return new MarketReport($args);
+					}
 				}
+				throw new Eexception("Keine passende Reportklasse für $type gefunden!");
 			}
-			throw new Eexception("Keine passende Reportklasse für $type gefunden!");
+			catch (Eexception $e)
+			{
+				echo $e;
+			}
+
+			return null;
 		}
-		catch (Eexception $e)
+
+		/**
+		 * Check new messages of the given user
+		 * 
+		 * @param int $userId
+		 * @return int Number of new messages
+		 */
+		static function countNew($userId)
 		{
-			echo $e;
+			$res = dbquery("SELECT COUNT(id) FROM reports WHERE user_id=".intval($userId)." AND `read`=0;");
+			$arr = mysql_fetch_row($res);
+			return $arr[0];
 		}
 
-		return null;
-	}
+		function typeName()
+		{
+			return self::$types[$this->type];
+		}
 
-}
-?>
+	}
+	?>

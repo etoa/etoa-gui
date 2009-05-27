@@ -1705,34 +1705,6 @@ visibility:visible;
 
 
 
-ul.horizMenu	{
-	list-style-type:none;
-	text-align:center;
-	background:#225;
-	border:1px solid #fff;
-	padding:5px;
-}
 
-.horizMenu li	{
-	float:left;
-	padding:0px 5px;
-}
-
-.horizMenu li a	{
-	text-decoration:none;
-	font-weight:bold;
-}
-
-.horizMenu li a:hover	{
-	text-decoration:none;
-	font-weight:bold;
-	color:#aaa;
-}
-
-ul.horizMenu:after	{
-	content:'.';
-	visibility:hidden;
-	clear:both;
-}
 
 

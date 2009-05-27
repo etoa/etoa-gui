@@ -115,6 +115,36 @@ class MarketHandler
 		}
 	}
 
+	static function addResToRate($supply,$demand)
+	{
+		global $resNames;
+		$res = dbquery("
+		SELECT
+			id
+		FROM
+			market_rates
+		ORDER BY
+			id DESC
+		LIMIT 1");
+		$arr = mysql_fetch_row($res);
+		$id = $arr[0];
+		$ssql="";
+		foreach ($resNames as $rk => $rn)
+		{
+			if ($ssql!="")
+				$ssql.=",";
+			$ssql.= "supply_".$rk."=".$supply[$rk].",demand_".$rk."=".$demand[$rk]."";
+		}
+		dbquery("
+		UPDATE
+			market_rates
+		SET
+			$ssql
+		WHERE
+			id=".$id."
+		");
+	}
+
 
 	static function randomRates($n=MARKET_RATES_COUNT)
 	{
@@ -142,6 +172,7 @@ class MarketHandler
 			self::updateRates();
 		}
 	}
+
 
 }
 ?>
