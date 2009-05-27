@@ -19,7 +19,13 @@
 		private $totalPeopleWorking = null;
 		
 		private $errorMsg;
-		
+
+		/**
+		 * Constructor
+		 * @param <type> $entityId
+		 * @param <type> $ownerId
+		 * @param <type> $load
+		 */
 		function BuildList($entityId,$ownerId,$load=0)
 		{
 			$this->entityId = $entityId;

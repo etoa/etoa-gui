@@ -124,6 +124,7 @@
 	define("RES_FOOD","Nahrung");
 	define("RES_POWER","Energiezellen");
 
+// deprecated!
 	define("RES_1",RES_METAL);
 	define("RES_2",RES_CRYSTAL);
 	define("RES_3",RES_PLASTIC);
@@ -144,6 +145,7 @@
 	define('RES_ICON_PEOPLE','<img class="resIcon" src="images/resources/people_s.png" alt="Bevölkerung" />');
 	define('RES_ICON_TIME','<img class="resIcon" src="images/resources/time_s.png" alt="Zeit" />');
 
+	$resIcons = array(RES_ICON_METAL,RES_ICON_CRYSTAL,RES_ICON_PLASTIC,RES_ICON_FUEL,RES_ICON_FOOD);
 
 	// Regular expressions
 	define('REGEXP_NAME','^.[^0-9\'\"\?\<\>\$\!\=\;\&]*$');

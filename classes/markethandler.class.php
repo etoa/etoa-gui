@@ -6,6 +6,11 @@
  */
 class MarketHandler
 {
+	
+
+
+
+
 	static function calcRate($ts=null)
 	{
 		// Resulting rates

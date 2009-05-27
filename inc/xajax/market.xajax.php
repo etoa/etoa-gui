@@ -17,12 +17,15 @@ $xajax->register(XAJAX_FUNCTION,'checkMarketSearchFormular');
 $xajax->register(XAJAX_FUNCTION,'marketSearch');
 
 
-function marketSearch($form)
+function marketSearch($form,$order="distance",$orderDirection=0)
 {
-	global $resNames;
+	global $resNames,$resIcons;
 	ob_start();
  	$ajax = new xajaxResponse();
 
+	//
+	// Resources
+	// <editor-fold>
 	if ($form['search_cat']=="resources")
 	{
 		// Build resource type filter query
@@ -50,7 +53,7 @@ function marketSearch($form)
 			$te = Entity::createFactoryById($_SESSION['cpid']);
 		}
 
-		$res = dbquery("
+		$sql = "
 		SELECT
 			*
 		FROM
@@ -64,42 +67,20 @@ function marketSearch($form)
 			".($dfilter!="" ? $dfilter : 0)."
 			)
 			AND user_id!='".$_SESSION['user_id']."'
-		ORDER BY
-			datum ASC;");
+			;";
+		
+		$res = dbquery($sql);
 
-		$cres = dbquery("SELECT COUNT(id) FROM market_ressource WHERE buyable=1");
-		$carr = mysql_fetch_row($cres);
+		$nr = mysql_num_rows($res);
+		if ($nr > 0)
+		{
+			$currentEntity = Entity::createFactoryById($_SESSION['cpid']);
+			$tradeShip = new Ship(MARKET_SHIP_ID);
 
-			$nr = mysql_num_rows($res);
-			if ($nr > 0)
+			$data = array();
+			$i=0;
+			while ($arr=mysql_fetch_assoc($res))
 			{
-				echo "<form action=\"?page=market&amp;mode=ressource\" method=\"post\" id=\"ress_buy_selector\">\n";
-				checker_init();
-				tableStart("Rohstoffangebote ($nr von ".$carr[0].")  <span id=\"market_search_loading\"><img src=\"images/loading.gif\" alt=\"loading\" /></span>");
-					echo "<tr>
-								<th>Rohstoffe:</th>
-								<th>Angebot:</th>
-								<th>Preis:</th>
-								<th>Anbieter:</th>
-								<th>Datum:</th>
-								<th style=\"width:50px;\">Kaufen:</th>
-							</tr>";
-				$cnt=0;
-				while ($arr=mysql_fetch_array($res))
-				{
-					/*
-					 *
-					$for_alliance="";
-					// Für Allianzmitglied reserveriert
-          if($arr['ressource_for_alliance']!=0)
-          {
-              $for_alliance="<span class=\"userAllianceMemberColor\">F&uuml;r Allianzmitglied Reserviert</span>";
-          }
-          else
-          {
-              $for_alliance="";
-          }*/
-
 				$show=true;
 				if (isset($te))
 				{
@@ -112,41 +93,110 @@ function marketSearch($form)
 						}
 					}
 				}
-
 				if ($show)
 				{
-					$i=0;
-					$cres = count($resNames);
+					$data[$i] = array();
+					$data[$i] = $arr;
+					$data[$i]['sell_total'] = 0;
+					$data[$i]['buy_total'] = 0;
+					$data[$i]['used_res'] = 0;
 					foreach ($resNames as $rk=>$rn)
 					{
+						$data[$i]['sell_total'] += $arr['sell_'.$rk];
+						$data[$i]['buy_total'] += $arr['buy_'.$rk];
+						if ($arr['sell_'.$rk]+$arr['buy_'.$rk]>0)
+							$data[$i]['used_res']++;
+					}
+					$sellerEntity = Entity::createFactoryById($arr['entity_id']);
+					$dist = $currentEntity->distance($sellerEntity);
+					$data[$i]['distance'] = $dist;
+					$data[$i]['duration'] = ceil($dist/$tradeShip->speed*3600 + $tradeShip->time2start+$tradeShip->time2land);
+					$i++;
+				}
+			}
+			$offerCount = count($data);
+
+			$sortOrder = $orderDirection>0 ? SORT_DESC : SORT_ASC;
+			foreach ($data as $key => $row)
+			{
+				if ($order=="sell")
+					$sort[$key]  = $row['sell_total'];
+				elseif ($order=="buy")
+					$sort[$key]  = $row['buy_total'];
+				else
+					$sort[$key]  = $row['distance'];
+			}
+			array_multisort($sort, $sortOrder, $data);
+
+
+			$cres = dbquery("SELECT COUNT(id) FROM market_ressource WHERE buyable=1 AND user_id!='".$_SESSION['user_id']."'");
+			$carr = mysql_fetch_row($cres);
+			echo "<form action=\"?page=market&amp;mode=ressource\" method=\"post\" id=\"ress_buy_selector\">\n";
+			checker_init();
+			tableStart("Rohstoffangebote ($offerCount von ".$carr[0].")  <span id=\"market_search_loading\"><img src=\"images/loading.gif\" alt=\"loading\" /></span>");
+				echo "<tr>
+							<th>Rohstoffe:</th>
+							<th><a href=\"javascript:sortSearch('sell',".($order=="sell"?($orderDirection+1)%2:0).")\">Angebot:</a></th>
+							<th><a href=\"javascript:sortSearch('buy',".($order=="buy"?($orderDirection+1)%2:0).")\">Preis:</a></th>
+							<th>Anbieter:</th>
+							<th><a href=\"javascript:sortSearch('distance',".($order=="distance"?($orderDirection+1)%2:0).")\">Entfernung:</a></th>
+							<th>Beschreibung:</th>
+							<th style=\"width:50px;\">Kaufen:</th>
+						</tr>";
+			$cnt=0;
+			foreach ($data as $arr)
+			{
+				$i=0;
+				/*
+				 *
+				$for_alliance="";
+				// Für Allianzmitglied reserveriert
+				if($arr['ressource_for_alliance']!=0)
+				{
+						$for_alliance="<span class=\"userAllianceMemberColor\">F&uuml;r Allianzmitglied Reserviert</span>";
+				}
+				else
+				{
+						$for_alliance="";
+				}*/
+
+				$cres = $arr['used_res'];
+				foreach ($resNames as $rk=>$rn)
+				{
+					if ($arr['sell_'.$rk]+$arr['buy_'.$rk]>0)
+					{
 						echo "<tr>
-										<td class=\"rescolor".$rk."\"><b>".$rn."</b>:</td>
+										<td class=\"rescolor".$rk."\">".$resIcons[$rk]."<b>".$rn."</b>:</td>
 										<td class=\"rescolor".$rk."\">".($arr['sell_'.$rk]>0 ? nf($arr['sell_'.$rk]) : '-')."</td>
 										<td class=\"rescolor".$rk."\">".($arr['buy_'.$rk]>0 ? nf($arr['buy_'.$rk]) : '-')."</td>";
 										if ($i==0)
 										{
+
 											echo "<td rowspan=\"".$cres."\">
-												<a href=\"?page=userinfo&amp;id=".$arr['user_id']."\">".get_user_nick($arr['user_id'])."</a>
+												<a href=\"?page=userinfo&amp;id=".$arr['user_id']."\">".get_user_nick($arr['user_id'])."</a></td>";
+											echo "<td rowspan=\"".$cres."\">
+												".tf($arr['duration'])."
 												</td>
 												<td rowspan=\"".$cres."\">
-													".date("d.m.Y  G:i:s", $arr['datum'])."<br/><br/>".stripslashes($arr['text'])."
+													".stripslashes($arr['text'])."
 												</td>
 												<td rowspan=\"".$cres."\">
 													<input type=\"checkbox\" name=\"ressource_market_id[]\" id=\"ressource_market_id\" value=\"".$arr['id']."\" /><br/><br/>
 												</td>";
 										}
-							echo "</tr>";
-							$i++;
-					}
-					$cnt++;
-					// Setzt Lücke zwischen den Angeboten
-					if ($cnt<mysql_num_rows($res))
-					{
-						echo "<tr>
-							<td colspan=\"7\" style=\"height:10px;background:#000\">&nbsp;</td>
-						</tr>";
+						echo "</tr>";
+						$i++;
 					}
 				}
+				$cnt++;
+				// Setzt Lücke zwischen den Angeboten
+				if ($cnt<$offerCount)
+				{
+					echo "<tr>
+						<td colspan=\"7\" style=\"height:10px;background:#000\">&nbsp;</td>
+					</tr>";
+				}
+
 			}
 			if ($i==0)
 			{
@@ -164,6 +214,95 @@ function marketSearch($form)
 			echo "<i>Keine Angebote vorhanden!</i>";
 		}
 	}
+	// </editor-fold>
+
+	//
+	// Ships
+	// <editor-fold>
+	if ($form['search_cat']=="ships")
+	{
+			echo "<form action=\"?page=market&amp;mode=ships\" method=\"post\" id=\"ship_buy_selector\">\n";
+			checker_init();
+
+			tableStart("Angebots&uuml;bersicht");
+			echo "<tr>
+						<th width=\"25%\">Angebot:</th>
+						<th colspan=\"2\" width=\"25%\">Preis:</th>
+						<th width=\"15%\">Anbieter:</th>
+						<th width=\"15%\">Beschreibung:</th>
+						<th width=\"10%\">Kaufen:</th>
+					</tr>";
+
+			$res = dbquery("
+			SELECT
+				*
+			FROM
+				market_ship
+			WHERE
+				buyable='1'
+        
+			;");//AND user_id!='".$_SESSION['user_id']."' todo
+			$cnt=0;
+			if(mysql_num_rows($res)>0)
+			{
+				while ($arr=mysql_fetch_array($res))
+				{
+					if($arr['for_alliance']!=0)
+						$for_alliance="<span class=\"userAllianceMemberColor\">F&uuml;r Allianzmitglied Reserviert</span>";
+					else
+						$for_alliance="";
+
+					$i=0;
+					$resCnt = count($resNames);
+					foreach ($resNames as $rk => $rn)
+					{
+						echo "<tr>";
+						if ($i==0)
+						{
+							$ship = new Ship($arr['ship_id']);
+							echo "<td rowspan=\"$resCnt\">".$arr['count']." <a href=\"?page=help&site=shipyard&id=".$arr['ship_id']."\">".$ship."</a></td>";
+						}
+						echo "<td class=\"rescolor".$rk."\">".$resIcons[$rk]."<b>".$rn."</b>:</td>
+						<td class=\"rescolor".$rk."\">".nf($arr['costs_'.$rk])."</td>";
+						if ($i++==0)
+						{
+							$tu = new User($arr['user_id']);
+							echo "<td rowspan=\"$resCnt\">".$tu->detailLink()."</td>";
+							echo "<td rowspan=\"$resCnt\">".stripslashes($arr['text'])."</td>";
+							echo "<td rowspan=\"$resCnt\">
+								<input type=\"checkbox\" name=\"ship_market_id[]\" id=\"ship_market_id_".$arr['id']."\" value=\"1\" onclick=\"xajax_calcMarketShipBuy(xajax.getFormValues('ship_buy_selector'));\" />
+							</td>";
+						}
+						echo "</tr>";
+					}
+
+					$cnt++;
+					if ($cnt<mysql_num_rows($res))
+						echo "<tr><td colspan=\"6\" style=\"height:10px;background:#000\"></td></tr>";
+
+
+				}
+				tableEnd();
+
+				tableStart();
+				echo "<tr>
+								<td colspan=\"7\" id=\"ship_buy_check_message\" style=\"text-align:center;vertical-align:middle;height:30px;\">&nbsp;</td>
+							</tr>
+							<tr>
+								<td colspan=\"7\" style=\"text-align:center;vertical-align:middle;\">
+									<input type=\"submit\" name=\"ship_submit\" id=\"ship_submit\" value=\"Angebot annehmen\" disabled=\"disabled\"/>
+								</td>
+							</tr>";
+				tableEnd();
+			}
+			else
+			{
+				echo "Keine Angebote vorhanden!";
+			}
+			echo "</form>";
+	}
+	// </editor-fold>
+
 
 	$ajax->assign("market_search_results","innerHTML",ob_get_clean());
 	$ajax->assign("market_search_loading","style.display","none");

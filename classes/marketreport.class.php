@@ -15,7 +15,9 @@ class MarketReport extends Report
 		'resadd'=>'Rohstoffangebot eingestellt',
 		'rescancel'=>'Rohstoffangebot zurückgezogen',
 		'ressold'=>'Rohstoffe verkauft',
-		'resbought'=>'Rohstoffe gekauft'
+		'resbought'=>'Rohstoffe gekauft',
+		'shipadd'=>'Schiffangebot eingestellt',
+		'shipcancel'=>'Schiffangebot zurückgezogen',
 	);
 
 	protected $subType = 'other';
@@ -25,6 +27,8 @@ class MarketReport extends Report
 	protected $resBuy;
 	protected $fleet1Id;
 	protected $fleet2Id;
+	protected $shipId;
+	protected $shipCount;
 
 	function __construct($args)
 	{
@@ -46,6 +50,8 @@ class MarketReport extends Report
 				}
 				$this->fleet1Id = $arr['fleet1_id'];
 				$this->fleet2Id = $arr['fleet2_id'];
+				$this->shipId = $arr['ship_id'];
+				$this->shipCount = $arr['ship_count'];
 			}
 			else
 			{
@@ -91,6 +97,16 @@ class MarketReport extends Report
 			{
 				$fs.= ",fleet2_id ";
 				$vs.= ",".$marketData['fleet2_id']." ";
+			}
+			if (isset($marketData['ship_id']) && $marketData['ship_id']>0)
+			{
+				$fs.= ",ship_id ";
+				$vs.= ",".$marketData['ship_id']." ";
+			}
+			if (isset($marketData['ship_count']) && $marketData['ship_count']>0)
+			{
+				$fs.= ",ship_count ";
+				$vs.= ",".$marketData['ship_count']." ";
 			}
 			dbquery("INSERT INTO
 				reports_market
@@ -140,6 +156,7 @@ class MarketReport extends Report
 				echo "</table><br/>";
 				echo "Die Marktgebühr beträgt: ".round(($this->factor-1)*100,2)."%.";
 				break;
+
 			case "rescancel":
 				echo "Du hast das Angebot #".$this->recordId." im <a href=\"?page=market&amp;mode=user_sell&amp;change_entity=".$this->entity1Id."\">Marktplatz</a>
 				auf ".$ent->detailLink()." abgebrochen!<br/><br/>";
@@ -163,6 +180,7 @@ class MarketReport extends Report
 				echo "</table><br/>";
 				echo "Es wurden ".round($this->factor*100)."% der Rohstoffe zurückerstattet.";
 				break;
+
 			case "ressold":
 				$op = new User($this->opponent1Id);
 				$ent2 = Entity::createFactoryById($this->entity2Id);
@@ -187,6 +205,7 @@ class MarketReport extends Report
 				if ($buyerFleet->valid())
 					echo " Landung: ".df($sellerFleet->landTime())."";
 				break;
+
 			case "resbought":
 				$op = new User($this->opponent1Id);
 				$ent2 = Entity::createFactoryById($this->entity2Id);
@@ -210,6 +229,53 @@ class MarketReport extends Report
 				if ($sellerFleet->valid())
 					echo " Landung: ".df($sellerFleet->landTime())."";
 				break;
+
+			case "shipadd":
+				echo "Du hast folgendes Angebot (#".$this->recordId.") im <a href=\"?page=market&amp;mode=user_sell&amp;change_entity=".$this->entity1Id."\">Marktplatz</a>
+				auf ".$ent->detailLink()." eingestellt:<br/><br/>";
+				if ($this->content !="")
+					echo $this->content."<br/><br/>";
+				$ts = new Ship($this->shipId);
+				echo "".nf($this->shipCount)." <b>".$ts."</b> <br/><br/> ";
+				echo "zu einem Preis von: <br/><br/>";
+				echo "<table class=\"tb\" style=\"width:auto;margin:5px;\">";
+				echo "<tr><th style=\"width:100px;\">Rohstoff:</th><th>Preis:</th></tr>";
+				foreach ($resNames as $k=>$v)
+				{
+					if ($this->resSell[$k] + $this->resBuy[$k]>0)
+						echo "<tr>
+						<td>".$v."</td>
+						<td>".nf($this->resBuy[$k])."</td>
+						</tr>";
+				}
+				echo "</table><br/>";
+				break;
+
+			case "shipcancel":
+				echo "Du hast das Angebot #".$this->recordId." im <a href=\"?page=market&amp;mode=user_sell&amp;change_entity=".$this->entity1Id."\">Marktplatz</a>
+				auf ".$ent->detailLink()." abgebrochen!<br/><br/>";
+				$ts = new Ship($this->shipId);
+				echo "".nf($this->shipCount)." <b>".$ts."</b> <br/><br/> ";
+				echo "zu einem Preis von: <br/><br/>";
+				echo "<table class=\"tb\" style=\"width:auto;margin:5px;\">";
+				echo "<tr>
+				<th style=\"width:100px;\">Rohstoff:</th>
+				<th>Preis:</th>
+				</tr>";
+				foreach ($resNames as $k=>$v)
+				{
+					if ($this->resSell[$k] + $this->resBuy[$k]>0)
+						echo "<tr>
+						<td>".$v."</td>
+						<td>".nf($this->resBuy[$k])."</td>
+						</tr>";
+				}
+				echo "</table><br/>";
+				echo "".floor($this->shipCount*$this->factor)." Schiffe (".round($this->factor*100)."%) wurden zurückerstattet.";
+				break;
+
+			default:
+				dump($this);
 		}
 
 		return ob_get_clean();

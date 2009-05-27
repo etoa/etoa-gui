@@ -22,7 +22,7 @@
 				");			
 				if (!$arr = mysql_fetch_assoc($res))
 				{
-					throw new EException("Ungültige Schiff-ID: $sid");
+					throw new EException("Ungï¿½ltige Schiff-ID: $sid");
 					return false;
 				}
 			}			
@@ -36,6 +36,9 @@
 			$this->heal = $arr['ship_heal'];
 			$this->capacity = $arr['ship_capacity'];
 			$this->peopleCapacity = $arr['ship_people_capacity'];
+			$this->speed = $arr['ship_speed'];
+			$this->time2start = $arr['ship_time2start'];
+			$this->time2land = $arr['ship_time2land'];
 			
 			$this->bStructure = $arr['special_ship_bonus_structure'];
 			$this->bShield = $arr['special_ship_bonus_shield'];
