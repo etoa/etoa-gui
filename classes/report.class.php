@@ -196,7 +196,7 @@ abstract class Report
 	 * @param string $order ORDER query string
 	 * @return array Array containing a list of reports
 	 */
-	static function & find($where=null,$order=null,$limit="")
+	static function & find($where=null,$order=null,$limit="",$count=0)
 	{
 		if ($order==null)
 		$order = " timestamp DESC ";
@@ -212,8 +212,18 @@ abstract class Report
 		else
 		$wheres = "";
 
+		if ($count>0)
+		{
+			$sql = "SELECT COUNT(id) FROM reports $wheres ORDER BY $order";
+			if ($limit != "" || $limit>0)
+				$sql.=" LIMIT $limit";
+			$res = dbquery($sql);
+			$arr = mysql_fetch_row($res);
+			return $arr[0];
+		}
+
 		$sql = "SELECT * FROM reports $wheres ORDER BY $order";
-		if ($limit != "")
+		if ($limit != "" || $limit>0)
 			$sql.=" LIMIT $limit";
 		$res = dbquery($sql);
 		$rtn = array();
