@@ -16,7 +16,9 @@
 	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
 	//////////////////////////////////////////////////
 	//
-	// 	$Id$
+	// $Author$
+	// $Date$
+	// $Rev$
 	//
 
 	echo "<h1>Berichte</h1>";
