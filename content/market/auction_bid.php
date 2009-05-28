@@ -1,4 +1,26 @@
 <?php
+	//////////////////////////////////////////////////
+	//		 	 ____    __           ______       			//
+	//			/\  _`\ /\ \__       /\  _  \      			//
+	//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
+	//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
+	//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
+	//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
+	//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
+	//																					 		//
+	//////////////////////////////////////////////////
+	// The Andromeda-Project-Browsergame				 		//
+	// Ein Massive-Multiplayer-Online-Spiel			 		//
+	// Programmiert von Nicolas Perrenoud				 		//
+	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
+	// www.etoa.ch | mail@etoa.ch								 		//
+	//////////////////////////////////////////////////
+	//
+	// $Author$
+	// $Date$
+	// $Rev$
+	//
+
 			$_POST['auction_new_buy_metal'] = nf_back($_POST['auction_new_buy_metal']);
 			$_POST['auction_new_buy_crystal'] = nf_back($_POST['auction_new_buy_crystal']);
 			$_POST['auction_new_buy_plastic'] = nf_back($_POST['auction_new_buy_plastic']);

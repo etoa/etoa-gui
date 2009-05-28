@@ -1,6 +1,4 @@
 <?PHP
-
-
 	//////////////////////////////////////////////////
 	//		 	 ____    __           ______       			//
 	//			/\  _`\ /\ \__       /\  _  \      			//
@@ -14,15 +12,15 @@
 	// The Andromeda-Project-Browsergame				 		//
 	// Ein Massive-Multiplayer-Online-Spiel			 		//
 	// Programmiert von Nicolas Perrenoud				 		//
-	// www.nicu.ch | mail@nicu.ch								 		//
 	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
+	// www.etoa.ch | mail@etoa.ch								 		//
 	//////////////////////////////////////////////////
 	//
-	// 	File: fleetinfo/alliance.php
-	// 	Created: 01.12.2008
-	// 	Last edited: 02.02.2009
-	// 	Last edited by: glaubinix <glaubinix@etoa.ch>
-	//	
+	// $Author$
+	// $Date$
+	// $Rev$
+	//
+
 	/**
 	* Shows information about a given fleet
 	*

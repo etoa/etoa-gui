@@ -1,4 +1,26 @@
 <?PHP
+	//////////////////////////////////////////////////
+	//		 	 ____    __           ______       			//
+	//			/\  _`\ /\ \__       /\  _  \      			//
+	//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
+	//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
+	//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
+	//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
+	//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
+	//																					 		//
+	//////////////////////////////////////////////////
+	// The Andromeda-Project-Browsergame				 		//
+	// Ein Massive-Multiplayer-Online-Spiel			 		//
+	// Programmiert von Nicolas Perrenoud				 		//
+	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
+	// www.etoa.ch | mail@etoa.ch								 		//
+	//////////////////////////////////////////////////
+	//
+	// $Author$
+	// $Date$
+	// $Rev$
+	//
+
 			iBoxStart("Logins");
 			echo "Hier findest du eine Liste der letzten 10 Logins in deinen Account, ebenfalls kannst du weiter unten
 			sehen wann dass fehlerhafte Loginversuche stattgefunden haben. Solltest du feststellen, dass jemand unbefugten 
