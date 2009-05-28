@@ -1,4 +1,26 @@
 <?php
+	//////////////////////////////////////////////////
+	//		 	 ____    __           ______       			//
+	//			/\  _`\ /\ \__       /\  _  \      			//
+	//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
+	//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
+	//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
+	//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
+	//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
+	//																					 		//
+	//////////////////////////////////////////////////
+	// The Andromeda-Project-Browsergame				 		//
+	// Ein Massive-Multiplayer-Online-Spiel			 		//
+	// Programmiert von Nicolas Perrenoud				 		//
+	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
+	// www.etoa.ch | mail@etoa.ch								 		//
+	//////////////////////////////////////////////////
+	//
+	// $Author: mrcage $
+	// $Date: 2009-05-28 12:20:00 +0200 (Do, 28 Mai 2009) $
+	// $Rev: 1058 $
+	//
+
 /**
  * Implements a report management system, replacing some of the
  * automatically generated ingame messages. This is an abstract basic class  based

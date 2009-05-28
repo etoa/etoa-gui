@@ -6,21 +6,21 @@
 	//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
 	//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
 	//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
-	//			    \/___/  \/__/\/___/  \/_/\/_/  			//
-	//																							//
+	//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
+	//																					 		//
 	//////////////////////////////////////////////////
-	// The Andromeda-Project-Browsergame						//
-	// Ein Massive-Multiplayer-Online-Spiel					//
-	// Programmiert von Nicolas Perrenoud						//
-	// www.nicu.ch | mail@nicu.ch			 							//
+	// The Andromeda-Project-Browsergame				 		//
+	// Ein Massive-Multiplayer-Online-Spiel			 		//
+	// Programmiert von Nicolas Perrenoud				 		//
 	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
+	// www.etoa.ch | mail@etoa.ch								 		//
 	//////////////////////////////////////////////////
 	//
-	// 	File: help.php
-	// 	Created: 01.12.2004
-	// 	Last edited: 07.07.2007
-	// 	Last edited by: MrCage <mrcage@etoa.ch>
-	//	
+	// $Author$
+	// $Date$
+	// $Rev$
+	//
+	
 	/**
 	* Online-Help and info tables
 	*

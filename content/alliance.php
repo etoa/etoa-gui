@@ -1,5 +1,4 @@
 <?PHP
-
 	//////////////////////////////////////////////////
 	//		 	 ____    __           ______       			//
 	//			/\  _`\ /\ \__       /\  _  \      			//
@@ -13,22 +12,21 @@
 	// The Andromeda-Project-Browsergame				 		//
 	// Ein Massive-Multiplayer-Online-Spiel			 		//
 	// Programmiert von Nicolas Perrenoud				 		//
-	// www.nicu.ch | mail@nicu.ch								 		//
 	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
+	// www.etoa.ch | mail@etoa.ch								 		//
 	//////////////////////////////////////////////////
 	//
-	// 	File: alliance.php
-	// 	Created: 01.12.2004
-	// 	Last edited: 07.07.2007
-	// 	Last edited by: MrCage <mrcage@etoa.ch>
-	//	
+	// $Author$
+	// $Date$
+	// $Rev$
+	//
+	
 	/**
 	* Create, view and manage an alliance
 	*
 	* @author MrCage <mrcage@etoa.ch>
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/	
-
  
 	// BEGIN SKRIPT //
 	echo "<h1>Allianz</h1>";

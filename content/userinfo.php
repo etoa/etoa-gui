@@ -1,5 +1,4 @@
 <?PHP
-
 	//////////////////////////////////////////////////
 	//		 	 ____    __           ______       			//
 	//			/\  _`\ /\ \__       /\  _  \      			//
@@ -13,15 +12,15 @@
 	// The Andromeda-Project-Browsergame				 		//
 	// Ein Massive-Multiplayer-Online-Spiel			 		//
 	// Programmiert von Nicolas Perrenoud				 		//
-	// www.nicu.ch | mail@nicu.ch								 		//
 	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
+	// www.etoa.ch | mail@etoa.ch								 		//
 	//////////////////////////////////////////////////
 	//
-	// 	File: userinfo.php
-	// 	Created: 01.12.2004
-	// 	Last edited: 07.03.2006
-	// 	Last edited by: MrCage <mrcage@etoa.ch>
-	//	
+	// $Author$
+	// $Date$
+	// $Rev$
+	//
+	
 	/**
 	* User information
 	*
