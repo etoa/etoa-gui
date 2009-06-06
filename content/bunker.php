@@ -197,14 +197,15 @@
 						WHERE
 							shiplist_user_id=".$cu->id."
 							AND shiplist_entity_id=".$cp->id."
-							AND shiplist_count>0
+							AND shiplist_bunkered>0
 						;");
 					while ($arr = mysql_fetch_assoc($res))
 					{
+						echo "test";
 						$count -= $arr['shiplist_bunkered'];
 						$structure -= $arr['shiplist_bunkered']*$ships[$arr['shiplist_ship_id']]['ship_structure'];
 					}
-					
+					echo $count.".".$structure;
 					foreach($_POST['ship_bunker_count'] as $shipId=>$cnt)
 					{
 						if ($cnt>0)

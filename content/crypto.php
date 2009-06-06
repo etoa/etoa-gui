@@ -452,7 +452,7 @@
 							}
 							else
 							{
-								error_msg("Zuwenig Allianzrohstoffe ".RES_FUEL.", ".nf(CRYPTO_FUEL_COSTS_PER_SCAN)." benötigt, ".nf($cu->alliance->resFuel())." vorhanden!");
+								error_msg("Zuwenig Allianzrohstoffe ".RES_FUEL.", ".nf(CRYPTO_FUEL_COSTS_PER_SCAN)." benötigt, ".nf($cu->alliance->resFuel)." vorhanden!");
 							}
 						}
 						else
@@ -519,12 +519,13 @@
 						<input type="text" name="sy" id="sy" value="'.$coords[1].'" size="2" maxlength="2" /> :
 						<input type="text" name="cx" id="cx" value="'.$coords[2].'" size="2" maxlength="2" /> /
 						<input type="text" name="cy" id="cy" value="'.$coords[3].'" size="2" maxlength="2" /> :
-						<input type="text" name="p" id="p" value="'.$coords[4].'" size="2" maxlength="2" /><br/><br/>';
+						<input type="text" name="p" id="p" value="'.$coords[4].'" size="2" maxlength="2" /><br /><br />';
 				
 				// Bookmarkliste anzeigen
-				echo "<i>oder</i> Favorit wählen: ".$bm->drawSelector("bookmarkselect","applyBookmark();")."<br/><br/>
-						<input type=\"checkbox\" name=\"scan_to_notes\" value=\"1\" checked=\"checked\" /> Bericht zu meinem Notizblock hinzufügen";					
-				echo $bm->drawSelectorJavaScript("bookmarkselect","applyBookmark");
+				echo '<i>oder</i> Favorit wählen: ';
+				$bm->drawSelector("bookmarkselect","applyBookmark();");
+						//echo '<input type=\"checkbox\" name=\"scan_to_notes\" value=\"1\" checked=\"checked\" /> Bericht zu meinem Notizblock hinzufügen';					
+				//echo $bm->drawSelectorJavaScript("bookmarkselect","applyBookmark");
 				iBoxEnd();
 				
 				if ($cp->resFuel >= CRYPTO_FUEL_COSTS_PER_SCAN)

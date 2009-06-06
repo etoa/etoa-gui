@@ -19,6 +19,7 @@ Die Chance einen erfolgreichen Gasangriff durchzuführen erhöht sich, indem man
 			$this->allowNpcEntities = false;
 			$this->allowSourceEntity = false;
 			$this->allowAllianceEntities = false;
+			$this->allianceAction = false;
 		}
 
 		function startAction() {} 

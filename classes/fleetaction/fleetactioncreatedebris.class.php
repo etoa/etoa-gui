@@ -19,6 +19,7 @@
 			$this->allowNpcEntities = false;
 			$this->allowSourceEntity = true;
 			$this->allowAllianceEntities = true;
+			$this->allianceAction = false;
 		}
 
 		function startAction() {} 

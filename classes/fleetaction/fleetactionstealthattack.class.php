@@ -19,6 +19,7 @@ Bedingt jedoch, dass keine anderen Schiffe mitfliegen. Bis heute gibt es noch ke
 			$this->allowNpcEntities = false;
 			$this->allowSourceEntity = false;
 			$this->allowAllianceEntities = false;
+			$this->allianceAction = false;
 		}
 
 		function startAction() {} 

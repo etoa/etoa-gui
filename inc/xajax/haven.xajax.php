@@ -58,6 +58,13 @@
 		if ($fleet->specialist->fleetMax>0)
 			echo " +3 Flotten durch ".$fleet->specialist->name;
 		echo ")</td></tr>";
+		if ($fleet->owner->allianceId()>0 && $fleet->owner->alliance->getBuildingLevel("Zentrale")) {
+			$flvl = $fleet->owner->alliance->getBuildingLevel("Flottenkontrolle");
+			$fleet->setAllianceSlots($flvl);
+			$afleets = $fleet->getAllianceSlots();
+			$pfleets = $flvl + 2;
+			echo "<th>Allianzflotten:</th><td><b>$afleets</b> Allianzflotten können mit <b>$pfleets</b> Teilflotten pro Flotte starten! (Allianzflottenkontrolle Stuffe $flvl)</td>";
+		}
 	
 		// Piloten		
   		echo "<tr><th>Piloten:</th><td>";
@@ -304,6 +311,8 @@
 
 		$response->script("document.forms[0].elements[0].select();");
 		ob_end_clean();
+		
+		$_SESSION['haven']['fleetObj']=serialize($fleet);
 		
 	
 	  return $response;	
@@ -598,7 +607,7 @@
 					echo "</td></tr>";
 					echo "<tr><th>Bemerkungen:</th>
 						<td id=\"comment\">-</td></tr>";
-					echo "<tr id=\"allianceAttacks\" style=\"display: none;\"><td>Allianzangriffe</td><td id=\"alliance\">-</td></tr>";
+					echo "<tr id=\"allianceAttacks\" style=\"display: none;\"><th>Allianzangriffe:</th><td id=\"alliance\">-</td></tr>";
 					tableEnd();
 					
 					echo "&nbsp;<input tabindex=\"7\" type=\"button\" onclick=\"xajax_havenShowShips()\" value=\"&lt;&lt; Zurück zur Schiffauswahl\" />&nbsp;";
@@ -806,11 +815,11 @@
 						
 						tableEnd();                                                                                  
 						
-						echo "<input type=\"button\" onclick=\"xajax_havenShowTarget(null)\" value=\"&lt;&lt; Zurück zur Zielwahl\" /> &nbsp; ";
+						echo "<div id=\"submitbutton\"><input type=\"button\" onclick=\"xajax_havenShowTarget(null)\" value=\"&lt;&lt; Zurück zur Zielwahl\" /> &nbsp; ";
 						echo "<input type=\"button\" onclick=\"xajax_havenReset()\" value=\"Reset\" /> &nbsp; ";
 						if ($actionsAvailable>0)
 						{
-							echo "<input type=\"button\" onclick=\"xajax_havenShowLaunch(xajax.getFormValues('actionForm'))\" value=\"Start! &gt;&gt;&gt;\"  />";
+							echo "<input type=\"button\" onclick=\"showLoader('submitbutton');xajax_havenShowLaunch(xajax.getFormValues('actionForm'))\" value=\"Start! &gt;&gt;&gt;\"  /></div>";
 						}
 						echo "</form>";			
 						
@@ -868,20 +877,20 @@
 					$fetch4 = $fleet->fetchResource(4,nf_back($form['fetch4']));
 					$fetch5 = $fleet->fetchResource(5,nf_back($form['fetch5']));
 					$fetch6 = $fleet->fetchResource(6,nf_back($form['fetchp']));
-					$load1 = $fleet->loadResource(1,0,1);
-					$load2 = $fleet->loadResource(2,0,1);
-					$load3 = $fleet->loadResource(3,0,1);
-					$load4 = $fleet->loadResource(4,0,1);
-					$load5 = $fleet->loadResource(5,0,1);
+					$load1 = $fleet->loadResource(1,0);
+					$load2 = $fleet->loadResource(2,0);
+					$load3 = $fleet->loadResource(3,0);
+					$load4 = $fleet->loadResource(4,0);
+					$load5 = $fleet->loadResource(5,0);
 					$load6 = $fleet->loadPeople(0);
 				}
 				else
 				{
-					$load1 = $fleet->loadResource(1,nf_back($form['res1']),1);
-					$load2 = $fleet->loadResource(2,nf_back($form['res2']),1);
-					$load3 = $fleet->loadResource(3,nf_back($form['res3']),1);
-					$load4 = $fleet->loadResource(4,nf_back($form['res4']),1);
-					$load5 = $fleet->loadResource(5,nf_back($form['res5']),1);
+					$load1 = $fleet->loadResource(1,nf_back($form['res1']));
+					$load2 = $fleet->loadResource(2,nf_back($form['res2']));
+					$load3 = $fleet->loadResource(3,nf_back($form['res3']));
+					$load4 = $fleet->loadResource(4,nf_back($form['res4']));
+					$load5 = $fleet->loadResource(5,nf_back($form['res5']));
 				}
 				
 				if ($form['fleet_action']=="fakeattack")
@@ -1043,33 +1052,20 @@
 				$response->assign('targetinfo','style.background',"#000");
 				
 				$action = "<input id=\"cooseAction\" tabindex=\"9\" type=\"submit\" value=\"Weiter zur Aktionsauswahl &gt;&gt;&gt;\"  /> &nbsp;";
-					
-				if ($ent->ownerId()>0) {
-					$res = dbquery("
-						SELECT
-							id,
-							user_id,
-							landtime
-						FROM
-							fleet
-						WHERE
-							leader_id>'0'
-							AND next_id='".$fleet->sourceEntity->ownerAlliance()."'
-							AND entity_to='".$ent->id()."'
-							AND status='0'
-						ORDER BY
-							landtime ASC;");
-
-					if (mysql_num_rows($res)>0) {
-						$alliance .= "<table style=\"width:100%;\">";
-						while($arr=mysql_fetch_assoc($res)) {
-							$alliance .= "<tr><input type=\"button\" style=\"width:100%;\" onclick=\"xajax_havenAllianceAttack(".$arr["id"].")\" name=\"".$fleet->owner->alliance->tag."-".$arr["id"]."\" value=\"Flottenleader: ".get_user_nick($arr["user_id"])." Ankunftszeit: ".date("d.m.y, H:i:s",$arr["landtime"])."\"/></tr>";
-						}
-						$alliance .= "</table>";
-						$allianceStyle = '';
-					}
-				}
 				
+				if ($ent->ownerId()>0 && count($fleet->aFleets)) {
+					$alliance .= "<table style=\"width:100%;\">";
+					$counter = 0;
+					foreach ($fleet->aFleets as $f) {
+						if ($f['entity_to']==$ent->id()) {
+							$counter++;
+							$alliance .= "<tr><input type=\"button\" style=\"width:100%;\" onclick=\"xajax_havenAllianceAttack(".$f["id"].")\" name=\"".$fleet->owner->alliance->tag."-".$f["id"]."\" value=\"Flottenleader: ".get_user_nick($f["user_id"])." Ankunftszeit: ".date("d.m.y, H:i:s",$f["landtime"])."\"/></tr>";
+						}
+					}
+					$alliance .= "</table>";
+					if ($counter)
+						$allianceStyle = '';
+				}
 			}
 			else
 			{
@@ -1166,30 +1162,18 @@
 				
 		$action = "<input id=\"cooseAction\" tabindex=\"7\" type=\"submit\" value=\"Weiter zur Aktionsauswahl &gt;&gt;&gt;\"  /> &nbsp;";
 					
-		if ($ent->ownerId()>0) {
-			$res = dbquery("
-						SELECT
-							id,
-							user_id,
-							landtime
-						FROM
-							fleet
-						WHERE
-							leader_id>'0'
-							AND next_id='".$fleet->sourceEntity->ownerAlliance()."'
-							AND entity_to='".$ent->id()."'
-						ORDER BY
-							landtime ASC;");
-
-			if (mysql_num_rows($res)>0) {
-				$alliance .= "<table style=\"width:100%;\">";
-				while($arr=mysql_fetch_assoc($res)) {
-					$alliance .= "<tr><input type=\"button\" style=\"width:100%;\" onclick=\"xajax_havenAllianceAttack(".$arr["id"].")\" name=\"".$arr["id"]."\" value=\"Flottenleader: ".get_user_nick($arr["user_id"])." Ankunftszeit: ".date("d.m.y, H:i:s",$arr["landtime"])."\"/></tr>";
+		if ($ent->ownerId()>0 && count($fleet->aFleets)) {
+			$alliance .= "<table style=\"width:100%;\">";
+			$counter = 0;
+			foreach ($fleet->aFleets as $f) {
+				if ($f['entity_to']==$ent->id()) {
+					$counter++;
+					$alliance .= "<tr><input type=\"button\" style=\"width:100%;\" onclick=\"xajax_havenAllianceAttack(".$f["id"].")\" name=\"".$fleet->owner->alliance->tag."-".$f["id"]."\" value=\"Flottenleader: ".get_user_nick($f["user_id"])." Ankunftszeit: ".date("d.m.y, H:i:s",$f["landtime"])."\"/></tr>";
 				}
-		
-				$alliance .= "</table>";
-				$allianceStyle = '';
 			}
+			$alliance .= "</table>";
+			if ($counter)
+				$allianceStyle = '';
 		}
 		$response->assign('targetinfo','innerHTML',ob_get_contents());
 		$response->assign('chooseAction','innerHTML',$action);
@@ -1413,31 +1397,37 @@
 		if ($id > 0 && $fleet->getLeader()!=$id) {
 			$res = dbquery("
 							SELECT
+								COUNT(id) as cnt,
 								id,
 								user_id,
+								next_id,
 								landtime
 							FROM
 								fleet
 							WHERE
 								leader_id='$id'
-								AND id='$id'
-								AND next_id='".$fleet->sourceEntity->ownerAlliance()."'
 							LIMIT 1;");
 
 			if (mysql_num_rows($res)>0) {
 				$arr=mysql_fetch_assoc($res);
-				$duration = $fleet->distance / $fleet->getSpeed();	// Calculate duration
-				$duration *= 3600;	// Convert to seconds
-				$duration = ceil($duration);
-				$maxTime = $arr["landtime"] - time() - $fleet->timeLaunchLand - 120;
-				
-				if ($duration < $maxTime) {
-					$percentageSpeed =  ceil(100 * $duration / $maxTime);
-					$fleet->setSpeedPercent($percentageSpeed);
-					$fleet->setLeader($id);
-					$comment = "Unterstützung des Allianzangriffes, mit geschätzter Ankunft: ".date("d.m.y, H:i:s",$arr["landtime"]);
+				if ($arr['next_id']==$fleet->sourceEntity->ownerAlliance()) {
+					if ($arr['cnt']<=$fleet->allianceSlots) {
+						$duration = $fleet->distance / $fleet->getSpeed();	// Calculate duration
+						$duration *= 3600;	// Convert to seconds
+						$duration = ceil($duration);
+						$maxTime = $arr["landtime"] - time() - $fleet->timeLaunchLand - 120;
+					
+						if ($duration < $maxTime) {
+							$percentageSpeed =  ceil(100 * $duration / $maxTime);
+							$fleet->setSpeedPercent($percentageSpeed);
+							$fleet->setLeader($id);
+							$comment = "Unterstützung des Allianzangriffes mit  Ankunft: ".date("d.m.y, H:i:s",$arr["landtime"]);
+						}
+						else $comment = "Der gewählte Angriff kann nicht mehr erreicht werden.";
+					}
+					else $comment = "Am gewählten Angriff kann nicht teilgenommen werden, da die Flottenkontrolle keine weiteren Teilflotten unterstützt.";
 				}
-				else $comment = "Tut mir leid, aber den gewählten Angriff können wir nicht mehr erreichen.";
+				else $comment = "Der gewählte Angriff gehört nicht zu unserem Imperium";
 
 			}
 				

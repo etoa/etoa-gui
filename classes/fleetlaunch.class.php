@@ -33,7 +33,7 @@
 		var $capacityPeopleLoaded;
 		
 		var $distance;
-
+		
 		private $action;
 		private $resources;
 		private $error;
@@ -107,6 +107,7 @@
 			}
 
 		}
+		
 
 		//
 		// Main workflow
@@ -430,6 +431,13 @@
 					$this->sourceEntity->chgRes(5,-$this->getCostsFood());
 					$this->sourceEntity->chgPeople(-($this->getPilots()+$this->capacityPeopleLoaded));
 					
+					// Load resource
+					$this->finalLoadResource(1);
+					$this->finalLoadResource(2);
+					$this->finalLoadResource(3);
+					$this->finalLoadResource(4);
+					$this->finalLoadResource(5);
+					
 					if ($this->action=="alliance" && $this->leaderId!=0) {
 						$status=3;
 						$nextId = $this->sourceEntity->ownerAlliance();
@@ -657,6 +665,9 @@
 		function getAllowedActions()
 		{
 			$cfg = Config::getInstance();
+			
+			if (in_array($this->targetEntity->id,$this->sFleets) || $this->leaderId>0) $allowed = true;
+			else $allowed = false;
 
 			// Get possible actions by intersecting ship actions and allowed target actions
 			$actions = array_intersect($this->shipActions,$this->targetEntity->allowedFleetActions());
@@ -679,15 +690,15 @@
 				foreach ($actions as $i)
 				{
 					$ai = FleetAction::createFactory($i);
-					
-					
 	
 					// Permission checks
 					if (
-					($this->sourceEntity->id() == $this->targetEntity->id() && $ai->allowSourceEntity()) || 
+					(($this->sourceEntity->id() == $this->targetEntity->id() && $ai->allowSourceEntity()) || 
 					($this->sourceEntity->ownerId() == $this->targetEntity->ownerId() && $this->sourceEntity->id() != $this->targetEntity->id() && $ai->allowOwnEntities()) ||
 					($this->sourceEntity->ownerId() != $this->targetEntity->ownerId() && $this->targetEntity->ownerId()>0 && $ai->allowPlayerEntities()) ||
-					($this->targetEntity->ownerId() == 0 && $ai->allowNpcEntities()) || ($ai->allowAllianceEntities && $this->sourceEntity->ownerAlliance()==$this->targetEntity->ownerAlliance())
+					($this->targetEntity->ownerId() == 0 && $ai->allowNpcEntities()) || 
+					($ai->allowAllianceEntities && $this->sourceEntity->ownerAlliance()==$this->targetEntity->ownerAlliance())) && 
+					(!$ai->allianceAction || $this->getAllianceSlots()>0 || $allowed) //this last check, checks for every AllianceAction support, alliance if there is a empty slot
 					)
 					{
 						if($this->targetEntity->ownerId()>0)
@@ -859,6 +870,30 @@
 			return $loaded;
 		}
 		
+		function finalLoadResource($id)
+		{
+			$ammount = $this->res[$id];
+			$this->res[$id] = 0;
+			$this->calcResLoaded();
+			if ($id==4) {
+				$loaded = floor(min($ammount,$this->getCapacity(),$this->sourceEntity->getRes($id)-$this->getSupportFuel()-$this->getCosts()));
+			}
+			elseif ($id==5) {
+				$loaded = floor(min($ammount,$this->getCapacity(),$this->sourceEntity->getRes($id)-$this->getSupportFood()-$this->getCostsFood()));
+			}
+			else {
+				$loaded = floor(min($ammount,$this->getCapacity(),$this->sourceEntity->getRes($id)));
+			}
+			$this->res[$id] = $loaded;
+			$this->calcResLoaded();
+			
+			if ($finalize==1)
+			{
+				$this->sourceEntity->chgRes($id,-$loaded);
+			}			
+			return $loaded;
+		}
+		
 		function loadPeople($ammount)
 		{
 			$ammount = max(0,$ammount);
@@ -943,6 +978,59 @@
 		
 		function setFakeId($id) {
 			$this->fakeId = $id;
+		}
+		
+		function loadAllianceFleets() {
+			$this->aFleets = array();
+			$this->sFleets = array();
+			if ($this->sourceEntity->ownerAlliance()) {
+				$res = dbquery("
+						SELECT
+							id,
+							user_id,
+							entity_to,
+							landtime
+						FROM
+							fleet
+						WHERE
+							leader_id>'0'
+							AND action='alliance'
+							AND next_id='".$this->sourceEntity->ownerAlliance()."'
+							AND status='0'
+						ORDER BY
+							landtime ASC;");
+				if (mysql_num_rows($res)>0) {
+					while($arr=mysql_fetch_assoc($res)) {
+						array_push($this->aFleets,$arr);
+					}
+				}
+				
+				$res = dbquery("
+							SELECT
+								entity_to
+							FROM
+								`fleet`
+							WHERE
+								action='support'
+								AND (status='0' || status='3')
+							GROUP BY
+								entity_to;");
+				if (mysql_num_rows($res)>0) {
+					while ($arr=mysql_fetch_row($res)) {
+						array_push($this->sFleets,$arr[0]);
+					}
+				}
+			}
+		}
+						
+		function setAllianceSlots($num) {
+			$this->allianceSlots = $num + 1;
+			
+			$this->loadAllianceFleets();
+		}
+		
+		function getAllianceSlots() {
+			return $this->allianceSlots - count($this->aFleets) - count($this->sFleets);
 		}
 		
 		
