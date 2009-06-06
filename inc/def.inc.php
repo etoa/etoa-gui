@@ -362,6 +362,9 @@
 	define("USER_ATTACK_MIN_POINTS",$cfg->user_attack_min_points->v);		// Absolute Puntktegrenze (momentan ausgeschaltet)
 	define("USER_ATTACK_PERCENTAGE",$cfg->user_attack_percentage->v); 		// Prozentualer Punkteunterschied
 
+	$weaponNames = array("Strahlenwaffe","Raketen","Projektilwaffe");
+	$defenseNames = array("Schilder","Raketenabwehr","Rüstung");
+
 
   /*********/
   /* Markt */

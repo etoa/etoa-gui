@@ -297,7 +297,7 @@
 							if ($i==0)
 							{
 								$ship = new Ship($arr['ship_id']);
-								echo "<td rowspan=\"$resCnt\">".$arr['count']." <a href=\"?page=help&site=shipyard&id=".$arr['ship_id']."\">".$ship."</a></td>";
+								echo "<td rowspan=\"$resCnt\">".$arr['count']." <a href=\"?page=help&site=shipyard&id=".$arr['ship_id']."\">".$ship->toolTip()."</a></td>";
 							}
 							echo "<td class=\"rescolor".$rk."\">".$resIcons[$rk]."<b>".$rn."</b>:</td>
 							<td class=\"rescolor".$rk."\">".nf($arr['costs_'.$rk])."</td>";

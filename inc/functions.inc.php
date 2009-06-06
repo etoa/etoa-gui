@@ -1799,14 +1799,6 @@
 	}
 	
 	/**
-	* Tooltip
-	*/
-	function tt($text)
-	{
-		return mTT("",$text);
-	}	
-
-	/**
 	* Date format
 	*/
 	function df($date,$seconds=1)
@@ -3039,10 +3031,14 @@ function imagecreatefromfile($path, $user_functions = false)
 
 	function mTT($title,$content)
 	{
-		
 		return " onmouseover=\"showTT('".str_replace('"',"\'",$title)."','".str_replace('"',"\'",$content)."',1,event,this);\" onmouseout=\"hideTT();\" ";
 	}
-	
+
+	function tt($content)
+	{
+		return " onmouseover=\"showTT('','".str_replace('"',"\'",$content)."',1,event,this);\" onmouseout=\"hideTT();\" ";
+	}
+
 	function chatSystemMessage($msg)
 	{
 		dbquery("INSERT INTO

@@ -79,7 +79,7 @@
 			echo "<input type=\"button\" value=\"&lt;&lt;\" onclick=\"document.location='?page=$page&amp;type=$type&amp;limit=0'\" /> ";
 			echo "<input type=\"button\" value=\"&lt;\" onclick=\"document.location='?page=$page&amp;type=$type&amp;limit=".($limit-REPORT_LIMIT)."'\" /> ";
 		}
-		echo " ".$limit."-".($limit+REPORT_LIMIT)." ";
+		echo " ".$limit."-".min($limit+REPORT_LIMIT,$totalReports)." ";
 		if ($limit+REPORT_LIMIT<$totalReports)
 		{
 			echo "<input type=\"button\" value=\"&gt;\" onclick=\"document.location='?page=$page&amp;type=$type&amp;limit=".($limit+REPORT_LIMIT)."'\" /> ";

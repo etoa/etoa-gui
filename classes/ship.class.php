@@ -44,6 +44,8 @@
 			$this->bShield = $arr['special_ship_bonus_shield'];
 			$this->bWeapon = $arr['special_ship_bonus_weapon'];
 
+			$this->actionString = $arr['ship_actions'];
+
 			$this->isValid = true;
 		}
 		
@@ -59,17 +61,92 @@
 			return $this->name;
 		}
 		
-		
+		/*
 		function imgPathSmall() 
 		{
 			return IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$this->id."_small.".IMAGE_EXT;			
-		}
-		
-		function imgSmall()
+		}*/
+
+		function imgPath($type="s")
 		{
+			if ($type=="small" || $type=="s")
+				return IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$this->id."_small.".IMAGE_EXT;
+			if ($type=="middle" || $type=="medium" || $type=="m")
+				return IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$this->id."_middle.".IMAGE_EXT;
+			return IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$this->id.".".IMAGE_EXT;
+		}
+
+/*
+		function imgSmall($float="")
+		{
+			if ($float == "left")
+				return "<img src=\"".$this->imgPathSmall()."\" style=\"width:40px;height:40px;float:left;margin-right:6px;\"/>";
 			return "<img src=\"".$this->imgPathSmall()."\" style=\"width:40px;height:40px;\"/>";
 		}
-		
+		*/
+
+		function img($type="s",$float="")
+		{
+			if ($float == "left")
+				return "<img src=\"".$this->imgPath($type)."\" style=\"float:left;margin-right:6px;\"/>";
+			if ($float == "right")
+				return "<img src=\"".$this->imgPath($type)."\" style=\"float:right;\"/>";
+			return "<img src=\"".$this->imgPath($type)."\" style=\"\"/>";
+		}
+
+		function & getActions($string=0)
+		{
+			$actions = explode(",",$this->actionString);
+			$ao = array();
+			$str = "";
+			$cnt = count($actions);
+			if ($cnt>0)
+			{
+				foreach ($actions as $i)
+				{
+					if ($ac = FleetAction::createFactory($i))
+					{
+						if ($string>0)
+						{
+							if ($str!="")
+								$str.=", ";
+							$str.= $ac->__toString();
+						}
+						else
+							$ao[$i] = $ac;
+					}
+				}
+			}
+			if ($string>0)
+				return $str;
+			return $ao;
+		}
+
+		function toolTip()
+		{
+			$tt = "<div style=\"display:none;\" id=\"shiptt".$this->id."\">
+			<div style=\"width:450px\">
+			".$this->img("m","left")."
+			<div style=\"float:left;width:260px\">
+			<b>$this->name</b><br/>
+			$this->shortComment<br/><br/>
+			<table style=\"width:260px;font-size:small;\">
+			<tr>
+			<td>Schaden:</td><td>".nf($this->weapon)."</td>
+			<td>Regeneration:</td><td>".nf($this->heal)."</td>
+			</tr><tr>
+			<td>Schild:</td><td>".nf($this->shield)."</td>
+			<td>Kapazität:</td><td>".nf($this->capacity)."</td>
+			</tr><tr>
+			<td>Struktur:</td><td>".nf($this->structure)."</td>
+			<td>Speed:</td><td>".nf($this->speed)."</td>
+			</tr>
+			</table><br/>".$this->getActions(1)."</div>
+			<br style=\"clear:both;\"/></div></div>";
+			return $tt."<span ".tt('shiptt'.$this->id).">".$this->__toString()."</span>";
+		}
+
+
 		static function xpByLevel($base_xp,$factor,$level)
 		{
 			return $base_xp * intpow($factor,$level-1);
@@ -79,7 +156,9 @@
 		{
 			return max(0,floor(1 + ((log($xp)-log($base_xp))/log($factor))));
 		}
-	
+
+
+
 	}
 
 ?>
