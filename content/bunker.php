@@ -201,11 +201,10 @@
 						;");
 					while ($arr = mysql_fetch_assoc($res))
 					{
-						echo "test";
 						$count -= $arr['shiplist_bunkered'];
 						$structure -= $arr['shiplist_bunkered']*$ships[$arr['shiplist_ship_id']]['ship_structure'];
 					}
-					echo $count.".".$structure;
+					
 					foreach($_POST['ship_bunker_count'] as $shipId=>$cnt)
 					{
 						if ($cnt>0)
