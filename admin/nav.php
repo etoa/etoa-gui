@@ -103,10 +103,6 @@
 	$navmenu['Allianzen']['Allianz-News (Rathaus)']['sub']="news";
 	$navmenu['Allianzen']['Allianz-News (Rathaus)']['level']=0;
 
-	$navmenu['Allianzen']['Allianz-Geschichte']['page']="alliances";
-	$navmenu['Allianzen']['Allianz-Geschichte']['sub']="history";
-	$navmenu['Allianzen']['Allianz-Geschichte']['level']=0;
-
 	$navmenu['Allianzen']['Bilder pr&uuml;fen']['page']="alliances";
 	$navmenu['Allianzen']['Bilder pr&uuml;fen']['sub']="imagecheck";
 	$navmenu['Allianzen']['Bilder pr&uuml;fen']['level']=0;
