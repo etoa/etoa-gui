@@ -8,6 +8,8 @@ $xajax->register(XAJAX_FUNCTION,"allianceNewsDel");
 $xajax->register(XAJAX_FUNCTION,"allianceNewsRemoveOld");
 $xajax->register(XAJAX_FUNCTION,"allianceNewsSetBanTime");
 
+$xajax->register(XAJAX_FUNCTION,"showSpend");
+
 function allianceNewsLoad()
 {
 	ob_start();
@@ -315,8 +317,191 @@ function allianceNewsSetBanTime($time,$text)
   return $objResponse;		
 }
 
-
-
+function showSpend($allianceId,$form)
+{
+	ob_start();
+	
+	$ures = dbquery("SELECT 
+					user_id,
+					user_nick,
+					user_points,
+					user_alliance_rank_id
+				FROM 
+					users 
+				WHERE 
+					user_alliance_id=".$allianceId." 
+				ORDER BY 
+					user_points DESC,
+					user_nick;");
+	$members = array();
+	if (mysql_num_rows($ures)>0)
+	{
+		while($uarr=mysql_fetch_array($ures))
+		{
+			$members[$uarr['user_id']] = $uarr;
+		}
+	}
+	
+	$sum = false;
+	$limit = 10;
+	$user = 0;
+	
+	// Summierung der Einzahlungen
+	if($form['output']==1)
+  	{
+  		$sum = true;
+	}
+	
+	// Limit
+	if($form['limit']>0)
+	{
+		$limit = $form['limit'];
+	}
+	
+	// User
+	if($form['user_spends']>0)
+	{
+		$user = $form['user_spends'];
+	}
+	
+	if($sum)
+	{
+  		if($user>0)
+		{
+	  		$user_sql = "AND alliance_spend_user_id='".$user."'";
+	  		$user_message = "von ".$members[$user]['user_nick']." ";
+		}
+		else
+		{
+			$user_sql = "";
+			$user_message = "";
+		}
+  		
+		echo "Es werden die bisher eingezahlten Rohstoffe ".$user_message." angezeigt.<br><br>";
+		
+		// Läd Einzahlungen
+		$res = dbquery("
+		SELECT
+			SUM(alliance_spend_metal) AS metal,
+			SUM(alliance_spend_crystal) AS crystal,
+			SUM(alliance_spend_plastic) AS plastic,
+			SUM(alliance_spend_fuel) AS fuel,
+			SUM(alliance_spend_food) AS food
+		FROM
+			alliance_spends
+		WHERE
+			alliance_spend_alliance_id='".$allianceId."'
+			".$user_sql.";");
+		
+		if(mysql_num_rows($res)>0)
+		{						
+			$arr=mysql_fetch_assoc($res);
+			
+			tableStart("Total eingezahlte Rohstoffe ".$user_message."");
+			echo "<tr>
+							<th class=\"resmetalcolor\" style=\"width:20%\">".RES_METAL."</th>
+							<th class=\"rescrystalcolor\" style=\"width:20%\">".RES_CRYSTAL."</th>
+							<th class=\"resplasticcolor\" style=\"width:20%\">".RES_PLASTIC."</th>
+							<th class=\"resfuelcolor\" style=\"width:20%\">".RES_FUEL."</th>
+							<th class=\"resfoodcolor\" style=\"width:20%\">".RES_FOOD."</th>
+						</tr>";
+			echo "<tr>
+							<td>".nf($arr['metal'])."</td>
+							<td>".nf($arr['crystal'])."</td>
+							<td>".nf($arr['plastic'])."</td>
+							<td>".nf($arr['fuel'])."</td>
+							<td>".nf($arr['food'])."</td>
+						</tr>";
+			tableEnd();
+		}
+		else
+		{
+			iBoxStart("Einzahlungen");
+			echo "Es wurden noch keine Rohstoffe eingezahlt!";
+			iBoxEnd();
+		}
+	}
+	// Einzahlungen werden einzelen ausgegeben
+	else
+	{
+		if($user>0)
+		{
+			$user_sql = "AND alliance_spend_user_id='".$user."'";
+			$user_message = "von ".$members[$user]['user_nick']." ";
+		}
+		else
+		{
+			$user_sql = "";
+			$user_message = "";
+		}
+		
+		if($limit>0)
+		{ 	
+			if($limit==1)
+			{
+				echo "Es wird die letzte Einzahlung ".$user_message."gezeigt.<br><br>";
+			}
+			else
+			{
+				echo "Es werden die letzten ".$limit." Einzahlungen ".$user_message."gezeigt.<br><br>";
+			}
+	  	
+			$limit_sql = "LIMIT ".$limit."";
+		}
+		else
+		{
+			echo "Es werden alle bisherigen Einzahlungen ".$user_message."gezeigt.<br><br>";
+			$limit_sql = "";
+		}
+		
+		// Läd Einzahlungen
+		$res = dbquery("
+		SELECT
+			*
+		FROM
+			alliance_spends
+		WHERE
+			alliance_spend_alliance_id='".$allianceId."'
+			".$user_sql."
+		ORDER BY
+			alliance_spend_time DESC
+		".$limit_sql.";");		
+		if(mysql_num_rows($res)>0)
+		{						
+			while($arr=mysql_fetch_assoc($res))
+			{
+				tableStart("".$members[$arr['alliance_spend_user_id']]['user_nick']." - ".df($arr['alliance_spend_time'])."");
+				echo "<tr>
+								<th class=\"resmetalcolor\" style=\"width:20%\">".RES_METAL."</th>
+								<th class=\"rescrystalcolor\" style=\"width:20%\">".RES_CRYSTAL."</th>
+								<th class=\"resplasticcolor\" style=\"width:20%\">".RES_PLASTIC."</th>
+								<th class=\"resfuelcolor\" style=\"width:20%\">".RES_FUEL."</th>
+								<th class=\"resfoodcolor\" style=\"width:20%\">".RES_FOOD."</th>
+							</tr>";
+				echo "<tr>
+								<td>".nf($arr['alliance_spend_metal'])."</td>
+								<td>".nf($arr['alliance_spend_crystal'])."</td>
+								<td>".nf($arr['alliance_spend_plastic'])."</td>
+								<td>".nf($arr['alliance_spend_fuel'])."</td>
+								<td>".nf($arr['alliance_spend_food'])."</td>
+							</tr>";
+				tableEnd();
+			}
+			
+		}
+		else
+		{
+			iBoxStart("Einzahlungen");
+			echo "Es wurden noch keine Rohstoffe eingezahlt!";
+			iBoxEnd();
+		}
+	}
+	
+	$objResponse = new xajaxResponse();
+	$objResponse->assign("spends","innerHTML",ob_get_contents());
+	ob_end_clean();
+  	return $objResponse;
+}
 
 
 ?>
