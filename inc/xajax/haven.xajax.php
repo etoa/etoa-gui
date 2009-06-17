@@ -242,7 +242,7 @@
 	      
 	      echo "</td>";
 	      echo "<td width=\"110\">";
-	      if ($arr['ship_launchable']==1 && $fleet->pilotsAvailable() > $arr['ship_pilots'])
+	      if ($arr['ship_launchable']==1 && $fleet->pilotsAvailable() >= $arr['ship_pilots'])
 	      {
 	      	echo "<input type=\"text\" 
 	      		id=\"ship_count_".$arr['ship_id']."\" 

@@ -200,8 +200,8 @@
 	  				}
 	  			}
 			}
-
-			echo '<form action="?page=$page" method="post">';
+			
+			echo '<form action="?page='.$page.'" method="post">';
 			checker_init();
 			tableStart("Arbeiter zuteilen");
 			echo '<tr><th>Geb&auml;ude</th><th>Arbeiter</th><th>Zus&auml;tzliche Nahrung</th></tr>';
@@ -252,7 +252,7 @@
                     }
                     else
                     {
-                        echo '<input type="text" id="'.$sp_arr['building_id'].'" name="people_work['.$sp_arr['building_id'].']" value="'.$sp_arr['buildlist_people_working'].'" size="8" maxlength="20" onKeyUp="FormatNumber(this.id,this.value, '.$cp->people.', "", "");"/>';
+                        echo '<input type="text" id="'.$sp_arr['building_id'].'" name="people_work['.$sp_arr['building_id'].']" value="'.$sp_arr['buildlist_people_working'].'" size="8" maxlength="20" onKeyUp="FormatNumber(this.id,this.value, '.$cp->people.', \'\', \'\');"/>';
                         
                         //onKeyPress=\"return nurZahlen(event)\"
 												//FormatNumber

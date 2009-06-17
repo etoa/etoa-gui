@@ -193,6 +193,7 @@
 			while ($arr = mysql_fetch_assoc($res))
 			{
 				$queue[$arr['queue_id']] = $arr;
+				$queue_entity[$arr['queue_def_id']] = $arr;
 			}
 			
 			// Alle Verteidigung laden
@@ -430,9 +431,9 @@
 			    		}
 					
 						// ... in der Bauliste
-						if(isset($queue[$def_id]))
+						if(isset($queue_entity[$def_id]))
 						{
-							$def_count += $queue[$def_id];
+							$def_count += $queue_entity[$def_id]['queue_cnt'];
 						}
 						
 						//Anzahl überprüfen, ob diese die maximalzahl übersteigt, gegebenenfalls ändern
@@ -917,9 +918,9 @@
 									$def_count += $deflist[$data['def_id']][$cp->id];
 								}
 								// ... in der Bauliste
-								if(isset($queue[$data['def_id']]))
+								if(isset($queue_entity[$data['def_id']]))
 								{
-									$def_count += $queue[$data['def_id']];
+									$def_count += $queue_entity[$data['def_id']]['queue_cnt'];
 								}
 								  
 								// Bauzeit berechnen
