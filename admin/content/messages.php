@@ -138,7 +138,9 @@
 			echo "<tr>
 				<th>Empf&auml;nger:</th>
 				<td class=\"tbldata\" width=\"250\">
-				<b>An:</b> <input type=\"radio\" name=\"rcpt_type\" value=\"0\"  checked=\"checked\"  onclick=\"document.getElementById('message_user_to').style.display='';\" /> Einzelner Empfänger
+				<b>An:</b>
+				<input type=\"radio\" name=\"rcpt_type\" id=\"rcpt_type_1\" value=\"1\"  checked=\"checked\"  onclick=\"document.getElementById('message_user_to').style.display='none';\" /> <label for=\"rcpt_type_1\">Alle Spieler</label>
+				<input type=\"radio\" name=\"rcpt_type\" id=\"rcpt_type_0\" value=\"0\"  onclick=\"document.getElementById('message_user_to').style.display='';\" /> <label for=\"rcpt_type_0\">Einzelner Empfänger</label>
 				<select name=\"message_user_to\" id=\"message_user_to\">";
 				$res=dbquery("SELECT user_id,user_nick FROM users ORDER BY user_nick;");
 				while ($arr=mysql_fetch_array($res))
@@ -147,12 +149,12 @@
 					echo ">".$arr['user_nick']."</option>";
 				}
 			echo "</select> &nbsp; 
-			<input type=\"radio\" name=\"rcpt_type\" value=\"1\" onclick=\"document.getElementById('message_user_to').style.display='none';\" /> Alle Spieler
+			
 			<br/>
 			<b>Typ:</b>
-			<input type=\"radio\" name=\"msg_type\" value=\"0\"  checked=\"checked\" /> InGame-Nachricht
-			<input type=\"radio\" name=\"msg_type\" value=\"1\" /> E-Mail
-			<input type=\"radio\" name=\"msg_type\" value=\"2\" /> InGame-Nachricht &amp; E-Mail
+			<input type=\"radio\" name=\"msg_type\" value=\"0\" id=\"msg_type_0\"  checked=\"checked\" /> <label for=\"msg_type_0\">InGame-Nachricht</label>
+			<input type=\"radio\" name=\"msg_type\" value=\"1\" id=\"msg_type_1\" /> <label for=\"msg_type_1\">E-Mail</label>
+			<input type=\"radio\" name=\"msg_type\" value=\"2\" id=\"msg_type_2\" /> <label for=\"msg_type_2\">InGame-Nachricht &amp; E-Mail</label>
 			</td></tr>";
 			echo "<tr>
 				<th>Betreff:</th>
@@ -176,7 +178,7 @@
 		//
 		// Suchresultate
 		//
-		if ($_POST['user_search']!="" || $_GET['action']=="searchresults")
+		if (isset($_POST['user_search']) && $_POST['user_search']!="" || isset($_GET['action']) && $_GET['action']=="searchresults")
 		{
 			if ($_SESSION['admin']['message_query']=="")
 			{
@@ -322,7 +324,7 @@
 			}
 		}
 
-		elseif ($_GET['sub']=="edit")
+		elseif (isset($_GET['sub']) && $_GET['sub']=="edit")
 		{
 			$res = dbquery("
 			SELECT 

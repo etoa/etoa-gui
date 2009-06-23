@@ -165,11 +165,6 @@
 
 		$nr = warpeace_update();
 		
-		// Mailqueue abarbeiten
-		$tmr = timerStart();
-		$cnt = mail_queue_send($conf['mailqueue']['v']);
-		$log = "Die E-Mail-Warteschlange wurde abgearbeitet, [b]".$cnt."[/b] Mails versendet!\nDauer: ".timerStop($tmr)." sec\n\n";
-
 		// Flotten updaten
 		$tmr = timerStart();
 
