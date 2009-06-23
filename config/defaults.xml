@@ -16,6 +16,7 @@
     <category id="13">R&#xE4;nge</category>
     <category id="16">Allianz</category>
     <category id="17">Quests</category>
+    <category id="18">Ereignisse</category>
   </categories>
   <items>
     <item name="num_of_sectors" cat="3">
@@ -519,11 +520,11 @@ Anmerkung: Eine Kopie dieser Nachricht wird in Eurer Nachrichten-Box hinterlegt.
     <item name="market_response_time" cat="6">
       <v comment="Angebotsdauer (in Tagen)" type="text">14</v>
     </item>
-    <item name="random_event_hits" cat="0">
-      <v comment="" type="text">57</v>
+    <item name="random_event_hits" cat="18">
+      <v comment="Zufallsereignis Hit (Statistik)" type="text">0</v>
     </item>
-    <item name="random_event_misses" cat="0">
-      <v comment="" type="text">4305</v>
+    <item name="random_event_misses" cat="18">
+      <v comment="Zufallsereignis Miss (Statistik)" type="text">0</v>
     </item>
     <item name="profileimagecheck_done" cat="10">
       <v comment="User-Profilbilder gepr&#xFC;ft" type="timedate">1209569797</v>
@@ -549,9 +550,6 @@ Anmerkung: Eine Kopie dieser Nachricht wird in Eurer Nachrichten-Box hinterlegt.
     <item name="userrank_diplomacy" cat="13">
       <v comment="Spielerrang: Diplomatie" type="text">Botschafter von Andromeda</v>
     </item>
-    <item name="admin_htaccess_auth_name" cat="0"/>
-    <item name="admin_htaccess_auth_user" cat="0"/>
-    <item name="admin_htaccess_auth_pw" cat="0"/>
     <item name="cryptocenter" cat="11">
       <v comment="Kryptocenter Standard-Cooldown (sec)&#13;&#10;Uservalue 3600" type="text">86400</v>
       <p1 comment="Kryptocenter Cooldown-Reduzierung/Stufe (sec)&#13;&#10;Uservalue 300" type="text">7200</p1>
@@ -705,20 +703,20 @@ Anmerkung: Eine Kopie dieser Nachricht wird in Eurer Nachrichten-Box hinterlegt.
       <p1 comment="SPECIALIST_MAX_COSTS_FACTOR" type="text">10</p1>
       <p2 comment="SPECIALIST_MIN_POINTS_REQ" type="text">100000</p2>
     </item>
-    <item name="market_rate_0" cat="0">
-      <v comment="" type="text">1</v>
+    <item name="market_rate_0" cat="6">
+      <v comment="Handelskurs Resource 0 (auto)" type="text">1</v>
     </item>
-    <item name="market_rate_1" cat="0">
-      <v comment="" type="text">1</v>
+    <item name="market_rate_1" cat="6">
+      <v comment="Handelskurs Resource 1 (auto)" type="text">1</v>
     </item>
-    <item name="market_rate_2" cat="0">
-      <v comment="" type="text">1</v>
+    <item name="market_rate_2" cat="6">
+      <v comment="Handelskurs Resource 2 (auto)" type="text">1</v>
     </item>
-    <item name="market_rate_3" cat="0">
-      <v comment="" type="text">1</v>
+    <item name="market_rate_3" cat="6">
+      <v comment="Handelskurs Resource 3 (auto)" type="text">1</v>
     </item>
-    <item name="market_rate_4" cat="0">
-      <v comment="" type="text">1</v>
+    <item name="market_rate_4" cat="6">
+      <v comment="Handelskurs Resource 4 (auto)" type="text">1</v>
     </item>
   </items>
 </config>

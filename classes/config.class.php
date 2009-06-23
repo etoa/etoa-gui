@@ -96,7 +96,17 @@
 	    	;");
 	    	return true;
 	    }
-	    
+
+			function del($name)
+			{
+	    	dbquery("
+	    	DELETE FROM
+	    		config
+	    	WHERE
+					config_name='".$name."';");
+				unset($this->_items[$name]);
+			}
+
 	    /**
 	    * Changes a value
 	    */
