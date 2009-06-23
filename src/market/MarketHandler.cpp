@@ -558,6 +558,9 @@ namespace market
 			}
 		}
 
+
+    		
+		/*
 		//
 		// Rohstoffe
 		//
@@ -569,8 +572,7 @@ namespace market
 			query << "ressource_buyable='0';";  
 		res = query.store();		
 		query.reset();	  			
-    		
-			
+
 		if (res) 
 		{
 			unsigned int resSize = res.size();
@@ -855,6 +857,8 @@ namespace market
 			}
 		}
 
+		*/
+
 		//
 		// Auktionen
 		//
@@ -1007,8 +1011,10 @@ namespace market
 				}	
 			}
 		}
-
-
+		
+		/*
+		
+		
 		//
 		// Rohstoffkurs Berechnung & Update (Der Schiffshandel beeinflusst die Kurse nicht!)
 		//
@@ -1017,6 +1023,7 @@ namespace market
 		// conf V = Gekaufte Rohstoffe
 		// conf p1 = Verkaufte Rohstoffe
 		// conf p2 = Startwert
+		std::cout << "Updating config...\n";
 		query << "SELECT ";
 		query << "	config_value, ";
 		query << "	config_param1, ";
@@ -1092,8 +1099,11 @@ namespace market
 		query.store();
 		query.reset();
 		
+		*/
+		
 		int responseTime = (int)config.nget("market_response_time", 0);
 		// Löscht alte Rohstoffangebote
+		/*std::cout << "Deleting old ones\n";
 		query << "SELECT ";
 			query << "* ";
 		query << "FROM ";
@@ -1106,7 +1116,7 @@ namespace market
 		if (res) 
 		{
 			unsigned int resSize = res.size();
-
+			std::cout << "Size: " << resSize << "\n";
 			if (resSize>0)
 			{
 				mysqlpp::Row arr;
@@ -1114,8 +1124,9 @@ namespace market
 
 				for (mysqlpp::Row::size_type i = 0; i<resSize; i++) 
 				{
+				std::cout << i << "\n";
 					arr = res.at(i);
-
+					
 					// Markt Level vom Verkäufer laden
 					query << "SELECT ";
 						query << "buildlist_current_level ";
@@ -1206,9 +1217,10 @@ namespace market
 					}
 				}
 			}
-    	}
+    	}*/
 
 		responseTime = (int)config.nget("market_response_time", 0);
+		std::cout << "Deleting ships\n";
 		// Löscht alte Schiffsangebote
 		query << "SELECT ";
 			query << "* ";
@@ -1304,5 +1316,6 @@ namespace market
 				}
 			}
 		}
+		std::cout << "done\n";
 	}	
 }
