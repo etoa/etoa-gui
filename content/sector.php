@@ -121,7 +121,7 @@
   }
 
 	echo "<form action=\"?page=$page\" method=\"post\">";
-	iBoxStart("Sektorkarte");
+	iBoxStart("Sektorkarte",600);
 	echo "<div style=\"text-align:center;\">
 	<a href=\"?page=galaxy\">Galaxie</a> &gt; &nbsp;";
 	echo "<select name=\"sector\" onchange=\"document.location='?page=$page&sector='+this.value\">";

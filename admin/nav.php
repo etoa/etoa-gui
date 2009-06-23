@@ -364,21 +364,20 @@
 	$navmenu['Datenbank']['Updates']['level']=2;
 
 
-
-	$res=dbquery("SELECT cat_name,cat_id,COUNT(*) as cnt FROM config_cat,config WHERE cat_id=config_cat_id GROUP BY cat_id ORDER BY cat_order,cat_name;");
-	if (mysql_num_rows($res)>0)
+	$cats = $cfg->categories();
+	if (count($cats))
 	{
-		while ($arr=mysql_fetch_array($res))
+		foreach ($cats as $k=> $v)
 		{
-			$navmenu['Konfiguration'][$arr['cat_name']]['page']="config";
-			$navmenu['Konfiguration'][$arr['cat_name']]['sub']=$arr['cat_id'];
-			$navmenu['Konfiguration'][$arr['cat_name']]['level']=3;			
+			$navmenu['Konfiguration'][$v] = array('page'=>"config",'sub'=>$k,'level'=>3);
 		}
 	}
-
-	$navmenu['Konfiguration']['Variable erstellen'] = array('page'=>"config",'sub'=>"createvar",'level'=>3);
-
 	$navmenu['Konfiguration']['bar'][0] = true;
+	$navmenu['Konfiguration']['Integritätsprüfung'] = array('page'=>"config",'sub'=>"check",'level'=>3);
+	$navmenu['Konfiguration']['Zurücksetzen'] = array('page'=>"config",'sub'=>"restoredefaults",'level'=>3);
+
+
+	$navmenu['Konfiguration']['bar'][1] = true;
 
 	$navmenu['Konfiguration']['Tipps'] = array('page'=>"config",'sub'=>"tipps",'level'=>0);
 	$navmenu['Konfiguration']['Ticket-Kategorien'] = array('page'=>"config",'sub'=>"ticketcat",'level'=>3);

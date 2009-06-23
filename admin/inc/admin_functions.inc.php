@@ -446,20 +446,20 @@
 
 	function display_field($type,$confname,$field)
 	{
-		global $conf;
+		global $cfg;
 		switch ($type)
 		{
 			case "text":
-				echo "<input type=\"text\" name=\"config_".$field."[".$confname."]\" value=\"".$conf[$confname][$field]."\" />";
+				echo "<input type=\"text\" name=\"config_".$field."[".$confname."]\" value=\"".$cfg->$confname->$field."\" />";
 				break;
 			case "textarea":
-				echo "<textarea name=\"config_".$field."[".$confname."]\" rows=\"4\" cols=\"50\">".$conf[$confname][$field]."</textarea>";
+				echo "<textarea name=\"config_".$field."[".$confname."]\" rows=\"4\" cols=\"50\">".$cfg->$confname->$field."</textarea>";
 				break;
 			case "onoff":
 				echo "Ja: <input type=\"radio\" name=\"config_".$field."[".$confname."]\" value=\"1\" ";
-				if ($conf[$confname][$field]==1) echo " checked=\"checked\"";
+				if ($cfg->$confname->$field==1) echo " checked=\"checked\"";
 				echo " /> Nein: <input type=\"radio\" name=\"config_".$field."[".$confname."]\" value=\"0\" ";
-				if ($conf[$confname][$field]==0) echo " checked=\"checked\"";
+				if ($cfg->$confname->$field==0) echo " checked=\"checked\"";
 				echo " />";
 				break;
 			case "timedate":
@@ -467,7 +467,7 @@
 				for ($x=1;$x<32;$x++)
 				{
 					echo "<option value=\"$x\"";
-					if (date("d",$conf[$confname][$field])==$x) echo " selected=\"selected\"";
+					if (date("d",$cfg->$confname->$field)==$x) echo " selected=\"selected\"";
 					echo ">";
 					if ($x<10) echo 0;
 					echo "$x</option>";
@@ -477,7 +477,7 @@
 				for ($x=1;$x<32;$x++)
 				{
 					echo "<option value=\"$x\"";
-					if (date("m",$conf[$confname][$field])==$x) echo " selected=\"selected\"";
+					if (date("m",$cfg->$confname->$field)==$x) echo " selected=\"selected\"";
 					echo ">";
 					if ($x<10) echo 0;
 					echo "$x</option>";
@@ -487,7 +487,7 @@
 				for ($x=date("Y")-50;$x<date("Y")+50;$x++)
 				{
 					echo "<option value=\"$x\"";
-					if (date("Y",$conf[$confname][$field])==$x) echo " selected=\"selected\"";
+					if (date("Y",$cfg->$confname->$field)==$x) echo " selected=\"selected\"";
 					echo ">$x</option>";
 				}
 				echo "</select> ";
@@ -495,7 +495,7 @@
 				for ($x=0;$x<25;$x++)
 				{
 					echo "<option value=\"$x\"";
-					if (date("H",$conf[$confname][$field])==$x) echo " selected=\"selected\"";
+					if (date("H",$cfg->$confname->$field)==$x) echo " selected=\"selected\"";
 					echo ">";
 					if ($x<10) echo 0;
 					echo "$x</option>";
@@ -505,7 +505,7 @@
 				for ($x=0;$x<60;$x++)
 				{
 					echo "<option value=\"$x\"";
-					if (date("i",$conf[$confname][$field])==$x) echo " selected=\"selected\"";
+					if (date("i",$cfg->$confname->$field)==$x) echo " selected=\"selected\"";
 					echo ">";
 					if ($x<10) echo 0;
 					echo "$x</option>";
@@ -515,7 +515,7 @@
 				for ($x=0;$x<60;$x++)
 				{
 					echo "<option value=\"$x\"";
-					if (date("s",$conf[$confname][$field])==$x) echo " selected=\"selected\"";
+					if (date("s",$cfg->$confname->$field)==$x) echo " selected=\"selected\"";
 					echo ">";
 					if ($x<10) echo 0;
 					echo "$x</option>";

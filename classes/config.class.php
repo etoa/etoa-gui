@@ -12,6 +12,10 @@
 	class Config implements ISingleton
 	{
 	    static private $instance;
+			/**
+			 * Array containing all ConfigItem items
+			 * @var array
+			 */
 	    private $_items;
 	
 			/**
@@ -36,21 +40,32 @@
 			*/
 	    private function __construct()
 	    {
+				$this->load();
+	    }
+
+			private function load()
+			{
 	    	$this->_items = array();
-	    	
 	    	$res = dbquery("
-	    	SELECT 
+	    	SELECT
 	    		config_name,
 	    		config_value,
 	    		config_param1,
-	    		config_param2 	 
-	    	FROM 
+	    		config_param2
+	    	FROM
 	    		config;");
-	    	while ($arr = mysql_fetch_assoc($res))
-	    	{
-	    		$this->_items[$arr['config_name']] = new ConfigItem($arr['config_value'],$arr['config_param1'],$arr['config_param2']);
-	    	}
-	    }
+				if (mysql_num_rows($res)>0)
+				{
+					while ($arr = mysql_fetch_assoc($res))
+					{
+						$this->_items[$arr['config_name']] = new ConfigItem(stripslashes($arr['config_value']),stripslashes($arr['config_param1']),stripslashes($arr['config_param2']));
+					}
+				}
+				else
+				{
+					err_msg("Config table empty!");
+				}
+			}
 	    
 	    /**
 	    * Adds a given value to a keyword
@@ -154,7 +169,12 @@
 				unset($i);
 				return $conf;
 			}	       	    	    
-	   
+
+	  public function __isset($name)
+  	{
+  		return isset($this->_items[$name]);
+		}
+
 	  public function __get($name)
   	{
   		try
@@ -165,6 +185,11 @@
 				}
 				else
 				{
+					if ($elem = $this->loadDefault($name))
+					{
+						return $elem;
+					}
+
 					throw new EException("Konfigurationsvariable $name existiert nicht!");
 					return null;
 				}
@@ -174,7 +199,136 @@
 				echo $e;
 	    	return null;
 			}			   		
-    }	    
+    }
+
+		function restoreDefaults()
+		{
+  		try
+  		{
+				if ($xml = simplexml_load_file(RELATIVE_ROOT."config/defaults.xml"))
+				{
+					dbquery("TRUNCATE TABLE config;");
+					$cnt = 0;
+					foreach ($xml->items->item as $i)
+					{
+						dbquery("
+						INSERT INTO
+							config
+						(
+							config_name,
+							config_value,
+							config_param1,
+							config_param2
+						)
+						VALUES
+						(
+							'".$i['name']."',
+							'".(isset($i->v) ? addslashes($i->v) : '')."',
+							'".(isset($i->p1) ? addslashes($i->p1) : '')."',
+							'".(isset($i->p2) ? addslashes($i->p2) : '')."'
+						)
+						;");
+						$cnt++;
+					}
+					$this->load();
+					return $cnt;
+				}
+				throw new EException("Konfiguratonsdatei existiert nicht!");
+			}
+			catch (EException $e)
+			{
+				echo $e;
+	    	return false;
+			}
+		}
+
+
+		function loadDefault($key)
+		{
+			$xml = simplexml_load_file(RELATIVE_ROOT."config/defaults.xml");
+			foreach ($xml->items->item as $i)
+			{
+				if ($i['name']==$key)
+				{
+					return new ConfigItem($i->v,$i->p1,$i->p2);
+				}
+			}
+			return false;
+		}
+
+		function categories()
+		{
+			$xml = simplexml_load_file(RELATIVE_ROOT."config/defaults.xml");
+			$c = array();
+			foreach ($xml->categories->category as $i)
+			{
+				$c[(int)$i['id']] = (string)$i;
+			}
+			return $c;
+		}
+
+		function itemInCategory($cat)
+		{
+			$xml = simplexml_load_file(RELATIVE_ROOT."config/defaults.xml");
+			$c = array();
+			foreach ($xml->items->item as $i)
+			{
+				if ($i['cat']==$cat)
+					$c[] = $i;
+			}
+			return $c;
+		}
+
+		/**
+		 * This was only used for the initial creation of defaults.xml
+		 * It will not work anymore because the config table has been reduced
+		function dump()
+		{
+			$str = "<config></config>";
+			$xml = new SimpleXMLElement($str);
+
+			$res = dbquery("
+			SELECT
+				*
+			FROM
+				config;");
+			$ixml = $xml->addChild("items");
+			while ($arr = mysql_fetch_assoc($res))
+			{
+				$ichld = $ixml->addChild("item");
+				$ichld->addAttribute("name", $arr['config_name']);
+				$ichld->addAttribute("cat", $arr['config_cat_id']);
+
+				if ($arr['config_value']!="" || $arr['config_comment_v']!="")
+				{
+					$vch = $ichld->addChild("v",$arr['config_value']);
+					$vch->addAttribute("comment",$arr['config_comment_v']);
+					$vch->addAttribute("type",$arr['config_type_v']=="" ? "text" : $arr['config_type_v']);
+				}
+
+				if ($arr['config_param1']!="" || $arr['config_comment_p1']!="")
+				{
+					$p1ch = $ichld->addChild("p1",$arr['config_param1']);
+					$p1ch->addAttribute("comment",$arr['config_comment_p1']);
+					$p1ch->addAttribute("type",$arr['config_type_p1']=="" ? "text" : $arr['config_type_p1']);
+				}
+
+				if ($arr['config_param2']!="" || $arr['config_comment_p2']!="")
+				{
+					$p2ch = $ichld->addChild("p2",$arr['config_param2']);
+					$p2ch->addAttribute("comment",$arr['config_comment_p2']);
+					$p2ch->addAttribute("type",$arr['config_type_p2']=="" ? "text" : $arr['config_type_p2']);
+				}
+			}
+
+			$dom = new DOMDocument('1.0');
+			$dom->preserveWhiteSpace = false;
+			$dom->formatOutput = true;
+			$dom->loadXML($xml->asXML());
+			$dom->save(RELATIVE_ROOT."config/defaults.xml");
+
+		}
+		*/
 	}
 	
 	class ConfigItem
