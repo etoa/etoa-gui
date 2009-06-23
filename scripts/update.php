@@ -38,7 +38,7 @@
 		include("inc/update.inc.php");
 
 		// Prüfen ob Updates eingeschaltet sind
-		if ($cfg->get('update_enabled')==1 && false)
+		if ($cfg->update_enabled->v==1)
 		{
 			// Mutex holen
 			$tmr = timerStart();
