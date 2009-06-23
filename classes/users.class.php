@@ -59,13 +59,14 @@
 				{
 				$text ="Hallo ".$arr['user_nick']."
 				
-	Du hast dich seit mehr als ".USER_INACTIVE_LONG." Tage nicht mehr bei EtoA: Escape to Andromeda ( http://www.etoa.ch ) eingeloggt und
+	Du hast dich seit mehr als ".USER_INACTIVE_LONG." Tage nicht mehr bei Escape to Andromeda (".ROUNDID.") eingeloggt und
 	dein Account wurde deshalb als inaktiv markiert. Solltest du dich innerhalb von ".USER_INACTIVE_SHOW." Tage
 	nicht mehr einloggen wird der Account gelöscht.
 	
-	Mit freundlichen Grüßen,
+	Mit freundlichen Grüssen,
 	die Spielleitung";
-				send_mail('',$arr['user_email'],'Inaktivität bei Escape to Andromeda',$text,'','');			
+					$mail = new Mail('Inaktivität',$text);
+					$mail->send($arr['user_email']);
 					
 				}
 			}					

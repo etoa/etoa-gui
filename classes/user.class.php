@@ -318,6 +318,25 @@
 					throw new EException("Property $key der Klasse  ".__CLASS__." ist nicht änderbar!");
 					return false;
 				}
+				elseif ($key == "email")
+				{
+					if ($val!=$this->$key)
+					{
+						if (checkEmail($val))
+						{
+							$mail = new Mail("Änderung deiner E-Mail-Adresse","Die E-Mail-Adresse deines Accounts ".$this->nick." wurde von ".$this->email." auf ".$val ." geändert!");
+							$mail->send($this->email);
+							if ($this->emailFix!=$this->email)
+								$mail->send($this->emailFix);
+							$this->$key = $val;
+							$this->changedFields[$key] = true;
+						}
+						else
+						{
+							err_msg("Ungültige Mail-Adresse!");
+						}
+					}
+				}
 				else
 				{
 					$this->$key = $val;
@@ -764,12 +783,13 @@
 
 				$text ="Hallo ".$this->nick."
 
-	Dein Accouont bei EtoA: Escape to Andromeda ( http://www.etoa.ch ) wurde auf Grund von Inaktivität
-	oder auf eigenem Wunsch nun gelöscht.
+	Dein Accouont bei Escape to Andromeda (".ROUNDID.") wurde auf Grund von Inaktivität
+	oder auf eigenem Wunsch hin gelöscht.
 
-	Mit freundlichen Grüßen,
+	Mit freundlichen Grüssen,
 	die Spielleitung";
-				send_mail('',$this->email,'Accountlöschung bei Escape to Andromeda',$text,'','');
+				$mail = new Mail("Accountlöschung",$text);
+				$mail->send($this->email);
 
 				return true;
 
@@ -875,12 +895,13 @@
 		      $email_text.= "Name: ".$data['name']."\n";
 		      $email_text.= "E-Mail: ".$data['email']."\n\n";
 		      $email_text.= "Nick: ".$nick."\n";
-		      $email_text.= "Passwort: ".$pw."\n\n";
-		      $email_text.= "WICHTIG: Gib das Passwort an niemanden weiter. Gib dein Passwort auch auf keiner Seite ausser der Login- und der Einstellungs-Seite ein. Ein Game-Admin oder Entwickler wird dich auch nie nach dem Passwort fragen!\n";
-		      $email_text.= "Desweiteren solltest du dich mit den Regeln (".LOGINSERVER_URL."?page=regeln) bekannt machen, da ein Regelverstoss eine (zeitweilige) Sperrung deines Accounts zur Folge haben kann!\n\n";
+		      $email_text.= "Passwort: ".$pw." (bitte nach dem ersten Login ändern)\n\n";
+		      $email_text.= "WICHTIG: Gib das Passwort an niemanden weiter. Gib dein Passwort auch auf keiner Seite ausser unserer Loginseite ein. Ein Game-Admin oder Entwickler wird dich auch nie nach dem Passwort fragen!\n";
+		      $email_text.= "Desweiteren solltest du dich mit den Regeln (".RULES_URL.") bekannt machen, da ein Regelverstoss eine (zeitweilige) Sperrung deines Accounts zur Folge haben kann!\n\n";
 		      $email_text.= "Viel Spass beim Spielen!\nDas EtoA-Team";
 
-		      send_mail(0,$data['email'],"EtoA Registrierung",$email_text,"","left",1);
+					$mail = new Mail("Account-Registrierung",$email_text);
+		      $mail->send($data['email']);
 				}
 
 	      	return true;

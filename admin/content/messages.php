@@ -60,13 +60,6 @@
 			echo "<i>Keine Nachrichten in der Warteschlange!</i>";
 	}
 
-	//
-	// Nachrichten löschen
-	//
-	elseif ($sub=="delmsgs")
-	{
-
-	}
 	elseif ($sub=="sendmsg")
 	{
 		$subj = isset($_GET['message_subject']) ? $_POST['message_subject'] : "";

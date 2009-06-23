@@ -43,7 +43,8 @@
 				$msg = "Hallo ".$arr[1].".\n\nDu hast für die Administration der ".ROUNDID." von EtoA ein neues Passwort angefordert.\n\n";
 				$msg.= "Das neue Passwort lautet: $pw\n\n";
 				$msg.= "Diese Anfrage wurde am ".date("d.m.Y")." um ".date("H:i")." Uhr vom Computer ".Net::getHost($_SERVER['REMOTE_ADDR'])." aus in Auftrag gegeben.\nBitte denke daran, das Passwort nach dem ersten Login zu ändern!";
-				send_mail(0,$arr[2],"Neues Administrationspasswort ".ROUNDID."",$msg,'','');
+				$mail = new Mail("Neues Administrationspasswort",$msg);
+				$mail->send($arr[2]);
 				echo "Das Passwort wurde geändert und dir per Mail zugestellt!<br/><br/>";
 				echo "<input type=\"button\" value=\"Zum Login\" onclick=\"document.location='?'\" />";
 				dbquery("

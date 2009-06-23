@@ -33,7 +33,7 @@
 	if (isset($_GET['rcpt']) && $_GET['rcpt']>0)	
 	{
 		echo '<h2>Mail an Game-Administrator</h2>
-		<form action="?page='.$page.'" method="post"><div>';
+		<form action="?page='.$page.'&amp;sendrcpt='.intval($_GET['rcpt']).'" method="post"><div>';
 		$res=dbquery("
 		SELECT
 			user_nick,
@@ -41,39 +41,51 @@
 		FROM
 			admin_users
 		WHERE
-			user_id=".$_GET['rcpt'].";
+			user_id=".intval($_GET['rcpt']).";
 		");
-		$arr = mysql_fetch_row($res);
-		echo '<input type="hidden" name="mail_rcpt" value="'.$arr[0].'<'.$arr[1].'>" />';
-		tableStart();
-		echo '<tr><th>Sender:</th><td>'.$cu->nick.'&lt;'.$cu->email.'&gt;</td></tr>';
-		echo '<tr><th>Empfänger:</th><td>'.$arr[0].'&lt;'.$arr[1].'&gt;</td></tr>';
-		echo '<tr><th>Titel:</th><td><input type="text" name="mail_subject" value="" size="50" /></td></tr>';
-		echo '<tr><th>Text:</th><td><textarea name="mail_text" rows="6" cols="80"></textarea></td></tr>';
-		tableEnd();
-		echo '<input type="submit" name="submit" value="Senden" /> &nbsp; 
-		<input type="button" onclick="document.location=\'?page='.$page.'\'" value="Abbrechen" />
-		</div></form>';		
+		if (mysql_num_rows($res)>0)
+		{
+			$arr = mysql_fetch_row($res);
+			echo '<input type="hidden" name="mail_rcpt" value="'.$arr[0].'<'.$arr[1].'>" />';
+			tableStart();
+			echo '<tr><th>Sender:</th><td>'.$cu->nick.'&lt;'.$cu->email.'&gt;</td></tr>';
+			echo '<tr><th>Empfänger:</th><td>'.$arr[0].'&lt;'.$arr[1].'&gt;</td></tr>';
+			echo '<tr><th>Titel:</th><td><input type="text" name="mail_subject" value="" size="50" /></td></tr>';
+			echo '<tr><th>Text:</th><td><textarea name="mail_text" rows="6" cols="80"></textarea></td></tr>';
+			tableEnd();
+			echo '<input type="submit" name="submit" value="Senden" /> &nbsp;
+			<input type="button" onclick="document.location=\'?page='.$page.'\'" value="Abbrechen" />
+			</div></form>';
+		}
+
 	}
 	else
 	{	
 		if (isset($_POST['submit']))
 		{
-			$text = "InGame-Anfrage ".ROUNDID."\n----------------------\n\n";
-			$text.= "Nick: ".$cu->nick."\n";
-			$text.= "ID: ".$cu->id."\n";
-			$text.= "IP/Host: ".$_SERVER['REMOTE_ADDR']." (".Net::getHost($_SERVER['REMOTE_ADDR']).")\n";
-			$text.= "Titel: ".$_POST['mail_subject']."\n\n";
-			$text.= $_POST['mail_text'];
-			
-      $email_header = "From: Escape to Andromeda<etoa@orion.etoa.net>\n";
-      $email_header .= "Reply-To: ".$cu->nick."<".$cu->email.">\n";
-      $email_header .= "X-Mailer: PHP/" . phpversion(). "\n";
-      $email_header .= "X-Sender-IP: ".$_SERVER['REMOTE_ADDR']."\n";
-      //$email_header .= "Content-type: text/html\n";
-      $email_header .= "Content-Style-Type: text/css\n";					
-			mail($_POST['mail_rcpt'],"EtoA InGame-Anfrage (".ROUNDID."): ".$_POST['mail_subject'],$text,$email_header);
-			echo '<div style="color:#0f0"><b>Vielen Dank!</b> Deine Nachricht wurde gesendet!</div><br/>';
+			$res=dbquery("
+			SELECT
+				user_nick,
+				user_email
+			FROM
+				admin_users
+			WHERE
+				user_id=".$_GET['sendrcpt'].";
+			");
+			if (mysql_num_rows($res)>0)
+			{
+				$text = "InGame-Anfrage ".ROUNDID."\n----------------------\n\n";
+				$text.= "Nick: ".$cu->nick."\n";
+				$text.= "ID: ".$cu->id."\n";
+				$text.= "IP/Host: ".$_SERVER['REMOTE_ADDR']." (".Net::getHost($_SERVER['REMOTE_ADDR']).")\n\n";
+				$text.= $_POST['mail_text'];
+
+				$mail = new Mail("InGame-Anfrage: ".$_POST['mail_subject'],$text);
+				if ($mail->send($_POST['mail_rcpt'],$cu->nick."<".$cu->email.">"))
+				{
+					echo '<div style="color:#0f0"><b>Vielen Dank!</b> Deine Nachricht wurde gesendet!</div><br/>';
+				}
+			}
 		}
 		
 		iBoxStart("Wichtig");

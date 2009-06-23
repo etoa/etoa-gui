@@ -104,7 +104,8 @@
 						$count++;
 						
 					}
-					send_mail(0,$arow[2],"Neue private Nachricht in EtoA - Admin",$email_text,"","left",1);
+					$mail = new Mail("Neue private Nachricht in EtoA - Admin",$email_text);
+					$mail->send($arow[2]);
 					dbquery("UPDATE messages SET messages.message_mailed=1 WHERE messages.message_user_to='".$arow[2]."';");
 					$log = "\nAdmin-Mailqueue wurde abgearbeitet.";
 				}

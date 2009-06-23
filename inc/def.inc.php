@@ -81,8 +81,11 @@
 	define('TEAMSPEAK_URL',"http://ts.etoa.ch");	// Teamspeak
 	define('TEAMSPEAK_ONCLICK',"window.open('".TEAMSPEAK_URL."','ts','width=800,height=600,scrollbars=yes');");
 
-	define('RULES_URL','http://www.etoa.ch/rules'); // Game-Rules
+	define('RULES_URL','http://www.etoa.ch/regeln'); // Game-Rules
 	define('RULES_ONCLICK',"window.open('".RULES_URL."','rules','width=600,height=500,scrollbars=yes');");
+
+	define('MAIL_SENDER','no-reply@etoa.ch');
+	define('MAIL_REPLY','mail@etoa.ch');
 
   /*********************/
   /* Zufallsereignisse */
