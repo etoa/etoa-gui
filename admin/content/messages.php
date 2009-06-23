@@ -32,52 +32,74 @@
 	echo "<h1>Nachrichten</h1>";
 
 	//
-	// E-Mail-Queue
+	// Send message form
 	//
-	if ($sub=="queue")
+	if ($sub=="sendmsg")
 	{
-		echo "<h2>E-Mail-Warteschlange</h2>";
-		if ($_POST['queue_release']!="")
-		{
-			mail_queue_send($_POST['limit']);
-			echo "Warteschlange wurde abgearbeitet!<br/><br/>";
-		}
+		echo "Nachricht an einen Spieler senden:<br/><br/>";
 
-		$res=dbquery("SELECT msg_id FROM mail_queue;");
-		$cnt=mysql_num_rows($res);
-		if ($cnt>0)
-		{
-			echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
-			echo "Es sind ".$cnt." Nachrichten in der Warteschlange.<br/><br/>Manuellen Versand ausl&ouml;sen f&uuml;r <select name=\"limit\">";
-			for ($x=min($cnt,10);$x<$cnt;$x++)
-			{
-				echo "<option value=\"$x\">$x</option>";
-			}
-			echo "<option value=\"$cnt\">alle</option>";
-			echo "</select> Nachrichten: <input type=\"submit\" name=\"queue_release\" value=\"Senden\" /></form>";
-		}
-		else
-			echo "<i>Keine Nachrichten in der Warteschlange!</i>";
-	}
-
-	elseif ($sub=="sendmsg")
-	{
 		$subj = isset($_GET['message_subject']) ? $_POST['message_subject'] : "";
 		$text = "";
 		if (isset($_POST['submit']))
 		{
 			if ($_POST['message_subject']!="" && $_POST['message_text']!="")
 			{
-				if ($msg_type==0 || $msg_type==2)
+				$to = array();
+				if ($_POST['rcpt_type']==1)
 				{
-					Message::sendFromUserToUser($_POST['from_id'],$_POST['message_user_to'],$_POST['message_subject'],$_POST['message_text']);
-					cms_ok_msg("Nachricht wurde gesendet!");
+					// Not good style, should use class.. but is faster for this ammount of data
+					$res = dbquery("SELECT user_id,user_nick,user_email FROM users");
+					if (mysql_num_rows($res)>0)
+					{
+						while($arr=mysql_fetch_assoc($res))
+						{
+							$to[$arr['user_id']] = $arr['user_nick']."<".$arr['user_email'].">";
+						}
+					}
 				}
+				else
+				{
+					$tu = new User($_POST['message_user_to']);
+					$to[$_POST['message_user_to']] = $tu->nick."<".$tu->email.">";
+				}
+
+				$msg_type = $_POST['msg_type'];
+
 				if ($msg_type==1 || $msg_type==2)
 				{
-					
-					cms_ok_msg("E-Mail wurde gesendet!");
+					$mail = new Mail($_POST['message_subject'],$_POST['message_text']);
+					if ($_POST['from_id']>0)
+					{
+						$atu = new User($cu->playerId);
+						$reply = $atu->nick."<".$atu->email.">";
+					}
+					else
+					{
+						$reply = "";
+					}					
 				}
+
+				$mailCnt = 0;
+				$msgCnt = 0;
+
+				foreach ($to as $k=>$v)
+				{
+					if ($msg_type==0 || $msg_type==2)
+					{
+						Message::sendFromUserToUser($_POST['from_id'],$k,$_POST['message_subject'],$_POST['message_text']);
+						$msgCnt++;
+					}
+					if ($msg_type==1 || $msg_type==2)
+					{
+						$mail->send($v,$reply);
+						$mailCnt++;
+					}
+				}
+				if ($msgCnt>0)
+					ok_msg("$msgCnt InGame-Nachrichten wurden versendet!");
+				if ($mailCnt>0)
+					ok_msg("$mailCnt Mails wurden versendet!");
+
 			}
 			else
 			{
@@ -87,7 +109,6 @@
 			$text = $_POST['message_text'];
 		}
 
-			echo "Nachricht an einen Spieler senden:<br/><br/>";
 			echo "<form action=\"?page=$page&sub=$sub\" method=\"POST\">";
 			echo "<table width=\"300\" class=\"tb\">";
 			echo "<tr>
@@ -102,12 +123,13 @@
 			FROM
 				users
 			WHERE 
-				user_id=".intval($s['player_id'])."
+				user_id=".intval($cu->playerId)."
 			");
+	
 			if (mysql_num_rows($fres)>0)
 			{
 				$farr = mysql_fetch_assoc($fres);
-				echo "<input type=\"radio\" name=\"from_id\" value=\"".$s['player_id']."\" checked=\"checked\" /> ".$farr['user_nick']." (InGame-Account #".$farr['user_id'].")<br/>";
+				echo "<input type=\"radio\" name=\"from_id\" value=\"".$cu->playerId."\" checked=\"checked\" /> ".$farr['user_nick']." (InGame-Account #".$farr['user_id'].")<br/>";
 				echo "<input type=\"radio\" name=\"from_id\" value=\"0\" /> System<br/>";
 			}
 			else
@@ -115,14 +137,19 @@
 			echo "</td></tr>";
 			echo "<tr>
 				<th>Empf&auml;nger:</th>
-				<td class=\"tbldata\" width=\"250\"><select name=\"message_user_to\">";
+				<td class=\"tbldata\" width=\"250\">
+				<b>An:</b> <input type=\"radio\" name=\"rcpt_type\" value=\"0\"  checked=\"checked\"  onclick=\"document.getElementById('message_user_to').style.display='';\" /> Einzelner Empfänger
+				<select name=\"message_user_to\" id=\"message_user_to\">";
 				$res=dbquery("SELECT user_id,user_nick FROM users ORDER BY user_nick;");
 				while ($arr=mysql_fetch_array($res))
 				{
 					echo "<option value=\"".$arr['user_id']."\"";
 					echo ">".$arr['user_nick']."</option>";
 				}
-			echo "</select><br/>
+			echo "</select> &nbsp; 
+			<input type=\"radio\" name=\"rcpt_type\" value=\"1\" onclick=\"document.getElementById('message_user_to').style.display='none';\" /> Alle Spieler
+			<br/>
+			<b>Typ:</b>
 			<input type=\"radio\" name=\"msg_type\" value=\"0\"  checked=\"checked\" /> InGame-Nachricht
 			<input type=\"radio\" name=\"msg_type\" value=\"1\" /> E-Mail
 			<input type=\"radio\" name=\"msg_type\" value=\"2\" /> InGame-Nachricht &amp; E-Mail
@@ -139,291 +166,6 @@
 		
 	}
 
-	//
-	// Ingame-Rundmail
-	//
-	elseif ($sub=="infomail")
-	{
-		if ($_POST['submit']!="")
-		{
-			$res = dbquery("SELECT user_id FROM users;");
-			while ($arr=mysql_fetch_array($res))
-			{
-   				 dbquery("
-					INSERT INTO 
-						messages
-					(
-						message_user_from,
-						message_user_to,
-						message_timestamp,
-						message_cat_id,
-						message_massmail
-					) 
-					VALUES 
-					(
-						'0',
-						'".$arr['user_id']."',
-						'".time()."',
-						'".SYS_MESSAGE_CAT_ID."',
-						'1'
-					);");
-						dbquery("
-							INSERT INTO
-								message_data
-							(
-								id,
-								subject,
-								text
-							)
-							VALUES
-							(
-								'".mysql_insert_id()."',
-								'".addslashes($_POST['message_subject'])."',
-							'".addslashes($_POST['message_text'])."'
-							);
-						");	
-			}
-			cms_ok_msg("Nachricht wurde an ".mysql_num_rows($res)." Spieler gesendet!");
-			echo "<p align=\"center\"><input type=\"button\" class=\"button\" value=\"Neue Nachricht schreiben\" onClick=\"document.location='?page=$page&sub=$sub'\"></p>";
-		}
-		else
-		{
-			echo "<h2>Rundmail an alle Spieler</h2>";
-			echo "<form action=\"?page=$page&sub=$sub\" method=\"POST\">";
-			echo "<table width=\"300\" class=\"tbl\">";
-			echo "<tr><td width=\"50\" valign=\"top\">&nbsp;</td><td class=\"tbltitle\">Neue Nachricht</td></tr>";
-			echo "<tr><td class=\"tbltitle\" width=\"50\" valign=\"top\">Betreff:</td><td class=\"tbldata\" width=\"250\"><input type=\"text\" name=\"message_subject\" value=\"".$_GET['message_subject']."\" size=\"30\" maxlength=\"255\"></td></tr>";
-			echo "<tr><td class=\"tbltitle\" width=\"50\" valign=\"top\">Text:</td><td class=\"tbldata\" width=\"250\"><textarea name=\"message_text\" rows=\"10\" cols=\"40\"></textarea></td></tr>";
-			echo "</table>";
-			echo "<p align=\"center\"><input type=\"submit\" class=\"button\" name=\"submit\" value=\"Senden\"></p>";
-			echo "</form>";
-		}
-	}
-	elseif ($sub=="email")
-	{
-		$designs = get_designs("../");
-
-		if ($_POST['submit']!="")
-		{
-			//Mail an alle User
-			if($_POST['email_at_all']==1)
-			{
-                $email_adress="";
-                $res = dbquery("SELECT user_email_fix,user_css_style FROM users;");
-                $users=mysql_num_rows($res);
-                $counter=$users;
-                while ($arr=mysql_fetch_array($res))
-                {
-
-                    if($_POST['email_style']=="self")
-                    {
-                        $email_style=$arr['user_css_style'];
-                    }
-                    else
-                    {
-                        //formatiert string, denn sonst würde es beispielsweise '../css_style/Dark' ausgeben anstatt 'css_style/Dark'
-                        $email_style=substr($_POST['email_style'],3);
-                    }
-
-
-                    //Sendet mail
-                    send_mail(0,$arr['user_email_fix'],$_POST['email_subject'],$_POST['email_text'],$email_style,$_POST['email_align']);
-
-                }
-
-                add_log(8,$_SESSION[SESSION_NAME]['user_nick']." schickt eine E-mail an alle User",time());
-                echo "E-mail an ".$users." User geschickt<br>";
-			}
-			//Mail an einen User
-			else
-			{
-                if($_POST['email_user_to']!=0)
-                {
-                    $res = dbquery("SELECT user_email_fix FROM users WHERE user_id='".$_POST['email_user_to']."';");
-                    $arr=mysql_fetch_array($res);
-                    $email_adress=$arr['user_email_fix'];
-                }
-                else
-                {
-                    $email_adress=$_POST['email_user_to_self'];
-                }
-
-                if($_POST['email_style']=="self")
-                {
-                    $res = dbquery("SELECT user_css_style FROM users WHERE user_id='".$_POST['email_user_to']."';");
-                    $arr=mysql_fetch_array($res);
-                    $email_style=$arr['user_css_style'];
-                }
-                else
-                {
-                    //formatiert string, denn sonst würde es beispielsweise '../css_style/Dark' ausgeben anstatt 'css_style/Dark'
-                    //$email_style=substr($_POST['email_style'],3);
-                    $email_style=$_POST['email_style'];
-                }
-
-				send_mail(0,$email_adress,$_POST['email_subject'],$_POST['email_text'],$email_style,$_POST['email_align']);
-
-				add_log(8,$_SESSION[SESSION_NAME]['user_nick']." schickt eine E-mail an die Adresse: ".$email_adress."",time());
-				echo "E-mail erfolgreich verschickt!<br>";
-			}
-		}
-
-		if ($_POST['submit_preview']!="")
-		{
-
-			if($_POST['email_user_to']!=0 || $_POST['email_user_to_self']!="" || $_POST['email_at_all']=='1')
-			{
-				if($_POST['email_subject']!="")
-				{
-					if($_POST['email_text']!="")
-					{
-						if($_POST['email_style']=="self" && $_POST['email_user_to']==0 && $_POST['email_at_all']!=1)
-						{
-							echo "Da du den Empf&auml;nger nicht aus der Liste ausgew&auml;hlt hast, musst du das Design selbst bestimmen!";
-						}
-						else
-						{
-                            if($_POST['email_user_to']!=0)
-                            {
-                                $res = dbquery("SELECT user_email_fix FROM users WHERE user_id='".$_POST['email_user_to']."';");
-                                $arr=mysql_fetch_array($res);
-                                $email_adress=$arr['user_email_fix'];
-                            }
-                            else
-                            {
-                                $email_adress=$_POST['email_user_to_self'];
-                            }
-
-                            if($_POST['email_style']=="self" && $_POST['email_user_to']!=0 && $_POST['email_at_all']!=1)
-                            {
-                                $res = dbquery("SELECT user_css_style FROM users WHERE user_id='".$_POST['email_user_to']."';");
-                                $arr=mysql_fetch_array($res);
-                                $email_style=$arr['user_css_style'];
-                            }
-                            elseif($_POST['email_style']=="self" && $_POST['email_at_all']==1)
-                            {
-                                $res = dbquery("SELECT user_css_style FROM users LIMIT 1;");
-                                $arr=mysql_fetch_array($res);
-                                $email_style=$arr['user_css_style'];
-                            }
-                            else
-                            {
-                                //formatiert string, denn sonst würde es beispielsweise '../css_style/Dark' ausgeben anstatt 'css_style/Dark'
-                                //$email_style=substr($_POST['email_style'],3);
-                                $email_style=$_POST['email_style'];
-                            }
-
-
-                            //Erstellt mail-vorschau
-                            $email_text=nl2br(text2html($_POST['email_text']));
-                            send_mail(1,$email_adress,$_POST['email_subject'],$email_text,$email_style,$_POST['email_align']);
-                            echo "Bist du mit der Vorschau zufieden, klicke auf \"Senden\" und die E-mail wird versendet!<br><br>";
-
-                            if($_POST['email_at_all']==1)
-                                echo "<b>Achtung: Diese Mail wird an alle User dieser Runde geschickt!</b><br><br>";
-
-
-                            //Zeigt Forumal mit den werten wieder
-                            echo "<form action=\"?page=$page&sub=$sub\" method=\"POST\">";
-                            echo "<table class=\"tbl\">";
-                            echo "<tr><td width=\"30%\" valign=\"top\">&nbsp;</td><td class=\"tbltitle\" width=\"70%\">Neue Nachricht</td></tr>";
-                            echo "<tr><td class=\"tbltitle\" width=\"30%\" valign=\"top\">E-Mail Adresse:</td><td class=\"tbldata\" width=\"70%\"><input type=\"text\" name=\"email_user_to_self\" value=\"".$_POST['email_user_to_self']."\" size=\"30\" maxlength=\"255\"> <select name=\"email_user_to\">";
-                            echo "<option value=\"0\" selected=\"selected\">------</option>";
-                            $res=dbquery("SELECT user_id,user_nick FROM users ORDER BY user_nick;");
-                            while ($arr=mysql_fetch_array($res))
-                            {
-                                echo "<option value=\"".$arr['user_id']."\"";
-                                if ($_POST['email_user_to']==$arr['user_id']) echo " selected=\"selected\"";
-                                echo ">".$arr['user_nick']."</option>";
-                            }
-                            echo "</select></td></tr>";
-                            echo "<tr><td class=\"tbltitle\" width=\"30%\" valign=\"top\">Betreff:</td><td class=\"tbldata\" width=\"70%\"><input type=\"text\" name=\"email_subject\" value=\"".$_POST['email_subject']."\" size=\"30\" maxlength=\"255\"></td></tr>";
-                            echo "<tr><td class=\"tbltitle\" width=\"30%\" valign=\"top\">Text:</td><td class=\"tbldata\" width=\"70%\"><textarea name=\"email_text\" rows=\"10\" cols=\"40\">".$_POST['email_text']."</textarea></td></tr>";
-
-                            echo "<tr><td class=\"tbltitle\" width=\"30%\" valign=\"top\">Text-Ausrichtung:</td><td class=\"tbldata\" width=\"70%\"><select name=\"email_align\">";
-                            if($_POST['email_align']=="center") $center="selected=\"selected\"";
-                            if($_POST['email_align']=="left") $left="selected=\"selected\"";
-                            if($_POST['email_align']=="right") $right="selected=\"selected\"";
-                            if($_POST['email_align']=="justify") $justify="selected=\"selected\"";
-                            echo "<option value=\"center\" $center>Zentriert</option>";
-                            echo "<option value=\"left\" $left>Linksb&uuml;ndig</option>";
-                            echo "<option value=\"right\" $right>Rechtsb&uuml;ndig</option>";
-                            echo "<option value=\"justify\" $justify>Blocksatz</option>";
-                            echo "</select></td></tr>";
-
-                            echo "<tr><td class=\"tbltitle\" width=\"30%\" valign=\"top\">Design w&auml;hlen:</td><td class=\"tbldata\" width=\"70%\"><select name=\"email_style\">";
-                            if($_POST['email_style']=="self") $self=" selected=\"selected\"";
-                            echo "<option value=\"self\" $self>Design des Benutzers</option>";
-                            foreach ($designs as $k => $v)
-                            {
-                                echo "<option value=\"$k\"";
-                                if($_POST['email_style']==$k) echo " selected=\"selected\"";
-                                echo ">".$v['name']."</option>";
-                            }
-                            echo "</select></td></tr>";
-                            if($_POST['email_at_all']==1) $all="checked=\"checked\""; else $not_at_all="checked=\"checked\"";
-
-                            echo "<tr><td class=\"tbltitle\" width=\"30%\" valign=\"top\">An alle User schicken:</td><td class=\"tbldata\" width=\"70%\"><input type=\"radio\" name=\"email_at_all\" value=\"1\" $all/> Ja  <input type=\"radio\" name=\"email_at_all\" value=\"0\" $not_at_all/> Nein</td></tr>";
-
-                            echo "</table>";
-                            echo "<p align=\"center\"><input type=\"submit\" class=\"button\" name=\"submit_preview\" value=\"Vorschau\" ></p>";
-                            echo "<p align=\"center\"><input type=\"submit\" class=\"button\" name=\"submit\" value=\"Senden\" >";
-                            echo "</form>";
-
-                    	}
-
-                    }
-                    else
-                    {
-                    	echo "Leere E-mails sind nicht beliebt!<br>";
-                    }
-                }
-                else
-                {
-                	echo "Die E-mail muss einen Betreff haben!<br>";
-                }
-            }
-            else
-            {
-            	echo "Es muss ein User, bzw. eine E-mail Adresse angegeben werden!<br>";
-            }
-		}
-		else
-		{
-			echo "E-Mail versenden:<br/><br/>";
-			echo "<form action=\"?page=$page&sub=$sub\" method=\"POST\">";
-			echo "<table class=\"tbl\">";
-			echo "<tr><td width=\"30%\" valign=\"top\">&nbsp;</td><td class=\"tbltitle\" width=\"70%\">Neue Nachricht</td></tr>";
-			echo "<tr><td class=\"tbltitle\" width=\"30%\" valign=\"top\">E-Mail Adresse:</td><td class=\"tbldata\" width=\"70%\"><input type=\"text\" name=\"email_user_to_self\" value=\"\" size=\"30\" maxlength=\"255\"> <select name=\"email_user_to\">";
-			echo "<option value=\"0\" selected=\"selected\">------</option>";
-			$res=dbquery("SELECT user_id,user_nick FROM users ORDER BY user_nick;");
-			while ($arr=mysql_fetch_array($res))
-			{
-				echo "<option value=\"".$arr['user_id']."\">".$arr['user_nick']."</option>";
-			}
-			echo "</select></td></tr>";
-			echo "<tr><td class=\"tbltitle\" width=\"30%\" valign=\"top\">Betreff:</td><td class=\"tbldata\" width=\"70%\"><input type=\"text\" name=\"email_subject\" value=\"\" size=\"30\" maxlength=\"255\"></td></tr>";
-			echo "<tr><td class=\"tbltitle\" width=\"30%\" valign=\"top\">Text:</td><td class=\"tbldata\" width=\"70%\"><textarea name=\"email_text\" rows=\"10\" cols=\"40\"></textarea></td></tr>";
-			echo "<tr><td class=\"tbltitle\" width=\"30%\" valign=\"top\">Text-Ausrichtung:</td><td class=\"tbldata\" width=\"70%\"><select name=\"email_align\">";
-			echo "<option value=\"center\" selected=\"selected\">Zentriert</option>";
-			echo "<option value=\"left\">Linksb&uuml;ndig</option>";
-			echo "<option value=\"right\">Rechtsb&uuml;ndig</option>";
-			echo "<option value=\"justify\">Blocksatz</option>";
-			echo "</select></td></tr>";
-            echo "<tr><td class=\"tbltitle\" width=\"30%\" valign=\"top\">Design w&auml;hlen:</td><td class=\"tbldata\" width=\"70%\"><select name=\"email_style\">";
-            echo "<option value=\"self\" selected=\"selected\">Design des Benutzers</option>";
-            foreach ($designs as $k => $v)
-            {
-                echo "<option value=\"$k\">".$v['name']."</option>";
-            }
-            echo "</select></td></tr>";
-			echo "<tr><td class=\"tbltitle\" width=\"30%\" valign=\"top\">An alle User schicken:</td><td class=\"tbldata\" width=\"70%\"><input type=\"radio\" name=\"email_at_all\" value=\"1\" /> Ja  <input type=\"radio\" name=\"email_at_all\" value=\"0\" checked=\"checked\"/> Nein</td></tr>";
-
-			echo "</table>";
-			echo "<p align=\"center\"><input type=\"submit\" class=\"button\" name=\"submit_preview\" value=\"Vorschau\" ></p>";
-			echo "</form>";
-		}
-	}
 
 
 /************************

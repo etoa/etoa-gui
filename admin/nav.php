@@ -309,18 +309,6 @@
 	$navmenu['Nachrichten']['Nachricht senden']['sub']="sendmsg";
 	$navmenu['Nachrichten']['Nachricht senden']['level']=0;
 
-	$navmenu['Nachrichten']['Rundmail (IGM)']['page']="messages";
-	$navmenu['Nachrichten']['Rundmail (IGM)']['sub']="infomail";
-	$navmenu['Nachrichten']['Rundmail (IGM)']['level']=1;
-
-	$navmenu['Nachrichten']['E-Mail verschicken']['page']="messages";
-	$navmenu['Nachrichten']['E-Mail verschicken']['sub']="email";
-	$navmenu['Nachrichten']['E-Mail verschicken']['level']=2;
-
-	$navmenu['Nachrichten']['E-Mail-Warteschlange']['page']="messages";
-	$navmenu['Nachrichten']['E-Mail-Warteschlange']['sub']="queue";
-	$navmenu['Nachrichten']['E-Mail-Warteschlange']['level']=2;
-
 	$navmenu['Chat']['Chat']['page']="chat";
 	$navmenu['Chat']['Chat']['sub']="";
 	$navmenu['Chat']['Chat']['level']=0;

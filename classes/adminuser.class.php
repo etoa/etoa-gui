@@ -31,9 +31,11 @@ class AdminUser
 			$arr = mysql_fetch_assoc($res);
 			$this->id = $id;
 			$this->nick = $arr['user_nick'];
+			$this->email = $arr['user_email'];
 			$this->valid = true;
 			$this->level = $arr['group_level'];
 			$this->groupName = $arr['group_name'];
+			$this->playerId = $arr['player_id'];
 		}
 	}
 
