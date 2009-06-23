@@ -15,7 +15,7 @@
 		$totalSteps = 288;
 		
 		$im = imagecreate($w,$h);
-		$imh = imagecreatefromjpeg(RELATIVE_ROOT."/images/logo_trans.jpg");
+		$imh = imagecreatefromjpeg(RELATIVE_ROOT."images/logo_trans.jpg");
 		ImageCopyresized($im,$imh,($w-imagesx($imh))/2,($h-imagesy($imh))/2,0,0,imagesx($imh),imagesy($imh),imagesx($imh),imagesy($imh));
 		
 		$colWhite = imagecolorallocate($im,255,255,255);
