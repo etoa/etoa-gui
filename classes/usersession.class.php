@@ -224,7 +224,7 @@ class UserSession extends Session
 	static function cleanup()
 	{
 		$cfg = Config::getInstance();
-		$this->time_action +
+		
 		$res = dbquery("
 		SELECT
 			id
