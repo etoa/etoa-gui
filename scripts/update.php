@@ -103,8 +103,11 @@
 			$t = timerStop($tmr);
 			if (LOG_UPDATES || $t > LOG_UPDATES_THRESHOLD)
 			{
-				add_log (15,$logt."Gesamtdauer: ".$t."\n\n".$log);
+				
 			}
+			// Hack: Log always
+			add_log (15,$logt."Gesamtdauer: ".$t."\n\n".$log);
+
 			//Löscht Arrays (gibt Speicher wieder frei)
 			unset($log);
 

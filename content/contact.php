@@ -62,7 +62,7 @@
 			$text = "InGame-Anfrage ".ROUNDID."\n----------------------\n\n";
 			$text.= "Nick: ".$cu->nick."\n";
 			$text.= "ID: ".$cu->id."\n";
-			$text.= "IP/Host: ".$_SERVER['REMOTE_ADDR']." (".resolveIp($_SERVER['REMOTE_ADDR']).")\n";
+			$text.= "IP/Host: ".$_SERVER['REMOTE_ADDR']." (".Net::getHost($_SERVER['REMOTE_ADDR']).")\n";
 			$text.= "Titel: ".$_POST['mail_subject']."\n\n";
 			$text.= $_POST['mail_text'];
 			

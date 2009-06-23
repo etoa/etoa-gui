@@ -15,14 +15,9 @@
 		$totalSteps = 288;
 		
 		$im = imagecreate($w,$h);
-		$imh = imagecreatefromjpeg(GAME_ROOT_DIR."/images/logo_trans.jpg");
+		$imh = imagecreatefromjpeg(RELATIVE_ROOT."/images/logo_trans.jpg");
 		ImageCopyresized($im,$imh,($w-imagesx($imh))/2,($h-imagesy($imh))/2,0,0,imagesx($imh),imagesy($imh),imagesx($imh),imagesy($imh));
 		
-		
-		
-		header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1	
-		header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); // Datum in der Vergangenheit	
-		header ("Content-type: image/png");
 		$colWhite = imagecolorallocate($im,255,255,255);
 		$colBlack = imagecolorallocate($im,0,0,0);
 		$colGrey = imagecolorallocate($im,180,180,180);
@@ -56,8 +51,9 @@
 		ORDER BY 
 			stats_timestamp DESC 
 		LIMIT 
-			".$totalSteps.";");
+			".($totalSteps+1).";");
 		$mnr = mysql_num_rows($res);
+		$sumo = $sumr = 0;
 		if ($mnr>0)
 		{
 			while ($arr=mysql_fetch_array($res))
@@ -67,8 +63,10 @@
 				$data[$t]['r']=$arr['stats_regcount'];
 				$max = max($max,$arr['stats_regcount']);
 				$maxo = max($maxo,$arr['stats_count']);
-				if ($acto==false) $acto = $arr['stats_count'];
-				if ($actr==false) $actr = $arr['stats_regcount'];
+				if (!isset($acto))
+					$acto = $arr['stats_count'];
+				if (!isset($actr))
+					$actr = $arr['stats_regcount'];
 				$sumo+=$arr['stats_count'];
 				$sumr+=$arr['stats_regcount'];
 				$index0=$arr['stats_timestamp'];
@@ -76,8 +74,9 @@
 			$avgo = round($sumo / $mnr,2);
 			$avgr = round($sumr / $mnr,2);
 		
-	
+
 		ksort($data);
+
 		$graphHeight=$h-$borderTop-$borderBottom;
 		$starti = $time-($totalSteps*5*60);
 	
@@ -102,8 +101,9 @@
 			$lastyr=$h-$borderBottom;// - ($graphHeight/$max*$data[$index0]['r']);;
 	
 			$ic=0;
-			for ($i=$starti;$i<$time;$i+=60)
+			foreach ($data as $i => $d)
 			{
+				
 				$x=$borderLeftRight + ($ic*$step);
 				// Vertikale Stundenlinien
 				if (date("i",$i)=="00")			
@@ -116,12 +116,12 @@
 				}
 				$t = date("dmyHi",$i);
 				// User-Diagramm
-				if (count($data[$t])>0)
+				if (count($d)>0)
 				{
 					if ($max>0)
 					{
-						$yo=$h - $borderBottom - ($graphHeight/$max*$data[$t]['o']);
-						$yr=$h - $borderBottom - ($graphHeight/$max*$data[$t]['r']);
+						$yo=$h - $borderBottom - ($graphHeight/$max*$d['o']);
+						$yr=$h - $borderBottom - ($graphHeight/$max*$d['r']);
 					}
 					else
 					{
@@ -141,9 +141,10 @@
 		}
 	
 		
-		// Renderzeit 
+		// Renderzeit
+		$cfg = Config::getInstance();
 		$render_time = explode(" ",microtime()); $rtime = $render_time[1]+$render_time[0]-$render_starttime; 
-		imagestring($im,6,10,5,$conf['game_name']['v']." ".$conf['game_name']['p1']." - ".ROUNDID,$colBlack);
+		imagestring($im,6,10,5,$cfg->game_name->v." ".$cfg->game_name->p1." - ".ROUNDID,$colBlack);
 		imagestring($im,6,10,20,"Userstatistik der letzten 24 Stunden",$colBlack);	
 		imagestring($im,2,10,40,"Erstellt: ".date("d.m.Y, H:i").", Renderzeit: ".round($rtime,3)." sec",$colBlack);	
 	
@@ -177,7 +178,25 @@
 			$presh = dbquery("SELECT COUNT(id) FROM planets WHERE planet_user_id>0;");
 			$parr = mysql_fetch_row($pres);
 			$parrh = mysql_fetch_row($presh);
-		
+
+			$res=dbquery("SELECT
+				stats_count,
+				stats_regcount,
+				stats_timestamp
+			FROM
+				user_onlinestats
+			ORDER BY
+				stats_timestamp DESC
+			LIMIT
+				1;");
+			$mnr = mysql_num_rows($res);
+			if ($mnr>0)
+			{
+				$arr=mysql_fetch_array($res);
+				$acto = $arr['stats_count'];
+				$actr = $arr['stats_regcount'];
+			}
+
 			$d = fopen($file,"w");
 			$text = "<gameserver>
 			<users>

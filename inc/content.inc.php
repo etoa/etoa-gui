@@ -165,7 +165,7 @@
 				
 				$str = "Der Spieler ".$cu->nick." (".$s['user_id'].") hat versucht, über ein externes Formular auf das Spiel zuzugreifen!\n";
 				$str.= "IP-Adresse: ".$_SERVER['REMOTE_ADDR']."\n";
-				$str.= "Host: ".resolveIp($_SERVER['REMOTE_ADDR'])."";
+				$str.= "Host: ".Net::getHost($_SERVER['REMOTE_ADDR'])."";
 				$str.="\nSeite: $page\n";
 				$str.="Inhalt des POST-Arrays:\n";
 				foreach ($_POST as $k => $v)

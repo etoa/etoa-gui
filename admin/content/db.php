@@ -133,11 +133,65 @@
 	  	}		
 		}
 
-
+		if (isset($_GET['action']) && $_GET['action']=="update_minute")
+		{
+			include(RELATIVE_ROOT."inc/update.inc.php");
+			iBoxStart("Update-Ergebis");
+			echo text2html(update_minute());
+			iBoxEnd();
+			echo "<br/><br/>";
+		}
+		if (isset($_GET['action']) && $_GET['action']=="update_30minute")
+		{
+			include(RELATIVE_ROOT."inc/update.inc.php");
+			iBoxStart("Update-Ergebis");
+			echo text2html(update_30minute());
+			iBoxEnd();
+			echo "<br/><br/>";
+		}
+		if (isset($_GET['action']) && $_GET['action']=="update_5minute")
+		{
+			include(RELATIVE_ROOT."inc/update.inc.php");
+			iBoxStart("Update-Ergebis");
+			echo text2html(update_5minute());
+			iBoxEnd();
+			echo "<br/><br/>";
+		}
+		if (isset($_GET['action']) && $_GET['action']=="update_hour")
+		{
+			include(RELATIVE_ROOT."inc/update.inc.php");
+			iBoxStart("Update-Ergebis");
+			echo text2html(update_hour());
+			iBoxEnd();
+			echo "<br/><br/>";
+		}
+		if (isset($_GET['action']) && $_GET['action']=="update_day")
+		{
+			include(RELATIVE_ROOT."inc/update.inc.php");
+			iBoxStart("Update-Ergebis");
+			echo text2html(update_day());
+			iBoxEnd();
+			echo "<br/><br/>";
+		}
 			
 		echo '<b>Punkte updaten:</b> 
 		Die Punkte aller Spieler aktualisieren 
 		<input type="button" value="Ausführen" onclick="document.location=\'?page='.$page.'&amp;sub='.$sub.'&amp;action=points\'" /><br/><br/>';
+
+		echo '<b>Minuten-Update:</b>
+		<input type="button" value="Ausführen" onclick="document.location=\'?page='.$page.'&amp;sub='.$sub.'&amp;action=update_minute\'" /><br/><br/>';
+		echo '<b>5-Minuten-Update:</b>
+		<input type="button" value="Ausführen" onclick="document.location=\'?page='.$page.'&amp;sub='.$sub.'&amp;action=update_5minute\'" /><br/><br/>';
+		echo '<b>30-Minuten-Update:</b>
+		<input type="button" value="Ausführen" onclick="document.location=\'?page='.$page.'&amp;sub='.$sub.'&amp;action=update_30minute\'" /><br/><br/>';
+		echo '<b>Studen-Update:</b>
+		<input type="button" value="Ausführen" onclick="document.location=\'?page='.$page.'&amp;sub='.$sub.'&amp;action=update_hour\'" /><br/><br/>';
+		echo '<b>Tages-Update:</b>
+		<input type="button" value="Ausführen" onclick="document.location=\'?page='.$page.'&amp;sub='.$sub.'&amp;action=update_day\'" /><br/><br/>';
+
+
+
+
 		/*
 		echo '<b>Markt updaten:</b> 
 		Fertige Auktionen und Angebote abschliessen

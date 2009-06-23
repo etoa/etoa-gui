@@ -566,46 +566,52 @@
 			unset($user_id);
 	
 			// Save points in memory cached table
-			dbquery("
-				INSERT INTO
-					user_stats
-				(
-					id,
-					points,
-					points_ships,
-					points_tech,
-					points_buildings,
-					points_exp,
-					nick,
-					alliance_tag,
-					alliance_id,
-					race_name,
-					sx,
-					sy,
-					blocked,
-					inactive,
-					hmod
-				)
-				VALUES
-					".substr($user_stats_query,1)."
-				;
-			");		
+			if ($user_stats_query!="")
+			{
+				dbquery("
+					INSERT INTO
+						user_stats
+					(
+						id,
+						points,
+						points_ships,
+						points_tech,
+						points_buildings,
+						points_exp,
+						nick,
+						alliance_tag,
+						alliance_id,
+						race_name,
+						sx,
+						sy,
+						blocked,
+						inactive,
+						hmod
+					)
+					VALUES
+						".substr($user_stats_query,1)."
+					;
+				");
+			}
 			
 			// Save points to user points table
-			dbquery("
-				INSERT INTO
-				user_points
-				(
-					point_user_id,
-					point_timestamp,
-					point_points,
-					point_ship_points,
-					point_tech_points,
-					point_building_points
-				)
-				VALUES
-					".substr($user_points_query,1)."
-			");
+			if ($user_points_query!="")
+			{
+				dbquery("
+					INSERT INTO
+					user_points
+					(
+						point_user_id,
+						point_timestamp,
+						point_points,
+						point_ship_points,
+						point_tech_points,
+						point_building_points
+					)
+					VALUES
+						".substr($user_points_query,1)."
+				");
+			}
 	
 			//Array Löschen (Speicher freigeben)
 			unset($ship);

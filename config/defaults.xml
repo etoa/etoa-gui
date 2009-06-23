@@ -9,7 +9,6 @@
     <category id="6">Markt</category>
     <category id="7">Layout</category>
     <category id="8">Nachrichten</category>
-    <category id="9">Farben</category>
     <category id="10">Spieler</category>
     <category id="11">Administration</category>
     <category id="12">Flotten</category>
@@ -69,10 +68,6 @@
     <item name="password_minlength" cat="1">
       <v comment="Minimale Passwortl&#xE4;nge" type="text">6</v>
       <p1 comment="Maximale PAsswortl&#xE4;nge" type="text">30</p1>
-    </item>
-    <item name="author" cat="1">
-      <v comment="Autor-Name" type="text">MrCage</v>
-      <p1 comment="Autor-Email" type="text">mrcage@etoa.ch</p1>
     </item>
     <item name="global_time" cat="2">
       <v comment="Global Bauzeit in Rohstoffe pro Sekunde, standart Value 12)" type="text">12</v>
@@ -221,25 +216,6 @@ Besten Dank f&#xFC;r euer Verst&#xE4;ndnis&#xD;
     <item name="msg_ban_hours" cat="8">
       <v comment="Sperrzeit f&#xFC;r Beleidigungen (h)" type="text">0</v>
     </item>
-    <item name="color_banned" cat="9">
-      <v comment="Gesperrt" type="text">#ffaaaa</v>
-    </item>
-    <item name="color_inactive" cat="9">
-      <v comment="Inaktiv" type="text">#ccc</v>
-      <p1 comment="Lange Inaktiv" type="text">#aaa</p1>
-    </item>
-    <item name="color_umod" cat="9">
-      <v comment="Urlaubsmodus" type="text">#aaffaa</v>
-    </item>
-    <item name="color_friend" cat="9">
-      <v comment="Freund" type="text">#3366ff</v>
-    </item>
-    <item name="color_enemy" cat="9">
-      <v comment="Feind" type="text">#ff6600</v>
-    </item>
-    <item name="color_default" cat="9">
-      <v comment="Standard" type="text">#ffffff</v>
-    </item>
     <item name="user_inactive_days" cat="1">
       <v comment="Inaktiv-Anzeige (Tage)" type="text">7</v>
       <p1 comment="Inaktiv-L&#xF6;schung (Tage)" type="text">21</p1>
@@ -325,30 +301,11 @@ Besten Dank f&#xFC;r euer Verst&#xE4;ndnis&#xD;
       <p1 comment="Min. Nebel Ressourcen (min. 5000)" type="text">100000</p1>
       <p2 comment="Max. Nebel Ressourcen" type="text">3000000</p2>
     </item>
-    <item name="color_alliance" cat="9">
-      <v comment="Allianz Mitglied" type="text">#ffff33</v>
-    </item>
-    <item name="color_noob_safe" cat="9">
-      <v comment="Noob-Schutz-Farbe" type="text">#aaffff</v>
-    </item>
     <item name="contact_message" cat="1">
       <v comment="Kontakt-Text" type="textarea">Die folgenden Angaben betreffen nur die aktuelle Spielrunde. Bitte bei Problemen im Zusammenhang mit dem Spielablauf (Namenswechsel, Cheater/Buguser melden etc) die Game-Admins kontaktieren. Bei schweren Bugs oder Fragen bitte zuerst im Forum nachschauen, dann erst die Entwickler kontaktieren. Bitte nur ganz wichtige E-Mails an die Projektleitung senden, belanglose Mails und Spam werden stillschweigend ignoriert!</v>
     </item>
     <item name="admininfo" cat="11">
       <v comment="Admin-News" type="textarea"/>
-    </item>
-    <item name="market_ship_action_ress" cat="6">
-      <v comment="Handelsschiffaktion bei Rohstoffen" type="text">market</v>
-    </item>
-    <item name="market_ship_action_ship" cat="6">
-      <v comment="Handelsschiffaktion bei Schiffen" type="text">market</v>
-    </item>
-    <item name="market_ship_flight_time" cat="6">
-      <p1 comment="Min. Flugzeit (Minuten)" type="text">15</p1>
-      <p2 comment="Max. Flugzeit (Minuten)" type="text">180</p2>
-    </item>
-    <item name="market_auction_delay_time" cat="6">
-      <v comment="Anzeigedauer der Auktionen (Stunden)" type="text">24</v>
     </item>
     <item name="admin_timeout" cat="11">
       <v comment="Admin-Timeout" type="text">1200</v>
@@ -470,55 +427,12 @@ Anmerkung: Eine Kopie dieser Nachricht wird in Eurer Nachrichten-Box hinterlegt.
     <item name="user_delete_days" cat="1">
       <v comment="Tage bis zur L&#xF6;schung" type="text">5</v>
     </item>
-    <item name="market_metal_factor" cat="6">
-      <v comment="Titan Faktor (Auto)" type="text">1</v>
-    </item>
-    <item name="market_crystal_factor" cat="6">
-      <v comment="Silizium Faktor (Auto)" type="text">1</v>
-    </item>
-    <item name="market_plastic_factor" cat="6">
-      <v comment="PVC Faktor (Auto)" type="text">1</v>
-    </item>
-    <item name="market_crystal_logger" cat="6">
-      <v comment="Gekaufte Siliziummengen (Auto)" type="text">0</v>
-      <p1 comment="Verkaufte Siliziummengen (Auto)" type="text">0</p1>
-      <p2 comment="Startangebot Silizium" type="text">1000000</p2>
-    </item>
-    <item name="market_fuel_factor" cat="6">
-      <v comment="Tritium Faktor (Auto)" type="text">1</v>
-    </item>
-    <item name="market_food_factor" cat="6">
-      <v comment="Nahrung Faktor (Auto)" type="text">1</v>
-    </item>
-    <item name="market_metal_logger" cat="6">
-      <v comment="Gekaufte Titanmengen (Auto)" type="text">0</v>
-      <p1 comment="Verkaufte Titanmengen (Auto)" type="text">0</p1>
-      <p2 comment="Startangebot Titan" type="text">1000000</p2>
-    </item>
     <item name="battleban_arrival_text" cat="12">
       <p1 comment="Flottenankunftstext" type="textarea">Die ankommenden Schiffe sind auf dem Planeten gelandet. Nach einer kurzen Kaffeepause der Piloten kehrten sie wieder um und machten sich auf den R&#xFC;ckflug.</p1>
       <p2 comment="Raketenankunftstext" type="textarea">Auf dem Weg zu ihrem Ziel flogen deine Raketen in ein intergalaktisches Warpfeld. Sie wurden deaktiviert und in ihr Lager gebeamt.</p2>
     </item>
     <item name="register_key" cat="1">
       <v comment="Registrations-Schl&#xFC;ssel (f&#xFC;r private Runden)" type="text"/>
-    </item>
-    <item name="market_plastic_logger" cat="6">
-      <v comment="Gekaufte PVCmengen (Auto)" type="text">0</v>
-      <p1 comment="Verkaufte PVCmengen (Auto)" type="text">0</p1>
-      <p2 comment="Startangebot PVC" type="text">1000000</p2>
-    </item>
-    <item name="market_fuel_logger" cat="6">
-      <v comment="Gekaufte Tritiummengen (Auto)" type="text">0</v>
-      <p1 comment="Verkaufte Tritiummengen (Auto)" type="text">0</p1>
-      <p2 comment="Startangebot Tritium" type="text">1000000</p2>
-    </item>
-    <item name="market_food_logger" cat="6">
-      <v comment="Gekaufte Nahrungsmengen (Auto)" type="text">0</v>
-      <p1 comment="Verkaufte Nahrungsmengen (Auto)" type="text">0</p1>
-      <p2 comment="Startangebot Nahrung" type="text">1000000</p2>
-    </item>
-    <item name="market_response_time" cat="6">
-      <v comment="Angebotsdauer (in Tagen)" type="text">14</v>
     </item>
     <item name="random_event_hits" cat="18">
       <v comment="Zufallsereignis Hit (Statistik)" type="text">0</v>
@@ -703,7 +617,23 @@ Anmerkung: Eine Kopie dieser Nachricht wird in Eurer Nachrichten-Box hinterlegt.
       <p1 comment="SPECIALIST_MAX_COSTS_FACTOR" type="text">10</p1>
       <p2 comment="SPECIALIST_MIN_POINTS_REQ" type="text">100000</p2>
     </item>
-    <item name="market_rate_0" cat="6">
+    <item name="market_response_time" cat="6">
+      <v comment="Angebotsdauer (in Tagen)" type="text">14</v>
+    </item>
+    <item name="market_ship_action_ress" cat="6">
+      <v comment="Handelsschiffaktion bei Rohstoffen" type="text">market</v>
+    </item>
+    <item name="market_ship_action_ship" cat="6">
+      <v comment="Handelsschiffaktion bei Schiffen" type="text">market</v>
+    </item>
+    <item name="market_ship_flight_time" cat="6">
+      <p1 comment="Min. Flugzeit (Minuten)" type="text">15</p1>
+      <p2 comment="Max. Flugzeit (Minuten)" type="text">180</p2>
+    </item>
+    <item name="market_auction_delay_time" cat="6">
+      <v comment="Anzeigedauer der Auktionen (Stunden)" type="text">24</v>
+    </item>
+		<item name="market_rate_0" cat="6">
       <v comment="Handelskurs Resource 0 (auto)" type="text">1</v>
     </item>
     <item name="market_rate_1" cat="6">

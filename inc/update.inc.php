@@ -43,12 +43,7 @@
 		$log.= "Tabellen analysiert.\nDauer: ".timerStop($tmr)." sec\n\n";
 
 		// Remove old ip-hostname combos from cache
-		$res = dbquery("
-		DELETE FROM
-			hostname_cache
-		WHERE
-			timestamp<".(time()-86400)."
-		");
+		Net::clearCache();
 
 		return $log;
 	}
@@ -82,6 +77,8 @@
 	function update_30minute()
 	{
 		global $conf;
+		$log = "";
+
 		//Admins �ber einkommende Nachrichten Informieren
 		$ares = dbquery("SELECT user_nick, user_email, player_id FROM admin_users WHERE player_id>0");
 		if (mysql_num_rows($ares)>0)

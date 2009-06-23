@@ -397,10 +397,11 @@
 	define("MARKET_FOOD_FACTOR",$cfg->market_rate_4->v);				// Nahrung Taxe
 
 
-	define('MARKET_RATES_COUNT',96);
-	define('MARKET_RATE_MIN',0.1);
-	define('MARKET_RATE_MAX',10);
-	define('NUM_RESOURCES',5);
+	define('MARKET_RATES_COUNT',96);	// Legt fest, wieviele vergangene Werte bei der Marktkursberechnung mit einbezogen werden
+	define('MARKET_RATE_MIN',0.1);	// Minimaler Marktkurs
+	define('MARKET_RATE_MAX',10);	// Maximaler Marktkurs
+	
+	define('NUM_RESOURCES',5);	// Anzahl Rohstofftypen im Spiel
 
   /****************/
   /* Allianzboard */

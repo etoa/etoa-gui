@@ -195,7 +195,7 @@
 							echo "-";						
 						echo "</td>";
 						echo "<td class=\"tbldata\">".$arr['log_ip']."</td>";
-						echo "<td class=\"tbldata\">".resolveIp($arr['log_hostname'])."</td>";
+						echo "<td class=\"tbldata\">".Net::getHost($arr['log_hostname'])."</td>";
 						echo "<td class=\"tbldata\">";
 						if (max($arr['log_logouttime'],$arr['log_acttime'])-$arr['log_logintime']>0)
 							echo tf(max($arr['log_logouttime'],$arr['log_acttime'])-$arr['log_logintime']);
@@ -259,7 +259,7 @@
 					else
 						echo "<td class=\"tbldata\" style=\"color:#f72\">offline</td>";
 					echo "<td class=\"tbldata\">".$arr['user_ip']."</td>";
-					echo "<td class=\"tbldata\">".resolveIp($arr['user_ip'])."</td>";
+					echo "<td class=\"tbldata\">".Net::getHost($arr['user_ip'])."</td>";
 					echo "</tr>";
 					
 				}			
@@ -422,7 +422,7 @@
 		if (!isset($s->home_visited))
 		{
 			echo "Hallo <b>".$cu->nick."</b>, willkommen im Administrationsmodus! Dein Rang ist <b>".$cu->groupName.".</b><br/>";
-			//echo "<span style=\"color:#0f0;\">Dein letzter Login war <b>".df($s['user_last_login'])."</b>, Host: <b>".resolveIp($s['user_last_host'])."</b> (aktuell: ".gethostbyaddr($_SERVER['REMOTE_ADDR'])."), IP: <b>".$s['user_last_ip']."</b> (aktuell: ".$_SERVER['REMOTE_ADDR'].")</span><br/><br/>";
+			//echo "<span style=\"color:#0f0;\">Dein letzter Login war <b>".df($s['user_last_login'])."</b>, Host: <b>".Net::getHost($s['user_last_host'])."</b> (aktuell: ".gethostbyaddr($_SERVER['REMOTE_ADDR'])."), IP: <b>".$s['user_last_ip']."</b> (aktuell: ".$_SERVER['REMOTE_ADDR'].")</span><br/><br/>";
 			$s->home_visited=true;
 		}
 		

@@ -10,14 +10,14 @@
 	if (isset($_GET['ip'])  && $_GET['ip']!="")
 		$ip = $_GET['ip'];
 	elseif (isset($_GET['host'])  && $_GET['host']!="")
-		$ip = resolveHostname($_GET['host']);
+		$ip = Net::getAddr($_GET['host']);
 	else
 		$ip = "";
 		
 	if (isset($_GET['host']) && $_GET['host']!="")
 		$host = $_GET['host'];
 	elseif ($ip != "")
-		$host = resolveIp($ip);
+		$host = Net::getHost($ip);
 	else	
 		$host = "";
 	

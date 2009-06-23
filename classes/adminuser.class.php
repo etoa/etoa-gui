@@ -42,6 +42,11 @@ class AdminUser
 		return $this->valid;
 	}
 
+	function __toString()
+	{
+		return "[ADMIN]".$this->nick;
+	}
+
 	function __get($field)
 	{
 		if ($field == "id")

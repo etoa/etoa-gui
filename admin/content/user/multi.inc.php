@@ -5,7 +5,7 @@
 			echo "<h1>Multi-Erkennung - Details</h1>";
 			
 			echo "<b>IP:</b> <a href=\"?page=$page&amp;sub=ipsearch&amp;ip=".$ip."\">$ip</a><br/>
-			<b>Host:</b> <a href=\"?page=$page&amp;sub=ipsearch&amp;host=".resolveIp($ip)."\">".resolveIp($ip)."</a><br/><br/>";
+			<b>Host:</b> <a href=\"?page=$page&amp;sub=ipsearch&amp;host=".Net::getHost($ip)."\">".Net::getHost($ip)."</a><br/><br/>";
 			$ipres = dbquery("
 			SELECT 
 				user_blocked_from,

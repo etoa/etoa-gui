@@ -120,6 +120,9 @@ class MarketHandler
 		}
 	}
 
+	/**
+	* Add resources when a transaction is made
+	*/
 	static function addResToRate($supply,$demand)
 	{
 		global $resNames;
@@ -150,7 +153,7 @@ class MarketHandler
 		");
 	}
 
-
+/*
 	static function randomRates($n=MARKET_RATES_COUNT)
 	{
 		for ($i=0;$i<$n;$i++)
@@ -176,7 +179,7 @@ class MarketHandler
 			LIMIT 1;");
 			self::updateRates();
 		}
-	}
+	}*/
 
 
 }
