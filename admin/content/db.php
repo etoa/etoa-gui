@@ -123,7 +123,7 @@
 	    	echo "Die Punkte von ".$num[0]." Spielern wurden aktualisiert!<br/>";
 	    	$d = $num[1]/$num[0];
 	    	echo "Ein Spieler hat durchschnittlich ".nf($d)." Punkte!<br/><br/>";
-	    	echo "<a href=\"?page=home&amp;sub=stats\">Resultat</a><br/><br/>";
+	    	echo "<a href=\"?page=overview&amp;sub=stats\">Resultat</a><br/><br/>";
 				// Update-Flag löschen
 				dbquery("UPDATE config SET config_value=0 WHERE config_name='updating';");            
 	    }

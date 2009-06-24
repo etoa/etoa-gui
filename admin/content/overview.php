@@ -421,7 +421,7 @@
 
 		if (!isset($s->home_visited))
 		{
-			echo "Hallo <b>".$cu->nick."</b>, willkommen im Administrationsmodus! Dein Rang ist <b>".$cu->groupName.".</b><br/>";
+			echo "<p>Hallo <b>".$cu->nick."</b>, willkommen im Administrationsmodus! Dein Rang ist <b>".$cu->groupName.".</b><br/></p>";
 			//echo "<span style=\"color:#0f0;\">Dein letzter Login war <b>".df($s['user_last_login'])."</b>, Host: <b>".Net::getHost($s['user_last_host'])."</b> (aktuell: ".gethostbyaddr($_SERVER['REMOTE_ADDR'])."), IP: <b>".$s['user_last_ip']."</b> (aktuell: ".$_SERVER['REMOTE_ADDR'].")</span><br/><br/>";
 			$s->home_visited=true;
 		}
@@ -625,7 +625,6 @@
 			echo "<a href=\"?page=alliances&amp;sub=imagecheck\" style=\"font-weight:bold;color:#f90;\">".$arr[0]." Allianz-Profilbilder</a> wurden noch nicht verifiziert. Gewisse Bilder könnten gegen die Regeln verstossen. <a href=\"?page=alliances&amp;sub=imagecheck\">Jetzt prüfen</a>";
 			echo "</td></tr>";
 		}
-
 
 		tableEnd();		
 		

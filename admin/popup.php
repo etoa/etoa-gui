@@ -23,13 +23,17 @@
 	// 	Erstellt: 27.12.2007
 	// 	Bearbeitet von: Yanneck Boss alias Yanneck
 	// 	Bearbeitet am: 01.01.2008
-	// 	Kommentar: 	Notepad für den Admin Modus
+	// 	Kommentar: 	Notepad fï¿½r den Admin Modus
 	//
 	
 	require("inc/includer.inc.php");
 	
-	adminHtmlHeader($s['theme']);
-	
+	adminHtmlHeader();
+
+	$cu = new AdminUser($s->user_id);
+
+	echo "<div style=\"padding:10px\">";
+
 	if (eregi("^[a-z\_]+$",$page)  && strlen($page)<=50)
 	{
 		if (!include("content/".$page.".php"))
@@ -38,7 +42,8 @@
 	else
 		echo "<h1>Fehler</h1>Der Seitenname <b>".$page."</b> enth&auml;lt unerlaubte Zeichen!<br><br><a href=\"javascript:history.back();\">Zur&uuml;ck</a>";
 	
-	
+	echo "</div>";
+
 	adminHtmlFooter();
 	
 	require("inc/footer.inc.php");

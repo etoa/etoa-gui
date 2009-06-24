@@ -45,6 +45,9 @@
 		// Remove old ip-hostname combos from cache
 		Net::clearCache();
 
+		// Close open tickets that are answered by an admin and are inactive
+		Ticket::closeAssigedInactive();
+		
 		return $log;
 	}
 

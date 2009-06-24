@@ -64,7 +64,7 @@ elseif (isset($_GET['id']) && $_GET['id']>0)
 	}
 	if (isset($_POST['submit_assign']))
 	{
-		$ti->assign($s['user_id']);
+		$ti->assign($cu->id);
 		if ($ti->changed)
 			ok_msg("Ticket aktualisiert!");
 	}
@@ -78,7 +78,7 @@ elseif (isset($_GET['id']) && $_GET['id']>0)
 	if (isset($_POST['submit_new_post']))
 	{
 		// Do not inform the user with pm, because the close function does this already
-		if ($ti->addMessage(array("admin_id"=>$s['user_id'],"message"=>$_POST['message']),0))
+		if ($ti->addMessage(array("admin_id"=>$cu->id,"message"=>$_POST['message']),0))
 		{
 			ok_msg("Nachricht hinzugefügt!");
 			if (isset($_POST['checkclose']))
@@ -150,7 +150,7 @@ elseif (isset($_GET['id']) && $_GET['id']>0)
 	{
 		tableStart("Neue Nachricht");
 		echo '<tr><th>Absender:</th><td>';
-		echo $s['user_nick']." (Admin)";
+		echo $cu->nick." (Admin)";
 		echo '</td></tr>';
 		echo '<tr><th>Nachricht:</th><td>';
 		echo '<textarea name="message" rows="8" cols="60"></textarea>';

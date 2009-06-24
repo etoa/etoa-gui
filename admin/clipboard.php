@@ -1,26 +1,28 @@
 <?PHP
 	require("inc/includer.inc.php");
 	
-	adminHtmlHeader($s['theme']);
+	adminHtmlHeader();
 
-		if ($s['user_id']>0)
+	$cu = new AdminUser($s->user_id);
+
+		if ($cu->id >0)
 		{
 			echo "<h1>Zwischenablage</h1>";
 			
 			if (isset($_GET['add_user']) && $_GET['add_user']>0)
 			{
-				$s['cp_users'][$_GET['add_user']]=$_GET['add_user'];
+				$_SESSION['cp_users'][$_GET['add_user']]=$_GET['add_user'];
 			}
 			if (isset($_GET['rem_user']) && $_GET['rem_user']>0)
 			{
-				$s['cp_users'][$_GET['rem_user']]=null;
+				$_SESSION['cp_users'][$_GET['rem_user']]=null;
 			}			
 			
-			echo "<h2>Benutzer [<a href=\"index.php?page=home&amp;sub=stats\" target=\"main\">alle</a>]</h2>";
-			if (isset($s['cp_users']) && count($s['cp_users'])>0)
+			echo "<h2>Benutzer [<a href=\"index.php?page=overview&amp;sub=stats\" target=\"main\">alle</a>]</h2>";
+			if (isset($_SESSION['cp_users']) && count($_SESSION['cp_users'])>0)
 			{
 				echo "<ul style=\"list-style-type:none;margin-left:-20px;\">";
-				foreach ($s['cp_users'] as $uid)
+				foreach ($_SESSION['cp_users'] as $uid)
 				{
 					if ($uid>0)
 					{

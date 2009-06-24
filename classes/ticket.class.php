@@ -488,6 +488,30 @@ class Ticket
 		return $arr[0];
 	}
 
+	/**
+	 * Searches assigned tickets that are answered by an admin
+	 * and inactive for 72 hours
+	 */
+	static function closeAssigedInactive()
+	{
+		$threshold = time()-72*3600;
+		$res = dbquery("SELECT id FROM tickets WHERE status='assigned' AND timestamp<$threshold");
+		while ($arr = mysql_fetch_assoc($res))
+		{
+			$mres = dbquery("SELECT * FROM ticket_msg WHERE ticket_id=".$arr['id']." ORDER BY timestamp DESC LIMIT 1;");
+			if (mysql_num_rows($mres)>0)
+			{
+				$marr = mysql_fetch_assoc($mres);
+				if ($marr['admin_id']>0)
+				{
+					$tt = new Ticket($arr['id']);
+					$tt->addMessage(array("message"=>"Das Ticket wurde automatisch geschlossen, da wir innerhalb der letzten 72 Stunden nichts mehr von dir gehört haben."));
+					$tt->close("solved");
+				}
+			}
+		}
+	}
+
 }
 
 /**

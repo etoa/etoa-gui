@@ -73,7 +73,7 @@
 			ticketmail=".$_POST['ticketmail'].",
 			player_id=".$_POST['player_id']."			
 		WHERE 
-			user_id='".$s['user_id']."';");
+			user_id='".$cu->id."';");
 		
 		if ($arr['player_id']!=$_POST['player_id'])
 		{
@@ -93,7 +93,7 @@
 		}
 		
 		cms_ok_msg("Die Daten wurden ge&auml;ndert!");
-		add_log(8,$s['user_nick']." ändert seine Daten",time());
+		add_log(8,$cu->nick." ändert seine Daten");
 	}		
 	
 	echo "<form action=\"?myprofile=1\" method=\"post\">";
@@ -105,7 +105,7 @@
 	FROM
 		admin_users
 	WHERE
-		user_id=".$s['user_id'].";");
+		user_id=".$cu->id.";");
 	$darr = mysql_fetch_array($dres);
 	echo "<fieldset><legend>Daten</legend>";
 	echo "<br/><table class=\"tbl\">";

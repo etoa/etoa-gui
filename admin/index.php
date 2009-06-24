@@ -203,7 +203,7 @@
 								echo "<tr><th colspan=\"3\">Online</th></tr>";
 								if (UNIX)
 								{
-									echo "<tr><th><a href=\"?page=home&amp;sub=daemon\">Backend:</a></th>";
+									echo "<tr><th><a href=\"?page=overview&amp;sub=daemon\">Backend:</a></th>";
 									if ($pid = checkDaemonRunning($daemonPidfile))
 										echo "<td colspan=\"2\" style=\"color:#0f0;\">Online, PID $pid</td>";
 									else
@@ -211,7 +211,7 @@
 									echo "</tr>";							
 								}								
 								echo "<tr><th><a href=\"?page=user&amp;sub=userlog\">User:</a></th><td>".$garr[0]." / ".$uarr[0]."</td><td>".round($gp,1)."%</td></tr>";
-								echo "<tr><th><a href=\"?page=home&amp;sub=adminlog\">Admins:</a></th><td>".$a1arr[0]." / ".$a2arr[0]."</td><td>".round($ap,1)."%</td></tr>";
+								echo "<tr><th><a href=\"?page=overview&amp;sub=adminlog\">Admins:</a></th><td>".$a1arr[0]." / ".$a2arr[0]."</td><td>".round($ap,1)."%</td></tr>";
 								echo "</table>";
 
 								//

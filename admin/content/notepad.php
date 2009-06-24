@@ -1,6 +1,6 @@
 <?PHP
 
-	$UID = $s['user_id'];
+	$UID = $cu->id;
 	if ($UID >0)
 	{
 			
