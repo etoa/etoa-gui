@@ -23,8 +23,8 @@
 				<img src="{$currentPlanetImage}" alt="Planet" style="width:100px;height:100px;" />
 			</a>
 		</div>
-		<a id="prevEntity" href="?page={$page}&planet_id={$prevPlanetId}"></a>
-		<a id="nextEntity" href="?page={$page}&planet_id={$nextPlanetId}"></a>
+		<a id="prevEntity" href="?page={$page}&change_entity={$prevPlanetId}"></a>
+		<a id="nextEntity" href="?page={$page}&change_entity={$nextPlanetId}"></a>
 		<div id="planetname">
 			{$selectField}
 		</div>		

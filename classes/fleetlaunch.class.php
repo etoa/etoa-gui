@@ -239,6 +239,7 @@
 						"name" => $arr['ship_name'],
 						"pilots" => $arr['ship_pilots'] * $cnt,
 						"special" => $arr['special_ship'],
+						"actions" => explode(",",$arr['ship_actions']),
 						"sLevel" => $arr['shiplist_special_ship_level'],
 						"sExp" => $arr['shiplist_special_ship_exp'],
 						"sBonusWeapon" => $arr['shiplist_special_ship_bonus_weapon'],
@@ -685,7 +686,7 @@
 				$this->error = "Flottensperre von ".df($cfg->p1("flightban_time"))." bis ".df($cfg->p2("flightban_time")).". ".$cfg->p1("flightban");
 			}
 			else
-			{			
+			{
 				// Test each possible action
 				foreach ($actions as $i)
 				{
@@ -701,39 +702,55 @@
 					(!$ai->allianceAction || $this->getAllianceSlots()>0 || $allowed) //this last check, checks for every AllianceAction support, alliance if there is a empty slot
 					)
 					{
-						if($this->targetEntity->ownerId()>0)
+						//Check for exclusive Actions
+						$exclusiceAllowed = true;
+						if ($ai->exclusive())
 						{
-							if (!$this->targetEntity->ownerHoliday() || $ai->allowOnHoliday())
+							foreach($this->getShips() as $ship)
 							{
-								if ($ai->attitude() > 1)
+								if (!(in_array($ai->code(),$ship['actions'])))
 								{
-									if (!$battleban)
+									$exclusiceAllowed = false;
+									break;
+								}
+							}
+						}
+						if ($exclusiceAllowed)
+						{
+							if($this->targetEntity->ownerId()>0)
+							{
+								if (!$this->targetEntity->ownerHoliday() || $ai->allowOnHoliday())
+								{
+									if ($ai->attitude() > 1)
 									{
-										if( !($this->sourceEntity->ownerPoints()*USER_ATTACK_PERCENTAGE>$this->targetEntity->ownerPoints()  || $this->sourceEntity->ownerPoints()/USER_ATTACK_PERCENTAGE < $this->targetEntity->ownerPoints() ) 
-										|| $this->targetEntity->owner->lastOnline<time()-USER_INACTIVE_SHOW*86400 
-										|| $this->targetEntity->ownerLocked() )
+										if (!$battleban)
 										{
-											$actionObjs[$i] = $ai;
+											if( !($this->sourceEntity->ownerPoints()*USER_ATTACK_PERCENTAGE>$this->targetEntity->ownerPoints()  || $this->sourceEntity->ownerPoints()/USER_ATTACK_PERCENTAGE < $this->targetEntity->ownerPoints() ) 
+											|| $this->targetEntity->owner->lastOnline<time()-USER_INACTIVE_SHOW*86400 
+											|| $this->targetEntity->ownerLocked() )
+											{
+												$actionObjs[$i] = $ai;
+											}
+											else
+											{
+												$this->error = "Der Besitzer des Ziels steht unter Anfängerschutz!  Die Punkte des Users m&uuml;ssen zwischen ".(USER_ATTACK_PERCENTAGE*100)."% und ".(100/USER_ATTACK_PERCENTAGE)."% von deinen Punkten liegen";
+											}
 										}
-										else
-										{
-											$this->error = "Der Besitzer des Ziels steht unter Anfängerschutz!  Die Punkte des Users m&uuml;ssen zwischen ".(USER_ATTACK_PERCENTAGE*100)."% und ".(100/USER_ATTACK_PERCENTAGE)."% von deinen Punkten liegen";
-										}
+									}
+									else
+									{
+										$actionObjs[$i] = $ai;
 									}
 								}
 								else
 								{
-									$actionObjs[$i] = $ai;
+									$this->error = "Der Besitzer des Zielst ist im Urlaub; viele Aktionen sind deshalb nicht möglich!";
 								}
 							}
 							else
 							{
-								$this->error = "Der Besitzer des Zielst ist im Urlaub; viele Aktionen sind deshalb nicht möglich!";
+								$actionObjs[$i] = $ai;
 							}
-						}
-						else
-						{
-							$actionObjs[$i] = $ai;
 						}
 					}
 				}
