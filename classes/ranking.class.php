@@ -1038,7 +1038,9 @@
 	 		if ($manual)
 	 			add_log("4","Statistiken wurden manuell vom User ".$_SESSION[SESSION_NAME]['user_nick']." aktualisiert!",time());
 	 		else
-	 			add_log("4","Statistiken wurden aktualisiert!",time());
+			{
+	 		//	add_log("4","Statistiken wurden aktualisiert!",time());
+			}
 
 			//Arrays löschen (Speicher freigeben)
 			mysql_free_result($res);

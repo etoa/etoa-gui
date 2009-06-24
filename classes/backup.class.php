@@ -29,19 +29,20 @@
 				{
 					if ($cfg->p2('backup')==1)
 					{
-						$result = shell_exec("gzip -9 --best ".$file.".sql");
+						$result = shell_exec("gzip ".$file.".sql");
 						if ($result!="")
 						{
 							echo "Error while zipping Backup-Dump $file: $result\n";
 						}
 						else
 						{
-							$log.= "Backup erstellt! Grösse: ".byte_format(filesize($file.".sql"));						
+							$log.= "GZIP Backup erstellt! Grösse: ".byte_format(filesize($file.".sql.gz"));
 							$rtn = true;
 						}
 					}
 					else
 					{
+						$log.= "Backup erstellt! Grösse: ".byte_format(filesize($file.".sql"));
 						$rtn = true;
 					}
 				}

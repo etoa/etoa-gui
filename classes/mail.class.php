@@ -13,7 +13,7 @@ class Mail
 {
 	function __construct($subject,$text,$useTemplate=1)
 	{
-		$this->subject = ROUNDID." - ".$subject;
+		$this->subject = Config::getInstance()->game_name." ".ROUNDID.": ".$subject;
 		if ($useTemplate)
 		{
 			$this->body.= $text."
