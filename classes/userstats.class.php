@@ -144,7 +144,7 @@
 		// Renderzeit
 		$cfg = Config::getInstance();
 		$render_time = explode(" ",microtime()); $rtime = $render_time[1]+$render_time[0]-$render_starttime; 
-		imagestring($im,6,10,5,$cfg->game_name->v." ".$cfg->game_name->p1." - ".ROUNDID,$colBlack);
+		imagestring($im,6,10,5,$cfg->game_name->v." ".$cfg->game_name->p1." - ".Config::getInstance()->roundname->v,$colBlack);
 		imagestring($im,6,10,20,"Userstatistik der letzten 24 Stunden",$colBlack);	
 		imagestring($im,2,10,40,"Erstellt: ".date("d.m.Y, H:i").", Renderzeit: ".round($rtime,3)." sec",$colBlack);	
 	

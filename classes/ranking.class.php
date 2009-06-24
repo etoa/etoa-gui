@@ -1112,8 +1112,8 @@
 					else
 						$pt = "  -  ".nf($arr[4])." Punkte, Platz ".$arr[8]."";
 					
-					ImageTTFText ($im, 9, 0, 9, 54, $colBlack, $font,ROUNDID.$pt);
-					ImageTTFText ($im, 9, 0, 8, 53, $colWhite, $font,ROUNDID.$pt);
+					ImageTTFText ($im, 9, 0, 9, 54, $colBlack, $font,Config::getInstance()->roundname->v.$pt);
+					ImageTTFText ($im, 9, 0, 8, 53, $colWhite, $font,Config::getInstance()->roundname->v.$pt);
 			
 					$file = CACHE_ROOT."/userbanner/".md5("user".$arr[5]).".png";
 					if (file_exists($file))

@@ -91,8 +91,8 @@
 	$tpl->assign("bodyTopStuff",ob_get_clean());
 
 	$tpl->assign("topmenu",$indexpage);
-	$tpl->assign("loginurl",LOGINSERVER_URL);
-	$tpl->assign("roundname",ROUNDID);
+	$tpl->assign("loginurl",Config::getInstance()->loginurl->v);
+	$tpl->assign("roundname",Config::getInstance()->roundname->v);
 
 	//
 	// Page content

@@ -33,7 +33,7 @@
 			if ($sessionKey!="")
 			{
 				// Valid browser values
-				if (substr($sessionKey,64,32)==md5(ROUNDID) 
+				if (substr($sessionKey,64,32)==md5(Config::getInstance()->roundname->v)
 				&& substr($sessionKey,96,32)==md5($_SERVER['REMOTE_ADDR']) 
 				&& substr($sessionKey,128,32)==md5($_SERVER['HTTP_USER_AGENT']) 
 				&& substr($sessionKey,160)==session_id() )

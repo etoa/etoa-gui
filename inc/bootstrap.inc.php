@@ -45,9 +45,22 @@
 	// Include db config
 	if (!@include_once(RELATIVE_ROOT."config/db.config.php"))
 	{
+		if (ADMIN_MODE)
+			forward(RELATIVE_ROOT);
 		require(RELATIVE_ROOT."inc/install.inc.php");
 		exit();
 	}
+
+	// Connect to database
+	dbconnect();
+
+	// Load config
+	$cfg = Config::getInstance();
+	$conf = $cfg->getArray();
+
+	// Debug einschalten?
+	if (!defined('ETOA_DEBUG'))
+		define('ETOA_DEBUG',$cfg->debug->v);
 
 	// Fehlermeldungs-Level feststellen
 	if (ETOA_DEBUG==1)
@@ -60,13 +73,6 @@
 		$s = AdminSession::getInstance();
 	else
 		$s = UserSession::getInstance();
-
-	// Connect to database
-	dbconnect();
-
-	// Load config
-	$cfg = Config::getInstance();
-	$conf = $cfg->getArray();
 
 	// Load default values
 	require_once(RELATIVE_ROOT."inc/def.inc.php");
@@ -84,6 +90,7 @@
 	// Initialize XAJAX and load functions
 	if (USE_HTML) // todo: shell check
 	{
+		define('XAJAX_DEBUG',false);
 		if (ADMIN_MODE)
 			require_once(RELATIVE_ROOT."/admin/inc/xajax_admin.inc.php");
 		else

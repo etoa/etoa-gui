@@ -13,7 +13,7 @@ class Mail
 {
 	function __construct($subject,$text,$useTemplate=1)
 	{
-		$this->subject = Config::getInstance()->game_name." ".ROUNDID.": ".$subject;
+		$this->subject = Config::getInstance()->game_name." ".Config::getInstance()->roundname->v.": ".$subject;
 		if ($useTemplate)
 		{
 			$this->body.= $text."
@@ -28,7 +28,7 @@ Forum: http://www.etoa.ch/forum";
 		{
 			$this->body = $text;
 		}
-		$this->headers = "From: ".Config::getInstance()->game_name." ".ROUNDID."<".MAIL_SENDER.">\n";
+		$this->headers = "From: ".Config::getInstance()->game_name." ".Config::getInstance()->roundname->v."<".MAIL_SENDER.">\n";
 		$this->headers.= "Content-Type: text/plain; charset=UTF-8\n";
 		$this->headers.= "MIME-Version: 1.0\n";
 		$this->headers.= "Content-Transfer-Encoding: 8bit\n";

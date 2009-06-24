@@ -827,8 +827,9 @@
 		</script>
 		<?PHP
 
-		iBoxStart("Filter",600);
-		echo "<form><label for=\"logcat\">Kategorie:</label>
+		iBoxStart("Filter",570);
+		echo "<form action=\".\" method=\"post\"><p>
+		<label for=\"logcat\">Kategorie:</label>
 		<select id=\"logcat\" onchange=\"applyFilter(0)\">
 		<option value=\"0\">(Alle)</option>";
 		$lres=dbquery("SELECT cat_id,cat_name,COUNT(*) as cnt FROM log_cat INNER JOIN logs ON log_cat=cat_id GROUP BY cat_id;;");
@@ -840,7 +841,7 @@
 		echo " <label for=\"searchtext\">Suchtext:</label> <input type=\"text\" id=\"searchtext\" value=\"\" /> &nbsp;
 		<input type=\"submit\" value=\"Anwenden\" onclick=\"applyFilter(0);document.getElementById('searchtext').select();return false;\" /> &nbsp;
 		<input type=\"button\" value=\"Reset\" onclick=\"document.getElementById('logcat').value=0;document.getElementById('searchtext').value='';applyFilter(0);document.getElementById('searchtext').focus();\" />";
-		echo "</form>";
+		echo "</p></form>";
 		iBoxEnd();
 
 		echo "<div id=\"log_contents\">";
@@ -848,7 +849,7 @@
 		echo "</div>";
 
 		$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM logs;"));
-		echo "<br/>Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.<br><br>";
+		echo "<p>Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.</p>";
 		
 	}
 			

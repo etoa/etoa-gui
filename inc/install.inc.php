@@ -2,8 +2,19 @@
 
 define('ADMIN_ROOT_GROUP',8);
 
+// Load template engine
+require_once(RELATIVE_ROOT."inc/template.inc.php");
+$tpl->assign("gameTitle","Setup");
+$tpl->assign("templateDir","designs/Discovery");
+$indexpage = array();
+$indexpage['feeds']=array('url'=>'.','label'=>'Setup');
+$tpl->assign("topmenu",$indexpage);
+$tpl->display(getcwd()."/tpl/headerext.html");
 
 session_start();
+
+if (!isset($_SESSION['INSTALL']))
+	$_SESSION['INSTALL'] = array();
 
 if (!file_exists("conf.inc.php") && !file_exists("../conf.inc.php"))
 {
@@ -43,17 +54,18 @@ if (!file_exists("conf.inc.php") && !file_exists("../conf.inc.php"))
 		}
 		echo "<br/>";
 	}
-	elseif($_POST['step2_submit'])
+	elseif(isset($_POST['step2_submit']) && $_POST['step2_submit'])
 	{
 		$step = 2;
+
+		$_SESSION['INSTALL']['round_name'] = $_POST['round_name'];
+		$_SESSION['INSTALL']['loginserver_url'] = $_POST['loginserver_url'];
+		$_SESSION['INSTALL']['password_salt'] = $_POST['password_salt'];
+
 		if ($_POST['round_name'] != "" && $_POST['loginserver_url'] != "" && $_POST['password_salt'] != "")
 		{
 			$step = 3;
 			$_SESSION['INSTALL']['step'] = 3;
-			$_SESSION['INSTALL']['round_name'] = $_POST['round_name'];
-			$_SESSION['INSTALL']['loginserver_url'] = $_POST['loginserver_url'];
-			$_SESSION['INSTALL']['password_salt'] = $_POST['password_salt'];
-			$_SESSION['INSTALL']['etoa_debug'] = $_POST['etoa_debug']==1 ? 1 : 0;
 			
 		}
 		else
@@ -62,7 +74,7 @@ if (!file_exists("conf.inc.php") && !file_exists("../conf.inc.php"))
 		}		
 	}	
 	
-	elseif($_POST['step3_submit'])
+	elseif(isset($_POST['step3_submit']) && $_POST['step3_submit'])
 	{
 		$step = 3;
 		if ($_POST['referers'] != "")
@@ -70,8 +82,10 @@ if (!file_exists("conf.inc.php") && !file_exists("../conf.inc.php"))
 			$step = 4;
 			$_SESSION['INSTALL']['step'] = 4;
 			$_SESSION['INSTALL']['referers'] = $_POST['referers'];
-			$_SESSION['INSTALL']['admin_user'] = $_POST['admin_user'];
-			$_SESSION['INSTALL']['admin_user_pw'] = $_POST['admin_user_pw'];
+			if (isset($_POST['admin_user']))
+				$_SESSION['INSTALL']['admin_user'] = $_POST['admin_user'];
+			if (isset($_POST['admin_user_pw']))
+				$_SESSION['INSTALL']['admin_user_pw'] = $_POST['admin_user_pw'];
 			
 		}
 		else
@@ -80,7 +94,7 @@ if (!file_exists("conf.inc.php") && !file_exists("../conf.inc.php"))
 		}		
 	}		
 	
-	if (isset($_SESSION['INSTALL']['step']) && $_GET['step']>0)
+	if (isset($_SESSION['INSTALL']['step']) && isset($_GET['step']) && $_GET['step']>0)
 	{
 		$step = $_GET['step'];
 	}
@@ -108,9 +122,13 @@ if (!file_exists("conf.inc.php") && !file_exists("../conf.inc.php"))
 		
 		$cfg = Config::getInstance();
 		$cfg->set("referers",$_SESSION['INSTALL']['referers']);
+		$cfg->set("roundname",$_SESSION['INSTALL']['round_name']);
+		$cfg->set("loginurl",$_SESSION['INSTALL']['loginserver_url']);
+		$cfg->set("password_salt",$_SESSION['INSTALL']['password_salt']);
+
 		echo "<div style=\"color:#0f0\">Refererliste gespeichert!</div><br/>";
 		
-		if ($_SESSION['INSTALL']['admin_user']!="" && $_SESSION['INSTALL']['admin_user_pw']!="")
+		if (isset($_SESSION['INSTALL']['admin_user']) && $_SESSION['INSTALL']['admin_user']!="" && $_SESSION['INSTALL']['admin_user_pw']!="")
 		{
 			$res = dbquery("SELECT COUNT(*) FROM admin_users WHERE user_nick='".$_SESSION['INSTALL']['admin_user']."';");
 			$arr = mysql_fetch_row($res);
@@ -149,17 +167,12 @@ if (!file_exists("conf.inc.php") && !file_exists("../conf.inc.php"))
 	define('DB_PASSWORD','".$_SESSION['INSTALL']['db_password']."');
 	define('DB_DATABASE','".$_SESSION['INSTALL']['db_name']."');	
 	
-	define('PASSWORD_SALT','".$_SESSION['INSTALL']['password_salt']."');
-	define('LOGINSERVER_URL','".$_SESSION['INSTALL']['loginserver_url']."');
-	define('ROUNDID','".$_SESSION['INSTALL']['round_name']."');
-	define('ETOA_DEBUG',".$_SESSION['INSTALL']['etoa_debug'].");
 ?&gt;";
 
-		echo "Fertig! Du kannst nun den folgenden Inhalt in eine neue Datei namens conf.inc.php speichern und 
-		diese im EtoA-Hauptverzeichnis platzieren!<br/><br/><fieldset style=\"width:900px;background:#eee;font-family:courier new;\">
-			<legend>conf.inc.php</legend>
+		echo "Fertig! Du musst nun den folgenden Inhalt in eine neue Textdatei namens <b>config/db.config.php</b> speichern!<br/><br/>
+			<div style=\"width:900px;background:#eee;color:#000;font-family:courier new;margin:0px auto;text-align:left;\">
 			".nl2br($out)."
-		</fieldset>";		
+		</div>";
 		echo "<br/>&gt;&gt; <a href=\"admin\">Zum Admin-Login</a><br/><br/>
 		&gt;&gt; <a href=\"".$_SESSION['INSTALL']['loginserver_url']."\">Zum Loginserver</a><br/><br/>";
 	
@@ -183,12 +196,12 @@ if (!file_exists("conf.inc.php") && !file_exists("../conf.inc.php"))
 		$cfg = Config::getInstance();
 		
 		echo "<form action=\"?\" method=\"post\">
-		<fieldset style=\"width:900px;\">
+		<fieldset style=\"width:700px;margin:0px auto;\">
 			<legend>Weitere Einstellungen</legend>
 			<table>
 				<tr>
 					<th>Referers:</th>
-					<td><textarea name=\"referers\" rows=\"6\" cols=\"50\">".($_SESSION['INSTALL']['referers']!="" ? $_SESSION['INSTALL']['referers'] : $cfg->get('referers'))."</textarea></td>
+					<td><textarea name=\"referers\" rows=\"6\" cols=\"50\">".(isset($_SESSION['INSTALL']['referers']) ? $_SESSION['INSTALL']['referers'] : $cfg->get('referers'))."</textarea></td>
 					<td>(alle Seiten, welche als Absender gelten sollen. Also der Loginserver, sowie der aktuelle Server. Mache für jeden Eintrag eine neue Linie!)</td>
 				</tr>";
 				$res = dbquery("SELECT COUNT(*) FROM admin_users;");
@@ -221,30 +234,23 @@ if (!file_exists("conf.inc.php") && !file_exists("../conf.inc.php"))
 		Schritt 4
 		</div><br/>";
 		echo "<form action=\"?\" method=\"post\">
-		<fieldset style=\"width:700px;\">
+		<fieldset style=\"width:700px;;margin:0px auto;\">
 			<legend>Allgemeine Daten</legend>
 			<table>
 				<tr>
 					<th>Name der Runde:</th>
-					<td><input type=\"text\" name=\"round_name\" value=\"".$_SESSION['INSTALL']['round_name']."\" /></td>
+					<td><input type=\"text\" name=\"round_name\" value=\"".(isset($_SESSION['INSTALL']['round_name']) ? $_SESSION['INSTALL']['round_name'] : 'Runde X')."\" /></td>
 					<td>(z.b. Runde 1)</td>
 				</tr>
 				<tr>
 					<th>Loginserver-URL:</th>
-					<td><input type=\"text\" name=\"loginserver_url\" value=\"".$_SESSION['INSTALL']['loginserver_url']."\" /></td>
+					<td><input type=\"text\" name=\"loginserver_url\" value=\"".(isset($_SESSION['INSTALL']['loginserver_url']) ? $_SESSION['INSTALL']['loginserver_url'] : 'http://www.etoa.ch')."\" /></td>
 					<td>(z.b. http://www.etoa.ch)</td>
 				</tr>
 				<tr>
 					<th>Passwort-Salt:</th>
-					<td><input type=\"text\" name=\"password_salt\" value=\"".$_SESSION['INSTALL']['password_salt']."\" /></td>
+					<td><input type=\"text\" name=\"password_salt\" value=\"".(isset($_SESSION['INSTALL']['password_salt']) ? $_SESSION['INSTALL']['password_salt'] : '')."\" /></td>
 					<td>(mit diesem Schlüssel werden alle Passwörter zusätzlich verschlüsselt; darf während einer laufenden Runde nicht ge&auml;ndert werde da sonst die Passw&ouml;rter nicht mehr gehen)</td>
-				</tr>
-				<tr>
-					<th>Debug-Modus:</th>
-					<td><input type=\"checkbox\" name=\"etoa_debug\" value=\"1\" ";
-					if ($_SESSION['INSTALL']['etoa_debug']==1) echo " checked=\"checked\"";
-					echo "/></td>
-					<td>(zeigt PHP-Warnungen an)</td>
 				</tr>
 			</table>
 		</fieldset>		
@@ -265,27 +271,27 @@ if (!file_exists("conf.inc.php") && !file_exists("../conf.inc.php"))
 		Schritt 4
 		</div><br/>";
 		echo "<form action=\"?\" method=\"post\">
-		<fieldset style=\"width:400px;\">
+		<fieldset style=\"width:400px;margin:0px auto;\">
 			<legend>MySQL-Datenbank</legend>
 			<table>
 				<tr>
 					<th>Server:</th>
-					<td><input type=\"text\" name=\"db_server\" value=\"".$_SESSION['INSTALL']['db_server']."\" /></td>
+					<td><input type=\"text\" name=\"db_server\" value=\"".(isset($_SESSION['INSTALL']['db_server']) ? $_SESSION['INSTALL']['db_server'] : '')."\" /></td>
 					<td>(z.b. localhost)</td>
 				</tr>
 				<tr>
 					<th>Datenbank:</th>
-					<td><input type=\"text\" name=\"db_name\" value=\"".$_SESSION['INSTALL']['db_name']."\" /></td>
+					<td><input type=\"text\" name=\"db_name\" value=\"".(isset($_SESSION['INSTALL']['db_name']) ? $_SESSION['INSTALL']['db_name'] : '')."\" /></td>
 					<td>(z.b. etoaroundx)</td>
 				</tr>
 				<tr>
 					<th>User:</th>
-					<td><input type=\"text\" name=\"db_user\" value=\"".$_SESSION['INSTALL']['db_user']."\" /></td>
+					<td><input type=\"text\" name=\"db_user\" value=\"".(isset($_SESSION['INSTALL']['db_user']) ? $_SESSION['INSTALL']['db_user'] : '')."\" /></td>
 					<td>(z.b. etoauser)</td>
 				</tr>
 				<tr>
 					<th>Passwort:</th>
-					<td><input type=\"password\" name=\"db_password\" value=\"".$_SESSION['INSTALL']['db_password']."\" /></td>
+					<td><input type=\"password\" name=\"db_password\" value=\"".(isset($_SESSION['INSTALL']['db_password']) ? $_SESSION['INSTALL']['db_password'] : '')."\" /></td>
 					<td>(mind. 10 Zeichen)</td>
 				</tr>
 			</table>
@@ -300,8 +306,7 @@ else
 	echo "Ihre Konfigurationsdatei existiert bereits!";
 }
 
-	define("PASSWORD_SALT","wokife63wigire64reyodi69");
-	define('LOGINSERVER_URL',"http://dev.etoa.ch");
-	define('ROUNDID',"Testrunde");
-	define('ETOA_DEBUG',0);
+$tpl->display(getcwd()."/tpl/footer.html");
+
+
 ?>

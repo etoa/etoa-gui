@@ -78,7 +78,7 @@
 	/**
 	* Baut die Datenbankverbindung auf
 	*/
-	function dbconnect()
+	function dbconnect($throwError = 1)
 	{
 		global $db_handle;
 		global $query_counter;
@@ -91,11 +91,17 @@
 		{
 			if (!$db_handle = @mysql_connect(DB_SERVER,DB_USER,DB_PASSWORD))
 			{
-				throw new DBException("Zum Datenbankserver auf <b>".DB_SERVER."</b> kann keine Verbindung hergestellt werden!");	
+				if ($throwError==1)
+					throw new DBException("Zum Datenbankserver auf <b>".DB_SERVER."</b> kann keine Verbindung hergestellt werden!");
+				else
+					return false;
 			}
 			if (!mysql_select_db(DB_DATABASE))
 			{
-				throw new DBException("Auf die Datenbank <b>".DB_DATABASE."</b> auf <b>".DB_SERVER."</b> kann nicht zugegriffen werden!");				
+				if ($throwError==1)
+					throw new DBException("Auf die Datenbank <b>".DB_DATABASE."</b> auf <b>".DB_SERVER."</b> kann nicht zugegriffen werden!");
+				else
+					return false;
 			}
 			$dbopen = true;
 			dbquery("SET NAMES 'utf8';"); 
@@ -157,7 +163,7 @@
 		}
 			
 		$query_counter++;
-		if (ETOA_DEBUG==1 && stristr($string,"SELECT"))
+		if (defined('ETOA_DEBUG') && ETOA_DEBUG==1 && stristr($string,"SELECT"))
 		{
 			ob_start();
 			debug_print_backtrace();
@@ -2291,12 +2297,13 @@ function imagecreatefromfile($path, $user_functions = false)
 	*/
 	function pw_salt($pw,$seed=0)
 	{
-		return md5($pw.$seed.PASSWORD_SALT).md5(PASSWORD_SALT.$seed.$pw);
+		$salt = Config::getInstance()->password_salt->v;
+		return md5($pw.$seed.$salt).md5($salt.$seed.$pw);
 	}
 	
 	function pw_salt2($pw,$seed=0)
 	{
-		$gseed = PASSWORD_SALT;	// Take the general seed
+		$gseed = Config::getInstance()->password_salt->v;	// Take the general seed
 		$seedlen = strlen($gseed); // Measure it's length
 		$pwlen = strlen($pw);	// Measure the password length		
 		$mlen = max($pwlen,$seedlen); // Get the maximum lenght
@@ -2866,7 +2873,7 @@ function imagecreatefromfile($path, $user_functions = false)
 	function showTitle($title)
 	{
 		echo "<br/><a href=\"?\"><img src=\"images/game_logo.gif\" alt=\"EtoA Logo\" /></a>";
-		echo "<h1>$title - ".ROUNDID."</h1>";
+		echo "<h1>$title - ".Config::getInstance()->roundname->v."</h1>";
 	}
 
 	function defineImagePaths()

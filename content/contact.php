@@ -74,7 +74,7 @@
 			");
 			if (mysql_num_rows($res)>0)
 			{
-				$text = "InGame-Anfrage ".ROUNDID."\n----------------------\n\n";
+				$text = "InGame-Anfrage ".Config::getInstance()->roundname->v."\n----------------------\n\n";
 				$text.= "Nick: ".$cu->nick."\n";
 				$text.= "ID: ".$cu->id."\n";
 				$text.= "IP/Host: ".$_SERVER['REMOTE_ADDR']." (".Net::getHost($_SERVER['REMOTE_ADDR']).")\n\n";

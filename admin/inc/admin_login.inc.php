@@ -31,7 +31,7 @@
 		adminHtmlHeader();
 		echo "<div style=\"width:500px;margin:10px auto;text-align:center;\">" .
 		"<br/><a href=\"..\"><img src=\"../images/game_logo.jpg\" alt=\"Logo\" width=\"450\" height=\"150\" border=\"0\" /></a>";
-		echo "<h1 style=\"text-align:center;\">Administration - ".ROUNDID."</h1>
+		echo "<h1 style=\"text-align:center;\">Administration - ".Config::getInstance()->roundname->v."</h1>
 		<h2 style=\"text-align:center;\">Passwort senden</h2>";
 		if (isset($_POST['sendpass_submit']))
 		{
@@ -40,7 +40,7 @@
 			{
 				$arr = mysql_fetch_row($res);			
 				$pw = mt_rand(1000000,9999999);
-				$msg = "Hallo ".$arr[1].".\n\nDu hast für die Administration der ".ROUNDID." von EtoA ein neues Passwort angefordert.\n\n";
+				$msg = "Hallo ".$arr[1].".\n\nDu hast für die Administration der ".Config::getInstance()->roundname->v." von EtoA ein neues Passwort angefordert.\n\n";
 				$msg.= "Das neue Passwort lautet: $pw\n\n";
 				$msg.= "Diese Anfrage wurde am ".date("d.m.Y")." um ".date("H:i")." Uhr vom Computer ".Net::getHost($_SERVER['REMOTE_ADDR'])." aus in Auftrag gegeben.\nBitte denke daran, das Passwort nach dem ersten Login zu ändern!";
 				$mail = new Mail("Neues Administrationspasswort",$msg);
@@ -93,7 +93,7 @@
 			{
 				echo "<div style=\"width:500px;margin:10px auto;text-align:center;\">" .
 				"<br/><a href=\"..\"><img src=\"../images/game_logo.jpg\" alt=\"Logo\" width=\"450\" height=\"150\" border=\"0\" /></a>";
-				echo "<h1 style=\"text-align:center;\">Administration - ".ROUNDID."</h1>";
+				echo "<h1 style=\"text-align:center;\">Administration - ".Config::getInstance()->roundname->v."</h1>";
 				echo "<form action=\"?\" method=\"post\">";			
 				echo "<h2 style=\"text-align:center;\">Admin-User erstellen</h2>";
 				echo '<table class="tb" style="width:400px;margin:10px auto;">';
@@ -118,7 +118,7 @@
 			if ($logo==1)
 			{
 				echo "<div  style=\"text-align:center\"><br/><a href=\"..\"><img src=\"../images/game_logo.jpg\" alt=\"Logo\" width=\"450\" height=\"150\" border=\"0\" /></a>";
-				echo "<h1 style=\"text-align:center\">Administration - ".ROUNDID."</h1><br/>";
+				echo "<h1 style=\"text-align:center\">Administration - ".Config::getInstance()->roundname->v."</h1><br/>";
 			}
 			if ($str!="")
 			{
@@ -142,7 +142,7 @@
 			<div style=\"margin:0px auto;\">
 				<input type=\"submit\" name=\"login_submit\" value=\"Login\" /> &nbsp;
 				<input type=\"button\" value=\"Passwort vergessen\" onclick=\"document.location='?sendpass=1'\" /> &nbsp;
-				<input type=\"button\" value=\"Zum Spiel-Login\" onclick=\"document.location='".LOGINSERVER_URL."'\" />
+				<input type=\"button\" value=\"Zum Spiel-Login\" onclick=\"document.location='".Config::getInstance()->loginurl->v."'\" />
 
 			</div></form></div>";
 			echo '<script type="text/javascript">document.forms[0].elements[0].focus()</script>';

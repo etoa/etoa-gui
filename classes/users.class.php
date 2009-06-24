@@ -59,7 +59,7 @@
 				{
 				$text ="Hallo ".$arr['user_nick']."
 				
-	Du hast dich seit mehr als ".USER_INACTIVE_LONG." Tage nicht mehr bei Escape to Andromeda (".ROUNDID.") eingeloggt und
+	Du hast dich seit mehr als ".USER_INACTIVE_LONG." Tage nicht mehr bei Escape to Andromeda (".Config::getInstance()->roundname->v.") eingeloggt und
 	dein Account wurde deshalb als inaktiv markiert. Solltest du dich innerhalb von ".USER_INACTIVE_SHOW." Tage
 	nicht mehr einloggen wird der Account gelöscht.
 	

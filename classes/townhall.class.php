@@ -20,9 +20,9 @@ class Townhall {
 			
 			// Build the channel tag
 			$rssValue .= "	<channel>\r\n";
-			$rssValue .= "		<title>EtoA Rathaus ".ROUNDID."</title>\r\n";
+			$rssValue .= "		<title>EtoA Rathaus ".Config::getInstance()->roundname->v."</title>\r\n";
 			$rssValue .= "		<link>http://www.etoa.ch</link>\r\n";
-			$rssValue .= "		<description>Rathaus der EtoA ".ROUNDID."</description>\r\n";
+			$rssValue .= "		<description>Rathaus der EtoA ".Config::getInstance()->roundname->v."</description>\r\n";
 			$rssValue .= "		<language>de</language>\r\n";
 			
 			// Build the image tag

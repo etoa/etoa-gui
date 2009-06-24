@@ -35,8 +35,12 @@ abstract class Session implements ISingleton
 	 */
 	protected function __construct()
 	{
-		ini_set('session.hash_function', 1); // Use SHA1 hash
-		session_name($this->namePrefix.ROUNDID); // Set session name based on round name
+		// Use SHA1 hash
+		ini_set('session.hash_function', 1);
+
+		// Set session name based on round name.
+		// MD5 is needed because spaces in roundname cause problems
+		session_name($this->namePrefix.md5(Config::getInstance()->roundname->v)); 
 		session_start();	// Start the session
 	}
 

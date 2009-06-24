@@ -33,6 +33,6 @@
 	}
 	else
 	{
-		forward(LOGINSERVER_URL);
+		forward(Config::getInstance()->loginurl->v);
 	}
 ?>

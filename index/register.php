@@ -58,7 +58,7 @@
 			$userEmail = isset($_SESSION['REGISTER']['register_user_email']) ? $_SESSION['REGISTER']['register_user_email'] : '';
 			
 			
-			echo 'Melde dich hier für die '.ROUNDID.' von '.$cfg->get('game_name').' an. Es sind noch <b>'.max($cfg->p2('enable_register')-$ucnt[0],0).'</b> von <b>'.$cfg->p2('enable_register').'</b> Plätzen frei!<br/><br/>';
+			echo 'Melde dich hier für die '.Config::getInstance()->roundname->v.' von '.$cfg->get('game_name').' an. Es sind noch <b>'.max($cfg->p2('enable_register')-$ucnt[0],0).'</b> von <b>'.$cfg->p2('enable_register').'</b> Plätzen frei!<br/><br/>';
 			echo "<form action=\"?index=register\" method=\"post\">
 			<div style=\"width:700px;margin:5px auto;\">";
 
@@ -80,8 +80,8 @@
 			echo "<td class=\"tbldata\" id=\"emailStatus\">Du musst eine g&uuml;ltige E-Mail-Adresse eingeben. Auf diese wird dir ein Passwort zugeschickt mit dem du dich einloggen kannst.</td></tr>";
 			echo "<tr><td colspan=\"3\">
 			<input type=\"checkbox\" name=\"agbread\" value=\"1\" onclick=\"if (this.checked) document.getElementById('register_submit').disabled=false; else document.getElementById('register_submit').disabled='disabled';\" />
-			Ich akzeptiere die <a href=\"javascript:;\" onclick=\"window.open('".LOGINSERVER_URL."/regeln');\" >Regeln</a>
-			sowie die <a href=\"javascript:;\" onclick=\"window.open('".LOGINSERVER_URL."/privacy');\" >Datenschutzerklärung</a>
+			Ich akzeptiere die <a href=\"javascript:;\" onclick=\"window.open('".Config::getInstance()->loginurl->v."/regeln');\" >Regeln</a>
+			sowie die <a href=\"javascript:;\" onclick=\"window.open('".Config::getInstance()->loginurl->v."/privacy');\" >Datenschutzerklärung</a>
 
 			<br/><ul style=\"text-align:left;margin-left:30px\">
 			<li>Pro Person darf nur 1 Account verwendet werden. Multis werden rigoros <a href=\"javascript:;\" onclick=\"window.open('?index=pillory');\">gesperrt</a>!</li>

@@ -104,7 +104,7 @@
 					</tr>
 					<tr>
 						<td id="logo">&nbsp;</td>
-						<td id="banner" colspan="2"><?PHP echo ROUNDID;?></td>
+						<td id="banner" colspan="2"><?PHP echo Config::getInstance()->roundname->v;?></td>
 					</tr>
 					<tr>
 						<td id="menu1">

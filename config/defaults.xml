@@ -18,7 +18,23 @@
     <category id="18">Ereignisse</category>
   </categories>
   <items>
-    <item name="num_of_sectors" cat="3">
+    <item name="game_name" cat="1">
+      <v comment="Spiel-Name" type="text">EtoA</v>
+      <p1 comment="Version" type="text">v3</p1>
+    </item>
+		<item name="roundname" cat="1">
+      <v comment="Runde-Name" type="text">Runde X</v>
+    </item>
+    <item name="roundurl" cat="1">
+      <v comment="Runden-URL" type="text">http://roundx.etoa.ch</v>
+    </item>
+    <item name="loginurl" cat="1">
+      <v comment="Login-URL" type="text">http://www.etoa.ch</v>
+    </item>
+    <item name="debug" cat="1">
+      <v comment="Debug-Modus" type="onoff">0</v>
+    </item>
+		<item name="num_of_sectors" cat="3">
       <p1 comment="Anzahl Sektoren X" type="text">2</p1>
       <p2 comment="Anzahl Sektoren Y" type="text">2</p2>
     </item>
@@ -58,10 +74,6 @@
       <p1 comment="Min Planetentemperatur" type="text">-155</p1>
       <p2 comment="Max Planetentemperatur" type="text">166</p2>
     </item>
-    <item name="game_name" cat="1">
-      <v comment="Spiel-Name" type="text">EtoA</v>
-      <p1 comment="Version" type="text">v3</p1>
-    </item>
     <item name="user_timeout" cat="1">
       <v comment="Timeout" type="text">2400</v>
     </item>
@@ -69,6 +81,9 @@
       <v comment="Minimale Passwortl&#xE4;nge" type="text">6</v>
       <p1 comment="Maximale PAsswortl&#xE4;nge" type="text">30</p1>
     </item>
+    <item name="password_salt" cat="1">
+      <v comment="Passwort-Salt" type="text">wokife63wigire64reyodi69</v>
+		</item>
     <item name="global_time" cat="2">
       <v comment="Global Bauzeit in Rohstoffe pro Sekunde, standart Value 12)" type="text">12</v>
     </item>
@@ -587,9 +602,6 @@ Anmerkung: Eine Kopie dieser Nachricht wird in Eurer Nachrichten-Box hinterlegt.
       <v comment="Grundchance" type="text">3</v>
       <p1 comment="Minimale Chance" type="text">1</p1>
       <p2 comment="Maximale Chance" type="text">10</p2>
-    </item>
-    <item name="roundurl" cat="1">
-      <v comment="Runden-URL" type="text">http://test.etoa.ch</v>
     </item>
     <item name="alliance_shipcosts_factor" cat="16">
       <v comment="Kostenfaktor pro Schiff&#13;&#10;&#13;&#10;calc: this.value * ships" type="text">1.02</v>

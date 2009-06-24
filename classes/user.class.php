@@ -783,7 +783,7 @@
 
 				$text ="Hallo ".$this->nick."
 
-	Dein Accouont bei Escape to Andromeda (".ROUNDID.") wurde auf Grund von Inaktivität
+	Dein Accouont bei Escape to Andromeda (".Config::getInstance()->roundname->v.") wurde auf Grund von Inaktivität
 	oder auf eigenem Wunsch hin gelöscht.
 
 	Mit freundlichen Grüssen,
@@ -891,7 +891,7 @@
 				if ($welcomeMail == 1)
 				{
 		      $email_text = "Hallo ".$nick."\n\nDu hast dich erfolgreich beim Sci-Fi Browsergame Escape to Andromeda registriert.\nHier nochmals deine Daten:\n\n";
-		      $email_text.= "Universum: ".ROUNDID."\n";
+		      $email_text.= "Universum: ".Config::getInstance()->roundname->v."\n";
 		      $email_text.= "Name: ".$data['name']."\n";
 		      $email_text.= "E-Mail: ".$data['email']."\n\n";
 		      $email_text.= "Nick: ".$nick."\n";

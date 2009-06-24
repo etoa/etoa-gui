@@ -19,8 +19,8 @@
 	{
     session_destroy();
     unset($s);
-    header("Location: ".LOGINSERVER_URL."?page=err&err=sitting");
-    echo "<h1>Sittingzeit abgelaufen!</h1>Falls die Weiterleitung nicht klappt, <a href=\"".LOGINSERVER_URL."?page=err&err=sitting\">hier</a> klicken...";
+    header("Location: ".Config::getInstance()->loginurl->v."?page=err&err=sitting");
+    echo "<h1>Sittingzeit abgelaufen!</h1>Falls die Weiterleitung nicht klappt, <a href=\"".Config::getInstance()->loginurl->v."?page=err&err=sitting\">hier</a> klicken...";
     exit;
 	}
 ?>

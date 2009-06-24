@@ -62,8 +62,8 @@
 				ImageTTFText ($im, 9, 0, 9, 39, $colBlack, $font,"<".$arr[2]."> ".$arr[1]);
 				ImageTTFText ($im, 9, 0, 8, 38, $colWhite, $font,"<".$arr[2]."> ".$arr[1]);
 			}
-			ImageTTFText ($im, 9, 0, 9, 54, $colBlack, $font,ROUNDID."  -  ".nf($arr[4])." Punkte");
-			ImageTTFText ($im, 9, 0, 8, 53, $colWhite, $font,ROUNDID."  -  ".nf($arr[4])." Punkte");
+			ImageTTFText ($im, 9, 0, 9, 54, $colBlack, $font,Config::getInstance()->roundname->v."  -  ".nf($arr[4])." Punkte");
+			ImageTTFText ($im, 9, 0, 8, 53, $colWhite, $font,Config::getInstance()->roundname->v."  -  ".nf($arr[4])." Punkte");
 		}
 		else
 		{

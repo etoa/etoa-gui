@@ -303,7 +303,7 @@
 					session_destroy();
 					success_msg("Deine Daten werden am ".df($t)." Uhr von unserem System gelöscht! <br/>Wir w&uuml;nschen weiterhin viel Erfolg im Netz!");
 					$cu->addToUserLog("settings","{nick} hat seinen Account zur Löschung freigegeben.",1);
-					echo '<input type="button" value="Zur Startseite" onclick="document.location=\''.LOGINSERVER_URL.'\'" />';
+					echo '<input type="button" value="Zur Startseite" onclick="document.location=\''.Config::getInstance()->loginurl->v.'\'" />';
 			}
 			else
 			{
