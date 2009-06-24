@@ -7,6 +7,19 @@ $xajax->register(XAJAX_FUNCTION,"showBattle");
 $xajax->register(XAJAX_FUNCTION,"showGameLogs");
 $xajax->register(XAJAX_FUNCTION,"showFleetLogs");
 
+$xajax->register(XAJAX_FUNCTION,"applyLogFilter");
+
+function applyLogFilter($cat=0,$text="")
+{
+	$objResponse = new xajaxResponse();
+	require_once("inc/admin_functions.inc.php");
+	ob_start();
+	showLogs($cat,$text);
+	$objResponse->assign("log_contents","innerHTML",ob_get_clean());
+
+	return $objResponse;
+}
+
 
 function logSelectorCat($cat)
 {

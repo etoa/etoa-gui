@@ -1140,4 +1140,62 @@ function drawTechTreeForSingleItem($type,$id)
 }
 
 
+
+function showLogs($cat=0,$text="")
+{
+	$limit = 100;
+	$order = "log_timestamp DESC";
+
+	$sql1 = "SELECT ";
+	$sql2 = " logs.*,log_cat.cat_name as cname ";
+
+	$sql3= " FROM logs LEFT JOIN log_cat ON logs.log_cat = log_cat.cat_id WHERE ";
+	$sql3.= "1";
+	if ($cat>0)
+	{
+		$sql3.=" AND log_cat=".$cat." ";
+	}
+	if ($text!="")
+	{
+		$sql3.=" AND log_text LIKE '%".$text."%' ";
+	}
+	$sql3.= " ORDER BY $order";
+
+
+	$res = dbquery($sql1." COUNT(log_id) as cnt ".$sql3);
+	$arr = mysql_fetch_row($res);
+	$total = $arr[0];
+
+	$sql4 = " LIMIT $limit";
+	$res = dbquery($sql1.$sql2.$sql3.$sql4);
+	$nr = mysql_num_rows($res);
+	if ($nr>0)
+	{
+		echo "<table class=\"tb\">";
+		echo "<tr><th colspan=\"3\" style=\"text-align:right;\">
+		Zeige $nr von $total Einträgen
+		</th></tr>";
+		echo "<tr>
+			<th style=\"width:140px;\">Datum</th>
+			<th style=\"width:90px;\">Bereich</th>
+			<th>Nachricht</th>
+		</tr>";
+		while ($arr = mysql_fetch_assoc($res))
+		{
+			echo "<tr>
+			<td>".df($arr['log_timestamp'])."</td>
+			<td>".$arr['cname']."</td>
+			<td>".text2html($arr['log_text'])."</td>
+			</tr>";
+		}
+		echo "</table>";
+	}
+	else
+	{
+		echo "<p>Keine Daten gefunden!</p>";
+	}
+}
+
+
+
 ?>
