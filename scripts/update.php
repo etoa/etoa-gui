@@ -126,7 +126,7 @@
 	}
 	else
 	{
-		throw new EException("Could not include config file ".getcwd()."/conf.inc.php\n");
+		throw new EException("Could not load bootstrap file ".getcwd()."/inc/bootstrap.inc.php\n");
 	}
 		
 

@@ -1141,9 +1141,10 @@ function drawTechTreeForSingleItem($type,$id)
 
 
 
-function showLogs($cat=0,$text="")
+function showLogs($cat=0,$text="",$limit=0)
 {
-	$limit = 100;
+	$paginationLimit = 20;
+
 	$order = "log_timestamp DESC";
 
 	$sql1 = "SELECT ";
@@ -1161,19 +1162,48 @@ function showLogs($cat=0,$text="")
 	}
 	$sql3.= " ORDER BY $order";
 
-
 	$res = dbquery($sql1." COUNT(log_id) as cnt ".$sql3);
 	$arr = mysql_fetch_row($res);
 	$total = $arr[0];
 
-	$sql4 = " LIMIT $limit";
+	$limit = max(0,$limit);
+	$limit = min($total,$limit);
+	$limit -= $limit % $paginationLimit;
+	$limitstring = "$limit,$paginationLimit";
+
+	$sql4 = " LIMIT $limitstring";
 	$res = dbquery($sql1.$sql2.$sql3.$sql4);
 	$nr = mysql_num_rows($res);
 	if ($nr>0)
 	{
 		echo "<table class=\"tb\">";
-		echo "<tr><th colspan=\"3\" style=\"text-align:right;\">
-		Zeige $nr von $total Einträgen
+		echo "<tr><th colspan=\"3\">
+		<div style=\"float:left;\">";
+
+		if ($limit>0)
+		{
+			echo "<input type=\"button\" value=\"&lt;&lt;\" onclick=\"applyFilter(0)\" /> ";
+			echo "<input type=\"button\" value=\"&lt;\" onclick=\"applyFilter(".($limit-$paginationLimit).")\" /> ";
+		}
+		else
+		{
+			echo "<input type=\"button\" value=\"&lt;&lt;\" disabled=\"disabled\" /> ";
+			echo "<input type=\"button\" value=\"&lt;\" disabled=\"disabled\" /> ";
+		}
+		if ($limit < $total-$paginationLimit)
+		{
+			echo "<input type=\"button\" value=\"&gt;\" onclick=\"applyFilter(".($limit+$paginationLimit).")\" /> ";
+			echo "<input type=\"button\" value=\"&gt;&gt;\" onclick=\"applyFilter(".($total-($total%$paginationLimit)).")\" /> ";
+		}
+		else
+		{
+			echo "<input type=\"button\" value=\"&gt;\" disabled=\"disabled\" /> ";
+			echo "<input type=\"button\" value=\"&gt;&gt;\" disabled=\"disabled\" /> ";
+		}
+
+		echo "</div><div style=\"float:right\">
+		".($limit+1)." - ".($limit+$nr)." von $total
+		</div><br style=\"clear:both;\" />
 		</th></tr>";
 		echo "<tr>
 			<th style=\"width:140px;\">Datum</th>

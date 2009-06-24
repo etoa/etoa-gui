@@ -80,12 +80,28 @@ input[type="submit"],input[type="reset"],input[type="button"]	{
 	color:#fff;
 	font-weight:bold;
 }
-
 input:hover[type="submit"],input:hover[type="reset"],input:hover[type="button"]	{
 	background:#225 url('../../images/button2.jpg');
 	color:#fff;
 	font-weight:bold;
 }
+
+input[type="button"][disabled="disabled"]	{
+	background:#444;
+	color:#fff;
+	font-weight:bold;
+}
+
+input[type="button"][disabled="disabled"]:hover	{
+	background:#444;
+	color:#fff;
+	font-weight:bold;
+}
+
+
+
+
+
 
 input,select,textarea	{
 	border:solid #fff 1px;

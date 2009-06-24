@@ -814,10 +814,22 @@
 	//		
 	else
 	{
-		echo "<h2>Allgemeines Log</h2>";
+		echo "<h2>Allgemeine Logs</h2>";
+
+		?>
+		<script type="text/javascript">
+			<!--
+			function applyFilter(limit)
+			{
+				xajax_applyLogFilter(document.getElementById('logcat').value,document.getElementById('searchtext').value,limit);
+			}
+			-->
+		</script>
+		<?PHP
+
 		iBoxStart("Filter",600);
 		echo "<form><label for=\"logcat\">Kategorie:</label>
-		<select id=\"logcat\" onchange=\"xajax_applyLogFilter(document.getElementById('logcat').value,document.getElementById('searchtext').value);\">
+		<select id=\"logcat\" onchange=\"applyFilter(0)\">
 		<option value=\"0\">(Alle)</option>";
 		$lres=dbquery("SELECT cat_id,cat_name,COUNT(*) as cnt FROM log_cat INNER JOIN logs ON log_cat=cat_id GROUP BY cat_id;;");
 		while ($larr=mysql_fetch_assoc($lres))
@@ -826,9 +838,9 @@
 		}
 		echo "</select> &nbsp; ";
 		echo " <label for=\"searchtext\">Suchtext:</label> <input type=\"text\" id=\"searchtext\" value=\"\" /> &nbsp;
-		<input type=\"submit\" value=\"Anwenden\" onclick=\"xajax_applyLogFilter(document.getElementById('logcat').value,document.getElementById('searchtext').value);document.getElementById('searchtext').select();return false;\" /> &nbsp;
-		<input type=\"button\" value=\"Reset\" onclick=\"xajax_applyLogFilter(0,'');document.getElementById('logcat').value=0;document.getElementById('searchtext').value='';document.getElementById('searchtext').focus();\" />
-	</form>";
+		<input type=\"submit\" value=\"Anwenden\" onclick=\"applyFilter(0);document.getElementById('searchtext').select();return false;\" /> &nbsp;
+		<input type=\"button\" value=\"Reset\" onclick=\"document.getElementById('logcat').value=0;document.getElementById('searchtext').value='';applyFilter(0);document.getElementById('searchtext').focus();\" />";
+		echo "</form>";
 		iBoxEnd();
 
 		echo "<div id=\"log_contents\">";

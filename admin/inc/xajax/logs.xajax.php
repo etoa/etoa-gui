@@ -9,12 +9,12 @@ $xajax->register(XAJAX_FUNCTION,"showFleetLogs");
 
 $xajax->register(XAJAX_FUNCTION,"applyLogFilter");
 
-function applyLogFilter($cat=0,$text="")
+function applyLogFilter($cat=0,$text="",$limit=0)
 {
 	$objResponse = new xajaxResponse();
 	require_once("inc/admin_functions.inc.php");
 	ob_start();
-	showLogs($cat,$text);
+	showLogs($cat,$text,$limit);
 	$objResponse->assign("log_contents","innerHTML",ob_get_clean());
 
 	return $objResponse;

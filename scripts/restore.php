@@ -26,35 +26,26 @@
 	// 	Bearbeitet am: 07.03.2006
 	// 	Kommentar: 	Diese Date erstellt ein Backup einer Datenbank mit dem Datum im Dateinamen
 
-	if ($_SERVER['argv'][2]!="")
-		define(GAME_ROOT_DIR,$_SERVER['argv'][1]);
-	else
-	{
-		$c=strrpos($_SERVER["SCRIPT_FILENAME"],"scripts/");
-		if (stristr($_SERVER["SCRIPT_FILENAME"],"./")&&$c==0)
-			define(GAME_ROOT_DIR,"../");
-		elseif ($c==0)
-			define(GAME_ROOT_DIR,".");
-		else
-			define(GAME_ROOT_DIR,substr($_SERVER["SCRIPT_FILENAME"],0,$c-1));
-	}
-	chdir(GAME_ROOT_DIR);
+	// Gamepfad feststellen
+	define('USE_HTML',false);
+
+	// Gamepfad feststellen
+	$grd = chdir(realpath(dirname(__FILE__)."/../"));
 
 	// Initialisieren
-	require("bootstrap.inc.php");
-	if (require("functions.php"))
+	if (include("inc/bootstrap.inc.php"))
 	{	
-		require("conf.inc.php");               
-		dbconnect(); 	
-		require(GAME_ROOT_DIR."/def.inc.php");
-	
 		if ($_SERVER['argv'][1]!="")
 		{
 			Backup::restore($_SERVER['argv'][1]);
 		}
 		else
-			echo "Usage: ".$_SERVER['argv'][0]." date\n";	
+		{
+			echo "Usage: ".$_SERVER['argv'][0]." date\n";
+		}
 	}
 	else
-		echo "Error: Could not include function file ".GAME_ROOT_DIR."/functions.php\n";	
+	{
+		throw new EException("Could not load bootstrap file ".getcwd()."/inc/bootstrap.inc.php\n");
+	}
 ?>
