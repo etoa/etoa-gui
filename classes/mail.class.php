@@ -18,6 +18,7 @@ class Mail
 		{
 			$this->body.= $text."
 
+-----------------------------------------------------------------
 Escape to Andromeda - Das Sci-Fi Browsergame - http://www.etoa.ch
 Copyright (C) 2004 EtoA-Gaming, Schweiz
 Kontakt: mail@etoa.ch
@@ -27,7 +28,7 @@ Forum: http://www.etoa.ch/forum";
 		{
 			$this->body = $text;
 		}
-		$this->headers = "From: ".Config::getInstance()->game_name." ".ROUNDID."<".MAIL_SENDER.">";
+		$this->headers = "From: ".Config::getInstance()->game_name." ".ROUNDID."<".MAIL_SENDER.">\n";
 		$this->headers.= "Content-Type: text/plain; charset=UTF-8\n";
 		$this->headers.= "MIME-Version: 1.0\n";
 		$this->headers.= "Content-Transfer-Encoding: 8bit\n";
@@ -38,11 +39,11 @@ Forum: http://www.etoa.ch/forum";
 	{
 		if ($replyTo!="")
 		{
-			$headers = $this->headers."Reply-to: ".$replyTo;
+			$headers = $this->headers."Reply-to: ".$replyTo."\n";
 		}
 		else
 		{
-			$headers = $this->headers."Reply-to: ".Config::getInstance()->game_name."<".MAIL_REPLY.">";
+			$headers = $this->headers."Reply-to: ".Config::getInstance()->game_name."<".MAIL_REPLY.">\n";
 		}
 		if (mail($rcpt,$this->subject,$this->body,$headers))
 			return true;

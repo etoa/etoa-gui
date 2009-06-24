@@ -129,8 +129,8 @@
 			if (mysql_num_rows($fres)>0)
 			{
 				$farr = mysql_fetch_assoc($fres);
-				echo "<input type=\"radio\" name=\"from_id\" value=\"".$cu->playerId."\" checked=\"checked\" /> ".$farr['user_nick']." (InGame-Account #".$farr['user_id'].")<br/>";
-				echo "<input type=\"radio\" name=\"from_id\" value=\"0\" /> System<br/>";
+				echo "<input type=\"radio\" name=\"from_id\" id=\"from_id_1\" value=\"".$cu->playerId."\" checked=\"checked\" /> <label for=\"from_id_1\">".$farr['user_nick']." (InGame-Account #".$farr['user_id'].")</label><br/>";
+				echo "<input type=\"radio\" name=\"from_id\" id=\"from_id_0\" value=\"0\" /> <label for=\"from_id_0\">System</label><br/>";
 			}
 			else
 				echo "System <input type=\"hidden\" name=\"from_id\" value=\"0\" />";
@@ -141,7 +141,7 @@
 				<b>An:</b>
 				<input type=\"radio\" name=\"rcpt_type\" id=\"rcpt_type_1\" value=\"1\"  checked=\"checked\"  onclick=\"document.getElementById('message_user_to').style.display='none';\" /> <label for=\"rcpt_type_1\">Alle Spieler</label>
 				<input type=\"radio\" name=\"rcpt_type\" id=\"rcpt_type_0\" value=\"0\"  onclick=\"document.getElementById('message_user_to').style.display='';\" /> <label for=\"rcpt_type_0\">Einzelner Empfänger</label>
-				<select name=\"message_user_to\" id=\"message_user_to\">";
+				<select name=\"message_user_to\" id=\"message_user_to\" style=\"display:none\">";
 				$res=dbquery("SELECT user_id,user_nick FROM users ORDER BY user_nick;");
 				while ($arr=mysql_fetch_array($res))
 				{
