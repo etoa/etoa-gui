@@ -103,9 +103,13 @@
 			$t = timerStop($tmr);
 			if (LOG_UPDATES || $t > LOG_UPDATES_THRESHOLD)
 			{
-				add_log (15,$logt."Gesamtdauer: ".$t."\n\n".$log);
+				Log::add(Log::F_UPDATES, Log::WARNING, $logt."Gesamtdauer: ".$t."\n\n".$log);
 			}
-
+			else
+			{
+				Log::add(Log::F_UPDATES, Log::DEBUG, $logt."Gesamtdauer: ".$t."\n\n".$log);
+			}
+			
 			//Löscht Arrays (gibt Speicher wieder frei)
 			unset($log);
 

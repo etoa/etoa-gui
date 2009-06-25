@@ -59,24 +59,27 @@
 			{
 				$severity = self::INFO;
 			}
-			dbquery("
-			INSERT INTO
-				logs
-			(
-				facility,
-				severity,
-				timestamp,
-				ip,
-				message
-			)
-			VALUES
-			(
-				'".$facility."',
-				'".$severity."',
-				'".time()."',
-				'".$_SERVER['REMOTE_ADDR']."',
-				'".addslashes($msg)."'
-			);");
+			if ($severity > self::DEBUG || ETOA_DEBUG==1)
+			{
+				dbquery("
+				INSERT INTO
+					logs
+				(
+					facility,
+					severity,
+					timestamp,
+					ip,
+					message
+				)
+				VALUES
+				(
+					'".$facility."',
+					'".$severity."',
+					'".time()."',
+					'".$_SERVER['REMOTE_ADDR']."',
+					'".addslashes($msg)."'
+				);");
+			}
 		}
 		
 		/**
