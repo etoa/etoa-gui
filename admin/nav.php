@@ -314,13 +314,10 @@
 	$navmenu['Chat']['Chat']['level']=0;
 
 
-	$navmenu['Logs']['Logs anschauen']['page']="logs";
-	$navmenu['Logs']['Logs anschauen']['sub']="";
-	$navmenu['Logs']['Logs anschauen']['level']=0;
+	$navmenu['Logs']['Allgemeine Logs'] = array('page'=>"logs",'sub'=>"",'level'=>0);
+	$navmenu['Logs']['Spiellogs'] = array('page'=>"logs",'sub'=>"gamelogs",'level'=>0);
+	$navmenu['Logs']['Kampfberichte'] = array('page'=>"logs",'sub'=>"logs_battle",'level'=>0);
 	
-	$navmenu['Logs']['Logs anschauen (new)']['page']="logs";
-	$navmenu['Logs']['Logs anschauen (new)']['sub']="new_logs_page";
-	$navmenu['Logs']['Logs anschauen (new)']['level']=0;	
 	
 	$navmenu['Logs']['Angriffsverletzung']['page']="logs";
 	$navmenu['Logs']['Angriffsverletzung']['sub']="check_fights";

@@ -230,6 +230,13 @@
 		return $r;
 	}
 
+	function dbexplain($sql)
+	{
+		echo "Explaining: $sql";
+		$res = mysql_query("EXPLAIN ".$sql."");
+		drawDbQueryResult($res);
+	}
+
 	/**
 	* Gesamte Config-Tabelle lesen und Werte in Array speichern
 	* DEPRECATED! This is only a wrapper!
@@ -687,35 +694,15 @@
 	/**
 	* Speichert Daten in die Log-Tabelle
 	*
+	 * TDOD: deprecated, please replace
 	* @param int $log_cat Log Kategorie
 	* @param string $log_text Log text
 	* @param int $log_timestamp Zeit
 	* @author MrCage
 	*/
-	function add_log($log_cat,$log_text,$log_timestamp=0)
+	function add_log($log_cat,$log_text)
 	{
-		if ($log_timestamp==0)
-		{
-		 	$log_timestamp=time();
-		}
-		 dbquery("
-		 INSERT INTO
-		 logs
-		 (
-			 facility,
-			 severity,
-			 timestamp,
-			 message,
-			 ip
-		 )
-		 VALUES
-		 (
-		 	'".$log_cat."',
-			1,
-		 	'".time()."',
-		 	'".addslashes($log_text)."',
-		 	'".$_SERVER['REMOTE_ADDR']."'
-		 );");
+		Log::add($log_cat,Log::INFO,$log_text);
 	}
 
 

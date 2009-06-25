@@ -107,8 +107,8 @@
 							$pl->chown($_POST['planet_user_id']);
 		
 							//Log Schreiben
-							add_log(8,$_SESSION[SESSION_NAME]['user_nick']." wechselt den Besitzer vom Planeten: [URL=?page=galaxy&sub=edit&id=".$id."][B]".$id."[/B][/URL]\nAlter Besitzer: [URL=?page=user&sub=edit&user_id=".$_POST['planet_user_id_old']."][B]".$_POST['planet_user_id_old']."[/B][/URL]\nNeuer Besitzer: [URL=?page=user&sub=edit&user_id=".$_POST['planet_user_id']."][B]".$_POST['planet_user_id']."[/B][/URL]",time());
-		
+							Log::add(Log::F_GALAXY,Log::INFO,$cu->nick." wechselt den Besitzer vom Planeten: [URL=?page=galaxy&sub=edit&id=".$id."][B]".$id."[/B][/URL]\nAlter Besitzer: [URL=?page=user&sub=edit&user_id=".$_POST['planet_user_id_old']."][B]".$_POST['planet_user_id_old']."[/B][/URL]\nNeuer Besitzer: [URL=?page=user&sub=edit&user_id=".$_POST['planet_user_id']."][B]".$_POST['planet_user_id']."[/B][/URL]");
+
 							success_msg("Der Planet wurde dem User mit der ID: [b]".$_POST['planet_user_id']."[/b] &uuml;bergeben!");
 						}
 						else

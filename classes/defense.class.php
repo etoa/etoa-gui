@@ -22,7 +22,7 @@
 				");			
 				if (!$arr = mysql_fetch_assoc($res))
 				{
-					throw new EException("Ungültige Verteidigungs-ID: $sid");
+					throw new EException("Ungï¿½ltige Verteidigungs-ID: $sid");
 					return false;
 				}
 			}			
@@ -62,7 +62,25 @@
 			return "<img src=\"".$this->imgPathSmall()."\" style=\"width:40px;height:40px;\"/>";
 		}
 		
-	
+		static function getItems()
+		{
+			$res = dbquery("
+			SELECT
+				*
+			FROM
+				defense
+			ORDER BY
+				def_order
+			;");
+			$rtn=array();
+			while($arr = mysql_fetch_assoc($res))
+			{
+				$rtn[$arr['def_id']] = new Defense($arr);
+			}
+			return $rtn;
+		}
+
+
 	}
 
 ?>

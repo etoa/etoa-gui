@@ -4,22 +4,31 @@ $xajax->register(XAJAX_FUNCTION,"logSelectorCat");
 $xajax->register(XAJAX_FUNCTION,"checkLogFormular");
 $xajax->register(XAJAX_FUNCTION,"logChangeButton");
 $xajax->register(XAJAX_FUNCTION,"showBattle");
-$xajax->register(XAJAX_FUNCTION,"showGameLogs");
 $xajax->register(XAJAX_FUNCTION,"showFleetLogs");
-
 $xajax->register(XAJAX_FUNCTION,"applyLogFilter");
+$xajax->register(XAJAX_FUNCTION,"applyGameLogFilter");
 
-function applyLogFilter($cat=0,$text="",$limit=0)
+function applyLogFilter($args,$limit=0)
 {
 	$objResponse = new xajaxResponse();
 	require_once("inc/admin_functions.inc.php");
 	ob_start();
-	showLogs($cat,$text,$limit);
+	showLogs($args,$limit);
 	$objResponse->assign("log_contents","innerHTML",ob_get_clean());
 
 	return $objResponse;
 }
 
+function applyGameLogFilter($args,$limit=0)
+{
+	$objResponse = new xajaxResponse();
+	require_once("inc/admin_functions.inc.php");
+	ob_start();
+	showGameLogs($args,$limit);
+	$objResponse->assign("log_contents","innerHTML",ob_get_clean());
+
+	return $objResponse;
+}
 
 function logSelectorCat($cat)
 {
@@ -1069,6 +1078,7 @@ function showBattle($battle,$id)
 	
 }
 
+/*
 function showGameLogs($log_text,$id)
 {	
 	ob_start();
@@ -1090,6 +1100,8 @@ function showGameLogs($log_text,$id)
 	return $objResponse;	
 	
 }
+
+*/
 
 function showFleetLogs($log_text,$id)
 {	

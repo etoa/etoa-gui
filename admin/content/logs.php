@@ -801,6 +801,113 @@
 		}
 	}	
 
+	elseif ($sub == "gamelogs")
+	{
+		echo "<h2>Spiellogs</h2>";
+
+		?>
+		<script type="text/javascript">
+			<!--
+			function applyFilter(limit)
+			{
+				xajax_applyGameLogFilter(xajax.getFormValues('filterform'),limit);
+			}
+			function resetFilter()
+			{
+				document.getElementById('logcat').value=0;
+				document.getElementById('logsev').value=0;
+				document.getElementById('searchtext').value='';
+				fillObjectSelection();
+				applyFilter(0);
+				document.getElementById('searchtext').focus();
+			}
+			function fillObjectSelection()
+			{
+				elem = document.getElementById('object_id');
+				elem.length = 0;
+				elem.options[elem.options.length] = new Option('Alle',0);
+				switch(document.getElementById('logcat').value)
+				{
+					case '1':
+						<?PHP
+						foreach (Building::getItems() as $k => $v)
+						{
+							echo "elem.options[elem.options.length] = new Option('$v',$k);";
+						}
+						?>
+						break;
+					case '2':
+						<?PHP
+						foreach (Technology::getItems() as $k => $v)
+						{
+							echo "elem.options[elem.options.length] = new Option('$v',$k);";
+						}
+						?>
+						break;
+					case '3':
+						<?PHP
+						foreach (Ship::getItems() as $k => $v)
+						{
+							echo "elem.options[elem.options.length] = new Option('$v',$k);";
+						}
+						?>
+						break;
+					case '4':
+						<?PHP
+						foreach (Defense::getItems() as $k => $v)
+						{
+							echo "elem.options[elem.options.length] = new Option('$v',$k);";
+						}
+						?>
+						break;
+				}
+			}
+			-->
+		</script>
+		<?PHP
+
+		iBoxStart("Filter",800);
+		echo "<form action=\".\" method=\"post\" id=\"filterform\"><p>";
+		echo "<label for=\"logsev\">Ab Schweregrad:</label>
+		<select id=\"logsev\" name=\"logsev\" onchange=\"applyFilter(0)\">";
+		foreach (GameLog::$severities as $k => $v)
+		{
+			echo "<option value=\"".$k."\">".$v."</option>";
+		}
+		echo "</select> &nbsp; ";
+
+		echo "<label for=\"logcat\">Kategorie:</label>
+		<select id=\"logcat\" name=\"logcat\" onchange=\"fillObjectSelection();applyFilter(0)\">
+		<option value=\"0\">(Alle)</option>";
+		foreach (GameLog::$facilities as $k => $v)
+		{
+			if ($k > 0)
+				echo "<option value=\"".$k."\">".$v."</option>";
+		}
+		echo "</select> &nbsp; ";
+
+		echo "<label for=\"object_id\">Objekt:</label>
+		<select id=\"object_id\" name=\"object_id\" onchange=\"applyFilter(0)\">
+		<option value=\"0\">(Alle)</option>";
+		echo "</select> &nbsp; ";
+
+		echo "<br/><br/>";
+
+		echo " <label for=\"searchtext\">Suchtext:</label> <input type=\"text\" id=\"searchtext\" name=\"searchtext\" value=\"\" /> &nbsp;
+		<input type=\"submit\" value=\"Anwenden\" onclick=\"applyFilter(0);document.getElementById('searchtext').select();return false;\" /> &nbsp;
+		<input type=\"button\" value=\"Reset\" onclick=\"resetFilter();\" />";
+		echo "</p></form>";
+		iBoxEnd();
+
+		echo "<div id=\"log_contents\">";
+		showGameLogs();
+		echo "</div>";
+
+
+
+	}
+
+
 	//
 	// New simple AJAX based general log viewer
 	//		
@@ -813,16 +920,16 @@
 			<!--
 			function applyFilter(limit)
 			{
-				xajax_applyLogFilter(document.getElementById('logcat').value,document.getElementById('searchtext').value,limit);
+				xajax_applyLogFilter(xajax.getFormValues('filterform'),limit);
 			}
 			-->
 		</script>
 		<?PHP
 
-		iBoxStart("Filter",600);
-		echo "<form action=\".\" method=\"post\"><p>
+		iBoxStart("Filter",800);
+		echo "<form action=\".\" method=\"post\" id=\"filterform\"><p>
 		<label for=\"logcat\">Kategorie:</label>
-		<select id=\"logcat\" onchange=\"applyFilter(0)\">
+		<select id=\"logcat\" name=\"logcat\" onchange=\"applyFilter(0)\">
 		<option value=\"0\">(Alle)</option>";
 		foreach (Log::$facilities as $k => $v)
 		{
@@ -830,9 +937,18 @@
 				echo "<option value=\"".$k."\">".$v."</option>";
 		}
 		echo "</select> &nbsp; ";
-		echo " <label for=\"searchtext\">Suchtext:</label> <input type=\"text\" id=\"searchtext\" value=\"\" /> &nbsp;
+		echo "<label for=\"logsev\">Ab Schweregrad:</label>
+		<select id=\"logsev\" name=\"logsev\" onchange=\"applyFilter(0)\">";
+		foreach (Log::$severities as $k => $v)
+		{
+			echo "<option value=\"".$k."\">".$v."</option>";
+		}
+		echo "</select> &nbsp; ";
+
+
+		echo " <label for=\"searchtext\">Suchtext:</label> <input type=\"text\" id=\"searchtext\" name=\"searchtext\" value=\"\" /> &nbsp;
 		<input type=\"submit\" value=\"Anwenden\" onclick=\"applyFilter(0);document.getElementById('searchtext').select();return false;\" /> &nbsp;
-		<input type=\"button\" value=\"Reset\" onclick=\"document.getElementById('logcat').value=0;document.getElementById('searchtext').value='';applyFilter(0);document.getElementById('searchtext').focus();\" />";
+		<input type=\"button\" value=\"Reset\" onclick=\"document.getElementById('logcat').value=0;document.getElementById('logsev').value=0;document.getElementById('searchtext').value='';applyFilter(0);document.getElementById('searchtext').focus();\" />";
 		echo "</p></form>";
 		iBoxEnd();
 
@@ -842,7 +958,7 @@
 
 		$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM logs;"));
 		echo "<p>Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.</p>";
-		
+
 	}
 			
 	

@@ -1144,10 +1144,13 @@ function drawTechTreeForSingleItem($type,$id)
 }
 
 
-
-function showLogs($cat=0,$text="",$limit=0)
+function showLogs($args=null,$limit=0)
 {
 	$paginationLimit = 100;
+
+	$cat = is_array($args) && isset($args['logcat']) ? $args['logcat'] : 0;
+	$sev = is_array($args) && isset($args['logsev'])  ? $args['logsev'] : 0;
+	$text = is_array($args)&& isset($args['searchtext'])   ? $args['searchtext'] : "";
 
 	$order = "timestamp DESC";
 
@@ -1164,6 +1167,10 @@ function showLogs($cat=0,$text="",$limit=0)
 	{
 		$sql3.=" AND message LIKE '%".$text."%' ";
 	}
+	if ($sev >0)
+	{
+		$sql3.=" AND severity >= ".$sev." ";
+	}
 	$sql3.= " ORDER BY $order";
 
 	$res = dbquery($sql1." COUNT(id) as cnt ".$sql3);
@@ -1176,6 +1183,7 @@ function showLogs($cat=0,$text="",$limit=0)
 	$limitstring = "$limit,$paginationLimit";
 
 	$sql4 = " LIMIT $limitstring";
+
 	$res = dbquery($sql1.$sql2.$sql3.$sql4);
 	$nr = mysql_num_rows($res);
 	if ($nr>0)
@@ -1232,6 +1240,143 @@ function showLogs($cat=0,$text="",$limit=0)
 	}
 }
 
+function showGameLogs($args=null,$limit=0)
+{
+	$paginationLimit = 100;
 
+	$cat = is_array($args) && isset($args['logcat']) ? $args['logcat'] : 0;
+	$sev = is_array($args) && isset($args['logsev'])  ? $args['logsev'] : 0;
+	$text = is_array($args)&& isset($args['searchtext'])   ? $args['searchtext'] : "";
+
+	$order = "timestamp DESC";
+
+	$sql1 = "SELECT ";
+	$sql2 = " * ";
+
+	$sql3= " FROM logs_game WHERE ";
+	$sql3.= "1";
+	if ($cat>0)
+	{
+		$sql3.=" AND facility=".$cat." ";
+	}
+	if ($text!="")
+	{
+		$sql3.=" AND message LIKE '%".$text."%' ";
+	}
+	if ($sev >0)
+	{
+		$sql3.=" AND severity >= ".$sev." ";
+	}
+	if (isset($args['object_id']) && $args['object_id']>0)
+	{
+		$sql3.=" AND object_id = ".$args['object_id']." ";
+	}
+	$sql3.= " ORDER BY $order";
+
+	$res = dbquery($sql1." COUNT(id) as cnt ".$sql3);
+	$arr = mysql_fetch_row($res);
+	$total = $arr[0];
+
+	$limit = max(0,$limit);
+	$limit = min($total,$limit);
+	$limit -= $limit % $paginationLimit;
+	$limitstring = "$limit,$paginationLimit";
+
+	$sql4 = " LIMIT $limitstring";
+
+	$res = dbquery($sql1.$sql2.$sql3.$sql4);
+	$nr = mysql_num_rows($res);
+	if ($nr>0)
+	{
+		echo "<table class=\"tb\">";
+		echo "<tr><th colspan=\"10\">
+		<div style=\"float:left;\">";
+
+		if ($limit>0)
+		{
+			echo "<input type=\"button\" value=\"&lt;&lt;\" onclick=\"applyFilter(0)\" /> ";
+			echo "<input type=\"button\" value=\"&lt;\" onclick=\"applyFilter(".($limit-$paginationLimit).")\" /> ";
+		}
+		else
+		{
+			echo "<input type=\"button\" value=\"&lt;&lt;\" disabled=\"disabled\" /> ";
+			echo "<input type=\"button\" value=\"&lt;\" disabled=\"disabled\" /> ";
+		}
+		if ($limit < $total-$paginationLimit)
+		{
+			echo "<input type=\"button\" value=\"&gt;\" onclick=\"applyFilter(".($limit+$paginationLimit).")\" /> ";
+			echo "<input type=\"button\" value=\"&gt;&gt;\" onclick=\"applyFilter(".($total-($total%$paginationLimit)).")\" /> ";
+		}
+		else
+		{
+			echo "<input type=\"button\" value=\"&gt;\" disabled=\"disabled\" /> ";
+			echo "<input type=\"button\" value=\"&gt;&gt;\" disabled=\"disabled\" /> ";
+		}
+
+		echo "</div><div style=\"float:right\">
+		".($limit+1)." - ".($limit+$nr)." von $total
+		</div><br style=\"clear:both;\" />
+		</th></tr>";
+		echo "<tr>
+			<th style=\"width:140px;\">Datum</th>
+			<th style=\"\">Bereich</th>
+			<th style=\"\">Schweregrad</th>
+			<th>User</th>
+			<th>Allianz</th>
+			<th>Raumobjekt</th>
+			<th>Einheit</th>
+			<th>Status</th>
+			<th>Optionen</th>
+		</tr>";
+		while ($arr = mysql_fetch_assoc($res))
+		{
+			$tu = ($arr['user_id']>0) ? new User($arr['user_id']) : "-";
+			$ta = ($arr['alliance_id']>0) ? new Alliance($arr['alliance_id']) : "-";
+			$te = ($arr['entity_id']>0) ? Entity::createFactoryById($arr['entity_id']) : "-";
+			switch ($arr['facility'])
+			{
+				case GameLog::F_BUILD:
+					$ob = new Building($arr['object_id']);
+					$obStatus = $arr['status'];
+					break;
+				case GameLog::F_TECH:
+					$ob = new Technology($arr['object_id']);
+					$obStatus = $arr['status'];
+					break;
+				case GameLog::F_SHIP:
+					$ob = $arr['object_id'] > 0 ? new Ship($arr['object_id']) : '-';
+					$obStatus = $arr['status'];
+					break;
+				case GameLog::F_DEF:
+					$ob = $arr['object_id'] > 0 ? new Defense($arr['object_id']) : '-';
+					$obStatus = $arr['status'];
+					break;
+				default:
+					$ob = "-";
+					$obStatus= "-";
+			}
+			
+			echo "<tr>
+			<td>".df($arr['timestamp'])."</td>
+			<td>".GameLog::$facilities[$arr['facility']]."</td>
+			<td>".GameLog::$severities[$arr['severity']]."</td>
+			<td>".$tu."</td>
+			<td>".$ta."</td>
+			<td>".$te."</td>
+			<td>".$ob."</td>
+			<td>".$obStatus."</td>
+			<td><a href=\"javascript:;\" onclick=\"toggleBox('details".$arr['id']."')\">Details</a></td>
+			</tr>";
+			echo "<tr id=\"details".$arr['id']."\" style=\"display:none;\"><td colspan=\"9\">".$arr['message']."</td></tr>";
+
+			//<td>".text2html($arr['message'])."</td>
+		}
+		echo "</table>";
+	}
+	else
+	{
+		echo "<p>Keine Daten gefunden!</p>";
+	}
+}
 
 ?>
