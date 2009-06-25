@@ -1149,24 +1149,24 @@ function showLogs($cat=0,$text="",$limit=0)
 {
 	$paginationLimit = 100;
 
-	$order = "log_timestamp DESC";
+	$order = "timestamp DESC";
 
 	$sql1 = "SELECT ";
-	$sql2 = " logs.*,log_cat.cat_name as cname ";
+	$sql2 = " * ";
 
-	$sql3= " FROM logs LEFT JOIN log_cat ON logs.log_cat = log_cat.cat_id WHERE ";
+	$sql3= " FROM logs WHERE ";
 	$sql3.= "1";
 	if ($cat>0)
 	{
-		$sql3.=" AND log_cat=".$cat." ";
+		$sql3.=" AND facility=".$cat." ";
 	}
 	if ($text!="")
 	{
-		$sql3.=" AND log_text LIKE '%".$text."%' ";
+		$sql3.=" AND message LIKE '%".$text."%' ";
 	}
 	$sql3.= " ORDER BY $order";
 
-	$res = dbquery($sql1." COUNT(log_id) as cnt ".$sql3);
+	$res = dbquery($sql1." COUNT(id) as cnt ".$sql3);
 	$arr = mysql_fetch_row($res);
 	$total = $arr[0];
 
@@ -1181,7 +1181,7 @@ function showLogs($cat=0,$text="",$limit=0)
 	if ($nr>0)
 	{
 		echo "<table class=\"tb\">";
-		echo "<tr><th colspan=\"3\">
+		echo "<tr><th colspan=\"4\">
 		<div style=\"float:left;\">";
 
 		if ($limit>0)
@@ -1212,14 +1212,16 @@ function showLogs($cat=0,$text="",$limit=0)
 		echo "<tr>
 			<th style=\"width:140px;\">Datum</th>
 			<th style=\"width:90px;\">Bereich</th>
+			<th style=\"width:90px;\">Schweregrad</th>
 			<th>Nachricht</th>
 		</tr>";
 		while ($arr = mysql_fetch_assoc($res))
 		{
 			echo "<tr>
-			<td>".df($arr['log_timestamp'])."</td>
-			<td>".$arr['cname']."</td>
-			<td>".text2html($arr['log_text'])."</td>
+			<td>".df($arr['timestamp'])."</td>
+			<td>".Log::$facilities[$arr['facility']]."</td>
+			<td>".Log::$severities[$arr['severity']]."</td>
+			<td>".text2html($arr['message'])."</td>
 			</tr>";
 		}
 		echo "</table>";

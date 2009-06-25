@@ -702,62 +702,22 @@
 		 INSERT INTO
 		 logs
 		 (
-			 log_cat,
-			 log_timestamp,
-			 log_realtime,
-			 log_text,
-			 log_ip,
-			 log_hostname
+			 facility,
+			 severity,
+			 timestamp,
+			 message,
+			 ip
 		 )
 		 VALUES
 		 (
 		 	'".$log_cat."',
-		 	'".$log_timestamp."',
+			1,
 		 	'".time()."',
 		 	'".addslashes($log_text)."',
-		 	'".$_SERVER['REMOTE_ADDR']."',
-		 	'".Net::getHost($_SERVER['REMOTE_ADDR'])."'
+		 	'".$_SERVER['REMOTE_ADDR']."'
 		 );");
 	}
 
-	/**
-	* Adds an user log item
-	*/
-	function add_log_user($log_cat,$log_text,$uid1,$uid2=0,$pid=0,$sid=0,$log_timestamp=0)
-	{
-		if ($log_timestamp==0)
-		{
-		 	$log_timestamp=time();
-		}
-		 dbquery("
-		 INSERT INTO
-		 logs
-		 (
-			 log_cat,
-			 log_timestamp,
-			 log_realtime,
-			 log_text,
-			 log_ip,
-			 log_hostname,
-			 log_user1_id,
-			 log_user2_id,
-			 log_planet_id,
-			 log_ship_id
-		 )
-		 VALUES
-		 (
-		 	'".$log_cat."',
-		 	'".$log_timestamp."',
-		 	'".time()."',
-		 	'".addslashes($log_text)."',
-		 	'".$_SERVER['REMOTE_ADDR']."',
-		 	'".Net::getHost($_SERVER['REMOTE_ADDR'])."',
-		 	'".intval($uid1)."',
-		 	'".intval($uid2)."',
-		 	'".intval($pid)."',
-		 	'".intval($sid)."'
-		 );");
-	}
 
 	/**
 	* Speichert Gebäudedaten in die Game_Log-Tabelle

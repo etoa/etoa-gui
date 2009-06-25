@@ -395,18 +395,12 @@ http://127.0.0.1</v>
     <item name="crypto_enable" cat="1">
       <v comment="Kryptocenter aktivieren" type="onoff">1</v>
     </item>
-    <item name="updating" cat="1">
-      <v comment="Update-Flag" type="text">0</v>
-    </item>
     <item name="update_enabled" cat="1">
       <v comment="Updates einschalten" type="text">1</v>
     </item>
     <item name="msg_max_store" cat="8">
       <v comment="Max. Anzahl Nachrichten" type="text">200</v>
       <p1 comment="Max. Anzahl Nachrichten Archiv" type="text">20</p1>
-    </item>
-    <item name="updating_fleet" cat="1">
-      <v comment="Flottenupdating Flag" type="text">0</v>
     </item>
     <item name="offline" cat="1">
       <v comment="Game offline stellen" type="onoff">0</v>

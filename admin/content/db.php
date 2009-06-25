@@ -35,102 +35,24 @@
 	{
 		echo '<h2>Updates</h2>';
 		
-		/*
-		// Ressourcen
-		if ($_GET['action']=="resources")
-		{
-			if ($conf['updating']['v']==0)
-			{
-        // Update-Flag setzen
-        dbquery("UPDATE config SET config_value=1,config_param2=".time()." WHERE config_name='updating';");
-        $num = updateAllEconomy();
-        echo "Ressourcen und Speicher wurden auf ".$num." Planeten aktualisiert!<br/><br/>";
-				// Update-Flag löschen
-				dbquery("UPDATE config SET config_value=0 WHERE config_name='updating';");              
-      }
-      else
-      {
-       	echo "Es kann momentan kein Update getätigt werden, da der Server zurzeit andere Updates am abarbeiten ist!<br>";
-      }
-		}
-		
-		// Felder
-		elseif ($_GET['action']=="fields")
-		{
-			if ($conf['updating']['v']==0)
-			{
-	      // Update-Flag setzen
-	      dbquery("UPDATE config SET config_value=1,config_param2=".time()." WHERE config_name='updating';");
-	      $num = fieldupdate();
-	      echo "Geb&auml;ude-Feldinformationen wurden verarbeitet.<br/>$num[0] Planeten aktuallisiert!<br/><br/>";
-	      echo "Verteidigungs-Feldinformationen wurden verarbeitet.<br/>$num[1] Planeten aktualisiert!<br/><br/>";
-	      $d = round($num[2]/($num[1]+$num[0]),2);
-	      echo "Es sind durchschnittlich $d Felder belegt!";
-				// Update-Flag löschen
-				dbquery("UPDATE config SET config_value=0 WHERE config_name='updating';");            
-			}
-      else
-      {
-      	echo "Es kann momentan kein Update getätigt werden, da der Server zurzeit andere Updates am abarbeiten ist!<br>";
-      }	
-		}
-
-		// Speicher
-		elseif ($_GET['action']=="store")
-		{
-			if ($conf['updating']['v']==0)
-			{
-	      // Update-Flag setzen
-	      dbquery("UPDATE config SET config_value=1,config_param2=".time()." WHERE config_name='updating';");
-				$num = storeupdate(true);
-				echo "Speicherinformationen von $num[1] Geb&auml;uden wurden auf $num[0] Planeten aktualisiert!<br/><br/>";
-				// Update-Flag löschen
-				dbquery("UPDATE config SET config_value=0 WHERE config_name='updating';");            
-     	}
-      else
-      {
-      	echo "Es kann momentan kein Update getätigt werden, da der Server zurzeit andere Updates am abarbeiten ist!<br>";
-      }			
-		}
-		// Markt aktualisieren
-		elseif ($_GET['action']=="market")
-		{
-			if ($conf['updating']['v']==0)
-			{
-	      // Update-Flag setzen
-	      dbquery("UPDATE config SET config_value=1,config_param2=".time()." WHERE config_name='updating';");
-	      market_update();
-	      echo "Die Marktangebote wurden Aktualisiert und ausstehende Warenversendungen wurden gemacht!<br/><br/>";
-				// Update-Flag löschen
-				dbquery("UPDATE config SET config_value=0 WHERE config_name='updating';");            
-       }
-       else
-       {
-       	echo "Es kann momentan kein Update getätigt werden, da der Server zurzeit andere Updates am abarbeiten ist!<br>";
-    	}		
-		}		
-		*/
 		
 		// Punkte aktualisieren
 		if (isset($_GET['action']) && $_GET['action']=="points")
 		{
-			if ($conf['updating']['v']==0)
-			{
-	    	// Update-Flag setzen
-	    	dbquery("UPDATE config SET config_value=1,config_param2=".time()." WHERE config_name='updating';");
-	    	$num = Ranking::calc(true);
+				$mtx = new Mutex();
+				$mtx->acquire();
+
+				$num = Ranking::calc(true);
 	    	Ranking::calcTitles();
+
+				$mtx->release();
+
 	    	echo "Die Punkte von ".$num[0]." Spielern wurden aktualisiert!<br/>";
 	    	$d = $num[1]/$num[0];
 	    	echo "Ein Spieler hat durchschnittlich ".nf($d)." Punkte!<br/><br/>";
 	    	echo "<a href=\"?page=overview&amp;sub=stats\">Resultat</a><br/><br/>";
-				// Update-Flag löschen
-				dbquery("UPDATE config SET config_value=0 WHERE config_name='updating';");            
-	    }
-	    else
-	    {
-	    	echo "Es kann momentan kein Update getätigt werden, da der Server zurzeit andere Updates am abarbeiten ist!<br/><br/>";
-	  	}		
+
+
 		}
 
 		if (isset($_GET['action']) && $_GET['action']=="update_minute")

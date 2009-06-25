@@ -26,14 +26,6 @@
 	// 	Kommentar:
 	//
 
-	$lres=dbquery("SELECT cat_id,cat_name,COUNT(*) as cnt FROM log_cat,logs WHERE log_cat=cat_id GROUP BY cat_id;;");
-	$log_type=array();
-	while ($larr=mysql_fetch_array($lres))
-	{
-		$log_type[$larr['cat_id']]['name']=$larr['cat_name'];
-		$log_type[$larr['cat_id']]['cnt']=$larr['cnt'];
-	}
-
 	echo "<h1>Logs</h1>";
 
 	echo "<div id=\"logsinfo\"></div>"; //nur zu entwicklungszwecken!
@@ -827,15 +819,15 @@
 		</script>
 		<?PHP
 
-		iBoxStart("Filter",570);
+		iBoxStart("Filter",600);
 		echo "<form action=\".\" method=\"post\"><p>
 		<label for=\"logcat\">Kategorie:</label>
 		<select id=\"logcat\" onchange=\"applyFilter(0)\">
 		<option value=\"0\">(Alle)</option>";
-		$lres=dbquery("SELECT cat_id,cat_name,COUNT(*) as cnt FROM log_cat INNER JOIN logs ON log_cat=cat_id GROUP BY cat_id;;");
-		while ($larr=mysql_fetch_assoc($lres))
+		foreach (Log::$facilities as $k => $v)
 		{
-			echo "<option value=\"".$larr['cat_id']."\">".$larr['cat_name']." (".$larr['cnt'].")</option>";
+			if ($k > 0)
+				echo "<option value=\"".$k."\">".$v."</option>";
 		}
 		echo "</select> &nbsp; ";
 		echo " <label for=\"searchtext\">Suchtext:</label> <input type=\"text\" id=\"searchtext\" value=\"\" /> &nbsp;

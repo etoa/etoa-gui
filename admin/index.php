@@ -270,45 +270,13 @@
 								}
 								else
 								{
-									// Release update lock
-									if (isset($_GET['releaseupdate']) && $_GET['releaseupdate']==1)
-									{
-										dbquery("UPDATE config SET config_value=0 WHERE config_name='updating';");
-									}
-									
-									// Release fleet update lock  
-									if (isset($_GET['releasefleetupdate']) && $_GET['releasefleetupdate']==1)
-									{
-										dbquery("UPDATE config SET config_value=0 WHERE config_name='updating_fleet';");
-									}
-									
 									// Activate update system
 									if (isset($_GET['activateupdate']) && $_GET['activateupdate']==1)
 									{
-										dbquery("UPDATE config SET config_value=1 WHERE config_name='update_enabled';");
+										Config::getInstance()->set("update_enabled",1);
 									}							
 									
-									if ($conf['updating']['v']!=0 && ($conf['updating']['p2']=="" || $conf['updating']['p2']<time()-120))
-									{
-										echo "<br/>";
-										iBoxStart("Update-Problem");
-										echo "Das Update k&ouml;nnte unter Umst&auml;nden festh&auml;ngen.";
-										if ($conf['updating']['p2']>0)
-											echo "Es wurde um ".date("d.m.Y, H:i",$conf['updating']['p2'])." zuletzt ausgeführt";
-										echo " <a href=\"?page=$page&amp;releaseupdate=1\">L&ouml;sen</a>";
-										iBoxEnd();
-									}
-									if ($conf['updating_fleet']['v']!=0 && ($conf['updating_fleet']['p2']=="" || $conf['updating_fleet']['p2']<time()-120))
-									{
-										echo "<br/>";
-										iBoxStart("Flottenupdate-Problem");
-										echo "Das Flottenupdate k&ouml;nnte unter Umst&auml;nden festh&auml;ngen.";
-										if ($conf['updating_fleet']['p2']>0)
-											echo "Es wurde um ".date("d.m.Y, H:i",$conf['updating_fleet']['p2'])." zuletzt ausgefhrt";
-										echo " <a href=\"?page=$page&amp;releasefleetupdate=1\">L&ouml;sen</a>";
-										iBoxEnd();
-									}
-									if ($conf['update_enabled']['v']!=1)
+									if (Config::getInstance()->update_enabled->v !=1 )
 									{
 										echo "<br/>";
 										iBoxStart("Updates deaktiviert");
