@@ -26,6 +26,8 @@
   {
   	$cu->properties->spyShipId = $_POST['spyship_id'];
   	$cu->properties->spyShipCount = $_POST['spyship_count'];
+  	$cu->properties->analyzeShipId = $_POST['analyzeship_id'];
+  	$cu->properties->analyzeShipCount = $_POST['analyzeship_count'];
   	$cu->properties->startUpChat = $_POST['startup_chat'];
     success_msg("Benutzer-Daten wurden ge&auml;ndert!");
   }
@@ -67,6 +69,48 @@
   	{
   		echo '<option value="'.$sarr['ship_id'].'"';
   		if ($cu->properties->spyShipId == $sarr['ship_id'])
+  		 echo ' selected="selected"';
+  		echo '>'.$sarr['ship_name'].'</option>';
+  	}
+  }
+  else
+  {
+  	echo "Momentan steht kein Schiff zur Auswahl!";
+  }
+  echo "</td></tr>";
+  
+  echo "<tr>
+  	<th><b>Anzahl Analyzatoren für Direktscan:</b></th>
+    <td>
+    	<input type=\"text\" name=\"analyzeship_count\" maxlength=\"5\" size=\"5\" value=\"".$cu->properties->analyzeShipCount."\">
+    </td>
+  </tr>";
+  
+  echo "<tr><th>Typ des Analyzators für Direktscan:</th>
+  <td>";
+	$sres = dbquery("
+	SELECT 
+    ship_id, 
+    ship_name
+	FROM 
+		ships 
+	WHERE 
+		ship_buildable='1'
+		AND (
+		ship_actions LIKE '%,analyze'
+		OR ship_actions LIKE 'analyze,%'
+		OR ship_actions LIKE '%,analyze,%'
+		OR ship_actions LIKE 'analyze'
+		)
+	ORDER BY 
+		ship_name ASC");
+  if (mysql_num_rows($sres)>0)
+  {
+  	echo '<select name="analyzeship_id"><option value="0">(keines)</option>';
+  	while ($sarr=mysql_fetch_array($sres))
+  	{
+  		echo '<option value="'.$sarr['ship_id'].'"';
+  		if ($cu->properties->analyzeShipId == $sarr['ship_id'])
   		 echo ' selected="selected"';
   		echo '>'.$sarr['ship_name'].'</option>';
   	}

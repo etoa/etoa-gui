@@ -360,6 +360,10 @@
 							}
 						}
 						
+						if (in_array("analyze",$ent->allowedFleetActions()))
+						{
+							echo "<a href=\"javascript:;\" onclick=\"xajax_launchAnalyzeProbe(".$ent->id().");\" title=\"Analysieren\">".icon("spy")."</a> ";
+						}
 
 			
 						echo "</td></tr>";
@@ -383,7 +387,7 @@
 				
 				
 				echo "<div id=\"spy_info_box\" style=\"display:none;\">";
-				iBoxStart("Spionage");
+				iBoxStart("Flotten");
 				echo "<div id=\"spy_info\"></div>";
 				iBoxEnd();
 				echo "</div>";

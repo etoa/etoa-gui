@@ -23,6 +23,8 @@
 		private $msgBlink;
     private $spyShipId;
     private $spyShipCount;
+	private $analyzeShipId;
+	private $analyzeShipCount;
     private $havenShipsButtons;
     private $showAdds;
     private $fleetRtnMsg;
@@ -68,6 +70,8 @@
 				$this->msgBlink = $arr['msg_blink'];
         $this->spyShipId = $arr['spyship_id'];
         $this->spyShipCount = $arr['spyship_count'];
+		$this->analyzeShipId = $arr['analyzeship_id'];
+		$this->analyzeShipCount = $arr['analyzeship_count'];
         $this->havenShipsButtons = $arr['havenships_buttons'];
 		    $this->showAdds = $arr['show_adds'];
 		    $this->fleetRtnMsg = $arr['fleet_rtn_msg'];
@@ -229,6 +233,16 @@
 				{
 					$this->$key = max(1,intval($val));
 					$this->changedFields[$key] = "spyship_count";
+				}
+				elseif ($key == "analyzeShipId")
+				{
+					$this->$key = $val;
+					$this->changedFields[$key] = "analyzeship_id";
+				}
+				elseif ($key == "analyzeShipCount")
+				{
+					$this->$key = max(1,intval($val));
+					$this->changedFields[$key] = "analyzeship_count";
 				}
 				elseif ($key == "havenShipsButtons")
 				{

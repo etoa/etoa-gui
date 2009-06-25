@@ -88,6 +88,8 @@
 			$this->supportCostsFoodPerSec = 0;
 			$this->leaderId = 0;
 			$this->fakeId = 0;
+			$this->sFleets = NULL;
+			$this->aFleets = NULL;
 
 			$this->shipActions = array();
 
@@ -667,8 +669,7 @@
 		{
 			$cfg = Config::getInstance();
 			
-			if (in_array($this->targetEntity->id,$this->sFleets) || $this->leaderId>0) $allowed = true;
-			else $allowed = false;
+			$allowed =  ($this->sFleets && (in_array($this->targetEntity->id,$this->sFleets) || $this->leaderId>0)) ? true : false;
 
 			// Get possible actions by intersecting ship actions and allowed target actions
 			$actions = array_intersect($this->shipActions,$this->targetEntity->allowedFleetActions());
@@ -998,8 +999,8 @@
 		}
 		
 		function loadAllianceFleets() {
-			$this->aFleets = array();
 			$this->sFleets = array();
+			$this->aFleets = array();
 			if ($this->sourceEntity->ownerAlliance()) {
 				$res = dbquery("
 						SELECT
