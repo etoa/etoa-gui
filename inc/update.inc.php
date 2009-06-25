@@ -166,23 +166,13 @@
 		// Zufalls-Event ausl�sen
 		//PlanetEventHandler::doEvent(RANDOM_EVENTS_PER_UPDATE);
 
+		$log= "Krieg/Frieden aktualisieren...\n";
 		$nr = warpeace_update();
 		
-		// Flotten updaten
-		$tmr = timerStart();
-
+		$log.= "Raketen berechnen...\n";
 		check_missiles();
       
-     /*  
-    $fa = updateAllFleet();
-    $log .= "Es wurden [b]".$fa[0]."[/b] Flotten aktualisiert!\n";
-    $log .= "Dauer: ".timerStop($tmr)." sec\n";
-    for ($i=0;$i<$fa[0];$i++)
-    {
-        $log .= "Flotte [b]".$fa[1][$i]."[/b]\n";
-    }
-		*/
-
+		$log.= "Inaktive Chat-User löschen...\n";
 		chatUserCleanUp();
 
 		return $log;
