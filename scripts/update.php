@@ -104,14 +104,11 @@
 			if (LOG_UPDATES || $t > LOG_UPDATES_THRESHOLD)
 			{
 				Log::add(Log::F_UPDATES, Log::WARNING, $logt."Gesamtdauer: ".$t."\n\n".$log);
-				echo 1;
 			}
 			else
 			{
 				Log::add(Log::F_UPDATES, Log::DEBUG, $logt."Gesamtdauer: ".$t."\n\n".$log);
-				echo 2;
 			}
-			echo $logt;
 			
 			//Löscht Arrays (gibt Speicher wieder frei)
 			unset($log);

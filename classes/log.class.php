@@ -59,6 +59,7 @@
 			{
 				$severity = self::INFO;
 			}
+			echo "$severity > ".self::DEBUG." || ".ETOA_DEBUG."==1";
 			if ($severity > self::DEBUG || ETOA_DEBUG==1)
 			{
 				dbquery("
