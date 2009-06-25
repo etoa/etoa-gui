@@ -59,7 +59,6 @@
 			{
 				$severity = self::INFO;
 			}
-			echo "$severity > ".self::DEBUG." || ".Config::getInstance()->debug->v."==1";
 			if ($severity > self::DEBUG || Config::getInstance()->debug->v==1)
 			{
 				dbquery("
