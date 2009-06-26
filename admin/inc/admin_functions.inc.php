@@ -1229,7 +1229,7 @@ function showLogs($args=null,$limit=0)
 			<td>".df($arr['timestamp'])."</td>
 			<td>".Log::$severities[$arr['severity']]."</td>
 			<td>".Log::$facilities[$arr['facility']]."</td>
-			<td>".text2html($arr['message'])."</td>
+			<td>".text2html($arr['message'])."<br/><br/>".$arr['ip']."</td>
 			</tr>";
 		}
 		echo "</table>";
@@ -1242,7 +1242,7 @@ function showLogs($args=null,$limit=0)
 
 function showGameLogs($args=null,$limit=0)
 {
-	$paginationLimit = 100;
+	$paginationLimit = 25;
 
 	$cat = is_array($args) && isset($args['logcat']) ? $args['logcat'] : 0;
 	$sev = is_array($args) && isset($args['logsev'])  ? $args['logsev'] : 0;
@@ -1415,9 +1415,8 @@ function showGameLogs($args=null,$limit=0)
 			<td>".$obStatus."</td>
 			<td><a href=\"javascript:;\" onclick=\"toggleBox('details".$arr['id']."')\">Details</a></td>
 			</tr>";
-			echo "<tr id=\"details".$arr['id']."\" style=\"display:none;\"><td colspan=\"9\">".text2html($arr['message'])."</td></tr>";
-
-			//<td>".text2html($arr['message'])."</td>
+			echo "<tr id=\"details".$arr['id']."\" style=\"display:none;\"><td colspan=\"9\">".text2html($arr['message'])."
+			<br/><br/>".$arr['ip']."</td></tr>";
 		}
 		echo "</table>";
 	}
