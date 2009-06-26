@@ -817,6 +817,9 @@
 				document.getElementById('logcat').value=0;
 				document.getElementById('logsev').value=0;
 				document.getElementById('searchtext').value='';
+				document.getElementById('searchuser').value='';
+				document.getElementById('searchalliance').value='';
+				document.getElementById('searchentity').value='';
 				fillObjectSelection();
 				applyFilter(0);
 				document.getElementById('searchtext').focus();
@@ -825,7 +828,7 @@
 			{
 				elem = document.getElementById('object_id');
 				elem.length = 0;
-				elem.options[elem.options.length] = new Option('Alle',0);
+				elem.options[elem.options.length] = new Option('(Alle)',0);
 				switch(document.getElementById('logcat').value)
 				{
 					case '1':
@@ -866,7 +869,7 @@
 		</script>
 		<?PHP
 
-		iBoxStart("Filter",800);
+		iBoxStart("Filter",950);
 		echo "<form action=\".\" method=\"post\" id=\"filterform\"><p>";
 		echo "<label for=\"logsev\">Ab Schweregrad:</label>
 		<select id=\"logsev\" name=\"logsev\" onchange=\"applyFilter(0)\">";
@@ -891,10 +894,16 @@
 		<option value=\"0\">(Alle)</option>";
 		echo "</select> &nbsp; ";
 
+		echo " <label for=\"searchtext\">Suchtext:</label> <input type=\"text\" id=\"searchtext\" name=\"searchtext\" value=\"\" autocomplete=\"off\" /> &nbsp; ";
 		echo "<br/><br/>";
 
-		echo " <label for=\"searchtext\">Suchtext:</label> <input type=\"text\" id=\"searchtext\" name=\"searchtext\" value=\"\" /> &nbsp;
-		<input type=\"submit\" value=\"Anwenden\" onclick=\"applyFilter(0);document.getElementById('searchtext').select();return false;\" /> &nbsp;
+		echo " <label for=\"searchuser\">User:</label> <input type=\"text\" id=\"searchuser\" name=\"searchuser\" value=\"\" autocomplete=\"off\" /> &nbsp; ";
+		echo " <label for=\"searchalliance\">Allianz:</label> <input type=\"text\" id=\"searchalliance\" name=\"searchalliance\" value=\"\" autocomplete=\"off\" /> &nbsp; ";
+		// Todo: extend to any entity
+		echo " <label for=\"searchentity\">Planet:</label> <input type=\"text\" id=\"searchentity\" name=\"searchentity\" value=\"\" autocomplete=\"off\" /> &nbsp; ";
+
+
+		echo " &nbsp; <input type=\"submit\" value=\"Anwenden\" onclick=\"applyFilter(0);return false;\" /> &nbsp;
 		<input type=\"button\" value=\"Reset\" onclick=\"resetFilter();\" />";
 		echo "</p></form>";
 		iBoxEnd();
@@ -902,9 +911,6 @@
 		echo "<div id=\"log_contents\">";
 		showGameLogs();
 		echo "</div>";
-
-
-
 	}
 
 
@@ -927,8 +933,16 @@
 		<?PHP
 
 		iBoxStart("Filter",800);
-		echo "<form action=\".\" method=\"post\" id=\"filterform\"><p>
-		<label for=\"logcat\">Kategorie:</label>
+		echo "<form action=\".\" method=\"post\" id=\"filterform\"><p>";
+		echo "<label for=\"logsev\">Ab Schweregrad:</label>
+		<select id=\"logsev\" name=\"logsev\" onchange=\"applyFilter(0)\">";
+		foreach (Log::$severities as $k => $v)
+		{
+			echo "<option value=\"".$k."\">".$v."</option>";
+		}
+		echo "</select> &nbsp; ";
+
+		echo "<label for=\"logcat\">Kategorie:</label>
 		<select id=\"logcat\" name=\"logcat\" onchange=\"applyFilter(0)\">
 		<option value=\"0\">(Alle)</option>";
 		foreach (Log::$facilities as $k => $v)
@@ -937,13 +951,7 @@
 				echo "<option value=\"".$k."\">".$v."</option>";
 		}
 		echo "</select> &nbsp; ";
-		echo "<label for=\"logsev\">Ab Schweregrad:</label>
-		<select id=\"logsev\" name=\"logsev\" onchange=\"applyFilter(0)\">";
-		foreach (Log::$severities as $k => $v)
-		{
-			echo "<option value=\"".$k."\">".$v."</option>";
-		}
-		echo "</select> &nbsp; ";
+
 
 
 		echo " <label for=\"searchtext\">Suchtext:</label> <input type=\"text\" id=\"searchtext\" name=\"searchtext\" value=\"\" /> &nbsp;

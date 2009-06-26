@@ -281,35 +281,31 @@
 									$b_status=3;
 									
 									//Log schreiben
-									$log_text = "
-									<b>Forschung Ausbau</b><br><br>
-									<b>User:</b> [USER_ID=".$cu->id.";USER_NICK=".$cu->nick."]<br>
-									<b>Planeten:</b> [PLANET_ID=".$cp->id().";PLANET_NAME=".$cp->name."]<br>
-									<b>Technologie:</b> ".$arr['tech_name']."<br>
-									<b>Technologie Level:</b> ".$b_level." (vor Ausbau)<br>
-									<b>Erforschungsdauer:</b> ".tf($btime)."<br>
-									<b>Ende:</b> ".date("Y-m-d H:i:s",$end_time)."<br>
-									<b>Forschungslabor Level:</b> ".CURRENT_LAB_LEVEL."<br>
-									<b>Eingesetzte Bewohner:</b> ".nf($peopleWorking)."<br>
-									<b>Gen-Tech Level:</b> ".GEN_TECH_LEVEL."<br>
-									<b>Eingesetzter Spezialist:</b> ".$cu->specialist->name."<br><br>
-									<b>Kosten</b><br>
-									<b>".RES_METAL.":</b> ".nf($bc['metal'])."<br>
-									<b>".RES_CRYSTAL.":</b> ".nf($bc['crystal'])."<br>
-									<b>".RES_PLASTIC.":</b> ".nf($bc['plastic'])."<br>
-									<b>".RES_FUEL.":</b> ".nf($bc['fuel'])."<br>
-									<b>".RES_FOOD.":</b> ".nf($bc['food'])."<br><br>
-									<b>Restliche Rohstoffe auf dem Planeten</b><br><br>
-									<b>".RES_METAL.":</b> ".nf($cp->resMetal)."<br>
-									<b>".RES_CRYSTAL.":</b> ".nf($cp->resCrystal)."<br>
-									<b>".RES_PLASTIC.":</b> ".nf($cp->resPlastic)."<br>
-									<b>".RES_FUEL.":</b> ".nf($cp->resFuel)."<br>
-									<b>".RES_FOOD.":</b> ".nf($cp->resFood)."<br><br>
-									";
+									$log_text = "[b]Forschung Ausbau[/b]
+
+[b]Erforschungsdauer:[/b] ".tf($btime)."
+[b]Ende:[/b] ".date("d.m.Y H:i:s",$end_time)."
+[b]Forschungslabor Level:[/b] ".CURRENT_LAB_LEVEL."
+[b]Eingesetzte Bewohner:[/b] ".nf($peopleWorking)."
+[b]Gen-Tech Level:[/b] ".GEN_TECH_LEVEL."
+[b]Eingesetzter Spezialist:[/b] ".$cu->specialist->name."
+
+[b]Kosten[/b]
+[b]".RES_METAL.":[/b] ".nf($bc['metal'])."
+[b]".RES_CRYSTAL.":[/b] ".nf($bc['crystal'])."
+[b]".RES_PLASTIC.":[/b] ".nf($bc['plastic'])."
+[b]".RES_FUEL.":[/b] ".nf($bc['fuel'])."
+[b]".RES_FOOD.":[/b] ".nf($bc['food'])."
+
+[b]Restliche Rohstoffe auf dem Planeten[/b]
+[b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
+[b]".RES_CRYSTAL.":[/b] ".nf($cp->resCrystal)."
+[b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
+[b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
+[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
 									
 									//Log Speichern
-									add_log_game_research($log_text,$cu->id,$cu->allianceId,$cp->id(),$arr['tech_id'],$b_status,time());								
-									
+									GameLog::add(GameLog::F_TECH, GameLog::INFO, $log_text, $cu->id,$cu->allianceId,$cp->id,$arr['tech_id'], $b_status, $b_level);
 								}
 								else
 								{
@@ -345,31 +341,29 @@
 							$builing_something=false;
 							
 							//Log schreiben
-							$log_text = "
-							<b>Forschungs Abbruch</b><br><br>
-							<b>User:</b> [USER_ID=".$cu->id.";USER_NICK=".$cu->nick."]<br>
-							<b>Planeten:</b> [PLANET_ID=".$cp->id().";PLANET_NAME=".$cp->name."]<br>
-							<b>Forschung:</b> ".$arr['tech_name']."<br>
-							<b>Forschungs Level:</b> ".$b_level." (nach Abbruch)<br>
-							<b>Start der Forschung:</b> ".date("Y-m-d H:i:s",$start_time)."<br>
-							<b>Ende der Forschung:</b> ".date("Y-m-d H:i:s",$end_time)."<br><br>
-							<b>Erhaltene Rohstoffe</b><br>
-							<b>Faktor:</b> ".$fac."<br>
-							<b>".RES_METAL.":</b> ".nf($bc['metal']*$fac)."<br>
-							<b>".RES_CRYSTAL.":</b> ".nf($bc['crystal']*$fac)."<br>
-							<b>".RES_PLASTIC.":</b> ".nf($bc['plastic']*$fac)."<br>
-							<b>".RES_FUEL.":</b> ".nf($bc['fuel']*$fac)."<br>
-							<b>".RES_FOOD.":</b> ".nf($bc['food']*$fac)."<br><br>
-							<b>Rohstoffe auf dem Planeten</b><br><br>
-							<b>".RES_METAL.":</b> ".nf($cp->resMetal)."<br>
-							<b>".RES_CRYSTAL.":</b> ".nf($cp->resCrystal)."<br>
-							<b>".RES_PLASTIC.":</b> ".nf($cp->resPlastic)."<br>
-							<b>".RES_FUEL.":</b> ".nf($cp->resFuel)."<br>
-							<b>".RES_FOOD.":</b> ".nf($cp->resFood)."<br><br>
-							";
+							$log_text = "[b]Forschung Abbruch[/b]
+
+[b]Start der Forschung:[/b] ".date("d.m.Y H:i:s",$start_time)."
+[b]Ende der Forschung:[/b] ".date("d.m.Y H:i:s",$end_time)."
+
+[b]Erhaltene Rohstoffe[/b]
+[b]Faktor:[/b] ".$fac."
+[b]".RES_METAL.":[/b] ".nf($bc['metal']*$fac)."
+[b]".RES_CRYSTAL.":[/b] ".nf($bc['crystal']*$fac)."
+[b]".RES_PLASTIC.":[/b] ".nf($bc['plastic']*$fac)."
+[b]".RES_FUEL.":[/b] ".nf($bc['fuel']*$fac)."
+[b]".RES_FOOD.":[/b] ".nf($bc['food']*$fac)."
+
+[b]Rohstoffe auf dem Planeten[/b]
+[b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
+[b]".RES_CRYSTAL.":[/b] ".nf($cp->resCrystal)."
+[b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
+[b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
+[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
 							
 							//Log Speichern
-							add_log_game_research($log_text,$cu->id,$cu->allianceId,$cp->id(),$arr['tech_id'],$b_status,time());								
+							GameLog::add(GameLog::F_TECH, GameLog::INFO, $log_text, $cu->id,$cu->allianceId,$cp->id,$arr['tech_id'], $b_status, $b_level);
+
 						}
 						else
 						{

@@ -1219,16 +1219,16 @@ function showLogs($args=null,$limit=0)
 		</th></tr>";
 		echo "<tr>
 			<th style=\"width:140px;\">Datum</th>
-			<th style=\"width:90px;\">Bereich</th>
 			<th style=\"width:90px;\">Schweregrad</th>
+			<th style=\"width:90px;\">Bereich</th>
 			<th>Nachricht</th>
 		</tr>";
 		while ($arr = mysql_fetch_assoc($res))
 		{
 			echo "<tr>
 			<td>".df($arr['timestamp'])."</td>
-			<td>".Log::$facilities[$arr['facility']]."</td>
 			<td>".Log::$severities[$arr['severity']]."</td>
+			<td>".Log::$facilities[$arr['facility']]."</td>
 			<td>".text2html($arr['message'])."</td>
 			</tr>";
 		}
@@ -1251,10 +1251,36 @@ function showGameLogs($args=null,$limit=0)
 	$order = "timestamp DESC";
 
 	$sql1 = "SELECT ";
-	$sql2 = " * ";
+	$sql2 = " l.* ";
 
-	$sql3= " FROM logs_game WHERE ";
-	$sql3.= "1";
+	$sql3= " FROM logs_game l ";
+	if (isset($args['searchuser']) && $args['searchuser']!="" && !is_numeric($args['searchuser']))
+	{
+		$sql3.=" INNER JOIN users u ON u.user_id=l.user_id AND u.user_nick LIKE '%".$args['searchuser']."%' ";
+	}
+	if (isset($args['searchalliance']) && $args['searchalliance']!="" && !is_numeric($args['searchalliance']))
+	{
+		$sql3.=" INNER JOIN alliances u ON u.alliance_id=l.alliance_id AND u.alliance_name LIKE '%".$args['searchalliance']."%' ";
+	}
+	if (isset($args['searchentity']) && $args['searchentity']!="" && !is_numeric($args['searchentity']))
+	{
+		// TODO: this now only works for planets...
+		$sql3.=" INNER JOIN planets u ON u.id=l.entity_id AND u.planet_name LIKE '%".$args['searchentity']."%' ";
+	}
+	$sql3.= " WHERE 1 ";
+
+	if (isset($args['searchuser']) && is_numeric($args['searchuser']))
+	{
+		$sql3.=" AND l.user_id=".intval($args['searchuser'])." ";
+	}
+	if (isset($args['searchalliance']) && is_numeric($args['searchalliance']))
+	{
+		$sql3.=" AND l.alliance_id=".intval($args['searchalliance'])." ";
+	}
+	if (isset($args['searchentity']) && is_numeric($args['searchentity']))
+	{
+		$sql3.=" AND l.entity_id=".intval($args['searchentity'])." ";
+	}
 	if ($cat>0)
 	{
 		$sql3.=" AND facility=".$cat." ";
@@ -1273,7 +1299,7 @@ function showGameLogs($args=null,$limit=0)
 	}
 	$sql3.= " ORDER BY $order";
 
-	$res = dbquery($sql1." COUNT(id) as cnt ".$sql3);
+	$res = dbquery($sql1." COUNT(l.id) as cnt ".$sql3);
 	$arr = mysql_fetch_row($res);
 	$total = $arr[0];
 
@@ -1319,8 +1345,8 @@ function showGameLogs($args=null,$limit=0)
 		</th></tr>";
 		echo "<tr>
 			<th style=\"width:140px;\">Datum</th>
-			<th style=\"\">Bereich</th>
 			<th style=\"\">Schweregrad</th>
+			<th style=\"\">Bereich</th>
 			<th>User</th>
 			<th>Allianz</th>
 			<th>Raumobjekt</th>
@@ -1336,16 +1362,33 @@ function showGameLogs($args=null,$limit=0)
 			switch ($arr['facility'])
 			{
 				case GameLog::F_BUILD:
-					$ob = new Building($arr['object_id']);
-					$obStatus = $arr['status'];
+					$ob = new Building($arr['object_id'])." ".($arr['level']>0 ? $arr['level'] : '');
+					switch ($arr['status'])
+					{
+						case 1: $obStatus="Ausbau abgebrochen";break;
+						case 2: $obStatus="Abriss abgebrochen";break;
+						case 3: $obStatus="Ausbau";break;
+						case 4: $obStatus="Abriss";break;
+						default: $obStatus='-';
+					}					
 					break;
 				case GameLog::F_TECH:
-					$ob = new Technology($arr['object_id']);
-					$obStatus = $arr['status'];
+					$ob = new Technology($arr['object_id'])." ".($arr['level']>0 ? $arr['level'] : '');
+					switch ($arr['status'])
+					{
+						case 3: $obStatus="Erforschung";break;
+						case 0: $obStatus="Erforschung abgebrochen";break;
+						default: $obStatus='-';
+					}
 					break;
 				case GameLog::F_SHIP:
 					$ob = $arr['object_id'] > 0 ? new Ship($arr['object_id']) : '-';
-					$obStatus = $arr['status'];
+					switch ($arr['status'])
+					{
+						case 1: $obStatus="Bau";break;
+						case 0: $obStatus="Bau abgebrochen";break;
+						default: $obStatus='-';
+					}
 					break;
 				case GameLog::F_DEF:
 					$ob = $arr['object_id'] > 0 ? new Defense($arr['object_id']) : '-';
@@ -1358,8 +1401,8 @@ function showGameLogs($args=null,$limit=0)
 			
 			echo "<tr>
 			<td>".df($arr['timestamp'])."</td>
-			<td>".GameLog::$facilities[$arr['facility']]."</td>
 			<td>".GameLog::$severities[$arr['severity']]."</td>
+			<td>".GameLog::$facilities[$arr['facility']]."</td>
 			<td>".$tu."</td>
 			<td>".$ta."</td>
 			<td>".$te."</td>
@@ -1367,7 +1410,7 @@ function showGameLogs($args=null,$limit=0)
 			<td>".$obStatus."</td>
 			<td><a href=\"javascript:;\" onclick=\"toggleBox('details".$arr['id']."')\">Details</a></td>
 			</tr>";
-			echo "<tr id=\"details".$arr['id']."\" style=\"display:none;\"><td colspan=\"9\">".$arr['message']."</td></tr>";
+			echo "<tr id=\"details".$arr['id']."\" style=\"display:none;\"><td colspan=\"9\">".text2html($arr['message'])."</td></tr>";
 
 			//<td>".text2html($arr['message'])."</td>
 		}

@@ -439,34 +439,30 @@ function calcDemolishingWaitTime($dc,$cp)
 								
 								
 								//Log schreiben
-								$log_text = "
-								<b>Gebäude Ausbau</b><br><br>
-								<b>User:</b> [USER_ID=".$cu->id.";USER_NICK=".$cu->nick."]<br>
-								<b>Planeten:</b> [PLANET_ID=".$cp->id().";PLANET_NAME=".$cp->name."]<br>
-								<b>Gebäude:</b> ".$arr['building_name']."<br>
-								<b>Gebäude Level:</b> ".$b_level." (vor Ausbau)<br>
-								<b>Bau dauer:</b> ".tf($btime)."<br>
-								<b>Ende:</b> ".date("Y-m-d H:i:s",$end_time)."<br>
-								<b>Eingesetzte Bewohner:</b> ".nf($peopleWorking)."<br>
-								<b>Gen-Tech Level:</b> ".GEN_TECH_LEVEL."<br>
-								<b>Eingesetzter Spezialist:</b> ".$cu->specialist->name."<br><br>
-								<b>Kosten</b><br>
-								<b>".RES_METAL.":</b> ".nf($bc['metal'])."<br>
-								<b>".RES_CRYSTAL.":</b> ".nf($bc['crystal'])."<br>
-								<b>".RES_PLASTIC.":</b> ".nf($bc['plastic'])."<br>
-								<b>".RES_FUEL.":</b> ".nf($bc['fuel'])."<br>
-								<b>".RES_FOOD.":</b> ".nf($bc['food'])."<br><br>
-								<b>Restliche Rohstoffe auf dem Planeten</b><br><br>
-								<b>".RES_METAL.":</b> ".nf($cp->resMetal)."<br>
-								<b>".RES_CRYSTAL.":</b> ".nf($cp->resCrystal)."<br>
-								<b>".RES_PLASTIC.":</b> ".nf($cp->resPlastic)."<br>
-								<b>".RES_FUEL.":</b> ".nf($cp->resFuel)."<br>
-								<b>".RES_FOOD.":</b> ".nf($cp->resFood)."<br><br>
-								";
+								$log_text = "[b]Gebäudebau[/b]
+
+[b]Baudauer:[/b] ".tf($btime)."
+[b]Ende:[/b] ".date("d.m.Y H:i:s",$end_time)."
+[b]Eingesetzte Bewohner:[/b] ".nf($peopleWorking)."
+[b]Gen-Tech Level:[/b] ".GEN_TECH_LEVEL."
+[b]Eingesetzter Spezialist:[/b] ".$cu->specialist->name."
+
+[b]Kosten[/b]
+[b]".RES_METAL.":[/b] ".nf($bc['metal'])."
+[b]".RES_CRYSTAL.":[/b] ".nf($bc['crystal'])."
+[b]".RES_PLASTIC.":[/b] ".nf($bc['plastic'])."
+[b]".RES_FUEL.":[/b] ".nf($bc['fuel'])."
+[b]".RES_FOOD.":[/b] ".nf($bc['food'])."
+
+[b]Restliche Rohstoffe auf dem Planeten[/b]
+[b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
+[b]".RES_CRYSTAL.":[/b] ".nf($cp->resCrystal)."
+[b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
+[b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
+[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
 								
 								//Log Speichern
-								add_log_game_building($log_text,$cu->id,$cu->allianceId,$cp->id(),$arr['building_id'],$b_status,time());
-								
+								GameLog::add(GameLog::F_BUILD, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $arr['building_id'], 3, $b_level);
 							}
 							else
 								error_msg("Bauauftrag kann nicht gestartet werden, zuwenig Rohstoffe vorhanden!");
@@ -504,30 +500,27 @@ function calcDemolishingWaitTime($dc,$cp)
 							
 							
 							//Log schreiben
-							$log_text = "
-							<b>Gebäude Abriss</b><br><br>
-							<b>User:</b> [USER_ID=".$cu->id.";USER_NICK=".$cu->nick."]<br>
-							<b>Planeten:</b> [PLANET_ID=".$cp->id().";PLANET_NAME=".$cp->name."]<br>
-							<b>Gebäude:</b> ".$arr['building_name']."<br>
-							<b>Gebäude Level:</b> ".$b_level." (vor Abriss)<br>
-							<b>Abriss dauer:</b> ".tf($dtime)."<br>
-							<b>Ende:</b> ".date("Y-m-d H:i:s",$end_time)."<br><br>
-							<b>Kosten</b><br>
-							<b>".RES_METAL.":</b> ".nf($dc['metal'])."<br>
-							<b>".RES_CRYSTAL.":</b> ".nf($dc['crystal'])."<br>
-							<b>".RES_PLASTIC.":</b> ".nf($dc['plastic'])."<br>
-							<b>".RES_FUEL.":</b> ".nf($dc['fuel'])."<br>
-							<b>".RES_FOOD.":</b> ".nf($dc['food'])."<br><br>
-							<b>Restliche Rohstoffe auf dem Planeten</b><br><br>
-							<b>".RES_METAL.":</b> ".nf($cp->resMetal)."<br>
-							<b>".RES_CRYSTAL.":</b> ".nf($cp->resCrystal)."<br>
-							<b>".RES_PLASTIC.":</b> ".nf($cp->resPlastic)."<br>
-							<b>".RES_FUEL.":</b> ".nf($cp->resFuel)."<br>
-							<b>".RES_FOOD.":</b> ".nf($cp->resFood)."<br><br>
-							";
+							$log_text = "[b]Gebäudeabriss[/b]
+
+[b]Abrissdauer:[/b] ".tf($dtime)."
+[b]Ende:[/b] ".date("d.m.Y H:i:s",$end_time)."
+
+[b]Kosten[/b]
+[b]".RES_METAL.":[/b] ".nf($dc['metal'])."
+[b]".RES_CRYSTAL.":[/b] ".nf($dc['crystal'])."
+[b]".RES_PLASTIC.":[/b] ".nf($dc['plastic'])."
+[b]".RES_FUEL.":[/b] ".nf($dc['fuel'])."
+[b]".RES_FOOD.":[/b] ".nf($dc['food'])."
+
+[b]Restliche Rohstoffe auf dem Planeten[/b]
+[b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
+[b]".RES_CRYSTAL.":[/b] ".nf($cp->resCrystal)."
+[b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
+[b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
+[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
 							
 							//Log Speichern
-							add_log_game_building($log_text,$cu->id,$cu->allianceId,$cp->id(),$arr['building_id'],$b_status,time());	
+							GameLog::add(GameLog::F_BUILD, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $arr['building_id'], 4, $b_level);
 							
 						}
 						else
@@ -560,31 +553,29 @@ function calcDemolishingWaitTime($dc,$cp)
 						$builing_something=false;
 						
 						//Log schreiben
-						$log_text = "
-						<b>Gebäudebau Abbruch</b><br><br>
-						<b>User:</b> [USER_ID=".$cu->id.";USER_NICK=".$cu->nick."]<br>
-						<b>Planeten:</b> [PLANET_ID=".$cp->id().";PLANET_NAME=".$cp->name."]<br>
-						<b>Gebäude:</b> ".$arr['building_name']."<br>
-						<b>Gebäude Level:</b> ".$b_level." (nach Abbruch)<br>
-						<b>Start des Gebädes:</b> ".date("Y-m-d H:i:s",$start_time)."<br>
-						<b>Ende des Gebädes:</b> ".date("Y-m-d H:i:s",$end_time)."<br><br>
-						<b>Erhaltene Rohstoffe</b><br>
-						<b>Faktor:</b> ".$fac."<br>
-						<b>".RES_METAL.":</b> ".nf($bc['metal']*$fac)."<br>
-						<b>".RES_CRYSTAL.":</b> ".nf($bc['crystal']*$fac)."<br>
-						<b>".RES_PLASTIC.":</b> ".nf($bc['plastic']*$fac)."<br>
-						<b>".RES_FUEL.":</b> ".nf($bc['fuel']*$fac)."<br>
-						<b>".RES_FOOD.":</b> ".nf($bc['food']*$fac)."<br><br>
-						<b>Rohstoffe auf dem Planeten</b><br><br>
-						<b>".RES_METAL.":</b> ".nf($cp->resMetal)."<br>
-						<b>".RES_CRYSTAL.":</b> ".nf($cp->resCrystal)."<br>
-						<b>".RES_PLASTIC.":</b> ".nf($cp->resPlastic)."<br>
-						<b>".RES_FUEL.":</b> ".nf($cp->resFuel)."<br>
-						<b>".RES_FOOD.":</b> ".nf($cp->resFood)."<br><br>
-						";
+						$log_text = "[b]Gebäudebau Abbruch[/b]
+
+[b]Start des Gebädes:[/b] ".date("d.m.Y H:i:s",$start_time)."
+[b]Ende des Gebädes:[/b] ".date("d.m.Y H:i:s",$end_time)."
+
+[b]Erhaltene Rohstoffe[/b]
+[b]Faktor:[/b] ".$fac."
+[b]".RES_METAL.":[/b] ".nf($bc['metal']*$fac)."
+[b]".RES_CRYSTAL.":[/b] ".nf($bc['crystal']*$fac)."
+[b]".RES_PLASTIC.":[/b] ".nf($bc['plastic']*$fac)."
+[b]".RES_FUEL.":[/b] ".nf($bc['fuel']*$fac)."
+[b]".RES_FOOD.":[/b] ".nf($bc['food']*$fac)."
+
+[b]Rohstoffe auf dem Planeten[/b]
+[b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
+[b]".RES_CRYSTAL.":[/b] ".nf($cp->resCrystal)."
+[b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
+[b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
+[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
 						
 						//Log Speichern
-						add_log_game_building($log_text,$cu->id,$cu->allianceId,$cp->id(),$arr['building_id'],$b_status,time());								
+						GameLog::add(GameLog::F_BUILD, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $arr['building_id'], 1, $b_level);
+
 					}
 					else
 						error_msg("Bauauftrag kann nicht mehr abgebrochen werden, die Arbeit ist bereits fertiggestellt!");
@@ -613,31 +604,29 @@ function calcDemolishingWaitTime($dc,$cp)
 						$builing_something=false;
 						
 						//Log schreiben
-						$log_text = "
-						<b>Gebäudeabbruch Abbruch</b><br><br>
-						<b>User:</b> [USER_ID=".$cu->id.";USER_NICK=".$cu->nick."]<br>
-						<b>Planeten:</b> [PLANET_ID=".$cp->id().";PLANET_NAME=".$cp->name."]<br>
-						<b>Gebäude:</b> ".$arr['building_name']."<br>
-						<b>Gebäude Level:</b> ".$b_level." (nach Abbruch)<br>
-						<b>Start des Gebädes:</b> ".date("Y-m-d H:i:s",$start_time)."<br>
-						<b>Ende des Gebädes:</b> ".date("Y-m-d H:i:s",$end_time)."<br><br>
-						<b>Erhaltene Rohstoffe</b><br>
-						<b>Faktor:</b> ".$fac."<br>
-						<b>".RES_METAL.":</b> ".nf($dc['metal']*$fac)."<br>
-						<b>".RES_CRYSTAL.":</b> ".nf($dc['crystal']*$fac)."<br>
-						<b>".RES_PLASTIC.":</b> ".nf($dc['plastic']*$fac)."<br>
-						<b>".RES_FUEL.":</b> ".nf($dc['fuel']*$fac)."<br>
-						<b>".RES_FOOD.":</b> ".nf($dc['food']*$fac)."<br><br>
-						<b>Rohstoffe auf dem Planeten</b><br><br>
-						<b>".RES_METAL.":</b> ".nf($cp->resMetal)."<br>
-						<b>".RES_CRYSTAL.":</b> ".nf($cp->resCrystal)."<br>
-						<b>".RES_PLASTIC.":</b> ".nf($cp->resPlastic)."<br>
-						<b>".RES_FUEL.":</b> ".nf($cp->resFuel)."<br>
-						<b>".RES_FOOD.":</b> ".nf($cp->resFood)."<br><br>
-						";
+						$log_text = "[b]Gebäudeabriss Abbruch[/b]
+						
+[b]Start des Gebädes:[/b] ".date("d.m.Y H:i:s",$start_time)."
+[b]Ende des Gebädes:[/b] ".date("d.m.Y H:i:s",$end_time)."
+
+[b]Erhaltene Rohstoffe[/b]
+[b]Faktor:[/b] ".$fac."
+[b]".RES_METAL.":[/b] ".nf($dc['metal']*$fac)."
+[b]".RES_CRYSTAL.":[/b] ".nf($dc['crystal']*$fac)."
+[b]".RES_PLASTIC.":[/b] ".nf($dc['plastic']*$fac)."
+[b]".RES_FUEL.":[/b] ".nf($dc['fuel']*$fac)."
+[b]".RES_FOOD.":[/b] ".nf($dc['food']*$fac)."
+
+[b]Rohstoffe auf dem Planeten[/b]
+[b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
+[b]".RES_CRYSTAL.":[/b] ".nf($cp->resCrystal)."
+[b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
+[b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
+[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
 						
 						//Log Speichern
-						add_log_game_building($log_text,$cu->id,$cu->allianceId,$cp->id(),$arr['building_id'],$b_status,time());							
+						GameLog::add(GameLog::F_BUILD, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $arr['building_id'], 2, $b_level);
+
 					}
 					else
 						error_msg("Abbruchauftrag kann nicht mehr abgebrochen werden, die Arbeit ist bereits fertiggestellt!");

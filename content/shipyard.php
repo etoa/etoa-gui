@@ -632,35 +632,35 @@
 				$cp->changeRes(-$total_metal,-$total_crystal,-$total_plastic,-$total_fuel,-$total_food);
 												
 				//Log schreiben
-				$log_text = "
-				<b>Schiffsauftrag Bauen</b><br><br>
-				<b>User:</b> [USER_ID=".$cu->id.";USER_NICK=".$cu->nick."]<br>
-				<b>Planeten:</b> [PLANET_ID=".$cp->id.";PLANET_NAME=".$cp->name."]<br>
-				<b>Dauer des gesamten Auftrages:</b> ".tf($total_duration)."<br>
-				<b>Ende des gesamten Auftrages:</b> ".date("Y-m-d H:i:s",$end_time)."<br>
-				<b>Schiffswerft Level:</b> ".CURRENT_SHIPYARD_LEVEL."<br>
-				<b>Eingesetzte Bewohner:</b> ".nf($people_working)."<br>
-				<b>Gen-Tech Level:</b> ".$gen_tech_level."<br>
-				<b>Eingesetzter Spezialist:</b> ".$cu->specialist->name."<br><br>
-				<b>Kosten</b><br>
-				<b>".RES_METAL.":</b> ".nf($total_metal)."<br>
-				<b>".RES_CRYSTAL.":</b> ".nf($total_crystal)."<br>
-				<b>".RES_PLASTIC.":</b> ".nf($total_plastic)."<br>
-				<b>".RES_FUEL.":</b> ".nf($total_fuel)."<br>
-				<b>".RES_FOOD.":</b> ".nf($total_food)."<br><br>
-				<b>Rohstoffe auf dem Planeten</b><br><br>
-				<b>".RES_METAL.":</b> ".nf($cp->resMetal)."<br>
-				<b>".RES_CRYSTAL.":</b> ".nf($cp->resCrystal)."<br>
-				<b>".RES_PLASTIC.":</b> ".nf($cp->resPlastic)."<br>
-				<b>".RES_FUEL.":</b> ".nf($cp->resFuel)."<br>
-				<b>".RES_FOOD.":</b> ".nf($cp->resFood)."<br><br>
-				<b>Schiffe</b><br>
-				".$log_ships."
-				";
-				
+				$log_text = "[b]Schiffsauftrag Bauen[/b]
+
+[b]Dauer des gesamten Auftrages:[/b] ".tf($total_duration)."
+[b]Ende des gesamten Auftrages:[/b] ".date("d.m.Y H:i:s",$end_t)."
+[b]Schiffswerft Level:[/b] ".CURRENT_SHIPYARD_LEVEL."
+[b]Eingesetzte Bewohner:[/b] ".nf($people_working)."
+[b]Gen-Tech Level:[/b] ".$gen_tech_level."
+[b]Eingesetzter Spezialist:[/b] ".$cu->specialist->name."
+
+[b]Kosten[/b]
+[b]".RES_METAL.":[/b] ".nf($total_metal)."
+[b]".RES_CRYSTAL.":[/b] ".nf($total_crystal)."
+[b]".RES_PLASTIC.":[/b] ".nf($total_plastic)."
+[b]".RES_FUEL.":[/b] ".nf($total_fuel)."
+[b]".RES_FOOD.":[/b] ".nf($total_food)."
+
+[b]Rohstoffe auf dem Planeten[/b]
+[b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
+[b]".RES_CRYSTAL.":[/b] ".nf($cp->resCrystal)."
+[b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
+[b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
+[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."
+
+[b]Schiffe[/b]
+".$log_ships."";
+
 				//Log Speichern
-				add_log_game_ship($log_text,$cu->id,$cu->allianceId,$cp->id,1,time());					
-				
+				GameLog::add(GameLog::F_SHIP, GameLog::INFO,$log_text,$cu->id,$cu->allianceId,$cp->id, 0, 1, 0);
+
 				if ($counter==0)
 				{
 					echo "<tr><td>Keine Schiffe gew&auml;hlt!</td></tr>";
