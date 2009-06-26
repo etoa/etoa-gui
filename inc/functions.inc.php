@@ -705,60 +705,6 @@
 		Log::add($log_cat,Log::INFO,$log_text);
 	}
 
-
-	/**
-	* Speichert Defdaten in die Game_Log-Tabelle
-	*
-	* @param string $log_text Log text
-	* @param int $user_id - User ID
-	* @param int $alliance_id - Allianz ID
-	* @param int $planet_id - Planet ID
-	* @param int $def_id - Def ID
-	* @param int $build_type - Bau Typ (Ausbau, Abbruch)
-	* @param int $log_timestamp - Log Zeit
-	* @author Lamborghini
-	*/
-
-	function add_log_game_def($log_text,$user_id,$alliance_id,$planet_id,$build_type=0,$log_timestamp=0)
-	{
-		
-		//Setzt auktuelle Zeit wenn keine andere angegeben wird
-		if ($log_timestamp==0)
-		{
-		 	$log_timestamp=time();
-		}
-		
-		//Speichert Log
-		dbquery("
-		INSERT INTO
-		logs_game
-		(
-			logs_game_cat,
-			logs_game_timestamp,
-			logs_game_realtime,
-			logs_game_text,
-			logs_game_ip,
-			logs_game_hostname,
-			logs_game_user_id,
-			logs_game_alliance_id,
-			logs_game_planet_id,
-			logs_game_build_type
-		)
-		VALUES
-		(
-			'4',
-			'".$log_timestamp."',
-			'".time()."',
-			'".addslashes($log_text)."',
-			'".$_SERVER['REMOTE_ADDR']."',
-			'".Net::getHost($_SERVER['REMOTE_ADDR'])."',
-			'".intval($user_id)."',
-			'".intval($alliance_id)."',
-			'".intval($planet_id)."',
-			'".intval($build_type)."'
-		);");
-	}
-
 	
 	/**
 	* Cuts a string by a given length

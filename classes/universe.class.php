@@ -754,8 +754,6 @@
 				
 				$tbl[]="login_failures";
 				$tbl[]="admin_user_log";
-				$tbl[]="logs_game";
-				$tbl[]="logs_battle";
 				$tbl[]="tickets";
 				$tbl[]="chat";
 				$tbl[]="chat_users";

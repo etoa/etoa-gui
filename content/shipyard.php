@@ -460,11 +460,11 @@
 			      	$ship_count += $fleet[$ship_id];
 			      }
 			      
-				  //Anzahl überprüfen, ob diese die maximalzahl übersteigt, gegebenenfalls ändern
-				  if ($build_cnt + $ship_count > $ships[$ship_id]['ship_max_count'] && $ships[$ship_id]['ship_max_count']!=0)
-				  {
-					  $build_cnt=max(0,$ships[$ship_id]['ship_max_count']-$ship_count);
-				  }
+						//Anzahl überprüfen, ob diese die maximalzahl übersteigt, gegebenenfalls ändern
+						if ($build_cnt + $ship_count > $ships[$ship_id]['ship_max_count'] && $ships[$ship_id]['ship_max_count']!=0)
+						{
+							$build_cnt=max(0,$ships[$ship_id]['ship_max_count']-$ship_count);
+						}
 
     				// TODO: Überprüfen
 						//Wenn der User nicht genug Ress hat, die Anzahl Schiffe drosseln
@@ -514,7 +514,7 @@
 							$bc['food']=0;
 						}
 
-						//Anzahl Drosseln
+						//Anzahl Drosseln ???
 						if ($build_cnt>floor(min($bf)))
 						{
 							$build_cnt=floor(min($bf));
@@ -600,15 +600,42 @@
 							
 								
 							echo "<tr><td>".nf($build_cnt)." ".$ships[$ship_id]['ship_name']." in Auftrag gegeben!</td></tr>";
-							
+
+							//Log schreiben
+							$log_text = "[b]Schiffsauftrag Bauen[/b]
+
+[b]Start:[/b] ".date("d.m.Y H:i:s",$end_time)."
+[b]Ende:[/b] ".date("d.m.Y H:i:s",$end_time)."
+[b]Dauer:[/b] ".tf($duration)."
+[b]Dauer pro Einheit:[/b] ".tf($obj_time)."
+[b]Schiffswerft Level:[/b] ".CURRENT_SHIPYARD_LEVEL."
+[b]Eingesetzte Bewohner:[/b] ".nf($people_working)."
+[b]Gen-Tech Level:[/b] ".$gen_tech_level."
+[b]Eingesetzter Spezialist:[/b] ".$cu->specialist->name."
+
+[b]Kosten[/b]
+[b]".RES_METAL.":[/b] ".nf($bc['metal'])."
+[b]".RES_CRYSTAL.":[/b] ".nf($bc['crystal'])."
+[b]".RES_PLASTIC.":[/b] ".nf($bc['plastic'])."
+[b]".RES_FUEL.":[/b] ".nf($bc['fuel'])."
+[b]".RES_FOOD.":[/b] ".nf($bc['food'])."
+
+[b]Rohstoffe auf dem Planeten[/b]
+[b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
+[b]".RES_CRYSTAL.":[/b] ".nf($cp->resCrystal)."
+[b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
+[b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
+[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
+
+							GameLog::add(GameLog::F_SHIP, GameLog::INFO,$log_text,$cu->id,$cu->allianceId,$cp->id, $ship_id, 1, $build_cnt);
+
 							//Rohstoffe summieren, diese werden nach der Schleife abgezogen
 							$total_metal+=$bc['metal'];
 							$total_crystal+=$bc['crystal'];
 							$total_plastic+=$bc['plastic'];
 							$total_fuel+=$bc['fuel'];
 							$total_food+=$bc['food'];
-							
-							
+
 							//Daten für Log speichern
 							$log_ships.="<b>".$ships[$ship_id]['ship_name']."</b>: ".nf($build_cnt)." (".tf($duration).")<br>";
 							$total_duration+=$duration;							
@@ -631,36 +658,6 @@
 				//Rohstoffe vom Planeten abziehen und aktualisieren
 				$cp->changeRes(-$total_metal,-$total_crystal,-$total_plastic,-$total_fuel,-$total_food);
 												
-				//Log schreiben
-				$log_text = "[b]Schiffsauftrag Bauen[/b]
-
-[b]Dauer des gesamten Auftrages:[/b] ".tf($total_duration)."
-[b]Ende des gesamten Auftrages:[/b] ".date("d.m.Y H:i:s",$end_t)."
-[b]Schiffswerft Level:[/b] ".CURRENT_SHIPYARD_LEVEL."
-[b]Eingesetzte Bewohner:[/b] ".nf($people_working)."
-[b]Gen-Tech Level:[/b] ".$gen_tech_level."
-[b]Eingesetzter Spezialist:[/b] ".$cu->specialist->name."
-
-[b]Kosten[/b]
-[b]".RES_METAL.":[/b] ".nf($total_metal)."
-[b]".RES_CRYSTAL.":[/b] ".nf($total_crystal)."
-[b]".RES_PLASTIC.":[/b] ".nf($total_plastic)."
-[b]".RES_FUEL.":[/b] ".nf($total_fuel)."
-[b]".RES_FOOD.":[/b] ".nf($total_food)."
-
-[b]Rohstoffe auf dem Planeten[/b]
-[b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
-[b]".RES_CRYSTAL.":[/b] ".nf($cp->resCrystal)."
-[b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
-[b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
-[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."
-
-[b]Schiffe[/b]
-".$log_ships."";
-
-				//Log Speichern
-				GameLog::add(GameLog::F_SHIP, GameLog::INFO,$log_text,$cu->id,$cu->allianceId,$cp->id, 0, 1, 0);
-
 				if ($counter==0)
 				{
 					echo "<tr><td>Keine Schiffe gew&auml;hlt!</td></tr>";
@@ -692,6 +689,7 @@
 
 					// Daten für Log speichern
 					$ship_name = $ships[$queue[$id]['queue_ship_id']]['ship_name'];
+					$ship_id = $queue[$id]['queue_ship_id'];
 					$queue_count = $queue[$id]['queue_cnt'];
 					$queue_objtime = $queue[$id]['queue_objtime'];
 					$start_time = $queue[$id]['queue_starttime'];
@@ -755,30 +753,28 @@
 					echo "Der Auftrag wurde abgebrochen!<br/><br/>";
 						
 					//Log schreiben
-					$log_text = "
-					<b>Schiffsauftrag Abbruch</b><br><br>
-					<b>User:</b> [USER_ID=".$cu->id.";USER_NICK=".$cu->nick."]<br>
-					<b>Planeten:</b> [PLANET_ID=".$cp->id.";PLANET_NAME=".$cp->name."]<br>
-					<b>Schiff:</b> ".$ship_name."<br>
-					<b>Anzahl:</b> ".nf($queue_count)."<br>
-					<b>Auftragsdauer:</b> ".tf($queue_objtime*$queue_count)."<br><br>
-					<b>Erhaltene Rohstoffe</b><br>
-					<b>Faktor:</b> ".$cancel_res_factor."<br>
-					<b>".RES_METAL.":</b> ".nf($ret['metal'])."<br>
-					<b>".RES_CRYSTAL.":</b> ".nf($ret['crystal'])."<br>
-					<b>".RES_PLASTIC.":</b> ".nf($ret['plastic'])."<br>
-					<b>".RES_FUEL.":</b> ".nf($ret['fuel'])."<br>
-					<b>".RES_FOOD.":</b> ".nf($ret['food'])."<br><br>
-					<b>Rohstoffe auf dem Planeten</b><br><br>
-					<b>".RES_METAL.":</b> ".nf($cp->resMetal)."<br>
-					<b>".RES_CRYSTAL.":</b> ".nf($cp->resCrystal)."<br>
-					<b>".RES_PLASTIC.":</b> ".nf($cp->resPlastic)."<br>
-					<b>".RES_FUEL.":</b> ".nf($cp->resFuel)."<br>
-					<b>".RES_FOOD.":</b> ".nf($cp->resFood)."<br>
-					";
+					$log_text = "[b]Schiffsauftrag Abbruch[/b]
+
+[b]Auftragsdauer:[/b] ".tf($queue_objtime*$queue_count)."
+
+[b]Erhaltene Rohstoffe[/b]
+[b]Faktor:[/b] ".$cancel_res_factor."
+[b]".RES_METAL.":[/b] ".nf($ret['metal'])."
+[b]".RES_CRYSTAL.":[/b] ".nf($ret['crystal'])."
+[b]".RES_PLASTIC.":[/b] ".nf($ret['plastic'])."
+[b]".RES_FUEL.":[/b] ".nf($ret['fuel'])."
+[b]".RES_FOOD.":[/b] ".nf($ret['food'])."
+
+[b]Rohstoffe auf dem Planeten[/b]
+[b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
+[b]".RES_CRYSTAL.":[/b] ".nf($cp->resCrystal)."
+[b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
+[b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
+[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
 					
 					//Log Speichern
-					add_log_game_ship($log_text,$cu->id,$cu->allianceId,$cp->id,0,time());					
+					GameLog::add(GameLog::F_SHIP, GameLog::INFO,$log_text,$cu->id,$cu->allianceId,$cp->id, $ship_id, 0, $queue_count);
+
 				}
 			}
 

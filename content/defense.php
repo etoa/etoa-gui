@@ -579,7 +579,36 @@
 							$queue[$deflist_id]['queue_starttime'] = $start_time;
 							$queue[$deflist_id]['queue_endtime'] = $end_time;
 							$queue[$deflist_id]['queue_objtime'] = $obj_time;
-						
+
+
+							//Log schreiben
+							$log_text = "[b]Verteidigungsauftrag Bauen[/b]
+
+[b]Start:[/b] ".date("d.m.Y H:i:s",$start_time)."
+[b]Ende:[/b] ".date("d.m.Y H:i:s",$end_time)."
+[b]Dauer:[/b] ".tf($duration)."
+[b]Dauer pro Einheit:[/b] ".tf($obj_time)."
+[b]Waffenfabrik Level:[/b] ".CURRENT_FACTORY_LEVEL."
+[b]Eingesetzte Bewohner:[/b] ".nf($people_working)."
+[b]Gen-Tech Level:[/b] ".GEN_TECH_LEVEL."
+[b]Eingesetzter Spezialist:[/b] ".$cu->specialist->name."
+
+[b]Kosten[/b]
+[b]".RES_METAL.":[/b] ".nf($bc['metal'])."
+[b]".RES_CRYSTAL.":[/b] ".nf($bc['crystal'])."
+[b]".RES_PLASTIC.":[/b] ".nf($bc['plastic'])."
+[b]".RES_FUEL.":[/b] ".nf($bc['fuel'])."
+[b]".RES_FOOD.":[/b] ".nf($bc['food'])."
+
+[b]Rohstoffe auf dem Planeten[/b]
+[b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
+[b]".RES_CRYSTAL.":[/b] ".nf($cp->resCrystal)."
+[b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
+[b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
+[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
+
+							//Log Speichern
+							GameLog::add(GameLog::F_DEF, GameLog::INFO,$log_text,$cu->id,$cu->allianceId,$cp->id, $def_id, 1, $build_cnt);
 							
 							echo "<tr><td>".nf($build_cnt)." ".$defs[$def_id]['def_name']." in Auftrag gegeben!</td></tr>";
 							
@@ -595,7 +624,6 @@
 						
 						
 							//Daten für Log speichern
-							$log_defs.="<b>".$defs[$def_id]['def_name']."</b>: ".nf($build_cnt)." (".tf($duration).")<br>";
 							$total_duration+=$duration;
 						}
 						else
@@ -616,36 +644,6 @@
 				//Rohstoffe vom Planeten abziehen und aktualisieren
 				$cp->changeRes(-$total_metal,-$total_crystal,-$total_plastic,-$total_fuel,-$total_food);
 												
-				//Log schreiben
-				$log_text = "
-				<b>Verteidigungsauftrag Bauen</b><br><br>
-				<b>User:</b> [USER_ID=".$cu->id.";USER_NICK=".$cu->nick."]<br>
-				<b>Planeten:</b> [PLANET_ID=".$cp->id().";PLANET_NAME=".$cp->name."]<br>
-				<b>Dauer des gesamten Auftrages:</b> ".tf($total_duration)."<br>
-				<b>Ende des gesamten Auftrages:</b> ".date("Y-m-d H:i:s",$end_time)."<br>
-				<b>Waffenfabrik Level:</b> ".CURRENT_FACTORY_LEVEL."<br>
-				<b>Eingesetzte Bewohner:</b> ".nf($people_working)."<br>
-				<b>Gen-Tech Level:</b> ".GEN_TECH_LEVEL."<br>
-				<b>Eingesetzter Spezialist:</b> ".$cu->specialist->name."<br><br>
-				<b>Kosten</b><br>
-				<b>".RES_METAL.":</b> ".nf($total_metal)."<br>
-				<b>".RES_CRYSTAL.":</b> ".nf($total_crystal)."<br>
-				<b>".RES_PLASTIC.":</b> ".nf($total_plastic)."<br>
-				<b>".RES_FUEL.":</b> ".nf($total_fuel)."<br>
-				<b>".RES_FOOD.":</b> ".nf($total_food)."<br><br>
-				<b>Rohstoffe auf dem Planeten</b><br><br>
-				<b>".RES_METAL.":</b> ".nf($cp->resMetal)."<br>
-				<b>".RES_CRYSTAL.":</b> ".nf($cp->resCrystal)."<br>
-				<b>".RES_PLASTIC.":</b> ".nf($cp->resPlastic)."<br>
-				<b>".RES_FUEL.":</b> ".nf($cp->resFuel)."<br>
-				<b>".RES_FOOD.":</b> ".nf($cp->resFood)."<br><br>
-				<b>Anlagen</b><br>
-				".$log_defs."
-				";
-				
-				//Log Speichern
-				add_log_game_def($log_text,$cu->id,$cu->allianceId,$cp->id(),1,time());						
-				
 				if ($counter==0)
 				{
 					echo "<tr><td>Keine Verteidigung gew&auml;hlt!</td></tr>";
@@ -678,6 +676,7 @@
 
 					// Daten für Log speichern
 					$def_name = $defs[$queue[$id]['queue_def_id']]['def_name'];
+					$defId = $queue[$id]['queue_def_id'];
 					$queue_count = $queue[$id]['queue_cnt'];
 					$queue_objtime = $queue[$id]['queue_objtime'];
 					$start_time = $queue[$id]['queue_starttime'];
@@ -745,30 +744,27 @@
 					echo "Der Auftrag wurde abgebrochen!<br/><br/>";
 						
 					//Log schreiben
-					$log_text = "
-					<b>Verteidigungsauftrag Abbruch</b><br><br>
-					<b>User:</b> [USER_ID=".$cu->id.";USER_NICK=".$cu->nick."]<br>
-					<b>Planeten:</b> [PLANET_ID=".$cp->id().";PLANET_NAME=".$cp->name."]<br>
-					<b>Anlage:</b> ".$qarr['def_name']."<br>
-					<b>Anzahl:</b> ".nf($qarr['queue_cnt'])."<br>
-					<b>Auftragsdauer:</b> ".tf($qarr['queue_objtime']*$qarr['queue_cnt'])."<br><br>
-					<b>Erhaltene Rohstoffe</b><br>
-					<b>Faktor:</b> ".$cancel_res_factor."<br>
-					<b>".RES_METAL.":</b> ".nf($ret['metal'])."<br>
-					<b>".RES_CRYSTAL.":</b> ".nf($ret['crystal'])."<br>
-					<b>".RES_PLASTIC.":</b> ".nf($ret['plastic'])."<br>
-					<b>".RES_FUEL.":</b> ".nf($ret['fuel'])."<br>
-					<b>".RES_FOOD.":</b> ".nf($ret['food'])."<br><br>
-					<b>Rohstoffe auf dem Planeten</b><br><br>
-					<b>".RES_METAL.":</b> ".nf($cp->resMetal)."<br>
-					<b>".RES_CRYSTAL.":</b> ".nf($cp->resCrystal)."<br>
-					<b>".RES_PLASTIC.":</b> ".nf($cp->resPlastic)."<br>
-					<b>".RES_FUEL.":</b> ".nf($cp->resFuel)."<br>
-					<b>".RES_FOOD.":</b> ".nf($cp->resFood)."<br>
-					";
+					$log_text = "[b]Verteidigungsauftrag Abbruch[/b]
+
+[b]Auftragsdauer:[/b] ".tf($queue_objtime* $queue_count )."
+
+[b]Erhaltene Rohstoffe[/b]
+[b]Faktor:[/b] ".$cancel_res_factor."
+[b]".RES_METAL.":[/b] ".nf($ret['metal'])."
+[b]".RES_CRYSTAL.":[/b] ".nf($ret['crystal'])."
+[b]".RES_PLASTIC.":[/b] ".nf($ret['plastic'])."
+[b]".RES_FUEL.":[/b] ".nf($ret['fuel'])."
+[b]".RES_FOOD.":[/b] ".nf($ret['food'])."
+
+[b]Rohstoffe auf dem Planeten[/b]
+[b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
+[b]".RES_CRYSTAL.":[/b] ".nf($cp->resCrystal)."
+[b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
+[b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
+[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
 					
 					//Log Speichern
-					add_log_game_def($log_text,$cu->id,$cu->allianceId,$cp->id(),0,time());
+					GameLog::add(GameLog::F_DEF, GameLog::INFO,$log_text,$cu->id,$cu->allianceId,$cp->id, $defId, 0, $queue_count);
 				}
 			}
 

@@ -1382,7 +1382,7 @@ function showGameLogs($args=null,$limit=0)
 					}
 					break;
 				case GameLog::F_SHIP:
-					$ob = $arr['object_id'] > 0 ? new Ship($arr['object_id']) : '-';
+					$ob = $arr['object_id'] > 0 ? new Ship($arr['object_id']).' '.($arr['level']>0 ? $arr['level'].'x' : '') : '-';
 					switch ($arr['status'])
 					{
 						case 1: $obStatus="Bau";break;
@@ -1391,8 +1391,13 @@ function showGameLogs($args=null,$limit=0)
 					}
 					break;
 				case GameLog::F_DEF:
-					$ob = $arr['object_id'] > 0 ? new Defense($arr['object_id']) : '-';
-					$obStatus = $arr['status'];
+					$ob = $arr['object_id'] > 0 ? new Defense($arr['object_id']).' '.($arr['level']>0 ? $arr['level'].'x' : '') : '-';
+					switch ($arr['status'])
+					{
+						case 1: $obStatus="Bau";break;
+						case 0: $obStatus="Bau abgebrochen";break;
+						default: $obStatus='-';
+					}
 					break;
 				default:
 					$ob = "-";
