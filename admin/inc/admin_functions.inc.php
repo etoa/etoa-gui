@@ -1260,12 +1260,12 @@ function showGameLogs($args=null,$limit=0)
 	}
 	if (isset($args['searchalliance']) && $args['searchalliance']!="" && !is_numeric($args['searchalliance']))
 	{
-		$sql3.=" INNER JOIN alliances u ON u.alliance_id=l.alliance_id AND u.alliance_name LIKE '%".$args['searchalliance']."%' ";
+		$sql3.=" INNER JOIN alliances a ON a.alliance_id=l.alliance_id AND a.alliance_name LIKE '%".$args['searchalliance']."%' ";
 	}
 	if (isset($args['searchentity']) && $args['searchentity']!="" && !is_numeric($args['searchentity']))
 	{
 		// TODO: this now only works for planets...
-		$sql3.=" INNER JOIN planets u ON u.id=l.entity_id AND u.planet_name LIKE '%".$args['searchentity']."%' ";
+		$sql3.=" INNER JOIN planets e ON e.id=l.entity_id AND e.planet_name LIKE '%".$args['searchentity']."%' ";
 	}
 	$sql3.= " WHERE 1 ";
 
