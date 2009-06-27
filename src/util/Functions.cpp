@@ -248,7 +248,7 @@ namespace etoa
 		
 		std::time_t time = std::time(0);
 		
-		mysqlpp::Query query = con_->query();
+		/*mysqlpp::Query query = con_->query();
 		query << "INSERT INTO logs ";
 			query << "(log_cat, ";
 			query << "log_timestamp, ";
@@ -260,7 +260,7 @@ namespace etoa
 		 	query << "'" << time << "', ";
 		 	query << "'" << log_text << "');"; //addslashes(log_text)
 		query.store();
-		query.reset();
+		query.reset();*/
 	}
 	
 	double s_round(float number, int precision)

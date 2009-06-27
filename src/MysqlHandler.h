@@ -54,7 +54,7 @@
 			datein.open(datei.c_str());
 	
 			if (datein == false) 
-				datein.open("/Applications/xampp/htdocs/etoa/trunk/conf.inc.php");
+				datein.open("/Applications/xampp/htdocs/etoa/trunk/config/db.config.php");
 
 			while (datein.eof() != true) {
 				zeichen += datein.get();

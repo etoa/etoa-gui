@@ -14,8 +14,6 @@ namespace retour
 		
 		this->actionMessage->addType((int)config.idget("SHIP_MISC_MSG_CAT_ID"));
 		
-					std::cout << 1111111111111 << std::endl;
-		
 		if (this->targetEntity->getUserId() == this->f->getUserId()) {
 			// Land fleet and delete entries in the database
 			fleetLand(1);

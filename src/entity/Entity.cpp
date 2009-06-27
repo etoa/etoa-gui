@@ -208,7 +208,7 @@
 
 		this->changedData = true;
 		if (steal)
-			metal = min(metal,this->resMetal-this->bunkerMetal);
+			metal = max(0.0,min(metal,this->resMetal-this->bunkerMetal));
 		else
 			metal = min(metal,this->resMetal);
 		this->resMetal -= metal;
@@ -221,7 +221,7 @@
 
 		this->changedData = true;
 		if (steal)
-			crystal = min(crystal,this->resCrystal-this->bunkerCrystal);
+			crystal = max(0.0,min(crystal,this->resCrystal-this->bunkerCrystal));
 		else
 			crystal = min(crystal,this->resCrystal);
 		this->resCrystal -= crystal;
@@ -234,7 +234,7 @@
 
 		this->changedData = true;
 		if (steal)
-			plastic = min(plastic,this->resPlastic-this->bunkerPlastic);
+			plastic = max(0.0,min(plastic,this->resPlastic-this->bunkerPlastic));
 		else
 			plastic = min(plastic,this->resPlastic);
 		this->resPlastic -= plastic;
@@ -247,7 +247,7 @@
 
 		this->changedData = true;
 		if (steal)
-			fuel = min(fuel,this->resFuel-this->bunkerFuel);
+			fuel = max(0.0,min(fuel,this->resFuel-this->bunkerFuel));
 		else
 			fuel = min(fuel,this->resFuel);
 		this->resFuel -= fuel;
@@ -260,7 +260,7 @@
 
 		this->changedData = true;
 		if (steal)
-			food = min(food,this->resFood-this->bunkerFood);
+			food = max(0.0,min(food,this->resFood-this->bunkerFood));
 		else
 			food = min(food,this->resFood);
 		this->resFood -= food;
@@ -479,7 +479,7 @@
 					+ etoa::nf(etoa::d2s(this->getResFood()))
 					+ "\n"
 					+ "Bewohner: "
-					+ etoa::nf(etoa::d2s(this->getResMetal()))
+					+ etoa::nf(etoa::d2s(this->getResPeople()))
 					+ "\n";
 		return resString;
 	}
