@@ -43,9 +43,10 @@ void etoamain()
 	// Main loop
 	while (true)
 	{
-		// Update the data, everyday once at about 02:17:00 AM
+		// Update the data and config, everyday once at about 02:17:00 AM
 		if ((time(0)-1021)%86400==0) {
 			DataHandler.reloadData();
+			Config::instance().reloadConfig();
 		}
 		
 		// Graphical bling-bling
@@ -137,10 +138,10 @@ void etoamain()
 			
 			while(!EntityUpdateQueue::instance().empty()) 
 			{
-      	if (verbose)
-      		std::cout << "Now serving: " << EntityUpdateQueue::instance().front() << std::endl;
-      	v1.push_back(EntityUpdateQueue::instance().front());
-      	EntityUpdateQueue::instance().pop();
+				if (verbose)
+					std::cout << "Now serving: " << EntityUpdateQueue::instance().front() << std::endl;
+				v1.push_back(EntityUpdateQueue::instance().front());
+				EntityUpdateQueue::instance().pop();
     	}
 						
 			planet::PlanetManager* pm = new planet::PlanetManager(&v1);

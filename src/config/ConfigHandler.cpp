@@ -48,6 +48,17 @@
 	{
 		return "/var/www/" + this->gameRound + ".etoa.ch/htdocs/";
 	}
+
+	void Config::reloadConfig()
+	{
+		this->sConfig.clear();
+		this->idConfig.clear();
+		this->cConfig.clear();
+		this->actions.clear();
+		this->actionName.clear();
+		
+		loadConfig();
+}
 	
 	/**	Initialisiert die Configwerte **/
 	void Config::loadConfig ()
@@ -84,6 +95,8 @@
 				}
 			}
 		}
+		
+		this->calcCollectFuelValues();
 		
 		query << "SELECT ";
 		query << " id ";
@@ -203,3 +216,87 @@
 		actionName["transport"] = "Waren transportieren";
 		actionName["alliance"] = "Allianzangriff";
 	}
+
+	void Config::calcCollectFuelValues()
+	{
+		My &my = My::instance();
+		mysqlpp::Connection *con = my.get();
+		
+		std::map<int,double> capaContainer;
+		
+		mysqlpp::Query query = con->query();
+		query << "SELECT "
+			<< "	(shiplist_count*ship_capacity) AS sl_capa, "
+			<< "	shiplist_user_id "
+			<< "FROM "
+			<< "	shiplist "
+			<< "INNER JOIN "
+			<< "	ships "
+			<< "ON "
+			<< "	ship_id=shiplist_ship_id "
+			<< "	AND ship_actions LIKE '%collectfuel%' "
+			<< "GROUP BY "
+			<< "	shiplist_user_id";
+		mysqlpp::Result res = query.store();
+		query.reset();
+		
+		if (res)
+		{
+			unsigned int resSize = res.size();
+			
+			if (resSize>0)
+			{
+	    		mysqlpp::Row row;
+	    		for (mysqlpp::Row::size_type i = 0; i<resSize; i++) {
+	    			row = res.at(i);
+					
+					capaContainer[(int)row["shiplist_user_id"] ] = (double)row["sl_capa"];
+				}
+			}
+		}
+		
+		query << "SELECT "
+			<< "	(fs_ship_cnt*ship_capacity) AS fs_capa, "
+			<< "	user_id "
+			<< "FROM "
+			<< "	fleet "
+			<< "INNER JOIN "
+			<< "	fleet_ships "
+			<< "ON "
+			<< "	id=fs_fleet_id "
+			<< "INNER JOIN "
+			<< "	ships "
+			<< "ON "
+			<< "	fs_ship_id=ship_id "
+			<< "	AND	ship_actions LIKE '%collectfuel%' "
+			<< "GROUP BY "
+			<< "	user_id ";
+		res = query.store();
+		query.reset();
+		
+		if (res)
+		{
+			unsigned int resSize = res.size();
+			
+			if (resSize>0)
+			{
+	    		mysqlpp::Row row;
+	    		for (mysqlpp::Row::size_type i = 0; i<resSize; i++) {
+	    			row = res.at(i);
+					
+					capaContainer[(int)row["user_id"] ] += (double)row["fs_capa"];
+				}
+			}
+		}
+		
+		double maxCapa = this->nget("gasplanet",2) * this->nget("planet_fields",2);
+		double hoursToRefill = maxCapa / this->nget("gasplanet",1);
+		std::map<int,double>::iterator it;
+		
+		for ( it=capaContainer.begin() ; it != capaContainer.end(); it++ )
+			maxCapa = std::max((*it).second,maxCapa);
+
+		cConfig[sConfig["gasplanet"]][1] = etoa::toString(maxCapa / hoursToRefill);
+		cConfig[sConfig["gasplanet"]][2] = etoa::toString(maxCapa/this->nget("planet_fields",2));
+	}
+

@@ -134,6 +134,10 @@ void msgQueueThread()
 			{
 				EntityUpdateQueue::instance().push(id);
 			}
+			else if (cmd == "configupdate")
+			{
+				Config::instance().reloadConfig();
+			}
 		}
 	}
 	std::clog << "Message queue thread ended"<<std::endl;

@@ -6,6 +6,8 @@
 #include <map>
 #include <vector>
 
+#include "../util/Functions.h"
+
 /**
 * Config Singleton, very usefull!!!!! So use it .D
 * 
@@ -71,6 +73,11 @@
 		**/
 		std::string getFrontendPath();
 		
+		/**
+		 * Config neu laden
+		 **/
+		void reloadConfig();
+		
 	private:
 	
 		/**
@@ -79,6 +86,13 @@
 		* @author Glaubinix
 		**/
 		void loadConfig();
+		
+		/**
+		 * Initalisiert die Gassaugerconfigwerte
+		 *
+		 * @author Glaubinix
+		 **/
+		void calcCollectFuelValues();
 		
 		/**
 		* Id <-> config_name Realtionscontainer
