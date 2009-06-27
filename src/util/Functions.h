@@ -168,13 +168,13 @@ namespace etoa
 	/**
 	* Speichert Daten in die Log-Tabelle
 	*
-	* @param int log_cat Log Kategorie
+	* @param int facility Log Kategorie
 	* @param string log_text Log text
 	* @param time_t log_timestamp Zeit
 	* @todo Perpahps define another overloaded function with only two arguments and automatic time choosing
 	* @author Glaubinix
 	*/
-	void add_log(int log_cat, std::string log_text, std::time_t log_timestamp);
+	void add_log(int facility, std::string log_text, std::time_t log_timestamp=0, int user_id=0, int entity_id=0, int alliance_id=0);
 		
 	/**
 	* Liefert eine Zahl mit Anzahl Komastellen

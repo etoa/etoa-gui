@@ -490,6 +490,21 @@
 		My &my = My::instance();
 		mysqlpp::Connection *con_ = my.get();
 		mysqlpp::Query query = con_->query();
+		
+		//Log
+		std::string log = "[URL=?page=user&sub=edit&user_id=";
+		log += etoa::toString(userId);
+		log += "][B]";
+		log += etoa::get_user_nick(userId);
+		log += "[/B][/URL] hat den Planeten ";
+		log += this->getCoords();
+		log += " von [URL=?page=user&sub=edit&user_id=";
+		log += etoa::toString(this->userId);
+		log += "][B]";
+		log += etoa::get_user_nick(this->userId);
+		log += "[/B][/URL] übernommen.";
+		etoa::add_log(13,log,time,userId,this->id);
+		etoa::add_log(13,log,time,this->userId,this->id);
 
         // Planet übernehmen
 		this->userId = userId;

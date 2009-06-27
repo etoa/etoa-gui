@@ -237,7 +237,7 @@ namespace etoa
 	
 	}
 	
-	void add_log(int log_cat, std::string log_text, std::time_t log_timestamp)
+	void add_log(int facility, std::string log_text, std::time_t log_timestamp, int user_id, int entity_id, int alliance_id)
 	{
 		My &my = My::instance();
 		mysqlpp::Connection *con_ = my.get();
@@ -246,21 +246,24 @@ namespace etoa
 		 	log_timestamp = std::time(0);
 		}
 		
-		std::time_t time = std::time(0);
-		
-		/*mysqlpp::Query query = con_->query();
-		query << "INSERT INTO logs ";
-			query << "(log_cat, ";
-			query << "log_timestamp, ";
-			query << "log_realtime, ";
-			query << "log_text) ";
-		query << "VALUES ";
-			query << "('" << log_cat << "', ";
-		 	query << "'" << log_timestamp << "', ";
-		 	query << "'" << time << "', ";
-		 	query << "'" << log_text << "');"; //addslashes(log_text)
+		mysqlpp::Query query = con_->query();
+		query << "INSERT INTO logs "
+				<< "("
+				<< "	facility, "
+				<< "	timestamp, "
+				<< "	message, "
+				<< "	user_id, "
+				<< "	alliance_id, "
+				<< "	entity_id) "
+				<< "VALUES "
+				<< "('" << facility << "', "
+				<< "'" << log_timestamp << "', "
+				<< "'" << log_text << "', "
+				<< "'" << user_id << "', "
+				<< "'" << alliance_id << "', "
+				<< "'" << entity_id << "');";
 		query.store();
-		query.reset();*/
+		query.reset();
 	}
 	
 	double s_round(float number, int precision)
@@ -406,8 +409,8 @@ namespace etoa
 				<< "	id=" << userId << ";";
 			query.store();
 			query.reset();
-			std::string text = "Der Spieler " + etoa::d2s(userId) +" erhŠlt 1 Kampfpunkte. Grund: " + reason;
-			add_log(17,text,0);
+			std::string text = "Der Spieler " + etoa::get_user_nick(userId) +" erhŠlt 1 Kampfpunkte. Grund: " + reason;
+			add_log(17,text,0,userId);
 		}
 	}
 }
