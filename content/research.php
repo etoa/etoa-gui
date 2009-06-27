@@ -30,8 +30,18 @@
 
    // DEFINITIONEN //
 
+if ($cu->properties->cssStyle=="Classic" || $cu->properties->cssStyle=="Dark")
+{
+  define('NUM_BUILDINGS_PER_ROW',4);
+  define('CELL_WIDTH','25%');
+  define('TABLE_WIDTH','');
+}
+else
+{
   define('NUM_BUILDINGS_PER_ROW',5);
   define('CELL_WIDTH',120);
+  define('TABLE_WIDTH','auto');
+}	
   
 	// Aktiviert / Deaktiviert Bildfilter
 	if ($cu->properties->imageFilter ==1)
@@ -704,8 +714,7 @@
 					echo $cstr;
 					while ($tarr = mysql_fetch_array($tres))
 					{
-						tableStart($tarr['type_name'],'','padding:0px;');
-						echo "<tr style=\"padding:0px;\"><td style=\"padding:0px;\">";
+						tableStart($tarr['type_name'],TABLE_WIDTH);
 						$cnt = 0; // Counter for current row
 						$scnt = 0; // Counter for shown techs
 	
@@ -877,22 +886,36 @@
 									if (!$requirements_passed)
 										$img = "misc/imagefilter.php?file=$img&filter=req";
 	
-									echo "<div style=\"background:url('".$img."') no-repeat;background-position:center;\" class=\"buildOverviewObjectContainer\"  ".tm($bv['name'],"<b>".$subtitle."</b><br style=\"clear:both\" />".$tmtext.$bv['shortcomment']).">
-									<div class=\"buildOverviewBGImage\">
-									<a class=\"buildOverviewLink\" href=\"?page=$page&amp;id=".$bid."\">
-									<div class=\"buildOverviewObjectTitle\">".$bv['name']."</div>";
-									if ($b_level>0 || ($b_level==0 && isset($techlist[$bid]['buildlist_build_type']) && $techlist[$bid]['buildlist_build_type']==3)) 
+									// Display row starter if needed				
+									if ($cnt==0) 
 									{
-										echo "<div class=\"buildOverviewObjectLevel\" style=\"color:".$color."\">".$b_level."</div>";
+										echo "<tr>";
 									}
-									echo "<div class=\"buildOverviewObjectSubTitle\">".$subtitle."</div>";
-									echo "<div class=\"buildOverviewObjectImage\"><input type=\"image\" value=\"".$bid."\" src=\"".$img."\" /></div>";
-									echo "</a>";
-									echo "</div></div>";
-	
+									
+									if ($cu->properties->cssStyle=="Classic" || $cu->properties->cssStyle=="Dark")
+									{
+										echo "<td style=\"color:".$color.";text-align:center;width:".CELL_WIDTH."\">
+													<b>".$bv['name']."";
+													if ($b_level>0) echo ' '.$b_level;
+													echo "</b><br/>".$subtitle."<br/>
+													<input name=\"show_".$bid."\" type=\"image\" value=\"".$bid."\" src=\"".$img."\" ".tm($bv['name'],$tmtext.$bv['shortcomment'])." style=\"width:120px;height:120px;\" />
+									</td>\n";
+									}
+									else
+									{
+										echo "<td style=\"background:url('".$img."') no-repeat;width:".CELL_WIDTH."px;height:".CELL_WIDTH."px ;padding:0px;\">
+											<div style=\"position:relative;height:".CELL_WIDTH."px;overflow:hidden\">
+											<div class=\"buildOverviewObjectTitle\">".$bv['name']."</div>";
+										echo "<a href=\"?page=$page&amp;id=".$bid."\" ".tm($bv['name'],"<b>".$subtitle."</b><br/>".$tmtext.$bv['shortcomment'])." style=\"display:block;height:180px;\"></a>";
+										if ($b_level>0 || ($b_level==0 && isset($techlist[$bid]['techlist_build_type']) && $techlist[$bid]['techlist_build_type']==3)) 
+										{
+											echo "<div class=\"buildOverviewObjectLevel\" style=\"color:".$color."\">".$b_level."</div>";
+										}
+										echo "</div></td>\n";
+									}
 
 									/*
-										echo "<td style=\"color:".$color.";text-align:center;width:".CELL_WIDTH."px\">
+										echo "<td class=\"tbldata\" style=\"color:".$color.";text-align:center;width:".CELL_WIDTH."px\">
 													<b>".$bv['name']."";
 													if ($b_level>0) echo ' '.$b_level;
 													echo "</b><br/>".$subtitle."<br/>
@@ -903,21 +926,39 @@
 									$cnt++;
 									$scnt++;
 								}
-							}					
+									
+								// Display row finisher if needed			
+								if ($cnt==NUM_BUILDINGS_PER_ROW)
+								{
+									echo "</tr>";
+									$cnt = 0;
+								}	
+							}
+	
+							// Fill up missing cols and end row
+							if ($cnt<NUM_BUILDINGS_PER_ROW && $cnt>0)
+							{
+								for ($x=0;$x < NUM_BUILDINGS_PER_ROW-$cnt;$x++)
+								{
+									echo "<td class=\"buildOverviewObjectNone\" style=\"width:".CELL_WIDTH."px;padding:0px;\">&nbsp;</td>";
+								}
+								echo '</tr>';
+							}							
 							
 							// Display message if no tech can be researched
 							if ($scnt==0)
 							{								
-								echo "<div>
-												<divstyle=\"text-align:center;border:0;width:100%\">
+								echo "<tr>
+												<td class=\"tbldata\" colspan=\"".NUM_BUILDINGS_PER_ROW."\" style=\"text-align:center;border:0;width:100%\">
 													<i>In dieser Kategorie kann momentan noch nichts geforscht werden!</i>
-												</div>";							
+												</td>
+											</tr>";								
 							}	
 	
 						}
 						else
 						{
-							echo "<div style=\"text-align:center;border:0;width:100%\"><i>In dieser Kategorie kann momentan noch nichts erforscht werden!</i></div>";
+							echo "<tr><td class=\"tbldata\" colspan=\"4\" style=\"text-align:center;border:0;width:100%\"><i>In dieser Kategorie kann momentan noch nichts erforscht werden!</i></td></tr>";
 						}
 						tableEnd();
 					}

@@ -183,22 +183,29 @@
 		
 		function remove($shipId,$cnt)
 		{
-			if ($cnt > 0)
-			{
-				dbquery("UPDATE
-							shiplist
-						SET
-							shiplist_count = shiplist_count - ".$cnt."
-						WHERE
-							shiplist_count >= ".$cnt."
-							AND shiplist_ship_id=".$shipId."
-							AND shiplist_user_id='".$this->userId."'
-							AND shiplist_entity_id='".$this->entityId."'
-						LIMIT 1;");
-				if (mysql_affected_rows()>0)
-					return true;
-			}
-			return false;
+			$res = dbquery("SELECT 
+								shiplist_id, 
+								shiplist_count 
+							FROM 
+								shiplist 
+							WHERE 
+								shiplist_ship_id=".$shipId." 
+								AND shiplist_user_id='".$this->userId."' 
+								AND shiplist_entity_id='".$this->entityId."';");
+			$arr = mysql_fetch_row($res);
+
+			$delable = min($cnt,$arr[1]);
+			
+			dbquery("UPDATE
+						shiplist
+					SET
+						shiplist_count = shiplist_count - ".$delable."
+					WHERE 
+						shiplist_ship_id=".$shipId."
+						AND shiplist_id='".$arr[0]."'
+				LIMIT 1;");
+
+			return $delable;
 		}
 		
 		function bunker($shipId,$cnt)

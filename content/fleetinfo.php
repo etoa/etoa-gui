@@ -235,7 +235,7 @@
 				$ship = new Ship($sid);
 				echo "<tr>
 					<td class=\"tbldata\" style=\"width:40px;background:#000\">
-						".$ship->imgSmall()."</td>";
+						".$ship->img()."</td>";
 				echo "<td class=\"tbldata\">
 					<b>".$ship->name()."</b><br/>
 				".text2html($ship->shortComment())."</td>";

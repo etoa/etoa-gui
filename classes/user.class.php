@@ -763,6 +763,9 @@
 				dbquery("DELETE FROM user_warnings WHERE warning_user_id='".$this->id."';"); 				//Nickänderungsanträge löschen
 				dbquery("DELETE FROM user_sitting WHERE user_sitting_user_id='".$this->id."';"); 			//Sitting löschen
 				dbquery("DELETE FROM user_sitting_date WHERE user_sitting_date_user_id='".$this->id."';"); //Sitting Daten löschen
+				dbquery("DELETE FROM user_properties WHERE id = '".$this->id."';");							//Properties löschen
+				dbquery("DELETE FROM user_surveillance WHERE user_id='".$this->id."';");					//Beobachter löschen
+				dbquery("DELETE FROM user_comments WHERE user_id='".$this->id."';");						//Kommentare löschen
 				// Todo: clean tickets
 
 				//
