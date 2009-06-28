@@ -77,7 +77,7 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 					$addstyle=" class=\"userAllianceMemberColor\"";
 				echo "<tr>";
 				echo  "<td $addstyle ".tm("Punkteverlauf","<div><img src=\"misc/alliance_stats.image.php?alliance=".$arr['alliance_id']."\" alt=\"Diagramm\" style=\"width:600px;height:400px;background:#335 url(images/loading335.gif) no-repeat 300px 200px;\" /></div>").">
-				".nf($cnt,1)." ";
+				".nf($cnt)." ";
 				if ($arr['alliance_rank_current']==$arr['alliance_rank_last'])
 					echo  "<img src=\"images/stats/stat_same.gif\" alt=\"same\" width=\"21\" height=\"9\" />";
 				elseif ($arr['alliance_rank_current']>$arr['alliance_rank_last'])

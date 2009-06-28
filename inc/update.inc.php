@@ -88,7 +88,7 @@
 		{
 			while ($arow = mysql_fetch_row($ares))
 			{
-				$mres = dbquery("SELECT message_data.subject, message_data.text, users.user_nick FROM messages INNER JOIN `message_data` ON messages.message_id=message_data.id AND messages.message_user_to='".$arow[2]."' AND messages.message_mailed=0 LEFT JOIN users ON messages.message_user_from=users.user_id");
+				$mres = dbquery("SELECT message_data.subject, message_data.text, users.user_nick FROM messages INNER JOIN `message_data` ON messages.message_id=message_data.id AND messages.message_user_to='".$arow[2]."' AND messages.message_mailed=0 AND messages.message_read=0 LEFT JOIN users ON messages.message_user_from=users.user_id");
 				
 				if (mysql_num_rows($mres)>0)
 				{

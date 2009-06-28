@@ -13,6 +13,8 @@
  		//
 		public $sourceEntity;
 		public $targetEntity;
+		public $wormholeEntryEntity;
+		public $wormholeExitEntity;
 		var $ownerId;
 
 		var $ships;
@@ -20,9 +22,13 @@
 		var $shipsFixed;
 
 		var $speed;
+		var $speed1;
 		var $speedPercent;
+		var $speedPercent1;
 		var $duration;
+		var $duration1;
 		var $costsPerHundredAE;
+		var $costsPerHundredAE1;
 		var $timeLaunchLand;
 		var $costsLaunchLand;
 		var $pilots;
@@ -33,6 +39,7 @@
 		var $capacityPeopleLoaded;
 		
 		var $distance;
+		var $distance1;
 		
 		private $action;
 		private $resources;
@@ -59,10 +66,12 @@
 			$this->ships = array();
 			$this->speedPercent=100;
 			$this->speed = 0;
+			$this->speed1 = 0;
 			$this->sBonusSpeed=1;
 			$this->duration=0;
 			$this->action='';
 			$this->costsPerHundredAE=0;
+			$this->costsPerHundredAE1=0;
 			$this->timeLaunchLand=0;
 			$this->costsLaunchLand=0;
 			$this->pilots=0;
@@ -306,33 +315,59 @@
 		*/
 		function fixShips()
 		{	
-			if (!$this->shipsFixed)
+			if ($this->shipsFixed)
 			{
-				if ($this->shipCount > 0)
-				{
-					if ($this->pilotsAvailable() >= $this->getPilots())
-					{					
-						// Calc Costs for all ships, based on regulated speed
-						foreach ($this->ships as $sid => $sd)
-						{
-							$cpae = $sd['fuel_use'] * $this->speed / $sd['speed'];
-							$this->ships[$sid]['costs_per_ae'] = $cpae;
-							$this->costsPerHundredAE += $cpae;				
-						}
-						$this->shipsFixed=true;
-						$this->error == "";
-						return $this->shipsFixed;
+				$this->costsPerHundredAE=0;
+				$this->shipsFixed=false;
+			}
+				
+			if ($this->shipCount > 0)
+			{
+				if ($this->pilotsAvailable() >= $this->getPilots())
+				{					
+					// Calc Costs for all ships, based on regulated speed
+					foreach ($this->ships as $sid => $sd)
+					{
+						$cpae = $sd['fuel_use'] * $this->speed / $sd['speed'];
+						$this->ships[$sid]['costs_per_ae'] = $cpae;
+						$this->costsPerHundredAE += $cpae;				
 					}
-					else
-						$this->error = "Es sind zuwenig Piloten für diese Flotte vorhanden.(".$this->pilotsAvailable()." verfügbar, ".$this->getPilots()." benötigt)";
+					$this->shipsFixed=true;
+					$this->error == "";
+					return $this->shipsFixed;
 				}
 				else
-					$this->error = "Kann Schiffauswahl nicht fertigstellen, es wurde keine Schiffe zur Flotte hinzugefügt.";
+					$this->error = "Es sind zuwenig Piloten für diese Flotte vorhanden.(".$this->pilotsAvailable()." verfügbar, ".$this->getPilots()." benötigt)";
 			}
 			else
-				$this->error = "Kann Schiffauswahl nicht fertigstellen, die Flotte wurde bereits fertig zusammengestellt!";
+				$this->error = "Kann Schiffauswahl nicht fertigstellen, es wurde keine Schiffe zur Flotte hinzugefügt.";
+			/*}
+			else
+				$this->error = "Kann Schiffauswahl nicht fertigstellen, die Flotte wurde bereits fertig zusammengestellt!";*/
 			return false;
-		}		
+		}	
+		
+		/**
+		* Set the wormhole entity
+		*
+		* >> Step 5.1
+		*/
+		function setWormhole(&$ent,$speedPercent=100)
+		{
+			if (is_array($ent->getFleetTargetForwarder()))
+			{
+				$this->wormholeEntryEntity=$ent;
+				$this->wormholeExitEntity=Entity::createFactoryById($this->wormholeEntryEntity->targetId());
+				$this->costsPerHundredAE1=$this->costsPerHundredAE;
+				$this->speed1=$this->speed;
+				$this->duration1=$this->duration - $this->getTimeLaunchLand();
+				$this->speedPercent1=$this->speedPercent;
+				return true;
+			}
+			else
+				$this->error = "Ungültiges Zielobjekt";
+			return false;
+		}
 
 		/**
 		* Sets the target entity
@@ -346,7 +381,16 @@
 				if ($ent->isValid())
 				{
 					$this->targetEntity=$ent;
-					$this->distance = $this->sourceEntity->distance($this->targetEntity);			
+					if ($this->wormholeEntryEntity!=NULL)
+					{
+						$this->distance = $this->wormholeExitEntity->distance($this->targetEntity);
+						$this->distance1 = $this->sourceEntity->distance($this->wormholeEntryEntity);
+					}
+					else
+					{
+						$this->distance = $this->sourceEntity->distance($this->targetEntity);
+						$this->distance1 = 0;
+					}
 					
 					$this->setSpeedPercent($speedPercent);
 					
@@ -659,6 +703,15 @@
 			$this->shipsFixed=false;
 		}				
 		
+		function unsetWormhole()
+		{
+			$this->wormholeEntryEntity=NULL;
+			$this->wormholeExitEntity=NULL;
+			$this->costsPerHundredAE1=0;
+			$this->speed1=0;
+			$this->duration1=0;
+			$this->speedPercent1=0;
+		}
 		
 		
 		
@@ -778,7 +831,7 @@
 		
 		function getCosts()
 		{
-			$this->costs = ceil($this->costsPerHundredAE / 100 * $this->distance * $this->speedPercent / 100);
+			$this->costs = ceil($this->costsPerHundredAE / 100 * $this->distance * $this->speedPercent / 100) + ceil($this->costsPerHundredAE1 / 100 * $this->distance1 * $this->speedPercent1 / 100);
 			$this->costs += $this->costsLaunchLand;
 			$this->capacityFuelUsed =$this->costs;
 			return $this->costs;
@@ -798,7 +851,7 @@
 		
 		function getDuration()
 		{
-			return $this->duration;
+			return $this->duration + $this->duration1;
 		}
 		
 		function getSpeedPercent()
@@ -1066,7 +1119,7 @@
 
 		function getDistance()
 		{
-			return $this->distance;
+			return $this->distance + $this->distance1;
 		}
 
 		function getShipCount()

@@ -70,6 +70,7 @@
 				<div style="padding:20px"><img src="images/loading.gif" alt="Loading" /> Lade Daten...</div>
 				</div>
 				<div id="havenContentTarget" style="display:none;"></div>
+				<div id="havenContentWormhole" style="display:none;"></div>
 				<div id="havenContentAction" style="display:none;"></div>
 				</div>';
 				echo '<script type="text/javascript">xajax_havenShowShips();</script>';	

@@ -3,6 +3,7 @@
 	// Main dialogs
 	$xajax->register(XAJAX_FUNCTION,"havenShowShips");
 	$xajax->register(XAJAX_FUNCTION,"havenShowTarget");
+	$xajax->register(XAJAX_FUNCTION,"havenShowWormhole");
 	$xajax->register(XAJAX_FUNCTION,"havenShowAction");
 	$xajax->register(XAJAX_FUNCTION,"havenShowLaunch");
 
@@ -15,6 +16,7 @@
 	$xajax->register(XAJAX_FUNCTION,"havenCheckAction");
 	$xajax->register(XAJAX_FUNCTION,"havenAllianceAttack");
 	$xajax->register(XAJAX_FUNCTION,"havenCheckSupport");
+	$xajax->register(XAJAX_FUNCTION,"havenWormholeReset");
 	
 
 	
@@ -426,8 +428,14 @@
 						$psp = $fleet->sourceEntity->pos();
 					}
 					
+					//Startplanet
+					echo "<tr><th width=\"25%\"><b>Startplanet:</b></th>
+						<td style=\"padding:2px 2px 3px 6px;background:#000;color:#fff;height:47px;\">
+							<img src=\"".$fleet->sourceEntity->imagePath()."\" style=\"float:left;\" >
+							<br/>&nbsp;&nbsp; ".$fleet->sourceEntity." (".$fleet->sourceEntity->entityCodeString().", Besitzer: ".$fleet->sourceEntity->owner().")
+						</td></tr>";
 					// Manuelle Auswahl
-					echo "<tr><th width=\"25%\">Manuelle Eingabe:</th><td width=\"75%\">";
+					echo "<tr id=\"manuelselect\"><th width=\"25%\">Manuelle Eingabe:</th><td width=\"75%\">";
 					echo "<input type=\"text\" 
 												id=\"man_sx\"
 												name=\"man_sx\" 
@@ -440,7 +448,7 @@
 												onfocus=\"this.select()\" 
 												onclick=\"this.select()\" 
 												onkeydown=\"detectChangeRegister(this,'t1');\"
-												onkeyup=\"if (detectChangeTest(this,'t1')) { showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
+												onkeyup=\"if (detectChangeTest(this,'t1')) { showLoader('submitbutton');showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
 												onkeypress=\"return nurZahlen(event)\"
 					/>&nbsp;/&nbsp;";
 					echo "<input type=\"text\" 
@@ -455,7 +463,7 @@
 												onfocus=\"this.select()\" 
 												onclick=\"this.select()\" 
 												onkeydown=\"detectChangeRegister(this,'t2');\"
-												onkeyup=\"if (detectChangeTest(this,'t2')) { showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
+												onkeyup=\"if (detectChangeTest(this,'t2')) { showLoader('submitbutton');showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
 												onkeypress=\"return nurZahlen(event)\"
 					/>&nbsp;&nbsp;:&nbsp;&nbsp;";
 					echo "<input type=\"text\" 
@@ -470,7 +478,7 @@
 												onfocus=\"this.select()\" 
 												onclick=\"this.select()\" 
 												onkeydown=\"detectChangeRegister(this,'t3');\"
-												onkeyup=\"if (detectChangeTest(this,'t3')) { showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
+												onkeyup=\"if (detectChangeTest(this,'t3')) { showLoader('submitbutton');showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
 												onkeypress=\"return nurZahlen(event)\"
 					/>&nbsp;/&nbsp;";
 					echo "<input type=\"text\" 
@@ -484,7 +492,7 @@
 												onfocus=\"this.select()\" 
 												onclick=\"this.select()\" 
 												onkeydown=\"detectChangeRegister(this,'t4');\"
-												onkeyup=\"if (detectChangeTest(this,'t4')) { showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
+												onkeyup=\"if (detectChangeTest(this,'t4')) { showLoader('submitbutton');showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
 												onkeypress=\"return nurZahlen(event)\"
 					/>&nbsp;&nbsp;:&nbsp;&nbsp;";
 					echo "<input type=\"text\" 
@@ -499,14 +507,14 @@
 												onfocus=\"this.select()\" 
 												onclick=\"this.select()\" 
 												onkeydown=\"detectChangeRegister(this,'t5');\"
-												onkeyup=\"if (detectChangeTest(this,'t5')) { showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
+												onkeyup=\"if (detectChangeTest(this,'t5')) { showLoader('submitbutton');showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
 												onkeypress=\"return nurZahlen(event)\"
 					/></td></tr>";
 					
-					echo "<tr><th width=\"25%\">Zielfavoriten:</th><td width=\"75%\" align=\"left\">";
+					echo "<tr id=\"bookmarkselect\"><th width=\"25%\">Zielfavoriten:</th><td width=\"75%\" align=\"left\">";
 							echo "<select name=\"bookmarks\" 
 											id=\"bookmarks\" 
-											onchange=\"xajax_havenBookmark(xajax.getFormValues('targetForm'));\"
+											onchange=\"showLoader('submitbutton');xajax_havenBookmark(xajax.getFormValues('targetForm'));\"
 											tabindex=\"6\"
 							>\n";
 					echo "<option value=\"0\"";
@@ -562,12 +570,12 @@
 					echo "</td></tr>";
 					
 					// Speedfaktor
-					echo "<tr>
+					echo "<tr id=\"speedselect\">
 						<th width=\"25%\">Speedfaktor:</th>
 						<td width=\"75%\" align=\"left\">";
 							echo "<select name=\"speed_percent\" 
 											id=\"duration_percent\" 
-											onchange=\"showLoader('duration');xajax_havenTargetInfo(xajax.getFormValues('targetForm'))\"
+											onchange=\"showLoader('submitbutton');showLoader('duration');xajax_havenTargetInfo(xajax.getFormValues('targetForm'))\"
 											tabindex=\"6\"
 							>\n";
 							for ($x=100;$x>0;$x-=1)
@@ -581,7 +589,7 @@
 					echo "</td></tr>";
 					
 					// Daten anzeigen
-					echo "<tr><th width=\"25%\"><b>Ziel-Informationen:</b></th>
+					echo "<tr><th id=\"targettitle\" width=\"25%\"><b>Ziel-Informationen:</b></th>
 						<td id=\"targetinfo\" style=\"padding:2px 2px 3px 6px;background:#000;color:#fff;height:47px;\">
 							<img src=\"images/loading.gif\" alt=\"Loading\" /> Lade Daten...
 						</td></tr>";
@@ -610,9 +618,7 @@
 					echo "<tr id=\"allianceAttacks\" style=\"display: none;\"><th>Allianzangriffe:</th><td id=\"alliance\">-</td></tr>";
 					tableEnd();
 					
-					echo "&nbsp;<input tabindex=\"7\" type=\"button\" onclick=\"xajax_havenShowShips()\" value=\"&lt;&lt; Zurück zur Schiffauswahl\" />&nbsp;";
-					echo "<input tabindex=\"8\" type=\"button\" onclick=\"xajax_havenReset()\" value=\"Reset\" />&nbsp;";
-					echo "<div style=\"display:inline;\" id=\"chooseAction\"></div>";
+					echo "<div id=\"submitbutton\"></div>";
 					
 					echo "</form>";
 					
@@ -627,7 +633,7 @@
 					
 					
 					
-					ob_end_clean();				
+					ob_end_clean();
 					
 			}
 			else
@@ -643,6 +649,312 @@
 		
 		$_SESSION['haven']['fleetObj']=serialize($fleet);
 	  return $response;			
+	}
+	
+	/**
+	* Verify wormhole and show target selector
+	*/
+	function havenShowWormhole($form)
+	{
+		$response = new xajaxResponse();
+
+		// Do some checks
+		if (count($form)>0)
+		{
+			// Get fleet object
+			$fleet = unserialize($_SESSION['haven']['fleetObj']);
+			
+			$absX = (($form['man_sx']-1) * CELL_NUM_X) + $form['man_cx'];
+			$absY = (($form['man_sy']-1) * CELL_NUM_Y) + $form['man_cy'];
+			if ($fleet->owner->discovered($absX,$absY) == 0)
+				$code='u';
+			else 
+				$code = '';
+			
+			$res = dbquery("
+			SELECT
+				entities.id,
+				entities.code
+			FROM
+				entities
+			INNER JOIN	
+				cells
+			ON
+				entities.cell_id=cells.id
+				AND cells.sx=".$form['man_sx']."
+				AND cells.sy=".$form['man_sy']."
+				AND cells.cx=".$form['man_cx']."
+				AND cells.cy=".$form['man_cy']."
+				AND entities.pos=".$form['man_p']."
+			");
+			if (mysql_num_rows($res)>0)
+			{
+				$arr=mysql_fetch_row($res);
+				if ($code == '')
+					$ent = Entity::createFactory($arr[1],$arr[0]);
+				else 
+					$ent = Entity::createFactory($code,$arr[0]);
+				
+				//Info Feld des ersten Teiles des Fluges, Tabelle muss vor setWormhole stehen!!
+				ob_start();
+				tableStart("Flug bis zum Wurmloch");
+				echo "<tr><th width=\"25%\"><b>Startplanet:</b></th>
+						<td style=\"padding:2px 2px 3px 6px;background:#000;color:#fff;height:47px;\">
+							<img src=\"".$fleet->sourceEntity->imagePath()."\" style=\"float:left;\" >
+							<br/>&nbsp;&nbsp; ".$fleet->sourceEntity." (".$fleet->sourceEntity->entityCodeString().", Besitzer: ".$fleet->sourceEntity->owner().")
+						</td></tr>
+					<tr><th width=\"25%\"><b>Wurmloch-Eintrittspunkt:</b></th>
+						<td style=\"padding:2px 2px 3px 6px;background:#000;color:#fff;height:47px;\">
+							<img src=\"".$fleet->targetEntity->imagePath()."\" style=\"float:left;\" >
+							<br/>&nbsp;&nbsp; ".$fleet->targetEntity." (".$fleet->targetEntity->entityCodeString().", Besitzer: ".$fleet->targetEntity->owner().")
+						</td></tr>
+					<tr><th width=\"25%\"><b>Entfernung:</b></th><td>".nf($fleet->getDistance())." AE"."</td>
+					<tr><th width=\"25%\"><b>Kosten/100 AE:</b></th><td>".nf($fleet->getCostsPerHundredAE())." t ".RES_FUEL."</td>";
+				$speedString = nf($fleet->getSpeed())." AE/h";
+				If ($fleet->sBonusSpeed>1)
+					$speedString .= " (inkl. ".get_percent_string($fleet->sBonusSpeed,1)." Mysticum-Bonus)";
+				echo "<tr><th width=\"25%\"><b>Geschwindigkeit:</b></th><td>".$speedString."</td>
+					<tr><th width=\"25%\"><b>Dauer:</b></th><td>".tf($fleet->getDuration())." (inkl. Start- und Landezeit von ".tf($fleet->getTimeLaunchLand()).")</td>
+					<tr><th width=\"25%\"><b>Treibstoff:</b></th><td>".nf($fleet->getCosts())." t ".RES_FUEL."  (inkl. Start- und Landeverbrauch von ".nf($fleet->getCostsLaunchLand())." ".RES_FUEL.")</td>
+					<tr><th width=\"25%\"><b>Nahrung:</b></th><td>".nf($fleet->getCostsFood())." t ".RES_FOOD."</td>
+					<tr><th width=\"25%\"><b>Piloten:</b></th><td>".nf($fleet->getPilots())."</td>";
+					
+				$response->assign("havenContentTarget","innerHTML",ob_get_contents());
+				
+				ob_end_clean();
+					
+				if ($fleet->setWormhole($ent,$form['speed_percent']))
+				{		
+					ob_start();
+					echo "<form id=\"targetForm\" onsubmit=\"xajax_havenShowAction(xajax.getFormValues('targetForm'));return false;\" >";
+					tableStart("Zielwahl nach dem Wurmlochsprung wählen");
+					
+					$csx = $fleet->sourceEntity->sx();
+					$csy = $fleet->sourceEntity->sy();
+					$ccx = $fleet->sourceEntity->cx();
+					$ccy = $fleet->sourceEntity->cy();
+					$psp = $fleet->sourceEntity->pos();
+					
+					//Wurmlochaustritt
+					echo "<tr><th width=\"25%\"><b>Wurmloch-Austrittspunkt:</b></th>
+							<td style=\"padding:2px 2px 3px 6px;background:#000;color:#fff;height:47px;\">
+								<img src=\"".$fleet->wormholeExitEntity->imagePath()."\" style=\"float:left;\" >
+								<br/>&nbsp;&nbsp; ".$fleet->wormholeExitEntity." (".$fleet->wormholeExitEntity->entityCodeString().", Besitzer: ".$fleet->wormholeExitEntity->owner().")
+							</td></tr>";
+					// Manuelle Auswahl
+					echo "<tr><th width=\"25%\">Manuelle Eingabe:</th><td width=\"75%\">";
+					echo "<input type=\"text\" 
+												id=\"man_sx\"
+												name=\"man_sx\" 
+												size=\"1\" 
+												maxlength=\"1\" 
+												value=\"$csx\" 
+												title=\"Sektor X-Koordinate\" 
+												tabindex=\"1\"
+												autocomplete=\"off\" 
+												onfocus=\"this.select()\" 
+												onclick=\"this.select()\" 
+												onkeydown=\"detectChangeRegister(this,'t1');\"
+												onkeyup=\"if (detectChangeTest(this,'t1')) { showLoader('submitbutton');showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
+												onkeypress=\"return nurZahlen(event)\"
+					/>&nbsp;/&nbsp;";
+					echo "<input type=\"text\" 
+												id=\"man_sy\" 
+												name=\"man_sy\" 
+												size=\"1\" 
+												maxlength=\"1\" 
+												value=\"$csy\" 
+												title=\"Sektor Y-Koordinate\" 
+												tabindex=\"2\"
+												autocomplete=\"off\" 
+												onfocus=\"this.select()\" 
+												onclick=\"this.select()\" 
+												onkeydown=\"detectChangeRegister(this,'t2');\"
+												onkeyup=\"if (detectChangeTest(this,'t2')) { showLoader('submitbutton');showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
+												onkeypress=\"return nurZahlen(event)\"
+					/>&nbsp;&nbsp;:&nbsp;&nbsp;";
+					echo "<input type=\"text\" 
+												id=\"man_cx\" 
+												name=\"man_cx\" 
+												size=\"2\" 
+												maxlength=\"2\" 
+												value=\"$ccx\" 
+												title=\"Zelle X-Koordinate\" 
+												tabindex=\"3\"
+												autocomplete=\"off\" 
+												onfocus=\"this.select()\" 
+												onclick=\"this.select()\" 
+												onkeydown=\"detectChangeRegister(this,'t3');\"
+												onkeyup=\"if (detectChangeTest(this,'t3')) { showLoader('submitbutton');showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
+												onkeypress=\"return nurZahlen(event)\"
+					/>&nbsp;/&nbsp;";
+					echo "<input type=\"text\" 
+												id=\"man_cy\" 
+												name=\"man_cy\" 
+												size=\"2\" 
+												maxlength=\"2\" 
+												value=\"$ccy\" 
+												tabindex=\"4\"
+												autocomplete=\"off\" 
+												onfocus=\"this.select()\" 
+												onclick=\"this.select()\" 
+												onkeydown=\"detectChangeRegister(this,'t4');\"
+												onkeyup=\"if (detectChangeTest(this,'t4')) { showLoader('submitbutton');showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
+												onkeypress=\"return nurZahlen(event)\"
+					/>&nbsp;&nbsp;:&nbsp;&nbsp;";
+					echo "<input type=\"text\" 
+												id=\"man_p\" 
+												name=\"man_p\" 
+												size=\"2\" 
+												maxlength=\"2\" 
+												value=\"$psp\" 
+												title=\"Position des Planeten im Sonnensystem\" 
+												tabindex=\"5\"
+												autocomplete=\"off\" 
+												onfocus=\"this.select()\" 
+												onclick=\"this.select()\" 
+												onkeydown=\"detectChangeRegister(this,'t5');\"
+												onkeyup=\"if (detectChangeTest(this,'t5')) { showLoader('submitbutton');showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
+												onkeypress=\"return nurZahlen(event)\"
+					/></td></tr>";
+					
+					echo "<tr id=\"bookmarkselect\"><th width=\"25%\">Zielfavoriten:</th><td width=\"75%\" align=\"left\">";
+							echo "<select name=\"bookmarks\" 
+											id=\"bookmarks\" 
+											onchange=\"showLoader('submitbutton');xajax_havenBookmark(xajax.getFormValues('targetForm'));\"
+											tabindex=\"6\"
+							>\n";
+					echo "<option value=\"0\"";
+					echo ">Wählen...</option>";
+							
+					$pRes=dbquery("
+								SELECT
+									planets.id
+								FROM
+									planets
+								WHERE
+									planets.planet_user_id=".$fleet->ownerid()."
+								ORDER BY
+									planet_user_main DESC,
+									planet_name ASC;");
+					
+					if (mysql_num_rows($pRes)>0)
+					{	
+						while ($pArr=mysql_fetch_assoc($pRes))
+						{
+							$ent = Entity::createFactory('p',$pArr['id']);
+							echo "<option value=\"".$ent->id()."\"";
+							echo ">Eigener Planet: ".$ent."</option>\n";
+						}
+					}
+					
+					$bRes=dbquery("
+								SELECT
+									bookmarks.entity_id,
+									bookmarks.comment,
+									entities.code      
+								FROM
+									bookmarks
+								INNER JOIN
+									entities	
+								ON bookmarks.entity_id=entities.id
+									AND bookmarks.user_id=".$fleet->ownerid().";");
+					
+					if (mysql_num_rows($bRes)>0)
+					{
+						echo "<option value=\"0\"";
+						echo ">-------------------------------</option>\n";
+						
+						while ($bArr=mysql_fetch_assoc($bRes))
+						{
+							$ent = Entity::createFactory($bArr['code'],$bArr['entity_id']);
+							echo "<option value=\"".$ent->id()."\"";
+							echo ">".$ent->entityCodeString()." - ".$ent." (".$bArr['comment'].")</option>\n";
+						}
+					}
+					echo "</select>";
+					
+					echo "</td></tr>";
+					
+					// Speedfaktor
+					echo "<tr id=\"speedselect\">
+						<th width=\"25%\">Speedfaktor:</th>
+						<td width=\"75%\" align=\"left\">";
+							echo "<select name=\"speed_percent\" 
+											id=\"duration_percent\" 
+											onchange=\"showLoader('submitbutton');showLoader('duration');xajax_havenTargetInfo(xajax.getFormValues('targetForm'))\"
+											tabindex=\"6\"
+							>\n";
+							for ($x=100;$x>0;$x-=1)
+							{
+								echo "<option value=\"$x\"";
+								if ($fleet->getSpeedPercent() == $x) echo " selected=\"selected\"";
+								echo ">".$x."</option>\n";
+							}
+					echo "</select> %";
+					
+					echo "</td></tr>";
+					
+					// Daten anzeigen
+					echo "<tr><th id=\"targettitle\" width=\"25%\"><b>Ziel-Informationen:</b></th>
+						<td id=\"targetinfo\" style=\"padding:2px 2px 3px 6px;background:#000;color:#fff;height:47px;\">
+							<img src=\"images/loading.gif\" alt=\"Loading\" /> Lade Daten...
+						</td></tr>";
+					echo "<tr><th>Entfernung:</th>
+						<td id=\"distance\">-</td></tr>";
+					echo "<tr><th width=\"25%\">Kosten/100 AE:</th>
+						<td id=\"costae\">".nf($fleet->getCostsPerHundredAE())." t ".RES_FUEL."</td></tr>";
+					echo "<tr><th>Geschwindigkeit:</th>
+						<td id=\"speed\">".nf($fleet->getSpeed())." AE/h";
+					If ($fleet->sBonusSpeed>1)
+							echo " (inkl. ".get_percent_string($fleet->sBonusSpeed,1)." Mysticum-Bonus)";
+					echo "</td></tr>";
+					echo "<tr><th>Dauer:</th>
+						<td><span id=\"duration\" style=\"font-weight:bold;\">-</span> (inkl. Start- und Landezeit von ".tf($fleet->getTimeLaunchLand()).")</td></tr>";
+					echo "<tr><th>Treibstoff:</th>
+						<td><span id=\"costs\" style=\"font-weight:bold;\">-</span> (inkl. Start- und Landeverbrauch von ".nf($fleet->getCostsLaunchLand())." ".RES_FUEL.")</td></tr>";
+					echo "<tr><th>Nahrung:</th>
+						<td><span id=\"food\"  style=\"font-weight:bold;\">-</span></td></tr>";
+					echo "<tr><th>Piloten:</th>
+						<td>".nf($fleet->getPilots());
+						If ($fleet->sBonusPilots!=1)
+							echo " (inkl. ".get_percent_string(1-$fleet->sBonusPilots,1,1)." Mysticum-Bonus)";
+					echo "</td></tr>";
+					echo "<tr><th>Bemerkungen:</th>
+						<td id=\"comment\">-</td></tr>";
+					echo "<tr id=\"allianceAttacks\" style=\"display: none;\"><th>Allianzangriffe:</th><td id=\"alliance\">-</td></tr>";
+					tableEnd();
+					
+					echo "<div id=\"submitbutton\"></div>
+							</form>";
+					
+					
+					$response->assign("havenContentWormhole","innerHTML",ob_get_contents());
+					$response->assign("havenContentWormhole","style.display",'');
+					
+					$response->script("document.getElementById('man_sx').focus();");
+					$response->script("xajax_havenTargetInfo(xajax.getFormValues('targetForm'))");
+					
+					ob_end_clean();
+				}
+				else
+				{
+					$response->alert($fleet->error());				
+				}
+			}
+			else
+			{
+				$response->alert("Ungültiges Ziel!");				
+			}
+			
+			$_SESSION['haven']['fleetObj']=serialize($fleet);
+			
+		}
+		else
+		{
+			$response->alert("Fehler! Es wurden keine Ziel gewählt!");
+		}
+		return $response;
 	}
 
 	/**
@@ -700,6 +1012,17 @@
 						//	
 						ob_start();
 						tableStart("Zielinfos");
+						if ($fleet->wormholeEntryEntity)
+						{
+							echo "<tr><th width=\"25%\"><b>Wurmloch-Eintrittspunkt:</b></th>
+								<td id=\"targetinfo\" style=\"padding:16px 2px 2px 60px;color:#fff;height:47px;background:#000 url('".$fleet->wormholeEntryEntity->imagePath()."') no-repeat 3px 3px;\">
+									".$fleet->wormholeEntryEntity." (".$fleet->wormholeEntryEntity->entityCodeString().", Besitzer: ".$fleet->wormholeEntryEntity->owner().")
+								</td></tr>";
+							echo "<tr><th width=\"25%\"><b>Wurmloch-Austrittspunkt:</b></th>
+								<td id=\"targetinfo\" style=\"padding:16px 2px 2px 60px;color:#fff;height:47px;background:#000 url('".$fleet->wormholeExitEntity->imagePath()."') no-repeat 3px 3px;\">
+									".$fleet->wormholeExitEntity." (".$fleet->wormholeExitEntity->entityCodeString().", Besitzer: ".$fleet->wormholeExitEntity->owner().")
+								</td></tr>";
+						}
 						echo "<tr><th width=\"25%\"><b>Ziel-Informationen:</b></th>
 							<td id=\"targetinfo\" style=\"padding:16px 2px 2px 60px;color:#fff;height:47px;background:#000 url('".$ent->imagePath()."') no-repeat 3px 3px;\">
 								".$ent." (".$ent->entityCodeString().", Besitzer: ".$ent->owner().")
@@ -721,7 +1044,9 @@
 						tableEnd();		
 						
 						$response->assign("havenContentTarget","innerHTML",ob_get_contents());				
-						$response->assign("havenContentTarget","style.display",'');			
+						$response->assign("havenContentTarget","style.display",'');	
+						$response->assign("havenContentWormhole","innerHTML",'');
+						$response->assign("havenContentWormhole","style.display",'none');	
 						ob_end_clean();
 						
 						//
@@ -815,7 +1140,7 @@
 						
 						tableEnd();                                                                                  
 						
-						echo "<div id=\"submitbutton\"><input type=\"button\" onclick=\"xajax_havenShowTarget(null)\" value=\"&lt;&lt; Zurück zur Zielwahl\" /> &nbsp; ";
+						echo "<div id=\"submitbutton\"><input type=\"button\" onclick=\"xajax_havenWormholeReset();xajax_havenShowTarget(null)\" value=\"&lt;&lt; Zurück zur Zielwahl\" /> &nbsp; ";
 						echo "<input type=\"button\" onclick=\"xajax_havenReset()\" value=\"Reset\" /> &nbsp; ";
 						if ($actionsAvailable>0)
 						{
@@ -945,8 +1270,8 @@
 					echo "<input type=\"button\" onclick=\"xajax_havenReset()\" value=\"Weitere Flotte starten\" />
 					&nbsp; <input type=\"button\" onclick=\"document.location='?page=fleetinfo&amp;id=".$fid."'\" value=\"Flotte beobachten\" />";
 	
-					$response->assign("havenContentAction","innerHTML",ob_get_contents());				
-					$response->assign("havenContentAction","style.display",'');	
+					$response->assign("havenContentAction","innerHTML",ob_get_contents());
+					$response->assign("havenContentAction","style.display",'');
 					$response->assign('support','innerHTML',tf($fleet->getSupportTime()) );
 					ob_end_clean();
 					$_SESSION['haven']['fleetObj']=serialize($fleet);				
@@ -1051,7 +1376,10 @@
 				$response->assign('food','innerHTML',nf($fleet->getCostsFood())." t ".RES_FOOD."");
 				$response->assign('targetinfo','style.background',"#000");
 				
-				$action = "<input id=\"cooseAction\" tabindex=\"9\" type=\"submit\" value=\"Weiter zur Aktionsauswahl &gt;&gt;&gt;\"  /> &nbsp;";
+				if ($ent->entityCode()=='w' && $fleet->wormholeEntryEntity==NULL)
+					$action = '<input id="setWormhole" tabindex="9" type="button" onclick="xajax_havenShowWormhole(xajax.getFormValues(\'targetForm\'))" value="Wurmloch auswählen">';
+				else
+					$action = "<input id=\"cooseAction\" tabindex=\"9\" type=\"submit\" value=\"Weiter zur Aktionsauswahl &gt;&gt;&gt;\"  /> &nbsp;";
 				
 				if ($ent->ownerId()>0 && count($fleet->aFleets)) {
 					$alliance .= "<table style=\"width:100%;\">";
@@ -1074,8 +1402,11 @@
 				$response->assign('targetinfo','style.background',"#f00");
 				$action = "&nbsp; ";
 			}
+			
+			$submitButton = '&nbsp;<input tabindex="7" type="button" onclick="xajax_havenShowShips()" value="&lt;&lt; Zurück zur Schiffauswahl" />&nbsp;<input tabindex="8" type="button" onclick="xajax_havenReset()" value="Reset" />&nbsp;'.$action;
+		
+			$response->assign('submitbutton','innerHTML',$submitButton);
 			$response->assign('targetinfo','innerHTML',ob_get_contents());
-			$response->assign('comment','innerHTML',$comment);
 			$response->assign('chooseAction','innerHTML',$action);
 			$response->assign('alliance','innerHTML',$alliance);
 			$response->assign('allianceAttacks',"style.display",$allianceStyle);
@@ -1160,7 +1491,10 @@
 		$response->assign('food','innerHTML',nf($fleet->getCostsFood())." t ".RES_FOOD."");
 		$response->assign('targetinfo','style.background',"#000");
 				
-		$action = "<input id=\"cooseAction\" tabindex=\"7\" type=\"submit\" value=\"Weiter zur Aktionsauswahl &gt;&gt;&gt;\"  /> &nbsp;";
+		if ($ent->entityCode()=='w' && $fleet->wormholeEntryEntity==NULL)
+			$action = '<input id="setWormhole" tabindex="9" type="button" onclick="xajax_havenShowWormhole(xajax.getFormValues(\'targetForm\'))" value="Wurmloch auswählen">';
+		else
+			$action = "<input id=\"cooseAction\" tabindex=\"9\" type=\"submit\" value=\"Weiter zur Aktionsauswahl &gt;&gt;&gt;\"  /> &nbsp;";
 					
 		if ($ent->ownerId()>0 && count($fleet->aFleets)) {
 			$alliance .= "<table style=\"width:100%;\">";
@@ -1175,8 +1509,10 @@
 			if ($counter)
 				$allianceStyle = '';
 		}
+		$submitButton = '&nbsp;<input tabindex="7" type="button" onclick="xajax_havenShowShips()" value="&lt;&lt; Zurück zur Schiffauswahl" />&nbsp;<input tabindex="8" type="button" onclick="xajax_havenReset()" value="Reset" />&nbsp;'.$action;
+		
+		$response->assign('submitbutton','innerHTML',$submitButton);
 		$response->assign('targetinfo','innerHTML',ob_get_contents());
-		$response->assign('chooseAction','innerHTML',$action);
 		$response->assign('alliance','innerHTML',$alliance);
 		$response->assign('allianceAttacks',"style.display",$allianceStyle);
 		
@@ -1415,7 +1751,7 @@
 						$duration = $fleet->distance / $fleet->getSpeed();	// Calculate duration
 						$duration *= 3600;	// Convert to seconds
 						$duration = ceil($duration);
-						$maxTime = $arr["landtime"] - time() - $fleet->timeLaunchLand - 120;
+						$maxTime = $arr["landtime"] - time() - $fleet->timeLaunchLand - $fleet->duration1 - 120;
 					
 						if ($duration < $maxTime) {
 							$percentageSpeed =  ceil(100 * $duration / $maxTime);
@@ -1500,5 +1836,12 @@
 		
 		return $response;
 	
+	}
+	
+	function havenWormholeReset()
+	{
+		$fleet = unserialize($_SESSION['haven']['fleetObj']);
+		$fleet->unsetWormhole();
+		$_SESSION['haven']['fleetObj']=serialize($fleet);
 	}
 ?>
