@@ -1376,7 +1376,7 @@
 				$response->assign('food','innerHTML',nf($fleet->getCostsFood())." t ".RES_FOOD."");
 				$response->assign('targetinfo','style.background',"#000");
 				
-				if ($ent->entityCode()=='w' && $fleet->wormholeEntryEntity==NULL)
+				if ($ent->entityCode()=='w' && $fleet->wormholeEntryEntity==NULL && $fleet->wormholeEnable)
 					$action = '<input id="setWormhole" tabindex="9" type="button" onclick="xajax_havenShowWormhole(xajax.getFormValues(\'targetForm\'))" value="Wurmloch auswählen">';
 				else
 					$action = "<input id=\"cooseAction\" tabindex=\"9\" type=\"submit\" value=\"Weiter zur Aktionsauswahl &gt;&gt;&gt;\"  /> &nbsp;";
@@ -1491,7 +1491,7 @@
 		$response->assign('food','innerHTML',nf($fleet->getCostsFood())." t ".RES_FOOD."");
 		$response->assign('targetinfo','style.background',"#000");
 				
-		if ($ent->entityCode()=='w' && $fleet->wormholeEntryEntity==NULL)
+		if ($ent->entityCode()=='w' && $fleet->wormholeEntryEntity==NULL && $fleet->wormholeEnable)
 			$action = '<input id="setWormhole" tabindex="9" type="button" onclick="xajax_havenShowWormhole(xajax.getFormValues(\'targetForm\'))" value="Wurmloch auswählen">';
 		else
 			$action = "<input id=\"cooseAction\" tabindex=\"9\" type=\"submit\" value=\"Weiter zur Aktionsauswahl &gt;&gt;&gt;\"  /> &nbsp;";

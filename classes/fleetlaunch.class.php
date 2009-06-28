@@ -116,6 +116,15 @@
 			elseif (isset($_SESSION['haven']['cellTargetId'])) {
 				$this->targetEntity = Entity::createFactoryUnkownCell($_SESSION['haven']['cellTargetId']);
 			}
+			
+			//Wormhole enable?
+			$this->wormholeEnable=false;
+			$res = dbquery("SELECT techlist_current_level FROM techlist WHERE techlist_tech_id=".TECH_WORMHOLE." AND techlist_user_id='".$this->ownerId."';");
+			if (mysql_num_rows($res))
+			{
+				$arr = mysql_fetch_row($res);
+				$this->wormholeEnable=$arr[0];
+			}	
 
 		}
 		
@@ -354,18 +363,23 @@
 		*/
 		function setWormhole(&$ent,$speedPercent=100)
 		{
-			if (is_array($ent->getFleetTargetForwarder()))
+			if ($this->wormholeEnable)
 			{
-				$this->wormholeEntryEntity=$ent;
-				$this->wormholeExitEntity=Entity::createFactoryById($this->wormholeEntryEntity->targetId());
-				$this->costsPerHundredAE1=$this->costsPerHundredAE;
-				$this->speed1=$this->speed;
-				$this->duration1=$this->duration - $this->getTimeLaunchLand();
-				$this->speedPercent1=$this->speedPercent;
-				return true;
+				if (is_array($ent->getFleetTargetForwarder()))
+				{
+					$this->wormholeEntryEntity=$ent;
+					$this->wormholeExitEntity=Entity::createFactoryById($this->wormholeEntryEntity->targetId());
+					$this->costsPerHundredAE1=$this->costsPerHundredAE;
+					$this->speed1=$this->speed;
+					$this->duration1=$this->duration - $this->getTimeLaunchLand();
+					$this->speedPercent1=$this->speedPercent;
+					return true;
+				}
+				else
+					$this->error = "Ungültiges Zielobjekt";
 			}
 			else
-				$this->error = "Ungültiges Zielobjekt";
+				$this->error = "Wurmlochforschung noch nicht erforscht";
 			return false;
 		}
 
@@ -460,7 +474,7 @@
 			if ($this->actionOk)
 			{
 				$time = time();
-				$this->landTime = ($time+$this->duration);
+				$this->landTime = ($time+$this->getDuration());
 				
 				// Subtract ships from source
 				$sl = new ShipList($this->sourceEntity->id(),$this->ownerId);

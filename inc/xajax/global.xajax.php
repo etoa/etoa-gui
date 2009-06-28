@@ -6,6 +6,7 @@ $xajax->register(XAJAX_FUNCTION,'formatNumbers');
 
 $xajax->register(XAJAX_FUNCTION,'setupShowRace');
 
+
 //Listet gefundene User auf
 function searchUser($val,$field_id='user_nick',$box_id='citybox',$separator=";")
 {
@@ -338,6 +339,7 @@ function formatNumbers($field_id,$val,$format=0,$max)
 function setupShowRace($val)
 {
 	$objResponse = new xajaxResponse();
+	defineImagePaths();
 	if ($val>0)
 	{
 	$res=dbquery("
@@ -414,10 +416,10 @@ function setupShowRace($val)
 	{
 		while ($arr=mysql_fetch_array($res))
 		{
-   	  $s_img = IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$arr['ship_id']."_small.".IMAGE_EXT;
-			echo "<tr><td style=\"background:black;\"><img src=\"".$s_img."\" style=\"width:40px;height:40px;border:none;\" alt=\"ship".$arr['ship_id']."\" /></td>
-			<th style=\"width:180px;\">".text2html($arr['ship_name'])."</th>
-			<td>".text2html($arr['ship_shortcomment'])."</td></tr>";
+			$ship = new Ship($arr);
+			echo "<tr><td style=\"background:black;\"><img src=\"".$ship->imgPath()."\" style=\"width:40px;height:40px;border:none;\" alt=\"ship".$ship->id."\" /></td>
+			<th style=\"width:180px;\">".text2html($ship->name)."</th>
+			<td>".text2html($ship->shortComment)."</td></tr>";
 		}
 	}
 	else
