@@ -2605,7 +2605,8 @@ function imagecreatefromfile($path, $user_functions = false)
 	function defineImagePaths()
 	{
 		global $cu;
-
+		$cfg = Config::getInstance();
+		
 		if (!defined('IMAGE_PATH'))
 		{
 			if (!isset($cu))
