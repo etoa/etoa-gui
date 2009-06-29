@@ -537,7 +537,7 @@
 
 							// TODO: Überprüfen
 							//Rechnet zeit wenn arbeiter eingeteilt sind
-							$btime_min=$btime*(0.1-(GEN_TECH_LEVEL/100));
+							$btime_min=$btime*(0.1-($gen_tech_level/100));
 							if ($btime_min<DEFENSE_MIN_BUILD_TIME) $btime_min=DEFENSE_MIN_BUILD_TIME;
 							$btime=$btime-$people_working*$cfg->value('people_work_done');
 							if ($btime<$btime_min) $btime=$btime_min;
@@ -590,7 +590,7 @@
 [b]Dauer pro Einheit:[/b] ".tf($obj_time)."
 [b]Waffenfabrik Level:[/b] ".CURRENT_FACTORY_LEVEL."
 [b]Eingesetzte Bewohner:[/b] ".nf($people_working)."
-[b]Gen-Tech Level:[/b] ".GEN_TECH_LEVEL."
+[b]Gen-Tech Level:[/b] ".$gen_tech_level."
 [b]Eingesetzter Spezialist:[/b] ".$cu->specialist->name."
 
 [b]Kosten[/b]

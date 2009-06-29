@@ -89,7 +89,7 @@
 			if(count($_POST)>0 && isset($_POST['sort_submit']))
 			{
 				$cu->properties->itemOrderShip = $_POST['sort_value'];
-       	$cu->properties->itemOrderWay = $_POST['sort_way'];
+       			$cu->properties->itemOrderWay = $_POST['sort_way'];
 			}
 			
 			
@@ -555,7 +555,7 @@
 
 	    				// TODO: Überprüfen
 							//Rechnet zeit wenn arbeiter eingeteilt sind
-							$btime_min=$btime*(0.1-(GEN_TECH_LEVEL/100));
+							$btime_min=$btime*(0.1-($gen_tech_level/100));
 							if ($btime_min<SHIPYARD_MIN_BUILD_TIME) $btime_min=SHIPYARD_MIN_BUILD_TIME;
 							$btime=$btime-$people_working*$cfg->value('people_work_done');
 							if ($btime<$btime_min) $btime=$btime_min;

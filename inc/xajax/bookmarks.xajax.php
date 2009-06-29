@@ -5,8 +5,6 @@ $xajax->register(XAJAX_FUNCTION,'addBookmarkShip');
 
 	function launchBookmarkProbe($bid)
 	{
-		global $cu;
-
 		$cp = unserialize($_SESSION['currentEntity']);
 		
 		$objResponse = new xajaxResponse();
@@ -24,12 +22,12 @@ $xajax->register(XAJAX_FUNCTION,'addBookmarkShip');
 							fleet_bookmarks
 						WHERE
 							id='".$bid."'
-							AND user_id='".$cu->id."';");
+							AND user_id='".$cp->owner()->id."';");
 		if (mysql_num_rows($bres))
 		{
 			$barr = mysql_fetch_assoc($bres);
 			
-			$fleet = new FleetLaunch($cp,$cu);
+			$fleet = new FleetLaunch($cp,$cp->owner());
 			if ($fleet->checkHaven())
 			{
 				$shipOutput = "";
@@ -122,7 +120,7 @@ $xajax->register(XAJAX_FUNCTION,'addBookmarkShip');
 		}
 		else
 		{
-			$str= "Du hast noch keine Standard-Spionagesonde gewählt, überprüfe bitte deine <a href=\"?page=userconfig&mode=game\">Spieleinstellungen</a>!";
+			$str= "Der ausgewählte Flottenfavorit ist ungültig!";
 		}				
 		if ($launched)
 		{
@@ -153,7 +151,7 @@ $xajax->register(XAJAX_FUNCTION,'addBookmarkShip');
 		{
 			if ($delete!=$k)
 			{
-				echo "Schiffe hinzufügen: <input type=\"text\" name=\"scount[]\" id=\"ship_".$cnt."\" value=\"".$v."\" size=\"6\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/>&nbsp;
+				echo "<input type=\"text\" name=\"scount[]\" id=\"ship_".$cnt."\" value=\"".$v."\" size=\"6\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/>&nbsp;
 					<select name=\"sid[]\">";
 				foreach ($ships as $k1 => $v1)
 				{
@@ -171,7 +169,7 @@ $xajax->register(XAJAX_FUNCTION,'addBookmarkShip');
 		
 		if ($delete<0 || $cnt==1 && $delete==0)
 		{
-			echo "Schiffe hinzufügen: <input type=\"text\" name=\"scount[]\" id=\"ship_".$cnt."\" value=\"1\" size=\"6\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/>&nbsp;
+			echo "<input type=\"text\" name=\"scount[]\" id=\"ship_".$cnt."\" value=\"1\" size=\"6\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/>&nbsp;
 				<select name=\"sid[]\">";
 			foreach ($ships as $k => $v)
 			{

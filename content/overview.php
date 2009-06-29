@@ -191,7 +191,7 @@
 		if (mysql_num_rows($bres)>0)
 		{
 			$barr = mysql_fetch_array($bres);
-			echo "<td><a href=\"?page=research&amp;planet_id=".$barr['techlist_entity_id']."\" id=\"tech_counter\">";
+			echo "<td><a href=\"?page=research&amp;change_entity=".$barr['techlist_entity_id']."\" id=\"tech_counter\">";
 			//Forschung ist fertig
 			if($barr['techlist_build_end_time']-time()<=0)
 			{
@@ -506,9 +506,9 @@
 			
 
 			//Alle Beschriftungen anzeigen
-			document.getElementById("planet_info_text_building").innerHTML ='<a href=\"?page=buildings&planet_id='+planet_id+'\">Bauhof:</a>';
-			document.getElementById("planet_info_text_shipyard").innerHTML ='<a href=\"?page=shipyard&planet_id='+planet_id+'\">Schiffswerft:</a>';
-			document.getElementById("planet_info_text_defense").innerHTML ='<a href=\"?page=defense&planet_id='+planet_id+'\">Waffenfabrik:</a>';
+			document.getElementById("planet_info_text_building").innerHTML ='<a href=\"?page=buildings&change_entity='+planet_id+'\">Bauhof:</a>';
+			document.getElementById("planet_info_text_shipyard").innerHTML ='<a href=\"?page=shipyard&change_entity='+planet_id+'\">Schiffswerft:</a>';
+			document.getElementById("planet_info_text_defense").innerHTML ='<a href=\"?page=defense&change_entity='+planet_id+'\">Waffenfabrik:</a>';
 			document.getElementById("planet_info_text_res").firstChild.nodeValue='Ressourcen';
 			document.getElementById("planet_info_text_res_metal").className='resmetalcolor';
 			document.getElementById("planet_info_text_res_crystal").className='rescrystalcolor';
@@ -766,7 +766,7 @@
 			$planet_image_path = "".IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$arr_planet['planet_image']."_middle.gif";
 	
 			// Planet bild mit link zum bauhof und der informationen übergabe beim mouseover
-	    $planet_link = "<a href=\"?page=buildings&planet_id=".$arr_planet['id']."\"><img id=\"Planet\" src=\"".$planet_image_path."\" width=\"".$pic_width."\" height=\"".$pic_height."\" border=\"0\" 
+	    $planet_link = "<a href=\"?page=buildings&change_entity=".$arr_planet['id']."\"><img id=\"Planet\" src=\"".$planet_image_path."\" width=\"".$pic_width."\" height=\"".$pic_height."\" border=\"0\" 
 	    onMouseOver=\"show_info(
 			'".$arr_planet['id']."',
 			'".$planet_name."',

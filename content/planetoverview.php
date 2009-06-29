@@ -204,7 +204,7 @@
 				echo "<div class=\"planetOverviewItem\">Trümmerfeld</div> 
 				<span class=\"resmetal\">".nf($cp->debrisMetal,0,1)."</span>
 				<span class=\"rescrystal\">".nf($cp->debrisCrystal,0,1)."</span>
-				<span class=\"resfuel\">".nf($cp->debrisPlastic,0,1)."</span>
+				<span class=\"resplastic\">".nf($cp->debrisPlastic,0,1)."</span>
 				<br style=\"clear:left;\"/>";
 			}			
 			if ($cp->desc!="")			
