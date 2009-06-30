@@ -80,13 +80,13 @@
   echo "</td></tr>";
   
   echo "<tr>
-  	<th><b>Anzahl Analyzatoren für Direktscan:</b></th>
+  	<th><b>Anzahl Analyzatoren für Quickanalyse:</b></th>
     <td>
     	<input type=\"text\" name=\"analyzeship_count\" maxlength=\"5\" size=\"5\" value=\"".$cu->properties->analyzeShipCount."\">
     </td>
   </tr>";
   
-  echo "<tr><th>Typ des Analyzators für Direktscan:</th>
+  echo "<tr><th>Typ des Analyzators für Quickanalyse:</th>
   <td>";
 	$sres = dbquery("
 	SELECT 

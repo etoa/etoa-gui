@@ -399,6 +399,21 @@ if (isset($_GET['id']))
 	    }
 	    tableEnd();
     }
+	//Raketensilo
+	elseif ($arr['building_id']==25)
+	{
+	    tableStart("Energieverbrauch (ohne Boni)");
+	    echo "<tr><th>Stufe</th><th>Energie</th></tr>";
+	    for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
+	    {
+	        $power_use = round($arr['building_power_use'] * pow($arr['building_production_factor'],$level-1));
+	        if($level==$currentLevel)
+	            echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($power_use)."</td></tr>";
+	        else
+	            echo "<tr><td>$level</td><td>".nf($power_use)."</td></tr>";
+	    }
+			tableEnd();
+    }
     // Rohstoffbunker
     elseif ($arr['building_id']==26)
     {

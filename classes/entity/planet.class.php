@@ -210,6 +210,7 @@
 				$arr[] = "support";
 				$arr[] = "hijack";
 				$arr[] = "market";
+				$arr[] = "emp";
 			}
     	if ($this->ownerId()==0 && $this->habitable)
     		$arr[] = "colonize";

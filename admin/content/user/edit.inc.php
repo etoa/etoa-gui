@@ -27,7 +27,9 @@
 				user_chatadmin=".$_POST['user_chatadmin'].",
 				admin=".$_POST['admin'].",
 				user_ghost=".$_POST['user_ghost'].",
-				user_profile_board_url='".$_POST['user_profile_board_url']."'";	
+				user_profile_board_url='".$_POST['user_profile_board_url']."',
+				user_alliace_shippoints='".$_POST['user_alliace_shippoints']."',
+				user_alliace_shippoints_used='".$_POST['user_alliace_shippoints_used']."'";
 
 				if (isset($_POST['user_alliance_rank_id']))
 				{
@@ -152,6 +154,8 @@
 				msg_blink=".$_POST['msg_blink'].",
 				spyship_id=".$_POST['spyship_id'].",
 				spyship_count='".$_POST['spyship_count']."',
+				analyzeship_id=".$_POST['analyzeship_id'].",
+				analyzeship_count='".$_POST['analyzeship_count']."',
 				havenships_buttons=".$_POST['havenships_buttons'].",
 				show_adds=".$_POST['show_adds'].",
 				fleet_rtn_msg=".$_POST['fleet_rtn_msg']."";	
@@ -754,6 +758,55 @@
 					        	echo "Momentan steht kein Schiff zur Auswahl!";
 					        }
 					echo "</td>
+							</tr>";
+							echo "<tr>
+			        	<td class=\"tbltitle\">Analysatoren für Quickanalyse:</td>
+			          <td class=\"tbldata\">
+			          	<input type=\"text\" name=\"analyzeship_count\" maxlength=\"5\" size=\"5\" value=\"".$arr['analyzeship_count']."\"> &nbsp; ";
+						$sres = dbquery("
+						SELECT 
+			        ship_id, 
+			        ship_name
+						FROM 
+							ships 
+						WHERE 
+							ship_buildable='1'
+							AND (
+							ship_actions LIKE '%,analyze'
+							OR ship_actions LIKE 'analyze,%'
+							OR ship_actions LIKE '%,analyze,%'
+							OR ship_actions LIKE 'analyze'
+							)
+						ORDER BY 
+							ship_name ASC");
+					        if (mysql_num_rows($sres)>0)
+					        {
+					        	echo '<select name="analyzeship_id"><option value="0">(keines)</option>';
+					        	while ($sarr=mysql_fetch_array($sres))
+					        	{
+					        		echo '<option value="'.$sarr['ship_id'].'"';
+					        		if ($arr['analyzeship_id']==$sarr['ship_id'])
+					        		 echo ' selected="selected"';
+					        		echo '>'.$sarr['ship_name'].'</option>';
+					        	}
+					        }
+					        else
+					        {
+					        	echo "Momentan steht kein Schiff zur Auswahl!";
+					        }
+					echo "</td>
+							</tr>
+							<tr>
+								<td class=\"tbltitle\" valign=\"top\">Verfügbare Allianzschiffteile</td>
+								<td class=\"tbldata\">
+									<input type=\"text\" name=\"user_alliace_shippoints\" value=\"".$arr['user_alliace_shippoints']."\" size=\"3\" maxlength=\"3\" />
+								</td>
+							</tr>
+							<tr>
+								<td class=\"tbltitle\" valign=\"top\">Verbaute Allianzschiffteile</td>
+								<td class=\"tbldata\">
+									<input type=\"text\" name=\"user_alliace_shippoints_used\" value=\"".$arr['user_alliace_shippoints_used']."\" size=\"3\" maxlength=\"3\" />
+								</td>
 							</tr>";
 							
 				// Multis & Sitting

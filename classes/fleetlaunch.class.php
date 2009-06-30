@@ -473,211 +473,223 @@
 		{
 			if ($this->actionOk)
 			{
-				$time = time();
-				$this->landTime = ($time+$this->getDuration());
+				// recheck because of browser-tabbing
+				$fm = new FleetManager($this->ownerId);
+				$this->fleetSlotsUsed = $fm->countControlledByEntity($this->sourceEntity->id());
+				unset($fm);
 				
-				// Subtract ships from source
-				$sl = new ShipList($this->sourceEntity->id(),$this->ownerId);
-				$addcnt = 0;
-				foreach ($this->ships as $sid => $sda)
-				{
-					$this->ships[$sid]['count'] = $sl->remove($sid,$sda['count']);
-					$addcnt+=$this->ships[$sid]['count'];
-				}
+				$this->possibleFleetStarts = FLEET_NOCONTROL_NUM + $this->fleetControlLevel - $this->fleetSlotsUsed + $this->specialist->fleetMax;
 				
-				if ($addcnt > 0)
-				{
-					// Subtract flight costs from source
-					$this->sourceEntity->chgRes(4,-$this->getCosts());
-					$this->sourceEntity->chgRes(5,-$this->getCostsFood());
-					$this->sourceEntity->chgPeople(-($this->getPilots()+$this->capacityPeopleLoaded));
+				if ($this->possibleFleetStarts > 0)
+				{	
+					$time = time();
+					$this->landTime = ($time+$this->getDuration());
 					
-					// Load resource
-					$this->finalLoadResource(1);
-					$this->finalLoadResource(2);
-					$this->finalLoadResource(3);
-					$this->finalLoadResource(4);
-					$this->finalLoadResource(5);
-					
-					if ($this->action=="alliance" && $this->leaderId!=0) {
-						$status=3;
-						$nextId = $this->sourceEntity->ownerAlliance();
-					}
-					else {
-						$status = 0;
-						$nextId = 0;
-					}
-					
-					// Create fleet record
-					$sql = "
-					INSERT INTO
-						fleet
-					(
-						user_id,
-						leader_id,
-						entity_from,
-						entity_to,
-						next_id,
-						launchtime,
-						landtime,
-						nextactiontime,
-						action,
-						status,
-						pilots,
-						usage_fuel,
-						usage_food,
-						usage_power,
-						support_usage_food,
-						support_usage_fuel,				
-						res_metal,
-						res_crystal,
-						res_plastic,
-						res_fuel,
-						res_food,
-						res_people,
-						fetch_metal,
-						fetch_crystal,
-						fetch_plastic,
-						fetch_fuel,
-						fetch_food,
-						fetch_people
-					)
-					VALUES
-					(
-						".$this->ownerId.",
-						".$this->leaderId.",
-						".$this->sourceEntity->id().",
-						".$this->targetEntity->id().",
-						".$nextId.",
-						".$time.",
-						".$this->landTime.",
-						".$this->supportTime.",
-						'".$this->action."',
-						'".$status."',
-						".$this->getPilots().",
-						".$this->getCosts().",
-						".$this->getCostsFood().",
-						".$this->getCostsPower().",
-						".$this->supportCostsFood.",
-						".$this->supportCostsFuel.",
-						".$this->res[1].",
-						".$this->res[2].",
-						".$this->res[3].",
-						".$this->res[4].",
-						".$this->res[5].",
-						".$this->capacityPeopleLoaded.",
-						".$this->fetch[1].",
-						".$this->fetch[2].",
-						".$this->fetch[3].",
-						".$this->fetch[4].",
-						".$this->fetch[5].",
-						".$this->fetch[6]."
-					)
-					";
-					dbquery($sql);
-					$fid = mysql_insert_id();
-					
+					// Subtract ships from source
+					$sl = new ShipList($this->sourceEntity->id(),$this->ownerId);
+					$addcnt = 0;
 					foreach ($this->ships as $sid => $sda)
 					{
-						if ($sda['special'])
-						{
-							dbquery("INSERT INTO
-							fleet_ships
-							(
-								fs_fleet_id,
-								fs_ship_id,
-								fs_ship_cnt,
-								fs_special_ship,
-								fs_special_ship_level,
-								fs_special_ship_exp,
-								fs_special_ship_bonus_weapon,
-								fs_special_ship_bonus_structure,
-								fs_special_ship_bonus_shield,
-								fs_special_ship_bonus_heal,
-								fs_special_ship_bonus_capacity,
-								fs_special_ship_bonus_speed,
-								fs_special_ship_bonus_pilots,
-								fs_special_ship_bonus_tarn,
-								fs_special_ship_bonus_antrax,
-								fs_special_ship_bonus_forsteal,
-								fs_special_ship_bonus_build_destroy,
-								fs_special_ship_bonus_antrax_food,
-								fs_special_ship_bonus_deactivade
-							)
-							VALUES
-							(
-								".$fid.",
-								".$sid.",
-								".$sda['count'].",
-								'1',
-								".$sda['sLevel'].",
-								".$sda['sExp'].",
-								".$sda['sBonusWeapon'].",
-								".$sda['sBonusStructure'].",
-								".$sda['sBonusShield'].",
-								".$sda['sBonusHeal'].",
-								".$sda['sBonusCapacity'].",
-								".$sda['sBonusSpeed'].",
-								".$sda['sBonusPilots'].",
-								".$sda['sBonusTarn'].",
-								".$sda['sBonusAntrax'].",
-								".$sda['sBonusForsteal'].",
-								".$sda['sBonusBuildDestroy'].",
-								".$sda['sBonusAntraxFood'].",
-								".$sda['sBonusDeactivade']."
-							);");
+						$this->ships[$sid]['count'] = $sl->remove($sid,$sda['count']);
+						$addcnt+=$this->ships[$sid]['count'];
+					}
+					
+					if ($addcnt > 0)
+					{
+						// Subtract flight costs from source
+						$this->sourceEntity->chgRes(4,-$this->getCosts());
+						$this->sourceEntity->chgRes(5,-$this->getCostsFood());
+						$this->sourceEntity->chgPeople(-($this->getPilots()+$this->capacityPeopleLoaded));
+						
+						// Load resource
+						$this->finalLoadResource(1);
+						$this->finalLoadResource(2);
+						$this->finalLoadResource(3);
+						$this->finalLoadResource(4);
+						$this->finalLoadResource(5);
+						
+						if ($this->action=="alliance" && $this->leaderId!=0) {
+							$status=3;
+							$nextId = $this->sourceEntity->ownerAlliance();
 						}
-						elseif ($sda['fake']!==false)
+						else {
+							$status = 0;
+							$nextId = 0;
+						}
+						
+						// Create fleet record
+						$sql = "
+						INSERT INTO
+							fleet
+						(
+							user_id,
+							leader_id,
+							entity_from,
+							entity_to,
+							next_id,
+							launchtime,
+							landtime,
+							nextactiontime,
+							action,
+							status,
+							pilots,
+							usage_fuel,
+							usage_food,
+							usage_power,
+							support_usage_food,
+							support_usage_fuel,				
+							res_metal,
+							res_crystal,
+							res_plastic,
+							res_fuel,
+							res_food,
+							res_people,
+							fetch_metal,
+							fetch_crystal,
+							fetch_plastic,
+							fetch_fuel,
+							fetch_food,
+							fetch_people
+						)
+						VALUES
+						(
+							".$this->ownerId.",
+							".$this->leaderId.",
+							".$this->sourceEntity->id().",
+							".$this->targetEntity->id().",
+							".$nextId.",
+							".$time.",
+							".$this->landTime.",
+							".$this->supportTime.",
+							'".$this->action."',
+							'".$status."',
+							".$this->getPilots().",
+							".$this->getCosts().",
+							".$this->getCostsFood().",
+							".$this->getCostsPower().",
+							".$this->supportCostsFood.",
+							".$this->supportCostsFuel.",
+							".$this->res[1].",
+							".$this->res[2].",
+							".$this->res[3].",
+							".$this->res[4].",
+							".$this->res[5].",
+							".$this->capacityPeopleLoaded.",
+							".$this->fetch[1].",
+							".$this->fetch[2].",
+							".$this->fetch[3].",
+							".$this->fetch[4].",
+							".$this->fetch[5].",
+							".$this->fetch[6]."
+						)
+						";
+						dbquery($sql);
+						$fid = mysql_insert_id();
+						
+						foreach ($this->ships as $sid => $sda)
 						{
-							dbquery("INSERT INTO
+							if ($sda['special'])
+							{
+								dbquery("INSERT INTO
 								fleet_ships
 								(
 									fs_fleet_id,
 									fs_ship_id,
 									fs_ship_cnt,
-									fs_ship_faked
+									fs_special_ship,
+									fs_special_ship_level,
+									fs_special_ship_exp,
+									fs_special_ship_bonus_weapon,
+									fs_special_ship_bonus_structure,
+									fs_special_ship_bonus_shield,
+									fs_special_ship_bonus_heal,
+									fs_special_ship_bonus_capacity,
+									fs_special_ship_bonus_speed,
+									fs_special_ship_bonus_pilots,
+									fs_special_ship_bonus_tarn,
+									fs_special_ship_bonus_antrax,
+									fs_special_ship_bonus_forsteal,
+									fs_special_ship_bonus_build_destroy,
+									fs_special_ship_bonus_antrax_food,
+									fs_special_ship_bonus_deactivade
 								)
 								VALUES
 								(
 									".$fid.",
 									".$sid.",
 									".$sda['count'].",
-									".$this->fakeId."
+									'1',
+									".$sda['sLevel'].",
+									".$sda['sExp'].",
+									".$sda['sBonusWeapon'].",
+									".$sda['sBonusStructure'].",
+									".$sda['sBonusShield'].",
+									".$sda['sBonusHeal'].",
+									".$sda['sBonusCapacity'].",
+									".$sda['sBonusSpeed'].",
+									".$sda['sBonusPilots'].",
+									".$sda['sBonusTarn'].",
+									".$sda['sBonusAntrax'].",
+									".$sda['sBonusForsteal'].",
+									".$sda['sBonusBuildDestroy'].",
+									".$sda['sBonusAntraxFood'].",
+									".$sda['sBonusDeactivade']."
 								);");
+							}
+							elseif ($sda['fake']!==false)
+							{
+								dbquery("INSERT INTO
+									fleet_ships
+									(
+										fs_fleet_id,
+										fs_ship_id,
+										fs_ship_cnt,
+										fs_ship_faked
+									)
+									VALUES
+									(
+										".$fid.",
+										".$sid.",
+										".$sda['count'].",
+										".$this->fakeId."
+									);");
+							}
+							else
+							{
+								dbquery("INSERT INTO
+									fleet_ships
+									(
+										fs_fleet_id,
+										fs_ship_id,
+										fs_ship_cnt
+									)
+									VALUES
+									(
+										".$fid.",
+										".$sid.",
+										".$sda['count']."
+									);");
+							}
 						}
-						else
-						{
-							dbquery("INSERT INTO
-								fleet_ships
-								(
-									fs_fleet_id,
-									fs_ship_id,
-									fs_ship_cnt
-								)
-								VALUES
-								(
-									".$fid.",
-									".$sid.",
-									".$sda['count']."
-								);");
-						}
-					}
+							
 						
-					
-					if ($this->action=="alliance" && $this->leaderId==0) {
-						dbquery("
-								UPDATE
-									fleet
-								SET
-									leader_id='".$fid."',
-									next_id='".$this->sourceEntity->ownerAlliance()."'
-								WHERE
-									id='".$fid."';");
+						if ($this->action=="alliance" && $this->leaderId==0) {
+							dbquery("
+									UPDATE
+										fleet
+									SET
+										leader_id='".$fid."',
+										next_id='".$this->sourceEntity->ownerAlliance()."'
+									WHERE
+										id='".$fid."';");
+						}
+						return $fid;
 					}
-					return $fid;
+					else
+						$this->error = "Konnte keine Schiffe zur Flotte hinzufügen da keine vorhanden sind!";
 				}
 				else
-					$this->error = "Konnte keine Schiffe zur Flotte hinzufügen da keine vorhanden sind!";
+					$this->error = "Von hier können keine weiteren Flotten starten, alle Slots (".$this->fleetSlotsUsed.") sind belegt!";
 			}
 			else
 			{	
@@ -793,9 +805,9 @@
 									{
 										if (!$battleban)
 										{
-											if( !($this->sourceEntity->ownerPoints()*USER_ATTACK_PERCENTAGE>$this->targetEntity->ownerPoints()  || $this->sourceEntity->ownerPoints()/USER_ATTACK_PERCENTAGE < $this->targetEntity->ownerPoints() ) 
+											if($this->sourceEntity->owner->alliance->checkWar($this->targetEntity->ownerAlliance()) || (!($this->sourceEntity->ownerPoints()*USER_ATTACK_PERCENTAGE>$this->targetEntity->ownerPoints()  || $this->sourceEntity->ownerPoints()/USER_ATTACK_PERCENTAGE < $this->targetEntity->ownerPoints() ) 
 											|| $this->targetEntity->owner->lastOnline<time()-USER_INACTIVE_SHOW*86400 
-											|| $this->targetEntity->ownerLocked() )
+											|| $this->targetEntity->ownerLocked() ))
 											{
 												$actionObjs[$i] = $ai;
 											}
