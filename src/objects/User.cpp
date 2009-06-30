@@ -287,7 +287,7 @@
 					{
 						tRow = tRes.at(i);
 						TechData::TechData *data = DataHandler.getTechById((int)tRow["techlist_tech_id"]);
-						techs[data->getName()] = (int)tRow["techlist_current_level"];
+						this->techs[data->getName()] = (int)tRow["techlist_current_level"];
 						if ((int)tRow["techlist_build_type"]==3) 
 						{
 							techAtWork = data->getName();
@@ -307,12 +307,18 @@
 		std::map<std::string,int> avaiableTechs;
 		
 		std::map<std::string,int>::iterator it;
-		for ( it=techs.begin() ; it != techs.end(); it++ ) 
+		for ( it=this->techs.begin() ; it != this->techs.end(); it++ ) 
 		{
-			TechData::TechData *data = DataHandler.getTechByName((*it).first);
-			if ((unsigned int)(*it).second < victim->getTechLevel((*it).first) && data->getStealable() && (*it).first!=techAtWork)
+			if ((unsigned int)(*it).second && (unsigned int)(*it).second < victim->getTechLevel((*it).first))
 			{
-				avaiableTechs[(*it).first] = victim->getTechLevel((*it).first);
+				if ((*it).first!=techAtWork)
+				{
+					TechData::TechData *data = DataHandler.getTechByName((*it).first);
+					if (data->getStealable())
+					{
+						avaiableTechs[(*it).first] = victim->getTechLevel((*it).first);
+					}
+				}
 			}
 		}
 		

@@ -457,7 +457,6 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 		query.store();
 		query.reset();
 
-
 		log->addText(("Battle id: " + etoa::d2s(con_->insert_id())));
 
 		switch (returnV)

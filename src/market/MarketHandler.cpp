@@ -93,7 +93,7 @@ namespace market
 		text += " Handelspunkte. Grund. ";
 		text += reason;
 		std::time_t time = std::time(0);
-		etoa::add_log(17,text,time,etoa::toInt(userId));
+		etoa::add_log(17,text,time);
 	}	
 		
 	//Configwerte des Marktes werden aktualisiert
@@ -389,8 +389,7 @@ namespace market
 										log += etoa::nf(std::string(arr["auction_buy_fuel"]));
 										log += "\nNahrung: ";
 										log += etoa::nf(std::string(arr["auction_buy_food"]));
-										etoa::add_log(10,log,time,(int)arr["auction_current_buyer_id"]);
-										etoa::add_log(10,log,time,(int)arr["auction_user_id"]);
+										etoa::add_log(10,log,time);
 									}
 								}
 
@@ -422,8 +421,7 @@ namespace market
 								log += "\n\nDie Auktion und wird nach ";
 								log += config.get("market_auction_delay_time", 0);
 								log += " Stunden gelöscht.";
-								etoa::add_log(7,log,time,(int)arr["auction_current_buyer_id"]);
-								etoa::add_log(7,log,time,(int)arr["auction_user_id"]);
+								etoa::add_log(7,log,time);
 
 								//Auktion noch eine zeit lang anzeigen, aber unkäuflich machen
 								query << "UPDATE ";

@@ -237,7 +237,7 @@ namespace etoa
 	
 	}
 	
-	void add_log(int facility, std::string log_text, std::time_t log_timestamp, int user_id, int entity_id, int alliance_id)
+	void add_log(int facility, std::string log_text, std::time_t log_timestamp)
 	{
 		My &my = My::instance();
 		mysqlpp::Connection *con_ = my.get();
@@ -251,17 +251,11 @@ namespace etoa
 				<< "("
 				<< "	facility, "
 				<< "	timestamp, "
-				<< "	message, "
-				<< "	user_id, "
-				<< "	alliance_id, "
-				<< "	entity_id) "
+				<< "	message) "
 				<< "VALUES "
 				<< "('" << facility << "', "
 				<< "'" << log_timestamp << "', "
-				<< "'" << log_text << "', "
-				<< "'" << user_id << "', "
-				<< "'" << alliance_id << "', "
-				<< "'" << entity_id << "');";
+				<< "'" << log_text << "');";
 		query.store();
 		query.reset();
 	}
@@ -410,7 +404,7 @@ namespace etoa
 			query.store();
 			query.reset();
 			std::string text = "Der Spieler " + etoa::get_user_nick(userId) +" erhŠlt 1 Kampfpunkte. Grund: " + reason;
-			add_log(17,text,0,userId);
+			add_log(17,text,0);
 		}
 	}
 }

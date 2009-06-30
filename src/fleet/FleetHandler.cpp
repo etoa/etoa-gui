@@ -12,14 +12,14 @@ namespace fleet
 		query << "FROM ";
 		query << "	fleet ";
 		query << "WHERE ";
-		query << " landtime<'" << time(0) << "' ";
+		query << "	landtime<'" << time(0) << "' ";
 		query << "	AND !(action='alliance' AND status='3') ";
 		//query << "	AND user_id='1' ";
 		query << "ORDER BY landtime ASC;";
 		mysqlpp::Result res = query.store();
 		query.reset();
 
-	//	std::cout << "Updating ";
+		//std::cout << "Updating ";
 		//Checking queryresult
 		if (res)  {
 	    	unsigned int resSize = res.size();
@@ -33,7 +33,7 @@ namespace fleet
 
 					std::string action = (std::string)row["action"];
 
-			//		std::cout << "User: " << row["user_id"] << " Zeit: " << row["landtime"] << " Aktion: " << action << " Status:" << row["status"] << "\n";
+					//std::cout << "User: " << row["user_id"] << " Zeit: " << row["landtime"] << " Aktion: " << action << " Status:" << row["status"] << "\n";
 
 
 					// Nachprüfen ob Landezeit wirklich kleider ist als aktuelle Zeit
