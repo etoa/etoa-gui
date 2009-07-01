@@ -224,13 +224,13 @@
 				// Wenn dieses Objekt im Bau ist
 				if($end_time>0)
 				{
-					$style_message = "style=\"color:green;\"";
+					$style_message = "color: rgb(0, 255, 0);";
 					$build_message = $status_message;
 				}
 				// Ein anderes Objekt ist in Bau
 				else
 				{
-					$style_message = "style=\"color:red;\"";
+					$style_message = "color: rgb(255, 0, 0);";
 					$build_message = $status_message2;
 				}
 			}
@@ -266,7 +266,7 @@
 			        <td ".$style_food." width=\"15%\">".nf($costs_food)."</td>
 						</tr>
 						<tr>
-							<td ".$style_message." colspan=\"7\" style=\"text-align:center;\" name=\"build_message_".$typ."_".$id."\" id=\"build_message_".$typ."_".$id."\">".$build_message."</td>
+							<td colspan=\"7\" style=\"text-align:center;".$style_message."\" name=\"build_message_".$typ."_".$id."\" id=\"build_message_".$typ."_".$id."\">".$build_message."</td>
 						</tr>";
 			// Packt alle infos in ein Array und gibt dieses zurück
 			// Kosten
@@ -441,7 +441,7 @@
 		{
 			// Prüft, ob ein User gewählt wurde
 			if($_POST['user_buy_ship']>0)
-			{		
+			{
 				// Gebaute Schiffe laden
 				$res = dbquery("
 				SELECT
@@ -496,6 +496,7 @@
 				}
 				
 				$ship_costs = 0;
+				$total_build_cnt = 0;
 				$to_much = false;
 				foreach ($_POST['buy_ship'] as $ship_id => $build_cnt)
 				{
@@ -536,128 +537,136 @@
 						{
 							$to_much = true;
 						}
+						$total_build_cnt += $build_cnt;
 					}
 				}
 				
 				// Prüft, ob die Maximalanzahl nicht überschritten wird
 				if(!$to_much)
 				{
-					// Lädt Schiffspunkte und Hauptplanet des gewählten Users
-					$res = dbquery("
-						SELECT
-							users.user_alliace_shippoints,
-							planets.id
-						FROM
-							users
-						INNER JOIN
-							planets
-						ON planet_user_id=user_id
-						WHERE
-							planets.planet_user_main='1'
-							AND users.user_id='".$_POST['user_buy_ship']."';");		
-						$arr = mysql_fetch_assoc($res);
-				
-						// Prüft ob Schiffspunkte noch ausreichend sind
-						if($arr['user_alliace_shippoints'] >= $ship_costs)
-						{
-							// Zieht Punkte vom Konto ab
-							dbquery("
-								UPDATE
-									users
-								SET
-									user_alliace_shippoints=user_alliace_shippoints-'".$ship_costs."',
-									user_alliace_shippoints_used=user_alliace_shippoints_used+'".$ship_costs."'
-								WHERE
-									user_id='".$_POST['user_buy_ship']."'
-							");
+
 					
-							
-							// Lädt das Allianzentity
-							$res = dbquery("
+					if ($total_build_cnt>0)
+					{
+						// Lädt Schiffspunkte und Hauptplanet des gewählten Users
+						$res = dbquery("
 							SELECT
-								id
+								users.user_alliace_shippoints,
+								planets.id
 							FROM
-								entities
+								users
+							INNER JOIN
+								planets
+							ON planet_user_id=user_id
 							WHERE
-								code='x';");		
-							$row = mysql_fetch_row($res);
-							
-							
-							// Speichert Flotte
-							$launchtime = time(); // Startzeit
-							$duration = 3600; // Dauer 1h
-							$landtime = $launchtime + $duration; // Landezeit
-							dbquery("
-									INSERT INTO fleet
-									(
-										user_id,
-										entity_from,
-										entity_to,
-										launchtime,
-										landtime,
-										action
-									)
-									VALUES
-									(
-										'".$_POST['user_buy_ship']."',
-										'".$row[0]."',
-										'".$arr['id']."',
-										'".$launchtime."',
-										'".$landtime."',
-										'delivery'
-									);");
-									
-									
-							// Speichert Schiffe in der Flotte
-							$sql = "";
-							$log = "";
-							$cnt = 0;
-							foreach ($_POST['buy_ship'] as $ship_id => $build_cnt)
+								planets.planet_user_main='1'
+								AND users.user_id='".$_POST['user_buy_ship']."';");		
+							$arr = mysql_fetch_assoc($res);
+					
+							// Prüft ob Schiffspunkte noch ausreichend sind
+							if($arr['user_alliace_shippoints'] >= $ship_costs)
 							{
-								// Formatiert die eingegebene Zahl (entfernt z.B. die Trennzeichen)
-								$build_cnt = nf_back($build_cnt);
+								// Zieht Punkte vom Konto ab
+								dbquery("
+									UPDATE
+										users
+									SET
+										user_alliace_shippoints=user_alliace_shippoints-'".$ship_costs."',
+										user_alliace_shippoints_used=user_alliace_shippoints_used+'".$ship_costs."'
+									WHERE
+										user_id='".$_POST['user_buy_ship']."'
+								");
 						
-								if($build_cnt>0)
-								{
-									// Stellt SQL-String her
-									if($cnt==0)
-									{
-										$sql .= "('".mysql_insert_id()."', '".$ship_id."', '".$build_cnt."')";
+								
+								// Lädt das Allianzentity
+								$res = dbquery("
+								SELECT
+									id
+								FROM
+									entities
+								WHERE
+									code='x';");		
+								$row = mysql_fetch_row($res);
+								
+								
+								// Speichert Flotte
+								$launchtime = time(); // Startzeit
+								$duration = 3600; // Dauer 1h
+								$landtime = $launchtime + $duration; // Landezeit
+								dbquery("
+										INSERT INTO fleet
+										(
+											user_id,
+											entity_from,
+											entity_to,
+											launchtime,
+											landtime,
+											action
+										)
+										VALUES
+										(
+											'".$_POST['user_buy_ship']."',
+											'".$row[0]."',
+											'".$arr['id']."',
+											'".$launchtime."',
+											'".$landtime."',
+											'delivery'
+										);");
 										
-										// Gibt einmalig eine OK-Medlung aus
-										$submit_message_pos .= "Schiffe wurden erfolgreich hergestellt!";
-									}
-									else
+								// Speichert Schiffe in der Flotte
+								$sql = "";
+								$log = "";
+								$cnt = 0;
+								foreach ($_POST['buy_ship'] as $ship_id => $build_cnt)
+								{
+									// Formatiert die eingegebene Zahl (entfernt z.B. die Trennzeichen)
+									$build_cnt = nf_back($build_cnt);
+									
+									if($build_cnt>0)
 									{
-										$sql .= ", ('".mysql_insert_id()."', '".$ship_id."', '".$build_cnt."')";
+										// Stellt SQL-String her
+										if($cnt==0)
+										{
+											$sql .= "('".mysql_insert_id()."', '".$ship_id."', '".$build_cnt."')";
+											
+											// Gibt einmalig eine OK-Medlung aus
+											$submit_message_pos .= "Schiffe wurden erfolgreich hergestellt!";
+										}
+										else
+										{
+											$sql .= ", ('".mysql_insert_id()."', '".$ship_id."', '".$build_cnt."')";
+										}
+										
+										// Listet gewählte Schiffe für Log auf
+										$log .= "[b]".$_POST['ship_name_'.$ship_id.''].":[/b] ".nf($build_cnt)."\n";
+										
+										$cnt++;
 									}
-									
-									// Listet gewählte Schiffe für Log auf
-									$log .= "[b]".$_POST['ship_name_'.$ship_id.''].":[/b] ".nf($build_cnt)."\n";
-									
-									$cnt++;
 								}
+								// Speichert Schiffe durch durch den generierten String
+								dbquery("
+										INSERT INTO
+										fleet_ships
+										(
+											fs_fleet_id,
+											fs_ship_id,
+											fs_ship_cnt
+										)
+										VALUES
+											".$sql."
+										;");
+						
+								// Zur Allianzgeschichte hinzufügen
+								add_alliance_history($cu->allianceId,"Folgende Schiffe wurden für [b]".get_user_nick($_POST['user_buy_ship'])."[/b] hergestellt:\n".$log."\n".nf($ship_costs)." Teile wurden dafür benötigt.");
 							}
-					
-							// Speichert Schiffe durch durch den generierten String
-							dbquery("
-									INSERT INTO
-									fleet_ships
-									(
-										fs_fleet_id,
-										fs_ship_id,
-										fs_ship_cnt
-									)
-									VALUES
-										".$sql."
-									;");
-					
-							// Zur Allianzgeschichte hinzufügen
-							add_alliance_history($cu->allianceId,"Folgende Schiffe wurden für [b]".get_user_nick($_POST['user_buy_ship'])."[/b] hergestellt:\n".$log."\n".nf($ship_costs)." Teile wurden dafür benötigt.");
+							else
+							{
+								$submit_message_neg .= "Der gewählte User hat nicht genügend Teile übrig!";
+							}
 						}
 						else
 						{
-							$submit_message_neg .= "Der gewählte User hat nicht genügend Teile übrig!";
+							$submit_message_neg .= "Keine Schiffe ausgewählt!";
 						}
 					}
 					else
@@ -979,6 +988,7 @@
 	//
 	
 	// Zeigt Nachricht an wenn vorhanden
+	
 	if($submit_message_pos!="")
 	{
 		$display_pos = "";

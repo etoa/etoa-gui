@@ -127,8 +127,9 @@
 		tableStart("Flugdaten");
 		
 		$progrssWidth = 590;
+		
+		$perc = ($fd->landTime()-$fd->launchTime()>0) ? (time()-$fd->launchTime()) / ($fd->landTime()-$fd->launchTime()) : 1;
 			
-		$perc = (time()-$fd->launchTime()) / ($fd->landTime()-$fd->launchTime());
 		$perc = min(1,$perc);
 		$pxl = 25 + round($perc * $progrssWidth);
 				

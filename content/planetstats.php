@@ -202,7 +202,7 @@
 	<th>Bewohner</th></tr>';
 	foreach ($planets as $p)
 	{
-		echo '<tr><td><a href="?page=economy&amp;planet_id='.$p->id.'">'.$p->name.'</a></td>';
+		echo '<tr><td><a href="?page=economy&amp;change_entity='.$p->id.'">'.$p->name.'</a></td>';
 		for ($x=0;$x<6;$x++)
 		{
 			echo '<td';
@@ -223,12 +223,17 @@
 			//Der Speicher ist noch nicht gefüllt
 			if($val_res[$p->id][$x]<$val_store[$p->id][$x] && $val_time[$p->id][$x]!=0)
 			{
-				echo ' '.tm("Speicher","Speicher voll in ".tf($val_time[$p->id][$x])."").' ';
+				echo ' '.tm("Speicher","Speicher voll in ".tf($val_time[$p->id][$x])."").'> ';
 				if ($val_time[$p->id][$x]<43200)
 				{
-					echo ' style="font-style:italic;" ';
+					echo '<i>';
 				}
-				echo '>'.nf($val_res[$p->id][$x]).'</td>';
+				echo nf($val_res[$p->id][$x]);
+				if ($val_time[$p->id][$x]<43200)
+				{
+					echo '</i>';
+				}
+				echo '</td>';
 			}
 			//Speicher Gefüllt
 			else
@@ -286,7 +291,7 @@
 	<th>Energie</th></tr>';
 	foreach ($planets as $p)
 	{
-		echo '<tr><td><a href="?page=economy&amp;planet_id='.$p->id.'">'.$p->name.'</a></td>';
+		echo '<tr><td><a href="?page=economy&amp;change_entity='.$p->id.'">'.$p->name.'</a></td>';
 		for ($x=0;$x<6;$x++)
 		{
 			echo '<td';

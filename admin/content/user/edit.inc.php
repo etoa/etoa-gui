@@ -799,13 +799,13 @@
 							<tr>
 								<td class=\"tbltitle\" valign=\"top\">Verfügbare Allianzschiffteile</td>
 								<td class=\"tbldata\">
-									<input type=\"text\" name=\"user_alliace_shippoints\" value=\"".$arr['user_alliace_shippoints']."\" size=\"3\" maxlength=\"3\" />
+									<input type=\"text\" name=\"user_alliace_shippoints\" value=\"".$arr['user_alliace_shippoints']."\" size=\"10\" maxlength=\"10\" />
 								</td>
 							</tr>
 							<tr>
 								<td class=\"tbltitle\" valign=\"top\">Verbaute Allianzschiffteile</td>
 								<td class=\"tbldata\">
-									<input type=\"text\" name=\"user_alliace_shippoints_used\" value=\"".$arr['user_alliace_shippoints_used']."\" size=\"3\" maxlength=\"3\" />
+									<input type=\"text\" name=\"user_alliace_shippoints_used\" value=\"".$arr['user_alliace_shippoints_used']."\" size=\"10\" maxlength=\"10\" />
 								</td>
 							</tr>";
 							
