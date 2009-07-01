@@ -319,7 +319,8 @@
 			this->loadShips();
 		if (this->shipsChanged)
 			this->recalcShips();
-		double peopleCapacity = this->peopleCapacity;
+		double peopleCapacity = 0;
+		peopleCapacity += this->peopleCapacity;
 
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
@@ -436,8 +437,9 @@
 		metal = round(metal);
 		if (metal>=this->getCapacity(total))
 			metal = this->getCapacity(total);
-
-		this->resMetal += metal*this->getCapacity()/this->getCapacity(total);
+		
+		if (metal*this->getCapacity(total))
+			this->resMetal += metal*this->getCapacity()/this->getCapacity(total);
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -451,8 +453,9 @@
 		this->changedData = true;
 		if (crystal>=this->getCapacity())
 			crystal = this->getCapacity();
-
-		this->resCrystal += crystal*this->getCapacity()/this->getCapacity(total);
+		
+		if (crystal*this->getCapacity(total))
+			this->resCrystal += crystal*this->getCapacity()/this->getCapacity(total);
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -466,8 +469,9 @@
 		this->changedData = true;
 		if (plastic>=this->getCapacity())
 			plastic = this->getCapacity();
-
-		this->resPlastic += plastic*this->getCapacity()/this->getCapacity(total);
+		
+		if (plastic*this->getCapacity(total))
+			this->resPlastic += plastic*this->getCapacity()/this->getCapacity(total);
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -481,8 +485,9 @@
 		this->changedData = true;
 		if (fuel>=this->getCapacity())
 			fuel = this->getCapacity();
-
-		this->resFuel += fuel*this->getCapacity()/this->getCapacity(total);
+		
+		if (fuel*this->getCapacity(total))
+			this->resFuel += fuel*this->getCapacity()/this->getCapacity(total);
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -496,8 +501,9 @@
 		this->changedData = true;
 		if (food>=this->getCapacity())
 			food = this->getCapacity();
-
-		this->resFood += food*this->getCapacity()/this->getCapacity(total);
+		
+		if (food*this->getCapacity(total))
+			this->resFood += food*this->getCapacity()/this->getCapacity(total);
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -511,8 +517,9 @@
 		this->changedData = true;
 		if (power>=this->getCapacity())
 			power = this->getCapacity();
-
-		this->resPower += power*this->getCapacity()/this->getCapacity(total);
+		
+		if (power*this->getCapacity(total))
+			this->resPower += power*this->getCapacity()/this->getCapacity(total);
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -526,13 +533,15 @@
 		this->changedData = true;
 		if (people>=this->getPeopleCapacity())
 			people = this->getPeopleCapacity();
-
-		this->resPeople += people*this->getPeopleCapacity()/this->getPeopleCapacity(total);
+		
+		if (people*this->getPeopleCapacity(total))
+			this->resPeople += people*this->getPeopleCapacity()/this->getPeopleCapacity(total);
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
 				people += (*it)->addPeople(people*(*it)->getPeopleCapacity()/this->getPeopleCapacity(total));
 		}
+		
 		return people;
 	}
 
@@ -898,7 +907,7 @@
 		this->entityFrom = this->entityTo;
 		int duration;
 
-		if (this->getStatus() == 3 && this->getNextactiontime() > 0) {
+		if (this->getStatus() == 3 && (this->getNextactiontime() > 0 || this->getAction()=="support")) {
 			duration = this->getNextactiontime();
 			this->entityTo = this->getNextId();
 		}
@@ -950,9 +959,11 @@
 	}
 
 	void Fleet::setSupport() {
+		int temp = this->getLandtime() - this->getLaunchtime();
 		this->launchtime = this->getLandtime();
 		this->landtime = this->getLandtime() + this->getNextactiontime();
 		this->status = 3;
+		this->nextactiontime = temp;
 
 		this->nextId = this->entityFrom;
 		this->entityFrom = this->entityTo;

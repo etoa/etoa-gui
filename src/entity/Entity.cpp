@@ -286,16 +286,18 @@
 	double Entity::removeResPeople(double people) {
 		if (!this->dataLoaded)
 			this->loadData();
-
-		this->changedData = true;
-		if (people<=this->resPeople) {
-			this->resPeople -= people;
-			return people;
-		}
-		else {
-			people = this->resPeople;
-			this->resPeople = 0;
-			return people;
+		if (people) {
+			this->changedData = true;
+			if (people<=this->resPeople) {
+				this->resPeople -= people;
+				return people;
+			}
+			else {
+				people = this->resPeople;
+				this->resPeople = 0;
+				return people;
+			}
+			return 0;
 		}
 	}
 
@@ -1097,7 +1099,7 @@
 				mysqlpp::Row fRow;
 				Fleet* additionalFleet;
 				for (int i=0; i<fSize; i++) {
-					fRow = fRes.at(0);
+					fRow = fRes.at(i);
 					additionalFleet = new Fleet(fRow);
 					fleets.push_back(additionalFleet);
 				}
