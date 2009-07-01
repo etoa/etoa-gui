@@ -27,7 +27,7 @@
 			WHERE 
 				user_id='".$this->userId."' 
 			AND 
-				(
+				((
 					entity_from='".$entId."' 
 					AND status=0
 				) 
@@ -35,7 +35,7 @@
 				(
 					entity_to='".$entId."' 
 					AND status>0  
-				);");
+				));");
 			$arr = mysql_fetch_row($res);
 			return $arr[0];		
 		}

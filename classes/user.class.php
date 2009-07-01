@@ -53,6 +53,7 @@
     protected $specialistTime;
 	protected $specialist = null;
 	protected $ghost;
+	protected $lastInvasion;
 
 		// Sub-objects and their id's
 		protected $raceId;
@@ -147,6 +148,8 @@
 
 		    	$this->specialistId = $arr['user_specialist_id'];
 		    	$this->specialistTime = $arr['user_specialist_time'];
+				
+				$this->lastInvasion = $arr['lastinvasion'];
 
 				$this->raceId = $arr['user_race_id'];
 
@@ -176,6 +179,8 @@
 
 		    	$this->specialistId = 0;
 		    	$this->specialistTime = 0;
+				
+				$this->lastInvasion = 0;
 
 				$this->raceId = 0;
 

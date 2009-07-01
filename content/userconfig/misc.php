@@ -29,119 +29,125 @@
 	
 		if (isset($_POST['hmod_on']) && checker_verify())
 		{
-		
-			$cres = dbquery("SELECT id FROM fleet WHERE user_id='".$cu->id."';");
-			$carr = mysql_fetch_row($cres);
-			if ($carr[0]==0)
+			if ($cu->lastInvasion < $cfg->user_umod_min_length*3600)
 			{
-				$pres = dbquery("SELECT 
-									f.id 
-								FROM 
-									fleet as f
-								INNER JOIN
-									planets as p
-								ON f.entity_to=p.id
-								AND p.planet_user_id='".$cu->id."';");
-				$parr = mysql_fetch_row($pres);
-				if ($parr[0]==0)
+				$cres = dbquery("SELECT id FROM fleet WHERE user_id='".$cu->id."';");
+				$carr = mysql_fetch_row($cres);
+				if ($carr[0]==0)
 				{
-					$sres = dbquery("SELECT 
-										queue_id,
-										queue_starttime 
+					$pres = dbquery("SELECT 
+										f.id 
 									FROM 
-										ship_queue 
-									WHERE 
-										queue_user_id='".$cu->id."';");
-					while ($sarr=mysql_fetch_row($sres))
+										fleet as f
+									INNER JOIN
+										planets as p
+									ON f.entity_to=p.id
+									AND p.planet_user_id='".$cu->id."';");
+					$parr = mysql_fetch_row($pres);
+					if ($parr[0]==0)
 					{
-						if ($sarr[1]>time())
+						$sres = dbquery("SELECT 
+											queue_id,
+											queue_starttime 
+										FROM 
+											ship_queue 
+										WHERE 
+											queue_user_id='".$cu->id."';");
+						while ($sarr=mysql_fetch_row($sres))
 						{
-							dbquery("UPDATE 
-										ship_queue 
-									SET 
-										queue_build_type=1
-									WHERE 
-										queue_user_id='".$cu->id."';");
+							if ($sarr[1]>time())
+							{
+								dbquery("UPDATE 
+											ship_queue 
+										SET 
+											queue_build_type=1
+										WHERE 
+											queue_user_id='".$cu->id."';");
+							}
+							else
+							{
+								dbquery("UPDATE 
+											ship_queue 
+										SET 
+											queue_build_type=1, 
+											queue_starttime=".time()." 
+										WHERE 
+											queue_user_id='".$cu->id."';");
+							}
 						}
-						else
+						$sres = dbquery("SELECT 
+											queue_id,
+											queue_starttime 
+										FROM 
+											def_queue 
+										WHERE 
+											queue_user_id='".$cu->id."';");
+						while ($sarr=mysql_fetch_row($sres))
 						{
-							dbquery("UPDATE 
-										ship_queue 
-									SET 
-										queue_build_type=1, 
-										queue_starttime=".time()." 
-									WHERE 
-										queue_user_id='".$cu->id."';");
+							if ($sarr[1]>time())
+							{
+								dbquery("UPDATE 
+											def_queue 
+										SET 
+											queue_build_type=1
+										WHERE 
+											queue_user_id='".$cu->id."';");
+							}
+							else
+							{
+								dbquery("UPDATE 
+											def_queue 
+										SET 
+											queue_build_type=1, 
+											queue_starttime=".time()." 
+										WHERE 
+											queue_user_id='".$cu->id."';");
+							}
+						}
+	
+						dbquery("UPDATE 
+									buildlist 
+								SET 
+									buildlist_build_type = buildlist_build_type - 2,
+									buildlist_build_start_time=".time()." 
+								WHERE 
+									buildlist_user_id='".$cu->id."' 
+									AND buildlist_build_start_time>0;");
+						dbquery("UPDATE 
+									techlist 
+								SET 
+									techlist_build_type=1, 
+									techlist_build_start_time=".time()." 
+								WHERE 
+									techlist_user_id='".$cu->id."' 
+									AND techlist_build_start_time>0;");
+					
+						$hfrom=time();
+						$hto=$hfrom+(MIN_UMOD_TIME*24*3600);
+						if (dbquery("UPDATE users SET user_hmode_from='$hfrom',user_hmode_to='$hto' WHERE user_id='".$cu->id."';"))
+						{
+							dbquery ("
+								UPDATE 
+									planets 
+								SET 
+									planet_last_updated='0',
+									planet_prod_metal=0,
+									planet_prod_crystal=0,
+									planet_prod_plastic=0,
+									planet_prod_fuel=0,
+									planet_prod_food=0
+								WHERE 
+									planet_user_id='".$cu->id."';");
+										
+								$arr['user_hmode_to'] = $hto;
+								success_msg("Du bist nun im Urlaubsmodus bis [b]".df($hto)."[/b].");
+								$cu->addToUserLog("settings","{nick} ist nun im Urlaub.",1);
+								$umod = true;
 						}
 					}
-					$sres = dbquery("SELECT 
-										queue_id,
-										queue_starttime 
-									FROM 
-										def_queue 
-									WHERE 
-										queue_user_id='".$cu->id."';");
-					while ($sarr=mysql_fetch_row($sres))
+					else
 					{
-						if ($sarr[1]>time())
-						{
-							dbquery("UPDATE 
-										def_queue 
-									SET 
-										queue_build_type=1
-									WHERE 
-										queue_user_id='".$cu->id."';");
-						}
-						else
-						{
-							dbquery("UPDATE 
-										def_queue 
-									SET 
-										queue_build_type=1, 
-										queue_starttime=".time()." 
-									WHERE 
-										queue_user_id='".$cu->id."';");
-						}
-					}
-
-					dbquery("UPDATE 
-								buildlist 
-							SET 
-								buildlist_build_type = buildlist_build_type - 2,
-								buildlist_build_start_time=".time()." 
-							WHERE 
-								buildlist_user_id='".$cu->id."' 
-								AND buildlist_build_start_time>0;");
-					dbquery("UPDATE 
-								techlist 
-							SET 
-								techlist_build_type=1, 
-								techlist_build_start_time=".time()." 
-							WHERE 
-								techlist_user_id='".$cu->id."' 
-								AND techlist_build_start_time>0;");
-				
-					$hfrom=time();
-					$hto=$hfrom+(MIN_UMOD_TIME*24*3600);
-					if (dbquery("UPDATE users SET user_hmode_from='$hfrom',user_hmode_to='$hto' WHERE user_id='".$cu->id."';"))
-					{
-						dbquery ("
-							UPDATE 
-								planets 
-							SET 
-								planet_last_updated='0',
-								planet_prod_metal=0,
-								planet_prod_crystal=0,
-								planet_prod_plastic=0,
-								planet_prod_fuel=0,
-								planet_prod_food=0
-							WHERE 
-								planet_user_id='".$cu->id."';");
-									
-							$arr['user_hmode_to'] = $hto;
-							success_msg("Du bist nun im Urlaubsmodus bis [b]".df($hto)."[/b].");
-							$cu->addToUserLog("settings","{nick} ist nun im Urlaub.",1);
-							$umod = true;
+						err_msg("Es sind noch Flotten unterwegs!");
 					}
 				}
 				else
@@ -151,7 +157,7 @@
 			}
 			else
 			{
-				err_msg("Es sind noch Flotten unterwegs!");
+				err_msg("Du musst mindestens ".$cfg->user_umod_min_length." Tage nach deiner letzten Invasion warten, bis du in den Urlaubsmodus gehen kannst!");
 			}
 				
 		}
@@ -178,7 +184,7 @@
 							
 				while ($barr=mysql_fetch_row($bres))
 				{
-					dbquery("UPDATE buildlist SET buildlist_build_type='".$barr[2]."+2',buildlist_build_starttime=".time().", buildlist_build_endtime='".time()."+".$barr[1]."' WHERE buildlist_id=".$barr[0].";");
+					dbquery("UPDATE buildlist SET buildlist_build_type='".$barr[2]."+2',buildlist_build_start_time=".time().", buildlist_build_end_time='".time()."+".$barr[1]."' WHERE buildlist_id=".$barr[0].";");
 				} 
 				
 				$bres = dbquery("
@@ -195,7 +201,7 @@
 									
 				while ($barr=mysql_fetch_row($bres))
 				{
-					dbquery("UPDATE techlist SET techlist_build_type='".$barr[2]."+2',techlist_build_starttime=".time().", techlist_build_endtime='".time()."+".$barr[1]."' WHERE techlist_id=".$barr[0].";");
+					dbquery("UPDATE techlist SET techlist_build_type='".$barr[2]."+2',techlist_build_start_time=".time().", techlist_build_end_time='".time()."+".$barr[1]."' WHERE techlist_id=".$barr[0].";");
 				}
 				
 				$sres = dbquery("SELECT 
@@ -301,7 +307,7 @@
 				
 					$s=Null;
 					session_destroy();
-					success_msg("Deine Daten werden am ".df($t)." Uhr von unserem System gelöscht! <br/>Wir w&uuml;nschen weiterhin viel Erfolg im Netz!");
+					success_msg("Deine Daten werden am ".df($t)." Uhr von unserem System gelöscht! Wir w&uuml;nschen weiterhin viel Erfolg im Netz!");
 					$cu->addToUserLog("settings","{nick} hat seinen Account zur Löschung freigegeben.",1);
 					echo '<input type="button" value="Zur Startseite" onclick="document.location=\''.Config::getInstance()->loginurl->v.'\'" />';
 			}
@@ -385,7 +391,7 @@
 	    	echo "<tr><th>Account l&ouml;schen</th>
 	    	<td>Hier kannst du deinen Account mitsamt aller Daten löschen.</td>
 	    	<td>";
-	    	if ($arr['user_deleted']>0)
+	    	if ($cu->deleted>0)
 	    	{
 	    		echo "<input type=\"submit\" name=\"remove_cancel\" value=\"Löschantrag aufheben\"  style=\"color:#0f0\" />";
 	    	}

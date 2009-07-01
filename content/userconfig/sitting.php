@@ -431,7 +431,7 @@
                         echo "</td></tr>";
 
                     }
-										// Todo: fix sitting
+					// Todo: fix sitting
                     if($unused_multi<1 && $s['sitter_active']==0)
                     {
                         echo "<tr><td style=\"text-align:center;\" colspan=\"3\"><input type=\"submit\" name=\"new_multi\" value=\"User hinzuf&uuml;gen\"/></td></tr>";
