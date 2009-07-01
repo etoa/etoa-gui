@@ -72,6 +72,7 @@ namespace invade
 								
 								// Invade the planet
 								this->targetEntity->invadeEntity(this->f->getUserId());
+								this->f->fleetUser->setLastInvasion();
 								
 								this->actionMessage->addText("[b]Planet:[/b]");
 								this->actionMessage->addText(this->targetEntity->getCoords(),1);

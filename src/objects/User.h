@@ -41,6 +41,7 @@ class User
 		SpecialistData* getSpecialist();
 		
 		void setDiscovered(short absX, short absY);
+		void setLastInvasion();
 		
 		void addCollectedWf(double res);
 		void addCollectedAsteroid(double res);

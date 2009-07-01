@@ -85,6 +85,22 @@
 		query.store();
 		query.reset();
 	}
+
+	void User::setLastInvasion()
+	{
+		My &my = My::instance();
+		mysqlpp::Connection *con_ = my.get();
+		mysqlpp::Query query = con_->query();
+		query << "UPDATE "
+			<< "	users "
+			<< "SET "
+			<< "	lastinvasion='" << time(0) << "' "
+			<< "WHERE "
+			<< " user_id='" << this->userId << "' "
+			<< "LIMIT 1;";
+		query.store();
+		query.reset();
+	}
 	
 	bool User::getPropertiesReturnMsg() {
 		My &my = My::instance();
