@@ -175,7 +175,7 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 					$addstyle=" class=\"userAllianceMemberColor\"";
 				echo "<tr>
 						<td $addstyle>
-							".nf($cnt,1)."
+							".nf($cnt)."
 						</td>";
 				echo "<td $addstyle>
 				<div id=\"ttuser".$arr['alliance_id']."\" style=\"display:none;\">

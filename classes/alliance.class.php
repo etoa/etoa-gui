@@ -951,7 +951,7 @@
 		/**
 		* Check rights for an action
 		*/
-	  static function checkActionRights($action)
+	  static function checkActionRights($action,$msg=TRUE)
 	  {
 			global $myRight,$isFounder,$page;
 			if ($isFounder || $myRight[$action])
@@ -959,8 +959,11 @@
 				return true;
 			}
 			
-			error_msg("Keine Berechtigung!");
-			echo "<input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"Zur&uuml;ck\" />";
+			if ($msg)
+			{
+				error_msg("Keine Berechtigung!");
+				echo "<input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"Zur&uuml;ck\" />";
+			}
 			return false;    	
 	  }
 	  

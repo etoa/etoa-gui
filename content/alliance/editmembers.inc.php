@@ -226,10 +226,10 @@ if (Alliance::checkActionRights('editmembers'))
 						<td>".$udata."</td>
 						<td>".nf($udata->points)."</td>";
 						// Zuletzt online
-						if ((time()-$conf['online_threshold']['v']*60) < $mv->acttime)
+						if ((time()-$conf['online_threshold']['v']*60) < $udata->acttime)
 							echo "<td style=\"color:#0f0;\">online</td>";
 						else
-							echo "<td>".date("d.m.Y H:i",$mv->acttime)."</td>";
+							echo "<td>".date("d.m.Y H:i",$udata->acttime)."</td>";
 						echo "<td>";
 						if ($wdata->founderId != $uid)
 						{

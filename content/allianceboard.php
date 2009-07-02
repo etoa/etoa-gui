@@ -26,8 +26,7 @@
 	*
 	* @author MrCage <mrcage@etoa.ch>
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
-	*/	
-
+	*/
 					
 	echo "<h1>Allianzforum</h1>";
 
@@ -153,7 +152,7 @@
 		
 		
 			// Board-Admin prüfen
-			if (isset($myRight['allianceboard']) || $isFounder)
+			if (Alliance::checkActionRights('allianceboard',FALSE) || $isFounder)
 				$isAdmin=true;
 			else
 				$isAdmin=false;
@@ -341,7 +340,21 @@
 							tableEnd();
 						}
 						else
-							error_msg("Es sind keine Posts vorhanden!");
+						{
+							$res = dbquery("SELECT topic_cat_id FROM ".BOARD_TOPIC_TABLE." WHERE topic_id=".$_GET['topic'].";");
+							dbquery("DELETE FROM ".BOARD_TOPIC_TABLE." WHERE topic_id=".$_GET['topic'].";");
+							if (mysql_num_rows($res))
+							{
+								$arr = mysql_fetch_assoc($res);
+								echo "<script>document.location='?page=$page&cat=".$arr['topic_cat_id']."';</script>
+									Klicke <a href=\"?page=$page&cat=".$arr['topic_cat_id']."\">hier</a> falls du nicht automatisch weitergeleitet wirst...";
+							}
+							else
+							{
+								echo "<script>document.location='?page=$page';</script>
+									Klicke <a href=\"?page=$page\">hier</a> falls du nicht automatisch weitergeleitet wirst...";
+							}
+						}
 						if ($cu->id>0 && $tarr['topic_closed']==0)
 							echo "<input type=\"button\" value=\"Neuer Beitrag\" onclick=\"document.location='?page=$page&amp;bnd=".$_GET['bnd']."&newpost=".$_GET['topic']."'\" /> &nbsp; ";
 					}
@@ -472,7 +485,7 @@
 				if (mysql_num_rows($res)>0)
 				{
 					$arr=mysql_fetch_array($res);
-					echo "<form action=\"?page=$page&amp;bnd=".$arr['topic_bnd_id']."\" method=\"post\">";
+					echo "<form action=\"?page=$page&amp;bnd=".$arr['topic_bnd_id']."&amp;cat=".$arr['topic_cat_id']."\" method=\"post\">";
 					echo "<input type=\"hidden\" name=\"topic_id\" value=\"".$arr['topic_id']."\" />";
 					echo "Soll der Beitrag <b>".$arr['topic_subject']."</b> und alle darin enthaltenen Posts gelöscht werden?";
 					echo "<br/><br/><input type=\"submit\" name=\"topic_delete\" value=\"L&ouml;schen\" onclick=\"return confirm('Willst du das Thema \'".$arr['topic_subject']."\' wirklich löschen?');\" /> ";

@@ -68,7 +68,7 @@
 	    			}
 	    			else
 	    			{
-	    				echo " Spreng&ouml;pfe</td></tr>";
+	    				echo " Sprengk&ouml;pfe</td></tr>";
 	    			}
 	  		}
 	  		else

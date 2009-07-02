@@ -57,6 +57,7 @@
 	define("IMAGE_BUILDING_DIR","buildings");				// Gebäude Ordner
 	define("IMAGE_DEF_DIR","defense");							// Def Ordner
 	define("IMAGE_ALLIANCE_BUILDING_DIR","abuildings");	// Allianzgebäude
+	define("IMAGE_ALLIANCE_TECHNOLOGY_DIR","atechnologies");	// Allianztech
 
   /***********************************/
   /* Design, Layout, Allgmeine Pfade */

@@ -1402,10 +1402,11 @@
         		// Generiert Bauoptionen mit allen Überprüfungen
   				$options_arr = show_buildoptions("research", $data['alliance_tech_id'], $aarr['alliance_res_metal'], $aarr['alliance_res_crystal'], $aarr['alliance_res_plastic'], $aarr['alliance_res_fuel'], $aarr['alliance_res_food'], $data['alliance_tech_costs_metal'], $data['alliance_tech_costs_crystal'], $data['alliance_tech_costs_plastic'], $data['alliance_tech_costs_fuel'], $data['alliance_tech_costs_food'], $data['alliance_tech_build_time'], $data['alliance_tech_costs_factor'], $b_level, $data['alliance_tech_last_level'], $researchsomething, $alliance_member_cnt, $end_time);
 				
-				$path = IMAGE_PATH."/".IMAGE_ALLIANCE_BUILDING_DIR."/tech".$data['alliance_tech_id']."_middle.".IMAGE_EXT;
+				$path = IMAGE_PATH."/".IMAGE_ALLIANCE_TECHNOLOGY_DIR."/technology".$data['alliance_tech_id']."_middle.".IMAGE_EXT;
 				$title = $data['alliance_tech_name'].' <span id="buildlevel">';
 				$title.= $b_level > 0 ? $b_level : '';
 				$title.= '</span>';
+				
 				tableStart($title);
 				echo "<tr>
                   <td style=\"width:120px;background:#000;vertical-align:middle;padding:0px;\">
@@ -1765,8 +1766,8 @@
 				$path = IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$data['ship_id']."_middle.".IMAGE_EXT;
 				tableStart($data['ship_name']);
 				echo "<tr>
-	                <td style=\"width:120px;background:#000;vertical-align:middle;\">
-	                	<img src=\"".$path."\" style=\"width:120px;height:120px;border:none;\" alt=\"".$data['ship_name']."\"/>
+	                <td style=\"width:120px;background:#000;vertical-align:middle;padding:0px;\">
+                  	<img src=\"".$path."\" style=\"width:120px;height:120px;border:none;margin:0px;\" alt=\"".$data['ship_name']."\"/>
 	                	<input type=\"hidden\" value=\"".$data['ship_name']."\" id=\"ship_name_".$data['ship_id']."\" name=\"ship_name_".$data['ship_id']."\" />
 	                </td>
 	                <td style=\"vertical-align:top;height:100px;\" colspan=\"7\">
