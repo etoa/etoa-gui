@@ -69,9 +69,8 @@
 		protected $resFood;
 		
 		protected $allianceObjectsForMembers;
-		protected $buildings = null;
-		protected $technologies = null;
-		protected $cryptoCooldown,$marketCooldown;
+		protected $buildlist = null;
+		protected $techlist = null;
 		
 		/**
 		* Constructor
@@ -261,6 +260,10 @@
 					else
 						$this->founder = new User($this->founderId);
 				}
+				if ($key == "techlist" && $this->techlist == null)
+					$this->techlist = new AllianceTechlist($this->id,TRUE);
+				if ($key == "buildlist" && $this->buildlist == null)
+					$this->buildlist = new AllianceBuildlist($this->id,TRUE);
 	
 	
 				// Protected properties
@@ -756,128 +759,6 @@
 		    $this->resFood+=$fo;
 		}
 		
-		/**
-		* Load Alliance Buildings
-		*/
-		
-		function loadBuildings()
-		{
-			if ($this->buildings==null)
-			{
-				$this->buildings = array();
-				$res = dbquery("
-							SELECT
-								alliance_buildlist_current_level,
-								alliance_building_name,
-								alliance_buildlist_cooldown
-							FROM
-								alliance_buildlist
-							INNER JOIN
-								alliance_buildings
-							ON
-								alliance_buildlist_building_id=alliance_building_id
-								AND alliance_buildlist_alliance_id='".$this->id."';");
-				while ($arr = mysql_fetch_row($res))
-				{
-					if ($arr[1]=="Kryptocenter")
-						$this->cryptoCooldown=$arr[2];
-					elseif ($arr[1]=="Handelszentrum")
-						$this->marketCooldown=$arr[2];
-					
-					$this->buildings[$arr[1] ] = $arr[0];
-				}
-			}
-		}
-		
-		/**
-		* Return Building Level
-		*/
-		
-		function getBuildingLevel($building)
-		{
-			if ($this->buildings==null)
-				$this->loadBuildings();
-			
-			if (isset($this->buildings[$building]))
-				return $this->buildings[$building];
-			return 0;
-		}
-		
-		/**
-		* Return Crypto Cooldown
-		*/
-		
-		function getCryptoCooldown()
-		{
-			if ($this->buildings==null)
-				$this->loadBuildings();
-			
-			return $this->cryptoCooldown;
-		}
-		
-		function setCryptoCooldown($cd)
-		{	
-			$this->cryptoCooldown=$cd;
-		}
-		
-		/**
-		* Return Market Cooldown
-		*/
-		
-		function getMarketCooldown()
-		{
-			if ($this->buildings==null)
-				$this->loadBuildings();
-			
-			return $this->marketCooldown;
-		}
-		
-		function setMarketCooldown($cd)
-		{	
-			$this->marketCooldown=$cd;
-		}
-		
-		/**
-		* Load Alliance Technologies
-		*/
-		
-		function loadTechnologies()
-		{
-			if ($this->technologies==null)
-			{
-				$this->buildings = array();
-				$res = dbquery("
-							SELECT
-								alliance_techlist_current_level,
-								alliance_tech_name
-							FROM
-								alliance_techlist
-							INNER JOIN
-								alliance_technologies
-							ON
-								alliance_techlist_tech_id=alliance_tech_id
-								AND alliance_techlist_alliance_id='".$this->id."';");
-				while ($arr = mysql_fetch_row($res))
-				{
-					$this->technologies[$arr[1] ] = $arr[0];
-				}
-			}
-		}
-		
-		/**
-		* Return Technologie Level
-		*/
-		
-		function getTechLevel($technologie)
-		{
-			if ($this->technologies==null)
-				$this->loadTechnologies();
-			
-			if (isset($this->technologies[$technologie]))
-				return $this->technologies[$technologie];
-			return 0;
-		}
-		
 		//
 		// Statics
 		//
@@ -1026,241 +907,143 @@
 	  /**
 	  * Calc costs at adding a new Member
 	  */
-	  public function calcMemberCosts($save=true,$newMemberCnt=1)
+	  public function calcMemberCosts($save=true,$addMembers=1)
 	  {
 		// Zählt aktuelle Memberanzahl und und läd den Wert, für welche Anzahl User die Allianzobjekte gebaut wurden
 		$this->getMembers();
-		$memberCnt = count($this->members);
+		$newMemberCnt = count($this->members) + $addMembers;
+		if ($save)
+		$newMemberCnt--;
 		
 		// Allianzrohstoffe anpassen, wenn die Allianzobjekte nicht für diese Anzahl ausgebaut sind
 		$cfg = Config::getInstance();
-			
-		$costs_metal = 0;
-		$costs_crystal = 0;
-		$costs_plastic = 0;
-		$costs_fuel = 0;
-		$costs_food = 0;
 		
-		$new_costs_metal = 0;
-		$new_costs_crystal = 0;
-		$new_costs_plastic = 0;
-		$new_costs_fuel = 0;
-		$new_costs_food = 0;
+		//Aktuelle, neue und zu zahlende Kosten
+		$costs = array(1=>0,2=>0,3=>0,4=>0,5=>0,6=>0);
+		$new_costs = array(1=>0,2=>0,3=>0,4=>0,5=>0,6=>0);
+		$to_pay = array(1=>0,2=>0,3=>0,4=>0,5=>0,6=>0);
 			
 		// Berechnet Kostendifferenz
 			
-		for ($i=0; $i<$newMemberCnt; $i++)
+		if ($this->buildlist == null)
+				$this->buildlist = new AllianceBuildlist($this->id);
+		$buildingIterator = $this->buildlist->getIterator();
+		
+		while ($buildingIterator->valid())
 		{
-			if (!$save) $memberCnt++;
-			$new_member_factor = 1 + ($memberCnt-1) * $cfg->get('alliance_membercosts_factor');
-			// Allianzgebäude
-			$res = dbquery("
-			SELECT
-				alliance_building_costs_metal,
-				alliance_building_costs_crystal,
-				alliance_building_costs_plastic,
-				alliance_building_costs_fuel,
-				alliance_building_costs_food,
-				alliance_building_costs_factor,
-				
-				alliance_buildlist_current_level,
-				alliance_buildlist_build_end_time,
-				alliance_buildlist_member_for
-			FROM
-					alliance_buildings
-				INNER JOIN
-					alliance_buildlist
-				ON
-					alliance_building_id=alliance_buildlist_building_id
-			WHERE
-				alliance_buildlist_alliance_id='".$this->id."';");
-				
-			if(mysql_num_rows($res)>0)
+			if ($this->buildlist->getMemberFor($buildingIterator->key())<$newMemberCnt)
 			{
-				while($arr=mysql_fetch_assoc($res))		
-				{
-					if ($arr['alliance_buildlist_member_for']<$memberCnt)
+				// Wenn ein Gebäude in Bau ist, wird die Stufe zur berechnung bereits erhöht
+				$level = $this->buildlist->getLevel($buildingIterator->key());
+				if ($this->buildlist->isUnderConstruction($buildingIterator->key()))
+					$level++;
+				
+				// Berechnungen nur durchführen, wenn die Stufe >0 ist oder sich das Objekt in Bau befindet
+				// Dies ist eine Sicherheit für den Fall, dass die Stufe manuel zurückgesetzt wird. Es würden falsche Kosten entstehen
+				if($level>0 || $this->buildlist->isUnderConstruction($buildingIterator->key()))
+				{									
+					// Kosten von jedem Level des Gebäudes wird berechnet
+					for ($x=1;$x<=$level;$x++)
 					{
-						// Wenn ein Gebäude in Bau ist, wird die Stufe zur berechnung bereits erhöht
-						if($arr['alliance_buildlist_build_end_time']>0)
-						{
-							$level = $arr['alliance_buildlist_current_level'] + 1;
-						}
-						else
-						{
-							$level = $arr['alliance_buildlist_current_level'];
-						}
+						$buildCosts = $buildingIterator->current()->getCosts($x,$this->buildlist->getMemberFor($buildingIterator->key()));
 						
-						// Berechnungen nur durchführen, wenn die Stufe >0 ist oder sich das Objekt in Bau befindet
-						// Dies ist eine Sicherheit für den Fall, dass die Stufe manuel zurückgesetzt wird. Es würden falsche Kosten entstehen
-						if($level>0 || $arr['alliance_buildlist_build_end_time']>0)
-						{									
-							// Kosten von jedem Level des Gebäudes wird berechnet
-							for ($x=1;$x<=$level;$x++)
-							{
-								$factor = pow($arr['alliance_building_costs_factor'],$x-1);
-							
-								// Summiert Kosten aller Gebäude mit der alten Anzahl Members
-								if($factor<1)
-								{
-									$factor = 1;
-								}
-								$member_factor = 1 + ($arr['alliance_buildlist_member_for']-1) * $cfg->get('alliance_membercosts_factor');
-								$costs_metal += ceil($arr['alliance_building_costs_metal'] * $factor * $member_factor);
-								$costs_crystal += ceil($arr['alliance_building_costs_crystal'] * $factor * $member_factor);
-								$costs_plastic += ceil($arr['alliance_building_costs_plastic'] * $factor * $member_factor);
-								$costs_fuel += ceil($arr['alliance_building_costs_fuel'] * $factor * $member_factor);
-								$costs_food += ceil($arr['alliance_building_costs_food'] * $factor * $member_factor);
-								
-								// Summiert Kosten aller Gebäude mit der neuen Anzahl Members
-								if($factor<1)
-								{
-									$factor = 1;
-								}
-								$new_costs_metal += ceil($arr['alliance_building_costs_metal'] * $factor * $new_member_factor);
-								$new_costs_crystal += ceil($arr['alliance_building_costs_crystal'] * $factor * $new_member_factor);
-								$new_costs_plastic += ceil($arr['alliance_building_costs_plastic'] * $factor * $new_member_factor);
-								$new_costs_fuel += ceil($arr['alliance_building_costs_fuel'] * $factor * $new_member_factor);
-								$new_costs_food += ceil($arr['alliance_building_costs_food'] * $factor * $new_member_factor);
-							}
-						}
+						foreach ($buildCosts as $rid=>$cost)
+							$costs[$rid] += $cost;
+						
+						$buildCosts = $buildingIterator->current()->getCosts($x,$newMemberCnt);
+						
+						foreach ($buildCosts as $rid=>$cost)
+							$new_costs[$rid] += $cost;
 					}
 				}
 			}
-			if ($save)
-			{
-				dbquery("UPDATE
-							alliance_buildlist
-						SET
-							alliance_buildlist_member_for='".$memberCnt."'
-						WHERE
-							alliance_buildlist_alliance_id='".$this->id."';");
-			}
+			$buildingIterator->next();
+		}
+		if ($save)
+		{
+			dbquery("UPDATE
+						alliance_buildlist
+					SET
+						alliance_buildlist_member_for='".$newMemberCnt."'
+					WHERE
+						alliance_buildlist_alliance_id='".$this->id."';");
 		}
 		
-		$memberCnt = count($this->members);
-		
-		for ($i=0; $i<$newMemberCnt; $i++)
-		{
-			if (!$save) $memberCnt++;
-			$new_member_factor = 1 + ($memberCnt-1) * $cfg->get('alliance_membercosts_factor');	
-			// Allianzforschungen
-			$res = dbquery("
-			SELECT
-				alliance_tech_costs_metal,
-				alliance_tech_costs_crystal,
-				alliance_tech_costs_plastic,
-				alliance_tech_costs_fuel,
-				alliance_tech_costs_food,
-				alliance_tech_costs_factor,
 			
-				alliance_techlist_current_level,
-				alliance_techlist_build_end_time,
-				alliance_techlist_member_for
-			FROM
-					alliance_technologies
-				INNER JOIN
-					alliance_techlist
-				ON
-					alliance_tech_id=alliance_techlist_tech_id
-			WHERE
-				alliance_techlist_alliance_id='".$this->id."';");
-			if(mysql_num_rows($res)>0)
+		if ($this->techlist == null)
+				$this->techlist = new AllianceTechlist($this->id);
+		$techIterator = $this->techlist->getIterator();
+		
+		while($techIterator->valid())
+		{
+			if ($this->buildlist->getMemberFor($techIterator->key())<$newMemberCnt)
 			{
-				while($arr=mysql_fetch_assoc($res))		
-				{				
-					if ($arr['alliance_techlist_member_for']<$memberCnt)
+				// Wenn eine Techin Bau ist, wird die Stufe zur berechnung bereits erhöht
+				$level = $this->techlist->getLevel($techIterator->key());
+				if ($this->techlist->isUnderConstruction($techIterator->key()))
+					$level++;
+				
+				// Berechnungen nur durchführen, wenn die Stufe >0 ist oder sich das Objekt in Bau befindet
+				// Dies ist eine Sicherheit für den Fall, dass die Stufe manuel zurückgesetzt wird. Es würden falsche Kosten entstehen
+				if($level>0 || $this->techlist->isUnderConstruction($techIterator->key()))
+				{									
+					// Kosten von jedem Level des Gebäudes wird berechnet
+					for ($x=1;$x<=$level;$x++)
 					{
-						// Wenn eine Forschung in Bau ist, wird die Stufe zur Berechnung bereits erhöht
-						if($arr['alliance_techlist_build_end_time']>0)
-						{
-							$level = $arr['alliance_techlist_current_level'] + 1;
-						}
-						else
-						{
-							$level = $arr['alliance_techlist_current_level'];
-						}
+						$buildCosts = $techIterator->current()->getCosts($x,$this->techlist->getMemberFor($techIterator->key()));
 						
-						// Berechnungen nur durchführen, wenn die Stufe >0 ist oder sich das Objekt in Bau befindet
-						// Dies ist eine Sicherheit für den Fall, dass die Stufe manuel zurückgesetzt wird. Es würden falsche Kosten entstehen
-						if($level>0 || $arr['alliance_techlist_build_end_time']>0)
-						{
-							// Kosten von jedem Level der Forschung wird berechnet
-							for ($x=1;$x<=$level;$x++)
-							{
-								$factor = pow($arr['alliance_tech_costs_factor'],$x-1);
-								
-								// Summiert Kosten aller Forschungen mit der alten Anzahl Members
-								if($factor<1)
-								{
-									$factor = 1;
-								}
-								$member_factor = 1 + ($arr['alliance_techlist_member_for']-1) * $cfg->get('alliance_membercosts_factor');
-								$costs_metal += ceil($arr['alliance_tech_costs_metal'] * $factor * $member_factor);
-								$costs_crystal += ceil($arr['alliance_tech_costs_crystal'] * $factor * $member_factor);
-								$costs_plastic += ceil($arr['alliance_tech_costs_plastic'] * $factor * $member_factor);
-								$costs_fuel += ceil($arr['alliance_tech_costs_fuel'] * $factor * $member_factor);
-								$costs_food += ceil($arr['alliance_tech_costs_food'] * $factor * $member_factor);
-								
-								// Summiert Kosten aller Forschungen mit der neuen Anzahl Members
-								if($factor<1)
-								{
-									$factor = 1;
-								}
-								$new_costs_metal += ceil($arr['alliance_tech_costs_metal'] * $factor * $new_member_factor);
-								$new_costs_crystal += ceil($arr['alliance_tech_costs_crystal'] * $factor * $new_member_factor);
-								$new_costs_plastic += ceil($arr['alliance_tech_costs_plastic'] * $factor * $new_member_factor);
-								$new_costs_fuel += ceil($arr['alliance_tech_costs_fuel'] * $factor * $new_member_factor);
-								$new_costs_food += ceil($arr['alliance_tech_costs_food'] * $factor * $new_member_factor);
-							}
-						}
+						foreach ($buildCosts as $rid=>$cost)
+							$costs[$rid] += $cost;
+						
+						$buildCosts = $techIterator->current()->getCosts($x,$newMemberCnt);
+						
+						foreach ($buildCosts as $rid=>$cost)
+							$new_costs[$rid] += $cost;
 					}
 				}
 			}
-			if ($save)
-			{
-				dbquery("UPDATE
-							alliance_techlist
-						SET
-							alliance_techlist_member_for='".$memberCnt."'
-						WHERE
-							alliance_techlist_alliance_id='".$this->id."';");
-			}
+			$techIterator->next();
 		}
-			
+		if ($save)
+		{
+			dbquery("UPDATE
+						alliance_techlist
+					SET
+						alliance_techlist_member_for='".$newMemberCnt."'
+					WHERE
+						alliance_techlist_alliance_id='".$this->id."';");
+		}
+		
 		// Berechnet die zu zahlenden Rohstoffe
-		$metal = $new_costs_metal - $costs_metal;
-		$crystal = $new_costs_crystal - $costs_crystal;
-		$plastic = $new_costs_plastic - $costs_plastic;
-		$fuel = $new_costs_fuel - $costs_fuel;
-		$food = $new_costs_food - $costs_food;
+		foreach ($costs as $rid=>$cost)
+			$to_pay[$rid] = $new_costs[$rid] - $cost;
 		
 		if ($save)
 		{
 			// Zieht Rohstoffe vom Allianzkonto ab und speichert Anzahl Members, für welche nun bezahlt ist
-			if($metal>0 || $crystal>0 || $plastic>0 || $fuel>0 || $food>0)
+			if(array_sum($to_pay)>0)
 			{
 				dbquery("
 					  UPDATE
 						alliances
 					  SET
-						alliance_res_metal=alliance_res_metal-'".$metal."',
-						alliance_res_crystal=alliance_res_crystal-'".$crystal."',
-						alliance_res_plastic=alliance_res_plastic-'".$plastic."',
-						alliance_res_fuel=alliance_res_fuel-'".$fuel."',
-						alliance_res_food=alliance_res_food-'".$food."',
-						alliance_objects_for_members='".$memberCnt."'
+						alliance_res_metal=alliance_res_metal-'".$to_pay[1]."',
+						alliance_res_crystal=alliance_res_crystal-'".$to_pay[2]."',
+						alliance_res_plastic=alliance_res_plastic-'".$to_pay[3]."',
+						alliance_res_fuel=alliance_res_fuel-'".$to_pay[4]."',
+						alliance_res_food=alliance_res_food-'".$to_pay[5]."',
+						alliance_objects_for_members='".$newMemberCnt."'
 					  WHERE
 						alliance_id='".$this->id."'
 					LIMIT 1;");
 							
 					// Log schreiben
-					add_alliance_history($this->id,"Dem Allianzkonto wurden folgende Rohstoffe abgezogen:\n[b]".RES_METAL."[/b]: ".nf($metal)."\n[b]".RES_CRYSTAL."[/b]: ".nf($crystal)."\n[b]".RES_PLASTIC."[/b]: ".nf($plastic)."\n[b]".RES_FUEL."[/b]: ".nf($fuel)."\n[b]".RES_FOOD."[/b]: ".nf($food)."\n\nDie Allianzobjekte sind nun für ".$memberCnt." Mitglieder verfügbar!");
+					add_alliance_history($this->id,"Dem Allianzkonto wurden folgende Rohstoffe abgezogen:\n[b]".RES_METAL."[/b]: ".nf($to_pay[1])."\n[b]".RES_CRYSTAL."[/b]: ".nf($to_pay[2])."\n[b]".RES_PLASTIC."[/b]: ".nf($to_pay[3])."\n[b]".RES_FUEL."[/b]: ".nf($to_pay[4])."\n[b]".RES_FOOD."[/b]: ".nf($to_pay[5])."\n\nDie Allianzobjekte sind nun für ".$newMemberCnt." Mitglieder verfügbar!");
 			}
 		}
 		else
 		{
-			return text2html("Bei der Aufnahme von $newMemberCnt Member werden dem Allianzkonto folgende Rohstoffe abgezogen:\n[b]".RES_METAL."[/b]: ".nf($metal)."\n[b]".RES_CRYSTAL."[/b]: ".nf($crystal)."\n[b]".RES_PLASTIC."[/b]: ".nf($plastic)."\n[b]".RES_FUEL."[/b]: ".nf($fuel)."\n[b]".RES_FOOD."[/b]: ".nf($food));
+			return text2html("Bei der Aufnahme von ".$addMembers." Member werden dem Allianzkonto folgende Rohstoffe abgezogen:\n[b]".RES_METAL."[/b]: ".nf($to_pay[1])."\n[b]".RES_CRYSTAL."[/b]: ".nf($to_pay[2])."\n[b]".RES_PLASTIC."[/b]: ".nf($to_pay[3])."\n[b]".RES_FUEL."[/b]: ".nf($to_pay[4])."\n[b]".RES_FOOD."[/b]: ".nf($to_pay[5]));
 		}
 	  }
 	  

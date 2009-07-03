@@ -37,7 +37,7 @@
 	//$cryptoCenterLevel = $bl->getLevel(BUILD_CRYPTO_ID);
 	if ($cu->allianceId!=0)
 	{
-		$cryptoCenterLevel = $cu->alliance->getBuildingLevel("Kryptocenter");
+		$cryptoCenterLevel = $cu->alliance->buildlist->getLevel(ALLIANCE_CRYPTO_ID);
 	}
 	else
 	{
@@ -57,14 +57,14 @@
 	  if ($cryptoCenterLevel > 0)
 	  {
 			// Titel
-			echo "<h1>Allianzkryptocenter (Stufe ".$cryptoCenterLevel.") der Allianz ".$cu->alliance->name."</h1>";		
+			echo "<h1>Allianzkryptocenter (Stufe ".$cryptoCenterLevel.") der Allianz ".$cu->alliance."</h1>";		
 			$cp->resBox($cu->properties->smallResBox);
 			
 			// Calculate cooldown
 			$cooldown = max($cfg->param2("cryptocenter"),$cfg->value("cryptocenter") - ($cfg->param1("cryptocenter")*($cryptoCenterLevel-1)));
-			if ($cu->alliance->getCryptoCooldown()>time())
+			if ($cu->alliance->buildlist->getCooldown(ALLIANCE_CRYPTO_ID)>time())
 			{
-				$status_text = "Bereit in <span id=\"cdcd\">".tf($cu->alliance->getCryptoCooldown()-time()."</span>");
+				$status_text = "Bereit in <span id=\"cdcd\">".tf($cu->alliance->buildlist->getCooldown(ALLIANCE_CRYPTO_ID)-time()."</span>");
 				$cd_enabled=true;
 			}
 			else
@@ -123,7 +123,7 @@
 														WHERE
 															techlist_tech_id=".TARN_TECH_ID."
 															AND techlist_user_id=".$target->ownerId()."");
-										$op_stealth = $target->owner->alliance->getTechLevel("Tarntechnik")+$target->owner->specialist->tarnLevel;
+										$op_stealth = $target->owner->alliance->techlist->getLevel(ALLIANCE_TECH_TARN_ID)+$target->owner->specialist->tarnLevel;
 										
 										if (mysql_num_rows($tres)>0)
 										{
@@ -155,7 +155,7 @@
 														WHERE
 															techlist_tech_id=".SPY_TECH_ID."
 															AND techlist_user_id=".$cu->id."");
-										$self_spy = $cu->alliance->getTechLevel("Spionagetechnik") + $cu->specialist->spyLevel;
+										$self_spy = $cu->alliance->techlist->getLevel(ALLIANCE_TECH_SPY_ID) + $cu->specialist->spyLevel;
 										
 										if (mysql_num_rows($tres)>0)
 										{
@@ -407,22 +407,13 @@
 											
 											// Set cooldown
 											$cd = time()+$cooldown;
-											dbquery("
-													UPDATE
-														alliance_buildlist
-													SET
-														alliance_buildlist_cooldown=".$cd."
-													WHERE
-														alliance_buildlist_alliance_id='".$cu->allianceId."'
-														AND alliance_buildlist_building_id='".ALLIANCE_BUILD_CRYPTO_ID."';");
-											
-											$cu->alliance->setCryptoCooldown($cd);
+											$cu->alliance->buildlist->setCooldown(ALLIANCE_CRYPTO_ID,$cd);
 											
 											$cu->alliance->addHistory("Der Spieler [b]".$cu."[/b] hat den Planeten ".$target->name()."[/b] (".$sx."/".$sy." : ".$cx."/".$cy." : ".$pp.") gescannt!");
 											
-											if ($cu->alliance->getCryptoCooldown()>time())
+											if ($cu->alliance->buildlist->getCooldown(ALLIANCE_CRYPTO_ID)>time())
 											{
-												$status_text = "Bereit in <span id=\"cdcd\">".tf($cu->alliance->getCryptoCooldown()-time()."</span>");
+												$status_text = "Bereit in <span id=\"cdcd\">".tf($cu->alliance->buildlist->getCooldown(ALLIANCE_CRYPTO_ID)-time()."</span>");
 												$cd_enabled=true;
 											}
 											else
@@ -541,9 +532,9 @@
 			else
 			{
 				echo "<b>Diese Funktion wurde vor kurzem benutzt! <br/>
-					Du musst bis ".df($cu->alliance->getCryptoCooldown())." warten, um die Funktion wieder zu benutzen!</b>";
+					Du musst bis ".df($cu->alliance->buildlist->getCooldown(ALLIANCE_CRYPTO_ID))." warten, um die Funktion wieder zu benutzen!</b>";
 				
-				countDown("cdcd",$cu->alliance->getCryptoCooldown());
+				countDown("cdcd",$cu->alliance->buildlist->getCooldown(ALLIANCE_CRYPTO_ID));
 			}
 		}
 		else

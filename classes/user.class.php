@@ -54,6 +54,7 @@
 	protected $specialist = null;
 	protected $ghost;
 	protected $lastInvasion;
+	protected $allianceShippoints;
 
 		// Sub-objects and their id's
 		protected $raceId;
@@ -152,6 +153,8 @@
 				$this->lastInvasion = $arr['lastinvasion'];
 
 				$this->raceId = $arr['user_race_id'];
+				
+				$this->allianceShippoints = $arr['user_alliace_shippoints'];
 
 				$this->changedFields = array();
 

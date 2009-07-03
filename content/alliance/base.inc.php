@@ -25,6 +25,45 @@
 	$cp->resBox($cu->properties->smallResBox);
 	
 	echo "<h2><a href=\"?page=".$page."&amp;action=".$_GET['action']."\">Allianzbasis</a></h2>";
+	
+	// Schiffswerft gebaut?
+	$shipyard = ($cu->alliance->buildlist->getLevel(ALLIANCE_SHIPYARD_ID)>=1) ? TRUE : FALSE;
+	$research = ($cu->alliance->buildlist->getLevel(ALLIANCE_RESEARCH_ID)>=1) ? TRUE : FALSE;
+	
+	//
+	// Navigation
+	//
+	
+	// Speichert Tab
+	if(isset($_GET['action2']))
+	{
+		$action2 = $_GET['action2'];
+	}
+	else
+	{
+		$action2 = "buildings";
+	}
+	
+	// Stellt standart Links dar
+	/*
+	echo "<a href=\"javascript:;\" onclick=\"showTab('tabBuildings')\">Gebäude</a> | 
+	<a href=\"javascript:;\" onclick=\"showTab('tabResearch')\">Technologien</a> | 
+	<a href=\"javascript:;\" onclick=\"showTab('tabStorage')\">Speicher</a>";
+	*/
+	
+	$ddm = new DropdownMenu(1);
+	$ddm->add('b','Gebäude',"showTab('tabBuildings');");
+	
+	if ($research)
+		$ddm->add('r','Technologien',"showTab('tabResearch');");
+	$ddm->add('s','Speicher',"showTab('tabStorage');");
+	
+	if($shipyard)
+		$ddm->add('sw','Schiffswerft',"showTab('tabShipyard');");
+
+	echo $ddm; 
+	
+	echo "<br>";
 		
 		
 	//
@@ -36,8 +75,6 @@
 	// Wechselt zwischen den Verschiedenen Tabs
 	function showTab(idx)
 	{
-		document.getElementById('submitMessagePos').style.display='none';
-		document.getElementById('submitMessageNeg').style.display='none';
 		document.getElementById('tabBuildings').style.display='none';
 		document.getElementById('tabResearch').style.display='none';
 		document.getElementById('tabStorage').style.display='none';
@@ -80,227 +117,8 @@
 	}
 	
 	</script>";	
-		
-	// Stellt die ganzen Bauoptionen dar, und errechnet und formatiert die Preise und gibt die Infos in einem Array zurück
-	function show_buildoptions($typ="building", $id=0, $res_metal=0, $res_crystal=0, $res_plastic=0, $res_fuel=0, $res_food=0, $costs_metal=0, $costs_crystal=0, $costs_plastic=0, $costs_fuel=0, $costs_food=0, $build_time=0, $costs_factor=0, $level=0, $max_level=0, $buildsomething=false, $members=1, $end_time=0)
-	{
-		$cfg = Config::getInstance();
-		
-		// Prüft Max. Level
-		if($level<$max_level)
-		{
-			// Bauzeit (Fixe Zeit * Level)
-			$btime = $build_time * ($level+1);
-
-			// Errechnet die Effektiven Kosten für die Allianz in Abgängigkeit von der Mitgliederanzahl
-			$factor = pow($costs_factor,$level);
-			$member_factor = 1 + ($members-1) * $cfg->get('alliance_membercosts_factor');
-			if($factor<1)
-			{
-				$factor = 1;
-			}
-			$costs_metal = ceil($costs_metal * $factor * $member_factor);
-			$costs_crystal = ceil($costs_crystal * $factor * $member_factor);
-			$costs_plastic = ceil($costs_plastic * $factor * $member_factor);
-			$costs_fuel = ceil($costs_fuel * $factor * $member_factor);
-			$costs_food = ceil($costs_food * $factor * $member_factor);
-	
-			// Rechnet fehlende Rohstoffe (Vorhandene Rohstoffe - Kosten -> Wenn Resultat positiv ist, sind genug Rohstoffe vorhanden)
-			$need_metal = $res_metal - $costs_metal;
-			$need_crystal = $res_crystal - $costs_crystal;
-			$need_plastic = $res_plastic - $costs_plastic;
-			$need_fuel = $res_fuel - $costs_fuel;
-			$need_food = $res_food - $costs_food;
-			
-			// Prüft ob Rohstoffe gebraucht werden (Negative Zahlen = Ja). 
-			$need_something = false;
-			// Titan
-			if($need_metal>=0)
-			{
-				$need_metal = 0;
-				$style_metal = "";
-			}
-			else
-			{
-				$need_something = true;
-				
-				// Erstellt absolut Wert der Zahl
-				$need_metal = abs($need_metal);
-				$style_metal = "style=\"color:red;\" ".tm("Fehlender Rohstoff","".nf($need_metal)." ".RES_METAL."")."";
-			}
-			
-			// Silizium
-			if($need_crystal>=0)
-			{
-				$need_crystal = 0;
-				$style_crystal = "";
-			}
-			else
-			{
-				$need_something = true;
-				
-				// Erstellt absolut Wert der Zahl
-				$need_crystal = abs($need_crystal);
-				$style_crystal = "style=\"color:red;\" ".tm("Fehlender Rohstoff","".nf($need_crystal)." ".RES_CRYSTAL."")."";
-			}
-			
-			// PVC
-			if($need_plastic>=0)
-			{
-				$need_plastic = 0;
-				$style_plastic = "";
-			}
-			else
-			{
-				$need_something = true;
-				
-				// Erstellt absolut Wert der Zahl
-				$need_plastic = abs($need_plastic);
-				$style_plastic = "style=\"color:red;\" ".tm("Fehlender Rohstoff","".nf($need_plastic)." ".RES_PLASTIC."")."";
-			}
-			
-			// Tritium
-			if($need_fuel>=0)
-			{
-				$need_fuel = 0;
-				$style_fuel = "";
-			}
-			else
-			{
-				$need_something = true;
-				
-				// Erstellt absolut Wert der Zahl
-				$need_fuel = abs($need_fuel);
-				$style_fuel = "style=\"color:red;\" ".tm("Fehlender Rohstoff","".nf($need_fuel)." ".RES_FUEL."")."";
-			}
-			
-			// Nahrung
-			if($need_food>=0)
-			{
-				$need_food = 0;
-				$style_food = "";
-			}
-			else
-			{
-				$need_something = true;
-				
-				// Erstellt absolut Wert der Zahl
-				$need_food = abs($need_food);
-				$style_food = "style=\"color:red;\" ".tm("Fehlender Rohstoff","".nf($need_food)." ".RES_FOOD."")."";
-			}
-			
-			
-			// Gibt Nachrichten aus. Unterschiedliche Ausgabe von Gebäuden und Technologien
-			$style_message = "";
-			
-			if($typ=="building")
-			{
-				if($level==0)
-				{
-					$build_button = "Bauen";
-				}
-				else
-				{
-					$build_button = "Ausbauen";
-				}
-				$status_message = startTime($end_time-time(), 'build_message_'.$typ.'_'.$id.'', 0, 'Wird ausgebaut auf Stufe '.($level+1).' (TIME)');
-				$status_message2 = "Es wird bereits gebaut!";
-			}
-			elseif($typ=="research")
-			{
-				$build_button = "Erforschen";
-				$status_message = startTime($end_time-time(), 'build_message_'.$typ.'_'.$id.'', 0, 'Stufe '.($level+1).' wird erforscht (TIME)');
-				$status_message2 = "Es wird bereits geforscht!";
-			}
-			else
-			{
-				$build_button = "";
-			}
-			
-	
-			// Es wird schon gebaut
-			if($buildsomething)
-			{
-				// Wenn dieses Objekt im Bau ist
-				if($end_time>0)
-				{
-					$style_message = "color: rgb(0, 255, 0);";
-					$build_message = $status_message;
-				}
-				// Ein anderes Objekt ist in Bau
-				else
-				{
-					$style_message = "color: rgb(255, 0, 0);";
-					$build_message = $status_message2;
-				}
-			}
-			// Nicht genügend Rohstoffe
-			elseif($need_something)
-			{		
-				$build_message = "<input type=\"button\" class=\"button\" name=\"storage_submit\" id=\"storage_submit\" value=\"Fehlende Roshtoffe einzahlen\" ".tm("Nicht genügend Rohstoffe","Es sind nicht genügend Rohstoffe vorhanden!<br>Klick auf den Button um die fehlenden Rohstoffe einzuzahlen.")." onclick=\"setSpends(".$need_metal.", ".$need_crystal.", ".$need_plastic.", ".$need_fuel.", ".$need_food.");\"/>";
-			}
-			// Gebäude kann ausgebaut werden
-			else
-			{
-				// Generiert Baubutton, mit welchem vor dem Absenden noch die Objekt ID übergeben wird
-				$build_message = "<input type=\"submit\" class=\"button\" name=\"".$typ."_submit\" id=\"".$typ."_submit\" value=\"".$build_button."\" onclick=\"document.getElementById('".$typ."_id').value=".$id.";\"/>";
-			}
-			
-			$out = "";
-			$out .= "<tr>
-							<th width=\"7%\">Stufe</th>
-			        <th width=\"18%\">Zeit</th>
-			        <th width=\"15%\">".RES_METAL."</th>
-			        <th width=\"15%\">".RES_CRYSTAL."</th>
-			        <th width=\"15%\">".RES_PLASTIC."</th>
-			        <th width=\"15%\">".RES_FUEL."</th>
-			        <th width=\"15%\">".RES_FOOD."</th>
-						</tr>
-						<tr>
-							<td width=\"7%\">".($level+1)."</th>
-							<td width=\"18%\">".tf($btime)."</th>
-			        <td ".$style_metal." width=\"15%\">".nf($costs_metal)."</td>
-			        <td ".$style_crystal." width=\"15%\">".nf($costs_crystal)."</td>
-			        <td ".$style_plastic." width=\"15%\">".nf($costs_plastic)."</td>
-			        <td ".$style_fuel." width=\"15%\">".nf($costs_fuel)."</td>
-			        <td ".$style_food." width=\"15%\">".nf($costs_food)."</td>
-						</tr>
-						<tr>
-							<td colspan=\"7\" style=\"text-align:center;".$style_message."\" name=\"build_message_".$typ."_".$id."\" id=\"build_message_".$typ."_".$id."\">".$build_message."</td>
-						</tr>";
-			// Packt alle infos in ein Array und gibt dieses zurück
-			// Kosten
-			$return['costs_metal'] = $costs_metal;
-			$return['costs_crystal'] = $costs_crystal;
-			$return['costs_plastic'] = $costs_plastic;
-			$return['costs_fuel'] = $costs_fuel;
-			$return['costs_food'] = $costs_food;
-			// Bauzeit
-			$return['btime'] = $btime;
-			// Gibt Optionsbox aus
-			$return['optionsbox'] = $out;
-			
-			return $return;
-		}
-		// Maximallevel erreicht, es werden keine Berechnungen mehr durchgeführt
-		else
-		{
-			$return['optionsbox'] = "<tr><td colspan=\"7\" style=\"text-align:center;\">Maximallevel erreicht!</td></tr>";
-			return $return;
-		}
-	}			
-		
-		
-		
- 	//
- 	// Datenverarbeitung 1: Muss vor dem laden der neuen Daten geschehen
- 	// Spenden und Einzahlungsoptionen speichern, Schiffe kaufen
- 	//
  	
- 	// Speichert Nachricht, welche später ausgegeben wird
- 	$submit_message_pos = "";
- 	$submit_message_neg = "";
- 	
+	
  	//
  	// Einzahlen
  	//
@@ -309,99 +127,65 @@
  	{
  		// Formatiert Eingaben 
  		$metal = nf_back($_POST['spend_metal']);
-	  $crystal = nf_back($_POST['spend_crystal']);
-	  $plastic = nf_back($_POST['spend_plastic']);
-	  $fuel = nf_back($_POST['spend_fuel']);
-	  $food = nf_back($_POST['spend_food']);
-	  
-	  
-	  // Prüft, ob Rohstoffe angegeben wurden
-	  if($metal>0
-	  	|| $crystal>0
-	  	|| $plastic>0
-	  	|| $fuel>0
-	  	|| $food>0)
-	  {
-	  	// Prüft, ob Rohstoffe noch vorhanden sind
-	  	$res=dbquery("
-	    SELECT
-	      planet_res_metal,
-	      planet_res_crystal,
-	      planet_res_plastic,
-	      planet_res_fuel,
-	      planet_res_food
-	    FROM
-	      planets
-	    WHERE
-	      id='".$cp->id()."'");
-	    $arr = mysql_fetch_assoc($res);
-	    
-	    if($arr['planet_res_metal'] >= $metal
-	    	&& $arr['planet_res_crystal'] >= $crystal
-	    	&& $arr['planet_res_plastic'] >= $plastic
-	    	&& $arr['planet_res_fuel'] >= $fuel
-	    	&& $arr['planet_res_food'] >= $food) 	
-	    {
-	    	// Rohstoffe vom Planet abziehen
-	      dbquery("
-	      UPDATE
-	        planets
-	      SET
-	        planet_res_metal=planet_res_metal-'".$metal."',
-	        planet_res_crystal=planet_res_crystal-'".$crystal."',
-	        planet_res_plastic=planet_res_plastic-'".$plastic."',
-	        planet_res_fuel=planet_res_fuel-'".$fuel."',
-	        planet_res_food=planet_res_food-'".$food."'
-	      WHERE
-	        id='".$cp->id()."';");
-	          
-	      // Rohstoffe der Allianz gutschreiben
-	      dbquery("
-	      UPDATE
-	        alliances
-	      SET
-	        alliance_res_metal=alliance_res_metal+'".$metal."',
-	        alliance_res_crystal=alliance_res_crystal+'".$crystal."',
-	        alliance_res_plastic=alliance_res_plastic+'".$plastic."',
-	        alliance_res_fuel=alliance_res_fuel+'".$fuel."',
-	        alliance_res_food=alliance_res_food+'".$food."'
-	      WHERE
-	        alliance_id='".$cu->allianceId."';");
-	        
-	     	// Spende speichern
-	     	dbquery("
-	      INSERT INTO
-	      alliance_spends
-	          (alliance_spend_alliance_id,
-	          alliance_spend_user_id,
-	          alliance_spend_metal,
-	          alliance_spend_crystal,
-	          alliance_spend_plastic,
-	          alliance_spend_fuel,
-	          alliance_spend_food,
-	          alliance_spend_time)
-	      VALUES
-	          ('".$cu->allianceId."',
-	          '".$cu->id."',
-	          '".$metal."',
-	          '".$crystal."',
-	          '".$plastic."',
-	          '".$fuel."',
-	          '".$food."',
-	          '".time()."')");
+		$crystal = nf_back($_POST['spend_crystal']);
+		$plastic = nf_back($_POST['spend_plastic']);
+		$fuel = nf_back($_POST['spend_fuel']);
+		$food = nf_back($_POST['spend_food']);
+		
+		// Prüft, ob Rohstoffe angegeben wurden
+		if($metal>0 
+		   || $crystal>0
+		   || $plastic>0
+		   || $fuel>0
+		   || $food>0)
+		{
+			// Prüft, ob Rohstoffe noch vorhanden sind
+			if($cp->getRes(1) >= $metal
+				&& $cp->getRes(2) >= $crystal
+				&& $cp->getRes(3) >= $plastic
+				&& $cp->getRes(4) >= $fuel
+				&& $cp->getRes(5) >= $food) 	
+			{
+				// Rohstoffe vom Planet abziehen
+				$cp->addRes(array(-$metal,-$crystal,-$plastic,-$fuel,-$food));
+				  
+				// Rohstoffe der Allianz gutschreiben
+				$cu->alliance->changeRes($metal,$crystal,$plastic,$fuel,$food);
+				
+				// Spende speichern
+				dbquery("
+						INSERT INTO
+							alliance_spends
+				 		(
+						 	alliance_spend_alliance_id,
+							alliance_spend_user_id,
+							alliance_spend_metal,
+							alliance_spend_crystal,
+							alliance_spend_plastic,
+							alliance_spend_fuel,
+							alliance_spend_food,
+							alliance_spend_time
+						)
+						VALUES
+				  		(
+						 	'".$cu->allianceId."',
+				 			'".$cu->id."',
+				  			'".$metal."',
+				  			'".$crystal."',
+				  			'".$plastic."',
+				  			'".$fuel."',
+				  			'".$food."',
+				  			'".time()."'
+						)");
 
-	      	$submit_message_pos .= "Rohstoffe erfolgreich eingezahlt!";    
-	    }
-	    else
-	    {
-	    	$submit_message_neg .= "Es sind zu wenig Rohstoffe auf dem Planeten!";
-	    }
-	  }
-	  else
-	  {
-	  	$submit_message_neg .= "Du hast keine Rohstoffe angegeben!";
-	  }	  
- 	}		
+				ok_msg("Rohstoffe erfolgreich eingezahlt!");
+			}
+			else
+				error_msg("Es sind zu wenig Rohstoffe auf dem Planeten!");
+		}
+		else
+			error_msg("Du hast keine Rohstoffe angegeben!");
+	}
  	
  	// Einzahlungs Filter aktivieren
 
@@ -428,8 +212,7 @@
 	  {
 	  	$user = $_POST['user_spends'];
 	  }
-	}		
-		
+	}
 		
 	//
 	// Schiffe kaufen
@@ -548,23 +331,8 @@
 					
 					if ($total_build_cnt>0)
 					{
-						// Lädt Schiffspunkte und Hauptplanet des gewählten Users
-						$res = dbquery("
-							SELECT
-								users.user_alliace_shippoints,
-								planets.id
-							FROM
-								users
-							INNER JOIN
-								planets
-							ON planet_user_id=user_id
-							WHERE
-								planets.planet_user_main='1'
-								AND users.user_id='".$_POST['user_buy_ship']."';");		
-							$arr = mysql_fetch_assoc($res);
-					
 							// Prüft ob Schiffspunkte noch ausreichend sind
-							if($arr['user_alliace_shippoints'] >= $ship_costs)
+							if($cu->alliance->members[$_POST['user_buy_ship']]->allianceShippoints >= $ship_costs)
 							{
 								// Zieht Punkte vom Konto ab
 								dbquery("
@@ -607,7 +375,7 @@
 										(
 											'".$_POST['user_buy_ship']."',
 											'".$row[0]."',
-											'".$arr['id']."',
+											'".$cp->id."',
 											'".$launchtime."',
 											'".$landtime."',
 											'delivery'
@@ -630,7 +398,7 @@
 											$sql .= "('".mysql_insert_id()."', '".$ship_id."', '".$build_cnt."')";
 											
 											// Gibt einmalig eine OK-Medlung aus
-											$submit_message_pos .= "Schiffe wurden erfolgreich hergestellt!";
+											ok_msg("Schiffe wurden erfolgreich hergestellt!");
 										}
 										else
 										{
@@ -661,27 +429,27 @@
 							}
 							else
 							{
-								$submit_message_neg .= "Der gewählte User hat nicht genügend Teile übrig!";
+								error_msg("Der gewählte User hat nicht genügend Teile übrig!");
 							}
 						}
 						else
 						{
-							$submit_message_neg .= "Keine Schiffe ausgewählt!";
+							error_msg("Keine Schiffe ausgewählt!");
 						}
 					}
 					else
 					{
-						$submit_message_neg .= "Die Maximalanzahl der Schiffe würde mit der eingegebenen Menge überschritten werden!";
+						error_msg("Die Maximalanzahl der Schiffe würde mit der eingegebenen Menge überschritten werden!");
 					}
 				}
 				else
 				{
-					$submit_message_neg .= "Es wurde kein User ausgewählt!";
+					error_msg("Es wurde kein User ausgewählt!");
 				}
 		}
 		else
 		{
-			$submit_message_neg .= "Keine Berechtigung!";
+			$error_msg("Keine Berechtigung!");
 		}
 	}	
 		
@@ -690,113 +458,7 @@
 		
 	//
 	// Läd Daten
-	//
-	
-	// Allianzdaten
-	$res = dbquery("
-	SELECT
-		alliance_id,
-		alliance_founder_id,
-		alliance_architect_id,
-		alliance_technican_id,
-		alliance_res_metal,
-		alliance_res_crystal,
-		alliance_res_plastic,
-		alliance_res_fuel,
-		alliance_res_food
-	FROM
-		alliances
-	WHERE
-		alliance_id='".$cu->allianceId."';");		
-	$aarr = mysql_fetch_assoc($res);
-	
-	// Läd die Allianzmitglieder
-	$res = dbquery("
-	SELECT
-		user_id,
-		user_nick,
-		user_alliace_shippoints
-	FROM
-		users
-	WHERE
-		user_alliance_id='".$cu->allianceId."';");
-	$alliance_member_cnt = mysql_num_rows($res);
-	while($arr=mysql_fetch_assoc($res))		
-	{
-		$alliance_members[$arr['user_id']] = $arr;	
-	}
-
-
-	// Allianzgebäude
-	$res = dbquery("
-	SELECT
-		*
-	FROM
-		alliance_buildings
-	WHERE
-		alliance_building_show='1';");
-	while($arr=mysql_fetch_assoc($res))		
-	{
-		$buildings[$arr['alliance_building_id']] = $arr;
-	}
-	
-	// Gebaute Gebäude laden und vormerken, falls etwas im Bau ist. AUsserdem werden diverse Gebäude als "gebaut" markiert
-	$buildsomething = false;
-	$shipyard = false;
-	$res = dbquery("
-	SELECT
-		*
-	FROM
-		alliance_buildlist
-	WHERE
-		alliance_buildlist_alliance_id='".$cu->allianceId."';");
-	while($arr=mysql_fetch_assoc($res))		
-	{
-		$buildlist[$arr['alliance_buildlist_building_id']] = $arr;
-				
-		if($arr['alliance_buildlist_build_end_time']>0)
-		{
-			$buildsomething = true;
-		}
-		
-		// Schiffswerft
-		if($arr['alliance_buildlist_building_id']==ALLIANCE_SHIPYARD_ID && $arr['alliance_buildlist_current_level']>=1)
-		{
-			$shipyard = true;
-		}
-	}	
-	
-	// Allianzforschungen
-	$res = dbquery("
-	SELECT
-		*
-	FROM
-		alliance_technologies
-	WHERE
-		alliance_tech_show='1';");
-	while($arr=mysql_fetch_assoc($res))		
-	{
-		$techs[$arr['alliance_tech_id']] = $arr;
-	}
-	
-	// Erforschte Techs laden und vormerken, falls etwas im Bau ist
-	$researchsomething = false;
-	$res = dbquery("
-	SELECT
-		*
-	FROM
-		alliance_techlist
-	WHERE
-		alliance_techlist_alliance_id='".$cu->allianceId."';");
-	while($arr=mysql_fetch_assoc($res))		
-	{
-		$techlist[$arr['alliance_techlist_tech_id']] = $arr;
-				
-		if($arr['alliance_techlist_build_end_time']>0)
-		{
-			$researchsomething = true;
-		}
-	}	
+	//	
 	
 	// Allianzschiffe (wenn Schiffswerft gebaut)
 	if($shipyard)
@@ -819,7 +481,7 @@
 		FROM
 			ships
 		WHERE
-			ship_alliance_shipyard_level<='".$buildlist[ALLIANCE_SHIPYARD_ID]['alliance_buildlist_current_level']."'
+			ship_alliance_shipyard_level<='".$cu->alliance->buildlist->getLevel(ALLIANCE_SHIPYARD_ID)."'
 			AND ship_alliance_shipyard_level>0
 		ORDER BY
 			ship_alliance_shipyard_level;");
@@ -882,47 +544,6 @@
 		$fleet[$arr['fs_ship_id']] = $arr['cnt'];
 	}
 	
-	
-	
-	
-	//
-	// Navigation
-	//
-	
-	// Speichert Tab
-	if(isset($_GET['action2']))
-	{
-		$action2 = $_GET['action2'];
-	}
-	else
-	{
-		$action2 = "buildings";
-	}
-	
-	// Stellt standart Links dar
-	/*
-	echo "<a href=\"javascript:;\" onclick=\"showTab('tabBuildings')\">Gebäude</a> | 
-	<a href=\"javascript:;\" onclick=\"showTab('tabResearch')\">Technologien</a> | 
-	<a href=\"javascript:;\" onclick=\"showTab('tabStorage')\">Speicher</a>";
-	*/
-	
-	$ddm = new DropdownMenu(1);
-	$ddm->add('b','Gebäude',"showTab('tabBuildings');");
-	$ddm->add('r','Technologien',"showTab('tabResearch');");
-	$ddm->add('s','Speicher',"showTab('tabStorage');");
-
-	// Stellt Objektbezogene Links dar
-	
-	// Schiffswerft
-	if($shipyard)
-	{
-		$ddm->add('sw','Schiffswerft',"showTab('tabShipyard');");
-	}
-
-	echo $ddm; 
-	
-	echo "<br>";
-	
 	//
 	// ResBox
 	//	
@@ -934,23 +555,23 @@
 	$style4 = "";
 
 	// Negative Rohstoffe farblich hervorben
-	if ($aarr['alliance_res_metal'] < 0)
+	if ($cu->alliance->resMetal < 0)
 	{
 		$style0 = "style=\"color:red;\"";
 	}
-	if ($aarr['alliance_res_crystal'] < 0)
+	if ($cu->alliance->resCrystal < 0)
 	{
 		$style1 = "style=\"color:red;\"";
 	}
-	if ($aarr['alliance_res_plastic'] < 0)
+	if ($cu->alliance->resPlastic < 0)
 	{
 		$style2 = "style=\"color:red;\"";
 	}
-	if ($aarr['alliance_res_fuel'] < 0)
+	if ($cu->alliance->resFuel < 0)
 	{
 		$style3 = "style=\"color:red;\"";
 	}
-	if ($aarr['alliance_res_food'] < 0)
+	if ($cu->alliance->resFood < 0)
 	{
 		$style4 = "style=\"color:red;\"";
 	}
@@ -965,11 +586,11 @@
 					<th style=\"width:20%;vertical-align:middle;\">".RES_ICON_FOOD." ".RES_FOOD."</th>
 				</tr>
 				<tr>
-					<td ".$style0." id=\"resBoxMetal\">".nf($aarr['alliance_res_metal'])." t</td>
-					<td ".$style1." id=\"resBoxCrystal\">".nf($aarr['alliance_res_crystal'])." t</td>
-					<td ".$style2."id=\"resBoxPlastic\">".nf($aarr['alliance_res_plastic'])." t</td>
-					<td ".$style3."id=\"resBoxFuel\">".nf($aarr['alliance_res_fuel'])." t</td>
-					<td ".$style4."id=\"resBoxFood\">".nf($aarr['alliance_res_food'])." t</td>
+					<td ".$style0." id=\"resBoxMetal\">".nf($cu->alliance->resMetal)." t</td>
+					<td ".$style1." id=\"resBoxCrystal\">".nf($cu->alliance->resCrystal)." t</td>
+					<td ".$style2."id=\"resBoxPlastic\">".nf($cu->alliance->resPlastic)." t</td>
+					<td ".$style3."id=\"resBoxFuel\">".nf($cu->alliance->resFuel)." t</td>
+					<td ".$style4."id=\"resBoxFood\">".nf($cu->alliance->resFood)." t</td>
 				</tr>";
  	tableEnd();
  	
@@ -983,37 +604,6 @@
  	// Content Laden
  	//
 	
-	//
-	// Submit Nachricht
-	//
-	
-	// Zeigt Nachricht an wenn vorhanden
-	
-	if($submit_message_pos!="")
-	{
-		$display_pos = "";
-	}
-	else
-	{
-		$display_pos = "none";
-	}
-	echo "<div id=\"submitMessagePos\"\" style=\"display:".$display_pos.";\">";
-	echo ok_msg($submit_message_pos);
-	echo "</div>";
-	
-	if($submit_message_neg!="")
-	{
-		$display_neg = "";
-	}
-	else
-	{
-		$display_neg = "none";
-	}
-	echo "<div id=\"submitMessageNeg\"\" style=\"display:".$display_neg.";\">";
-	echo error_msg($submit_message_neg);
-	echo "</div>";
-	
-	
 	
  	//
  	// Datenverarbeitung 2: Muss nach dem Laden der Daten geschehen
@@ -1025,118 +615,13 @@
 	{
 		if (Alliance::checkActionRights("buildminister"))
 		{
-		  if(isset($_POST['building_id']) && $_POST['building_id']!=0)
-		  {		
-			  // Überprüft ob schon ein Gebäude in Bau ist
-			  if(!$buildsomething)
-			  {
-				  $id = intval($_POST['building_id']);
-				  if(isset($buildlist[$id]))
-				  {
-					  $b_level = $buildlist[$id]['alliance_buildlist_current_level'];
-				  }
-				  else
-				  {
-					  $b_level = 0;
-				  }
-				  
-				  // Berechnet Kosten
-				  $options_arr = show_buildoptions('', '',$aarr['alliance_res_metal'], $aarr['alliance_res_crystal'], $aarr['alliance_res_plastic'], $aarr['alliance_res_fuel'], $aarr['alliance_res_food'], $buildings[$id]['alliance_building_costs_metal'], $buildings[$id]['alliance_building_costs_crystal'], $buildings[$id]['alliance_building_costs_plastic'], $buildings[$id]['alliance_building_costs_fuel'], $buildings[$id]['alliance_building_costs_food'], $buildings[$id]['alliance_building_build_time'], $buildings[$id]['alliance_building_costs_factor'], $b_level, $buildings[$id]['alliance_building_last_level'], $buildsomething, $alliance_member_cnt);
-				  
-				  // Prüft Allianzrohstoffe
-				  if($aarr['alliance_res_metal']>=$options_arr['costs_metal']
-					  && $aarr['alliance_res_metal']>=$options_arr['costs_metal']
-					  && $aarr['alliance_res_metal']>=$options_arr['costs_metal']
-					  && $aarr['alliance_res_metal']>=$options_arr['costs_metal']
-					  && $aarr['alliance_res_metal']>=$options_arr['costs_metal'])
-				  {					
-					  // Zieht Rohstoffe vom Allianzkonto ab
-					  dbquery("
-				UPDATE
-				  alliances
-				SET
-				  alliance_res_metal=alliance_res_metal-'".$options_arr['costs_metal']."',
-				  alliance_res_crystal=alliance_res_crystal-'".$options_arr['costs_crystal']."',
-				  alliance_res_plastic=alliance_res_plastic-'".$options_arr['costs_plastic']."',
-				  alliance_res_fuel=alliance_res_fuel-'".$options_arr['costs_fuel']."',
-				  alliance_res_food=alliance_res_food-'".$options_arr['costs_food']."'
-				WHERE
-				  alliance_id='".$cu->allianceId."';");
-				  
-				// Setzt Bauzeit für das Gebäude
-				$end_time = $options_arr['btime'] + time();
-				// Prüft ob Datensatz schon vorhanden ist
-				if(isset($buildlist[$id]))
-				{
-				  // Update
-				  dbquery("
-					UPDATE
-					  alliance_buildlist
-					SET
-					  alliance_buildlist_build_start_time='".time()."',
-					  alliance_buildlist_build_end_time='".$end_time."',
-					  alliance_buildlist_member_for='".$alliance_member_cnt."'
-					WHERE
-					  alliance_buildlist_alliance_id='".$cu->allianceId."'
-					  AND alliance_buildlist_building_id='".$id."';");
-				}
+			if(isset($_POST['building_id']) && $_POST['building_id']!=0)
+			{
+				if ($cu->alliance->buildlist->build($_POST['building_id']))
+					ok_msg("Gebäude wurde erfolgreich in Auftrag gegeben!");
 				else
-				{
-					  dbquery("
-						  INSERT INTO 
-						  alliance_buildlist 
-						  (
-							  alliance_buildlist_alliance_id,
-							  alliance_buildlist_building_id,
-							  alliance_buildlist_build_start_time,
-							  alliance_buildlist_build_end_time
-						  ) 
-						  VALUES 
-						  ( 
-							  '".$cu->allianceId."',
-							  '".$id."',
-							  '".time()."',
-							  '".$end_time."'
-						  );");
-				}
-				
-				// Baulisten Array aktualisieren
-			  $buildlist[$id]['alliance_buildlist_build_start_time'] = time();
-			  $buildlist[$id]['alliance_buildlist_build_end_time'] = $end_time;
-			  if(!isset($buildlist[$id]['alliance_buildlist_current_level']))
-			  {
-				  $buildlist[$id]['alliance_buildlist_current_level'] = 0;
-			  }
-			  $buildsomething=true;
-  
-					  // Aktualister ResBox
-					  $aarr['alliance_res_metal'] = $aarr['alliance_res_metal'] - $options_arr['costs_metal'];
-					  $aarr['alliance_res_crystal'] = $aarr['alliance_res_crystal'] - $options_arr['costs_crystal'];
-					  $aarr['alliance_res_plastic'] = $aarr['alliance_res_plastic'] - $options_arr['costs_plastic'];
-					  $aarr['alliance_res_fuel'] = $aarr['alliance_res_fuel'] - $options_arr['costs_fuel'];
-					  $aarr['alliance_res_food'] = $aarr['alliance_res_food'] - $options_arr['costs_food'];
-					  
-					  echo "<script type=\"text/javascript\">changeResBox(".$aarr['alliance_res_metal'].", ".$aarr['alliance_res_crystal'].", ".$aarr['alliance_res_plastic'].", ".$aarr['alliance_res_fuel'].", ".$aarr['alliance_res_food'].");</script>";
-				
-				// Ausbau zur Allianzgeschichte hinzufügen
-				add_alliance_history($cu->allianceId,"[b]".$cu->nick."[/b] hat das Gebäude \"".$buildings[$id]['alliance_building_name']." (".($buildlist[$id]['alliance_buildlist_current_level']+1).")\" in Auftrag gegeben.");
-				
-				ok_msg("Gebäude wurde erfolgreich in Auftrag gegeben!");
-				  }
-				  else
-				  {
-					  error_msg("Es sind zuwenig Rohstoffe vorhanden!");
-				  }
-			  }
-			  else
-			  {
-				  error_msg("Es ist bereits ein Gebäude in bau!");
-			  }
-		  }
-		  else
-		  {
-			  error_msg("Es konnte keine Objekt-ID ermittelt werden!");
-		  }
+					error_msg($cu->alliance->buildlist->getLastError());
+			}
 		}
 	}
 	
@@ -1148,119 +633,24 @@
 		{
 			if(isset($_POST['research_id']) && $_POST['research_id']!=0)
 			{			
-				// Überprüft ob schon ein Gebäude in Bau ist
-				if(!$researchsomething)
-				{
-					$id = intval($_POST['research_id']);
-					if(isset($techlist[$id]))
-					{
-						$b_level = $techlist[$id]['alliance_techlist_current_level'];
-					}
-					else
-					{
-						$b_level = 0;
-					}
-					
-					// Berechnet Kosten
-					$options_arr = show_buildoptions('', '',$aarr['alliance_res_metal'], $aarr['alliance_res_crystal'], $aarr['alliance_res_plastic'], $aarr['alliance_res_fuel'], $aarr['alliance_res_food'], $techs[$id]['alliance_tech_costs_metal'], $techs[$id]['alliance_tech_costs_crystal'], $techs[$id]['alliance_tech_costs_plastic'], $techs[$id]['alliance_tech_costs_fuel'], $techs[$id]['alliance_tech_costs_food'], $techs[$id]['alliance_tech_build_time'], $techs[$id]['alliance_tech_costs_factor'], $b_level, $techs[$id]['alliance_tech_last_level'], $researchsomething, $alliance_member_cnt);
-					
-					// Prüft Allianzrohstoffe
-					if($aarr['alliance_res_metal']>=$options_arr['costs_metal']
-						&& $aarr['alliance_res_metal']>=$options_arr['costs_metal']
-						&& $aarr['alliance_res_metal']>=$options_arr['costs_metal']
-						&& $aarr['alliance_res_metal']>=$options_arr['costs_metal']
-						&& $aarr['alliance_res_metal']>=$options_arr['costs_metal'])
-					{					
-						// Zieht Rohstoffe vom Allianzkonto ab
-						dbquery("
-				  UPDATE
-					alliances
-				  SET
-					alliance_res_metal=alliance_res_metal-'".$options_arr['costs_metal']."',
-					alliance_res_crystal=alliance_res_crystal-'".$options_arr['costs_crystal']."',
-					alliance_res_plastic=alliance_res_plastic-'".$options_arr['costs_plastic']."',
-					alliance_res_fuel=alliance_res_fuel-'".$options_arr['costs_fuel']."',
-					alliance_res_food=alliance_res_food-'".$options_arr['costs_food']."'
-				  WHERE
-					alliance_id='".$cu->allianceId."';");
-					
-				  // Setzt Bauzeit für das Gebäude
-				  $end_time = $options_arr['btime'] + time();
-				  // Prüft ob Datensatz schon vorhanden ist
-				  if(isset($techlist[$id]))
-				  {
-					// Update
-					dbquery("
-					  UPDATE
-						alliance_techlist
-					  SET
-						alliance_techlist_build_start_time='".time()."',
-						alliance_techlist_build_end_time='".$end_time."',
-						alliance_techlist_member_for='".$alliance_member_cnt."'
-					  WHERE
-						alliance_techlist_alliance_id='".$cu->allianceId."'
-						AND alliance_techlist_tech_id='".$id."';");
-				  }
-				  else
-				  {
-						dbquery("
-							INSERT INTO 
-							alliance_techlist 
-							(
-								alliance_techlist_alliance_id,
-								alliance_techlist_tech_id,
-								alliance_techlist_build_start_time,
-								alliance_techlist_build_end_time
-							) 
-							VALUES 
-							( 
-								'".$cu->allianceId."',
-								'".$id."',
-								'".time()."',
-								'".$end_time."'
-							);");
-				  }
-				  
-				  // Baulisten Array aktualisieren
-				$techlist[$id]['alliance_techlist_build_start_time'] = time();
-				$techlist[$id]['alliance_techlist_build_end_time'] = $end_time;
-				if(!isset($techlist[$id]['alliance_techlist_current_level']))
-				{
-					$techlist[$id]['alliance_techlist_current_level'] = 0;
-				}
-				$researchsomething=true;
-	
-						// Aktualister ResBox
-						$aarr['alliance_res_metal'] = $aarr['alliance_res_metal'] - $options_arr['costs_metal'];
-						$aarr['alliance_res_crystal'] = $aarr['alliance_res_crystal'] - $options_arr['costs_crystal'];
-						$aarr['alliance_res_plastic'] = $aarr['alliance_res_plastic'] - $options_arr['costs_plastic'];
-						$aarr['alliance_res_fuel'] = $aarr['alliance_res_fuel'] - $options_arr['costs_fuel'];
-						$aarr['alliance_res_food'] = $aarr['alliance_res_food'] - $options_arr['costs_food'];
-						
-						echo "<script type=\"text/javascript\">changeResBox(".$aarr['alliance_res_metal'].", ".$aarr['alliance_res_crystal'].", ".$aarr['alliance_res_plastic'].", ".$aarr['alliance_res_fuel'].", ".$aarr['alliance_res_food'].");</script>";
-				  
-				  // Ausbau zur Allianzgeschichte hinzufügen
-				  add_alliance_history($cu->allianceId,"[b]".$cu->nick."[/b] hat die Forschung \"".$techs[$id]['alliance_tech_name']." (".($techlist[$id]['alliance_techlist_current_level']+1).")\" in Auftrag gegeben.");
-				  
-				  ok_msg("Forschung wurde erfolgreich in Auftrag gegeben!");
-					}
-					else
-					{
-						error_msg("Es sind zuwenig Rohstoffe vorhanden!");
-					}
-				}
+				if ($cu->alliance->techlist->build($_POST['research_id']))
+					ok_msg("Forschung wurde erfolgreich in Auftrag gegeben!");
 				else
-				{
-					error_msg("Es wird bereits geforscht!");
-				}
-			}
-			else
-			{
-				error_msg("Es konnte keine Objekt-ID ermittelt werden!");
+					error_msg($cu->alliance->techlist->getLastError());
 			}
 		}
 	}
 	
+	$allianceRes = array(1=>$cu->alliance->resMetal,
+						 2=>$cu->alliance->resCrystal,
+						 3=>$cu->alliance->resPlastic,
+						 4=>$cu->alliance->resFuel,
+						 5=>$cu->alliance->resFood);
+	$resName = array(1=>RES_METAL,
+					 2=>RES_CRYSTAL,
+					 3=>RES_PLASTIC,
+					 4=>RES_FUEL,
+					 5=>RES_FOOD);
 	
 	
 	//
@@ -1283,59 +673,110 @@
 	echo "<input type=\"hidden\" value=\"0\" name=\"building_id\" id=\"building_id\" />";	
 		
 	// Es sind Gebäude vorhanden
-	if(isset($buildings))
-	{
-		// Geht alle Gebäude durch
-		foreach($buildings as $id => $data)
+	if($cu->alliance->buildlist->count())
+	{	
+		$buildingIterator = $cu->alliance->buildlist->getIterator();
+		while($buildingIterator->valid())
 		{
-			// Prüft Voraussetzungen
-			if($data['alliance_building_needed_level']==0 
-				|| (isset($buildlist[$data['alliance_building_needed_id']]) 
-						&& $data['alliance_building_needed_level']<=$buildlist[$data['alliance_building_needed_id']]['alliance_buildlist_current_level']
-						)
-				)
+			if ($cu->alliance->buildlist->show($buildingIterator->key()))
 			{
-				
-				//
-				// Gebäudedaten anzeigen
-				//
-				
-				// Definiert Level und Endzeit
-				if(isset($buildlist[$id]['alliance_buildlist_current_level']))
-				{
-					$b_level = $buildlist[$id]['alliance_buildlist_current_level'];
-					$end_time = $buildlist[$id]['alliance_buildlist_build_end_time'];
-				}
-				else
-				{
-					$b_level = 0;
-					$end_time = 0;
-				}
-
-        // Generiert Bauoptionen mit allen Überprüfungen
-  			$options_arr = show_buildoptions("building", $data['alliance_building_id'], $aarr['alliance_res_metal'], $aarr['alliance_res_crystal'], $aarr['alliance_res_plastic'], $aarr['alliance_res_fuel'], $aarr['alliance_res_food'], $data['alliance_building_costs_metal'], $data['alliance_building_costs_crystal'], $data['alliance_building_costs_plastic'], $data['alliance_building_costs_fuel'], $data['alliance_building_costs_food'], $data['alliance_building_build_time'], $data['alliance_building_costs_factor'], $b_level, $data['alliance_building_last_level'], $buildsomething, $alliance_member_cnt, $end_time);
-
-				
-				$path = IMAGE_PATH."/".IMAGE_ALLIANCE_BUILDING_DIR."/building".$data['alliance_building_id']."_middle.".IMAGE_EXT;
-				$title = $data['alliance_building_name'].' <span id="buildlevel">';
-				$title.= $b_level > 0 ? $b_level : '';
+				$level = $cu->alliance->buildlist->getLevel($buildingIterator->key());
+				$title = $buildingIterator->current().' <span id="buildlevel">';
+				$title.= ($level > 0) ? $level : '';
 				$title.= '</span>';
 				tableStart($title);
 				echo "<tr>
-                  <td style=\"width:120px;background:#000;vertical-align:middle;padding:0px;\">
-                  	<img src=\"".$path."\" style=\"width:120px;height:120px;border:none;margin:0px;\" alt=\"".$data['alliance_building_name']."\"/>
-                  </td>
-                  <td style=\"vertical-align:top;height:100px;\" colspan=\"6\">
-                  	".$data['alliance_building_longcomment']."
-                 	</td>
-				     </tr>";
+				  <td style=\"width:120px;background:#000;vertical-align:middle;padding:0px;\">"
+					.$buildingIterator->current()->imgMiddle()."
+				  </td>
+				  <td style=\"vertical-align:top;height:100px;\" colspan=\"6\">
+					".$buildingIterator->current()->longDesc."
+					</td>
+					 </tr>";
 				//
 				// Baumenü
 				//
-  
-  			echo $options_arr['optionsbox'];
-  			tableEnd();
+				
+				echo "<tr>";
+				if ($cu->alliance->buildlist->isMaxLevel($buildingIterator->key()))
+					echo "<td colspan=\"7\" style=\"text-align:center;\">Maximallevel erreicht!</td>";
+				else
+				{
+					$costs = $buildingIterator->current()->getCosts($level+1,$cu->alliance->memberCount);
+					$need_something = false;
+					foreach ($allianceRes as $id=>$res)
+					{
+						if ($res>$costs[$id])
+						{
+							$need[$id] = 0;
+							$style[$id] = "";
+						}
+						else
+						{
+							$need_something = true;
+							
+							// Erstellt absolut Wert der Zahl
+							$need[$id] = abs($costs[$id]-$res);
+							$style[$id] =  "style=\"color:red;\" ".tm("Fehlender Rohstoff","".nf($need[$id])." ".$resName[$id]."")."";
+						}
+					}
+					
+					if ($cu->alliance->buildlist->checkBuildable($buildingIterator->key()))
+					{
+						if($level==0)
+							$build_button = "Bauen";
+						else
+							$build_button = "Ausbauen";
+							
+						// Generiert Baubutton, mit welchem vor dem Absenden noch die Objekt ID übergeben wird
+						$message = "<input type=\"submit\" class=\"button\" name=\"building_submit\" id=\"building_submit\" value=\"".$build_button."\" onclick=\"document.getElementById('building_id').value=".$buildingIterator->key().";\"/>";
+					}
+					else
+					{
+						if ($cu->alliance->buildlist->isUnderConstruction())
+						{
+							if ($cu->alliance->buildlist->isUnderConstruction($buildingIterator->key()))
+							{
+								$style_message = "color: rgb(0, 255, 0);";
+								$message = startTime($cu->alliance->buildlist->isUnderConstruction($buildingIterator->key())-time(), 'build_message_building_'.$buildingIterator->key().'', 0, 'Wird ausgebaut auf Stufe '.($level+1).' (TIME)');
+							}
+							else
+							{
+								$message = $cu->alliance->buildlist->getLastError();
+								$style_message = "color: rgb(255, 0, 0);";
+							}
+						}
+						elseif ($need_something)
+						{
+							$message = "<input type=\"button\" class=\"button\" name=\"storage_submit\" id=\"storage_submit\" value=\"Fehlende Roshtoffe einzahlen\" ".tm("Nicht genügend Rohstoffe","Es sind nicht genügend Rohstoffe vorhanden!<br>Klick auf den Button um die fehlenden Rohstoffe einzuzahlen.")." onclick=\"setSpends(".$need[0].", ".$need[1].", ".$need[2].", ".$need[3].", ".$need[4].");\"/>";
+						}
+						else
+							$message = $cu->alliance->buildlist->getLastError();
+					}
+					echo "<th width=\"7%\">Stufe</th>
+						<th width=\"18%\">Zeit</th>
+						<th width=\"15%\">".RES_METAL."</th>
+						<th width=\"15%\">".RES_CRYSTAL."</th>
+						<th width=\"15%\">".RES_PLASTIC."</th>
+						<th width=\"15%\">".RES_FUEL."</th>
+						<th width=\"15%\">".RES_FOOD."</th>
+					</tr><tr>
+						<td width=\"7%\">".($level+1)."</th>
+						<td width=\"18%\">".tf($cu->alliance->buildlist->getBuildTime($buildingIterator->key(),$level+1))."</th>
+						<td ".$style[1]." width=\"15%\">".nf($costs[1])."</td>
+						<td ".$style[2]." width=\"15%\">".nf($costs[2])."</td>
+						<td ".$style[3]." width=\"15%\">".nf($costs[3])."</td>
+						<td ".$style[4]." width=\"15%\">".nf($costs[4])."</td>
+						<td ".$style[5]." width=\"15%\">".nf($costs[5])."</td>
+					</tr>
+					<tr>
+						<td colspan=\"7\" style=\"text-align:center;".$style_message."\" name=\"build_message_building_".$buildingIterator->key()."\" id=\"build_message_building_".$buildingIterator->key()."\">".$message."</td>";
+				}
+				echo "</tr>";
+				tableEnd();
 			}
+			
+			$buildingIterator->next();
 		}
 	}
 	// Es sind noch keine Gebäude vorhanden
@@ -1370,59 +811,104 @@
 	echo "<input type=\"hidden\" value=\"0\" name=\"research_id\" id=\"research_id\" />";	
 		
 	// Es sind Technologien vorhanden
-	if(isset($techs))
-	{
-		// Geht alle Techs durch
-		foreach($techs as $id => $data)
+	// Es sind Gebäude vorhanden
+	if($research && $cu->alliance->techlist->count())
+	{	
+		$techIterator = $cu->alliance->techlist->getIterator();
+		while($techIterator->valid())
 		{
-			// Prüft Voraussetzungen
-			if($data['alliance_tech_needed_level']==0 
-				|| (isset($buildlist[$data['alliance_tech_needed_id']]) 
-						&& $data['alliance_tech_needed_level']<=$buildlist[$data['alliance_tech_needed_id']]['alliance_buildlist_current_level']
-						)
-				)
+			if ($cu->alliance->techlist->show($techIterator->key()))
 			{
-				
-				//
-				// Techdaten anzeigen
-				//
-				
-				// Definiert Level und Endzeit
-				if(isset($techlist[$id]['alliance_techlist_current_level']))
-				{
-					$b_level = $techlist[$id]['alliance_techlist_current_level'];
-					$end_time = $techlist[$id]['alliance_techlist_build_end_time'];
-				}
-				else
-				{
-					$b_level = 0;
-					$end_time = 0;
-				}
-				
-        		// Generiert Bauoptionen mit allen Überprüfungen
-  				$options_arr = show_buildoptions("research", $data['alliance_tech_id'], $aarr['alliance_res_metal'], $aarr['alliance_res_crystal'], $aarr['alliance_res_plastic'], $aarr['alliance_res_fuel'], $aarr['alliance_res_food'], $data['alliance_tech_costs_metal'], $data['alliance_tech_costs_crystal'], $data['alliance_tech_costs_plastic'], $data['alliance_tech_costs_fuel'], $data['alliance_tech_costs_food'], $data['alliance_tech_build_time'], $data['alliance_tech_costs_factor'], $b_level, $data['alliance_tech_last_level'], $researchsomething, $alliance_member_cnt, $end_time);
-				
-				$path = IMAGE_PATH."/".IMAGE_ALLIANCE_TECHNOLOGY_DIR."/technology".$data['alliance_tech_id']."_middle.".IMAGE_EXT;
-				$title = $data['alliance_tech_name'].' <span id="buildlevel">';
-				$title.= $b_level > 0 ? $b_level : '';
+				$level = $cu->alliance->techlist->getLevel($techIterator->key());
+				$title = $techIterator->current().' <span id="buildlevel">';
+				$title.= ($level > 0) ? $level : '';
 				$title.= '</span>';
-				
 				tableStart($title);
 				echo "<tr>
-                  <td style=\"width:120px;background:#000;vertical-align:middle;padding:0px;\">
-                  	<img src=\"".$path."\" style=\"width:120px;height:120px;border:none;margin:0px;\" alt=\"".$data['alliance_tech_name']."\"/>
-                  </td>
-                  <td style=\"vertical-align:top;height:100px;\" colspan=\"6\">
-                  	".$data['alliance_tech_longcomment']."
-                 	</td>
-				     </tr>";
+				  <td style=\"width:120px;background:#000;vertical-align:middle;padding:0px;\">"
+					.$techIterator->current()->imgMiddle()."
+				  </td>
+				  <td style=\"vertical-align:top;height:100px;\" colspan=\"6\">
+					".$techIterator->current()->longDesc."
+					</td>
+					 </tr>";
 				//
 				// Baumenü
 				//
-  
-  				echo $options_arr['optionsbox'];
-  				tableEnd();
+				
+				echo "<tr>";
+				if ($cu->alliance->techlist->isMaxLevel($techIterator->key()))
+					echo "<td colspan=\"7\" style=\"text-align:center;\">Maximallevel erreicht!</td>";
+				else
+				{
+					$costs = $techIterator->current()->getCosts($level+1,$cu->alliance->memberCount);
+					$need_something = false;
+					foreach ($allianceRes as $id=>$res)
+					{
+						if ($res>$costs[$id])
+						{
+							$need[$id] = 0;
+							$style[$id] = "";
+						}
+						else
+						{
+							$need_something = true;
+							
+							// Erstellt absolut Wert der Zahl
+							$need[$id] = abs($costs[$id]-$res);
+							$style[$id] =  "style=\"color:red;\" ".tm("Fehlender Rohstoff","".nf($need[$id])." ".$resName[$id]."")."";
+						}
+					}
+					
+					
+					if ($cu->alliance->techlist->checkBuildable($techIterator->key()))
+					{		
+						// Generiert Baubutton, mit welchem vor dem Absenden noch die Objekt ID übergeben wird
+						$message = "<input type=\"submit\" class=\"button\" name=\"research_submit\" id=\"research_submit\" value=\"Erforschen\" onclick=\"document.getElementById('research_id').value=".$techIterator->key().";\"/>";
+					}
+					else
+					{
+						if ($cu->alliance->techlist->isUnderConstruction())
+						{
+							if ($cu->alliance->techlist->isUnderConstruction($techIterator->key()))
+							{
+								$style_message = "color: rgb(0, 255, 0);";
+								$message = startTime($cu->alliance->techlist->isUnderConstruction($techIterator->key())-time(), 'build_message_research_'.$techIterator->key().'', 0, 'Wird ausgebaut auf Stufe '.($level+1).' (TIME)');
+							}
+							else
+							{
+								$message = $cu->alliance->techlist->getLastError();
+								$style_message = "color: rgb(255, 0, 0);";
+							}
+						}
+						elseif ($need_something)
+						{
+							$message = "<input type=\"button\" class=\"button\" name=\"storage_submit\" id=\"storage_submit\" value=\"Fehlende Roshtoffe einzahlen\" ".tm("Nicht genügend Rohstoffe","Es sind nicht genügend Rohstoffe vorhanden!<br>Klick auf den Button um die fehlenden Rohstoffe einzuzahlen.")." onclick=\"setSpends(".$need[0].", ".$need[1].", ".$need[2].", ".$need[3].", ".$need[4].");\"/>";
+						}
+					}
+					echo "<th width=\"7%\">Stufe</th>
+						<th width=\"18%\">Zeit</th>
+						<th width=\"15%\">".RES_METAL."</th>
+						<th width=\"15%\">".RES_CRYSTAL."</th>
+						<th width=\"15%\">".RES_PLASTIC."</th>
+						<th width=\"15%\">".RES_FUEL."</th>
+						<th width=\"15%\">".RES_FOOD."</th>
+					</tr><tr>
+						<td width=\"7%\">".($level+1)."</th>
+						<td width=\"18%\">".tf($cu->alliance->techlist->getBuildTime($techIterator->key(),$level+1))."</th>
+						<td ".$style[1]." width=\"15%\">".nf($costs[1])."</td>
+						<td ".$style[2]." width=\"15%\">".nf($costs[2])."</td>
+						<td ".$style[3]." width=\"15%\">".nf($costs[3])."</td>
+						<td ".$style[4]." width=\"15%\">".nf($costs[4])."</td>
+						<td ".$style[5]." width=\"15%\">".nf($costs[5])."</td>
+					</tr>
+					<tr>
+						<td colspan=\"7\" style=\"text-align:center;".$style_message."\" name=\"build_message_research_".$techIterator->key()."\" id=\"build_message_research_".$techIterator->key()."\">".$message."</td>";
+				}
+				echo "</tr>";
+				tableEnd();
 			}
+			$techIterator->next();
 		}
 	}
 	// Es sind noch keine Gebäude vorhanden
@@ -1540,9 +1026,9 @@
   					<select id=\"user_spends\" name=\"user_spends\">
 							<option value=\"0\">alle</option>";
 					  	// Allianzuser
-							foreach($alliance_members as $id => $data)
+							foreach($cu->alliance->members as $id => $data)
 							{
-					  		echo "<option value=\"".$id."\">".$data['user_nick']."</option>";
+					  		echo "<option value=\"".$id."\">".$data."</option>";
 					  	}
   		echo "</select>
   				</td>
@@ -1566,7 +1052,7 @@
   	if($user>0)
 	  {
 	  	$user_sql = "AND alliance_spend_user_id='".$user."'";
-	  	$user_message = "von ".$alliance_members[$user]['user_nick']." ";
+	  	$user_message = "von ".$cu->alliance->members[$user]." ";
 	  }
 	  else
 	  {
@@ -1624,7 +1110,7 @@
   	if($user>0)
 	  {
 	  	$user_sql = "AND alliance_spend_user_id='".$user."'";
-	  	$user_message = "von ".$alliance_members[$user]['user_nick']." ";
+	  	$user_message = "von ".$cu->alliance->members[$user]." ";
 	  }
 	  else
 	  {
@@ -1669,7 +1155,7 @@
 		{						
 			while($arr=mysql_fetch_assoc($res))
 			{
-				tableStart("".$alliance_members[$arr['alliance_spend_user_id']]['user_nick']." - ".df($arr['alliance_spend_time'])."");
+				tableStart("".$cu->alliance->members[$arr['alliance_spend_user_id']]." - ".df($arr['alliance_spend_time'])."");
 				echo "<tr>
 								<th style=\"width:20%\">".RES_METAL."</th>
 								<th style=\"width:20%\">".RES_CRYSTAL."</th>
@@ -1724,13 +1210,13 @@
 		tableStart("Guthaben Übersicht");
 		
 		echo "<tr>";
-		if ($aarr['alliance_res_metal']<0 || $aarr['alliance_res_crystal']<0 || $aarr['alliance_res_plastic']<0 || $aarr['alliance_res_fuel']<0 || $aarr['alliance_res_food']<0)
+		if ($cu->alliance->resMetal<0 || $cu->alliance->resCrystal<0 || $cu->alliance->resPlastic<0 || $cu->alliance->resFuel<0 || $cu->alliance->resFood<0)
 			echo "<td style=\"text-align:center;\"><span ".tm("Produktionsstop","Die Produktion wurde unterbrochen, da negative Rohstoffe vorhanden sind.").">Schiffsteile pro Stunde: 0</span></td>";
 		else
-			echo "<td style=\"text-align:center;\">Schiffsteile pro Stunde: ".($cfg->get('alliance_shippoints_per_hour')*$buildlist[ALLIANCE_SHIPYARD_ID]['alliance_buildlist_current_level'])."</td>";
+			echo "<td style=\"text-align:center;\">Schiffsteile pro Stunde: ".($cfg->get('alliance_shippoints_per_hour')*$cu->alliance->buildlist->getLevel(ALLIANCE_SHIPYARD_ID))."</td>";
 					echo "</tr>
 					<tr>
-						<td style=\"text-align:center;\">Vorhandene Teile: ".$alliance_members[$cu->id]['user_alliace_shippoints']."</td>
+						<td style=\"text-align:center;\">Vorhandene Teile: ".$cu->allianceShippoints."</td>
 					</tr>";
 		
 		tableEnd();
@@ -1819,15 +1305,9 @@
 		
 		echo "<tr>
 						<td style=\"text-align:center;\">
-							<select id=\"user_buy_ship\" name=\"user_buy_ship\">";
-//							<option value=\"0\">User wählen...</option>";
-					  	// Allianzuser
-							foreach($alliance_members as $id => $data)
-							{
-								if ($cu==$data['user_nick'])
-					  		echo "<option value=\"".$id."\">".$data['user_nick']." (".nf($data['user_alliace_shippoints']).")</option>";
-					  	}
-  			echo "</select><br><br>
+							<select id=\"user_buy_ship\" name=\"user_buy_ship\">
+					  			<option value=\"".$cu->id."\">".$cu." (".nf($cu->allianceShippoints).")</option>
+							</select><br/><br/>
   						<input type=\"submit\" class=\"button\" name=\"ship_submit\" id=\"ship_submit\" value=\"Schiffe herstellen\" ".tm("Schiffe herstellen","Stellt aus den vorhandenen Teilen die gewünschten Schiffe für den ausgewählten User her.").">
 						</td>
 					</tr>";

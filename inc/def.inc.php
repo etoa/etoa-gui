@@ -314,7 +314,13 @@
 	// Allianzgebäude
 	define("ALLIANCE_MARKET_ID",2);								// ID des Allianzmarktplatzes
 	define("ALLIANCE_SHIPYARD_ID",3);								// ID des Allianzschiffwerftes
-	define("ALLIANCE_BUILD_CRYPTO_ID",6);
+	define("ALLIANCE_CRYPTO_ID",6);
+	define("ALLIANCE_MAIN_ID",1);
+	define("ALLIANCE_FLEET_CONTROL_ID",4);
+	define("ALLIANCE_RESEARCH_ID",5);
+	
+	define("ALLIANCE_TECH_TARN_ID",4);
+	define("ALLIANCE_TECH_SPY_ID",8);
 
 	// Schiffswerft
 	define("SHIPYARD_MIN_BUILD_TIME",20);					// Absolute minimal Bauzeit in Sekunden

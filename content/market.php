@@ -118,7 +118,7 @@
 			
 	// Lädt Stufe des Allianzmarktplatzes
 	if ($cu->allianceId()>0)
-		$alliance_market_level = $cu->alliance->getBuildingLevel("Handelszentrum");
+		$alliance_market_level = $cu->alliance->buildlist->getLevel(ALLIANCE_MARKET_ID);
 	else
 		$alliance_market_level = 0;
 	
@@ -134,9 +134,9 @@
 	$cooldown = ($factor==0) ? 0 : 3600/$factor;
 	if ($alliance_market_level>0)
 	{
-		if ($cu->alliance->getMarketCooldown()>time())
+		if ($cu->alliance->buildlist->getCooldown(ALLIANCE_MARKET_ID)>time())
 		{
-			$status_text = "Bereit in <span id=\"cdcd\">".tf($cu->alliance->getMarketCooldown()-time()."</span>");
+			$status_text = "Bereit in <span id=\"cdcd\">".tf($cu->alliance->buildlist->getCooldown(ALLIANCE_MARKET_ID)-time()."</span>");
 			$cd_enabled=true;
 		}
 		else
@@ -1103,7 +1103,7 @@
 		
 		if ($cd_enabled)
 		{
-			countDown("cdcd",$cu->alliance->getMarketCooldown());
+			countDown("cdcd",$cu->alliance->buildlist->getCooldown(ALLIANCE_MARKET_ID));
 		}
 
 	}

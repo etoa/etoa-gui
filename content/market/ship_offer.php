@@ -42,7 +42,7 @@
 						alliance_buildlist_alliance_id='".$cu->allianceId."'
 						AND alliance_buildlist_building_id='".ALLIANCE_MARKET_ID."';");
 
-			$cu->alliance->setMarketCooldown($cd);
+			$cu->alliance->setCooldown(ALLIANCE_MARKET_ID,$cd);
 		}
 		else
 		{
