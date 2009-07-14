@@ -156,6 +156,20 @@
 					user_blocked_to<'".time()."';
 			");
 		}
+		
+		/**
+		* Spionageangriffscounter auf 0 setzen
+		*
+		*/
+		static function resetSpyattacks()
+		{
+			dbquery("
+					UPDATE
+						users
+					SET
+						spyattack_counter='0';
+			");
+		}
 
 		static function getArray()
 		{

@@ -98,6 +98,7 @@
 			//
 			
 			// Vorausetzungen laden
+			$req = array();
 			$res = dbquery("
 			SELECT 
 				* 

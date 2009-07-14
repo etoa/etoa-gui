@@ -15,6 +15,7 @@ class MarketHandler
 	{
 		// Resulting rates
 		$rates = array_fill(0,NUM_RESOURCES,1);
+		$res_rates = array_fill(0,NUM_RESOURCES,1);
 
 		$where = $ts!= null ? ' WHERE timestamp<='.$ts.' ' : '';
 
@@ -70,6 +71,58 @@ class MarketHandler
 		{
 			$rates[$i] = round($rates[$i]/$normalizer,2);
 		}
+		
+		//Adding planet/fleet res in universe
+		$pres = dbquery("
+					   SELECT
+					   		SUM(planet_res_metal) as metal,
+							SUM(planet_res_crystal) as crystal,
+							SUM(planet_res_plastic) as plastic,
+							SUM(planet_res_fuel) as fuel,
+							SUM(planet_res_food) as food
+						FROM
+							planets
+						INNER JOIN
+							users
+	       				ON
+                    		planet_user_id=user_id
+                    		AND user_ghost=0
+						;");
+		$fres = dbquery("
+						SELECT
+							SUM(res_metal) as metal,
+							SUM(res_crystal) as crystal,
+							SUM(res_plastic) as plastic,
+							SUM(res_fuel) as fuel,
+							SUM(res_food) as food
+						FROM
+							fleet
+						");
+		$parr = mysql_fetch_array($pres);
+		$farr = mysql_fetch_array($fres);
+		
+		for ($i=0;$i<NUM_RESOURCES;$i++)
+		{
+			$res_rates[$i] = 1/($parr[$i]+$farr[$i]);
+		}
+		
+		$normalizer = array_sum($res_rates) / NUM_RESOURCES;
+		for ($i=0;$i<NUM_RESOURCES;$i++)
+		{
+			$res_rates[$i] = round($res_rates[$i]/$normalizer,2);
+		}
+		
+		for ($i=0;$i<NUM_RESOURCES;$i++)
+		{
+			$rates[$i] = $res_rates[$i]+$rates[$i];
+		}
+		
+		$normalizer = array_sum($rates) / NUM_RESOURCES;
+		for ($i=0;$i<NUM_RESOURCES;$i++)
+		{
+			$rates[$i] = round($rates[$i]/$normalizer,2);
+		}
+		
 		return $rates;
 	}
 

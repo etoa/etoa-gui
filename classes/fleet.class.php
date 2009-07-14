@@ -19,6 +19,7 @@
 		private $status;
 		private $launchTime;
 		private $landTime;
+		private $nextActionTime;
 		private $ships;
 		
 		/**
@@ -66,6 +67,7 @@
 				$this->status = $arr['status'];
 				$this->launchTime = $arr['launchtime'];
 				$this->landTime = $arr['landtime'];
+				$this->nextActionTime = $arr['nextactiontime'];
 				$this->pilots = $arr['pilots'];
 
 				$this->usageFuel = $arr['usage_fuel'] + $arr['support_usage_fuel'];
@@ -465,7 +467,7 @@
 		*/
 		function cancelFlight($alliance=false)
 		{
-			if ($this->status == 0)
+			if ($this->status == 0 || $this->status == 3)
 			{
 				if ($this->landTime() > time())
 				{
@@ -512,18 +514,30 @@
 											leader_id='".$this->id."';");
 							}
 						}
-
-						$tottime = $this->landTime() - $this->launchTime;
+						
+						$tottime = $this->landTime() - $this->launchTime + $this->nextActionTime;
 						$difftime = time() - $this->launchTime;
-						$this->launchTime = time();
-						$this->landTime = $this->launchTime + $difftime ;
-
-						$tmp = $this->targetId;
-						$this->targetId = $this->sourceId;
-						$this->sourceId = $tmp;
-
 						$this->status = 2;
-
+	
+						if ($this->actionCode=="support" && $this->status=3)
+						{
+							$this->launchTime = time();
+							$this->landTime = time() + $this->nextActionTime;
+							
+							$this->targetId = $this->nextId;
+						}
+						else
+						{
+							$tottime = $this->landTime() - $this->launchTime;
+							$difftime = time() - $this->launchTime;
+							$this->launchTime = time();
+							$this->landTime = $this->launchTime + $difftime ;
+							
+							$tmp = $this->targetId;
+							$this->targetId = $this->sourceId;
+							$this->sourceId = $tmp;
+						}
+						
 						$passed = $difftime / $tottime;
 						$returnFactor = 1 - $passed;
 
@@ -549,7 +563,7 @@
 					$this->error = "Flotte ist bereits beim Ziel angekommen!";
 			}
 			else
-				$this->error = "Flotte ist bereits auf dem R�ckflug!";
+				$this->error = "Flotte ist bereits auf dem Rückflug!";
 			return false;
 		}
 

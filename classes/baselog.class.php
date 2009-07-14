@@ -58,6 +58,13 @@
 					timestamp<'".$tstamp."'
 			");
 			$nr += mysql_affected_rows();
+			dbquery("
+				DELETE FROM
+					logs_fleet
+				WHERE
+					logs_fleet_timestamp<'".$tstamp."'
+			");
+			$nr += mysql_affected_rows();
 
 
 

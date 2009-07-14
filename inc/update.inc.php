@@ -13,6 +13,10 @@
 		$tmr = timerStart();
 		$nr = Users::cleanUpPoints();
 		$log.= "$nr alte Userpunkte-Logs gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
+		
+		$tmr = timerStart();
+		Users::resetSpyattacks();
+		$log.= "Spionageangriffscounter auf 0 gesetzt.\nDauer: ".timerStop($tmr)." sec\n\n";
 
 		// Alte Session-Logs
 		$tmr = timerStart();

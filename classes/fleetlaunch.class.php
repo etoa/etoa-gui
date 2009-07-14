@@ -512,6 +512,11 @@
 							$status=3;
 							$nextId = $this->sourceEntity->ownerAlliance();
 						}
+						elseif ($this->action=="support")
+						{
+							$status = 0;
+							$nextId = $this->sourceEntity->id();
+						}
 						else {
 							$status = 0;
 							$nextId = 0;

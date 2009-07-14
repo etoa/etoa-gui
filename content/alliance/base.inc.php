@@ -147,7 +147,8 @@
 				&& $cp->getRes(5) >= $food) 	
 			{
 				// Rohstoffe vom Planet abziehen
-				$cp->addRes(array(-$metal,-$crystal,-$plastic,-$fuel,-$food));
+				$res = array($metal,$crystal,$plastic,$fuel,$food);
+				$cp->subRes($res);
 				  
 				// Rohstoffe der Allianz gutschreiben
 				$cu->alliance->changeRes($metal,$crystal,$plastic,$fuel,$food);
@@ -748,7 +749,7 @@
 						}
 						elseif ($need_something)
 						{
-							$message = "<input type=\"button\" class=\"button\" name=\"storage_submit\" id=\"storage_submit\" value=\"Fehlende Roshtoffe einzahlen\" ".tm("Nicht genügend Rohstoffe","Es sind nicht genügend Rohstoffe vorhanden!<br>Klick auf den Button um die fehlenden Rohstoffe einzuzahlen.")." onclick=\"setSpends(".$need[0].", ".$need[1].", ".$need[2].", ".$need[3].", ".$need[4].");\"/>";
+							$message = "<input type=\"button\" class=\"button\" name=\"storage_submit\" id=\"storage_submit\" value=\"Fehlende Roshtoffe einzahlen\" ".tm("Nicht genügend Rohstoffe","Es sind nicht genügend Rohstoffe vorhanden!<br>Klick auf den Button um die fehlenden Rohstoffe einzuzahlen.")." onclick=\"setSpends(".$need[1].", ".$need[2].", ".$need[3].", ".$need[4].", ".$need[5].");\"/>";
 						}
 						else
 							$message = $cu->alliance->buildlist->getLastError();
@@ -883,7 +884,7 @@
 						}
 						elseif ($need_something)
 						{
-							$message = "<input type=\"button\" class=\"button\" name=\"storage_submit\" id=\"storage_submit\" value=\"Fehlende Roshtoffe einzahlen\" ".tm("Nicht genügend Rohstoffe","Es sind nicht genügend Rohstoffe vorhanden!<br>Klick auf den Button um die fehlenden Rohstoffe einzuzahlen.")." onclick=\"setSpends(".$need[0].", ".$need[1].", ".$need[2].", ".$need[3].", ".$need[4].");\"/>";
+							$message = "<input type=\"button\" class=\"button\" name=\"storage_submit\" id=\"storage_submit\" value=\"Fehlende Roshtoffe einzahlen\" ".tm("Nicht genügend Rohstoffe","Es sind nicht genügend Rohstoffe vorhanden!<br>Klick auf den Button um die fehlenden Rohstoffe einzuzahlen.")." onclick=\"setSpends(".$need[1].", ".$need[2].", ".$need[3].", ".$need[4].", ".$need[5].");\"/>";
 						}
 					}
 					echo "<th width=\"7%\">Stufe</th>
