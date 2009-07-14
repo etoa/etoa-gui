@@ -48,6 +48,9 @@ class User
 		void addCollectedNebula(double res);
 		void addRaidedRes(double res);
 		
+		void addSpyattackCount();
+		int getSpyattackCount();
+		
 		bool getPropertiesReturnMsg();
 		
 		double getTechBonus(std::string tech);
@@ -65,6 +68,7 @@ class User
 		int allianceId;
 		std::string userNick;
 		double points;
+		unsigned int spyattackCount;
 		
 		SpecialistData* specialist;
 		

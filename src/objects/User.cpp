@@ -20,7 +20,16 @@
 			this->loadData();
 		
 		return this->points;
-	}		
+	}	
+
+	int User::getSpyattackCount() {
+		if (!this->dataLoaded)
+			this->loadData();
+		
+		this->addSpyattackCount();
+		
+		return this->spyattackCount;
+	}
 	
 	SpecialistData* User::getSpecialist() 
 	{
@@ -226,17 +235,18 @@
 				mysqlpp::Connection *con_ = my.get();
 				
 				mysqlpp::Query query = con_->query();
-				query << "SELECT ";
-				query << "	user_nick, ";
-				query << "	user_alliance_id, ";
-				query << "	user_points, ";
-				query << "	user_specialist_id, ";
-				query << "	user_specialist_time ";
-				query << "FROM ";
-				query << " users ";
-				query << "WHERE ";
-				query << "	user_id='" << this->userId << "' ";
-				query << "LIMIT 1;";
+				query << "SELECT "
+					<< "	user_nick, "
+					<< "	user_alliance_id, "
+					<< "	user_points, "
+					<< "	user_specialist_id, "
+					<< "	user_specialist_time, "
+					<< "	spyattack_counter "
+					<< "FROM "
+					<< " users "
+					<< "WHERE "
+					<< "	user_id='" << this->userId << "' "
+					<< "LIMIT 1;";
 				mysqlpp::Result uRes = query.store();
 				query.reset();
 				
@@ -249,6 +259,7 @@
 						this->allianceId = (int)uRow["user_alliance_id"];
 						this->userNick = std::string(uRow["user_nick"]);
 						this->points = (double)uRow["user_points"];
+						this->spyattackCount = (int)uRow["spyattack_counter"];
 						
 						DataHandler &DataHandler = DataHandler::instance();
 						if ((int)uRow["user_specialist_id"]>0 && (int)uRow["user_specialist_time"]>time(0)) {
@@ -365,6 +376,22 @@
 		}
 		
 		return "";
+	}
+
+	void User::addSpyattackCount() {
+		My &my = My::instance();
+		mysqlpp::Connection *con_ = my.get();
+		
+		mysqlpp::Query query = con_->query();		
+		query << "UPDATE "
+			<< "	users "
+			<< "SET "
+			<< "	spyattack_counter='" << ++this->spyattackCount << "' "
+			<< "WHERE "
+			<< "	user_id='" << this->userId << "' "
+			<< "LIMIT 1;";
+		query.store();
+		query.reset();
 	}
 	
 	int User::getUserMain() {

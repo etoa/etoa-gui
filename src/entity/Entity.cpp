@@ -297,8 +297,8 @@
 				this->resPeople = 0;
 				return people;
 			}
-			return 0;
 		}
+		return 0;
 	}
 
 	double Entity::getWfMetal() {
