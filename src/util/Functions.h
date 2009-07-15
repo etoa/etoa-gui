@@ -19,6 +19,7 @@
 #ifndef ETOA_FUNCTIONS_H
 #define ETOA_FUNCTIONS_H
 
+#define MYSQLPP_MYSQL_HEADERS_BURIED
 #include <mysql++/mysql++.h>
 #include <time.h>
 #include <math.h>
@@ -114,7 +115,7 @@ namespace etoa
 	int getSolarPowerBonus(int t_min, int t_max);
 	
 	/**
-	* Liefet den Namen der Aktion zurück 
+	* Liefet den Namen der Aktion zurï¿½ck 
 	*
 	* @param string fAction, DB eintrag der Aktion
 	* @author Glaubinix
@@ -204,7 +205,7 @@ namespace etoa
 	double calcDistanceByPlanetId(int pid1, int pid2);
 	
 	/**
-	* FŸgt die Kampfpunkte zur Statistik hinzu
+	* Fï¿½gt die Kampfpunkte zur Statistik hinzu
 	*
 	* @param int userId Benutzer
 	* @param int points Anzahlpunkte

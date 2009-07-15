@@ -2,6 +2,7 @@
 #ifndef __SHIPHANDLER__
 #define __SHIPHANDLER__
 
+#define MYSQLPP_MYSQL_HEADERS_BURIED
 #include <mysql++/mysql++.h>
 
 #include <vector>

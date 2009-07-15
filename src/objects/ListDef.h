@@ -2,6 +2,7 @@
 #ifndef __ListDef__
 #define __ListDef__
 
+#define MYSQLPP_MYSQL_HEADERS_BURIED
 #include <mysql++/mysql++.h>
 
 #include "../MysqlHandler.h"

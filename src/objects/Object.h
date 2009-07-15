@@ -2,6 +2,7 @@
 #ifndef __OBJECT__
 #define __OBJECT__
 
+#define MYSQLPP_MYSQL_HEADERS_BURIED
 #include <mysql++/mysql++.h>
 #include <math.h>
 

@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include "../MysqlHandler.h"
+#define MYSQLPP_MYSQL_HEADERS_BURIED
 #include <mysql++/mysql++.h>
 
 #include "DataHandler.h"

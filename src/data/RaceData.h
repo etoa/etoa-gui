@@ -2,6 +2,7 @@
 #ifndef __RACEDATA__
 #define __RACEDATA__
 
+#define MYSQLPP_MYSQL_HEADERS_BURIED
 #include <mysql++/mysql++.h>
 
 #include "Data.h"

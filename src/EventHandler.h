@@ -2,6 +2,7 @@
 #ifndef __EVENTHANDLER__
 #define __EVENTHANDLER__
 
+#define MYSQLPP_MYSQL_HEADERS_BURIED
 #include <mysql++/mysql++.h>
 #include "MysqlHandler.h"
 

@@ -2,6 +2,7 @@
 #ifndef __SOLDATA__
 #define __SOLDATA__
 
+#define MYSQLPP_MYSQL_HEADERS_BURIED
 #include <mysql++/mysql++.h>
 
 #include "Data.h"

@@ -2,6 +2,7 @@
 #ifndef __MARKETHANDLER__
 #define __MARKETHANDLER__
 
+#define MYSQLPP_MYSQL_HEADERS_BURIED
 #include <mysql++/mysql++.h>
 
 #include "../EventHandler.h"

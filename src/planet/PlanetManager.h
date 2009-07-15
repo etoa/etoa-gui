@@ -2,6 +2,7 @@
 #ifndef __PLANETMANAGER__
 #define __PLANETMANAGER__
 
+#define MYSQLPP_MYSQL_HEADERS_BURIED
 #include <mysql++/mysql++.h>
 
 #include <vector>

@@ -2,6 +2,7 @@
 #ifndef __BUILDINGHANDLER__
 #define __BUILDINGHANDLER__
 
+#define MYSQLPP_MYSQL_HEADERS_BURIED
 #include <mysql++/mysql++.h>
 
 #include <ctime>

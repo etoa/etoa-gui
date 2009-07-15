@@ -4,6 +4,7 @@
 
 #include <ctime>
 #include <cstdio>
+#define MYSQLPP_MYSQL_HEADERS_BURIED
 #include <mysql++/mysql++.h>
 
 #include "../../MysqlHandler.h"

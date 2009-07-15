@@ -2,6 +2,7 @@
 #ifndef __DEFHANDLER__
 #define __DEFHANDLER__
 
+#define MYSQLPP_MYSQL_HEADERS_BURIED
 #include <mysql++/mysql++.h>
 
 #include <vector>

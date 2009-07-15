@@ -6,6 +6,7 @@
 #include <string.h>
 #include <mysql++/mysql++.h>
 #include "../util/Functions.h"
+#define MYSQLPP_MYSQL_HEADERS_BURIED
 #include "../MysqlHandler.h"
 #include "../config/ConfigHandler.h"
 

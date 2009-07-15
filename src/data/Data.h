@@ -2,6 +2,7 @@
 #ifndef __DATA__
 #define __DATA__
 
+#define MYSQLPP_MYSQL_HEADERS_BURIED
 #include <mysql++/mysql++.h>
 #include <string>
 

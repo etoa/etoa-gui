@@ -2,6 +2,7 @@
 #ifndef __SPECIALISTDATA__
 #define __SPECIALISTDATA__
 
+#define MYSQLPP_MYSQL_HEADERS_BURIED
 #include <mysql++/mysql++.h>
 
 #include "Data.h"

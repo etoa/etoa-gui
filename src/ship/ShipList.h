@@ -1,6 +1,7 @@
 #ifndef __SHIPLIST__
 #define __SHIPLIST__
 
+#define MYSQLPP_MYSQL_HEADERS_BURIED
 #include <mysql++/mysql++.h>
 
 #include "../MysqlHandler.h"

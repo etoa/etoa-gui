@@ -2,6 +2,7 @@
 #ifndef __PLANETDATA__
 #define __PLANETDATA__
 
+#define MYSQLPP_MYSQL_HEADERS_BURIED
 #include <mysql++/mysql++.h>
 
 #include "Data.h"

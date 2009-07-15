@@ -2,6 +2,7 @@
 #ifndef __CONFIGHANDLER__
 #define __CONFIGHANDLER__
 
+#define MYSQLPP_MYSQL_HEADERS_BURIED
 #include <mysql++/mysql++.h>
 #include <map>
 #include <vector>
