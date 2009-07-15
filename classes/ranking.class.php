@@ -254,9 +254,12 @@
 					building_points;
 			");
 	    $building=array();
-			while ($arr = mysql_fetch_row($res))
-			{
-				$building[$arr[0]][$arr[1]]=$arr[2];
+	    if (mysql_num_rows($res)>0)
+	    {
+				while ($arr = mysql_fetch_row($res))
+				{
+					$building[$arr[0]][$arr[1]]=$arr[2];
+				}
 			}
 	
 			// Technologien laden
@@ -269,9 +272,12 @@
 					tech_points;
 			");
 	    $tech=array();
-			while ($arr = mysql_fetch_row($res))
-			{
-				$tech[$arr[0]][$arr[1]]=$arr[2];
+	    if (mysql_num_rows($res)>0)
+	    {	    
+				while ($arr = mysql_fetch_row($res))
+				{
+					$tech[$arr[0]][$arr[1]]=$arr[2];
+				}
 			}
 			
 			//Cells laden
@@ -475,11 +481,14 @@
 					WHERE
 						buildlist_user_id='".$user_id."';
 				");
-				while ($arr = mysql_fetch_assoc($res))
+				if (mysql_num_rows($res)>0)
 				{
-					$p = round($building[$arr['buildlist_building_id']][$arr['buildlist_current_level']]);
-					$points+=$p;
-					$points_building+=$p;
+					while ($arr = mysql_fetch_assoc($res))
+					{
+						$p = round($building[$arr['buildlist_building_id']][$arr['buildlist_current_level']]);
+						$points+=$p;
+						$points_building+=$p;
+					}
 				}
 	
 				//
@@ -494,11 +503,14 @@
 					WHERE
 						techlist_user_id='".$user_id."';
 				");
-				while ($arr = mysql_fetch_assoc($res))
-				{
-					$p = round($tech[$arr['techlist_tech_id']][$arr['techlist_current_level']]);
-					$points+=$p;
-					$points_tech+=$p;
+	    	if (mysql_num_rows($res)>0)
+	    	{				
+					while ($arr = mysql_fetch_assoc($res))
+					{
+						$p = round($tech[$arr['techlist_tech_id']][$arr['techlist_current_level']]);
+						$points+=$p;
+						$points_tech+=$p;
+					}
 				}
 				
 				//

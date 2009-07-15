@@ -9,7 +9,7 @@
 			if (defined('ERROR_LOGFILE'))
 			{
 				$f = fopen(DBERROR_LOGFILE,"a+");
-				fwrite($f,date("d.m.Y H:i:s").", ".$_SERVER['REMOTE_ADDR'].", ".$cu."\n".$str."\n\n");
+				fwrite($f,date("d.m.Y H:i:s").", ".(isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR']:'local').", ".$cu."\n".$str."\n\n");
 				fclose($f);
 			}
 			if (!defined('USE_HTML') || USE_HTML)

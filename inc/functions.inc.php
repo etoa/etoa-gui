@@ -781,7 +781,7 @@
 		else
 		{
 			global $cu;
-			if ($cu->properties->cssStyle=="Graphite")
+			if (isset($cu->properties) && $cu->properties->cssStyle=="Graphite")
 				$w = "width:650px";			
 			else
 				$w = "width:98%";
@@ -820,7 +820,7 @@
 		else
 		{
 			global $cu;
-			if ($cu->properties->cssStyle=="Graphite")
+			if (isset($cu->properties) && $cu->properties->cssStyle=="Graphite")
 				$w = "width:650px";			
 			else
 				$w = "width:98%";

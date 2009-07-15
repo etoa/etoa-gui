@@ -12,7 +12,7 @@
 		$render_time = explode(" ",microtime());
 		$render_starttime=$render_time[1]+$render_time[0];
 	
-		$out.="<h2>Spieler-Auslastung</h2>";
+		$out="<h2>Spieler-Auslastung</h2>";
 		$out.="<img src=\"cache/out/userstats.png\" alt=\"User-Statistik\" />";
 
 		//

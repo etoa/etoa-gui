@@ -127,7 +127,7 @@
 					'".$facility."',
 					'".$severity."',
 					'".time()."',
-					'".$_SERVER['REMOTE_ADDR']."',
+					'".(isset($_SERVER['REMOTE_ADDR'])?$_SERVER['REMOTE_ADDR']:'')."',
 					'".addslashes($msg)."'
 				);");
 			}
