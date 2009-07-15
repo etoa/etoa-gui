@@ -184,7 +184,7 @@ namespace etoa
 			value.erase(value.begin()+(int)found,value.end());
 		}
 		
-		/** Fügt die Tausenderzeichen hinzu **/
+		/** Fï¿½gt die Tausenderzeichen hinzu **/
 		int length = value.length();
 		int i=3;
 		while (length > i) {
@@ -284,7 +284,7 @@ namespace etoa
 		// Calc time and distance
 		int nx = (int)config.nget("num_of_cells", 1); //$conf['num_of_cells']['p1'];		// Anzahl Zellen Y
 		int ny = (int)config.nget("num_of_cells", 2); //$conf['num_of_cells']['p2'];		// Anzahl Zellen X
-		int ae =(int)config.nget("cell_length", 0); //$conf['cell_length']['v'];			// Länge vom Solsys in AE
+		int ae =(int)config.nget("cell_length", 0); //$conf['cell_length']['v'];			// Lï¿½nge vom Solsys in AE
 		int np = (int)config.nget("num_planets", 2);; //$conf['num_planets']['p2'];			// Max. Planeten im Solsys
 
 		double dx = fabs(((((int)rowPlanet2["sx"]-1) * nx) + (int)rowPlanet2["cx"]) - ((((int)rowPlanet1["sx"]-1) * nx) + (int)rowPlanet1["cx"]));
@@ -385,7 +385,7 @@ namespace etoa
 			<< "	id=" << userId << ";";
 		query.store();
 		query.reset();
-		std::string text = "Der Spieler " + etoa::d2s(userId) +" erhŠlt " + etoa::d2s(points) + " Kampfpunkt(e). Grund: " + reason;
+		std::string text = "Der Spieler " + etoa::d2s(userId) +" erhÃ¤lt " + etoa::d2s(points) + " Kampfpunkt(e). Grund: " + reason;
 		add_log(17,text,0);
 	}
 	
@@ -403,7 +403,7 @@ namespace etoa
 				<< "	id=" << userId << ";";
 			query.store();
 			query.reset();
-			std::string text = "Der Spieler " + etoa::get_user_nick(userId) +" erhŠlt 1 Kampfpunkte. Grund: " + reason;
+			std::string text = "Der Spieler " + etoa::get_user_nick(userId) +" erhÃ¤lt 1 Kampfpunkte. Grund: " + reason;
 			add_log(17,text,0);
 		}
 	}
