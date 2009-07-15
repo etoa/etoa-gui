@@ -250,8 +250,10 @@
         AND planets.planet_user_main=1
   )
 	ON 
-  	buddylist.bl_user_id='".$cu->id."'
-    AND buddylist.bl_buddy_id=users.user_id
+  		buddylist.bl_user_id='".$cu->id."'
+    	AND buddylist.bl_buddy_id=users.user_id
+	GROUP BY
+		users.user_id
 	ORDER BY
 		users.user_nick ASC;");
 	if (mysql_num_rows($res)>0)
