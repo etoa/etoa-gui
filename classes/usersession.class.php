@@ -58,6 +58,7 @@ class UserSession extends Session
 					$t = time();
 					$this->time_login = $t;
 					$this->time_action = $t;
+                    $this->sittingActive = 0;
 					$this->registerSession();
 
 					$this->firstView = true;
