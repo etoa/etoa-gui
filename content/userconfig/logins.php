@@ -29,15 +29,15 @@
     	tableStart("Letzte 10 Logins");
 			$res=dbquery("
 			SELECT 
-				log_logintime,
-				log_ip,
-				log_hostname 
+				time_login,
+				ip_addr ,
+				user_agent  
 			FROM 
 				user_sessionlog 
 			WHERE
-				log_user_id=".$cu->id."
+				user_id=".$cu->id."
 			ORDER BY 
-				log_logintime DESC
+				time_login DESC
 			LIMIT 
 				10;");
 			echo "<tr><th>Zeit</th>
@@ -45,9 +45,9 @@
 			<th>Hostname</th></tr>";
 			while ($arr=mysql_fetch_array($res))
 			{
-				echo "<tr><td>".df($arr['log_logintime'])."</td>";
-				echo "<td>".$arr['log_ip']."</td>";
-				echo "<td>".$arr['log_hostname']."</td></tr>";
+				echo "<tr><td>".df($arr['time_login'])."</td>";
+				echo "<td>".$arr['ip_addr']."</td>";
+				echo "<td>".$arr['user_agent']."</td></tr>";
 			}
     	tableEnd();
     	tableStart("Letzte 10 fehlgeschlagene Logins");
