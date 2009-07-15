@@ -47,7 +47,7 @@
 		void loadData () {
 			Config &config = Config::instance();
 			std::ifstream datein;
-			std::string datei = config.getFrontendPath() + "conf.inc.php";
+			std::string datei = config.getFrontendPath() + "db.conf.php";
 			std::string zeichen;
 			std::string value, key;
 			std::size_t defineFound, middleFound, endFound;

@@ -46,7 +46,7 @@
 	// Liefert den Frontendpfad zurück
 	std::string Config::getFrontendPath()
 	{
-		return "/var/www/" + this->gameRound + ".etoa.ch/htdocs/";
+		return "/var/www/" + this->gameRound + ".etoa.ch/htdocs/config";
 	}
 
 	void Config::reloadConfig()
