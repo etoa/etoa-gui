@@ -11,7 +11,8 @@ $indexpage['feeds']=array('url'=>'.','label'=>'Setup');
 $tpl->assign("topmenu",$indexpage);
 $tpl->display(getcwd()."/tpl/headerext.html");
 
-session_start();
+if (!isset($_SESSION))
+    session_start();
 
 if (!isset($_SESSION['INSTALL']))
 	$_SESSION['INSTALL'] = array();
