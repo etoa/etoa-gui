@@ -780,7 +780,11 @@
 		}
 		else
 		{
-			$w = "width:98%";
+			global $cu;
+			if ($cu->properties->cssStyle=="Graphite")
+				$w = "width:650px";			
+			else
+				$w = "width:98%";
 		}
 		if ($layout=="double")
 		{
@@ -815,7 +819,11 @@
 		}
 		else
 		{
-			$w = "width:98%";
+			global $cu;
+			if ($cu->properties->cssStyle=="Graphite")
+				$w = "width:650px";			
+			else
+				$w = "width:98%";
 		}
 		
 		echo "<div class=\"boxLayout\" style=\"".$w."\">";
