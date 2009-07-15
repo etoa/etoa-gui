@@ -1057,7 +1057,7 @@
 		{
 			$w = 468;
 			$h = 60;
-			$font = "../images/userbanner/calibri.ttf";
+			$font = RELATIVE_ROOT."images/userbanner/calibri.ttf";
 			
 			$res=dbquery("
 			SELECT
@@ -1083,7 +1083,7 @@
 			{
 				while ($arr = mysql_fetch_row($res))
 				{
-					$im = imagecreatefrompng("../images/userbanner/userbanner1.png");
+					$im = imagecreatefrompng(RELATIVE_ROOT."images/userbanner/userbanner1.png");
 					$colBlack = imagecolorallocate($im,0,0,0);
 					$colGrey = imagecolorallocate($im,120,120,120);
 					$colYellow = imagecolorallocate($im,255,255,0);
