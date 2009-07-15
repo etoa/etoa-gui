@@ -181,6 +181,7 @@
 							}
 							else
 							{
+								unset($pw);
 								error_msg("Das Passwort darf nicht dasselbe wie das normale Accountpasswort sein!");
 							}
 						}
@@ -216,7 +217,7 @@
 				echo "<tr>
 						<th width=\"35%\">Sitter Passwort:</th>
 						<td width=\"65%\" colspan=\"2\" ".tm("Sitter Passwort","Definiere hier das Passwort, mit dem sich dein Sitter einlogen kann.").">
-							<input type=\"password\" name=\"sitter_password1\" maxlength=\"20\" size=\"20\" value=\"\" />
+							<input type=\"password\" name=\"sitter_password1\" maxlength=\"20\" size=\"20\" value=\"".(isset($pw)?$pw:'')."\" autocomplete=\"off\" />
 						</td>
 					 </tr>";
 
@@ -224,7 +225,7 @@
 				echo "<tr>
 						<th width=\"35%\">Sitter Passwort (wiederholen):</th>
 						<td width=\"65%\" colspan=\"2\" ".tm("Sitter Passwort (wiederholen)","Zur SIcherheit, musst du hier das Passwort noch einmal hinschreiben.").">
-							<input type=\"password\" name=\"sitter_password2\" maxlength=\"20\" size=\"20\" value=\"\" />
+							<input type=\"password\" name=\"sitter_password2\" maxlength=\"20\" size=\"20\" value=\"".(isset($pw)?$pw:'')."\" autocomplete=\"off\" />
 						</td>
 					 </tr>";
 
@@ -379,7 +380,7 @@
 		WHERE
 			s.user_id=".$cu->id."
 		ORDER BY
-			s.date_from;");
+			s.date_from DESC;");
 		$days = $cu->sittingDays;
 		if (mysql_num_rows($res)>0)
 		{

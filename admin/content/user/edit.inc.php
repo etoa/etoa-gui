@@ -166,37 +166,7 @@
 				
 				cms_ok_msg("&Auml;nderungen wurden &uuml;bernommen!","submitresult");
 
-				//Aktuelles Sitten Stoppen
-				if(isset($_POST['user_sitting_active']) && $_POST['user_sitting_active']==1)
-				{
-                    dbquery("
-                    UPDATE
-                        user_sitting
-                    SET
-                        user_sitting_active='0',
-                        user_sitting_sitter_user_id='0',
-                        user_sitting_sitter_password='0',
-                        user_sitting_date='0'
-                    WHERE
-                        user_sitting_user_id='".$id."';");
-
-                	//löscht alle gespeichertet Sittingdaten des users
-               		dbquery("DELETE FROM user_sitting_date WHERE user_sitting_date_user_id='".$id."';");
-
-				}
-				//Sitter Passwort ändern
-				if (isset($_POST['user_sitting_sitter_password']) && $_POST['user_sitting_sitter_password']!="")
-				{
-                    dbquery("
-                    UPDATE
-                        user_sitting
-                    SET
-                        user_sitting_sitter_password='".md5($_POST['user_sitting_sitter_password'])."'
-                    WHERE
-                        user_sitting_user_id='".$id."';");
-					echo "Das Sitter Passwort wurde ge&auml;ndert!<br>";
-					add_log(8,$_SESSION[SESSION_NAME]['user_nick']." &auml;ndert das Sitterpasswort von ".$_POST['user_nick']."",time());
-				}				
+		
 			}
 
 			// User löschen
@@ -833,57 +803,7 @@
 								</td>
 							</tr>";
 
-							$sitting_res=dbquery("
-							SELECT 
-								user_sitting_sitter_user_id,
-								user_sitting_sitter_ip,
-								user_sitting_date 
-							FROM 
-								user_sitting 
-							WHERE 
-								user_sitting_user_id='".$arr['user_id']."' 
-								AND user_sitting_active='1';");
-							if(mysql_num_rows($sitting_res)>0)
-							{
-								$sitting_arr = mysql_fetch_array($sitting_res);
-								
-								echo "<tr>
-												<td class=\"tbltitle\" valign=\"top\">Sitter Passwort</td>
-												<td class=\"tbldata\">
-													<input type=\"text\" name=\"user_sitting_sitter_password\" value=\"\" size=\"35\" maxlength=\"250\" />
-												</td>
-											</tr>
-											<tr>
-												<td class=\"tbltitle\" valign=\"top\">Sitting Infos</td>
-												<td class=\"tbldata\">
-													Sitter: ".get_user_nick($sitting_arr['user_sitting_sitter_user_id'])."<br>Aktiviert am: ".date("d.m.Y H:i",$sitting_arr['user_sitting_date'])."<br><br>Zugriffsdaten:<br>";
-			
-			                    $date_res = dbquery("
-			                    SELECT
-			                        *
-			                    FROM
-			                        user_sitting_date
-			                    WHERE
-			                        user_sitting_date_user_id='".$arr['user_id']."'
-			                        AND user_sitting_date_from!=0
-			                        AND user_sitting_date_to!=0
-			                    ORDER BY
-			                        user_sitting_date_from;");
-			
-			                    while ($date_arr=mysql_fetch_array($date_res))
-			                    {
-			                    	echo "Von ".date("d.m.Y H:i",$date_arr['user_sitting_date_from'])." bis ".date("d.m.Y H:i",$date_arr['user_sitting_date_to'])."<br>";
-			                    }
-			            echo "</td>
-			            		</tr>
-			            		<tr>
-			            			<td class=\"tbltitle\" valign=\"top\">Sitting Deaktivieren</td>
-			            			<td class=\"tbldata\">
-			                    Ja: <input type=\"radio\" name=\"user_sitting_active\" value=\"1\"/>
-													Nein: <input type=\"radio\" name=\"user_sitting_active\" value=\"0\" checked=\"checked\"/>
-												</td></tr>";
-							}							
-							
+						
 					echo "</table>";
 					echo "
 					<script type=\"text/javascript\">
