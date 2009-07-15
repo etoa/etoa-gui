@@ -354,7 +354,8 @@
 						return new UnknownEntity($id);
 				}			
 			}
-			return false;
+            
+			return null;
 			//die ("Ungültige ID");
 		}
 		

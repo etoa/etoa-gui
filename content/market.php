@@ -56,6 +56,9 @@
 	*
 	********/
 
+    if ($cfg->market_enabled->v == 1)
+    {
+
 	$mode = isset($_GET['mode']) ? $_GET['mode'] : "";
 
 	//Überprüfung ob der Marktplatz schon gebaut wurde
@@ -1119,7 +1122,16 @@
 
 		error_msg("Der Marktplatz wurde noch nicht gebaut.");
 	}
-		
+
+
+    }
+    else
+    {
+		echo '<h1>Marktplatz</h1>';
+		$cp->resBox($cu->properties->smallResBox);
+
+		error_msg("Der Marktplatz ist momentan im Spiel deaktiviert.");
+    }
 
 
 ?>

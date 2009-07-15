@@ -225,21 +225,32 @@
 							$for_alliance="";
 
 						$i = 0;
-						foreach ($resNames as $rk=>$rn)
+
+						$te = Entity::createFactoryById($row['entity_id']);
+                        if ($te!=null)
+                        {
+
+                        foreach ($resNames as $rk=>$rn)
 						{
-							echo "<tr>
+                            echo "<tr>
 							<td class=\"rescolor".$rk."\">".$resIcons[$rk]." <b>".$rn."</b>:</td>
 							<td class=\"rescolor".$rk."\">".($row['sell_'.$rk]>0 ? nf($row['sell_'.$rk]) : '-')."</td>
 							<td class=\"rescolor".$rk."\">".($row['buy_'.$rk]>0 ? nf($row['buy_'.$rk]) : '-')."</td>";
 							if ($i++==0)
 							{
-								$te = Entity::createFactoryById($row['entity_id']);
-								echo "<td rowspan=\"5\">".$te->detailLink()."</td>";
+                                
+								echo "<td rowspan=\"5\">".($te->detailLink())."</td>";
 								echo "<td rowspan=\"5\">".date("d.m.Y  G:i:s", $row['datum'])."<br/><br/>".stripslashes($row['text'])."</td>";
 								echo "<td rowspan=\"5\"><input type=\"radio\" name=\"ressource_market_id\" value=\"".$row['id']."\"><br/><br/>".$for_alliance."</td></tr>";
 							}
 							echo "</tr>";
 						}
+                        }
+                        else
+                        {
+                            echo "<tr><td colspan=\"6\">Angebot von ungültigem Ziel</td></tr>";
+                        }
+
 						$cnt++;
 						if ($cnt<mysql_num_rows($res))
 							echo "<tr><td colspan=\"7\" style=\"height:10px;background:#000\"></td></tr>";

@@ -20,7 +20,7 @@
   <items>
     <item name="game_name" cat="1">
       <v comment="Spiel-Name" type="text">EtoA</v>
-      <p1 comment="Version" type="text">v3</p1>
+      <p1 comment="Version" type="text">v3.1</p1>
     </item>
 		<item name="roundname" cat="1">
       <v comment="Runde-Name" type="text">Runde X</v>
@@ -622,6 +622,9 @@ Anmerkung: Eine Kopie dieser Nachricht wird in Eurer Nachrichten-Box hinterlegt.
       <v comment="SPECIALIST_AVAILABILITY_FACTOR basierend auf Faktor * Anzahl" type="text">0.3</v>
       <p1 comment="SPECIALIST_MAX_COSTS_FACTOR" type="text">10</p1>
       <p2 comment="SPECIALIST_MIN_POINTS_REQ" type="text">100000</p2>
+    </item>
+    <item name="market_enabled" cat="6">
+      <v comment="Marktplatz aktiv" type="onoff">1</v>
     </item>
     <item name="market_response_time" cat="6">
       <v comment="Angebotsdauer (in Tagen)" type="text">14</v>
