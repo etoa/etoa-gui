@@ -1,4 +1,4 @@
-<?PHP
+e<?PHP
 
 define('ADMIN_ROOT_GROUP',8);
 
@@ -16,7 +16,7 @@ session_start();
 if (!isset($_SESSION['INSTALL']))
 	$_SESSION['INSTALL'] = array();
 
-if (!file_exists("conf.inc.php") && !file_exists("../conf.inc.php"))
+if (!file_exists(RELATIVE_ROOT."config/db.config.php"))
 {
 	echo "<h1>EtoA Installation</h1>";
 
