@@ -799,8 +799,11 @@
 				}
 			}	
 		}
-	}	
+	}
 
+	//
+	// New simple AJAX based Gamelogs viewer
+	//
 	elseif ($sub == "gamelogs")
 	{
 		echo "<h2>Spiellogs</h2>";
@@ -913,6 +916,66 @@
 		echo "</div>";
 	}
 
+	//
+	// New simple AJAX based general log viewer
+	//
+	elseif ($sub=="fleetlogs")
+	{
+		echo "<h2>Flottenlogs</h2>";
+
+		?>
+		<script type="text/javascript">
+			<!--
+			function applyFilter(limit)
+			{
+				xajax_applyFleetLogFilter(xajax.getFormValues('filterform'),limit);
+			}
+			function resetFilter()
+			{
+				document.getElementById('flaction').value=0;
+				document.getElementById('logsev').value=0;
+				document.getElementById('searchuser').value='';
+				applyFilter(0);
+			}
+			-->
+		</script>
+		<?PHP
+
+		iBoxStart("Filter",800);
+		echo "<form action=\".\" method=\"post\" id=\"filterform\"><p>";
+		echo "<label for=\"logsev\">Ab Schweregrad:</label>
+		<select id=\"logsev\" name=\"logsev\" onchange=\"applyFilter(0)\">";
+		foreach (Log::$severities as $k => $v)
+		{
+			echo "<option value=\"".$k."\">".$v."</option>";
+		}
+		echo "</select> &nbsp; ";
+
+		echo "<label for=\"logcat\">Aktion:</label>
+		<select id=\"flaction\" name=\"flaction\" onchange=\"applyFilter(0)\">
+		<option value=\"\">(Egal)</option>";
+		foreach (FleetAction::getAll() as $k => $v)
+		{
+			echo "<option value=\"".$k."\">".$v."</option>";
+		}
+		echo "</select> &nbsp; ";
+
+		echo " <label for=\"searchuser\">User:</label> <input type=\"text\" id=\"searchuser\" name=\"searchuser\" value=\"\" autocomplete=\"off\" /> &nbsp; ";
+
+		echo "<input type=\"submit\" value=\"Anwenden\" onclick=\"applyFilter(0);return false;\" /> &nbsp;
+		<input type=\"button\" value=\"Reset\" onclick=\"resetFilter();\" />";
+		echo "</p></form>";
+		iBoxEnd();
+
+		echo "<div id=\"log_contents\">";
+		showFleetLogs();
+		echo "</div>";
+
+		//$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM logs;"));
+		//echo "<p>Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.</p>";
+
+	}
+
 
 	//
 	// New simple AJAX based general log viewer
@@ -927,6 +990,14 @@
 			function applyFilter(limit)
 			{
 				xajax_applyLogFilter(xajax.getFormValues('filterform'),limit);
+			}
+			function resetFilter()
+			{
+				document.getElementById('logcat').value=0;
+				document.getElementById('logsev').value=0;
+				document.getElementById('searchtext').value='';
+				applyFilter(0);
+				document.getElementById('searchtext').focus();
 			}
 			-->
 		</script>
@@ -956,7 +1027,7 @@
 
 		echo " <label for=\"searchtext\">Suchtext:</label> <input type=\"text\" id=\"searchtext\" name=\"searchtext\" value=\"\" /> &nbsp;
 		<input type=\"submit\" value=\"Anwenden\" onclick=\"applyFilter(0);document.getElementById('searchtext').select();return false;\" /> &nbsp;
-		<input type=\"button\" value=\"Reset\" onclick=\"document.getElementById('logcat').value=0;document.getElementById('logsev').value=0;document.getElementById('searchtext').value='';applyFilter(0);document.getElementById('searchtext').focus();\" />";
+		<input type=\"button\" value=\"Reset\" onclick=\"resetFilter();\" />";
 		echo "</p></form>";
 		iBoxEnd();
 

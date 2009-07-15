@@ -4,9 +4,10 @@ $xajax->register(XAJAX_FUNCTION,"logSelectorCat");
 $xajax->register(XAJAX_FUNCTION,"checkLogFormular");
 $xajax->register(XAJAX_FUNCTION,"logChangeButton");
 $xajax->register(XAJAX_FUNCTION,"showBattle");
-$xajax->register(XAJAX_FUNCTION,"showFleetLogs");
+
 $xajax->register(XAJAX_FUNCTION,"applyLogFilter");
 $xajax->register(XAJAX_FUNCTION,"applyGameLogFilter");
+$xajax->register(XAJAX_FUNCTION,"applyFleetLogFilter");
 
 function applyLogFilter($args,$limit=0)
 {
@@ -25,6 +26,17 @@ function applyGameLogFilter($args,$limit=0)
 	require_once("inc/admin_functions.inc.php");
 	ob_start();
 	showGameLogs($args,$limit);
+	$objResponse->assign("log_contents","innerHTML",ob_get_clean());
+
+	return $objResponse;
+}
+
+function applyFleetLogFilter($args,$limit=0)
+{
+	$objResponse = new xajaxResponse();
+	require_once("inc/admin_functions.inc.php");
+	ob_start();
+	showFleetLogs($args,$limit);
 	$objResponse->assign("log_contents","innerHTML",ob_get_clean());
 
 	return $objResponse;
@@ -1070,53 +1082,6 @@ function showBattle($battle,$id)
 	{
 		$objResponse->assign("show_battle_".$id."","innerHTML", "");
 	}
-
-	$objResponse->assign("logsinfo","innerHTML",ob_get_contents());
-	ob_end_clean();
-	
-	return $objResponse;	
-	
-}
-
-/*
-function showGameLogs($log_text,$id)
-{	
-	ob_start();
-	$objResponse = new xajaxResponse();
-		
-	if($log_text!="")
-	{
-		$objResponse->assign("show_game_logs_".$id."","innerHTML", $log_text);	
-	}	
-	else
-	{
-		$objResponse->assign("show_game_logs_".$id."","innerHTML", "");
-	}
-
-
-	$objResponse->assign("logsinfo","innerHTML",ob_get_contents());
-	ob_end_clean();
-	
-	return $objResponse;	
-	
-}
-
-*/
-
-function showFleetLogs($log_text,$id)
-{	
-	ob_start();
-	$objResponse = new xajaxResponse();
-		
-	if($log_text!="")
-	{
-		$objResponse->assign("show_fleet_logs_".$id."","innerHTML", $log_text);	
-	}	
-	else
-	{
-		$objResponse->assign("show_fleet_logs_".$id."","innerHTML", "");
-	}
-
 
 	$objResponse->assign("logsinfo","innerHTML",ob_get_contents());
 	ob_end_clean();

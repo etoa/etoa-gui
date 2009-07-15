@@ -217,8 +217,11 @@ class UserSession extends Session
 				id='".$sid."'
 			;");
 		}
-		session_destroy();
-		session_regenerate_id();
+        if ($logoutPressed==1)
+        {
+            session_destroy();
+            session_regenerate_id();
+        }
 	}
 
 	static function cleanup()
@@ -244,7 +247,7 @@ class UserSession extends Session
 
 	static function kick($sid)
 	{
-		self::unregisterSession($sid);
+		self::unregisterSession($sid,0);
 	}
 
 }

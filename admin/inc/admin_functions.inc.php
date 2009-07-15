@@ -1240,6 +1240,123 @@ function showLogs($args=null,$limit=0)
 	}
 }
 
+function showFleetLogs($args=null,$limit=0)
+{
+	$paginationLimit = 50;
+
+	$action = is_array($args) && isset($args['flaction']) ? $args['flaction'] : 0;
+	$sev = is_array($args) && isset($args['logsev'])  ? $args['logsev'] : 0;
+	
+	$order = "timestamp DESC";
+
+	$sql1 = "SELECT ";
+	$sql2 = " * ";
+
+	$sql3= " FROM logs_fleet l ";
+	if (isset($args['searchuser']) && $args['searchuser']!="" && !is_numeric($args['searchuser']))
+	{
+		$sql3.=" INNER JOIN users u ON u.user_id=l.user_id AND u.user_nick LIKE '%".$args['searchuser']."%' ";
+	}
+
+	$sql3.= " WHERE 1 ";
+	if ($action!="")
+	{
+		$sql3.=" AND action='".$action."' ";
+	}
+	if ($sev >0)
+	{
+		$sql3.=" AND severity >= ".$sev." ";
+	}
+	if (isset($args['searchuser']) && is_numeric($args['searchuser']))
+	{
+		$sql3.=" AND l.user_id=".intval($args['searchuser'])." ";
+	}
+	$sql3.= " ORDER BY $order";
+
+	$res = dbquery($sql1." COUNT(id) as cnt ".$sql3);
+	$arr = mysql_fetch_row($res);
+	$total = $arr[0];
+
+	$limit = max(0,$limit);
+	$limit = min($total,$limit);
+	$limit -= $limit % $paginationLimit;
+	$limitstring = "$limit,$paginationLimit";
+
+	$sql4 = " LIMIT $limitstring";
+
+	$res = dbquery($sql1.$sql2.$sql3.$sql4);
+	$nr = mysql_num_rows($res);
+	if ($nr>0)
+	{
+		echo "<table class=\"tb\">";
+		echo "<tr><th colspan=\"10\">
+		<div style=\"float:left;\">";
+
+		if ($limit>0)
+		{
+			echo "<input type=\"button\" value=\"&lt;&lt;\" onclick=\"applyFilter(0)\" /> ";
+			echo "<input type=\"button\" value=\"&lt;\" onclick=\"applyFilter(".($limit-$paginationLimit).")\" /> ";
+		}
+		else
+		{
+			echo "<input type=\"button\" value=\"&lt;&lt;\" disabled=\"disabled\" /> ";
+			echo "<input type=\"button\" value=\"&lt;\" disabled=\"disabled\" /> ";
+		}
+		if ($limit < $total-$paginationLimit)
+		{
+			echo "<input type=\"button\" value=\"&gt;\" onclick=\"applyFilter(".($limit+$paginationLimit).")\" /> ";
+			echo "<input type=\"button\" value=\"&gt;&gt;\" onclick=\"applyFilter(".($total-($total%$paginationLimit)).")\" /> ";
+		}
+		else
+		{
+			echo "<input type=\"button\" value=\"&gt;\" disabled=\"disabled\" /> ";
+			echo "<input type=\"button\" value=\"&gt;&gt;\" disabled=\"disabled\" /> ";
+		}
+
+		echo "</div><div style=\"float:right\">
+		".($limit+1)." - ".($limit+$nr)." von $total
+		</div><br style=\"clear:both;\" />
+		</th></tr>";
+		echo "<tr>
+			<th style=\"width:140px;\">Datum</th>
+			<th>Schweregrad</th>
+			<th>Besitzer</th>
+			<th>Aktion</th>
+			<th>Start</th>
+			<th>Ziel</th>
+			<th>Startzeit</th>
+			<th>Landezeit</th>
+			<th>Flotte</th>
+		</tr>";
+		while ($arr = mysql_fetch_assoc($res))
+		{
+			$owner = new User($arr['user_id']);
+			$fa = FleetAction::createFactory($arr['action']);
+			$startEntity = Entity::createFactoryById($arr['entity_from']);
+			$endEntity = Entity::createFactoryById($arr['entity_to']);
+			echo "<tr>
+			<td>".df($arr['timestamp'])."</td>
+			<td>".Log::$severities[$arr['severity']]."</td>
+			<td>$owner</td>
+			<td>$fa</td>
+			<td>".$startEntity."<br/>".$startEntity->entityCodeString().", ".$startEntity->owner()."</td>
+			<td>".$endEntity."<br/>".$endEntity->entityCodeString().", ".$endEntity->owner()."</td>
+			<td>".df($arr['launchtime'])."</td>
+			<td>".df($arr['landtime'])."</td>
+			<td><a href=\"javascript:;\" onclick=\"toggleBox('details".$arr['id']."')\">Bericht</a></td>
+			</tr>";
+			echo "<tr id=\"details".$arr['id']."\" style=\"display:none;\"><td colspan=\"9\">
+
+			</td></tr>";
+		}
+		echo "</table>";
+	}
+	else
+	{
+		echo "<p>Keine Daten gefunden!</p>";
+	}
+}
+
 function showGameLogs($args=null,$limit=0)
 {
 	$paginationLimit = 25;
@@ -1416,7 +1533,7 @@ function showGameLogs($args=null,$limit=0)
 			<td><a href=\"javascript:;\" onclick=\"toggleBox('details".$arr['id']."')\">Details</a></td>
 			</tr>";
 			echo "<tr id=\"details".$arr['id']."\" style=\"display:none;\"><td colspan=\"9\">".text2html($arr['message'])."
-			<br/><br/>".$arr['ip']."</td></tr>";
+			<br/><br/>IP: ".$arr['ip']."</td></tr>";
 		}
 		echo "</table>";
 	}
@@ -1425,5 +1542,8 @@ function showGameLogs($args=null,$limit=0)
 		echo "<p>Keine Daten gefunden!</p>";
 	}
 }
+
+
+
 
 ?>

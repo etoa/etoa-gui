@@ -314,9 +314,10 @@
 	$navmenu['Chat']['Chat']['level']=0;
 
 
-	$navmenu['Logs']['Allgemeine Logs'] = array('page'=>"logs",'sub'=>"",'level'=>0);
-	$navmenu['Logs']['Spiellogs'] = array('page'=>"logs",'sub'=>"gamelogs",'level'=>0);
-	$navmenu['Logs']['Kampfberichte'] = array('page'=>"logs",'sub'=>"logs_battle",'level'=>0);
+	$navmenu['Logs']['Allgemein'] = array('page'=>"logs",'sub'=>"",'level'=>0);
+	$navmenu['Logs']['Spiel'] = array('page'=>"logs",'sub'=>"gamelogs",'level'=>0);
+	$navmenu['Logs']['Flotten'] = array('page'=>"logs",'sub'=>"fleetlogs",'level'=>0);
+	$navmenu['Logs']['Kämpfe'] = array('page'=>"logs",'sub'=>"battlelogs",'level'=>0);
 	
 	
 	$navmenu['Logs']['Angriffsverletzung']['page']="logs";
