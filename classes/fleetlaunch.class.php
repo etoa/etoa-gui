@@ -989,10 +989,7 @@
 			$this->res[$id] = $loaded;
 			$this->calcResLoaded();
 			
-			if ($finalize==1)
-			{
-				$this->sourceEntity->chgRes($id,-$loaded);
-			}			
+			$this->sourceEntity->chgRes($id,-$loaded);
 			return $loaded;
 		}
 		
