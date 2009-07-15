@@ -29,6 +29,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <cerrno>
+#include <cstdlib>
+#include <string.h>
 
 /** 
 * Manages a pidfile containing the pid (posix-style process id) 

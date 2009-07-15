@@ -30,7 +30,7 @@ public:
 		Config &config = Config::instance();
 		this->rebuild = rebuild + config.nget("def_restore_percent",0) - 1;
 	}
-	
+
 	~ListDef() {
 		this->save();
 	}

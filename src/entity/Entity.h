@@ -12,6 +12,8 @@
 #include "../objects/User.h"
 #include "../objects/Object.h"
 #include "../objects/Fleet.h"
+#include "../objects/ListDef.h"
+#include "../objects/ListShip.h"
 
 /**
 * Entity class

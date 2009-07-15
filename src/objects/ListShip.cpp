@@ -1,6 +1,7 @@
 
 #include "ListShip.h"
 
+
 	
 	double ListShip::getWfMetal() {
 		Config &config = Config::instance();

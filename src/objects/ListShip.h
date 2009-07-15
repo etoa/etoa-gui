@@ -42,7 +42,8 @@ public:
 		this->sBonusDeactivade = (short)oRow["shiplist_special_ship_bonus_deactivade"];
 	}
 	
-	~ListShip() {
+	~ListShip()
+	 {
 		this->save();
 	}
 	

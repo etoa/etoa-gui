@@ -1,5 +1,5 @@
 PROJECT_NAME = "EtoA-Backend: Eventhandler"
-OUTPUT_DIRECTORY = "/var/www/dev.etoa.net/htdocs/doxygen/"
+OUTPUT_DIRECTORY = "/var/www/etoa/dev/htdocs/doxygen/"
 INPUT = .
 FILE_PATTERNS          = *.h *.cpp *.cc *.hpp
 RECURSIVE = YES

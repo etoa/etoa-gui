@@ -26,6 +26,7 @@
 #include <time.h>
 #include <streambuf>
 #include <string>
+#include <cstring>
 
 #include "Mutex.h"
 
