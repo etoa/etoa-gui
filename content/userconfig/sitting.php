@@ -21,42 +21,9 @@
 	// $Rev$
 	//
 
-	//Abgelaufene Sittings löschen
-  $check_res = dbquery("
-  SELECT
-      user_sitting_date_to
-  FROM
-      user_sitting_date
-    INNER JOIN
-      user_sitting
-    ON user_sitting_date_user_id=user_sitting_user_id
- WHERE
- 		user_sitting_user_id='".$cu->id."'
-    AND user_sitting_active='1'
- ORDER BY
-    user_sitting_date_to DESC
-  LIMIT 1;");
-  $check_arr=mysql_fetch_assoc($check_res);
-
-  if(mysql_num_rows($check_res)>0 && $check_arr['user_sitting_date_to']<time())
-  {
-      dbquery("
-      UPDATE
-          user_sitting
-      SET
-          user_sitting_active='0',
-          user_sitting_sitter_user_id='0',
-          user_sitting_sitter_password='0',
-          user_sitting_date='0'
-      WHERE
-          user_sitting_user_id='".$cu->id."';");
-
-      //löscht alle gespeichertet Sittingdaten des users
-      dbquery("DELETE FROM user_sitting_date WHERE user_sitting_date_user_id='".$cu->id."';");
-  }
-
-
-            //
+	if (!$s->sittingActive || $s->falseSitter)
+	{
+			//
             // Neuer user anlegen, der am gleichen PC sitzt (multi)
             //
 
@@ -143,223 +110,155 @@
 
 
 
-            //
-            // Neues Sitting Datum erzeugen
-            //
-
-            if (isset($_POST['new_sitting_date']) && checker_verify())
-            {
-                dbquery("
-                INSERT INTO
-                user_sitting_date
-                (user_sitting_date_user_id)
-                VALUES
-                ('".$cu->id."');");
-
-                echo "Neues Datumfeld erzeugt!<br><br>";
-            }
+       
 
 
-            //
-            // Daten Speichern (sitting)
-            //
 
-            if (isset($_POST['data_submit_sitting']) && checker_verify())
-            {
-                //überprüft ob der angegebene user wirklich vorhanden ist
-                if (get_user_id($_POST['user_sitting_sitter_nick'])!=0 || $_POST['user_sitting_sitter_nick']=="")
-                {
-                    if(get_user_id($_POST['user_sitting_sitter_nick'])!=$cu->id)
-                    {
-                        $pw1 = md5($_POST['user_sitting_sitter_password1']);
-                        $pw2 = md5($_POST['user_sitting_sitter_password2']);
+	//
+	// Plan new sitting session
+	// 
+	if (isset($_GET['action']) && $_GET['action']=="new_sitting")
+	{
+		echo "<form action=\"?page=$page&amp;mode=$mode&amp;action=new_sitting\" method=\"post\">";
 
-                        if($pw1==$pw2)
-                        {
-                            if (strlen($_POST['user_sitting_sitter_password1'])>=PASSWORD_MINLENGHT || $_POST['user_sitting_sitter_password1']=="")
-                            {
-                                //überprüft, ob das eingegebene sitterpasswort nicht gleich dem normalen passwort ist
-                                if(mysql_num_rows(dbquery("SELECT user_password FROM users WHERE user_id='".$cu->id."' AND user_password='$pw1';"))>0)
-                                {
-                                    echo "<b>Fehler:</b> Du kannst nicht das gleiche Passwort nehmen wie beim Account!<br><br>";
-                                }
-                                else
-                                {
+		$res = dbquery("
+		SELECT
+			SUM(CEIL((date_to-date_from)/86400))
+		FROM
+			user_sitting
+		WHERE
+			user_id=".$cu->id.";");
+		$arr = mysql_fetch_row($res);
+		$prof_rest_days = max(0,$cu->sittingDays - ceil($arr[0]));
 
-                                    if($_POST['user_sitting_sitter_password1']=="")
-                                        $password = 0;
-                                    else
-                                        $password = $pw1;
+		$form = true;
+		if ($prof_rest_days>0)
+		{
+
+			// Save
+			if (isset($_POST['sitting_add']))
+			{
+				if ($_POST['sitter_nick']!="")
+				{
+					$res = dbquery("SELECT user_id,user_registered FROM users WHERE user_id!=".$cu->id." AND user_nick='".addslashes($_POST['sitter_nick'])."' LIMIT 1;");
+					if (mysql_num_rows($res)>0)
+					{
+						$arr = mysql_fetch_row($res);
+						$sitterId = $arr[0];
+						$sitterRegistered=$arr[1];
+						if ($_POST['sitter_password1']==$_POST['sitter_password2'] && $_POST['sitter_password1']!="" && strlen($_POST['sitter_password1'])>=PASSWORD_MINLENGHT)
+						{
+							$pw = pw_salt($_POST['sitter_password1'],$cu->registered);
+
+							$res = dbquery("SELECT user_id FROM users WHERE user_password='".$pw."' AND user_id=".$cu->id." LIMIT 1;");
+							if (mysql_num_rows($res)==0)
+							{
+								$tm_from = mktime($_POST['date_from_h'], $_POST['date_from_i'], 0, $_POST['date_from_m'], $_POST['date_from_d'], $_POST['date_from_y']);
+								$tm_to = $tm_from + $_POST['date_to_days'] * 86400;
+								if ($tm_from > time()-600  && $tm_from < $tm_to && $_POST['date_to_days'] <= $prof_rest_days)
+								{
+									$res = dbquery("SELECT id FROM user_sitting WHERE user_id=".$cu->id." AND ((date_from < $tm_from AND $tm_from < date_to) OR (date_from < $tm_to AND $tm_to < date_to)) ;");
+									if (mysql_num_rows($res)==0)
+									{
+										dbquery("INSERT INTO user_sitting (
+										user_id,sitter_id,password,date_from,date_to
+										) VALUES (
+										".$cu->id.",".$sitterId.",'$pw',$tm_from,$tm_to
+										);");
+										ok_msg("Sitting eingerichtet!");
+										echo "<p>".button("Weiter","?page=$page&amp;mode=$mode&amp;")."</p>";
+										$form = false;
+									}
+									else
+									{
+										error_msg("In diesem Zeitraum existiert bereits ein Sittingeintrag!");
+									}
+								}
+								else
+								{
+									error_msg("Ungültiger Zeitraum!");
+								}
+							}
+							else
+							{
+								error_msg("Das Passwort darf nicht dasselbe wie das normale Accountpasswort sein!");
+							}
+						}
+						else
+						{
+							error_msg("Passwörter sind nicht gleich oder zu kurz (mind. ".PASSWORD_MINLENGHT." Zeichen)");
+						}
+					}
+					else
+					{
+						error_msg("Benutzername ist ungültig!");
+					}
+				}
+				else
+				{
+					error_msg("Kein Name angegeben!");
+				}
+			}
+
+			if ($form)
+			{
+				tableStart("Neues Sitting einrichten");
+
+				//Sitter Nick
+				echo "<tr>
+						<th width=\"35%\">Sitter Nick:</th>
+						<td width=\"65%\" colspan=\"2\" ".tm("Sitter Nick","Gib hier den Nick des Users an, welcher dein Account Sitten soll.").">";
+						echo "<input type=\"text\" name=\"sitter_nick\" maxlength=\"20\" size=\"20\" value=\"".(isset($_POST['sitter_nick'])?$_POST['sitter_nick']:'')."\" id=\"user_nick_sitting\" autocomplete=\"off\" />";
+						echo "</td>";
+				echo "</tr>";
+
+				//Sitter Passwort
+				echo "<tr>
+						<th width=\"35%\">Sitter Passwort:</th>
+						<td width=\"65%\" colspan=\"2\" ".tm("Sitter Passwort","Definiere hier das Passwort, mit dem sich dein Sitter einlogen kann.").">
+							<input type=\"password\" name=\"sitter_password1\" maxlength=\"20\" size=\"20\" value=\"\" />
+						</td>
+					 </tr>";
+
+				//Sitter Passwort (wiederholen)
+				echo "<tr>
+						<th width=\"35%\">Sitter Passwort (wiederholen):</th>
+						<td width=\"65%\" colspan=\"2\" ".tm("Sitter Passwort (wiederholen)","Zur SIcherheit, musst du hier das Passwort noch einmal hinschreiben.").">
+							<input type=\"password\" name=\"sitter_password2\" maxlength=\"20\" size=\"20\" value=\"\" />
+						</td>
+					 </tr>";
 
 
-                                    $check_res = dbquery("
-                                    SELECT
-                                        user_sitting_id
-                                    FROM
-                                        user_sitting
-                                    WHERE
-                                        user_sitting_user_id='".$cu->id."';");
-                                    if (mysql_num_rows($check_res)>0)
-                                    {
-                                        // Daten Speichern
-                                        dbquery("
-                                        UPDATE
-                                            user_sitting
-                                        SET
-                                            user_sitting_sitter_user_id='".get_user_id($_POST['user_sitting_sitter_nick'])."',
-                                            user_sitting_sitter_password='".$password."'
-                                        WHERE
-                                            user_sitting_user_id='".$cu->id."';");
+				echo "<tr><th>Zeitraun:</th><td>Von ";
+				show_timebox("date_from",isset($tm_from) ? $tm_from : time());
+				echo " Dauer (Tage) ";
 
-                                    }
-                                    else
-                                    {
-                                        dbquery("
-                                        INSERT INTO
-                                        user_sitting
-                                        (user_sitting_user_id,
-                                        user_sitting_sitter_user_id,
-                                        user_sitting_sitter_password)
-                                        VALUES
-                                        ('".$cu->id."',
-                                        '".get_user_id($_POST['user_sitting_sitter_nick'])."',
-                                        '".$password."');");
-                                    }
-                                }
+				// erstellt ein Optionsfeld mit den anzahl sitting tagen die der user noch zur verfügung hat
 
-                            }
-                            else
-                            {
-                                echo "<b>Fehler:</b> Das Passwort muss mindestens ".PASSWORD_MINLENGHT." Zeichen lang sein!<br><br>";
-                            }
-                        }
-                        else
-                        {
-                            echo "<b>Fehler:</b> Die beiden Passw&ouml;rter m&uuml;ssen identisch sein!<br><br>";
-                        }
-                    }
-                    else
-                    {
-                        echo "<b>Fehler:</b> Du kannst nicht dich selbst zum Sitter ernennen!<br><br>";
-                    }
+				echo "<select name=\"date_to_days\">";
+				for ($x=1; $prof_rest_days >= $x; $x++)
+				{
+					echo "<option value=\"".$x."\" ".(isset($_POST['date_to_days']) && $_POST['date_to_days']==$x ? ' selected="selected"': '').">".$x."</option>";
+				}
+				echo "</select></td></tr>";
+				tableEnd();
+				echo "<p>Mit dem Speichern dieses Eintrags werden die entsprechnden Sittingtage von deinem Account abgezogen.<br/><br/><input type=\"submit\" name=\"sitting_add\" value=\"Speichern\" /> ";
+			}
+		}
+		else
+		{
+			err_msg("Alle Sitting-Tage sind aufgebraucht!");
+			echo "<p>";
+		}
+		echo "".button("Abbrechen", "?page=$page&amp;mode=$mode")."</p>";
+		echo "</form>";
+	}
 
-                }
-                else
-                {
-                    echo "<b>Fehler:</b> Ein Spieler mit dem Nick \"".$_POST['user_sitting_sitter_nick']."\" wurde nicht gefunden!<br><br>";
-                }
-
-
-								//Sitting Daten löschen
-                if($_POST['del_sitting_date'])
-                {
-                    // Sittingdaten löschen
-                    foreach ($_POST['del_sitting_date'] as $id=>$data)
-                    {
-                        if ($_POST['del_sitting_date'][$id]==1)
-                            dbquery("DELETE FROM user_sitting_date WHERE user_sitting_date_id=".$id.";");
-                    }
-                }
-
-
-                if($_POST['user_sitting_time']==0 && $_POST['user_sitting_time']!=NULL)
-                {
-                    echo "<b>Fehler:</b> Du must eine Zeitdauer beim Sitterdatum angeben!<br><br>";
-                }
-                else
-                {
-                    $sitting_from = mktime($_POST['user_sitting_from_h'],$_POST['user_sitting_from_i'],0,$_POST['user_sitting_from_m'],$_POST['user_sitting_from_d'],$_POST['user_sitting_from_y']);
-                    $sitting_to = $sitting_from + ($_POST['user_sitting_time']*3600*24);
-
-                    //überprüft, ob das eingegebene datum nach dem letzten ist
-                    $date_check_res = dbquery("
-                    SELECT
-                        user_sitting_date_to
-                    FROM
-                        user_sitting_date
-                    WHERE
-                        user_sitting_date_user_id='".$cu->id."'
-                    ORDER BY
-                        user_sitting_date_to DESC;");
-                    $date_check_row = mysql_fetch_object($date_check_res);
-                    $last_date = $date_check_row->user_sitting_date_to;
-
-										//überprüft, ob das neue Datum nicht ein älteres schneidet
-                    if($last_date<$sitting_from)
-                    {
-                        // Sittingzeit Speichern
-                        dbquery("
-                        UPDATE
-                            user_sitting_date
-                        SET
-                            user_sitting_date_from='".$sitting_from."',
-                            user_sitting_date_to='".$sitting_to."'
-                        WHERE
-                            user_sitting_date_user_id='".$cu->id."'
-                            AND user_sitting_date_from='0'
-                            AND user_sitting_date_to='0';");
-                    }
-                    else
-                    {
-                        if($_POST['user_sitting_time']!=NULL)
-                        {
-                            echo "<b>Fehler:</b> Das Startdatum muss sp&auml;ter als das Enddatum vom vorherigen Datum sein!<br><br>";
-                        }
-                    }
-                }
-
-            }
-
-            //Sittermodus aktivieren
-
-            if (isset($_POST['sitting_activade']) && checker_verify())
-            {
-                //Errechnet Anzahl der Sittertage
-                $date_res = dbquery("
-                SELECT
-                    user_sitting_date_from,
-                    user_sitting_date_to
-                FROM
-                    user_sitting_date
-                WHERE
-                    user_sitting_date_user_id='".$cu->id."'
-                    AND user_sitting_date_from!=0
-                    AND user_sitting_date_to!=0
-                ORDER BY
-                    user_sitting_date_from;");
-
-                $sitting_from=0;
-                $sitting_to=0;
-                while ($date_arr=mysql_fetch_array($date_res))
-                {
-                    $sitting_from+=$date_arr['user_sitting_date_from'];
-                    $sitting_to+=$date_arr['user_sitting_date_to'];
-                }
-                $sitting_days=($sitting_to-$sitting_from)/3600/24;
-
-                //Speichert alle nötigen Daten
-                dbquery("
-                UPDATE
-                    user_sitting
-                SET
-                    user_sitting_active='1',
-                    user_sitting_date='".time()."'
-                WHERE
-                    user_sitting_user_id='".$cu->id."';");
-
-                dbquery("
-                UPDATE
-                    users
-                SET
-                    user_sitting_days=user_sitting_days-".$sitting_days."
-                WHERE
-                    user_id='".$cu->id."';");
-
-                //löscht daten beidenen keine zeit festgelegt ist
-                dbquery("DELETE FROM user_sitting_date WHERE user_sitting_date_from=0 AND user_sitting_date_to=0;");
-
-                echo "<b>Der Sittermodus wurde aktiviert!</b><br><br>";
-            }
+	//
+	// Show past and planned sitting sessions
+	//
+	else
+	{
 
 
             //
@@ -432,7 +331,7 @@
 
                     }
 					// Todo: fix sitting
-                    if($unused_multi<1 && $s->sittingActive == 0)
+                    if($unused_multi<1)
                     {
                         echo "<tr><td style=\"text-align:center;\" colspan=\"3\"><input type=\"submit\" name=\"new_multi\" value=\"User hinzuf&uuml;gen\"/></td></tr>";
                     }
@@ -443,250 +342,82 @@
 
 
 
-            //
-            // Sitter einstellungen
-            //
-            //überprüft ob der user noch Sittertage zur verfügung hat
-            if(intval($user_arr['user_sitting_days'])>0)
-            {
-
-                $res = dbquery("
-                SELECT
-                    *
-                FROM
-                    user_sitting
-                WHERE
-                    user_sitting_user_id='".$cu->id."'
-                ORDER BY
-                    user_sitting_id;");
-                $arr = mysql_fetch_array($res);
 
 
-                //Sperrt Formular wenn der Modus aktiv ist
-                if($arr['user_sitting_active']==0)
-                {
-                    tableStart("Sitter Einstellungen [<a href=\"?page=help&site=multi_sitting\">Info</a>]");
-                    echo "<form action=\"?page=$page&mode=sitting\" method=\"post\">";
-                    echo $cstr;
-
-                    $nick_class="tbldata2";
-                    $nick_check=0;
-                    $pw_class="tbldata2";
-                    $pw_check=0;
-                    $date_check=0;
-
-        						//Prüft, ob bereits ein User angegen wurde
-                    if($arr['user_sitting_sitter_user_id']!='0' && $arr['user_sitting_sitter_user_id']!=NULL)
-                    {
-                        $nick_class="tbldata";
-                        $nick_check=1;
-                    }
-
-        						//Prüft, ob bereits ein passwort angegen wurde
-                    if($arr['user_sitting_sitter_password']!='0' && $arr['user_sitting_sitter_password']!=NULL)
-                    {
-                        $pw_class="tbldata";
-                        $pw_check=1;
-                    }
-
-                    //Listet alle eingetragenen daten aus, und ev. noch ein ausfüllfeld dazu
-                    $date_res = dbquery("
-                    SELECT
-                        *
-                    FROM
-                        user_sitting_date
-                    WHERE
-                        user_sitting_date_user_id='".$cu->id."'
-                        AND user_sitting_date_from!=0
-                        AND user_sitting_date_to!=0
-                    ORDER BY
-                        user_sitting_date_from;");
-
-                    $date_cnt = mysql_num_rows($date_res);
-                    $rowspan=0;
-                    $activade=0;
-                    $sitting_from=0;
-                    $sitting_to=0;
-
-                    //Es ist noch kein Datum festgelegt worden
-                    if($date_cnt==0)
-                    {
-                      //Zeichnet "Sitting Daten" farbig und dahinter eine leere Zeile
-                        echo "<tr>
-                            <td class=\"tbldata2\" width=\"35%\">Sitting Daten</td>
-                            <td width=\"65%\" colspan=\"2\"></td>
-                             </tr>";
-                    }
-                    //Min. 1 Datum ist festgelegt -> Anzeigen der übrigen Formularfelder
-                    else
-                    {
-                        //Sitter Nick
-                        echo "<tr>
-                                <td class=\"$nick_class\" width=\"35%\">Sitter Nick</td>
-                                <td width=\"65%\" colspan=\"2\" ".tm("Sitter Nick","Gib hier den Nick des Users an, welcher dein Account Sitten soll.").">";
-
-                                if($arr['user_sitting_sitter_user_id']!=0)
-                                {
-                                    echo "<input type=\"text\" name=\"user_sitting_sitter_nick\" maxlength=\"20\" size=\"20\" value=\"".stripslashes(get_user_nick($arr['user_sitting_sitter_user_id']))."\" id=\"user_nick_sitting\" autocomplete=\"off\" onkeyup=\"xajax_searchUser(this.value,'user_nick_sitting','citybox_sitting');\"><br/>
-                                    <div class=\"citybox\" id=\"citybox_sitting\">&nbsp;</div>";
-                                }
-                                else
-                                {
-                                    echo "<input type=\"text\" name=\"user_sitting_sitter_nick\" maxlength=\"20\" size=\"20\" value=\"\" id=\"user_nick_sitting\" autocomplete=\"off\" onkeyup=\"xajax_searchUser(this.value,'user_nick_sitting','citybox_sitting');\"><br/>
-                                    <div class=\"citybox\" id=\"citybox_sitting\">&nbsp;</div>";
-                                }
-                                echo "</td>";
-                        echo "</tr>";
-
-                        //Sitter Passwort
-                        echo "<tr>
-                                <td class=\"$pw_class\" width=\"35%\">Sitter Passwort</td>
-                                <td width=\"65%\" colspan=\"2\" ".tm("Sitter Passwort","Definiere hier das Passwort, mit dem sich dein Sitter einlogen kann.").">
-                                    <input type=\"password\" name=\"user_sitting_sitter_password1\" maxlength=\"20\" size=\"20\" value=\"\">
-                                </td>
-                             </tr>";
-
-                        //Sitter Passwort (wiederholen)
-                        echo "<tr>
-                                <td class=\"$pw_class\" width=\"35%\">Sitter Passwort (wiederholen)</td>
-                                <td width=\"65%\" colspan=\"2\" ".tm("Sitter Passwort (wiederholen)","Zur SIcherheit, musst du hier das Passwort noch einmal hinschreiben.").">
-                                    <input type=\"password\" name=\"user_sitting_sitter_password2\" maxlength=\"20\" size=\"20\" value=\"\">
-                                </td>
-                             </tr>";
 
 
-                        echo "<td width=\"35%\" rowspan=\"$date_cnt\">Sitting Daten</td>";
 
-                        //Listet alle festgelegten daten auf
-                        while ($date_arr=mysql_fetch_array($date_res))
-                        {
+		//
+		// Sitting
+		//
 
-                            if(mysql_num_rows($date_res)!=$date_cnt)
-                            {
-                                echo "<tr>";
-                                echo "<td width=\"35%\" rowspan=\"$date_cnt\">&nbsp;</td>";
-                            }
 
-                            echo "<td width=\"60%\">Von ".date("d.m.Y H:i",$date_arr['user_sitting_date_from'])." bis ".date("d.m.Y H:i",$date_arr['user_sitting_date_to'])."</td>";
-                            echo "<td width=\"5%\" style=\"text-align:center;\" ".tm("Datum löschen","Setz ein Häckchen, wenn du dieses Datum löschen willst.")."><input type=\"checkbox\" name=\"del_sitting_date[".$date_arr['user_sitting_date_id']."]\" value=\"1\"/></td></tr>";
+		if (isset($_GET['remove_sitting']) && $_GET['remove_sitting']>0)
+		{
+			dbquery("DELETE FROM user_sitting WHERE id=".$_GET['remove_sitting']." AND user_id=".$cu->id." AND date_from>".time().";");
+			if (mysql_affected_rows()>0)
+				ok_msg("Sitting entfernt!");
+		}
+		if (isset($_GET['cancel_sitting']) && $_GET['cancel_sitting']>0)
+		{
+			$res = dbquery("UPDATE user_sitting SET date_to=".time()." WHERE id=".$_GET['cancel_sitting']." AND user_id=".$cu->id." AND date_from<".time()." AND date_to>".time().";");
+			if (mysql_affected_rows()>0)
+				ok_msg("Sitting abgebrochen!");
+		}
 
-                            $sitting_from+=$date_arr['user_sitting_date_from'];
-                            $sitting_to+=$date_arr['user_sitting_date_to'];
-                        }
-                        $date_check=1;
-                        $date_cnt--;
 
-               			}
-
-                  	echo "<tr><td colspan=\"3\"><div align=\"center\">";
-
-                    $date_field_res = dbquery("
-                    SELECT
-                        user_sitting_date_id
-                    FROM
-                        user_sitting_date
-                    WHERE
-                        user_sitting_date_user_id='".$cu->id."'
-                        AND user_sitting_date_to=0;");
-
-                    $rest_days = $user_arr['user_sitting_days'];
-                    $prof_rest_days = $rest_days - (($sitting_to-$sitting_from)/3600/24);
-                    if(mysql_num_rows($date_field_res)==1)
-                    {
-                        echo "Von ";
-                        show_timebox("user_sitting_from",time());
-                        echo " Dauer (Tage) ";
-
-                        // erstellt ein Optionsfeld mit den anzahl sitting tagen die der user noch zur verfügung hat
-                        echo "<select name=\"user_sitting_time\">";
-                        for ($x=0;$prof_rest_days>=$x;$x++)
-                        {
-                            if($prof_rest_days==0)
-                                echo "<option value=\"0\">-</option>";
-                            else
-                                echo "<option value=\"".$x."\">".$x."</option>";
-                        }
-                        echo "</select>";
-                        echo "<br>";
-                    }
-
-                    if(mysql_num_rows($date_field_res)==0)
-                    {
-                        if($user_arr['user_sitting_days']!=0 && $prof_rest_days>0)
-                        {
-                            echo "<br><input type=\"submit\" name=\"new_sitting_date\" value=\"Datum hinzuf&uuml;gen\" ".tm("Datum hinzufügen","F&uuml;ge eine neue Sitterzugriffszeit ein.")."/>";
-                        }
-                        else
-                        {
-                            echo "<br>Dir stehen keine weiteren Sittertage zur verf&uuml;gung!";
-                        }
-                    }
-                    //wenn user,passwort und datum korrekt eingegeben sind, zeige button zum aktivieren
-                    if($nick_check==1 && $pw_check==1 && $date_check==1)
-                    {
-                        echo "<br><br><input type=\"submit\" name=\"sitting_activade\" style=\"color:#0f0\" value=\"Sittingmodus aktivieren\" ".tm("Sittingmodus aktivieren","Aktiviert den Sittmodus mit den momentanen Daten.")." onclick=\"return confirm('Wenn du diese Info best&auml;tigst wird der Modus mit sofortiger Wirkung aktiviert und kann nicht mehr ge&auml;ndert werden.\nDu solltest dir also sicher sein, dass die Daten richtig eingegeben sind!');\" />
-                        	</td>
-                        </tr>
-                        <tr>
-                        	<td colspan=\"3\">Alle Sittingdaten sind nun korrekt eingestellt. Der Sittingmodus kann nun mit einem Klick auf \"Sittingmodus aktivieren\" gestartet werden oder es können noch Änderungen angebracht werden!";
-                    }
-                    else
-                    {
-                     echo "</td>
-                        </tr>
-                        <tr>
-                        	<td class=\"tbldata2\" colspan=\"3\">Es sind nicht alle benötigten Daten angegeben!";
-                    }
-
-                    echo "</div></td></tr>";
-                    tableEnd();
-
-                    echo "<input type=\"submit\" name=\"data_submit_sitting\" value=\"&Uuml;bernehmen\" ".tm("Übernehmen","Speichert die angegebenen Daten. Mit diesem Button wird der Sittingmodus aber NICHT aktiviert!")."/>";
-                    echo "</form><br/><br/><br>";
-                }
-                else
-                {
-                    tableStart("Sitter Einstellungen");
-                    echo "<tr><td><div align=\"center\"><b>Modus aktiv!</b></div></td></tr>";
-
-                    $date_res = dbquery("
-                    SELECT
-                        *
-                    FROM
-                        user_sitting_date
-                    WHERE
-                        user_sitting_date_user_id='".$cu->id."'
-                        AND user_sitting_date_from!=0
-                        AND user_sitting_date_to!=0
-                    ORDER BY
-                        user_sitting_date_from;");
-
-                    echo "<tr><td><div align=\"center\">";
-                    while ($date_arr=mysql_fetch_array($date_res))
-                    {
-                        if($date_arr['user_sitting_date_to']<time())
-                        {
-                            echo "<span style=\"color:#f00\">Von ".date("d.m.Y H:i",$date_arr['user_sitting_date_from'])." bis ".date("d.m.Y H:i",$date_arr['user_sitting_date_to'])."</span><br>";
-                        }
-                        elseif($date_arr['user_sitting_date_from']<time() && $date_arr['user_sitting_date_to']>time())
-                        {
-                            echo "<span style=\"color:#0f0\">Von ".date("d.m.Y H:i",$date_arr['user_sitting_date_from'])." bis ".date("d.m.Y H:i",$date_arr['user_sitting_date_to'])."</span><br>";
-                        }
-                        else
-                        {
-                            echo "Von ".date("d.m.Y H:i",$date_arr['user_sitting_date_from'])." bis ".date("d.m.Y H:i",$date_arr['user_sitting_date_to'])."<br>";
-                        }
-                    }
-                    echo "</td></tr>";
-                    tableEnd();
-                }
-            }
-            //Dem User stehen keine Sittertage mehr zur Verfügung
-            else
-            {
-              tableStart("Sitter Einstellungen");
-              echo "<tr><td class=\"tbldata2\"><div align=\"center\">Dir stehen keine weiteren Sittertage zur verf&uuml;gung!</div></td></tr>";
-              tableEnd();
-            }
-
+		tableStart("Sitter Einstellungen [<a href=\"?page=help&site=multi_sitting\">Info</a>]");
+		$res = dbquery("
+		SELECT
+			s.*,
+			u.user_nick as snick
+		FROM
+			user_sitting s
+		LEFT JOIN
+			users u
+			ON s.sitter_id=u.user_id
+		WHERE
+			s.user_id=".$cu->id."
+		ORDER BY
+			s.date_from;");
+		$days = $cu->sittingDays;
+		if (mysql_num_rows($res)>0)
+		{
+			echo "<tr><th>Sitter</th><th>Von</th><th>Bis</th><th>Tage</th><th>Aktionen</th></tr>";
+			while ($arr=mysql_fetch_array($res))
+			{
+				$tdays = ceil(($arr['date_to']-$arr['date_from'])/86400);
+				$days -= $tdays;
+				echo "<tr>
+				<td>".$arr['snick']."</td>
+				<td>".df($arr['date_from'])."</td>
+				<td>".df($arr['date_to'])."</td>
+				<td>".$tdays."</td>
+				<td>";
+				if ($arr['date_from']>time())
+				{
+					echo "<a href=\"?page=$page&amp;mode=$mode&amp;remove_sitting=".$arr['id']."\" onclick=\"return confirm('Sittereinstellung löschen?');\">Löschen</a>";
+				}
+				elseif ($arr['date_from']<time() && $arr['date_to']>time())
+				{
+					echo "AKTIV <a href=\"?page=$page&amp;mode=$mode&amp;cancel_sitting=".$arr['id']."\" onclick=\"return confirm('Sitting abbrechen?');\">Abbrechen</a>";
+				}
+				else
+				{
+					echo "-";
+				}
+				echo "</td>
+				</tr>";
+			}
+		}
+		else
+		{
+			echo "<tr><td>Keine Sitting-Daten vorhanden!</td></tr>";
+		}
+		tableEnd();
+		echo "<p>Noch $days Sittingtage verfügbar.</p>";
+		if ($days>0)
+			echo "<p>".button("Sitting einrichten/hinzufügen", "?page=$page&amp;mode=$mode&amp;action=new_sitting")."</p>";
+	}
+	}
 ?>

@@ -728,7 +728,6 @@
 				$tbl[]="user_sessionlog";
 				$tbl[]="user_points";
 				$tbl[]="user_sitting";
-				$tbl[]="user_sitting_date";
 				$tbl[]="user_stats";
 				$tbl[]="user_ratings";
 				$tbl[]="user_onlinestats";

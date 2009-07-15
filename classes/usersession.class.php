@@ -43,24 +43,51 @@ class UserSession extends Session
 			WHERE
 				LCASE(user_nick)='".strtolower($data['login_nick'])."'
 			LIMIT 1;
-			;";
-
-			
+			;";			
 			$ures = dbquery($sql);
 			if (mysql_num_rows($ures)>0)
 			{
 				$uarr = mysql_fetch_assoc($ures);
-				if ($uarr['user_password'] == pw_salt($data['login_pw'],$uarr['user_registered'])
+				$pw = pw_salt($data['login_pw'],$uarr['user_registered']);
+				$t = time();
+				
+				// check sitter
+                $this->sittingActive = false;
+				$this->falseSitter = false;
+				$sres = dbquery("
+				SELECT
+					date_to,
+					password
+				FROM user_sitting
+				WHERE 
+					user_id=".$uarr['user_id']."
+					AND date_from<=$t
+					AND $t<=date_to ;");
+				if (mysql_num_rows($sres)>0)
+				{
+					$sarr = mysql_fetch_row($sres);
+					if ($sarr[1] == $pw)
+					{
+						$this->sittingActive = true;
+						$this->sittingUntil = $sarr[0];
+					}
+					elseif ($uarr['user_password'] == $pw)
+					{
+						$this->falseSitter = true;
+						$this->sittingActive = true;
+						$this->sittingUntil = $sarr[0];
+					}
+				}
+
+				if ($uarr['user_password'] == $pw
+					|| $this->sittingActive
 					|| ($uarr['user_password_temp']!="" && $uarr['user_password_temp']==$data['login_pw']))
 				{
 					$this->user_id = $uarr['user_id'];
 					$this->user_nick = $uarr['user_nick'];
-					$t = time();
 					$this->time_login = $t;
 					$this->time_action = $t;
-                    $this->sittingActive = 0;
 					$this->registerSession();
-
 					$this->firstView = true;
 					return true;
 				}
@@ -106,17 +133,44 @@ class UserSession extends Session
 				$cfg = Config::getInstance();
 				if ($this->time_action + $cfg->user_timeout->v > $t)
 				{
-					dbquery("
-					UPDATE
-						`".self::tableSession."`
-					SET
-						time_action=".$t."
-					WHERE
-						id='".session_id()."'
-					;");
-					$this->time_action = $t;
-					return true;
-
+					$allows = false;
+					if ($this->sittingActive)
+					{
+						if (time() < $this->sittingUntil)
+						{
+							$t = time();
+							$res = dbquery("SELECT
+								id
+							FROM user_sitting
+							WHERE
+								user_id=".$this->user_id."
+								AND date_from<=$t
+								AND $t<=date_to ;");
+							if (mysql_num_rows($res)>0)
+							{
+								$allows = true;
+							}
+						}
+					}
+					else
+						$allows = true;
+					if ($allows)
+					{
+						dbquery("
+						UPDATE
+							`".self::tableSession."`
+						SET
+							time_action=".$t."
+						WHERE
+							id='".session_id()."'
+						;");
+						$this->time_action = $t;
+						return true;
+					}
+					else
+					{
+						$this->lastError = "Sitting abgelaufen!";
+					}
 				}
 				else
 				{

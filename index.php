@@ -73,9 +73,6 @@
 		forward(Config::getInstance()->loginurl->v."?page=err&err=usernotfound","Benutzer nicht mehr vorhanden");
 	}
 
-	// Check sitting
-	//require_once('inc/sitting.inc.php');
-
 	//
 	// Design / layout properties
 	//

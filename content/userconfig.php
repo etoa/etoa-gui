@@ -75,7 +75,7 @@
 		elseif($mode=='messages')
 		{
 			// todo: sitter
-      if($s->sitter_active==0)
+      if($s->sittingActive==0)
       {
       	require("content/userconfig/messages.php");
       }
@@ -90,7 +90,7 @@
     /****************/
 		elseif($mode=='warnings')
 		{
-      if($s->sitter_active==0)
+      if($s->sittingActive==0)
       {
       	tableStart("Ausgesprochene Verwarnungne");
       	echo "
@@ -151,7 +151,7 @@
 		/****************/
    	elseif($mode=='sitting')
     {
-      if($s->sitter_active==0)
+      if(!$s->sittingActive || $s->falseSitter)
       {
       	require("content/userconfig/sitting.php");
       }
@@ -159,40 +159,7 @@
       {
         echo "Im Sittermodus ist dieser Bereich gesperrt!<br><br>";
         
-        // Aktive Sittingdaten Anzeigen
-        tableStart("Sitter Einstellungen");
-        echo "<tr><td><div align=\"center\"><b>Modus aktiv!</b></div></td></tr>";
 
-        $date_res = dbquery("
-        SELECT
-            *
-        FROM
-            user_sitting_date
-        WHERE
-            user_sitting_date_user_id='".$cu->id."'
-            AND user_sitting_date_from!=0
-            AND user_sitting_date_to!=0
-        ORDER BY
-            user_sitting_date_from;");
-
-        echo "<tr><td><div align=\"center\">";
-        while ($date_arr=mysql_fetch_array($date_res))
-        {
-            if($date_arr['user_sitting_date_to']<time())
-            {
-                echo "<span style=\"color:#f00\">Von ".date("d.m.Y H:i",$date_arr['user_sitting_date_from'])." bis ".date("d.m.Y H:i",$date_arr['user_sitting_date_to'])."</span><br>";
-            }
-            elseif($date_arr['user_sitting_date_from']<time() && $date_arr['user_sitting_date_to']>time())
-            {
-                echo "<span style=\"color:#0f0\">Von ".date("d.m.Y H:i",$date_arr['user_sitting_date_from'])." bis ".date("d.m.Y H:i",$date_arr['user_sitting_date_to'])."</span><br>";
-            }
-            else
-            {
-                echo "Von ".date("d.m.Y H:i",$date_arr['user_sitting_date_from'])." bis ".date("d.m.Y H:i",$date_arr['user_sitting_date_to'])."<br>";
-            }
-        }
-        echo "</td></tr>";
-        tableEnd();
       }
     }
 
@@ -201,7 +168,7 @@
 		/****************/
 		elseif($mode=='password')
   	{
-      if($s->sitter_active==0)
+      if(!$s->sittingActive)
       {
       	require("content/userconfig/password.php");
     	}
@@ -216,7 +183,7 @@
 		/****************/
 		elseif($mode=='misc')
 		{
-        if($s->sitter_active==0)
+        if(!$s->sittingActive)
         {
         	require("content/userconfig/misc.php");
       	}
@@ -240,7 +207,7 @@
     /****************/
 		else
 		{
-        if($s->sitter_active==0)
+        if(!$s->sittingActive)
         {
 					require("content/userconfig/general.php");
         }

@@ -51,6 +51,12 @@
 		}
 	}
 
+	if ($s->sittingActive)
+	{
+		iBoxStart("Sitting-Modus aktiv");
+		echo "Du sittest diesen Account im Auftrag von ".$cu->nick." bis ".df($s->sittingUntil).". Bitte beachte die speziellen Sittingregeln!";
+		iBoxEnd();
+	}
 
 /*	// REMOVE / DISABLE AFTER BETA
 	iBoxStart("BETA");		

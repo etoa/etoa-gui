@@ -56,6 +56,8 @@
 	protected $lastInvasion;
 	protected $allianceShippoints;
 
+	protected $sittingDays;
+
 		// Sub-objects and their id's
 		protected $raceId;
 		protected $race = null;
@@ -139,6 +141,7 @@
 				$this->allianceId = $arr['user_alliance_id'];
 				$this->allianceRankId = $arr['user_alliance_rank_id'];
 
+				$this->sittingDays = $arr['user_sitting_days'];
 
 				$this->allianceName = "";
 				$this->allianceTag = "";
@@ -804,8 +807,7 @@
 				dbquery("DELETE FROM user_multi WHERE user_multi_user_id='".$this->id."' OR user_multi_multi_user_id='".$this->id."';"); //Multiliste löschen
 				dbquery("DELETE FROM user_points WHERE point_user_id='".$this->id."';"); 					//Punkte löschen
 				dbquery("DELETE FROM user_warnings WHERE warning_user_id='".$this->id."';"); 				//Nickänderungsanträge löschen
-				dbquery("DELETE FROM user_sitting WHERE user_sitting_user_id='".$this->id."';"); 			//Sitting löschen
-				dbquery("DELETE FROM user_sitting_date WHERE user_sitting_date_user_id='".$this->id."';"); //Sitting Daten löschen
+				dbquery("DELETE FROM user_sitting WHERE user_id='".$this->id."';"); 			//Sitting löschen
 				dbquery("DELETE FROM user_properties WHERE id = '".$this->id."';");							//Properties löschen
 				dbquery("DELETE FROM user_surveillance WHERE user_id='".$this->id."';");					//Beobachter löschen
 				dbquery("DELETE FROM user_comments WHERE comment_user_id='".$this->id."';");						//Kommentare löschen

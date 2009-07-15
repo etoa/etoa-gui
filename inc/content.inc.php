@@ -104,7 +104,16 @@
 			echo '<br/>Solltest du Fragen oder Probleme mit dem Urlaubsmodus haben,<br/>
 			dann <a href="?page=contact">melde</a> dich bei einem Game-Administrator.';
 		}
-	
+
+
+		elseif ($s->sittingActive && $s->falseSitter && $page!="userconfig")
+		{
+			echo '<h1>Sitting ist aktiv</h1>
+			Dein Account wird gesitted bis <b>'.df($s->sittingUntil).'</b><br/><br/>';
+			echo button("Einstellungen","?page=userconfig&mode=sitting");
+
+		}
+
 		// Seite anzeigen
 		else
 		{

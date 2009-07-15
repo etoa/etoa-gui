@@ -98,7 +98,7 @@
 				WHERE
 					id=".$this->id.";");
 				if ($reason!="")
-					add_log(17,"Der Spieler ".$this->id." erhält ".$rating." Kampfpunkte. Grund: ".$reason);
+					add_log(17,"KP: Der Spieler ".$this->id." erhält ".$rating." Kampfpunkte. Grund: ".$reason);
 			}
 		}
 		
@@ -115,7 +115,7 @@
 			WHERE
 				id=".$this->id.";");			
 			if ($reason!="")
-				add_log(17,"Der Spieler ".$this->id." erhält ".$rating." Handelspunkte. Grund: ".$reason);
+				add_log(17,"HP: Der Spieler ".$this->id." erhält ".$rating." Handelspunkte. Grund: ".$reason);
 		}
 		
 		/**
@@ -131,7 +131,7 @@
 			WHERE
 				id=".$this->id.";");			
 			if ($reason!="")
-				add_log(17,"Der Spieler ".$this->id." erhält ".$rating." Diplomatiepunke. Grund: ".$reason);
+				add_log(17,"DP: Der Spieler ".$this->id." erhält ".$rating." Diplomatiepunke. Grund: ".$reason);
 		}	
 
 		
