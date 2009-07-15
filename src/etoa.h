@@ -1,3 +1,5 @@
+#define MYSQLPP_MYSQL_HEADERS_BURIED
+
 #include <ctime>
 #include <iostream>
 #include <iomanip>

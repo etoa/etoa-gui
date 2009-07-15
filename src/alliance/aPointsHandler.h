@@ -2,6 +2,7 @@
 #ifndef __APOINTSHANDLER__
 #define __APOINTSHANDLER__
 
+#define MYSQLPP_MYSQL_HEADERS_BURIED
 #include <mysql++/mysql++.h>
 #include <ctime>
 

@@ -310,6 +310,7 @@ int main(int argc, char* argv[])
 	logr = new Logger(logFile);
 	clog << "Loggin started"<<endl;
 
+  
 	if (detach)
 		daemonize();
 

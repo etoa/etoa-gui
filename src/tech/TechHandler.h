@@ -2,6 +2,7 @@
 #ifndef __TECHHANDLER__
 #define __TECHHANDLER__
 
+#define MYSQLPP_MYSQL_HEADERS_BURIED
 #include <mysql++/mysql++.h>
 
 #include <time.h>
