@@ -133,7 +133,7 @@
 		// User Statistik speichern
 		$rres=dbquery("SELECT COUNT(user_id) FROM users;");
 		$rarr=mysql_fetch_row($rres);
-		$gres=dbquery("SELECT COUNT(user_id) FROM users WHERE user_acttime>".(time()-$conf['user_timeout']['v']).";");
+		$gres=dbquery("SELECT COUNT(user_id) FROM user_sessions;");
 		$garr=mysql_fetch_row($gres);
 		dbquery("INSERT INTO user_onlinestats (stats_timestamp,stats_count,stats_regcount) VALUES (".time().",".$garr[0].",".$rarr[0].");");
 		$log = "\nUser-Statistik: ".$garr[0]." User online, ".$rarr[0]." User registriert\n\n";

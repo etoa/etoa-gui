@@ -221,7 +221,8 @@
         users.user_id,
         users.user_nick,
         users.user_points,
-        users.user_acttime,
+        Max(user_sessionlog.time_action) as last_log,
+		user_sessions.time_action,
         buddylist.bl_allow,
         buddylist.bl_comment,
         buddylist.bl_comment_buddy,
@@ -234,10 +235,18 @@
   INNER JOIN
   (
     users
+	LEFT JOIN
+		user_sessionlog
+	ON
+		users.user_id=user_sessionlog.user_id
+	LEFT JOIN
+		user_sessions
+	ON
+		users.user_id=user_sessions.user_id
    	INNER JOIN
 			planets
 		ON    
-        user_id=planets.planet_user_id
+        users.user_id=planets.planet_user_id
         AND planets.planet_user_main=1
   )
 	ON 
@@ -265,10 +274,12 @@
 				$tp = new Planet($arr['pid']);
 				echo "<td>".nf($arr['user_points'])."</td>";
 				echo "<td><a href=\"?page=cell&amp;id=".$tp->cellId()."&amp;hl=".$tp->id()."\">".$tp."</a></td>";
-				if ((time()-$conf['online_threshold']['v']*60) < $arr['user_acttime'])
+				if ($arr['time_action'])
 					echo "<td style=\"color:#0f0;\">online</td>";
+				elseif ($arr['last_log'])
+					echo "<td>".date("d.m.Y H:i",$arr['last_log'])."</td>";
 				else
-					echo "<td>".date("d.m.Y H:i",$arr['user_acttime'])."</td>";
+					echo "<td>Noch nicht eingeloggt!</td>";
 			}
 			else
 				echo "<td colspan=\"3\"><i>Noch keine Erlaubnis</i></td>";

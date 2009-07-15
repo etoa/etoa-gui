@@ -461,6 +461,41 @@
 			$cfg = Config::getInstance();
 			return $this->acttime + $cfg->value('user_timeout') < time();
 		}
+		
+		function loadLastAction()
+		{
+			$res = dbquery("
+							SELECT
+								time_action
+							FROM
+								user_sessions
+							WHERE
+								user_id='".$this->id."'
+							LIMIT 1;");
+			if (mysql_num_rows($res))
+			{
+				$arr = mysql_fetch_assoc($res);
+				return $arr[0];
+			}
+			else
+			{
+				$res = dbquery("
+							SELECT
+								time_action
+							FROM
+								user_sessionlog
+							WHERE
+								user_id='".$this->id."'
+							LIMIT 1;");
+				if (mysql_num_rows($res))
+				{
+					$arr = mysql_fetch_assoc($res);
+					return $arr[0];
+				}
+				else
+					return 1;
+			}
+		}
 
 		/**
 		* Load alliance data
@@ -773,7 +808,7 @@
 				dbquery("DELETE FROM user_sitting_date WHERE user_sitting_date_user_id='".$this->id."';"); //Sitting Daten löschen
 				dbquery("DELETE FROM user_properties WHERE id = '".$this->id."';");							//Properties löschen
 				dbquery("DELETE FROM user_surveillance WHERE user_id='".$this->id."';");					//Beobachter löschen
-				dbquery("DELETE FROM user_comments WHERE user_id='".$this->id."';");						//Kommentare löschen
+				dbquery("DELETE FROM user_comments WHERE comment_user_id='".$this->id."';");						//Kommentare löschen
 				// Todo: clean tickets
 
 				//

@@ -1319,11 +1319,10 @@
 				COUNT(user_id)
 			FROM
 				buddylist AS bl
-				INNER JOIN users AS u
+				INNER JOIN user_sessions AS u
 				ON bl.bl_buddy_id = u.user_id
 				AND bl_user_id='".$id."'
-				AND bl_allow=1
-				AND user_acttime>".(time()-$conf['online_threshold']['v']*60).";
+				AND bl_allow=1;
 		");
 		$arr = mysql_fetch_row($res);
 		return $arr[0];		

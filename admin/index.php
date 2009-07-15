@@ -184,13 +184,13 @@
 
 
 
-								$gres=dbquery("SELECT COUNT(*) FROM users WHERE user_acttime>".(time()-$cfg->user_timeout->v).";");
+								$gres=dbquery("SELECT COUNT(*) FROM user_sessions WHERE time_action>".(time()-$cfg->user_timeout->v).";");
 								$garr=mysql_fetch_row($gres);
 								if ($uarr[0]>0)
 									$gp=$garr[0]/$uarr[0]*100;
 								else
 									$gp=0;
-								$a1res=dbquery("SELECT COUNT(*)  FROM admin_users WHERE user_acttime>".(time()-TIMEOUT)." AND user_session_key!='';");
+								$a1res=dbquery("SELECT COUNT(*)  FROM admin_user_sessions WHERE time_action>".(time()-TIMEOUT).";");
 								$a1arr=mysql_fetch_row($a1res);
 								$a2res=dbquery("SELECT COUNT(*)  FROM admin_users;");
 								$a2arr=mysql_fetch_row($a2res);
@@ -210,7 +210,7 @@
 										echo "<td colspan=\"2\" style=\"color:red;\">LÄUFT NICHT!</td>";
 									echo "</tr>";							
 								}								
-								echo "<tr><th><a href=\"?page=user&amp;sub=userlog\">User:</a></th><td>".$garr[0]." / ".$uarr[0]."</td><td>".round($gp,1)."%</td></tr>";
+								echo "<tr><th><a href=\"?page=user&amp;sub=sessions\">User:</a></th><td>".$garr[0]." / ".$uarr[0]."</td><td>".round($gp,1)."%</td></tr>";
 								echo "<tr><th><a href=\"?page=overview&amp;sub=adminlog\">Admins:</a></th><td>".$a1arr[0]." / ".$a2arr[0]."</td><td>".round($ap,1)."%</td></tr>";
 								echo "</table>";
 

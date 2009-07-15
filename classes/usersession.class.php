@@ -217,6 +217,15 @@ class UserSession extends Session
 			WHERE
 				id='".$sid."'
 			;");
+			
+			dbquery("
+					UPDATE
+						users
+					SET
+						user_logouttime='".time()."'
+					WHERE
+						user_id='".$arr['user_id']."'
+					LIMIT 1;");
 		}
         if ($logoutPressed==1)
         {
