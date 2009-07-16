@@ -195,7 +195,7 @@ namespace market
 							int delete_date = time + ((int)config.nget("market_auction_delay_time", 0) * 3600);
 
 							//überprüfen ob geboten wurde, wenn nicht, Waren dem Verkäufer zurückgeben
-							if((int)arr[current_buyer_id"]==0)
+							if((int)arr["current_buyer_id"]==0)
 							{
 								// Ress dem besitzer zurückgeben (mit dem faktor)
 								query << "UPDATE ";
