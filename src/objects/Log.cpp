@@ -83,9 +83,13 @@
 	
 	void Log::save() 
 	{
+	/*
 		My &my = My::instance();
 		mysqlpp::Connection *con_ = my.get();
 		
+// TODO
+
+		/*
 		mysqlpp::Query query = con_->query();
 
 	
@@ -137,7 +141,7 @@
 
 			query.store();
 			query.reset();			
-
+		*/
 	}
 
 
