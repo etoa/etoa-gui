@@ -111,7 +111,9 @@ namespace market
 		ressource[4] = "food";
 		
 		mysqlpp::Query query = con_->query();
-				
+
+                // TODO: This doest not work correctly, user market_rating instead
+                /*
 		int i=0;
 		while (i<5)
 		{
@@ -126,6 +128,7 @@ namespace market
 			query.reset();
 			i++;
 		}
+                 */
 	}
 	
 	//Markt: Abgelaufene Auktionen löschen
@@ -141,8 +144,8 @@ namespace market
 		query << "FROM ";
 			query << "market_auction ";
 		query << "WHERE ";
-			query << "auction_end<" << time << " ";
-			query << "OR auction_delete_date!='0';";
+			query << "date_end<" << time << " ";
+			query << "OR date_delete!='0';";
 		mysqlpp::Result res = query.store();		
 		query.reset();
 
@@ -168,10 +171,10 @@ namespace market
 					query << "FROM ";
 						query << "buildlist ";
 					query << "WHERE ";
-						query << "buildlist_entity_id=" << arr["auction_planet_id"] << " ";
+						query << "buildlist_entity_id=" << arr["entity_id"] << " ";
 						query << "AND buildlist_building_id='21' "; //ID muss definiert werden oder in config (DEFINE!!)
 						query << "AND buildlist_current_level>'0' ";
-						query << "AND buildlist_user_id=" << arr["auction_user_id"] << ";";
+						query << "AND buildlist_user_id=" << arr["user_id"] << ";";
 					mysqlpp::Result mres = query.store();		
 					query.reset();
 					
@@ -187,25 +190,25 @@ namespace market
 							// Definiert den Rückgabefaktor
 							float return_factor = 1 - (1/(marr["buildlist_current_level"]+1));
 
-							std::string partner_user_nick = etoa::get_user_nick((int)arr["auction_user_id"]);
-							std::string buyer_user_nick = etoa::get_user_nick((int)arr["auction_current_buyer_id"]);
+							std::string partner_user_nick = etoa::get_user_nick((int)arr["user_id"]);
+							std::string buyer_user_nick = etoa::get_user_nick((int)arr["current_buyer_id"]);
 							int delete_date = time + ((int)config.nget("market_auction_delay_time", 0) * 3600);
 
 							//überprüfen ob geboten wurde, wenn nicht, Waren dem Verkäufer zurückgeben
-							if((int)arr["auction_current_buyer_id"]==0)
+							if((int)arr[current_buyer_id"]==0)
 							{
 								// Ress dem besitzer zurückgeben (mit dem faktor)
 								query << "UPDATE ";
 									query << "planets ";
 								query << "SET ";
-									query << "planet_res_metal=planet_res_metal+(" << arr["auction_sell_metal"]*return_factor << "), ";
-									query << "planet_res_crystal=planet_res_crystal+(" << arr["auction_sell_crystal"]*return_factor << "), ";
-									query << "planet_res_plastic=planet_res_plastic+(" << arr["auction_sell_plastic"]*return_factor << "), ";
-									query << "planet_res_fuel=planet_res_fuel+(" << arr["auction_sell_fuel"]*return_factor << "), ";
-									query << "planet_res_food=planet_res_food+(" << arr["auction_sell_food"]*return_factor << ") ";
+									query << "planet_res_metal=planet_res_metal+(" << arr["sell_0"]*return_factor << "), ";
+									query << "planet_res_crystal=planet_res_crystal+(" << arr["sell_1"]*return_factor << "), ";
+									query << "planet_res_plastic=planet_res_plastic+(" << arr["sell_2"]*return_factor << "), ";
+									query << "planet_res_fuel=planet_res_fuel+(" << arr["sell_3"]*return_factor << "), ";
+									query << "planet_res_food=planet_res_food+(" << arr["sell_4"]*return_factor << ") ";
 								query << "WHERE ";
-									query << "id=" << arr["auction_planet_id"] << " ";
-									query << "AND planet_user_id=" << arr["auction_user_id"] << ";";
+									query << "id=" << arr["entity_id"] << " ";
+									query << "AND planet_user_id=" << arr["user_id"] << ";";
 								query.store();		
 								query.reset();
 
@@ -213,23 +216,23 @@ namespace market
 								msg = "Folgende Auktion ist erfolglos abgelaufen und wurde gelöscht.\n\n"; 
             
 								msg += "Start: ";
-								msg += etoa::format_time(arr["auction_start"]);
+								msg += etoa::format_time(arr["date_start"]);
 								msg += "\n";
 								msg += "Ende: ";
-								msg += etoa::format_time(arr["auction_end"]);
+								msg += etoa::format_time(arr["date_end"]);
 								msg += "\n\n";
             
 								msg += "[b]Waren:[/b]\n";
 								msg += "Titan: ";
-								msg += etoa::nf(std::string(arr["auction_sell_metal"]));
+								msg += etoa::nf(std::string(arr["sell_0l"]));
 								msg += "\nSilizium: ";
-								msg += etoa::nf(std::string(arr["auction_sell_crystal"]));
+								msg += etoa::nf(std::string(arr["sell_1l"]));
 								msg += "\nPVC: ";
-								msg += etoa::nf(std::string(arr["auction_sell_plastic"]));
+								msg += etoa::nf(std::string(arr["sell_2"]));
 								msg += "\nTritium: ";
-								msg += etoa::nf(std::string(arr["auction_sell_fuel"]));
+								msg += etoa::nf(std::string(arr["sell_3"]));
 								msg += "\nNahrung: ";
-								msg += etoa::nf(std::string(arr["auction_sell_food"]));
+								msg += etoa::nf(std::string(arr["sell_4"]));
 								msg += "\n\n";
             
 								msg += "Du erhälst ";
@@ -238,25 +241,25 @@ namespace market
 								msg += "% deiner Rohstoffe wieder zurück (abgerundet)!\n\n";
             
 								msg += "Das Handelsministerium";
-								etoa::send_msg((int)arr["auction_user_id"],atoi(SHIP_MISC_MSG_CAT_ID),"Auktion beendet",msg);
+								etoa::send_msg((int)arr["user_id"],atoi(SHIP_MISC_MSG_CAT_ID),"Auktion beendet",msg);
 
 								//Auktion löschen
 								query << "DELETE FROM ";
 									query << "market_auction ";
 								query << "WHERE ";
-									query << "auction_market_id=" << arr["auction_market_id"] << ";";
+									query << "id=" << arr["id"] << ";";
 								query.store();		
 								query.reset();
 							}
 					
 							//Jemand hat geboten: Waren zum Versenden freigeben und Nachricht schreiben
-							else if((int)arr["auction_current_buyer_id"]!=0 and (int)arr["auction_buyable"]==1)
+							else if((int)arr["current_buyer_id"]!=0 and (int)arr["buyable"]==1)
 							{
 								// Nachricht an Verkäufer
 								msg = "Die Auktion vom ";
-								msg += etoa::format_time(arr["auction_start"]);
+								msg += etoa::format_time(arr["date_start"]);
 								msg += ", welche am ";
-								msg += etoa::format_time(arr["auction_end"]);
+								msg += etoa::format_time(arr["date_end"]);
 								msg += " endete, ist erfolgteich abgelaufen und wird nach ";
 								msg += config.get("market_auction_delay_time", 0);
 								msg += " Stunden gelöscht. Die Waren werden nach wenigen Minuten versendet.\n\nDer Spieler ";
@@ -264,63 +267,63 @@ namespace market
 								msg += " hat von dir folgende Rohstoffe ersteigert:\n\n";
             
 								msg += "Titan: ";
-								msg += etoa::nf(std::string(arr["auction_sell_metal"]));
+								msg += etoa::nf(std::string(arr["sell_0"]));
 								msg += "\nSilizium: ";
-								msg += etoa::nf(std::string(arr["auction_sell_crystal"]));
+								msg += etoa::nf(std::string(arr["sell_1"]));
 								msg += "\nPVC: ";
-								msg += etoa::nf(std::string(arr["auction_sell_plastic"]));
+								msg += etoa::nf(std::string(arr["sell_2"]));
 								msg += "\nTritium: ";
-								msg += etoa::nf(std::string(arr["auction_sell_fuel"]));
+								msg += etoa::nf(std::string(arr["sell_3"]));
 								msg += "\nNahrung: ";
-								msg += etoa::nf(std::string(arr["auction_sell_food"]));
+								msg += etoa::nf(std::string(arr["sell_4"]));
 								msg += "\n\n";
             
 								msg += "Dies macht dich um folgende Rohstoffe reicher:\n"; 
 								msg += "Titan: ";
-								msg += etoa::nf(std::string(arr["auction_buy_metal"]));
+								msg += etoa::nf(std::string(arr["buy_0"]));
 								msg += "\nSilizium: ";
-								msg += etoa::nf(std::string(arr["auction_buy_crystal"]));
+								msg += etoa::nf(std::string(arr["buy_1"]));
 								msg += "\nPVC: ";
-								msg += etoa::nf(std::string(arr["auction_buy_plastic"]));
+								msg += etoa::nf(std::string(arr["buy_2"]));
 								msg += "\nTritium: ";
-								msg += etoa::nf(std::string(arr["auction_buy_fuel"]));
+								msg += etoa::nf(std::string(arr["buy_3"]));
 								msg += "\nNahrung: ";
-								msg += etoa::nf(std::string(arr["auction_buy_food"]));
+								msg += etoa::nf(std::string(arr["buy_4"]));
 								msg += "\n\n";
             
 								msg += "Das Handelsministerium";
-								etoa::send_msg((int)arr["auction_user_id"],atoi(SHIP_MISC_MSG_CAT_ID),"Auktion beendet",msg);
+								etoa::send_msg((int)arr["user_id"],atoi(SHIP_MISC_MSG_CAT_ID),"Auktion beendet",msg);
 
 								// Nachricht an Käufer
 								msg = "Du warst der höchstbietende in der Auktion vom Spieler " + partner_user_nick + ", welche am ";
-								msg += etoa::format_time(arr["auction_end"]);
+								msg += etoa::format_time(arr["date_end"]);
 								msg += " zu Ende ging.\n\n";
 								msg += "Du hast folgende Rohstoffe ersteigert:\n\n";
 			
 								msg += "Titan: ";
-								msg += etoa::nf(std::string(arr["auction_sell_metal"]));
+								msg += etoa::nf(std::string(arr["sell_0"]));
 								msg += "\nSilizium: ";
-								msg += etoa::nf(std::string(arr["auction_sell_crystal"]));
+								msg += etoa::nf(std::string(arr["sell_1"]));
 								msg += "\nPVC: ";
-								msg += etoa::nf(std::string(arr["auction_sell_plastic"]));
+								msg += etoa::nf(std::string(arr["sell_2"]));
 								msg += "\nTritium: ";
-								msg += etoa::nf(std::string(arr["auction_sell_fuel"]));
+								msg += etoa::nf(std::string(arr["sell_3"]));
 								msg += "\nNahrung: ";
-								msg += etoa::nf(std::string(arr["auction_sell_food"]));
+								msg += etoa::nf(std::string(arr["sell_4"]));
 								msg += "\n\n";
             
 								msg += "Dies hat dich folgende Rohstoffe gekostet:\n\n"; 
 				
 								msg += "Titan: ";
-								msg += etoa::nf(std::string(arr["auction_buy_metal"]));
+								msg += etoa::nf(std::string(arr["buy_0"]));
 								msg += "\nSilizium: ";
-								msg += etoa::nf(std::string(arr["auction_buy_crystal"]));
+								msg += etoa::nf(std::string(arr["buy_1"]));
 								msg += "\nPVC: ";
-								msg += etoa::nf(std::string(arr["auction_buy_plastic"]));
+								msg += etoa::nf(std::string(arr["buy_2"]));
 								msg += "\nTritium: ";
-								msg += etoa::nf(std::string(arr["auction_buy_fuel"]));
+								msg += etoa::nf(std::string(arr["buy_3"]));
 								msg += "\nNahrung: ";
-								msg += etoa::nf(std::string(arr["auction_buy_food"]));
+								msg += etoa::nf(std::string(arr["buy_4"]));
 								msg += "\n\n"; 
 				
 								msg += "Die Auktion wird nach ";
@@ -328,7 +331,7 @@ namespace market
 								msg += " Stunden gelöscht und die Waren in wenigen Minuten versendet.\n\n";
             
 								msg += "Das Handelsministerium";
-								etoa::send_msg((int)arr["auction_current_buyer_id"],atoi(SHIP_MISC_MSG_CAT_ID),"Auktion beendet",msg);
+								etoa::send_msg((int)arr["current_buyer_id"],atoi(SHIP_MISC_MSG_CAT_ID),"Auktion beendet",msg);
             
 
 								//Log schreiben, falls dieser Handel regelwidrig ist
@@ -337,8 +340,8 @@ namespace market
 								query << "FROM ";
 									query << "user_multi ";
 								query << "WHERE ";
-									query << "user_multi_user_id=" << arr["auction_user_id"] << " ";
-									query << "AND user_multi_multi_user_id=" << arr["auction_current_buyer_id"] << ";";
+									query << "user_multi_user_id=" << arr["user_id"] << " ";
+									query << "AND user_multi_multi_user_id=" << arr["current_buyer_id"] << ";";
 								mysqlpp::Result multi_res = query.store();		
 								query.reset();
 				
@@ -347,8 +350,8 @@ namespace market
 								query << "FROM ";
 									query << "user_multi ";
 								query << "WHERE ";
-									query << "user_multi_user_id=" << arr["auction_current_buyer_id"] << " ";
-									query << "AND user_multi_multi_user_id=" << arr["auction_user_id"] << ";";
+									query << "user_multi_user_id=" << arr["current_buyer_id"] << " ";
+									query << "AND user_multi_multi_user_id=" << arr["user_id"] << ";";
 								mysqlpp::Result multi_res2 = query.store();		
 								query.reset();
 							
@@ -360,37 +363,37 @@ namespace market
 									if (multi_resSize>0 or multi_res2Size>0)
 									{
 										std::string log = "[URL=?page=user&sub=edit&user_id=";
-										log += std::string(arr["auction_current_buyer_id"]);
+										log += std::string(arr["current_buyer_id"]);
 										log += "][B]";
 										log += buyer_user_nick;
 										log += "[/B][/URL] hat an einer Auktion von [URL=?page=user&sub=edit&user_id=";
-										log += std::string(arr["auction_user_id"]);
+										log += std::string(arr["user_id"]);
 										log += "][B]";
 										log += partner_user_nick;
 										log += "[/B][/URL] gewonnen:\n\nSchiffe:\n";
-										log += etoa::nf(std::string(arr["auction_ship_count"]));
-										log += " ";
-										log += std::string(arr["auction_ship_name"]);
+										log += etoa::nf(std::string(arr["ship_count"]));
+										log += " Schiff-ID";
+										log += std::string(arr["ship_id"]);
 										log += "\n\nRohstoffe:\nTitan: ";
-										log += etoa::nf(std::string(arr["auction_sell_metal"]));
+										log += etoa::nf(std::string(arr["sell_0"]));
 										log += "\nSilizium: ";
-										log += etoa::nf(std::string(arr["auction_sell_crystal"]));
+										log += etoa::nf(std::string(arr["sell_1"]));
 										log += "\nPVC: ";
-										log += etoa::nf(std::string(arr["auction_sell_plastic"]));
+										log += etoa::nf(std::string(arr["sell_2"]));
 										log += "\nTritium: ";
-										log += etoa::nf(std::string(arr["auction_sell_fuel"]));
+										log += etoa::nf(std::string(arr["sell_3"]));
 										log += "\nNahrung: ";
-										log += etoa::nf(std::string(arr["auction_sell_food"]));
+										log += etoa::nf(std::string(arr["sell_4"]));
 										log += "\n\nDies hat ihn folgende Rohstoffe gekostet:\nTitan: ";
-										log += etoa::nf(std::string(arr["auction_buy_metal"]));
+										log += etoa::nf(std::string(arr["buy_1"]));
 										log += "\nSilizium: ";
-										log += etoa::nf(std::string(arr["auction_buy_crystal"]));
+										log += etoa::nf(std::string(arr["buy_2"]));
 										log += "\nPVC: ";
-										log += etoa::nf(std::string(arr["auction_buy_plastic"]));
+										log += etoa::nf(std::string(arr["buy_3"]));
 										log += "\nTritium: ";
-										log += etoa::nf(std::string(arr["auction_buy_fuel"]));
+										log += etoa::nf(std::string(arr["buy_4"]));
 										log += "\nNahrung: ";
-										log += etoa::nf(std::string(arr["auction_buy_food"]));
+										log += etoa::nf(std::string(arr["buy_5"]));
 										etoa::add_log(10,log,time);
 									}
 								}
@@ -401,25 +404,25 @@ namespace market
 								log += " hat vom Spieler ";
 								log += partner_user_nick;
 								log += " folgende Waren ersteigert:\n\nRohstoffe:\nTitan: ";
-								log += etoa::nf(std::string(arr["auction_sell_metal"]));
+								log += etoa::nf(std::string(arr["sell_0"]));
 								log += "\nSilizium: ";
-								log += etoa::nf(std::string(arr["auction_sell_crystal"]));
+								log += etoa::nf(std::string(arr["sell_1"]));
 								log += "\nPVC: ";
-								log += etoa::nf(std::string(arr["auction_sell_plastic"]));
+								log += etoa::nf(std::string(arr["sell_2"]));
 								log += "\nTritium: ";
-								log += etoa::nf(std::string(arr["auction_sell_fuel"]));
+								log += etoa::nf(std::string(arr["sell_3"]));
 								log += "\nNahrung: ";
-								log += etoa::nf(std::string(arr["auction_sell_food"]));
+								log += etoa::nf(std::string(arr["sell_4"]));
 								log += "\n\nDies hat ihn folgende Rohstoffe gekostet:\nTitan: ";
-								log += etoa::nf(std::string(arr["auction_buy_metal"]));
+								log += etoa::nf(std::string(arr["buy_0"]));
 								log += "\nnSilizium: ";
-								log += etoa::nf(std::string(arr["auction_buy_crystal"]));
+								log += etoa::nf(std::string(arr["buy_1"]));
 								log += "\nPVC: ";
-								log += etoa::nf(std::string(arr["auction_buy_plastic"]));
+								log += etoa::nf(std::string(arr["buy_2"]));
 								log += "\nTritium: ";
-								log += etoa::nf(std::string(arr["auction_buy_fuel"]));
+								log += etoa::nf(std::string(arr["buy_3"]));
 								log += "\nNahrung: ";
-								log += etoa::nf(std::string(arr["auction_buy_food"]));
+								log += etoa::nf(std::string(arr["buy_4"]));
 								log += "\n\nDie Auktion und wird nach ";
 								log += config.get("market_auction_delay_time", 0);
 								log += " Stunden gelöscht.";
@@ -429,64 +432,64 @@ namespace market
 								query << "UPDATE ";
 									query << "market_auction ";
 								query << "SET ";
-									query << "auction_buyable='0', ";
-									query << "auction_delete_date=" << delete_date << ", ";
-									query << "auction_sent='0' ";
+									query << "buyable='0', ";
+									query << "date_delete=" << delete_date << ", ";
+									query << "sent='0' ";
 								query << "WHERE ";
-									query << "auction_market_id=" << arr["auction_market_id"] << ";";
+									query << "id=" << arr["id"] << ";";
 								query.store();		
 								query.reset();
 
 								// Verkauftse Roshtoffe summieren für Config
-								sell_res[0] += int(arr["auction_sell_metal"]);
-								sell_res[1] += int(arr["auction_sell_crystal"]);
-								sell_res[2] += int(arr["auction_sell_plastic"]);
-								sell_res[3] += int(arr["auction_sell_fuel"]);
-								sell_res[4] += int(arr["auction_sell_food"]);
+								sell_res[0] += int(arr["sell_0"]);
+								sell_res[1] += int(arr["sell_1"]);
+								sell_res[2] += int(arr["sell_2"]);
+								sell_res[3] += int(arr["sell_3"]);
+								sell_res[4] += int(arr["sell_4"]);
 						
 								// Faktor = Kaufzeit - Verkaufzeit (in ganzen Tagen, mit einem Max. von 7)
 								// Total = Mengen / Faktor
-								int	factor = std::min((int)ceil( (time - arr["auction_start"]) / 3600 / 24 ) ,7);
+								int	factor = std::min((int)ceil( (time - arr["date_start"]) / 3600 / 24 ) ,7);
 						
 								// Summiert gekaufte Rohstoffe für Config
-								buy_res[0] += arr["auction_buy_metal"] / factor;
-								buy_res[1] += arr["auction_buy_crystal"] / factor;
-								buy_res[2] += arr["auction_buy_plastic"] / factor;
-								buy_res[3] += arr["auction_buy_fuel"] /	factor;
-								buy_res[4] += arr["auction_buy_food"] / factor;
+								buy_res[0] += arr["buy_0"] / factor;
+								buy_res[1] += arr["buy_1"] / factor;
+								buy_res[2] += arr["buy_2"] / factor;
+								buy_res[3] += arr["buy_3"] /	factor;
+								buy_res[4] += arr["buy_4"] / factor;
 						
 								// Summiert verkaufte Rohstoffe für Config
-								sell_res[0] += arr["auction_sell_metal"] / factor;
-								sell_res[1] += arr["auction_sell_crystal"] / factor;
-								sell_res[2] += arr["auction_sell_plastic"] / factor;
-								sell_res[3] += arr["auction_sell_fuel"] / factor;
-								sell_res[4] += arr["auction_sell_food"] / factor;
+								sell_res[0] += arr["sell_0"] / factor;
+								sell_res[1] += arr["sell_1"] / factor;
+								sell_res[2] += arr["sell_2"] / factor;
+								sell_res[3] += arr["sell_3"] / factor;
+								sell_res[4] += arr["sell_4"] / factor;
 
 							}
 						
 							// Waren sind gesendet, jetzt nur noch nachricht schreiben und löschendatum festlegen
-							else if((int)arr["auction_delete_date"]==0 and (int)arr["auction_sent"]==1)
+                                                        else if((int)arr["date_delete"]==0 and (int)arr["sent"]==1)
 							{
 								// Nachricht senden
 								msg = "Die Auktion vom ";
-								msg += etoa::format_time(arr["auction_start"]);
+								msg += etoa::format_time(arr["date_start"]);
 								msg += ", welche am ";
-								msg += etoa::format_time(arr["auction_end"]);
+								msg += etoa::format_time(arr["date_end"]);
 								msg += " endete, ist erfolgreich abgelaufen und wird nach ";
 								msg += config.get("market_auction_delay_time", 0);
 								msg += " Stunden gelöscht.\n\n";
 				
 								msg += "Das Handelsministerium";
-								etoa::send_msg((int)arr["auction_user_id"],atoi(SHIP_MISC_MSG_CAT_ID),"Auktion abgelaufen",msg);
+								etoa::send_msg((int)arr["user_id"],atoi(SHIP_MISC_MSG_CAT_ID),"Auktion abgelaufen",msg);
 	
 								//Auktion noch eine zeit lang anzeigen, aber unkäuflich machen
 								query << "UPDATE ";
 									query << "market_auction ";
 								query << "SET ";
-									query << "auction_buyable='0', ";
-									query << "auction_delete_date=" << delete_date << " ";
+									query << "buyable='0', ";
+									query << "date_delete=" << delete_date << " ";
 								query << "WHERE ";
-									query << "auction_market_id=" << arr["auction_market_id"] << ";";
+									query << "id=" << arr["id"] << ";";
 								query.store();		
 								query.reset();          
 							}
@@ -495,9 +498,9 @@ namespace market
 							query << "DELETE FROM ";
 								query << "market_auction ";
 							query << "WHERE ";
-								query << "auction_market_id=" << arr["auction_market_id"] << " ";
-								query << "AND auction_delete_date<=" << time << " ";
-								query << "AND auction_sent='1';";
+								query << "id=" << arr["id"] << " ";
+								query << "AND date_delete<=" << time << " ";
+								query << "AND sent='1';";
 							query.store();		
 							query.reset();
 						}
@@ -869,9 +872,9 @@ namespace market
 		query << "FROM ";
 		query << "	market_auction ";
 		query << "WHERE ";
-		query << "	auction_buyable='0' ";
-		query << "	AND auction_sent='0' ";
-		query << "	AND auction_delete_date>" << time << ";";
+		query << "	buyable='0' ";
+		query << "	AND sent='0' ";
+		query << "	AND date_delete>" << time << ";";
 		res = query.store();		
 		query.reset();	
 		
@@ -888,29 +891,29 @@ namespace market
 				{
 					arr = res.at(i);
 						
-					buyer = new User((int)arr["auction_current_buyer_id"]);
-					seller = new User((int)arr["auction_user_id"]);
+					buyer = new User((int)arr["current_buyer_id"]);
+					seller = new User((int)arr["user_id"]);
 						
 					// Add trade points
 					int tradepointsBuyer = 1;
 					int tradepointsSeller = 1;
-					if ((int)strlen(arr["auction_text"]) > 15) 
+					if ((int)strlen(arr["text"]) > 15) 
 					{
 						tradepointsSeller += 1;
 					}
 					
 					std::string textBuyer = "Auktion von ";
-					textBuyer += std::string(arr["auction_user_id"]);
+					textBuyer += std::string(arr["user_id"]);
 					
 					std::string textSeller = "Rohstoffverkauf an ";
-					textSeller += std::string(arr["auction_current_buyer_id"]);
+					textSeller += std::string(arr["current_buyer_id"]);
 					
-					addTradePoints(std::string(arr["auction_current_buyer_id"]),tradepointsBuyer,0,textBuyer);
-					addTradePoints(std::string(arr["auction_user_id"]),tradepointsSeller,1,textSeller);
+					addTradePoints(std::string(arr["current_buyer_id"]),tradepointsBuyer,0,textBuyer);
+					addTradePoints(std::string(arr["user_id"]),tradepointsSeller,1,textSeller);
 
 					//Flotte zum verkäufer der auktion schicken
 					int launchtime = time; // Startzeit
-					double distance = etoa::calcDistanceByPlanetId(arr["auction_planet_id"],arr["auction_current_buyer_planet_id"]);
+					double distance = etoa::calcDistanceByPlanetId(arr["entity_id"],arr["current_buyer_entity_id"]);
 					int duration = (int)(distance / (double)ship_speed * 3600) + ship_starttime + ship_landtime;
 					int sellerLandtime = launchtime + (int)(duration / seller->getSpecialist()->getSpecialistTradeBonus()); // Landezeit
 					int buyerLandtime = launchtime + (int)(duration / buyer->getSpecialist()->getSpecialistTradeBonus()); // Landezeit
@@ -929,18 +932,18 @@ namespace market
 						query << "res_fuel, ";
 						query << "res_food) ";
 					query << "VALUES ";
-						query << "('" << arr["auction_user_id"] << "', ";
+						query << "('" << arr["user_id"] << "', ";
 						query << "'" << config.get("market_entity", 0) << "', ";
-						query << arr["auction_planet_id"] << ", ";
-						query << arr["auction_user_id"] << ", ";
+						query << arr["entity_id"] << ", ";
+						query << arr["user_id"] << ", ";
 						query << launchtime << ", ";
 						query << sellerLandtime << ", ";
 						query << "'" << FLEET_ACTION_RESS << "', ";
-						query << arr["auction_buy_metal"] << ", ";
-						query << arr["auction_buy_crystal"] << ", ";
-						query << arr["auction_buy_plastic"] << ", ";
-						query << arr["auction_buy_fuel"] << ", ";
-						query << arr["auction_buy_food"] << ");";
+						query << arr["buy_0"] << ", ";
+						query << arr["buy_1"] << ", ";
+						query << arr["buy_2"] << ", ";
+						query << arr["buy_3"] << ", ";
+						query << arr["buy_4"] << ");";
 					query.store();
 					query.reset();
 				
@@ -972,18 +975,18 @@ namespace market
 						query << "res_fuel, ";
 						query << "res_food) ";
 					query << "VALUES ";
-						query << "('" << arr["auction_current_buyer_id"] << "', ";
+						query << "('" << arr["current_buyer_id"] << "', ";
 						query << "'" << config.get("market_entity", 0) << "', ";
-						query << arr["auction_current_buyer_planet_id"] << ", ";
-						query << arr["auction_current_buyer_id"] << ", ";
+						query << arr["current_buyer_entity_id"] << ", ";
+						query << arr["current_buyer_id"] << ", ";
 						query << launchtime << ", ";
 						query << buyerLandtime << ", ";
 						query << "'" << FLEET_ACTION_RESS << "', ";
-						query << arr["auction_sell_metal"] << ", ";
-						query << arr["auction_sell_crystal"] << ", ";
-						query << arr["auction_sell_plastic"] << ", ";
-						query << arr["auction_sell_fuel"] << ", ";
-						query << arr["auction_sell_food"] << ");";
+						query << arr["sell_0"] << ", ";
+						query << arr["sell_1"] << ", ";
+						query << arr["sell_2"] << ", ";
+						query << arr["sell_3"] << ", ";
+						query << arr["sell_4"] << ");";
 					query.store();
 					query.reset();
 					
@@ -1005,9 +1008,9 @@ namespace market
 					query << "UPDATE ";
 						query << "market_auction ";
 					query << "SET ";
-						query << "auction_sent='1' ";
+						query << "sent='1' ";
 					query << "WHERE ";
-						query << "auction_market_id=" << arr["auction_market_id"] << ";";
+						query << "id=" << arr["id"] << ";";
 					query.store();
 					query.reset();
 				}	
