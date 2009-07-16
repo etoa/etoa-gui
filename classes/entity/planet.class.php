@@ -1030,6 +1030,11 @@
 		{
 			return null;
 		}
+		
+		public function getResourceLog()
+		{
+			return $this->resMetal.":".$this->resCrystal.":".$this->resPlastic.":".$this->resFuel.":".$this->resFood.":".$this->people.":0,w,".$this->debrisMetal.":".$this->debrisCrystal.":".$this->debrisPlastic;
+		}
 			
 	}
 ?>

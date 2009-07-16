@@ -1269,7 +1269,7 @@
 					tableEnd();
 					echo "<input type=\"button\" onclick=\"xajax_havenReset()\" value=\"Weitere Flotte starten\" />
 					&nbsp; <input type=\"button\" onclick=\"document.location='?page=fleetinfo&amp;id=".$fid."'\" value=\"Flotte beobachten\" />";
-	
+					
 					$response->assign("havenContentAction","innerHTML",ob_get_contents());
 					$response->assign("havenContentAction","style.display",'');
 					$response->assign('support','innerHTML',tf($fleet->getSupportTime()) );

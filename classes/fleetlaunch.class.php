@@ -44,6 +44,7 @@
 		private $action;
 		private $resources;
 		private $error;
+		private $fleetLog;
 		
 		/**
 		* The constructor
@@ -108,6 +109,8 @@
 			$this->actionOk=false;			
 			
 			$this->error="";
+			
+			$this->fleetLog = new FleetLog($this->ownerId, $this->sourceEntity->id, $sourceEnt);
 			
 			//Create targetentity
 			if (isset($_SESSION['haven']['targetId'])) {
@@ -496,17 +499,17 @@
 					
 					if ($addcnt > 0)
 					{
-						// Subtract flight costs from source
-						$this->sourceEntity->chgRes(4,-$this->getCosts());
-						$this->sourceEntity->chgRes(5,-$this->getCostsFood());
-						$this->sourceEntity->chgPeople(-($this->getPilots()+$this->capacityPeopleLoaded));
-						
 						// Load resource
 						$this->finalLoadResource(1);
 						$this->finalLoadResource(2);
 						$this->finalLoadResource(3);
 						$this->finalLoadResource(4);
 						$this->finalLoadResource(5);
+						
+						// Subtract flight costs from source
+						$this->sourceEntity->chgRes(4,-$this->getCosts());
+						$this->sourceEntity->chgRes(5,-$this->getCostsFood());
+						$this->sourceEntity->chgPeople(-($this->getPilots()+$this->capacityPeopleLoaded));
 						
 						if ($this->action=="alliance" && $this->leaderId!=0) {
 							$status=3;
@@ -591,8 +594,10 @@
 						dbquery($sql);
 						$fid = mysql_insert_id();
 						
+						$shipLog = "";
 						foreach ($this->ships as $sid => $sda)
 						{
+							$shipLog .= $sid.":".$sda['count'].",";
 							if ($sda['special'])
 							{
 								dbquery("INSERT INTO
@@ -676,6 +681,19 @@
 									);");
 							}
 						}
+						
+						//add all the cool stuff to the fleetLog
+						$this->fleetLog->fleetId = $fid;
+						$this->fleetLog->targetId = $this->targetEntity->id();
+						$this->fleetLog->launchtime = $time;
+						$this->fleetLog->landtime = $this->landTime;
+						$this->fleetLog->fuel = $this->getCosts() + $this->supportCostsFuel;
+						$this->fleetLog->food = $this->getCostsFood() + $this->supportCostsFood;
+						$this->fleetLog->pilots = $this->getPilots();
+						$this->fleetLog->action = $this->action;
+						$this->fleetLog->addFleetRes($this->res,$this->capacityPeopleLoaded,$this->fetch);
+						$this->fleetLog->fleetShipEnd = $shipLog;
+						$this->fleetLog->launch();
 							
 						
 						if ($this->action=="alliance" && $this->leaderId==0) {
