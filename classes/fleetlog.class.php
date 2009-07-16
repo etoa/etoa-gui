@@ -34,12 +34,26 @@
 			$this->entityResStart = $this->sourceEntity->getResourceLog();
 			$this->fleetResStart = "0:0:0:0:0:0:0,f,0:0:0:0:0:0:0";
 			$this->fleetShipStart = "0";
+			
+			$this->fleetId=0;
+			$this->launchtime=0;
+			$this->landtime=0;
+			$this->targetId=0;
+			$this->action="";
+			$this->entityResEnd="";
+			$this->entityShipStart="";
+			$this->entityShipEnd="";
+			$this->fleetResEnd="";
+			$this->fleetShipEnd="";
+			$this->fuel=0;
+			$this->food=0;
+			$this->pilots=0;
 		}
 		
 		
 		function __destruct()
 		{
-			if ($this->launched)
+			if ($this->launched && false)
 			{
 				$text = "Treibstoff: ".$this->fuel." Nahrung: ".$this->food." Piloten".$this->pilots." launched";
 				dbquery("

@@ -65,7 +65,7 @@
 			$fleet->setAllianceSlots($flvl);
 			$afleets = $fleet->getAllianceSlots();
 			$pfleets = $flvl + 2;
-			echo "<th>Allianzflotten:</th><td><b>$afleets</b> Allianzflotten können mit <b>$pfleets</b> Teilflotten pro Flotte starten! (Allianzflottenkontrolle Stuffe $flvl)</td>";
+			echo "<th>Allianzflotten:</th><td><b>$afleets</b> Allianzflotten können mit <b>$pfleets</b> Teilflotten pro Flotte starten! (Allianzflottenkontrolle Stufe $flvl)</td>";
 		}
 	
 		// Piloten		
