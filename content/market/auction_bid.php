@@ -253,6 +253,6 @@
 	}
 	else
 	{
-		"Die Auktion ist nicht mehr vorhanden oder bereits abgelaufen!<br/>";
+		echo "Die Auktion ist nicht mehr vorhanden oder bereits abgelaufen!<br/>";
 	}
 ?>

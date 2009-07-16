@@ -328,10 +328,9 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 				market_auction
 			WHERE
 				buyable=1
+				AND user_id!='".$_SESSION['user_id']."'
 			ORDER BY
 				date_end ASC;");
-		// todo			WHERE
-//				auction_user_id!='".$cu->id."'
 
 			if (mysql_num_rows($res)>0)
 			{
@@ -450,19 +449,34 @@ function showAuctionDetail($id)
 			$rest_time_str = tf($rest_time);
 		}
 
+		$seller = new User($arr['user_id']);
+		$bidder = new User($arr['current_buyer_id']);
+		$sellerEntity = Entity::createFactoryById($arr['entity_id']);
+		$own = Entity::createFactoryById($_SESSION['cpid']);
+
+
 		echo "<form action=\"?page=market&amp;mode=auction\" method=\"post\" name=\"auctionShowFormular\" id=\"auction_show_selector\">";
 		checker_init();
 		echo "<input type=\"hidden\" value=\"".$arr['id']."\" name=\"auction_market_id\" id=\"auction_market_id\"/>";
+        echo "<input type=\"hidden\" value=\"0\" name=\"auction_show_last_update\" id=\"auction_show_last_update\"/>";
 
+		// Übergibt Daten an XAJAX
+		foreach ($resNames as $rk => $rn)
+		{
+			// Rohstoffe
+			echo "<input type=\"hidden\" value=\"".$own->resources[$rk]."\" name=\"res_$rk\" id=\"res_$rk\"/>";
+			// Angebot
+	        echo "<input type=\"hidden\" value=\"".$arr['sell_'.$rk]."\" name=\"sell_$rk\" id=\"sell_$rk\"/>";
+	        // Höchstgebot
+		    echo "<input type=\"hidden\" value=\"".$arr['buy_'.$rk]."\" name=\"buy_$rk\" id=\"buy_$rk\"/>";
+	        // Gewünschte Währung
+		    echo "<input type=\"hidden\" value=\"".$arr['currency_'.$rk]."\" name=\"currency_$rk\" id=\"currency_$rk\"/>";
+		}
 
 		tableStart("Auktionsdetails");
 		echo "<tr>";
 
 
-		$seller = new User($arr['user_id']);
-		$bidder = new User($arr['current_buyer_id']);
-		$sellerEntity = Entity::createFactoryById($arr['entity_id']);
-		$own = Entity::createFactoryById($_SESSION['cpid']);
 
 		echo "
 		<th style=\"width:150px;\">Verkäufer:</th>
@@ -511,7 +525,9 @@ function showAuctionDetail($id)
 				<td style=\"vertical-align:middle;\">";
 				if($arr['currency_'.$rk]==1)
 				{
-					echo "<input type=\"text\" value=\"".nf($arr['buy_'.$rk])."\" name=\"auction_new_buy_".$rk."\" id=\"auction_new_buy_".$rk."\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$sellerEntity->resources[$rk].",'','');calcMarketAuctionPrice(0);\"/>";
+
+					//calcMarketAuctionPrice(0);
+					echo "<input type=\"text\" value=\"".nf($arr['buy_'.$rk])."\" name=\"auction_new_buy_".$rk."\" id=\"auction_new_buy_".$rk."\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$sellerEntity->resources[$rk].",'','');\"/>";
 				}
 				else
 				{
@@ -521,6 +537,11 @@ function showAuctionDetail($id)
 					<th id=\"auction_min_max_".$rk."\" style=\"vertical-align:middle;\"> - </th>
 				</tr>";
 			}
+			// Status Nachricht (Ajax Überprüfungstext)
+			echo "<tr>
+							<td colspan=\"6\" id=\"auction_check_message\" style=\"text-align:center;vertical-align:middle;height:30px;\">&nbsp;</td>
+						</tr>";
+
 			tableEnd();
 			echo "<p><input type=\"submit\" name=\"submit_auction_bid\" value=\"Gebot abgeben\" /> ";
 			echo "<input type=\"button\" onclick=\"applySearchFilter();\" value=\"Zurück\" /></p>";

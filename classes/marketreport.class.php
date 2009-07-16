@@ -18,6 +18,12 @@ class MarketReport extends Report
 		'resbought'=>'Rohstoffe gekauft',
 		'shipadd'=>'Schiffangebot eingestellt',
 		'shipcancel'=>'Schiffangebot zurückgezogen',
+		'auctionadd'=>'Auktion hinzugefügt',
+		'auctioncancel'=>'Auktion abgebrochen',
+		'auctionbid'=>'Gebot abgegeben',
+		'auctionoverbid'=>'Überboten',
+		'auctionwon'=>'Auktion gewonnen',
+		'auctionfinished'=>'Auktion beendet',
 	);
 
 	protected $subType = 'other';

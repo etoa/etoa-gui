@@ -1098,6 +1098,7 @@
 
 				function calcMarketAuctionPrice(last_update)
 				{
+					window.alert(1);
 					// Setzt Zeichen, dass die Eingaben noch nicht definitiv geprüft wurden vor dem Absenden
 					document.getElementById('auction_show_last_update').value=0;
 
@@ -1122,32 +1123,32 @@
 					//
 
 					// Aktuelle Rohstoffe auf dem Planeten werden abgefragt
-					res_metal = document.getElementById('res_metal').value;
-					res_crystal = document.getElementById('res_crystal').value;
-					res_plastic = document.getElementById('res_plastic').value;
-					res_fuel = document.getElementById('res_fuel').value;
-					res_food = document.getElementById('res_food').value;
+					res_metal = document.getElementById('res_0').value;
+					res_crystal = document.getElementById('res_1').value;
+					res_plastic = document.getElementById('res_2').value;
+					res_fuel = document.getElementById('res_3').value;
+					res_food = document.getElementById('res_4').value;
 
 					// Zu versteigernde Rohstoffe (Angebot) in Variablen speichern
-					auction_sell_metal = document.getElementById('auction_sell_metal').value;
-					auction_sell_crystal = document.getElementById('auction_sell_crystal').value;
-					auction_sell_plastic = document.getElementById('auction_sell_plastic').value;
-					auction_sell_fuel = document.getElementById('auction_sell_fuel').value;
-					auction_sell_food = document.getElementById('auction_sell_food').value;
+					auction_sell_metal = document.getElementById('sell_0').value;
+					auction_sell_crystal = document.getElementById('sell_1').value;
+					auction_sell_plastic = document.getElementById('sell_2').value;
+					auction_sell_fuel = document.getElementById('sell_3').value;
+					auction_sell_food = document.getElementById('sell_4').value;
 
 					// Das momentane Höchstgebot in Variablen speichern
-					auction_buy_metal = document.getElementById('auction_buy_metal').value;
-					auction_buy_crystal = document.getElementById('auction_buy_crystal').value;
-					auction_buy_plastic = document.getElementById('auction_buy_plastic').value;
-					auction_buy_fuel = document.getElementById('auction_buy_fuel').value;
-					auction_buy_food = document.getElementById('auction_buy_food').value;
+					auction_buy_metal = document.getElementById('buy_0').value;
+					auction_buy_crystal = document.getElementById('buy_1').value;
+					auction_buy_plastic = document.getElementById('buy_2').value;
+					auction_buy_fuel = document.getElementById('buy_3').value;
+					auction_buy_food = document.getElementById('buy_4').value;
 
 					// Das eingegebene Gebot (neuer Preis) formatieren (Trennzeichen entfernen) und in Variable speichern
-					auction_new_buy_metal = document.getElementById('auction_new_buy_metal').value.replace(/`/g, "");
-					auction_new_buy_crystal = document.getElementById('auction_new_buy_crystal').value.replace(/`/g, "");
-					auction_new_buy_plastic = document.getElementById('auction_new_buy_plastic').value.replace(/`/g, "");
-					auction_new_buy_fuel = document.getElementById('auction_new_buy_fuel').value.replace(/`/g, "");
-					auction_new_buy_food = document.getElementById('auction_new_buy_food').value.replace(/`/g, "");
+					auction_new_buy_metal = document.getElementById('auction_new_buy_0').value.replace(/`/g, "");
+					auction_new_buy_crystal = document.getElementById('auction_new_buy_1').value.replace(/`/g, "");
+					auction_new_buy_plastic = document.getElementById('auction_new_buy_2').value.replace(/`/g, "");
+					auction_new_buy_fuel = document.getElementById('auction_new_buy_3').value.replace(/`/g, "");
+					auction_new_buy_food = document.getElementById('auction_new_buy_4').value.replace(/`/g, "");
 
 
 					// Stellt sicher, dass nur positive Zahlen verrechnet werden
@@ -1162,7 +1163,7 @@
 					if(istZahl(auction_new_buy_metal)==false || auction_new_buy_metal=='')
 					{
 						auction_new_buy_metal = 0;
-						document.getElementById('auction_new_buy_metal').value=auction_new_buy_metal;
+						document.getElementById('auction_new_buy_0').value=auction_new_buy_metal;
 					}
 					auction_new_buy_metal = Math.abs(auction_new_buy_metal);
 
@@ -1170,7 +1171,7 @@
 					if(istZahl(auction_new_buy_crystal)==false || auction_new_buy_crystal=='')
 					{
 						auction_new_buy_crystal = 0;
-						document.getElementById('auction_new_buy_crystal').value=auction_new_buy_crystal;
+						document.getElementById('auction_new_buy_1').value=auction_new_buy_crystal;
 					}
 					auction_new_buy_crystal = Math.abs(auction_new_buy_crystal);
 
@@ -1178,7 +1179,7 @@
 					if(istZahl(auction_new_buy_plastic)==false || auction_new_buy_plastic=='')
 					{
 						auction_new_buy_plastic = 0;
-						document.getElementById('auction_new_buy_plastic').value=auction_new_buy_plastic;
+						document.getElementById('auction_new_buy_2').value=auction_new_buy_plastic;
 					}
 					auction_new_buy_plastic = Math.abs(auction_new_buy_plastic);
 
@@ -1186,7 +1187,7 @@
 					if(istZahl(auction_new_buy_fuel)==false || auction_new_buy_fuel=='')
 					{
 						auction_new_buy_fuel = 0;
-						document.getElementById('auction_new_buy_fuel').value=auction_new_buy_fuel;
+						document.getElementById('auction_new_buy_3').value=auction_new_buy_fuel;
 					}
 					auction_new_buy_fuel = Math.abs(auction_new_buy_fuel);
 
@@ -1194,7 +1195,7 @@
 					if(istZahl(auction_new_buy_food)==false || auction_new_buy_food=='')
 					{
 						auction_new_buy_food = 0;
-						document.getElementById('auction_new_buy_food').value=auction_new_buy_food;
+						document.getElementById('auction_new_buy_4').value=auction_new_buy_food;
 					}
 					auction_new_buy_food = Math.abs(auction_new_buy_food);
 
@@ -1225,7 +1226,7 @@
 							var actuel_res_factor = <?php echo MARKET_METAL_FACTOR; ?>;
 							var auction_sell = auction_sell_metal;
 							var auction_new_buy = auction_new_buy_metal;
-							var buy_field = "auction_new_buy_metal";
+							var buy_field = "auction_new_buy_0";
 						}
 						// Silizium
 						else if(res==1)
@@ -1233,7 +1234,7 @@
 							var actuel_res_factor = <?php echo MARKET_CRYSTAL_FACTOR;?>;
 							var auction_sell = auction_sell_crystal;
 							var auction_new_buy = auction_new_buy_crystal;
-							var buy_field = "auction_new_buy_crystal";
+							var buy_field = "auction_new_buy_1";
 						}
 						// PVC
 						else if(res==2)
@@ -1241,7 +1242,7 @@
 							var actuel_res_factor = <?php echo MARKET_PLASTIC_FACTOR;?>;
 							var auction_sell = auction_sell_plastic;
 							var auction_new_buy = auction_new_buy_plastic;
-							var buy_field = "auction_new_buy_plastic";
+							var buy_field = "auction_new_buy_2";
 						}
 						// Tritium
 						else if(res==3)
@@ -1249,7 +1250,7 @@
 							var actuel_res_factor = <?php echo MARKET_FUEL_FACTOR;?>;
 							var auction_sell = auction_sell_fuel;
 							var auction_new_buy = auction_new_buy_fuel;
-							var buy_field = "auction_new_buy_fuel";
+							var buy_field = "auction_new_buy_3";
 						}
 						// Nahrung
 						else if(res==4)
@@ -1257,7 +1258,7 @@
 							var actuel_res_factor = <?php echo MARKET_FOOD_FACTOR;?>;
 							var auction_sell = auction_sell_food;
 							var auction_new_buy = auction_new_buy_food;
-							var buy_field = "auction_new_buy_food";
+							var buy_field = "auction_new_buy_4";
 						}
 
 
@@ -1406,25 +1407,25 @@
 					//
 
 					// Ändert Daten in den Min/Max Feldern
-					if(document.getElementById('auction_currency_metal').value==1)
+					if(document.getElementById('currency_0').value==1)
 					{
-						document.getElementById('auction_min_max_metal').innerHTML=out_auction_min_max['0'];
+						document.getElementById('min_max_0').innerHTML=out_auction_min_max['0'];
 					}
-					if(document.getElementById('auction_currency_crystal').value==1)
+					if(document.getElementById('currency_1').value==1)
 					{
-						document.getElementById('auction_min_max_crystal').innerHTML=out_auction_min_max['1'];
+						document.getElementById('min_max_1').innerHTML=out_auction_min_max['1'];
 					}
-					if(document.getElementById('auction_currency_plastic').value==1)
+					if(document.getElementById('currency_2').value==1)
 					{
-						document.getElementById('auction_min_max_plastic').innerHTML=out_auction_min_max['2'];
+						document.getElementById('min_max_2').innerHTML=out_auction_min_max['2'];
 					}
-					if(document.getElementById('auction_currency_fuel').value==1)
+					if(document.getElementById('currency_3').value==1)
 					{
-						document.getElementById('auction_min_max_fuel').innerHTML=out_auction_min_max['3'];
+						document.getElementById('min_max_3').innerHTML=out_auction_min_max['3'];
 					}
-					if(document.getElementById('auction_currency_food').value==1)
+					if(document.getElementById('currency_4').value==1)
 					{
-						document.getElementById('auction_min_max_food').innerHTML=out_auction_min_max['4'];
+						document.getElementById('min_max_4').innerHTML=out_auction_min_max['4'];
 					}
 
 
