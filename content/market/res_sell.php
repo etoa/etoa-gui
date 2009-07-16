@@ -54,141 +54,138 @@ $cnt = 0;
 						$sellarr = array();
 						foreach ($resNames as $rk => $rn)
 						{
-							if ($cp->resources[$rk] < $arr['buy_'.$rk])
-							{
-								$ok = false;
-								break;
-							}
 							$buyarr[$rk] = $arr['buy_'.$rk];
 							$sellarr[$rk] = $arr['sell_'.$rk];
 						}
 
-						if ($ok)
+						if ($cp->checkRes($buyarr))
 						{
+							$cp->subRes($buyarr);
+							
 							$seller = new User($arr['user_id']);
 							$sellerEntity = Entity::createFactoryById($arr['entity_id']);
 
-							// Fleet Seller -> Buyer
-							$sellerShipList = new ShipList($sellerEntity->id,$seller->id);
 							$tradeShip = new Ship(MARKET_SHIP_ID);
 							$numSellerShip = ($tradeShip->capacity>0) ? ceil(array_sum($sellarr) / $tradeShip->capacity) : 1;
+						
+							$dist = $sellerEntity->distance($cp);
+							$flighttime = ceil($dist / ($tradeShip->speed/3600));
+							
+							$launchtime = time();
+							$landtime = $launchtime + $flighttime;
+							
+							// Fleet Seller -> Buyer
+							dbquery("
+							INSERT INTO 
+								fleet
+							(
+								user_id,
+								entity_from,
+								entity_to,
+								launchtime,
+								landtime,
+								action,
+								res_metal,
+								res_crystal,
+								res_plastic,
+								res_fuel,
+								res_food,
+								status
+							)
+							VALUES
+							(
+								0,
+								".$sellerEntity->id.",
+								".$cp->id.",
+								".$launchtime.",
+								".$landtime.",
+								'market',
+								".$sellarr[0].",
+								".$sellarr[1].",
+								".$sellarr[2].",
+								".$sellarr[3].",
+								".$sellarr[4].",
+								0
+							);");
+							dbquery("
+							INSERT INTO
+								fleet_ships
+							(
+								fs_fleet_id,
+								fs_ship_id,
+								fs_ship_cnt
+							)
+							VALUES
+							(
+								".mysql_insert_id().",
+								".MARKET_SHIP_ID.",
+								".$numSellerShip."
+							);");
+							$launched = true;
 
-							$sellerShipList->add(MARKET_SHIP_ID, $numSellerShip);
 
-							$launched = false;
-							$fleet = new FleetLaunch($sellerEntity,$seller);
-							if ($fleet->checkHaven())
-							{
-								if ($probeCount = $fleet->addShip(MARKET_SHIP_ID,$numSellerShip))
-								{
-									if ($fleet->fixShips())
-									{
-											if ($fleet->setTarget($cp))
-											{
-												if ($fleet->checkTarget())
-												{
-													if ($fleet->setAction("market"))
-													{
-														if ($sellerFid = $fleet->launch())
-														{
-															$flObj = new Fleet($sellerFid);
-															$str = "Handelssschiffe unterwegs. Ankunft in ".tf($flObj->remainingTime());
-															$launched = true;
-														}
-														else
-															$str= $fleet->error();
-													}
-													else
-														$str= $fleet->error();
-												}
-												else
-													$str= $fleet->error();
-											}
-											else
-												$str= $fleet->error();
-									}
-									else
-									{
-										$str= $fleet->error();
-									}
-								}
-								else
-								{
-									$str= "Auf dem Verkäuferplaneten befinden sich keine Handelsschiffe! ".$fleet->error();
-								}
-							}
-							else
-							{
-								$str= $fleet->error();
-							}
-
-							//$cp->subRes($subarr)
-							//
-							// Rohstoffe vom Käuferplanet abziehen und $c-variabeln anpassen
 							if ($launched)
 							{
-								$myShipList = new ShipList($cp->id,$cu->id);
 								$numBuyerShip = ($tradeShip->capacity>0) ? ceil(array_sum($buyarr) / $tradeShip->capacity) : 1;
-								$myShipList->add(MARKET_SHIP_ID, $numBuyerShip);
 
-								$launched = false;
-								$fleet = new FleetLaunch($cp,$cu);
-								if ($fleet->checkHaven())
-								{
-									if ($probeCount = $fleet->addShip(MARKET_SHIP_ID,$numBuyerShip))
-									{
-										if ($fleet->fixShips())
-										{
-												if ($fleet->setTarget($sellerEntity))
-												{
-													if ($fleet->checkTarget())
-													{
-														if ($fleet->setAction("market"))
-														{
-															if ($buyerFid = $fleet->launch())
-															{
-																$flObj = new Fleet($buyerFid);
-																$str = "Handel #".$arr['id'].": Handelssschiffe unterwegs. Ankunft in ".tf($flObj->remainingTime());
-																$launched = true;
-															}
-															else
-																$str= $fleet->error();
-														}
-														else
-															$str= $fleet->error();
-													}
-													else
-														$str= $fleet->error();
-												}
-												else
-													$str= $fleet->error();
-										}
-										else
-										{
-											$str= $fleet->error();
-										}
-									}
-									else
-									{
-										$str= "Auf dem Käuferplaneten befinden sich keine Handelsschiffe! ".$fleet->error();
-									}
-								}
-								else
-								{
-									$str= $fleet->error();
-								}
+							// Fleet Buyer->Seller
+								dbquery("
+								INSERT INTO 
+									fleet
+								(
+									user_id,
+									entity_from,
+									entity_to,
+									launchtime,
+									landtime,
+									action,
+									res_metal,
+									res_crystal,
+									res_plastic,
+									res_fuel,
+									res_food,
+									status
+								)
+								VALUES
+								(
+									0,
+									".$cp->id.",
+									".$sellerEntity->id.",
+									".$launchtime.",
+									".$landtime.",
+									'market',
+								".$buyarr[0].",
+								".$buyarr[1].",
+								".$buyarr[2].",
+								".$buyarr[3].",
+								".$buyarr[4].",									
+									0
+								);");
+								dbquery("
+								INSERT INTO
+									fleet_ships
+								(
+									fs_fleet_id,
+									fs_ship_id,
+									fs_ship_cnt
+								)
+								VALUES
+								(
+									".mysql_insert_id().",
+									".MARKET_SHIP_ID.",
+									".$numBuyerShip."
+								);");
+
+
+								$launched = true;
 
 								if ($launched)
 								{
-									// Angebot als gekauft markieren (wird zu einem späteren Zeitpunkt gelöscht)
-									// todo: delete
+									
+									// Angebot löschen
 									dbquery("
-									UPDATE
+									DELETE FROM
 										market_ressource
-									SET
-										buyable='0',
-										buyer_id='".$cu->id."',
-										buyer_entity_id='".$cp->id."'
 									WHERE
 										id='".$arr['id']."'");
 
@@ -197,12 +194,6 @@ $cnt = 0;
 									$mr = array();
 									foreach ($resNames as $rk => $rn)
 									{
-										// Faktor = Kaufzeit - Verkaufzeit (in ganzen Tagen, mit einem Max. von 7)
-										// Total = Mengen / Faktor
-										// deprecated: New market race calculation is checked every half hour,
-										// so no daily average value us needed
-										//$factor = min( ceil( (time() - $arr['datum']) / 3600 / 24 ) ,7);
-
 										$supplyTotal[$rk] += $arr['sell_'.$rk];
 										$demandTotal[$rk] += $arr['buy_'.$rk];
 

@@ -272,7 +272,7 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 							echo "<td rowspan=\"$resCnt\">".$tu->detailLink()."</td>";
 							echo "<td rowspan=\"$resCnt\">".stripslashes($arr['text'])."</td>";
 							echo "<td rowspan=\"$resCnt\">
-								<input type=\"checkbox\" name=\"ship_market_id[]\" id=\"ship_market_id_".$arr['id']."\" value=\"1\" onclick=\"xajax_calcMarketShipBuy(xajax.getFormValues('ship_buy_selector'));\" />
+								<input type=\"checkbox\" name=\"ship_market_id[]\" id=\"ship_market_id_".$arr['id']."\" value=\"".$arr['id']."\" onclick=\"xajax_calcMarketShipBuy(xajax.getFormValues('ship_buy_selector'));\" />
 							</td>";
 						}
 						echo "</tr>";

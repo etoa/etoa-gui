@@ -33,75 +33,146 @@
 				FROM
 					market_ship
 				WHERE
-					ship_market_id='".$id."'
-					AND ship_buyable='1';");
+					id='".$id."'
+					AND buyable='1';");
 				// Prüft, ob Angebot noch vorhanden ist
 				if (mysql_num_rows($res)!=0)
 				{
 					$arr = mysql_fetch_array($res);
-
+					
+					$buyarr = array();
+					foreach ($resNames as $rk => $rn)
+					{
+						$buyarr[$rk] = $arr['costs_'.$rk];
+					}
+					
 					// Prüft, ob genug Rohstoffe vorhanden sind
-					if ($cp->resMetal >= $arr['ship_costs_metal']
-					&& $cp->resCrystal >= $arr['ship_costs_crystal']
-					&& $cp->resPlastic >= $arr['ship_costs_plastic']
-					&& $cp->resFuel >= $arr['ship_costs_fuel']
-					&& $cp->resFood >= $arr['ship_costs_food'])
+					if ($cp->checkRes($buyArr))
 					{
 						$seller_user_nick = get_user_nick($arr['user_id']);
 
-						//Angebot reservieren (wird zu einem späteren Zeitpunkt verschickt)
+						// Rohstoffe vom Käuferplanet abziehen 
+						$cp->subRes($buyArr);
+						
+						$seller = new User($arr['user_id']);
+						$sellerEntity = Entity::createFactoryById($arr['entity_id']);
+
+						$tradeShip = new Ship(MARKET_SHIP_ID);
+					
+						$dist = $sellerEntity->distance($cp);
+						$flighttime = ceil($dist / ($tradeShip->speed/3600));
+						
+						$launchtime = time();
+						$landtime = $launchtime + $flighttime;
+						
+						// Fleet Seller -> Buyer
 						dbquery("
-						UPDATE
-							market_ship
-						SET
-							ship_buyable='0',
-							ship_buyer_id='".$cu->id."',
-							ship_buyer_planet_id='".$cp->id()."',
-							ship_buyer_cell_id='".$cp->cellId()."'
-						WHERE
-							ship_market_id='".$id."'");
-
-						// Rohstoffe vom Käuferplanet abziehen und $c-variabeln anpassen
-						$cp->changeRes(-$arr['ship_costs_metal'],-$arr['ship_costs_crystal'],-$arr['ship_costs_plastic'],-$arr['ship_costs_fuel'],-$arr['ship_costs_food']);
-
-						// Nachricht an Verkäufer
-						$msg = "Der Handel war erfolgreich: Der User ".$cu->nick." hat folgende Schiffe von dir gekauft:\n\n";
-
-						$msg .= "".$arr['ship_name'].": ".$arr['ship_count']."\n\n";
-
-						$msg .= "Dies hat dich um folgende Rohstoffe reicher gemacht:\n\n";
-
-						$msg .= "".RES_METAL.": ".nf($arr['ship_costs_metal'])."\n";
-						$msg .= "".RES_CRYSTAL.": ".nf($arr['ship_costs_crystal'])."\n";
-						$msg .= "".RES_PLASTIC.": ".nf($arr['ship_costs_plastic'])."\n";
-						$msg .= "".RES_FUEL.": ".nf($arr['ship_costs_fuel'])."\n";
-						$msg .= "".RES_FOOD.": ".nf($arr['ship_costs_food'])."\n";
-
-						$msg .= "Die Rohstoffe werden in wenigen Minuten versendet.\n\n";
-
-						$msg .= "Das Handelsministerium";
-						send_msg($arr['user_id'],SHIP_MISC_MSG_CAT_ID,"Handel vollzogen",$msg);
-
-
-						// Nachricht an Käufer
-						$msg = "Ein Handel wurde erfolgreich vollzogen. Du hast vom Spieler ".$seller_user_nick." folgende Schiffe gekauft:\n\n";
-
-						$msg .= "".$arr['ship_name'].": ".$arr['ship_count']."\n\n";
-
-						$msg .= "Dies hat dich folgende Rohstoffe gekostet:\n\n";
-
-						$msg .= "".RES_METAL.": ".nf($arr['ship_costs_metal'])."\n";
-						$msg .= "".RES_CRYSTAL.": ".nf($arr['ship_costs_crystal'])."\n";
-						$msg .= "".RES_PLASTIC.": ".nf($arr['ship_costs_plastic'])."\n";
-						$msg .= "".RES_FUEL.": ".nf($arr['ship_costs_fuel'])."\n";
-						$msg .= "".RES_FOOD.": ".nf($arr['ship_costs_food'])."\n\n";
-
-						$msg .= "Die Waren werden in wenigen Minuten versendet.\n\n";
-
-						$msg .= "Das Handelsministerium";
-						send_msg($cu->id,SHIP_MISC_MSG_CAT_ID,"Handel vollzogen",$msg);
+						INSERT INTO 
+							fleet
+						(
+							user_id,
+							entity_from,
+							entity_to,
+							launchtime,
+							landtime,
+							action,
+							status
+						)
+						VALUES
+						(
+							0,
+							".$sellerEntity->id.",
+							".$cp->id.",
+							".$launchtime.",
+							".$landtime.",
+							'market',
+							0
+						);");
+						dbquery("
+						INSERT INTO
+							fleet_ships
+						(
+							fs_fleet_id,
+							fs_ship_id,
+							fs_ship_cnt
+						)
+						VALUES
+						(
+							".mysql_insert_id().",
+							".$arr['ship_id'].",
+							".$arr['count']."
+						);");
+						$launched = true;
 
 
+						if ($launched)
+						{
+							$numBuyerShip = ($tradeShip->capacity>0) ? ceil(array_sum($buyarr) / $tradeShip->capacity) : 1;
+
+							// Fleet Buyer->Seller
+							dbquery("
+							INSERT INTO 
+								fleet
+							(
+								user_id,
+								entity_from,
+								entity_to,
+								launchtime,
+								landtime,
+								action,
+								res_metal,
+								res_crystal,
+								res_plastic,
+								res_fuel,
+								res_food,
+								status
+							)
+							VALUES
+							(
+								0,
+								".$cp->id.",
+								".$sellerEntity->id.",
+								".$launchtime.",
+								".$landtime.",
+								'market',
+							".$buyarr[0].",
+							".$buyarr[1].",
+							".$buyarr[2].",
+							".$buyarr[3].",
+							".$buyarr[4].",									
+								0
+							);");
+							dbquery("
+							INSERT INTO
+								fleet_ships
+							(
+								fs_fleet_id,
+								fs_ship_id,
+								fs_ship_cnt
+							)
+							VALUES
+							(
+								".mysql_insert_id().",
+								".MARKET_SHIP_ID.",
+								".$numBuyerShip."
+							);");
+
+
+							$launched = true;
+
+							if ($launched)
+							{
+								dbquery("
+								DELETE FROM
+									market_ship
+								WHERE
+									id='".$id."'");								
+								$cnt++;
+							}
+						}
+
+
+						/*
 						//Log schreiben, falls dieser Handel regelwidrig ist
 						$multi_res1=dbquery("
 						SELECT
@@ -124,13 +195,16 @@
 						if(mysql_num_rows($multi_res1)!=0 && mysql_num_rows($multi_res2)!=0)
 						{
 					    add_log(10,"[URL=?page=user&sub=edit&user_id=".$cu->id."][B]".$cu->nick."[/B][/URL] hat von [URL=?page=user&sub=edit&user_id=".$arr['user_id']."][B]".$seller_user_nick."[/B][/URL] Schiffe gekauft:\n\n".$arr['ship_count']." ".$arr['ship_name']."\n\nund das zu folgendem Preis:\n\n".RES_METAL.": ".nf($arr['ship_costs_metal'])."\n".RES_CRYSTAL.": ".nf($arr['ship_costs_crystal'])."\n".RES_PLASTIC.": ".nf($arr['ship_costs_plastic'])."\n".RES_FUEL.": ".nf($arr['ship_costs_fuel'])."\n".RES_FOOD.": ".nf($arr['ship_costs_food']),time());
-						}
+						}*/
+
+						//Angebot reservieren (wird zu einem späteren Zeitpunkt verschickt)
+
 
 						//Marktlog schreiben
-						add_log(7,"Der Spieler ".$cu->nick." hat folgende Schiffe von ".$seller_user_nick." gekauft:\n\n".$arr['ship_count']." ".$arr['ship_name']."\n\nund das zu folgendem Preis:\n\n".RES_METAL.": ".nf($arr['ship_costs_metal'])."\n".RES_CRYSTAL.": ".nf($arr['ship_costs_crystal'])."\n".RES_PLASTIC.": ".nf($arr['ship_costs_plastic'])."\n".RES_FUEL.": ".nf($arr['ship_costs_fuel'])."\n".RES_FOOD.": ".nf($arr['ship_costs_food']),time());
+						//add_log(7,"Der Spieler ".$cu->nick." hat folgende Schiffe von ".$seller_user_nick." gekauft:\n\n".$arr['ship_count']." ".$arr['ship_name']."\n\nund das zu folgendem Preis:\n\n".RES_METAL.": ".nf($arr['ship_costs_metal'])."\n".RES_CRYSTAL.": ".nf($arr['ship_costs_crystal'])."\n".RES_PLASTIC.": ".nf($arr['ship_costs_plastic'])."\n".RES_FUEL.": ".nf($arr['ship_costs_fuel'])."\n".RES_FOOD.": ".nf($arr['ship_costs_food']),time());
 
 						// Zählt die erfolgreich abgewickelten Angebote
-						$cnt++;
+
 					}
 					else
 					{
