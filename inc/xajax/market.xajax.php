@@ -14,7 +14,9 @@ $xajax->register(XAJAX_FUNCTION,'calcMarketAuctionTime');
 $xajax->register(XAJAX_FUNCTION,'calcMarketAuctionPrice');
 $xajax->register(XAJAX_FUNCTION,'MarketSearchFormularShow');
 $xajax->register(XAJAX_FUNCTION,'checkMarketSearchFormular');
+
 $xajax->register(XAJAX_FUNCTION,'marketSearch');
+$xajax->register(XAJAX_FUNCTION,'showAuctionDetail');
 
 
 function marketSearch($form,$order="distance",$orderDirection=0)
@@ -219,19 +221,10 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 	//
 	// Ships
 	// <editor-fold>
-	if ($form['search_cat']=="ships")
+	elseif ($form['search_cat']=="ships")
 	{
 			echo "<form action=\"?page=market&amp;mode=ships\" method=\"post\" id=\"ship_buy_selector\">\n";
 			checker_init();
-
-			tableStart("Angebots&uuml;bersicht");
-			echo "<tr>
-						<th width=\"25%\">Angebot:</th>
-						<th colspan=\"2\" width=\"25%\">Preis:</th>
-						<th width=\"15%\">Anbieter:</th>
-						<th width=\"15%\">Beschreibung:</th>
-						<th width=\"10%\">Kaufen:</th>
-					</tr>";
 
 			$res = dbquery("
 			SELECT
@@ -240,11 +233,20 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 				market_ship
 			WHERE
 				buyable='1'
-        
-			;");//AND user_id!='".$_SESSION['user_id']."' todo
+			AND user_id!='".$_SESSION['user_id']."'
+			;");
 			$cnt=0;
 			if(mysql_num_rows($res)>0)
 			{
+				tableStart("Angebots&uuml;bersicht");
+				echo "<tr>
+							<th width=\"25%\">Angebot:</th>
+							<th colspan=\"2\" width=\"25%\">Preis:</th>
+							<th width=\"15%\">Anbieter:</th>
+							<th width=\"15%\">Beschreibung:</th>
+							<th width=\"10%\">Kaufen:</th>
+						</tr>";
+
 				while ($arr=mysql_fetch_array($res))
 				{
 					if($arr['for_alliance']!=0)
@@ -304,11 +306,242 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 	// </editor-fold>
 
 
+
+	// Auctions
+	// <editor-fold>
+	elseif ($form['search_cat']=="auctions")
+	{
+		if (isset($_SESSION['auctionid']) && $_SESSION['auctionid']>0)
+		{
+			ob_end_clean();
+			$ajax->script("xajax_showAuctionDetail(".$_SESSION['auctionid'].");");
+			$_SESSION['auctionid']=0;
+			unset($_SESSION['auctionid']);
+			return $ajax;
+
+		}
+
+			$res = dbquery("
+			SELECT
+				*
+			FROM
+				market_auction
+			WHERE
+				buyable=1
+			ORDER BY
+				date_end ASC;");
+		// todo			WHERE
+//				auction_user_id!='".$cu->id."'
+
+			if (mysql_num_rows($res)>0)
+			{
+				tableStart("Offene Auktionen");
+				// Header
+				echo "<tr>
+				<th>Angebot</th>
+				<th>Beschreibung</th>
+				<th style=\"width:100px;\">Angebotsende</th>
+				<th style=\"width:50px;\">Gebote</th>
+				<th colspan=\"2\">Aktuelles Gebot</th>
+				</tr>";
+
+				$cnt=0;
+				$acnts=array();
+				$acnt=0;
+				while ($arr=mysql_fetch_array($res))
+				{
+						//restliche zeit bis zum ende
+						$rest_time=$arr['date_end']-time();
+
+						// Gibt Nachricht aus, wenn die Auktion beendet ist, aber noch kein Löschtermin festgelegt ist
+						if($rest_time<=0)
+						{
+							$rest_time = "Auktion beendet!";
+						}
+						// und sonst Zeit bis zum Ende anzeigen
+						else
+						{
+							$rest_time = tf($rest_time);
+						}
+
+						echo "<tr>
+						<td>";
+						foreach ($resNames as $rk => $rn)
+						{
+							if ($arr['sell_'.$rk]>0)
+							{
+								echo "<span class=\"rescolor".$rk."\">";
+								echo $resIcons[$rk].$rn.": ".nf($arr['sell_'.$rk])."</span><br style=\"clear:both;\" />";
+							}
+						}
+						echo "</td>
+						<td>".$arr['text']."</td>
+						<td>$rest_time</td>
+						<td>".$arr['bidcount']."</td>
+						<td>";
+						foreach ($resNames as $rk => $rn)
+						{
+							if ($arr['currency_'.$rk]>0)
+							{
+								echo "<span class=\"rescolor".$rk."\">";
+								echo $resIcons[$rk].$rn.": ".nf($arr['buy_'.$rk]);
+								echo "</span><br style=\"clear:both;\" />";
+							}
+						}
+						echo "</td>";
+						echo "<td style=\"width:100px;\">
+					<input type=\"button\" onclick=\"xajax_showAuctionDetail(".$arr['id'].")\" value=\"Infos &amp; Bieten\" /></td>";
+					echo "</td></tr>";
+				}
+				tableEnd();
+			}
+			else
+			{
+				echo "Keine Auktionen vorhanden!";
+			}
+
+
+	}
+	// </editor-fold>
+
 	$ajax->assign("market_search_results","innerHTML",ob_get_clean());
 	$ajax->assign("market_search_loading","style.display","none");
 
 
 	return $ajax;
+}
+
+function showAuctionDetail($id)
+{
+	global $resNames,$resIcons;
+	ob_start();
+ 	$ajax = new xajaxResponse();
+
+
+	$cnt=0;
+	$acnts=array();
+	$acnt=0;
+
+	$res=dbquery("
+	SELECT
+		*
+	FROM
+		market_auction
+	WHERE
+		id='".intval($id)."'
+		AND user_id!='".$_SESSION['user_id']."'
+	");
+
+	if (mysql_num_rows($res)>0)
+	{
+		$arr = mysql_fetch_assoc($res);
+
+		//restliche zeit bis zum ende
+		$rest_time=$arr['date_end']-time();
+
+		// Gibt Nachricht aus, wenn die Auktion beendet ist, aber noch kein Löschtermin festgelegt ist
+		if($rest_time<=0)
+		{
+			$rest_time_str = "Auktion beendet!";
+		}
+		// und sonst Zeit bis zum Ende anzeigen
+		else
+		{
+			$rest_time_str = tf($rest_time);
+		}
+
+		echo "<form action=\"?page=market&amp;mode=auction\" method=\"post\" name=\"auctionShowFormular\" id=\"auction_show_selector\">";
+		checker_init();
+		echo "<input type=\"hidden\" value=\"".$arr['id']."\" name=\"auction_market_id\" id=\"auction_market_id\"/>";
+
+
+		tableStart("Auktionsdetails");
+		echo "<tr>";
+
+
+		$seller = new User($arr['user_id']);
+		$bidder = new User($arr['current_buyer_id']);
+		$sellerEntity = Entity::createFactoryById($arr['entity_id']);
+		$own = Entity::createFactoryById($_SESSION['cpid']);
+
+		echo "
+		<th style=\"width:150px;\">Verkäufer:</th>
+		<td>".$seller."</td>
+		<th style=\"width:200px;\">Aktueller Höchstbietender:</th>
+		<td>".$bidder."</td>
+
+		<td rowspan=\"2\" style=\"text-align:center;vertical-align:middle\">
+		<span style=\"font-size:16pt;\" >".$rest_time_str."</span></td>
+		</tr>
+
+		<tr>
+		<th>Entfernung:</th>
+		<td>".$sellerEntity->distance($own)." AE</td>
+		<th>Anzahl Gebote:</th>
+		<td>".$arr['bidcount']."</td>
+		</tr>";
+
+		if ($arr['text']!="")
+			echo "<tr><td colspan=\"5\">".(isset($arr['text'])?stripslashes($arr['text']):'Keine Beschreibung vorhanden')."</td></tr>";
+		tableEnd();
+
+		// Angebots/Preis Maske
+		if ($rest_time>0)
+		{
+			tableStart();
+			echo "<tr>
+				<th style=\"width:15%;vertical-align:middle;\" colspan=\"2\">Rohstoff</th>
+				<th style=\"width:5%;text-align:center;vertical-align:middle;\">Kurs</th>
+				<th style=\"width:15%;vertical-align:middle;\">Höchstgebot</th>
+				<th style=\"width:15%;vertical-align:middle;\">Bieten</th>
+				<th style=\"width:35%;vertical-align:middle;\">Min./Max.</th>
+			</tr>";
+
+			foreach ($resNames as $rk => $rn)
+			{
+				echo "<tr>
+				<th style=\"vertical-align:middle;\" class=\"rescolor".$rk."\">".$rn.":</th>
+				<td id=\"auction_sell_metal_field\" style=\"vertical-align:middle;\"  class=\"rescolor".$rk."\">
+					".nf($arr['sell_'.$rk])."
+				</td>
+				<th style=\"text-align:center;vertical-align:middle;\">".MARKET_METAL_FACTOR."</th>
+				<td id=\"auction_buy_".$rk."_field\" style=\"vertical-align:middle;\">
+					".nf($arr['buy_'.$rk])."
+				</td>
+				<td style=\"vertical-align:middle;\">";
+				if($arr['currency_'.$rk]==1)
+				{
+					echo "<input type=\"text\" value=\"".nf($arr['buy_'.$rk])."\" name=\"auction_new_buy_".$rk."\" id=\"auction_new_buy_".$rk."\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$sellerEntity->resources[$rk].",'','');calcMarketAuctionPrice(0);\"/>";
+				}
+				else
+				{
+					echo " - ";
+				}
+				echo "</td>
+					<th id=\"auction_min_max_".$rk."\" style=\"vertical-align:middle;\"> - </th>
+				</tr>";
+			}
+			tableEnd();
+			echo "<p><input type=\"submit\" name=\"submit_auction_bid\" value=\"Gebot abgeben\" /> ";
+			echo "<input type=\"button\" onclick=\"applySearchFilter();\" value=\"Zurück\" /></p>";
+		}
+		else
+			echo "<p><input type=\"button\" onclick=\"applySearchFilter();\" value=\"Zurück\" /></p>";
+		echo "</form>";
+	}
+	else
+	{
+		error_msg("Angebot nicht mehr vorhanden!");
+		echo "<p><input type=\"button\" onclick=\"applySearchFilter();\" value=\"Zurück\" /></p>";
+	}
+
+
+
+	$ajax->assign("market_search_results","innerHTML",ob_get_clean());
+	$ajax->assign("market_search_loading","style.display","none");
+
+	return $ajax;
+	
 }
 
 

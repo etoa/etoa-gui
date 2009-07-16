@@ -797,6 +797,21 @@
 			return false;
 		}
 
+		function checkRes($data)
+		{
+			global $resNames;
+
+			foreach ($resNames as $rk => $rn)
+			{
+				if (isset($data[$rk]) && $data[$rk]>=0)
+				{
+					if ($this->resources[$rk] - $data[$rk] < 0)
+						return false;
+				}
+			}
+			return true;
+		}
+
 		function subRes($data)
 		{
 			global $resNames;

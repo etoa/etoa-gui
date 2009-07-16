@@ -1438,9 +1438,14 @@
 				{
 					document.getElementById('market_search_filter_container_res').style.display="none";
 					document.getElementById('market_search_filter_container_ship').style.display="none";
+					document.getElementById('market_search_filter_container_auction').style.display="none";
 					if (type=="ships")
 					{
 						document.getElementById('market_search_filter_container_ship').style.display="";
+					}
+					else if(type=="auctions")
+					{
+						document.getElementById('market_search_filter_container_auction').style.display="";
 					}
 					else
 					{
