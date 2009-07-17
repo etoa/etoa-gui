@@ -132,6 +132,19 @@
 				);");
 			}
 		}
+
+		static function cleanup($timestamp=0)
+		{
+			if ($timestamp==0)
+				$timestamp = time() - (24*3600*$cfg->get('log_threshold_days'));
+			dbquery("
+				DELETE FROM
+					logs
+				WHERE
+					timestamp<'".$timestamp."'
+			");
+			return mysql_affected_rows();
+		}
 		
 			
 	}

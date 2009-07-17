@@ -112,12 +112,12 @@
 			if ($threshold>0)
 				$tstamp = time() - $threshold;
 			else
-				$tstamp = time() - (24*3600*$cfg->get('log_threshold_days'));			
+				$tstamp = time() - (24*3600*$cfg->log_threshold_days->v);
 			dbquery("
 			DELETE FROM 
 				user_sessionlog 
 			WHERE 
-				log_logintime < ".$tstamp.";");		
+				time_action < ".$tstamp.";");
 			$nr = mysql_affected_rows();
 			add_log("4","$nr Session-Logs die älter als ".date("d.m.Y H:i",$tstamp)." sind wurden gelöscht!");
 			return $nr;

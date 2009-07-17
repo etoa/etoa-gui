@@ -37,13 +37,9 @@
 				$tstamp = time() - $threshold;
 			else
 				$tstamp = time() - (24*3600*$cfg->get('log_threshold_days'));
-			dbquery("
-				DELETE FROM
-					logs
-				WHERE
-					timestamp<'".$tstamp."'
-			");
-			$nr = mysql_affected_rows();
+
+			$nr = Log::cleanup($tstamp);
+
 			dbquery("
 				DELETE FROM
 					logs_battle
