@@ -17,14 +17,14 @@ namespace marketdelivery
 		//create a message for the entity user
 		Message *marketMesage = new Message();
 		
-		// Deliver ships and resources
+		// Deliver resources
 		if (this->f->getResLoaded()>0) {
 			fleetLand(2);
 			
 			marketMesage->addSubject("Transport vom Handelsministerium");
 		}
 		
-		// If there were only resources delivered
+		// Deliver ships
 		else {
 			// Land fleet and save the resources and the ships on the planet
 			fleetLand(1);
@@ -47,7 +47,7 @@ namespace marketdelivery
 		marketMesage->addUserId(this->targetEntity->getUserId());
 		marketMesage->addEntityId(this->targetEntity->getId());
 		marketMesage->addFleetId(this->f->getId());
-		marketMesage->addType((int)config.idget("SHIP_MONITOR_MSG_CAT_ID"));
+		marketMesage->addType((int)config.idget("SHIP_MISC_MSG_CAT_ID"));
 		
 		delete marketMesage;
 		
