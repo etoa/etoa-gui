@@ -1012,7 +1012,7 @@
 						//	
 						ob_start();
 						tableStart("Zielinfos");
-						if ($fleet->wormholeEntryEntity)
+						if ($fleet->wormholeEntryEntity!=null)
 						{
 							echo "<tr><th width=\"25%\"><b>Wurmloch-Eintrittspunkt:</b></th>
 								<td id=\"targetinfo\" style=\"padding:16px 2px 2px 60px;color:#fff;height:47px;background:#000 url('".$fleet->wormholeEntryEntity->imagePath()."') no-repeat 3px 3px;\">
