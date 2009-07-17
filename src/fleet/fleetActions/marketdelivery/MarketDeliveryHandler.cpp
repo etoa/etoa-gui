@@ -18,19 +18,19 @@ namespace marketdelivery
 		Message *marketMesage = new Message();
 		
 		// Deliver ships and resources
-		if (this->f->getCapacity()>0) {
-			// Land fleet and save the resources and the ships on the planet
-			fleetLand(1);
+		if (this->f->getResLoaded()>0) {
+			fleetLand(2);
 			
-			marketMesage->addSubject("Flotte vom Handelsministerium");
+			marketMesage->addSubject("Transport vom Handelsministerium");
 		}
 		
 		// If there were only resources delivered
 		else {
-			// Save them on the planet
-			fleetLand(2);
+			// Land fleet and save the resources and the ships on the planet
+			fleetLand(1);
 			
-			marketMesage->addSubject("Transport vom Handelsministerium");
+			marketMesage->addSubject("Flotte vom Handelsministerium");
+
 		}
 		
 		// Send a message to the user
@@ -40,7 +40,7 @@ namespace marketdelivery
 		marketMesage->addText("[b]Zeit:[/b] ");
 		marketMesage->addText(this->f->getLandtimeString(),1);
 		marketMesage->addText("[b]Bericht:[/b] Die gekauften Waren sind angekommen.",1);
-		marketMesage->addUserId(this->targetEntity->getUserId());
+		marketMesage->addText(this->msgRes,1);
 		
 		marketMesage->addSignature("Unser Unternehmen dankt ihnen f&uuml;r die Unterst&uuml;tzung und wir hoffen sie sind mit uns zufrieden und w&uuml;nschen ihnen auch in Zukunft viel Erfolg.\nDas Handelsministerium");
 		

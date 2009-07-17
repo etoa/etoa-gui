@@ -42,7 +42,11 @@
 			loadData();
 		
 			mysqlpp::Connection con((mysql["DB_DATABASE"]).c_str(),(mysql["DB_SERVER"]).c_str(),(mysql["DB_USER"]).c_str(),(mysql["DB_PASSWORD"]).c_str());
-
+			
+			if (!con) {
+				cerr << "Database connection failed: " << con.error() << endl;
+				exit(EXIT_FAILURE);
+			}
 			con_ = con;
 			
 		}; 
