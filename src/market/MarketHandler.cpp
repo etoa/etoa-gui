@@ -1255,7 +1255,7 @@ namespace market
 					query << "FROM ";
 						query << "buildlist ";
 					query << "WHERE ";
-						query << "buildlist_entity_id=" << arr["planet_id"] << " ";
+						query << "buildlist_entity_id=" << arr["entity_id"] << " ";
 						query << "AND buildlist_building_id='21' ";
 						query << "AND buildlist_current_level>'0' ";
 						query << "AND buildlist_user_id=" << arr["user_id"] << ";";
@@ -1276,7 +1276,7 @@ namespace market
 						query << "shiplist_count=shiplist_count+" << floor(int(arr["ship_count"])*return_factor) << " "; 
 					query << "WHERE "; 
 						query << "shiplist_user_id=" << arr["user_id"] << " "; 
-						query << "AND shiplist_entity_id=" << arr["planet_id"] << " "; 
+						query << "AND shiplist_entity_id=" << arr["entity_id"] << " "; 
 						query << "AND shiplist_ship_id=" << arr["ship_id"] << ";";
 					query.store();
 					query.reset();
