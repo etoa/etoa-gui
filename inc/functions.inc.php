@@ -2559,7 +2559,7 @@ function imagecreatefromfile($path, $user_functions = false)
 	{
 		if (function_exists("msg_get_queue"))
 		{
-			$dname = dirname(realpath("conf.inc.php"));
+			$dname = dirname(realpath(RELATIVE_ROOT."/config/db.config.php"));
 			$ipckey = ftok($dname,IPC_ID);
 			$q = msg_get_queue($ipckey,0666);
 			add_log(4,"Sende IPC Message mit Key $ipckey vom Token $dname und Projekt-Id ".IPC_ID.". Die Queue hat die ID ".$q);
