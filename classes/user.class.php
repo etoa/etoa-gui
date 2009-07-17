@@ -104,7 +104,7 @@
 				$this->email=$arr['user_email'];
 				$this->emailFix=$arr['user_email_fix'];
 
-				$this->lastOnline=$arr['user_last_online'];
+				$this->lastOnline=$arr['user_logouttime'];
 				$this->acttime = $arr['user_acttime'];
 				$this->points=$arr['user_points'];
 

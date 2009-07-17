@@ -365,7 +365,7 @@
 					user_rank_highest,
 					user_blocked_to,
 					user_hmode_from,
-					user_acttime
+					user_logouttime
 				FROM
 					users
 				WHERE
@@ -561,7 +561,7 @@
 						'".$sx."',
 						'".$sy."',
 						'".($uarr['user_blocked_to'] > $time ? 1 : 0)."',
-						'".($uarr['user_acttime'] < $time-$inactivetime ? 1 : 0)."',
+						'".($uarr['user_logouttime'] < $time-$inactivetime ? 1 : 0)."',
 						'".($uarr['user_hmode_from'] > 0 ? 1 : 0)."'
 					)";
 				$user_points_query.=",(

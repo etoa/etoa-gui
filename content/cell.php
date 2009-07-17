@@ -182,13 +182,13 @@
 						  $tm_info = "Urlaubsmodus";
 					  }
 					  // Lange Inaktiv
-					  elseif ($ent->owner->acttime<time()-USER_INACTIVE_LONG*86400)
+					  elseif ($ent->owner->lastOnline<time()-USER_INACTIVE_LONG*86400)
 					  {
 						  $class .= "userLongInactiveColor";
 						  $tm_info = "Inaktiv";
 					  }		
 					  // Inaktiv
-					  elseif ($ent->owner->acttime<time()-USER_INACTIVE_SHOW*86400)
+					  elseif ($ent->owner->lastOnline<time()-USER_INACTIVE_SHOW*86400)
 					  {
 						  $class .= "userInactiveColor";
 						  $tm_info = "Inaktiv";
