@@ -97,7 +97,7 @@
 		query << " 	fleet_id, ";
 		query << " 	timestamp, ";
 		query << " 	message, ";
-		query << "	fleet_user_id, ";
+		query << "	user_id, ";
 		query << " 	entity_user_id, ";
 		query << " 	entity_from, ";
 		query << " 	entity_to, ";
