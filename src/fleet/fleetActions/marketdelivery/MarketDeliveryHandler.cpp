@@ -17,21 +17,9 @@ namespace marketdelivery
 		//create a message for the entity user
 		Message *marketMesage = new Message();
 		
-		// Deliver resources
-		if (this->f->getResLoaded()>0) {
-			fleetLand(2);
+		fleetLand(1);
 			
-			marketMesage->addSubject("Transport vom Handelsministerium");
-		}
-		
-		// Deliver ships
-		else {
-			// Land fleet and save the resources and the ships on the planet
-			fleetLand(1);
-			
-			marketMesage->addSubject("Flotte vom Handelsministerium");
-
-		}
+		marketMesage->addSubject("Flotte vom Handelsministerium");
 		
 		// Send a message to the user
 		marketMesage->addText("Eine Flotte vom Handelsministerium hat folgendes Ziel erreicht:",1);
