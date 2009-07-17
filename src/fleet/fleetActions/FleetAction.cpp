@@ -63,7 +63,7 @@
 					if ((*ot)->getCount()) {
 						if (set) query << ",";
 						set = true;
-						query << "('" << this->f->getUserId() << "', '";
+						query << "('" << this->targetEntity->getUserId() << "', '";
 						query << (*ot)->getTypeId() << "', '";
 						query << this->targetEntity->getId() << "', '";
 						query << (*ot)->getCount() << "', '";
