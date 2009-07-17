@@ -83,38 +83,36 @@
 	
 	void Log::save() 
 	{
-	/*
+
 		My &my = My::instance();
 		mysqlpp::Connection *con_ = my.get();
 		
-// TODO
 
-		/*
 		mysqlpp::Query query = con_->query();
 
 	
 		query << "INSERT INTO ";
 		query << "	logs_fleet ";
 		query << "(";
-		query << " 	logs_fleet_fleet_id, ";
-		query << " 	logs_fleet_timestamp, ";
-		query << " 	logs_fleet_text, ";
-		query << "	logs_fleet_fleet_user_id, ";
-		query << " 	logs_fleet_entity_user_id, ";
-		query << " 	logs_fleet_entity_from, ";
-		query << " 	logs_fleet_entity_to, ";
-		query << " 	logs_fleet_launchtime, ";
-		query << " 	logs_fleet_landtime, ";
-		query << " 	logs_fleet_action, ";
-		query << " 	logs_fleet_status, ";
-		query << " 	logs_fleet_fleet_res_start, ";
-		query << " 	logs_fleet_fleet_res_end, ";
-		query << " 	logs_fleet_fleet_ships_start, ";
-		query << " 	logs_fleet_fleet_ships_end, ";
-		query << "	logs_fleet_entity_res_start, ",
-		query << " 	logs_fleet_entity_res_end, ";
-		query << " 	logs_fleet_entity_ships_start, ";
-		query << " 	logs_fleet_entity_ships_end ";
+		query << " 	fleet_id, ";
+		query << " 	timestamp, ";
+		query << " 	text, ";
+		query << "	fleet_user_id, ";
+		query << " 	entity_user_id, ";
+		query << " 	entity_from, ";
+		query << " 	entity_to, ";
+		query << " 	launchtime, ";
+		query << " 	landtime, ";
+		query << " 	action, ";
+		query << " 	status, ";
+		query << " 	fleet_res_start, ";
+		query << " 	fleet_res_end, ";
+		query << " 	fleet_ships_start, ";
+		query << " 	fleet_ships_end, ";
+		query << "	entity_res_start, ",
+		query << " 	entity_res_end, ";
+		query << " 	entity_ships_start, ";
+		query << " 	entity_ships_end ";
 		query << ") ";
 		query << "VALUES ";
 		query << "('" << this->fleetId << "', '";
@@ -141,7 +139,7 @@
 
 			query.store();
 			query.reset();			
-		*/
+		
 	}
 
 
