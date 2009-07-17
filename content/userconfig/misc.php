@@ -139,7 +139,7 @@
 								WHERE 
 									planet_user_id='".$cu->id."';");
 										
-								$arr['user_hmode_to'] = $hto;
+								$cu->hmode_to = $hto;
 								success_msg("Du bist nun im Urlaubsmodus bis [b]".df($hto)."[/b].");
 								$cu->addToUserLog("settings","{nick} ist nun im Urlaub.",1);
 								$umod = true;
@@ -381,7 +381,7 @@
 	    	{
 	    		echo "<input type=\"submit\" style=\"color:#0f0\" name=\"hmod_off\" value=\"Urlaubsmodus deaktivieren\" />";
 	    	}
-	    	elseif ($arr['user_hmode_from']>0 && $cu->hmode_from<time() && $cu->hmode_to>=time() || $umod)
+	    	elseif ($cu->hmode_from>0 && $cu->hmode_from<time() && $cu->hmode_to>=time() || $umod)
 	    	{
 	    	  echo "<span style=\"color:#f90\">Urlaubsmodus ist aktiv bis mindestens <b>".df($cu->hmode_to)."</b>!</span>";
 	    	}
