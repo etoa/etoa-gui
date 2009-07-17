@@ -252,6 +252,10 @@
 					
 				dbquery("UPDATE users SET user_hmode_from=0,user_hmode_to=0 WHERE user_id='".$cu->id."';");
 				dbquery ("UPDATE planets SET planet_last_updated=".time()." WHERE planet_user_id='".$cu->id."';");
+				
+				foreach ($planets as $pid)
+					sendBackendMessage("planetupdate:".$pid);
+				
 				success_msg("Urlaubsmodus aufgehoben! Denke daran, auf allen deinen Planeten die Produktion zu überprüfen!");
 				$cu->addToUserLog("settings","{nick} ist nun aus dem Urlaub zurück.",1);
 				
