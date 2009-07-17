@@ -62,7 +62,7 @@
 				DELETE FROM
 					logs_fleet
 				WHERE
-					logs_fleet_timestamp<'".$tstamp."'
+					timestamp<'".$tstamp."'
 			");
 			$nr += mysql_affected_rows();
 

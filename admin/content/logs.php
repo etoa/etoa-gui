@@ -238,7 +238,7 @@
 				</tr>";		
 			while($arr=mysql_fetch_array($res))
 			{	
-				$user_nick = get_user_nick($arr["logs_fleet_fleet_user_id"]);
+				$user_nick = get_user_nick($arr["fleet_user_id"]);
 				if ($user_nick=="")
 				{
 					$owner = "<span style=\"color:#99f\">System</span>";
@@ -248,47 +248,47 @@
 					$owner = $user_nick;
 				}
 
-				if ($fa = FleetAction::createFactory($arr['logs_fleet_action']))
+				if ($fa = FleetAction::createFactory($arr['action']))
 				{
 					echo "<tr>";
 					echo "<td class=\"tbldata\">".$owner."</td>";
 					echo "<td class=\"tbldata\"><span style=\"color:".FleetAction::$attitudeColor[$fa->attitude()]."\">";
 					echo $fa."</span><br/>";
-					echo FleetAction::$statusCode[$arr['logs_fleet_status']];
+					echo FleetAction::$statusCode[$arr['status']];
 					echo "</td>";
 					echo "<td class=\"tbldata\" >";
-						$startEntity = Entity::createFactoryById($arr['logs_fleet_entity_from']);
+						$startEntity = Entity::createFactoryById($arr['entity_from']);
 					echo $startEntity."<br/>".$startEntity->entityCodeString().", ".$startEntity->owner()."</td>";
 					echo "<td class=\"tbldata\">";
-						$endEntity = Entity::createFactoryById($arr['logs_fleet_entity_to']);
+						$endEntity = Entity::createFactoryById($arr['entity_to']);
 					echo $endEntity."<br/>".$endEntity->entityCodeString().", ".$endEntity->owner()."</td>";
-					echo "<td class=\"tbldata\" >".date("d.m.y",$arr['logs_fleet_landtime'])." &nbsp; ".date("H:i:s",$arr['logs_fleet_landtime'])."</td>";
-					echo "<td class=\"tbldata\" >".date("d.m.y",$arr['logs_fleet_landtime'])." &nbsp; ".date("H:i:s",$arr['logs_fleet_landtime'])."</td>";
+					echo "<td class=\"tbldata\" >".date("d.m.y",$arr['landtime'])." &nbsp; ".date("H:i:s",$arr['landtime'])."</td>";
+					echo "<td class=\"tbldata\" >".date("d.m.y",$arr['landtime'])." &nbsp; ".date("H:i:s",$arr['landtime'])."</td>";
 				}
 				else
 				{
 					echo "<tr>";
 					echo "<td class=\"tbldata\" >".$owner."</td>";
 					echo "<td class=\"tbldata\"><span style=\"color:red\">";
-					echo "Ungültig (".$arr['logs_fleet_action'].")</span><br/>";
+					echo "Ungültig (".$arr['action'].")</span><br/>";
 					echo "</td>";
 					echo "<td class=\"tbldata\" >";
-						$startEntity = Entity::createFactoryById($arr['logs_fleet_entity_from']);
+						$startEntity = Entity::createFactoryById($arr['entity_from']);
 					echo $startEntity."<br/>".$startEntity->entityCodeString().", ".$startEntity->owner()."</td>";
 					echo "<td class=\"tbldata\" >";
-						$endEntity = Entity::createFactoryById($arr['logs_fleet_entity_to']);
+						$endEntity = Entity::createFactoryById($arr['entity_to']);
 					echo $endEntity."<br/>".$endEntity->entityCodeString().", ".$endEntity->owner()."</td>";
-					echo "<td class=\"tbldata\" >".date("d.m.y",$arr['logs_fleet_landtime'])." &nbsp; ".date("H:i:s",$arr['logs_fleet_launchtime'])."</td>";
-					echo "<td class=\"tbldata\" >".date("d.m.y",$arr['logs_fleet_landtime'])." &nbsp; ".date("H:i:s",$arr['logs_fleet_landtime'])."</td>";
+					echo "<td class=\"tbldata\" >".date("d.m.y",$arr['landtime'])." &nbsp; ".date("H:i:s",$arr['launchtime'])."</td>";
+					echo "<td class=\"tbldata\" >".date("d.m.y",$arr['landtime'])." &nbsp; ".date("H:i:s",$arr['landtime'])."</td>";
 				}
 				
 				$log_text = "hamer";
-				echo "<td class=\"tbldata\" onclick=\"xajax_showFleetLogs('".$log_text."',".$arr['logs_fleet_id'].");\" ".mTT("","Klicken für Anzeige des Berichtes!").">
+				echo "<td class=\"tbldata\" onclick=\"xajax_showFleetLogs('".$log_text."',".$arr['id'].");\" ".mTT("","Klicken für Anzeige des Berichtes!").">
 									<a href=\"javascript:;\">Anzeigen</a>
 								</td>
 							</tr>
 							<tr>
-								<td class=\"tbldata\" id=\"show_fleet_logs_".$arr['logs_fleet_id']."\" style=\"vertical-align:middle;\" colspan=\"7\" ondblclick=\"xajax_showFleetLogs('".$log_text."',".$arr['logs_fleet_id'].");\" ".mTT("","Doppelklick zum deaktivieren des Fensters!").">
+								<td class=\"tbldata\" id=\"show_fleet_logs_".$arr['id']."\" style=\"vertical-align:middle;\" colspan=\"7\" ondblclick=\"xajax_showFleetLogs('".$log_text."',".$arr['id'].");\" ".mTT("","Doppelklick zum deaktivieren des Fensters!").">
 								</td>
 							</tr>";
 			}

@@ -229,14 +229,14 @@ function logSelectorCat($cat)
 	  			<tr>
 	  				<td class=\"tbltitle\">Logs nach</td>
 	  				<td class=\"tbldata\">";
-	  					$out .= show_logs_timebox("logs_fleet_time_min",time());
+	  					$out .= show_logs_timebox("time_min",time());
 	 					$out .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type=\"checkbox\" name=\"add_logs_game_time_min\" value=\"1\" onclick=\"xajax_logChangeButton();\"> Aktivieren 
 	 				</td>
 	 			</tr>
 	 			<tr>
 	  				<td class=\"tbltitle\">Logs vor</td>
 	  				<td class=\"tbldata\">";
-	  					$out .= show_logs_timebox("logs_fleet_time_max",time());
+	  					$out .= show_logs_timebox("time_max",time());
 	 					$out .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type=\"checkbox\" name=\"add_logs_game_time_max\" value=\"1\" onclick=\"xajax_logChangeButton();\"> Aktivieren 
 	 				</td>
 	 			</tr>
@@ -725,48 +725,48 @@ function checkLogFormular($val)
 	//Flotten Query erstellen
 	if($val['log_cat']=="logs_fleet")
 	{
-		$sql_select = "logs_fleet_id";
+		$sql_select = "id";
 		$sql_table = 'logs_fleet';
-		$sql_where_start = "logs_fleet_id!=0";
+		$sql_where_start = "id!=0";
 		$sql_add = "";
-		$sql_order = "ORDER BY logs_fleet_landtime DESC";
+		$sql_order = "ORDER BY landtime DESC";
 		$sql_limit = $val['limit'];
 		print_r($val);
 	// Kampfzeit min.
 		if($val['add_fleet_time_min']==1)
 		{
-			$sql_add .= " AND logs_fleet_landtime >= '".mktime($val['logs_fleet_time_min_h'],$val['logs_fleet_time_min_i'],0,$val['logs_fleet_time_min_m'],$val['logs_fleet_time_min_d'],$val['logs_fleet_time_min_y'])."'";
+			$sql_add .= " AND landtime >= '".mktime($val['time_min_h'],$val['time_min_i'],0,$val['time_min_m'],$val['time_min_d'],$val['time_min_y'])."'";
 		}
 		
 		// Kampfzeit max.
 		if($val['add_fleet_time_max']==1)
 		{
-			$sql_add .= " AND logs_fleet_landtime <= '".mktime($val['logs_fleet_time_max_h'],$val['logs_fleet_time_max_i'],0,$val['logs_fleet_time_max_m'],$val['logs_fleet_time_max_d'],$val['logs_fleet_time_max_y'])."'";
+			$sql_add .= " AND landtime <= '".mktime($val['time_max_h'],$val['time_max_i'],0,$val['time_max_m'],$val['time_max_d'],$val['time_max_y'])."'";
 		}
 		
 		
 		// Angreiffer
 		if($val['user_nick_entity']!="")
 		{
-			$sql_add .= " AND logs_fleet_fleet_user_id='".get_user_id($val['user_nick_fleet'])."'";
+			$sql_add .= " AND fleet_user_id='".get_user_id($val['user_nick_fleet'])."'";
 		}
 		
 		// Verteidiger
 		if($val['user_nick_entity']!="")
 		{
-			$sql_add .= " AND logs_fleet_entity_user_id='".get_user_id($val['user_nick_entity'])."'";
+			$sql_add .= " AND entity_user_id='".get_user_id($val['user_nick_entity'])."'";
 		}
 		
 		// Aktion
 		if($val['action']!="")
 		{
-			$sql_add .= " AND logs_fleet_action='".$val['action']."'";
+			$sql_add .= " AND action='".$val['action']."'";
 		}
 		
 		// Status
 		if($val['status']!="")
 		{
-			$sql_add .= " AND logs_fleet_status='".$val['status']."'";
+			$sql_add .= " AND status='".$val['status']."'";
 		}
 		echo $sql_select.$sql_add;
 	}
