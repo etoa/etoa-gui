@@ -1223,7 +1223,7 @@ namespace market
 				}
 			}
     	}*/
-
+/*
 		responseTime = (int)config.nget("market_response_time", 0);
 		std::cout << "Deleting ships\n";
 		// Löscht alte Schiffsangebote
@@ -1320,7 +1320,7 @@ namespace market
 					query.reset();
 				}
 			}
-		}
-		std::cout << "done\n";
+		}*/
+		std::cout << "done market\n";
 	}	
 }
