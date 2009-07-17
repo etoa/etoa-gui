@@ -74,11 +74,12 @@
 		}
 		
 		if (isset($_GET['action']) && $_GET['action']=="update")
-		{
-			ok_msg("Planet wird neu berechnet!");
-				
+		{		
 			// Send
-			sendBackendMessage("planetupdate:".$cp->id);
+			if (sendBackendMessage("planetupdate:".$cp->id))
+				ok_msg("Planet wird neu berechnet!");
+			else
+				error_msg("Berechnung fehlgeschlagen");
 		}
 
 		//
