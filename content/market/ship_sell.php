@@ -47,12 +47,12 @@
 					}
 					
 					// Prüft, ob genug Rohstoffe vorhanden sind
-					if ($cp->checkRes($buyArr))
+					if ($cp->checkRes($buyarr))
 					{
 						$seller_user_nick = get_user_nick($arr['user_id']);
 
 						// Rohstoffe vom Käuferplanet abziehen 
-						$cp->subRes($buyArr);
+						$cp->subRes($buyarr);
 						
 						$seller = new User($arr['user_id']);
 						$sellerEntity = Entity::createFactoryById($arr['entity_id']);
