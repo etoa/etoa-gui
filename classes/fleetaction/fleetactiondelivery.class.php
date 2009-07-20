@@ -20,6 +20,8 @@
 			$this->allowAllianceEntities = false;
 			$this->allianceAction = false;
 			
+			$this->visibleSource = false;
+			$this->sourceCode = "m";
 			$this->cancelable = false;
 		}
 

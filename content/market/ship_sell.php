@@ -80,7 +80,7 @@
 						)
 						VALUES
 						(
-							0,
+							".$cu->id.",
 							".$sellerEntity->id.",
 							".$cp->id.",
 							".$launchtime.",
@@ -129,7 +129,7 @@
 							)
 							VALUES
 							(
-								0,
+								".$seller->id.",
 								".$cp->id.",
 								".$sellerEntity->id.",
 								".$launchtime.",

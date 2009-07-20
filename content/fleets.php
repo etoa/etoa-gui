@@ -45,7 +45,7 @@
 		
 		if ($cu->allianceId()>0)
 		{
-			if ($cu->alliance->getBuildingLevel("Flottenkontrolle")>=ALLIANCE_FLEET_SHOW)
+			if ($cu->alliance->buildlist->getLevel(ALLIANCE_FLEET_CONTROL_ID)>=ALLIANCE_FLEET_SHOW)
 			{
 				$fm = new FleetManager($cu->id,$cu->allianceId);
 				$fm->loadAllianceSupport();		

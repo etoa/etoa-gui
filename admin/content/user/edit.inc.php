@@ -91,7 +91,7 @@
 					$parr = mysql_fetch_row($pres);
 					$sql.= ",user_password='".pw_salt($_POST['user_password'],$parr[0])."'";
 					echo "Das Passwort wurde ge&auml;ndert!<br>";
-					add_log(8,$_SESSION[SESSION_NAME]['user_nick']." ändert das Passwort von ".$_POST['user_nick']."",time());
+					add_log(8,$cu->nick." ändert das Passwort von ".$_POST['user_nick']."",time());
 				}				
 				
 				// Handle ban
@@ -105,7 +105,7 @@
 					$sql.= ",user_ban_reason='".addslashes($_POST['user_ban_reason'])."'";
 					
 					$usr = new User($id);
-					$usr->addToUserLog("account","{nick} wird von [b]".date("d.m.Y H:i",$ban_from)."[/b] bis [b]".date("d.m.Y H:i",$ban_to)."[/b] gesperrt.\n[b]Grund:[/b] ".addslashes($_POST['user_ban_reason'])."\n[b]Verantwortlich: [/b] ".$_SESSION[SESSION_NAME]['user_nick'],1);
+					$usr->addToUserLog("account","{nick} wird von [b]".date("d.m.Y H:i",$ban_from)."[/b] bis [b]".date("d.m.Y H:i",$ban_to)."[/b] gesperrt.\n[b]Grund:[/b] ".addslashes($_POST['user_ban_reason'])."\n[b]Verantwortlich: [/b] ".$cu->nick,1);
 				}
 				else
 				{

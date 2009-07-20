@@ -94,7 +94,7 @@ $cnt = 0;
 							)
 							VALUES
 							(
-								0,
+								".$cu->id.",
 								".$sellerEntity->id.",
 								".$cp->id.",
 								".$launchtime.",
@@ -148,7 +148,7 @@ $cnt = 0;
 								)
 								VALUES
 								(
-									0,
+									".$seller->id.",
 									".$cp->id.",
 									".$sellerEntity->id.",
 									".$launchtime.",

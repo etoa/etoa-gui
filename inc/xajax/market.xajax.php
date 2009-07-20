@@ -510,7 +510,8 @@ function showAuctionDetail($id)
 				<th style=\"width:15%;vertical-align:middle;\">Bieten</th>
 				<th style=\"width:35%;vertical-align:middle;\">Min./Max.</th>
 			</tr>";
-
+			
+			$factor = array(MARKET_METAL_FACTOR,MARKET_CRYSTAL_FACTOR,MARKET_PLASTIC_FACTOR,MARKET_FUEL_FACTOR,MARKET_FOOD_FACTOR);
 			foreach ($resNames as $rk => $rn)
 			{
 				echo "<tr>
@@ -518,7 +519,7 @@ function showAuctionDetail($id)
 				<td id=\"auction_sell_metal_field\" style=\"vertical-align:middle;\"  class=\"rescolor".$rk."\">
 					".nf($arr['sell_'.$rk])."
 				</td>
-				<th style=\"text-align:center;vertical-align:middle;\">".MARKET_METAL_FACTOR."</th>
+				<th style=\"text-align:center;vertical-align:middle;\">".$factor[$rk]."</th>
 				<td id=\"auction_buy_".$rk."_field\" style=\"vertical-align:middle;\">
 					".nf($arr['buy_'.$rk])."
 				</td>

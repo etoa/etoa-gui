@@ -66,8 +66,10 @@
 		protected $allowOwnEntities;
 		protected $allowNpcEntities;
 		protected $allowSourceEntity;
-
+		
 		protected $cancelable = true;
+		protected $visibleSource = true;
+		protected $sourceCode = 'u';
 
 		//
 		// Abstract methods
@@ -92,6 +94,8 @@
 		function visible() { return $this->visible; }
 		function exclusive() { return $this->exclusive; }
 		function cancelable() { return $this->cancelable; }
+		function visibleSource() { return $this->visibleSource; }
+		function sourceCode() { return $this->sourceCode; }
 
 		// Overwritable functions
 		function displayName() { return $this->name; }

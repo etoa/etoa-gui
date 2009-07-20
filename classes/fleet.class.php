@@ -272,7 +272,10 @@
 		{
 			if (!isset($this->source))
 			{
-				$this->source = Entity::createFactoryById($this->sourceId);
+				if ($this->getAction()->visibleSource())
+					$this->source = Entity::createFactoryById($this->sourceId);
+				else
+					$this->source = Entity::createFactory($this->getAction()->sourceCode());
 			}
 			return $this->source;
 		}		

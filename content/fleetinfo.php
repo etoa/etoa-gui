@@ -137,16 +137,23 @@
 			<td style=\"background:#000 url('images/fleetbg.png');\">
 				<div style=\"position:relative;height:80px;\">
 					<div id=\"source\" style=\"position:absolute;left:0px;top:5px;\">";
-					if ($cu->discovered($fd->getSource()->getCell()->absX(),$fd->getSource()->getCell()->absY()))
+					if ($fd->getAction()->visibleSource())
 					{
-						echo $fd->getSource()->smallImage()."<br/>
-						<a href=\"?page=cell&amp;id=".$fd->getSource()->cellId()."&amp;hl=".$fd->getSource()->id()."\">".$fd->getSource()."</a><br/>";
+						if ($cu->discovered($fd->getSource()->getCell()->absX(),$fd->getSource()->getCell()->absY()))
+						{
+							echo $fd->getSource()->smallImage()."<br/>
+							<a href=\"?page=cell&amp;id=".$fd->getSource()->cellId()."&amp;hl=".$fd->getSource()->id()."\">".$fd->getSource()."</a><br/>";
+						}
+						else
+						{
+							$ent = Entity::createFactory('u',$fd->getSource()->id());
+							echo $ent->smallImage()."<br/>
+							<a href=\"?page=cell&amp;id=".$ent->cellId()."&amp;hl=".$ent->id()."\">".$ent."</a><br/>";
+						}
 					}
 					else
 					{
-						$ent = Entity::createFactory('u',$fd->getSource()->id());
-						echo $ent->smallImage()."<br/>
-						<a href=\"?page=cell&amp;id=".$ent->cellId()."&amp;hl=".$ent->id()."\">".$ent."</a><br/>";
+						echo $fd->getSource()->smallImage()."<br />".$fd->getSource()->entityCodeString()."<br />";
 					}
 					echo "<b><span id=\"sourceLabel\">Start</span>:</b> ".date("d.m.Y H:i:s",$fd->launchTime())."
 					</div>

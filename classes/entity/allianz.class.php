@@ -90,11 +90,12 @@
 		*/
 		function __toString() 
 		{
-			if (!$this->coordsLoaded)
+			/*if (!$this->coordsLoaded)
 			{
 				$this->loadCoords();
 			}
-			return $this->formatedCoords();
+			return $this->formatedCoords();*/
+			return "";
 		}
 		
 		/**
