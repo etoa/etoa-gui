@@ -162,6 +162,8 @@
 		AdminSession::getInstance()->cleanup();
 		
 		//Check Backend
+		$daemonId = $cfg->daemonIdentifier->v;
+		$daemonPidfile = "/var/run/etoa/".$daemonId.".pid";
 		$backend = checkDaemonRunning($daemonPidfile)>0 ? true : false;
 		if ($cfg->value("backend") != $backend)
 		{
