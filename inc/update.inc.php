@@ -129,6 +129,7 @@
 	function update_5minute()
 	{
 		global $conf;
+		$cfg = Config::getInstance();
 
 		// User Statistik speichern
 		$rres=dbquery("SELECT COUNT(user_id) FROM users;");
@@ -161,7 +162,8 @@
 		AdminSession::getInstance()->cleanup();
 		
 		//Check Backend
-		if ($cfg->value("backend") != checkDaemonRunning($daemonPidfile))
+		$backend = checkDaemonRunning($daemonPidfile)>0 ? true : false;
+		if ($cfg->value("backend") != $backend)
 		{
 			$mailText = $cfg->value("backend") == 0 ? "Funktioniert wieder" : $cfg->p1("backend");
 			
