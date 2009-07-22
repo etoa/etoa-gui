@@ -195,8 +195,9 @@ function userTickets($uid,$target)
 		foreach ($tset as $tid => &$ti)
 		{
 			echo "<tr>
-				<td class=\"tbldata\">".popupLink("tickets",$ti->idString,"","&id=".$ti->id)."</td>
-				<td class=\"tbldata\">".df($ti->time)."</td>
+				<td><a href=\"#\" onclick=\"window.open('popup.php?page=tickets&id=".$ti->id."','Tickets','top=20,left='+(screen.availWidth-720)+',width=700, height=600, status=no, scrollbars=yes')\">".$ti->idString."</a></td>";
+//				<td class=\"tbldata\">".popupLink("tickets",$ti->idString,"","&id=".$ti->id)."</td>
+	echo"			<td class=\"tbldata\">".df($ti->time)."</td>
 				<td class=\"tbldata\">".$ti->catName."</td>
 				<td class=\"tbldata\">".$ti->statusName."</td>
 				<td class=\"tbldata\">".$ti->adminNick."</td>

@@ -69,8 +69,7 @@
 								dbquery("UPDATE 
 											ship_queue 
 										SET 
-											queue_build_type=1, 
-											queue_starttime=".time()." 
+											queue_build_type=1
 										WHERE 
 											queue_user_id='".$cu->id."';");
 							}
@@ -98,8 +97,7 @@
 								dbquery("UPDATE 
 											def_queue 
 										SET 
-											queue_build_type=1, 
-											queue_starttime=".time()." 
+											queue_build_type=1
 										WHERE 
 											queue_user_id='".$cu->id."';");
 							}
@@ -108,16 +106,14 @@
 						dbquery("UPDATE 
 									buildlist 
 								SET 
-									buildlist_build_type = buildlist_build_type - 2,
-									buildlist_build_start_time=".time()." 
+									buildlist_build_type = buildlist_build_type - 2
 								WHERE 
 									buildlist_user_id='".$cu->id."' 
 									AND buildlist_build_start_time>0;");
 						dbquery("UPDATE 
 									techlist 
 								SET 
-									techlist_build_type=1, 
-									techlist_build_start_time=".time()." 
+									techlist_build_type=1
 								WHERE 
 									techlist_user_id='".$cu->id."' 
 									AND techlist_build_start_time>0;");
@@ -170,10 +166,12 @@
 		{
 			if ($cu->hmode_from > 0 && $cu->hmode_from < time() && $cu->hmode_to < time())
 			{
+				$hmodTime = time() - $cu->hmode_from;
 				$bres = dbquery("
 								SELECT
 									buildlist_id,
-									(buildlist_build_end_time-buildlist_build_start_time) AS time,
+									buildlist_build_end_time,
+									buildlist_build_start_time,
 									buildlist_build_type
 								FROM
 									buildlist
@@ -184,13 +182,24 @@
 							
 				while ($barr=mysql_fetch_row($bres))
 				{
-					dbquery("UPDATE buildlist SET buildlist_build_type='".$barr[2]."+2',buildlist_build_start_time=".time().", buildlist_build_end_time='".time()."+".$barr[1]."' WHERE buildlist_id=".$barr[0].";");
+					$start = $barr[2]+$hmodTime;
+					$end = $barr[1]+$hmodTime;
+					$status = $barr[3] + 2;
+					dbquery("UPDATE
+								buildlist
+							SET
+								buildlist_build_type='".$status."',
+								buildlist_build_start_time='".$start."',
+								buildlist_build_end_time='".$end."'
+							WHERE
+								buildlist_id='".$barr[0]."';");
 				} 
 				
-				$bres = dbquery("
+				$tres = dbquery("
 								SELECT
 									techlist_id,
-									(techlist_build_end_time-techlist_build_start_time) AS time,
+									techlist_build_end_time,
+									techlist_build_start_time,
 									techlist_build_type
 								FROM
 									techlist
@@ -199,14 +208,25 @@
 									AND techlist_build_type>0
 									AND techlist_user_id=".$cu->id.";");
 									
-				while ($barr=mysql_fetch_row($bres))
+				while ($tarr=mysql_fetch_row($tres))
 				{
-					dbquery("UPDATE techlist SET techlist_build_type='".$barr[2]."+2',techlist_build_start_time=".time().", techlist_build_end_time='".time()."+".$barr[1]."' WHERE techlist_id=".$barr[0].";");
+					$status = $tarr[3] + 2;
+					$start = $tarr[2]+$hmodTime;
+					$end = $tarr[1]+$hmodTime;
+					dbquery("UPDATE
+								techlist
+							SET
+								techlist_build_type='".$status."',
+								techlist_build_start_time='".$start."',
+								techlist_build_end_time='".$end."'
+							WHERE
+								techlist_id=".$tarr[0].";");
 				}
 				
 				$sres = dbquery("SELECT 
 									queue_id,
-									(queue_endtime-queue_starttime) AS time
+									queue_endtime,
+									queue_starttime
 								 FROM 
 								 	ship_queue 
 								WHERE 
@@ -216,20 +236,22 @@
 				$time = time();
 				while ($sarr=mysql_fetch_row($sres))
 				{
+					$start = $sarr[2]+$hmodTime;
+					$end = $sarr[1]+$hmodTime;
 					dbquery("UPDATE 
 								ship_queue
 							SET
 								queue_build_type=0,
-								queue_starttime=".$time.",
-								queue_endtime='".$time+$sarr[1]."'
+								queue_starttime='".$start."',
+								queue_endtime='".$end."'
 							WHERE
 								queue_id=".$sarr[0].";");
-					$time+=$sarr[1];
 				}
 				
 			$dres = dbquery("SELECT 
 									queue_id,
-									(queue_endtime-queue_starttime) AS time
+									queue_endtime,
+									queue_starttime
 								 FROM 
 								 	def_queue 
 								WHERE 
@@ -237,17 +259,18 @@
 								ORDER BY 
 									queue_starttime ASC;");
 				$time = time();
-				while ($sarr=mysql_fetch_row($sres))
+				while ($darr=mysql_fetch_row($dres))
 				{
+					$start = $darr[2]+$hmodTime;
+					$end = $darr[1]+$hmodTime;
 					dbquery("UPDATE 
 								def_queue
 							SET
 								queue_build_type=0,
-								queue_starttime=".$time.",
-								queue_endtime='".$time+$sarr[1]."'
+							queue_starttime='".$start."',
+								queue_endtime='".$end."'
 							WHERE
-								queue_id=".$sarr[0].";");
-					$time+=$sarr[1];
+								queue_id=".$darr[0].";");
 				}
 					
 				dbquery("UPDATE users SET user_hmode_from=0,user_hmode_to=0 WHERE user_id='".$cu->id."';");

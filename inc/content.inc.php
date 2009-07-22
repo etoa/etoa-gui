@@ -42,6 +42,15 @@
 			iBoxEnd();
 		}
 		
+		//Eventhandler //
+		if (!$cfg->value("backend"))
+		{
+			echo "<br />";
+			iBoxStart("<span style=\"color:red;\">UPDATEDIENST</span>");
+			echo text2html($cfg->p1("backend"));
+			iBoxEnd();
+		}
+		
 		// Auf Löschung prüfen
 		if ($cu->deleted > 0 &&
 		$page != 'contact' &&

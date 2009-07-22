@@ -538,14 +538,14 @@
 	else
 	{
 		echo "<h1>Geb&auml;udeliste</h1>";
-
-		$build_type[0]="Unt&auml;tig";
-		$build_type[1]="Bauen";
-		$build_type[2]="Abreissen";
+		
+		$buildTypes = Building::getBuildTypes();
 
 		$build_colors[0]="#fff";
-		$build_colors[1]="#0f0";
+		$build_colors[1]="red";
 		$build_colors[2]="orange";
+		$build_colors[3]="#0f0";
+		$build_colors[4]="orange";
 
 		if (isset($_POST['save']))
 		{
@@ -609,7 +609,7 @@
 				echo "<tr><th>Geb&auml;ude</th><td>".$arr['building_name']."</td></tr>";
 				echo "<tr><th>Level</th><td><input type=\"text\" name=\"buildlist_current_level\" value=\"".$arr['buildlist_current_level']."\" size=\"2\" maxlength=\"3\" /></td></tr>";
 				echo "<tr><th>Baustatus</th><td><select name=\"buildlist_build_type\">";
-				foreach ($build_type as $id=>$val)
+				foreach ($buildTypes as $id=>$val)
 				{
 					echo "<option value=\"$id\"";
 					if ($arr['buildlist_build_type']==$id) echo " selected=\"selected\"";
@@ -802,7 +802,7 @@
 
 					echo "<td class=\"tbldata\" $style>".$arr['building_name']."</td>";
 					echo "<td class=\"tbldata\" $style>".nf($arr['buildlist_current_level'])."</td>";
-					echo "<td class=\"tbldata\" $style>".$build_type[$arr['buildlist_build_type']]."</td>";
+					echo "<td class=\"tbldata\" $style>".$buildTypes[$arr['buildlist_build_type']]."</td>";
 					echo "<td class=\"tbldata\">".edit_button("?page=$page&amp;sub=$sub&amp;action=edit&amp;buildlist_id=".$arr['buildlist_id'])."</td>";
 					echo "</tr>";
 

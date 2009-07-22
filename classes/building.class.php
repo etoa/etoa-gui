@@ -199,7 +199,14 @@
 				$rtn[$arr['id']] = $arr['name'];
 			}
 			return $rtn;
-		}		
+		}
+		
+		static function getBuildTypes()
+		{
+			$buildType = array(0=>"Untätig",1=>"Bau eingefroren",2=>"Abriss eingefroren",3=>"Wird ausgebaut",4=>"Wird abgerissen");
+			
+			return $buildType;
+		}
 		
 
 		

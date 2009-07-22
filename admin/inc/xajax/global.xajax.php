@@ -903,13 +903,16 @@ function showBuildingsOnPlanet($form)
 	$eid=$updata[0];
 	$out = 	"<script type=\"text/javascript\">document.getElementById('entity_id').selectedindex=".$eid.";</script>";
 	
+	$buildTypes = Building::getBuildTypes();
+	
 	if ($eid!=0)
 	{
 		$res=dbquery("
 		SELECT
 			building_name,
 			buildlist_current_level,
-			buildlist_id
+			buildlist_id,
+			buildlist_build_type
 		FROM
 			buildlist
 		INNER JOIN
@@ -925,6 +928,7 @@ function showBuildingsOnPlanet($form)
 			while ($arr=mysql_fetch_array($res))
 			{
 				$out.="<tr><td style=\"width:80px\" id=\"cnt_".$arr['buildlist_id']."\">".$arr['buildlist_current_level']."</td>
+				<td style=\"width:100px\">".$buildTypes[$arr['buildlist_build_type']]."</td>
 				<th>".$arr['building_name']."</th>
 				<td style=\"width:150px\" id=\"actions_".$arr['buildlist_id']."\"><a href=\"javascript:;\" onclick=\"xajax_editBuilding(xajax.getFormValues('selector'),".$arr['buildlist_id'].")\">Bearbeiten</a>
 				<a href=\"javascript:;\" onclick=\"if (confirm('Soll ".$arr['building_name']." ".$arr['buildlist_current_level']." von diesem Planeten gel&ouml;scht werden?')) {xajax_removeBuildingFromPlanet(xajax.getFormValues('selector'),".$arr['buildlist_id'].")}\">L&ouml;schen</td>

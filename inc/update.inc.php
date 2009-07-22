@@ -159,6 +159,21 @@
 		// Cleanup session
 		Session::getInstance()->cleanup();
 		AdminSession::getInstance()->cleanup();
+		
+		//Check Backend
+		if ($cfg->value("backend") != checkDaemonRunning($daemonPidfile))
+		{
+			$mailText = $cfg->value("backend") == 0 ? "Funktioniert wieder" : $cfg->p1("backend");
+			
+			$status = $cfg->value("backend") == 0 ? 1 : 0;
+			
+			$cfg->set("backend",$status,$cfg->p1("backend"),$cfg->p2("backend"));
+			
+			$mail = new Mail("EtoA-Backend",$mailText);
+			$sendTo = explode(";",$cfg->p2("backend"));
+			foreach ($sendTo as $sendMail)
+				$mail->send($sendMail);
+		}
 
 		return $log;
 	}

@@ -657,5 +657,10 @@ Anmerkung: Eine Kopie dieser Nachricht wird in Eurer Nachrichten-Box hinterlegt.
     <item name="market_rate_4" cat="6">
       <v comment="Handelskurs Resource 4 (auto)" type="text">1</v>
     </item>
+    <item name="backend" cat="1">
+      <v comment="active" type="text">0</v>
+      <p1 comment="message" type="text">Der EtoA-Updatedienst ist momentan ausser Betrieb. Die Entwickler sind informiert. Es ist nicht notwendig ein Ticket zu eröffnen. Unterdessen werden weder Gebäude, Technologien, Schiffe, Verteidigungen, Planeten noch Flotten aktualisiert.</p1>
+      <p2 comment="mail-to" type="text">glaubinix@etoa.ch;mrcage@etoa.ch</p2>
+    </item>
   </items>
 </config>
