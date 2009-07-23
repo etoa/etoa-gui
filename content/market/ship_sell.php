@@ -188,8 +188,8 @@
 									'user_id'=>$cu->id,
 									'entity1_id'=>$cp->id,
 									'entity2_id'=>$arr['entity_id'],
-									'opponent1_id'Schiffe$arr['user_id'],
-									'subject'=>"Rohstoffe gekauft",
+									'opponent1_id'=>$arr['user_id'],
+									'subject'=>"Schiffe gekauft",
 									), "shipbought", $arr['id'], array_merge($mr,array("fleet1_id"=>$buyerFid,"fleet2_id"=>$sellerFid)));
 							}
 						}
