@@ -41,9 +41,11 @@
 					$arr = mysql_fetch_array($res);
 					
 					$buyarr = array();
+					$mr = array("ship_id"=>$arr['ship_id'],"ship_count"=>$arr['count']);
 					foreach ($resNames as $rk => $rn)
 					{
 						$buyarr[$rk] = $arr['costs_'.$rk];
+						$mr['buy_'.$rk] = $arr['costs_'.$rk];
 					}
 					
 					// Prüft, ob genug Rohstoffe vorhanden sind
@@ -88,6 +90,7 @@
 							'market',
 							0
 						);");
+						$sellerFid = mysql_insert_id();
 						dbquery("
 						INSERT INTO
 							fleet_ships
@@ -98,7 +101,7 @@
 						)
 						VALUES
 						(
-							".mysql_insert_id().",
+							".$sellerFid.",
 							".$arr['ship_id'].",
 							".$arr['count']."
 						);");
@@ -142,6 +145,7 @@
 							".$buyarr[4].",									
 								0
 							);");
+							$buyerFid = mysql_insert_id();
 							dbquery("
 							INSERT INTO
 								fleet_ships
@@ -152,7 +156,7 @@
 							)
 							VALUES
 							(
-								".mysql_insert_id().",
+								".$buyerFid.",
 								".MARKET_SHIP_ID.",
 								".$numBuyerShip."
 							);");
@@ -168,6 +172,25 @@
 								WHERE
 									id='".$id."'");								
 								$cnt++;
+								
+								
+								// Send report to seller
+								MarketReport::add(array(
+									'user_id'=>$arr['user_id'],
+									'entity1_id'=>$arr['entity_id'],
+									'entity2_id'=>$cp->id,
+									'opponent1_id'=>$cu->id,
+									'subject'=>"Schiffe verkauft",
+									), "shipsold", $arr['id'], array_merge($mr,array("fleet1_id"=>$sellerFid,"fleet2_id"=>$buyerFid)));
+
+								// Send report to buyer (the current user)
+								MarketReport::add(array(
+									'user_id'=>$cu->id,
+									'entity1_id'=>$cp->id,
+									'entity2_id'=>$arr['entity_id'],
+									'opponent1_id'Schiffe$arr['user_id'],
+									'subject'=>"Rohstoffe gekauft",
+									), "shipbought", $arr['id'], array_merge($mr,array("fleet1_id"=>$buyerFid,"fleet2_id"=>$sellerFid)));
 							}
 						}
 

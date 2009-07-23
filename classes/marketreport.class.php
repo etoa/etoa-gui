@@ -18,6 +18,8 @@ class MarketReport extends Report
 		'resbought'=>'Rohstoffe gekauft',
 		'shipadd'=>'Schiffangebot eingestellt',
 		'shipcancel'=>'Schiffangebot zurückgezogen',
+		'shipsold'=>'Schiffe verkauft',
+		'shipbought'=>'Schiffe gekauft',
 		'auctionadd'=>'Auktion hinzugefügt',
 		'auctioncancel'=>'Auktion abgebrochen',
 		'auctionbid'=>'Gebot abgegeben',
@@ -191,8 +193,10 @@ class MarketReport extends Report
 				$op = new User($this->opponent1Id);
 				$ent2 = Entity::createFactoryById($this->entity2Id);
 
+//				echo "Du hast folgendes Angebot (#".$this->recordId.") im <a href=\"?page=market&amp;mode=user_sell&amp;change_entity=".$this->entity1Id."\">Marktplatz</a>
+//				auf ".$ent->detailLink()." an ".$op->detailLink()." auf ".$ent2->detailLink()." verkauft:<br/><br/>";
 				echo "Du hast folgendes Angebot (#".$this->recordId.") im <a href=\"?page=market&amp;mode=user_sell&amp;change_entity=".$this->entity1Id."\">Marktplatz</a>
-				auf ".$ent->detailLink()." an ".$op->detailLink()." auf ".$ent2->detailLink()." verkauft:<br/><br/>";
+				auf ".$ent->detailLink()." an ".$op->detailLink()." verkauft:<br/><br/>";
 				if ($this->content !="")
 					echo $this->content."<br/><br/>";
 				echo "<table class=\"tb\" style=\"width:auto;margin:5px;\">";
@@ -209,7 +213,7 @@ class MarketReport extends Report
 				echo "</table><br/>";
 				$buyerFleet = new Fleet($this->fleet2Id);
 				if ($buyerFleet->valid())
-					echo " Landung: ".df($sellerFleet->landTime())."";
+					echo " Landung: ".df($buyerFleet->landTime())."";
 				break;
 
 			case "resbought":
@@ -231,7 +235,8 @@ class MarketReport extends Report
 						</tr>";
 				}
 				echo "</table><br/>";
-				echo "Die Waren werden von ".$ent2->detailLink()." nach ".$ent->detailLink()." geliefert.";
+				//echo "Die Waren werden von ".$ent2->detailLink()." nach ".$ent->detailLink()." geliefert.";
+				echo "Die Waren werden vom Marktplatz nach ".$ent->detailLink()." geliefert.";
 				if ($sellerFleet->valid())
 					echo " Landung: ".df($sellerFleet->landTime())."";
 				break;

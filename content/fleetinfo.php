@@ -55,22 +55,22 @@
 		{
 			if ($fd->getAction()->code()=="support" && $fd->ownerAllianceId()==$cu->allianceId() && $cu->allianceId()>0 && ($fd->status()==0 || $fd->status->status()==3))
 			{
-				$valid = $cu->alliance->getBuildingLevel("Flottenkontrolle");
+				$valid = $cu->alliance->buildlist->getLevel(ALLIANCE_FLEET_CONTROL_ID);
 			}
 			elseif ($fd->getAction()->code()=="alliance" && $fd->ownerAllianceId()==$cu->allianceId() && $cu->allianceId()>0)
 			{
 				if ($fd->status()==0)
 				{
-					if ($lead_id && ($cu->alliance->getBuildingLevel("Flottenkontrolle")>=ALLIANCE_FLEET_SHOW))
+					if ($lead_id && ($cu->alliance->buildlist->getLevel(ALLIANCE_FLEET_CONTROL_ID)>=ALLIANCE_FLEET_SHOW))
 					{
-						$valid = $cu->alliance->getBuildingLevel("Flottenkontrolle");
+						$valid = $cu->alliance->buildlist->getLevel(ALLIANCE_FLEET_CONTROL_ID);
 					}
 				}
 				elseif ($fd->status->status()==3)
 				{
-					if ($cu->alliance->getBuildingLevel("Flottenkontrolle")>=ALLIANCE_FLEET_SHOW_PART)
+					if ($cu->alliance->buildlist->getLevel(ALLIANCE_FLEET_CONTROL_ID)>=ALLIANCE_FLEET_SHOW_PART)
 					{
-						$valid = $cu->alliance->getBuildingLevel("Flottenkontrolle");
+						$valid = $cu->alliance->buildlist->getLevel(ALLIANCE_FLEET_CONTROL_ID);
 					}
 				}
 			}

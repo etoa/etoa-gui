@@ -107,6 +107,7 @@ $cnt = 0;
 								".$sellarr[4].",
 								0
 							);");
+							$sellerFid = mysql_insert_id();
 							dbquery("
 							INSERT INTO
 								fleet_ships
@@ -117,7 +118,7 @@ $cnt = 0;
 							)
 							VALUES
 							(
-								".mysql_insert_id().",
+								".$buyerFid.",
 								".MARKET_SHIP_ID.",
 								".$numSellerShip."
 							);");
@@ -161,6 +162,7 @@ $cnt = 0;
 								".$buyarr[4].",									
 									0
 								);");
+								$buyerFid = mysql_insert_id();
 								dbquery("
 								INSERT INTO
 									fleet_ships
@@ -171,7 +173,7 @@ $cnt = 0;
 								)
 								VALUES
 								(
-									".mysql_insert_id().",
+									".$sellerFid.",
 									".MARKET_SHIP_ID.",
 									".$numBuyerShip."
 								);");

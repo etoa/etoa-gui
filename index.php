@@ -262,7 +262,7 @@
 		$ucarr=mysql_fetch_row($ucres);
 		
 		// Count online users
-		$gres=dbquery('SELECT COUNT(user_id) FROM users WHERE user_acttime>'.(time()-$cfg->value('user_timeout')).';');
+		$gres=dbquery('SELECT COUNT(user_id) FROM user_sessions;');
 		$garr=mysql_fetch_row($gres);
 		
 		// Count notes
