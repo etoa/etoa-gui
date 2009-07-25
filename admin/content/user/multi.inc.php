@@ -8,20 +8,47 @@
 			<b>Host:</b> <a href=\"?page=$page&amp;sub=ipsearch&amp;host=".Net::getHost($ip)."\">".Net::getHost($ip)."</a><br/><br/>";
 			$ipres = dbquery("
 			SELECT 
-				user_blocked_from,
-				user_blocked_to,
-				user_alliance_id,
-				user_id,user_points,
-				user_nick,user_acttime,
-				user_name,user_email,
-				user_email_fix,
-				user_multi_delets 
+				users.user_blocked_from,
+				users.user_blocked_to,
+				users.user_hmode_from,
+				users.admin,
+				users.user_ghost,
+				user_deleted,
+				users.user_alliance_id,
+				users.user_id,
+				users.user_points,
+				users.user_nick,
+				user_sessionlog.time_action AS time_log,
+				user_sessions.time_action,
+				users.user_name,
+				users.user_email,
+				users.user_email_fix,
+				users.user_multi_delets 
 			FROM 
 				users
-			WHERE 
-				user_ip='$ip' 
-			ORDER BY 
-				user_acttime DESC;");
+				LEFT JOIN
+					user_sessions
+				ON
+				users.user_id=user_sessions.user_id
+			INNER JOIN
+				user_sessionlog
+			ON
+				users.user_id=user_sessionlog.user_id
+				INNER JOIN (
+					SELECT
+						user_id,
+						MAX( time_action ) AS last_action
+					FROM
+						user_sessionlog
+					GROUP BY
+						user_id
+				) AS log
+				ON
+					user_sessionlog.user_id = log.user_id
+					AND user_sessionlog.time_action = log.last_action
+					AND (user_sessions.ip_addr='$ip' OR user_sessionlog.ip_addr='$ip')
+			ORDER BY
+				time_log DESC;");
 
 			echo "<table class=\"tbl\" width=\"100%\">";
 			echo "<tr><td class=\"tbltitle\">Nick</td><td class=\"tbltitle\">Name</td><td class=\"tbltitle\">E-Mail</td><td class=\"tbltitle\">Online</td><td class=\"tbltitle\">Punkte</td><td class=\"tbltitle\">Eingetragene Multis</td><td class=\"tbltitle\">Gel&ouml;schte Multis</td></tr>";
@@ -36,10 +63,19 @@
             user_multi_user_id='".$iparr['user_id']."'
             AND user_multi_multi_user_id!='0';");
 
-				if ($iparr['user_blocked_from']<time() && $iparr['user_blocked_to']>time())
+				if ($iparr['admin'])
+					$uCol = ' class="adminColor"';
+				elseif ($iparr['user_ghost'])
+					$uCol=' class="userGhostColor"';
+				elseif ($iparr['user_blocked_from']<time() && $iparr['user_blocked_to']>time())
 					$uCol=' class="userLockedColor"';
+				elseif ($iparr['user_hmode_from']>0)
+					$uCol=' class="userHolidayColor"';
+				elseif ($iparr['user_deleted']>0)
+					$uCol=' class="userDeletedColor"';
 				else
-					$uCol='';
+					$uCol=' class="tbldata"';
+				
 				echo "<tr>";
 				echo "<td $uCol>
 				<a href=\"?page=$page&amp;sub=ipsearch&amp;user=".$iparr['user_id']."\">".$iparr['user_nick']."</a>
@@ -52,11 +88,13 @@
 				echo "</td>";
 				echo "<td $uCol>".$iparr['user_name']."</td>";
 				echo "<td $uCol>".$iparr['user_email_fix']."<br/>".$iparr['user_email']."</td>";
-				echo "<td $uCol>";
-				if ($iparr['user_acttime']+$conf['user_timeout']['v'] > time())
-					echo "<span style=\"color:#0f0\">online</span>";
+				echo "<td $uCol ";
+				if ($iparrarr['time_action'])
+					echo " style=\"color:#0f0;\">online";
+				elseif ($iparr['time_log'])
+					echo ">".date("d.m.Y H:i",$iparr['time_log'])."";
 				else
-					echo date("Y-m-d H:i:s",$iparr['user_acttime']);
+					echo ">Noch nicht eingeloggt!";
 				echo "</td><td $uCol>".nf($iparr['user_points'])."</td>";
         if(mysql_num_rows($multi_res)>0)
         {
@@ -90,16 +128,46 @@
 		{
 			echo "<h1>Multi-Erkennung - Zusammenfassung</h1>";
 			echo "Multi-Merkmale:</br><ul><li>Gleiche IP (durch dieses Tool pr&uuml;fen)</li><li>&Auml;hnliche Onlinezeit (mit Session-Log pr&uuml;fen)</li><li>evtl. dieselbe Allianz</li><li>&Auml;hnliche Mailadresse</li><li>&Auml;hnliche Fantasienamen</li></ul></br>";
-			$res = dbquery("SELECT count(user_ip) as ip_count,user_id,user_ip FROM users WHERE user_ip!='' GROUP by user_ip ORDER BY ip_count DESC;");
-			$multi_ips=array();
+			$res = dbquery("SELECT
+						   		user_sessionlog.ip_addr AS log_ip,
+								user_sessions.ip_addr
+							FROM
+								users
+							INNER JOIN
+								user_sessionlog
+							ON
+								users.user_id=user_sessionlog.user_id
+							INNER JOIN (
+								SELECT
+									user_id,
+									MAX( time_action ) AS last_action
+								FROM
+									user_sessionlog
+								GROUP BY
+									user_id
+							) AS log
+							ON
+								user_sessionlog.user_id = log.user_id
+								AND user_sessionlog.time_action = log.last_action
+							LEFT JOIN
+								user_sessions
+							ON
+								user_sessionlog.user_id = user_sessions.user_id
+							;");
+			$ips = array();
 			while ($arr=mysql_fetch_array($res))
 			{
-				if ($arr['ip_count']>1)
-				{
-					array_push($multi_ips,$arr['user_ip']);
-				}
-				if ($arr['ip_count']==1)
-					break;
+				$ip = $arr['ip_addr']==null ? $arr['log_ip'] : $arr['ip_addr'];
+				if (isset($ips[$ip]))
+					++$ips[$ip];
+				else
+					$ips[$ip] = 1;
+			}
+			$multi_ips=array();
+			foreach ($ips as $ip=>$cnt)
+			{
+				if ($cnt>1)
+					array_push($multi_ips,$ip);
 			}
 			if (count($multi_ips)>0)
 			{
@@ -111,25 +179,66 @@
 				{
 					$ipres = dbquery("
 					SELECT
-                        user_id,
-                        user_blocked_from,
-                        user_blocked_to,
-                        user_nick,
-                        user_acttime,
-                        user_name,
-                        user_email
-					FROM
+						users.user_blocked_from,
+						users.user_blocked_to,
+						users.user_hmode_from,
+						users.user_deleted,
+						users.admin,
+						users.user_ghost,
+						users.user_alliance_id,
+						users.user_id,
+						users.user_points,
+						users.user_nick,
+						user_sessionlog.time_action AS time_log,
+						user_sessions.time_action,
+						users.user_name,
+						users.user_email
+					FROM 
 						users
-					WHERE
-						user_ip='$ip'
+						LEFT JOIN
+							user_sessions
+						ON
+						users.user_id=user_sessions.user_id
+					INNER JOIN
+						user_sessionlog
+					ON
+						users.user_id=user_sessionlog.user_id
+						INNER JOIN (
+							SELECT
+								user_id,
+								MAX( time_action ) AS last_action
+							FROM
+								user_sessionlog
+							GROUP BY
+								user_id
+						) AS log
+						ON
+							user_sessionlog.user_id = log.user_id
+							AND user_sessionlog.time_action = log.last_action
+							AND (user_sessions.ip_addr='$ip' OR user_sessionlog.ip_addr='$ip')
 					ORDER BY
-						user_acttime DESC;");
-
-
+						time_log DESC;");
+					
+					if ($iparr['admin'])
+						$uCol = ' class="adminColor"';
+					elseif ($iparr['user_ghost'])
+						$uCol=' class="userGhostColor"';
+					elseif ($iparr['user_blocked_from']<time() && $iparr['user_blocked_to']>time())
+						$uCol=' class="userLockedColor"';
+					elseif ($iparr['user_hmode_from']>0)
+						$uCol=' class="userHolidayColor"';
+					elseif ($iparr['user_deleted']>0)
+						$uCol=' class="userDeletedColor"';
+					else
+						$uCol=' class="tbldata"';
 
 
 					echo "<tr>
-					<td rowspan=\"".mysql_num_rows($ipres)."\" valign=\"top\" class=\"tbldata\"><a href=\"?page=$page&amp;sub=$sub&amp;ip=$ip\">$ip</a></td>";
+					<td rowspan=\"".mysql_num_rows($ipres)."\" valign=\"top\" class=\"tbldata\">
+						<a href=\"?page=$page&amp;sub=$sub&amp;ip=$ip\">
+							$ip
+						</a>
+					</td>";
 					$cnt=0;
 					while ($iparr = mysql_fetch_array($ipres))
 					{
@@ -144,17 +253,16 @@
                             AND user_multi_multi_user_id!='0';");
 
 						if ($cnt!=0) echo "<tr>"; else $cnt=1;
-						if ($iparr['user_blocked_from']<time() && $iparr['user_blocked_to']>time())
-							$uCol=' class="userLockedColor"';
-						else
-							$uCol='';
+						
 						echo "<td $uCol>".$iparr['user_nick']."</td>";
 						echo "<td $uCol title=\"".$iparr['user_email']."\">".$iparr['user_name']."</td>";
-						echo "<td $uCol>";
-						if ($iparr['user_acttime']+$conf['user_timeout']['v'] > time())
-							echo "<span style=\"color:#0f0\">online</span>";
+						echo "<td $uCol";
+						if ($iparr['time_action'])
+							echo " style=\"color:#0f0;\">online";
+						elseif ($iparr['time_log'])
+							echo ">".date("d.m.Y H:i",$iparr['time_log'])."";
 						else
-							echo date("Y-m-d H:i:s",$iparr['user_acttime']);
+							echo ">Noch nicht eingeloggt!";
 						echo "</td>";
 
 						if(mysql_num_rows($multi_res)>0)

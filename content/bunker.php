@@ -210,7 +210,7 @@
 						if ($cnt>0)
 						{
 							$countBunker = min($count,$cnt);
-							$spaceBunker = min($cnt,$structure/$ships[$shipId]['ship_structure']);
+							$spaceBunker = $ships[$shipId]['ship_structure']>0 ? min($cnt,$structure/$ships[$shipId]['ship_structure']) : $cnt;
 							$cnt = floor(min($countBunker,$spaceBunker));
 							$cnt = $sl->bunker($shipId,$cnt);
 							$count -= $cnt;

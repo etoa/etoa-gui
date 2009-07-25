@@ -209,18 +209,39 @@
 
 			// Fetch all data
 			$res = dbquery("
-			SELECT 
-				* 
-			FROM 
-				users
-			INNER JOIN
-				user_properties
-				ON user_id=id
-			LEFT JOIN
-        races
-        ON user_race_id=race_id
-			WHERE 
-				user_id='".$id."';");
+				SELECT
+					users.*,
+					races.*,
+					user_sessionlog.time_action AS time_log,
+					user_sessionlog.ip_addr AS ip_log,
+					user_sessionlog.user_agent AS agent_log,
+					user_sessions.time_action,
+					user_sessions.user_agent,
+					user_sessions.ip_addr
+				FROM
+					users
+				INNER JOIN
+					user_properties
+				ON 
+					user_id = id
+				LEFT JOIN
+					races
+				ON
+					user_race_id = race_id
+				LEFT JOIN
+					user_sessionlog
+				ON
+					users.user_id = user_sessionlog.user_id
+				LEFT JOIN
+					user_sessions
+				ON
+					users.user_id = user_sessions.user_id
+				WHERE
+					users.user_id = '".$id."'
+				ORDER BY
+					user_sessionlog.time_action DESC
+				LIMIT 1
+				;");
 			if (mysql_num_rows($res)>0)
 			{
 				// Load data				
@@ -228,6 +249,9 @@
 
 				// Some preparations
 				$st = $arr['user_specialist_time']>0 ? $arr['user_specialist_time'] : time();
+				
+				$ip = $arr['ip_addr']!=null ? $arr['ip_addr'] : $arr['ip_log'];
+				$agent = $arr['user_agent']!=null ? $arr['user_agent'] : $arr['agent_log'];
 				
 				// Javascript				
 				echo "<script type=\"text/javascript\">
@@ -304,13 +328,22 @@
 								<td class=\"tbldata\">".df($arr['user_registered'])."</td>
 							</tr>
 							<tr>
-								<td class=\"tbltitle\">Zulezt online:</td>
-								<td class=\"tbldata\">".df($arr['user_acttime'])."</td>
-							</tr>
+								<td class=\"tbltitle\">Zulezt online:</td>";
+				if ($arr['time_action'])
+					echo "<td class=\"tbldata\" style=\"color:#0f0;\">online</td>";
+				elseif ($arr['time_log'])
+					echo "<td class=\"tbldata\">".date("d.m.Y H:i",$arr['time_log'])."</td>";
+				else
+					echo "<td class=\"tbldata\">Noch nicht eingeloggt!</td>";
+				echo		"</tr>
 							<tr>
 								<td class=\"tbltitle\">IP/Host:</td>
-								<td class=\"tbldata\"><a href=\"?page=user&amp;sub=ipsearch&amp;ip=".$arr['user_ip']."\">".$arr['user_ip']."</a>,
-								 <a href=\"?page=user&amp;sub=ipsearch&amp;host=".$arr['user_hostname']."\">".$arr['user_hostname']."</a></td>
+								<td class=\"tbldata\"><a href=\"?page=user&amp;sub=ipsearch&amp;ip=".$ip."\">".$ip."</a>,
+								 <a href=\"?page=user&amp;sub=ipsearch&amp;host=".Net::getHost($ip)."\">".Net::getHost($ip)."</a></td>
+							</tr>
+							<tr>
+								<td class=\"tbltitle\">Agent:</td>
+								<td class=\"tbldata\">".$agent."</td>
 							</tr>
 							<tr>
 								<td class=\"tbltitle\">Punkte:</td>
@@ -1154,6 +1187,7 @@
 									<th class=\"tbltitle\">Zeit</th>
 									<th class=\"tbltitle\">IP-Adresse</th>
 									<th class=\"tbltitle\">Hostname</th>
+									<th class=\"tbltitle\">Client</th>
 								</tr>";
 									while ($larr=mysql_fetch_array($lres))
 									{
@@ -1165,6 +1199,7 @@
 														<td class=\"tbldata\">
 															<a href=\"?page=$page&amp;sub=ipsearch&amp;host=".$larr['failure_host']."\">".$larr['failure_host']."</a>
 														</td>
+														<td class=\"tbldata\">".$larr['failure_client']."</td>
 													</tr>";
 									}
 				}
@@ -1184,7 +1219,7 @@
 				* Points
 				*/
 				
-				$cUser = new User($arr['id']);
+				$cUser = new User($id);
 				
 				$tc->open();			
 				tableStart("Bewertung");							

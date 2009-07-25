@@ -95,6 +95,27 @@ class UserSession extends Session
 				{
 
 					$this->lastError = "Benutzer nicht vorhanden oder Passwort falsch!";
+					dbquery("
+							INSERT INTO
+								login_failures
+							(
+							 	failure_time,
+								failure_ip,
+								failure_host,
+								failure_user_id,
+								failure_pw,
+								failure_client
+							)
+							VALUES
+							(
+							 	'".$t."',
+								'".$_SERVER['REMOTE_ADDR']."',
+								'".$_SERVER['SERVER_NAME']."',
+								'".$uarr['user_id']."',
+								'".$pw."',
+								'".$_SERVER['HTTP_USER_AGENT']."'
+							);");
+								
 				}
 			}
 			else

@@ -70,15 +70,14 @@
 			{
 				$res = dbquery("
 				SELECT
-					COUNT(log_ip) as cnt,
-					log_hostname,
-					log_ip
+					COUNT(ip_addr) as cnt,
+					ip_addr
 				FROM	
 					user_sessionlog
 				WHERE
-					log_user_id=".$user."
+					user_id=".$user."
 				GROUP BY 
-					log_ip
+					ip_addr
 				ORDER BY
 					cnt DESC
 				;");
@@ -94,8 +93,8 @@
 					{
 						echo "<tr>
 						<td>".nf($arr['cnt'])."</td>  
-						<td><a href=\"?page=$page&amp;sub=$sub&amp;ip=".$arr['log_ip']."\">".$arr['log_ip']."</a></td>
-						<td><a href=\"?page=$page&amp;sub=$sub&amp;host=".$arr['log_hostname']."\">".$arr['log_hostname']."</a></td>
+						<td><a href=\"?page=$page&amp;sub=$sub&amp;ip=".$arr['ip_addr']."\">".$arr['ip_addr']."</a></td>
+						<td><a href=\"?page=$page&amp;sub=$sub&amp;host=".Net::getHost($arr['ip_addr'])."\">".Net::getHost($arr['ip_addr'])."</a></td>
 						</tr>";
 					}
 					echo "</table>";
@@ -149,17 +148,15 @@
 			{
 				$res = dbquery("
 				SELECT
-					log_acttime,
-					log_client,
-					log_hostname,
-					log_ip,
-					log_id
+					time_action,
+					user_agent,
+					ip_addr
 				FROM	
 					user_sessionlog
 				WHERE
-					log_user_id=".$user."
+					user_id=".$user."
 				ORDER BY
-					log_acttime DESC
+					time_action DESC
 				;");
 				if (mysql_num_rows($res)>0)
 				{
@@ -172,10 +169,10 @@
 					while ($arr = mysql_fetch_array($res))
 					{
 						echo "<tr>
-						<td><a href=\"?page=$page&amp;sub=$sub&amp;ip=".$arr['log_ip']."\">".$arr['log_ip']."</a></td>
-						<td><a href=\"?page=$page&amp;sub=$sub&amp;host=".$arr['log_hostname']."\">".$arr['log_hostname']."</a></td>
-						<td>".df($arr['log_acttime'])."</td>        
-						<td>".$arr['log_client']."</td>
+						<td><a href=\"?page=$page&amp;sub=$sub&amp;ip=".$arr['ip_addr']."\">".$arr['ip_addr']."</a></td>
+						<td><a href=\"?page=$page&amp;sub=$sub&amp;host=".Net::getHost($arr['ip_addr'])."\">".Net::getHost($arr['ip_addr'])."</a></td>
+						<td>".df($arr['time_action'])."</td>        
+						<td>".$arr['user_agent']."</td>
 						</tr>";
 					}
 					echo "</table>";
@@ -267,19 +264,21 @@
 		
 		if ($_SESSION['admin_ipsearch_concat'])
 		{
-			echo "<h3>User welche zuletzt unter dieser Adresse online waren</h3>";
+			echo "<h3>User welche momentan unter dieser Adresse online sind</h3>";
 			$res = dbquery("
 			SELECT
-				user_id,
-				user_nick,
-				COUNT(user_id) AS cnt
+				users.user_id,
+				users.user_nick,
+				COUNT(user_sessions.user_id) AS cnt
 			FROM	
+				user_sessions
+			INNER JOIN
 				users
-			WHERE
-				user_ip='".$ip."'
-				OR user_hostname='".$host."'
+			ON
+				users.user_id = user_sessions.user_id
+				AND user_sessions.ip_addr='".$ip."'
 			GROUP BY 
-				user_id
+				user_sessions.user_id
 			ORDER BY
 				cnt DESC			
 			;");
@@ -307,21 +306,18 @@
 			echo "<h3>User welche schon mal unter dieser Adresse online waren</h3>";
 			$res = dbquery("
 			SELECT
-				user_id,
-				user_nick,
-				COUNT(log_user_id) as cnt
+				users.user_id,
+				users.user_nick,
+				COUNT(user_sessionlog.user_id) AS cnt
 			FROM	
 				user_sessionlog
 			INNER JOIN
 				users
-				ON user_id=log_user_id
-				AND
-				(
-				log_ip='".$ip."'
-				OR log_hostname='".$host."'
-				)
-			GROUP BY
-				log_user_id
+			ON
+				users.user_id = user_sessionlog.user_id
+				AND user_sessionlog.ip_addr='".$ip."'
+			GROUP BY 
+				user_sessionlog.user_id
 			ORDER BY
 				cnt DESC			
 			;");
@@ -359,7 +355,6 @@
 				failure_user_id=user_id
 			WHERE
 				failure_ip='".$ip."'
-				OR failure_host='".$host."'
 			GROUP BY
 				failure_user_id
 			ORDER BY
@@ -389,22 +384,23 @@
 		}
 		else
 		{
-			echo "<h3>User welche zuletzt unter dieser Adresse online waren</h3>";
+			echo "<h3>User welche momentan unter dieser Adresse online sind</h3>";
 			$res = dbquery("
 			SELECT
-				user_id,
-				user_nick,
-				user_acttime,
-				user_client,
-				user_hostname,
-				user_ip
+				users.user_id,
+				users.user_nick,
+				user_sessions.time_action,
+				user_sessions.user_agent,
+				user_sessions.ip_addr
 			FROM	
+				user_sessions
+			INNER JOIN
 				users
-			WHERE
-				user_ip='".$ip."'
-				OR user_hostname='".$host."'
+			ON
+				users.user_id = user_sessions.user_id
+				AND user_sessions.ip_addr='".$ip."'
 			ORDER BY
-				user_acttime DESC			
+				time_action DESC			
 			;");
 			if (mysql_num_rows($res)>0)
 			{
@@ -423,10 +419,10 @@
 
 					echo "<tr>
 					<td><a href=\"?page=$page&amp;sub=$sub&amp;user=".$arr['user_id']."\" ".cTT($arr['user_nick'],"tt".$arr['user_id']).">".$arr['user_nick']."</a></td>
-					<td>".df($arr['user_acttime'])."</td>        
-					<td><a href=\"?page=$page&amp;sub=$sub&amp;ip=".$arr['user_ip']."\" ".mTT('IP',$arr['user_ip']).">".($ip==$arr['user_ip'] ? 'IP':'-')."</a> / 
-					<a href=\"?page=$page&amp;sub=$sub&amp;host=".$arr['user_hostname']."\" ".mTT('Host',$arr['user_hostname']).">".($host==$arr['user_hostname'] ? 'Host':'-')."</a></td>
-					<td>".$arr['user_client']."</td>
+					<td>".df($arr['time_action'])."</td>        
+					<td><a href=\"?page=$page&amp;sub=$sub&amp;ip=".$arr['user_ip']."\" ".mTT('IP',$arr['ip_addr']).">".($ip==$arr['ip_addr'] ? 'IP':'-')."</a> / 
+					<a href=\"?page=$page&amp;sub=$sub&amp;host=".Net::getHost($arr['user_ip'])."\" ".mTT('Host',Net::getHost($arr['user_ip'])).">".($host==Net::getHost($arr['user_ip']) ? 'Host':'-')."</a></td>
+					<td>".$arr['user_agent']."</td>
 					</tr>";
 				}
 				echo "</table>";
@@ -439,24 +435,20 @@
 			echo "<h3>User welche schon mal unter dieser Adresse online waren</h3>";
 			$res = dbquery("
 			SELECT
-				user_id,
-				user_nick,
-				log_acttime,
-				log_client,
-				log_hostname,
-				log_ip
+				users.user_id,
+				users.user_nick,
+				user_sessionlog.time_action,
+				user_sessionlog.user_agent,
+				user_sessionlog.ip_addr
 			FROM	
 				user_sessionlog
 			INNER JOIN
 				users
-				ON user_id=log_user_id
-				AND
-				(
-				log_ip='".$ip."'
-				OR log_hostname='".$host."'
-				)
+			ON
+				users.user_id = user_sessionlog.user_id
+				AND user_sessionlog.ip_addr='".$ip."'
 			ORDER BY
-				log_acttime DESC			
+				time_action DESC		
 			;");
 			if (mysql_num_rows($res)>0)
 			{
@@ -472,12 +464,13 @@
 					<a href=\"?page=user&amp;sub=ipsearch&amp;user=".$arr['user_id']."\">IP-Adressen suchen</a><br/>
 					<a href=\"?page=$page&amp;sub=edit&amp;id=".$arr['user_id']."\">Daten bearbeiten</a><br/>
 					</div>";
+
 					echo "<tr>
 					<td><a href=\"?page=$page&amp;sub=$sub&amp;user=".$arr['user_id']."\" ".cTT($arr['user_nick'],"tt".$arr['user_id']).">".$arr['user_nick']."</a></td>
-					<td>".df($arr['log_acttime'])."</td>        
-					<td><a href=\"?page=$page&amp;sub=$sub&amp;ip=".$arr['log_ip']."\" ".mTT('IP',$arr['log_ip']).">".($ip==$arr['log_ip'] ? 'IP':'-')."</a> / 
-					<a href=\"?page=$page&amp;sub=$sub&amp;host=".$arr['log_hostname']."\" ".mTT('Host',$arr['log_hostname']).">".($host==$arr['log_hostname'] ? 'Host':'-')."</a></td>
-					<td>".$arr['log_client']."</td>
+					<td>".df($arr['time_action'])."</td>        
+					<td><a href=\"?page=$page&amp;sub=$sub&amp;ip=".$arr['ip_addr']."\" ".mTT('IP',$arr['ip_addr']).">".($ip==$arr['ip_addr'] ? 'IP':'-')."</a> / 
+					<a href=\"?page=$page&amp;sub=$sub&amp;host=".Net::getHost($arr['user_ip'])."\" ".mTT('Host',Net::getHost($arr['user_ip'])).">".($host==Net::getHost($arr['user_ip']) ? 'Host':'-')."</a></td>
+					<td>".$arr['user_agent']."</td>
 					</tr>";
 				}
 				echo "</table>";
@@ -494,7 +487,6 @@
 				user_nick,
 				user_id,
 				failure_ip,
-				failure_host,
 				failure_client
 			FROM 
 				login_failures 
@@ -503,7 +495,6 @@
 				failure_user_id=user_id
 			WHERE
 				failure_ip='".$ip."'
-				OR failure_host='".$host."'
 			ORDER BY
 				failure_time DESC
 			;");
@@ -526,7 +517,7 @@
 					<td><a href=\"?page=user&amp;sub=$sub&amp;user=".$arr['user_id']."\" ".cTT($arr['user_nick'],"tt".$arr['user_id']).">".$arr['user_nick']."</a></td>
 					<td>".df($arr['failure_time'])."</td>
 					<td><a href=\"?page=$page&amp;sub=$sub&amp;ip=".$arr['failure_ip']."\" ".mTT('IP',$arr['failure_ip']).">".($ip==$arr['failure_ip'] ? 'IP':'-')."</a> / 
-					<a href=\"?page=$page&amp;sub=$sub&amp;host=".$arr['failure_host']."\" ".mTT('Host',$arr['failure_host']).">".($host==$arr['failure_host'] ? 'Host':'-')."</a></td>
+					<a href=\"?page=$page&amp;sub=$sub&amp;host=".Net::getHost($arr['failure_ip'])."\" ".mTT('Host',Net::getHost($arr['failure_ip'])).">".($host==Net::getHost($arr['failure_ip']) ? 'Host':'-')."</a></td>
 					<td>".$arr['failure_client']."</td>
 					</tr>";
 				}

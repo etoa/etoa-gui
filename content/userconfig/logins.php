@@ -42,11 +42,13 @@
 				10;");
 			echo "<tr><th>Zeit</th>
 			<th>IP-Adresse</th>
-			<th>Hostname</th></tr>";
+			<th>Hostname</th>
+			<th>Client</th></tr>";
 			while ($arr=mysql_fetch_array($res))
 			{
 				echo "<tr><td>".df($arr['time_login'])."</td>";
 				echo "<td>".$arr['ip_addr']."</td>";
+				echo "<td>".Net::getHost($arr['ip_addr'])."</td>";
 				echo "<td>".$arr['user_agent']."</td></tr>";
 			}
     	tableEnd();
@@ -67,13 +69,15 @@
 				echo "<tr><th>Zeit</th>";
 				//echo "<th>Passwort</th>";
 				echo "<th>IP-Adresse</th>
-				<th>Hostname</th></tr>";
+				<th>Hostname</th>
+				<th>Client</th></tr>";
 				while ($arr=mysql_fetch_array($res))
 				{
 					echo "<tr><td>".df($arr['failure_time'])."</td>";
 					//echo "<td>".$arr['failure_pw']."</td>";
 					echo "<td>".$arr['failure_ip']."</td>";
-					echo "<td>".$arr['failure_host']."</td></tr>";
+					echo "<td>".$arr['failure_host']."</td>";
+					echo "<td>".$arr['failure_agent']."</td></tr>";
 				}
 			}
 			else
