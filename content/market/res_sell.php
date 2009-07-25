@@ -118,7 +118,7 @@ $cnt = 0;
 							)
 							VALUES
 							(
-								".$buyerFid.",
+								".$sellerFid.",
 								".MARKET_SHIP_ID.",
 								".$numSellerShip."
 							);");
@@ -173,7 +173,7 @@ $cnt = 0;
 								)
 								VALUES
 								(
-									".$sellerFid.",
+									".$buyerFid.",
 									".MARKET_SHIP_ID.",
 									".$numBuyerShip."
 								);");

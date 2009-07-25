@@ -771,8 +771,8 @@
 		{
 			$cfg = Config::getInstance();
 			
-			$allowed =  ($this->sFleets && (in_array($this->targetEntity->id,$this->sFleets) || $this->leaderId>0)) ? true : false;
-
+			//$allowed =  ($this->sFleets && count($this->sFleets) && ( $this->leaderId>0 || in_array($this->targetEntity->id,$this->sFleets))) ? true : false;
+			$allowed = true;
 			// Get possible actions by intersecting ship actions and allowed target actions
 			$actions = array_intersect($this->shipActions,$this->targetEntity->allowedFleetActions());
 			$actionObjs = array();
