@@ -33,6 +33,7 @@
 		<a href="?page=stats" id="navstats" onmouseover="hideAllHbarMenus();"></a>
 		{literal}<a href="?page=cell" id="navmap" onmouseover="		
 				if (document.getElementById('hbarmapslide').style.display=='none') { document.getElementById('hbarmapslide').style.display='';	}
+                document.getElementById('hbarmessagesslide').style.display='none';
 				document.getElementById('hbarallianceslide').style.display='none';
 				document.getElementById('hbarsettingsslide').style.display='none';
 				document.getElementById('hbarhelpslide').style.display='none';
@@ -45,16 +46,24 @@
 			</script>	
 		{/if}
 		<a href="?page=fleets" id="navfleet" onmouseover="hideAllHbarMenus();"></a>
-		{if $messages > 0}
+		{if $messages > 0 || $newreports>0}
 			<a href="?page=messages" id="navmessagesgreen" onmouseover="hideAllHbarMenus();"></a>
 			<script type="text/javascript">
 				{literal}	Effect.Pulsate('navmessagesgreen',{duration:180,pulses:120,from:0.0}); {/literal}
 			</script>	
 		{/if}
-		<a href="?page=messages" id="navmessages" onmouseover="hideAllHbarMenus();"></a>
-		{literal}<a href="?page=alliance" id="navalliance" onmouseover="
-				if (document.getElementById('hbarallianceslide').style.display=='none') { document.getElementById('hbarallianceslide').style.display='' } 
+		{literal}<a href="?page=messages" id="navmessages" onmouseover="
+				if (document.getElementById('hbarmessagesslide').style.display=='none') { document.getElementById('hbarmessagesslide').style.display=''; }
+                document.getElementById('hbarallianceslide').style.display='none' ;
 				document.getElementById('hbarmapslide').style.display='none';
+				document.getElementById('hbarsettingsslide').style.display='none';
+				document.getElementById('hbarhelpslide').style.display='none';
+				document.getElementById('hbarlogoutslide').style.display='none';
+				return false;"></a>{/literal}
+		{literal}<a href="?page=alliance" id="navalliance" onmouseover="
+				if (document.getElementById('hbarallianceslide').style.display=='none') { document.getElementById('hbarallianceslide').style.display=''; } 
+				document.getElementById('hbarmapslide').style.display='none';
+                document.getElementById('hbarmessagesslide').style.display='none';
 				document.getElementById('hbarsettingsslide').style.display='none';
 				document.getElementById('hbarhelpslide').style.display='none';
 				document.getElementById('hbarlogoutslide').style.display='none';
@@ -66,6 +75,7 @@
 				if (document.getElementById('hbarsettingsslide').style.display=='none') { document.getElementById('hbarsettingsslide').style.display=''; }
 				document.getElementById('hbarallianceslide').style.display='none';
 				document.getElementById('hbarmapslide').style.display='none';
+                document.getElementById('hbarmessagesslide').style.display='none';
 				document.getElementById('hbarhelpslide').style.display='none';
 				document.getElementById('hbarlogoutslide').style.display='none';
 				return false;"></a>{/literal}
@@ -74,14 +84,16 @@
 				document.getElementById('hbarsettingsslide').style.display='none';
 				document.getElementById('hbarallianceslide').style.display='none';
 				document.getElementById('hbarmapslide').style.display='none';
+                document.getElementById('hbarmessagesslide').style.display='none';
 				document.getElementById('hbarlogoutslide').style.display='none';
 				return false;"></a>{/literal}		
 		{literal}<a href="?logout=1" id="navlogout" onmouseover="		
-				if (document.getElementById('hbarlogoutslide').style.display=='none'){ document.getElementById('hbarlogoutslide').style.display='' }
+				if (document.getElementById('hbarlogoutslide').style.display=='none'){ document.getElementById('hbarlogoutslide').style.display=''; }
 				document.getElementById('hbarhelpslide').style.display='none';
 				document.getElementById('hbarsettingsslide').style.display='none';
 				document.getElementById('hbarallianceslide').style.display='none';
 				document.getElementById('hbarmapslide').style.display=='none'; 
+                document.getElementById('hbarmessagesslide').style.display='none';
 				return false;"></a>{/literal}
 	</div>
 	<div id="hbarmap">
@@ -92,7 +104,15 @@
 				<a href="?page=galaxy">Galaxie</a>
 			</div>
 		</div>
-	</div>	
+	</div>
+	<div id="hbarmessages">
+		<div id="hbarmessagesslide" style="display:none;">
+			<div>
+				<a href="?page=messages">Nachrichten {if $messages > 0}({$messages} neu){/if}</a>		
+				<a href="?page=reports">Berichte {if $newreports > 0}({$newreports} neu){/if}</a>
+			</div>
+		</div>
+	</div>
 	<div id="hbaralliance">
 		<div id="hbarallianceslide" style="display:none;">
 			<div>

@@ -244,7 +244,7 @@ Besten Dank f&#xFC;r euer Verst&#xE4;ndnis&#xD;
     </item>
     <item name="messages_threshold_days" cat="1">
       <v comment="Aufbewahrungsdauer Nachrichten" type="text">28</v>
-      <p1 comment="Aufbewahrungsdauer Nachrichten im Papierkorb" type="text">7</p1>
+      <p1 comment="Aufbewahrungsdauer Nachrichten im Papierkorb" type="text">14</p1>
     </item>
     <item name="user_ban_min_length" cat="10">
       <v comment="Minimale Sperrdauer (f&#xFC;r Admin-Modus)" type="text">1</v>

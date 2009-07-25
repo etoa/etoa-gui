@@ -42,6 +42,17 @@ function applyFleetLogFilter($args,$limit=0)
 	return $objResponse;
 }
 
+function applyAttackLogFilter($args,$limit=0)
+{
+	$objResponse = new xajaxResponse();
+	require_once("inc/admin_functions.inc.php");
+	ob_start();
+	showAttackLogs($args,$limit);
+	$objResponse->assign("log_contents","innerHTML",ob_get_clean());
+
+	return $objResponse;
+}
+
 function logSelectorCat($cat)
 {
 	

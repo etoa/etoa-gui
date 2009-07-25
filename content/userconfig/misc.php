@@ -29,7 +29,7 @@
 	
 		if (isset($_POST['hmod_on']) && checker_verify())
 		{
-			if ($cu->lastInvasion < $cfg->user_umod_min_length*3600)
+			if ($cu->lastInvasion < time() - $cfg->user_umod_min_length*3600)
 			{
 				$cres = dbquery("SELECT id FROM fleet WHERE user_id='".$cu->id."';");
 				$carr = mysql_fetch_row($cres);

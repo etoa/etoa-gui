@@ -284,7 +284,63 @@ class MarketReport extends Report
 				echo "</table><br/>";
 				echo "".floor($this->shipCount*$this->factor)." Schiffe (".round($this->factor*100)."%) wurden zurückerstattet.";
 				break;
+			case "shipbought":
+				$op = new User($this->opponent1Id);
+				$ent2 = Entity::createFactoryById($this->entity2Id);
+				$sellerFleet = new Fleet($this->fleet2Id);
+				echo "Du hast folgendes Angebot (#".$this->recordId.") von ".$op->detailLink()." gekauft:<br/><br/>";
+				$ts = new Ship($this->shipId);
+				echo "".nf($this->shipCount)." <b>".$ts."</b> <br/><br/> ";
+				echo "zu einem Preis von: <br/><br/>";
+				echo "<table class=\"tb\" style=\"width:auto;margin:5px;\">";
+				echo "<tr>
+				<th style=\"width:100px;\">Rohstoff:</th>
+				<th>Preis:</th>
+				</tr>";
+				foreach ($resNames as $k=>$v)
+				{
+					if ($this->resSell[$k] + $this->resBuy[$k]>0)
+						echo "<tr>
+						<td>".$v."</td>
+						<td>".nf($this->resBuy[$k])."</td>
+						</tr>";
+				}
+				echo "</table><br/>";
+				//echo "Die Waren werden von ".$ent2->detailLink()." nach ".$ent->detailLink()." geliefert.";
+				echo "Die Waren werden vom Marktplatz nach ".$ent->detailLink()." geliefert.";
+				if ($sellerFleet->valid())
+					echo " Landung: ".df($sellerFleet->landTime())."";
+				break;
+		case "shipsold":
+				$op = new User($this->opponent1Id);
+				$ent2 = Entity::createFactoryById($this->entity2Id);
 
+//				echo "Du hast folgendes Angebot (#".$this->recordId.") im <a href=\"?page=market&amp;mode=user_sell&amp;change_entity=".$this->entity1Id."\">Marktplatz</a>
+//				auf ".$ent->detailLink()." an ".$op->detailLink()." auf ".$ent2->detailLink()." verkauft:<br/><br/>";
+				echo "Du hast folgendes Angebot (#".$this->recordId.") im <a href=\"?page=market&amp;mode=user_sell&amp;change_entity=".$this->entity1Id."\">Marktplatz</a>
+				auf ".$ent->detailLink()." an ".$op->detailLink()." verkauft:<br/><br/>";
+				$ts = new Ship($this->shipId);
+				echo "".nf($this->shipCount)." <b>".$ts."</b> <br/><br/> ";
+				echo "zu einem Preis von: <br/><br/>";
+				echo "<table class=\"tb\" style=\"width:auto;margin:5px;\">";
+				echo "<tr>
+				<th style=\"width:100px;\">Rohstoff:</th>
+				<th>Preis:</th>
+				</tr>";
+				foreach ($resNames as $k=>$v)
+				{
+					if ($this->resSell[$k] + $this->resBuy[$k]>0)
+						echo "<tr>
+						<td>".$v."</td>
+						<td>".nf($this->resBuy[$k])."</td>
+						</tr>";
+				}
+				echo "</table><br/>";
+				echo "Die Waren werden vom Marktplatz nach ".$ent->detailLink()." geliefert.";
+				$buyerFleet = new Fleet($this->fleet2Id);
+				if ($buyerFleet->valid())
+					echo " Landung: ".df($buyerFleet->landTime())."";
+				break;
 			default:
 				dump($this);
 		}

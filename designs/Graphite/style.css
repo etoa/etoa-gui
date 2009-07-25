@@ -381,6 +381,18 @@ img	{
 	z-index:500;
 }
 
+#hbarmessages {
+	position:absolute;
+	right:190px;
+	top:53px;
+	padding:0px;
+	text-align:left;
+	background:#333;
+	border:1px solid #999;
+	border-top:none;
+	z-index:500;
+}
+
 #hbaralliance	{
 	position:absolute;
 	right:140px;
@@ -429,13 +441,13 @@ img	{
 	z-index:503;		
 }
 
-#hbaralliance a,#hbarmap a, #hbarsettings	a,#hbarhelp a,#hbarlogout a	{
+#hbaralliance a,#hbarmessages a,#hbarmap a, #hbarsettings	a,#hbarhelp a,#hbarlogout a	{
 	display:block;
 	color:#fff;
 	text-decoration:none;
 	padding:5px;
 }
-#hbaralliance a:hover, #hbarmap a:hover, #hbarsettings	a:hover, #hbarhelp a:hover,#hbarlogout a:hover	{
+#hbaralliance a:hover, #hbarmessages a:hover, #hbarmap a:hover, #hbarsettings	a:hover, #hbarhelp a:hover,#hbarlogout a:hover	{
 	color:#B98A5E;
 }
 

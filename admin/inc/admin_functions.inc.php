@@ -1240,6 +1240,244 @@ function showLogs($args=null,$limit=0)
 	}
 }
 
+function showAttackLogs($args=null,$limit=-1,$load=true)
+{
+	$paginationLimit = 50;
+	
+	if ($load)
+	{
+		$action = is_array($args) && isset($args['flaction']) ? $args['flaction'] : 0;
+		$sev = is_array($args) && isset($args['logsev'])  ? $args['logsev'] : 0;
+		
+		$landtime = is_array($args) ? mktime($args['searchtime_h'],$args['searchtime_i'],$args['searchtime_s'],$args['searchtime_m'],$args['searchtime_d'],$args['searchtime_y']) : time();
+		
+		$order = "timestamp ASC";
+		
+		$sql1 = "SELECT ";
+		$sql2 = " * ";
+		$sql3 = " FROM logs_battle l ";
+		
+		if (isset($args['searchfuser']) && $args['searchfuser']!="" && !is_numeric($args['searchfuser']))
+		{
+			$sql3.=" INNER JOIN users fu ON fu.user_id=l.user_id AND fu.user_nick LIKE '%".$args['searchfuser']."%' ";
+		}
+		if (isset($args['searcheuser']) && $args['searcheuser']!="" && !is_numeric($args['searcheuser']))
+		{
+			$sql3.=" INNER JOIN users eu ON eu.user_id=l.entity_user_id AND eu.user_nick LIKE '%".$args['searcheuser']."%' ";
+		}
+		
+		$sql3.= " WHERE landtime<='".$landtime."' AND landtime>'".($landtime-3600*24)."' ";
+		if ($action!="")
+		{
+			$sql3.=" AND action='".$action."' ";
+		}
+		if ($sev >0)
+		{
+			$sql3.=" AND severity >= ".$sev." ";
+		}
+		if (isset($args['searchfuser']) && is_numeric($args['searchfuser']))
+		{
+			$sql3.=" AND l.user_id=".intval($args['searchfuser'])." ";
+		}
+		if (isset($args['searcheuser']) && is_numeric($args['searcheuser']))
+		{
+			$sql3.=" AND l.entity_user_id=".intval($args['searcheuser'])." ";
+		}
+		$sql3.= " ORDER BY $order";
+		
+		$res=dbquery($sql1.$sql2.$sql3);
+		
+		$bans = array();
+		
+		if (mysql_num_rows($res)>0)
+		{
+			$data = array();
+			
+			$waveMaxCnt = array(3,4);				// Max. 3er/4er Wellen...
+			$waveTime = 15*60;						// ...innerhalb 15mins
+			
+			$attacksPerEntity = array(2,4);			// Max. 2/4 mal den gleichen Planeten angreiffen
+			
+			$attackedEntitiesMax = array(5,10);		// Max. Anzahl Planeten die angegriffen werden können...
+			$timeBetweenAttacksOnEntity = 6*3600;	// ...innerhalb 6h
+			
+			$banRange = 24*3600;					// alle Regeln gelten innerhalb von 24h
+			
+			$first_ban_time = 12*3600;							// Sperrzeit beim ersten Vergehen: 12h
+			$add_ban_time = 12*3600;								// Sperrzeit bei jedem weiteren Vergehen: 12h (wird immer dazu addiert)
+			
+			//Alle Daten werden in einem Array gespeichert, da mehr als 1 Angriffer möglich ist funktioniert das alte Tool nicht mehr
+			while ($arr=mysql_fetch_array($res))
+			{
+				$uid = explode(",",$arr['user_id']);
+				$euid = explode(",",$arr['entity_user_id']);
+				$eUser = $euid[1];
+				$entity = $arr['entity_id'];
+				$time = $arr['landtime'];
+				$war = $arr['war'];
+				foreach ($uid as $fUser)
+				{
+					if ($fUser!="")
+					{
+						if (!isset($data[$fUser])) $data[$fUser] = array();
+						if (!isset($data[$fUser][$eUser])) $data[$fUser][$eUser] = array();
+						if (!isset($data[$fUser][$eUser][$entity])) $data[$fUser][$eUser][$entity] = array();
+						array_push($data[$fUser][$eUser][$entity],array($time,$war));
+					}
+				}
+			}
+			
+			foreach ($data as $fUser=>$eUserArr)
+			{
+				foreach ($eUserArr as $eUser=>$eArr)
+				{
+					$firstTime = 0;
+					$attackCntTotal = 0;
+					$attackedEntities = count($eArr);
+					
+					foreach ($eArr as $entity=>$eDataArr)
+					{
+						$firstPlanetTime = 0;
+						$lastPlanetTime = 0;
+						$attackCntEntity = 0;
+						
+						foreach($eDataArr as $eData)
+						{
+							$ban = 0;
+							$banReason = "";
+							if ($frstTime==0) {
+								$firsTime = $eData[0];
+								
+								// Wenn mehr als 5 Planeten angegrifen wurden
+								if ($attackedEntities>$attackedEntitiesMax[$eData[1]])
+								{
+									$ban = 1;
+									$banReason .= "Mehr als ".$attackedEntitiesMax[$eData[1]]." innerhalb von ".($banRange/3600)." Stunden.\nAnzahl: ".$attackedEntities."\n\n";
+								}
+							}
+							if ($firstPlanetTime==0) $firstPlanetTime = $eData[0];
+							if ($lastPlanetTime==0) $lastPlanetTime = $eData[0];
+							
+							//Wellenreset
+							if ($waveStart==0 || $waveEnd<=$eData[0]-$waveStart)
+							{
+								$waveStart = $eData[0];
+								$waveEnd = $eData[0];
+								$waveCnt = 1;
+								++$attackCntEntity;
+							}
+							else
+							{
+								++$waveCnt;
+								$waveEnd = $eData[0];
+							}
+							
+							//
+							// Überprüfungen
+							//
+							
+							//Zu viele Angriffe in einer Welle
+							if ($waveCnt>$waveMaxCnt[$eData[1]])
+							{
+								$ban = 1;
+								$banReason .= "Mehr als ".$waveMaxCnt[$eData[1]]." Angriffe in einer Welle auf dem selben Ziel.<br />Anzahl Angriffe : ".$waveCnt."<br />Dauer der Welle: ".tf($waveEnd-$waveStart)."<br /><br />";
+							}
+							// Sperre keine 6h gewartet zwischen Angriffen auf einen Planeten
+							if ($waveCnt==1 && $eData[0]>$waveEnd && $eData[0]<$waveEnd+$timeBetweenAttacksOnEntity)
+							{
+								$ban = 1;
+								$banReason .= "Der Abstand zwischen 2 Angriffen/Wellen auf ein Ziel ist kleiner als ".($timeBetweenAttacksOnEntity/3600)." Stunden.<br />Dauer zwischen den beiden Angriffen: ".tf($eData[0]-$waveEnd)."<br /><br />";
+							}
+							// Sperre wenn mehr als 2/4 Angriffe pro Planet
+							if ($waveCnt==1 && $attackCntEntity>$attacksPerEntity[$eData[1]])
+							{
+								$ban = 1;
+								$banReason .= "Mehr als ".$attacksPerEntity[$eData[1]]." Angriffe/Wellen auf ein Ziel.\<br />nzahl:".$attackCntEntity."<br /><br />";
+							}
+							
+							// Es liegt eine Angriffsverletzung vor
+							if($ban==1)
+								array_push($bans,array("timestamp"=>$eData[0],"fUser"=>$fUser,"eUser"=>$eUser,"entity"=>$entity,"ban"=>$banReason));
+						}
+					}
+				}
+			}
+		}
+		$_SESSION['logs']['attackObj'] = serialize($bans);
+	}
+	
+	$bans = unserialize($_SESSION['logs']['attackObj']);
+	$nr = count($bans);
+	if ($nr>0)
+	{
+		echo "<table class=\"tb\">";
+		echo "<tr><th colspan=\"10\">
+		<div style=\"float:left;\">";
+
+		if ($limit>0)
+		{
+			echo "<input type=\"button\" value=\"&lt;&lt;\" onclick=\"applyFilter(0)\" /> ";
+			echo "<input type=\"button\" value=\"&lt;\" onclick=\"applyFilter(".($limit-$paginationLimit).")\" /> ";
+		}
+		else
+		{
+			echo "<input type=\"button\" value=\"&lt;&lt;\" disabled=\"disabled\" /> ";
+			echo "<input type=\"button\" value=\"&lt;\" disabled=\"disabled\" /> ";
+		}
+		if ($limit < $total-$paginationLimit)
+		{
+			echo "<input type=\"button\" value=\"&gt;\" onclick=\"applyFilter(".($limit+$paginationLimit).")\" /> ";
+			echo "<input type=\"button\" value=\"&gt;&gt;\" onclick=\"applyFilter(".($total-($total%$paginationLimit)).")\" /> ";
+		}
+		else
+		{
+			echo "<input type=\"button\" value=\"&gt;\" disabled=\"disabled\" /> ";
+			echo "<input type=\"button\" value=\"&gt;&gt;\" disabled=\"disabled\" /> ";
+		}
+
+		echo "</div><div style=\"float:right\">
+		".($limit+1)." - ".($limit+$nr)." von $nr
+		</div><br style=\"clear:both;\" />
+		</th></tr>";
+		echo "<tr>
+			<th style=\"width:140px;\">Datum</th>
+			<th>Schweregrad</th>
+			<th>Angreifer</th>
+			<th>Verteidiger</th>
+			<th>Ziel</th>
+			<th>Aktion</th>
+			<th>Sperrgrund</th>
+		</tr>";
+		foreach ($bans as $id=>$banData)
+		{
+			$fUser = new User($banData['fUser']);
+			$eUser = new User($banData['eUser']);
+			//$fa = FleetAction::createFactory($arr['action']);
+			$entity = Entity::createFactoryById($banData['entity']);
+			
+			echo "<tr>
+			<td>".df($banData['timestamp'])."</td>
+			<td>".Log::$severities[$banData['severity']]."</td>
+			<td>$fUser</td>
+			<td>$eUser</td>
+			<td>$entity</td>
+			<td>fa</td>
+			<td><a href=\"javascript:;\" onclick=\"toggleBox('details".$id."')\">Bericht</a></td>
+			</tr>";
+			echo "<tr id=\"details".$id."\" style=\"display:none;\"><td colspan=\"9\">".
+			$banData['ban']."
+			</td></tr>";
+		}
+		echo "</table>";
+	}
+	else
+	{
+		echo "<p>Keine Daten gefunden!</p>";
+	}
+}
+
+	
+
 function showFleetLogs($args=null,$limit=0)
 {
 	$paginationLimit = 50;
