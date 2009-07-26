@@ -1197,7 +1197,7 @@
 															<a href=\"?page=$page&amp;sub=ipsearch&amp;ip=".$larr['failure_ip']."\">".$larr['failure_ip']."</a>
 														</td>
 														<td class=\"tbldata\">
-															<a href=\"?page=$page&amp;sub=ipsearch&amp;host=".$larr['failure_host']."\">".$larr['failure_host']."</a>
+															<a href=\"?page=$page&amp;sub=ipsearch&amp;host=".Net::getHost($arr['failure_ip'])."\">".Net::getHost($arr['failure_ip'])."</a>
 														</td>
 														<td class=\"tbldata\">".$larr['failure_client']."</td>
 													</tr>";

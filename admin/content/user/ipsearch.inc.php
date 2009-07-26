@@ -420,8 +420,8 @@
 					echo "<tr>
 					<td><a href=\"?page=$page&amp;sub=$sub&amp;user=".$arr['user_id']."\" ".cTT($arr['user_nick'],"tt".$arr['user_id']).">".$arr['user_nick']."</a></td>
 					<td>".df($arr['time_action'])."</td>        
-					<td><a href=\"?page=$page&amp;sub=$sub&amp;ip=".$arr['user_ip']."\" ".mTT('IP',$arr['ip_addr']).">".($ip==$arr['ip_addr'] ? 'IP':'-')."</a> / 
-					<a href=\"?page=$page&amp;sub=$sub&amp;host=".Net::getHost($arr['user_ip'])."\" ".mTT('Host',Net::getHost($arr['user_ip'])).">".($host==Net::getHost($arr['user_ip']) ? 'Host':'-')."</a></td>
+					<td><a href=\"?page=$page&amp;sub=$sub&amp;ip=".$arr['ip_addr']."\" ".mTT('IP',$arr['ip_addr']).">".($ip==$arr['ip_addr'] ? 'IP':'-')."</a> / 
+					<a href=\"?page=$page&amp;sub=$sub&amp;host=".Net::getHost($arr['ip_addr'])."\" ".mTT('Host',Net::getHost($arr['ip_addr'])).">".($host==Net::getHost($arr['ip_addr']) ? 'Host':'-')."</a></td>
 					<td>".$arr['user_agent']."</td>
 					</tr>";
 				}

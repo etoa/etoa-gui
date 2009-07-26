@@ -117,18 +117,20 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 				}
 			}
 			$offerCount = count($data);
-
-			$sortOrder = $orderDirection>0 ? SORT_DESC : SORT_ASC;
-			foreach ($data as $key => $row)
+			if ($offerCount)
 			{
-				if ($order=="sell")
-					$sort[$key]  = $row['sell_total'];
-				elseif ($order=="buy")
-					$sort[$key]  = $row['buy_total'];
-				else
-					$sort[$key]  = $row['distance'];
+				$sortOrder = $orderDirection>0 ? SORT_DESC : SORT_ASC;
+				foreach ($data as $key => $row)
+				{
+					if ($order=="sell")
+						$sort[$key]  = $row['sell_total'];
+					elseif ($order=="buy")
+						$sort[$key]  = $row['buy_total'];
+					else
+						$sort[$key]  = $row['distance'];
+				}
+				array_multisort($sort, $sortOrder, $data);
 			}
-			array_multisort($sort, $sortOrder, $data);
 
 
 			$cres = dbquery("SELECT COUNT(id) FROM market_ressource WHERE buyable=1 AND user_id!='".$_SESSION['user_id']."'");

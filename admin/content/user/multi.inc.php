@@ -128,7 +128,8 @@
 		{
 			echo "<h1>Multi-Erkennung - Zusammenfassung</h1>";
 			echo "Multi-Merkmale:</br><ul><li>Gleiche IP (durch dieses Tool pr&uuml;fen)</li><li>&Auml;hnliche Onlinezeit (mit Session-Log pr&uuml;fen)</li><li>evtl. dieselbe Allianz</li><li>&Auml;hnliche Mailadresse</li><li>&Auml;hnliche Fantasienamen</li></ul></br>";
-			$res = dbquery("SELECT
+			$res = dbquery("
+						   SELECT
 						   		user_sessionlog.ip_addr AS log_ip,
 								user_sessions.ip_addr
 							FROM

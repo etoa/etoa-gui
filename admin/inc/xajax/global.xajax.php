@@ -912,7 +912,9 @@ function showBuildingsOnPlanet($form)
 			building_name,
 			buildlist_current_level,
 			buildlist_id,
-			buildlist_build_type
+			buildlist_build_type,
+			buildlist_build_start_time,
+			buildlist_build_end_time
 		FROM
 			buildlist
 		INNER JOIN
@@ -928,7 +930,10 @@ function showBuildingsOnPlanet($form)
 			while ($arr=mysql_fetch_array($res))
 			{
 				$out.="<tr><td style=\"width:80px\" id=\"cnt_".$arr['buildlist_id']."\">".$arr['buildlist_current_level']."</td>
-				<td style=\"width:100px\">".$buildTypes[$arr['buildlist_build_type']]."</td>
+				<td style=\"width:100px\" id=\"type_".$arr['buildlist_id']."\">".$buildTypes[$arr['buildlist_build_type']]."</td>
+				<td style=\"width:300px\" id=\"time_".$arr['buildlist_id']."\">";
+				$out.= ($arr['buildlist_build_end_time']>0) ? "Start: ".df($arr['buildlist_build_start_time'])."<br />Ende: ".df($arr['buildlist_build_end_time']) : "";
+				$out.= "</td>
 				<th>".$arr['building_name']."</th>
 				<td style=\"width:150px\" id=\"actions_".$arr['buildlist_id']."\"><a href=\"javascript:;\" onclick=\"xajax_editBuilding(xajax.getFormValues('selector'),".$arr['buildlist_id'].")\">Bearbeiten</a>
 				<a href=\"javascript:;\" onclick=\"if (confirm('Soll ".$arr['building_name']." ".$arr['buildlist_current_level']." von diesem Planeten gel&ouml;scht werden?')) {xajax_removeBuildingFromPlanet(xajax.getFormValues('selector'),".$arr['buildlist_id'].")}\">L&ouml;schen</td>
@@ -943,7 +948,7 @@ function showBuildingsOnPlanet($form)
 	}
 	else
 	{
-		$out="Planet w&auml;hlen...".$form."hammer";
+		$out="Planet w&auml;hlen...";
 	}
   	$objResponse->assign("shipsOnPlanet","innerHTML", $out);
 	return $objResponse;		
@@ -991,6 +996,9 @@ function editBuilding($form,$listId)
 	$res=dbquery("
 	SELECT
 		buildlist_current_level,
+		buildlist_build_start_time,
+		buildlist_build_end_time,
+		buildlist_build_type,
 		buildlist_id
 	FROM
 		buildlist
@@ -999,12 +1007,29 @@ function editBuilding($form,$listId)
 	;");
 	if (mysql_num_rows($res))
 	{
+		$buildTypes = Building::getBuildTypes();
 		while ($arr=mysql_fetch_array($res))
 		{
 			if ($arr['buildlist_id']==$listId)
 			{
+				ob_start();
+				echo "Start: ";
+				show_timebox("editstart_".$listId,$arr['buildlist_build_start_time']);
+				echo "<br />Ende: ";
+				show_timebox("editend_".$listId,$arr['buildlist_build_end_time']);
+		 		$objResponse->assign("time_".$listId,"innerHTML", ob_get_clean());
+				ob_start();
+				echo '<select name="editbuildtype_'.$listId.'">';
+				foreach($buildTypes as $id=>$type)
+				{
+					echo '<option value="'.$id.'"';
+					if ($id==$arr['buildlist_build_type']) echo ' selected';
+					echo '>'.$type.'</option>';
+				}
+				echo '</select>';
+		 		$objResponse->assign("type_".$listId,"innerHTML", ob_get_clean());
 				$out="<input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editcnt_".$listId."\" value=\"".$arr['buildlist_current_level']."\" />";
-		 		$objResponse->assign("cnt_".$listId,"innerHTML", $out); 	
+		 		$objResponse->assign("cnt_".$listId,"innerHTML", $out);
 		 		$out="<a href=\"javaScript:;\" onclick=\"xajax_submitEditBuilding(xajax.getFormValues('selector'),".$listId.");\">Speichern</a> ";
 		 		$out.="<a href=\"javaScript:;\" onclick=\"xajax_showBuildingsOnPlanet('".$form['entity_id']."');\">Abbrechen</a>";
 		 		$objResponse->assign("actions_".$listId,"innerHTML", $out); 	
@@ -1023,12 +1048,19 @@ function submitEditBuilding($form,$listId)
 {
 	$objResponse = new xajaxResponse();	
 	
+	$status = intval($form['editbuildtype_'.$listId]);
+	$endtime = $status>0 ? mktime($form['editend_'.$listId.'_h'],$form['editend_'.$listId.'_i'],$form['editend_'.$listId.'_s'],$form['editend_'.$listId.'_m'],$form['editend_'.$listId.'_d'],$form['editend_'.$listId.'_d']) : '0';
+	$starttime = $status>0 ? mktime($form['editstart_'.$listId.'_h'],$form['editstart_'.$listId.'_i'],$form['editstart_'.$listId.'_s'],$form['editstart_'.$listId.'_m'],$form['editstart_'.$listId.'_d'],$form['editstart_'.$listId.'_d']) : '0';
+	
 	$updata=explode(":",$form['entity_id']);
 	dbquery("
 	UPDATE
 		buildlist
 	SET
-		buildlist_current_level=".intval($form['editcnt_'.$listId])."
+		buildlist_current_level=".intval($form['editcnt_'.$listId]).",
+		buildlist_build_type=".$status.",
+		buildlist_build_start_time=".$starttime.",
+		buildlist_build_end_time=".$endtime."
 	WHERE
 		buildlist_id=".intval($listId)."
 	;");

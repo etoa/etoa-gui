@@ -603,7 +603,7 @@
 		
 		
 		
-		echo "Angriffsverletzung (Test tool)<br><br><br>";
+		//echo "Angriffsverletzung (Test tool)<br><br><br>";
 		
 		// Alle Kampfberichte, die laut Regeln als Angriff zählen (Waffen > 0), aus den letzten 24h Stunden werden ausgelesen. KBs, die schon einmal zu einer Sperre geführt haben, werden nicht noch ein 2. mal verarbeitet.
 		

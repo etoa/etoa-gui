@@ -7,6 +7,15 @@
 		(user_id,reason,timestamp)
 		VALUES (".$uid.",'Banned by Admin',".time().")
 		ON DUPLICATE KEY UPDATE timestamp=".time()."");
+		
+		dbquery("
+		UPDATE
+			chat_users
+		SET
+			kick='Bannend by Admin'
+		WHERE
+			user_id='".$uid."'");
+		chatSystemMessage(get_user_nick($uid)." wurde gebannt!");
 	}
 	elseif(isset($_GET['unban']) && $_GET['unban'] > 0)
 	{
@@ -26,6 +35,7 @@
 			kick='Kicked by Admin'
 		WHERE
 			user_id='".$uid."'");
+		chatSystemMessage(get_user_nick($uid)." wurde gekickt!");
 	}
 	elseif(isset($_GET['del']) && $_GET['del'] > 0)
 	{
