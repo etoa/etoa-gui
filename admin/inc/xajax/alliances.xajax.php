@@ -343,8 +343,8 @@ function showSpend($allianceId,$form)
 	}
 	
 	$sum = false;
-	$limit = 10;
 	$user = 0;
+	$LIMIT = 0;
 	
 	// Summierung der Einzahlungen
 	if($form['output']==1)
