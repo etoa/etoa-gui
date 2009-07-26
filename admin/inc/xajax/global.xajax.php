@@ -1049,8 +1049,8 @@ function submitEditBuilding($form,$listId)
 	$objResponse = new xajaxResponse();	
 	
 	$status = intval($form['editbuildtype_'.$listId]);
-	$endtime = $status>0 ? mktime($form['editend_'.$listId.'_h'],$form['editend_'.$listId.'_i'],$form['editend_'.$listId.'_s'],$form['editend_'.$listId.'_m'],$form['editend_'.$listId.'_d'],$form['editend_'.$listId.'_d']) : '0';
-	$starttime = $status>0 ? mktime($form['editstart_'.$listId.'_h'],$form['editstart_'.$listId.'_i'],$form['editstart_'.$listId.'_s'],$form['editstart_'.$listId.'_m'],$form['editstart_'.$listId.'_d'],$form['editstart_'.$listId.'_d']) : '0';
+	$endtime = $status>0 ? mktime($form['editend_'.$listId.'_h'],$form['editend_'.$listId.'_i'],$form['editend_'.$listId.'_s'],$form['editend_'.$listId.'_m'],$form['editend_'.$listId.'_d'],$form['editend_'.$listId.'_y']) : '0';
+	$starttime = $status>0 ? mktime($form['editstart_'.$listId.'_h'],$form['editstart_'.$listId.'_i'],$form['editstart_'.$listId.'_s'],$form['editstart_'.$listId.'_m'],$form['editstart_'.$listId.'_d'],$form['editstart_'.$listId.'_y']) : '0';
 	
 	$updata=explode(":",$form['entity_id']);
 	dbquery("

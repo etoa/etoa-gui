@@ -73,21 +73,21 @@
 				FROM 
 					user_sessionlog
 				WHERE
-					log_session_key='".$si[0]."'
+					session_id='".$si[0]."'
 				LIMIT 1;");
 				if (mysql_num_rows($res)>0)
 				{
 					$arr=mysql_fetch_array($res);
 					echo "<tr>";
-					echo "<td>".date("d.m.Y H:i",$arr['log_logintime'])."</td>";
+					echo "<td>".date("d.m.Y H:i",$arr['time_login'])."</td>";
 					echo "<td>";
-					if ($arr['log_acttime']>0)
-						echo date("d.m.Y H:i",$arr['log_acttime']);
+					if ($arr['time_action']>0)
+						echo date("d.m.Y H:i",$arr['time_action']);
 					else
 						echo "-";
 					echo "</td>";
 					echo "<td>";
-					$dur = max($arr['log_logouttime'],$arr['log_acttime'])-$arr['log_logintime'];
+					$dur = max($arr['time_logout'],$arr['time_action'])-$arr['time_login'];
 					if ($dur>0)
 						echo tf($dur);
 					else
@@ -95,14 +95,14 @@
 					echo "</td>
 					<td>".$si[1]."</td>
 					<td>".($dur>0 ? round($si[1] / $dur * 60,1) : '-')."</td>
-					<td><a href=\"javascript:;\" onclick=\"toggleBox('details".$arr['log_id']."')\">Details</a></td>
+					<td><a href=\"javascript:;\" onclick=\"toggleBox('details".$arr['id']."')\">Details</a></td>
 					</tr>";
 				}
 				echo "<tr>
-				<td colspan=\"6\" id=\"details".$arr['log_id']."\" style=\"display:none;\">";
-				echo "<b>IP:</b> ".$arr['log_ip'].", &nbsp; 
-				<b>Host:</b> ".$arr['log_hostname'].", &nbsp; ";
-				echo "<b>Client:</b> ".$arr['log_client']."<br/>";
+				<td colspan=\"6\" id=\"details".$arr['id']."\" style=\"display:none;\">";
+				echo "<b>IP:</b> ".$arr['ip_addr'].", &nbsp; 
+				<b>Host:</b> ".Net::getHost($arr['ip_addr']).", &nbsp; ";
+				echo "<b>Client:</b> ".$arr['user_agent']."<br/>";
 				
 				$res = dbquery("SELECT * FROM user_surveillance WHERE session='".$si[0]."' ORDER BY timestamp DESC;");
 				if (mysql_num_rows($res)>0)
@@ -244,18 +244,27 @@
 		echo "Folgende User stehen unter Beobachtung:<br/><br/>";
 		$res = dbquery("
 		SELECT
-			user_nick,
-			user_points,
-			user_id,
-			user_observe,
-			user_acttime,
-			user_session_key
+			users.user_nick,
+			users.user_points,
+			users.user_id,
+			users.user_observe,
+			MAX(user_sessionlog.time_action) AS time_log,
+			user_sessions.time_action
 		FROM 
 			users
-		WHERE 
-			user_observe!=''
+		INNER JOIN
+			user_sessionlog
+		ON
+			users.user_id = user_sessionlog.user_id
+			AND users.user_observe!=''
+		LEFT JOIN
+			user_sessions
+		ON
+			users.user_id = user_sessions.user_id
+		GROUP BY
+			users.user_id
 		ORDER BY
-			user_nick	
+			users.user_nick	
 		");
 		if (mysql_num_rows($res)>0)
 		{
@@ -274,12 +283,12 @@
 					<td><a href=\"?page=$page&amp;sub=edit&amp;id=".$arr['user_id']."\">".$arr['user_nick']."</a></td>
 					<td ".tm("Punkteverlauf","<img src=\"../misc/stats.image.php?user=".$arr['user_id']."\" alt=\"Diagramm\" style=\"width:600px;height:400px;\" />").">".nf($arr['user_points'])."</td>
 					<td>".stripslashes($arr['user_observe'])."</td>";
-					if (time()-$conf['user_timeout']['v']< $arr['user_acttime'] && $arr['user_session_key']!='' )
-					{
-						echo "<td style=\"color:#0f0\">Online</td>";
-					}
+					if ($arr['time_action'])
+						echo "<td class=\"tbldata\" style=\"color:#0f0;\">online</td>";
+					elseif ($arr['time_log'])
+						echo "<td class=\"tbldata\">".date("d.m.Y H:i",$arr['time_log'])."</td>";
 					else
-						echo "<td>".df($arr['user_acttime'])."</td>";
+						echo "<td class=\"tbldata\">Noch nicht eingeloggt!</td>";
 					$dres = dbquery("SELECT COUNT(id) FROM user_surveillance WHERE user_id=".$arr['user_id'].";");
 					$dnum = mysql_fetch_row($dres);
 					echo "<td>".nf($dnum[0])."</td>
