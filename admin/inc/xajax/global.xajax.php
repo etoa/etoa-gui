@@ -230,6 +230,7 @@ function showShipsOnPlanet($form)
 			ship_points,
 			ship_name,
 			shiplist_count,
+			shiplist_bunkered,
 			shiplist_id,
 			special_ship_need_exp as ship_xp_base, 
 			special_ship_exp_factor as ship_xp_factor,
@@ -249,6 +250,7 @@ function showShipsOnPlanet($form)
 		{
 			$out="<table class=\"tb\">
 			<tr><th>Anzahl</th>
+			<th>Bunker</th>
 			<th>Typ</th>
 			<th>Punkte</th>
 			<th>Spezielles</th>
@@ -256,10 +258,11 @@ function showShipsOnPlanet($form)
 			$points = 0;
 			while ($arr=mysql_fetch_array($res))
 			{
-				$points += $arr['ship_points']*$arr['shiplist_count'];
+				$points += $arr['ship_points']*($arr['shiplist_count']+$arr['shiplist_bunkered']);
 				$out.="<tr><td style=\"width:80px\" id=\"cnt_".$arr['shiplist_id']."\">".$arr['shiplist_count']."</td>
+				<td style=\"width:80px\" id=\"bunkered_".$arr['shiplist_id']."\">".$arr['shiplist_bunkered']."</td>
 				<td>".$arr['ship_name']."</td>
-				<td>".($arr['ship_points']*$arr['shiplist_count'])."</td>
+				<td>".($arr['ship_points']*($arr['shiplist_count']+$arr['shiplist_bunkered']))."</td>
 				<td id=\"special_".$arr['shiplist_id']."\">";
 				if ($arr['ship_xp_base']>0)
 				{
@@ -272,7 +275,7 @@ function showShipsOnPlanet($form)
 				</td>
 				</tr>";
 			}
-			$out.="<tr><td colspan=\"2\"></td><td><b>".nf($points)."</b></td><td colspan=\"2\"></td></tr>";
+			$out.="<tr><td colspan=\"3\"></td><td><b>".nf($points)."</b></td><td colspan=\"2\"></td></tr>";
 			$out.="</table>";
 		}
 		else
@@ -290,6 +293,7 @@ function showShipsOnPlanet($form)
 			ship_points,
 			ship_name,
 			SUM(shiplist_count) AS cnt,
+			SUM(shiplist_bunkered) AS bunkered,
 			ship_id,
 			special_ship_need_exp as ship_xp_base, 
 			special_ship_exp_factor as ship_xp_factor,
@@ -311,6 +315,7 @@ function showShipsOnPlanet($form)
 		{
 			$out="<table class=\"tb\">
 			<tr><th>Anzahl</th>
+			<th>Bunker</th>
 			<th>Typ</th>
 			<th>Punkte</th>
 			<th>Spezielles</th>
@@ -318,8 +323,9 @@ function showShipsOnPlanet($form)
 			$points = 0;
 			while ($arr=mysql_fetch_array($res))
 			{
-				$points += $arr['ship_points']*$arr['cnt'];
+				$points += $arr['ship_points']*($arr['cnt']+$arr['bunkered']);
 				$out.="<tr id=\"data_".$arr['ship_id']."\"><td style=\"width:80px\" id=\"cnt_".$arr['ship_id']."\">".$arr['cnt']."</td>
+				<td style=\"width:80px\" id=\"bunkered_".$arr['ship_id']."\">".$arr['bunkered']."</td>
 				<td>".$arr['ship_name']."</td>
 				<td>".($arr['ship_points']*$arr['cnt'])."</td>
 				<td id=\"special_".$arr['ship_id']."\">";
@@ -331,9 +337,9 @@ function showShipsOnPlanet($form)
 				<td style=\"width:180px\" id=\"actions_".$arr['ship_id']."\" id=\"actions_".$arr['ship_id']."\">
 				<input type=\"button\" value=\"Bearbeiten\" onclick=\"xajax_editShipByShipId(xajax.getFormValues('selector'),".$arr['ship_id'].")\" />
 				</td></tr>
-				<tr><td colspan=\"5\" id=\"edit_".$arr['ship_id']."\" style=\"display:none;\"></td></tr>";
+				<tr><td colspan=\"6\" id=\"edit_".$arr['ship_id']."\" style=\"display:none;\"></td></tr>";
 			}
-			$out.="<tr><td colspan=\"2\"></td><td><b>".nf($points)."</b></td><td colspan=\"2\"></td></tr>";
+			$out.="<tr><td colspan=\"3\"></td><td><b>".nf($points)."</b></td><td colspan=\"2\"></td></tr>";
 			$out.="</table>";
 		}
 		else
@@ -396,6 +402,7 @@ function editShipByListId($form,$listId)
 	$res=dbquery("
 		SELECT
 			shiplist_count,
+			shiplist_bunkered,
 			shiplist_id,
 			special_ship_need_exp as ship_xp_base, 
 			special_ship_exp_factor as ship_xp_factor,
@@ -429,7 +436,9 @@ function editShipByListId($form,$listId)
 			if ($arr['shiplist_id']==$listId)
 			{
 				$out="<input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editcnt_".$listId."\" value=\"".$arr['shiplist_count']."\" />";
-		 		$objResponse->assign("cnt_".$listId,"innerHTML", $out); 	
+		 		$objResponse->assign("cnt_".$listId,"innerHTML", $out); 
+				$out="<input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editbunkered_".$listId."\" value=\"".$arr['shiplist_bunkered']."\" />";
+		 		$objResponse->assign("bunkered_".$listId,"innerHTML", $out); 
 				if ($arr['ship_xp_base']>0)
 				{
 					$out= "<input type=\"hidden\" name=\"ship_special_".$listId."\" value=\"1\"><input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editxp_".$listId."\" value=\"".$arr['shiplist_xp']."\" onkeyup=\"xajax_calcShipLevel(".$listId.",".$arr['ship_xp_base'].",".$arr['ship_xp_factor'].",this.value);\" /> XP, 
@@ -477,6 +486,7 @@ function editShipByShipId($form,$shipId)
 	$res=dbquery("
 		SELECT
 			shiplist_count,
+			shiplist_bunkered,
 			shiplist_id,
 			ship_id,
 			ship_name,
@@ -523,10 +533,11 @@ function editShipByShipId($form,$shipId)
 				$p = new Planet($arr['shiplist_entity_id']);
 				$listId = $arr['shiplist_id'];
 				
-				echo "<tr><th colspan=\"5\">".$p."</th></tr><tr>
-				<td style=\"width:80px\" id=\"cnt".$arr['shiplist_id']."\"><input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editcnt_".$listId."\" value=\"".$arr['shiplist_count']."\" /></td>
+				echo "<tr><th colspan=\"6\">".$p."</th></tr><tr>
+				<td style=\"width:80px\" id=\"cnt_".$arr['shiplist_id']."\"><input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editcnt_".$listId."\" value=\"".$arr['shiplist_count']."\" /></td>
+				<td style=\"width:80px\" id=\"bunkered_".$arr['shiplist_id']."\"><input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editbunkered_".$listId."\" value=\"".$arr['shiplist_bunkered']."\" /></td>
 				<td>".$arr['ship_name']."</td>
-				<td>".($arr['ship_points']*$arr['shiplist_count'])."</td>
+				<td>".($arr['ship_points']*($arr['shiplist_count']+$arr['shiplist_bunkered']))."</td>
 				<td id=\"special_".$listId."\">";
 				if ($arr['ship_xp_base']>0)
 				{
@@ -584,6 +595,7 @@ function submitEditShip($form,$listId)
 			shiplist
 		SET
 			shiplist_count=".intval($form['editcnt_'.$listId]).",
+			shiplist_bunkered=".intval($form['editbunkered_'.$listId]).",
 			shiplist_special_ship_exp=".intval($form['editxp_'.$listId]).",
 			shiplist_special_ship_bonus_weapon='".intval($form['edit_bonus_weapon_'.$listId])."',
 			shiplist_special_ship_bonus_structure='".intval($form['edit_bonus_structure_'.$listId])."',
@@ -608,7 +620,8 @@ function submitEditShip($form,$listId)
 		UPDATE
 			shiplist
 		SET
-			shiplist_count=".intval($form['editcnt_'.$listId])."		
+			shiplist_count=".intval($form['editcnt_'.$listId]).",
+			shiplist_bunkered=".intval($form['editbunkered_'.$listId])."
 		WHERE
 			shiplist_id=".intval($listId)."
 		;");
