@@ -7,7 +7,7 @@ namespace ship
 	{
 		std::time_t time = std::time(0);
 		
-		std::cout << "Updating ships\n";
+		//std::cout << "Updating ships\n";
 
 		// Load queues who needs updating
 		mysqlpp::Query query = con_->query();

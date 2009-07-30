@@ -5,39 +5,32 @@ namespace etoa
 {
 	
 
-	std::string get_user_nick(int pid)
+	std::string get_user_nick(int userId)
 	{
 		My &my = My::instance();
 		mysqlpp::Connection *con_ = my.get();
 		mysqlpp::Query query = con_->query();
-		query << "SELECT ";
-			query << "user_nick ";
-		query << "FROM ";
-			query << "users ";
-		query << "WHERE ";
-			query << "user_id='" << pid << "';";
+		query << "SELECT "
+			<< "	user_nick "
+			<< "FROM "
+			<< "	users "
+			<< "WHERE "
+			<< "	user_id='" << userId << "';";
 		mysqlpp::Result res = query.store();		
 		query.reset();
 
-		if (res)
-		{
+		if (res) {
 			int resSize = res.size();			
-    	
-			if (resSize>0)
-			{
+			
+			if (resSize>0) {
 				mysqlpp::Row row;
 				row = res.at(0);
 				return (std::string(row["user_nick"]));
-			}
-			else
-			{
+			} else
 				return "<i>Unbekannter Benutzer</i>";
-			}
 		}
 		else
-		{
 			return "<i>Unbekannter Benutzer</i>";
-		}
 	}
     
 	float getSolarFuelBonus(int t_min, int t_max)
@@ -49,10 +42,7 @@ namespace etoa
 	int getSolarPowerBonus(int t_min, int t_max)
 	{
 		int v = (int)floor((t_max + t_min)/4.0);
-		if (v <= -100)
-		{
-			v = -99;
-		}
+		v = (v <= -100) ? -99 : v;
 		return v;
 	}
 	
@@ -130,11 +120,8 @@ namespace etoa
 	
 	std::string format_time(std::time_t Zeitstempel)
 	{
-		std::time_t zeit = Zeitstempel;
-		if (zeit == 0)
-		{
-				zeit = time(0);
-		}
+		std::time_t zeit = (Zeitstempel==0) ? time(0) : Zeitstempel;
+		
 		tm *now;
 		now = localtime(&zeit);
 		
@@ -178,13 +165,12 @@ namespace etoa
 
 	std::string nf(std::string  value)
 	{
-		/** Schneidet den Rest ab, wenn ein Punkt und Nachkommazeichen vorhanden sind **/
+		// Schneidet den Rest ab, wenn ein Punkt und Nachkommazeichen vorhanden sind
 		std::size_t found = value.find(".");
-		if (found!=std::string::npos) {
+		if (found!=std::string::npos)
 			value.erase(value.begin()+(int)found,value.end());
-		}
 		
-		/** F�gt die Tausenderzeichen hinzu **/
+		// Fügt die Tausenderzeichen hinzu
 		int length = value.length();
 		int i=3;
 		while (length > i) {
@@ -241,10 +227,8 @@ namespace etoa
 	{
 		My &my = My::instance();
 		mysqlpp::Connection *con_ = my.get();
-		if (log_timestamp==0)
-		{
-		 	log_timestamp = std::time(0);
-		}
+		log_timestamp = (log_timestamp==0) ? std::time(0) : log_timestamp;
+
 		
 		mysqlpp::Query query = con_->query();
 		query << "INSERT INTO logs "
@@ -268,10 +252,7 @@ namespace etoa
 		temp2 = number*temp1;
 		temp3 = temp2-ceil(temp2);
 		
-		if (temp3>0.5)
-		{
-			temp2++;
-		}
+		if (temp3>0.5) temp2++;
 		
 		temp3 = ceil(temp2);
 		temp2 = temp3/temp1;
@@ -294,13 +275,10 @@ namespace etoa
 		double ps;										// Distance in AE units
 		
 		if (int(rowPlanet1["sx"])==int(rowPlanet2["sx"]) && int(rowPlanet1["sy"])==int(rowPlanet2["sy"]) && int(rowPlanet1["cx"])==int(rowPlanet2["cx"]) && int(rowPlanet1["cy"])==int(rowPlanet2["cy"]))
-		{
 			ps = fabs(int(rowPlanet2["pos"])-int(rowPlanet1["pos"]))*ae/4/np;				// Planetendistanz wenn sie im selben Solsys sind
-		}
 		else
-		{
 			ps = (ae/2) - ((int(rowPlanet2["pos"]))*ae/4/np);	// Planetendistanz wenn sie nicht im selben Solsys sind
-		}
+		
 		double ssae = sae + ps;
 		return ssae;	
 		return 1;
@@ -312,57 +290,50 @@ namespace etoa
 		mysqlpp::Connection *con_ = my.get();
 		mysqlpp::Row rowPlanet1, rowPlanet2;
 		mysqlpp::Query query = con_->query();
-		query << "SELECT ";
-			query << "cells.sx, ";
-			query << "cells.sy, ";
-			query << "cells.cx, ";
-			query << "cells.cy, ";
-			query << "entities.pos ";
-		query << "FROM ";
-			query << "entities ";
-		query << "INNER JOIN ";
-			query << "cells ";
-			query << "ON cells.id=entities.cell_id ";
-			query << "AND entities.id='" << pid1 <<"';";
+		query << "SELECT "
+			<< "	cells.sx, "
+			<< "	cells.sy, "
+			<< "	cells.cx, "
+			<< "	cells.cy, "
+			<< "	entities.pos "
+			<< "FROM "
+			<< "	entities "
+			<< "INNER JOIN "
+			<< "	cells "
+			<< "	ON cells.id=entities.cell_id "
+			<< "	AND entities.id='" << pid1 <<"';";
 		mysqlpp::Result res1 = query.store();		
 		query.reset();
 		
-		query << "SELECT ";
-			query << "cells.sx, ";
-			query << "cells.sy, ";
-			query << "cells.cx, ";
-			query << "cells.cy, ";
-			query << "entities.pos ";
-		query << "FROM ";
-			query << "entities ";
-		query << "INNER JOIN ";
-			query << "cells ";
-			query << "ON cells.id=entities.cell_id ";
-			query << "AND entities.id='" << pid2 <<"';";
+		query << "SELECT "
+			<< "	cells.sx, "
+			<< "	cells.sy, "
+			<< "	cells.cx, "
+			<< "	cells.cy, "
+			<< "	entities.pos "
+			<< "FROM "
+			<< "	entities "
+			<< "INNER JOIN "
+			<< "	cells "
+			<< "	ON cells.id=entities.cell_id "
+			<< "	AND entities.id='" << pid2 <<"';";
 		mysqlpp::Result res2 = query.store();		
 		query.reset();
 		
-		if (res1) 
-		{
+		if (res1) {
 			int res1Size = res1.size();			
     	
 			if (res1Size>0)
-			{
 				rowPlanet1 = res1.at(0);
-			}
 		}
 		
-		if (res2) 
-		{
+		if (res2) {
 			int res2Size = res2.size();			
     	
 			if (res2Size>0)
-			{
 				rowPlanet2 = res2.at(0);
-			}
 		}
-	
-
+		
 		double distance = calcDistance(rowPlanet1, rowPlanet2);
 		return distance;
 	}

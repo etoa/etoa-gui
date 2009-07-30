@@ -31,8 +31,7 @@
 		return this->spyattackCount;
 	}
 	
-	SpecialistData* User::getSpecialist() 
-	{
+	SpecialistData* User::getSpecialist() {
 		if (!this->dataLoaded)
 			this->loadData();
 		
@@ -55,13 +54,13 @@
 		mysqlpp::Connection *con_ = my.get();
 		
 		mysqlpp::Query query = con_->query();
-		query << "SELECT ";
-		query << "	discoverymask ";
-		query << "FROM ";
-		query << "	users ";
-		query << "WHERE ";
-		query << "	user_id='" << this->userId << "' ";
-		query << "LIMIT 1;";
+		query << "SELECT "
+			<< "	discoverymask "
+			<< "FROM "
+			<< "	users "
+			<< "WHERE "
+			<< "	user_id='" << this->userId << "' "
+			<< "LIMIT 1;";
 		mysqlpp::Result maskRes = query.store();
 		query.reset();
 		
@@ -84,19 +83,18 @@
 		}	
 						
 		// Update the mask
-		query << "UPDATE ";
-		query << "	users ";
-		query << "SET ";
-		query << " discoverymask='" << mask << "' ";
-		query << "WHERE ";
-		query << "	user_id='" << this->userId << "' ";
-		query << "LIMIT 1;";
+		query << "UPDATE "
+			<< "	users "
+			<< "SET "
+			<< " discoverymask='" << mask << "' "
+			<< "WHERE "
+			<< "	user_id='" << this->userId << "' "
+			<< "LIMIT 1;";
 		query.store();
 		query.reset();
 	}
 
-	void User::setLastInvasion()
-	{
+	void User::setLastInvasion() {
 		My &my = My::instance();
 		mysqlpp::Connection *con_ = my.get();
 		mysqlpp::Query query = con_->query();
@@ -116,13 +114,13 @@
 		mysqlpp::Connection *con_ = my.get();
 		
 		mysqlpp::Query query = con_->query();
-		query << "SELECT ";
-		query << "	fleet_rtn_msg ";
-		query << "FROM ";
-		query << "	user_properties ";
-		query << "WHERE ";
-		query << "	id=" << this->userId << " ";
-		query << "LIMIT 1;";
+		query << "SELECT "
+			<< "	fleet_rtn_msg "
+			<< "FROM "
+			<< "	user_properties "
+			<< "WHERE "
+			<< "	id=" << this->userId << " "
+			<< "LIMIT 1;";
 		mysqlpp::Result mRes = query.store();
 		query.reset();
 		
@@ -145,13 +143,13 @@
 			mysqlpp::Connection *con_ = my.get();
 			
 			mysqlpp::Query query = con_->query();
-			query << "UPDATE ";
-			query << "	users ";
-			query << "SET ";
-			query << "	user_res_from_tf=user_res_from_tf+'" << res << "' ";
-			query << "WHERE ";
-			query << "	user_id='" << this->userId << "' ";
-			query << "LIMIT 1;";
+			query << "UPDATE "
+				<< "	users "
+				<< "SET "
+				<< "	user_res_from_tf=user_res_from_tf+'" << res << "' "
+				<< "WHERE "
+				<< "	user_id='" << this->userId << "' "
+				<< "LIMIT 1;";
 			query.store();
 			query.reset();
 		}
@@ -163,13 +161,13 @@
 			mysqlpp::Connection *con_ = my.get();
 			
 			mysqlpp::Query query = con_->query();
-			query << "UPDATE ";
-			query << "	users ";
-			query << "SET ";
-			query << "	user_res_from_asteroid=user_res_from_asteroid+'" << res << "' ";
-			query << "WHERE ";
-			query << "	user_id='" << this->userId << "' ";
-			query << "LIMIT 1;";
+			query << "UPDATE "
+				<< "	users "
+				<< "SET "
+				<< "	user_res_from_asteroid=user_res_from_asteroid+'" << res << "' "
+				<< "WHERE "
+				<< "	user_id='" << this->userId << "' "
+				<< "LIMIT 1;";
 			query.store();
 			query.reset();
 		}
@@ -181,13 +179,13 @@
 			mysqlpp::Connection *con_ = my.get();
 			
 			mysqlpp::Query query = con_->query();
-			query << "UPDATE ";
-			query << "	users ";
-			query << "SET ";
-			query << "	user_res_from_nebula=user_res_from_nebula+'" << res << "' ";
-			query << "WHERE ";
-			query << "	user_id='" << this->userId << "' ";
-			query << "LIMIT 1;";
+			query << "UPDATE "
+				<< "	users "
+				<< "SET "
+				<< "	user_res_from_nebula=user_res_from_nebula+'" << res << "' "
+				<< "WHERE "
+				<< "	user_id='" << this->userId << "' "
+				<< "LIMIT 1;";
 			query.store();
 			query.reset();
 		}
@@ -199,13 +197,13 @@
 			mysqlpp::Connection *con_ = my.get();
 			
 			mysqlpp::Query query = con_->query();
-			query << "UPDATE ";
-			query << "	users ";
-			query << "SET ";
-			query << "	user_res_from_raid=user_res_from_raid+'" << res << "' ";
-			query << "WHERE ";
-			query << "	user_id='" << this->userId << "' ";
-			query << "LIMIT 1;";
+			query << "UPDATE "
+				<< "	users "
+				<< "SET "
+				<< "	user_res_from_raid=user_res_from_raid+'" << res << "' "
+				<< "WHERE "
+				<< "	user_id='" << this->userId << "' "
+				<< "LIMIT 1;";
 			query.store();
 			query.reset();
 		}
@@ -281,52 +279,44 @@
 		}
 	}
 	
-	void User::loadTechs() 
-	{
-		if (!this->techsLoaded) 
-		{
+	void User::loadTechs() {
+		if (!this->techsLoaded) {
 			My &my = My::instance();
 			mysqlpp::Connection *con_ = my.get();
 			
 			mysqlpp::Query query = con_->query();
-			query << "SELECT ";
-			query << "	techlist_tech_id, ";
-			query << "	techlist_current_level, ";
-			query << "	techlist_build_type ";
-			query << "FROM ";
-			query << " techlist ";
-			query << "WHERE ";
-			query << "	techlist_user_id='" << this->userId << "' ";
-			query << "	AND techlist_current_level>'0';";
+			query << "SELECT "
+				<< "	techlist_tech_id, "
+				<< "	techlist_current_level, "
+				<< "	techlist_build_type "
+				<< "FROM "
+				<< " techlist "
+				<< "WHERE "
+				<< "	techlist_user_id='" << this->userId << "' "
+				<< "	AND techlist_current_level>'0';";
 			mysqlpp::Result tRes = query.store();
 			query.reset();
 			
-			if (tRes) 
-			{
+			if (tRes) {
 				int tSize = tRes.size();
 				this->techsLoaded = true;
 				
-				if (tSize > 0) 
-				{
+				if (tSize > 0) {
 					mysqlpp::Row tRow;
 					DataHandler &DataHandler = DataHandler::instance();
-					for (int i=0; i<tSize; i++) 
-					{
+					for (int i=0; i<tSize; i++) {
 						tRow = tRes.at(i);
 						TechData::TechData *data = DataHandler.getTechById((int)tRow["techlist_tech_id"]);
 						this->techs[data->getName()] = (int)tRow["techlist_current_level"];
 						if ((int)tRow["techlist_build_type"]==3) 
-						{
 							techAtWork = data->getName();
-						}
 					}
 				}
 			}
 		}
 	}
 	
-	std::string User::stealTech(User* victim) 
-	{
+	std::string User::stealTech(User* victim) {
 		if (!this->techsLoaded)
 			this->loadTechs();
 		
@@ -334,17 +324,12 @@
 		std::map<std::string,int> avaiableTechs;
 		
 		std::map<std::string,int>::iterator it;
-		for ( it=this->techs.begin() ; it != this->techs.end(); it++ ) 
-		{
-			if ((unsigned int)(*it).second && (unsigned int)(*it).second < victim->getTechLevel((*it).first))
-			{
-				if ((*it).first!=techAtWork)
-				{
+		for ( it=this->techs.begin() ; it != this->techs.end(); it++ ) {
+			if ((unsigned int)(*it).second && (unsigned int)(*it).second < victim->getTechLevel((*it).first)) {
+				if ((*it).first!=techAtWork) {
 					TechData::TechData *data = DataHandler.getTechByName((*it).first);
 					if (data->getStealable())
-					{
 						avaiableTechs[(*it).first] = victim->getTechLevel((*it).first);
-					}
 				}
 			}
 		}
@@ -358,14 +343,14 @@
 					mysqlpp::Connection *con_ = my.get();
 					
 					mysqlpp::Query query = con_->query();
-					query << "UPDATE ";
-					query << "	techlist ";
-					query << "SET ";
-					query << "	techlist_current_level='" << (*it).second << "' ";
-					query << "WHERE ";
-					query << "	techlist_user_id='" << this->userId << "' ";
-					query << "	AND techlist_tech_id='" << data->getId() << "' ";
-					query << "LIMIT 1;";
+					query << "UPDATE "
+						<< "	techlist "
+						<< "SET "
+						<< "	techlist_current_level='" << (*it).second << "' "
+						<< "WHERE "
+						<< "	techlist_user_id='" << this->userId << "' "
+						<< "	AND techlist_tech_id='" << data->getId() << "' "
+						<< "LIMIT 1;";
 					query.store();
 					query.reset();
 					
@@ -399,14 +384,14 @@
 		mysqlpp::Connection *con_ = my.get();
 		
 		mysqlpp::Query query = con_->query();
-		query << "SELECT ";
-		query << "	id  ";
-		query << "FROM ";
-		query << "	planets ";
-		query << "WHERE ";
-		query << "	planet_user_id='" << this->userId << "' ";
-		query << "	AND planet_user_main='1' ";
-		query << "LIMIT 1";
+		query << "SELECT "
+			<< "	id  "
+			<< "FROM "
+			<< "	planets "
+			<< "WHERE "
+			<< "	planet_user_id='" << this->userId << "' "
+			<< "	AND planet_user_main='1' "
+			<< "LIMIT 1";
 		mysqlpp::Result mainRes = query.store();
 		query.reset();
 		
@@ -427,12 +412,12 @@
 		mysqlpp::Connection *con_ = my.get();
 		
 		mysqlpp::Query query = con_->query();
-		query << "SELECT ";
-		query << "	COUNT(planet_user_id) as cnt ";
-		query << "FROM ";
-		query << "	planets ";
-		query << "WHERE ";
-		query << "	planet_user_id='" << this->userId << "';";
+		query << "SELECT "
+			<< "	COUNT(planet_user_id) as cnt "
+			<< "FROM "
+			<< "	planets "
+			<< "WHERE "
+			<< "	planet_user_id='" << this->userId << "';";
 		mysqlpp::Result planetRes = query.store();
 		query.reset();
 		

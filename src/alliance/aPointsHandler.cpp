@@ -28,8 +28,7 @@ namespace aPoints
 		mysqlpp::Result res = query.store();		
 		query.reset();
 		
-		if (res)  
-		{
+		if (res) {
 			unsigned int resSize = res.size();
 			
 			if (resSize>0) {

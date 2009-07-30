@@ -97,7 +97,7 @@ namespace etoa
 	* @param int uid User ID 
 	* @author Glaubinix
 	*/
-	std::string get_user_nick(int pid);
+	std::string get_user_nick(int userId);
 		
 	/**
 	* Liefet den Bonus durch die Temparatur 

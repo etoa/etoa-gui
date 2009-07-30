@@ -81,65 +81,59 @@
 			this->entityShipsEnd = ships;
 	}
 	
-	void Log::save() 
-	{
-
+	void Log::save() {
 		My &my = My::instance();
 		mysqlpp::Connection *con_ = my.get();
 		
-
 		mysqlpp::Query query = con_->query();
-
-	
-		query << "INSERT INTO ";
-		query << "	logs_fleet ";
-		query << "(";
-		query << " 	fleet_id, ";
-		query << " 	timestamp, ";
-		query << " 	message, ";
-		query << "	user_id, ";
-		query << " 	entity_user_id, ";
-		query << " 	entity_from, ";
-		query << " 	entity_to, ";
-		query << " 	launchtime, ";
-		query << " 	landtime, ";
-		query << " 	action, ";
-		query << " 	status, ";
-		query << " 	fleet_res_start, ";
-		query << " 	fleet_res_end, ";
-		query << " 	fleet_ships_start, ";
-		query << " 	fleet_ships_end, ";
-		query << "	entity_res_start, ",
-		query << " 	entity_res_end, ";
-		query << " 	entity_ships_start, ";
-		query << " 	entity_ships_end ";
-		query << ") ";
-		query << "VALUES ";
-		query << "('" << this->fleetId << "', '";
-		query << time(0) << "', '";
-		query << this->text << "', '";
-		query << this->fleetUserId << "', '";
-		query << this->entityUserId << "', '";
-		query << this->entityFromId << "', '";
-		query << this->entityToId << "', '";
-		query << this->launchtime << "', '";
-		query << this->landtime << "', '";
-		query << this->action << "', '";
-		query << this->status << "', '";
-		query << this->fleetResStart << "', '";
-		query << this->fleetResEnd << "', '";
-		query << this->fleetShipsStart << "', '";
-		query << this->fleetShipsEnd << "', '";
-		query << this->entityResStart << "', '";
-		query << this->entityResEnd << "', '";
-		query << this->entityShipsStart << "', '";
-		query << this->entityShipsEnd << "' ";
-		query << ");";
-
-
-			query.store();
-			query.reset();			
 		
+		query << "INSERT INTO "
+			<< "	logs_fleet "
+			<< "("
+			<< " 	fleet_id, "
+			<< " 	timestamp, "
+			<< " 	message, "
+			<< "	user_id, "
+			<< " 	entity_user_id, "
+			<< " 	entity_from, "
+			<< " 	entity_to, "
+			<< " 	launchtime, "
+			<< " 	landtime, "
+			<< " 	action, "
+			<< " 	status, "
+			<< " 	fleet_res_start, "
+			<< " 	fleet_res_end, "
+			<< " 	fleet_ships_start, "
+			<< " 	fleet_ships_end, "
+			<< "	entity_res_start, "
+			<< " 	entity_res_end, "
+			<< " 	entity_ships_start, "
+			<< " 	entity_ships_end "
+			<< ") "
+			<< "VALUES "
+			<< "('" << this->fleetId << "', '"
+			<< time(0) << "', '"
+			<< this->text << "', '"
+			<< this->fleetUserId << "', '"
+			<< this->entityUserId << "', '"
+			<< this->entityFromId << "', '"
+			<< this->entityToId << "', '"
+			<< this->launchtime << "', '"
+			<< this->landtime << "', '"
+			<< this->action << "', '"
+			<< this->status << "', '"
+			<< this->fleetResStart << "', '"
+			<< this->fleetResEnd << "', '"
+			<< this->fleetShipsStart << "', '"
+			<< this->fleetShipsEnd << "', '"
+			<< this->entityResStart << "', '"
+			<< this->entityResEnd << "', '"
+			<< this->entityShipsStart << "', '"
+			<< this->entityShipsEnd << "' "
+			<< ");";
+		
+		query.store();
+		query.reset();
 	}
 
 

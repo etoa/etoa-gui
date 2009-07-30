@@ -2,34 +2,34 @@ SET(FLEET_SRC_FILES
 	FleetHandler.cpp
 	battle/BattleHandler.cpp
 	fleetActions/FleetAction.cpp
-	fleetActions/FleetFactory.h
-	fleetActions/alliance/AllianceHandler.cpp
-	fleetActions/analyze/AnalyzeHandler.cpp
-	fleetActions/antrax/AntraxHandler.cpp
-	fleetActions/asteroid/AsteroidHandler.cpp
-	fleetActions/attack/AttackHandler.cpp
-	fleetActions/bombard/BombardHandler.cpp
-	fleetActions/cancel/CancelHandler.cpp
-	fleetActions/colonialize/ColonializeHandler.cpp
-	fleetActions/debris/DebrisHandler.cpp
-	fleetActions/default/DefaultHandler.cpp
-	fleetActions/delivery/DeliveryHandler.cpp
-	fleetActions/emp/EmpHandler.cpp
-	fleetActions/explore/ExploreHandler.cpp
-	fleetActions/fetch/FetchHandler.cpp
-	fleetActions/gas/GasHandler.cpp
-	fleetActions/gattack/GattackHandler.cpp
-	fleetActions/invade/InvadeHandler.cpp
-	fleetActions/marketdelivery/MarketDeliveryHandler.cpp
-	fleetActions/nebula/NebulaHandler.cpp
-	fleetActions/position/PositionHandler.cpp
-	fleetActions/return/ReturnHandler.cpp
-	fleetActions/spy/SpyHandler.cpp
-	fleetActions/steal/StealHandler.cpp
-	fleetActions/stealth/StealthHandler.cpp
-	fleetActions/support/SupportHandler.cpp
-	fleetActions/transport/TransportHandler.cpp
-	fleetActions/wreckage/WreckageHandler.cpp
+	FleetFactory.h
+	fleetActions/AllianceHandler.cpp
+	fleetActions/AnalyzeHandler.cpp
+	fleetActions/AntraxHandler.cpp
+	fleetActions/AsteroidHandler.cpp
+	fleetActions/AttackHandler.cpp
+	fleetActions/BombardHandler.cpp
+	fleetActions/CancelHandler.cpp
+	fleetActions/ColonializeHandler.cpp
+	fleetActions/DebrisHandler.cpp
+	fleetActions/DefaultHandler.cpp
+	fleetActions/DeliveryHandler.cpp
+	fleetActions/EmpHandler.cpp
+	fleetActions/ExploreHandler.cpp
+	fleetActions/FetchHandler.cpp
+	fleetActions/GasHandler.cpp
+	fleetActions/GattackHandler.cpp
+	fleetActions/InvadeHandler.cpp
+	fleetActions/MarketDeliveryHandler.cpp
+	fleetActions/NebulaHandler.cpp
+	fleetActions/PositionHandler.cpp
+	fleetActions/ReturnHandler.cpp
+	fleetActions/SpyHandler.cpp
+	fleetActions/StealHandler.cpp
+	fleetActions/StealthHandler.cpp
+	fleetActions/SupportHandler.cpp
+	fleetActions/TransportHandler.cpp
+	fleetActions/WreckageHandler.cpp
 
 )
 

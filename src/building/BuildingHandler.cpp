@@ -11,26 +11,26 @@ namespace building
 		// Load fleetcontrolls to update discoverymask
 		mysqlpp::Query query = con_->query();
 		query << "SELECT "
-		<< "	buildlist_user_id, "
-		<< "	buildlist_current_level, "
-		<< "	cells.sx, "
-		<< "	cells.sy, "
-		<< "	cells.cx, "
-		<< "	cells.cy "
-		<< "FROM "
-		<< "	buildlist "
-		<< "	INNER JOIN "
-		<< "		entities "
-		<< "	ON "
-		<< "		entities.id=buildlist_entity_id "
-		<< "		INNER JOIN "
-		<< "			cells "
-		<< "		ON "
-		<< "			cells.id=entities.cell_id "
-		<< "WHERE "
-		<< "	buildlist_build_type>2 "
-		<< "	AND buildlist_building_id='" << config.idget("FLEET_CONTROL_ID") << "' "
-		<< "	AND buildlist_build_end_time<" << time << " ORDER BY buildlist_entity_id;";
+			<< "	buildlist_user_id, "
+			<< "	buildlist_current_level, "
+			<< "	cells.sx, "
+			<< "	cells.sy, "
+			<< "	cells.cx, "
+			<< "	cells.cy "
+			<< "FROM "
+			<< "	buildlist "
+			<< "	INNER JOIN "
+			<< "		entities "
+			<< "	ON "
+			<< "		entities.id=buildlist_entity_id "
+			<< "		INNER JOIN "
+			<< "			cells "
+			<< "		ON "
+			<< "			cells.id=entities.cell_id "
+			<< "WHERE "
+			<< "	buildlist_build_type>2 "
+			<< "	AND buildlist_building_id='" << config.idget("FLEET_CONTROL_ID") << "' "
+			<< "	AND buildlist_build_end_time<" << time << " ORDER BY buildlist_entity_id;";
 		mysqlpp::Result res = query.store();		
 		query.reset();
 		
@@ -85,12 +85,12 @@ namespace building
 					
 					// Update the mask
 					query << "UPDATE "
-					<< "	users "
-					<< "SET "
-					<< " discoverymask='" << mask << "' "
-					<< "WHERE "
-					<< "	user_id='" << (int)row["buildlist_user_id"] << "' "
-					<< "LIMIT 1;";
+						<< "	users "
+						<< "SET "
+						<< " discoverymask='" << mask << "' "
+						<< "WHERE "
+						<< "	user_id='" << (int)row["buildlist_user_id"] << "' "
+						<< "LIMIT 1;";
 					query.store();
 					query.reset();
 				}

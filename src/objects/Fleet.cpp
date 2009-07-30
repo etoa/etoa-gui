@@ -931,14 +931,14 @@
 		My &my = My::instance();
 		mysqlpp::Connection *con = my.get();
 		mysqlpp::Query query = con->query();
-		query << "SELECT ";
-		query << "	planets.id ";
-		query << "FROM ";
-		query << "	planets ";
-		query << "WHERE ";
-		query << "	planets.planet_user_id='" << this->getUserId() << "' ";
-		query << "	AND planets.planet_user_main='1' ";
-		query << "LIMIT 1;";
+		query << "SELECT "
+			<< "	planets.id "
+			<< "FROM "
+			<< "	planets "
+			<< "WHERE "
+			<< "	planets.planet_user_id='" << this->getUserId() << "' "
+			<< "	AND planets.planet_user_main='1' "
+			<< "LIMIT 1;";
 		mysqlpp::Result mainRes = query.store();
 		query.reset();
 
@@ -1210,14 +1210,14 @@
 		std::time_t time = std::time(0);
 
 		mysqlpp::Query query = con->query();
-		query << "SELECT ";
-		query << " * ";
-		query << "FROM ";
-		query << " fleet ";
-		query << "WHERE ";
-		query << "	leader_id='" << this->getLeaderId() << "' ";
-		query << "	AND landtime<='" << time << "' ";
-		query << "	AND status=3;";
+		query << "SELECT "
+			<< " * "
+			<< "FROM "
+			<< " fleet "
+			<< "WHERE "
+			<< "	leader_id='" << this->getLeaderId() << "' "
+			<< "	AND landtime<='" << time << "' "
+			<< "	AND status=3;";
 		mysqlpp::Result fRes = query.store();
 		query.reset();
 
@@ -1244,12 +1244,12 @@
 			mysqlpp::Connection *con = my.get();
 
 			mysqlpp::Query query = con->query();
-			query << "SELECT ";
-			query << "	* ";
-			query << "FROM ";
-			query << "	fleet_ships ";
-			query << "WHERE ";
-			query << "	fs_fleet_id='" << this->getId() << "';";
+			query << "SELECT "
+				<< "	* "
+				<< "FROM "
+				<< "	fleet_ships "
+				<< "WHERE "
+				<< "	fs_fleet_id='" << this->getId() << "';";
 			mysqlpp::Result fsRes = query.store();
 			query.reset();
 
@@ -1553,48 +1553,48 @@
 		mysqlpp::Query query = con->query();
 
 		if (sum>0 || !this->shipsLoaded) {
-			query << "UPDATE ";
-			query << "	fleet ";
-			query << "SET ";
-			query << "	entity_from='" << this->getEntityFrom() << "', ";
-			query << "	entity_to='" << this->getEntityTo() << "', ";
-			query << "	next_id='" << this->getNextId() << "', ";
-			query << "	launchtime='" << this->getLaunchtime() << "', ";
-			query << "	landtime='" << this->getLandtime() << "', ";
-			query << "	nextactiontime='" << this->getNextactiontime() << "', ";
-			query << "	status='" << this->getStatus() << "', ";
-			query << "	pilots='" << this->getPilots() << "', ";
-			query << "	usage_fuel='" << this->usageFuel << "', ";
-			query << "	usage_food='" << this->usageFood << "', ";
-			query << "	usage_power='" << this->usagePower << "', ";
-			query << "	support_usage_fuel='" << this->supportUsageFuel << "', ";
-			query << "	support_usage_food='" << this->supportUsageFood << "', ";
-			query << "	res_metal='" << this->getResMetal() << "', ";
-			query << "	res_crystal='" << this->getResCrystal() << "', ";
-			query << "	res_plastic='" << this->getResPlastic() << "', ";
-			query << "	res_fuel='" << this->getResFuel() << "', ";
-			query << "	res_food='" << this->getResFood() << "', ";
-			query << "	res_power='" << this->getResPower() << "', ";
-			query << "	res_people='" << this->getResPeople() << "', ";
-			query << "	fetch_metal='0', ";
-			query << "	fetch_crystal='0', ";
-			query << "	fetch_plastic='0', ";
-			query << "	fetch_fuel='0', ";
-			query << "	fetch_food='0', ";
-			query << "	fetch_power='0', ";
-			query << "	fetch_people='0' ";
-			query << "WHERE ";
-			query << "	id='" << this->getId() << "' ";
-			query << "LIMIT 1;";
+			query << "UPDATE "
+				<< "	fleet "
+				<< "SET "
+				<< "	entity_from='" << this->getEntityFrom() << "', "
+				<< "	entity_to='" << this->getEntityTo() << "', "
+				<< "	next_id='" << this->getNextId() << "', "
+				<< "	launchtime='" << this->getLaunchtime() << "', "
+				<< "	landtime='" << this->getLandtime() << "', "
+				<< "	nextactiontime='" << this->getNextactiontime() << "', "
+				<< "	status='" << this->getStatus() << "', "
+				<< "	pilots='" << this->getPilots() << "', "
+				<< "	usage_fuel='" << this->usageFuel << "', "
+				<< "	usage_food='" << this->usageFood << "', "
+				<< "	usage_power='" << this->usagePower << "', "
+				<< "	support_usage_fuel='" << this->supportUsageFuel << "', "
+				<< "	support_usage_food='" << this->supportUsageFood << "', "
+				<< "	res_metal='" << this->getResMetal() << "', "
+				<< "	res_crystal='" << this->getResCrystal() << "', "
+				<< "	res_plastic='" << this->getResPlastic() << "', "
+				<< "	res_fuel='" << this->getResFuel() << "', "
+				<< "	res_food='" << this->getResFood() << "', "
+				<< "	res_power='" << this->getResPower() << "', "
+				<< "	res_people='" << this->getResPeople() << "', "
+				<< "	fetch_metal='0', "
+				<< "	fetch_crystal='0', "
+				<< "	fetch_plastic='0', "
+				<< "	fetch_fuel='0', "
+				<< "	fetch_food='0', "
+				<< "	fetch_power='0', "
+				<< "	fetch_people='0' "
+				<< "WHERE "
+				<< "	id='" << this->getId() << "' "
+				<< "LIMIT 1;";
 			mysqlpp::Result fsRes = query.store();
 			query.reset();
 		}
 		else {
-			query << "DELETE FROM ";
-			query << "	fleet ";
-			query << "WHERE ";
-			query << "	id='" << this->getId() << "' ";
-			query << "LIMIT 1;";
+			query << "DELETE FROM "
+				<< "	fleet "
+				<< "WHERE "
+				<< "	id='" << this->getId() << "' "
+				<< "LIMIT 1;";
 			query.store();
 			query.reset();
 		}

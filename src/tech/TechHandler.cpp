@@ -22,7 +22,7 @@ namespace tech
 			<< "	techlist_build_type=3 "
 			<< "	AND techlist_build_end_time<" << time << ";";
 		query.store();
-		std::cout << "Upgraded "<<con_->affected_rows()<<" Technologies\n";
+		//std::cout << "Upgraded "<<con_->affected_rows()<<" Technologies\n";
 		query.reset();    
 		
 		if (con_->affected_rows()>0) {

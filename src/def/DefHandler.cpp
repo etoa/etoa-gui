@@ -7,7 +7,7 @@ namespace def
 	{
 		std::time_t time = std::time(0);
 		
-		std::cout << "Updating defs\n";
+		//std::cout << "Updating defs\n";
 
 		// Load queues who needs updating
 		mysqlpp::Query query = con_->query();

@@ -51,23 +51,23 @@
 			mysqlpp::Query query = con->query();
 
 			if (this->getCount() > 0) {
-				query << "UPDATE ";
-				query << "	fleet_ships ";
-				query << "SET ";
-				query << "	fs_ship_cnt='" << this->getCount() << "', ";
-				query << "	fs_special_ship_exp= '" << this->getSExp() << "' ";
-				query << "WHERE ";
-				query << "	fs_id='" << this->getId() << "' ";
-				query << "LIMIT 1;";
+				query << "UPDATE "
+					<< "	fleet_ships "
+					<< "SET "
+					<< "	fs_ship_cnt='" << this->getCount() << "', "
+					<< "	fs_special_ship_exp= '" << this->getSExp() << "' "
+					<< "WHERE "
+					<< "	fs_id='" << this->getId() << "' "
+					<< "LIMIT 1;";
 				query.store();
 				query.reset();
 			}
 			else {
-				query << "DELETE FROM ";
-				query << " fleet_ships ";
-				query << "WHERE ";
-				query << "	fs_id='" << this->getId() << "' ";
-				query << "LIMIT 1;";
+				query << "DELETE FROM "
+					<< " fleet_ships "
+					<< "WHERE "
+					<< "	fs_id='" << this->getId() << "' "
+					<< "LIMIT 1;";
 				query.store();
 				query.reset();
 			}

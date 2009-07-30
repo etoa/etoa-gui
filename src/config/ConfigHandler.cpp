@@ -68,17 +68,16 @@
 		
 		int counter = 0;
 		mysqlpp::Query query = con->query();
-		query << "SELECT ";
-		query << "	config_name, ";
-		query << "	config_value, ";
-		query << "	config_param1, ";
-		query << "	config_param2 ";
-		query << "FROM ";
-		query << "	config;";
+		query << "SELECT "
+			<< "	config_name, "
+			<< "	config_value, "
+			<< "	config_param1, "
+			<< "	config_param2 "
+			<< "FROM "
+			<< "	config;";
 		mysqlpp::Result res = query.store();	
 		query.reset();
-		if (res) 
-		{
+		if (res) {
 			unsigned int resSize = res.size();
 			if (resSize>0) {
 				mysqlpp::Row row;
@@ -98,13 +97,13 @@
 		
 		this->calcCollectFuelValues();
 		
-		query << "SELECT ";
-		query << " id ";
-		query << "FROM ";
-		query << "	entities ";
-		query << "WHERE ";
-		query << "	code='m' ";
-		query << "LIMIT 1;";
+		query << "SELECT "
+			<< " id "
+			<< "FROM "
+			<< "	entities "
+			<< "WHERE "
+			<< "	code='m' "
+			<< "LIMIT 1;";
 		mysqlpp::Result mRes = query.store();
 		query.reset();
 		
@@ -148,7 +147,8 @@
 		idConfig["FACTORY_ID"] = 10;
 		idConfig["SHIPYARD_ID"] = 9;
 		idConfig["BUILD_MISSILE_ID"] = 25;
-		idConfig["BUILD_CRYPTO_ID"] = 24;		
+		idConfig["BUILD_CRYPTO_ID"] = 24;
+		idConfig["MARKET_ID"] = 21;
 		
 		//->Spionage
 		idConfig["SPY_DEFENSE_FACTOR_TECH"] = 20;
@@ -240,12 +240,10 @@
 		mysqlpp::Result res = query.store();
 		query.reset();
 		
-		if (res)
-		{
+		if (res) {
 			unsigned int resSize = res.size();
 			
-			if (resSize>0)
-			{
+			if (resSize>0) {
 	    		mysqlpp::Row row;
 	    		for (mysqlpp::Row::size_type i = 0; i<resSize; i++) {
 	    			row = res.at(i);
@@ -274,12 +272,10 @@
 		res = query.store();
 		query.reset();
 		
-		if (res)
-		{
+		if (res) {
 			unsigned int resSize = res.size();
 			
-			if (resSize>0)
-			{
+			if (resSize>0) {
 	    		mysqlpp::Row row;
 	    		for (mysqlpp::Row::size_type i = 0; i<resSize; i++) {
 	    			row = res.at(i);

@@ -7,7 +7,7 @@
 #include <mysql++/mysql++.h>
 
 #include "../EventHandler.h"
-#include "fleetActions/FleetFactory.h"
+#include "FleetFactory.h"
 
 namespace fleet
 {

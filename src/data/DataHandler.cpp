@@ -93,34 +93,34 @@
 
 		this->counter = 0;
 		mysqlpp::Query query = con->query();
-		query << "SELECT ";
-		query << "	def_id AS id, ";
-		query << "	def_name AS name, ";
-		query << "	def_shortcomment AS shortcomment, ";
-		query << "	def_longcomment AS longcomment, ";
-		query << "	def_costs_metal AS costs_metal, ";
-		query << "	def_costs_crystal AS costs_crystal, ";
-		query << "	def_costs_plastic AS costs_plastic, ";
-		query << "	def_costs_fuel AS costs_fuel, ";
-		query << "	def_costs_food AS costs_food, ";
-		query << "	def_costs_power AS costs_power, ";
-		query << "	def_power_use, ";
-		query << "	def_fuel_use, ";
-		query << "	def_show, ";
-		query << "	def_buildable, ";
-		query << "	def_order, ";
-		query << "	def_heal, ";
-		query << "	def_structure, ";
-		query << "	def_shield, ";
-		query << "	def_weapon, ";
-		query << "	def_race_id, ";
-		query << "	def_cat_id, ";
-		query << "	def_max_count, ";
-		query << "	def_points, ";
-		query << "	def_jam, ";
-		query << "	def_fields ";
-		query << "FROM ";
-		query << "	defense;";
+		query << "SELECT "
+			<< "	def_id AS id, "
+			<< "	def_name AS name, "
+			<< "	def_shortcomment AS shortcomment, "
+			<< "	def_longcomment AS longcomment, "
+			<< "	def_costs_metal AS costs_metal, "
+			<< "	def_costs_crystal AS costs_crystal, "
+			<< "	def_costs_plastic AS costs_plastic, "
+			<< "	def_costs_fuel AS costs_fuel, "
+			<< "	def_costs_food AS costs_food, "
+			<< "	def_costs_power AS costs_power, "
+			<< "	def_power_use, "
+			<< "	def_fuel_use, "
+			<< "	def_show, "
+			<< "	def_buildable, "
+			<< "	def_order, "
+			<< "	def_heal, "
+			<< "	def_structure, "
+			<< "	def_shield, "
+			<< "	def_weapon, "
+			<< "	def_race_id, "
+			<< "	def_cat_id, "
+			<< "	def_max_count, "
+			<< "	def_points, "
+			<< "	def_jam, "
+			<< "	def_fields "
+			<< "FROM "
+			<< "	defense;";
 		mysqlpp::Result dRes = query.store();	
 		query.reset();
 		if (dRes) {
@@ -142,66 +142,66 @@
 		}
 		
 		this->counter = 0;
-		query << "SELECT ";
-		query << "	ship_id AS Id, ";
-		query << "	ship_name AS Name, ";
-		query << "	ship_type_id, ";
-		query << "	ship_shortcomment AS shortcomment, ";
-		query << "	ship_longcomment AS longcomment, ";
-		query << "	ship_costs_metal AS costs_metal, ";
-		query << "	ship_costs_crystal AS costs_crystal, ";
-		query << "	ship_costs_plastic AS costs_plastic, ";
-		query << "	ship_costs_fuel AS costs_fuel, ";
-		query << "	ship_costs_food AS costs_food, ";
-		query << "	ship_costs_power AS costs_power, ";
-		query << "	ship_power_use, ";
-		query << "	ship_fuel_use, ";
-		query << "	ship_fuel_use_launch, ";
-		query << "	ship_fuel_use_landing, ";
-		query << "	ship_prod_power, ";
-		query << "	ship_capacity, ";
-		query << "	ship_people_capacity, ";
-		query << "	ship_pilots, ";
-		query << "	ship_speed, ";
-		query << "	ship_time2start, ";
-		query << "	ship_time2land, ";
-		query << "	ship_show, ";
-		query << "	ship_buildable, ";
-		query << "	ship_order, ";
-		query << "	ship_actions, ";
-		query << "	ship_bounty_bonus, ";
-		query << "	ship_heal, ";
-		query << "	ship_structure, ";
-		query << "	ship_shield, ";
-		query << "	ship_weapon, ";
-		query << "	ship_race_id, ";
-		query << "	ship_launchable, ";
-		query << "	ship_fieldsprovide, ";
-		query << "	ship_cat_id, ";
-		query << "	ship_fakeable, ";
-		query << "	special_ship, ";
-		query << "	ship_max_count, ";
-		query << "	special_ship_max_level, ";
-		query << "	special_ship_need_exp, ";
-		query << "	special_ship_exp_factor, ";
-		query << "	special_ship_bonus_weapon, ";
-		query << "	special_ship_bonus_structure, ";
-		query << "	special_ship_bonus_shield, ";
-		query << "	special_ship_bonus_heal, ";
-		query << "	special_ship_bonus_capacity, ";
-		query << "	special_ship_bonus_speed, ";
-		query << "	special_ship_bonus_pilots, ";
-		query << "	special_ship_bonus_tarn, ";
-		query << "	special_ship_bonus_antrax, ";
-		query << "	special_ship_bonus_forsteal, ";
-		query << "	special_ship_bonus_build_destroy, ";
-		query << "	special_ship_bonus_antrax_food, ";
-		query << "	special_ship_bonus_deactivade, ";
-		query << "	ship_points, ";
-		query << "	ship_alliance_shipyard_level, ";
-		query << "	ship_alliance_costs ";
-		query << "FROM ";
-		query << "	ships;";
+		query << "SELECT "
+			<< "	ship_id AS Id, "
+			<< "	ship_name AS Name, "
+			<< "	ship_type_id, "
+			<< "	ship_shortcomment AS shortcomment, "
+			<< "	ship_longcomment AS longcomment, "
+			<< "	ship_costs_metal AS costs_metal, "
+			<< "	ship_costs_crystal AS costs_crystal, "
+			<< "	ship_costs_plastic AS costs_plastic, "
+			<< "	ship_costs_fuel AS costs_fuel, "
+			<< "	ship_costs_food AS costs_food, "
+			<< "	ship_costs_power AS costs_power, "
+			<< "	ship_power_use, "
+			<< "	ship_fuel_use, "
+			<< "	ship_fuel_use_launch, "
+			<< "	ship_fuel_use_landing, "
+			<< "	ship_prod_power, "
+			<< "	ship_capacity, "
+			<< "	ship_people_capacity, "
+			<< "	ship_pilots, "
+			<< "	ship_speed, "
+			<< "	ship_time2start, "
+			<< "	ship_time2land, "
+			<< "	ship_show, "
+			<< "	ship_buildable, "
+			<< "	ship_order, "
+			<< "	ship_actions, "
+			<< "	ship_bounty_bonus, "
+			<< "	ship_heal, "
+			<< "	ship_structure, "
+			<< "	ship_shield, "
+			<< "	ship_weapon, "
+			<< "	ship_race_id, "
+			<< "	ship_launchable, "
+			<< "	ship_fieldsprovide, "
+			<< "	ship_cat_id, "
+			<< "	ship_fakeable, "
+			<< "	special_ship, "
+			<< "	ship_max_count, "
+			<< "	special_ship_max_level, "
+			<< "	special_ship_need_exp, "
+			<< "	special_ship_exp_factor, "
+			<< "	special_ship_bonus_weapon, "
+			<< "	special_ship_bonus_structure, "
+			<< "	special_ship_bonus_shield, "
+			<< "	special_ship_bonus_heal, "
+			<< "	special_ship_bonus_capacity, "
+			<< "	special_ship_bonus_speed, "
+			<< "	special_ship_bonus_pilots, "
+			<< "	special_ship_bonus_tarn, "
+			<< "	special_ship_bonus_antrax, "
+			<< "	special_ship_bonus_forsteal, "
+			<< "	special_ship_bonus_build_destroy, "
+			<< "	special_ship_bonus_antrax_food, "
+			<< "	special_ship_bonus_deactivade, "
+			<< "	ship_points, "
+			<< "	ship_alliance_shipyard_level, "
+			<< "	ship_alliance_costs "
+			<< "FROM "
+			<< "	ships;";
 		mysqlpp::Result sRes = query.store();	
 		query.reset();
 		if (sRes) {
@@ -226,25 +226,25 @@
 		}
 		
 		this->counter = 0;
-		query << "SELECT ";
-		query << "	tech_id AS Id, ";
-		query << "	tech_name AS Name, ";
-		query << "	tech_type_id, ";
-		query << "	tech_shortcomment AS shortcomment, ";
-		query << "	tech_longcomment AS longcomment, ";
-		query << "	tech_costs_metal AS costs_metal, ";
-		query << "	tech_costs_crystal AS costs_crystal, ";
-		query << "	tech_costs_plastic AS costs_plastic, ";
-		query << "	tech_costs_fuel AS costs_fuel, ";
-		query << "	tech_costs_food AS costs_food, ";
-		query << "	tech_costs_power AS costs_power, ";
-		query << "	tech_build_costs_factor, ";
-		query << "	tech_last_level, ";
-		query << "	tech_show, ";
-		query << "	tech_order, ";
-		query << "	tech_stealable ";
-		query << "FROM ";
-		query << "	technologies;";
+		query << "SELECT "
+			<< "	tech_id AS Id, "
+			<< "	tech_name AS Name, "
+			<< "	tech_type_id, "
+			<< "	tech_shortcomment AS shortcomment, "
+			<< "	tech_longcomment AS longcomment, "
+			<< "	tech_costs_metal AS costs_metal, "
+			<< "	tech_costs_crystal AS costs_crystal, "
+			<< "	tech_costs_plastic AS costs_plastic, "
+			<< "	tech_costs_fuel AS costs_fuel, "
+			<< "	tech_costs_food AS costs_food, "
+			<< "	tech_costs_power AS costs_power, "
+			<< "	tech_build_costs_factor, "
+			<< "	tech_last_level, "
+			<< "	tech_show, "
+			<< "	tech_order, "
+			<< "	tech_stealable "
+			<< "FROM "
+			<< "	technologies;";
 		mysqlpp::Result tRes = query.store();	
 		query.reset();
 		if (tRes) {
@@ -328,11 +328,11 @@
 			}
 		}
 		
-		this->counter = 0;	 	 	 	 	 	 	 	 	 	 	 	 	 	
-		query << "SELECT ";
-		query << "	* ";
-		query << "FROM ";
-		query << "	races;";
+		this->counter = 0;	 	 	 	 	 	 	 	 	 	 	
+		query << "SELECT "
+			<< "	* "
+			<< "FROM "
+			<< "	races;";
 		mysqlpp::Result rRes = query.store();	
 		query.reset();
 		if (rRes) {
@@ -353,10 +353,10 @@
 		}
 		
 		this->counter = 0;	 	 	 	 	 	 	 	 	 	 	 	 	 	
-		query << "SELECT ";
-		query << "	* ";
-		query << "FROM ";
-		query << "	sol_types;";
+		query << "SELECT "
+			<< "	* "
+			<< "FROM "
+			<< "	sol_types;";
 		mysqlpp::Result slRes = query.store();	
 		query.reset();
 		if (slRes) {
@@ -377,10 +377,10 @@
 		}
 		
 		this->counter = 0;	 	 	 	 	 	 	 	 	 	 	 	 	 	
-		query << "SELECT ";
-		query << "	* ";
-		query << "FROM ";
-		query << "	planet_types;";
+		query << "SELECT "
+			<< "	* "
+			<< "FROM "
+			<< "	planet_types;";
 		mysqlpp::Result pRes = query.store();	
 		query.reset();
 		if (pRes) {
@@ -401,10 +401,10 @@
 		}
 		
 		this->counter = 0;	 	 	 	 	 	 	 	 	 	 	 	 	 	
-		query << "SELECT ";
-		query << "	* ";
-		query << "FROM ";
-		query << "	specialists;";
+		query << "SELECT "
+			<< "	* "
+			<< "FROM "
+			<< "	specialists;";
 		mysqlpp::Result spRes = query.store();	
 		query.reset();
 		if (spRes) {

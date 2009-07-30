@@ -41,14 +41,14 @@
 			mysqlpp::Connection *con = my.get();
 			mysqlpp::Query query = con->query();
 
-			query << "UPDATE ";
-			query << "	deflist ";
-			query << "SET ";
-			query << "	deflist_count='" << this->getCount() + this->getRebuildCount() << "' ";
-			query << "WHERE ";
-			query << "	deflist_id='" << this->getId() << "' ";
-			query << "	AND deflist_user_id='" << this->getUserId() << "' ";
-			query << "LIMIT 1;";
+			query << "UPDATE "
+				<< "	deflist "
+				<< "SET "
+				<< "	deflist_count='" << this->getCount() + this->getRebuildCount() << "' "
+				<< "WHERE "
+				<< "	deflist_id='" << this->getId() << "' "
+				<< "	AND deflist_user_id='" << this->getUserId() << "' "
+				<< "LIMIT 1;";
 			query.store();
 			query.reset();
 		}

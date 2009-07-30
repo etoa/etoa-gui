@@ -20,7 +20,7 @@ namespace atech
 			<< "	alliance_techlist_build_start_time>0 AND"
 			<< " alliance_techlist_build_end_time<" << time << ";";
 		query.store();
-		std::cout << "Upgraded "<<con_->affected_rows()<<" Alliance Technologies\n";
+		//std::cout << "Upgraded "<<con_->affected_rows()<<" Alliance Technologies\n";
 		query.reset();    
     
 	}	

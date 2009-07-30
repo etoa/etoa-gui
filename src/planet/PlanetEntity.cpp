@@ -102,31 +102,14 @@ namespace planet
 
 		this->birthRate = 1.1 + this->planet_->getTypePopulation() + this->race_->getRacePopulation() + this->sol_->getTypePopulation() + this->specialist_->getSpecialistPopulation() - 4;
 		this->ressource[6] = this->ressource[5] / 50 * this->birthRate;
+		this->ressource[6] = (this->ressource[6] <= 3) ? 3 : this->ressource[6];
 		
-		if(this->ressource[6] <= 3)
-		{
-			this->ressource[6] = 3;
-		}
 		if (!this->ressource[5] && this->isMain)
-		{
 			this->ressource[5] = 1;
-		}
 		else if (this->store[5] > (this->ressource[5] + (this->ressource[6] / 3600 * this->t)))
-		{
 			this->ressource[5] =  (this->ressource[6] / 3600) * this->t;
-		}
 		else if (this->store[5] <= (this->ressource[5] + (this->ressource[6] / 3600 * this->t)))
-		{
-			if (this->ressource[5] > this->store[5])
-			{
-				this->ressource[5] = 0;
-			}
-			else
-			{
-				this->ressource[5] = this->store[5] - this->ressource[5];
-			}
-
-		}
+			this->ressource[5] = (this->ressource[5] > this->store[5]) ? 0 : this->store[5] - this->ressource[5];
 	}
 	
 	void PlanetEntity::loadBuildlist() {

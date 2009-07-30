@@ -69,52 +69,51 @@
 			
 			std::vector<int>::iterator it;
 			for ( it=this->users.begin() ; it < this->users.end(); it++ ) {
-				if ((*it)) 
-				{
+				if ((*it)) {
 					try	{
-					query << "INSERT INTO ";
-					query << "	messages ";
-					query << "(";
-					query << "	message_user_from, ";
-					query << "	message_user_to, ";
-					query << "	message_timestamp, ";
-					query << "	message_cat_id ";
-					query << ") ";
-					query << "VALUES ";
-					query << "('0', '";
-					query << (*it) << "', '";
-					query << time(0) << "', '";
-					query << this->type << "' ";
-					query << ");";
-					std::cout << query.str() << std::endl;
-					query.store();
-					query.reset();
-				
-					query << "INSERT INTO ";
-					query << "	message_data ";
-					query << "(";
-					query << "	id, ";
-					query << "	subject, ";
-					query << "	text, ";
-					query << "	entity_id, ";
-					query << "	fleet_id ";
-					query << ") ";
-					query << "VALUES ";
-					query << "('" << con_->insert_id() << "', ";
-					query << "'" << this->subject << "', ";
-					
-					std::string buff = this->text;
-					// TODO: Dirty!! Hack. fix it
-					if (buff.find("'") && !buff.find("\\'"))
-						buff = etoa::addslashes(buff);
+						query << "INSERT INTO "
+							<< "	messages "
+							<< "("
+							<< "	message_user_from, "
+							<< "	message_user_to, "
+							<< "	message_timestamp, "
+							<< "	message_cat_id "
+							<< ") "
+							<< "VALUES "
+							<< "('0', '"
+							<< (*it) << "', '"
+							<< time(0) << "', '"
+							<< this->type << "' "
+							<< ");";
+						std::cout << query.str() << std::endl;
+						query.store();
+						query.reset();
+						
+						query << "INSERT INTO "
+							<< "	message_data "
+							<< "("
+							<< "	id, "
+							<< "	subject, "
+							<< "	text, "
+							<< "	entity_id, "
+							<< "	fleet_id "
+							<< ") "
+							<< "VALUES "
+							<< "('" << con_->insert_id() << "', "
+							<< "'" << this->subject << "', ";
+						
+						std::string buff = this->text;
+						// TODO: Dirty!! Hack. fix it
+						if (buff.find("'") && !buff.find("\\'"))
+							buff = etoa::addslashes(buff);
 							
-					query << "'" << buff << "', ";
-					query << "'" << this->entityId << "', ";
-					query << "'" << this->fleetId << "' ";
-					query << ");";
-					std::cout << query.str() << std::endl;
-					query.store();
-					query.reset();
+						query << "'" << buff << "', "
+							<< "'" << this->entityId << "', "
+							<< "'" << this->fleetId << "' "
+							<< ");";
+						std::cout << query.str() << std::endl;
+						query.store();
+						query.reset();
 					}
 					catch (mysqlpp::Exception* e)
 					{

@@ -19,7 +19,7 @@ namespace abuilding
 			<< "	alliance_buildlist_build_end_time>0 AND"
 			<< " alliance_buildlist_build_end_time<" << time << ";";
 		query.store();
-		std::cout << "Upgraded "<<con_->affected_rows()<<" Alliance Buildings\n";
+		//std::cout << "Upgraded "<<con_->affected_rows()<<" Alliance Buildings\n";
 		query.reset();    
 	}	
 }
