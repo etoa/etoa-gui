@@ -499,6 +499,21 @@
 					
 					if ($addcnt > 0)
 					{
+						//
+						$pres = dbquery("SELECT
+											id,
+									   		planet_res_metal,
+											planet_res_crystal,
+											planet_res_plastic,
+											planet_res_fuel,
+											planet_res_food
+										FROM
+											planets
+										WHERE
+											id='".$this->sourceEntity->id()."'
+										LIMIT 1;");
+						$parr = mysql_fetch_row($pres);
+						
 						// Load resource
 						$this->finalLoadResource(1);
 						$this->finalLoadResource(2);
@@ -593,6 +608,10 @@
 						";
 						dbquery($sql);
 						$fid = mysql_insert_id();
+						
+						$severity = 1;
+						for ($i=1;$i<6;$i++)
+							if ($this->res[$i]>$parr[$i]) $severity=2;
 						
 						$shipLog = "";
 						foreach ($this->ships as $sid => $sda)
@@ -693,6 +712,7 @@
 						$this->fleetLog->action = $this->action;
 						$this->fleetLog->addFleetRes($this->res,$this->capacityPeopleLoaded,$this->fetch);
 						$this->fleetLog->fleetShipEnd = $shipLog;
+						$this->fleetLog->text = $severity;
 						$this->fleetLog->launch();
 							
 						

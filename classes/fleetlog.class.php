@@ -2,6 +2,28 @@
 
 	class FleetLog extends BaseLog
 	{
+		
+		/**
+		 * Others
+		 */
+		const F_OTHER = 0;
+		/**
+		 * Launch
+		 */
+		const F_LAUNCH = 1;
+		/**
+		 * Cancel
+		 */
+		const F_CANCEL = 2;
+		/**
+		 * Action
+		 */
+		const F_ACTION = 3;
+		/**
+		 * Return
+		 */
+		const F_RETURN = 4;
+		
 		private $fleetId;
 		private $userId;
 		private $launchtime;
@@ -23,6 +45,10 @@
 		private $fuel;
 		private $food;
 		private $pilots;
+		private $text;
+		
+		private $severity;
+		private $facility;
 		
 		public function FleetLog($userId=0,$sourceId, &$sourceEnt)
 		{
@@ -30,6 +56,8 @@
 			$this->sourceEntity = $sourceEnt;
 			$this->sourceId=$sourceId;
 			$this->status = 0;
+			$this->severity = 0;
+			$this->facility = 0;
 			$this->launched=false;
 			$this->entityResStart = $this->sourceEntity->getResourceLog();
 			$this->fleetResStart = "0:0:0:0:0:0:0,f,0:0:0:0:0:0:0";
@@ -53,17 +81,19 @@
 		
 		function __destruct()
 		{
-			if ($this->launched && false)
+			if ($this->launched)
 			{
-				$text = "Treibstoff: ".$this->fuel." Nahrung: ".$this->food." Piloten".$this->pilots." launched";
+				$text = "Treibstoff: ".$this->fuel." Nahrung: ".$this->food." Piloten: ".$this->pilots;
 				dbquery("
 						INSERT INTO 
 							`logs_fleet` 
 						(
 						 	`fleet_id`,
+							`severity`,
+							`facility`,
 							`timestamp`,
-							`text`,
-							`fleet_user_id`,
+							`message`,
+							`user_id`,
 							`entity_user_id`,
 							`entity_from`,
 							`entity_to`,
@@ -81,6 +111,8 @@
 							`entity_ships_end`
 						) VALUES (
 							'".$this->fleetId."',
+							'".$this->text."',
+							'".$this->facility."',
 							'".time()."',
 							'".$text."',
 							'".$this->userId."',
@@ -153,6 +185,7 @@
 		public function launch()
 		{
 			$this->entityResEnd = $this->sourceEntity->getResourceLog();
+			$this->facility = F_LAUNCH;
 			$this->launched = true;
 		}
 		
