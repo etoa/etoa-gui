@@ -50,7 +50,8 @@ if (Alliance::checkActionRights('viewmembers'))
 		</tr>";
 		$ures = dbquery("
 		SELECT 
-			u.user_acttime,
+			Max(user_sessionlog.time_action) as last_log,
+			user_sessions.time_action,
 			u.user_id,
 			u.user_points,
 			u.user_nick,
@@ -65,21 +66,26 @@ if (Alliance::checkActionRights('viewmembers'))
 			AND p.planet_user_main=1 
 		INNER JOIN
 			races 
-			ON user_race_id=race_id 
+			ON user_race_id=race_id
+		LEFT JOIN
+			user_sessionlog
+		ON
+			u.user_id=user_sessionlog.user_id
+		LEFT JOIN
+			user_sessions
+		ON
+			u.user_id=user_sessions.user_id
 		WHERE
 			u.user_alliance_id='".$arr['alliance_id']."'
+		GROUP BY
+			u.user_id
 		ORDER BY 
 			u.user_points DESC, u.user_nick;");
 		$time = time();
 		while ($uarr = mysql_fetch_assoc($ures))
 		{
 			$tp = new Planet($uarr['pid']);
-			echo "<tr";
-			if ($time-ONLINE_TIME< $uarr['user_acttime'])	
-			{
-				echo " style=\"color:#0f0;\";";
-			}
-			echo ">";
+			echo "<tr>";
 			echo "<td>".$uarr['user_nick']."</td>
 			<td>".$tp."</td>
 			<td>".nf($uarr['user_points'])."</td>
@@ -102,10 +108,12 @@ if (Alliance::checkActionRights('viewmembers'))
 			else
 				echo "<td>-</td>";
 
-			if (($time-$conf['online_threshold']['v']*60) < $uarr['user_acttime'])
+			if ($uarr['time_action'])
 				echo "<td style=\"color:#0f0;\">online</td>";
+			elseif ($uarr['last_log'])
+				echo "<td>".date("d.m.Y H:i",$uarr['last_log'])."</td>";
 			else
-				echo "<td>".date("d.m.Y H.i",$uarr['user_acttime'])."</td>";
+				echo "<td>Noch nicht eingeloggt!</td>";
 
 			echo"<td class=\"tbldata\">";
 			if ($cu->id!=$uarr['user_id'])

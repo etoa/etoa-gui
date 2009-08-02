@@ -290,6 +290,8 @@ abstract class Report
 				{
 					case 'market':
 						return new MarketReport($args);
+					case 'explore':
+						return new ExploreReport($args);
 					}
 				}
 				throw new Eexception("Keine passende Reportklasse für $type gefunden!");

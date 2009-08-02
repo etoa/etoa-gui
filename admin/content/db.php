@@ -251,6 +251,7 @@
 					shiplist
 				WHERE 
 					shiplist_count =0
+					AND shiplist_bunkered =0
 					AND shiplist_special_ship=0
 				;");	
 				echo mysql_affected_rows()." leere Schiffdaten wurden gelöscht!<br/>";
@@ -332,7 +333,7 @@
 		echo '<fieldset><legend><input type="checkbox" value="1" name="cl_log" /> Logs</legend>';
 		$tblcnt = mysql_fetch_row(dbquery("
 		SELECT 
-			count(log_id) 
+			count(id) 
 		FROM 
 			logs
 		;"));
@@ -429,6 +430,7 @@
 			shiplist
 		WHERE 
 			shiplist_count =0
+			AND shiplist_bunkered =0
 			AND shiplist_special_ship=0
 		;");		
 		$scnt = mysql_fetch_row($res);

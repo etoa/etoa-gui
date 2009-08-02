@@ -105,7 +105,7 @@
 				$this->emailFix=$arr['user_email_fix'];
 
 				$this->lastOnline=$arr['user_logouttime'];
-				$this->acttime = $arr['user_acttime'];
+				$this->acttime = null;
 				$this->points=$arr['user_points'];
 
 		    	$this->blocked_from = $arr['user_blocked_from'];
@@ -397,6 +397,10 @@
 				{
 					$this->locked = ($this->blocked_from< time() && $this->blocked_to > time()) ? true : false;
 				}
+				if ($key=="acttime" && $this->acttime==null)
+				{
+					$this->acttime = $this->loadLastAction();
+				}
 				return $this->$key;
 			}
 			catch (EException $e)
@@ -477,7 +481,7 @@
 							LIMIT 1;");
 			if (mysql_num_rows($res))
 			{
-				$arr = mysql_fetch_assoc($res);
+				$arr = mysql_fetch_row($res);
 				return $arr[0];
 			}
 			else
@@ -492,7 +496,7 @@
 							LIMIT 1;");
 				if (mysql_num_rows($res))
 				{
-					$arr = mysql_fetch_assoc($res);
+					$arr = mysql_fetch_row($res);
 					return $arr[0];
 				}
 				else
@@ -791,7 +795,7 @@
 				//Markt Angebote löschen
 				dbquery("DELETE FROM market_ressource WHERE user_id='".$this->id."';"); 	// Rohstoff Angebot
 				dbquery("DELETE FROM market_ship WHERE user_id='".$this->id."';"); 				// Schiff Angebot
-				dbquery("DELETE FROM market_auction WHERE auction_user_id='".$this->id."';"); // Auktionen
+				dbquery("DELETE FROM market_auction WHERE user_id='".$this->id."';"); // Auktionen
 
 				//Notitzen löschen
 				$np = new Notepad($this->id);

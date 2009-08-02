@@ -111,6 +111,7 @@ class Message
 					messages
 				WHERE
 					message_archived=0
+					AND message_read=1
 					AND message_timestamp<'".$tstamp."';		
 			");
 			if (mysql_num_rows($res)>0)
@@ -130,6 +131,7 @@ class Message
 					messages
 				WHERE
 					message_archived=0
+					AND message_read=1
 					AND message_timestamp<'".$tstamp."';
 			");		
 			$nr = mysql_affected_rows();
