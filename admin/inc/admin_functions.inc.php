@@ -1240,7 +1240,7 @@ function showLogs($args=null,$limit=0)
 	}
 }
 
-function showAttackLogs($args=null,$limit=-1,$load=true)
+function showAttackAbuseLogs($args=null,$limit=-1,$load=true)
 {
 	$paginationLimit = 50;
 	
@@ -1288,6 +1288,7 @@ function showAttackLogs($args=null,$limit=-1,$load=true)
 		$res=dbquery($sql1.$sql2.$sql3);
 		
 		$bans = array();
+		$actions = array();
 		
 		if (mysql_num_rows($res)>0)
 		{
@@ -1315,6 +1316,7 @@ function showAttackLogs($args=null,$limit=-1,$load=true)
 				$entity = $arr['entity_id'];
 				$time = $arr['landtime'];
 				$war = $arr['war'];
+				$action = $arr['action'];
 				foreach ($uid as $fUser)
 				{
 					if ($fUser!="")
@@ -1322,7 +1324,7 @@ function showAttackLogs($args=null,$limit=-1,$load=true)
 						if (!isset($data[$fUser])) $data[$fUser] = array();
 						if (!isset($data[$fUser][$eUser])) $data[$fUser][$eUser] = array();
 						if (!isset($data[$fUser][$eUser][$entity])) $data[$fUser][$eUser][$entity] = array();
-						array_push($data[$fUser][$eUser][$entity],array($time,$war));
+						array_push($data[$fUser][$eUser][$entity],array($time,$war,$action));
 					}
 				}
 			}
@@ -1340,6 +1342,8 @@ function showAttackLogs($args=null,$limit=-1,$load=true)
 						$firstPlanetTime = 0;
 						$lastPlanetTime = 0;
 						$attackCntEntity = 0;
+						$waveStart=0;
+						$waveEnd = 0;
 						
 						foreach($eDataArr as $eData)
 						{
@@ -1359,8 +1363,9 @@ function showAttackLogs($args=null,$limit=-1,$load=true)
 							if ($lastPlanetTime==0) $lastPlanetTime = $eData[0];
 							
 							//Wellenreset
-							if ($waveStart==0 || $waveEnd<=$eData[0]-$waveStart)
+							if ($waveStart==0 || $waveEnd<=$eData[0]-$waveTime)
 							{
+								$lastWave = $waveEnd;
 								$waveStart = $eData[0];
 								$waveEnd = $eData[0];
 								$waveCnt = 1;
@@ -1383,21 +1388,21 @@ function showAttackLogs($args=null,$limit=-1,$load=true)
 								$banReason .= "Mehr als ".$waveMaxCnt[$eData[1]]." Angriffe in einer Welle auf dem selben Ziel.<br />Anzahl Angriffe : ".$waveCnt."<br />Dauer der Welle: ".tf($waveEnd-$waveStart)."<br /><br />";
 							}
 							// Sperre keine 6h gewartet zwischen Angriffen auf einen Planeten
-							if ($waveCnt==1 && $eData[0]>$waveEnd && $eData[0]<$waveEnd+$timeBetweenAttacksOnEntity)
+							if ($waveCnt==1 && $eData[0]>$lastWave && $eData[0]<$lastWave+$timeBetweenAttacksOnEntity)
 							{
 								$ban = 1;
-								$banReason .= "Der Abstand zwischen 2 Angriffen/Wellen auf ein Ziel ist kleiner als ".($timeBetweenAttacksOnEntity/3600)." Stunden.<br />Dauer zwischen den beiden Angriffen: ".tf($eData[0]-$waveEnd)."<br /><br />";
+								$banReason .= "Der Abstand zwischen 2 Angriffen/Wellen auf ein Ziel ist kleiner als ".($timeBetweenAttacksOnEntity/3600)." Stunden.<br />Dauer zwischen den beiden Angriffen: ".tf($eData[0]-$lastWave)."<br /><br />";
 							}
 							// Sperre wenn mehr als 2/4 Angriffe pro Planet
 							if ($waveCnt==1 && $attackCntEntity>$attacksPerEntity[$eData[1]])
 							{
 								$ban = 1;
-								$banReason .= "Mehr als ".$attacksPerEntity[$eData[1]]." Angriffe/Wellen auf ein Ziel.\<br />nzahl:".$attackCntEntity."<br /><br />";
+								$banReason .= "Mehr als ".$attacksPerEntity[$eData[1]]." Angriffe/Wellen auf ein Ziel.\br />Anzahl:".$attackCntEntity."<br /><br />";
 							}
 							
 							// Es liegt eine Angriffsverletzung vor
 							if($ban==1)
-								array_push($bans,array("timestamp"=>$eData[0],"fUser"=>$fUser,"eUser"=>$eUser,"entity"=>$entity,"ban"=>$banReason));
+								array_push($bans,array("action"=>$eData[2],"timestamp"=>$eData[0],"fUser"=>$fUser,"eUser"=>$eUser,"entity"=>$entity,"ban"=>$banReason));
 						}
 					}
 				}
@@ -1452,6 +1457,7 @@ function showAttackLogs($args=null,$limit=-1,$load=true)
 		{
 			$fUser = new User($banData['fUser']);
 			$eUser = new User($banData['eUser']);
+			$action = FleetAction::createFactory($banData['action']);
 			//$fa = FleetAction::createFactory($arr['action']);
 			$entity = Entity::createFactoryById($banData['entity']);
 			
@@ -1461,7 +1467,7 @@ function showAttackLogs($args=null,$limit=-1,$load=true)
 			<td>$fUser</td>
 			<td>$eUser</td>
 			<td>$entity</td>
-			<td>fa</td>
+			<td>$action</td>
 			<td><a href=\"javascript:;\" onclick=\"toggleBox('details".$id."')\">Bericht</a></td>
 			</tr>";
 			echo "<tr id=\"details".$id."\" style=\"display:none;\"><td colspan=\"9\">".

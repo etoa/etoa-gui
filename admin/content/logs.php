@@ -526,7 +526,7 @@
 			<!--
 			function applyFilter(limit)
 			{
-				xajax_applyAttackLogFilter(xajax.getFormValues('filterform'),limit);
+				xajax_applyAttackAbuseLogFilter(xajax.getFormValues('filterform'),limit);
 			}
 			function resetFilter()
 			{
@@ -582,7 +582,7 @@
 		iBoxEnd();
 
 		echo "<div id=\"log_contents\">";
-		showAttackLogs();
+		//showAttackAbuseLogs();
 		echo "</div>";
 
 		//$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM logs;"));

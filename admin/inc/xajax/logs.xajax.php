@@ -8,6 +8,7 @@ $xajax->register(XAJAX_FUNCTION,"showBattle");
 $xajax->register(XAJAX_FUNCTION,"applyLogFilter");
 $xajax->register(XAJAX_FUNCTION,"applyGameLogFilter");
 $xajax->register(XAJAX_FUNCTION,"applyFleetLogFilter");
+$xajax->register(XAJAX_FUNCTION,"applyAttackAbuseLogFilter");
 
 function applyLogFilter($args,$limit=0)
 {
@@ -42,12 +43,12 @@ function applyFleetLogFilter($args,$limit=0)
 	return $objResponse;
 }
 
-function applyAttackLogFilter($args,$limit=0)
+function applyAttackAbuseLogFilter($args,$limit=0)
 {
 	$objResponse = new xajaxResponse();
 	require_once("inc/admin_functions.inc.php");
 	ob_start();
-	showAttackLogs($args,$limit);
+	showAttackAbuseLogs($args,$limit);
 	$objResponse->assign("log_contents","innerHTML",ob_get_clean());
 
 	return $objResponse;

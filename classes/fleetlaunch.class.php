@@ -998,7 +998,7 @@
 			{
 				$id = $rk+1;
 				$ammount = $this->res[$id];
-				$this->res[$rk] = 0;
+				$this->res[$id] = 0;
 				$this->calcResLoaded();
 				if ($id==4) {
 					$loaded = floor(min($ammount,$this->getCapacity(),$this->sourceEntity->getRes($id)-$this->getSupportFuel()-$this->getCosts()));
