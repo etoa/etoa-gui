@@ -1259,11 +1259,11 @@ function showAttackAbuseLogs($args=null,$limit=-1,$load=true)
 		
 		if (isset($args['searchfuser']) && $args['searchfuser']!="" && !is_numeric($args['searchfuser']))
 		{
-			$sql3.=" INNER JOIN users fu ON fu.user_id=l.user_id AND fu.user_nick LIKE '%".$args['searchfuser']."%' ";
+			$args['searchfuser'] = get_user_id($args['searchfuser']);
 		}
 		if (isset($args['searcheuser']) && $args['searcheuser']!="" && !is_numeric($args['searcheuser']))
 		{
-			$sql3.=" INNER JOIN users eu ON eu.user_id=l.entity_user_id AND eu.user_nick LIKE '%".$args['searcheuser']."%' ";
+			$args['searcheuser'] = get_user_id($args['searcheuser']);
 		}
 		
 		$sql3.= " WHERE landtime<='".$landtime."' AND landtime>'".($landtime-3600*24)."' ";
@@ -1277,11 +1277,11 @@ function showAttackAbuseLogs($args=null,$limit=-1,$load=true)
 		}
 		if (isset($args['searchfuser']) && is_numeric($args['searchfuser']))
 		{
-			$sql3.=" AND l.user_id=".intval($args['searchfuser'])." ";
+			$sql3.=" AND l.user_id LIKE '%,".intval($args['searchfuser']).",%' ";
 		}
 		if (isset($args['searcheuser']) && is_numeric($args['searcheuser']))
 		{
-			$sql3.=" AND l.entity_user_id=".intval($args['searcheuser'])." ";
+			$sql3.=" AND l.entity_user_id LIKE '%,".intval($args['searcheuser']).",%' ";
 		}
 		$sql3.= " ORDER BY $order";
 		
@@ -1397,7 +1397,7 @@ function showAttackAbuseLogs($args=null,$limit=-1,$load=true)
 							if ($waveCnt==1 && $attackCntEntity>$attacksPerEntity[$eData[1]])
 							{
 								$ban = 1;
-								$banReason .= "Mehr als ".$attacksPerEntity[$eData[1]]." Angriffe/Wellen auf ein Ziel.\br />Anzahl:".$attackCntEntity."<br /><br />";
+								$banReason .= "Mehr als ".$attacksPerEntity[$eData[1]]." Angriffe/Wellen auf ein Ziel.<br />Anzahl:".$attackCntEntity."<br /><br />";
 							}
 							
 							// Es liegt eine Angriffsverletzung vor

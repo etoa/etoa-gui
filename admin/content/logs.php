@@ -582,7 +582,7 @@
 		iBoxEnd();
 
 		echo "<div id=\"log_contents\">";
-		//showAttackAbuseLogs();
+		showAttackAbuseLogs();
 		echo "</div>";
 
 		//$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM logs;"));
