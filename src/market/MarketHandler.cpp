@@ -464,7 +464,7 @@ namespace market
 		query << "DELETE FROM "
 			<< "	market_auction "
 			<< "WHERE "
-			<< "	AND date_delete<='" << time << "' "
+			<< "	date_delete<='" << time << "' "
 			<< "	AND sent='1';";
 		query.store();		
 		query.reset();
