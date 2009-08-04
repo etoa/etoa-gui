@@ -499,27 +499,9 @@
 					
 					if ($addcnt > 0)
 					{
-						//
-						$pres = dbquery("SELECT
-											id,
-									   		planet_res_metal,
-											planet_res_crystal,
-											planet_res_plastic,
-											planet_res_fuel,
-											planet_res_food
-										FROM
-											planets
-										WHERE
-											id='".$this->sourceEntity->id()."'
-										LIMIT 1;");
-						$parr = mysql_fetch_row($pres);
 						
-						// Load resource
-						$this->finalLoadResource(1);
-						$this->finalLoadResource(2);
-						$this->finalLoadResource(3);
-						$this->finalLoadResource(4);
-						$this->finalLoadResource(5);
+						// Load resource (is needed because of the xajax use)
+						$this->finalLoadResource();
 						
 						// Subtract flight costs from source
 						$this->sourceEntity->chgRes(4,-$this->getCosts());
@@ -608,10 +590,6 @@
 						";
 						dbquery($sql);
 						$fid = mysql_insert_id();
-						
-						$severity = 1;
-						for ($i=1;$i<6;$i++)
-							if ($this->res[$i]>$parr[$i]) $severity=2;
 						
 						$shipLog = "";
 						foreach ($this->ships as $sid => $sda)
@@ -712,7 +690,6 @@
 						$this->fleetLog->action = $this->action;
 						$this->fleetLog->addFleetRes($this->res,$this->capacityPeopleLoaded,$this->fetch);
 						$this->fleetLog->fleetShipEnd = $shipLog;
-						$this->fleetLog->text = $severity;
 						$this->fleetLog->launch();
 							
 						
@@ -1010,25 +987,35 @@
 			return $loaded;
 		}
 		
-		function finalLoadResource($id)
+		function finalLoadResource()
 		{
-			$ammount = $this->res[$id];
-			$this->res[$id] = 0;
-			$this->calcResLoaded();
-			if ($id==4) {
-				$loaded = floor(min($ammount,$this->getCapacity(),$this->sourceEntity->getRes($id)-$this->getSupportFuel()-$this->getCosts()));
+			global $resNames;
+			
+			$this->sourceEntity->reloadRes();
+			$resarr = array();
+			
+			foreach ($resNames as $rk => $rn)
+			{
+				$id = $rk+1;
+				$ammount = $this->res[$id];
+				$this->res[$rk] = 0;
+				$this->calcResLoaded();
+				if ($id==4) {
+					$loaded = floor(min($ammount,$this->getCapacity(),$this->sourceEntity->getRes($id)-$this->getSupportFuel()-$this->getCosts()));
+				}
+				elseif ($id==5) {
+					$loaded = floor(min($ammount,$this->getCapacity(),$this->sourceEntity->getRes($id)-$this->getSupportFood()-$this->getCostsFood()));
+				}
+				else {
+					$loaded = floor(min($ammount,$this->getCapacity(),$this->sourceEntity->getRes($id)));
+				}
+				$this->res[$id] = $loaded;
+				$resarr[$rk] = $loaded;
 			}
-			elseif ($id==5) {
-				$loaded = floor(min($ammount,$this->getCapacity(),$this->sourceEntity->getRes($id)-$this->getSupportFood()-$this->getCostsFood()));
-			}
-			else {
-				$loaded = floor(min($ammount,$this->getCapacity(),$this->sourceEntity->getRes($id)));
-			}
-			$this->res[$id] = $loaded;
+			
 			$this->calcResLoaded();
 			
-			$this->sourceEntity->chgRes($id,-$loaded);
-			return $loaded;
+			$this->sourceEntity->subRes($resarr);
 		}
 		
 		function loadPeople($ammount)

@@ -907,6 +907,31 @@
 	    			id='".$this->id."';";
 	   		dbquery($sql);			
 		}
+		
+		function reloadRes()
+		{
+			$res = dbquery("
+						   SELECT
+						   		planet_res_metal,
+								planet_res_crystal,
+								planet_res_plastic,
+								planet_res_fuel,
+								planet_res_food
+							FROM
+								planets
+							WHERE
+								id='".$this->id."'
+							LIMIT 1;");
+			if (mysql_num_rows($res)>0)
+			{
+				$arr = mysql_fetch_assoc($res);
+				$this->resMetal = $arr['planet_res_metal'];
+				$this->resCrystal = $arr['planet_res_crystal'];
+				$this->resPlastic = $arr['planet_res_plastic'];
+				$this->resFuel = $arr['planet_res_fuel'];
+				$this->resFood = $arr['planet_res_food'];
+			}
+		}
 
 		/**
 		* Set this planet as the users main

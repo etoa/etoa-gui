@@ -1248,23 +1248,23 @@
 					</tr>";
 					echo "<tr>
 						<td><b>Ladung: ".RES_METAL."</b></td>
-						<td>".nf($load1)."</td>
+						<td>".nf($fleet->getLoadedRes(1))."</td>
 					</tr>";				
 					echo "<tr>
 						<td><b>Ladung: ".RES_CRYSTAL."</b></td>
-						<td>".nf($load2)."</td>
+						<td>".nf($fleet->getLoadedRes(2))."</td>
 					</tr>";				
 					echo "<tr>
 						<td><b>Ladung: ".RES_PLASTIC."</b></td>
-						<td>".nf($load3)."</td>
+						<td>".nf($fleet->getLoadedRes(3))."</td>
 					</tr>";				
 					echo "<tr>
 						<td><b>Ladung: ".RES_FUEL."</b></td>
-						<td>".nf($load4)."</td>
+						<td>".nf($fleet->getLoadedRes(4))."</td>
 					</tr>";				
 					echo "<tr>
 						<td><b>Ladung: ".RES_FOOD."</b></td>
-						<td>".nf($load5)."</td>
+						<td>".nf($fleet->getLoadedRes(5))."</td>
 					</tr>";				
 					tableEnd();
 					echo "<input type=\"button\" onclick=\"xajax_havenReset()\" value=\"Weitere Flotte starten\" />

@@ -83,13 +83,12 @@
 		{
 			if ($this->launched)
 			{
-				$text = "Treibstoff: ".$this->fuel." Nahrung: ".$this->food." Piloten: ".$this->pilots;
+				$this->text = "Treibstoff: ".$this->fuel." Nahrung: ".$this->food." Piloten: ".$this->pilots;
 				dbquery("
 						INSERT INTO 
 							`logs_fleet` 
 						(
 						 	`fleet_id`,
-							`severity`,
 							`facility`,
 							`timestamp`,
 							`message`,
@@ -111,10 +110,9 @@
 							`entity_ships_end`
 						) VALUES (
 							'".$this->fleetId."',
-							'".$this->text."',
 							'".$this->facility."',
 							'".time()."',
-							'".$text."',
+							'".$this->text."',
 							'".$this->userId."',
 							'".$this->userId."',
 							'".$this->sourceId."',
@@ -185,7 +183,7 @@
 		public function launch()
 		{
 			$this->entityResEnd = $this->sourceEntity->getResourceLog();
-			$this->facility = F_LAUNCH;
+			$this->facility = self::F_LAUNCH;
 			$this->launched = true;
 		}
 		
