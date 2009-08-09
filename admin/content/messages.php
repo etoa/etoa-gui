@@ -29,13 +29,13 @@
 	define("USER_MESSAGE_CAT_ID",1);
 	define("SYS_MESSAGE_CAT_ID",5);
 
-	echo "<h1>Nachrichten</h1>";
-
 	//
 	// Send message form
 	//
 	if ($sub=="sendmsg")
 	{
+		echo "<h1>Nachrichten</h1>";
+	
 		echo "Nachricht an einen Spieler senden:<br/><br/>";
 
 		$subj = isset($_GET['message_subject']) ? $_POST['message_subject'] : "";
@@ -167,7 +167,304 @@
 			echo "</form>";
 		
 	}
+	
+	
+	/**
+	*
+	* Berichte
+	*/
+	elseif ($sub=="reports")
+	{
+		echo "<h1>Berichte</h1>";
+		//
+		// Suchresultate
+		//
+		if (isset($_POST['user_search']) && $_POST['user_search']!="" || isset($_GET['action']) && $_GET['action']=="searchresults")
+		{
+			if ($_POST['user__id']!="")
+				$sql.= " AND user_id='".$_POST['user__id']."' ";
+			if ($_POST['user_nick']!="")
+			{
+				$uid = get_user_id($_POST['user_nick']);
+				if ($uid>0)
+					$sql.= " AND user_id='".$uid."' ";
+			}
+			if ($_POST['opponent1_id']!="")
+				$sql.= " AND opponent1_id='".$_POST['opponent1_id']."' ";
+			if ($_POST['opponent1_nick']!="")
+			{
+				$uid = get_user_id($_POST['opponent1_nick']);
+				if ($uid>0)
+					$sql.= " AND opponent1_id='".$uid."' ";
+			}
+			if ($_POST['subject']!="")
+			{
+					if (stristr($_POST['qmode']['subject'],"%")) $addchars = "%";else $addchars = "";
+					$sql.= " AND subject ".stripslashes($_POST['qmode']['subject']).$_POST['subject']."$addchars'";
+			}
+			
+			if ($_POST['read']<2)
+			{
+				if ($_POST['read']==1)
+					$sql.= " AND (read=1)";
+				else
+					$sql.= " AND (read=0)";
+			}
+			if ($_POST['deleted']<2)
+			{
+				if ($_POST['deleted']==1)
+					$sql.= " AND (deleted=1)";
+				else
+					$sql.= " AND (deleted=0)";
+			}
+			if ($_POST['type']!="")
+				$sql.= " AND type='".$_POST['type']."' ";
+				
+			if ($_POST['entity1_id']!="")
+				$sql.= " AND (entity1_id=".$_POST['entity1_id']. " OR entity2_id=".$_POST['entity1_id'].") ";
+			if ($_POST['entity2_id']!="")
+				$sql.= " AND (entity2_id=".$_POST['entity2_id']. " OR entity1_id=".$_POST['entity2_id'].") ";
+			
+			
+			//data tables
+			if (isset($_POST['table']) && $_POST['table'])
+				$join = " INNER JOIN `reports_".$_POST['type']."` AS rd ON reports.id=rd.id ";
+			
+			if ($_POST['subtype']!="")
+				$sql.= " AND rd.subtype='".$_POST['subtype']."'";
+				
+			//market
+			if (isset($_POST['type']) && $_POST['type']=='market')
+			{
+				if ($_POST['fleet1_id']!="")
+					$sql.= " AND (rd.fleet1_id=".$_POST['fleet1_id']. " OR rd.fleet2_id=".$_POST['fleet1_id'].") ";
+				if ($_POST['fleet2_id']!="")
+					$sql.= " AND (rd.fleet2_id=".$_POST['fleet2_id']. " OR rd.fleet1_id=".$_POST['fleet2_id'].") ";
+				
+				if ($_POST['ship_id']!="")
+					$sql.= " AND rd.ship_id=".$_POST['ship_id'];
+				if ($_POST['ship_count']!="")
+					$sql.= " AND rd.ship_count=".$_POST['ship_count'];
+				
+				if (isset($_POST['sell_0']) && $_POST['sell_0']==1)
+					$sql.= " AND rd.sell_0>'0'";
+				if (isset($_POST['sell_1']) && $_POST['sell_1']==1)
+					$sql.= " AND rd.sell_1>'0'";
+				if (isset($_POST['sell_2']) && $_POST['sell_2']==1)
+					$sql.= " AND rd.sell_2>'0'";
+				if (isset($_POST['sell_3']) && $_POST['sell_3']==1)
+					$sql.= " AND rd.sell_3>'0'";
+				if (isset($_POST['sell_4']) && $_POST['sell_4']==1)
+					$sql.= " AND rd.sell_4>'0'";
+				
+				if (isset($_POST['buy_0']) && $_POST['buy_0']==1)
+					$sql.= " AND rd.buy_0>'0'";
+				if (isset($_POST['buy_1']) && $_POST['buy_1']==1)
+					$sql.= " AND rd.buy_1>'0'";
+				if (isset($_POST['buy_2']) && $_POST['buy_2']==1)
+					$sql.= " AND rd.buy_2>'0'";
+				if (isset($_POST['buy_3']) && $_POST['buy_3']==1)
+					$sql.= " AND rd.buy_3>'0'";
+				if (isset($_POST['buy_4']) && $_POST['buy_4']==1)
+					$sql.= " AND rd.buy_4>'0'";
+			}
+			
+			
+			//LIMIT
+			if ($_POST['report_limit']!="")
+				$limit=$_POST['report_limit'];
+			else
+				$limit="1";
+			
+			$reports = Report::find($sql,null,$limit,0,true,$join);
+			
+			$cnt = count($reports);
+			echo $cnt." Datens&auml;tze vorhanden<br/><br/>";
+			if ($cnt>0)
+			{
+				if ($cnt>20)
+					echo "<input type=\"button\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" value=\"Neue Suche\" /><br/><br/>";
 
+				echo "<b>Legende:</b> <span style=\"color:#0f0;\">Ungelesen</span>, <span style=\"color:#f90;\">Gel&ouml;scht</span>, <span style=\"font-style:italic;\">Archiviert</span><br/><br/>";
+
+				echo "<table class=\"tb\">";
+				echo "<tr>";
+				echo "<th>Empf&auml;nger</th>";
+				echo "<th>Betreff</th>";
+				echo "<th>Datum</th>";
+				echo "<th>Kategorie</th>";
+				echo "<th>Aktion</th>";
+				echo "</tr>";
+				$types = Report::$types;
+				foreach ($reports as $rid=>$r)
+				{
+					
+					if ($r->userId>0)
+						$uidf = get_user_nick($r->userId);
+					else
+						$uidf = "<i>System</i>";
+
+					if ($r->deleted==1)
+						$style="style=\"color:#f90\"";
+					elseif ($r->read==0)
+						$style="style=\"color:#0f0\"";
+					elseif($r->archived==1)
+						$style="style=\"font-style:italic;\"";
+					else
+						$style="";
+					echo "<tr>";
+					echo "<td $style>".cut_string($uidf,11)."</a></td>";
+					echo "<td $style ".mTT($r->subject,text2html(substr($r, 0, 1000))).">".cut_string($r->subject,50)."</a></td>";
+					echo "<td $style>".date("Y-d-m H:i",$r->timestamp)."</a></td>";
+					echo "<td $style>".$types[$r->type]."</td>";
+					echo "<td>".edit_button("?page=$page&amp;sub=reports&amp;reportedit=edit&amp;report_id=".$rid)."</td>";
+					echo "</tr>";
+				}
+				echo "</table><br/>";
+				echo "<input type=\"button\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" value=\"Neue Suche\" />";
+			}
+			else
+			{
+				echo "Die Suche lieferte keine Resultate!<br/><br/>";
+				echo "<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Zur&uuml;ck\" /><br/><br/>";
+			}
+		}
+
+		elseif (isset($_GET['reportedit']) && $_GET['reportedit']=="edit")
+		{
+			$r = Report::createFactory($_GET['report_id']);
+			
+			if ($r->userId>0)
+				$uidf = get_user_nick($r->userId);
+			else
+				$uidf = "<i>System</i>";
+			
+			echo "<table class=\"tbl\">";
+			echo "<tr><td class=\"tbltitle\" valign=\"top\">ID</td><td class=\"tbldata\">".$r->id."</td></tr>";
+			echo "<tr><td class=\"tbltitle\" valign=\"top\">Empf&auml;nger</td><td class=\"tbldata\">$uidf</td></tr>";
+			echo "<tr><td class=\"tbltitle\" valign=\"top\">Datum</td><td class=\"tbldata\">".date("Y-m-d H:i:s",$r->timestamp)."</td></tr>";
+			echo "<tr><td class=\"tbltitle\" valign=\"top\">Betreff</td><td class=\"tbldata\">".text2html($r->subject)."</td></tr>";
+			echo "<tr><td class=\"tbltitle\" valign=\"top\">Text</td><td class=\"tbldata\">".$r."</td></tr>";
+			echo "<tr><td class=\"tbltitle\" valign=\"top\">Quelltext</td>
+			<td class=\"tbldata\"><textarea rows=\"20\" cols=\"80\" readonly=\"readonly\">".stripslashes($r)."</textarea></td></tr>";
+			echo "<tr><td class=\"tbltitle\" valign=\"top\">Gelesen?</td><td class=\"tbldata\">";
+			switch ($r->read)
+			{
+				case 1: echo "Ja"; break;case 0: echo "Nein";break;
+			}
+			echo "</td></tr>";
+			echo "<tr><td class=\"tbltitle\" valign=\"top\">Gel&ouml;scht?</td><td class=\"tbldata\" id=\"deleted\">";
+			switch ($r->deleted)
+			{
+				case 1: echo "Ja"; break;case 0: echo "Nein";break;
+			}
+			if ($r->deleted) echo "&nbsp;<input type=\"button\" onclick=\"xajax_restoreReport(".$r->id.");\" value=\"Nachricht wiederherstellen\" />";
+			echo "</td></tr>";
+
+			echo "</table><br/><input type=\"button\" onclick=\"document.location='?page=$page&amp;sub=reports&amp;action=searchresults'\" value=\"Zur&uuml;ck zu den Suchergebnissen\" /> &nbsp;
+			<input type=\"button\" onclick=\"document.location='?page=$page&amp;sub=reports'\" value=\"Neue Suche\" />";
+		}
+
+		else
+		{
+			$_SESSION['admin']['message_query']=null;
+			echo "Suchmaske:<br/><br/>";
+			echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">
+					<div style=\"float:left;\">";
+			tableStart("",'auto');
+			echo "		<tr>
+							<th>Empf&auml;nger-ID</th>
+							<td>
+								<input type=\"text\" name=\"user_id\" value=\"\" size=\"4\" maxlength=\"250\" />
+							</td>
+						</tr>
+						<tr>
+							<th>Empf&auml;nger-Nick</th>
+							<td>
+								<input type=\"text\" name=\"user_nick\" id=\"user_nick\" value=\"\" size=\"20\" maxlength=\"250\" autocomplete=\"off\" onkeyup=\"xajax_searchUser(this.value,'message_user_to_nick','citybox1');\" />
+								<br />
+								<div class=\"citybox\" id=\"citybox1\">&nbsp;</div>
+							</td>
+						</tr>
+						<tr>
+							<th>Gegespieler-ID</th>
+							<td>
+								<input type=\"text\" name=\"opponent1_id\" value=\"\" size=\"4\" maxlength=\"250\" />
+							</td>
+						</tr>
+						<tr>
+							<th>Gegespieler-Nick</th>
+							<td>
+								<input type=\"text\" name=\"opponent1_nick\" id=\"opponent1_nick\" value=\"\" size=\"20\" maxlength=\"250\" autocomplete=\"off\" onkeyup=\"xajax_searchUser(this.value,opponent1_nick,citybox1);\" />
+								<br />
+								<div class=\"citybox\" id=\"citybox1\">&nbsp;</div>
+							</td>
+						</tr>
+						<tr>
+							<th>Betreff</th>
+							<td>
+								<input type=\"text\" name=\"subject\" value=\"\" size=\"20\" maxlength=\"250\" />";
+								fieldqueryselbox(subject);
+			echo "			</td>
+						</tr>
+						<tr>
+							<th>Kategorie</th>
+								<td>
+									<select name=\"type\" onchange=\"xajax_showDetail(this.value);\" >
+										<option value=\"\">(egal)</option>";
+			foreach (Report::$types as $k=>$v)
+				echo "					<option value=\"".$k."\">".$v."</option>";
+			
+			echo "					</select>
+								</td>
+							</tr>
+
+							<tr>
+								<th style=\"width:130px;\">Entitiy-ID's</th>
+								<td>
+									<input type=\"text\" name=\"entity1_id\" value=\"\" size=\"4\" maxlength=\"250\" />&nbsp;
+									<input type=\"text\" name=\"entity2_id\" value=\"\" size=\"4\" maxlength=\"250\" />
+								</td>
+							</tr>
+							<tr>
+								<th>Gelesen</th>
+								<td>
+									<input type=\"radio\" name=\"read\" value=\"2\" checked=\"checked\" /> Egal
+									<input type=\"radio\" name=\"read\" value=\"0\" /> Nein
+									<input type=\"radio\" name=\"read\" value=\"1\" /> Ja
+								</td>
+							</tr>
+							<tr>
+								<th>Gel&ouml;scht</th>
+								<td>
+									<input type=\"radio\" name=\"deleted\" value=\"2\" checked=\"checked\" /> Egal
+									<input type=\"radio\" name=\"deleted\" value=\"0\" /> Nein
+									<input type=\"radio\" name=\"deleted\" value=\"1\" /> Ja
+								</td>
+							</tr>
+							<tr>
+								<th>Anzahl Datens&auml;tze</th>
+								<td class=\"tbldata\">
+									<select name=\"report_limit\">";
+			for ($x=100;$x<=2000;$x+=100)
+				echo "					<option value=\"$x\">$x</option>";
+			echo "					</select>
+								</td>
+							</tr>
+
+						</table>
+						</div>
+						<div id=\"detail\" style=\"display:none;\">
+						</div>
+						<br style=\"clear:both\" />
+						<input type=\"submit\" class=\"button\" name=\"user_search\" value=\"Suche starten\" />
+					</form>";
+
+			$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM reports;"));
+			echo "<br/>Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.";
+		}
+
+	}
 
 
 /************************
@@ -175,6 +472,7 @@
 ************************/
 	else
 	{
+		echo "<h1>Nachrichten</h1>";
 		//
 		// Suchresultate
 		//
