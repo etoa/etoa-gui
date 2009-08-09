@@ -44,6 +44,7 @@ TARGET_LINK_LIBRARIES( etoad
 	ship
 	tech
   ${Boost_LIBRARIES}
+  ${MYSQLCLIENT_LIBRARY}
   ${MYSQLPP_LIBRARY}
 )
 
