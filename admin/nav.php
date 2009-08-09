@@ -308,6 +308,10 @@
 	$navmenu['Nachrichten']['Nachricht senden']['page']="messages";
 	$navmenu['Nachrichten']['Nachricht senden']['sub']="sendmsg";
 	$navmenu['Nachrichten']['Nachricht senden']['level']=0;
+	
+	$navmenu['Nachrichten']['Berichte verwalten']['page']="messages";
+	$navmenu['Nachrichten']['Berichte verwalten']['sub']="reports";
+	$navmenu['Nachrichten']['Berichte verwalten']['level']=1;
 
 	$navmenu['Chat']['Chat']['page']="chat";
 	$navmenu['Chat']['Chat']['sub']="";

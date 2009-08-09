@@ -88,6 +88,7 @@ class UserSession extends Session
 					$this->time_login = $t;
 					$this->time_action = $t;
 					$this->registerSession();
+					$this->bot_count = 0;
 					$this->firstView = true;
 					return true;
 				}
@@ -153,6 +154,18 @@ class UserSession extends Session
 				if ($this->time_action + $cfg->user_timeout->v > $t)
 				{
 					$allows = false;
+					$bot = false;
+					if ($this->last_span >= $t-$this->time_action-1 && $this->last_span <= $t-$this->time_action+1)
+					{
+						$this->bot_count++;
+						if ($this->bot_count>$cfg->bot_max_count->v) $bot = true;
+					}
+					else
+					{
+						$this->last_span = $t-$this->time_action;
+						$this->bot_count=0;
+					}
+					
 					if ($this->sittingActive)
 					{
 						if (time() < $this->sittingUntil)
@@ -175,16 +188,27 @@ class UserSession extends Session
 						$allows = true;
 					if ($allows)
 					{
-						dbquery("
-						UPDATE
-							`".self::tableSession."`
-						SET
-							time_action=".$t."
-						WHERE
-							id='".session_id()."'
-						;");
-						$this->time_action = $t;
-						return true;
+						if (!$bot)
+						{
+							dbquery("
+							UPDATE
+								`".self::tableSession."`
+							SET
+								time_action=".$t.",
+								bot_count='".$this->bot_count."',
+								last_span='".$this->last_span."'
+								
+							WHERE
+								id='".session_id()."'
+							;");
+							
+							$this->time_action = $t;
+							return true;
+						}
+						else
+						{
+							$this->lastError = "Die Verwendung von Bots ist nichtgestattet!";
+						}
 					}
 					else
 					{

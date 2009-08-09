@@ -1266,7 +1266,7 @@ function showAttackAbuseLogs($args=null,$limit=-1,$load=true)
 			$args['searcheuser'] = get_user_id($args['searcheuser']);
 		}
 		
-		$sql3.= " WHERE landtime<='".$landtime."' AND landtime>'".($landtime-3600*24)."' ";
+		$sql3.= " WHERE fleet_weapon>0 AND landtime<='".$landtime."' AND landtime>'".($landtime-3600*24)."' ";
 		if ($action!="")
 		{
 			$sql3.=" AND action='".$action."' ";

@@ -43,6 +43,8 @@ abstract class Report
 	protected $subject;
 	protected $content;
 	protected $read = false;
+	protected $deleted = false;	
+	protected $archived = false;	
 	protected $userId=0;
 	protected $allianceId=0;
 	protected $entity1Id=0;
@@ -83,6 +85,7 @@ abstract class Report
 			$this->timestamp = $arr['timestamp'];
 			$this->type = $arr['type'];
 			$this->read = $arr['read']==1;
+			$this->deleted = $arr['deleted']==1;
 			$this->userId = $arr['user_id'];
 			$this->allianceId = $arr['alliance_id'];
 			$this->subject = $arr['subject'];
@@ -123,6 +126,12 @@ abstract class Report
 			if (isset($this->$field))
 			{
 				if ($field == "read")
+				{
+					$this->$field = $value;
+					dbquery("UPDATE reports SET `".$field."`=".($value ? 1:0)." WHERE id=$this->id;");
+					return true;
+				}
+				elseif ($field == "deleted")
 				{
 					$this->$field = $value;
 					dbquery("UPDATE reports SET `".$field."`=".($value ? 1:0)." WHERE id=$this->id;");
@@ -218,25 +227,26 @@ abstract class Report
 	 * @param string $order ORDER query string
 	 * @return array Array containing a list of reports
 	 */
-	static function & find($where=null,$order=null,$limit="",$count=0)
+	static function & find($where=null,$order=null,$limit="",$count=0, $admin=false,$join="")
 	{
 		if ($order==null)
 		$order = " timestamp DESC ";
-
+		
+		$wheres	= $admin ? "WHERE 1 " : " WHERE deleted=0 ";
+		
 		if (is_array($where))
 		{
-			$wheres	= " WHERE 1 ";
 			foreach ($where as $k=>$v)
 			{
 				$wheres.= " AND `".$k."`='".$v."'";
 			}
 		}
-		else
-		$wheres = "";
+		elseif ($admin)
+			$wheres .= $where;
 
 		if ($count>0)
 		{
-			$sql = "SELECT COUNT(id) FROM reports $wheres ORDER BY $order";
+			$sql = "SELECT COUNT(id) FROM reports $join $wheres ORDER BY $order";
 			if ($limit != "" || $limit>0)
 				$sql.=" LIMIT $limit";
 			$res = dbquery($sql);
@@ -244,7 +254,8 @@ abstract class Report
 			return $arr[0];
 		}
 
-		$sql = "SELECT * FROM reports $wheres ORDER BY $order";
+		$sql = "SELECT * FROM reports $join $wheres ORDER BY $order";
+		
 		if ($limit != "" || $limit>0)
 			$sql.=" LIMIT $limit";
 		$res = dbquery($sql);
@@ -312,7 +323,7 @@ abstract class Report
 		 */
 		static function countNew($userId)
 		{
-			$res = dbquery("SELECT COUNT(id) FROM reports WHERE user_id=".intval($userId)." AND `read`=0;");
+			$res = dbquery("SELECT COUNT(id) FROM reports WHERE user_id=".intval($userId)." AND `read`=0 AND `deleted`=0;");
 			$arr = mysql_fetch_row($res);
 			return $arr[0];
 		}

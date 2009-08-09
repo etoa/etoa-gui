@@ -151,7 +151,11 @@ class MarketReport extends Report
 				if ($this->content !="")
 					echo $this->content."<br/><br/>";
 				echo "<table class=\"tb\" style=\"width:auto;margin:5px;\">";
-				echo "<tr><th style=\"width:100px;\">Rohstoff:</th><th>Angebot:</th><th>Preis:</th></tr>";
+				echo "<tr>
+				<th style=\"width:100px;\">Rohstoff:</th>
+				<th>Angebot:</th>
+				<th>Preis:</th>
+				</tr>";
 				foreach ($resNames as $k=>$v)
 				{
 					if ($this->resSell[$k] + $this->resBuy[$k]>0)
@@ -200,7 +204,10 @@ class MarketReport extends Report
 				if ($this->content !="")
 					echo $this->content."<br/><br/>";
 				echo "<table class=\"tb\" style=\"width:auto;margin:5px;\">";
-				echo "<tr><th style=\"width:100px;\">Rohstoff:</th><th>Angebot:</th><th>Preis:</th></tr>";
+				echo "<tr>
+				<th style=\"width:100px;\">Rohstoff:</th>
+				<th>Angebot:</th>
+				<th>Preis:</th></tr>";
 				foreach ($resNames as $k=>$v)
 				{
 					if ($this->resSell[$k] + $this->resBuy[$k]>0)
@@ -224,7 +231,11 @@ class MarketReport extends Report
 				if ($this->content !="")
 					echo $this->content."<br/><br/>";
 				echo "<table class=\"tb\" style=\"width:auto;margin:5px;\">";
-				echo "<tr><th style=\"width:100px;\">Rohstoff:</th><th>Angebot:</th><th>Preis:</th></tr>";
+				echo "<tr>
+				<th style=\"width:100px;\">Rohstoff:</th>
+				<th>Angebot:</th>
+				<th>Preis:</th>
+				</tr>";
 				foreach ($resNames as $k=>$v)
 				{
 					if ($this->resSell[$k] + $this->resBuy[$k]>0)
@@ -250,7 +261,10 @@ class MarketReport extends Report
 				echo "".nf($this->shipCount)." <b>".$ts."</b> <br/><br/> ";
 				echo "zu einem Preis von: <br/><br/>";
 				echo "<table class=\"tb\" style=\"width:auto;margin:5px;\">";
-				echo "<tr><th style=\"width:100px;\">Rohstoff:</th><th>Preis:</th></tr>";
+				echo "<tr>
+				<th style=\"width:100px;\">Rohstoff:</th>
+				<th>Preis:</th>
+				</tr>";
 				foreach ($resNames as $k=>$v)
 				{
 					if ($this->resSell[$k] + $this->resBuy[$k]>0)

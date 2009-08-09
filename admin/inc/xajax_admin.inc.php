@@ -37,6 +37,11 @@
 	{
 		require_once("inc/xajax/ships.xajax.php");
 	}
+	
+	if (isset($page) && $page=="messages")
+	{
+		require_once("inc/xajax/messages.xajax.php");
+	}
 
 	if (isset($sub) && $sub=="defaultitems")
 	{
