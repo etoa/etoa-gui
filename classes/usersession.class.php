@@ -155,7 +155,7 @@ class UserSession extends Session
 				{
 					$allows = false;
 					$bot = false;
-					if ($this->last_span >= $t-$this->time_action-1 && $this->last_span <= $t-$this->time_action+1)
+					if (($t-$this->time_action)>=5 && ($this->last_span >= $t-$this->time_action-1 && $this->last_span <= $t-$this->time_action+1))
 					{
 						$this->bot_count++;
 						if ($this->bot_count>$cfg->bot_max_count->v) $bot = true;
