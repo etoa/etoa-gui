@@ -209,13 +209,13 @@
 		}
 	}
 	
-	double User::getTechBonus(std::string tech) {
+	double User::getTechBonus(unsigned int tech) {
 		if (!this->techsLoaded)
 			this->loadTechs();
 		return techs[tech]/10.0;
 	}
 	
-	unsigned int User::getTechLevel(std::string tech) {
+	unsigned int User::getTechLevel(unsigned int tech) {
 		if (!this->techsLoaded)
 			this->loadTechs();
 		return techs[tech];
@@ -303,13 +303,11 @@
 				
 				if (tSize > 0) {
 					mysqlpp::Row tRow;
-					DataHandler &DataHandler = DataHandler::instance();
 					for (int i=0; i<tSize; i++) {
 						tRow = tRes.at(i);
-						TechData::TechData *data = DataHandler.getTechById((int)tRow["techlist_tech_id"]);
-						this->techs[data->getName()] = (int)tRow["techlist_current_level"];
+						this->techs[(int)tRow["techlist_tech_id"]] = (int)tRow["techlist_current_level"];
 						if ((int)tRow["techlist_build_type"]==3) 
-							techAtWork = data->getName();
+							techAtWork = (int)tRow["techlist_tech_id"];
 					}
 				}
 			}
@@ -321,13 +319,13 @@
 			this->loadTechs();
 		
 		DataHandler &DataHandler = DataHandler::instance();
-		std::map<std::string,int> avaiableTechs;
+		std::map<int,int> avaiableTechs;
 		
-		std::map<std::string,int>::iterator it;
+		std::map<int,int>::iterator it;
 		for ( it=this->techs.begin() ; it != this->techs.end(); it++ ) {
 			if ((unsigned int)(*it).second && (unsigned int)(*it).second < victim->getTechLevel((*it).first)) {
 				if ((*it).first!=techAtWork) {
-					TechData::TechData *data = DataHandler.getTechByName((*it).first);
+					TechData::TechData *data = DataHandler.getTechById((*it).first);
 					if (data->getStealable())
 						avaiableTechs[(*it).first] = victim->getTechLevel((*it).first);
 				}
@@ -338,7 +336,6 @@
 			int tech = rand() % avaiableTechs.size();
 			for ( it=avaiableTechs.begin() ; it != avaiableTechs.end(); it++ ) {
 				if (!tech) {
-					TechData::TechData *data = DataHandler.getTechByName((*it).first);
 					My &my = My::instance();
 					mysqlpp::Connection *con_ = my.get();
 					
@@ -349,12 +346,12 @@
 						<< "	techlist_current_level='" << (*it).second << "' "
 						<< "WHERE "
 						<< "	techlist_user_id='" << this->userId << "' "
-						<< "	AND techlist_tech_id='" << data->getId() << "' "
+						<< "	AND techlist_tech_id='" << (*it).first << "' "
 						<< "LIMIT 1;";
 					query.store();
 					query.reset();
 					
-					return ((*it).first + " bis zum Level " + etoa::d2s((*it).second) + ".");
+					return (etoa::d2s((*it).first) + " bis zum Level " + etoa::d2s((*it).second) + ".");
 				}
 				tech--;
 			}
@@ -436,17 +433,14 @@
 	std::string User::getTechString() {
 		if (!this->techsLoaded)
 			this->loadTechs();
-		std::string techString = "[b]TECHNOLOGIEN[/b]:\n";
+		std::string techString = "";
 		if (techs.size()) {
-			techString += "[table]";
-			std::map<std::string,int>::iterator it;
+			std::map<int,int>::iterator it;
 			for ( it=techs.begin() ; it != techs.end(); it++ )
-				techString += "[tr][td]" + (*it).first + "[/td][td]" + etoa::d2s((*it).second) + "[/td][/tr]";
-			
-			techString += "[/table]";
+				techString += etoa::d2s((*it).first) + ":" + etoa::d2s((*it).second) + ",";
 		}
 		else
-			techString += "[i]Nichts vorhanden[/i]\n";
+			techString += "0";
 		
 		return techString;
 	}

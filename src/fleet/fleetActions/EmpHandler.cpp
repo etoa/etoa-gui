@@ -24,7 +24,7 @@ namespace emp
 			// Precheck action==possible?
 			if (this->f->actionIsAllowed()) {
 				this->shipCnt = this->f->getActionCount();
-				this->tLevel = this->f->fleetUser->getTechLevel("EMP-Technik");
+				this->tLevel = this->f->fleetUser->getTechLevel((unsigned int)config.idget("EMP_TECH_ID"));
 				
 				// Calculate the possibility
 				this->one = rand() % 101;

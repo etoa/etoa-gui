@@ -9,6 +9,8 @@
 #include "../../util/Functions.h"
 #include "../../config/ConfigHandler.h"
 
+#include "../../reports/SpyReport.h"
+
 /**
 * Handles Spy....
 * 
@@ -38,7 +40,7 @@ namespace spy
 		* Different spy defense values
 		**/
 		double spyDefense, spyDefense1, spyDefense2, tarnDefense;
-		bool defended, info, support;
+		bool support;
 		
 		/**
 		* Something like a go or not variable

@@ -10,30 +10,34 @@ namespace transport
 		* Fleet-Action: Transport
 		*/
 		
-		Config &config = Config::instance();
+		OtherReport *report = new OtherReport(this->f->getUserId(),
+											  this->f->getEntityTo(),
+											  this->f->getEntityFrom(),
+											  this->f->getLandtime(),
+											  this->f->getId(),
+											  this->f->getAction(true));
+		report->setSubtype("transport");
+		report->setRes(floor(this->f->getResMetal()),
+					   floor(this->f->getResCrystal()),
+					   floor(this->f->getResPlastic()),
+					   floor(this->f->getResFuel()),floor(this->f->getResFood()),
+					   floor(this->f->getResPeople()));
+		
+		report->setAction(this->f->getAction(true));
+		report->setStatus(this->f->getStatus());
+		
+		// If the planet user is not the same as the fleet user, send him a message too
+		if (this->f->getUserId() != this->targetEntity->getUserId()) {
+			report->addUser(this->targetEntity->getUserId());
+			
+			this->actionLog->addText("Action succeed: Transport 2 User");
+		}
+		
+		delete report;
 		
 		// Unload the resources
 		this->fleetLand(2);
 		
-		this->actionMessage->addType((int)config.idget("SHIP_MISC_MSG_CAT_ID"));
-		
-		this->actionMessage->addText("[B]TRANSPORT GELANDET[/B]",2);
-		this->actionMessage->addText("Eine Flotte vom Planeten [b]",1);
-		this->actionMessage->addText(this->startEntity->getCoords(),1);
-		this->actionMessage->addText("[/b]hat ihr Ziel erreicht!",1);
-		this->actionMessage->addText("[b]Planet:[/b] ");
-		this->actionMessage->addText(this->targetEntity->getCoords(),1);
-		this->actionMessage->addText("[b]Zeit:[/b] ");
-		this->actionMessage->addText(this->f->getLandtimeString(),1);
-		
-		this->actionMessage->addSubject("Transport angekommen");
-		
-		// If the planet user is not the same as the fleet user, send him a message too
-		if (this->f->getUserId() != this->targetEntity->getUserId()) {
-			this->actionMessage->addUserId(this->targetEntity->getUserId());
-			
-			this->actionLog->addText("Action succeed: Transport 2 User");
-		}
 		// Send fleet back home and delete the resources tonnage
 		this->f->setReturn();
 	}

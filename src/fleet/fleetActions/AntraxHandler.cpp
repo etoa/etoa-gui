@@ -23,7 +23,7 @@ namespace antrax
 			
 			// Precheck action==possible?
 			if (this->f->actionIsAllowed()) {
-				this->tLevel = this->f->fleetUser->getTechLevel("Gifttechnologie");
+				this->tLevel = this->f->fleetUser->getTechLevel((unsigned int)config.idget("POISON_TECH_ID"));
 				this->shipCnt = this->f->getActionCount();
 				
 				// Calculate the chance 

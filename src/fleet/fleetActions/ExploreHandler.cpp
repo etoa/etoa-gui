@@ -10,26 +10,23 @@ namespace explore
 		* Fleet-Action: Explore the univserse
 		*/
 		
-		Config &config = Config::instance();
-		
-		this->actionMessage->addType((int)config.idget("SHIP_MISC_MSG_CAT_ID"));
-		
 		// Precheck action==possible?
 		if (this->f->actionIsAllowed()) {
 			
 			this->f->fleetUser->setDiscovered(this->targetEntity->getAbsX(),this->targetEntity->getAbsY());
 			
-			this->actionMessage->addText("Eine Flotte vom Planeten [b]",1);
-			this->actionMessage->addText(this->startEntity->getCoords(),1);
-			this->actionMessage->addText("[/b]hat das Ziel [b]",1);
-			this->actionMessage->addText(this->targetEntity->getCoords(),1);
-			this->actionMessage->addText("[/b]um [b]");
-			this->actionMessage->addText(this->f->getLandtimeString(),1);
-			this->actionMessage->addText("[/b]erkundet.");
+			this->actionMessage->dontSend();
 			
-			this->actionMessage->addSubject("Erkundung");
+			ExploreReport *report = new ExploreReport(this->f->getUserId(),
+													  this->f->getEntityTo(),
+													  this->f->getEntityFrom(),
+													  this->f->getLandtime());
+			delete report;
 		}	
 		else {
+			Config &config = Config::instance();
+			
+			this->actionMessage->addType((int)config.idget("SHIP_MISC_MSG_CAT_ID"));
 			this->actionMessage->addText("Eine Flotte vom Planeten [b]",1);
 			this->actionMessage->addText(this->startEntity->getCoords(),1);
 			this->actionMessage->addText("versuchte das Ziel zu erkunden. Leider war kein Schiff mehr in der Flotte, welches die Aktion ausführen konnte, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!");

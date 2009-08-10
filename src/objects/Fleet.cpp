@@ -1167,29 +1167,23 @@
 			}
 		}
 		std::string shipString = "";
-
-		DataHandler &DataHandler = DataHandler::instance();
+		
 		std::map<int,int>::iterator st;
 		for ( st=specialShips.begin() ; st != specialShips.end(); st++ ) {
-			ShipData::ShipData *data = DataHandler.getShipById((*st).first);
-			shipString += "[tr][td]"
-						+ data->getName()
-						+ "[/td][td]"
-						+ etoa::nf(etoa::d2s((*st).second))
-						+ "[/td][/tr]";
+			shipString += etoa::d2s((*st).first)
+						+ ":"
+						+ etoa::d2s((*st).second)
+						+ ",";
 		}
 		for ( st=ships.begin() ; st != ships.end(); st++ ) {
-			ShipData::ShipData *data = DataHandler.getShipById((*st).first);
-			shipString += "[tr][td]"
-						+ data->getName()
-						+ "[/td][td]"
-						+ etoa::nf(etoa::d2s((*st).second))
-						+ "[/td][/tr]";
+			shipString += etoa::d2s((*st).first)
+						+ ":"
+						+ etoa::d2s((*st).second)
+						+ ",";
 		}
 		if (shipString.length()<1)
-			shipString = "[i]Nichts vorhanden![/i]\n";
-		else
-			shipString = "[table]" + shipString + "[/table]";
+			shipString = "0";
+		
 		return shipString;
 
 	}
@@ -1471,7 +1465,7 @@
 				bonus += (*it)->getSBonusWeapon() * data->getBonusWeapon();
 			}
 		}
-		bonus += this->fleetUser->getTechBonus("Waffentechnik") + this->allianceWeapon/100.0;
+		bonus += this->fleetUser->getTechBonus((unsigned int)Config::instance().idget("WEAPON_TECH_ID")) + this->allianceWeapon/100.0;
 		return bonus;
 
 	}
@@ -1486,7 +1480,7 @@
 				bonus += (*it)->getSBonusShield() * data->getBonusShield();
 			}
 		}
-		bonus += this->fleetUser->getTechBonus("Schutzschilder") + this->allianceShield/100.0;
+		bonus += this->fleetUser->getTechBonus((unsigned int)Config::instance().idget("SHIELD_TECH_ID")) + this->allianceShield/100.0;
 		return bonus;
 	}
 
@@ -1500,7 +1494,7 @@
 				bonus += (*it)->getSBonusStructure() * data->getBonusStructure();
 			}
 		}
-		bonus += this->fleetUser->getTechBonus("Panzerung") + this->allianceStructure/100.0;
+		bonus += this->fleetUser->getTechBonus((unsigned int)Config::instance().idget("STRUCTURE_TECH_ID")) + this->allianceStructure/100.0;
 		return bonus;
 	}
 
@@ -1514,7 +1508,7 @@
 				bonus += (*it)->getSBonusHeal() * data->getBonusHeal();
 			}
 		}
-		bonus += this->fleetUser->getTechBonus("Regenatechnik");
+		bonus += this->fleetUser->getTechBonus((unsigned int)Config::instance().idget("REGENA_TECH_ID"));
 		return bonus;
 	}
 

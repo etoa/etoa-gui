@@ -984,54 +984,44 @@
 			}
 		}
 		std::string shipString = "";
-
-		DataHandler &DataHandler = DataHandler::instance();
+		
 		std::map<int,int>::iterator st;
 		for ( st=specialShips.begin() ; st != specialShips.end(); st++ ) {
-			ShipData::ShipData *data = DataHandler.getShipById((*st).first);
-			shipString += "[tr][td]"
-						+ data->getName()
-						+ "[/td][td]"
-						+ etoa::nf(etoa::d2s((*st).second))
-						+ "[/td][/tr]";
+			shipString += etoa::d2s((*st).second)
+						+ ":"
+						+ etoa::d2s((*st).second)
+						+ ",";
 		}
 		for ( st=ships.begin() ; st != ships.end(); st++ ) {
-			ShipData::ShipData *data = DataHandler.getShipById((*st).first);
-			shipString += "[tr][td]"
-						+ data->getName()
-						+ "[/td][td]"
-						+ etoa::nf(etoa::d2s((*st).second))
-						+ "[/td][/tr]";
+			shipString += etoa::d2s((*st).second)
+						+ ":"
+						+ etoa::d2s((*st).second)
+						+ ",";
 		}
 		if (shipString.length()<1)
-			shipString = "[i]Nichts vorhanden![/i]\n";
-		else
-			shipString = "[table]" + shipString + "[/table]";
+			shipString = "0";
+		
 		return shipString;
 	}
 
 	std::string Entity::getDefString(bool rebuild) {
 		this->loadDef();
 		std::string defString = "";
-		DataHandler &DataHandler = DataHandler::instance();
+		
 		std::vector<Object*>::iterator ot;
 		for (ot = this->def.begin() ; ot < this->def.end(); ot++) {
-			DefData::DefData *data = DataHandler.getDefById((*ot)->getTypeId());
-			defString += "[tr][td]"
-						+ data->getName()
-						+ "[/td][td] "
-						+ etoa::nf(etoa::d2s((*ot)->getCount()));
+			defString += (*ot)->getTypeId()
+						+ ":"
+						+ etoa::d2s((*ot)->getCount());
 			if (rebuild)
-				defString += " (+"
-							+ etoa::nf(etoa::d2s((*ot)->getRebuildCount()))
-							+ ")";
+				defString += ":"
+						+ etoa::d2s((*ot)->getRebuildCount());
 
-			defString += "[/td][/tr]";
+			defString += ",";
 		}
 		if (defString.length()<1)
-			defString = "[i]Nichts vorhanden![/i]\n";
-		else
-			defString = "[table]" + defString + "[/table]";
+			defString = "0";
+		
 		return defString;
 	}
 
@@ -1376,7 +1366,7 @@
 				bonus += (*it)->getSBonusWeapon() * data->getBonusWeapon();
 			}
 		}
-		bonus += this->entityUser->getTechBonus("Waffentechnik");
+		bonus += this->entityUser->getTechBonus((unsigned int)Config::instance().idget("WEAPON_TECH_ID"));
 		return bonus;
 	}
 
@@ -1390,7 +1380,7 @@
 				bonus += (*it)->getSBonusShield() * data->getBonusShield();
 			}
 		}
-		bonus += this->entityUser->getTechBonus("Schutzschilder");
+		bonus += this->entityUser->getTechBonus((unsigned int)Config::instance().idget("SHIELD_TECH_ID"));
 		return bonus;
 	}
 
@@ -1404,7 +1394,7 @@
 				bonus += (*it)->getSBonusStructure() * data->getBonusStructure();
 			}
 		}
-		bonus += this->entityUser->getTechBonus("Panzerung");
+		bonus += this->entityUser->getTechBonus((unsigned int)Config::instance().idget("STRUCTURE_TECH_ID"));
 		return bonus;
 	}
 
@@ -1418,7 +1408,7 @@
 				bonus += (*it)->getSBonusHeal() * data->getBonusHeal();
 			}
 		}
-		bonus += this->entityUser->getTechBonus("Regenatechnik");
+		bonus += this->entityUser->getTechBonus((unsigned int)Config::instance().idget("REGENA_TECH_ID"));
 		return bonus;
 	}
 
@@ -1428,16 +1418,16 @@
 			mysqlpp::Connection *con = my.get();
 
 			mysqlpp::Query query = con->query();
-			query << "SELECT ";
-			query << "	buildlist_building_id, ";
-			query << "	buildlist_current_level, ";
-			query << "	buildlist_build_type ";
-			query << "FROM ";
-			query << "	buildlist ";
-			query << "WHERE ";
-			query << "	buildlist_entity_id='" << this->id << "' ";
-			query << "	AND buildlist_current_level>'0' ";
-			query << "	AND buildlist_user_id='" << this->userId << "';";
+			query << "SELECT "
+				<< "	buildlist_building_id, "
+				<< "	buildlist_current_level, "
+				<< "	buildlist_build_type "
+				<< "FROM "
+				<< "	buildlist "
+				<< "WHERE "
+				<< "	buildlist_entity_id='" << this->id << "' "
+				<< "	AND buildlist_current_level>'0' "
+				<< "	AND buildlist_user_id='" << this->userId << "';";
 			mysqlpp::Result bRes = query.store();
 			query.reset();
 
@@ -1447,13 +1437,11 @@
 
 				if (bSize > 0) {
 					mysqlpp::Row bRow;
-					DataHandler &DataHandler = DataHandler::instance();
 					for (int i=0; i<bSize; i++) {
 						bRow = bRes.at(i);
-						BuildingData::BuildingData *data = DataHandler.getBuildingById((int)bRow["buildlist_building_id"]);
-						buildings[data->getName()] = (int)bRow["buildlist_current_level"];
+						buildings[(int)bRow["buildlist_building_id"]] = (int)bRow["buildlist_current_level"];
 						if ((int)bRow["buildlist_build_type"]>0)
-							this->buildingAtWork = data->getName();
+							this->buildingAtWork = (int)bRow["buildlist_building_id"];
 					}
 				}
 			}
@@ -1467,11 +1455,9 @@
 		if (this->buildings.size()) {
 			int building = rand() % this->buildings.size();
 
-			std::map<std::string,int>::iterator it;
+			std::map<int,int>::iterator it;
 			for ( it=buildings.begin() ; it != buildings.end(); it++ ) {
 				if (!building) {
-					DataHandler &DataHandler = DataHandler::instance();
-					BuildingData::BuildingData *data = DataHandler.getBuildingByName((*it).first);
 					My &my = My::instance();
 					mysqlpp::Connection *con_ = my.get();
 
@@ -1484,12 +1470,12 @@
 					query << "	buildlist_current_level='" << level  << "' ";
 					query << "WHERE ";
 					query << "	buildlist_user_id='" << this->userId << "' ";
-					query << "	AND buildlist_building_id='" << data->getId() << "' ";
+					query << "	AND buildlist_building_id='" << (*it).first << "' ";
 					query << "LIMIT 1;";
 					query.store();
 					query.reset();
 
-					return ("[/b]hat das Gebäude " + (*it).first + " des Planeten [b]" + this->getCoords() + "[/b] um ein Level auf Stuffe " + etoa::d2s((*it).second) + " zurück gesetzt.");
+					return ("[/b]hat das Gebäude " + etoa::d2s((*it).first) + " des Planeten [b]" + this->getCoords() + "[/b] um ein Level auf Stuffe " + etoa::d2s((*it).second) + " zurück gesetzt.");
 				}
 				building--;
 			}
@@ -1562,18 +1548,19 @@
 	std::string Entity::getBuildingString() {
 		if (!this->buildingsLoaded)
 			this->loadBuildings();
-		std::string buildingString = "[b]GEBÄUDE:[/B]\n";
-
+		
+		std::string buildingString = "";
+		
 		if (buildings.size()) {
-			buildingString += "[table]";
-			std::map<std::string,int>::iterator it;
+			std::map<int,int>::iterator it;
 				for ( it=buildings.begin() ; it != buildings.end(); it++ )
-					buildingString += "[tr][td]" + (*it).first + "[/td][td]" + etoa::d2s((*it).second) + "[/td][/tr]";
-
-			buildingString += "[/table]";
+					buildingString +=  etoa::d2s((*it).first)
+								+ ":"
+								+ etoa::d2s((*it).second)
+								+ ",";
 		}
 		else
-			buildingString += "[i]Nichts vorhanden[/i]\n";
+			buildingString += "0";
 
 		return buildingString;
 	}

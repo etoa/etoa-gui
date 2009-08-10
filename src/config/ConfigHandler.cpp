@@ -139,7 +139,8 @@
 		idConfig["SHIELD_TECH_ID"] = 10;
 		idConfig["WEAPON_TECH_ID"] = 8;
 		idConfig["BOMB_TECH_ID"] = 15;
-		idConfig["Gifttechnologie"] = 18;
+		idConfig["EMP_TECH_ID"] = 17;
+		idConfig["POISON_TECH_ID"] = 18;
 		idConfig["REGENA_TECH_ID"] = 19;
 		
 		//->Gebäude

@@ -5,6 +5,8 @@
 #include "FleetAction.h"
 #include "../../config/ConfigHandler.h"
 
+#include "../../reports/SpyReport.h"
+
 /**
 * Handles Analyze....
 * You can analyze an entity to find out the resources

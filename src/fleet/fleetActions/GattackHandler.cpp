@@ -23,7 +23,7 @@ namespace gattack
 			// Precheck action==possible? 
 			if (this->f->actionIsAllowed()) {
 				this->shipCnt = this->f->getActionCount();
-				this->tLevel = this->f->fleetUser->getTechLevel("Gifttechnologie");
+				this->tLevel = this->f->fleetUser->getTechLevel((unsigned int)config.idget("POISON_TECH_ID"));
 				
 				// Calculate the chance 
 				this->one = rand() % 101;

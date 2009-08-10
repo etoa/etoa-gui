@@ -22,7 +22,7 @@ namespace bombard
 			
 			// Precheck action==possible?
 			if (this->f->actionIsAllowed()) {
-				this->tLevel = this->f->fleetUser->getTechLevel("Bombentechnik");
+				this->tLevel = this->f->fleetUser->getTechLevel((unsigned int)config.idget("BOMB_TECH_ID"));
 				this->shipCnt = this->f->getActionCount(true);
 				
 				// 10% + Bonis, dass Bombardierung erfolgreich

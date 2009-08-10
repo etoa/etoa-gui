@@ -96,7 +96,7 @@ class Entity
 			this->allianceTechsLoaded = false;
 			this->buildingsLoaded = false;
 			
-			this->buildingAtWork = "";
+			this->buildingAtWork = 0;
 			this->actionName = "";
 			this->userId = 0;
 		}
@@ -231,7 +231,7 @@ class Entity
 		std::vector<Object*> specialObjects;
 		std::vector<Object*> def;
 		std::vector<Fleet*> fleets;
-		std::map<std::string, int> buildings;
+		std::map<int, int> buildings;
 		
 		double resMetal, resCrystal, resPlastic, resFuel, resFood, resPower, resPeople;
 		double initResMetal, initResCrystal, initResPlastic, initResFuel, initResFood, initResPower, initResPeople;
@@ -244,7 +244,7 @@ class Entity
 		std::string coordsString;
 		std::string actionName;
 		
-		std::string buildingAtWork;
+		int buildingAtWork;
 		
 		bool userMain;
 		bool showCoords, coordsLoaded;

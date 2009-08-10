@@ -8,6 +8,7 @@
 
 #include "../../MysqlHandler.h"
 #include "../../util/Functions.h"
+#include "../../reports/OtherReport.h"
 #include "../../objects/User.h"
 #include "../../objects/Fleet.h"
 #include "../../objects/Message.h"

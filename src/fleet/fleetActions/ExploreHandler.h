@@ -5,6 +5,8 @@
 #include "FleetAction.h"
 #include "../../config/ConfigHandler.h"
 
+#include "../../reports/ExploreReport.h"
+
 /**
 * Handles explorer....
 * Important to discover the universe and to get some quest's

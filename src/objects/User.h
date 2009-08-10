@@ -30,7 +30,7 @@ class User
 			
 			this->specialist= NULL;
 			
-			this->techAtWork = "";
+			this->techAtWork = 0;
 		}
 		
 		~User() { }
@@ -54,8 +54,8 @@ class User
 		
 		bool getPropertiesReturnMsg();
 		
-		double getTechBonus(std::string tech);
-		unsigned int getTechLevel(std::string tech);
+		double getTechBonus(unsigned int tech);
+		unsigned int getTechLevel(unsigned int tech);
 		
 		std::string stealTech(User* victim);
 		
@@ -73,8 +73,8 @@ class User
 		
 		SpecialistData* specialist;
 		
-		std::map<std::string, int> techs;
-		std::string techAtWork;
+		std::map<int, int> techs;
+		unsigned int techAtWork;
 		bool dataLoaded, techsLoaded;
 		void loadData();
 		void loadTechs();
