@@ -6,104 +6,60 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 	Config &config = Config::instance();
 	std::time_t time = std::time(0);
 
-	message->addType((int)config.idget("SHIP_WAR_MSG_CAT_ID"));
-
     // BEGIN SKRIPT //
 	alliancesHaveWar = 0;
+	
+	BattleReport * report = new BattleReport(fleet->getUserId(),
+											 entity->getUserId(),
+											 fleet->getEntityTo(),
+											 fleet->getEntityFrom(),
+											 fleet->getLandtime(),
+											 fleet->getId());
+	std::string users = fleet->getUserIds();
+	report->setUser(users);
+	size_t found=users.find_first_of(",");
+	while (found!=std::string::npos) {
+		users = users.substr(found+1);
+		found=users.find_first_of(",");
+		report->addUser((int)etoa::s2d(users.substr(0,found)));
+	}
+	
+	users = entity->getUserIds();
+	report->setEntityUser(users);
+	found=users.find_first_of(",");
+	while (found!=std::string::npos) {
+		users = users.substr(found+1);
+		found=users.find_first_of(",");
+		report->addUser((int)etoa::s2d(users.substr(0,found)));
+	}
 
    	// Kampf abbrechen falls User gleich 0
-	if (entity->getUserId()==0) {
-		message->addText("[b]KAMPFBERICHT[/b]",1);
-		message->addText("vom Planeten ",0);
-		message->addText(entity->getCoords(),1);
-		message->addText("[b]Zeit:[/b] ");
-		message->addText(fleet->getLandtimeString(),2);
-		message->addText("[b]Angreifer:[/b] ");
-		message->addText(fleet->getUserNicks(),1);
-		message->addText("[b]Verteidiger:[b] ");
-		message->addText("Niemand");
-		message->addText("Der Kampf wurde abgebrochen da der Verteidiger nicht mehr existiert!");
+	if (entity->getUserId()==0
+		|| (fleet->getLeaderId() > 0 && (fleet->fleetUser->getAllianceId()==entity->getUser()->getAllianceId() &&fleet->fleetUser->getAllianceId()!=0))
+		|| (fleet->getLeaderId() == 0 && fleet->getUserId()==entity->getUserId())) {
+		report->setSubtype("battlefailed");	
 		
-		message->addSubject("Kampfbericht (Unentschieden)");
+		report->setResult(0);
 		
 		this->returnV = 4;
 		this->returnFleet = true;
-		
-		fleet->addMessageUser(message);
 		
 		log->addText("Action failed: Opponent error");
 	}
-    else if (fleet->getLeaderId() > 0 && (fleet->fleetUser->getAllianceId()==entity->getUser()->getAllianceId() &&fleet->fleetUser->getAllianceId()!=0)) {
-		message->addText("[b]KAMPFBERICHT[/b]",1);
-		message->addText("vom Planeten ",0);
-		message->addText(entity->getCoords(),1);
-		message->addText("[b]Zeit:[/b] ");
-		message->addText(fleet->getLandtimeString(),2);
-		message->addText("[b]Angreifer:[/b] ");
-		message->addText(fleet->getUserNicks(),1);
-		message->addText("[b]Verteidiger:[b] ");
-		message->addText(entity->getUserNicks(),2);
-		message->addText("Der Kampf wurde abgebrochen da Angreifer und Verteidiger demselben Imperium angehören!");
-
-		message->addSubject("Kampfbericht (Unentschieden)");
-
-		this->returnV = 4;
-		this->returnFleet = true;
-
-		fleet->addMessageUser(message);
-		entity->addMessageUser(message);
-
-		log->addText("Action failed: Opponent error");
-
-  	}
-
-   	// Kampf abbrechen falls User gleich
-    else if (fleet->getLeaderId() == 0 && fleet->getUserId()==entity->getUserId()) {
-		message->addText("[b]KAMPFBERICHT[/b]",1);
-		message->addText("vom Planeten ",0);
-		message->addText(entity->getCoords(),1);
-		message->addText("[b]Zeit:[/b] ");
-		message->addText(fleet->getLandtimeString(),2);
-		message->addText("[b]Angreifer:[/b] ");
-		message->addText(fleet->fleetUser->getUserNick(),1);
-		message->addText("[b]Verteidiger:[b] ");
-		message->addText(entity->getUser()->getUserNick(),2);
-		message->addText("Der Kampf wurde abgebrochen da Angreifer und Verteidiger demselben Imperium angehören!");
-
-		message->addSubject("Kampfbericht (Unentschieden)");
-
-		message->addUserId(fleet->getUserId());
-
-		this->returnV = 4;
-		this->returnFleet = true;
-
-		log->addText("Action failed: Opponent error");
-  	}
 
   	// Kampf abbrechen und Flotte zum Startplanet schicken wenn Kampfsperre aktiv ist
   	else if ((int)config.nget("battleban",0)!=0 && (int)config.nget("battleban",1)<=time && (int)config.nget("battleban",2)>time) {
-		message->addText("[b]KAMPFBERICHT[/b]",1);
-		message->addText("vom Planeten ",0);
-		message->addText(entity->getCoords(),1);
-		message->addText("[b]Zeit:[/b] ");
-		message->addText(fleet->getLandtimeString(),2);
-		message->addText("[b]Angreifer:[/b] ");
-		message->addText(fleet->getUserNicks(),1);
-		message->addText("[b]Verteidiger:[b] ");
-		message->addText(entity->getUserNicks(),2);
-		message->addText(config.get("battleban_arrival_text",1));
-
-		message->addSubject("Kampfbericht (Unentschieden)");
-
+		report->setSubtype("battleban");	
+		
+		report->setResult(0);
+		
 		this->returnV = 4;
-		this->returnFleet =true;
-
-		fleet->addMessageUser(message);
-		entity->addMessageUser(message);
+		this->returnFleet = true;
 
 		log->addText("Action failed: Battleban error");
 	}
 	else {
+		report->setSubtype("battle");
 		My &my = My::instance();
 		mysqlpp::Connection *con_ = my.get();
 
@@ -137,32 +93,30 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 				}
 			}
 		}
-		message->addText("[b]KAMPFBERICHT[/b]",1);
-		message->addText("vom Planeten ",0);
-		message->addText(entity->getCoords(),1);
-		message->addText("[b]Zeit:[/b] ");
-		message->addText(fleet->getLandtimeString(),2);
-		message->addText("[b]Angreifer:[/b] ");
-		message->addText(fleet->getUserNicks(),1);
-		message->addText("[b]Verteidiger:[/b] ");
-		message->addText(entity->getUserNicks(),2);
-		message->addText("[b]ANGREIFENDE FLOTTE:[/b] ",1);
-		message->addText(fleet->getShipString(),1);
-		message->addText("[b]VERTEIDIGENDE FLOTTE:[/b] ",1);
-		message->addText(entity->getShipString(),1);
-		message->addText("[b]VERTEIDIGUNG:[/b] ",1);
-		message->addText(entity->getDefString(),1);
-		message->addText("[b]DATEN DES ANGREIFERS:[/b] ",1);
-		message->addText(fleet->getShieldString(false),1);
-		message->addText(fleet->getStructureString(false),1);
-		message->addText(fleet->getWeaponString(false),1);
-		message->addText(fleet->getCountString(false),2);
-		message->addText("[b]DATEN DES VERTEIDIGERS:[/b] ",1);
-		message->addText(entity->getShieldString(false),1);
-		message->addText(entity->getStructureString(false),1);
-		message->addText(entity->getWeaponString(false),1);
-		message->addText(entity->getCountString(false),3);
-
+		
+		//Report
+		report->setShield(fleet->getShield(true));
+		report->setStructure(fleet->getStructure(true));
+		report->setWeapon(fleet->getWeapon(true));
+		report->setCount(fleet->getCount(true));
+		
+		report->setEntityWeapon(entity->getWeapon(true));
+		report->setEntityCount(entity->getCount(true));
+		report->setEntityShield(entity->getShield(true));
+		report->setEntityStructure(entity->getStructure(true));
+		
+		report->setWeaponTech(fleet->getWeaponTech());
+		report->setShieldTech(fleet->getShieldTech());
+		report->setStructureTech(fleet->getStructureTech());
+		
+		report->setEntityWeaponTech(entity->getWeaponTech());
+		report->setEntityShieldTech(entity->getShieldTech());
+		report->setEntityStructureTech(entity->getStructureTech());
+		
+		report->setShips(fleet->getShipString());
+		report->setEntityShips(entity->getShipString());
+		report->setEntityDef(entity->getDefString());
+		
 		//
 		//Kampf Daten errechnen
 		//
@@ -186,9 +140,8 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 		//
 		//Der Kampf!
 		//
-        for (int bx = 0; bx < config.nget("battle_rounds",0); bx++) {
-
-           this->runde = bx + 1;
+        for (int bx = 1; bx <= config.nget("battle_rounds",0); bx++) {
+			report->setRounds(bx);
 
             cAttStructureShield -= entity->getWeapon(true);
 			cDefStructureShield -= fleet->getWeapon(true);
@@ -199,72 +152,37 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 			attPercent = (cAttStructureShield==0) ? 0 : cAttStructureShield/initAttStructureShield;
 			defPercent = (cDefStructureShield==0) ? 0 : cDefStructureShield/initDefStructureShield;
 
-			message->addText(etoa::d2s(runde));
-			message->addText(": ");
-			message->addText(fleet->getCountString());
-			message->addText(" Einheiten des Angreifes schiessen mit einer St&auml;rke von ");
-			message->addText(fleet->getWeaponString());
-			message->addText(" auf den Verteidiger. Der Verteidiger hat danach noch ");
-			message->addText(etoa::nf(etoa::d2s(cDefStructureShield)));
-			message->addText(" Struktur- und Schildpunkte",2);
-
-			message->addText(etoa::d2s(this->runde));
-			message->addText(": ");
-			message->addText(entity->getCountString());
-			message->addText(" Einheiten des Verteidigers schiessen mit einer St&auml;rke von ");
-			message->addText(entity->getWeaponString());
-			message->addText(" auf den Angreifer. Der Angreifer hat danach noch ");
-			message->addText(etoa::nf(etoa::d2s(cAttStructureShield)));
-			message->addText(" Struktur- und Schildpunkte",2);
-
 			fleet->setPercentSurvive(attPercent,true);
 			entity->setPercentSurvive(defPercent,true);
+			
+			report->setHeal(fleet->getHeal());
+			report->setEntityHeal(entity->getHeal());
 
             if (fleet->getHeal() > 0) {
                 cAttStructureShield += fleet->getHeal();
                 if (cAttStructureShield > initAttStructureShield)
                     cAttStructureShield = initAttStructureShield;
-
-				message->addText(etoa::d2s(runde));
-				message->addText(": ");
-				message->addText(etoa::d2s(fleet->getHealCount()));
-				message->addText(" Einheiten des Angreifes heilen ");
-				message->addText(etoa::d2s(fleet->getHeal()));
-				message->addText(" Struktur- und Schildpunkte. Der Angreifer hat danach wieder ");
-
+				
 				fleet->setPercentSurvive(cAttStructureShield/initAttStructureShield,true);
-
-				message->addText(entity->getStructureShieldString());
-				message->addText(" Struktur- und Schildpunkte",1);
             }
 
             if (entity->getHeal() > 0) {
                 cDefStructureShield += entity->getHeal();
                 if (cDefStructureShield > initDefStructureShield)
                     cDefStructureShield = initDefStructureShield;
-
-				message->addText(etoa::d2s(runde));
-				message->addText(": ");
-				message->addText(etoa::nf(etoa::d2s(entity->getHealCount())));
-				message->addText(" Einheiten des Verteidigers heilen ");
-				message->addText(etoa::nf(etoa::d2s(entity->getHeal())));
-				message->addText(" Struktur- und Schildpunkte. Der Verteidiger hat danach wieder ");
-
+				
 				entity->setPercentSurvive(cDefStructureShield/initDefStructureShield,true);
-
-				message->addText(entity->getStructureShieldString());
-				message->addText(" Struktur- und Schildpunkte",1);
             }
-
-			message->addText("",1);
+			
+			report->setWeapon(fleet->getWeapon(true));
+			report->setCount(fleet->getCount(true));
+			
+			report->setEntityWeapon(entity->getWeapon(true));
+			report->setEntityCount(entity->getCount(true));
+			
             if (cAttStructureShield <= 0 || cDefStructureShield <= 0)
                 break;
         }
-
-		message->addText("Der Kampf dauerte ");
-		message->addText(etoa::d2s(runde));
-		message->addText(" Runden!",2);
-
 
 		//
 		//Daten nach dem Kampf
@@ -296,27 +214,28 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 
 		if (cDefStructureShield == 0 && cAttStructureShield > 0) {
 			this->returnV = 1;
-
-			message->addText("Der Angreifer hat den Kampf gewonnen!");
-
+			
 			double percent = std::min(fleet->getBountyBonus(),(fleet->getCapacity(true) / entity->getResSum()));
 			raid[0] = entity->removeResMetal(fleet->addMetal(entity->getResMetal(percent),true));
 			raid[1] = entity->removeResCrystal(fleet->addCrystal(entity->getResCrystal(percent),true));
 			raid[2] = entity->removeResPlastic(fleet->addPlastic(entity->getResPlastic(percent),true));
 			raid[3] = entity->removeResFuel(fleet->addFuel(entity->getResFuel(percent),true));
 			raid[4] = entity->removeResFood(fleet->addFood(entity->getResFood(percent),true));
-
-			message->addText(fleet->getResCollectedString(true,"Beute"),2);
+			
+			report->setRes(raid[0],
+						   raid[1],
+						   raid[2],
+						   raid[3],
+						   raid[4],
+						   0);
 		}
 
 
 		//
 		//Der Verteidiger hat gewonnen
 		//
-		else if (cAttStructureShield==0 && cDefStructureShield>0) {
+		else if (cAttStructureShield==0 && cDefStructureShield>0)
 			this->returnV = 2;
-			message->addText("Der Verteidiger hat den Kampf gewonnen!",3);
-		}
 
 		//
 		//Der Kampf endete unentschieden
@@ -326,54 +245,27 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 			//
 			//	Unentschieden, beide Flotten wurden zerstört
 			//
-			if (cAttStructureShield==0 && cDefStructureShield==0) {
+			if (cAttStructureShield==0 && cDefStructureShield==0)
         		this->returnV = 3;
-				message->addText("Der Kampf endete unentschieden, da sowohl die Einheiten des Angreifes als auch die Einheiten des Verteidigers alle zerstört wurden!",3);
-			}
 
 			//
 			//	Unentschieden, beide Flotten haben überlebt
 			//
-			else {
+			else
 				this->returnV = 4;
-
-				message->addText("Der Kampf endete unentschieden und die Flotten zogen sich zurück!",1);
-			}
 		}
-
-		message->addText("[b]TR&Uuml;MMERFELD:[/b]",1);
-		message->addText("Titan: ");
-		message->addText(etoa::nf(etoa::d2s(entity->getAddedWfMetal())),1);
-		message->addText("Silizium: ");
-		message->addText(etoa::nf(etoa::d2s(entity->getAddedWfCrystal())),1);
-		message->addText("PVC: ");
-		message->addText(etoa::nf(etoa::d2s(entity->getAddedWfPlastic())),3);
-
+		
+		report->setWf(entity->getAddedWfMetal(),
+					  entity->getAddedWfCrystal(),
+					  entity->getAddedWfPlastic());
+		
 		//
 		//Auswertung
 		//
-
-		message->addText("[b]Zustand nach dem Kampf:[/b]",2);
-		message->addText("[b]ANGREIFENDE FLOTTE:[/b]",1);
-		message->addText(fleet->getShipString(),1);
-		if (fleet->getAddedExp()>=0) {
-			message->addText("Gewonnene EXP: ");
-			message->addText(etoa::nf(etoa::d2s(fleet->getAddedExp())),2);
-		}
-
-		message->addText("",1);
-		message->addText("[b]VERTEIDIGENDE FLOTTE:[/b]",1);
-		message->addText(entity->getShipString(),1);
-		if (entity->getAddedExp()>=0) {
-			message->addText("Gewonnene EXP: ");
-			message->addText(etoa::nf(etoa::d2s(entity->getAddedExp())),2);
-		}
-
-		message->addText("[b]VERTEIDIGUNG:[/b]",1);
-		message->addText(entity->getDefString(true),1);
-
-        message->addText(etoa::d2s(round((config.nget("def_restore_percent",0) + entity->getUser()->getSpecialist()->getSpecialistDefRepair() - 1)*100)));
-		message->addText("% der Verteidigungsanlagen werden repariert!");
+		report->setShipsEnd(fleet->getShipString());
+		report->setEntityShipsEnd(entity->getShipString());
+		report->setEntityDefEnd(entity->getDefString(true));
+		report->setRestore(round((config.nget("def_restore_percent",0) + entity->getUser()->getSpecialist()->getSpecialistDefRepair() - 1)*100));
 
         //Log schreiben
         query << "INSERT INTO "
@@ -425,7 +317,7 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 			<< "	'" << entity->getUser()->getAllianceId() << "', "
 			<< "	'" << this->alliancesHaveWar << "', "
 			<< "	'" << entity->getId() << "', "
-			<< "	'" << fleet->getAction(true) << "', "
+			<< "	'" << fleet->getAction() << "', "
 			<< "	'" << returnV << "', "
 			<< "	'" << fleet->getInitCount(true) << "', "
 			<< "	'" << entity->getInitCount(true) - entity->getInitDefCount() << "', "
@@ -462,44 +354,40 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 		switch (returnV)
 		{
 			case 1:	//angreifer hat gewonnen
-				this->bstat = "Gewonnen";
-				this->bstat2 = "Verloren";
 				this->returnFleet = true;
 				this->attPoints = 3;
 				this->defPoints = 0;
 				this->attResult = 2;
 				this->defResult = 0;
+				report->setResult(1);
 				break;
 			case 2:	//agreifer hat verloren
-				this->bstat = "Verloren";
-				this->bstat2 = "Gewonnen";
 				this->returnFleet = false;
 				this->attPoints = 1;
 				this->defPoints = 2;
 				this->attResult = 0;
 				this->defResult = 2;
+				report->setResult(2);
 				break;
 			case 3:	//beide flotten sind kaputt
-				this->bstat = "Unentschieden";
-				this->bstat2 = "Unentschieden";
 				this->returnFleet = false;
 				this->attPoints = 1;
 				this->defPoints = 1;
 				this->attResult = 1;
 				this->defResult = 1;
+				report->setResult(0);
 				break;
 			case 4: //beide flotten haben überlebt
-				this->bstat = "Unentschieden";
-				this->bstat2 = "Unentschieden";
 				this->returnFleet = true;
 				this->attPoints = 1;
 				this->defPoints = 1;
 				this->attResult = 1;
 				this->defResult = 1;
+				report->setResult(0);
 				break;
 		}
-
-		size_t found;
+		
+		//Battlepoints
 		int user;
 		std::string attReason = "Angriff gegen" + entity->getUserNicks();
 		std::string defReason = "Verteidigung gegen" + fleet->getUserNicks();
@@ -523,19 +411,7 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 				etoa::addBattlePoints(user,this->defPoints,this->defResult,attReason);
 			}
 		}
-
-
-		Message *defender = new Message(message);
-
-		fleet->addMessageUser(message);
-		entity->addMessageUser(defender);
-
-		defender->addSubject("Kampfbericht (" + this->bstat2 + ")");
-		delete defender;
-
-		message->addSubject("Kampfbericht(" + this->bstat + ")");
-
+		
 		fleet->addRaidedRes();
 	}
-	delete message;
 }

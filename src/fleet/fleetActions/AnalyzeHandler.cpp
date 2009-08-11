@@ -47,7 +47,7 @@ namespace analyze
 												this->f->getEntityFrom(),
 												this->f->getLandtime(),
 												this->f->getId(),
-												this->f->getAction(true));
+												this->f->getAction());
 			report->setSubtype("actionfailed");
 			
 			delete report;

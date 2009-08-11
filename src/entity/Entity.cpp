@@ -867,93 +867,61 @@
 		return ids;
 	}
 
-	std::string Entity::getShieldString(bool small) {
+	short Entity::getShieldTech() {
 		if (!this->allianceTechsLoaded)
 			this->loadAllianceTechs();
-		std::string shieldString = "";
-		if (!small) {
-			int counter = 1;
-			double shieldTech = this->getShieldBonus();
-			shieldString += "[b]Schild (";
-			if (fleets.size()) {
-				shieldString += "~";
-				std::vector<Fleet*>::iterator it;
-				for ( it=fleets.begin() ; it < fleets.end(); it++ ) {
-					counter++;
-					shieldTech += (*it)->getShieldBonus();
-				}
+		
+		int counter = 1;
+		double shieldTech = this->getShieldBonus();
+		if (fleets.size()) {
+			std::vector<Fleet*>::iterator it;
+			for ( it=fleets.begin() ; it < fleets.end(); it++ ) {
+				counter++;
+				shieldTech += (*it)->getShieldBonus();
 			}
-
-			shieldString += etoa::d2s(round(shieldTech*100/counter));
-			shieldString += "%):[/b] ";
 		}
-		shieldString += etoa::nf(etoa::d2s(this->getShield(true)));
-
-		return shieldString;
+		
+		shieldTech = round(shieldTech*100/counter);
+		
+		return shieldTech;
 	}
 
-	std::string Entity::getStructureString(bool small) {
+	short Entity::getStructureTech() {
 		if (!this->allianceTechsLoaded)
 			this->loadAllianceTechs();
-		std::string structureString = "";
-		if (!small) {
-			int counter = 1;
-			double structureTech = this->getStructureBonus();
-			structureString += "[b]Struktur (";
-			if (fleets.size()) {
-				structureString += "~";
-				std::vector<Fleet*>::iterator it;
-				for ( it=fleets.begin() ; it < fleets.end(); it++ ) {
-					counter++;
-					structureTech += (*it)->getStructureBonus();
-				}
+		
+		int counter = 1;
+		double structureTech = this->getStructureBonus();
+		if (fleets.size()) {
+			std::vector<Fleet*>::iterator it;
+			for ( it=fleets.begin() ; it < fleets.end(); it++ ) {
+				counter++;
+				structureTech += (*it)->getStructureBonus();
 			}
-
-			structureString += etoa::d2s(round(structureTech*100/counter));
-			structureString += "%):[/b] ";
 		}
-		structureString += etoa::nf(etoa::d2s(this->getStructure(true)));
+		
+		structureTech = round(structureTech*100/counter);
 
-		return structureString;
+		return structureTech;
 	}
 
-	std::string Entity::getStructureShieldString() {
-		return etoa::nf(etoa::d2s(getStructShield(true)));
-	}
-
-	std::string Entity::getWeaponString(bool small) {
+	short Entity::getWeaponTech() {
 		if (!this->allianceTechsLoaded)
 			this->loadAllianceTechs();
-		std::string weaponString = "";
-		if (!small) {
-			int counter = 1;
-			double weaponTech = this->getWeaponBonus();
-			weaponString += "[b]Waffen (";
-			if (fleets.size()) {
-				weaponString += "~";
-				std::vector<Fleet*>::iterator it;
-				for ( it=fleets.begin() ; it < fleets.end(); it++ ) {
-					counter++;
-					weaponTech += (*it)->getWeaponBonus();
-				}
+		
+		int counter = 1;
+		double weaponTech = this->getWeaponBonus();
+		if (fleets.size()) {
+			std::vector<Fleet*>::iterator it;
+			for ( it=fleets.begin() ; it < fleets.end(); it++ ) {
+				counter++;
+				weaponTech += (*it)->getWeaponBonus();
 			}
-
-			weaponString += etoa::d2s(round(weaponTech*100/counter));
-			weaponString += "%):[/b] ";
 		}
-		weaponString += etoa::nf(etoa::d2s(this->getWeapon(true)));
-		return weaponString;
-	}
-
-	std::string Entity::getCountString(bool small)
-	{
-		std::string countString = "";
-		if (!small)
-		{
-			countString += "[b]Einheiten:[/b] ";
-		}
-		countString += etoa::nf(etoa::d2s(this->getCount(true)));
-		return countString;
+		
+		weaponTech = round(weaponTech*100/counter);
+		
+		return weaponTech;
 	}
 
 	std::string Entity::getShipString(bool total)

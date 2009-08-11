@@ -15,7 +15,7 @@ namespace support
 											  this->f->getEntityFrom(),
 											  this->f->getLandtime(),
 											  this->f->getId(),
-											  this->f->getAction(true));
+											  this->f->getAction());
 		
 		//Support beenden und Flotte nach Hause schicken
 		if (this->f->getStatus()==3) {

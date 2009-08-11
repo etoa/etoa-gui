@@ -57,12 +57,12 @@ public:
 	void setStatus(unsigned short status);
 	void setAction(std::string action);
 	void setShips(std::string ships);
-	void setRes(unsigned long res0,
-				unsigned long res1,
-				unsigned long res2,
-				unsigned long res3,
-				unsigned long res4,
-				unsigned long res5);
+	void setRes(double res0=0,
+				double res1=0,
+				double res2=0,
+				double res3=0,
+				double res4=0,
+				double res5=0);
 	void setFleetId(unsigned int fleetId);
 	void setEndtime(unsigned int endtime);
 	
@@ -74,7 +74,7 @@ private:
 	
 	std::string ships;
 	
-	unsigned long res0, res1, res2, res3, res4, res5;
+	double res0, res1, res2, res3, res4, res5;
 	unsigned int fleetId;
 	unsigned int endtime;
 };

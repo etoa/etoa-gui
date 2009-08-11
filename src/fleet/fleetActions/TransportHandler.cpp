@@ -15,7 +15,7 @@ namespace transport
 											  this->f->getEntityFrom(),
 											  this->f->getLandtime(),
 											  this->f->getId(),
-											  this->f->getAction(true));
+											  this->f->getAction());
 		report->setSubtype("transport");
 		report->setRes(floor(this->f->getResMetal()),
 					   floor(this->f->getResCrystal()),
@@ -23,7 +23,6 @@ namespace transport
 					   floor(this->f->getResFuel()),floor(this->f->getResFood()),
 					   floor(this->f->getResPeople()));
 		
-		report->setAction(this->f->getAction(true));
 		report->setStatus(this->f->getStatus());
 		
 		// If the planet user is not the same as the fleet user, send him a message too

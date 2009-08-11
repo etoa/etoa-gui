@@ -2,12 +2,21 @@
 #ifndef __MARKETHANDLER__
 #define __MARKETHANDLER__
 
+#include <iostream>
+#include <vector>
+#include <ctime>
+#include <cmath>
+#include <string.h>
+
 #define MYSQLPP_MYSQL_HEADERS_BURIED
 #include <mysql++/mysql++.h>
 
 #include "../EventHandler.h"
-#include "../MysqlHandler.h"
 #include "../objects/User.h"
+#include "../util/Functions.h"
+#include "../MysqlHandler.h"
+#include "../config/ConfigHandler.h"
+#include "../reports/MarketReport.h"
 
 /**
 * Handles market updates

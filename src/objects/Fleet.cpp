@@ -139,18 +139,8 @@
 		return this->nextactiontime;
 	}
 
-	std::string Fleet::getAction(bool blank) {
-		if (blank)
-			return this->action;
-		else {
-			Config &config = Config::instance();
-			std::string action = config.getActionName(this->action);
-			if (this->status==1)
-				action += " (Rückflug)";
-			else if (this->status==2)
-				action += " (Abgebrochen)";
-			return action;
-		}
+	std::string Fleet::getAction() {
+		return this->action;
 	}
 
 	short Fleet::getStatus() {
@@ -969,18 +959,6 @@
 		this->entityFrom = this->entityTo;
 	}
 
-	std::string Fleet::getActionString() {
-		return this->getAction();
-	}
-
-	std::string Fleet::getLandtimeString() {
-		return etoa::formatTime(this->getLandtime());
-	}
-
-	std::string Fleet::getLaunchtimeString() {
-		return  etoa::formatTime(this->getLaunchtime());
-	}
-
 	std::string Fleet::getUserNicks() {
 		std::string nicks = this->fleetUser->getUserNick();
 		if (fleets.size()) {
@@ -1013,132 +991,74 @@
 		return ids;
 	}
 
-	std::string Fleet::getShieldString(bool small) {
+	short Fleet::getShieldTech() {
 		if (!this->allianceTechsLoaded)
 			this->loadAllianceTechs();
-		std::string shieldString = "";
-		if (!small) {
-			int counter = 1;
-			double shieldTech = this->getShieldBonus();
-			shieldString += "[b]Schild (";
-			if (fleets.size()) {
-				shieldString += "~";
-				std::vector<Fleet*>::iterator it;
-				for ( it=fleets.begin() ; it < fleets.end(); it++ ) {
-					counter++;
-					shieldTech += (*it)->getShieldBonus();
-				}
+		
+		int counter = 1;
+		double shieldTech = this->getShieldBonus();
+		if (fleets.size()) {
+			std::vector<Fleet*>::iterator it;
+			for ( it=fleets.begin() ; it < fleets.end(); it++ ) {
+				counter++;
+				shieldTech += (*it)->getShieldBonus();
 			}
-
-			shieldString += etoa::d2s(round(shieldTech*100/counter));
-			shieldString += "%):[/b] ";
 		}
-		shieldString += etoa::nf(etoa::d2s(this->getShield(true)));
 
-		return shieldString;
+		shieldTech =round(shieldTech*100/counter);
+		
+		return shieldTech;
 	}
 
-	std::string Fleet::getStructureString(bool small) {
+	short Fleet::getStructureTech() {
 		if (!this->allianceTechsLoaded)
 			this->loadAllianceTechs();
-		std::string structureString = "";
-		if (!small) {
-			int counter = 1;
-			double structureTech = this->getStructureBonus();
-			structureString += "[b]Struktur (";
-			if (fleets.size()) {
-				structureString += "~";
-				std::vector<Fleet*>::iterator it;
-				for ( it=fleets.begin() ; it < fleets.end(); it++ ) {
-					counter++;
-					structureTech += (*it)->getStructureBonus();
-				}
+		
+		int counter = 1;
+		double structureTech = this->getStructureBonus();
+		if (fleets.size()) {
+			std::vector<Fleet*>::iterator it;
+			for ( it=fleets.begin() ; it < fleets.end(); it++ ) {
+				counter++;
+				structureTech += (*it)->getStructureBonus();
 			}
-
-			structureString += etoa::d2s(round(structureTech*100/counter));
-			structureString += "%):[/b] ";
 		}
-		structureString += etoa::nf(etoa::d2s(this->getStructure(true)));
-
-		return structureString;
+		
+		structureTech = round(structureTech*100/counter);
+		
+		return structureTech;
 	}
 
-	std::string Fleet::getStructureShieldString() {
-		return etoa::nf(etoa::d2s(getStructShield(true)));
-	}
-
-	std::string Fleet::getWeaponString(bool small) {
+	short Fleet::getWeaponTech() {
 		if (!this->allianceTechsLoaded)
 			this->loadAllianceTechs();
-		std::string weaponString = "";
-		if (!small) {
-			int counter = 1;
-			double weaponTech = this->getWeaponBonus();
-			weaponString += "[b]Waffen (";
-			if (fleets.size()) {
-				weaponString += "~";
-				std::vector<Fleet*>::iterator it;
-				for ( it=fleets.begin() ; it < fleets.end(); it++ ) {
-					counter++;
-					weaponTech += (*it)->getWeaponBonus();
-				}
+		
+		int counter = 1;
+		double weaponTech = this->getWeaponBonus();
+		if (fleets.size()) {
+			std::vector<Fleet*>::iterator it;
+			for ( it=fleets.begin() ; it < fleets.end(); it++ ) {
+				counter++;
+				weaponTech += (*it)->getWeaponBonus();
 			}
-
-			weaponString += etoa::d2s(round(weaponTech*100/counter));
-			weaponString += "%):[/b] ";
 		}
-		weaponString += etoa::nf(etoa::d2s(this->getWeapon(true)));
+		
+		weaponTech = round(weaponTech*100/counter);
 
-		return weaponString;
+		return weaponTech;
 	}
 
-	std::string Fleet::getCountString(bool small) {
-		std::string countString = "";
-		if (!small) {
-			countString += "[b]Einheiten:[/b] ";
-		}
-		countString += etoa::nf(etoa::d2s(this->getCount(true)));
-		return countString;
-	}
-
-	std::string Fleet::getDestroyedShipString(std::string reason) {
+	std::string Fleet::getDestroyedShipString() {
 		std::string destroyedString = "";
-
-		DataHandler &DataHandler = DataHandler::instance();
+		
 		std::vector<Object*>::iterator it;
 		for (it = this->objects.begin() ; it < this->objects.end(); it++) {
 			if ((*it)->getCount() < (*it)->getInitCount()) {
-				ShipData::ShipData *data = DataHandler.getShipById((*it)->getTypeId());
-				destroyedString +=  etoa::d2s((*it)->getInitCount() - (*it)->getCount())
-								+ " "
-								+ data->getName()
-								+ "\n";
+				destroyedString +=  etoa::d2s((*it)->getTypeId())	+ ":" + etoa::d2s((*it)->getInitCount() - (*it)->getCount()) + ",";
 			}
 		}
 
-		if (destroyedString.length()>0)
-			destroyedString = reason + destroyedString;
-
 		return destroyedString;
-	}
-
-	std::string Fleet::getResCollectedString(bool total, std::string subject) {
-		std::string msgRes = "\n\n\n[b]"
-							+ subject
-							+ ":[/b]\n\nTitan: "
-							+ etoa::nf(etoa::d2s(this->getResMetal(total) - this->initResMetal))
-							+ "\nSilizium: "
-							+ etoa::nf(etoa::d2s(this->getResCrystal(total) - this->initResCrystal))
-							+ "\nPVC: "
-							+ etoa::nf(etoa::d2s(this->getResPlastic(total) - this->initResPlastic))
-							+ "\nTritium: "
-							+ etoa::nf(etoa::d2s(this->getResFuel(total) - this->initResFuel))
-							+ "\nNahrung: "
-							+ etoa::nf(etoa::d2s(this->getResFood(total) - this->initResFood))
-							+ "\nBewohner: "
-							+ etoa::nf(etoa::d2s(this->getResPeople(total) - this->initResPeople))
-							+ "\n";
-		return msgRes;
 	}
 
 	std::string Fleet::getShipString() {

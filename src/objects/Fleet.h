@@ -83,7 +83,7 @@ public:
 	int getLandtime();
 	int getLaunchtime();
 	int getNextactiontime();
-	std::string getAction(bool blank=false);
+	std::string getAction();
 	short getStatus();
 	
 	void addMessageUser(Message* message);
@@ -151,6 +151,10 @@ public:
 	double getStructureBonus();
 	double getHealBonus();
 	
+	short getShieldTech();
+	short getStructureTech();
+	short getWeaponTech();
+	
 	void setAllianceWeapon(int weapon);
 	void setAllianceStructure(int structure);
 	void setAllianceShield(int shield);
@@ -175,20 +179,10 @@ public:
 	void setMain();
 	void setSupport();
 	
-	std::string getActionString();
-	std::string getLandtimeString();
-	std::string getLaunchtimeString();
-	
 	std::string getUserNicks();
 	std::string getUserIds();
-	std::string getShieldString(bool small=true);
-	std::string getStructureString(bool small=true);
-	std::string getStructureShieldString();
-	std::string getWeaponString(bool small=true);
-	std::string getCountString(bool small=true);
 	
-	std::string getDestroyedShipString(std::string reason);
-	std::string getResCollectedString(bool total=false, std::string suject="Rohstoffe");
+	std::string getDestroyedShipString();
 	std::string getShipString();
 	
 	bool actionIsAllowed();

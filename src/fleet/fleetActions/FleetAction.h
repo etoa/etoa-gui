@@ -65,7 +65,7 @@ public:
 		this->actionLog->addEntityFromId(this->f->getEntityFrom());
 		this->actionLog->addLaunchtime(this->f->getLaunchtime());
 		this->actionLog->addLandtime(this->f->getLandtime());
-		this->actionLog->addAction(this->f->getAction(true));
+		this->actionLog->addAction(this->f->getAction());
 		this->actionLog->addStatus(this->f->getStatus());
 		
 		this->msgShips = "";
@@ -85,8 +85,6 @@ public:
 		this->actionLog->addEntityShipsEnd(this->targetEntity->getLogShipsEnd());
 		delete this->actionLog;
 		
-		this->actionMessage->addText(this->msgShips);		
-		this->actionMessage->addText(this->msgRes);
 		delete this->actionMessage;
 		
 		delete this->targetEntity;		

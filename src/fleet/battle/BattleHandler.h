@@ -13,8 +13,9 @@
 
 #include "../../objects/Fleet.h"
 #include "../../entity/Entity.h"
-#include "../../objects/Message.h"
 #include "../../objects/Log.h"
+
+#include "../../reports/BattleReport.h"
 
 /**
 * Handles battles....

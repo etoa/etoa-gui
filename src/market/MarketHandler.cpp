@@ -1,15 +1,3 @@
-#include <iostream>
-#include <vector>
-
-#include <time.h>
-#include <math.h>
-#include <string.h>
-#define MYSQLPP_MYSQL_HEADERS_BURIED
-
-#include <mysql++/mysql++.h>
-#include "../util/Functions.h"
-#include "../MysqlHandler.h"
-#include "../config/ConfigHandler.h"
 
 #include "MarketHandler.h"
 
@@ -95,7 +83,6 @@ namespace market
 	void MarketHandler::MarketAuctionUpdate()
 	{
 		Config &config = Config::instance();
-		std::string msg;
 		std::time_t time = std::time(0);
 	
 		mysqlpp::Query query = con_->query();
@@ -144,11 +131,10 @@ namespace market
 							marr = mres.at(0);
 
 							// Definiert den Rückgabefaktor
-							float return_factor = 1 - (1/(marr["buildlist_current_level"]+1));
-
-							std::string partner_user_nick = etoa::get_user_nick((int)arr["user_id"]);
+							float returnFactor = 1 - (1/(marr["buildlist_current_level"]+1));
+							int deleteDate = time + ((int)config.nget("market_auction_delay_time", 0) * 3600);
 							std::string buyer_user_nick = etoa::get_user_nick((int)arr["current_buyer_id"]);
-							int delete_date = time + ((int)config.nget("market_auction_delay_time", 0) * 3600);
+							std::string partner_user_nick = etoa::get_user_nick((int)arr["user_id"]);
 
 							//überprüfen ob geboten wurde, wenn nicht, Waren dem Verkäufer zurückgeben
 							if((int)arr["current_buyer_id"]==0)
@@ -157,48 +143,33 @@ namespace market
 								query << "UPDATE "
 									<< "	planets "
 									<< "SET "
-									<< "	planet_res_metal=planet_res_metal+(" << arr["sell_0"]*return_factor << "), "
-									<< "	planet_res_crystal=planet_res_crystal+(" << arr["sell_1"]*return_factor << "), "
-									<< "	planet_res_plastic=planet_res_plastic+(" << arr["sell_2"]*return_factor << "), "
-									<< "	planet_res_fuel=planet_res_fuel+(" << arr["sell_3"]*return_factor << "), "
-									<< "	planet_res_food=planet_res_food+(" << arr["sell_4"]*return_factor << ") "
+									<< "	planet_res_metal=planet_res_metal+(" << arr["sell_0"]*returnFactor << "), "
+									<< "	planet_res_crystal=planet_res_crystal+(" << arr["sell_1"]*returnFactor << "), "
+									<< "	planet_res_plastic=planet_res_plastic+(" << arr["sell_2"]*returnFactor << "), "
+									<< "	planet_res_fuel=planet_res_fuel+(" << arr["sell_3"]*returnFactor << "), "
+									<< "	planet_res_food=planet_res_food+(" << arr["sell_4"]*returnFactor << ") "
 									<< "WHERE "
 									<< "	id='" << arr["entity_id"] << "' "
 									<< "	AND planet_user_id='" << arr["user_id"] << "' "
 									<< "LIMIT 1;";
 								query.store();		
 								query.reset();
-
-								// Nachricht senden
-								msg = "Folgende Auktion ist erfolglos abgelaufen und wurde gelöscht.\n\n"; 
+								
+								MarketReport *report = new MarketReport((int)arr["user_id"],
+																		 (int)arr["entity_id"],
+																		 (int)arr["id"],
+																		 (int)arr["date_end"]);
+								report->setSell((int)arr["sell_0"],
+												(int)arr["sell_1"],
+												(int)arr["sell_2"],
+												(int)arr["sell_3"],
+												(int)arr["sell_4"],
+												0);
+								report->setFactor(etoa::s_round(returnFactor,2));
+								report->setSubtype("auctioncancel");
+								
+								delete report;
             
-								msg += "Start: ";
-								msg += etoa::format_time(arr["date_start"]);
-								msg += "\n";
-								msg += "Ende: ";
-								msg += etoa::format_time(arr["date_end"]);
-								msg += "\n\n";
-            
-								msg += "[b]Waren:[/b]\n";
-								msg += "Titan: ";
-								msg += etoa::nf(std::string(arr["sell_0"]));
-								msg += "\nSilizium: ";
-								msg += etoa::nf(std::string(arr["sell_1"]));
-								msg += "\nPVC: ";
-								msg += etoa::nf(std::string(arr["sell_2"]));
-								msg += "\nTritium: ";
-								msg += etoa::nf(std::string(arr["sell_3"]));
-								msg += "\nNahrung: ";
-								msg += etoa::nf(std::string(arr["sell_4"]));
-								msg += "\n\n";
-            
-								msg += "Du erhälst ";
-								double tmp = etoa::s_round(return_factor,2)*100;
-								msg += etoa::toString(tmp);
-								msg += "% deiner Rohstoffe wieder zurück (abgerundet)!\n\n";
-            
-								msg += "Das Handelsministerium";
-								etoa::send_msg((int)arr["user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Auktion beendet",msg);
 
 								//Auktion löschen
 								query << "DELETE FROM "
@@ -212,83 +183,50 @@ namespace market
 					
 							//Jemand hat geboten: Waren zum Versenden freigeben und Nachricht schreiben
 							else if((int)arr["current_buyer_id"]!=0 and (int)arr["buyable"]==1) {
-								// Nachricht an Verkäufer
-								msg = "Die Auktion vom ";
-								msg += etoa::format_time(arr["date_start"]);
-								msg += ", welche am ";
-								msg += etoa::format_time(arr["date_end"]);
-								msg += " endete, ist erfolgteich abgelaufen und wird nach ";
-								msg += config.get("market_auction_delay_time", 0);
-								msg += " Stunden gelöscht. Die Waren werden nach wenigen Minuten versendet.\n\nDer Spieler ";
-								msg += buyer_user_nick;
-								msg += " hat von dir folgende Rohstoffe ersteigert:\n\n";
-            
-								msg += "Titan: ";
-								msg += etoa::nf(std::string(arr["sell_0"]));
-								msg += "\nSilizium: ";
-								msg += etoa::nf(std::string(arr["sell_1"]));
-								msg += "\nPVC: ";
-								msg += etoa::nf(std::string(arr["sell_2"]));
-								msg += "\nTritium: ";
-								msg += etoa::nf(std::string(arr["sell_3"]));
-								msg += "\nNahrung: ";
-								msg += etoa::nf(std::string(arr["sell_4"]));
-								msg += "\n\n";
-            
-								msg += "Dies macht dich um folgende Rohstoffe reicher:\n"; 
-								msg += "Titan: ";
-								msg += etoa::nf(std::string(arr["buy_0"]));
-								msg += "\nSilizium: ";
-								msg += etoa::nf(std::string(arr["buy_1"]));
-								msg += "\nPVC: ";
-								msg += etoa::nf(std::string(arr["buy_2"]));
-								msg += "\nTritium: ";
-								msg += etoa::nf(std::string(arr["buy_3"]));
-								msg += "\nNahrung: ";
-								msg += etoa::nf(std::string(arr["buy_4"]));
-								msg += "\n\n";
-            
-								msg += "Das Handelsministerium";
-								etoa::send_msg((int)arr["user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Auktion beendet",msg);
+								// Report an Verkäufer
+								MarketReport *report = new MarketReport((int)arr["user_id"],
+																		 (int)arr["entity_id"],
+																		 (int)arr["id"],
+																		 (int)arr["date_end"],
+																		 (int)arr["current_buyer_id"]);
+								report->setSell((int)arr["sell_0"], 
+												(int)arr["sell_1"],
+												(int)arr["sell_2"],
+												(int)arr["sell_3"],
+												(int)arr["sell_4"],
+												0);
+								report->setBuy((int)arr["buy_0"], 
+												(int)arr["buy_1"],
+												(int)arr["buy_2"],
+												(int)arr["buy_3"],
+												(int)arr["buy_4"],
+												0);
+								report->setSubtype("auctionfinished");
+								
+								delete report;
 
-								// Nachricht an Käufer
-								msg = "Du warst der höchstbietende in der Auktion vom Spieler " + partner_user_nick + ", welche am ";
-								msg += etoa::format_time(arr["date_end"]);
-								msg += " zu Ende ging.\n\n";
-								msg += "Du hast folgende Rohstoffe ersteigert:\n\n";
-			
-								msg += "Titan: ";
-								msg += etoa::nf(std::string(arr["sell_0"]));
-								msg += "\nSilizium: ";
-								msg += etoa::nf(std::string(arr["sell_1"]));
-								msg += "\nPVC: ";
-								msg += etoa::nf(std::string(arr["sell_2"]));
-								msg += "\nTritium: ";
-								msg += etoa::nf(std::string(arr["sell_3"]));
-								msg += "\nNahrung: ";
-								msg += etoa::nf(std::string(arr["sell_4"]));
-								msg += "\n\n";
-            
-								msg += "Dies hat dich folgende Rohstoffe gekostet:\n\n"; 
-				
-								msg += "Titan: ";
-								msg += etoa::nf(std::string(arr["buy_0"]));
-								msg += "\nSilizium: ";
-								msg += etoa::nf(std::string(arr["buy_1"]));
-								msg += "\nPVC: ";
-								msg += etoa::nf(std::string(arr["buy_2"]));
-								msg += "\nTritium: ";
-								msg += etoa::nf(std::string(arr["buy_3"]));
-								msg += "\nNahrung: ";
-								msg += etoa::nf(std::string(arr["buy_4"]));
-								msg += "\n\n"; 
-				
-								msg += "Die Auktion wird nach ";
-								msg += config.get("market_auction_delay_time", 0);
-								msg += " Stunden gelöscht und die Waren in wenigen Minuten versendet.\n\n";
-            
-								msg += "Das Handelsministerium";
-								etoa::send_msg((int)arr["current_buyer_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Auktion beendet",msg);
+								//Report an Käufer
+								report = new MarketReport((int)arr["current_buyer_id"],
+														  (int)arr["entity_id"],
+														  (int)arr["id"],
+														  (int)arr["date_end"],
+														  (int)arr["user_id"]);
+								
+								report->setSell((int)arr["sell_0"], 
+												(int)arr["sell_1"],
+												(int)arr["sell_2"],
+												(int)arr["sell_3"],
+												(int)arr["sell_4"],
+												0);
+								report->setBuy((int)arr["buy_0"], 
+												(int)arr["buy_1"],
+												(int)arr["buy_2"],
+												(int)arr["buy_3"],
+												(int)arr["buy_4"],
+												0);
+								report->setSubtype("auctionwon");
+								
+								delete report;
             
 
 								//Log schreiben, falls dieser Handel regelwidrig ist
@@ -390,7 +328,7 @@ namespace market
 									<< "	market_auction "
 									<< "SET "
 									<< "	buyable='0', "
-									<< "	date_delete='" << delete_date << "', "
+									<< "	date_delete='" << deleteDate << "', "
 									<< "	sent='0' "
 									<< "WHERE "
 									<< "	id='" << arr["id"] << "' "
@@ -424,33 +362,6 @@ namespace market
 								sell_res[4] += arr["sell_4"] / factor;
 
 							}
-						
-							// Waren sind gesendet, jetzt nur noch nachricht schreiben und löschendatum festlegen
-							else if((int)arr["date_delete"]==0 and (int)arr["sent"]==1) {
-								// Nachricht senden
-								msg = "Die Auktion vom ";
-								msg += etoa::format_time(arr["date_start"]);
-								msg += ", welche am ";
-								msg += etoa::format_time(arr["date_end"]);
-								msg += " endete, ist erfolgreich abgelaufen und wird nach ";
-								msg += config.get("market_auction_delay_time", 0);
-								msg += " Stunden gelöscht.\n\n";
-				
-								msg += "Das Handelsministerium";
-								etoa::send_msg((int)arr["user_id"],(int)config.idget("SHIP_MISC_MSG_CAT_ID"),"Auktion abgelaufen",msg);
-	
-								//Auktion noch eine zeit lang anzeigen, aber unkäuflich machen
-								query << "UPDATE "
-									<< "	market_auction "
-									<< "SET "
-									<< "	buyable='0', "
-									<< "	date_delete='" << delete_date << "' "
-									<< "WHERE "
-									<< "	id='" << arr["id"] << "' "
-									<< "LIMIT 1;";
-								query.store();		
-								query.reset();          
-							}
 						}
 					}
 				}
@@ -479,8 +390,7 @@ namespace market
 		Config &config = Config::instance();
 		//Auktionen Updaten (beenden)
 		MarketHandler::MarketAuctionUpdate();
-
-		std::string msg;
+		
 		std::time_t time = std::time(0);
 		
 		User *buyer;

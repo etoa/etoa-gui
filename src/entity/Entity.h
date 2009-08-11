@@ -202,11 +202,9 @@ class Entity
 		
 		std::string getUserNicks();
 		std::string getUserIds();
-		std::string getShieldString(bool small=true);
-		std::string getStructureString(bool small=true);
-		std::string getStructureShieldString();
-		std::string getWeaponString(bool small=true);
-		std::string getCountString(bool small=true);
+		short getShieldTech();
+		short getStructureTech();
+		short getWeaponTech();
 		std::string getShipString(bool total=true);
 		std::string getDefString(bool rebuild=false);
 		

@@ -14,7 +14,7 @@ namespace wreckage
 											  this->f->getEntityFrom(),
 											  this->f->getLandtime(),
 											  this->f->getId(),
-											  this->f->getAction(true));
+											  this->f->getAction());
 		
 		// Precheck action==possible?
 		if (this->f->actionIsAllowed()) {
@@ -45,7 +45,6 @@ namespace wreckage
 							   0,
 							   0,
 							   0);
-				this->actionMessage->addText(this->f->getResCollectedString());
 				
 				// Update collected resources for the userstatistic
 				this->f->fleetUser->addCollectedWf(this->sum);

@@ -26,7 +26,7 @@ namespace asteroid
 		/**
 		*Calculated/collected resources
 		**/
-		double asteroid;
+		double metal, crystal, plastic;
 		double sum;
 		
 		/**

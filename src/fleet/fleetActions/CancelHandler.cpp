@@ -12,13 +12,13 @@ namespace cancel
 		if (this->targetEntity->getUserId() == this->f->getUserId()) {
 			
 			// Check if the user'd like to have a return message for spy and transport
-			if (!((this->f->getAction(true)=="spy" || this->f->getAction(true)=="transport") && !this->f->fleetUser->getPropertiesReturnMsg())) {
+			if (!((this->f->getAction()=="spy" || this->f->getAction()=="transport") && !this->f->fleetUser->getPropertiesReturnMsg())) {
 				OtherReport *report = new OtherReport(this->f->getUserId(),
 													  this->f->getEntityTo(),
 													  this->f->getEntityFrom(),
 													  this->f->getLandtime(),
 													  this->f->getId(),
-													  this->f->getAction(true));
+													  this->f->getAction());
 				report->setSubtype("return");
 				report->setRes(floor(this->f->getResMetal()),
 							   floor(this->f->getResCrystal()),
@@ -26,7 +26,6 @@ namespace cancel
 							   floor(this->f->getResFuel()),floor(this->f->getResFood()),
 							   floor(this->f->getResPeople()));
 				report->setShips(this->f->getShipString());
-				report->setAction(this->f->getAction(true));
 				report->setStatus(this->f->getStatus());
 				
 				delete report;
@@ -44,10 +43,9 @@ namespace cancel
 												  this->f->getEntityFrom(),
 												  this->f->getLandtime(),
 												  this->f->getId(),
-												  this->f->getAction(true));
+												  this->f->getAction());
 			report->setSubtype("returnfailed");
 			report->setShips(this->f->getShipString());
-			report->setAction(this->f->getAction(true));
 			report->setStatus(this->f->getStatus());
 			
 			delete report;

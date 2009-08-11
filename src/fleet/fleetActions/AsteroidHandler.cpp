@@ -12,12 +12,19 @@ namespace asteroid
 		
 		Config &config = Config::instance();
 		
-		this->actionMessage->addType((int)config.idget("SHIP_MISC_MSG_CAT_ID"));
+		OtherReport *report = new OtherReport(this->f->getUserId(),
+											  this->f->getEntityTo(),
+											  this->f->getEntityFrom(),
+											  this->f->getLandtime(),
+											  this->f->getId(),
+											  this->f->getAction());
+		report->setStatus(this->f->getStatus());
 		
 		// Precheck action==possible?
 		if (this->f->actionIsAllowed()) {
 			// Check if there is a field
 			if (this->targetEntity->getCode()=='a' && this->targetEntity->getResSum()>0) {
+				report->setSubtype("collectmetal");
 				
 				this->one = rand() % 101;
 				this->two = (int)(config.nget("asteroid_action",0));
@@ -28,53 +35,35 @@ namespace asteroid
 					this->f->setPercentSurvive(percent/100.0);
 				}
 				
+				report->setShips(this->f->getDestroyedShipString());
+				
 				if (this->f->actionIsAllowed()) {
-					this->sum = 0;
+					this->metal = config.nget("asteroid_action",2) + (rand() % (int)(this->f->getActionCapacity()/3 - config.nget("asteroid_action",2) + 1));
+					this->metal = this->f->addMetal(this->targetEntity->removeResMetal(std::min(this->metal,this->targetEntity->getResMetal())));
 					
-					this->asteroid = config.nget("asteroid_action",2) + (rand() % (int)(this->f->getActionCapacity()/3 - config.nget("asteroid_action",2) + 1));
-					this->sum +=this->f->addMetal(this->targetEntity->removeResMetal(std::min(this->asteroid,this->targetEntity->getResMetal())));
+					this->crystal = config.nget("asteroid_action",2) + (rand() % (int)(this->f->getActionCapacity()/3 - config.nget("asteroid_action",2) + 1));
+					this->crystal = this->f->addCrystal(this->targetEntity->removeResCrystal(std::min(this->crystal,this->targetEntity->getResCrystal())));
 					
-					this->asteroid = config.nget("asteroid_action",2) + (rand() % (int)(this->f->getActionCapacity()/3 - config.nget("asteroid_action",2) + 1));
-					this->sum +=this->f->addCrystal(this->targetEntity->removeResCrystal(std::min(this->asteroid,this->targetEntity->getResCrystal())));
+					this->plastic = config.nget("asteroid_action",2) + (rand() % (int)(this->f->getActionCapacity()/3 - config.nget("asteroid_action",2) + 1));
+					this->plastic = this->f->addPlastic(this->targetEntity->removeResPlastic(std::min(this->plastic,this->targetEntity->getResPlastic())));
 					
-					this->asteroid = config.nget("asteroid_action",2) + (rand() % (int)(this->f->getActionCapacity()/3 - config.nget("asteroid_action",2) + 1));
-					this->sum +=this->f->addPlastic(this->targetEntity->removeResPlastic(std::min(this->asteroid,this->targetEntity->getResPlastic())));
+					this->sum = this->metal + this->crystal + this->plastic;
 					
-					this->actionMessage->addText("Eine Flotte vom Planeten [b]",1);
-					this->actionMessage->addText(this->startEntity->getCoords(),1);
-					this->actionMessage->addText("[/b]hat das[b]",1);
-					this->actionMessage->addText(this->targetEntity->getCoords(),1);
-					this->actionMessage->addText("[/b]um [b]");
-					this->actionMessage->addText(this->f->getLandtimeString(),1);
-					this->actionMessage->addText("[/b]erreicht und Rohstoffe gesammelt.");
-					this->actionMessage->addText(this->f->getResCollectedString(),1);
-					this->actionMessage->addText(this->f->getDestroyedShipString("\n\nAufrund einer Kolision mit einem Asteroiden sind einige deiner Schiffe zerst&ouml;rt worden:\n\n"),1);
-					
-					this->actionMessage->addSubject("Asteroiden gesammelt");
+					report->setRes(floor(metal),
+								   floor(crystal),
+								   floor(plastic));
 					
 					// Save the collected resources
 					this->f->fleetUser->addCollectedAsteroid(this->sum);
 				}
 				
 				// If there arent any asteroid collecter anymore
-				else {
-					// Send a message to the user
-					this->actionMessage->addText("Eine Flotte vom Planeten [b]",1);
-					this->actionMessage->addText(this->startEntity->getCoords(),1);
-					this->actionMessage->addText("wurde bei einem Asteroidenfeld abgeschossen.");
-					
-					this->actionMessage->addSubject("Flotte abgeschossen");
-					
+				else
 					this->actionLog->addText("Action failed: Shot error");
-				}
 			}
 			// If the asteroid field isnt there anymore
 			else {
-				this->actionMessage->addText("Eine Flotte vom Planeten [b]",1);
-				this->actionMessage->addText(this->startEntity->getCoords(),1);
-				this->actionMessage->addText("[/b]versuchte, Asteroiden zu sammeln, doch war kein Asteroidenfeld mehr vorhanden und so machte sich die Crew auf den Weg nach Hause.");
-				
-				this->actionMessage->addSubject("Asteroidensammeln gescheitert");
+				report->setSubtype("collectmetalfailed");
 				
 				this->actionLog->addText("Action failed: entity error");
 			}
@@ -82,15 +71,12 @@ namespace asteroid
 		
 		// If there isnt any asteroid colecter in the fleet 
 		else {
-			this->actionMessage->addText("Eine Flotte vom Planeten [b]",1);
-			this->actionMessage->addText(this->startEntity->getCoords(),1);
-			this->actionMessage->addText(" versuchte, Asteroiden zu sammeln. Leider war kein Schiff mehr in der Flotte, welches die Aktion ausführen konnte, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!");
-			
-			this->actionMessage->addSubject("Asteroidensammeln gescheitert");
+			report->setSubtype("actionfailed");
 			
 			this->actionLog->addText("Action failed: Ship error");
 		}
 		
+		delete report;
 		this->f->setReturn();
 	}
 }

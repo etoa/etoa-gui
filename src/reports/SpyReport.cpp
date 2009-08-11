@@ -17,12 +17,12 @@ void SpyReport::setDefense(std::string defense) {
 	this->defense = defense;
 }
 
-void SpyReport::setRes(unsigned long res0,
-					   unsigned long res1,
-					   unsigned long res2,
-					   unsigned long res3,
-					   unsigned long res4,
-					   unsigned long res5) {
+void SpyReport::setRes(double res0,
+					   double res1,
+					   double res2,
+					   double res3,
+					   double res4,
+					   double res5) {
 	this->res0 = res0;
 	this->res1 = res1;
 	this->res2 = res2;
