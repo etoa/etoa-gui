@@ -38,8 +38,8 @@ class ExploreReport extends Report
 	function __toString()
 	{
 		ob_start();
-		$start = Entity::createFactoryById($this->entity1Id);
-		$target = Entity::createFactoryById($this->entity2Id);
+		$start = Entity::createFactoryById($this->entity2Id);
+		$target = Entity::createFactoryById($this->entity1Id);
 		
 		switch ($this->subType)
 		{

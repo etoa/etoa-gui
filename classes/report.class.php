@@ -39,8 +39,8 @@ abstract class Report
 	protected $valid = false;
 	protected $type = 'other';
 	protected $id;
+	protected $subject="1";
 	protected $timestamp;
-	protected $subject;
 	protected $content;
 	protected $read = false;
 	protected $deleted = false;	
@@ -88,7 +88,6 @@ abstract class Report
 			$this->deleted = $arr['deleted']==1;
 			$this->userId = $arr['user_id'];
 			$this->allianceId = $arr['alliance_id'];
-			$this->subject = $arr['subject'];
 			$this->content = $arr['content'];
 			$this->entity1Id = $arr['entity1_id'];
 			$this->entity2Id = $arr['entity2_id'];
@@ -108,6 +107,8 @@ abstract class Report
 	{
 		try
 		{
+			/*if ($this->field=="subject")
+				return $this->createSubject();*/
 			if (isset($this->$field))
 				return $this->$field;
 			throw new Eexception("Property $field does not exists!");
@@ -148,6 +149,11 @@ abstract class Report
 		}
 		return false;
 	}
+	
+/*	abstract function createSubject()
+	{
+		return $this->subTypes[$this->subTypes];
+	}*/
 
 	/**
 	 * Adds a new report. To be called from the derived class.
@@ -171,11 +177,6 @@ abstract class Report
 			{
 				$fs.= ",alliance_id";
 				$vs.= ",'".$data['alliance_id']."'";
-			}
-			if (isset($data['subject']))
-			{
-				$fs.= ",subject";
-				$vs.= ",'".addslashes($data['subject'])."'";
 			}
 			if (isset($data['content']))
 			{
@@ -303,6 +304,10 @@ abstract class Report
 						return new MarketReport($args);
 					case 'explore':
 						return new ExploreReport($args);
+					case 'spy':
+						return new SpyReport($args);
+					default:
+						return new OtherReport($args);
 					}
 				}
 				throw new Eexception("Keine passende Reportklasse für $type gefunden!");
