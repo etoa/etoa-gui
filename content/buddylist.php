@@ -399,8 +399,9 @@ $res=dbquery("
 
 
 
-	/*
-	$kraft_array = array(20,30,40);
+	//20,30,35,40,45,50,60,65,70,75,80,85,90,100,115,130,140,160,180,190,195,220,230,240,245,270,290,300,305,315,330,340,350,360,365,375,390,400,410,415,430,435,440,445,450,465,470,490,520,535,560,580,610,650,690,710,740,900,940,960,990,1150,1200,1250,1300,1350,1400,1450,1500
+	
+	$kraft_array = array(20);
 	$op_array = array();
 	$res = mysql_query("SELECT item_op FROM dl4_3_items GROUP BY item_op;");
 	while($arr=mysql_fetch_array($res))
@@ -424,6 +425,7 @@ $res=dbquery("
 				WHERE
 					item2_kraft <= ".$kraft."
 					AND item2_op <= ".$op."
+					AND item2_distance = 0
 				ORDER BY (`item2_ap`*1.2 + `item2_vp`*0.85 + `item2_hp`*0.7 + `item2_mp`*0.9) desc
 				LIMIT 1
 			) AS OP,
@@ -435,6 +437,7 @@ $res=dbquery("
 				WHERE
 					item2_kraft <= ".$kraft."
 					AND item2_op <= ".$op."
+					AND item2_distance = 0
 				ORDER BY (`item2_ap`*1.2 + `item2_vp`*0.85 + `item2_hp`*0.7 + `item2_mp`*0) desc
 				LIMIT 1
 			) AS OPMP,
@@ -446,6 +449,7 @@ $res=dbquery("
 				WHERE
 					item2_kraft <= ".$kraft."
 					AND item2_op <= ".$op."
+					AND item2_distance = 0
 				ORDER BY item2_ap desc
 				LIMIT 1
 			) AS AP,
@@ -457,6 +461,7 @@ $res=dbquery("
 				WHERE
 					item2_kraft <= ".$kraft."
 					AND item2_op <= ".$op."
+					AND item2_distance = 0
 				ORDER BY item2_vp desc
 				LIMIT 1
 			) AS VP,
@@ -468,6 +473,7 @@ $res=dbquery("
 				WHERE
 					item2_kraft <= ".$kraft."
 					AND item2_op <= ".$op."
+					AND item2_distance = 0
 				ORDER BY item2_hp desc
 				LIMIT 1
 			) AS HP,
@@ -479,6 +485,7 @@ $res=dbquery("
 				WHERE
 					item2_kraft <= ".$kraft."
 					AND item2_op <= ".$op."
+					AND item2_distance = 0
 				ORDER BY item2_mp desc
 				LIMIT 1
 			) AS MP,
@@ -490,6 +497,7 @@ $res=dbquery("
 				WHERE
 					item2_kraft <= ".$kraft."
 					AND item2_op <= ".$op."
+					AND item2_distance = 0
 				ORDER BY item2_tp desc
 				LIMIT 1
 			) AS TP
@@ -571,11 +579,11 @@ $res=dbquery("
 
 		}
 	}
-*/
 
 
 
 
+/*
 
 // Waffen
 $res = mysql_query("SELECT * FROM dl4_3_items WHERE item_cat_id='1';");
@@ -618,7 +626,7 @@ $count3 = 1;
 $sql_values = "";
 foreach($weapons as $weapons_data) 
 { 
-	if($count == 19 || $count == 20 || $count == 21) 
+	if($count == 0) 
 	{ 
 		// schilder 
 		foreach($shields as $shields_data) 
@@ -730,7 +738,7 @@ foreach($weapons as $weapons_data)
 mysql_query("INSERT INTO dl4_3_items2 (item2_op, item2_kraft, item2_ap, item2_vp, item2_hp, item2_mp, item2_tp, item2_distance, item2_weapon, item2_shield, item2_armor, item2_helm, item2_acc) VALUES ".$sql_values.";");
 
 echo "Count: $count / count2: $count2";
-
+*/
 
 
 $render_time = explode(' ',microtime());
