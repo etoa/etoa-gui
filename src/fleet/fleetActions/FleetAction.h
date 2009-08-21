@@ -11,7 +11,6 @@
 #include "../../reports/OtherReport.h"
 #include "../../objects/User.h"
 #include "../../objects/Fleet.h"
-#include "../../objects/Message.h"
 #include "../../objects/Log.h"
 #include "../../entity/Entity.h"
 #include "../../entity/EntityFactory.h"
@@ -53,11 +52,6 @@ public:
 		else
 			this->targetEntity = EntityFactory::createEntityById(this->f->getEntityTo());
 		
-		this->actionMessage = new Message();
-		this->actionMessage->addFleetId(this->f->getId());
-		this->actionMessage->addEntityId(this->f->getEntityTo());
-		this->actionMessage->addUserId(this->f->getUserId());
-		
 		this->actionLog = new Log();
 		this->actionLog->addFleetId(this->f->getId());
 		this->actionLog->addFleetUserId(this->f->getUserId());
@@ -67,10 +61,6 @@ public:
 		this->actionLog->addLandtime(this->f->getLandtime());
 		this->actionLog->addAction(this->f->getAction());
 		this->actionLog->addStatus(this->f->getStatus());
-		
-		this->msgShips = "";
-		this->msgRes = "";
-		
 	}
 	
 	virtual ~FleetAction() {
@@ -84,8 +74,6 @@ public:
 		this->actionLog->addEntityShipsStart(this->targetEntity->getLogShipsStart());
 		this->actionLog->addEntityShipsEnd(this->targetEntity->getLogShipsEnd());
 		delete this->actionLog;
-		
-		delete this->actionMessage;
 		
 		delete this->targetEntity;		
 		
@@ -116,7 +104,6 @@ protected:
 	Entity* targetEntity;
 	Message *actionMessage;
 	Log *actionLog;
-	std::string msgRes, msgShips, msgAllShips, text;
 	
 	//Fight
 	int returnV;

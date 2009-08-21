@@ -55,13 +55,14 @@ namespace gas
 				
 				}
 				// if there are no nebula collecter in the fleet anymore
-				else 
-					// Send a message to the user
+				else {
+					report->setSubtype("actionshot");
 					this->actionLog->addText("Action failed: Shot error");
+				}
 			}
 			// If the gasplanet field isnt there anymore
 			else {
-				report->setSubtype("gasplanetfailed");
+				report->setSubtype("collectfuelfailed");
 				
 				this->actionLog->addText("Action failed: entity error");
 			}

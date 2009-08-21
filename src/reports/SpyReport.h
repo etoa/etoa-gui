@@ -53,8 +53,7 @@ public:
 			this->id = this->save(this->users.back());
 			this->saveSpyReport();
 			this->users.pop_back();
-		}
-		
+		}	
 	}
 	
 	void setBuildings(std::string buildings);

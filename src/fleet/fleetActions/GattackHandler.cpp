@@ -12,10 +12,8 @@ namespace gattack
 		Config &config = Config::instance();
 
 		
-		BattleHandler *bh = new BattleHandler(this->actionMessage);
+		BattleHandler *bh = new BattleHandler();
 		bh->battle(this->f,this->targetEntity,this->actionLog);
-		
-		this->actionMessage->addType((int)config.idget("SHIP_WAR_MSG_CAT_ID"));
 
 		// gas-attack the planet
 		if (bh->returnV==1) {
@@ -29,6 +27,15 @@ namespace gattack
 				this->one = rand() % 101;
 				this->two = config.nget("gasattack_action",0) + ceil(this->shipCnt/10000.0) + this->tLevel * 5 + this->f->getSpecialShipBonusAntraxFood() * 100;
 				
+				//Battlereport
+				BattleReport *gasattack = new BattleReport(this->f->getUserId(),
+														 this->targetEntity->getUserId(),
+														 this->f->getEntityTo(),
+														 this->f->getEntityFrom(),
+														 this->f->getLandtime(),
+														 this->f->getId());
+				gasattack->addUser(this->targetEntity->getUserId());
+				
 				if (this->one < this->two) {
 					// Calculate the damage percentage (Max. 95%) 
 					this->temp = std::min((10 + this->tLevel * 3),(int)config.nget("gasattack_action",1));
@@ -38,49 +45,37 @@ namespace gattack
 					// Calculate dead planet people 
 					this->people = this->targetEntity->removeResPeople(round(this->targetEntity->getResPeople() * this->fak / 100));
 					
-					// Send message to the entity and the fleet user 
-					this->actionMessage->addText("Eine Flotte vom Planeten [b]",1);
-					this->actionMessage->addText(this->startEntity->getCoords(),1);
-					this->actionMessage->addText("[/b]einen Giftgasangriff auf den Planeten[b]",1);
-					this->actionMessage->addText(this->targetEntity->getCoords(),1);
-					this->actionMessage->addText("[/b]verübt es starben dabei ");
-					this->actionMessage->addText(etoa::nf(etoa::d2s(this->people)));
-					this->actionMessage->addText(" Bewohner.");
+					// Add Reportdata
+					gasattack->setSubtype("gasattack");
+					gasattack->setRes(0,0,0,0,0,this->people);
 					
-					this->actionMessage->addSubject("Giftgasangriff");
-					this->actionMessage->addUserId(this->targetEntity->getUserId());
-					
-						this->actionLog->addText("Action succeed: " + etoa::d2s(this->one) + " < " + etoa::d2s(this->two));
+					this->actionLog->addText("Action succeed: " + etoa::d2s(this->one) + " < " + etoa::d2s(this->two));
 					
 					etoa::addSpecialiBattle(this->f->getUserId(),"Spezialaktion");
 					
 					this->f->deleteActionShip(1);
 					
 				}
-				else  {
-					this->actionMessage->addText("Eine Flotte vom Planeten [b]",1);
-					this->actionMessage->addText(this->startEntity->getCoords(),1);
-					this->actionMessage->addText("[/b]hat erfolglos einen Giftgasangriff auf den Planeten",1);
-					this->actionMessage->addText(this->targetEntity->getCoords(),1);
-					this->actionMessage->addText("[/b]verübt.");
-					
-					this->actionMessage->addSubject("Giftgasangriff erfolglos");
-					this->actionMessage->addUserId(this->targetEntity->getUserId());
-				}
+				else
+					gasattack->setSubtype("gasattackfailed");
+				delete gasattack;
+				
 			}
 			// If no ship with the action was in the fleet 
 			else {
-				this->actionMessage->addText("Eine Flotte vom Planeten [b]",1);
-				this->actionMessage->addText(this->startEntity->getCoords(),1);
-				this->actionMessage->addText("[/b]versuchte eine Giftgasangriff auszuführen. Leider war kein Schiff mehr in der Flotte, welches die Aktion ausführen konnte, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!");
-				
-				this->actionMessage->addSubject("Giftgasangriff gescheitert");
+				OtherReport *report = new OtherReport(this->f->getUserId(),
+													this->f->getEntityTo(),
+													this->f->getEntityFrom(),
+													this->f->getLandtime(),
+													this->f->getId(),
+													this->f->getAction());
+				report->setSubtype("actionfailed");
+
+				delete report;
 				
 				this->actionLog->addText("Action failed: Ship error");
 			}
 		}
-		else
-			this->actionMessage->dontSend();
 		
 		this->f->setReturn();
 		delete bh;

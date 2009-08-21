@@ -13,10 +13,8 @@ namespace steal
 		// Initialize data
 		Config &config = Config::instance();
 				
-		BattleHandler *bh = new BattleHandler(this->actionMessage);
+		BattleHandler *bh = new BattleHandler();
 		bh->battle(this->f,this->targetEntity,this->actionLog);
-		
-		this->actionMessage->addType((int)config.idget("SHIP_WAR_MSG_CAT_ID"));
 
 		// Steal a tech
 		if (bh->returnV==1) {
@@ -34,7 +32,13 @@ namespace steal
 				this->two *= 10;
 				this->two -= this->f->fleetUser->getSpyattackCount();
 				
-				std::cout <<  this->one << " < " << this->two << std::endl;
+				BattleReport *spyattack = new BattleReport(this->f->getUserId(),
+														 this->targetEntity->getUserId(),
+														 this->f->getEntityTo(),
+														 this->f->getEntityFrom(),
+														 this->f->getLandtime(),
+														 this->f->getId());
+				spyattack->addUser(this->targetEntity->getUserId());
 				
 				if (this->one < this->two) {
 				
@@ -42,13 +46,8 @@ namespace steal
 					
 					//if there is a tech
 					if (actionString.length()) {
-						this->actionMessage->addText("Eine Flotte vom Planeten [b]",1);
-						this->actionMessage->addText(this->startEntity->getCoords(),1);
-						this->actionMessage->addText("[/b] hat erfolgreich einen Spionageangriff durchgeführt und erfuhr so die Geheimnisse der Forschung ");
-						this->actionMessage->addText(actionString);
-						
-						this->actionMessage->addSubject("Spionageangriff");
-						this->actionMessage->addUserId(this->targetEntity->getUserId());
+						spyattack->setContent(actionString);
+						spyattack->setSubtype("spyattack");
 						
 						this->actionLog->addText("Action succeed: " + etoa::d2s(this->one) + " < " + etoa::d2s(this->two));
 						
@@ -59,43 +58,31 @@ namespace steal
 					
 					// if stealing a tech failed
 					else  {
-						this->actionMessage->addText("Eine Flotte vom Planeten [b]",1);
-						this->actionMessage->addText(this->startEntity->getCoords(),1);
-						this->actionMessage->addText("[/b]hat erfolglos einen Spionageangriff auf den Planeten[b]",1);
-						this->actionMessage->addText(this->targetEntity->getCoords(),1);
-						this->actionMessage->addText("[/b]verübt.");
-						
-						this->actionMessage->addSubject("Spionageangriff erfolglos");
-						this->actionMessage->addUserId(this->targetEntity->getUserId());
+						spyattack->setSubtype("spyattackfailed");
 						
 						this->actionLog->addText("Action failed: Tech error");
 					}
 				} 
 					// if stealing a tech failed
-				else  {
-					this->actionMessage->addText("Eine Flotte vom Planeten [b]",1);
-					this->actionMessage->addText(this->startEntity->getCoords(),1);
-					this->actionMessage->addText("[/b]hat erfolglos einen Spionageangriff auf den Planeten[b]",1);
-					this->actionMessage->addText(this->targetEntity->getCoords(),1);
-					this->actionMessage->addText("[/b]verübt.");
-					
-					this->actionMessage->addSubject("Spionageangriff erfolglos");
-					this->actionMessage->addUserId(this->targetEntity->getUserId());
-				}
+				else 
+					spyattack->setSubtype("spyattackfailed");
+				delete spyattack;
 			}
 			// If no ship with the action was in the fleet 
 			else {
-				this->actionMessage->addText("Eine Flotte vom Planeten [b]",1);
-				this->actionMessage->addText(this->startEntity->getCoords(),1);
-				this->actionMessage->addText("[/b]versuchte eine Spionageangriff auszuführen. Leider war kein Schiff mehr in der Flotte, welches die Aktion ausführen konnte, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!");
-				
-				this->actionMessage->addSubject("Spionageangriff gescheitert");
+				OtherReport *report = new OtherReport(this->f->getUserId(),
+													this->f->getEntityTo(),
+													this->f->getEntityFrom(),
+													this->f->getLandtime(),
+													this->f->getId(),
+													this->f->getAction());
+				report->setSubtype("actionfailed");
+
+				delete report;
 				
 				this->actionLog->addText("Action failed: Ship error");
 			}
 		}
-		else
-			this->actionMessage->dontSend();
 		
 		this->f->setReturn();
 		delete bh;

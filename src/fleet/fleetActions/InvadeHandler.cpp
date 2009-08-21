@@ -13,19 +13,11 @@ namespace invade
 		Config &config = Config::instance();
 		this->time = std::time(0);
 		
-		BattleHandler *bh = new BattleHandler(this->actionMessage);
+		BattleHandler *bh = new BattleHandler();
 		bh->battle(this->f,this->targetEntity,this->actionLog);
 		
 		//invade the planet
 		if (bh->returnV==1) {
-			
-			OtherReport *report = new OtherReport(this->f->getUserId(),
-												  this->f->getEntityTo(),
-												  this->f->getEntityFrom(),
-												  this->f->getLandtime(),
-												  this->f->getId(),
-												  this->f->getAction());
-			report->setStatus(this->f->getStatus());
 			
 			// Precheck action==possible?
 			if (this->f->actionIsAllowed()) {
@@ -33,7 +25,13 @@ namespace invade
 				
 				if (this->targetEntity->getUserId()==this->f->getUserId()) 
 				{
-					// Send a message to the user
+					OtherReport *report = new OtherReport(this->f->getUserId(),
+														  this->f->getEntityTo(),
+														  this->f->getEntityFrom(),
+														  this->f->getLandtime(),
+														  this->f->getId(),
+														  this->f->getAction());
+					report->setStatus(this->f->getStatus());
 					report->setSubtype("return");
 					report->setRes(floor(this->f->getResMetal()),
 								   floor(this->f->getResCrystal()),
@@ -41,6 +39,7 @@ namespace invade
 								   floor(this->f->getResFuel()),floor(this->f->getResFood()),
 								   floor(this->f->getResPeople()));
 					report->setShips(this->f->getShipString());
+					delete report;
 					
 					fleetLand(1);
 				}
@@ -69,30 +68,34 @@ namespace invade
 						this->two = (100 * this->chance);
 						
 						if (this->one < this->two) {
-						
-							// if the user has already the number of planets
 							if (this->f->fleetUser->getPlanetsCount() < (int)config.nget("user_max_planets",0)) {
 								// Invade the planet
 								this->targetEntity->invadeEntity(this->f->getUserId());
 								this->f->fleetUser->setLastInvasion();
 								this->f->deleteActionShip(1);
 								
-								report->setSubtype("invasion");
-								report->setRes(floor(this->f->getResMetal()),
+								BattleReport *invade = new BattleReport(this->f->getUserId(),
+																		 this->targetEntity->getUserId(),
+																		 this->f->getEntityTo(),
+																		 this->f->getEntityFrom(),
+																		 this->f->getLandtime(),
+																		 this->f->getId());
+								invade->setSubtype("invasion");
+								invade->setRes(floor(this->f->getResMetal()),
 											   floor(this->f->getResCrystal()),
 											   floor(this->f->getResPlastic()),
 											   floor(this->f->getResFuel()),floor(this->f->getResFood()),
 											   floor(this->f->getResPeople()));
-								report->setShips(this->f->getShipString());
-								report->setOpponent1Id(this->targetEntity->getUserId());
+								invade->setShips(this->f->getShipString());
+								invade->setOpponent1Id(this->targetEntity->getUserId());
+								delete invade;
 								
-								OtherReport *vreport = new OtherReport(this->targetEntity->getUserId(),
-																	  this->f->getEntityTo(),
-																	  this->f->getEntityFrom(),
-																	  this->f->getLandtime(),
-																	  this->f->getId(),
-																	  this->f->getAction());
-								vreport->setStatus(this->f->getStatus());
+								BattleReport *vreport = new BattleReport(this->f->getUserId(),
+																		 this->targetEntity->getUserId(),
+																		 this->f->getEntityTo(),
+																		 this->f->getEntityFrom(),
+																		 this->f->getLandtime(),
+																		 this->f->getId());
 								vreport->setSubtype("invaded");
 								vreport->setOpponent1Id(this->f->getUserId());
 								
@@ -107,8 +110,16 @@ namespace invade
 							}
 							// if the user has already reached the max number of planets
 							else {
-								report->setSubtype("invasionfailed");
-								report->setOpponent1Id(this->targetEntity->getUserId());
+								BattleReport *invade = new BattleReport(this->f->getUserId(),
+																		 this->targetEntity->getUserId(),
+																		 this->f->getEntityTo(),
+																		 this->f->getEntityFrom(),
+																		 this->f->getLandtime(),
+																		 this->f->getId());
+								invade->setSubtype("invasionfailed");
+								invade->setOpponent1Id(this->targetEntity->getUserId());
+								invade->setContent("1");
+								delete invade;
 																
 								OtherReport *vreport = new OtherReport(this->targetEntity->getUserId(),
 																	   this->f->getEntityTo(),
@@ -126,8 +137,15 @@ namespace invade
 						
 						// if the invasion failed
 						else {
-							report->setSubtype("invasionfailed");
-							report->setOpponent1Id(this->targetEntity->getUserId());
+							BattleReport *invade = new BattleReport(this->f->getUserId(),
+																	 this->targetEntity->getUserId(),
+																	 this->f->getEntityTo(),
+																	 this->f->getEntityFrom(),
+																	 this->f->getLandtime(),
+																	 this->f->getId());
+							invade->setSubtype("invasionfailed");
+							invade->setOpponent1Id(this->targetEntity->getUserId());
+							delete invade;
 							
 							OtherReport *vreport = new OtherReport(this->targetEntity->getUserId(),
 																   this->f->getEntityTo(),
@@ -145,8 +163,16 @@ namespace invade
 					
 					// if the planet is a main planet
 					else {
-						report->setSubtype("invasionfailed");
-						report->setOpponent1Id(this->targetEntity->getUserId());
+						BattleReport *invade = new BattleReport(this->f->getUserId(),
+																 this->targetEntity->getUserId(),
+																 this->f->getEntityTo(),
+																 this->f->getEntityFrom(),
+																 this->f->getLandtime(),
+																 this->f->getId());
+						invade->setSubtype("invasionfailed");
+						invade->setContent("2");
+						invade->setOpponent1Id(this->targetEntity->getUserId());
+						delete invade;
 						
 						OtherReport *vreport = new OtherReport(this->targetEntity->getUserId(),
 															   this->f->getEntityTo(),
@@ -164,11 +190,18 @@ namespace invade
 			}
 			// If no ship with the action was in the fleet 
 			else {
+				OtherReport *report = new OtherReport(this->f->getUserId(),
+													this->f->getEntityTo(),
+													this->f->getEntityFrom(),
+													this->f->getLandtime(),
+													this->f->getId(),
+													this->f->getAction());
 				report->setSubtype("actionfailed");
+
+				delete report;
 				
 				this->actionLog->addText("Action failed: Ship error");
 			}
-			delete report;
 		}
 		
 		this->f->setReturn();

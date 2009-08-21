@@ -15,8 +15,6 @@ namespace explore
 			
 			this->f->fleetUser->setDiscovered(this->targetEntity->getAbsX(),this->targetEntity->getAbsY());
 			
-			this->actionMessage->dontSend();
-			
 			ExploreReport *report = new ExploreReport(this->f->getUserId(),
 													  this->f->getEntityTo(),
 													  this->f->getEntityFrom(),
@@ -24,14 +22,15 @@ namespace explore
 			delete report;
 		}	
 		else {
-			Config &config = Config::instance();
-			
-			this->actionMessage->addType((int)config.idget("SHIP_MISC_MSG_CAT_ID"));
-			this->actionMessage->addText("Eine Flotte vom Planeten [b]",1);
-			this->actionMessage->addText(this->startEntity->getCoords(),1);
-			this->actionMessage->addText("versuchte das Ziel zu erkunden. Leider war kein Schiff mehr in der Flotte, welches die Aktion ausführen konnte, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!");
-			
-			this->actionMessage->addSubject("Erkundung gescheitert");
+			OtherReport *report = new OtherReport(this->f->getUserId(),
+												this->f->getEntityTo(),
+												this->f->getEntityFrom(),
+												this->f->getLandtime(),
+												this->f->getId(),
+												this->f->getAction());
+			report->setSubtype("actionfailed");
+
+			delete report;
 			
 			this->actionLog->addText("Action failed: Ship error");
 		}

@@ -52,8 +52,10 @@ namespace nebula
 					
 				}
 				// if there are no nebula collecter in the fleet anymore
-				else
-					this->actionLog->addText("Action failed: Shot error");
+				else {
+					report->setSubtype("actionshot");					
+					this->actionLog->addText("Action failed: Shot error");	
+				}
 			}
 			// If the asteroid field isnt there anymore
 			else {

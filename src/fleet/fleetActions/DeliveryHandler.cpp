@@ -30,7 +30,7 @@ namespace delivery
 		
 		// If the planet user is not the same as the buyer, send fleet to the main and send a message with the info
 		else {
-			report->setSubtype("deliveryfailed");
+			report->setSubtype("actionmain");
 			
 			this->f->setMain();
 			

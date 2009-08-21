@@ -43,7 +43,7 @@ namespace position
 												  this->f->getLandtime(),
 												  this->f->getId(),
 												  this->f->getAction());
-			report->setSubtype("returnfailed");
+			report->setSubtype("actionmain");
 			report->setShips(this->f->getShipString());
 			report->setStatus(this->f->getStatus());
 			

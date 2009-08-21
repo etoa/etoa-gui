@@ -12,9 +12,12 @@ namespace debris
 		* Whole fleet will be destroyed!
 		*/ 
 		
-		Config &config = Config::instance();
-		
-		this->actionMessage->addType((int)config.idget("SHIP_MISC_MSG_CAT_ID"));
+		OtherReport *report = new OtherReport(this->f->getUserId(),
+										this->f->getEntityTo(),
+										this->f->getEntityFrom(),
+										this->f->getLandtime(),
+										this->f->getId(),
+										this->f->getAction());
 		
 		// Precheck action==possible?
 		if (this->f->actionIsAllowed()) {
@@ -24,27 +27,17 @@ namespace debris
 			this->targetEntity->addWfCrystal(this->f->getWfCrystal());
 			this->targetEntity->addWfPlastic(this->f->getWfPlastic());
 
-			// Send a message to the fleet user
-			this->actionMessage->addText("Eine Flotte vom Planeten [b]",1);
-			this->actionMessage->addText(this->startEntity->getCoords(),1);
-			this->actionMessage->addText("[/b]hat auf dem Planeten [b]");
-			this->actionMessage->addText(this->targetEntity->getCoords(),1);
-			this->actionMessage->addText("[/b]ein Trümmerfeld erstellt.");
-			
-			this->actionMessage->addSubject("Tr&uuml;mmerfeld erstellt");
+			report->setSubtype("createdebris");
 		}
 		
 		// If no ship with the action was in the fleet
 		else {
-			this->actionMessage->addText("Eine Flotte vom Planeten [b]",1);
-			this->actionMessage->addText(this->startEntity->getCoords(),1);
-			this->actionMessage->addText("versuchte ein Trümmerfeld zu erstellen. Leider war kein Schiff mehr in der Flotte, welches die Aktion ausführen konnte, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!");
-			
-			this->actionMessage->addSubject("Trümmerfeld erstellen gescheitert");
+
+			report->setSubtype("actionfailed");
 			
 			this->actionLog->addText("Action failed: Ship error");
 		}
-		
+		delete report;		
 		this->f->setReturn();
 	}
 }

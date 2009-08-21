@@ -955,13 +955,13 @@
 		
 		std::map<int,int>::iterator st;
 		for ( st=specialShips.begin() ; st != specialShips.end(); st++ ) {
-			shipString += etoa::d2s((*st).second)
+			shipString += etoa::d2s((*st).first)
 						+ ":"
 						+ etoa::d2s((*st).second)
 						+ ",";
 		}
 		for ( st=ships.begin() ; st != ships.end(); st++ ) {
-			shipString += etoa::d2s((*st).second)
+			shipString += etoa::d2s((*st).first)
 						+ ":"
 						+ etoa::d2s((*st).second)
 						+ ",";
@@ -978,7 +978,7 @@
 		
 		std::vector<Object*>::iterator ot;
 		for (ot = this->def.begin() ; ot < this->def.end(); ot++) {
-			defString += (*ot)->getTypeId()
+			defString += etoa::d2s((*ot)->getTypeId())
 						+ ":"
 						+ etoa::d2s((*ot)->getCount());
 			if (rebuild)

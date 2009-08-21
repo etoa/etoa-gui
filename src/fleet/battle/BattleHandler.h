@@ -26,14 +26,10 @@
 class BattleHandler
 {
 	public:
-		BattleHandler(Message* message) {
-			this->message = new Message(message);
-		}
+		BattleHandler() { }
 		void battle(Fleet* fleet, Entity* entity, Log* log);
 
 		~BattleHandler() {	}
-
-		Message* message;
 
 		bool alliancesHaveWar;
 

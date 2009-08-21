@@ -13,10 +13,8 @@ namespace antrax
 		/** Initialize data **/
 		Config &config = Config::instance();
 		
-		BattleHandler *bh = new BattleHandler(this->actionMessage);
+		BattleHandler *bh = new BattleHandler();
 		bh->battle(this->f,this->targetEntity,this->actionLog);
-		
-		this->actionMessage->addType((int)config.idget("SHIP_WAR_MSG_CAT_ID"));
 		
 		// Antrax the planet
 		if (bh->returnV==1) {
@@ -30,6 +28,15 @@ namespace antrax
 				this->one = rand() % 101;
 				this->two = config.nget("antrax_action",0) + ceil(this->shipCnt/10000.0) + this->tLevel * 5 + this->f->getSpecialShipBonusAntrax() * 100;
 				
+				//Battlereport
+				BattleReport *antrax = new BattleReport(this->f->getUserId(),
+														 this->targetEntity->getUserId(),
+														 this->f->getEntityTo(),
+														 this->f->getEntityFrom(),
+														 this->f->getLandtime(),
+														 this->f->getId());
+				antrax->addUser(this->targetEntity->getUserId());
+														
 				if (this->one < this->two) {
 					// Calculate the damage percentage (Max. 90%) 
 					this->temp = (int)std::min((10 + this->tLevel * 3),(int)config.nget("antrax_action",1));
@@ -40,19 +47,9 @@ namespace antrax
 					this->people = this->targetEntity->removeResPeople(round(this->targetEntity->getResPeople() * this->fak / 100));
 					this->food = this->targetEntity->removeResFood(round(this->targetEntity->getResFood() * this->fak / 100));
 					
-					/// Send message to the entity and the fleet user 
-					this->actionMessage->addText("Eine Flotte vom Planeten [b]",1);
-					this->actionMessage->addText(this->startEntity->getCoords(),1);
-					this->actionMessage->addText("[/b]einen Antraxangriff auf den Planeten[b]",1);
-					this->actionMessage->addText(this->targetEntity->getCoords(),1);
-					this->actionMessage->addText("[/b]verübt es starben dabei ");
-					this->actionMessage->addText(etoa::nf(etoa::d2s(this->people)));
-					this->actionMessage->addText(" Bewohner und ");
-					this->actionMessage->addText(etoa::nf(etoa::d2s(this->food)));
-					this->actionMessage->addText(" t Nahrung wurden verbrannt.");
-					
-					this->actionMessage->addSubject("Antraxangriff");
-					this->actionMessage->addUserId(this->targetEntity->getUserId());
+					// Add Reportdata
+					antrax->setSubtype("antrax");
+					antrax->setRes(0,0,0,0,this->food,this->people);
 					
 					this->actionLog->addText("Action succeed: " + etoa::d2s(this->one) + " < " + etoa::d2s(this->two));
 					
@@ -61,30 +58,25 @@ namespace antrax
 					this->f->deleteActionShip(1);
 				}
 					// if antrax failed 
-				else  {
-					this->actionMessage->addText("Eine Flotte vom Planeten [b]",1);
-					this->actionMessage->addText(this->startEntity->getCoords(),1);
-					this->actionMessage->addText("[/b]hat erfolglos einen Antraxangriff auf den Planeten[b]",1);
-					this->actionMessage->addText(this->targetEntity->getCoords(),1);
-					this->actionMessage->addText("[/b]verübt.");
-					
-					this->actionMessage->addSubject("Antraxangriff erfolglos");
-					this->actionMessage->addUserId(this->targetEntity->getUserId());
-				}
+				else
+					antrax->setSubtype("antraxfailed");
+				delete antrax;
 			}
 			// If no ship with the action was in the fleet 
 			else {
-				this->actionMessage->addText("Eine Flotte vom Planeten [b]",1);
-				this->actionMessage->addText(this->startEntity->getCoords(),1);
-				this->actionMessage->addText("[/b]versuchte eine Antraxangriff auszuführen. Leider war kein Schiff mehr in der Flotte, welches die Aktion ausführen konnte, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!");
-				
-				this->actionMessage->addSubject("Antraxangriff gescheitert");
+				OtherReport *report = new OtherReport(this->f->getUserId(),
+													this->f->getEntityTo(),
+													this->f->getEntityFrom(),
+													this->f->getLandtime(),
+													this->f->getId(),
+													this->f->getAction());
+				report->setSubtype("actionfailed");
+
+				delete report;
 				
 				this->actionLog->addText("Action failed: Ship error");
 			}
 		}
-		else
-			this->actionMessage->dontSend();
 		
 		this->f->setReturn();
 		delete bh;

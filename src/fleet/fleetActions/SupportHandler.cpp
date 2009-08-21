@@ -33,6 +33,7 @@ namespace support
 				report->setOpponent1Id(this->f->getUserId());
 				
 				report->setSubtype("support");
+				report->setContent(etoa::d2s(this->f->getLandtime() + this->f->getNextactiontime()));
 				
 				if (this->targetEntity->getUserId() != this->f->getUserId())
 					report->addUser(this->targetEntity->getUserId());

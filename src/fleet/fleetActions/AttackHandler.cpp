@@ -8,10 +8,8 @@ namespace attack
 		/**
 		* Fleet-Action: Attack
 		*/
-		BattleHandler *bh = new BattleHandler(this->actionMessage);
+		BattleHandler *bh = new BattleHandler();
 		bh->battle(this->f,this->targetEntity,this->actionLog);
-		
-		this->actionMessage->dontSend();
 		
 		// if fleet user has won the fight, send fleet home
 		if (bh->returnFleet)

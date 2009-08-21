@@ -140,7 +140,7 @@ namespace building
 			<< "	buildlist_build_type=3 "
 			<< "	AND buildlist_build_end_time<" << time << ";";
 		query.store();
-		std::cout << "Upgraded "<<con_->affected_rows()<<" Buildings\n";
+		//std::cout << "Upgraded "<<con_->affected_rows()<<" Buildings\n";
 		query.reset();    
 		
 		query << "UPDATE "
@@ -154,7 +154,7 @@ namespace building
 			<< "	buildlist_build_type=4 "
 			<< "	AND buildlist_build_end_time<" << time << ";";
 		query.store();   	
-		std::cout << "Downgraded "<<con_->affected_rows()<<" Buildings\n";		
+		//std::cout << "Downgraded "<<con_->affected_rows()<<" Buildings\n";		
 		query.reset();
 	}	
 }

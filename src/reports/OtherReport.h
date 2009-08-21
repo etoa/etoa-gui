@@ -45,7 +45,7 @@ public:
 
 	OtherReport(OtherReport* report) {	}
 		
-	OtherReport() {
+	~OtherReport() {
 		while (!this->users.empty()) {
 			this->id = this->save(this->users.back());
 			this->saveOtherReport();

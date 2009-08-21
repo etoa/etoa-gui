@@ -7,20 +7,6 @@
 		
 		//Flotte wird stationiert und Waren werden ausgeladen
 		if(fleetAction==1) {
-			//Rohstoffnachricht für den User
-			this->msgRes += "\n\n[b]WAREN[/b]\n\n[b]Titan:[/b] "
-				+ etoa::nf(etoa::d2s(this->f->getResMetal()))
-				+ "\n[b]Silizium:[/b] "
-				+ etoa::nf(etoa::d2s(this->f->getResCrystal()))
-				+ "\n[b]PVC:[/b] "
-				+ etoa::nf(etoa::d2s(this->f->getResPlastic()))
-				+ "\n[b]Tritium:[/b] "
-				+ etoa::nf(etoa::d2s(this->f->getResFuel()))
-				+ "\n[b]Nahrung:[/b] "
-				+ etoa::nf(etoa::d2s(this->f->getResFood()))
-				+ "\n[b]Bewohner:[/b] "
-				+ etoa::nf(etoa::d2s(this->f->getResPeople()))
-				+ "\n";
 			
 			this->targetEntity->addResMetal(this->f->unloadResMetal());
 			this->targetEntity->addResCrystal(this->f->unloadResCrystal());
@@ -32,7 +18,6 @@
 			
 			// Flotte stationieren
 			if (this->f->getCount()) {
-				DataHandler &DataHandler = DataHandler::instance();
 				query << "INSERT INTO " 
 						<< "	`shiplist` "
 						<< "(`shiplist_user_id` , "
@@ -84,12 +69,6 @@
 						query << (*ot)->getSBonusAntraxFood() << "', '";
 						query << (*ot)->getSBonusDeactivade() << "' ";
 						query << ")";
-						
-						ShipData::ShipData *data = DataHandler.getShipById((*ot)->getTypeId());
-						this->msgShips += "\n[b]"
-										+ data->getName()
-										+ ":[/b] "
-										+ etoa::nf(etoa::d2s((*ot)->getCount()));
 					}
 				}
 				query << " ON DUPLICATE KEY "
@@ -114,12 +93,6 @@
 				query.reset();
 				
 			}
-			if (this->msgShips=="") {
-				this->msgShips = "\n\n[b]SCHIFFE[/b]\n[i]Keine weiteren Schiffe in der Flotte![/i]\n";					
-			}
-			else {
-				this->msgShips = "\n\n[b]SCHIFFE[/b]\n" + this->msgShips + "\n";
-			}
 			
 			//Delete Fleet
 			this->f->setPercentSurvive(0);
@@ -127,21 +100,6 @@
 		
 		//Waren werden ausgeladen
 		else if(fleetAction==2) {
-			//Rohstoffnachricht für den User
-			this->msgRes += "\n\n[b]WAREN[/b]\n\n[b]Titan:[/b] "
-				+ etoa::nf(etoa::d2s(this->f->getResMetal()))
-				+ "\n[b]Silizium:[/b] "
-				+ etoa::nf(etoa::d2s(this->f->getResCrystal()))
-				+ "\n[b]PVC:[/b] "
-				+ etoa::nf(etoa::d2s(this->f->getResPlastic()))
-				+ "\n[b]Tritium:[/b] "
-				+ etoa::nf(etoa::d2s(this->f->getResFuel()))
-				+ "\n[b]Nahrung:[/b] "
-				+ etoa::nf(etoa::d2s(this->f->getResFood()))
-				+ "\n[b]Bewohner:[/b] "
-				+ etoa::nf(etoa::d2s(this->f->getResPeople()))
-				+ "\n";
-			
 			this->targetEntity->addResMetal(this->f->unloadResMetal());
 			this->targetEntity->addResCrystal(this->f->unloadResCrystal());
 			this->targetEntity->addResPlastic(this->f->unloadResPlastic());
@@ -149,9 +107,5 @@
 			this->targetEntity->addResFood(this->f->unloadResFood(false));
 			this->targetEntity->addResPower(this->f->unloadResPower());
 			this->targetEntity->addResPeople(this->f->unloadResPeople(false));
-		}
-		//Fehler, die Flotte hat eine ungültige Aktion
-		else {
-			this->msgRes = "Fehler, die Flotte hat eine ungültige Aktion!<br>";
 		}
 	}

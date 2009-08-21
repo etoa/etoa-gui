@@ -10,12 +10,11 @@ namespace bombard
 		/**
 		* Fleet-Action: Bombard
 		*/
+		
 		Config &config = Config::instance();
 		
-		BattleHandler *bh = new BattleHandler(this->actionMessage);
+		BattleHandler *bh = new BattleHandler();
 		bh->battle(this->f,this->targetEntity,this->actionLog);
-		
-		this->actionMessage->addType((int)config.idget("SHIP_WAR_MSG_CAT_ID"));
 
 		// Bombard the planet
 		if (bh->returnV==1) {
@@ -25,9 +24,18 @@ namespace bombard
 				this->tLevel = this->f->fleetUser->getTechLevel((unsigned int)config.idget("BOMB_TECH_ID"));
 				this->shipCnt = this->f->getActionCount(true);
 				
-				// 10% + Bonis, dass Bombardierung erfolgreich
+				// 10% + Boni, for success
 				this->one = rand() % 101;
 				this->two = config.nget("ship_bomb_factor",1) + (config.nget("ship_bomb_factor",0) * this->tLevel + ceil(this->shipCnt / 10000) + this->f->getSpecialShipBonusBuildDestroy() * 100);
+				
+				//Battlereport
+				BattleReport *bombard = new BattleReport(this->f->getUserId(),
+														 this->targetEntity->getUserId(),
+														 this->f->getEntityTo(),
+														 this->f->getEntityFrom(),
+														 this->f->getLandtime(),
+														 this->f->getId());
+				bombard->addUser(this->targetEntity->getUserId());
 				
 				if (this->one < this->two) 
 				{
@@ -37,13 +45,8 @@ namespace bombard
 					std::string actionString = this->targetEntity->bombBuilding(this->bLevel);
 					
 					if (actionString.length()) {
-						
-						this->actionMessage->addText("Eine Flotte vom Planeten [b]",1);
-						this->actionMessage->addText(this->startEntity->getCoords(),1);
-						this->actionMessage->addText(actionString,1);
-						
-						this->actionMessage->addSubject("Gebäude bombardiert");
-						this->actionMessage->addUserId(this->targetEntity->getUserId());
+						bombard->setContent(actionString);
+						bombard->setSubtype("bombard");
 						
 						this->actionLog->addText("Action succeed: " + etoa::d2s(this->one) + " < " + etoa::d2s(this->two));
 						
@@ -51,43 +54,31 @@ namespace bombard
 						
 						this->f->deleteActionShip(1);
 					}
-					// If bombard failed 
-					else  {
-						this->actionMessage->addText("Eine Flotte vom Planeten [b]",1);
-						this->actionMessage->addText(this->startEntity->getCoords(),1);
-						this->actionMessage->addText("[/b]hat erfolglos versucht ein Gebäude des Planeten [b]",1);
-						this->actionMessage->addText(this->targetEntity->getCoords(),1);
-						this->actionMessage->addText("[/b]zu bombardieren.");
-						
-						this->actionMessage->addSubject("Bombardierung erfolglos");
-						this->actionMessage->addUserId(this->targetEntity->getUserId());
-					}
+					// If bombard failed (no building)
+					else
+						bombard->setSubtype("bombardfailed");
 				} 
-					// if stealing a tech failed
-				else  {
-					this->actionMessage->addText("Eine Flotte vom Planeten [b]",1);
-					this->actionMessage->addText(this->startEntity->getCoords(),1);
-					this->actionMessage->addText("[/b]hat erfolglos versucht ein Gebäude des Planeten[b]",1);
-					this->actionMessage->addText(this->targetEntity->getCoords(),1);
-					this->actionMessage->addText("[/b]zu bombardieren.");
-					
-					this->actionMessage->addSubject("Bombardierung erfolglos");
-					this->actionMessage->addUserId(this->targetEntity->getUserId());
-				}
+					// if bombard failed
+				else
+					bombard->setSubtype("bombardfailed");
+				delete bombard;
 			}
 			// If no ship with the action was in the fleet 
 			else {
-				this->actionMessage->addText("Eine Flotte vom Planeten [b]",1);
-				this->actionMessage->addText(this->startEntity->getCoords(),1);
-				this->actionMessage->addText("[/b]versuchte eine Bombardierung auszuführen. Leider war kein Schiff mehr in der Flotte, welches die Aktion ausführen konnte, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!");
-				
-				this->actionMessage->addSubject("Bombardierung gescheitert");
+				OtherReport *report = new OtherReport(this->f->getUserId(),
+													this->f->getEntityTo(),
+													this->f->getEntityFrom(),
+													this->f->getLandtime(),
+													this->f->getId(),
+													this->f->getAction());
+				report->setSubtype("actionfailed");
+
+				delete report;
 				
 				this->actionLog->addText("Action failed: Ship error");
 			}
 		}
 		else 
-			this->actionMessage->dontSend();
 		
 		this->f->setReturn();
 		delete bh;

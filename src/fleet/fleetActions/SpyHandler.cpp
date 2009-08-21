@@ -98,12 +98,12 @@ namespace spy
 				entityReport->setCoverage(round(this->tarnDefense));
 				
 				fleetReport->setSubtype("spy");
-				fleetReport->setSubtype("surveillance");
+				entityReport->setSubtype("surveillance");
 			}
 			// if the mission failed 
 			else {
 				fleetReport->setSubtype("spyfailed");
-				fleetReport->setSubtype("surveillancefailed");
+				entityReport->setSubtype("surveillancefailed");
 			}
 			
 			fleetReport->setSpydefense(round(this->spyDefense));
