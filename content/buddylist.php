@@ -377,7 +377,354 @@ $res=dbquery("
 	
 	
 	
-	
+// Renderzeit-Start festlegen
+	$render_time = explode(" ",microtime());
+	$render_starttime=$render_time[1]+$render_time[0];
+
+/*
+	mysql_query("
+	DELETE
+	FROM
+		dl4_3_items2
+	WHERE
+		item2_for_op=0
+		AND item2_for_opmp=0
+		AND item2_for_ap=0
+		AND item2_for_vp=0
+		AND item2_for_hp=0
+		AND item2_for_mp=0
+		AND item2_for_tp=0;");
+
+*/
+
+
+
+	/*
+	$kraft_array = array(20,30,40);
+	$op_array = array();
+	$res = mysql_query("SELECT item_op FROM dl4_3_items GROUP BY item_op;");
+	while($arr=mysql_fetch_array($res))
+	{
+		$op_array[] = $arr['item_op'];
+	}
+
+
+	foreach($kraft_array as $kraft)
+	{
+		foreach($op_array as $op)
+		{
+			// OPs
+			$res = mysql_query("
+			SELECT
+			(
+				SELECT 
+					item2_id
+				FROM
+					dl4_3_items2
+				WHERE
+					item2_kraft <= ".$kraft."
+					AND item2_op <= ".$op."
+				ORDER BY (`item2_ap`*1.2 + `item2_vp`*0.85 + `item2_hp`*0.7 + `item2_mp`*0.9) desc
+				LIMIT 1
+			) AS OP,
+			(
+				SELECT 
+					item2_id
+				FROM
+					dl4_3_items2
+				WHERE
+					item2_kraft <= ".$kraft."
+					AND item2_op <= ".$op."
+				ORDER BY (`item2_ap`*1.2 + `item2_vp`*0.85 + `item2_hp`*0.7 + `item2_mp`*0) desc
+				LIMIT 1
+			) AS OPMP,
+			(
+				SELECT 
+					item2_id
+				FROM
+					dl4_3_items2
+				WHERE
+					item2_kraft <= ".$kraft."
+					AND item2_op <= ".$op."
+				ORDER BY item2_ap desc
+				LIMIT 1
+			) AS AP,
+			(
+				SELECT 
+					item2_id
+				FROM
+					dl4_3_items2
+				WHERE
+					item2_kraft <= ".$kraft."
+					AND item2_op <= ".$op."
+				ORDER BY item2_vp desc
+				LIMIT 1
+			) AS VP,
+			(
+				SELECT 
+					item2_id
+				FROM
+					dl4_3_items2
+				WHERE
+					item2_kraft <= ".$kraft."
+					AND item2_op <= ".$op."
+				ORDER BY item2_hp desc
+				LIMIT 1
+			) AS HP,
+			(
+				SELECT 
+					item2_id
+				FROM
+					dl4_3_items2
+				WHERE
+					item2_kraft <= ".$kraft."
+					AND item2_op <= ".$op."
+				ORDER BY item2_mp desc
+				LIMIT 1
+			) AS MP,
+			(
+				SELECT 
+					item2_id
+				FROM
+					dl4_3_items2
+				WHERE
+					item2_kraft <= ".$kraft."
+					AND item2_op <= ".$op."
+				ORDER BY item2_tp desc
+				LIMIT 1
+			) AS TP
+			");
+			$arr=mysql_fetch_array($res);
+		
+			if($arr['OP']>0)
+			{
+				mysql_query("
+			  UPDATE
+			   dl4_3_items2
+			  SET
+			    item2_for_op=1
+			  WHERE
+			    item2_id=".$arr['OP'].";");
+			}
+			if($arr['OPMP']>0)
+			{
+				mysql_query("
+			  UPDATE
+			   dl4_3_items2
+			  SET
+			    item2_for_opmp=1
+			  WHERE
+			    item2_id=".$arr['OPMP'].";");
+			}
+			if($arr['AP']>0)
+			{
+				mysql_query("
+			  UPDATE
+			   dl4_3_items2
+			  SET
+			    item2_for_ap=1
+			  WHERE
+			    item2_id=".$arr['AP'].";");
+			}
+			if($arr['VP']>0)
+			{
+				mysql_query("
+			  UPDATE
+			   dl4_3_items2
+			  SET
+			    item2_for_vp=1
+			  WHERE
+			    item2_id=".$arr['VP'].";");
+			}
+			if($arr['HP']>0)
+			{
+				mysql_query("
+			  UPDATE
+			   dl4_3_items2
+			  SET
+			    item2_for_hp=1
+			  WHERE
+			    item2_id=".$arr['HP'].";");
+			}
+			if($arr['MP']>0)
+			{
+				mysql_query("
+			  UPDATE
+			   dl4_3_items2
+			  SET
+			    item2_for_mp=1
+			  WHERE
+			    item2_id=".$arr['MP'].";");
+			}
+			if($arr['TP']>0)
+			{
+				mysql_query("
+			  UPDATE
+			   dl4_3_items2
+			  SET
+			    item2_for_tp=1
+			  WHERE
+			    item2_id=".$arr['TP'].";");
+			}
+		    
+		    
+
+		}
+	}
+*/
+
+
+
+
+
+// Waffen
+$res = mysql_query("SELECT * FROM dl4_3_items WHERE item_cat_id='1';");
+$weapons = array();
+while($arr=mysql_fetch_array($res))
+{
+	$weapons[] = $arr;
+}
+
+// schilder
+$res = mysql_query("SELECT * FROM dl4_3_items WHERE item_cat_id='2' LIMIT 1;");
+$shields = array();
+while($arr=mysql_fetch_array($res))
+{
+	$shields[] = $arr;
+}
+// rüstung
+$res = mysql_query("SELECT * FROM dl4_3_items WHERE item_cat_id='3';");
+$armor = array();
+while($arr=mysql_fetch_array($res))
+{
+	$armor[] = $arr;
+}
+$res = mysql_query("SELECT * FROM dl4_3_items WHERE item_cat_id='4';");
+$helms = array();
+while($arr=mysql_fetch_array($res))
+{
+	$helms[] = $arr;
+}
+$res = mysql_query("SELECT * FROM dl4_3_items WHERE item_cat_id='5';");
+$acc = array();
+while($arr=mysql_fetch_array($res))
+{
+	$acc[] = $arr;
+}
+echo "<br>teest:<br>";
+$count = 1; 
+$count2 = 1;
+$sql_values = "";
+foreach($weapons as $weapons_data) 
+{ 
+	if($count == 1) 
+	{ 
+		// schilder 
+		foreach($shields as $shields_data) 
+		{ 
+			// rüstung 
+			foreach($armor as $armor_data) 
+			{ 
+				// helme 
+				foreach($helms as $helms_data) 
+				{ 
+					// zubehör 
+					foreach($acc as $acc_data) 
+					{ 
+						$kraft_sum = $weapons_data['item_kraft'] + $shields_data['item_kraft'] + $armor_data['item_kraft'] + $helms_data['item_kraft'] + $acc_data['item_kraft']; 
+						$max_op = max($weapons_data['item_op'],$shields_data['item_op'],$armor_data['item_op'],$helms_data['item_op'], $acc_data['item_op']);
+						
+						$ap_sum = $weapons_data['item_ap'] + $shields_data['item_ap'] + $armor_data['item_ap'] + $helms_data['item_ap'] + $acc_data['item_ap']; $vp_sum = $weapons_data['item_vp'] + $shields_data['item_vp'] + $armor_data['item_vp'] + $helms_data['item_vp'] + $acc_data['item_vp']; $hp_sum = $weapons_data['item_hp'] + $shields_data['item_hp'] + $armor_data['item_hp'] + $helms_data['item_hp'] + $acc_data['item_hp']; $mp_sum = $weapons_data['item_mp'] + $shields_data['item_mp'] + $armor_data['item_mp'] + $helms_data['item_mp'] + $acc_data['item_mp']; $tp_sum = $weapons_data['item_tp'] + $shields_data['item_tp'] + $armor_data['item_tp'] + $helms_data['item_tp'] + $acc_data['item_tp']; 
+						
+						$kombi = "".$weapons_data['item_name']." / ".$shields_data['item_name']." / ".$armor_data['item_name']." / ".$helms_data['item_name']." / ".$acc_data['item_name']." / ";
+						
+						if($weapons_data['item_skills']=="distance;")
+						{
+							$distance = 1;
+						}
+						else
+						{
+							$distance = 0;
+						}
+						
+						$solve = true;
+						
+						//Element
+						if($weapons_data['item_element']!="" || $shields_data['item_element'] != "" || $armor_data['item_element'] != "" || $helms_data['item_element'] != "" || $acc_data['item_element'] != "")
+						{
+							
+							//feuer
+							if(($weapons_data['item_element']=="fire" || $shields_data['item_element']=="fire" || $armor_data['item_element']=="fire" || $helms_data['item_element']=="fire" || $acc_data['item_element']=="fire") 
+							AND 
+							($weapons_data['item_element']=="ice" || $shields_data['item_element']=="ice" || $armor_data['item_element']=="ice" || $helms_data['item_element']=="ice" || $acc_data['item_element']=="ice" ||
+							$weapons_data['item_element']=="stone" || $shields_data['item_element']=="stone" || $armor_data['item_element']=="stone" || $helms_data['item_element']=="stone" || $acc_data['item_element']=="stone"))
+							{
+								$solve = false;
+							}
+							
+							//eis
+							if(($weapons_data['item_element']=="ice" || $shields_data['item_element']=="ice" || $armor_data['item_element']=="ice" || $helms_data['item_element']=="ice" || $acc_data['item_element']=="ice")
+							AND 
+							($weapons_data['item_element']=="fire" || $shields_data['item_element']=="fire" || $armor_data['item_element']=="fire" || $helms_data['item_element']=="fire" || $acc_data['item_element']=="fire" ||
+							$weapons_data['item_element']=="air" || $shields_data['item_element']=="air" || $armor_data['item_element']=="air" || $helms_data['item_element']=="air" || $acc_data['item_element']=="air"))
+							{
+								$solve = false;
+							}
+							
+							//luft
+							if(($weapons_data['item_element']=="air" || $shields_data['item_element']=="air" || $armor_data['item_element']=="air" || $helms_data['item_element']=="air" || $acc_data['item_element']=="air")
+							AND 
+							($weapons_data['item_element']=="stone" || $shields_data['item_element']=="stone" || $armor_data['item_element']=="stone" || $helms_data['item_element']=="stone" || $acc_data['item_element']=="stone" ||
+							$weapons_data['item_element']=="ice" || $shields_data['item_element']=="ice" || $armor_data['item_element']=="ice" || $helms_data['item_element']=="ice" || $acc_data['item_element']=="ice"))
+							{
+								$solve = false;
+							}
+							
+							//erde
+							if(($weapons_data['item_element']=="stone" || $shields_data['item_element']=="stone" || $armor_data['item_element']=="stone" || $helms_data['item_element']=="stone" || $acc_data['item_element']=="stone")
+							AND 
+							($weapons_data['item_element']=="fire" || $shields_data['item_element']=="fire" || $armor_data['item_element']=="fire" || $helms_data['item_element']=="fire" || $acc_data['item_element']=="fire" ||
+							$weapons_data['item_element']=="air" || $shields_data['item_element']=="air" || $armor_data['item_element']=="air" || $helms_data['item_element']=="air" || $acc_data['item_element']=="air"))
+							{
+								$solve = false;
+							}
+							
+						}
+						
+						if($solve)
+						{
+							if($count2==1)
+							{
+								//$sql_values .= "(".$max_op.", ".$kraft_sum.", ".$ap_sum.", ".$vp_sum.", ".$hp_sum.", ".$mp_sum.", ".$tp_sum.", '".$weapons_data['item_name']."', '".$shields_data['item_name']."', '".$armor_data['item_name']."', '".$helms_data['item_name']."', '".$acc_data['item_name']."')";
+								
+								$sql_values .= "(".$max_op.", ".$kraft_sum.", ".$ap_sum.", ".$vp_sum.", ".$hp_sum.", ".$mp_sum.", ".$tp_sum.",  ".$distance.", ".$weapons_data['item_id'].", ".$shields_data['item_id'].", ".$armor_data['item_id'].", ".$helms_data['item_id'].", ".$acc_data['item_id'].")";
+							}
+							else
+							{
+								//$sql_values .= ",(".$max_op.", ".$kraft_sum.", ".$ap_sum.", ".$vp_sum.", ".$hp_sum.", ".$mp_sum.", ".$tp_sum.", '".$weapons_data['item_name']."', '".$shields_data['item_name']."', '".$armor_data['item_name']."', '".$helms_data['item_name']."', '".$acc_data['item_name']."')";
+								
+								$sql_values .= ",(".$max_op.", ".$kraft_sum.", ".$ap_sum.", ".$vp_sum.", ".$hp_sum.", ".$mp_sum.", ".$tp_sum.", ".$distance.", ".$weapons_data['item_id'].", ".$shields_data['item_id'].", ".$armor_data['item_id'].", ".$helms_data['item_id'].", ".$acc_data['item_id'].")";
+							}
+						}
+
+						//echo "count:$count / count2:$count2<br>$kombi<br>kraft:$kraft_sum<br>op:$max_op<br>ap:$ap_sum<br>vp:$vp_sum<br>hp:$hp_sum<br>mp:$mp_sum<br>tp:$tp_sum<br><br>";
+						$count2++;
+					} 
+				}
+			}
+		}
+	}
+	$count++;
+}
+mysql_query("INSERT INTO dl4_3_items2 (item2_op, item2_kraft, item2_ap, item2_vp, item2_hp, item2_mp, item2_tp, item2_distance, item2_weapon, item2_shield, item2_armor, item2_helm, item2_acc) VALUES ".$sql_values.";");
+
+echo "Count: $count / count2: $count2";
+
+
+
+$render_time = explode(' ',microtime());
+	$rtime = $render_time[1]+$render_time[0]-$render_starttime;
+	echo "<br><br>Erstellt in ".$rtime." sec<br>";
 	
 	
 ?>
