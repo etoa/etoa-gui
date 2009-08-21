@@ -586,14 +586,14 @@ while($arr=mysql_fetch_array($res))
 }
 
 // schilder
-$res = mysql_query("SELECT * FROM dl4_3_items WHERE item_cat_id='2' LIMIT 1;");
+$res = mysql_query("SELECT * FROM dl4_3_items WHERE item_cat_id='2' LIMIT 10;");
 $shields = array();
 while($arr=mysql_fetch_array($res))
 {
 	$shields[] = $arr;
 }
 // rüstung
-$res = mysql_query("SELECT * FROM dl4_3_items WHERE item_cat_id='3' LIMIT 3;");
+$res = mysql_query("SELECT * FROM dl4_3_items WHERE item_cat_id='3';");
 $armor = array();
 while($arr=mysql_fetch_array($res))
 {
@@ -614,6 +614,7 @@ while($arr=mysql_fetch_array($res))
 echo "<br>teest:<br>";
 $count = 1; 
 $count2 = 1;
+$count3 = 1;
 $sql_values = "";
 foreach($weapons as $weapons_data) 
 { 
@@ -693,7 +694,7 @@ foreach($weapons as $weapons_data)
 						
 						if($solve)
 						{
-							if($count2==1)
+							if($sql_values=="")
 							{
 								//$sql_values .= "(".$max_op.", ".$kraft_sum.", ".$ap_sum.", ".$vp_sum.", ".$hp_sum.", ".$mp_sum.", ".$tp_sum.", '".$weapons_data['item_name']."', '".$shields_data['item_name']."', '".$armor_data['item_name']."', '".$helms_data['item_name']."', '".$acc_data['item_name']."')";
 								
@@ -705,10 +706,20 @@ foreach($weapons as $weapons_data)
 								
 								$sql_values .= ",(".$max_op.", ".$kraft_sum.", ".$ap_sum.", ".$vp_sum.", ".$hp_sum.", ".$mp_sum.", ".$tp_sum.", ".$distance.", ".$weapons_data['item_id'].", ".$shields_data['item_id'].", ".$armor_data['item_id'].", ".$helms_data['item_id'].", ".$acc_data['item_id'].")";
 							}
+							
+							$count3++;
+							if($count3==10000)
+							{
+								mysql_query("INSERT INTO dl4_3_items2 (item2_op, item2_kraft, item2_ap, item2_vp, item2_hp, item2_mp, item2_tp, item2_distance, item2_weapon, item2_shield, item2_armor, item2_helm, item2_acc) VALUES ".$sql_values.";");
+								
+								$sql_values = "";
+								$count3=1;
+							}
 						}
 
 						//echo "count:$count / count2:$count2<br>$kombi<br>kraft:$kraft_sum<br>op:$max_op<br>ap:$ap_sum<br>vp:$vp_sum<br>hp:$hp_sum<br>mp:$mp_sum<br>tp:$tp_sum<br><br>";
 						$count2++;
+						
 					} 
 				}
 			}
