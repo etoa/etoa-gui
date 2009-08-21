@@ -593,7 +593,7 @@ while($arr=mysql_fetch_array($res))
 	$shields[] = $arr;
 }
 // rüstung
-$res = mysql_query("SELECT * FROM dl4_3_items WHERE item_cat_id='3';");
+$res = mysql_query("SELECT * FROM dl4_3_items WHERE item_cat_id='3' LIMIT 3;");
 $armor = array();
 while($arr=mysql_fetch_array($res))
 {
