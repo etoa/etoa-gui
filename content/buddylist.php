@@ -586,7 +586,7 @@ while($arr=mysql_fetch_array($res))
 }
 
 // schilder
-$res = mysql_query("SELECT * FROM dl4_3_items WHERE item_cat_id='2' LIMIT 10;");
+$res = mysql_query("SELECT * FROM dl4_3_items WHERE item_cat_id='2';");
 $shields = array();
 while($arr=mysql_fetch_array($res))
 {
