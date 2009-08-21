@@ -618,7 +618,7 @@ $count3 = 1;
 $sql_values = "";
 foreach($weapons as $weapons_data) 
 { 
-	if($count == 9 || $count == 10) 
+	if($count == 11 || $count == 12) 
 	{ 
 		// schilder 
 		foreach($shields as $shields_data) 
