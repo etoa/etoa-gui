@@ -403,7 +403,7 @@ mysql_query("
 			  SET
 			    `item2_opmp_value`=(item2_ap*1.2 + item2_vp*0.85 + item2_hp*0.7 + item2_mp*0)
 			  WHERE
-			    item2_id<0
+			    item2_id>0
 			    AND item2_id<10000;");
 /*
 
