@@ -5,11 +5,11 @@
  */
 
 /**
- * Description of spyreport
+ * Description of battlereport
  *
  * @author glaubinix
  */
-class SpyReport extends Report
+class BattleReport extends Report
 {
 	static $subTypes = array(
 		'antrax'=>'Antraxangriff',
@@ -26,17 +26,21 @@ class SpyReport extends Report
 		'invadedfailed'=>'Invasionsversuch abgewehrt',
 		'spyattack'=>'Spionageangriff',
 		'spyattackfailed'=>'Spionageangriff erfolglos',
-		
+		'battle'=>'Kampfbericht',
+		'battlefailed'=>'Kampfbericht (Abgebrochen)'
 	);
 
 	protected $subType = 'other';
-	protected $buildings;
-	protected $technologies;
-	protected $ships;
-	protected $def;
+	protected $user, $entityUser;
+	protected $ships, $entityShips, $entityDef;
+	protected $weaponTech, $shieldTech, $structureTech;
+	protected $weapon, $shield, $structure, $heal, $count, $exp;
+	protected $entityWeaponTech, $entityShieldTech, $entityStructureTech;
+	protected $entityWeapon, $entityShield, $entityStructure, $entityHeal, $entityCount, $entityExp;
+	protected $shipsEnd, $entityShipsEnd, $entityDefEnd;
+	protected $restore, $result;
 	protected $res;
-	protected $spydefense;
-	protected $coverage;
+	protected $wf;
 	protected $fleetId;
 	
 	function __construct($args)
@@ -45,21 +49,44 @@ class SpyReport extends Report
 		parent::__construct($args);
 		if ($this->valid)
 		{
-			$res = dbquery("SELECT * FROM reports_spy WHERE id=".$this->id.";");
+			$res = dbquery("SELECT * FROM reports_battle WHERE id=".$this->id.";");
 			if (mysql_num_rows($res)>0)
 			{
 				$arr = mysql_fetch_assoc($res);
 				$this->subType = $arr['subtype'];
-				$this->buildings = $arr['buildings'];
-				$this->technologies = $arr['technologies'];
+				$this->user = $arr['user'];
+				$this->entityUser = $arr['entity_user'];
 				$this->ships = $arr['ships'];
-				$this->def = $arr['def'];
+				$this->entityShips = $arr['entity_ships'];
+				$this->entityDef = $arr['entity_def'];
+				$this->weaponTech = $arr['weapon_tech'];
+				$this->shieldTech = $arr['shield_tech'];
+				$this->structureTech = $arr['structure_tech'];
+				$this->weapon = array(0,$arr['weapon_1'],$arr['weapon_2'],$arr['weapon_3'],$arr['weapon_4'],$arr['weapon_5']);
+				$this->shield = $arr['shield'];
+				$this->structure = $arr['structure'];
+				$this->heal = array(0,$arr['heal_1'],$arr['heal_2'],$arr['heal_3'],$arr['heal_4'],$arr['heal_5']);
+				$this->count = array(0,$arr['count_1'],$arr['count_2'],$arr['count_3'],$arr['count_4'],$arr['count_5']);
+				$this->exp = $arr['exp'];
+				$this->entityWeaponTech = $arr['entity_weapon_tech'];
+				$this->entityShieldTech = $arr['entity_shield_tech'];
+				$this->entityStructureTech = $arr['entity_structure_tech'];
+				$this->entityWeapon = array(0,$arr['entity_weapon_1'],$arr['entity_weapon_2'],$arr['entity_weapon_3'],$arr['entity_weapon_4'],$arr['entity_weapon_5']);
+				$this->entityShield = $arr['entity_shield'];
+				$this->entityStructure = $arr['entity_structure'];
+				$this->entityHeal = array(0,$arr['entity_heal_1'],$arr['entity_heal_2'],$arr['entity_heal_3'],$arr['entity_heal_4'],$arr['entity_heal_5']);
+				$this->entityCount = array(0,$arr['entity_count_1'],$arr['entity_count_2'],$arr['entity_count_3'],$arr['entity_count_4'],$arr['entity_count_5']);
+				$this->entityExp = $arr['entity_exp'];
+				$this->shipsEnd = $arr['ships_end'];
+				$this->entityShipsEnd = $arr['entity_ships_end'];
+				$this->entityDefEnd = $arr['entity_def_end'];
+				$this->restore = $arr['restore'];
+				$this->result = $arr['result'];
 				$this->res = array();
 				foreach ($resNames as $rk => $rn)
 					$this->res[$rk] = $arr['res_'.$rk];
 				$this->res[5] = $arr['res_5'];
-				$this->spydefense = $arr['spydefense'];
-				$this->coverage = $arr['coverage'];
+				$this->wf = array($arr['wf_0'],$arr['wf_1'],$arr['wf_2']);
 				$this->fleetId = $arr['fleet_id'];
 			}
 			else
@@ -70,67 +97,42 @@ class SpyReport extends Report
 		}
 	}
 
-	static function add($data,$subType,$recordId,$spyData)
+	static function add($data,$subType,$battleData)
 	{
-		global $resNames;
-
-		$id = parent::add(array_merge($data,array("type"=>"spy")));
-		if ($id!=null)
-		{
-			$fs = "";
-			$vs = "";
-			foreach ($resNames as $rk => $rn)
-			{
-				if (isset($spyData['res_'.$rk]))
-				{
-					$fs.= ",res_".$rk." ";
-					$vs.= ",".$spyData['res_'.$rk]." ";
-				}
-			}
-			if (isset($spyData['factor']) && $spyData['factor']>0)
-			{
-				$fs.= ",factor ";
-				$vs.= ",".$marketData['factor']." ";
-			}
-			if (isset($spyData['fleet_id']) && $spyData['fleet_id']>0)
-			{
-				$fs.= ",fleet_id ";
-				$vs.= ",".$spyData['fleet_id']." ";
-			}
-			if (isset($marketData['fleet2_id']) && $marketData['fleet2_id']>0)
-			{
-				$fs.= ",fleet2_id ";
-				$vs.= ",".$marketData['fleet2_id']." ";
-			}
-			if (isset($marketData['ship_id']) && $marketData['ship_id']>0)
-			{
-				$fs.= ",ship_id ";
-				$vs.= ",".$marketData['ship_id']." ";
-			}
-			if (isset($marketData['ship_count']) && $marketData['ship_count']>0)
-			{
-				$fs.= ",ship_count ";
-				$vs.= ",".$marketData['ship_count']." ";
-			}
-			dbquery("INSERT INTO
-				reports_market
-			(
-				id,
-				subtype,
-				record_id
-				".$fs."
-			)
-			VALUES
-			(
-				".$id.",
-				'".(isset(self::$subTypes[$subType]) ? $subType : 'other')."',
-				".intval($recordId)."
-				".$vs."
-			)
-			");
-			return $id;
-		}
 		return null;
+	}
+	
+	function createSubject()
+	{
+		$ent1 = Entity::createFactoryById($this->entity1Id);
+		switch ($this->subType)
+		{
+			case 'battle':
+				$users = explode(',',$this->user);
+				$subject = "Kampfbericht (";
+				switch ($this->result)
+				{
+					case '1':
+						if (array_search($this->userId,$users))
+							$subject .= 'Gewonnen';
+						else
+							$subject .= 'Verloren';
+						break;
+					case '2':
+						if (array_search($this->userId,$users))
+						$subject .= 'Verloren';
+					else
+						$subject .= 'Gewonnen';
+					break;
+						break;
+					default:
+						$subject.='Unentschieden';
+				}
+				$subject .= ') '.$ent1;
+				return $subject;
+			default :
+			return self::$subTypes[$this->subType];		
+		}
 	}
 
 	function __toString()
@@ -145,19 +147,23 @@ class SpyReport extends Report
 		switch ($this->subType)
 		{
 			case 'antrax':
-				echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' hat einen Antraxangriff auf den Planeten '.$ent1->detailLink().' verübt. Es starben dabei '.PEOPLE.' Bewohner und '.FOOD.' t Nahrung wurden verbrannt.';
+				echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' hat einen Antraxangriff auf den Planeten '.$ent1->detailLink().' verübt. Es starben dabei '.nf($this->res[5]).' Bewohner und '.nf($this->res[4]).' t Nahrung wurden verbrannt.';
 				break;
 			case 'antraxfailed':
 				echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' hat erfolglos einen Antraxangriff auf den Planeten '.$ent1->detailLink().' verübt.';
 				break;
 			case 'bombard':
-				echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' hat';
+				$data = explode(':',$this->content);
+				$building = new Building($data[0]);
+				echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' hat das Geb&auml;de '.$building.' des Planeten '.$ent1->detailLink().' von Stuffe '.$data[2].' auf Stuffe '.$data[1].' zur&uuml;ck gesetzt.';
 				break;
 			case 'bombardfailed':
 				echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' hat erfolglos versucht ein Gebäude des Planeten '.$ent1->detailLink().' zu bombardieren.';
 				break;
 			case 'emp':
-				echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' hat';
+				$data = explode(':',$this->content);
+				$building = new Building($data[0]);
+				echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' hat das Gebäude '.$building.' des Planeten '.$ent1->detailLink().' für '.$data[1].' h deaktiviert.';
 				break;
 			case 'empfailed':
 				echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' hat erfolglos versucht ein Gebäude des Planeten '.$ent1->detailLink().' zu deaktivieren.<br />';
@@ -165,7 +171,7 @@ class SpyReport extends Report
 					echo 'Hinweis: Der Spieler hat keine Gebäudeeinrichtungen, welche deaktiviert werden können!';
 				break;
 			case 'gasattack':
-				echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' hat einen Giftgasangriff auf den Planeten '.$ent1->detailLink().' verübt. Es starben dabei '.PEOPLE.' Bewohner.';
+				echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' hat einen Giftgasangriff auf den Planeten '.$ent1->detailLink().' verübt. Es starben dabei '.nf($this->res[5]).' Bewohner.';
 				break;
 			case 'gasattackfailed':
 				echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' hat erfolglos einen Giftgasangriff auf den Planeten '.$ent1->detailLink().' verübt.';
@@ -227,12 +233,376 @@ class SpyReport extends Report
 				echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' hat versucht den Planeten '.$ent1->detailLink().' zu &uuml;bernehmen. Dieser Versuch schlug aber fehl und die Flotte machte sich auf den R&uuml;ckweg!';
 				break;
 			case 'spyattack':
-				echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' hat erfolgreich einen Spionageangriff durchgeführt und erfuhr so die Geheimnisse der Forschung';
+				$data = explode(':',$this->content);
+				$tech = new Technology($data[0]);
+				echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' hat erfolgreich einen Spionageangriff durchgef&uuml;hrt und erfuhr so die Geheimnisse der Forschung '.$tech.' bis zum Level '.$data[1].'.';
 				break;
 			case 'spyattackfailed':
 				echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' hat erfolglos einen Spionageangriff auf den Planeten '.$ent1->detailLink().' ver&uuml;bt.';
 				break;
-			
+			case 'battle':
+				echo '<strong>KAMPFBERICHT</strong><br />
+					vom Planeten '.$ent2->detailLink().'<br />
+					<strong>Zeit:</strong> '.df($this->timestamp).'<br /><br />
+					<table class="battleTable" width="100%">
+						<tr>
+							<td>
+								<strong>Angreifer:</strong> ';
+								if ($this->user!='')
+								{	
+									$userArr = explode(',',$this->user);
+									$cnt=0;
+									foreach ($userArr as $uId)
+									{
+										if ($uId!='')
+										{
+											$user = new User($uId);
+											if ($cnt>0) echo ', ';
+											echo $user;
+											++$cnt;
+										}
+									}
+								}
+				echo		'</td>
+							<td>
+								<strong>Verteidiger:</strong> ';
+								if ($this->entityUser!='')
+								{	
+									$userArr = explode(',',$this->entityUser);
+									$cnt=0;
+									foreach ($userArr as $uId)
+									{
+										if ($uId!='')
+										{
+											$user = new User($uId);
+											if ($cnt>0) echo ', ';
+											echo $user;
+											++$cnt;
+										}
+									}
+								}
+				echo 		'<br /><br /></td>
+						</tr>
+						<tr>
+							<td>
+								<strong>ANGREIFENDE FLOTTE</strong><br />';
+								if (!($this->ships=='' || $this->ships=='0'))
+								{
+									echo '<table>';
+									$shipArr = explode(',',$this->ships);
+									$ships = Ship::getItems();
+									foreach ($shipArr as $ship)
+									{
+										if ($ship!='')
+										{
+											$data = explode(':',$ship);
+											echo '<tr>
+													<td>'.$ships[$data[0] ].' </td>
+													<td style="text-align:right;"> '.nf($data[1]).'</td>
+												</tr>';
+										}
+									}
+									echo '</table>';
+								}
+								else
+									echo '<i>Nichts vorhanden!</i>';
+				echo		'</td>
+							<td>
+								<strong>VERTEIDIGENDE FLOTTE</strong><br />';
+								if (!($this->entityShips=='' || $this->entityShips=='0'))
+								{
+									echo '<table>';
+									$shipArr = explode(',',$this->entityShips);
+									$ships = Ship::getItems();
+									foreach ($shipArr as $ship)
+									{
+										if ($ship!='')
+										{
+											$data = explode(':',$ship);
+											echo '<tr>
+													<td>'.$ships[$data[0] ].' </td>
+													<td style="text-align:right;"> '.nf($data[1]).'</td>
+												</tr>';
+										}
+									}
+									echo '</table>';
+								}
+								else
+									echo '<i>Nichts vorhanden!</i>';
+				echo		'<br /></td>
+						</tr>
+						<tr>
+							<td>
+							</td>
+							<td>
+								<strong>PLANETARE VERTEIDIGUNG</strong><br />';
+								if (!($this->entityDef=='' || $this->entityDef=='0'))
+								{
+									echo '<table>';
+									$defArr = explode(',',$this->entityDef);
+									$def = Defense::getItems();
+									foreach ($defArr as $defense)
+									{
+										if ($defense!='')
+										{
+											$data = explode(':',$defense);
+											echo '<tr>
+													<td>'.$def[$data[0] ].' </td>
+													<td style="text-align:right;"> '.nf($data[1]).'</td>
+												</tr>';
+										}
+									}
+									echo '</table>';
+								}
+								else
+									echo '<i>Nichts vorhanden!</i>';
+				echo		'<br /></td>
+						</tr>
+						<tr>
+							<td>
+								<strong>DATEN DES ANGREIFERS</strong><br />
+								<table>
+									<tr>
+										<td>Schild ('.$this->shieldTech.'%):</td><td style="text-align:right;"> '.nf($this->shield).'</td>
+									</tr><tr>
+										<td>Struktur ('.$this->structureTech.'%):</td><td style="text-align:right;"> '.nf($this->structure).'</td>
+									</tr><tr>
+										<td>Waffen ('.$this->weaponTech.'%):</td><td style="text-align:right;"> '.nf($this->weapon[1]).'</td>
+									</tr><tr>
+										<td>Einheiten:</td><td style="text-align:right;"> '.nf($this->count[1]).'</td>
+									</tr>
+								</table>
+							</td>
+							<td>
+								<strong>DATEN DES VERTEIDIGERS</strong><br />
+								<table>
+									<tr>
+										<td>Schild ('.$this->entityShieldTech.'%):</td><td style="text-align:right;"> '.nf($this->entityShield).'</td>
+									</tr><tr>
+										<td>Struktur ('.$this->entityStructureTech.'%):</td><td style="text-align:right;"> '.nf($this->entityStructure).'</td>
+									</tr><tr>
+										<td>Waffen ('.$this->entityWeaponTech.'%):</td><td style="text-align:right;"> '.nf($this->entityWeapon[1]).'</td>
+									</tr><tr>
+										<td>Einheiten:</td><td style="text-align:right;"> '.nf($this->entityCount[1]).'</td>
+									</tr>
+								</table>
+							<br /></td>
+						</tr>
+						<tr>
+							<td colspan="2">';
+								$rnd = 1;
+								$shieldStructure = $initShieldStructure = $this->shield + $this->structure;
+								$entityShieldStructure = $entityInitShieldStructure = $this->entityShield + $this->entityStructure;
+								for ($rnd=1; $rnd<=5; ++$rnd)
+								{
+									$shieldStructure = max(0,$shieldStructure-$this->entityWeapon[$rnd]);
+									$entityShieldStructure = max(0,$entityShieldStructure-$this->weapon[$rnd]);
+									
+									echo '<br />'.nf($this->count[$rnd]).' Einheiten des Angreifes schiessen mit einer Stärke von '.nf($this->weapon[$rnd]).' auf den Verteidiger. Der Verteidiger hat danach noch '.nf($entityShieldStructure).' Struktur- und Schildpunkte.<br /><br />';
+									echo nf($this->entityCount[$rnd]).' Einheiten des Verteidigers schiessen mit einer Stärke von '.nf($this->entityWeapon[$rnd]).' auf den Angreifer. Der Angreifer hat danach noch '.nf($shieldStructure).' Struktur- und Schildpunkte.<br /><br />';
+									
+									if ($this->heal[$rnd]>0 && $shieldStructure<$initShieldStructure)
+									{
+										$shieldStructure = min($initShieldStructure,($shieldStructure+$this->heal[$rnd]));
+										echo 'Die Einheiten des Angreifes heilen '.nf($this->heal[$rnd]).' Struktur- und Schildpunkte. Der Angreifer hat danach wieder '.nf($shieldStructure).' Struktur- und Schildpunkte<br /><br />';
+									}
+									if ($this->entityHeal[$rnd]>0 && $entityShieldStructure<$entityInitShieldStructure)
+									{
+										$entityShieldStructure = min($entityShieldStructure,($entityShieldStructure+$this->entityHeal[$rnd]));
+										echo 'Die Einheiten des Verteidiger heilen '.nf($this->entityHeal[$rnd]).' Struktur- und Schildpunkte. Der Verteidiger hat danach wieder '.nf($entityShieldStructure).' Struktur- und Schildpunkte<br /><br />';
+									}
+
+									
+									if (!$shieldStructure || !$entityShieldStructure) break;
+								}
+								
+								echo 'Der Kampf dauerte '.$rnd.' Runden!<br /><br />';
+								switch ($this->result)
+								{
+									case '1':
+										echo 'Der Angreifer hat den Kampf gewonnen!';
+										break;
+									case '2':
+										echo 'Der Verteidiger hat den Kampf gewonnen!';
+										break;
+									case '3':
+										echo 'Der Kampf endete unentschieden, da sowohl die Einheiten des Angreifes als auch die Einheiten des Verteidigers alle zerst&ouml;rt wurden!';
+										break;
+									default:
+										echo 'Der Kampf endete unentschieden und die Flotten zogen sich zur&uuml;ck!';
+								}
+				echo '<br /><br /></td>
+						</tr>
+						<tr>
+							<td>';
+								if ($this->result==1)
+								{
+									echo '<strong>BEUTE</strong><br />';
+									echo '<table>';
+									foreach ($resNames as $k=>$v)
+									{
+											echo '<tr>
+											<td>'.$v.' </td>
+											<td style="text-align:right;"> '.nf($this->res[$k]).'</td>
+											</tr>';
+									}
+									echo '<tr>
+											<td>Bewohner </td>
+											<td style="text-align:right;"> '.nf($this->res[5]).'</td>
+										</tr>';
+									echo '</table>';
+								}
+				echo '<br /><br /></td>
+							<td>
+								<strong>TR&Uuml;MMERFELD</strong><br />';
+								echo '<table>';
+								foreach ($this->wf as $k=>$wf)
+								{
+									echo '<tr>
+											<td>'.$resNames[$k].' </td>
+											<td style="text-align:right;"> '.nf($wf).'</td>
+										</tr>';
+								}
+								echo '</table><br/>
+						<br /><br /></td>
+						</tr>
+						<tr>
+							<td>
+								Zustand nach dem Kampf:<br /><br />
+								<strong>ANGREIFENDE FLOTTE</strong><br />';
+								if (!($this->shipsEnd=='' || $this->shipsEnd=='0'))
+								{
+									echo '<table>';
+									$shipArr = explode(',',$this->shipsEnd);
+									$ships = Ship::getItems();
+									foreach ($shipArr as $ship)
+									{
+										if ($ship!='')
+										{
+											$data = explode(':',$ship);
+											echo '<tr>
+													<td>'.$ships[$data[0] ].' </td>
+													<td style="text-align:right;"> '.nf($data[1]).'</td>
+												</tr>';
+										}
+									}
+									echo '</table>';
+								}
+								else
+									echo '<i>Nichts vorhanden!</i>';
+				echo		'</td>
+							<td>
+								<strong>VERTEIDIGENDE FLOTTE</strong><br />';
+								if (!($this->entityShipsEnd=='' || $this->entityShipsEnd=='0'))
+								{
+									echo '<table>';
+									$shipArr = explode(',',$this->entityShipsEnd);
+									$ships = Ship::getItems();
+									foreach ($shipArr as $ship)
+									{
+										if ($ship!='')
+										{
+											$data = explode(':',$ship);
+											echo '<tr>
+													<td>'.$ships[$data[0] ].' </td>
+													<td style="text-align:right;"> '.nf($data[1]).'</td>
+												</tr>';
+										}
+									}
+									echo '</table>';
+								}
+								else
+									echo '<i>Nichts vorhanden!</i>';
+				echo		'<br /></td>
+						</tr>';
+				if ($this->exp>=0 || $this->entityExp>=0)
+				{
+					echo '<tr>
+							<td>';
+					if ($this->exp>=0)
+						echo 'Gewonnene EXP: '.nf($this->exp);
+					echo '	</td><td>';
+					if ($this->entityExp>=0)
+						echo 'Gewonnene EXP: '.nf($this->entityExp);
+					echo '<br /><br /></td>
+						</tr>';
+				}
+				echo '	<tr>
+							<td>
+							</td>
+							<td>
+								<strong>PLANETARE VERTEIDIGUNG:</strong><br />';
+								if (!($this->entityDefEnd=='' || $this->entityDefEnd=='0'))
+								{
+									echo '<table>';
+									$defArr = explode(',',$this->entityDefEnd);
+									$def = Defense::getItems();
+									foreach ($defArr as $defense)
+									{
+										if ($defense!='')
+										{
+											$data = explode(':',$defense);
+											echo '<tr>
+													<td>'.$def[$data[0] ].' </td>
+													<td style="text-align:right;"> '.nf($data[1]).' (+'.nf($data[2]).')</td>
+												</tr>';
+										}
+									}
+									echo '<tr><td colspan="3">'.$this->restore.'% der Verteidigungsanlagen werden repariert!</td></tr>';
+									echo '</table>';
+								}
+								else
+									echo '<i>Nichts vorhanden!</i>';
+				echo		'<br /></td>
+						</tr>
+					</table>';
+				break;
+			case 'battlefailed':
+			echo '<strong>KAMPFBERICHT</strong><br />
+				vom Planeten '.$ent2->detailLink().'<br />
+				<strong>Zeit:</strong> '.df($this->timestamp).'<br /><br />
+				<table class="battleTable" width="100%">
+					<tr>
+						<td>
+							<strong>Angreifer:</strong> ';
+							if ($this->user!='')
+							{	
+								$userArr = explode(',',$this->user);
+								$cnt=0;
+								foreach ($userArr as $uId)
+								{
+									if ($uId!='')
+									{
+										$user = new User($uId);
+										if ($cnt>0) echo ', ';
+										echo $user;
+										++$cnt;
+									}
+								}
+							}
+			echo		'</td>
+						<td>
+							<strong>Verteidiger:</strong> ';
+							if ($this->entityUser!='')
+							{	
+								$userArr = explode(',',$this->entityUser);
+								$cnt=0;
+								foreach ($userArr as $uId)
+								{
+									if ($uId!='')
+									{
+										$user = new User($uId);
+										if ($cnt>0) echo ', ';
+										echo $user;
+										++$cnt;
+									}
+								}
+							}
+			echo 		'<br /><br /></td>
+					</tr>
+				</table';
+			echo 'Der Kampf wurde abgebrochen da Angreifer und Verteidiger demselben Imperium angeh&ouml;ren oder der Verteidiger nicht mehr existiert!';
+				break;
 			default:
 				dump($this);
 		}

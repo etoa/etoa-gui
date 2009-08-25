@@ -26,30 +26,47 @@
 	$auction_time_days = $_POST['auction_time_days'];
 	$auction_time_hours = $_POST['auction_time_hours'];
 	$auction_end_time = time() + $auction_min_time + $auction_time_days * 24 * 3600 + $auction_time_hours * 3600;
+	$marr = array('factor'=>MARKET_TAX,'timestamp2'=>$auction_end_time);
+	
+	$ok = true;
+	foreach ($resNames as $rk => $rn)
+	{
+		// Convert formatted number back to integer
+		$_POST['auction_sell_'.$rk] = nf_back($_POST['auction_sell_'.$rk]);
 
+		// Prüft ob noch immer genug Rohstoffe auf dem Planeten sind (eventueller verlust durch Kampf?)
+		if (isset($_POST['auction_sell_'.$rk]) && $_POST['auction_sell_'.$rk] * MARKET_TAX > $cp->resources[$rk])
+		{
+			$ok = false;
+			break;
+		}
+
+		// Save resource to be subtracted from the planet
+		$subtracted[$rk] = $_POST['auction_sell_'.$rk] * MARKET_TAX;
+
+		// Build query
+		$sf.= ",sell_".$rk;
+		$sv.= ",'".$_POST['auction_sell_'.$rk]."'";
+
+		$sf.= ",currency_".$rk;
+		$sv.= ",'".(isset($_POST['auction_buy_'.$rk])?$_POST['auction_buy_'.$rk]:'')."'";
+
+		// Report data
+		if ($_POST['auction_sell_'.$rk]>0)
+			$marr['sell_'.$rk]=$_POST['auction_sell_'.$rk];
+		if (isset($_POST['res_buy_'.$rk]) && $_POST['res_buy_'.$rk]>0)
+			$marr['buy_'.$rk]=$_POST['auction_buy_'.$rk];
+	}
+	
 	$ship_update=0;
 	$ress_update=0;
-
-	$_POST['auction_sell_metal'] = nf_back($_POST['auction_sell_metal']);
-	$_POST['auction_sell_crystal'] = nf_back($_POST['auction_sell_crystal']);
-	$_POST['auction_sell_plastic'] = nf_back($_POST['auction_sell_plastic']);
-	$_POST['auction_sell_fuel'] = nf_back($_POST['auction_sell_fuel']);
-	$_POST['auction_sell_food'] = nf_back($_POST['auction_sell_food']);
-
-	$offeredRes = array(
-	$_POST['auction_sell_metal']*MARKET_TAX,
-	$_POST['auction_sell_crystal']*MARKET_TAX,
-	$_POST['auction_sell_plastic']*MARKET_TAX,
-	$_POST['auction_sell_fuel']*MARKET_TAX,
-	$_POST['auction_sell_food']*MARKET_TAX,
-	);
-
+	
 	// Prüft ob Rohstoffe noch vorhanden sind (eventueller verlust durch Kampf?)
-	if ($cp->checkRes($offeredRes))
+	if ($ok && $cp->checkRes($subtracted))
 	{
 
         // Rohstoffe + Taxe vom Planetenkonto abziehen
-		$cp->subRes($offeredRes);
+		$cp->subRes($subtracted);
 
         // Angebot speichern
         dbquery("
@@ -60,50 +77,25 @@
             entity_id,
             date_start,
             date_end,
-            sell_0,
-            sell_1,
-            sell_2,
-            sell_3,
-            sell_4,
-            `text`,
-            currency_0,
-            currency_1,
-            currency_2,
-            currency_3,
-            currency_4,
+			text
+			".$sf.",
             buyable)
         VALUES
             ('".$cu->id."',
             '".$cp->id()."',
             '".time()."',
             '".$auction_end_time."',
-            '".$_POST['auction_sell_metal']."',
-            '".$_POST['auction_sell_crystal']."',
-            '".$_POST['auction_sell_plastic']."',
-            '".$_POST['auction_sell_fuel']."',
-            '".$_POST['auction_sell_food']."',
-            '".addslashes($_POST['auction_text'])."',
-            '".(isset($_POST['auction_buy_metal'])?$_POST['auction_buy_metal']:'')."',
-            '".(isset($_POST['auction_buy_crystal'])?$_POST['auction_buy_crystal']:'')."',
-            '".(isset($_POST['auction_buy_plastic'])?$_POST['auction_buy_plastic']:'')."',
-            '".(isset($_POST['auction_buy_fuel'])?$_POST['auction_buy_fuel']:'')."',
-            '".(isset($_POST['auction_buy_food'])?$_POST['auction_buy_food']:'')."',
+            '".addslashes($_POST['auction_text'])."'
+			".$sv.",
             '1')");
 
 
         //Nachricht senden
-        $msg = "Du hast folgende Rohstoffe zur versteigerung angeboten:\n\n";
-
-        $msg .= "".RES_METAL.": ".nf($_POST['auction_sell_metal'])."\n";
-        $msg .= "".RES_CRYSTAL.": ".nf($_POST['auction_sell_crystal'])."\n";
-        $msg .= "".RES_PLASTIC.": ".nf($_POST['auction_sell_plastic'])."\n";
-        $msg .= "".RES_FUEL.": ".nf($_POST['auction_sell_fuel'])."\n";
-        $msg .= "".RES_FOOD.": ".nf($_POST['auction_sell_food'])."\n\n";
-
-        $msg .= "Die Auktion endet am ".date("d.m.Y",$auction_end_time)." um ".date("H:i",$auction_end_time)." Uhr.\n\n";
-
-        $msg .= "Das Handelsministerium";
-        send_msg($cu->id,SHIP_MISC_MSG_CAT_ID,"Auktion eingetragen",$msg);
+		MarketReport::add(array(
+			'user_id'=>$cu->id,
+			'entity1_id'=>$cp->id,
+			'content'=>$_POST['ressource_text']
+			), "auctionadd", mysql_insert_id(), $marr);
 
         add_log(LOG_CAT,"Der Spieler ".$cu->nick." hat folgende Rohstoffe zur versteigerung angeboten:\n\n".RES_METAL.": ".nf($_POST['auction_sell_metal'])."\n".RES_CRYSTAL.": ".nf($_POST['auction_sell_crystal'])."\n".RES_PLASTIC.": ".nf($_POST['auction_sell_plastic'])."\n".RES_FUEL.": ".nf($_POST['auction_sell_fuel'])."\n".RES_FOOD.": ".nf($_POST['auction_sell_food'])."\n\nAuktionsende: ".date("d.m.Y H:i",$auction_end_time)."",time());
 

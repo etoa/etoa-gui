@@ -391,11 +391,11 @@
 					echo "<tr>
 									<th style=\"vertical-align:middle;\">".RES_METAL.":</th>
 									<td style=\"vertical-align:middle;\">
-										<input type=\"text\" value=\"0\" name=\"auction_sell_metal\" id=\"auction_sell_metal\" size=\"7\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resMetal.",'','');checkMarketAuctionFormular(0);\"/>
+										<input type=\"text\" value=\"0\" name=\"auction_sell_0\" id=\"auction_sell_metal\" size=\"7\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resMetal.",'','');checkMarketAuctionFormular(0);\"/>
 									</td>
 									<th style=\"text-align:center;vertical-align:middle;\">".MARKET_METAL_FACTOR."</th>
 									<td id=\"auction_buy_metal_field\" style=\"text-align:center;vertical-align:middle;\">
-										<input type=\"checkbox\" name=\"auction_buy_metal\" id=\"auction_buy_metal\" value=\"1\" onclick=\"checkMarketAuctionFormular(0);\" checked=\"checked\"/>
+										<input type=\"checkbox\" name=\"auction_buy_0\" id=\"auction_buy_metal\" value=\"1\" onclick=\"checkMarketAuctionFormular(0);\" checked=\"checked\"/>
 									</td>
 									<th colspan=\"2\" style=\"vertical-align:middle;\">&nbsp;</th>
 								</tr>";
@@ -403,11 +403,11 @@
 					echo "<tr>
 									<th style=\"vertical-align:middle;\">".RES_CRYSTAL.":</th>
 									<td style=\"vertical-align:middle;\">
-										<input type=\"text\" value=\"0\" name=\"auction_sell_crystal\" id=\"auction_sell_crystal\" size=\"7\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resCrystal.",'','');checkMarketAuctionFormular(0);\"/>
+										<input type=\"text\" value=\"0\" name=\"auction_sell_1\" id=\"auction_sell_crystal\" size=\"7\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resCrystal.",'','');checkMarketAuctionFormular(0);\"/>
 									</td>
 									<th style=\"text-align:center;vertical-align:middle;\">".MARKET_CRYSTAL_FACTOR."</th>
 									<td id=\"auction_buy_crystal_field\" style=\"text-align:center;vertical-align:middle;\">
-										<input type=\"checkbox\" name=\"auction_buy_crystal\" id=\"auction_buy_crystal\" value=\"1\" onclick=\"checkMarketAuctionFormular(0);\" checked=\"checked\"/>
+										<input type=\"checkbox\" name=\"auction_buy_1\" id=\"auction_buy_crystal\" value=\"1\" onclick=\"checkMarketAuctionFormular(0);\" checked=\"checked\"/>
 									</td>
 									<th style=\"vertical-align:middle;\">Dauer:</th>
 									<td name=\"auction_time_field\" id=\"auction_time_field\" style=\"vertical-align:middle;\">
@@ -435,11 +435,11 @@
 					echo "<tr>
 									<th style=\"vertical-align:middle;\">".RES_PLASTIC.":</th>
 									<td style=\"vertical-align:middle;\">
-										<input type=\"text\" value=\"0\" name=\"auction_sell_plastic\" id=\"auction_sell_plastic\" size=\"7\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resPlastic.",'','');checkMarketAuctionFormular(0);\"/>
+										<input type=\"text\" value=\"0\" name=\"auction_sell_2\" id=\"auction_sell_plastic\" size=\"7\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resPlastic.",'','');checkMarketAuctionFormular(0);\"/>
 									</td>
 									<th style=\"text-align:center;vertical-align:middle;\">".MARKET_PLASTIC_FACTOR."</th>
 									<td id=\"auction_buy_plastic_field\" style=\"text-align:center;vertical-align:middle;\">
-										<input type=\"checkbox\" name=\"auction_buy_plastic\" id=\"auction_buy_plastic\" value=\"1\" onclick=\"checkMarketAuctionFormular(0);\" checked=\"checked\"/>
+										<input type=\"checkbox\" name=\"auction_buy_2\" id=\"auction_buy_plastic\" value=\"1\" onclick=\"checkMarketAuctionFormular(0);\" checked=\"checked\"/>
 									</td>
 									<th colspan=\"2\" style=\"vertical-align:middle;\">&nbsp;</th>
 								</tr>";
@@ -447,11 +447,11 @@
 					echo "<tr>
 									<th style=\"vertical-align:middle;\">".RES_FUEL.":</th>
 									<td style=\"vertical-align:middle;\">
-										<input type=\"text\" value=\"0\" name=\"auction_sell_fuel\" id=\"auction_sell_fuel\" size=\"7\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resFuel.",'','');checkMarketAuctionFormular(0);\"/>
+										<input type=\"text\" value=\"0\" name=\"auction_sell_3\" id=\"auction_sell_fuel\" size=\"7\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resFuel.",'','');checkMarketAuctionFormular(0);\"/>
 									</td>
 									<th style=\"text-align:center;vertical-align:middle;\">".MARKET_FUEL_FACTOR."</th>
 									<td id=\"auction_buy_fuel_field\" style=\"text-align:center;vertical-align:middle;\">
-										<input type=\"checkbox\" name=\"auction_buy_fuel\" id=\"auction_buy_fuel\" value=\"1\" onclick=\"checkMarketAuctionFormular(0);\" checked=\"checked\"/>
+										<input type=\"checkbox\" name=\"auction_buy_3\" id=\"auction_buy_fuel\" value=\"1\" onclick=\"checkMarketAuctionFormular(0);\" checked=\"checked\"/>
 									</td>
 									<th style=\"vertical-align:middle;\">Ende:</th>
 									<td id=\"auction_end_time\" style=\"vertical-align:middle;\">".date("d.m.Y H:i",$auction_time)."</td>
@@ -460,11 +460,11 @@
 					echo "<tr>
 									<th style=\"vertical-align:middle;\">".RES_FOOD.":</th>
 									<td style=\"vertical-align:middle;\">
-										<input type=\"text\" value=\"0\" name=\"auction_sell_food\" id=\"auction_sell_food\" size=\"7\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resFood.",'','');checkMarketAuctionFormular(0);\"/>
+										<input type=\"text\" value=\"0\" name=\"auction_sell_4\" id=\"auction_sell_food\" size=\"7\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resFood.",'','');checkMarketAuctionFormular(0);\"/>
 									</td>
 									<th style=\"text-align:center;vertical-align:middle;\">".MARKET_FOOD_FACTOR."</th>
 									<td id=\"auction_buy_food_field\" style=\"text-align:center;vertical-align:middle;\">
-										<input type=\"checkbox\" name=\"auction_buy_food\" id=\"auction_buy_food\" value=\"1\" onclick=\"checkMarketAuctionFormular(0);\" checked=\"checked\"/>
+										<input type=\"checkbox\" name=\"auction_buy_4\" id=\"auction_buy_food\" value=\"1\" onclick=\"checkMarketAuctionFormular(0);\" checked=\"checked\"/>
 									</td>
 									<th colspan=\"2\" style=\"vertical-align:middle;\">&nbsp;</th>
 								</tr>";

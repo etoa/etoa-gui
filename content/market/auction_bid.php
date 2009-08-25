@@ -55,7 +55,7 @@
 			$new_price = 0;
 
 			$currentBuyRes = array();
-
+			$marr = array();
 			foreach ($resNames as $rk => $rn)
 			{
 				// Errechnet Rohstoffwert vom Angebot
@@ -66,6 +66,8 @@
 				$new_price += $buyRes[$rk] * $cfg->{"market_rate_".$rk}->v;
 
 				$currentBuyRes[$rk] = $arr['buy_'.$rk];
+				$marr['sell_'.$rk] = $arr['sell_'.$rk];
+				$marr['buy_'.$rk] = $buyRes[$rk];
 			}
 
 			// Prüft, ob Gebot höher ist als das vom Höchstbietenden
@@ -86,58 +88,29 @@
 						}
 
 						// Nachricht dem überbotenen User schicken
-						$msg = "Du wurdest vom Spieler ".$cu->nick." in einer Auktion &uuml;berboten\n";
-						$msg .= "Die Auktion ist nun zu Ende und wird nach ".AUCTION_DELAY_TIME." Stunden gel&ouml;scht.\n";
-						$msg .= "[URL=?page=market&mode=auction&id=".$arr['id']."Hier[/URL] gehts zu der Auktion.\n\n";
-
-						$msg .= "Das Handelsministerium";
-						send_msg($arr['current_buyer_id'],SHIP_MISC_MSG_CAT_ID,"Überboten",$msg);
+						$marr['timestamp2']='0';
+						MarketReport::add(array(
+							'user_id'=>$arr['current_buyer_id'],
+							'entity1_id'=>$cp->id,
+							'opponent1_id'=>$cu->id,
+							), "auctionoverbid", $arr['id'], $marr);
 					}
 
 					// Rohstoffe dem Gewinner abziehen
 					$cp->subRes($buyRes);
 
 					// Nachricht an Verkäufer
-					$msg = "Ein Handel ist erfolgreich zustande gekommen.\n";
-					$msg .= "Der Spieler ".$cu." hat von dir folgende Rohstoffe ersteigert: \n\n";
+					MarketReport::add(array(
+						'user_id'=>$arr['user_id'],
+						'entity1_id'=>$cp->id,
+						'opponent1_id'=>$cu->id,
+						), "auctionfinished", $arr['id'], $marr);
 
-					$msg .= "".RES_METAL.": ".nf($arr['sell_0'])."\n";
-					$msg .= "".RES_CRYSTAL.": ".nf($arr['sell_1'])."\n";
-					$msg .= "".RES_PLASTIC.": ".nf($arr['sell_2'])."\n";
-					$msg .= "".RES_FUEL.": ".nf($arr['sell_3'])."\n";
-					$msg .= "".RES_FOOD.": ".nf($arr['sell_4'])."\n\n";
-
-					$msg .= "Dies macht dich um folgende Rohstoffe reicher:\n";
-					$msg .= "".RES_METAL.": ".nf($buyRes[0])."\n";
-					$msg .= "".RES_CRYSTAL.": ".nf($buyRes[1])."\n";
-					$msg .= "".RES_PLASTIC.": ".nf($buyRes[2])."\n";
-					$msg .= "".RES_FUEL.": ".nf($buyRes[3])."\n";
-					$msg .= "".RES_FOOD.": ".nf($buyRes[4])."\n\n";
-
-					$msg .= "Die Auktion wird nach ".AUCTION_DELAY_TIME." Stunden gel&ouml;scht und die Waren werden in wenigen Minuten versendet.\n\n";
-
-					$msg .= "Das Handelsministerium";
-					send_msg($arr['user_id'],SHIP_MISC_MSG_CAT_ID,"Auktion vorzeitig beendet",$msg);
-
-					$seller = new User($arr['user_id']);
-
-					// Nachricht an Käufer
-					$msg = "Du warst der h&ouml;chstbietende in der Auktion vom Spieler ".$seller.".\n";
-					$msg .= "Du hast folgende Rohstoffe ersteigert:\n\n";
-					$msg .= "".RES_METAL.": ".nf($arr['sell_0'])."\n";
-					$msg .= "".RES_CRYSTAL.": ".nf($arr['sell_1'])."\n";
-					$msg .= "".RES_PLASTIC.": ".nf($arr['sell_2'])."\n";
-					$msg .= "".RES_FUEL.": ".nf($arr['sell_3'])."\n";
-					$msg .= "".RES_FOOD.": ".nf($arr['sell_4'])."\n\n";
-					$msg .= "Dies hat dich folgende Rohstoffe gekostet:\n";
-					$msg .= "".RES_METAL.": ".nf($buyRes[0])."\n";
-					$msg .= "".RES_CRYSTAL.": ".nf($buyRes[1])."\n";
-					$msg .= "".RES_PLASTIC.": ".nf($buyRes[2])."\n";
-					$msg .= "".RES_FUEL.": ".nf($buyRes[3])."\n";
-					$msg .= "".RES_FOOD.": ".nf($buyRes[4])."\n\n";
-					$msg .= "Die Auktion wird nach ".AUCTION_DELAY_TIME." Stunden gel&ouml;scht und die Waren werden in wenigen Minuten versendet.\n\n";
-					$msg .= "Das Handelsministerium";
-					send_msg($cu->id,SHIP_MISC_MSG_CAT_ID,"Auktion vorzeitig beendet",$msg);
+					MarketReport::add(array(
+						'user_id'=>$cu->id,
+						'entity1_id'=>$cp->id,
+						'opponent1_id'=>$arr['user_id'],
+						), "auctionwon", $arr['id'], $marr);
 
 					$resourceString = "";
 					foreach ($resNames as $rk => $rn)
@@ -207,12 +180,12 @@
 						}
 
 						// Nachricht dem überbotenen user schicken
-						$msg = "Du wurdest vom Spieler ".$cu->nick." in einer Auktion &uuml;berboten\n";
-						$msg .= "Die Auktion dauert noch bis am ".date("d.m.Y H:i",$arr['date_end']).".\n";
-						$msg .= "[URL=?page=market&mode=auction&id=".$arr['id']."]Hier[/URL] gehts zu der Auktion.\n\n";
-
-						$msg .= "Das Handelsministerium";
-						send_msg($arr['current_buyer_id'],SHIP_MISC_MSG_CAT_ID,"Überboten",$msg);
+						$marr['timestamp2']=$arr['date_end'];
+						MarketReport::add(array(
+							'user_id'=>$arr['current_buyer_id'],
+							'entity1_id'=>$cp->id,
+							'opponent1_id'=>$cu->id,
+							), "auctionoverbid", $arr['id'], $marr);
 					}
 
 

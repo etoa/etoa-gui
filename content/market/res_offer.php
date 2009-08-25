@@ -119,7 +119,6 @@
 						MarketReport::add(array(
 							'user_id'=>$cu->id,
 							'entity1_id'=>$cp->id,
-							'subject'=>"Rohstoffangebot ".$for_alliance."eingetragen",
 							'content'=>$_POST['ressource_text']
 							), "resadd", mysql_insert_id(), $marr);
 

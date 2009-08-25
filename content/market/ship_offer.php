@@ -97,7 +97,6 @@
 			MarketReport::add(array(
 				'user_id'=>$cu->id,
 				'entity1_id'=>$cp->id,
-				'subject'=>"Schiffangebot ".$for_alliance."eingetragen",
 				'content'=>$_POST['ship_text']
 				), "shipadd", mysql_insert_id(), $marr);
 

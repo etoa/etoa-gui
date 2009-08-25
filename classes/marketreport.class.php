@@ -37,6 +37,7 @@ class MarketReport extends Report
 	protected $fleet2Id;
 	protected $shipId;
 	protected $shipCount;
+	protected $timestamp2;
 
 	function __construct($args)
 	{
@@ -60,6 +61,7 @@ class MarketReport extends Report
 				$this->fleet2Id = $arr['fleet2_id'];
 				$this->shipId = $arr['ship_id'];
 				$this->shipCount = $arr['ship_count'];
+				$this->timestamp2 = $arr['timestamp2'];
 			}
 			else
 			{
@@ -116,6 +118,11 @@ class MarketReport extends Report
 				$fs.= ",ship_count ";
 				$vs.= ",".$marketData['ship_count']." ";
 			}
+			if (isset($marketData['timestamp2']) && $marketData['timestamp2']>0)
+			{
+				$fs.= ",timestamp2 ";
+				$vs.= ",".$marketData['timestamp2']." ";
+			}
 			dbquery("INSERT INTO
 				reports_market
 			(
@@ -135,6 +142,11 @@ class MarketReport extends Report
 			return $id;
 		}
 		return null;
+	}
+	
+	function createSubject()
+	{
+		return self::$subTypes[$this->subType];
 	}
 
 	function __toString()
@@ -325,7 +337,7 @@ class MarketReport extends Report
 				if ($sellerFleet->valid())
 					echo " Landung: ".df($sellerFleet->landTime())."";
 				break;
-		case "shipsold":
+			case "shipsold":
 				$op = new User($this->opponent1Id);
 				$ent2 = Entity::createFactoryById($this->entity2Id);
 
@@ -354,6 +366,100 @@ class MarketReport extends Report
 				$buyerFleet = new Fleet($this->fleet2Id);
 				if ($buyerFleet->valid())
 					echo " Landung: ".df($buyerFleet->landTime())."";
+				break;
+			case 'auctionadd':
+				echo "Du hast folgendes Angebot (#".$this->recordId.") im <a href=\"?page=market&amp;mode=user_sell&amp;change_entity=".$this->entity1Id."\">Marktplatz</a>
+				auf ".$ent->detailLink()." eingestellt:<br/><br/>";
+				if ($this->content !="")
+					echo $this->content."<br/><br/>";
+				echo "<table class=\"tb\" style=\"width:auto;margin:5px;\">";
+				echo "<tr>
+					<th style=\"width:100px;\">Rohstoff:</th>
+					<th>Angebot:</th>
+					</tr>";
+				foreach ($resNames as $k=>$v)
+				{
+					if ($this->resSell[$k]>0)
+						echo "<tr>
+						<td>".$v."</td>
+						<td>".nf($this->resSell[$k])."</td>
+						</tr>";
+				}
+				echo "</table><br/>";
+				echo 'Die Auktion endet am '.df($this->timestamp2).'.';
+				break;
+			case 'auctioncancel':
+				echo "Du hast das Angebot #".$this->recordId." im <a href=\"?page=market&amp;mode=user_sell&amp;change_entity=".$this->entity1Id."\">Marktplatz</a>
+				auf ".$ent->detailLink()." abgebrochen!<br/><br/>";
+				echo "<table class=\"tb\" style=\"width:auto;margin:5px;\">";
+				echo "<tr>
+					<th style=\"width:100px;\">Rohstoff:</th>
+					<th>Angebot:</th>
+					<th>Retour:</th>
+					</tr>";
+				foreach ($resNames as $k=>$v)
+				{
+					if ($this->resSell[$k]>0)
+						echo "<tr>
+							<td>".$v."</td>
+							<td>".nf($this->resSell[$k])."</td>
+							<td>".nf($this->resSell[$k]*$this->factor)."</td>
+						</tr>";
+				}
+				echo "</table><br/>";
+				echo "Es wurden ".round($this->factor*100)."% der Rohstoffe zurückerstattet.";
+				break;
+			case 'auctionoverbid':
+				$op = new User($this->opponent1Id);
+				echo 'Du wurdest bei folgendem Angebot (#'.$this->recordId.') von '.$op->detailLink().' &uuml;berboten:<br/><br/>';
+				if ($this->timestamp2)
+					echo 'Die Auktion dauert noch bis am '.date("d.m.Y H:i",$this->timestamp2).'<br />';
+				else
+					echo "Die Auktion ist nun zu Ende und wird nach ".AUCTION_DELAY_TIME." Stunden gel&ouml;scht.<br />";
+				echo '<a hred="?page=market&mode=auction&id='.$arr['id'].'">Hier</a> gehts zu der Auktion.';
+				break;
+			case 'auctionfinished':
+				$op = new User($this->opponent1Id);
+				echo "Du hast folgendes Angebot (#".$this->recordId.") im <a href=\"?page=market&amp;mode=user_sell&amp;change_entity=".$this->entity1Id."\">Marktplatz</a>
+				auf ".$ent->detailLink()." an ".$op->detailLink()." versteigert:<br/><br/>";
+				echo "<table class=\"tb\" style=\"width:auto;margin:5px;\">";
+				echo "<tr>
+					<th style=\"width:100px;\">Rohstoff:</th>
+					<th>Angebot:</th>
+					<th>Preis:</th>
+					</tr>";
+				foreach ($resNames as $k=>$v)
+				{
+					if ($this->resSell[$k] + $this->resBuy[$k]>0)
+						echo "<tr>
+							<td>".$v."</td>
+							<td>".nf($this->resSell[$k])."</td>
+							<td>".nf($this->resBuy[$k])."</td>
+						</tr>";
+				}
+				echo "</table><br/>";
+				echo 'Die Auktion wird nach '.AUCTION_DELAY_TIME.' Stunden gel&ouml;scht und die Waren werden in wenigen Minuten versendet.<br /><br />';
+				break;
+			case 'auctionwon':
+				$op = new User($this->opponent1Id);
+				echo 'Du hast folgendes Angebot (#'.$this->recordId.') von '.$op->detailLink().' ersteigert:<br/><br/>';
+				echo "<table class=\"tb\" style=\"width:auto;margin:5px;\">";
+				echo "<tr>
+					<th style=\"width:100px;\">Rohstoff:</th>
+					<th>Angebot:</th>
+					<th>Preis:</th>
+					</tr>";
+				foreach ($resNames as $k=>$v)
+				{
+					if ($this->resSell[$k] + $this->resBuy[$k]>0)
+						echo "<tr>
+							<td>".$v."</td>
+							<td>".nf($this->resSell[$k])."</td>
+							<td>".nf($this->resBuy[$k])."</td>
+						</tr>";
+				}
+				echo "</table><br/>";
+				echo 'Die Auktion wird nach '.AUCTION_DELAY_TIME.' Stunden gel&ouml;scht und die Waren werden in wenigen Minuten versendet.<br /><br />';
 				break;
 			default:
 				dump($this);

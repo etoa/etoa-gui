@@ -74,65 +74,12 @@ class OtherReport extends Report
 
 	static function add($data,$subType,$recordId,$spyData)
 	{
-		global $resNames;
-
-		$id = parent::add(array_merge($data,array("type"=>"spy")));
-		if ($id!=null)
-		{
-			$fs = "";
-			$vs = "";
-			foreach ($resNames as $rk => $rn)
-			{
-				if (isset($spyData['res_'.$rk]))
-				{
-					$fs.= ",res_".$rk." ";
-					$vs.= ",".$spyData['res_'.$rk]." ";
-				}
-			}
-			if (isset($spyData['factor']) && $spyData['factor']>0)
-			{
-				$fs.= ",factor ";
-				$vs.= ",".$marketData['factor']." ";
-			}
-			if (isset($spyData['fleet_id']) && $spyData['fleet_id']>0)
-			{
-				$fs.= ",fleet_id ";
-				$vs.= ",".$spyData['fleet_id']." ";
-			}
-			if (isset($marketData['fleet2_id']) && $marketData['fleet2_id']>0)
-			{
-				$fs.= ",fleet2_id ";
-				$vs.= ",".$marketData['fleet2_id']." ";
-			}
-			if (isset($marketData['ship_id']) && $marketData['ship_id']>0)
-			{
-				$fs.= ",ship_id ";
-				$vs.= ",".$marketData['ship_id']." ";
-			}
-			if (isset($marketData['ship_count']) && $marketData['ship_count']>0)
-			{
-				$fs.= ",ship_count ";
-				$vs.= ",".$marketData['ship_count']." ";
-			}
-			dbquery("INSERT INTO
-				reports_market
-			(
-				id,
-				subtype,
-				record_id
-				".$fs."
-			)
-			VALUES
-			(
-				".$id.",
-				'".(isset(self::$subTypes[$subType]) ? $subType : 'other')."',
-				".intval($recordId)."
-				".$vs."
-			)
-			");
-			return $id;
-		}
 		return null;
+	}
+	
+	function createSubject()
+	{
+		return self::$subTypes[$this->subType];
 	}
 
 	function __toString()

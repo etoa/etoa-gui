@@ -433,3 +433,11 @@ ul.horizMenu:after	{
 	visibility:hidden;
 	clear:both;
 }
+
+table.battleTable, table.battleTable tr, table.battleTable tr td  {
+    border:none;
+}
+
+table.battleTable {
+    margin:0 auto;
+}

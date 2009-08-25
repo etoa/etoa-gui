@@ -27,12 +27,12 @@ class ExploreReport extends Report
 
 	static function add($data)
 	{
-
-		$id = parent::add(array_merge($data,array("type"=>"explore")));
-		if ($id!=null)
-		{
-			
-		}
+		return null;
+	}
+	
+	function createSubject()
+	{
+		return 'Erkundung';
 	}
 
 	function __toString()

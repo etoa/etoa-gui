@@ -64,7 +64,6 @@
 			MarketReport::add(array(
 				'user_id'=>$cu->id,
 				'entity1_id'=>$cp->id,
-				'subject'=>"Schiffangebot zurückgezogen"
 				), "shipcancel", $_POST['ship_market_id'], $marr);
 
 				ok_msg("Angebot wurde gel&ouml;scht und du hast $returnCount (".(round($return_factor,2)*100)."%) der angebotenen Schiffe zur&uuml;ck erhalten (es wird abgerundet)");
@@ -121,7 +120,6 @@
 			MarketReport::add(array(
 				'user_id'=>$cu->id,
 				'entity1_id'=>$rcrow['entity_id'],
-				'subject'=>"Rohstoffangebot zurückgezogen",
 				), "rescancel", $_POST['ressource_market_id'], $marr);
 
 			dbquery("
@@ -157,16 +155,28 @@
 			// Rohstoffe zurückgeben
 			$acrow=mysql_fetch_array($acres);
 
-			$returnRes = array();
+			$rarr = array();
+			$marr = array('factor'=>$return_factor);
 			foreach ($resNames as $rk => $rn)
 			{
-				$returnRes[$rk] = $acrow['sell_'.$rk]*$return_factor;
+				if ($acrow['sell_'.$rk]>0)
+				{
+					// todo: when non on the planet where the deal belongs to, the return_factor
+					// is based on the local marketplace, for better or worse... change that so that the
+					// origin marketplace return factor will be taken
+					$rarr[$rk] = $acrow['sell_'.$rk] * $return_factor;
+					$marr['sell_'.$rk] = $acrow['sell_'.$rk];
+				}
 			}
-			$cp->addRes($rk);
+			$cp->addRes($rarr);
 
 			//Auktion löschen
 			dbquery("DELETE FROM market_auction WHERE id='".$_POST['auction_cancel_id']."'");
-
+			
+			MarketReport::add(array(
+				'user_id'=>$cu->id,
+				'entity1_id'=>$acrow['entity_id'],
+				), "auctioncancel", $_POST['auction_cancel_id'], $marr);
 			//add_log(7,"Der Spieler ".$cu->nick." zieht folgende Auktion zur&uuml;ck:\nRohstoffe:\n".RES_METAL.": ".$acrow['sell_metal']."\n".RES_CRYSTAL.": ".$acrow['sell_crystal']."\n".RES_PLASTIC.": ".$acrow['sell_plastic']."\n".RES_FUEL.": ".$acrow['sell_fuel']."\n".RES_FOOD.": ".$acrow['sell_food']."\n\nEr erh&auml;lt ".(round($return_factor,2)*100)."% der Waren erstattet!",time());
 
 			ok_msg("Auktion wurde gel&ouml;scht und du hast ".(round($return_factor,2)*100)."% der angebotenen Waren zur&uuml;ck erhalten (es wird abgerundet)!");

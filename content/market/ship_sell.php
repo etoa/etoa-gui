@@ -180,7 +180,6 @@
 									'entity1_id'=>$arr['entity_id'],
 									'entity2_id'=>$cp->id,
 									'opponent1_id'=>$cu->id,
-									'subject'=>"Schiffe verkauft",
 									), "shipsold", $arr['id'], array_merge($mr,array("fleet1_id"=>$sellerFid,"fleet2_id"=>$buyerFid)));
 
 								// Send report to buyer (the current user)
@@ -189,7 +188,6 @@
 									'entity1_id'=>$cp->id,
 									'entity2_id'=>$arr['entity_id'],
 									'opponent1_id'=>$arr['user_id'],
-									'subject'=>"Schiffe gekauft",
 									), "shipbought", $arr['id'], array_merge($mr,array("fleet1_id"=>$buyerFid,"fleet2_id"=>$sellerFid)));
 							}
 						}

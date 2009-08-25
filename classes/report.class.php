@@ -107,8 +107,8 @@ abstract class Report
 	{
 		try
 		{
-			/*if ($this->field=="subject")
-				return $this->createSubject();*/
+			if ($field=="subject")
+				return $this->createSubject();
 			if (isset($this->$field))
 				return $this->$field;
 			throw new Eexception("Property $field does not exists!");
@@ -150,10 +150,8 @@ abstract class Report
 		return false;
 	}
 	
-/*	abstract function createSubject()
-	{
-		return $this->subTypes[$this->subTypes];
-	}*/
+	
+	public abstract function createSubject();
 
 	/**
 	 * Adds a new report. To be called from the derived class.
@@ -306,6 +304,8 @@ abstract class Report
 						return new ExploreReport($args);
 					case 'spy':
 						return new SpyReport($args);
+					case 'battle':
+						return new BattleReport($args);
 					default:
 						return new OtherReport($args);
 					}
