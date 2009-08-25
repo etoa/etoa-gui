@@ -19,6 +19,7 @@ namespace explore
 													  this->f->getEntityTo(),
 													  this->f->getEntityFrom(),
 													  this->f->getLandtime());
+			report->setType("explore");
 			delete report;
 		}	
 		else {
