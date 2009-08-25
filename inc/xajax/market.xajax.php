@@ -69,6 +69,7 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 			".($dfilter!="" ? $dfilter : 0)."
 			)
 			AND user_id!='".$_SESSION['user_id']."'
+			AND (for_alliance='".$_SESSION['alliance_id']."' OR for_alliance='0')
 			;";
 		
 		$res = dbquery($sql);
@@ -133,7 +134,7 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 			}
 
 
-			$cres = dbquery("SELECT COUNT(id) FROM market_ressource WHERE buyable=1 AND user_id!='".$_SESSION['user_id']."'");
+			$cres = dbquery("SELECT COUNT(id) FROM market_ressource WHERE buyable=1 AND user_id!='".$_SESSION['user_id']."' AND (for_alliance='".$_SESSION['alliance_id']."' OR for_alliance='0')");
 			$carr = mysql_fetch_row($cres);
 			echo "<form action=\"?page=market&amp;mode=ressource\" method=\"post\" id=\"ress_buy_selector\">\n";
 			checker_init();
@@ -151,18 +152,17 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 			foreach ($data as $arr)
 			{
 				$i=0;
-				/*
-				 *
+
 				$for_alliance="";
 				// Für Allianzmitglied reserveriert
-				if($arr['ressource_for_alliance']!=0)
+				if($arr['for_alliance']!=0)
 				{
 						$for_alliance="<span class=\"userAllianceMemberColor\">F&uuml;r Allianzmitglied Reserviert</span>";
 				}
 				else
 				{
 						$for_alliance="";
-				}*/
+				}
 
 				$cres = $arr['used_res'];
 				foreach ($resNames as $rk=>$rn)
@@ -182,6 +182,7 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 												".tf($arr['duration'])."
 												</td>
 												<td rowspan=\"".$cres."\">
+													".$for_alliance."<br />
 													".stripslashes($arr['text'])."
 												</td>
 												<td rowspan=\"".$cres."\">
@@ -236,6 +237,7 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 			WHERE
 				buyable='1'
 			AND user_id!='".$_SESSION['user_id']."'
+			AND (for_alliance='".$_SESSION['alliance_id']."' OR for_alliance='0')
 			;");
 			$cnt=0;
 			if(mysql_num_rows($res)>0)
@@ -272,7 +274,7 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 						{
 							$tu = new User($arr['user_id']);
 							echo "<td rowspan=\"$resCnt\">".$tu->detailLink()."</td>";
-							echo "<td rowspan=\"$resCnt\">".stripslashes($arr['text'])."</td>";
+							echo "<td rowspan=\"$resCnt\">".$for_alliance."<br />".stripslashes($arr['text'])."</td>";
 							echo "<td rowspan=\"$resCnt\">
 								<input type=\"checkbox\" name=\"ship_market_id[]\" id=\"ship_market_id_".$arr['id']."\" value=\"".$arr['id']."\" onclick=\"xajax_calcMarketShipBuy(xajax.getFormValues('ship_buy_selector'));\" />
 							</td>";

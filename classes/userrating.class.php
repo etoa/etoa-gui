@@ -105,13 +105,15 @@
 		/**
 		* Add trade rating
 		*/
-		function addTradeRating($rating,$reason="")
+		function addTradeRating($rating,$sell=true,$reason="")
 		{
+			$sell = $sell ? ',trades_sell=trades_sell+1' : ',trades_buy=trades_buy+1';
 			dbquery("
 			UPDATE
 				user_ratings
 			SET
 				trade_rating=trade_rating+".$rating."
+				".$sell."
 			WHERE
 				id=".$this->id.";");			
 			if ($reason!="")

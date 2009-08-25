@@ -99,7 +99,11 @@
 						-$arr['specialist_costs_crystal'],
 						-$arr['specialist_costs_plastic'],
 						-$arr['specialist_costs_fuel'],
-						-$arr['specialist_costs_food']);				
+						-$arr['specialist_costs_food']);
+						
+						//Update every planet
+						foreach ($planets as $pid)
+							sendBackendMessage("planetupdate:".$pid);
 						
 						ok_msg('Der gewählte Spezialist wurde eingestellt!');
 					}

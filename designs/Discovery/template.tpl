@@ -220,6 +220,8 @@
 		<img src="{$templateDir}/images/Menueleiste_62.gif" /></div>
 	<div class="pb-post_">
 		<img name="pb_post" id="pb_post" src="{if $messages > 0}{$templateDir}/images/pb_post-sp_pb_post_postther.gif{else}{$templateDir}/images/pb_post.gif{/if}" usemap="#pb_post_Map" /></div>
+		<div class="pb-report_">
+			<img name="pb_report" id="pb_report" src="{if $newreports > 0}{$templateDir}/images/pb_report-sp_pb_report_reportther.gif{else}{$templateDir}/images/pb_report.gif{/if}" usemap="#pb_report_Map" /></div>
 	<div class="Menueleiste-63_">
 		<img src="{$templateDir}/images/Menueleiste_63.gif" /></div>
 	<div class="alert_"><a href="?page=fleets"><img id="alert" src="{if $fleetAttack > 0}{$templateDir}/images/alert-attacked.gif{else}{$templateDir}/images/alert.gif{/if}" alt="Alarm" border="0"/></a></div>
@@ -339,6 +341,13 @@
 	onmouseout="changeImages('pb_post', '{if $messages > 0}{$templateDir}/images/pb_post-sp_pb_post_postther.gif{else}{$templateDir}/images/pb_post.gif{/if}');"
 	onmousedown="changeImages('pb_post', '{$templateDir}/images/pb_post-sp_pb_post_down.gif'); return true;"
 	onmouseup="changeImages('pb_post', '{$templateDir}/images/pb_post-sp_pb_post_over.gif'); return true;">
+</map>
+<map name="pb_report_Map">
+<area shape="circle" alt="" coords="0,37,27" href="?page=reports"
+	onmouseover="changeImages('pb_report', '{$templateDir}/images/pb_report-sp_pb_report_over.gif'); return true;"
+	onmouseout="changeImages('pb_report', '{if $newreports > 0}{$templateDir}/images/pb_report-sp_pb_report_reportther.gif{else}{$templateDir}/images/pb_report.gif{/if}');"
+	onmousedown="changeImages('pb_report', '{$templateDir}/images/pb_report-sp_pb_report_down.gif'); return true;"
+	onmouseup="changeImages('pb_report', '{$templateDir}/images/pb_report-sp_pb_report_over.gif'); return true;">
 </map>
 <map name="pb_notes_Map">
 <area shape="circle" alt="" coords="23,32,18" 

@@ -193,6 +193,10 @@ function preloadImages()
 		pb_post_sp_pb_post_down = newImage("designs/Discovery/images/pb_post-sp_pb_post_down.gif");
 		pb_post_sp_pb_post_sel_item_post = newImage("designs/Discovery/images/pb_post-sp_pb_post_sel_item.gif");
 		pb_post_sp_pb_post_postthere = newImage("designs/Discovery/images/pb_post-sp_pb_post_postther.gif");
+		pb_report_sp_pb_report_over = newImage("designs/Discovery/images/pb_report-sp_pb_report_over.gif");
+		pb_report_sp_pb_report_down = newImage("designs/Discovery/images/pb_report-sp_pb_report_down.gif");
+		pb_report_sp_pb_report_sel_item_report = newImage("designs/Discovery/images/pb_report-sp_pb_report_sel_item.gif");
+		pb_report_sp_pb_report_reportthere = newImage("designs/Discovery/images/pb_report-sp_pb_report_reportther.gif");
 		alert_attacked = newImage("designs/Discovery/images/alert-attacked.gif");
 		pb_notes_sp_pb_notes_over = newImage("designs/Discovery/images/pb_notes-sp_pb_notes_over.gif");
 		pb_notes_sp_pb_notes_down = newImage("designs/Discovery/images/pb_notes-sp_pb_notes_down.gif");

@@ -111,6 +111,14 @@
 						'entity1_id'=>$cp->id,
 						'opponent1_id'=>$arr['user_id'],
 						), "auctionwon", $arr['id'], $marr);
+						
+					// Add market ratings
+					$seller = new User($arr['user_id']);
+					$cu->rating->addTradeRating(TRADE_POINTS_PER_TRADE,false,'Handel #'.$arr['id'].' mit '.$arr['user_id']);
+					if (strlen($arr['text'])>TRADE_POINTS_TRADETEXT_MIN_LENGTH)
+						$seller->rating->addTradeRating(TRADE_POINTS_PER_TRADE+TRADE_POINTS_PER_TRADETEXT,true,'Handel #'.$arr['id'].' mit '.$cu->id);
+					else
+						$seller->rating->addTradeRating(TRADE_POINTS_PER_TRADE,true,'Handel #'.$arr['id'].' mit '.$cu->id);
 
 					$resourceString = "";
 					foreach ($resNames as $rk => $rn)

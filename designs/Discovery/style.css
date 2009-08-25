@@ -1055,7 +1055,14 @@ div.pb-post_ {
 	position:absolute;
 	left:0px;
 	top:704px;
-	width:91px;
+	width:49px;
+	height:71px;
+}
+div.pb-report_ {
+	position:absolute;
+	left:49px;
+	top:704px;
+	width:42px;
 	height:71px;
 }
 

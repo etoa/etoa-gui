@@ -20,6 +20,7 @@
 	// $Date$
 	// $Rev$
 	//
+	$_SESSION['alliance_id'] = $cu->allianceId();
 
 	if (isset($_GET['searchcat']) && $_GET['searchcat']=="auctions")
 		$searchCat = "auctions";
@@ -90,7 +91,6 @@
 
 	echo "<div id=\"market_search_filter_container_auction\" style=\"display:none;\">";
 	echo "</div>";
-
 
 	echo "</td></tr>";
 

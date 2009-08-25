@@ -189,6 +189,13 @@
 									'entity2_id'=>$arr['entity_id'],
 									'opponent1_id'=>$arr['user_id'],
 									), "shipbought", $arr['id'], array_merge($mr,array("fleet1_id"=>$buyerFid,"fleet2_id"=>$sellerFid)));
+								
+								// Add market ratings
+								$cu->rating->addTradeRating(TRADE_POINTS_PER_TRADE,false,'Handel #'.$arr['id'].' mit '.$arr['user_id']);
+								if (strlen($arr['text'])>TRADE_POINTS_TRADETEXT_MIN_LENGTH)
+									$seller->rating->addTradeRating(TRADE_POINTS_PER_TRADE+TRADE_POINTS_PER_TRADETEXT,true,'Handel #'.$arr['id'].' mit '.$cu->id);
+								else
+									$seller->rating->addTradeRating(TRADE_POINTS_PER_TRADE,true,'Handel #'.$arr['id'].' mit '.$cu->id);
 							}
 						}
 
