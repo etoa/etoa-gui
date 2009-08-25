@@ -37,7 +37,7 @@ namespace bombard
 														 this->f->getId());
 				bombard->addUser(this->targetEntity->getUserId());
 				
-				if (this->one < this->two) 
+				if (this->one < this->two || true) 
 				{
 					// level the building down, at least one level 
 					this->bLevel = (short)ceil(this->shipCnt/2500.0);

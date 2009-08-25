@@ -37,7 +37,7 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 	if (entity->getUserId()==0
 		|| (fleet->getLeaderId() > 0 && (fleet->fleetUser->getAllianceId()==entity->getUser()->getAllianceId() &&fleet->fleetUser->getAllianceId()!=0))
 		|| (fleet->getLeaderId() == 0 && fleet->getUserId()==entity->getUserId())) {
-		report->setSubtype("battlefailed");	
+		report->setSubtype("battlefailed");
 		
 		report->setResult(0);
 		
@@ -97,11 +97,7 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 		//Report
 		report->setShield(fleet->getShield(true));
 		report->setStructure(fleet->getStructure(true));
-		report->setWeapon(fleet->getWeapon(true));
-		report->setCount(fleet->getCount(true));
 		
-		report->setEntityWeapon(entity->getWeapon(true));
-		report->setEntityCount(entity->getCount(true));
 		report->setEntityShield(entity->getShield(true));
 		report->setEntityStructure(entity->getStructure(true));
 		
@@ -142,6 +138,10 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 		//
         for (int bx = 1; bx <= config.nget("battle_rounds",0); bx++) {
 			report->setRounds(bx);
+			report->setWeapon(fleet->getWeapon(true));
+			report->setCount(fleet->getCount(true));
+			report->setEntityWeapon(entity->getWeapon(true));
+			report->setEntityCount(entity->getCount(true));
 
             cAttStructureShield -= entity->getWeapon(true);
 			cDefStructureShield -= fleet->getWeapon(true);
@@ -174,12 +174,6 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 				entity->setPercentSurvive(cDefStructureShield/initDefStructureShield,true);
             }
 			
-			report->setWeapon(fleet->getWeapon(true));
-			report->setCount(fleet->getCount(true));
-			
-			report->setEntityWeapon(entity->getWeapon(true));
-			report->setEntityCount(entity->getCount(true));
-			
             if (cAttStructureShield <= 0 || cDefStructureShield <= 0)
                 break;
         }
@@ -195,6 +189,8 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 		//Erfahrung für die Spezialschiffe errechnen
         fleet->addExp(entity->getExp() / 100000);
         entity->addExp(fleet->getExp() / 100000);
+		report->setExp(fleet->getAddedExp());
+		report->setEntityExp(entity->getAddedExp());
 
 
 		//Das entstandene Trümmerfeld erstellen/hochladen
@@ -350,7 +346,7 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 		query.reset();
 
 		log->addText(("Battle id: " + etoa::d2s(con_->insert_id())));
-
+		
 		switch (returnV)
 		{
 			case 1:	//angreifer hat gewonnen
@@ -359,7 +355,6 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 				this->defPoints = 0;
 				this->attResult = 2;
 				this->defResult = 0;
-				report->setResult(1);
 				break;
 			case 2:	//agreifer hat verloren
 				this->returnFleet = false;
@@ -367,7 +362,6 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 				this->defPoints = 2;
 				this->attResult = 0;
 				this->defResult = 2;
-				report->setResult(2);
 				break;
 			case 3:	//beide flotten sind kaputt
 				this->returnFleet = false;
@@ -375,7 +369,6 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 				this->defPoints = 1;
 				this->attResult = 1;
 				this->defResult = 1;
-				report->setResult(0);
 				break;
 			case 4: //beide flotten haben überlebt
 				this->returnFleet = true;
@@ -383,9 +376,9 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 				this->defPoints = 1;
 				this->attResult = 1;
 				this->defResult = 1;
-				report->setResult(0);
 				break;
 		}
+		report->setResult(returnV);
 		
 		//Battlepoints
 		int user;
@@ -414,4 +407,5 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 		
 		fleet->addRaidedRes();
 	}
+	delete report;
 }

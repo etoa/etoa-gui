@@ -52,7 +52,7 @@ void BattleReport::setCount(double count) {
 	this->count.push_back(count);
 }
 
-void BattleReport::setExp(double exp) {
+void BattleReport::setExp(int exp) {
 	this->exp = exp;
 }
 
@@ -88,7 +88,7 @@ void BattleReport::setEntityCount(double count) {
 	this->entityCount.push_back(count);
 }
 
-void BattleReport::setEntityExp(double exp) {
+void BattleReport::setEntityExp(int exp) {
 	this->entityExp = exp;
 }
 
@@ -146,7 +146,7 @@ void BattleReport::saveBattleReport() {
 		if (!this->id) throw 0;
 		
 		query << "INSERT INTO "
-			<< "	`reports_other` "
+			<< "	`reports_battle` "
 			<< "( "
 			<< "	`id`, "
 			<< "	`subtype`, "
@@ -155,29 +155,29 @@ void BattleReport::saveBattleReport() {
 			<< "	`entity_user`, "
 			<< "	`ships`, "
 			<< "	`entity_ships`, "
-			<< "	`entity-def`, "
+			<< "	`entity_def`, "
 			<< "	`weapon_tech`, "
 			<< "	`shield_tech`, "
 			<< "	`structure_tech`, ";
-		for (int i=this->rounds; i>0; --i)
+		for (int i=1; i<=this->rounds; ++i)
 			query << "	`weapon_" << i << "`, ";
 		query << "	`shield`, "
 			<< "	`structure`, ";
-		for (int i=this->rounds; i>0; --i)
+		for (int i=1; i<=this->rounds; ++i)
 			query << "	`heal_" << i << "`, ";
-		for (int i=this->rounds; i>0; --i)
+		for (int i=1; i<=this->rounds; ++i)
 			query << "	`count_" << i << "`, ";
 		query << "	`exp`, "
 			<< "	`entity_weapon_tech`, "
 			<< "	`entity_shield_tech`, "
 			<< "	`entity_structure_tech`, ";
-		for (int i=this->rounds; i>0; --i)
+		for (int i=1; i<=this->rounds; ++i)
 			query << "	`entity_weapon_" << i << "`, ";
 		query << "	`entity_shield`, "
 			<< "	`entity_structure`, ";
-		for (int i=this->rounds; i>0; --i)
+		for (int i=1; i<=this->rounds; ++i)
 			query << "	`entity_heal_" << i << "`, ";
-		for (int i=this->rounds; i>0; --i)
+		for (int i=1; i<=this->rounds; ++i)
 			query << "	`entity_count_" << i << "`, ";
 		query << "	`entity_exp`, "
 			<< "	`res_0`, "
@@ -208,38 +208,26 @@ void BattleReport::saveBattleReport() {
 			<< "	'" << this->weaponTech << "', "
 			<< "	'" << this->shieldTech << "', "
 			<< "	'" << this->structureTech << "', ";
-		while (!this->weapon.empty()) {
-			query << "	'" << this->weapon.back() << "', ";
-			this->weapon.pop_back();
-		}
+		for (int i=0; i<this->rounds; ++i)
+			query << "	'" << this->weapon[i] << "', ";
 		query << "	'" << this->shield << "', "
 			<< "	'" << this->structure << "', ";
-		while (!this->heal.empty()) {
-			query << "	'" << this->heal.back() << "', ";
-			this->heal.pop_back();
-		}
-		while (!this->count.empty()) {
-			query << "	'" << this->count.back() << "', ";
-			this->count.pop_back();
-		}
+		for (int i=0; i<this->rounds; ++i)
+			query << "	'" << this->heal[i] << "', ";
+		for (int i=0; i<this->rounds; ++i)
+			query << "	'" << this->count[i] << "', ";
 		query << "	'" << this->exp << "', "
 			<< "	'" << this->entityWeaponTech << "', "
 			<< "	'" << this->entityShieldTech << "', "
 			<< "	'" << this->entityStructureTech << "', ";
-		while (!this->entityWeapon.empty()) {
-			query << "	'" << this->entityWeapon.back() << "', ";
-			this->entityWeapon.pop_back();
-		}
+		for (int i=0; i<this->rounds; ++i)
+			query << "	'" << this->entityWeapon[i] << "', ";
 		query << "	'" << this->entityShield << "', "
 			<< "	'" << this->entityStructure << "', ";
-		while (!this->entityHeal.empty()) {
-			query << "	'" << this->entityHeal.back() << "', ";
-			this->entityHeal.pop_back();
-		}
-		while (!this->entityCount.empty()) {
-			query << "	'" << this->entityCount.back() << "', ";
-			this->entityCount.pop_back();
-		}
+		for (int i=0; i<this->rounds; ++i)
+			query << "	'" << this->entityHeal[i] << "', ";
+		for (int i=0; i<this->rounds; ++i)
+			query << "	'" << this->entityCount[i] << "', ";
 		query << "	'" << this->entityExp << "', "
 			<< "	'" << this->res0 << "', "
 			<< "	'" << this->res1 << "', "

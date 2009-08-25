@@ -33,10 +33,12 @@ void Report::setContent(std::string content) {
 }
 
 void Report::addUser(int userId) {
-	std::vector<int>::iterator it;
-	for (it = this->users.begin(); it < this->users.end(); it++ )
-		if (*it == userId) return;
-	this->users.push_back(userId);
+	if (userId>0) {
+		std::vector<int>::iterator it;
+		for (it = this->users.begin(); it < this->users.end(); it++ )
+			if (*it == userId) return;
+		this->users.push_back(userId);	
+	}
 }
 
 void Report::setAllianceId(unsigned int allianceId) {

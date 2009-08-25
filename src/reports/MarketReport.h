@@ -60,7 +60,7 @@ public:
 
 	MarketReport(MarketReport* report) {	}
 		
-	MarketReport() {
+	~MarketReport() {
 		while (!this->users.empty()) {
 			this->id = this->save(this->users.back());
 			this->saveMarketReport();

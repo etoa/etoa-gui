@@ -15,12 +15,12 @@ namespace market
 		mysqlpp::Connection *con_ = my.get();
 		mysqlpp::Query query = con_->query();
 		query << "INSERT INTO "
-			<< "	user_rating "
+			<< "	user_ratings "
 			<< "( "
 			<< "	id, ";
 		if (sell) query << " trades_sell, ";
 		else query << " trades_buy, ";
-		query << "	trades_rating "
+		query << "	trade_rating "
 			<< ") "
 			<< "VALUES "
 			<< "( "

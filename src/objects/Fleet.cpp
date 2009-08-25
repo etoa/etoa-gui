@@ -793,7 +793,7 @@
 		else
 			this->exp = -1;
 			// TODO added this to overcome error, but which value should it be?
-		return exp;
+		return counter;
 	}
 
 	double Fleet::getExp() {

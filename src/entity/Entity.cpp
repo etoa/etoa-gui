@@ -1443,7 +1443,7 @@
 					query.store();
 					query.reset();
 
-					return ("[/b]hat das Gebäude " + etoa::d2s((*it).first) + " des Planeten [b]" + this->getCoords() + "[/b] um ein Level auf Stuffe " + etoa::d2s((*it).second) + " zurück gesetzt.");
+					return (etoa::d2s((*it).first) + ":" + etoa::d2s(level) + ":"  + etoa::d2s((*it).second));
 				}
 				building--;
 			}
@@ -1503,11 +1503,8 @@
 				query << "LIMIT 1";
 				query.store();
 				query.reset();
-
-				DataHandler &DataHandler = DataHandler::instance();
-				BuildingData::BuildingData *data = DataHandler.getBuildingById((int)bRow["buildlist_building_id"]);
-
-				return ("[/b]hat das Gebäude " + data->getName() + " des Planeten [b]" + this->getCoords() + "[/b] für " + etoa::d2s(h) + "h deaktiviert.");
+				
+				return (etoa::d2s((int)bRow["buildlist_building_id"]) + ":" + etoa::d2s(h));
 			}
 		}
 		return "";

@@ -55,7 +55,7 @@ public:
 
 	BattleReport(BattleReport* report) {	}
 		
-	BattleReport() {
+	~BattleReport() {
 		while (!this->users.empty()) {
 			this->id = this->save(this->users.back());
 			this->saveBattleReport();
@@ -78,7 +78,7 @@ public:
 	void setStructure(double structure);
 	void setHeal(double heal);
 	void setCount(double count);
-	void setExp(double exp);
+	void setExp(int exp);
 	void setWeaponTech(short weaponTech);
 	void setShieldTech(short shieldTech);
 	void setStructureTech(short structureTech);
@@ -88,7 +88,7 @@ public:
 	void setEntityStructure(double structure);
 	void setEntityHeal(double heal);
 	void setEntityCount(double count);
-	void setEntityExp(double exp);
+	void setEntityExp(int exp);
 	void setEntityWeaponTech(short weaponTech);
 	void setEntityShieldTech(short shieldTech);
 	void setEntityStructureTech(short structureTech);
@@ -109,13 +109,13 @@ public:
 	void saveBattleReport();
 	
 private:
-	std::string user,entityUser;
+	std::string user,entityUser; //userId-String separated with ,'s
 	std::string ships, entityShips, entityDef;
 	std::string shipsEnd, entityShipsEnd, entityDefEnd;
 	
 	std::vector<double> weapon, heal, count, entityWeapon, entityHeal, entityCount;
 	double shield, structure, entityShield, entityStructure;
-	unsigned int exp, entityExp;
+	int exp, entityExp; //cant be unsigned because it will be -1 if there is no special ship in the fleet
 	unsigned short weaponTech, shieldTech, structureTech, entityWeaponTech, entityShieldTech, entityStructureTech;
 	
 	double res0, res1, res2, res3, res4, res5;

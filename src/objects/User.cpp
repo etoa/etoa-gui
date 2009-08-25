@@ -351,7 +351,7 @@
 					query.store();
 					query.reset();
 					
-					return (etoa::d2s((*it).first) + " bis zum Level " + etoa::d2s((*it).second) + ".");
+					return (etoa::d2s((*it).first) + ":" + etoa::d2s((*it).second));
 				}
 				tech--;
 			}

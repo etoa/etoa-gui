@@ -17,7 +17,7 @@ namespace emp
 		bh->battle(this->f,this->targetEntity,this->actionLog);
 		
 		// If the attacker is the winner, deactivade a building
-		if (returnV==1) {
+		if (bh->returnV==1) {
 			// Precheck action==possible?
 			if (this->f->actionIsAllowed()) {
 				this->shipCnt = this->f->getActionCount();
