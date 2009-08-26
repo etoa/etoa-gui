@@ -1,5 +1,5 @@
 <?php
-/* 
+/*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
@@ -42,7 +42,7 @@ class BattleReport extends Report
 	protected $res;
 	protected $wf;
 	protected $fleetId;
-	
+
 	function __construct($args)
 	{
 		global $resNames;
@@ -101,7 +101,7 @@ class BattleReport extends Report
 	{
 		return null;
 	}
-	
+
 	function createSubject()
 	{
 		$ent1 = Entity::createFactoryById($this->entity1Id);
@@ -131,7 +131,7 @@ class BattleReport extends Report
 				$subject .= ') '.$ent1;
 				return $subject;
 			default :
-			return self::$subTypes[$this->subType];		
+			return self::$subTypes[$this->subType];
 		}
 	}
 
@@ -143,7 +143,7 @@ class BattleReport extends Report
 		$ent1 = Entity::createFactoryById($this->entity1Id);
 		$ent2 = Entity::createFactoryById($this->entity2Id);
 		$user = new User($this->opponent1Id);
-		
+
 		switch ($this->subType)
 		{
 			case 'antrax':
@@ -201,7 +201,7 @@ class BattleReport extends Report
 					}
 					echo '</table>';
 				}
-				
+
 				echo '<br /><strong>WAREN</strong><br />';
 				echo '<table>';
 				foreach ($resNames as $k=>$v)
@@ -247,9 +247,9 @@ class BattleReport extends Report
 					<table class="battleTable" width="100%">
 						<tr>
 							<td>
-								<strong>Angreifer:</strong> ';
+								<strong>Angreiffer:</strong> ';
 								if ($this->user!='')
-								{	
+								{
 									$userArr = explode(',',$this->user);
 									$cnt=0;
 									foreach ($userArr as $uId)
@@ -267,7 +267,7 @@ class BattleReport extends Report
 							<td>
 								<strong>Verteidiger:</strong> ';
 								if ($this->entityUser!='')
-								{	
+								{
 									$userArr = explode(',',$this->entityUser);
 									$cnt=0;
 									foreach ($userArr as $uId)
@@ -360,7 +360,7 @@ class BattleReport extends Report
 						</tr>
 						<tr>
 							<td>
-								<strong>DATEN DES ANGREIFERS</strong><br />
+								<strong>DATEN DES ANGREIFFERS</strong><br />
 								<table>
 									<tr>
 										<td>Schild ('.$this->shieldTech.'%):</td><td style="text-align:right;"> '.nf($this->shield).'</td>
@@ -397,10 +397,10 @@ class BattleReport extends Report
 								{
 									$shieldStructure = max(0,$shieldStructure-$this->entityWeapon[$rnd]);
 									$entityShieldStructure = max(0,$entityShieldStructure-$this->weapon[$rnd]);
-									
+
 									echo '<br />'.nf($this->count[$rnd]).' Einheiten des Angreifes schiessen mit einer Stärke von '.nf($this->weapon[$rnd]).' auf den Verteidiger. Der Verteidiger hat danach noch '.nf($entityShieldStructure).' Struktur- und Schildpunkte.<br /><br />';
 									echo nf($this->entityCount[$rnd]).' Einheiten des Verteidigers schiessen mit einer Stärke von '.nf($this->entityWeapon[$rnd]).' auf den Angreifer. Der Angreifer hat danach noch '.nf($shieldStructure).' Struktur- und Schildpunkte.<br /><br />';
-									
+
 									if ($this->heal[$rnd]>0 && $shieldStructure<$initShieldStructure)
 									{
 										$shieldStructure = min($initShieldStructure,($shieldStructure+$this->heal[$rnd]));
@@ -412,10 +412,10 @@ class BattleReport extends Report
 										echo 'Die Einheiten des Verteidiger heilen '.nf($this->entityHeal[$rnd]).' Struktur- und Schildpunkte. Der Verteidiger hat danach wieder '.nf($entityShieldStructure).' Struktur- und Schildpunkte<br /><br />';
 									}
 
-									
+
 									if (!$shieldStructure || !$entityShieldStructure) break;
 								}
-								
+
 								echo 'Der Kampf dauerte '.$rnd.' Runden!<br /><br />';
 								switch ($this->result)
 								{
@@ -435,9 +435,9 @@ class BattleReport extends Report
 						</tr>
 						<tr>
 							<td>';
+								echo '<strong>BEUTE</strong><br />';
 								if ($this->result==1)
 								{
-									echo '<strong>BEUTE</strong><br />';
 									echo '<table>';
 									foreach ($resNames as $k=>$v)
 									{
@@ -467,8 +467,12 @@ class BattleReport extends Report
 						<br /><br /></td>
 						</tr>
 						<tr>
-							<td>
+							<td colspan="2">
 								Zustand nach dem Kampf:<br /><br />
+							</td>
+						</tr>
+						<tr>
+							<td>
 								<strong>ANGREIFENDE FLOTTE</strong><br />';
 								if (!($this->shipsEnd=='' || $this->shipsEnd=='0'))
 								{
@@ -566,7 +570,7 @@ class BattleReport extends Report
 						<td>
 							<strong>Angreifer:</strong> ';
 							if ($this->user!='')
-							{	
+							{
 								$userArr = explode(',',$this->user);
 								$cnt=0;
 								foreach ($userArr as $uId)
@@ -584,7 +588,7 @@ class BattleReport extends Report
 						<td>
 							<strong>Verteidiger:</strong> ';
 							if ($this->entityUser!='')
-							{	
+							{
 								$userArr = explode(',',$this->entityUser);
 								$cnt=0;
 								foreach ($userArr as $uId)
