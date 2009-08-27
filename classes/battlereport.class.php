@@ -242,7 +242,7 @@ class BattleReport extends Report
 				break;
 			case 'battle':
 				echo '<strong>KAMPFBERICHT</strong><br />
-					vom Planeten '.$ent2->detailLink().'<br />
+					vom Planeten '.$ent1->detailLink().'<br />
 					<strong>Zeit:</strong> '.df($this->timestamp).'<br /><br />
 					<table class="battleTable" width="100%">
 						<tr>
