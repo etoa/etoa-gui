@@ -441,3 +441,9 @@ table.battleTable, table.battleTable tr, table.battleTable tr td  {
 table.battleTable {
     margin:0 auto;
 }
+
+#chatPreview {
+	float:right;
+	padding: 5px 20px;
+	background-color:#000;
+}

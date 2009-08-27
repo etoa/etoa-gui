@@ -1013,6 +1013,19 @@ function tabActivate(tabName,elemId)
 	
 }
 
+function addFontColor(id, colorId)
+{
+	var color = document.getElementById(id).value;
+	if (color.length==3 || color.length==6)
+	{
+		document.getElementById(colorId).style.color="#"+color;
+	}
+	else
+	{
+		document.getElementById(colorId).style.color="#FFF";
+	}
+}
+
 
 	/**
 	*	BB-Code Wrapper

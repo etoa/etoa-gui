@@ -101,7 +101,7 @@
 		//Der Username wird übernommen wenn dieser angegeben ist
 		elseif (isset($_POST['message_user_to']))
 		{
-			$user = rawurldecode($_POST['message_user_to']);
+			$user =  get_user_nick(intval(rawurldecode($_POST['message_user_to'])));
 		}
 		else
 		{

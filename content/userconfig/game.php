@@ -29,6 +29,11 @@
   	$cu->properties->analyzeShipId = $_POST['analyzeship_id'];
   	$cu->properties->analyzeShipCount = $_POST['analyzeship_count'];
   	$cu->properties->startUpChat = $_POST['startup_chat'];
+	
+	if (strlen($_POST['chat_color'])==3 || strlen($_POST['chat_color'])==6)
+  		$cu->properties->chatColor = $_POST['chat_color'];
+	else
+  		$cu->properties->chatColor = "FFF";
     success_msg("Benutzer-Daten wurden ge&auml;ndert!");
   }
 			
@@ -133,7 +138,22 @@
               if ($cu->properties->startUpChat==0) echo " checked=\"checked\"";
     					echo "/> Deaktiviert
     		</td>
-  		</tr>";   
+  		</tr>";  
+// Chat font color
+echo "<tr>
+  			<th>Chat Schriftfarbe:</th>
+  			<td>
+            #<input type=\"text\"
+					id=\"chat_color\"
+					name=\"chat_color\"
+					size=\"6\"
+					maxsize=\"6\"
+					value=\"".$cu->properties->chatColor."\"
+					onkeyup=\"addFontColor(this.id,'chatPreview')\"
+					onchange=\"addFontColor(this.id,'chatPreview')\"/>&nbsp;
+			<div id=\"chatPreview\" style=\"color:#".$cu->properties->chatColor.";\">&lt;".$cu." | ".date("H:i",time())."&gt; Chatvorschau </div>
+  		</td>
+		</tr>";
       		
 
   tableEnd();

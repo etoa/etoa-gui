@@ -25,8 +25,8 @@
 	$buyRes = array();
 	foreach ($resNames as $rk => $rn)
 	{
-		if (isset($_POST['auction_new_buy_'.$rk]))
-			$buyRes[$rk] = nf_back($_POST['auction_new_buy_'.$rk]);
+		if (isset($_POST['new_buy_'.$rk]))
+			$buyRes[$rk] = nf_back($_POST['new_buy_'.$rk]);
 		else
 			$buyRes[$rk] = 0;
 	}
@@ -71,7 +71,7 @@
 			}
 
 			// Prüft, ob Gebot höher ist als das vom Höchstbietenden
-			if($current_price < $new_price)
+			if($current_price*(1+AUCTION_OVERBID) < $new_price)
 			{
 						
 
@@ -172,7 +172,7 @@
 					//add_log(7,"Es wurde folgende Auktion erfolgreich beendet: Der Spieler ".$cu->nick." hat vom Spieler ".$partner_user_nick."  folgende Waren ersteigert:\n\nRohstoffe:\n".RES_METAL.": ".nf($arr['auction_sell_metal'])."\n".RES_CRYSTAL.": ".nf($arr['auction_sell_crystal'])."\n".RES_PLASTIC.": ".nf($arr['auction_sell_plastic'])."\n".RES_FUEL.": ".nf($arr['auction_sell_fuel'])."\n".RES_FOOD.": ".nf($arr['auction_sell_food'])."\n\nDies hat ihn folgende Rohstoffe gekostet:".RES_METAL.": ".nf($_POST['auction_new_buy_metal'])."\n".RES_CRYSTAL.": ".nf($_POST['auction_new_buy_crystal'])."\n".RES_PLASTIC.": ".nf($_POST['auction_new_buy_plastic'])."\n".RES_FUEL.": ".nf($_POST['auction_new_buy_fuel'])."\n".RES_FOOD.": ".nf($_POST['auction_new_buy_food'])."\n\nDie Auktion wird nach ".AUCTION_DELAY_TIME." Stunden gel&ouml;scht",time());
 
 
-					echo "Gratulation, du hast die Auktion gewonnen, da du den maximal Betrag geboten hast!<br/>";
+					ok_msg("Gratulation, du hast die Auktion gewonnen, da du den maximal Betrag geboten hast!");
 
 					// TODO: Market course update
 				}
@@ -218,22 +218,23 @@
 						bidcount=bidcount+1
 					WHERE
 						id='".$arr['id']."';");
-					echo "Gebot erfolgeich abgegeben!<br/>";
+					ok_msg("Gebot erfolgeich abgegeben!");
+					echo "<p>".button("Zurück zur Auktion", "?page=market&amp;mode=search&amp;searchcat=auctions&amp;auctionid=".$arr['id']."")."</p>";
 				}
 			}
 			else
 			{
-				echo "Das Gebot muss höher sein als vom Höchstbietenden!<br/>";
+				error_msg("Das Gebot muss mindestens ".AUCTION_OVERBID."% höher sein als das Gebot des Höchstbietenden!");
 				echo "<p>".button("Zurück zur Auktion", "?page=market&amp;mode=search&amp;searchcat=auctions&amp;auctionid=".$arr['id']."")."</p>";
 			}
 		}
 		else
 		{
-			echo "Die gebotenen Rohstoffe sind nicht mehr verfügbar!<br/>";
+			error_msg("Die gebotenen Rohstoffe sind nicht mehr verfügbar!");
 		}
 	}
 	else
 	{
-		echo "Die Auktion ist nicht mehr vorhanden oder bereits abgelaufen!<br/>";
+		error_msg("Die Auktion ist nicht mehr vorhanden oder bereits abgelaufen!");
 	}
 ?>

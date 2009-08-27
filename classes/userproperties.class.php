@@ -30,6 +30,7 @@
     private $fleetRtnMsg;
 		private $smallResBox;
 		private $startUpChat;
+		private $chatColor;
 		
 		private $changedFields;
 		
@@ -68,15 +69,16 @@
 				$this->noteBox = $arr['notebox'];
 				$this->msgCopy = $arr['msg_copy'];
 				$this->msgBlink = $arr['msg_blink'];
-        $this->spyShipId = $arr['spyship_id'];
-        $this->spyShipCount = $arr['spyship_count'];
-		$this->analyzeShipId = $arr['analyzeship_id'];
-		$this->analyzeShipCount = $arr['analyzeship_count'];
-        $this->havenShipsButtons = $arr['havenships_buttons'];
-		    $this->showAdds = $arr['show_adds'];
-		    $this->fleetRtnMsg = $arr['fleet_rtn_msg'];
-		    $this->smallResBox = $arr['small_res_box'];
-		    $this->startUpChat = $arr['startup_chat'];
+        		$this->spyShipId = $arr['spyship_id'];
+        		$this->spyShipCount = $arr['spyship_count'];
+				$this->analyzeShipId = $arr['analyzeship_id'];
+				$this->analyzeShipCount = $arr['analyzeship_count'];
+        		$this->havenShipsButtons = $arr['havenships_buttons'];
+		    	$this->showAdds = $arr['show_adds'];
+		    	$this->fleetRtnMsg = $arr['fleet_rtn_msg'];
+		    	$this->smallResBox = $arr['small_res_box'];
+		    	$this->startUpChat = $arr['startup_chat'];
+				$this->chatColor = $arr['chat_color'];
 
 			}
 			else
@@ -258,6 +260,11 @@
 				{
 					$this->$key = $val;
 					$this->changedFields[$key] = "fleet_rtn_msg";
+				}
+				elseif ($key == "chatColor")
+				{
+					$this->$key = $val;
+					$this->changedFields[$key] = "chat_color";
 				}
 				else
 				{

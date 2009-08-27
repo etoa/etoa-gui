@@ -662,5 +662,8 @@ Anmerkung: Eine Kopie dieser Nachricht wird in Eurer Nachrichten-Box hinterlegt.
       <p1 comment="message" type="text">Der EtoA-Updatedienst ist momentan ausser Betrieb. Die Entwickler sind informiert. Es ist nicht notwendig ein Ticket zu eröffnen. Unterdessen werden weder Gebäude, Technologien, Schiffe, Verteidigungen, Planeten noch Flotten aktualisiert.</p1>
       <p2 comment="mail-to" type="text">glaubinix@etoa.ch;mrcage@etoa.ch</p2>
     </item>
+    <item name="bot_max_count" cat="1">
+      <v comment="Bot Counter" type="text">5</v>
+    </item>
   </items>
 </config>

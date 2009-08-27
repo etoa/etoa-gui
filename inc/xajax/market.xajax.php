@@ -457,12 +457,12 @@ function showAuctionDetail($id)
 		$bidder = new User($arr['current_buyer_id']);
 		$sellerEntity = Entity::createFactoryById($arr['entity_id']);
 		$own = Entity::createFactoryById($_SESSION['cpid']);
-
-
+		
 		echo "<form action=\"?page=market&amp;mode=auction\" method=\"post\" name=\"auctionShowFormular\" id=\"auction_show_selector\">";
 		checker_init();
 		echo "<input type=\"hidden\" value=\"".$arr['id']."\" name=\"auction_market_id\" id=\"auction_market_id\"/>";
         echo "<input type=\"hidden\" value=\"0\" name=\"auction_show_last_update\" id=\"auction_show_last_update\"/>";
+        echo "<input type=\"hidden\" value=\"".$rest_time."\" name=\"auction_rest_time\" id=\"auction_rest_time\"/>";
 
 		// Übergibt Daten an XAJAX
 		foreach ($resNames as $rk => $rn)
@@ -488,7 +488,7 @@ function showAuctionDetail($id)
 		<th style=\"width:200px;\">Aktueller Höchstbietender:</th>
 		<td>".$bidder."</td>
 
-		<td rowspan=\"2\" style=\"text-align:center;vertical-align:middle\">
+		<td id=\"rest_time_str\" rowspan=\"2\" style=\"text-align:center;vertical-align:middle\">
 		<span style=\"font-size:16pt;\" >".$rest_time_str."</span></td>
 		</tr>
 
@@ -532,7 +532,7 @@ function showAuctionDetail($id)
 				{
 
 					//calcMarketAuctionPrice(0);
-					echo "<input type=\"text\" value=\"".nf($arr['buy_'.$rk])."\" name=\"auction_new_buy_".$rk."\" id=\"auction_new_buy_".$rk."\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$sellerEntity->resources[$rk].",'','');\"/>";
+					echo "<input type=\"text\" value=\"".nf($arr['buy_'.$rk])."\" name=\"new_buy_".$rk."\" id=\"new_buy_".$rk."\" size=\"9\" maxlength=\"15\" onkeyup=\"xajax_calcMarketAuctionPrice(xajax.getFormValues('auction_show_selector'));FormatNumber(this.id,this.value,".$sellerEntity->resources[$rk].",'','');\"/>";
 				}
 				else
 				{
@@ -548,7 +548,7 @@ function showAuctionDetail($id)
 						</tr>";
 
 			tableEnd();
-			echo "<p><input type=\"submit\" name=\"submit_auction_bid\" value=\"Gebot abgeben\" /> ";
+			echo "<p><input type=\"submit\" name=\"submit_auction_bid\" id=\"submit_auction_bid\" style=\"color: rgb(255, 0, 0);\" disabled=\"disabled\" value=\"Gebot abgeben\" /> ";
 			echo "<input type=\"button\" onclick=\"applySearchFilter();\" value=\"Zurück\" /></p>";
 		}
 		else
@@ -562,10 +562,8 @@ function showAuctionDetail($id)
 	}
 
 
-
 	$ajax->assign("market_search_results","innerHTML",ob_get_clean());
 	$ajax->assign("market_search_loading","style.display","none");
-
 	return $ajax;
 	
 }
@@ -1848,425 +1846,183 @@ function checkMarketAuctionFormular($val, $last_update=0)
 
 function calcMarketAuctionPrice($val, $last_update=0)
 {
-		ob_start();
+	ob_start();
   	$objResponse = new xajaxResponse();
 		
-		// Eingaben wurden noch nicht geprüft
+	// Eingaben wurden noch nicht geprüft
   	$objResponse->assign("auction_show_check_submit","value",0);
 		
-		$val['auction_new_buy_metal'] = min(nf_back($val['auction_new_buy_metal']),floor($val['res_metal']));
-  	$val['auction_new_buy_crystal'] = min(nf_back($val['auction_new_buy_crystal']),floor($val['res_crystal']));
-  	$val['auction_new_buy_plastic'] = min(nf_back($val['auction_new_buy_plastic']),floor($val['res_plastic']));
-  	$val['auction_new_buy_fuel'] = min(nf_back($val['auction_new_buy_fuel']),floor($val['res_fuel']));
-  	$val['auction_new_buy_food'] = min(nf_back($val['auction_new_buy_food']),floor($val['res_food']));	
-		
-		
-		// Errechnet Rohstoffwert vom Höchstbietenden
-		$buy_price = 	$val['auction_buy_metal'] * MARKET_METAL_FACTOR
-								+ $val['auction_buy_crystal'] * MARKET_CRYSTAL_FACTOR
-								+ $val['auction_buy_plastic'] * MARKET_PLASTIC_FACTOR
-								+ $val['auction_buy_fuel'] * MARKET_FUEL_FACTOR
-								+ $val['auction_buy_food'] * MARKET_FOOD_FACTOR;
-		// Errechnet Roshtoffwert vom eingegebenen Gebot
-		$new_buy_price = 	$val['auction_new_buy_metal'] * MARKET_METAL_FACTOR
-										+ $val['auction_new_buy_crystal'] * MARKET_CRYSTAL_FACTOR
-										+ $val['auction_new_buy_plastic'] * MARKET_PLASTIC_FACTOR
-										+ $val['auction_new_buy_fuel'] * MARKET_FUEL_FACTOR
-										+ $val['auction_new_buy_food'] * MARKET_FOOD_FACTOR;		
-		
+	$val['new_buy_0'] = min(nf_back($val['new_buy_0']),floor($val['res_0']));
+  	$val['new_buy_1'] = min(nf_back($val['new_buy_1']),floor($val['res_1']));
+  	$val['new_buy_2'] = min(nf_back($val['new_buy_2']),floor($val['res_2']));
+  	$val['new_buy_3'] = min(nf_back($val['new_buy_3']),floor($val['res_3']));
+  	$val['new_buy_4'] = min(nf_back($val['new_buy_4']),floor($val['res_4']));	
+	
+	dump($val);
+	// Errechnet Rohstoffwert vom Höchstbietenden
+	$buy_price = 	$val['buy_0'] * MARKET_METAL_FACTOR
+					+ $val['buy_1'] * MARKET_CRYSTAL_FACTOR
+					+ $val['buy_2'] * MARKET_PLASTIC_FACTOR
+					+ $val['buy_3'] * MARKET_FUEL_FACTOR
+					+ $val['buy_4'] * MARKET_FOOD_FACTOR;
+	// Errechnet Roshtoffwert vom eingegebenen Gebot
+	$new_buy_price = 	$val['new_buy_0'] * MARKET_METAL_FACTOR
+						+ $val['new_buy_1'] * MARKET_CRYSTAL_FACTOR
+						+ $val['new_buy_2'] * MARKET_PLASTIC_FACTOR
+						+ $val['new_buy_3'] * MARKET_FUEL_FACTOR
+						+ $val['new_buy_4'] * MARKET_FOOD_FACTOR;
+						
   	//
   	// Errechnet und formatiert Preise
   	//
-  
-  	//
-  	// Titan
-  	//
-		
+	$buyMax = array();
+	$buyMin = array();
+	$logBuyMax = array();
+	$logBuyMin = array();
+	$outMinMax = array();
+	$factor = array(MARKET_METAL_FACTOR,
+					MARKET_CRYSTAL_FACTOR,
+					MARKET_PLASTIC_FACTOR,
+					MARKET_FUEL_FACTOR,
+					MARKET_FOOD_FACTOR);
+	
+	global $resNames;
+	foreach ($resNames as $rid=>$r)
+	{
 		// MaxBetrag
 		// Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
-		$auction_buy_metal_max = $val['auction_sell_metal'] / MARKET_METAL_FACTOR * MARKET_METAL_FACTOR * AUCTION_PRICE_FACTOR_MAX
-		  										+ $val['auction_sell_crystal'] / MARKET_METAL_FACTOR * MARKET_CRYSTAL_FACTOR * AUCTION_PRICE_FACTOR_MAX
-		  										+ $val['auction_sell_plastic'] / MARKET_METAL_FACTOR * MARKET_PLASTIC_FACTOR * AUCTION_PRICE_FACTOR_MAX
-		  										+ $val['auction_sell_fuel'] / MARKET_METAL_FACTOR * MARKET_FUEL_FACTOR * AUCTION_PRICE_FACTOR_MAX
-		  										+ $val['auction_sell_food'] / MARKET_METAL_FACTOR * MARKET_FOOD_FACTOR * AUCTION_PRICE_FACTOR_MAX;
-	  // Errechnet Grundbetrag abzüglich bereits eingebener Preise
-		$auction_buy_metal_max = $auction_buy_metal_max
-		  										-	$val['auction_new_buy_metal'] * MARKET_METAL_FACTOR / MARKET_METAL_FACTOR
-		  										- $val['auction_new_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_METAL_FACTOR
-		  										- $val['auction_new_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_METAL_FACTOR
-		  										- $val['auction_new_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_METAL_FACTOR
-		  										- $val['auction_new_buy_food'] * MARKET_FOOD_FACTOR / MARKET_METAL_FACTOR;	  										
-	  $log_auction_buy_metal_max = ceil($auction_buy_metal_max);		//Der Effektivwert, dieser wird nicht angepasst
-	  $auction_buy_metal_max = floor($auction_buy_metal_max);				//Rundet Betrag auf die nächst kleinere Ganzzahl	
-	  
-	  					
+		$buyMax[$rid] = $val['sell_0'] / $factor[$rid] * $factor[0] * AUCTION_PRICE_FACTOR_MAX
+		  				+ $val['sell_1'] / $factor[$rid] * $factor[1] * AUCTION_PRICE_FACTOR_MAX
+						+ $val['sell_2'] / $factor[$rid] * $factor[2] * AUCTION_PRICE_FACTOR_MAX
+						+ $val['sell_3'] / $factor[$rid] * $factor[3] * AUCTION_PRICE_FACTOR_MAX
+						+ $val['sell_4'] / $factor[$rid] * $factor[4] * AUCTION_PRICE_FACTOR_MAX;
+		// Errechnet Grundbetrag abzüglich bereits eingebener Preise
+		$buyMax[$rid] = $buyMax[$rid]
+			  			- $val['new_buy_0'] * $factor[0] / $factor[$rid]
+			  			- $val['new_buy_1'] * $factor[1] / $factor[$rid]
+			  			- $val['new_buy_2'] * $factor[2] / $factor[$rid]
+			  			- $val['new_buy_3'] * $factor[3] / $factor[$rid]
+			  			- $val['new_buy_4'] * $factor[4] / $factor[$rid];
+		$logBuyMax[$rid] = ceil($buyMax[$rid]);		//Der Effektivwert, dieser wird nicht angepasst
+		$buyMax[$rid] = floor($buyMax[$rid]);			//Rundet Betrag auf die nächst kleinere Ganzzahl	
+
+
 		// MinBetrag
 		// Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
-		$auction_buy_metal_min =	
-													$val['auction_sell_metal'] / MARKET_METAL_FACTOR * MARKET_METAL_FACTOR * AUCTION_PRICE_FACTOR_MIN
-	  										+ $val['auction_sell_crystal'] / MARKET_METAL_FACTOR * MARKET_CRYSTAL_FACTOR * AUCTION_PRICE_FACTOR_MIN
-	  										+ $val['auction_sell_plastic'] / MARKET_METAL_FACTOR * MARKET_PLASTIC_FACTOR * AUCTION_PRICE_FACTOR_MIN
-	  										+ $val['auction_sell_fuel'] / MARKET_METAL_FACTOR * MARKET_FUEL_FACTOR * AUCTION_PRICE_FACTOR_MIN
-	  										+ $val['auction_sell_food'] / MARKET_METAL_FACTOR * MARKET_FOOD_FACTOR * AUCTION_PRICE_FACTOR_MIN;
-	  // Errechnet Grundbetrag abzüglich bereits eingebener Preise
-	  $auction_buy_metal_min = $auction_buy_metal_min
-	  										-	$val['auction_new_buy_metal'] * MARKET_METAL_FACTOR / MARKET_METAL_FACTOR
-	  										- $val['auction_new_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_METAL_FACTOR
-	  										- $val['auction_new_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_METAL_FACTOR
-	  										- $val['auction_new_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_METAL_FACTOR
-	  										- $val['auction_new_buy_food'] * MARKET_FOOD_FACTOR / MARKET_METAL_FACTOR;		  										
-	  $auction_buy_metal_min = ceil($auction_buy_metal_min);	//Rundet Betrag auf die nächste höhere Ganzzahl
-	  $log_auction_buy_metal_min = $auction_buy_metal_min;		//Der Effektivwert, dieser wird nicht angepasst	
-	  
-	  if($auction_buy_metal_max<=0)
-	  {
-	  	$auction_buy_metal_max=0;
-	  }  									
+		$buyMin[$rid] =	
+						$val['sell_0'] / $factor[$rid] * $factor[0] * AUCTION_PRICE_FACTOR_MIN
+		  				+ $val['sell_1'] / $factor[$rid] * $factor[1] * AUCTION_PRICE_FACTOR_MIN
+		  				+ $val['sell_2'] / $factor[$rid] * $factor[2] * AUCTION_PRICE_FACTOR_MIN
+		  				+ $val['sell_3'] / $factor[$rid] * $factor[3] * AUCTION_PRICE_FACTOR_MIN
+		  				+ $val['sell_4'] / $factor[$rid] * $factor[4] * AUCTION_PRICE_FACTOR_MIN;
+		// Errechnet Grundbetrag abzüglich bereits eingebener Preise
+		$buyMin[$rid] =	$buyMin[$rid]
+		  				- $val['new_buy_0'] * $factor[0] / $factor[$rid]
+		  				- $val['new_buy_1'] * $factor[1] / $factor[$rid]
+		  				- $val['new_buy_2'] * $factor[2] / $factor[$rid]
+		  				- $val['new_buy_3'] * $factor[3] / $factor[$rid]
+		  				- $val['new_buy_4'] * $factor[4] / $factor[$rid];		  										
+		$buyMin[$rid] = ceil($buyMin[$rid]);	//Rundet Betrag auf die nächste höhere Ganzzahl
+		$logBuyMin[$rid] = $buyMin[$rid];		//Der Effektivwert, dieser wird nicht angepasst	
 
-	  if($auction_buy_metal_min<=0)
-	  {
-	  	$auction_buy_metal_min=0;
-	  } 
-	  
-	  // Generiert Link mit dem Min./Max. Betrag. Bei draufklick wird der Wert sofort ins Feld geschrieben
-	  if($val['auction_currency_metal']==1)
-	  {
-	  	$out_auction_min_max_metal="<a href=\"javascript:;\" onclick=\"document.getElementById('auction_new_buy_metal').value=".($val['auction_new_buy_metal']+$auction_buy_metal_min).";xajax_calcMarketAuctionPrice(xajax.getFormValues('auction_show_selector'));\">+".$auction_buy_metal_min."</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('auction_new_buy_metal').value=".($val['auction_new_buy_metal']+$auction_buy_metal_max).";xajax_calcMarketAuctionPrice(xajax.getFormValues('auction_show_selector'));\">+".$auction_buy_metal_max."</a>"; 
+		if($buyMax[$rid]<=0)
+		{
+			$buyMax[$rid]=0;
+		}  									
+
+		if($buyMin[$rid]<=0)
+		{
+			$buyMin[$rid]=0;
+		}
+
+		// Generiert Link mit dem Min./Max. Betrag. Bei draufklick wird der Wert sofort ins Feld geschrieben
+		if($val['currency_'.$rid]==1)
+		{
+			$outMinMax[$rid]="<a href=\"javascript:;\" onclick=\"document.getElementById('new_buy_".$rid."').value=".($val['new_buy_'.$rid]+$buyMin[$rid]).";xajax_calcMarketAuctionPrice(xajax.getFormValues('auction_show_selector'));\">+".$buyMin[$rid]."</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('new_buy_".$rid."').value=".($val['new_buy_'.$rid]+$buyMax[$rid]).";xajax_calcMarketAuctionPrice(xajax.getFormValues('auction_show_selector'));\">+".$buyMax[$rid]."</a>"; 
 		}
 		else
 		{
-			$out_auction_min_max_metal = "-";
+			$outMinMax[$rid] = "-";
 		}
-  	
-  	
-  	
-  	
-  	//
-  	// Silizium
-  	//
-		
-		// MaxBetrag
-		// Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
-		$auction_buy_crystal_max = $val['auction_sell_metal'] / MARKET_CRYSTAL_FACTOR * MARKET_METAL_FACTOR * AUCTION_PRICE_FACTOR_MAX
-		  										+ $val['auction_sell_crystal'] / MARKET_CRYSTAL_FACTOR * MARKET_CRYSTAL_FACTOR * AUCTION_PRICE_FACTOR_MAX
-		  										+ $val['auction_sell_plastic'] / MARKET_CRYSTAL_FACTOR * MARKET_PLASTIC_FACTOR * AUCTION_PRICE_FACTOR_MAX
-		  										+ $val['auction_sell_fuel'] / MARKET_CRYSTAL_FACTOR * MARKET_FUEL_FACTOR * AUCTION_PRICE_FACTOR_MAX
-		  										+ $val['auction_sell_food'] / MARKET_CRYSTAL_FACTOR * MARKET_FOOD_FACTOR * AUCTION_PRICE_FACTOR_MAX;
-	  // Errechnet Grundbetrag abzüglich bereits eingebener Preise
-		$auction_buy_crystal_max = $auction_buy_crystal_max
-		  										-	$val['auction_new_buy_metal'] * MARKET_METAL_FACTOR / MARKET_CRYSTAL_FACTOR
-		  										- $val['auction_new_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_CRYSTAL_FACTOR
-		  										- $val['auction_new_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_CRYSTAL_FACTOR
-		  										- $val['auction_new_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_CRYSTAL_FACTOR
-		  										- $val['auction_new_buy_food'] * MARKET_FOOD_FACTOR / MARKET_CRYSTAL_FACTOR;	  										
-	  $log_auction_buy_crystal_max = ceil($auction_buy_crystal_max);		//Der Effektivwert, dieser wird nicht angepasst	
-	  $auction_buy_crystal_max = floor($auction_buy_crystal_max);	//Rundet Betrag auf die nächst kleinere Ganzzahl
-	  
-	  					
-		// MinBetrag
-		// Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
-		$auction_buy_crystal_min =	
-													$val['auction_sell_metal'] / MARKET_CRYSTAL_FACTOR * MARKET_METAL_FACTOR * AUCTION_PRICE_FACTOR_MIN
-	  										+ $val['auction_sell_crystal'] / MARKET_CRYSTAL_FACTOR * MARKET_CRYSTAL_FACTOR * AUCTION_PRICE_FACTOR_MIN
-	  										+ $val['auction_sell_plastic'] / MARKET_CRYSTAL_FACTOR * MARKET_PLASTIC_FACTOR * AUCTION_PRICE_FACTOR_MIN
-	  										+ $val['auction_sell_fuel'] / MARKET_CRYSTAL_FACTOR * MARKET_FUEL_FACTOR * AUCTION_PRICE_FACTOR_MIN
-	  										+ $val['auction_sell_food'] / MARKET_CRYSTAL_FACTOR * MARKET_FOOD_FACTOR * AUCTION_PRICE_FACTOR_MIN;
-	  // Errechnet Grundbetrag abzüglich bereits eingebener Preise
-	  $auction_buy_crystal_min = $auction_buy_crystal_min
-	  										-	$val['auction_new_buy_metal'] * MARKET_METAL_FACTOR / MARKET_CRYSTAL_FACTOR
-	  										- $val['auction_new_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_CRYSTAL_FACTOR
-	  										- $val['auction_new_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_CRYSTAL_FACTOR
-	  										- $val['auction_new_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_CRYSTAL_FACTOR
-	  										- $val['auction_new_buy_food'] * MARKET_FOOD_FACTOR / MARKET_CRYSTAL_FACTOR;		  										
-	  $auction_buy_crystal_min = ceil($auction_buy_crystal_min);	//Rundet Betrag auf die nächste höhere Ganzzahl
-	  $log_auction_buy_crystal_min = $auction_buy_crystal_min;		//Der Effektivwert, dieser wird nicht angepasst	
-	  
-	  if($auction_buy_crystal_max<=0)
-	  {
-	  	$auction_buy_crystal_max=0;
-	  }  									
-
-	  if($auction_buy_crystal_min<=0)
-	  {
-	  	$auction_buy_crystal_min=0;
-	  } 
-	  
-	  // Generiert Link mit dem Min./Max. Betrag. Bei draufklick wird der Wert sofort ins Feld geschrieben
-	  if($val['auction_currency_crystal']==1)
-	  {	  
-	  	$out_auction_min_max_crystal = "<a href=\"javascript:;\" onclick=\"document.getElementById('auction_new_buy_crystal').value=".($val['auction_new_buy_crystal']+$auction_buy_crystal_min).";xajax_calcMarketAuctionPrice(xajax.getFormValues('auction_show_selector'));\">+".nf($auction_buy_crystal_min)."</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('auction_new_buy_crystal').value=".($val['auction_new_buy_crystal']+$auction_buy_crystal_max).";xajax_calcMarketAuctionPrice(xajax.getFormValues('auction_show_selector'));\">+".nf($auction_buy_crystal_max)."</a>"; 
-	  }
-	  else
-	  {
-	  	$out_auction_min_max_crystal = "-";
-	  }  	
-  	
-  	
-  	
-  	
-  	//
-  	// PVC
-  	//
-		
-		// MaxBetrag
-		// Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
-		$auction_buy_plastic_max = $val['auction_sell_metal'] / MARKET_PLASTIC_FACTOR * MARKET_METAL_FACTOR * AUCTION_PRICE_FACTOR_MAX
-		  										+ $val['auction_sell_crystal'] / MARKET_PLASTIC_FACTOR * MARKET_CRYSTAL_FACTOR * AUCTION_PRICE_FACTOR_MAX
-		  										+ $val['auction_sell_plastic'] / MARKET_PLASTIC_FACTOR * MARKET_PLASTIC_FACTOR * AUCTION_PRICE_FACTOR_MAX
-		  										+ $val['auction_sell_fuel'] / MARKET_PLASTIC_FACTOR * MARKET_FUEL_FACTOR * AUCTION_PRICE_FACTOR_MAX
-		  										+ $val['auction_sell_food'] / MARKET_PLASTIC_FACTOR * MARKET_FOOD_FACTOR * AUCTION_PRICE_FACTOR_MAX;
-	  // Errechnet Grundbetrag abzüglich bereits eingebener Preise
-		$auction_buy_plastic_max = $auction_buy_plastic_max
-		  										-	$val['auction_new_buy_metal'] * MARKET_METAL_FACTOR / MARKET_PLASTIC_FACTOR
-		  										- $val['auction_new_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_PLASTIC_FACTOR
-		  										- $val['auction_new_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_PLASTIC_FACTOR
-		  										- $val['auction_new_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_PLASTIC_FACTOR
-		  										- $val['auction_new_buy_food'] * MARKET_FOOD_FACTOR / MARKET_PLASTIC_FACTOR;	
-		$log_auction_buy_plastic_max = ceil($auction_buy_plastic_max);		//Der Effektivwert, dieser wird nicht angepasst
-	  $auction_buy_plastic_max = floor($auction_buy_plastic_max);	//Rundet Betrag auf die nächst kleinere Ganzzahl
-	  
-	  					
-		// MinBetrag
-		// Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
-		$auction_buy_plastic_min =	
-													$val['auction_sell_metal'] / MARKET_PLASTIC_FACTOR * MARKET_METAL_FACTOR * AUCTION_PRICE_FACTOR_MIN
-	  										+ $val['auction_sell_crystal'] / MARKET_PLASTIC_FACTOR * MARKET_CRYSTAL_FACTOR * AUCTION_PRICE_FACTOR_MIN
-	  										+ $val['auction_sell_plastic'] / MARKET_PLASTIC_FACTOR * MARKET_PLASTIC_FACTOR * AUCTION_PRICE_FACTOR_MIN
-	  										+ $val['auction_sell_fuel'] / MARKET_PLASTIC_FACTOR * MARKET_FUEL_FACTOR * AUCTION_PRICE_FACTOR_MIN
-	  										+ $val['auction_sell_food'] / MARKET_PLASTIC_FACTOR * MARKET_FOOD_FACTOR * AUCTION_PRICE_FACTOR_MIN;
-	  // Errechnet Grundbetrag abzüglich bereits eingebener Preise
-	  $auction_buy_plastic_min = $auction_buy_plastic_min
-	  										-	$val['auction_new_buy_metal'] * MARKET_METAL_FACTOR / MARKET_PLASTIC_FACTOR
-	  										- $val['auction_new_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_PLASTIC_FACTOR
-	  										- $val['auction_new_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_PLASTIC_FACTOR
-	  										- $val['auction_new_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_PLASTIC_FACTOR
-	  										- $val['auction_new_buy_food'] * MARKET_FOOD_FACTOR / MARKET_PLASTIC_FACTOR;		  										
-	  $auction_buy_plastic_min = ceil($auction_buy_plastic_min);	//Rundet Betrag auf die nächste höhere Ganzzahl
-	  $log_auction_buy_plastic_min = $auction_buy_plastic_min;		//Der Effektivwert, dieser wird nicht angepasst	
-	  
-	  if($auction_buy_plastic_max<=0)
-	  {
-	  	$auction_buy_plastic_max=0;
-	  }  									
-
-	  if($auction_buy_plastic_min<=0)
-	  {
-	  	$auction_buy_plastic_min=0;
-	  } 
-	  
-	  // Generiert Link mit dem Min./Max. Betrag. Bei draufklick wird der Wert sofort ins Feld geschrieben
-	  if($val['auction_currency_plastic']==1)
-	  {	  
-	  	$out_auction_min_max_plastic = "<a href=\"javascript:;\" onclick=\"document.getElementById('auction_new_buy_plastic').value=".($val['auction_new_buy_plastic']+$auction_buy_plastic_min).";xajax_calcMarketAuctionPrice(xajax.getFormValues('auction_show_selector'));\">+".nf($auction_buy_plastic_min)."</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('auction_new_buy_plastic').value=".($val['auction_new_buy_plastic']+$auction_buy_plastic_max).";xajax_calcMarketAuctionPrice(xajax.getFormValues('auction_show_selector'));\">+".nf($auction_buy_plastic_max)."</a>"; 
-	  }
-	  else
-	  {
-	  	$out_auction_min_max_plastic = "-";
-	  }    	
-   	
-  	
-  	
-  	
-  	//
-  	// Tritium
-  	//
-		
-		// MaxBetrag
-		// Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
-		$auction_buy_fuel_max = $val['auction_sell_metal'] / MARKET_FUEL_FACTOR * MARKET_METAL_FACTOR * AUCTION_PRICE_FACTOR_MAX
-		  										+ $val['auction_sell_crystal'] / MARKET_FUEL_FACTOR * MARKET_CRYSTAL_FACTOR * AUCTION_PRICE_FACTOR_MAX
-		  										+ $val['auction_sell_plastic'] / MARKET_FUEL_FACTOR * MARKET_PLASTIC_FACTOR * AUCTION_PRICE_FACTOR_MAX
-		  										+ $val['auction_sell_fuel'] / MARKET_FUEL_FACTOR * MARKET_FUEL_FACTOR * AUCTION_PRICE_FACTOR_MAX
-		  										+ $val['auction_sell_food'] / MARKET_FUEL_FACTOR * MARKET_FOOD_FACTOR * AUCTION_PRICE_FACTOR_MAX;
-	  // Errechnet Grundbetrag abzüglich bereits eingebener Preise
-		$auction_buy_fuel_max = $auction_buy_fuel_max
-		  										-	$val['auction_new_buy_metal'] * MARKET_METAL_FACTOR / MARKET_FUEL_FACTOR
-		  										- $val['auction_new_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_FUEL_FACTOR
-		  										- $val['auction_new_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_FUEL_FACTOR
-		  										- $val['auction_new_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_FUEL_FACTOR
-		  										- $val['auction_new_buy_food'] * MARKET_FOOD_FACTOR / MARKET_FUEL_FACTOR;	  										
-	  $log_auction_buy_fuel_max = ceil($auction_buy_fuel_max);		//Der Effektivwert, dieser wird nicht angepasst
-	  $auction_buy_fuel_max = floor($auction_buy_fuel_max);	//Rundet Betrag auf die nächst kleinere Ganzzahl
-	  
-	  					
-		// MinBetrag
-		// Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
-		$auction_buy_fuel_min =	
-													$val['auction_sell_metal'] / MARKET_FUEL_FACTOR * MARKET_METAL_FACTOR * AUCTION_PRICE_FACTOR_MIN
-	  										+ $val['auction_sell_crystal'] / MARKET_FUEL_FACTOR * MARKET_CRYSTAL_FACTOR * AUCTION_PRICE_FACTOR_MIN
-	  										+ $val['auction_sell_plastic'] / MARKET_FUEL_FACTOR * MARKET_PLASTIC_FACTOR * AUCTION_PRICE_FACTOR_MIN
-	  										+ $val['auction_sell_fuel'] / MARKET_FUEL_FACTOR * MARKET_FUEL_FACTOR * AUCTION_PRICE_FACTOR_MIN
-	  										+ $val['auction_sell_food'] / MARKET_FUEL_FACTOR * MARKET_FOOD_FACTOR * AUCTION_PRICE_FACTOR_MIN;
-	  // Errechnet Grundbetrag abzüglich bereits eingebener Preise
-	  $auction_buy_fuel_min = $auction_buy_fuel_min
-	  										-	$val['auction_new_buy_metal'] * MARKET_METAL_FACTOR / MARKET_FUEL_FACTOR
-	  										- $val['auction_new_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_FUEL_FACTOR
-	  										- $val['auction_new_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_FUEL_FACTOR
-	  										- $val['auction_new_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_FUEL_FACTOR
-	  										- $val['auction_new_buy_food'] * MARKET_FOOD_FACTOR / MARKET_FUEL_FACTOR;		  										
-	  $auction_buy_fuel_min = ceil($auction_buy_fuel_min);	//Rundet Betrag auf die nächste höhere Ganzzahl
-	  $log_auction_buy_fuel_min = $auction_buy_fuel_min;		//Der Effektivwert, dieser wird nicht angepasst	
-	  
-	  if($auction_buy_fuel_max<=0)
-	  {
-	  	$auction_buy_fuel_max=0;
-	  }  									
-
-	  if($auction_buy_fuel_min<=0)
-	  {
-	  	$auction_buy_fuel_min=0;
-	  } 
-	  
-	  // Generiert Link mit dem Min./Max. Betrag. Bei draufklick wird der Wert sofort ins Feld geschrieben
-	  if($val['auction_currency_fuel']==1)
-	  {	  
-	  	$out_auction_min_max_fuel = "<a href=\"javascript:;\" onclick=\"document.getElementById('auction_new_buy_fuel').value=".($val['auction_new_buy_fuel']+$auction_buy_fuel_min).";xajax_calcMarketAuctionPrice(xajax.getFormValues('auction_show_selector'));\">+".nf($auction_buy_fuel_min)."</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('auction_new_buy_fuel').value=".($val['auction_new_buy_fuel']+$auction_buy_fuel_max).";xajax_calcMarketAuctionPrice(xajax.getFormValues('auction_show_selector'));\">+".nf($auction_buy_fuel_max)."</a>"; 
-	  }
-	  else
-	  {
-	  	$out_auction_min_max_fuel = "-";
-	  }  
-   	
-  	
-  	
-  	
-  	//
-  	// Nahrung
-  	//
-		
-		// MaxBetrag
-		// Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
-		$auction_buy_food_max = $val['auction_sell_metal'] / MARKET_FOOD_FACTOR * MARKET_METAL_FACTOR * AUCTION_PRICE_FACTOR_MAX
-		  										+ $val['auction_sell_crystal'] / MARKET_FOOD_FACTOR * MARKET_CRYSTAL_FACTOR * AUCTION_PRICE_FACTOR_MAX
-		  										+ $val['auction_sell_plastic'] / MARKET_FOOD_FACTOR * MARKET_PLASTIC_FACTOR * AUCTION_PRICE_FACTOR_MAX
-		  										+ $val['auction_sell_fuel'] / MARKET_FOOD_FACTOR * MARKET_FUEL_FACTOR * AUCTION_PRICE_FACTOR_MAX
-		  										+ $val['auction_sell_food'] / MARKET_FOOD_FACTOR * MARKET_FOOD_FACTOR * AUCTION_PRICE_FACTOR_MAX;
-	  // Errechnet Grundbetrag abzüglich bereits eingebener Preise
-		$auction_buy_food_max = $auction_buy_food_max
-		  										-	$val['auction_new_buy_metal'] * MARKET_METAL_FACTOR / MARKET_FOOD_FACTOR
-		  										- $val['auction_new_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_FOOD_FACTOR
-		  										- $val['auction_new_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_FOOD_FACTOR
-		  										- $val['auction_new_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_FOOD_FACTOR
-		  										- $val['auction_new_buy_food'] * MARKET_FOOD_FACTOR / MARKET_FOOD_FACTOR;	 
-		$test=$auction_buy_food_max;									
-	  $log_auction_buy_food_max = ceil($auction_buy_food_max);		//Der Effektivwert, dieser wird nicht angepasst
-	  $auction_buy_food_max = floor($auction_buy_food_max);				//Rundet Betrag auf die nächst kleinere Ganzzahl	
-	 
-	  					
-		// MinBetrag
-		// Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
-		$auction_buy_food_min =	
-													$val['auction_sell_metal'] / MARKET_FOOD_FACTOR * MARKET_METAL_FACTOR * AUCTION_PRICE_FACTOR_MIN
-	  										+ $val['auction_sell_crystal'] / MARKET_FOOD_FACTOR * MARKET_CRYSTAL_FACTOR * AUCTION_PRICE_FACTOR_MIN
-	  										+ $val['auction_sell_plastic'] / MARKET_FOOD_FACTOR * MARKET_PLASTIC_FACTOR * AUCTION_PRICE_FACTOR_MIN
-	  										+ $val['auction_sell_fuel'] / MARKET_FOOD_FACTOR * MARKET_FUEL_FACTOR * AUCTION_PRICE_FACTOR_MIN
-	  										+ $val['auction_sell_food'] / MARKET_FOOD_FACTOR * MARKET_FOOD_FACTOR * AUCTION_PRICE_FACTOR_MIN;
-	  // Errechnet Grundbetrag abzüglich bereits eingebener Preise
-	  $auction_buy_food_min = $auction_buy_food_min
-	  										-	$val['auction_new_buy_metal'] * MARKET_METAL_FACTOR / MARKET_FOOD_FACTOR
-	  										- $val['auction_new_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_FOOD_FACTOR
-	  										- $val['auction_new_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_FOOD_FACTOR
-	  										- $val['auction_new_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_FOOD_FACTOR
-	  										- $val['auction_new_buy_food'] * MARKET_FOOD_FACTOR / MARKET_FOOD_FACTOR;		  										
-	  $auction_buy_food_min = ceil($auction_buy_food_min);	//Rundet Betrag auf die nächste höhere Ganzzahl
-	  $log_auction_buy_food_min = $auction_buy_food_min;		//Der Effektivwert, dieser wird nicht angepasst	
-	  
-	  if($auction_buy_food_max<=0)
-	  {
-	  	$auction_buy_food_max=0;
-	  }  									
-
-	  if($auction_buy_food_min<=0)
-	  {
-	  	$auction_buy_food_min=0;
-	  } 
-	  
-	  // Generiert Link mit dem Min./Max. Betrag. Bei draufklick wird der Wert sofort ins Feld geschrieben
-	  if($val['auction_currency_food']==1)
-	  {	  
-	  	$out_auction_min_max_food = "<a href=\"javascript:;\" onclick=\"document.getElementById('auction_new_buy_food').value=".($val['auction_new_buy_food']+$auction_buy_food_min).";xajax_calcMarketAuctionPrice(xajax.getFormValues('auction_show_selector'));\">+".nf($auction_buy_food_min)."</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('auction_new_buy_food').value=".($val['auction_new_buy_food']+$auction_buy_food_max).";xajax_calcMarketAuctionPrice(xajax.getFormValues('auction_show_selector'));\">+".nf($auction_buy_food_max)."</a>"; 
-	  }
-	  else
-	  {
-	  	$out_auction_min_max_food = "-";
-	  } 	  
-	   	
- 
- 
+	}
+	dump($buyMin);
+	dump($buyMax);
+	
+	
   	//
   	// End Prüfung ob Angebot OK ist
   	//
   	
   	// Keine Rohstoffe angegeben
-  	if($val['auction_new_buy_metal'] <= 0 
-  		&& $val['auction_new_buy_crystal'] <= 0  
-  		&& $val['auction_new_buy_plastic'] <= 0  
-  		&& $val['auction_new_buy_fuel'] <= 0  
-  		&& $val['auction_new_buy_food'] <= 0)
+  	if($val['new_buy_0'] <= 0 
+  		&& $val['new_buy_1'] <= 0  
+  		&& $val['new_buy_2'] <= 0  
+  		&& $val['new_buy_3'] <= 0  
+  		&& $val['new_buy_4'] <= 0)
   	{
   		$out_auction_check_message = "<div style=\"color:red;font-weight:bold;\">Gib ein Gebot ein!</div>";
   		
-  		$objResponse->assign("auction_submit","disabled",true);
-  		$objResponse->assign("auction_submit","style.color",'#f00');
+  		$objResponse->assign("submit_auction_bid","disabled",true);
+  		$objResponse->assign("submit_auction_bid","style.color",'#f00');
   	} 
   	// Zu hohe Preise
-  	elseif($log_auction_buy_metal_max<0 
-  		|| $log_auction_buy_crystal_max<0 
-  		|| $log_auction_buy_plastic_max<0 
-  		|| $log_auction_buy_fuel_max<0 
-  		|| $log_auction_buy_food_max<0)
+  	elseif($logBuyMax[0]<0 
+  		|| $logBuyMax[1]<0 
+  		|| $logBuyMax[2]<0 
+  		|| $logBuyMax[3]<0 
+  		|| $logBuyMax[4]<0)
   	{
   		$out_auction_check_message = "<div style=\"color:red;font-weight:bold;\">Das Gebot ist zu hoch!</div>";
   		
-  		$objResponse->assign("auction_submit","disabled",true);
-  		$objResponse->assign("auction_submit","style.color",'#f00');
+  		$objResponse->assign("submit_auction_bid","disabled",true);
+  		$objResponse->assign("submit_auction_bid","style.color",'#f00');
   	}
   	// Zu niedrige Preise
-  	elseif($log_auction_buy_metal_min>0 
-  		|| $log_auction_buy_crystal_min>0 
-  		|| $log_auction_buy_plastic_min>0 
-  		|| $log_auction_buy_fuel_min>0 
-  		|| $log_auction_buy_food_min>0)
+  	elseif($logBuyMin[0]>0 
+  		|| $logBuyMin[1]>0 
+  		|| $logBuyMin[2]>0 
+  		|| $logBuyMin[3]>0 
+  		|| $logBuyMin[4]>0)
   	{
   		$out_auction_check_message = "<div style=\"color:red;font-weight:bold;\">Das Gebot ist zu niedrig!</div>";
   		
-  		$objResponse->assign("ship_sell_submit","disabled",true);
-  		$objResponse->assign("ship_sell_submit","style.color",'#f00');
+  		$objResponse->assign("submit_auction_bid","disabled",true);
+  		$objResponse->assign("submit_auction_bid","style.color",'#f00');
   	} 
   	// Zu wenig Rohstoffe auf dem Planeten
-  	elseif($val['auction_new_buy_metal'] > $val['res_metal']
-  		|| $val['auction_new_buy_crystal'] > $val['res_crystal'] 
-  		|| $val['auction_new_buy_plastic'] > $val['res_plastic'] 
-  		|| $val['auction_new_buy_fuel'] > $val['res_fuel']
-  		|| $val['auction_new_buy_food'] > $val['res_food'])
+  	elseif($val['new_buy_0'] > $val['res_0']
+  		|| $val['new_buy_1'] > $val['res_1'] 
+  		|| $val['new_buy_2'] > $val['res_2'] 
+  		|| $val['new_buy_3'] > $val['res_3']
+  		|| $val['new_buy_4'] > $val['res_4'])
   	{
   		$out_auction_check_message = "<div style=\"color:red;font-weight:bold;\">Es sind zu wenig Rohstoffe vorhanden!</div>";
   		
-  		$objResponse->assign("auction_submit","disabled",true);
-  		$objResponse->assign("auction_submit","style.color",'#f00');
+  		$objResponse->assign("submit_auction_bid","disabled",true);
+  		$objResponse->assign("submit_auction_bid","style.color",'#f00');
   	}
   	// Gebot ist tiefer als das vom Höchstbietenden
-  	elseif($buy_price >= $new_buy_price)
+  	elseif($buy_price*(1+AUCTION_OVERBID) >= $new_buy_price)
   	{
-  		$out_auction_check_message = "<div style=\"color:red;font-weight:bold;\">Das Gebot muss höher sein als das vom Höchstbietenden!</div>";
+  		$out_auction_check_message = "<div style=\"color:red;font-weight:bold;\">Das Gebot muss mindestens ".AUCTION_OVERBID."% höher sein als das Gebot des Höchstbietenden!</div>";
   		
-  		$objResponse->assign("auction_submit","disabled",true);
-  		$objResponse->assign("auction_submit","style.color",'#f00');  		
+  		$objResponse->assign("submit_auction_bid","disabled",true);
+  		$objResponse->assign("submit_auction_bid","style.color",'#f00');  		
   	}	
   	// Zeit ist abgelaufen 
   	elseif($val['auction_rest_time'] <= 0)
   	{
   		$out_auction_check_message = "<div style=\"color:red;font-weight:bold;\">Auktion ist beendet!</div>";
   		
-  		$objResponse->assign("auction_submit","disabled",true);
-  		$objResponse->assign("auction_submit","style.color",'#f00');  		
+  		$objResponse->assign("submit_auction_bid","disabled",true);
+  		$objResponse->assign("submit_auction_bid","style.color",'#f00');  		
   	}   	
   	// Angebot ist OK
   	else
   	{		
   		$out_auction_check_message = "<div style=\"color:#0f0;font-weight:bold;\">OK!</div>";
-  		$objResponse->assign("auction_submit","disabled",false);
-  		$objResponse->assign("auction_submit","style.color",'#0f0');
+  		$objResponse->assign("submit_auction_bid","disabled",false);
+  		$objResponse->assign("submit_auction_bid","style.color",'#0f0');
   		
   		$objResponse->assign("auction_show_check_submit","value",1);
   	}  	 
@@ -2274,26 +2030,19 @@ function calcMarketAuctionPrice($val, $last_update=0)
   	
   	// Bestätigt, dass XAJAX das Formular vor dem Absenden nochmal kontrolliert hat
   	$objResponse->assign("auction_show_last_update","value", $last_update);  	
-  	  	
-
-		// XAJAX ändert Daten
-		$objResponse->assign("auction_min_max_metal","innerHTML", $out_auction_min_max_metal);
-		$objResponse->assign("auction_min_max_crystal","innerHTML", $out_auction_min_max_crystal);
-		$objResponse->assign("auction_min_max_plastic","innerHTML", $out_auction_min_max_plastic);
-		$objResponse->assign("auction_min_max_fuel","innerHTML", $out_auction_min_max_fuel);
-		$objResponse->assign("auction_min_max_food","innerHTML", $out_auction_min_max_food);
-		
-		$objResponse->assign("auction_new_buy_metal","value", nf($val['auction_new_buy_metal']));
-		$objResponse->assign("auction_new_buy_crystal","value", nf($val['auction_new_buy_crystal']));
-		$objResponse->assign("auction_new_buy_plastic","value", nf($val['auction_new_buy_plastic']));
-		$objResponse->assign("auction_new_buy_fuel","value", nf($val['auction_new_buy_fuel']));
-		$objResponse->assign("auction_new_buy_food","value", nf($val['auction_new_buy_food']));		
-		
-		
-		$objResponse->assign("auction_check_message","innerHTML", $out_auction_check_message);
+  	 
+	// XAJAX ändert Daten 	
+	foreach($resNames as $rid=>$r)
+	{
+		$objResponse->assign("auction_min_max_".$rid,"innerHTML", $outMinMax[$rid]);
+		$objResponse->assign("new_buy_".$rid,"value", nf($val['new_buy_'.$rid]));
+	}	
+	
+	
+	$objResponse->assign("auction_check_message","innerHTML", $out_auction_check_message);
 
   	$objResponse->assign("marketinfo","innerHTML",ob_get_contents());
-		ob_end_clean();
+	ob_end_clean();
   	
   	return $objResponse;
 }
