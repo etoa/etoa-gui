@@ -381,7 +381,7 @@ class OtherReport extends Report
 					echo '</table><br />';
 				}
 				break;
-			case 'collectmcrystalfailed':
+			case 'collectcrystalfailed':
 				echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' konnte kein Intergalaktisches Nebelfeld orten und so machte sich die Crew auf den Weg nach Hause.';
 				break;
 			case 'supportreturn':
