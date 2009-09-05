@@ -436,7 +436,7 @@ class OtherReport extends Report
 				break;
 			case 'collectdebris':
 				echo '<strong>TR&Uuml;MMERSAMMLER-RAPPORT</strong><br /><br />
-					Eine Flotte vom Planeten '.$ent2->detailLink().' hat das Tr&uuml;mmerfeld bei '.$ent2->detailLink().' um '.df($this->timestamp).' erreicht und Trümmer gesammelt.<br /><br />';
+					Eine Flotte vom Planeten '.$ent2->detailLink().' hat das Tr&uuml;mmerfeld bei '.$ent1->detailLink().' um '.df($this->timestamp).' erreicht und Trümmer gesammelt.<br /><br />';
 			echo '<br /><strong>ROHSTOFFE</strong><br />';
 				echo '<table>';
 				foreach ($resNames as $k=>$v)
