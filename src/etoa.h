@@ -37,8 +37,8 @@
 
 #include "lib/anyoption/anyoption.h"
 #include "util/IPCMessageQueue.h"
-#include "util/Logger.h"
 #include "util/PidFile.h"
+#include "util/Log.h"
 
 #ifndef __ETOAMAIN__
 #define __ETOAMAIN__

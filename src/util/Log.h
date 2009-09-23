@@ -4,9 +4,6 @@
 #include <string>
 #include <fstream>
 
-#ifndef __LOG__
-#define __LOG__
-
 /**
 * Log message to syslog
 *
@@ -31,9 +28,9 @@
 */
 void log(int priority, std::string message);
 void logPrio(int priority);
+bool debugEnabled();
 static void inline log(int priority, const std::ostringstream& oss) { log(priority,oss.str()); }
 	
 #define LOG(priority,text) \
 {std::ostringstream oss; log(priority,(std::ostringstream&)(oss<<text));}
 
-#endif

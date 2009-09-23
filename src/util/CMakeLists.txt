@@ -3,9 +3,10 @@ SET(UTIL_SRC_FILES
 	Functions.h
 	Functions.cpp
 	IPCMessageQueue.cpp
-	Logger.cpp
 	Mutex.cpp
 	PidFile.cpp
+	Log.cpp
+	Log.h
 )
 
 ADD_LIBRARY(util ${UTIL_SRC_FILES})

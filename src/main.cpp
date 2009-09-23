@@ -28,9 +28,9 @@ using namespace std;
 
 std::string gameRound;
 std::string pidFile;
-std::string logFile;
+//std::string logFile;
 
-Logger* logr;
+//Logger* logr;
 PIDFile* pf;
 
 bool verbose = false;
@@ -48,28 +48,27 @@ void sighandler(int sig)
 	
 	if (sig == SIGTERM)
 	{
-	  std::clog << "Caught signal SIGTERM, exiting..."<<std::endl;
-		std::clog << "EtoA backend "<<gameRound<<" stopped"<<std::endl;
-		delete logr;
-		
+		LOG(LOG_NOTICE,"Received ordinary termination signal (SIGTERM), shutting down");		
+		exit(EXIT_SUCCESS);
+	}
+	if (sig == SIGINT)
+	{
+		LOG(LOG_WARNING,"Received interrupt from keyboard (SIGINT), shutting down");		
 		exit(EXIT_SUCCESS);
 	}
 
-	std::cerr << "Caught signal "<<sig<<", exiting..."<<std::endl;
-	std::cerr << "EtoA backend "<<gameRound<<" unexpectedly stopped"<<std::endl;
-	std::clog << "Caught signal "<<sig<<", exiting..."<<std::endl;
-	std::clog << "EtoA backend "<<gameRound<<" unexpectedly stopped"<<std::endl;
-
-	delete logr;
-
+	LOG(LOG_ERR,"Caught signal "<<sig<<", shutting down due to error");		
+	exit(EXIT_FAILURE);
+	
 	// Restart after segfault
+	/*
 	if (sig==SIGSEGV)
 	{
 		std::string cmd = appPath + " "+(detach ? "-d" : "")+" -k -r "+gameRound;
 		system(cmd.c_str());
-	}
+	}*/
 	
-	exit(EXIT_FAILURE);
+	
 }
 
 // Create a daemon
@@ -89,8 +88,8 @@ void daemonize()
   {
     exit(EXIT_SUCCESS);
   }
-
-	/* Close out the standard file descriptors */
+  
+ 	/* Close out the standard file descriptors */
 	close(STDIN_FILENO);
 	close(STDOUT_FILENO);
 	close(STDERR_FILENO);
@@ -109,8 +108,9 @@ void daemonize()
   // Create pidfile
   pf->write();	
 
-  int myPid = (int)getpid();
-	clog <<  "Daemon initialized with PID " << myPid << " and owned by " << getuid()<<std::endl;
+  //int myPid = (int)getpid();
+	//clog <<  "Daemon initialized with PID " << myPid << " and owned by " << getuid()<<std::endl;
+		
 }
 
 /**
@@ -119,7 +119,7 @@ void daemonize()
 */
 void msgQueueThread()
 {                                   
-	std::clog << "Message queue thread started"<<std::endl;
+	LOG(LOG_DEBUG,"Entering message queue thread");				
 	
 	IPCMessageQueue queue(Config::instance().getFrontendPath());
 	if (queue.valid())
@@ -140,7 +140,7 @@ void msgQueueThread()
 			}
 		}
 	}
-	std::clog << "Message queue thread ended"<<std::endl;
+	LOG(LOG_ERR,"Entering message queue ended");				
 }
 
 int main(int argc, char* argv[])
@@ -164,11 +164,10 @@ int main(int argc, char* argv[])
   opt->addUsage( " -r  --round roundname   Select round to be used (necessary)");
   opt->addUsage( " -u  --uid userid        Select user id under which it runs (necessary if you are root)");
   opt->addUsage( " -p  --pidfile path      Select path to pidfile");
-  opt->addUsage( " -l  --logfile path  	   Select path to logfile");
   opt->addUsage( " -k  --killexisting      Kills an already running instance of this backend before starting this instance");
   opt->addUsage( " -s  --stop              Stops a running instance of this backend");
   opt->addUsage( " -d  --daemon            Detach from console and run as daemon in background");
-  opt->addUsage( " -v  --verbose           Detailed output");
+  opt->addUsage( " -v  --verbose level     Detailed log output");
   opt->addUsage( " -h  --help              Prints this help");
   opt->addUsage( " --version           Prints version information");
   opt->setFlag("help",'h');
@@ -176,11 +175,10 @@ int main(int argc, char* argv[])
   opt->setFlag("killexisting",'k');
   opt->setFlag("stop",'s');
   opt->setFlag("daemon",'d');
-  opt->setFlag("verbose",'v');
+  opt->setOption("verbose",'v');
   opt->setOption("userid",'u');
   opt->setOption("round",'r');
   opt->setOption("pidfile",'p');  
-  opt->setOption("logfile",'l');
   opt->processCommandArgs( argc, argv );
 	if( ! opt->hasOptions()) 
 	{ 
@@ -211,9 +209,16 @@ int main(int argc, char* argv[])
   {	
 		detach = true;
 	}
-  if( opt->getFlag( "verbose" ) || opt->getFlag( 'v' )) 
+
+	logPrio(LOG_NOTICE);
+  if( opt->getValue('v') != NULL) 
   {	
-		verbose = true;
+  	int lvl = atoi(opt->getValue('v'));
+  	if (LOG_DEBUG >= lvl && lvl >= LOG_EMERG)
+  	{
+  		std::cout << "Setting log verbosity to " << lvl << std::endl;
+			logPrio(lvl);
+		}
 	}	
 
 	
@@ -234,14 +239,6 @@ int main(int argc, char* argv[])
 	else
 		pidFile = "/var/run/etoa/"+gameRound+".pid";
 		
-	
-	if( opt->getValue('l') != NULL)
-		logFile = opt->getValue('l');
-	else if (opt->getValue("logfile") != NULL )
-		logFile = opt->getValue("logfile");
-	else
-		logFile = "/var/log/etoa/"+gameRound+".log";
-
 	if( opt->getValue('u') != NULL)
 		ownerUID = atoi(opt->getValue('u'));
 	else if (opt->getValue("uid") != NULL )
@@ -271,7 +268,7 @@ int main(int argc, char* argv[])
    	
    	if (stop)
    	{
-   		std::clog << "Got manual kill by console" <<endl;
+   		//std::clog << "Got manual kill by console" <<endl;
    		kill(existingPid,SIGTERM);   
    		std::cout << "Killing process "<<existingPid<<endl;
    		exit(EXIT_SUCCESS);		
@@ -306,11 +303,8 @@ int main(int argc, char* argv[])
  		return EXIT_FAILURE;		
  	}	
 
-  // Open any logs here 
-	logr = new Logger(logFile);
-	clog << "Loggin started"<<endl;
+	LOG(LOG_NOTICE,"Starting EtoA background service "<<versionNumber()<<" for universe " << gameRound);
 
-  
 	if (detach)
 		daemonize();
 

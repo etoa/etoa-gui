@@ -29,9 +29,7 @@ void etoamain()
 {
 	int minLoopDuration = 1;	// Minimal loop duration
 	
-	bool verbose = false;
-	
-	std::clog << "Entering etoa main loop"<<std::endl;
+	LOG(LOG_DEBUG,"Entering main event-handler loop");				
 	
 	// TODO: Error handling
 	std::time_t mtime=0;
@@ -39,6 +37,10 @@ void etoamain()
 	
 	//Load Data
 	DataHandler &DataHandler = DataHandler::instance();
+
+	if (debugEnabled())
+		sleep(3);
+
 	
 	// Main loop
 	while (true)
@@ -50,13 +52,11 @@ void etoamain()
 		}
 		
 		// Graphical bling-bling
-		if (verbose)
-		{
+		if (debugEnabled())
 			system("clear");
-			std::cout << "----------------------------------------------------------------\n";
-			std::cout << "- EtoA Eventhandler, (C) 2007 by EtoA Gaming, Time: "<< std::time(0) <<" -\n";
-			std::cout << "----------------------------------------------------------------\n\n";
-		}
+		LOG(LOG_DEBUG, "----------------------------------------------------------------");
+		LOG(LOG_DEBUG, "- EtoA Eventhandler, (C) 2007 by EtoA Gaming, Time: "<< std::time(0) <<" -");
+		LOG(LOG_DEBUG, "----------------------------------------------------------------\n");
 		
 		//quest::QuestHandler* qh = new quest::QuestHandler();
 		//qh->update();
@@ -104,8 +104,8 @@ void etoamain()
 
 		if (bh->changes() || dh->changes() || sh->changes() || true)
 		{			
-			if (verbose)
-				std::cout << "Changing planet data...\n";
+			LOG(LOG_DEBUG,"Changing planet data...");
+			
 			// Load id's of changed planets
 			std::vector<int> v1 = bh->getChangedPlanets();
 			std::vector<int> v2 = sh->getChangedPlanets();
@@ -138,8 +138,8 @@ void etoamain()
 			
 			while(!EntityUpdateQueue::instance().empty()) 
 			{
-				if (verbose)
-					std::cout << "Now serving: " << EntityUpdateQueue::instance().front() << std::endl;
+				LOG(LOG_DEBUG,"Now serving: " << EntityUpdateQueue::instance().front());
+					
 				v1.push_back(EntityUpdateQueue::instance().front());
 				EntityUpdateQueue::instance().pop();
     	}
@@ -148,14 +148,13 @@ void etoamain()
 			pm->updateUserPlanets();
 			delete pm;
 
-     	if (verbose)
-				std::cout << "Updated "<<v1.size() << " entities."<<std::endl;
+			LOG(LOG_DEBUG,"Updated "<<v1.size() << " entities.");
 		}
 		
 		sleep(minLoopDuration);
 	}
 	
-	std::clog << "Unexpectedly reached end of main thread!"<<std::endl;
+	LOG(LOG_ERR,"Unexpectedly reached end of main thread!");
 	exit(EXIT_FAILURE);
 			
 }
