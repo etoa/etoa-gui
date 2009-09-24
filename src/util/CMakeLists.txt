@@ -7,6 +7,8 @@ SET(UTIL_SRC_FILES
 	PidFile.cpp
 	Log.cpp
 	Log.h
+	Debug.h
+	Debug.cpp
 )
 
 ADD_LIBRARY(util ${UTIL_SRC_FILES})

@@ -33,7 +33,6 @@ std::string pidFile;
 //Logger* logr;
 PIDFile* pf;
 
-bool verbose = false;
 bool detach = false;
 
 int ownerUID;
@@ -154,7 +153,6 @@ int main(int argc, char* argv[])
 	signal(SIGQUIT, &sighandler);
 	signal(SIGFPE, &sighandler);
 
-	sleep(1);
 	appPath = std::string(argv[0]);
 
 	// Parse command line
@@ -167,7 +165,8 @@ int main(int argc, char* argv[])
   opt->addUsage( " -k  --killexisting      Kills an already running instance of this backend before starting this instance");
   opt->addUsage( " -s  --stop              Stops a running instance of this backend");
   opt->addUsage( " -d  --daemon            Detach from console and run as daemon in background");
-  opt->addUsage( " -v  --verbose level     Detailed log output");
+  opt->addUsage( " -l  --log level       	 Specify log level (0=emerg, ... , 7=everything");
+  opt->addUsage( " --debug       					 Enable debug mode");
   opt->addUsage( " -h  --help              Prints this help");
   opt->addUsage( " --version           Prints version information");
   opt->setFlag("help",'h');
@@ -175,7 +174,8 @@ int main(int argc, char* argv[])
   opt->setFlag("killexisting",'k');
   opt->setFlag("stop",'s');
   opt->setFlag("daemon",'d');
-  opt->setOption("verbose",'v');
+  opt->setFlag("debug");
+  opt->setOption("log",'l');
   opt->setOption("userid",'u');
   opt->setOption("round",'r');
   opt->setOption("pidfile",'p');  
@@ -209,17 +209,38 @@ int main(int argc, char* argv[])
   {	
 		detach = true;
 	}
+	else
+	{
+		std::cout << "Escape to Andromeda Event-Handler" << std::endl;
+		std::cout << "(C) 2007 EtoA Gaming Switzerland, www.etoa.ch" << std::endl;
+		std::cout << "Version " <<versionNumber() << std::endl<< std::endl;
+	}
+	
+
+  if( opt->getFlag( "debug" )) 
+  {	
+  	debugEnable(1);
+	}
 
 	logPrio(LOG_NOTICE);
-  if( opt->getValue('v') != NULL) 
+  if( opt->getValue('l') != NULL) 
   {	
-  	int lvl = atoi(opt->getValue('v'));
+  	int lvl = atoi(opt->getValue('l'));
   	if (LOG_DEBUG >= lvl && lvl >= LOG_EMERG)
   	{
   		std::cout << "Setting log verbosity to " << lvl << std::endl;
 			logPrio(lvl);
 		}
-	}	
+	}
+  else if( opt->getValue("log") != NULL) 
+  {	
+  	int lvl = atoi(opt->getValue("log"));
+  	if (LOG_DEBUG >= lvl && lvl >= LOG_EMERG)
+  	{
+  		std::cout << "Setting log verbosity to " << lvl << std::endl;
+			logPrio(lvl);
+		}
+	}			
 
 	
 	if( opt->getValue( 'r' ) != NULL)
@@ -303,7 +324,7 @@ int main(int argc, char* argv[])
  		return EXIT_FAILURE;		
  	}	
 
-	LOG(LOG_NOTICE,"Starting EtoA background service "<<versionNumber()<<" for universe " << gameRound);
+	LOG(LOG_NOTICE,"Starting EtoA event-handler "<<versionNumber()<<" for universe " << gameRound);
 
 	if (detach)
 		daemonize();

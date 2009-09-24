@@ -17,21 +17,21 @@
 //
 
 #include "IPCMessageQueue.h"
+#include "Log.h"
 
 IPCMessageQueue::IPCMessageQueue(std::string token)
 {
 	_valid = false;
 	char proj_id = 'A';
   key = ftok(token.c_str(),proj_id);
-  std::clog << "Creating IPC key " << key << " from token " << token << " with project id " << proj_id << std::endl;
+  LOG(LOG_DEBUG,"Creating IPC key " << key << " from token " << token << " with project id " << proj_id);
   msgqid=msgget(key,0666|IPC_CREAT);
   if (msgqid < 0) 
   {
-    std::clog << strerror(errno) << std::endl;
-    std::clog << "Error getting message queue, msgget() failed, msgqid = " << msgqid << std::endl;
+    LOG(LOG_ERR,strerror(errno)<<". Error getting message queue, msgget() failed, msgqid = " << msgqid);
     return;
   }
-  std::clog << "Message queue gets id " << msgqid << std::endl;
+  LOG(LOG_DEBUG,"Message queue gets id " << msgqid );
    _valid = true;  
 }
 
@@ -68,8 +68,7 @@ std::string IPCMessageQueue::rcv()
 
 	if (msgrcv(msgqid, (struct msgbuf *)&buf, sizeof(buf), 0, 0) < 0) 
 	{
-		std::clog << strerror(errno) << std::endl;
-		std::clog << "Error getting ipc message from queue " << std::endl;
+		LOG(LOG_ERR,strerror(errno)<<". Error getting ipc message from queue ");
 		return NULL;
   }
 	return std::string(buf.mtext);

@@ -38,11 +38,12 @@ void etoamain()
 	//Load Data
 	DataHandler &DataHandler = DataHandler::instance();
 
-	if (debugEnabled())
-		sleep(3);
-
-	
 	// Main loop
+	if (debugEnable(0))
+	{
+		DEBUG("Waiting 3 seconds so that you can read all messages before entering loop");
+		sleep(3);
+	}
 	while (true)
 	{
 		// Update the data and config, everyday once at about 02:17:00 AM
@@ -52,11 +53,11 @@ void etoamain()
 		}
 		
 		// Graphical bling-bling
-		if (debugEnabled())
+		if (debugEnable(0))
 			system("clear");
-		LOG(LOG_DEBUG, "----------------------------------------------------------------");
-		LOG(LOG_DEBUG, "- EtoA Eventhandler, (C) 2007 by EtoA Gaming, Time: "<< std::time(0) <<" -");
-		LOG(LOG_DEBUG, "----------------------------------------------------------------\n");
+		DEBUG("----------------------------------------------------------------");
+		DEBUG("- EtoA Eventhandler, (C) 2007 by EtoA Gaming, Time: "<< std::time(0) <<" -");
+		DEBUG("----------------------------------------------------------------\n");
 		
 		//quest::QuestHandler* qh = new quest::QuestHandler();
 		//qh->update();
@@ -104,7 +105,7 @@ void etoamain()
 
 		if (bh->changes() || dh->changes() || sh->changes() || true)
 		{			
-			LOG(LOG_DEBUG,"Changing planet data...");
+			DEBUG("Changing planet data...");
 			
 			// Load id's of changed planets
 			std::vector<int> v1 = bh->getChangedPlanets();
@@ -138,7 +139,7 @@ void etoamain()
 			
 			while(!EntityUpdateQueue::instance().empty()) 
 			{
-				LOG(LOG_DEBUG,"Now serving: " << EntityUpdateQueue::instance().front());
+				DEBUG("Now serving: " << EntityUpdateQueue::instance().front());
 					
 				v1.push_back(EntityUpdateQueue::instance().front());
 				EntityUpdateQueue::instance().pop();
@@ -148,7 +149,7 @@ void etoamain()
 			pm->updateUserPlanets();
 			delete pm;
 
-			LOG(LOG_DEBUG,"Updated "<<v1.size() << " entities.");
+			DEBUG("Updated "<<v1.size() << " entities.");
 		}
 		
 		sleep(minLoopDuration);
