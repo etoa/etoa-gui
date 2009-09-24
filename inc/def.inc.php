@@ -482,7 +482,7 @@
 	// Daemon
 	// Todo: make changeable
 	$daemonId = $cfg->daemonIdentifier->v;
-	$daemonLogfile = "/var/log/etoa/".$daemonId.".log";
+	$daemonLogfile = "/var/log/etoad/etoad.".$daemonId.".log";
 	$daemonPidfile = "/var/run/etoa/".$daemonId.".pid";
 	$daemonExe = "/home/etoa/backend/bin/etoad";
 
