@@ -29,6 +29,7 @@
 void log(int priority, std::string message);
 void logPrio(int priority);
 static void inline log(int priority, const std::ostringstream& oss) { log(priority,oss.str()); }
+std::string logProgam(std::string roundName);	
 	
 #define LOG(priority,text) \
 {std::ostringstream oss; log(priority,(std::ostringstream&)(oss<<text));}

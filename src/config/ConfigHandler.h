@@ -68,7 +68,7 @@
 		* @param string name, Rundenname
 		**/
 		void setRoundName(std::string name);
-		
+			
 		/**
 		* Liefert den Frontendpfad zurück
 		**/

@@ -28,9 +28,7 @@ using namespace std;
 
 std::string gameRound;
 std::string pidFile;
-//std::string logFile;
 
-//Logger* logr;
 PIDFile* pf;
 
 bool detach = false;
@@ -252,6 +250,7 @@ int main(int argc, char* argv[])
 		std::cerr << "Error: No gameround name given!"<<endl;	
 	 	return EXIT_FAILURE;
 	}
+	logProgam(gameRound);
 	
 	if( opt->getValue('p') != NULL)
 		pidFile = opt->getValue('p');
