@@ -7,6 +7,8 @@ void log(int priority, std::string message)
 	{
 		debugMsg(message);
 	}
+	if (priority <= LOG_ERR)
+		std::cout << "ERR: " << message << std::endl;
 	openlog ("etoad", LOG_CONS | LOG_PID | LOG_NDELAY, LOG_LOCAL1);
 	syslog (priority, message.c_str());
 	closelog ();

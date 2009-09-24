@@ -78,7 +78,7 @@ void daemonize()
   pid = fork();
   if (pid < 0) 
   {
-  	cerr << "Could not fork parent process";
+  	LOG(LOG_CRIT,  "Could not fork parent process");
  		exit(EXIT_FAILURE);
   }
 
@@ -100,15 +100,15 @@ void daemonize()
   sid = setsid();
   if (sid < 0) 
   {
-  	cerr << "Unable to get SID for child process";
+  	LOG(LOG_CRIT, "Unable to get SID for child process");
     exit(EXIT_FAILURE);
   }
 
   // Create pidfile
   pf->write();	
 
-  //int myPid = (int)getpid();
-	//clog <<  "Daemon initialized with PID " << myPid << " and owned by " << getuid()<<std::endl;
+  int myPid = (int)getpid();
+	LOG(LOG_NOTICE,"Daemon initialized with PID " << myPid << " and owned by " << getuid());
 		
 }
 
@@ -192,7 +192,7 @@ int main(int argc, char* argv[])
 	}
   if( opt->getFlag( "version" )) 
   {	
-  	cout << getVersion()<<endl;
+  	std::cout << getVersion()<<endl;
  		return EXIT_SUCCESS;
 	}
 	bool killExistingInstance = false;
@@ -249,7 +249,7 @@ int main(int argc, char* argv[])
 		gameRound = opt->getValue("round");
 	else
 	{
-		cout << "Error: No gameround name given!"<<endl;	
+		std::cerr << "Error: No gameround name given!"<<endl;	
 	 	return EXIT_FAILURE;
 	}
 	
@@ -270,13 +270,13 @@ int main(int argc, char* argv[])
   // Set correct uid
   if (setuid(ownerUID)!=0)
   {
-  	cout << "Unable to change user id" << endl;
+  	std::cerr << "Unable to change user id" << endl;
     exit(EXIT_FAILURE);  	
   }
   // Check uid
   if (getuid()==0)
   {
-  	cout << "This software cannot be run as root!" <<endl;
+  	std::cerr << "This software cannot be run as root!" <<endl;
     exit(EXIT_FAILURE);  	
   }  
 
@@ -289,7 +289,6 @@ int main(int argc, char* argv[])
    	
    	if (stop)
    	{
-   		//std::clog << "Got manual kill by console" <<endl;
    		kill(existingPid,SIGTERM);   
    		std::cout << "Killing process "<<existingPid<<endl;
    		exit(EXIT_SUCCESS);		
@@ -302,25 +301,25 @@ int main(int argc, char* argv[])
 			{
 				if (errno==EPERM)
 				{
-					std::cout << "I am not allowed to kill the instance. Exiting..." << std::endl;
+					std::cerr << "I am not allowed to kill the instance. Exiting..." << std::endl;
 					exit(EXIT_FAILURE);
 				}
 				else
 				{
-					std::cout << "The process doesn't exist, perhaps the PID file was outdated. Continuing..." << std::endl;
+					std::cerr << "The process doesn't exist, perhaps the PID file was outdated. Continuing..." << std::endl;
 				}
 			}
 			sleep(1);
 		}
 		else
 		{
-			std::cout << "EtoA Daemon " << gameRound << " is already running with PID "<<existingPid<<"!"<<std::endl<<"Use the -k flag to force killing it and continue with this instance. Exiting..." << std::endl;
+			std::cerr << "EtoA Daemon " << gameRound << " is already running with PID "<<existingPid<<"!"<<std::endl<<"Use the -k flag to force killing it and continue with this instance. Exiting..." << std::endl;
 			exit(EXIT_FAILURE);
 		}
 	}
  	else if (stop)
  	{
- 		std::cout << "No running process found, exiting..."<<std::endl;
+ 		std::cerr << "No running process found, exiting..."<<std::endl;
  		return EXIT_FAILURE;		
  	}	
 

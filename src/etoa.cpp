@@ -24,6 +24,7 @@
 */
 
 #include "etoa.h"
+#include <exception>
 
 void etoamain()
 {
@@ -59,98 +60,110 @@ void etoamain()
 		DEBUG("- EtoA Eventhandler, (C) 2007 by EtoA Gaming, Time: "<< std::time(0) <<" -");
 		DEBUG("----------------------------------------------------------------\n");
 		
-		//quest::QuestHandler* qh = new quest::QuestHandler();
-		//qh->update();
-		
-		/**
-		* Start with event handling
-		*/
-		if ((mtime+300) < std::time(0))
-		{
-			market::MarketHandler* mh = new market::MarketHandler();
-			mh->update();
-			mtime = std::time(0);
-			delete mh;
-		}
-		
-		if ((std::time(0) + 60) % 3600 == 0)
-		{
-			aPoints::aPointsHandler* aph = new aPoints::aPointsHandler();
-			aph->update();
-			delete aph;
-		}
-		
-		
-		abuilding::aBuildingHandler* abh = new abuilding::aBuildingHandler();
-		abh->update();
-		
-		atech::aTechHandler* ath = new atech::aTechHandler();
-		ath->update();
-		
-		building::BuildingHandler* bh = new building::BuildingHandler();
-		bh->update();  
-
-		tech::TechHandler* th = new tech::TechHandler();
-		th->update(); 
-		delete th;
-		
-		fleet::FleetHandler* fh = new fleet::FleetHandler();
-		fh->update(); 
-		
-		ship::ShipHandler* sh = new ship::ShipHandler();
-		sh->update();  
-
-		def::DefHandler* dh = new def::DefHandler();
-		dh->update();  
-
-		if (bh->changes() || dh->changes() || sh->changes() || true)
-		{			
-			DEBUG("Changing planet data...");
+		try 
+		{ 
+	
+			//quest::QuestHandler* qh = new quest::QuestHandler();
+			//qh->update();
 			
-			// Load id's of changed planets
-			std::vector<int> v1 = bh->getChangedPlanets();
-			std::vector<int> v2 = sh->getChangedPlanets();
-			std::vector<int> v3 = dh->getChangedPlanets();
-			delete bh;
-			delete sh;
-			delete dh;
-			delete fh;
-			
-			// Merge all changed planet id's together
-			for (unsigned int x=0; x<v2.size(); x++)
+			/**
+			* Start with event handling
+			*/
+			if ((mtime+300) < std::time(0))
 			{
-				std::vector<int>::iterator result;
- 				result = find(v1.begin(), v1.end(), v2[x]);
- 				if (result == v1.end())
- 				{ 
- 					 v1.push_back(v2[x]);
- 				}				
+				market::MarketHandler* mh = new market::MarketHandler();
+				mh->update();
+				mtime = std::time(0);
+				delete mh;
 			}
-			for (unsigned int x=0;x<v3.size();x++)
+			
+			if ((std::time(0) + 60) % 3600 == 0)
 			{
-				std::vector<int>::iterator result;
- 				result = find( v1.begin(), v1.end(), v3[x]);
- 				if (result == v1.end())
- 				{
- 					v1.push_back(v3[x]);
+				aPoints::aPointsHandler* aph = new aPoints::aPointsHandler();
+				aph->update();
+				delete aph;
+			}
+			
+			
+			abuilding::aBuildingHandler* abh = new abuilding::aBuildingHandler();
+			abh->update();
+			
+			atech::aTechHandler* ath = new atech::aTechHandler();
+			ath->update();
+			
+			building::BuildingHandler* bh = new building::BuildingHandler();
+			bh->update();  
+	
+			tech::TechHandler* th = new tech::TechHandler();
+			th->update(); 
+			delete th;
+			
+			fleet::FleetHandler* fh = new fleet::FleetHandler();
+			fh->update(); 
+			
+			ship::ShipHandler* sh = new ship::ShipHandler();
+			sh->update();  
+	
+			def::DefHandler* dh = new def::DefHandler();
+			dh->update();  
+	
+			if (bh->changes() || dh->changes() || sh->changes() || true)
+			{			
+				DEBUG("Changing planet data...");
+				
+				// Load id's of changed planets
+				std::vector<int> v1 = bh->getChangedPlanets();
+				std::vector<int> v2 = sh->getChangedPlanets();
+				std::vector<int> v3 = dh->getChangedPlanets();
+				delete bh;
+				delete sh;
+				delete dh;
+				delete fh;
+				
+				// Merge all changed planet id's together
+				for (unsigned int x=0; x<v2.size(); x++)
+				{
+					std::vector<int>::iterator result;
+	 				result = find(v1.begin(), v1.end(), v2[x]);
+	 				if (result == v1.end())
+	 				{ 
+	 					 v1.push_back(v2[x]);
+	 				}				
+				}
+				for (unsigned int x=0;x<v3.size();x++)
+				{
+					std::vector<int>::iterator result;
+	 				result = find( v1.begin(), v1.end(), v3[x]);
+	 				if (result == v1.end())
+	 				{
+	 					v1.push_back(v3[x]);
+					}
+					
 				}
 				
-			}
-			
-			while(!EntityUpdateQueue::instance().empty()) 
-			{
-				DEBUG("Now serving: " << EntityUpdateQueue::instance().front());
-					
-				v1.push_back(EntityUpdateQueue::instance().front());
-				EntityUpdateQueue::instance().pop();
-    	}
+				while(!EntityUpdateQueue::instance().empty()) 
+				{
+					DEBUG("Now serving: " << EntityUpdateQueue::instance().front());
 						
-			planet::PlanetManager* pm = new planet::PlanetManager(&v1);
-			pm->updateUserPlanets();
-			delete pm;
-
-			DEBUG("Updated "<<v1.size() << " entities.");
-		}
+					v1.push_back(EntityUpdateQueue::instance().front());
+					EntityUpdateQueue::instance().pop();
+	    	}
+							
+				planet::PlanetManager* pm = new planet::PlanetManager(&v1);
+				pm->updateUserPlanets();
+				delete pm;
+	
+				DEBUG("Updated "<<v1.size() << " entities.");
+	
+			}
+		
+		} 
+		// Catch mysql exceptions
+		catch (mysqlpp::Exception e) 
+		{ 
+		  LOG(LOG_ERR,"MySQL: " << e.what()); 
+		  kill(getpid(),SIGIOT);
+		} 			
 		
 		sleep(minLoopDuration);
 	}
