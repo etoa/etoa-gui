@@ -31,7 +31,7 @@ namespace building
 			<< "	buildlist_build_type>2 "
 			<< "	AND buildlist_building_id='" << config.idget("FLEET_CONTROL_ID") << "' "
 			<< "	AND buildlist_build_end_time<" << time << " ORDER BY buildlist_entity_id;";
-		mysqlpp::Result res = query.store();		
+		mysqlpp::StoreQueryResult res = query.store();		
 		query.reset();
 		
 		if (res) {
@@ -58,7 +58,7 @@ namespace building
 					<< "WHERE "
 					<< "	user_id='" << (int)row["buildlist_user_id"] << "' "
 					<< "LIMIT 1;";
-					mysqlpp::Result maskRes = query.store();
+					mysqlpp::StoreQueryResult maskRes = query.store();
 					query.reset();
 					
 					if (maskRes) {

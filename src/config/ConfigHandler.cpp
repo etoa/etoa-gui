@@ -75,7 +75,7 @@
 			<< "	config_param2 "
 			<< "FROM "
 			<< "	config;";
-		mysqlpp::Result res = query.store();	
+		mysqlpp::StoreQueryResult res = query.store();	
 		query.reset();
 		if (res) {
 			unsigned int resSize = res.size();
@@ -104,7 +104,7 @@
 			<< "WHERE "
 			<< "	code='m' "
 			<< "LIMIT 1;";
-		mysqlpp::Result mRes = query.store();
+		mysqlpp::StoreQueryResult mRes = query.store();
 		query.reset();
 		
 		if (mRes) {
@@ -238,7 +238,7 @@
 			<< "	AND ship_actions LIKE '%collectfuel%' "
 			<< "GROUP BY "
 			<< "	shiplist_user_id";
-		mysqlpp::Result res = query.store();
+		mysqlpp::StoreQueryResult res = query.store();
 		query.reset();
 		
 		if (res) {

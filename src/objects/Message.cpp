@@ -1,6 +1,7 @@
 
 #include "Message.h"
 #include "../util/Functions.h"
+#include "../util/Log.h"
 
 	std::string Message::getText() {
 		return this->text;
@@ -99,7 +100,7 @@
 							<< "	fleet_id "
 							<< ") "
 							<< "VALUES "
-							<< "('" << con_->insert_id() << "', "
+							<< "('" << query.insert_id() << "', "
 							<< "'" << this->subject << "', ";
 						
 						std::string buff = this->text;
@@ -117,8 +118,7 @@
 					}
 					catch (mysqlpp::Exception* e)
 					{
-						std::cout << e->what() << std::endl;
-						std::cout << query.str() << std::endl;
+						LOG(LOG_ERR, "MySQL error while sending message: " << e->what()<<", Query: "<<query.str());
 					}
 				}
 			}

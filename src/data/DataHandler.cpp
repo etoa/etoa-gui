@@ -121,7 +121,7 @@
 			<< "	def_fields "
 			<< "FROM "
 			<< "	defense;";
-		mysqlpp::Result dRes = query.store();	
+		mysqlpp::StoreQueryResult dRes = query.store();	
 		query.reset();
 		if (dRes) {
 			unsigned int dSize = dRes.size();
@@ -202,7 +202,7 @@
 			<< "	ship_alliance_costs "
 			<< "FROM "
 			<< "	ships;";
-		mysqlpp::Result sRes = query.store();	
+		mysqlpp::StoreQueryResult sRes = query.store();	
 		query.reset();
 		if (sRes) {
 			unsigned int sSize = sRes.size();
@@ -245,7 +245,7 @@
 			<< "	tech_stealable "
 			<< "FROM "
 			<< "	technologies;";
-		mysqlpp::Result tRes = query.store();	
+		mysqlpp::StoreQueryResult tRes = query.store();	
 		query.reset();
 		if (tRes) {
 			unsigned int tSize = tRes.size();
@@ -308,7 +308,7 @@
 			<< "	building_bunker_fleet_space "
 			<< "FROM "
 			<< "	buildings;";
-		mysqlpp::Result bRes = query.store();	
+		mysqlpp::StoreQueryResult bRes = query.store();	
 		query.reset();
 		if (bRes) {
 			unsigned int bSize = bRes.size();
@@ -333,7 +333,7 @@
 			<< "	* "
 			<< "FROM "
 			<< "	races;";
-		mysqlpp::Result rRes = query.store();	
+		mysqlpp::StoreQueryResult rRes = query.store();	
 		query.reset();
 		if (rRes) {
 			unsigned int rSize = rRes.size();
@@ -357,7 +357,7 @@
 			<< "	* "
 			<< "FROM "
 			<< "	sol_types;";
-		mysqlpp::Result slRes = query.store();	
+		mysqlpp::StoreQueryResult slRes = query.store();	
 		query.reset();
 		if (slRes) {
 			unsigned int slSize = slRes.size();
@@ -381,7 +381,7 @@
 			<< "	* "
 			<< "FROM "
 			<< "	planet_types;";
-		mysqlpp::Result pRes = query.store();	
+		mysqlpp::StoreQueryResult pRes = query.store();	
 		query.reset();
 		if (pRes) {
 			unsigned int pSize = pRes.size();
@@ -405,7 +405,7 @@
 			<< "	* "
 			<< "FROM "
 			<< "	specialists;";
-		mysqlpp::Result spRes = query.store();	
+		mysqlpp::StoreQueryResult spRes = query.store();	
 		query.reset();
 		if (spRes) {
 			unsigned int spSize = spRes.size();

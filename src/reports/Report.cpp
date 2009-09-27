@@ -1,4 +1,4 @@
-
+#include "../util/Log.h"
 #include "Report.h"
 
 int Report::getId() {
@@ -94,14 +94,12 @@ int Report::save(int userId) {
 		query.store();
 		query.reset();
 
-		return con_->insert_id();
+		return query.insert_id();
 	}
-	catch (mysqlpp::Exception* e)
-	{
-		std::cout << e->what() << std::endl;
-		std::cout << query.str() << std::endl;
-		query.reset();
-	}
+		catch (mysqlpp::Exception* e)
+		{
+			LOG(LOG_ERR, "MySQL error while saving report: " << e->what()<<", Query: "<<query.str());
+		}
 	return 0;
 }
 
