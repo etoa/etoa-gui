@@ -475,7 +475,6 @@ namespace market
 						<<		arr["buy_3"] << ", "
 						<<		arr["buy_4"] << ");";
 					query.store();
-					query.reset();
 				
 					query << "INSERT INTO fleet_ships "
 						<< "(	fs_fleet_id, "
@@ -483,11 +482,10 @@ namespace market
 						<< "	fs_ship_cnt) "
 						<< "VALUES "
 						<< "( "
-						<< "	'" << con_->insert_id() << "', "
+						<< "	'" << query.insert_id() << "', "
 						<< "	'" << config.idget("MARKET_SHIP_ID") << "', "
 						<< "	'1');";
 					query.store();
-					query.reset();
 					
 
 					//Flotte zum hochstbietenden schicken (Käufer)
@@ -528,7 +526,7 @@ namespace market
 						<< "fs_ship_cnt) "
 						<< "VALUES "
 						<< "( "
-						<< "'" << con_->insert_id() << "',"
+						<< "'" << query.insert_id() << "',"
 						<< "'" << config.idget("MARKET_SHIP_ID") << "', "
 						<< "'1');";
 					query.store();

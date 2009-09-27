@@ -1,6 +1,6 @@
 
 #include "TechHandler.h"
-
+#include "../util/Debug.h"
 namespace tech
 {
 	void TechHandler::update()
@@ -22,10 +22,10 @@ namespace tech
 			<< "	techlist_build_type=3 "
 			<< "	AND techlist_build_end_time<" << time << ";";
 		query.store();
-		//std::cout << "Upgraded "<<con_->affected_rows()<<" Technologies\n";
-		query.reset();    
+		DEBUG("Upgraded "<<query.affected_rows()<<" Technologies");
 		
-		if (con_->affected_rows()>0) {
+		
+		if (query.affected_rows()>0) {
 			this->changes_ = true;
 		}
 	}	

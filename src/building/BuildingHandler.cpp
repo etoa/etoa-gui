@@ -1,5 +1,6 @@
 
 #include "BuildingHandler.h"
+#include "../util/Debug.h"
 
 namespace building
 {
@@ -32,7 +33,7 @@ namespace building
 			<< "	AND buildlist_building_id='" << config.idget("FLEET_CONTROL_ID") << "' "
 			<< "	AND buildlist_build_end_time<" << time << " ORDER BY buildlist_entity_id;";
 		mysqlpp::StoreQueryResult res = query.store();		
-		query.reset();
+		
 		
 		if (res) {
 			unsigned int resSize = res.size();
@@ -59,7 +60,7 @@ namespace building
 					<< "	user_id='" << (int)row["buildlist_user_id"] << "' "
 					<< "LIMIT 1;";
 					mysqlpp::StoreQueryResult maskRes = query.store();
-					query.reset();
+					
 					
 					if (maskRes) {
 						int maskSize = maskRes.size();
@@ -92,7 +93,7 @@ namespace building
 						<< "	user_id='" << (int)row["buildlist_user_id"] << "' "
 						<< "LIMIT 1;";
 					query.store();
-					query.reset();
+					
 				}
 			}
 		}
@@ -106,7 +107,7 @@ namespace building
 			<< "	buildlist_build_type>2 "
 			<< "	AND buildlist_build_end_time<" << time << " ORDER BY buildlist_entity_id;";
 		res = query.store();		
-		query.reset();
+		
 		
 		// Add changed planets to vector
 		if (res) {
@@ -140,8 +141,8 @@ namespace building
 			<< "	buildlist_build_type=3 "
 			<< "	AND buildlist_build_end_time<" << time << ";";
 		query.store();
-		//std::cout << "Upgraded "<<con_->affected_rows()<<" Buildings\n";
-		query.reset();    
+		DEBUG("Upgraded "<<query.affected_rows()<<" Buildings");
+		    
 		
 		query << "UPDATE "
 			<< "	buildlist "
@@ -154,7 +155,7 @@ namespace building
 			<< "	buildlist_build_type=4 "
 			<< "	AND buildlist_build_end_time<" << time << ";";
 		query.store();   	
-		//std::cout << "Downgraded "<<con_->affected_rows()<<" Buildings\n";		
-		query.reset();
+		DEBUG("Downgraded "<<query.affected_rows()<<" Buildings");		
+		
 	}	
 }

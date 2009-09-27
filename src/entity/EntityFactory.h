@@ -40,7 +40,7 @@ public:
 		query << "WHERE ";
 		query << "	id='" << id << "' ";
 		query << "LIMIT 1;";
-		mysqlpp::Result eRes = query.store();
+		mysqlpp::StoreQueryResult eRes = query.store();
 		query.reset();
 			
 		if (eRes) 
