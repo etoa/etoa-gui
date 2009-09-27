@@ -1,4 +1,3 @@
-
 #include "Wormhole.h"
 
 	void Wormhole::loadData() {
@@ -19,7 +18,8 @@
 		this->dataLoaded = true;
 	}
 	
-	void Wormhole::saveData() {
+	void Wormhole::saveData() 
+	{
 		
 		this->changedData = false;
 	}

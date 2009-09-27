@@ -34,7 +34,7 @@
 			<< "WHERE "
 			<< "	id='" << this->getId() << "' "
 			<< "LIMIT 1;";
-		mysqlpp::Result pRes = query.store();
+		mysqlpp::StoreQueryResult pRes = query.store();
 		query.reset();
 		
 		if (pRes) {
