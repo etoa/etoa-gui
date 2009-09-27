@@ -36,7 +36,7 @@ namespace planet
 			<< "		users  "
 			<< "	ON planets.planet_user_id = users.user_id "
 			<< "LIMIT 1;";
-		mysqlpp::Result pRes = query.store();
+		mysqlpp::StoreQueryResult pRes = query.store();
 		query.reset();
 		
 		if (pRes) {
@@ -126,7 +126,7 @@ namespace planet
 			<< "	buildlist_entity_id='" << this->entityId << "' "
 			<< "	AND buildlist_user_id='" << this->userId << "' "
 			<< "	AND buildlist_current_level>0;";
-		mysqlpp::Result bRes = query.store();
+		mysqlpp::StoreQueryResult bRes = query.store();
 		query.reset();
 		
 		if (bRes) {
@@ -183,7 +183,7 @@ namespace planet
 			<< "	shiplist_entity_id='" << this->entityId << "' "
 			<< "	AND shiplist_user_id='" << this->userId << "' "
 			<< "	AND shiplist_count>0;";
-		mysqlpp::Result sRes = query.store();
+		mysqlpp::StoreQueryResult sRes = query.store();
 		query.reset();
 		
 		if (sRes) {
@@ -219,7 +219,7 @@ namespace planet
 			<< "	deflist_entity_id='" << this->entityId << "' "
 			<< "	AND deflist_user_id='" << this->userId << "' "
 			<< "	AND deflist_count>0;";
-		mysqlpp::Result dRes = query.store();
+		mysqlpp::StoreQueryResult dRes = query.store();
 		query.reset();
 		
 		if (dRes) {

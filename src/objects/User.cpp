@@ -61,7 +61,7 @@
 			<< "WHERE "
 			<< "	user_id='" << this->userId << "' "
 			<< "LIMIT 1;";
-		mysqlpp::Result maskRes = query.store();
+		mysqlpp::StoreQueryResult maskRes = query.store();
 		query.reset();
 		
 		if (maskRes) {
@@ -121,7 +121,7 @@
 			<< "WHERE "
 			<< "	id=" << this->userId << " "
 			<< "LIMIT 1;";
-		mysqlpp::Result mRes = query.store();
+		mysqlpp::StoreQueryResult mRes = query.store();
 		query.reset();
 		
 		if (mRes) {
@@ -245,7 +245,7 @@
 					<< "WHERE "
 					<< "	user_id='" << this->userId << "' "
 					<< "LIMIT 1;";
-				mysqlpp::Result uRes = query.store();
+				mysqlpp::StoreQueryResult uRes = query.store();
 				query.reset();
 				
 				if (uRes) {
@@ -294,7 +294,7 @@
 				<< "WHERE "
 				<< "	techlist_user_id='" << this->userId << "' "
 				<< "	AND techlist_current_level>'0';";
-			mysqlpp::Result tRes = query.store();
+			mysqlpp::StoreQueryResult tRes = query.store();
 			query.reset();
 			
 			if (tRes) {
@@ -389,7 +389,7 @@
 			<< "	planet_user_id='" << this->userId << "' "
 			<< "	AND planet_user_main='1' "
 			<< "LIMIT 1";
-		mysqlpp::Result mainRes = query.store();
+		mysqlpp::StoreQueryResult mainRes = query.store();
 		query.reset();
 		
 		if (mainRes) {
@@ -415,7 +415,7 @@
 			<< "	planets "
 			<< "WHERE "
 			<< "	planet_user_id='" << this->userId << "';";
-		mysqlpp::Result planetRes = query.store();
+		mysqlpp::StoreQueryResult planetRes = query.store();
 		query.reset();
 		
 		if (planetRes) {

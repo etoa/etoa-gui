@@ -16,7 +16,7 @@ namespace fleet
 		query << "	AND !(action='alliance' AND status='3') ";
 		//query << "	AND user_id='1' ";
 		query << "ORDER BY landtime ASC;";
-		mysqlpp::Result res = query.store();
+		mysqlpp::StoreQueryResult res = query.store();
 		query.reset();
 
 		//std::cout << "Updating ";

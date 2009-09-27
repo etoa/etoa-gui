@@ -80,7 +80,7 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 			query << "	(alliance_bnd_alliance_id1='" << entity->getUser()->getAllianceId() << "' ";
 			query << "	AND alliance_bnd_alliance_id2='" << fleet->fleetUser->getAllianceId() << "') ";
 			query << "	AND alliance_bnd_level='3';";
-			mysqlpp::Result warCheckRes = query.store();
+			mysqlpp::StoreQueryResult warCheckRes = query.store();
 			query.reset();
 
 			if (warCheckRes)
