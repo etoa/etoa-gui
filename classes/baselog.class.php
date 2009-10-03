@@ -44,7 +44,7 @@
 				DELETE FROM
 					logs_battle
 				WHERE
-					logs_battle_time<'".$tstamp."'
+					timestamp<'".$tstamp."'
 			");
 			$nr += mysql_affected_rows();
 			dbquery("
