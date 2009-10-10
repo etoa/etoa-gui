@@ -122,11 +122,29 @@
 			echo "<h2>Log</h2>";
 			if (is_file($daemonLogfile))
 			{
+				echo "<div id=\"logtext\" style=\"border:1px solid white;background:black;padding:3px;overflow:scroll;height:400px\">";
+				$lf = fopen($daemonLogfile,"r");
+				while($l = fgets($lf))
+				{
+					if (stristr($l,"warning]"))
+						echo "<span style=\"color:orange;\">";
+					elseif (stristr($l,"err]"))
+						echo "<span style=\"color:red;\">";
+					elseif(stristr($l,"notice]"))
+						echo "<span style=\"color:#afa;\">";
+					else
+						echo "<span>";
+					echo $l."</span><br/>";
+				}
+				fclose($lf);
+				echo "</div>";
+
+				/*
 				echo "<textarea style=\"height:400px;width:100%\" id=\"logtextarea\" readonly=\"readonly\">";
 				readfile($daemonLogfile);
-				echo "</textarea>
-				<script type=\"text/javascript\">
-				textareaelem = document.getElementById('logtextarea');
+				echo "</textarea>*/ 
+				echo "<script type=\"text/javascript\">
+				fScrolltextareaelem = document.getElementById('logtext');
 				textareaelem.scrollTop = textareaelem.scrollHeight;
 				</script>";
 			}

@@ -55,7 +55,7 @@
 	*	}
 	*
 	********/
-	echo '<div id="marketinfo"></div>';
+//	echo '<div id="marketinfo"></div>';
     if ($cfg->market_enabled->v == 1)
     {
 

@@ -1,6 +1,6 @@
 <?PHP
 	session_start();
-	if (count($_SESSION)>0)
+	if (true || count($_SESSION)>0)
 	{
 		if ($_GET['path']!="" && $_GET['hash']!="")
 		{
