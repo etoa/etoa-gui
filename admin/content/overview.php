@@ -144,7 +144,7 @@
 				readfile($daemonLogfile);
 				echo "</textarea>*/ 
 				echo "<script type=\"text/javascript\">
-				fScrolltextareaelem = document.getElementById('logtext');
+				textareaelem = document.getElementById('logtext');
 				textareaelem.scrollTop = textareaelem.scrollHeight;
 				</script>";
 			}
