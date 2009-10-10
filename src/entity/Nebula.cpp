@@ -11,7 +11,7 @@
 		query << "FROM ";
 		query << "	nebulas ";
 		query << "WHERE ";
-		query << "	id='" << this->getId() << "' ";
+		query << "	id=" << this->getId() << " ";
 		query << "LIMIT 1;";
 		mysqlpp::StoreQueryResult nRes = query.store();
 		query.reset();
@@ -62,9 +62,9 @@
 			query << "	entities ";
 			query << "SET ";
 			query << "	code='e', ";
-			query << " lastvisited='0' ";
+			query << " lastvisited=0 ";
 			query << "WHERE ";
-			query << "	id='" << this->getId() << "' ";
+			query << "	id=" << this->getId() << " ";
 			query << "LIMIT 1;";
 			query.store();
 			query.reset();
@@ -72,7 +72,7 @@
 			query << "DELETE FROM";
 			query << "	nebulas ";
 			query << "WHERE ";
-			query << " id='" << this->getId() << "' ";
+			query << " id=" << this->getId() << " ";
 			query << "LIMIT 1;";
 			query.store();
 			query.reset();
@@ -84,7 +84,7 @@
 			query << ") ";
 			query << "VALUES ";
 			query << "(";
-			query << "'" << this->getId() << "');";
+			query << "" << this->getId() << ");";
 			query.store();
 			query.reset();
 			
@@ -116,7 +116,7 @@
 					query << "SET ";
 					query << "	code='n' ";
 					query << "WHERE ";
-					query << "	id='" << searchRow["id"] << "' ";
+					query << "	id=" << searchRow["id"] << " ";
 					query << "LIMIT 1;";
 					query.store();
 					query.reset();
@@ -129,15 +129,15 @@
 					query << ") ";
 					query << "VALUES ";
 					query << "(";
-					query << "'" << searchRow["id"] << "', ";
-					query << "'" << newRess << "');";
+					query << "" << searchRow["id"] << ", ";
+					query << "" << newRess << ");";
 					query.store();
 					query.reset();
 					
 					query << "DELETE FROM ";
 					query << "	space ";
 					query << "WHERE ";
-					query << " id='" << searchRow["id"] << "' ";
+					query << " id=" << searchRow["id"] << " ";
 					query << "LIMIT 1;";
 					query.store();
 					query.reset();
@@ -149,14 +149,14 @@
 			query << "UPDATE ";
 			query << "	nebulas ";
 			query << "SET ";
-			query << "	res_metal=res_metal+'" << (this->getResMetal() - this->initResMetal) << "', ";
-			query << "	res_crystal=res_crystal+'" << (this->getResCrystal() - this->initResCrystal) << "', ";
-			query << "	res_plastic=res_plastic+'" << (this->getResPlastic() - this->initResPlastic) << "', ";
-			query << "	res_fuel=res_fuel+'" << (this->getResFuel() - this->initResFuel) << "', ";
-			query << "	res_food=res_food+'" << (this->getResFood() - this->initResFood) << "', ";
-			query << "	res_power=res_power+'" << (this->getResPower() - this->initResPower) << "' ";
+			query << "	res_metal=res_metal+" << (this->getResMetal() - this->initResMetal) << ", ";
+			query << "	res_crystal=res_crystal+" << (this->getResCrystal() - this->initResCrystal) << ", ";
+			query << "	res_plastic=res_plastic+" << (this->getResPlastic() - this->initResPlastic) << ", ";
+			query << "	res_fuel=res_fuel+" << (this->getResFuel() - this->initResFuel) << ", ";
+			query << "	res_food=res_food+" << (this->getResFood() - this->initResFood) << ", ";
+			query << "	res_power=res_power+" << (this->getResPower() - this->initResPower) << " ";
 			query << "WHERE ";
-			query << "	id='" << this->getId() << "' ";
+			query << "	id=" << this->getId() << " ";
 			query << "LIMIT 1;";
 			query.store();
 			query.reset();

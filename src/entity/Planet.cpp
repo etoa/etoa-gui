@@ -151,7 +151,7 @@
 			query << "	planet_people=planet_people+'" << (this->getResPeople() - this->initResPeople) << "', ";
 			if (this->userChanged) {
 				query << " planet_user_changed='" << this->userChanged << "', ";
-				query << "	planet_name='" << mysqlpp::quote << this->codeName << "', ";
+				query << "	planet_name=" << mysqlpp::quote << this->codeName << ", ";
 			}
 			query << "	planet_last_updated='" << this->lastUpdated << "' ";
 			query << "WHERE ";
