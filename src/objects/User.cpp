@@ -233,13 +233,13 @@
 			<< "FROM "
 			<< "	technologies "
 			<< "WHERE "
-			<< "	tech_name = '" << tech << "' "
+			<< "	tech_name = " << mysqlpp::quote << tech << " "
 			<< "LIMIT 1;";
 		RESULT_TYPE res = query.store();
 		query.reset();
 
 		if( res && res.size() > 0 ) {
-			unsigned int techid= res["tech_id"];
+			unsigned int techid= res.at(0)[res.field_num("tech_id")];
 			techlvl= this->getTechLevel(techid);
 		}
 		return techlvl;

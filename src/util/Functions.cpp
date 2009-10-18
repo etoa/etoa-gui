@@ -16,7 +16,7 @@ namespace etoa
 			<< "	users "
 			<< "WHERE "
 			<< "	user_id='" << userId << "';";
-		mysqlpp::Result res = query.store();
+		RESULT_TYPE res = query.store();
 		
 		if (res) {
 			int resSize = res.size();			
@@ -304,7 +304,7 @@ namespace etoa
 			<< "	cells "
 			<< "	ON cells.id=entities.cell_id "
 			<< "	AND entities.id='" << pid1 <<"';";
-		mysqlpp::Result res1 = query.store();
+		RESULT_TYPE res1 = query.store();
 		query.reset();
 		
 		query << "SELECT "
@@ -319,7 +319,7 @@ namespace etoa
 			<< "	cells "
 			<< "	ON cells.id=entities.cell_id "
 			<< "	AND entities.id='" << pid2 <<"';";
-		mysqlpp::Result res2 = query.store();
+		RESULT_TYPE res2 = query.store();
 		query.reset();
 		
 		if (res1) {
