@@ -100,17 +100,18 @@
 							<< "	fleet_id "
 							<< ") "
 							<< "VALUES "
-							<< "('" << query.insert_id() << "', "
-							<< "'" << this->subject << "', ";
+							<< "(" << mysqlpp::quote << my.insert_id(query) << ", "
+							<< mysqlpp::quote << this->subject << ", ";
 						
-						std::string buff = this->text;
+//						std::string buff = this->text;
 						// TODO: Dirty!! Hack. fix it
-						if (buff.find("'") && !buff.find("\\'"))
-							buff = etoa::addslashes(buff);
-							
-						query << "'" << buff << "', "
-							<< "'" << this->entityId << "', "
-							<< "'" << this->fleetId << "' "
+//						if (buff.find("'") && !buff.find("\\'"))
+//							buff = etoa::addslashes(buff);
+//						query << "'" << buff << "', "
+
+						query << mysqlpp::quote << this->text << ", "
+							<< mysqlpp::quote << this->entityId << ", "
+							<< mysqlpp::quote << this->fleetId
 							<< ");";
 						std::cout << query.str() << std::endl;
 						query.store();

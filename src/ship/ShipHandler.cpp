@@ -25,7 +25,7 @@ namespace ship
 			<< "	queue_starttime<" << time <<" "
 			<< "	AND queue_build_type<1 "
 			<< "ORDER BY queue_entity_id;";
-		mysqlpp::StoreQueryResult res = query.store();		
+		mysqlpp::Result res = query.store();
 		query.reset();
 
 		// Add changed planets to vector

@@ -1004,7 +1004,7 @@
 		query << "WHERE ";
 		query << "	id='" << this->cellId << "' ";
 		query << "LIMIT 1;";
-		mysqlpp::StoreQueryResult cRes = query.store();
+		RESULT_TYPE cRes = query.store();
 		query.reset();
 
 		if (cRes) {
@@ -1047,7 +1047,7 @@
 		query << "	entity_to='" << this->getId() << "' ";
 		query << "	AND action='support' ";
 		query << "	AND status='3';";
-		mysqlpp::StoreQueryResult fRes = query.store();
+		RESULT_TYPE fRes = query.store();
 		query.reset();
 
 		if (fRes) {
@@ -1081,7 +1081,7 @@
 			query << "	shiplist_entity_id='" << this->getId() << "' ";
 			query << "	AND shiplist_count>'0' ";
 			query << "	AND shiplist_user_id='" << this->getUserId() << "';";
-			mysqlpp::StoreQueryResult slRes = query.store();
+			RESULT_TYPE slRes = query.store();
 			query.reset();
 
 			if (slRes) {
@@ -1180,7 +1180,7 @@
 			query << "	deflist_entity_id='" << this->getId() << "' ";
 			query << "	AND deflist_count>'0' ";
 			query << "	AND deflist_user_id='" << this->getUserId() << "';";
-			mysqlpp::StoreQueryResult dlRes = query.store();
+			RESULT_TYPE dlRes = query.store();
 			query.reset();
 
 			if (dlRes) {
@@ -1279,7 +1279,7 @@
 				<< "	alliance_techlist "
 				<< "WHERE "
 				<< "	alliance_techlist_alliance_id='" << this->entityUser->getAllianceId() << "';";
-			mysqlpp::StoreQueryResult aRes = query.store();
+			RESULT_TYPE aRes = query.store();
 			query.reset();
 			
 			if (aRes) {
@@ -1396,7 +1396,7 @@
 				<< "	buildlist_entity_id='" << this->id << "' "
 				<< "	AND buildlist_current_level>'0' "
 				<< "	AND buildlist_user_id='" << this->userId << "';";
-			mysqlpp::StoreQueryResult bRes = query.store();
+			RESULT_TYPE bRes = query.store();
 			query.reset();
 
 			if (bRes) {
@@ -1478,7 +1478,7 @@
 		query << "ORDER BY ";
 		query << "	RAND() ";
 		query << "LIMIT 1;";
-		mysqlpp::StoreQueryResult bRes = query.store();
+		RESULT_TYPE bRes = query.store();
 		query.reset();
 
 		if (bRes) {

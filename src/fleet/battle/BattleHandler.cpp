@@ -80,7 +80,7 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 			query << "	(alliance_bnd_alliance_id1='" << entity->getUser()->getAllianceId() << "' ";
 			query << "	AND alliance_bnd_alliance_id2='" << fleet->fleetUser->getAllianceId() << "') ";
 			query << "	AND alliance_bnd_level='3';";
-			mysqlpp::StoreQueryResult warCheckRes = query.store();
+			RESULT_TYPE warCheckRes = query.store();
 			query.reset();
 
 			if (warCheckRes)
@@ -344,7 +344,7 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 			<< "	" << fleet->getLandtime() << ");";
 		query.store();
 
-		log->addText(("Battle id: " + etoa::d2s(query.insert_id())));
+		log->addText(("Battle id: " + etoa::d2s(my.insert_id(query))));
 		
 		switch (returnV)
 		{

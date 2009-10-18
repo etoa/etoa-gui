@@ -18,8 +18,8 @@ public:
 	* Eventhandler constructor for all handler classes.
 	* Sets the internal MySQL connection pointer
 	*/
-	EventHandler() {
-		My &my = My::instance();
+	EventHandler():my(My::instance()) {
+//		My &my = My::instance();
 		con_ = my.get();
 		
 	}
@@ -33,6 +33,7 @@ public:
 	virtual void update() = 0;
 
 protected:
+	My &my;
 	/**
 	* The connection object
 	*/

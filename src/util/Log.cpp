@@ -10,7 +10,7 @@ void log(int priority, std::string message)
 	if (priority <= LOG_ERR)
 		std::cout << "ERR: " << message << std::endl;
 	openlog (logProgam("").c_str(), LOG_CONS | LOG_PID | LOG_NDELAY, LOG_LOCAL1);
-	syslog (priority, message.c_str());
+	syslog (priority, "%s", message.c_str());
 	closelog ();
 }
 

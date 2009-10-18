@@ -72,7 +72,7 @@ namespace planet
 			<< " INNER JOIN  "
 			<< "	users  "
 			<< " ON planets.planet_user_id = users.user_id;";
-		mysqlpp::StoreQueryResult res = query.store();			
+		RESULT_TYPE res = query.store();
 		query.reset();
 		
 		if (res) {

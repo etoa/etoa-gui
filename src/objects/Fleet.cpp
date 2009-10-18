@@ -929,7 +929,7 @@
 			<< "	planets.planet_user_id='" << this->getUserId() << "' "
 			<< "	AND planets.planet_user_main='1' "
 			<< "LIMIT 1;";
-		mysqlpp::StoreQueryResult mainRes = query.store();
+		RESULT_TYPE mainRes = query.store();
 		query.reset();
 
 		if (mainRes) {
@@ -1132,7 +1132,7 @@
 			<< "	leader_id='" << this->getLeaderId() << "' "
 			<< "	AND landtime<='" << time << "' "
 			<< "	AND status=3;";
-		mysqlpp::StoreQueryResult fRes = query.store();
+		RESULT_TYPE fRes = query.store();
 		query.reset();
 
 		if (fRes) {
@@ -1164,7 +1164,7 @@
 				<< "	fleet_ships "
 				<< "WHERE "
 				<< "	fs_fleet_id='" << this->getId() << "';";
-			mysqlpp::StoreQueryResult fsRes = query.store();
+			RESULT_TYPE fsRes = query.store();
 			query.reset();
 
 			if (fsRes) {
@@ -1329,7 +1329,7 @@
 				<< "	alliance_techlist "
 				<< "WHERE "
 				<< "	alliance_techlist_alliance_id='" << this->fleetUser->getAllianceId() << "';";
-			mysqlpp::StoreQueryResult aRes = query.store();
+			RESULT_TYPE aRes = query.store();
 			query.reset();
 			
 			if (aRes) {
@@ -1500,7 +1500,7 @@
 				<< "WHERE "
 				<< "	id='" << this->getId() << "' "
 				<< "LIMIT 1;";
-			mysqlpp::StoreQueryResult fsRes = query.store();
+			RESULT_TYPE fsRes = query.store();
 			query.reset();
 		}
 		else {

@@ -94,12 +94,12 @@ int Report::save(int userId) {
 		query.store();
 		query.reset();
 
-		return query.insert_id();
+		return my.insert_id(query);
 	}
-		catch (mysqlpp::Exception* e)
-		{
+	catch (mysqlpp::Exception* e) {
 			LOG(LOG_ERR, "MySQL error while saving report: " << e->what()<<", Query: "<<query.str());
-		}
+	}
+
 	return 0;
 }
 

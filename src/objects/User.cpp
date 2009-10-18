@@ -61,7 +61,7 @@
 			<< "WHERE "
 			<< "	user_id='" << this->userId << "' "
 			<< "LIMIT 1;";
-		mysqlpp::StoreQueryResult maskRes = query.store();
+		RESULT_TYPE maskRes = query.store();
 		query.reset();
 		
 		if (maskRes) {
@@ -121,7 +121,7 @@
 			<< "WHERE "
 			<< "	id=" << this->userId << " "
 			<< "LIMIT 1;";
-		mysqlpp::StoreQueryResult mRes = query.store();
+		RESULT_TYPE mRes = query.store();
 		query.reset();
 		
 		if (mRes) {
@@ -220,6 +220,30 @@
 			this->loadTechs();
 		return techs[tech];
 	}
+
+	unsigned int User::getTechLevel(std::string tech) {
+		unsigned int techlvl= 0;
+
+		My &my= My::instance();
+		mysqlpp::Connection *con_ = my.get();
+
+		mysqlpp::Query query= con_->query();
+		query << "SELECT "
+			<< "	tech_id "
+			<< "FROM "
+			<< "	technologies "
+			<< "WHERE "
+			<< "	tech_name = '" << tech << "' "
+			<< "LIMIT 1;";
+		RESULT_TYPE res = query.store();
+		query.reset();
+
+		if( res && res.size() > 0 ) {
+			unsigned int techid= res["tech_id"];
+			techlvl= this->getTechLevel(techid);
+		}
+		return techlvl;
+	}
 	
 	void User::loadData() {
 		if (!this->dataLoaded) {
@@ -245,7 +269,7 @@
 					<< "WHERE "
 					<< "	user_id='" << this->userId << "' "
 					<< "LIMIT 1;";
-				mysqlpp::StoreQueryResult uRes = query.store();
+				RESULT_TYPE uRes = query.store();
 				query.reset();
 				
 				if (uRes) {
@@ -294,7 +318,7 @@
 				<< "WHERE "
 				<< "	techlist_user_id='" << this->userId << "' "
 				<< "	AND techlist_current_level>'0';";
-			mysqlpp::StoreQueryResult tRes = query.store();
+			RESULT_TYPE tRes = query.store();
 			query.reset();
 			
 			if (tRes) {
@@ -324,7 +348,7 @@
 		std::map<int,int>::iterator it;
 		for ( it=this->techs.begin() ; it != this->techs.end(); it++ ) {
 			if ((unsigned int)(*it).second && (unsigned int)(*it).second < victim->getTechLevel((*it).first)) {
-				if ((*it).first!=techAtWork) {
+				if ((unsigned int)(*it).first != techAtWork) {
 					TechData::TechData *data = DataHandler.getTechById((*it).first);
 					if (data->getStealable())
 						avaiableTechs[(*it).first] = victim->getTechLevel((*it).first);
@@ -389,7 +413,7 @@
 			<< "	planet_user_id='" << this->userId << "' "
 			<< "	AND planet_user_main='1' "
 			<< "LIMIT 1";
-		mysqlpp::StoreQueryResult mainRes = query.store();
+		RESULT_TYPE mainRes = query.store();
 		query.reset();
 		
 		if (mainRes) {
@@ -415,7 +439,7 @@
 			<< "	planets "
 			<< "WHERE "
 			<< "	planet_user_id='" << this->userId << "';";
-		mysqlpp::StoreQueryResult planetRes = query.store();
+		RESULT_TYPE planetRes = query.store();
 		query.reset();
 		
 		if (planetRes) {

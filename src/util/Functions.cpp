@@ -16,7 +16,7 @@ namespace etoa
 			<< "	users "
 			<< "WHERE "
 			<< "	user_id='" << userId << "';";
-		mysqlpp::StoreQueryResult res = query.store();		
+		mysqlpp::Result res = query.store();
 		
 		if (res) {
 			int resSize = res.size();			
@@ -196,18 +196,18 @@ namespace etoa
 		query << "	message_timestamp, ";
 		query << "	message_cat_id ";
 		query << ") ";
-		query << "VALUES ";
-		query << "('0', '";
-		query << user_id << "', '";
-		query << time(0) << "', '";
-		query << msg_type << "' ";
+		query << "VALUES (";
+		query << "'0', ";
+		query << mysqlpp::quote << user_id << ", ";
+		query << mysqlpp::quote << time(0) << ", ";
+		query << mysqlpp::quote << msg_type;
 		query << ");";
 		query.store();
-		
-		int iid = query.insert_id();
-		
+
+		int iid = my.insert_id(query);
+
 		query.reset();
-		
+
 		query << "INSERT INTO ";
 		query << "	message_data ";
 		query << "(";
@@ -215,10 +215,10 @@ namespace etoa
 		query << "	subject, ";
 		query << "	text ";
 		query << ") ";
-		query << "VALUES ";
-		query << "('" << iid << "', ";
-		query << "'" << subject << "', ";
-		query << "'" << text << "' ";
+		query << "VALUES (";
+		query << mysqlpp::quote << iid << ", ";
+		query << mysqlpp::quote << subject << ", ";
+		query << mysqlpp::quote << text;
 		query << ");";
 		query.store();
 		query.reset();
@@ -304,7 +304,7 @@ namespace etoa
 			<< "	cells "
 			<< "	ON cells.id=entities.cell_id "
 			<< "	AND entities.id='" << pid1 <<"';";
-		mysqlpp::StoreQueryResult res1 = query.store();		
+		mysqlpp::Result res1 = query.store();
 		query.reset();
 		
 		query << "SELECT "
@@ -319,7 +319,7 @@ namespace etoa
 			<< "	cells "
 			<< "	ON cells.id=entities.cell_id "
 			<< "	AND entities.id='" << pid2 <<"';";
-		mysqlpp::StoreQueryResult res2 = query.store();		
+		mysqlpp::Result res2 = query.store();
 		query.reset();
 		
 		if (res1) {

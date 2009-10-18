@@ -93,7 +93,7 @@ namespace market
 			<< "WHERE "
 			<< "	date_end<'" << time << "' "
 			<< "	OR date_delete!='0';";
-		mysqlpp::StoreQueryResult res = query.store();		
+		RESULT_TYPE res = query.store();
 		query.reset();
 
 		if (res) {
@@ -120,7 +120,7 @@ namespace market
 						<< "	AND buildlist_current_level>'0' "
 						<< "	AND buildlist_user_id='" << arr["user_id"] << "' "
 						<< "LIMIT 1;";
-					mysqlpp::StoreQueryResult mres = query.store();		
+					RESULT_TYPE mres = query.store();
 					query.reset();
 					
 					if (mres) {
@@ -238,7 +238,7 @@ namespace market
 									<< "	user_multi_user_id='" << arr["user_id"] << "' "
 									<< "	AND user_multi_multi_user_id='" << arr["current_buyer_id"] << "' "
 									<< "LIMIT 1;";
-								mysqlpp::StoreQueryResult multi_res = query.store();		
+								RESULT_TYPE multi_res = query.store();
 								query.reset();
 				
 								query <<"SELECT "
@@ -249,7 +249,7 @@ namespace market
 									<< "	user_multi_user_id='" << arr["current_buyer_id"] << "' "
 									<< "	AND user_multi_multi_user_id='" << arr["user_id"] << "' "
 									<< "LIMIT 1;";
-								mysqlpp::StoreQueryResult multi_res2 = query.store();		
+								RESULT_TYPE multi_res2 = query.store();
 								query.reset();
 							
 								if (multi_res and multi_res2) {
@@ -412,7 +412,7 @@ namespace market
 			<< "	buyable='0' "
 			<< "	AND sent='0' "
 			<< "	AND date_delete>'" << time << "';";
-		mysqlpp::StoreQueryResult res = query.store();		
+		RESULT_TYPE res = query.store();
 		query.reset();	
 		
 		if (res) {
@@ -480,9 +480,8 @@ namespace market
 						<< "(	fs_fleet_id, "
 						<< "	fs_ship_id, "
 						<< "	fs_ship_cnt) "
-						<< "VALUES "
-						<< "( "
-						<< "	'" << query.insert_id() << "', "
+						<< "VALUES ("
+						<< "	'" << my.insert_id(query) << "', "
 						<< "	'" << config.idget("MARKET_SHIP_ID") << "', "
 						<< "	'1');";
 					query.store();
@@ -524,10 +523,9 @@ namespace market
 						<< "(fs_fleet_id, "
 						<< "fs_ship_id, "
 						<< "fs_ship_cnt) "
-						<< "VALUES "
-						<< "( "
-						<< "'" << query.insert_id() << "',"
-						<< "'" << config.idget("MARKET_SHIP_ID") << "', "
+						<< "VALUES ("
+						<< mysqlpp::quote << my.insert_id(query) << ","
+						<< mysqlpp::quote << config.idget("MARKET_SHIP_ID") << ", "
 						<< "'1');";
 					query.store();
 					query.reset();

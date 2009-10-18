@@ -19,7 +19,7 @@
 		query << "WHERE ";
 		query << "	id=" << this->id << " ";
 		query << "LIMIT 1;";
-		mysqlpp::StoreQueryResult nRes = query.store();
+		RESULT_TYPE nRes = query.store();
 		query.reset();
 		
 		if (nRes) {
@@ -110,7 +110,7 @@
 			query << "ORDER BY ";
 			query << " RAND() ";
 			query << "LIMIT 1;";
-			mysqlpp::StoreQueryResult searchRes = query.store();
+			RESULT_TYPE searchRes = query.store();
 			query.reset();
 			
 			if (searchRes) {

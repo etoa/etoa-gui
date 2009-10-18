@@ -25,7 +25,7 @@ namespace aPoints
 			<< "ON "
 			<< "	alliance_id=alliance_buildlist_alliance_id "
 			<< "	AND alliance_buildlist_building_id='3';";
-		mysqlpp::StoreQueryResult res = query.store();		
+		RESULT_TYPE res = query.store();
 		query.reset();
 		
 		if (res) {

@@ -32,9 +32,8 @@ namespace building
 			<< "	buildlist_build_type>2 "
 			<< "	AND buildlist_building_id='" << config.idget("FLEET_CONTROL_ID") << "' "
 			<< "	AND buildlist_build_end_time<" << time << " ORDER BY buildlist_entity_id;";
-		mysqlpp::StoreQueryResult res = query.store();		
-		
-		
+		RESULT_TYPE res = query.store();
+
 		if (res) {
 			unsigned int resSize = res.size();
 			if (resSize>0) {
@@ -59,9 +58,8 @@ namespace building
 					<< "WHERE "
 					<< "	user_id='" << (int)row["buildlist_user_id"] << "' "
 					<< "LIMIT 1;";
-					mysqlpp::StoreQueryResult maskRes = query.store();
-					
-					
+					RESULT_TYPE maskRes = query.store();
+
 					if (maskRes) {
 						int maskSize = maskRes.size();
 						
@@ -141,7 +139,7 @@ namespace building
 			<< "	buildlist_build_type=3 "
 			<< "	AND buildlist_build_end_time<" << time << ";";
 		query.store();
-		DEBUG("Upgraded "<<query.affected_rows()<<" Buildings");
+		DEBUG("Upgraded "<< my.affected_rows(query) <<" Buildings");
 		    
 		
 		query << "UPDATE "
@@ -155,7 +153,7 @@ namespace building
 			<< "	buildlist_build_type=4 "
 			<< "	AND buildlist_build_end_time<" << time << ";";
 		query.store();   	
-		DEBUG("Downgraded "<<query.affected_rows()<<" Buildings");		
-		
+		DEBUG("Downgraded "<< my.affected_rows(query) <<" Buildings");
+
 	}	
 }

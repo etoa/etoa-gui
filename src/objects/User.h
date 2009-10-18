@@ -56,6 +56,7 @@ class User
 		
 		double getTechBonus(unsigned int tech);
 		unsigned int getTechLevel(unsigned int tech);
+		unsigned int getTechLevel(std::string tech);
 		
 		std::string stealTech(User* victim);
 		
