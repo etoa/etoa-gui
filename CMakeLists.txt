@@ -30,9 +30,4 @@ ADD_SUBDIRECTORY(src)
 
 SET(CMAKE_INSTALL_PREFIX "/usr/local/bin")
 
-EXEC_PROGRAM(svn 
-	ARGS log > ChangeLog
-)
-
-
 
