@@ -344,7 +344,9 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 			<< "	" << fleet->getLandtime() << ");";
 		query.store();
 
-		log->addText(("Battle id: " + etoa::d2s(my.insert_id(query))));
+		std::cerr << query.str();
+
+		log->addText(("Battle id: " + etoa::d2s(query.insert_id())));
 		
 		switch (returnV)
 		{
