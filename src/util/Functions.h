@@ -94,7 +94,7 @@ namespace etoa
 	/**
 	* Liefet den Usernamen  
 	*
-	* @param int uid User ID 
+	* @param userId User ID 
 	* @author Glaubinix
 	*/
 	std::string get_user_nick(int userId);
@@ -102,7 +102,8 @@ namespace etoa
 	/**
 	* Liefet den Bonus durch die Temparatur 
 	*
-	* @param int t_min, int t_max Temparaturbegrenzung des Planeten
+	* @param t_min Minimaler Temperaturbonus
+	* @param t_max Maximaler Temperaturbonus
 	* @author Glaubinix
 	*/
 	float getSolarFuelBonus(int t_min, int t_max);
@@ -110,7 +111,8 @@ namespace etoa
 	/**
 	* Liefet den Bonus durch die Temparatur 
 	*
-	* @param int t_min, int t_max Temparaturbegrenzung des Planeten
+	* @param t_min Min Bonus
+	* @param t_max Max Bonus
 	* @author Glaubinix
 	*/
 	int getSolarPowerBonus(int t_min, int t_max);
@@ -118,7 +120,7 @@ namespace etoa
 	/**
 	* Liefet den Namen der Aktion zur�ck 
 	*
-	* @param string fAction, DB eintrag der Aktion
+	* @param fAction DB eintrag der Aktion
 	* @author Glaubinix
 	*/
 	std::string fa(std::string fAction);
@@ -126,16 +128,17 @@ namespace etoa
 	/**
 	* Wandelt ein Zahl in einen String um 
 	*
-	* @param double number
+	* @param number
 	* @author Glaubinix
 	*/		
 	std::string d2s(double number);
+		
 	double s2d(std::string number);
 		
 	/**
 	* Formatiert einen Timestamp
 	*
-	* @param int time, Zeitangabe in Form eines Timestamps
+	* @param time Zeitangabe in Form eines Timestamps
 	* @author Glaubinix
 	*/
 	std::string formatTime(int time);									
@@ -143,7 +146,7 @@ namespace etoa
 	/**
 	* Formatiert ein Datum 
 	*
-	* @param std::string vale zu formatierende Zahl
+	* @param Zeitstempel Zu formatierende Zahl
 	* @author Glaubinix
 	*/
 	std::string format_time(std::time_t Zeitstempel);	
@@ -151,7 +154,7 @@ namespace etoa
 	/**
 	* Formatiert eine Zahl mit '
 	*
-	* @param std::string vale zu formatierende Zahl
+	* @param value zu formatierende Zahl
 	* @author Glaubinix
 	*/
 	std::string nf(std::string  value);
@@ -159,10 +162,10 @@ namespace etoa
 	/**
 	* Speichert Nachricht in die Tabelle
 	*
-	* @param int user_id 
-	* @param int msg_type Kategorie
-	* @param string subject
-	* @param string text
+	* @param user_id 
+	* @param msg_type Kategorie
+	* @param subject
+	* @param text
 	* @author Glaubinix
 	*/	
 	void send_msg(int user_id, int msg_type, std::string subject, std::string text);
@@ -170,9 +173,9 @@ namespace etoa
 	/**
 	* Speichert Daten in die Log-Tabelle
 	*
-	* @param int facility Log Kategorie
-	* @param string log_text Log text
-	* @param time_t log_timestamp Zeit
+	* @param facility Log Kategorie
+	* @param log_text Log text
+	* @param log_timestamp Zeit
 	* @todo Perpahps define another overloaded function with only two arguments and automatic time choosing
 	* @author Glaubinix
 	*/
@@ -181,8 +184,8 @@ namespace etoa
 	/**
 	* Liefert eine Zahl mit Anzahl Komastellen
 	*
-	* @param float number zu bearbeitende Zahl
-	* @param int precision Anzahl Nachkommastellen
+	* @param number zu bearbeitende Zahl
+	* @param precision Anzahl Nachkommastellen
 	* @author Glaubinix
 	*/
 	double s_round(float number, int precision);
@@ -190,8 +193,8 @@ namespace etoa
 	/**
 	* Liefert die Distance zwischen 2 Planeten
 	*
-	* @param int pid1 PlanetenID Planet 1
-	* @param int pid1 PlanetenID Planet 2
+	* @param rowPlanet1 PlanetenID Planet 1
+	* @param rowPlanet2 PlanetenID Planet 2
 	* @author Glaubinix
 	*/	
 	double calcDistance(mysqlpp::Row rowPlanet1, mysqlpp::Row rowPlanet2);
@@ -199,8 +202,8 @@ namespace etoa
 	/**
 	* Liefert die Distance zwischen 2 Planeten
 	*
-	* @param mysqlpp::Row rowPlanet1 Planetendaten Planet 1
-	* @param mysqlpp::Row rowPlanet2 Planetendaten Planet 2
+	* @param pid1 Planetendaten Planet 1
+	* @param pid2 Planetendaten Planet 2
 	* @author Glaubinix
 	*/
 	double calcDistanceByPlanetId(int pid1, int pid2);
@@ -208,10 +211,10 @@ namespace etoa
 	/**
 	* F�gt die Kampfpunkte zur Statistik hinzu
 	*
-	* @param int userId Benutzer
-	* @param int points Anzahlpunkte
-	* @param bool won Kampf gewonnen?
-	* @param std::string reason Grund der Punkte
+	* @param userId Benutzer
+	* @param points Anzahlpunkte
+	* @param won Kampf gewonnen?
+	* @param reason Grund der Punkte
 	*/
 	void addBattlePoints(int userId, int points, short result, std::string reason="");
 	void addSpecialiBattle(int userId, std::string reason);
