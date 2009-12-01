@@ -3,7 +3,12 @@
 
 #include "ConfigHandler.h"
 
-	/** Liefert die Configwerte als string **/
+	/**
+	 * Liefert die Configwerte als string 
+	 *
+	 * @param name
+	 * @param value
+	 */
 	std::string Config::get(std::string name, int value)
 	{
 		std::vector<std::string> temp (3);
@@ -11,7 +16,12 @@
 		return(temp[value]);
 	}
 	
-	/** Liefert die Configwerte als double **/
+	/** 
+	 * Liefert die Configwerte als double 
+	 *
+	 * @param name
+	 * @param value
+	 */
 	double Config::nget(std::string name, int value)
 	{
 		std::string temp = get(name, value);
@@ -19,36 +29,58 @@
 		return(var);
 	}
 	
-	/** Liefert die Zahlenwerte gespeicherter Werte **/
+	/** 
+	 * Liefert die Zahlenwerte gespeicherter Werte 
+	 *
+	 * @param name
+	 */
 	double Config::idget(std::string name)
 	{
 		return(idConfig[name]);
 	}
 	
-	/** Liefert die Zahlenwerte gespeicherter Werte **/
+	/** 
+	 * Liefert die Zahlenwerte gespeicherter Werte
+	 *
+	 * @param action
+	 */
 	short Config::getAction(std::string action)
 	{
 		return(actions[action]);
 	}
 	
+	/**
+	 * 
+	 *
+	 * @param action
+	 */
 	std::string Config::getActionName(std::string action)
 	{
 		return(actionName[action]);
 	}
 	
-	// Setzt den Rundenname
+	/**
+	 * Setzt den Rundenname
+	 *
+	 * @param name
+	 */
 	void Config::setRoundName(std::string name)
 	{
 		this->gameRound = name;
 		loadConfig();
 	}
 	
-	// Liefert den Frontendpfad zurück
+	/**
+	 * Liefert den Frontendpfad zurück
+	 */
 	std::string Config::getFrontendPath()
 	{
 		return "/var/www/" + this->gameRound + ".etoa.ch/htdocs/config/";
 	}
-
+	
+	/**
+	 * Reloads config 
+	 */
 	void Config::reloadConfig()
 	{
 		this->sConfig.clear();
@@ -58,9 +90,11 @@
 		this->actionName.clear();
 		
 		loadConfig();
-}
+	}
 	
-	/**	Initialisiert die Configwerte **/
+	/**	
+	 * Initialisiert die Configwerte 
+	 */
 	void Config::loadConfig ()
 	{
 		My &my = My::instance();
