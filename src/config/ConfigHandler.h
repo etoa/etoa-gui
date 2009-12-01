@@ -30,30 +30,30 @@
 		/**
 		* Liefert die Configwerte als string
 		*
-		* @param name, config_name in der DB
-		* @param value, 0=value, 1=param1, 2=param2
+		* @param name config_name in der DB
+		* @param value 0=value, 1=param1, 2=param2
 		**/
 		std::string get(std::string name, int value);
 		
 		/**
 		* Liefert die Configwerte als double
 		*
-		* @param name, config_name in der DB
-		* @param value, 0=value, 1=param1, 2=param2
+		* @param name config_name in der DB
+		* @param value 0=value, 1=param1, 2=param2
 		**/		
 		double nget(std::string name, int value);
 		
 		/**
 		* Liefert die Zahlenwerte gespeicherter Werte
 		*
-		* @param name, Erkennungsname ingame, wie auch backend
+		* @param name Erkennungsname ingame, wie auch backend
 		**/
 		double idget(std::string name);
 		
 		/**
 		* Liefert die Zahlenwerte gespeicherter Flottenaktionen
 		*
-		* @param name, Flottenaktionsnamen
+		* @param name Flottenaktionsnamen
 		**/
 		short getAction(std::string action);
 		std::string getActionName(std::string action);
@@ -61,7 +61,7 @@
 		/**
 		* Setzt den Rundenname
 		*
-		* @param name, Rundenname
+		* @param name Rundenname
 		**/
 		void setRoundName(std::string name);
 			
