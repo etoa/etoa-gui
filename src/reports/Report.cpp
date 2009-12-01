@@ -102,5 +102,3 @@ int Report::save(int userId) {
 
 	return 0;
 }
-
-

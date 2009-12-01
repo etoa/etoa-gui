@@ -13,7 +13,7 @@
 // (C) by EtoA Gaming | www.etoa.ch   			 		//
 //////////////////////////////////////////////////
 //
-// Main loop framework
+// Main loop
 //
 // $Rev$
 // $Author: mrcage $
