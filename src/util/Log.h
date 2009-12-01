@@ -20,7 +20,7 @@
 * LOG_INFO    informational
 * LOG_DEBUG   debug-level messages
 *
-* @example 
+* example 
 *
 *		logPrio(LOG_NOTICE);
 * 	LOG(LOG_NOTICE,"This is a log message for " << 2 << " errors!");
