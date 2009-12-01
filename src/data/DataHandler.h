@@ -38,7 +38,7 @@
 		/**
 		* Liefert ein Data Object zurück
 		*
-		* @param int id
+		* @param id
 		* @author Glaubinix
 		**/
 		ShipData::ShipData* getShipById(int id);

@@ -53,7 +53,7 @@
 		/**
 		* Liefert die Zahlenwerte gespeicherter Flottenaktionen
 		*
-		* @param name Flottenaktionsnamen
+		* @param action Flottenaktionsnamen
 		**/
 		short getAction(std::string action);
 		std::string getActionName(std::string action);
