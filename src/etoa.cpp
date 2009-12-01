@@ -24,6 +24,8 @@
 * Copyright (c) 2004 by EtoA Gaming, www.etoa.net
 *
 * $Rev$
+* $Author$
+* $Date$
 */
 
 #include "etoa.h"

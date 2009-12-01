@@ -1,27 +1,34 @@
 //////////////////////////////////////////////////
-//		 	 ____    __           ______       			//
-//			/\  _`\ /\ \__       /\  _  \      			//
-//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
-//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
-//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
-//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
-//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
-//																					 		//
+//   ____    __           ______                //
+//  /\  _`\ /\ \__       /\  _  \               //
+//  \ \ \L\_\ \ ,_\   ___\ \ \L\ \              //
+//   \ \  _\L\ \ \/  / __`\ \  __ \             //
+//    \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \            //
+//     \ \____/\ \__\ \____/\ \_\ \_\           //
+//      \/___/  \/__/\/___/  \/_/\/_/  	        //
+//                                              //
 //////////////////////////////////////////////////
-// The Andromeda-Project-Browsergame				 		//
-// Ein Massive-Multiplayer-Online-Spiel			 		//
-// (C) by EtoA Gaming | www.etoa.ch   			 		//
+// The Andromeda-Project-Browsergame            //
+// Ein Massive-Multiplayer-Online-Spiel         //
+// Programmiert von Nicolas Perrenoud           //
+// www.nicu.ch | mail@nicu.ch                   //
+// als Maturaarbeit '04 am Gymnasium Oberaargau	//
 //////////////////////////////////////////////////
-//
-// Main loop
-//
-// $Rev$
-// $Author: mrcage $
-// $Date: 2009-09-24 12:07:36 +0200 (Thu, 24 Sep 2009) $
-//
+
+/**
+* Startup function, bootstraps the daemon and 
+* initializes threads, logging and pidfile.
+*
+* @author Nicolas Perrenoud<mrcage@etoa.ch>
+* 
+* Copyright (c) 2004 by EtoA Gaming, www.etoa.net
+*
+* $Rev$
+* $Author$
+* $Date$
+*/
 
 #include "etoa.h"
-
 #include "version.h"
 
 using namespace std;
