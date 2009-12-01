@@ -1,17 +1,17 @@
 //////////////////////////////////////////////////
-//		 	 ____    __           ______       			//
-//			/\  _`\ /\ \__       /\  _  \      			//
-//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
-//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
-//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
-//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
-//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
-//																					 		//
+//   ____    __           ______                //
+//  /\  _`\ /\ \__       /\  _  \               //
+//  \ \ \L\_\ \ ,_\   ___\ \ \L\ \              //
+//   \ \  _\L\ \ \/  / __`\ \  __ \             //
+//    \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \            //
+//     \ \____/\ \__\ \____/\ \_\ \_\           //
+//      \/___/  \/__/\/___/  \/_/\/_/  	        //
+//                                              //
 //////////////////////////////////////////////////
-// The Andromeda-Project-Browsergame				 		//
-// Ein Massive-Multiplayer-Online-Spiel			 		//
-// Programmiert von Nicolas Perrenoud				 		//
-// www.nicu.ch | mail@nicu.ch								 		//
+// The Andromeda-Project-Browsergame            //
+// Ein Massive-Multiplayer-Online-Spiel         //
+// Programmiert von Nicolas Perrenoud           //
+// www.nicu.ch | mail@nicu.ch                   //
 // als Maturaarbeit '04 am Gymnasium Oberaargau	//
 //////////////////////////////////////////////////
 
@@ -20,7 +20,10 @@
 * connection and runs the main loop
 *
 * @author Nicolas Perrenoud<mrcage@etoa.ch>
-* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
+* 
+* Copyright (c) 2004 by EtoA Gaming, www.etoa.net
+*
+* $Rev$
 */
 
 #include "etoa.h"

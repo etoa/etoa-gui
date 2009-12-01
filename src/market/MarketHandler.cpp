@@ -519,13 +519,14 @@ namespace market
 					
 
 					// Schickt gekaufte Rohstoffe mit Handelsschiff
+					// 29.10.09 Fixed a bug where the mysqlpp::quote was used in the query below which caused a crash
 					query << "INSERT INTO fleet_ships "
 						<< "(fs_fleet_id, "
 						<< "fs_ship_id, "
 						<< "fs_ship_cnt) "
 						<< "VALUES ("
-						<< mysqlpp::quote << my.insert_id(query) << ","
-						<< mysqlpp::quote << config.idget("MARKET_SHIP_ID") << ", "
+						<< (int)my.insert_id(query) << ","
+						<< (int)config.idget("MARKET_SHIP_ID") << ", "
 						<< "'1');";
 					query.store();
 					query.reset();

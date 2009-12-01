@@ -16,8 +16,8 @@
 // Main loop framework
 //
 // $Rev$
-// $Author$
-// $Date$
+// $Author: mrcage $
+// $Date: 2009-09-24 12:07:36 +0200 (Thu, 24 Sep 2009) $
 //
 
 #include "etoa.h"
