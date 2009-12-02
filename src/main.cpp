@@ -64,15 +64,6 @@ void sighandler(int sig)
 	LOG(LOG_ERR,"Caught signal "<<sig<<", shutting down due to error");		
 	exit(EXIT_FAILURE);
 	
-	// Restart after segfault
-	/*
-	if (sig==SIGSEGV)
-	{
-		std::string cmd = appPath + " "+(detach ? "-d" : "")+" -k -r "+gameRound;
-		system(cmd.c_str());
-	}*/
-	
-	
 }
 
 // Create a daemon
@@ -147,6 +138,12 @@ void msgQueueThread()
 	LOG(LOG_ERR,"Entering message queue ended");				
 }
 
+bool validateRoundName(const std::string& s)
+{
+   static const boost::regex e("^[a-z0-9]+$");
+   return boost::regex_match(s, e);
+}
+
 int main(int argc, char* argv[])
 {
 	// Register signal handlers
@@ -158,22 +155,22 @@ int main(int argc, char* argv[])
 	signal(SIGQUIT, &sighandler);
 	signal(SIGFPE, &sighandler);
 
-	appPath = std::string(argv[0]);
+	logPrio(LOG_NOTICE);
 
 	// Parse command line
 	AnyOption *opt = new AnyOption();
-  opt->addUsage( "Usage: " );
-  opt->addUsage( "" );
-  opt->addUsage( " -r  --round roundname   Select round to be used (necessary)");
-  opt->addUsage( " -u  --uid userid        Select user id under which it runs (necessary if you are root)");
-  opt->addUsage( " -p  --pidfile path      Select path to pidfile");
-  opt->addUsage( " -k  --killexisting      Kills an already running instance of this backend before starting this instance");
-  opt->addUsage( " -s  --stop              Stops a running instance of this backend");
-  opt->addUsage( " -d  --daemon            Detach from console and run as daemon in background");
-  opt->addUsage( " -l  --log level       	 Specify log level (0=emerg, ... , 7=everything");
-  opt->addUsage( " --debug       					 Enable debug mode");
-  opt->addUsage( " -h  --help              Prints this help");
-  opt->addUsage( " --version           Prints version information");
+  opt->addUsage( "Options: " );
+  opt->addUsage( "  -d, --daemon            Detach from console and run as daemon in background");
+  opt->addUsage( "  -s, --stop              Stops a running instance of this backend");
+  opt->addUsage( "");
+  opt->addUsage( "  -p, --pidfile path      Select path to pidfile");
+  opt->addUsage( "  -u, --uid userid        Select user id under which it runs (necessary if you are root)");
+  opt->addUsage( "  -k, --killexisting      Kills an already running instance of this backend before starting this instance");
+  opt->addUsage( "  -l, --log level         Specify log level (0=emerg, ... , 7=everything");
+  opt->addUsage( "");
+  opt->addUsage( "      --debug             Enable debug mode");
+  opt->addUsage( "  -h, --help              Prints this help");
+  opt->addUsage( "      --version           Prints version information");
   opt->setFlag("help",'h');
   opt->setFlag("version");
   opt->setFlag("killexisting",'k');
@@ -182,24 +179,40 @@ int main(int argc, char* argv[])
   opt->setFlag("debug");
   opt->setOption("log",'l');
   opt->setOption("userid",'u');
-  opt->setOption("round",'r');
   opt->setOption("pidfile",'p');  
   opt->processCommandArgs( argc, argv );
-	if( ! opt->hasOptions()) 
-	{ 
-    opt->printUsage();
-	 	return EXIT_FAILURE;
-	}  
-  if( opt->getFlag( "help" ) || opt->getFlag( 'h' )) 
+
+	appPath = std::string(argv[0]);
+  
+  // Show help
+  if(argc <= 1 || opt->getFlag( "help" ) || opt->getFlag( 'h' )) 
   {	
+		std::cerr << "Usage: " << appPath << " ROUNDNAME [options]" << std::endl;
   	opt->printUsage();
  		return EXIT_SUCCESS;
 	}
+	
+	// Show version info
   if( opt->getFlag( "version" )) 
   {	
   	std::cout << getVersion()<<endl;
  		return EXIT_SUCCESS;
 	}
+  
+  // Set game round
+  gameRound = argv[1];
+  if (!validateRoundName(gameRound))
+  {
+		LOG(LOG_ERR,"Invalid game round name!");  	
+		return EXIT_FAILURE;
+  }
+
+	// Enable debug if requested
+  if( opt->getFlag( "debug" )) 
+  {	
+  	debugEnable(1);
+	}
+
 	bool killExistingInstance = false;
   if( opt->getFlag( "killexisting" ) || opt->getFlag( 'k' )) 
   {	
@@ -221,13 +234,7 @@ int main(int argc, char* argv[])
 		std::cout << "Version " <<versionNumber() << std::endl<< std::endl;
 	}
 	
-
-  if( opt->getFlag( "debug" )) 
-  {	
-  	debugEnable(1);
-	}
-
-	logPrio(LOG_NOTICE);
+	// Log verbosity
   if( opt->getValue('l') != NULL) 
   {	
   	int lvl = atoi(opt->getValue('l'));
@@ -247,18 +254,10 @@ int main(int argc, char* argv[])
 		}
 	}			
 
-	
-	if( opt->getValue( 'r' ) != NULL)
-		gameRound = opt->getValue( 'r' );
-	else if (opt->getValue("round") != NULL )
-		gameRound = opt->getValue("round");
-	else
-	{
-		std::cerr << "Error: No gameround name given!"<<endl;	
-	 	return EXIT_FAILURE;
-	}
+	// Sets the round name the logger uses to create the etoad.roundname.log files
 	logProgam(gameRound);
 	
+	// Set pidfile
 	if( opt->getValue('p') != NULL)
 		pidFile = opt->getValue('p');
 	else if (opt->getValue("pidfile") != NULL )
@@ -266,6 +265,7 @@ int main(int argc, char* argv[])
 	else
 		pidFile = "/var/run/etoa/"+gameRound+".pid";
 		
+	// Set user
 	if( opt->getValue('u') != NULL)
 		ownerUID = atoi(opt->getValue('u'));
 	else if (opt->getValue("uid") != NULL )
@@ -276,13 +276,13 @@ int main(int argc, char* argv[])
   // Set correct uid
   if (setuid(ownerUID)!=0)
   {
-  	std::cerr << "Unable to change user id" << endl;
+  	LOG(LOG_ERR,"Unable to change user id!");  	
     exit(EXIT_FAILURE);  	
   }
   // Check uid
   if (getuid()==0)
   {
-  	std::cerr << "This software cannot be run as root!" <<endl;
+  	LOG(LOG_ERR,"This software cannot be run as root!");  	
     exit(EXIT_FAILURE);  	
   }  
 
@@ -329,10 +329,12 @@ int main(int argc, char* argv[])
  		return EXIT_FAILURE;		
  	}	
 
-	LOG(LOG_NOTICE,"Starting EtoA event-handler "<<versionNumber()<<" for universe " << gameRound);
+	LOG(LOG_NOTICE,"Starting EtoA event-handler "<<versionNumber()<<" $Rev$ for universe " << gameRound);
 
 	if (detach)
 		daemonize();
+	else
+		pf->write();
 
 	Config &config = Config::instance();
 	config.setRoundName(gameRound);

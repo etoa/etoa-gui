@@ -56,41 +56,39 @@ int PIDFile::readPid()
 void PIDFile::write()
 {
   // open pidfile for writing
-  pidfile_fd = open(pidfile_path.c_str(), 
-                    O_WRONLY|O_CREAT|O_NOFOLLOW, 0644);
+  pidfile_fd = open(pidfile_path.c_str(),O_WRONLY|O_CREAT|O_NOFOLLOW, 0644);
   if (0 > pidfile_fd)
-    {
+  {
       int err = errno;
       std::ostringstream msg;
       msg << "Cannot open pidfile '" << pidfile_path.c_str() << "': "
           << strerror(err);
       throw std::runtime_error(msg.str());
-    }
+  }
 
   // lock pidfile for writing
   int rc = lockf(pidfile_fd, F_TLOCK, 0);
   if (-1 == rc)
-    {
+  {
       int err = errno;
       std::ostringstream msg;
-      msg << "Cannot lock pidfile '" << pidfile_path << "': "
-          << strerror(err);
+      msg << "Cannot lock pidfile '" << pidfile_path << "': " << strerror(err);
       throw std::runtime_error(msg.str());
-    }
+  }
 
   // truncate pidfile at 0 length
   ftruncate(pidfile_fd, 0);
 
   // write our pid
   try
-    {
-      std::ofstream pidf(pidfile_path.c_str());
-      pidf << getpid();
-    }
-  catch(std::exception x) {
+  {
+    std::ofstream pidf(pidfile_path.c_str());
+    pidf << getpid();
+  }
+  catch(std::exception x) 
+  {
     std::ostringstream msg;
-    msg << "Cannot write pidfile '" << pidfile_path << "': "
-        << x.what();
+    msg << "Cannot write pidfile '" << pidfile_path << "': " << x.what();
     throw std::runtime_error(msg.str());
   }
 }

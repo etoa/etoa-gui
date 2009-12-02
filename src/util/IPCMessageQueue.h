@@ -23,7 +23,7 @@
 #include <sys/ipc.h>
 #include <sys/msg.h>
 #include <vector>
-#include<sys/errno.h>
+#include <sys/errno.h>
 
 #include "ExceptionHandler.h"
 #include "Functions.h"

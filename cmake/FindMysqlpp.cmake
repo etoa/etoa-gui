@@ -1,8 +1,8 @@
 FIND_PATH(MYSQLPP_INCLUDE_DIR mysql++.h /usr/include/mysql++ /usr/local/include/mysql++)
 
-FIND_LIBRARY(MYSQLPP_LIBRARY NAMES mysqlpp PATH /usr/lib /usr/local/lib)
+FIND_LIBRARY(MYSQLPP_LIBRARY NAMES mysqlpp PATH /lib /usr/lib /usr/local/lib)
 
-FIND_LIBRARY(MYSQLCLIENT_LIBRARY mysqlclient PATH /usr/lib  /usr/local/lib /usr/local/mysql/lib)
+FIND_LIBRARY(MYSQLCLIENT_LIBRARY mysqlclient PATH /lib /usr/lib /usr/local/lib /usr/local/mysql/lib)
 
 IF (MYSQLPP_INCLUDE_DIR AND MYSQLPP_LIBRARY)
    SET(MYSQLPP_FOUND TRUE)
