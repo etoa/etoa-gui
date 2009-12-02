@@ -282,7 +282,7 @@
 						
 						if ($arr['special_ship']) {
 							$this->sBonusSpeed += $arr['shiplist_special_ship_bonus_speed']*$arr['special_ship_bonus_speed'];
-							$this->sBonusPilots -= $arr['shiplist_special_ship_bonus_pilots']*$arr['special_ship_bonus_pilots'];
+							$this->sBonusPilots = max(0,$this->sBonusPilots-$arr['shiplist_special_ship_bonus_pilots']*$arr['special_ship_bonus_pilots']);
 							$this->sBonusCapacity += $arr['shiplist_special_ship_bonus_capacity']*$arr['special_ship_bonus_capacity'];
 						}
 			
@@ -747,6 +747,9 @@
 			$this->shipCount=0;
 			$this->distance=0;
 			$this->shipsFixed=false;
+			$this->sBonusCapacity=1;
+			$this->sBonusPilots=1;
+			$this->sBonusSpeed=1;
 		}				
 		
 		function unsetWormhole()
