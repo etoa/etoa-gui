@@ -231,7 +231,7 @@ int main(int argc, char* argv[])
 	{
 		std::cout << "Escape to Andromeda Event-Handler" << std::endl;
 		std::cout << "(C) 2007 EtoA Gaming Switzerland, www.etoa.ch" << std::endl;
-		std::cout << "Version " <<versionNumber() << std::endl<< std::endl;
+		std::cout << "Version " <<versionNumber() << " $Rev$ " << std::endl<< std::endl;
 	}
 	
 	// Log verbosity
