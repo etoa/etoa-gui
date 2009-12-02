@@ -43,6 +43,7 @@ bool detach = false;
 int ownerUID;
 
 std::string appPath;
+std::string configDir;
 
 // Signal handler
 void sighandler(int sig)
@@ -116,7 +117,7 @@ void msgQueueThread()
 {                                   
 	LOG(LOG_DEBUG,"Entering message queue thread");				
 	
-	IPCMessageQueue queue(Config::instance().getFrontendPath());
+	IPCMessageQueue queue(Config::instance().getConfigDir());
 	if (queue.valid())
 	{
 		while (true)
@@ -164,6 +165,7 @@ int main(int argc, char* argv[])
   opt->addUsage( "  -s, --stop              Stops a running instance of this backend");
   opt->addUsage( "");
   opt->addUsage( "  -p, --pidfile path      Select path to pidfile");
+  opt->addUsage( "  -c, --config-dir path   Path to config directory");
   opt->addUsage( "  -u, --uid userid        Select user id under which it runs (necessary if you are root)");
   opt->addUsage( "  -k, --killexisting      Kills an already running instance of this backend before starting this instance");
   opt->addUsage( "  -l, --log level         Specify log level (0=emerg, ... , 7=everything");
@@ -180,6 +182,7 @@ int main(int argc, char* argv[])
   opt->setOption("log",'l');
   opt->setOption("userid",'u');
   opt->setOption("pidfile",'p');  
+  opt->setOption("config-dir",'c');  
   opt->processCommandArgs( argc, argv );
 
 	appPath = std::string(argv[0]);
@@ -253,6 +256,21 @@ int main(int argc, char* argv[])
 			logPrio(lvl);
 		}
 	}			
+	
+	// Determine config directory
+  if( opt->getValue('c') != NULL) 
+  	configDir = opt->getValue('c');
+  else if( opt->getValue("config-dir") != NULL) 
+  	configDir = opt->getValue("config-dir");
+	else	
+	{
+		configDir = "/home/etoa/"+gameRound+"/config";
+	}	
+	if (!boost::filesystem::is_directory(configDir))
+	{
+		LOG(LOG_ERR,"Config directory "<<configDir<<" does not exist!");  	
+		return EXIT_FAILURE;		
+	}
 
 	// Sets the round name the logger uses to create the etoad.roundname.log files
 	logProgam(gameRound);
@@ -336,8 +354,10 @@ int main(int argc, char* argv[])
 	else
 		pf->write();
 
+
+
 	Config &config = Config::instance();
-	config.setRoundName(gameRound);
+	config.setConfigDir(configDir);
 
 	boost::thread mThread(&etoamain);
 	boost::thread qThread(&msgQueueThread);

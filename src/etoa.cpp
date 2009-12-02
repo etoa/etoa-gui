@@ -52,6 +52,9 @@ void etoamain()
 	}
 	while (true)
 	{
+		try 
+		{ 
+			
 		// Update the data and config, everyday once at about 02:17:00 AM
 		if ((time(0)-1021)%86400==0) {
 			DataHandler.reloadData();
@@ -65,8 +68,7 @@ void etoamain()
 		DEBUG("- EtoA Eventhandler, (C) 2007 by EtoA Gaming, Time: "<< std::time(0) <<" -");
 		DEBUG("----------------------------------------------------------------\n");
 		
-		try 
-		{ 
+
 	
 			//quest::QuestHandler* qh = new quest::QuestHandler();
 			//qh->update();
@@ -165,24 +167,13 @@ void etoamain()
 		} 
 		// Catch mysql exceptions
     catch (mysqlpp::BadQuery e) {
-    	/* mysqlpp 3.0
-        if (e.errnum() == ER_LOCK_DEADLOCK) 
-        {
-            LOG(LOG_ERR,"MySQL: Transaction deadlock detected! BadQuery::errnum = " << e.errnum());
-            //cerr << "Connection::errnum = " << con.errnum() <<
-        }
-        else 
-        {*/
-            LOG(LOG_ERR,"MySQL: Unexpected query error: " << e.what());
-        //}
+        LOG(LOG_ERR,"MySQL: Unexpected query error: " << e.what());
 			  sleep(10);
     }
 		catch (mysqlpp::Exception e) 
 		{ 
 		  LOG(LOG_ERR,"MySQL: General error: " << e.what()); 
 		  sleep(10);
-		  // TODO This is a dirty workaround
-		  //kill(getpid(),SIGIOT);
 		} 			
 		
 		sleep(minLoopDuration);

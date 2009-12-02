@@ -9,6 +9,8 @@ SET(UTIL_SRC_FILES
 	Log.h
 	Debug.h
 	Debug.cpp
+	Chameleon.cpp
+	ConfigFile.cpp
 )
 
 ADD_LIBRARY(util ${UTIL_SRC_FILES})

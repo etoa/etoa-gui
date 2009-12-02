@@ -11,6 +11,8 @@
 #include <fstream>
 
 #include "config/ConfigHandler.h"
+#include "util/ConfigFile.h"
+
 /**
 * Mysql Singleton for the Connection Objects
 * 
@@ -60,7 +62,7 @@
 		My () {
 			loadData();
 
-			mysqlpp::Connection con((mysql["DB_DATABASE"]).c_str(),(mysql["DB_SERVER"]).c_str(),(mysql["DB_USER"]).c_str(),(mysql["DB_PASSWORD"]).c_str());
+			mysqlpp::Connection con((mysql["database"]).c_str(),(mysql["host"]).c_str(),(mysql["user"]).c_str(),(mysql["password"]).c_str());
 			
 			if (!con) {
 				std::cerr << "Database connection failed: " << con.error() << std::endl;
@@ -72,34 +74,14 @@
 		void loadData () {
 			Config &config = Config::instance();
 			std::ifstream datein;
-			std::string datei = config.getFrontendPath() + "db.config.php";
-			std::string zeichen;
-			std::string value, key;
-			std::size_t defineFound, middleFound, endFound;
-			datein.open(datei.c_str());
-	
-			if (datein == false) 
-//				datein.open("/Applications/xampp/htdocs/etoa/trunk/config/db.config.php");
-				datein.open("/home/michael/www/etoa/config/db.config.php");
+			std::string dbCfgFile = config.getConfigDir()+"/db.cfg";
+			
+		  ConfigFile cf(dbCfgFile);
+			mysql.insert ( std::pair<std::string,std::string>("host",cf.Value("mysql","host")) );
+			mysql.insert ( std::pair<std::string,std::string>("database",cf.Value("mysql","database")) );
+			mysql.insert ( std::pair<std::string,std::string>("user",cf.Value("mysql","user")) );
+			mysql.insert ( std::pair<std::string,std::string>("password",cf.Value("mysql","password")) );
 
-			while (datein.eof() != true) {
-				zeichen += datein.get();
-			}
-		
-			defineFound = zeichen.find("define('");
-			while (defineFound!=std::string::npos) {
-				middleFound = zeichen.find("','");
-				endFound = zeichen.find("');");
-				key = "";
-				value = "";
-
-				key += zeichen.substr((int)defineFound + 8, (int)middleFound - (int)defineFound - 8);
-				value += zeichen.substr((int)middleFound + 3, endFound - (int)middleFound -3);
-				mysql.insert ( std::pair<std::string,std::string>(key,value) );
-
-				zeichen.erase(0,endFound+3);
-				defineFound = zeichen.find("define('");
-			}
 		}
 		My ( const My& );
 		My & operator = (const My &);

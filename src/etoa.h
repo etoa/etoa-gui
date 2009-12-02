@@ -44,6 +44,7 @@
 #include <mysql++/mysql++.h>
 #include <boost/thread.hpp>
 #include <boost/regex.hpp>
+#include <boost/filesystem.hpp>
 
 #include "EventHandler.h"
 
@@ -70,6 +71,7 @@
 #include "util/PidFile.h"
 #include "util/Log.h"
 #include "util/Debug.h"
+#include "util/ConfigFile.h"
 
 #ifndef __ETOAMAIN__
 #define __ETOAMAIN__

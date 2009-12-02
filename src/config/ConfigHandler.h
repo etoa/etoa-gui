@@ -58,17 +58,8 @@
 		short getAction(std::string action);
 		std::string getActionName(std::string action);
 		
-		/**
-		* Setzt den Rundenname
-		*
-		* @param name Rundenname
-		**/
-		void setRoundName(std::string name);
-			
-		/**
-		* Liefert den Frontendpfad zurück
-		**/
-		std::string getFrontendPath();
+		void setConfigDir(std::string dir);
+		std::string getConfigDir();
 		
 		/**
 		 * Config neu laden
@@ -110,7 +101,7 @@
 		std::map<std::string, short> actions;
 		std::map<std::string, std::string> actionName;
 		
-		std::string gameRound;
+		std::string configDir;
 		
 		static Config* _instance;
 		

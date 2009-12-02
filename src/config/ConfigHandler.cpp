@@ -32,15 +32,15 @@
 		return(actionName[action]);
 	}
 	
-	void Config::setRoundName(std::string name)
+	void Config::setConfigDir(std::string dir)
 	{
-		this->gameRound = name;
+		this->configDir	= dir;
 		loadConfig();
 	}
 	
-	std::string Config::getFrontendPath()
+	std::string Config::getConfigDir()
 	{
-		return "/var/www/" + this->gameRound + ".etoa.ch/htdocs/config/";
+		return this->configDir;
 	}
 	
 	void Config::reloadConfig()
