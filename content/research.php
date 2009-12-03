@@ -835,11 +835,11 @@ else
 									else
 									{
 	              	  // Baukostenberechnung          Baukosten = Grundkosten * (Kostenfaktor ^ Ausbaustufe)
-	              	  $bc['metal'] = $bv['tech_costs_metal'] * pow($bv['tech_build_costs_factor'],$b_level);
-	              	  $bc['crystal'] = $bv['tech_costs_crystal'] * pow($bv['tech_build_costs_factor'],$b_level);
-	              	  $bc['plastic'] = $bv['tech_costs_plastic'] * pow($bv['tech_build_costs_factor'],$b_level);
-	              	  $bc['fuel'] = $bv['tech_costs_fuel'] * pow($bv['tech_build_costs_factor'],$b_level);
-	              	  $bc['food'] = $bv['tech_costs_food'] * pow($bv['tech_build_costs_factor'],$b_level);
+	              	  $bc['metal'] = $bv['tech_costs_metal'] * $cu->specialist->costsResearch * pow($bv['tech_build_costs_factor'],$b_level);
+	              	  $bc['crystal'] = $bv['tech_costs_crystal'] * $cu->specialist->costsResearch * pow($bv['tech_build_costs_factor'],$b_level);
+	              	  $bc['plastic'] = $bv['tech_costs_plastic'] * $cu->specialist->costsResearch * pow($bv['tech_build_costs_factor'],$b_level);
+	              	  $bc['fuel'] = $bv['tech_costs_fuel'] * $cu->specialist->costsResearch * pow($bv['tech_build_costs_factor'],$b_level);
+	              	  $bc['food'] = $bv['tech_costs_food'] * $cu->specialist->costsResearch * pow($bv['tech_build_costs_factor'],$b_level);
 										
 										// Zuwenig Ressourcen
 										if($b_level<$bv['last_level'] && ($cp->resMetal < $bc['metal'] || $cp->resCrystal < $bc['crystal']  || $cp->resPlastic < $bc['plastic']  || $cp->resFuel < $bc['fuel']  || $cp->resFood < $bc['food']))

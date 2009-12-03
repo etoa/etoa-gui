@@ -76,6 +76,7 @@
 					$count = 0;
 					foreach($_POST['ship_bunker_count'] as $shipId=>$cnt)
 					{
+						$cnt = nf_back($cnt);
 						if ($cnt>0)
 						{
 							$count += $cnt;
@@ -207,6 +208,7 @@
 					
 					foreach($_POST['ship_bunker_count'] as $shipId=>$cnt)
 					{
+						$cnt = nf_back($cnt);
 						if ($cnt>0)
 						{
 							$countBunker = min($count,$cnt);
