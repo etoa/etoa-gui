@@ -36,9 +36,7 @@
  	echo '<br/>';
 
 	if ($mode=="fleet")
-	{
-		$_SESSION['currentEntity']=serialize($cp);
-		
+	{	
 		$res = dbquery("SELECT ship_id,ship_name FROM ships WHERE ship_show=1 ORDER BY ship_type_id,ship_order;");
 		while ($arr = mysql_fetch_row($res))
 		{

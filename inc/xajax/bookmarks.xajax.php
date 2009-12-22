@@ -5,7 +5,7 @@ $xajax->register(XAJAX_FUNCTION,'addBookmarkShip');
 
 	function launchBookmarkProbe($bid)
 	{
-		$cp = unserialize($_SESSION['currentEntity']);
+		$cp = Entity::createFactoryById($_SESSION['cpid']);
 		
 		$objResponse = new xajaxResponse();
 		

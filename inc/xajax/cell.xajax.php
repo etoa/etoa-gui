@@ -5,7 +5,7 @@ $xajax->register(XAJAX_FUNCTION,'launchAnalyzeProbe');
 
 	function launchSypProbe($tid)
 	{
-		$cp = unserialize($_SESSION['currentEntity']);
+		$cp = Entity::createFactoryById($_SESSION['cpid']);
 		
 		$objResponse = new xajaxResponse();
 		ob_start();

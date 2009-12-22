@@ -420,7 +420,7 @@
 				{
 					$build_cnt=nf_back($build_cnt);
 
-					if ($build_cnt>0)
+					if ($build_cnt>0 && isset($defs[$def_id]))
 					{
 			     		// Zählt die Anzahl Verteidigugn dieses Typs im ganzen Account...
 			     		$def_count = 0;

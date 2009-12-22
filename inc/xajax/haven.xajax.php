@@ -611,7 +611,7 @@
 					echo "<tr><th>Piloten:</th>
 						<td>".nf($fleet->getPilots());
 						If ($fleet->sBonusPilots!=1)
-							echo " (inkl. ".get_percent_string(1-$fleet->sBonusPilots,1,1)." Mysticum-Bonus)";
+							echo " (inkl. ".get_percent_string($fleet->sBonusPilots,1,1)." Mysticum-Bonus)";
 					echo "</td></tr>";
 					echo "<tr><th>Bemerkungen:</th>
 						<td id=\"comment\">-</td></tr>";
@@ -918,7 +918,7 @@
 					echo "<tr><th>Piloten:</th>
 						<td>".nf($fleet->getPilots());
 						If ($fleet->sBonusPilots!=1)
-							echo " (inkl. ".get_percent_string(1-$fleet->sBonusPilots,1,1)." Mysticum-Bonus)";
+							echo " (inkl. ".get_percent_string($fleet->sBonusPilots,1,1)." Mysticum-Bonus)";
 					echo "</td></tr>";
 					echo "<tr><th>Bemerkungen:</th>
 						<td id=\"comment\">-</td></tr>";

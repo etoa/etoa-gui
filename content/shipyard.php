@@ -436,7 +436,7 @@
 				{
 					$build_cnt=nf_back($build_cnt);
 
-					if ($build_cnt>0)
+					if ($build_cnt>0 && isset($ships[$ship_id]))
 					{
 			      // Zählt die Anzahl Schiffe dieses Typs im ganzen Account...
 			      $ship_count = 0;
