@@ -23,7 +23,7 @@ class LoginToken
 		}
 		
 		$t = time();
-		if ($time + 120 <= $t || $time - 120 >= $t)
+		if ($time + 3600 <= $t || $time - 3600 >= $t)
 		{
 			$errorCode = 2;
 			return false;					
