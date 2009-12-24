@@ -45,6 +45,16 @@
 	// Login if requested
 	if (isset($_POST['login_submit']))
 	{
+		// NEW: Login token check
+		$lt = new LoginToken();
+		$errorCode = null;
+		if (!$lt->verify($_POST['token'],$errorCode))
+		{
+			$text = date("d.m.Y H:i:s")." Failed token (code $errorCode) ".$_POST['token']."\n".var_export($_POST,true)."\n\n"; 
+			file_put_contents("cache/log/logintoken.log", $text, FILE_APPEND);
+		}
+			
+		
 		if (!$s->login($_POST))
 		{
 			forward(Config::getInstance()->loginurl->v."?page=err&err=pass","Loginfehler",$s->lastError);
