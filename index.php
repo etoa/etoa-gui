@@ -47,18 +47,10 @@
 	{
 		// NEW: Login token check
 		$lt = new LoginToken();
-		$errorCode = null;
-		if (!$lt->verify($_POST['token'],$errorCode))
+		if (!$lt->verify())
 		{
-			$tpost = $_POST;
-			unset($tpost['login_pw']);
-			$text = "[".date("d.m.Y H:i:s")." | ".$_SERVER['REMOTE_ADDR']."] Failed token (code $errorCode) ".$_POST['token']."\n";
-			$text.= var_export($tpost,true)."\n"; 
-			$text.= var_export($_SERVER,true)."\n\n"; 
-			
-			file_put_contents("cache/log/logintoken.log", $text, FILE_APPEND);
+			// TODO: Later when this is completed and working well without false positives, add error message here
 		}
-			
 		
 		if (!$s->login($_POST))
 		{

@@ -438,6 +438,8 @@
 
 					if ($build_cnt>0 && isset($ships[$ship_id]))
 					{
+						$buildCountOriginal = $build_cnt;
+						
 			      // Zählt die Anzahl Schiffe dieses Typs im ganzen Account...
 			      $ship_count = 0;
 			      // ... auf den Planeten
@@ -523,7 +525,8 @@
 						
 						//Check for Rene-Bug
 						$additional_food_costs = $people_working*$cfg->value('people_food_require');
-						if ($additional_food_costs!=$_POST['additional_food_costs'] || $_POST['additional_food_costs']<0) {
+						if ($additional_food_costs!=$_POST['additional_food_costs'] || $_POST['additional_food_costs']<0) 
+						{
 							$build_cnt=0;
 						}
 						
@@ -643,7 +646,7 @@
 						}
 						else
 						{
-							echo "<tr><td>".$ships[$ship_id]['ship_name'].": Zu wenig Rohstoffe für diese Anzahl!</td></tr>";
+							echo "<tr><td>".$ships[$ship_id]['ship_name'].": Zu wenig Rohstoffe für diese Anzahl ($buildCountOriginal)!</td></tr>";
 						}
 						$counter++;
 					}							
