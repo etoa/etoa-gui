@@ -50,7 +50,7 @@
 		$errorCode = null;
 		if (!$lt->verify($_POST['token'],$errorCode))
 		{
-			$text = date("d.m.Y H:i:s")." Failed token (code $errorCode) ".$_POST['token']."\n".var_export($_POST,true)."\n\n"; 
+			$text = date("d.m.Y H:i:s")." ".$_SERVER['REMOTE_ADDR']." Failed token (code $errorCode) ".$_POST['token']."\n".var_export($_POST,true)."\n\n"; 
 			file_put_contents("cache/log/logintoken.log", $text, FILE_APPEND);
 		}
 			
