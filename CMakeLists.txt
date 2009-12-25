@@ -11,7 +11,7 @@ SET(CMAKE_C_FLAGS "$ENV{CFLAGS} -O3 -Wall -g -ggdb")
 SET(CMAKE_CXX_FLAGS "$ENV{CXXFLAGS} -O3 -Wall -g -ggdb")
 
 
-FIND_PACKAGE(Boost REQUIRED thread regex)
+FIND_PACKAGE(Boost REQUIRED thread regex filesystem)
 FIND_PACKAGE(Mysqlpp)
 
 LINK_DIRECTORIES(
