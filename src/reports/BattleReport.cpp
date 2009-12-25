@@ -145,7 +145,8 @@ void BattleReport::saveBattleReport() {
 	try	{
 		if (!this->id) throw 0;
 		
-		query << "INSERT INTO "
+		query << std::setprecision(18)
+			<< "INSERT INTO "
 			<< "	`reports_battle` "
 			<< "( "
 			<< "	`id`, "

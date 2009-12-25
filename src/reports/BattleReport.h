@@ -115,7 +115,7 @@ private:
 	
 	std::vector<double> weapon, heal, count, entityWeapon, entityHeal, entityCount;
 	double shield, structure, entityShield, entityStructure;
-	int exp, entityExp; //cant be unsigned because it will be -1 if there is no special ship in the fleet
+	double exp, entityExp; //cant be unsigned because it will be -1 if there is no special ship in the fleet
 	unsigned short weaponTech, shieldTech, structureTech, entityWeaponTech, entityShieldTech, entityStructureTech;
 	
 	double res0, res1, res2, res3, res4, res5;

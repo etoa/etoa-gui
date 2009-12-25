@@ -25,19 +25,19 @@
 		return this->order;
 	}
 	
-	int DefData::getHeal() {
+	double DefData::getHeal() {
 		return this->heal;
 	}
 	
-	int DefData::getStructure() {
+	double DefData::getStructure() {
 		return this->structure;
 	}
 	
-	int DefData::getShield() {
+	double DefData::getShield() {
 		return this->shield;
 	}
 	
-	int DefData::getWeapon() {
+	double DefData::getWeapon() {
 		return this->weapon;
 	}
 	

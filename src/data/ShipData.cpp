@@ -25,11 +25,11 @@
 		return this->prodPower;
 	}
 	
-	int ShipData::getCapacity() {
+	double ShipData::getCapacity() {
 		return this->capacity;
 	}
 	
-	int ShipData::getPeopleCapacity() {
+	double ShipData::getPeopleCapacity() {
 		return this->peopleCapacity;
 	}
 	
@@ -73,19 +73,19 @@
 		return this->bountyBonus;
 	}
 	
-	int ShipData::getHeal() {
+	double ShipData::getHeal() {
 		return this->heal;
 	}
 	
-	int ShipData::getStructure() {
+	double ShipData::getStructure() {
 		return this->structure;
 	}
 	
-	int ShipData::getShield() {
+	double ShipData::getShield() {
 		return this->shield;
 	}
 	
-	int ShipData::getWeapon() {
+	double ShipData::getWeapon() {
 		return this->weapon;
 	}
 	
