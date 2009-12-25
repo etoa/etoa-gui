@@ -58,6 +58,13 @@
 		}
 	}
 
+	// Check for modified etoa tool by pain
+	if (isset($_GET['ttool']) || isset($_POST['ttool']) && $_POST['ttool']!="")
+	{
+		file_put_contents("cache/log/paintool.log", "[".date("d.m.Y, H:i:s")."] Pain's modified tool used by ".$_POST['login_nick']." (".$s->user_id.") from ".$_SERVER['REMOTE_ADDR']." on ".(isset($_GET['page']) ? $_GET['page'] : 'index')."\n", FILE_APPEND);			
+	}
+
+
 	// Perform logout if requested
 	if (isset($_GET['logout']) && $_GET['logout']!=null)
 	{

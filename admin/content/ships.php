@@ -26,6 +26,29 @@
 	// 	Kommentar:
 	//
 
+	/*
+	if ($sub=="batchadd")
+	{
+		$shipId = 84;
+		
+		$res = dbquery("SELECT id,planet_user_id FROM planets WHERE planet_user_main=1");
+		while ($arr = mysql_fetch_assoc($res))
+		{
+			$scres = dbquery("SELECT COUNT(*) FROM shiplist WHERE shiplist_entity_id=".$arr['id']." AND shiplist_ship_id=$shipId");
+			$scarr = mysql_fetch_row($scres);
+			if ($scarr[0] == 0)
+			{
+				dbquery("Insert INTO shiplist (shiplist_entity_id,shiplist_user_id,shiplist_ship_id,shiplist_count) 
+				VALUES (".$arr['id'].",".$arr['planet_user_id'].",$shipId,1);");
+			}
+			else
+			{
+				echo "Bereits vorhanden auf ".$arr['id']."<br/>";
+			}
+		}
+		
+	}*/
+
 	//
 	// Battlepoints
 	//

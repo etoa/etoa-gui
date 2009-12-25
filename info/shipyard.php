@@ -63,7 +63,7 @@
 			ON ship_cat_id=cat_id
 		WHERE 
 			ship_id='".$_GET['id']."' 
-			AND special_ship=0
+			AND ship_show=1
 		;");
 		if ($arr = @mysql_fetch_array($res))
 		{
@@ -322,7 +322,6 @@
 				WHERE
 					ship_cat_id=".$carr['cat_id']."
 					AND ship_show=1 
-					AND special_ship=0 
 				ORDER BY 
 					$order $sort;");
 				if (mysql_num_rows($res)>0)
