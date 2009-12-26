@@ -46,7 +46,7 @@
 	{
 		if (!$s->login($_POST))
 		{
-			forward(Config::getInstance()->loginurl->v."?page=err&err=pass","Loginfehler",$s->lastError);
+			forward(Config::getInstance()->loginurl->v."?page=err&err=".$s->lastErrorCode,"Loginfehler",$s->lastError);
 		}
 	}
 

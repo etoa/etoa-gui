@@ -146,8 +146,8 @@
 					}
 					else
 					{
-						if ($k=="login_pw")
-							$post.="[b]".$k.":[/b] ******* (hidden by system)\n";
+						if ($k==$s->passwordField)
+							$post.="[b]".$k.":[/b] *******\n";
 						else
 							$post.="[b]".$k.":[/b] ".$v."\n";
 					}

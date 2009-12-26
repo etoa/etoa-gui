@@ -26,6 +26,7 @@ abstract class Session implements ISingleton
 	// Class variables and constants
 	//
 	protected $lastError;
+	protected $lastErrorCode;
 	protected $firstView = false;
 	protected $namePrefix = "";
 
@@ -48,6 +49,8 @@ abstract class Session implements ISingleton
 	{
 		if ($field=="lastError")
 			return ($this->lastError!=null) ? $this->lastError : "";
+		if ($field=="lastErrorCode")
+			return ($this->lastErrorCode!=null) ? $this->lastErrorCode : "general";
 		if ($field=="id")
 			return session_id();
 		if ($field=="firstView")

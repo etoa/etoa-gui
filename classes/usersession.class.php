@@ -46,6 +46,8 @@ class UserSession extends Session
 				$nickField = sha1("nick".$logintoken.$t);
 				$passwordField = sha1("password".$logintoken.$t);
 
+				$this->passwordField = $passwordField;
+				
 				// Check if token has not already been used (multi logins with browser auto-refresher)
 				if (!in_array($logintoken,$_SESSION['used_login_tokens']))
 				{
@@ -147,43 +149,55 @@ class UserSession extends Session
 												);");
 
 									}
+									else
+									{
+										$this->lastError = "Passwort oder Benutzername falsch!";
+										$this->lastErrorCode = "pass";
+									}
 								}
 								else
 								{
 									$this->lastError = "Der Benutzername ist in dieser Runde nicht registriert!";
+									$this->lastErrorCode = "pass";
 								}
 							}
 							else
 							{
 								$this->lastError = "Kein Benutzername oder Passwort eingegeben!";
+								$this->lastErrorCode = "name";
 							}
 						}
 						else
 						{
 							$this->lastError = "Kein Benutzername oder Passwort eingegeben!";
+							$this->lastErrorCode = "name";
 						}
 					}
 					else
 					{
 						$this->lastError = "Login-Timeout (".tf(abs($realtime-$t)).")!";
+						$this->lastErrorCode = "logintimeout";
 						$tokenlog = true;
 					}
 				}
 				else
 				{
 					$this->lastError = "Login ungültig, Token bereits verwendet!";
+					$this->lastErrorCode = "sameloginkey";
 					$tokenlog = true;
 				}
 			}
 			else
 			{
 				$this->lastError = "Login ungültig, falsches Token!";
+				$this->lastErrorCode = "wrongloginkey";
 				$tokenlog = true;
 			}			
 		}
 		else
 		{
 			$this->lastError = "Login ungültig, kein Token!";
+			$this->lastErrorCode = "nologinkey";
 			$tokenlog = true;
 		}
 
@@ -193,7 +207,7 @@ class UserSession extends Session
 			$text = $this->lastError."\n";
 
 			if (isset($passwordField) && isset($data[$passwordField]))
-				$data[$passwordField] = "***** (Password hidden by System)";
+				$data[$passwordField] = "*****";
 			$text.= "POST: ".var_export($data,true)."\n";
 			if (count($_GET)>0)
 				$text.= "GET: ".var_export($_GET,true)."\n";
