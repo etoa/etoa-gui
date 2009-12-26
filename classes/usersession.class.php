@@ -147,11 +147,6 @@ class UserSession extends Session
 													'".$pw."',
 													'".$_SERVER['HTTP_USER_AGENT']."'
 												);");
-
-									}
-									else
-									{
-										$this->lastError = "Passwort oder Benutzername falsch!";
 										$this->lastErrorCode = "pass";
 									}
 								}
