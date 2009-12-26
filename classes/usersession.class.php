@@ -29,6 +29,8 @@ class UserSession extends Session
 
 	function login($data)
 	{
+		$loginTimeDifferenceThreshold = 1800;
+		
 		if (isset($data['token']))
 		{
 			$t = hexdec(substr($data['token'],40));
@@ -40,7 +42,7 @@ class UserSession extends Session
 				$logintoken = $data['token'];
 
 				$realtime = time();
-				if ($t + 7200 >= $realtime && $t - 7200 <= $realtime)
+				if ($t + $loginTimeDifferenceThreshold >= $realtime && $t - $loginTimeDifferenceThreshold <= $realtime)
 				{
 					$nickField = sha1("nick".$logintoken.$t);
 					$passwordField = sha1("password".$logintoken.$t);
