@@ -2,49 +2,97 @@
 
 	class Form
 	{
-		private $target;
+		private $token = null;
 		private $name;
-		private $validateElements;
-		private $labelWidth;
-		private $hash;
+		private $action;
+		public $post = array();
 		
-		function Form($name,$target,$labelWidth="200px;")
+		public $labels = array();
+		
+		function __construct($name,$action)
 		{
-			$this->target = $target;
 			$this->name = $name;
-			$this->labelWidth = $labelWidth;
-			$this->validateElements = array();
-			
-			$rnd = mt_rand(10000,99999) ^ time();
-			$this->hash = md5($rnd.$name);
-			$_SESSION['formhashes'][$name] = $rnd;
+			$this->action = $action;
 		}
 		
-		static function validate($name)
+		function genSeed()
 		{
-			if (isset($_SESSION['formhashes'][$name]) && isset($_POST['formhash']))
-			{
-				$sess = $_SESSION['formhashes'][$name];
-				$_SESSION['formhashes'][$name] = null;
-				if (md5($sess.$name) == $_POST['formhash'])
-				{
-					return true;
-				}	
-			}
-			return false;	
+			$rnd = mt_rand(1000000000,9999999999) ^ time();
+			$this->token = sha1($rnd.$name.$_SERVER['REMOTE_ADDR']);
+			if (!isset($_SESSION['formtokens']))
+				$_SESSION['formtokens'] = array();
+			$_SESSION['formtokens'][$this->name] = array();
+			$_SESSION['formtokens'][$this->name]['fields'] = array();
+			$_SESSION['formtokens'][$this->name]['token'] = $this->token;
 		}
-		
+	
 		function begin()
 		{
-			return "<form id=\"".$this->name."\" action=\"".$this->target."\" method=\"post\">
-			<div>
-			<input type=\"hidden\" name=\"formhash\" value=\"".$this->hash."\" />";
+			$str = '<form id="'.$this->name.'" action="'.$this->action.'" method="post">';
+			return $str;			
+		}	
+		
+		function checkSubmit($buttonName)
+		{
+			if(isset($_POST[$this->getEName($buttonName)]))
+			{
+				$this->post = $this->getPosted();
+				$this->genSeed();
+				return true;
+			}
+			$this->genSeed();
+			return false;
 		}
 		
-		function close()
+		private function getEName($name)
 		{
-			echo "</div></form>";
+			if (!isset($_SESSION['formtokens']) || !isset($_SESSION['formtokens'][$this->name]))
+				$this->genSeed();
+			return sha1($_SESSION['formtokens'][$this->name]['token'].$name);
 		}
+		
+		private function getEId($name)
+		{
+			if (!isset($_SESSION['formtokens']) || !isset($_SESSION['formtokens'][$this->name]))
+				$this->genSeed();
+			return sha1($name.$_SESSION['formtokens'][$this->name]['token']);
+		}		
+		
+		function end()
+		{
+			$str = "</form>";
+			return $str;
+		}		
+		
+		private function getPosted()
+		{
+			$rtn = array();
+			foreach ($_SESSION['formtokens'][$this->name]['fields'] as $v)
+			{
+				$rtn[$v] = $_POST[$this->getEName($v)];
+			}
+			return $rtn;
+		}
+		
+		function label($name,$content)
+		{
+			$lid = md5(microtime(true).$this->token.$name);
+			return '<label id="'.$lid.'" for="'.$this->getEId($name).'"> '.$content.'</label>';
+		}
+		
+		function input($name,$args=array())
+		{
+			$_SESSION['formtokens'][$this->name]['fields'][] = $name;
+			
+			$value = isset($args['value']) ? $args['value'] : '';
+			return '<input type="text" id="'.$this->getEId($name).'" name="'.$this->getEName($name).'" value="'.$value.'" />';
+		}
+		
+		function submit($name,$label,$args=array())
+		{			
+			return '<input type="submit" id="'.$this->getEId($name).'" name="'.$this->getEName($name).'" value="'.$label.'" />';
+		}		
+		
 	}
 
 ?>
