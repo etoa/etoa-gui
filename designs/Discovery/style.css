@@ -460,7 +460,7 @@ table#innerspacetbl {
 }
 .PlaniTextCenterPlanetname {
 	color: #FFFFFF;
-	font-family: "SF Chaerilidae";
+	font-family: "SF Chaerilidae",sans-serif;
 	font-size: 20px;
 	text-align: center;
 	vertical-align: baseline;
@@ -476,7 +476,7 @@ table#innerspacetbl {
 }
 .PlaniTextCenterRessourcen {
 	color: #FFFFFF;
-	font-family: "SF Chaerilidae";
+	font-family: "SF Chaerilidae",sans-serif;
 	font-size: 16px;
 	text-align: center;
 	vertical-align: baseline;
@@ -675,7 +675,7 @@ body {
 }
 
 div.platzhalter-serverzeit_ {
-	font-family: "SF Chaerilidae";
+	font-family: "SF Chaerilidae",sans-serif;
 	font-size: 10px;
 	font-style: normal;
 	line-height: normal;
@@ -696,11 +696,11 @@ div.platzhalter-serverzeit_ {
 
 div.PlanetName {
 	position:absolute;
-	left:30px;
-	top:147px;
+	left:34px;
+	top:149px;
 	width:218px;
 	height:23px;
-	font-family: "SF Chaerilidae";
+	font-family: "SF Chaerilidae",sans-serif;
 	font-size: 12px;
 	font-style: normal;
 	line-height: normal;

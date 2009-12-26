@@ -41,7 +41,7 @@ abstract class Session implements ISingleton
 		// Set session name based on round name.
 		// MD5 is needed because spaces in roundname cause problems
 		session_name($this->namePrefix.md5(Config::getInstance()->roundname->v)); 
-		session_start();	// Start the session
+		@session_start();	// Start the session
 	}
 
 	function __get($field)

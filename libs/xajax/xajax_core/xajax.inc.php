@@ -357,7 +357,7 @@ class xajax
 				$xuf =& $aArgs[2];
 
 				if (false == is_a($xuf, 'xajaxUserFunction'))
-					$xuf =& new xajaxUserFunction($xuf);
+					$xuf = new xajaxUserFunction($xuf); // Hack: removed &=
 
 				$this->aProcessingEvents[$sEvent] =& $xuf;
 
@@ -1302,7 +1302,7 @@ class xajax
 	*/
 	function registerFunction($mFunction, $sIncludeFile=null)
 	{
-		$xuf =& new xajaxUserFunction($mFunction, $sIncludeFile);
+		$xuf = new xajaxUserFunction($mFunction, $sIncludeFile); // Hack: Removed &=
 		return $this->register(XAJAX_FUNCTION, $xuf);
 	}
 

@@ -78,13 +78,13 @@
 		$string = str_replace('[*]', '<li>', $string);
 		$string = str_replace('[/*]', '</li>', $string);
 
-		$string = eregi_replace('\[list=1]([^\[]*)\[/list\]', '<ol style="list-style-type:decimal">\1</ol>', $string);
-		$string = eregi_replace('\[list=a]([^\[]*)\[/list\]', '<ol style="list-style-type:lower-latin">\1</ol>', $string);
-		$string = eregi_replace('\[list=a]([^\[]*)\[/list\]', '<ol style="list-style-type:lower-latin">\1</ol>', $string);
-		$string = eregi_replace('\[list=I]([^\[]*)\[/list\]', '<ol style="list-style-type:upper-roman">\1</ol>', $string);
-		$string = eregi_replace('\[list=i]([^\[]*)\[/list\]', '<ol style="list-style-type:upper-roman">\1</ol>', $string);
+		$string = preg_replace('#\[list=1]([^\[]*)\[/list\]#i', '<ol style="list-style-type:decimal">\1</ol>', $string);
+		$string = preg_replace('#\[list=a]([^\[]*)\[/list\]#i', '<ol style="list-style-type:lower-latin">\1</ol>', $string);
+		$string = preg_replace('#\[list=a]([^\[]*)\[/list\]#i', '<ol style="list-style-type:lower-latin">\1</ol>', $string);
+		$string = preg_replace('#\[list=I]([^\[]*)\[/list\]#i', '<ol style="list-style-type:upper-roman">\1</ol>', $string);
+		$string = preg_replace('#\[list=i]([^\[]*)\[/list\]#i', '<ol style="list-style-type:upper-roman">\1</ol>', $string);
 
-		$string = eregi_replace('\[page=([^\[]*)\]([^\[]*)\[/page\]', '<a href="?page=\1">\2</a>', $string);
+		$string = preg_replace('#\[page=([^\[]*)\]([^\[]*)\[/page\]#i', '<a href="?page=\1">\2</a>', $string);
 
 
 		$string = str_replace('[list]', '<ul>', $string);
@@ -113,30 +113,30 @@
 		$string = str_replace('[line]', '<hr class="line" />', $string);
 		$string = str_replace('[LINE]', '<hr class="line" />', $string);
 
-		$string = eregi_replace('\[quote]([^\[]*)\[/quote\]', '<fieldset class="quote"><legend class="quote"><b>Zitat</b></legend>\1</fieldset>', $string);
-		$string = eregi_replace('\[quote ([^\[]*)\]([^\[]*)\[/quote\]', '<fieldset class="quote"><legend class="quote"><b>Zitat von:</b> \1</legend>\2</fieldset>', $string);
-		$string = eregi_replace('\[quote=([^\[]*)\]([^\[]*)\[/quote\]', '<fieldset class="quote"><legend class="quote"><b>Zitat von:</b> \1</legend>\2</fieldset>', $string);
-		$string = eregi_replace('\[img\]([^\[]*)\[/img\]', '<img src="\1" alt="\1" border="0" />', $string);
-		$string = eregi_replace('\[img ([0-9]*) ([0-9]*)\]([^\[]*)\[/img]', '<img src="\3" alt="\3" width="\1" height="\2" border="0" />', $string);
-		$string = eregi_replace('\[img ([0-9]*)\]([^\[]*)\[/img]', '<img src="\2" alt="\2" width="\1" border="0" />', $string);
-		$string = eregi_replace('\[flag ([^\[]*)\]', '<img src="images/flags/'.strtolower('\1').'.gif" border="0" alt="Flagge \1" class=\"flag\" />', $string);
-		$string = eregi_replace('\[thumb ([0-9]*)\]([^\[]*)\[/thumb]', '<a href="\2"><img src="\2" alt="\2" width="\1" border="0" /></a>', $string);
+		$string = preg_replace('#\[quote]([^\[]*)\[/quote\]#i', '<fieldset class="quote"><legend class="quote"><b>Zitat</b></legend>\1</fieldset>', $string);
+		$string = preg_replace('#\[quote ([^\[]*)\]([^\[]*)\[/quote\]#i', '<fieldset class="quote"><legend class="quote"><b>Zitat von:</b> \1</legend>\2</fieldset>', $string);
+		$string = preg_replace('#\[quote=([^\[]*)\]([^\[]*)\[/quote\]#i', '<fieldset class="quote"><legend class="quote"><b>Zitat von:</b> \1</legend>\2</fieldset>', $string);
+		$string = preg_replace('#\[img\]([^\[]*)\[/img\]#i', '<img src="\1" alt="\1" border="0" />', $string);
+		$string = preg_replace('#\[img ([0-9]*) ([0-9]*)\]([^\[]*)\[/img]#i', '<img src="\3" alt="\3" width="\1" height="\2" border="0" />', $string);
+		$string = preg_replace('#\[img ([0-9]*)\]([^\[]*)\[/img]#i', '<img src="\2" alt="\2" width="\1" border="0" />', $string);
+		$string = preg_replace('#\[flag ([^\[]*)\]#i', '<img src="images/flags/'.strtolower('\1').'.gif" border="0" alt="Flagge \1" class=\"flag\" />', $string);
+		$string = preg_replace('#\[thumb ([0-9]*)\]([^\[]*)\[/thumb]#i', '<a href="\2"><img src="\2" alt="\2" width="\1" border="0" /></a>', $string);
 
-		$string = eregi_replace("^http://([^ ,\n]*)", "[url]http://\\1[/url]", $string);
-		$string = eregi_replace("^ftp://([^ ,\n]*)", "[url]ftp://\\1[/url]", $string);
-		$string = eregi_replace("^www\\.([^ ,\n]*)", "[url]http://www.\\1[/url]", $string);
+		$string = preg_replace("#^http://([^ ,\n]*)#i", "[url]http://\\1[/url]", $string);
+		$string = preg_replace("#^ftp://([^ ,\n]*)#i", "[url]ftp://\\1[/url]", $string);
+		$string = preg_replace("#^www\\.([^ ,\n]*)#i", "[url]http://www.\\1[/url]", $string);
 
-		$string = eregi_replace('\[url=([^\[]*)\]([^\[]*)\[/url\]', '<a href="\1">\2</a>', $string);
-		$string = eregi_replace('\[url ([^\[]*)\]([^\[]*)\[/url\]', '<a href="\1">\2</a>', $string);
-	 	$string = eregi_replace('\[url\]www.([^\[]*)\[/url\]', '<a href="http://www.\1">\1</a>', $string);
-		$string = eregi_replace('\[url\]([^\[]*)\[/url\]', '<a href="\1">\1</a>', $string);
+		$string = preg_replace('#\[url=([^\[]*)\]([^\[]*)\[/url\]#i', '<a href="\1">\2</a>', $string);
+		$string = preg_replace('#\[url ([^\[]*)\]([^\[]*)\[/url\]#i', '<a href="\1">\2</a>', $string);
+	 	$string = preg_replace('#\[url\]www.([^\[]*)\[/url\]#i', '<a href="http://www.\1">\1</a>', $string);
+		$string = preg_replace('#\[url\]([^\[]*)\[/url\]#i', '<a href="\1">\1</a>', $string);
 
-		$string = eregi_replace('\[mailurl=([^\[]*)\]([^\[]*)\[/mailurl\]', '<a href="mailto:\1">\2</a>', $string);
-		$string = eregi_replace('\[mailurl ([^\[]*)\]([^\[]*)\[/mailurl\]', '<a href="mailto:\1">\2</a>', $string);
-		$string = eregi_replace('\[mailurl\]([^\[]*)\[/mailurl\]', '<a href="mailto:\1">\1</a>', $string);
-		$string = eregi_replace('\[email=([^\[]*)\]([^\[]*)\[/email\]', '<a href="mailto:\1">\2</a>', $string);
-		$string = eregi_replace('\[email ([^\[]*)\]([^\[]*)\[/email\]', '<a href="mailto:\1">\2</a>', $string);
-		$string = eregi_replace('\[email\]([^\[]*)\[/email\]', '<a href="mailto:\1">\1</a>', $string);
+		$string = preg_replace('#\[mailurl=([^\[]*)\]([^\[]*)\[/mailurl\]#i', '<a href="mailto:\1">\2</a>', $string);
+		$string = preg_replace('#\[mailurl ([^\[]*)\]([^\[]*)\[/mailurl\]#i', '<a href="mailto:\1">\2</a>', $string);
+		$string = preg_replace('#\[mailurl\]([^\[]*)\[/mailurl\]#i', '<a href="mailto:\1">\1</a>', $string);
+		$string = preg_replace('#\[email=([^\[]*)\]([^\[]*)\[/email\]#i', '<a href="mailto:\1">\2</a>', $string);
+		$string = preg_replace('#\[email ([^\[]*)\]([^\[]*)\[/email\]#i', '<a href="mailto:\1">\2</a>', $string);
+		$string = preg_replace('#\[email\]([^\[]*)\[/email\]#i', '<a href="mailto:\1">\1</a>', $string);
 
 		$string = str_replace('[table]', '<table class="bbtable">', $string);
     $string = str_replace('[/table]', '</table>', $string);
@@ -181,12 +181,13 @@
 		$string = str_replace(' :rolleyes: ', '<img src="'.SMILIE_DIR.'/rolleyes.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
 
 		
-		$string = eregi_replace('\[font ([^\[]*)\]', '<font style=\"font-family:\1">', $string);
-		$string = eregi_replace('\[color ([^\[]*)\]', '<font style=\"color:\1">', $string);
-		$string = eregi_replace('\[size ([^\[]*)\]', '<font style=\"font-size:\1pt">', $string);
-		$string = eregi_replace('\[font=([^\[]*)\]', '<font style=\"font-family:\1">', $string);
-		$string = eregi_replace('\[color=([^\[]*)\]', '<font style=\"color:\1">', $string);
-		$string = eregi_replace('\[size=([^\[]*)\]', '<font style=\"font-size:\1pt">', $string);
+		$string = preg_replace('#\[font ([^\[]*)\]#i', '<font style=\"font-family:\1">', $string);
+		$string = preg_replace('#\[color ([^\[]*)\]#i', '<font style=\"color:\1">', $string);
+		$string = preg_replace('#\[size ([^\[]*)\]#i', '<font style=\"font-size:\1pt">', $string);
+		$string = preg_replace('#\[font=([^\[]*)\]#i', '<font style=\"font-family:\1">', $string);
+		$string = preg_replace('#\[color=([^\[]*)\]#i', '<font style=\"color:\1">', $string);
+		$string = preg_replace('#\[size=([^\[]*)\]#i', '<font style=\"font-size:\1pt">', $string);
+		
 		$string = str_replace('[/font]', '</font>', $string);
 		$string = str_replace('[/FONT]', '</font>', $string);
 		$string = str_replace('[/color]', '</font>', $string);

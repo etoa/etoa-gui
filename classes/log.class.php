@@ -78,6 +78,10 @@
 		 * Ranking 17
 		 */
 		const F_RANKING = 17;
+		/**
+		 * Illegal user action (bots, wrong referes etc)
+		 */
+		const F_ILLEGALACTION = 18;
 
 		static public $facilities = array(
 		"Sonstiges",
@@ -98,6 +102,7 @@
 		"Updates",
 		"Schiffe",
 		"Ranglisten",
+		"Illegale Useraktion"
 		);
 
 		static function add($facility,$severity,$msg)

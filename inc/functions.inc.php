@@ -184,6 +184,21 @@
 		}
 	}
 
+	/**
+	 * Prepares a user string for sql queries and
+	 * escapes all malicious characters, e.g. '
+	 * 
+	 * @param string $string
+	 * @return string
+	 */
+	function dbEscapeStr($string)
+	{
+		$string = trim($string);
+		if(get_magic_quotes_gpc())
+			$string = stripslashes($string);
+		return mysql_real_escape_string($string);
+	}
+
 	function drawDbQueryResult($res)
 	{
 		if (mysql_num_rows($res)>0)

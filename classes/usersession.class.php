@@ -32,9 +32,19 @@ class UserSession extends Session
 		if (isset($data['token']))
 		{
 			$t = hexdec(substr($data['token'],40));
-			$logintoken = sha1($_SERVER['REMOTE_ADDR'].$_SERVER['HTTP_USER_AGENT'].$t).dechex($t);					
-			if ($logintoken == $data['token'])
+			$logintoken = sha1($_SERVER['REMOTE_ADDR'].$_SERVER['HTTP_USER_AGENT'].$t).dechex($t);
+
+			// Check token (except if user is form localhost = developer)
+			if ($logintoken == $data['token'] || $_SERVER['REMOTE_ADDR']=="127.0.0.1" || $_SERVER['REMOTE_ADDR']=="::1")
 			{
+				$logintoken = $data['token'];
+
+				$realtime = time();
+				if ($t + 7200 >= $realtime && $t - 7200 <= $realtime)
+				{
+
+
+
 				$nickField = sha1("nick".$logintoken.$t);
 				$passwordField = sha1("password".$logintoken.$t);
 				
@@ -43,7 +53,7 @@ class UserSession extends Session
 					$loginNick = trim($data[$nickField]);
 					$loginPassword = trim($data[$passwordField]);
 					
-					if ($loginNick!="" && $loginPassword!="" )
+					if ($loginNick!="" && $loginPassword!="" ) // Add here regex check for nickname
 					{
 						$sql = "
 						SELECT
@@ -55,7 +65,7 @@ class UserSession extends Session
 						FROM
 							".self::tableUser."
 						WHERE
-							LCASE(user_nick)='".strtolower($loginNick)."'
+							LCASE(user_nick)='".strtolower(dbEscapeStr($loginNick))."'
 						LIMIT 1;
 						;";			
 						$ures = dbquery($sql);
@@ -144,19 +154,36 @@ class UserSession extends Session
 				{
 					$this->lastError = "Kein Benutzername oder Passwort eingegeben!";
 				}
+				}
+				else
+				{
+					$this->lastError = "Login-Timeout (".tf(abs($realtime-$t)).")!";
+					$tokenlog = true;
+				}
 			}
 			else
 			{
 				$this->lastError = "Login ungültig, falsches Token!";
+				$tokenlog = true;
 			}			
 		}
 		else
 		{
 			$this->lastError = "Login ungültig, kein Token!";
+			$tokenlog = true;
 		}
-		
-		
-		
+
+		if (isset($tokenlog))
+		{
+			$tokenlog = true;
+			$text = $this->lastError."\n";
+			$text.= "POST: ".var_export($data,true)."\n";
+			if (count($_GET)>0)
+				$text.= "GET: ".var_export($_GET,true)."\n";
+			$text.= "Agent: ".$_SERVER['HTTP_USER_AGENT']."\n";
+			$text.= "Referer: ".$_SERVER['HTTP_REFERER']."\n";
+			Log::add(Log::F_ILLEGALACTION, Log::WARNING, $text);
+		}
 		
 		return false;
 	}
