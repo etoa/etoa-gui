@@ -1229,7 +1229,10 @@ function showLogs($args=null,$limit=0)
 			<td>".df($arr['timestamp'])."</td>
 			<td>".Log::$severities[$arr['severity']]."</td>
 			<td>".Log::$facilities[$arr['facility']]."</td>
-			<td>".text2html($arr['message'])."<br/><br/>".$arr['ip']."</td>
+			<td>".text2html($arr['message']);
+			if ($arr['ip']!="")
+				echo "<br/><br/><b>Host:</b> ".$arr['ip']." (".Net::getHost($arr['ip']).")";
+			echo "</td>
 			</tr>";
 		}
 		echo "</table>";

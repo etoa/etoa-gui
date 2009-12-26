@@ -963,7 +963,7 @@
 		</script>
 		<?PHP
 
-		iBoxStart("Filter",800);
+		iBoxStart("Filter",900);
 		echo "<form action=\".\" method=\"post\" id=\"filterform\"><p>";
 		echo "<label for=\"logsev\">Ab Schweregrad:</label>
 		<select id=\"logsev\" name=\"logsev\" onchange=\"applyFilter(0)\">";
@@ -982,8 +982,6 @@
 				echo "<option value=\"".$k."\">".$v."</option>";
 		}
 		echo "</select> &nbsp; ";
-
-
 
 		echo " <label for=\"searchtext\">Suchtext:</label> <input type=\"text\" id=\"searchtext\" name=\"searchtext\" value=\"\" /> &nbsp;
 		<input type=\"submit\" value=\"Anwenden\" onclick=\"applyFilter(0);document.getElementById('searchtext').select();return false;\" /> &nbsp;
