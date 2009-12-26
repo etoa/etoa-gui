@@ -29,7 +29,7 @@ class UserSession extends Session
 
 	function login($data)
 	{
-		$loginTimeDifferenceThreshold = 1800;
+		$loginTimeDifferenceThreshold = 3600;
 		
 		if (isset($data['token']))
 		{
@@ -43,18 +43,19 @@ class UserSession extends Session
 					$_SESSION['used_login_tokens'] = array();
 
 				$logintoken = $data['token'];
+				$nickField = sha1("nick".$logintoken.$t);
+				$passwordField = sha1("password".$logintoken.$t);
 
+				// Check if token has not already been used (multi logins with browser auto-refresher)
 				if (!in_array($logintoken,$_SESSION['used_login_tokens']))
 				{
 					$_SESSION['used_login_tokens'][] = $logintoken;
 
-					$nickField = sha1("nick".$logintoken.$t);
-					$passwordField = sha1("password".$logintoken.$t);
-
+					// Check if login is withing given time bounds (+- one hour)
 					$realtime = time();
 					if ($t + $loginTimeDifferenceThreshold >= $realtime && $t - $loginTimeDifferenceThreshold <= $realtime)
 					{
-
+						// Check if the user and password fields are set
 						if (isset($data[$nickField]) && isset($data[$passwordField]))
 						{
 							$loginNick = trim($data[$nickField]);
@@ -190,6 +191,9 @@ class UserSession extends Session
 		{
 			$tokenlog = true;
 			$text = $this->lastError."\n";
+
+			if (isset($passwordField) && isset($data[$passwordField]))
+				$data[$passwordField] = "***** (Password hidden by System)";
 			$text.= "POST: ".var_export($data,true)."\n";
 			if (count($_GET)>0)
 				$text.= "GET: ".var_export($_GET,true)."\n";
