@@ -107,7 +107,7 @@
 
 		static function add($facility,$severity,$msg)
 		{
-			if (!is_numeric($facility) || $facility < 0 || $facility > 17)
+			if (!is_numeric($facility) || $facility < 0 || $facility > 18)
 			{
 				$facility = self::F_OTHER;
 			}
