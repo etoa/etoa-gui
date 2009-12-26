@@ -42,118 +42,115 @@ class UserSession extends Session
 				$realtime = time();
 				if ($t + 7200 >= $realtime && $t - 7200 <= $realtime)
 				{
+					$nickField = sha1("nick".$logintoken.$t);
+					$passwordField = sha1("password".$logintoken.$t);
 
-
-
-				$nickField = sha1("nick".$logintoken.$t);
-				$passwordField = sha1("password".$logintoken.$t);
-				
-				if (isset($data[$nickField]) && isset($data[$passwordField]))
-				{					
-					$loginNick = trim($data[$nickField]);
-					$loginPassword = trim($data[$passwordField]);
-					
-					if ($loginNick!="" && $loginPassword!="" ) // Add here regex check for nickname
+					if (isset($data[$nickField]) && isset($data[$passwordField]))
 					{
-						$sql = "
-						SELECT
-							user_id,
-							user_nick,
-							user_registered,
-							user_password,
-							user_password_temp
-						FROM
-							".self::tableUser."
-						WHERE
-							LCASE(user_nick)='".strtolower(dbEscapeStr($loginNick))."'
-						LIMIT 1;
-						;";			
-						$ures = dbquery($sql);
-						if (mysql_num_rows($ures)>0)
+						$loginNick = trim($data[$nickField]);
+						$loginPassword = trim($data[$passwordField]);
+
+						if ($loginNick!="" && $loginPassword!="" ) // Add here regex check for nickname
 						{
-							$uarr = mysql_fetch_assoc($ures);
-							$pw = pw_salt($loginPassword,$uarr['user_registered']);
-							$t = time();
-							
-							// check sitter
-							$this->sittingActive = false;
-							$this->falseSitter = false;
-							$sres = dbquery("
+							$sql = "
 							SELECT
-								date_to,
-								password
-							FROM user_sitting
-							WHERE 
-								user_id=".$uarr['user_id']."
-								AND date_from<=$t
-								AND $t<=date_to ;");
-							if (mysql_num_rows($sres)>0)
+								user_id,
+								user_nick,
+								user_registered,
+								user_password,
+								user_password_temp
+							FROM
+								".self::tableUser."
+							WHERE
+								LCASE(user_nick)='".strtolower(dbEscapeStr($loginNick))."'
+							LIMIT 1;
+							;";
+							$ures = dbquery($sql);
+							if (mysql_num_rows($ures)>0)
 							{
-								$sarr = mysql_fetch_row($sres);
-								if ($sarr[1] == $pw)
+								$uarr = mysql_fetch_assoc($ures);
+								$pw = pw_salt($loginPassword,$uarr['user_registered']);
+								$t = time();
+
+								// check sitter
+								$this->sittingActive = false;
+								$this->falseSitter = false;
+								$sres = dbquery("
+								SELECT
+									date_to,
+									password
+								FROM user_sitting
+								WHERE
+									user_id=".$uarr['user_id']."
+									AND date_from<=$t
+									AND $t<=date_to ;");
+								if (mysql_num_rows($sres)>0)
 								{
-									$this->sittingActive = true;
-									$this->sittingUntil = $sarr[0];
+									$sarr = mysql_fetch_row($sres);
+									if ($sarr[1] == $pw)
+									{
+										$this->sittingActive = true;
+										$this->sittingUntil = $sarr[0];
+									}
+									elseif ($uarr['user_password'] == $pw)
+									{
+										$this->falseSitter = true;
+										$this->sittingActive = true;
+										$this->sittingUntil = $sarr[0];
+									}
 								}
-								elseif ($uarr['user_password'] == $pw)
+
+								if ($uarr['user_password'] == $pw
+									|| $this->sittingActive
+									|| ($uarr['user_password_temp']!="" && $uarr['user_password_temp']==$loginPassword))
 								{
-									$this->falseSitter = true;
-									$this->sittingActive = true;
-									$this->sittingUntil = $sarr[0];
+									$this->user_id = $uarr['user_id'];
+									$this->user_nick = $uarr['user_nick'];
+									$this->time_login = $t;
+									$this->time_action = $t;
+									$this->registerSession();
+									$this->bot_count = 0;
+									$this->firstView = true;
+									return true;
 								}
-							}
-			
-							if ($uarr['user_password'] == $pw
-								|| $this->sittingActive
-								|| ($uarr['user_password_temp']!="" && $uarr['user_password_temp']==$loginPassword))
-							{
-								$this->user_id = $uarr['user_id'];
-								$this->user_nick = $uarr['user_nick'];
-								$this->time_login = $t;
-								$this->time_action = $t;
-								$this->registerSession();
-								$this->bot_count = 0;
-								$this->firstView = true;
-								return true;
+								else
+								{
+									$this->lastError = "Benutzer nicht vorhanden oder Passwort falsch!";
+									dbquery("
+											INSERT INTO
+												login_failures
+											(
+												failure_time,
+												failure_ip,
+												failure_user_id,
+												failure_pw,
+												failure_client
+											)
+											VALUES
+											(
+												'".$t."',
+												'".$_SERVER['REMOTE_ADDR']."',
+												'".$uarr['user_id']."',
+												'".$pw."',
+												'".$_SERVER['HTTP_USER_AGENT']."'
+											);");
+
+								}
 							}
 							else
 							{
-								$this->lastError = "Benutzer nicht vorhanden oder Passwort falsch!";
-								dbquery("
-										INSERT INTO
-											login_failures
-										(
-										 	failure_time,
-											failure_ip,
-											failure_user_id,
-											failure_pw,
-											failure_client
-										)
-										VALUES
-										(
-										 	'".$t."',
-											'".$_SERVER['REMOTE_ADDR']."',
-											'".$uarr['user_id']."',
-											'".$pw."',
-											'".$_SERVER['HTTP_USER_AGENT']."'
-										);");
-											
+								$this->lastError = "Der Benutzername ist in dieser Runde nicht registriert!";
 							}
 						}
 						else
 						{
-							$this->lastError = "Der Benutzername ist in dieser Runde nicht registriert!";
+							$this->lastError = "Kein Benutzername oder Passwort eingegeben!";
 						}
 					}
 					else
 					{
 						$this->lastError = "Kein Benutzername oder Passwort eingegeben!";
-					}					
-				}
-				else
-				{
-					$this->lastError = "Kein Benutzername oder Passwort eingegeben!";
-				}
+					}
 				}
 				else
 				{
