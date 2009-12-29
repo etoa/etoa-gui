@@ -20,9 +20,13 @@
 
 		// Alte Session-Logs
 		$tmr = timerStart();
-		$nr = Users::cleanUpSessionLogs();
+		$nr = Users::cleanUpSessionLogs();	// TODO Integrate into usersession class
 		$log.= "$nr alte Session-Logs gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
-		
+
+		$tmr = timerStart();
+		$nr = AdminSession::cleanupLogs();
+		$log.= "$nr alte Session-Logs gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
+
 		// Alte Logs l�schen
 		$tmr = timerStart();
 		$nr = Log::removeOld();
@@ -158,8 +162,8 @@
 		UserStats::generateXml(XML_INFO_FILE);
 
 		// Cleanup session
-		Session::getInstance()->cleanup();
-		AdminSession::getInstance()->cleanup();
+		UserSession::cleanup();
+		AdminSession::cleanup();
 		
 		//Check Backend
 		$daemonId = $cfg->daemonIdentifier->v;

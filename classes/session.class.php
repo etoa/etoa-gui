@@ -8,27 +8,76 @@
 abstract class Session implements ISingleton
 {
 	//
-	// Singleton code
+	// Singleton mechanism
 	//
+
+	/**
+	 * @var Session Singleton innstance container
+	 */
 	protected static $instance;
-	public static function getInstance()
+
+	/**
+	 * Returns the single instance of this class (Singleton design pattern)
+	 * 
+	 * @return Session Instance of the session class
+	 */
+	public static function getInstance($className = null)
 	{
 		if (empty(self::$instance))
 		{
-			$className = __CLASS__;
+			// PHP >= 5.3
+			if (function_exists("get_called_class"))
+				$className = get_called_class();
+			// PHP < 5.3
+			elseif ($className==null)
+				$className = __CLASS__;
 			self::$instance = new $className(func_get_args());
 		}
 		return self::$instance;
 	}
+
+	/**
+	 * The Clone operator. Cloning is prohibitet by this definition
+	 */
 	final function __clone() {}
 
 	//
 	// Class variables and constants
 	//
+
+	/**
+	 * @var string Message of the last error
+	 */
 	protected $lastError;
+	/**
+	 * @var string Short string (one word/abreviation) that characterizes the last error
+	 */
 	protected $lastErrorCode;
+	/**
+	 * @var bool True if this is the first run (page) of the session, that means if the user hast just logged in
+	 */
 	protected $firstView = false;
+	/**
+	 * @var string Prefix string for the session-id seeding. Must be unique for each inheriting class
+	 */
 	protected $namePrefix = "";
+
+	//
+	// Abstract methds
+	//
+	
+	abstract function login($data);
+	abstract function logout();
+	abstract function validate();
+	abstract function registerSession();
+
+	abstract static function unregisterSession($sid=null,$logoutPressed=1);
+	abstract static function cleanup();
+	abstract static function kick($sid);
+
+	//
+	// Common class methods
+	//
 
 	/**
 	 * The constructor defines the session hash function to be used
@@ -41,10 +90,17 @@ abstract class Session implements ISingleton
 
 		// Set session name based on round name.
 		// MD5 is needed because spaces in roundname cause problems
-		session_name($this->namePrefix.md5(Config::getInstance()->roundname->v)); 
+		$sname = md5($this->namePrefix.Config::getInstance()->roundname->v);
+		session_name($sname);
 		@session_start();	// Start the session
 	}
 
+	/**
+	 * Getter that returns session variables or some class properties
+	 * 
+	 * @param <type> $field
+	 * @return mixed Requested variable or null if field was not found
+	 */
 	function __get($field)
 	{
 		if ($field=="lastError")
@@ -63,16 +119,24 @@ abstract class Session implements ISingleton
 		return null;
 	}
 
+	/**
+	 * Checks if a session property exists
+	 *
+	 * @param string $field Property name
+	 * @return bool True if property exists
+	 */
 	function __isset($field)
 	{
 		return isset($_SESSION[$field]);
 	}
 
-	function __unset($field)
-	{
-		unset($_SESSION[$field]);
-	}
-	
+	/**
+	 * Sets a session property
+	 *
+	 * @param string $field Property name
+	 * @param mixed $value Property value
+	 * @return bool True if setting was successfull
+	 */
 	function __set($field,$value)
 	{
 		if ($field=="lastError" || $field=="id")
@@ -87,17 +151,14 @@ abstract class Session implements ISingleton
 		return true;
 	}
 
-	abstract function login($data);
-	abstract function logout();
-	abstract function validate();
-	abstract function registerSession();
-
-	abstract static function unregisterSession($sid=null,$logoutPressed=1);
-	abstract static function cleanup();
-	abstract static function kick($sid);
-
-
-
-
+	/**
+	 * Unsets a session property
+	 *
+	 * @param string $field Property name
+	 */
+	function __unset($field)
+	{
+		unset($_SESSION[$field]);
+	}
 }
 ?>

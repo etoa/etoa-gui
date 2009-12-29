@@ -1,14 +1,4 @@
 <?php
-/* 
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/**
- * Description of adminsession
- *
- * @author Nicolas
- */
 class AdminSession extends Session
 {	
 	const tableUser = "admin_users";
@@ -17,18 +7,21 @@ class AdminSession extends Session
 
 	protected $namePrefix = "admin";
 
+	/**
+	 * Returns the single instance of this class
+	 * 
+	 * @return AdminSession Instance of this class
+	 */
 	public static function getInstance()
 	{
-		if (empty(self::$instance))
-		{
-			$className = __CLASS__;
-			self::$instance = new $className(func_get_args());
-		}
-		return self::$instance;
+		return parent::getInstance(__CLASS__);
 	}
 
 	function login($data)
 	{
+		self::cleanup();
+
+		// TODO: Use preg_match
 		if ($data['login_nick']!="" && $data['login_pw']!="" && !stristr($data['login_nick'],"'") && !stristr($data['login_pw'],"'"))
 		{
 			$sql = "
@@ -39,10 +32,9 @@ class AdminSession extends Session
 			FROM
 				".self::tableUser."
 			WHERE
-				LCASE(user_nick)='".strtolower($data['login_nick'])."'
+				LCASE(user_nick)='".strtolower(dbEscapeStr($data['login_nick']))."'
 			LIMIT 1;
 			;";
-
 			$ures = dbquery($sql);
 			if (mysql_num_rows($ures)>0)
 			{
@@ -62,26 +54,33 @@ class AdminSession extends Session
 				else
 				{
 					$this->lastError = "Benutzer nicht vorhanden oder Passwort falsch!";
+					$this->lastErrorCode = "pass";
 				}
 			}
 			else
 			{
-				$this->lastError = "Der Benutzername ist in dieser Runde nicht registriert!";
+				$this->lastError = "Benutzer nicht vorhanden oder Passwort falsch!";
+				$this->lastErrorCode = "pass";
 			}
 		}
 		else
 		{
 			$this->lastError = "Kein Benutzername oder Passwort eingegeben oder ungültige Zeichen verwendet!";
+			$this->lastErrorCode = "name";
 		}
-
 		return false;
 	}
 
+	/**
+	 * Checks if the current session is valid
+	 * 
+	 * @return True if session is valid
+	 */
 	function validate()
 	{
 		if (isset($this->time_login))
 		{
-			$res = dbquery("
+			$sql = "
 			SELECT
 				id
 			FROM
@@ -93,12 +92,13 @@ class AdminSession extends Session
 				AND `user_agent`='".$_SERVER['HTTP_USER_AGENT']."'
 				AND `time_login`=".intval($this->time_login)."
 			LIMIT 1
-			;");
+			;";
+			$res = dbquery($sql);
 			if (mysql_num_rows($res)>0)
 			{
 				$t = time();
 				$cfg = Config::getInstance();
-				if ($this->time_action + $cfg->user_timeout->v > $t)
+				if ($this->time_action + $cfg->admin_timeout->v > $t)
 				{
 					dbquery("
 					UPDATE
@@ -110,21 +110,23 @@ class AdminSession extends Session
 					;");
 					$this->time_action = $t;
 					return true;
-
 				}
 				else
 				{
-					$this->lastError = "Das Timeout von ".tf($cfg->user_timeout->v)." wurde überschritten!";
+					$this->lastError = "Das Timeout von ".tf($cfg->admin_timeout->v)." wurde überschritten!";
+					$this->lastErrorCode = "timeout";
 				}
 			}
 			else
 			{
 				$this->lastError = "Session nicht mehr vorhanden!";
+				$this->lastErrorCode = "nosession";
 			}
 		}
 		else
 		{
-			$this->lastError = "";
+			$this->lastError = "Ungültige Session!";
+			$this->lastErrorCode = "invalidsession";
 		}
 		self::unregisterSession();
 		return false;
@@ -132,14 +134,16 @@ class AdminSession extends Session
 
 	function registerSession()
 	{
-		dbquery("
+		$sql = "
 		DELETE FROM
 			`".self::tableSession."`
 		WHERE
 			user_id=".intval($this->user_id)."
 			OR id='".session_id()."'
-		;");
-		dbquery("
+		;";
+		dbquery($sql);
+
+		$sql = "
 		INSERT INTO
 			`".self::tableSession."`
 		(
@@ -157,7 +161,8 @@ class AdminSession extends Session
 			'".$_SERVER['HTTP_USER_AGENT']."',
 			".intval($this->time_login)."
 		)
-		");
+		";
+		$res = dbquery($sql);
 	}
 
 	function logout()
@@ -225,7 +230,7 @@ class AdminSession extends Session
 		FROM
 			`".self::tableSession."`
 		WHERE
-			time_action+".($cfg->user_timeout->v)." < '".time()."'
+			time_action+".($cfg->admin_timeout->v)." < '".time()."'
 		;");
 		if (mysql_num_rows($res)>0)
 		{
@@ -235,6 +240,24 @@ class AdminSession extends Session
 			}
 		}
 	}
+
+	static function cleanupLogs($threshold=0)
+	{
+		$cfg = Config::getInstance();
+		if ($threshold>0)
+			$tstamp = time() - $threshold;
+		else
+			$tstamp = time() - (24*3600*$cfg->sessionlog_store_days->p2);
+		dbquery("
+		DELETE FROM
+			`".self::tableLog."`
+		WHERE
+			time_action < ".$tstamp.";");
+		$nr = mysql_affected_rows();
+		Log::add(Log::F_SYSTEM, Log::INFO, "$nr Adminsession-Logs die älter als ".date("d.m.Y, H:i",$tstamp)." sind wurden gelöscht.");
+		return $nr;
+	}
+
 
 	static function kick($sid)
 	{

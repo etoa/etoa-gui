@@ -16,6 +16,7 @@
     <category id="16">Allianz</category>
     <category id="17">Quests</category>
     <category id="18">Ereignisse</category>
+    <category id="19">Logging</category>
   </categories>
   <items>
     <item name="game_name" cat="1">
@@ -238,9 +239,6 @@ Besten Dank f&#xFC;r euer Verst&#xE4;ndnis&#xD;
     </item>
     <item name="stats_num_rows" cat="1">
       <v comment="Statistik Anzahl Daten/Seite" type="text">50</v>
-    </item>
-    <item name="log_threshold_days" cat="1">
-      <v comment="Aufbewahrungsdauer Logs" type="text">14</v>
     </item>
     <item name="messages_threshold_days" cat="1">
       <v comment="Aufbewahrungsdauer Nachrichten" type="text">28</v>
@@ -665,5 +663,13 @@ Anmerkung: Eine Kopie dieser Nachricht wird in Eurer Nachrichten-Box hinterlegt.
     <item name="bot_max_count" cat="1">
       <v comment="Bot Counter" type="text">5</v>
     </item>
+    <item name="log_threshold_days" cat="19">
+      <v comment="Aufbewahrungsdauer Logs" type="text">14</v>
+    </item>
+    <item name="sessionlog_store_days" cat="19">
+      <p1 comment="Aufbewahrungsdauer User-Sessionlogs" type="text">30</p1>
+	  <p2 comment="Aufbewahrungsdauer Admin-Sessionlogs" type="text">60</p2>
+    </item>	
+
   </items>
 </config>

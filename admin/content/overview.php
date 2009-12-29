@@ -183,45 +183,68 @@
 		
 		if (isset($_POST['logshow']) && $_POST['logshow']!="")
 		{
-			$ures=dbquery("SELECT user_nick FROM admin_users WHERE user_id=".$_POST['user_id'].";");
+			$ures=dbquery("SELECT
+				user_nick
+				FROM admin_users
+				WHERE user_id=".$_POST['user_id'].";");
 			if (mysql_num_rows($ures)>0)
 			{
 				$uarr=mysql_fetch_array($ures);
 				echo "<h2>Session-Log f&uuml;r ".$uarr['user_nick']."</h2>";
 
-				$res=dbquery("SELECT * FROM admin_user_log WHERE log_user_id=".$_POST['user_id']." ORDER BY log_id DESC;");
+				$sql = "SELECT
+					l.*,
+					u.user_nick
+				FROM
+					admin_user_sessionlog l
+				INNER JOIN
+					admin_users u
+					ON l.user_id=u.user_id
+					AND l.user_id=".$_POST['user_id']."
+				ORDER BY
+					time_action DESC;";
+				$res=dbquery($sql);
 				if (mysql_num_rows($res)>0)
 				{
-					echo "<table><tr><th class=\"tbltitle\">Login</th><th class=\"tbltitle\">Letzte Aktivit&auml;t</th>
-					<th class=\"tbltitle\">Logout</th>
-					<th class=\"tbltitle\">IP</th>
-					<th class=\"tbltitle\">Hostname</th>
-					<th class=\"tbltitle\">Session-Dauer</th>";
-					while ($arr=mysql_fetch_array($res))
+					echo "<table class=\"tb\">
+					<tr>
+						<th>Login</th>
+						<th>Aktivität</th>
+						<th>Logout</th>
+						<th>Dauer</th>
+						<th>IP</th>
+						<th>Browser</th>
+						<th>OS</th>
+					</tr>";
+					while ($arr = mysql_fetch_array($res))
 					{
-						echo "<tr><td class=\"tbldata\">".date("d.m.Y H:i",$arr['log_logintime'])."</td>";
-						echo "<td class=\"tbldata\">";
-						if ($arr['log_acttime']>0)
-							echo date("d.m.Y H:i",$arr['log_acttime']);
+						echo "<tr>
+							<td>".date("d.m.Y, H:i",$arr['time_login'])."</td>";
+						echo "<td>";
+						if ($arr['time_action']>0)
+							echo date("d.m.Y H:i",$arr['time_action']);
 						else
-							echo "-";						
+							echo "-";
 						echo "</td>";
-						echo "<td class=\"tbldata\">";						
-						if ($arr['log_logouttime']>0)
-							echo date("d.m.Y H:i",$arr['log_logouttime']);
+						echo "<td>";
+						if ($arr['time_logout']>0)
+							echo date("d.m.Y, H:i",$arr['time_logout']);
 						else
-							echo "-";						
+							echo "-";
 						echo "</td>";
-						echo "<td class=\"tbldata\">".$arr['log_ip']."</td>";
-						echo "<td class=\"tbldata\">".Net::getHost($arr['log_hostname'])."</td>";
-						echo "<td class=\"tbldata\">";
-						if (max($arr['log_logouttime'],$arr['log_acttime'])-$arr['log_logintime']>0)
-							echo tf(max($arr['log_logouttime'],$arr['log_acttime'])-$arr['log_logintime']);
+						echo "<td>";
+						if (max($arr['time_logout'],$arr['time_action'])-$arr['time_login']>0)
+							echo tf(max($arr['time_logout'],$arr['time_action'])-$arr['time_login']);
 						else
 							echo "-";
 						if ($arr['log_session_key']==$s->id)
 							echo " <span style=\"color:#0f0\">aktiv</span>";
-						echo "</td></tr>";
+						echo "</td>";
+						echo "<td title=\"".Net::getHost($arr['ip_addr'])."\">".$arr['ip_addr']."</td>";
+						$browser = get_browser($arr['user_agent'], true);
+						echo "<td title=\"".$arr['user_agent']."\">".$browser['parent']."</td>";
+						echo "<td title=\"".$arr['user_agent']."\">".$browser['platform']."</td>";
+						echo "</tr>";
 					}
 					echo "</table>";
 				}
@@ -238,48 +261,71 @@
 		else
 		{
 		
-			if (isset($_GET['kick']) && $_GET['kick']>0 && $_GET['kick']!=$cu->id)
+			if (isset($_GET['kick']) && $_GET['kick']>0)
 			{
-				dbquery("UPDATE admin_users SET user_session_key='' WHERE user_id=".$_GET['kick'].";");	
-				add_log(8,$cu->nick." l&ouml;scht die Session des Administrators mit der ID ".$_GET['kick'],time());
+				if ($_GET['kick']!=$cu->id)
+				{
+					AdminSession::kick($_GET['kick']);
+					add_log(8,$cu->nick." l&ouml;scht die Session des Administrators mit der ID ".$_GET['kick'],time());
+				}
+				else
+					echo error_msg("Du kannst nicht dich selbst kicken!");
 			}
 			
 			if (isset($_POST['delentrys']) && $_POST['delentrys']!="")
 			{
-				$tstamp = time()-$_POST['log_timestamp'];
-				dbquery("DELETE FROM admin_user_log WHERE log_logintime<$tstamp;");
-				echo mysql_affected_rows()." Eintr&auml;ge wurden gel&ouml;scht!<br/><br/>";
-				add_log(8,$cu->nick." l&ouml;scht ".mysql_affected_rows()." Eintr&auml;ge des Admin-Session-Logs",time());
+				$td = $_POST['log_timestamp'];
+				$nr = AdminSession::cleanupLogs($td);
+				echo "<p>".$nr." Eintr&auml;ge wurden gel&ouml;scht!</p>";
 			}			
 			
-			echo "<h2>Aktive Sessions / Zuletzt aktiv</h2>";
-			echo "Das Timeout betr&auml;gt ".TIMEOUT." Sekunden<br/><br/>";
-			$res=dbquery("SELECT * FROM admin_users WHERE user_acttime>0 ORDER BY user_acttime DESC;");
+			echo "<h2>Aktive Sessions</h2>";
+			echo "Das Timeout betr&auml;gt ".tf($cfg->admin_timeout->v)."<br/><br/>";
+
+			$res=dbquery("
+				SELECT 
+					s.user_id,
+					s.ip_addr,
+					s.user_agent,
+					s.time_login,
+					s.time_action,
+					u.user_nick
+				FROM
+					admin_user_sessions s
+				INNER JOIN 
+					admin_users u
+					ON s.user_id=u.user_id
+				ORDER BY
+					time_action DESC;");
 			if (mysql_num_rows($res)>0)
 			{
-				echo "<table><tr><th class=\"tbltitle\">Nick</th>
-				<th class=\"tbltitle\">Login</th>
-				<th class=\"tbltitle\">Letzte Aktion</th>
-				<th class=\"tbltitle\">Status</th>
-				<th class=\"tbltitle\">IP</th>
-				<th class=\"tbltitle\">Hostname</th>
+				echo "<table class=\"tb\">
+				<tr>
+					<th>Status</th>
+					<th>Nick</th>
+					<th>Login</th>
+					<th>Aktivität</th>
+					<th>Dauer</th>
+					<th>IP</th>
+					<th>Browser</th>
+					<th>OS</th>
+					<th>Kicken</th>
 				</tr>";
+				$t = time();
 				while ($arr=mysql_fetch_array($res))
 				{
-					echo "<tr><td class=\"tbldata\">".$arr['user_nick']."</td>
-					<td class=\"tbldata\">".date("d.m.Y H:i",$arr['user_last_login'])."</td><td class=\"tbldata\">".date("d.m.Y  H:i",$arr['user_acttime'])."</td>";
-					if (time()-TIMEOUT< $arr['user_acttime'] && $arr['user_session_key']!="")
-					{
-						echo "<td class=\"tbldata\" style=\"color:#0f0\">Online";
-						if ($arr['user_id']!=$cu->id)
-							echo " [<a href=\"?page=$page&amp;sub=$sub&amp;kick=".$arr['user_id']."\">kick</a>]</td>";
-					}
-					else
-						echo "<td class=\"tbldata\" style=\"color:#f72\">offline</td>";
-					echo "<td class=\"tbldata\">".$arr['user_ip']."</td>";
-					echo "<td class=\"tbldata\">".Net::getHost($arr['user_ip'])."</td>";
-					echo "</tr>";
-					
+					$browser = get_browser($arr['user_agent'], true);
+					echo "<tr>
+						<td ".($t - $cfg->admin_timeout->v < $arr['time_action'] ? 'style="color:#0f0;">Online': 'style="color:red;">Timeout')."</td>
+						<td>".$arr['user_nick']."</td>
+						<td>".date("d.m.Y H:i",$arr['time_login'])."</td>
+						<td>".date("d.m.Y H:i",$arr['time_action'])."</td>
+						<td>".tf($arr['time_action']-$arr['time_login'])."</td>
+						<td title=\"".Net::getHost($arr['ip_addr'])."\">".$arr['ip_addr']."</td>
+						<td title=\"".$arr['user_agent']."\">".$browser['parent']."</td>
+						<td title=\"".$arr['user_agent']."\">".$browser['platform']."</td>
+						<td><a href=\"?page=$page&amp;sub=$sub&amp;kick=".$arr['user_id']."\">Kick</a></td>
+					</tr>";
 				}			
 				echo "</table>";
 			}
@@ -287,7 +333,15 @@
 				echo "<i>Keine Eintr&auml;ge vorhanden!</i>";
 			
 			echo "<h2>Session-Log</h2>";
-			$res=dbquery("SELECT user_nick,user_id,COUNT(*) as cnt FROM admin_users,admin_user_log WHERE log_user_id=user_id GROUP BY user_id ORDER BY user_nick;");
+			$res=dbquery("SELECT 
+				user_nick,
+				u.user_id,
+				COUNT(*) as cnt
+			FROM admin_users u
+			INNER JOIN
+				admin_user_sessionlog l
+				ON l.user_id=u.user_id
+			GROUP BY u.user_id ORDER BY u.user_nick;");
 			if (mysql_num_rows($res)>0)
 			{
 				echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
@@ -297,19 +351,22 @@
 					echo "<option value=\"".$arr['user_id']."\">".$arr['user_nick']." (".$arr['cnt']." Sessions)</option>";
 				}
 				echo "</select> &nbsp; <input type=\"submit\" name=\"logshow\" value=\"Anzeigen\" /></form>";
-				$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM admin_user_log;"));
-				echo "<br/>Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.";					
+
+				$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM admin_user_sessionlog;"));
+
+				echo "<h2>Logs löschen</h2>";
+				echo "<form action=\"?page=$page&sub=$sub\" method=\"post\">";
+				echo "Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.<br/><br/> Eintr&auml;ge l&ouml;schen die &auml;lter als <select name=\"log_timestamp\">";
+				echo "<option value=\"604800\" selected=\"selected\">1 Woche</option>";
+				echo "<option value=\"1209600\">2 Wochen</option>";
+				echo "<option value=\"2419200\">4 Wochen</option>";
+				echo "</select> sind: <input type=\"submit\" name=\"delentrys\" value=\"Ausf&uuml;hren\" /></form>";
+
+
 			}
 			else
-				echo "<i>Keine Eintr&auml;ge vorhanden</i>";		
+				echo "<i>Keine Eintr&auml;ge vorhanden</i>";
 				
-			echo "<h2>Logs l&ouml;schen</h2>";
-			echo "<form action=\"?page=$page&sub=$sub\" method=\"post\">";
-			echo "Eintr&auml;ge l&ouml;schen die &auml;lter als <select name=\"log_timestamp\">";
-			echo "<option value=\"604800\" selected=\"selected\">1 Woche</option>";
-			echo "<option value=\"1209600\">2 Wochen</option>";
-			echo "<option value=\"2419200\">4 Wochen</option>";
-			echo "</select> sind: <input type=\"submit\" name=\"delentrys\" value=\"Ausf&uuml;hren\" /></form>";				
 		}
 	}	
 	

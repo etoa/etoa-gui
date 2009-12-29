@@ -28,7 +28,6 @@
 	define('URL_SEARCH_STRING3', "page=$page");
 
 	define('DATE_FORMAT',$conf['admin_dateformat']['v']);
-	define('TIMEOUT',$conf['admin_timeout']['v']);
 
 	define('HTPASSWD_COMMAND',$conf['htaccess']['v']);
 	define('HTPASSWD_FILE',$conf['htaccess']['p2']);

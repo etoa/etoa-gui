@@ -184,13 +184,13 @@
 
 
 
-								$gres=dbquery("SELECT COUNT(*) FROM user_sessions WHERE time_action>".(time()-$cfg->user_timeout->v).";");
+								$gres=dbquery("SELECT COUNT(*) FROM user_sessions WHERE time_action>".(time() - $cfg->user_timeout->v).";");
 								$garr=mysql_fetch_row($gres);
 								if ($uarr[0]>0)
 									$gp=$garr[0]/$uarr[0]*100;
 								else
 									$gp=0;
-								$a1res=dbquery("SELECT COUNT(*)  FROM admin_user_sessions WHERE time_action>".(time()-TIMEOUT).";");
+								$a1res=dbquery("SELECT COUNT(*)  FROM admin_user_sessions WHERE time_action>".(time() - $cfg->admin_timeout->v).";");
 								$a1arr=mysql_fetch_row($a1res);
 								$a2res=dbquery("SELECT COUNT(*)  FROM admin_users;");
 								$a2arr=mysql_fetch_row($a2res);
