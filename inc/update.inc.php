@@ -20,7 +20,7 @@
 
 		// Alte Session-Logs
 		$tmr = timerStart();
-		$nr = Users::cleanUpSessionLogs();	// TODO Integrate into usersession class
+		$nr = UserSession::cleanupLogs();
 		$log.= "$nr alte Session-Logs gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
 
 		$tmr = timerStart();

@@ -211,7 +211,8 @@
 			// Session-Log cleanup
 			if ((isset($_POST['cl_sesslog']) && $_POST['cl_sesslog']==1) || $all)
 			{
-				$nr = Users::cleanUpSessionLogs($_POST['sess_log_timestamp']);
+				$nr = UserSession::cleanupLogs($_POST['sess_log_timestamp']);
+				$nr += AdminSession::cleanupLogs($_POST['sess_log_timestamp']);
 				echo $nr." Session-Logs wurden gelöscht!<br/>";
 			}
 			

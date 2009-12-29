@@ -65,14 +65,52 @@ abstract class Session implements ISingleton
 	//
 	// Abstract methds
 	//
-	
+
+	/**
+	 * Tries to login the user with the given dataand to create a session
+	 * 
+	 * @param array $data Login data like username and password
+	 */
 	abstract function login($data);
+
+	/**
+	 * Logs the current user out and destroys the session
+	 */
 	abstract function logout();
+
+	/**
+	 * Validates if the user is currently logged in and if his session is valid
+	 */
 	abstract function validate();
+
+	/**
+	 * Registers a new session
+	 */
 	abstract function registerSession();
 
+	/**
+	 * Unregisters a session and save session to session-log
+	 * 
+	 * @param string $sid Session-ID. If null, the current user's session id will be taken
+	 * @param bool $logoutPressed True if it was manual logout
+	 */
 	abstract static function unregisterSession($sid=null,$logoutPressed=1);
+
+	/**
+	 * Cleans up sessions with have a timeout. Should be called at login or by cronjob regularly
+	 */
 	abstract static function cleanup();
+
+	/**
+	 * Removes old session logs from the database
+	 * @param int $threshold Time difference in seconds
+	 */
+	abstract static function cleanupLogs($threshold=0);
+
+	/**
+	 * Kicks the user with the given session id
+	 * @param string $sid Session id
+	 */
 	abstract static function kick($sid);
 
 	//

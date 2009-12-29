@@ -82,16 +82,6 @@
 		echo "<h1>Backend-Daemon</h1>";
 		if (UNIX)
 		{
-			/*if (isset($_GET['action']) && $_GET['action']=="daeomonrestart")
-			{
-				echo "<div><div style=\"background:#000;padding:6px;border:1px solid #fff\">";
-				$cmd = $daemonExe." -r ".$cfg->daemonIdentifier->v." -k";
-				echo $cmd."<br/>";
-				passthru($cmd);
-				echo "</div><br/>";
-			}*/
-
-
 			$frm = new Form("bustn","?page=$page&amp;sub=$sub");
 			echo $frm->begin();
 			
@@ -103,17 +93,7 @@
 			echo "<tr><th>Logfile</th><td>".$daemonLogfile."</td></tr>";
 			echo "<tr><th>Pidfile</th><td>".$daemonPidfile."</td></tr>";
 			echo "<tr><th>Status</th><td>";			
-			/*if ($pid = checkDaemonRunning($daemonPidfile))
-			{
-				echo "<div style=\"color:#0f0;\">Der Backend-Dienst läuft mit PID $pid!
-				&nbsp; <input type=\"button\" value=\"Neu starten\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;action=daeomonrestart'\" />
-				</div>";
-			}	
-			else
-			{
-				echo "<div style=\"color:red;\">Der Backend-Dienst scheint nicht zu laufen!
-				&nbsp; <input type=\"button\" value=\"Neu starten\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;action=daeomonrestart'\" /></div>";
-			}*/
+
 			echo "</td></tr>";			
 			tableEnd();
 			echo $frm->close();		
@@ -139,10 +119,6 @@
 				fclose($lf);
 				echo "</div>";
 
-				/*
-				echo "<textarea style=\"height:400px;width:100%\" id=\"logtextarea\" readonly=\"readonly\">";
-				readfile($daemonLogfile);
-				echo "</textarea>*/ 
 				echo "<script type=\"text/javascript\">
 				textareaelem = document.getElementById('logtext');
 				textareaelem.scrollTop = textareaelem.scrollHeight;
@@ -159,9 +135,6 @@
 		}
 	}	
 	
-	
-	
-
 	//
 	// Statistiken
 	//
@@ -260,7 +233,13 @@
 		}
 		else
 		{
-		
+			$logDelTimespan = array(
+				array(1296000,"15 Tage"),
+				array(2592000,"30 Tage"),
+				array(3888000,"45 Tage"),
+				array(5184000,"60 Tage"),
+			);
+
 			if (isset($_GET['kick']) && $_GET['kick']>0)
 			{
 				if ($_GET['kick']!=$cu->id)
@@ -274,9 +253,12 @@
 			
 			if (isset($_POST['delentrys']) && $_POST['delentrys']!="")
 			{
-				$td = $_POST['log_timestamp'];
-				$nr = AdminSession::cleanupLogs($td);
-				echo "<p>".$nr." Eintr&auml;ge wurden gel&ouml;scht!</p>";
+				if (isset($logDelTimespan[$_POST['log_timestamp']]))
+				{
+					$td = $logDelTimespan[$_POST['log_timestamp']][0];
+					$nr = AdminSession::cleanupLogs($td);
+					echo "<p>".$nr." Eintr&auml;ge wurden gel&ouml;scht!</p>";
+				}
 			}			
 			
 			echo "<h2>Aktive Sessions</h2>";
@@ -356,17 +338,16 @@
 
 				echo "<h2>Logs löschen</h2>";
 				echo "<form action=\"?page=$page&sub=$sub\" method=\"post\">";
-				echo "Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.<br/><br/> Eintr&auml;ge l&ouml;schen die &auml;lter als <select name=\"log_timestamp\">";
-				echo "<option value=\"604800\" selected=\"selected\">1 Woche</option>";
-				echo "<option value=\"1209600\">2 Wochen</option>";
-				echo "<option value=\"2419200\">4 Wochen</option>";
+				echo "Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.<br/><br/>
+					Eintr&auml;ge l&ouml;schen die &auml;lter als <select name=\"log_timestamp\">";
+				foreach ($logDelTimespan as $k => $lts)
+				{
+					echo "<option value=\"".$k."\">".$lts[1]."</option>";
+				}
 				echo "</select> sind: <input type=\"submit\" name=\"delentrys\" value=\"Ausf&uuml;hren\" /></form>";
-
-
 			}
 			else
 				echo "<i>Keine Eintr&auml;ge vorhanden</i>";
-				
 		}
 	}	
 	
@@ -376,7 +357,7 @@
 	elseif ($sub=="ingamenews")
 	{
 		echo "<h1>Ingame-News</h1>";
-    echo "<form action=\"?page=$page&sub=$sub#writer\" method=\"post\">";
+		echo "<form action=\"?page=$page&sub=$sub#writer\" method=\"post\">";
 
 		if (isset($_POST['save']))
 		{

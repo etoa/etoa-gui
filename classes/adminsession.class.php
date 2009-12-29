@@ -1,4 +1,10 @@
 <?php
+/**
+ * Providess session and authentication management
+ * for admin area. See parent class for documentation
+ *
+ * @author Nicolas Perrenoud <mrcage@etoa.ch>
+ */
 class AdminSession extends Session
 {	
 	const tableUser = "admin_users";

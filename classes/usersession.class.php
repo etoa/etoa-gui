@@ -29,6 +29,8 @@ class UserSession extends Session
 
 	function login($data)
 	{
+		self::cleanup();
+		
 		$loginTimeDifferenceThreshold = 3600;
 		
 		if (isset($data['token']))
@@ -434,6 +436,23 @@ class UserSession extends Session
 				self::unregisterSession($arr[0],0);
 			}
 		}
+	}
+
+	static function cleanupLogs($threshold=0)
+	{
+		$cfg = Config::getInstance();
+		if ($threshold>0)
+			$tstamp = time() - $threshold;
+		else
+			$tstamp = time() - (24*3600*$cfg->sessionlog_store_days->p1);
+		dbquery("
+		DELETE FROM
+			`".self::tableLog."`
+		WHERE
+			time_action < ".$tstamp.";");
+		$nr = mysql_affected_rows();
+		Log::add(Log::F_SYSTEM, Log::INFO, "$nr Usersession-Logs die älter als ".date("d.m.Y, H:i",$tstamp)." sind wurden gelöscht.");
+		return $nr;
 	}
 
 	static function kick($sid)
