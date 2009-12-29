@@ -120,7 +120,7 @@
 				echo "<div  style=\"text-align:center\"><br/><a href=\"..\"><img src=\"../images/game_logo.jpg\" alt=\"Logo\" width=\"450\" height=\"150\" border=\"0\" /></a>";
 				echo "<h1 style=\"text-align:center\">Administration - ".Config::getInstance()->roundname->v."</h1><br/>";
 			}
-			if ($str!="")
+			if ($str!="" && $s->lastErrorCode!="nologin")
 			{
 				if ($clr==3)
 					echo "<div style=\"color:#f90;\">";

@@ -125,8 +125,8 @@ class AdminSession extends Session
 		}
 		else
 		{
-			$this->lastError = "Ungültige Session!";
-			$this->lastErrorCode = "invalidsession";
+			$this->lastError = "Keine Session!";
+			$this->lastErrorCode = "nologin";
 		}
 		self::unregisterSession();
 		return false;
