@@ -9,54 +9,38 @@
 		$ud = Users::removeDeleted();
 		$log = "Inaktive und als gelöscht markierte User gel�scht.\nDauer: ".timerStop($tmr)." sec\n\n";
 
-		echo "daily update step 1\n";
-
 		// Alte Benuterpunkte-Logs l�schen
 		$tmr = timerStart();
 		$nr = Users::cleanUpPoints();
 		$log.= "$nr alte Userpunkte-Logs gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
 
-		echo "daily update step 1\n";
-
 		$tmr = timerStart();
 		Users::resetSpyattacks();
 		$log.= "Spionageangriffscounter auf 0 gesetzt.\nDauer: ".timerStop($tmr)." sec\n\n";
-
-		echo "daily update step 3\n";
 
 		// Alte Session-Logs
 		$tmr = timerStart();
 		$nr = UserSession::cleanupLogs();
 		$log.= "$nr alte Session-Logs gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
 
-		echo "daily update step 4\n";
-
 		$tmr = timerStart();
 		$nr = AdminSession::cleanupLogs();
 		$log.= "$nr alte Session-Logs gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
-
-		echo "daily update step 5\n";
 
 		// Alte Logs l�schen
 		$tmr = timerStart();
 		$nr = Log::removeOld();
 		$log.= "$nr alte Logs gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
 
-		echo "daily update step 6\n";
-
 		// Alte Nachrichten l�schen
 		$tmr = timerStart();
 		Message::removeOld();
 		$log.= "Alte Nachrichten gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
 
-		echo "daily update step 7\n";
-
 		// Abgelaufene Sperren l�schen
 		$tmr = timerStart();
 		Users::removeOldBanns();
 		$log.= "Abgelaufene Sperren gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
-
-		echo "daily update step 8\n";
 
 		// Tabellen optimieren
 		$tmr = timerStart();
@@ -66,12 +50,8 @@
 		DbMaintenance::analyzeTables();
 		$log.= "Tabellen analysiert.\nDauer: ".timerStop($tmr)." sec\n\n";
 
-		echo "daily update step 9\n";
-
 		// Remove old ip-hostname combos from cache
 		Net::clearCache();
-
-		echo "daily update step 10\n";
 
 		// Close open tickets that are answered by an admin and are inactive
 		Ticket::closeAssigedInactive();

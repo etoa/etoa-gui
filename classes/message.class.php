@@ -103,7 +103,7 @@ class Message
 				$tstamp = time() - $threshold;
 			else
 				$tstamp=time()-(24*3600*$cfg->value('messages_threshold_days'));
-			echo df($tstamp)." ".$threshold."<br/>";
+
 			$res = dbquery("
 				SELECT
 					message_id
