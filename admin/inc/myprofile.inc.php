@@ -30,28 +30,28 @@
 	
 	if (isset($_POST['submitpw']))
 	{
-		$res=dbquery("SELECT user_password,player_id FROM admin_users WHERE user_id='".$s['user_id']."';");
+		$res=dbquery("SELECT user_password,player_id FROM admin_users WHERE user_id='".$cu->id."';");
 		$arr=mysql_fetch_array($res);
 
-		if (pw_salt($_POST['user_password_old'],$s['user_id'])==$arr['user_password'])
+		if (pw_salt($_POST['user_password_old'],$cu->id)==$arr['user_password'])
 		{
 			if ($_POST['user_password']==$_POST['user_password2'] && $_POST['user_password_old']!=$_POST['user_password'])
 			{
-				if (strlen($_POST['user_password'])>=PASSWORD_MIN_LENGTH)
+				if (strlen($_POST['user_password'])>=PASSWORD_MINLENGHT)
 				{
 					dbquery("
 					UPDATE 
 						admin_users 
 					SET 
-						user_password='".pw_salt($_POST['user_password'],$s['user_id'])."',
+						user_password='".pw_salt($_POST['user_password'],$cu->id)."',
 						user_force_pwchange=0
 					WHERE 
-						user_id='".$s['user_id']."';");
+						user_id='".$cu->id."';");
 					cms_ok_msg("Das Passwort wurde ge&auml;ndert!");
-					add_log(8,$s['user_nick']." ändert sein Passwort",time());
+					add_log(8,$cu->id." ändert sein Passwort",time());
 				}
 				else
-					cms_err_msg("Das Passwort ist zu kurz! Es muss mindestens ".PASSWORD_MIN_LENGTH." Zeichen lang sein!");			
+					cms_err_msg("Das Passwort ist zu kurz! Es muss mindestens ".PASSWORD_MINLENGHT." Zeichen lang sein!");			
 			}
 			else
 				cms_err_msg("Die Kennwortwiederholung stimmt nicht oder das alte und das neue Passwort sind gleich!");			
