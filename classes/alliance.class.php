@@ -774,7 +774,7 @@
 			&& $data['name']!="" 
 			&& $data['tag']!="")
 			{
-				$tagRegExPattern = '/^[^\'\"\?\<\>\$\!\=\;\&]{1,6}/i$';
+				$tagRegExPattern = '/^[^\'\"\?\<\>\$\!\=\;\&]{1,6}$/i';
 				if (preg_match($tagRegExPattern,$data['tag'])>0)
 				//if (eregi('^[^\'\"\?\<\>\$\!\=\;\&]{1,6}$',$data['tag']))
 				{

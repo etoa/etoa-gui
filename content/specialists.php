@@ -67,17 +67,21 @@
 					AND user_specialist_id=".$arr['specialist_id'].";");
 				$tarr = mysql_fetch_row($tres);
 				$used = min($tarr[0],$totAvail);
-				$factor = 1 + (SPECIALIST_MAX_COSTS_FACTOR / $totAvail * $used);
+				$avail = $totAvail - $used;
+				if ($totAvail!=0)
+					$factor = 1 + (SPECIALIST_MAX_COSTS_FACTOR / $totAvail * $used);
+				else
+					$factor = 1;
 
 
 
 				if ($cu->points >= $arr['specialist_points_req'])
 				{
-					if ($cp->resMetal >= $arr['specialist_costs_metal'] &&
-					$cp->resCrystal >= $arr['specialist_costs_crystal'] &&
-					$cp->resPlastic >= $arr['specialist_costs_plastic'] &&
-					$cp->resFuel >= $arr['specialist_costs_fuel'] &&
-					$cp->resFood >= $arr['specialist_costs_food']
+					if ($cp->resMetal >= $arr['specialist_costs_metal'] * $factor &&
+					$cp->resCrystal >= $arr['specialist_costs_crystal'] * $factor &&
+					$cp->resPlastic >= $arr['specialist_costs_plastic'] * $factor &&
+					$cp->resFuel >= $arr['specialist_costs_fuel'] * $factor &&
+					$cp->resFood >= $arr['specialist_costs_food'] * $factor
 					)
 					{
 						$st = $t + (86400 *$arr['specialist_days']);
@@ -95,11 +99,11 @@
 						$cu->specialistTime = $st;
 						
 						$cp->changeRes(
-						-$arr['specialist_costs_metal'],
-						-$arr['specialist_costs_crystal'],
-						-$arr['specialist_costs_plastic'],
-						-$arr['specialist_costs_fuel'],
-						-$arr['specialist_costs_food']);
+						-$arr['specialist_costs_metal'] * $factor,
+						-$arr['specialist_costs_crystal'] * $factor,
+						-$arr['specialist_costs_plastic'] * $factor,
+						-$arr['specialist_costs_fuel'] * $factor,
+						-$arr['specialist_costs_food'] * $factor);
 						
 						//Update every planet
 						foreach ($planets as $pid)

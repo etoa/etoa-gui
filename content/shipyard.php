@@ -262,7 +262,6 @@
 					ship_cat_id=cat_id
 			WHERE
 				ship_buildable='1'
-				AND ship_show='1'
 				AND (ship_race_id='0' OR ship_race_id='".$cu->raceId."')
 			ORDER BY
 				cat_order,
