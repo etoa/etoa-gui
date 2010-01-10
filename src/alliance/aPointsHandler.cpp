@@ -36,11 +36,11 @@ namespace aPoints
 				for (mysqlpp::Row::size_type i = 0; i<resSize; i++) {
 					arr = res.at(i);
 					
-					if (!((int)arr["alliance_res_metal"]<0 
-						  || (int)arr["alliance_res_crystal"]<0 
-						  || (int)arr["alliance_res_plastic"]<0 
-						  || (int)arr["alliance_res_fuel"]<0 
-						  || (int)arr["alliance_res_food"]<0)) {
+					if (!((double)arr["alliance_res_metal"]<0 
+						  || (double)arr["alliance_res_crystal"]<0 
+						  || (double)arr["alliance_res_plastic"]<0 
+						  || (double)arr["alliance_res_fuel"]<0 
+						  || (double)arr["alliance_res_food"]<0)) {
 						
 						// Berechnet Schiffspunkte die addiert werden
 						int shipPointsAdd = (int)arr["alliance_buildlist_current_level"] * (int)config.nget("alliance_shippoints_per_hour", 0);
