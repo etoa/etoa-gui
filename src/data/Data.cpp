@@ -17,7 +17,7 @@
 		return this->longComment;
 	}
 	
-	int Data::getCosts() {
+	double Data::getCosts() {
 		return (this->costsMetal + this->costsCrystal + this->costsPlastic + this->costsFuel + this->costsFood);
 	}
 	
@@ -41,6 +41,6 @@
 		return this->costsFood;
 	}
 	
-	int Data::getCostsPower() {
+	double Data::getCostsPower() {
 		return this->costsPower;
 	}

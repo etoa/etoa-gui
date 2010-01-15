@@ -793,6 +793,7 @@
 		this->shipsSave = true;
 		int counter = 0;
 		std::vector<Object*>::iterator ot;
+		std::cout << this->specialObjects.size() << std::endl;
 		for (ot = this->specialObjects.begin() ; ot < this->specialObjects.end(); ot++) {
 			counter++;
 			(*ot)->addExp(exp);
@@ -802,6 +803,7 @@
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
 				counter += (int)(*it)->addExp(exp);
 		}
+		
 		if (counter)
 			this->exp = exp;
 		else
@@ -1115,10 +1117,10 @@
 						if (data->getActions("spy"))
 							this->spyCount += object->getCount();
 
-						objects.push_back(object);
-
-						if (object->getSpecial())
-							specialObjects.push_back(object);
+						this->objects.push_back(object);
+						
+						if (data->getSpecial())
+							this->specialObjects.push_back(object);
 					}
 				}
 			}

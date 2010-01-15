@@ -21,7 +21,7 @@ public:
 		this->typeId = (short)oRow["fs_ship_id"];
 		this->userId = 0;
 		this->fleetId = (int)oRow["fs_fleet_id"];
-		this->count = (int)oRow["fs_ship_cnt"];
+		this->count = (double)oRow["fs_ship_cnt"];
 		this->initCount = this->count;
 		this->isFaked = (bool)oRow["fs_ship_faked"];
 		

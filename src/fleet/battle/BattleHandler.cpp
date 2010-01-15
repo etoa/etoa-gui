@@ -187,8 +187,8 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 		//
 
 		//Erfahrung für die Spezialschiffe errechnen
-        fleet->addExp(entity->getExp() / 100000);
-        entity->addExp(fleet->getExp() / 100000);
+        fleet->addExp(entity->getExp() / 100000.0);
+        entity->addExp(fleet->getExp() / 100000.0);
 		report->setExp(fleet->getAddedExp());
 		report->setEntityExp(entity->getAddedExp());
 

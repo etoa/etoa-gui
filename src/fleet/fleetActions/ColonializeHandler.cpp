@@ -35,7 +35,7 @@ namespace colonialize
 				}
 				// If the planet belongs to en other user, return the fleet back home
 				else {
-					report->setSubtype("colonilzefailed");
+					report->setSubtype("colonizefailed");
 					report->setContent("1");
 				}
 			}
@@ -43,14 +43,14 @@ namespace colonialize
 			else {
 				// if the user has already enough planets 
 				if (this->f->fleetUser->getPlanetsCount() >= (int)config.nget("user_max_planets",0)) {
-					report->setSubtype("colonilzefailed");
+					report->setSubtype("colonizefailed");
 					report->setContent("2");
 				}
 				// if up to now everything is fine, let's colonialize the planet
 				else {
 					// reset the planet
 					this->targetEntity->resetEntity(this->f->getUserId());
-					report->setSubtype("colonilze");
+					report->setSubtype("colonize");
 					
 					report->setRes(floor(this->f->getResMetal()),
 								   floor(this->f->getResCrystal()),

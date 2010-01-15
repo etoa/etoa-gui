@@ -36,9 +36,9 @@ class Object
 		int getId();
 		int getUserId();
 		short getTypeId();
-		int getCount();
-		int getInitCount();
-		int getRebuildCount();
+		double getCount();
+		double getInitCount();
+		double getRebuildCount();
 		int getEntityId();
 		int getFleetId();
 		
@@ -77,7 +77,7 @@ class Object
 		int id;
 		short typeId;
 		int userId;
-		int count, initCount, rebuildCount;
+		double count, initCount, rebuildCount;
 		int entityId, fleetId;
 		
 		bool isFaked;

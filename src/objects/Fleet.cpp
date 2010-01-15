@@ -811,6 +811,7 @@
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
 				exp += (*it)->getExp();
 		}
+		std::cout << exp << std::endl;
 		return exp;
 	}
 
@@ -1209,7 +1210,7 @@
 
 							this->objects.push_back(object);
 
-							if (object->getSpecial()) {
+							if (data->getSpecial()) {
 								this->antraxBonus += object->getCount() * object->getSBonusAntrax() * data->getBonusAntrax();
 								this->antraxFoodBonus += object->getCount() * object->getSBonusAntraxFood() * data->getBonusAntraxFood();
 								this->destroyBonus += object->getCount() * object->getSBonusBuildDestroy() * data->getBonusBuildDestroy();

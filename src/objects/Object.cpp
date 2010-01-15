@@ -13,16 +13,16 @@
 		return this->userId;
 	}
 	
-	int Object::getCount() {
+	double Object::getCount() {
 		return this->count;
 	}
 	
-	int Object::getInitCount() {
+	double Object::getInitCount() {
 		return this->initCount;
 	}
 	
-	int Object::getRebuildCount() {
-		return std::max(0,this->rebuildCount);
+	double Object::getRebuildCount() {
+		return std::max(0.0,this->rebuildCount);
 	}
 	
 	int Object::getEntityId() {

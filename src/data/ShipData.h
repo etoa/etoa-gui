@@ -31,7 +31,7 @@ public:
 		this->bountyBonus = (double)object["ship_bounty_bonus"];
 		this->raceId = (short)object["ship_race_id"];
 		this->catId = (short)object["ship_cat_id"];
-		this->maxCount = (int)object["ship_max_count"];
+		this->maxCount = (double)object["ship_max_count"];
 		this->points = (double)object["ship_points"];
 		this->fuelUseLanding = (int)object["ship_fuel_use_launch"];
 		this->fuelUseLaunch = (int)object["ship_fuel_use_landing"];
@@ -94,7 +94,7 @@ public:
 	short getCatId();
 	bool getFakeable();
 	bool getSpecial();
-	int getMaxCount();
+	double getMaxCount();
 	short getMaxLevel();
 	int getNeedExp();
 	double getExpFactor();
@@ -144,7 +144,7 @@ private:
 	short catId;
 	bool fakeable;
 	bool special;
-	int maxCount;
+	double maxCount;
 	short maxLevel;
 	int needExp;
 	double expFactor;

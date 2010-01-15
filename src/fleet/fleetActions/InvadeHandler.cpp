@@ -69,10 +69,6 @@ namespace invade
 						
 						if (this->one < this->two) {
 							if (this->f->fleetUser->getPlanetsCount() < (int)config.nget("user_max_planets",0)) {
-								// Invade the planet
-								this->targetEntity->invadeEntity(this->f->getUserId());
-								this->f->fleetUser->setLastInvasion();
-								this->f->deleteActionShip(1);
 								
 								BattleReport *invade = new BattleReport(this->f->getUserId(),
 																		 this->targetEntity->getUserId(),
@@ -90,8 +86,8 @@ namespace invade
 								invade->setOpponent1Id(this->targetEntity->getUserId());
 								delete invade;
 								
-								BattleReport *vreport = new BattleReport(this->f->getUserId(),
-																		 this->targetEntity->getUserId(),
+								BattleReport *vreport = new BattleReport(this->targetEntity->getUserId(),
+																		 this->f->getUserId(),
 																		 this->f->getEntityTo(),
 																		 this->f->getEntityFrom(),
 																		 this->f->getLandtime(),
@@ -100,6 +96,11 @@ namespace invade
 								vreport->setOpponent1Id(this->f->getUserId());
 								
 								delete vreport;
+								
+								// Invade the planet
+								this->targetEntity->invadeEntity(this->f->getUserId());
+								this->f->fleetUser->setLastInvasion();
+								this->f->deleteActionShip(1);
 								
 								// Land fleet
 								fleetLand(1);

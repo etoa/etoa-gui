@@ -113,7 +113,7 @@
 		return this->special;
 	}
 	
-	int ShipData::getMaxCount() {
+	double ShipData::getMaxCount() {
 		return this->maxCount;
 	}
 	
