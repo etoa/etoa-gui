@@ -195,7 +195,7 @@ class SpyReport extends Report
 				}
 				if (array_sum($this->res)>0)
 				{
-					echo '<br /><strong>ROHSOTFFE:</strong><br />';
+					echo '<br /><strong>ROHSTOFFE:</strong><br />';
 					echo '<table>';
 					foreach ($resNames as $k=>$v)
 					{

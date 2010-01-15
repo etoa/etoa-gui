@@ -20,7 +20,7 @@
 	// $Date$
 	// $Rev$
 	//
-print_r($_POST);
+	
 			// Alliance checks
 			if(!isset($_POST['ressource_for_alliance']))
 			{
