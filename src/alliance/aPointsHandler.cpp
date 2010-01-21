@@ -5,7 +5,7 @@ namespace aPoints
 {
 	void aPointsHandler::update()
 	{
-		
+		/*
 		//std::time_t time = std::time(0);  Unused
 		mysqlpp::Query query = con_->query();
 		Config &config = Config::instance();
@@ -57,6 +57,6 @@ namespace aPoints
 					}
 				}
 			}
-		}
+		}*/
 	}
 }
