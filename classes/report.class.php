@@ -367,44 +367,95 @@ abstract class Report
 				");
 				if (mysql_num_rows($res)>0)
 				{
+					$battle = array();
+					$spy = array();
+					$market = array();
+					$other = array();
+					$counter = 0;
+
 					while ($arr=mysql_fetch_row($res))
 					{
 						switch ($arr[1]) {
 							case 'battle':
+								array_push($battle,$arr[0]);
+								break;
+							case 'spy':
+								array_push($spy,$arr[0]);
+								break;
+							case 'market':
+								array_push($market,$arr[0]);
+								break;
+							case 'other':
+								array_push($other,$arr[0]);
+								break;
+						}
+
+						if ($counter > 10000) {
+							if (count($battle)>0)
 								dbquery("
 									DELETE FROM
 										reports_battle
 									WHERE
-										id=".$arr[0].";
-								");
-							break;
-							case 'spy':
-								dbquery("
-									DELETE FROM
-										reports_spy
-									WHERE
-										id=".$arr[0].";
-								");
-							break;
-							case 'market':
+										id IN (".implode(",", $battle).");");
+
+							if (count($market)>0)
 								dbquery("
 									DELETE FROM
 										reports_market
 									WHERE
-										id=".$arr[0].";
-								");
-							break;
-							case 'other':
+										id IN (".implode(",", $market).");");
+
+							if (count($spy)>0)
+								dbquery("
+									DELETE FROM
+										reports_spy
+									WHERE
+										id IN (".implode(",", $spy).");");
+
+							if (count($other)>0)
 								dbquery("
 									DELETE FROM
 										reports_other
 									WHERE
-										id=".$arr[0].";
-								");
-							break;
-							
-						}			
-					}			
+										id IN (".implode(",", $other).");");
+
+							$battle = array();
+							$spy = array();
+							$market = array();
+							$other = array();
+							$counter = 0;
+						}
+						else $counter++;
+
+					}
+
+					if (count($battle)>0)
+						dbquery("
+							DELETE FROM
+								reports_battle
+							WHERE
+								id IN (".implode(",", $battle).");");
+
+					if (count($market)>0)
+						dbquery("
+							DELETE FROM
+								reports_market
+							WHERE
+								id IN (".implode(",", $market).");");
+
+					if (count($spy)>0)
+						dbquery("
+							DELETE FROM
+								reports_spy
+							WHERE
+								id IN (".implode(",", $spy).");");
+
+					if (count($other)>0)
+						dbquery("
+							DELETE FROM
+								reports_other
+							WHERE
+								id IN (".implode(",", $other).");");			
 				}
 				dbquery("
 					DELETE FROM
@@ -436,44 +487,95 @@ abstract class Report
 			");
 			if (mysql_num_rows($res)>0)
 			{
+				$battle = array();
+				$spy = array();
+				$market = array();
+				$other = array();
+				$counter = 0;
+				
 				while ($arr=mysql_fetch_row($res))
 				{
 					switch ($arr[1]) {
 						case 'battle':
+							array_push($battle,$arr[0]);
+							break;
+						case 'spy':
+							array_push($spy,$arr[0]);
+							break;
+						case 'market':
+							array_push($market,$arr[0]);
+							break;
+						case 'other':
+							array_push($other,$arr[0]);
+							break;
+					}
+					
+					if ($counter > 10000) {
+						if (count($battle)>0)
 							dbquery("
 								DELETE FROM
 									reports_battle
 								WHERE
-									id=".$arr[0].";
-							");
-						break;
-						case 'spy':
-							dbquery("
-								DELETE FROM
-									reports_spy
-								WHERE
-									id=".$arr[0].";
-							");
-						break;
-						case 'market':
+									id IN (".implode(",", $battle).");");
+
+						if (count($market)>0)
 							dbquery("
 								DELETE FROM
 									reports_market
 								WHERE
-									id=".$arr[0].";
-							");
-						break;
-						case 'other':
+									id IN (".implode(",", $market).");");
+
+						if (count($spy)>0)
+							dbquery("
+								DELETE FROM
+									reports_spy
+								WHERE
+									id IN (".implode(",", $spy).");");
+
+						if (count($other)>0)
 							dbquery("
 								DELETE FROM
 									reports_other
 								WHERE
-									id=".$arr[0].";
-							");
-						break;
+									id IN (".implode(",", $other).");");
 						
-					}				
-				}			
+						$battle = array();
+						$spy = array();
+						$market = array();
+						$other = array();
+						$counter = 0;
+					}
+					else $counter++;
+									
+				}
+				
+				if (count($battle)>0)
+					dbquery("
+						DELETE FROM
+							reports_battle
+						WHERE
+							id IN (".implode(",", $battle).");");
+				
+				if (count($market)>0)
+					dbquery("
+						DELETE FROM
+							reports_market
+						WHERE
+							id IN (".implode(",", $market).");");
+				
+				if (count($spy)>0)
+					dbquery("
+						DELETE FROM
+							reports_spy
+						WHERE
+							id IN (".implode(",", $spy).");");
+				
+				if (count($other)>0)
+					dbquery("
+						DELETE FROM
+							reports_other
+						WHERE
+							id IN (".implode(",", $other).");");
 			}
 			$res = dbquery("
 				DELETE FROM

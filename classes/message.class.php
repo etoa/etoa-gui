@@ -116,15 +116,18 @@ class Message
 			");
 			if (mysql_num_rows($res)>0)
 			{
+				$ids = array();
 				while ($arr=mysql_fetch_row($res))
 				{
-					dbquery("
-						DELETE FROM
-							message_data
-						WHERE
-							id=".$arr[0].";
-					");				
-				}			
+					array_push($ids,$arr[0]);
+				}
+
+				dbquery("
+					DELETE FROM
+						message_data
+					WHERE
+						id IN (".implode(",",$ids),");
+				");			
 			}
 			dbquery("
 				DELETE FROM
@@ -154,15 +157,18 @@ class Message
 		");
 		if (mysql_num_rows($res)>0)
 		{
+			$ids = array();
 			while ($arr=mysql_fetch_row($res))
 			{
-				dbquery("
-					DELETE FROM
-						message_data
-					WHERE
-						id=".$arr[0].";
-				");				
-			}			
+				array_push($ids,$arr[0]);
+			}
+			
+			dbquery("
+				DELETE FROM
+					message_data
+				WHERE
+					id IN (".implode(",",$ids),");
+			");
 		}
 		$res = dbquery("
 			DELETE FROM
