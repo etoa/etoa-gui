@@ -200,7 +200,7 @@
 		{
 			echo "Clean-Up wird durchgeführt...<br/>";
 			$all = isset($_POST['submit_cleanup_all']) ? true : false;
-
+			
 			// Log cleanup
 			if (isset($_POST['cl_log']) || $all)
 			{
@@ -225,6 +225,17 @@
 				else
 					$nr = Message::removeOld($_POST['message_timestamp']);
 					echo $nr." Nachrichten wurden gelöscht!<br/>";
+
+			}
+			
+			/* Reprots cleanup */	
+			if ((isset($_POST['cl_report']) && $_POST['cl_report']==1) || $all)
+			{
+				if ($_POST['only_deletedr']==1)
+					$nr = Report::removeOld($_POST['report_timestampd'],1);
+				else
+					$nr = Report::removeOld($_POST['report_timestamp']);
+					echo $nr." Berichte wurden gelöscht!<br/>";
 
 			}
 						
@@ -326,6 +337,48 @@
 		foreach ($days as $ds)
 		{
 			echo "<option value=\"".(24*3600*$ds)."\" ".($ds==$cfg->p1('messages_threshold_days')  ? " selected=\"selected\"" : "").">".$ds." Tage</option>";
+		}
+		echo "</select> (".nf($tblcnt[0])." total).";
+		echo '</fieldset><br/>';
+		
+		/* Reports */		
+		echo '<fieldset><legend><input type="checkbox" value="1" name="cl_report" /> Berichte</legend>';
+		$tblcnt = mysql_fetch_row(dbquery("
+		SELECT 
+			COUNT(id) 
+		FROM 
+			reports
+		WHERE
+			archived=0
+		;"));
+		echo '<input type="radio" name="only_deletedr" value="0" /><b>Berichte löschen:</b> ';
+		echo "Älter als <select name=\"repor_timestamp\">";
+		$days = array(1,7,14,21,28);
+		if (!in_array($cfg->get('report_threshold_days'),$days))
+			$days[] = $cfg->get('report_threshold_days');
+		sort($days);
+		foreach ($days as $ds)
+		{
+			echo "<option value=\"".(24*3600*$ds)."\" ".($ds==$cfg->get('rerport_threshold_days')  ? " selected=\"selected\"" : "").">".$ds." Tage</option>";
+		}
+		echo "</select> (".nf($tblcnt[0])." total).<br/>";
+		$tblcnt = mysql_fetch_row(dbquery("
+		SELECT 
+			COUNT(id) 
+		FROM 
+			reports
+		WHERE 
+			deleted=1
+		;"));
+		echo '<input type="radio" name="only_deletedr" value="1" checked="checked" /> <b>Nur \'gelöschte\' Berichte löschen:</b> ';
+		echo 'Älter als <select name="message_timestampd">';
+		$days = array(7,14,21,28);
+		if (!in_array($cfg->p1('reports_threshold_days'),$days))
+			$days[] = $cfg->p1('reports_threshold_days');
+		sort($days);
+		foreach ($days as $ds)
+		{
+			echo "<option value=\"".(24*3600*$ds)."\" ".($ds==$cfg->p1('reports_threshold_days')  ? " selected=\"selected\"" : "").">".$ds." Tage</option>";
 		}
 		echo "</select> (".nf($tblcnt[0])." total).";
 		echo '</fieldset><br/>';

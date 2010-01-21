@@ -423,8 +423,7 @@ abstract class Report
 				$tstamp = time() - $threshold;
 			else
 				$tstamp=time()-(24*3600*$cfg->p1('reports_threshold_days'));
-				
-			echo $tstamp;
+			
 			$res = dbquery("
 				SELECT
 					id,
