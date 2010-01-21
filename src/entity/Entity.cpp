@@ -287,14 +287,15 @@
 		if (!this->dataLoaded)
 			this->loadData();
 		if (people) {
+			double peopleAtWork = this->loadPeopleAtWork();
 			this->changedData = true;
-			if (people<=this->resPeople) {
+			if (people<=this->resPeople-peopleAtWork) {
 				this->resPeople -= people;
 				return people;
 			}
 			else {
-				people = this->resPeople;
-				this->resPeople = 0;
+				people = this->resPeople - peopleAtWork;
+				this->resPeople = 0 + peopleAtWork;
 				return people;
 			}
 		}
@@ -793,7 +794,6 @@
 		this->shipsSave = true;
 		int counter = 0;
 		std::vector<Object*>::iterator ot;
-		std::cout << this->specialObjects.size() << std::endl;
 		for (ot = this->specialObjects.begin() ; ot < this->specialObjects.end(); ot++) {
 			counter++;
 			(*ot)->addExp(exp);
@@ -1416,6 +1416,35 @@
 				}
 			}
 		}
+	}
+	
+	double Entity::loadPeopleAtWork() {
+		double working = 0;
+		
+		My &my = My::instance();
+		mysqlpp::Connection *con = my.get();
+		mysqlpp::Query query = con->query();
+		query << "SELECT "
+        	<< "	SUM(buildlist_people_working) AS atWork "
+        	<< "FROM "
+        	<< "	buildlist "
+        	<< "WHERE "
+        	<< "	buildlist_entity_id='" << this->id << "' "
+			<< "	AND buildlist_people_working_status='1';";
+        
+		RESULT_TYPE pRes = query.store();
+		query.reset();
+		
+		if (pRes) {
+			int pSize = pRes.size();
+			
+			if (pSize > 0) {
+				mysqlpp::Row pRow = pRes.at(0);
+				working = (double)pRow[0];
+			}
+		}
+		
+		return working;
 	}
 
 	std::string	Entity::bombBuilding(int level) {

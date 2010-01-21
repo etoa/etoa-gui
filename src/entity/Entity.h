@@ -274,6 +274,8 @@ class Entity
 	
 		void loadBuildings();
 		
+		double loadPeopleAtWork();
+		
 		virtual void loadData() = 0;
 };
 
