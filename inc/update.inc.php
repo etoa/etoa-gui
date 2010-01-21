@@ -36,6 +36,11 @@
 		$tmr = timerStart();
 		Message::removeOld();
 		$log.= "Alte Nachrichten gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
+		
+		// Alte Berichte löschen
+		$tmr = timerStart();
+		Report::removeOld();
+		$log.= "Alte Berichte gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
 
 		// Abgelaufene Sperren l�schen
 		$tmr = timerStart();
@@ -72,6 +77,9 @@
 			Ranking::calcTitles();
 		}
 		$log = "\nPunkte aktualisiert.\nDauer: ".timerStop($tmr)." sec\n\n";
+		
+		//Schiffsteile berechnen
+		Alliance::allianceShipPointsUpdate();
 
 		// Wurml�cher vertauschen
 		//$tmr = timerStart();

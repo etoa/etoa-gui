@@ -76,8 +76,8 @@
 					echo "<tr><td>".df($arr['failure_time'])."</td>";
 					//echo "<td>".$arr['failure_pw']."</td>";
 					echo "<td>".$arr['failure_ip']."</td>";
-					echo "<td>".$arr['failure_host']."</td>";
-					echo "<td>".$arr['failure_agent']."</td></tr>";
+					echo "<td>".Net::getHost($arr['failure_ip'])."</td>";
+					echo "<td>".$arr['failure_client']."</td></tr>";
 				}
 			}
 			else

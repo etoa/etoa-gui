@@ -337,6 +337,157 @@ abstract class Report
 		{
 			return self::$types[$this->type];
 		}
+		
+		/**
+		* Alte Nachrichten löschen
+		*/
+		static function removeOld($threshold=0,$onlyDeleted=1) //need to be changed as soon as there is an archive
+		{
+			$cfg = Config::getInstance();
+
+			$nr = 0;
+			if ($onlyDeleted==0)
+			{
+				// Normal old messages
+				if ($threshold>0)
+					$tstamp = time() - $threshold;
+				else
+					$tstamp=time()-(24*3600*$cfg->value('reports_threshold_days'));
+
+				$res = dbquery("
+					SELECT
+						id,
+						type
+					 FROM
+						reports
+					WHERE
+						archived=0
+						AND read=1
+						AND timestamp<'".$tstamp."';		
+				");
+				if (mysql_num_rows($res)>0)
+				{
+					while ($arr=mysql_fetch_row($res))
+					{
+						switch ($arr[1]) {
+							case 'battle':
+								dbquery("
+									DELETE FROM
+										reports_battle
+									WHERE
+										id=".$arr[0].";
+								");
+							break;
+							case 'spy':
+								dbquery("
+									DELETE FROM
+										reports_spy
+									WHERE
+										id=".$arr[0].";
+								");
+							break;
+							case 'market':
+								dbquery("
+									DELETE FROM
+										reports_market
+									WHERE
+										id=".$arr[0].";
+								");
+							break;
+							case 'other':
+								dbquery("
+									DELETE FROM
+										reports_other
+									WHERE
+										id=".$arr[0].";
+								");
+							break;
+							
+						}			
+					}			
+				}
+				dbquery("
+					DELETE FROM
+						reports
+					WHERE
+						archived=0
+						AND read=1
+						AND timestamp<'".$tstamp."';
+				");		
+				$nr = mysql_affected_rows();
+				add_log("4","Unarchivierte Berichte die älter als ".date("d.m.Y H:i",$tstamp)." sind wurden gelöscht!",time());
+			}
+
+			// Deleted
+			if ($threshold>0)
+				$tstamp = time() - $threshold;
+			else
+				$tstamp=time()-(24*3600*$cfg->p1('reports_threshold_days'));
+				
+			echo $tstamp;
+			$res = dbquery("
+				SELECT
+					id,
+					type
+				 FROM
+					reports
+				WHERE
+					deleted='1'
+					AND timestamp<'".$tstamp."';		
+			");
+			if (mysql_num_rows($res)>0)
+			{
+				while ($arr=mysql_fetch_row($res))
+				{
+					switch ($arr[1]) {
+						case 'battle':
+							dbquery("
+								DELETE FROM
+									reports_battle
+								WHERE
+									id=".$arr[0].";
+							");
+						break;
+						case 'spy':
+							dbquery("
+								DELETE FROM
+									reports_spy
+								WHERE
+									id=".$arr[0].";
+							");
+						break;
+						case 'market':
+							dbquery("
+								DELETE FROM
+									reports_market
+								WHERE
+									id=".$arr[0].";
+							");
+						break;
+						case 'other':
+							dbquery("
+								DELETE FROM
+									reports_other
+								WHERE
+									id=".$arr[0].";
+							");
+						break;
+						
+					}				
+				}			
+			}
+			$res = dbquery("
+				DELETE FROM
+					reports
+				WHERE
+					deleted='1'
+					AND timestamp<'".$tstamp."';
+			");		
+			add_log("4","Unarchivierte Berichte die älter als ".date("d.m.Y H:i",$tstamp)." sind wurden gelöscht!",time());		
+			$nr += mysql_affected_rows();
+			return $nr;
+		}
+
 
 	}
 	?>
