@@ -10,20 +10,20 @@ function showDetail($type)
 	switch ($type)
 	{
 		case 'market':
-		tableStart("Detailsuche",'auto');
-		echo "<input type=\"hidden\" name=\"table\" id=\"table\" value=\"1\" />
-			<tr>
-				<th>Unterkategorie</th>
-				<td>
-					<select id=\"subtype\" name=\"subtype\">
-						<option value=\"\">(egal)</option>";
-		foreach (MarketReport::$subTypes as $k=>$v)
-		echo "			<option value=\"".$k."\">".$v."</option>";
+			tableStart("Detailsuche",'auto');
+			echo "<input type=\"hidden\" name=\"table\" id=\"table\" value=\"1\" />
+				<tr>
+					<th>Unterkategorie</th>
+					<td>
+						<select id=\"subtype\" name=\"subtype\">
+							<option value=\"\">(egal)</option>";
+					foreach (MarketReport::$subTypes as $k=>$v)
+			echo "			<option value=\"".$k."\">".$v."</option>";
 
-		echo "		</select>
-				</td>
-			</tr>
-			<tr>
+			echo "		</select>
+					</td>
+				</tr>
+				<tr>
 				<th>Schiff</th>
 				<td>
 					<select id=\"ship_id\" name=\"ship_id\">
@@ -78,6 +78,83 @@ function showDetail($type)
 			</tr>";
 		tableEnd();
 		break;
+		case 'other':
+			tableStart("Detailsuche",'auto');
+			echo "<input type=\"hidden\" name=\"table\" id=\"table\" value=\"1\" />
+				<tr>
+					<th>Unterkategorie</th>
+					<td>
+						<select id=\"subtype\" name=\"subtype\">
+							<option value=\"\">(egal)</option>";
+						foreach (OtherReport::$subTypes as $k=>$v)
+							echo "			<option value=\"".$k."\">".$v."</option>";
+
+						echo "		</select>
+					</td>
+				</tr>
+				<tr>
+					<th>Aktion:</th>
+					<td>
+						<select name=\"action\">
+							<option value=\"\">(egal)</option>";
+				$fas = FleetAction::getAll();
+				foreach ($fas as $fa)
+					echo "<option value=\"".$fa->code()."\" style=\"color:".FleetAction::$attitudeColor[$fa->attitude()]."\">".$fa->name()."</option>";
+				
+				echo "</select> &nbsp; <select name=\"status\">";
+				echo "<option value=\"\">(egal)</option>";
+				foreach (FleetAction::$statusCode as $k => $v)
+				{
+					echo "<option value=\"".$k."\">".$v."</option>";
+				}
+				echo "</select>
+					</td>
+				</tr>
+				<tr>
+					<th>Schiff</th>
+					<td>
+						<select id=\"ship_id\" name=\"ship_id\">
+							<option value=\"\">(egal)</option>";
+					// Schiffe laden
+					$res = dbquery("
+								SELECT 
+									ship_id,
+									ship_name 
+								FROM 
+									ships 
+								ORDER BY 
+									ship_name;");
+					while ($arr=mysql_fetch_row($res))
+			echo "			<option value=\"".$arr[0]."\">".$arr[1]."</option>";
+	
+			echo "		</select>
+					</td>
+				</tr>
+				<tr>
+					<th>Anzahl</th>
+					<td>
+						<input type=\"text\" name=\"ship_count\" value=\"\" size=\"6\" maxlength=\"250\" />
+					</td>
+				</tr>
+				<tr>
+					<th>Rohstoffe</th>
+					<td>
+						<input id=\"res_0\" type=\"checkbox\" name=\"res_0\" value=\"1\" title=\"Titan\" />&nbsp;Titan
+						<input id=\"res_1\" type=\"checkbox\" name=\"res_1\" value=\"1\" title=\"Silizium\" />&nbsp;Silizium
+						<input id=\"res_2\" type=\"checkbox\" name=\"res_2\" value=\"1\" title=\"PVC\" />&nbsp;PVC
+						<input id=\"res_3\" type=\"checkbox\" name=\"res_3\" value=\"1\" title=\"Tritium\" />&nbsp;Tritium
+						<input id=\"res_4\" type=\"checkbox\" name=\"res_4\" value=\"1\" title=\"Nahrung\" />&nbsp;Nahrung
+					</td>
+				</tr>
+				<tr>
+					<th>Flotten-ID</th>
+					<td>
+						<input type=\"text\" name=\"fleet1_id\" value=\"\" size=\"4\" maxlength=\"250\" />
+					</td>
+				</tr>";
+			tableEnd();
+		break;
+		
 		default:
 	}
 	

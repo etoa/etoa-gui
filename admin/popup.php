@@ -23,27 +23,32 @@
 	// 	Erstellt: 27.12.2007
 	// 	Bearbeitet von: Yanneck Boss alias Yanneck
 	// 	Bearbeitet am: 01.01.2008
-	// 	Kommentar: 	Notepad f�r den Admin Modus
+	// 	Kommentar: 	Notepad für den Admin Modus
 	//
 	
 	require("inc/includer.inc.php");
 	
 	adminHtmlHeader();
-
-	$cu = new AdminUser($s->user_id);
-
-	echo "<div style=\"padding:10px\">";
-
-	if (eregi("^[a-z\_]+$",$page)  && strlen($page)<=50)
+	
+	if ($s->user_id)
 	{
-		if (!include("content/".$page.".php"))
-			cms_err_msg("Die Seite $page wurde nicht gefunden!");
+		$cu = new AdminUser($s->user_id);
+		
+		echo "<div style=\"padding:10px\">";
+		
+		if (eregi("^[a-z\_]+$",$page)  && strlen($page)<=50)
+		{
+			if (!include("content/".$page.".php"))
+				cms_err_msg("Die Seite $page wurde nicht gefunden!");
+		}
+		else
+			echo "<h1>Fehler</h1>Der Seitenname <b>".$page."</b> enth&auml;lt unerlaubte Zeichen!<br><br><a href=\"javascript:history.back();\">Zur&uuml;ck</a>";
+		
+		echo "</div>";
 	}
 	else
-		echo "<h1>Fehler</h1>Der Seitenname <b>".$page."</b> enth&auml;lt unerlaubte Zeichen!<br><br><a href=\"javascript:history.back();\">Zur&uuml;ck</a>";
+		cms_err_msg("Die Seite wurde nicht gefunden!");
 	
-	echo "</div>";
-
 	adminHtmlFooter();
 	
 	require("inc/footer.inc.php");

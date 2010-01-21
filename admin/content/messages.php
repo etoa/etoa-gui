@@ -181,8 +181,8 @@
 		//
 		if (isset($_POST['user_search']) && $_POST['user_search']!="" || isset($_GET['action']) && $_GET['action']=="searchresults")
 		{
-			if ($_POST['user__id']!="")
-				$sql.= " AND user_id='".$_POST['user__id']."' ";
+			if ($_POST['user_id']!="")
+				$sql.= " AND user_id='".$_POST['user_id']."' ";
 			if ($_POST['user_nick']!="")
 			{
 				$uid = get_user_id($_POST['user_nick']);
@@ -267,6 +267,42 @@
 					$sql.= " AND rd.buy_3>'0'";
 				if (isset($_POST['buy_4']) && $_POST['buy_4']==1)
 					$sql.= " AND rd.buy_4>'0'";
+			}
+			
+			//other
+			if (isset($_POST['type']) && $_POST['type']=='other')
+			{
+				if ($_POST['fleet1_id']!="")
+					$sql.= " AND (rd.fleet1_id=".$_POST['fleet1_id']. " OR rd.fleet2_id=".$_POST['fleet1_id'].") ";
+				
+				if ($_POST['ship_id']!="")
+				{
+					if ($_POST['ship_count']!="")
+						$sql.= " AND rd.ships LIKE '%".$_POST['ship_id'].":".$_POST['ship_count'].",%'";
+					else
+						$sql.= " AND rd.ships LIKE '%".$_POST['ship_id'].":%'";
+				}
+				elseif ($_POST["ship_count"]!="")
+					$sql.= " AND rd.ships LIKE '%:".$_POST['ship_count'].",%'";
+				
+				if (isset($_POST['res_0']) && $_POST['res_0']==1)
+					$sql.= " AND rd.res_0>'0'";
+				if (isset($_POST['res_1']) && $_POST['res_1']==1)
+					$sql.= " AND rd.res_1>'0'";
+				if (isset($_POST['res_2']) && $_POST['res_2']==1)
+					$sql.= " AND rd.res_2>'0'";
+				if (isset($_POST['res_3']) && $_POST['res_3']==1)
+					$sql.= " AND rd.res_3>'0'";
+				if (isset($_POST['res_4']) && $_POST['res_4']==1)
+					$sql.= " AND rd.res_4>'0'";
+					
+				if ($_POST['status']!="")
+					$sql.= " AND rd.status=".$_POST['status'];
+				
+				if ($_POST['action']!="")
+					$sql.= " AND rd.action=".$_POST['action'];
+					
+				
 			}
 			
 			
@@ -399,13 +435,6 @@
 								<br />
 								<div class=\"citybox\" id=\"citybox1\">&nbsp;</div>
 							</td>
-						</tr>
-						<tr>
-							<th>Betreff</th>
-							<td>
-								<input type=\"text\" name=\"subject\" value=\"\" size=\"20\" maxlength=\"250\" />";
-								fieldqueryselbox(subject);
-			echo "			</td>
 						</tr>
 						<tr>
 							<th>Kategorie</th>

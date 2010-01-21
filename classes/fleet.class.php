@@ -522,7 +522,7 @@
 						$difftime = time() - $this->launchTime;
 						$this->status = 2;
 	
-						if ($this->actionCode=="support" && $this->status=3)
+						if ($this->actionCode=="support" && $this->status==3)
 						{
 							$this->launchTime = time();
 							$this->landTime = time() + $this->nextActionTime;
