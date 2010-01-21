@@ -1440,7 +1440,7 @@
 			
 			if (pSize > 0) {
 				mysqlpp::Row pRow = pRes.at(0);
-				working = (double)pRow[0];
+				//working = (double)pRow[0];
 			}
 		}
 		
