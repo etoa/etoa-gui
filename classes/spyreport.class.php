@@ -234,15 +234,9 @@ class SpyReport extends Report
 				echo '<table>';
 				foreach ($resNames as $k=>$v)
 				{
-						echo '<tr>
-						<td>'.$v.' </td>
-						<td style="text-align:right;"> '.nf($this->res[$k]).'</td>
-						</tr>';
+						echo '<tr><td>'.$v.' </td><td style="text-align:right;"> '.nf($this->res[$k]).'</td></tr>';
 				}
-				echo '<tr>
-						<td>Bewohner </td>
-						<td style="text-align:right;"> '.nf($this->res[5]).'</td>
-					</tr>';
+				echo '<tr><td>Bewohner </td><td style="text-align:right;"> '.nf($this->res[5]).'</td></tr>';
 				echo '</table><br/>';
 				break;
 			case 'analyzefaild':

@@ -297,10 +297,10 @@
 					$sql.= " AND rd.res_4>'0'";
 					
 				if ($_POST['status']!="")
-					$sql.= " AND rd.status=".$_POST['status'];
+					$sql.= " AND rd.status='".$_POST['status']."'";
 				
 				if ($_POST['action']!="")
-					$sql.= " AND rd.action=".$_POST['action'];
+					$sql.= " AND rd.action='".$_POST['action']."'";
 					
 				
 			}

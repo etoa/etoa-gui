@@ -353,7 +353,7 @@
 								// Besiedelte Planete
 								if($ent->ownerId() > 0)
 								{
-									echo "<a href=\"javascript:;\" onclick=\"xajax_launchSypProbe(".$ent->id().");\" title=\"Ausspionieren\">".icon("spy")."</a> ";
+									echo "<a href=\"javascript:;\" onclick=\"xajax_launchSypProbe(".$ent->id().");\" title=\"Ausspionieren\">".icon("spy")."</a>";
 									echo "<a href=\"?page=missiles&amp;target=".$ent->id()."\" title=\"Raketenangriff starten\">".icon("missile")."</a> ";
 									echo "<a href=\"?page=crypto&amp;target=".$ent->id()."\" title=\"Flottenbewegungen analysieren\">".icon("crypto")."</a> ";					
 								}
@@ -362,7 +362,18 @@
 						
 						if (in_array("analyze",$ent->allowedFleetActions()))
 						{
-							echo "<a href=\"javascript:;\" onclick=\"xajax_launchAnalyzeProbe(".$ent->id().");\" title=\"Analysieren\">".icon("spy")."</a> ";
+							if ($cu->properties->showCellreports)
+							{
+								$reports = Report::find(array("type"=>"spy","user_id"=>$cu->id, "entity1_id"=>$ent->id()),"timestamp DESC",1,0,true);
+								if (count($reports)) {
+									$r = array_pop($reports);
+									echo "<span ".tm($r->subject,$r."<br style=\"clear:both\" />")."><a href=\"javascript:;\" onclick=\"xajax_launchAnalyzeProbe(".$ent->id().");\" title=\"Analysieren\">".icon("spy")."</a></span>";	
+								}
+								else
+									echo "<a href=\"javascript:;\" onclick=\"xajax_launchAnalyzeProbe(".$ent->id().");\" title=\"Analysieren\">".icon("spy")."</a> ";
+							}
+							else
+								echo "<a href=\"javascript:;\" onclick=\"xajax_launchAnalyzeProbe(".$ent->id().");\" title=\"Analysieren\">".icon("spy")."</a> ";
 						}
 
 			

@@ -327,6 +327,7 @@
 							LIMIT 1;
 							");
 				}
+				add_alliance_history($cu->allianceId,"[b]".$cu->nick."[/b] hat das Gebäude [b]".$this->items[$itemId]->name." (".$lvl.")[/b] in Auftrag gegeben.");
 				return true;
 			}			
 			return false;

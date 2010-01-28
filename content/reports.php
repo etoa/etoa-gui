@@ -40,10 +40,43 @@
 	{
 		$tabitems[$k] = $v;
 	}
+	$tabitems["archiv"] = "Archiv";
 	show_tab_menu("type",$tabitems);
 
 	// Detect report type
 	$type = isset($_GET['type']) ? $_GET['type'] : 'all';
+	
+	// Selektiere archivieren
+	if (isset($_POST['submitarchivselection'])  && checker_verify())
+	{
+		
+		if (count($_POST['delreport'])>0)
+		{
+			
+			$ids = array();
+			foreach ($_POST['delreport'] as $id=>$val)
+				array_push($ids,$id);
+			
+			dbquery("
+				UPDATE
+					reports
+				SET
+					archived=1
+				WHERE
+					id IN (".implode(",",$ids).")
+					AND user_id='".$cu->id."'
+					$sqladd;");
+			
+			if (count($_POST['delreport'])==1)
+			{
+				success_msg("Bericht wurde archiviert!");
+			}
+			else
+			{
+				success_msg("Berichte wurden archiviert!");
+			}
+		}
+	}
 	
 	// Selektiere löschen
 	if (isset($_POST['submitdeleteselection'])  && checker_verify())
@@ -59,18 +92,21 @@
 		
 		if (count($_POST['delreport'])>0)
 		{
+			
+			$ids = array();
 			foreach ($_POST['delreport'] as $id=>$val)
-			{
-				dbquery("
+				array_push($ids,$id);
+			
+			dbquery("
 				UPDATE
 					reports
 				SET
 					deleted=1
 				WHERE
-					id='$id'
+					id IN (".implode(",",$ids).")
 					AND user_id='".$cu->id."'
 					$sqladd;");
-			}
+			
 			if (count($_POST['delreport'])==1)
 			{
 				success_msg("Bericht wurde gel&ouml;scht!");
@@ -115,6 +151,11 @@
 		$reports = Report::find(array("user_id"=>$cu->id),"timestamp DESC",$limitstr);
 		$totalReports = Report::find(array("user_id"=>$cu->id),"timestamp DESC","",1);
 	}
+	elseif ($type == "archiv")
+	{
+		$reports = Report::find(array("user_id"=>$cu->id,"archived"=>true),"timestamp DESC",$limitstr);
+		$totalReports = Report::find(array("user_id"=>$cu->id,"archived"=>true),"timestamp DESC","",1);		
+	}
 	else
 	{
 		$reports = Report::find(array("type"=>$type,"user_id"=>$cu->id),"timestamp DESC",$limitstr);
@@ -129,6 +170,8 @@
 		// Table title
 		if ($type == "all")
 			tableStart("Neueste Berichte");
+		elseif ($type == "archiv")
+			tableStart("Archiv");
 		else
 			tableStart(Report::$types[$type]."berichte");
 
@@ -195,6 +238,8 @@
 			$cnt++;
 		}
 		tableEnd();
+		if ($type!="archiv")
+			echo "<input type=\"submit\" name=\"submitarchivselection\" value=\"Markierte archivieren\" />&nbsp;&nbsp;";
 		echo "<input type=\"submit\" name=\"submitdeleteselection\" value=\"Markierte l&ouml;schen\" />&nbsp;
 				<input type=\"submit\" name=\"submitdeleteall\" value=\"Alle l&ouml;schen\" onclick=\"return confirm('Wirklich alle Berichte in dieser Kategorie löschen?');\" />&nbsp;";
 		echo "</div></form>";

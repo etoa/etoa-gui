@@ -232,13 +232,16 @@ abstract class Report
 		$order = " timestamp DESC ";
 		
 		$wheres	= $admin ? "WHERE 1 " : " WHERE deleted=0 ";
+		$archived = false;
 		
 		if (is_array($where))
 		{
 			foreach ($where as $k=>$v)
 			{
 				$wheres.= " AND `".$k."`='".$v."'";
+				if ($k == "archived") $archived = true;
 			}
+			if (!$archived) $wheres.= " AND `archived`='false'";
 		}
 		elseif ($admin)
 			$wheres .= $where;

@@ -29,6 +29,7 @@
   	$cu->properties->analyzeShipId = $_POST['analyzeship_id'];
   	$cu->properties->analyzeShipCount = $_POST['analyzeship_count'];
   	$cu->properties->startUpChat = $_POST['startup_chat'];
+	$cu->properties->showCellreports = $_POST['show_cellreports'];
 	
 	if (strlen($_POST['chat_color'])==3 || strlen($_POST['chat_color'])==6)
   		$cu->properties->chatColor = $_POST['chat_color'];
@@ -125,7 +126,19 @@
   	echo "Momentan steht kein Schiff zur Auswahl!";
   }
   echo "</td></tr>";
-
+	//Berichte im Sonnensystem (Aktiviert/Deaktiviert)
+  echo "<tr>
+    			<th>Berichte im Sonnensystem:</th>
+    			<td>
+              <input type=\"radio\" name=\"show_cellreports\" value=\"1\" ";
+              if ($cu->properties->showCellreports==1) echo " checked=\"checked\"";
+              echo "/> Aktiviert &nbsp; 
+          
+              <input type=\"radio\" name=\"show_cellreports\" value=\"0\" ";
+              if ($cu->properties->showCellreports==0) echo " checked=\"checked\"";
+    					echo "/> Deaktiviert
+    		</td>
+  		</tr>";
 	//Notizbox (Aktiviert/Deaktiviert)
   echo "<tr>
     			<th>Chat beim Login öffnen:</th>
