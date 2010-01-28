@@ -1419,8 +1419,7 @@
 	}
 	
 	double Entity::loadPeopleAtWork() {
-		double working = 0;
-		
+				
 		My &my = My::instance();
 		mysqlpp::Connection *con = my.get();
 		mysqlpp::Query query = con->query();
@@ -1440,11 +1439,11 @@
 			
 			if (pSize > 0) {
 				mysqlpp::Row pRow = pRes.at(0);
-				//working = (double)pRow[0];
+				return (double)pRow["atWork"];
 			}
 		}
 		
-		return working;
+		return 0;
 	}
 
 	std::string	Entity::bombBuilding(int level) {
