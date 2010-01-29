@@ -52,8 +52,11 @@
 				}
 
 				$returnCount = floor($scrow['count']*$return_factor);
-				$rsl = new ShipList($scrow['entity_id'],$scrow['user_id']);
-				$rsl->add($scrow['ship_id'], $returnCount);
+				if ($returnCount>0)
+				{
+					$rsl = new ShipList($scrow['entity_id'],$scrow['user_id']);
+					$rsl->add($scrow['ship_id'], $returnCount);	
+				}
 
 				dbquery("
 				DELETE FROM
