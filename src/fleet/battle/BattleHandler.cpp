@@ -210,7 +210,6 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 
 		if (cDefStructureShield == 0 && cAttStructureShield > 0) {
 			this->returnV = 1;
-			
 			double percent = std::min(fleet->getBountyBonus(),(fleet->getCapacity(true) / entity->getResSum()));
 			raid[0] = entity->removeResMetal(fleet->addMetal(entity->getResMetal(percent),true));
 			raid[1] = entity->removeResCrystal(fleet->addCrystal(entity->getResCrystal(percent),true));

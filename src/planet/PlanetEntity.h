@@ -105,11 +105,11 @@ namespace planet
 			this->cnt[6] = 0;
 			this->cnt[7] = 0;
 			
-			this->bunker[0] = (unsigned int)planet["planet_bunker_metal"];
-			this->bunker[1] = (unsigned int)planet["planet_bunker_crystal"];
-			this->bunker[2] = (unsigned int)planet["planet_bunker_plastic"];
-			this->bunker[3] = (unsigned int)planet["planet_bunker_fuel"];
-			this->bunker[4] = (unsigned int)planet["planet_bunker_food"];
+			this->bunker[0] = (double)planet["planet_bunker_metal"];
+			this->bunker[1] = (double)planet["planet_bunker_crystal"];
+			this->bunker[2] = (double)planet["planet_bunker_plastic"];
+			this->bunker[3] = (double)planet["planet_bunker_fuel"];
+			this->bunker[4] = (double)planet["planet_bunker_food"];
 			
 			this->raceId = (int)planet["user_race_id"];
 			this->userId = (int)planet["user_id"];
@@ -151,7 +151,7 @@ namespace planet
 		std::vector<double> store;
 		std::vector<double> cnt;
 		std::vector<double> ressource;
-		std::vector<unsigned int> bunker;
+		std::vector<double> bunker;
 		
 		RaceData* race_;
 		SolData* sol_;

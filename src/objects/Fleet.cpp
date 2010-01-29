@@ -811,7 +811,7 @@
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
 				exp += (*it)->getExp();
 		}
-		std::cout << exp << std::endl;
+		
 		return exp;
 	}
 

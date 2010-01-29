@@ -81,11 +81,11 @@ namespace planet
 				this->cnt[6] = 0;
 				this->cnt[7] = 0;
 				
-				this->bunker[0] = (int)pRow["planet_bunker_metal"];
-				this->bunker[1] = (int)pRow["planet_bunker_crystal"];
-				this->bunker[2] = (int)pRow["planet_bunker_plastic"];
-				this->bunker[3] = (int)pRow["planet_bunker_fuel"];
-				this->bunker[4] = (int)pRow["planet_bunker_food"];
+				this->bunker[0] = (double)pRow["planet_bunker_metal"];
+				this->bunker[1] = (double)pRow["planet_bunker_crystal"];
+				this->bunker[2] = (double)pRow["planet_bunker_plastic"];
+				this->bunker[3] = (double)pRow["planet_bunker_fuel"];
+				this->bunker[4] = (double)pRow["planet_bunker_food"];
 			}
 		}
 	}
@@ -267,14 +267,32 @@ namespace planet
 			this->cnt[6] = floor(this->cnt[6]);
 		}
 		
-		this->bunkered = this->bunker[0] + this->bunker[1] + this->bunker[2] + this->bunker[3] + this->bunker[4];
-		this->bunkerRes -= this->bunkered;
+		//Bunkerberechnung mit einigen Extraüberprüfungen
+		this->bunker[0] = std::max(0.0, this->bunker[0]);
+		this->bunker[1] = std::max(0.0, this->bunker[1]);
+		this->bunker[2] = std::max(0.0, this->bunker[2]);
+		this->bunker[3] = std::max(0.0, this->bunker[3]);
+		this->bunker[4] = std::max(0.0, this->bunker[4]);
 		
-		this->bunker[0] += this->bunkerRes/5;
-		this->bunker[1] += this->bunkerRes/5;
-		this->bunker[2] += this->bunkerRes/5;
-		this->bunker[3] += this->bunkerRes/5;
-		this->bunker[4] += this->bunkerRes/5;
+		this->bunkered = this->bunker[0] + this->bunker[1] + this->bunker[2] + this->bunker[3] + this->bunker[4];
+		double bunkerAdd = (this->bunkerRes - this->bunkered);
+		
+		if (bunkerAdd>0) {
+			this->bunker[0] += floor(bunkerAdd/5);
+			this->bunker[1] += floor(bunkerAdd/5);
+			this->bunker[2] += floor(bunkerAdd/5);
+			this->bunker[3] += floor(bunkerAdd/5);
+			this->bunker[4] += floor(bunkerAdd/5);	
+		}
+		else {
+			this->bunker[0] = floor(this->bunkerRes/5);
+			this->bunker[1] = floor(this->bunkerRes/5);
+			this->bunker[2] = floor(this->bunkerRes/5);
+			this->bunker[3] = floor(this->bunkerRes/5);
+			this->bunker[4] = floor(this->bunkerRes/5);
+		}
+		
+
 	}
 	
 	void PlanetEntity::save() {
