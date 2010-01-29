@@ -43,8 +43,8 @@
 #define MYSQLPP_MYSQL_HEADERS_BURIED
 #include <mysql++/mysql++.h>
 #include <boost/thread.hpp>
-//#include <boost/regex.hpp>
-//#include <boost/filesystem.hpp>
+#include <boost/regex.hpp>
+#include <boost/filesystem.hpp>
 
 #include "EventHandler.h"
 

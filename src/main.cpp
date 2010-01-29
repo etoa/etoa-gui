@@ -141,8 +141,8 @@ void msgQueueThread()
 
 bool validateRoundName(const std::string& s)
 {
-   /*static const boost::regex e("^[a-z0-9]+$");
-   return boost::regex_match(s, e);*/
+   static const boost::regex e("^[a-z0-9]+$");
+   return boost::regex_match(s, e);
 	return true;
 }
 
@@ -265,13 +265,13 @@ int main(int argc, char* argv[])
   	configDir = opt->getValue("config-dir");
 	else	
 	{
-		configDir = "/Applications/XAMPP/xamppfiles/htdocs/etoa/trunk/config";
+		configDir = "/home/etoa/"+gameRound+"/config";
 	}	
-	/*if (!boost::filesystem::is_directory(configDir))
+	if (!boost::filesystem::is_directory(configDir))
 	{
 		LOG(LOG_ERR,"Config directory "<<configDir<<" does not exist!");  	
 		return EXIT_FAILURE;		
-	}*/
+	}
 
 	// Sets the round name the logger uses to create the etoad.roundname.log files
 	logProgam(gameRound);
