@@ -238,10 +238,11 @@
 			$cnt++;
 		}
 		tableEnd();
-		if ($type!="archiv")
-			echo "<input type=\"submit\" name=\"submitarchivselection\" value=\"Markierte archivieren\" />&nbsp;&nbsp;";
 		echo "<input type=\"submit\" name=\"submitdeleteselection\" value=\"Markierte l&ouml;schen\" />&nbsp;
-				<input type=\"submit\" name=\"submitdeleteall\" value=\"Alle l&ouml;schen\" onclick=\"return confirm('Wirklich alle Berichte in dieser Kategorie löschen?');\" />&nbsp;";
+				<input type=\"submit\" name=\"submitdeleteall\" value=\"Alle l&ouml;schen\" onclick=\"return confirm('Wirklich alle Berichte in dieser Kategorie löschen?');\" />&nbsp;&nbsp;";
+		if ($type!="archiv")
+			echo "<input type=\"submit\" name=\"submitarchivselection\" value=\"Markierte archivieren\" />";
+				
 		echo "</div></form>";
 	}
 	else
