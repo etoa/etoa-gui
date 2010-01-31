@@ -1439,6 +1439,9 @@
 			
 			if (pSize > 0) {
 				mysqlpp::Row pRow = pRes.at(0);
+				
+				//TODO: Nur temporÃ¤rer Fix, da wenn buildlist_people_working_status=0 NULL als Resultat geliefert wird
+				if (pRow["atWork"]!="NULL")
 				return (double)pRow["atWork"];
 			}
 		}
