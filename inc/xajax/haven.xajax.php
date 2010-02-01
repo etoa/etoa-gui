@@ -1731,9 +1731,9 @@
 		$fleet->setSpeedPercent($percentageSpeed);
 		
 		if ($id > 0 && $fleet->getLeader()!=$id) {
+
 			$res = dbquery("
 							SELECT
-								COUNT(id) as cnt,
 								id,
 								user_id,
 								next_id,
@@ -1741,13 +1741,22 @@
 							FROM
 								fleet
 							WHERE
-								leader_id='$id'
+								id='$id'
 							LIMIT 1;");
 
 			if (mysql_num_rows($res)>0) {
 				$arr=mysql_fetch_assoc($res);
 				if ($arr['next_id']==$fleet->sourceEntity->ownerAlliance()) {
-					if ($arr['cnt']<=$fleet->allianceSlots) {
+					$cres = dbquery("
+									SELECT
+										COUNT(id) as cnt
+									FROM
+										fleet
+									WHERE
+										leader_id='$id'
+									;");
+					$carr=mysql_fetch_assoc($cres);
+					if ($carr['cnt']<=$fleet->allianceSlots) {
 						$duration = $fleet->distance / $fleet->getSpeed();	// Calculate duration
 						$duration *= 3600;	// Convert to seconds
 						$duration = ceil($duration);

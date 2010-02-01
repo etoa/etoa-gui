@@ -82,9 +82,9 @@
 		Alliance::allianceShipPointsUpdate();
 
 		// Wurml�cher vertauschen
-		//$tmr = timerStart();
-		//Wormhole::randomize();
-		//$log.= "Wurml&ouml;cher vertauscht.\nDauer: ".timerStop($tmr)." sec\n\n";
+		$tmr = timerStart();
+		Wormhole::randomize();
+		$log.= "Wurml&ouml;cher vertauscht.\nDauer: ".timerStop($tmr)." sec\n\n";
 
 		// Closes all open tables, forces all tables in use to be closed, and flushes the query cache.
 		dbquery("FLUSH TABLES");

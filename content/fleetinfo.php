@@ -66,7 +66,7 @@
 						$valid = $cu->alliance->buildlist->getLevel(ALLIANCE_FLEET_CONTROL_ID);
 					}
 				}
-				elseif ($fd->status->status()==3)
+				elseif ($fd->status()==3)
 				{
 					if ($cu->alliance->buildlist->getLevel(ALLIANCE_FLEET_CONTROL_ID)>=ALLIANCE_FLEET_SHOW_PART)
 					{
@@ -253,8 +253,8 @@
 		}
 
 		echo "</td></tr></table>";
-
-		echo "<form action=\"?page=$page&amp;id=$fleet_id\" method=\"post\">";
+		
+		echo "<form action=\"?page=$page&amp;id=$fleet_id&amp;lead_id=$lead_id\" method=\"post\">";
 		echo "<input type=\"button\" onClick=\"document.location='?page=fleets'\" value=\"Zur&uuml;ck zur Flotten&uuml;bersicht\"> &nbsp;";
 
 		// Abbrechen-Button anzeigen

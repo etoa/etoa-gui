@@ -58,14 +58,14 @@
 		{
 			while ($arr=mysql_fetch_array($res))
 			{
-				$t = date("dmyHi",$arr['stats_timestamp']);
+				$t = $arr['stats_timestamp'];
 				$data[$t]['o']=$arr['stats_count'];
 				$data[$t]['r']=$arr['stats_regcount'];
 				$max = max($max,$arr['stats_regcount']);
 				$maxo = max($maxo,$arr['stats_count']);
-				if (!isset($acto))
+				if ($acto==false)
 					$acto = $arr['stats_count'];
-				if (!isset($actr))
+				if ($actr==false)
 					$actr = $arr['stats_regcount'];
 				$sumo+=$arr['stats_count'];
 				$sumr+=$arr['stats_regcount'];
@@ -74,14 +74,16 @@
 			$avgo = round($sumo / $mnr,2);
 			$avgr = round($sumr / $mnr,2);
 		
-
+			$maxr = $max;
+			$max = ceil($max/100)*100;
+		
 		ksort($data);
 
 		$graphHeight=$h-$borderTop-$borderBottom;
 		$starti = $time-($totalSteps*5*60);
 	
 		// Horizontale Linien und Gr?ssen
-		for ($i=0;$i<($max/100);$i++)
+		for ($i=0;$i<=ceil($max/100);$i++)
 		{
 			$y = $h-$borderBottom-($graphHeight/($max/100)*$i);
 			imagestring($im,2,$yLegend,$y-(imagefontheight(2)/2),$i*100,$colBlack);
@@ -92,8 +94,8 @@
 		$c = count($data);
 		if ($c>0)
 		{
-			$step = ($w-$borderLeftRight-$borderLeftRight)*60/($time-$starti);
-	
+			$step = ($w-$borderLeftRight-$borderLeftRight)*5*60/($time-$starti);
+			
 			$x=$borderLeftRight;
 			$y=$h-$borderBottom;
 			$lastx=$borderLeftRight;
@@ -103,7 +105,6 @@
 			$ic=0;
 			foreach ($data as $i => $d)
 			{
-				
 				$x=$borderLeftRight + ($ic*$step);
 				// Vertikale Stundenlinien
 				if (date("i",$i)=="00")			
@@ -156,7 +157,7 @@
 	
 		imagestring($im,3,450,$h-40,"Max    Durchschnitt   Aktuell",$colBlack);	
 		imagestring($im,3,350,$h-25,"Registriert",$colBlue);	
-		imagestring($im,2,450,$h-25,$max,$colBlack);	
+		imagestring($im,2,450,$h-25,$maxr,$colBlack);	
 		imagestring($im,2,500,$h-25,$avgr,$colBlack);	
 		imagestring($im,2,605,$h-25,$actr,$colBlack);	
 	

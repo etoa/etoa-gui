@@ -214,6 +214,95 @@
 	  	$user = $_POST['user_spends'];
 	  }
 	}
+	
+	//
+	// Läd Daten
+	//	
+	
+	// Allianzschiffe (wenn Schiffswerft gebaut)
+	if($shipyard)
+	{
+		
+		$res = dbquery("
+		SELECT
+			ship_id,
+			ship_name,
+			ship_longcomment,
+			ship_speed,
+			ship_time2start,
+			ship_time2land,
+			ship_structure,
+			ship_shield,
+			ship_weapon,
+			ship_max_count,
+			ship_alliance_shipyard_level,
+			ship_alliance_costs
+		FROM
+			ships
+		WHERE
+			ship_alliance_shipyard_level<='".$cu->alliance->buildlist->getLevel(ALLIANCE_SHIPYARD_ID)."'
+			AND ship_alliance_shipyard_level>0
+		ORDER BY
+			ship_alliance_shipyard_level;");
+		while($arr=mysql_fetch_assoc($res))		
+		{
+			$ships[$arr['ship_id']] = $arr;
+		}
+	}
+	
+	// Userschiffe laden (wenn Schiffswerft gebaut=
+	// Gebaute Schiffe laden
+	$res = dbquery("
+	SELECT
+		shiplist_ship_id,
+		shiplist_entity_id,
+		shiplist_count
+	FROM
+		shiplist
+	WHERE
+		shiplist_user_id='".$cu->id."';");
+	while ($arr = mysql_fetch_assoc($res))
+	{
+		$shiplist[$arr['shiplist_ship_id']][$arr['shiplist_entity_id']]=$arr['shiplist_count'];
+	}
+	
+	// Bauliste von allen Planeten laden und nach Schiffe zusammenfassen
+	$res = dbquery("
+	SELECT
+		queue_id,
+		queue_ship_id,
+		SUM(queue_cnt) AS cnt
+	FROM
+		ship_queue
+	WHERE
+		queue_user_id='".$cu->id."'
+		AND queue_endtime>'".$time."'
+	GROUP BY
+		queue_ship_id;");
+	while ($arr = mysql_fetch_assoc($res))
+	{
+		$queue_total[$arr['queue_ship_id']] = $arr['cnt'];
+	}
+	
+	// Flotten laden und nach Schiffe zusammenfassen
+	$res = dbquery("
+		SELECT
+			fs_ship_id,
+			SUM(fs.fs_ship_cnt) AS cnt
+		FROM
+			fleet AS f
+		INNER JOIN
+			fleet_ships AS fs
+		ON f.id=fs.fs_fleet_id
+		WHERE
+			f.user_id='".$cu->id."'
+		GROUP BY
+			fs.fs_ship_id;");
+	while ($arr = mysql_fetch_assoc($res))
+	{
+		$fleet[$arr['fs_ship_id']] = $arr['cnt'];
+	}
+	
 		
 	//
 	// Schiffe kaufen
@@ -306,15 +395,21 @@
 		      			{
 		      				$ship_count += $fleet[$ship_id];
 		      			}
-		      			
+						
 		      			// Total Schiffe mit den zu bauenden
 						$total_count = $build_cnt + $ship_count;
 						
 						// Prüft ob Anzahl grösser ist als Schiffsmaximum
-						if($_POST['ship_max_count_'.$ship_id.''] >= $total_count || $_POST['ship_max_count_'.$ship_id.''] == 0)
+						if($ships[$ship_id]['ship_max_count'] >= $total_count || $ships[$ship_id]['ship_max_count'] == 0)
 						{
-							// Berechnet die Kosten
-							$ship_costs += $build_cnt * $_POST['ship_costs_'.$ship_id.''];
+							for ($i=$build_cnt-1; $i>=0; $i--)
+							{
+								//Kostenfaktor Schiffe
+								$cost_factor = pow($cfg->get("alliance_shipcosts_factor"),$ship_count+$i);
+								// Berechnet die Kosten
+								$ship_costs += $cost_factor * $ships[$ship_id]['ship_alliance_costs'];								
+							}
+
 						}
 						// Die Anzahl übersteigt die Max. Anzahl -> Nachricht wird ausgegeben
 						else
@@ -345,7 +440,7 @@
 									WHERE
 										user_id='".$_POST['user_buy_ship']."'
 								");
-						
+								$ship_costed = $ship_costs;
 								
 								// Lädt das Allianzentity
 								$res = dbquery("
@@ -397,7 +492,7 @@
 										if($cnt==0)
 										{
 											$sql .= "('".mysql_insert_id()."', '".$ship_id."', '".$build_cnt."')";
-											
+											$fleet[$ship_id] += $build_cnt;
 											// Gibt einmalig eine OK-Medlung aus
 											ok_msg("Schiffe wurden erfolgreich hergestellt!");
 										}
@@ -454,96 +549,6 @@
 		}
 	}	
 		
-		
-		
-		
-	//
-	// Läd Daten
-	//	
-	
-	// Allianzschiffe (wenn Schiffswerft gebaut)
-	if($shipyard)
-	{
-		
-		$res = dbquery("
-		SELECT
-			ship_id,
-			ship_name,
-			ship_longcomment,
-			ship_speed,
-			ship_time2start,
-			ship_time2land,
-			ship_structure,
-			ship_shield,
-			ship_weapon,
-			ship_max_count,
-			ship_alliance_shipyard_level,
-			ship_alliance_costs
-		FROM
-			ships
-		WHERE
-			ship_alliance_shipyard_level<='".$cu->alliance->buildlist->getLevel(ALLIANCE_SHIPYARD_ID)."'
-			AND ship_alliance_shipyard_level>0
-		ORDER BY
-			ship_alliance_shipyard_level;");
-		while($arr=mysql_fetch_assoc($res))		
-		{
-			$ships[$arr['ship_id']] = $arr;
-		}
-	}
-	
-	// Userschiffe laden (wenn Schiffswerft gebaut=
-	// Gebaute Schiffe laden
-	$res = dbquery("
-	SELECT
-		shiplist_ship_id,
-		shiplist_entity_id,
-		shiplist_count
-	FROM
-		shiplist
-	WHERE
-		shiplist_user_id='".$cu->id."';");
-	while ($arr = mysql_fetch_assoc($res))
-	{
-		$shiplist[$arr['shiplist_ship_id']][$arr['shiplist_entity_id']]=$arr['shiplist_count'];
-	}
-	
-	// Bauliste von allen Planeten laden und nach Schiffe zusammenfassen
-	$res = dbquery("
-	SELECT
-		queue_id,
-		queue_ship_id,
-		SUM(queue_cnt) AS cnt
-	FROM
-		ship_queue
-	WHERE
-		queue_user_id='".$cu->id."'
-		AND queue_endtime>'".$time."'
-	GROUP BY
-		queue_ship_id;");
-	while ($arr = mysql_fetch_assoc($res))
-	{
-		$queue_total[$arr['queue_ship_id']] = $arr['cnt'];
-	}
-	
-	// Flotten laden und nach Schiffe zusammenfassen
-	$res = dbquery("
-		SELECT
-			fs_ship_id,
-			SUM(fs.fs_ship_cnt) AS cnt
-		FROM
-			fleet AS f
-		INNER JOIN
-			fleet_ships AS fs
-		ON f.id=fs.fs_fleet_id
-		WHERE
-			f.user_id='".$cu->id."'
-		GROUP BY
-			fs.fs_ship_id;");
-	while ($arr = mysql_fetch_assoc($res))
-	{
-		$fleet[$arr['fs_ship_id']] = $arr['cnt'];
-	}
 	
 	//
 	// ResBox
@@ -1217,7 +1222,7 @@
 			echo "<td style=\"text-align:center;\">Schiffsteile pro Stunde: ".($cfg->get('alliance_shippoints_per_hour')*$cu->alliance->buildlist->getLevel(ALLIANCE_SHIPYARD_ID))."</td>";
 					echo "</tr>
 					<tr>
-						<td style=\"text-align:center;\">Vorhandene Teile: ".$cu->allianceShippoints."</td>
+						<td style=\"text-align:center;\">Vorhandene Teile: ".($cu->allianceShippoints-$ship_costed)."</td>
 					</tr>";
 		
 		tableEnd();
@@ -1307,7 +1312,7 @@
 		echo "<tr>
 						<td style=\"text-align:center;\">
 							<select id=\"user_buy_ship\" name=\"user_buy_ship\">
-					  			<option value=\"".$cu->id."\">".$cu." (".nf($cu->allianceShippoints).")</option>
+					  			<option value=\"".$cu->id."\">".$cu." (".nf($cu->allianceShippoints-$ship_costed).")</option>
 							</select><br/><br/>
   						<input type=\"submit\" class=\"button\" name=\"ship_submit\" id=\"ship_submit\" value=\"Schiffe herstellen\" ".tm("Schiffe herstellen","Stellt aus den vorhandenen Teilen die gewünschten Schiffe für den ausgewählten User her.").">
 						</td>

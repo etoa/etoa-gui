@@ -90,7 +90,9 @@
 					$this->fleets = array();
 					while ($arr = mysql_fetch_assoc($res))
 					{
-						$this->fleets[$arr['id']] = new Fleet($arr['id']);
+						if ($arr['status']==3) {
+							$this->fleets[$arr['id']] = new Fleet($arr['id']);
+						}
 					}
 				}	  
 				else
@@ -478,49 +480,50 @@
 					{
 						if ($this->id == $this->leaderId)
 						{
+							echo "alliance:".$alliance;
 							if ($alliance)
 							{
-								if (count($this->fleets) && $fleet<0)
+								foreach($this->fleets as $id=>$f)
 								{
-									foreach($this->fleets as $id=>$f)
-									{
-										$f->cancelFlight();
-									}
+									$f->cancelFlight();
 								}
 							}
-
-							$res = dbquery("SELECT
-													id
-											FROM
-												fleet
-											WHERE
-												leader_id='".$this->id."'
-												AND next_id='".$this->nextId."'
-												AND status='3'
-											LIMIT 1;");
-							if (mysql_num_rows($res)>0)
+							else
 							{
-								$arr = mysql_fetch_row($res);
-								dbquery("UPDATE
-											fleet
-										SET
-											status='0',
-											landtime='".$this->landTime."'
-										WHERE
-											id='".$arr[0]."'
-										LIMIT 1;");
-								dbquery("UPDATE
-											fleet
-										SET
-											leader_id='".$arr[0]."'
-										WHERE
-											leader_id='".$this->id."';");
+								$res = dbquery("SELECT
+														id
+												FROM
+													fleet
+												WHERE
+													leader_id='".$this->id."'
+													AND next_id='".$this->nextId."'
+													AND status='3'
+												LIMIT 1;");
+								if (mysql_num_rows($res)>0)
+								{
+									$arr = mysql_fetch_row($res);
+									dbquery("UPDATE
+												fleet
+											SET
+												status='0',
+												landtime='".$this->landTime."'
+											WHERE
+												id='".$arr[0]."'
+											LIMIT 1;");
+									dbquery("UPDATE
+												fleet
+											SET
+												leader_id='".$arr[0]."'
+											WHERE
+												leader_id='".$this->id."';");
+								}	
 							}
 						}
 						
 						$tottime = $this->landTime() - $this->launchTime + $this->nextActionTime;
 						$difftime = time() - $this->launchTime;
 						$this->status = 2;
+						$this->leaderId = 0;
 	
 						if ($this->actionCode=="support" && $this->status==3)
 						{
@@ -591,6 +594,7 @@
 				$this->sourceId = $tmp;
 				
 				$this->status = 1;
+				$this->leaderId = 0;
 	
 				$this->update();	
 				return true;			
@@ -614,6 +618,7 @@
 				entity_from=".$this->sourceId.",
 				entity_to=".$this->targetId.",
 				status='".$this->status."',
+				leader_id='".$this->leaderId."',
 				usage_fuel='".$this->usageFuel."',
 				usage_food='".$this->usageFood."',
 				usage_power='".$this->usagePower."',

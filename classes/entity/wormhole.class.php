@@ -161,11 +161,12 @@
 		static function randomize()
 		{
 			$time = time();
-			
+			$del = array();
 			// L?schen
 			$res=dbquery("
 				SELECT
-					id
+					id,
+					target_id
 				FROM
 					wormholes
 				WHERE
@@ -175,24 +176,37 @@
 					RAND()
 				LIMIT ".WH_UPDATE_AFFECT_CNT.";
 			");
-			$delcnt = mysql_num_rows($res);
+			echo mysql_num_rows($res);
+			while ($arr=mysql_fetch_row($res))
+			{
+				if (!in_array($arr[0], $del))
+				{
+					array_push($del, $arr[0], $arr[1]);
+				}
+			}
+			
+			$delcnt = count($del);
+			echo $delcnt." werden gelöscht!";
+			print_r($del);
 			if ($delcnt > 0)
 			{
-				while ($arr=mysql_fetch_assoc($res))
+				foreach($del AS $id)
 				{
+					echo $id."-";
+					
 					dbquery("
 						UPDATE
 							entities
 						SET
 							code='e'
 						WHERE
-							id='".$arr['id']."';
+							id='".$id."';
 					");
 					dbquery("
 						DELETE FROM	
 							wormholes
 						WHERE
-							id='".$arr['id']."'
+							id='".$id."'
 					");
 					dbquery("
 						INSERT INTO
@@ -201,11 +215,11 @@
 							id
 						)
 						VALUES
-						('".$arr['id']."')
-					;");					
+						('".$id."')
+					;");			
 				}
 			}
-	
+			
 			// Neue erstellen
 			$res=dbquery("
 				SELECT
@@ -214,13 +228,15 @@
 					entities
 				WHERE
 					code='e'
+					AND pos='0'
 				ORDER BY
 					RAND()
-				LIMIT ".($delcnt*2).";
+				LIMIT ".($delcnt).";
 			");
 			while ($arr1=mysql_fetch_row($res))
-			{
+			{	
 				$arr2=mysql_fetch_row($res);
+				
 				dbquery("
 				UPDATE
 					entities
@@ -235,7 +251,19 @@
 					code='w'
 				WHERE
 					id='".$arr2[0]."';");
-
+				
+				dbquery("
+				DELETE FROM
+					space
+				WHERE
+					id='".$arr1[0]."';");
+					
+				dbquery("
+				DELETE FROM
+					space
+				WHERE
+					id='".$arr2[0]."';");
+				
 				dbquery("
 				INSERT INTO
 					wormholes
