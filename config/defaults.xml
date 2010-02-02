@@ -345,7 +345,7 @@ Besten Dank f&#xFC;r euer Verst&#xE4;ndnis&#xD;
     </item>
     <item name="wh_update" cat="3">
       <v comment="Wurmloch-Update: Zeitschwelle" type="text">172800</v>
-      <p1 comment="Wurmloch-Update: Anzahl &#xC4;nderungen" type="text">2</p1>
+      <p1 comment="Wurmloch-Update: Anzahl &#xC4;nderungen" type="text">1</p1>
     </item>
     <item name="referers" cat="1">
       <v comment="Zugelassene Referers" type="textarea">http://test.etoa.ch&#xD;

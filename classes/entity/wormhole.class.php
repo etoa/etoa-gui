@@ -176,7 +176,7 @@
 					RAND()
 				LIMIT ".WH_UPDATE_AFFECT_CNT.";
 			");
-			echo mysql_num_rows($res);
+			
 			while ($arr=mysql_fetch_row($res))
 			{
 				if (!in_array($arr[0], $del))
@@ -186,8 +186,7 @@
 			}
 			
 			$delcnt = count($del);
-			echo $delcnt." werden gelöscht!";
-			print_r($del);
+			
 			if ($delcnt > 0)
 			{
 				foreach($del AS $id)
