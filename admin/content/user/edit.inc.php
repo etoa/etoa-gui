@@ -905,7 +905,7 @@
 				{
 					echo '<tr>
 							<td>
-								<a href="?page=user&sub=edit&user_id='.$sitted_arr['user_id'].'">'.get_user_nick($sitted_arr['sitter_id']).'</a>
+								<a href="?page=user&sub=edit&user_id='.$sitted_arr['user_id'].'">'.get_user_nick($sitted_arr['user_id']).'</a>
 							</td>
 							<td>
 								'.df($sitted_arr['date_from']).'
