@@ -191,8 +191,6 @@
 			{
 				foreach($del AS $id)
 				{
-					echo $id."-";
-					
 					dbquery("
 						UPDATE
 							entities

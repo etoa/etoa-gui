@@ -32,11 +32,11 @@
                 dbquery("
                 INSERT INTO
                 	user_multi
-                (user_multi_user_id)
+                (user_id)
                 VALUES
                 ('".$cu->id."');");
 
-                echo "Neuer User angelegt<br>";
+                ok_msg("Neuer User angelegt!");
             }
 
 
@@ -47,20 +47,21 @@
             if (isset($_POST['data_submit_multi']) && checker_verify())
             {
 
-                $user=array_unique($_POST['user_multi_multi_nick']); //löscht alle users die mehrfach eingetragen wurden
+                $user=array_unique($_POST['multi_nick']); //löscht alle users die mehrfach eingetragen wurden
+				$change = false;
                 foreach ($user as $id=>$data)
                 {
-                    if ($user[$id]!="")
+                    if ($user[$id]!="" && $_POST['del_multi'][$id]!=1)
                     {
                         //Ist dieser User existent
                         if (get_user_id($user[$id])==0)
                         {
-                            $msg = "<b>Fehler:</b> Dieser User exisitert nicht!<br><br>";
+                            error_msg("Dieser User exisitert nicht!");
                         }
                         //ist der eigene nick eingetragen
                         elseif (get_user_id($user[$id])==$cu->id)
                         {
-                            $msg = "<b>Fehler:</b> Du kannst nicht dich selber eintragen!<br><br>";
+                            error_msg("Du kannst nicht dich selber eintragen!");
                         }
                         else
                         {
@@ -69,16 +70,18 @@
                             UPDATE
                                 user_multi
                             SET
-                                user_multi_multi_user_id='".addslashes(get_user_id($user[$id]))."',
-                                user_multi_connection='".addslashes($_POST['user_multi_connection'][$id])."'
+                                multi_id='".addslashes(get_user_id($user[$id]))."',
+                                connection='".addslashes($_POST['connection'][$id])."'
                             WHERE
-                                user_multi_id=$id;");
+                                id=$id;");
+							$change = true;
 
                         }
 
                     }
 
                 }
+				if ($change) ok_msg("&Auml;nderungen &uuml;bernommen!");
 
                 //Löscht alle angekreuzten user
                 if($_POST['del_multi'])
@@ -88,24 +91,26 @@
                     {
                         if ($_POST['del_multi'][$id]==1)
                         {
-                            dbquery("DELETE FROM user_multi WHERE user_multi_id=$id;");
-
-                            // Speichert jeden gelöschten multi (soll vor missbrauch schützen -> mutli erstellen -> löschen -> erstellen -> löschen etc.)
-                            dbquery("
-                            UPDATE
-                                users
-                            SET
-                                user_multi_delets=user_multi_delets+1
-                            WHERE
-                                user_id='".$cu->id."';");
+							if ($_POST['connection'][$id]==0 && $_POST['multi_id'][$id]==0)
+							{
+								dbquery("DELETE FROM user_multi WHERE id=$id;");
+							}
+							else
+							{
+								dbquery("UPDATE user_multi SET activ='0' WHERE id=$id;");
+								// Speichert jeden gelöschten multi (soll vor missbrauch schützen -> mutli erstellen -> löschen -> erstellen -> löschen etc.)
+	                            dbquery("
+	                            UPDATE
+	                                users
+	                            SET
+	                                user_multi_delets=user_multi_delets+1
+	                            WHERE
+	                                user_id='".$cu->id."';");
+							}
+							ok_msg("Eintrag gelöscht!");
                         }
                     }
                 }
-
-                if($msg!="")
-                    echo $msg;
-                else
-                    echo "Daten &uuml;bernommen<br>";
             }
 
 
@@ -274,9 +279,10 @@
             FROM
                 user_multi
             WHERE
-                user_multi_user_id='".$cu->id."'
+                user_id='".$cu->id."'
+				AND activ='1'
             ORDER BY
-                user_multi_id;");
+                id;");
 
             $user_res = dbquery("
             SELECT
@@ -302,13 +308,13 @@
 
                         echo "<tr><td>";
 
-                        if($arr['user_multi_multi_user_id']!=0)
+                        if($arr['multi_id']!=0)
                         {
-                            echo "<input type=\"text\" name=\"user_multi_multi_nick[".$arr['user_multi_id']."]\" maxlength=\"20\" size=\"20\" value=\"".stripslashes(get_user_nick($arr['user_multi_multi_user_id']))."\" readonly=\"readonly\">";
+                            echo "<input type=\"text\" name=\"multi_nick[".$arr['id']."]\" maxlength=\"20\" size=\"20\" value=\"".stripslashes(get_user_nick($arr['multi_id']))."\" readonly=\"readonly\">";
                         }
                         else
                         {
-                            echo "<input type=\"text\" name=\"user_multi_multi_nick[".$arr['user_multi_id']."]\" id=\"user_nick_multi\"  maxlength=\"20\" size=\"20\" autocomplete=\"off\" value=\"Usernick\" onkeyup=\"xajax_searchUser(this.value,'user_nick_multi','citybox_multi');\"><br/>
+                            echo "<input type=\"text\" name=\"multi_nick[".$arr['id']."]\" id=\"user_nick_multi\"  maxlength=\"20\" size=\"20\" autocomplete=\"off\" value=\"Usernick\" onkeyup=\"xajax_searchUser(this.value,'user_nick_multi','citybox_multi');\"><br/>
             								<div class=\"citybox\" id=\"citybox_multi\">&nbsp;</div>";
                             $unused_multi++;
                         }
@@ -316,18 +322,18 @@
                         echo "</td>";
                         echo "<td>";
 
-                        if($arr['user_multi_connection']!='0')
+                        if($arr['connection']!='0')
                         {
-                            echo "<input type=\"text\" name=\"user_multi_connection[".$arr['user_multi_id']."]\" maxlength=\"50\" size=\"50\" value=\"".stripslashes($arr['user_multi_connection'])."\" readonly=\"readonly\">";
+                            echo "<input type=\"text\" name=\"connection[".$arr['id']."]\" maxlength=\"50\" size=\"50\" value=\"".stripslashes($arr['connection'])."\" readonly=\"readonly\">";
                         }
                         else
                         {
-                            echo "<input type=\"text\" name=\"user_multi_connection[".$arr['user_multi_id']."]\" maxlength=\"50\" size=\"50\" value=\"\">";
+                            echo "<input type=\"text\" name=\"connection[".$arr['id']."]\" maxlength=\"50\" size=\"50\" value=\"\">";
                         }
 
                         echo "</td>";
                         echo "<td style=\"text-align:center;\">";
-                        echo "<input type=\"checkbox\" name=\"del_multi[".$arr['user_multi_id']."]\" value=\"1\" />";
+                        echo "<input type=\"checkbox\" name=\"del_multi[".$arr['id']."]\" value=\"1\" />";
                         echo "</td></tr>";
 
                     }

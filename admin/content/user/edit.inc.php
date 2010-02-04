@@ -296,6 +296,7 @@
 			"Info",
 			"Account",
 			array("name"=>"Daten","js"=>""),
+			"Sitting",
 			"Profil",
 			"Design",
 			array("name"=>"Nachrichten","js"=>"xajax_showLast5Messages(".$arr['user_id'].",'lastmsgbox');"),
@@ -844,6 +845,90 @@
 					</script>";
 				
 				$tc->close();
+				
+				/**
+				* Sitting & Multi
+				*/
+				$tc->open();			
+				
+				$multi_res = dbquery("SELECT * FROM user_multi WHERE user_id=".$arr['user_id']." AND activ=1;");
+				$del_multi_res = dbquery("SELECT * FROM user_multi WHERE user_id=".$arr['user_id']." AND activ=0;");
+				echo '<table class="tb">
+						<tr>
+							<th rowspan="'.(mysql_num_rows($multi_res)+1).'" valign="top">Eingetragene Multis</th>';
+				while ($multi_arr = mysql_fetch_array($multi_res))
+				{
+					echo '<tr>
+							<td>
+								<a href="?page=user&sub=edit&user_id='.$multi_arr['multi_id'].'">'.get_user_nick($multi_arr['multi_id']).'</a>
+							</td>
+							<td>
+								('.$multi_arr['connection'].')
+							</td>
+						</tr>';
+				}
+				echo '<tr>
+					<th rowspan="'.(mysql_num_rows($del_multi_res)+1).'" valign="top">Gelöschte Multis</th>';
+				while ($del_multi_arr = mysql_fetch_array($del_multi_res))
+				{
+					echo '<tr>
+							<td>
+								<a href="?page=user&sub=edit&user_id='.$del_multi_arr['multi_id'].'">'.get_user_nick($del_multi_arr['multi_id']).'</a>
+							</td>
+							<td>
+								('.$del_multi_arr['connection'].')
+							</td>
+						</tr>';
+				}
+				echo '</table>';
+				
+				$sitting_res = dbquery("SELECT * FROM user_sitting WHERE user_id='".$arr['user_id']."' ORDER BY id DESC;");
+				$sitted_res = dbquery("SELECT * FROM user_sitting WHERE sitter_id='".$arr['user_id']."' ORDER BY id DESC;");
+				echo '<table class="tb">
+						<tr>
+							<th rowspan="'.(mysql_num_rows($sitting_res)+1).'" valign="top">Wurde gesittet</th>
+							<th>Sitter</th>
+							<th>Start</th>
+							<th>Ende</th>
+						</tr>';
+				while ($sitting_arr = mysql_fetch_array($sitting_res))
+				{
+					echo '<tr>
+							<td>
+								<a href="?page=user&sub=edit&user_id='.$sitting_arr['sitter_id'].'">'.get_user_nick($sitting_arr['sitter_id']).'</a>
+							</td>
+							<td>
+								'.df($sitting_arr['date_from']).'
+							</td>
+							<td>
+								'.df($sitting_arr['date_to']).'
+							</td>
+						</tr>';
+					}
+				echo '<tr>
+						<th rowspan="'.(mysql_num_rows($sitted_res)+1).'" valign="top">Hat gesittet</th>
+						<th>Gesitteter User</th>
+						<th>Start</th>¨
+						<th>Ende</th>
+					</tr>';
+				while ($sitted_arr = mysql_fetch_array($sitted_res))
+				{
+					echo '<tr>
+							<td>
+								<a href="?page=user&sub=edit&user_id='.$sitted_arr['sitter_id'].'">'.get_user_nick($sitted_arr['sitter_id']).'</a>
+							</td>
+							<td>
+								'.df($sitted_arr['date_from']).'
+							</td>
+							<td>
+								'.df($sitted_arr['date_to']).'
+							</td>
+						</tr>';
+				}
+				echo '</table>';
+				
+				$tc->close();
+
 
 
 
