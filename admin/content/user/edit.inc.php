@@ -819,16 +819,6 @@
 								<td class=\"tbldata\">
 									<input type=\"text\" name=\"user_multi_delets\" value=\"".$arr['user_multi_delets']."\" size=\"3\" maxlength=\"3\" />
 								</td>
-								</tr>
-								<tr>
-									<td class=\"tbltitle\" valign=\"top\">Eingetragene Multis</td>
-									<td class=\"tbldata\">";
-									$multi_res = dbquery("SELECT user_multi_multi_user_id,user_multi_connection FROM user_multi WHERE user_multi_user_id=".$arr['user_id'].";");
-									while ($multi_arr = mysql_fetch_array($multi_res))
-									{
-										echo "<a href=\"?page=user&sub=edit&user_id=".$multi_arr['user_multi_multi_user_id']."\">".get_user_nick($multi_arr['user_multi_multi_user_id'])."</a> (".$multi_arr['user_multi_connection'].")<br>";
-									}
-					echo "</td>
 							</tr>
 							<tr>
 								<td class=\"tbltitle\" valign=\"top\">Sittertage</td>
@@ -915,7 +905,7 @@
 				{
 					echo '<tr>
 							<td>
-								<a href="?page=user&sub=edit&user_id='.$sitted_arr['sitter_id'].'">'.get_user_nick($sitted_arr['sitter_id']).'</a>
+								<a href="?page=user&sub=edit&user_id='.$sitted_arr['user_id'].'">'.get_user_nick($sitted_arr['sitter_id']).'</a>
 							</td>
 							<td>
 								'.df($sitted_arr['date_from']).'
