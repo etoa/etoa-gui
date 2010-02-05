@@ -604,7 +604,7 @@ class BattleReport extends Report
 							}
 			echo 		'<br /><br /></td>
 					</tr>
-				</table';
+				</table>';
 			echo 'Der Kampf wurde abgebrochen da Angreifer und Verteidiger demselben Imperium angeh&ouml;ren oder der Verteidiger nicht mehr existiert!';
 				break;
 			default:

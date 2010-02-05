@@ -230,21 +230,21 @@ $cnt = 0;
 									// TODO: Think of an implementation using the user class...
 									$multi_res1=dbquery("
 									SELECT
-										user_multi_multi_user_id
+										multi_id
 									FROM
 										user_multi
 									WHERE
-										user_multi_user_id='".$cu->id."'
-										AND user_multi_multi_user_id='".$arr['user_id']."';");
+										multi_id='".$cu->id."'
+										AND user_id='".$arr['user_id']."';");
 
 									$multi_res2=dbquery("
 									SELECT
-										user_multi_multi_user_id
+										user_id
 									FROM
 										user_multi
 									WHERE
-										user_multi_user_id='".$arr['user_id']."'
-										AND user_multi_multi_user_id='".$cu->id."';");
+										multi_id='".$arr['user_id']."'
+										AND user_id='".$cu->id."';");
 
 									if(mysql_num_rows($multi_res1)!=0 && mysql_num_rows($multi_res2)!=0)
 									{
