@@ -161,10 +161,10 @@
 						multi_id='".$cu->id."'
 						AND user_id='".$arr['user_id']."';");
 
-					if(mysql_num_rows($multi_res1)!=0 && mysql_num_rows($multi_res2)!=0)
+					if(mysql_num_rows($multi_res1)!=0 || mysql_num_rows($multi_res2)!=0)
 					{
 						// TODO
-						//add_log(10,"[URL=?page=user&sub=edit&user_id=".$cu->id."][B]".$cu->nick."[/B][/URL] hat an einer Auktion von [URL=?page=user&sub=edit&user_id=".$arr['auction_user_id']."][B]".$partner_user_nick."[/B][/URL] gewonnen:\n\nRohstoffe:\n".RES_METAL.": ".nf($arr['auction_sell_metal'])."\n".RES_CRYSTAL.": ".nf($arr['auction_sell_crystal'])."\n".RES_PLASTIC.": ".nf($arr['auction_sell_plastic'])."\n".RES_FUEL.": ".nf($arr['auction_sell_fuel'])."\n".RES_FOOD.": ".nf($arr['auction_sell_food'])."\n\nDies hat ihn folgende Rohstoffe gekostet:\n".RES_METAL.": ".nf($_POST['auction_new_buy_metal'])."\n".RES_CRYSTAL.": ".nf($_POST['auction_new_buy_crystal'])."\n".RES_PLASTIC.": ".nf($_POST['auction_new_buy_plastic'])."\n".RES_FUEL.": ".nf($_POST['auction_new_buy_fuel'])."\n".RES_FOOD.": ".nf($_POST['auction_new_buy_food'])."",time());
+						Log::add(Log::F_MULTITRADE,Log::INFO,"[URL=?page=user&sub=edit&user_id=".$cu->id."][B]".$cu->nick."[/B][/URL] hat an einer Auktion von [URL=?page=user&sub=edit&user_id=".$arr['user_id']."][B]".$seller."[/B][/URL] gewonnen:\n\nRohstoffe:\n".RES_METAL.": ".nf($arr['sell_0'])."\n".RES_CRYSTAL.": ".nf($arr['sell_1'])."\n".RES_PLASTIC.": ".nf($arr['sell_2'])."\n".RES_FUEL.": ".nf($arr['sell_3'])."\n".RES_FOOD.": ".nf($arr['sell_4'])."\n\nDies hat ihn folgende Rohstoffe gekostet:\n".RES_METAL.": ".nf($_POST['new_buy_0'])."\n".RES_CRYSTAL.": ".nf($_POST['new_buy_1'])."\n".RES_PLASTIC.": ".nf($_POST['new_buy_2'])."\n".RES_FUEL.": ".nf($_POST['new_buy_3'])."\n".RES_FOOD.": ".nf($_POST['new_buy_4'])."",time());
 					}
 
 					// Log schreiben

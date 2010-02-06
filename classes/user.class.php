@@ -788,6 +788,7 @@
 				dbquery("DELETE FROM deflist WHERE deflist_user_id='".$this->id."';");			// Verteidigung löschen
 				dbquery("DELETE FROM techlist WHERE techlist_user_id='".$this->id."';");		// Forschung löschen
 				dbquery("DELETE FROM buildlist WHERE buildlist_user_id='".$this->id."';");		// Gebäude löschen
+				dbquery("DELETE FROM missilelist WHERE missilelist_user_id='".$this->id."';");	// Raketen löschen
 
 				//Buddyliste löschen
 				dbquery("DELETE FROM buddylist WHERE bl_user_id='".$this->id."' OR bl_buddy_id='".$this->id."';");
@@ -808,13 +809,14 @@
 
 				//'user' Info löschen
 				//dbquery("DELETE FROM user_log WHERE log_user_id='".$this->id."';"); 			//Log löschen
-				dbquery("DELETE FROM user_multi WHERE user_multi_user_id='".$this->id."' OR user_multi_multi_user_id='".$this->id."';"); //Multiliste löschen
+				dbquery("DELETE FROM user_multi WHERE user_id='".$this->id."' OR multi_id='".$this->id."';"); //Multiliste löschen
 				dbquery("DELETE FROM user_points WHERE point_user_id='".$this->id."';"); 					//Punkte löschen
 				dbquery("DELETE FROM user_warnings WHERE warning_user_id='".$this->id."';"); 				//Nickänderungsanträge löschen
 				dbquery("DELETE FROM user_sitting WHERE user_id='".$this->id."';"); 			//Sitting löschen
 				dbquery("DELETE FROM user_properties WHERE id = '".$this->id."';");							//Properties löschen
 				dbquery("DELETE FROM user_surveillance WHERE user_id='".$this->id."';");					//Beobachter löschen
 				dbquery("DELETE FROM user_comments WHERE comment_user_id='".$this->id."';");						//Kommentare löschen
+				dbquery("DELETE FROM user_ratings WHERE id='".$this->id."';");							//Ratings löschen
 				// Todo: clean tickets
 
 				//

@@ -1489,6 +1489,7 @@ function showAttackAbuseLogs($args=null,$limit=-1,$load=true)
 
 function showFleetLogs($args=null,$limit=0)
 {
+	global $resNames;
 	$paginationLimit = 50;
 
 	$action = is_array($args) && isset($args['flaction']) ? $args['flaction'] : 0;
@@ -1504,6 +1505,11 @@ function showFleetLogs($args=null,$limit=0)
 	{
 		$sql3.=" INNER JOIN users u ON u.user_id=l.user_id AND u.user_nick LIKE '%".$args['searchuser']."%' ";
 	}
+	
+	if (isset($args['searcheuser']) && $args['searcheuser']!="" && !is_numeric($args['searcheuser']))
+	{
+		$sql3.=" INNER JOIN users eu ON eu.user_id=l.entity_user_id AND eu.user_nick LIKE '%".$args['searcheuser']."%' ";
+	}
 
 	$sql3.= " WHERE 1 ";
 	if ($action!="")
@@ -1514,9 +1520,17 @@ function showFleetLogs($args=null,$limit=0)
 	{
 		$sql3.=" AND severity >= ".$sev." ";
 	}
+	if (isset($args['logfac']) && is_numeric($args['logfac']))
+	{
+		$sql3.=" AND facility = ".$args['logfac']." ";
+	}
 	if (isset($args['searchuser']) && is_numeric($args['searchuser']))
 	{
 		$sql3.=" AND l.user_id=".intval($args['searchuser'])." ";
+	}
+	if (isset($args['searcheuser']) && is_numeric($args['searcheuser']))
+	{
+		$sql3.=" AND l.user_id=".intval($args['searcheuser'])." ";
 	}
 	$sql3.= " ORDER BY $order";
 
@@ -1530,7 +1544,7 @@ function showFleetLogs($args=null,$limit=0)
 	$limitstring = "$limit,$paginationLimit";
 
 	$sql4 = " LIMIT $limitstring";
-
+	
 	$res = dbquery($sql1.$sql2.$sql3.$sql4);
 	$nr = mysql_num_rows($res);
 	if ($nr>0)
@@ -1567,6 +1581,7 @@ function showFleetLogs($args=null,$limit=0)
 		echo "<tr>
 			<th style=\"width:140px;\">Datum</th>
 			<th>Schweregrad</th>
+			<th>Facility</th>
 			<th>Besitzer</th>
 			<th>Aktion</th>
 			<th>Start</th>
@@ -1575,6 +1590,11 @@ function showFleetLogs($args=null,$limit=0)
 			<th>Landezeit</th>
 			<th>Flotte</th>
 		</tr>";
+		$sres = dbquery("SELECT ship_id,ship_name FROM ships WHERE ship_show=1 ORDER BY ship_type_id,ship_order;");
+		while ($sarr = mysql_fetch_row($sres))
+		{
+			$ships[$sarr[0]] = $sarr[1];
+		}
 		while ($arr = mysql_fetch_assoc($res))
 		{
 			$owner = new User($arr['user_id']);
@@ -1584,17 +1604,97 @@ function showFleetLogs($args=null,$limit=0)
 			echo "<tr>
 			<td>".df($arr['timestamp'])."</td>
 			<td>".Log::$severities[$arr['severity']]."</td>
+			<td>".Fleetlog::$facilities[$arr['facility']]."</td>
 			<td>$owner</td>
-			<td>$fa</td>
+			<td>".$fa." [".FleetAction::$statusCode[$arr["status"] ]."]</td>
 			<td>".$startEntity."<br/>".$startEntity->entityCodeString().", ".$startEntity->owner()."</td>
 			<td>".$endEntity."<br/>".$endEntity->entityCodeString().", ".$endEntity->owner()."</td>
 			<td>".df($arr['launchtime'])."</td>
 			<td>".df($arr['landtime'])."</td>
 			<td><a href=\"javascript:;\" onclick=\"toggleBox('details".$arr['id']."')\">Bericht</a></td>
 			</tr>";
-			echo "<tr id=\"details".$arr['id']."\" style=\"display:none;\"><td colspan=\"9\">
-
-			</td></tr>";
+			echo "<tr id=\"details".$arr['id']."\" style=\"display:none;\"><td colspan=\"10\">";
+			tableStart("",450);
+			echo "<tr><th>Schiffe in der Flotte</th><th>Vor der Aktion</th><th>Nach der Aktion</th></tr>";
+			$sship = array();
+			$ssship = explode(",",$arr['fleet_ships_start']);
+			foreach ($ssship as $sd)
+			{
+				$sdi = explode(":",$sd);
+				$sship[$sdi[0] ]=$sdi[1];
+			}
+			$esship = explode(",",$arr['fleet_ships_end']);
+			foreach ($esship as $sd)
+			{
+				$sdi = explode(":",$sd);
+				if ($sdi[0]>0)
+					echo "<tr><td>".$ships[$sdi[0] ]."</td><td>".nf($sdi[1])."</td><td>".nf($sship[$sdi[0] ])."</td></tr>";
+			}
+			echo tableEnd();
+			tableStart("",450);
+			echo "<tr><th>Schiffe auf dem Planeten</th><th>Vor der Aktion</th><th>Nach der Aktion</th></tr>";
+			$sship = array();
+			$ssship = explode(",",$arr['entity_ships_start']);
+			foreach ($ssship as $sd)
+			{
+				$sdi = explode(":",$sd);
+				$sship[$sdi[0] ]=$sdi[1];
+			}
+			$esship = explode(",",$arr['entity_ships_end']);
+			foreach ($esship as $sd)
+			{
+				$sdi = explode(":",$sd);
+				if ($sdi[0]>0)
+					echo "<tr><td>".$ships[$sdi[0] ]."</td><td>".nf($sdi[1])."</td><td>".nf($sship[$sdi[0] ])."</td></tr>";
+			}
+			echo tableEnd();
+			tableStart("",450);
+			echo "<tr><th>Rohstoffe in der Flotte</th><th>Vor der Aktion</th><th>Nach der Aktion</th></tr>";
+			$sres = array();
+			$eres = array();
+			$ssres = explode(":",$arr['fleet_res_start']);
+			foreach ($ssres as $sd)
+			{
+				array_push($sres,$sd);
+			}
+			$esres = explode(":",$arr['fleet_res_end']);
+			foreach ($esres as $sd)
+			{
+				array_push($eres,$sd);
+			}
+			foreach ($resNames as $k=>$v)
+			{
+				echo "<tr><td>".$v."</td><td>".nf($sres[$k])."</td><td>".nf($eres[$k])."</td></tr>";
+			}
+			echo "<tr><td>Bewoner</td><td>".nf($sres[5])."</td><td>".nf($eres[5])."</td></tr>";
+			echo tableEnd();
+			
+			//Will not show Resmessage if entity was not touched (fleet cancel)
+			if ($arr['entity_res_start']!="untouched" || $arr['entity_res_end']!="untouched")
+			{
+				tableStart("",450);
+				echo "<tr><th>Rohstoffe auf der Entity</th><th>Vor der Aktion</th><th>Nach der Aktion</th></tr>";
+				$sres = array();
+				$eres = array();
+				$ssres = explode(":",$arr['entity_res_start']);
+				foreach ($ssres as $sd)
+				{
+					array_push($sres,$sd);
+				}
+				$esres = explode(":",$arr['entity_res_end']);
+				foreach ($esres as $sd)
+				{
+					array_push($eres,$sd);
+				}
+				foreach ($resNames as $k=>$v)
+				{
+					echo "<tr><td>".$v."</td><td>".nf($sres[$k])."</td><td>".nf($eres[$k])."</td></tr>";
+				}
+				echo "<tr><td>Bewoner</td><td>".nf($sres[5])."</td><td>".nf($eres[5])."</td></tr>";
+				echo tableEnd();
+			} 
+			echo $arr["message"];
+			echo "</td></tr>";
 		}
 		echo "</table>";
 	}

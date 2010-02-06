@@ -520,6 +520,9 @@
 							}
 						}
 						
+						$log = new Fleetlog($this->ownerId,$this->sourceId);
+						$log->cancel($this->id,$this->launchTime,$this->landTime,$this->targetId,$this->actionCode,$this->stauts,$this->pilots);
+						$log->addFleetRes(array($this->resMetal,$this->resCrystal,$this->resPlastic,$this->resFuel,$this->resFood),$this->resPeople,null,false);
 						$tottime = $this->landTime() - $this->launchTime + $this->nextActionTime;
 						$difftime = time() - $this->launchTime;
 						$this->status = 2;
@@ -555,7 +558,10 @@
 						$this->usageFuel = floor($this->usageFuel * $passed);
 						$this->usageFood = floor($this->usageFood * $passed);
 						$this->usagePower = floor($this->usagePower * $passed);
-
+						
+						$log->fuel = $this->usageFuel;
+						$log->food = $this->usageFood;
+						$log->addFleetRes(array($this->resMetal,$this->resCrystal,$this->resPlastic,$this->resFuel,$this->resFood),$this->resPeople,null,true);
 						if ($this->update())
 							return true;
 

@@ -253,7 +253,164 @@
 				echo $num." inaktive User wurden gelöscht!<br/>";
 				$num = Users::removeDeleted(true);
 				echo $num." gelöschte User wurden endgültig gelöscht!<br/>";
-			}			
+			}
+			
+			//Observer
+			if ((isset($_POST['cl_surveillance']) && $_POST['cl_surveillance']==1) || $all)
+			{
+				$num = 0;
+				$ores =	dbquery("SELECT
+									`user_surveillance`.user_id
+								FROM
+									`user_surveillance`
+								INNER JOIN 
+									`users` 
+								ON 
+									`user_surveillance`.user_id=`users`.user_id 
+									AND `users`.user_observe='' 
+								GROUP BY 
+									`user_surveillance`.user_id;");
+				while ($oarr = mysql_fetch_row($ores))
+				{
+					dbquery("DELETE FROM
+								`user_surveillance`
+							WHERE
+								user_id='".$oarr[0]."';");
+					$num += mysql_affected_rows();
+				}
+				echo $num." verwaiste Beobachtereinträge gelöscht<br/>";
+			}
+			
+			// Userdata
+			if ((isset($_POST['cl_userdata']) && $_POST['cl_userdata']==1) || $all)
+			{
+				$ures = dbquery("SELECT
+									user_id
+								FROM
+									`users`;");
+				$ustring = "";
+				$set = false;
+				while ($uarr = mysql_fetch_row($ures))
+				{
+					if  ($set) $ustring .=",";
+					else $set = true;
+					$ustring .= $uarr[0];
+
+				}
+				if ($_POST['del_user_log']==1)
+				{
+					$lres = dbquery("DELETE	FROM 
+										`user_log`
+									WHERE
+										!(`user_log`.user_id IN (".$ustring."))");
+					echo mysql_affected_rows()." verwaiste Userlogs wurden gelöscht!<br/>";					
+				}
+				if ($_POST['del_user_ratings']==1)
+				{
+					$rres = dbquery("DELETE	FROM 
+										`user_ratings`
+									WHERE
+										!(`user_ratings`.id IN (".$ustring."))");
+					echo mysql_affected_rows()." verwaiste Ratings wurden gelöscht!<br/>";	
+				}
+				if ($_POST['del_user_properties']==1)
+				{
+					$pres = dbquery("DELETE FROM 
+										`user_properties`
+									WHERE
+										!(`user_properties`.id IN (".$ustring."))");
+					echo mysql_affected_rows()." verwaiste Properties wurden gelöscht!<br/>";	
+				}
+				if ($_POST['del_user_multi']==1)
+				{
+					$mres = dbquery("DELETE FROM 
+										`user_multi`
+									WHERE
+										!(`user_multi`.user_id IN (".$ustring."))
+										OR !(`user_multi`.multi_id IN (".$ustring."))");
+					echo mysql_affected_rows()." verwaiste Multieinträge wurden gelöscht!<br/>";	
+				}
+				if ($_POST['del_user_comments']==1)
+				{
+					$cres = dbquery("DELETE FROM 
+										`user_comments`
+									WHERE
+										!(`user_comments`.comment_user_id IN (".$ustring."))");
+					echo mysql_affected_rows()." verwaiste Adminkommentare wurden gelöscht!<br/>";	
+				}
+				if ($_POST['del_tickets']==1)
+				{
+					$tres = dbquery("DELETE FROM 
+										`tickets`
+									WHERE
+										!(`tickets`.user_id IN (".$ustring."))");
+					echo mysql_affected_rows()." verwaiste Tickets wurden gelöscht!<br/>";	
+				}
+				if ($_POST['del_notepad']==1)
+				{
+					$nres = dbquery("DELETE FROM 
+										`notepad`
+									WHERE
+										!(`notepad`.user_id IN (".$ustring."))");
+					echo mysql_affected_rows()." verwaiste Notizen wurden gelöscht!<br/>";	
+				}
+				if ($_POST['del_shiplist']==1)
+				{
+					$slres = dbquery("DELETE FROM 
+										`shiplist`
+									WHERE
+										!(`shiplist`.shiplist_user_id IN (".$ustring."))");
+					echo mysql_affected_rows()." verwaiste Schiffe wurden gelöscht!<br/>";	
+				}
+				if ($_POST['del_deflist']==1)
+				{
+					$dlres = dbquery("DELETE FROM 
+										`deflist`
+									WHERE
+										!(`deflist`.deflist_user_id IN (".$ustring."))");
+					echo mysql_affected_rows()." verwaiste Verteidigungen wurden gelöscht!<br/>";	
+				}
+				if ($_POST['del_missilelist']==1)
+				{
+					$dlres = dbquery("DELETE FROM 
+										`missilelist`
+									WHERE
+										!(`missilelist`.missilelist_user_id IN (".$ustring."))");
+					echo mysql_affected_rows()." verwaiste Raketen wurden gelöscht!<br/>";	
+				}
+				if ($_POST['del_buildlist']==1)
+				{
+					$blres = dbquery("DELETE FROM 
+										`buildlist`
+									WHERE
+										!(`buildlist`.buildlist_user_id IN (".$ustring."))");
+					echo mysql_affected_rows()." verwaiste Gebäude wurden gelöscht!<br/>";	
+				}
+				if ($_POST['del_techlist']==1)
+				{
+					$tlres = dbquery("DELETE FROM 
+										`techlist`
+									WHERE
+										!(`techlist`.techlist_user_id IN (".$ustring."))");
+					echo mysql_affected_rows()." verwaiste Technologien wurden gelöscht!<br/>";	
+				}
+				if ($_POST['del_def_queue']==1)
+				{
+					$dqres = dbquery("DELETE FROM 
+										`def_queue`
+									WHERE
+										!(`def_queue`.queue_user_id IN (".$ustring."))");
+					echo mysql_affected_rows()." verwaiste Bauaufträge (Def) wurden gelöscht!<br/>";	
+				}
+				if ($_POST['del_ship_queue']==1)
+				{
+					$sqres = dbquery("DELETE FROM 
+										`ship_queue`
+									WHERE
+										!(`ship_queue`.queue_user_id IN (".$ustring."))");
+					echo mysql_affected_rows()." verwaiste Bauaufträge (Schiff) wurden gelöscht!<br/>";	
+				}
+			}		
 
 			/* object lists */
 			if ((isset($_POST['cl_objlist']) && $_POST['cl_objlist']==1) || $all)
@@ -475,6 +632,155 @@
 
 		echo '</fieldset><br/>';
 		
+		// Beobachter 
+		echo '<fieldset><legend><input type="checkbox" value="1" name="cl_surveillance" /> Beobachter</legend>';
+		$ores =	dbquery("SELECT
+							count(`user_surveillance`.user_id)
+						FROM
+							`user_surveillance`
+						INNER JOIN 
+							`users` 
+						ON 
+							`user_surveillance`.user_id=`users`.user_id 
+							AND `users`.user_observe='' 
+						GROUP BY 
+							`user_surveillance`.user_id;");		
+		$tblcnt = mysql_fetch_row($ores);
+		echo nf($tblcnt[0])." verwaiste Beobachtereinträge gefunden";
+		echo '</fieldset><br/>';
+		
+		// Userdata
+		echo '<fieldset><legend><input type="checkbox" value="1" name="cl_userdata" /> Userdata von gelöschten Spielern</legend>';
+		$ures = dbquery("SELECT
+							user_id
+						FROM
+							`users`;");
+		$ustring = "";
+		$set = false;
+		while ($uarr = mysql_fetch_row($ures))
+		{
+			if  ($set) $ustring .=",";
+			else $set = true;
+			$ustring .= $uarr[0];
+			
+		}
+		
+		$lres = dbquery("SELECT
+							count(`user_log`.id)
+						FROM 
+							`user_log`
+						WHERE
+							!(`user_log`.user_id IN (".$ustring."))");		
+		$rres = dbquery("SELECT
+							count(`user_ratings`.id)
+						FROM 
+							`user_ratings`
+						WHERE
+							!(`user_ratings`.id IN (".$ustring."))");
+		$pres = dbquery("SELECT
+							count(`user_properties`.id)
+						FROM 
+							`user_properties`
+						WHERE
+							!(`user_properties`.id IN (".$ustring."))");
+		$mres = dbquery("SELECT
+							count(`user_multi`.id)
+						FROM 
+							`user_multi`
+						WHERE
+							!(`user_multi`.user_id IN (".$ustring."))
+							OR !(`user_multi`.multi_id IN (".$ustring."))");
+		$cres = dbquery("SELECT
+							count(`user_comments`.comment_id)
+						FROM 
+							`user_comments`
+						WHERE
+							!(`user_comments`.comment_user_id IN (".$ustring."))");
+		$tres = dbquery("SELECT
+							count(`tickets`.id)
+						FROM 
+							`tickets`
+						WHERE
+							!(`tickets`.user_id IN (".$ustring."))");
+		$nres = dbquery("SELECT
+							count(`notepad`.id)
+						FROM 
+							`notepad`
+						WHERE
+							!(`notepad`.user_id IN (".$ustring."))");
+		$slres = dbquery("SELECT
+							count(`shiplist`.shiplist_id)
+						FROM 
+							`shiplist`
+						WHERE
+							!(`shiplist`.shiplist_user_id IN (".$ustring."))");
+		$dlres = dbquery("SELECT
+							count(`deflist`.deflist_id)
+						FROM 
+							`deflist`
+						WHERE
+							!(`deflist`.deflist_user_id IN (".$ustring."))");
+		$blres = dbquery("SELECT
+							count(`buildlist`.buildlist_id)
+						FROM 
+							`buildlist`
+						WHERE
+							!(`buildlist`.buildlist_user_id IN (".$ustring."))");
+		$tlres = dbquery("SELECT
+							count(`techlist`.techlist_id)
+						FROM 
+							`techlist`
+						WHERE
+							!(`techlist`.techlist_user_id IN (".$ustring."))");
+		$mlres = dbquery("SELECT
+							count(`missilelist`.missilelist_id)
+						FROM 
+							`missilelist`
+						WHERE
+							!(`missilelist`.missilelist_user_id IN (".$ustring."))");
+		$dqres = dbquery("SELECT
+							count(`def_queue`.queue_id)
+						FROM 
+							`def_queue`
+						WHERE
+							!(`def_queue`.queue_user_id IN (".$ustring."))");
+		$sqres = dbquery("SELECT
+							count(`ship_queue`.queue_id)
+						FROM 
+							`ship_queue`
+						WHERE
+							!(`ship_queue`.queue_user_id IN (".$ustring."))");
+
+		$tblcnt = mysql_fetch_row($lres);
+		echo '<input type="checkbox" value="1" name="del_user_log" /> '.nf($tblcnt[0])." verwaiste <strong>Userlogs</strong> gefunden<br/>";
+		$tblcnt = mysql_fetch_row($rres);
+		echo '<input type="checkbox" value="1" name="del_user_ratings" /> '.nf($tblcnt[0])." verwaiste <strong>Ratings</strong> gefunden<br/>";
+		$tblcnt = mysql_fetch_row($pres);
+		echo '<input type="checkbox" value="1" name="del_user_properties" /> '.nf($tblcnt[0])." verwaiste <strong>Properties</strong> gefunden<br/>";
+		$tblcnt = mysql_fetch_row($mres);
+		echo '<input type="checkbox" value="1" name="del_user_multi" /> '.nf($tblcnt[0])." verwaiste <strong>Multieinträge</strong> gefunden<br/>";
+		$tblcnt = mysql_fetch_row($cres);
+		echo '<input type="checkbox" value="1" name="del_user_comments" /> '.nf($tblcnt[0])." verwaiste <strong>Adminkommentare</strong> gefunden<br/>";
+		$tblcnt = mysql_fetch_row($tres);
+		echo '<input type="checkbox" value="1" name="del_tickets" /> '.nf($tblcnt[0])." verwaiste <strong>Tickets</strong> gefunden<br/>";
+		$tblcnt = mysql_fetch_row($nres);
+		echo '<input type="checkbox" value="1" name="del_notepad" /> '.nf($tblcnt[0])." verwaiste <strong>Notizen</strong> gefunden<br/>";
+		$tblcnt = mysql_fetch_row($slres);
+		echo '<input type="checkbox" value="1" name="del_shiplist" /> '.nf($tblcnt[0])." verwaiste <strong>Schiffdatensätze</strong> gefunden<br/>";
+		$tblcnt = mysql_fetch_row($sqres);
+		echo '<input type="checkbox" value="1" name="del_ship_queue" /> '.nf($tblcnt[0])." verwaiste <strong>Schiffbauaufträge</strong> gefunden<br/>";		
+		$tblcnt = mysql_fetch_row($dlres);
+		echo '<input type="checkbox" value="1" name="del_deflist" /> '.nf($tblcnt[0])." verwaiste <strong>Defdatensätze</strong> gefunden<br/>";
+		$tblcnt = mysql_fetch_row($dqres);
+		echo '<input type="checkbox" value="1" name="del_def_queue" /> '.nf($tblcnt[0])." verwaiste <strong>Defbauaufträge</strong> gefunden<br/>";
+		$tblcnt = mysql_fetch_row($blres);
+		echo '<input type="checkbox" value="1" name="del_buildlist" /> '.nf($tblcnt[0])." verwaiste <strong>Gebäude</strong> gefunden<br/>";
+		$tblcnt = mysql_fetch_row($tlres);
+		echo '<input type="checkbox" value="1" name="del_techlist" /> '.nf($tblcnt[0])." verwaiste <strong>Technologien</strong> gefunden<br/>";
+		$tblcnt = mysql_fetch_row($mlres);
+		echo '<input type="checkbox" value="1" name="del_missilelist" /> '.nf($tblcnt[0])." verwaiste <strong>Raketen</strong> gefunden<br/>";
+		echo '</fieldset><br/>';
+		
 		/* Object lists */
 		echo '<fieldset><legend><input type="checkbox" value="1" name="cl_objlist" /> Objektlisten</legend>';
 		$res =	dbquery("
@@ -512,7 +818,24 @@
 			deflist
 		;");		
 		$dtcnt = mysql_fetch_row($res);
-				
+		
+		$res =	dbquery("
+		SELECT
+			 COUNT( missilelist_id )
+		FROM 
+			missilelist
+		WHERE 
+			missilelist_count =0
+		;");		
+		$mcnt = mysql_fetch_row($res);
+		$res =	dbquery("
+		SELECT
+			 COUNT( missilelist_id )
+		FROM 
+			missilelist
+		;");		
+		$mtcnt = mysql_fetch_row($res);
+		
 		$res =	dbquery("
 		SELECT
 			 COUNT( buildlist_id )
@@ -553,6 +876,7 @@
 
 		echo "<b>Leere Schiffdatensätze:</b> ".nf($scnt[0])." vorhanden (".nf($stcnt[0])." total).<br/>";
 		echo "<b>Leere Verteidigungsdatensätze:</b> ".nf($dcnt[0])." vorhanden (".nf($dtcnt[0])." total).<br/>";
+		echo "<b>Leere Raketendatensäte:</b> ".nf($mcnt[0])." vorhanden (".nf($mtcnt[0])." total).<br/>";
 		echo "<b>Leere Gebäudedatensätze:</b> ".nf($bcnt[0])." vorhanden (".nf($btcnt[0])." total).<br/>";
 		echo "<b>Leere Forschungsdatensätze:</b> ".nf($tcnt[0])." vorhanden (".nf($ttcnt[0])." total).<br/>";
 		echo '</fieldset><br/>';	

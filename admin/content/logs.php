@@ -910,6 +910,15 @@
 			echo "<option value=\"".$k."\">".$v."</option>";
 		}
 		echo "</select> &nbsp; ";
+		
+		echo "<label for=\"logfac\">Facility:</label>
+		<select id=\"logfac\" name=\"logfac\" onchange=\"applyFilter(0)\">
+		<option value=\"\">(Alle)</option>";
+		foreach (FleetLog::$facilities as $k => $v)
+		{
+			echo "<option value=\"".$k."\">".$v."</option>";
+		}
+		echo "</select> &nbsp; ";
 
 		echo "<label for=\"logcat\">Aktion:</label>
 		<select id=\"flaction\" name=\"flaction\" onchange=\"applyFilter(0)\">
@@ -918,10 +927,22 @@
 		{
 			echo "<option value=\"".$k."\">".$v."</option>";
 		}
-		echo "</select> &nbsp; ";
+		echo "</select> &nbsp;
+		<select id=\"flstatus\" name=\"flstatus\" onchange=\"applyFilter(0)\">
+		<option value=\"\">(Egal)</option>";
+		foreach (FleetAction::$statusCode as $k => $v)
+		{
+			echo "<option value=\"".$k."\">".$v."</option>";
+		}
+		echo "</select><br/><br/> ";
 
-		echo " <label for=\"searchuser\">User:</label> <input type=\"text\" id=\"searchuser\" name=\"searchuser\" value=\"\" autocomplete=\"off\" /> &nbsp; ";
-
+		echo " <label for=\"searchuser\">Flottenuser:</label> <input type=\"text\" id=\"searchuser\" name=\"searchuser\" value=\"\" autocomplete=\"off\" /> &nbsp; ";
+		
+		echo " <label for=\"searcheuser\">Entityuser:</label> <input type=\"text\" id=\"searcheuser\" name=\"searcheuser\" value=\"\" autocomplete=\"off\" /> &nbsp;<br/><br/>";
+		
+		echo " <label for=\"start\">Start:</label> <input type=\"text\" id=\"start\" name=\"start\" value=\"\" autocomplete=\"off\" /> &nbsp; ";
+		echo " <label for=\"target\">Ziel:</label> <input type=\"text\" id=\"target\" name=\"target\" value=\"\" autocomplete=\"off\" /> &nbsp; ";
+		
 		echo "<input type=\"submit\" value=\"Anwenden\" onclick=\"applyFilter(0);return false;\" /> &nbsp;
 		<input type=\"button\" value=\"Reset\" onclick=\"resetFilter();\" />";
 		echo "</p></form>";

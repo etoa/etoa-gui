@@ -87,7 +87,6 @@
 				if ($fd->cancelFlight())
 				{
 					ok_msg("Flug erfolgreich abgebrochen!");
-					add_log(13,"Der Spieler [b]".$cu->nick."[/b] bricht den Flug seiner Flotte [b]".$fleet_id."[/b] ab",time());
 				}
 				else
 				{

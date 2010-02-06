@@ -20,7 +20,7 @@
 	// $Date$
 	// $Rev$
 	//
-
+	
 	if (!$s->sittingActive || $s->falseSitter)
 	{
 			//
@@ -91,7 +91,7 @@
                     {
                         if ($_POST['del_multi'][$id]==1)
                         {
-							if ($_POST['connection'][$id]==0 && $_POST['multi_id'][$id]==0)
+							if ($_POST['connection'][$id]==0 && $_POST['del_multi'][$id]==0)
 							{
 								dbquery("DELETE FROM user_multi WHERE id=$id;");
 							}

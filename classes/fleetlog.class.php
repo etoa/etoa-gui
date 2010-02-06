@@ -24,6 +24,7 @@
 		 */
 		const F_RETURN = 4;
 		
+		
 		private $fleetId;
 		private $userId;
 		private $launchtime;
@@ -49,17 +50,34 @@
 		
 		private $severity;
 		private $facility;
+		static public $facilities = array(
+		"Sonstige",
+		"Start",
+		"Abbruch",
+		"Aktion",
+		"Rückkehr"
+		);
 		
-		public function FleetLog($userId=0,$sourceId, &$sourceEnt)
+		public function FleetLog($userId=0,$sourceId, &$sourceEnt=null)
 		{
 			$this->userId=$userId;
-			$this->sourceEntity = $sourceEnt;
+			if ($sourceEnt)
+			{
+				$this->sourceEntity = $sourceEnt;
+				$this->entityResStart = $this->sourceEntity->getResourceLog();
+				$this->entityResEnd="";
+			}
+			else
+			{
+				$this->sourceEntity = null;
+				$this->entityResStart = "untouched";
+				$this->entityResEnd = "untouched";
+			}
 			$this->sourceId=$sourceId;
 			$this->status = 0;
 			$this->severity = 0;
 			$this->facility = 0;
 			$this->launched=false;
-			$this->entityResStart = $this->sourceEntity->getResourceLog();
 			$this->fleetResStart = "0:0:0:0:0:0:0,f,0:0:0:0:0:0:0";
 			$this->fleetShipStart = "0";
 			
@@ -68,7 +86,6 @@
 			$this->landtime=0;
 			$this->targetId=0;
 			$this->action="";
-			$this->entityResEnd="";
 			$this->entityShipStart="";
 			$this->entityShipEnd="";
 			$this->fleetResEnd="";
@@ -166,24 +183,43 @@
 			}
 		}
 		
-		public function addFleetRes($res,$people,$fetch)
+		public function addFleetRes($res,$people,$fetch=null,$end=true)
 		{
-			$this->fleetResEnd = "";
+			$string = "";
 			
 			foreach ($res as $rid=>$rcnt)
 				if ($rid)
-					$this->fleetResEnd .= $rcnt.":";
-			$this->fleetResEnd .= $people.":0,f,";
+					$string .= $rcnt.":";
+			$string .= $people.":0,f,";
 			
-			foreach ($fetch as $fid=>$fcnt)
-				if ($fid)
-					$this->fleetResEnd .= $fcnt.":";
+			if ($fetch)
+				foreach ($fetch as $fid=>$fcnt)
+					if ($fid)
+						$string .= $fcnt.":";
+			if ($end)
+				$this->fleetResEnd = $string;
+			else
+				$this->fleetResStart = $string;
+		
 		}
 		
 		public function launch()
 		{
 			$this->entityResEnd = $this->sourceEntity->getResourceLog();
 			$this->facility = self::F_LAUNCH;
+			$this->launched = true;
+		}
+		
+		public function cancel($fleetId,$launchtime,$landtime,$targetId,$action,$stauts,$pilots)
+		{
+			$this->fleetId=0;
+			$this->facility = self::F_CANCEL;
+			$this->launchtime=$launchtime;
+			$this->landtime=$landtime;
+			$this->targetId=$targetId;
+			$this->action=$action;
+			$this->status = $status;
+			$this->pilots = $pilots;
 			$this->launched = true;
 		}
 		

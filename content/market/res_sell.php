@@ -246,9 +246,9 @@ $cnt = 0;
 										multi_id='".$arr['user_id']."'
 										AND user_id='".$cu->id."';");
 
-									if(mysql_num_rows($multi_res1)!=0 && mysql_num_rows($multi_res2)!=0)
+									if(mysql_num_rows($multi_res1)!=0 || mysql_num_rows($multi_res2)!=0)
 									{
-										add_log(10,"[URL=?page=user&sub=edit&user_id=".$cu->id."][B]".$cu->nick."[/B][/URL] hat von [URL=?page=user&sub=edit&user_id=".$arr['user_id']."][B]".$seller_user_nick."[/B][/URL] Rohstoffe gekauft:\n\n".RES_METAL.": ".nf($arr['sell_metal'])."\n".RES_CRYSTAL.": ".nf($arr['sell_crystal'])."\n".RES_PLASTIC.": ".nf($arr['sell_plastic'])."\n".RES_FUEL.": ".nf($arr['sell_fuel'])."\n".RES_FOOD.": ".nf($arr['sell_food'])."\n\nDies hat ihn folgende Rohstoffe gekostet:\n".RES_METAL.": ".nf($arr['buy_metal'])."\n".RES_CRYSTAL.": ".nf($arr['buy_crystal'])."\n".RES_PLASTIC.": ".nf($arr['buy_plastic'])."\n".RES_FUEL.": ".nf($arr['buy_fuel'])."\n".RES_FOOD.": ".nf($arr['buy_food']),time());
+										Log::add(Log::F_MULTITRADE,Log::INFO,"[URL=?page=user&sub=edit&user_id=".$cu->id."][B]".$cu->nick."[/B][/URL] hat von [URL=?page=user&sub=edit&user_id=".$arr['user_id']."][B]".$seller."[/B][/URL] Rohstoffe gekauft:\n\n".RES_METAL.": ".nf($arr['sell_0'])."\n".RES_CRYSTAL.": ".nf($arr['sell_1'])."\n".RES_PLASTIC.": ".nf($arr['sell_2'])."\n".RES_FUEL.": ".nf($arr['sell_3'])."\n".RES_FOOD.": ".nf($arr['sell_4'])."\n\nDies hat ihn folgende Rohstoffe gekostet:\n".RES_METAL.": ".nf($arr['buy_0'])."\n".RES_CRYSTAL.": ".nf($arr['buy_1'])."\n".RES_PLASTIC.": ".nf($arr['buy_2'])."\n".RES_FUEL.": ".nf($arr['buy_3'])."\n".RES_FOOD.": ".nf($arr['buy_4']),time());
 									}
 
 									// Zählt die erfolgreich abgewickelten Angebote
