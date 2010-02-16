@@ -276,7 +276,7 @@
 		if (this->shipsChanged)
 			this->recalcShips();
 		double capacity = this->capacity - this->getResLoaded() - this->usageFuel - this->usageFood - this->supportUsageFuel - this->supportUsageFood;
-
+		
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -424,82 +424,93 @@
 
 	double Fleet::addMetal(double metal, bool total) {
 		this->changedData = true;
+		double raidedMetal = 0;
 		metal = round(metal);
-		if (metal>=this->getCapacity(total))
-			metal = this->getCapacity(total);
+		double initCapa = this->getCapacity(total);
+		if (metal>=initCapa)
+			metal = initCapa;
 		
-		if (metal*this->getCapacity(total))
-			this->resMetal += metal*this->getCapacity()/this->getCapacity(total);
+		if (metal*initCapa) 
+			this->resMetal += raidedMetal = metal*this->getCapacity()/initCapa;
+		
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
-				metal += (*it)->addMetal(metal*(*it)->getCapacity()/this->getCapacity(total));
+				raidedMetal += (*it)->addMetal(metal*(*it)->getCapacity()/initCapa);
 		}
-		return metal;
+		return raidedMetal;
 	}
 
 	double Fleet::addCrystal(double crystal, bool total) {
-		crystal = round(crystal);
 		this->changedData = true;
-		if (crystal>=this->getCapacity())
-			crystal = this->getCapacity();
+		double raidedCrystal = 0;
+		crystal = round(crystal);
+		double initCapa = this->getCapacity(total);
+		if (crystal>=initCapa)
+			crystal = initCapa;
 		
-		if (crystal*this->getCapacity(total))
-			this->resCrystal += crystal*this->getCapacity()/this->getCapacity(total);
+		if (crystal*initCapa)
+			this->resCrystal += raidedCrystal = crystal*this->getCapacity()/initCapa;
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
-				crystal += (*it)->addCrystal(crystal*(*it)->getCapacity()/this->getCapacity(total));
+				raidedCrystal += (*it)->addCrystal(crystal*(*it)->getCapacity()/initCapa);
 		}
-		return crystal;
+		return raidedCrystal;
 	}
 
 	double Fleet::addPlastic(double plastic, bool total) {
-		plastic = round(plastic);
 		this->changedData = true;
-		if (plastic>=this->getCapacity())
-			plastic = this->getCapacity();
+		double raidedPlastic = 0;
+		plastic = round(plastic);
+		double initCapa = this->getCapacity(total);
+		if (plastic>=initCapa)
+			plastic = initCapa;
 		
-		if (plastic*this->getCapacity(total))
-			this->resPlastic += plastic*this->getCapacity()/this->getCapacity(total);
+		if (plastic*initCapa)
+			this->resPlastic += raidedPlastic = plastic*this->getCapacity()/initCapa;
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
-				plastic += (*it)->addPlastic(plastic*(*it)->getCapacity()/this->getCapacity(total));
+				raidedPlastic += (*it)->addPlastic(plastic*(*it)->getCapacity()/initCapa);
 		}
-		return plastic;
+		return raidedPlastic;
 	}
 
 	double Fleet::addFuel(double fuel, bool total) {
-		fuel = round(fuel);
 		this->changedData = true;
-		if (fuel>=this->getCapacity())
-			fuel = this->getCapacity();
+		double raidedFuel = 0;
+		fuel = round(fuel);
+		double initCapa = this->getCapacity(total);
+		if (fuel>=initCapa)
+			fuel = initCapa;
 		
-		if (fuel*this->getCapacity(total))
-			this->resFuel += fuel*this->getCapacity()/this->getCapacity(total);
+		if (fuel*initCapa)
+			this->resFuel += raidedFuel = fuel*this->getCapacity()/initCapa;
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
-				fuel += (*it)->addFuel(fuel*(*it)->getCapacity()/this->getCapacity(total));
+				raidedFuel += (*it)->addFuel(fuel*(*it)->getCapacity()/initCapa);
 		}
-		return fuel;
+		return raidedFuel;
 	}
 
 	double Fleet::addFood(double food, bool total) {
-		food = round(food);
 		this->changedData = true;
-		if (food>=this->getCapacity())
-			food = this->getCapacity();
+		double raidedFood = 0;
+		food = round(food);
+		double initCapa = this->getCapacity(total);
+		if (food>=initCapa)
+			food = initCapa;
 		
 		if (food*this->getCapacity(total))
-			this->resFood += food*this->getCapacity()/this->getCapacity(total);
+			this->resFood += raidedFood = food*this->getCapacity()/initCapa;
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
-				food += (*it)->addFood(food*(*it)->getCapacity()/this->getCapacity(total));
+				raidedFood += (*it)->addFood(food*(*it)->getCapacity()/initCapa);
 		}
-		return food;
+		return raidedFood;
 	}
 
 	double Fleet::addPower(double power, bool total) {
