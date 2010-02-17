@@ -161,7 +161,11 @@
 	  	while ($sarr=mysql_fetch_array($sres))
 	  	{	  
 			 	//Zeigt Informationen (Zeile) an wenn Schiffe vorhanden sind
-			  if(isset($shiplist_data[$sarr['ship_id']]) || isset($queue_data[$sarr['ship_id']])  || isset($fleet_data[$sarr['ship_id']]) )
+			  if(
+				(isset($shiplist_data[$sarr['ship_id']]) && array_sum($shiplist_data[$sarr['ship_id']])>0) 
+				|| (isset($queue_data[$sarr['ship_id']]) && array_sum($queue_data[$sarr['ship_id']])>0) 
+				|| (isset($fleet_data[$sarr['ship_id']]) && array_sum($fleet_data[$sarr['ship_id']])>0)
+				|| (isset($shiplist_bunkered[$saar['ship_id']]) && array_sum($shiplist_bunkered[$sarr['ship_id']])>0))
 			  {
 			  	$s_img = IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$sarr['ship_id']."_small.".IMAGE_EXT;
 			  	echo '<tr>
@@ -215,13 +219,21 @@
 		  						$tm = "";
 		  						foreach ($shiplist_bunkered[$sarr['ship_id']] as $planet_id => $count)
 							  	{
-							  		$tm .= "<b>".$planet_data[$planet_id]."</b>: ".nf($count)."<br>";
+									if ($count)
+							  			$tm .= "<b>".$planet_data[$planet_id]."</b>: ".nf($count)."<br>";
 							  	}
-		  						
-		  						echo '
-			  					<td '.tm("Anzahl",$tm).'>
-			  						'.nf($total).'
-			  					</td>';
+		  						if ($tm!="")
+								{
+									echo '
+				  					<td '.tm("Anzahl",$tm).'>
+				  						'.nf($total).'
+				  					</td>';
+								}
+								else
+									echo '
+									<td>
+										&nbsp;
+									</td>';
 			  				}
 			  				else
 			  				{

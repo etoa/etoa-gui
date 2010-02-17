@@ -558,6 +558,7 @@
 	function nf_back($number,$colorize=0)
 	{
 		$number = str_replace('`', '', $number);
+		$number = str_replace('%', '', $number);
 		if ($colorize==1)
 		{
 			if ($number>0)
@@ -783,7 +784,7 @@
 	}
 
 
-	function tableStart($title="",$width=0,$layout="")
+	function tableStart($title="",$width=0,$layout="", $id="")
 	{
 		if ($width>0)
 		{
@@ -801,13 +802,21 @@
 			else
 				$w = "width:98%";
 		}
+		if ($id!="")
+		{
+			$id = "id=\"".$id."\"";
+		}
 		if ($layout=="double")
 		{
-			echo "<table style=\"".$w."\"><tr><td style=\"width:50%;vertical-align:top;\">";
+			echo "<table ".$id." style=\"".$w."\"><tr><td style=\"width:50%;vertical-align:top;\">";
+		}
+		elseif ($layout=="nondisplay")
+		{
+			echo "<table ".$id." class=\"tb boxLayout\" style=\"display:none;".$w."\">";
 		}
 		else
 		{
-			echo "<table class=\"tb boxLayout\" style=\"".$w."\">";
+			echo "<table ".$id." class=\"tb boxLayout\" style=\"".$w."\">";
 		}
 		
 		if ($title!="")
@@ -2397,8 +2406,28 @@ function imagecreatefromfile($path, $user_functions = false)
 			}
 		</script>
 		<?PHP	
-	}	
-
+	}
+	
+	function jsSlider($elem,$value=100)	
+	{
+		?>
+		<script type="text/javascript">
+			$(function() {
+				$("#slider").slider({
+					value: <?PHP echo $value ?>,
+					min: 1,
+					max: 100,
+					step: 1,
+					slide: function(event, ui) {
+						$("#value").val(ui.value + ' %');
+					}
+				});
+				$("#value").val($("#slider" + " %").slider("value"));
+			});
+			</script>
+		
+		<?PHP	
+	}
 
 	/**
 	* The ultimate answer

@@ -481,6 +481,7 @@ class OtherReport extends Report
 				echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' versuchte Waren abzuholen. Leider fand die Flotte keinen deiner Planeten mehr vor und so machte sich die Crew auf den Weg nach Hause!<br />';
 				break;
 			case 'actionmain':
+				$action = FleetAction::createFactory($this->actionCode);
 				echo '<strong>FLOTTE LANDEN GESCHEITERT</strong><br /><br />
 						Eine eurer Flotten hat versucht auf ihrem Ziel zu laden Der Versuch scheiterte jedoch und die Flotte macht sich auf den Weg zu eurem Hauptplaneten!<br /><br />';
 				echo '<strong>Ziel: </strong>'.$ent1->detailLink().'<br />';

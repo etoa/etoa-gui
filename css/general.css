@@ -447,3 +447,36 @@ table.battleTable {
 	padding: 5px 20px;
 	background-color:#000;
 }
+
+#shiplist  {
+  position:absolute;
+  z-index:10;
+  border:1px #ccc solid;
+  border-top:none;
+  border-bottom:none;
+  background:#223;
+  padding:0px;
+  display:none;
+}
+
+#shiplist ul  {
+  padding:0 10px 0 10px;
+  margin:0;
+}
+
+#shiplist li  {
+  list-style:none;
+  padding-left:0;
+}
+
+#shiplist a  {
+  text-decoration:none;
+  color:#aaa;
+  display:block;
+  padding:5px;
+  border-bottom:1px solid #fff;
+}
+#shiplist a:hover {
+  color:#fff;
+  background:#225;
+}

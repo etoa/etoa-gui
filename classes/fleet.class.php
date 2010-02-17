@@ -525,9 +525,7 @@
 						$log->addFleetRes(array($this->resMetal,$this->resCrystal,$this->resPlastic,$this->resFuel,$this->resFood),$this->resPeople,null,false);
 						$tottime = $this->landTime() - $this->launchTime + $this->nextActionTime;
 						$difftime = time() - $this->launchTime;
-						$this->status = 2;
-						$this->leaderId = 0;
-	
+						
 						if ($this->actionCode=="support" && $this->status==3)
 						{
 							$this->launchTime = time();
@@ -547,6 +545,8 @@
 							$this->sourceId = $tmp;
 						}
 						
+						$this->status = 2;
+						$this->leaderId = 0;
 						$passed = $difftime / $tottime;
 						$returnFactor = 1 - $passed;
 
