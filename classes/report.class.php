@@ -344,7 +344,7 @@ abstract class Report
 		/**
 		* Alte Nachrichten löschen
 		*/
-		static function removeOld($threshold=0,$onlyDeleted=1) //need to be changed as soon as there is an archive
+		static function removeOld($threshold=0,$onlyDeleted=0)
 		{
 			$cfg = Config::getInstance();
 

@@ -26,10 +26,10 @@
 		//
 		// Urlaubsmodus einschalten
 		//
-	
+		
 		if (isset($_POST['hmod_on']) && checker_verify())
 		{
-			if ($cu->lastInvasion < time() - $cfg->user_umod_min_length*3600)
+			if ($cu->lastInvasion < time() - $cfg->user_umod_min_length*24*3600)
 			{
 				$cres = dbquery("SELECT id FROM fleet WHERE user_id='".$cu->id."';");
 				$carr = mysql_fetch_row($cres);
@@ -119,7 +119,7 @@
 									AND techlist_build_start_time>0;");
 					
 						$hfrom=time();
-						$hto=$hfrom+(MIN_UMOD_TIME*24*3600);
+						$hto=$hfrom+($cfg->user_umod_min_length*24*3600);
 						if (dbquery("UPDATE users SET user_hmode_from='$hfrom',user_hmode_to='$hto' WHERE user_id='".$cu->id."';"))
 						{
 							dbquery ("

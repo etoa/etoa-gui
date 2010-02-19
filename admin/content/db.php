@@ -340,11 +340,139 @@
 				}
 				if ($_POST['del_tickets']==1)
 				{
+					$res = dbquery("
+							SELECT
+								id
+							FROM
+								`tickets`
+							WHERE
+								!(`tickets`.user_id IN (".$ustring."))");
+					$tstring = "";
+					$set = false;
+					while ($uarr = mysql_fetch_row($ures))
+					{
+						if  ($set) $tstring .=",";
+						else $set = true;
+						$tstring .= $uarr[0];
+					}
+					dbquery("DELETE FROM
+								`ticket_msg`
+							WHERE
+								`tickets_msg`.id IN (".$tstring."))");
+					
 					$tres = dbquery("DELETE FROM 
 										`tickets`
 									WHERE
 										!(`tickets`.user_id IN (".$ustring."))");
 					echo mysql_affected_rows()." verwaiste Tickets wurden gelöscht!<br/>";	
+				}
+				if ($_POST['del_reports']==1)
+				{
+					$res = dbquery("
+							SELECT
+								id,
+								type
+							FROM
+								`reports`
+							WHERE
+								!(`reports`.user_id IN (".$ustring."))");
+					if (mysql_num_rows($res)>0)
+					{
+						$battle = array();
+						$spy = array();
+						$market = array();
+						$other = array();
+						$counter = 0;
+
+						while ($arr=mysql_fetch_row($res))
+						{
+							switch ($arr[1]) {
+								case 'battle':
+									array_push($battle,$arr[0]);
+									break;
+								case 'spy':
+									array_push($spy,$arr[0]);
+									break;
+								case 'market':
+									array_push($market,$arr[0]);
+									break;
+								case 'other':
+									array_push($other,$arr[0]);
+									break;
+							}
+
+							if ($counter > 10000) {
+								if (count($battle)>0)
+									dbquery("
+										DELETE FROM
+											reports_battle
+										WHERE
+											id IN (".implode(",", $battle).");");
+
+								if (count($market)>0)
+									dbquery("
+										DELETE FROM
+											reports_market
+										WHERE
+											id IN (".implode(",", $market).");");
+
+								if (count($spy)>0)
+									dbquery("
+										DELETE FROM
+											reports_spy
+										WHERE
+											id IN (".implode(",", $spy).");");
+
+								if (count($other)>0)
+									dbquery("
+										DELETE FROM
+											reports_other
+										WHERE
+											id IN (".implode(",", $other).");");
+
+								$battle = array();
+								$spy = array();
+								$market = array();
+								$other = array();
+								$counter = 0;
+							}
+							else $counter++;
+
+						}
+
+						if (count($battle)>0)
+							dbquery("
+								DELETE FROM
+									reports_battle
+								WHERE
+									id IN (".implode(",", $battle).");");
+
+						if (count($market)>0)
+							dbquery("
+								DELETE FROM
+									reports_market
+								WHERE
+									id IN (".implode(",", $market).");");
+
+						if (count($spy)>0)
+							dbquery("
+								DELETE FROM
+									reports_spy
+								WHERE
+									id IN (".implode(",", $spy).");");
+
+						if (count($other)>0)
+							dbquery("
+								DELETE FROM
+									reports_other
+								WHERE
+									id IN (".implode(",", $other).");");
+					}
+					$tres = dbquery("DELETE FROM 
+										`reports`
+									WHERE
+										!(`reports`.user_id IN (".$ustring."))");
+					echo mysql_affected_rows()." verwaiste Berichte wurden gelöscht!<br/>";			
 				}
 				if ($_POST['del_notepad']==1)
 				{
@@ -702,6 +830,12 @@
 							`tickets`
 						WHERE
 							!(`tickets`.user_id IN (".$ustring."))");
+		$reres = dbquery("SELECT
+							count(`reports`.id)
+						FROM 
+							`reports`
+						WHERE
+							!(`reports`.user_id IN (".$ustring."))");
 		$nres = dbquery("SELECT
 							count(`notepad`.id)
 						FROM 
@@ -763,6 +897,8 @@
 		echo '<input type="checkbox" value="1" name="del_user_comments" /> '.nf($tblcnt[0])." verwaiste <strong>Adminkommentare</strong> gefunden<br/>";
 		$tblcnt = mysql_fetch_row($tres);
 		echo '<input type="checkbox" value="1" name="del_tickets" /> '.nf($tblcnt[0])." verwaiste <strong>Tickets</strong> gefunden<br/>";
+		$tblcnt = mysql_fetch_row($reres);
+		echo '<input type="checkbox" value="1" name="del_reports" /> '.nf($tblcnt[0])." verwaiste <strong>Berichte</strong> gefunden<br/>";
 		$tblcnt = mysql_fetch_row($nres);
 		echo '<input type="checkbox" value="1" name="del_notepad" /> '.nf($tblcnt[0])." verwaiste <strong>Notizen</strong> gefunden<br/>";
 		$tblcnt = mysql_fetch_row($slres);

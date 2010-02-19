@@ -201,12 +201,14 @@ $xajax->register(XAJAX_FUNCTION,'bookmarkBookmark');
 	    return $objResponse;
 	}
 	
-	function addShipToList($shipname, $count=0)
+	function addShipToList($ship, $count=0)
 	{
 		defineImagePaths();
 		$objResponse = new xajaxResponse();
 		$objResponse->script("document.getElementById('shipname').value=\"\"");
 		
+		if (is_numeric($ship)) $sql = " AND ship_id='".$ship."'";
+		else $sql = "AND ship_name='".$ship."'";
 		$res = dbquery("
 					SELECT
 						ship_id,
@@ -220,7 +222,7 @@ $xajax->register(XAJAX_FUNCTION,'bookmarkBookmark');
 					WHERE
 						(ship_show=1
 							|| ship_buildable=1)
-						AND ship_name='".$shipname."'
+						".$sql."
 					LIMIT 1;");
 
 		if (mysql_num_rows($res)>0)
