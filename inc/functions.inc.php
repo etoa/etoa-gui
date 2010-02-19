@@ -2408,7 +2408,7 @@ function imagecreatefromfile($path, $user_functions = false)
 		<?PHP	
 	}
 	
-	function jsSlider($elem,$value=100)	
+	function jsSlider($elem,$value=100, $target='"#value"')	
 	{
 		?>
 		<script type="text/javascript">
@@ -2419,10 +2419,10 @@ function imagecreatefromfile($path, $user_functions = false)
 					max: 100,
 					step: 1,
 					slide: function(event, ui) {
-						$("#value").val(ui.value + ' %');
+						$(<?PHP echo $target; ?>).val(ui.value + ' %');
 					}
 				});
-				$("#value").val($("#slider" + " %").slider("value"));
+				$(<?PHP echo $target; ?>).val($("#slider" + " %").slider("value"));
 			});
 			</script>
 		

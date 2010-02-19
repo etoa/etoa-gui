@@ -240,6 +240,9 @@
 		$data = array();
 		$new = false;
 		
+		$_SESSION['bookmarks'] = array('added');
+		$_SESSION['bookmarks']['added'] = array();
+		
 		if (isset($_GET['edit']) && $_GET['edit']>0)
 		{
 			// Load bookmark data
@@ -366,10 +369,13 @@
 					FROM
 						ships
 					WHERE
-						ship_id='".$id."'
+						(ship_show=1
+							|| ship_buildable=1)
+						AND ship_id='".$id."'
 					LIMIT 1;");
 			if (mysql_num_rows($res)>0)
 			{
+				array_push($_SESSION['bookmarks']['added'], $arr['ship_id']);
 				$cnt++;
 				$arr = mysql_fetch_assoc($res);
 				echo "<tr id=\"ship_".$arr['ship_id']."\">";
@@ -452,7 +458,7 @@
 		// Manuel selector
 		echo '<tr id="manuelselect">
 				<th width="25%">Manuelle Eingabe:</th>
-				<td width="75%">
+				<td colspan="2" width="75%">
 					<input type="text" 
 						id="sx"
 						name="sx" 
@@ -527,7 +533,7 @@
 		// Bookmark selector
 		echo '<tr id="bookmarkselect">
 				<th width="25%">Zielfavoriten:</th>
-				<td width="75%" align="left">
+				<td colspan="2" width="75%" align="left">
 					<select name="bookmarks" 
 							id="bookmarks" 
 							onchange="xajax_bookmarkBookmark(xajax.getFormValues(\'bookmarkForm\'));"
@@ -582,15 +588,17 @@
 			</tr>
 			<tr>
 				<th width="25%"><b>Ziel-Informationen:</b></th>
-				<td id="targetinfo" style="padding:2px 2px 3px 6px;background:#000;color:#fff;height:47px;">
+				<td colspan="2" id="targetinfo" style="padding:2px 2px 3px 6px;background:#000;color:#fff;height:47px;">
 					<img src="images/loading.gif" alt="Loading" /> Lade Daten...
 				</td>
 			</tr>
 			<tr>
 				<th>Speedfaktor:</th>
-				<td>
+				<td width="75%">
 					<div id="slider" style="margin:10px;"></div>
-					<input type="text" id="value" name="value" value="'.$data['speed'].' %" size="4" style="position:relative;padding-left:10px;left:45%;border:0"/>
+				</td>
+				<td style="background:#000;vertical-align:middle;text-align:center;">
+					<input type="text" id="value" name="value" value="'.$data['speed'].' %" size="4" style="border:0"/>
 				</td>
 			</tr>';
 		tableEnd();
