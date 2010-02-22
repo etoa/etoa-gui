@@ -170,6 +170,58 @@ class AdminSession extends Session
 		";
 		$res = dbquery($sql);
 	}
+	
+	
+	function monitor()
+	{
+		global $_GET, $_POST;
+		// 1984
+		$req = "";
+		foreach ($_GET as $k=>$v)
+		{
+			if ($k!="page")
+			{
+				$req.="[b]".$k.":[/b] ".$v."\n";
+			}
+			else
+				$page = $_GET['page'];
+		}
+		$post = "";
+		foreach ($_POST as $k=>$v)
+		{
+			if (is_array($v))
+			{
+				$post.="[b]".$k.":[/b] ".dump($v,1);
+			}
+			else
+			{
+				if ($k=="login_pw" || $k=="user_password_old" || $k=="user_password" || $k=="user_password2")
+					$post.="[b]".$k.":[/b] *******\n";
+				else
+					$post.="[b]".$k.":[/b] ".$v."\n";
+			}
+		}
+
+		dbquery("INSERT INTO
+			admin_surveillance
+		(
+			timestamp,
+			user_id,
+			page,
+			request,
+			post,
+			session
+		)
+		VALUES
+		(
+			".time().",
+			'".$this->user_id."',
+			'".$page."',
+			'".$req."',
+			'".$post."',
+			'".$this->id."'
+		)");
+	}
 
 	function logout()
 	{

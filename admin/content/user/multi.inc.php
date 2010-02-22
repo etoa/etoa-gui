@@ -60,8 +60,8 @@
         FROM
             user_multi
         WHERE
-            user_multi_user_id='".$iparr['user_id']."'
-            AND user_multi_multi_user_id!='0';");
+            user_id='".$iparr['user_id']."'
+            AND multi_id!='0';");
 
 				if ($iparr['admin'])
 					$uCol = ' class="adminColor"';
@@ -103,7 +103,7 @@
             echo "<td $uCol>";
             while($multi_arr = mysql_fetch_array($multi_res))
             {
-                echo "<span title=\"".$multi_arr['user_multi_connection']."\">".get_user_nick($multi_arr['user_multi_multi_user_id'])."</span>";
+                echo "<span title=\"".$multi_arr['connection']."\">".get_user_nick($multi_arr['multi_id'])."</span>";
 
                 if($multi<mysql_num_rows($multi_res))
                 {
@@ -250,8 +250,8 @@
                         FROM
                             user_multi
                         WHERE
-                            user_multi_user_id='".$iparr['user_id']."'
-                            AND user_multi_multi_user_id!='0';");
+                            user_id='".$iparr['user_id']."'
+                            AND multi_id!='0';");
 
 						if ($cnt!=0) echo "<tr>"; else $cnt=1;
 						
@@ -273,7 +273,7 @@
 							echo "<td $uCol>";
 							while($multi_arr = mysql_fetch_array($multi_res))
 							{
-								echo "<span title=\"".$multi_arr['user_multi_connection']."\">".get_user_nick($multi_arr['user_multi_multi_user_id'])."</span>";
+								echo "<span title=\"".$multi_arr['connection']."\">".get_user_nick($multi_arr['multi_id'])."</span>";
 
 								if($multi<mysql_num_rows($multi_res))
 								{

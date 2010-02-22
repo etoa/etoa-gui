@@ -34,6 +34,8 @@
 	{
 		$cu = new AdminUser($s->user_id);
 		
+		$s->monitor();
+		
 		echo "<div style=\"padding:10px\">";
 		
 		if (eregi("^[a-z\_]+$",$page)  && strlen($page)<=50)

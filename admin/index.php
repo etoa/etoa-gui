@@ -250,6 +250,8 @@
 				</td>
 				<td id="content">
 					<?php
+					
+						$s->monitor();
 						// Inhalt einbinden
 
 						if (isset($_GET['adminlist']))

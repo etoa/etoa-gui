@@ -13,6 +13,7 @@
 		'Admin-News' => array('page'=>"overview",'sub'=>"adminnews",'level'=>2),
 		'Admin-Management' => array('page'=>"overview",'sub'=>"adminusers",'level'=>2),
 		'Admin-Sessionlog' => array('page'=>"overview",'sub'=>"adminlog",'level'=>2),
+		'Admin-Beobachter' => array('page'=>"overview",'sub'=>"observed",'level'=>3),
 	);
 
 

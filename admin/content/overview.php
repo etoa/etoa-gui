@@ -465,6 +465,14 @@
 	elseif ($sub=="adminusers")
 	{
 		require("home/adminusers.inc.php");
+	}
+	
+	//
+	// User beobachten
+	//
+	elseif ($sub=="observed")
+	{
+		require("home/observed.inc.php");
 	}	
 	
 	//

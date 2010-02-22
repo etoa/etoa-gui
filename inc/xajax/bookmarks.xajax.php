@@ -60,7 +60,7 @@ $xajax->register(XAJAX_FUNCTION,'bookmarkBookmark');
 						{
 							if ($fleet->setTarget($ent))
 							{
-								$fleet->setSpeedPercent($barr['speed']/100);
+								$fleet->setSpeedPercent($barr['speed']);
 								if ($fleet->checkTarget())
 								{
 									if ($fleet->setAction($barr['action']))
@@ -144,7 +144,7 @@ $xajax->register(XAJAX_FUNCTION,'bookmarkBookmark');
 	}
 	
 	//Listet gefundene Schiffe auf
-	function searchShipList($val,$function)
+	function searchShipList($val)
 	{
 		$targetId = 'shiplist';
 		$inputId = 'shipname';
@@ -166,7 +166,7 @@ $xajax->register(XAJAX_FUNCTION,'bookmarkBookmark');
 			while($arr=mysql_fetch_row($res))
 			{
 		    $nCount++;
-	      $sOut .= "<a href=\"#\" onclick=\"javascript:document.getElementById('$inputId').value='".htmlentities($arr[0])."';xajax_addShipToList('".$arr[0]."','".$function."');document.getElementById('$targetId').style.display = 'none';\">".htmlentities($arr[0])."</a>";
+	      $sOut .= "<a href=\"#\" onclick=\"javascript:document.getElementById('$inputId').value='".htmlentities($arr[0])."';xajax_addShipToList('".$arr[0]."');document.getElementById('$targetId').style.display = 'none';\">".htmlentities($arr[0])."</a>";
 	      $sLastHit = $arr[0];
 	    }
 		}
@@ -276,7 +276,7 @@ $xajax->register(XAJAX_FUNCTION,'bookmarkBookmark');
 					echo "<input type=\"text\" 
 							id=\"ship_count_".$arr['ship_id']."\" 
 							name=\"ship_count[".$arr['ship_id']."]\" 
-							size=\"10\" value=\"0\"  
+							size=\"10\" value=\"".$count."\"  
 							title=\"Anzahl Schiffe eingeben, die mitfliegen sollen\" 
 							onclick=\"this.select();\" tabindex=\"".$tabulator."\" 
 							onkeyup=\"FormatNumber(this.id,this.value,'','','');\"/>";

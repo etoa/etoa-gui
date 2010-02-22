@@ -320,7 +320,7 @@
 			$data['name'] = "";
 			$data['res'] = array(0,0,0,0,0,0);
 			$data['fetch'] = array(0,0,0,0,0,0);
-			$data['ships'] = array();
+			$data['ships'] = array(0);
 			$data['speed'] = "100";
 			$data['action'] = "flight";
 		}
@@ -371,7 +371,7 @@
 		echo '<tr>
 				<th colspan="2">Schiffname:</th>
 				<td>
-					<input type="text" name="shipname" id="shipname" value="" autocomplete="off" size="30" maxlength="30" onkeyup="xajax_searchShipList(this.value,\'showShipsOnPlanet\');">
+					<input type="text" name="shipname" id="shipname" value="" autocomplete="off" size="30" maxlength="30" onkeyup="xajax_searchShipList(this.value);">
 					<br>
 					<div id="shiplist">&nbsp;</div>
 				</td>
