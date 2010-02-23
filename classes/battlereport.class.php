@@ -393,7 +393,7 @@ class BattleReport extends Report
 								$rnd = 1;
 								$shieldStructure = $initShieldStructure = $this->shield + $this->structure;
 								$entityShieldStructure = $entityInitShieldStructure = $this->entityShield + $this->entityStructure;
-								for ($rnd=1; $rnd<=5; ++$rnd)
+								for ($rnd=1; $rnd<=5; $rnd++)
 								{
 									$shieldStructure = max(0,$shieldStructure-$this->entityWeapon[$rnd]);
 									$entityShieldStructure = max(0,$entityShieldStructure-$this->weapon[$rnd]);
@@ -416,7 +416,7 @@ class BattleReport extends Report
 									if (!$shieldStructure || !$entityShieldStructure) break;
 								}
 
-								echo 'Der Kampf dauerte '.$rnd.' Runden!<br /><br />';
+								echo 'Der Kampf dauerte '.max(5,$rnd).' Runden!<br /><br />';
 								switch ($this->result)
 								{
 									case '1':
