@@ -103,35 +103,23 @@
 		{
 			$sql = admin_create_new_dataset_query($db_fields,$_POST);
 			dbquery($sql);
-			if (!mysql_error())
+			if (defined('POST_INSERT_UPDATE_METHOD'))
 			{
-				if (defined('POST_INSERT_UPDATE_METHOD'))
-				{
-					$fname = POST_INSERT_UPDATE_METHOD;
-					cms_ok_msg("Datensatz ge&auml;ndert! ".$fname());
-				}
-				else
-				{
-					cms_ok_msg("Neuer Datensatz gespeichert!");
-				}
+				$fname = POST_INSERT_UPDATE_METHOD;
+				cms_ok_msg("Datensatz ge&auml;ndert! ".$fname());
 			}
 			else
 			{
-				cms_err_msg(mysql_error());
+				cms_ok_msg("Neuer Datensatz gespeichert!");
 			}
 		}
 
   	// Delete dataset query
 		if (isset($_POST['del']) && $_POST['del']!="")
 		{
-			dbquery("DELETE FROM ".DB_TABLE." WHERE ".DB_TABLE_ID."='".$_POST[DB_TABLE_ID]."';");
-			if (!mysql_error())
+			if (dbquery("DELETE FROM ".DB_TABLE." WHERE ".DB_TABLE_ID."='".$_POST[DB_TABLE_ID]."';"))
 			{
 				echo "<p class='amsgok'>Datensatz wurde gel&ouml;scht!</p>";
-			}
-			else
-			{
-				echo "<p class='amsgerr'>".mysql_error()."</p>";
 			}
 		}
 
@@ -140,21 +128,14 @@
 		{
 			$sql = admin_edit_dataset_query($db_fields,$_POST);
 			dbquery($sql);
-			if (!mysql_error())
+			if (defined('POST_INSERT_UPDATE_METHOD'))
 			{
-				if (defined('POST_INSERT_UPDATE_METHOD'))
-				{
-					$fname = POST_INSERT_UPDATE_METHOD;
-					cms_ok_msg("Datensatz ge&auml;ndert! ".$fname());
-				}
-				else
-				{
-					cms_ok_msg("Datensatz ge&auml;ndert!");
-				}
+				$fname = POST_INSERT_UPDATE_METHOD;
+				cms_ok_msg("Datensatz ge&auml;ndert! ".$fname());
 			}
 			else
 			{
-				cms_err_msg(mysql_error());
+				cms_ok_msg("Datensatz ge&auml;ndert!");
 			}
 		}
 
@@ -216,8 +197,7 @@
 			$sql = "SELECT * FROM ".DB_TABLE." WHERE ".DB_CONDITION." ORDER BY ".DB_OVERVIEW_ORDER_FIELD." ".DB_OVERVIEW_ORDER.";";
 		else
 			$sql = "SELECT * FROM ".DB_TABLE." ORDER BY ".DB_OVERVIEW_ORDER_FIELD." ".DB_OVERVIEW_ORDER.";";
-		$res = dbquery($sql);
-		if (!mysql_error())
+		if ($res = dbquery($sql))
 		{
 			echo "<table width=\"100%\" cellpadding=\"3\" cellspacing=\"1\" align=\"center\"><tr>";
 			if (defined('DB_IMAGE_PATH'))
