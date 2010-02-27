@@ -185,6 +185,42 @@
 	}
 
 	/**
+	* Executes an sql query savely and protects agains SQL injections
+	*
+	* @param string $query SQL-Query
+	* @param array $params Array of arguments
+	*/
+	function dbQuerySave($query,$params=array()) 
+	{
+	    if (is_array($params) && count($params)>0) 
+	    {
+	        foreach ($params as &$v) 
+	        { 
+	        	$v = dbEscapeStr($v); 
+	        }    
+	        # Escaping parameters
+	        # str_replace - replacing ? -> %s. %s is ugly in raw sql query
+	        # vsprintf - replacing all %s to parameters
+	        $sql = vsprintf( str_replace("?","'%s'",$query), $params );   
+	    } 
+	    else 
+	    {
+	        $sql = $query;    # If no params...
+	    }
+	    if ($res = mysql_query($sql))
+	    	return $res;
+			try
+			{
+				throw new DBException($string);	
+			}
+			catch (DBException $e)
+			{
+				echo $e;
+			}
+			return false;
+	} 
+
+	/**
 	 * Prepares a user string for sql queries and
 	 * escapes all malicious characters, e.g. '
 	 * 

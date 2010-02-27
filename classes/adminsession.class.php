@@ -38,10 +38,10 @@ class AdminSession extends Session
 			FROM
 				".self::tableUser."
 			WHERE
-				LCASE(user_nick)='".strtolower(dbEscapeStr($data['login_nick']))."'
+				LCASE(user_nick)=LCASE(?)
 			LIMIT 1;
 			;";
-			$ures = dbquery($sql);
+			$ures = dbQuerySave($sql,array($data['login_nick']));
 			if (mysql_num_rows($ures)>0)
 			{
 				$uarr = mysql_fetch_assoc($ures);

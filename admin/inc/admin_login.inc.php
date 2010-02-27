@@ -35,7 +35,16 @@
 		<h2 style=\"text-align:center;\">Passwort senden</h2>";
 		if (isset($_POST['sendpass_submit']))
 		{
-			$res = dbquery("SELECT user_id,user_nick,user_email FROM admin_users WHERE user_nick='".addslashes($_POST['user_nick'])."';");
+			$res = dbQuerySave("
+			SELECT 
+				user_id,
+				user_nick,
+				user_email 
+			FROM 
+				admin_users 
+			WHERE 
+				user_nick=?;
+			",array($_POST['user_nick']));
 			if (mysql_num_rows($res)>0)
 			{
 				$arr = mysql_fetch_row($res);			
