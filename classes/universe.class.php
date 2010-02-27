@@ -314,7 +314,6 @@
 	            WHERE
 	            	id='".$v."';
 				");
-				echo mysql_error();
 				dbquery("
 	            UPDATE
 	            	wormholes
@@ -323,7 +322,6 @@
 	            WHERE
 	            	id='".$k."';
 				");
-				echo mysql_error();
 			} 
 			
 			echo "Platziere Marktplatz...<br />";

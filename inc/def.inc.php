@@ -72,7 +72,7 @@
 
 	define("FORUM_PATH","http://www.etoa.ch/forum");	// Forum Link
 	
-	define("DEVCENTER_PATH","https://dev.etoa.ch");	// Entwickler Link
+	define("DEVCENTER_PATH","http://dev.etoa.ch");	// Entwickler Link
 	define("DEVCENTER_ONCLICK","window.open('".DEVCENTER_PATH."','dev','width=1024,height=768,scrollbars=yes');");	// Entwickler Link
 	define("BUGREPORT_URL","http://dev.etoa.ch:8000/game/wiki/TicketTutorial");
 
