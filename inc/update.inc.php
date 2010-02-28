@@ -58,9 +58,6 @@
 		$log.= "$nr alte Schiffseinträge gelöscht.\n";
 		$nr = Deflist::cleanUp();
 		$log.= "$nr alte Verteidigungseinträge gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
-		
-		
-		Dauer: ".timerStop($tmr)." sec\n\n";
 
 		// Tabellen optimieren
 		$tmr = timerStart();
