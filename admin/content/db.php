@@ -243,7 +243,9 @@
 			if ((isset($_POST['cl_points']) && $_POST['cl_points']==1) || $all)
 			{
 				$nr = Users::cleanUpPoints($_POST['del_user_points']);
-				echo $nr." Benutzerpunkte-Logs wurden gelöscht!<br/>";
+				echo $nr." Benutzerpunkte-Logs und ";
+				$nr = Alliance::cleanUpPoints($_POST['del_user_points']);
+				echo $nr." Allianzpunkte-Logs wurden gelöscht!<br/>";
 			}
 
 			// Inactive and delete jobs
@@ -543,22 +545,10 @@
 			/* object lists */
 			if ((isset($_POST['cl_objlist']) && $_POST['cl_objlist']==1) || $all)
 			{
-				dbquery("
-				DELETE FROM 
-					shiplist
-				WHERE 
-					shiplist_count =0
-					AND shiplist_bunkered =0
-					AND shiplist_special_ship=0
-				;");	
-				echo mysql_affected_rows()." leere Schiffdaten wurden gelöscht!<br/>";
-				dbquery("
-				DELETE FROM 
-					deflist
-				WHERE 
-					deflist_count =0
-				;");
-				echo mysql_affected_rows()." leere Verteidigungsdaten wurden gelöscht!<br/>";
+				$nr = Shiplist::cleanUp();
+				echo $nr." leere Schiffdaten wurden gelöscht!<br/>";
+				$nr = Deflist::cleanUp();
+				echo $nr." leere Verteidigungsdaten wurden gelöscht!<br/>";
 				dbquery("
 				DELETE FROM 
 					buildlist
@@ -726,7 +716,14 @@
 		{
 			echo "<option value=\"".(24*3600*$ds)."\" ".($ds==$cfg->get('log_threshold_days')  ? " selected=\"selected\"" : "").">".$ds." Tage</option>";
 		}		
-		echo "</select> sind (".nf($tblcnt[0])." total).";
+		echo "</select> sind (Total: ".nf($tblcnt[0])." User,";
+		$tblcnt = mysql_fetch_row(dbquery("
+		SELECT 
+			COUNT(*) 
+		FROM 
+			alliance_points
+		;"));
+		echo " ".nf($tblcnt[0])." Allianz).";
 		echo '</fieldset><br/>';
 
 		// Inactive 

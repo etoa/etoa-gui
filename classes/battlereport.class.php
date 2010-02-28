@@ -416,7 +416,7 @@ class BattleReport extends Report
 									if (!$shieldStructure || !$entityShieldStructure) break;
 								}
 
-								echo 'Der Kampf dauerte '.max(5,$rnd).' Runden!<br /><br />';
+								echo 'Der Kampf dauerte '.min(5,$rnd).' Runden!<br /><br />';
 								switch ($this->result)
 								{
 									case '1':

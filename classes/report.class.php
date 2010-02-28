@@ -359,14 +359,14 @@ abstract class Report
 
 				$res = dbquery("
 					SELECT
-						id,
-						type
+						`id`,
+						`type`
 					 FROM
 						reports
 					WHERE
-						archived=0
-						AND read=1
-						AND timestamp<'".$tstamp."';		
+						`archived`='0'
+						AND `read`='1'
+						AND `timestamp`<'".$tstamp."';		
 				");
 				if (mysql_num_rows($res)>0)
 				{
@@ -464,9 +464,9 @@ abstract class Report
 					DELETE FROM
 						reports
 					WHERE
-						archived=0
-						AND read=1
-						AND timestamp<'".$tstamp."';
+						`archived`='0'
+						AND `read`='1'
+						AND `timestamp`<'".$tstamp."';
 				");		
 				$nr = mysql_affected_rows();
 				add_log("4","Unarchivierte Berichte die älter als ".date("d.m.Y H:i",$tstamp)." sind wurden gelöscht!",time());

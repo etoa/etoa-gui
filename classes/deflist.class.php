@@ -181,7 +181,21 @@
 
 			return $delable;
 		}
-	
+		
+		/**
+		* Remove empty data
+		*/
+		static function cleanUp()
+		{
+			dbquery("DELETE FROM 
+						`deflist`
+					WHERE 
+						`deflist_count`='0'
+						;");
+			$nr = mysql_affected_rows();
+			add_log("4","$nr leere Verteidigungsdatensätze wurden gelöscht!");
+			return $nr;
+		}
 	
 	}
 

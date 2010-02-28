@@ -298,7 +298,22 @@
 				return $i;
 		}
 		
-		
+		/**
+		* Remove empty data
+		*/
+		static function cleanUp()
+		{
+			dbquery("DELETE FROM 
+						`shiplist`
+					WHERE 
+						`shiplist_count`='0'
+						AND `shiplist_bunkered`='0'
+						AND `shiplist_special_ship`='0'
+						;");
+			$nr = mysql_affected_rows();
+			add_log("4","$nr leere Schiffsdatensätze wurden gelöscht!");
+			return $nr;
+		}
 	
 	
 	}

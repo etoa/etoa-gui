@@ -112,7 +112,7 @@
 	//
 	// Page content
 	//
-
+	
 	// Referers prüfen
 	$referer_allow=false;
 	if (isset($_SERVER["HTTP_REFERER"]))
@@ -316,6 +316,7 @@
 		$tpl->assign("userNick",$cu->nick);
 		$tpl->assign("gameWidth",GAME_WIDTH);
 		$tpl->assign("page",$page);
+		$tpl->assign("mode",$mode);
 		$tpl->assign("topNav",$topnav);
 		$tpl->assign("gameNav",$navmenu);
 		$tpl->assign("teamspeakUrl",TEAMSPEAK_URL);

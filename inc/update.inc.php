@@ -9,10 +9,15 @@
 		$ud = Users::removeDeleted();
 		$log = "Inaktive und als gelöscht markierte User gel�scht.\nDauer: ".timerStop($tmr)." sec\n\n";
 
-		// Alte Benuterpunkte-Logs l�schen
+		// Alte Benuterpunkte-Logs löschen
 		$tmr = timerStart();
 		$nr = Users::cleanUpPoints();
 		$log.= "$nr alte Userpunkte-Logs gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
+		
+		// Alte Allianzpunkte-Logs löschen
+		$tmr = timerStart();
+		$nr = Alliance::cleanUpPoints();
+		$log.= "$nr alte Allianzpunkte-Logs gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
 
 		$tmr = timerStart();
 		Users::resetSpyattacks();
@@ -27,12 +32,12 @@
 		$nr = AdminSession::cleanupLogs();
 		$log.= "$nr alte Session-Logs gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
 
-		// Alte Logs l�schen
+		// Alte Logs löschen
 		$tmr = timerStart();
 		$nr = Log::removeOld();
 		$log.= "$nr alte Logs gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
 
-		// Alte Nachrichten l�schen
+		// Alte Nachrichten löschen
 		$tmr = timerStart();
 		Message::removeOld();
 		$log.= "Alte Nachrichten gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
@@ -42,10 +47,20 @@
 		Report::removeOld();
 		$log.= "Alte Berichte gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
 
-		// Abgelaufene Sperren l�schen
+		// Abgelaufene Sperren löschen
 		$tmr = timerStart();
 		Users::removeOldBanns();
 		$log.= "Abgelaufene Sperren gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
+		
+		//Alte Baudatensätze löschen
+		$tmr = timerStart();
+		$nr = Shiplist::cleanUp();
+		$log.= "$nr alte Schiffseinträge gelöscht.\n";
+		$nr = Deflist::cleanUp();
+		$log.= "$nr alte Verteidigungseinträge gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
+		
+		
+		Dauer: ".timerStop($tmr)." sec\n\n";
 
 		// Tabellen optimieren
 		$tmr = timerStart();

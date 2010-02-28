@@ -79,6 +79,7 @@
 
 	// Set default page / action variables
 	$page = (isset($_GET['page']) && $_GET['page']!="") ? $_GET['page'] : DEFAULT_PAGE;
+	$mode = (isset($_GET['mode']) && $_GET['mode']!="") ? $_GET['mode'] : "";
 	$sub = isset($_GET['sub']) ? $_GET['sub'] : null;
 	$index = isset($_GET['index']) ? $_GET['index'] : null;
 	$info = isset($_GET['info']) ? $_GET['info'] : null;

@@ -33,14 +33,14 @@
 				cms_err_msg("Beim Ausf&uuml;hren des Backup-Befehls trat ein Fehler auf! $result");
 			}
 		}
-
-		if (Form::validate("bustn") && isset($_POST['submit_changes']))
+		
+		if (false) //$frm->checkSubmit("bustn") && isset($_POST['submit_changes']))
 		{
 			$cfg->set("backup",$_POST['backup_v'],$_POST['backup_p1'],$_POST['backup_p2']);
 			$cfg->set("backup_time",$_POST['backup_time_v'],$_POST['backup_time_p1'],$_POST['backup_time_p2']);
 			ok_msg("Gespeichert");
 		}
-
+		
 		$frm = new Form("bustn","?page=$page&amp;sub=$sub");
 		echo $frm->begin();
 		iBoxStart("Backup-Einstellungen");
@@ -67,7 +67,7 @@
 		
 		echo "&nbsp;&nbsp;  <input type=\"submit\" value=\"Speichern\" name=\"submit_changes\"  />";
 		iBoxEnd();
-		echo $frm->close();
+		echo $frm->end();
 
 		echo "<br/>Im Folgenden sind alle verfügbaren Backups aufgelistet. Backups werden durch ein Skript erstellt dass per Cronjob aufgerufen wird.<br/><br/>";
 

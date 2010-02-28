@@ -319,14 +319,14 @@
 	onmouseover="changeImages('pb_previousplanet', '{$templateDir}/images/pb_previousplanet-sp_pb_pre.gif'); return true;"
 	onmouseout="changeImages('pb_previousplanet', '{$templateDir}/images/pb_previousplanet.gif'); return true;"
 	onmousedown="changeImages('pb_previousplanet', '{$templateDir}/images/pb_previousplanet-sp_pb_-38.gif'); return true;"
-	onmouseup="changeImages('pb_previousplanet', '{$templateDir}/images/pb_previousplanet.gif'); document.location='?page={$page}&change_entity={$prevPlanetId}'; return true;">
+	onmouseup="changeImages('pb_previousplanet', '{$templateDir}/images/pb_previousplanet.gif'); document.location='?page={$page}&mode={$mode}&change_entity={$prevPlanetId}'; return true;">
 </map>
 <map name="pb_ddplanets_Map">
 <area shape="poly" alt="" coords="4,5, 23,16, 4,27"
 	onmouseover="changeImages('pb_ddplanets', '{$templateDir}/images/pb_ddplanets-sp_pb_nextplan.gif'); return true;"
 	onmouseout="changeImages('pb_ddplanets', '{$templateDir}/images/pb_ddplanets.gif'); return true;"
 	onmousedown="changeImages('pb_ddplanets', '{$templateDir}/images/pb_ddplanets-sp_pb_nextp-44.gif'); return true;"
-	onmouseup="changeImages('pb_ddplanets', '{$templateDir}/images/pb_ddplanets.gif'); document.location='?page={$page}&change_entity={$nextPlanetId}'; return true;">
+	onmouseup="changeImages('pb_ddplanets', '{$templateDir}/images/pb_ddplanets.gif'); document.location='?page={$page}&mode={$mode}&change_entity={$nextPlanetId}'; return true;">
 </map>
 <map name="pb_nextplanet_Map">
 <area shape="poly" alt="" coords="14,7, 14,26,  26,26, 38,7 "

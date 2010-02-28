@@ -105,8 +105,12 @@
 
 		function getSelectField($currendId)
 		{
-			global $page;
-			$req = "&amp;change_entity=";
+			global $page, $mode;
+			
+			if ($mode!="")
+				$req = "&amp;mode=$mode&amp;change_entity=";
+			else
+				$req = "&amp;change_entity=";
 
 			$this->load();
 			ob_start();
@@ -126,8 +130,12 @@
 
 		function getLinkList($currendId,$images=0)
 		{
-			global $page;
-			$req = "&amp;change_entity=";
+			global $page, $mode;
+			
+			if ($mode!="")
+				$req = "&amp;mode=$mode&amp;change_entity=";
+			else
+				$req = "&amp;change_entity=";
 
 			$this->load();
 			ob_start();			
