@@ -509,10 +509,11 @@
 		etoa::add_log(13,log,time);
 
         // Planet übernehmen
+		this->lastUserId = this->userId;
 		this->userId = userId;
 		this->codeName = "Unbenannt";
 		this->userChanged = time;
-
+		
         // Gebäude übernehmen
         query << "UPDATE ";
 		query << "	buildlist ";

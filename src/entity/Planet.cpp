@@ -28,7 +28,8 @@
 			<< "	planet_people, "
 			<< "	planet_fields, "
 			<< "	planet_last_updated, "
-			<< "	planet_user_changed "
+			<< "	planet_user_changed, "
+			<< "	planet_last_user_id "
 			<< "FROM "
 			<< "	planets "
 			<< "WHERE "
@@ -65,6 +66,7 @@
 				this->fields = (int)pRow["planet_fields"];
 				this->lastUpdated = (int)pRow["planet_last_updated"];
 				this->userChanged = (int)pRow["planet_user_changed"];
+				this->lastUserId = (int)pRow["planet_last_user_id"];
 			}
 		}
 		
@@ -151,6 +153,7 @@
 			query << "	planet_people=planet_people+'" << (this->getResPeople() - this->initResPeople) << "', ";
 			if (this->userChanged) {
 				query << " planet_user_changed='" << this->userChanged << "', ";
+				query << " planet_last_user_id='" << this->lastUserId << "', ";
 				query << "	planet_name=" << mysqlpp::quote << this->codeName << ", ";
 			}
 			query << "	planet_last_updated='" << this->lastUpdated << "' ";

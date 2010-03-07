@@ -63,6 +63,7 @@ class Entity
 			this->userMain = false;
 			this->typeId = 0;
 			this->userChanged = 0;
+			this->lastUserId = 0;
 			
 			this->initWeapon = -1;
 			this->initShield = -1;
@@ -217,7 +218,7 @@ class Entity
 		
 	protected:
 		int id;
-		int userId;
+		int userId, lastUserId;
 		int cellId;
 		int sx,sy,cx,cy;
 		short pos;

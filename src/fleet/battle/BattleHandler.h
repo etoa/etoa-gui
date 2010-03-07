@@ -3,6 +3,7 @@
 #define __BATTLEHANDLER__
 
 #include <ctime>
+#include <cmath>
 #include <cstdio>
 #define MYSQLPP_MYSQL_HEADERS_BURIED
 #include <mysql++/mysql++.h>
@@ -37,6 +38,7 @@ class BattleHandler
 		short runde;
 
 		double attPercent, defPercent;
+		int attCnt, defCnt;
 		int attPoints,defPoints;
 		short attResult, defResult;
 

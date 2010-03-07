@@ -27,9 +27,9 @@ namespace steal
 				this->shipCnt = this->f->getActionCount();
 				
 				// Calculate the chance
-				this->one = rand() % 1001;
+				this->one = rand() % 501;
 				this->two = std::min(config.nget("spyattack_action",2),std::max(config.nget("spyattack_action",1),(config.nget("spyattack_action",0) +this->tLevelAtt - this->tLevelDef + ceil(this->shipCnt/10000.0)+ this->f->getSpecialShipBonusForsteal() * 100)));
-				this->two *= 10;
+				this->two *= 5;
 				this->two -= this->f->fleetUser->getSpyattackCount();
 				
 				BattleReport *spyattack = new BattleReport(this->f->getUserId(),

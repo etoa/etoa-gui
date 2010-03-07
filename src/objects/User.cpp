@@ -20,7 +20,56 @@
 			this->loadData();
 		
 		return this->points;
-	}	
+	}
+	
+	int User::getElorating() {
+		My &my = My::instance();
+		mysqlpp::Connection *con_ = my.get();
+		
+		this->elorating = 0;
+		
+		mysqlpp::Query query = con_->query();
+		query << "SELECT "
+			<< "	elorating "
+			<< "FROM "
+			<< "	user_ratings "
+			<< "WHERE "
+			<< "	id='" << this->userId << "' "
+			<< "LIMIT 1;";
+		RESULT_TYPE eloRes = query.store();
+		query.reset();
+		
+		if (eloRes) {
+			int eloSize = eloRes.size();
+			
+			if (eloSize > 0) {
+				mysqlpp::Row eloRow = eloRes.at(0);
+				this->elorating = (int)eloRow["elorating"];
+			}
+		}
+		
+		if (this->elorating==0) {
+			Config &config = Config::instance();
+			this->elorating = (int)config.nget("elorating",0);
+		}
+		return this->elorating;
+	}
+	
+	void User::addElorating(int newRating) {
+		My &my = My::instance();
+		mysqlpp::Connection *con_ = my.get();
+		
+		mysqlpp::Query query = con_->query();
+		query << "UPDATE "
+			<< "	user_ratings "
+			<< "SET "
+			<< "	elorating='" << newRating << "' "
+			<< "WHERE "
+			<< "	id='" << this->userId << "' "
+			<< "LIMIT 1;";
+		query.store();
+		query.reset();
+	}
 
 	int User::getSpyattackCount() {
 		if (!this->dataLoaded)

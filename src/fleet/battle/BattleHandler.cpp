@@ -8,6 +8,8 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 
     // BEGIN SKRIPT //
 	alliancesHaveWar = 0;
+	attCnt = -1;
+	defCnt = -1;
 	
 	BattleReport * report = new BattleReport(fleet->getUserId(),
 											 entity->getUserId(),
@@ -22,6 +24,7 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 		users = users.substr(found+1);
 		found=users.find_first_of(",");
 		report->addUser((int)etoa::s2d(users.substr(0,found)));
+		attCnt++;
 	}
 	
 	users = entity->getUserIds();
@@ -31,11 +34,12 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 		users = users.substr(found+1);
 		found=users.find_first_of(",");
 		report->addUser((int)etoa::s2d(users.substr(0,found)));
+		defCnt++;
 	}
 
    	// Kampf abbrechen falls User gleich 0
 	if (entity->getUserId()==0
-		|| (fleet->getLeaderId() > 0 && (fleet->fleetUser->getAllianceId()==entity->getUser()->getAllianceId() &&fleet->fleetUser->getAllianceId()!=0))
+		|| (fleet->getLeaderId() > 0 && (fleet->fleetUser->getAllianceId()==entity->getUser()->getAllianceId() && fleet->fleetUser->getAllianceId()!=0))
 		|| (fleet->getLeaderId() == 0 && fleet->getUserId()==entity->getUserId())) {
 		report->setSubtype("battlefailed");
 		
@@ -402,6 +406,25 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 				found=users.find_first_of(",");
 				user = (int)etoa::s2d(users.substr(0,found));
 				etoa::addBattlePoints(user,this->defPoints,this->defResult,attReason);
+			}
+			std::cout << attCnt << "==" << defCnt << "==1" << std::endl;
+			// elorating if 1 vs 1
+			if (attCnt==1 && defCnt==1)
+			{
+				int attElo = fleet->fleetUser->getElorating();
+				int defElo = entity->getUser()->getElorating();
+				
+				double winPercentage =  1/(1+pow(10,(defElo-attElo)/400.0));
+				if (defElo>=attElo) {
+					defElo += (int)config.nget("elorating",1) * ((this->defResult/2)-1+winPercentage);
+					attElo += (int)config.nget("elorating",1) * ((this->attResult/2)-winPercentage);
+				}
+				else {
+					defElo += (int)config.nget("elorating",1) * ((this->defResult/2)-1+winPercentage);
+					attElo += (int)config.nget("elorating",1) * ((this->attResult/2)-winPercentage);
+				}
+				entity->getUser()->addElorating(defElo);
+				fleet->fleetUser->addElorating(attElo);
 			}
 		}
 		

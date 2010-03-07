@@ -38,6 +38,8 @@ class User
 		int getAllianceId();
 		std::string getUserNick();
 		double getUserPoints();
+		int getElorating();
+		void addElorating(int newRating);
 		
 		SpecialistData* getSpecialist();
 		
@@ -70,6 +72,7 @@ class User
 		int allianceId;
 		std::string userNick;
 		double points;
+		int elorating;
 		unsigned int spyattackCount;
 		
 		SpecialistData* specialist;
