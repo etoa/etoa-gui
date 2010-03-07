@@ -18,28 +18,12 @@ class ListDef : public Object {
 	private:
 		double rebuild;
 public: 
-	ListDef(mysqlpp::Row &oRow,double rebuild=1.0) : Object(oRow) {
-		this->id = (int)oRow["deflist_id"];
-		this->typeId = (short)oRow["deflist_def_id"];
-		this->entityId = (int)oRow["deflist_entity_id"];
-		this->userId = (int)oRow["deflist_user_id"];
-		this->count = (int)oRow["deflist_count"];
-		this->initCount = this->count;
-		this->rebuildCount = -1;
-		
-		Config &config = Config::instance();
-		this->rebuild = rebuild + config.nget("def_restore_percent",0) - 1;
-	}
-
-	~ListDef() {
-		this->save();
-	}
+	ListDef(mysqlpp::Row &oRow,double rebuild=1.0);
+	~ListDef();
 	
 	double getWfMetal();
 	double getWfCrystal();
 	double getWfPlastic();
-	
-	void save();
 	
 };
 

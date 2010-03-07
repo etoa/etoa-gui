@@ -407,7 +407,7 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 				user = (int)etoa::s2d(users.substr(0,found));
 				etoa::addBattlePoints(user,this->defPoints,this->defResult,attReason);
 			}
-			std::cout << attCnt << "==" << defCnt << "==1" << std::endl;
+			
 			// elorating if 1 vs 1
 			if (attCnt==1 && defCnt==1)
 			{

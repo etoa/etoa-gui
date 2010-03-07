@@ -71,8 +71,6 @@ class Object
 		virtual double getWfCrystal() = 0;
 		virtual double getWfPlastic() = 0;
 		
-		virtual void save() = 0;
-		
 	protected:
 		int id;
 		short typeId;
