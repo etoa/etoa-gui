@@ -385,11 +385,11 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 			}
 			elseif ($mode=="battle")
 			{
-				$field="battles_won,battles_lost,battles_fought,battle_rating";
+				$field="battles_won,battles_lost,battles_fought,battle_rating,elorating";
 				$order="battle_rating";
 				$title="Kampfwertung";
-				$titleContainer=array("#","Nick","Rasse","Allianz","Kämpfe Gewonnen","Kämpfe Verloren","Kämpfe Total","Bewertung");
-				$contentContainer=array("counter","user_nick","race_name","alliance_tag","battles_won","battles_lost","battles_fought","battle_rating");
+				$titleContainer=array("#","Nick","Rasse","Allianz","Kämpfe Gewonnen","Kämpfe Verloren","Kämpfe Total","Bewertung","Elo Rating");
+				$contentContainer=array("counter","user_nick","race_name","alliance_tag","battles_won","battles_lost","battles_fought","battle_rating","elorating");
 			}
 			elseif ($mode=="ships")
 			{

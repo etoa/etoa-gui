@@ -88,6 +88,7 @@
 				$this->image=$arr['planet_image'];
 				$this->updated=$arr['planet_last_updated'];
 				$this->userChanged=$arr['planet_user_changed'];
+				$this->lastUserId=$arr['planet_last_user_id'];
 				
 				$this->owner = new User($arr['planet_user_id']);
 				
@@ -1064,6 +1065,16 @@
 		public function getResourceLog()
 		{
 			return $this->resMetal.":".$this->resCrystal.":".$this->resPlastic.":".$this->resFuel.":".$this->resFood.":".$this->people.":0,w,".$this->debrisMetal.":".$this->debrisCrystal.":".$this->debrisPlastic;
+		}
+		
+		public function lastUserCheck()
+		{
+			$t = $this->userChanged()+COLONY_DELETE_THRESHOLD;
+			if ($t > time())
+			{
+				return $this->lastUserId;
+			}
+			return 0;
 		}
 			
 	}

@@ -156,7 +156,7 @@
 		function ownerHoliday() { return false; }
 		function ownerLocked() { return false; }
 		function ownerAlliance() { return 0; }
-   
+		function lastUserCheck() { return 0; }
     
 		/**
 		* check if data could be loaded
