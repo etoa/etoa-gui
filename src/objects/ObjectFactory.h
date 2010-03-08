@@ -17,8 +17,8 @@
 #include "FleetShip.h"
 #include "ListDef.h"
 
-class ObjectFactory {
-
+class ObjectFactory 
+{
 public:	
 	static Object* createObject(mysqlpp::Row oRow, char type, double rebuild=1.0) 
 	{

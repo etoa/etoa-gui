@@ -14,7 +14,8 @@
 * @author Stephan Vock<glaubinx@etoa.ch>
 */
 
-class FleetShip : public Object {
+class FleetShip : public Object 
+{
 public: 
 	FleetShip(mysqlpp::Row &oRow);
 	~FleetShip();

@@ -47,7 +47,8 @@ int PIDFile::readPid()
  	}
  	else 
  	{
-   	fgets (mystring , 100 , pFile);
+ 		char* tmpstr;
+   	tmpstr = fgets (mystring , 100 , pFile);
    	fclose (pFile);
  	}		
  	return atoi(mystring);	
@@ -77,7 +78,8 @@ void PIDFile::write()
   }
 
   // truncate pidfile at 0 length
-  ftruncate(pidfile_fd, 0);
+  int tmpresult;
+  tmpresult = ftruncate(pidfile_fd, 0);
 
   // write our pid
   try

@@ -14,10 +14,10 @@
 * @author Stephan Vock<glaubinx@etoa.ch>
 */
 
-class ListShip : public Object {
+class ListShip : public Object 
+{
 public: 
-	ListShip(mysqlpp::Row &oRow);
-	
+	ListShip(mysqlpp::Row &oRow);	
 	~ListShip();
 	
 	double getWfMetal();

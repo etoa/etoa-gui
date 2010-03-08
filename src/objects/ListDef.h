@@ -14,9 +14,10 @@
 * @author Stephan Vock<glaubinx@etoa.ch>
 */
 
-class ListDef : public Object {
-	private:
-		double rebuild;
+class ListDef : public Object 
+{
+private:
+	double rebuild;
 public: 
 	ListDef(mysqlpp::Row &oRow,double rebuild=1.0);
 	~ListDef();

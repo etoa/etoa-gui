@@ -63,7 +63,10 @@ void etoamain()
 		
 		// Graphical bling-bling
 		if (debugEnable(0))
-			system("clear");
+		{
+			int rtn;
+			rtn = system("clear");
+		}
 		DEBUG("----------------------------------------------------------------");
 		DEBUG("- EtoA Eventhandler, (C) 2007 by EtoA Gaming, Time: "<< std::time(0) <<" -");
 		DEBUG("----------------------------------------------------------------\n");

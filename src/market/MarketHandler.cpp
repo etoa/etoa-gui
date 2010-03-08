@@ -231,23 +231,23 @@ namespace market
 
 								//Log schreiben, falls dieser Handel regelwidrig ist
 								query <<"SELECT "
-									<< "	user_multi_multi_user_id "
+									<< "	multi_id "
 									<< "FROM "
 									<< "	user_multi "
 									<< "WHERE "
-									<< "	user_multi_user_id='" << arr["user_id"] << "' "
-									<< "	AND user_multi_multi_user_id='" << arr["current_buyer_id"] << "' "
+									<< "	user_id='" << arr["user_id"] << "' "
+									<< "	AND multi_id='" << arr["current_buyer_id"] << "' "
 									<< "LIMIT 1;";
 								RESULT_TYPE multi_res = query.store();
 								query.reset();
 				
 								query <<"SELECT "
-									<< "	user_multi_multi_user_id "
+									<< "	multi_id "
 									<< "FROM "
 									<< "	user_multi "
 									<< "WHERE "
-									<< "	user_multi_user_id='" << arr["current_buyer_id"] << "' "
-									<< "	AND user_multi_multi_user_id='" << arr["user_id"] << "' "
+									<< "	user_id='" << arr["current_buyer_id"] << "' "
+									<< "	AND multi_id='" << arr["user_id"] << "' "
 									<< "LIMIT 1;";
 								RESULT_TYPE multi_res2 = query.store();
 								query.reset();

@@ -28,6 +28,9 @@
 #define CHAMELEON_H__
 
 #include <string>
+#include <cmath>
+#include <stdio.h>
+#include <stdlib.h>
 
 class Chameleon {
 public:
