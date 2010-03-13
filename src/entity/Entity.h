@@ -230,6 +230,7 @@ class Entity
 		std::vector<Object*> specialObjects;
 		std::vector<Object*> def;
 		std::vector<Fleet*> fleets;
+		std::map<unsigned int,unsigned int> objCounter;
 		std::map<int, int> buildings;
 		
 		double resMetal, resCrystal, resPlastic, resFuel, resFood, resPower, resPeople;

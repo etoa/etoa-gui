@@ -100,10 +100,15 @@
 		return this->sBonusDeactivade;
 	}
 	
-	void Object::setPercentSurvive(double percentage) {
+	void Object::setPercentSurvive(double percentage, int count) {
 		this->isChanged = true;
-		percentage = std::min(1.0,percentage);
-		this->count = (int)ceil(this->initCount * percentage);
+		if (count<0 || this->special) {
+			percentage = std::min(1.0,percentage);
+			this->count = (int)ceil(this->initCount * percentage);			
+		} else {
+			this->count = count;
+		}
+
 	}
 	
 	int Object::removeObjects(int count) {

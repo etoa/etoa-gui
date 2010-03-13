@@ -186,6 +186,7 @@ public:
 	std::string getShipString();
 	
 	bool actionIsAllowed();
+	void setShipsChanged();
 	
 	std::string getLogResStart();
 	std::string getLogResEnd();
@@ -196,6 +197,7 @@ public:
 	std::vector<Object*> objects;
 	std::vector<Object*> specialObjects;
 	std::vector<Object*> actionObjects;
+	std::map<unsigned int,unsigned int> objCounter;
 	
 private:
 	void loadAdditionalFleets();

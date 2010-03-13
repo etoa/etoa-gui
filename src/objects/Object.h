@@ -61,7 +61,7 @@ class Object
 		short getSBonusAntraxFood();
 		short getSBonusDeactivade();
 		
-		void setPercentSurvive(double percentage);
+		void setPercentSurvive(double percentage, int count=-1);
 		
 		int removeObjects(int count);
 		

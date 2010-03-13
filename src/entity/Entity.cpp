@@ -775,18 +775,90 @@
 	}
 
 	void Entity::setPercentSurvive(double percentage, bool total) {
-		this->shipsChanged = true;
 		percentage = std::max(percentage,0.0);
-		std::vector<Object*>::iterator ot;
-		for (ot = this->objects.begin() ; ot < this->objects.end(); ot++)
-			(*ot)->setPercentSurvive(percentage);
-		for (ot = this->def.begin() ; ot < this->def.end(); ot++)
-			(*ot)->setPercentSurvive(percentage);
+
+		// if the changes affect more then one fleet
 		if (total && fleets.size()) {
+			
+			// initialize the object conter for every fleet and a counter for the entire fleet
+			std::map<unsigned int, unsigned int> fleetObjCounter;
+			std::map<unsigned int, unsigned int>::iterator oct;
+			std::vector<Object*>::iterator ot;
 			std::vector<Fleet*>::iterator it;
+			std::pair<std::map<unsigned int,unsigned int>::iterator,bool> ret;
+			
+			// clean the counter
+			this->objCounter.clear();
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
-				(*it)->setPercentSurvive(percentage);
+				(*it)->objCounter.clear();
+			
+			// calculations for the main fleet
+			for ( ot = this->objects.begin() ; ot != this->objects.end(); ot++ ) {
+				this->objCounter.insert ( std::pair<unsigned int, unsigned int>((*ot)->getTypeId(),(*ot)->getInitCount()) );
+				fleetObjCounter.insert ( std::pair<unsigned int, unsigned int>((*ot)->getTypeId(),(*ot)->getInitCount()) );				
+			}
+			
+			// calculations for all the support fleets
+			for ( it=fleets.begin() ; it < fleets.end(); it++ ) {
+				for ( ot = (*it)->objects.begin() ; ot != (*it)->objects.end(); ot++ ) {
+					(*it)->objCounter.insert ( std::pair<unsigned int, unsigned int>((*ot)->getTypeId(),(*ot)->getInitCount()) );
+					ret = fleetObjCounter.insert ( std::pair<unsigned int, unsigned int>((*ot)->getTypeId(),(*ot)->getInitCount()) );
+					if (ret.second==false)
+						fleetObjCounter[(*ot)->getTypeId()] += (*ot)->getInitCount();			
+				}
+			}
+			
+			// calc the losts in the entire fleet
+			for ( oct = fleetObjCounter.begin() ; oct != fleetObjCounter.end(); oct++ ) {
+				(*oct).second = (*oct).second - ceil(percentage*(*oct).second);
+			}
+			
+			// calc the new count of each fleet
+			for ( oct = this->objCounter.begin() ; oct != this->objCounter.end(); oct++ ) {
+				if (fleetObjCounter[(*oct).first]>0) {
+					unsigned int losts = (*oct).second - round((*oct).second*percentage);
+					losts = std::min(losts,fleetObjCounter[(*oct).first]);
+					(*oct).second -= losts;
+					fleetObjCounter[(*oct).first] -= losts;
+				}
+			}
+			
+			for ( it=fleets.begin() ; it < fleets.end(); it++ ) {
+				for ( oct = (*it)->objCounter.begin() ; oct != (*it)->objCounter.end(); oct++ ) {
+					if (fleetObjCounter[(*oct).first]>0) {
+						unsigned int losts = (*oct).second - floor((*oct).second*percentage);
+						losts = std::min(losts,fleetObjCounter[(*oct).first]);
+						(*oct).second -= losts;
+						fleetObjCounter[(*oct).first] -= losts;
+					}
+				}
+			}
+			
+			// apply the changes to the objects
+			for (ot = this->objects.begin() ; ot < this->objects.end(); ot++)
+				(*ot)->setPercentSurvive(percentage, this->objCounter[(*ot)->getTypeId()]);
+			if (total && fleets.size()) {
+				std::vector<Fleet*>::iterator it;
+				for ( it=fleets.begin() ; it < fleets.end(); it++ ) {
+					(*it)->setShipsChanged();
+					for (ot = (*it)->objects.begin() ; ot < (*it)->objects.end(); ot++)
+						(*ot)->setPercentSurvive(percentage, (*it)->objCounter[(*ot)->getTypeId()]);	
+				}
+			}
+			for (ot = this->def.begin() ; ot < this->def.end(); ot++)
+				(*ot)->setPercentSurvive(percentage);
 		}
+		// if there is just one fleet affected set percentage without the counter
+		else {
+			std::vector<Object*>::iterator ot;
+			for (ot = this->objects.begin() ; ot < this->objects.end(); ot++)
+				(*ot)->setPercentSurvive(percentage);
+			for (ot = this->def.begin() ; ot < this->def.end(); ot++)
+				(*ot)->setPercentSurvive(percentage);
+		}
+		
+		// set flag to update the values
+		this->shipsChanged = true;
 	}
 
 	// TODO: Is double reasonable? Added conversion to int in line 777
