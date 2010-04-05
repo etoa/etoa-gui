@@ -811,7 +811,7 @@
 						{
 							foreach($this->getShips() as $ship)
 							{
-								if (!(in_array($ai->code(),$ship['actions'])))
+								if (!(in_array($ai->code(),$ship['actions']) || $ship['special']))
 								{
 									$exclusiceAllowed = false;
 									break;

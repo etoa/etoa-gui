@@ -60,7 +60,7 @@
 		
 		protected $attitude;	// 0: Neutral, 1: Peacefull, 2: A bit hostile 3: Very hostile
 		protected $visible;	// True: Visible to other players, False: Hidden for other players
-		protected $exclusive; // True: Only ships with this action can take part in the fleet
+		protected $exclusive; // True: Only ships with this action can take part in the fleet except special ships
 
 		protected $allowPlayerEntities;
 		protected $allowOwnEntities;

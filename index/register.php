@@ -41,8 +41,8 @@
 		// Check if current time is lower tjhan registration opening time
 		elseif ($cfg->get('enable_register')==1 && $cfg->p1('enable_register')!="" && $cfg->p1('enable_register')>time())
 		{
-			echo "Du kannst duch erst am ".date("d.m.Y",$cfg->p1('enable_register'))." ab ".date("H:i",$$cfg->p1('enable_register'))." registrieren.<br/>
-			 Schau doch dann nochmal vorbei oder registriere dich in einer anderen Runde!<br/><br/>";
+			echo "Du kannst dich erst am ".date("d.m.Y",$cfg->p1('enable_register'))." ab ".date("H:i",$cfg->p1('enable_register'))." registrieren.<br/>
+			Schau doch dann nochmal vorbei oder registriere dich in einer anderen Runde!<br/><br/>";
 		}
 		// Check if there are too much users
 		elseif ($cfg->p2('enable_register')<= $ucnt[0])

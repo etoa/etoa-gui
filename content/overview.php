@@ -31,8 +31,19 @@
 	// BEGIN SKRIPT //
 	echo "<h1>&Uuml;bersicht</h1>";
 
-	if ($s->firstView)
+	if ($s->firstView || true)
 	{
+		if ($cfg->p1("round_end"))
+		{
+			iBoxStart("Ende der Runde");
+			echo "<div style=\"witdh:100%;text-align:center;\">Die Runde endet am <strong>".df($cfg->p1("round_end"))."</strong>!";
+			if ($cfg->p2("round_end"))
+			{
+				echo " ".$cfg->p2("round_end");
+			}
+			echo "</div>";
+			iBoxEnd();	
+		}
 		$res = dbquery("
 		SELECT
 			COUNT(failure_user_id)

@@ -1,4 +1,4 @@
-e<?PHP
+<?PHP
 
 define('ADMIN_ROOT_GROUP',8);
 
@@ -9,10 +9,11 @@ $tpl->assign("templateDir","designs/Discovery");
 $indexpage = array();
 $indexpage['feeds']=array('url'=>'.','label'=>'Setup');
 $tpl->assign("topmenu",$indexpage);
-$tpl->display(getcwd()."/tpl/headerext.html");
 
 if (!isset($_SESSION))
     session_start();
+
+$tpl->display(getcwd()."/tpl/headerext.html");
 
 if (!isset($_SESSION['INSTALL']))
 	$_SESSION['INSTALL'] = array();

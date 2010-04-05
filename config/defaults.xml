@@ -115,6 +115,11 @@
       <v comment="Login erlauben" type="onoff">1</v>
       <p1 comment="Login offen ab" type="timedate">1205485200</p1>
     </item>
+    <item name="round_end" cat="1">
+      <v comment="Rundenende aktualisieren" type="onoff">0</v>
+      <p1 comment="Rundenende am" type="timedate">1205485200</p1>
+	  <p2 comment="Zusätzliche Info" type="text"></p2>
+    </item>
     <item name="points_update" cat="1">
       <v comment="" type="text">3600</v>
       <p1 comment="Einheiten/Userpunkt" type="text">1000</p1>
