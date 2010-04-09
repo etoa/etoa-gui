@@ -861,6 +861,7 @@
 		static public function register($data, &$errorCode, $welcomeMail=1)
 		{
 			$time = time();
+			$cfg = Config::getInstance();
 
 			if ($data['name']=="" || $data['nick']=="" || $data['email']=="")
 			{
@@ -921,7 +922,8 @@
           user_email_fix,
           user_race_id,
           user_ghost,
-          user_registered
+          user_registered,
+		  user_sitting_days
           )
       VALUES
           ('".$data['name']."',
@@ -931,7 +933,8 @@
           '".$data['email']."',
           '".(isset($data['race']) ? $data['race'] : 0)."',
           '".(isset($data['ghost']) ? $data['ghost'] : 0)."',
-          '".$time."');"))
+          '".$time."',
+		  '".$cfg->get("user_sitting_days")."');"))
       {
       	$errorCode = mysql_insert_id();
 				$rating = new UserRating($errorCode);

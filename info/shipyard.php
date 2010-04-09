@@ -261,7 +261,7 @@
 		else
 		  echo "Schiffdaten nicht gefunden!<br><br>";
 
-		echo "<input type=\"button\" value=\"Schiff&uuml;bersicht\" onclick=\"document.location='?page=$page&site=$site'\" /> &nbsp; ";
+		echo "<input type=\"button\" value=\"Schiff&uuml;bersicht\" onclick=\"document.location='?$link&site=$site'\" /> &nbsp; ";
 		echo "<input type=\"button\" value=\"Technikbaum\" onclick=\"document.location='?page=techtree&mode=ships'\" /> &nbsp; ";
 		if ($_SESSION['lastpage']=="haven")
 			echo "<input type=\"button\" value=\"Zur&uuml;ck zum Hafen\" onclick=\"document.location='?page=haven'\" /> &nbsp; ";
@@ -327,25 +327,25 @@
 				if (mysql_num_rows($res)>0)
 				{
 					tableStart($carr['cat_name'],800);
-					echo "<tr><th colspan=\"2\"><a href=\"?page=$page&amp;site=$site&amp;order=name\">Name</a></th>";
-					echo "<th><a href=\"?page=$page&amp;site=$site&amp;order=race_id\">Rasse</a></th>";
-					echo "<th><a href=\"?page=$page&amp;site=$site&amp;order=capacity\">Kapazität</a></th>";
-					echo "<th><a href=\"?page=$page&amp;site=$site&amp;order=speed\">Speed</a></th>";
-					echo "<th><a href=\"?page=$page&amp;site=$site&amp;order=fuel_use\">Treibstoff</a></th>";
-					echo "<th><a href=\"?page=$page&amp;site=$site&amp;order=weapon\">Waffen</a></th>";
-					echo "<th><a href=\"?page=$page&amp;site=$site&amp;order=structure\">Struktur</a></th>";
-					echo "<th><a href=\"?page=$page&amp;site=$site&amp;order=shield\">Schild</a></th>";
-					echo "<th><a href=\"?page=$page&amp;site=$site&amp;order=pilots\">Piloten</a></th>
-					<th><a href=\"?page=$page&amp;site=$site&amp;order=points\">Wert</a></th>
+					echo "<tr><th colspan=\"2\"><a href=\"?$link&amp;site=$site&amp;order=name\">Name</a></th>";
+					echo "<th><a href=\"?$link&amp;site=$site&amp;order=race_id\">Rasse</a></th>";
+					echo "<th><a href=\"?$link&amp;site=$site&amp;order=capacity\">Kapazität</a></th>";
+					echo "<th><a href=\"?$link&amp;site=$site&amp;order=speed\">Speed</a></th>";
+					echo "<th><a href=\"?$link&amp;site=$site&amp;order=fuel_use\">Treibstoff</a></th>";
+					echo "<th><a href=\"?$link&amp;site=$site&amp;order=weapon\">Waffen</a></th>";
+					echo "<th><a href=\"?$link&amp;site=$site&amp;order=structure\">Struktur</a></th>";
+					echo "<th><a href=\"?$link&amp;site=$site&amp;order=shield\">Schild</a></th>";
+					echo "<th><a href=\"?$link&amp;site=$site&amp;order=pilots\">Piloten</a></th>
+					<th><a href=\"?$link&amp;site=$site&amp;order=points\">Wert</a></th>
 					</tr>";
 					while ($arr = mysql_fetch_array($res))
 					{
 						$s_img = IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$arr['ship_id']."_small.".IMAGE_EXT;
 						echo "<tr><td style=\"background:#000;width:40px;\">
-						<a href=\"?page=$page&site=$site&id=".$arr['ship_id']."\">
+						<a href=\"?$link&site=$site&id=".$arr['ship_id']."\">
 						<img src=\"$s_img\" alt=\"Schiffbild\" width=\"40\" height=\"40\" border=\"0\"/></a></td>";
 						echo "<td ".tm($arr['ship_name'],text2html($arr['ship_shortcomment'])."<br/><br/>".shipRanking($arr)).">
-							<a href=\"?page=$page&site=$site&id=".$arr['ship_id']."\">".$arr['ship_name']."</a>
+							<a href=\"?$link&site=$site&id=".$arr['ship_id']."\">".$arr['ship_name']."</a>
 						</td>";
 						echo "<td>";
 						if ($arr['ship_race_id']>0)

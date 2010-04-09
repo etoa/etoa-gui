@@ -128,7 +128,6 @@
 			
 	if ($show)
 	{
-
 		if ($index!="")
 		{
 			$index = ($index=="stats") ? "ladder" : $index;

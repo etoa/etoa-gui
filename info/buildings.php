@@ -16,7 +16,7 @@ if (isset($_GET['id']))
 	if ($arr = @mysql_fetch_array($res))
 	{
 		HelpUtil::breadCrumbs(array("Geb&auml;ude","buildings"),array(text2html($arr['building_name']),$arr['building_id']),1);
-		echo "<select onchange=\"document.location='?page=help&site=buildings&id='+this.options[this.selectedIndex].value\">";
+		echo "<select onchange=\"document.location='?$link&amp;site=buildings&id='+this.options[this.selectedIndex].value\">";
 		$bres=dbquery("SELECT 
 			building_id,
 			building_name 
@@ -188,7 +188,7 @@ if (isset($_GET['id']))
     {
 			$pbarr = mysql_fetch_row(dbquery("SELECT building_people_place FROM buildings WHERE building_id=6;"));
 			echo "Beachte das es einen Grundwohnraum für <b>".nf($conf['user_start_people']['p1'])."</b> Menschen pro Planet gibt. Ebenfalls bietet die
-			<a href=\"?page=help&amp;site=buildings&amp;id=6\">Planetenbasis</a> Platz für <b>".$pbarr[0]."</b> Menschen.<br/>";
+			<a href=\"?$link&amp;site=buildings&amp;id=6\">Planetenbasis</a> Platz für <b>".$pbarr[0]."</b> Menschen.<br/>";
 
 	    tableStart("Platz f&uuml;r Bewohner");
 	    echo "<tr>
@@ -499,7 +499,7 @@ if (isset($_GET['id']))
   	err_msg("Geb&auml;udeinfodaten nicht gefunden!");
   }
 
-	echo "<input type=\"button\" value=\"Geb&auml;ude&uuml;bersicht\" onclick=\"document.location='?page=$page&site=$site'\" /> &nbsp; ";
+	echo "<input type=\"button\" value=\"Geb&auml;ude&uuml;bersicht\" onclick=\"document.location='?$link&amp;site=$site'\" /> &nbsp; ";
 	if (!$popup)
 	{
 		echo "<input type=\"button\" value=\"Technikbaum\" onclick=\"document.location='?page=techtree&mode=buildings'\" /> &nbsp; ";
@@ -671,7 +671,7 @@ elseif(isset($_GET['type_id']) && $_GET['type_id']>0)
 		echo "<i>Zu dieser Kategorie sind keine Informationen vorhanden!</i>";
 	}
 	
-	echo "<br/><br/><input type=\"button\" value=\"Geb&auml;ude&uuml;bersicht\" onclick=\"document.location='?page=$page&site=$site'\" /> &nbsp; ";
+	echo "<br/><br/><input type=\"button\" value=\"Geb&auml;ude&uuml;bersicht\" onclick=\"document.location='?$link&amp;site=$site'\" /> &nbsp; ";
 	echo "<input type=\"button\" value=\"Technikbaum\" onclick=\"document.location='?page=techtree&mode=buildings'\" /> &nbsp; ";
 }
 
@@ -721,10 +721,10 @@ else
 				{
 					echo "<tr>
 						<td style=\"width:40px;padding:0px;background:#000;vertical-align:middle;\">
-							<a href=\"?page=$page&site=$site&id=".$arr['building_id']."\">
+							<a href=\"?$link&amp;site=$site&id=".$arr['building_id']."\">
 								<img src=\"".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$arr['building_id']."_small.".IMAGE_EXT."\" align=\"top\" style=\"width:40px;height:40px;background:#000;margin:0px;\" alt=\"Bild ".text2html($arr['building_name'])."\" border=\"0\"/></a></td>";
 					echo "<td style=\"width:130px;\">
-						<a href=\"?page=$page&site=$site&id=".$arr['building_id']."\"><b>".text2html($arr['building_name'])."</a></a>
+						<a href=\"?$link&amp;site=$site&amp;id=".$arr['building_id']."\"><b>".text2html($arr['building_name'])."</a></a>
 					</td>";
 					echo "<td>".text2html($arr['building_shortcomment'])."</td>";
 					echo "<td style=\"width:90px\">";

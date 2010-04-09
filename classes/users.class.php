@@ -163,6 +163,17 @@
 			return $rtn;
 		}
 		
+		static function addSittingDays($days=0)
+		{
+			if ($days==0)
+			{
+				$cfg = Config::getInstance();
+				$days = $cfg->p1("user_sitting_days");
+			}
+			
+			dbquery("UPDATE `users` SET `user_sitting_days`=`user_sitting_days`+'".$days."';");
+		}
+		
 	}
 
 ?>

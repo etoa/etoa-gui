@@ -25,7 +25,7 @@
 		{
 			while ($arr=mysql_fetch_array($res))
 			{
-				echo "<li><a href=\"?page=help&amp;site=buildings&amp;id=".$arr['building_id']."\">".$arr['building_name']."</a></li>";
+				echo "<li><a href=\"?$link&amp;site=buildings&amp;id=".$arr['building_id']."\">".$arr['building_name']."</a></li>";
 			}
 		}
 		echo "</ul>";

@@ -7,9 +7,9 @@
 		{
 			$this->code = "transport";
 			$this->name = "Waren transportieren";
-			$this->desc = "Bringt Waren zum Ziel und lädt sie dort ab.";
-			$this->longDesc = "Die grundlegendste Aktion überhaupt, bei der Ressourcen und Bewohner transportiert werden.
-So gut wie jedes Schiff kann Waren transportieren, die Frage ist nur immer wie viel!
+			$this->desc = "Bringt Waren zum Ziel und l&auml;dt sie dort ab.";
+			$this->longDesc = "Die grundlegendste Aktion &uuml;berhaupt, bei der Ressourcen und Bewohner transportiert werden.
+So gut wie jedes Schiff kann Waren transportieren, die Frage ist nur immer wie viel.
 Baue spezielle Transporter, um kostengünstig zu transportieren.";
 			$this->visible = true;
 			$this->exclusive = false;					

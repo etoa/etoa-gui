@@ -9,7 +9,7 @@
 			$this->name = "Stationieren";
 			$this->desc = "Fliegt zum Ziel und stationiert sich dort.";
 			$this->longDesc = "Die Flotte fliegt zu einem eigenen Ziel und die Schiffe landen dort. Bei erfolgreicher
-			Durchführung wird der unverbrauchte Treibstoff und die unverbrauchte Nahrung (also die Hälfte) auf dem Zielplaneten ausgeladen und dort gespeichert.";
+			Durchf&uuml;hrung wird der unverbrauchte Treibstoff und die unverbrauchte Nahrung (also die H&auml;lfte) auf dem Zielplaneten ausgeladen und dort gespeichert.";
 			$this->visible = true;
 			$this->exclusive = false;					
 			$this->attitude = 1;

@@ -1,7 +1,7 @@
 <?PHP
 	echo "<h2>Schiffsaktionen</h2>";
 	
-	define("HELP_URL","?page=$page&site=shipyard");
+	define("HELP_URL","?$link&amp;site=shipyard");
 	
 	
 	if (isset($_GET['action']))
@@ -11,7 +11,7 @@
 		if ($site!="" AND $action!="")
 		{
 			HelpUtil::breadCrumbs(array("Schiffsaktionen","action"),array("$action","$action"),1);
-			echo "<select onchange=\"document.location='?page=$page&site=action&action='+this.options[this.selectedIndex].value\">";
+			echo "<select onchange=\"document.location='?$link&amp;site=action&amp;action='+this.options[this.selectedIndex].value\">";
 			$actions = FleetAction::getAll();
 			foreach($actions as $data)			
 			{
@@ -64,7 +64,7 @@
 			}
 			tableEnd();		
 		}
-		echo "&nbsp;<input type=\"button\" value=\"Schiffsaktionen\" onclick=\"document.location='?page=$page&site=action'\" />";
+		echo "&nbsp;<input type=\"button\" value=\"Schiffsaktionen\" onclick=\"document.location='?$link&amp;site=action'\" />";
 	}
 	else
 	{
@@ -88,7 +88,7 @@
 			{
 				echo "<tr><td class=\"tbltitle\" width=\"25%\">".$data->name()."</td>
 				<td class=\"tbldata\">".$data->desc()."</td>
-				<td class=\"tbldata\" width=\"60\"><a href=\"?page=$page&site=action&action=".$data->code()."\">Anzeigen</a></td></tr>";
+				<td class=\"tbldata\" width=\"60\"><a href=\"?$link&amp;site=action&amp;action=".$data->code()."\">Anzeigen</a></td></tr>";
 
 			}			
 			tableEnd();

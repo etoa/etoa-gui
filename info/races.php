@@ -50,7 +50,7 @@
 		{
 			echo "<tr><td>
 						<img src=\"".IMAGE_PATH."/races/race_".$arr['race_id']."_small.".IMAGE_EXT."\"></td>";
-			echo "<td><a href=\"?page=help&site=races_detail\">".$arr['race_name']."</a></td>";
+			echo "<td><a href=\"?$link&amp;site=races_detail\">".$arr['race_name']."</a></td>";
 			echo "<td>".text2html($arr['race_short_comment'])."</td></tr>";
 
 		}
@@ -72,17 +72,17 @@
 	if (mysql_num_rows($res)>0)
 	{
 		tableStart("Bonus-Malus Vergleichstabelle");
-		echo "<tr><th><a href=\"?page=$page&amp;site=$site&amp;order=name\">Name</a></th>";
-		echo "<th><a href=\"?page=$page&amp;site=$site&amp;order=f_metal\">".RES_METAL."</a></th>";
-		echo "<th><a href=\"?page=$page&amp;site=$site&amp;order=f_crystal\">".RES_CRYSTAL."</a></th>";
-		echo "<th><a href=\"?page=$page&amp;site=$site&amp;order=f_plastic\">".RES_PLASTIC."</a></th>";
-		echo "<th><a href=\"?page=$page&amp;site=$site&amp;order=f_fuel\">".RES_FUEL."</a></th>";
-		echo "<th><a href=\"?page=$page&amp;site=$site&amp;order=f_food\">".RES_FOOD."</a></th>";
-		echo "<th><a href=\"?page=$page&amp;site=$site&amp;order=f_power\">Energie</a></th>";
-		echo "<th><a href=\"?page=$page&amp;site=$site&amp;order=f_population\">Wachstum</a></th>";
-		echo "<th><a href=\"?page=$page&amp;site=$site&amp;order=f_researchtime\">Forschungszeit</a></th>";
-		echo "<th><a href=\"?page=$page&amp;site=$site&amp;order=f_buildtime\">Bauzeit</a></th>";
-		echo "<th><a href=\"?page=$page&amp;site=$site&amp;order=f_fleettime\">Fluggeschwindigkeit</a></th></tr>";
+		echo "<tr><th><a href=\"?$link&amp;site=$site&amp;order=name\">Name</a></th>";
+		echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_metal\">".RES_METAL."</a></th>";
+		echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_crystal\">".RES_CRYSTAL."</a></th>";
+		echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_plastic\">".RES_PLASTIC."</a></th>";
+		echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_fuel\">".RES_FUEL."</a></th>";
+		echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_food\">".RES_FOOD."</a></th>";
+		echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_power\">Energie</a></th>";
+		echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_population\">Wachstum</a></th>";
+		echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_researchtime\">Forschungszeit</a></th>";
+		echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_buildtime\">Bauzeit</a></th>";
+		echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_fleettime\">Fluggeschwindigkeit</a></th></tr>";
 
 		while ($arr = mysql_fetch_row($res))
 		{

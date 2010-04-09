@@ -259,6 +259,12 @@ Besten Dank f&#xFC;r euer Verst&#xE4;ndnis&#xD;
     <item name="user_umod_min_length" cat="10">
       <v comment="Minimale Urlaubsdauer" type="text">3</v>
     </item>
+    <item name="user_sitting_days" cat="10">
+      <v comment="Sittertage beim Start" type="text">12</v>
+    </item>
+    <item name="user_sitting_days" cat="10">
+      <p1 comment="Zusätzliche Sittertage pro Monat" type="text">2</p1>
+    </item>
     <item name="people_multiply" cat="5">
       <v comment="Bev&#xF6;lkerungswachstum" type="text">1.1</v>
     </item>

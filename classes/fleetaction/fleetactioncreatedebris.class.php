@@ -7,9 +7,9 @@
 		{
 			$this->code = "createdebris";
 			$this->name = "Trümmerfeld erstellen";
-			$this->desc = "Erstellt ein Trümmerfeld (Flotte wird zerstört!).";
-			$this->longDesc = "Mit dieser Aktion wird beim Gegner ein Trümmerfeld erstellt, damit den Navigationscomputern der Trümmerfeld-Sammler ein gültiges Ziel zugewiesen werden kann. 
-			Die Flotte ist für den Gegner nicht sichtbar, wird beim Trümmerfeld-Erstellen aber vollständig zerstört!";
+			$this->desc = "Erstellt ein Tr&uuml;mmerfeld (Flotte wird zerst&ouml;rt!).";
+			$this->longDesc = "Mit dieser Aktion wird beim Gegner ein Tr&uuml;mmerfeld erstellt, damit den Navigationscomputern der Tr&uuml;mmerfeld-Sammler ein gültiges Ziel zugewiesen werden kann. 
+			Die Flotte ist für den Gegner nicht sichtbar, wird beim Tr&uuml;mmerfeld-Erstellen aber vollst&auml;ndig zerst&ouml;rt!";
 			$this->visible = false;
 			$this->exclusive = true;					
 			$this->attitude = 0;

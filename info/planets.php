@@ -34,16 +34,16 @@
 	{
 
 		tableStart("Planetenboni");
-		echo "<tr><td class=\"tbltitle\" colspan=\"2\"><a href=\"?page=$page&amp;site=$site&amp;order=name\">Name</a></td>";
-		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_metal\">".RES_METAL."</td>";
-		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_crystal\">".RES_CRYSTAL."</td>";
-		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_plastic\">".RES_PLASTIC."</td>";
-		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_fuel\">".RES_FUEL."</td>";
-		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_food\">".RES_FOOD."</td>";
-		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_power\">Energie</td>";
-		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_population\">Wachstum</td>";
-		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_researchtime\">Forschungszeit</td>";
-		echo "<td class=\"tbltitle\"><a href=\"?page=$page&amp;site=$site&amp;order=f_buildtime\">Bauzeit</td>";
+		echo "<tr><td class=\"tbltitle\" colspan=\"2\"><a href=\"?$link&amp;site=$site&amp;order=name\">Name</a></td>";
+		echo "<td class=\"tbltitle\"><a href=\"?$link&amp;site=$site&amp;order=f_metal\">".RES_METAL."</td>";
+		echo "<td class=\"tbltitle\"><a href=\"?$link&amp;site=$site&amp;order=f_crystal\">".RES_CRYSTAL."</td>";
+		echo "<td class=\"tbltitle\"><a href=\"?$link&amp;site=$site&amp;order=f_plastic\">".RES_PLASTIC."</td>";
+		echo "<td class=\"tbltitle\"><a href=\"?$link&amp;site=$site&amp;order=f_fuel\">".RES_FUEL."</td>";
+		echo "<td class=\"tbltitle\"><a href=\"?$link&amp;site=$site&amp;order=f_food\">".RES_FOOD."</td>";
+		echo "<td class=\"tbltitle\"><a href=\"?$link&amp;site=$site&amp;order=f_power\">Energie</td>";
+		echo "<td class=\"tbltitle\"><a href=\"?$link&amp;site=$site&amp;order=f_population\">Wachstum</td>";
+		echo "<td class=\"tbltitle\"><a href=\"?$link&amp;site=$site&amp;order=f_researchtime\">Forschungszeit</td>";
+		echo "<td class=\"tbltitle\"><a href=\"?$link&amp;site=$site&amp;order=f_buildtime\">Bauzeit</td>";
 		echo "</tr>";
 
 		while ($arr = mysql_fetch_array($res))

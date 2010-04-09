@@ -9,7 +9,7 @@
 		if ($arr = mysql_fetch_array($res))
 		{
 			HelpUtil::breadCrumbs(array("Verteidigung","defense"),array(text2html($arr['def_name']),$arr['def_id']),1);
-			echo "<select onchange=\"document.location='?page=help&site=defense&id='+this.options[this.selectedIndex].value\">";
+			echo "<select onchange=\"document.location='?$link&amp;site=defense&id='+this.options[this.selectedIndex].value\">";
 			$bres=dbquery("SELECT 
 				def_id,
 				def_name 
@@ -64,7 +64,7 @@
 	    	$otarr = mysql_fetch_assoc($otres);
 		    iBoxStart("Transformation");
 	    	echo "Diese Verteidigungsanlage lässt sich auf ein Schiff verladen:<br/><br/>";
-	    	echo "<a href=\"?page=help&amp;site=shipyard&amp;id=".$otarr['id']."\">".$otarr['name']."</a>";
+	    	echo "<a href=\"?$link&amp;site=shipyard&amp;id=".$otarr['id']."\">".$otarr['name']."</a>";
 				iBoxEnd();
 	    	
 	  	}
@@ -76,7 +76,7 @@
 		}
 		else
 		  echo "Verteidigungsdaten nicht gefunden!";
-		echo "<input type=\"button\" value=\"Verteidigungs&uuml;bersicht\" onclick=\"document.location='?page=$page&site=$site'\" /> &nbsp; ";
+		echo "<input type=\"button\" value=\"Verteidigungs&uuml;bersicht\" onclick=\"document.location='?$link&amp;site=$site'\" /> &nbsp; ";
 		echo "<input type=\"button\" value=\"Technikbaum\" onclick=\"document.location='?page=techtree&mode=defense'\" /> &nbsp; ";
 		if ($_SESSION['lastpage']=="defense")
 			echo "<input type=\"button\" value=\"Zur&uuml;ck zu den Anlagen\" onclick=\"document.location='?page=defense'\" /> &nbsp; ";
@@ -137,22 +137,22 @@
 					tableStart($carr['cat_name'],700);
 		
 					echo "<tr>
-						<th colspan=\"2\"><a href=\"?page=$page&amp;site=$site&amp;order=name\">Name</a></th>
-						<th><a href=\"?page=$page&amp;site=$site&amp;order=race_id\">Rasse</a></th>
-						<th><a href=\"?page=$page&amp;site=$site&amp;order=fields\">Felder</a></th>
-						<th><a href=\"?page=$page&amp;site=$site&amp;order=weapon\">Waffen</a></th>
-						<th><a href=\"?page=$page&amp;site=$site&amp;order=structure\">Struktur</a></th>
-						<th><a href=\"?page=$page&amp;site=$site&amp;order=shield\">Schild</a></th>
-						<th><a href=\"?page=$page&amp;site=$site&amp;order=heal\">Reparatur</a></th>
-						<th><a href=\"?page=$page&amp;site=$site&amp;order=points\">Wert</a></th>
+						<th colspan=\"2\"><a href=\"?$link&amp;site=$site&amp;order=name\">Name</a></th>
+						<th><a href=\"?$link&amp;site=$site&amp;order=race_id\">Rasse</a></th>
+						<th><a href=\"?$link&amp;site=$site&amp;order=fields\">Felder</a></th>
+						<th><a href=\"?$link&amp;site=$site&amp;order=weapon\">Waffen</a></th>
+						<th><a href=\"?$link&amp;site=$site&amp;order=structure\">Struktur</a></th>
+						<th><a href=\"?$link&amp;site=$site&amp;order=shield\">Schild</a></th>
+						<th><a href=\"?$link&amp;site=$site&amp;order=heal\">Reparatur</a></th>
+						<th><a href=\"?$link&amp;site=$site&amp;order=points\">Wert</a></th>
 					</tr>";
 					while ($arr = mysql_fetch_array($res))
 					{
 						$s_img = IMAGE_PATH."/".IMAGE_DEF_DIR."/def".$arr['def_id']."_small.".IMAGE_EXT;
 						echo "<tr><td class=\"tbldata\" style=\"width:40px;background:#000;\">
-						<a href=\"?page=$page&site=$site&id=".$arr['def_id']."\"><img src=\"$s_img\" alt=\"Verteidigung\" width=\"40\" height=\"40\" border=\"0\"/></a></td>";
+						<a href=\"?$link&site=$site&id=".$arr['def_id']."\"><img src=\"$s_img\" alt=\"Verteidigung\" width=\"40\" height=\"40\" border=\"0\"/></a></td>";
 						echo "<td>
-							<a href=\"?page=$page&site=$site&id=".$arr['def_id']."\">".$arr['def_name']."</a></td>";
+							<a href=\"?$link&site=$site&id=".$arr['def_id']."\">".$arr['def_name']."</a></td>";
 						echo "<td>";
 						if ($arr['def_race_id']>0)
 							echo $race[$arr['def_race_id']]['race_name'];

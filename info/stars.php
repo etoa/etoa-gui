@@ -35,16 +35,16 @@
 	{
 
 		tableStart("Sternenboni");
-		echo "<tr><th colspan=\"2\" ><a href=\"?page=$page&amp;site=$site&amp;order=name\">Name</a></th>";
-		echo "<th><a href=\"?page=$page&amp;site=$site&amp;order=f_metal\">".RES_METAL."</th>";
-		echo "<th><a href=\"?page=$page&amp;site=$site&amp;order=f_crystal\">".RES_CRYSTAL."</th>";
-		echo "<th><a href=\"?page=$page&amp;site=$site&amp;order=f_plastic\">".RES_PLASTIC."</th>";
-		echo "<th><a href=\"?page=$page&amp;site=$site&amp;order=f_fuel\">".RES_FUEL."</th>";
-		echo "<th><a href=\"?page=$page&amp;site=$site&amp;order=f_food\">".RES_FOOD."</th>";
-		echo "<th><a href=\"?page=$page&amp;site=$site&amp;order=f_power\">Energie</th>";
-		echo "<th><a href=\"?page=$page&amp;site=$site&amp;order=f_population\">Wachstum</th>";
-		echo "<th><a href=\"?page=$page&amp;site=$site&amp;order=f_researchtime\">Forschungszeit</th>";
-		echo "<th><a href=\"?page=$page&amp;site=$site&amp;order=f_buildtime\">Bauzeit</th>";
+		echo "<tr><th colspan=\"2\" ><a href=\"?$link&amp;site=$site&amp;order=name\">Name</a></th>";
+		echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_metal\">".RES_METAL."</th>";
+		echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_crystal\">".RES_CRYSTAL."</th>";
+		echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_plastic\">".RES_PLASTIC."</th>";
+		echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_fuel\">".RES_FUEL."</th>";
+		echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_food\">".RES_FOOD."</th>";
+		echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_power\">Energie</th>";
+		echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_population\">Wachstum</th>";
+		echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_researchtime\">Forschungszeit</th>";
+		echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_buildtime\">Bauzeit</th>";
 		echo "</tr>";
 
 		while ($arr = mysql_fetch_array($res))

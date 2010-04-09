@@ -1,5 +1,5 @@
 <?php
-	$url = "?page=$page&amp;site=$site";
+	$url = "?$link&amp;site=$site";
 	$id = isset($_GET['id']) ? $_GET['id'] : 0;
 
 	echo "<h1>Schiffe</h1>";

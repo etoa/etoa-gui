@@ -49,7 +49,15 @@
 			
 			// Starte Zeitmessung
 			$tmr = timerStart();
-
+			
+			// Monates-Update (1. des Monates 05:13)
+			if (date("H")=="05" && date("i")=="13" && date("m"))
+			{
+				$logt = "[b]Monates-Update ".date("d.m.Y, H:i")."[/b]\n";
+				$log .= update_minute();
+				$log .= update_month();
+			}
+			
 			// Tages-Update (03:13)
 			if (date("H")=="03" && date("i")=="13")
 			{

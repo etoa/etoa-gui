@@ -1,4 +1,13 @@
 <?PHP
+	function update_month()
+	{
+		// Urlaubstage aktualisieren
+		$tmr = timerStart();
+		Users::addSittingDays();
+		$log = "Sittertage aller User wurden aktualisiert.\nDauer: ".timerStop($tmr)." sec\n\n";
+		
+		return $log;
+	}
 	function update_day()
 	{
 		global $conf;

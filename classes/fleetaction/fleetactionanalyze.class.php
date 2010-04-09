@@ -8,7 +8,7 @@
 			$this->code = "analyze";
 			$this->name = "Analysieren";
 			$this->desc = "Das Ziel sondieren um vorhandene Rohstoffvorkommen festzustellen.";
-			$this->longDesc = "Analysiert Asteroidenfelder, interstellare Nebel und Gasplaneten um festzustellen wieviele Ressourcen sich abbauen lassen.";
+			$this->longDesc = "Analysiert Asteroidenfelder, interstellare Nebel und Gasplaneten um festzustellen wie viele Ressourcen sich abbauen lassen.";
 			$this->visible = false;
 			$this->exclusive = false;
 			$this->attitude = 0;

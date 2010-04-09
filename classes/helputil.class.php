@@ -11,13 +11,20 @@ class HelpUtil
   */
   static function breadCrumbs($item1=null,$item2=null,$disable2=0)
 	{
+		global $_GET;
 		echo "Du befindest dich hier: ";
 		if ($item1!=null)
 		{
-			echo "<a href=\"?page=help\">Hilfe</a> &gt; ";
+			if (isset($_GET['page']))
+				$page = "page";
+			else
+				$page = "index";
+			
+			echo "<a href=\"?$page=help\">Hilfe</a> &gt; ";
+			
 			if ($item2!=null)
 			{
-				echo "<a href=\"?page=help&amp;site=".$item1[1]."\">".$item1[0]."</a> &gt; ";		
+				echo "<a href=\"?$page=help&amp;site=".$item1[1]."\">".$item1[0]."</a> &gt; ";		
 				if ($disable2==0)
 					echo $item2[0]."<br/><br/>";		
 			}

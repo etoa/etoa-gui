@@ -30,7 +30,7 @@
 		if ($arr = @mysql_fetch_array($res))
 		{
 			HelpUtil::breadCrumbs(array("Technologien","research"),array(text2html($arr['tech_name']),$arr['tech_id']),1);
-			echo "<select onchange=\"document.location='?page=help&site=research&id='+this.options[this.selectedIndex].value\">";
+			echo "<select onchange=\"document.location='?$link&site=research&id='+this.options[this.selectedIndex].value\">";
 			$bres=dbquery("SELECT 
 				tech_id,
 				tech_name 
@@ -85,7 +85,7 @@
 					tableStart("Folgende Schiffe verwenden diesen Antrieb");
 					while ($varr=mysql_fetch_array($vres))
 					{
-						echo "<tr><td class=\"tbldata\"><a href=\"?page=help&amp;site=shipyard&amp;id=".$varr['ship_id']."\">".$varr['ship_name']."</a></td><td class=\"tbldata\">ben&ouml;tigt Stufe ".$varr['req_level']."</td></tr>";
+						echo "<tr><td class=\"tbldata\"><a href=\"?$link&amp;site=shipyard&amp;id=".$varr['ship_id']."\">".$varr['ship_name']."</a></td><td class=\"tbldata\">ben&ouml;tigt Stufe ".$varr['req_level']."</td></tr>";
 					}
 					tableEnd();
 				}
@@ -118,7 +118,7 @@
 		}
 		else
 		  echo "Technologiedaten nicht gefunden!";
-		echo "<input type=\"button\" value=\"Technologie&uuml;bersicht\" onclick=\"document.location='?page=$page&site=$site'\" /> &nbsp; ";
+		echo "<input type=\"button\" value=\"Technologie&uuml;bersicht\" onclick=\"document.location='?$link&amp;site=$site'\" /> &nbsp; ";
 		if (!$popup)
 		echo "<input type=\"button\" value=\"Technikbaum\" onclick=\"document.location='?page=techtree&mode=tech'\" /> &nbsp; ";
 	}
@@ -141,12 +141,12 @@
 					{
 						echo "<tr>
 							<td style=\"width:40px;padding:0px;background:#000\">
-								<a href=\"?page=$page&site=$site&id=".$arr['tech_id']."\">
+								<a href=\"?$link&amp;site=$site&amp;id=".$arr['tech_id']."\">
 									<img src=\"".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$arr['tech_id']."_small.".IMAGE_EXT."\" width=\"40\" height=\"40\" alt=\"Bild ".$arr['tech_name']."\" border=\"0\"/>
 								</a>
 							</td>";
 						echo "<td style=\"width:160px;\">
-							<a href=\"?page=$page&site=$site&id=".$arr['tech_id']."\">".$arr['tech_name']."</a></td>";
+							<a href=\"?$link&amp;site=$site&amp;id=".$arr['tech_id']."\">".$arr['tech_name']."</a></td>";
 						echo "<td>".$arr['tech_shortcomment']."</td></tr>";
 					}
 					tableEnd();

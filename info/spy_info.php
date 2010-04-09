@@ -49,7 +49,7 @@
 	{
 		echo "<tr><td class=\"tbldata\">".$arr['ship_name']."</td>
 		<td class=\"tbldata\">".$arr['ship_shortcomment']."</td>
-		<td class=\"tbldata\"><a href=\"?page=help&amp;site=shipyard&amp;id=".$arr['ship_id']."\">Mehr Infos</a></td>
+		<td class=\"tbldata\"><a href=\"?".$link."&amp;site=shipyard&amp;id=".$arr['ship_id']."\">Mehr Infos</a></td>
 		</tr>";
 	}
 	tableEnd();

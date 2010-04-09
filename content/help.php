@@ -30,6 +30,12 @@
 
 	echo '<h1>Hilfe</h1>';
 	
+	// 
+	if ($index!="")
+		$link = "index=".$index;
+	else
+		$pqge = "page=".$page;
+	
 	if (isset($_GET['site']) && $_GET['site']!="")
 	{
 		$site = $_GET['site'];
@@ -119,7 +125,7 @@
 			tableStart($cat);
 			foreach ($data as $title=>$item)
 			{
-				echo '<tr><td width="35%"><b><a href="?page='.$page.'&site='.$item[0].'">'.$title.'</b></td><td>'.$item[1].'</td></tr>';
+				echo '<tr><td width="35%"><b><a href="?'.$link.'&site='.$item[0].'">'.$title.'</b></td><td>'.$item[1].'</td></tr>';
 			}
 			tableEnd();
 		}    

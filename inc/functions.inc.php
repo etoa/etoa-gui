@@ -1470,8 +1470,11 @@
 	*/
 	function return_btn()
 	{
-		global $page;
-		echo "<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Zur&uuml;ck\" />";
+		global $page, $index;
+		if ($index!="")
+			echo "<input type=\"button\" onclick=\"document.location='?index=$index'\" value=\"Zur&uuml;ck\" />";
+		else
+			echo "<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Zur&uuml;ck\" />";
 	}
 	
 	function button($label,$target)

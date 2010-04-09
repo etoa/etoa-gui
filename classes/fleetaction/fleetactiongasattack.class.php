@@ -8,8 +8,8 @@
 			$this->code = "gasattack";
 			$this->name = "Gasangriff";
 			$this->desc = "Greift das Ziel an und vernichtet Nahrung.";
-			$this->longDesc = "Diese Fähigkeit ermöglicht dem Angreifer bei Gelingen der Aktion Nahrung eines Planeten zu vernichten. Die Schadenhöhe wird zufällig entschieden. Einsetzbar, wenn man dem Gegner nach gewonnenem Kampf noch die restliche Nahrung vernichten will.
-Die Chance einen erfolgreichen Gasangriff durchzuführen erhöht sich, indem man die Giftgas-Technologie weiter erforscht!";
+			$this->longDesc = "Diese F&auml;higkeit erm&ouml;glicht dem Angreifer bei Gelingen der Aktion Nahrung eines Planeten zu vernichten. Die Schadensh&ouml;he wird zuf&auml;llig entschieden. Einsetzbar, wenn man dem Gegner nach gewonnenem Kampf noch die restliche Nahrung vernichten will.
+Die Chance einen erfolgreichen Gasangriff durchzuf&uuml;hren erh&ouml;ht sich, indem man die Giftgas-Technologie weiter erforscht. (Pro Stufe +5%)";
 			$this->visible = true;
 			$this->exclusive = false;					
 			$this->attitude = 3;

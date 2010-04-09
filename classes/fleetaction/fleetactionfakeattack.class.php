@@ -6,9 +6,9 @@
 		function FleetActionFakeattack()
 		{
 			$this->code = "fakeattack";
-			$this->name = "Täuschungsangriff";
-			$this->desc = "Täuscht einen Angriff auf das Ziel vor.";
-			$this->longDesc = "Eine weitere taktische Aktion ist der Fakeangriff. Mit dieser Option kann man den Gegner verwirren, indem man ihm eine Flotte aus Schiffen vorgaukelt, die gar nicht existiert! Die Anzahl und der Typ, der vorgegaukelten Schiffe, hängen von der Anzahl Schiffe ab, die einen Fakeangriff durchführen können.";
+			$this->name = "T&auml;uschungsangriff";
+			$this->desc = "T&auml;uscht einen Angriff auf das Ziel vor.";
+			$this->longDesc = "Eine weitere taktische Aktion ist der T&auml;uschungsangriff. Mit dieser Option kann man den Gegner verwirren, indem man ihm eine Flotte aus Schiffen vorgaukelt, die gar nicht existiert. Die Anzahl und der Typ, der vorgegaukelten Schiffe, h&auml;ngen von der Anzahl Schiffe ab, die einen T&auml;uschungsangriff. durchf&uuml;hren k&ouml;nnen.";
 			$this->visible = true;
 			$this->exclusive = false;						
 			$this->attitude = 3;

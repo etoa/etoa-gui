@@ -14,7 +14,7 @@
 		if ($arr = mysql_fetch_array($res))
 		{
 			HelpUtil::breadCrumbs(array("Raketen","missiles"),array(text2html($arr['missile_name']),$arr['missile_id']),1);
-			echo "<select onchange=\"document.location='?page=help&site=missiles&id='+this.options[this.selectedIndex].value\">";
+			echo "<select onchange=\"document.location='?$link&amp;site=missiles&id='+this.options[this.selectedIndex].value\">";
 			$bres=dbquery("SELECT 
 				missile_id,
 				missile_name 
@@ -88,7 +88,7 @@
 		}
 		else
 		  echo "Ragetendaten nicht gefunden!";
-		echo "<input type=\"button\" value=\"Raketen&uuml;bersicht\" onclick=\"document.location='?page=$page&site=$site'\" /> &nbsp; ";
+		echo "<input type=\"button\" value=\"Raketen&uuml;bersicht\" onclick=\"document.location='?$link&amp;site=$site'\" /> &nbsp; ";
 		echo "<input type=\"button\" value=\"Technikbaum\" onclick=\"document.location='?page=techtree&mode=defense'\" /> &nbsp; ";
 		if ($_SESSION['lastpage']=="missiles")
 			echo "<input type=\"button\" value=\"Zur&uuml;ck zum Silo\" onclick=\"document.location='?page=missiles'\" /> &nbsp; ";
@@ -143,7 +143,7 @@
 			while ($arr = mysql_fetch_array($res))
 			{
 				echo "<tr><td class=\"tbldata\" style=\"width:40px;background:#000\">
-							<a href=\"?page=$page&site=$site&id=".$arr['missile_id']."\">
+							<a href=\"?$link&amp;site=$site&amp;id=".$arr['missile_id']."\">
 							<img src=\"".IMAGE_PATH."/missiles/missile".$arr['missile_id']."_small.".IMAGE_EXT."\" alt=\"Raketen\" width=\"40\" height=\"40\" border=\"0\"/></a></td>";
 				echo "<td class=\"tbltitle\">".$arr['missile_name']."</td>";
 				echo "<td class=\"tbldata\">".$arr['missile_sdesc']."</td>";
