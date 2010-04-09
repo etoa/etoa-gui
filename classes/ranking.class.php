@@ -378,7 +378,11 @@
 			while ($uarr=mysql_fetch_assoc($ures))
 			{
 				$user_id = $uarr['user_id'];
-				$user_rank_highest[$user_id] = $uarr['user_rank_highest']>0 ? $uarr['user_rank_highest'] : 9999;
+				// first 24hours no highest rank calculation
+				if (time()>(3600*24+$cfg->p1("enable_login")))
+					$user_rank_highest[$user_id] = $uarr['user_rank_highest']>0 ? $uarr['user_rank_highest'] : 9999;
+				else
+					$user_rank_highest[$user_id] = 0;
 				$points = 0.0;
 				$points_ships = 0.0;
 				$points_tech = 0;

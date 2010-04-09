@@ -30,10 +30,10 @@
 
 	// BEGIN SKRIPT //
 	echo "<h1>&Uuml;bersicht</h1>";
-
-	if ($s->firstView || true)
+	Ranking::calc();
+	if ($s->firstView)
 	{
-		if ($cfg->p1("round_end"))
+		if ($cfg->get("round_end")==1)
 		{
 			iBoxStart("Ende der Runde");
 			echo "<div style=\"witdh:100%;text-align:center;\">Die Runde endet am <strong>".df($cfg->p1("round_end"))."</strong>!";
