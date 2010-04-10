@@ -30,7 +30,7 @@
 
 	// BEGIN SKRIPT //
 	echo "<h1>&Uuml;bersicht</h1>";
-	Ranking::calc();
+	
 	if ($s->firstView)
 	{
 		if ($cfg->get("round_end")==1)
