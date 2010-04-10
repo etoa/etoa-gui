@@ -34,7 +34,7 @@
 	if ($index!="")
 		$link = "index=".$index;
 	else
-		$pqge = "page=".$page;
+		$link = "page=".$page;
 	
 	if (isset($_GET['site']) && $_GET['site']!="")
 	{
