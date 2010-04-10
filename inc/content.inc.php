@@ -214,7 +214,17 @@
 						Die Seite <b>'.$page.'</b> existiert nicht!<br/><br/>
 						<input type="button" onclick="history.back();" value="Zurück" />';
 					}
-					logAccess($page,"ingame");
+
+					if (isset($_GET['sub']))
+						$lasub = $_GET['sub'];
+                                        elseif (isset($_GET['action']))
+	                                        $lasub = $_GET['action'];
+                                        elseif (isset($_GET['site']))
+	                                        $lasub = $_GET['site'];
+					else
+						$lasub="";
+
+					logAccess($page,"ingame",$lasub);
 				}
 				else
 				{

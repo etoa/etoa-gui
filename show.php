@@ -162,7 +162,17 @@
 			{
 				$popup = true;
 				include ($sub.$page.".php");
-				logAccess($page,"ingame");
+
+				if (isset($_GET['sub']))
+	                                $lasub = $_GET['sub'];
+                                elseif (isset($_GET['action']))
+                                     $lasub = $_GET['action'];
+                                elseif (isset($_GET['site']))
+                                        $lasub = $_GET['site'];
+                                else
+                                     $lasub="";
+
+				logAccess($page,"ingame",$lasub);
 
 				echo "<br/><br/>";
 			}

@@ -50,12 +50,35 @@ echo "<h1>Tools</h1>";
 
 		foreach ($domains as $d)
 		{
-			$res = dbquery("SELECT target,COUNT(target) cnt FROM accesslog WHERE domain='$d' GROUP BY target ORDER BY cnt DESC");
+			$res = dbquery("
+			SELECT target,COUNT(target) cnt 
+			FROM accesslog 
+			WHERE domain='$d' 
+			GROUP BY target 
+			ORDER BY cnt DESC");
 			echo "<h3>".ucfirst($d)."</h3>";
-			echo "<table class=\"tb\"><tr><th>Ziel</th><th style=\"width:100px\">Zugriffe</th></tr>";
+			echo "<table class=\"tb\" style=\"width:500px\"><tr>
+			<th>Ziel</th>
+			<th style=\"width:90px\">Zugriffe
+			<th style=\"width:200px\">Unterbereiche</th></tr>";
 			while ($arr = mysql_fetch_assoc($res))
 			{
-				echo "<tr><td>".$arr['target']."</td><td>".$arr['cnt']."</td></tr>";
+				echo "<tr><td>".$arr['target']."</td>
+				<td>".$arr['cnt']."</td>
+				<td style=\"padding:1px\"><table style=\"margin:0;width:100%;border:none;\">";
+				$sres = dbquery("
+	                        SELECT sub,COUNT(sub) cnt
+	                        FROM accesslog
+	                        WHERE domain='$d' AND target='".$arr['target']."'
+	                        GROUP BY sub
+	                        ORDER BY cnt DESC");
+				while ($sarr = mysql_fetch_assoc($sres))
+                        	{
+			        	echo "<tr><td>".$sarr['sub']."</td>
+					<td style=\"width:60px\">".$sarr['cnt']."</td></tr>";
+				}
+				echo "</table></td>
+				</tr>";
 			}
 			echo "</table>";
 		}
