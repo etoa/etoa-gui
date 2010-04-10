@@ -40,6 +40,21 @@ echo "<h1>Tools</h1>";
 		echo "<br>Verbrauchte Zeit mit rationioneller Auslesung ( ".$i."x SELECT xy FROM): ".($ende4 - $start4);
 	}
 
+      //
+       // Filesharing
+        elseif ($sub=="accesslog")
+	{
+		echo "<h2>Seitenzugriffe</h2>";
+		$res = dbquery("SELECT target,COUNT(target) cnt FROM accesslog GROUP BY target ORDER BY cnt DESC");
+		echo "<table class=\"tb\"><tr><th>Ziel</th><th>Zugriffe</th></tr>";
+		while ($arr = mysql_fetch_assoc($res))
+		{
+			echo "<tr><td>".$arr['target']."</td><td>".$arr['cnt']."</td></tr>";
+		}
+		echo "</table>";
+	}
+
+
 	//
 	// Filesharing
 	//

@@ -402,6 +402,10 @@
 	$navmenu['Tools']['Game-Statistik']['sub']="gamestats";
 	$navmenu['Tools']['Game-Statistik']['level']=3;
 
+        $navmenu['Tools']['Seitenzugriffe']['page']="tools";
+        $navmenu['Tools']['Seitenzugriffe']['sub']="accesslog";
+        $navmenu['Tools']['Seitenzugriffe']['level']=3;
+
 	$navmenu['Tools']['IP-Resolver']['page']="tools";
 	$navmenu['Tools']['IP-Resolver']['sub']="ipresolver";
 	$navmenu['Tools']['IP-Resolver']['level']=1;
