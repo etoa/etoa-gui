@@ -5,7 +5,7 @@
 		{
 			global $cu;
 
-			if (!ETOA_DEBUG)
+			if (!(defined('ETOA_DEBUG') && ETOA_DEBUG==1))
 				return "<div class=\"errorBox\" style=\"text-align:left;\"><h2>Datenbankfehler</h2>Die gewünschte Abfrage konnte nicht durchgeführt werden!<br/>
 					Bitte versuchen Sie es später nochmals und <a href=\"".DEVCENTER_PATH."\" onclick=\"".DEVCENTER_ONCLICK.";return false;\">melden</a> Sie diesen Fehler falls er weiterhin auftritt!</div>";
 
