@@ -141,6 +141,8 @@
 			{
 				$popup = true;
 				include ($sub.$index.".php");
+				logAccess($index,"public");
+
 				echo "<br/><br/>";
 			}
 			else
@@ -160,6 +162,8 @@
 			{
 				$popup = true;
 				include ($sub.$page.".php");
+				logAccess($page,"ingame");
+
 				echo "<br/><br/>";
 			}
 			else

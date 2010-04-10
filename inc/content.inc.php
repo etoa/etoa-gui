@@ -214,13 +214,7 @@
 						Die Seite <b>'.$page.'</b> existiert nicht!<br/><br/>
 						<input type="button" onclick="history.back();" value="Zurück" />';
 					}
-					
-					if ($cfg->accesslog->v == 1)
-					{
-						if (!isset($_SESSION['accesslog_sid']))
-							$_SESSION['accesslog_sid'] = uniqid(mt_rand(), true);
-						dbquery("INSERT INTO accesslog (target,timestamp,sid) VALUES ('$page',UNIX_TIMESTAMP(),'". $_SESSION['accesslog_sid']."');");
-					}
+					logAccess($page,"ingame");
 				}
 				else
 				{

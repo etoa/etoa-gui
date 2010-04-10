@@ -2727,6 +2727,23 @@ function imagecreatefromfile($path, $user_functions = false)
 		}
 	}
 
+
+	function logAccess($target,$domain="",$sub="")
+	{
+		global $cfg;
+		if ($cfg->accesslog->v == 1)
+		{
+			if (!isset($_SESSION['accesslog_sid']))
+				$_SESSION['accesslog_sid'] = uniqid(mt_rand(), true);
+			dbquery("
+			INSERT INTO 
+			accesslog 
+			(target,timestamp,sid,sub,domain) 
+			VALUES ('$target',UNIX_TIMESTAMP(),'". $_SESSION['accesslog_sid']."','$sub','$domain');");
+		}
+	}
+
+
 	/**
 	* Textfunktionen einbinden
 	*/

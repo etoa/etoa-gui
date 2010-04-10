@@ -45,13 +45,20 @@ echo "<h1>Tools</h1>";
         elseif ($sub=="accesslog")
 	{
 		echo "<h2>Seitenzugriffe</h2>";
-		$res = dbquery("SELECT target,COUNT(target) cnt FROM accesslog GROUP BY target ORDER BY cnt DESC");
-		echo "<table class=\"tb\"><tr><th>Ziel</th><th>Zugriffe</th></tr>";
-		while ($arr = mysql_fetch_assoc($res))
+
+		$domains = array('ingame','public','admin');
+
+		foreach ($domains as $d)
 		{
-			echo "<tr><td>".$arr['target']."</td><td>".$arr['cnt']."</td></tr>";
+			$res = dbquery("SELECT target,COUNT(target) cnt FROM accesslog WHERE domain='$d' GROUP BY target ORDER BY cnt DESC");
+			echo "<h3>".ucfirst($d)."</h3>";
+			echo "<table class=\"tb\"><tr><th>Ziel</th><th style=\"width:100px\">Zugriffe</th></tr>";
+			while ($arr = mysql_fetch_assoc($res))
+			{
+				echo "<tr><td>".$arr['target']."</td><td>".$arr['cnt']."</td></tr>";
+			}
+			echo "</table>";
 		}
-		echo "</table>";
 	}
 
 
