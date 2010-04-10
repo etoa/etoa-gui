@@ -299,6 +299,8 @@
 								{
 									if (!include("content/".$page.".php"))
 										cms_err_msg("Die Seite $page wurde nicht gefunden!");
+									else
+										logAccess($page,"admin",$sub);
 								}
 								else
 									echo "<h1>Fehler</h1>Der Seitenname <b>".$page."</b> enth&auml;lt unerlaubte Zeichen!<br><br><a href=\"javascript:history.back();\">Zur&uuml;ck</a>";

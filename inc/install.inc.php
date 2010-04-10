@@ -12,6 +12,7 @@ $tpl->assign("topmenu",$indexpage);
 
 if (!isset($_SESSION))
     session_start();
+$tpl->display(getcwd()."/tpl/headerext.html");
 
 $tpl->display(getcwd()."/tpl/headerext.html");
 
