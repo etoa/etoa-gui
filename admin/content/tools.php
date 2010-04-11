@@ -1,6 +1,7 @@
 <?php
 
 echo "<h1>Tools</h1>";
+dbquery('FLUSH TABLES;');
 
 	//
 	// Time Tester

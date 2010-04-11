@@ -108,7 +108,8 @@
 		$log.= "Wurml&ouml;cher vertauscht.\nDauer: ".timerStop($tmr)." sec\n\n";
 
 		// Closes all open tables, forces all tables in use to be closed, and flushes the query cache.
-		dbquery("FLUSH TABLES");
+		// DEPRECATED: One should not rely on that, it should work otherwise. Needs global admin privilege of mysql
+		//dbquery("FLUSH TABLES");
 
 		return $log;
 	}

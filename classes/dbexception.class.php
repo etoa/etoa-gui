@@ -12,6 +12,11 @@
 			$str = "Datenbankfehler\nDatei: ".parent::getFile().", Zeile: ".parent::getLine()."\nAbfrage:".parent::getMessage()."\nFehlermeldung: ".mysql_error()."\nStack-Trace: ".parent::getTraceAsString()."";
 			if (defined('ERROR_LOGFILE'))
 			{
+				if (!file_exists())
+				{
+					touch(DBERROR_LOGFILE);
+					chmod(DBERROR_LOGFILE,0622);
+				}
 				$f = fopen(DBERROR_LOGFILE,"a+");
 				fwrite($f,date("d.m.Y H:i:s").", ".(isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR']:'local').", ".$cu."\n".$str."\n\n");
 				fclose($f);
