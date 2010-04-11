@@ -61,6 +61,9 @@
 		void setConfigDir(std::string dir);
 		std::string getConfigDir();
 		
+		void setSleep(int sleep);
+		int getSleep();
+		
 		/**
 		 * Config neu laden
 		 **/
@@ -102,6 +105,7 @@
 		std::map<std::string, std::string> actionName;
 		
 		std::string configDir;
+		unsigned int sleep;
 		
 		static Config* _instance;
 		

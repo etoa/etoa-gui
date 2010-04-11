@@ -43,6 +43,16 @@
 		return this->configDir;
 	}
 	
+	void Config::setSleep(int sleep)
+	{
+		this->sleep = sleep;
+	}
+	
+	int Config::getSleep()
+	{
+		return this->sleep;
+	}
+	
 	void Config::reloadConfig()
 	{
 		this->sConfig.clear();
@@ -60,6 +70,9 @@
 		mysqlpp::Connection *con = my.get();
 		
 		int counter = 0;
+		
+		this->sleep = 1;
+		
 		mysqlpp::Query query = con->query();
 		query << "SELECT "
 			<< "	config_name, "

@@ -33,7 +33,7 @@
 
 void etoamain()
 {
-	int minLoopDuration = 1;	// Minimal loop duration
+	int minLoopDuration = Config::instance().getSleep();	// Minimal loop duration
 	
 	LOG(LOG_DEBUG,"Entering main event-handler loop");				
 	

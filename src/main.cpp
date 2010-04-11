@@ -183,7 +183,8 @@ int main(int argc, char* argv[])
   opt->setOption("log",'l');
   opt->setOption("userid",'u');
   opt->setOption("pidfile",'p');  
-  opt->setOption("config-dir",'c');  
+  opt->setOption("config-dir",'c');
+  opt->setOption("sleep",'t');
   opt->processCommandArgs( argc, argv );
 
 	appPath = std::string(argv[0]);
@@ -303,7 +304,14 @@ int main(int argc, char* argv[])
   {
   	LOG(LOG_ERR,"This software cannot be run as root!");  	
     exit(EXIT_FAILURE);  	
-  }  
+  }
+
+	Config &config = Config::instance();
+	config.setConfigDir(configDir);
+	
+	// Set sleep between loop
+	if( opt->getValue('t') != NULL)
+		config.setSleep(atoi(opt->getValue('t')));
 
   pf = new PIDFile(pidFile);
 
@@ -355,10 +363,6 @@ int main(int argc, char* argv[])
 	else
 		pf->write();
 
-
-
-	Config &config = Config::instance();
-	config.setConfigDir(configDir);
 
 	boost::thread mThread(&etoamain);
 	boost::thread qThread(&msgQueueThread);
