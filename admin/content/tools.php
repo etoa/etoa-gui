@@ -46,6 +46,35 @@ echo "<h1>Tools</h1>";
 	{
 		echo "<h2>Seitenzugriffe</h2>";
 
+		$frm = new Form("accesslog","?page=$page&amp;sub=$sub");
+		if (isset($_POST['submit_toggle']))
+		{
+			$cfg->set("accesslog",($cfg->accesslog->v+1)%2);
+			ok_msg("Einstellungen gespeichert");
+		}
+		if (isset($_POST['submit_truncate']))
+		{
+			dbquery("DELETE FROM accesslog;");
+			ok_msg("Aufzeichnungen gelöscht");
+		}					
+		
+		
+		echo $frm->begin();	
+		if ($cfg->accesslog->v ==1)
+		{
+			echo "<p>Seitenzugriffe werden aufgezeichnet. 
+			<input type=\"submit\" value=\"Deaktivieren\" name=\"submit_toggle\"  />";			
+		}
+		else
+		{
+			echo "<p>Seitenzugriffe werden momentan NICHT aufgezeichnet. 
+			<input type=\"submit\" value=\"Aktivieren\" name=\"submit_toggle\"  />";
+		}
+		echo " <input type=\"submit\" value=\"Aufzeichnungen löschen\" name=\"submit_truncate\"  /></p>";
+		echo $frm->end();
+
+
+
 		$domains = array('ingame','public','admin');
 
 		foreach ($domains as $d)

@@ -34,14 +34,14 @@
 			}
 		}
 		
-		if (false) //$frm->checkSubmit("bustn") && isset($_POST['submit_changes']))
+		$frm = new Form("bustn","?page=$page&amp;sub=$sub");
+		if (isset($_POST['submit_changes'])) //$frm->checkSubmit("submit_changes")
 		{
 			$cfg->set("backup",$_POST['backup_v'],$_POST['backup_p1'],$_POST['backup_p2']);
 			$cfg->set("backup_time",$_POST['backup_time_v'],$_POST['backup_time_p1'],$_POST['backup_time_p2']);
-			ok_msg("Gespeichert");
+			ok_msg("Einstellungen gespeichert");
 		}
 		
-		$frm = new Form("bustn","?page=$page&amp;sub=$sub");
 		echo $frm->begin();
 		iBoxStart("Backup-Einstellungen");
 		echo "Speicherpfad: <input type=\"text\" value=\"".$cfg->backup."\" name=\"backup_v\" size=\"50\" /><br/>

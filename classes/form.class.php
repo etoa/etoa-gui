@@ -18,7 +18,7 @@
 		function genSeed()
 		{
 			$rnd = mt_rand(1000000000,9999999999) ^ time();
-			$this->token = sha1($rnd.$name.$_SERVER['REMOTE_ADDR']);
+			$this->token = sha1($rnd.$this->name.$_SERVER['REMOTE_ADDR']);
 			if (!isset($_SESSION['formtokens']))
 				$_SESSION['formtokens'] = array();
 			$_SESSION['formtokens'][$this->name] = array();
