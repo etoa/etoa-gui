@@ -7,12 +7,22 @@
 		exit;
 	}
 	
+	$fi = pathinfo($file);
 	$ext = substr($file,strrpos($file,".")+1);
 	$filter=$_GET['filter'];
+	
+	$tmpName = "../cache/filtered_images/".md5($fi['filename'].$filter).".".$fi['extension'];
+	
+	if (file_exists($tmpName))
+	{
+		header("Location: $tmpName");
+		exit;
+	}
+	
 	if (file_exists("../".$file))
 	{
 		$error = false;
-		switch($ext)
+		switch($fi['extension'])
 		{
 			case "jpg":
 				header ("Content-type: image/jpeg");
@@ -112,15 +122,22 @@
 			imagestring($im,2,5,5,"Fehler: Ungültiger Dateityp!",$white);
 		}
 		
-		switch($ext)
+		switch($fi['extension'])
 		{
 			case "jpg":
-				imagejpeg($im);		
+				imagejpeg($im,$tmpName);		
+				imagejpeg($im);
+				break;
 			case "png":
+				imagepng($im,$tmpName);		
 				imagepng($im);		
+				break;
 			case "gif":
+				imagegif($im,$tmpName);		
 				imagegif($im);		
+				break;
 			default:
+				imagejpeg($im,$tmpName);		
 				imagejpeg($im);		
 		}		
 	}
