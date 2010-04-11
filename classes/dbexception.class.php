@@ -5,22 +5,24 @@
 		{
 			global $cu;
 
-			if (!(defined('ETOA_DEBUG') && ETOA_DEBUG==1))
-				return "<div class=\"errorBox\" style=\"text-align:left;\"><h2>Datenbankfehler</h2>Die gewünschte Abfrage konnte nicht durchgeführt werden!<br/>
-					Bitte versuchen Sie es später nochmals und <a href=\"".DEVCENTER_PATH."\" onclick=\"".DEVCENTER_ONCLICK.";return false;\">melden</a> Sie diesen Fehler falls er weiterhin auftritt!</div>";
-
 			$str = "Datenbankfehler\nDatei: ".parent::getFile().", Zeile: ".parent::getLine()."\nAbfrage:".parent::getMessage()."\nFehlermeldung: ".mysql_error()."\nStack-Trace: ".parent::getTraceAsString()."";
+
 			if (defined('ERROR_LOGFILE'))
 			{
-				if (!file_exists())
+				if (!file_exists(DBERROR_LOGFILE))
 				{
 					touch(DBERROR_LOGFILE);
-					chmod(DBERROR_LOGFILE,0622);
+					chmod(DBERROR_LOGFILE,0662);
 				}
 				$f = fopen(DBERROR_LOGFILE,"a+");
 				fwrite($f,date("d.m.Y H:i:s").", ".(isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR']:'local').", ".$cu."\n".$str."\n\n");
 				fclose($f);
 			}
+
+			if (!(defined('ETOA_DEBUG') && ETOA_DEBUG==1))
+				return "<div class=\"errorBox\" style=\"text-align:left;\"><h2>Datenbankfehler</h2>Die gewünschte Abfrage konnte nicht durchgeführt werden!<br/>
+					Bitte versuchen Sie es später nochmals und <a href=\"".DEVCENTER_PATH."\" onclick=\"".DEVCENTER_ONCLICK.";return false;\">melden</a> Sie diesen Fehler falls er weiterhin auftritt!</div>";
+
 			if (!defined('USE_HTML') || USE_HTML)
 			{
 				if (!headers_sent())
