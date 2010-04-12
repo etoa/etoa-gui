@@ -216,7 +216,7 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 		}
 		else
 		{
-			echo "<i>Keine Angebote vorhanden!</i>";
+			error_msg("Keine Angebote vorhanden!",1);
 		}
 	}
 	// </editor-fold>
@@ -226,8 +226,16 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 	// <editor-fold>
 	elseif ($form['search_cat']=="ships")
 	{
+			
 			echo "<form action=\"?page=market&amp;mode=ships\" method=\"post\" id=\"ship_buy_selector\">\n";
 			checker_init();
+			
+			// Load current entity if payable check active
+			
+			if (isset($form['market_ship_search_filter_payable']) && $form['market_ship_search_filter_payable']==1)
+			{
+				$te = Entity::createFactoryById($_SESSION['cpid']);
+			}
 
 			$res = dbquery("
 			SELECT
@@ -242,68 +250,90 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 			$cnt=0;
 			if(mysql_num_rows($res)>0)
 			{
-				tableStart("Angebots&uuml;bersicht");
-				echo "<tr>
-							<th width=\"25%\">Angebot:</th>
-							<th colspan=\"2\" width=\"25%\">Preis:</th>
-							<th width=\"15%\">Anbieter:</th>
-							<th width=\"15%\">Beschreibung:</th>
-							<th width=\"10%\">Kaufen:</th>
-						</tr>";
-
 				while ($arr=mysql_fetch_array($res))
 				{
-					if($arr['for_alliance']!=0)
-						$for_alliance="<span class=\"userAllianceMemberColor\">F&uuml;r Allianzmitglied Reserviert</span>";
-					else
-						$for_alliance="";
-
-					$i=0;
-					$resCnt = count($resNames);
-					foreach ($resNames as $rk => $rn)
+					$show=true;
+					if (isset($te))
 					{
-						echo "<tr>";
-						if ($i==0)
+						foreach ($resNames as $rk=>$rn)
 						{
-							$ship = new Ship($arr['ship_id']);
-							echo "<td rowspan=\"$resCnt\">".$arr['count']." <a href=\"?page=help&site=shipyard&id=".$arr['ship_id']."\">".$ship."</a></td>";
+							if ($te->resources[$rk]< $arr['costs_'.$rk])
+							{
+								$show = false;
+								break;
+							}
 						}
-						echo "<td class=\"rescolor".$rk."\">".$resIcons[$rk]."<b>".$rn."</b>:</td>
-						<td class=\"rescolor".$rk."\">".nf($arr['costs_'.$rk])."</td>";
-						if ($i++==0)
-						{
-							$tu = new User($arr['user_id']);
-							echo "<td rowspan=\"$resCnt\">".$tu->detailLink()."</td>";
-							echo "<td rowspan=\"$resCnt\">".$for_alliance."<br />".stripslashes($arr['text'])."</td>";
-							echo "<td rowspan=\"$resCnt\">
-								<input type=\"checkbox\" name=\"ship_market_id[]\" id=\"ship_market_id_".$arr['id']."\" value=\"".$arr['id']."\" onclick=\"xajax_calcMarketShipBuy(xajax.getFormValues('ship_buy_selector'));\" />
-							</td>";
-						}
-						echo "</tr>";
 					}
+					if ($show)
+					{
+						if ($cnt==0)
+						{
+							tableStart("Angebots&uuml;bersicht");
+							echo "<tr>
+										<th width=\"25%\">Angebot:</th>
+										<th colspan=\"2\" width=\"25%\">Preis:</th>
+										<th width=\"15%\">Anbieter:</th>
+										<th width=\"15%\">Beschreibung:</th>
+										<th width=\"10%\">Kaufen:</th>
+									</tr>";
+						}
+						
+						if($arr['for_alliance']!=0)
+							$for_alliance="<span class=\"userAllianceMemberColor\">F&uuml;r Allianzmitglied Reserviert</span>";
+						else
+							$for_alliance="";
 
-					$cnt++;
-					if ($cnt<mysql_num_rows($res))
-						echo "<tr><td colspan=\"6\" style=\"height:10px;background:#000\"></td></tr>";
+						$i=0;
+						$resCnt = count($resNames);
+						foreach ($resNames as $rk => $rn)
+						{
+							echo "<tr>";
+							if ($i==0)
+							{
+								$ship = new Ship($arr['ship_id']);
+								echo "<td rowspan=\"$resCnt\">".$arr['count']." <a href=\"?page=help&site=shipyard&id=".$arr['ship_id']."\">".$ship."</a></td>";
+							}
+							echo "<td class=\"rescolor".$rk."\">".$resIcons[$rk]."<b>".$rn."</b>:</td>
+							<td class=\"rescolor".$rk."\">".nf($arr['costs_'.$rk])."</td>";
+							if ($i++==0)
+							{
+								$tu = new User($arr['user_id']);
+								echo "<td rowspan=\"$resCnt\">".$tu->detailLink()."</td>";
+								echo "<td rowspan=\"$resCnt\">".$for_alliance."<br />".stripslashes($arr['text'])."</td>";
+								echo "<td rowspan=\"$resCnt\">
+									<input type=\"checkbox\" name=\"ship_market_id[]\" id=\"ship_market_id_".$arr['id']."\" value=\"".$arr['id']."\" onclick=\"xajax_calcMarketShipBuy(xajax.getFormValues('ship_buy_selector'));\" />
+								</td>";
+							}
+							echo "</tr>";
+						}
 
-
+						$cnt++;
+						if ($cnt<mysql_num_rows($res))
+							echo "<tr><td colspan=\"6\" style=\"height:10px;background:#000\"></td></tr>";
+					}
 				}
-				tableEnd();
+				if ($cnt>0)
+				{
+					tableEnd();
 
-				tableStart();
-				echo "<tr>
-								<td colspan=\"7\" id=\"ship_buy_check_message\" style=\"text-align:center;vertical-align:middle;height:30px;\">&nbsp;</td>
-							</tr>
-							<tr>
-								<td colspan=\"7\" style=\"text-align:center;vertical-align:middle;\">
-									<input type=\"submit\" name=\"ship_submit\" id=\"ship_submit\" value=\"Angebot annehmen\" disabled=\"disabled\"/>
-								</td>
-							</tr>";
-				tableEnd();
+					tableStart();
+					echo "<tr>
+									<td colspan=\"7\" id=\"ship_buy_check_message\" style=\"text-align:center;vertical-align:middle;height:30px;\">&nbsp;</td>
+								</tr>
+								<tr>
+									<td colspan=\"7\" style=\"text-align:center;vertical-align:middle;\">
+										<input type=\"submit\" name=\"ship_submit\" id=\"ship_submit\" value=\"Angebot annehmen\" disabled=\"disabled\"/>
+									</td>
+								</tr>";
+					tableEnd();
+				}
+				else
+					error_msg("Keine bezahlbaren Angebote vorhanden!",1);
+
 			}
 			else
 			{
-				echo "Keine Angebote vorhanden!";
+				error_msg("Keine Angebote vorhanden!",1);
 			}
 			echo "</form>";
 	}
@@ -400,7 +430,7 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 			}
 			else
 			{
-				echo "Keine Auktionen vorhanden!";
+				error_msg("Keine Auktionen vorhanden!",1);
 			}
 
 

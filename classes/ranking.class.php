@@ -919,7 +919,8 @@
 								FROM
 									alliance_buildlist
 								WHERE
-									alliance_buildlist_alliance_id='".$arr['alliance_id']."';");
+									alliance_buildlist_alliance_id='".$arr['alliance_id']."'
+									AND alliance_buildlist_current_level>0;");
 					if (mysql_num_rows($bres)>0)
 					{
 						while ($barr=mysql_fetch_row($bres))
@@ -934,7 +935,8 @@
 								FROM
 									alliance_techlist
 								WHERE
-									alliance_techlist_alliance_id='".$arr['alliance_id']."';");
+									alliance_techlist_alliance_id='".$arr['alliance_id']."'
+									AND alliance_techlist_current_level>0;");
 					if (mysql_num_rows($tres)>0)
 					{
 						while ($tarr=mysql_fetch_row($tres))

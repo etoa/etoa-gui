@@ -42,15 +42,16 @@
 	{
 
 		tableStart("Kurzinformation");
-		echo "<tr>,<td class=\"tbltitle\">Logo</td>";
+		echo "<tr>";
+		//"<td class=\"tbltitle\">Logo</td>";
 		echo "<td class=\"tbltitle\">Name</td>";
 		echo "<td class=\"tbltitle\">Kurzbeschreibug</td></tr>";
 
 		while ($arr = mysql_fetch_array($res))
 		{
-			echo "<tr><td>
+			echo "<tr>";/*<td>
 						<img src=\"".IMAGE_PATH."/races/race_".$arr['race_id']."_small.".IMAGE_EXT."\"></td>";
-			echo "<td><a href=\"?$link&amp;site=races_detail\">".$arr['race_name']."</a></td>";
+		*/	echo "<td><a href=\"?$link&amp;site=races_detail\">".$arr['race_name']."</a></td>";
 			echo "<td>".text2html($arr['race_short_comment'])."</td></tr>";
 
 		}

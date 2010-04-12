@@ -65,7 +65,7 @@
 			$pcnt=$cfg->p1('user_start_people');
 			while ($arr=mysql_fetch_array($res))
 			{
-				$place = floor($arr['building_people_place'] * pow($arr['building_store_factor'],$arr['buildlist_current_level']-1));
+				$place = round($arr['building_people_place'] * pow($arr['building_store_factor'],$arr['buildlist_current_level']-1));
 				echo '<tr><th>'.$arr['building_name'].'</th>
 				<td>'.nf($place).'</td></tr>';
 				$pcnt+=$place;

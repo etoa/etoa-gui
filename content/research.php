@@ -214,13 +214,13 @@ else
 	
 	
 					// Bauzeit
-					$bonus = $cu->race->researchTime + $cp->typeResearchtime + $cp->starResearchtime + $cu->specialist->researchTime - 3;
+					$bonus = $cu->race->researchTime + $cp->typeResearchtime + $cp->starResearchtime - 2;
 	
 					$btime = ($bc['metal']+$bc['crystal']+$bc['plastic']+$bc['fuel']+$bc['food']) / GLOBAL_TIME * RES_BUILD_TIME * $time_boni_factor;
-					$btime *= $bonus;
+					$btime *= $bonus * $cu->specialist->researchTime;
 	
 					$btimen = ($bcn['metal']+$bcn['crystal']+$bcn['plastic']+$bcn['fuel']+$bcn['food']) / GLOBAL_TIME * RES_BUILD_TIME * $time_boni_factor;
-					$btimen  *= $bonus;
+					$btimen  *= $bonus * $cu->specialist->researchTime;
 	
 	
 					// Berechnet mindest Bauzeit in beachtung von Gentechlevel
