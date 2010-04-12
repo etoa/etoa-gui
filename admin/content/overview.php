@@ -92,11 +92,8 @@
 			echo "<tr><th>Pfad</th><td>".$daemonExe."</td></tr>";
 			echo "<tr><th>Logfile</th><td>".$daemonLogfile."</td></tr>";
 			echo "<tr><th>Pidfile</th><td>".$daemonPidfile."</td></tr>";
-			echo "<tr><th>Status</th><td>";			
-
-			echo "</td></tr>";			
 			tableEnd();
-			echo $frm->close();		
+			echo $frm->end();		
 		
 		
 			echo "<h2>Log</h2>";
