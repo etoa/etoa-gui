@@ -306,12 +306,6 @@ int main(int argc, char* argv[])
     exit(EXIT_FAILURE);  	
   }
 
-	Config &config = Config::instance();
-	config.setConfigDir(configDir);
-	
-	// Set sleep between loop
-	if( opt->getValue('t') != NULL)
-		config.setSleep(atoi(opt->getValue('t')));
 
   pf = new PIDFile(pidFile);
 
@@ -363,7 +357,12 @@ int main(int argc, char* argv[])
 	else
 		pf->write();
 
-
+ 	Config &config = Config::instance();
+        config.setConfigDir(configDir);
+	if( opt->getValue('t') != NULL)
+	  config.setSleep(atoi(opt->getValue('t')));
+		
+	
 	boost::thread mThread(&etoamain);
 	boost::thread qThread(&msgQueueThread);
 
