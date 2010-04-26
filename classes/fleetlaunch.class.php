@@ -732,6 +732,7 @@
 		function resetShips()
 		{	
 			$this->ships = array();
+			$this->shipActions = array();
 			$this->shipsFixed=false;
 			$this->speed = 0;
 			$this->duration=0;
