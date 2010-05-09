@@ -52,17 +52,17 @@ namespace invade
 					* that an invasion to an illegal target could be launched */
 					if (!this->targetEntity->getIsUserMain()) 
 					{
-						this->pointsDef = (int)this->f->fleetUser->getUserPoints();
-						this->pointsAtt = (int)this->targetEntity->getUser()->getUserPoints();
+						this->pointsAtt = (int)this->f->fleetUser->getUserPoints();
+						this->pointsDef = (int)this->targetEntity->getUser()->getUserPoints();
 						
 						// Calculate the Chance
-						this->chance = config.nget("INVADE_POSSIBILITY",0) / this->pointsAtt * this->pointsDef;
+						this->chance = config.nget("invade_possibility",0) / this->pointsAtt * this->pointsDef;
 						
 						// Check if the chance is wheter higher then the max not lower then the min
-						if(this->chance > config.nget("INVADE_POSSIBILITY",1))
-							this->chance = config.nget("INVADE_POSSIBILITY",1);
-						else if(this->chance < config.nget("INVADE_POSSIBILITY",1))
-							this->chance = config.nget("INVADE_POSSIBILITY",1);
+						if(this->chance > config.nget("invade_possibility",1))
+							this->chance = config.nget("invade_possibility",1);
+						else if(this->chance < config.nget("invade_possibility",2))
+							this->chance = config.nget("invade_possibility",2);
 						
 						this->one = rand() % 101;
 						this->two = (100 * this->chance);
