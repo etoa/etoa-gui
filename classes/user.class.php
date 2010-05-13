@@ -453,6 +453,21 @@
 				user_alliance_id=".$id."
 			WHERE user_id='".$this->id."';");
 		}
+		
+		public function isInactiv()
+		{
+			if (!$this->admin)
+			{
+				if (!$this->holiday)
+				{
+					if ($this->lastOnline>time()-USER_INACTIVE_SHOW*86400)
+					{
+						return true;
+					}
+				}
+			}
+			return false;
+		}
 
 
 		//

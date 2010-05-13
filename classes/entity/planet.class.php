@@ -149,12 +149,12 @@
 				$this->people=zeroPlus($arr['planet_people']);
 				$this->people_place=zeroPlus($arr['planet_people_place']);
 
-				$this->resMetal=zeroPlus($arr['planet_res_metal']);
-				$this->resCrystal=zeroPlus($arr['planet_res_crystal']);
-				$this->resPlastic=zeroPlus($arr['planet_res_plastic']);
-				$this->resFuel=zeroPlus($arr['planet_res_fuel']);
-				$this->resFood=zeroPlus($arr['planet_res_food']);
-				$this->usePower=zeroPlus($arr['planet_use_power']);
+				$this->resMetal=zeroPlus(floor($arr['planet_res_metal']));
+				$this->resCrystal=zeroPlus(floor($arr['planet_res_crystal']));
+				$this->resPlastic=zeroPlus(floor($arr['planet_res_plastic']));
+				$this->resFuel=zeroPlus(floor($arr['planet_res_fuel']));
+				$this->resFood=zeroPlus(floor($arr['planet_res_food']));
+				$this->usePower=zeroPlus(floor($arr['planet_use_power']));
 
 				$this->resources = array($this->resMetal,$this->resCrystal,$this->resPlastic,$this->resFuel,$this->resFood);
 
@@ -931,11 +931,11 @@
 			if (mysql_num_rows($res)>0)
 			{
 				$arr = mysql_fetch_assoc($res);
-				$this->resMetal = $arr['planet_res_metal'];
-				$this->resCrystal = $arr['planet_res_crystal'];
-				$this->resPlastic = $arr['planet_res_plastic'];
-				$this->resFuel = $arr['planet_res_fuel'];
-				$this->resFood = $arr['planet_res_food'];
+				$this->resMetal = floor($arr['planet_res_metal']);
+				$this->resCrystal = floor($arr['planet_res_crystal']);
+				$this->resPlastic = floor($arr['planet_res_plastic']);
+				$this->resFuel = floor($arr['planet_res_fuel']);
+				$this->resFood = floor($arr['planet_res_food']);
 			}
 		}
 

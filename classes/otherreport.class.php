@@ -454,7 +454,7 @@ class OtherReport extends Report
 				break;
 			case 'collectdebrisfailed':
 				echo '<strong>TR&Uuml;MMERSAMMLER-RAPPORT</strong><br /><br />
-					Eine Flotte vom Planeten '.$ent2->detailLink().' hat das Tr&uuml;mmerfeld bei '.$ent2->detailLink().' um '.df($this->timestamp).' erreicht.<br />
+					Eine Flotte vom Planeten '.$ent2->detailLink().' hat das Tr&uuml;mmerfeld bei '.$ent1->detailLink().' um '.df($this->timestamp).' erreicht.<br />
 					Es wurden aber leider keine brauchbaren Tr&uuml;mmerteile mehr gefunden so dass die Flotte unverrichteter Dinge zur&uuml;ckkehren musste.';
 				break;
 			case 'fetch':

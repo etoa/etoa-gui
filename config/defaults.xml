@@ -369,6 +369,9 @@ http://www.etoa.ch&#xD;
 http://localhost&#xD;
 http://127.0.0.1</v>
     </item>
+	    <item name="under_construction" cat="1">
+	      <v comment="Seite die in Bearbeitung sind (DB Updates, ...)" type="textarea"></v>
+	    </item>
     <item name="flightban" cat="12">
       <v comment="Flottensperre" type="onoff">0</v>
       <p1 comment="Grund der Flottensperre" type="textarea"/>

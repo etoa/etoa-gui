@@ -832,7 +832,7 @@
 											if(($this->sourceEntity->ownerAlliance() && $this->sourceEntity->owner->alliance->checkWar($this->targetEntity->ownerAlliance()))
 											|| $this->ownerId==$this->sourceEntity->lastUserCheck()
 											|| !($this->sourceEntity->ownerPoints()*USER_ATTACK_PERCENTAGE>$this->targetEntity->ownerPoints()  || $this->sourceEntity->ownerPoints()/USER_ATTACK_PERCENTAGE < $this->targetEntity->ownerPoints() ) 
-											|| $this->targetEntity->owner->lastOnline<time()-USER_INACTIVE_SHOW*86400 
+											|| $this->targetEntity->owner->isInactiv() 
 											|| $this->targetEntity->ownerLocked() )
 											{
 												$actionObjs[$i] = $ai;

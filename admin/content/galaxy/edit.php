@@ -105,7 +105,12 @@
 							//Planet dem neuen User übergeben (Schiffe und Verteidigung werden vom Planeten gelöscht!)
 							$pl = new Planet($id);
 							$pl->chown($_POST['planet_user_id']);
-		
+							
+							if ($_POST['planet_user_id']==0)
+							{
+								$pl->reset();
+							}
+							
 							//Log Schreiben
 							Log::add(Log::F_GALAXY,Log::INFO,$cu->nick." wechselt den Besitzer vom Planeten: [URL=?page=galaxy&sub=edit&id=".$id."][B]".$id."[/B][/URL]\nAlter Besitzer: [URL=?page=user&sub=edit&user_id=".$_POST['planet_user_id_old']."][B]".$_POST['planet_user_id_old']."[/B][/URL]\nNeuer Besitzer: [URL=?page=user&sub=edit&user_id=".$_POST['planet_user_id']."][B]".$_POST['planet_user_id']."[/B][/URL]");
 
