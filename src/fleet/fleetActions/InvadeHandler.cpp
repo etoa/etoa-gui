@@ -52,8 +52,9 @@ namespace invade
 					* that an invasion to an illegal target could be launched */
 					if (!this->targetEntity->getIsUserMain()) 
 					{
-						this->pointsAtt = (int)this->f->fleetUser->getUserPoints();
-						this->pointsDef = (int)this->targetEntity->getUser()->getUserPoints();
+						// ToDo, find a better solution!!!
+						this->pointsAtt = 1;//(int)this->f->fleetUser->getUserPoints();
+						this->pointsDef = 1;//(int)this->targetEntity->getUser()->getUserPoints();
 						
 						// Calculate the Chance
 						this->chance = config.nget("invade_possibility",0) / this->pointsAtt * this->pointsDef;

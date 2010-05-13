@@ -284,14 +284,6 @@ namespace planet
 			this->bunker[3] += floor(bunkerAdd/5);
 			this->bunker[4] += floor(bunkerAdd/5);	
 		}
-		else {
-			this->bunker[0] = floor(this->bunkerRes/5);
-			this->bunker[1] = floor(this->bunkerRes/5);
-			this->bunker[2] = floor(this->bunkerRes/5);
-			this->bunker[3] = floor(this->bunkerRes/5);
-			this->bunker[4] = floor(this->bunkerRes/5);
-		}
-		
 
 	}
 	

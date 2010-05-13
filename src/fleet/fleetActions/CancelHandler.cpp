@@ -12,7 +12,7 @@ namespace cancel
 		if (this->targetEntity->getUserId() == this->f->getUserId()) {
 			
 			// Check if the user'd like to have a return message for spy and transport
-			if (!((this->f->getAction()=="spy" || this->f->getAction()=="transport") && !this->f->fleetUser->getPropertiesReturnMsg())) {
+			if (!((this->f->getAction()=="spy" || this->f->getAction()=="transport") && this->f->fleetUser->getPropertiesReturnMsg())) {
 				OtherReport *report = new OtherReport(this->f->getUserId(),
 													  this->f->getEntityTo(),
 													  this->f->getEntityFrom(),
