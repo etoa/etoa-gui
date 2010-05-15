@@ -1032,6 +1032,7 @@
 									if ($cp->prodMetal>0)
 									{
 										$bwait['metal']=ceil(($data['def_costs_metal']-$cp->resMetal)/$cp->prodMetal*3600);
+										$bwmsg['metal'] = tm("Fehlender Rohstoff",nf($data['def_costs_metal']-$cp->resMetal)." Titan<br />Bereit in ".tf($bwait['metal'])."");
 									}
 									else
 									{
@@ -1042,6 +1043,7 @@
 									if ($cp->prodCrystal>0)
 									{
 										$bwait['crystal']=ceil(($data['def_costs_crystal']-$cp->resCrystal)/$cp->prodCrystal*3600);
+										$bwmsg['crystal'] = tm("Fehlender Rohstoff",nf($data['def_costs_crystal']-$cp->resCrystal)." Silizium<br />Bereit in ".tf($bwait['crystal'])."");
 									}
 									else
 									{ 
@@ -1052,6 +1054,7 @@
 									if ($cp->prodPlastic>0)
 									{
 										$bwait['plastic']=ceil(($data['def_costs_plastic']-$cp->resPlastic)/$cp->prodPlastic*3600);
+										$bwmsg['plastic'] = tm("Fehlender Rohstoff",nf($data['def_costs_plastic']-$cp->resPlastic)." PVC<br />Bereit in ".tf($bwait['plastic'])."");
 									}
 									else
 									{ 
@@ -1062,6 +1065,7 @@
 									if ($cp->prodFuel>0)
 									{
 										$bwait['fuel']=ceil(($data['def_costs_fuel']-$cp->resFuel)/$cp->prodFuel*3600);
+										$bwmsg['fuel'] = tm("Fehlender Rohstoff",nf($data['def_costs_fuel']-$cp->resFuel)." Tritium<br />Bereit in ".tf($bwait['fuel'])."");
 									}
 									else
 									{ 
@@ -1072,6 +1076,7 @@
 									if ($cp->prodFood>0)
 									{
 										$bwait['food']=ceil(($food_costs-$cp->resFood)/$cp->prodFood*3600);
+										$bwmsg['food'] = tm("Fehlender Rohstoff",nf($data['def_costs_food']-$cp->resFood)." Nahrung<br />Bereit in ".tf($bwait['food'])."");
 									}
 									else
 									{ 
@@ -1092,7 +1097,7 @@
 								//Titan
 								if($data['def_costs_metal']>$cp->resMetal)
 								{
-									$ress_style_metal="style=\"color:red;\"";
+									$ress_style_metal="style=\"color:red;\" ".$bwmsg['metal']."";
 								}
 								else
 								{
@@ -1102,7 +1107,7 @@
 								//Silizium
 								if($data['def_costs_crystal']>$cp->resCrystal)
 								{
-									$ress_style_crystal="style=\"color:red;\"";
+									$ress_style_crystal="style=\"color:red;\" ".$bwmsg['crystal']."";
 								}
 								else
 								{
@@ -1112,7 +1117,7 @@
 								//PVC
 								if($data['def_costs_plastic']>$cp->resPlastic)
 								{
-									$ress_style_plastic="style=\"color:red;\"";
+									$ress_style_plastic="style=\"color:red;\" ".$bwmsg['plastic']."";
 								}
 								else
 								{
@@ -1122,7 +1127,7 @@
 								//Tritium
 								if($data['def_costs_fuel']>$cp->resFuel)
 								{
-									$ress_style_fuel="style=\"color:red;\"";
+									$ress_style_fuel="style=\"color:red;\" ".$bwmsg['fuel']."";
 								}
 								else
 								{
@@ -1132,7 +1137,7 @@
 								//Nahrung
 								if($food_costs>$cp->resFood)
 								{
-									$ress_style_food="style=\"color:red;\"";
+									$ress_style_food="style=\"color:red;\" ".$bwmsg['food']."";
 								}
 								else
 								{

@@ -892,75 +892,75 @@
 						foreach ($ships as $data)
 						{
 							// Prüfen ob Schiff gebaut werden kann
-    			  	$build_ship = 1;
-    			  	// Gebäude prüfen
-    			    if (isset($req[$data['ship_id']]['b']) && count($req[$data['ship_id']]['b'])>0)
-    			    {
-  			        foreach ($req[$data['ship_id']]['b'] as $id=>$level)
-  			        {
-			            if (!isset($buildlist[$id]) || $buildlist[$id]<$level)
-			            {
-			            	$build_ship = 0;
-			            }
-  			        }
-    			    }
-    			  	// Technologien prüfen
-    			    if (isset($req[$data['ship_id']]['t']) && count($req[$data['ship_id']]['t'])>0)
-    			    {
-  			        foreach ($req[$data['ship_id']]['t'] as $id=>$level)
-  			        {
-			            if (!isset($techlist[$id]) || $techlist[$id]<$level)
-			            {
-			            	$build_ship = 0;
-			            }
-  			        }
-    			    }
-
-    			    // Schiffdatensatz zeigen wenn die Voraussetzungen erfüllt sind und das Schiff in diese Kategorie gehört
-							if ($build_ship==1 && $data['ship_cat_id']==$cat_id)
+							$build_ship = 1;
+							// Gebäude prüfen
+							if (isset($req[$data['ship_id']]['b']) && count($req[$data['ship_id']]['b']) > 0)
 							{
-    			      // Zählt die Anzahl Schiffe dieses Typs im ganzen Account...
-    			      $ship_count = 0;
-    			      // ... auf den Planeten
-    			      if(isset($shiplist[$data['ship_id']]))
-    			      {
-    			      	$ship_count += array_sum($shiplist[$data['ship_id']]);
-    			      }
-    			      // ... im Bunker
-    			      if(isset($bunkered[$data['ship_id']]))
-    			      {
-    			      	$ship_count += array_sum($bunkered[$data['ship_id']]);
-    			      }
-    			      // ... in der Bauliste
-    			      if(isset($queue_total[$data['ship_id']]))
-    			      {
-    			      	$ship_count += $queue_total[$data['ship_id']];
-    			      }
+								foreach ($req[$data['ship_id']]['b'] as $id=>$level)
+								{
+									if (!isset($buildlist[$id]) || $buildlist[$id]<$level)
+									{
+										$build_ship = 0;
+									}
+								}
+							}
+							// Technologien prüfen
+							if (isset($req[$data['ship_id']]['t']) && count($req[$data['ship_id']]['t'])>0)
+							{
+								foreach ($req[$data['ship_id']]['t'] as $id=>$level)
+								{
+									if (!isset($techlist[$id]) || $techlist[$id]<$level)
+									{
+										$build_ship = 0;
+									}
+								}
+							}
+							
+							// Schiffdatensatz zeigen wenn die Voraussetzungen erfüllt sind und das Schiff in diese Kategorie gehört
+							if ($build_ship == 1 && $data['ship_cat_id'] == $cat_id)
+							{
+								// Zählt die Anzahl Schiffe dieses Typs im ganzen Account...
+								$ship_count = 0;
+    			      			// ... auf den Planeten
+    			      			if(isset($shiplist[$data['ship_id']]))
+    			      			{
+    			      				$ship_count += array_sum($shiplist[$data['ship_id']]);
+    			      			}
+    			      			// ... im Bunker
+    			      			if(isset($bunkered[$data['ship_id']]))
+    			      			{
+    			      				$ship_count += array_sum($bunkered[$data['ship_id']]);
+    			      			}
+    			      			// ... in der Bauliste
+    			      			if(isset($queue_total[$data['ship_id']]))
+    			      			{
+    			      				$ship_count += $queue_total[$data['ship_id']];
+    			      			}
 								// ... in der Luft
-    			      if(isset($fleet[$data['ship_id']]))
-    			      {
-    			      	$ship_count += $fleet[$data['ship_id']];
-    			      }
-
-
-    						// Bauzeit berechnen
-								$btime = ($data['ship_costs_metal']+$data['ship_costs_crystal']+$data['ship_costs_plastic']+$data['ship_costs_fuel']+$data['ship_costs_food']) / GLOBAL_TIME * SHIP_BUILD_TIME * $time_boni_factor * $cu->specialist->shipTime;
-    			      $btime_min=$btime*(0.1-($gen_tech_level/100));
-    			      
-    			      //Mindest Bauzeit
-    			      if ($btime_min<SHIPYARD_MIN_BUILD_TIME) 
-    			      {
-    			      	$btime_min=SHIPYARD_MIN_BUILD_TIME;
-    			      }
-    			      
-    			      $btime=ceil($btime-$people_working*$cfg->value('people_work_done'));
-    			      if ($btime<$btime_min) 
-    			      {
-    			      	$btime=$btime_min;
-    			      }
-
+    			      			if(isset($fleet[$data['ship_id']]))
+    			      			{
+									$ship_count += $fleet[$data['ship_id']];
+								}
+								
+								
+								// Bauzeit berechnen
+								$btime = ($data['ship_costs_metal'] + $data['ship_costs_crystal'] + $data['ship_costs_plastic'] + $data['ship_costs_fuel'] + $data['ship_costs_food']) / GLOBAL_TIME * SHIP_BUILD_TIME * $time_boni_factor * $cu->specialist->shipTime;
+								$btime_min = $btime * (0.1 - ($gen_tech_level / 100));
+								
+								//Mindest Bauzeit
+    			      			if ($btime_min < SHIPYARD_MIN_BUILD_TIME) 
+								{
+									$btime_min = SHIPYARD_MIN_BUILD_TIME;
+								}
+								
+								$btime = ceil($btime - $people_working * $cfg->value('people_work_done'));
+								if ($btime < $btime_min) 
+								{
+									$btime = $btime_min;
+								}
+								
 								//Nahrungskosten berechnen
-								$food_costs = $people_working*$cfg->value('people_food_require');
+								$food_costs = $people_working * $cfg->value('people_food_require');
 								
 								//Nahrungskosten versteckt übermitteln
 								echo "<input type=\"hidden\" name=\"additional_food_costs\" value=\"".$food_costs."\" />";
@@ -971,131 +971,136 @@
 								//Errechnet wie viele Schiffe von diesem Typ maximal Gebaut werden können mit den aktuellen Rohstoffen
 								
 								//Titan
-								if($data['ship_costs_metal']>0)
+								if($data['ship_costs_metal'] > 0)
 								{
-									$build_cnt_metal=floor($cp->resMetal/$data['ship_costs_metal']);
+									$build_cnt_metal = floor($cp->resMetal / $data['ship_costs_metal']);
 								}
 								else
 								{
-									$build_cnt_metal=99999999999;
+									$build_cnt_metal = 99999999999;
 								}
 
 								//Silizium
-								if($data['ship_costs_crystal']>0)
+								if($data['ship_costs_crystal'] > 0)
 								{
-									$build_cnt_crystal=floor($cp->resCrystal/$data['ship_costs_crystal']);
+									$build_cnt_crystal = floor($cp->resCrystal/$data['ship_costs_crystal']);
 								}
 								else
 								{
-									$build_cnt_crystal=99999999999;
+									$build_cnt_crystal = 99999999999;
 								}
 						
 								//PVC
-								if($data['ship_costs_plastic']>0)
+								if($data['ship_costs_plastic'] > 0)
 								{
-									$build_cnt_plastic=floor($cp->resPlastic/$data['ship_costs_plastic']);
+									$build_cnt_plastic = floor($cp->resPlastic / $data['ship_costs_plastic']);
 								}
 								else
 								{
-									$build_cnt_plastic=99999999999;
+									$build_cnt_plastic = 99999999999;
 								}
 								
 								//Tritium
-								if($data['ship_costs_fuel']>0)
+								if($data['ship_costs_fuel'] > 0)
 								{
-									$build_cnt_fuel=floor($cp->resFuel/$data['ship_costs_fuel']);
+									$build_cnt_fuel = floor($cp->resFuel / $data['ship_costs_fuel']);
 								}
 								else
 								{
-									$build_cnt_fuel=99999999999;
+									$build_cnt_fuel = 99999999999;
 								}
 
 								//Nahrung
-								if($food_costs>0)
+								if($food_costs > 0)
 								{
-									$build_cnt_food=floor($cp->resFood/$food_costs);
+									$build_cnt_food = floor($cp->resFood / $food_costs);
 								}
 								else
 								{
-									$build_cnt_food=99999999999;
+									$build_cnt_food = 99999999999;
 								}
 
 								//Begrente Anzahl baubar
-								if($data['ship_max_count']!=0)
+								if($data['ship_max_count'] != 0)
 								{
-									$max_cnt=$data['ship_max_count']-$ship_count;
+									$max_cnt = $data['ship_max_count'] - $ship_count;
 								}
 								else
 								{
-									$max_cnt=99999999999;
+									$max_cnt = 99999999999;
 								}
 
 								//Effetiv max. baubare Schiffe in Betrachtung der Rohstoffe und des Baumaximums
-								$ship_max_build=min($build_cnt_metal,$build_cnt_crystal,$build_cnt_plastic,$build_cnt_fuel,$build_cnt_food,$max_cnt);
-
+								$ship_max_build = min($build_cnt_metal,$build_cnt_crystal,$build_cnt_plastic,$build_cnt_fuel,$build_cnt_food,$max_cnt);
+								
 								//Tippbox Nachricht generieren
 								//X Schiffe baubar
-								if($ship_max_build>0)
+								if($ship_max_build > 0)
 								{
 									$tm_cnt="Es k&ouml;nnen maximal ".nf($ship_max_build)." Schiffe gebaut werden.";
 								}
 								//Zuwenig Rohstoffe. Wartezeit errechnen
-								elseif($ship_max_build==0)
+								elseif($ship_max_build == 0)
 								{
 									//Wartezeit Titan
-    			    		if ($cp->prodMetal>0)
-    			    		{
-    			    			$bwait['metal']=ceil(($data['ship_costs_metal']-$cp->resMetal)/$cp->prodMetal*3600);
-    			    		}
-    			    		else
-    			    		{
-    			    			$bwait['metal']=0;
-    			    		}
-    			    		
-    			    		//Wartezeit Silizium
-    			    		if ($cp->prodCrystal>0)
-    			    		{
-    			    			$bwait['crystal']=ceil(($data['ship_costs_crystal']-$cp->resCrystal)/$cp->prodCrystal*3600);
-    			    		}
-    			    		else
-    			    		{ 
-    			    			$bwait['crystal']=0;
-    			    		}
-    			    		
-    			    		//Wartezeit PVC
-    			    		if ($cp->prodPlastic>0)
-    			    		{
-    			    			$bwait['plastic']=ceil(($data['ship_costs_plastic']-$cp->resPlastic)/$cp->prodPlastic*3600);
-    			    		}
-    			    		else
-    			    		{ 
-    			    			$bwait['plastic']=0;
-    			    		}
-    			    		
-    			    		//Wartezeit Tritium
-    			    		if ($cp->prodFuel>0)
-    			    		{
-    			    			$bwait['fuel']=ceil(($data['ship_costs_fuel']-$cp->resFuel)/$cp->prodFuel*3600);
-    			    		}
-    			    		else
-    			    		{ 
-    			    			$bwait['fuel']=0;
-    			    		}
-    			    		
-    			    		//Wartezeit Nahrung
-    			    		if ($cp->prodFood>0)
-    			    		{
-    			    			$bwait['food']=ceil(($food_costs-$cp->resFood)/$cp->prodFood*3600);
-    			    		}
-    			    		else
-    			    		{ 
-    			    			$bwait['food']=0;
-    			    		}
-    			    		
-    			    		//Maximale Wartezeit ermitteln
-    			    		$bwmax=max($bwait['metal'],$bwait['crystal'],$bwait['plastic'],$bwait['fuel'],$bwait['food']);
-    			    		
-    			    		$tm_cnt="Rohstoffe verf&uuml;gbar in ".tf($bwmax)."";
+									if ($cp->prodMetal > 0)
+									{
+										$bwait['metal'] = ceil(($data['ship_costs_metal'] - $cp->resMetal) / $cp->prodMetal * 3600);
+										$bwmsg['metal'] = tm("Fehlender Rohstoff",nf($data['ship_costs_metal']-$cp->resMetal)." Titan<br />Bereit in ".tf($bwait['metal'])."");
+									}
+									else
+									{
+										$bwait['metal'] = 0;
+									}
+									
+									//Wartezeit Silizium
+									if ($cp->prodCrystal > 0)
+									{
+										$bwait['crystal'] = ceil(($data['ship_costs_crystal'] - $cp->resCrystal) / $cp->prodCrystal * 3600);
+										$bwmsg['crystal'] = tm("Fehlender Rohstoff",nf($data['ship_costs_crystal']-$cp->resCrystal)." Silizium<br />Bereit in ".tf($bwait['crystal'])."");
+									}
+									else
+									{ 
+										$bwait['crystal'] = 0;
+									}
+									
+									//Wartezeit PVC
+									if ($cp->prodPlastic > 0)
+									{
+										$bwait['plastic'] = ceil(($data['ship_costs_plastic'] - $cp->resPlastic) / $cp->prodPlastic * 3600);
+										$bwmsg['plastic'] = tm("Fehlender Rohstoff",nf($data['ship_costs_plastic']-$cp->resPlastic)." PVC<br />Bereit in ".tf($bwait['plastic'])."");
+									}
+									else
+									{ 
+										$bwait['plastic'] = 0;
+									}
+									
+									//Wartezeit Tritium
+									if ($cp->prodFuel > 0)
+									{
+										$bwait['fuel'] = ceil(($data['ship_costs_fuel'] - $cp->resFuel) / $cp->prodFuel * 3600);
+										$bwmsg['fuel'] = tm("Fehlender Rohstoff",nf($data['ship_costs_fuel']-$cp->resFuel)." Tritium<br />Bereit in ".tf($bwait['fuel'])."");
+									}
+									else
+									{ 
+										$bwait['fuel'] = 0;
+									}
+									
+									//Wartezeit Nahrung
+									if ($cp->prodFood > 0)
+									{
+										$bwait['food'] = ceil(($food_costs - $cp->resFood) / $cp->prodFood * 3600);
+										$bwmsg['food'] = tm("Fehlender Rohstoff",nf($data['ship_costs_food']-$cp->resFood)." Nahrung<br />Bereit in ".tf($bwait['food'])."");
+									}
+									else
+									{
+										$bwait['food'] = 0;
+									}
+									
+									//Maximale Wartezeit ermitteln
+									$bwmax = max($bwait['metal'],$bwait['crystal'],$bwait['plastic'],$bwait['fuel'],$bwait['food']);
+									
+									$tm_cnt="Rohstoffe verf&uuml;gbar in ".tf($bwmax)."";
 								}
 								else
 								{
@@ -1106,7 +1111,7 @@
 								//Titan
 								if($data['ship_costs_metal']>$cp->resMetal)
 								{
-									$ress_style_metal="style=\"color:red;\"";
+									$ress_style_metal="style=\"color:red;\" ".$bwmsg['metal']."";
 								}
 								else
 								{
@@ -1116,7 +1121,7 @@
 								//Silizium
 								if($data['ship_costs_crystal']>$cp->resCrystal)
 								{
-									$ress_style_crystal="style=\"color:red;\"";
+									$ress_style_crystal="style=\"color:red;\" ".$bwmsg['crystal']."";
 								}
 								else
 								{
@@ -1126,7 +1131,7 @@
 								//PVC
 								if($data['ship_costs_plastic']>$cp->resPlastic)
 								{
-									$ress_style_plastic="style=\"color:red;\"";
+									$ress_style_plastic="style=\"color:red;\" ".$bwmsg['plastic']."";
 								}
 								else
 								{
@@ -1136,7 +1141,7 @@
 								//Tritium
 								if($data['ship_costs_fuel']>$cp->resFuel)
 								{
-									$ress_style_fuel="style=\"color:red;\"";
+									$ress_style_fuel="style=\"color:red;\" ".$bwmsg['fuel']."";
 								}
 								else
 								{
@@ -1146,120 +1151,120 @@
 								//Nahrung
 								if($food_costs>$cp->resFood)
 								{
-									$ress_style_food="style=\"color:red;\"";
+									$ress_style_food="style=\"color:red;\" ".$bwmsg['food']."";
 								}
 								else
 								{
 									$ress_style_food="";
 								}
-
-
-    			      // Sicherstellen dass epische Spezialschiffe nur auf dem Hauptplanet gebaut werden
- 			      		if ($data['special_ship']==0 || $cp->isMain)
- 			      		{
- 			      			// Speichert die Anzahl gebauter Schiffe in eine Variable
- 			      			if(isset($shiplist[$data['ship_id']][$cp->id]))
- 			      			{
- 			      				$shiplist_count = $shiplist[$data['ship_id']][$cp->id];
- 			      			}
- 			      			else
- 			      			{
- 			      				$shiplist_count = 0;
- 			      			}
-									// Volle Ansicht
-    			      	if($cu->properties->itemShow=='full')
-    			      	{
-    			      		if ($ccnt>0)
-    			      		{
-    			      			echo "<tr>
-    			      							<td colspan=\"5\" style=\"height:5px;\"></td>
-    			      					</tr>";
-    			      		}
-    			      	  $s_img = IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$data['ship_id']."_middle.".IMAGE_EXT;
-    			      	  
-    			      	  echo "<tr>
-    			      	  				<th colspan=\"5\" height=\"20\">".$data['ship_name']."</th>
-    			      	  			</tr>
-    			      	  			<tr>
-    			      	  				<td width=\"120\" height=\"120\" rowspan=\"3\">";
-    			      	  				
-				    			      	  //Bei Spezialschiffen nur Bild ohne Link darstellen
-				    			      		if ($data['special_ship']==1)
-														{
-															echo "<img src=\"".$s_img."\" width=\"120\" height=\"120\" border=\"0\" />";
-														}
-														//Bei normalen Schiffen mit Hilfe verlinken
-														else
-														{
-															echo "<a href=\"".HELP_URL."&amp;id=".$data[ITEM_ID_FLD]."\" title=\"Info zu diesem Schiff anzeigen\">
-				    			      	  	<img src=\"".$s_img."\" width=\"120\" height=\"120\" border=\"0\" /></a>";
-				    			      	  }
-    			      	  	echo "</td>
-    			      	  				<td colspan=\"4\" valign=\"top\">".$data['ship_shortcomment']."</td>
-    			      	  			</tr>
-    			      	  			<tr>
-    			      	  				<th  height=\"30\">Vorhanden:</th>
-				    			      	  <td colspan=\"3\">".nf($shiplist_count)."</td>
-				    			      	</tr>
-				    			      	<tr>
-				    			      	 	<th height=\"30\">Bauzeit</th>
-    			      	  				<td>".tf($btime)."</td>";
-    			      	  				
-				    			      	  //Maximale Anzahl erreicht
-				    			      	  if ($ship_count>=$data['ship_max_count'] && $data['ship_max_count']!=0)
-				    			      	  {
-				    			      	     	echo "<th height=\"30\" colspan=\"2\"><i>Maximalanzahl erreicht</i></th>";
-				    			      	  }
-				    			      	  else
-				    			      	  {
-				    			      	      echo "<th height=\"30\">In Aufrag geben:</th>
-				    			      	      			<td><input type=\"text\" value=\"0\" name=\"build_count[".$data['ship_id']."]\" id=\"build_count_".$data['ship_id']."\" size=\"4\" maxlength=\"9\" ".tm("",$tm_cnt)." tabindex=\"".$tabulator."\" onkeyup=\"FormatNumber(this.id,this.value, ".$ship_max_build.", '', '');\"/> St&uuml;ck<br><a href=\"javascript:;\" onclick=\"document.getElementById('build_count_".$data['ship_id']."').value=".$ship_max_build.";\">max</a></td>";
-				    			      	  }
-    			      	  echo "</tr>";
-    			      	  echo "<tr>
-				    			      	  <th height=\"20\" width=\"110\">".RES_METAL.":</th>
-				    			      	  <th height=\"20\" width=\"97\">".RES_CRYSTAL.":</th>
-				    			      	  <th height=\"20\" width=\"98\">".RES_PLASTIC.":</th>
-				    			      	  <th height=\"20\" width=\"97\">".RES_FUEL.":</th>
-				    			      	  <th height=\"20\" width=\"98\">".RES_FOOD."</th></tr>";
-    			      	  echo "<tr>
-    			      	  				<td height=\"20\" width=\"110\" ".$ress_style_metal.">
-    			      	  					".nf($data['ship_costs_metal'])."
-    			      	  				</td>
-    			      	  				<td height=\"20\" width=\"25%\" ".$ress_style_crystal.">
-    			      	  					".nf($data['ship_costs_crystal'])."
-    			      	  				</td>
-    			      	  				<td height=\"20\" width=\"25%\" ".$ress_style_plastic.">
-    			      	  					".nf($data['ship_costs_plastic'])."
-    			      	  				</td>
-    			      	  				<td height=\"20\" width=\"25%\" ".$ress_style_fuel.">
-    			      	  					".nf($data['ship_costs_fuel'])."
-    			      	  				</td>
-    			      	  				<td height=\"20\" width=\"25%\" ".$ress_style_food.">
-    			      	  					".nf($food_costs)."
-    			      	  				</td>
-    			      	  			</tr>";
-    			      	}
-    			      	//Einfache Ansicht der Schiffsliste
-    			      	else
-    			      	{
-  			      			$s_img = IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$data['ship_id']."_small.".IMAGE_EXT;
-  			      			
-  			      			echo "<tr>
+								
+								// Sicherstellen dass epische Spezialschiffe nur auf dem Hauptplanet gebaut werden
+								if ($data['special_ship']==0 || $cp->isMain)
+								{
+ 			      				// Speichert die Anzahl gebauter Schiffe in eine Variable
+ 			      				if(isset($shiplist[$data['ship_id']][$cp->id]))
+ 			      				{
+ 			      					$shiplist_count = $shiplist[$data['ship_id']][$cp->id];
+ 			      				}
+ 			      				else
+ 			      				{
+ 			      					$shiplist_count = 0;
+ 			      				}
+								
+								// Volle Ansicht
+    			      			if($cu->properties->itemShow=='full')
+    			      			{
+    			      				if ($ccnt>0)
+    			      				{
+    			      					echo "<tr>
+    			      									<td colspan=\"5\" style=\"height:5px;\"></td>
+    			      							</tr>";
+    			      				}
+    			      	  		 	$s_img = IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$data['ship_id']."_middle.".IMAGE_EXT;
+								 	
+    			      	  		 	echo "<tr>
+    			      	  		 			<th colspan=\"5\" height=\"20\">".$data['ship_name']."</th>
+    			      	  		 		</tr>
+    			      	  		 		<tr>
+    			      	  		 			<td width=\"120\" height=\"120\" rowspan=\"3\">";
+    			      	  		 	
+								 	//Bei Spezialschiffen nur Bild ohne Link darstellen
+								 	if ($data['special_ship']==1)
+								 	{
+								 		echo "<img src=\"".$s_img."\" width=\"120\" height=\"120\" border=\"0\" />";
+								 	}
+								 	//Bei normalen Schiffen mit Hilfe verlinken
+								 	else
+								 	{
+								 		echo "<a href=\"".HELP_URL."&amp;id=".$data[ITEM_ID_FLD]."\" title=\"Info zu diesem Schiff anzeigen\">
+				    			   	  	<img src=\"".$s_img."\" width=\"120\" height=\"120\" border=\"0\" /></a>";
+								 	}
+    			      	  		 	echo "</td>
+								 			<td colspan=\"4\" valign=\"top\">".$data['ship_shortcomment']."</td>
+    			      	  		 		</tr>
+								 		<tr>
+								 			<th  height=\"30\">Vorhanden:</th>
+								 			<td colspan=\"3\">".nf($shiplist_count)."</td>
+								 		</tr>
+								 		<tr>
+								 			<th height=\"30\">Bauzeit</th>
+    			      	  		 			<td>".tf($btime)."</td>";
+    			      	  		 	
+								 	//Maximale Anzahl erreicht
+								 	if ($ship_count>=$data['ship_max_count'] && $data['ship_max_count']!=0)
+								 	{
+								 		echo "<th height=\"30\" colspan=\"2\"><i>Maximalanzahl erreicht</i></th>";
+								 	}
+								 	else
+								 	{
+								 		echo "<th height=\"30\">In Aufrag geben:</th>
+				    			   	      			<td><input type=\"text\" value=\"0\" name=\"build_count[".$data['ship_id']."]\" id=\"build_count_".$data['ship_id']."\" size=\"4\" maxlength=\"9\" ".tm("",$tm_cnt)." tabindex=\"".$tabulator."\" onkeyup=\"FormatNumber(this.id,this.value, ".$ship_max_build.", '', '');\"/> St&uuml;ck<br><a href=\"javascript:;\" onclick=\"document.getElementById('build_count_".$data['ship_id']."').value=".$ship_max_build.";\">max</a></td>";
+								 	}
+								 	echo "</tr>";
+								 	echo "<tr>
+				    			   	  <th height=\"20\" width=\"110\">".RES_METAL.":</th>
+				    			   	  <th height=\"20\" width=\"97\">".RES_CRYSTAL.":</th>
+				    			   	  <th height=\"20\" width=\"98\">".RES_PLASTIC.":</th>
+				    			   	  <th height=\"20\" width=\"97\">".RES_FUEL.":</th>
+				    			   	  <th height=\"20\" width=\"98\">".RES_FOOD."</th></tr>";
+								 	echo "<tr>
+    			      	  		 		<td height=\"20\" width=\"110\" ".$ress_style_metal.">
+    			      	  		 			".nf($data['ship_costs_metal'])."
+    			      	  		 		</td>
+    			      	  		 		<td height=\"20\" width=\"25%\" ".$ress_style_crystal.">
+    			      	  		 			".nf($data['ship_costs_crystal'])."
+								 		</td>
+								 		<td height=\"20\" width=\"25%\" ".$ress_style_plastic.">
+    			      	  		 			".nf($data['ship_costs_plastic'])."
+    			      	  		 		</td>
+    			      	  		 		<td height=\"20\" width=\"25%\" ".$ress_style_fuel.">
+    			      	  		 			".nf($data['ship_costs_fuel'])."
+    			      	  		 		</td>
+    			      	  		 		<td height=\"20\" width=\"25%\" ".$ress_style_food.">
+    			      	  		 			".nf($food_costs)."
+    			      	  		 		</td>
+    			      	  		 	</tr>";
+								}
+								//Einfache Ansicht der Schiffsliste
+								else
+								{
+									$s_img = IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$data['ship_id']."_small.".IMAGE_EXT;
+									
+									echo "<tr>
   			      							<td>";
   			      						
-	  			      						//Spezialschiffe ohne Link darstellen
-				  			      			if ($data['special_ship']==1)
-														{
-				  			      				echo "<img src=\"$s_img\" width=\"40\" height=\"40\" border=\"0\" /></td>";
-				  			      			}
-				  			      			//Normale Schiffe mit Link zur Hilfe darstellen
-				  			      			else
-				  			      			{
-				  			      				echo "<a href=\"".HELP_URL."&amp;id=".$data[ITEM_ID_FLD]."\"><img src=\"".$s_img."\" width=\"40\" height=\"40\" border=\"0\" /></a></td>";
-				  			      			}
-				  			      			
-	  			      			echo "<th width=\"30%\">
+	  			      				//Spezialschiffe ohne Link darstellen
+				  			      	if ($data['special_ship']==1)
+									{
+				  			      		echo "<img src=\"$s_img\" width=\"40\" height=\"40\" border=\"0\" /></td>";
+				  			      	}
+				  			      	//Normale Schiffe mit Link zur Hilfe darstellen
+				  			      	else
+				  			      	{
+				  			      		echo "<a href=\"".HELP_URL."&amp;id=".$data[ITEM_ID_FLD]."\"><img src=\"".$s_img."\" width=\"40\" height=\"40\" border=\"0\" /></a></td>";
+				  			      	}
+									
+	  			      				echo "<th width=\"30%\">
 	  			      							<span style=\"font-weight:500\">".$data['ship_name']."<br/>
 	  			      							Gebaut:</span> ".nf($shiplist_count)."
 	  			      						</th>

@@ -29,7 +29,7 @@
 	*/	
 
   // DEFINITIONEN //
-
+print_r($_POST);
 if ($cu->properties->cssStyle=="Classic" || $cu->properties->cssStyle=="Dark")
 {
   define('NUM_BUILDINGS_PER_ROW',4);
@@ -42,6 +42,8 @@ else
   define('CELL_WIDTH',120);
   define('TABLE_WIDTH','auto');
 }
+
+define('HELP_URL',"?page=help&site=buildings");
 	
 	// Aktiviert / Deaktiviert Bildfilter
 	if ($cu->properties->imageFilter==1)
@@ -296,6 +298,21 @@ function calcDemolishingWaitTime($dc,$cp)
 /********************
 * Gebäudedetail     *
 ********************/
+
+		if (is_array($_POST['command_build']))
+		{
+			foreach($_POST['command_build'] as $bid=>$bmsg)
+			{
+				foreach ($_POST['id'] as $id=>$msg)
+				{
+					if ($id==$bid)
+					{
+						$_POST['id'] = $bid;
+						break;
+					}
+				}
+			}
+		}
 
 		//Gebäude ausbauen/abreissen/abbrechen
 		if ((isset($_GET['id']) && $_GET['id'] >0) || (count($_POST)>0 && checker_verify()))
@@ -1032,8 +1049,23 @@ function calcDemolishingWaitTime($dc,$cp)
 				{
 					tableStart($tarr['type_name'],TABLE_WIDTH);
 
-						$cnt = 0; // Counter for current row
-						$scnt = 0; // Counter for shown buildings
+					//Einfache Ansicht
+					if ($cu->properties->itemShow!='full')
+					{
+						echo "<tr>
+										<th colspan=\"2\">Gebäude</th>
+										<th>Zeit</th>
+										<th>".RES_METAL."</th>
+										<th>".RES_CRYSTAL."</th>
+										<th>".RES_PLASTIC."</th>
+										<th>".RES_FUEL."</th>
+										<th>".RES_FOOD."</th>
+										<th>Ausbau</th>
+									</tr>";
+					}
+					
+					$cnt = 0; // Counter for current row
+					$scnt = 0; // Counter for shown buildings
 
 						$bdata = $building[$tarr['type_id']];
 						if (isset($bdata) && count($bdata)>0)
@@ -1148,20 +1180,111 @@ function calcDemolishingWaitTime($dc,$cp)
 								else
 								{
 									// Zuwenig Ressourcen
-									
-                	$bc = calcBuildingCosts($bv,$b_level,$cu->specialist->costsBuilding);
+                					$bc = calcBuildingCosts($bv,$b_level,$cu->specialist->costsBuilding);
 									if($b_level<$bv['last_level'] && $cp->resMetal < $bc['metal'] || $cp->resCrystal < $bc['crystal']  || $cp->resPlastic < $bc['plastic']  || $cp->resFuel < $bc['fuel']  || $cp->resFood < $bc['food'])
 									{
-										$tmtext = "<span style=\"color:#f00\">Zuwenig Ressourcen f&uuml;r weiteren Ausbau!</span><br/>";
-										$color = '#f00';
-										
-										if($use_img_filter)
+										if ($cu->properties->itemShow!='full')
 										{
-											$img = "misc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid.".".IMAGE_EXT."&filter=lowres";
+											$tmtext = "<span style=\"color:#f00\">Zuwenig Ressourcen f&uuml;r weiteren Ausbau!</span><br/>";
+											//Stellt Rohstoff Rot dar, wenn es von diesem zu wenig auf dem Planeten hat
+											//Titan
+											if($bc['metal']>$cp->resMetal)
+											{
+												$style['metal'] = "style=\"color:red;\" ";
+												if ($cp->prodMetal > 0)
+												{
+													$bwait['metal'] = ceil(($bc['metal']-$cp->resMetal)/$cp->prodMetal*3600);
+													$bwmsg['metal'] = tm("Fehlender Rohstoff",nf($bc['metal']-$cp->resMetal)." Titan<br />Bereit in ".tf($bwait['metal'])."");
+													$style['metal'] .= $bwmsg['metal']."";
+												}
+
+											}
+											else
+											{
+												$style['metal'] = "";
+											}
+
+											//Silizium
+											if($bc['crystal']>$cp->resCrystal)
+											{
+												$style['crystal'] = "style=\"color:red;\" ";
+												if ($cp->prodCrystal > 0)
+												{
+													$bwait['crystal'] = ceil(($bc['crystal']-$cp->resCrystal)/$cp->prodCrystal*3600);
+													$bwmsg['crystal'] = tm("Fehlender Rohstoff",nf($bc['crystal']-$cp->resCrystal)." Silizium<br />Bereit in ".tf($bwait['crystal'])."");
+													$style['crystal'] .= $bwmsg['crystal']."";
+												}
+
+											}
+											else
+											{
+												$style['crystal'] = "";
+											}
+
+											//PVC
+											if($bc['plastic']>$cp->resPlastic)
+											{
+												$style['plastic'] = "style=\"color:red;\" ";
+												if ($cp->prodPlastic > 0)
+												{
+													$bwait['plastic'] = ceil(($bc['plastic']-$cp->resPlastic)/$cp->prodPlastic*3600);
+													$bwmsg['plastic'] = tm("Fehlender Rohstoff",nf($bc['plastic']-$cp->resPlastic)." PVC<br />Bereit in ".tf($bwait['plastic'])."");
+													$style['plastic'] .= $bwmsg['plastic']."";
+												}
+
+											}
+											else
+											{
+												$style['plastic'] = "";
+											}
+
+											//Tritium
+											if($bc['fuel']>$cp->resFuel)
+											{
+												$style['fuel'] = "style=\"color:red;\" ";
+												if ($cp->prodFuel > 0)
+												{
+													$bwait['fuel'] = ceil(($bc['fuel']-$cp->resFuel)/$cp->prodFuel*3600);
+													$bwmsg['fuel'] = tm("Fehlender Rohstoff",nf($bc['fuel']-$cp->resFuel)." Tirtium<br />Bereit in ".tf($bwait['fuel'])."");
+													$style['fuel'] .= $bwmsg['fuel']."";
+												}
+
+											}
+											else
+											{
+												$style['fuel'] = "";
+											}
+
+											//Nahrung
+											if($bc['food']>$cp->resFood)
+											{
+												$style['food'] = "style=\"color:red;\" ";
+												if ($cp->prodFood > 0)
+												{
+													$bwait['food'] = ceil(($bc['fuel']-$cp->resFood)/$cp->prodFood*3600);
+													$bwmsg['food'] = tm("Fehlender Rohstoff",nf($bc['food']-$cp->resFood)." Tirtium<br />Bereit in ".tf($bwait['food'])."");
+													$style['food'] .= $bwmsg['food']."";
+												}
+
+											}
+											else
+											{
+												$style['food'] = "";
+											}
 										}
 										else
 										{
-											$img="".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid.".".IMAGE_EXT."";
+											$tmtext = "<span style=\"color:#f00\">Zuwenig Ressourcen f&uuml;r weiteren Ausbau!</span><br/>";
+											$color = '#f00';
+										
+											if($use_img_filter)
+											{
+												$img = "misc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid.".".IMAGE_EXT."&filter=lowres";
+											}
+											else
+											{
+												$img="".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid.".".IMAGE_EXT."";
+											}
 										}
 									}
 									else
@@ -1169,6 +1292,7 @@ function calcDemolishingWaitTime($dc,$cp)
 										$tmtext = "";
 										$color = '#fff';
 										$img="".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid.".".IMAGE_EXT."";
+										$style['metal'] = $style['crystal'] = $style['plastic'] = $style['food'] = "";
 									}
 									
 									if ($b_level==0)
@@ -1178,6 +1302,7 @@ function calcDemolishingWaitTime($dc,$cp)
 									elseif ($b_level>=$bv['last_level'])
 									{
 										$subtitle = 'Vollständig ausgebaut';
+										$tmtext = '';
 									}
 									else
 									{
@@ -1193,63 +1318,117 @@ function calcDemolishingWaitTime($dc,$cp)
 									if (!$requirements_passed)
 										$img = "misc/imagefilter.php?file=$img&filter=req";
 
-									// Display row starter if needed				
-									if ($cnt==0) 
+									//Einfache Ansicht
+									if ($cu->properties->itemShow!='full')
 									{
-										echo "<tr>";
-									}
-									
-									if ($cu->properties->cssStyle=="Classic" || $cu->properties->cssStyle=="Dark")
-									{
-										echo "<td style=\"color:".$color.";text-align:center;width:".CELL_WIDTH."\">
-													<b>".$bv['name']."";
-													if ($b_level>0) echo ' '.$b_level;
-													echo "</b><br/>".$subtitle."<br/>
-													<input name=\"show_".$bid."\" type=\"image\" value=\"".$bid."\" src=\"".$img."\" ".tm($bv['name'],$tmtext.$bv['shortcomment'])." style=\"width:120px;height:120px;\" />
-									</td>\n";
+										$img = IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid."_small.".IMAGE_EXT;
+
+	  			      					echo "<tr>
+	  			      							<td>
+					  			      				<a href=\"".HELP_URL."&amp;id=".$bid."\"><img src=\"".$img."\" width=\"40\" height=\"40\" border=\"0\" /></a>
+												</td>
+												<th width=\"45%\">
+		  			      							<span style=\"font-weight:500\">".$bv['name']."<br/>
+		  			      							Suffe:</span> ".nf($b_level)."
+		  			      						</th>";
+										if (!$requirements_passed || $b_level>=$bv['last_level'])
+										{
+											echo "<td width=\"90%\" style=\"color:#999\" colspan=\"7\" ".tm($bv['name'],$subtitle."<br/>".$tmtext).">".$subtitle."</td>";
+										}
+										elseif (isset($buildlist[$bid]['buildlist_build_type']) && ($buildlist[$bid]['buildlist_build_type']==4 || $buildlist[$bid]['buildlist_build_type']==3))
+										{
+											echo "<td id=\"buildtime\">-</td>
+					      					<td colspan=\"6\"  id=\"buildprogress\" style=\"height:100%;background:#fff;text-align:center;\"></td>";
+											countDown("buildtime",$end_time,"buildcancel");
+											jsProgressBar("buildprogress",$start_time,$end_time);
+										}
+										else
+										{
+											echo "<td width=\"40%\">".tf($bc['time'])."</td>
+	  			      						<td width=\"10%\" ".$style['metal'].">".nf($bc['metal'])."</td>
+	  			      						<td width=\"10%\" ".$style['crystal'].">".nf($bc['crystal'])."</td>
+	  			      						<td width=\"10%\" ".$style['plastic'].">".nf($bc['plastic'])."</td>
+	  			      						<td width=\"10%\" ".$style['fuel'].">".nf($bc['fuel'])."</td>
+	  			      						<td width=\"10%\" ".$style['food'].">".nf($bc['food'])."</td>";
+	
+										//Maximale Anzahl erreicht
+					  			      	if ($tmtext!="")
+					  			      	{
+					  			      	    echo "<td style=\"color:red;\" ".tm($bv['name'],$subtitle."<br/>".$tmtext).">Bauen</td></tr>";
+					  			      	}
+					  			      	else
+					  			      	{
+					  			      	    echo "<td>
+													<form action=\"?page=$page\" method=\"post\">";
+											        echo "<input type=\"hidden\" name=\"id[$bid]\" value=\"".$bid."\">";
+											        checker_init();
+													echo "<input type=\"submit\" class=\"button\" name=\"command_build[$bid]\" value=\"Ausbauen\"></td</tr>";
+					  			      	}	
+										}
+
 									}
 									else
 									{
-										echo "<td style=\"background:url('".$img."') no-repeat;width:".CELL_WIDTH."px;height:".CELL_WIDTH."px ;padding:0px;\">";
-										echo "<div style=\"position:relative;height:".CELL_WIDTH."px;overflow:hidden;\">
-											<div class=\"buildOverviewObjectTitle\">".$bv['name']."</div>";
-										echo "<a href=\"?page=$page&amp;id=".$bid."\" ".tm($bv['name'],"<b>".$subtitle."</b><br/>".$tmtext.$bv['shortcomment'])." style=\"display:block;height:180px;\"></a>";
-										if ($b_level>0 || ($b_level==0 && isset($buildlist[$bid]['buildlist_build_type']) && $buildlist[$bid]['buildlist_build_type']==3)) 
+										// Display row starter if needed				
+										if ($cnt==0) 
 										{
-											echo "<div class=\"buildOverviewObjectLevel\" style=\"color:".$color."\">".$b_level."</div>";
+											echo "<tr>";
 										}
-										echo "</div>";
-										echo "</td>\n";
+										
+										if ($cu->properties->cssStyle=="Classic" || $cu->properties->cssStyle=="Dark")
+										{
+											echo "<td style=\"color:".$color.";text-align:center;width:".CELL_WIDTH."\">
+														<b>".$bv['name']."";
+														if ($b_level>0) echo ' '.$b_level;
+														echo "</b><br/>".$subtitle."<br/>
+														<input name=\"show_".$bid."\" type=\"image\" value=\"".$bid."\" src=\"".$img."\" ".tm($bv['name'],$tmtext.$bv['shortcomment'])." style=\"width:120px;height:120px;\" />
+										</td>\n";
+										}
+										else
+										{
+											echo "<td style=\"background:url('".$img."') no-repeat;width:".CELL_WIDTH."px;height:".CELL_WIDTH."px ;padding:0px;\">";
+											echo "<div style=\"position:relative;height:".CELL_WIDTH."px;overflow:hidden;\">
+												<div class=\"buildOverviewObjectTitle\">".$bv['name']."</div>";
+											echo "<a href=\"?page=$page&amp;id=".$bid."\" ".tm($bv['name'],"<b>".$subtitle."</b><br/>".$tmtext.$bv['shortcomment'])." style=\"display:block;height:180px;\"></a>";
+											if ($b_level>0 || ($b_level==0 && isset($buildlist[$bid]['buildlist_build_type']) && $buildlist[$bid]['buildlist_build_type']==3)) 
+											{
+												echo "<div class=\"buildOverviewObjectLevel\" style=\"color:".$color."\">".$b_level."</div>";
+											}
+											echo "</div>";
+											echo "</td>\n";
+										}
+										$cnt++;
+										$scnt++;
 									}
-									$cnt++;
-									$scnt++;
+								}
+									
+									// Display row finisher if needed			
+									if ($cnt==NUM_BUILDINGS_PER_ROW)
+									{
+										echo "</tr>";
+										$cnt = 0;
+									}	
+							}	
+							if ($cu->properties->itemShow=='full')
+							{
+								// Fill up missing cols and end row
+								if ($cnt<NUM_BUILDINGS_PER_ROW && $cnt>0)
+								{
+									for ($x=0;$x < NUM_BUILDINGS_PER_ROW-$cnt;$x++)
+									{
+										echo "<td class=\"buildOverviewObjectNone\" style=\"width:".CELL_WIDTH."px;padding:0px;\">&nbsp;</td>";
+									}
+									echo '</tr>';
 								}
 								
-								// Display row finisher if needed			
-								if ($cnt==NUM_BUILDINGS_PER_ROW)
-								{
-									echo "</tr>";
-									$cnt = 0;
-								}	
-							}	
-							
-							// Fill up missing cols and end row
-							if ($cnt<NUM_BUILDINGS_PER_ROW && $cnt>0)
-							{
-								for ($x=0;$x < NUM_BUILDINGS_PER_ROW-$cnt;$x++)
-								{
-									echo "<td class=\"buildOverviewObjectNone\" style=\"width:".CELL_WIDTH."px;padding:0px;\">&nbsp;</td>";
-								}
-								echo '</tr>';
-							}
-							
-							if ($scnt==0)
-							{								
-								echo "<tr>
+								if ($scnt==0)
+								{								
+									echo "<tr>
 												<td colspan=\"".NUM_BUILDINGS_PER_ROW."\" style=\"text-align:center;border:0;width:100%\">
 													<i>In dieser Kategorie kann momentan noch nichts gebaut werden!</i>
 												</td>
 											</tr>";								
+								}
 							}
 						}
 						else

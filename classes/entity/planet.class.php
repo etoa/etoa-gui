@@ -702,6 +702,23 @@
 					return $this->resFood;
 			}
 		}
+		
+		function getProd($i) 
+		{ 
+			switch ($i)
+			{
+				case 1:
+					return $this->prodMetal;
+				case 2:
+					return $this->prodCrystal;
+				case 3:
+					return $this->prodPlastic;
+				case 4:
+					return $this->prodFuel;
+				case 5:
+					return $this->prodFood;
+			}
+		}
 
 		/**
 		 * Change resource on planet
