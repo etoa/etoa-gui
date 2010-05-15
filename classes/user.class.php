@@ -460,7 +460,7 @@
 			{
 				if (!$this->holiday)
 				{
-					if ($this->lastOnline>time()-USER_INACTIVE_SHOW*86400)
+					if ($this->lastOnline<time()-USER_INACTIVE_SHOW*86400)
 					{
 						return true;
 					}

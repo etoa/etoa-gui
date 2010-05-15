@@ -399,13 +399,13 @@
 				<th class=\"resBoxTitleCell\"><div class=\"respeople\">Bewohner</div></th>
 				<th class=\"resBoxTitleCell\"><div class=\"respower\">Energie</div></th>
 				</tr><tr>
-				<td class=\"$style0\">".nf(floor($this->resMetal))."</td>
-				<td class=\"$style1\">".nf(floor($this->resCrystal))."</td>
-				<td class=\"$style2\">".nf(floor($this->resPlastic))."</td>
-				<td class=\"$style3\">".nf(floor($this->resFuel))."</td>
-				<td class=\"$style4\">".nf(floor($this->resFood))."</td>
-				<td class=\"$style5\">".nf(floor($this->people))."</td>
-				<td class=\"$style6\">".nf($power_rest)."</td>
+				<td class=\"$style0\" ".mTT(RES_METAL,"<img src=\"images/resources/metal.png\" style=\"float:left;margin-right:5px;\"/> <b>Vorhanden:</b> ".nf($this->resMetal)."<br/><b>Speicher:</b> ".nf($this->storeMetal)."<br style=\"clear:both;\"/>").">".nf(floor($this->resMetal))."</td>
+				<td class=\"$style1\" ".mTT(RES_CRYSTAL,"<img src=\"images/resources/crystal.png\" style=\"float:left;margin-right:5px;\"/> <b>Vorhanden:</b> ".nf($this->resCrystal)."<br/><b>Speicher:</b> ".nf($this->storeCrystal)."<br style=\"clear:both;\"/>").">".nf(floor($this->resCrystal))."</td>
+				<td class=\"$style2\" ".mTT(RES_PLASTIC,"<img src=\"images/resources/plastic.png\" style=\"float:left;margin-right:5px;\"/> <b>Vorhanden:</b> ".nf($this->resPlastic)."<br/><b>Speicher:</b> ".nf($this->storePlastic)."<br style=\"clear:both;\"/>").">".nf(floor($this->resPlastic))."</td>
+				<td class=\"$style3\" ".mTT(RES_FUEL,"<img src=\"images/resources/fuel.png\" style=\"float:left;margin-right:5px;\"/> <b>Vorhanden:</b> ".nf($this->resFuel)."<br/><b>Speicher:</b> ".nf($this->storeFuel)."<br style=\"clear:both;\"/>").">".nf(floor($this->resFuel))."</td>
+				<td class=\"$style4\" ".mTT(RES_FOOD,"<img src=\"images/resources/food.png\" style=\"float:left;margin-right:5px;\"/> <b>Vorhanden:</b> ".nf($this->resFood)."<br/><b>Speicher:</b> ".nf($this->storeFood)."<br style=\"clear:both;\"/>").">".nf(floor($this->resFood))."</td>
+				<td class=\"$style5\" ".mTT("Bevölkerung","<img src=\"images/resources/people.png\" style=\"float:left;margin-right:5px;\"/> <b>Vorhanden:</b> ".nf($this->people)."<br/><b>Platz:</b> ".nf($this->people_place)."<br style=\"clear:both;\"/>").">".nf(floor($this->people))."</td>
+				<td class=\"$style6\" ".mTT(RES_POWER,"<img src=\"images/resources/power.png\" style=\"float:left;margin-right:5px;\"/> <b>Produktion:</b> ".nf($this->prodPower)."<br/><b>Verfügbar:</b> ".nf($power_rest)."<br/><b>Verbrauch:</b> ".nf($this->usePower)."<br style=\"clear:both;\"/>").">".nf($power_rest)."</td>
 				</tr>";
 
 				/*	

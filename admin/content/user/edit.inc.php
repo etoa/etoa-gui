@@ -11,6 +11,7 @@
 			// Geänderte Daten speichern
 			if (isset($_POST['save']))
 			{
+				
 				// Speichert Usertdaten in der Tabelle "users"
 				$sql = "UPDATE users SET
 				user_name='".$_POST['user_name']."',
@@ -55,34 +56,34 @@
 				}
 
 				// Handle  image
-        if (isset($_POST['profile_img_del']) && $_POST['profile_img_del']==1)
-        {
+        		if (isset($_POST['profile_img_del']) && $_POST['profile_img_del']==1)
+        		{
 					$res = dbquery("SELECT user_profile_img FROM users WHERE user_id=".$id.";");
 					if (mysql_num_rows($res)>0)
 					{
 						$arr=mysql_fetch_array($res);
-	          if (file_exists(PROFILE_IMG_DIR."/".$arr['user_profile_img']))
-	          {
-	              unlink(PROFILE_IMG_DIR."/".$arr['user_profile_img']);
-	          }
-	          $sql.=",user_profile_img=''";
-	        }
-        }
-        
-        // Handle avatar
-        if (isset($_POST['avatar_img_del']) && $_POST['avatar_img_del']==1)
-        {
+	          			if (file_exists(PROFILE_IMG_DIR."/".$arr['user_profile_img']))
+	          			{
+	              			unlink(PROFILE_IMG_DIR."/".$arr['user_profile_img']);
+	          			}
+	          			$sql.=",user_profile_img=''";
+	        		}
+        		}
+        		
+        		// Handle avatar
+        		if (isset($_POST['avatar_img_del']) && $_POST['avatar_img_del']==1)
+        		{
 					$res = dbquery("SELECT user_avatar FROM users WHERE user_id=".$id.";");
 					if (mysql_num_rows($res)>0)
 					{
 						$arr=mysql_fetch_array($res);
-	          if (file_exists(BOARD_AVATAR_DIR."/".$arr['user_avatar']))
-	          {
-	              unlink(BOARD_AVATAR_DIR."/".$arr['user_avatar']);
-	          }
-	          $sql.=",user_avatar=''";
-	        }
-        }        
+	          			if (file_exists(BOARD_AVATAR_DIR."/".$arr['user_avatar']))
+	          			{
+	              			unlink(BOARD_AVATAR_DIR."/".$arr['user_avatar']);
+	          			}
+	          			$sql.=",user_avatar=''";
+	        		}
+        		}        
 
 				// Handle password
 				if (isset($_POST['user_password']) && $_POST['user_password']!="")
@@ -212,6 +213,7 @@
 				SELECT
 					users.*,
 					races.*,
+					user_properties.*,
 					user_sessionlog.time_action AS time_log,
 					user_sessionlog.ip_addr AS ip_log,
 					user_sessionlog.user_agent AS agent_log,
@@ -246,7 +248,7 @@
 			{
 				// Load data				
 				$arr = mysql_fetch_array($res);
-
+				
 				// Some preparations
 				$st = $arr['user_specialist_time']>0 ? $arr['user_specialist_time'] : time();
 				
