@@ -9,8 +9,8 @@
 		private $owner;
 
 		private $items = null;
-		private $itemStatus = null;	
 		private $count = null;
+		public static $underConstruction = false;
 		
 		private $tmpItems = array();
 		
@@ -18,7 +18,11 @@
 		
 		private $totalPeopleWorking = null;
 		
+		public $tl = null;
+		
 		private $errorMsg;
+		
+		public static $GENTECH = 0;
 
 		/**
 		 * Constructor
@@ -30,54 +34,84 @@
 		{
 			$this->entityId = $entityId;
 			$this->ownerId = $ownerId;
-			if ($load==1)
-				$this->load();
+			if ($load>0)
+				$this->load($load);
 		}
 	
-	  public function getIterator() 
-  	{
-  		if ($this->items == null)
-  			$this->load();
-    	return new ArrayIterator($this->items);
-  	}
-	
-		private function load()
+		public function getIterator() 
 		{
+			if ($this->items == null)
+				$this->load();
+			return new ArrayIterator($this->items);
+		}
+		
+		public function getCatIterator($catId=0)
+		{
+			if ($this->items == null)
+				$this->load();
+			$catItems = array();
+			foreach ($this->items as $id=>$item)
+			{
+				if ($item->building->typeId == $catId)
+					$catItems[$id] = $item;
+			}
+			return new ArrayIterator(&$catItems);
+		}
+		
+		private function load($load=1)
+		{
+			$this->tl = new TechList($this->ownerId);
+			
 			$this->items = array();
-			$this->itemStatus = array();
 			$this->count = 0;
 			
-			$res = dbquery("
-			SELECT	
-				l.buildlist_id,
-				l.buildlist_current_level,
-				l.buildlist_deactivated,
-				l.buildlist_cooldown,
-				l.buildlist_people_working,
-				l.buildlist_prod_percent,
-				i.*
-			FROM 
-				buildlist l
-			INNER JOIN
-				buildings i
-			ON
-				l.buildlist_building_id = i.building_id
-				AND l.buildlist_entity_id='".$this->entityId."'
-				AND l.buildlist_current_level>0;");
+			if ($load==2)
+			{
+				$sql = "SELECT	
+							l.*,
+							i.*
+						FROM 
+							buildings i
+						LEFT JOIN
+							buildlist l
+						ON
+							l.buildlist_building_id = i.building_id
+							AND l.buildlist_entity_id='".$this->entityId."'
+						WHERE i.building_show='1'
+						ORDER BY
+							i.building_order,
+							i.building_name;";
+			}
+			else
+			{
+				$sql = "SELECT	
+							l.*,
+							i.*
+						FROM 
+							buildlist l
+						INNER JOIN
+							buildings i
+						ON
+							l.buildlist_building_id = i.building_id
+							AND l.buildlist_entity_id='".$this->entityId."'
+							AND l.buildlist_current_level>'0'
+						ORDER BY
+							i.building_order,
+							i.building_name;";
+			}
+			$res = dbquery($sql);
+			
 			if (mysql_num_rows($res)>0)
 			{		
 				while ($arr = mysql_fetch_assoc($res))
 				{
-					$this->items[$arr['building_id']] = new Building($arr);
-					$this->itemStatus[$arr['building_id']] = array(
-						'listid' => $arr['buildlist_id'],
-						'level' => $arr['buildlist_current_level'],
-						'deactivated' => $arr['buildlist_deactivated'],
-						'cooldown' => $arr['buildlist_cooldown'],
-						'people_working' => $arr['buildlist_people_working'],
-						'prod_percent' => $arr['buildlist_prod_percent']
-					);
+					$this->items[$arr['building_id']] = new BuildlistItem($arr);
 					$this->count++;
+					
+					if (($arr['buildlist_build_type']==3 || $arr['buildlist_build_type']==4) && $arr['buildlist_build_end_time']>time())
+					{
+						self::$underConstruction = true;
+					}
 				}
 			}			
 		}			
@@ -115,24 +149,40 @@
 				return $this->tmpItems[$bid];
 			return false;			
 		}
+		
+		function isUnderConstruction()
+		{
+			if (!isset(self::$underConstruction))
+				$this->load();
+			return self::$underConstruction;
+		}
 			
 		function getLevel($bid)
 		{
 			if ($this->items==null)
 				$this->load();
-			if (isset($this->itemStatus[$bid]))
-				return $this->itemStatus[$bid]['level'];
+			if (isset($this->items[$bid]))
+				return $this->items[$bid]->level;
 			return 0;
-		}	
+		}
+		
+		function getStatus($bid)
+		{
+			if ($this->items==null)
+				$this->load();
+			if (isset($this->items[$bid]))
+				return $this->items[$bid]->buildType;
+			return 0;
+		}
 
 		function getDeactivated($bid)
 		{
 			if ($this->items==null)
 				$this->load();
-			if (isset($this->itemStatus[$bid]))
+			if (isset($this->items[$bid]))
 			{
-				if ($this->itemStatus[$bid]['deactivated'] > time())
-					return $this->itemStatus[$bid]['deactivated'];
+				if ($this->items[$bid]->deactivated > time())
+					return $this->item[$bid]->deactivated;
 			}
 			return false;	
 		}	
@@ -141,19 +191,40 @@
 		{
 			if ($this->items==null)
 				$this->load();
-			if (isset($this->itemStatus[$bid]))
-				return $this->itemStatus[$bid]['people_working'];
+			if (isset($this->items[$bid]))
+			{
+				return $this->items[$bid]->peopleWorking;
+			}
 			return 0;
-		}				
+		}
+		
+		function setPeopleWorking($bid,$people)
+		{
+			if ($this->items==null)
+				$this->load();
+			if (!$this->isUnderConstruction)
+			{
+				if (isset($this->items[$bid]))
+				{
+					$free = $this->items[$bid]->peopleWorking + $this->totalPeopleWorking();
+					if ($free >= $people)
+					{
+						if ($this->items[$bid]->setPeopleWorking($people))
+							return true;
+					}
+				}
+			}
+			return false;
+		}
 		
 		function getCooldown($bid)
 		{
 			if ($this->items==null)
 				$this->load();
-			if (isset($this->itemStatus[$bid]))
+			if (isset($this->items[$bid]))
 			{
-				if ($this->itemStatus[$bid]['cooldown'] > time())
-					return $this->itemStatus[$bid]['cooldown'];
+				if ($this->items[$bid]->cooldown > time())
+					return $this->items[$bid]->cooldown;
 			}
 			return false;	
 		}		
@@ -162,40 +233,33 @@
 		{
 			if ($this->items==null)
 				$this->load();
-			if (isset($this->itemStatus[$bid]))
+			if (isset($this->items[$bid]))
 			{
-				$this->itemStatus[$bid]['cooldown'] = $cd;
-				$res = dbquery("
-				UPDATE
-					buildlist 
-				SET
-					buildlist_cooldown=".$cd."
-				WHERE 
-					buildlist_id=".$this->itemStatus[$bid]['listid'].";");				
+				$this->items[$bid]->cooldown = $cd;				
 			}
 		}		
 		
 		function totalPeopleWorking()
 		{
-			if ($this->totalPeopleWorking!=null)
+			if ($this->totalPeopleWorking>-1)
 				return $this->totalPeopleWorking;
 			if ($this->items!=null)
 			{
 				$this->totalPeopleWorking = 0;
-				foreach ($this->itemStatus as $k=>&$v)
+				foreach ($this->items as $k=>&$v)
 				{
-					$this->totalPeopleWorking+=$v['people_working'];
+					$this->totalPeopleWorking+=$v->peopleWorking;
 				}
 				unset($v);
 				return $this->totalPeopleWorking;
 			}
-			$res = dbquery("
-			SELECT 
-				SUM(buildlist_people_working) 
-			FROM 
-				buildlist
-			WHERE 
-				buildlist_entity_id='".$this->entityId."';");
+			
+			$res = dbquery("SELECT 
+								SUM(buildlist_people_working) 
+							FROM 
+								buildlist
+							WHERE 
+								buildlist_entity_id='".$this->entityId."';");
 			$pbarr = mysql_fetch_row($res);
 			$this->totalPeopleWorking = $pbarr[0];
 			return $this->totalPeopleWorking;			
@@ -206,9 +270,9 @@
 			if ($this->items==null)
 				$this->load();
 			$this->bunkerRes= 0;
-			foreach ($this->itemStatus as $k=>&$v)
+			foreach ($this->items as $k=>&$v)
 			{
-				$this->bunkerRes+= $this->item($k)->bunkerRes*intpow($this->item($k)->storeFactor,$v['level']-1);
+				$this->bunkerRes+= $v->bunkerRes;
 			}
 			return $this->bunkerRes;
 		}
@@ -218,9 +282,9 @@
 			if ($this->items==null)
 				$this->load();
 			$this->bunkerFleetCount= 0;
-			foreach ($this->itemStatus as $k=>&$v)
+			foreach ($this->item as $k=>&$v)
 			{
-				$this->bunkerFleetCount+= $this->item($k)->bunkerFleetCount*intpow($this->item($k)->storeFactor,$v['level']-1);
+				$this->bunkerFleetCount+= $v->bunkerFleetCount;
 			}
 			return $this->bunkerFleetCount;
 		}
@@ -230,114 +294,203 @@
 			if ($this->items==null)
 				$this->load();
 			$this->bunkerFleetSpace= 0;
-			foreach ($this->itemStatus as $k=>&$v)
+			foreach ($this->item as $k=>&$v)
 			{
-				$this->bunkerFleetSpace+= $this->item($k)->bunkerFleetSpace*intpow($this->item($k)->storeFactor,$v['level']-1);
+				$this->bunkerFleetSpace+= $v->bunkerFleetSpace;
 			}
 			return $this->bunkerFleetSpace;
 		}
 		
-		function getBuildTime($itemId,$targetLevel)
+		function getCosts($bid,$type='build',$levelUp=0)
 		{
-			global $cu,$cp;
-			
-			$targetLevel = max(1,$targetLevel);
-			
-			if ($this->owner == null)
-			{			
-				if ($cu->id != $this->ownerId)
-					$this->owner = new User($this->ownerId);
-				else
-					$this->owner = &$cu;
-			}
-			if ($this->entity == null)
+			if ($type=='build')
 			{
-				if ($cp->id != $this->entityId)
-					$this->entity = Entity::createFactoryById($this->entityId);
-				else
-					$this->entity = &$cp;
-			}
-
-			// Calc bonus			
-			$bonus = $this->owner->race->buildTime + $this->entity->typeBuildtime + $this->entity->starBuildtime - 2;
-			
-			if (isset($this->items[$itemId]))
-			{
-				$itm = &$this->items[$itemId];
+				return $this->items[$bid]->getBuildCosts($levelUp);
 			}
 			else
 			{
-				$itm = new Building($itemId);
+				return $this->items[$bid]->getDemolishCosts($levelUp);
 			}
-
-			$cst = $itm->getCosts($targetLevel);
-			$btime = ($cst[1]+$cst[2]+$cst[3]+$cst[4]+$cst[5]) / GLOBAL_TIME * BUILD_BUILD_TIME;
-			$btime *= $bonus;		
-			
-			unset($itm);
-			unset($cst);
-			return $btime;
+		}
+		
+		function build($bid)
+		{
+			if ($this->checkBuildable($bid))
+			{
+				return $this->items[$bid]->build();
+			}
+			return false;
+		}
+		
+		function demolish($bid)
+		{
+			if ($this->checkDemolishable($bid))
+			{
+				return $this->items[$bid]->demolish();
+			}
+			return false;
+		}
+		
+		function cancelBuild($bid)
+		{
+			if (isset($this->items[$bid]))
+			{
+				$this->errorMsg =  $this->items[$bid]->cancelBuild();
+				if ($this->errorMsg=="")
+					return true;
+				else
+					return false;
+			}
+			$this->errorMsg = "Geb&aauml;de nicht vorhanden;";
+			return false;
+		}
+		
+		function cancelDemolish($bid)
+		{
+			if (isset($this->items[$bid]))
+			{
+				$this->errorMsg =  $this->items[$bid]->cancelDemolish();
+				if ($this->errorMsg=="")
+					return true;
+				else
+					return false;
+			}
+			$this->errorMsg = "Geb&aauml;de nicht vorhanden;";
+			return false;
 		}
 		
 		/**
 		* Check wether an item is buildable. Conditions are
-		* enough resources, not maxed out level, enough fields,
+		* no building under construction, enough resources, not maxed out level, enough fields,
 		* and satisfied prerequisites.
+		*
+		*
+		*	@return <int> 1=buildable,0=not buildable but show resbox, -1= not buildable & no res box
 		*/
-		function checkBuildable($itemId)
+		function checkBuildable($bid)
 		{
-			global $cu,$cp;
-			if ($this->entity == null)
+			if (!isset($this->items[$bid]->buildableStatus))
 			{
-				if ($cp->id != $this->entityId)
-					$this->entity = Entity::createFactoryById($this->entityId);
-				else
-					$this->entity = &$cp;
-			}
-			
-			if (isset($this->items[$itemId]))
-			{
-				$itm = &$this->items[$itemId];
-				$cst = $itm->getCosts($this->itemStatus[$itemId]['level']+1);
-				$lvl = $this->itemStatus[$itemId]['level'];
-			}
-			else
-			{
-				$itm = new Building($itemId);
-				if (!$itm->isValid())
-					return false;
-				$cst = $itm->getCosts(1);
-				$lvl = 0;
-			}			
-
-			
-			// Check level
-			if ($lvl < $itm->maxLevel)
-			{
-				// Check costs
-				if ($cst[1] <= $this->entity->getRes(1) 
-				&& $cst[2] <= $this->entity->getRes(2) 
-				&& $cst[3] <= $this->entity->getRes(3) 
-				&& $cst[4] <= $this->entity->getRes(4) 
-				&& $cst[5] <= $this->entity->getRes(5))
+				// check all the buildings
+				if (!$this->underConstruction)
 				{
-					$req = $itm->getBuildingRequirements();
-					foreach ($req as $rk=>$rv)
+					global $cu,$cp;
+					if ($this->entity == null)
 					{
-						if ($rv > $this->getLevel($rk))
-						{
-							$this->errorMsg = "Voraussetzungen nicht erfüllt!";
-							return false;
-						}
+						if ($cp->id != $this->entityId)
+							$this->entity = Entity::createFactoryById($this->entityId);
+						else
+							$this->entity = &$cp;
 					}
-					return true;					
+					
+					// check max level
+					if (!$this->items[$bid]->isMaxLevel())
+					{
+						$cst = $this->items[$bid]->getBuildCosts();
+						// Check costs
+						if ($cst['costs0'] <= $this->entity->getRes1(0) 
+							&& $cst['costs1'] <= $this->entity->getRes1(1) 
+							&& $cst['costs2'] <= $this->entity->getRes1(2) 
+							&& $cst['costs3'] <= $this->entity->getRes1(3) 
+							&& $cst['costs4'] <= $this->entity->getRes1(4))
+						{
+							// check fields
+							if ($this->items[$bid]->building->fields==0 || $cp->fields_used+$this->items[$bid]->building->fields <= $cp->fields+$cp->fields_extra)
+							{
+								if ($this->requirementsPassed($bid))
+									$this->items[$bid]->buildableStatus = 1;
+								else
+								{
+									$this->errorMsg = 'Voraussetzungen nicht erf&uuml;llt!';
+									$this->items[$bid]->buildableStatus = -1;	
+								}
+							}
+							else
+							{
+								$this->errorMsg = 'Nicht gen&uuml;gend Felder vorhanden!';
+								$this->items[$bid]->buildableStatus = 0;
+							}
+						}
+						else
+						{
+							$this->errorMsg = 'Zuwenig Rohstoffe vorhanden!';
+							$this->items[$bid]->buildableStatus = 0;
+						}
+					}							
+					else
+					{
+						$this->errorMsg = 'Maximalstufe erreicht! Kein weiterer Ausbau m&ouml;glich!';
+						$this->items[$bid]->buildableStatus = -1;
+					}
+				}
+				else
+				{
+					$this->errorMsg = 'Es wird gerade an einem Geb&aauml;de gebaut!';
+					$this->items[$bid]->buildableStatus = 0;
+				}
+			}
+			return $this->items[$bid]->buildableStatus;
+		}
+		
+		/**
+		* Check wether an item is demolishable. Conditions are
+		* no building under construction and enough resources.
+		*/
+		function checkDemolishable($bid)
+		{
+			// check all the buildings
+			if (!$this->underConstruction)
+			{
+				global $cu,$cp;
+				if ($this->entity == null)
+				{
+					if ($cp->id != $this->entityId)
+						$this->entity = Entity::createFactoryById($this->entityId);
+					else
+						$this->entity = &$cp;
+				}
+				
+				$cst = $this->items[$bid]->getDemolishCosts();
+				// Check costs
+				if ($cst[0] <= $this->entity->getRes1(0) 
+						&& $cst[1] <= $this->entity->getRes1(1) 
+						&& $cst[2] <= $this->entity->getRes1(2) 
+						&& $cst[3] <= $this->entity->getRes1(3) 
+						&& $cst[4] <= $this->entity->getRes1(4))
+				{
+					return true;	
 				}
 				else
 					$this->errorMsg = "Zuwenig Rohstoffe vorhanden!";
-			}				
+			}
 			else
-				$this->errorMsg = "Maximalstufe erreicht!";
-			return false;				
+				$this->errorMsg = "Es wird gerade an einem Geb&aauml;de gebaut!";
+			return true;	
+		}
+		
+		public function requirementsPassed($bid=0)
+		{
+			if (isset($this->items[$bid]))
+			{
+				$req = $this->items[$bid]->building->getBuildingRequirements();
+				foreach ($req as $rk=>$rv)
+				{
+					if (isset($this->items[$rk]) && $rv> $this->items[$rk]->level)
+					{
+						return false;
+					}
+				}
+				$req = $this->items[$bid]->building->getTechRequirements();
+				foreach ($req as $rk=>$rv)
+				{
+					if ($rv > $this->tl->getLevel($rk))
+					{
+						return false;
+					}
+				}
+				return true;	
+			}
+			return false;
 		}
 
 		/**

@@ -2009,6 +2009,7 @@ function imagecreatefromfile($path, $user_functions = false)
 	*/	
 	function calcBuildingCosts($buildingArray, $level, $fac=1)
 	{
+		global $cp, $cu;
 		$bc=array();
 		$bc['metal'] = $fac * $buildingArray['building_costs_metal'] * pow($buildingArray['building_build_costs_factor'],$level);
 		$bc['crystal'] = $fac * $buildingArray['building_costs_crystal'] * pow($buildingArray['building_build_costs_factor'],$level);
@@ -2016,6 +2017,10 @@ function imagecreatefromfile($path, $user_functions = false)
 		$bc['fuel'] = $fac * $buildingArray['building_costs_fuel'] * pow($buildingArray['building_build_costs_factor'],$level);
 		$bc['food'] = $fac * $buildingArray['building_costs_food'] * pow($buildingArray['building_build_costs_factor'],$level);
 		$bc['power'] = $fac * $buildingArray['building_costs_power'] * pow($buildingArray['building_build_costs_factor'],$level);
+		
+		$bonus = $cu->race->buildTime + $cp->typeBuildtime + $cp->starBuildtime + $cu->specialist->buildTime - 3;
+		$bc['time'] = ($bc['metal']+$bc['crystal']+$bc['plastic']+$bc['fuel']+$bc['food']) / GLOBAL_TIME * BUILD_BUILD_TIME;
+		$bc['time'] *= $bonus;
 		return $bc;
 	}
 	

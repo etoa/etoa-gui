@@ -703,19 +703,37 @@
 			}
 		}
 		
+		//Added getter with 0-5 like everywhere else
+		function getRes1($i) 
+		{ 
+			switch ($i)
+			{
+				case 0:
+					return $this->resMetal;
+				case 1:
+					return $this->resCrystal;
+				case 2:
+					return $this->resPlastic;
+				case 3:
+					return $this->resFuel;
+				case 4:
+					return $this->resFood;
+			}
+		}
+		
 		function getProd($i) 
 		{ 
 			switch ($i)
 			{
-				case 1:
+				case 0:
 					return $this->prodMetal;
-				case 2:
+				case 1:
 					return $this->prodCrystal;
-				case 3:
+				case 2:
 					return $this->prodPlastic;
-				case 4:
+				case 3:
 					return $this->prodFuel;
-				case 5:
+				case 4:
 					return $this->prodFood;
 			}
 		}

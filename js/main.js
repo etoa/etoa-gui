@@ -1137,3 +1137,132 @@ function addFontColor(id, colorId)
 
 		document.getElementById(target).innerHTML=text;
 	}
+	
+	function updatePeopleWorkingBox(people,time,food)
+	{
+		var peopleOptimized	= parseFloat(document.getElementById('peopleOptimized').value);
+		var peopleFree		= parseFloat(document.getElementById('peopleFree').value);
+		var foodAvaiable	= parseFloat(document.getElementById('foodAvaiable').value);
+		var foodRequired	= parseFloat(document.getElementById('foodRequired').value);
+		var workDone		= parseFloat(document.getElementById('workDone').value);
+		var error = "";
+		people = parseFloat(people.replace(/`/g, ""));
+		food = parseFloat(food.replace(/`/g, ""));
+		if (people!=-1)
+		{
+			if (people > peopleFree) people = peopleFree;
+			food = people * foodRequired;
+			time = people * workDone;
+		}
+		else if (food!=-1)
+		{
+			people = Math.floor(food / foodRequired);
+			time = people * workDone;
+		}
+		else if (time!=-1)
+		{
+			if (is_tf(time))
+			{
+				time = parseFloat(tf_back(time));
+				people = Math.floor(time / workDone);
+				food = people * foodRequired;
+				
+			}
+			else return;
+		}
+		
+		if (people > peopleFree)
+			error = "Nicht genug freie Arbeiter vorhanden!";
+		else if (food > foodAvaiable)
+			error = "Nicht genug Nahrung vorhanden!";
+		else if (peopleOptimized!=0 && people > peopleOptimized)
+			error = "Mehr Arbeiter als notwendig ausgewählt!";
+		
+		if (error.length>0)
+		{
+			document.getElementById('errorBox').innerHTML = error;
+			document.getElementById('errorBox').style.display = 'block';
+		}
+		else
+		{
+			document.getElementById('errorBox').innerHTML = '';
+			document.getElementById('errorBox').style.display = 'none';
+		}
+		
+		document.getElementById('peopleWorking').value = FormatNumber('return',people,peopleFree, '', '');
+		document.getElementById('foodUsing').value = FormatNumber('return',food,0, '', '');
+		document.getElementById('timeReduction').value = tf(time);
+	}
+	
+	// checks if the last sign is a letter
+	function is_tf(time)
+	{
+		time = time.replace(/\s+/g,'');
+		
+		if (time[time.length-1]=='s' || time[time.length-1]=='m' || time[time.length-1]=='h' || time[time.length-1]=='d'  | time[time.length-1]=='w')
+			return true;
+		else return false;
+	}
+	function tf_back(time)
+	{
+		var value = 0;
+		var index = 0;
+		var index2 = 0;
+		if (time.indexOf("w")>0)
+		{
+			index2 = time.indexOf("w");
+			value += 3600 * 24 * 7 * parseInt(time.slice(index,index2));
+			index = index2 + 1;
+		}
+		if (time.indexOf("d")>0)
+		{
+			index2 = time.indexOf("d");
+			value += 3600 * 24 * parseInt(time.slice(index,index2));
+			index = index2 + 1;
+		}
+		if (time.indexOf("h")>0)
+		{
+			index2 = time.indexOf("h");
+			value += 3600 * parseInt(time.slice(index,index2));
+			index = index2 + 1;
+		}
+		if (time.indexOf("m")>0)
+		{
+			index2 = time.indexOf("m");
+			value += 60 * parseInt(time.slice(index,index2));
+			index = index2 + 1;
+		}
+		if (time.indexOf("s")>0)
+		{
+			index2 = time.indexOf("s");
+			value += parseInt(time.slice(index,index2));
+		}
+		return value;
+	}
+	
+	function tf(time)	// Time format
+	{
+		var w = Math.floor(time / 3600 / 24 / 7);
+		time -= w*3600*24*7;
+		var t = Math.floor(time / 3600 / 24);
+		var h = Math.floor((time-(t*3600*24)) / 3600);
+		var m = Math.floor((time-(t*3600*24)-(h*3600))/60);
+		var s = Math.floor((time-(t*3600*24)-(h*3600)-(m*60)));
+
+		var str = "";
+		if (w>0)
+			str += w.toString() + "w ";
+		if (t>0)
+			str += t.toString() + "d ";
+		if (h>0)
+			str += h.toString() + "h ";
+		if (m>0)
+			str += m.toString() + "m ";
+		if (s>0)
+			str += s.toString()  + "s ";
+		
+		if (str.length==0)
+			str = "0s ";
+
+		return str;
+	}

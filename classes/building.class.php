@@ -3,10 +3,11 @@
 	class Building
 	{
 		public $name;
+		public $typeId;
 		public $fields;
 		public $id;
 		
-		public $costs, $costsFactor, $storeFactor;
+		public $costs, $costsFactor, $demolishCostsFactor, $storeFactor;
 		
 		public $bunkerRes, $bunkerFleetCount, $bunkerFleetSpace;
 		
@@ -42,20 +43,22 @@
 				}
 
 				$this->id = $arr['building_id'];
+				$this->typeId = $arr['building_type_id'];
 				$this->name = $arr['building_name'];
 				$this->shortDesc = $arr['building_shortcomment'];
 				$this->longDesc = $arr['building_longcomment'];
-				$this->fieldsUsed = $arr['building_fields'];
+				$this->fields = $arr['building_fields'];
 				$this->maxLevel = $arr['building_last_level'];
 				
 				$this->costs = array();
-				$this->costs[1] = $arr['building_costs_metal'];
-				$this->costs[2] = $arr['building_costs_crystal'];
-				$this->costs[3] = $arr['building_costs_plastic'];
-				$this->costs[4] = $arr['building_costs_fuel'];
-				$this->costs[5] = $arr['building_costs_food'];
-				$this->costs[6] = $arr['building_costs_power'];
+				$this->costs[0] = $arr['building_costs_metal'];
+				$this->costs[1] = $arr['building_costs_crystal'];
+				$this->costs[2] = $arr['building_costs_plastic'];
+				$this->costs[3] = $arr['building_costs_fuel'];
+				$this->costs[4] = $arr['building_costs_food'];
+				$this->costs[5] = $arr['building_costs_power'];
 				$this->costsFactor = $arr['building_build_costs_factor'];
+				$this->demolishCostsFactor = $arr['building_demolish_costs_factor'];
 				$this->storeFactor = $arr['building_store_factor'];
 				
 				$this->bunkerRes = $arr['building_bunker_res'];
@@ -134,8 +137,8 @@
 			while ($arr = mysql_fetch_row($res))
 			{
 				if ($arr[1]>0)
-					$this->tRequirements[$arr[0]] = $arr[2];
-				else
+					$this->tRequirements[$arr[1]] = $arr[2];
+				if ($arr[0]>0)
 					$this->bRequirements[$arr[0]] = $arr[2];
 			}			
 		}

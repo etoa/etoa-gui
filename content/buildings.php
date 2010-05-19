@@ -29,7 +29,7 @@
 	*/	
 
   // DEFINITIONEN //
-print_r($_POST);
+
 if ($cu->properties->cssStyle=="Classic" || $cu->properties->cssStyle=="Dark")
 {
   define('NUM_BUILDINGS_PER_ROW',4);
@@ -55,250 +55,27 @@ define('HELP_URL',"?page=help&site=buildings");
 		$use_img_filter = false;
 	}
 
-/* This function has to be outsourced, of course, later */
-
-
-
-function calcBuildingWaitTime($bc,$cp)
-{
-	$notAvStyle=" style=\"color:red;\"";
-	
-	// Wartezeiten auf Ressourcen berechnen
-	if ($cp->prodMetal>0) $bwait['metal']=ceil(($bc['metal']-$cp->resMetal)/$cp->prodMetal*3600);else $bwait['metal']=0;
-	if ($cp->prodCrystal>0) $bwait['crystal']=ceil(($bc['crystal']-$cp->resCrystal)/$cp->prodCrystal*3600);else $bwait['crystal']=0;
-	if ($cp->prodPlastic>0) $bwait['plastic']=ceil(($bc['plastic']-$cp->resPlastic)/$cp->prodPlastic*3600);else $bwait['plastic']=0;
-	if ($cp->prodFuel>0) $bwait['fuel']=ceil(($bc['fuel']-$cp->resFuel)/$cp->prodFuel*3600);else $bwait['fuel']=0;
-	if ($cp->prodFood>0) $bwait['food']=ceil(($bc['food']-$cp->resFood)/$cp->prodFood*3600);else $bwait['food']=0;
-	$bwmax=max($bwait['metal'],$bwait['crystal'],$bwait['plastic'],$bwait['fuel'],$bwait['food']);
-
-	// Baukosten-String
-	$bcstring = "<td ";
-	if ($bc['metal']>$cp->resMetal)
-		$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff","<b>".nf($bc['metal']-$cp->resMetal)."</b> ".RES_METAL."<br/>Bereit in <b>".tf($bwait['metal'])."</b>");
-	
-	$bcstring.= ">".nf($bc['metal'])."</td><td";
-	if ($bc['crystal']>$cp->resCrystal)
-		$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['crystal']-$cp->resCrystal)." ".RES_CRYSTAL."<br/>Bereit in <b>".tf($bwait['crystal'])."</b>");
-	
-	$bcstring.= ">".nf($bc['crystal'])."</td><td";
-	if ($bc['plastic']>$cp->resPlastic)
-		$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['plastic']-$cp->resPlastic)." ".RES_PLASTIC."<br/>Bereit in <b>".tf($bwait['plastic'])."</b>");
-	
-	$bcstring.= ">".nf($bc['plastic'])."</td><td";
-	if ($bc['fuel']>$cp->resFuel)
-		$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['fuel']-$cp->resFuel)." ".RES_FUEL."<br/>Bereit in <b>".tf($bwait['fuel'])."</b>");
-	
-	$bcstring.= ">".nf($bc['fuel'])."</td><td";
-	if ($bc['food']>$cp->resFood)
-		$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['food']-$cp->resFood)." ".RES_FOOD."<br/>Bereit in <b>".tf($bwait['food'])."</b>");
-	
-	$bcstring.= ">".nf($bc['food'])."</td><td";
-	if ($bc['power']> $cp->prodPower- $cp->usePower && $bc['power']>0)
-		$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['power']-($cp->prodPower-$cp->usePower))." Energie");
-	
-	$bcstring.= ">".nf($bc['power'])."</td></tr>";
-	return array($bcstring,$bwmax);
-}
-
-function calcDemolishingCosts($buildingArray, $buildingCosts, $fac)
-{	
-	$dc=array();
-	// Abrisskostenberechnung				Abrisskosten = Baukosten  * Abrisskostenfaktor
-	$dc['metal'] = $fac * $buildingCosts['metal'] * $buildingArray['building_demolish_costs_factor'];
-	$dc['crystal'] = $fac * $buildingCosts['crystal'] * $buildingArray['building_demolish_costs_factor'];
-	$dc['plastic'] = $fac * $buildingCosts['plastic'] * $buildingArray['building_demolish_costs_factor'];
-	$dc['fuel'] = $fac * $buildingCosts['fuel'] * $buildingArray['building_demolish_costs_factor'];
-	$dc['food'] = $fac * $buildingCosts['food'] * $buildingArray['building_demolish_costs_factor'];
-	$dc['power'] = $fac * $buildingCosts['power'] * $buildingArray['building_demolish_costs_factor'];
-	return $dc;
-}
-
-function calcDemolishingWaitTime($dc,$cp)
-{
-	$notAvStyle=" style=\"color:red;\"";
-	
-	if ($cp->prodMetal>0)
-		$dwait['metal']=ceil(($dc['metal']-$cp->resMetal)/$cp->prodMetal*3600);
-	else
-		$dwait['metal']=0;
-	if ($cp->prodCrystal>0)
-		$dwait['crystal']=ceil(($dc['crystal']-$cp->resCrystal)/$cp->prodCrystal*3600);
-	else
-		$dwait['crystal']=0;
-	if ($cp->prodPlastic>0)
-		$dwait['plastic']=ceil(($dc['plastic']-$cp->resPlastic)/$cp->prodPlastic*3600);
-	else
-		$dwait['plastic']=0;
-	if ($cp->prodFuel>0)
-		$dwait['fuel']=ceil(($dc['fuel']-$cp->resFuel)/$cp->prodFuel*3600);
-	else
-		$dwait['fuel']=0;
-	if ($cp->prodFood>0)
-		$dwait['food']=ceil(($dc['food']-$cp->resFood)/$cp->prodFood*3600);
-	else
-		$dwait['food']=0;
-	$dwmax=max($dwait['metal'],$dwait['crystal'],$dwait['plastic'],$dwait['fuel'],$dwait['food']);
-	
-	$dwstring = "<td";
-	if ($dc['metal']>$cp->resMetal)
-		$dwstring.= $notAvStyle." ".tm("Fehlender Rohstoff","<b>".nf($dc['metal']-$cp->resMetal)."</b> ".RES_METAL."<br/>Bereit in <b>".tf($dwait['metal'])."</b>");
-	
-	$dwstring.= ">".nf($dc['metal'])."</td><td";
-	if ($dc['crystal']>$cp->resCrystal)
-		$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($dc['crystal']-$cp->resCrystal)." ".RES_CRYSTAL."<br/>Bereit in <b>".tf($dwait['crystal'])."</b>");
-	
-	$dwstring.= ">".nf($dc['crystal'])."</td><td";
-	if ($dc['plastic']>$cp->resPlastic)
-		$dwstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($dc['plastic']-$cp->resPlastic)." ".RES_PLASTIC."<br/>Bereit in <b>".tf($dwait['plastic'])."</b>");
-	
-	$dwstring.= ">".nf($dc['plastic'])."</td><td";
-	if ($dc['fuel']>$cp->resFuel)
-		$dwstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($dc['fuel']-$cp->resFuel)." ".RES_FUEL."<br/>Bereit in <b>".tf($dwait['fuel'])."</b>");
-	
-	$dwstring.= ">".nf($dc['fuel'])."</td><td";
-	if ($dc['food']>$cp->resFood)
-		$dwstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($dc['food']-$cp->resFood)." ".RES_FOOD."<br/>Bereit in <b>".tf($dwait['food'])."</b>");
-	
-	$dwstring.= ">".nf($dc['food'])."</td><td";
-	if ($dc['power']> $cp->prodPower- $cp->usePower && $dc['power']>0)
-		$dwstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($dc['power']-($cp->prodPower-$cp->usePower))." Energie");
-	
-	$dwstring.= ">".nf($dc['power'])."</td></tr>";
-	return array($dwstring,$dwmax);
-}
-
 	// SKRIPT //
 
 	if (isset($cp))
 	{
 		echo "<h1>Bauhof des Planeten ".$cp->name()."</h1>";
 		$cp->resBox($cu->properties->smallResBox);
-
-
-		//
-		// Lädt alle benötigten Daten in Arrays
-		//
-
-		// Gebäudeliste laden
-		$sql ="
-		SELECT 
-			*
-		FROM 
-			buildlist
-		WHERE  
-			buildlist_entity_id='".$cp->id()."';";
 		
-		$blres = dbquery($sql);
-		$builing_something=false;
-		while ($blarr = mysql_fetch_array($blres))
+		// Load buildlist object
+		$bl = new Buildlist($cp->id,$cu->id,2);
+		$bid=0;
+		
+		// people working changed
+		if (isset($_POST['submit_people_form']))
 		{
-			$buildlist[$blarr['buildlist_building_id']]=$blarr;
-			if ($blarr['buildlist_build_type']>2)
-			{ 
-				$builing_something=true;
-			}
+			if ($bl->setPeopleWorking(BUILD_BUILDING_ID,nf_back($_POST['peopleWorking'])))
+				ok_msg("Arbeiter erfolgreich zugeteilt!");
+			else
+				error_msg('Arbeiter konnten nicht zugeteilt werden!');
 		}
-
-		// Technologieliste laden
-		$tres = dbquery("
-		SELECT 
-			* 
-		FROM 
-			techlist
-		WHERE 
-			techlist_user_id='".$cu->id."'
-		;");
-		while ($tarr = mysql_fetch_array($tres))
-		{
-			$techlist[$tarr['techlist_tech_id']]=$tarr['techlist_current_level'];
-		}
-
-		// Load gene technology level
-		$tl = new TechList($cu->id);
-		define("GEN_TECH_LEVEL",$tl->getLevel(GEN_TECH_ID));
-		$minBuildTimeFactor = (0.1-(GEN_TECH_LEVEL/100));
-	
-		// Load working people data
-		$bl = new BuildList($cp->id(),$cu->id);
-		$peopleWorking = $bl->getPeopleWorking(BUILD_BUILDING_ID);	
-		$peopleTimeReduction = $cfg->value('people_work_done');
-		$peopleFoodConsumption = $cfg->value('people_food_require');
-	
-	
-		// Requirements
-		$rres = dbquery("
-		SELECT 
-			* 
-		FROM 
-			building_requirements
-		;");
-		while ($rarr = mysql_fetch_array($rres))
-		{
-			if ($rarr['req_building_id']>0) 
-			{
-				$b_req[$rarr['obj_id']]['b'][$rarr['req_building_id']]=$rarr['req_level'];
-			}
-			
-			if ($rarr['req_tech_id']>0) 
-			{
-				$b_req[$rarr['obj_id']]['t'][$rarr['req_tech_id']]=$rarr['req_level'];
-			}
-		}
-
-		// TODO: Use def queue
-		/*
-		// Felder von bauender Def laden
-		$res_def =	dbquery("
-		SELECT 
-			SUM(d.def_fields * dl.deflist_build_count) AS planet_def_fields_needed 
-		FROM 
-			defense AS d
-			INNER JOIN
-			deflist AS dl
-			ON
-			d.def_id = dl.deflist_def_id
-		WHERE
-			dl.deflist_entity_id='".$cp->id()."';");
-		if(mysql_num_rows($res_def)>0)
-		{
-			$arr=mysql_fetch_array($res_def);
-			if ($arr['planet_def_fields_needed']>0)
-			{
-				$def_field_needed = $arr['planet_def_fields_needed'];
-    	}
-    	else
-    	{
-    		$def_field_needed = 0;
-    	}
-    }
-    else
-    {
-    	$def_field_needed = 0;
-    }*/
-    $def_field_needed = 0;
-
-  	iBoxStart("Bauhof-Infos");
-  	echo "<div style=\"text-align:left;\">";
-	if ($cu->specialist->buildTime!=1) {
-		echo "<b>Bauzeitverringerung durch ".$cu->specialist->name.":</b> ".get_percent_string($cu->specialist->buildTime)."<br>";
-	}
-  	echo "<b>Eingestellte Arbeiter:</b> ".nf($peopleWorking)."<br/>
-  	<b>Zeitreduktion durch Arbeiter pro Auftrag:</b> ".tf($peopleTimeReduction*$peopleWorking)."<br/>
-  	<b>Nahrungsverbrauch durch Arbeiter pro Auftrag:</b> ".nf($peopleFoodConsumption*$peopleWorking)."<br/>
-  	<b>Gentechnologie:</b> ".GEN_TECH_LEVEL."<br/>
-  	<b>Minimale Bauzeit (mit Arbeiter):</b> Bauzeit * ".$minBuildTimeFactor;
-	if ($cu->specialist->costsBuilding!=1)
-	{
-		echo "<br/><br/><b>Kostenreduktion durch ".$cu->specialist->name.":</b> ".get_percent_string($cu->specialist->costsBuilding);
-	}
-  	echo "</div>";   	
-  	iBoxEnd();
-
-
-/********************
-* Gebäudedetail     *
-********************/
-
+		
+		// create posted id for small view
 		if (is_array($_POST['command_build']))
 		{
 			foreach($_POST['command_build'] as $bid=>$bmsg)
@@ -313,10 +90,24 @@ function calcDemolishingWaitTime($dc,$cp)
 				}
 			}
 		}
+		if (is_array($_POST['command_cbuild']))
+		{
+			foreach($_POST['command_cbuild'] as $bid=>$bmsg)
+			{
+				foreach ($_POST['id'] as $id=>$msg)
+				{
+					if ($id==$bid)
+					{
+						$_POST['id'] = $bid;
+						break;
+					}
+				}
+			}
+		}
 
 		//Gebäude ausbauen/abreissen/abbrechen
-		if ((isset($_GET['id']) && $_GET['id'] >0) || (count($_POST)>0 && checker_verify()))
-		{
+		if ((isset($_GET['id']) && $_GET['id'] > 0) || (count($_POST)>0 && checker_verify()))
+		{	
 			$bid = 0;
 			if (isset($_GET['id']) && $_GET['id'] >0)
 			{
@@ -342,606 +133,350 @@ function calcDemolishingWaitTime($dc,$cp)
 				}			
 			}
 			
-			// Gebäudedaten laden
-			$res = dbquery("
-			SELECT 
-				* 
-			FROM 
-				buildings 
-			WHERE 
-				building_show='1' 
-				AND building_id='".$bid."';");
-			if (mysql_num_rows($res)>0)
+			// build building
+			if (isset($_POST['command_build']) && $bl->getStatus($bid)==0)
 			{
-				$arr = mysql_fetch_array($res);
+				if ($bl->build($bid))
+				{
+					ok_msg('Bauauftrag wurde erfolgreich gestartet!');
+				}
+				else
+				{
+					error_msg($bl->getLastError());
+				}
+			}
+			
+			// demolish building
+			elseif (isset($_POST['command_demolish']) && $bl->getStatus($bid)==0)
+			{
+				if ($bl->demolish($bid))
+				{
+					ok_msg('Abbruchauftrag wurde erfolgreich gestartet!');
+				}
+				else
+				{
+					error_msg($bl->getLastError());
+				}
+			}
+			
+			// cancel build building
+			elseif (isset($_POST['command_cbuild']) && $bl->getStatus($bid)==3)
+			{
+				if ($bl->cancelBuild($bid))
+				{
+					ok_msg('Bauauftrag wurde erfolgreich abgebrochen!');
+				}
+				else
+				{
+					error_msg($bl->getLastError());
+				}
+			}
+			
+			// cancel demolish building
+			elseif (isset($_POST['command_cdemolish']) && $bl->getStatus($bid)==4)
+			{
+				if ($bl->cancelDemolish($bid))
+				{
+					ok_msg('Abbruchauftrag wurde erfolgreich abgebrochen!');
+				}
+				else
+				{
+					error_msg($bl->getLastError());
+				}
+			}
+			
+			// create design relateted stuff
+			if ($bl->getStatus($bid)==3 && $bl->getLevel($bid)>0)
+			{
+				$color="color:#0f0;";
+				$status_text="Wird ausgebaut";
+			}
+			elseif ($bl->getStatus($bid)==3)
+			{
+				$color="color:#0f0;";
+				$status_text="Wird gebaut";
+			}
+			elseif ($bl->getStatus($bid)==4)
+			{
+				$color="color:#f80;";
+				$status_text="Wird abgerissen";
+			}
+			else
+			{
+				$color="";
+				$status_text="Unt&auml;tig";
+			}
+		}
+		$peopleFree = floor($cp->people) - $bl->totalPeopleWorking() + $bl->getPeopleWorking(BUILD_BUILDING_ID);
+		// create box to change people working
+		$box =	'
+					<input type="hidden" name="workDone" id="workDone" value="'.$cfg->value('people_work_done').'" />
+					<input type="hidden" name="foodRequired" id="foodRequired" value="'.$cfg->value('people_food_require').'" />
+					<input type="hidden" name="peopleFree" id="peopleFree" value="'.$peopleFree.'" />
+					<input type="hidden" name="foodAvaiable" id="foodAvaiable" value="'.$cp->getRes1(4).'" />';
+		if ($cu->properties->itemShow=='full' && isset($bid) && $bid>0)
+		{
+			$box .= '<input type="hidden" name="peopleOptimized" id="peopleOptimized" value="'.$bl->item($bid)->getPeopleOptimized().'" />';
+		}
+		else
+		{
+			$box .= '<input type="hidden" name="peopleOptimized" id="peopleOptimized" value="0" />';	
+		}
+		$box .= '	<tr>
+							<th>Eingestellte Arbeiter</th>
+							<td>
+								<input 	type="text" 
+										name="peopleWorking" 
+										id="peopleWorking" 
+										value="'.nf($bl->getPeopleWorking(BUILD_BUILDING_ID)).'" 
+										size="15" 
+										onkeyup="updatePeopleWorkingBox(this.value,\'-1\',\'-1\');"/>
+								<a href="javascript:;" onclick="updatePeopleWorkingBox(\''.$peopleFree.'\',\'-1\',\'-1\');">max</a></td>
+						</tr>
+						<tr>
+							<th>Zeitreduktion</th>
+							<td><input	type="text"
+										name="timeReduction"
+										id="timeReduction"
+										value="'.tf($cfg->value('people_work_done') * $bl->getPeopleWorking(BUILD_BUILDING_ID)).'"
+										onkeyup="updatePeopleWorkingBox(\'-1\',this.value,\'-1\');" /></td>
+						</tr>
+							<th>Nahrungsverbrauch</th>
+							<td><input	type="text"
+										name="foodUsing"
+										id="foodUsing"
+										value="'.nf($cfg->value('people_food_require') * $bl->getPeopleWorking(BUILD_BUILDING_ID)).'"
+										onkeyup="updatePeopleWorkingBox(\'-1\',\'-1\',this.value);" /></td>
+						</tr>
+						<tr>
+							<td colspan="2" style="text-align:center;">
+								<div class="errorBox" id="errorBox" style="display:none;">&nbsp;</div>
+								<input type="submit" value="Speichern" name="submit_people_form" />&nbsp;';
+		
+		if ($cu->properties->itemShow=='full' && isset($bid) && $bid>0)
+		{
+			$peopleOptimized = $bl->item($bid)->getPeopleOptimized();
+			$box .= '<input type="button" value="Optimieren" onclick="updatePeopleWorkingBox(\''.$peopleOptimized.'\',\'-1\',\'^-1\');">';
+		}
+		$box .= '
+					</td>
+				</tr>';				
+		
+		// create infobox incl. editable stuff for working people adjustements
+  		iBoxStart('Bauhof-Infos');
+  		echo '<div style="text-align:left;">';
+		if ($cu->specialist->buildTime!=1)
+		{
+			echo '<strong>Bauzeitverringerung durch '.$cu->specialist->name.':</strong> '.get_percent_string($cu->specialist->buildTime).'<br />';
+		}
+		
+  		echo '<strong>Eingestellte Arbeiter:</strong> <span id="people_working">'.nf($bl->getPeopleWorking(BUILD_BUILDING_ID)).'</span>';
+		if (!$bl->underConsturction)
+			echo '&nbsp;<a href="javascript:;" onclick="toggleBox(\'changePeople\');">[&Auml;ndern]</a>';
+		echo '<br />
+  			<strong>Zeitreduktion durch Arbeiter pro Auftrag:</strong> <span id="people_work_done">'.tf($cfg->value('people_work_done') * $bl->getPeopleWorking(BUILD_BUILDING_ID)).'</span><br />
+  			<strong>Nahrungsverbrauch durch Arbeiter pro Auftrag:</strong> <span id="people_food_require">'.nf($cfg->value('people_food_require') * $bl->getPeopleWorking(BUILD_BUILDING_ID)).'</span><br />
+  			<strong>Gentechnologie:</strong> '.$bl->tl->getLevel(GEN_TECH_ID).'<br />
+  			<strong>Minimale Bauzeit (mit Arbeiter):</b> Bauzeit * '.(0.1-($bl->tl->getLevel(GEN_TECH_ID)/100));
+
+		if ($cu->specialist->costsBuilding!=1)
+		{
+			echo '<br /><br /><strong>Kostenreduktion durch '.$cu->specialist->name.':</strong> '.get_percent_string($cu->specialist->costsBuilding);
+		}
+  		echo '</div>';   	
+  		iBoxEnd();
+		
+		echo '<div id="changePeople" style="display:none;">';
+		tableStart("Arbeiter im Bauhof zuteilen");
+		echo '<form id="changeWorkingPeople" action="?page='.$page.'&amp;id='.$bid.'" method="post">
+			'.$box.'</form>';
+		tableEnd();
+		echo '</div>';
+		
+		// if full view and detail view selected, show it
+		if (isset($bid) && $bid>0 && $cu->properties->itemShow=='full')
+		{
+			//
+			// Gebäudedaten anzeigen
+			//
+			$item = $bl->item($bid);
+			tableStart($title);
+			echo '<tr>
+                  	<td rowspan="4" style="width:220px;background:#000;vertical-align:middle;">
+                 		'.helpImageLink('buildings&amp;id='.$item->buildingId,$item->building->imgPathBig(),$item->building,'width:220px;height:220px').'
+					</td>
+					<td colspan="2" style="vertical-align:top;height:150px;">
+						'.$item->building->longcomment.'
+					</td>
+				</tr>';
+			$f = $item->building->fields;
+			echo '<tr>
+                  	<th style="width:250px;height:20px;">Platzverbrauch pro Ausbaustufe:</th>
+                  	<td>'.$f.' '.($f!=1 ? 'Felder' : 'Feld').'</td>
+      			</tr>';
+			$f = $item->building->fields * $item->level;
+			echo '<tr>
+					<th style="width:250px;height:20px;">Platzverbrauch total:</th>
+					<td>'.$f.' '.($f!=1 ? 'Felder' : 'Feld').'</td>
+				</tr>';
+			echo '<tr>
+					<th style="width:250px;height:20px;">Status:</th>
+					<td style="'.$color.'" id="buildstatus" >'.$status_text.'</td>
+				</tr>';
+			tableEnd();
+			
+			//
+			// Baumenü
+			//
+			echo '<form action="?page='.$page.'" method="post">';
+			echo '<input type="hidden" name="id" value="'.$bid.'">';
+			checker_init();
+			
+			// Voraussetzungen sind erfüllt
+			if ($bl->requirementsPassed($bid))
+			{
+				$costs = $bl->getCosts($bid,'build');
+				$demolishCosts = $bl->getCosts($bid,'demolish');
+				tableStart('Bauoptionen');
+				echo '<tr>
+						<th width="16%">Aktion</td>
+						<th width="14%">'.RES_ICON_TIME.' Zeit</th>
+						<th width="14%">'.RES_ICON_METAL.'</td>
+						<th width="14%">'.RES_ICON_CRYSTAL.'</td>
+						<th width="14%">'.RES_ICON_PLASTIC.'</td>
+						<th width="14%">'.RES_ICON_FUEL.'</td>
+						<th width="14%">'.RES_ICON_FOOD.'</td>
+						<th width="14%">'.RES_ICON_POWER.'</td>
+					</tr>';
 				
-				// Prüft, ob Gebäude schon gebaut wurde und setzt Variablen
-				if(isset($buildlist[$arr['building_id']]))
+				// Bauen
+				if ($item->buildType==0)
 				{
-					$built = true;
-					
-					$b_level = $buildlist[$arr['building_id']]['buildlist_current_level'];
-					$b_status = $buildlist[$arr['building_id']]['buildlist_build_type'];
-					$start_time = $buildlist[$arr['building_id']]['buildlist_build_start_time'];
-					$end_time = $buildlist[$arr['building_id']]['buildlist_build_end_time'];
-				}
-				// Gebäude wurde noch nicht gebaut. Es werden Default Werte vergeben
-				else
-				{
-					$built = false;
-					
-					$b_level = 0;
-					$b_status=0;
-					$start_time = 0;
-					$end_time = 0;
-				}
-					
-
-        $bc = calcBuildingCosts($arr,$b_level,$cu->specialist->costsBuilding);
-        $bcn = calcBuildingCosts($arr,$b_level+1,$cu->specialist->costsBuilding);
-				$dc = calcDemolishingCosts($arr, $bc,$cu->specialist->costsBuilding);
-
-				// Bauzeit
-				$bonus = $cu->race->buildTime + $cp->typeBuildtime + $cp->starBuildtime + $cu->specialist->buildTime - 3;
-
-				$btime = ($bc['metal']+$bc['crystal']+$bc['plastic']+$bc['fuel']+$bc['food']) / GLOBAL_TIME * BUILD_BUILD_TIME;
-				$btime *= $bonus;
-
-				$btimen = ($bcn['metal']+$bcn['crystal']+$bcn['plastic']+$bcn['fuel']+$bcn['food']) / GLOBAL_TIME * BUILD_BUILD_TIME;
-				$btimen  *= $bonus;
-
-				$dtime = ($dc['metal']+$dc['crystal']+$dc['plastic']+$dc['fuel']+$dc['food']) / GLOBAL_TIME * BUILD_BUILD_TIME;
-				$dtime  *= $bonus;
-
-				if ($peopleWorking > 0)
-				{
-					$btime_min = $btime * $minBuildTimeFactor;
-					$btime = $btime-($peopleWorking * $peopleTimeReduction);
-					if ($btime < $btime_min) 
-						$btime = $btime_min;
-					$bc['food']+= $peopleWorking * $peopleFoodConsumption;
-				}
-
-
-				//
-				// Befehle ausführen
-				//
-
-				//Gebäude ausbauen
-				if (isset($_POST['command_build']) && $b_status==0)
-				{
-					if (!$builing_something)
+					$waitArr = $item->waitingTime();
+					if ($bl->checkBuildable($bid)<=0)
 					{
-
-						if ($cp->fields_used+$arr['building_fields']+$def_field_needed <= $cp->fields+$cp->fields_extra || $arr['building_fields']==0)
+						if($bl->checkBuildable($bid)==0)
 						{
-							if ($cp->resMetal >= $bc['metal'] && $cp->resCrystal >= $bc['crystal'] && $cp->resPlastic >= $bc['plastic']  && $cp->resFuel >= $bc['fuel']  && $cp->resFood >= $bc['food'])
-							{
-								$start_time = time();
-								$end_time = time()+$btime;
-								
-								//Gebäude bereits vorhanden
-								if (isset($buildlist[$arr['building_id']])>0)
-								{
-									dbquery("
-									UPDATE 
-										buildlist 
-									SET
-										buildlist_build_type='3',
-										buildlist_build_start_time='".time()."',
-										buildlist_build_end_time='".$end_time."'
-									WHERE
-										buildlist_entity_id='".$cp->id()."'
-										AND buildlist_building_id='".$arr['building_id']."';");
-								}
-								//Gebäude noch nicht vorhanden
-								else
-								{
-									dbquery("
-									INSERT INTO 
-									buildlist 
-									(
-										buildlist_build_type,
-										buildlist_build_start_time,
-										buildlist_build_end_time,
-										buildlist_building_id,
-										buildlist_user_id,
-										buildlist_entity_id
-									) 
-									VALUES 
-									( 
-										'3',
-										'".time()."',
-										'".$end_time."',
-										'".$arr['building_id']."',
-										'".$cu->id."',
-										'".$cp->id()."'
-									);");
-
-								}
-								
-								//Rohstoffe vom Planeten abziehen und aktualisieren
-								$cp->changeRes(-$bc['metal'],-$bc['crystal'],-$bc['plastic'],-$bc['fuel'],-$bc['food']);
-								$b_status=3;
-								
-								
-								//Log schreiben
-								$log_text = "[b]Gebäudebau[/b]
-
-[b]Baudauer:[/b] ".tf($btime)."
-[b]Ende:[/b] ".date("d.m.Y H:i:s",$end_time)."
-[b]Eingesetzte Bewohner:[/b] ".nf($peopleWorking)."
-[b]Gen-Tech Level:[/b] ".GEN_TECH_LEVEL."
-[b]Eingesetzter Spezialist:[/b] ".$cu->specialist->name."
-
-[b]Kosten[/b]
-[b]".RES_METAL.":[/b] ".nf($bc['metal'])."
-[b]".RES_CRYSTAL.":[/b] ".nf($bc['crystal'])."
-[b]".RES_PLASTIC.":[/b] ".nf($bc['plastic'])."
-[b]".RES_FUEL.":[/b] ".nf($bc['fuel'])."
-[b]".RES_FOOD.":[/b] ".nf($bc['food'])."
-
-[b]Restliche Rohstoffe auf dem Planeten[/b]
-[b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
-[b]".RES_CRYSTAL.":[/b] ".nf($cp->resCrystal)."
-[b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
-[b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
-[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
-								
-								//Log Speichern
-								GameLog::add(GameLog::F_BUILD, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $arr['building_id'], 3, $b_level);
-							}
-							else
-								error_msg("Bauauftrag kann nicht gestartet werden, zuwenig Rohstoffe vorhanden!");
+							echo '<tr>
+									<td style="color:red;">Bauen</td>
+									<td>'.tf($costs['time']).'</td>'
+									.$waitArr['string'].'
+								</tr>';
 						}
-						else
-							error_msg("Bauauftrag kann nicht gestartet werden, zuwenig Felder vorhanden!");
+						
+						echo '<tr>
+								<td colspan="8">
+									<i>'.$bl->getLastError().'</i>
+								</td>
+							</tr>'; 
+						
 					}
 					else
-						error_msg("Bauauftrag kann nicht gestartet werden, es wird bereits an einem Geb&auml;ude gearbeitet!");
-				}
-
-				//Gebäude abbrechen
-				if (isset($_POST['command_demolish']) && $b_status==0)
-				{
-					if (!$builing_something)
 					{
-						if ($cp->resMetal >= $dc['metal'] && $cp->resCrystal >= $dc['crystal'] && $cp->resPlastic >= $dc['plastic']  && $cp->resFuel >= $dc['fuel']  && $cp->resFood >= $dc['food'])
+						// Bauen
+						if ($item->level==0)
 						{
-							$end_time = time()+$dtime;
-							$start_time = time();
-							dbquery("
-							UPDATE 
-								buildlist 
-							SET
-								buildlist_build_type='4',
-								buildlist_build_start_time='".time()."',
-								buildlist_build_end_time='".$end_time."'
-							WHERE 
-								buildlist_entity_id='".$cp->id()."'
-								AND buildlist_building_id='".$arr['building_id']."';");
-								
-							//Rohstoffe vom Planeten abziehen und aktualisieren
-							$cp->changeRes(-$dc['metal'],-$dc['crystal'],-$dc['plastic'],-$dc['fuel'],-$dc['food']);
-							$b_status=4;
-							
-							
-							//Log schreiben
-							$log_text = "[b]Gebäudeabriss[/b]
-
-[b]Abrissdauer:[/b] ".tf($dtime)."
-[b]Ende:[/b] ".date("d.m.Y H:i:s",$end_time)."
-
-[b]Kosten[/b]
-[b]".RES_METAL.":[/b] ".nf($dc['metal'])."
-[b]".RES_CRYSTAL.":[/b] ".nf($dc['crystal'])."
-[b]".RES_PLASTIC.":[/b] ".nf($dc['plastic'])."
-[b]".RES_FUEL.":[/b] ".nf($dc['fuel'])."
-[b]".RES_FOOD.":[/b] ".nf($dc['food'])."
-
-[b]Restliche Rohstoffe auf dem Planeten[/b]
-[b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
-[b]".RES_CRYSTAL.":[/b] ".nf($cp->resCrystal)."
-[b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
-[b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
-[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
-							
-							//Log Speichern
-							GameLog::add(GameLog::F_BUILD, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $arr['building_id'], 4, $b_level);
-							
+							echo '<tr>
+									<td>
+										<input type="submit" class="button" name="command_build" value="Bauen">
+									</td>
+									<td>'.tf($costs['time']).'</td>';
 						}
-						else
-							error_msg("Abbruchauftrag kann nicht gestartet werden, zuwenig Rohstoffe vorhanden!");;
-					}
-					else
-						error_msg("Abbruchauftrag kann nicht gestartet werden, es wird bereits an einem Geb&auml;ude gearbeitet!");
-				}
-
-				//Bauauftrag abbrechen
-				if (isset($_POST['command_cbuild']) && $b_status==3)
-				{
-					if ($buildlist[$arr['building_id']]['buildlist_build_end_time'] > time())
-					{
-						$fac = ($end_time-time())/($end_time-$start_time);
-						dbquery("
-						UPDATE 
-							buildlist 
-						SET
-							buildlist_build_type=0,
-							buildlist_build_start_time=0,
-							buildlist_build_end_time=0
-						WHERE 
-							buildlist_entity_id='".$cp->id()."'
-							AND buildlist_building_id='".$arr['building_id']."';");
-							
-						//Rohstoffe vom Planeten abziehen und aktualisieren
-						$cp->changeRes($bc['metal']*$fac,$bc['crystal']*$fac,$bc['plastic']*$fac,$bc['fuel']*$fac,$bc['food']*$fac);
-						$b_status=0;
-						$builing_something=false;
-						
-						//Log schreiben
-						$log_text = "[b]Gebäudebau Abbruch[/b]
-
-[b]Start des Gebädes:[/b] ".date("d.m.Y H:i:s",$start_time)."
-[b]Ende des Gebädes:[/b] ".date("d.m.Y H:i:s",$end_time)."
-
-[b]Erhaltene Rohstoffe[/b]
-[b]Faktor:[/b] ".$fac."
-[b]".RES_METAL.":[/b] ".nf($bc['metal']*$fac)."
-[b]".RES_CRYSTAL.":[/b] ".nf($bc['crystal']*$fac)."
-[b]".RES_PLASTIC.":[/b] ".nf($bc['plastic']*$fac)."
-[b]".RES_FUEL.":[/b] ".nf($bc['fuel']*$fac)."
-[b]".RES_FOOD.":[/b] ".nf($bc['food']*$fac)."
-
-[b]Rohstoffe auf dem Planeten[/b]
-[b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
-[b]".RES_CRYSTAL.":[/b] ".nf($cp->resCrystal)."
-[b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
-[b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
-[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
-						
-						//Log Speichern
-						GameLog::add(GameLog::F_BUILD, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $arr['building_id'], 1, $b_level);
-
-					}
-					else
-						error_msg("Bauauftrag kann nicht mehr abgebrochen werden, die Arbeit ist bereits fertiggestellt!");
-				}
-
-				//Abbruchauftrag abbrechen
-				if (isset($_POST['command_cdemolish']) && $b_status==4)
-				{
-					if ($buildlist[$arr['building_id']]['buildlist_build_end_time'] > time())
-					{
-						$fac = ($end_time-time())/($end_time-$start_time);
-						dbquery("
-						UPDATE 
-							buildlist 
-						SET
-							buildlist_build_type=0,
-							buildlist_build_start_time=0,
-							buildlist_build_end_time=0
-						WHERE 
-							buildlist_entity_id='".$cp->id()."'
-							AND buildlist_building_id='".$arr['building_id']."';");
-						
-						//Rohstoffe vom Planeten abziehen und aktualisieren
-						$cp->changeRes($dc['metal']*$fac,$dc['crystal']*$fac,$dc['plastic']*$fac,$dc['fuel']*$fac,$dc['food']*$fac);
-						$b_status=0;
-						$builing_something=false;
-						
-						//Log schreiben
-						$log_text = "[b]Gebäudeabriss Abbruch[/b]
-						
-[b]Start des Gebädes:[/b] ".date("d.m.Y H:i:s",$start_time)."
-[b]Ende des Gebädes:[/b] ".date("d.m.Y H:i:s",$end_time)."
-
-[b]Erhaltene Rohstoffe[/b]
-[b]Faktor:[/b] ".$fac."
-[b]".RES_METAL.":[/b] ".nf($dc['metal']*$fac)."
-[b]".RES_CRYSTAL.":[/b] ".nf($dc['crystal']*$fac)."
-[b]".RES_PLASTIC.":[/b] ".nf($dc['plastic']*$fac)."
-[b]".RES_FUEL.":[/b] ".nf($dc['fuel']*$fac)."
-[b]".RES_FOOD.":[/b] ".nf($dc['food']*$fac)."
-
-[b]Rohstoffe auf dem Planeten[/b]
-[b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
-[b]".RES_CRYSTAL.":[/b] ".nf($cp->resCrystal)."
-[b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
-[b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
-[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
-						
-						//Log Speichern
-						GameLog::add(GameLog::F_BUILD, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $arr['building_id'], 2, $b_level);
-
-					}
-					else
-						error_msg("Abbruchauftrag kann nicht mehr abgebrochen werden, die Arbeit ist bereits fertiggestellt!");
-				}
-
-
-				if ($b_status==3 && $b_level>0)
-				{
-					$color="color:#0f0;";
-					$status_text="Wird ausgebaut";
-				}
-				elseif ($b_status==32)
-				{
-					$color="color:#0f0;";
-					$status_text="Wird gebaut";
-				}
-				elseif ($b_status==4)
-				{
-					$color="color:#f80;";
-					$status_text="Wird abgerissen";
-				}
-				else
-				{
-					$color="";
-					$status_text="Unt&auml;tig";
-				}
-
-				//
-				// Gebäudedaten anzeigen
-				//
-				$path = IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$arr['building_id'].".".IMAGE_EXT;
-				$title = $arr['building_name'].' <span id="buildlevel">';
-				$title.= $b_level > 0 ? $b_level : '';
-				$title.= '</span>';
-				tableStart($title);
-				echo "<tr>
-                  <td rowspan=\"4\" style=\"width:220px;background:#000;vertical-align:middle;\">
-                 		".helpImageLink("buildings&amp;id=".$arr['building_id'],$path,$arr['building_name'],"width:220px;height:220px")."
-                  </td>
-                  <td colspan=\"2\" style=\"vertical-align:top;height:150px;\">
-                  	".$arr['building_longcomment']."
-                 	</td>
-				     </tr>";
-       	$f = $arr['building_fields'];
-				echo "<tr>
-                  <th style=\"width:250px;height:20px;\">Platzverbrauch pro Ausbaustufe:</th>
-                  <td>".$f." ".($f!=1 ? 'Felder' : 'Feld')."</td>
-      	</tr>";
-      	$f = $arr['building_fields'] * $b_level;
-				echo "<tr>
-                  <th style=\"width:250px;height:20px;\">Platzverbrauch total:</th>
-       						<td>".$f." ".($f!=1 ? 'Felder' : 'Feld')."</td>
-						</tr>";
-				echo "<tr>
-                  <th style=\"width:250px;height:20px;\">Status:</th>
-                  <td style=\"".$color."\" id=\"buildstatus\" >$status_text</td>
-				     </tr>";
-				tableEnd();
-
-
-				// Check requirements for this building
-				$requirements_passed = true;
-				$bid = $arr['building_id'];
-				if (isset($b_req[$bid]['b']) && count($b_req[$bid]['b'])>0)
-				{
-					foreach ($b_req[$bid]['b'] as $b => $l)
-					{
-						if (!isset($buildlist[$b]['buildlist_current_level']) || $buildlist[$b]['buildlist_current_level']<$l)
-						{
-							$requirements_passed = false;
-						}
-					}
-				}								
-				if (isset($b_req[$bid]['t']) && count($b_req[$bid]['t'])>0)
-				{
-					foreach ($b_req[$bid]['t'] as $id => $level)
-					{
-						if (!isset($techlist[$id]) || $techlist[$id]<$level)
-						{
-							$requirements_passed = false;
-						}
-					}
-				}
-
-
-				//
-				// Baumenü
-				//
-				echo "<form action=\"?page=$page\" method=\"post\">";
-        echo "<input type=\"hidden\" name=\"id\" value=\"".$arr['building_id']."\">";
-        checker_init();
-        
-        // Voraussetzungen sind erfüllt
-        if ($requirements_passed)
-        {
-					tableStart("Bauoptionen");
-					echo "<tr>
-	                <th width=\"16%\">Aktion</td>
-	                <th width=\"14%\">".RES_ICON_TIME." Zeit</th>
-	                <th width=\"14%\">".RES_ICON_METAL."</td>
-	                <th width=\"14%\">".RES_ICON_CRYSTAL."</td>
-	                <th width=\"14%\">".RES_ICON_PLASTIC."</td>
-	                <th width=\"14%\">".RES_ICON_FUEL."</td>
-	                <th width=\"14%\">".RES_ICON_FOOD."</td>
-	                <th width=\"14%\">".RES_ICON_POWER."</td>
-							</tr>";
-	
-					// Bauen
-					if ($b_status==0)
-					{
-						$bWaitArray = calcBuildingWaitTime($bc,$cp);
-	
-						// Maximale Stufe erreicht
-						if ($b_level>=$arr['building_last_level'])
-						{
-							echo "<tr>
-											<td colspan=\"8\">
-												<i>Kein weiterer Ausbau m&ouml;glich.</i>
-											</td>
-										</tr>";
-						}
-						// Es wird bereits an einem Gebäude gebaut
-						elseif ($builing_something)
-						{
-							echo "<tr>
-											<td style=\"color:red;\">Bauen</td>
-											<td>".tf($btime)."</td>";
-							echo $bWaitArray[0];
-							echo "<tr>
-											<td colspan=\"8\">
-												<i>Es kann nichts gebaut werden da gerade an einem anderen Geb&auml;ude gearbeitet wird!</i>
-											</td>
-										</tr>";
-						}
-						// Zuwenig Felder vorhanden
-						elseif ($arr['building_fields']>0 && ($cp->fields_used+$arr['building_fields']+$def_field_needed > $cp->fields+$cp->fields_extra))
-						{
-							echo "<tr>
-											<td style=\"color:red;\">Bauen</td>
-											<td>".tf($btime)."</td>";
-							echo $bWaitArray[0];
-							echo "<tr>
-											<td colspan=\"8\">
-												<i>Kein Ausbau m&ouml;glich, da es zuwenig Platz (Total: ".($cp->fields+$cp->fields_extra).", reserviert: ".($cp->fields_used+$def_field_needed).", benötigt: ".$arr['building_fields'].") f&uuml;r dieses Geb&auml;ude hat!</i>
-											</td>
-										</tr>";
-						}
-						// Zuwenig Rohstoffe vorhanden
-						elseif ($cp->resMetal < $bc['metal'] || 
-						$cp->resCrystal < $bc['crystal']  || 
-						$cp->resPlastic < $bc['plastic']  || 
-						$cp->resFuel < $bc['fuel']  || 
-						$cp->resFood < $bc['food'] || 
-						($cp->prodPower - $cp->usePower < $bc['power'] && $bc['power']>0)
-						)
-						{
-							echo "<tr>
-											<td style=\"color:red;\">Bauen</td>
-											<td>".tf($btime)."</td>";
-							echo $bWaitArray[0];
-							echo "<tr>
-											<td colspan=\"8\">
-												<i>Kein Ausbau m&ouml;glich, zuwenig Rohstoffe!</i>
-											</td>
-										</tr>";
-						}
+						// Ausbauen
 						else
 						{
-							// Bauen
-							if ($b_level==0)
-							{
-								echo "<tr>
-												<td>
-													<input type=\"submit\" class=\"button\" name=\"command_build\" value=\"Bauen\"
-												</td>
-												<td>".tf($btime)."</td>";
+							echo '<tr>
+									<td>
+										<input type="submit" class="button" name="command_build" value="Ausbauen">
+									</td>
+									<td>'.tf($costs['time']).'</td>';
 							}
-							// Ausbauen
-							else
+							foreach ($resNames as $rk=>$rn)
 							{
-								echo "<tr>
-												<td>
-													<input type=\"submit\" class=\"button\" name=\"command_build\" value=\"Ausbauen\">
-												</td>
-												<td>".tf($btime)."</td>";
+								echo '<td>'.nf($costs['costs'.$rk]).'</td>';
 							}
-							
-									echo "<td>".nf($bc['metal'])."</td>
-												<td>".nf($bc['crystal'])."</td>
-												<td>".nf($bc['plastic'])."</td>
-												<td>".nf($bc['fuel'])."</td>
-												<td>".nf($bc['food'])."</td>
-												<td>".nf($bc['power'])."</td>
-											</tr>";
+							echo '<td id="costs5">'.nf($costs['costs5']).'</td>';
+							echo '</tr>';
 						}
 					}
 	
 					// Abreissen
-					if ($b_level>0 && $arr['building_demolish_costs_factor']!=0 && $b_status==0)
+					if ($item->level>0 && $item->building->demolishCostsFactor!=0 && $item->buildType==0)
 					{
-						$dWaitArray = calcDemolishingWaitTime($dc,$cp);
+						$waitArr = $item->waitingTime('demolish');
 						// Es wird bereits an einem Gebäude gebaut
-						if ($builing_something)
+						if ($bl->checkBuildable($bid)<=0)
 						{
-							echo "<tr>
-											<td style=\"color:red;\">Abreissen</td>
-											<td>".tf($dtime)."</td>";
-							echo $dWaitArray[0];
-							echo "<tr>
-											<td colspan=\"8\">
-													<i>Kein Abriss m&ouml;glich, es wird gerade an einem anderen Geb&auml;ude gearbeitet!</i>
-											</td>
-										</tr>";
-						}
-						// Zuwenig Rohstoffe
-						elseif ($cp->resMetal < $dc['metal'] || 
-						$cp->resCrystal < $dc['crystal']  || 
-						$cp->resPlastic < $dc['plastic']  || 
-						$cp->resFuel < $dc['fuel']  || 
-						$cp->resFood < $dc['food'] || 
-						($cp->prodPower - $cp->usePower < $dc['power'] && $dc['power']>0)
-						)
-						{
-							echo "<tr>
-											<td style=\"color:red;\">Abreissen</td>
-											<td>".tf($dtime)."</td>";
-							echo $dWaitArray[0];
-							echo "<tr>
-											<td colspan=\"8\">
-												<i>Kein Abriss m&ouml;glich, zuwenig Rohstoffe!</i>
-											</td>
-										</tr>";
+							if($bl->checkBuildable($bid)==0)
+							{
+								echo '<tr>
+										<td style="color:red;">Abreissen</td>
+										<td>'.tf($demolishCosts['time']).'</td>'
+										.$waitArr['string'].'
+									</tr>';
+							}
+
+							echo '<tr>
+									<td colspan="8">
+										<i>'.$bl->getLastError().'</i>
+									</td>
+								</tr>'; 
+
 						}
 						else
 						{
-							echo "<tr>
-											<td>
-												<input type=\"submit\" class=\"button\" name=\"command_demolish\" value=\"Abreissen\">
-											</td>
-											<td>".tf($dtime)."</td>
-											<td>".nf($dc['metal'])."</td>
-											<td>".nf($dc['crystal'])."</td>
-											<td>".nf($dc['plastic'])."</td>
-											<td>".nf($dc['fuel'])."</td>
-											<td>".nf($dc['food'])."</td>
-											<td>".nf($dc['power'])."</td>
-										</tr>";
+							echo '<tr>
+									<td>
+										<input type="submit" class="button" name="command_demolish" value="Abreissen">
+									</td>
+									<td>'.tf($demolishCosts['time']).'</td>';
+							foreach ($resNames as $rk=>$rn)
+							{
+								echo '<td>'.nf($demolishCosts['costs'.$rk]).'</td>';
+							}
+							echo '<td>'.nf($demolishCosts['costs5']).'</td>';
+							echo '</tr>';
 						}
 					}
+					
 	
 					// Bau abbrechen
-					if ($b_status==3)
+					if ($item->buildType==3)
 					{
-		      	echo "<tr>
-		      					<td id=\"buildcancel\">
-		      						<input type=\"submit\" class=\"button\" name=\"command_cbuild\" value=\"Bau abbrechen\" onclick=\"if (this.value=='Bau abbrechen'){return confirm('Wirklich abbrechen?');}\" />
+		      			echo '<tr>
+		      					<td id="buildcancel">
+		      						<input type="submit" class="button" name="command_cbuild" value="Bau abbrechen" onclick="if (this.value==\'Bau abbrechen\'){return confirm(\'Wirklich abbrechen?\');}" />
 		      					</td>
-		      					<td id=\"buildtime\">-</td>
-		      					<td colspan=\"6\" id=\"buildprogress\" style=\"height:25px;background:#fff;text-align:center;\"></td>
-		      				</tr>";
-		      	if ($b_level < $arr['building_last_level']-1)
-		      	{
-		         	echo "<tr>
-		         					<td width=\"90\">N&auml;chste Stufe:</td>
-		         					<td>".tf($btimen)."</td>
-		         					<td>".nf($bcn['metal'])."</td>
-		         					<td>".nf($bcn['crystal'])."</td>
-		         					<td>".nf($bcn['plastic'])."</td>
-		         					<td>".nf($bcn['fuel'])."</td>
-		         					<td>".nf($bcn['food'])."</td>
-		         					<td>".nf($bcn['power'])."</td>
-		         				</tr>";
-		         }
+		      					<td id="buildtime">-</td>
+		      					<td colspan="6" id="buildprogress" style="height:25px;background:#fff;text-align:center;"></td>
+		      				</tr>';
+		      			if ($item->level < $item->building->maxLevel-1)
+		      			{
+							$costs = $bl->getCosts($bid,'build',1);
+		         			echo '<tr>
+		         					<td width="90">N&auml;chste Stufe:</td>
+		         					<td>'.tf($costs['time']).'</td>';
+							foreach ($resNames as $rk=>$rn)
+							{
+								echo '<td>'.nf($costs['costs'.$rk]).'</td>';
+							}
+							echo '<td>'.nf($costs['costs5']).'</td>';
+							echo '</tr>';
+		         		}
 					}
 	
 					// Abriss abbrechen
-					if ($b_status==4)
+					if ($item->buildType==4)
 					{
-		      	echo "<tr>
-		      					<td id=\"buildcancel\">
-		      						<input type=\"submit\" class=\"button\" name=\"command_cdemolish\" value=\"Abriss abbrechen\" onclick=\"if (this.value=='Abriss abbrechen'){return confirm('Wirklich abbrechen?');}\" />
+		      			echo '<tr>
+		      					<td id="buildcancel">
+		      						<input type="submit" class="button" name="command_cdemolish" value="Abriss abbrechen" onclick="if (this.value==\'Abriss abbrechen\'){return confirm(\'Wirklich abbrechen?\');}" />
 		      					</td>
-		      					<td id=\"buildtime\">-</td>
-		      					<td colspan=\"6\"  id=\"buildprogress\" style=\"height:25px;background:#fff;text-align:center;\"></td>
-		      				</tr>";
+		      					<td id="buildtime">-</td>
+		      					<td colspan="6"  id="buildprogress" style="height:25px;background:#fff;text-align:center;"></td>
+		      				</tr>';
 					}
 					tableEnd();
-					
 					
 	
 					if (isset($bWaitArray) && $bWaitArray[1]>0)
@@ -954,10 +489,10 @@ function calcDemolishingWaitTime($dc,$cp)
 					}
 					echo "<br/>";
 	
-					if ($b_status==3 || $b_status==4)
+					if ($item->buildType==3 || $item->buildType==4)
 					{
-						countDown("buildtime",$end_time,"buildcancel");
-						jsProgressBar("buildprogress",$start_time,$end_time);
+						countDown("buildtime",$item->endTime,"buildcancel");
+						jsProgressBar("buildprogress",$item->startTime,$item->endTime);
 					}
 				
 				}
@@ -969,12 +504,11 @@ function calcDemolishingWaitTime($dc,$cp)
 				echo "<input type=\"submit\" name=\"command_show\" value=\"Aktualisieren\" /> &nbsp; ";
 				echo "<input type=\"button\" value=\"Zur&uuml;ck zur &Uuml;bersicht\" onclick=\"document.location='?page=$page'\" />";
 				echo "</form>";
-			}
-			else {
+		}
+		/*	else {
 				error_msg("Geb&auml;ude nicht vorhanden!");
 				return_btn();
 			}
-		}
 
 /********************
 * Übersicht         *
@@ -984,471 +518,250 @@ function calcDemolishingWaitTime($dc,$cp)
 		{
 	
 		
-			$tres = dbquery("
-			SELECT
-				*
-			FROM
-        building_types
-			ORDER BY
-				type_order ASC
+			$tres = dbquery("SELECT
+								type_id,
+								type_name
+							FROM
+        						building_types
+							ORDER BY
+								type_order ASC
 			;");				
 			if (mysql_num_rows($tres)>0)
 			{
-
-				// Gebäude laden
-				$bres = dbquery("
-				SELECT
-					building_type_id,
-					building_id,
-					building_name,
-					building_last_level,
-					building_shortcomment,
-					building_costs_metal,
-					building_costs_crystal,
-					building_costs_plastic,
-					building_costs_fuel,
-					building_costs_food,
-					building_costs_power,
-					building_build_costs_factor,
-					building_show
-				FROM
-					buildings
-				WHERE
-					building_show='1'
-				ORDER BY
-					building_order,
-					building_name
-				;");	
-				$building = array();
-				if (mysql_num_rows($bres)>0)			
-				{
-					while ($barr = mysql_Fetch_Array($bres))
-					{
-						$tid = $barr['building_type_id'];
-						$bid = $barr['building_id'];
-						$building[$tid][$bid]['name'] = $barr['building_name'];
-						$building[$tid][$bid]['last_level'] = $barr['building_last_level'];
-						$building[$tid][$bid]['shortcomment'] = $barr['building_shortcomment'];
-						$building[$tid][$bid]['building_costs_metal'] = $barr['building_costs_metal'];
-						$building[$tid][$bid]['building_costs_crystal'] = $barr['building_costs_crystal'];
-						$building[$tid][$bid]['building_costs_plastic'] = $barr['building_costs_plastic'];
-						$building[$tid][$bid]['building_costs_fuel'] = $barr['building_costs_fuel'];
-						$building[$tid][$bid]['building_costs_food'] = $barr['building_costs_food'];
-						$building[$tid][$bid]['building_costs_power'] = $barr['building_costs_power'];
-						$building[$tid][$bid]['building_build_costs_factor'] = $barr['building_build_costs_factor'];
-						$building[$tid][$bid]['show'] = $barr['building_show'];
-					}
-				}
-				
 				// Jede Kategorie durchgehen
-				$cstr=checker_init();
-				echo "<form action=\"?page=$page\" method=\"post\"><div>";
-				echo $cstr;
-
+				echo '<form action="?page='.$page.'" method="post"><div>';
+				checker_init();
+				
 				while ($tarr = mysql_fetch_array($tres))
 				{
 					tableStart($tarr['type_name'],TABLE_WIDTH);
-
+					
 					//Einfache Ansicht
 					if ($cu->properties->itemShow!='full')
 					{
 						echo "<tr>
-										<th colspan=\"2\">Gebäude</th>
-										<th>Zeit</th>
-										<th>".RES_METAL."</th>
-										<th>".RES_CRYSTAL."</th>
-										<th>".RES_PLASTIC."</th>
-										<th>".RES_FUEL."</th>
-										<th>".RES_FOOD."</th>
-										<th>Ausbau</th>
-									</tr>";
+								<th colspan=\"2\">Gebäude</th>
+								<th>Zeit</th>
+								<th>".RES_METAL."</th>
+								<th>".RES_CRYSTAL."</th>
+								<th>".RES_PLASTIC."</th>
+								<th>".RES_FUEL."</th>
+								<th>".RES_FOOD."</th>
+								<th>Ausbau</th>
+							</tr>";
 					}
 					
 					$cnt = 0; // Counter for current row
 					$scnt = 0; // Counter for shown buildings
-
-						$bdata = $building[$tarr['type_id']];
-						if (isset($bdata) && count($bdata)>0)
+					
+					$it = $bl->getCatIterator($tarr['type_id']);
+					
+					while( $it->valid() )
+					{
+						if ($cu->properties->itemShow!='full')
+							$img = $it->current()->building->imgPathSmall();
+						else
+							$img = $it->current()->building->imgPathMiddle();
+						
+						if (!$bl->requirementsPassed($it->key()))
 						{
-							foreach ($bdata as $bid => $bv)
+							$subtitle =  'Voraussetzungen fehlen';
+							$tmtext = '<span style="color:#999">Baue zuerst die nötigen Gebäude und erforsche die nötigen Technologien um diese Gebäude zu bauen!</span><br/>';
+							foreach ($it->current()->building->getBuildingRequirements() as $id=>$level)
 							{
-								// Aktuellen Level feststellen
-								if(isset($buildlist[$bid]['buildlist_current_level']))
-								{
-									$b_level = intval($buildlist[$bid]['buildlist_current_level']);
-									$end_time = intval($buildlist[$bid]['buildlist_build_end_time']);
-									$start_time = intval($buildlist[$bid]['buildlist_build_start_time']);
-								}
-								else
-								{
-									$b_level=0;
-									$end_time=0;
-								}
-
-
-								// Check requirements for this building
-								$requirements_passed = true;
-								$b_req_info = array();
-								$t_req_info = array();
-								if (isset($b_req[$bid]['b']) && count($b_req[$bid]['b'])>0)
-								{
-									foreach ($b_req[$bid]['b'] as $b => $l)
-									{
-										if (!isset($buildlist[$b]['buildlist_current_level']) || $buildlist[$b]['buildlist_current_level']<$l)
-										{
-											$b_req_info[] = array($b,$l,false);
-											$requirements_passed = false;
-										}
-										else
-											$b_req_info[] = array($b,$l,true);
-									}
-								}								
-								if (isset($b_req[$bid]['t']) && count($b_req[$bid]['t'])>0)
-								{
-									foreach ($b_req[$bid]['t'] as $id => $level)
-									{
-										if (!isset($techlist[$id]) || $techlist[$id]<$level)
-										{
-											$requirements_passed = false;
-											$t_req_info[] = array($id,$level,false);
-										}
-										else
-											$t_req_info[] = array($id,$level,true);
-									}
-								}
-
-								// Voraussetzungen nicht erfüllt
-								if (!$requirements_passed)
-								{
-									$subtitle =  'Voraussetzungen fehlen';
-									$tmtext = '<span style="color:#999">Baue zuerst die nötigen Gebäude und erforsche die nötigen Technologien um diese Gebäude zu bauen!</span><br/>';
-									foreach ($b_req_info as $v)
-									{
-										$b = new Building($v[0]);
-										$tmtext .= "<div style=\"color:".($v[2]?'#0f0':'#f30')."\">".$b." Stufe ".$v[1]."</div>";
-										unset($b);
-									}
-									foreach ($t_req_info as $v)
-									{
-										$b = new Technology($v[0]);
-										$tmtext .= "<div style=\"color:".($v[2]?'#0f0':'#f30')."\">".$b." Stufe ".$v[1]."</div>";
-										unset($b);
-									}
-									
-									$color = '#999';
-									if($use_img_filter)
-									{
-										$img = "misc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid.".".IMAGE_EXT."&filter=na";
-									}
-									else
-									{
-										$img="".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid.".".IMAGE_EXT."";
-									}							
-									
-								}
-								// Ist im Bau
-								elseif (isset($buildlist[$bid]['buildlist_build_type']) && $buildlist[$bid]['buildlist_build_type']==3)
-								{
-									$subtitle =  "Ausbau auf Stufe ".($b_level+1);
-									$tmtext = "<span style=\"color:#0f0\">Wird ausgebaut<br/>Dauer: ".tf($end_time-time())."</span><br/>";
-									$color = '#0f0';
-									if($use_img_filter)
-									{
-										$img = "misc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid.".".IMAGE_EXT."&filter=building";
-									}
-									else
-									{
-										$img="".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid.".".IMAGE_EXT."";
-									}
-								}
-								// Wird abgerissen
-								elseif (isset($buildlist[$bid]['buildlist_build_type']) && $buildlist[$bid]['buildlist_build_type']==4)
-								{
-									$subtitle = "Abriss auf Stufe ".($b_level-1);
-									$tmtext = "<span style=\"color:#f90\">Wird abgerissen!<br/>Dauer: ".tf($end_time-time())."</span><br/>";
-									$color = '#f90';
-									if($use_img_filter)
-									{
-										$img = "misc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid.".".IMAGE_EXT."&filter=destructing";
-									}
-									else
-									{
-										$img="".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid.".".IMAGE_EXT."";
-									}
-								}
-								// Untätig
-								else
-								{
-									// Zuwenig Ressourcen
-                					$bc = calcBuildingCosts($bv,$b_level,$cu->specialist->costsBuilding);
-									if($b_level<$bv['last_level'] && $cp->resMetal < $bc['metal'] || $cp->resCrystal < $bc['crystal']  || $cp->resPlastic < $bc['plastic']  || $cp->resFuel < $bc['fuel']  || $cp->resFood < $bc['food'])
-									{
-										if ($cu->properties->itemShow!='full')
-										{
-											$tmtext = "<span style=\"color:#f00\">Zuwenig Ressourcen f&uuml;r weiteren Ausbau!</span><br/>";
-											//Stellt Rohstoff Rot dar, wenn es von diesem zu wenig auf dem Planeten hat
-											//Titan
-											if($bc['metal']>$cp->resMetal)
-											{
-												$style['metal'] = "style=\"color:red;\" ";
-												if ($cp->prodMetal > 0)
-												{
-													$bwait['metal'] = ceil(($bc['metal']-$cp->resMetal)/$cp->prodMetal*3600);
-													$bwmsg['metal'] = tm("Fehlender Rohstoff",nf($bc['metal']-$cp->resMetal)." Titan<br />Bereit in ".tf($bwait['metal'])."");
-													$style['metal'] .= $bwmsg['metal']."";
-												}
-
-											}
-											else
-											{
-												$style['metal'] = "";
-											}
-
-											//Silizium
-											if($bc['crystal']>$cp->resCrystal)
-											{
-												$style['crystal'] = "style=\"color:red;\" ";
-												if ($cp->prodCrystal > 0)
-												{
-													$bwait['crystal'] = ceil(($bc['crystal']-$cp->resCrystal)/$cp->prodCrystal*3600);
-													$bwmsg['crystal'] = tm("Fehlender Rohstoff",nf($bc['crystal']-$cp->resCrystal)." Silizium<br />Bereit in ".tf($bwait['crystal'])."");
-													$style['crystal'] .= $bwmsg['crystal']."";
-												}
-
-											}
-											else
-											{
-												$style['crystal'] = "";
-											}
-
-											//PVC
-											if($bc['plastic']>$cp->resPlastic)
-											{
-												$style['plastic'] = "style=\"color:red;\" ";
-												if ($cp->prodPlastic > 0)
-												{
-													$bwait['plastic'] = ceil(($bc['plastic']-$cp->resPlastic)/$cp->prodPlastic*3600);
-													$bwmsg['plastic'] = tm("Fehlender Rohstoff",nf($bc['plastic']-$cp->resPlastic)." PVC<br />Bereit in ".tf($bwait['plastic'])."");
-													$style['plastic'] .= $bwmsg['plastic']."";
-												}
-
-											}
-											else
-											{
-												$style['plastic'] = "";
-											}
-
-											//Tritium
-											if($bc['fuel']>$cp->resFuel)
-											{
-												$style['fuel'] = "style=\"color:red;\" ";
-												if ($cp->prodFuel > 0)
-												{
-													$bwait['fuel'] = ceil(($bc['fuel']-$cp->resFuel)/$cp->prodFuel*3600);
-													$bwmsg['fuel'] = tm("Fehlender Rohstoff",nf($bc['fuel']-$cp->resFuel)." Tirtium<br />Bereit in ".tf($bwait['fuel'])."");
-													$style['fuel'] .= $bwmsg['fuel']."";
-												}
-
-											}
-											else
-											{
-												$style['fuel'] = "";
-											}
-
-											//Nahrung
-											if($bc['food']>$cp->resFood)
-											{
-												$style['food'] = "style=\"color:red;\" ";
-												if ($cp->prodFood > 0)
-												{
-													$bwait['food'] = ceil(($bc['fuel']-$cp->resFood)/$cp->prodFood*3600);
-													$bwmsg['food'] = tm("Fehlender Rohstoff",nf($bc['food']-$cp->resFood)." Tirtium<br />Bereit in ".tf($bwait['food'])."");
-													$style['food'] .= $bwmsg['food']."";
-												}
-
-											}
-											else
-											{
-												$style['food'] = "";
-											}
-										}
-										else
-										{
-											$tmtext = "<span style=\"color:#f00\">Zuwenig Ressourcen f&uuml;r weiteren Ausbau!</span><br/>";
-											$color = '#f00';
-										
-											if($use_img_filter)
-											{
-												$img = "misc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid.".".IMAGE_EXT."&filter=lowres";
-											}
-											else
-											{
-												$img="".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid.".".IMAGE_EXT."";
-											}
-										}
-									}
-									else
-									{
-										$tmtext = "";
-										$color = '#fff';
-										$img="".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid.".".IMAGE_EXT."";
-										$style['metal'] = $style['crystal'] = $style['plastic'] = $style['food'] = "";
-									}
-									
-									if ($b_level==0)
-									{
-										$subtitle = "Noch nicht gebaut";
-									}
-									elseif ($b_level>=$bv['last_level'])
-									{
-										$subtitle = 'Vollständig ausgebaut';
-										$tmtext = '';
-									}
-									else
-									{
-										$subtitle = 'Stufe '.$b_level;
-									}
-								}
-
-								// Display all buildings that are buildable or are already built
-								if (($bv['show']==1) || $b_level>0)
-								{			
-									$img="".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid."_middle.".IMAGE_EXT."";
-
-									if (!$requirements_passed)
-										$img = "misc/imagefilter.php?file=$img&filter=req";
-
-									//Einfache Ansicht
-									if ($cu->properties->itemShow!='full')
-									{
-										$img = IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$bid."_small.".IMAGE_EXT;
-
-	  			      					echo "<tr>
-	  			      							<td>
-					  			      				<a href=\"".HELP_URL."&amp;id=".$bid."\"><img src=\"".$img."\" width=\"40\" height=\"40\" border=\"0\" /></a>
-												</td>
-												<th width=\"45%\">
-		  			      							<span style=\"font-weight:500\">".$bv['name']."<br/>
-		  			      							Suffe:</span> ".nf($b_level)."
-		  			      						</th>";
-										if (!$requirements_passed || $b_level>=$bv['last_level'])
-										{
-											echo "<td width=\"90%\" style=\"color:#999\" colspan=\"7\" ".tm($bv['name'],$subtitle."<br/>".$tmtext).">".$subtitle."</td>";
-										}
-										elseif (isset($buildlist[$bid]['buildlist_build_type']) && ($buildlist[$bid]['buildlist_build_type']==4 || $buildlist[$bid]['buildlist_build_type']==3))
-										{
-											echo "<td id=\"buildtime\">-</td>
-					      					<td colspan=\"6\"  id=\"buildprogress\" style=\"height:100%;background:#fff;text-align:center;\"></td>";
-											countDown("buildtime",$end_time,"buildcancel");
-											jsProgressBar("buildprogress",$start_time,$end_time);
-										}
-										else
-										{
-											echo "<td width=\"40%\">".tf($bc['time'])."</td>
-	  			      						<td width=\"10%\" ".$style['metal'].">".nf($bc['metal'])."</td>
-	  			      						<td width=\"10%\" ".$style['crystal'].">".nf($bc['crystal'])."</td>
-	  			      						<td width=\"10%\" ".$style['plastic'].">".nf($bc['plastic'])."</td>
-	  			      						<td width=\"10%\" ".$style['fuel'].">".nf($bc['fuel'])."</td>
-	  			      						<td width=\"10%\" ".$style['food'].">".nf($bc['food'])."</td>";
-	
-										//Maximale Anzahl erreicht
-					  			      	if ($tmtext!="")
-					  			      	{
-					  			      	    echo "<td style=\"color:red;\" ".tm($bv['name'],$subtitle."<br/>".$tmtext).">Bauen</td></tr>";
-					  			      	}
-					  			      	else
-					  			      	{
-					  			      	    echo "<td>
-													<form action=\"?page=$page\" method=\"post\">";
-											        echo "<input type=\"hidden\" name=\"id[$bid]\" value=\"".$bid."\">";
-											        checker_init();
-													echo "<input type=\"submit\" class=\"button\" name=\"command_build[$bid]\" value=\"Ausbauen\"></td</tr>";
-					  			      	}	
-										}
-
-									}
-									else
-									{
-										// Display row starter if needed				
-										if ($cnt==0) 
-										{
-											echo "<tr>";
-										}
-										
-										if ($cu->properties->cssStyle=="Classic" || $cu->properties->cssStyle=="Dark")
-										{
-											echo "<td style=\"color:".$color.";text-align:center;width:".CELL_WIDTH."\">
-														<b>".$bv['name']."";
-														if ($b_level>0) echo ' '.$b_level;
-														echo "</b><br/>".$subtitle."<br/>
-														<input name=\"show_".$bid."\" type=\"image\" value=\"".$bid."\" src=\"".$img."\" ".tm($bv['name'],$tmtext.$bv['shortcomment'])." style=\"width:120px;height:120px;\" />
-										</td>\n";
-										}
-										else
-										{
-											echo "<td style=\"background:url('".$img."') no-repeat;width:".CELL_WIDTH."px;height:".CELL_WIDTH."px ;padding:0px;\">";
-											echo "<div style=\"position:relative;height:".CELL_WIDTH."px;overflow:hidden;\">
-												<div class=\"buildOverviewObjectTitle\">".$bv['name']."</div>";
-											echo "<a href=\"?page=$page&amp;id=".$bid."\" ".tm($bv['name'],"<b>".$subtitle."</b><br/>".$tmtext.$bv['shortcomment'])." style=\"display:block;height:180px;\"></a>";
-											if ($b_level>0 || ($b_level==0 && isset($buildlist[$bid]['buildlist_build_type']) && $buildlist[$bid]['buildlist_build_type']==3)) 
-											{
-												echo "<div class=\"buildOverviewObjectLevel\" style=\"color:".$color."\">".$b_level."</div>";
-											}
-											echo "</div>";
-											echo "</td>\n";
-										}
-										$cnt++;
-										$scnt++;
-									}
-								}
-									
-									// Display row finisher if needed			
-									if ($cnt==NUM_BUILDINGS_PER_ROW)
-									{
-										echo "</tr>";
-										$cnt = 0;
-									}	
-							}	
-							if ($cu->properties->itemShow=='full')
+								$b = new Building($id);
+								$tmtext .= "<div style=\"color:".($level<=$bl->getLevel($id)?'#0f0':'#f30')."\">".$b." Stufe ".$level."</div>";
+								unset($b);
+							}
+							foreach ($it->current()->building->getTechRequirements() as $id=>$level)
 							{
-								// Fill up missing cols and end row
-								if ($cnt<NUM_BUILDINGS_PER_ROW && $cnt>0)
-								{
-									for ($x=0;$x < NUM_BUILDINGS_PER_ROW-$cnt;$x++)
-									{
-										echo "<td class=\"buildOverviewObjectNone\" style=\"width:".CELL_WIDTH."px;padding:0px;\">&nbsp;</td>";
-									}
-									echo '</tr>';
-								}
+								$b = new Technology($id);
+								$tmtext .= "<div style=\"color:".($level<=$bl->tl->getLevel($id)?'#0f0':'#f30')."\">".$b." Stufe ".$level."</div>";
+								unset($b);
+							}
+
+							$color = '#999';
+							if($use_img_filter)
+							{
+								$img = "misc/imagefilter.php?file=".$img."&filter=na";
+							}
+						}
+						// Ist im Bau
+						elseif ($it->current()->buildType == 3)
+						{
+							$subtitle =  "Ausbau auf Stufe ".($it->current()->level + 1);
+							$tmtext = "<span style=\"color:#0f0\">Wird ausgebaut<br/>Dauer: ".tf($it->current()->endTime-time())."</span><br/>";
+							$color = '#0f0';
+							if($use_img_filter)
+							{
+								$img = "misc/imagefilter.php?file=".$img."&filter=building";
+							}
+						}
+						//Wird abgerissen
+						elseif ($it->current()->buildType == 4)
+						{
+							$subtitle = "Abriss auf Stufe ".($it->current()->level - 1);
+							$tmtext = "<span style=\"color:#f90\">Wird abgerissen!<br/>Dauer: ".tf($it->current()->endTime - time())."</span><br/>";
+							$color = '#f90';
+							if($use_img_filter)
+							{
+								$img = "misc/imagefilter.php?file=".$img."&filter=destructing";
+							}
+						}
+						// Untätig
+						else
+						{
+							// Zuwenig Ressourcen
+							$waitArr = $it->current()->waitingTime('build');
+							if ($waitArr['max']>0)
+							{
+								$tmtext = "<span style=\"color:#f00\">Zuwenig Ressourcen f&uuml;r weiteren Ausbau!</span><br/>";
+								$color = '#f00';
 								
-								if ($scnt==0)
-								{								
-									echo "<tr>
-												<td colspan=\"".NUM_BUILDINGS_PER_ROW."\" style=\"text-align:center;border:0;width:100%\">
-													<i>In dieser Kategorie kann momentan noch nichts gebaut werden!</i>
-												</td>
-											</tr>";								
+								if($use_img_filter)
+								{
+									$img = "misc/imagefilter.php?file=".$img."&filter=lowres";
 								}
 							}
+							else
+							{
+								$tmtext = "";
+								$color = '#fff';
+								$style['metal'] = $style['crystal'] = $style['plastic'] = $style['food'] = "";
+							}
+							
+							if ($it->current()->level==0)
+							{
+								$subtitle = "Noch nicht gebaut";
+							}
+							elseif ($it->current()->isMaxLevel())
+							{
+								$subtitle = 'Vollständig ausgebaut';
+								$tmtext = '';
+							}
+							else
+							{
+								$subtitle = 'Stufe '.$it->current()->level;
+							}
+						}
+						
+						//Einfache Ansicht
+						if ($cu->properties->itemShow!='full')
+						{
+					 		echo "<tr>
+			  		 				<td>
+							  			<a href=\"".HELP_URL."&amp;id=".$it->key()."\"><img src=\"".$img."\" width=\"40\" height=\"40\" border=\"0\" /></a>
+									</td>
+									<th width=\"45%\">
+										<span style=\"font-weight:500\">".$it->current()->building."<br/>
+				  			      			Suffe:</span> ".nf($it->current()->level)."
+				  			      		</th>";
+							if (!$bl->requirementsPassed($it->key()) || $it->current()->isMaxLevel())
+							{
+								echo "<td width=\"90%\" style=\"color:#999\" colspan=\"7\" ".tm($it->current()->building,$subtitle."<br/>".$tmtext).">".$subtitle."</td>";
+							}
+							elseif ($it->current()->buildType == 4 || $it->current()->buildType == 3)
+							{
+								echo '<td id="buildtime">-</td>
+							    	<td colspan="5"  id="buildprogress" style="height:100%;background:#fff;text-align:center;"></td>
+									<td id="buildcancel">
+										<form action="?page='.$page.'" method="post">
+											<input type="hidden" name="id['.$it->key().']" value="'.$it->key().'">';
+										checker_init();
+		      							echo '<input type="submit" class="button" name="command_cbuild['.$it->key().']" value="Bau abbrechen" onclick="if (this.value==\'Bau abbrechen\'){return confirm(\'Wirklich abbrechen?\');}" />
+		      					</td>';
+									countDown("buildtime",$it->current()->endTime,"buildcancel");
+									jsProgressBar("buildprogress",$it->current()->startTime,$it->current()->endTime);
+							}
+							else
+							{
+								echo '<td>'.tf($it->current()->getBuildTime()).'</td>'.$waitArr['string'];
+
+								//Maximale Anzahl erreicht oder anderes Gebäude im Bau
+								if ($tmtext!="" || $bl->isUnderConstruction())
+								{
+									echo "<td style=\"color:red;\" ".tm($it->current()->building,$subtitle."<br/>".$tmtext).">Bauen</td></tr>";
+								}
+								else
+								{
+									echo '<td>
+											<form action="?page='.$page.'" method="post">
+												<input type="hidden" name="id['.$it->key().']" value="'.$it->key().'">';
+											checker_init();
+									echo '<input type="submit" class="button" name="command_build['.$it->key().']" value="Ausbauen"></td</tr>';
+								}
+							}
+							echo '</tr>';
 						}
 						else
 						{
-							echo "<tr>
-											<td colspan=\"".NUM_BUILDINGS_PER_ROW."\" style=\"text-align:center;border:0;width:100%\">
-												<i>In dieser Kategorie kann momentan noch nichts gebaut werden!</i>
-											</td>
-										</tr>";
+							
+							if ($cu->properties->itemShow=='full')
+							{
+								// Display row starter if needed				
+								if ($cnt==0) 
+								{
+									echo "<tr>";
+								}
+								
+								if ($cu->properties->cssStyle=="Classic" || $cu->properties->cssStyle=="Dark")
+								{
+									echo "<td style=\"color:".$color.";text-align:center;width:".CELL_WIDTH."\">
+												<b>".$it->current()->building."";
+												if ($it->current()->level>0) echo ' '.$it->current()->level;
+												echo "</b><br/>".$subtitle."<br/>
+												<input name=\"show_".$it->key()."\" type=\"image\" value=\"".$it->key()."\" src=\"".$img."\" ".tm($it->current->building,$tmtext.$it->current()->building->shortcomment)." style=\"width:120px;height:120px;\" />
+								</td>\n";
+								}
+								else
+								{
+									echo "<td style=\"background:url('".$img."') no-repeat;width:".CELL_WIDTH."px;height:".CELL_WIDTH."px ;padding:0px;\">";
+									echo "<div style=\"position:relative;height:".CELL_WIDTH."px;overflow:hidden;\">
+										<div class=\"buildOverviewObjectTitle\">".$it->current()->building."</div>";
+									echo "<a href=\"?page=$page&amp;id=".$it->key()."\" ".tm($it->current()->building,"<b>".$subtitle."</b><br/>".$tmtext.$bv['shortcomment'])." style=\"display:block;height:180px;\"></a>";
+									if ($it->current()->level || ($it->current()->level==0 && isset($it->current()->buildType) && $buildlist[$bid]['buildlist_build_type']==3)) 
+									{
+										echo "<div class=\"buildOverviewObjectLevel\" style=\"color:".$color."\">".$it->current()->level."</div>";
+									}
+									echo "</div>";
+									echo "</td>\n";
+								}
+								$cnt++;
+								$scnt++;
+							
+							}
 						}
+						// Display row finisher if needed			
+						if ($cnt==NUM_BUILDINGS_PER_ROW)
+						{
+							echo "</tr>";
+							$cnt = 0;
+						}
+						$it->next();
+					}
+					// Fill up missing cols and end row
+					if ($cnt<NUM_BUILDINGS_PER_ROW && $cnt>0)
+					{
+						for ($x=0;$x < NUM_BUILDINGS_PER_ROW-$cnt;$x++)
+						{
+							echo "<td class=\"buildOverviewObjectNone\" style=\"width:".CELL_WIDTH."px;padding:0px;\">&nbsp;</td>";
+						}
+						echo '</tr>';
+					}
+					
+					if ($scnt==0 && $cu->properties->itemShow=='full')
+					{
+						echo "<tr>
+								<td colspan=\"".NUM_BUILDINGS_PER_ROW."\" style=\"text-align:center;border:0;width:100%\">
+									<i>In dieser Kategorie kann momentan noch nichts gebaut werden!</i>
+									</td>
+								</tr>";
+					}
 					tableEnd();
 				}				
 				echo '</div></form>';
 			}
-			else
-			{
-				error_msg("Es k&ouml;nnen noch keine Geb&auml;ude gebaut werden!");
-			}
-		}
-
+		}		
 	}
 	// ENDE SKRIPT //
 
