@@ -179,7 +179,7 @@
 			if (mSize > 0) {
 				mysqlpp::Row mRow = mRes.at(0);
 				
-				if (mRow["fleet_rtn_msg"]!="0")
+				if (mRow["fleet_rtn_msg"]=="0")
 					return false;
 			}
 		}
