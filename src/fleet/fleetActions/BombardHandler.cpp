@@ -36,8 +36,7 @@ namespace bombard
 														 this->f->getLandtime(),
 														 this->f->getId());
 				bombard->addUser(this->targetEntity->getUserId());
-				
-				if (this->one < this->two || true) 
+				if (this->one < this->two) 
 				{
 					// level the building down, at least one level 
 					this->bLevel = (short)ceil(this->shipCnt/2500.0);
@@ -78,8 +77,7 @@ namespace bombard
 				this->actionLog->addText("Action failed: Ship error");
 			}
 		}
-		else 
-		
+				
 		this->f->setReturn();
 		delete bh;
 	}
