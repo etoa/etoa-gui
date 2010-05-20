@@ -242,9 +242,8 @@ define('HELP_URL',"?page=help&site=buildings");
 										name="peopleWorking" 
 										id="peopleWorking" 
 										value="'.nf($bl->getPeopleWorking(BUILD_BUILDING_ID)).'" 
-										size="15" 
 										onkeyup="updatePeopleWorkingBox(this.value,\'-1\',\'-1\');"/>
-								<a href="javascript:;" onclick="updatePeopleWorkingBox(\''.$peopleFree.'\',\'-1\',\'-1\');">max</a></td>
+						</td>
 						</tr>
 						<tr>
 							<th>Zeitreduktion</th>
@@ -290,7 +289,7 @@ define('HELP_URL',"?page=help&site=buildings");
   			<strong>Zeitreduktion durch Arbeiter pro Auftrag:</strong> <span id="people_work_done">'.tf($cfg->value('people_work_done') * $bl->getPeopleWorking(BUILD_BUILDING_ID)).'</span><br />
   			<strong>Nahrungsverbrauch durch Arbeiter pro Auftrag:</strong> <span id="people_food_require">'.nf($cfg->value('people_food_require') * $bl->getPeopleWorking(BUILD_BUILDING_ID)).'</span><br />
   			<strong>Gentechnologie:</strong> '.$bl->tl->getLevel(GEN_TECH_ID).'<br />
-  			<strong>Minimale Bauzeit (mit Arbeiter):</b> Bauzeit * '.(0.1-($bl->tl->getLevel(GEN_TECH_ID)/100));
+  			<strong>Minimale Bauzeit (mit Arbeiter):</strong> Bauzeit * '.(0.1-($bl->tl->getLevel(GEN_TECH_ID)/100));
 
 		if ($cu->specialist->costsBuilding!=1)
 		{

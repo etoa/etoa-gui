@@ -220,7 +220,8 @@
 			{
 				if (isset($this->items[$bid]))
 				{
-					$free = $this->items[$bid]->peopleWorking + $this->totalPeopleWorking();
+					global $cp;
+					$free = $cp->people - $this->items[$bid]->peopleWorking + $this->totalPeopleWorking();
 					if ($free >= $people)
 					{
 						if ($this->items[$bid]->setPeopleWorking($people))
