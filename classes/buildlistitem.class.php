@@ -60,7 +60,7 @@
 				$this->level = $arr['buildlist_current_level'];
 				$this->startTime = $arr['buildlist_build_start_time'];
 				$this->endTime = $arr['buildlist_build_end_time'];
-				$this->prodPercent = $arr['buildlist_prod_precent'];
+				$this->prodPercent = $arr['buildlist_prod_percent'];
 				$this->peopleWorking = $arr['buildlist_people_working'];
 				$this->peopleWorkingStatus = $arr['buildlist_people_working_status'];
 				$this->deactivated = $arr['buildlist_deactivated'];
@@ -79,8 +79,6 @@
 				$this->building = new Building($arr);
 			}
 			
-			$this->entityId = $entityId;
-			$this->ownerId = $ownerId;
 			if ($load==1)
 				$this->load();
 		}
@@ -273,7 +271,7 @@
 		
 		public function build()
 		{
-			global $cp;
+			global $cp, $cu, $bl;
 			$costs = $this->getBuildCosts();
 			$this->changedFields['startTime'] = "buildlist_build_start_time";
 			$this->changedFields['endTime'] = "buildlist_build_end_time";
@@ -308,7 +306,7 @@
 							'".$this->buildType."',
 							'".$this->level."',
 							'".$this->startTime."',
-							'".$this->endTime."'
+							'".floor($this->endTime)."'
 						);");
 			}
 			Buildlist::$underConstruction = true; 
@@ -317,18 +315,18 @@
 			//Log schreiben
 			$log_text = "[b]Gebäudebau[/b]
 
-			[b]Baudauer:[/b] ".tf($btime)."
-			[b]Ende:[/b] ".date("d.m.Y H:i:s",$end_time)."
-			[b]Eingesetzte Bewohner:[/b] ".nf($peopleWorking)."
-			[b]Gen-Tech Level:[/b] ".GEN_TECH_LEVEL."
+			[b]Baudauer:[/b] ".tf($costs['time'])."
+			[b]Ende:[/b] ".date("d.m.Y H:i:s",$this->endTime)."
+			[b]Eingesetzte Bewohner:[/b] ".nf($bl->getPeopleWorking(BUILD_BUILDING_ID))."
+			[b]Gen-Tech Level:[/b] ".Buildlist::$GENTECH."
 			[b]Eingesetzter Spezialist:[/b] ".$cu->specialist->name."
 
 			[b]Kosten[/b]
-			[b]".RES_METAL.":[/b] ".nf($bc['metal'])."
-			[b]".RES_CRYSTAL.":[/b] ".nf($bc['crystal'])."
-			[b]".RES_PLASTIC.":[/b] ".nf($bc['plastic'])."
-			[b]".RES_FUEL.":[/b] ".nf($bc['fuel'])."
-			[b]".RES_FOOD.":[/b] ".nf($bc['food'])."
+			[b]".RES_METAL.":[/b] ".nf($costs['costs0'])."
+			[b]".RES_CRYSTAL.":[/b] ".nf($costs['costs1'])."
+			[b]".RES_PLASTIC.":[/b] ".nf($costs['costs2'])."
+			[b]".RES_FUEL.":[/b] ".nf($costs['costs3'])."
+			[b]".RES_FOOD.":[/b] ".nf($costs['costs4'])."
 
 			[b]Restliche Rohstoffe auf dem Planeten[/b]
 			[b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
@@ -338,9 +336,9 @@
 			[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
 
 			//Log Speichern
-			GameLog::add(GameLog::F_BUILD, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $arr['building_id'], 3, $b_level);
+			GameLog::add(GameLog::F_BUILD, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $this->buildingId, 3, $this->level);
 			
-			return true;
+			return;
 		}
 		
 		public function getPeopleOptimized()
@@ -350,9 +348,9 @@
 			$bc = array();
 			foreach ($resNames as $rk => $rn)
 			{
-				$bc['costs'.$rk] = $cu->specialist->costsBuilding * $this->building->costs[$rk] * pow($this->building->costsFactor,$this->level+$levelUp);
+				$bc['costs'.$rk] = $cu->specialist->costsBuilding * $this->building->costs[$rk] * pow($this->building->costsFactor,$this->level);
 			}
-			$bc['costs5'] = $cu->specialist->costsBuilding * $this->building->costs[5] * pow($this->building->costsFactor,$this->level+$levelUp);
+			$bc['costs5'] = $cu->specialist->costsBuilding * $this->building->costs[5] * pow($this->building->costsFactor,$this->level);
 
 			$bonus = $cu->race->buildTime + $cp->typeBuildtime + $cp->starBuildtime + $cu->specialist->buildTime - 3;
 
@@ -371,7 +369,7 @@
 		
 		public function demolish()
 		{
-			global $cp;
+			global $cp, $cu;
 			$costs = $this->getDemolishCosts();
 			$this->changedFields['startTime'] = "buildlist_build_start_time";
 			$this->changedFields['endTime'] = "buildlist_build_end_time";
@@ -388,15 +386,15 @@
 			//Log schreiben
 			$log_text = "[b]Gebäudeabriss[/b]
 
-			[b]Abrissdauer:[/b] ".tf($dtime)."
-			[b]Ende:[/b] ".date("d.m.Y H:i:s",$end_time)."
+			[b]Abrissdauer:[/b] ".tf($costs['time'])."
+			[b]Ende:[/b] ".date("d.m.Y H:i:s",$this->endTime)."
 
 			[b]Kosten[/b]
-			[b]".RES_METAL.":[/b] ".nf($dc['metal'])."
-			[b]".RES_CRYSTAL.":[/b] ".nf($dc['crystal'])."
-			[b]".RES_PLASTIC.":[/b] ".nf($dc['plastic'])."
-			[b]".RES_FUEL.":[/b] ".nf($dc['fuel'])."
-			[b]".RES_FOOD.":[/b] ".nf($dc['food'])."
+			[b]".RES_METAL.":[/b] ".nf($costs['costs0'])."
+			[b]".RES_CRYSTAL.":[/b] ".nf($costs['costs1'])."
+			[b]".RES_PLASTIC.":[/b] ".nf($costs['costs2'])."
+			[b]".RES_FUEL.":[/b] ".nf($costs['costs3'])."
+			[b]".RES_FOOD.":[/b] ".nf($costs['costs4'])."
 
 			[b]Restliche Rohstoffe auf dem Planeten[/b]
 			[b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
@@ -406,14 +404,16 @@
 			[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
 			
 			//Log Speichern
-			GameLog::add(GameLog::F_BUILD, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $arr['building_id'], 4, $b_level);
+			GameLog::add(GameLog::F_BUILD, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $this->buildingId, 4, $this->level);
+			
+			return;
 		}
 		
 		public function cancelBuild()
 		{
 			if ($this->endTime > time())
 			{
-				global $cp;
+				global $cp, $cu;
 				$costs = $this->getBuildCosts();
 				$fac = ($this->endTime-time()) / ($this->endTime - $this->startTime);
 				$this->endTime = 0;
@@ -423,21 +423,21 @@
 				dbquery("UPDATE buildlist SET buildlist_build_type='0', buildlist_build_start_time='0', buildlist_build_end_time='0' WHERE buildlist_id='".$this->id."' LIMIT 1;");
 				Buildlist::$underConstruction = false;
 				//Rohstoffe vom Planeten abziehen und aktualisieren
-				$cp->changeRes($costs['costs1']*$fac,$costs['costs2']*$fac,$costs['costs3']*$fac,$costs['costs4']*$fac,$costs['costs5']*$fac);
+				$cp->changeRes($costs['costs0']*$fac,$costs['costs1']*$fac,$costs['costs2']*$fac,$costs['costs3']*$fac,$costs['costs4']*$fac);
 				
 				//Log schreiben
 				$log_text = "[b]Gebäudebau Abbruch[/b]
 
-[b]Start des Gebädes:[/b] ".date("d.m.Y H:i:s",$start_time)."
-[b]Ende des Gebädes:[/b] ".date("d.m.Y H:i:s",$end_time)."
+[b]Start des Gebädes:[/b] ".date("d.m.Y H:i:s",$this->startTime)."
+[b]Ende des Gebädes:[/b] ".date("d.m.Y H:i:s",$this->endTime)."
 
 [b]Erhaltene Rohstoffe[/b]
 [b]Faktor:[/b] ".$fac."
-[b]".RES_METAL.":[/b] ".nf($bc['metal']*$fac)."
-[b]".RES_CRYSTAL.":[/b] ".nf($bc['crystal']*$fac)."
-[b]".RES_PLASTIC.":[/b] ".nf($bc['plastic']*$fac)."
-[b]".RES_FUEL.":[/b] ".nf($bc['fuel']*$fac)."
-[b]".RES_FOOD.":[/b] ".nf($bc['food']*$fac)."
+[b]".RES_METAL.":[/b] ".nf($costs['costs0']*$fac)."
+[b]".RES_CRYSTAL.":[/b] ".nf($costs['costs1']*$fac)."
+[b]".RES_PLASTIC.":[/b] ".nf($costs['costs2']*$fac)."
+[b]".RES_FUEL.":[/b] ".nf($costs['costs3']*$fac)."
+[b]".RES_FOOD.":[/b] ".nf($costs['costs4']*$fac)."
 
 [b]Rohstoffe auf dem Planeten[/b]
 [b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
@@ -447,7 +447,7 @@
 [b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
 				
 				//Log Speichern
-				GameLog::add(GameLog::F_BUILD, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $arr['building_id'], 1, $b_level);
+				GameLog::add(GameLog::F_BUILD, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $this->buildingId, 1, $this->level);
 				
 				return;
 			}
@@ -459,7 +459,7 @@
 		{
 			if ($this->endTime > time())
 			{
-				global $cp;
+				global $cp, $cu;
 				$costs = $this->getDemolishCosts();
 				$fac = ($this->endTime-time()) / ($this->endTime - $this->startTime);
 				$this->endTime = 0;
@@ -474,16 +474,16 @@
 				//Log schreiben
 				$log_text = "[b]Gebäudeabriss Abbruch[/b]
 
-				[b]Start des Gebädes:[/b] ".date("d.m.Y H:i:s",$start_time)."
-				[b]Ende des Gebädes:[/b] ".date("d.m.Y H:i:s",$end_time)."
+				[b]Start des Gebädes:[/b] ".date("d.m.Y H:i:s",$this->startTime)."
+				[b]Ende des Gebädes:[/b] ".date("d.m.Y H:i:s",$this->endTime)."
 
 				[b]Erhaltene Rohstoffe[/b]
 				[b]Faktor:[/b] ".$fac."
-				[b]".RES_METAL.":[/b] ".nf($dc['metal']*$fac)."
-				[b]".RES_CRYSTAL.":[/b] ".nf($dc['crystal']*$fac)."
-				[b]".RES_PLASTIC.":[/b] ".nf($dc['plastic']*$fac)."
-				[b]".RES_FUEL.":[/b] ".nf($dc['fuel']*$fac)."
-				[b]".RES_FOOD.":[/b] ".nf($dc['food']*$fac)."
+				[b]".RES_METAL.":[/b] ".nf($costs['costs0']*$fac)."
+				[b]".RES_CRYSTAL.":[/b] ".nf($costs['costs1']*$fac)."
+				[b]".RES_PLASTIC.":[/b] ".nf($costs['costs2']*$fac)."
+				[b]".RES_FUEL.":[/b] ".nf($costs['costs3']*$fac)."
+				[b]".RES_FOOD.":[/b] ".nf($costs['costs4']*$fac)."
 
 				[b]Rohstoffe auf dem Planeten[/b]
 				[b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
@@ -493,7 +493,7 @@
 				[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
 
 				//Log Speichern
-				GameLog::add(GameLog::F_BUILD, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $arr['building_id'], 2, $b_level);
+				GameLog::add(GameLog::F_BUILD, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $this->buildingId, 2, $this->level);
 				
 				return;
 			}

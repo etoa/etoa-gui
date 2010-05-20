@@ -45,7 +45,7 @@
 			return new ArrayIterator($this->items);
 		}
 		
-		public function getCatIterator($catId=0)
+		public function getCatIterator($catId=0, $mode='all')
 		{
 			if ($this->items == null)
 				$this->load();
@@ -53,7 +53,21 @@
 			foreach ($this->items as $id=>$item)
 			{
 				if ($item->building->typeId == $catId)
-					$catItems[$id] = $item;
+				{
+					$add = true;
+					if ($mode == 'buildable')
+					{
+						if (!$this->requirementsPassed($id) || $item->isMaxLevel())
+							$add = false;
+					}
+					elseif ($mode == 'resable')
+					{
+						if (!($this->checkBuildable($id,false) == 1))
+							$add = false;
+					}
+					if ($add)
+						$catItems[$id] = $item;
+				}
 			}
 			return new ArrayIterator(&$catItems);
 		}
@@ -202,7 +216,7 @@
 		{
 			if ($this->items==null)
 				$this->load();
-			if (!$this->isUnderConstruction)
+			if (!$this->isUnderConstruction())
 			{
 				if (isset($this->items[$bid]))
 				{
@@ -315,10 +329,12 @@
 		
 		function build($bid)
 		{
-			if ($this->checkBuildable($bid))
-			{
-				return $this->items[$bid]->build();
-			}
+			$this->errorMsg =  $this->items[$bid]->build();
+			if ($this->errorMsg=="")
+				return true;
+			else
+				return false;
+			$this->errorMsg = "Geb&auml;de nicht abreissbar!";
 			return false;
 		}
 		
@@ -326,8 +342,13 @@
 		{
 			if ($this->checkDemolishable($bid))
 			{
-				return $this->items[$bid]->demolish();
+				$this->errorMsg =  $this->items[$bid]->demolish();
+				if ($this->errorMsg=="")
+					return true;
+				else
+					return false;
 			}
+			$this->errorMsg = "Geb&auml;de nicht abreissbar!";
 			return false;
 		}
 		
@@ -341,7 +362,7 @@
 				else
 					return false;
 			}
-			$this->errorMsg = "Geb&aauml;de nicht vorhanden;";
+			$this->errorMsg = "Geb&aauml;de nicht vorhanden!";
 			return false;
 		}
 		
@@ -355,7 +376,7 @@
 				else
 					return false;
 			}
-			$this->errorMsg = "Geb&aauml;de nicht vorhanden;";
+			$this->errorMsg = "Geb&aauml;de nicht vorhanden!";
 			return false;
 		}
 		
@@ -367,12 +388,12 @@
 		*
 		*	@return <int> 1=buildable,0=not buildable but show resbox, -1= not buildable & no res box
 		*/
-		function checkBuildable($bid)
+		function checkBuildable($bid, $uncheckConstruction=false)
 		{
 			if (!isset($this->items[$bid]->buildableStatus))
 			{
 				// check all the buildings
-				if (!$this->underConstruction)
+				if (!$this->isUnderConstruction() || $checkConstruction)
 				{
 					global $cu,$cp;
 					if ($this->entity == null)
@@ -439,7 +460,7 @@
 		function checkDemolishable($bid)
 		{
 			// check all the buildings
-			if (!$this->underConstruction)
+			if (!$this->isUnderConstruction())
 			{
 				global $cu,$cp;
 				if ($this->entity == null)
@@ -452,11 +473,11 @@
 				
 				$cst = $this->items[$bid]->getDemolishCosts();
 				// Check costs
-				if ($cst[0] <= $this->entity->getRes1(0) 
-						&& $cst[1] <= $this->entity->getRes1(1) 
-						&& $cst[2] <= $this->entity->getRes1(2) 
-						&& $cst[3] <= $this->entity->getRes1(3) 
-						&& $cst[4] <= $this->entity->getRes1(4))
+				if ($cst['costs0'] <= $this->entity->getRes1(0) 
+						&& $cst['costs1'] <= $this->entity->getRes1(1) 
+						&& $cst['costs2'] <= $this->entity->getRes1(2) 
+						&& $cst['costs3'] <= $this->entity->getRes1(3) 
+						&& $cst['costs4'] <= $this->entity->getRes1(4))
 				{
 					return true;	
 				}

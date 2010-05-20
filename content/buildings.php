@@ -30,7 +30,12 @@
 
   // DEFINITIONEN //
 
-if ($cu->properties->cssStyle=="Classic" || $cu->properties->cssStyle=="Dark")
+if ($cu->properties->itemShow!='full')
+{
+	define('NUM_BUILDINGS_PER_ROW',9);
+	define('TABLE_WIDTH','');
+}
+elseif ($cu->properties->cssStyle=="Classic" || $cu->properties->cssStyle=="Dark")
 {
   define('NUM_BUILDINGS_PER_ROW',4);
   define('CELL_WIDTH','25%');
@@ -66,17 +71,9 @@ define('HELP_URL',"?page=help&site=buildings");
 		$bl = new Buildlist($cp->id,$cu->id,2);
 		$bid=0;
 		
-		// people working changed
-		if (isset($_POST['submit_people_form']))
-		{
-			if ($bl->setPeopleWorking(BUILD_BUILDING_ID,nf_back($_POST['peopleWorking'])))
-				ok_msg("Arbeiter erfolgreich zugeteilt!");
-			else
-				error_msg('Arbeiter konnten nicht zugeteilt werden!');
-		}
 		
 		// create posted id for small view
-		if (is_array($_POST['command_build']))
+		if (isset($_POST['command_build']) && is_array($_POST['command_build']))
 		{
 			foreach($_POST['command_build'] as $bid=>$bmsg)
 			{
@@ -90,7 +87,7 @@ define('HELP_URL',"?page=help&site=buildings");
 				}
 			}
 		}
-		if (is_array($_POST['command_cbuild']))
+		if (isset($_POST['command_cbuild']) && is_array($_POST['command_cbuild']))
 		{
 			foreach($_POST['command_cbuild'] as $bid=>$bmsg)
 			{
@@ -131,6 +128,15 @@ define('HELP_URL',"?page=help&site=buildings");
 				{
 					$bid = $_POST['id'];
 				}			
+			}
+			
+			// people working changed
+			if (isset($_POST['submit_people_form']))
+			{
+				if ($bl->setPeopleWorking(BUILD_BUILDING_ID,nf_back($_POST['peopleWorking'])))
+					ok_msg("Arbeiter zugeteilt!");
+				else
+					error_msg('Arbeiter konnten nicht zugeteilt werden!');
 			}
 			
 			// build building
@@ -207,6 +213,13 @@ define('HELP_URL',"?page=help&site=buildings");
 				$status_text="Unt&auml;tig";
 			}
 		}
+		
+		// cache checker to add it to several forms
+		ob_start();
+		checker_init();
+		$checker = ob_get_contents();
+		ob_end_clean();
+		
 		$peopleFree = floor($cp->people) - $bl->totalPeopleWorking() + $bl->getPeopleWorking(BUILD_BUILDING_ID);
 		// create box to change people working
 		$box =	'
@@ -271,7 +284,7 @@ define('HELP_URL',"?page=help&site=buildings");
 		}
 		
   		echo '<strong>Eingestellte Arbeiter:</strong> <span id="people_working">'.nf($bl->getPeopleWorking(BUILD_BUILDING_ID)).'</span>';
-		if (!$bl->underConsturction)
+		if (!$bl->isUnderConstruction())
 			echo '&nbsp;<a href="javascript:;" onclick="toggleBox(\'changePeople\');">[&Auml;ndern]</a>';
 		echo '<br />
   			<strong>Zeitreduktion durch Arbeiter pro Auftrag:</strong> <span id="people_work_done">'.tf($cfg->value('people_work_done') * $bl->getPeopleWorking(BUILD_BUILDING_ID)).'</span><br />
@@ -289,7 +302,7 @@ define('HELP_URL',"?page=help&site=buildings");
 		echo '<div id="changePeople" style="display:none;">';
 		tableStart("Arbeiter im Bauhof zuteilen");
 		echo '<form id="changeWorkingPeople" action="?page='.$page.'&amp;id='.$bid.'" method="post">
-			'.$box.'</form>';
+			'.$checker.$box.'</form>';
 		tableEnd();
 		echo '</div>';
 		
@@ -300,13 +313,13 @@ define('HELP_URL',"?page=help&site=buildings");
 			// Gebäudedaten anzeigen
 			//
 			$item = $bl->item($bid);
-			tableStart($title);
+			tableStart($item);
 			echo '<tr>
                   	<td rowspan="4" style="width:220px;background:#000;vertical-align:middle;">
                  		'.helpImageLink('buildings&amp;id='.$item->buildingId,$item->building->imgPathBig(),$item->building,'width:220px;height:220px').'
 					</td>
 					<td colspan="2" style="vertical-align:top;height:150px;">
-						'.$item->building->longcomment.'
+						'.$item->building->longDesc.'
 					</td>
 				</tr>';
 			$f = $item->building->fields;
@@ -330,7 +343,7 @@ define('HELP_URL',"?page=help&site=buildings");
 			//
 			echo '<form action="?page='.$page.'" method="post">';
 			echo '<input type="hidden" name="id" value="'.$bid.'">';
-			checker_init();
+			echo $checker;
 			
 			// Voraussetzungen sind erfüllt
 			if ($bl->requirementsPassed($bid))
@@ -517,7 +530,14 @@ define('HELP_URL',"?page=help&site=buildings");
 		else
 		{
 	
-		
+			$tabitems = array(
+				"all"=>"Alle anzeigen",
+					"buildable"=>"Baubare Gebäude",
+					"resable"=>"Ausbaubare Gebäude",
+			);
+			show_tab_menu("mode",$tabitems);
+			$mode = (isset($_GET['mode'])) ? $_GET['mode'] : "all";
+			
 			$tres = dbquery("SELECT
 								type_id,
 								type_name
@@ -530,7 +550,7 @@ define('HELP_URL',"?page=help&site=buildings");
 			{
 				// Jede Kategorie durchgehen
 				echo '<form action="?page='.$page.'" method="post"><div>';
-				checker_init();
+				echo $checker;
 				
 				while ($tarr = mysql_fetch_array($tres))
 				{
@@ -554,7 +574,7 @@ define('HELP_URL',"?page=help&site=buildings");
 					$cnt = 0; // Counter for current row
 					$scnt = 0; // Counter for shown buildings
 					
-					$it = $bl->getCatIterator($tarr['type_id']);
+					$it = $bl->getCatIterator($tarr['type_id'],$mode);
 					
 					while( $it->valid() )
 					{
@@ -667,8 +687,8 @@ define('HELP_URL',"?page=help&site=buildings");
 									<td id="buildcancel">
 										<form action="?page='.$page.'" method="post">
 											<input type="hidden" name="id['.$it->key().']" value="'.$it->key().'">';
-										checker_init();
-		      							echo '<input type="submit" class="button" name="command_cbuild['.$it->key().']" value="Bau abbrechen" onclick="if (this.value==\'Bau abbrechen\'){return confirm(\'Wirklich abbrechen?\');}" />
+								echo $checker;
+		      					echo '<input type="submit" class="button" name="command_cbuild['.$it->key().']" value="Bau abbrechen" onclick="if (this.value==\'Bau abbrechen\'){return confirm(\'Wirklich abbrechen?\');}" />
 		      					</td>';
 									countDown("buildtime",$it->current()->endTime,"buildcancel");
 									jsProgressBar("buildprogress",$it->current()->startTime,$it->current()->endTime);
@@ -687,11 +707,12 @@ define('HELP_URL',"?page=help&site=buildings");
 									echo '<td>
 											<form action="?page='.$page.'" method="post">
 												<input type="hidden" name="id['.$it->key().']" value="'.$it->key().'">';
-											checker_init();
+									echo $checker;
 									echo '<input type="submit" class="button" name="command_build['.$it->key().']" value="Ausbauen"></td</tr>';
 								}
 							}
 							echo '</tr>';
+							$scnt++;
 						}
 						else
 						{
@@ -710,7 +731,7 @@ define('HELP_URL',"?page=help&site=buildings");
 												<b>".$it->current()->building."";
 												if ($it->current()->level>0) echo ' '.$it->current()->level;
 												echo "</b><br/>".$subtitle."<br/>
-												<input name=\"show_".$it->key()."\" type=\"image\" value=\"".$it->key()."\" src=\"".$img."\" ".tm($it->current->building,$tmtext.$it->current()->building->shortcomment)." style=\"width:120px;height:120px;\" />
+												<input name=\"show_".$it->key()."\" type=\"image\" value=\"".$it->key()."\" src=\"".$img."\" ".tm($it->current->building,$tmtext.$it->current()->building->shortDesc)." style=\"width:120px;height:120px;\" />
 								</td>\n";
 								}
 								else
@@ -718,7 +739,7 @@ define('HELP_URL',"?page=help&site=buildings");
 									echo "<td style=\"background:url('".$img."') no-repeat;width:".CELL_WIDTH."px;height:".CELL_WIDTH."px ;padding:0px;\">";
 									echo "<div style=\"position:relative;height:".CELL_WIDTH."px;overflow:hidden;\">
 										<div class=\"buildOverviewObjectTitle\">".$it->current()->building."</div>";
-									echo "<a href=\"?page=$page&amp;id=".$it->key()."\" ".tm($it->current()->building,"<b>".$subtitle."</b><br/>".$tmtext.$bv['shortcomment'])." style=\"display:block;height:180px;\"></a>";
+									echo "<a href=\"?page=$page&amp;id=".$it->key()."\" ".tm($it->current()->building,"<b>".$subtitle."</b><br/>".$tmtext.$it->current()->building->shortDesc)." style=\"display:block;height:180px;\"></a>";
 									if ($it->current()->level || ($it->current()->level==0 && isset($it->current()->buildType) && $buildlist[$bid]['buildlist_build_type']==3)) 
 									{
 										echo "<div class=\"buildOverviewObjectLevel\" style=\"color:".$color."\">".$it->current()->level."</div>";
@@ -728,9 +749,9 @@ define('HELP_URL',"?page=help&site=buildings");
 								}
 								$cnt++;
 								$scnt++;
-							
 							}
 						}
+
 						// Display row finisher if needed			
 						if ($cnt==NUM_BUILDINGS_PER_ROW)
 						{
@@ -749,7 +770,7 @@ define('HELP_URL',"?page=help&site=buildings");
 						echo '</tr>';
 					}
 					
-					if ($scnt==0 && $cu->properties->itemShow=='full')
+					if ($scnt==0)
 					{
 						echo "<tr>
 								<td colspan=\"".NUM_BUILDINGS_PER_ROW."\" style=\"text-align:center;border:0;width:100%\">
