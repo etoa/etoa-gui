@@ -287,7 +287,7 @@
 			$this->bunkerRes= 0;
 			foreach ($this->items as $k=>&$v)
 			{
-				$this->bunkerRes+= $v->bunkerRes;
+				$this->bunkerRes+= $v->building->bunkerRes * pow($v->building->storeFactor,$v->level-1);
 			}
 			return $this->bunkerRes;
 		}
@@ -297,9 +297,9 @@
 			if ($this->items==null)
 				$this->load();
 			$this->bunkerFleetCount= 0;
-			foreach ($this->item as $k=>&$v)
+			foreach ($this->items as $k=>&$v)
 			{
-				$this->bunkerFleetCount+= $v->bunkerFleetCount;
+				$this->bunkerFleetCount+= $v->building->bunkerFleetCount * pow($v->building->storeFactor,$v->level-1);
 			}
 			return $this->bunkerFleetCount;
 		}
@@ -309,9 +309,9 @@
 			if ($this->items==null)
 				$this->load();
 			$this->bunkerFleetSpace= 0;
-			foreach ($this->item as $k=>&$v)
+			foreach ($this->items as $k=>&$v)
 			{
-				$this->bunkerFleetSpace+= $v->bunkerFleetSpace;
+				$this->bunkerFleetSpace+= $v->building->bunkerFleetSpace * pow($v->building->storeFactor,$v->level-1);
 			}
 			return $this->bunkerFleetSpace;
 		}
@@ -394,7 +394,7 @@
 			if (!isset($this->items[$bid]->buildableStatus))
 			{
 				// check all the buildings
-				if (!$this->isUnderConstruction() || $checkConstruction)
+				if (!$this->isUnderConstruction() || $uncheckConstruction)
 				{
 					global $cu,$cp;
 					if ($this->entity == null)

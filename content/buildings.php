@@ -308,6 +308,7 @@ define('HELP_URL',"?page=help&site=buildings");
 		// if full view and detail view selected, show it
 		if (isset($bid) && $bid>0 && $cu->properties->itemShow=='full')
 		{
+			
 			//
 			// Gebäudedaten anzeigen
 			//
@@ -373,6 +374,7 @@ define('HELP_URL',"?page=help&site=buildings");
 									<td style="color:red;">Bauen</td>
 									<td>'.tf($costs['time']).'</td>'
 									.$waitArr['string'].'
+									<td>'.nf($costs['costs5']).'</td>
 								</tr>';
 						}
 						
@@ -407,7 +409,7 @@ define('HELP_URL',"?page=help&site=buildings");
 							{
 								echo '<td>'.nf($costs['costs'.$rk]).'</td>';
 							}
-							echo '<td id="costs5">'.nf($costs['costs5']).'</td>';
+							echo '<td>'.nf($costs['costs5']).'</td>';
 							echo '</tr>';
 						}
 					}
@@ -425,6 +427,7 @@ define('HELP_URL',"?page=help&site=buildings");
 										<td style="color:red;">Abreissen</td>
 										<td>'.tf($demolishCosts['time']).'</td>'
 										.$waitArr['string'].'
+										<td>'.nf($costs['costs5']).'</td>
 									</tr>';
 							}
 

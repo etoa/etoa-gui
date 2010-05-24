@@ -85,7 +85,7 @@
 		
 		public function __toString()
 		{
-			if ($this->id>0)
+			if ($this->buildingId>0)
 			{
 				$title = $this->building.' <span id="buildlevel">';
 				$title.= $this->level > 0 ? $this->level : '';
