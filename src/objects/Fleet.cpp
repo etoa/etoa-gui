@@ -1062,11 +1062,10 @@
 			std::vector<Fleet*>::iterator it;
 			std::size_t found;
 			for ( it=fleets.begin() ; it < fleets.end(); it++ ) {
-				std::string key = "," + etoa::d2s((*it)->getUserId()) + ",";
-				found=ids.rfind(key);
+				std::string key = etoa::d2s((*it)->getUserId()) + ",";
+				found=ids.find(key);
 				if (found==std::string::npos)
-					ids += ","
-							+ key;
+					ids += key;
 			}
 		}
 		return ids;

@@ -911,6 +911,9 @@
 	}
 
 	std::string Entity::getUserNicks() {
+		if (!this->shipsLoaded)
+			this->loadAdditionalFleets();
+		
 		std::string nicks = this->entityUser->getUserNick();
 		if (fleets.size()) {
 			std::vector<Fleet*>::iterator it;
@@ -927,16 +930,18 @@
 	}
 
 	std::string Entity::getUserIds() {
+		if (!this->shipsLoaded)
+			this->loadAdditionalFleets();
+			
 		std::string ids = "," + etoa::d2s(this->getUserId()) + ",";
-		if (fleets.size()) {
+		if (this->fleets.size()) {
 			std::vector<Fleet*>::iterator it;
 			std::size_t found;
-			for ( it=fleets.begin() ; it < fleets.end(); it++ ) {
-				std::string key = "," + etoa::d2s((*it)->getUserId()) + ",";
-				found=ids.rfind(key);
+			for ( it = this->fleets.begin() ; it < this->fleets.end(); it++ ) {
+				std::string key = etoa::d2s((*it)->getUserId()) + ",";
+				found=ids.find(key);
 				if (found==std::string::npos)
-					ids += ","
-							+ key;
+					ids += key;
 			}
 		}
 		return ids;
