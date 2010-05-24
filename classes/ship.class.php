@@ -22,7 +22,7 @@
 				");			
 				if (!$arr = mysql_fetch_assoc($res))
 				{
-					throw new EException("Ung�ltige Schiff-ID: $sid");
+					throw new EException("Ung&uuml;ltige Schiff-ID: $sid");
 					return false;
 				}
 			}			

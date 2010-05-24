@@ -419,19 +419,15 @@ define('HELP_URL',"?page=help&site=buildings");
 					{
 						$waitArr = $item->waitingTime('demolish');
 						// Es wird bereits an einem Gebäude gebaut
-						if ($bl->checkBuildable($bid)<=0)
+						if ($bl->checkDemolishable($bid))
 						{
-							if($bl->checkBuildable($bid)==0)
-							{
-								echo '<tr>
-										<td style="color:red;">Abreissen</td>
-										<td>'.tf($demolishCosts['time']).'</td>'
-										.$waitArr['string'].'
-										<td>'.nf($costs['costs5']).'</td>
-									</tr>';
-							}
-
 							echo '<tr>
+									<td style="color:red;">Abreissen</td>
+									<td>'.tf($demolishCosts['time']).'</td>'
+									.$waitArr['string'].'
+									<td>'.nf($costs['costs5']).'</td>
+								</tr>
+								<tr>
 									<td colspan="8">
 										<i>'.$bl->getLastError().'</i>
 									</td>
@@ -463,7 +459,7 @@ define('HELP_URL',"?page=help&site=buildings");
 		      						<input type="submit" class="button" name="command_cbuild" value="Bau abbrechen" onclick="if (this.value==\'Bau abbrechen\'){return confirm(\'Wirklich abbrechen?\');}" />
 		      					</td>
 		      					<td id="buildtime">-</td>
-		      					<td colspan="6" id="buildprogress" style="height:25px;background:#fff;text-align:center;"></td>
+		      					<td colspan="6" id="progressbar" style="height:25px;background:#fff;text-align:center;"></td>
 		      				</tr>';
 		      			if ($item->level < $item->building->maxLevel-1)
 		      			{
@@ -488,7 +484,7 @@ define('HELP_URL',"?page=help&site=buildings");
 		      						<input type="submit" class="button" name="command_cdemolish" value="Abriss abbrechen" onclick="if (this.value==\'Abriss abbrechen\'){return confirm(\'Wirklich abbrechen?\');}" />
 		      					</td>
 		      					<td id="buildtime">-</td>
-		      					<td colspan="6"  id="buildprogress" style="height:25px;background:#fff;text-align:center;"></td>
+		      					<td colspan="6"  id="progressbar" style="height:25px;background:#fff;text-align:center;"></td>
 		      				</tr>';
 					}
 					tableEnd();
@@ -507,7 +503,7 @@ define('HELP_URL',"?page=help&site=buildings");
 					if ($item->buildType==3 || $item->buildType==4)
 					{
 						countDown("buildtime",$item->endTime,"buildcancel");
-						jsProgressBar("buildprogress",$item->startTime,$item->endTime);
+						jsProgressBar("progressbar",$item->startTime,$item->endTime);
 					}
 				
 				}
@@ -672,7 +668,7 @@ define('HELP_URL',"?page=help&site=buildings");
 						{
 					 		echo "<tr>
 			  		 				<td>
-							  			<a href=\"".HELP_URL."&amp;id=".$it->key()."\"><img src=\"".$img."\" width=\"40\" height=\"40\" border=\"0\" /></a>
+							  			<a href=\"".HELP_URL."&amp;id=".$it->key()."\"><img src=\"".$img."\" width=\"40px\" height=\"40px\" border=\"0\" /></a>
 									</td>
 									<th width=\"45%\">
 										<span style=\"font-weight:500\">".$it->current()->building."<br/>
@@ -685,7 +681,7 @@ define('HELP_URL',"?page=help&site=buildings");
 							elseif ($it->current()->buildType == 4 || $it->current()->buildType == 3)
 							{
 								echo '<td id="buildtime">-</td>
-							    	<td colspan="5"  id="buildprogress" style="height:100%;background:#fff;text-align:center;"></td>
+							    	<td colspan="5"  id="progressbar" style="height:40px;background:#fff;text-align:center;"></td>
 									<td id="buildcancel">
 										<form action="?page='.$page.'" method="post">
 											<input type="hidden" name="id['.$it->key().']" value="'.$it->key().'">';
@@ -693,7 +689,7 @@ define('HELP_URL',"?page=help&site=buildings");
 		      					echo '<input type="submit" class="button" name="command_cbuild['.$it->key().']" value="Bau abbrechen" onclick="if (this.value==\'Bau abbrechen\'){return confirm(\'Wirklich abbrechen?\');}" />
 		      					</td>';
 									countDown("buildtime",$it->current()->endTime,"buildcancel");
-									jsProgressBar("buildprogress",$it->current()->startTime,$it->current()->endTime);
+									jsProgressBar("progressbar",$it->current()->startTime,$it->current()->endTime);
 							}
 							else
 							{

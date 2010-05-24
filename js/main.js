@@ -42,7 +42,7 @@
 	}
 	
 
-	function updateProgressBar(progresselem,startTime,endTime,cTime,length)
+	function updateProgressBar(progresselem,startTime,endTime,cTime)
 	{
 		if (progresselem)
 		{
@@ -52,23 +52,19 @@
 				perc = Math.ceil((cTime-startTime) / diff * 100);
 				cTime++;
 				
-				document.getElementById(progresselem).innerHTML=perc+"%";
-				document.getElementById(progresselem).style.background="#fff url('images/progressbar.png') no-repeat";
-				document.getElementById(progresselem).style.backgroundPosition=(-650+(perc*length/100))+"px 0px";
-				//document.getElementById(progresselem).style.backgroundPosition=(-500+(perc*5))+"px 0px";
+				$(function() {
+				        $("#progressbar").progressbar("value",perc).find('span').text(perc+"%");
+					});
 				if (perc<=48)
 					document.getElementById(progresselem).style.color="#000";
 				else
 					document.getElementById(progresselem).style.color="#fff";
-
-				setTimeout("updateProgressBar('"+progresselem+"',"+startTime+","+endTime+",'"+cTime+"','"+length+"')",1000);
+				
+				setTimeout("updateProgressBar('"+progresselem+"',"+startTime+","+endTime+",'"+cTime+"')",1000);
 			}
 			else
 			{
 				document.getElementById(progresselem).innerHTML="Abgeschlossen!";
-				document.getElementById(progresselem).style.background="url('images/progressbar.png') no-repeat";
-				document.getElementById(progresselem).style.backgroundPosition="0px 0px";
-				document.getElementById(progresselem).style.color="#fff";
 			}
 		}
 	}	

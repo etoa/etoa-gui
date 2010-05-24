@@ -694,6 +694,14 @@ Anmerkung: Eine Kopie dieser Nachricht wird in Eurer Nachrichten-Box hinterlegt.
       <v comment="Startrating" type="text">1600</v>
 	  <p1 comment="K Variable" type="text">15</p1>
     </item>
+	<item name="battle_rebuildable" cat="4">
+  		<v comment="Basicvalue" type="text">0</v>
+		<p1 comment="Angrefer x * tech lvl %" type="text">0.75</p1>
+		<p1 comment="Verteidiger x * tech lvl %" type="text">1</p1>
+	</item>
+	<item name="rebuildable_costs" cat="4">
+  		<v comment="Kostenfaktor x * Normal" type="text">0.25</v>
+	</item>
 
   </items>
 </config>

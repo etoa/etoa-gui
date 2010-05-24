@@ -258,7 +258,13 @@
 					$tt = new Tooltip();
 					$tt->addTitle($ent->entityCodeString());
 					$tt->addText("Position: $sx/$sy : $xcoords/$ycoords");
-					$tt->addComment($ent->name());
+					if ($ent->entityCode()=='w')
+					{
+						$tent = new Wormhole($ent->targetId());
+						$tt->addComment("Ziel: $tent</a>");	
+					}
+					else
+						$tt->addComment($ent->name());
 					
 					echo "<td style=\"background:url('".$ent->imagePath()."');\"
 						onmouseover=\"counter_left_$ycoords.src='$counter_left_high$ycoords.gif';counter_bottom_$xcoords.src='$counter_bottom_high$xcoords.gif';\" onmouseout=\"counter_left_$ycoords.src='$counter_left$ycoords.gif';counter_bottom_$xcoords.src='$counter_bottom$xcoords.gif';\">";										

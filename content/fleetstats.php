@@ -165,7 +165,7 @@
 				(isset($shiplist_data[$sarr['ship_id']]) && array_sum($shiplist_data[$sarr['ship_id']])>0) 
 				|| (isset($queue_data[$sarr['ship_id']]) && array_sum($queue_data[$sarr['ship_id']])>0) 
 				|| (isset($fleet_data[$sarr['ship_id']]) && $fleet_data[$sarr['ship_id']]>0)
-				|| (isset($shiplist_bunkered[$saar['ship_id']]) && array_sum($shiplist_bunkered[$sarr['ship_id']])>0))
+				|| (isset($shiplist_bunkered[$sarr['ship_id']]) && array_sum($shiplist_bunkered[$sarr['ship_id']])>0))
 			  {
 			  	$s_img = IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$sarr['ship_id']."_small.".IMAGE_EXT;
 			  	echo '<tr>

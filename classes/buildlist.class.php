@@ -50,6 +50,7 @@
 			if ($this->items == null)
 				$this->load();
 			$catItems = array();
+			
 			foreach ($this->items as $id=>$item)
 			{
 				if ($item->building->typeId == $catId)
@@ -75,7 +76,7 @@
 		private function load($load=1)
 		{
 			$this->tl = new TechList($this->ownerId);
-			
+			self::$GENTECH = $this->tl->getLevel(GEN_TECH_ID);
 			$this->items = array();
 			$this->count = 0;
 			
@@ -330,12 +331,18 @@
 		
 		function build($bid)
 		{
-			$this->errorMsg =  $this->items[$bid]->build();
-			if ($this->errorMsg=="")
-				return true;
-			else
-				return false;
-			$this->errorMsg = "Geb&auml;de nicht abreissbar!";
+			if ($this->checkBuildable($bid)>0)
+			{
+				if (isset($this->items[$bid]))
+				{
+					$this->errorMsg =  $this->items[$bid]->build();
+					if ($this->errorMsg=="")
+						return true;
+					else
+						return false;	
+				}	
+			}
+			$this->errorMsg = "Geb&auml;de nicht baubar!";
 			return false;
 		}
 		
@@ -383,7 +390,7 @@
 		
 		/**
 		* Check wether an item is buildable. Conditions are
-		* no building under construction, enough resources, not maxed out level, enough fields,
+		* no building under construction, enough resources, not maxed out level, enough fieldsUsed,
 		* and satisfied prerequisites.
 		*
 		*

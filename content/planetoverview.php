@@ -239,7 +239,7 @@
 			tableStart("Felderbelegung");
 			echo "<tr>
 			<tr><td colspan=\"2\">			
-			<img src=\"misc/progress.image.php?r=1&w=650&p=".round($cp->fields_used/$cp->fields*100)."\" alt=\"progress\" style=\"width:100%;\"/>
+			<img src=\"misc/progress.image.php?r=1&w=650&p=".round($cp->fieldsUsed/$cp->fields*100)."\" alt=\"progress\" style=\"width:100%;\"/>
 			<br/>Benutzt: ".$cp->fieldsUsed.", Total: ".nf($cp->fields)." = ".nf($cp->fieldsBase)." Basisfelder + ".nf($cp->fieldsExtra)." zusätzliche Felder<br/></td></tr>
 			<tr><td style=\"width:50%;vertical-align:top;padding:5px;\">";
 			tableStart("Geb&auml;ude",'100%');
@@ -255,8 +255,8 @@
 				{
 					echo "<tr><th>".$v."</th>";
 					echo "<td>".$bl->getLevel($k)."</td>";
-					echo "<td>".nf($bl->getLevel($k) * $v->fieldsUsed)."</td></tr>";
-					$fcnt += $bl->getLevel($k) * $v->fieldsUsed;
+					echo "<td>".nf($bl->getLevel($k) * $v->building->fields)."</td></tr>";
+					$fcnt += $bl->getLevel($k) * $v->building->fields;
 				}
 				unset($v);
 				echo "<tr><th colspan=\"2\">Total</th><td>".nf($fcnt)."</td></tr>";

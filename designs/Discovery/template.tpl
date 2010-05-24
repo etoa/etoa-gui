@@ -16,221 +16,221 @@
 <div class="Left_Panel">
 
 	<div class="Menueleiste-03_">
-		<img name="Menueleiste_03" src="{$templateDir}/images/Menueleiste_03.gif"  align="top" /></div>
+		<img width="207px" height="9px" name="Menueleiste_03" src="{$templateDir}/images/Menueleiste_03.gif"  align="top" /></div>
 	<div class="Menueleiste-08_">
-		<img src="{$templateDir}/images/Menueleiste_08.gif" /></div>
+		<img width="16px" height="145px" src="{$templateDir}/images/Menueleiste_08.gif" /></div>
 	<div class="sp-pb-overview_">
-		<img name="sp_pb_overview" src="{$templateDir}/images/sp_pb_overview.gif" alt="Ueberblick" usemap="#sp_pb_overview_Map" /></div>
+		<img width="71px" height="74px" name="sp_pb_overview" src="{$templateDir}/images/sp_pb_overview.gif" alt="Ueberblick" usemap="#sp_pb_overview_Map" /></div>
 	<div class="Menueleiste-11_">
-		<img src="{$templateDir}/images/Menueleiste_11.gif" /></div>
+		<img width="120px" height="29px" src="{$templateDir}/images/Menueleiste_11.gif" /></div>
 	<div class="Menueleiste-14_">
-		<img src="{$templateDir}/images/Menueleiste_14.gif" /></div>
+		<img width="5px" height="45px" src="{$templateDir}/images/Menueleiste_14.gif" /></div>
 	<div class="platzhalter-serverzeit_">
 		<td colspan="2" bgcolor="#000000" class="Servertime">
 			{$serverTime}
 		</td>
 	</div>
 	<div class="Menueleiste-12_">
-		<img src="{$templateDir}/images/Menueleiste_12.gif" /></div>
+		<img width="53px" height="45px" src="{$templateDir}/images/Menueleiste_12.gif" /></div>
 	<div class="pb-info_">
 		<img name="pb_info" src="{$templateDir}/images/pb_info.gif" width="56px" height="60px" alt="Info" usemap="#pb_info_Map" /></div>
 	<div class="Menueleiste-15_">
-		<img src="{$templateDir}/images/Menueleiste_15.gif" /></div>
+		<img width="62px" height="27px" src="{$templateDir}/images/Menueleiste_15.gif" /></div>
 	<div class="Menueleiste-16_">
-		<img src="{$templateDir}/images/Menueleiste_16.gif" /></div>
+		<img width="56px" height="23px" src="{$templateDir}/images/Menueleiste_16.gif" /></div>
 	<div class="Menueleiste-18_">
-		<img src="{$templateDir}/images/Menueleiste_18.gif" /></div>
+		<img width="12px" height="23px" src="{$templateDir}/images/Menueleiste_18.gif" /></div>
 	<div class="PlanetName">
 		<td colspan="11" align="left" valign="middle">
 			{$currentPlanetName}
 		</td>
 	</div>
 	<div class="Menueleiste-20_">
-		<img src="{$templateDir}/images/Menueleiste_20.gif" /></div>
+		<img width="17px" height="23px" src="{$templateDir}/images/Menueleiste_20.gif" /></div>
 	<div class="pb-previousplanet_">
-		<img name="pb_previousplanet" src="{$templateDir}/images/pb_previousplanet.gif" alt="PrevPlanet" usemap="#pb_previousplanet_Map" /></a></div>
+		<img width="37px" height="35px" name="pb_previousplanet" src="{$templateDir}/images/pb_previousplanet.gif" alt="PrevPlanet" usemap="#pb_previousplanet_Map" /></a></div>
 	<div class="pb-nextplanet_">
-		<img name="pb_ddplanets" src="{$templateDir}/images/pb_ddplanets.gif" alt="NextPlanet" usemap="#pb_ddplanets_Map" /></div>
+		<img width="34px" height="35px" name="pb_ddplanets" src="{$templateDir}/images/pb_ddplanets.gif" alt="NextPlanet" usemap="#pb_ddplanets_Map" /></div>
 	<div class="Menueleiste_">
-		<img src="{$templateDir}/images/Menueleiste.gif" /></div>
+		<img width="16px" height="154px" src="{$templateDir}/images/Menueleiste.gif" /></div>
 	<div class="Menueleiste-27_">
-		<img src="{$templateDir}/images/Menueleiste_27.gif" /></div>
+		<img width="71px" height="13px" src="{$templateDir}/images/Menueleiste_27.gif" /></div>
 	<div class="pb-planetdropdown_">
-		<img name="pb_nextplanet" src="{$templateDir}/images/pb_nextplanet.gif" alt="Planeten" alt="" usemap="#pb_nextplanet_Map" /></div>
+		<img width="43px" height="32px" name="pb_nextplanet" src="{$templateDir}/images/pb_nextplanet.gif" alt="Planeten" alt="" usemap="#pb_nextplanet_Map" /></div>
 	<div class="Menueleiste-23_">
-		<img src="{$templateDir}/images/Menueleiste_23.gif" /></div>
+		<img width="121px" height="48px" src="{$templateDir}/images/Menueleiste_23.gif" /></div>
 	<div class="Menueleiste-25_">
-		<img src="{$templateDir}/images/Menueleiste_25.gif" /></div>
+		<img width="12px" height="58px" src="{$templateDir}/images/Menueleiste_25.gif" /></div>
 	<div class="Menueleiste-26_">
-		<img src="{$templateDir}/images/Menueleiste_26.gif" /></div>
+		<img width="43px" height="26px" src="{$templateDir}/images/Menueleiste_26.gif" /></div>
 	<div class="nb-raumkarte_">
 		<a href="?page=sector"
 			onmouseover="changeImages('nb_space', '{$templateDir}/images/nb_raumkarte-over.gif'); return true;"
 			onmouseout="changeImages('nb_space', '{$templateDir}/images/nb_raumkarte.gif'); return true;"
 			onmousedown="changeImages('nb_space', '{$templateDir}/images/nb_raumkarte-down.gif'); return true;"
 			onmouseup="changeImages('nb_space', '{$templateDir}/images/nb_raumkarte-over.gif'); return true;">
-			<img id="nb_space" src="{$templateDir}/images/nb_raumkarte.gif" alt="Raumkarte" /></a></div>
+			<img width="164px" height="21px" id="nb_space" src="{$templateDir}/images/nb_raumkarte.gif" alt="Raumkarte" /></a></div>
 	<div class="nb-flotten_">
 		<a href="?page=fleets"
 			onmouseover="changeImages('nb_flotten', '{$templateDir}/images/nb_flotten-over.gif'); return true;"
 			onmouseout="changeImages('nb_flotten', '{$templateDir}/images/nb_flotten.gif'); return true;"
 			onmousedown="changeImages('nb_flotten', '{$templateDir}/images/nb_flotten-down.gif'); return true;"
 			onmouseup="changeImages('nb_flotten', '{$templateDir}/images/nb_flotten-over.gif'); return true;">
-			<img id="nb_flotten" src="{$templateDir}/images/nb_flotten.gif" alt="Flotten" /></a></div>
+			<img width="164px" height="21px" id="nb_flotten" src="{$templateDir}/images/nb_flotten.gif" alt="Flotten" /></a></div>
 	<div class="nb-favoriten_">
 		<a href="?page=bookmarks"
 			onmouseover="changeImages('nb_favoriten', '{$templateDir}/images/nb_favoriten-over.gif'); return true;"
 			onmouseout="changeImages('nb_favoriten', '{$templateDir}/images/nb_favoriten.gif'); return true;"
 			onmousedown="changeImages('nb_favoriten', '{$templateDir}/images/nb_favoriten-down.gif'); return true;"
 			onmouseup="changeImages('nb_favoriten', '{$templateDir}/images/nb_favoriten-over.gif'); return true;">
-			<img name="nb_favoriten" src="{$templateDir}/images/nb_favoriten.gif" alt="Favoriten" /></a></div>
+			<img width="164px" height="21px" name="nb_favoriten" src="{$templateDir}/images/nb_favoriten.gif" alt="Favoriten" /></a></div>
 	<div class="nb-allianz_">
 		<a href="?page=alliance"
 			onmouseover="changeImages('nb_allianz', '{$templateDir}/images/nb_allianz-over.gif'); return true;"
 			onmouseout="changeImages('nb_allianz', '{$templateDir}/images/nb_allianz.gif'); return true;"
 			onmousedown="changeImages('nb_allianz', '{$templateDir}/images/nb_allianz-down.gif'); return true;"
 			onmouseup="changeImages('nb_allianz', '{$templateDir}/images/nb_allianz-over.gif'); return true;">
-			<img name="nb_allianz" src="{$templateDir}/images/nb_allianz.gif" alt="Allianz" /></a></div>
+			<img width="164px" height="21px" name="nb_allianz" src="{$templateDir}/images/nb_allianz.gif" alt="Allianz" /></a></div>
 	<div class="nb-rathaus_">
 		<a href="?page=townhall"
 			onmouseover="changeImages('nb_rathaus', '{$templateDir}/images/nb_rathaus-over.gif'); return true;"
 			onmouseout="changeImages('nb_rathaus', '{$templateDir}/images/nb_rathaus.gif'); return true;"
 			onmousedown="changeImages('nb_rathaus', '{$templateDir}/images/nb_rathaus-down.gif'); return true;"
 			onmouseup="changeImages('nb_rathaus', '{$templateDir}/images/nb_rathaus-over.gif'); return true;">
-			<img name="nb_rathaus" src="{$templateDir}/images/nb_rathaus.gif" alt="Rathaus" /></a></div>
+			<img width="164px" height="21px" name="nb_rathaus" src="{$templateDir}/images/nb_rathaus.gif" alt="Rathaus" /></a></div>
 	<div class="Menueleiste-41_">
-		<img src="{$templateDir}/images/Menueleiste_41.gif" /></div>
+		<img width="164px" height="23px" src="{$templateDir}/images/Menueleiste_41.gif" /></div>
 	<div class="nb-bev-lkerung_">
 		<a href="?page=population"
 			onmouseover="changeImages('nb_bevoelkerung', '{$templateDir}/images/nb_bevoelkerung-over.gif'); return true;"
 			onmouseout="changeImages('nb_bevoelkerung', '{$templateDir}/images/nb_bevoelkerung.gif'); return true;"
 			onmousedown="changeImages('nb_bevoelkerung', '{$templateDir}/images/nb_bevoelkerung-down.gif'); return true;"
 			onmouseup="changeImages('nb_bevoelkerung', '{$templateDir}/images/nb_bevoelkerung-over.gif'); return true;">
-			<img name="nb_bevoelkerung" src="{$templateDir}/images/nb_bevoelkerung.gif" alt="Bevoelkerung" /></a></div>
+			<img width="164px" height="21px" name="nb_bevoelkerung" src="{$templateDir}/images/nb_bevoelkerung.gif" alt="Bevoelkerung" /></a></div>
 	<div class="nb-informationen_">
 		<a href="?page=planetoverview"
 			onmouseover="changeImages('nb_informationen', '{$templateDir}/images/nb_informationen-over.gif'); return true;"
 			onmouseout="changeImages('nb_informationen', '{$templateDir}/images/nb_informationen.gif'); return true;"
 			onmousedown="changeImages('nb_informationen', '{$templateDir}/images/nb_informationen-down.gif'); return true;"
 			onmouseup="changeImages('nb_informationen', '{$templateDir}/images/nb_informationen-over.gif'); return true;">
-			<img name="nb_informationen" src="{$templateDir}/images/nb_informationen.gif" alt="Info" /></a></div>
+			<img width="164px" height="21px" name="nb_informationen" src="{$templateDir}/images/nb_informationen.gif" alt="Info" /></a></div>
 	<div class="nb-schiffshafen_">
 		<a href="?page=haven"
 			onmouseover="changeImages('nb_schiffshafen', '{$templateDir}/images/nb_schiffshafen-over.gif'); return true;"
 			onmouseout="changeImages('nb_schiffshafen', '{$templateDir}/images/nb_schiffshafen.gif'); return true;"
 			onmousedown="changeImages('nb_schiffshafen', '{$templateDir}/images/nb_schiffshafen-down.gif'); return true;"
 			onmouseup="changeImages('nb_schiffshafen', '{$templateDir}/images/nb_schiffshafen-over.gif'); return true;">
-			<img name="nb_schiffshafen" src="{$templateDir}/images/nb_schiffshafen.gif" alt="Raumschiffhafen" /></a></div>
+			<img width="164px" height="21px" name="nb_schiffshafen" src="{$templateDir}/images/nb_schiffshafen.gif" alt="Raumschiffhafen" /></a></div>
 	<div class="nb-technikbuam_">
 		<a href="?page=techtree"
 			onmouseover="changeImages('nb_technikbuam', '{$templateDir}/images/nb_technikbuam-over.gif'); return true;"
 			onmouseout="changeImages('nb_technikbuam', '{$templateDir}/images/nb_technikbuam.gif'); return true;"
 			onmousedown="changeImages('nb_technikbuam', '{$templateDir}/images/nb_technikbuam-down.gif'); return true;"
 			onmouseup="changeImages('nb_technikbuam', '{$templateDir}/images/nb_technikbuam-over.gif'); return true;">
-			<img name="nb_technikbuam" src="{$templateDir}/images/nb_technikbuam.gif" alt="Technikbaum" /></a></div>
+			<img width="164px" height="21px" name="nb_technikbuam" src="{$templateDir}/images/nb_technikbuam.gif" alt="Technikbaum" /></a></div>
 	<div class="nb-wirtschaft_">
 		<a href="?page=economy"
 			onmouseover="changeImages('nb_wirtschaft', '{$templateDir}/images/nb_wirtschaft-over.gif'); return true;"
 			onmouseout="changeImages('nb_wirtschaft', '{$templateDir}/images/nb_wirtschaft.gif'); return true;"
 			onmousedown="changeImages('nb_wirtschaft', '{$templateDir}/images/nb_wirtschaft-down.gif'); return true;"
 			onmouseup="changeImages('nb_wirtschaft', '{$templateDir}/images/nb_wirtschaft-over.gif'); return true;">
-			<img name="nb_wirtschaft" src="{$templateDir}/images/nb_wirtschaft.gif" alt="Wirtschaft" /></a></div>
+			<img width="164px" height="21px" name="nb_wirtschaft" src="{$templateDir}/images/nb_wirtschaft.gif" alt="Wirtschaft" /></a></div>
 	<div class="nb-kryptocenter_">
 		<a href="?page=crypto"
 			onmouseover="changeImages('nb_kryptocenter', '{$templateDir}/images/nb_kryptocenter-over.gif'); return true;"
 			onmouseout="changeImages('nb_kryptocenter', '{$templateDir}/images/nb_kryptocenter.gif'); return true;"
 			onmousedown="changeImages('nb_kryptocenter', '{$templateDir}/images/nb_kryptocenter-down.gif'); return true;"
 			onmouseup="changeImages('nb_kryptocenter', '{$templateDir}/images/nb_kryptocenter-over.gif'); return true;">
-			<img name="nb_kryptocenter" src="{$templateDir}/images/nb_kryptocenter.gif" alt="Kryptocenter" /></a></div>
+			<img width="164px" height="21px" name="nb_kryptocenter" src="{$templateDir}/images/nb_kryptocenter.gif" alt="Kryptocenter" /></a></div>
 	<div class="nb-bunker_">
 		<a href="?page=bunker"
 			onmouseover="changeImages('nb_bunker', '{$templateDir}/images/nb_bunker-over.gif'); return true;"
 			onmouseout="changeImages('nb_bunker', '{$templateDir}/images/nb_bunker.gif'); return true;"
 			onmousedown="changeImages('nb_bunker', '{$templateDir}/images/nb_bunker-down.gif'); return true;"
 			onmouseup="changeImages('nb_bunker', '{$templateDir}/images/nb_bunker-over.gif'); return true;">
-			<img name="nb_bunker" src="{$templateDir}/images/nb_bunker.gif" alt="Bunker" /></a></div>
+			<img width="164px" height="21px" name="nb_bunker" src="{$templateDir}/images/nb_bunker.gif" alt="Bunker" /></a></div>
 
 	<div class="Menueleiste-47_">
-		<img img name="Menueleiste-47_" src="{$templateDir}/images/Menueleiste_47.gif" /></div>
+		<img width="164px" height="22px" img name="Menueleiste-47_" src="{$templateDir}/images/Menueleiste_47.gif" /></div>
 	<div class="nb-bauhof_">
 		<a href="?page=buildings"
 			onmouseover="changeImages('nb_bauhof', '{$templateDir}/images/nb_bauhof-over.gif'); return true;"
 			onmouseout="changeImages('nb_bauhof', '{$templateDir}/images/nb_bauhof.gif'); return true;"
 			onmousedown="changeImages('nb_bauhof', '{$templateDir}/images/nb_bauhof-down.gif'); return true;"
 			onmouseup="changeImages('nb_bauhof', '{$templateDir}/images/nb_bauhof-over.gif'); return true;">
-			<img name="nb_bauhof" src="{$templateDir}/images/nb_bauhof.gif" alt="Bauhof" /></a></div>
+			<img width="164px" height="21px" name="nb_bauhof" src="{$templateDir}/images/nb_bauhof.gif" alt="Bauhof" /></a></div>
 	<div class="nb-schiffswerft_">
 		<a href="?page=shipyard"
 			onmouseover="changeImages('nb_schiffswerft', '{$templateDir}/images/nb_schiffswerft-over.gif'); return true;"
 			onmouseout="changeImages('nb_schiffswerft', '{$templateDir}/images/nb_schiffswerft.gif'); return true;"
 			onmousedown="changeImages('nb_schiffswerft', '{$templateDir}/images/nb_schiffswerft-down.gif'); return true;"
 			onmouseup="changeImages('nb_schiffswerft', '{$templateDir}/images/nb_schiffswerft-over.gif'); return true;">
-			<img name="nb_schiffswerft" src="{$templateDir}/images/nb_schiffswerft.gif" alt="Raumschiffwerft" /></a></div>
+			<img width="164px" height="21px" name="nb_schiffswerft" src="{$templateDir}/images/nb_schiffswerft.gif" alt="Raumschiffwerft" /></a></div>
 	<div class="nb-verteidigung_">
 		<a href="?page=defense"
 			onmouseover="changeImages('nb_verteidigung', '{$templateDir}/images/nb_verteidigung-over.gif'); return true;"
 			onmouseout="changeImages('nb_verteidigung', '{$templateDir}/images/nb_verteidigung.gif'); return true;"
 			onmousedown="changeImages('nb_verteidigung', '{$templateDir}/images/nb_verteidigung-down.gif'); return true;"
 			onmouseup="changeImages('nb_verteidigung', '{$templateDir}/images/nb_verteidigung-over.gif'); return true;">
-			<img id="nb_verteidigung" src="{$templateDir}/images/nb_verteidigung.gif" alt="Verteidigungsanlagen" /></a></div>
+			<img width="164px" height="21px" id="nb_verteidigung" src="{$templateDir}/images/nb_verteidigung.gif" alt="Verteidigungsanlagen" /></a></div>
 	<div class="nb-forschung_">
 		<a href="?page=research"
 			onmouseover="changeImages('nb_forschung', '{$templateDir}/images/nb_forschung-over.gif'); return true;"
 			onmouseout="changeImages('nb_forschung', '{$templateDir}/images/nb_forschung.gif'); return true;"
 			onmousedown="changeImages('nb_forschung', '{$templateDir}/images/nb_forschung-down.gif'); return true;"
 			onmouseup="changeImages('nb_forschung', '{$templateDir}/images/nb_forschung-over.gif'); return true;">
-			<img id="nb_forschung" src="{$templateDir}/images/nb_forschung.gif" alt="Forschung" /></a></div>
+			<img width="164px" height="21px" id="nb_forschung" src="{$templateDir}/images/nb_forschung.gif" alt="Forschung" /></a></div>
 	<div class="nb-raketen_">
 		<a href="?page=missiles"
 			onmouseover="changeImages('nb_raketen', '{$templateDir}/images/nb_raketen-over.gif'); return true;"
 			onmouseout="changeImages('nb_raketen', '{$templateDir}/images/nb_raketen.gif'); return true;"
 			onmousedown="changeImages('nb_raketen', '{$templateDir}/images/nb_raketen-down.gif'); return true;"
 			onmouseup="changeImages('nb_raketen', '{$templateDir}/images/nb_raketen-over.gif'); return true;">
-			<img id="nb_raketen" src="{$templateDir}/images/nb_raketen.gif" alt="raketen" /></a></div>			
+			<img width="164px" height="21px" id="nb_raketen" src="{$templateDir}/images/nb_raketen.gif" alt="raketen" /></a></div>			
 	<div class="nb-marktplatz_">
 		<a href="?page=market"
 			onmouseover="changeImages('nb_marktplatz', '{$templateDir}/images/nb_marktplatz-over.gif'); return true;"
 			onmouseout="changeImages('nb_marktplatz', '{$templateDir}/images/nb_marktplatz.gif'); return true;"
 			onmousedown="changeImages('nb_marktplatz', '{$templateDir}/images/nb_marktplatz-down.gif'); return true;"
 			onmouseup="changeImages('nb_marktplatz', '{$templateDir}/images/nb_marktplatz-over.gif'); return true;">
-			<img id="nb_marktplatz" src="{$templateDir}/images/nb_marktplatz.gif" alt="Marktplatz" /></a></div>
+			<img width="164px" height="21px" id="nb_marktplatz" src="{$templateDir}/images/nb_marktplatz.gif" alt="Marktplatz" /></a></div>
 	<div class="nb-recycling_">
 		<a href="?page=recycle"
 			onmouseover="changeImages('nb_recycling', '{$templateDir}/images/nb_recycling-over.gif'); return true;"
 			onmouseout="changeImages('nb_recycling', '{$templateDir}/images/nb_recycling.gif'); return true;"
 			onmousedown="changeImages('nb_recycling', '{$templateDir}/images/nb_recycling-down.gif'); return true;"
 			onmouseup="changeImages('nb_recycling', '{$templateDir}/images/nb_recycling-over.gif'); return true;">
-			<img id="nb_recycling" src="{$templateDir}/images/nb_recycling.gif" alt="Recycling" /></a></div>
+			<img width="164px" height="21px" id="nb_recycling" src="{$templateDir}/images/nb_recycling.gif" alt="Recycling" /></a></div>
 	<div class="Menueleiste-57_">
-		<img src="{$templateDir}/images/Menueleiste_57.gif" /></div>
+		<img width="164px" height="21px" src="{$templateDir}/images/Menueleiste_57.gif" /></div>
 	<div class="nb-buddylist_">
 		<a href="?page=buddylist"
 			onmouseover="changeImages('nb_buddylist', '{$templateDir}/images/nb_buddylist-over.gif'); return true;"
 			onmouseout="changeImages('nb_buddylist', '{if $buddys == true}{$templateDir}/images/nb_buddylist-sel.gif{else}{$templateDir}/images/nb_buddylist.gif{/if}');"
 			onmousedown="changeImages('nb_buddylist', '{$templateDir}/images/nb_buddylist-down.gif'); return true;"
 			onmouseup="changeImages('nb_buddylist', '{$templateDir}/images/nb_buddylist-over.gif'); return true;">
-			<img id="nb_buddylist" src="{if $buddys == true}{$templateDir}/images/nb_buddylist-sel.gif{else}{$templateDir}/images/nb_buddylist.gif{/if}" alt="Buddyliste" /></a></div>
+			<img width="164px" height="21px" id="nb_buddylist" src="{if $buddys == true}{$templateDir}/images/nb_buddylist-sel.gif{else}{$templateDir}/images/nb_buddylist.gif{/if}" alt="Buddyliste" /></a></div>
 	<div class="Menueleiste-33_">
-		<img src="{$templateDir}/images/Menueleiste_33.gif" /></div>
+		<img width="32px" height="520px" src="{$templateDir}/images/Menueleiste_33.gif" /></div>
 	<div class="Menueleiste-51_">
-		<img src="{$templateDir}/images/Menueleiste_51.gif" /></div>
+		<img width="30px" height="497px" src="{$templateDir}/images/Menueleiste_51.gif" /></div>
 	<div class="Menueleiste-59_">
-		<img src="{$templateDir}/images/Menueleiste_59.gif" /></div>
+		<img width="164px" height="14px" src="{$templateDir}/images/Menueleiste_59.gif" /></div>
 	<div class="Menueleiste-62_">
-		<img src="{$templateDir}/images/Menueleiste_62.gif" /></div>
+		<img width="117px" height="16px" src="{$templateDir}/images/Menueleiste_62.gif" /></div>
 	<div class="pb-post_">
-		<img name="pb_post" id="pb_post" src="{if $messages > 0}{$templateDir}/images/pb_post-sp_pb_post_postther.gif{else}{$templateDir}/images/pb_post.gif{/if}" usemap="#pb_post_Map" /></div>
+		<img width="49px" height="71px" name="pb_post" id="pb_post" src="{if $messages > 0}{$templateDir}/images/pb_post-sp_pb_post_postther.gif{else}{$templateDir}/images/pb_post.gif{/if}" usemap="#pb_post_Map" /></div>
 		<div class="pb-report_">
-			<img name="pb_report" id="pb_report" src="{if $newreports > 0}{$templateDir}/images/pb_report-sp_pb_report_reportther.gif{else}{$templateDir}/images/pb_report.gif{/if}" usemap="#pb_report_Map" /></div>
+			<img width="42px" height="71px" name="pb_report" id="pb_report" src="{if $newreports > 0}{$templateDir}/images/pb_report-sp_pb_report_reportther.gif{else}{$templateDir}/images/pb_report.gif{/if}" usemap="#pb_report_Map" /></div>
 	<div class="Menueleiste-63_">
-		<img src="{$templateDir}/images/Menueleiste_63.gif" /></div>
-	<div class="alert_"><a href="?page=fleets"><img id="alert" src="{if $fleetAttack > 0}{$templateDir}/images/alert-attacked.gif{else}{$templateDir}/images/alert.gif{/if}" alt="Alarm" border="0"/></a></div>
+		<img width="23px" height="94px" src="{$templateDir}/images/Menueleiste_63.gif" /></div>
+	<div class="alert_"><a href="?page=fleets"><img width="97px" height="41px" id="alert" src="{if $fleetAttack > 0}{$templateDir}/images/alert-attacked.gif{else}{$templateDir}/images/alert.gif{/if}" alt="Alarm" border="0"/></a></div>
 	<div class="pb-notes_">
-		<img name="pb_notes" id="pb_notes" src="{$templateDir}/images/pb_notes.gif" alt="Notitzen" usemap="#pb_notes_Map" /></div>
+		<img width="52px" height="64px" name="pb_notes" id="pb_notes" src="{$templateDir}/images/pb_notes.gif" alt="Notitzen" usemap="#pb_notes_Map" /></div>
 	<div class="Menueleiste-66_">
-		<img src="{$templateDir}/images/Menueleiste_66.gif" /></div>
+		<img width="97px" height="56px" src="{$templateDir}/images/Menueleiste_66.gif" /></div>
 	<div class="Menueleiste-68_">
-		<img src="{$templateDir}/images/Menueleiste_68.gif" /></div>
+		<img width="75px" height="23px" src="{$templateDir}/images/Menueleiste_68.gif" /></div>
 
 
 </div>

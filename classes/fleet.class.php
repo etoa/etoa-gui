@@ -327,12 +327,14 @@
 		{
 			$this->shipsIds = array();
 			$this->shipCount = 0;	
+			$this->rebuildablecount = 0;
 			if (count($this->fleets) && $fleet<0)
 			{	
 				$sres = dbquery("
 					SELECT 
 						fs_ship_id, 
 						SUM( fs_ship_cnt )
+						SUM( fs_ship_rebuildable) AS rebuildable
 					FROM 
 						fleet_ships
 					INNER JOIN 
@@ -340,7 +342,7 @@
 					ON 
 						fleet.id = fs_fleet_id
 						AND fleet.leader_id = '".$this->id."'
-						AND fs_ship_cnt > '0'
+						AND (fs_ship_cnt > '0' OR fs_ship_rebuildable > '0' )
 						AND fs_ship_faked = '0'
 					GROUP BY 
 						fs_ship_id
@@ -353,12 +355,13 @@
 				$sres = dbquery("
 				SELECT
 					fs_ship_id,
-					fs_ship_cnt
+					fs_ship_cnt,
+					fs_ship_rebuildable
 				FROM
 			fleet_ships
 				WHERE
 			fs_fleet_id='".$this->id."'
-			AND fs_ship_cnt>'0'
+			AND (fs_ship_cnt > '0' OR fs_ship_rebuildable > '0' )
 			AND fs_ship_faked='0'
 				;");
 			}
@@ -368,6 +371,7 @@
 				{
 					$this->shipsIds[$arr[0]] = $arr[1];
 					$this->shipCount += $arr[1];
+					$this->rebuildablecount += $arr[2];
 				}
 			}
 		}
@@ -383,6 +387,15 @@
 				$this->loadShipIds();
 			}
 			return $this->shipCount;			
+		}
+		
+		function countRebuildable()
+		{
+			if (!isset($this->shipsIds))
+			{
+				$this->loadShipIds();
+			}
+			return $this->rebuildablecount;			
 		}
 		
 		/**
