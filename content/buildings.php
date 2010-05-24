@@ -419,7 +419,7 @@ define('HELP_URL',"?page=help&site=buildings");
 					{
 						$waitArr = $item->waitingTime('demolish');
 						// Es wird bereits an einem Gebäude gebaut
-						if ($bl->checkDemolishable($bid))
+						if (!$bl->checkDemolishable($bid))
 						{
 							echo '<tr>
 									<td style="color:red;">Abreissen</td>
