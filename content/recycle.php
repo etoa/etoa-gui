@@ -226,7 +226,7 @@
 		
 		
 		tableStart("Recycling");
- 		echo "<tr><td>Deine Recyclingtechnologie ist auf Stufe ".$tech_level." entwickelt. Es werden ".$pb_percent." % der Kosten zur&uuml;ckerstattet.<br/>Der Recyclingvorgang kann nicht r&uuml;ckgangig gemacht werden, die Objekte werden sofort verschrottet!</td></tr>";
+ 		echo "<tr><td>Deine Recyclingtechnologie ist auf Stufe ".$tech_level." entwickelt. Es werden ".$pb_percent." % der Kosten zur&uuml;ckerstattet.<br/>Der Recyclingvorgang kann nicht r&uuml;ckg&auml;ngig gemacht werden, die Objekte werden sofort verschrottet!</td></tr>";
 		tableEnd();
 
 		//Schiffe recyceln

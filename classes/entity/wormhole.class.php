@@ -79,6 +79,7 @@
 
 		function imagePath($opt="")
 		{
+			defineImagePaths();
 			$r = mt_rand(1,9);
 			return IMAGE_PATH."/wormholes/wormhole1_small.".IMAGE_EXT;
 		}

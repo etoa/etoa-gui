@@ -73,6 +73,7 @@
 
 		function imagePath($opt="")
 		{
+			defineImagePaths();
 			$r = mt_rand(1,10);
 			return IMAGE_PATH."/space/space".$r."_small.".IMAGE_EXT;
 		}

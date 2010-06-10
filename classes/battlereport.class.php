@@ -247,7 +247,7 @@ class BattleReport extends Report
 					<table class="battleTable" width="100%">
 						<tr>
 							<td>
-								<strong>Angreiffer:</strong> ';
+								<strong>Angreifer:</strong> ';
 								if ($this->user!='')
 								{
 									$userArr = explode(',',$this->user);
@@ -360,7 +360,7 @@ class BattleReport extends Report
 						</tr>
 						<tr>
 							<td>
-								<strong>DATEN DES ANGREIFFERS</strong><br />
+								<strong>DATEN DES ANGREIFERS</strong><br />
 								<table>
 									<tr>
 										<td>Schild ('.$this->shieldTech.'%):</td><td style="text-align:right;"> '.nf($this->shield).'</td>

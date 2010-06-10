@@ -262,7 +262,7 @@
 				if (mysql_num_rows($tres)>0)
 				{
 				$tarr=mysql_fetch_array($tres);
-					if ($isAdmin || $myCat[$tarr['cat_id']])
+					if (isset($myCat[$tarr['cat_id']]) && ($isAdmin || $myCat[$tarr['cat_id']]))
 					{				
 						if ($tarr['topic_bnd_id']>0)
 						{

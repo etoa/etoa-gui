@@ -74,6 +74,7 @@
 
 		function imagePath($opt="")
 		{
+			defineImagePaths();
 			$numImages = 9;
 			$r = ($this->id % $numImages) + 1;
 			return IMAGE_PATH."/nebulas/nebula".$r."_small.".IMAGE_EXT;

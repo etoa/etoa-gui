@@ -29,6 +29,8 @@
 		 * @param <type> $entityId
 		 * @param <type> $ownerId
 		 * @param <type> $load
+		*
+		* @access public
 		 */
 		function BuildList($entityId,$ownerId,$load=0)
 		{
@@ -37,7 +39,15 @@
 			if ($load>0)
 				$this->load($load);
 		}
-	
+		
+		/**
+		*  Returns an Iterator with every element in the buildlist,
+		* to specify the selection use the $load param in the Constructor
+		*
+		* @return ArrayIterator with key() building_id and current() buildlistitem
+		*
+		* @access public
+		*/
 		public function getIterator() 
 		{
 			if ($this->items == null)
@@ -45,6 +55,17 @@
 			return new ArrayIterator($this->items);
 		}
 		
+		/**
+		*  Returns an ArrayIterator with every element in the selected category,
+		* use the $mode param to specify the returned buildings aswell as the $load param in the Constructor
+		*
+		* @param unsigned int $catId
+	 	* @param string $mode {all | buildable | resable}
+		*
+		* @return ArrayIterator	with key() building_id and current() buildlistitem
+		*
+		* @access public
+		*/
 		public function getCatIterator($catId=0, $mode='all')
 		{
 			if ($this->items == null)

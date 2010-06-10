@@ -76,6 +76,7 @@
 
 		function imagePath($opt="")
 		{
+			defineImagePaths();
 			$r = mt_rand(1,10);
 			return IMAGE_PATH."/unexplored/ue1.png";
 		}

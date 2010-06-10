@@ -145,6 +145,7 @@
 
 		function imagePath($opt="")
 		{
+			defineImagePaths();
 			if ($opt=="b")
 			{
 				return IMAGE_PATH."/stars/star".$this->typeId.".".IMAGE_EXT;
