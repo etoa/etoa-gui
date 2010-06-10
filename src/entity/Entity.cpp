@@ -912,7 +912,7 @@
 
 	std::string Entity::getUserNicks() {
 		if (!this->shipsLoaded)
-			this->loadAdditionalFleets();
+			this->loadShips();
 		
 		std::string nicks = this->entityUser->getUserNick();
 		if (fleets.size()) {
@@ -931,7 +931,7 @@
 
 	std::string Entity::getUserIds() {
 		if (!this->shipsLoaded)
-			this->loadAdditionalFleets();
+			this->loadShips();
 			
 		std::string ids = "," + etoa::d2s(this->getUserId()) + ",";
 		if (this->fleets.size()) {

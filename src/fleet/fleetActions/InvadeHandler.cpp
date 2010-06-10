@@ -123,14 +123,14 @@ namespace invade
 								invade->setContent("1");
 								delete invade;
 																
-								OtherReport *vreport = new OtherReport(this->targetEntity->getUserId(),
+								BattleReport *vreport = new BattleReport(this->targetEntity->getUserId(),
+																		this->f->getUserId(),
 																	   this->f->getEntityTo(),
 																	   this->f->getEntityFrom(),
 																	   this->f->getLandtime(),
-																	   this->f->getId(),
-																	   this->f->getAction());
-								vreport->setStatus(this->f->getStatus());
+																	   this->f->getId());
 								vreport->setSubtype("invadedfailed");
+								vreport->setContent("1");
 								vreport->setOpponent1Id(this->f->getUserId());
 								
 								delete vreport;
@@ -149,14 +149,14 @@ namespace invade
 							invade->setOpponent1Id(this->targetEntity->getUserId());
 							delete invade;
 							
-							OtherReport *vreport = new OtherReport(this->targetEntity->getUserId(),
+							BattleReport *vreport = new BattleReport(this->targetEntity->getUserId(),
+																	this->f->getUserId(),
 																   this->f->getEntityTo(),
 																   this->f->getEntityFrom(),
 																   this->f->getLandtime(),
-																   this->f->getId(),
-																   this->f->getAction());
-							vreport->setStatus(this->f->getStatus());
+																   this->f->getId());
 							vreport->setSubtype("invadedfailed");
+							vreport->setContent("1");
 							vreport->setOpponent1Id(this->f->getUserId());
 							
 							delete vreport;
@@ -176,14 +176,14 @@ namespace invade
 						invade->setOpponent1Id(this->targetEntity->getUserId());
 						delete invade;
 						
-						OtherReport *vreport = new OtherReport(this->targetEntity->getUserId(),
+						BattleReport *vreport = new BattleReport(this->targetEntity->getUserId(),
+																this->f->getUserId(),
 															   this->f->getEntityTo(),
 															   this->f->getEntityFrom(),
 															   this->f->getLandtime(),
-															   this->f->getId(),
-															   this->f->getAction());
-						vreport->setStatus(this->f->getStatus());
+															   this->f->getId());
 						vreport->setSubtype("invadedfailed");
+						vreport->setContent("2");
 						vreport->setOpponent1Id(this->f->getUserId());
 						
 						delete vreport;

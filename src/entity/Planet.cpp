@@ -100,9 +100,9 @@
 		//if the planet was not updated yet, set the actual time minus an hour
 		if (this->lastUpdated == 0) this->lastUpdated = ptime - 3600;
 		double tlast = ptime - this->lastUpdated;
-		tlast = this->resFuel + tlast*(int)config.nget("gasplanet", 1)/3600;
+		tlast = this->resFuel + tlast*(double)config.nget("gasplanet", 1)/3600.0;
 					
-		double pSize = (int)config.nget("gasplanet", 2)*this->fields;
+		double pSize = (double)config.nget("gasplanet", 2)*this->fields;
 		this->resFuel = std::min(tlast,pSize);
 		
 		this->lastUpdated = time;
