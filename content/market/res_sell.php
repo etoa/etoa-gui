@@ -69,10 +69,13 @@ $cnt = 0;
 							$numSellerShip = ($tradeShip->capacity>0) ? ceil(array_sum($sellarr) / $tradeShip->capacity) : 1;
 						
 							$dist = $sellerEntity->distance($cp);
-							$flighttime = ceil($dist / ($tradeShip->speed/3600));
-							
+							$sellerFlighttime = ceil($dist / ($seller->specialist->tradeTime*$tradeShip->speed/3600));
+							$buyerFlighttime = ceil($dist / ($cu->specialist->tradeTime*$tradeShip->speed/3600));
+
 							$launchtime = time();
-							$landtime = $launchtime + $flighttime;
+							$sellerLandtime = $launchtime + $sellerFlighttime;
+							$buyerLandtime = $launchtime + $buyerFlighttime;
+
 							
 							// Fleet Seller -> Buyer
 							dbquery("
@@ -98,7 +101,7 @@ $cnt = 0;
 								".$sellerEntity->id.",
 								".$cp->id.",
 								".$launchtime.",
-								".$landtime.",
+								".$buyerLandtime.",
 								'market',
 								".$sellarr[0].",
 								".$sellarr[1].",
@@ -153,7 +156,7 @@ $cnt = 0;
 									".$cp->id.",
 									".$sellerEntity->id.",
 									".$launchtime.",
-									".$landtime.",
+									".$sellerLandtime.",
 									'market',
 								".$buyarr[0].",
 								".$buyarr[1].",
