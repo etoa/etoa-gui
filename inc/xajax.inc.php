@@ -57,6 +57,10 @@
 		{
 			require_once(RELATIVE_ROOT."inc/xajax/bookmarks.xajax.php");
 		}
+		elseif ($page=="buddylist")
+		{
+			require_once(RELATIVE_ROOT."inc/xajax/buddylist.xajax.php");			
+		}
 	}	
 		
 	if (isset($index))

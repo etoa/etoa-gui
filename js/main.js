@@ -1262,3 +1262,175 @@ function addFontColor(id, colorId)
 
 		return str;
 	}
+	
+	//
+	// Javascript für dynamischen Planetkreis   
+	//
+    function show_info(
+    planet_id,
+    planet_name,
+    building_name,
+    building_time,
+    shipyard_name,
+    shipyard_time,
+    defense_name,
+    defense_time,
+    people,
+    res_metal,
+    res_crystal,
+    res_plastic,
+    res_fuel,
+    res_food,
+    use_power,
+    prod_power,
+    store_metal,
+    store_crystal,
+    store_plastic,
+    store_fuel,
+    store_food,
+    people_place)
+    {
+
+					//Planetinfo Anzeigen
+        document.getElementById("planet_info_name").firstChild.nodeValue=planet_name;
+
+        document.getElementById("planet_info_building_name").firstChild.nodeValue=building_name;
+        document.getElementById("planet_info_building_time").firstChild.nodeValue=building_time;
+
+        document.getElementById("planet_info_shipyard_name").firstChild.nodeValue=shipyard_name;
+        document.getElementById("planet_info_shipyard_time").firstChild.nodeValue=shipyard_time;
+
+        document.getElementById("planet_info_defense_name").firstChild.nodeValue=defense_name;
+        document.getElementById("planet_info_defense_time").firstChild.nodeValue=defense_time;
+		
+		//Überprüfen ob Speicher voll ist
+		var check_metal = store_metal-res_metal;
+		var check_crystal = store_crystal-res_crystal;
+		var check_plastic = store_plastic-res_plastic;
+		var check_fuel = store_fuel-res_fuel;
+		var check_food = store_food-res_food;
+		var check_people = people_place-people;
+
+		var rest_power = prod_power-use_power;
+
+		//Wenn Speicher voll, anders darstellen als normal
+		if (check_metal<=0)
+		{
+			document.getElementById("planet_info_res_metal").className='resfullcolor';
+		}
+		else
+		{
+			document.getElementById("planet_info_res_metal").className='resmetalcolor';
+		}
+
+		if (check_crystal<=0)
+		{
+			document.getElementById("planet_info_res_crystal").className='resfullcolor';
+		}
+		else
+		{
+			document.getElementById("planet_info_res_crystal").className='rescrystalcolor';
+		}
+
+		if (check_plastic<=0)
+		{
+			document.getElementById("planet_info_res_plastic").className='resfullcolor';
+		}
+		else
+		{
+			document.getElementById("planet_info_res_plastic").className='resplasticcolor';
+		}
+
+		if (check_fuel<=0)
+		{
+			document.getElementById("planet_info_res_fuel").className='resfullcolor';
+		}
+		else
+		{
+			document.getElementById("planet_info_res_fuel").className='resfuelcolor';
+		}
+
+		if (check_food<=0)
+		{
+			document.getElementById("planet_info_res_food").className='resfullcolor';
+		}
+		else
+		{
+			document.getElementById("planet_info_res_food").className='resfoodcolor';
+		}
+
+		if (check_people<=0)
+		{
+			document.getElementById("planet_info_people").className='resfullcolor';
+		}
+		else
+		{
+			document.getElementById("planet_info_people").className='respeoplecolor';
+		}
+
+		if (rest_power<=0)
+		{
+			document.getElementById("planet_info_power").className='resfullcolor';
+		}
+		else
+		{
+			document.getElementById("planet_info_power").className='respowercolor';
+		}
+
+
+        var res_metal = FormatNumber('return',res_metal,0, '', '');
+        var res_crystal = FormatNumber('return',res_crystal,0, '', '');
+        var res_plastic = FormatNumber('return',res_plastic,0, '', '');
+        var res_fuel = FormatNumber('return',res_fuel,0, '', '');
+        var res_food = FormatNumber('return',res_food,0, '', '');
+        var people = FormatNumber('return',people,0, '', '');
+        var use_power = FormatNumber('return',use_power,0, '', '');
+
+        var store_metal = FormatNumber('return',store_metal,0, '', '');
+        var store_crystal = FormatNumber('return',store_crystal,0, '', '');
+        var store_plastic = FormatNumber('return',store_plastic,0, '', '');
+        var store_fuel = FormatNumber('return',store_fuel,0, '', '');
+        var store_food = FormatNumber('return',store_food,0, '', '');
+        var people_place = FormatNumber('return',people_place,0, '', '');
+        var prod_power = FormatNumber('return',prod_power,0, '', '');
+
+        if (rest_power>=0)
+        {
+        	var rest_power = FormatNumber('return',rest_power,0, '', '');
+        }
+        else
+        {
+        	var rest_power ='-'+FormatNumber('return',Math.abs(rest_power),0, '', '');
+        }
+
+
+					//Roshtoff Anzeigen
+        document.getElementById("planet_info_res_metal").firstChild.nodeValue=''+res_metal+' t';
+        document.getElementById("planet_info_res_crystal").firstChild.nodeValue=''+res_crystal+' t';
+        document.getElementById("planet_info_res_plastic").firstChild.nodeValue=''+res_plastic+' t';
+        document.getElementById("planet_info_res_fuel").firstChild.nodeValue=''+res_fuel+' t';
+        document.getElementById("planet_info_res_food").firstChild.nodeValue=''+res_food+' t';
+        document.getElementById("planet_info_power").firstChild.nodeValue=rest_power;
+        document.getElementById("planet_info_people").firstChild.nodeValue=people;
+		
+
+		//Alle Beschriftungen anzeigen
+		document.getElementById("planet_info_text_building").innerHTML ='<a href=\"?page=buildings&change_entity='+planet_id+'\">Bauhof:</a>';
+		document.getElementById("planet_info_text_shipyard").innerHTML ='<a href=\"?page=shipyard&change_entity='+planet_id+'\">Schiffswerft:</a>';
+		document.getElementById("planet_info_text_defense").innerHTML ='<a href=\"?page=defense&change_entity='+planet_id+'\">Waffenfabrik:</a>';
+		document.getElementById("planet_info_text_res").firstChild.nodeValue='Ressourcen';
+		document.getElementById("planet_info_text_res_metal").className='resmetalcolor';
+		document.getElementById("planet_info_text_res_crystal").className='rescrystalcolor';
+		document.getElementById("planet_info_text_res_plastic").className='resplasticcolor';
+		document.getElementById("planet_info_text_res_fuel").className='resfuelcolor';
+		document.getElementById("planet_info_text_res_food").className='resfoodcolor';
+		document.getElementById("planet_info_text_people").className='respeoplecolor';
+		document.getElementById("planet_info_text_power").className='respowercolor';
+		document.getElementById("planet_info_text_res_metal").firstChild.nodeValue='Titan:';
+		document.getElementById("planet_info_text_res_crystal").firstChild.nodeValue='Silizium:';
+		document.getElementById("planet_info_text_res_plastic").firstChild.nodeValue='PVC:';
+		document.getElementById("planet_info_text_res_fuel").firstChild.nodeValue='Tritium:';
+		document.getElementById("planet_info_text_res_food").firstChild.nodeValue='Nahrung:';
+		document.getElementById("planet_info_text_people").firstChild.nodeValue='Bewohner:';
+		document.getElementById("planet_info_text_power").firstChild.nodeValue='Energie:';
+    }

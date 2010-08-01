@@ -36,8 +36,8 @@
 	*/
 	function __autoload($class_name) 
 	{
-		try
-		{
+		//try
+		//{
 			if ($class_name != "xajax")
 			{
 				if (defined("CLASS_ROOT"))
@@ -64,15 +64,15 @@
 	      }    
 	      else
 	      {
-	      	throw new EException("Die Klasse ".$class_name." wurde nicht gefunden (".$dir."/".$file.")!");
+	      //	throw new EException("Die Klasse ".$class_name." wurde nicht gefunden (".$dir."/".$file.")!");
 		    }
 		  }
-		}
+	/*	}
 		catch (EException $e)
 		{
 			echo $e;
 			exit;
-		}
+		}*/
 	}
 	
 	/**

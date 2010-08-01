@@ -65,8 +65,9 @@
 		protected $alliance = null;
 		protected $rating = null;
 		protected $properties = null;
+                protected $buddylist = null;
 
-		protected $changedFields;
+                protected $changedFields;
 
 		/**
 		* The constructor initializes and loads
@@ -401,6 +402,10 @@
 				{
 					$this->acttime = $this->loadLastAction();
 				}
+                                if ($key == 'buddylist' && $this->buddylist == null)
+                                {
+                                    $this->buddylist = new Buddylist($this->id);
+                                }
 				return $this->$key;
 			}
 			catch (EException $e)
@@ -508,6 +513,8 @@
 								user_sessionlog
 							WHERE
 								user_id='".$this->id."'
+                                                        ORDER BY
+                                                                time_action DESC
 							LIMIT 1;");
 				if (mysql_num_rows($res))
 				{

@@ -265,7 +265,6 @@ input,select,textarea	{
 	border:1px solid #fff;
 	background:#000000 url('images/cellpic4.gif');
 	padding:2px;
-	vertical-align:top;
 	text-align:left;
 }
 
@@ -275,7 +274,6 @@ input,select,textarea	{
 	border:1px solid #fff;
 	background:#000000 url('images/cellpic3.gif');
 	padding:3px;
-	vertical-align:top;
 	text-align:left;
 }
 
