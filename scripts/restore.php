@@ -41,7 +41,13 @@
 		}
 		else
 		{
-			echo "Usage: ".$_SERVER['argv'][0]." date\n";
+			echo "Usage: ".$_SERVER['argv'][0]." restorepoint\n\n";
+			echo "Available restorepoints:\n\n";
+			$dates = Backup::listImages();
+			foreach ($dates as $f)
+			{
+				echo "$f\n";
+			}
 		}
 	}
 	else
