@@ -63,16 +63,29 @@ function saveChanges(obj, actions, cancel, n) {
 	setClickable($("p").get(n), n);
 }
 
-function setRemovable(obj) {
+function setRemovable(obj, page, action, callback) {
 	$(obj).click(function() {
-		var tr = $(obj).parent().parent();
-		var tbody = tr.parent()
+		var id = $(obj).parent().find('input').val();
+		var tr = $(obj).parent().parent().parent();
+		var tbody = tr.parent();
+
+		if (action == "declineBuddy") {
+			xajax_declineBuddy(id);
+		}
+		else {
+			xajax_acceptBuddy(id,1);
+		}
+		
 		tr.remove();
-		console.log(tbody.find("TD").length);
-		//xajax_removeBuddy(id);
 		if ( !tbody.find("td").length > 0 )
 		{
 			tbody.parent().remove();
+		}
+		
+		if (callback)
+		{
+			var buddylist = $("buddylist").find("TBODY");
+
 		}
 		return false;
 	});
@@ -98,15 +111,6 @@ $(function() {
 	function extractLast(term) {
 		return split(term).pop();
 	}
-	
-	$(document).ready(function(){
-		$(".editable").each(function(i){
-			setClickable(this, i);
-		})
-		$(".deny").each(function(){
-			setRemovable(this);
-		})
-	});
 	
 	$("#usernick").autocomplete({
 		delay: 500,
@@ -156,7 +160,6 @@ $(function() {
 });
 </script>
 <?PHP
-	echo '<div id="info">test</div>';
 	//
 	// Erlaubnis erteilen
 	//
@@ -212,26 +215,20 @@ $(function() {
 	}
 	
 	// start new script
-	$ares = dbquery("SELECT player_id FROM admin_users WHERE player_id<>0;");
-	$admins = array();
-	while ($arow = mysql_fetch_row($ares))
-	{
-		array_push($admins,$arow[0]);
-	}
 	                    
 	$buddys = $cu->buddylist->getIterator();
 	
 	if ($cu->buddylist->buddyCount)
 	{
 		$store = array();
-		tableStart("Meine Freunde");
+		Design::tableStart('Meine Freunde', 'buddylist');
 		echo '<tr>
 				<th class="tbltitle">Nick</th>
 				<th class="tbltitle">Punkte</th>
 				<th class="tbltitle">Hauptplanet</th>
 				<th class="tbltitle">Online</th>
 				<th class="tbltitle">Kommentar</th>
-				<th class="tbltitle">Aktion</th>
+				<th class="tbltitle" style="width:95px">Aktion</th>
 		</tr>';
 
 		// loop through every buddy
@@ -242,107 +239,27 @@ $(function() {
 			$comment = $store['comment'];
 			$buddy = $store['user'];
 
-			// check several options to choose the right font-color (banned, admin, ...)
+			echo createBuddyRow($buddy, $allow, $comment);
 
-			//Admin
-			if ( in_array($buddy->id,$admins) )
-			{
-				$class = "adminColor";
-			}
-			// war
-			elseif ($buddy->allianceId > 0 && $cu->allianceId > 0 && $cu->alliance->checkWar($buddy->allianceId))
-			{
-				$class = "enemyColor";
-			}
-			// pact
-			elseif ($buddy->allianceId > 0 && $cu->allianceId > 0 && $cu->alliance->checkBnd($buddy->allianceId))
-			{
-				$class = "friendColor";
-			}
-			// bannend/locked
-			elseif ($buddy->locked)
-			{
-				$class = "userLockedColor";
-			}
-			// on holiday
-			elseif ($buddy->holiday)
-			{
-				$class = "userHolidayColor";
-			}
-			// long time Inactive
-			elseif ($buddy->lastOnline<time()-USER_INACTIVE_LONG*86400)
-			{
-				$class = "userLongInactiveColor";
-			}
-			// inactive
-			elseif ($buddy->lastOnline<time()-USER_INACTIVE_SHOW*86400)
-			{
-				$class = "userInactiveColor";
-			}
-			// alliance member
-			elseif($cu->allianceId() && $cu->allianceId()==$buddy->allianceId())
-			{
-				$class = "userAllianceMemberColor";
-			}
-			else
-			{
-				$class = "";
-			}
-
-			// create the row
-			echo '<tr id="'.$buddy->id.'">
-					<td class="tbldata '.$class.'" >
-						<div id="ttuser'.$buddy->id.'" style="display:none;">
-							'.popUp('Profil anzeigen','page=userinfo&id='.$buddy->id).'<br/>
-							'.popUp('Punkteverlauf','page=$page&amp;mode=$mode&amp;userdetail='.$buddy->id).'<br/>
-							<a href="?page=messages&mode=new&message_user_to='.$buddy->id.'">Nachricht senden</a>
-						</div>
-						<a class="'.$class.'" href="#" '.cTT($buddy,"ttuser".$buddy->id).'>'.$buddy.'</a>
-					</td>';
-                        
-			// if the request is still pending
-			if ($allow == 0)
-				echo '<td class="tbldata '.$class.'" colspan="3"><i>Noch keine Erlaubnis</i></td>';
-			else
-			{
-				// create the planet object
-				//TODO
-				$tp = $cp;
-				echo '<td class="tbldata '.$class.'">'.nf($buddy->points).'</td>
-					<td style="padding:2px 2px 3px 6px;background:#000;color:#fff;height:47px;">
-						<img src="'.$tp->imagePath().'" style="float:left;" >
-						<br/>&nbsp;&nbsp; '.$tp.'
-					</td>';
-				$time = $buddy->loadLastAction();
-				if ($time + $cfg->value('user_timeout') > time() )
-					echo '<td style="color:#0f0;">online</td>';
-				elseif ($time)
-					echo '<td class="tbldata '.$class.'">'.date("d.m.Y H:i",$time).'</td>';
-				else
-					echo '<td class="tbldata '.$class.'"><i>Noch nicht eingeloggt!</i></td>';
-			}
-
-			// create the comment
-			echo '<td class="tbldata '.$class.'"><p class="editable">'.text2html($comment).'</p></td>';
-
-			// and the last part, the icons
-			echo '<td>
-					<p class="icons">
-						<a class="msg"href="?page=messages&amp;mode=new&amp;message_user_to='.$arr['user_id'].'" title="Nachricht senden">'.icon('mail').'</a>'."
-						<a href=\"?page=userinfo&amp;id=".$arr['user_id']."\" title=\"Profil anzeigen\">".icon("profil")."</a>
-						<a href=\"?page=$page&comment=".$arr['bl_id']."\" title=\"Kommentar bearbeiten\">".icon("edit")."</a>
-						<a href=\"?page=$page&remove=".$arr['user_id']."\" onclick=\"return confirm('Willst du ".$arr['user_nick']." wirklich von deiner Liste entfernen?');\" title=\"Kontakt entfernen\">".icon("delete")."</a>
-					</p>
-				</td>
-			</tr>";
 			$buddys->next();
 		}
-		tableEnd();
+		
+		// create the add alliance member button if the user is in an alliance
+		if ( $cu->allianceId() )
+		{
+			$abutton = '<input type="submit" name="submit_buddy" value="&nbsp;A&nbsp;" title="Allianzmitglieder hinzufügen" onClick="xajax_addAllianceMembers(\''.$cu->allianceId().'\');" )/>';
+		}
+		else
+		{
+			$abutton = '';
+		}
+		Design::tableEnd('<input type="submit" name="submit_buddy" value="&nbsp;+&nbsp;" title="Neuen Freund hinzufügen" onclick="toggleBox(\'addbuddy\');" />'.$abutton, 'button');
 	}
-	dump($_SESSION);
-	echo '<div id="addBuddy" style="display:;">
-			<form id="buddyform" onsubmit="xajax_addBuddy(xajax.getFormValues(\'buddyform\'));return false;">';
-	tableStart('Freund hinzufügen');
+
+
+	
+	echo '<form id="buddyform" onsubmit="xajax_addBuddy(xajax.getFormValues(\'buddyform\'));return false;">';
+	Design::tableStart('Freund hinzufügen', 'addbuddy', '', 'nondisplay');
 	echo '<tr>
 			<td colspan="4" class="tbldata">F&uuml;ge Freunde zu deiner Buddylist hinzu um auf einen Blick zu sehen wer alles online ist:</td>
 		</tr>
@@ -357,16 +274,8 @@ $(function() {
 				<input type="submit" name="submit_buddy" value="Freund hinzuf&uuml;gen" />
 			</td>
 		</tr>';
-	tableEnd();
-	echo '	</form>
-		</div>';
-
-	echo '&nbsp;<input style="float:right;margin:0 10px;" type="button" onclick="" value="Freund hinzufügen" />&nbsp;';
-
-	if ( $cu->allianceId() )
-	{
-		echo '<input style="float:right;" type="button" onclick=\"xajax_addAllianceMembers()" value="Allianzmember hinzufügen" />&nbsp;';
-	}
+	Design::tableEnd();
+	echo '	</form>';
 
 
 	$buddys = $cu->buddylist->getIterator('requests');
@@ -379,7 +288,7 @@ $(function() {
 				<th class="tbltitle">Nick</th>
 				<th class="tbltitle">Punkte</th>
 				<th class="tbltitle">Kommentar</th>
-				<th class="tbltitle">Aktion</th>
+				<th class="tbltitle" style="width:95px">Aktion</th>
 		</tr>';
 		
 
@@ -390,52 +299,8 @@ $(function() {
 			$buddy = $store['user'];
 			$comment = $store['comment'];
 
-			// check several options to choose the right font-color (banned, admin, ...)
-
-			//Admin
-			if ( in_array($buddy->id,$admins) )
-			{
-				$class = "adminColor";
-			}
-			// war
-			elseif ($buddy->allianceId > 0 && $cu->allianceId > 0 && $cu->alliance->checkWar($buddy->allianceId))
-			{
-				$class = "enemyColor";
-			}
-			// pact
-			elseif ($buddy->allianceId > 0 && $cu->allianceId > 0 && $cu->alliance->checkBnd($buddy->allianceId))
-			{
-				$class = "friendColor";
-			}
-			// bannend/locked
-			elseif ($buddy->locked)
-			{
-				$class = "userLockedColor";
-			}
-			// on holiday
-			elseif ($buddy->holiday)
-			{
-				$class = "userHolidayColor";
-			}
-			// long time Inactive
-			elseif ($buddy->lastOnline<time()-USER_INACTIVE_LONG*86400)
-			{
-				$class = "userLongInactiveColor";
-			}
-			// inactive
-			elseif ($buddy->lastOnline<time()-USER_INACTIVE_SHOW*86400)
-			{
-				$class = "userInactiveColor";
-			}
-			// alliance member
-			elseif($cu->allianceId() && $cu->allianceId()==$buddy->allianceId())
-			{
-				$class = "userAllianceMemberColor";
-			}
-			else
-			{
-				$class = "";
-			}
+			// check several options to choose the right font-color (banned, admin, ...
+			$class = getFormatingColorByUser($buddy);
 
 			// create the row
 			echo '<tr id="'.$buddy->id.'">
@@ -453,10 +318,11 @@ $(function() {
 			// and the last part, the icons
 			echo '<td>
 					<p class="icons">
+						<input id="id['.$buddy->id.']" type="hidden" value="'.$buddy->id.'">
 						<a class="msg"href="?page=messages&amp;mode=new&amp;message_user_to='.$arr['user_id'].'" title="Nachricht senden">'.icon('mail').'</a>
 						<a href="?page=userinfo&amp;id='.$arr['user_id'].'" title="Profil anzeigen">'.icon('profil').'</a>
-						<a class="accept" href="#" title="Annehmen">'.icon('check').'</a>
-					<a class="deny" href="#" title="Zurückweisen">'.icon('delete').'</a>
+						<a id="accept['.$buddy->id.']" class="accept" href="#" title="Annehmen">'.icon('check').'</a>
+						<a class="deny" href="#" title="Zurückweisen">'.icon('delete').'</a>
 					</p>
 				</td>
 			</tr>';
@@ -464,31 +330,9 @@ $(function() {
 		}
 		tableEnd();
 	}
-        /*
 
-		echo '<div class="tbldata" style="float:right;width:100px;height:25px;"><a href="javascript:;" class="add">'.icon('copy').'</a></div>';
-	}
-	else
-	{
-		error_msg("Es sind noch keine Freunde in deiner Buddyliste eingetragen!",1);
-	}
+	echo JS::jqClickable('editable');
+	echo JS::jqRemovable('deny', 'declineBuddy');
+	echo JS::jqRemovable('accept', 'acceptBuddy');
 
-
-
-	}
-	echo '<div style="display:;"><form action="?page='.$page.'" method="post">';
-	tableStart('Freund hinzufügen');
-	echo '<tr>
-			<td colspan="3" class="tbldata">F&uuml;ge Freunde zu deiner Buddylist hinzu um auf einen Blick zu sehen wer alles online ist:</td>
-		</tr>
-			<th class="tbltitle"><label for="usernick">Nick: </label></th>
-			<td class="tbldata">
-				<input type="text" name="usernick" id="usernick" maxlength="20" size="20" autocomplete="off" value="" onkeyup="xajax_searchUser(this.value)">
-			</td>
-			<td class="tbldata">
-				<input type="submit" name="submit_buddy" value="Freund hinzuf&uuml;gen" />
-			</td>
-		</tr>';
-	tableEnd();
-	echo '</form></div>';*/
 ?>

@@ -651,6 +651,174 @@
 		return $string;
 	}
 
+	/*
+	 * Format the data in a row by comparing two user
+	 *
+	 * @param <User> $uer userobject you need to compare to the $cu
+	 *
+	 * option 2
+	 * @param <Planet> $object
+	 *
+	 * @return $class
+	 */
+	function getFormatingColorByUser(&$user)
+	{
+		// if the $cu is not active as in xajax functions create one
+		if ( !isset($cu) )
+		{
+			// if there is no session active as on external pages return nothing;
+			if ( !$_SESSION['user_id']) return;
+			$cu = new User($_SESSION['user_id']);
+		}
+
+		$admins = getAdmins();
+		// admin
+		if ( in_array($user->id, $admins) )
+		{
+			$class = "adminColor";
+		}
+		// war
+		elseif ($user->allianceId > 0 && $cu->allianceId > 0 && $cu->alliance->checkWar($user->allianceId))
+		{
+			$class = "enemyColor";
+		}
+		// pact
+		elseif ($user->allianceId > 0 && $cu->allianceId > 0 && $cu->alliance->checkBnd($user->allianceId))
+		{
+			$class = "friendColor";
+		}
+		// bannend/locked
+		elseif ($user->locked)
+		{
+			$class = "userLockedColor";
+		}
+		// on holiday
+		elseif ($user->holiday)
+		{
+			$class = "userHolidayColor";
+		}
+		// long time Inactive
+		elseif ($user->lastOnline < time() - USER_INACTIVE_LONG * 86400)
+		{
+			$class = "userLongInactiveColor";
+		}
+		// inactive
+		elseif ($user->lastOnline < time() - USER_INACTIVE_SHOW * 86400)
+		{
+			$class = "userInactiveColor";
+		}
+		// alliance member
+		elseif($cu->allianceId() && $cu->allianceId() == $user->allianceId())
+		{
+			$class = "userAllianceMemberColor";
+		}
+		else
+		{
+			$class = "";
+		}
+		
+		return $class;
+	}
+
+	/*
+	 * Format the data in a row by comparing two user
+	 *
+	 * @param <Entity> $ent Entityobject you will compare the entity owner with the $cu
+	 *
+	 * @return $class
+	 */
+	function getFormatingColorByEntity(&$ent)
+	{
+		if ( !isset($cu) )
+		{
+			if ( !$_SESSION['user_id']) return;
+			$cu = new User($_SESSION['user_id']);
+		}
+
+		// admin
+		if ( in_array($ent->ownerId(), $admins) )
+		{
+		  $class = "adminColor";
+		  $tm_info = "Admin/Entwickler";
+		}
+		// war
+		elseif ($ent->owner->allianceId>0 && $cu->allianceId>0 && $cu->alliance->checkWar($ent->owner->allianceId))
+		{
+		  $class = "enemyColor";
+		  $tm_info = "Krieg";
+		}
+		// pact
+		elseif ($ent->owner->allianceId>0 && $cu->allianceId>0 && $cu->alliance->checkBnd($ent->owner->allianceId))
+		{
+		  $class = "friendColor";
+		  $tm_info = "B&uuml;ndnis";
+		}
+		// banned/locked
+		elseif ($ent->ownerLocked())
+		{
+		  $class = "userLockedColor";
+		  $tm_info = "Gesperrt";
+		}
+		// on holiday
+		elseif ($ent->ownerHoliday())
+		{
+		  $class = "userHolidayColor";
+		  $tm_info = "Urlaubsmodus";
+		}
+		// long time inactive
+		elseif ($ent->owner->lastOnline < time() - USER_INACTIVE_LONG * 86400)
+		{
+		  $class = "userLongInactiveColor";
+		  $tm_info = "Inaktiv";
+		}
+		// inactive
+		elseif ($ent->owner->lastOnline < time() - USER_INACTIVE_SHOW * 86400)
+		{
+		  $class = "userInactiveColor";
+		  $tm_info = "Inaktiv";
+		}
+		// own planet
+		elseif($cu->id == $ent->ownerId())
+		{
+		  $class .= "userSelfColor";
+		  $tm_info = "";
+		}
+		// own planet
+		elseif($cu->allianceId() == $ent->owner->allianceId() && $cu->allianceId())
+		{
+		  $class = "userAllianceMemberColor";
+		  $tm_info = "Allianzmitglied";
+		}
+		// noob
+		elseif ( ($cu->points * USER_ATTACK_PERCENTAGE > $ent->ownerPoints()
+				|| $cu->points / USER_ATTACK_PERCENTAGE < $ent->ownerPoints() )
+				&& $ent->ownerId() != $cu->id)
+		{
+		  $class = "noobColor";
+		  $tm_info = "Anf&auml;ngerschutz";
+		}
+		else
+		{
+		  $class = "";
+		  $tm_info="";
+		}
+	}
+
+	function getAdmins()
+	{
+		global $admins;
+		if ( !isset($admins))
+		{
+			$ares = dbquery("SELECT player_id FROM admin_users WHERE player_id<>0;");
+			$admins = array();
+			while ($arow = mysql_fetch_row($ares))
+			{
+				array_push($admins,$arow[0]);
+			}
+		}
+		return $admins;
+	}
+
 	/**
 	* Überprüft ob unerlaubte Zeichen im Text sind und gibt Antwort zurück
 	*

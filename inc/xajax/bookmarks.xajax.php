@@ -7,7 +7,27 @@ $xajax->register(XAJAX_FUNCTION,'removeShipFromList');
 $xajax->register(XAJAX_FUNCTION,'bookmarkTargetInfo');
 $xajax->register(XAJAX_FUNCTION,'bookmarkBookmark');
 
+$xajax->register(XAJAX_FUNCTION,'showFleetCategorie');
 
+
+	function showFleetCategorie($cId)
+	{
+		$objResponse = new xajaxResponse();
+		
+		ob_start();
+		
+		$fbm = unserialize($_SESSION['bookmarks']['fbm']);
+		
+		echo $fbm->printBookmarks($cId);
+		
+		$_SESSION['bookmarks']['fbm'] = serialize($fbm);
+		
+		$objResponse->assign("bookmark$cId","innerHTML",ob_get_contents());				
+		ob_end_clean();
+		
+		return $objResponse;
+	}
+	
 	function launchBookmarkProbe($bid)
 	{
 		$cp = Entity::createFactoryById($_SESSION['cpid']);
