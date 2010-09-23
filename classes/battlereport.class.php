@@ -27,7 +27,8 @@ class BattleReport extends Report
 		'spyattack'=>'Spionageangriff',
 		'spyattackfailed'=>'Spionageangriff erfolglos',
 		'battle'=>'Kampfbericht',
-		'battlefailed'=>'Kampfbericht (Abgebrochen)'
+		'battlefailed'=>'Kampfbericht (Abgebrochen)',
+		'battleban'=>'Kampfbericht (Abgebrochen)'
 	);
 
 	protected $subType = 'other';
@@ -408,7 +409,7 @@ class BattleReport extends Report
 									}
 									if ($this->entityHeal[$rnd]>0 && $entityShieldStructure<$entityInitShieldStructure)
 									{
-										$entityShieldStructure = min($entityShieldStructure,($entityShieldStructure+$this->entityHeal[$rnd]));
+										$entityShieldStructure = min($entityInitShieldStructure,($entityShieldStructure+$this->entityHeal[$rnd]));
 										echo 'Die Einheiten des Verteidiger heilen '.nf($this->entityHeal[$rnd]).' Struktur- und Schildpunkte. Der Verteidiger hat danach wieder '.nf($entityShieldStructure).' Struktur- und Schildpunkte<br /><br />';
 									}
 
@@ -562,12 +563,12 @@ class BattleReport extends Report
 					</table>';
 				break;
 			case 'battlefailed':
-			echo '<strong>KAMPFBERICHT</strong><br />
-				vom Planeten '.$ent2->detailLink().'<br />
-				<strong>Zeit:</strong> '.df($this->timestamp).'<br /><br />
-				<table class="battleTable" width="100%">
-					<tr>
-						<td>
+				echo '<strong>KAMPFBERICHT</strong><br />
+					vom Planeten '.$ent2->detailLink().'<br />
+					<strong>Zeit:</strong> '.df($this->timestamp).'<br /><br />
+					<table class="battleTable" width="100%">
+						<tr>
+							<td>
 							<strong>Angreifer:</strong> ';
 							if ($this->user!='')
 							{
@@ -584,7 +585,7 @@ class BattleReport extends Report
 									}
 								}
 							}
-			echo		'</td>
+				echo		'</td>
 						<td>
 							<strong>Verteidiger:</strong> ';
 							if ($this->entityUser!='')
@@ -602,10 +603,56 @@ class BattleReport extends Report
 									}
 								}
 							}
-			echo 		'<br /><br /></td>
+				echo 		'<br /><br /></td>
 					</tr>
 				</table>';
-			echo 'Der Kampf wurde abgebrochen da Angreifer und Verteidiger demselben Imperium angeh&ouml;ren oder der Verteidiger nicht mehr existiert!';
+				echo 'Der Kampf wurde abgebrochen da Angreifer und Verteidiger demselben Imperium angeh&ouml;ren oder der Verteidiger nicht mehr existiert!';
+				break;
+			case 'battleban':
+				echo '<strong>KAMPFBERICHT</strong><br />
+					vom Planeten '.$ent2->detailLink().'<br />
+					<strong>Zeit:</strong> '.df($this->timestamp).'<br /><br />
+					<table class="battleTable" width="100%">
+						<tr>
+							<td>
+							<strong>Angreifer:</strong> ';
+							if ($this->user!='')
+							{
+								$userArr = explode(',',$this->user);
+								$cnt=0;
+								foreach ($userArr as $uId)
+								{
+									if ($uId!='')
+									{
+										$user = new User($uId);
+										if ($cnt>0) echo ', ';
+										echo $user;
+										++$cnt;
+									}
+								}
+							}
+				echo		'</td>
+						<td>
+							<strong>Verteidiger:</strong> ';
+							if ($this->entityUser!='')
+							{
+								$userArr = explode(',',$this->entityUser);
+								$cnt=0;
+								foreach ($userArr as $uId)
+								{
+									if ($uId!='')
+									{
+										$user = new User($uId);
+										if ($cnt>0) echo ', ';
+										echo $user;
+										++$cnt;
+									}
+								}
+							}
+				echo 		'<br /><br /></td>
+					</tr>
+				</table>';
+				echo 'Der Kampf wurde abgebrochen, da momentan gerade eine Kampfsperre aktiv ist!';
 				break;
 			default:
 				dump($this);
