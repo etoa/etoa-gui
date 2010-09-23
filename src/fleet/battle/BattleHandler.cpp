@@ -52,7 +52,7 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 	}
 
   	// Kampf abbrechen und Flotte zum Startplanet schicken wenn Kampfsperre aktiv ist
-  	else if ((int)config.nget("battleban",0)!=0 && (int)config.nget("battleban",1)<=time && (int)config.nget("battleban",2)>time) {
+  	else if ((int)config.nget("battleban",0)!=0 && (int)config.nget("battleban_time",1)<=time && (int)config.nget("battleban_time",2)>time) {
 		report->setSubtype("battleban");	
 		
 		report->setResult(0);
