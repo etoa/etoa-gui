@@ -160,7 +160,6 @@
 				shiplist_ship_id,
 				shiplist_entity_id,
     			shiplist_count,
-				shiplist_rebuildable,
 				shiplist_bunkered
 			FROM
     		shiplist
@@ -393,14 +392,6 @@
 
 			echo '<br style="clear:both;" /></div>';
 			echo "</form>";
-			
-			$tabitems = array(
-				"all"=>"Alle anzeigen",
-					"buildable"=>"Baubare Schiffe",
-					"rebuildable"=>"Wiederherstellbare Schiffe",
-			);
-			show_tab_menu("mode",$tabitems);
-
 
 			echo "<form action=\"?page=".$page."\" method=\"post\">";
 

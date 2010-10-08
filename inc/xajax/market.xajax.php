@@ -79,6 +79,7 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 		{
 			$currentEntity = Entity::createFactoryById($_SESSION['cpid']);
 			$tradeShip = new Ship(MARKET_SHIP_ID);
+			$specialist = new Specialist(0,0,$_SESSION['user_id']);
 
 			$data = array();
 			$i=0;
@@ -113,7 +114,7 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 					$sellerEntity = Entity::createFactoryById($arr['entity_id']);
 					$dist = $currentEntity->distance($sellerEntity);
 					$data[$i]['distance'] = $dist;
-					$data[$i]['duration'] = ceil($dist/$tradeShip->speed*3600 + $tradeShip->time2start+$tradeShip->time2land);
+					$data[$i]['duration'] = ceil($dist/($tradeShip->speed * $specialist->tradeTime)*3600 + $tradeShip->time2start+$tradeShip->time2land);
 					$i++;
 				}
 			}

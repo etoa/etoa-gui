@@ -62,8 +62,8 @@
 						$tradeShip = new Ship(MARKET_SHIP_ID);
 					
 						$dist = $sellerEntity->distance($cp);
-						$sellerFlighttime = ceil($dist / ($seller->specialist->tradeTime*$tradeShip->speed/3600));
-						$buyerFlighttime = ceil($dist / ($cu->specialist->tradeTime*$tradeShip->speed/3600));
+						$sellerFlighttime = ceil($dist / ($seller->specialist->tradeTime*$tradeShip->speed/3600) + $tradeShip->time2start+$tradeShip->time2land);
+						$buyerFlighttime = ceil($dist / ($cu->specialist->tradeTime*$tradeShip->speed/3600) + $tradeShip->time2start+$tradeShip->time2land);
 						
 						$launchtime = time();
 						$sellerLandtime = $launchtime + $sellerFlighttime;
