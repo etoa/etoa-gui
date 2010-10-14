@@ -84,10 +84,10 @@
 				".$_POST['warning_user_id'].",
 				UNIX_TIMESTAMP(),
 				'".addslashes($_POST['warning_text'])."',
-				".$s['user_id']."
+				".$cu->id."
 			);");
 			
-			send_msg($_POST['warning_user_id'],7,"Verwarnung","Du hast vom Administrator ".$s['user_nick']." eine Verwarnung erhalten!\n\n".$_POST['warning_text']);
+			send_msg($_POST['warning_user_id'],7,"Verwarnung","Du hast vom Administrator ".$cu->nick." eine Verwarnung erhalten!\n\n".$_POST['warning_text']);
 			
 			success_msg("Verwarnung gespeichert!");		
 		}

@@ -248,14 +248,6 @@
 				".text2html($ship->shortComment())."</td>";
 				echo "<td class=\"tbldata\" style=\"width:50px;\">".nf($scnt)."</td></tr>";
 			}
-			if ($fd->countRebuildable()>0)
-			{
-				echo "<tr>
-					<td class=\"tbldata\" style=\"width:40px;height: 40px;background:#000\">&nbsp;</td>";
-				echo "<td class=\"tbldata\">
-					<b>Schiffswrack</b><br/>Durch das Reparieren von Schiffswracks lassen sich verlorene Schiffe wieder nachbauen.</td>";
-				echo "<td class=\"tbldata\" style=\"width:50px;\">".nf($fd->countRebuildable())."</td></tr>";	
-			}
 			tableEnd();
 		}
 
