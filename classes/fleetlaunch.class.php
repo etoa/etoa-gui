@@ -733,6 +733,8 @@
 		{	
 			$this->ships = array();
 			$this->shipActions = array();
+			$this->res = array(0,0,0,0,0,0);
+			$this->fetch = array(0,0,0,0,0,0,0);
 			$this->shipsFixed=false;
 			$this->speed = 0;
 			$this->duration=0;
@@ -1160,7 +1162,10 @@
 		}
 		
 		function getAllianceSlots() {
-			return $this->allianceSlots - count($this->aFleets) - count($this->sFleets);
+			if ($this->sourceEntity->ownerAlliance())
+			{
+				return $this->allianceSlots - count($this->aFleets) - count($this->sFleets);		
+			}
 		}
 		
 		
