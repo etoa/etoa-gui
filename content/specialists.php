@@ -142,19 +142,36 @@
 		echo '<br/>';
 		if ($cu->specialistId > 0 && $cu->specialistTime > $t)
 		{
-			dbquery("
-			UPDATE
-				users
-			SET
-				user_specialist_id=0,
-				user_specialist_time=0
-			WHERE
-				user_id=".$cu->id."
-			;");
-			$cu->specialistId = 0;
-			$cu->specialistTime = 0;
-			
-			ok_msg('Der Spezialist wurde entlassen!');
+			$inUse = false;
+			// check if a research is in progress if using the professor
+			if ($cu->specialistId == 4)
+			{
+				$res = dbquery("SELECT techlist_id FROM techlist WHERE techlist_user_id='".$cu->id."' AND techlist_build_end_time>'".time()."' AND techlist_build_start_time<'".time()."' LIMIT 1;");
+				if (mysql_num_rows($res))
+				{
+					$inUse = true;
+				}
+			}
+			if ($inUse)
+			{
+				err_msg('Der Spezialist wird gerade verwendet!');
+			}
+			else
+			{
+				dbquery("
+				UPDATE
+					users
+				SET
+					user_specialist_id=0,
+					user_specialist_time=0
+				WHERE
+					user_id=".$cu->id."
+				;");
+				$cu->specialistId = 0;
+				$cu->specialistTime = 0;
+
+				ok_msg('Der Spezialist wurde entlassen!');	
+			}
 		}
 		else
 		{
