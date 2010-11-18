@@ -58,6 +58,8 @@
 	$cfg = Config::getInstance();
 	$conf = $cfg->getArray();
 
+	date_default_timezone_set("Europe/Zurich");
+
 	// Debug einschalten?
 	if (!defined('ETOA_DEBUG'))
 		define('ETOA_DEBUG',$cfg->debug->v);
