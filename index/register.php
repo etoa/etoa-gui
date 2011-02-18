@@ -125,7 +125,7 @@
         Melde dich bei einem <a href=\"?index=contact\">Admin</a>, falls du keine E-Mail erh&auml;ltst oder andere Anmeldeprobleme auftreten.";
         iBoxEnd();
 
-				echo button("Zum Login",LOGINSERVER_URL);
+				echo button("Zum Login",Config::getInstance()->loginurl->v);
 
         echo "</div><br style=\"clear:both;\" /></div>";
     		$_SESSION['REGISTER']=Null;
