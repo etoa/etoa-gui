@@ -97,6 +97,7 @@
 		
 		
 			echo "<h2>Log</h2>";
+			// Warning: Open-Basedir restrictions may appply
 			if (is_file($daemonLogfile))
 			{
 				echo "<div id=\"logtext\" style=\"border:1px solid white;background:black;padding:3px;overflow:scroll;height:400px\">";
