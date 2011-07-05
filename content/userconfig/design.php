@@ -68,8 +68,8 @@
 
       if($_POST['image_ext']!="" && isset($_POST['image_url']) && $_POST['image_url']!="")
       {
-      	$cu->properties->imageUrl = $_POST['image_url'];
-      	$cu->properties->imageExt = $_POST['image_ext'];
+      	$cu->properties->imageUrl = htmlentities($_POST['image_url']);
+      	$cu->properties->imageExt = htmlentities($_POST['image_ext']);
       }
       
       if ($_POST['image_select']!='')

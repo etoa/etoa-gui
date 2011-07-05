@@ -111,10 +111,11 @@
 										if (mysql_num_rows($jres)>0)
 										{
 											$jarr=mysql_fetch_row($jres);
-											$op_jam = $jarr[0];
+											$op_jam += $jarr[0];
 										}
 										
-										// Load oponents computer and stealth technologies  
+										// Load oponents computer and stealth technologies 
+										$op_stealth = 0;
 										$tres = dbquery("
 														SELECT
 															techlist_current_level
@@ -123,12 +124,16 @@
 														WHERE
 															techlist_tech_id=".TARN_TECH_ID."
 															AND techlist_user_id=".$target->ownerId()."");
-										$op_stealth = $target->owner->alliance->techlist->getLevel(ALLIANCE_TECH_TARN_ID)+$target->owner->specialist->tarnLevel;
+										if ($target->owner->allianceId() > 0)
+										{
+											$op_stealth += $target->owner->alliance->techlist->getLevel(ALLIANCE_TECH_TARN_ID);
+										}
+										$op_stealth += $target->owner->specialist->tarnLevel;
 										
 										if (mysql_num_rows($tres)>0)
 										{
 											$jarr=mysql_fetch_row($tres);
-											$op_stealth = $jarr[0];
+											$op_stealth += $jarr[0];
 										}
 										
 										$tres = dbquery("
@@ -143,7 +148,7 @@
 										if (mysql_num_rows($tres)>0)
 										{
 											$jarr=mysql_fetch_row($tres);
-											$op_computer = $jarr[0];
+											$op_computer += $jarr[0];
 										}
 										
 										// Load own computer and spy technologies
@@ -160,7 +165,7 @@
 										if (mysql_num_rows($tres)>0)
 										{
 											$jarr=mysql_fetch_row($tres);
-											$self_spy = $jarr[0];
+											$self_spy += $jarr[0];
 										}
 										$tres = dbquery("
 														SELECT
@@ -174,7 +179,7 @@
 										if (mysql_num_rows($tres)>0)
 										{
 											$jarr=mysql_fetch_row($tres);
-											$self_computer = $jarr[0];
+											$self_computer += $jarr[0];
 										}
 										
 										// Calculate success chance

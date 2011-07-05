@@ -471,7 +471,7 @@ else
 							if ($cp->prodFuel>0) $bwait['fuel']=ceil(($bc['fuel']-$cp->resFuel)/$cp->prodFuel*3600);else $bwait['fuel']=0;
 							if ($cp->prodFood>0) $bwait['food']=ceil(($bc['food']-$cp->resFood)/$cp->prodFood*3600);else $bwait['food']=0;
 							$bwmax=max($bwait['metal'],$bwait['crystal'],$bwait['plastic'],$bwait['fuel'],$bwait['food']);
-		
+							
 							// Baukosten-String
 							$bcstring = "<td";
 							if ($bc['metal']>$cp->resMetal)
@@ -530,12 +530,14 @@ else
 					{
 						if ($planet_id==$cp->id())
 						{
-	              echo "<tr><td><input type=\"submit\" class=\"button\" id=\"buildcancel\" name=\"command_cbuild\" value=\"Abbrechen\"  onclick=\"if (this.value=='Abbrechen'){return confirm('Wirklich abbrechen?');}\" />";
-	              echo "</td><td id=\"buildtime\">-</td>
-		      					<td colspan=\"6\" id=\"buildprogress\" style=\"height:25px;background:#fff;text-align:center;\"></td></tr>";
-	              if ($b_level<$arr['tech_last_level']-1)
-		         		echo "<tr><td width=\"90\">N&auml;chste Stufe:</td><td>".tf($btimen)."</td><td>".nf($bcn['metal'])."</td><td>".nf($bcn['crystal'])."</td><td>".nf($bcn['plastic'])."</td><td>".nf($bcn['fuel'])."</td><td>".nf($bcn['food'])."</td></tr>";
-		         }
+	              			echo "<tr><td><input type=\"submit\" class=\"button\" id=\"buildcancel\" name=\"command_cbuild\" value=\"Abbrechen\"  onclick=\"if (this.value=='Abbrechen'){return confirm('Wirklich abbrechen?');}\" /></td>";
+	              			echo '<td id="buildtime">-</td>
+					    	<td colspan="5"  id="progressbar" style="height:40px;background:#fff;text-align:center;"></td></tr>';
+	              			if ($b_level<$arr['tech_last_level']-1)
+		         				echo "<tr><td width=\"90\">N&auml;chste Stufe:</td><td>".tf($btimen)."</td><td>".nf($bcn['metal'])."</td><td>".nf($bcn['crystal'])."</td><td>".nf($bcn['plastic'])."</td><td>".nf($bcn['fuel'])."</td><td>".nf($bcn['food'])."</td></tr>";
+		         			countDown("buildtime",$end_time,"buildcancel");
+							jsProgressBar("progressbar",$start_time,$end_time);
+						}
 						else
 						{
 							echo "<tr><td colspan=\"7\">Technologie wird auf einem anderen Planeten bereits erforscht!</td></tr>";					
@@ -601,8 +603,6 @@ else
 								</script>
 							<?PHP
 						}*/
-						countDown("buildtime",$end_time,"buildcancel");
-						jsProgressBar("buildprogress",$start_time,$end_time);
 					}
 					else
 					{

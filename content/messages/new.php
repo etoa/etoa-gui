@@ -59,7 +59,7 @@
 							if($check_subject=="")
 							{
 									$s->messagesSent[$uid]=$time;
-									Message::sendFromUserToUser($cu->id,$uid,$_POST['message_subject'],$_POST['message_text']);
+									Message::sendFromUserToUser($cu->id,$uid,htmlspecialchars($_POST['message_subject']),htmlspecialchars($_POST['message_text']));
 	
 	         					    echo "Nachricht wurde an <b>".$rcpt."</b> gesendet! ";
 	         		    			$_POST['message_user_to']=null;
@@ -155,7 +155,14 @@
 			{
 				if (isset($_GET['message_sender']))
 				{
-					$text = "\n\n[b]Nachricht von ".base64_decode($_GET['message_sender']).":[/b]\n\n".base64_decode(stripslashes($_GET['message_text']))."";
+					$sql = "SELECT text FROM message_data INNER JOIN messages ON id=message_id AND message_user_to='".$cu->id."' AND id='".base64_decode(stripslashes($_GET['message_text']))."' AND subject='".base64_decode($_GET['message_subject'])."' LIMIT 1;";
+					$mres = dbquery($sql);
+					
+					if (mysql_num_rows($mres))
+					{
+						$marr = mysql_fetch_array($mres);
+						$text = "\n\n[b]Nachricht von ".base64_decode($_GET['message_sender']).":[/b]\n\n".stripslashes($marr['text'])."";
+					}
 				}
 				else
 				{

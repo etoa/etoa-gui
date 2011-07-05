@@ -634,7 +634,7 @@
 								echo "<tr style=\"display:none;\" id=\"msgtext".$marr['message_id']."\"><td colspan=\"5\" class=\"tbldata\">";
 								echo text2html($marr['text']);
 								echo "<br/><br/>";
-								$msgadd = "&amp;message_text=".base64_encode($marr['text'])."&amp;message_sender=".base64_encode($sender);
+								$msgadd = "&amp;message_text=".base64_encode($marr['message_id'])."&amp;message_sender=".base64_encode($sender);
 								if(substr($marr['subject'],0,3) == "Fw:")
 								{
 									$subject = base64_encode($marr['subject']);

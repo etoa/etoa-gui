@@ -365,7 +365,7 @@ define('HELP_URL',"?page=help&site=buildings");
 				// Bauen
 				if ($item->buildType==0)
 				{
-					$waitArr = $item->waitingTime();
+					$waitArr = $item->waitingTimeString();
 					if ($bl->checkBuildable($bid)<=0)
 					{
 						if($bl->checkBuildable($bid)==0)
@@ -417,7 +417,7 @@ define('HELP_URL',"?page=help&site=buildings");
 					// Abreissen
 					if ($item->level>0 && $item->building->demolishCostsFactor!=0 && $item->buildType==0)
 					{
-						$waitArr = $item->waitingTime('demolish');
+						$waitArr = $item->waitingTimeString('demolish');
 						// Es wird bereits an einem Gebäude gebaut
 						if (!$bl->checkDemolishable($bid))
 						{
@@ -489,10 +489,9 @@ define('HELP_URL',"?page=help&site=buildings");
 					}
 					tableEnd();
 					
-	
-					if (isset($bWaitArray) && $bWaitArray[1]>0)
+					if ($item->getWaitingTime()>0)
 					{
-						echo "Wartezeit bis gen&uuml;gend Rohstoffe zum Bau vorhanden sind: <b>".tf($bWaitArray[1])."</b><br/>";
+						echo "Wartezeit bis gen&uuml;gend Rohstoffe zum Bau vorhanden sind: <b>".tf($item->getWaitingTime())."</b><br/>";
 					}
 					if (isset($dWaitArray) && $dWaitArray[1]>0)
 					{
@@ -630,7 +629,7 @@ define('HELP_URL',"?page=help&site=buildings");
 						else
 						{
 							// Zuwenig Ressourcen
-							$waitArr = $it->current()->waitingTime('build');
+							$waitArr = $it->current()->waitingTimeString('build');
 							if ($waitArr['max']>0)
 							{
 								$tmtext = "<span style=\"color:#f00\">Zuwenig Ressourcen f&uuml;r weiteren Ausbau!</span><br/>";

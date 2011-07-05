@@ -53,7 +53,7 @@
 				cTime++;
 				
 				$(function() {
-				        $("#progressbar").progressbar("value",perc).find('span').text(perc+"%");
+				        $("#"+progresselem).progressbar("value",perc).find('span').text(perc+"%");
 					});
 				if (perc<=48)
 					document.getElementById(progresselem).style.color="#000";

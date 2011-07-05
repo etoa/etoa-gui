@@ -501,7 +501,26 @@
 				return "Abbruchauftrag kann nicht mehr abgebrochen werden, die Arbeit ist bereits fertiggestellt!";
 		}
 		
-		public function waitingTime($type='build')
+		public function getWaitingTime()
+		{
+			global $cp, $resNames;
+			
+			$costs = $this->getBuildCosts(0,0);
+			$wTime = array();
+			// Wartezeiten auf Ressourcen berechnen
+			foreach ($resNames as $rk => $rn)
+			{
+				if ($cp->getProd($rk))
+				{
+					$wTime[$rk] = ceil(($costs['costs'.$rk] - $cp->getRes1($rk)) / $cp->getProd($rk) * 3600);
+				}
+				else
+					$wTime[$rk] = 0;
+			}
+			return max($wTime);
+		}
+		
+		public function waitingTimeString($type='build')
 		{
 			global $cp, $resNames;
 			$notAvStyle=" style=\"color:red;\"";

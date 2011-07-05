@@ -53,7 +53,7 @@
 		}
 		elseif ($cu->alliance->checkActionRightsNA('fleetminister'))
 		{
-			if ($fd->getAction()->code()=="support" && $fd->ownerAllianceId()==$cu->allianceId() && $cu->allianceId()>0 && ($fd->status()==0 || $fd->status->status()==3))
+			if ($fd->getAction()->code()=="support" && $fd->ownerAllianceId()==$cu->allianceId() && $cu->allianceId()>0 && ($fd->status()==0 || $fd->status()==3))
 			{
 				$valid = $cu->alliance->buildlist->getLevel(ALLIANCE_FLEET_CONTROL_ID);
 			}
