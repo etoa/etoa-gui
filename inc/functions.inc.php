@@ -2619,7 +2619,7 @@ function imagecreatefromfile($path, $user_functions = false)
 						value: 0, 
 					}).append('<span id="progress">%</span>');
 				});
-				updateProgressBar('<?PHP echo $elem;?>',<?PHP echo ceil($startTime);?>,<?PHP echo ceil($endTime);?>,<?PHP echo time();?>);
+				updateProgressBar('<?PHP echo $elem;?>',<?PHP echo floor($startTime);?>,<?PHP echo ceil($endTime);?>,<?PHP echo time();?>);
 			}
 		</script>
 		<?PHP	

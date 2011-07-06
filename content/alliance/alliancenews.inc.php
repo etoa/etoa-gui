@@ -131,7 +131,9 @@ if (Alliance::checkActionRights('alliancenews'))
 	{
 		$send = "";
 	}
-	
+
+	$aid = (isset($_POST['alliance_id'])) ? $_POST['alliance_id'] : $cu->allianceId();
+
 	echo "<tr><th colspan=\"3\">Sende diese Nachricht nur ab, wenn du dir bezüglich der Ratshausreglen sicher bist! Eine Missachtung kann zur Sperrung des Accounts führen!</th></tr>";
 	echo "<tr>
 		<th width=\"170\">Betreff:</td>
@@ -142,8 +144,16 @@ if (Alliance::checkActionRights('alliancenews'))
 	echo "<tr>
 		<th width=\"170\">Ziel:</td>
 		<td colspan=2>
-			<select name=\"alliance_id\">
-				<option value=\"0\" style=\"font-weight:bold;color:#0f0;\">Öffentliches Rathaus</option>";
+			<select name=\"alliance_id\">";
+		
+
+		$selected = '';
+		if ($aid == 0)
+		{
+			$selected = 'selected="selected" ';
+		}
+		echo '<option '.$selected.' value="0" style="font-weight:bold;color:#0f0;">Öffentliches Rathaus</option>';
+				
 		$alliance=dbquery("
 		SELECT
       alliance_id,
@@ -151,11 +161,12 @@ if (Alliance::checkActionRights('alliancenews'))
       alliance_name
 		FROM
 			alliances");
+			
 		while ($alliances=mysql_fetch_assoc($alliance))
 		{
-			echo "<option value=\"".$alliances['alliance_id']."\"";
-			if ($alliances['alliance_id']==$aid) echo " selected=\"selected\"";
-			echo ">[".$alliances['alliance_tag']."]  ".$alliances['alliance_name']."</option>";
+			$selected = ($aid = $alliances['alliance_id']) ? 'selected="selected" ' : "";
+			
+			echo '<option value="'.$alliances['alliance_id'].'" '.$selected.'>['.$alliances['alliance_tag']."]  ".$alliances['alliance_name']."</option>";
 		}
 		echo "</select></td>
 	</tr>";

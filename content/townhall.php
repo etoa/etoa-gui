@@ -168,7 +168,7 @@
 	ON
 		user_id = alliance_news_user_id
 	WHERE 
-		alliance_news_alliance_to_id=".$cu->id." 
+		alliance_news_alliance_to_id=".$cu->allianceId()." 
 	ORDER BY 
 		alliance_news_date DESC 
 	;");

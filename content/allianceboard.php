@@ -258,11 +258,13 @@
 			//	
 			elseif (isset($_GET['topic']) && $_GET['topic']>0 && $legal=TRUE)
 			{
-				$tres=dbquery("SELECT * FROM ".BOARD_TOPIC_TABLE.",".BOARD_CAT_TABLE." WHERE topic_id=".$_GET['topic']." AND (topic_cat_id=cat_id || topic_cat_id=0);");
+				$sql = "SELECT * FROM ".BOARD_TOPIC_TABLE." LEFT JOIN ".BOARD_CAT_TABLE." ON topic_cat_id=cat_id WHERE topic_id=".$_GET['topic']." LIMIT 1";
+				$tres=dbquery($sql);
+				
 				if (mysql_num_rows($tres)>0)
 				{
-				$tarr=mysql_fetch_array($tres);
-					if (isset($myCat[$tarr['cat_id']]) && ($isAdmin || $myCat[$tarr['cat_id']]))
+					$tarr=mysql_fetch_array($tres);
+					if (($alliance_bnd_id===$tarr['topic_bnd_id'] && $isAdmin) || (isset($myCat[$tarr['cat_id']]) && ($isAdmin ||$myCat[$tarr['cat_id']])))
 					{				
 						if ($tarr['topic_bnd_id']>0)
 						{
@@ -362,7 +364,7 @@
 						error_msg("Kein Zugriff!");
 				}
 				else
-					error_msg("Dieses Thema existiert nicht!");
+					error_msg("2Dieses Thema existiert nicht!");
 				if ($tarr['topic_bnd_id']>0)
 				{
 					echo "<input type=\"button\" value=\"Zur &Uuml;bersicht\" onclick=\"document.location='?page=$page&amp;bnd=".$tarr['topic_bnd_id']."'\" />";

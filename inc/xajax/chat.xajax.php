@@ -294,7 +294,7 @@ function sendChat($form)
 			(
 				".time().",
 				'".$s['user_nick']."',
-				'".addslashes(htmlentities($ct))."',
+				'".addslashes(htmlspecialchars($ct))."',
 				'".$form['ccolor']."',
 				'".$s['user_id']."',
 				'".$admin."'
