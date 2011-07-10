@@ -39,7 +39,7 @@
             </tr>
             <tr>
                 <th width="50" valign="top">Text:</th>
-                <td width="250"
+                <td width="250">
                     <textarea onkeyup="text2html(this.value,'msgPreview');" cols="60" rows="10" id="message" name="message_text"></textarea>
                 </td>
                 <td>

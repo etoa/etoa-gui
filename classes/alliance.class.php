@@ -776,11 +776,11 @@
 			{
 				$tagRegExPattern = '/^[^\'\"\?\<\>\$\!\=\;\&]{1,6}$/i';
 				if (preg_match($tagRegExPattern,$data['tag'])>0)
-				//if (eregi('^[^\'\"\?\<\>\$\!\=\;\&]{1,6}$',$data['tag']))
+				//if (eregi("^[^\'\"\?\<\>\$\!\=\;\&]{1,6}$",$data['tag']))
 				{
-					if (eregi('^[^\'\"\?\<\>\$\!\=\;\&]{4,25}$',$data['name']))
+					if (preg_match('/([^\'\"\?\<\>\$\!\=\;\&]{4,25})$/',$data['name']))
 					{
-						if (isset($data['founder']))
+					if (isset($data['founder']))
 						{
 							$res = dbquery("
 							SELECT 

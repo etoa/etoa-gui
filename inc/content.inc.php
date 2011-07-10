@@ -201,7 +201,7 @@
 			}*/
 			if (true)
 			{
-				if (eregi('^[a-z\_]+$',$page)  && strlen($page)<=50)
+				if (preg_match('/^[a-z\_]+$/',$page)  && strlen($page)<=50)
 				{
 					// DEBUG
 					$query_counter=0; 

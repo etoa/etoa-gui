@@ -29,7 +29,7 @@
 	*/
 	
 	//Fehler ausgabe definiert
-  ini_set('display_errors', 1);
+  	ini_set('display_errors', 1);
 	ini_set('arg_separator.output',  '&amp;');
 
 	date_default_timezone_set('Europe/Zurich');
@@ -37,7 +37,7 @@
 	// Path to the relative root of the game
 	if (!defined('RELATIVE_ROOT'))
 		define('RELATIVE_ROOT','');
-
+		
 	// Load constants
 	require_once(RELATIVE_ROOT."inc/const.inc.php");
 

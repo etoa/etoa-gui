@@ -50,7 +50,12 @@
 			Usersetup::addItemSetListToPlanet($tp->id,$cu->id,$arr['set_id']);							
 			$cu->setSetupFinished();
 			$mode = "finished";
-		}		
+		}
+		else 
+		{
+			$cu->setSetupFinished();
+			$mode = "finished";
+		}				
 	}
 	elseif (isset($_GET['setup_sx']) && isset($_GET['setup_sy']) && $_GET['setup_sx']>0 && $_GET['setup_sy']>0 && $_GET['setup_sx']<=$sx_num && $_GET['setup_sy']<=$sy_num)
 	{

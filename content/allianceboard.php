@@ -364,7 +364,7 @@
 						error_msg("Kein Zugriff!");
 				}
 				else
-					error_msg("2Dieses Thema existiert nicht!");
+					error_msg("Dieses Thema existiert nicht!");
 				if ($tarr['topic_bnd_id']>0)
 				{
 					echo "<input type=\"button\" value=\"Zur &Uuml;bersicht\" onclick=\"document.location='?page=$page&amp;bnd=".$tarr['topic_bnd_id']."'\" />";

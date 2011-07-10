@@ -15,7 +15,9 @@
 	function text2html($string)
 	{
 		global $smilielist;
-
+		if (!defined('SMILIE_DIR'))
+			define('SMILIE_DIR', "images/smilies");
+		
 		$string = str_replace("  ", "&nbsp;&nbsp;", $string);
 
 		$string = str_replace("\"", "&quot;", $string);

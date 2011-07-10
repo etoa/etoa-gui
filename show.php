@@ -132,7 +132,7 @@
 		{
 			$index = ($index=="stats") ? "ladder" : $index;
 			$sub="index/";
-			if (!eregi("^[a-z\_]+$",$index) || strlen($index)>50)
+			if (!preg_match('^[a-z\_]+$^',$index) || strlen($index)>50)
 			{
 				die("<h1>Fehler</h1>Der Seitenname <b>".$index."</b> enth&auml;lt unerlaubte Zeichen!<br/><br/>
 				<a href=\"javascript:window.close();\">Schliessen</a><br/><br/>");
@@ -153,7 +153,7 @@
 		elseif ($page!="" && $loggedIn  && $page!=DEFAULT_PAGE)
 		{
 			$sub="content/";
-			if (!eregi("^[a-z\_]+$",$page) || strlen($page)>50)
+			if (!preg_match('/^[a-z\_]+$/',$page) || strlen($page)>50)
 			{
 				die("<h1>Fehler</h1>Der Seitenname <b>".$page."</b> enth&auml;lt unerlaubte Zeichen!<br/><br/>
 				<a href=\"javascript:window.close();\">Schliessen</a><br/><br/>");

@@ -55,7 +55,7 @@
 				$pres=dbquery("SELECT
 					bp_level,
 					bp_points
-				FROM tech_poins
+				FROM tech_points
 				WHERE bp_tech_id=".$arr['tech_id']."
 				ORDER BY bp_level ASC;");
 				if (mysql_num_rows($pres)>0)

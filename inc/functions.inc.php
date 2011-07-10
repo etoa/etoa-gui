@@ -942,7 +942,7 @@
 	*/
 	function checkEmail($email)
 	{
-	  return preg_match("/^[a-zA-Z0-9-_.]+@[a-zA-Z0-9-_.]+\.[a-zA-Z]{2,4}$/",$email);
+	  return preg_match('/^[a-zA-Z0-9-_.]+@[a-zA-Z0-9-_.]+\.[a-zA-Z]{2,4}$/',$email);
 	}
 	
 	/**
@@ -950,7 +950,7 @@
 	*/
 	function checkValidName($name)
 	{
-		return eregi(REGEXP_NAME, $name);
+		return preg_match(REGEXP_NAME, $name);
 	}
 
 	/**
@@ -958,7 +958,7 @@
 	*/
 	function checkValidNick($name)
 	{
-		return eregi(REGEXP_NICK, $name);
+		return preg_match(REGEXP_NICK, $name);
 	}
 
 	/**

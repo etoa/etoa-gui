@@ -38,7 +38,7 @@
 		
 		echo "<div style=\"padding:10px\">";
 		
-		if (eregi("^[a-z\_]+$",$page)  && strlen($page)<=50)
+		if (preg_match('/^[a-z\_]+$/',$page)  && strlen($page)<=50)
 		{
 			if (!include("content/".$page.".php"))
 				cms_err_msg("Die Seite $page wurde nicht gefunden!");

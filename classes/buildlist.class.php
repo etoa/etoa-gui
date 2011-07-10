@@ -91,7 +91,7 @@
 						$catItems[$id] = $item;
 				}
 			}
-			return new ArrayIterator(&$catItems);
+			return new ArrayIterator($catItems);
 		}
 		
 		private function load($load=1)
