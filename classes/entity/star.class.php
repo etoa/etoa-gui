@@ -114,7 +114,7 @@
 		/**
 		* Returns id
 		*/                        
-		function name() { return htmlspecialchars($this->name); }      
+		function name() { return (addslashes($this->name)); }      
 
 
 		/**

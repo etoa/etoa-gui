@@ -541,9 +541,6 @@
 			document.getElementById("planet_info_text_res_food").firstChild.nodeValue='<?php echo RES_FOOD.":";?>';
 			document.getElementById("planet_info_text_people").firstChild.nodeValue='Bewohner:';
 			document.getElementById("planet_info_text_power").firstChild.nodeValue='Energie:';
-			
-            show_links();
-
         }
 
 				//Formatiert Zahlen (der PHP Skript will nicht gehen)
@@ -901,7 +898,7 @@
 			</tr>
 
 			<tr>
-				<td width=\"38%\" class=\"PlaniTextCenterBeschreibung\"><div id=\"planet_info_text_building\" onMouseOver=\"chng('buildings');\">&nbsp;</div></td>
+				<td width=\"38%\" class=\"PlaniTextCenterBeschreibung\"><div id=\"planet_info_text_building\" \">&nbsp;</div></td>
 				<td width=\"2%\">&nbsp;</td>
 				<td width=\"60%\" class=\"PlaniTextCenter\" id=\"planet_info_building_name\">&nbsp;</td>
 			</tr>
@@ -911,7 +908,7 @@
 				<td width=\"60%\" class=\"PlaniTextCenter\" id=\"planet_info_building_time\">&nbsp;</td></tr>
 
 			<tr>
-				<td width=\"38%\" class=\"PlaniTextCenterBeschreibung\"><div id=\"planet_info_text_shipyard\" onMouseOver=\"chng('shipyard');\">&nbsp;</div></td>
+				<td width=\"38%\" class=\"PlaniTextCenterBeschreibung\"><div id=\"planet_info_text_shipyard\" \">&nbsp;</div></td>
 				<td width=\"2%\">&nbsp;</td>
 				<td width=\"60%\" class=\"PlaniTextCenter\" id=\"planet_info_shipyard_name\">&nbsp;</td>
 			</tr>
@@ -922,7 +919,7 @@
 			</tr>
 
 			<tr>
-				<td width=\"38%\" class=\"PlaniTextCenterBeschreibung\"><div id=\"planet_info_text_defense\" onMouseOver=\"chng('defense');\">&nbsp;</div></td>
+				<td width=\"38%\" class=\"PlaniTextCenterBeschreibung\"><div id=\"planet_info_text_defense\" \">&nbsp;</div></td>
 				<td width=\"2%\">&nbsp;</td>
 				<td width=\"60%\" class=\"PlaniTextCenter\" id=\"planet_info_defense_name\">&nbsp;</td>
 			</tr>

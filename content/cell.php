@@ -297,7 +297,7 @@
 							echo "<br/><span style=\"color:#817339;font-weight:bold\" ".tm("Trümmerfeld",RES_ICON_METAL.nf($ent->debrisMetal)." ".RES_METAL."<br style=\"clear:both\" />".RES_ICON_CRYSTAL.nf($ent->debrisCrystal)." ".RES_CRYSTAL."<br style=\"clear:both\" />".RES_ICON_PLASTIC.nf($ent->debrisPlastic)." ".RES_PLASTIC."<br style=\"clear:both\" />").">Trümmerfeld</span> ";
 						}	
 						echo "</td>
-						<td $addstyle><a $class href=\"?page=entity&amp;id=".$ent->id()."\">".$ent->name()."</a></td>
+						<td $addstyle><a $class href=\"?page=entity&amp;id=".$ent->id()."\">".text2html($ent->name())."</a></td>
 						<td $addstyle>";
 						if ($ent->ownerId()>0)
 						{
