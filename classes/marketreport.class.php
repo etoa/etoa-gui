@@ -416,7 +416,7 @@ class MarketReport extends Report
 					echo 'Die Auktion dauert noch bis am '.date("d.m.Y H:i",$this->timestamp2).'<br />';
 				else
 					echo "Die Auktion ist nun zu Ende und wird nach ".AUCTION_DELAY_TIME." Stunden gel&ouml;scht.<br />";
-				echo '<a hred="?page=market&mode=auction&id='.$arr['id'].'">Hier</a> gehts zu der Auktion.';
+				echo '<a href="?page=market&mode=auction&id='.$this.>id.'">Hier</a> gehts zu der Auktion.';
 				break;
 			case 'auctionfinished':
 				$op = new User($this->opponent1Id);

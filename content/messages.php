@@ -164,7 +164,7 @@
 					// Sender
 					$sender = $marr['message_user_from']>0 ? ($marr['user_nick']!='' ? $marr['user_nick'] : '<i>Unbekannt</i>') : '<i>'.$marr['cat_sender'].'</i>';
 					// Title
-					$subj = $marr['subject']!="" ? stripslashes($marr['subject']) : "<i>Kein Titel</i>";
+					$subj = $marr['subject']!="" ? htmlspecialchars($marr['subject']) : "<i>Kein Titel</i>";
 					
 					tableStart();
 					echo "<tr><th colspan=\"2\">".$subj."</th></tr>";
@@ -186,11 +186,11 @@
 					{
 						if (isset($_GET['src']))
 						{
-							echo '<textarea rows="30" cols="60" readonly="readonly">'.stripslashes($marr['text']).'</textarea>';
+							echo '<textarea rows="30" cols="60" readonly="readonly">'.htmlspecialchars($marr['text']).'</textarea>';
 						}	
 						else
 						{
-							echo text2html(stripslashes($marr['text']));
+							echo text2html(htmlspecialchars($marr['text']));
 						}
 					}
 					else
@@ -217,7 +217,7 @@
 					{
 						// Muss mit echo 'text'; erfolgen, da sonst der Text beim ersten " - Zeichen abgeschnitten wird!
 						// Allerdings ist so das selbe Problem mit den ' - Zeichen!
-						echo '<input type=\'hidden\' name=\'message_text\' value=\''.stripslashes($marr['text']).'\' />';
+						echo '<input type=\'hidden\' name=\'message_text\' value=\''.htmlspecialchars($marr['text']).'\' />';
 					}
 					echo "<input type=\"submit\" value=\"Weiterleiten\" name=\"remit\" />&nbsp;";
 					if ($marr['message_user_from']>0)
@@ -600,7 +600,7 @@
 	            			<td style=\"width:66%;\" ";
 							if ($msgpreview)
 							{
-								echo tm($subj,text2html(substr($marr['text'], 0, 500)));
+								echo tm($subj,htmlspecialchars(substr($marr['text'], 0, 500)));
 							}
 							echo ">";
 							if ($marr['message_massmail']==1)

@@ -275,12 +275,12 @@
 		
 		function name()
 		{
-			return $this->name;
+			return htmlspecialchars($this->name);
 		}
 
 		function __toString()
 		{
-			return $this->formatedCoords()." ".$this->name;
+			return $this->formatedCoords()." ".$this->name();
 		}
 		
 		function cellId()
