@@ -152,8 +152,8 @@
 	$resIcons = array(RES_ICON_METAL,RES_ICON_CRYSTAL,RES_ICON_PLASTIC,RES_ICON_FUEL,RES_ICON_FOOD);
 
 	// Regular expressions
-	define('REGEXP_NAME','^.[^0-9\'\"\?\<\>\$\!\=\;\&]*$');
-	define('REGEXP_NICK','^.[^\'\"\?\<\>\$\!\=\;\&]*$');
+	define('REGEXP_NAME','/^.[^0-9\'\"\?\<\>\$\!\=\;\&]*$/');
+	define('REGEXP_NICK','/^.[^\'\"\?\<\>\$\!\=\;\&]*$/');
 
 	// Universum
 	define("CELL_NUM_X",$cfg->num_of_cells->p1);		// Anzahl Zellen x
