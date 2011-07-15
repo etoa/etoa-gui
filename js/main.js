@@ -55,10 +55,7 @@
 				$(function() {
 				        $("#"+progresselem).progressbar("value",perc).find('span').text(perc+"%");
 					});
-				if (perc<=48)
-					document.getElementById(progresselem).style.color="#000";
-				else
-					document.getElementById(progresselem).style.color="#fff";
+				document.getElementById(progresselem).style.color="#000";
 				
 				setTimeout("updateProgressBar('"+progresselem+"',"+startTime+","+endTime+",'"+cTime+"')",1000);
 			}

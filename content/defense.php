@@ -156,7 +156,7 @@
 			{
 				$buildlist[$arr['buildlist_building_id']]=$arr['buildlist_current_level'];
 			}
-			echo $building_fields;
+			// echo $building_fields;
 			
 			// Gebaute Verteidigung laden
 			$res = dbquery("
@@ -245,7 +245,7 @@
 			}
 			
 			// Bauliste vom allen Planeten laden und nach Verteidigung zusammenfassen
-			$queue_field = 0;
+			$queue_fields = 0;
 			$res = dbquery("
 						SELECT
 							queue_id,
@@ -947,9 +947,9 @@
 								//Errechnet wie viele Verteidigung von diesem Typ maximal Gebaut werden können mit den aktuellen Rohstoffen
 								
 								//Felder
-								if($$defs[$def_id]['def_fields']>0)
+								if((int)$data['def_fields']>0)
 								{
-									$build_cnt_fields=floor($fields_available/$$defs[$def_id]['def_fields']);
+									$build_cnt_fields=floor($fields_available / $data['def_fields']);
 								}
 								else
 								{

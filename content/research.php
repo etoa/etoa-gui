@@ -154,7 +154,7 @@ else
 					{
 						if(stristr($k,'_x'))
 						{
-							$bid = eregi_replace('show_([0-9]+)_x', '\1', $k);
+							$bid = preg_replace('/show_([0-9]+)_x/', '\1', $k);
 							break;
 						}
 					}

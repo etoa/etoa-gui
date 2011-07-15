@@ -116,7 +116,7 @@ define('HELP_URL',"?page=help&site=buildings");
 				{
 					if(stristr($k,'_x'))
 					{
-						$bid = eregi_replace('show_([0-9]+)_x', '\1', $k);
+						$bid = preg_replace('/show_([0-9]+)_x/', '\1', $k);
 						break;
 					}
 				}
@@ -728,8 +728,8 @@ define('HELP_URL',"?page=help&site=buildings");
 												<b>".$it->current()->building."";
 												if ($it->current()->level>0) echo ' '.$it->current()->level;
 												echo "</b><br/>".$subtitle."<br/>
-												<input name=\"show_".$it->key()."\" type=\"image\" value=\"".$it->key()."\" src=\"".$img."\" ".tm($it->current->building,$tmtext.$it->current()->building->shortDesc)." style=\"width:120px;height:120px;\" />
-								</td>\n";
+													<input name=\"show_".$it->key()."\" type=\"image\" value=\"".$it->key()."\" src=\"".$img."\" ".tm($it->current()->building,"<b>".$subtitle."</b><br/>".$tmtext.$it->current()->building->shortDesc)." style=\"width:120px;height:120px;\" />
+													</td>\n";
 								}
 								else
 								{

@@ -898,7 +898,7 @@
 			</tr>
 
 			<tr>
-				<td width=\"38%\" class=\"PlaniTextCenterBeschreibung\"><div id=\"planet_info_text_building\" \">&nbsp;</div></td>
+				<td width=\"38%\" class=\"PlaniTextCenterBeschreibung\"><div id=\"planet_info_text_building\">&nbsp;</div></td>
 				<td width=\"2%\">&nbsp;</td>
 				<td width=\"60%\" class=\"PlaniTextCenter\" id=\"planet_info_building_name\">&nbsp;</td>
 			</tr>
@@ -908,7 +908,7 @@
 				<td width=\"60%\" class=\"PlaniTextCenter\" id=\"planet_info_building_time\">&nbsp;</td></tr>
 
 			<tr>
-				<td width=\"38%\" class=\"PlaniTextCenterBeschreibung\"><div id=\"planet_info_text_shipyard\" \">&nbsp;</div></td>
+				<td width=\"38%\" class=\"PlaniTextCenterBeschreibung\"><div id=\"planet_info_text_shipyard\">&nbsp;</div></td>
 				<td width=\"2%\">&nbsp;</td>
 				<td width=\"60%\" class=\"PlaniTextCenter\" id=\"planet_info_shipyard_name\">&nbsp;</td>
 			</tr>
@@ -919,7 +919,7 @@
 			</tr>
 
 			<tr>
-				<td width=\"38%\" class=\"PlaniTextCenterBeschreibung\"><div id=\"planet_info_text_defense\" \">&nbsp;</div></td>
+				<td width=\"38%\" class=\"PlaniTextCenterBeschreibung\"><div id=\"planet_info_text_defense\">&nbsp;</div></td>
 				<td width=\"2%\">&nbsp;</td>
 				<td width=\"60%\" class=\"PlaniTextCenter\" id=\"planet_info_defense_name\">&nbsp;</td>
 			</tr>
