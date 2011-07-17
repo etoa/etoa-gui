@@ -39,7 +39,7 @@ namespace emp
 				if (this->one < this->two) {
 					
 					// Calculate the damage
-					this->h = rand() % (10 + this->tLevel + 1); //ToDo Add shipCnt
+					this->h = rand() % (10 + this->tLevel) + 1; //ToDo Add shipCnt
 					
 					std::string actionString = this->targetEntity->empBuilding(this->h);
 					
