@@ -217,8 +217,9 @@
 				$this->load();
 			if (isset($this->items[$bid]))
 			{
-				if ($this->items[$bid]->deactivated > time())
-					return $this->item[$bid]->deactivated;
+				if ($this->items[$bid]->deactivated > time()) {
+					 return $this->items[$bid]->deactivated;
+				}
 			}
 			return false;	
 		}	
