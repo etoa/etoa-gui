@@ -395,7 +395,7 @@ class BattleReport extends Report
 								$shieldStructure = $initShieldStructure = $this->shield + $this->structure;
 								$entityShieldStructure = $entityInitShieldStructure = $this->entityShield + $this->entityStructure;
 								for ($rnd=1; $rnd<=5; $rnd++)
-								{
+								{	
 									$shieldStructure = max(0,$shieldStructure-$this->entityWeapon[$rnd]);
 									$entityShieldStructure = max(0,$entityShieldStructure-$this->weapon[$rnd]);
 
@@ -412,9 +412,8 @@ class BattleReport extends Report
 										$entityShieldStructure = min($entityInitShieldStructure,($entityShieldStructure+$this->entityHeal[$rnd]));
 										echo 'Die Einheiten des Verteidiger heilen '.nf($this->entityHeal[$rnd]).' Struktur- und Schildpunkte. Der Verteidiger hat danach wieder '.nf($entityShieldStructure).' Struktur- und Schildpunkte<br /><br />';
 									}
-
-
-									if (!$shieldStructure || !$entityShieldStructure) break;
+									
+									if ($rnd==5 || $this->count[$rnd+1]==0 || $this->entityCount[$rnd+1]==0) break;
 								}
 
 								echo 'Der Kampf dauerte '.min(5,$rnd).' Runden!<br /><br />';
