@@ -131,8 +131,8 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 		double initDefShield = entity->getShield(true);
 
 		//Schild + Strukturstärke
-        double initAttStructureShield = fleet->getStructShield(true);
-        double initDefStructureShield = entity->getStructShield(true);
+		double initAttStructureShield = fleet->getStructShield(true);
+		double initDefStructureShield = entity->getStructShield(true);
 
 		double cAttStructureShield = initAttStructureShield;
 		double cDefStructureShield = initDefStructureShield;
@@ -140,24 +140,41 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 		//
 		//Der Kampf!
 		//
-        for (int bx = 1; bx <= config.nget("battle_rounds",0); bx++) {
+		for (int bx = 1; bx <= config.nget("battle_rounds",0); bx++) {
 			report->setRounds(bx);
 			report->setWeapon(fleet->getWeapon(true));
 			report->setCount(fleet->getCount(true));
 			report->setEntityWeapon(entity->getWeapon(true));
 			report->setEntityCount(entity->getCount(true));
-
-            cAttStructureShield -= entity->getWeapon(true);
+			
+			cAttStructureShield -= entity->getWeapon(true);
 			cDefStructureShield -= fleet->getWeapon(true);
 
 			cAttStructureShield = std::max(0.0,cAttStructureShield);
 			cDefStructureShield = std::max(0.0,cDefStructureShield);
 
-			attPercent = (cAttStructureShield==0) ? 0 : cAttStructureShield/initAttStructureShield;
-			defPercent = (cDefStructureShield==0) ? 0 : cDefStructureShield/initDefStructureShield;
-
+			if (entity->getWeapon(true) == 0 && initAttStructureShield==cAttStructureShield) {
+				attPercent = 1;
+			}
+			else if (cAttStructureShield==0) {
+				attPercent = 0;
+			}
+			else {
+				attPercent = cAttStructureShield/initAttStructureShield;
+			}
+			
+			if (fleet->getWeapon(true) == 0 && initDefStructureShield==cDefStructureShield) {
+				defPercent = 1;
+			}
+			else if (cDefStructureShield==0) {
+				defPercent = 0;
+			}
+			else {
+				defPercent = cDefStructureShield/initDefStructureShield;
+			}
+			
 			fleet->setPercentSurvive(attPercent,true);
-			entity->setPercentSurvive(defPercent,true);
+			entity->setPercentSurvive(defPercent,true);	
 			
 			report->setHeal(fleet->getHeal());
 			report->setEntityHeal(entity->getHeal());
@@ -178,7 +195,7 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 				entity->setPercentSurvive(cDefStructureShield/initDefStructureShield,true);
             }
 			
-            if (cAttStructureShield <= 0 || cDefStructureShield <= 0)
+            if (fleet->getCount(true) <= 0 || entity->getCount(true) <= 0)
                 break;
         }
 
@@ -191,8 +208,8 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 		//
 
 		//Erfahrung für die Spezialschiffe errechnen
-        fleet->addExp(entity->getExp() / 100000.0);
-        entity->addExp(fleet->getExp() / 100000.0);
+		fleet->addExp(entity->getExp() / 100000.0);
+		entity->addExp(fleet->getExp() / 100000.0);
 		report->setExp(fleet->getAddedExp());
 		report->setEntityExp(entity->getAddedExp());
 
@@ -212,7 +229,7 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 		raid[3] = 0;
 		raid[4] = 0;
 
-		if (cDefStructureShield == 0 && cAttStructureShield > 0) {
+		if (entity->getCount(true) == 0 && fleet->getCount(true) > 0) {
 			this->returnV = 1;
 			double percent = std::min(fleet->getBountyBonus(),(fleet->getCapacity(true) / entity->getResSum()));
 			
@@ -233,7 +250,7 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 		//
 		//Der Verteidiger hat gewonnen
 		//
-		else if (cAttStructureShield==0 && cDefStructureShield>0)
+		else if (fleet->getCount(true) && entity->getCount(true)>0)
 			this->returnV = 2;
 
 		//
@@ -244,7 +261,7 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 			//
 			//	Unentschieden, beide Flotten wurden zerstört
 			//
-			if (cAttStructureShield==0 && cDefStructureShield==0)
+			if (fleet->getCount(true)==0 && entity->getCount(true)==0)
         		this->returnV = 3;
 
 			//

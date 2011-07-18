@@ -1550,6 +1550,7 @@
 					query << "WHERE ";
 					query << "	buildlist_user_id='" << this->userId << "' ";
 					query << "	AND buildlist_building_id='" << (*it).first << "' ";
+					query << "	AND buildlist_entity_id='" << this->id << "' ";
 					query << "LIMIT 1;";
 					query.store();
 					query.reset();
