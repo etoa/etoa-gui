@@ -250,7 +250,7 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 		//
 		//Der Verteidiger hat gewonnen
 		//
-		else if (fleet->getCount(true) && entity->getCount(true)>0)
+		else if (fleet->getCount(true)==0 && entity->getCount(true)>0)
 			this->returnV = 2;
 
 		//
