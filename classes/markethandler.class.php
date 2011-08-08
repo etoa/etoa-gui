@@ -101,28 +101,38 @@ class MarketHandler
 		$parr = mysql_fetch_array($pres);
 		$farr = mysql_fetch_array($fres);
 		
-		for ($i=0;$i<NUM_RESOURCES;$i++)
+		if ($parr!=null && $farr!=null)
 		{
-			$res_rates[$i] = 1/($parr[$i]+$farr[$i]);
-		}
+			for ($i=0;$i<NUM_RESOURCES;$i++)
+			{
+				$res_rates[$i] = 1/($parr[$i]+$farr[$i]);
+			}
 		
-		$normalizer = array_sum($res_rates) / NUM_RESOURCES;
-		for ($i=0;$i<NUM_RESOURCES;$i++)
+			$normalizer = array_sum($res_rates) / NUM_RESOURCES;
+			for ($i=0;$i<NUM_RESOURCES;$i++)
+			{
+				$res_rates[$i] = round($res_rates[$i]/$normalizer,2);
+			}
+		
+			for ($i=0;$i<NUM_RESOURCES;$i++)
+			{
+				$rates[$i] = $res_rates[$i]+$rates[$i];
+			}
+		
+			$normalizer = array_sum($rates) / NUM_RESOURCES;
+			for ($i=0;$i<NUM_RESOURCES;$i++)
+			{
+				$rates[$i] = round($rates[$i]/$normalizer,2);
+			}
+		}
+		else
 		{
-			$res_rates[$i] = round($res_rates[$i]/$normalizer,2);
+                        for ($i=0;$i<NUM_RESOURCES;$i++)
+                        {
+				$rates[$i] = 1;
+			}
 		}
-		
-		for ($i=0;$i<NUM_RESOURCES;$i++)
-		{
-			$rates[$i] = $res_rates[$i]+$rates[$i];
-		}
-		
-		$normalizer = array_sum($rates) / NUM_RESOURCES;
-		for ($i=0;$i<NUM_RESOURCES;$i++)
-		{
-			$rates[$i] = round($rates[$i]/$normalizer,2);
-		}
-		
+
 		return $rates;
 	}
 
