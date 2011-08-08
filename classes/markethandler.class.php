@@ -101,8 +101,9 @@ class MarketHandler
 		$parr = mysql_fetch_array($pres);
 		$farr = mysql_fetch_array($fres);
 		
-		if ($parr!=null && $farr!=null)
+		if ($parr!=null && $farr!=null && isset($parr[0]) && isset($farr[0]))
 		{
+
 			for ($i=0;$i<NUM_RESOURCES;$i++)
 			{
 				$res_rates[$i] = 1/($parr[$i]+$farr[$i]);
