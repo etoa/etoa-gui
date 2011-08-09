@@ -608,6 +608,26 @@
 	}
 
 	/**
+	* Convert formated number back to integer (positive & negative number)
+	*/
+	function nf_back_sign($number,$colorize=0)
+	{
+		$number = str_replace('`', '', $number);
+		$number = str_replace('%', '', $number);
+		if ($colorize==1)
+		{
+			if ($number>0)
+				return "<span style=\"color:#0f0\">".number_format($number,0,",",".")."</span>";
+			if ($number<0)
+				return "<span style=\"color:#f00\">".number_format($number,0,",",".")."</span>";
+		}
+		// $number = abs(intval($number));
+		$number = intval($number);
+		return $number;
+		
+	}
+	
+	/**
 	* Format time in seconds to hour,minute,seconds
 	*/
 	function tf($ts)	// Time format
@@ -2177,7 +2197,8 @@ function imagecreatefromfile($path, $user_functions = false)
 	*/	
 	function calcBuildingCosts($buildingArray, $level, $fac=1)
 	{
-		global $cp, $cu;
+		global $cp;
+		global $cu;
 		$bc=array();
 		$bc['metal'] = $fac * $buildingArray['building_costs_metal'] * pow($buildingArray['building_build_costs_factor'],$level);
 		$bc['crystal'] = $fac * $buildingArray['building_costs_crystal'] * pow($buildingArray['building_build_costs_factor'],$level);
@@ -2186,6 +2207,10 @@ function imagecreatefromfile($path, $user_functions = false)
 		$bc['food'] = $fac * $buildingArray['building_costs_food'] * pow($buildingArray['building_build_costs_factor'],$level);
 		$bc['power'] = $fac * $buildingArray['building_costs_power'] * pow($buildingArray['building_build_costs_factor'],$level);
 		
+		if (!isset($cp->typeBuildtime))
+			$cp->typeBuildtime = 1.0;
+		if (!isset($cp->starBuildtime))
+			$cp->starBuildtime = 1.0;
 		$bonus = $cu->race->buildTime + $cp->typeBuildtime + $cp->starBuildtime + $cu->specialist->buildTime - 3;
 		$bc['time'] = ($bc['metal']+$bc['crystal']+$bc['plastic']+$bc['fuel']+$bc['food']) / GLOBAL_TIME * BUILD_BUILD_TIME;
 		$bc['time'] *= $bonus;

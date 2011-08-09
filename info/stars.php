@@ -70,6 +70,6 @@
 		}
 	}
 	tableEnd();
-sol_type_comment
+	/* TODU: sol_type_comment */
 
 ?>

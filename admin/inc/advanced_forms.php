@@ -234,7 +234,7 @@
 				echo "<tr>";
 				if (defined('DB_IMAGE_PATH'))
 				{
-					$path = ereg_replace('<DB_TABLE_ID>',$arr[DB_TABLE_ID],DB_IMAGE_PATH);
+					$path = preg_replace('/<DB_TABLE_ID>/',$arr[DB_TABLE_ID],DB_IMAGE_PATH);
 					if (is_file($path))
 					{
 						$imsize = getimagesize($path);

@@ -67,7 +67,7 @@
 	// Validate session
 	if (!$s->validate())
 	{
-		forward(Config::getInstance()->loginurl->v."?page=err&err=nosession","Ung체ltige Session",$s->lastError);
+		forward(Config::getInstance()->loginurl->v."?page=err&err=nosession","Ung웞tige Session",$s->lastError);
 	}
 
 	// Load user data
@@ -113,7 +113,7 @@
 	// Page content
 	//
 	
-	// Referers pr체fen
+	// Referers pr웖en
 	$referer_allow=false;
 	if (isset($_SERVER["HTTP_REFERER"]))
 	{
@@ -135,7 +135,7 @@
 		unset($rfr);
 	}
 
-	// Spiel ist generell gesperrt (ausser f체r erlaubte IP's)
+	// Spiel ist generell gesperrt (ausser f웦 erlaubte IP's)
 	$allowed_ips = explode("\n",$cfg->p1('offline'));
 	
 	if ($cfg->value('offline')==1 && !in_array($_SERVER['REMOTE_ADDR'],$allowed_ips))
@@ -162,7 +162,7 @@
 		echo button("Zur Startseite",Config::getInstance()->loginurl->v);
 		iBoxEnd();
 	}
-	// Login ist erlaubt aber noch zeitlich zu fr체h
+	// Login ist erlaubt aber noch zeitlich zu fr웘
 	elseif ($cfg->value('enable_login')==1 && $cfg->value('enable_login')!="" && $cfg->param1('enable_login') > time() && !in_array($_SERVER['REMOTE_ADDR'],$allowed_ips))
 	{
 		iBoxStart("Login noch geschlossen",750,"margin:50px auto;text-align:center");
@@ -218,7 +218,7 @@
 				}
 				// Todo: check if mainplanet is still 0
 				
-				// Wenn eine ID angegeben wurde (Wechsel des Planeten) wird diese 체berpr체ft
+				// Wenn eine ID angegeben wurde (Wechsel des Planeten) wird diese 웑erpr웖t
 				//if (!isset($s->echng_key))
 				//	$s->echng_key = mt_rand(100,9999999);
 				

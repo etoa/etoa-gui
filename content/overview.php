@@ -287,12 +287,12 @@
 		//Mehrere Flotten
 		if ($fm->count() > 1)
 		{
-			echo "<td><a href=\"?page=fleets&mode=alliance\"><b>".$fm->count()."</b> Supportlotten</a></td>";
+			echo "<td><a href=\"?page=fleets&mode=alliance\"><b>".$fm->count()."</b> Supportflotten</a></td>";
 		}
 		//Eine Flotte
 		elseif ($fm->count()==1)
 		{
-			echo "<td><a href=\"?page=fleets&mode=alliance\"><b>".$fm->count()."</b> Supportlotte</a></td>";
+			echo "<td><a href=\"?page=fleets&mode=alliance\"><b>".$fm->count()."</b> Supportflotte</a></td>";
 		}
 		//Keine Flotten
 		else

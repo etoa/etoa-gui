@@ -178,9 +178,9 @@ class BattleReport extends Report
 				echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' hat erfolglos einen Giftgasangriff auf den Planeten '.$ent1->detailLink().' verübt.';
 				break;
 			case 'invasion':
-				echo '<strong>Planet:</strong> '.$ent2->detailLink().'<br />';
+				echo '<strong>Planet:</strong> '.$ent1->detailLink().'<br />';
 				echo '<strong>Besitzer:</strong> '.$user.'<br /><br />';
-				echo 'Dieser Planet wurde von einer Flotte, welche vom Planeten '.$ent1->detailLink().' stammt, &uuml;bernommen!<br />Ein Invasionsschiff wurde bei der &Uuml;bernahme aufgebraucht!<br /><br />';
+				echo 'Dieser Planet wurde von einer Flotte, welche vom Planeten '.$ent2->detailLink().' stammt, übernommen!<br />Ein Invasionsschiff wurde bei der Übernahme aufgebraucht!<br /><br />';
 				echo '<strong>SCHIFFE</strong><br />';
 				if ($this->ships=='' || $this->ships=='0')
 					echo '<i>Nichts vorhanden!</i><br />';
@@ -189,7 +189,7 @@ class BattleReport extends Report
 					echo '<table>';
 					$shipArr = explode(',',$this->ships);
 					$ships = Ship::getItems();
-					foreach ($shipArr as $ships)
+					foreach ($shipArr as $ship)
 					{
 						if ($ship!='')
 						{
@@ -219,27 +219,27 @@ class BattleReport extends Report
 				echo '</table><br/>';
 				break;
 			case 'invasionfailed':
-				echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' hatversucht den Planeten '.$ent1->detailLink().' zu &uuml;bernehmen. Dieser Versuch schlug aber fehl und die Flotte machte sich auf den R&uuml;ckweg!<br />';
+				echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' hat versucht den Planeten '.$ent1->detailLink().' zu übernehmen. Dieser Versuch schlug aber fehl und die Flotte machte sich auf den Rückweg!<br />';
 				if ($this->content==1)
 					echo 'Hinweis: Du hast bereits die maximale Anzahl Planeten erreicht!<br />';
 				elseif ($this->content==2)
 					echo 'Hinweis: Dies ist ein Hauptplanet!<br />';
 				break;
 			case 'invaded':
-				echo '<strong>Planet:</strong> '.$ent2->detailLink().'<br />';
+				echo '<strong>Planet:</strong> '.$ent1->detailLink().'<br />';
 				echo '<strong>Besitzer:</strong> '.$user.'<br /><br />';
-				echo 'Dieser Planet wurde von einer Flotte, welche vom Planeten '.$ent1->detailLink().' stammt, &uuml;bernommen!<br />';
+				echo 'Dieser Planet wurde von einer Flotte, welche vom Planeten '.$ent2->detailLink().' stammt, übernommen!<br />';
 				break;
 			case 'invadedfailed':
-				echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' hat versucht den Planeten '.$ent1->detailLink().' zu &uuml;bernehmen. Dieser Versuch schlug aber fehl und die Flotte machte sich auf den R&uuml;ckweg!';
+				echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' hat versucht den Planeten '.$ent1->detailLink().' zu übernehmen. Dieser Versuch schlug aber fehl und die Flotte machte sich auf den Rückweg!';
 				break;
 			case 'spyattack':
 				$data = explode(':',$this->content);
 				$tech = new Technology($data[0]);
-				echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' hat erfolgreich einen Spionageangriff durchgef&uuml;hrt und erfuhr so die Geheimnisse der Forschung '.$tech.' bis zum Level '.$data[1].'.';
+				echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' hat erfolgreich einen Spionageangriff durchgeführt und erfuhr so die Geheimnisse der Forschung '.$tech.' bis zum Level '.$data[1].'.';
 				break;
 			case 'spyattackfailed':
-				echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' hat erfolglos einen Spionageangriff auf den Planeten '.$ent1->detailLink().' ver&uuml;bt.';
+				echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' hat erfolglos einen Spionageangriff auf den Planeten '.$ent1->detailLink().' verübt.';
 				break;
 			case 'battle':
 				echo '<strong>KAMPFBERICHT</strong><br />

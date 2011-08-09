@@ -21,42 +21,45 @@
 	// $Rev$
 	//
 
-		if (intval($_GET['msg_id'])>0)
+		if (isset($_GET['msg_id']))
 		{
-			$mres = dbquery("
-			SELECT
-        md.subject,
-        md.text,
-        m.message_timestamp,
-        m.message_user_to,
-        m.message_read
-			FROM
-				messages AS m
-			INNER JOIN
-				message_data as md
-				ON md.id=message_id				
-        AND m.message_id='".intval($_GET['msg_id'])."'
-        AND m.message_user_from='".$cu->id."'
-        ");
-			if (mysql_num_rows($mres)>0)
+			if (intval($_GET['msg_id'])>0)
 			{
-				$marr = mysql_fetch_array($mres);
-				$subj = $marr['subject']!="" ? stripslashes($marr['subject']) : "<i>Kein Titel</i>";
+				$mres = dbquery("
+				SELECT
+        			md.subject,
+        			md.text,
+        			m.message_timestamp,
+        			m.message_user_to,
+        			m.message_user_from,
+        			m.message_read
+				FROM
+					messages AS m
+				INNER JOIN
+					message_data as md
+					ON md.id=message_id				
+        			AND m.message_id='".intval($_GET['msg_id'])."'
+        			AND m.message_user_from='".$cu->id."'");
+				if (mysql_num_rows($mres)>0)
+				{
+					$marr = mysql_fetch_array($mres);
+					$subj = $marr['subject']!="" ? stripslashes($marr['subject']) : "<i>Kein Titel</i>";
 				
-				tableStart();
-				echo "<tr><th colspan=\"2\">".$subj."</th></tr>";
-				echo "<tr><th style=\"width:100px;\">Datum:</td><td>".date("d.m.Y H:i",$marr['message_timestamp'])."</td></tr>";
+					tableStart();
+					echo "<tr><th colspan=\"2\">".$subj."</th></tr>";
+					echo "<tr><th style=\"width:100px;\">Datum:</td><td>".date("d.m.Y H:i",$marr['message_timestamp'])."</td></tr>";
 				
-				echo "<tr><th>Sender:</th><td>".userPopUp($marr['message_user_from'],$marr['user_nick'],0)."</td></tr>";
-				echo "<tr><th>Text:</td><td>".text2html($marr['text'])."</td></tr>";
-				tableEnd();
-				echo "<input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=messages&mode=sent'\" /> &nbsp; ";
+					echo "<tr><th>Sender:</th><td>".userPopUp($cu->id, $cu->nick,0)."</td></tr>";
+					echo "<tr><th>Text:</td><td>".text2html($marr['text'])."</td></tr>";
+					tableEnd();
+					echo "<input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=messages&mode=sent'\" /> &nbsp; ";
 				}
 				else
 				{
 					error_msg("Diese Nachricht existiert nicht!");
 					echo "<input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=messages&mode=sent'\" />";
 				}
+			}
 		}
 		else
 		{
@@ -65,12 +68,12 @@
 
 			$mres = dbquery("
 			SELECT
-        md.subject,
-        message_id,
-        message_timestamp,
-        message_user_to,
-        message_read,
-        user_nick
+        		md.subject,
+        		message_id,
+        		message_timestamp,
+        		message_user_to,
+        		message_read,
+        		user_nick
 			FROM
 				messages
 			INNER JOIN
@@ -80,7 +83,7 @@
 				users
 				ON message_user_to=user_id				
 			WHERE
-        message_user_from='".$cu->id."'
+        		message_user_from='".$cu->id."'
 			ORDER BY
 				message_timestamp DESC
 			LIMIT 30;");

@@ -246,16 +246,17 @@ else
 								{
 									$start_time = time();
 									$end_time = time()+$btime;
-									if (sizeof($techlist[$arr['tech_id']])>0)
+									// if (sizeof($techlist[$arr['tech_id']])>0)
+									if (isset($techlist[$arr['tech_id']]))
 									{
 										dbquery("
 										UPDATE 
 											techlist 
 										SET
-		                  techlist_build_type='3',
-		                  techlist_build_start_time='".time()."',
-		                  techlist_build_end_time='".$end_time."',
-		                  techlist_entity_id='".$cp->id()."'
+		                  					techlist_build_type='3',
+		                  					techlist_build_start_time='".time()."',
+		                  					techlist_build_end_time='".$end_time."',
+		                  					techlist_entity_id='".$cp->id()."'
 										WHERE
 											techlist_tech_id='".$arr['tech_id']."'
 											AND techlist_user_id='".$cu->id."';");

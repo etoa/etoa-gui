@@ -210,7 +210,7 @@
 			$this->launched = true;
 		}
 		
-		public function cancel($fleetId,$launchtime,$landtime,$targetId,$action,$stauts,$pilots)
+		public function cancel($fleetId,$launchtime,$landtime,$targetId,$action,$status,$pilots)
 		{
 			$this->fleetId=0;
 			$this->facility = self::F_CANCEL;

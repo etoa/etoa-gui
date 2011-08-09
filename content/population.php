@@ -80,16 +80,16 @@
 			if (isset($_POST['submit_people_work']) && checker_verify())
 			{
 				//zählt gesperrte Arbeiter
-        $check_res = dbquery("
-        SELECT
-        	SUM(buildlist_people_working)
-        FROM
-        	buildlist
-        WHERE
-        	buildlist_entity_id=".$cp->id."
-        	AND buildlist_people_working_status='1';");
-        $check_arr = mysql_fetch_array($check_res);
-
+        		$check_res = dbquery("
+        		SELECT
+        			SUM(buildlist_people_working)
+        		FROM
+        			buildlist
+        		WHERE
+        			buildlist_entity_id=".$cp->id."
+        		AND buildlist_people_working_status='1';");
+        		$working = 0;
+        		$check_arr = mysql_fetch_array($check_res);
 				$free_people=floor($cp->people)-$check_arr[0];
 				if (count($_POST['people_work'])>0)
 				{

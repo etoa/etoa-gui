@@ -831,47 +831,51 @@
 									{
 										if (!$battleban)
 										{
-											if(($this->sourceEntity->ownerAlliance() && $this->sourceEntity->owner->alliance->checkWar($this->targetEntity->ownerAlliance()))
-											|| $this->ownerId==$this->sourceEntity->lastUserCheck()
-											|| !($this->sourceEntity->ownerPoints()*USER_ATTACK_PERCENTAGE>$this->targetEntity->ownerPoints()  || $this->sourceEntity->ownerPoints()/USER_ATTACK_PERCENTAGE < $this->targetEntity->ownerPoints() ) 
-											|| $this->targetEntity->owner->isInactiv() 
-											|| $this->targetEntity->ownerLocked() )
+											if ($ai->allowActivePlayerEntities() 
+												|| $this->targetEntity->owner->isInactivLong() 
+												|| ($this->ownerId == $this->sourceEntity->lastUserCheck())
+												)
 											{
-												$actionObjs[$i] = $ai;
-											}
-											else
-											{
-												$this->error = "Der Besitzer des Ziels steht unter Anfängerschutz!  Die Punkte des Users m&uuml;ssen zwischen ".(USER_ATTACK_PERCENTAGE*100)."% und ".(100/USER_ATTACK_PERCENTAGE)."% von deinen Punkten liegen";
-											}
-										}
-									}
+												// 1. att allowed if war is active
+												// 2. or att allowed if last owner == this owner (invade time threshold)
+												// 3. or att allowed if user points are in limits
+												// 4. or att allowed if target user is inactive
+												// 5. or att allowed if target user is locked 
+												if(($this->sourceEntity->ownerAlliance() && $this->sourceEntity->owner->alliance->checkWar($this->targetEntity->ownerAlliance()))
+												|| $this->ownerId==$this->sourceEntity->lastUserCheck()
+												|| !($this->sourceEntity->ownerPoints()*USER_ATTACK_PERCENTAGE>$this->targetEntity->ownerPoints()  || $this->sourceEntity->ownerPoints()/USER_ATTACK_PERCENTAGE < $this->targetEntity->ownerPoints() ) 
+												|| $this->targetEntity->owner->isInactiv() 
+												|| $this->targetEntity->ownerLocked() )
+												{
+													$actionObjs[$i] = $ai;
+												}
+												else
+												{
+													$this->error = "Der Besitzer des Ziels steht unter Anfängerschutz!  Die Punkte des Users müssen zwischen ".(USER_ATTACK_PERCENTAGE*100)."% und ".(100/USER_ATTACK_PERCENTAGE)."% von deinen Punkten liegen";
+												}
+											} // if ($ai->allowActivePlayerEntities() || ($this->targetEntity->owner->isInactiv() && !$ai->allowActivePlayerEntities()))
+										} // if (!$battleban)
+									} // if ($ai->attitude() > 1)
 									else
 									{
 										$actionObjs[$i] = $ai;
 									}
-								}
+								} // if (!$this->targetEntity->ownerHoliday() || $ai->allowOnHoliday())
 								else
 								{
 									$this->error = "Der Besitzer des Zielst ist im Urlaub; viele Aktionen sind deshalb nicht möglich!";
 								}
-							}
+							} // if($this->targetEntity->ownerId()>0)
 							else
 							{
 								$actionObjs[$i] = $ai;
 							}
-						}
-					}
-				}
-			}	
+						} // if ($exclusiceAllowed)
+					} // Permission checks
+				} // foreach ($actions as $i)
+			} // else Flottensperre
 			return $actionObjs;			
 		}
-		
-		
-
-		
-
-		
-
 		
 		function getSpeed()
 		{
@@ -973,17 +977,39 @@
 		
 		function loadResource($id,$ammount,$finalize=0)
 		{
-			$ammount = max(0,$ammount);
+			// $ammount = max(0,$ammount);
 			$this->res[$id] = 0;
 			$this->calcResLoaded();
-			if ($id==4) {
-				$loaded = floor(min($ammount,$this->getCapacity(),$this->sourceEntity->getRes($id)-$this->getSupportFuel()-$this->getCosts()));
+			if ($ammount >= 0)
+			{
+				if ($id==4)
+				{
+					$loaded = floor(min($ammount,$this->getCapacity(),$this->sourceEntity->getRes($id)-$this->getSupportFuel()-$this->getCosts()));
+				}
+				elseif ($id==5) 
+				{
+					$loaded = floor(min($ammount,$this->getCapacity(),$this->sourceEntity->getRes($id)-$this->getSupportFood()-$this->getCostsFood()));
+				}
+				else 
+				{
+					$loaded = floor(min($ammount,$this->getCapacity(),$this->sourceEntity->getRes($id)));
+				}
 			}
-			elseif ($id==5) {
-				$loaded = floor(min($ammount,$this->getCapacity(),$this->sourceEntity->getRes($id)-$this->getSupportFood()-$this->getCostsFood()));
-			}
-			else {
-				$loaded = floor(min($ammount,$this->getCapacity(),$this->sourceEntity->getRes($id)));
+			else 
+			{
+				if ($id==4)
+				{
+					$loaded = floor(min($this->getCapacity(),max(0,$this->sourceEntity->getRes($id) + $ammount - $this->getSupportFuel() - $this->getCosts())));
+				}
+				elseif ($id==5) 
+				{
+					$loaded = floor(min($this->getCapacity(),max(0,$this->sourceEntity->getRes($id) + $ammount - $this->getSupportFood() - $this->getCostsFood())));
+				}
+				else 
+				{
+					$loaded = floor(min($this->getCapacity(),max(0,$this->sourceEntity->getRes($id) + $ammount)));
+				}
+				
 			}
 			$this->res[$id] = $loaded;
 			$this->calcResLoaded();
@@ -1005,7 +1031,24 @@
 			foreach ($resNames as $rk => $rn)
 			{
 				$id = $rk+1;
-				$ammount = $this->res[$id];
+				if ($this->res[$id] >= 0)
+				{
+					$ammount = $this->res[$id];
+				}
+				else
+				{
+					if ($id==4)
+					{
+						$ammount = max(0,$this->sourceEntity->getRes($id) + $this->res[$id] - $this->getSupportFuel() - $this->getCosts());
+					}
+					elseif ($id==5)
+					{
+						$ammount = max(0,$this->sourceEntity->getRes($id) + $this->res[$id] - $this->getSupportFood() - $this->getCostsFood());
+					}
+					else
+						$ammount = max(0,$this->sourceEntity->getRes($id) + $this->res[$id]);
+				}
+					
 				$this->res[$id] = 0;
 				$this->calcResLoaded();
 				if ($id==4) {
@@ -1162,7 +1205,7 @@
 		}
 		
 		function getAllianceSlots() {
-			if ($this->sourceEntity->ownerAlliance())
+			if ($this->sourceEntity->ownerAlliance() && isset($this->allianceSlots))
 			{
 				return $this->allianceSlots - count($this->aFleets) - count($this->sFleets);		
 			}

@@ -23,17 +23,17 @@
 		protected $lastOnline;
 		protected $acttime;
 		protected $points;
-    protected $blocked_from;
-    protected $blocked_to;
-    protected $ban_reason;
-    protected $ban_admin_id;
-    protected $hmode_from;
-    protected $hmode_to;
-	protected $holiday=null;
-	protected $locked=null;
-    protected $deleted;
+    	protected $blocked_from;
+    	protected $blocked_to;
+    	protected $ban_reason;
+    	protected $ban_admin_id;
+    	protected $hmode_from;
+    	protected $hmode_to;
+		protected $holiday=null;
+		protected $locked=null;
+    	protected $deleted;
 		protected $monitored;
-    protected $registered;
+    	protected $registered;
 		protected $chatadmin;
 		protected $admin;
 		protected $ip;
@@ -49,14 +49,14 @@
 		protected $allianceRankName;
 		protected $rank;
 		protected $rankHighest;
-    protected $specialistId;
-    protected $specialistTime;
-	protected $specialist = null;
-	protected $ghost;
-	protected $lastInvasion;
-	protected $allianceShippoints;
+    	protected $specialistId;
+    	protected $specialistTime;
+		protected $specialist = null;
+		protected $ghost;
+		protected $lastInvasion;
+		protected $allianceShippoints;
 
-	protected $sittingDays;
+		protected $sittingDays;
 
 		// Sub-objects and their id's
 		protected $raceId;
@@ -465,7 +465,7 @@
 			{
 				if (!$this->holiday)
 				{
-					if ($this->lastOnline<time()-USER_INACTIVE_SHOW*86400)
+					if ($this->lastOnline < time() - USER_INACTIVE_SHOW * 86400)
 					{
 						return true;
 					}
@@ -474,7 +474,21 @@
 			return false;
 		}
 
-
+		public function isInactivLong()
+		{
+			if (!$this->admin)
+			{
+				if (!$this->holiday)
+				{
+					if ($this->lastOnline < time() - USER_INACTIVE_LONG * 86400)
+					{
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+		
 		//
 		// Methods
 		//

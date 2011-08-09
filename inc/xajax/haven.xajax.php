@@ -12,6 +12,8 @@
 	$xajax->register(XAJAX_FUNCTION,"havenTargetInfo");
 	$xajax->register(XAJAX_FUNCTION,"havenBookmark");
 	$xajax->register(XAJAX_FUNCTION,"havenCheckRes");
+	$xajax->register(XAJAX_FUNCTION,"havenSetResAll");
+	$xajax->register(XAJAX_FUNCTION,"havenSetFetchAll");
 	$xajax->register(XAJAX_FUNCTION,"havenCheckPeople");
 	$xajax->register(XAJAX_FUNCTION,"havenCheckAction");
 	$xajax->register(XAJAX_FUNCTION,"havenAllianceAttack");
@@ -319,9 +321,6 @@
 	
 	  return $response;	
 	}
-
-
-
 
 	/**
 	* Verify ships and show target selector
@@ -1059,7 +1058,7 @@
 							<th>Aktionswahl</th>
 							<th colspan=\"2\">Ladung</th>
 						</tr>";
-						echo "<tr><td rowspan=\"8\">";
+						echo "<tr><td rowspan=\"9\">";
 						$actionsAvailable = 0;
 						foreach ($fleet->getAllowedActions() as $ac)
 						{
@@ -1089,49 +1088,54 @@
 						$tabindex = 1;
 						
 						echo "</td>
-						<th style=\"width:170px;\">
-						Freie Kapazität:</th>
+						<th style=\"width:170px;\">Freie Kapazität:</th>
 						<td style=\"width:150px;\" id=\"resfree\">".nf($fleet->getCapacity())."</td></tr>
 						<tr><th>Freie Passagierplätze:</th>
 						<td style=\"width:150px;\" id=\"peoplefree\">".nf($fleet->getPeopleCapacity())."</td>
 						</td></tr>
 						<tr id=\"resbox1\" style=\"display:;\"><th>".RES_ICON_METAL."".RES_METAL."</th>
-						<td><input type=\"text\" name=\"res1\" id=\"res1\" value=\"".$fleet->getLoadedRes(1)."\" size=\"8\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckRes(1,this.value)\" /> 
+						<td><input type=\"text\" name=\"res1\" id=\"res1\" value=\"".$fleet->getLoadedRes(1)."\" size=\"12\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckRes(1,this.value)\" /> 
 						<a href=\"javascript:;\" onclick=\"xajax_havenCheckRes(1,".floor($fleet->sourceEntity->getRes(1)).");\">max</a></td></tr>
 						<tr id=\"resbox2\" style=\"display:;\"><th>".RES_ICON_CRYSTAL."".RES_CRYSTAL."</th>
-						<td><input type=\"text\" name=\"res2\" id=\"res2\" value=\"".$fleet->getLoadedRes(2)."\" size=\"8\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckRes(2,this.value)\" /> 
+						<td><input type=\"text\" name=\"res2\" id=\"res2\" value=\"".$fleet->getLoadedRes(2)."\" size=\"12\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckRes(2,this.value)\" /> 
 						<a href=\"javascript:;\" onclick=\"xajax_havenCheckRes(2,".floor($fleet->sourceEntity->getRes(2)).");\">max</a></td></tr>
 						<tr id=\"resbox3\" style=\"display:;\"><th>".RES_ICON_PLASTIC."".RES_PLASTIC."</th>
-						<td><input type=\"text\" name=\"res3\" id=\"res3\" value=\"".$fleet->getLoadedRes(3)."\" size=\"8\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckRes(3,this.value)\" /> 
+						<td><input type=\"text\" name=\"res3\" id=\"res3\" value=\"".$fleet->getLoadedRes(3)."\" size=\"12\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckRes(3,this.value)\" /> 
 						<a href=\"javascript:;\" onclick=\"xajax_havenCheckRes(3,".floor($fleet->sourceEntity->getRes(3)).");\">max</a></td></tr>
 						<tr id=\"resbox4\" style=\"display:;\"><th>".RES_ICON_FUEL."".RES_FUEL."</th>
-						<td><input type=\"text\" name=\"res4\" id=\"res4\" value=\"".$fleet->getLoadedRes(4)."\" size=\"8\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckRes(4,this.value)\" /> 
+						<td><input type=\"text\" name=\"res4\" id=\"res4\" value=\"".$fleet->getLoadedRes(4)."\" size=\"12\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckRes(4,this.value)\" /> 
 						<a href=\"javascript:;\" onclick=\"xajax_havenCheckRes(4,".floor($fleet->sourceEntity->getRes(4)).");\">max</a></td></tr>
 						<tr id=\"resbox5\" style=\"display:;\"><th>".RES_ICON_FOOD."".RES_FOOD."</th>
-						<td><input type=\"text\" name=\"res5\" id=\"res5\" value=\"".$fleet->getLoadedRes(5)."\" size=\"8\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckRes(5,this.value)\" /> 
+						<td><input type=\"text\" name=\"res5\" id=\"res5\" value=\"".$fleet->getLoadedRes(5)."\" size=\"12\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckRes(5,this.value)\" /> 
 						<a href=\"javascript:;\" onclick=\"xajax_havenCheckRes(5,".floor($fleet->sourceEntity->getRes(5)).");\">max</a></td></tr>
 						<tr id=\"resbox6\" style=\"display:;\"><th>".RES_ICON_PEOPLE."Passagiere</th>
-						<td><input type=\"text\" name=\"resp\" id=\"resp\" value=\"".$fleet->capacityPeopleLoaded."\" size=\"8\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckPeople(this.value)\" /> 
+						<td><input type=\"text\" name=\"resp\" id=\"resp\" value=\"".$fleet->capacityPeopleLoaded."\" size=\"12\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckPeople(this.value)\" /> 
 						<a href=\"javascript:;\" onclick=\"xajax_havenCheckPeople(".floor($fleet->sourceEntity->people()).");\">max</a></td></tr>
+						<tr id=\"resbox7\" style=\"display:;\"><th id=\"respercent\">&nbsp;</th>
+						<td>&nbsp;
+						<a href=\"javascript:;\" onclick=\"xajax_havenSetResAll();\">Alles einladen</a></td></tr>
 						
 						<tr id=\"fetchbox1\" style=\"display:none;\"><th>".RES_ICON_METAL."".RES_METAL."</th>
-						<td><input type=\"text\" name=\"fetch1\" id=\"fres1\" value=\"0\" size=\"8\" onkeyup=\"FormatNumber(this.id,this.value, '".$fleet->getTotalCapacity()."', '', '');\"/> 
+						<td><input type=\"text\" name=\"fetch1\" id=\"fres1\" value=\"0\" size=\"12\" onkeyup=\"FormatNumber(this.id,this.value, '".$fleet->getTotalCapacity()."', '', '');\"/> 
 						<a href=\"javascript:;\" onclick=\"document.getElementById('fres1').value=".$fleet->getTotalCapacity()."\">max</a></td></tr>
 						<tr id=\"fetchbox2\" style=\"display:none;\"><th>".RES_ICON_CRYSTAL."".RES_CRYSTAL."</th>
-						<td><input type=\"text\" name=\"fetch2\" id=\"fres2\" value=\"0\" size=\"8\" onkeyup=\"FormatNumber(this.id,this.value, '".$fleet->getTotalCapacity()."', '', '');\"/> 
+						<td><input type=\"text\" name=\"fetch2\" id=\"fres2\" value=\"0\" size=\"12\" onkeyup=\"FormatNumber(this.id,this.value, '".$fleet->getTotalCapacity()."', '', '');\"/> 
 						<a href=\"javascript:;\" onclick=\"document.getElementById('fres2').value=".$fleet->getTotalCapacity()."\">max</a></td></tr>
 						<tr id=\"fetchbox3\" style=\"display:none;\"><th>".RES_ICON_PLASTIC."".RES_PLASTIC."</th>
-						<td><input type=\"text\" name=\"fetch3\" id=\"fres3\" value=\"0\" size=\"8\" onkeyup=\"FormatNumber(this.id,this.value, '".$fleet->getTotalCapacity()."', '', '');\"/> 
+						<td><input type=\"text\" name=\"fetch3\" id=\"fres3\" value=\"0\" size=\"12\" onkeyup=\"FormatNumber(this.id,this.value, '".$fleet->getTotalCapacity()."', '', '');\"/> 
 						<a href=\"javascript:;\" onclick=\"document.getElementById('fres3').value=".$fleet->getTotalCapacity()."\">max</a></td></tr>
 						<tr id=\"fetchbox4\" style=\"display:none;\"><th>".RES_ICON_FUEL."".RES_FUEL."</th>
-						<td><input type=\"text\" name=\"fetch4\" id=\"fres4\" value=\"0\" size=\"8\" onkeyup=\"FormatNumber(this.id,this.value, '".$fleet->getTotalCapacity()."', '', '');\"/> 
+						<td><input type=\"text\" name=\"fetch4\" id=\"fres4\" value=\"0\" size=\"12\" onkeyup=\"FormatNumber(this.id,this.value, '".$fleet->getTotalCapacity()."', '', '');\"/> 
 						<a href=\"javascript:;\" onclick=\"document.getElementById('fres4').value=".$fleet->getTotalCapacity()."\">max</a></td></tr>
 						<tr id=\"fetchbox5\" style=\"display:none;\"><th>".RES_ICON_FOOD."".RES_FOOD."</th>
-						<td><input type=\"text\" name=\"fetch5\" id=\"fres5\" value=\"0\" size=\"8\" onkeyup=\"FormatNumber(this.id,this.value, '".$fleet->getTotalCapacity()."', '', '');\"/> 
+						<td><input type=\"text\" name=\"fetch5\" id=\"fres5\" value=\"0\" size=\"12\" onkeyup=\"FormatNumber(this.id,this.value, '".$fleet->getTotalCapacity()."', '', '');\"/> 
 						<a href=\"javascript:;\" onclick=\"document.getElementById('fres5').value=".$fleet->getTotalCapacity()."\">max</a></td></tr>
 						<tr id=\"fetchbox6\" style=\"display:none;\"><th>".RES_ICON_PEOPLE."Passagiere</th>
-						<td><input type=\"text\" name=\"fetchp\" id=\"fresp\" value=\"0\" size=\"8\" onkeyup=\"FormatNumber(this.id,this.value, '".$fleet->getTotalPeopleCapacity()."', '', '');\"/> 
+						<td><input type=\"text\" name=\"fetchp\" id=\"fresp\" value=\"0\" size=\"12\" onkeyup=\"FormatNumber(this.id,this.value, '".$fleet->getTotalPeopleCapacity()."', '', '');\"/> 
 						<a href=\"javascript:;\" onclick=\"document.getElementById('fresp').value=".$fleet->getTotalPeopleCapacity()."\">max</a></td></tr>
+						<tr id=\"fetchbox7\" style=\"display:none;\"><th>&nbsp;</th>
+						<td>&nbsp;
+						<a href=\"javascript:;\" onclick=\"xajax_havenSetFetchAll();\">Alles einladen</a></td></tr>
 						
 						<tr id=\"msgHeader\" style=\"display:none;\"><th colspan=\"2\">Nachricht</th><th>Empfänger</th></tr>
 						<tr id=\"msg\" style=\"display:none;\"></tr>
@@ -1294,10 +1298,6 @@
 		return $response;			
 	}
 
-
-
-
-
 	/**
 	* Reset everything
 	*/
@@ -1376,10 +1376,20 @@
 				$response->assign('food','innerHTML',nf($fleet->getCostsFood())." t ".RES_FOOD."");
 				$response->assign('targetinfo','style.background',"#000");
 				
+				$target = true;
+				
 				if ($ent->entityCode()=='w' && $fleet->wormholeEntryEntity==NULL && $fleet->wormholeEnable)
 					$action = '<input id="setWormhole" tabindex="9" type="button" onclick="xajax_havenShowWormhole(xajax.getFormValues(\'targetForm\'))" value="Wurmloch auswählen">';
 				else
-					$action = "<input id=\"cooseAction\" tabindex=\"9\" type=\"submit\" value=\"Weiter zur Aktionsauswahl &gt;&gt;&gt;\"  /> &nbsp;";
+				{
+					if ($arr[1] != 'w')
+						$action = "<input id=\"cooseAction\" tabindex=\"9\" type=\"submit\" value=\"Weiter zur Aktionsauswahl &gt;&gt;&gt;\"  /> &nbsp;";
+					else
+					{ 
+						$action = '';
+						$target = false;
+					}
+				}
 				
 				if ($ent->ownerId()>0 && count($fleet->aFleets)) {
 					$alliance .= "<table style=\"width:100%;\">";
@@ -1403,7 +1413,10 @@
 				$action = "&nbsp; ";
 			}
 			
-			$submitButton = '&nbsp;<input tabindex="7" type="button" onclick="xajax_havenShowShips()" value="&lt;&lt; Zurück zur Schiffauswahl" />&nbsp;<input tabindex="8" type="button" onclick="xajax_havenReset()" value="Reset" />&nbsp;'.$action;
+			if ($target == true)
+				$submitButton = '&nbsp;<input tabindex="7" type="button" onclick="xajax_havenShowShips()" value="&lt;&lt; Zurück zur Schiffauswahl" />&nbsp;<input tabindex="8" type="button" onclick="xajax_havenReset()" value="Reset" />&nbsp;'.$action;
+			else 
+				$submitButton = '&nbsp;<input tabindex="8" type="button" onclick="xajax_havenReset()" value="Reset" />&nbsp;';
 		
 			$response->assign('submitbutton','innerHTML',$submitButton);
 			$response->assign('targetinfo','innerHTML',ob_get_contents());
@@ -1479,7 +1492,40 @@
 		$speedString = nf($fleet->getSpeed())." AE/h";
 		If ($fleet->sBonusSpeed>1)
 			$speedString .= " (inkl. ".get_percent_string($fleet->sBonusSpeed,1)." Mysticum-Bonus)";
+
+		$absX = (($csx - 1) * CELL_NUM_X) + $ccx;
+		$absY = (($csy - 1) * CELL_NUM_Y) + $ccy;	
+			
+		if ($fleet->owner->discovered($absX,$absY) == 0)
+			$code='u';
+		else 
+			$code = '';
+		
+			$res = dbquery("
+			SELECT
+				entities.id,
+				entities.code
+			FROM
+				entities
+			INNER JOIN	
+				cells
+			ON
+				entities.cell_id=cells.id
+				AND cells.sx=".$csx."
+				AND cells.sy=".$csy."
+				AND cells.cx=".$ccx."
+				AND cells.cy=".$ccy."
+				AND entities.pos=".$psp."
+			");
+		if (mysql_num_rows($res)>0 && !($code=='u' && $psp))
+			{
+				$arr=mysql_fetch_row($res);
 				
+				if ($code=='')
+					$ent = Entity::createFactory($arr[1],$arr[0]);
+				else
+					$ent = Entity::createFactory($code,$arr[0]);
+			}
 		echo "<img src=\"".$ent->imagePath()."\" style=\"float:left;\" >";
 				
 		echo "<br/>&nbsp;&nbsp; ".$ent." (".$ent->entityCodeString().", Besitzer: ".$ent->owner().")";
@@ -1490,11 +1536,22 @@
 		$response->assign('costs','innerHTML',nf($fleet->getCosts())." t ".RES_FUEL."");
 		$response->assign('food','innerHTML',nf($fleet->getCostsFood())." t ".RES_FOOD."");
 		$response->assign('targetinfo','style.background',"#000");
+		
+		$target = true;
 				
 		if ($ent->entityCode()=='w' && $fleet->wormholeEntryEntity==NULL && $fleet->wormholeEnable)
 			$action = '<input id="setWormhole" tabindex="9" type="button" onclick="xajax_havenShowWormhole(xajax.getFormValues(\'targetForm\'))" value="Wurmloch auswählen">';
 		else
-			$action = "<input id=\"cooseAction\" tabindex=\"9\" type=\"submit\" value=\"Weiter zur Aktionsauswahl &gt;&gt;&gt;\"  /> &nbsp;";
+		{
+			if ($arr[1] != 'w')
+				$action = "<input id=\"cooseAction\" tabindex=\"9\" type=\"submit\" value=\"Weiter zur Aktionsauswahl &gt;&gt;&gt;\"  /> &nbsp;";
+			else 
+			{
+				$action = '';
+				$target = false;
+			}
+		}
+		// $action = "<input id=\"cooseAction\" tabindex=\"9\" type=\"submit\" value=\"Weiter zur Aktionsauswahl &gt;&gt;&gt;\"  /> &nbsp;";
 					
 		if ($ent->ownerId()>0 && count($fleet->aFleets)) {
 			$alliance .= "<table style=\"width:100%;\">";
@@ -1509,7 +1566,11 @@
 			if ($counter)
 				$allianceStyle = '';
 		}
-		$submitButton = '&nbsp;<input tabindex="7" type="button" onclick="xajax_havenShowShips()" value="&lt;&lt; Zurück zur Schiffauswahl" />&nbsp;<input tabindex="8" type="button" onclick="xajax_havenReset()" value="Reset" />&nbsp;'.$action;
+		
+		if ($target == true)
+			$submitButton = '&nbsp;<input tabindex="7" type="button" onclick="xajax_havenShowShips()" value="&lt;&lt; Zurück zur Schiffauswahl" />&nbsp;<input tabindex="8" type="button" onclick="xajax_havenReset()" value="Reset" />&nbsp;'.$action;
+		else 
+			$submitButton = '&nbsp;<input tabindex="8" type="button" onclick="xajax_havenReset()" value="Reset" />&nbsp;';
 		
 		$response->assign('submitbutton','innerHTML',$submitButton);
 		$response->assign('targetinfo','innerHTML',ob_get_contents());
@@ -1535,8 +1596,96 @@
 	  
 		$response->assign('resfree','innerHTML',nf($fleet->getCapacity())." / ".nf($fleet->getTotalCapacity())	);
 		$response->assign('resfree','style.color',"#0f0");
-	  
+		$response->assign('respercent','innerHTML','');
+		
 	  $_SESSION['haven']['fleetObj']=serialize($fleet);
+	  
+	  return $response;					
+	}
+
+	function havenSetResAll()
+	{
+		$response = new xajaxResponse();
+		
+		$val = 0;
+		$erg = 0;
+		$sum = 0;
+		$loadPerc = 0;
+		
+		$fleet = unserialize($_SESSION['haven']['fleetObj']);
+			
+		for ($id = 1; $id < 6;$id++)
+		{
+			$erg = $fleet->loadResource($id, 0);
+			$sum += floor($fleet->sourceEntity->getRes($id));
+		}
+		
+		$loadPerc = min(1.00, $fleet->getCapacity() / $sum);
+		$response->assign('respercent','innerHTML','&nbsp;Ladung: '.round($loadPerc * 100, 2).'%');
+		if ($loadPerc < 1.00)
+			$response->assign('respercent','style.color',"#f00");
+		else 
+			$response->assign('respercent','style.color',"#0f0");
+				
+		for ($id = 1; $id < 6;$id++)
+		{
+			if ($id < 5)
+				$val = floor(($fleet->sourceEntity->getRes($id))*$loadPerc);
+			else 
+				$val = floor($fleet->sourceEntity->getRes($id));
+		
+			$val = max(0,intval(nf_back($val)));
+			$erg = $fleet->loadResource($id,$val);
+			$response->assign('res'.$id,'value',nf($erg));
+		}
+		$response->assign('resfree','innerHTML',nf($fleet->getCapacity())." / ".nf($fleet->getTotalCapacity())	);
+		$response->assign('resfree','style.color',"#0f0");
+
+		// max. People
+		$val = floor($fleet->sourceEntity->people());
+		$val = max(0,intval(nf_back($val)));
+		$erg = $fleet->loadPeople($val);
+		$response->assign('resp','value',nf($erg));
+		$response->assign('peoplefree','innerHTML',nf($fleet->getPeopleCapacity())." / ".nf($fleet->getTotalPeopleCapacity())	);
+		$response->assign('peoplefree','style.color',"#0f0");
+				
+		$_SESSION['haven']['fleetObj']=serialize($fleet);
+	  
+	  return $response;					
+	}
+	
+	function havenSetFetchAll()
+	{
+		$response = new xajaxResponse();
+		
+		$val = 0;
+		$erg = 0;
+		$sum = 0;
+		$loadPerc = 0;
+		
+		$fleet = unserialize($_SESSION['haven']['fleetObj']);
+			
+		for ($id = 1; $id < 6;$id++)
+		{
+			$erg = $fleet->loadResource($id, 0);
+			$sum += floor($fleet->sourceEntity->getRes($id));
+		}
+		
+		for ($id = 1; $id < 6;$id++)
+		{
+			$val = floor($fleet->getTotalCapacity($id));
+			$response->assign('fres'.$id,'value',nf($val));
+		}
+		$response->assign('resfree','innerHTML',nf($fleet->getCapacity())." / ".nf($fleet->getTotalCapacity())	);
+		$response->assign('resfree','style.color',"#0f0");
+
+		// max. People
+		$val = floor($fleet->getTotalPeopleCapacity());
+		$response->assign('fresp','value',nf($val));
+		$response->assign('peoplefree','innerHTML',nf($fleet->getPeopleCapacity())." / ".nf($fleet->getTotalPeopleCapacity())	);
+		$response->assign('peoplefree','style.color',"#0f0");
+				
+		$_SESSION['haven']['fleetObj']=serialize($fleet);
 	  
 	  return $response;					
 	}
@@ -1638,12 +1787,14 @@
 			$response->assign("fetchbox4","style.display",'');
 			$response->assign("fetchbox5","style.display",'');
 			$response->assign("fetchbox6","style.display",'');
+			$response->assign("fetchbox7","style.display",'');
 			$response->assign("resbox1","style.display",'none');
 			$response->assign("resbox2","style.display",'none');
 			$response->assign("resbox3","style.display",'none');
 			$response->assign("resbox4","style.display",'none');
 			$response->assign("resbox5","style.display",'none');
 			$response->assign("resbox6","style.display",'none');
+			$response->assign("resbox7","style.display",'none');
 			$response->assign("peoplefree","innerHTML",nf($fleet->getTotalPeopleCapacity()));
 			$response->assign("resfree","innerHTML",nf($fleet->getTotalCapacity()));
 		}
@@ -1655,12 +1806,14 @@
 			$response->assign("fetchbox4","style.display",'none');
 			$response->assign("fetchbox5","style.display",'none');
 			$response->assign("fetchbox6","style.display",'none');
+			$response->assign("fetchbox7","style.display",'none');
 			$response->assign("resbox1","style.display",'');
 			$response->assign("resbox2","style.display",'');
 			$response->assign("resbox3","style.display",'');
 			$response->assign("resbox4","style.display",'');
 			$response->assign("resbox5","style.display",'');
 			$response->assign("resbox6","style.display",'');
+			$response->assign("resbox7","style.display",'');
 			$response->assign('peoplefree','innerHTML',nf($fleet->getPeopleCapacity())." / ".nf($fleet->getTotalPeopleCapacity()));
 			$response->assign('resfree','innerHTML',nf($fleet->getCapacity())." / ".nf($fleet->getTotalCapacity()));
 		}

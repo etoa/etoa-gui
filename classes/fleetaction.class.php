@@ -66,6 +66,7 @@
 		protected $allowOwnEntities;
 		protected $allowNpcEntities;
 		protected $allowSourceEntity;
+		protected $allowActivePlayerEntities;
 		
 		protected $cancelable = true;
 		protected $visibleSource = true;
@@ -102,6 +103,7 @@
 		
 		// Other functions		
 		function allowPlayerEntities() { return $this->allowPlayerEntities; }
+		function allowActivePlayerEntities() { return $this->allowActivePlayerEntities; }
 		function allowOwnEntities() { return $this->allowOwnEntities; }
 		function allowNpcEntities() { return $this->allowNpcEntities; }
 		function allowSourceEntity() { return $this->allowSourceEntity; }

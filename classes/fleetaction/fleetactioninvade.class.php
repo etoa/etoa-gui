@@ -21,6 +21,7 @@
 			$this->allowNpcEntities = false;
 			$this->allowSourceEntity = false;
 			$this->allowAllianceEntities = false;
+			$this->allowActivePlayerEntities = (boolean)INVADE_ACTIVE_USER;
 			$this->allianceAction = false;
 		}
 

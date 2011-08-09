@@ -1050,6 +1050,7 @@
 									else
 									{
 										$bwait['metal'] = 0;
+										$bwmsg['metal'] = '';
 									}
 									
 									//Wartezeit Silizium
@@ -1061,6 +1062,7 @@
 									else
 									{ 
 										$bwait['crystal'] = 0;
+										$bwmsg['crystal'] = '';
 									}
 									
 									//Wartezeit PVC
@@ -1072,6 +1074,7 @@
 									else
 									{ 
 										$bwait['plastic'] = 0;
+										$bwmsg['plastic'] = '';
 									}
 									
 									//Wartezeit Tritium
@@ -1083,6 +1086,7 @@
 									else
 									{ 
 										$bwait['fuel'] = 0;
+										$bwmsg['fuel'] = '';
 									}
 									
 									//Wartezeit Nahrung
@@ -1094,6 +1098,7 @@
 									else
 									{
 										$bwait['food'] = 0;
+										$bwmsg['food'] = '';
 									}
 									
 									//Maximale Wartezeit ermitteln

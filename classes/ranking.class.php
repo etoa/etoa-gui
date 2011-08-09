@@ -489,9 +489,12 @@
 				{
 					while ($arr = mysql_fetch_assoc($res))
 					{
-						$p = round($building[$arr['buildlist_building_id']][$arr['buildlist_current_level']]);
-						$points+=$p;
-						$points_building+=$p;
+						if ($arr['buildlist_current_level'] > 0)
+						{
+							$p = round($building[$arr['buildlist_building_id']][$arr['buildlist_current_level']]);
+							$points+=$p;
+							$points_building+=$p;
+						}
 					}
 				}
 	

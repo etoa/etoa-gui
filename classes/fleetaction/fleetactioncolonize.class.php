@@ -16,6 +16,7 @@ Es ist zu beachten, dass man maximal 15 Planeten kontrollieren kann! Bei einer e
 			$this->attitude = 1;
 			
 			$this->allowPlayerEntities = false;
+			$this->allowActivePlayerEntities = false;
 			$this->allowOwnEntities = false;
 			$this->allowNpcEntities = true;
 			$this->allowSourceEntity = false;

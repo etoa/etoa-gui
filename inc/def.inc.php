@@ -72,6 +72,10 @@
 
 	define("FORUM_PATH","http://www.etoa.ch/forum");	// Forum Link
 	
+	define("DEVCENTER_PATH","http://dev.etoa.ch");	// Entwickler Link
+	define("DEVCENTER_ONCLICK","window.open('".DEVCENTER_PATH."','dev','width=1024,height=768,scrollbars=yes');");	// Entwickler Link
+	define("BUGREPORT_URL","http://dev.etoa.ch:8000/game/wiki/TicketTutorial");
+
 	define('CHAT_URL',"chatframe.php");	// Chat
 	define('CHAT_ONCLICK',"parent.top.location='chatframe.php';");
 
@@ -101,20 +105,20 @@
 	define('ONLINE_TIME',$cfg->get('online_threshold'));
 
 	//Paswort und Nicklänge
-	define("PASSWORD_MINLENGHT",$cfg->get('password_minlength')); 		// Minimale Passwortlänge
+	define("PASSWORD_MINLENGHT",$cfg->get('password_minlength')); 	// Minimale Passwortlänge
 	define("PASSWORD_MAXLENGHT",$cfg->get('password_minlength')); 	// Minimale Passwortlänge
-	define("NICK_MINLENGHT",$cfg->p1('nick_length'));							// Minimale Nicklänge
-	define("NICK_MAXLENGHT",$cfg->p2('nick_length'));							// Maximale Nicklänge
-	define("NAME_MAXLENGTH",$cfg->name_length->v);								// Minimale Nicklänge
+	define("NICK_MINLENGHT",$cfg->p1('nick_length'));				// Minimale Nicklänge
+	define("NICK_MAXLENGHT",$cfg->p2('nick_length'));				// Maximale Nicklänge
+	define("NAME_MAXLENGTH",$cfg->name_length->v);					// Minimale Nicklänge
 	
 	// Inaktive & Urlaubsmodus
-  define("MIN_UMOD_TIME",$cfg->hmode_days->v);									// Minimale Umode-Dauer
-  define("USER_INACTIVE_DELETE",$cfg->user_inactive_days->p1);	// Vergangene Zeit bis Löschung eines Users
-  define("USER_NOTLOGIN_DELETE",$cfg->user_inactive_days->p2);	// Vergangene Zeit bis Löschung falls nie eingeloggt
-  define("USER_INACTIVE_SHOW",$cfg->user_inactive_days->v);		// Zeit bis "Inaktiv" Status
-	define("USER_INACTIVE_TIME",time()-(24 * 3600 * $cfg->user_inactive_days->v));
-  define("USER_INACTIVE_LONG",14);		// Zeit bis "Inaktiv" Status
-	define("USER_INACTIVE_TIME_LONG",time()-(24*3600*14));
+  	define("MIN_UMOD_TIME",$cfg->hmode_days->v);					// Minimale Umode-Dauer
+  	define("USER_INACTIVE_DELETE",$cfg->user_inactive_days->p1);	// Vergangene Zeit bis Löschung eines Users (atm 21 Tage)
+  	define("USER_NOTLOGIN_DELETE",$cfg->user_inactive_days->p2);	// Vergangene Zeit bis Löschung falls nie eingeloggt & Zeit bis "Inaktiv" Status Long (atm 14 Tage)
+  	define("USER_INACTIVE_SHOW",$cfg->user_inactive_days->v);		// Zeit bis "Inaktiv" Status (atm 7 Tage)
+	define("USER_INACTIVE_TIME",time()-(24 * 3600 * $cfg->user_inactive_days->v)); // UNIX-Time (last user action atm -7d)
+  	define("USER_INACTIVE_LONG", $cfg->user_inactive_days->p2);		// Zeit bis "Inaktiv" Status Long (atm 14 Tage)
+	define("USER_INACTIVE_TIME_LONG",time() - (24 * 3600 * USER_INACTIVE_LONG)); // UNIX-Time (last user action long -14d)
 	
 	// Rohstoffbenennung
 	define("RES_METAL","Titan");
@@ -254,7 +258,7 @@
 	define("WEAPON_TECH_ID",8);								// ID der Waffentechnik
 	define("REGENA_TECH_ID",19);							// ID der Regenatechnik	
 	define("TARN_TECH_ID",11);								// ID der Tarntechnik	
-  define("COMPUTER_TECH_ID",25);            // ID der Tarntechnik  
+  	define("COMPUTER_TECH_ID",25);            // ID der Tarntechnik  
 	define("RECYC_TECH_ID",12);								// ID der Recyclingtechnologie	
 	define("BOMB_TECH_ID",15); 								// ID der Bombentechnik
 	define('GEN_TECH_ID',23);									// ID der Gentechnologie
@@ -346,21 +350,22 @@
   /*************************/
 
 	//Invasion
-	define("INVADE_POSSIBILITY",$cfg->invade_possibility->v);				// Grundinvasionschance
+	define("INVADE_POSSIBILITY",$cfg->invade_possibility->v);			// Grundinvasionschance
 	define("INVADE_MAX_POSSIBILITY",$cfg->invade_possibility->p1);		// MAX. Invasionschance
 	define("INVADE_MIN_POSSIBILITY",$cfg->invade_possibility->p2);		// Min. Invasionschance
 	define("INVADE_SHIP_DESTROY",$cfg->invade_ship_destroy->v);			// wird nicht benötigt!
+	define("INVADE_ACTIVE_USER", (boolean)$cfg->invade_active_users->v);// = true/1 um aktive user zu invasieren
 
 	// Sonstige Flottendefinitionen
-	define("FLEET_ACTION_LOG_CAT",13);	// Flotten Log ID (Kategorie)
+	define("FLEET_ACTION_LOG_CAT",13);		// Flotten Log ID (Kategorie)
 	define("FLEET_NOCONTROL_NUM",1);		// Anzahl Flotten die OHNE Flottenkontrolle fliegen können
-	define("TECH_SPEED_CAT",1);					// Kategorie der Antriebstechniken
+	define("TECH_SPEED_CAT",1);				// Kategorie der Antriebstechniken
 	define("DEFAULT_ACTION","to");			// Standartflug "Transport hinflug" ??? (wieso das?)
 
 	// Kampfsystem
-	define("BATTLE_ROUNDS",5); 																				// Anzahl Runden
-	define("DEF_RESTORE_PERCENT",$cfg->def_restore_percent->v);	// Prozentualer Wiederaufbau der Def
-	define("DEF_WF_PERCENT",$cfg->def_wf_percent->v);						// Def ins Trümmerfeld
+	define("BATTLE_ROUNDS",5); 											// Anzahl Runden
+	define("DEF_RESTORE_PERCENT",$cfg->def_restore_percent->v);			// Prozentualer Wiederaufbau der Def
+	define("DEF_WF_PERCENT",$cfg->def_wf_percent->v);					// Def ins Trümmerfeld
 	define("SHIP_WF_PERCENT",$cfg->ship_wf_percent->v);					// Ship ins Trümmerfeld
 	define("SHIP_BOMB_FACTOR",$cfg->ship_bomb_factor->v); 				// Chance-Faktor beim Bombardieren + Deaktivieren
 

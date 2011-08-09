@@ -851,13 +851,11 @@ function setFocus(theForm) {
  	theForm.message.focus();
 }
 
-
-
-function FormatNumber(id, num, max, decpoint, sep) 
+function FormatNumber(id, num, max, decpoint, sep)
 {
 	// Macht aus der Zahl einen String (sonst funktioniert replace nicht richtig)
 	var num = num.toString();
-	
+
 	// Löscht Trennzeichen aus der Zahl
 	var num = num.replace(/`/g, "");
 	
@@ -870,85 +868,220 @@ function FormatNumber(id, num, max, decpoint, sep)
 	// Erstellt den Absolut Wert der Zahl
 	var num = Math.abs(num);
 	
-  // check for missing parameters and use defaults if so 
-  if (decpoint == '') {
-    decpoint = ".";
-  }
-  if (sep == '') {
-    sep = "`";
-  } 
-  
-  if(max != '')
-  {
-  	var num = Math.min(max,num);
-  }
+	// check for missing parameters and use defaults if so 
+	if (decpoint == '')
+	{
+		decpoint = ".";
+	}
+	if (sep == '')
+	{
+		sep = "`";
+	} 
+ 
+	if(max != '')
+	{
+		var num = Math.min(max,num);
+	}
    
 	// Rundet die Zahl ab
 	var num = Math.floor(num);   
    
    
-  // need a string for operations
-  num = num.toString();
-  // separate the whole number and the fraction if possible
-  a = num.split(decpoint);
-  x = a[0]; // decimal
-  y = a[1]; // fraction
-  z = "";
+	// need a string for operations
+	num = num.toString();
+	// separate the whole number and the fraction if possible
+	var a = num.split(decpoint);
+	var x = a[0]; // decimal
+	var y = a[1]; // fraction
+	var z = "";
 
 
-  if (typeof(x) != "undefined") 
-  {
-    // reverse the digits. regexp works from left to right.
-    for (i=x.length-1;i>=0;i--)
-    {
-      z += x.charAt(i);
-    }
+	if (typeof(x) != "undefined") 
+	{
+			
+		// reverse the digits. regexp works from left to right.
+		for (var i=x.length-1;i>=0;i--)
+		{
+			z += x.charAt(i);
+		}
     
-    // add seperators. but undo the trailing one, if there
-    z = z.replace(/(\d{3})/g, "$1" + sep);
-    if (z.slice(-sep.length) == sep)
-    {
-      z = z.slice(0, -sep.length);
-    }
-    x = "";
-    
-    // reverse again to get back the number
-    for (i=z.length-1;i>=0;i--)
-    {
-      x += z.charAt(i);
-    }
-    // add the fraction back in, if it was there
-    if (typeof(y) != "undefined" && y.length > 0)
-    {
-      x += decpoint + y;
-    }
-  }
+		// add seperators. but undo the trailing one, if there
+		z = z.replace(/(\d{3})/g, "$1" + sep);
+		if (z.slice(-sep.length) == sep)
+		{
+			z = z.slice(0, -sep.length);
+		}
+		
+		x = "";	
+		// reverse again to get back the number
+		for (var i=z.length-1;i>=0;i--)
+		{
+			x += z.charAt(i);
+		}
+		// add the fraction back in, if it was there
+		if (typeof(y) != "undefined" && y.length > 0)
+		{
+			x += decpoint + y;
+		}
   
-  if (id!='return')
-  {
-  	document.getElementById(id).value=x;
-  }
-  else
-  {
-  	return x;
-  }
-}
+		if (id!='return')
+		{
+			document.getElementById(id).value=x;
+		}
+		else
+		{
+			return x;
+		}
+	} // if (typeof(x) != "undefined")
+} // function FormatNumber(id, num, max, decpoint, sep)
 
+function FormatSignedNumber(id, num, max, decpoint, sep)
+{
+	// Macht aus der Zahl einen String (sonst funktioniert replace nicht richtig)
+	var num = num.toString();
+
+	if (num == '-' || num == '0-' || num == '-0')
+	{
+		num = '-';
+		document.getElementById(id).value=num;
+	}
+	else
+	{
+	//}
+		// Löscht Trennzeichen aus der Zahl
+		var num = num.replace(/`/g, "");
+	
+		// Prüft, ob Wert eine Zahl ist
+		if(istSignedZahl(num)==false)
+		{
+			var num = 0;
+		}
+	
+		// Erstellt den Absolut Wert der Zahl
+		// var num = Math.abs(num);
+	
+		// check for missing parameters and use defaults if so 
+		if (decpoint == '')
+		{
+			decpoint = ".";
+		}
+		if (sep == '')
+		{
+			sep = "`";
+		} 
+  
+		if(max != '')
+		{
+			var num = Math.min(max,num);
+		}
+   
+		// Rundet die Zahl ab
+		var num = Math.floor(num);   
+   
+   
+		// need a string for operations
+		num = num.toString();
+		// separate the whole number and the fraction if possible
+		var a = num.split(decpoint);
+		var x = a[0]; // decimal
+		var y = a[1]; // fraction
+		var z = "";
+
+
+		if (typeof(x) != "undefined") 
+		{
+			var sign = false;
+			if (x.charAt(0) == "-")
+			{
+				// Loescht Vorzeichen aus der Zahl
+				x = x.replace(/-/g, "");
+				sign = true;
+			}
+			
+			// reverse the digits. regexp works from left to right.
+			for (var i=x.length-1;i>=0;i--)
+			{
+				z += x.charAt(i);
+			}
+    
+			// add seperators. but undo the trailing one, if there
+			z = z.replace(/(\d{3})/g, "$1" + sep);
+			if (z.slice(-sep.length) == sep)
+			{
+				z = z.slice(0, -sep.length);
+			}
+			
+			if(sign)
+				x = "-";
+			else
+				x = "";
+    
+			// reverse again to get back the number
+			for (var i=z.length-1;i>=0;i--)
+			{
+				x += z.charAt(i);
+			}
+			// add the fraction back in, if it was there
+			if (typeof(y) != "undefined" && y.length > 0)
+			{
+				x += decpoint + y;
+			}
+		}
+  
+		if (id!='return')
+		{
+			document.getElementById(id).value=x;
+		}
+		else
+		{
+			return x;
+		}
+	} // if (typeof(x) != "undefined") 
+} // function FormatSignedNumber(id, num, max, decpoint, sep)
 
 function istZahl(field)
 {
-   var Wert=true;
-   points=0;
-   for(i=0;i<field.length;i++)
-   {
-	   if(field.charAt(i) < "0"|| field.charAt(i) > "9")
-	   {
-        Wert=false;
-	   }
-   }
-   return Wert;
+	var Wert=true;
+	var points=0;
+	for(var i=0;i<field.length;i++)
+	{
+		if(field.charAt(i) < "0" || field.charAt(i) > "9")
+		{
+			Wert=false;
+		}
+	}
+	return Wert;
 }
 
+function istSignedZahl(field)
+{
+	var Wert=true;
+	var points=0;
+	for(var i=0;i<field.length;i++)
+	{
+		if((field.charAt(0) >= "0" && field.charAt(0) <= "9") || field.charAt(0) == "-" || field.charAt(0) == "+")
+		{
+			if(i != 0)
+			{
+				if(field.charAt(i) < "0" || field.charAt(i) > "9")
+				{
+					Wert=false;
+				}
+				else
+				{					
+				}
+			}
+			else
+			{
+			}
+		}
+		else
+		{
+			Wert=false;
+		}
+	}
+	return Wert;
+}
 
 // Such nach unerlaubten Zeichen in einem Text und gibt TRUE bei einem Treffer zurück
 function check_illegal_signs(str)

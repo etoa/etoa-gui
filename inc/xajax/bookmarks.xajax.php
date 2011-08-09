@@ -291,6 +291,7 @@ $xajax->register(XAJAX_FUNCTION,'showFleetCategorie');
 				
  				echo "<td ".tm($arr['ship_name'],"<img src=\"".IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$arr['ship_id']."_middle.".IMAGE_EXT."\" style=\"float:left;margin-right:5px;\">".text2html($arr['ship_shortcomment']."<br/>".$acstr."<br style=\"clear:both;\"/>")).">".$arr['ship_name']."</td>";
 				echo "<td width=\"110\">";
+				$tabulator = 1;
 				if ($arr['ship_launchable']==1)
 				{
 					echo "<input type=\"text\" 

@@ -83,15 +83,12 @@
 		$starti = $time-($totalSteps*5*60);
 	
 		// Horizontale Linien und Gr?ssen
-		if ($max > 0)
+		for ($i=0;$i<=ceil($max/100);$i++)
 		{
-			for ($i=0;$i<=ceil($max/100);$i++)
-			{
-				$y = $h-$borderBottom-($graphHeight/($max/100)*$i);
-				imagestring($im,2,$yLegend,$y-(imagefontheight(2)/2),$i*100,$colBlack);
-				if ($i!=0)
-					imageline($im,$borderLeftRight+1,$y,$w-$borderLeftRight-1,$y,$colGrey);
-			}
+			$y = $h-$borderBottom-($graphHeight/($max/100)*$i);
+			imagestring($im,2,$yLegend,$y-(imagefontheight(2)/2),$i*100,$colBlack);
+			if ($i!=0)
+			imageline($im,$borderLeftRight+1,$y,$w-$borderLeftRight-1,$y,$colGrey);
 		}
 		
 		$c = count($data);

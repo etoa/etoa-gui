@@ -43,17 +43,17 @@ function loadChat($minId)
 					if ($arr['user_id']==0)
 					{
 						$out.= "<span style=\"color:#aaa\">";
-						$out.= "&lt;".date("H:i",$arr['timestamp'])."&gt; ".stripslashes($arr['text']);
+						$out.= "&lt;".date("H:i",$arr['timestamp'])."&gt; ".htmlspecialchars(stripslashes($arr['text']));
 						$out.= "</span><br/>";
 					}
 					elseif ($arr['color']!="")
 					{
 						$out.= "<span style=\"color:".$arr['color']."\">";
-						$out.= "$adminstr&lt;<a style=\"color:".$arr['color']."\" href=\"../index.php?page=userinfo&id=".$arr['user_id']."\" target=\"main\">".$arr['nick']."</a> | ".date("H:i",$arr['timestamp'])."&gt; ".stripslashes($arr['text']);
+						$out.= "$adminstr&lt;<a style=\"color:".$arr['color']."\" href=\"../index.php?page=userinfo&id=".$arr['user_id']."\" target=\"main\">".$arr['nick']."</a> | ".date("H:i",$arr['timestamp'])."&gt; ".htmlspecialchars(stripslashes($arr['text']));
 						$out.= "</span><br/>";
 					}
 					else
-						$out.= "$adminstr&lt;<a style=\"color:#fff\" href=\"../index.php?page=userinfo&id=".$arr['user_id']."\" target=\"main\">".$arr['nick']."</a> | ".date("H:i",$arr['timestamp'])."&gt; ".stripslashes($arr['text'])."<br/>";
+						$out.= "$adminstr&lt;<a style=\"color:#fff\" href=\"../index.php?page=userinfo&id=".$arr['user_id']."\" target=\"main\">".$arr['nick']."</a> | ".date("H:i",$arr['timestamp'])."&gt; ".htmlspecialchars(stripslashes($arr['text']))."<br/>";
 
 					$lastid = $arr['id'];
 				}

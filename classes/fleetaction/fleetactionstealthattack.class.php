@@ -15,6 +15,7 @@ Bedingt jedoch, dass keine anderen Schiffe mitfliegen. Bis heute gibt es noch ke
 			$this->attitude = 3;
 			
 			$this->allowPlayerEntities = true;
+			$this->allowActivePlayerEntities = true;
 			$this->allowOwnEntities = false;
 			$this->allowNpcEntities = false;
 			$this->allowSourceEntity = false;

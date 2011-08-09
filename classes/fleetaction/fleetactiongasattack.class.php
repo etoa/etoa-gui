@@ -15,6 +15,7 @@ Die Chance einen erfolgreichen Gasangriff durchzuf&uuml;hren erh&ouml;ht sich, i
 			$this->attitude = 3;
 			
 			$this->allowPlayerEntities = true;
+			$this->allowActivePlayerEntities = true;
 			$this->allowOwnEntities = false;
 			$this->allowNpcEntities = false;
 			$this->allowSourceEntity = false;

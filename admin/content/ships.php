@@ -232,6 +232,7 @@
 					;";
 
 			// Suchquery generieren
+			$sql ='';
 			if ($_SESSION['shipqueue']['query']=="")
 			{
 				if ($_POST['planet_id']!="")

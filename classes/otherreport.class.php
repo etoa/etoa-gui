@@ -491,11 +491,11 @@ class OtherReport extends Report
 				break;
 			case 'actionshot':
 				$action = FleetAction::createFactory($this->actionCode);
-				echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' wurde beim Ziel '.$ent2->detailLink().' beim durchführen der Aktion '.$action->name().' abgeschossen.';
+				echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' wurde beim Ziel '.$ent1->detailLink().' beim durchführen der Aktion '.$action->name().' abgeschossen.';
 				break;
 			case 'actionfailed':
 				$action = FleetAction::createFactory($this->actionCode);
-				echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' versuchte beim Ziel '.$ent2->detailLink().' die Aktion '.$action->name().' durchzuführen. Leider war kein Schiff mehr in der Flotte, welches die Aktion ausf&uml;hren konnte, deshalb schlug der Versuch fehl und die Flotte machte sich auf den R&uml;ckweg!<br />';
+				echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' versuchte beim Ziel '.$ent1->detailLink().' die Aktion '.$action->name().' durchzuführen. Leider war kein Schiff mehr in der Flotte, welches die Aktion ausführen konnte, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!<br />';
 				break;
 			default:
 				dump($this);

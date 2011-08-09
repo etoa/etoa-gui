@@ -7,7 +7,8 @@
 	
 	if (isset($_GET['id']))
 	{
-		if ($b_level==0) $b_level==1;
+		if (!isset($b_level)) $b_level = 0;
+		if ($b_level == 0) $b_level = 1;
 		$res = dbquery("
 		SELECT 
 			tech_id,

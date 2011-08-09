@@ -16,6 +16,7 @@ Asteroidenfelder sind aber nicht unbegrenzt verfügbar. Wenn man sie aufgebrauch
 			$this->attitude = 0;
 			
 			$this->allowPlayerEntities = false;
+			$this->allowActivePlayerEntities = false;
 			$this->allowOwnEntities = false;
 			$this->allowNpcEntities = true;
 			$this->allowSourceEntity = false;

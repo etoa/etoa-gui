@@ -15,6 +15,7 @@
 			$this->attitude = 0;
 			
 			$this->allowPlayerEntities = true;
+			$this->allowActivePlayerEntities = true;
 			$this->allowOwnEntities = true;
 			$this->allowNpcEntities = false;
 			$this->allowSourceEntity = true;

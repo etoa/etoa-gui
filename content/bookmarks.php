@@ -72,19 +72,33 @@
 			$speed = max(1,min(100,nf_back($_POST['value'])));
 			
 			// Create restring
-			$freight = max(0,intval(nf_back($_POST['res0']))).",".
+			$freight = intval(nf_back_sign($_POST['res0'])).",".
+				intval(nf_back_sign($_POST['res1'])).",".
+				intval(nf_back_sign($_POST['res2'])).",".
+				intval(nf_back_sign($_POST['res3'])).",".
+				intval(nf_back_sign($_POST['res4'])).",".
+				intval(nf_back_sign($_POST['res5']))."";
+				
+			/*$fetch = intval(nf_back_sign($_POST['fetch0'])).",".
+				intval(nf_back_sign($_POST['fetch1'])).",".
+				intval(nf_back_sign($_POST['fetch2'])).",".
+				intval(nf_back_sign($_POST['fetch3'])).",".
+				intval(nf_back_sign($_POST['fetch4'])).",".
+				intval(nf_back_sign($_POST['fetch5']))."";*/
+
+			/*$freight = max(0,intval(nf_back($_POST['res0']))).",".
 				max(0,intval(nf_back($_POST['res1']))).",".
 				max(0,intval(nf_back($_POST['res2']))).",".
 				max(0,intval(nf_back($_POST['res3']))).",".
 				max(0,intval(nf_back($_POST['res4']))).",".
-				max(0,intval(nf_back($_POST['res5'])))."";
+				max(0,intval(nf_back($_POST['res5']))).""; */
 				
 			$fetch = max(0,intval(nf_back($_POST['fetch0']))).",".
 				max(0,intval(nf_back($_POST['fetch1']))).",".
 				max(0,intval(nf_back($_POST['fetch2']))).",".
 				max(0,intval(nf_back($_POST['fetch3']))).",".
 				max(0,intval(nf_back($_POST['fetch4']))).",".
-				max(0,intval(nf_back($_POST['fetch5'])))."";
+				max(0,intval(nf_back($_POST['fetch5']))).""; 
 				
 			// Save new bookmark
 			if (isset($_POST['submitNew']))
@@ -542,55 +556,55 @@
 			<tr>
 				<th>'.RES_ICON_METAL.''.RES_METAL.'</th>
 				<td>
-					<input type="text" name="res0" id="res0" value="'.$data['res'][0].'" size="9" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
+					<input type="text" name="res0" id="res0" value="'.$data['res'][0].'" size="16" onkeyup="FormatSignedNumber(this.id,this.value, \'\', \'\', \'\');" />
 				</td>
 				<td>
-					<input type="text" name="fetch0" id="fetch0" value="'.$data['fetch'][0].'" size="9" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
+					<input type="text" name="fetch0" id="fetch0" value="'.$data['fetch'][0].'" size="16" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
 				</td>
 			</tr>
 			<tr>
 				<th>'.RES_ICON_CRYSTAL.''.RES_CRYSTAL.'</th>
 				<td>
-					<input type="text" name="res1" id="res1" value="'.$data['res'][1].'" size="9" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
+					<input type="text" name="res1" id="res1" value="'.$data['res'][1].'" size="16" onkeyup="FormatSignedNumber(this.id,this.value, \'\', \'\', \'\');" />
 				</td>
 				<td>
-					<input type="text" name="fetch1" id="fetch1" value="'.$data['fetch'][1].'" size="9" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
+					<input type="text" name="fetch1" id="fetch1" value="'.$data['fetch'][1].'" size="16" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
 				</td>
 			</tr>
 			<tr>
 				<th>'.RES_ICON_PLASTIC.''.RES_PLASTIC.'</th>
 				<td>
-					<input type="text" name="res2" id="res2" value="'.$data['res'][2].'" size="9" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
+					<input type="text" name="res2" id="res2" value="'.$data['res'][2].'" size="16" onkeyup="FormatSignedNumber(this.id,this.value, \'\', \'\', \'\');" />
 				</td>
 				<td>
-					<input type="text" name="fetch2" id="fetch2" value="'.$data['fetch'][2].'" size="9" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
+					<input type="text" name="fetch2" id="fetch2" value="'.$data['fetch'][2].'" size="16" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
 				</td>
 			</tr>
 			<tr>
 				<th>'.RES_ICON_FUEL.''.RES_FUEL.'</th>
 				<td>
-					<input type="text" name="res3" id="res3" value="'.$data['res'][3].'" size="9" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
+					<input type="text" name="res3" id="res3" value="'.$data['res'][3].'" size="16" onkeyup="FormatSignedNumber(this.id,this.value, \'\', \'\', \'\');" />
 				</td>
 				<td>
-					<input type="text" name="fetch3" id="fetch3" value="'.$data['fetch'][3].'" size="9" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
+					<input type="text" name="fetch3" id="fetch3" value="'.$data['fetch'][3].'" size="16" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
 				</td>
 			</tr>
 			<tr>
 				<th>'.RES_ICON_FOOD.''.RES_FOOD.'</th>
 				<td>
-					<input type="text" name="res4" id="res4" value="'.$data['res'][4].'" size="9" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
+					<input type="text" name="res4" id="res4" value="'.$data['res'][4].'" size="16" onkeyup="FormatSignedNumber(this.id,this.value, \'\', \'\', \'\');" />
 				</td>
 				<td>
-					<input type="text" name="fetch4" id="fetch4" value="'.$data['fetch'][4].'" size="9" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
+					<input type="text" name="fetch4" id="fetch4" value="'.$data['fetch'][4].'" size="16" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
 				</td>
 			</tr>
 			<tr>
 				<th>'.RES_ICON_PEOPLE.'Passagiere</th>
 				<td>
-					<input type="text" name="res5" id="res5" value="'.$data['res'][5].'" size="9" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
+					<input type="text" name="res5" id="res5" value="'.$data['res'][5].'" size="16" onkeyup="FormatSignedNumber(this.id,this.value, \'\', \'\', \'\');" />
 				</td>
 				<td>
-					<input type="text" name="fetch5" id="fetch5" value="'.$data['fetch'][5].'" size="9" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
+					<input type="text" name="fetch5" id="fetch5" value="'.$data['fetch'][5].'" size="16" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
 				</td>
 			</tr>';
 		tableEnd();

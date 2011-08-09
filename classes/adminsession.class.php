@@ -177,6 +177,7 @@ class AdminSession extends Session
 		global $_GET, $_POST;
 		// 1984
 		$req = "";
+		$page= "";
 		foreach ($_GET as $k=>$v)
 		{
 			if ($k!="page")

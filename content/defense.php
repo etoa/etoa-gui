@@ -802,7 +802,7 @@
 									<th style=\"width:80px;\" colspan=\"2\">Verbleibend</th>
 								</tr>";
 							echo "<tr>";
-							echo "<td colspan=\"2\">".$ships[$data['queue_def_id']]['def_name']."</td>";
+							echo "<td colspan=\"2\">".$defs[$data['queue_def_id']]['def_name']."</td>";
 							echo "<td>".df(time()-$obj_t_passed,1)."</td>";
 							echo "<td>".df(time()+$obj_t_remaining,1)."</td>";
 							echo "<td colspan=\"2\">".tf($obj_t_remaining)."</td>

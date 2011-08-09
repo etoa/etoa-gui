@@ -175,7 +175,7 @@
 	    	$text = '';
 	    }			
 
-			if ($cu->properties->msgSignature)
+		if ($cu->properties->msgSignature)
 	    {
 	    	$text = "\n\n".$cu->properties->msgSignature.$text;
 	    }

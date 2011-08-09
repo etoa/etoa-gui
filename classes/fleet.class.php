@@ -521,7 +521,7 @@
 						}
 						
 						$log = new Fleetlog($this->ownerId,$this->sourceId);
-						$log->cancel($this->id,$this->launchTime,$this->landTime,$this->targetId,$this->actionCode,$this->stauts,$this->pilots);
+						$log->cancel($this->id,$this->launchTime,$this->landTime,$this->targetId,$this->actionCode,$this->status,$this->pilots);
 						$log->addFleetRes(array($this->resMetal,$this->resCrystal,$this->resPlastic,$this->resFuel,$this->resFood),$this->resPeople,null,false);
 						$tottime = $this->landTime() - $this->launchTime + $this->nextActionTime;
 						$difftime = time() - $this->launchTime;
@@ -585,7 +585,7 @@
 		*/
 		function returnFlight()
 		{
-			if ($this->stauts == 0)
+			if ($this->status == 0)
 			{
 				if ($this->landTime() > time())
 					$difftime = $this->landTime() - $this->launchTime;

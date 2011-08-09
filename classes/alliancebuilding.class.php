@@ -115,7 +115,15 @@
 			$memberFactor = 1 + ($members-1) * $cfg->get('alliance_membercosts_factor');
 			$bc=array();
 			for ($i=1;$i<=6;$i++)
-				$bc[$i] = ceil($this->costs[$i] * $factor * $memberFactor);
+			{
+				if (isset($this->costs[$i]))
+					$bc[$i] = ceil($this->costs[$i] * $factor * $memberFactor);
+				else
+				{
+					$this->costs[$i] = 0;
+					$bc[$i] = ceil($this->costs[$i] * $factor * $memberFactor);
+				}
+			}
 			return $bc;
 		}
 		
