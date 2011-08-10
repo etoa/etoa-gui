@@ -193,7 +193,6 @@
 			
 			while ($arr = mysql_fetch_assoc($res))
 			{
-				echo "test";
 				$queue[$arr['queue_id']] = $arr;
 				$queue_entity[$arr['queue_def_id']] = $arr;
 			}
