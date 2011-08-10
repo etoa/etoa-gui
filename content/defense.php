@@ -193,6 +193,7 @@
 			
 			while ($arr = mysql_fetch_assoc($res))
 			{
+				echo "test";
 				$queue[$arr['queue_id']] = $arr;
 				$queue_entity[$arr['queue_def_id']] = $arr;
 			}
@@ -526,7 +527,7 @@
 							$cp->resFuel-=$bc['fuel'];
 							$cp->resFood-=$bc['food'];
 
-							// Bauzeit pro Schiff berechnen
+							// Bauzeit pro Def berechnen
 							$btime = ($defs[$def_id]['def_costs_metal'] 
 								+ $defs[$def_id]['def_costs_crystal'] 
 								+ $defs[$def_id]['def_costs_plastic'] 
@@ -580,6 +581,8 @@
 							$queue[$deflist_id]['queue_starttime'] = $start_time;
 							$queue[$deflist_id]['queue_endtime'] = $end_time;
 							$queue[$deflist_id]['queue_objtime'] = $obj_time;
+							
+							$queue_entity[$def_id]['queue_cnt'] += $def_id;
 
 
 							//Log schreiben
