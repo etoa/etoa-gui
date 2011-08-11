@@ -56,10 +56,10 @@ if (Alliance::checkActionRights('editmembers'))
 				}
 				ok_msg("&Auml;nderungen wurden übernommen!");
 			}
-			
+
 			// Handle user move from wing to wing or main
 			if (count($ally->wings) > 0)
-			{	
+			{
 				if (isset($_POST['moveuser']) && count($_POST['moveuser'])>0)
 				{
 					foreach ($_POST['moveuser'] as $wf => $wd)
@@ -78,23 +78,23 @@ if (Alliance::checkActionRights('editmembers'))
 									{
 										$ally->wings[$wf]->kickMember($uk);
 									}
-									
+
 									if ($wt == $ally->id)
 									{
 										$ally->addMember($uk);
-										success_msg($ally->members[$uk]." wurde umgeteilt!");						
+										success_msg($ally->members[$uk]." wurde umgeteilt!");
 									}
 									else
 									{
 										$ally->wings[$wt]->addMember($uk);
-										success_msg($ally->wings[$wt]->members[$uk]." wurde verschoben!");						
-									}			
+										success_msg($ally->wings[$wt]->members[$uk]." wurde verschoben!");
+									}
 								}
 							}
 						}
 					}
-				}			
-			}			
+				}
+			}
 		}
 
 		// Gründer wechseln
@@ -112,7 +112,7 @@ if (Alliance::checkActionRights('editmembers'))
 		}
 
 		// Mitglied kicken
-		if (isset($_GET['kickuser']) && intval($_GET['kickuser'])>0 && checker_verify())
+		if (isset($_GET['kickuser']) && intval($_GET['kickuser'])>0 && checker_verify() && !$cu->alliance->isAtWar())
 		{
 			if (isset($ally->members[$_GET['kickuser']]))
 			{
@@ -153,7 +153,7 @@ if (Alliance::checkActionRights('editmembers'))
 				echo "<td style=\"color:#0f0;\">online</td>";
 			else
 				echo "<td>".date("d.m.Y H:i",$mv->acttime)."</td>";
-			
+
 			// Rang
 			if ($mk == $ally->founderId)
 				echo "<td>Gründer</td>";
@@ -173,23 +173,22 @@ if (Alliance::checkActionRights('editmembers'))
 			if (count($ally->wings) > 0)
 			{
 				echo "<td>";
-				if ($ally->founderId != $mk)
-				{
+				if ($ally->founderId != $mk && !$ally->isAtWar()) {
 						echo "<select name=\"moveuser[".$ally->id."][".$mk."]\">
 					<option value=\"\">Keine Änderung</option>";
 					foreach ($ally->wings as $wk => $wv)
 					{
 						echo "<option value=\"".$wk."\">Wing ".$wv."</option>";
-					}								
+					}
 					echo "</select>";
-				}
-				else
-				{
+				} elseif ($ally->founderId == $mk) {
 					echo "Gründer";
+				} else {
+					echo "";
 				}
 				echo "</td>";
     	}
-    	
+
 			// Aktionen
 			echo "<td>";
 			if ($cu->id != $mk)
@@ -198,20 +197,20 @@ if (Alliance::checkActionRights('editmembers'))
 			if ($isFounder && $cu->id != $mk)
 				echo "<a href=\"?page=alliance&amp;action=editmembers&amp;setfounder=".$mk."\" onclick=\"return confirm('Soll der Spieler \'".$mv."\' wirklich zum Gründer bef&ouml;rdert werden? Dir werden dabei die Gründerrechte entzogen!');\">Gründer</a><br/>";
 
-			if ($cu->id != $mk && $mk != $ally->founderId)
+			if ($cu->id != $mk && $mk != $ally->founderId && !$cu->alliance->isAtWar())
 			{
 				echo "<a href=\"?page=$page&amp;action=editmembers&amp;kickuser=".$mk.checker_get_link_key()."\" onclick=\"return confirm('Soll ".$mv." wirklich aus der Allianz ausgeschlosen werden?');\">Kicken</a>";
 			}
 			echo "</td></tr>";
 		}
 		tableEnd();
-		
-		
+
+
 
 		if (count($ally->wings) > 0)
 		{
 			foreach ($ally->wings as $wid => $wdata)
-			{			
+			{
 				tableStart("Mitglieder des Wings ".$wdata);
 				echo "<tr>
 					<th>Name:</th>
@@ -231,8 +230,7 @@ if (Alliance::checkActionRights('editmembers'))
 						else
 							echo "<td>".date("d.m.Y H:i",$udata->acttime)."</td>";
 						echo "<td>";
-						if ($wdata->founderId != $uid)
-						{
+						if ($wdata->founderId != $uid && !$wdata->isAtWar()) {
 								echo "<select name=\"moveuser[".$wid."][".$uid."]\">
 							<option value=\"\">Keine Änderung</option>
 							<option value=\"".$ally->id."\">Hauptallianz ".$ally."</option>";
@@ -240,12 +238,14 @@ if (Alliance::checkActionRights('editmembers'))
 							{
 								if ($k != $wid)
 									echo "<option value=\"".$k."\">Wing ".$v."</option>";
-							}								
+							}
 							echo "</select>";
+						} elseif ($wdata->founderId == $uid) {
+							echo "Gründer";
 						}
 						else
 						{
-							echo "Gründer";
+							echo "";
 						}
 						echo "</td><td>
 						<a href=\"?page=messages&amp;mode=new&amp;message_user_to=".$uid."\">Nachricht</a><br/>
@@ -253,9 +253,9 @@ if (Alliance::checkActionRights('editmembers'))
 				}
 				tableEnd();
 			}
-		}		
-		
-		
+		}
+
+
 		echo "<br/><br/><input type=\"submit\" name=\"editmemberssubmit\" value=\"&Uuml;bernehmen\" />&nbsp;&nbsp;&nbsp;
 		<input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"Zur&uuml;ck\" /></form>";
 

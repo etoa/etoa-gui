@@ -20,14 +20,14 @@
 	// $Date$
 	// $Rev$
 	//
-	
+
 	/**
 	* Create, view and manage an alliance
 	*
 	* @author MrCage <mrcage@etoa.ch>
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
-	*/	
- 
+	*/
+
 	// BEGIN SKRIPT //
 	echo "<h1>Allianz</h1>";
 	echo "<div id=\"allianceinfo\"></div>"; //nur zu entwicklungszwecken!
@@ -35,7 +35,7 @@
 
 /**************************************************/
 /* Allianzinformationen                           */
-/**************************************************/	
+/**************************************************/
 	if ((isset($_GET['info_id']) && intval($_GET['info_id'])>0) || (isset($_GET['id']) && intval($_GET['id'])>0))
 	{
 		require("alliance/info.inc.php");
@@ -55,8 +55,8 @@
 /* User ist in der Allianz                        */
 /**************************************************/
 
-			$myRankId = $cu->allianceRankId;			
-			
+			$myRankId = $cu->allianceRankId;
+
 			// Allianzdaten laden
 			$res = dbquery("
 			SELECT
@@ -92,7 +92,7 @@
                 AND alliance_ranks.rank_alliance_id=".$cu->allianceId."
                 AND alliance_rankrights.rr_right_id=".$rightarr['right_id']."
                 AND alliance_rankrights.rr_rank_id=".$myRankId.";");
-						
+
 						if (mysql_num_rows($check_res)>0)
 							$myRight[$rightarr['right_key']]=true;
 						else
@@ -191,7 +191,7 @@
 				//
 				// Allianz auflösen bestätigen
 				//
-				elseif (isset($_GET['action']) && $_GET['action']=="liquidate")
+				elseif (isset($_GET['action']) && $_GET['action']=="liquidate"  && !$cu->alliance->isAtWar())
 				{
 					if (Alliance::checkActionRights('liquidate'))
 					{
@@ -218,7 +218,7 @@
 					if (Alliance::checkActionRights('relations'))
 					{
 						require("alliance/diplomacy.inc.php");
-					}					
+					}
 				}
 
 				//
@@ -257,17 +257,17 @@
 				//
 				// Allianz verlassen (Durchführen)
 				//
-				elseif (isset($_GET['action']) && $_GET['action']=="leave" && !$isFounder)
+				elseif (isset($_GET['action']) && $_GET['action']=="leave" && !$isFounder && !$cu->alliance->isAtWar())
 				{
 					echo "<h2>Allianz-Austritt</h2>";
 					if ($cu->allianceId!=0)
 					{
 						$ally->kickMember($cu->id,0);
 
-						
+
 						ok_msg("Du bist aus der Allianz ausgetreten!");
 						echo "<input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"&Uuml;bersicht\" />";
-						
+
 
 						//add_log(5,"Der Spieler [b]".$cu->nick."[/b] ist aus der Allianz [b][".$allys[$cu->allianceId]['tag']."] ".$allys[$cu->allianceId]['name']."[/b] ausgetreten!",time());
 
@@ -299,7 +299,7 @@
 							// Prüfen, ob der Allianzname bzw. Tag nicht nur aus Leerschlägen besteht
 							$check_tag = str_replace(' ','',$_POST['alliance_tag']);
 							$check_name = str_replace(' ','',$_POST['alliance_name']);
-							
+
 							if($check_name!='' && $check_tag!='')
 							{
 								$check_tag = check_illegal_signs($_POST['alliance_tag']);
@@ -309,18 +309,18 @@
 								{
 									// Prüft, ob dieser Tag oder Name bereits vorhanden ist
 									$check_res = dbquery("
-									SELECT 
+									SELECT
 										COUNT(*)
-									FROM 
+									FROM
 										alliances
-									WHERE 
+									WHERE
 										(alliance_tag='".$_POST['alliance_tag']."'
 										OR alliance_name='".$_POST['alliance_name']."')
 										AND alliance_id!='".$cu->allianceId."'
 									;");
 									// Name / Tag sind bereits vergeben
 									if(mysql_result($check_res,0)>0)
-									{										
+									{
 										error_msg("Der gewünschte Tag oder Name ist bereits vergeben!");
 									}
 									// Name / Tag sind noch nicht vergeben
@@ -339,13 +339,13 @@
 								error_msg("Der Allianzname und Allianztag dürfen nicht nur aus Leerzeichen besttehen!");
 							}
 						}
-						
+
 						// Name und/oder Tag wird übernommen
 						if($check)
 						{
 							$alliance_tag = $_POST['alliance_tag'];
 							$alliance_name = $_POST['alliance_name'];
-							
+
 							add_alliance_history($cu->allianceId,"[b]".$cu->nick."[/b] ändert den Allianzname und/oder Tag von [b]".$arr['alliance_name']." (".$arr['alliance_tag'].")[/b] in [b]".$_POST['alliance_name']." (".$_POST['alliance_tag'].")[/b]!");
 						}
 						// Name und/oder Tag sind fehlerhaft
@@ -354,8 +354,8 @@
 							$alliance_tag = $arr['alliance_tag'];
 							$alliance_name = $arr['alliance_name'];
 						}
-						
-						
+
+
 						// Prüft Korrektheit des Allianzbildes
             $alliance_img_string="";
             if (isset($_POST['alliance_img_del']) && $_POST['alliance_img_del']==1)
@@ -373,39 +373,39 @@
 	          	$imup->setMaxSize(ALLIANCE_IMG_MAX_SIZE);
 	          	$imup->setMaxDim(ALLIANCE_IMG_MAX_WIDTH,ALLIANCE_IMG_MAX_HEIGHT);
 	          	$imup->enableResizing(ALLIANCE_IMG_WIDTH,ALLIANCE_IMG_HEIGHT);
-	          	
+
 							if ($imup->process())
 							{
 								$alliance_img_string="alliance_img='".$imup->getResultName()."',
                 alliance_img_check=1,";
 								ok_msg("Allianzbild hochgeladen!");
-							}          	
-	          }                     
+							}
+	          }
 
 
 						if(!isset($message))
 						{
-							$message = "";	
+							$message = "";
 						}
-						
+
 						dbquery("
-						UPDATE 
-							alliances 
-						SET 
-							alliance_tag='".addslashes($alliance_tag)."', 
-							alliance_name='".addslashes($alliance_name)."', 
+						UPDATE
+							alliances
+						SET
+							alliance_tag='".addslashes($alliance_tag)."',
+							alliance_name='".addslashes($alliance_name)."',
 							alliance_text='".addslashes($_POST['alliance_text'])."',
 						 	".$alliance_img_string."
 							alliance_url='".$_POST['alliance_url']."',
 							alliance_accept_applications='".$_POST['alliance_accept_applications']."',
 							alliance_accept_bnd='".$_POST['alliance_accept_bnd']."',
 							alliance_public_memberlist='".$_POST['alliance_public_memberlist']."'
-						WHERE 
+						WHERE
 							alliance_id=".$cu->allianceId.";");
 						$res = dbquery("SELECT * FROM alliances WHERE alliance_id='".$cu->allianceId."';");
 						$arr = mysql_fetch_array($res);
 						echo "Die &Auml;nderungen wurden übernommen!<br/>".$message."<br/>";
-						
+
 						// Hack
 						$ally = new Alliance($cu->allianceId);
 					}
@@ -418,11 +418,12 @@
 					}
 
 	        // Allianz auflösen
-					if (isset($_POST['liquidatesubmit']) 
-					&& $_POST['liquidatesubmit']!="" 
-					&& $isFounder 
-					&& $cu->allianceId==$_POST['id_control'] 
-					&& checker_verify())
+					if (isset($_POST['liquidatesubmit'])
+					&& $_POST['liquidatesubmit']!=""
+					&& $isFounder
+					&& $cu->allianceId==$_POST['id_control']
+					&& checker_verify()
+					&& !$cu->alliance->isAtWar())
 					{
 						$ally->delete($cu);
 						echo "Die Allianz wurde aufgel&ouml;st!<br/><br/>
@@ -434,7 +435,7 @@
 
 						$ally->visits++;
 
-						
+
 						tableStart("[".stripslashes($arr['alliance_tag'])."] ".stripslashes($arr['alliance_name']));
 						if ($arr['alliance_img']!="")
 						{
@@ -522,8 +523,8 @@
 							FROM
 								alliance_applications
 							WHERE
-								alliance_id=".$cu->allianceId."	
-							;");							
+								alliance_id=".$cu->allianceId."
+							;");
 							$aarr= mysql_fetch_row($ares);
 							if ($aarr[0]>0)
 							{
@@ -547,7 +548,7 @@
 											<th colspan=\"3\" style=\"text-align:center;\">
 												Diese Allianz ist ein Wing von <b><a href=\"?page=$page&amp;action=info&amp;id=".$ally->motherId."\">".$ally->mother."</a></b>
 											</th>
-										</tr>";				
+										</tr>";
 						}
 
 
@@ -555,12 +556,12 @@
 						if ($isFounder || $myRight['relations'])
 						{
 							$bres = dbquery("
-							SELECT 
-								alliance_bnd_id 
-							FROM 
-								alliance_bnd 
-							WHERE 
-								alliance_bnd_alliance_id2='".$cu->allianceId."' 
+							SELECT
+								alliance_bnd_id
+							FROM
+								alliance_bnd
+							WHERE
+								alliance_bnd_alliance_id2='".$cu->allianceId."'
 								AND alliance_bnd_level='0';");
 							if (mysql_num_rows($bres)>0)
 								echo "<tr>
@@ -595,28 +596,28 @@
 						if ($isFounder || $myRight['ranks']) array_push($adminBox,"<a href=\"?page=$page&action=ranks\">R&auml;nge</a>");
 						if ($isFounder || $myRight['editdata']) array_push($adminBox,"<a href=\"?page=$page&amp;action=editdata\">Allianz-Daten</a>");
 						if ($isFounder || $myRight['applicationtemplate']) array_push($adminBox,"<a href=\"?page=$page&action=applicationtemplate\">Bewerbungsvorlage</a>");
-						if ($isFounder) array_push($adminBox,"<a href=\"?page=$page&action=liquidate\">Allianz aufl&ouml;sen</a>");
-						
+						if ($isFounder && !$cu->alliance->isAtWar()) array_push($adminBox,"<a href=\"?page=$page&action=liquidate\">Allianz aufl&ouml;sen</a>");
 
-						if (!$isFounder) array_push($adminBox,"<a href=\"?page=$page&action=leave\" onclick=\"return confirm('Allianz wirklich verlassen?');\">Allianz verlassen</a>");
+
+						if (!$isFounder && !$cu->alliance->isAtWar()) array_push($adminBox,"<a href=\"?page=$page&action=leave\" onclick=\"return confirm('Allianz wirklich verlassen?');\">Allianz verlassen</a>");
 
 						$cnt=count($adminBox);
 						if ($cnt>0)
 						{
 							echo"<tr><th width=\"120\" >Verwaltung:</th>";
 							echo "<td class=\"twoColumnList\" colspan=\"2\">";
-							$bcnt=0;							
+							$bcnt=0;
 							foreach ($adminBox as $ab)
-							{							
+							{
 								if ($bcnt==0)
 									echo "<ul>";
 								echo "<li><b>".$ab."</b></li>";
-								if ($bcnt == floor($cnt/2))							
+								if ($bcnt == floor($cnt/2))
 									echo "</ul><ul>";
 								$bcnt++;
 							}
 							echo "</ul>";
-							echo "</td></tr>";							
+							echo "</td></tr>";
 						}
 
 
@@ -627,13 +628,13 @@
 								<th width=\"120\">Letzte Ereignisse:</th>
 								<td colspan=\"2\">";
 							$hres=dbquery("
-							SELECT 
-								* 
-							FROM 
-								alliance_history 
-							WHERE 
-								history_alliance_id=".$cu->allianceId." 
-							ORDER BY 
+							SELECT
+								*
+							FROM
+								alliance_history
+							WHERE
+								history_alliance_id=".$cu->allianceId."
+							ORDER BY
 								history_timestamp DESC
 							LIMIT 5;");
 							if(mysql_num_rows($hres)>0)
@@ -643,32 +644,32 @@
 									echo "<div class=\"infoLog\">".text2html($harr['history_text'])." <span>".df($harr['history_timestamp'],0)."</span></div>";
 								}
 							}
-							echo "</td></tr>";							
-						}						
+							echo "</td></tr>";
+						}
 
 						// Text anzeigen
 						if ($arr['alliance_text']!="")
 						{
 							echo "<tr><td colspan=\"3\" style=\"text-align:center\">".text2html($arr['alliance_text'])."</td></tr>\n";
 						}
-			
+
 						// Kriege
 						$wars=dbquery("
-						SELECT 
+						SELECT
 							alliance_bnd_alliance_id1 as a1id,
 							alliance_bnd_alliance_id2 as a2id,
 							alliance_bnd_date as date
-						FROM 
+						FROM
 							alliance_bnd
-					 	WHERE 
+					 	WHERE
 					 		alliance_bnd_level=3
 					 		AND
-					 		(alliance_bnd_alliance_id1='".$ally->id."' 
-					 		OR alliance_bnd_alliance_id2='".$ally->id."') 
+					 		(alliance_bnd_alliance_id1='".$ally->id."'
+					 		OR alliance_bnd_alliance_id2='".$ally->id."')
 					 	;");
 						if (mysql_num_rows($wars)>0)
 						{
-							
+
 							echo "<tr>
 											<th>Kriege:</th>
 											<td>
@@ -680,7 +681,7 @@
 													</tr>";
 									while ($war=mysql_fetch_array($wars))
 									{
-										if ($war['a1id']==$ally->id) 
+										if ($war['a1id']==$ally->id)
 											$opAlly = new Alliance($war['a2id']);
 										else
 											$opAlly = new Alliance($war['a1id']);
@@ -696,25 +697,25 @@
 											</td>
 										</tr>";
 						}
-			
-			
+
+
 						// Friedensabkommen
 						$wars=dbquery("
-						SELECT 
+						SELECT
 							alliance_bnd_alliance_id1 as a1id,
 							alliance_bnd_alliance_id2 as a2id,
 							alliance_bnd_date as date
-						FROM 
+						FROM
 							alliance_bnd
-					 	WHERE 
+					 	WHERE
 					 		alliance_bnd_level=4
-					 		AND 
-					 		(alliance_bnd_alliance_id1='".$ally->id."' 
-					 		OR alliance_bnd_alliance_id2='".$ally->id."') 
-					 		
+					 		AND
+					 		(alliance_bnd_alliance_id1='".$ally->id."'
+					 		OR alliance_bnd_alliance_id2='".$ally->id."')
+
 					 	;");
 						if (mysql_num_rows($wars)>0)
-						{			
+						{
 							echo "<tr>
 											<th>Friedensabkommen:</th>
 											<td>
@@ -723,10 +724,10 @@
 														<th>Allianz</th>
 														<th>Punkte</th>
 														<th>Zeitraum</th>
-													</tr>";					
+													</tr>";
 									while ($war=mysql_fetch_array($wars))
 									{
-										if ($war['a1id']==$ally->id) 
+										if ($war['a1id']==$ally->id)
 											$opAlly = new Alliance($war['a2id']);
 										else
 											$opAlly = new Alliance($war['a1id']);
@@ -736,30 +737,30 @@
 														</td>
 														<td>".nf($opAlly->points)." / ".nf($opAlly->avgPoints)."</td>
 														<td>".df($war['date'],0)." bis ".df($war['date']+PEACE_DURATION,0)."</td>
-													</tr>";				
+													</tr>";
 									}
 									echo "</table>
 											</td>
 										</tr>";
-						}						
-			
+						}
+
 						// Bündnisse
 						$wars=dbquery("
-						SELECT 
+						SELECT
 							alliance_bnd_alliance_id1 as a1id,
 							alliance_bnd_alliance_id2 as a2id,
 							alliance_bnd_date as date,
 							alliance_bnd_name as name
-						FROM 
+						FROM
 							alliance_bnd
-					 	WHERE 
+					 	WHERE
 					 		alliance_bnd_level=2
-					 		AND 
-					 		(alliance_bnd_alliance_id1='".$ally->id."' 
-					 		OR alliance_bnd_alliance_id2='".$ally->id."') 
+					 		AND
+					 		(alliance_bnd_alliance_id1='".$ally->id."'
+					 		OR alliance_bnd_alliance_id2='".$ally->id."')
 					 	;");
 						if (mysql_num_rows($wars)>0)
-						{				
+						{
 							echo "<tr>
 											<th>Bündnisse:</th>
 											<td>
@@ -769,31 +770,31 @@
 														<th>Allianz</th>
 														<th>Punkte</th>
 														<th>Seit</th>
-													</tr>";		
-			
+													</tr>";
+
 									while ($war=mysql_fetch_array($wars))
 									{
-										if ($war['a1id']==$ally->id) 
+										if ($war['a1id']==$ally->id)
 											$opAlly = new Alliance($war['a2id']);
 										else
 											$opAlly = new Alliance($war['a1id']);
 										echo "<tr>
 														<td>".stripslashes($war['name'])."</td>
 														<td><a href=\"?page=$page&amp;id=".$opAlly->id."\">".$opAlly."</a></td>
-														<td>".nf($opAlly->points)." / ".nf($opAlly->avgPoints)."</td>											
+														<td>".nf($opAlly->points)." / ".nf($opAlly->avgPoints)."</td>
 														<td>".df($war['date'])."</td>
-													</tr>";							
-																
+													</tr>";
+
 									}
 									echo "</table>
 											</td>
 										</tr>";
-						}				
+						}
 
 						// Besucher
 						echo "<tr><th width=\"120\">Besucherzähler:</th>
 						<td colspan=\"2\">".nf($ally->visits)." intern / ".nf($ally->visitsExt)." extern</td></tr>\n";
-						
+
 						// Wings
 						if (count($ally->wings) > 0)
 						{
@@ -817,8 +818,8 @@
 							echo "</td></tr>";
 							tableEnd();
 							echo "</td></tr>";
-						}						
-						
+						}
+
 
 						// Website
 						if ($arr['alliance_url']!="")
@@ -826,7 +827,7 @@
 							echo "<tr><th width=\"120\">Website/Forum:</th><td colspan=\"2\"><b>".
 							format_link($arr['alliance_url'])."</a></b></td></tr>\n";
 						}
-						
+
 						// Diverses
 						echo "<tr><th width=\"120\">Mitglieder:</th>
 						<td colspan=\"2\">".$ally->memberCount."</td></tr>\n";
@@ -846,7 +847,7 @@
 										<td colspan=\"2\">
 											".df($ally->foundationDate)." (vor ".tf(time() - $ally->foundationDate).")
 										</td>
-									</tr>";								
+									</tr>";
 						echo "\n</table><br/>";
 					}
 				}
@@ -856,12 +857,12 @@
 				if ($_POST['resolvefalseallyid']!="")
 				{
 					dbquery("
-					UPDATE 
-						users 
-					SET 
+					UPDATE
+						users
+					SET
 						user_alliance_id=0,
-						user_alliance_rank_id=0 
-					WHERE 
+						user_alliance_rank_id=0
+					WHERE
 						user_id=".$cu->id.";");
 					ok_msg("Die fehlerhafte Verkn&uuml;pfung wurde gel&ouml;st!");
 				}
@@ -869,6 +870,6 @@
 					echo "<form action=\"?page=$page\" method=\"post\">Diese Allianz existiert nicht!<br/><br/>
 					<input type=\"submit\" name=\"resolvefalseallyid\" value=\"Fehlerhafte Allianzverkn&uuml;pfung l&ouml;schen\" /></form>";
 			}
-		
+
 	}
 ?>
