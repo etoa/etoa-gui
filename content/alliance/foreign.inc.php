@@ -32,14 +32,14 @@
 		FROM
 			alliance_applications
 		WHERE
-			user_id=".$cu->id."	
+			user_id=".$cu->id."
 		;");
 		if (mysql_num_rows($res))
 		{
 			$arr=mysql_fetch_row($res);
 			$application_alliance=$arr[0];
 			$application_timestamp=$arr[1];
-		}				
+		}
 
 		//
 		// Infotext bei aktiver Bewerbung
@@ -53,9 +53,9 @@
         send_msg($alliances[$application_alliance]['founder_id'],MSG_ALLYMAIL_CAT,"Bewerbung zurückgezogen","Der Spieler ".$cu->nick." hat die Bewerbung bei deiner Allianz zurückgezogen!");
         add_alliance_history($application_alliance,"Der Spieler [b]".$cu->nick."[/b] zieht seine Bewerbung zurück.");
         dbquery("
-        DELETE FROM 
+        DELETE FROM
         	alliance_applications
-        WHERE 
+        WHERE
         	user_id=".$cu->id."
         	AND alliance_id=".$application_alliance.";");
         echo "Deine Bewerbung wurde gel&ouml;scht!<br/><br/>
@@ -76,7 +76,7 @@
 				if (mysql_num_rows($appres)>0)
 				{
 					$apparr = mysql_fetch_array($appres);
-         	ok_msg("Du hast dich am ".df($application_timestamp)." bei der Allianz <b>[".$apparr['alliance_tag']."] ".$apparr['alliance_name']."</b> beworben 
+         	ok_msg("Du hast dich am ".df($application_timestamp)." bei der Allianz <b>[".$apparr['alliance_tag']."] ".$apparr['alliance_name']."</b> beworben
          	und musst nun darauf warten, dass deine Bewerbung akzeptiert wird!");
          	echo "<input type=\"button\" onclick=\"document.location='?page=$page&action=cancelapplication';\" value=\"Bewerbung zurückziehen\" />";
 				}
@@ -88,14 +88,14 @@
 				}
 			}
 		}
-		
+
 		//
 		// Allianzgründung
 		//
 		elseif (isset($_GET['action']) && $_GET['action']=="create")
 		{
 			echo "<h2>Gr&uuml;ndung einer Allianz</h2>";
-	
+
 			$defTag = "";
 			$defName = "";
 			$finish = false;
@@ -104,12 +104,12 @@
 			{
 				$rtnMsg = "";
 				if (Alliance::create(array(
-					"tag" => $_POST['alliance_tag'], 
+					"tag" => $_POST['alliance_tag'],
 					"name" => $_POST['alliance_name'],
 					"founder" => $cu
 					),$rtnMsg))
 				{
-					success_msg("Allianz [b]".$rtnMsg."[/b] gegründet!");	
+					success_msg("Allianz [b]".$rtnMsg."[/b] gegründet!");
 					echo "<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Weiter\" />";
 					$finish = true;
 				}
@@ -135,7 +135,7 @@
 				<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Übersicht\" /></form>";
 			}
 		}
-	
+
 		//
 		// Bewerbung bei einer Allianz
 		//
@@ -145,15 +145,15 @@
 			if (isset($_GET['alliance_id']) && intval($_GET['alliance_id'])>0)
 			{
 				$res=dbquery("
-				SELECT 
+				SELECT
 					alliance_id,
 					alliance_tag,
 					alliance_name,
 					alliance_application_template,
 					alliance_accept_applications
-				FROM 
-					alliances 
-				WHERE 
+				FROM
+					alliances
+				WHERE
 					alliance_id='".intval($_GET['alliance_id'])."'");
 				if (mysql_num_rows($res)>0)
 				{
@@ -206,8 +206,8 @@
 						".time()."
 					);
 					");
-					
-					ok_msg("Deine Bewerbung bei der Allianz <b>[".$alliances[$_POST['user_alliance_id']]['tag']."] ".$alliances[$_POST['user_alliance_id']]['name']."</b> wurde gespeichert! Die Allianzleitung wurde informiert und wird deine Bewerbung ansehen.");
+
+					ok_msg("Deine Bewerbung bei der Allianz [".$alliances[$_POST['user_alliance_id']]['tag']."] ".$alliances[$_POST['user_alliance_id']]['name']." wurde gespeichert! Die Allianzleitung wurde informiert und wird deine Bewerbung ansehen.");
 					echo "<input value=\"&Uuml;bersicht\" type=\"button\" onclick=\"document.location='?page=$page'\" />";
 				}
 				else
@@ -260,7 +260,7 @@
 					error_msg("Es gibt im Moment keine Allianzen denen man beitreten k&ouml;nnte!");
 					echo "<a href=\"?page=$page&amp;action=create\">Gründe</a> eine eigene Allianz.</a>";
 				}
-			}			
+			}
 		}
 
 		//
@@ -274,7 +274,7 @@
 			echo "<input type=\"button\" onclick=\"document.location='?page=$page&amp;action=join';\" value=\"Einer Allianz beitreten\" />&nbsp;&nbsp;&nbsp;";
 			echo "<input type=\"button\" onclick=\"document.location='?page=$page&amp;action=create';\" value=\"Eine Allianz gr&uuml;nden\" />";
 		}
-		
+
 	}
 
 ?>

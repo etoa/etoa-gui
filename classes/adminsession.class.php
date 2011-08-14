@@ -6,7 +6,7 @@
  * @author Nicolas Perrenoud <mrcage@etoa.ch>
  */
 class AdminSession extends Session
-{	
+{
 	const tableUser = "admin_users";
 	const tableSession = "admin_user_sessions";
 	const tableLog = "admin_user_sessionlog";
@@ -15,7 +15,7 @@ class AdminSession extends Session
 
 	/**
 	 * Returns the single instance of this class
-	 * 
+	 *
 	 * @return AdminSession Instance of this class
 	 */
 	public static function getInstance()
@@ -79,7 +79,7 @@ class AdminSession extends Session
 
 	/**
 	 * Checks if the current session is valid
-	 * 
+	 *
 	 * @return True if session is valid
 	 */
 	function validate()
@@ -170,8 +170,8 @@ class AdminSession extends Session
 		";
 		$res = dbquery($sql);
 	}
-	
-	
+
+
 	function monitor()
 	{
 		global $_GET, $_POST;
@@ -219,7 +219,7 @@ class AdminSession extends Session
 			'".$this->user_id."',
 			'".$page."',
 			'".$req."',
-			'".$post."',
+			'".addslashes($post)."',
 			'".$this->id."'
 		)");
 	}
@@ -282,7 +282,7 @@ class AdminSession extends Session
 	static function cleanup()
 	{
 		$cfg = Config::getInstance();
-		
+
 		$res = dbquery("
 		SELECT
 			id
