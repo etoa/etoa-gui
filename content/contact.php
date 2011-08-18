@@ -145,7 +145,7 @@
 			error_msg("Keine Kontaktpersonen vorhanden!");
 
 		iBoxStart('Impressum');
-		echo 'EtoA Gaming<br/>Grenzweg 4<br/>3377 Walliswil-Wangen<br/>Schweiz<br/><a href="mailto:mail@etoa.ch">mail@etoa.ch</a>';     
+		echo 'EtoA Gaming<br/>Nicolas Perrenoud<br/>Belchenstrasse 9c<br/>4900 Langenthal<br/>Schweiz<br/><a href="mailto:mail@etoa.ch">mail@etoa.ch</a>';     
 		iBoxEnd();
 
 		iBoxStart('Powered by');
