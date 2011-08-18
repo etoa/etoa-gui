@@ -1721,4 +1721,5 @@ function get_html_translation_table (table, quote_style) {
     }
  
     return hash_map;
+}
 }	
