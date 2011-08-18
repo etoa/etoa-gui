@@ -214,7 +214,7 @@
 	define('SPECIALIST_AVAILABILITY_FACTOR',$cfg->get('specialistconfig'));											// Verfügbare Spezialisten pro Typ basierend auf Faktor * Anzahl User
 	
 	// Kriegsdauer
-	define("WAR_DURATION",3600*48);
+	define("WAR_DURATION",3600*96);
 	define("PEACE_DURATION",3600*48);
 	
 	// Tipps beim Start aktivieren
