@@ -622,6 +622,10 @@ Anmerkung: Eine Kopie dieser Nachricht wird in Eurer Nachrichten-Box hinterlegt.
       <v comment="Grundbonus der Kampftechniken" type="text">10</v>
       <p1 comment="Bonus pro zus&#xE4;tzlichem User im Kampf" type="text"/>
     </item>
+    <item name="alliance_war_time" cat="16">
+      <v comment="Dauer eines Krieges (h)" type="text">48</v>
+      <p1 comment="Dauer eines Friedens nach Krieg (h)" type="text">48</p1>
+    </item>
     <item name="backup_time" cat="1">
       <v comment="Intervall (Stunden)" type="text">6</v>
       <p1 comment="StartStunde" type="text">0</p1>
