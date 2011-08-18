@@ -37,23 +37,24 @@ function loadChat($minId)
 				while ($arr=mysql_fetch_assoc($res))
 				{
 					$adminstr = "";
+					$text = htmlspecialchars($arr['text']);
 					if ($arr['admin']==1)
 						$adminstr = "<img src=\"../images/star_y.gif\" />";
 
 					if ($arr['user_id']==0)
 					{
 						$out.= "<span style=\"color:#aaa\">";
-						$out.= "&lt;".date("H:i",$arr['timestamp'])."&gt; ".htmlspecialchars(stripslashes($arr['text']));
+						$out.= "&lt;".date("H:i",$arr['timestamp'])."&gt; ".$text;
 						$out.= "</span><br/>";
 					}
 					elseif ($arr['color']!="")
 					{
 						$out.= "<span style=\"color:".$arr['color']."\">";
-						$out.= "$adminstr&lt;<a style=\"color:".$arr['color']."\" href=\"../index.php?page=userinfo&id=".$arr['user_id']."\" target=\"main\">".$arr['nick']."</a> | ".date("H:i",$arr['timestamp'])."&gt; ".htmlspecialchars(stripslashes($arr['text']));
+						$out.= "$adminstr&lt;<a style=\"color:".$arr['color']."\" href=\"../index.php?page=userinfo&id=".$arr['user_id']."\" target=\"main\">".$arr['nick']."</a> | ".date("H:i",$arr['timestamp'])."&gt; ".$text;
 						$out.= "</span><br/>";
 					}
 					else
-						$out.= "$adminstr&lt;<a style=\"color:#fff\" href=\"../index.php?page=userinfo&id=".$arr['user_id']."\" target=\"main\">".$arr['nick']."</a> | ".date("H:i",$arr['timestamp'])."&gt; ".htmlspecialchars(stripslashes($arr['text']))."<br/>";
+						$out.= "$adminstr&lt;<a style=\"color:#fff\" href=\"../index.php?page=userinfo&id=".$arr['user_id']."\" target=\"main\">".$arr['nick']."</a> | ".date("H:i",$arr['timestamp'])."&gt; ".$text."<br/>";
 
 					$lastid = $arr['id'];
 				}
@@ -112,7 +113,7 @@ function appendToChatBox($string)
 	if (isset($s['user_id']))
 	{
 		$out= "<span style=\"color:#aaa\">";
-		$out.= "&lt;".date("H:i")."&gt; ".stripslashes($string);
+		$out.= "&lt;".date("H:i")."&gt; ".htmlspecialchars($string);
 		$out.= "</span><br/>";
 		$ajax->append("chatitems","innerHTML",$out);
 		$ajax->script("window.scrollBy(0,100000);");
@@ -294,7 +295,7 @@ function sendChat($form)
 			(
 				".time().",
 				'".$s['user_nick']."',
-				'".addslashes(($ct))."',
+				'".mysql_real_escape_string(($ct))."',
 				'".$form['ccolor']."',
 				'".$s['user_id']."',
 				'".$admin."'
